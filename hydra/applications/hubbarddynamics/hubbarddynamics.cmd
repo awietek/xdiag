@@ -1,0 +1,8 @@
+Opt double t 1. t t t "Hubbard t"
+Opt double U 4. U U U "Hubbard U"
+Opt std::string outfile "" o outfile outfile "name of outfile"
+Opt std::string latticefile "" l latticefile latticefile "name of latticefile"
+Opt int nup -1 u nup nup "number of up electrons (optional, default half filling)"
+Opt int ndown -1 d ndown ndown "number of down electrons (optional, default half filling)"
+Opt std::string fermiontype "" f fermiontype fermiontype "type of fermion (one of cdagup, cdag, cdagdn, cdn) (optinal: default all are computed)"
+Opt int dyniters 200 d dyniters dyniters "number of dynamical Lanczos iterations performed (optional, default 200)"

@@ -1,0 +1,6 @@
+Opt double T 0.1 t temperature temperature "temperature (ignored if temperaturefile is given)"
+Opt double J 1. t t t "coupling constant J"
+Opt std::string outfile "" o outfile outfile "name of outfile"
+Opt std::string latticefile "" l latticefile latticefile "name of latticefile"
+Opt std::string temperaturefile "" t temperaturefile temperaturefile "name of temperaturefile"
+Opt int nup -1 u nup nup "number of up spins (optional, default: all sectors are combined)"

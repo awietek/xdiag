@@ -1,0 +1,6 @@
+Opt double t 1. t t t "hopping constant t"
+Opt double V 1. V V V "interaction strength V"
+Opt std::string outfile "" o outfile outfile "name of outfile"
+Opt std::string latticefile "" l latticefile latticefile "name of latticefile"
+Opt int np -1 p np np "number of spinless fermions (optional, default: half filled)"
+Opt std::string representation "" r representation representation "space group representation (optional: default no space group symmetries applied)"

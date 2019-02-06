@@ -1,0 +1,31 @@
+#!/bin/bash
+
+t=1.
+V=1.
+outfile=""
+latticefile="../lattice-files/square.16.spinlessfermions.pbc"
+
+# nps=$(seq 0 1 16)
+reps=("Gamma.D4.A1" "Gamma.D4.A2" "Gamma.D4.B1" "Gamma.D4.B2" "Gamma.D4.E" "M.D4.A1" "M.D4.A2" "M.D4.B1" "M.D4.B2" "M.D4.E" "Delta.D1.A" "Delta.D1.B" "Sigma.D1.A" "Sigma.D1.B" "Z.D1.A" "Z.D1.B" "X.D2.A1" "X.D2.A2" "X.D2.B1" "X.D2.B2")
+
+nps=(8)
+# reps=("Gamma.D4.A1")
+
+for np in ${nps[@]}; do
+for representation in ${reps[@]}; do
+
+../../bin/spinlessfermioned \
+--t $t \
+--V $V \
+--latticefile $latticefile \
+--np $np \
+--representation $representation \
+# --outfile $outfile \
+
+done
+done
+
+
+
+
+

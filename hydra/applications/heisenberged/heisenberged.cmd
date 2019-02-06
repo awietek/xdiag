@@ -1,0 +1,5 @@
+Opt double J 1. J J J "hopping constant t"
+Opt std::string outfile "" o outfile outfile "name of outfile"
+Opt std::string latticefile "" l latticefile latticefile "name of latticefile"
+Opt int nup -1 u nup nup "number of upspins (optional, default: half filled)"
+Opt std::string representation "" r representation representation "space group representation (optional: default no space group symmetries applied)"
