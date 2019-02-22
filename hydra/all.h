@@ -30,6 +30,7 @@
 #include "utils/typedefs.h"
 #include "operators/bond.h"
 #include "operators/bondlist.h"
+#include "operators/couplings.h"
 #include "thermodynamics/thermodynamics.h"
 #include "dynamics/continuedfraction.h"
 #include "symmetries/spacegroup.h"

@@ -20,58 +20,61 @@
 
 #include <lila/matrix.h>
 #include <hydra/hilbertspaces/hubbard.h>
+#include <hydra/operators/bondlist.h>
+#include <hydra/operators/couplings.h>
 
 namespace hydra { namespace models {
-    
+    using operators::BondList;
+    using operators::Couplings;
+
     /*!
       Class to generate representations of the Hubbard models
     */
     class HubbardModel {
 
     public:
-
       /*! 
 	Defines a Hubbard model given number of sites and pairs of 
 	neighboring sites with hoppings
       */
-      HubbardModel(const int& n_sites, 
-		   const std::vector<std::pair<int, int>> neighbors);
-      
-      ///  Return all possible quantum numbers
-      std::vector<hilbertspaces::hubbard_qn> quantumnumbers();
+      HubbardModel(BondList bondlist, Couplings couplings, 
+		   hilbertspaces::hubbard_qn qn);
       
       /*!
 	returns a lila::Matrix of the Hubbard model given t, U, and
 	the quantum numbers (n_upspins, n_downspins).
-
-	Usage:
-	@code
-	#include <hydra/models/hubbardmodel.h>
-
-	using hydra::hilbertspaces::hubbard_qn;
-	using hydra::models::HubbardModel;
-
-	int n_upspins = 4;
-	int n_downspins = 4;
-	int n_sites = 8;
-	std::vector<std::pair<int, int>> hoppings;
-	for (int i = 0; i < n_sites; ++i)
-	  hoppings.push_back({i, (i + 1) % n_sites});
-	hubbard_qn qn = {nup, ndown}; 
-	auto model = HubbardModel(n_sites, hoppings);
-	auto hamilton = model.matrix(t, U, qn);
-	@endcode
       */
-      lila::Matrix<double> matrix(const double& t, const double& U,
-				  const hilbertspaces::hubbard_qn& qn) const;
+      lila::Matrix<double> matrix() const;
 
-      lila::Vector<double> apply_fermion(const lila::Vector<double>& state_before, 
-					 hilbertspaces::hubbard_qn& qn, 
-					 std::string type, int site) const;
+      /*!
+	returns a lila::Matrix of the Hubbard model given t, U, and
+	the quantum numbers (n_upspins, n_downspins).
+      */
+      void apply_hamiltonian(const lila::Vector<double>& in_vec,
+			     lila::Vector<double>& out_vec) const;      
+
+      /*!
+	applies a fermion creation/annihilation operator to a state
+      */
+      hilbertspaces::hubbard_qn apply_fermion
+      (const lila::Vector<double>& state_before, 
+       lila::Vector<double>& state_after, std::string type, int site) const;
+
+      hilbertspaces::hubbard_qn qn() const { return qn_; }
+      void set_qn(hilbertspaces::hubbard_qn qn);
+      int n_sites() const { return n_sites_; }
+      int64 dim() const { return dim_; }
 
     private:
       int n_sites_;
-      std::vector<std::pair<int, int>> neighbors_;
+      int64 dim_;
+      hilbertspaces::hubbard_qn qn_;
+
+      std::vector<std::pair<int, int>> hoppings_;
+      std::vector<double> hopping_amplitudes_;
+      std::vector<std::pair<int, int>> interactions_;
+      std::vector<double> interaction_strengths_;
+      double U_;
     };
     
   }

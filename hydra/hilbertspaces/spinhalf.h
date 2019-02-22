@@ -51,6 +51,7 @@ namespace hydra { namespace hilbertspaces {
       using state_t = state_type;
       using iterator_t = SpinhalfIterator<state_t>;
   
+      Spinhalf() = default;
       Spinhalf(const int& n_sites, const quantumnumber_t& qn);
 
       int n_sites() const;
