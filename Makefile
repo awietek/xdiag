@@ -6,7 +6,7 @@ apps=hydra/applications/heisenberged hydra/applications/hubbarded hydra/applicat
 lila_dir = /mnt/home/awietek/Research/Software/lila
 clara_dir=/mnt/home/awietek/Research/Software/Clara/include
 
-CC            = icpc
+CC            = mpicxx -cxx=icpc
 MPICC         = mpicxx -cxx=icpc
 CCOPT         = -O3
 CCARCH        = -std=c++11 
@@ -37,11 +37,11 @@ hydra_includes = $(addprefix -I,$(hydra_module_dirs)) -I$(lila_dir) -I. -I$(clar
 
 include $(hydra_module_makefiles)
 
-.PHONY: mpi
-mpi:  $(mpiprograms)
-
 .PHONY: all
 all:  $(programs)
+
+.PHONY: mpi
+mpi:  $(mpiprograms)
 
 # .PHONY: libraries
 # libraries: $(libraries)
