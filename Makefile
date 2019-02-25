@@ -6,11 +6,14 @@ apps=hydra/applications/heisenberged hydra/applications/hubbarded hydra/applicat
 lila_dir = /mnt/home/awietek/Research/Software/lila
 clara_dir=/mnt/home/awietek/Research/Software/Clara/include
 
+# CC            = mpicxx 
+# MPICC         = mpicxx 
 CC            = mpicxx -cxx=icpc
 MPICC         = mpicxx -cxx=icpc
 CCOPT         = -O3
-CCARCH        = -std=c++11 
+CCARCH        = -std=c++11 -Wall -pedantic
 
+lapack        = -llapack -lblas
 lapack        = -mkl -DLILA_USE_MKL
 programs     :=
 mpiprograms  :=
