@@ -61,8 +61,8 @@ namespace hydra { namespace models {
 
       if ((mpi_rank_== 0) && verbose)
 	{
-	  printf("max_local_dim: %d\n", max_local_dim_);
-	  printf("min_local_dim: %d\n", min_local_dim_);
+	  printf("max_local_dim: %lu\n", max_local_dim_);
+	  printf("min_local_dim: %lu\n", min_local_dim_);
 	}
       auto hs_downspins = Spinhalf<state_t>(n_sites_, qn_.n_downspins);
       Zeros(out_vec.vector_local());

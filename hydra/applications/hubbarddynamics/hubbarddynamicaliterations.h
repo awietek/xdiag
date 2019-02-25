@@ -24,6 +24,7 @@ dyn_lanczos_result_t hubbard_dynamical_iterations_lanczos
   using hydra::models::HubbardModel;
   using namespace lila;
   using Clock = std::chrono::high_resolution_clock;
+  using secs = std::chrono::duration<float>;
 
   printf("Computing Greens function: type: %s, s1: %d, s2: %d\n",
 			    fermiontype.c_str(), site1, site2);
@@ -31,7 +32,7 @@ dyn_lanczos_result_t hubbard_dynamical_iterations_lanczos
   printf("Applying creation/annihilation operator (%s)...\n",
 			    fermiontype.c_str());
   auto t1 = Clock::now();
-  printf("dim before: %d\n", groundstate.size());
+  printf("dim before: %d\n", (int)groundstate.size());
   Vector<double> dyn_start_state1; 
   auto qn_after = 
     model.apply_fermion(groundstate, dyn_start_state1, fermiontype, site1);
@@ -46,10 +47,9 @@ dyn_lanczos_result_t hubbard_dynamical_iterations_lanczos
   dyn_start_state2.shrink_to_fit();
 
   double dyn_weight = pow(Norm(dyn_start_state), 2);
-  printf("dim after: %d\n", dyn_start_state.size());  
+  printf("dim after: %d\n", (int)dyn_start_state.size());  
   auto t2 = Clock::now();
-  printf("time fermion: %3.4f\n", 
-	 std::chrono::duration_cast<std::chrono::seconds>(t2-t1).count()); 
+  printf("time fermion: %3.4f\n", secs(t2-t1).count()); 
 
   
   printf("Creating Hubbard model for n_upspins=%d, n_downspins=%d...\n", 
@@ -58,8 +58,7 @@ dyn_lanczos_result_t hubbard_dynamical_iterations_lanczos
   auto model_dyn = model;
   model_dyn.set_qn(qn_after);
   t2 = Clock::now();
-  printf("time init dyn: %3.4f\n", 
-	 std::chrono::duration_cast<std::chrono::seconds>(t2-t1).count()); 
+  printf("time init dyn: %3.4f\n", secs(t2-t1).count()); 
 
 
   printf("Starting dynamical Lanczos procedure ...\n");
@@ -70,11 +69,9 @@ dyn_lanczos_result_t hubbard_dynamical_iterations_lanczos
     (const Vector<double>& v, Vector<double>& w) {
     static int iter=0;
     auto t1 = Clock::now();
-    bool verbose = (iter == 0);
     model_dyn.apply_hamiltonian(v, w);
     auto t2 = Clock::now();
-    printf("dyniter: %d, time MVM: %3.4f\n", iter, 
-	   std::chrono::duration_cast<std::chrono::seconds>(t2-t1).count()); 
+    printf("dyniter: %d, time MVM: %3.4f\n", iter, secs(t2-t1).count()); 
     ++iter;
   };
 
@@ -110,6 +107,7 @@ hubbard_dynamical_iterations_bandlanczos
   using hydra::models::HubbardModel;
   using namespace lila;
   using Clock = std::chrono::high_resolution_clock;
+  using secs = std::chrono::duration<float>;
 
   printf("Computing Greens function (BandLanczos): type: %s, \n",
 			    fermiontype.c_str());
@@ -117,7 +115,7 @@ hubbard_dynamical_iterations_bandlanczos
   printf("Applying creation/annihilation operator (%s)...\n",
 			    fermiontype.c_str());
   auto t1 = Clock::now();
-  printf("dim before: %d\n", groundstate.size());
+  printf("dim before: %d\n", (int)groundstate.size());
   std::vector<Vector<double>> dyn_start_states;
   assert(sites.size() > 0);
   int p = sites.size();
@@ -126,10 +124,9 @@ hubbard_dynamical_iterations_bandlanczos
   for (int i=0; i<p; ++i)
     qn_after = model.apply_fermion(groundstate, dyn_start_states[i], fermiontype, sites[i]);
 
-  printf("dim after: %d\n", dyn_start_states[0].size());  
+  printf("dim after: %d\n", (int)dyn_start_states[0].size());  
   auto t2 = Clock::now();
-  printf("time fermion: %3.4f\n", 
-	 std::chrono::duration_cast<std::chrono::seconds>(t2-t1).count()); 
+  printf("time fermion: %3.4f\n", secs(t2-t1).count()); 
 
   // Compute overlap of start states with Lanczos vectors (orthonormal basis thereof)
   auto ortho = lila::gramschmidt(dyn_start_states);
@@ -146,8 +143,7 @@ hubbard_dynamical_iterations_bandlanczos
   auto model_dyn = model;
   model_dyn.set_qn(qn_after);
   t2 = Clock::now();
-  printf("time init dyn: %3.4f s\n", 
-	 std::chrono::duration_cast<std::chrono::seconds>(t2-t1).count()); 
+  printf("time init dyn: %3.4f s\n", secs(t2-t1).count()); 
 
 
   printf("Starting dynamical Lanczos procedure ...\n");
@@ -158,11 +154,9 @@ hubbard_dynamical_iterations_bandlanczos
     (const Vector<double>& v, Vector<double>& w) {
     static int iter=0;
     auto t1 = Clock::now();
-    bool verbose = (iter == 0);
     model_dyn.apply_hamiltonian(v, w);
     auto t2 = Clock::now();
-    printf("dyniter: %d, time MVM: %3.4f s\n", iter, 
-	   std::chrono::duration_cast<std::chrono::seconds>(t2-t1).count()); 
+    printf("dyniter: %d, time MVM: %3.4f s\n", iter, secs(t2-t1).count()); 
     ++iter;
   };
 

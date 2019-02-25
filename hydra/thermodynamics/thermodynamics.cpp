@@ -1,5 +1,6 @@
 #include <cassert>
 #include <algorithm>
+#include <cmath>
 
 #include "thermodynamics.h"
 
@@ -11,7 +12,7 @@ namespace hydra { namespace thermodynamics {
       assert(quantities.size() == e0s.size());
       double total_e0 = *std::min_element(e0s.begin(), e0s.end());
       double combined_quantity = 0.;
-      for (int idx = 0; idx < e0s.size(); ++idx)
+      for (int idx = 0; idx < (int)e0s.size(); ++idx)
 	{
 	  double pre = std::exp(-beta * (e0s[idx] - total_e0));
 	  combined_quantity += pre * quantities[idx];

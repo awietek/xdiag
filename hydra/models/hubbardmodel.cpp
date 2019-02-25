@@ -263,7 +263,6 @@ namespace hydra { namespace models {
 	
       Hubbard<uint32> hs_before(n_sites_, qn_);
       IndexHubbard<IndexTable<Spinhalf<uint32>, uint32>> indexing_before(hs_before);
-      int dim_before = indexing_before.size();
 
       printf("type: %s\n", type.c_str());
 
@@ -280,7 +279,7 @@ namespace hydra { namespace models {
 
       Hubbard<uint32> hs_after(n_sites_, qn_after);
       IndexHubbard<IndexTable<Spinhalf<uint32>, uint32>> indexing_after(hs_after);
-      int dim_after = indexing_after.size();
+      int64 dim_after = indexing_after.size();
 
       state_after.resize(dim_after);
 
@@ -369,4 +368,4 @@ namespace hydra { namespace models {
     
     
   }
-};
+}

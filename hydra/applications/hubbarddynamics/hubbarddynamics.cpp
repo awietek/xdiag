@@ -18,6 +18,7 @@ int main(int argc, char* argv[])
   using namespace hydra::operators;
   using hydra::dynamics::continued_fraction;
   using Clock = std::chrono::high_resolution_clock;
+  using secs = std::chrono::duration<float>;
   using namespace lila;
 
   std::string outfile;
@@ -124,8 +125,7 @@ int main(int argc, char* argv[])
     auto t1 = Clock::now();
     model.apply_hamiltonian(v, w);
     auto t2 = Clock::now();
-    printf("iter: %d, time MVM: %3.4f\n", iter, 
-	   std::chrono::duration_cast<std::chrono::seconds>(t2-t1).count()); 
+    printf("iter: %d, time MVM: %3.4f\n", iter, secs(t2-t1).count()); 
     ++iter;
   };
 

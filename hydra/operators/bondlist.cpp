@@ -114,7 +114,7 @@ namespace hydra { namespace operators {
     std::vector<std::string> BondList::couplings() const 
     { return detail::get_couplings(bonds_); }
     std::vector<TypeCoupling> BondList::types_couplings() const 
-    { return detail::get_types_couplings(bonds_); };
+    { return detail::get_types_couplings(bonds_); }
 
     BondList BondList::bonds_of_type(const std::string& type) const
     { return BondList(detail::get_bonds_of_type(bonds_, type)); }

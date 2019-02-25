@@ -46,10 +46,7 @@ namespace hydra { namespace symmetries { namespace detail {
 	      ++nf;
 	    }
 	
-	bool to_do=true;
 	int old_sum;
-	
-	// while (to_do)
 	while (true)
 	  {
 	    old_sum=sum;
@@ -60,7 +57,6 @@ namespace hydra { namespace symmetries { namespace detail {
 		  std::swap(sort[k+1], sort[k]);
 		}
 	    if (old_sum == sum) break;
-	    // to_do=(sum-old_sum ? true: false);
 	  }
 	return (sum % 2 ? -1 : 1);
       }

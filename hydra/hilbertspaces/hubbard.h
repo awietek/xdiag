@@ -72,6 +72,7 @@ namespace hydra { namespace hilbertspaces {
 	    down_iter_ = down_begin_;
 	    ++up_iter_;
 	  }
+	return *this;
       }
       inline hubbard_state<state_t> operator*() const 
       { return {*up_iter_, *down_iter_}; }
@@ -79,7 +80,7 @@ namespace hydra { namespace hilbertspaces {
     private:
       int n_sites_;
       SpinhalfIterator<state_t> down_begin_, down_end_;
-      SpinhalfIterator<state_t> up_iter_, down_iter_;
+      SpinhalfIterator<state_t> down_iter_, up_iter_;
     };
 
     /*!

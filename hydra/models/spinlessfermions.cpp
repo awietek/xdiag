@@ -59,8 +59,7 @@ namespace hydra { namespace models {
       for (auto pair : hoppings_)
 	{
 	  int s1 = std::min(pair.first, pair.second); 
-	  int s2 = std::max(pair.first, pair.second);
-	  
+	  int s2 = std::max(pair.first, pair.second);	  
 	  uint32 flipmask = ((uint32)1 << s1) | ((uint32)1 << s2);
 	  int idx = 0;	  
 	  for (auto state : hs)
@@ -83,8 +82,6 @@ namespace hydra { namespace models {
 	{
 	  int s1 = pair.first; 
 	  int s2 = pair.second;
-	  
-	  uint32 flipmask = ((uint32)1 << s1) | ((uint32)1 << s2);
 	  int idx = 0;	  
 	  for (auto state : hs)
 	    {  
@@ -159,8 +156,6 @@ namespace hydra { namespace models {
 	{
 	  int s1 = pair.first; 
 	  int s2 = pair.second;
-	  
-	  uint32 flipmask = ((uint32)1 << s1) | ((uint32)1 << s2);
 	  for (int idx : range<>(indexing.size()))
 	    {
 	      auto state = indexing.state(idx);
@@ -172,4 +167,4 @@ namespace hydra { namespace models {
     }
     
   }
-};
+}

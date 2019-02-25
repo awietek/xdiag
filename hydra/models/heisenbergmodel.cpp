@@ -137,4 +137,4 @@ namespace hydra { namespace models {
     }
     
   }
-};
+}

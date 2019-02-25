@@ -18,7 +18,8 @@
 #include <string>
 #include <vector>
 
-#include "symmetrydetail.h"
+#include <hydra/symmetries/symmetrydetail.h>
+#include <hydra/hilbertspaces/siteoperations.h>
 
 namespace hydra { namespace symmetries {
 
@@ -80,8 +81,6 @@ namespace hydra { namespace symmetries {
       {
 	using hydra::hilbertspaces::get_site_val;
 	using hydra::hilbertspaces::set_site_val;
-	using state_t = typename hilbertspace_t::state_t;
-
 	return detail::apply_permutation
 	  (state, n_sites_, symmetries_internal_.data() + n_sym*n_sites_, 
 	   get_site_val<hilbertspace_t>, set_site_val<hilbertspace_t>);

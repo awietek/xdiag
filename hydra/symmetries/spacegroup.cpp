@@ -29,7 +29,7 @@ namespace hydra { namespace symmetries {
       for (int i = 0; i < (int)symmetries.size(); ++i)
 	{
 	  // Check whether lattice symmetries are well-formed
-	  assert(symmetries[i].size() == n_sites_);
+	  assert((int)symmetries[i].size() == n_sites_);
 	  assert(detail::is_valid_permutation(symmetries[i]));
 	  std::copy(symmetries[i].begin(), symmetries[i].end(), 
 		    symmetries_internal_.begin() + i*n_sites_);

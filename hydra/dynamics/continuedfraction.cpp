@@ -7,10 +7,10 @@ namespace hydra { namespace dynamics {
 					    const std::vector<double>& betas, 
 					    int level)
     {
-      if (level==alphas.size())
+      if (level==(int)alphas.size())
 	return 0.0;
 
-      else if( level == 0)
+      else if(level == 0)
 	return 1./ (z - alphas[0] - continued_fraction(z, alphas, betas, 1));
       else
         return (betas[level-1]*betas[level-1]) /			\
