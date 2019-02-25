@@ -154,7 +154,7 @@ namespace hydra { namespace operators {
       // read lines until '[' is found or else until EOF
       while (std::getline(File, tobeparsed))
 	{
-	  if ((tobeparsed.find('[') != std::string::npos) || !File.good())
+	  if ((tobeparsed.find('[') != std::string::npos))
 	    break;
 	  
 	  // Parse line
@@ -166,6 +166,8 @@ namespace hydra { namespace operators {
 	  int n;
 	  while(stream >> n) sites.push_back(n);
 	  bonds.push_back(Bond(type, coupling, sites));
+	  if (!File.good())
+	    break;
 	} 
 
       return BondList(bonds);

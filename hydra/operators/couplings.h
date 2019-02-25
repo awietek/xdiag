@@ -51,7 +51,7 @@ namespace hydra { namespace operators {
 
       /// checks whether coupling has zero imaginary part    
       bool is_real(const std::string& name) const 
-      { return std::abs(std::imag((*this)[name])) < 1e-14; }
+      { return std::abs(std::imag((*this)[name])) < 1e-12; }
 
       /// returns real part of coupling 
       double real(const std::string& name) const 
