@@ -35,7 +35,7 @@ dyn_lanczos_result_t hubbard_dynamical_iterations_lanczos_mpi
   if (mpi_rank == 0) printf("Applying creation/annihilation operator (%s)...\n",
 			    fermiontype.c_str());
   double t1 = MPI_Wtime();
-  if (mpi_rank == 0) printf("dim before: %d\n", groundstate.size_global());
+  if (mpi_rank == 0) printf("dim before: %ld\n", groundstate.size_global());
   VectorMPI<double> dyn_start_state1; 
   auto qn_after = 
     model.apply_fermion(groundstate, dyn_start_state1, fermiontype, site1);
@@ -50,7 +50,7 @@ dyn_lanczos_result_t hubbard_dynamical_iterations_lanczos_mpi
   dyn_start_state2.shrink_to_fit();
 
   double dyn_weight = pow(Norm(dyn_start_state), 2);
-  if (mpi_rank == 0) printf("dim after: %d\n", dyn_start_state.size_global());  
+  if (mpi_rank == 0) printf("dim after: %ld\n", dyn_start_state.size_global());  
   double t2 = MPI_Wtime();
   if (mpi_rank == 0) printf("time fermion: %3.4f\n", t2-t1); 
 
@@ -120,7 +120,7 @@ hubbard_dynamical_iterations_bandlanczos_mpi
   if (mpi_rank == 0) printf("Applying creation/annihilation operator (%s)...\n",
 			    fermiontype.c_str());
   double t1 = MPI_Wtime();
-  if (mpi_rank == 0) printf("dim before: %d\n", groundstate.size_global());
+  if (mpi_rank == 0) printf("dim before: %ld\n", groundstate.size_global());
   std::vector<VectorMPI<double>> dyn_start_states;
   assert(sites.size() > 0);
   int p = sites.size();
@@ -129,7 +129,7 @@ hubbard_dynamical_iterations_bandlanczos_mpi
   for (int i=0; i<p; ++i)
     qn_after = model.apply_fermion(groundstate, dyn_start_states[i], fermiontype, sites[i]);
 
-  if (mpi_rank == 0) printf("dim after: %d\n", dyn_start_states[0].size_global());  
+  if (mpi_rank == 0) printf("dim after: %ld\n", dyn_start_states[0].size_global());  
   double t2 = MPI_Wtime();
   if (mpi_rank == 0) printf("time fermion: %3.4f\n", t2-t1); 
 

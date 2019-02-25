@@ -16,7 +16,6 @@ int main(int argc, char* argv[])
   using hydra::hilbertspaces::Hubbard;
   using hydra::models::HubbardModel;
   using namespace hydra::operators;
-  using hydra::dynamics::continued_fraction;
   using Clock = std::chrono::high_resolution_clock;
   using secs = std::chrono::duration<float>;
   using namespace lila;
