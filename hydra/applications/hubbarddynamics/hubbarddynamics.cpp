@@ -28,10 +28,13 @@ int main(int argc, char* argv[])
   int ndown = -1;
   std::string fermiontype;
   std::string algorithm;
-  int dyniters = 200;
-  parse_cmdline(outfile, latticefile, couplingfile, corrfile, nup, 
-		ndown, fermiontype, algorithm, dyniters, argc, argv);
-
+  double precision = 1e-12;
+  int iters = 1000;
+  double dynprecision = 1e-12;
+  int dyniters = 1000;
+  parse_cmdline(outfile, latticefile, couplingfile, corrfile, nup, ndown, 
+		fermiontype, algorithm, precision, iters, dynprecision, 
+		dyniters, argc, argv);
 
   // Check if valid algorithm is defined
   if (algorithm == "") algorithm = "lanczos";
@@ -114,8 +117,7 @@ int main(int argc, char* argv[])
 
 
   printf("Starting ground state eigenvalues Lanczos procedure ...\n");
-  double precision = 1e-12;
-  int max_iterations = 1000;
+
   int num_eigenvalue = 0;
   int random_seed = 42;
 
@@ -127,12 +129,12 @@ int main(int argc, char* argv[])
     printf("iter: %d, time MVM: %3.4f\n", iter, secs(t2-t1).count()); 
     ++iter;
   };
-
+  
   int64 dim = model.dim();
   auto lzs = Lanczos<double, decltype(multiply)>
-    (dim, random_seed, max_iterations, precision, num_eigenvalue, multiply);
+    (dim, random_seed, iters, precision, num_eigenvalue, multiply);
   Vector<double> eigs = lzs.eigenvalues();
-  printf("lzs e %f %f %f %20.18g %20.18g\n", eigs(0), eigs(1), eigs(2), eigs(3), eigs(4));
+  printf("lzs e %20.18g\n", eigs(0));
   printf("Done\n");
   
   printf("Reiterating for ground state...\n");
@@ -159,7 +161,7 @@ int main(int argc, char* argv[])
 	    int s1 = corr.first;
 	    int s2 = corr.second;
 	    auto res = hydra::hubbard_dynamical_iterations_lanczos
-	      (model, groundstate, s1, s2, ftype, dyniters);
+	      (model, groundstate, s1, s2, ftype, dyniters, dynprecision);
 
 	    // Write to outfile
 	    std::stringstream line;
@@ -198,7 +200,7 @@ int main(int argc, char* argv[])
       for (auto ftype : ftype_list)
 	{  
 	  auto res = hydra::hubbard_dynamical_iterations_bandlanczos
-	    (model, groundstate, sites, ftype, dyniters);
+	    (model, groundstate, sites, ftype, dyniters, dynprecision);
 	  auto tmat = res.tmatrix;
 	  auto overlaps = res.overlaps;
 	  std::stringstream line;

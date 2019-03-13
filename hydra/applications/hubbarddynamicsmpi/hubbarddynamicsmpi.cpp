@@ -51,7 +51,7 @@ int main(int argc, char* argv[])
   int dyniters = 200;
   parse_cmdline(outfile, latticefile, couplingfile, corrfile, nup, 
 		ndown, fermiontype, algorithm, dyniters, argc, argv);
-
+  if (mpi_rank == 0) printf("Using %d MPI tasks\n", mpi_size);
   // Check if valid algorithm is defined
   if (algorithm == "") algorithm = "lanczos";
   if (!((algorithm == "lanczos") || (algorithm == "bandlanczos")))

@@ -19,7 +19,7 @@ struct dyn_lanczos_result_t
 dyn_lanczos_result_t hubbard_dynamical_iterations_lanczos
 (models::HubbardModel& model,
  const lila::Vector<double>& groundstate, 
- int site1, int site2, std::string fermiontype, int dyniters)
+ int site1, int site2, std::string fermiontype, int dyniters, double precision)
 {
   using hydra::models::HubbardModel;
   using namespace lila;
@@ -62,9 +62,6 @@ dyn_lanczos_result_t hubbard_dynamical_iterations_lanczos
 
 
   printf("Starting dynamical Lanczos procedure ...\n");
-  double precision = -1;
-  int max_iterations = dyniters;
-
   auto multiply_dyn = [&model_dyn]
     (const Vector<double>& v, Vector<double>& w) {
     static int iter=0;
@@ -79,7 +76,7 @@ dyn_lanczos_result_t hubbard_dynamical_iterations_lanczos
   int random_seed = 0;
   int num_eigenvalue = 1;
   auto lzs_dyn = Lanczos<double, decltype(multiply_dyn), Vector<double>>
-    (dim_dyn, random_seed, max_iterations, precision, num_eigenvalue, multiply_dyn);
+    (dim_dyn, random_seed, dyniters, precision, num_eigenvalue, multiply_dyn);
   lzs_dyn.set_init_state(dyn_start_state);
 
   Vector<double> dyn_eigs = lzs_dyn.eigenvalues();
@@ -102,7 +99,8 @@ struct dynamical_iterations_bandlanczos_return_t
 dynamical_iterations_bandlanczos_return_t
 hubbard_dynamical_iterations_bandlanczos
 (models::HubbardModel& model, const lila::Vector<double>& groundstate, 
- std::vector<int> sites, std::string fermiontype, int dyniters)
+ std::vector<int> sites, std::string fermiontype, int dyniters,
+ double precision)
 {
   using hydra::models::HubbardModel;
   using namespace lila;
@@ -122,7 +120,8 @@ hubbard_dynamical_iterations_bandlanczos
   dyn_start_states.resize(p);
   hilbertspaces::hubbard_qn qn_after;
   for (int i=0; i<p; ++i)
-    qn_after = model.apply_fermion(groundstate, dyn_start_states[i], fermiontype, sites[i]);
+    qn_after = model.apply_fermion(groundstate, dyn_start_states[i], 
+				   fermiontype, sites[i]);
 
   printf("dim after: %d\n", (int)dyn_start_states[0].size());  
   auto t2 = Clock::now();
@@ -147,8 +146,6 @@ hubbard_dynamical_iterations_bandlanczos
 
 
   printf("Starting dynamical Lanczos procedure ...\n");
-  double precision = -1;
-  int max_iterations = dyniters;
 
   auto multiply_dyn = [&model_dyn]
     (const Vector<double>& v, Vector<double>& w) {
@@ -164,7 +161,7 @@ hubbard_dynamical_iterations_bandlanczos
   int random_seed = 0;
   int num_eigenvalue = 1;
   auto lzs_dyn = BandLanczos<double, decltype(multiply_dyn), Vector<double>>
-    (dim_dyn, random_seed, max_iterations, precision, num_eigenvalue, multiply_dyn, p);
+    (dim_dyn, random_seed, dyniters, precision, num_eigenvalue, multiply_dyn, p);
   lzs_dyn.set_init_states(dyn_start_states);
 
   auto res = lzs_dyn.eigenvalues();

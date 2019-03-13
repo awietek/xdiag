@@ -38,6 +38,16 @@ namespace hydra { namespace models {
 	  interaction_strengths_.push_back(couplings.real(bond.coupling()));
 	}
 
+      BondList onsites_list = bondlist.bonds_of_type("HUBBARDMU");
+      for (auto bond : onsites_list)
+	{
+	  assert(bond.sites().size() == 1);
+	  int s1 = bond.sites()[0];
+	  onsites_.push_back(s1);
+	  assert( couplings.is_real(bond.coupling()) );
+	  onsites_potentials_.push_back(couplings.real(bond.coupling()));
+	}
+
       U_ = couplings.defined("U") ? couplings.real("U") : 0;	
     }
 
@@ -96,6 +106,24 @@ namespace hydra { namespace models {
 		}
 	    }
 	  ++interaction_idx;
+	}
+
+      // Apply onsite chemical potential
+      int onsite_idx=0;
+      for (auto site : onsites_)
+	{
+	  const double mu = onsites_potentials_[onsite_idx];
+	  if (std::abs(mu) > 1e-14)
+	    {
+	      for (int idx : range<>(indexing.size()))
+		{
+		  auto state = indexing.state(idx);
+		  hamilton(idx,idx) += 
+		    mu * (double)((gbit(state.upspins, site) + 
+				   gbit(state.downspins, site)));
+		}
+	    }
+	  ++onsite_idx;
 	}
       
       // Apply hopping terms
@@ -201,6 +229,25 @@ namespace hydra { namespace models {
 	    }
 	  ++interaction_idx;
 	}
+
+      // Apply onsite chemical potential
+      int onsite_idx=0;
+      for (auto site : onsites_)
+	{
+	  const double mu = onsites_potentials_[onsite_idx];
+	  if (std::abs(mu) > 1e-14)
+	    {
+	      for (int idx : range<>(indexing.size()))
+		{
+		  auto state = indexing.state(idx);
+		  auto coeff = 
+		    mu * (double)((gbit(state.upspins, site) + 
+				   gbit(state.downspins, site)));
+		  out_vec(idx) += coeff * in_vec(idx); 
+		}
+	    }
+	  ++onsite_idx;
+	}
       
       // Apply hopping terms
       int hopping_idx=0;
@@ -210,7 +257,6 @@ namespace hydra { namespace models {
 	  const int s2 = std::max(pair.first, pair.second);
 	  const double t = hopping_amplitudes_[hopping_idx];
 	  const uint32 flipmask = ((uint32)1 << s1) | ((uint32)1 << s2);
-
 	  for (int idx : range<>(indexing.size()))
 	    {
 	      auto state = indexing.state(idx);
