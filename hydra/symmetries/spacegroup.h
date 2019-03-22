@@ -131,7 +131,7 @@ namespace hydra { namespace symmetries {
       std::vector<int> symmetries_internal_;  // size = n_symmetries_*n_sites_
     };
 
-    void Print(const SpaceGroup& group);
+    // void Print(const SpaceGroup& group);
     SpaceGroup read_spacegroup(std::string filename);
 
   }

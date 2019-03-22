@@ -58,12 +58,7 @@ namespace hydra { namespace hilbertspaces {
 	up_iter_(state.upspins)
     { assert(up.n_sites() == down.n_sites()); }
 
-    template <typename state_t>
-    std::string Print(int n_sites, hubbard_state<state_t> state)
-    { 
-      return PrintSpinhalf(n_sites, state.upspins) + ";" +
-	PrintSpinhalf(n_sites, state.downspins);
-    }
+
 
 
     template class Hubbard<uint16>;
@@ -74,12 +69,18 @@ namespace hydra { namespace hilbertspaces {
     template class HubbardIterator<uint32>;
     template class HubbardIterator<uint64>;
 
-    template std::string Print<uint16>(int n_sites, 
-				       hubbard_state<uint16> state);
-    template std::string Print<uint32>(int n_sites, 
-				       hubbard_state<uint32> state);
-    template std::string Print<uint64>(int n_sites, 
-				       hubbard_state<uint64> state);
+    // template <typename state_t>
+    // std::string Print(int n_sites, hubbard_state<state_t> state)
+    // { 
+    //   return PrintSpinhalf(n_sites, state.upspins) + ";" +
+    // 	PrintSpinhalf(n_sites, state.downspins);
+    // }
+    // template std::string Print<uint16>(int n_sites, 
+    // 				       hubbard_state<uint16> state);
+    // template std::string Print<uint32>(int n_sites, 
+    // 				       hubbard_state<uint32> state);
+    // template std::string Print<uint64>(int n_sites, 
+    // 				       hubbard_state<uint64> state);
 
 
   }  // namespace hilbertspaces

@@ -51,7 +51,7 @@ namespace hydra { namespace symmetries {
       std::map<std::string, bool> is_real_;
     };
 
-    void Print(const CharacterTable& table);
+    // void Print(const CharacterTable& table);
     CharacterTable read_charactertable(std::string filename);
   }
 }

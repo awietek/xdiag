@@ -127,15 +127,23 @@ hubbard_dynamical_iterations_bandlanczos
   auto t2 = Clock::now();
   printf("time fermion: %3.4f\n", secs(t2-t1).count()); 
 
+  // for (int i=0; i<p; ++i)
+  //   for (int j=0; j<p; ++j)
+  //     {
+  // 	printf("i: %d, j: %d\n", i, j);
+  // 	LilaPrint(Dot(dyn_start_states[i], dyn_start_states[j])/(Norm(dyn_start_states[i])*Norm(dyn_start_states[j])));
+  //     }
+
   // Compute overlap of start states with Lanczos vectors (orthonormal basis thereof)
   auto ortho = lila::gramschmidt(dyn_start_states);
   Matrix<double> overlaps(p, p);
   for (int i=0; i<p; ++i)
     for (int j=0; j<p; ++j)
       overlaps(i, j) = Dot(ortho[i], dyn_start_states[j]);
+  LilaPrint(overlaps);
   ortho.clear();
   ortho.shrink_to_fit();
-
+  
   printf("Creating Hubbard model for n_upspins=%d, n_downspins=%d...\n", 
 	 qn_after.n_upspins, qn_after.n_downspins);
   t1 = Clock::now();

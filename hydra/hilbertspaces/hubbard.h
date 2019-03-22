@@ -142,8 +142,8 @@ namespace hydra { namespace hilbertspaces {
       iterator_t begin_, end_;
     };
 
-    template <typename state_t>
-    std::string Print(int n_sites, hubbard_state<state_t> state);
+    // template <typename state_t>
+    // std::string Print(int n_sites, hubbard_state<state_t> state);
       
 
   }  // namespace hilbertspaces

@@ -85,7 +85,11 @@ namespace hydra { namespace operators {
       const_iterator_t end() const { return bonds_.end(); }
       const_iterator_t cbegin() const { return bonds_.cbegin(); }
       const_iterator_t cend() const { return bonds_.cend(); }
-	
+
+      Bond operator[](int i) const { return bonds_[i]; }
+      Bond& operator[](int i) { return bonds_[i]; }
+      int size() const { return (int)bonds_.size(); }
+
     private:
       std::vector<Bond> bonds_;
     };

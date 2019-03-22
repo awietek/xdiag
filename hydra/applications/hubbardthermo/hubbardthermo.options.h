@@ -1,25 +1,30 @@
 #ifndef HYDRA_APPLICATIONS_HUBBARDTHERMO_OPTIONS_H_
 #define HYDRA_APPLICATIONS_HUBBARDTHERMO_OPTIONS_H_
+#include <string>
+#include "clara.hpp"
 
 #include <string>
 #include "clara.hpp"
 
-void parse_cmdline(double& T, double& t, double& U, std::string& outfile, 
-		   std::string& latticefile, std::string& temperaturefile, 
-		   int& nup, int& ndown, int& np, int& argc, char** argv)
+void parse_cmdline(std::string& outfile, std::string& latticefile, std::string& couplingfile, std::string& evaluate, std::string& method, std::string& temperaturefile, int& seed, double& precision, int& neval, int& iters, int& nup, int& ndown, int& np, bool& loseevals, int& argc, char** argv)
 {
 
   bool showhelp = false;
   auto parser =
-    clara::Opt(T, "temperature")["-t"]["--temperature"]("temperature (ignored if temperaturefile is given)") |
-    clara::Opt(t, "t")["-t"]["--t"]("Hubbard t") |
-    clara::Opt(U, "U")["-U"]["--U"]("Hubbard U") |
     clara::Opt(outfile, "outfile")["-o"]["--outfile"]("name of outfile") |
     clara::Opt(latticefile, "latticefile")["-l"]["--latticefile"]("name of latticefile") |
+    clara::Opt(couplingfile, "couplingfile")["-c"]["--couplingfile"]("name of couplingfile (default: latticefile)") |
+    clara::Opt(evaluate, "evaluate")["-e"]["--evaluate"]("choose whether to evaluate or not, either evaluate/notevaluate/onlyevaluate") |
+    clara::Opt(method, "method")["-m"]["--method"]("method to use, either exact or TPQ (default: exact)") |
     clara::Opt(temperaturefile, "temperaturefile")["-t"]["--temperaturefile"]("name of temperaturefile") |
+    clara::Opt(seed, "seed")["-s"]["--seed"]("random seed (optional, default 42)") |
+    clara::Opt(precision, "precision")["-p"]["--precision"]("precision of Lanczos procedure (optional, default 1e-12)") |
+    clara::Opt(neval, "neval")["-n"]["--neval"]("number of eigenvalue to converge (optional, default 1)") |
+    clara::Opt(iters, "iters")["-i"]["--iters"]("maximum number of ground state Lanczos iterations performed (optional, default 1000)") |
     clara::Opt(nup, "nup")["-u"]["--nup"]("number of up electrons (optional, default half filling)") |
     clara::Opt(ndown, "ndown")["-d"]["--ndown"]("number of down electrons (optional, default half filling)") |
     clara::Opt(np, "np")["-p"]["--np"]("number of particles (optional, default half filling)") |
+    clara::Opt(loseevals)["-l"]["--loseevals"]("flag whether eigenvalues should not be written to output") |
     clara::Help(showhelp);
 
 
@@ -37,15 +42,20 @@ void parse_cmdline(double& T, double& t, double& U, std::string& outfile,
   else
     {
       std::cout <<
-	"T              : " << T << std::endl <<
-	"t              : " << t << std::endl <<
-	"U              : " << U << std::endl <<
 	"outfile        : " << outfile << std::endl <<
 	"latticefile    : " << latticefile << std::endl <<
+	"couplingfile   : " << couplingfile << std::endl <<
+	"evaluate       : " << evaluate << std::endl <<
+	"method         : " << method << std::endl <<
 	"temperaturefile: " << temperaturefile << std::endl <<
+	"seed           : " << seed << std::endl <<
+	"precision      : " << precision << std::endl <<
+	"neval          : " << neval << std::endl <<
+	"iters          : " << iters << std::endl <<
 	"nup            : " << nup << std::endl <<
 	"ndown          : " << ndown << std::endl <<
 	"np             : " << np << std::endl <<
+	"loseevals      : " << loseevals << std::endl <<
 	"-----" << std::endl;
     }
 }

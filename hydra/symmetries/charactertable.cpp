@@ -75,22 +75,22 @@ namespace hydra { namespace symmetries {
     std::vector<complex> CharacterTable::characters(const std::string& name) const
     { return characters_.find(name)->second; }
 
-    void Print(const CharacterTable& table)
-    {
-      for (auto name : table.names())
-	{
-	  printf("[Representation]=%s\n", name.c_str());
-	  if ( table.is_real(name) ) printf("REAL\n");
-	  else printf("COMPLEX\n");
-	  printf("[AllowedOps]=%d\n", table.n_symmetries(name));
-	  for (int n_sym : table.allowed_symmetries(name))
-	    printf("%d ", n_sym);
-	  printf("\n");
-	  for (int n_sym=0; n_sym < table.n_symmetries(name); ++n_sym)
-	    printf("%f %f\n", std::real(table.character(name, n_sym)),
-		   std::imag(table.character(name, n_sym)));
-	}
-    }
+    // void Print(const CharacterTable& table)
+    // {
+    //   for (auto name : table.names())
+    // 	{
+    // 	  printf("[Representation]=%s\n", name.c_str());
+    // 	  if ( table.is_real(name) ) printf("REAL\n");
+    // 	  else printf("COMPLEX\n");
+    // 	  printf("[AllowedOps]=%d\n", table.n_symmetries(name));
+    // 	  for (int n_sym : table.allowed_symmetries(name))
+    // 	    printf("%d ", n_sym);
+    // 	  printf("\n");
+    // 	  for (int n_sym=0; n_sym < table.n_symmetries(name); ++n_sym)
+    // 	    printf("%f %f\n", std::real(table.character(name, n_sym)),
+    // 		   std::imag(table.character(name, n_sym)));
+    // 	}
+    // }
 
     bool CharacterTable::is_real(const std::string& name) const
     { return is_real_.find(name)->second; }

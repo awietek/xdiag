@@ -136,7 +136,8 @@ int main(int argc, char* argv[])
   Vector<double> eigs = lzs.eigenvalues();
   printf("lzs e %20.18g\n", eigs(0));
   printf("Done\n");
-  
+  LilaPrint(lzs.tmatrix());
+
   printf("Reiterating for ground state...\n");
   auto eigenvectors = lzs.eigenvectors({0});
   Vector<double>& groundstate = eigenvectors[0];

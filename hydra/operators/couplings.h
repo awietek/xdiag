@@ -19,7 +19,7 @@
 #include <string>
 #include <vector>
 
-#include "typedefs.h"
+#include <hydra/utils/typedefs.h>
 
 namespace hydra { namespace operators {
 
@@ -34,7 +34,7 @@ namespace hydra { namespace operators {
       /// Create Couplings from map from string to complex
       explicit Couplings(const std::map<std::string, complex>& couplings)
 	: couplings_(couplings)
-      {}
+      { }
 
       /// returns vector with names of couplings
       std::vector<std::string> couplings() const;
@@ -51,15 +51,15 @@ namespace hydra { namespace operators {
 
       /// checks whether coupling has zero imaginary part    
       bool is_real(const std::string& name) const 
-      { return std::abs(std::imag((*this)[name])) < 1e-12; }
+      { return std::abs(std::imag(couplings_.find(name)->second)) < 1e-10; }
 
       /// returns real part of coupling 
       double real(const std::string& name) const 
-      { return std::real((*this)[name]); }
+      { return std::real(couplings_.find(name)->second); }
 
       /// returns imaginary part of coupling 
       double imag(const std::string& name) const 
-      { return std::imag((*this)[name]); }
+      { return std::imag(couplings_.find(name)->second); }
 
 
       iterator_t begin() { return couplings_.begin(); }

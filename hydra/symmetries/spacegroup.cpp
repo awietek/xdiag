@@ -50,17 +50,17 @@ namespace hydra { namespace symmetries {
     }
 
 
-    void Print(const SpaceGroup& group)
-    {
-      int sym_idx=0;
-      for (const auto& sym : group.symmetries())
-	{
-	  printf("[S%d] ", sym_idx);
-	  for (auto p : sym) printf("%d ", p);
-	  printf("\n");
-	  ++sym_idx;
-	}
-    }
+    // void Print(const SpaceGroup& group)
+    // {
+    //   int sym_idx=0;
+    //   for (const auto& sym : group.symmetries())
+    // 	{
+    // 	  printf("[S%d] ", sym_idx);
+    // 	  for (auto p : sym) printf("%d ", p);
+    // 	  printf("\n");
+    // 	  ++sym_idx;
+    // 	}
+    // }
 
     SpaceGroup read_spacegroup(std::string filename)
     {

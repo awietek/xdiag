@@ -1,4 +1,4 @@
-#include <lila/special.h>
+#include <lila/all.h>
 
 #include <hydra/hilbertspaces/spinhalf.h>
 #include <hydra/indexing/indextable.h>
@@ -118,7 +118,7 @@ namespace hydra { namespace models {
 	      for (int idx : range<>(indexing.size()))
 		{
 		  auto state = indexing.state(idx);
-		  hamilton(idx,idx) += 
+		  hamilton(idx,idx) -= 
 		    mu * (double)((gbit(state.upspins, site) + 
 				   gbit(state.downspins, site)));
 		}
@@ -134,6 +134,7 @@ namespace hydra { namespace models {
 	  const int s2 = std::max(pair.first, pair.second);
 	  const double t = hopping_amplitudes_[hopping_idx];
 	  const uint32 flipmask = ((uint32)1 << s1) | ((uint32)1 << s2);
+
 	  if (std::abs(t) > 1e-14)
 	    {
 	      for (int idx : range<>(indexing.size()))
@@ -243,7 +244,7 @@ namespace hydra { namespace models {
 		  auto coeff = 
 		    mu * (double)((gbit(state.upspins, site) + 
 				   gbit(state.downspins, site)));
-		  out_vec(idx) += coeff * in_vec(idx); 
+		  out_vec(idx) -= coeff * in_vec(idx); 
 		}
 	    }
 	  ++onsite_idx;
@@ -299,7 +300,6 @@ namespace hydra { namespace models {
     {
       using hilbertspaces::Spinhalf;
       using hilbertspaces::Hubbard;
-      using hilbertspaces::Print;
       using indexing::IndexTable;
       using indexing::IndexHubbard;
       using utils::range;
@@ -407,7 +407,6 @@ namespace hydra { namespace models {
 		}
 	    }
 	}
-    
       return qn_after;
     }
     
