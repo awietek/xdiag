@@ -1,7 +1,6 @@
-hydra_module_dirs = hydra/hilbertspaces hydra/utils hydra/indexing test  hydra/models hydra/operators hydra/thermodynamics hydra/symmetries hydra/applications/hubbarddynamics hydra/dynamics hydra/applications/hubbarddynamicsmpi
+hydra_module_dirs = hydra/hilbertspaces hydra/utils hydra/indexing test  hydra/models hydra/operators hydra/thermodynamics hydra/symmetries  hydra/dynamics hydra/applications/hubbardthermo
 
-
-apps=hydra/applications/heisenberged hydra/applications/hubbarded hydra/applications/spinlessfermioned hydra/applications/hubbardthermo hydra/applications/heisenbergthermo
+apps=hydra/applications/heisenberged hydra/applications/hubbarded hydra/applications/spinlessfermioned hydra/applications/hubbardthermo hydra/applications/heisenbergthermo hydra/applications/hubbardthermo hydra/applications/hubbarddynamics 
 
 lila_dir = /mnt/home/awietek/Research/Software/lila
 clara_dir=/mnt/home/awietek/Research/Software/Clara/include
