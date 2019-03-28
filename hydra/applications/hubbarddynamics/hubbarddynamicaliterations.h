@@ -19,20 +19,24 @@ struct dyn_lanczos_result_t
 dyn_lanczos_result_t hubbard_dynamical_iterations_lanczos
 (models::HubbardModel& model,
  const lila::Vector<double>& groundstate, 
- int site1, int site2, std::string fermiontype, int dyniters, double precision)
+ int site1, int site2, std::string fermiontype, int dyniters, double precision,
+ int verbosity)
 {
   using hydra::models::HubbardModel;
   using namespace lila;
   using Clock = std::chrono::high_resolution_clock;
   using secs = std::chrono::duration<float>;
+  
+  if (verbosity >= 1)
+    {
+      printf("Computing Greens function: type: %s, s1: %d, s2: %d\n",
+	     fermiontype.c_str(), site1, site2);
+      printf("Applying creation/annihilation operator (%s)...\n",
+	     fermiontype.c_str());
+      printf("dim before: %d\n", (int)groundstate.size());
+    }
 
-  printf("Computing Greens function: type: %s, s1: %d, s2: %d\n",
-			    fermiontype.c_str(), site1, site2);
-
-  printf("Applying creation/annihilation operator (%s)...\n",
-			    fermiontype.c_str());
   auto t1 = Clock::now();
-  printf("dim before: %d\n", (int)groundstate.size());
   Vector<double> dyn_start_state1; 
   auto qn_after = 
     model.apply_fermion(groundstate, dyn_start_state1, fermiontype, site1);
@@ -47,28 +51,32 @@ dyn_lanczos_result_t hubbard_dynamical_iterations_lanczos
   dyn_start_state2.shrink_to_fit();
 
   double dyn_weight = pow(Norm(dyn_start_state), 2);
-  printf("dim after: %d\n", (int)dyn_start_state.size());  
   auto t2 = Clock::now();
-  printf("time fermion: %3.4f\n", secs(t2-t1).count()); 
-
-  
-  printf("Creating Hubbard model for n_upspins=%d, n_downspins=%d...\n", 
-	 qn_after.n_upspins, qn_after.n_downspins);
+  if (verbosity >= 1)
+    {
+      printf("time fermion: %3.4f\n", secs(t2-t1).count()); 
+      printf("dim after: %d\n", (int)dyn_start_state.size());  
+      printf("Creating Hubbard model for n_upspins=%d, n_downspins=%d...\n", 
+	     qn_after.n_upspins, qn_after.n_downspins);
+    }
   t1 = Clock::now();
   auto model_dyn = model;
   model_dyn.set_qn(qn_after);
   t2 = Clock::now();
-  printf("time init dyn: %3.4f\n", secs(t2-t1).count()); 
+  if (verbosity >= 1)
+    {
+      printf("time init dyn: %3.4f\n", secs(t2-t1).count()); 
+      printf("Starting dynamical Lanczos procedure ...\n");
+    }
 
-
-  printf("Starting dynamical Lanczos procedure ...\n");
-  auto multiply_dyn = [&model_dyn]
+  auto multiply_dyn = [&model_dyn, &verbosity]
     (const Vector<double>& v, Vector<double>& w) {
     static int iter=0;
     auto t1 = Clock::now();
     model_dyn.apply_hamiltonian(v, w);
     auto t2 = Clock::now();
-    printf("dyniter: %d, time MVM: %3.4f\n", iter, secs(t2-t1).count()); 
+    if (verbosity >= 2)
+      printf("dyniter: %d, time MVM: %3.4f\n", iter, secs(t2-t1).count()); 
     ++iter;
   };
 
@@ -100,20 +108,23 @@ dynamical_iterations_bandlanczos_return_t
 hubbard_dynamical_iterations_bandlanczos
 (models::HubbardModel& model, const lila::Vector<double>& groundstate, 
  std::vector<int> sites, std::string fermiontype, int dyniters,
- double precision)
+ double precision, int verbosity, double deflationtol)
 {
   using hydra::models::HubbardModel;
   using namespace lila;
   using Clock = std::chrono::high_resolution_clock;
   using secs = std::chrono::duration<float>;
 
-  printf("Computing Greens function (BandLanczos): type: %s, \n",
-			    fermiontype.c_str());
+  if (verbosity >= 1)
+    {
+      printf("Computing Greens function (BandLanczos): type: %s, \n",
+	     fermiontype.c_str());
+      printf("Applying creation/annihilation operator (%s)...\n",
+	     fermiontype.c_str());
+      printf("dim before: %d\n", (int)groundstate.size());
+    }
 
-  printf("Applying creation/annihilation operator (%s)...\n",
-			    fermiontype.c_str());
   auto t1 = Clock::now();
-  printf("dim before: %d\n", (int)groundstate.size());
   std::vector<Vector<double>> dyn_start_states;
   assert(sites.size() > 0);
   int p = sites.size();
@@ -122,46 +133,53 @@ hubbard_dynamical_iterations_bandlanczos
   for (int i=0; i<p; ++i)
     qn_after = model.apply_fermion(groundstate, dyn_start_states[i], 
 				   fermiontype, sites[i]);
-
-  printf("dim after: %d\n", (int)dyn_start_states[0].size());  
   auto t2 = Clock::now();
-  printf("time fermion: %3.4f\n", secs(t2-t1).count()); 
 
-  // for (int i=0; i<p; ++i)
-  //   for (int j=0; j<p; ++j)
-  //     {
-  // 	printf("i: %d, j: %d\n", i, j);
-  // 	LilaPrint(Dot(dyn_start_states[i], dyn_start_states[j])/(Norm(dyn_start_states[i])*Norm(dyn_start_states[j])));
-  //     }
+  if (verbosity >= 1)
+    {
+      printf("dim after: %d\n", (int)dyn_start_states[0].size());  
+      printf("time fermion: %3.4f\n", secs(t2-t1).count()); 
+    }
 
   // Compute overlap of start states with Lanczos vectors (orthonormal basis thereof)
+  if (!has_full_rank(dyn_start_states))
+    {
+      printf("Error: Cannot use bandlanczos for dynamical iterations.\n"); 
+      printf("electron/hole states do not have full rank!\n");
+      exit(EXIT_FAILURE);
+    }
+
   auto ortho = lila::gramschmidt(dyn_start_states);
   Matrix<double> overlaps(p, p);
   for (int i=0; i<p; ++i)
     for (int j=0; j<p; ++j)
       overlaps(i, j) = Dot(ortho[i], dyn_start_states[j]);
-  LilaPrint(overlaps);
   ortho.clear();
   ortho.shrink_to_fit();
-  
-  printf("Creating Hubbard model for n_upspins=%d, n_downspins=%d...\n", 
-	 qn_after.n_upspins, qn_after.n_downspins);
+
+  if (verbosity >= 1)
+    printf("Creating Hubbard model for n_upspins=%d, n_downspins=%d...\n", 
+	   qn_after.n_upspins, qn_after.n_downspins);
+    
   t1 = Clock::now();
   auto model_dyn = model;
   model_dyn.set_qn(qn_after);
   t2 = Clock::now();
-  printf("time init dyn: %3.4f s\n", secs(t2-t1).count()); 
 
+  if (verbosity >= 1)
+    {
+      printf("time init dyn: %3.4f s\n", secs(t2-t1).count()); 
+      printf("Starting dynamical Lanczos procedure ...\n");
+    }
 
-  printf("Starting dynamical Lanczos procedure ...\n");
-
-  auto multiply_dyn = [&model_dyn]
+  auto multiply_dyn = [&model_dyn, &verbosity]
     (const Vector<double>& v, Vector<double>& w) {
     static int iter=0;
     auto t1 = Clock::now();
     model_dyn.apply_hamiltonian(v, w);
     auto t2 = Clock::now();
-    printf("dyniter: %d, time MVM: %3.4f s\n", iter, secs(t2-t1).count()); 
+    if (verbosity >= 2)
+      printf("dyniter: %d, time MVM: %3.4f s\n", iter, secs(t2-t1).count()); 
     ++iter;
   };
 
@@ -172,7 +190,7 @@ hubbard_dynamical_iterations_bandlanczos
     (dim_dyn, random_seed, dyniters, precision, num_eigenvalue, multiply_dyn, p);
   lzs_dyn.set_init_states(dyn_start_states);
 
-  auto res = lzs_dyn.eigenvalues();
+  auto res = lzs_dyn.eigenvalues(deflationtol);
   dynamical_iterations_bandlanczos_return_t ret;
   ret.tmatrix = lzs_dyn.tmatrix();
   ret.overlaps = overlaps;

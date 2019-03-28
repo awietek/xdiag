@@ -20,33 +20,36 @@ namespace hydra { namespace models {
       
       BondList hopping_list = bondlist.bonds_of_type("HUBBARDHOP");
       for (auto bond : hopping_list)
-	{
-	  int s1 = bond.sites()[0];
-	  int s2 = bond.sites()[1];
-	  hoppings_.push_back({s1, s2});
-	  assert( couplings.is_real(bond.coupling()) );
-	  hopping_amplitudes_.push_back(couplings.real(bond.coupling()));
-	}
+	if (couplings.defined(bond.coupling()))
+	  {
+	    int s1 = bond.sites()[0];
+	    int s2 = bond.sites()[1];
+	    hoppings_.push_back({s1, s2});
+	    assert( couplings.is_real(bond.coupling()) );
+	    hopping_amplitudes_.push_back(couplings.real(bond.coupling()));
+	  }
 
       BondList interaction_list = bondlist.bonds_of_type("HUBBARDV");
       for (auto bond : interaction_list)
-	{
-	  int s1 = bond.sites()[0];
-	  int s2 = bond.sites()[1];
-	  interactions_.push_back({s1, s2});
-	  assert( couplings.is_real(bond.coupling()) );
-	  interaction_strengths_.push_back(couplings.real(bond.coupling()));
-	}
+	if (couplings.defined(bond.coupling()))
+	  {
+	    int s1 = bond.sites()[0];
+	    int s2 = bond.sites()[1];
+	    interactions_.push_back({s1, s2});
+	    assert(couplings.is_real(bond.coupling()));
+	    interaction_strengths_.push_back(couplings.real(bond.coupling()));
+	  }
 
       BondList onsites_list = bondlist.bonds_of_type("HUBBARDMU");
       for (auto bond : onsites_list)
-	{
-	  assert(bond.sites().size() == 1);
-	  int s1 = bond.sites()[0];
-	  onsites_.push_back(s1);
-	  assert( couplings.is_real(bond.coupling()) );
-	  onsites_potentials_.push_back(couplings.real(bond.coupling()));
-	}
+	if (couplings.defined(bond.coupling()))
+	  {
+	    assert(bond.sites().size() == 1);
+	    int s1 = bond.sites()[0];
+	    onsites_.push_back(s1);
+	    assert( couplings.is_real(bond.coupling()) );
+	    onsites_potentials_.push_back(couplings.real(bond.coupling()));
+	  }
 
       U_ = couplings.defined("U") ? couplings.real("U") : 0;	
     }
@@ -309,8 +312,6 @@ namespace hydra { namespace models {
 	
       Hubbard<uint32> hs_before(n_sites_, qn_);
       IndexHubbard<IndexTable<Spinhalf<uint32>, uint32>> indexing_before(hs_before);
-
-      printf("type: %s\n", type.c_str());
 
       auto qn_after = qn_;
       if (type == "cdagup") ++qn_after.n_upspins;

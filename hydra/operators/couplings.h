@@ -19,6 +19,7 @@
 #include <string>
 #include <vector>
 
+#include <lila/all.h>
 #include <hydra/utils/typedefs.h>
 
 namespace hydra { namespace operators {
@@ -51,7 +52,7 @@ namespace hydra { namespace operators {
 
       /// checks whether coupling has zero imaginary part    
       bool is_real(const std::string& name) const 
-      { return std::abs(std::imag(couplings_.find(name)->second)) < 1e-10; }
+      { return lila::close(std::abs(std::imag(couplings_.find(name)->second)), 0.); }
 
       /// returns real part of coupling 
       double real(const std::string& name) const 

@@ -10,3 +10,5 @@ Opt double precision 1e-12 p precision precision "precision of ground state Lanc
 Opt int iters 1000 i iters iters "maximum number of ground state Lanczos iterations performed (optional, default 1000)"
 Opt double dynprecision 1e-12 q dynprecision dynprecision "precision of dynamical Lanczos procedure (optional, default 1e-12)"
 Opt int dyniters 1000 j dyniters dyniters "maximum number of dynamical Lanczos iterations performed (optional, default 1000)"
+Opt int verbosity 1 v verbosity verbosity "verbosity level, one of 0, 1 ,2 (optional, default 1)"
+Opt double deflationtol 1e-8 x deflationtol deflationtol "tolerance for detecting deflation in Band Lanczos algortihm (optional, default 1e-8)"

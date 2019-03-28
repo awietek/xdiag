@@ -32,9 +32,13 @@ int main(int argc, char* argv[])
   int iters = 1000;
   double dynprecision = 1e-12;
   int dyniters = 1000;
+  int verbosity = 1;
+  double deflationtol = 1e-8;
+
   parse_cmdline(outfile, latticefile, couplingfile, corrfile, nup, ndown, 
 		fermiontype, algorithm, precision, iters, dynprecision, 
-		dyniters, argc, argv);
+		dyniters, verbosity, deflationtol, argc, argv);
+
 
   // Check if valid algorithm is defined
   if (algorithm == "") algorithm = "lanczos";
@@ -71,17 +75,22 @@ int main(int argc, char* argv[])
   // Parse bondlist and couplings from file
   BondList bondlist = read_bondlist(latticefile);
   BondList hopping_list = bondlist.bonds_of_type("HUBBARDHOP");
-  for (auto bond : hopping_list)
-    printf("hopping %s %d %d\n", bond.coupling().c_str(), 
-	   bond.sites()[0], bond.sites()[1]);
   BondList interaction_list = bondlist.bonds_of_type("HUBBARDV");
-  for (auto bond : interaction_list)
-    printf("interaction %s %d %d\n", bond.coupling().c_str(), 
-	   bond.sites()[0], bond.sites()[1]);
   if (couplingfile == "") couplingfile = latticefile;
   Couplings couplings = read_couplings(couplingfile);
-  for (auto c : couplings)
-    printf("coupling %s %f %fj\n", c.first.c_str(), std::real(c.second), std::imag(c.second));
+
+  if (verbosity >= 1)
+    {
+      for (auto bond : hopping_list)
+	printf("hopping %s %d %d\n", bond.coupling().c_str(), 
+	       bond.sites()[0], bond.sites()[1]);
+      for (auto bond : interaction_list)
+	printf("interaction %s %d %d\n", bond.coupling().c_str(), 
+	       bond.sites()[0], bond.sites()[1]);
+      for (auto c : couplings)
+	printf("coupling %s %f %fj\n", c.first.c_str(), std::real(c.second), std::imag(c.second));
+    }
+
   int n_sites = bondlist.n_sites();
   hubbard_qn qn;
   if ((nup == -1)  || (ndown == -1))
@@ -112,21 +121,23 @@ int main(int argc, char* argv[])
 	  printf("Invalid correlation: %d %d\n", corr.first, corr.second);
 	  exit(EXIT_FAILURE);
 	}
-      printf("measure corr %d %d\n", corr.first, corr.second);
+      if (verbosity >= 1)  
+	printf("measure corr %d %d\n", corr.first, corr.second);
     }
 
-
-  printf("Starting ground state eigenvalues Lanczos procedure ...\n");
+  if (verbosity >= 1)
+    printf("Starting ground state eigenvalues Lanczos procedure ...\n");
 
   int num_eigenvalue = 0;
   int random_seed = 42;
 
-  auto multiply = [&model](const Vector<double>& v, Vector<double>& w) {
+  auto multiply = [&model, &verbosity](const Vector<double>& v, Vector<double>& w) {
     static int iter=0;
     auto t1 = Clock::now();
     model.apply_hamiltonian(v, w);
     auto t2 = Clock::now();
-    printf("iter: %d, time MVM: %3.4f\n", iter, secs(t2-t1).count()); 
+    if (verbosity >= 2)
+      printf("iter: %d, time MVM: %3.4f\n", iter, secs(t2-t1).count()); 
     ++iter;
   };
   
@@ -134,14 +145,17 @@ int main(int argc, char* argv[])
   auto lzs = Lanczos<double, decltype(multiply)>
     (dim, random_seed, iters, precision, num_eigenvalue, multiply);
   Vector<double> eigs = lzs.eigenvalues();
-  printf("lzs e %20.18g\n", eigs(0));
-  printf("Done\n");
-  LilaPrint(lzs.tmatrix());
+  if (verbosity >= 1)
+    {
+      printf("lanczos converged in %d steps\n", (int)eigs.size());
+      printf("ground state energy %20.18g\n", eigs(0));
+      printf("Done\n");
+      printf("Reiterating for ground state...\n");
+    }
 
-  printf("Reiterating for ground state...\n");
   auto eigenvectors = lzs.eigenvectors({0});
   Vector<double>& groundstate = eigenvectors[0];
-  printf("Done\n");
+  if (verbosity >= 1) printf("Done\n");
 
   // Write gs energy to outfile
   if (outfile != "")
@@ -162,7 +176,9 @@ int main(int argc, char* argv[])
 	    int s1 = corr.first;
 	    int s2 = corr.second;
 	    auto res = hydra::hubbard_dynamical_iterations_lanczos
-	      (model, groundstate, s1, s2, ftype, dyniters, dynprecision);
+	      (model, groundstate, s1, s2, ftype, dyniters, dynprecision, 
+	       verbosity);
+	    if (verbosity >= 1) printf("Done\n");
 
 	    // Write to outfile
 	    std::stringstream line;
@@ -201,7 +217,10 @@ int main(int argc, char* argv[])
       for (auto ftype : ftype_list)
 	{  
 	  auto res = hydra::hubbard_dynamical_iterations_bandlanczos
-	    (model, groundstate, sites, ftype, dyniters, dynprecision);
+	    (model, groundstate, sites, ftype, dyniters, dynprecision, 
+	     verbosity, deflationtol);
+	  if (verbosity >= 1) printf("Done\n");
+
 	  auto tmat = res.tmatrix;
 	  auto overlaps = res.overlaps;
 	  std::stringstream line;
