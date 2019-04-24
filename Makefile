@@ -1,6 +1,6 @@
-hydra_module_dirs = hydra/hilbertspaces hydra/utils hydra/indexing test  hydra/models hydra/operators hydra/thermodynamics hydra/symmetries  hydra/dynamics hydra/applications/hubbarddynamics 
+hydra_module_dirs = hydra/hilbertspaces hydra/utils hydra/indexing test  hydra/models hydra/operators hydra/thermodynamics hydra/symmetries  hydra/dynamics hydra/applications/hubbarddynamicsmpi 
 
-apps=hydra/applications/heisenberged hydra/applications/hubbarded hydra/applications/spinlessfermioned hydra/applications/hubbardthermo hydra/applications/heisenbergthermo hydra/applications/hubbardthermo hydra/applications/hubbardthermo
+apps=hydra/applications/heisenberged hydra/applications/hubbarded hydra/applications/spinlessfermioned hydra/applications/hubbardthermo hydra/applications/heisenbergthermo hydra/applications/hubbardthermo 
 
 lila_dir = /mnt/home/awietek/Research/Software/lila
 clara_dir=/mnt/home/awietek/Research/Software/Clara/include
@@ -35,7 +35,7 @@ hydra_module_makefiles = $(addsuffix /module.mk,$(hydra_module_dirs))
 hydra_build_dirs = $(subst hydra,build,$(hydra_module_dirs))
 hydra_includes = $(addprefix -I,$(hydra_module_dirs)) -I$(lila_dir) -I. -I$(clara_dir)
 
-# all:
+all:
 
 include $(hydra_module_makefiles)
 
