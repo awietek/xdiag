@@ -51,6 +51,8 @@ namespace hydra { namespace hilbertspaces {
       int n_downspins;
     };
 
+    std::ostream& operator<<(std::ostream& os, const hubbard_qn& qn);
+
     template <class state_type=uint32>
     class HubbardIterator {
     public:

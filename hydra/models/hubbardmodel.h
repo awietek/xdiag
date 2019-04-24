@@ -33,12 +33,14 @@ namespace hydra { namespace models {
     class HubbardModel {
 
     public:
+      using qn_t = hilbertspaces::hubbard_qn;
+
       /*! 
 	Defines a Hubbard model given number of sites and pairs of 
 	neighboring sites with hoppings
       */
       HubbardModel(BondList bondlist, Couplings couplings, 
-		   hilbertspaces::hubbard_qn qn);
+		   qn_t qn);
       
       /*!
 	returns a lila::Matrix of the Hubbard model given t, U, and
@@ -56,19 +58,19 @@ namespace hydra { namespace models {
       /*!
 	applies a fermion creation/annihilation operator to a state
       */
-      hilbertspaces::hubbard_qn apply_fermion
+      qn_t apply_fermion
       (const lila::Vector<double>& state_before, 
        lila::Vector<double>& state_after, std::string type, int site) const;
 
-      hilbertspaces::hubbard_qn qn() const { return qn_; }
-      void set_qn(hilbertspaces::hubbard_qn qn);
+      qn_t qn() const { return qn_; }
+      void set_qn(qn_t qn);
       int n_sites() const { return n_sites_; }
       int64 dim() const { return dim_; }
 
     private:
       int n_sites_;
       int64 dim_;
-      hilbertspaces::hubbard_qn qn_;
+      qn_t qn_;
 
       std::vector<std::pair<int, int>> hoppings_;
       std::vector<double> hopping_amplitudes_;

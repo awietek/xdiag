@@ -70,6 +70,8 @@ namespace hydra { namespace models {
       std::vector<double> hopping_amplitudes_;
       std::vector<std::pair<int, int>> interactions_;
       std::vector<double> interaction_strengths_;
+      std::vector<int> onsites_;
+      std::vector<double> onsites_potentials_;
       double U_;
 
       // members below are all set by initialize

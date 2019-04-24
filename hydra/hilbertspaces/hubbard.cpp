@@ -24,6 +24,12 @@ namespace hydra { namespace hilbertspaces {
     template <class state_t>
     int Hubbard<state_t>::n_sites() const { return n_sites_; }
 
+    std::ostream& operator<<(std::ostream& os, const hubbard_qn& qn)
+    { 
+      os << "nup: " << qn.n_upspins << ", ndown: " << qn.n_downspins; 
+      return os; 
+    }
+
     template <class state_t>
     hubbard_qn Hubbard<state_t>::quantumnumber() const 
     { return qn_; }

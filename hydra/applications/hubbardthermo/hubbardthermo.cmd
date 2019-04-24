@@ -1,7 +1,6 @@
 Opt std::string outfile "" o outfile outfile "name of outfile"
 Opt std::string latticefile "" l latticefile latticefile "name of latticefile"
 Opt std::string couplingfile "" c couplingfile couplingfile "name of couplingfile (default: latticefile)"
-Opt std::string evaluate "evaluate" e evaluate evaluate "choose whether to evaluate or not, either evaluate/notevaluate/onlyevaluate" 
 Opt std::string method "exact" m method method "method to use, either exact or TPQ (default: exact)" 
 Opt std::string temperaturefile "" t temperaturefile temperaturefile "name of temperaturefile"
 Opt int seed 42 s seed seed "random seed (optional, default 42)"
@@ -11,4 +10,4 @@ Opt int iters 1000 i iters iters "maximum number of ground state Lanczos iterati
 Opt int nup -1 u nup nup "number of up electrons (optional, default half filling)"
 Opt int ndown -1 d ndown ndown "number of down electrons (optional, default half filling)"
 Opt int np -1 p np np "number of particles (optional, default half filling)"
-Flag loseevals l loseevals loseevals "flag whether eigenvalues should not be written to output"
+Flag writeevals w writeevals writeevals "flag whether eigenvalues should not be written to output"

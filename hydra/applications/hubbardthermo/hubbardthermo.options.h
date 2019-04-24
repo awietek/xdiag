@@ -6,7 +6,7 @@
 #include <string>
 #include "clara.hpp"
 
-void parse_cmdline(std::string& outfile, std::string& latticefile, std::string& couplingfile, std::string& evaluate, std::string& method, std::string& temperaturefile, int& seed, double& precision, int& neval, int& iters, int& nup, int& ndown, int& np, bool& loseevals, int& argc, char** argv)
+void parse_cmdline(std::string& outfile, std::string& latticefile, std::string& couplingfile, std::string& method, std::string& temperaturefile, int& seed, double& precision, int& neval, int& iters, int& nup, int& ndown, int& np, bool& writeevals, int& argc, char** argv)
 {
 
   bool showhelp = false;
@@ -14,7 +14,6 @@ void parse_cmdline(std::string& outfile, std::string& latticefile, std::string& 
     clara::Opt(outfile, "outfile")["-o"]["--outfile"]("name of outfile") |
     clara::Opt(latticefile, "latticefile")["-l"]["--latticefile"]("name of latticefile") |
     clara::Opt(couplingfile, "couplingfile")["-c"]["--couplingfile"]("name of couplingfile (default: latticefile)") |
-    clara::Opt(evaluate, "evaluate")["-e"]["--evaluate"]("choose whether to evaluate or not, either evaluate/notevaluate/onlyevaluate") |
     clara::Opt(method, "method")["-m"]["--method"]("method to use, either exact or TPQ (default: exact)") |
     clara::Opt(temperaturefile, "temperaturefile")["-t"]["--temperaturefile"]("name of temperaturefile") |
     clara::Opt(seed, "seed")["-s"]["--seed"]("random seed (optional, default 42)") |
@@ -24,7 +23,7 @@ void parse_cmdline(std::string& outfile, std::string& latticefile, std::string& 
     clara::Opt(nup, "nup")["-u"]["--nup"]("number of up electrons (optional, default half filling)") |
     clara::Opt(ndown, "ndown")["-d"]["--ndown"]("number of down electrons (optional, default half filling)") |
     clara::Opt(np, "np")["-p"]["--np"]("number of particles (optional, default half filling)") |
-    clara::Opt(loseevals)["-l"]["--loseevals"]("flag whether eigenvalues should not be written to output") |
+    clara::Opt(writeevals)["-w"]["--writeevals"]("flag whether eigenvalues should not be written to output") |
     clara::Help(showhelp);
 
 
@@ -45,7 +44,6 @@ void parse_cmdline(std::string& outfile, std::string& latticefile, std::string& 
 	"outfile        : " << outfile << std::endl <<
 	"latticefile    : " << latticefile << std::endl <<
 	"couplingfile   : " << couplingfile << std::endl <<
-	"evaluate       : " << evaluate << std::endl <<
 	"method         : " << method << std::endl <<
 	"temperaturefile: " << temperaturefile << std::endl <<
 	"seed           : " << seed << std::endl <<
@@ -55,7 +53,7 @@ void parse_cmdline(std::string& outfile, std::string& latticefile, std::string& 
 	"nup            : " << nup << std::endl <<
 	"ndown          : " << ndown << std::endl <<
 	"np             : " << np << std::endl <<
-	"loseevals      : " << loseevals << std::endl <<
+	"writeevals     : " << writeevals << std::endl <<
 	"-----" << std::endl;
     }
 }

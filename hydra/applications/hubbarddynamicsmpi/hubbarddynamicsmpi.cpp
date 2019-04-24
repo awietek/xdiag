@@ -27,17 +27,19 @@ std::string FormatWithCommas(T value)
 
 int main(int argc, char* argv[])
 {
-  MPI_Init(&argc, &argv); 
-  int mpi_rank, mpi_size;
-  MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
-  MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
-
   using hydra::hilbertspaces::hubbard_qn;
   using hydra::hilbertspaces::Hubbard;
   using hydra::models::HubbardModelMPI;
   using namespace hydra::operators;
   using hydra::dynamics::continued_fraction;
   using namespace lila;
+
+  MPI_Init(&argc, &argv); 
+  int mpi_rank, mpi_size;
+  MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
+  MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
+
+  if (mpi_rank == 0) printf("Using %d MPI tasks\n", mpi_size);
 
   // Get input parameters
   std::string outfile;
@@ -48,10 +50,17 @@ int main(int argc, char* argv[])
   int ndown = -1;
   std::string fermiontype;
   std::string algorithm;
-  int dyniters = 200;
-  parse_cmdline(outfile, latticefile, couplingfile, corrfile, nup, 
-		ndown, fermiontype, algorithm, dyniters, argc, argv);
-  if (mpi_rank == 0) printf("Using %d MPI tasks\n", mpi_size);
+  double precision = 1e-12;
+  int iters = 1000;
+  double dynprecision = 1e-12;
+  int dyniters = 1000;
+  int verbosity = 1;
+  double deflationtol = 1e-8;
+
+  parse_cmdline(outfile, latticefile, couplingfile, corrfile, nup, ndown, 
+		fermiontype, algorithm, precision, iters, dynprecision, 
+		dyniters, verbosity, deflationtol, argc, argv);
+
   // Check if valid algorithm is defined
   if (algorithm == "") algorithm = "lanczos";
   if (!((algorithm == "lanczos") || (algorithm == "bandlanczos")))
@@ -84,10 +93,37 @@ int main(int argc, char* argv[])
 	      std::cerr << "Error in opening outfile: " 
 			<< "Could not open file with filename ["
 			<< outfile << "] given. Abort." << std::endl;
+	      MPI_Abort(MPI_COMM_WORLD, 1);
 	    }
-	  MPI_Abort(MPI_COMM_WORLD, 1);
 	}
     }
+
+
+  // Parse bondlist and couplings from file
+  BondList bondlist = read_bondlist(latticefile);
+  BondList hopping_list = bondlist.bonds_of_type("HUBBARDHOP");
+  BondList interaction_list = bondlist.bonds_of_type("HUBBARDV");
+  if (couplingfile == "") couplingfile = latticefile;
+  Couplings couplings = read_couplings(couplingfile);
+
+  if ((verbosity >= 1) && (mpi_rank == 0))
+    {
+      for (auto bond : hopping_list)
+	printf("hopping %s %d %d\n", bond.coupling().c_str(), 
+	       bond.sites()[0], bond.sites()[1]);
+      for (auto bond : interaction_list)
+	printf("interaction %s %d %d\n", bond.coupling().c_str(), 
+	       bond.sites()[0], bond.sites()[1]);
+      for (auto c : couplings)
+	printf("coupling %s %f %fj\n", c.first.c_str(), std::real(c.second), std::imag(c.second));
+    }
+
+  int n_sites = bondlist.n_sites();
+  hubbard_qn qn;
+  if ((nup == -1)  || (ndown == -1))
+    qn = {n_sites/2, n_sites/2};
+  else qn = {nup, ndown};
+
 
   // Parse the corrfile
   std::vector<std::pair<int, int>> correlation_list;
@@ -98,39 +134,25 @@ int main(int argc, char* argv[])
       if(ifs.fail()) 
 	{
 	  if (mpi_rank == 0)
-	    {
-	      std::cerr << "Error in opening corrfile: " 
-			<< "Could not open file with filename ["
-			<< outfile << "] given. Abort." << std::endl;
-	    }
-	  MPI_Abort(MPI_COMM_WORLD, 1);
+	    std::cerr << "Error in opening corrfile: " 
+		      << "Could not open file with filename ["
+		      << outfile << "] given. Abort." << std::endl;
+	  MPI_Abort(MPI_COMM_WORLD, 2);
 	}
       int a, b;
       while (ifs >> a >> b) correlation_list.push_back({a, b});
     }
-  for (auto corr : correlation_list)
-    if (mpi_rank == 0) printf("corr %d %d\n", corr.first, corr.second);
 
-  // Parse bondlist and couplings from file
-  BondList bondlist = read_bondlist(latticefile);
-  BondList hopping_list = bondlist.bonds_of_type("HUBBARDHOP");
-  for (auto bond : hopping_list)
-    if (mpi_rank == 0) printf("hopping %s %d %d\n", bond.coupling().c_str(), 
-			      bond.sites()[0], bond.sites()[1]);
-  BondList interaction_list = bondlist.bonds_of_type("HUBBARDV");
-  for (auto bond : interaction_list)
-    if (mpi_rank == 0) printf("interaction %s %d %d\n", bond.coupling().c_str(),
-	   bond.sites()[0], bond.sites()[1]);
-  if (couplingfile == "") couplingfile = latticefile;
-  Couplings couplings = read_couplings(couplingfile);
-  for (auto c : couplings)
-    if (mpi_rank == 0) printf("coupling %s %f %fj\n", c.first.c_str(), 
-			      std::real(c.second), std::imag(c.second));
-  int n_sites = bondlist.n_sites();
-  hubbard_qn qn;
-  if ((nup == -1)  || (ndown == -1))
-    qn = {n_sites/2, n_sites/2};
-  else qn = {nup, ndown};
+  for (auto corr : correlation_list)
+    {
+      if ((corr.first >= n_sites) || (corr.second >= n_sites))
+	{
+	  if (mpi_rank == 0) printf("Invalid correlation: %d %d\n", corr.first, corr.second);
+	  MPI_Abort(MPI_COMM_WORLD, 3);
+	}
+      if (verbosity >= 2)  
+	if (mpi_rank == 0) printf("corr %d %d\n", corr.first, corr.second);
+    }
 
 
   // Create infrastructure for Hubbard model
@@ -147,19 +169,18 @@ int main(int argc, char* argv[])
   // Get the ground state
   if (mpi_rank == 0) 
     printf("Starting ground state eigenvalues Lanczos procedure ...\n");
-  double precision = 1e-12;
-  int max_iterations = 1000;
   int num_eigenvalue = 0;
   int random_seed = 42 + 1234567*mpi_rank;
 
-  auto multiply = [&model, &mpi_rank](const VectorMPI<double>& v, 
-					      VectorMPI<double>& w) {
+  auto multiply = [&model, &mpi_rank, &verbosity](const VectorMPI<double>& v, 
+				      VectorMPI<double>& w) {
     static int iter=0;
     double t1 = MPI_Wtime();
-    bool verbose = (iter == 0);
+    bool verbose = ((iter == 0) && verbosity >=1);
     model.apply_hamiltonian(v, w, verbose);
     double t2 = MPI_Wtime();
-    if (mpi_rank == 0) printf("iter: %d, time MVM: %3.4f\n", iter, t2-t1); 
+    if ((verbosity >= 2) && (mpi_rank == 0))
+      printf("iter: %d, time MVM: %3.4f\n", iter, t2-t1); 
     ++iter;
   };
   MPI_Barrier(MPI_COMM_WORLD);
@@ -168,9 +189,9 @@ int main(int argc, char* argv[])
   MPI_Barrier(MPI_COMM_WORLD);
   uint64 local_dim = model.local_dim();
   auto lzs = Lanczos<double, decltype(multiply), VectorMPI<double>>
-    (local_dim, random_seed, max_iterations, precision, num_eigenvalue, multiply);
+    (local_dim, random_seed, iters, precision, num_eigenvalue, multiply);
   Vector<double> eigs = lzs.eigenvalues();
-  if (mpi_rank == 0) LilaPrint(eigs);
+
   if (mpi_rank == 0) printf("Done\n");
   
 
@@ -200,7 +221,7 @@ int main(int argc, char* argv[])
 	    int s1 = corr.first;
 	    int s2 = corr.second;
 	    auto res = hydra::hubbard_dynamical_iterations_lanczos_mpi
-	      (model, groundstate, s1, s2, ftype, dyniters);
+	      (model, groundstate, s1, s2, ftype, dyniters, dynprecision, verbosity);
 
 	    // Write to outfile
 	    if (mpi_rank == 0)
@@ -243,7 +264,8 @@ int main(int argc, char* argv[])
       for (auto ftype : ftype_list)
 	{  
 	  auto res = hydra::hubbard_dynamical_iterations_bandlanczos_mpi
-	    (model, groundstate, sites, ftype, dyniters);
+	    (model, groundstate, sites, ftype, dyniters, dynprecision, 
+	     verbosity, deflationtol);
 	  auto tmat = res.tmatrix;
 	  auto overlaps = res.overlaps;
 	  std::stringstream line;

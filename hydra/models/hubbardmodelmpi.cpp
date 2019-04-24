@@ -38,6 +38,17 @@ namespace hydra { namespace models {
 	  interaction_strengths_.push_back(couplings.real(bond.coupling()));
 	}
 
+      BondList onsites_list = bondlist.bonds_of_type("HUBBARDMU");
+      for (auto bond : onsites_list)
+	if (couplings.defined(bond.coupling()))
+	  {
+	    assert(bond.sites().size() == 1);
+	    int s1 = bond.sites()[0];
+	    onsites_.push_back(s1);
+	    assert( couplings.is_real(bond.coupling()) );
+	    onsites_potentials_.push_back(couplings.real(bond.coupling()));
+	  }
+
       U_ = couplings.defined("U") ? couplings.real("U") : 0;	
 
       initialize();
@@ -71,19 +82,22 @@ namespace hydra { namespace models {
       double t1 = MPI_Wtime();
 
       // Apply Diagonal U terms
-      uint64 upspin_idx = 0;
-      for (const state_t& upspins : my_upspins_)  // loop over upspins of process
+      if (std::abs(U_) > 1e-14)
 	{
-	  uint64 upspin_offset = my_upspins_offset_[upspins];
-	  uint64 downspin_offset=0;
-	  for (state_t downspins : hs_downspins)  // loop over all downspins
+	  uint64 upspin_idx = 0;
+	  for (const state_t& upspins : my_upspins_)  // loop over upspins of process
 	    {
-	      uint64 idx = upspin_offset + downspin_offset;
-	      double coeff = U_*(double)popcnt(upspins & downspins);
-	      out_vec.vector_local()(idx) += coeff*in_vec.vector_local()(idx);
-	      ++downspin_offset;
+	      uint64 upspin_offset = my_upspins_offset_[upspins];
+	      uint64 downspin_offset=0;
+	      for (state_t downspins : hs_downspins)  // loop over all downspins
+		{
+		  uint64 idx = upspin_offset + downspin_offset;
+		  double coeff = U_*(double)popcnt(upspins & downspins);
+		  out_vec.vector_local()(idx) += coeff*in_vec.vector_local()(idx);
+		  ++downspin_offset;
+		}
+	      ++upspin_idx;
 	    }
-	  ++upspin_idx;
 	}
 
      // Apply Diagonal V terms
@@ -94,24 +108,58 @@ namespace hydra { namespace models {
 	  const int s2 = pair.second;
 	  const double V = interaction_strengths_[interaction_idx];
 
-	  uint64 upspin_idx = 0;
-	  for (const state_t& upspins : my_upspins_)  // loop over upspins of process
+	  if (std::abs(V) > 1e-14)
 	    {
-	      uint64 upspin_offset = my_upspins_offset_[upspins];
-	      uint64 downspin_offset=0;
-	      for (state_t downspins : hs_downspins)  // loop over all downspins
+	      uint64 upspin_idx = 0;
+	      for (const state_t& upspins : my_upspins_)  // loop over upspins of process
 		{
-		  uint64 idx = upspin_offset + downspin_offset;
-		  auto coeff = 	
-		    V * (double)((gbit(upspins, s1) + gbit(downspins, s1))*
-				 (gbit(upspins, s2) + gbit(downspins, s2)));
-		  out_vec(idx) += coeff * in_vec(idx); 
-		  ++downspin_offset;
+		  uint64 upspin_offset = my_upspins_offset_[upspins];
+		  uint64 downspin_offset=0;
+		  for (state_t downspins : hs_downspins)  // loop over all downspins
+		    {
+		      uint64 idx = upspin_offset + downspin_offset;
+		      auto coeff = 	
+			V * (double)((gbit(upspins, s1) + gbit(downspins, s1))*
+				     (gbit(upspins, s2) + gbit(downspins, s2)));
+		      out_vec(idx) += coeff * in_vec(idx); 
+		      ++downspin_offset;
+		    }
+		  ++upspin_idx;
 		}
-	      ++upspin_idx;
-	    }
+	    }  // (std::abs(V) > 1e-14)
+
 	  ++interaction_idx;
 	}
+
+
+     // Apply onsite chemical potential
+      int onsite_idx=0;
+      for (auto site : onsites_)
+	{
+	  const double mu = onsites_potentials_[onsite_idx];
+
+	  if (std::abs(mu) > 1e-14)
+	    {
+	      uint64 upspin_idx = 0;
+	      for (const state_t& upspins : my_upspins_)  // loop over upspins of process
+		{
+		  uint64 upspin_offset = my_upspins_offset_[upspins];
+		  uint64 downspin_offset=0;
+		  for (state_t downspins : hs_downspins)  // loop over all downspins
+		    {
+		      uint64 idx = upspin_offset + downspin_offset;
+		      auto coeff = 	
+			mu * (double)((gbit(upspins, site) + gbit(downspins, site)));
+		      out_vec(idx) -= coeff * in_vec(idx); 
+		      ++downspin_offset;
+		    }
+		  ++upspin_idx;
+		}
+	    }  // (std::abs(mu) > 1e-14)
+
+	  ++onsite_idx;
+	}
+
 
       double t2 = MPI_Wtime();
       if ((mpi_rank_== 0) && verbose) printf("  diag: %3.4f\n", t2-t1); 
@@ -130,7 +178,7 @@ namespace hydra { namespace models {
 	  if (std::abs(t) > 1e-14)
 	    {
 	      // Loop over all configurations
-	      upspin_idx = 0;
+	      uint64 upspin_idx = 0;
 	      for (const state_t& upspins : my_upspins_) 
 		{
 		  uint64 upspin_offset = my_upspins_offset_[upspins];
@@ -172,7 +220,7 @@ namespace hydra { namespace models {
       for (state_t downspins : hs_downspins)
 	{	    
 	  int destination_mpi_rank = mpi_rank_of_spins(downspins);
-	  for (upspin_idx = 0; upspin_idx < my_upspins_.size(); ++upspin_idx)
+	  for (uint64 upspin_idx = 0; upspin_idx < my_upspins_.size(); ++upspin_idx)
 	    {
 	      uint64 send_idx = n_downspins_i_send_forward_offsets_[destination_mpi_rank] +
 		n_states_already_prepared[destination_mpi_rank]++; 
@@ -638,7 +686,7 @@ namespace hydra { namespace models {
 
 
       // Loop over all configurations
-      uint upspin_idx = 0;
+      uint64 upspin_idx = 0;
       for (const state_t& upspins : my_upspins_) 
 	{
 	  uint64 upspin_offset = my_upspins_offset_[upspins];

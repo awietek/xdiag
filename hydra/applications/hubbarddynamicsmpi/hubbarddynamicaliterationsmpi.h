@@ -21,7 +21,8 @@ struct dyn_lanczos_result_t
 dyn_lanczos_result_t hubbard_dynamical_iterations_lanczos_mpi
 (models::HubbardModelMPI<uint32>& model,
  const lila::VectorMPI<double>& groundstate, 
- int site1, int site2, std::string fermiontype, int dyniters)
+ int site1, int site2, std::string fermiontype, int dyniters,
+ double precision, int verbosity)
 {
   using hydra::models::HubbardModelMPI;
   using namespace lila;
@@ -29,13 +30,16 @@ dyn_lanczos_result_t hubbard_dynamical_iterations_lanczos_mpi
   int mpi_rank;
   MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
   
-  if (mpi_rank == 0) printf("Computing Greens function: type: %s, s1: %d, s2: %d\n",
-			    fermiontype.c_str(), site1, site2);
+  if ((verbosity >= 1) && (mpi_rank == 0))
+    {
+      printf("Computing Greens function: type: %s, s1: %d, s2: %d\n",
+	     fermiontype.c_str(), site1, site2);
+      printf("Applying creation/annihilation operator (%s)...\n",
+	     fermiontype.c_str());
+      printf("dim before: %ld\n", groundstate.size_global());
+    }
 
-  if (mpi_rank == 0) printf("Applying creation/annihilation operator (%s)...\n",
-			    fermiontype.c_str());
   double t1 = MPI_Wtime();
-  if (mpi_rank == 0) printf("dim before: %ld\n", groundstate.size_global());
   VectorMPI<double> dyn_start_state1; 
   auto qn_after = 
     model.apply_fermion(groundstate, dyn_start_state1, fermiontype, site1);
@@ -50,32 +54,34 @@ dyn_lanczos_result_t hubbard_dynamical_iterations_lanczos_mpi
   dyn_start_state2.shrink_to_fit();
 
   double dyn_weight = pow(Norm(dyn_start_state), 2);
-  if (mpi_rank == 0) printf("dim after: %ld\n", dyn_start_state.size_global());  
   double t2 = MPI_Wtime();
-  if (mpi_rank == 0) printf("time fermion: %3.4f\n", t2-t1); 
-
-  if (mpi_rank == 0) 
-    printf("Creating Hubbard model for n_upspins=%d, n_downspins=%d...\n", 
-	   qn_after.n_upspins, qn_after.n_downspins);
+  if ((verbosity >= 1) && (mpi_rank == 0))
+    {
+      printf("dim after: %ld\n", dyn_start_state.size_global());  
+      printf("time fermion: %3.4f\n", t2-t1); 
+      printf("Creating Hubbard model for n_upspins=%d, n_downspins=%d...\n", 
+	     qn_after.n_upspins, qn_after.n_downspins);
+    }
   t1 = MPI_Wtime();
   auto model_dyn = model;
   model_dyn.set_qn(qn_after);
   t2 = MPI_Wtime();
-  if (mpi_rank == 0) printf("time init dyn: %3.4f\n", t2-t1); 
+  if ((verbosity >= 1) && (mpi_rank == 0))
+    { 
+      printf("time init dyn: %3.4f\n", t2-t1); 
+      printf("Starting dynamical Lanczos procedure ...\n");
+    }
 
 
-  if (mpi_rank == 0) printf("Starting dynamical Lanczos procedure ...\n");
-  double precision = -1;
-  int max_iterations = dyniters;
-
-  auto multiply_dyn = [&model_dyn, &mpi_rank]
+  auto multiply_dyn = [&model_dyn, &mpi_rank, &verbosity]
     (const VectorMPI<double>& v, VectorMPI<double>& w) {
     static int iter=0;
     double t1 = MPI_Wtime();
-    bool verbose = (iter == 0);
+    bool verbose = ((iter == 0) && verbosity >=1);
     model_dyn.apply_hamiltonian(v, w, verbose);
     double t2 = MPI_Wtime();
-    if (mpi_rank == 0) printf("dyniter: %d, time MVM: %3.4f\n", iter, t2-t1); 
+    if ((verbosity >= 2) && (mpi_rank == 0)) 
+      printf("dyniter: %d, time MVM: %3.4f\n", iter, t2-t1); 
     ++iter;
   };
 
@@ -83,7 +89,7 @@ dyn_lanczos_result_t hubbard_dynamical_iterations_lanczos_mpi
   int random_seed = 0;
   int num_eigenvalue = 1;
   auto lzs_dyn = Lanczos<double, decltype(multiply_dyn), VectorMPI<double>>
-    (dim_dyn, random_seed, max_iterations, precision, num_eigenvalue, multiply_dyn);
+    (dim_dyn, random_seed, dyniters, precision, num_eigenvalue, multiply_dyn);
   lzs_dyn.set_init_state(dyn_start_state);
 
   Vector<double> dyn_eigs = lzs_dyn.eigenvalues();
@@ -106,7 +112,8 @@ dynamical_iterations_bandlanczos_return_t
 hubbard_dynamical_iterations_bandlanczos_mpi
 (models::HubbardModelMPI<uint32>& model,
  const lila::VectorMPI<double>& groundstate, 
- std::vector<int> sites, std::string fermiontype, int dyniters)
+ std::vector<int> sites, std::string fermiontype, int dyniters,
+ double precision, int verbosity, double deflationtol)
 {
   using hydra::models::HubbardModelMPI;
   using namespace lila;
@@ -114,13 +121,16 @@ hubbard_dynamical_iterations_bandlanczos_mpi
   int mpi_rank;
   MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
   
-  if (mpi_rank == 0) printf("Computing Greens function (BandLanczos): type: %s, \n",
-			    fermiontype.c_str());
+  if ((verbosity >= 1) && (mpi_rank == 0))
+    {
+      printf("Computing Greens function (BandLanczos): type: %s, \n",
+      	fermiontype.c_str());
+      printf("Applying creation/annihilation operator (%s)...\n",
+      	fermiontype.c_str());
+      printf("dim before: %ld\n", groundstate.size_global());
+    }
 
-  if (mpi_rank == 0) printf("Applying creation/annihilation operator (%s)...\n",
-			    fermiontype.c_str());
   double t1 = MPI_Wtime();
-  if (mpi_rank == 0) printf("dim before: %ld\n", groundstate.size_global());
   std::vector<VectorMPI<double>> dyn_start_states;
   assert(sites.size() > 0);
   int p = sites.size();
@@ -128,10 +138,13 @@ hubbard_dynamical_iterations_bandlanczos_mpi
   hilbertspaces::hubbard_qn qn_after;
   for (int i=0; i<p; ++i)
     qn_after = model.apply_fermion(groundstate, dyn_start_states[i], fermiontype, sites[i]);
-
-  if (mpi_rank == 0) printf("dim after: %ld\n", dyn_start_states[0].size_global());  
   double t2 = MPI_Wtime();
-  if (mpi_rank == 0) printf("time fermion: %3.4f\n", t2-t1); 
+
+  if ((verbosity >= 1) && (mpi_rank == 0))
+    {
+      printf("dim after: %ld\n", dyn_start_states[0].size_global());  
+      printf("time fermion: %3.4f\n", t2-t1); 
+    }
 
   // Compute overlap of start states with Lanczos vectors (orthonormal basis thereof)
   auto ortho = lila::gramschmidt(dyn_start_states);
@@ -142,28 +155,28 @@ hubbard_dynamical_iterations_bandlanczos_mpi
   ortho.clear();
   ortho.shrink_to_fit();
 
-  if (mpi_rank == 0) 
+  if ((verbosity >= 1) && (mpi_rank == 0)) 
     printf("Creating Hubbard model for n_upspins=%d, n_downspins=%d...\n", 
 	   qn_after.n_upspins, qn_after.n_downspins);
   t1 = MPI_Wtime();
   auto model_dyn = model;
   model_dyn.set_qn(qn_after);
   t2 = MPI_Wtime();
-  if (mpi_rank == 0) printf("time init dyn: %3.4f\n", t2-t1); 
+  if ((verbosity >= 1) && (mpi_rank == 0))
+    {
+      printf("time init dyn: %3.4f\n", t2-t1); 
+      printf("Starting dynamical Lanczos procedure ...\n");
+    }
 
-
-  if (mpi_rank == 0) printf("Starting dynamical Lanczos procedure ...\n");
-  double precision = -1;
-  int max_iterations = dyniters;
-
-  auto multiply_dyn = [&model_dyn, &mpi_rank]
+  auto multiply_dyn = [&model_dyn, &mpi_rank, &verbosity]
     (const VectorMPI<double>& v, VectorMPI<double>& w) {
     static int iter=0;
     double t1 = MPI_Wtime();
-    bool verbose = (iter == 0);
+    bool verbose = ((iter == 0) && verbosity >=1);
     model_dyn.apply_hamiltonian(v, w, verbose);
     double t2 = MPI_Wtime();
-    if (mpi_rank == 0) printf("dyniter: %d, time MVM: %3.4f\n", iter, t2-t1); 
+    if ((verbosity >= 2) && (mpi_rank == 0)) 
+      printf("dyniter: %d, time MVM: %3.4f\n", iter, t2-t1); 
     ++iter;
   };
 
@@ -171,7 +184,7 @@ hubbard_dynamical_iterations_bandlanczos_mpi
   int random_seed = 0;
   int num_eigenvalue = 1;
   auto lzs_dyn = BandLanczos<double, decltype(multiply_dyn), VectorMPI<double>>
-    (dim_dyn, random_seed, max_iterations, precision, num_eigenvalue, multiply_dyn, p);
+    (dim_dyn, random_seed, dyniters, precision, num_eigenvalue, multiply_dyn, p);
   lzs_dyn.set_init_states(dyn_start_states);
 
   auto res = lzs_dyn.eigenvalues();
