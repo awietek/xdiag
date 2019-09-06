@@ -37,7 +37,6 @@ namespace hydra { namespace utils {
 	}
     }
 
-
     void check_if_file_exists (const std::string& filename) {
       std::ifstream f(filename.c_str());
       if (!f.good())

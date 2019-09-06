@@ -39,7 +39,7 @@ namespace hydra { namespace thermodynamics {
 	  // Create and diagonalize Hamiltonian
 	  auto model = model_t(bondlist, couplings, qn); 
 	  auto hamilton = model.matrix();
-	  auto eigs = lila::EigenvaluesH(hamilton);
+	  auto eigs = lila::EigenvaluesSym(hamilton);
 	  double e0 = eigs(0);
 	  result.e0s.push_back(e0);
 
@@ -131,19 +131,26 @@ namespace hydra { namespace thermodynamics {
     
     // Hubbard model 
     using models::HubbardModel;  
+    template thermodynamics_exact_result_t 
+    thermodynamics_exact<HubbardModel<double>>
+    (const BondList& bondlist, const Couplings& couplings,
+     const std::vector<HubbardModel<double>::qn_t>& qns,
+     const std::vector<double>& temperatures, bool keep_evs);
+
+
+    template thermodynamics_exact_result_t 
+    thermodynamics_exact<HubbardModel<complex>>
+    (const BondList& bondlist, const Couplings& couplings,
+     const std::vector<HubbardModel<complex>::qn_t>& qns,
+     const std::vector<double>& temperatures, bool keep_evs);
+
     template 
-    thermodynamics_exact_result_t 
-    thermodynamics_exact<HubbardModel>(const BondList& bondlist, 
-				       const Couplings& couplings,
-				       const std::vector<HubbardModel::qn_t>& qns,
-				       const std::vector<double>& temperatures,
-				       bool keep_evs);
-    template 
-    void write_thermodynamics_exact<HubbardModel::qn_t>
-    (const std::vector<HubbardModel::qn_t>& qns, 
+    void write_thermodynamics_exact<HubbardModel<double>::qn_t>
+    (const std::vector<HubbardModel<double>::qn_t>& qns, 
      const std::vector<double>& temperatures,
      const thermodynamics_exact_result_t& result,
      std::string outfile, bool write_evs);
+
 
   }
 }

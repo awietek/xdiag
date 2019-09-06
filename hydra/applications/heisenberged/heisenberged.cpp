@@ -68,14 +68,14 @@ int main(int argc, char* argv[])
 	  printf("No lattice symmetry used\n");
 	  printf("Creating Heisenberg Hamiltonian for n_particles=%d...\n", qn);
 	  auto hamilton = model.matrix(J, qn);
-	  printf("dim: %d\n", hamilton.nrows());
+	  printf("dim: %d\n", (int)hamilton.nrows());
 	  printf("Done\n");
 	  
 
 	  if (hamilton.nrows()>0)
 	    {
 	      printf("Computing eigenvalues ...\n");
-	      auto eigs = lila::EigenvaluesH(hamilton);
+	      auto eigs = lila::EigenvaluesSym(hamilton);
 	      double e0 = eigs(0); 
 	      printf("e0: %f\n", e0);
 	      printf("Done\n");
@@ -89,15 +89,15 @@ int main(int argc, char* argv[])
 	  printf("Creating Heisenberg Hamiltonian for n_particles=%d...\n", qn);
 	  auto hamilton = model.matrix(J, qn, character_table, representation);
 	  // LilaPrint(hamilton);
-	  printf("dim: %d\n", hamilton.nrows());
+	  printf("dim: %d\n", (int)hamilton.nrows());
 	  printf("Done\n");
 	  assert(lila::close(Conj(Transpose(hamilton)), hamilton));
 
 	  if (hamilton.nrows()>0)
 	    {
 	      printf("Computing eigenvalues ...\n");
-	      auto eigs = lila::EigenvaluesH(hamilton);
-	      double e0 = eigs(0); 
+	      auto eigs = lila::Eigenvalues(hamilton);
+	      double e0 = lila::real(eigs(0)); 
 	      printf("e0: %f\n", e0);
 	      printf("Done\n");
 	    }

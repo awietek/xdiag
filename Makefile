@@ -1,72 +1,66 @@
-hydra_module_dirs = hydra/hilbertspaces hydra/utils hydra/indexing test  hydra/models hydra/operators hydra/thermodynamics hydra/symmetries  hydra/dynamics hydra/applications/hubbarddynamicsmpi 
+srcdir = hydra
+appdir = hydra/applications
+tstdir = test
 
-apps=hydra/applications/heisenberged hydra/applications/hubbarded hydra/applications/spinlessfermioned hydra/applications/hubbardthermo hydra/applications/heisenbergthermo hydra/applications/hubbardthermo 
+modules = hilbertspaces utils indexing models operators symmetries dynamics thermodynamics
+apps=heisenberged spinlessfermioned hubbarddynamicsmpi hubbardopticalmpi hubbardthermo hubbardthermotpq #hubbarded   heisenbergthermo hubbarddynamics  
 
 lila_dir = /mnt/home/awietek/Research/Software/lila
 clara_dir=/mnt/home/awietek/Research/Software/Clara/include
 
-# CC            = mpicxx 
-# MPICC         = mpicxx 
-CC            = mpicxx -cxx=icpc
-MPICC         = mpicxx -cxx=icpc
-CCOPT         = -O3
-CCARCH        = -std=c++11 -Wall -pedantic
-
+CC         = mpicxx
+CCOPT         = -O3 
+CCARCH        = -std=c++11 -Wall -pedantic -m64
 lapack        = -llapack -lblas
-lapack        = -mkl -DLILA_USE_MKL
+lapack        = -lmkl_rt -DLILA_USE_MKL
 programs     :=
 mpiprograms  :=
 sources      :=
-libraries    := $(lapack)
+libraries    := $(lapack) -lhydra_$(CC) -Llib
 extra_clean  :=
-
-objects      = $(subst .cpp,.o,$(sources))
-test_objects = $(subst .cpp,.o,$(test_sources))
-# dependencies = $(subst .cpp,.d,$(sources))
-
-include_dirs := lib include
 CPPFLAGS     += $(addprefix -I ,$(include_dirs))
-vpath %.h $(include_dirs)
-
 RM     := rm -f
 MKDIR  := mkdir -p
 
-hydra_module_makefiles = $(addsuffix /module.mk,$(hydra_module_dirs))
-hydra_build_dirs = $(subst hydra,build,$(hydra_module_dirs))
-hydra_includes = $(addprefix -I,$(hydra_module_dirs)) -I$(lila_dir) -I. -I$(clara_dir)
+# Set the variable sources
+app_dirs = $(addprefix $(appdir)/,$(apps))
+app_makefiles = $(addsuffix /module.mk,$(app_dirs))
+module_dirs = $(addprefix $(srcdir)/,$(modules))
+module_makefiles = $(addsuffix /module.mk,$(module_dirs))
 
-all:
+include $(app_makefiles)
+include $(module_makefiles)
 
-include $(hydra_module_makefiles)
+objects = $(subst .cpp,.o,$(sources))
+depends = $(subst .cpp,.d,$(sources))
+depflags = -MT $@ -MMD -MP -MF $*.d
 
-.PHONY: all
-all:  $(programs)
 
-.PHONY: mpi
-mpi:  $(mpiprograms)
+includes = $(addprefix -I,$(module_dirs)) -I$(lila_dir) -I. -I$(clara_dir)
 
-# .PHONY: libraries
-# libraries: $(libraries)
+.PHONY: all 
+all:  $(objects) lib
 
-.PHONY: lib
+apps: $(apps)
+
+$(depends):
+include $(depends)
+
 lib: $(objects)
-	ar rcs lib/libhydra.a $(objects)
+	ar rcs lib/libhydra_$(CC).a $(objects)
+
 .PHONY: clean
 clean:
-	$(RM) $(objects) $(programs) $(extra_clean) $(test_objects)
+	$(RM) -r $(objects) $(depends)
 
 .PHONY: rebuild
 rebuild: clean all lib
 
-%.o : %.cpp
-	$(CC) $(CCOPT) $(CCARCH) -c $< -o $@ $(hydra_includes)
+%.o: %.cpp 
+%.o: %.cpp %.d
+	$(CC) $(CCOPT) $(CCARCH) $(depflags) -c $< -o $@ $(includes)
 
-$(programs): $(objects)	
-	$(CC) $(CCOPT) $(CCARCH) $@.cpp -o bin/$(notdir $@) $(objects) $(hydra_includes) $(libraries)  
+$(depdir): ; @mkdir -o $@
 
-$(mpiprograms): $(objects)	
-	$(MPICC) $(CCOPT) $(CCARCH) $@.cpp -o bin/$(notdir $@) $(objects) $(hydra_includes) $(libraries)  
-
-
-tests: $(test_objects) $(objects)
-	$(CC) $(CCOPT) $(CCARCH) test/tests.cpp -o bin/tests $(test_objects) $(objects) $(hydra_includes) $(libraries) 
+$(apps): $(appdir)/$@ lib
+	$(CC) $(CCOPT) $(CCARCH) $(appdir)/$@/$@.cpp -o bin/$@ $(includes) $(libraries)  

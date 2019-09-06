@@ -1,4 +1,7 @@
+#include <iostream>
 #include <hydra/utils/bitops.h>
+#include <hydra/utils/complex.h>
+#include "hubbardmodeldetail.h"
 #include "hubbardmodelmpi.h"
 
 namespace hydra { namespace models {
@@ -8,62 +11,33 @@ namespace hydra { namespace models {
     using hilbertspaces::hubbard_qn;
     using indexing::IndexTable;
 
-    template <class state_t>
-    HubbardModelMPI<state_t>::HubbardModelMPI
-    (BondList bondlist, Couplings couplings,
-     hilbertspaces::hubbard_qn qn)
+    template <class coeff_t, class state_t>
+    HubbardModelMPI<coeff_t, state_t>::HubbardModelMPI
+    (BondList bondlist, Couplings couplings, hilbertspaces::hubbard_qn qn)
       : n_sites_(bondlist.n_sites()),
 	qn_(qn)
     {
       MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank_);
       MPI_Comm_size(MPI_COMM_WORLD, &mpi_size_);
 
-      BondList hopping_list = bondlist.bonds_of_type("HUBBARDHOP");
-      for (auto bond : hopping_list)
-	{
-	  int s1 = bond.sites()[0];
-	  int s2 = bond.sites()[1];
-	  hoppings_.push_back({s1, s2});
-	  assert( couplings.is_real(bond.coupling()) );
-	  hopping_amplitudes_.push_back(couplings.real(bond.coupling()));
-	}
-
-      BondList interaction_list = bondlist.bonds_of_type("HUBBARDV");
-      for (auto bond : interaction_list)
-	{
-	  int s1 = bond.sites()[0];
-	  int s2 = bond.sites()[1];
-	  interactions_.push_back({s1, s2});
-	  assert( couplings.is_real(bond.coupling()) );
-	  interaction_strengths_.push_back(couplings.real(bond.coupling()));
-	}
-
-      BondList onsites_list = bondlist.bonds_of_type("HUBBARDMU");
-      for (auto bond : onsites_list)
-	if (couplings.defined(bond.coupling()))
-	  {
-	    assert(bond.sites().size() == 1);
-	    int s1 = bond.sites()[0];
-	    onsites_.push_back(s1);
-	    assert( couplings.is_real(bond.coupling()) );
-	    onsites_potentials_.push_back(couplings.real(bond.coupling()));
-	  }
-
-      U_ = couplings.defined("U") ? couplings.real("U") : 0;	
+      hubbardmodeldetail::set_hubbard_terms<coeff_t>
+      (bondlist, couplings, hoppings_, hopping_amplitudes_,
+       currents_, current_amplitudes_, interactions_, interaction_strengths_,
+       onsites_, onsite_potentials_, U_);
 
       initialize();
     }
 
-    template <class state_t>
-    void HubbardModelMPI<state_t>::set_qn(hilbertspaces::hubbard_qn qn) 
+    template <class coeff_t, class state_t>
+    void HubbardModelMPI<coeff_t, state_t>::set_qn(hilbertspaces::hubbard_qn qn)
     { 
       qn_ = qn; 
       initialize();
     }
       
-    template <class state_t>
-    void HubbardModelMPI<state_t>::apply_hamiltonian
-    (const lila::VectorMPI<double>& in_vec, lila::VectorMPI<double>& out_vec,
+    template <class coeff_t, class state_t>
+    void HubbardModelMPI<coeff_t, state_t>::apply_hamiltonian
+    (const lila::VectorMPI<coeff_t>& in_vec, lila::VectorMPI<coeff_t>& out_vec,
      bool verbose)
     {
       using utils::popcnt;
@@ -77,7 +51,6 @@ namespace hydra { namespace models {
 	}
       auto hs_downspins = Spinhalf<state_t>(n_sites_, qn_.n_downspins);
       Zeros(out_vec.vector_local());
-
 
       double t1 = MPI_Wtime();
 
@@ -136,7 +109,7 @@ namespace hydra { namespace models {
       int onsite_idx=0;
       for (auto site : onsites_)
 	{
-	  const double mu = onsites_potentials_[onsite_idx];
+	  const double mu = onsite_potentials_[onsite_idx];
 
 	  if (std::abs(mu) > 1e-14)
 	    {
@@ -173,7 +146,7 @@ namespace hydra { namespace models {
 	{
 	  const int s1 = std::min(pair.first, pair.second); 
 	  const int s2 = std::max(pair.first, pair.second);
-	  const double t = hopping_amplitudes_[hopping_idx];
+	  const coeff_t t = hopping_amplitudes_[hopping_idx];
 	  const uint32 flipmask = ((uint32)1 << s1) | ((uint32)1 << s2);
 	  if (std::abs(t) > 1e-14)
 	    {
@@ -192,6 +165,7 @@ namespace hydra { namespace models {
 			{
 			  double fermi = 
 			    popcnt(gbits(downspins, s2-s1-1, s1+1)) % 2==0 ? 1. : -1.;
+
 			  uint64 idx = upspin_offset + downspin_offset;
 			  state_t new_downspins = downspins ^ flipmask;
 			  uint64 new_idx = upspin_offset + indexing_downspins_.index(new_downspins);
@@ -205,6 +179,48 @@ namespace hydra { namespace models {
 	    }
 	  ++hopping_idx;
 	}  // hopping on downspin
+
+      // Apply currents on downspins
+      t1 = MPI_Wtime();
+      int current_idx=0;
+      for (auto pair : currents_)
+	{
+	  const int s1 = std::min(pair.first, pair.second); 
+	  const int s2 = std::max(pair.first, pair.second);
+	  const coeff_t t = current_amplitudes_[current_idx];
+	  const uint32 flipmask = ((uint32)1 << s1) | ((uint32)1 << s2);
+	  if (std::abs(t) > 1e-14)
+	    {
+	      // Loop over all configurations
+	      uint64 upspin_idx = 0;
+	      for (const state_t& upspins : my_upspins_) 
+		{
+		  uint64 upspin_offset = my_upspins_offset_[upspins];
+		  uint64 downspin_offset = 0;
+		  for (state_t downspins : hs_downspins)
+		    {
+
+		      // Check if current is possible
+		      if (((downspins & flipmask) != 0) && 
+			  ((downspins & flipmask) != flipmask))
+			{
+			  double fermi = 
+			    popcnt(gbits(downspins, s2-s1-1, s1+0)) % 2==0 ? 1. : -1.;
+			  // minus sign in current op ->       ^^ 
+			  uint64 idx = upspin_offset + downspin_offset;
+			  state_t new_downspins = downspins ^ flipmask;
+			  uint64 new_idx = upspin_offset + indexing_downspins_.index(new_downspins);
+			  out_vec.vector_local()(new_idx) -= fermi * t * in_vec.vector_local()(idx);
+			}
+
+		      ++downspin_offset;
+		    }
+		  ++upspin_idx;
+		}
+	    }
+	  ++hopping_idx;
+	}  // hopping on downspin
+
       t2 = MPI_Wtime();
       if ((mpi_rank_ == 0) && verbose) printf("  down: %3.4f\n", t2-t1); 
 
@@ -234,14 +250,12 @@ namespace hydra { namespace models {
       if ((mpi_rank_ == 0) && verbose) printf("  send forward (prepare): %3.4f\n", t2-t1); 
 	
       t1 = MPI_Wtime();
-      MPI_Alltoallv(send_buffer_.data(), 
-		    n_downspins_i_send_forward_.data(), 
-		    n_downspins_i_send_forward_offsets_.data(), 
-		    MPI_DOUBLE,
-		    recv_buffer_.data(),
-		    n_downspins_i_recv_forward_.data(), 
-		    n_downspins_i_recv_forward_offsets_.data(), 
-		    MPI_DOUBLE, MPI_COMM_WORLD);
+      lila::MPI_Alltoallv<coeff_t>
+	(send_buffer_.data(), n_downspins_i_send_forward_.data(), 
+	 n_downspins_i_send_forward_offsets_.data(), 
+	 recv_buffer_.data(), n_downspins_i_recv_forward_.data(), 
+	 n_downspins_i_recv_forward_offsets_.data(), 
+	 MPI_COMM_WORLD);
       t2 = MPI_Wtime();
       if ((mpi_rank_ == 0) && verbose) printf("  send forward (Alltoallv): %3.4f\n", t2-t1); 
 
@@ -385,15 +399,17 @@ namespace hydra { namespace models {
       // std::copy(send_buffer_.begin(), send_buffer_.end(), recv_buffer_.begin());
       // // DEBUG END
 
-      // Apply hoppings on upspins
-      t1 = MPI_Wtime();
       std::fill(recv_buffer_.begin(), recv_buffer_.end(), 0);
+
+      t1 = MPI_Wtime();
+
+      // Apply hoppings on upspins
       hopping_idx = 0;
       for (auto pair : hoppings_)
 	{
 	  const int s1 = std::min(pair.first, pair.second); 
 	  const int s2 = std::max(pair.first, pair.second);
-	  const double t = hopping_amplitudes_[hopping_idx];
+	  const coeff_t t = hopping_amplitudes_[hopping_idx];
 	  const uint32 flipmask = ((uint32)1 << s1) | ((uint32)1 << s2);
 	  if (std::abs(t) > 1e-14)
 	    {
@@ -423,7 +439,49 @@ namespace hydra { namespace models {
 		}
 	    }
 	  ++hopping_idx;
-	}  // hopping on downspin
+	}  // hopping on upspins
+
+
+      // Apply currents on upspins
+      current_idx = 0;
+      for (auto pair : currents_)
+	{
+	  const int s1 = std::min(pair.first, pair.second); 
+	  const int s2 = std::max(pair.first, pair.second);
+	  const coeff_t t = current_amplitudes_[current_idx];
+	  const uint32 flipmask = ((uint32)1 << s1) | ((uint32)1 << s2);
+	  if (std::abs(t) > 1e-14)
+	    {
+	      // Loop over all configurations
+	      uint64 downspin_idx = 0;
+	      for (const state_t& downspins : my_downspins_) 
+		{
+		  uint64 downspin_offset = my_downspins_offset_[downspins];
+		  uint64 upspin_offset = 0;
+		  for (state_t upspins : hs_upspins_)
+		    {
+		      // Check if current is possible
+		      if (((upspins & flipmask) != 0) && 
+			  ((upspins & flipmask) != flipmask))
+			{
+			  double fermi = 
+			    popcnt(gbits(upspins, s2-s1-1, s1+0)) % 2==0 ? 1. : -1.;
+			  // minus sign in current op ->     ^^ 
+
+			  uint64 idx = upspin_offset + downspin_offset;
+			  state_t new_upspins = upspins ^ flipmask;
+			  uint64 new_idx = downspin_offset + indexing_upspins_.index(new_upspins);
+			  recv_buffer_[new_idx] -= fermi * t * send_buffer_[idx];
+			}
+
+		      ++upspin_offset;
+		    }
+		  ++downspin_idx;
+		}
+	    }
+	  ++current_idx;
+	}  // current on upspins
+
       t2 = MPI_Wtime();
       if ((mpi_rank_ == 0) && verbose) printf("  up:   %3.4f\n", t2-t1); 
 	
@@ -510,14 +568,12 @@ namespace hydra { namespace models {
 
 
       t1 = MPI_Wtime();
-      MPI_Alltoallv(send_buffer_.data(), 
-		    n_upspins_i_send_back_.data(), 
-		    n_upspins_i_send_back_offsets_.data(), 
-		    MPI_DOUBLE,
-		    recv_buffer_.data(),
-		    n_upspins_i_recv_back_.data(), 
-		    n_upspins_i_recv_back_offsets_.data(), 
-		    MPI_DOUBLE, MPI_COMM_WORLD);
+      lila::MPI_Alltoallv<coeff_t>
+	(send_buffer_.data(), n_upspins_i_send_back_.data(), 
+	 n_upspins_i_send_back_offsets_.data(), 
+	 recv_buffer_.data(), n_upspins_i_recv_back_.data(), 
+	 n_upspins_i_recv_back_offsets_.data(), 
+	 MPI_COMM_WORLD);
       t2 = MPI_Wtime();
       if ((mpi_rank_ == 0) && verbose) printf("  send back (Alltoall):   %3.4f\n", t2-t1); 
 
@@ -616,10 +672,10 @@ namespace hydra { namespace models {
 
     }
 
-    template <class state_t>
-    hubbard_qn HubbardModelMPI<state_t>::
+    template <class coeff_t, class state_t>
+    hubbard_qn HubbardModelMPI<coeff_t, state_t>::
     apply_fermion
-    (const lila::VectorMPI<double>& in_vec, lila::VectorMPI<double>& out_vec, 
+    (const lila::VectorMPI<coeff_t>& in_vec, lila::VectorMPI<coeff_t>& out_vec, 
      std::string type, int site)
     {
       using utils::popcnt;
@@ -753,8 +809,8 @@ namespace hydra { namespace models {
     }
 
       
-    template <class state_t>
-    void HubbardModelMPI<state_t>::initialize()
+    template <class coeff_t, class state_t>
+    void HubbardModelMPI<coeff_t, state_t>::initialize()
     {
       hs_upspins_ = Spinhalf<state_t>(n_sites_, qn_.n_upspins);
       hs_downspins_ = Spinhalf<state_t>(n_sites_, qn_.n_downspins);
@@ -1078,8 +1134,11 @@ namespace hydra { namespace models {
 	}
     }
 
-    template class HubbardModelMPI<uint32>;
-    template class HubbardModelMPI<uint64>;
+
+    template class HubbardModelMPI<double, uint32>;
+    template class HubbardModelMPI<complex, uint32>;
+    template class HubbardModelMPI<double, uint64>;
+    template class HubbardModelMPI<complex, uint64>;
        
   }  // namespace models
 }  // namespace hydra

@@ -34,6 +34,7 @@
 #include "operators/bond.h"
 #include "operators/bondlist.h"
 #include "operators/couplings.h"
+#include "thermodynamics/thermodynamics_detail.h"
 #include "thermodynamics/thermodynamics_exact.h"
 #include "thermodynamics/thermodynamics_tpq.h"
 #include "dynamics/continuedfraction.h"

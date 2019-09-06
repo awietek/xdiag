@@ -30,6 +30,7 @@ namespace hydra { namespace models {
     /*!
       Class to generate representations of the Hubbard models
     */
+    template <class coeff_t>
     class HubbardModel {
 
     public:
@@ -39,28 +40,27 @@ namespace hydra { namespace models {
 	Defines a Hubbard model given number of sites and pairs of 
 	neighboring sites with hoppings
       */
-      HubbardModel(BondList bondlist, Couplings couplings, 
-		   qn_t qn);
+      HubbardModel(BondList bondlist, Couplings couplings, qn_t qn);
       
       /*!
 	returns a lila::Matrix of the Hubbard model given t, U, and
 	the quantum numbers (n_upspins, n_downspins).
       */
-      lila::Matrix<double> matrix() const;
+      lila::Matrix<coeff_t> matrix() const;
 
       /*!
 	returns a lila::Matrix of the Hubbard model given t, U, and
 	the quantum numbers (n_upspins, n_downspins).
       */
-      void apply_hamiltonian(const lila::Vector<double>& in_vec,
-			     lila::Vector<double>& out_vec) const;      
+      void apply_hamiltonian(const lila::Vector<coeff_t>& in_vec,
+			     lila::Vector<coeff_t>& out_vec) const;      
 
       /*!
 	applies a fermion creation/annihilation operator to a state
       */
       qn_t apply_fermion
-      (const lila::Vector<double>& state_before, 
-       lila::Vector<double>& state_after, std::string type, int site) const;
+      (const lila::Vector<coeff_t>& state_before, 
+       lila::Vector<coeff_t>& state_after, std::string type, int site) const;
 
       qn_t qn() const { return qn_; }
       void set_qn(qn_t qn);
@@ -73,11 +73,13 @@ namespace hydra { namespace models {
       qn_t qn_;
 
       std::vector<std::pair<int, int>> hoppings_;
-      std::vector<double> hopping_amplitudes_;
+      std::vector<coeff_t> hopping_amplitudes_;
+      std::vector<std::pair<int, int>> currents_;
+      std::vector<coeff_t> current_amplitudes_;
       std::vector<std::pair<int, int>> interactions_;
       std::vector<double> interaction_strengths_;
       std::vector<int> onsites_;
-      std::vector<double> onsites_potentials_;      
+      std::vector<double> onsite_potentials_;      
       double U_;
     };
     

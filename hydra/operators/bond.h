@@ -35,6 +35,8 @@ namespace hydra { namespace operators {
       inline std::string type() const { return type_; }
       inline std::string coupling() const { return coupling_; } 
       inline std::vector<int> sites() const { return sites_; }
+      inline int sites(const int& j) const { return sites_[j]; }
+      inline int size() const { return (int)sites_.size(); }
 
       std::string type_;
       std::string coupling_;

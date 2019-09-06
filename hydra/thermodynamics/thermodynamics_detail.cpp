@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cmath>
 #include <hydra/thermodynamics/thermodynamics_detail.h>
 
 namespace hydra { namespace thermodynamics { namespace detail {
@@ -15,9 +16,9 @@ namespace hydra { namespace thermodynamics { namespace detail {
        std::vector<double>& specific_heats)
       {
 	int n_temperatures = temperatures.size();
-	assert(partitions_for_qn.size() == n_temperatures);
-	assert(energies_for_qn.size() == n_temperatures);
-	assert(quad_moments_for_qn.size() == n_temperatures);
+	assert((int)partitions_for_qn.size() == n_temperatures);
+	assert((int)energies_for_qn.size() == n_temperatures);
+	assert((int)quad_moments_for_qn.size() == n_temperatures);
 
 	partitions.resize(n_temperatures, 0);
 	energies.resize(n_temperatures, 0);
@@ -41,7 +42,7 @@ namespace hydra { namespace thermodynamics { namespace detail {
 	    specific_heats[t_idx] = beta * beta * 
 	      (quad_moments[t_idx] - energies[t_idx] * energies[t_idx]);
 
-	    for (int qn_idx=0; qn_idx < partitions_for_qn[t_idx].size(); ++qn_idx)
+	    for (int qn_idx=0; qn_idx < (int)partitions_for_qn[t_idx].size(); ++qn_idx)
 	      {
 		energies_for_qn[t_idx][qn_idx] /= 
 		  partitions_for_qn[t_idx][qn_idx];

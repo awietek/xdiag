@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
     hoppings.push_back({i, i+1});
   if (periodic) hoppings.push_back({n_sites-1, 0});
       
-  auto model = HubbardModel(n_sites, hoppings);
+  auto model = HubbardModel<double>(n_sites, hoppings);
   auto hamilton = model.matrix(t, U, qn);
   // LilaPrint(hamilton);
   
@@ -32,7 +32,7 @@ int main(int argc, char* argv[])
   // assert(lila::close<double>(hamilton, hdag));
 
   // LilaPrint(hamilton);
-  auto eigs = lila::EigenvaluesH(hamilton); 
+  auto eigs = lila::EigenvaluesSym(hamilton); 
   double e0 = eigs(0);
  
   hydra::hilbertspaces::Hubbard<unsigned int> hs(n_sites, qn);

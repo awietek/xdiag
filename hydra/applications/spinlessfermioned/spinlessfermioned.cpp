@@ -74,13 +74,13 @@ int main(int argc, char* argv[])
 	  printf("No lattice symmetry used\n");
 	  printf("Creating spinless fermion Hamiltonian for n_particles=%d...\n", qn);
 	  auto hamilton = model.matrix(t, V, qn);
-	  printf("dim: %d\n", hamilton.nrows());
+	  printf("dim: %d\n", (int)hamilton.nrows());
 	  printf("Done\n");
 	  
 	  if (hamilton.nrows()>0)
 	    {
 	      printf("Computing eigenvalues ...\n");
-	      auto eigs = lila::EigenvaluesH(hamilton);
+	      auto eigs = lila::EigenvaluesSym(hamilton);
 	      double e0 = eigs(0); 
 	      printf("e0: %.20g\n", e0);
 	      printf("Done\n");
@@ -94,14 +94,14 @@ int main(int argc, char* argv[])
 	  printf("Creating spinless fermion Hamiltonian for n_particles=%d...\n", qn);
 	  auto hamilton = model.matrix(t, V, qn, character_table, representation);
 	  // LilaPrint(hamilton);
-	  printf("dim: %d\n", hamilton.nrows());
+	  printf("dim: %d\n", (int)hamilton.nrows());
 	  printf("Done\n");
 	  assert(lila::close(Conj(Transpose(hamilton)), hamilton));
 
 	  if (hamilton.nrows()>0)
 	    {
 	      printf("Computing eigenvalues ...\n");
-	      auto eigs = lila::EigenvaluesH(hamilton);
+	      auto eigs = lila::EigenvaluesSym(hamilton);
 	      double e0 = eigs(0); 
 	      printf("e0: %.20g\n", e0);
 	      printf("Done\n");

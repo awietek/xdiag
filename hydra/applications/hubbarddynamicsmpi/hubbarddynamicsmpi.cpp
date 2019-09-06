@@ -39,7 +39,6 @@ int main(int argc, char* argv[])
   MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
   MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
 
-  if (mpi_rank == 0) printf("Using %d MPI tasks\n", mpi_size);
 
   // Get input parameters
   std::string outfile;
@@ -56,10 +55,15 @@ int main(int argc, char* argv[])
   int dyniters = 1000;
   int verbosity = 1;
   double deflationtol = 1e-8;
+  int lobpcgbands = 1;
 
   parse_cmdline(outfile, latticefile, couplingfile, corrfile, nup, ndown, 
 		fermiontype, algorithm, precision, iters, dynprecision, 
-		dyniters, verbosity, deflationtol, argc, argv);
+		dyniters, verbosity, deflationtol, lobpcgbands, argc, argv);
+
+  if ((verbosity >= 1) && (mpi_rank == 0))  
+    printf("Using %d MPI tasks\n", mpi_size);
+
 
   // Check if valid algorithm is defined
   if (algorithm == "") algorithm = "lanczos";
@@ -156,20 +160,18 @@ int main(int argc, char* argv[])
 
 
   // Create infrastructure for Hubbard model
-  if (mpi_rank == 0) 
+  if ((verbosity >= 1) && (mpi_rank == 0))
     printf("Creating Hubbard model for n_upspins=%d, n_downspins=%d...\n",
 	   qn.n_upspins, qn.n_downspins);
   double t1 = MPI_Wtime();
-  auto model = HubbardModelMPI<uint32>(bondlist, couplings, qn);
+  auto model = HubbardModelMPI<double,uint32>(bondlist, couplings, qn);
   double t2 = MPI_Wtime();
-  if (mpi_rank == 0) printf("time init: %3.4f\n", t2-t1); 
-  
-
+  if ((verbosity >= 1) && (mpi_rank == 0))
+    printf("time init: %3.4f\n", t2-t1); 
 
   // Get the ground state
-  if (mpi_rank == 0) 
+  if ((verbosity >= 1) && (mpi_rank == 0))
     printf("Starting ground state eigenvalues Lanczos procedure ...\n");
-  int num_eigenvalue = 0;
   int random_seed = 42 + 1234567*mpi_rank;
 
   auto multiply = [&model, &mpi_rank, &verbosity](const VectorMPI<double>& v, 
@@ -183,22 +185,87 @@ int main(int argc, char* argv[])
       printf("iter: %d, time MVM: %3.4f\n", iter, t2-t1); 
     ++iter;
   };
+
   MPI_Barrier(MPI_COMM_WORLD);
   uint64 dim = model.dim();
-  if (mpi_rank == 0) printf("dim %s\n", FormatWithCommas(dim).c_str()); 
+  if ((verbosity >= 1) && (mpi_rank == 0)) printf("dim %s\n", FormatWithCommas(dim).c_str()); 
   MPI_Barrier(MPI_COMM_WORLD);
-  uint64 local_dim = model.local_dim();
-  auto lzs = Lanczos<double, decltype(multiply), VectorMPI<double>>
-    (local_dim, random_seed, iters, precision, num_eigenvalue, multiply);
-  Vector<double> eigs = lzs.eigenvalues();
 
-  if (mpi_rank == 0) printf("Done\n");
+  uint64 local_dim = model.local_dim();
+  VectorMPI<double> groundstate(local_dim);
+  Vector<double> eigs;
+
+  // Lanczos algorithm for ground state (unstable)
+  if (lobpcgbands == 0)
+    {
+      if ((verbosity >= 1) && (mpi_rank == 0))
+	printf("Using Lanczos algorithm for ground state calculation\n");
+
+      
+      // auto lzs = Lanczos<double, decltype(multiply), VectorMPI<double>>
+      // 	(local_dim, random_seed, iters, precision, num_eigenvalue, multiply);
+      // eigs = lzs.eigenvalues();
+
+      // if ((verbosity >= 1) && (mpi_rank == 0)) printf("Done\n");
+      // if ((verbosity >= 1) && (mpi_rank == 0)) printf("Reiterating for ground state...\n");
+      // auto eigenvectors = lzs.eigenvectors({0});
+
+      normal_dist_t<double> dist(1., 0.);
+      normal_gen_t<double> gen(dist, random_seed);
+      auto res = LanczosEigenvectors(multiply, groundstate, gen, true, precision, {0}, "Ritz");
+      groundstate = res.vectors[0];
+    }
+
+  // LOBPCG algorithm for ground state (prefered)
+  else
+    {
+      if ((verbosity >= 1) && (mpi_rank == 0))
+	{
+	  printf("Using LOBPCG algorithm for ground state calculation\n");
+	  printf("Using %d bands\n", lobpcgbands);
+	}
+      
+      // Create random start vectors
+      uniform_dist_t<double> dist(-1., 1.);
+      uniform_gen_t<double> gen(dist, random_seed);
+      std::vector<VectorMPI<double>> vs;
+      for (int i=0; i<lobpcgbands; ++i)
+	{
+	  VectorMPI<double> v(local_dim);
+	  Random(v, gen);
+	  vs.push_back(v);
+	}
+      auto res = Lobpcg(multiply, vs, precision, iters);
+      eigs = res.eigenvalues;
+      groundstate = res.eigenvectors[0];
+    }
+
+  double norm = Dot(groundstate, groundstate);
+  groundstate /= sqrt(norm);
+  if ((verbosity >= 1) && (mpi_rank == 0)) printf("Done\n");
+
+  // Debug start
+  auto w = groundstate;
+  multiply(groundstate, w);
+  double e0 = Dot(w, groundstate);
+  if (mpi_rank == 0)
+    {
+      printf("eig0: %.17g\n", eigs(0));
+      printf("norm: %.17g, e0: %.17g\n", norm, e0);
+      // if (!(std::abs(norm - 1) < 1e-12))
+      // 	{
+      // 	  for (auto a : lzs.alphas())
+      // 	    printf("%.17g, ", a);
+      // 	  printf("\n");
+      // 	  for (auto a : lzs.betas())
+      // 	    printf("%.17g, ", a);
+      // 	  printf("\n");
+      // 	}
+    }
+  // Debug end
+
   
 
-  if (mpi_rank == 0) printf("Reiterating for ground state...\n");
-  auto eigenvectors = lzs.eigenvectors({0});
-  VectorMPI<double>& groundstate = eigenvectors[0];
-  if (mpi_rank == 0) printf("Done\n");
 
   // Write gs energy to outfile
   if (outfile != "")

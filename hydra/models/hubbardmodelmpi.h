@@ -36,7 +36,7 @@ namespace hydra { namespace models {
     using operators::BondList;
     using operators::Couplings;
 
-    template <class state_t>
+    template <class coeff_t, class state_t=uint32>
     class HubbardModelMPI
     {
     public:
@@ -47,12 +47,12 @@ namespace hydra { namespace models {
       HubbardModelMPI(BondList bondlist, Couplings couplings, 
 		      hilbertspaces::hubbard_qn qn);
       
-      void apply_hamiltonian(const lila::VectorMPI<double>& in_vec,
-			     lila::VectorMPI<double>& out_vec,
+      void apply_hamiltonian(const lila::VectorMPI<coeff_t>& in_vec,
+			     lila::VectorMPI<coeff_t>& out_vec,
 			     bool verbose = false);
 
       hilbertspaces::hubbard_qn apply_fermion
-      (const lila::VectorMPI<double>& in_vec, lila::VectorMPI<double>& out_vec,
+      (const lila::VectorMPI<coeff_t>& in_vec, lila::VectorMPI<coeff_t>& out_vec,
        std::string type, int site);
 
       hilbertspaces::hubbard_qn qn() const { return qn_; }
@@ -61,17 +61,19 @@ namespace hydra { namespace models {
       uint64 local_dim() const { return local_dim_; }
       uint64 dim() const { return dim_; }
 
-
     private:     
 
       const int n_sites_;
       hubbard_qn qn_;
+
       std::vector<std::pair<int, int>> hoppings_;
-      std::vector<double> hopping_amplitudes_;
+      std::vector<coeff_t> hopping_amplitudes_;
+      std::vector<std::pair<int, int>> currents_;
+      std::vector<coeff_t> current_amplitudes_;
       std::vector<std::pair<int, int>> interactions_;
       std::vector<double> interaction_strengths_;
       std::vector<int> onsites_;
-      std::vector<double> onsites_potentials_;
+      std::vector<double> onsite_potentials_;
       double U_;
 
       // members below are all set by initialize
@@ -134,18 +136,22 @@ namespace hydra { namespace models {
       uint64 sum_n_upspins_i_recv_back_; 
 
       uint64 buffer_size_;
-      std::vector<double> send_buffer_;
-      std::vector<double> recv_buffer_;
-
+      std::vector<coeff_t> send_buffer_;
+      std::vector<coeff_t> recv_buffer_;
 
       // std::vector<state_t> downspins_i_send_forward_;
       // std::vector<state_t> upspins_i_send_forward_;
       // std::vector<state_t> downspins_i_send_back_;
       // std::vector<state_t> upspins_i_send_back_;
-
+     
 
     };
     
+    
+
+
+
+
   }
 }
 

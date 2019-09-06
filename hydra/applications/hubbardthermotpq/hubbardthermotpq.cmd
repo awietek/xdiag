@@ -5,3 +5,8 @@ Opt std::string ensemble "canonical" e ensemble ensemble "ensemble to use, eithe
 Opt std::string temperaturefile "" t temperaturefile temperaturefile "name of temperaturefile"
 Opt int np -1 p np np "number of particles for canonical ensemble (optional, default half filling)"
 Opt double mu 0. m mu mu "chemical potential for grandcanonical ensemble (optional, default 0.)"
+Opt int seed -1 s seed seed "random seed (optional, default 1)"
+Opt double mintemperature 0.01 m mintemperature mintemperature "minumum temperature for convergence (optional, default 0.01)"
+Opt double precision 1e-12 p precision precision "precision of Lanczos imag. time evolution (optional, default 1e-12)"
+Opt int iters 1000 i iters iters "maximum number of Lanczos iterations performed (optional, default 1000)"
+Opt int verbosity 1 v verbosity verbosity "verbosity level, one of 0, 1 ,2 (optional, default 1)"

@@ -15,45 +15,37 @@
 #ifndef HYDRA_THERMODYNAMICS_THERMODYNAMICS_TPQ_
 #define HYDRA_THERMODYNAMICS_THERMODYNAMICS_TPQ_
 
-#include <vector>
-#include <string>
-#include <algorithm>
-
-#include <hydra/operators/bondlist.h>
-#include <hydra/operators/couplings.h>
+#include <lila/all.h>
 
 namespace hydra { namespace thermodynamics {
-    using operators::BondList;
-    using operators::Couplings;
       
-    /*!
-      Approximate thermodynamics measurements using TPQ/Lanczos algorithm
-    */
     struct thermodynamics_tpq_result_t
     {
-      std::vector<double> e0s;
-      std::vector<lila::Vector<double>> alphas, betas;
-      std::vector<std::vector<double>> partitions_for_qn;
-      std::vector<std::vector<double>> energies_for_qn;
-      std::vector<std::vector<double>> quad_moments_for_qn;
-      std::vector<double> partitions;
-      std::vector<double> energies;
-      std::vector<double> quad_moments;
-      std::vector<double> specific_heats;
+      double e0;
+      lila::Tmatrix<double> tmatrix;
+      lila::Vector<double> eigenvalues;
+      lila::Vector<double> temperatures;
+      lila::Vector<double> partitions;
+      lila::Vector<double> energies;
+      lila::Vector<double> quad_moments;
     };
 
-    template <class model_t>
+    template <class model_t, class vector_t, class logger_t=lila::Logger>
     thermodynamics_tpq_result_t
-    thermodynamics_tpq(const BondList& bondlist, 
-		       const Couplings& couplings,
-		       const std::vector<typename model_t::qn_t>& qns,
-		       const std::vector<double>& temperatures, 
-		       int seed, int iters, double precision, int neval);
+    thermodynamics_tpq(model_t& model, vector_t& v0,
+		       std::vector<double> temperatures,
+		       double mintemperature = 0.01, 
+		       double precision = 1e-12,
+		       int iters = 1000, 
+		       logger_t& logger=lila::logger);
+    
+    void write_thermodynamics_tpq_outfile
+    (const thermodynamics_tpq_result_t& res, std::ofstream& of, 
+     std::string comment="");
 
-    template <class qn_t>
-    void write_thermodynamics_tpq
-    (const std::vector<qn_t>& qns, const std::vector<double>& temperatures,
-     const thermodynamics_tpq_result_t& result, std::string outfile);
+    void write_thermodynamics_tpq_tmatrix
+    (const thermodynamics_tpq_result_t& res, std::ofstream& of, 
+     std::string comment="");
 
     
   }

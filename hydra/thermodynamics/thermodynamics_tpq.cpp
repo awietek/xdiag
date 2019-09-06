@@ -6,168 +6,139 @@
 #include <hydra/thermodynamics/thermodynamics_detail.h>
 #include <hydra/utils/iochecks.h>
 #include <hydra/models/hubbardmodel.h>
+#include <hydra/models/hubbardmodelmpi.h>
+
+#include <lila/all.h>
 
 namespace hydra { namespace thermodynamics {
 
-    template <class model_t>
+    template <class model_t, class vector_t, class logger_t>
     thermodynamics_tpq_result_t
-    thermodynamics_tpq(const BondList& bondlist, 
-		       const Couplings& couplings,
-		       const std::vector<typename model_t::qn_t>& qns,
-		       const std::vector<double>& temperatures, 
-		       int seed, int iters, double precision, int neval)
+    thermodynamics_tpq(model_t& model, vector_t& v0,
+		       std::vector<double> temperatures,
+		       double mintemperature, double precision,
+		       int iters, logger_t& logger)
     {
-      // Allocate result data
-      int n_temperatures = temperatures.size();
-      int n_qns = qns.size();
+      using coeff_type = typename vector_t::coeff_type;
+      using real_type = lila::real_t<coeff_type>;
+      using tmatrix_t = lila::Tmatrix<real_type>;
+      
+      // Define multiplication
+      auto multiply = [&model, &logger](const vector_t& v, vector_t& w) 
+	{
+	  using Clock = std::chrono::high_resolution_clock;
+	  using secs = std::chrono::duration<float>;
+	  static int iter=0;
+	  auto t1 = Clock::now();
+	  model.apply_hamiltonian(v, w);
+	  auto t2 = Clock::now();
+	  logger.out(2, "dim: {}, iter: {}, time MVM: {}\n", 
+		     model.dim(), iter, secs(t2-t1).count());
+	};
+      
+
+      double max_invt = 1. / mintemperature;
+      double max_invt_half = max_invt / 2.;
+      double norm = lila::Norm(v0);
+
+      // Set convergence criterion
+      auto converged = 
+	[precision, iters, max_invt_half, norm](const tmatrix_t& tmat, real_type beta) 
+	{ 
+	  return LanczosConvergedTimeEvolution(tmat, beta, max_invt_half, 
+					       precision, iters, norm);
+	};
+
+      // Call the Lanczos algorithm
+      auto lczs_result = Lanczos(multiply, v0, converged);
+
+      auto tmat = lczs_result.tmatrix;
+      auto tmatm = lila::Matrix<double>(tmat);
+      auto teig = Eigen(tmat);
+      auto teigs = teig.eigenvalues;
+      auto Q = teig.eigenvectors;
+      double e0 = *std::min_element(teigs.begin(), teigs.end());
+      
       thermodynamics_tpq_result_t result;
-      result.partitions_for_qn.resize(n_temperatures);
-      result.energies_for_qn.resize(n_temperatures);
-      result.quad_moments_for_qn.resize(n_temperatures);
-      for (int i=0; i < (int)n_temperatures; ++i)
-	{
-	  result.partitions_for_qn[i].resize(n_qns, 0);
-	  result.energies_for_qn[i].resize(n_qns, 0);
-	  result.quad_moments_for_qn[i].resize(n_qns, 0);
-	}
-      for (int i=0; i < (int)n_temperatures; ++i)
-	{
-	  result.alphas.resize(n_qns);
-	  result.betas.resize(n_qns);
-	}
+      result.e0 = e0;
+      result.tmatrix = tmat;
+      result.eigenvalues = teigs;
 
-      int qn_idx = 0;
-      for (auto qn : qns)
-	{
-	  // Compute T-Matrix using Lanczos algorithm
-	  auto model = model_t(bondlist, couplings, qn); 
-	  auto multiply = [&model](const lila::Vector<double>& v, 
-				   lila::Vector<double>& w) {
-	    using Clock = std::chrono::high_resolution_clock;
-	    using secs = std::chrono::duration<float>;
-	    static int iter=0;
-	    auto t1 = Clock::now();
-	    model.apply_hamiltonian(v, w);
-	    auto t2 = Clock::now();
-	    printf("dim: %ld, iter: %d, time MVM: %3.4f\n", model.dim(), iter, secs(t2-t1).count()); 
-	  };
-	  int64 dim = model.dim();
-	  auto lzs = lila::Lanczos<double, decltype(multiply)>
-	    (dim, seed + 1234321*qn_idx, iters, precision, neval, multiply);
-	  lila::Vector<double> eigs = lzs.eigenvalues();
-	  double e0 = eigs(0);
-	  result.e0s.push_back(e0);
-	  result.alphas[qn_idx] = lzs.alphas();
-	  result.betas[qn_idx] = lzs.betas();
-	  auto tmat = lzs.tmatrix();
-	  auto tmatm = lila::Matrix<double>(tmat);
-	  auto teig = Eigen(tmat);
-	  auto teigs = teig.eigenvalues;
-	  auto Q = teig.eigenvectors;
-	  double shift = *std::min_element(teigs.begin(), teigs.end());
+      uint64 dim = model.dim();
 
-	  // Evaluate energy and quad moments at every temperature
-	  int t_idx = 0;
-	  for (double t : temperatures)
-	    {
-	      double beta = 1. / t;
-	      auto diag = lila::Zeros<double>(tmat.size(), tmat.size());
-	      for (int j = 0; j < tmat.size(); ++j)
-		diag(j, j) = exp(-(beta / 2.) * (teigs(j) - shift));
-	      auto Texp = Mult(Mult(Q, diag), Transpose(Q));
-	      auto Texp0 = Texp.col(0);
+      // Evaluate energy and quad moments at every temperature
+      for (double t : temperatures)
+	{
+	  double beta = 1. / t;
+	  auto diag = lila::Zeros<double>(tmat.size(), tmat.size());
+	  for (int j = 0; j < tmat.size(); ++j)
+	    diag(j, j) = exp(-(beta / 2.) * (teigs(j) - e0));
+	  auto Texp = Mult(Mult(Q, diag), Transpose(Q));
+	  auto Texp0 = Texp.col(0);
 		  
-	      double partition = Dot(Texp0, Texp0) * dim;
-	      double energy = Dot(Texp0, Mult(tmatm, Texp0)) * dim;
-	      double quad = 
-		Dot(Texp0, Mult(tmatm, Mult(tmatm, Texp0))) * dim;
+	  double partition = Dot(Texp0, Texp0) * dim;
+	  double energy = Dot(Texp0, Mult(tmatm, Texp0)) * dim;
+	  double quad_moment = 
+	    Dot(Texp0, Mult(tmatm, Mult(tmatm, Texp0))) * dim;
 		  
-	      result.partitions_for_qn[t_idx][qn_idx] = partition;
-	      result.energies_for_qn[t_idx][qn_idx] = energy;
-	      result.quad_moments_for_qn[t_idx][qn_idx] = quad;
-	      ++t_idx;
-	    }
+	  result.temperatures.push_back(t);
+	  result.partitions.push_back(partition);
+	  result.energies.push_back(energy);
+	  result.quad_moments.push_back(quad_moment);
+	}
 
-	  ++qn_idx;
-	}  // for (auto qn : qns)
-      detail::combine_thermodynamics
-	(temperatures, result.e0s, result.partitions_for_qn,
-	 result.energies_for_qn, result.quad_moments_for_qn,
-	 result.partitions, result.energies, 
-	 result.quad_moments, result.specific_heats);
       return result;
     }
 
-    
-    template <class qn_t>
-    void write_thermodynamics_tpq
-    (const std::vector<qn_t>& qns, 
-     const std::vector<double>& temperatures,
-     const thermodynamics_tpq_result_t& result,
-     std::string outfile)
-    {
-      std::ofstream of;
-      of.open(outfile, std::ios::out);
-      utils::check_if_file_exists(outfile);
-      of << "### method: exact\n";
-      int qn_idx = 0;
-      for (auto qn : qns)
-	{
-	  of << std::setprecision(20) << "## BLOCK: " << qn << "\n"	      
-	     << "# gs energy: " << result.e0s[qn_idx] << "\n";
-	  of << "# alphas betas\n";
-	  for (int i=0; i<result.alphas[qn_idx].size(); ++i)
-	    of << std::setprecision(20) 
-	       << result.alphas[qn_idx](i) << " " 
-	       << result.betas[qn_idx](i)<< "\n";
-	  of << "# temperature partition energy quadmoment\n";      
-	  int t_idx = 0;
 
-	  for (double t : temperatures)
-	    {
-	      of << std::setprecision(20)  
-		 << t << " " << result.partitions_for_qn[t_idx][qn_idx] << " " 
-		 << result.energies_for_qn[t_idx][qn_idx] << " " 
-		 << result.quad_moments_for_qn[t_idx][qn_idx] << "\n";
-	      ++t_idx;
-	    }
-	  ++qn_idx;
-	}
-      of << "## COMBINATION\n";
-      double total_e0 = *std::min_element(result.e0s.begin(), result.e0s.end());
-      of << "# gs energy: " << total_e0 << "\n";
-      of << "# temperature  partition  energy  quadmoments  specificheats\n";
+    void write_thermodynamics_tpq_outfile
+    (const thermodynamics_tpq_result_t& res, std::ofstream& of, std::string comment)
+    {
+      if (comment != "")
+	of << "## "<< comment << "\n";
+      of << "# gs energy: " << std::setprecision(20) << res.e0 << "\n";
+      of << "# temperature  partition  energy  quadmoments\n";
       int t_idx = 0;
-      for (double t : temperatures)
+      for (double t : res.temperatures)
 	{
 	  of << std::setprecision(20)  
 	     << t << " " 
-	     << result.partitions[t_idx] << " " 
-	     << result.energies[t_idx] << " " 
-	     << result.quad_moments[t_idx] << " " 
-	     << result.specific_heats[t_idx] << "\n";
+	     << res.partitions(t_idx) << " " 
+	     << res.energies(t_idx) << " " 
+	     << res.quad_moments(t_idx) << "\n"; 
 	  ++t_idx;
 	}
     }
 
+    void write_thermodynamics_tpq_tmatrix
+    (const thermodynamics_tpq_result_t& res, std::ofstream& of, std::string comment)
+    {
+      if (comment != "")
+	of << "## "<< comment << "\n";
+      of << "# tmatrix\n";
+      of << "# alphas betas eigenvalues\n";
+      auto alphas = res.tmatrix.diag();
+      auto betas = res.tmatrix.offdiag();
+      betas.push_back(0.);
+      auto eigs = res.eigenvalues;
+      assert(alphas.size() == betas.size());
+      assert(alphas.size() == eigs.size());
+      for (int i=0; i<alphas.size(); ++i)
+	of << std::setprecision(20)  
+	   << alphas(i) << " " << betas(i) << " " << eigs(i) << "\n"; 
+    }
 
-    // HubbardModel
-    using models::HubbardModel;
 
-    template
-    thermodynamics_tpq_result_t
-    thermodynamics_tpq<HubbardModel>
-    (const BondList& bondlist, const Couplings& couplings,
-     const std::vector<HubbardModel::qn_t>& qns,
-     const std::vector<double>& temperatures,
-     int seed, int iters, double precision, int neval);
 
-    template
-    void write_thermodynamics_tpq<HubbardModel::qn_t>
-    (const std::vector<HubbardModel::qn_t>& qns, 
-     const std::vector<double>& temperatures,
-     const thermodynamics_tpq_result_t& result,
-     std::string outfile);
+    template thermodynamics_tpq_result_t
+    thermodynamics_tpq<hydra::models::HubbardModelMPI<double, uint32>, 
+		       lila::VectorMPI<double>, lila::LoggerMPI>
+    (hydra::models::HubbardModelMPI<double, uint32>& model, 
+     lila::VectorMPI<double>& v0, std::vector<double> temperatures,
+     double mintemperature, double precision, int iters, 
+     lila::LoggerMPI& logger);
 
+
+      
   }
 }

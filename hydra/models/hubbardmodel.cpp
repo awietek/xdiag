@@ -7,61 +7,36 @@
 #include <hydra/utils/bitops.h>
 
 #include "hubbardmodel.h"
+#include "hubbardmodeldetail.h"
+
 
 namespace hydra { namespace models {
     
-    HubbardModel::HubbardModel(BondList bondlist, Couplings couplings,
-			       hilbertspaces::hubbard_qn qn)
+    template <class coeff_t>
+    HubbardModel<coeff_t>::HubbardModel
+    (BondList bondlist, Couplings couplings, hilbertspaces::hubbard_qn qn)
       : n_sites_(bondlist.n_sites()),
 	qn_(qn)
     {
       hilbertspaces::Hubbard<uint32> hs(n_sites_, qn_);
       dim_ = hs.size();
       
-      BondList hopping_list = bondlist.bonds_of_type("HUBBARDHOP");
-      for (auto bond : hopping_list)
-	if (couplings.defined(bond.coupling()))
-	  {
-	    int s1 = bond.sites()[0];
-	    int s2 = bond.sites()[1];
-	    hoppings_.push_back({s1, s2});
-	    assert( couplings.is_real(bond.coupling()) );
-	    hopping_amplitudes_.push_back(couplings.real(bond.coupling()));
-	  }
-
-      BondList interaction_list = bondlist.bonds_of_type("HUBBARDV");
-      for (auto bond : interaction_list)
-	if (couplings.defined(bond.coupling()))
-	  {
-	    int s1 = bond.sites()[0];
-	    int s2 = bond.sites()[1];
-	    interactions_.push_back({s1, s2});
-	    assert(couplings.is_real(bond.coupling()));
-	    interaction_strengths_.push_back(couplings.real(bond.coupling()));
-	  }
-
-      BondList onsites_list = bondlist.bonds_of_type("HUBBARDMU");
-      for (auto bond : onsites_list)
-	if (couplings.defined(bond.coupling()))
-	  {
-	    assert(bond.sites().size() == 1);
-	    int s1 = bond.sites()[0];
-	    onsites_.push_back(s1);
-	    assert( couplings.is_real(bond.coupling()) );
-	    onsites_potentials_.push_back(couplings.real(bond.coupling()));
-	  }
-
-      U_ = couplings.defined("U") ? couplings.real("U") : 0;	
+      hubbardmodeldetail::set_hubbard_terms<coeff_t>
+      (bondlist, couplings, hoppings_, hopping_amplitudes_,
+       currents_, current_amplitudes_, interactions_, interaction_strengths_,
+       onsites_, onsite_potentials_, U_);
     }
 
-    void HubbardModel::set_qn(hilbertspaces::hubbard_qn qn) 
+    template <class coeff_t>
+    void HubbardModel<coeff_t>::set_qn(hilbertspaces::hubbard_qn qn) 
     { 
       qn_ = qn; 
       hilbertspaces::Hubbard<uint32> hs(n_sites_, qn_);
       dim_ = hs.size();
     }
 
-    lila::Matrix<double> HubbardModel::matrix() const
+    template <class coeff_t>
+    lila::Matrix<coeff_t> HubbardModel<coeff_t>::matrix() const
     {
       using hilbertspaces::Spinhalf;
       using hilbertspaces::Hubbard;
@@ -75,7 +50,7 @@ namespace hydra { namespace models {
       Hubbard<uint32> hs(n_sites_, qn_);
       IndexHubbard<IndexTable<Spinhalf<uint32>, uint32>> indexing(hs);
       int dim = indexing.size();
-      lila::Matrix<double> hamilton(dim, dim);
+      lila::Matrix<coeff_t> hamilton(dim, dim);
       lila::Zeros(hamilton);
 
       // Apply Hubbard U term
@@ -115,7 +90,7 @@ namespace hydra { namespace models {
       int onsite_idx=0;
       for (auto site : onsites_)
 	{
-	  const double mu = onsites_potentials_[onsite_idx];
+	  const double mu = onsite_potentials_[onsite_idx];
 	  if (std::abs(mu) > 1e-14)
 	    {
 	      for (int idx : range<>(indexing.size()))
@@ -135,7 +110,7 @@ namespace hydra { namespace models {
 	{
 	  const int s1 = std::min(pair.first, pair.second); 
 	  const int s2 = std::max(pair.first, pair.second);
-	  const double t = hopping_amplitudes_[hopping_idx];
+	  const coeff_t t = hopping_amplitudes_[hopping_idx];
 	  const uint32 flipmask = ((uint32)1 << s1) | ((uint32)1 << s2);
 
 	  if (std::abs(t) > 1e-14)
@@ -179,9 +154,9 @@ namespace hydra { namespace models {
       return hamilton;
     }
 
-
-    void HubbardModel::apply_hamiltonian
-    (const lila::Vector<double>& in_vec, lila::Vector<double>& out_vec) const
+    template <class coeff_t>
+    void HubbardModel<coeff_t>::apply_hamiltonian
+    (const lila::Vector<coeff_t>& in_vec, lila::Vector<coeff_t>& out_vec) const
     {
       using hilbertspaces::Spinhalf;
       using hilbertspaces::Hubbard;
@@ -238,7 +213,7 @@ namespace hydra { namespace models {
       int onsite_idx=0;
       for (auto site : onsites_)
 	{
-	  const double mu = onsites_potentials_[onsite_idx];
+	  const double mu = onsite_potentials_[onsite_idx];
 	  if (std::abs(mu) > 1e-14)
 	    {
 	      for (int idx : range<>(indexing.size()))
@@ -259,7 +234,7 @@ namespace hydra { namespace models {
 	{
 	  const int s1 = std::min(pair.first, pair.second); 
 	  const int s2 = std::max(pair.first, pair.second);
-	  const double t = hopping_amplitudes_[hopping_idx];
+	  const coeff_t t = hopping_amplitudes_[hopping_idx];
 	  const uint32 flipmask = ((uint32)1 << s1) | ((uint32)1 << s2);
 	  for (int idx : range<>(indexing.size()))
 	    {
@@ -295,9 +270,10 @@ namespace hydra { namespace models {
 	}  // loop over hoppings
     }
 
-    hilbertspaces::hubbard_qn HubbardModel::apply_fermion
-    (const lila::Vector<double>& state_before, 
-     lila::Vector<double>& state_after, 
+    template <class coeff_t>
+    hilbertspaces::hubbard_qn HubbardModel<coeff_t>::apply_fermion
+    (const lila::Vector<coeff_t>& state_before, 
+     lila::Vector<coeff_t>& state_after, 
      std::string type, int site) 
       const
     {
@@ -411,7 +387,7 @@ namespace hydra { namespace models {
       return qn_after;
     }
     
-    
-    
+    template class HubbardModel<double>;
+    template class HubbardModel<complex>;    
   }
 }
