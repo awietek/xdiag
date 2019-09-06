@@ -1,5 +1,5 @@
 #ifndef HYDRA_TYPEDEFS_H_
-#define HYRDA_TYPEDEFS_H_
+#define HYDRA_TYPEDEFS_H_
 
 #include <complex>
 

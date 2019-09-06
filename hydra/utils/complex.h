@@ -1,5 +1,5 @@
 #ifndef HYDRA_COMPLEX_H_
-#define HYRDA_COMPLEX_H_
+#define HYDRA_COMPLEX_H_
 
 #include <lila/all.h>
 #include "typedefs.h"
