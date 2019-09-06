@@ -1,18 +1,27 @@
 srcdir = hydra
 appdir = hydra/applications
 tstdir = test
+arch = osx
+
+ifeq ($(arch), flatiron_linux)
+	lapack        = -llapack -lblas
+	lapack        = -lmkl_rt -DLILA_USE_MKL	
+	lila_dir =/mnt/home/awietek/Research/Software/lila
+	clara_dir=/mnt/home/awietek/Research/Software/Clara/include
+endif
+ifeq ($(arch), osx)
+	lapack        = -framework accelerate
+	lila_dir =/Users/awietek/Research/Software/lila
+	clara_dir=/Users/awietek/Research/Software/Clara/include
+endif
 
 modules = hilbertspaces utils indexing models operators symmetries dynamics thermodynamics
 apps=heisenberged spinlessfermioned hubbarddynamicsmpi hubbardopticalmpi hubbardthermo hubbardthermotpq #hubbarded   heisenbergthermo hubbarddynamics  
 
-lila_dir = /mnt/home/awietek/Research/Software/lila
-clara_dir=/mnt/home/awietek/Research/Software/Clara/include
 
 CC         = mpicxx
 CCOPT         = -O3 
 CCARCH        = -std=c++11 -Wall -pedantic -m64
-lapack        = -llapack -lblas
-lapack        = -lmkl_rt -DLILA_USE_MKL
 programs     :=
 mpiprograms  :=
 sources      :=
