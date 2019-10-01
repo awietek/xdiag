@@ -1,7 +1,7 @@
 srcdir = hydra
 appdir = hydra/applications
 tstdir = test
-arch = osx
+arch = flatiron_linux
 
 ifeq ($(arch), flatiron_linux)
 	lapack        = -llapack -lblas
