@@ -39,8 +39,7 @@ int main(int argc, char* argv[])
   MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
   MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
 
-
-  // Get input parameters
+  // Parse input
   std::string outfile;
   std::string latticefile;
   std::string couplingfile;
@@ -52,17 +51,17 @@ int main(int argc, char* argv[])
   double dynprecision = 1e-12;
   int dyniters = 1000;
   int verbosity = 1;
-  int lobpcgbands = 1;
   int seed = 0;
-  double temperature = 0;
+  std::string method = "canonical";
+  int lobpcgbands = 1;
+  double temperature = 1;
 
-  parse_cmdline(outfile, latticefile, couplingfile, corrfile, nup, ndown, precision, 
-		iters, dynprecision, dyniters, verbosity, lobpcgbands, seed, temperature, 
-		argc, argv);
+  parse_cmdline(outfile, latticefile, couplingfile, corrfile, nup, ndown,
+		precision, iters, dynprecision, dyniters, verbosity, seed,
+		method, lobpcgbands, temperature, argc, argv);
 
   if ((verbosity >= 1) && (mpi_rank == 0))  
     printf("Using %d MPI tasks\n", mpi_size);
-
 
   // Open outfile
   std::ofstream of;
@@ -120,7 +119,7 @@ int main(int argc, char* argv[])
 	      MPI_Abort(MPI_COMM_WORLD, 3);
 	    }
     }  
-  BondList curr_bondlist = read_bondlist(latticefile);
+  BondList curr_bondlist = read_bondlist(corrfile);
   
 
   // Create infrastructure for Hubbard model
@@ -138,7 +137,14 @@ int main(int argc, char* argv[])
     printf("Creating current operator for n_upspins=%d, n_downspins=%d...\n",
 	   qn.n_upspins, qn.n_downspins);
   t1 = MPI_Wtime();
-  auto current = HubbardModelMPI<complex,uint32>(curr_bondlist, couplings, qn);
+  for (auto bond : curr_bondlist)
+    if ((verbosity >= 1) && (mpi_rank == 0))
+      printf("curr %s %d %d\n", bond.coupling().c_str(), 
+	     bond.sites()[0], bond.sites()[1]);
+
+  Couplings curr_couplings;
+  curr_couplings["C"] = 1;
+  auto current = HubbardModelMPI<complex,uint32>(curr_bondlist, curr_couplings, qn);
   t2 = MPI_Wtime();
   if ((verbosity >= 1) && (mpi_rank == 0))
     printf("time curr init: %3.4f\n", t2-t1); 
@@ -147,8 +153,9 @@ int main(int argc, char* argv[])
   // Get the TPQ / ground state
   if ((verbosity >= 1) && (mpi_rank == 0))
     printf("Starting TPQ / ground state Lanczos procedure ...\n");
-  int random_seed = 42 + 1234567*mpi_rank;
+  int random_seed = seed + 1234567*mpi_rank;
 
+  // Define multiplication function
   auto multiply = [&model, &mpi_rank, &verbosity](const VectorMPI<complex>& v, 
 				      VectorMPI<complex>& w) {
     static int iter=0;
@@ -167,123 +174,145 @@ int main(int argc, char* argv[])
   MPI_Barrier(MPI_COMM_WORLD);
 
   uint64 local_dim = model.local_dim();
-  VectorMPI<complex> groundstate(local_dim);
+  VectorMPI<complex> tpqstate(local_dim);
   Vector<double> eigs;
-  normal_dist_t<complex> dist(1., 0.);
+  normal_dist_t<complex> dist(0., 1.);
   normal_gen_t<complex> gen(dist, random_seed);
-
-  // Get the groundstate 
-  if (temperature == 0)
+  
+  // Get the tpqstate
+  double e0 = 0;
+  double measured_temperature = 0;
+  if (method == "groundstate")
     {
-      // Lanczos algorithm for ground state (unstable)
-      if (lobpcgbands == 0)
+      if ((verbosity >= 1) && (mpi_rank == 0))
 	{
-	  if ((verbosity >= 1) && (mpi_rank == 0))
-	    printf("Using Lanczos algorithm for ground state calculation\n");
-	  
-	  auto res = LanczosEigenvectors(multiply, groundstate, gen, true, precision, {0}, "Ritz");
-	  groundstate = res.vectors[0];
+	  printf("Using LOBPCG algorithm for ground state calculation\n");
+	  printf("Using %d bands\n", lobpcgbands);
 	}
-
-      // LOBPCG algorithm for ground state (prefered)
-      else
+      std::vector<VectorMPI<complex>> vs;
+      for (int i=0; i<lobpcgbands; ++i)
 	{
-	  if ((verbosity >= 1) && (mpi_rank == 0))
-	    {
-	      printf("Using LOBPCG algorithm for ground state calculation\n");
-	      printf("Using %d bands\n", lobpcgbands);
-	    }
-	  std::vector<VectorMPI<complex>> vs;
-	  for (int i=0; i<lobpcgbands; ++i)
-	    {
-	      VectorMPI<complex> v(local_dim);
-	      Random(v, gen);
-	      vs.push_back(v);
-	    }
-	  auto res = Lobpcg(multiply, vs, precision, iters);
-	  eigs = res.eigenvalues;
-	  groundstate = res.eigenvectors[0];
+	  VectorMPI<complex> v(local_dim);
+	  Random(v, gen);
+	  vs.push_back(v);
 	}
+      auto res = Lobpcg(multiply, vs, precision, iters);
+      eigs = res.eigenvalues;
+      tpqstate = res.eigenvectors[0];
+      e0 = eigs(0);
+      measured_temperature = 0;
     }
-  // Get the TPQ state
-  else 
+  // Get the canonical TPQ state
+  else if (method == "canonical") 
     {
+      if ((verbosity >= 1) && (mpi_rank == 0))
+	printf("Using Lanczos algorithm for canonical TPQ state\n");
+
       double beta = 1. / temperature;
-      Random(groundstate, gen);
-      ExpSymVInplace(multiply, groundstate, -beta, precision);  // TODO: get gse
+      Random(tpqstate, gen);
+      e0 = ExpSymVInplace(multiply, tpqstate, -beta / 2., precision, true);
+      measured_temperature = temperature;
+    }
+  // Get the microcanonical TPQ state
+  else if (method == "microcanonical") 
+    {
+      if ((verbosity >= 1) && (mpi_rank == 0))
+	printf("Using Lanczos algorithm for microcanonical TPQ state\n");
+
+      // First run for Tmatrix
+      Random(tpqstate, gen, false);  // do not alter the generator
+      int n_eigenvalue = 0;
+      auto res_first = 
+	LanczosEigenvalues(multiply, tpqstate, precision, n_eigenvalue, "Ritz");
+      // Define fixed iterations convergence criterion
+      int n_iterations = res_first.tmatrix.size();
+      auto converged = 
+	[n_iterations](const lila::Tmatrix<double>& tmat, double beta) {
+	  (void)beta;
+	  return LanczosConvergedFixed(tmat, n_iterations);
+	};
+    
+      // Prepare linear combinations
+      int n_eigenvector = (int)temperature;
+      auto evecs = Eigen(res_first.tmatrix).eigenvectors;
+      std::vector<Vector<complex>> linear_combinations;
+      Vector<complex> evc(n_iterations);
+      for (int i=0; i<n_iterations; ++i)
+	evc(i) = (complex)evecs(i, n_eigenvector);
+      linear_combinations.push_back(evc);
+      // reset initial vector and rerun with linear combination
+      Random(tpqstate, gen, true);
+      auto res = Lanczos(multiply, tpqstate, converged, linear_combinations);
+      eigs = res.eigenvalues;
+      tpqstate = res.vectors[0];
+      e0 = eigs(0);
+      measured_temperature = 1.23;
     }
 
-  double norm = lila::real(Dot(groundstate, groundstate));
-  groundstate /= (complex)sqrt(norm);
+  double norm = lila::real(Dot(tpqstate, tpqstate));
+  tpqstate /= (complex)sqrt(norm);
   if ((verbosity >= 1) && (mpi_rank == 0)) printf("Done\n");
 
-  // Debug start
-  auto w = groundstate;
-  multiply(groundstate, w);
-  double e0 = lila::real(Dot(w, groundstate));
+  auto w = tpqstate;
+  multiply(tpqstate, w);
+  double energy = lila::real(Dot(w, tpqstate));
+  double energy2 = lila::real(Dot(w, w));
+  double delta_e = energy2 - energy*energy;
+  auto startstate = tpqstate;
+  current.apply_hamiltonian(tpqstate, startstate);
+  double weight = lila::Norm(startstate);
+
   if (mpi_rank == 0)
     {
-      printf("eig0: %.17g\n", eigs(0));
-      printf("norm: %.17g, e0: %.17g\n", norm, e0);
-      // if (!(std::abs(norm - 1) < 1e-12))
-      // 	{
-      // 	  for (auto a : lzs.alphas())
-      // 	    printf("%.17g, ", a);
-      // 	  printf("\n");
-      // 	  for (auto a : lzs.betas())
-      // 	    printf("%.17g, ", a);
-      // 	  printf("\n");
-      // 	}
+      printf("norm: %.17g, e0: %.17g, e: %.17g, delta_e: %.17g, weight: %.17g\n",
+	     norm, e0, energy, delta_e, weight);
     }
-  // Debug end
-
   
-  // Write gs energy to outfile
+  // Write energies and weight to outfile
   if (outfile != "")
     {
       if (mpi_rank == 0)
 	{
 	  std::stringstream line;
 	  line << std::setprecision(20);
-	  line << "# gs energy: " << eigs(0) << "\n";
+	  line << "# weight: " << weight << "\n";
+	  line << "# energy: " << energy << "\n";
+	  line << "# temperature: " << measured_temperature << "\n";
+	  line << "# gs energy: " << e0 << "\n";
 	  of << line.str();
 	  line.str("");
 	}
     }
-
   
-  // for (auto corr : correlation_list)
+  int num_eigenvalue = 1;
+  auto lczs_res = LanczosEigenvalues(multiply, startstate, dynprecision, 
+				     num_eigenvalue, "Eigenvalues");
 
-  //   int s1 = corr.first;
-  // int s2 = corr.second;
-  // auto res = hydra::hubbard_dynamical_iterations_lanczos_mpi
-  //   (model, groundstate, s1, s2, ftype, dyniters, dynprecision, verbosity);
+  auto eigenvalues = lczs_res.eigenvalues;
+  auto alphas = lczs_res.tmatrix.diag();
+  auto betas = lczs_res.tmatrix.offdiag();
+  if (mpi_rank==0)
+    {
+      LilaPrint(eigenvalues);
+      LilaPrint(alphas);
+      LilaPrint(betas);
+    }
 
-  // // Write to outfile
-  // if (mpi_rank == 0)
-  //   {
-  //     std::stringstream line;
-
-  //     line << "# weight: " << std::setprecision(20) 
-  // 	   << res.dyn_weight << "\n";
-  //     line << "# alphas betas\n";
-  //     of << line.str();
-  //     line.str("");
-
-  //     auto alphas = res.alphas;
-  //     auto betas = res.betas;
-  //     assert(alphas.size() == betas.size());
-  //     for (int idx = 0; idx < alphas.size(); ++idx)
-  // 	{
-  // 	  line << std::setprecision(20)
-  // 	       << alphas(idx) << " " << betas(idx) << "\n";
-  // 	  of << line.str();
-  // 	  line.str("");
-  // 	}
-
-  //   }
-// }  // algorithm lanczos
-
-MPI_Finalize();
+   if (outfile != "")
+    {
+      if (mpi_rank == 0)
+	{
+	  std::stringstream line;
+	  line << std::setprecision(20);
+	  line << "# alphas betas eigenvalues\n";
+	  betas.push_back(0.);
+	  for (int i=0; i<alphas.size(); ++i)
+	    line << alphas(i) << " " << betas(i) << " " << eigenvalues(i) << "\n";
+	  of << line.str();
+	  line.str("");
+	}
+    }
+   
+  MPI_Finalize();
   return EXIT_SUCCESS;
 }

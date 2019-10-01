@@ -19,7 +19,7 @@ namespace hydra { namespace models {
     {
       MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank_);
       MPI_Comm_size(MPI_COMM_WORLD, &mpi_size_);
-
+     
       hubbardmodeldetail::set_hubbard_terms<coeff_t>
       (bondlist, couplings, hoppings_, hopping_amplitudes_,
        currents_, current_amplitudes_, interactions_, interaction_strengths_,
@@ -189,6 +189,9 @@ namespace hydra { namespace models {
 	  const int s2 = std::max(pair.first, pair.second);
 	  const coeff_t t = current_amplitudes_[current_idx];
 	  const uint32 flipmask = ((uint32)1 << s1) | ((uint32)1 << s2);
+	  printf("down p1: %d, p2: %d, s1: %d, s2: %d\n",
+	  	 pair.first, pair.second, s1, s2);
+			  
 	  if (std::abs(t) > 1e-14)
 	    {
 	      // Loop over all configurations
@@ -204,13 +207,16 @@ namespace hydra { namespace models {
 		      if (((downspins & flipmask) != 0) && 
 			  ((downspins & flipmask) != flipmask))
 			{
-			  double fermi = 
-			    popcnt(gbits(downspins, s2-s1-1, s1+0)) % 2==0 ? 1. : -1.;
-			  // minus sign in current op ->       ^^ 
+			  double fermi =
+			    popcnt(gbits(downspins, s2-s1-1, s1+1)) % 2==0 ? 1. : -1.;
+			  double dir = gbit(downspins, pair.first) ? 1. : -1.;  // use pair, not s1 s2
+			  // printf("down p1: %d, p2: %d, s1: %d, s2: %d, v1: %d, v2: %d, dir: %f\n",
+			  // 	 pair.first, pair.second, s1, s2, gbit(downspins, pair.first), gbit(downspins, pair.second), dir);
+			  
 			  uint64 idx = upspin_offset + downspin_offset;
 			  state_t new_downspins = downspins ^ flipmask;
 			  uint64 new_idx = upspin_offset + indexing_downspins_.index(new_downspins);
-			  out_vec.vector_local()(new_idx) -= fermi * t * in_vec.vector_local()(idx);
+			  out_vec.vector_local()(new_idx) -= fermi * dir * t * in_vec.vector_local()(idx);
 			}
 
 		      ++downspin_offset;
@@ -450,6 +456,8 @@ namespace hydra { namespace models {
 	  const int s2 = std::max(pair.first, pair.second);
 	  const coeff_t t = current_amplitudes_[current_idx];
 	  const uint32 flipmask = ((uint32)1 << s1) | ((uint32)1 << s2);
+	  printf("up p1: %d, p2: %d, s1: %d, s2: %d\n",
+	  	 pair.first, pair.second, s1, s2);
 	  if (std::abs(t) > 1e-14)
 	    {
 	      // Loop over all configurations
@@ -464,14 +472,15 @@ namespace hydra { namespace models {
 		      if (((upspins & flipmask) != 0) && 
 			  ((upspins & flipmask) != flipmask))
 			{
-			  double fermi = 
-			    popcnt(gbits(upspins, s2-s1-1, s1+0)) % 2==0 ? 1. : -1.;
-			  // minus sign in current op ->     ^^ 
-
+			  double fermi = popcnt(gbits(upspins, s2-s1-1, s1+1)) % 2==0 ? 1. : -1.;
+			  double dir = gbit(upspins, pair.first) ? 1. : -1.;  // use pair, not s1 s2
+			  // printf("up p1: %d, p2: %d, s1: %d, s2: %d, v1: %d, v2: %d, dir: %f\n",
+			  // 	 pair.first, pair.second, s1, s2, gbit(upspins, pair.first), gbit(upspins, pair.second), dir);
+			  
 			  uint64 idx = upspin_offset + downspin_offset;
 			  state_t new_upspins = upspins ^ flipmask;
 			  uint64 new_idx = downspin_offset + indexing_upspins_.index(new_upspins);
-			  recv_buffer_[new_idx] -= fermi * t * send_buffer_[idx];
+			  recv_buffer_[new_idx] -= fermi * dir * t * send_buffer_[idx];
 			}
 
 		      ++upspin_offset;
@@ -812,8 +821,10 @@ namespace hydra { namespace models {
     template <class coeff_t, class state_t>
     void HubbardModelMPI<coeff_t, state_t>::initialize()
     {
+
       hs_upspins_ = Spinhalf<state_t>(n_sites_, qn_.n_upspins);
       hs_downspins_ = Spinhalf<state_t>(n_sites_, qn_.n_downspins);
+      
       indexing_upspins_= IndexTable<Spinhalf<state_t>, uint64>(hs_upspins_);
       indexing_downspins_ = IndexTable<Spinhalf<state_t>, uint64>(hs_downspins_);
 
@@ -850,7 +861,7 @@ namespace hydra { namespace models {
       buffer_size_ = 0;
       send_buffer_.clear();
       recv_buffer_.clear();
-
+ 
       // Collect all upspin configurations belonging to this mpi_rank
       uint64 offset = 0;
       for (auto state : hs_upspins_)
@@ -966,7 +977,6 @@ namespace hydra { namespace models {
       upspins_i_send_forward_.clear();
       downspins_i_send_forward_.shrink_to_fit();
       upspins_i_send_forward_.shrink_to_fit();
-
 
       // // Print forward communication patterns
       // MPI_Barrier(MPI_COMM_WORLD);

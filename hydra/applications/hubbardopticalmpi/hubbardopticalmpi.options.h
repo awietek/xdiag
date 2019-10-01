@@ -4,8 +4,12 @@
 #include <mpi.h>
 #include "clara.hpp"
 
-
-void parse_cmdline(std::string& outfile, std::string& latticefile, std::string& couplingfile, std::string& corrfile, int& nup, int& ndown, double& precision, int& iters, double& dynprecision, int& dyniters, int& verbosity, int& lobpcgbands, int& seed, double& temperature, int& argc, char** argv)
+void parse_cmdline(std::string& outfile, std::string& latticefile,
+		   std::string& couplingfile, std::string& corrfile,
+		   int& nup, int& ndown, double& precision, int& iters,
+		   double& dynprecision, int& dyniters, int& verbosity,
+		   int& seed, std::string& method, int& lobpcgbands,
+		   double& temperature, int& argc, char** argv)
 {
   int mpi_rank;
   MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
@@ -23,8 +27,9 @@ void parse_cmdline(std::string& outfile, std::string& latticefile, std::string& 
     clara::Opt(dynprecision, "dynprecision")["-q"]["--dynprecision"]("precision of dynamical Lanczos procedure (optional, default 1e-12)") |
     clara::Opt(dyniters, "dyniters")["-j"]["--dyniters"]("maximum number of dynamical Lanczos iterations performed (optional, default 1000)") |
     clara::Opt(verbosity, "verbosity")["-v"]["--verbosity"]("verbosity level, one of 0, 1 ,2 (optional, default 1)") |
-    clara::Opt(lobpcgbands, "lobpcgbands")["-b"]["--lobpcgbands"]("number of lobpcg bands for ground state search") |
     clara::Opt(seed, "seed")["-s"]["--seed"]("random seed") |
+    clara::Opt(method, "method")["-m"]["--method"]("method to use (canonical, microcanonical, groundstate)") |
+    clara::Opt(lobpcgbands, "lobpcgbands")["-b"]["--lobpcgbands"]("number of lobpcg bands for ground state search") |
     clara::Opt(temperature, "temperature")["-T"]["--temperature"]("temperature to evaluate TPQ state, if 0, ground state is computed") |
     clara::Help(showhelp);
 
@@ -56,8 +61,9 @@ void parse_cmdline(std::string& outfile, std::string& latticefile, std::string& 
 	    "dynprecision: " << dynprecision << std::endl <<
 	    "dyniters    : " << dyniters << std::endl <<
 	    "verbosity   : " << verbosity << std::endl <<
-	    "lobpcgbands : " << lobpcgbands << std::endl <<
 	    "seed        : " << seed << std::endl <<
+	    "method      : " << method << std::endl <<
+	    "lobpcgbands : " << lobpcgbands << std::endl <<
 	    "temperature : " << temperature << std::endl <<
 	    "-----" << std::endl;
 	}
