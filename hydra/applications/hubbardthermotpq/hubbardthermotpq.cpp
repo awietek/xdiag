@@ -69,8 +69,15 @@ int main(int argc, char* argv[])
     }
   else if (ensemble == "grandcanonical")
     {
-      loggermpi.err("grandcanonical not implemented yet!");
-      MPI_Abort(MPI_COMM_WORLD, 1);
+      if (np < 0) np = n_sites;
+      for (int nup=0; nup<=n_sites; ++nup)
+	for (int ndown=0; ndown<=n_sites; ++ndown)
+	  {
+	    qns.push_back({nup, ndown});
+	  }
+      for (int i=0; i<n_sites; ++i)
+	bondlist << Bond("HUBBARDMU", "MU", {i});
+      couplings["MU"] = mu;
     }
 
   // HOld results for all temperatures and quantum numbers

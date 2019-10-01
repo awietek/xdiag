@@ -9,6 +9,7 @@ Opt int iters 1000 i iters iters "maximum number of ground state Lanczos iterati
 Opt double dynprecision 1e-12 q dynprecision dynprecision "precision of dynamical Lanczos procedure (optional, default 1e-12)"
 Opt int dyniters 1000 j dyniters dyniters "maximum number of dynamical Lanczos iterations performed (optional, default 1000)"
 Opt int verbosity 1 v verbosity verbosity "verbosity level, one of 0, 1 ,2 (optional, default 1)"
-Opt int lobpcgbands 1 b lobpcgbands lobpcgbands "number of lobpcg bands for ground state search"
 Opt int seed 0 s seed seed "random seed"
+Opt std::string method "canonical" m method method "method to use (canonical, microcanonical, groundstate)"
+Opt int lobpcgbands 1 b lobpcgbands lobpcgbands "number of lobpcg bands for ground state search"
 Opt double temperature 0 T temperature temperature "temperature to evaluate TPQ state, if 0, ground state is computed"

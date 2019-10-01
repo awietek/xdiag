@@ -11,6 +11,7 @@ namespace hydra { namespace indexing {
     {
       states_.clear();
       index_t idx = 0;
+
       for (auto state : hilbertspace)
 	{
 	  states_.push_back(state);
