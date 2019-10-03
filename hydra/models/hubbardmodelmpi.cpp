@@ -189,8 +189,8 @@ namespace hydra { namespace models {
 	  const int s2 = std::max(pair.first, pair.second);
 	  const coeff_t t = current_amplitudes_[current_idx];
 	  const uint32 flipmask = ((uint32)1 << s1) | ((uint32)1 << s2);
-	  printf("down p1: %d, p2: %d, s1: %d, s2: %d\n",
-	  	 pair.first, pair.second, s1, s2);
+	  // printf("down p1: %d, p2: %d, s1: %d, s2: %d\n",
+	  // 	 pair.first, pair.second, s1, s2);
 			  
 	  if (std::abs(t) > 1e-14)
 	    {
@@ -228,7 +228,7 @@ namespace hydra { namespace models {
 	}  // hopping on downspin
 
       t2 = MPI_Wtime();
-      if ((mpi_rank_ == 0) && verbose) printf("  down: %3.4f\n", t2-t1); 
+      // if ((mpi_rank_ == 0) && verbose) printf("  down: %3.4f\n", t2-t1); 
 
 
       //
@@ -456,8 +456,8 @@ namespace hydra { namespace models {
 	  const int s2 = std::max(pair.first, pair.second);
 	  const coeff_t t = current_amplitudes_[current_idx];
 	  const uint32 flipmask = ((uint32)1 << s1) | ((uint32)1 << s2);
-	  printf("up p1: %d, p2: %d, s1: %d, s2: %d\n",
-	  	 pair.first, pair.second, s1, s2);
+	  // printf("up p1: %d, p2: %d, s1: %d, s2: %d\n",
+	  // 	 pair.first, pair.second, s1, s2);
 	  if (std::abs(t) > 1e-14)
 	    {
 	      // Loop over all configurations
@@ -492,7 +492,7 @@ namespace hydra { namespace models {
 	}  // current on upspins
 
       t2 = MPI_Wtime();
-      if ((mpi_rank_ == 0) && verbose) printf("  up:   %3.4f\n", t2-t1); 
+      // if ((mpi_rank_ == 0) && verbose) printf("  up:   %3.4f\n", t2-t1); 
 	
 
 
