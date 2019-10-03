@@ -9,6 +9,12 @@ ifeq ($(arch), flatiron_linux)
 	lila_dir =/mnt/home/awietek/Research/Software/lila
 	clara_dir=/mnt/home/awietek/Research/Software/Clara/include
 endif
+ifeq ($(arch), flatiron_gordon)
+	lapack        = -llapack -lblas
+	lapack        = -lmkl_rt -DLILA_USE_MKL	
+	lila_dir =/home/awietek/Research/Software/lila
+	clara_dir=/home/awietek/Research/Software/Clara/include
+endif
 ifeq ($(arch), osx)
 	lapack        = -framework accelerate
 	lila_dir =/Users/awietek/Research/Software/lila
