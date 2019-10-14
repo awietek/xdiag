@@ -48,8 +48,10 @@ int main(int argc, char* argv[])
   int iters = 100;
   int verbosity = 1;
   int seed = 1;
+  bool kinetic = false;
 
-  parse_cmdline(outfile, latticefile, couplingfile, corrfile, nup, ndown, iters, verbosity, seed, argc, argv);
+  parse_cmdline(outfile, latticefile, couplingfile, corrfile, nup, ndown, 
+		iters, verbosity, seed, kinetic, argc, argv);
 
 
   if ((verbosity >= 1) && (mpi_rank == 0))  
@@ -226,7 +228,7 @@ int main(int argc, char* argv[])
     }
 
 
-  // Compute overlap with start vectors
+  // Compute current operator matrix
   Matrix<complex> psis_A_psis_tilde(iters, iters);
   for (int i=0; i<iters; ++i)
     {
@@ -237,6 +239,30 @@ int main(int argc, char* argv[])
 	
       for (int j=0; j<iters; ++j)
 	  psis_A_psis_tilde(i,j) = Dot(tmp, psis_tilde[j]);
+    }
+
+
+  // Compute kinetic energy matrix
+  Matrix<complex> psis_T_psis(iters, iters);
+  if (kinetic)
+    {
+      Couplings kin_couplings;
+      kin_couplings["T"] = 1.;
+      kin_couplings["U"] = 0.;
+      kin_couplings["C"] = 0.;
+      auto kinetic_op = HubbardModelMPI<complex,uint32>(hopping_list, kin_couplings, qn);
+  
+
+      for (int i=0; i<iters; ++i)
+	{
+	  auto tmp = psis[i];
+	  kinetic_op.apply_hamiltonian(psis[i], tmp);
+	  if (mpi_rank == 0)
+	    printf("computing kinetic matrix line %d\n", i); 
+	
+	  for (int j=0; j<iters; ++j)
+	    psis_T_psis(i,j) = Dot(tmp, psis[j]);
+	}
     }
 
    if (outfile != "")
@@ -284,6 +310,38 @@ int main(int argc, char* argv[])
 		}
 	      ofmat << line.str();
 	      line.str("");
+	    }
+
+
+	  // Write kinetic matrix
+	  if (kinetic)
+	    {
+	      std::ofstream ofkinmat;
+	      ofkinmat.open(outfile + std::string(".kinetic.matrix"), std::ios::out);
+	      if(ofkinmat.fail()) 
+		{
+		  if (mpi_rank == 0)
+		    {
+		      std::cerr << "Error in opening matrix outfile: " 
+				<< "Could not open file with filename ["
+				<< outfile << "] given. Abort." << std::endl;
+		      MPI_Abort(MPI_COMM_WORLD, 1);
+		    }
+		}
+	      else
+		{
+		  std::stringstream line;
+		  line << std::setprecision(20);
+		  for (auto i : psis_T_psis.rows())
+		    {
+		      for (auto j : psis_T_psis.cols())
+			line << std::real(psis_T_psis(i,j)) << "+"
+			     << std::imag(psis_T_psis(i,j)) << "j ";
+		      line << "\n";
+		    }
+		  ofkinmat << line.str();
+		  line.str("");
+		}
 	    }
 
 	}

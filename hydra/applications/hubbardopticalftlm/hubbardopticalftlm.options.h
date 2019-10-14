@@ -4,7 +4,7 @@
 #include <mpi.h>
 #include "clara.hpp"
 
-void parse_cmdline(std::string& outfile, std::string& latticefile, std::string& couplingfile, std::string& corrfile, int& nup, int& ndown, int& iters, int& verbosity, int& seed, int& argc, char** argv)
+void parse_cmdline(std::string& outfile, std::string& latticefile, std::string& couplingfile, std::string& corrfile, int& nup, int& ndown, int& iters, int& verbosity, int& seed, bool& kinetic, int& argc, char** argv)
   {
 
   int mpi_rank;
@@ -21,6 +21,7 @@ void parse_cmdline(std::string& outfile, std::string& latticefile, std::string& 
     clara::Opt(iters, "iters")["-i"]["--iters"]("maximum number of ground state Lanczos iterations performed (optional, default 1000)") |
     clara::Opt(verbosity, "verbosity")["-v"]["--verbosity"]("verbosity level, one of 0, 1 ,2 (optional, default 1)") |
     clara::Opt(seed, "seed")["-s"]["--seed"]("random seed") |
+    clara::Opt(kinetic)["-k"]["--kinetic"]("flag to measure kinetic energy") |
     clara::Help(showhelp);
 
 
@@ -49,6 +50,7 @@ void parse_cmdline(std::string& outfile, std::string& latticefile, std::string& 
 	    "iters       : " << iters << std::endl <<
 	    "verbosity   : " << verbosity << std::endl <<
 	    "seed        : " << seed << std::endl <<
+	    "kinetic     : " << kinetic << std::endl <<
 	    "-----" << std::endl;
 	}
     }

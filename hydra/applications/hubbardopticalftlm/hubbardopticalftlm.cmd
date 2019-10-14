@@ -7,3 +7,4 @@ Opt int ndown -1 d ndown ndown "number of down electrons (optional, default half
 Opt int iters 100 i iters iters "maximum number of ground state Lanczos iterations performed (optional, default 1000)"
 Opt int verbosity 1 v verbosity verbosity "verbosity level, one of 0, 1 ,2 (optional, default 1)"
 Opt int seed 1 s seed seed "random seed"
+Flag kinetic k kinetic kinetic "flag to measure kinetic energy"
