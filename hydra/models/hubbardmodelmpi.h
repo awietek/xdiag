@@ -60,6 +60,11 @@ namespace hydra { namespace models {
       int n_sites() const { return n_sites_; }
       uint64 local_dim() const { return local_dim_; }
       uint64 dim() const { return dim_; }
+      int64 index(state_t upspins, state_t downspins)
+      { 
+	return mpi_rank_of_spins(upspins)==mpi_rank_ ? 
+	  my_upspins_offset_[upspins] + indexing_downspins_.index(downspins) : -1;
+      }
 
     private:     
 
