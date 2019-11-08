@@ -105,14 +105,14 @@ int main(int argc, char* argv[])
     printf("Creating Hubbard model for n_upspins=%d, n_downspins=%d...\n",
 	   qn.n_upspins, qn.n_downspins);
   double t1 = MPI_Wtime();
-  auto model = HubbardModelMPI<complex,uint32>(bondlist, couplings, qn);
+  auto model = HubbardModelMPI<double,uint32>(bondlist, couplings, qn);
   double t2 = MPI_Wtime();
   if ((verbosity >= 1) && (mpi_rank == 0))
     printf("time init: %3.4f\n", t2-t1); 
 
   // Define multiplication function
-  auto multiply_hamiltonian = [&model, &mpi_rank, &verbosity](const VectorMPI<complex>& v, 
-							      VectorMPI<complex>& w) {
+  auto multiply_hamiltonian = [&model, &mpi_rank, &verbosity](const VectorMPI<double>& v, 
+							      VectorMPI<double>& w) {
     static int iter=0;
     double t1 = MPI_Wtime();
     bool verbose = ((iter == 0) && verbosity >=1);
@@ -153,7 +153,7 @@ int main(int argc, char* argv[])
 
   Couplings curr_couplings;
   curr_couplings["C"] = 1;
-  auto current = HubbardModelMPI<complex,uint32>(curr_bondlist, curr_couplings, qn);
+  auto current = HubbardModelMPI<double,uint32>(curr_bondlist, curr_couplings, qn);
   t2 = MPI_Wtime();
   if ((verbosity >= 1) && (mpi_rank == 0))
     printf("time curr init: %3.4f\n", t2-t1); 
@@ -165,9 +165,9 @@ int main(int argc, char* argv[])
   // Create random start state
   int random_seed = seed + 1234567*mpi_rank;
   uint64 local_dim = model.local_dim();
-  VectorMPI<complex> startstate(local_dim);
-  normal_dist_t<complex> dist(0., 1.);
-  normal_gen_t<complex> gen(dist, random_seed);
+  VectorMPI<double> startstate(local_dim);
+  normal_dist_t<double> dist(0., 1.);
+  normal_gen_t<double> gen(dist, random_seed);
   Random(startstate, gen, true);
   Normalize(startstate);
   //
@@ -176,10 +176,11 @@ int main(int argc, char* argv[])
 
   //////////////////////////////////////////////////
   // Create random start state
-  VectorMPI<complex> currstartstate = startstate;
+  VectorMPI<double> currstartstate = startstate;
   current.apply_hamiltonian(startstate, currstartstate);
   //
   //////////////////////////////////////////////////
+
 
 
   //////////////////////////////////////////////////
@@ -190,13 +191,16 @@ int main(int argc, char* argv[])
     return LanczosConvergedFixed(tmat, iters);
   };
 
-  std::vector<Vector<complex>> linear_combinations;
+  std::vector<Vector<double>> linear_combinations;
   for (int i=0; i< iters; ++i)
     {
-      auto lin = Zeros<complex>(iters);
+      auto lin = Zeros<double>(iters);
       lin(i) = 1.;
       linear_combinations.push_back(lin);
     }
+
+  // Reset iters to reasonable size for small model dimension
+  iters = std::min(model.dim() / 8 + 5, (unsigned long)iters);
 
   auto v0 = startstate;
   auto start_res = Lanczos(multiply_hamiltonian, v0, converged, linear_combinations);
@@ -206,30 +210,33 @@ int main(int argc, char* argv[])
   auto& psis = start_res.vectors; 
 
   v0 = currstartstate;
-  Normalize(v0);
   auto current_start_res = Lanczos(multiply_hamiltonian, v0, converged, linear_combinations);
   auto alphas_psi_tilde = current_start_res.tmatrix.diag();
   auto betas_psi_tilde = current_start_res.tmatrix.offdiag();
   auto eigenvalues_psi_tilde = current_start_res.eigenvalues;
   auto& psis_tilde = current_start_res.vectors;
-  
+
+  iters = alphas_psi.size();
+  int iters_tilde = alphas_psi_tilde.size();
+
   // Compute overlap with start vectors
-  Vector<complex> psis_dot_r(iters);
-  Vector<complex> psis_tilde_dot_r(iters);
+  Vector<double> psis_dot_r(iters);
+  Vector<double> psis_tilde_dot_r(iters_tilde);
   for (int i=0; i<iters; ++i)
     {
       psis_dot_r(i) = Dot(startstate, psis[i]);
+      if (mpi_rank == 0)
+	printf("psis_dot_r(%d)= %.17g %.17g\n", i, std::real(psis_dot_r(i)), std::imag(psis_dot_r(i)));
+    }
+  for (int i=0; i<iters_tilde; ++i)
+    {
       psis_tilde_dot_r(i) = Dot(psis_tilde[i], currstartstate);
       if (mpi_rank == 0)
-	{
-	  printf("psis_dot_r(%d)= %.17g %.17g\n", i, std::real(psis_dot_r(i)), std::imag(psis_dot_r(i)));
-	  printf("psis_tilde_dot_r(%d)= %.17g %.17g\n\n", i, std::real(psis_tilde_dot_r(i)), std::imag(psis_tilde_dot_r(i)));
-	}
+	printf("psis_tilde_dot_r(%d)= %.17g %.17g\n\n", i, std::real(psis_tilde_dot_r(i)), std::imag(psis_tilde_dot_r(i)));
     }
 
-
   // Compute current operator matrix
-  Matrix<complex> psis_A_psis_tilde(iters, iters);
+  Matrix<double> psis_A_psis_tilde(iters, iters_tilde);
   for (int i=0; i<iters; ++i)
     {
       auto tmp = psis[i];
@@ -237,20 +244,20 @@ int main(int argc, char* argv[])
       if (mpi_rank == 0)
 	printf("computing matrix line %d\n", i); 
 	
-      for (int j=0; j<iters; ++j)
+      for (int j=0; j<iters_tilde; ++j)
 	  psis_A_psis_tilde(i,j) = Dot(tmp, psis_tilde[j]);
     }
 
 
   // Compute kinetic energy matrix
-  Matrix<complex> psis_T_psis(iters, iters);
+  Matrix<double> psis_T_psis(iters, iters);
   if (kinetic)
     {
       Couplings kin_couplings;
       kin_couplings["T"] = 1.;
       kin_couplings["U"] = 0.;
       kin_couplings["C"] = 0.;
-      auto kinetic_op = HubbardModelMPI<complex,uint32>(hopping_list, kin_couplings, qn);
+      auto kinetic_op = HubbardModelMPI<double,uint32>(hopping_list, kin_couplings, qn);
   
 
       for (int i=0; i<iters; ++i)
@@ -269,6 +276,17 @@ int main(int argc, char* argv[])
     {
       if (mpi_rank == 0)
 	{
+	  // Resize vectors for output
+	  int iters_max = std::max(iters, iters_tilde);
+	  alphas_psi.resize(iters_max);
+	  betas_psi.resize(iters_max);
+	  eigenvalues_psi.resize(iters_max);
+	  alphas_psi_tilde.resize(iters_max);
+	  betas_psi_tilde.resize(iters_max);
+	  eigenvalues_psi_tilde.resize(iters_max);
+	  psis_dot_r.resize(iters_max);
+	  psis_tilde_dot_r.resize(iters_max);
+
 	  std::stringstream line;
 	  line << std::setprecision(20);
 	  line << "# alphas_psi betas_psi eigenvalues_psi " 
@@ -276,7 +294,7 @@ int main(int argc, char* argv[])
 	       << "psis_dot_r psis_tilde_dot_r\n";
 	  betas_psi.push_back(0.);
 	  betas_psi_tilde.push_back(0.);
-	  for (int i=0; i<iters; ++i)
+	  for (int i=0; i<iters_max; ++i)
 	    line << alphas_psi(i) << " " << betas_psi(i) << " " << eigenvalues_psi(i) << " "
 		 << alphas_psi_tilde(i) << " " << betas_psi_tilde(i) << " " << eigenvalues_psi_tilde(i) << " "
 		 << std::real(psis_dot_r(i)) << "+" << std::imag(psis_dot_r(i)) << "j " 

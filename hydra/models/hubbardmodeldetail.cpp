@@ -71,8 +71,10 @@ namespace hydra { namespace models {
 	{
 	  int s1 = bond.sites()[0];
 	  int s2 = bond.sites()[1];
-	  std::cerr << "Warning: Ignoring (complex) current operator on "
-		    << s1 << " " << s2 << "\n";
+	  currents.push_back({s1, s2});
+	  assert( couplings.is_real(bond.coupling()) ); // current be real
+	  double c = couplings.real(bond.coupling());
+	  current_amplitudes.push_back(c);
 	}
       }
 
