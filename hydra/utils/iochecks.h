@@ -21,10 +21,11 @@
 namespace hydra { namespace utils {
     
     template <class T>
-    void check_if_contained_in(const T& elem, const std::vector<T>& vec, 
+    void check_if_contained_in(T const& elem, std::vector<T> const& vec, 
 			       std::string name="element");
 
-    void check_if_file_exists(const std::string& filename);
+    void check_if_file_exists(std::string filename);
+    void check_if_files_exists(std::vector<std::string> filenames);
 
   }  // namespace utils
 }  // namespace hydra

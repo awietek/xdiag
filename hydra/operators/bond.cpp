@@ -18,7 +18,21 @@ namespace hydra { namespace operators {
 
     Bond::Bond(const std::string& type, const std::string& coupling, 
 	       const std::vector<int>& sites)
-      : type_(type), coupling_(coupling), sites_(sites)
+      : type_(type), 
+	coupling_(coupling), 
+	sites_(sites), 
+	has_parameters_(false),
+	parameters_()
+    {}
+
+    Bond::Bond(const std::string& type, const std::string& coupling, 
+	       const std::vector<int>& sites, 
+	       const parameters::Parameters& parameters)
+      : type_(type), 
+	coupling_(coupling), 
+	sites_(sites),
+	has_parameters_(true),
+	parameters_(parameters)
     {}
 
     std::ostream& operator<< (std::ostream& out, const Bond& bond)

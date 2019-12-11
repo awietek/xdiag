@@ -66,6 +66,9 @@ namespace hydra { namespace models {
 	  my_upspins_offset_[upspins] + indexing_downspins_.index(downspins) : -1;
       }
 
+      std::vector<state_t> my_upspins() { return my_upspins_; }
+      std::unordered_map<state_t, uint64> my_upspins_offset(){ return my_upspins_offset_; }
+
     private:     
 
       const int n_sites_;

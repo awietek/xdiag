@@ -5,33 +5,36 @@ arch = flatiron_linux
 
 ifeq ($(arch), flatiron_linux)
 	lapack        = -llapack -lblas
-	lapack        = -lmkl_rt -DLILA_USE_MKL	
+	lapack        = -lmkl_rt -DLILA_USE_MKL
 	lila_dir =/mnt/home/awietek/Research/Software/lila
+	lime_dir =/mnt/home/awietek/Research/Software/lime
 	clara_dir=/mnt/home/awietek/Research/Software/Clara/include
 endif
 ifeq ($(arch), flatiron_gordon)
 	lapack        = -llapack -lblas
-	lapack        = -lmkl_rt -DLILA_USE_MKL	
+	lapack        = -lmkl_rt -DLILA_USE_MKL
 	lila_dir =/home/awietek/Research/Software/lila
+	lime_dir =/home/awietek/Research/Software/lime
 	clara_dir=/home/awietek/Research/Software/Clara/include
 endif
 ifeq ($(arch), osx)
 	lapack        = -framework accelerate
 	lila_dir =/Users/awietek/Research/Software/lila
+	lime_dir =/Users/awietek/Research/Software/lime
 	clara_dir=/Users/awietek/Research/Software/Clara/include
 endif
 
-modules = hilbertspaces utils indexing models operators symmetries dynamics thermodynamics
-apps= hubbardopticalftlm  # hubbardopticalmpi # hubbarddynamicsmpi  hubbardthermotpq heisenberged spinlessfermioned   hubbardthermo  heisenbergthermo  hubbardopticaltsl hubbarded hubbarddynamics
+modules = hilbertspaces utils indexing models operators symmetries dynamics thermodynamics parameters
+apps=  hubbardopticalftlm  # hubbardthermotpq hubbardopticalmpi # hubbarddynamicsmpi   heisenberged spinlessfermioned   hubbardthermo  heisenbergthermo  hubbardopticaltsl hubbarded hubbarddynamics
 
 
 CC         = mpicxx
-CCOPT         = -O3 
+CCOPT         = -O3
 CCARCH        = -std=c++11 -Wall -pedantic -m64
 programs     :=
 mpiprograms  :=
 sources      :=
-libraries    := $(lapack) -lhydra_$(CC) -Llib
+libraries    := $(lapack) -lhydra -Llib -llime -L$(lime_dir)/lib -lhdf5
 extra_clean  :=
 CPPFLAGS     += $(addprefix -I ,$(include_dirs))
 RM     := rm -f
@@ -51,9 +54,9 @@ depends = $(subst .cpp,.d,$(sources))
 depflags = -MT $@ -MMD -MP -MF $*.d
 
 
-includes = $(addprefix -I,$(module_dirs)) -I$(lila_dir) -I. -I$(clara_dir)
+includes = $(addprefix -I,$(module_dirs)) -I$(lila_dir) -I. -I$(clara_dir) -I$(lime_dir)
 
-.PHONY: all 
+.PHONY: all
 all:  $(objects) lib
 
 apps: $(apps)
@@ -62,7 +65,7 @@ $(depends):
 include $(depends)
 
 lib: $(objects)
-	ar rcs lib/libhydra_$(CC).a $(objects)
+	ar rcs lib/libhydra.a $(objects)
 
 .PHONY: clean
 clean:
@@ -71,11 +74,11 @@ clean:
 .PHONY: rebuild
 rebuild: clean all lib
 
-%.o: %.cpp 
+%.o: %.cpp
 %.o: %.cpp %.d
 	$(CC) $(CCOPT) $(CCARCH) $(depflags) -c $< -o $@ $(includes)
 
 $(depdir): ; @mkdir -o $@
 
 $(apps): $(appdir)/$@ lib
-	$(CC) $(CCOPT) $(CCARCH) $(appdir)/$@/$@.cpp -o bin/$@ $(includes) $(libraries)  
+	$(CC) $(CCOPT) $(CCARCH) $(appdir)/$@/$@.cpp -o bin/$@ $(includes) $(libraries)

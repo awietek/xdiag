@@ -37,7 +37,8 @@ namespace hydra { namespace utils {
 	}
     }
 
-    void check_if_file_exists (const std::string& filename) {
+    void check_if_file_exists(std::string filename) 
+    {
       std::ifstream f(filename.c_str());
       if (!f.good())
 	{
@@ -46,6 +47,13 @@ namespace hydra { namespace utils {
 	  exit(EXIT_FAILURE);
 	}
     }
+
+    void check_if_files_exists(std::vector<std::string> filenames) 
+    {
+      for (auto filename : filenames)
+	check_if_file_exists(filename);
+    }
+
     
     template
     void check_if_contained_in<std::string>

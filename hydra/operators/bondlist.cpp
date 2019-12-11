@@ -20,6 +20,8 @@
 
 #include "bondlist.h"
 
+#include <hydra/parameters/parser.h>
+
 namespace hydra { namespace operators {
   
     namespace detail 
@@ -156,18 +158,85 @@ namespace hydra { namespace operators {
 	{
 	  if ((tobeparsed.find('[') != std::string::npos))
 	    break;
-	  
-	  // Parse line
+
 	  std::string type, coupling;
 	  std::vector<int> sites;
 	  std::stringstream stream(tobeparsed);
 	  stream >> type;
 	  stream >> coupling;
-	  int n;
-	  while(stream >> n) sites.push_back(n);
-	  bonds.push_back(Bond(type, coupling, sites));
+	  
+	  
+	  // Parse bond with Parameters
+	  if (tobeparsed.find("@PARAMBEGIN") != std::string::npos)
+	    {
+	      std::string paramline;
+	      std::stringstream paramss;
+	      std::getline(File, paramline);
+
+	      // Get the parameter lines into paramss
+	      while(paramline.find("@PARAMEND") == std::string::npos)
+		{	
+		  if (!File.good())
+		    {
+		      std::cerr << "Invalid BondList format: No end token for Parameters in bondlist!"
+				<< std::endl;
+		      exit(EXIT_FAILURE);
+		    }
+		  if (paramline.find("@PARAMBEGIN") != std::string::npos)
+		    {
+		      std::cerr << "Invalid BondList format: expected @PARAMEND token before @PARAMBEGIN!"
+				<< std::endl;
+		      exit(EXIT_FAILURE);
+		    }
+		  paramss << paramline << "\n";
+		  std::getline(File, paramline);
+		}
+	      std::string paramstr = paramss.str();
+
+	      // Update stream and check if @PARAMEND starts the line
+	      stream = std::stringstream(paramline);
+	      std::string end;
+	      stream >> end;
+	      if (end != "@PARAMEND")
+		{
+		  std::cerr << "Invalid BondList format: @PARAMEND should start the line!"
+			    << std::endl;
+		  exit(EXIT_FAILURE);
+		}	
+	      paramss = std::stringstream(paramstr);
+	      parameters::Parameters parameters;
+
+	      try
+		{
+		  parameters::parser prs(paramss);
+		  parameters = parameters::Parameters(prs);
+		}
+	      catch (...)
+		{
+		  std::cerr << "Error parsing Bond Parameters: parsing failed for:\n"
+			    << paramstr<< std::endl;
+		  exit(EXIT_FAILURE);
+		}
+
+	      int n;
+	      while(stream >> n) 
+		sites.push_back(n);
+	      bonds.push_back(Bond(type, coupling, sites, parameters));	
+	    }
+
+	  // Parse bond without parameters
+	  else
+	    {
+	      // Just parse sites
+	      int n;
+	      while(stream >> n) 
+		sites.push_back(n);
+	      bonds.push_back(Bond(type, coupling, sites));
+	    }
+
 	  if (!File.good())
 	    break;
+	    
 	} 
 
       return BondList(bonds);

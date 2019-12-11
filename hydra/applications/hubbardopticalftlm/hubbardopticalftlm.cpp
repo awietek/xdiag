@@ -1,37 +1,20 @@
 #include <cstdlib>
 #include <vector>
-#include <utility>
-#include <fstream>
-#include <iomanip>
-#include <unistd.h>
 
 #include <mpi.h>
-
-#include <lila/allmpi.h>
 #include <hydra/allmpi.h>
+#include <lila/allmpi.h>
+#include <lime/all.h>
 
 #include "hubbardopticalftlm.options.h"
 
-#include <iomanip>
-#include <locale>
-
-template<class T>
-std::string FormatWithCommas(T value)
-{
-    std::stringstream ss;
-    ss.imbue(std::locale(""));
-    ss << std::fixed << value;
-    return ss.str();
-}
+lila::LoggerMPI lg;
 
 int main(int argc, char* argv[])
 {
-  using hydra::hilbertspaces::hubbard_qn;
-  using hydra::hilbertspaces::Hubbard;
-  using hydra::models::HubbardModelMPI;
-  using namespace hydra::operators;
-  using hydra::dynamics::continued_fraction;
+  using namespace hydra::all;
   using namespace lila;
+  using namespace lime;
 
   MPI_Init(&argc, &argv); 
   int mpi_rank, mpi_size;
@@ -43,154 +26,91 @@ int main(int argc, char* argv[])
   std::string latticefile;
   std::string couplingfile;
   std::string corrfile;
+  std::string corrcouplingfile;
   int nup = -1;
   int ndown = -1;
   int iters = 100;
   int verbosity = 1;
   int seed = 1;
   bool kinetic = false;
+  parse_cmdline(outfile, latticefile, couplingfile, corrfile, corrcouplingfile,
+		nup, ndown, iters, verbosity, seed, kinetic, argc, argv);
+  lg.set_verbosity(verbosity);  
+  lg.out(1, "Using {} MPI tasks\n", mpi_size);
 
-  parse_cmdline(outfile, latticefile, couplingfile, corrfile, nup, ndown, 
-		iters, verbosity, seed, kinetic, argc, argv);
+  auto dumper = lime::MeasurementsH5((mpi_rank == 0) ? outfile : "");
+  check_if_files_exists({latticefile, couplingfile, corrfile, corrcouplingfile});
 
-
-  if ((verbosity >= 1) && (mpi_rank == 0))  
-    printf("Using %d MPI tasks\n", mpi_size);
-
-  // Open outfile
-  std::ofstream of;
-  if (outfile != "")
-    {
-      of.open(outfile, std::ios::out);
-      if(of.fail()) 
-	{
-	  if (mpi_rank == 0)
-	    {
-	      std::cerr << "Error in opening outfile: " 
-			<< "Could not open file with filename ["
-			<< outfile << "] given. Abort." << std::endl;
-	      MPI_Abort(MPI_COMM_WORLD, 1);
-	    }
-	}
-    }
-
-  /////////////////////////////////////////////////
   // Create Hamiltonian
   BondList bondlist = read_bondlist(latticefile);
-  BondList hopping_list = bondlist.bonds_of_type("HUBBARDHOP");
-  BondList interaction_list = bondlist.bonds_of_type("HUBBARDV");
-  if (couplingfile == "") couplingfile = latticefile;
   Couplings couplings = read_couplings(couplingfile);
 
-  if ((verbosity >= 1) && (mpi_rank == 0))
-    {
-      for (auto bond : hopping_list)
-	printf("hopping %s %d %d\n", bond.coupling().c_str(), 
-	       bond.sites()[0], bond.sites()[1]);
-      for (auto bond : interaction_list)
-	printf("interaction %s %d %d\n", bond.coupling().c_str(), 
-	       bond.sites()[0], bond.sites()[1]);
-      for (auto c : couplings)
-	printf("coupling %s %f %fj\n", c.first.c_str(), std::real(c.second), std::imag(c.second));
-    }
-
+  // Create infrastructure for Hubbard model
   int n_sites = bondlist.n_sites();
   hubbard_qn qn;
   if ((nup == -1)  || (ndown == -1))
     qn = {n_sites/2, n_sites/2};
   else qn = {nup, ndown};
 
-  // Create infrastructure for Hubbard model
-  if ((verbosity >= 1) && (mpi_rank == 0))
-    printf("Creating Hubbard model for n_upspins=%d, n_downspins=%d...\n",
-	   qn.n_upspins, qn.n_downspins);
+  lg.out(1, "Creating Hubbard model for n_upspins={}, n_downspins={}...\n",
+	     qn.n_upspins, qn.n_downspins);
   double t1 = MPI_Wtime();
-  auto model = HubbardModelMPI<double,uint32>(bondlist, couplings, qn);
+  auto H = HubbardModelMPI<double,uint32>(bondlist, couplings, qn);
   double t2 = MPI_Wtime();
-  if ((verbosity >= 1) && (mpi_rank == 0))
-    printf("time init: %3.4f\n", t2-t1); 
+  lg.out(1, "time init: {} secs\n", t2-t1); 
+
 
   // Define multiplication function
-  auto multiply_hamiltonian = [&model, &mpi_rank, &verbosity](const VectorMPI<double>& v, 
-							      VectorMPI<double>& w) {
-    static int iter=0;
-    double t1 = MPI_Wtime();
-    bool verbose = ((iter == 0) && verbosity >=1);
-    model.apply_hamiltonian(v, w, verbose);
-    double t2 = MPI_Wtime();
-    if ((verbosity >= 2) && (mpi_rank == 0))
-      printf("iter: %d, time MVM: %3.4f\n", iter, t2-t1); 
-    ++iter;
-  };
-  //
-  /////////////////////////////////////////////////
-
-
-  /////////////////////////////////////////////////
-  // Create current operator
-  std::vector<std::pair<int, int>> correlation_list;
-  if (corrfile == "") 
+  int iter = 0;
+  auto multiply_H = 
+    [&H, &iter](const VectorMPI<double>& v, VectorMPI<double>& w) 
     {
-      if (mpi_rank == 0)
-	    {
-	      std::cerr << "Error in opening corr: " 
-			<< "Could not open file with filename ["
-			<< corrfile << "] given. Abort." << std::endl;
-	      MPI_Abort(MPI_COMM_WORLD, 3);
-	    }
-    }  
+      double t1 = MPI_Wtime();
+      H.apply_hamiltonian(v, w, false);
+      double t2 = MPI_Wtime();
+      lg.out(2, "iter: {}, time MVM: %3.4f\n", iter, t2-t1); 
+      ++iter;
+    };
+
+
+  // Create current operator
   BondList curr_bondlist = read_bondlist(corrfile);
+  Couplings curr_couplings = read_couplings(corrcouplingfile);  
   
-  // Create infrastructure for current operator
-  if ((verbosity >= 1) && (mpi_rank == 0))
-    printf("Creating current operator for n_upspins=%d, n_downspins=%d...\n",
-	   qn.n_upspins, qn.n_downspins);
+  lg.out(1, "Creating Current for n_upspins={}, n_downspins={}...\n",
+	     qn.n_upspins, qn.n_downspins);
   t1 = MPI_Wtime();
-  for (auto bond : curr_bondlist)
-    if ((verbosity >= 1) && (mpi_rank == 0))
-      printf("curr %s %d %d\n", bond.coupling().c_str(), 
-	     bond.sites()[0], bond.sites()[1]);
-
-  Couplings curr_couplings;
-  curr_couplings["C"] = 1;
-  auto current = HubbardModelMPI<double,uint32>(curr_bondlist, curr_couplings, qn);
+  auto C = HubbardModelMPI<double,uint32>(curr_bondlist, curr_couplings, qn);
   t2 = MPI_Wtime();
-  if ((verbosity >= 1) && (mpi_rank == 0))
-    printf("time curr init: %3.4f\n", t2-t1); 
-  //
-  //////////////////////////////////////////////////
+  lg.out(1, "time curr init: {}\n", t2-t1); 
 
-
-  //////////////////////////////////////////////////
-  // Create random start state
+  
+  // Create normal distributed random start state
   int random_seed = seed + 1234567*mpi_rank;
-  uint64 local_dim = model.local_dim();
-  VectorMPI<double> startstate(local_dim);
+  VectorMPI<double> startstate(H.local_dim());
   normal_dist_t<double> dist(0., 1.);
   normal_gen_t<double> gen(dist, random_seed);
   Random(startstate, gen, true);
   Normalize(startstate);
-  //
-  //////////////////////////////////////////////////
 
 
-  //////////////////////////////////////////////////
-  // Create random start state
+  // Create random current start state
   VectorMPI<double> currstartstate = startstate;
-  current.apply_hamiltonian(startstate, currstartstate);
-  //
-  //////////////////////////////////////////////////
+  C.apply_hamiltonian(startstate, currstartstate);
 
 
+  // Reset iters to reasonable size for small model dimension
+  iters = std::min(H.dim() / 8 + 5, (unsigned long)iters);
 
-  //////////////////////////////////////////////////
-  // Perform Lanczos on start state and current start state
+  // Define fixed number of steps convergence criterion
   auto converged = 
     [iters](const lila::Tmatrix<double>& tmat, double beta) {
     (void)beta;
     return LanczosConvergedFixed(tmat, iters);
   };
 
+
+  // Define trivial linear combination to get all Lanczos vectors
   std::vector<Vector<double>> linear_combinations;
   for (int i=0; i< iters; ++i)
     {
@@ -199,175 +119,95 @@ int main(int argc, char* argv[])
       linear_combinations.push_back(lin);
     }
 
-  // Reset iters to reasonable size for small model dimension
-  iters = std::min(model.dim() / 8 + 5, (unsigned long)iters);
 
+  // First Lanczos run with random startstate
   auto v0 = startstate;
-  auto start_res = Lanczos(multiply_hamiltonian, v0, converged, linear_combinations);
-  auto alphas_psi = start_res.tmatrix.diag();
-  auto betas_psi = start_res.tmatrix.offdiag();
-  auto eigenvalues_psi = start_res.eigenvalues;
-  auto& psis = start_res.vectors; 
+  auto start_res = Lanczos(multiply_H, v0, converged, 
+			   linear_combinations);
+  auto alphas_v = start_res.tmatrix.diag();
+  auto betas_v = start_res.tmatrix.offdiag();
+  betas_v.push_back(start_res.beta);
+  auto eigenvalues_v = start_res.eigenvalues;
+  auto& vs = start_res.vectors; 
+  dumper["AlphasV"] << alphas_v;
+  dumper["BetasV"] << betas_v;
+  dumper["EigenvaluesV"] << eigenvalues_v;
+  if (mpi_rank==0) dumper.dump();
 
+  // Second Lanczos run with current startstate
+  iter = 0;
   v0 = currstartstate;
-  auto current_start_res = Lanczos(multiply_hamiltonian, v0, converged, linear_combinations);
-  auto alphas_psi_tilde = current_start_res.tmatrix.diag();
-  auto betas_psi_tilde = current_start_res.tmatrix.offdiag();
-  auto eigenvalues_psi_tilde = current_start_res.eigenvalues;
-  auto& psis_tilde = current_start_res.vectors;
+  auto current_start_res = Lanczos(multiply_H, v0, converged, 
+				   linear_combinations);
+  auto alphas_v_tilde = current_start_res.tmatrix.diag();
+  auto betas_v_tilde = current_start_res.tmatrix.offdiag();
+  betas_v_tilde.push_back(current_start_res.beta);
+  auto eigenvalues_v_tilde = current_start_res.eigenvalues;
+  auto& vs_tilde = current_start_res.vectors;
+  dumper["AlphasVTilde"] << alphas_v_tilde;
+  dumper["BetasVTilde"] << betas_v_tilde;
+  dumper["EigenvaluesVTilde"] << eigenvalues_v_tilde;
+  dumper.dump();
 
-  iters = alphas_psi.size();
-  int iters_tilde = alphas_psi_tilde.size();
+  iters = alphas_v.size();
+  int iters_tilde = alphas_v_tilde.size();
 
-  // Compute overlap with start vectors
-  Vector<double> psis_dot_r(iters);
-  Vector<double> psis_tilde_dot_r(iters_tilde);
+  // Compute overlap of Lanczos vectors with start vectors
+  Vector<double> r_dot_vs(iters);
   for (int i=0; i<iters; ++i)
     {
-      psis_dot_r(i) = Dot(startstate, psis[i]);
-      if (mpi_rank == 0)
-	printf("psis_dot_r(%d)= %.17g %.17g\n", i, std::real(psis_dot_r(i)), std::imag(psis_dot_r(i)));
+      r_dot_vs(i) = Dot(startstate, vs[i]);
+      lg.out(1, "r_dot_vs({})= {}\n", i, r_dot_vs(i));
     }
+  dumper["RDotVs"] << r_dot_vs;
+  if (mpi_rank==0) dumper.dump();
+
+  // Compute overlap of current Lanczos vectors with current start vectors
+  Vector<double> vs_tilde_dot_A_r(iters_tilde);
   for (int i=0; i<iters_tilde; ++i)
     {
-      psis_tilde_dot_r(i) = Dot(psis_tilde[i], currstartstate);
-      if (mpi_rank == 0)
-	printf("psis_tilde_dot_r(%d)= %.17g %.17g\n\n", i, std::real(psis_tilde_dot_r(i)), std::imag(psis_tilde_dot_r(i)));
+      vs_tilde_dot_A_r(i) = Dot(vs_tilde[i], currstartstate);
+      lg.out(1, "vs_tilde_dot_A_r({})= {}\n", i, vs_tilde_dot_A_r(i));
     }
+  dumper["VsTildeDotAR"] << vs_tilde_dot_r;
+  if (mpi_rank==0) dumper.dump();  
+
 
   // Compute current operator matrix
-  Matrix<double> psis_A_psis_tilde(iters, iters_tilde);
+  Matrix<double> vs_A_vs_tilde(iters, iters_tilde);
   for (int i=0; i<iters; ++i)
     {
-      auto tmp = psis[i];
-      current.apply_hamiltonian(psis[i], tmp);
-      if (mpi_rank == 0)
-	printf("computing matrix line %d\n", i); 
-	
+      auto tmp = vs[i];
+      lg.out(1, "computing matrix line {}\n", i);
+      C.apply_hamiltonian(vs[i], tmp);
       for (int j=0; j<iters_tilde; ++j)
-	  psis_A_psis_tilde(i,j) = Dot(tmp, psis_tilde[j]);
+	vs_A_vs_tilde(i,j) = Dot(tmp, vs_tilde[j]);
     }
+  dumper["VsAVsTilde"] << vs_A_vs_tilde;
+  if (mpi_rank==0) dumper.dump();
 
 
   // Compute kinetic energy matrix
-  Matrix<double> psis_T_psis(iters, iters);
   if (kinetic)
     {
       Couplings kin_couplings;
       kin_couplings["T"] = 1.;
       kin_couplings["U"] = 0.;
       kin_couplings["C"] = 0.;
-      auto kinetic_op = HubbardModelMPI<double,uint32>(hopping_list, kin_couplings, qn);
+      auto T = HubbardModelMPI<double,uint32>(bondlist, kin_couplings, qn);
   
-
+      Matrix<double> vs_T_vs(iters, iters);
       for (int i=0; i<iters; ++i)
 	{
-	  auto tmp = psis[i];
-	  kinetic_op.apply_hamiltonian(psis[i], tmp);
-	  if (mpi_rank == 0)
-	    printf("computing kinetic matrix line %d\n", i); 
-	
+	  lg.out(1, "computing kinetic matrix line {}\n", i);
+	  auto tmp = vs[i];
+	  T.apply_hamiltonian(vs[i], tmp);
 	  for (int j=0; j<iters; ++j)
-	    psis_T_psis(i,j) = Dot(tmp, psis[j]);
+	    vs_T_vs(i,j) = Dot(tmp, vs[j]);
 	}
+      dumper["VsTVs"] << vs_T_vs;
+      if (mpi_rank==0) dumper.dump();
     }
-
-   if (outfile != "")
-    {
-      if (mpi_rank == 0)
-	{
-	  // Resize vectors for output
-	  int iters_max = std::max(iters, iters_tilde);
-	  alphas_psi.resize(iters_max);
-	  betas_psi.resize(iters_max);
-	  eigenvalues_psi.resize(iters_max);
-	  alphas_psi_tilde.resize(iters_max);
-	  betas_psi_tilde.resize(iters_max);
-	  eigenvalues_psi_tilde.resize(iters_max);
-	  psis_dot_r.resize(iters_max);
-	  psis_tilde_dot_r.resize(iters_max);
-
-	  std::stringstream line;
-	  line << std::setprecision(20);
-	  line << "# alphas_psi betas_psi eigenvalues_psi " 
-	       << "alphas_psi_tilde betas_psi_tilde eigenvalues_psi_tilde " 
-	       << "psis_dot_r psis_tilde_dot_r\n";
-	  betas_psi.push_back(0.);
-	  betas_psi_tilde.push_back(0.);
-	  for (int i=0; i<iters_max; ++i)
-	    line << alphas_psi(i) << " " << betas_psi(i) << " " << eigenvalues_psi(i) << " "
-		 << alphas_psi_tilde(i) << " " << betas_psi_tilde(i) << " " << eigenvalues_psi_tilde(i) << " "
-		 << std::real(psis_dot_r(i)) << "+" << std::imag(psis_dot_r(i)) << "j " 
-		 << std::real(psis_tilde_dot_r(i)) << "+" << std::imag(psis_tilde_dot_r(i))<< "j\n";
-	  of << line.str();
-	  line.str("");
-
-	  // Write current matrix
-	  std::ofstream ofmat;
-	  ofmat.open(outfile + std::string(".matrix"), std::ios::out);
-	  if(ofmat.fail()) 
-	    {
-	      if (mpi_rank == 0)
-		{
-		  std::cerr << "Error in opening matrix outfile: " 
-			    << "Could not open file with filename ["
-			    << outfile << "] given. Abort." << std::endl;
-		  MPI_Abort(MPI_COMM_WORLD, 1);
-		}
-	    }
-	  else
-	    {
-	      std::stringstream line;
-	      line << std::setprecision(20);
-	      for (auto i : psis_A_psis_tilde.rows())
-		{
-		  for (auto j : psis_A_psis_tilde.cols())
-		    line << std::real(psis_A_psis_tilde(i,j)) << "+"
-			 << std::imag(psis_A_psis_tilde(i,j)) << "j ";
-		  line << "\n";
-		}
-	      ofmat << line.str();
-	      line.str("");
-	    }
-
-
-	  // Write kinetic matrix
-	  if (kinetic)
-	    {
-	      std::ofstream ofkinmat;
-	      ofkinmat.open(outfile + std::string(".kinetic.matrix"), std::ios::out);
-	      if(ofkinmat.fail()) 
-		{
-		  if (mpi_rank == 0)
-		    {
-		      std::cerr << "Error in opening matrix outfile: " 
-				<< "Could not open file with filename ["
-				<< outfile << "] given. Abort." << std::endl;
-		      MPI_Abort(MPI_COMM_WORLD, 1);
-		    }
-		}
-	      else
-		{
-		  std::stringstream line;
-		  line << std::setprecision(20);
-		  for (auto i : psis_T_psis.rows())
-		    {
-		      for (auto j : psis_T_psis.cols())
-			line << std::real(psis_T_psis(i,j)) << "+"
-			     << std::imag(psis_T_psis(i,j)) << "j ";
-		      line << "\n";
-		    }
-		  ofkinmat << line.str();
-		  line.str("");
-		}
-	    }
-
-	}
-
-    }
-
-
-
 
   MPI_Finalize();
   return EXIT_SUCCESS;

@@ -19,6 +19,8 @@
 #include <string>
 #include <vector>
 
+#include <hydra/parameters/parameters.h>
+
 namespace hydra { namespace operators {
 
     /*!
@@ -32,15 +34,21 @@ namespace hydra { namespace operators {
     {
       Bond(const std::string& type, const std::string& coupling, 
 	   const std::vector<int>& sites);
+      Bond(const std::string& type, const std::string& coupling, 
+	   const std::vector<int>& sites, const parameters::Parameters& parameters);
       inline std::string type() const { return type_; }
       inline std::string coupling() const { return coupling_; } 
       inline std::vector<int> sites() const { return sites_; }
       inline int sites(const int& j) const { return sites_[j]; }
       inline int size() const { return (int)sites_.size(); }
-
+      inline bool has_parameters() const { return has_parameters_; }
+      inline parameters::Parameters parameters() const { return parameters_; } 
+      
       std::string type_;
       std::string coupling_;
       std::vector<int> sites_;
+      bool has_parameters_;
+      parameters::Parameters parameters_;
     };
 
     /// writes bond to stream 

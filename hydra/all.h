@@ -17,13 +17,16 @@
 
 #include "hilbertspaces/hubbard.h"
 #include "hilbertspaces/spinhalf.h"
+
 #include "indexing/indexhubbard.h"
 #include "indexing/indexsearch.h"
 #include "indexing/indexspinhalf.h"
 #include "indexing/indextable.h"
+
 #include "models/hubbardmodel.h"
 #include "models/heisenbergmodel.h"
 #include "models/spinlessfermions.h"
+
 #include "utils/bitops.h"
 #include "utils/combinatorics.h"
 #include "utils/range.h"
@@ -31,13 +34,38 @@
 #include "utils/iochecks.h"
 #include "utils/format.h"
 #include "utils/print.h"
+
 #include "operators/bond.h"
 #include "operators/bondlist.h"
 #include "operators/couplings.h"
+
 #include "thermodynamics/thermodynamics_detail.h"
 #include "thermodynamics/thermodynamics_exact.h"
 #include "thermodynamics/thermodynamics_tpq.h"
+
 #include "dynamics/continuedfraction.h"
+
 #include "symmetries/spacegroup.h"
+
+#include "parameters/parser.h"
+#include "parameters/parameters_impl.h"
+#include "parameters/parameters.h"
+
+namespace hydra 
+{
+  namespace all
+  {
+    using namespace hydra::dynamics;
+    using namespace hydra::hilbertspaces;
+    using namespace hydra::indexing;
+    using namespace hydra::models;
+    using namespace hydra::operators;
+    using namespace hydra::parameters;
+    using namespace hydra::symmetries;
+    using namespace hydra::thermodynamics;
+    using namespace hydra::utils;
+  }
+}
+
 
 #endif
