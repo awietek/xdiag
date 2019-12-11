@@ -132,7 +132,7 @@ int main(int argc, char* argv[])
   dumper["AlphasV"] << alphas_v;
   dumper["BetasV"] << betas_v;
   dumper["EigenvaluesV"] << eigenvalues_v;
-  if (mpi_rank==0) dumper.dump();
+  dumper.dump();
 
   // Second Lanczos run with current startstate
   iter = 0;
@@ -160,7 +160,7 @@ int main(int argc, char* argv[])
       lg.out(1, "r_dot_vs({})= {}\n", i, r_dot_vs(i));
     }
   dumper["RDotVs"] << r_dot_vs;
-  if (mpi_rank==0) dumper.dump();
+  dumper.dump();
 
   // Compute overlap of current Lanczos vectors with current start vectors
   Vector<double> vs_tilde_dot_A_r(iters_tilde);
@@ -169,8 +169,8 @@ int main(int argc, char* argv[])
       vs_tilde_dot_A_r(i) = Dot(vs_tilde[i], currstartstate);
       lg.out(1, "vs_tilde_dot_A_r({})= {}\n", i, vs_tilde_dot_A_r(i));
     }
-  dumper["VsTildeDotAR"] << vs_tilde_dot_r;
-  if (mpi_rank==0) dumper.dump();  
+  dumper["VsTildeDotAR"] << vs_tilde_dot_A_r;
+  dumper.dump();  
 
 
   // Compute current operator matrix
@@ -184,7 +184,7 @@ int main(int argc, char* argv[])
 	vs_A_vs_tilde(i,j) = Dot(tmp, vs_tilde[j]);
     }
   dumper["VsAVsTilde"] << vs_A_vs_tilde;
-  if (mpi_rank==0) dumper.dump();
+  dumper.dump();
 
 
   // Compute kinetic energy matrix
@@ -206,7 +206,7 @@ int main(int argc, char* argv[])
 	    vs_T_vs(i,j) = Dot(tmp, vs[j]);
 	}
       dumper["VsTVs"] << vs_T_vs;
-      if (mpi_rank==0) dumper.dump();
+      dumper.dump();
     }
 
   MPI_Finalize();
