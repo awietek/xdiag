@@ -2,77 +2,82 @@
 #include <vector>
 #include <utility>
 
-#include <lila/all.h>
 #include <hydra/all.h>
+#include <lila/all.h>
+#include <lime/all.h>
+
+#include "hubbarded.options.h"
+
+lila::Logger lg;
 
 int main(int argc, char* argv[])
 {
-  using hydra::hilbertspaces::hubbard_qn;
-  using hydra::models::HubbardModel;
-  using hydra::utils::range;
+  using namespace hydra::all;
+  using namespace lila;
+  using namespace lime;
 
-  int n_sites = 8;
-  hubbard_qn qn = {n_sites/2, n_sites/2}; 
-  bool periodic = false;
-  double t = 1.;
-  double U = 4.;
-  auto temperatures = {.1}; //lila::linspace<double>(0.1, 1, 10);
+  std::string outfile;
+  std::string latticefile;
+  std::string couplingfile;
+  int nup = -1;
+  int ndown = -1;
+  double precision = 1e-12;
+  int neigenvalue = 0;
+  int iters = 1000;
+  int verbosity = 1;
+  int seed = 1;
+  parse_cmdline(outfile, latticefile, couplingfile, nup, ndown, precision, 
+		neigenvalue, iters, verbosity, seed, argc, argv);
 
-  // Set 1d chain lattice
-  std::vector<std::pair<int, int>> hoppings;
-  for (int i : range<>(n_sites-1))
-    hoppings.push_back({i, i+1});
-  if (periodic) hoppings.push_back({n_sites-1, 0});
+  lg.set_verbosity(verbosity);  
+  
+  auto dumper = lime::MeasurementsH5(outfile);
+  check_if_files_exists({latticefile, couplingfile});
+
+  // Create Hamiltonian
+  BondList bondlist = read_bondlist(latticefile);
+  Couplings couplings = read_couplings(couplingfile);
+
+  // Create infrastructure for Hubbard model
+  int n_sites = bondlist.n_sites();
+  hubbard_qn qn;
+  if ((nup == -1)  || (ndown == -1))
+    qn = {n_sites/2, n_sites/2};
+  else qn = {nup, ndown};
       
-  auto model = HubbardModel<double>(n_sites, hoppings);
-  auto hamilton = model.matrix(t, U, qn);
-  // LilaPrint(hamilton);
-  
-  // lila::Matrix<double> hdag = Transpose(hamilton) ;
-  // assert(lila::close<double>(hamilton, hdag));
+  lg.out(1, "Creating Hubbard model for n_upspins={}, n_downspins={}...\n",
+	     qn.n_upspins, qn.n_downspins);
+  auto H = HubbardModel<double>(bondlist, couplings, qn);
 
-  // LilaPrint(hamilton);
-  auto eigs = lila::EigenvaluesSym(hamilton); 
-  double e0 = eigs(0);
- 
-  hydra::hilbertspaces::Hubbard<unsigned int> hs(n_sites, qn);
-  printf("dim: %d, gs energy (ED): %f\n", hs.size(), e0);
-  
-  for (double t : temperatures)
+  // Define multiplication function
+  int iter = 0;
+  auto multiply_H = 
+    [&H, &iter](const Vector<double>& v, Vector<double>& w) 
     {
-      double beta = 1./t;
+      H.apply_hamiltonian(v, w);
+      lg.out(2, "iter: {}\n", iter); 
+      ++iter;
+    };
 
-      auto exp_eigs = eigs;
-      lila::Map(exp_eigs, [t, e0](double& e) { e = std::exp(-(e-e0)/t); });
-      double partition = lila::Sum(exp_eigs);
-      double energy = lila::Dot(eigs, exp_eigs) / partition;
-      printf("%f %f\n", t, energy);
+  // Create normal distributed random start state
+  Vector<double> startstate(H.dim());
+  normal_dist_t<double> dist(0., 1.);
+  normal_gen_t<double> gen(dist, seed);
+  Random(startstate, gen, true);
+  Normalize(startstate);  
 
-      // Create Neel state
-      using hydra::uint32;
-      hydra::hilbertspaces::hubbard_state<uint32> neel_config = {0, 0};
-      for (int i=0; i<n_sites; ++i)
-	{
-	  if (i%2==0) neel_config.downspins |= 1 << i;
-	  else neel_config.upspins |= 1 << i;
-	}
-      std::cout << hydra::hilbertspaces::Print(n_sites, neel_config) << std::endl;
-      hydra::indexing::IndexHubbard<hydra::indexing::IndexTable<hydra::hilbertspaces::Spinhalf<uint32>, uint32>> indexing(hs);
-      int neel_idx = indexing.index(neel_config);
-      lila::Vector<double> neel_state(hamilton.ncols());
-      neel_state(neel_idx) = 1.;
-      auto expH = hamilton;
-      lila::ExpH(expH, -beta/2., 'U');
-      auto tpq = Mult(expH, neel_state);
-      tpq = tpq / lila::Norm(tpq);
-      double neel_energy = lila::Dot(tpq, Mult(hamilton, tpq));
-
-      auto asdf = Mult(Mult(expH, Mult(hamilton, expH)), neel_state);
-      printf("neel energy: %f\n", neel_energy);
-
-
-      // printf("T: %f, beta: %f, energy: %f, partition: %f\n", t, beta, energy/n_sites, partition);
-    }
+  // Run Lanczos
+  auto res = LanczosEigenvalues(multiply_H, startstate, precision,
+				neigenvalue, "Eigenvalues");
    
+  auto alphas = res.tmatrix.diag();
+  auto betas = res.tmatrix.offdiag();
+  betas.push_back(res.beta);
+  auto eigenvalues = res.eigenvalues;
+  dumper["Alphas"] << alphas;
+  dumper["Betas"] << betas;
+  dumper["Eigenvalues"] << eigenvalues;
+  dumper.dump();
+
   return EXIT_SUCCESS;
 }

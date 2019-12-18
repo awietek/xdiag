@@ -45,6 +45,8 @@ int main(int argc, char* argv[])
   BondList bondlist = read_bondlist(latticefile);
   Couplings couplings = read_couplings(couplingfile);
 
+  if (mpi_rank==0) HydraPrint(bondlist);
+
   // Create infrastructure for Hubbard model
   int n_sites = bondlist.n_sites();
   hubbard_qn qn;
