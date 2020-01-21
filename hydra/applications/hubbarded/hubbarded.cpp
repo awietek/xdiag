@@ -1,20 +1,25 @@
 #include <cstdlib>
-#include <vector>
-#include <utility>
 
-#include <hydra/all.h>
-#include <lila/all.h>
+#include <mpi.h>
+
+#include <lila/allmpi.h>
+#include <hydra/allmpi.h>
 #include <lime/all.h>
 
-#include "hubbarded.options.h"
+lila::LoggerMPI lg;
 
-lila::Logger lg;
+#include "hubbarded.options.h"
 
 int main(int argc, char* argv[])
 {
   using namespace hydra::all;
   using namespace lila;
   using namespace lime;
+
+  MPI_Init(&argc, &argv); 
+  int mpi_rank, mpi_size;
+  MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
+  MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
 
   std::string outfile;
   std::string latticefile;
@@ -47,12 +52,12 @@ int main(int argc, char* argv[])
       
   lg.out(1, "Creating Hubbard model for n_upspins={}, n_downspins={}...\n",
 	     qn.n_upspins, qn.n_downspins);
-  auto H = HubbardModel<double>(bondlist, couplings, qn);
+  auto H = HubbardModelMPI<double>(bondlist, couplings, qn);
 
   // Define multiplication function
   int iter = 0;
   auto multiply_H = 
-    [&H, &iter](const Vector<double>& v, Vector<double>& w) 
+    [&H, &iter](const VectorMPI<double>& v, VectorMPI<double>& w) 
     {
       H.apply_hamiltonian(v, w);
       lg.out(2, "iter: {}\n", iter); 
@@ -60,7 +65,7 @@ int main(int argc, char* argv[])
     };
 
   // Create normal distributed random start state
-  Vector<double> startstate(H.dim());
+  VectorMPI<double> startstate(H.dim());
   normal_dist_t<double> dist(0., 1.);
   normal_gen_t<double> gen(dist, seed);
   Random(startstate, gen, true);
@@ -79,5 +84,6 @@ int main(int argc, char* argv[])
   dumper["Eigenvalues"] << eigenvalues;
   dumper.dump();
 
+  MPI_Finalize();
   return EXIT_SUCCESS;
 }

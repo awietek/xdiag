@@ -1,11 +1,14 @@
 #ifndef HYDRA_APPLICATIONS_HUBBARDED_OPTIONS_H_
 #define HYDRA_APPLICATIONS_HUBBARDED_OPTIONS_H_
 #include <string>
+#include <mpi.h>
 #include "clara.hpp"
 
     void parse_cmdline(std::string& outfile, std::string& latticefile, std::string& couplingfile, int& nup, int& ndown, double& precision, int& neigenvalue, int& iters, int& verbosity, int& seed, int& argc, char** argv)
   {
-
+  int mpi_rank;
+  MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
+  
 bool showhelp = false;
  auto parser =
 clara::Opt(outfile, "outfile")["-o"]["--outfile"]("name of outfile") |
@@ -24,28 +27,32 @@ clara::Help(showhelp);
     auto cmd_args = parser.parse(clara::Args(argc,argv));
     if( !cmd_args ) 
       {
-        std::cerr << "Error in command line: " << cmd_args.errorMessage() << std::endl;
-        exit(EXIT_FAILURE);
+        if (mpi_rank==0) std::cerr << "Error in command line: " << cmd_args.errorMessage() << std::endl;
+      MPI_Abort(MPI_COMM_WORLD, 1);
       }
     else if (showhelp) 
       {
         parser.writeToStream(std::cout);
+	MPI_Finalize();
         exit(EXIT_SUCCESS);
       }
     else
       {
-        std::cout <<
-      "outfile     : " << outfile << std::endl <<
-      "latticefile : " << latticefile << std::endl <<
-      "couplingfile: " << couplingfile << std::endl <<
-      "nup         : " << nup << std::endl <<
-      "ndown       : " << ndown << std::endl <<
-      "precision   : " << precision << std::endl <<
-      "neigenvalue : " << neigenvalue << std::endl <<
-      "iters       : " << iters << std::endl <<
-      "verbosity   : " << verbosity << std::endl <<
-      "seed        : " << seed << std::endl <<
-      "-----" << std::endl;
+	if ((verbosity >= 1) && (mpi_rank == 0))
+	  {
+	    std::cout <<
+	      "outfile     : " << outfile << std::endl <<
+	      "latticefile : " << latticefile << std::endl <<
+	      "couplingfile: " << couplingfile << std::endl <<
+	      "nup         : " << nup << std::endl <<
+	      "ndown       : " << ndown << std::endl <<
+	      "precision   : " << precision << std::endl <<
+	      "neigenvalue : " << neigenvalue << std::endl <<
+	      "iters       : " << iters << std::endl <<
+	      "verbosity   : " << verbosity << std::endl <<
+	      "seed        : " << seed << std::endl <<
+	      "-----" << std::endl;
+	  }
   }
 }
 #endif

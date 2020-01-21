@@ -148,11 +148,10 @@ namespace hydra { namespace models {
       }
 
 
-      template <class coeff_t>
       void set_szszs
 	(BondList bondlist, Couplings couplings,
 	 std::vector<std::pair<int, int>>& szszs,
-	 std::vector<coeff_t>& szsz_amplitudes)
+	 std::vector<double>& szsz_amplitudes)
       {
 	BondList szsz_list = bondlist.bonds_of_type("HEISENBERG");
 	for (auto bond : szsz_list)
@@ -160,7 +159,7 @@ namespace hydra { namespace models {
 	    int s1 = bond.sites()[0];
 	    int s2 = bond.sites()[1];
 	    szszs.push_back({s1, s2});
-	    coeff_t c = ForceReal<coeff_t>
+	    double c = ForceReal<double>
 	      (couplings[bond.coupling()], true, 
 	       "Warning: deprecating imaginary part of Heisenberg (real Hubbard)!");
 	    szsz_amplitudes.push_back(c);
