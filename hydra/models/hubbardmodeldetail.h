@@ -36,6 +36,10 @@ namespace hydra { namespace models {
 			     std::vector<double>& interaction_strengths,
 			     std::vector<int>& onsites,
 			     std::vector<double>& onsite_potentials, 
+			     std::vector<std::pair<int,int>> szszs_,
+			     std::vector<double> szszs_amplitudes_,
+			     std::vector<std::pair<int,int>> exchanges_,
+			     std::vector<coeff_t> exchange_amplitudes_,
 			     double& U);
       
       template <class coeff_t>
@@ -62,6 +66,17 @@ namespace hydra { namespace models {
       
       void set_U
       (Couplings couplings, double& U);
+
+      void set_szszs
+	(BondList bondlist, Couplings couplings,
+	 std::vector<std::pair<int, int>>& szszs,
+	 std::vector<double>& szsz_amplitudes);
+      
+      template <class coeff_t>
+      void set_exchanges
+      (BondList bondlist, Couplings couplings,
+       std::vector<std::pair<int, int>>& exchanges,
+       std::vector<coeff_t>& exchange_amplitudes);
       
     }
   }

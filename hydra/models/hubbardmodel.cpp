@@ -23,8 +23,11 @@ namespace hydra { namespace models {
       
       hubbardmodeldetail::set_hubbard_terms<coeff_t>
       (bondlist, couplings, hoppings_, hopping_amplitudes_,
-       currents_, current_amplitudes_, interactions_, interaction_strengths_,
-       onsites_, onsite_potentials_, U_);
+       currents_, current_amplitudes_,
+       interactions_, interaction_strengths_,
+       onsites_, onsite_potentials_, 
+       szszs_, szsz_amplitudes_,
+       exchanges_, exchange_amplitudes_, U_);
     }
 
     template <class coeff_t>

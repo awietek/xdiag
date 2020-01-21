@@ -29,7 +29,11 @@ namespace hydra { namespace models {
 			     std::vector<std::pair<int, int>>& interactions,
 			     std::vector<double>& interaction_strengths,
 			     std::vector<int>& onsites,
-			     std::vector<double>& onsite_potentials, 
+			     std::vector<double>& onsite_potentials,
+			     std::vector<std::pair<int,int>> szszs,
+			     std::vector<double> szsz_amplitudes,
+			     std::vector<std::pair<int,int>> exchanges,
+			     std::vector<coeff_t> exchange_amplitudes,
 			     double& U)
       {
 	set_hoppings(bondlist, couplings, hoppings, hopping_amplitudes);
@@ -38,6 +42,9 @@ namespace hydra { namespace models {
 			 interaction_strengths);
 	set_onsites(bondlist, couplings, onsites, onsite_potentials);
 	set_U(couplings, U);
+	set_szszs(bondlist, couplings, szszs, szsz_amplitudes);
+	set_exchanges<coeff_t>(bondlist, couplings, exchanges, exchange_amplitudes);
+
       }
 
       
@@ -139,7 +146,45 @@ namespace hydra { namespace models {
 	  }
 	else U = 0.;
       }
-    
+
+
+      template <class coeff_t>
+      void set_szszs
+	(BondList bondlist, Couplings couplings,
+	 std::vector<std::pair<int, int>>& szszs,
+	 std::vector<coeff_t>& szsz_amplitudes)
+      {
+	BondList szsz_list = bondlist.bonds_of_type("HEISENBERG");
+	for (auto bond : szsz_list)
+	  {
+	    int s1 = bond.sites()[0];
+	    int s2 = bond.sites()[1];
+	    szszs.push_back({s1, s2});
+	    coeff_t c = ForceReal<coeff_t>
+	      (couplings[bond.coupling()], true, 
+	       "Warning: deprecating imaginary part of Heisenberg (real Hubbard)!");
+	    szsz_amplitudes.push_back(c);
+	  }
+      }
+
+      template <class coeff_t>
+      void set_exchanges
+	(BondList bondlist, Couplings couplings,
+	 std::vector<std::pair<int, int>>& exchanges,
+	 std::vector<coeff_t>& exchange_amplitudes)
+      {
+	BondList exchange_list = bondlist.bonds_of_type("HEISENBERG");
+	for (auto bond : exchange_list)
+	  {
+	    int s1 = bond.sites()[0];
+	    int s2 = bond.sites()[1];
+	    exchanges.push_back({s1, s2});
+	    coeff_t c = ForceReal<coeff_t>
+	      (couplings[bond.coupling()], true, 
+	       "Warning: deprecating imaginary part of Heisenberg (real Hubbard)!");
+	    exchange_amplitudes.push_back(c);
+	  }
+      }
 
       template void set_hubbard_terms<double>
       (BondList bondlist, Couplings couplings,
@@ -150,7 +195,11 @@ namespace hydra { namespace models {
        std::vector<std::pair<int, int>>& interactions,
        std::vector<double>& interaction_strengths,
        std::vector<int>& onsites,
-       std::vector<double>& onsite_potentials, 
+       std::vector<double>& onsite_potentials,
+       std::vector<std::pair<int,int>> szszs,
+       std::vector<double> szsz_amplitudes,
+       std::vector<std::pair<int,int>> exchanges,
+       std::vector<double> exchange_amplitudes,
        double& U);
 
       template void set_hubbard_terms<complex>
@@ -162,7 +211,11 @@ namespace hydra { namespace models {
        std::vector<std::pair<int, int>>& interactions,
        std::vector<double>& interaction_strengths,
        std::vector<int>& onsites,
-       std::vector<double>& onsite_potentials, 
+       std::vector<double>& onsite_potentials,
+       std::vector<std::pair<int,int>> szszs,
+       std::vector<double> szsz_amplitudes,
+       std::vector<std::pair<int,int>> exchanges,
+       std::vector<complex> exchange_amplitudes,
        double& U);
   
     }

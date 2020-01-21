@@ -82,6 +82,11 @@ namespace hydra { namespace models {
       std::vector<double> interaction_strengths_;
       std::vector<int> onsites_;
       std::vector<double> onsite_potentials_;
+      std::vector<std::pair<int,int>> szszs_;
+      std::vector<double> szsz_amplitudes_;
+      std::vector<std::pair<int,int>> exchanges_;
+      std::vector<coeff_t> exchange_amplitudes_;
+
       double U_;
 
       // members below are all set by initialize
