@@ -1,38 +1,23 @@
 #include <cstdlib>
-#include <vector>
-#include <utility>
-#include <fstream>
-#include <iomanip>
-#include <unistd.h>
 
 #include <mpi.h>
 
 #include <lila/allmpi.h>
 #include <hydra/allmpi.h>
+#include <lime/all.h>
+
+lila::LoggerMPI lg;
 
 #include "hubbarddynamicsmpi.options.h"
 #include "hubbarddynamicaliterationsmpi.h"
 
-#include <iomanip>
-#include <locale>
 
-template<class T>
-std::string FormatWithCommas(T value)
-{
-    std::stringstream ss;
-    ss.imbue(std::locale(""));
-    ss << std::fixed << value;
-    return ss.str();
-}
 
 int main(int argc, char* argv[])
 {
-  using hydra::hilbertspaces::hubbard_qn;
-  using hydra::hilbertspaces::Hubbard;
-  using hydra::models::HubbardModelMPI;
-  using namespace hydra::operators;
-  using hydra::dynamics::continued_fraction;
+  using namespace hydra::all;
   using namespace lila;
+  using namespace lime;
 
   MPI_Init(&argc, &argv); 
   int mpi_rank, mpi_size;
@@ -56,71 +41,21 @@ int main(int argc, char* argv[])
   int verbosity = 1;
   double deflationtol = 1e-8;
   int lobpcgbands = 1;
-
   parse_cmdline(outfile, latticefile, couplingfile, corrfile, nup, ndown, 
 		fermiontype, algorithm, precision, iters, dynprecision, 
 		dyniters, verbosity, deflationtol, lobpcgbands, argc, argv);
-
-  if ((verbosity >= 1) && (mpi_rank == 0))  
-    printf("Using %d MPI tasks\n", mpi_size);
-
-
-  // Check if valid algorithm is defined
-  if (algorithm == "") algorithm = "lanczos";
-  if (!((algorithm == "lanczos") || (algorithm == "bandlanczos")))
-    {
-      if (mpi_rank == 0) 
-	printf("Unknown algorithm: %s (expected lanczos or bandlanczos)\n", 
-	       algorithm.c_str());
-      MPI_Finalize();
-      return EXIT_FAILURE;
-    } 
-
-  // Set fermiontype list
-  std::vector<std::string> ftype_list;
-  if (fermiontype != "") ftype_list.push_back(fermiontype);
-  else
-    {
-      ftype_list.push_back("cdagdn");
-      ftype_list.push_back("cdn");
-    }   
-
-  // Open outfile
-  std::ofstream of;
-  if (outfile != "")
-    {
-      of.open(outfile, std::ios::out);
-      if(of.fail()) 
-	{
-	  if (mpi_rank == 0)
-	    {
-	      std::cerr << "Error in opening outfile: " 
-			<< "Could not open file with filename ["
-			<< outfile << "] given. Abort." << std::endl;
-	      MPI_Abort(MPI_COMM_WORLD, 1);
-	    }
-	}
-    }
+  lg.set_verbosity(verbosity);  
+  check_if_files_exists({latticefile, couplingfile, corrfile});
+  check_if_contained_in(algorithm, {"lanczos", "bandlanczos"});
+  auto dumper = lime::MeasurementsH5((mpi_rank == 0) ? outfile : "");
+  lg.out(1, "Using {} MPI tasks\n", mpi_size);
 
 
-  // Parse bondlist and couplings from file
+  // Parse bondlist, couplings, and corr_bondlist from file
   BondList bondlist = read_bondlist(latticefile);
-  BondList hopping_list = bondlist.bonds_of_type("HUBBARDHOP");
-  BondList interaction_list = bondlist.bonds_of_type("HUBBARDV");
-  if (couplingfile == "") couplingfile = latticefile;
   Couplings couplings = read_couplings(couplingfile);
+  BondList corr_bondlist = read_bondlist(corrfile);
 
-  if ((verbosity >= 1) && (mpi_rank == 0))
-    {
-      for (auto bond : hopping_list)
-	printf("hopping %s %d %d\n", bond.coupling().c_str(), 
-	       bond.sites()[0], bond.sites()[1]);
-      for (auto bond : interaction_list)
-	printf("interaction %s %d %d\n", bond.coupling().c_str(), 
-	       bond.sites()[0], bond.sites()[1]);
-      for (auto c : couplings)
-	printf("coupling %s %f %fj\n", c.first.c_str(), std::real(c.second), std::imag(c.second));
-    }
 
   int n_sites = bondlist.n_sites();
   hubbard_qn qn;
@@ -129,105 +64,54 @@ int main(int argc, char* argv[])
   else qn = {nup, ndown};
 
 
-  // Parse the corrfile
-  std::vector<std::pair<int, int>> correlation_list;
-  if (corrfile == "") correlation_list.push_back({0, 0});
-  else
-    {
-      std::ifstream ifs(corrfile);
-      if(ifs.fail()) 
-	{
-	  if (mpi_rank == 0)
-	    std::cerr << "Error in opening corrfile: " 
-		      << "Could not open file with filename ["
-		      << outfile << "] given. Abort." << std::endl;
-	  MPI_Abort(MPI_COMM_WORLD, 2);
-	}
-      int a, b;
-      while (ifs >> a >> b) correlation_list.push_back({a, b});
-    }
-
-  for (auto corr : correlation_list)
-    {
-      if ((corr.first >= n_sites) || (corr.second >= n_sites))
-	{
-	  if (mpi_rank == 0) printf("Invalid correlation: %d %d\n", corr.first, corr.second);
-	  MPI_Abort(MPI_COMM_WORLD, 3);
-	}
-      if (verbosity >= 2)  
-	if (mpi_rank == 0) printf("corr %d %d\n", corr.first, corr.second);
-    }
-
-
-  // Create infrastructure for Hubbard model
-  if ((verbosity >= 1) && (mpi_rank == 0))
-    printf("Creating Hubbard model for n_upspins=%d, n_downspins=%d...\n",
-	   qn.n_upspins, qn.n_downspins);
+  // Create Hubbard Hamiltonian
+  lg.out(1, "Creating Hubbard model for n_upspins={}, n_downspins={}...\n",
+	     qn.n_upspins, qn.n_downspins);
   double t1 = MPI_Wtime();
-  auto model = HubbardModelMPI<double,uint32>(bondlist, couplings, qn);
+  auto H = HubbardModelMPI<double,uint32>(bondlist, couplings, qn);
   double t2 = MPI_Wtime();
-  if ((verbosity >= 1) && (mpi_rank == 0))
-    printf("time init: %3.4f\n", t2-t1); 
+  lg.out(1, "time init: {} secs\n", t2-t1); 
 
+
+  // Define Hamilton multiplication function
+  int iter = 0;
+  auto multiply_H = 
+    [&H, &iter](const VectorMPI<double>& v, VectorMPI<double>& w) 
+    {
+      double t1 = MPI_Wtime();
+      H.apply_hamiltonian(v, w, false);
+      double t2 = MPI_Wtime();
+      lg.out(2, "iter: {}, time MVM: {}\n", iter, t2-t1); 
+      ++iter;
+    };
+
+
+  ///////////////////////////////
   // Get the ground state
-  if ((verbosity >= 1) && (mpi_rank == 0))
-    printf("Starting ground state eigenvalues Lanczos procedure ...\n");
-  int random_seed = 42 + 1234567*mpi_rank;
-
-  auto multiply = [&model, &mpi_rank, &verbosity](const VectorMPI<double>& v, 
-				      VectorMPI<double>& w) {
-    static int iter=0;
-    double t1 = MPI_Wtime();
-    bool verbose = ((iter == 0) && verbosity >=1);
-    model.apply_hamiltonian(v, w, verbose);
-    double t2 = MPI_Wtime();
-    if ((verbosity >= 2) && (mpi_rank == 0))
-      printf("iter: %d, time MVM: %3.4f\n", iter, t2-t1); 
-    ++iter;
-  };
-
-  MPI_Barrier(MPI_COMM_WORLD);
-  uint64 dim = model.dim();
-  if ((verbosity >= 1) && (mpi_rank == 0)) printf("dim %s\n", FormatWithCommas(dim).c_str()); 
-  MPI_Barrier(MPI_COMM_WORLD);
-
-  uint64 local_dim = model.local_dim();
+  uint64 local_dim = H.local_dim();
   VectorMPI<double> groundstate(local_dim);
   Vector<double> eigs;
+
+  int random_seed = 42 + 1234567*mpi_rank;
+  normal_dist_t<double> dist(0., 1.);
+  normal_gen_t<double> gen(dist, random_seed);
 
   // Lanczos algorithm for ground state (unstable)
   if (lobpcgbands == 0)
     {
-      if ((verbosity >= 1) && (mpi_rank == 0))
-	printf("Using Lanczos algorithm for ground state calculation\n");
-
-      
-      // auto lzs = Lanczos<double, decltype(multiply), VectorMPI<double>>
-      // 	(local_dim, random_seed, iters, precision, num_eigenvalue, multiply);
-      // eigs = lzs.eigenvalues();
-
-      // if ((verbosity >= 1) && (mpi_rank == 0)) printf("Done\n");
-      // if ((verbosity >= 1) && (mpi_rank == 0)) printf("Reiterating for ground state...\n");
-      // auto eigenvectors = lzs.eigenvectors({0});
-
-      normal_dist_t<double> dist(1., 0.);
-      normal_gen_t<double> gen(dist, random_seed);
-      auto res = LanczosEigenvectors(multiply, groundstate, gen, true, precision, {0}, "Ritz");
+      lg.out(1, "Starting ground state Lanczos...\n");
+      auto res = LanczosEigenvectors(multiply_H, groundstate, gen, true, precision, {0}, "Ritz");
+      eigs = res.eigenvalues;
       groundstate = res.vectors[0];
     }
 
   // LOBPCG algorithm for ground state (prefered)
   else
     {
-      if ((verbosity >= 1) && (mpi_rank == 0))
-	{
-	  printf("Using LOBPCG algorithm for ground state calculation\n");
-	  printf("Using %d bands\n", lobpcgbands);
-	}
+      lg.out(1, "Starting ground state LOBPCG algorithm...\n");
+      lg.out(1, "Using {} bands\n", lobpcgbands);
       
       // Create random start vectors
-      uniform_dist_t<double> dist(-1., 1.);
-      uniform_gen_t<double> gen(dist, random_seed);
       std::vector<VectorMPI<double>> vs;
       for (int i=0; i<lobpcgbands; ++i)
 	{
@@ -235,143 +119,103 @@ int main(int argc, char* argv[])
 	  Random(v, gen);
 	  vs.push_back(v);
 	}
-      auto res = Lobpcg(multiply, vs, precision, iters);
+
+      // Run LOBPCG
+      auto res = Lobpcg(multiply_H, vs, precision, iters);
       eigs = res.eigenvalues;
       groundstate = res.eigenvectors[0];
     }
 
   double norm = Dot(groundstate, groundstate);
   groundstate /= sqrt(norm);
-  if ((verbosity >= 1) && (mpi_rank == 0)) printf("Done\n");
+  lg.out(1, "Done\n");
+  lg.out(1, "Ground state energy: {}\n", eigs(0));
+  lg.out(1, "Ground state norm  : {}\n", norm);
+  dumper["GroundStateEnergy"] << eigs(0);
+  dumper.dump();
 
-  // Debug start
-  auto w = groundstate;
-  multiply(groundstate, w);
-  double e0 = Dot(w, groundstate);
-  if (mpi_rank == 0)
-    {
-      printf("eig0: %.17g\n", eigs(0));
-      printf("norm: %.17g, e0: %.17g\n", norm, e0);
-      // if (!(std::abs(norm - 1) < 1e-12))
-      // 	{
-      // 	  for (auto a : lzs.alphas())
-      // 	    printf("%.17g, ", a);
-      // 	  printf("\n");
-      // 	  for (auto a : lzs.betas())
-      // 	    printf("%.17g, ", a);
-      // 	  printf("\n");
-      // 	}
-    }
-  // Debug end
-
-  
-
-
-  // Write gs energy to outfile
-  if (outfile != "")
-    {
-      if (mpi_rank == 0)
-	{
-	  std::stringstream line;
-	  line << std::setprecision(20);
-	  line << "# gs energy: " << eigs(0) << "\n";
-	  of << line.str();
-	  line.str("");
-	}
-    }
-
+  ///////////////////////////////
+  // Get dynamics
   if (algorithm == "lanczos")
     {
-      for (auto corr : correlation_list)
-	for (auto ftype : ftype_list)
-	  {  
-	    int s1 = corr.first;
-	    int s2 = corr.second;
-	    auto res = hydra::hubbard_dynamical_iterations_lanczos_mpi
-	      (model, groundstate, s1, s2, ftype, dyniters, dynprecision, verbosity);
-
-	    // Write to outfile
-	    if (mpi_rank == 0)
-	      {
-		std::stringstream line;
-		line << "# ftype: " << ftype << ", s1: " << s1 << ", s2: " 
-		     << s2 << "\n";
-		line << "# weight: " << std::setprecision(20) 
-		     << res.dyn_weight << "\n";
-		line << "# alphas betas\n";
-		of << line.str();
-		line.str("");
-
-		auto alphas = res.alphas;
-		auto betas = res.betas;
-		assert(alphas.size() == betas.size());
-		for (int idx = 0; idx < alphas.size(); ++idx)
-		  {
-		    line << std::setprecision(20)
-			 << alphas(idx) << " " << betas(idx) << "\n";
-		    of << line.str();
-		    line.str("");
-		  }
-	      }
-	  }
-    }  // algorithm lanczos
-
-  else if (algorithm == "bandlanczos")
-    {
-      std::vector<int> sites;
-      for (auto corr : correlation_list)
+      auto corrs_cdagdncdn = corr_bondlist.bonds_of_type("CDAGDNCDN");
+      for (auto corr : corrs_cdagdncdn)
 	{
-	  int s1 = corr.first;
-	  int s2 = corr.second;
-	  if (std::find(sites.begin(), sites.end(), s1) == sites.end())
-	    sites.push_back(s1);
-	  if (std::find(sites.begin(), sites.end(), s2) == sites.end())
-	    sites.push_back(s2);
-	}
-      for (auto ftype : ftype_list)
-	{  
-	  auto res = hydra::hubbard_dynamical_iterations_bandlanczos_mpi
-	    (model, groundstate, sites, ftype, dyniters, dynprecision, 
-	     verbosity, deflationtol);
-	  auto tmat = res.tmatrix;
-	  auto overlaps = res.overlaps;
-	  std::stringstream line;
-	  if (mpi_rank == 0)
-	    {
-	      line << "# ftype: " << ftype << "\n";
-	      line << "# sites: ";
-	      for (auto site : sites)
-		line << site << " ";
-	      line << "\n";
-	      line << "# tmatrix\n";
-	      of << line.str();
+	  // Get the dynamical weight and Lanczos T-Matrix
+	  assert(corr.sites().size() == 2);
+	  int s1 = corr.sites()[0];
+	  int s2 = corr.sites()[1];
+	  auto res = hydra::hubbard_dynamical_iterations_lanczos_mpi
+	    (H, groundstate, s1, s2, "cdagdn", dyniters, dynprecision);
+	  
+	  // Dump to outfile
+	  std::stringstream ss;
+	  ss << "CDAGDNCDN_" << s1 << "_" << s2;
+	  std::string label = ss.str();
+	  dumper[label + std::string("_Weight")] << res.dyn_weight;
+	  dumper[label + std::string("_Alphas")] << res.alphas;
+	  dumper[label + std::string("_Betas")] << res.betas;
+	  dumper[label + std::string("_Eigenvalues")] << res.eigenvalues;
+	  dumper.dump();
+	} 
+    }
 
-	      // Write the tmatrix
-	      line.str("");
-	      for (auto i : tmat.rows())
-		{
-		  for (auto j : tmat.cols())
-		    line << std::setprecision(20) << tmat(i, j) << " ";
-		  line << "\n";
-		}
-	      of << line.str();
+  // else if (algorithm == "bandlanczos")
+  //   {
+  //     std::vector<int> sites;
+  //     for (auto corr : correlation_list)
+  // 	{
+  // 	  int s1 = corr.first;
+  // 	  int s2 = corr.second;
+  // 	  if (std::find(sites.begin(), sites.end(), s1) == sites.end())
+  // 	    sites.push_back(s1);
+  // 	  if (std::find(sites.begin(), sites.end(), s2) == sites.end())
+  // 	    sites.push_back(s2);
+  // 	}
+  //     for (auto ftype : ftype_list)
+  // 	{  
+  // 	  auto res = hydra::hubbard_dynamical_iterations_bandlanczos_mpi
+  // 	    (model, groundstate, sites, ftype, dyniters, dynprecision, 
+  // 	     verbosity, deflationtol);
+  // 	  auto tmat = res.tmatrix;
+  // 	  auto overlaps = res.overlaps;
+  // 	  std::stringstream line;
+  // 	  if (mpi_rank == 0)
+  // 	    {
+  // 	      line << "# ftype: " << ftype << "\n";
+  // 	      line << "# sites: ";
+  // 	      for (auto site : sites)
+  // 		line << site << " ";
+  // 	      line << "\n";
+  // 	      line << "# tmatrix\n";
+  // 	      of << line.str();
 
-	      // Write the overlaps
-	      line.str("");
-	      line << "# overlaps\n";
-	      of << line.str();
-	      line.str("");
-	      for (auto i : overlaps.rows())
-		{
-		  for (auto j : overlaps.cols())
-		    line << std::setprecision(20) << overlaps(i, j) << " ";
-		  line << "\n";
-		}
-	      of << line.str();
-	    }
-	}
-    }  // algorithm bandlanczos
+  // 	      // Write the tmatrix
+  // 	      line.str("");
+  // 	      for (auto i : tmat.rows())
+  // 		{
+  // 		  for (auto j : tmat.cols())
+  // 		    line << std::setprecision(20) << tmat(i, j) << " ";
+  // 		  line << "\n";
+  // 		}
+  // 	      of << line.str();
 
+  // 	      // Write the overlaps
+  // 	      line.str("");
+  // 	      line << "# overlaps\n";
+  // 	      of << line.str();
+  // 	      line.str("");
+  // 	      for (auto i : overlaps.rows())
+  // 		{
+  // 		  for (auto j : overlaps.cols())
+  // 		    line << std::setprecision(20) << overlaps(i, j) << " ";
+  // 		  line << "\n";
+  // 		}
+  // 	      of << line.str();
+  // 	    }
+  // 	}
+  //   }  // algorithm bandlanczos
+  
   MPI_Finalize();
   return EXIT_SUCCESS;
 }

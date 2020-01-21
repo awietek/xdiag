@@ -25,7 +25,7 @@ ifeq ($(arch), osx)
 endif
 
 modules = hilbertspaces utils indexing models operators symmetries dynamics thermodynamics parameters
-apps=  hubbarded #hubbarddynamics #hubbardopticalftlm  # hubbardthermotpq hubbardopticalmpi # hubbarddynamicsmpi   heisenberged spinlessfermioned   hubbardthermo  heisenbergthermo  hubbardopticaltsl hubbarded 
+apps=  hubbarddynamicsmpi #hubbarded #hubbarddynamics #hubbardopticalftlm  # hubbardthermotpq hubbardopticalmpi #    heisenberged spinlessfermioned   hubbardthermo  heisenbergthermo  hubbardopticaltsl hubbarded 
 
 
 CC         = mpicxx
