@@ -179,9 +179,11 @@ namespace hydra { namespace models {
 	  const state_t flipmask = ((state_t)1 << s1) | ((state_t)1 << s2); 
 	  
 	  // Find out how many states is send to each process
-	  std::vector<int> n_states_i_send_to_proc_no(mpi_size_, 0);
+	  std::vector<int> n_states_i_send(mpi_size_, 0);
 	  if (std::abs(jx) > 1e-14)
 	    {
+
+	      // Flip states and check out how much needs to be communicated
 	      for (const state_t& upspins : my_upspins_)
 		for (state_t downspins: hs_downspins)
 		  {
@@ -190,57 +192,110 @@ namespace hydra { namespace models {
 		      {
 			state_t flipped_upspins = upspins ^ flipmask;
 			int target = mpi_rank_of_spins(flipped_upspins);
-			++n_states_i_send_to_proc_no[target];
+			++n_states_i_send[target];
 		      }
 		  }
-	    }
 
-	  std::vector<int> n_states_i_recv_from_proc_no(mpi_size_, 0);
-	  MPI_Alltoall(n_states_i_send_to_proc_no.data(), 1, MPI_INT,
-		       n_states_i_recv_from_proc_no.data(), 1, MPI_INT,
-		       MPI_COMM_WORLD);
-	  
-	  MPI_Barrier(MPI_COMM_WORLD);
-	  if(mpi_rank_ == 0) printf("SEND BUFFER --------------------------------\n");
-	  MPI_Barrier(MPI_COMM_WORLD);
-	  for(int nt = 0; nt < mpi_size_; ++nt) 
-	    {
-	      if(mpi_rank_ == nt) 
+	      // Exchange information on who sends how much to whom
+	      std::vector<int> n_states_i_recv(mpi_size_, 0);
+	      MPI_Alltoall(n_states_i_send.data(), 1, MPI_INT,
+			   n_states_i_recv.data(), 1, MPI_INT,
+			   MPI_COMM_WORLD);
+
+	      // Sum up states sent/recvd and eventually resize buffers
+	      uint64 sum_n_states_i_send =
+		std::accumulate(n_states_i_send.begin(),
+				n_states_i_send.end(), (uint64)0);
+	      uint64 sum_n_states_i_recv =
+		std::accumulate(n_states_i_recv.begin(),
+				n_states_i_recv.end(), (uint64)0);
+
+	      if (sum_n_states_i_send > send_buffer_.size())
+		send_buffer_.resize(sum_n_states_i_send);
+	      if (sum_n_states_i_recv > recv_buffer_.size())
+		recv_buffer_.resize(sum_n_states_i_recv);
+
+	      // Compute offsets of send/receive states
+	      std::vector<int> n_states_i_send_offsets(mpi_size_, 0);
+	      std::vector<int> n_states_i_recv_offsets(mpi_size_, 0);
+	      for(int m = 0; m < mpi_size_; ++m)
+		for(int n = 0; n < m; ++n)
+		  {
+		    n_states_i_send_offsets[m] += n_states_i_send[n];
+		    n_states_i_recv_offsets[m] += n_states_i_recv[n];
+		  }
+
+	      // Flip states and check out how much needs to be communicated
+	      std::vector<int> n_states_prepared(mpi_size_, 0);
+	      for (const state_t& upspins : my_upspins_)
 		{
-		  printf("[%d]:\n", mpi_rank_);
-		  
-		  for (int sendto = 0; sendto < mpi_size_; ++sendto)
+		  uint64 upspin_offset = my_upspins_offset_[upspins];
+		  uint64 downspin_offset=0;
+		  for (state_t downspins: hs_downspins)
 		    {
-		      printf("-> [%d] %d\n", sendto, n_states_i_send_to_proc_no[sendto]);			     
-		    }
-		  printf("\n");
+		      
+		      if ((popcnt(upspins & flipmask) == 1) &&
+			  (popcnt(downspins & flipmask) == 1))
+			{
+			  uint64 idx = upspin_offset + downspin_offset;
+			  state_t flipped_upspins = upspins ^ flipmask;
+			  int target = mpi_rank_of_spins(flipped_upspins);
+			  int send_idx = n_states_i_send_offsets[target] +
+			    n_states_prepared[target];
+			
+			  send_buffer_[send_idx] = in_vec.vector_local()(idx);
+			  ++n_states_prepared[target];
+			}
+		      ++downspin_offset;
+		  }
 		}
-	      MPI_Barrier(MPI_COMM_WORLD);
-	    }
-	  MPI_Barrier(MPI_COMM_WORLD);
 
+	      // Check, whether correct number of states has been prepared
+	      for(int m = 0; m < mpi_size_; ++m)
+		assert(n_states_prepared[m] == n_states_i_send[m]);
 
-	  MPI_Barrier(MPI_COMM_WORLD);
-	  if(mpi_rank_ == 0) printf("RECV BUFFER --------------------------------\n");
-	  MPI_Barrier(MPI_COMM_WORLD);
-	  for(int nt = 0; nt < mpi_size_; ++nt) 
-	    {
-	      if(mpi_rank_ == nt) 
+	      // Alltoall call
+	      lila::MPI_Alltoallv<coeff_t>
+		(send_buffer_.data(), n_states_i_send.data(), 
+		 n_states_i_send_offsets.data(), 
+		 recv_buffer_.data(), n_states_i_recv.data(), 
+		 n_states_i_recv_offsets.data(), 
+		 MPI_COMM_WORLD);
+
+	      // Get the original upspin configuration and its source proc
+	      std::vector<std::vector<state_t>> upspins_i_get_from_proc(mpi_size_);
+	      for (const state_t& upspins : my_upspins_)
 		{
-		  printf("[%d]:\n", mpi_rank_);
-		  
-		  for (int sendto = 0; sendto < mpi_size_; ++sendto)
-		    {
-		      printf("<- [%d] %d\n", sendto, n_states_i_recv_from_proc_no[sendto]);			     
-		    }
-		  printf("\n");
+		  state_t flipped_upspins = upspins ^ flipmask;
+		  int source = mpi_rank_of_spins(flipped_upspins);
+		  upspins_i_get_from_proc[source].push_back(upspins);		  
 		}
-	      MPI_Barrier(MPI_COMM_WORLD);
+
+	      // Sort the upspins and add coefficients to outvec
+	      int recv_idx=0;
+	      for (int m=0; m<mpi_size_; ++m)
+		{
+		  std::sort(upspins_i_get_from_proc[m].begin(),
+			    upspins_i_get_from_proc[m].end());
+		  for (const state_t& upspins : upspins_i_get_from_proc[m])
+		    {
+		      uint64 upspin_offset = my_upspins_offset_[upspins];
+		      uint64 downspin_offset=0;
+		      for (state_t downspins: hs_downspins)
+			{
+			  if ((popcnt(upspins & flipmask) == 1) &&
+			      (popcnt(downspins & flipmask) == 1))
+			    {
+			      int target_idx = upspin_offset + downspin_offset;
+			      out_vec.vector_local()(target_idx) += jx *
+				recv_buffer_[recv_idx];
+			      ++recv_idx;
+			    }
+			  ++downspin_offset;
+			}	  
+		    }
+		}
 	    }
-	  MPI_Barrier(MPI_COMM_WORLD);
-
-
-
 	  
 	  ++exchange_idx;
 	}
