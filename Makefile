@@ -1,7 +1,7 @@
 srcdir = hydra
 appdir = hydra/applications
 tstdir = test
-arch = osx
+arch = hshackle_linux
 
 ifeq ($(arch), flatiron_linux)
 	lapack        = -llapack -lblas
@@ -23,9 +23,14 @@ ifeq ($(arch), osx)
 	lime_dir =/Users/awietek/Research/Software/lime
 	clara_dir=/Users/awietek/Research/Software/Clara/include
 endif
-
+ifeq ($(arch), hshackle_linux)
+	lapack        = -llapack -lblas
+	lila_dir =/home/hshackle/ed/lila
+	lime_dir =/home/hshackle/ed/lime
+	clara_dir=/home/hshackle/ed/clara/include
+endif
 modules = hilbertspaces utils indexing models operators symmetries dynamics thermodynamics parameters
-apps=  hubbarddynamicsmpi #hubbarded #hubbarddynamics #hubbardopticalftlm  # hubbardthermotpq hubbardopticalmpi #    heisenberged spinlessfermioned   hubbardthermo  heisenbergthermo  hubbardopticaltsl hubbarded 
+apps=  hubbarded hubbarddynamicsmpi #hubbarddynamics #hubbardopticalftlm  # hubbardthermotpq hubbardopticalmpi # hubbarddynamicsmpi   heisenberged spinlessfermioned   hubbardthermo  heisenbergthermo  hubbardopticaltsl hubbarded 
 
 
 CC         = mpicxx
