@@ -179,7 +179,7 @@ namespace hydra { namespace models {
 	  const state_t flipmask = ((state_t)1 << s1) | ((state_t)1 << s2); 
 	  
 	  // Find out how many states is send to each process
-	  std::vector<uint64> n_states_i_send_to_proc_no(mpi_size_, 0);
+	  std::vector<int> n_states_i_send_to_proc_no(mpi_size_, 0);
 	  if (std::abs(jx) > 1e-14)
 	    {
 	      for (const state_t& upspins : my_upspins_)
@@ -195,7 +195,7 @@ namespace hydra { namespace models {
 		  }
 	    }
 
-	  std::vector<uint64> n_states_i_recv_from_proc_no(mpi_size_, 0);
+	  std::vector<int> n_states_i_recv_from_proc_no(mpi_size_, 0);
 	  MPI_Alltoall(n_states_i_send_to_proc_no.data(), 1, MPI_INT,
 		       n_states_i_recv_from_proc_no.data(), 1, MPI_INT,
 		       MPI_COMM_WORLD);
@@ -211,7 +211,7 @@ namespace hydra { namespace models {
 		  
 		  for (int sendto = 0; sendto < mpi_size_; ++sendto)
 		    {
-		      printf("-> [%d] %ld\n", sendto, n_states_i_send_to_proc_no[sendto]);			     
+		      printf("-> [%d] %d\n", sendto, n_states_i_send_to_proc_no[sendto]);			     
 		    }
 		  printf("\n");
 		}
@@ -231,7 +231,7 @@ namespace hydra { namespace models {
 		  
 		  for (int sendto = 0; sendto < mpi_size_; ++sendto)
 		    {
-		      printf("<- [%d] %ld\n", sendto, n_states_i_recv_from_proc_no[sendto]);			     
+		      printf("<- [%d] %d\n", sendto, n_states_i_recv_from_proc_no[sendto]);			     
 		    }
 		  printf("\n");
 		}
