@@ -137,40 +137,114 @@ namespace hydra { namespace models {
 	}
 
 
-  double t2 = MPI_Wtime();
-  if ((mpi_rank_== 0) && verbose) printf("  diag: %3.4f\n", t2-t1); 
-
       // Apply szsz interactions
-  int szsz_idx=0;
-  for (auto pair : szszs_)
-  {
-    const int s1 = std::min(pair.first, pair.second);
-    const int s2 = std::min(pair.first, pair.second);
-    const double jz = szsz_amplitudes_[szsz_idx];
-    if (std::abs(jz) > 1e-14)
-    {
-      uint64 upspin_idx = 0;
-      for (const state_t& upspins : my_upspins_)
-      {
-        uint64 upspin_offset = my_upspins_offset_[upspins];
-        uint64 downspin_offset=0;
-        for (state_t downspins: hs_downspins)
-        {
-          uint64 idx = upspin_offset + downspin_offset;
-          auto coeff = 
-            jz*0.25*(double)((gbit(upspins, s1) - gbit(downspins, s2))*(gbit(upspins, s2) - gbit(downspins, s2)));
-          out_vec(idx) = coeff * in_vec(idx);
-          ++downspin_offset;
-        }
-        ++upspin_idx;
-      }
-    }
-    ++onsite_idx;
-  }
+      int szsz_idx=0;
+      for (auto pair : szszs_)
+	{
+	  const int s1 = std::min(pair.first, pair.second);
+	  const int s2 = std::min(pair.first, pair.second);
+	  const double jz = szsz_amplitudes_[szsz_idx]*0.25;
+	  if (std::abs(jz) > 1e-14)
+	    {
+	      uint64 upspin_idx = 0;
+	      for (const state_t& upspins : my_upspins_)
+		{
+		  uint64 upspin_offset = my_upspins_offset_[upspins];
+		  uint64 downspin_offset=0;
+		  for (state_t downspins: hs_downspins)
+		    {
+		      uint64 idx = upspin_offset + downspin_offset;
+		      auto coeff = 
+			jz*(double)((gbit(upspins, s1) - gbit(downspins, s2)) *
+				    (gbit(upspins, s2) - gbit(downspins, s2)));
+		      out_vec(idx) = coeff * in_vec(idx);
+		      ++downspin_offset;
+		    }
+		  ++upspin_idx;
+		}
+	    }
+	  ++szsz_idx;
+	}
+
+      double t2 = MPI_Wtime();
+      if ((mpi_rank_== 0) && verbose) printf("  diag: %3.4f\n", t2-t1);
+
+      // Spin exchange terms
+      int exchange_idx=0;
+      for (auto pair : exchanges_)
+	{
+	  const int s1 = std::min(pair.first, pair.second);
+	  const int s2 = std::min(pair.first, pair.second);
+	  const coeff_t jx = exchange_amplitudes_[exchange_idx]*0.5;
+	  const state_t flipmask = ((state_t)1 << s1) | ((state_t)1 << s2); 
+	  
+	  // Find out how many states is send to each process
+	  std::vector<uint64> n_states_i_send_to_proc_no(mpi_size_, 0);
+	  if (std::abs(jx) > 1e-14)
+	    {
+	      for (const state_t& upspins : my_upspins_)
+		for (state_t downspins: hs_downspins)
+		  {
+		    if ((popcnt(upspins & flipmask) == 1) &&
+			(popcnt(downspins & flipmask) == 1))
+		      {
+			state_t flipped_upspins = upspins ^ flipmask;
+			int target = mpi_rank_of_spins(flipped_upspins);
+			++n_states_i_send_to_proc_no[target];
+		      }
+		  }
+	    }
+
+	  std::vector<uint64> n_states_i_recv_from_proc_no(mpi_size_, 0);
+	  MPI_Alltoall(n_states_i_send_to_proc_no.data(), 1, MPI_INT,
+		       n_states_i_recv_from_proc_no.data(), 1, MPI_INT,
+		       MPI_COMM_WORLD);
+	  
+	  MPI_Barrier(MPI_COMM_WORLD);
+	  if(mpi_rank_ == 0) printf("SEND BUFFER --------------------------------\n");
+	  MPI_Barrier(MPI_COMM_WORLD);
+	  for(int nt = 0; nt < mpi_size_; ++nt) 
+	    {
+	      if(mpi_rank_ == nt) 
+		{
+		  printf("[%d]:\n", mpi_rank_);
+		  
+		  for (int sendto = 0; sendto < mpi_size_; ++sendto)
+		    {
+		      printf("-> [%d] %ld\n", sendto, n_states_i_send_to_proc_no[sendto]);			     
+		    }
+		  printf("\n");
+		}
+	      MPI_Barrier(MPI_COMM_WORLD);
+	    }
+	  MPI_Barrier(MPI_COMM_WORLD);
+
+
+	  MPI_Barrier(MPI_COMM_WORLD);
+	  if(mpi_rank_ == 0) printf("RECV BUFFER --------------------------------\n");
+	  MPI_Barrier(MPI_COMM_WORLD);
+	  for(int nt = 0; nt < mpi_size_; ++nt) 
+	    {
+	      if(mpi_rank_ == nt) 
+		{
+		  printf("[%d]:\n", mpi_rank_);
+		  
+		  for (int sendto = 0; sendto < mpi_size_; ++sendto)
+		    {
+		      printf("<- [%d] %ld\n", sendto, n_states_i_recv_from_proc_no[sendto]);			     
+		    }
+		  printf("\n");
+		}
+	      MPI_Barrier(MPI_COMM_WORLD);
+	    }
+	  MPI_Barrier(MPI_COMM_WORLD);
 
 
 
-
+	  
+	  ++exchange_idx;
+	}
+      
 
       
       // Apply hoppings on downspins
