@@ -144,20 +144,30 @@ namespace hydra { namespace models {
   int szsz_idx=0;
   for (auto pair : szszs_)
   {
-    const int s1 = std:min(pair.first, pair.second);
-    const int s1 = std:min(pair.first, pair.second);
+    const int s1 = std::min(pair.first, pair.second);
+    const int s2 = std::min(pair.first, pair.second);
     const double jz = szsz_amplitudes_[szsz_idx];
     if (std::abs(jz) > 1e-14)
     {
-      uint64 uspin_idx = 0;
+      uint64 upspin_idx = 0;
       for (const state_t& upspins : my_upspins_)
       {
-        uint64 upsin_offset = my_upspins_offset_[upspins];
+        uint64 upspin_offset = my_upspins_offset_[upspins];
         uint64 downspin_offset=0;
         for (state_t downspins: hs_downspins)
         {
           uint64 idx = upspin_offset + downspin_offset;
-          auto coeff = jx*0.25*(double)
+          auto coeff = 
+            jz*0.25*(double)((gbit(upspins, s1) - gbit(downspins, s2))*(gbit(upspins, s2) - gbit(downspins, s2)));
+          out_vec(idx) = coeff * in_vec(idx);
+          ++downspin_offset;
+        }
+        ++upspin_idx;
+      }
+    }
+    ++onsite_idx;
+  }
+
 
 
 
