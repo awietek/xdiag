@@ -36,10 +36,10 @@ namespace hydra { namespace models {
 			     std::vector<double>& interaction_strengths,
 			     std::vector<int>& onsites,
 			     std::vector<double>& onsite_potentials, 
-			     std::vector<std::pair<int,int>> szszs_,
-			     std::vector<double> szszs_amplitudes_,
-			     std::vector<std::pair<int,int>> exchanges_,
-			     std::vector<coeff_t> exchange_amplitudes_,
+			     std::vector<std::pair<int,int>>& szszs_,
+			     std::vector<double>& szszs_amplitudes_,
+			     std::vector<std::pair<int,int>>& exchanges_,
+			     std::vector<coeff_t>& exchange_amplitudes_,
 			     double& U);
       
       template <class coeff_t>

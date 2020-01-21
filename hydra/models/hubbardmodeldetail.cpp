@@ -30,10 +30,10 @@ namespace hydra { namespace models {
 			     std::vector<double>& interaction_strengths,
 			     std::vector<int>& onsites,
 			     std::vector<double>& onsite_potentials,
-			     std::vector<std::pair<int,int>> szszs,
-			     std::vector<double> szsz_amplitudes,
-			     std::vector<std::pair<int,int>> exchanges,
-			     std::vector<coeff_t> exchange_amplitudes,
+			     std::vector<std::pair<int,int>>& szszs,
+			     std::vector<double>& szsz_amplitudes,
+			     std::vector<std::pair<int,int>>& exchanges,
+			     std::vector<coeff_t>& exchange_amplitudes,
 			     double& U)
       {
 	set_hoppings(bondlist, couplings, hoppings, hopping_amplitudes);
@@ -195,10 +195,10 @@ namespace hydra { namespace models {
        std::vector<double>& interaction_strengths,
        std::vector<int>& onsites,
        std::vector<double>& onsite_potentials,
-       std::vector<std::pair<int,int>> szszs,
-       std::vector<double> szsz_amplitudes,
-       std::vector<std::pair<int,int>> exchanges,
-       std::vector<double> exchange_amplitudes,
+       std::vector<std::pair<int,int>>& szszs,
+       std::vector<double>& szsz_amplitudes,
+       std::vector<std::pair<int,int>>& exchanges,
+       std::vector<double>& exchange_amplitudes,
        double& U);
 
       template void set_hubbard_terms<complex>
@@ -211,10 +211,10 @@ namespace hydra { namespace models {
        std::vector<double>& interaction_strengths,
        std::vector<int>& onsites,
        std::vector<double>& onsite_potentials,
-       std::vector<std::pair<int,int>> szszs,
-       std::vector<double> szsz_amplitudes,
-       std::vector<std::pair<int,int>> exchanges,
-       std::vector<complex> exchange_amplitudes,
+       std::vector<std::pair<int,int>>& szszs,
+       std::vector<double>& szsz_amplitudes,
+       std::vector<std::pair<int,int>>& exchanges,
+       std::vector<complex>& exchange_amplitudes,
        double& U);
   
     }
