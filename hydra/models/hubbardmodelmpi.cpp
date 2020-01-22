@@ -97,7 +97,7 @@ namespace hydra { namespace models {
 		      auto coeff = 	
 			V * (double)((gbit(upspins, s1) + gbit(downspins, s1))*
 				     (gbit(upspins, s2) + gbit(downspins, s2)));
-		      out_vec(idx) += coeff * in_vec(idx); 
+		      out_vec.vector_local()(idx) += coeff * in_vec(idx); 
 		      ++downspin_offset;
 		    }
 		  ++upspin_idx;
@@ -126,7 +126,7 @@ namespace hydra { namespace models {
 		      uint64 idx = upspin_offset + downspin_offset;
 		      auto coeff = 	
 			mu * (double)((gbit(upspins, site) + gbit(downspins, site)));
-		      out_vec(idx) -= coeff * in_vec(idx); 
+		      out_vec.vector_local()(idx) -= coeff * in_vec(idx); 
 		      ++downspin_offset;
 		    }
 		  ++upspin_idx;
@@ -142,7 +142,7 @@ namespace hydra { namespace models {
       for (auto pair : szszs_)
 	{
 	  const int s1 = std::min(pair.first, pair.second);
-	  const int s2 = std::min(pair.first, pair.second);
+	  const int s2 = std::max(pair.first, pair.second);
 	  const double jz = szsz_amplitudes_[szsz_idx]*0.25;
 	  if (std::abs(jz) > 1e-14)
 	    {
@@ -157,7 +157,7 @@ namespace hydra { namespace models {
 		      auto coeff = 
 			jz*(double)((gbit(upspins, s1) - gbit(downspins, s2)) *
 				    (gbit(upspins, s2) - gbit(downspins, s2)));
-		      out_vec(idx) = coeff * in_vec(idx);
+		      out_vec(idx) += coeff * in_vec(idx);
 		      ++downspin_offset;
 		    }
 		  ++upspin_idx;
@@ -174,7 +174,7 @@ namespace hydra { namespace models {
       for (auto pair : exchanges_)
 	{
 	  const int s1 = std::min(pair.first, pair.second);
-	  const int s2 = std::min(pair.first, pair.second);
+	  const int s2 = std::max(pair.first, pair.second);
 	  const coeff_t jx = exchange_amplitudes_[exchange_idx]*0.5;
 	  const state_t flipmask = ((state_t)1 << s1) | ((state_t)1 << s2); 
 	  
@@ -188,7 +188,7 @@ namespace hydra { namespace models {
 		for (state_t downspins: hs_downspins)
 		  {
 		    if ((popcnt(upspins & flipmask) == 1) &&
-			(popcnt(downspins & flipmask) == 1))
+			(popcnt(downspins & flipmask) == 1)&& popcnt((downspins & flipmask) & (upspins & flipmask)) == 0)
 		      {
 			state_t flipped_upspins = upspins ^ flipmask;
 			int target = mpi_rank_of_spins(flipped_upspins);
@@ -235,7 +235,7 @@ namespace hydra { namespace models {
 		    {
 		      
 		      if ((popcnt(upspins & flipmask) == 1) &&
-			  (popcnt(downspins & flipmask) == 1))
+			  (popcnt(downspins & flipmask) == 1) && popcnt((downspins & flipmask) & (upspins & flipmask)) == 0)
 			{
 			  uint64 idx = upspin_offset + downspin_offset;
 			  state_t flipped_upspins = upspins ^ flipmask;
@@ -284,7 +284,7 @@ namespace hydra { namespace models {
 		      for (state_t downspins: hs_downspins)
 			{
 			  if ((popcnt(upspins & flipmask) == 1) &&
-			      (popcnt(downspins & flipmask) == 1))
+			      (popcnt(downspins & flipmask) == 1)&& popcnt((downspins & flipmask) & (upspins & flipmask)) == 0)
 			    {
 			      int target_idx = upspin_offset + downspin_offset;
 			      out_vec.vector_local()(target_idx) += jx *
