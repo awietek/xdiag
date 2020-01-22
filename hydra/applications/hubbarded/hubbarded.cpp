@@ -36,7 +36,7 @@ int main(int argc, char* argv[])
 
   lg.set_verbosity(verbosity);  
   
-  auto dumper = lime::MeasurementsH5(outfile);
+  auto dumper = lime::MeasurementsH5((mpi_rank == 0) ? outfile : "");
   check_if_files_exists({latticefile, couplingfile});
 
   // Create Hamiltonian
@@ -84,6 +84,8 @@ int main(int argc, char* argv[])
   dumper["Eigenvalues"] << eigenvalues;
   dumper.dump();
 
+  lg.out(1, "E0: {}\n", eigenvalues(0));
+  
   MPI_Finalize();
   return EXIT_SUCCESS;
 }

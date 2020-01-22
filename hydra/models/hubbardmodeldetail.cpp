@@ -156,6 +156,7 @@ namespace hydra { namespace models {
 	BondList szsz_list = bondlist.bonds_of_type("HEISENBERG");
 	for (auto bond : szsz_list)
 	  {
+	    assert(bond.sites().size() == 2);
 	    int s1 = bond.sites()[0];
 	    int s2 = bond.sites()[1];
 	    szszs.push_back({s1, s2});
@@ -175,6 +176,7 @@ namespace hydra { namespace models {
 	BondList exchange_list = bondlist.bonds_of_type("HEISENBERG");
 	for (auto bond : exchange_list)
 	  {
+	    assert(bond.sites().size() == 2);
 	    int s1 = bond.sites()[0];
 	    int s2 = bond.sites()[1];
 	    exchanges.push_back({s1, s2});

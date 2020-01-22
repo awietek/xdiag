@@ -13,9 +13,7 @@ namespace hydra { namespace indexing {
       using hilbertspace_t = hilbertspace_type;
       using index_t = index_type;
       using state_t = typename hilbertspace_t::state_t;
-  
-      static constexpr index_t invalid = -1;
-  
+    
       IndexTable() = default;
       IndexTable(const hilbertspace_t& hilbertspace);
 

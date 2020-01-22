@@ -7,7 +7,7 @@ namespace hydra { namespace indexing {
     IndexTable<hilbertspace_t, index_t>::IndexTable
     (const hilbertspace_t& hilbertspace)
       : size_(hilbertspace.size()),
-	indices_(hilbertspace.rawsize(), invalid)
+	indices_(hilbertspace.rawsize(), -1)
     {
       states_.clear();
       index_t idx = 0;
