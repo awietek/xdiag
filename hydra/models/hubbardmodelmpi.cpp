@@ -169,188 +169,188 @@ namespace hydra { namespace models {
       double t2 = MPI_Wtime();
       if ((mpi_rank_== 0) && verbose) printf("  diag: %3.4f\n", t2-t1);
 
-      // // Spin exchange terms
-      // int exchange_idx=0;
-      // for (auto pair : exchanges_)
-      // 	{
-      // 	  const int s1 = std::min(pair.first, pair.second);
-      // 	  const int s2 = std::max(pair.first, pair.second);
-      // 	  const coeff_t jx = exchange_amplitudes_[exchange_idx]*0.5;
-      // 	  const state_t flipmask = ((state_t)1 << s1) | ((state_t)1 << s2); 
+      // Spin exchange terms
+      int exchange_idx=0;
+      for (auto pair : exchanges_)
+      	{
+      	  const int s1 = std::min(pair.first, pair.second);
+      	  const int s2 = std::max(pair.first, pair.second);
+      	  const coeff_t jx = exchange_amplitudes_[exchange_idx]*0.5;
+      	  const state_t flipmask = ((state_t)1 << s1) | ((state_t)1 << s2); 
 	  
-      // 	  // Find out how many states is send to each process
-      // 	  std::vector<int> n_states_i_send(mpi_size_, 0);
-      // 	  if (std::abs(jx) > 1e-14)
-      // 	    {
-      // 	      // Flip states and check out how much needs to be communicated
-      // 	      for (const state_t& upspins : my_upspins_)
-      // 		for (state_t downspins: hs_downspins)
-      // 		  {
-      // 		    if ((popcnt(upspins & flipmask) == 1) &&
-      // 			(popcnt(downspins & flipmask) == 1)&& popcnt((downspins & flipmask) & (upspins & flipmask)) == 0)
-      // 		      {
-      // 			state_t flipped_upspins = upspins ^ flipmask;
-      // 			int target = mpi_rank_of_spins(flipped_upspins);
-      // 			++n_states_i_send[target];
-      // 		      }
-      // 		  }
+      	  // Find out how many states is send to each process
+      	  std::vector<int> n_states_i_send(mpi_size_, 0);
+      	  if (std::abs(jx) > 1e-14)
+      	    {
+      	      // Flip states and check out how much needs to be communicated
+      	      for (const state_t& upspins : my_upspins_)
+      		for (state_t downspins: hs_downspins)
+      		  {
+      		    if ((popcnt(upspins & flipmask) == 1) &&
+      			(popcnt(downspins & flipmask) == 1)&& popcnt((downspins & flipmask) & (upspins & flipmask)) == 0)
+      		      {
+      			state_t flipped_upspins = upspins ^ flipmask;
+      			int target = mpi_rank_of_spins(flipped_upspins);
+      			++n_states_i_send[target];
+      		      }
+      		  }
 	      
-      // 	      // printf("n_states_i_send\n");
-      // 	      // for (int m=0; m<mpi_size_; ++m)
-      // 	      // 	printf(" [%d] -> [%d] %d\n", mpi_rank_, m, n_states_i_send[m]);
+      	      // printf("n_states_i_send\n");
+      	      // for (int m=0; m<mpi_size_; ++m)
+      	      // 	printf(" [%d] -> [%d] %d\n", mpi_rank_, m, n_states_i_send[m]);
 
 
 
-      // 	      // Exchange information on who sends how much to whom
-      // 	      std::vector<int> n_states_i_recv(mpi_size_, 0);
-      // 	      MPI_Alltoall(n_states_i_send.data(), 1, MPI_INT,
-      // 			   n_states_i_recv.data(), 1, MPI_INT,
-      // 			   MPI_COMM_WORLD);
+      	      // Exchange information on who sends how much to whom
+      	      std::vector<int> n_states_i_recv(mpi_size_, 0);
+      	      MPI_Alltoall(n_states_i_send.data(), 1, MPI_INT,
+      			   n_states_i_recv.data(), 1, MPI_INT,
+      			   MPI_COMM_WORLD);
 
 	      
-      // 	      // printf("n_states_i_recv\n");
-      // 	      // for (int m=0; m<mpi_size_; ++m)
-      // 	      // 	printf(" [%d] <- [%d] %d\n", mpi_rank_, m, n_states_i_recv[m]);
+      	      // printf("n_states_i_recv\n");
+      	      // for (int m=0; m<mpi_size_; ++m)
+      	      // 	printf(" [%d] <- [%d] %d\n", mpi_rank_, m, n_states_i_recv[m]);
 
 
-      // 	      // Sum up states sent/recvd and eventually resize buffers
-      // 	      uint64 sum_n_states_i_send =
-      // 		std::accumulate(n_states_i_send.begin(),
-      // 				n_states_i_send.end(), (uint64)0);
-      // 	      uint64 sum_n_states_i_recv =
-      // 		std::accumulate(n_states_i_recv.begin(),
-      // 				n_states_i_recv.end(), (uint64)0);
+      	      // Sum up states sent/recvd and eventually resize buffers
+      	      uint64 sum_n_states_i_send =
+      		std::accumulate(n_states_i_send.begin(),
+      				n_states_i_send.end(), (uint64)0);
+      	      uint64 sum_n_states_i_recv =
+      		std::accumulate(n_states_i_recv.begin(),
+      				n_states_i_recv.end(), (uint64)0);
 
-      // 	      if (sum_n_states_i_send > send_buffer_.size())
-      // 		send_buffer_.resize(sum_n_states_i_send);
-      // 	      if (sum_n_states_i_recv > recv_buffer_.size())
-      // 		recv_buffer_.resize(sum_n_states_i_recv);
+      	      if (sum_n_states_i_send > send_buffer_.size())
+      		send_buffer_.resize(sum_n_states_i_send);
+      	      if (sum_n_states_i_recv > recv_buffer_.size())
+      		recv_buffer_.resize(sum_n_states_i_recv);
 
-      // 	      // printf("sum_n_states_i_send: %ld\n", sum_n_states_i_send);
-      // 	      // printf("sum_n_states_i_recv: %ld\n", sum_n_states_i_recv);
+      	      // printf("sum_n_states_i_send: %ld\n", sum_n_states_i_send);
+      	      // printf("sum_n_states_i_recv: %ld\n", sum_n_states_i_recv);
 
-      // 	      // Compute offsets of send/receive states
-      // 	      std::vector<int> n_states_i_send_offsets(mpi_size_, 0);
-      // 	      std::vector<int> n_states_i_recv_offsets(mpi_size_, 0);
-      // 	      for(int m = 0; m < mpi_size_; ++m)
-      // 		for(int n = 0; n < m; ++n)
-      // 		  {
-      // 		    n_states_i_send_offsets[m] += n_states_i_send[n];
-      // 		    n_states_i_recv_offsets[m] += n_states_i_recv[n];
-      // 		  }
+      	      // Compute offsets of send/receive states
+      	      std::vector<int> n_states_i_send_offsets(mpi_size_, 0);
+      	      std::vector<int> n_states_i_recv_offsets(mpi_size_, 0);
+      	      for(int m = 0; m < mpi_size_; ++m)
+      		for(int n = 0; n < m; ++n)
+      		  {
+      		    n_states_i_send_offsets[m] += n_states_i_send[n];
+      		    n_states_i_recv_offsets[m] += n_states_i_recv[n];
+      		  }
 
-      // 	      // printf("n_states_i_send_offsets\n");
-      // 	      // for (int m=0; m<mpi_size_; ++m)
-      // 	      // 	printf(" [%d] -> [%d] %d\n", mpi_rank_, m, n_states_i_send_offsets[m]);
-      // 	      // printf("n_states_i_recv_offsets\n");
-      // 	      // for (int m=0; m<mpi_size_; ++m)
-      // 	      // 	printf(" [%d] <- [%d] %d\n", mpi_rank_, m, n_states_i_recv_offsets[m]);
+      	      // printf("n_states_i_send_offsets\n");
+      	      // for (int m=0; m<mpi_size_; ++m)
+      	      // 	printf(" [%d] -> [%d] %d\n", mpi_rank_, m, n_states_i_send_offsets[m]);
+      	      // printf("n_states_i_recv_offsets\n");
+      	      // for (int m=0; m<mpi_size_; ++m)
+      	      // 	printf(" [%d] <- [%d] %d\n", mpi_rank_, m, n_states_i_recv_offsets[m]);
 
 
-      // 	      // Flip states and check out how much needs to be communicated
-      // 	      std::vector<int> n_states_prepared(mpi_size_, 0);
-      // 	      for (const state_t& upspins : my_upspins_)
-      // 		{
-      // 		  uint64 upspin_offset = my_upspins_offset_[upspins];
-      // 		  uint64 downspin_offset=0;
-      // 		  for (state_t downspins: hs_downspins)
-      // 		    {
+      	      // Flip states and check out how much needs to be communicated
+      	      std::vector<int> n_states_prepared(mpi_size_, 0);
+      	      for (const state_t& upspins : my_upspins_)
+      		{
+      		  uint64 upspin_offset = my_upspins_offset_[upspins];
+      		  uint64 downspin_offset=0;
+      		  for (state_t downspins: hs_downspins)
+      		    {
 		      
-      // 		      if ((popcnt(upspins & flipmask) == 1) &&
-      // 			  (popcnt(downspins & flipmask) == 1) && popcnt((downspins & flipmask) & (upspins & flipmask)) == 0)
-      // 			{
-      // 			  uint64 idx = upspin_offset + downspin_offset;
-      // 			  state_t flipped_upspins = upspins ^ flipmask;
-      // 			  int target = mpi_rank_of_spins(flipped_upspins);
-      // 			  int send_idx = n_states_i_send_offsets[target] +
-      // 			    n_states_prepared[target];
+      		      if ((popcnt(upspins & flipmask) == 1) &&
+      			  (popcnt(downspins & flipmask) == 1) && popcnt((downspins & flipmask) & (upspins & flipmask)) == 0)
+      			{
+      			  uint64 idx = upspin_offset + downspin_offset;
+      			  state_t flipped_upspins = upspins ^ flipmask;
+      			  int target = mpi_rank_of_spins(flipped_upspins);
+      			  int send_idx = n_states_i_send_offsets[target] +
+      			    n_states_prepared[target];
 			
-      // 			  send_buffer_[send_idx] = in_vec.vector_local()(idx);
-      // 			  ++n_states_prepared[target];
-      // 			}
-      // 		      ++downspin_offset;
-      // 		  }
-      // 		}
+      			  send_buffer_[send_idx] = in_vec.vector_local()(idx);
+      			  ++n_states_prepared[target];
+      			}
+      		      ++downspin_offset;
+      		  }
+      		}
 
-      // 	      // LilaPrint(in_vec.vector_local());
-      // 	      // for (int i=0; i<sum_n_states_i_send; ++i)
-      // 	      // 	printf("send_buf[%d] = %f\n", i, send_buffer_[i]);
+      	      // LilaPrint(in_vec.vector_local());
+      	      // for (int i=0; i<sum_n_states_i_send; ++i)
+      	      // 	printf("send_buf[%d] = %f\n", i, send_buffer_[i]);
 	      
 	      
-      // 	      // Check, whether correct number of states has been prepared
-      // 	      for(int m = 0; m < mpi_size_; ++m)
-      // 		assert(n_states_prepared[m] == n_states_i_send[m]);
+      	      // Check, whether correct number of states has been prepared
+      	      for(int m = 0; m < mpi_size_; ++m)
+      		assert(n_states_prepared[m] == n_states_i_send[m]);
 
-      // 	      // Alltoall call
-      // 	      lila::MPI_Alltoallv<coeff_t>
-      // 		(send_buffer_.data(), n_states_i_send.data(), 
-      // 		 n_states_i_send_offsets.data(), 
-      // 		 recv_buffer_.data(), n_states_i_recv.data(), 
-      // 		 n_states_i_recv_offsets.data(), 
-      // 		 MPI_COMM_WORLD);
+      	      // Alltoall call
+      	      lila::MPI_Alltoallv<coeff_t>
+      		(send_buffer_.data(), n_states_i_send.data(), 
+      		 n_states_i_send_offsets.data(), 
+      		 recv_buffer_.data(), n_states_i_recv.data(), 
+      		 n_states_i_recv_offsets.data(), 
+      		 MPI_COMM_WORLD);
 
-      // 	      // for (int i=0; i<sum_n_states_i_recv; ++i)
-      // 	      // 	printf("recv_buf[%d] = %f\n", i, recv_buffer_[i]);
+      	      // for (int i=0; i<sum_n_states_i_recv; ++i)
+      	      // 	printf("recv_buf[%d] = %f\n", i, recv_buffer_[i]);
 
-      // 	      // Get the original upspin configuration and its source proc
-      // 	      std::vector<std::vector<state_t>> upspins_i_get_from_proc(mpi_size_);
-      // 	      for (const state_t& upspins : my_upspins_)
-      // 		{
-      // 		  state_t flipped_upspins = upspins ^ flipmask;
-      // 		  int source = mpi_rank_of_spins(flipped_upspins);
-      // 		  upspins_i_get_from_proc[source].push_back(upspins);		  
-      // 		}
+      	      // Get the original upspin configuration and its source proc
+      	      std::vector<std::vector<state_t>> upspins_i_get_from_proc(mpi_size_);
+      	      for (const state_t& upspins : my_upspins_)
+      		{
+      		  state_t flipped_upspins = upspins ^ flipmask;
+      		  int source = mpi_rank_of_spins(flipped_upspins);
+      		  upspins_i_get_from_proc[source].push_back(upspins);		  
+      		}
 
-      // 	      // for (int i=0; i<mpi_size_; ++i)
-      // 	      // 	for (auto upspins : upspins_i_get_from_proc[i])
-      // 	      // 	  printf("upspins_i_get: %d\n", upspins);
+      	      // for (int i=0; i<mpi_size_; ++i)
+      	      // 	for (auto upspins : upspins_i_get_from_proc[i])
+      	      // 	  printf("upspins_i_get: %d\n", upspins);
 	      
 
-      // 	      // Sort the upspins and add coefficients to outvec
-      // 	      // LilaPrint(out_vec.vector_local());
+      	      // Sort the upspins and add coefficients to outvec
+      	      // LilaPrint(out_vec.vector_local());
 
-      // 	      uint64 recv_idx=0;
-      // 	      for (int m=0; m<mpi_size_; ++m)
-      // 		{
+      	      uint64 recv_idx=0;
+      	      for (int m=0; m<mpi_size_; ++m)
+      		{
 
-      // 		  // Sort according to order of flipped upspins
-      // 		  std::sort(upspins_i_get_from_proc[m].begin(),
-      // 			    upspins_i_get_from_proc[m].end(),
-      // 			    [&flipmask](state_t const& a, state_t const& b)
-      // 			    {
-      // 			      state_t flipped_a = a ^ flipmask;
-      // 			      state_t flipped_b = b ^ flipmask;
-      // 			      return flipped_a < flipped_b;
-      // 			    });
+      		  // Sort according to order of flipped upspins
+      		  std::sort(upspins_i_get_from_proc[m].begin(),
+      			    upspins_i_get_from_proc[m].end(),
+      			    [&flipmask](state_t const& a, state_t const& b)
+      			    {
+      			      state_t flipped_a = a ^ flipmask;
+      			      state_t flipped_b = b ^ flipmask;
+      			      return flipped_a < flipped_b;
+      			    });
 		  
-      // 		  for (const state_t& upspins : upspins_i_get_from_proc[m])
-      // 		    {
-      // 		      uint64 upspin_offset = my_upspins_offset_[upspins];
+      		  for (const state_t& upspins : upspins_i_get_from_proc[m])
+      		    {
+      		      uint64 upspin_offset = my_upspins_offset_[upspins];
 		      
-      // 		      uint64 downspin_offset=0;
-      // 		      for (state_t downspins: hs_downspins)
-      // 			{
-      // 			  if ((popcnt(upspins & flipmask) == 1) &&
-      // 			      (popcnt(downspins & flipmask) == 1) &&
-      // 			      popcnt((downspins & flipmask) & (upspins & flipmask)) == 0)
-      // 			    {
-      // 			      uint64 target_idx = upspin_offset + downspin_offset;
-      // 			      // printf("upspins_offset: %d, target_idx: %d, recv_idx: %d, coeff: %f\n",
-      // 			      // 	     upspin_offset, target_idx, recv_idx, jx * recv_buffer_[recv_idx] );
+      		      uint64 downspin_offset=0;
+      		      for (state_t downspins: hs_downspins)
+      			{
+      			  if ((popcnt(upspins & flipmask) == 1) &&
+      			      (popcnt(downspins & flipmask) == 1) &&
+      			      popcnt((downspins & flipmask) & (upspins & flipmask)) == 0)
+      			    {
+      			      uint64 target_idx = upspin_offset + downspin_offset;
+      			      // printf("upspins_offset: %d, target_idx: %d, recv_idx: %d, coeff: %f\n",
+      			      // 	     upspin_offset, target_idx, recv_idx, jx * recv_buffer_[recv_idx] );
 
-      // 			      out_vec.vector_local()(target_idx) += jx *
-      // 				recv_buffer_[recv_idx];
-      // 			      ++recv_idx;
-      // 			    }
-      // 			  ++downspin_offset;
-      // 			}	  
-      // 		    }
-      // 		}
-      // 	      // LilaPrint(out_vec.vector_local());
+      			      out_vec.vector_local()(target_idx) += jx *
+      				recv_buffer_[recv_idx];
+      			      ++recv_idx;
+      			    }
+      			  ++downspin_offset;
+      			}	  
+      		    }
+      		}
+      	      // LilaPrint(out_vec.vector_local());
 
-      // 	    }
-      // 	  ++exchange_idx;
-      // 	}
+      	    }
+      	  ++exchange_idx;
+      	}
       
 
       
@@ -889,8 +889,8 @@ namespace hydra { namespace models {
 
       // Fill in from send buffer
       t1 = MPI_Wtime();
-      printf("[%d] send_buffer_size: %d, out_vec.vector_local().size(): %d\n",
-	     mpi_rank_, send_buffer_.size(), out_vec.vector_local().size());
+      // printf("[%d] send_buffer_size: %d, in_vec.vector_local().size(): %d, out_vec.vector_local().size(): %d\n",
+      // 	     mpi_rank_, send_buffer_.size(), in_vec.vector_local().size(), out_vec.vector_local().size());
       
       for (int k=0; k<in_vec.vector_local().size(); ++k)
 	out_vec.vector_local()(k) += send_buffer_[k];

@@ -65,7 +65,7 @@ int main(int argc, char* argv[])
     };
 
   // Create normal distributed random start state
-  VectorMPI<double> startstate(H.dim());
+  VectorMPI<double> startstate(H.local_dim());
   normal_dist_t<double> dist(0., 1.);
   normal_gen_t<double> gen(dist, seed);
   Random(startstate, gen, true);
