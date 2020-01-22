@@ -46,7 +46,7 @@ namespace hydra { namespace models {
       using utils::popcnt;
       using utils::gbit;
       using utils::gbits;
-
+      verbose=true;
       if ((mpi_rank_== 0) && verbose)
 	{
 	  printf("max_local_dim: %lu\n", max_local_dim_);
@@ -171,6 +171,7 @@ namespace hydra { namespace models {
 
       // Spin exchange terms
       int exchange_idx=0;
+      t1 = MPI_Wtime();
       for (auto pair : exchanges_)
       	{
       	  const int s1 = std::min(pair.first, pair.second);
@@ -351,11 +352,12 @@ namespace hydra { namespace models {
       	    }
       	  ++exchange_idx;
       	}
-      
+      t2 = MPI_Wtime();
+      if ((mpi_rank_== 0) && verbose) printf("  exch: %3.4f\n", t2-t1);
 
       
       // Apply hoppings on downspins
-      t1 = MPI_Wtime();
+      double ht1 = MPI_Wtime();
       int hopping_idx=0;
       for (auto pair : hoppings_)
 	{
@@ -896,6 +898,9 @@ namespace hydra { namespace models {
 	out_vec.vector_local()(k) += send_buffer_[k];
       t2 = MPI_Wtime();
       if ((mpi_rank_ == 0) && verbose) printf("  fill outvec:   %3.4f\n", t2-t1); 
+
+      double ht2 = MPI_Wtime();
+      if ((mpi_rank_== 0) && verbose) printf("  hopp: %3.4f\n", ht2-ht1);
 
     }
 

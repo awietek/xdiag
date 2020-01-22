@@ -59,8 +59,10 @@ int main(int argc, char* argv[])
   auto multiply_H = 
     [&H, &iter](const VectorMPI<double>& v, VectorMPI<double>& w) 
     {
+      double t1 = MPI_Wtime();
       H.apply_hamiltonian(v, w);
-      lg.out(2, "iter: {}\n", iter); 
+      double t2 = MPI_Wtime();
+      lg.out(2, "iter: {}, time: {} secs\n", iter, t2-t1); 
       ++iter;
     };
 

@@ -127,7 +127,7 @@ TEST_CASE( "Add MPI test", "[AddMPI]" ) {
   }
 
 
-  // four sites Heisenberg
+  // four-sites Heisenberg
   {  
     BondList bondlist;
     Couplings couplings;
@@ -155,7 +155,7 @@ TEST_CASE( "Add MPI test", "[AddMPI]" ) {
     test_hubbardmodelmpi(bondlist, couplings, qn, e0);
   }
 
-  // six sites Heisenberg
+  // six-sites Heisenberg
   {  
     BondList bondlist;
     Couplings couplings;
@@ -169,7 +169,7 @@ TEST_CASE( "Add MPI test", "[AddMPI]" ) {
     test_hubbardmodelmpi(bondlist, couplings, qn, e0);
   }
 
-  // eight sites Heisenberg
+  // eight-sites Heisenberg
   {  
     BondList bondlist;
     Couplings couplings;
@@ -182,7 +182,6 @@ TEST_CASE( "Add MPI test", "[AddMPI]" ) {
     hubbard_qn qn = {n_sites/2, n_sites/2};
     test_hubbardmodelmpi(bondlist, couplings, qn, e0);
   }
-
 
 
 }
