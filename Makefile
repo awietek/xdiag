@@ -33,9 +33,10 @@ modules = hilbertspaces utils indexing models operators symmetries dynamics ther
 
 apps=  hubbarded #hubbarddynamicsmpi #hubbarddynamics #hubbardopticalftlm  # hubbardthermotpq hubbardopticalmpi # hubbarddynamicsmpi   heisenberged spinlessfermioned   hubbardthermo  heisenbergthermo  hubbardopticaltsl hubbarded 
 
+# -g -fsanitize=address
 
 CC         = mpicxx
-CCOPT         = -g -fsanitize=address
+CCOPT         = -O3
 CCARCH        = -std=c++11 -Wall -pedantic -m64
 programs     :=
 mpiprograms  :=
