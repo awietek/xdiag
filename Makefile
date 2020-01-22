@@ -31,11 +31,11 @@ ifeq ($(arch), hshackle_linux)
 endif
 modules = hilbertspaces utils indexing models operators symmetries dynamics thermodynamics parameters
 
-apps=  hubbarded hubbarddynamicsmpi #hubbarddynamics #hubbardopticalftlm  # hubbardthermotpq hubbardopticalmpi # hubbarddynamicsmpi   heisenberged spinlessfermioned   hubbardthermo  heisenbergthermo  hubbardopticaltsl hubbarded 
+apps=  hubbarded #hubbarddynamicsmpi #hubbarddynamics #hubbardopticalftlm  # hubbardthermotpq hubbardopticalmpi # hubbarddynamicsmpi   heisenberged spinlessfermioned   hubbardthermo  heisenbergthermo  hubbardopticaltsl hubbarded 
 
 
 CC         = mpicxx
-CCOPT         = -O3
+CCOPT         = -g -fsanitize=address
 CCARCH        = -std=c++11 -Wall -pedantic -m64
 programs     :=
 mpiprograms  :=
