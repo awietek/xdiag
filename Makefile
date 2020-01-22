@@ -1,7 +1,7 @@
 srcdir = hydra
 appdir = hydra/applications
 tstdir = test
-arch = osx
+arch = flatiron_linux
 
 ifeq ($(arch), flatiron_linux)
 	lapack        = -llapack -lblas
@@ -89,3 +89,6 @@ $(depdir): ; @mkdir -o $@
 
 $(apps): $(appdir)/$@ lib
 	$(CC) $(CCOPT) $(CCARCH) $(appdir)/$@/$@.cpp -o bin/$@ $(includes) $(libraries)
+
+$(tests): $@ lib
+	$(CC) $(CCOPT) $(CCARCH) $@.cpp -o $@ $(includes) $(libraries) $(test_objects)
