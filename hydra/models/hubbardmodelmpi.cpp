@@ -1348,7 +1348,7 @@ namespace hydra { namespace models {
 				       sum_n_downspins_i_recv_forward_),
 			      std::max(sum_n_upspins_i_send_back_, 
 				       sum_n_upspins_i_recv_back_));
-      printf("buffer_size: %d\n", buffer_size_);
+
       try 								       
 	{
 	  send_buffer_.resize(buffer_size_);

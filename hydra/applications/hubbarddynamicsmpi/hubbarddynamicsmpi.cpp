@@ -11,8 +11,6 @@ lila::LoggerMPI lg;
 #include "hubbarddynamicsmpi.options.h"
 #include "hubbarddynamicaliterationsmpi.h"
 
-
-
 int main(int argc, char* argv[])
 {
   using namespace hydra::all;

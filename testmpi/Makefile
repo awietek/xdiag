@@ -29,11 +29,6 @@ ifeq ($(arch), hshackle_linux)
 	lime_dir =/home/hshackle/ed/lime
 	clara_dir=/home/hshackle/ed/clara/include
 endif
-modules = hilbertspaces utils indexing models operators symmetries dynamics thermodynamics parameters
-
-apps=  hubbarded #hubbarddynamicsmpi #hubbarddynamics #hubbardopticalftlm  # hubbardthermotpq hubbardopticalmpi # hubbarddynamicsmpi   heisenberged spinlessfermioned   hubbardthermo  heisenbergthermo  hubbardopticaltsl hubbarded 
-
-# -g -fsanitize=address
 
 CC         = mpicxx
 CCOPT         = -O3
@@ -44,51 +39,24 @@ sources      :=
 libraries    := $(lapack) -lhydra -Llib -llime -L$(lime_dir)/lib -lhdf5
 extra_clean  :=
 CPPFLAGS     += $(addprefix -I ,$(include_dirs))
-RM     := rm -f
-MKDIR  := mkdir -p
 
-# Set the variable sources
-app_dirs = $(addprefix $(appdir)/,$(apps))
-app_makefiles = $(addsuffix /module.mk,$(app_dirs))
-module_dirs = $(addprefix $(srcdir)/,$(modules))
-module_makefiles = $(addsuffix /module.mk,$(module_dirs))
+exe = tests
+objects = tests.o test_hubbardmodelmpi.o
 
-include $(app_makefiles)
-include $(module_makefiles)
-
-objects = $(subst .cpp,.o,$(sources))
-depends = $(subst .cpp,.d,$(sources))
-depflags = -MT $@ -MMD -MP -MF $*.d
 
 
 includes = $(addprefix -I,$(module_dirs)) -I$(lila_dir) -I. -I$(clara_dir) -I$(lime_dir)
 
-.PHONY: all
-all:  $(objects) lib
 
-apps: $(apps)
-
-$(depends):
-include $(depends)
-
-lib: $(objects)
-	ar rcs lib/libhydra.a $(objects)
+$(exe):  $(objects) 
+	$(CC) $(CCOPT) $(CCARCH) -o $(exe) $(objects) $(lapack) -L../lib -lhydra
 
 .PHONY: clean
 clean:
 	$(RM) -r $(objects) $(depends)
 
 .PHONY: rebuild
-rebuild: clean all lib
+rebuild: clean $(exe)
 
 %.o: %.cpp
-%.o: %.cpp %.d
-	$(CC) $(CCOPT) $(CCARCH) $(depflags) -c $< -o $@ $(includes)
-
-$(depdir): ; @mkdir -o $@
-
-$(apps): $(appdir)/$@ lib
-	$(CC) $(CCOPT) $(CCARCH) $(appdir)/$@/$@.cpp -o bin/$@ $(includes) $(libraries)
-
-$(tests): $@ lib
-	$(CC) $(CCOPT) $(CCARCH) $@.cpp -o $@ $(includes) $(libraries) $(test_objects)
+	$(CC) $(CCOPT) $(CCARCH) -c $< -o $@ $(includes) -I../
