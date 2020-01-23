@@ -18,6 +18,7 @@
 #include <mpi.h>
 
 #include "all.h"
+#include "models/tjmodelmpi.h"
 #include "models/hubbardmodelmpi.h"
 
 #endif

@@ -11,8 +11,6 @@ void test_hubbardmodelmpi(hydra::operators::BondList bondlist,
 			  hydra::hilbertspaces::hubbard_qn qn, 
 			  double e0)
 {
-
-
   auto H = HubbardModelMPI<double>(bondlist, couplings, qn);
   auto multiply_H = 
     [&H](const VectorMPI<double>& v, VectorMPI<double>& w) 
@@ -35,7 +33,6 @@ TEST_CASE( "Add MPI test", "[AddMPI]" ) {
 
   //////////////////////////////////////
   // Test free fermion chains
-
 
   // Two sites free-fermions
   {  
@@ -98,6 +95,7 @@ TEST_CASE( "Add MPI test", "[AddMPI]" ) {
 
   //////////////////////////////////////////////
   // Test antiferromagnetic heisenberg models
+
   // Two sites Heisenberg
   {  
     BondList bondlist;
@@ -125,7 +123,6 @@ TEST_CASE( "Add MPI test", "[AddMPI]" ) {
     hubbard_qn qn = {1, 2};
     test_hubbardmodelmpi(bondlist, couplings, qn, e0);
   }
-
 
   // four-sites Heisenberg
   {  

@@ -1097,10 +1097,12 @@ namespace hydra { namespace models {
 	    }
 	}
 
+      // Check whether every upspin configuration belongs to some process
       uint64 dim_test = my_upspins_.size();
       MPI_Allreduce(MPI_IN_PLACE, &dim_test, 1, MPI_UNSIGNED_LONG, MPI_SUM, 
 		    MPI_COMM_WORLD);
       assert(dim_test == hs_upspins_.size());
+
 	
       local_dim_ = offset;
       MPI_Allreduce(&local_dim_, &dim_, 1, MPI_UNSIGNED_LONG, MPI_SUM, 
