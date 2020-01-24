@@ -3,6 +3,9 @@
 
 namespace hydra { namespace models {
 
+    using combinatorics::down_hole_to_up;
+    using combinatorics::up_hole_to_down;
+
     template <class coeff_t, class state_t>
     TJModelMPI<coeff_t, state_t>::TJModelMPI
     (BondList bondlist, Couplings couplings, hilbertspaces::hubbard_qn qn)
@@ -176,7 +179,7 @@ namespace hydra { namespace models {
 		    n_downspins_i_recv_forward_offsets_.data(), 
 		    MPI_UNSIGNED, MPI_COMM_WORLD);
 
-      // downspins_i_send_forward_ and upspins_i_send_forward_ not neede anymore
+      // downspins_i_send_forward_ and upspins_i_send_forward_ not needed anymore
       downspins_i_send_forward_.clear();
       upspins_i_send_forward_.clear();
       downspins_i_send_forward_.shrink_to_fit();
@@ -198,7 +201,7 @@ namespace hydra { namespace models {
 	  {
 	    state_t upspins = down_hole_to_up(downspins, holes);
 	    int destination_mpi_rank = mpi_rank_of_spins(upspins);
-	    ++n_downspins_i_send_back_[destination_mpi_rank];
+	    ++n_upspins_i_send_back_[destination_mpi_rank];
 	  }
 
       
@@ -222,8 +225,8 @@ namespace hydra { namespace models {
 
       
       // Communicate which upstates are sent/received by whom
-      std::vector<state_t> downspins_i_send_back(sum_n_upspins_i_send_back_, 0);
-      std::vector<state_t> upspins_i_send_back(sum_n_upspins_i_send_back_, 0);
+      std::vector<state_t> downspins_i_send_back_(sum_n_upspins_i_send_back_, 0);
+      std::vector<state_t> upspins_i_send_back_(sum_n_upspins_i_send_back_, 0);
 
 
       std::vector<uint64> n_upspins_already_prepared(mpi_size_, 0);
@@ -235,8 +238,8 @@ namespace hydra { namespace models {
 
 	    uint64 idx = n_upspins_i_send_back_offsets_[destination_mpi_rank] +
 		n_upspins_already_prepared[destination_mpi_rank]++; 
-	      downspins_i_send_back[idx] = downspins;
-	      upspins_i_send_back[idx] = upspins;
+	      downspins_i_send_back_[idx] = downspins;
+	      upspins_i_send_back_[idx] = upspins;
 	  }
       
       downspins_i_recv_back_.resize(sum_n_upspins_i_recv_back_);

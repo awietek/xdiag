@@ -2,6 +2,7 @@
 #define HYDRA_UTILS_COMBINATORICS_
 
 #include "typedefs.h"
+#include "bitops.h"
 
 namespace hydra { namespace combinatorics {
     
@@ -26,6 +27,9 @@ namespace hydra { namespace combinatorics {
     uint64 get_nth_pattern(const uint64& n, const int& n_sites, const int& n_upspins);
     uint64 get_n_for_pattern(const uint64& pattern, const int& n_sites, 
 			    const int& n_upspins);
+
+    template <class state_t=uint64> state_t down_hole_to_up(state_t downspins, state_t holes);
+    template <class state_t=uint64> state_t up_hole_to_down(state_t upspins, state_t holes);
 
   }  // namespace combinatorics
 }  // namespace hydra

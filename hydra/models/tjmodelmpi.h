@@ -97,6 +97,36 @@ namespace hydra { namespace models {
       std::vector<state_t> my_downspins_;
       std::unordered_map<state_t, uint64> my_downspins_offset_;
 
+      
+      std::vector<int> n_downspins_i_send_forward_;
+      std::vector<int> n_downspins_i_recv_forward_;
+      std::vector<int> n_downspins_i_send_forward_offsets_;
+      std::vector<int> n_downspins_i_recv_forward_offsets_;
+
+      std::vector<state_t> downspins_i_recv_forward_;
+      std::vector<state_t> upspins_i_recv_forward_;
+      std::vector<int> downspins_i_send_forward_offsets_;
+      std::vector<int> downspins_i_recv_forward_offsets_;
+
+      uint64 sum_n_downspins_i_send_forward_;
+      uint64 sum_n_downspins_i_recv_forward_; 
+
+      std::vector<int> n_upspins_i_send_back_;
+      std::vector<int> n_upspins_i_recv_back_;
+      std::vector<int> n_upspins_i_send_back_offsets_;
+      std::vector<int> n_upspins_i_recv_back_offsets_;
+      std::vector<state_t> downspins_i_recv_back_;
+      std::vector<state_t> upspins_i_recv_back_;
+      std::vector<int> upspins_i_send_back_offsets_;
+      std::vector<int> upspins_i_recv_back_offsets_;
+
+      uint64 sum_n_upspins_i_send_back_;
+      uint64 sum_n_upspins_i_recv_back_; 
+
+      uint64 buffer_size_;
+      std::vector<coeff_t> send_buffer_;
+      std::vector<coeff_t> recv_buffer_;
+
 
 
     };
