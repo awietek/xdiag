@@ -1,7 +1,7 @@
 srcdir = hydra
 appdir = hydra/applications
 tstdir = test
-arch = osx
+arch = hshackle_linux
 
 ifeq ($(arch), flatiron_linux)
 	lapack        = -llapack -lblas
@@ -31,7 +31,7 @@ ifeq ($(arch), hshackle_linux)
 endif
 modules = hilbertspaces utils indexing models operators symmetries dynamics thermodynamics parameters
 
-apps=  tjed #hubbarded hubbarddynamicsmpi #hubbarddynamics #hubbardopticalftlm  # hubbardthermotpq hubbardopticalmpi # hubbarddynamicsmpi   heisenberged spinlessfermioned   hubbardthermo  heisenbergthermo  hubbardopticaltsl hubbarded 
+apps= holetest hubbarded hubbarddynamicsmpi #hubbarddynamics #hubbardopticalftlm  # hubbardthermotpq hubbardopticalmpi # hubbarddynamicsmpi   heisenberged spinlessfermioned   hubbardthermo  heisenbergthermo  hubbardopticaltsl hubbarded 
 
 # -g -fsanitize=address
 
