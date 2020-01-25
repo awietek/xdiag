@@ -86,7 +86,6 @@ namespace hydra { namespace combinatorics {
       while (holes > 0) {
         if (~downspin_tmp & 1) {
           upspin = ((holes & 1) << bit_i_am_testing) | upspin;
-          std::cout << holes << std::endl;
           holes = holes >> 1;
       }
       downspin_tmp = downspin_tmp >> 1;
