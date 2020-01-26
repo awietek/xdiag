@@ -1,32 +1,40 @@
-#ifndef HYDRA_INDEXING_INDEXTABLE_
-#define HYDRA_INDEXING_INDEXTABLE_
+#ifndef HYDRA_INDEXING_LINTABLE_
+#define HYDRA_INDEXING_LINTABLE_
 
 #include <vector>
 
 #include <hydra/utils/typedefs.h>
 
+#include <hydra/utils/bitops.h>
+
 namespace hydra { namespace indexing {
 
+    using utils::gbits;
+
     template <class hilbertspace_type, class index_type=uint32>
-    class IndexTable {
+    class LinTable {
     public:
       using hilbertspace_t = hilbertspace_type;
       using index_t = index_type;
       using state_t = typename hilbertspace_t::state_t;
     
-      IndexTable() = default;
-      IndexTable(const hilbertspace_t& hilbertspace);
+      LinTable() = default;
+      LinTable(const hilbertspace_t& hilbertspace);
 
-      index_t index(const state_t& state) const { return indices_[state]; }
+      index_t index(const state_t& state) const { return left_indices_[state >> (site_divider_)] + right_indices_[gbits(state, site_divider_, 0)]; }
       state_t state(const index_t& index) const { return states_[index]; }  
-      index_t size() const { return size_; }
+      index_t size() const { return total_size_; }
 
     private:
-      index_t size_;
-      int right_state_size;
-      int left_state_size;
-      std::vector<std::vector<index_t>> indices_;
-      std::vector<std::vector<state_t>> states_;  
+      index_t total_size_;
+      index_t right_size_;
+      index_t left_size_;
+      int site_divider_;
+      std::vector<index_t> right_indices_;
+      std::vector<index_t> left_indices_;
+      int num_of_right_sites;
+      int num_of_left_sites;
+      std::vector<state_t> states_;
     };
 
   }  // namespace indexing

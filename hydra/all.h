@@ -21,7 +21,8 @@
 #include "indexing/indexhubbard.h"
 #include "indexing/indexsearch.h"
 #include "indexing/indexspinhalf.h"
-#include "indexing/indextable.h"
+#include "indexing/indexspinhalf.h"
+#include "indexing/lintable.h"
 
 #include "models/hubbardmodel.h"
 #include "models/heisenbergmodel.h"
