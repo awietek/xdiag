@@ -1,12 +1,7 @@
 #include "catch.hpp"
 
 #include <iostream>
-
-#include "indextable.h"
-#include "indexsearch.h"
-#include "indexspinhalf.h"
-
-#include "typedefs.h"
+#include <hydra/all.h>
 
 template <class state_t, class index_t>
 void test_indextable_spinhalf(int n_sites, int n_upspins){

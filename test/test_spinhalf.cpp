@@ -2,9 +2,8 @@
 
 #include <iostream>
 
-#include "combinatorics.h"
-#include "spinhalf.h"
-#include "range.h"
+#include <hydra/all.h>
+
 
 template <class state_t>
 void test_spinhalf(){
@@ -27,7 +26,7 @@ void test_spinhalf(){
 	    // 	      <<  " " << *Spinhalf(n_sites, qn).end() << std::endl;
 	    ++ctr;
 	  }
-	REQUIRE(ctr == hs.size());
+	REQUIRE(ctr == (int)hs.size());
       }
 }
 

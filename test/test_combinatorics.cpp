@@ -1,10 +1,6 @@
 #include "catch.hpp"
 
-// #include <iostream>
-// #include "spinhalf.h"
-
-#include "combinatorics.h"
-#include "typedefs.h"
+#include <hydra/all.h>
 
 TEST_CASE( "utils/combinatorics test", "[utils/combinatorics]" ) {
   using uint64 = hydra::uint64;

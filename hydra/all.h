@@ -19,8 +19,8 @@
 #include "hilbertspaces/spinhalf.h"
 
 #include "indexing/indexhubbard.h"
+#include "indexing/indextable.h"
 #include "indexing/indexsearch.h"
-#include "indexing/indexspinhalf.h"
 #include "indexing/indexspinhalf.h"
 #include "indexing/lintable.h"
 
