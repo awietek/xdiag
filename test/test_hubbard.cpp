@@ -1,10 +1,6 @@
 #include "catch.hpp"
 
-#include <iostream>
-
-#include "combinatorics.h"
-#include "hubbard.h"
-#include "range.h"
+#include <hydra/all.h>
 
 template <class state_type>
 void test_hubbard(){
@@ -12,8 +8,6 @@ void test_hubbard(){
   using Hubbard = hydra::hilbertspaces::Hubbard<state_type>;
   using state_t = hydra::hilbertspaces::hubbard_state<state_type>;
   using hydra::hilbertspaces::hubbard_qn;
-  using hydra::hilbertspaces::Print;
-  using hydra::hilbertspaces::Print;
   using hydra::utils::range;
 
   for (int n_sites : range<>(5))
@@ -34,7 +28,7 @@ void test_hubbard(){
 	      ++ctr;
 	    }
 	  // std::cout << std::endl;
-	  REQUIRE(ctr == hs.size());
+	  REQUIRE(ctr == (int)hs.size());
 	}
 }
 

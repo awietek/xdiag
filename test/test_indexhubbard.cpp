@@ -2,13 +2,8 @@
 
 #include <iostream>
 
-#include "indextable.h"
-#include "indexsearch.h"
-#include "indexspinhalf.h"
-#include "indexhubbard.h"
+#include <hydra/all.h>
 
-#include "typedefs.h"
-#include "range.h"
 
 template <class indexing_t>
 void test_indexhubbard(int n_sites, hydra::hilbertspaces::hubbard_qn qn){

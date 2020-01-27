@@ -2,7 +2,8 @@
 
 #include <iostream>
 
-#include "spacegroup.h"
+#include <hydra/all.h>
+
 
 
 TEST_CASE( "spacegroup test", "[symmetries/spacegroup]" ) {
@@ -15,10 +16,10 @@ TEST_CASE( "spacegroup test", "[symmetries/spacegroup]" ) {
   symmetries.push_back({3, 0, 1, 2});
   
   SpaceGroup sg(symmetries);
-  Print(sg);
+  // HydraPrint(sg);
   
   SpaceGroup sub_sg = sg.subgroup({0, 2});
-  Print(sub_sg);
+  // HydraPrint(sub_sg);
   
   // SpaceGroup square_sg = read_spacegroup("misc/lattice-files/square.16.spinlessfermions.pbc");
   // Print(square_sg);

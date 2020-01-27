@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include "bondlist.h"
+#include <hydra/all.h>
 
 
 TEST_CASE( "bondlist test", "[operators/bondlist]" ) {
