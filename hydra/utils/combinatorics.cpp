@@ -78,30 +78,30 @@ namespace hydra { namespace combinatorics {
     }
 */
 
-    template <class state_t> state_t down_hole_to_up(state_t downspins, state_t holes) {
-      using utils::gbit;
+    template <class state_t> state_t down_hole_to_up(const state_t& downspins, const state_t& holes) {
       state_t downspin_tmp = downspins;
+      state_t holes_tmp= holes;
       state_t upspin = 0;
       int bit_i_am_testing = 0;
-      while (holes > 0) {
+      while (holes_tmp > 0) {
         if (~downspin_tmp & 1) {
-          upspin = ((holes & 1) << bit_i_am_testing) | upspin;
-          holes = holes >> 1;
+          upspin = ((holes_tmp & 1) << bit_i_am_testing) | upspin;
+          holes_tmp = holes_tmp >> 1;
       }
       downspin_tmp = downspin_tmp >> 1;
       ++bit_i_am_testing;
       }
       return upspin;
     }
-    template <class state_t> state_t up_hole_to_down(state_t upspins, state_t holes) {
-      using utils::gbit;
+    template <class state_t> state_t up_hole_to_down(const state_t& upspins, const state_t& holes) {
       state_t upspin_tmp=upspins;
+      state_t holes_tmp=holes;
       state_t downspin = 0;
       int bit_i_am_testing = 0;
-      while (holes > 0) {
+      while (holes_tmp > 0) {
         if (~upspin_tmp & 1) {
-          downspin = ((holes & 1) << bit_i_am_testing) | downspin;
-          holes = holes >> 1;
+          downspin = ((holes_tmp & 1) << bit_i_am_testing) | downspin;
+          holes_tmp = holes_tmp >> 1;
       }
       upspin_tmp = upspin_tmp >> 1;
       ++bit_i_am_testing;
@@ -109,10 +109,10 @@ namespace hydra { namespace combinatorics {
       return downspin;
     }
 
-    template uint32 down_hole_to_up(uint32, uint32);
-    template uint64 down_hole_to_up(uint64, uint64);
-    template uint32 up_hole_to_down(uint32, uint32);
-    template uint64 up_hole_to_down(uint64, uint64);
+    template uint32 down_hole_to_up(const uint32&, const uint32&);
+    template uint64 down_hole_to_up(const uint64&, const uint64&);
+    template uint32 up_hole_to_down(const uint32&, const uint32&);
+    template uint64 up_hole_to_down(const uint64&, const uint64&);
 }
 
 }
