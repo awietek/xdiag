@@ -21,6 +21,7 @@
 #include <hydra/hilbertspaces/spinhalf.h>
 #include <hydra/hilbertspaces/hubbard.h>
 #include <hydra/indexing/indextable.h>
+#include <hydra/indexing/lintable.h>
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
 
@@ -39,7 +40,7 @@ namespace hydra { namespace models {
     public:
 
       TJModelMPI(BondList bondlist, Couplings couplings, 
-		      hilbertspaces::hubbard_qn qn);
+		 hilbertspaces::hubbard_qn qn);
       
       void apply_hamiltonian(lila::VectorMPI<coeff_t> const& in_vec,
 			     lila::VectorMPI<coeff_t>& out_vec,
@@ -89,8 +90,10 @@ namespace hydra { namespace models {
 
       Spinhalf<state_t> hs_upspins_;
       Spinhalf<state_t> hs_downspins_;
-      Spinhalf<state_t> hs_holes_;      
-      IndexTable<Spinhalf<state_t>, uint64> indexing_holes_;
+      Spinhalf<state_t> hs_holes_in_ups_;      
+      Spinhalf<state_t> hs_holes_in_downs_;
+      LinTable<Spinhalf<state_t>, uint64> indexing_holes_in_ups_;
+      LinTable<Spinhalf<state_t>, uint64> indexing_holes_in_downs_;
 
       std::vector<state_t> my_upspins_;
       std::unordered_map<state_t, uint64> my_upspins_offset_;

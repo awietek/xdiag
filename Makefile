@@ -31,7 +31,7 @@ ifeq ($(arch), hshackle_linux)
 endif
 modules = hilbertspaces utils indexing models operators symmetries dynamics thermodynamics parameters
 
-apps= holetest hubbarded hubbarddynamicsmpi #hubbarddynamics #hubbardopticalftlm  # hubbardthermotpq hubbardopticalmpi # hubbarddynamicsmpi   heisenberged spinlessfermioned   hubbardthermo  heisenbergthermo  hubbardopticaltsl hubbarded 
+apps= tjed #holetest hubbarded hubbarddynamicsmpi #hubbarddynamics #hubbardopticalftlm  # hubbardthermotpq hubbardopticalmpi # hubbarddynamicsmpi   heisenberged spinlessfermioned   hubbardthermo  heisenbergthermo  hubbardopticaltsl hubbarded 
 
 # -g -fsanitize=address
 
