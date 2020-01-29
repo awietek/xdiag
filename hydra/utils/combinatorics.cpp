@@ -1,6 +1,8 @@
 #include "combinatorics.h"
 #include <cstdio>
 
+#include <iostream>
+#include <hydra/all.h>
 namespace hydra { namespace combinatorics {
 
     int64 binomial(const int& n, const int& k)
@@ -109,10 +111,52 @@ namespace hydra { namespace combinatorics {
       return downspin;
     }
 
+    template <class state_t> 
+    state_t up_down_to_hole(state_t ups, state_t downs) 
+    {
+      state_t holes = 0;
+      int bit_i_am_setting = 0;
+      while ((ups) || (downs)) 
+	{
+	  if (~ups & 1) 
+	    {
+	      holes |= ((downs & 1) << bit_i_am_setting);
+	      ++bit_i_am_setting;
+	    }
+	  ups >>= 1;
+	  downs >>= 1;
+	}
+      return holes;
+    }
+
+    template <class state_t> 
+    state_t down_up_to_hole(state_t downs, state_t ups) 
+    {
+      state_t holes = 0;
+      int bit_i_am_setting = 0;
+      while ((ups) || (downs)) 
+	{
+	  if (~downs & 1) 
+	    {
+	      holes |= ((ups & 1) << bit_i_am_setting);
+	      ++bit_i_am_setting;
+	    }
+	  ups >>= 1;
+	  downs >>= 1;
+	}
+      return holes;
+    }
+
     template uint32 down_hole_to_up(const uint32&, const uint32&);
     template uint64 down_hole_to_up(const uint64&, const uint64&);
     template uint32 up_hole_to_down(const uint32&, const uint32&);
     template uint64 up_hole_to_down(const uint64&, const uint64&);
+    template uint32 up_down_to_hole(uint32 ups, uint32 downs);
+    template uint64 up_down_to_hole(uint64 ups, uint64 downs);
+    template uint32 down_up_to_hole(uint32 downs, uint32 ups);
+    template uint64 down_up_to_hole(uint64 downs, uint64 ups);
+
+
 }
 
 }

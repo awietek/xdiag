@@ -52,8 +52,12 @@ int main(int argc, char* argv[])
       
   lg.out(1, "Creating t-J model for n_upspins={}, n_downspins={}...\n",
 	     qn.n_upspins, qn.n_downspins);
-
+  double t1 = MPI_Wtime();
   auto H = TJModelMPI<double>(bondlist, couplings, qn);
+  double t2 = MPI_Wtime();
+  lg.out(1, "done. time: {} secs\n", t2-t1); 
+  lg.out(1, "dim: {}\n", H.dim()); 
+
 
   // Define multiplication function
   int iter = 0;

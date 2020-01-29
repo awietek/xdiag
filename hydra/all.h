@@ -65,6 +65,7 @@ namespace hydra
     using namespace hydra::symmetries;
     using namespace hydra::thermodynamics;
     using namespace hydra::utils;
+    using namespace hydra::combinatorics;
   }
 }
 
