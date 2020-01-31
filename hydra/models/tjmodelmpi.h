@@ -52,8 +52,6 @@ namespace hydra { namespace models {
       uint64 local_dim() const { return local_dim_; }
       uint64 dim() const { return dim_; }
 
-      
-
     private:     
       const int n_sites_;
       hubbard_qn qn_;
@@ -130,7 +128,11 @@ namespace hydra { namespace models {
       std::vector<coeff_t> send_buffer_;
       std::vector<coeff_t> recv_buffer_;
 
-
+      std::vector<state_t> downspins_i_send_forward_;
+      std::vector<state_t> upspins_i_send_forward_;
+      std::vector<state_t> downspins_i_send_back_;
+      std::vector<state_t> upspins_i_send_back_;
+    
 
     };
   

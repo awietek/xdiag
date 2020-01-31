@@ -56,16 +56,17 @@ int main(int argc, char* argv[])
   auto H = TJModelMPI<double>(bondlist, couplings, qn);
   double t2 = MPI_Wtime();
   lg.out(1, "done. time: {} secs\n", t2-t1); 
-  lg.out(1, "dim: {}\n", H.dim()); 
+  lg.out(1, "dim: {}\n", FormatWithCommas(H.dim())); 
 
 
   // Define multiplication function
   int iter = 0;
   auto multiply_H = 
-    [&H, &iter](const VectorMPI<double>& v, VectorMPI<double>& w) 
+    [&H, &iter, verbosity](const VectorMPI<double>& v, VectorMPI<double>& w) 
     {
+      bool verbose = (iter==0) && (verbosity > 0);
       double t1 = MPI_Wtime();
-      H.apply_hamiltonian(v, w);
+      H.apply_hamiltonian(v, w, verbose);
       double t2 = MPI_Wtime();
       lg.out(2, "iter: {}, time: {} secs\n", iter, t2-t1); 
       ++iter;
