@@ -335,11 +335,13 @@ namespace hydra { namespace models {
       			      (popcnt(downspins & flipmask) == 1) &&
       			      popcnt((downspins & flipmask) & (upspins & flipmask)) == 0)
       			    {
+                   double fermi = (popcnt(gbits(downspins, s2-s1-1, s1+1)) % 2==0 ? 1. : -1.)*
+                     (popcnt(gbits(upspins, s2-s1-1, s1+1)) % 2==0 ? 1. : -    1.);
       			      uint64 target_idx = upspin_offset + downspin_offset;
       			      // printf("upspins_offset: %d, target_idx: %d, recv_idx: %d, coeff: %f\n",
       			      // 	     upspin_offset, target_idx, recv_idx, jx * recv_buffer_[recv_idx] );
 
-      			      out_vec.vector_local()(target_idx) += jx *
+      			      out_vec.vector_local()(target_idx) -= fermi * jx *
       				recv_buffer_[recv_idx];
       			      ++recv_idx;
       			    }
