@@ -239,41 +239,56 @@ namespace hydra { namespace models {
       	  const int s2 = std::max(pair.first, pair.second);
       	  const coeff_t t = hopping_amplitudes_[hopping_idx];
       	  const uint32 flipmask = ((state_t)1 << s1) | ((state_t)1 << s2);
+	  
+	  uint64 n_hole_configurations = hs_holes_in_ups_.size();
+
       	  if (std::abs(t) > 1e-14)
       	    {
       	      // Loop over all configurations
-      	      uint64 upspin_idx = 0;
+	      for(state_t upspins : my_upspins_)
+		{
+		  // t-J hard-core constraint
+      		  if ((upspins & flipmask) != 0) continue;
+		  else
+		    {
+		      uint64 upspins_offset = my_upspins_offset_[upspins];
+		      for (uint64 idx=upspins_offset;
+			   idx < upspins_offset + n_hole_configurations;
+			   ++idx)
+			{
+			  state_t downspins = downspins_table_[idx];
+		      
+			  // Check if hopping is possible
+			  if (((downspins & flipmask) != 0) && 
+			      ((downspins & flipmask) != flipmask))
+			    {
+			      double fermi = 
+				popcnt(gbits(downspins, s2-s1-1, s1+1)) % 2==0 ? 1. : -1.;
+			      state_t new_downspins = downspins ^ flipmask;
+			  
+			      // Binary search the downspin configuration
+			      auto it = std::lower_bound
+			      	(downspins_table_.begin() + upspins_offset,
+			      	 downspins_table_.begin() + upspins_offset + 
+			      	 n_hole_configurations, new_downspins);
+			      uint64 new_idx = std::distance(downspins_table_.begin(), it);
+			   
+			      // state_t new_holes = up_down_to_hole(upspins, new_downspins);
+			      // uint64 new_idx2 = my_upspins_offset_[upspins] + indexing_holes_in_ups_.index(new_holes);
+			      // printf("ni1: %ul, ni2: %ul\n", new_idx, new_idx2);
+			      // assert(new_idx == new_idx2);
 
-      	      for (state_t upspins : my_upspins_)
-      		{
-      		  if ((upspins & flipmask) == 0)  // t-J hard-core constraint
-      		    {
-      		      uint64 upspin_offset = my_upspins_offset_[upspins];
-      		      uint64 downspin_offset = 0;
-      		      for (state_t holes : hs_holes_in_ups_)
-      			{
-      			  state_t downspins = up_hole_to_down(upspins, holes);
+			      // state_t new_holes = up_down_to_hole(upspins, new_downspins);
+			      // uint64 new_idx = my_upspins_offset_[upspins] + indexing_holes_in_ups_.index(new_holes);
 
-      			  // Check if hopping is possible
-      			  if (((downspins & flipmask) != 0) && 
-      			      ((downspins & flipmask) != flipmask))
-      			    {
-      			      double fermi = 
-      				popcnt(gbits(downspins, s2-s1-1, s1+1)) % 2==0 ? 1. : -1.;
 
-      			      uint64 idx = upspin_offset + downspin_offset;
-      			      state_t new_downspins = downspins ^ flipmask;
-      			      state_t new_holes = up_down_to_hole(upspins, new_downspins);
-      			      uint64 new_idx = upspin_offset + indexing_holes_in_ups_.index(new_holes);
-      			      out_vec.vector_local()(new_idx) -= fermi * t * in_vec.vector_local()(idx);
-      			    }
-
-      			  ++downspin_offset;
-      			}
-      		    }
-      		  ++upspin_idx;
-      		}
-      	    }
+			      out_vec.vector_local()(new_idx) -= fermi * t 
+				* in_vec.vector_local()(idx);
+			    }
+			}
+		    }
+		}  // for(const state_t& upspins : my_upspins_)
+	    }  // if (std::abs(t) > 1e-14)
       	  ++hopping_idx;
       	}  // hopping on downspin
       t2 = MPI_Wtime();
@@ -282,22 +297,44 @@ namespace hydra { namespace models {
 
       // Send configurations 
       t1 = MPI_Wtime();
+      // std::vector<uint64> n_states_already_prepared(mpi_size_, 0);
+      // uint64 downspin_offset=0;
+      // for (state_t holes : hs_holes_in_ups_)
+      // 	{
+      // 	  for (uint64 upspin_idx = 0; upspin_idx < my_upspins_.size(); ++upspin_idx)
+      // 	    {
+      // 	      state_t upspins = my_upspins_[upspin_idx];
+      // 	      state_t downspins = up_hole_to_down(upspins, holes);
+      // 	      int destination_mpi_rank = mpi_rank_of_spins(downspins);
+      // 	      uint64 send_idx = n_downspins_i_send_forward_offsets_[destination_mpi_rank] +
+      // 		n_states_already_prepared[destination_mpi_rank]++; 
+      // 	      uint64 upspin_offset = my_upspins_offset_[upspins];
+      // 	      uint64 idx = upspin_offset + downspin_offset;
+      // 	      send_buffer_[send_idx] = in_vec.vector_local()(idx);
+      // 	    }
+      // 	  ++downspin_offset;
+      // 	}
+
+      // std::vector<coeff_t> send_buffer(send_buffer_.size());
+      // std::fill(n_states_already_prepared.begin(), n_states_already_prepared.end(), 0);
+
+      uint64 n_hole_configurations = hs_holes_in_ups_.size();
       std::vector<uint64> n_states_already_prepared(mpi_size_, 0);
-      uint64 downspin_offset=0;
-      for (state_t holes : hs_holes_in_ups_)
-      	{
-      	  for (uint64 upspin_idx = 0; upspin_idx < my_upspins_.size(); ++upspin_idx)
-      	    {
-      	      state_t upspins = my_upspins_[upspin_idx];
-      	      state_t downspins = up_hole_to_down(upspins, holes);
+      for (uint64 down_idx=0; down_idx < n_hole_configurations; ++down_idx)
+     	{
+	  for(uint64 up_idx=0; up_idx < my_upspins_.size(); ++up_idx)
+	    {
+	      state_t upspins = my_upspins_[up_idx];
+	      uint64 upspin_offset = my_upspins_offset_[upspins];
+      	      uint64 idx = upspin_offset + down_idx;
+
+      	      state_t downspins = downspins_table_[idx];
       	      int destination_mpi_rank = mpi_rank_of_spins(downspins);
+
       	      uint64 send_idx = n_downspins_i_send_forward_offsets_[destination_mpi_rank] +
       		n_states_already_prepared[destination_mpi_rank]++; 
-      	      uint64 upspin_offset = my_upspins_offset_[upspins];
-      	      uint64 idx = upspin_offset + downspin_offset;
       	      send_buffer_[send_idx] = in_vec.vector_local()(idx);
       	    }
-      	  ++downspin_offset;
       	}
       t2 = MPI_Wtime();
       if ((mpi_rank_ == 0) && verbose) printf("  send forward (prepare): %3.4f\n", t2-t1); 
@@ -405,17 +442,29 @@ namespace hydra { namespace models {
       // Sort the received data into the send buffer
       t1 = MPI_Wtime();
       std::fill(send_buffer_.begin(), send_buffer_.end(), 0);
+      n_hole_configurations = hs_holes_in_downs_.size();
       for (uint64 idx = 0; idx < sum_n_downspins_i_recv_forward_; ++idx)
       	{
       	  state_t upspins = upspins_i_recv_forward_[idx];
       	  state_t downspins = downspins_i_recv_forward_[idx];	    
-      	  state_t holes = down_up_to_hole(downspins, upspins);
-      	  uint64 sorted_idx = my_downspins_offset_[downspins] + 
-      	    indexing_holes_in_downs_.index(holes);
-      	  send_buffer_[sorted_idx] = recv_buffer_[idx];
+      	  
+	  // Binary search the upspin configuration
+	  uint64 downspins_offset = my_downspins_offset_[downspins];
+	  auto it = std::lower_bound
+	    (upspins_table_.begin() + downspins_offset,
+	     upspins_table_.begin() + downspins_offset + 
+	     n_hole_configurations, upspins);
+	  uint64 sorted_idx = std::distance(upspins_table_.begin(), it);
+
+	  // state_t holes = down_up_to_hole(downspins, upspins);
+      	  // uint64 sorted_idx = my_downspins_offset_[downspins] + 
+      	  //   indexing_holes_in_downs_.index(holes);
+      	  
+	  send_buffer_[sorted_idx] = recv_buffer_[idx];
       	}
       t2 = MPI_Wtime();
-      if ((mpi_rank_ == 0) && verbose) printf("  sort forward: %3.4f\n", t2-t1); 
+      if ((mpi_rank_ == 0) && verbose) printf("  sort forward: %3.4f\n", t2-t1);
+
 
 
       // // DEBUG START
@@ -460,6 +509,7 @@ namespace hydra { namespace models {
       t1 = MPI_Wtime();
       hopping_idx = 0;
       std::fill(recv_buffer_.begin(), recv_buffer_.end(), 0);   // clear the recv buffer
+
       for (auto pair : hoppings_)
       	{
       	  const int s1 = std::min(pair.first, pair.second); 
@@ -469,16 +519,18 @@ namespace hydra { namespace models {
       	  if (std::abs(t) > 1e-14)
       	    {
       	      // Loop over all configurations
-      	      uint64 downspin_idx = 0;
       	      for (state_t downspins : my_downspins_)
       		{
-      		  if ((downspins & flipmask) == 0)  // t-J hard-core constraint
+		  // t-J hard-core constraint
+      		  if ((downspins & flipmask) != 0) continue;
+		  else
       		    {
       		      uint64 downspin_offset = my_downspins_offset_[downspins];
-      		      uint64 upspin_offset = 0;
-      		      for (state_t holes : hs_holes_in_downs_)
-      			{
-      			  state_t upspins = down_hole_to_up(downspins, holes);
+		      for (uint64 idx=downspin_offset;
+			   idx < downspin_offset + n_hole_configurations;
+			   ++idx)
+			{
+			  state_t upspins = upspins_table_[idx];
 
       			  // Check if hopping is possible
       			  if (((upspins & flipmask) != 0) && 
@@ -486,20 +538,26 @@ namespace hydra { namespace models {
       			    {
       			      double fermi = 
       				popcnt(gbits(upspins, s2-s1-1, s1+1)) % 2==0 ? 1. : -1.;
-
-      			      uint64 idx = upspin_offset + downspin_offset;
       			      state_t new_upspins = upspins ^ flipmask;
-      			      state_t new_holes = down_up_to_hole(downspins, new_upspins);
-      			      uint64 new_idx = downspin_offset + indexing_holes_in_downs_.index(new_holes);
+
+			      // Binary search the upspin configuration
+			      auto it = std::lower_bound
+			      	(upspins_table_.begin() + downspin_offset,
+			      	 upspins_table_.begin() + downspin_offset + 
+			      	 n_hole_configurations, new_upspins);
+			      uint64 new_idx = std::distance(upspins_table_.begin(), it);
+
+      			      // state_t new_holes = down_up_to_hole(downspins, new_upspins);
+      			      // uint64 new_idx = downspin_offset + indexing_holes_in_downs_.index(new_holes);
+
       			      recv_buffer_[new_idx] -= fermi * t * send_buffer_[idx];
       			    }
-
-      			  ++upspin_offset;
       			}
       		    }
-      		  ++downspin_idx;
-      		}
-      	    }
+
+      		}  // for (state_t downspins : my_downspins_)
+      	    }  // if (std::abs(t) > 1e-14)
+
       	  ++hopping_idx;
       	}  // hopping on upspins
       t2 = MPI_Wtime();
@@ -539,22 +597,40 @@ namespace hydra { namespace models {
       // Send back the resulting configurations 
       t1 = MPI_Wtime();
       std::fill(n_states_already_prepared.begin(), n_states_already_prepared.end(), 0);
-      uint64 upspin_offset=0;
-      for (state_t holes : hs_holes_in_downs_)
-      	{
-      	  for (uint64 downspin_idx = 0; downspin_idx < my_downspins_.size(); ++downspin_idx)
-      	    {
-      	      state_t downspins = my_downspins_[downspin_idx];
-      	      state_t upspins = down_hole_to_up(downspins, holes);
+      // uint64 upspin_offset=0;
+      // for (state_t holes : hs_holes_in_downs_)
+      // 	{
+      // 	  for (uint64 downspin_idx = 0; downspin_idx < my_downspins_.size(); ++downspin_idx)
+      // 	    {
+      // 	      state_t downspins = my_downspins_[downspin_idx];
+      // 	      state_t upspins = down_hole_to_up(downspins, holes);
+      // 	      int destination_mpi_rank = mpi_rank_of_spins(upspins);
+      // 	      uint64 send_idx = n_upspins_i_send_back_offsets_[destination_mpi_rank] +
+      // 		n_states_already_prepared[destination_mpi_rank]++; 
+      // 	      uint64 downspin_offset = my_downspins_offset_[downspins];
+      // 	      uint64 idx = upspin_offset + downspin_offset;
+      // 	      send_buffer_[send_idx] = recv_buffer_[idx];
+      // 	    }
+      // 	  ++upspin_offset;
+      // 	}
+
+      for (uint64 up_idx=0; up_idx < n_hole_configurations; ++up_idx)
+     	{
+	  for(uint64 down_idx=0; down_idx < my_downspins_.size(); ++down_idx)
+	    {
+	      state_t downspins = my_downspins_[down_idx];
+	      uint64 downspin_offset = my_downspins_offset_[downspins];
+      	      uint64 idx = downspin_offset + up_idx;
+
+      	      state_t upspins = upspins_table_[idx];
       	      int destination_mpi_rank = mpi_rank_of_spins(upspins);
+
       	      uint64 send_idx = n_upspins_i_send_back_offsets_[destination_mpi_rank] +
       		n_states_already_prepared[destination_mpi_rank]++; 
-      	      uint64 downspin_offset = my_downspins_offset_[downspins];
-      	      uint64 idx = upspin_offset + downspin_offset;
       	      send_buffer_[send_idx] = recv_buffer_[idx];
       	    }
-      	  ++upspin_offset;
       	}
+
       t2 = MPI_Wtime();
       if ((mpi_rank_ == 0) && verbose) printf("  send back (prepare):   %3.4f\n", t2-t1); 
 
@@ -607,9 +683,19 @@ namespace hydra { namespace models {
       	{
       	  state_t upspins = upspins_i_recv_back_[idx];
       	  state_t downspins = downspins_i_recv_back_[idx];
-      	  state_t holes = up_down_to_hole(upspins, downspins);
-      	  uint64 sorted_idx = my_upspins_offset_[upspins] + 
-      	    indexing_holes_in_ups_.index(holes);
+
+	  // Binary search the downspin configuration
+	  uint64 upspins_offset = my_upspins_offset_[upspins];
+	  auto it = std::lower_bound
+	    (downspins_table_.begin() + upspins_offset,
+	     downspins_table_.begin() + upspins_offset + 
+	     n_hole_configurations, downspins);
+	  uint64 sorted_idx = std::distance(downspins_table_.begin(), it);
+
+      	  // state_t holes = up_down_to_hole(upspins, downspins);
+      	  // uint64 sorted_idx = my_upspins_offset_[upspins] + 
+      	  //   indexing_holes_in_ups_.index(holes);
+
       	  send_buffer_[sorted_idx] = recv_buffer_[idx];
       	}
 
