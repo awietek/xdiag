@@ -25,11 +25,11 @@ void test_hubbardmodelmpi(hydra::operators::BondList bondlist,
   // Run Lanczos
   auto res = LanczosEigenvalues(multiply_H, startstate, 1e-12,
 				0, "Ritz");
-  printf("e0real: %f, e0comp: %f, diff: %e\n", e0, res.eigenvalues(0), e0 - res.eigenvalues(0));
+  // printf("e0real: %f, e0comp: %f, diff: %e\n", e0, res.eigenvalues(0), e0 - res.eigenvalues(0));
   REQUIRE(std::abs(e0 - res.eigenvalues(0)) < 1e-10);
 }
 
-TEST_CASE( "Add MPI test", "[AddMPI]" ) {
+TEST_CASE( "HubbardModelMPI test", "[HubbardModelMPI]" ) {
 
   //////////////////////////////////////
   // Test free fermion chains
