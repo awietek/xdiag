@@ -23,13 +23,13 @@ TEST_CASE( "bondlist test", "[operators/bondlist]" ) {
   bl << Bond("HB", "J2", {5, 1});  
 
 
-  for (auto bond : bl)
-    std::cout << bond << std::endl;
-  std::cout << std::endl;
-  for (auto bond : bl.bonds_of_coupling("J1"))
-    std::cout << bond << std::endl;
-  std::cout << std::endl;
-  for (auto bond : bl.bonds_of_coupling("J2"))
-    std::cout << bond << std::endl;
+  // for (auto bond : bl)
+  //   std::cout << bond << std::endl;
+  // std::cout << std::endl;
+  // for (auto bond : bl.bonds_of_coupling("J1"))
+  //   std::cout << bond << std::endl;
+  // std::cout << std::endl;
+  // for (auto bond : bl.bonds_of_coupling("J2"))
+  //   std::cout << bond << std::endl;
 
 }
