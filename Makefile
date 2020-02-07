@@ -36,7 +36,7 @@ apps= tjed #hubbarded #hubbarded #holetest hubbarded hubbarddynamicsmpi #hubbard
 # -g -fsanitize=address
 
 CC         = mpicxx
-CCOPT         = -O3 -g
+CCOPT         = -O3 -mavx -Ofast
 CCARCH        = -std=c++11 -Wall -pedantic -m64
 programs     :=
 mpiprograms  :=
