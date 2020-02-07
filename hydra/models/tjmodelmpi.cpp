@@ -56,33 +56,82 @@ namespace hydra { namespace models {
       Zeros(out_vec.vector_local());
 
       // Apply szsz terms
-      
+      double t1 = MPI_Wtime();
       int szsz_idx = 0;
       for (auto pair : szszs_)
       {
-        const int s1 = std::min(pair.first, pair.second);
-        const int s2 = std::max(pair.first, pair.second);
-        const double jz = szsz_amplitudes_[szsz_idx]*0.25;
+        int s1 = std::min(pair.first, pair.second);
+        int s2 = std::max(pair.first, pair.second);
+        double jz = szsz_amplitudes_[szsz_idx]*0.25;
+	state_t s1_mask = (state_t)1 << s1;
+	state_t s2_mask = (state_t)1 << s2;
+
         if (std::abs(jz) > 1e-14)
           {
 	    uint64 n_hole_configurations = hs_holes_in_ups_.size();
-	    for(uint64 idx=0; idx<downspins_table_.size(); ++idx)
+	    uint64 upspin_idx=0;
+	    for (state_t upspins : my_upspins_)
 	      {
-		auto downspins = downspins_table_[idx];
-		auto upspins = my_upspins_[idx / n_hole_configurations];
-		auto coeff =
-		  jz*(((double)gbit(upspins, s1) - (double)gbit(downspins, s1)) *
-		      ((double)gbit(upspins, s2) - (double)gbit(downspins, s2)));
-		out_vec(idx) += coeff * in_vec(idx);
-	      }
+		uint64 upspin_offset = upspin_idx * n_hole_configurations;
+		state_t upspin_s1 = upspins & s1_mask;
+		state_t upspin_s2 = upspins & s2_mask;
+
+		// Both upspins are set SzSz -> +0.25
+		if (upspin_s1 && upspin_s2)
+		  {
+		    for(uint64 idx=upspin_offset; 
+			idx<upspin_offset + n_hole_configurations; ++idx)
+		      {
+			out_vec(idx) += jz * in_vec(idx);
+		      }
+		  }
+		// upspin at s1 is set -> -0.25 if downspin s2 is set
+		else if (upspin_s1)
+		  {
+		    for(uint64 idx=upspin_offset; 
+			idx<upspin_offset + n_hole_configurations; ++idx)
+		      {
+			state_t downspins = downspins_table_[idx];
+			out_vec(idx) -= jz * ((downspins & s2_mask) != 0) * in_vec(idx);
+		      }
+		  }
+		// upspin at s2 is set -> -0.25 if downspin s1 is set
+		else if (upspin_s2)
+		  {
+		    for(uint64 idx=upspin_offset; 
+			idx<upspin_offset + n_hole_configurations; ++idx)
+		      {
+			state_t downspins = downspins_table_[idx];
+			out_vec(idx) -= jz * ((downspins & s1_mask) != 0) * in_vec(idx);
+		      }
+		  }
+		// no upspin set -> +0.25 if both downspins are set
+		else
+		  {
+		    for(uint64 idx=upspin_offset; 
+			idx<upspin_offset + n_hole_configurations; ++idx)
+		      {
+			state_t downspins = downspins_table_[idx];
+			out_vec(idx) += jz * ((downspins & s1_mask) && 
+					      (downspins & s2_mask)) 
+			  * in_vec(idx);
+		      }
+		  }
+
+		++upspin_idx;
+
+	      }  // (state_t upspins : my_upspins_)
 	  }
 	++szsz_idx;
       }
+      double t2 = MPI_Wtime();
+      if ((mpi_rank_ == 0) && verbose) printf("  diag: %3.4f\n", t2-t1); 
+
       
 
       // Spin exchange terms
       int exchange_idx=0;
-      double t1 = MPI_Wtime();
+      t1 = MPI_Wtime();
       for (auto pair: exchanges_)
       {
         const int s1 = std::min(pair.first, pair.second);
@@ -247,8 +296,7 @@ namespace hydra { namespace models {
 	} // if (std::abs(jx) > 1e-14)
 	++exchange_idx;
       } // for (auto pair: exchanges_)
-      
-      double t2 = MPI_Wtime();
+      t2 = MPI_Wtime();
       if ((mpi_rank_ == 0) && verbose) printf("  exch: %3.4f\n", t2-t1); 
 
     
