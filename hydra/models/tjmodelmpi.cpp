@@ -58,7 +58,6 @@ namespace hydra { namespace models {
       // Apply szsz terms
       
       int szsz_idx = 0;
-      
       for (auto pair : szszs_)
       {
         const int s1 = std::min(pair.first, pair.second);
@@ -66,31 +65,24 @@ namespace hydra { namespace models {
         const double jz = szsz_amplitudes_[szsz_idx]*0.25;
         if (std::abs(jz) > 1e-14)
           {
-            uint64 upspin_idx = 0;
-            for (const state_t& upspins : my_upspins_)
-            {
-            uint64 upspin_offset = my_upspins_offset_[upspins];
-            uint64 downspin_offset=0;
-            for (state_t holes: hs_holes_in_ups_)
-              {
-                state_t downspins = up_hole_to_down(upspins, holes);
-                uint64 idx = upspin_offset + downspin_offset;
-                auto coeff =
-            jz*(((double)gbit(upspins, s1) - (double)gbit(downspins, s1)) *
-          ((double)gbit(upspins, s2) - (double)gbit(downspins, s2)));
-                out_vec(idx) += coeff * in_vec(idx);
-                ++downspin_offset;
-              }
-            ++upspin_idx;
-            }
-          }
-        ++szsz_idx;
+	    uint64 n_hole_configurations = hs_holes_in_ups_.size();
+	    for(uint64 idx=0; idx<downspins_table_.size(); ++idx)
+	      {
+		auto downspins = downspins_table_[idx];
+		auto upspins = my_upspins_[idx / n_hole_configurations];
+		auto coeff =
+		  jz*(((double)gbit(upspins, s1) - (double)gbit(downspins, s1)) *
+		      ((double)gbit(upspins, s2) - (double)gbit(downspins, s2)));
+		out_vec(idx) += coeff * in_vec(idx);
+	      }
+	  }
+	++szsz_idx;
       }
       
 
       // Spin exchange terms
-      
       int exchange_idx=0;
+      double t1 = MPI_Wtime();
       for (auto pair: exchanges_)
       {
         const int s1 = std::min(pair.first, pair.second);
@@ -98,15 +90,18 @@ namespace hydra { namespace models {
         const coeff_t jx = exchange_amplitudes_[exchange_idx]*0.5;
         const state_t flipmask = ((state_t)1 << s1) | ((state_t)1 << s2);
 
+	uint64 n_hole_configurations = hs_holes_in_ups_.size();
+
         // Find out how many states is sent to each process
         std::vector<int> n_states_i_send(mpi_size_, 0);
         if (std::abs(jx) > 1e-14)
         {
           // Flip states and check out how much needs to be communicated
-          for (const state_t& upspins : my_upspins_)
-          for (state_t holes : hs_holes_in_ups_)
-            {
-              state_t downspins = up_hole_to_down(upspins, holes);
+	  for(uint64 idx=0; idx<downspins_table_.size(); ++idx)
+	    {
+	      auto downspins = downspins_table_[idx];
+	      auto upspins = my_upspins_[idx / n_hole_configurations];
+
               if ((popcnt(upspins & flipmask) == 1) && 
                   (popcnt(downspins & flipmask) == 1))
                   {
@@ -118,14 +113,17 @@ namespace hydra { namespace models {
 
             // Exchange information on who sends how much to whom
             std::vector<int> n_states_i_recv(mpi_size_, 0);
-            MPI_Alltoall(n_states_i_send.data(), 1, MPI_INT, n_states_i_recv.data(),
-              1, MPI_INT, MPI_COMM_WORLD);
+            MPI_Alltoall(n_states_i_send.data(), 1, MPI_INT, 
+			 n_states_i_recv.data(),
+			 1, MPI_INT, MPI_COMM_WORLD);
 
             // Sum up states sent/recvd and eventually resize buffers
             uint64 sum_n_states_i_send = std::accumulate(n_states_i_send.begin(), 
-              n_states_i_send.end(), (uint64)0);
+							 n_states_i_send.end(), 
+							 (uint64)0);
             uint64 sum_n_states_i_recv = std::accumulate(n_states_i_recv.begin(),
-              n_states_i_recv.end(), (uint64)0);
+							 n_states_i_recv.end(), 
+							 (uint64)0);
 
             if (sum_n_states_i_send > send_buffer_.size())
               send_buffer_.resize(sum_n_states_i_send);
@@ -144,117 +142,96 @@ namespace hydra { namespace models {
             
             // Flip states and check how much needs to be communicated
             std::vector<int> n_states_prepared(mpi_size_, 0);
-            for (const state_t& upspins : my_upspins_)
-            {
-              uint64 upspin_offset = my_upspins_offset_[upspins];
-              uint64 downspin_offset=0;
-              for (state_t holes: hs_holes_in_ups_)
-                {
-                  state_t downspins = up_hole_to_down(upspins, holes);
+	    for(uint64 idx=0; idx<downspins_table_.size(); ++idx)
+	      {
+		auto downspins = downspins_table_[idx];
+		auto upspins = my_upspins_[idx / n_hole_configurations];
 
-                  if ((popcnt(upspins & flipmask) == 1) &&
-                (popcnt(downspins & flipmask) == 1))
-              {
-                uint64 idx = upspin_offset + downspin_offset;
-                state_t flipped_upspins = upspins ^ flipmask;
-                int target = mpi_rank_of_spins(flipped_upspins);
-                int send_idx = n_states_i_send_offsets[target] +
-                  n_states_prepared[target];
-      			                      send_buffer_[send_idx] = in_vec.vector_local()(idx);
-                ++n_states_prepared[target];
-              }
-                  ++downspin_offset;
-              }
-            }
+		if ((popcnt(upspins & flipmask) == 1) &&
+		    (popcnt(downspins & flipmask) == 1))
+		  {
+		    state_t flipped_upspins = upspins ^ flipmask;
+		    int target = mpi_rank_of_spins(flipped_upspins);
+		    int send_idx = n_states_i_send_offsets[target] +
+		      n_states_prepared[target];
+		    send_buffer_[send_idx] = in_vec.vector_local()(idx);
+		    ++n_states_prepared[target];
+		  }
 
-                 //LilaPrint(in_vec.vector_local());
-                 //for (int i=0; i<sum_n_states_i_send; ++i)
-                 //	printf("send_buf[%d] = %f\n", i, send_buffer_[i]);
+              }
+            
 
 	    
 	    // Check, whether correct number of states has been prepared
 	    for(int m = 0; m < mpi_size_; ++m)
-            assert(n_states_prepared[m] == n_states_i_send[m]);
+	      assert(n_states_prepared[m] == n_states_i_send[m]);
 
 	    // Alltoall call
 	    lila::MPI_Alltoallv<coeff_t>
-            (send_buffer_.data(), n_states_i_send.data(),
-             n_states_i_send_offsets.data(),
-             recv_buffer_.data(), n_states_i_recv.data(),
-             n_states_i_recv_offsets.data(),
-             MPI_COMM_WORLD);
+	      (send_buffer_.data(), n_states_i_send.data(),
+	       n_states_i_send_offsets.data(),
+	       recv_buffer_.data(), n_states_i_recv.data(),
+	       n_states_i_recv_offsets.data(),
+	       MPI_COMM_WORLD);
+	
 
-                // for (int i=0; i<sum_n_states_i_recv; ++i)
-                // 	printf("recv_buf[%d] = %f\n", i, recv_buffer_[i]);
-
-                // Get the original upspin configuration and its source proc
-                std::vector<std::vector<state_t>> upspins_i_get_from_proc(mpi_size_);
-                for (const state_t& upspins : my_upspins_)
-            {
-              state_t flipped_upspins = upspins ^ flipmask;
-              int source = mpi_rank_of_spins(flipped_upspins);
-              upspins_i_get_from_proc[source].push_back(upspins);
-            }
-
-                // for (int i=0; i<mpi_size_; ++i)
-                // 	for (auto upspins : upspins_i_get_from_proc[i])
-                // 	  printf("upspins_i_get: %d\n", upspins);
+	    // Get the original upspin configuration and its source proc
+	    std::vector<std::vector<state_t>> upspins_i_get_from_proc(mpi_size_);
+	    for (const state_t& upspins : my_upspins_)
+	      {
+		state_t flipped_upspins = upspins ^ flipmask;
+		int source = mpi_rank_of_spins(flipped_upspins);
+		upspins_i_get_from_proc[source].push_back(upspins);
+	      }
 
 
-                // Sort the upspins and add coefficients to outvec
-                //LilaPrint(out_vec.vector_local());
+	    uint64 recv_idx=0;
+	    for (int m=0; m<mpi_size_; ++m)
+	      {
+	    
+		// Sort according to order of flipped upspins
+		std::sort(upspins_i_get_from_proc[m].begin(),
+			  upspins_i_get_from_proc[m].end(),
+			  [&flipmask](state_t const& a, state_t const& b)
+			  {
+			    state_t flipped_a = a ^ flipmask;
+			    state_t flipped_b = b ^ flipmask;
+			    return flipped_a < flipped_b;
+			  });
 
-                uint64 recv_idx=0;
-                for (int m=0; m<mpi_size_; ++m)
-            {
+		for (const state_t& upspins : upspins_i_get_from_proc[m])
+		  {
+		    uint64 upspin_offset = my_upspins_offset_[upspins];
+		    for (uint64 target_idx=upspin_offset; 
+			 target_idx < upspin_offset + n_hole_configurations;
+			 ++target_idx)
+		      {
+			auto downspins = downspins_table_[target_idx];
 
-              // Sort according to order of flipped upspins
-              std::sort(upspins_i_get_from_proc[m].begin(),
-                  upspins_i_get_from_proc[m].end(),
-                  [&flipmask](state_t const& a, state_t const& b)
-                  {
-                    state_t flipped_a = a ^ flipmask;
-                    state_t flipped_b = b ^ flipmask;
-                    return flipped_a < flipped_b;
-                  });
+			if ((popcnt(upspins & flipmask) == 1) &&
+			    (popcnt(downspins & flipmask) == 1))
+			  {
+			    double fermi = (popcnt(gbits(downspins, s2-s1-1, s1+1)) % 2==0 ? 1. : -1.)*
+			      (popcnt(gbits(upspins, s2-s1-1, s1+1)) % 2==0 ? 1. : -1.);
+			    out_vec.vector_local()(target_idx) -= jx * fermi *
+			      recv_buffer_[recv_idx];
+			    ++recv_idx;
+			  }
+		      }
+		  }
 
-              for (const state_t& upspins : upspins_i_get_from_proc[m])
-                {
-                  uint64 upspin_offset = my_upspins_offset_[upspins];
-
-                  uint64 downspin_offset=0;
-                  for (state_t holes : hs_holes_in_ups_)
-              {
-                    state_t downspins = up_hole_to_down(upspins, holes);
-                if ((popcnt(upspins & flipmask) == 1) &&
-                    (popcnt(downspins & flipmask) == 1))
-                  {
-              double fermi = (popcnt(gbits(downspins, s2-s1-1, s1+1)) % 2==0 ? 1. : -1.)*
-                (popcnt(gbits(upspins, s2-s1-1, s1+1)) % 2==0 ? 1. : -1.);
-                    uint64 target_idx = upspin_offset + downspin_offset;
-                     //printf("upspins_offset: %d, target_idx: %d, recv_idx: %d, coeff: %f\n",
-                     	//     upspin_offset, target_idx, recv_idx, jx * recv_buffer_[recv_idx] );
-
-                    out_vec.vector_local()(target_idx) -= jx * fermi *
-                recv_buffer_[recv_idx];
-                // LilaPrint(out_vec.vector_local());
-                    ++recv_idx;
-                  }
-                ++downspin_offset;
-              }
-              }
-            }
-                 //LilaPrint(out_vec.vector_local());
-
-              }
-            ++exchange_idx;
-          }
+	      } // loop over processes
+	} // if (std::abs(jx) > 1e-14)
+	++exchange_idx;
+      } // for (auto pair: exchanges_)
+      double t2 = MPI_Wtime();
+      if ((mpi_rank_ == 0) && verbose) printf("  exch: %3.4f\n", t2-t1); 
 
     
 
 
       // Apply hoppings on downspins
-      double t1 = MPI_Wtime();
+      t1 = MPI_Wtime();
       int hopping_idx=0;
       for (auto pair : hoppings_)
       	{
@@ -299,7 +276,7 @@ namespace hydra { namespace models {
       	    }
       	  ++hopping_idx;
       	}  // hopping on downspin
-      double t2 = MPI_Wtime();
+      t2 = MPI_Wtime();
       if ((mpi_rank_ == 0) && verbose) printf("  down: %3.4f\n", t2-t1); 
 
 
@@ -972,7 +949,22 @@ namespace hydra { namespace models {
 		    << std::endl << std::flush;
 	  MPI_Abort(MPI_COMM_WORLD,3);
 	}
-      
+
+
+      // Create downspins_table_ and upspins_table
+      for (state_t upspins : my_upspins_)
+	for (state_t holes : hs_holes_in_ups_)
+	  {
+	    state_t downspins = up_hole_to_down(upspins, holes);
+	    downspins_table_.push_back(downspins);
+	  }
+
+      for (state_t downspins : my_downspins_)
+	for (state_t holes : hs_holes_in_downs_)
+	  {
+	    state_t upspins = down_hole_to_up(downspins, holes);
+	    upspins_table_.push_back(upspins);
+	  }
     }
 
     template class TJModelMPI<double, uint32>;

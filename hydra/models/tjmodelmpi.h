@@ -46,7 +46,6 @@ namespace hydra { namespace models {
 			     lila::VectorMPI<coeff_t>& out_vec,
 			     bool verbose = false);
 
-
       hubbard_qn qn() const { return qn_; }
       int n_sites() const { return n_sites_; }
       uint64 local_dim() const { return local_dim_; }
@@ -77,6 +76,9 @@ namespace hydra { namespace models {
 
       void initialize();
 
+      state_t up_down_to_hole_table(const state_t& upspins, const state_t& downspin);
+      state_t down_up_to_hole_table(const state_t& upspins, const state_t& downspin);
+
       inline int mpi_rank_of_spins(const state_t& spins) const
       { 
 	state_t x = spins;
@@ -98,7 +100,7 @@ namespace hydra { namespace models {
       std::vector<state_t> my_downspins_;
       std::unordered_map<state_t, uint64> my_downspins_offset_;
 
-      
+    
       std::vector<int> n_downspins_i_send_forward_;
       std::vector<int> n_downspins_i_recv_forward_;
       std::vector<int> n_downspins_i_send_forward_offsets_;
@@ -132,6 +134,10 @@ namespace hydra { namespace models {
       std::vector<state_t> upspins_i_send_forward_;
       std::vector<state_t> downspins_i_send_back_;
       std::vector<state_t> upspins_i_send_back_;
+
+      std::vector<state_t> downspins_table_;
+      std::vector<state_t> upspins_table_;
+
     
 
     };
