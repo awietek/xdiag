@@ -25,6 +25,7 @@
 #include "indexing/lintable.h"
 
 #include "models/hubbardmodel.h"
+#include "models/tjmodel.h"
 #include "models/heisenbergmodel.h"
 #include "models/spinlessfermions.h"
 

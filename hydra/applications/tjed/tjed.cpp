@@ -81,7 +81,11 @@ int main(int argc, char* argv[])
 
   // Run Lanczos
   auto res = LanczosEigenvalues(multiply_H, startstate, precision,
-				neigenvalue, "Eigenvalues");
+				neigenvalue, "Eigenvalues", iters);
+  if (res.exhausted) 
+    lg.out("Warning: Lanczos sequence exhausted after {} steps\n", res.eigenvalues.size());
+  if (!res.converged) 
+    lg.out("Warning: Lanczos sequence not converged in {} steps\n", iters);
    
   auto alphas = res.tmatrix.diag();
   auto betas = res.tmatrix.offdiag();
@@ -90,6 +94,7 @@ int main(int argc, char* argv[])
   dumper["Alphas"] << alphas;
   dumper["Betas"] << betas;
   dumper["Eigenvalues"] << eigenvalues;
+  dumper["Dimension"] << H.dim();
   dumper.dump();
 
   lg.out(1, "E0: {}\n", eigenvalues(0));
