@@ -41,7 +41,7 @@ extra_clean  :=
 CPPFLAGS     += $(addprefix -I ,$(include_dirs))
 
 exe = tests
-objects = tests.o test_hubbardmodelmpi.o test_bondlist.o test_charactertable.o test_combinatorics.o test_hubbard.o test_indexhubbard.o test_indextable.o test_spacegroup.o test_spinhalf.o test_lintable.o test_up_down_hole.o test_tjmodelmpi.o
+objects = tests.o test_hubbardmodelmpi.o test_bondlist.o test_charactertable.o test_combinatorics.o test_hubbard.o test_indexhubbard.o test_indextable.o test_spacegroup.o test_spinhalf.o test_lintable.o test_up_down_hole.o test_tjmodelmpi.o test_tjmodel.o
 
 
 

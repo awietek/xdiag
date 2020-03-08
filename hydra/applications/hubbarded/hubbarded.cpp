@@ -89,6 +89,7 @@ int main(int argc, char* argv[])
   dumper["Alphas"] << alphas;
   dumper["Betas"] << betas;
   dumper["Eigenvalues"] << eigenvalues;
+  dumper["Dimension"] << H.dim();
   dumper.dump();
 
   lg.out(1, "E0: {}\n", eigenvalues(0));
