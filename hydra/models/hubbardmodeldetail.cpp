@@ -36,7 +36,7 @@ namespace hydra { namespace models {
 			     std::vector<coeff_t>& exchange_amplitudes,
 			     double& U)
       {
-	set_hoppings(bondlist, couplings, hoppings, hopping_amplitudes);
+	set_hoppings<coeff_t>(bondlist, couplings, hoppings, hopping_amplitudes);
 	set_currents<coeff_t>(bondlist, couplings, currents, current_amplitudes);
 	set_interactions(bondlist, couplings, interactions, 
 			 interaction_strengths);
