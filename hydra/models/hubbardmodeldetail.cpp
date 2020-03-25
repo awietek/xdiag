@@ -48,11 +48,11 @@ namespace hydra { namespace models {
       }
 
       
-      template <class coeff_t>
-      void set_hoppings
+      template <>
+      void set_hoppings<double>
 	(BondList bondlist, Couplings couplings,
 	 std::vector<std::pair<int, int>>& hoppings,
-	 std::vector<coeff_t>& hopping_amplitudes)
+	 std::vector<double>& hopping_amplitudes)
       {
 	BondList hopping_list = bondlist.bonds_of_type("HUBBARDHOP");
 	for (auto bond : hopping_list)
@@ -60,9 +60,26 @@ namespace hydra { namespace models {
 	    int s1 = bond.sites()[0];
 	    int s2 = bond.sites()[1];
 	    hoppings.push_back({s1, s2});
-	    coeff_t c = ForceReal<coeff_t>
+	    double c = ForceReal<double>
 	      (couplings[bond.coupling()], true, 
 	       "Warning: deprecating imaginary part of hopping (real Hubbard)!");
+	    hopping_amplitudes.push_back(c);
+	  }
+      }
+
+      template <>
+      void set_hoppings<complex>
+      (BondList bondlist, Couplings couplings,
+       std::vector<std::pair<int, int>>& hoppings,
+       std::vector<complex>& hopping_amplitudes)
+      {
+	BondList hopping_list = bondlist.bonds_of_type("HUBBARDHOP");
+	for (auto bond : hopping_list)
+	  {
+	    int s1 = bond.sites()[0];
+	    int s2 = bond.sites()[1];
+	    hoppings.push_back({s1, s2});
+	    complex c = couplings[bond.coupling()];
 	    hopping_amplitudes.push_back(c);
 	  }
       }

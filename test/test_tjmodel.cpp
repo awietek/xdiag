@@ -72,6 +72,18 @@ void test_tjmodel_alps(hydra::operators::BondList bondlist,
 }
 
 
+void test_tjmodel_complex(hydra::operators::BondList bondlist, 
+			  hydra::operators::Couplings couplings, 
+			  hydra::hilbertspaces::hubbard_qn qn)
+{
+  auto model = TJModel<complex>(bondlist, couplings, qn);
+  auto H = model.matrix();
+  REQUIRE(lila::close(H, lila::Herm(H)));
+  
+  // auto eigs = lila::EigenvaluesSym(H);
+  // REQUIRE(std::abs(e0 - eigs(0)) < 1e-6);
+}
+
 TEST_CASE( "TJModel test", "[TJModel]" ) {
 
   // six site tJ model
@@ -154,20 +166,22 @@ TEST_CASE( "TJModel test", "[TJModel]" ) {
     couplings["J"] = J;
 
     // Chains of length 3,4,5,6
-    std::vector<int> Ls = {3, 4, 5, 6};
-    for (auto L : Ls)
-      {
-	BondList bondlist;
-	for (int s=0; s<L; ++s)
-	  {
-	    bondlist << Bond("HUBBARDHOP", "T", {s, (s+1) % L});
-	    bondlist << Bond("HEISENBERG", "J", {s, (s+1) % L});
-	  }
-	std::stringstream ss;
-	ss << "data/tjfullspectrum/spectrum.chain." << L
-	   << ".txt";	
-	test_tjmodel_alps(bondlist, couplings, ss.str());
-      }
+    {
+      std::vector<int> Ls = {3, 4, 5, 6};
+      for (auto L : Ls)
+	{
+	  BondList bondlist;
+	  for (int s=0; s<L; ++s)
+	    {
+	      bondlist << Bond("HUBBARDHOP", "T", {s, (s+1) % L});
+	      bondlist << Bond("HEISENBERG", "J", {s, (s+1) % L});
+	    }
+	  std::stringstream ss;
+	  ss << "data/tjfullspectrum/spectrum.chain." << L
+	     << ".txt";	
+	  test_tjmodel_alps(bondlist, couplings, ss.str());
+	}
+    }  // Chains of length 3,4,5,6
 
     // Square 2x2
     {
@@ -190,7 +204,7 @@ TEST_CASE( "TJModel test", "[TJModel]" ) {
       bondlist << Bond("HEISENBERG", "J", {3, 1});
       test_tjmodel_alps(bondlist, couplings,
 			"data/tjfullspectrum/spectrum.square.2.txt");
-    }
+    }  // Square 2x2
 
     // Square 3x3
     {
@@ -234,7 +248,35 @@ TEST_CASE( "TJModel test", "[TJModel]" ) {
       
       test_tjmodel_alps(bondlist, couplings,
 			"data/tjfullspectrum/spectrum.square.3.txt");
-    }
+    }  // Square 3x3
+
+  }  // compare full spectrum of chain with alps
+
+
+  // test if complex tJ model gives Hermitian matrix
+  {  
+    Couplings couplings;
+    couplings["T"] = complex(1.0, 1.0);
+    couplings["J"] = 1.0;
+
+    std::vector<int> Ls = {3, 4, 5, 6};
+    for (auto L : Ls)
+      {
+	BondList bondlist;
+	for (int s=0; s<L; ++s)
+	  {
+	    bondlist << Bond("HUBBARDHOP", "T", {s, (s+1) % L});
+	    bondlist << Bond("HEISENBERG", "J", {s, (s+1) % L});
+	  }
+
+	std::vector<hubbard_qn> qns; 
+	for (int nup=0; nup<=L; ++nup)
+	  for (int ndn=0; ndn<L - nup; ++ndn)
+	    {
+	      hubbard_qn qn = {nup, ndn};
+	      test_tjmodel_complex(bondlist, couplings, qn);
+	    }
+      }
 
   }
 
