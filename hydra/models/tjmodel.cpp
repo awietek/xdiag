@@ -43,7 +43,7 @@ namespace hydra { namespace models {
     }
 
     template <class coeff_t>
-    lila::Matrix<coeff_t> TJModel<coeff_t>::matrix() const
+    lila::Matrix<coeff_t> TJModel<coeff_t>::matrix(bool ninj_term) const
     {
       using state_t = uint32;
       using hydra::combinatorics::up_hole_to_down;
@@ -97,8 +97,8 @@ namespace hydra { namespace models {
 	  auto up_end = std::distance(upspins.begin(),
 				      up_bounds.second); 
 	  auto it = 
-	  std::lower_bound(dnspins.begin() + up_begin, 
-	  		   dnspins.begin() + up_end, dns);
+	    std::lower_bound(dnspins.begin() + up_begin, 
+			     dnspins.begin() + up_end, dns);
 	  return std::distance(dnspins.begin(), it);
 	  
 	  // auto idxb = std::distance(dnspins.begin(), it);
@@ -135,70 +135,80 @@ namespace hydra { namespace models {
       // SzSz terms
       int szsz_idx = 0;
       for (auto pair : szszs_)
-      {
-        int s1 = pair.first;
-        int s2 = pair.second;
-        double jz = szsz_amplitudes_[szsz_idx]*0.25;
+	{
+	  int s1 = pair.first;
+	  int s2 = pair.second;
+	  double jz = szsz_amplitudes_[szsz_idx]*0.25;
 
-        if (std::abs(jz) > 1e-14)
-          {
-	    for (int64 idx=0; idx<dim_; ++idx)
-	      {
-		state_t ups = upspins[idx];
-		state_t dns = dnspins[idx];
+	  if (std::abs(jz) > 1e-14)
+	    {
+	      for (int64 idx=0; idx<dim_; ++idx)
+		{
+		  state_t ups = upspins[idx];
+		  state_t dns = dnspins[idx];
 
-		bool up1 = gbit(ups, s1);
-		bool up2 = gbit(ups, s2);
-		bool dn1 = gbit(dns, s1);
-		bool dn2 = gbit(dns, s2);
-		
-		if ((up1 && up2) || (dn1 && dn2))
-		  H(idx, idx) += jz;
-		else if ((up1 && dn2) || (dn1 && up2))
-		  H(idx, idx) += -jz;
-	      } 
+		  bool up1 = gbit(ups, s1);
+		  bool up2 = gbit(ups, s2);
+		  bool dn1 = gbit(dns, s1);
+		  bool dn2 = gbit(dns, s2);
 
-	  }  // if (std::abs(jz) > 1e-14)
-	++szsz_idx;
-      }  // for (auto pair : szszs_)
+		  if (ninj_term)
+		    {
+		      if ((up1 && up2) || (dn1 && dn2))
+			H(idx, idx) += 0;
+		      else if ((up1 && dn2) || (dn1 && up2))
+			H(idx, idx) += -2*jz;
+		    }
+		  else
+		    {
+		      if ((up1 && up2) || (dn1 && dn2))
+			H(idx, idx) += jz;
+		      else if ((up1 && dn2) || (dn1 && up2))
+			H(idx, idx) += -jz;
+		    }
+		} 
+
+	    }  // if (std::abs(jz) > 1e-14)
+	  ++szsz_idx;
+	}  // for (auto pair : szszs_)
 
       // Exchange terms
       int exchange_idx=0;
       for (auto pair: exchanges_)
-      {
-	int s1 = std::min(pair.first, pair.second);
-	int s2 = std::max(pair.first, pair.second);
-	coeff_t jx = exchange_amplitudes_[exchange_idx]*0.5;
-	state_t flipmask = ((state_t)1 << s1) | ((state_t)1 << s2);
+	{
+	  int s1 = std::min(pair.first, pair.second);
+	  int s2 = std::max(pair.first, pair.second);
+	  coeff_t jx = exchange_amplitudes_[exchange_idx]*0.5;
+	  state_t flipmask = ((state_t)1 << s1) | ((state_t)1 << s2);
 	
-        if (std::abs(jx) > 1e-14)
-          {
-	    for (int64 idx=0; idx<dim_; ++idx)
-	      {
-		state_t ups = upspins[idx];
-		state_t dns = dnspins[idx];
-		bool up1 = gbit(ups, s1);
-		bool up2 = gbit(ups, s2);
-		bool dn1 = gbit(dns, s1);
-		bool dn2 = gbit(dns, s2);
+	  if (std::abs(jx) > 1e-14)
+	    {
+	      for (int64 idx=0; idx<dim_; ++idx)
+		{
+		  state_t ups = upspins[idx];
+		  state_t dns = dnspins[idx];
+		  bool up1 = gbit(ups, s1);
+		  bool up2 = gbit(ups, s2);
+		  bool dn1 = gbit(dns, s1);
+		  bool dn2 = gbit(dns, s2);
 		
-		if ((up1 && dn2) || (dn1 && up2))
-		  {
-		    state_t flipped_ups = ups ^ flipmask;
-		    state_t flipped_dns = dns ^ flipmask;
-		    int64 flipped_idx = index_of_up_dn(flipped_ups, flipped_dns);
-		    double fermi_up = 
-		      popcnt(gbits(ups, s2-s1-1, s1+1)) % 2==0 ? 1. : -1.;
-		    double fermi_dn = 
-		      popcnt(gbits(dns, s2-s1-1, s1+1)) % 2==0 ? 1. : -1.;
+		  if ((up1 && dn2) || (dn1 && up2))
+		    {
+		      state_t flipped_ups = ups ^ flipmask;
+		      state_t flipped_dns = dns ^ flipmask;
+		      int64 flipped_idx = index_of_up_dn(flipped_ups, flipped_dns);
+		      double fermi_up = 
+			popcnt(gbits(ups, s2-s1-1, s1+1)) % 2==0 ? 1. : -1.;
+		      double fermi_dn = 
+			popcnt(gbits(dns, s2-s1-1, s1+1)) % 2==0 ? 1. : -1.;
 
-		    H(flipped_idx, idx) -= jx * fermi_up * fermi_dn;
-		  }
+		      H(flipped_idx, idx) -= jx * fermi_up * fermi_dn;
+		    }
 
-	      }  // loop over spin configurations
-	  }  // if (std::abs(jz) > 1e-14)
-	++exchange_idx;
-      }  // for (auto pair: exchanges_)
+		}  // loop over spin configurations
+	    }  // if (std::abs(jz) > 1e-14)
+	  ++exchange_idx;
+	}  // for (auto pair: exchanges_)
 
 
       // Hoppings
