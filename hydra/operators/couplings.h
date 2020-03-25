@@ -54,6 +54,17 @@ namespace hydra { namespace operators {
       bool is_real(const std::string& name) const 
       { return lila::close(std::abs(std::imag(couplings_.find(name)->second)), 0.); }
 
+      /// checks whether all couplings have zero imaginary part    
+      bool all_real() const 
+      {
+	for(auto name_val : couplings_)
+	  {
+	    if (!is_real(name_val.first))
+	      return false;
+	  }
+	return true;	
+      }
+
       /// returns real part of coupling 
       double real(const std::string& name) const 
       { return std::real(couplings_.find(name)->second); }
