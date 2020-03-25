@@ -1,5 +1,6 @@
 #include "catch.hpp"
 
+#include <fstream>
 #include <lila/all.h>
 #include <hydra/all.h>
 
@@ -20,8 +21,58 @@ void test_tjmodel(hydra::operators::BondList bondlist,
   REQUIRE(std::abs(e0 - eigs(0)) < 1e-6);
 }
 
-TEST_CASE( "TJModel test", "[TJModel]" ) {
 
+
+void test_tjmodel_alps(hydra::operators::BondList bondlist, 
+		       hydra::operators::Couplings couplings,
+		       std::string filename)
+{
+  int n_sites = bondlist.n_sites();
+
+  // Compute full spectrum in hydra
+  lila::Vector<double> all_eigs;
+  for (int nup=0; nup<=n_sites; ++nup)
+    for (int ndn=0; ndn<=n_sites - nup; ++ndn)
+      {
+	hubbard_qn qn = {nup, ndn};
+	auto model = TJModel<double>(bondlist, couplings, qn);
+
+	// Run Full ED
+	bool ninj_term = true;
+	auto H = model.matrix(ninj_term);
+	REQUIRE(lila::close(H, lila::Herm(H)));
+	auto eigs = lila::EigenvaluesSym(H);
+	for (auto eig : eigs)
+	  all_eigs.push_back(eig);
+  
+      }
+  std::sort(all_eigs.begin(), all_eigs.end());
+
+  // Read alps_eigs
+  lila::Vector<double> alps_eigs;
+  std::ifstream in(filename.c_str());
+  if(!in)
+    {
+      std::cerr << "test_tjmodel.cpp: Cannot open the File : "
+		<< filename <<std::endl;
+      exit(EXIT_FAILURE);
+    }
+  std::string str;
+  while (std::getline(in, str))
+    {
+      if(str.size() > 0)
+        alps_eigs.push_back(std::stod(str));
+    }
+  in.close();
+
+  REQUIRE(all_eigs.size() == alps_eigs.size());
+  for (int i=0; i<all_eigs.size(); ++i)
+    REQUIRE(close(all_eigs(i), alps_eigs(i)));
+  
+}
+
+
+TEST_CASE( "TJModel test", "[TJModel]" ) {
 
   // six site tJ model
   {  
@@ -93,5 +144,98 @@ TEST_CASE( "TJModel test", "[TJModel]" ) {
 
   }
 
+
+  // compare full spectrum of chain with alps
+  {
+    double t=1.0;
+    double J=1.0;
+    Couplings couplings;
+    couplings["T"] = t;
+    couplings["J"] = J;
+
+    // Chains of length 3,4,5,6
+    std::vector<int> Ls = {3, 4, 5, 6};
+    for (auto L : Ls)
+      {
+	BondList bondlist;
+	for (int s=0; s<L; ++s)
+	  {
+	    bondlist << Bond("HUBBARDHOP", "T", {s, (s+1) % L});
+	    bondlist << Bond("HEISENBERG", "J", {s, (s+1) % L});
+	  }
+	std::stringstream ss;
+	ss << "data/tjfullspectrum/spectrum.chain." << L
+	   << ".txt";	
+	test_tjmodel_alps(bondlist, couplings, ss.str());
+      }
+
+    // Square 2x2
+    {
+      BondList bondlist;
+      bondlist << Bond("HUBBARDHOP", "T", {0, 1});
+      bondlist << Bond("HUBBARDHOP", "T", {1, 0});
+      bondlist << Bond("HUBBARDHOP", "T", {2, 3});
+      bondlist << Bond("HUBBARDHOP", "T", {3, 2});
+      bondlist << Bond("HUBBARDHOP", "T", {0, 2});
+      bondlist << Bond("HUBBARDHOP", "T", {2, 0});
+      bondlist << Bond("HUBBARDHOP", "T", {1, 3});
+      bondlist << Bond("HUBBARDHOP", "T", {3, 1});
+      bondlist << Bond("HEISENBERG", "J", {0, 1});
+      bondlist << Bond("HEISENBERG", "J", {1, 0});
+      bondlist << Bond("HEISENBERG", "J", {2, 3});
+      bondlist << Bond("HEISENBERG", "J", {3, 2});
+      bondlist << Bond("HEISENBERG", "J", {0, 2});
+      bondlist << Bond("HEISENBERG", "J", {2, 0});
+      bondlist << Bond("HEISENBERG", "J", {1, 3});
+      bondlist << Bond("HEISENBERG", "J", {3, 1});
+      test_tjmodel_alps(bondlist, couplings,
+			"data/tjfullspectrum/spectrum.square.2.txt");
+    }
+
+    // Square 3x3
+    {
+      BondList bondlist;
+      bondlist << Bond("HUBBARDHOP", "T", {0, 1});
+      bondlist << Bond("HUBBARDHOP", "T", {1, 2});
+      bondlist << Bond("HUBBARDHOP", "T", {2, 0});
+      bondlist << Bond("HUBBARDHOP", "T", {3, 4});
+      bondlist << Bond("HUBBARDHOP", "T", {4, 5});
+      bondlist << Bond("HUBBARDHOP", "T", {5, 3});
+      bondlist << Bond("HUBBARDHOP", "T", {6, 7});
+      bondlist << Bond("HUBBARDHOP", "T", {7, 8});
+      bondlist << Bond("HUBBARDHOP", "T", {8, 6});
+      bondlist << Bond("HUBBARDHOP", "T", {0, 3});
+      bondlist << Bond("HUBBARDHOP", "T", {3, 6});
+      bondlist << Bond("HUBBARDHOP", "T", {6, 0});
+      bondlist << Bond("HUBBARDHOP", "T", {1, 4});
+      bondlist << Bond("HUBBARDHOP", "T", {4, 7});
+      bondlist << Bond("HUBBARDHOP", "T", {7, 1});
+      bondlist << Bond("HUBBARDHOP", "T", {2, 5});
+      bondlist << Bond("HUBBARDHOP", "T", {5, 8});
+      bondlist << Bond("HUBBARDHOP", "T", {8, 2});
+      bondlist << Bond("HEISENBERG", "J", {0, 1});
+      bondlist << Bond("HEISENBERG", "J", {1, 2});
+      bondlist << Bond("HEISENBERG", "J", {2, 0});
+      bondlist << Bond("HEISENBERG", "J", {3, 4});
+      bondlist << Bond("HEISENBERG", "J", {4, 5});
+      bondlist << Bond("HEISENBERG", "J", {5, 3});
+      bondlist << Bond("HEISENBERG", "J", {6, 7});
+      bondlist << Bond("HEISENBERG", "J", {7, 8});
+      bondlist << Bond("HEISENBERG", "J", {8, 6});
+      bondlist << Bond("HEISENBERG", "J", {0, 3});
+      bondlist << Bond("HEISENBERG", "J", {3, 6});
+      bondlist << Bond("HEISENBERG", "J", {6, 0});
+      bondlist << Bond("HEISENBERG", "J", {1, 4});
+      bondlist << Bond("HEISENBERG", "J", {4, 7});
+      bondlist << Bond("HEISENBERG", "J", {7, 1});
+      bondlist << Bond("HEISENBERG", "J", {2, 5});
+      bondlist << Bond("HEISENBERG", "J", {5, 8});
+      bondlist << Bond("HEISENBERG", "J", {8, 2});
+      
+      test_tjmodel_alps(bondlist, couplings,
+			"data/tjfullspectrum/spectrum.square.3.txt");
+    }
+
+  }
 
 }

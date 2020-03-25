@@ -46,7 +46,7 @@ namespace hydra { namespace models {
 	returns a lila::Matrix of the TJ model given t, U, and
 	the quantum numbers (n_upspins, n_downspins).
       */
-      lila::Matrix<coeff_t> matrix() const;
+      lila::Matrix<coeff_t> matrix(bool ninj_term=false) const;
 
       qn_t qn() const { return qn_; }
       void set_qn(qn_t qn);
