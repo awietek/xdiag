@@ -29,6 +29,37 @@ void test_tjmodelmpi(hydra::operators::BondList bondlist,
   REQUIRE(std::abs(e0 - res.eigenvalues(0)) < 1e-6);
 }
 
+void test_tjmodelmpi_complex(hydra::operators::BondList bondlist, 
+			     hydra::operators::Couplings couplings, 
+			     hydra::hilbertspaces::hubbard_qn qn)
+{
+  auto model = TJModel<complex>(bondlist, couplings, qn);
+  auto H = model.matrix();
+  REQUIRE(lila::close(H, lila::Herm(H)));
+  auto full_eigs = lila::EigenvaluesSym(H);
+
+
+  auto HMPI = TJModelMPI<complex>(bondlist, couplings, qn);
+  auto multiply_H = 
+    [&HMPI](const VectorMPI<complex>& v, VectorMPI<complex>& w) 
+    { HMPI.apply_hamiltonian(v, w); };
+  // REQUIRE(std::abs(e0 - eigs(0)) < 1e-6);
+
+  // Create normal distributed random start state
+  VectorMPI<complex> startstate(HMPI.local_dim());
+  normal_dist_t<complex> dist(0., 1.);
+  normal_gen_t<complex> gen(dist, 42);
+  Random(startstate, gen, true);
+  Normalize(startstate);  
+
+  // Run Lanczos
+  auto res = LanczosEigenvalues(multiply_H, startstate, 1e-12,
+				0, "Ritz");
+  // std::cout << full_eigs(0) << " " << res.eigenvalues(0) << "\n";
+  REQUIRE(std::abs(full_eigs(0) - res.eigenvalues(0)) < 1e-6);
+}
+
+
 TEST_CASE( "TJModelMPI test", "[TJModelMPI]" ) {
 
 
@@ -102,5 +133,81 @@ TEST_CASE( "TJModelMPI test", "[TJModelMPI]" ) {
 
   }
 
+
+  // test if complex tJ model MPI gives same e0 as fullED
+  {  
+    Couplings couplings;
+    couplings["T"] = complex(1.0, 1.0);
+    couplings["J"] = 1.0;
+
+    // Chains of length 3,4,5,6
+    std::vector<int> Ls = {3, 4, 5, 6};
+    for (auto L : Ls)
+      {
+	BondList bondlist;
+	for (int s=0; s<L; ++s)
+	  {
+	    bondlist << Bond("HUBBARDHOP", "T", {s, (s+1) % L});
+	    bondlist << Bond("HEISENBERG", "J", {s, (s+1) % L});
+	  }
+
+	for (int nup=0; nup<=L; ++nup)
+	  for (int ndn=0; ndn<L - nup; ++ndn)
+	    {
+	      hubbard_qn qn = {nup, ndn};
+	      test_tjmodelmpi_complex(bondlist, couplings, qn);
+	    }
+      }
+
+    // Square 3x3
+    {
+      BondList bondlist;
+      bondlist << Bond("HUBBARDHOP", "T", {0, 1});
+      bondlist << Bond("HUBBARDHOP", "T", {1, 2});
+      bondlist << Bond("HUBBARDHOP", "T", {2, 0});
+      bondlist << Bond("HUBBARDHOP", "T", {3, 4});
+      bondlist << Bond("HUBBARDHOP", "T", {4, 5});
+      bondlist << Bond("HUBBARDHOP", "T", {5, 3});
+      bondlist << Bond("HUBBARDHOP", "T", {6, 7});
+      bondlist << Bond("HUBBARDHOP", "T", {7, 8});
+      bondlist << Bond("HUBBARDHOP", "T", {8, 6});
+      bondlist << Bond("HUBBARDHOP", "T", {0, 3});
+      bondlist << Bond("HUBBARDHOP", "T", {3, 6});
+      bondlist << Bond("HUBBARDHOP", "T", {6, 0});
+      bondlist << Bond("HUBBARDHOP", "T", {1, 4});
+      bondlist << Bond("HUBBARDHOP", "T", {4, 7});
+      bondlist << Bond("HUBBARDHOP", "T", {7, 1});
+      bondlist << Bond("HUBBARDHOP", "T", {2, 5});
+      bondlist << Bond("HUBBARDHOP", "T", {5, 8});
+      bondlist << Bond("HUBBARDHOP", "T", {8, 2});
+      bondlist << Bond("HEISENBERG", "J", {0, 1});
+      bondlist << Bond("HEISENBERG", "J", {1, 2});
+      bondlist << Bond("HEISENBERG", "J", {2, 0});
+      bondlist << Bond("HEISENBERG", "J", {3, 4});
+      bondlist << Bond("HEISENBERG", "J", {4, 5});
+      bondlist << Bond("HEISENBERG", "J", {5, 3});
+      bondlist << Bond("HEISENBERG", "J", {6, 7});
+      bondlist << Bond("HEISENBERG", "J", {7, 8});
+      bondlist << Bond("HEISENBERG", "J", {8, 6});
+      bondlist << Bond("HEISENBERG", "J", {0, 3});
+      bondlist << Bond("HEISENBERG", "J", {3, 6});
+      bondlist << Bond("HEISENBERG", "J", {6, 0});
+      bondlist << Bond("HEISENBERG", "J", {1, 4});
+      bondlist << Bond("HEISENBERG", "J", {4, 7});
+      bondlist << Bond("HEISENBERG", "J", {7, 1});
+      bondlist << Bond("HEISENBERG", "J", {2, 5});
+      bondlist << Bond("HEISENBERG", "J", {5, 8});
+      bondlist << Bond("HEISENBERG", "J", {8, 2});
+      
+      int n_sites = bondlist.n_sites();
+      for (int nup=0; nup<=n_sites; ++nup)
+	for (int ndn=0; ndn<n_sites - nup; ++ndn)
+	  {
+	    hubbard_qn qn = {nup, ndn};
+	    test_tjmodelmpi_complex(bondlist, couplings, qn);
+	  }
+    }
+
+  }
 
 }

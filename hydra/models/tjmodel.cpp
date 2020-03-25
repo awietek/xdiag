@@ -219,6 +219,9 @@ namespace hydra { namespace models {
       	  int s2 = std::max(pair.first, pair.second);
       	  coeff_t t = hopping_amplitudes_[hopping_idx];
       	  uint32 flipmask = ((state_t)1 << s1) | ((state_t)1 << s2);
+
+	  uint32 firstmask = (state_t)1 << pair.first;
+	  
       	  if (std::abs(t) > 1e-14)
       	    {
       	      for (int64 idx=0; idx<dim_; ++idx)
@@ -227,9 +230,10 @@ namespace hydra { namespace models {
       		  state_t dns = dnspins[idx];
 	      
       		  // upspin hopping
-      		  if ((dns & flipmask) ==0)
+      		  if ((dns & flipmask) == 0)
       		    {
-      		      if (((ups & flipmask) != 0) && ((ups & flipmask) != flipmask))
+      		      if (((ups & flipmask) != 0) &&
+			  ((ups & flipmask) != flipmask))
       			{
       			  state_t flipped_ups = ups ^ flipmask;
       			  double fermi_up = 
@@ -238,20 +242,28 @@ namespace hydra { namespace models {
 			  // printf("idx: %d, ups: %d, s1: %d, s2: %d, fups: %d, fidx: %d\n",
 			  // 	 idx, ups, s1,s2, flipped_ups, flipped_idx);
 
-      			  H(flipped_idx, idx) -= t * fermi_up;
+			  if (ups & firstmask)
+			    H(flipped_idx, idx) -= t * fermi_up;
+			  else
+			    H(flipped_idx, idx) -= lila::conj(t) * fermi_up;
       			}
       		    }
 
       		  // dnspin hopping
-      		  if ((ups & flipmask) ==0)
+      		  if ((ups & flipmask) == 0)
       		    {
-      		      if (((dns & flipmask) != 0) && ((dns & flipmask) != flipmask))
+      		      if (((dns & flipmask) != 0) &&
+			  ((dns & flipmask) != flipmask))
       			{
       			  state_t flipped_dns = dns ^ flipmask;
       			  double fermi_dn = 
       			    popcnt(gbits(dns, s2-s1-1, s1+1)) % 2==0 ? 1. : -1.;
       			  int64 flipped_idx = index_of_up_dn(ups, flipped_dns);
-      			  H(flipped_idx, idx) -= t * fermi_dn;
+			  if (dns & firstmask)
+			    H(flipped_idx, idx) -= t * fermi_dn;
+			  else
+			    H(flipped_idx, idx) -= lila::conj(t) * fermi_dn;
+			  
 			  // printf("idx: %d, dns: %d, s1: %d, s2: %d, fdns: %d, fidx: %d\n",
 			  // 	 idx, dns, s1,s2, flipped_dns, flipped_idx);
       			}

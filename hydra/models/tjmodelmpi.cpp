@@ -311,7 +311,8 @@ namespace hydra { namespace models {
       	  const int s2 = std::max(pair.first, pair.second);
       	  const coeff_t t = hopping_amplitudes_[hopping_idx];
       	  const uint32 flipmask = ((state_t)1 << s1) | ((state_t)1 << s2);
-	  
+	  const uint32 firstmask = (state_t)1 << pair.first;
+
 	  uint64 n_hole_configurations = hs_holes_in_ups_.size();
 
       	  if (std::abs(t) > 1e-14)
@@ -356,10 +357,18 @@ namespace hydra { namespace models {
 
 			      // state_t new_holes = up_down_to_hole(upspins, new_downspins);
 			      // uint64 new_idx = my_upspins_offset_[upspins] + indexing_holes_in_ups_.index(new_holes);
-
-
-			      out_vec.vector_local()(new_idx) -= fermi * t 
-				* in_vec.vector_local()(idx);
+			      
+			      if (downspins & firstmask)
+				{
+				  out_vec.vector_local()(new_idx) -=
+				    fermi * t * in_vec.vector_local()(idx);
+				}
+			      else
+				{
+				  out_vec.vector_local()(new_idx) -=
+				    fermi * lila::conj(t)
+				    * in_vec.vector_local()(idx);
+				}
 			    }
 			}
 		    }  // if ((upspins & flipmask) == 0)
@@ -573,6 +582,8 @@ namespace hydra { namespace models {
       	  const int s2 = std::max(pair.first, pair.second);
       	  const coeff_t t = hopping_amplitudes_[hopping_idx];
       	  const uint32 flipmask = ((state_t)1 << s1) | ((state_t)1 << s2);
+	  const uint32 firstmask = (state_t)1 << pair.first;
+
       	  if (std::abs(t) > 1e-14)
       	    {
       	      // Loop over all configurations
@@ -610,8 +621,17 @@ namespace hydra { namespace models {
 
       			      // state_t new_holes = down_up_to_hole(downspins, new_upspins);
       			      // uint64 new_idx = downspin_offset + indexing_holes_in_downs_.index(new_holes);
-
-      			      recv_buffer_[new_idx] -= fermi * t * send_buffer_[idx];
+			      if (upspins & firstmask)
+				{
+				  recv_buffer_[new_idx] -=
+				    fermi * t * send_buffer_[idx];
+				}
+			      else
+				{
+				  recv_buffer_[new_idx] -=
+				    fermi * lila::conj(t)
+				    * send_buffer_[idx];
+				}
       			    }
       			}
       		    }  //if ((downspins & flipmask) == 0)
