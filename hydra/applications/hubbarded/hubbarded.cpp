@@ -31,8 +31,11 @@ int main(int argc, char* argv[])
   int iters = 1000;
   int verbosity = 1;
   int seed = 1;
-  parse_cmdline(outfile, latticefile, couplingfile, nup, ndown, precision, 
-		neigenvalue, iters, verbosity, seed, argc, argv);
+  bool measure_kinetic = false;
+
+  parse_cmdline(outfile, latticefile, couplingfile, nup, ndown,
+		precision, neigenvalue, iters, verbosity, seed,
+		measure_kinetic, argc, argv);
 
   lg.set_verbosity(verbosity);  
   
@@ -78,21 +81,77 @@ int main(int argc, char* argv[])
   Random(startstate, gen, true);
   Normalize(startstate);  
 
-  // Run Lanczos
-  auto res = LanczosEigenvalues(multiply_H, startstate, precision,
-				neigenvalue, "Eigenvalues");
-   
-  auto alphas = res.tmatrix.diag();
-  auto betas = res.tmatrix.offdiag();
-  betas.push_back(res.beta);
-  auto eigenvalues = res.eigenvalues;
-  dumper["Alphas"] << alphas;
-  dumper["Betas"] << betas;
-  dumper["Eigenvalues"] << eigenvalues;
-  dumper["Dimension"] << H.dim();
-  dumper.dump();
+  if (measure_kinetic)
+    {
+      // Reset iters to reasonable size for small model dimension
+      iters = std::min(H.dim() / 8 + 5, (unsigned long)iters);
+      
+      // Define fixed number of steps convergence criterion
+      auto converged = 
+	[iters](const lila::Tmatrix<double>& tmat, double beta) {
+	  (void)beta;
+	  return LanczosConvergedFixed(tmat, iters);
+	};
 
-  lg.out(1, "E0: {}\n", eigenvalues(0));
+      // Define trivial linear combination to get all Lanczos vectors
+      std::vector<Vector<double>> linear_combinations;
+      for (int i=0; i< iters; ++i)
+	{
+	  auto lin = Zeros<double>(iters);
+	  lin(i) = 1.;
+	  linear_combinations.push_back(lin);
+	}
+      
+      // First Lanczos run with random startstate
+      auto v0 = startstate;
+      auto start_res = Lanczos(multiply_H, v0, converged, 
+			       linear_combinations);
+      auto alphas_v = start_res.tmatrix.diag();
+      auto betas_v = start_res.tmatrix.offdiag();
+      betas_v.push_back(start_res.beta);
+      auto eigenvalues_v = start_res.eigenvalues;
+      auto& vs = start_res.vectors; 
+      dumper["AlphasV"] << alphas_v;
+      dumper["BetasV"] << betas_v;
+      dumper["EigenvaluesV"] << eigenvalues_v;
+
+      Couplings kin_couplings;
+      kin_couplings["T"] = 1.;
+      kin_couplings["U"] = 0.;
+      kin_couplings["C"] = 0.;
+      auto T = HubbardModelMPI<double,uint32>(bondlist, kin_couplings, qn);
+  
+      Matrix<double> vs_T_vs(iters, iters);
+      for (int i=0; i<iters; ++i)
+	{
+	  lg.out(1, "computing kinetic matrix line {}\n", i);
+	  auto tmp = vs[i];
+	  T.apply_hamiltonian(vs[i], tmp);
+	  for (int j=0; j<iters; ++j)
+	    vs_T_vs(i,j) = Dot(tmp, vs[j]);
+	}
+      dumper["VsTVs"] << vs_T_vs;
+      dumper.dump();
+
+    }
+  else
+    {
+      // Run Lanczos
+      auto res = LanczosEigenvalues(multiply_H, startstate, precision,
+				    neigenvalue, "Eigenvalues");
+   
+      auto alphas = res.tmatrix.diag();
+      auto betas = res.tmatrix.offdiag();
+      betas.push_back(res.beta);
+      auto eigenvalues = res.eigenvalues;
+      dumper["Alphas"] << alphas;
+      dumper["Betas"] << betas;
+      dumper["Eigenvalues"] << eigenvalues;
+      dumper["Dimension"] << H.dim();
+      dumper.dump();
+
+      lg.out(1, "E0: {}\n", eigenvalues(0));
+    }
   
   MPI_Finalize();
   return EXIT_SUCCESS;

@@ -4,7 +4,7 @@
 #include <mpi.h>
 #include "clara.hpp"
 
-    void parse_cmdline(std::string& outfile, std::string& latticefile, std::string& couplingfile, int& nup, int& ndown, double& precision, int& neigenvalue, int& iters, int& verbosity, int& seed, int& argc, char** argv)
+    void parse_cmdline(std::string& outfile, std::string& latticefile, std::string& couplingfile, int& nup, int& ndown, double& precision, int& neigenvalue, int& iters, int& verbosity, int& seed, bool& measure_kinetic, int& argc, char** argv)
   {
   int mpi_rank;
   MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
@@ -21,8 +21,8 @@ clara::Opt(neigenvalue, "neigenvalue")["-n"]["--neigenvalue"]("which eigenvalue 
 clara::Opt(iters, "iters")["-i"]["--iters"]("maximum number of ground state Lanczos iterations performed (optional, default 1000)") |
 clara::Opt(verbosity, "verbosity")["-v"]["--verbosity"]("verbosity level, one of 0, 1 ,2 (optional, default 1)") |
 clara::Opt(seed, "seed")["-s"]["--seed"]("random seed") |
+clara::Opt(measure_kinetic, "measure_kinetic")["-k"]["--measure_kinetic"]("measure_kinetic") |
 clara::Help(showhelp);
-
 
     auto cmd_args = parser.parse(clara::Args(argc,argv));
     if( !cmd_args ) 
