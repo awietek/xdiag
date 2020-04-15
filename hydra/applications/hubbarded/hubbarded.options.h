@@ -41,16 +41,17 @@ clara::Help(showhelp);
 	if ((verbosity >= 1) && (mpi_rank == 0))
 	  {
 	    std::cout <<
-	      "outfile     : " << outfile << std::endl <<
-	      "latticefile : " << latticefile << std::endl <<
-	      "couplingfile: " << couplingfile << std::endl <<
-	      "nup         : " << nup << std::endl <<
-	      "ndown       : " << ndown << std::endl <<
-	      "precision   : " << precision << std::endl <<
-	      "neigenvalue : " << neigenvalue << std::endl <<
-	      "iters       : " << iters << std::endl <<
-	      "verbosity   : " << verbosity << std::endl <<
-	      "seed        : " << seed << std::endl <<
+	      "outfile        : " << outfile << std::endl <<
+	      "latticefile    : " << latticefile << std::endl <<
+	      "couplingfile   : " << couplingfile << std::endl <<
+	      "nup            : " << nup << std::endl <<
+	      "ndown          : " << ndown << std::endl <<
+	      "precision      : " << precision << std::endl <<
+	      "neigenvalue    : " << neigenvalue << std::endl <<
+	      "iters          : " << iters << std::endl <<
+	      "verbosity      : " << verbosity << std::endl <<
+	      "seed           : " << seed << std::endl <<
+	      "measure_kinetic: " << measure_kinetic << std::endl <<
 	      "-----" << std::endl;
 	  }
   }
