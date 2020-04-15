@@ -18,7 +18,8 @@ ifeq ($(arch), flatiron_gordon)
 	clara_dir=/home/awietek/Research/Software/Clara/include
 endif
 ifeq ($(arch), osx)
-	lapack        = -framework accelerate
+	options = -DLILA_USE_ACCELERATE
+	lapack        = -framework accelerate 
 	lila_dir =/Users/awietek/Research/Software/lila
 	lime_dir =/Users/awietek/Research/Software/lime
 	clara_dir=/Users/awietek/Research/Software/Clara/include
@@ -31,12 +32,12 @@ ifeq ($(arch), hshackle_linux)
 endif
 modules = hilbertspaces utils indexing models operators symmetries dynamics thermodynamics parameters
 
-apps= tjfulled #tjed hubbarded #hubbarded #holetest hubbarded hubbarddynamicsmpi #hubbarddynamics #hubbardopticalftlm  # hubbardthermotpq hubbardopticalmpi # hubbarddynamicsmpi   heisenberged spinlessfermioned   hubbardthermo  heisenbergthermo  hubbardopticaltsl hubbarded 
+apps= hubbarded #hubbardfulled #tjfulled #tjed hubbarded # #holetest hubbarded hubbarddynamicsmpi #hubbarddynamics #hubbardopticalftlm  # hubbardthermotpq hubbardopticalmpi # hubbarddynamicsmpi   heisenberged spinlessfermioned   hubbardthermo  heisenbergthermo  hubbardopticaltsl hubbarded 
 
 # -g -fsanitize=address
 
 CC         = mpicxx
-CCOPT         = -O3 -mavx -Ofast
+CCOPT         = -O3 -mavx -Ofast $(options)
 CCARCH        = -std=c++11 -Wall -pedantic -m64
 programs     :=
 mpiprograms  :=
