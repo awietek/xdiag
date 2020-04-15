@@ -1,18 +1,18 @@
 srcdir = hydra
 appdir = hydra/applications
 tstdir = test
-arch = osx
+arch = flatiron_gordon
 
 ifeq ($(arch), flatiron_linux)
-	lapack        = -llapack -lblas
-	lapack        = -lmkl_rt -DLILA_USE_MKL
+	options       = -DLILA_USE_MKL
+	lapack        = -lmkl_rt 
 	lila_dir =/mnt/home/awietek/Research/Software/lila
 	lime_dir =/mnt/home/awietek/Research/Software/lime
 	clara_dir=/mnt/home/awietek/Research/Software/Clara/include
 endif
 ifeq ($(arch), flatiron_gordon)
-	lapack        = -llapack -lblas
-	lapack        = -lmkl_rt -DLILA_USE_MKL
+	options       = -DLILA_USE_MKL
+	lapack        = -lmkl_rt 
 	lila_dir =/home/awietek/Research/Software/lila
 	lime_dir =/home/awietek/Research/Software/lime
 	clara_dir=/home/awietek/Research/Software/Clara/include
