@@ -111,9 +111,10 @@ int main(int argc, char* argv[])
       betas_v.push_back(start_res.beta);
       auto eigenvalues_v = start_res.eigenvalues;
       auto& vs = start_res.vectors; 
-      dumper["AlphasV"] << alphas_v;
-      dumper["BetasV"] << betas_v;
-      dumper["EigenvaluesV"] << eigenvalues_v;
+      dumper["Alphas"] << alphas_v;
+      dumper["Betas"] << betas_v;
+      dumper["Eigenvalues"] << eigenvalues_v;
+      dumper["Dimension"] << H.dim();
 
       Couplings kin_couplings;
       kin_couplings["T"] = 1.;
