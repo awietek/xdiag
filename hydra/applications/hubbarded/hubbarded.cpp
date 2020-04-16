@@ -116,6 +116,8 @@ int main(int argc, char* argv[])
       dumper["Eigenvalues"] << eigenvalues_v;
       dumper["Dimension"] << H.dim();
 
+      iters = alphas_v.size();
+      
       Couplings kin_couplings;
       kin_couplings["T"] = 1.;
       kin_couplings["U"] = 0.;
