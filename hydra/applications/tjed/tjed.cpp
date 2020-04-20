@@ -34,7 +34,7 @@ void run_real_complex(std::string real_complex,
   lg.out(1, "Using {} MPI tasks\n", mpi_size);
 
   double t1 = MPI_Wtime();
-  auto H = TJModelMPI<double>(bondlist, couplings, qn);
+  auto H = TJModelMPI<coeff_t>(bondlist, couplings, qn);
   double t2 = MPI_Wtime();
   lg.out(1, "done. time: {} secs\n", t2-t1); 
   lg.out(1, "dim: {}\n", FormatWithCommas(H.dim())); 
