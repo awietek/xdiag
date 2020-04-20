@@ -10,48 +10,29 @@ lila::LoggerMPI lg;
 
 #include "tjed.options.h"
 
-int main(int argc, char* argv[])
+
+template <class coeff_t>
+void run_real_complex(std::string real_complex,
+		      hydra::all::BondList bondlist,
+		      hydra::all::Couplings couplings,
+		      hydra::all::hubbard_qn qn,
+		      double precision, int neigenvalue,
+		      int iters, int verbosity, int seed,
+		      std::string outfile)
 {
   using namespace hydra::all;
   using namespace lila;
   using namespace lime;
-
-  MPI_Init(&argc, &argv); 
   int mpi_rank, mpi_size;
   MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
   MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
-
-  std::string outfile;
-  std::string latticefile;
-  std::string couplingfile;
-  int nup = -1;
-  int ndown = -1;
-  double precision = 1e-12;
-  int neigenvalue = 0;
-  int iters = 1000;
-  int verbosity = 1;
-  int seed = 1;
-  parse_cmdline(outfile, latticefile, couplingfile, nup, ndown, precision, 
-		neigenvalue, iters, verbosity, seed, argc, argv);
-
-  lg.set_verbosity(verbosity);  
   
   auto dumper = lime::MeasurementsH5((mpi_rank == 0) ? outfile : "");
-  check_if_files_exists({latticefile, couplingfile});
 
-  // Create Hamiltonian
-  BondList bondlist = read_bondlist(latticefile);
-  Couplings couplings = read_couplings(couplingfile);
+  lg.out(1, "Creating {} t-J model for n_upspins={}, n_downspins={}...\n",
+	 real_complex, qn.n_upspins, qn.n_downspins);
+  lg.out(1, "Using {} MPI tasks\n", mpi_size);
 
-  // Create infrastructure for Hubbard model
-  int n_sites = bondlist.n_sites();
-  hubbard_qn qn;
-  if ((nup == -1)  || (ndown == -1))
-    qn = {n_sites/2, n_sites/2};
-  else qn = {nup, ndown};
-      
-  lg.out(1, "Creating t-J model for n_upspins={}, n_downspins={}...\n",
-	     qn.n_upspins, qn.n_downspins);
   double t1 = MPI_Wtime();
   auto H = TJModelMPI<double>(bondlist, couplings, qn);
   double t2 = MPI_Wtime();
@@ -98,6 +79,54 @@ int main(int argc, char* argv[])
   dumper.dump();
 
   lg.out(1, "E0: {}\n", eigenvalues(0));
+  
+}
+
+int main(int argc, char* argv[])
+{
+  using namespace hydra::all;
+  using namespace lila;
+  using namespace lime;
+
+  MPI_Init(&argc, &argv); 
+
+  std::string outfile;
+  std::string latticefile;
+  std::string couplingfile;
+  int nup = -1;
+  int ndown = -1;
+  double precision = 1e-12;
+  int neigenvalue = 0;
+  int iters = 1000;
+  int verbosity = 1;
+  int seed = 1;
+  parse_cmdline(outfile, latticefile, couplingfile, nup, ndown, precision, 
+		neigenvalue, iters, verbosity, seed, argc, argv);
+
+  lg.set_verbosity(verbosity);  
+  
+  check_if_files_exists({latticefile, couplingfile});
+
+  // Create Hamiltonian
+  BondList bondlist = read_bondlist(latticefile);
+  Couplings couplings = read_couplings(couplingfile);
+
+  // Create infrastructure for Hubbard model
+  int n_sites = bondlist.n_sites();
+  hubbard_qn qn;
+  if ((nup == -1)  || (ndown == -1))
+    qn = {n_sites/2, n_sites/2};
+  else qn = {nup, ndown};
+
+
+  if (couplings.all_real())
+    run_real_complex<double>(std::string("REAL"), bondlist,
+			     couplings, qn, precision, neigenvalue, iters,
+			     verbosity, seed, outfile);
+  else
+    run_real_complex<lila::complex>(std::string("COMPLEX"), bondlist,
+				    couplings, qn, precision, neigenvalue,
+				    iters, verbosity, seed, outfile);
   
   MPI_Finalize();
   return EXIT_SUCCESS;
