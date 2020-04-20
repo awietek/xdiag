@@ -43,7 +43,7 @@ void run_real_complex(std::string real_complex,
   // Define multiplication function
   int iter = 0;
   auto multiply_H = 
-    [&H, &iter, verbosity](const VectorMPI<double>& v, VectorMPI<double>& w) 
+    [&H, &iter, verbosity](const VectorMPI<coeff_t>& v, VectorMPI<coeff_t>& w) 
     {
       bool verbose = (iter==0) && (verbosity > 0);
       double t1 = MPI_Wtime();
@@ -54,9 +54,9 @@ void run_real_complex(std::string real_complex,
     };
 
   // Create normal distributed random start state
-  VectorMPI<double> startstate(H.local_dim());
-  normal_dist_t<double> dist(0., 1.);
-  normal_gen_t<double> gen(dist, seed);
+  VectorMPI<coeff_t> startstate(H.local_dim());
+  normal_dist_t<coeff_t> dist(0., 1.);
+  normal_gen_t<coeff_t> gen(dist, seed);
   Random(startstate, gen, true);
   Normalize(startstate);  
 
