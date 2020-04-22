@@ -124,15 +124,21 @@ int main(int argc, char* argv[])
       auto T = HubbardModelMPI<double,uint32>(bondlist, kin_couplings, qn);
   
       Matrix<double> vs_T_vs(iters, iters);
+      Matrix<double> vs_vs(iters, iters);
+
       for (int i=0; i<iters; ++i)
 	{
 	  lg.out(1, "computing kinetic matrix line {}\n", i);
 	  auto tmp = vs[i];
 	  T.apply_hamiltonian(vs[i], tmp);
 	  for (int j=0; j<iters; ++j)
-	    vs_T_vs(i,j) = Dot(tmp, vs[j]);
+	    {
+	      vs_T_vs(i,j) = Dot(tmp, vs[j]);
+	      vs_vs(i,j) = Dot(vs[i], vs[j]);
+	    }
 	}
       dumper["VsTVs"] << vs_T_vs;
+      dumper["VsVs"] << vs_vs;
       dumper.dump();
 
     }

@@ -1,7 +1,7 @@
 srcdir = hydra
 appdir = hydra/applications
 tstdir = test
-arch = flatiron_gordon
+arch = osx
 
 ifeq ($(arch), flatiron_linux)
 	options       = -DLILA_USE_MKL
