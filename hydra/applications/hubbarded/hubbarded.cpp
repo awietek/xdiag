@@ -84,7 +84,7 @@ int main(int argc, char* argv[])
   if (measure_kinetic)
     {
       // Reset iters to reasonable size for small model dimension
-      iters = std::min(H.dim() / 8 + 5, (unsigned long)iters);
+      iters = std::min(H.dim(), (unsigned long)iters);
       
       // Define fixed number of steps convergence criterion
       auto converged = 
