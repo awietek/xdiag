@@ -118,8 +118,7 @@ int main(int argc, char* argv[])
 
       iters = alphas_v.size();
       
-      Couplings kin_couplings;
-      kin_couplings["T"] = 1.;
+      Couplings kin_couplings = couplings;
       kin_couplings["U"] = 0.;
       kin_couplings["C"] = 0.;
       auto T = HubbardModelMPI<double,uint32>(bondlist, kin_couplings, qn);
