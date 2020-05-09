@@ -34,7 +34,33 @@ namespace hydra { namespace operators {
 	has_parameters_(true),
 	parameters_(parameters)
     {}
+    
+    std::vector<int> common_sites(Bond b1, Bond b2)
+    {
+      std::vector<int> s1 = b1.sites();
+      std::vector<int> s2 = b2.sites();
+      std::vector<int> s12;
+      std::sort(s1.begin(), s1.end());
+      std::sort(s2.begin(), s2.end());
+      std::set_intersection(s1.begin(),s1.end(),
+			    s2.begin(),s2.end(),
+			    std::back_inserter(s12));
+      return s12;
+    }
 
+    bool same_sites(Bond b1, Bond b2)
+    {
+      if (b1.size() != b2.size()) return false;
+      int n_sites = b1.size();
+      for (int idx=0; idx<n_sites; ++idx)
+	{
+	  if (b1.sites(idx) != b2.sites(idx))
+	    return false;
+	}
+      return true;
+    }
+    
+    
     std::ostream& operator<< (std::ostream& out, const Bond& bond)
     {
       out << bond.type() << " " << bond.coupling() << " ";
