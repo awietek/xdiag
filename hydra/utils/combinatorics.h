@@ -28,20 +28,17 @@ namespace hydra { namespace combinatorics {
     uint64 get_n_for_pattern(const uint64& pattern, const int& n_sites, 
 			    const int& n_upspins);
 
-    // template <class state_t=uint64> state_t down_hole_to_up(const state_t& downspins, const state_t& holes);
-    // template <class state_t=uint64> state_t up_hole_to_down(const state_t& upspins, const state_t& holes);
-
     template <class state_t=uint64> 
     state_t down_hole_to_up(state_t downspins, state_t holes);
     
     template <class state_t=uint64> 
     state_t up_hole_to_down(state_t upspins, state_t holes);
     
-    template <class state_t> 
-    state_t up_down_to_hole(state_t ups, state_t downs);
+    template <class state_t=uint64> 
+    state_t up_down_to_hole(state_t upspins, state_t downspins);
     
-    template <class state_t> 
-    state_t down_up_to_hole(state_t downs, state_t ups); 
+    template <class state_t=uint64> 
+    state_t down_up_to_hole(state_t downspins, state_t upspins);
 
   }  // namespace combinatorics
 }  // namespace hydra

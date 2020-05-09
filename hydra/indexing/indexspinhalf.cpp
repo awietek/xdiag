@@ -1,6 +1,6 @@
 #include "indexspinhalf.h"
 
-#include "combinatorics.h"
+#include <hydra/utils/combinatorics.h>
 
 namespace hydra { namespace indexing {
 

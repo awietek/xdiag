@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <hydra/all.h>
+
 namespace hydra { namespace combinatorics {
 
     int64 binomial(const int& n, const int& k)
@@ -13,7 +14,6 @@ namespace hydra { namespace combinatorics {
       return res;
     }
  
-   
     uint64 get_nth_pattern(const uint64& n, const int& n_sites, 
 			   const int& n_upspins)
     {
@@ -80,63 +80,41 @@ namespace hydra { namespace combinatorics {
     }
 */
 
-    // template <class state_t> state_t down_hole_to_up(const state_t& downspins, const state_t& holes) {
-    //   state_t downspin_tmp = downspins;
-    //   state_t holes_tmp= holes;
-    //   state_t upspin = 0;
-    //   int bit_i_am_testing = 0;
-    //   while (holes_tmp > 0) {
-    //     if (~downspin_tmp & 1) {
-    //       upspin = ((holes_tmp & 1) << bit_i_am_testing) | upspin;
-    //       holes_tmp = holes_tmp >> 1;
-    //   }
-    //   downspin_tmp = downspin_tmp >> 1;
-    //   ++bit_i_am_testing;
-    //   }
-    //   return upspin;
-    // }
-    // template <class state_t> state_t up_hole_to_down(const state_t& upspins, const state_t& holes) {
-    //   state_t upspin_tmp=upspins;
-    //   state_t holes_tmp=holes;
-    //   state_t downspin = 0;
-    //   int bit_i_am_testing = 0;
-    //   while (holes_tmp > 0) {
-    //     if (~upspin_tmp & 1) {
-    //       downspin = ((holes_tmp & 1) << bit_i_am_testing) | downspin;
-    //       holes_tmp = holes_tmp >> 1;
-    //   }
-    //   upspin_tmp = upspin_tmp >> 1;
-    //   ++bit_i_am_testing;
-    //   }
-    //   return downspin;
-    // }
 
-    template <class state_t> state_t down_hole_to_up(state_t downspins, state_t holes) {
-      state_t upspin = 0;
+    template <class state_t> state_t
+    down_hole_to_up(state_t downspins, state_t holes)
+    {
+      state_t upspins = 0;
       int bit_i_am_testing = 0;
-      while (holes) {
-        if (~downspins & 1) {
-          upspin |= ((holes & 1) << bit_i_am_testing);
-          holes >>= 1;
+      while (holes)
+	{
+	  if (~downspins & 1)
+	    {
+	      upspins |= ((holes & 1) << bit_i_am_testing);
+	      holes >>= 1;
+	    }
+	  downspins >>= 1;
+	  ++bit_i_am_testing;
 	}
-	downspins >>= 1;
-	++bit_i_am_testing;
-      }
-      return upspin;
+      return upspins;
     }
 
-    template <class state_t> state_t up_hole_to_down(state_t upspins, state_t holes) {
-      state_t downspin = 0;
+    template <class state_t>
+    state_t up_hole_to_down(state_t upspins, state_t holes)
+    {
+      state_t downspins = 0;
       int bit_i_am_testing = 0;
-      while (holes) {
-        if (~upspins & 1) {
-          downspin |= ((holes & 1) << bit_i_am_testing);
-          holes >>= 1;
+      while (holes)
+	{
+	  if (~upspins & 1)
+	    {
+	      downspins |= ((holes & 1) << bit_i_am_testing);
+	      holes >>= 1;
+	    }
+	  upspins >>= 1;
+	  ++bit_i_am_testing;
 	}
-	upspins >>= 1;
-	++bit_i_am_testing;
-      }
-      return downspin;
+      return downspins;
     }
 
     template <class state_t> 
@@ -145,15 +123,15 @@ namespace hydra { namespace combinatorics {
       state_t holes = 0;
       int bit_i_am_setting = 0;
       while ((ups) || (downs)) 
-	{
-	  if (~ups & 1) 
-	    {
-	      holes |= ((downs & 1) << bit_i_am_setting);
-	      ++bit_i_am_setting;
-	    }
-	  ups >>= 1;
-	  downs >>= 1;
-	}
+    	{
+    	  if (~ups & 1) 
+    	    {
+    	      holes |= ((downs & 1) << bit_i_am_setting);
+    	      ++bit_i_am_setting;
+    	    }
+    	  ups >>= 1;
+    	  downs >>= 1;
+    	}
       return holes;
     }
 
@@ -163,27 +141,26 @@ namespace hydra { namespace combinatorics {
       state_t holes = 0;
       int bit_i_am_setting = 0;
       while ((ups) || (downs)) 
-	{
-	  if (~downs & 1) 
-	    {
-	      holes |= ((ups & 1) << bit_i_am_setting);
-	      ++bit_i_am_setting;
-	    }
-	  ups >>= 1;
-	  downs >>= 1;
-	}
+    	{
+    	  if (~downs & 1) 
+    	    {
+    	      holes |= ((ups & 1) << bit_i_am_setting);
+    	      ++bit_i_am_setting;
+    	    }
+    	  ups >>= 1;
+    	  downs >>= 1;
+    	}
       return holes;
     }
 
-    template uint32 down_hole_to_up(uint32, uint32);
-    template uint64 down_hole_to_up(uint64, uint64);
-    template uint32 up_hole_to_down(uint32, uint32);
-    template uint64 up_hole_to_down(uint64, uint64);
-    template uint32 up_down_to_hole(uint32, uint32);
-    template uint64 up_down_to_hole(uint64, uint64);
-    template uint32 down_up_to_hole(uint32, uint32);
-    template uint64 down_up_to_hole(uint64, uint64);
-
+    template uint32 down_hole_to_up<uint32>(uint32, uint32);
+    template uint64 down_hole_to_up<uint64>(uint64, uint64);
+    template uint32 up_hole_to_down<uint32>(uint32, uint32);
+    template uint64 up_hole_to_down<uint64>(uint64, uint64);
+    template uint32 up_down_to_hole<uint32>(uint32, uint32);
+    template uint64 up_down_to_hole<uint64>(uint64, uint64);
+    template uint32 down_up_to_hole<uint32>(uint32, uint32);
+    template uint64 down_up_to_hole<uint64>(uint64, uint64);
 
 }
 

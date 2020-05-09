@@ -18,8 +18,8 @@ ifeq ($(arch), flatiron_gordon)
 	clara_dir=/home/awietek/Research/Software/Clara/include
 endif
 ifeq ($(arch), osx)
-	options = -DLILA_USE_ACCELERATE
-	lapack        = -framework accelerate 
+	options  = -DLILA_USE_ACCELERATE
+	lapack   = -framework Accelerate 
 	lila_dir =/Users/awietek/Research/Software/lila
 	lime_dir =/Users/awietek/Research/Software/lime
 	clara_dir=/Users/awietek/Research/Software/Clara/include
@@ -37,20 +37,18 @@ CCARCH        = -std=c++11 -Wall -pedantic -m64
 programs     :=
 mpiprograms  :=
 sources      :=
-libraries    := $(lapack) -lhydra -Llib -llime -L$(lime_dir)/lib -lhdf5
+libraries    :=  -L../lib -lhydra $(lapack) -L$(lime_dir)/lib  -llime -lhdf5 
 extra_clean  :=
 CPPFLAGS     += $(addprefix -I ,$(include_dirs))
 
 exe = tests
 objects = tests.o test_hubbardmodelmpi.o test_bondlist.o test_charactertable.o test_combinatorics.o test_hubbard.o test_indexhubbard.o test_indextable.o test_spacegroup.o test_spinhalf.o test_lintable.o test_up_down_hole.o test_tjmodelmpi.o test_tjmodel.o
 
-
-
 includes = $(addprefix -I,$(module_dirs)) -I$(lila_dir) -I. -I$(clara_dir) -I$(lime_dir)
 
 
 $(exe):  $(objects) 
-	$(CC) $(CCOPT) $(CCARCH) -o $(exe) $(objects) $(lapack) -L../lib -lhydra
+	$(CC) $(CCOPT) $(CCARCH) -o $(exe) $(objects) $(libraries)
 
 .PHONY: clean
 clean:

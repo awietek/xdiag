@@ -86,7 +86,7 @@ int main(int argc, char* argv[])
 
   ///////////////////////////////
   // Get the ground state
-  uint64 local_dim = H.local_dim();
+  auto local_dim = H.local_dim();
   VectorMPI<double> groundstate(local_dim);
   Vector<double> eigs;
 

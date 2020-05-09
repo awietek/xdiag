@@ -32,10 +32,7 @@ void test_indexhubbard(int n_sites, hydra::hilbertspaces::hubbard_qn qn){
 }
 
 TEST_CASE( "indexing indexhubbard test", "[indexing/indexhubbard]" ) {
-  using namespace hydra;
-  using namespace hydra::hilbertspaces;
-  using namespace hydra::indexing;
-  using hydra::utils::range;
+  using namespace hydra::all;
 
   for (int n_sites : range<>(5))
     for (int n_upspins : range<>(n_sites+1))
