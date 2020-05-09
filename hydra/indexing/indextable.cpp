@@ -1,5 +1,6 @@
 #include "indextable.h"
-#include "spinhalf.h"
+
+#include <hydra/hilbertspaces/spinhalf.h>
 
 namespace hydra { namespace indexing {
 

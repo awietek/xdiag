@@ -47,19 +47,6 @@ namespace hydra { namespace operators {
 			    std::back_inserter(s12));
       return s12;
     }
-
-    bool same_sites(Bond b1, Bond b2)
-    {
-      if (b1.size() != b2.size()) return false;
-      int n_sites = b1.size();
-      for (int idx=0; idx<n_sites; ++idx)
-	{
-	  if (b1.sites(idx) != b2.sites(idx))
-	    return false;
-	}
-      return true;
-    }
-    
     
     std::ostream& operator<< (std::ostream& out, const Bond& bond)
     {

@@ -3,7 +3,8 @@
 #include <sstream>
 
 #include "spinhalf.h"
-#include "bitops.h"
+
+#include <hydra/utils/bitops.h>
 
 namespace hydra { namespace hilbertspaces {
 

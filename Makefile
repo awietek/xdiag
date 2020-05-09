@@ -1,95 +1,53 @@
-srcdir = hydra
-appdir = hydra/applications
-tstdir = test
 arch = osx
 
-ifeq ($(arch), flatiron_linux)
-	options       = -DLILA_USE_MKL
-	lapack        = -lmkl_rt 
-	lila_dir =/mnt/home/awietek/Research/Software/lila
-	lime_dir =/mnt/home/awietek/Research/Software/lime
-	clara_dir=/mnt/home/awietek/Research/Software/Clara/include
-endif
-ifeq ($(arch), flatiron_gordon)
-	options       = -DLILA_USE_MKL
-	lapack        = -lmkl_rt 
-	lila_dir =/home/awietek/Research/Software/lila
-	lime_dir =/home/awietek/Research/Software/lime
-	clara_dir=/home/awietek/Research/Software/Clara/include
-endif
-ifeq ($(arch), osx)
-	options = -DLILA_USE_ACCELERATE
-	lapack        = -framework accelerate 
-	lila_dir =/Users/awietek/Research/Software/lila
-	lime_dir =/Users/awietek/Research/Software/lime
-	clara_dir=/Users/awietek/Research/Software/Clara/include
-endif
-ifeq ($(arch), hshackle_linux)
-	lapack        = -llapack -lblas
-	lila_dir =/home/hshackle/ed/lila
-	lime_dir =/home/hshackle/ed/lime
-	clara_dir=/home/hshackle/ed/clara/include
-endif
-modules = hilbertspaces utils indexing models operators symmetries dynamics thermodynamics parameters
-
-apps= hubbarded #hubbardfulled #tjfulled #tjed hubbarded # #holetest hubbarded hubbarddynamicsmpi #hubbarddynamics #hubbardopticalftlm  # hubbardthermotpq hubbardopticalmpi # hubbarddynamicsmpi   heisenberged spinlessfermioned   hubbardthermo  heisenbergthermo  hubbardopticaltsl hubbarded 
-
-# -g -fsanitize=address
-
-CC         = mpicxx
-CCOPT         = -O3 -mavx -Ofast $(options)
-CCARCH        = -std=c++11 -Wall -pedantic -m64
-programs     :=
-mpiprograms  :=
-sources      :=
-libraries    := $(lapack) -lhydra -Llib -llime -L$(lime_dir)/lib -lhdf5
-extra_clean  :=
-CPPFLAGS     += $(addprefix -I ,$(include_dirs))
-RM     := rm -f
-MKDIR  := mkdir -p
-
-# Set the variable sources
-app_dirs = $(addprefix $(appdir)/,$(apps))
-app_makefiles = $(addsuffix /module.mk,$(app_dirs))
-module_dirs = $(addprefix $(srcdir)/,$(modules))
-module_makefiles = $(addsuffix /module.mk,$(module_dirs))
-
-include $(app_makefiles)
-include $(module_makefiles)
+include options.mk
+include sources.mk
 
 objects = $(subst .cpp,.o,$(sources))
 depends = $(subst .cpp,.d,$(sources))
+
+appobjects = $(subst .cpp,.o,$(appsources))
+appdepends = $(subst .cpp,.d,$(appsources))
+appbinaries = $(subst .cpp,,$(appsources))
+
+testobjects = $(subst .cpp,.o,$(testsources))
+testdepends = $(subst .cpp,.d,$(testsources))
 depflags = -MT $@ -MMD -MP -MF $*.d
 
-
-includes = $(addprefix -I,$(module_dirs)) -I$(lila_dir) -I. -I$(clara_dir) -I$(lime_dir)
-
-.PHONY: all
+.PHONY: all 
 all:  $(objects) lib
 
-apps: $(apps)
+.PHONY: test 
+test:  $(objects) $(testobjects) lib 
+	$(cc) $(ccopt) $(ccarch) $(depflags) $(libraries) $(testobjects) $(objects) -o test/tests 
+
+.PHONY: apps
+apps: $(objects) $(appobjects) $(appbinaries) lib
+
+.PHONY: lib
+lib: $(objects)
+	ar rcs lib/libhydra.a $(objects)
+
+$(appbinaries):
+	$(cc) $(ccopt) $(ccarch) $(depflags) -Llib -lhydra $(libraries) $@.o -o bin/$(notdir $@)
 
 $(depends):
 include $(depends)
 
-lib: $(objects)
-	ar rcs lib/libhydra.a $(objects)
+$(appdepends):
+include $(appdepends)
+
+$(testdepends):
+include $(testdepends)
+
 
 .PHONY: clean
 clean:
-	$(RM) -r $(objects) $(depends)
+	$(RM) -r $(objects) $(appobjects) $(testobjects) $(depends) $(appdepends) $(testdepends)
 
 .PHONY: rebuild
 rebuild: clean all lib
 
-%.o: %.cpp
 %.o: %.cpp %.d
-	$(CC) $(CCOPT) $(CCARCH) $(depflags) -c $< -o $@ $(includes)
-
-$(depdir): ; @mkdir -o $@
-
-$(apps): $(appdir)/$@ lib
-	$(CC) $(CCOPT) $(CCARCH) $(appdir)/$@/$@.cpp -o bin/$@ $(includes) $(libraries)
-
-$(tests): $@ lib
-	$(CC) $(CCOPT) $(CCARCH) $@.cpp -o $@ $(includes) $(libraries) $(test_objects)
+%.o: %.cpp 
+	$(cc) $(ccopt) $(ccarch) $(depflags) -c $< -o $@ $(includes)

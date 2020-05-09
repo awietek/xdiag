@@ -76,8 +76,10 @@ namespace hydra { namespace models {
 
       void initialize();
 
-      state_t up_down_to_hole_table(const state_t& upspins, const state_t& downspin);
-      state_t down_up_to_hole_table(const state_t& upspins, const state_t& downspin);
+      state_t up_down_to_hole_table(const state_t& upspins,
+				    const state_t& downspin);
+      state_t down_up_to_hole_table(const state_t& upspins,
+				    const state_t& downspin);
 
       inline int mpi_rank_of_spins(const state_t& spins) const
       { 
@@ -137,8 +139,6 @@ namespace hydra { namespace models {
 
       std::vector<state_t> downspins_table_;
       std::vector<state_t> upspins_table_;
-
-    
 
     };
   

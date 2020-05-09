@@ -29,7 +29,7 @@ void test_indextable_spinhalf(int n_sites, int n_upspins){
 }
 
 TEST_CASE( "indexing indextable test", "[indexing/indextable]" ) {
-  using namespace hydra;
+  using namespace hydra::all;
 
   for (int n_sites = 0; n_sites < 8; ++n_sites)
     for (int n_upspins = 0; n_upspins <= n_sites; ++n_upspins)

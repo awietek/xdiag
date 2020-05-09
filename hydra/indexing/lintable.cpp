@@ -1,5 +1,6 @@
 #include "lintable.h"
-#include "spinhalf.h"
+
+#include <hydra/hilbertspaces/spinhalf.h>
 #include <hydra/utils/combinatorics.h>
 #include <hydra/utils/bitops.h>
 
@@ -52,6 +53,14 @@ namespace hydra { namespace indexing {
         ++idx;
       }
       }
+
+    template <class hilbertspace_t,  class index_t>
+    index_t LinTable<hilbertspace_t, index_t>::index
+    (const state_t& state) const
+    {
+      return left_indices_[state >> (site_divider_)] +
+	right_indices_[gbits(state, site_divider_, 0)];
+    }
 
 
     template class LinTable<hilbertspaces::Spinhalf<uint16>, uint16>;

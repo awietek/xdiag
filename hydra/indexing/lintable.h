@@ -21,9 +21,12 @@ namespace hydra { namespace indexing {
       LinTable() = default;
       LinTable(const hilbertspace_t& hilbertspace);
 
-      index_t index(const state_t& state) const { return left_indices_[state >> (site_divider_)] + right_indices_[gbits(state, site_divider_, 0)]; }
-      state_t state(const index_t& index) const { return states_[index]; }  
-      index_t size() const { return total_size_; }
+      index_t index(const state_t& state) const;
+      inline state_t state(const index_t& index) const
+      { return states_[index]; }  
+
+      inline index_t size() const
+      { return total_size_; }
 
     private:
       index_t total_size_;
