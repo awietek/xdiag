@@ -1,4 +1,4 @@
-arch = osx
+arch = flatiron_linux
 
 include options.mk
 include sources.mk
@@ -29,7 +29,7 @@ lib: $(objects)
 	ar rcs lib/libhydra.a $(objects)
 
 $(appbinaries):
-	$(cc) $(ccopt) $(ccarch) $(depflags) -Llib -lhydra $(libraries) $@.o -o bin/$(notdir $@)
+	$(cc) $(ccopt) $(ccarch) $(depflags) $@.o -Llib -lhydra $(libraries) -o bin/$(notdir $@)
 
 $(depends):
 include $(depends)
