@@ -51,6 +51,10 @@ namespace hydra { namespace operators {
       parameters::Parameters parameters_;
     };
 
+    std::vector<int> common_sites(Bond b1, Bond b2);
+    bool same_sites(Bond b1, Bond b2);
+
+    
     /// writes bond to stream 
     std::ostream& operator<< (std::ostream& out, const Bond& bond);
 
