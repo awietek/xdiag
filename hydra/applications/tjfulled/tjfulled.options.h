@@ -4,7 +4,7 @@
 #include "clara.hpp"
 
 
-void parse_cmdline(std::string& outfile, std::string& latticefile, std::string& couplingfile, int& nup, int& ndown, int& verbosity, int& argc, char** argv)
+void parse_cmdline(std::string& outfile, std::string& latticefile, std::string& couplingfile, int& nup, int& ndown, bool& fulldiag, int& verbosity, int& argc, char** argv)
 {
 
   bool showhelp = false;
@@ -14,6 +14,7 @@ void parse_cmdline(std::string& outfile, std::string& latticefile, std::string& 
     clara::Opt(couplingfile, "couplingfile")["-t"]["--couplingfile"]("name of couplingfile") |
     clara::Opt(nup, "nup")["-u"]["--nup"]("number of up electrons (optional, default half filling)") |
     clara::Opt(ndown, "ndown")["-d"]["--ndown"]("number of down electrons (optional, default half filling)") |
+    clara::Opt(fulldiag, "fulldiag")["-f"]["--fulldiag"]("boolean, whether to calculate eigenstates in addition to energy (default false)") |
     clara::Opt(verbosity, "verbosity")["-v"]["--verbosity"]("verbosity level, one of 0, 1 ,2 (optional, default 1)") |
     clara::Help(showhelp);
 
@@ -37,6 +38,7 @@ void parse_cmdline(std::string& outfile, std::string& latticefile, std::string& 
 	"couplingfile: " << couplingfile << std::endl <<
 	"nup         : " << nup << std::endl <<
 	"ndown       : " << ndown << std::endl <<
+	"fulldiag    : " << fulldiag << std::endl <<
 	"verbosity   : " << verbosity << std::endl <<
 	"-----" << std::endl;
     }
