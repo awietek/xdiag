@@ -45,7 +45,7 @@ namespace hydra { namespace models {
     template <class coeff_t>
     lila::Matrix<coeff_t> TJModel<coeff_t>::matrix(bool ninj_term) const
     {
-      using state_t = uint32;
+      using state_t = uint64;
       using hydra::combinatorics::up_hole_to_down;
       using hydra::hilbertspaces::Spinhalf;
       using namespace hydra::utils;

@@ -34,7 +34,7 @@ using namespace hydra::operators;
 namespace hydra { namespace models {
 
 
-    template <class coeff_t, class state_t=uint32>
+    template <class coeff_t, class state_t=uint64>
     class TJModelMPI
     {
     public:
