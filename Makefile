@@ -1,4 +1,4 @@
-arch = flatiron_linux
+arch = osx
 
 include options.mk
 include sources.mk
@@ -14,8 +14,20 @@ testobjects = $(subst .cpp,.o,$(testsources))
 testdepends = $(subst .cpp,.d,$(testsources))
 depflags = -MT $@ -MMD -MP -MF $*.d
 
+
+
 .PHONY: all 
 all:  $(objects) lib
+
+$(depends):
+include $(depends)
+
+$(appdepends):
+include $(appdepends)
+
+$(testdepends):
+include $(testdepends)
+
 
 .PHONY: test 
 test:  $(objects) $(testobjects) lib 
@@ -31,14 +43,6 @@ lib: $(objects)
 $(appbinaries):
 	$(cc) $(ccopt) $(ccarch) $(depflags) $@.o -Llib -lhydra $(libraries) -o bin/$(notdir $@)
 
-$(depends):
-include $(depends)
-
-$(appdepends):
-include $(appdepends)
-
-$(testdepends):
-include $(testdepends)
 
 
 .PHONY: clean
