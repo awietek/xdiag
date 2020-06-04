@@ -100,22 +100,6 @@ namespace hydra { namespace models {
 	    std::lower_bound(dnspins.begin() + up_begin, 
 			     dnspins.begin() + up_end, dns);
 	  return std::distance(dnspins.begin(), it);
-	  
-	  // auto idxb = std::distance(dnspins.begin(), it);
-	  // // linear search
-	  // int64 idx = 0;
-	  // for (idx=0; idx<(int64)upspins.size(); ++idx)
-	  //   {
-	  //     if ((ups == upspins[idx]) && (dns == dnspins[idx]))
-	  // 	break;
-	  //   }
-	  // printf("linear: %d, binary: %d\n", idx, idxb);
-	  // if (idx != idxb)
-	  //   {
-	  //     std::cout << "up_begin " << up_begin << ", up_end " << up_end << std::endl;
-	  //   }
-	  // assert(idx == idxb);
-	  // return idx;
 	};
 
       // Try allocating the matrix
@@ -140,13 +124,16 @@ namespace hydra { namespace models {
 	  int s2 = pair.second;
 	  double jz = szsz_amplitudes_[szsz_idx]*0.25;
 
+	  
 	  if (std::abs(jz) > 1e-14)
 	    {
+	      // printf("sites %d %d %d %f\n", s1, s2, szsz_idx, jz);
+
 	      for (int64 idx=0; idx<dim_; ++idx)
 		{
 		  state_t ups = upspins[idx];
 		  state_t dns = dnspins[idx];
-
+		  
 		  bool up1 = gbit(ups, s1);
 		  bool up2 = gbit(ups, s2);
 		  bool dn1 = gbit(dns, s1);
@@ -171,7 +158,7 @@ namespace hydra { namespace models {
 	    }  // if (std::abs(jz) > 1e-14)
 	  ++szsz_idx;
 	}  // for (auto pair : szszs_)
-
+      
       // Exchange terms
       int exchange_idx=0;
       for (auto pair: exchanges_)
@@ -180,7 +167,6 @@ namespace hydra { namespace models {
 	  int s2 = std::max(pair.first, pair.second);
 	  coeff_t jx = exchange_amplitudes_[exchange_idx]*0.5;
 	  state_t flipmask = ((state_t)1 << s1) | ((state_t)1 << s2);
-	
 	  if (std::abs(jx) > 1e-14)
 	    {
 	      for (int64 idx=0; idx<dim_; ++idx)
@@ -196,13 +182,24 @@ namespace hydra { namespace models {
 		    {
 		      state_t flipped_ups = ups ^ flipmask;
 		      state_t flipped_dns = dns ^ flipmask;
-		      int64 flipped_idx = index_of_up_dn(flipped_ups, flipped_dns);
-		      double fermi_up = 
-			popcnt(gbits(ups, s2-s1-1, s1+1)) % 2==0 ? 1. : -1.;
-		      double fermi_dn = 
-			popcnt(gbits(dns, s2-s1-1, s1+1)) % 2==0 ? 1. : -1.;
 
-		      H(flipped_idx, idx) -= jx * fermi_up * fermi_dn;
+		      if (popcnt(flipped_ups) != popcnt(ups))
+			{
+			  using namespace hilbertspaces;
+			  std::cout << PrintSpinhalf(64, ups)
+				    << std::endl
+				    << popcnt(ups) << std::endl
+				    << PrintSpinhalf(64, flipped_ups)
+				    << std::endl
+				    << popcnt(flipped_ups) << std::endl
+				    << std::endl;
+			}
+		      assert(popcnt(flipped_ups) == popcnt(ups));
+		      assert(popcnt(flipped_dns) == popcnt(dns));
+
+		      int64 flipped_idx = index_of_up_dn(flipped_ups,
+							 flipped_dns);
+		      H(flipped_idx, idx) += jx;
 		    }
 
 		}  // loop over spin configurations
@@ -218,9 +215,8 @@ namespace hydra { namespace models {
       	  int s1 = std::min(pair.first, pair.second); 
       	  int s2 = std::max(pair.first, pair.second);
       	  coeff_t t = hopping_amplitudes_[hopping_idx];
-      	  uint32 flipmask = ((state_t)1 << s1) | ((state_t)1 << s2);
-
-	  uint32 firstmask = (state_t)1 << pair.first;
+      	  state_t flipmask = ((state_t)1 << s1) | ((state_t)1 << s2);
+	  state_t firstmask = (state_t)1 << s1;
 	  
       	  if (std::abs(t) > 1e-14)
       	    {
@@ -236,14 +232,15 @@ namespace hydra { namespace models {
 			  ((ups & flipmask) != flipmask))
       			{
       			  state_t flipped_ups = ups ^ flipmask;
-      			  double fermi_up = 
-      			    popcnt(gbits(ups, s2-s1-1, s1+1)) % 2==0 ? 1. : -1.;
-      			  int64 flipped_idx = index_of_up_dn(flipped_ups, dns);
-			  // printf("idx: %d, ups: %d, s1: %d, s2: %d, fups: %d, fidx: %d\n",
-			  // 	 idx, ups, s1,s2, flipped_ups, flipped_idx);
+			  int64 flipped_idx =
+			    index_of_up_dn(flipped_ups, dns);
+       			  
+			  double fermi_up = 
+			    popcnt(gbits(ups ^ dns, s2-s1, s1)) % 2==0
+			    ? 1. : -1.;
 
 			  if (ups & firstmask)
-			    H(flipped_idx, idx) -= t * fermi_up;
+			    H(flipped_idx, idx) += t * fermi_up;
 			  else
 			    H(flipped_idx, idx) -= lila::conj(t) * fermi_up;
       			}
@@ -256,16 +253,19 @@ namespace hydra { namespace models {
 			  ((dns & flipmask) != flipmask))
       			{
       			  state_t flipped_dns = dns ^ flipmask;
-      			  double fermi_dn = 
-      			    popcnt(gbits(dns, s2-s1-1, s1+1)) % 2==0 ? 1. : -1.;
-      			  int64 flipped_idx = index_of_up_dn(ups, flipped_dns);
+			  int64 flipped_idx =
+			    index_of_up_dn(ups, flipped_dns);
+
+			  double fermi_dn = 
+      			    popcnt(gbits(ups ^ dns, s2-s1, s1)) % 2==0
+			    ? 1. : -1.;
+
 			  if (dns & firstmask)
-			    H(flipped_idx, idx) -= t * fermi_dn;
+			    H(flipped_idx, idx) += t * fermi_dn;
 			  else
 			    H(flipped_idx, idx) -= lila::conj(t) * fermi_dn;
-			  
-			  // printf("idx: %d, dns: %d, s1: %d, s2: %d, fdns: %d, fidx: %d\n",
-			  // 	 idx, dns, s1,s2, flipped_dns, flipped_idx);
+	
+
       			}
       		    }
       		}  // loop over spin configurations

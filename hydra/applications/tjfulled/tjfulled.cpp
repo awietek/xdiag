@@ -32,9 +32,10 @@ void run_real_complex(std::string real_complex,
   double t2 = MPI_Wtime();
   lg.out(1, "done. time: {} secs\n", t2-t1); 
   lg.out(1, "dim: {}\n", FormatWithCommas(model.dim())); 
-  
   lg.out(1, "Diagonalizing...\n",
-	     qn.n_upspins, qn.n_downspins);
+	 qn.n_upspins, qn.n_downspins);
+
+  LilaPrint(lila::Diag(H));
   if (fulldiag == 0) {
     t1 = MPI_Wtime();
     auto eigenvalues = EigenvaluesSym(H);
@@ -76,7 +77,8 @@ int main(int argc, char* argv[])
   bool fulldiag = 0;
   int verbosity = 1;
 
-  parse_cmdline(outfile, latticefile, couplingfile, nup, ndown, fulldiag, verbosity, argc, argv);
+  parse_cmdline(outfile, latticefile, couplingfile, nup, ndown, fulldiag,
+		verbosity, argc, argv);
   lg.set_verbosity(verbosity);  
   
   check_if_files_exists({latticefile, couplingfile});

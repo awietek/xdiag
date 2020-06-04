@@ -25,7 +25,7 @@ namespace hydra { namespace models {
       std::vector<double> interaction_strengths_;
       double U_;
 
-      // Use Hubbard routing so set interation terms
+      // Use Hubbard routine so set interation terms
       hubbardmodeldetail::set_hubbard_terms<coeff_t>
       (bondlist, couplings, hoppings_, hopping_amplitudes_,
        currents_, current_amplitudes_,
@@ -39,7 +39,8 @@ namespace hydra { namespace models {
       
     template <class coeff_t, class state_t>
     void TJModelMPI<coeff_t, state_t>::apply_hamiltonian
-    (const lila::VectorMPI<coeff_t>& in_vec, lila::VectorMPI<coeff_t>& out_vec,
+    (const lila::VectorMPI<coeff_t>& in_vec,
+     lila::VectorMPI<coeff_t>& out_vec,
      bool verbose)
     {
       using utils::popcnt;
@@ -274,8 +275,6 @@ namespace hydra { namespace models {
 		    if (popcnt(upspins & flipmask) == 1)
 		      {
 			uint64 upspin_offset = my_upspins_offset_[upspins];
-			double fermi_up = popcnt(gbits(upspins, s2-s1-1, s1+1)) % 2==0 ? 1. : -1.;
-		
 			for (uint64 target_idx=upspin_offset; 
 			     target_idx < upspin_offset + n_hole_configurations;
 			     ++target_idx)
@@ -283,9 +282,7 @@ namespace hydra { namespace models {
 			    auto downspins = downspins_table_[target_idx];
 			    if (popcnt(downspins & flipmask) == 1)
 			      {
-				double fermi_down = popcnt(gbits(downspins, s2-s1-1, s1+1)) % 2==0 ? 1. : -1.;
-				out_vec.vector_local()(target_idx) -= jx * fermi_up * fermi_down *
-				  recv_buffer_[recv_idx];
+				out_vec.vector_local()(target_idx) += jx * recv_buffer_[recv_idx];
 				++recv_idx;
 			      }
 			  }
@@ -310,8 +307,8 @@ namespace hydra { namespace models {
       	  const int s1 = std::min(pair.first, pair.second); 
       	  const int s2 = std::max(pair.first, pair.second);
       	  const coeff_t t = hopping_amplitudes_[hopping_idx];
-      	  const uint32 flipmask = ((state_t)1 << s1) | ((state_t)1 << s2);
-	  const uint32 firstmask = (state_t)1 << pair.first;
+      	  const state_t flipmask = ((state_t)1 << s1) | ((state_t)1 << s2);
+	  const state_t firstmask = (state_t)1 << s1;
 
 	  uint64 n_hole_configurations = hs_holes_in_ups_.size();
 
@@ -326,9 +323,6 @@ namespace hydra { namespace models {
 		    {
 		      uint64 upspins_offset = upspin_idx*n_hole_configurations;
 
-		      // uint64 upspins_offset2 = my_upspins_offset_[upspins];
-		      // assert(upspins_offset == upspins_offset2);
-
 		      for (uint64 idx=upspins_offset;
 			   idx < upspins_offset + n_hole_configurations;
 			   ++idx)
@@ -339,8 +333,7 @@ namespace hydra { namespace models {
 			  if (((downspins & flipmask) != 0) && 
 			      ((downspins & flipmask) != flipmask))
 			    {
-			      double fermi = 
-				popcnt(gbits(downspins, s2-s1-1, s1+1)) % 2==0 ? 1. : -1.;
+			      double fermi = popcnt(gbits(upspins ^ downspins, s2-s1, s1)) % 2==0 ? 1. : -1.;
 			      state_t new_downspins = downspins ^ flipmask;
 			  
 			      // Binary search the downspin configuration
@@ -349,18 +342,10 @@ namespace hydra { namespace models {
 			      	 downspins_table_.begin() + upspins_offset + 
 			      	 n_hole_configurations, new_downspins);
 			      uint64 new_idx = std::distance(downspins_table_.begin(), it);
-			   
-			      // state_t new_holes = up_down_to_hole(upspins, new_downspins);
-			      // uint64 new_idx2 = my_upspins_offset_[upspins] + indexing_holes_in_ups_.index(new_holes);
-			      // printf("ni1: %ul, ni2: %ul\n", new_idx, new_idx2);
-			      // assert(new_idx == new_idx2);
 
-			      // state_t new_holes = up_down_to_hole(upspins, new_downspins);
-			      // uint64 new_idx = my_upspins_offset_[upspins] + indexing_holes_in_ups_.index(new_holes);
-			      
 			      if (downspins & firstmask)
 				{
-				  out_vec.vector_local()(new_idx) -=
+				  out_vec.vector_local()(new_idx) +=
 				    fermi * t * in_vec.vector_local()(idx);
 				}
 			      else
@@ -581,8 +566,8 @@ namespace hydra { namespace models {
       	  const int s1 = std::min(pair.first, pair.second); 
       	  const int s2 = std::max(pair.first, pair.second);
       	  const coeff_t t = hopping_amplitudes_[hopping_idx];
-      	  const uint32 flipmask = ((state_t)1 << s1) | ((state_t)1 << s2);
-	  const uint32 firstmask = (state_t)1 << pair.first;
+      	  const state_t flipmask = ((state_t)1 << s1) | ((state_t)1 << s2);
+	  const state_t firstmask = (state_t)1 << s1;
 
       	  if (std::abs(t) > 1e-14)
       	    {
@@ -594,10 +579,6 @@ namespace hydra { namespace models {
       		  if ((downspins & flipmask) == 0)
 		    {
       		      uint64 downspin_offset = downspin_idx * n_hole_configurations;
-
-      		      // uint64 downspin_offset2 = my_downspins_offset_[downspins];
-		      // assert(downspin_offset == downspin_offset2);
-		      
       		      for (uint64 idx=downspin_offset;
       			   idx < downspin_offset + n_hole_configurations;
       			   ++idx)
@@ -608,8 +589,7 @@ namespace hydra { namespace models {
       			  if (((upspins & flipmask) != 0) && 
       			      ((upspins & flipmask) != flipmask))
       			    {
-      			      double fermi = 
-      				popcnt(gbits(upspins, s2-s1-1, s1+1)) % 2==0 ? 1. : -1.;
+      			      double fermi = popcnt(gbits(upspins ^ downspins, s2-s1, s1)) % 2==0 ? 1. : -1.;
       			      state_t new_upspins = upspins ^ flipmask;
 
       			      // Binary search the upspin configuration
@@ -619,11 +599,9 @@ namespace hydra { namespace models {
       			      	 n_hole_configurations, new_upspins);
       			      uint64 new_idx = std::distance(upspins_table_.begin(), it);
 
-      			      // state_t new_holes = down_up_to_hole(downspins, new_upspins);
-      			      // uint64 new_idx = downspin_offset + indexing_holes_in_downs_.index(new_holes);
 			      if (upspins & firstmask)
 				{
-				  recv_buffer_[new_idx] -=
+				  recv_buffer_[new_idx] +=
 				    fermi * t * send_buffer_[idx];
 				}
 			      else

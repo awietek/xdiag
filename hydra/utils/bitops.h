@@ -15,7 +15,7 @@ namespace hydra { namespace utils {
 
     inline int popcnt(const uint16& x) { return __builtin_popcount(x); }
     inline int popcnt(const uint32& x) { return __builtin_popcount(x); }
-    inline int popcnt(const uint64& x) { return __builtin_popcount(x); }
+    inline int popcnt(const uint64& x) { return __builtin_popcountll(x); }
 
   }  // namespace utils
 }  // namespace hydra

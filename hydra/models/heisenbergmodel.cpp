@@ -25,42 +25,36 @@
 
 namespace hydra { namespace models {
     
-    HeisenbergModel::HeisenbergModel
-    (int n_sites, const std::vector<std::pair<int, int>> neighbors)
-      : n_sites_(n_sites),
-	neighbors_(neighbors)
-    {}
 
-    std::vector<int> HeisenbergModel::quantumnumbers()
-    {
-      std::vector<int> qns;
-      for (int n_upspins = 0; n_upspins <= n_sites_; ++n_upspins)
-	qns.push_back(n_upspins);
-      return qns;
-    }
-
-    lila::Matrix<double> HeisenbergModel::matrix(double J, int qn) const
+    lila::Matrix<double>
+    HeisenbergModel::matrix(BondList bondlist,
+			    Couplings couplings, int qn) const
     {
       using hilbertspaces::Spinhalf;
       using indexing::IndexSpinhalf;
-      using utils::range;
       using utils::gbit;
       using utils::popcnt;
+
+      int n_sites = bondlist.n_sites();
 	
-      Spinhalf<uint64> hs(n_sites_, qn);
+      Spinhalf<uint64> hs(n_sites, qn);
       IndexSpinhalf<uint64, uint64> indexing(hs);
       int dim = indexing.size();
       lila::Matrix<double> hamilton(dim, dim);
       lila::Zeros(hamilton);
 
-      for (auto pair : neighbors_)
+      auto heisenberg_bonds = bondlist.bonds_of_type("HEISENBERG");
+      for (auto bond : heisenberg_bonds)
 	{
-	  int s1 = pair.first; 
-	  int s2 = pair.second;
+	  assert(bond.size()==2); // Heisenberg bonds must have length 2
+	  int s1 = bond.sites(0); 
+	  int s2 = bond.sites(1);
+	  std::string coupling = bond.coupling();
+	  double J = lila::real(couplings[coupling]);
 	  
 	  // Apply Heisenberg operator on sites s1, s2
-	  uint32 flipmask = ((uint32)1 << s1) | ((uint32)1 << s2);
-	  for (int idx : range<>(indexing.size()))
+	  uint64 flipmask = ((uint64)1 << s1) | ((uint64)1 << s2);
+	  for (int idx=0; idx<indexing.size(); ++idx)
 	    {
 	      auto state = indexing.state(idx);
 		
@@ -81,16 +75,18 @@ namespace hydra { namespace models {
     }
 
     lila::Matrix<complex> HeisenbergModel::matrix
-    (double J, int qn, CharacterTable& character_table, 
-     std::string representation_name) const
+    (BondList bondlist, Couplings couplings, int qn,
+     CharacterTable& character_table, std::string representation_name) const
     {
       using hilbertspaces::Spinhalf;
       using indexing::IndexSymmetrized;
       using utils::range;
       using utils::gbit;
       using utils::popcnt;
+
+      int n_sites = bondlist.n_sites();
 	
-      Spinhalf<uint64> hs(n_sites_, qn);
+      Spinhalf<uint64> hs(n_sites, qn);
       IndexSymmetrized<Spinhalf<uint64>> indexing
 	(hs, character_table, representation_name);
       std::vector<complex> characters = 
@@ -99,13 +95,17 @@ namespace hydra { namespace models {
       lila::Matrix<complex> hamilton(dim, dim);
       lila::Zeros(hamilton);
 
-      for (auto pair : neighbors_)
+      auto heisenberg_bonds = bondlist.bonds_of_type("HEISENBERG");
+      for (auto bond : heisenberg_bonds)
 	{
-	  int s1 = pair.first; 
-	  int s2 = pair.second;
+	  assert(bond.size()==2); // Heisenberg bonds must have length 2
+	  int s1 = bond.sites(0); 
+	  int s2 = bond.sites(1);
+	  std::string coupling = bond.coupling();
+	  double J = lila::real(couplings[coupling]);
 	  
 	  // Apply Heisenberg operator on sites s1, s2
-	  uint32 flipmask = ((uint32)1 << s1) | ((uint32)1 << s2);
+	  uint64 flipmask = ((uint64)1 << s1) | ((uint64)1 << s2);
 	  for (int idx : range<>(indexing.size()))
 	    {
 	      auto state = indexing.state(idx);

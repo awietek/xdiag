@@ -18,13 +18,17 @@
 #include <utility>
 #include <vector>
 
+#include <hydra/operators/bondlist.h>
+#include <hydra/operators/couplings.h>
 #include <hydra/symmetries/charactertable.h>
 
 #include <lila/matrix.h>
 
 namespace hydra { namespace models {
 
-using symmetries::CharacterTable;
+    using symmetries::CharacterTable;
+    using operators::BondList;
+    using operators::Couplings;
 
     /*!
       Class to generate representations of the Heisenberg models
@@ -35,12 +39,8 @@ using symmetries::CharacterTable;
 	Defines a Heisenberg model given number of sites and pairs of 
 	neighboring sites with Heisenberg interactions
       */
-      HeisenbergModel(int n_sites, 
-		      const std::vector<std::pair<int, int>> neighbors);
-      
-      ///  Return all possible quantum numbers, i.e. number of upspins
-      std::vector<int> quantumnumbers();
-      
+      HeisenbergModel() = default;
+            
       /*!
 	returns a lila::Matrix of the Heisenberg model given
 	the quantum number (number of upspins).
@@ -50,15 +50,14 @@ using symmetries::CharacterTable;
 
 	@endcode
       */
-      lila::Matrix<double> matrix(double J, int qn) const;
+      lila::Matrix<double> matrix(BondList bondlist,
+				  Couplings couplings, int qn) const;
 
       lila::Matrix<complex> matrix
-      (double J, int qn, CharacterTable& character_table, 
+      (BondList bondlist, Couplings couplings, int qn,
+       CharacterTable& character_table,
        std::string representation_name) const;
 
-    private:
-      int n_sites_;
-      std::vector<std::pair<int, int>> neighbors_;
     };
     
   }

@@ -3,211 +3,152 @@
 #include <lila/allmpi.h>
 #include <hydra/allmpi.h>
 
+#include "testcases_tjmodel.h"
+
 using namespace hydra::all;
 using namespace lila;
 
-void test_tjmodelmpi(hydra::operators::BondList bondlist, 
-			  hydra::operators::Couplings couplings, 
-			  hydra::hilbertspaces::hubbard_qn qn, 
-			  double e0)
+// Checks whether tjmodelmpi gives same ground state enery as tjmodel
+template <class coeff_t>
+void test_tjmodelmpi(BondList bondlist,  Couplings couplings)
 {
-  auto H = TJModelMPI<double>(bondlist, couplings, qn);
-  auto multiply_H = 
-    [&H](const VectorMPI<double>& v, VectorMPI<double>& w) 
-    { H.apply_hamiltonian(v, w); };
-  // Create normal distributed random start state
-  VectorMPI<double> startstate(H.local_dim());
-  normal_dist_t<double> dist(0., 1.);
-  normal_gen_t<double> gen(dist, 42);
-  Random(startstate, gen, true);
-  Normalize(startstate);  
+  int n_sites = bondlist.n_sites();
+  
+  for (int nup=0; nup<=n_sites; ++nup)
+    for (int ndn=0; ndn<=n_sites-nup; ++ndn)
+      {
+	hubbard_qn qn = {nup, ndn};
+	auto model = TJModel<complex>(bondlist, couplings, qn);
+	auto HM = model.matrix();
+	REQUIRE(lila::close(HM, lila::Herm(HM)));
+	auto full_eigs = lila::EigenvaluesSym(HM);
+	
+	auto H = TJModelMPI<coeff_t>(bondlist, couplings, qn);
+	auto multiply_H = 
+	  [&H](const VectorMPI<coeff_t>& v, VectorMPI<coeff_t>& w) 
+	  { H.apply_hamiltonian(v, w); };
+	// Create normal distributed random start state
+	VectorMPI<coeff_t> startstate(H.local_dim());
+	normal_dist_t<coeff_t> dist(0., 1.);
+	normal_gen_t<coeff_t> gen(dist, 42);
+	Random(startstate, gen, true);
+	Normalize(startstate);  
 
-  // Run Lanczos
-  auto res = LanczosEigenvalues(multiply_H, startstate, 1e-12,
-				0, "Ritz");
-  // printf("e0real: %f, e0comp: %f, diff: %e\n", e0, res.eigenvalues(0), e0 - res.eigenvalues(0));
-  REQUIRE(std::abs(e0 - res.eigenvalues(0)) < 1e-6);
-}
-
-void test_tjmodelmpi_complex(hydra::operators::BondList bondlist, 
-			     hydra::operators::Couplings couplings, 
-			     hydra::hilbertspaces::hubbard_qn qn)
-{
-  auto model = TJModel<complex>(bondlist, couplings, qn);
-  auto H = model.matrix();
-  REQUIRE(lila::close(H, lila::Herm(H)));
-  auto full_eigs = lila::EigenvaluesSym(H);
-
-
-  auto HMPI = TJModelMPI<complex>(bondlist, couplings, qn);
-  auto multiply_H = 
-    [&HMPI](const VectorMPI<complex>& v, VectorMPI<complex>& w) 
-    { HMPI.apply_hamiltonian(v, w); };
-  // REQUIRE(std::abs(e0 - eigs(0)) < 1e-6);
-
-  // Create normal distributed random start state
-  VectorMPI<complex> startstate(HMPI.local_dim());
-  normal_dist_t<complex> dist(0., 1.);
-  normal_gen_t<complex> gen(dist, 42);
-  Random(startstate, gen, true);
-  Normalize(startstate);  
-
-  // Run Lanczos
-  auto res = LanczosEigenvalues(multiply_H, startstate, 1e-12,
-				0, "Ritz");
-  // std::cout << full_eigs(0) << " " << res.eigenvalues(0) << "\n";
-  REQUIRE(std::abs(full_eigs(0) - res.eigenvalues(0)) < 1e-6);
+	// Run Lanczos
+	auto res = LanczosEigenvalues(multiply_H, startstate, 1e-12,
+				      0, "Ritz");
+	// LilaPrint(full_eigs(0));
+	// LilaPrint(res.eigenvalues(0));
+	REQUIRE(std::abs(full_eigs(0) - res.eigenvalues(0)) < 1e-8);
+      }
 }
 
 
-TEST_CASE( "TJModelMPI test", "[TJModelMPI]" ) {
+TEST_CASE( "TJModelMPI", "[TJModel]" ) {
+  using namespace hydra::tjtestcases;
+  BondList bondlist;
+  Couplings couplings;
 
+  
+  ////////////////////////////////////////////////
+  // Cross-checks with various heisenberg models
+  printf("TJModelMPI: Heisenberg triangle test, N=3\n");
+  std::tie(bondlist, couplings) = heisenberg_triangle();
+  test_tjmodelmpi<double>(bondlist, couplings);
 
-  // six site tJ model
-  {  
-    BondList bondlist;
-    Couplings couplings;
-
-    int n_sites = 6;
-    for (int s=0; s<n_sites; ++s)
-      {
-	bondlist << Bond("HUBBARDHOP", "T", {s, (s+1) % n_sites});
-	bondlist << Bond("HEISENBERG", "J", {s, (s+1) % n_sites});
-      }
-   
-    // Test t=1.0, J=1.0
+  
+  ///////////////////////////////////////////////////
+  // Test all-to-all random coupling Heisenberg
+  for (int n_sites=3; n_sites<8; ++n_sites)
     {
-      couplings["T"] = 1.0;
-      couplings["J"] = 1.0;
-      std::vector<double> e0s;
-      std::vector<hubbard_qn> qns; 
-     
-      qns.push_back({0, 0}); e0s.push_back(0.000000000);
-      qns.push_back({0, 1}); e0s.push_back(-1.99999999);
-      qns.push_back({0, 2}); e0s.push_back(-2.960813110);
-      qns.push_back({0, 3}); e0s.push_back(-3.79610527);
-      qns.push_back({0, 4}); e0s.push_back(-2.46081311);
-      qns.push_back({0, 5}); e0s.push_back(-0.99999999);
-      qns.push_back({0, 6}); e0s.push_back(1.500000000);
-      qns.push_back({1, 1}); e0s.push_back(-3.61222054);
-      qns.push_back({1, 2}); e0s.push_back(-4.04537829);
-      qns.push_back({1, 3}); e0s.push_back(-4.10768318);
-      qns.push_back({1, 4}); e0s.push_back(-2.42705097);
-      qns.push_back({1, 5}); e0s.push_back(-0.49999999);
-      qns.push_back({2, 2}); e0s.push_back(-4.16447847);
-      qns.push_back({2, 3}); e0s.push_back(-3.52922048);
-      qns.push_back({2, 4}); e0s.push_back(-2.11803398);
-      qns.push_back({3, 3}); e0s.push_back(-2.80277563);
-
-      for (int i=0; i<(int)qns.size(); ++i)
-	test_tjmodelmpi(bondlist, couplings, qns[i], e0s[i]);
+      printf("TJModelMPI: Heisenberg random all-to-all test, N=%d\n", n_sites);
+      std::tie(bondlist, couplings) = heisenberg_alltoall(n_sites);
+      test_tjmodelmpi<double>(bondlist, couplings);
     }
 
-    // Test t=1.0, J=0.0
+  
+  // ///////////////////////////////////////////////////
+  // // Kagome 3hexagons
+  // printf("TJModelMPI: Heisenberg kagome test, N=15\n");
+  // std::tie(bondlist, couplings) = heisenberg_kagome15();
+  // test_tjmodelmpi<double>(bondlist, couplings, 4);
+
+  
+  // ///////////////////////////////////////////////////
+  // // Kagome 6hexagons(outer)
+  // printf("TJModelMPI: Heisenberg kagome test, N=39\n");
+  // std::tie(bondlist, couplings) = heisenberg_kagome39();
+  // test_tjmodelmpi<double>(bondlist, couplings);
+
+
+  ///////////////////////////////////////////////////
+  // Test Fermion all to all, free fermions
+  for (int n_sites = 3; n_sites < 8; ++n_sites)
     {
-      couplings["T"] = 1.0;
-      couplings["J"] = 0.0;
-      std::vector<double> e0s;
-      std::vector<hubbard_qn> qns; 
+      printf("TJModelMPI: free fermion random all-to-all test, N=%d\n", n_sites);
+      std::tie(bondlist, couplings) = freefermion_alltoall(n_sites);
+      test_tjmodelmpi<double>(bondlist, couplings);
+    }
+  
 
-      qns.push_back({0, 0}); e0s.push_back(0.000000000);
-      qns.push_back({0, 1}); e0s.push_back(-1.99999999);
-      qns.push_back({0, 2}); e0s.push_back(-3.00000000);
-      qns.push_back({0, 3}); e0s.push_back(-4.00000000);
-      qns.push_back({0, 4}); e0s.push_back(-2.99999999);
-      qns.push_back({0, 5}); e0s.push_back(-2.00000000);
-      qns.push_back({0, 6}); e0s.push_back(0.000000000);
-      qns.push_back({1, 1}); e0s.push_back(-3.46410161);
-      qns.push_back({1, 2}); e0s.push_back(-3.99999999);
-      qns.push_back({1, 3}); e0s.push_back(-3.46410161);
-      qns.push_back({1, 4}); e0s.push_back(-1.99999999);
-      qns.push_back({1, 5}); e0s.push_back(0.000000000);
-      qns.push_back({2, 2}); e0s.push_back(-3.46410161);
-      qns.push_back({2, 3}); e0s.push_back(-1.99999999);
-      qns.push_back({2, 4}); e0s.push_back(0.000000000);
-      qns.push_back({3, 3}); e0s.push_back(0.000000000);
-
-      for (int i=0; i<(int)qns.size(); ++i)
-	test_tjmodelmpi(bondlist, couplings, qns[i], e0s[i]);
+  ///////////////////////////////////////////////////
+  // Test Fermion all to all, free fermions (complex)
+  for (int n_sites = 3; n_sites < 8; ++n_sites)
+    {
+      printf("TJModelMPI: free fermion random all-to-all test (cplx), N=%d\n", n_sites);
+      std::tie(bondlist, couplings) = freefermion_alltoall_complex(n_sites);
+      test_tjmodelmpi<complex>(bondlist, couplings);
     }
 
-  }
+  ///////////////////////////////////
+  // six site tJ model with t=1, J=1
+  printf("TJModelMPI: six-site chain test, t=1.0, J=1.0, N=6\n");
+  std::tie(bondlist, couplings) = tJchain(6, 1.0, 1.0);
+  test_tjmodelmpi<double>(bondlist, couplings);
 
 
-  // test if complex tJ model MPI gives same e0 as fullED
-  {  
-    Couplings couplings;
-    couplings["T"] = complex(1.0, 1.0);
-    couplings["J"] = 1.0;
+  ///////////////////////////////////
+  // six site tJ model with t=1, J=0
+  printf("TJModelMPI: six-site chain test, t=1.0, J=1.0, N=6\n");
+  std::tie(bondlist, couplings) = tJchain(6, 1.0, 0.0);
+  test_tjmodelmpi<double>(bondlist, couplings);
 
-    // Chains of length 3,4,5,6
-    std::vector<int> Ls = {3, 4, 5, 6};
-    for (auto L : Ls)
-      {
-	BondList bondlist;
-	for (int s=0; s<L; ++s)
-	  {
-	    bondlist << Bond("HUBBARDHOP", "T", {s, (s+1) % L});
-	    bondlist << Bond("HEISENBERG", "J", {s, (s+1) % L});
-	  }
-
-	for (int nup=0; nup<=L; ++nup)
-	  for (int ndn=0; ndn<L - nup; ++ndn)
-	    {
-	      hubbard_qn qn = {nup, ndn};
-	      test_tjmodelmpi_complex(bondlist, couplings, qn);
-	    }
-      }
-
-    // Square 3x3
+  /////////////////////////////////////////////////////////////////
+  // Test of full spectrum of chains by comparing to ALPS results
+  std::vector<int> Ls = {3, 4, 5, 6};
+  for (auto L : Ls)
     {
-      BondList bondlist;
-      bondlist << Bond("HUBBARDHOP", "T", {0, 1});
-      bondlist << Bond("HUBBARDHOP", "T", {1, 2});
-      bondlist << Bond("HUBBARDHOP", "T", {2, 0});
-      bondlist << Bond("HUBBARDHOP", "T", {3, 4});
-      bondlist << Bond("HUBBARDHOP", "T", {4, 5});
-      bondlist << Bond("HUBBARDHOP", "T", {5, 3});
-      bondlist << Bond("HUBBARDHOP", "T", {6, 7});
-      bondlist << Bond("HUBBARDHOP", "T", {7, 8});
-      bondlist << Bond("HUBBARDHOP", "T", {8, 6});
-      bondlist << Bond("HUBBARDHOP", "T", {0, 3});
-      bondlist << Bond("HUBBARDHOP", "T", {3, 6});
-      bondlist << Bond("HUBBARDHOP", "T", {6, 0});
-      bondlist << Bond("HUBBARDHOP", "T", {1, 4});
-      bondlist << Bond("HUBBARDHOP", "T", {4, 7});
-      bondlist << Bond("HUBBARDHOP", "T", {7, 1});
-      bondlist << Bond("HUBBARDHOP", "T", {2, 5});
-      bondlist << Bond("HUBBARDHOP", "T", {5, 8});
-      bondlist << Bond("HUBBARDHOP", "T", {8, 2});
-      bondlist << Bond("HEISENBERG", "J", {0, 1});
-      bondlist << Bond("HEISENBERG", "J", {1, 2});
-      bondlist << Bond("HEISENBERG", "J", {2, 0});
-      bondlist << Bond("HEISENBERG", "J", {3, 4});
-      bondlist << Bond("HEISENBERG", "J", {4, 5});
-      bondlist << Bond("HEISENBERG", "J", {5, 3});
-      bondlist << Bond("HEISENBERG", "J", {6, 7});
-      bondlist << Bond("HEISENBERG", "J", {7, 8});
-      bondlist << Bond("HEISENBERG", "J", {8, 6});
-      bondlist << Bond("HEISENBERG", "J", {0, 3});
-      bondlist << Bond("HEISENBERG", "J", {3, 6});
-      bondlist << Bond("HEISENBERG", "J", {6, 0});
-      bondlist << Bond("HEISENBERG", "J", {1, 4});
-      bondlist << Bond("HEISENBERG", "J", {4, 7});
-      bondlist << Bond("HEISENBERG", "J", {7, 1});
-      bondlist << Bond("HEISENBERG", "J", {2, 5});
-      bondlist << Bond("HEISENBERG", "J", {5, 8});
-      bondlist << Bond("HEISENBERG", "J", {8, 2});
-      
-      int n_sites = bondlist.n_sites();
-      for (int nup=0; nup<=n_sites; ++nup)
-	for (int ndn=0; ndn<n_sites - nup; ++ndn)
-	  {
-	    hubbard_qn qn = {nup, ndn};
-	    test_tjmodelmpi_complex(bondlist, couplings, qn);
-	  }
+      printf("TJModelMPI: ALPS full spectrum test, chain N=%d\n", L);
+      std::tie(bondlist, couplings) = tJchain(L, 1.0, 1.0);
+      test_tjmodelmpi<double>(bondlist, couplings);
     }
 
-  }
+  // Square 2x2
+  printf("TJModelMPI: ALPS full spectrum test, square 2x2\n");
+  std::tie(bondlist, couplings) = square2x2(1.0, 1.0);
+  test_tjmodelmpi<double>(bondlist, couplings);
 
+
+  // Square 3x3
+  printf("TJModelMPI: ALPS full spectrum test, square 3x3\n");
+  std::tie(bondlist, couplings) = square2x2(1.0, 1.0);
+  test_tjmodelmpi<double>(bondlist, couplings);
+
+  // test if complex tJ chain gives Hermitian matrix
+  Ls = {3, 4, 5, 6};
+  for (auto L : Ls)
+    {
+      printf("TJModelMPI: complex hermitecity test, chain N=%d\n", L);
+      std::tie(bondlist, couplings) = tJchain(L, 1.0, 1.0);
+      couplings["T"] = complex(1.0, 1.0);
+      test_tjmodelmpi<complex>(bondlist, couplings);
+    }
+
+  // test if complex tJ all-to-all gives Hermitian matrix
+  for (int n_sites = 3; n_sites < 8; ++n_sites)
+    {
+      printf("TJModelMPI: complex hermitecity test, all-to-all N=%d\n", n_sites);
+      std::tie(bondlist, couplings) = freefermion_alltoall_complex(n_sites);
+      test_tjmodelmpi<complex>(bondlist, couplings);
+    }
 }

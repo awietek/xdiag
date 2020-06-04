@@ -89,6 +89,7 @@ namespace hydra { namespace operators {
       Bond operator[](int i) const { return bonds_[i]; }
       Bond& operator[](int i) { return bonds_[i]; }
       int size() const { return (int)bonds_.size(); }
+      void clear() { bonds_.clear(); }
 
     private:
       std::vector<Bond> bonds_;
