@@ -182,6 +182,19 @@ namespace hydra { namespace models {
 	       "Warning: deprecating imaginary part of Heisenberg (real Hubbard)!");
 	    szsz_amplitudes.push_back(c);
 	  }
+
+	szsz_list = bondlist.bonds_of_type("SZSZ");
+	for (auto bond : szsz_list)
+	  {
+	    assert(bond.sites().size() == 2);
+	    int s1 = bond.sites()[0];
+	    int s2 = bond.sites()[1];
+	    szszs.push_back({s1, s2});
+	    double c = ForceReal<double>
+	      (couplings[bond.coupling()], true, 
+	       "Warning: deprecating imaginary part of Heisenberg (real Hubbard)!");
+	    szsz_amplitudes.push_back(c);
+	  }
       }
 
       template <class coeff_t>
@@ -191,6 +204,19 @@ namespace hydra { namespace models {
 	 std::vector<coeff_t>& exchange_amplitudes)
       {
 	BondList exchange_list = bondlist.bonds_of_type("HEISENBERG");
+	for (auto bond : exchange_list)
+	  {
+	    assert(bond.sites().size() == 2);
+	    int s1 = bond.sites()[0];
+	    int s2 = bond.sites()[1];
+	    exchanges.push_back({s1, s2});
+	    coeff_t c = ForceReal<coeff_t>
+	      (couplings[bond.coupling()], true, 
+	       "Warning: deprecating imaginary part of Heisenberg (real Hubbard)!");
+	    exchange_amplitudes.push_back(c);
+	  }
+
+	exchange_list = bondlist.bonds_of_type("EXCHANGEXY");
 	for (auto bond : exchange_list)
 	  {
 	    assert(bond.sites().size() == 2);

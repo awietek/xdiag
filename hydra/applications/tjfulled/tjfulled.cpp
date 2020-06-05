@@ -35,7 +35,6 @@ void run_real_complex(std::string real_complex,
   lg.out(1, "Diagonalizing...\n",
 	 qn.n_upspins, qn.n_downspins);
 
-  LilaPrint(lila::Diag(H));
   if (fulldiag == 0) {
     t1 = MPI_Wtime();
     auto eigenvalues = EigenvaluesSym(H);
