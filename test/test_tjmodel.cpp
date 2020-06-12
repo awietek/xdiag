@@ -62,8 +62,9 @@ void test_tjmodel_e0(hydra::operators::BondList bondlist,
 
 
 // Test by comparing to full spectrum of alps
-void test_tjmodel_alps(hydra::operators::BondList bondlist, 
+void test_tjmodel_fullspectrum(hydra::operators::BondList bondlist, 
 		       hydra::operators::Couplings couplings,
+           bool ninj_term,
 		       std::string filename)
 {
   int n_sites = bondlist.n_sites();
@@ -77,7 +78,6 @@ void test_tjmodel_alps(hydra::operators::BondList bondlist,
 	auto model = TJModel<double>(bondlist, couplings, qn);
 
 	// Run Full ED
-	bool ninj_term = true;
 	auto H = model.matrix(ninj_term);
 
 	if (nup + ndn == n_sites)
@@ -105,7 +105,7 @@ void test_tjmodel_alps(hydra::operators::BondList bondlist,
         alps_eigs.push_back(std::stod(str));
     }
   in.close();
-
+  std::sort(alps_eigs.begin(), alps_eigs.end());
   REQUIRE(all_eigs.size() == alps_eigs.size());  
   for (int i=0; i<all_eigs.size(); ++i)
     REQUIRE(close(all_eigs(i), alps_eigs(i)));
@@ -291,21 +291,34 @@ TEST_CASE( "TJModel", "[TJModel]" )
       std::stringstream ss;
       ss << "data/tjfullspectrum/spectrum.chain." << L
 	 << ".txt";	
-      test_tjmodel_alps(bondlist, couplings, ss.str());
+      test_tjmodel_fullspectrum(bondlist, couplings, true,  ss.str());
     }  // Chains of length 3,4,5,6
 
   // Square 2x2
   printf("TJModel: ALPS full spectrum test, square 2x2\n");
   std::tie(bondlist, couplings) = square2x2(1.0, 1.0);
-  test_tjmodel_alps(bondlist, couplings,
+  test_tjmodel_fullspectrum(bondlist, couplings, true,
 		    "data/tjfullspectrum/spectrum.square.2.txt");
 
   // Square 3x3
   printf("TJModel: ALPS full spectrum test, square 3x3\n");
   std::tie(bondlist, couplings) = square3x3(1.0, 1.0);
-  test_tjmodel_alps(bondlist, couplings,
+  test_tjmodel_fullspectrum(bondlist, couplings, true,
 		    "data/tjfullspectrum/spectrum.square.3.txt");
    
+  /////////////////////////////////////////////////////////////////
+  // Test of full spectrum of random all-to-all interactions 
+  // by comparing to MATLAB results
+  printf("TJModel: MATLAB full spectrum test, chain N=3\n");
+  std::tie(bondlist, couplings) = randomAlltoAll3();
+  test_tjmodel_fullspectrum(bondlist, couplings, false,
+		    "data/tjfullspectrum/spectrum.allToAll.3.txt");
+
+
+  printf("TJModel: MATLAB full spectrum test, chain N=4\n");
+  std::tie(bondlist, couplings) = randomAlltoAll4();
+  test_tjmodel_fullspectrum(bondlist, couplings, false,
+		    "data/tjfullspectrum/spectrum.allToAll.4.txt");
 
   // test if complex tJ chain gives Hermitian matrix
   Ls = {3, 4, 5, 6};

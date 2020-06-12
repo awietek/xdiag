@@ -15,6 +15,7 @@ void run_real_complex(std::string real_complex,
 		      hydra::all::BondList bondlist,
 		      hydra::all::Couplings couplings,
 		      hydra::all::hubbard_qn qn,
+          bool fulldiag,
 		      std::string outfile)
 {
   using namespace hydra::all;
@@ -34,16 +35,31 @@ void run_real_complex(std::string real_complex,
   
   lg.out(1, "Diagonalizing...\n",
 	     qn.n_upspins, qn.n_downspins);
-  t1 = MPI_Wtime();
-  auto eigenvalues = EigenvaluesSym(H);
-  t2 = MPI_Wtime();
-  lg.out(1, "done. time: {} secs\n", t2-t1); 
+  if (fulldiag == 0) {
+    t1 = MPI_Wtime();
+    auto eigenvalues = EigenvaluesSym(H);
+    t2 = MPI_Wtime();
+    lg.out(1, "done. time: {} secs\n", t2-t1); 
 
-  dumper["Eigenvalues"] << eigenvalues;
-  dumper["Dimension"] << model.dim();
-  dumper.dump();
+    dumper["Eigenvalues"] << eigenvalues;
+    dumper["Dimension"] << model.dim();
+    dumper.dump();
 
-  lg.out(1, "E0: {}\n", eigenvalues(0));
+    lg.out(1, "E0: {}\n", eigenvalues(0));
+  
+  } else {
+    t1 = MPI_Wtime();
+    auto diagResults = EigenSym(H);
+    t2 = MPI_Wtime();
+    lg.out(1, "done. time: {} secs\n", t2-t1); 
+
+    dumper["Eigenvalues"] << diagResults.eigenvalues;
+    dumper["Eigenvectors"] << diagResults.eigenvectors;
+    dumper["Dimension"] << model.dim();
+    dumper.dump();
+
+    lg.out(1, "E0: {}\n", diagResults.eigenvalues(0));
+  }
 }
 
 int main(int argc, char* argv[])
@@ -57,9 +73,10 @@ int main(int argc, char* argv[])
   std::string couplingfile;
   int nup = -1;
   int ndown = -1;
+  bool fulldiag = 0;
   int verbosity = 1;
 
-  parse_cmdline(outfile, latticefile, couplingfile, nup, ndown, verbosity, argc, argv);
+  parse_cmdline(outfile, latticefile, couplingfile, nup, ndown, fulldiag, verbosity, argc, argv);
   lg.set_verbosity(verbosity);  
   
   check_if_files_exists({latticefile, couplingfile});
@@ -76,9 +93,9 @@ int main(int argc, char* argv[])
   else qn = {nup, ndown};
 
   if (couplings.all_real())
-    run_real_complex<double>(std::string("REAL"), bondlist, couplings, qn, outfile);
+    run_real_complex<double>(std::string("REAL"), bondlist, couplings, qn, fulldiag, outfile);
   else
-    run_real_complex<lila::complex>(std::string("COMPLEX"), bondlist, couplings, qn, outfile);
+    run_real_complex<lila::complex>(std::string("COMPLEX"), bondlist, couplings, qn, fulldiag, outfile);
   
   return EXIT_SUCCESS;
 }

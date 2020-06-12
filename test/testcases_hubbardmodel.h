@@ -1,10 +1,10 @@
-#ifndef HYDRA_TEST_TESTCASES_TJMODEL
-#define HYDRA_TEST_TESTCASES_TJMODEL
+#ifndef HYDRA_TEST_TESTCASES_HUBBARDMODEL
+#define HYDRA_TEST_TESTCASES_HUBBARDMODEL
 
 #include <hydra/all.h>
 #include <random>
 
-namespace hydra { namespace tjtestcases {
+namespace hydra { namespace hubbardtestcases {
 using namespace operators;
     
 inline std::tuple<BondList, Couplings> heisenberg_triangle()
@@ -204,22 +204,22 @@ inline std::tuple<BondList, Couplings> tJchain(int n_sites, double t, double J)
 }
 
 
-inline std::tuple<BondList, Couplings> randomAlltoAll4()
+inline std::tuple<BondList, Couplings> randomAlltoAll4NoU()
 {
   BondList bondlist;
   Couplings couplings;
   couplings["T01"] = 3;
-  couplings["J01"] = -1;
-  couplings["T02"] = 5;
+  couplings["J01"] = 1;
+  couplings["T02"] = 3;
   couplings["J02"] = -3;
-  couplings["T03"] = -3;
-  couplings["J03"] = -4;
-  couplings["T12"] = -4;
-  couplings["J12"] = 4;
-  couplings["T13"] = 1;
-  couplings["J13"] = 1;
-  couplings["T23"] = -4;
-  couplings["J23"] = 4;
+  couplings["T03"] = 3;
+  couplings["J03"] = 5;
+  couplings["T12"] = 4;
+  couplings["J12"] = -5;
+  couplings["T13"] = -1;
+  couplings["J13"] = -1;
+  couplings["T23"] = 2;
+  couplings["J23"] = 1;
   bondlist << Bond("HUBBARDHOP", "T01", {0, 1});
   bondlist << Bond("HUBBARDHOP", "T02", {0, 2});
   bondlist << Bond("HUBBARDHOP", "T03", {0, 3});
@@ -234,6 +234,39 @@ inline std::tuple<BondList, Couplings> randomAlltoAll4()
   bondlist << Bond("HEISENBERG", "J23", {2, 3});
   return std::make_tuple(bondlist, couplings);
 }
+
+inline std::tuple<BondList, Couplings> randomAlltoAll4()
+{
+  BondList bondlist;
+  Couplings couplings;
+  couplings["U"] = 5;
+  couplings["T01"] = 3;
+  couplings["J01"] = -1;
+  couplings["T02"] = -3;
+  couplings["J02"] = -5;
+  couplings["T03"] = 3;
+  couplings["J03"] = -3;
+  couplings["T12"] = -1;
+  couplings["J12"] = 1;
+  couplings["T13"] = -3;
+  couplings["J13"] = 2;
+  couplings["T23"] = 0;
+  couplings["J23"] = -4;
+  bondlist << Bond("HUBBARDHOP", "T01", {0, 1});
+  bondlist << Bond("HUBBARDHOP", "T02", {0, 2});
+  bondlist << Bond("HUBBARDHOP", "T03", {0, 3});
+  bondlist << Bond("HUBBARDHOP", "T12", {1, 2});
+  bondlist << Bond("HUBBARDHOP", "T13", {1, 3});
+  bondlist << Bond("HUBBARDHOP", "T23", {2, 3});
+  bondlist << Bond("HEISENBERG", "J01", {0, 1});
+  bondlist << Bond("HEISENBERG", "J02", {0, 2});
+  bondlist << Bond("HEISENBERG", "J03", {0, 3});
+  bondlist << Bond("HEISENBERG", "J12", {1, 2});
+  bondlist << Bond("HEISENBERG", "J13", {1, 3});
+  bondlist << Bond("HEISENBERG", "J23", {2, 3});
+  return std::make_tuple(bondlist, couplings);
+}
+
 
 
 inline std::tuple<BondList, Couplings> randomAlltoAll3()
