@@ -188,6 +188,68 @@ inline std::tuple<BondList, Couplings> freefermion_alltoall_complex(int n_sites)
   return std::make_tuple(bondlist, couplings);
 }
 
+
+inline std::tuple<BondList, Couplings> tj_alltoall(int n_sites)
+{
+  std::default_random_engine generator;
+  std::normal_distribution<double> distribution(0., 1.);
+
+  BondList bondlist;
+  Couplings couplings;
+  for (int s1=0; s1<n_sites; ++s1)
+    for (int s2=s1+1; s2<n_sites; ++s2)
+      {
+	std::stringstream ss;
+	ss << "T" << s1 << "_" << s2;
+	std::string name = ss.str();
+        double value = distribution(generator);
+	bondlist << Bond("HUBBARDHOP", name, {s1, s2});
+	couplings[name] = value;
+      }
+  for (int s1=0; s1<n_sites; ++s1)
+    for (int s2=s1+1; s2<n_sites; ++s2)
+      {
+	std::stringstream ss;
+	ss << "J" << s1 << "_" << s2;
+	std::string name = ss.str();
+        double value = distribution(generator);
+	bondlist << Bond("HEISENBERG", name, {s1, s2});
+	couplings[name] = value;
+      }
+  return std::make_tuple(bondlist, couplings);
+}
+
+inline std::tuple<BondList, Couplings> tj_alltoall_complex(int n_sites)
+{
+  std::default_random_engine generator;
+  std::normal_distribution<double> distribution(0., 1.);
+
+  BondList bondlist;
+  Couplings couplings;
+  for (int s1=0; s1<n_sites; ++s1)
+    for (int s2=s1+1; s2<n_sites; ++s2)
+      {
+	std::stringstream ss;
+	ss << "T" << s1 << "_" << s2;
+	std::string name = ss.str();
+	complex value = complex(distribution(generator),
+				distribution(generator));
+	bondlist << Bond("HUBBARDHOP", name, {s1, s2});
+	couplings[name] = value;
+      }
+  for (int s1=0; s1<n_sites; ++s1)
+    for (int s2=s1+1; s2<n_sites; ++s2)
+      {
+	std::stringstream ss;
+	ss << "J" << s1 << "_" << s2;
+	std::string name = ss.str();
+        double value = distribution(generator);
+	bondlist << Bond("HEISENBERG", name, {s1, s2});
+	couplings[name] = value;
+      }
+  return std::make_tuple(bondlist, couplings);
+}
+
 inline std::tuple<BondList, Couplings> tJchain(int n_sites, double t, double J)
 {
 

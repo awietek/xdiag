@@ -11,7 +11,7 @@ namespace hydra { namespace indexing {
 
     using utils::gbits;
 
-    template <class hilbertspace_type, class index_type=uint32>
+    template <class hilbertspace_type, class index_type=uint64>
     class LinTable {
     public:
       using hilbertspace_t = hilbertspace_type;
