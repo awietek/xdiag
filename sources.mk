@@ -50,12 +50,13 @@ testsources+= test/test_hubbardmodel.cpp
 testsources+= test/test_hubbardmodelmpi.cpp
 # testsources+= test/test_up_down_hole.cpp
 
-
-# appsources+= hydra/applications/hubbarded/hubbarded.cpp
-# appsources+= hydra/applications/hubbardfulled/hubbardfulled.cpp
 # appsources+= hydra/applications/hubbardopticalftlm/hubbardopticalftlm.cpp
 # appsources+= hydra/applications/hubbarddynamics/hubbarddynamics.cpp
 # appsources+= hydra/applications/hubbarddynamicsmpi/hubbarddynamicsmpi.cpp
+
+
+appsources+= hydra/applications/hubbarded/hubbarded.cpp
+appsources+= hydra/applications/hubbardfulled/hubbardfulled.cpp
 appsources+= hydra/applications/tjed/tjed.cpp
 appsources+= hydra/applications/tjfulled/tjfulled.cpp
 

@@ -26,9 +26,10 @@ void run_real_complex(std::string real_complex,
   int mpi_rank, mpi_size;
   MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
   MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
-  
-  auto dumper = lime::MeasurementsH5((mpi_rank == 0) ? outfile : "");
 
+  FileH5 file;
+  if (mpi_rank == 0) file = lime::FileH5(outfile, "w!");
+  
   lg.out(1, "Creating {} t-J model for n_upspins={}, n_downspins={}...\n",
 	 real_complex, qn.n_upspins, qn.n_downspins);
   lg.out(1, "Using {} MPI tasks\n", mpi_size);
@@ -72,14 +73,16 @@ void run_real_complex(std::string real_complex,
   auto betas = res.tmatrix.offdiag();
   betas.push_back(res.beta);
   auto eigenvalues = res.eigenvalues;
-  dumper["Alphas"] << alphas;
-  dumper["Betas"] << betas;
-  dumper["Eigenvalues"] << eigenvalues;
-  dumper["Dimension"] << H.dim();
-  dumper.dump();
+  if (mpi_rank == 0)
+    {
+      file["Alphas"] = alphas;
+      file["Betas"] = betas;
+      file["Eigenvalues"] = eigenvalues;
+      file["Dimension"] = H.dim();
+      file.close();
+    }
 
   lg.out(1, "E0: {}\n", eigenvalues(0));
-  
 }
 
 int main(int argc, char* argv[])

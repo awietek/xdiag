@@ -22,7 +22,7 @@ void run_real_complex(std::string real_complex,
   using namespace lila;
   using namespace lime;
   
-  auto dumper = lime::MeasurementsH5(outfile);
+  auto file = lime::FileH5(outfile, "w!");
   
   lg.out(1, "Creating {} Hubbard matrixfor n_upspins={}, n_downspins={}...\n",
 	 real_complex, qn.n_upspins, qn.n_downspins);
@@ -41,9 +41,9 @@ void run_real_complex(std::string real_complex,
     t2 = MPI_Wtime();
     lg.out(1, "done. time: {} secs\n", t2-t1); 
 
-    dumper["Eigenvalues"] << eigenvalues;
-    dumper["Dimension"] << model.dim();
-    dumper.dump();
+    file["Eigenvalues"] = eigenvalues;
+    file["Dimension"] = model.dim();
+    file.close();
 
     lg.out(1, "E0: {}\n", eigenvalues(0));
   
@@ -53,10 +53,10 @@ void run_real_complex(std::string real_complex,
     t2 = MPI_Wtime();
     lg.out(1, "done. time: {} secs\n", t2-t1); 
 
-    dumper["Eigenvalues"] << diagResults.eigenvalues;
-    dumper["Eigenvectors"] << diagResults.eigenvectors;
-    dumper["Dimension"] << model.dim();
-    dumper.dump();
+    file["Eigenvalues"] = diagResults.eigenvalues;
+    file["Eigenvectors"] = diagResults.eigenvectors;
+    file["Dimension"] = model.dim();
+    file.close();
 
     lg.out(1, "E0: {}\n", diagResults.eigenvalues(0));
   }

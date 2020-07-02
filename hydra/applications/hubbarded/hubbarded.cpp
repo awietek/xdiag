@@ -38,8 +38,10 @@ int main(int argc, char* argv[])
 		measure_kinetic, argc, argv);
 
   lg.set_verbosity(verbosity);  
+
+  FileH5 file;
+  if (mpi_rank == 0) file = lime::FileH5(outfile, "w!");
   
-  auto dumper = lime::MeasurementsH5((mpi_rank == 0) ? outfile : "");
   check_if_files_exists({latticefile, couplingfile});
 
   // Create Hamiltonian
@@ -111,11 +113,14 @@ int main(int argc, char* argv[])
       betas_v.push_back(start_res.beta);
       auto eigenvalues_v = start_res.eigenvalues;
       auto& vs = start_res.vectors; 
-      dumper["Alphas"] << alphas_v;
-      dumper["Betas"] << betas_v;
-      dumper["Eigenvalues"] << eigenvalues_v;
-      dumper["Dimension"] << H.dim();
-
+      if (mpi_rank == 0)
+	{
+	  file["Alphas"] = alphas_v;
+	  file["Betas"] = betas_v;
+	  file["Eigenvalues"] = eigenvalues_v;
+	  file["Dimension"] = H.dim();
+	}
+      
       iters = alphas_v.size();
       
       Couplings kin_couplings = couplings;
@@ -137,10 +142,12 @@ int main(int argc, char* argv[])
 	      vs_vs(i,j) = Dot(vs[i], vs[j]);
 	    }
 	}
-      dumper["VsTVs"] << vs_T_vs;
-      dumper["VsVs"] << vs_vs;
-      dumper.dump();
-
+      if (mpi_rank == 0)
+	{
+	  file["VsTVs"] = vs_T_vs;
+	  file["VsVs"] = vs_vs;
+	  file.close();
+	}
     }
   else
     {
@@ -152,11 +159,14 @@ int main(int argc, char* argv[])
       auto betas = res.tmatrix.offdiag();
       betas.push_back(res.beta);
       auto eigenvalues = res.eigenvalues;
-      dumper["Alphas"] << alphas;
-      dumper["Betas"] << betas;
-      dumper["Eigenvalues"] << eigenvalues;
-      dumper["Dimension"] << H.dim();
-      dumper.dump();
+      if (mpi_rank == 0)
+	{
+	  file["Alphas"] = alphas;
+	  file["Betas"] = betas;
+	  file["Eigenvalues"] = eigenvalues;
+	  file["Dimension"] = H.dim();
+	  file.close();
+	}
 
       lg.out(1, "E0: {}\n", eigenvalues(0));
     }
