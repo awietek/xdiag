@@ -31,7 +31,7 @@ include $(testdepends)
 
 .PHONY: test 
 test:  $(objects) $(testobjects) lib 
-	$(cc) $(ccopt) $(ccarch) $(depflags) $(libraries) $(testobjects) $(objects) -o test/tests 
+	$(cc) $(ccopt) $(ccarch) $(depflags) $(libraries) $(testobjects) -Llib -lhydra -o test/tests 
 
 .PHONY: apps
 apps: $(objects) $(appobjects) $(appbinaries) lib
