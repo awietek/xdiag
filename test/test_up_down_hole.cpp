@@ -12,8 +12,8 @@ void test_up_down_hole(int n_sites, int n_upspins, int n_downspins){
     hs_t hsup(n_sites, n_upspins);
     hs_t hsholes(n_sites - n_upspins, n_sites - n_upspins - n_downspins);
   
-    for (auto ups : hsup)
-      for (auto holes : hsholes)
+    for (state_t ups : hsup)
+      for (state_t holes : hsholes)
 	{
 	  auto downs = up_hole_to_down(ups, holes);
 	  auto holes2 = up_down_to_hole(ups, downs);
@@ -26,8 +26,8 @@ void test_up_down_hole(int n_sites, int n_upspins, int n_downspins){
     hs_t hsdown(n_sites, n_downspins);
     hs_t hsholes(n_sites - n_downspins, n_sites - n_upspins - n_downspins);
   
-    for (auto downs : hsdown)
-      for (auto holes : hsholes)
+    for (state_t downs : hsdown)
+      for (state_t holes : hsholes)
 	{
 	  auto ups = down_hole_to_up(downs, holes);
 	  auto holes2 = down_up_to_hole(downs, ups);
