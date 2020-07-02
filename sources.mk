@@ -36,14 +36,18 @@ testsources+= test/test_bondlist.cpp
 # testsources+= test/test_charactertable.cpp
 testsources+= test/test_combinatorics.cpp
 testsources+= test/test_hubbard.cpp
-testsources+= test/test_hubbardmodelmpi.cpp
 # testsources+= test/test_indexhubbard.cpp
 # testsources+= test/test_indextable.cpp
 # testsources+= test/test_lintable.cpp
+
 testsources+= test/test_spacegroup.cpp
 testsources+= test/test_spinhalf.cpp
+
 testsources+= test/test_tjmodel.cpp
 testsources+= test/test_tjmodelmpi.cpp
+
+testsources+= test/test_hubbardmodel.cpp
+testsources+= test/test_hubbardmodelmpi.cpp
 # testsources+= test/test_up_down_hole.cpp
 
 

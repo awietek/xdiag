@@ -13,6 +13,9 @@ template <class coeff_t>
 void test_tjmodelmpi(BondList bondlist,  Couplings couplings)
 {
   int n_sites = bondlist.n_sites();
+  int mpi_rank;
+  MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
+
   
   for (int nup=0; nup<=n_sites; ++nup)
     for (int ndn=0; ndn<=n_sites-nup; ++ndn)
@@ -30,15 +33,14 @@ void test_tjmodelmpi(BondList bondlist,  Couplings couplings)
 	// Create normal distributed random start state
 	VectorMPI<coeff_t> startstate(H.local_dim());
 	normal_dist_t<coeff_t> dist(0., 1.);
-	normal_gen_t<coeff_t> gen(dist, 42);
+	normal_gen_t<coeff_t> gen(dist, 42 + mpi_rank);
 	Random(startstate, gen, true);
 	Normalize(startstate);  
 
 	// Run Lanczos
 	auto res = LanczosEigenvalues(multiply_H, startstate, 1e-12,
 				      0, "Ritz");
-	// LilaPrint(full_eigs(0));
-	// LilaPrint(res.eigenvalues(0));
+
 	REQUIRE(std::abs(full_eigs(0) - res.eigenvalues(0)) < 1e-8);
 
 	// hubbard_qn qn = {nup, ndn};
@@ -62,6 +64,7 @@ void test_tjmodelmpi(BondList bondlist,  Couplings couplings)
 	// std::cout << "\n"; 
 	
       }
+
 }
 
 
@@ -69,6 +72,9 @@ TEST_CASE( "TJModelMPI", "[TJModel]" ) {
   using namespace hydra::tjtestcases;
   BondList bondlist;
   Couplings couplings;
+
+  int mpi_rank;
+  MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
 
   bondlist << Bond("HUBBARDHOP", "T01", {0, 1});
   bondlist << Bond("HUBBARDHOP", "T12", {0, 2});
@@ -78,7 +84,7 @@ TEST_CASE( "TJModelMPI", "[TJModel]" ) {
     
   ////////////////////////////////////////////////
   // Cross-checks with various heisenberg models
-  printf("TJModelMPI: Heisenberg triangle test, N=3\n");
+  if (mpi_rank==0) printf("TJModelMPI: Heisenberg triangle test, N=3\n");
   std::tie(bondlist, couplings) = heisenberg_triangle();
   test_tjmodelmpi<double>(bondlist, couplings);
 
@@ -87,7 +93,9 @@ TEST_CASE( "TJModelMPI", "[TJModel]" ) {
   // Test all-to-all random coupling Heisenberg
   for (int n_sites=3; n_sites<8; ++n_sites)
     {
-      printf("TJModelMPI: Heisenberg random all-to-all test, N=%d\n", n_sites);
+      if (mpi_rank==0) 
+	printf("TJModelMPI: Heisenberg random all-to-all test, N=%d\n",
+	       n_sites);
       std::tie(bondlist, couplings) = heisenberg_alltoall(n_sites);
       test_tjmodelmpi<double>(bondlist, couplings);
     }
@@ -111,7 +119,9 @@ TEST_CASE( "TJModelMPI", "[TJModel]" ) {
   // Test Fermion all to all, free fermions
   for (int n_sites = 3; n_sites < 8; ++n_sites)
     {
-      printf("TJModelMPI: free fermion random all-to-all test, N=%d\n", n_sites);
+      if (mpi_rank==0) 
+	printf("TJModelMPI: free fermion random all-to-all test, N=%d\n",
+	       n_sites);
       std::tie(bondlist, couplings) = freefermion_alltoall(n_sites);
       test_tjmodelmpi<double>(bondlist, couplings);
     }
@@ -121,7 +131,11 @@ TEST_CASE( "TJModelMPI", "[TJModel]" ) {
   // Test Fermion all to all, free fermions (complex)
   for (int n_sites = 3; n_sites < 8; ++n_sites)
     {
-      printf("TJModelMPI: free fermion random all-to-all test (cplx), N=%d\n", n_sites);
+      if (mpi_rank==0)
+	{
+	  printf("TJModelMPI: free fermion random all-to-all test (cplx), ");
+	  printf("N=%d\n", n_sites);
+	}
       std::tie(bondlist, couplings) = freefermion_alltoall_complex(n_sites);
       test_tjmodelmpi<complex>(bondlist, couplings);
     }
@@ -130,7 +144,7 @@ TEST_CASE( "TJModelMPI", "[TJModel]" ) {
   // Test full t-J all-to-all, free fermions
   for (int n_sites = 3; n_sites < 8; ++n_sites)
     {
-      printf("TJModelMPI: full t-J random all-to-all test, N=%d\n", n_sites);
+      if (mpi_rank==0) printf("TJModelMPI: full t-J random all-to-all test, N=%d\n", n_sites);
       std::tie(bondlist, couplings) = tj_alltoall(n_sites);
       test_tjmodelmpi<double>(bondlist, couplings);
     }
@@ -139,7 +153,7 @@ TEST_CASE( "TJModelMPI", "[TJModel]" ) {
   // Test full t-J all to all, free fermions (complex)
   for (int n_sites = 3; n_sites < 8; ++n_sites)
     {
-      printf("TJModelMPI: full t-J random all-to-all test (cplx), N=%d\n", n_sites);
+      if (mpi_rank==0) printf("TJModelMPI: full t-J random all-to-all test (cplx), N=%d\n", n_sites);
       std::tie(bondlist, couplings) = tj_alltoall_complex(n_sites);
       test_tjmodelmpi<complex>(bondlist, couplings);
     }

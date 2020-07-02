@@ -208,18 +208,32 @@ inline std::tuple<BondList, Couplings> randomAlltoAll4NoU()
 {
   BondList bondlist;
   Couplings couplings;
-  couplings["T01"] = 3;
+  // couplings["T01"] = 3;
+  // couplings["J01"] = 1;
+  // couplings["T02"] = 3;
+  // couplings["J02"] = -3;
+  // couplings["T03"] = 3;
+  // couplings["J03"] = 5;
+  // couplings["T12"] = 4;
+  // couplings["J12"] = -5;
+  // couplings["T13"] = -1;
+  // couplings["J13"] = -1;
+  // couplings["T23"] = 2;
+  // couplings["J23"] = 1;
+
+  couplings["T01"] = -3;
   couplings["J01"] = 1;
-  couplings["T02"] = 3;
+  couplings["T02"] = -3;
   couplings["J02"] = -3;
-  couplings["T03"] = 3;
+  couplings["T03"] = -3;
   couplings["J03"] = 5;
-  couplings["T12"] = 4;
+  couplings["T12"] = -4;
   couplings["J12"] = -5;
-  couplings["T13"] = -1;
+  couplings["T13"] = 1;
   couplings["J13"] = -1;
-  couplings["T23"] = 2;
+  couplings["T23"] = -2;
   couplings["J23"] = 1;
+  
   bondlist << Bond("HUBBARDHOP", "T01", {0, 1});
   bondlist << Bond("HUBBARDHOP", "T02", {0, 2});
   bondlist << Bond("HUBBARDHOP", "T03", {0, 3});
@@ -239,19 +253,34 @@ inline std::tuple<BondList, Couplings> randomAlltoAll4()
 {
   BondList bondlist;
   Couplings couplings;
+  // couplings["U"] = 5;
+  // couplings["T01"] = 3;
+  // couplings["J01"] = -1;
+  // couplings["T02"] = -3;
+  // couplings["J02"] = -5;
+  // couplings["T03"] = 3;
+  // couplings["J03"] = -3;
+  // couplings["T12"] = -1;
+  // couplings["J12"] = 1;
+  // couplings["T13"] = -3;
+  // couplings["J13"] = 2;
+  // couplings["T23"] = 0;
+  // couplings["J23"] = -4;
+
   couplings["U"] = 5;
-  couplings["T01"] = 3;
+  couplings["T01"] = -3;
   couplings["J01"] = -1;
-  couplings["T02"] = -3;
+  couplings["T02"] = 3;
   couplings["J02"] = -5;
-  couplings["T03"] = 3;
+  couplings["T03"] = -3;
   couplings["J03"] = -3;
-  couplings["T12"] = -1;
+  couplings["T12"] = 1;
   couplings["J12"] = 1;
-  couplings["T13"] = -3;
+  couplings["T13"] = 3;
   couplings["J13"] = 2;
   couplings["T23"] = 0;
   couplings["J23"] = -4;
+  
   bondlist << Bond("HUBBARDHOP", "T01", {0, 1});
   bondlist << Bond("HUBBARDHOP", "T02", {0, 2});
   bondlist << Bond("HUBBARDHOP", "T03", {0, 3});

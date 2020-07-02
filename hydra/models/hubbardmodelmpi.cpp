@@ -204,9 +204,9 @@ namespace hydra { namespace models {
 
       	      // Exchange information on who sends how much to whom
       	      std::vector<int> n_states_i_recv(mpi_size_, 0);
-      	      MPI_Alltoall(n_states_i_send.data(), 1, MPI_INT,
-      			   n_states_i_recv.data(), 1, MPI_INT,
-      			   MPI_COMM_WORLD);
+	      lila::MPI_Alltoall<int>(n_states_i_send.data(), 1,
+				      n_states_i_recv.data(), 1,
+				      MPI_COMM_WORLD);
 
 	      
       	      // printf("n_states_i_recv\n");
@@ -327,22 +327,22 @@ namespace hydra { namespace models {
       		  for (const state_t& upspins : upspins_i_get_from_proc[m])
       		    {
       		      uint64 upspin_offset = my_upspins_offset_[upspins];
-		      
-      		      uint64 downspin_offset=0;
-      		      for (state_t downspins: hs_downspins)
-      			{
-      			  if ((popcnt(upspins & flipmask) == 1) &&
-      			      (popcnt(downspins & flipmask) == 1) &&
-      			      popcnt((downspins & flipmask) & (upspins & flipmask)) == 0)
-      			    {
-                   double fermi = (popcnt(gbits(downspins, s2-s1-1, s1+1)) % 2==0 ? 1. : -1.)*
-                     (popcnt(gbits(upspins, s2-s1-1, s1+1)) % 2==0 ? 1. : -    1.);
-      			      uint64 target_idx = upspin_offset + downspin_offset;
-      			      // printf("upspins_offset: %d, target_idx: %d, recv_idx: %d, coeff: %f\n",
-      			      // 	     upspin_offset, target_idx, recv_idx, jx * recv_buffer_[recv_idx] );
+		      uint64 downspin_offset=0;
 
-      			      out_vec.vector_local()(target_idx) -= fermi * jx *
-      				recv_buffer_[recv_idx];
+		      // Skip upspins if exchange isn't possible
+		      if (popcnt(upspins & flipmask) != 1) continue;
+
+		      state_t downmask = gbit(upspins, s1) ?
+			(state_t)1 << s2 : (state_t)1 << s1;
+		      
+		      for (state_t downspins: hs_downspins)
+      			{
+			  if ((downspins & flipmask) == downmask)
+      			    {
+      			      uint64 target_idx =
+				upspin_offset + downspin_offset;
+      			      out_vec.vector_local()(target_idx) +=
+				jx * recv_buffer_[recv_idx];
       			      ++recv_idx;
       			    }
       			  ++downspin_offset;
@@ -368,6 +368,8 @@ namespace hydra { namespace models {
 	  const int s2 = std::max(pair.first, pair.second);
 	  const coeff_t t = hopping_amplitudes_[hopping_idx];
 	  const uint32 flipmask = ((uint32)1 << s1) | ((uint32)1 << s2);
+	  const uint32 secondmask = (uint32)1 << s2;
+	  
 	  if (std::abs(t) > 1e-14)
 	    {
 	      // Loop over all configurations
@@ -378,18 +380,30 @@ namespace hydra { namespace models {
 		  uint64 downspin_offset = 0;
 		  for (state_t downspins : hs_downspins)
 		    {
-
 		      // Check if hopping is possible
 		      if (((downspins & flipmask) != 0) && 
 			  ((downspins & flipmask) != flipmask))
 			{
-			  double fermi = 
-			    popcnt(gbits(downspins, s2-s1-1, s1+1)) % 2==0 ? 1. : -1.;
+			  const double fermi = 
+			    popcnt(gbits(upspins ^ (downspins ^ secondmask),
+					 s2-s1, s1+1)) & 1 ? 1. : -1.;
 
 			  uint64 idx = upspin_offset + downspin_offset;
 			  state_t new_downspins = downspins ^ flipmask;
-			  uint64 new_idx = upspin_offset + indexing_downspins_.index(new_downspins);
-			  out_vec.vector_local()(new_idx) -= fermi * t * in_vec.vector_local()(idx);
+			  uint64 new_idx = upspin_offset +
+			    indexing_downspins_.index(new_downspins);
+			  
+			  if (downspins & secondmask)
+			    {
+			      out_vec.vector_local()(new_idx) +=
+				fermi * t * in_vec.vector_local()(idx);
+			    }
+			  else
+			    {
+			      out_vec.vector_local()(new_idx) -=
+				fermi * lila::conj(t) *
+				in_vec.vector_local()(idx);
+			    }
 			}
 
 		      ++downspin_offset;
@@ -429,8 +443,7 @@ namespace hydra { namespace models {
       			  double fermi =
       			    popcnt(gbits(downspins, s2-s1-1, s1+1)) % 2==0 ? 1. : -1.;
       			  double dir = gbit(downspins, pair.first) ? 1. : -1.;  // use pair, not s1 s2
-      			  // printf("down p1: %d, p2: %d, s1: %d, s2: %d, v1: %d, v2: %d, dir: %f\n",
-      			  // 	 pair.first, pair.second, s1, s2, gbit(downspins, pair.first), gbit(downspins, pair.second), dir);
+
 			  
       			  uint64 idx = upspin_offset + downspin_offset;
       			  state_t new_downspins = downspins ^ flipmask;
@@ -636,6 +649,8 @@ namespace hydra { namespace models {
       	  const int s2 = std::max(pair.first, pair.second);
       	  const coeff_t t = hopping_amplitudes_[hopping_idx];
       	  const uint32 flipmask = ((uint32)1 << s1) | ((uint32)1 << s2);
+	  const uint32 secondmask = (uint32)1 << s2;
+
       	  if (std::abs(t) > 1e-14)
       	    {
       	      // Loop over all configurations
@@ -650,14 +665,25 @@ namespace hydra { namespace models {
       		      if (((upspins & flipmask) != 0) && 
       			  ((upspins & flipmask) != flipmask))
       			{
-      			  double fermi = 
-      			    popcnt(gbits(upspins, s2-s1-1, s1+1)) % 2==0 ? 1. : -1.;
+			  const double fermi = 
+			    popcnt(gbits(upspins^downspins, s2-s1, s1)) &1 ?
+			    1. : -1.;
+			  
       			  uint64 idx = upspin_offset + downspin_offset;
       			  state_t new_upspins = upspins ^ flipmask;
-      			  uint64 new_idx = downspin_offset + indexing_upspins_.index(new_upspins);
-      			  recv_buffer_[new_idx] -= fermi * t * send_buffer_[idx];
+      			  uint64 new_idx = downspin_offset +
+			    indexing_upspins_.index(new_upspins);
+			  if (upspins & secondmask)
+			    {
+			      recv_buffer_[new_idx] +=
+				fermi * t * send_buffer_[idx];
+			    }
+			  else
+			    {
+			      recv_buffer_[new_idx] -=
+				fermi * lila::conj(t) * send_buffer_[idx];
+			    }
       			}
-
       		      ++upspin_offset;
       		    }
       		  ++downspin_idx;
@@ -1146,8 +1172,9 @@ namespace hydra { namespace models {
 	  n_downspins_i_send_forward_[destination_mpi_rank] += my_upspins_.size();
 	}
       // Communicate number of send/receive states
-      MPI_Alltoall(n_downspins_i_send_forward_.data(), 1, MPI_INT,
-		   n_downspins_i_recv_forward_.data(), 1, MPI_INT, MPI_COMM_WORLD);
+      lila::MPI_Alltoall<int>(n_downspins_i_send_forward_.data(), 1,
+			      n_downspins_i_recv_forward_.data(), 1,
+			      MPI_COMM_WORLD);
 
 
       // Compute offsets and total number of send/receive states
@@ -1185,18 +1212,22 @@ namespace hydra { namespace models {
       downspins_i_recv_forward_.resize(sum_n_downspins_i_recv_forward_);
       upspins_i_recv_forward_.resize(sum_n_downspins_i_recv_forward_);
 
-      MPI_Alltoallv(downspins_i_send_forward_.data(), 
-		    n_downspins_i_send_forward_.data(), n_downspins_i_send_forward_offsets_.data(), 
-		    MPI_UNSIGNED,
-		    downspins_i_recv_forward_.data(), 		      
-		    n_downspins_i_recv_forward_.data(), n_downspins_i_recv_forward_offsets_.data(), 
-		    MPI_UNSIGNED, MPI_COMM_WORLD);
-      MPI_Alltoallv(upspins_i_send_forward_.data(), 
-		    n_downspins_i_send_forward_.data(), n_downspins_i_send_forward_offsets_.data(), 
-		    MPI_UNSIGNED,
-		    upspins_i_recv_forward_.data(), 		      
-		    n_downspins_i_recv_forward_.data(), n_downspins_i_recv_forward_offsets_.data(), 
-		    MPI_UNSIGNED, MPI_COMM_WORLD);
+      lila::MPI_Alltoallv<state_t>
+	(downspins_i_send_forward_.data(), 
+	 n_downspins_i_send_forward_.data(),
+	 n_downspins_i_send_forward_offsets_.data(), 
+	 downspins_i_recv_forward_.data(),
+	 n_downspins_i_recv_forward_.data(),
+	 n_downspins_i_recv_forward_offsets_.data(), 
+	 MPI_COMM_WORLD);
+      lila::MPI_Alltoallv<state_t>
+	(upspins_i_send_forward_.data(), 
+	 n_downspins_i_send_forward_.data(),
+	 n_downspins_i_send_forward_offsets_.data(), 
+	 upspins_i_recv_forward_.data(),      
+	 n_downspins_i_recv_forward_.data(),
+	 n_downspins_i_recv_forward_offsets_.data(),
+	 MPI_COMM_WORLD);
 
 
       // downspins_i_send_forward_ and upspins_i_send_forward_ not neede anymore
@@ -1256,8 +1287,9 @@ namespace hydra { namespace models {
 	  n_upspins_i_send_back_[destination_mpi_rank] += my_downspins_.size();
 	}
       // Communicate number of send/receive states
-      MPI_Alltoall(n_upspins_i_send_back_.data(), 1, MPI_INT,
-		   n_upspins_i_recv_back_.data(), 1, MPI_INT, MPI_COMM_WORLD);
+      lila::MPI_Alltoall<int>(n_upspins_i_send_back_.data(), 1, 
+			      n_upspins_i_recv_back_.data(), 1,
+			      MPI_COMM_WORLD);
 
 
       // Compute offsets and total number of send/receive states
@@ -1296,18 +1328,22 @@ namespace hydra { namespace models {
       downspins_i_recv_back_.resize(sum_n_upspins_i_recv_back_);
       upspins_i_recv_back_.resize(sum_n_upspins_i_recv_back_);
 
-      MPI_Alltoallv(downspins_i_send_back_.data(), 
-		    n_upspins_i_send_back_.data(), n_upspins_i_send_back_offsets_.data(), 
-		    MPI_UNSIGNED,
-		    downspins_i_recv_back_.data(), 		      
-		    n_upspins_i_recv_back_.data(), n_upspins_i_recv_back_offsets_.data(), 
-		    MPI_UNSIGNED, MPI_COMM_WORLD);
-      MPI_Alltoallv(upspins_i_send_back_.data(), 
-		    n_upspins_i_send_back_.data(), n_upspins_i_send_back_offsets_.data(), 
-		    MPI_UNSIGNED,
-		    upspins_i_recv_back_.data(), 		      
-		    n_upspins_i_recv_back_.data(), n_upspins_i_recv_back_offsets_.data(), 
-		    MPI_UNSIGNED, MPI_COMM_WORLD);
+      lila::MPI_Alltoallv<state_t>
+	(downspins_i_send_back_.data(), 
+	 n_upspins_i_send_back_.data(),
+	 n_upspins_i_send_back_offsets_.data(), 
+	 downspins_i_recv_back_.data(), 		      
+	 n_upspins_i_recv_back_.data(),
+	 n_upspins_i_recv_back_offsets_.data(), 
+	 MPI_COMM_WORLD);
+      lila::MPI_Alltoallv<state_t>
+	(upspins_i_send_back_.data(), 
+	 n_upspins_i_send_back_.data(),
+	 n_upspins_i_send_back_offsets_.data(), 
+	 upspins_i_recv_back_.data(), 		      
+	 n_upspins_i_recv_back_.data(),
+	 n_upspins_i_recv_back_offsets_.data(),
+	 MPI_COMM_WORLD);
 
       // downspins_i_send_back_ and upspins_i_send_back_ not neede anymore
       downspins_i_send_back_.clear();

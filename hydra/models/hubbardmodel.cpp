@@ -115,7 +115,7 @@ namespace hydra { namespace models {
 	  const int s2 = std::max(pair.first, pair.second);
 	  const coeff_t t = hopping_amplitudes_[hopping_idx];
 	  const uint32 flipmask = ((uint32)1 << s1) | ((uint32)1 << s2);
-    const uint32 secondmask = (uint32)1 << s2;
+	  const uint32 secondmask = (uint32)1 << s2;
 
 	  if (std::abs(t) > 1e-14)
 	    {
@@ -130,16 +130,15 @@ namespace hydra { namespace models {
 		      ((upspins & flipmask) != flipmask))
 		    {
 		      const double fermi = 
-			popcnt(gbits(upspins ^ downspins, s2-s1, s1)) % 2==0 ? 1. : -1.;
-		      // printf("fermi %f\n", fermi);
+			popcnt(gbits(upspins ^ downspins, s2-s1, s1)) & 1 ? 1. : -1.;
 		      auto new_state = state;
 		      new_state.upspins = upspins ^ flipmask;
 		      int new_idx = indexing.index(new_state);
-          if (upspins & secondmask) {
-		        hamilton(new_idx, idx) += fermi*t;
-        } else { 
-            hamilton(new_idx, idx) -= lila::conj(t) * fermi;
-        }
+		      if (upspins & secondmask)
+			hamilton(new_idx, idx) += fermi*t;
+		      else 
+			hamilton(new_idx, idx) -= lila::conj(t) * fermi;
+       
 		    }
 
 		  // downspins hopping
@@ -147,16 +146,14 @@ namespace hydra { namespace models {
 		      ((downspins & flipmask) != flipmask))
 		    {
 		      const double fermi = 
-			popcnt(gbits(upspins ^ (downspins ^ secondmask), s2-s1, s1+1)) % 2==0 ? 1.:-1.;
-		      // printf("fermi %f\n", fermi);
+			popcnt(gbits(upspins ^ (downspins ^ secondmask), s2-s1, s1+1)) & 1 ? 1.:-1.;
 		      auto new_state = state;
 		      new_state.downspins = downspins ^ flipmask;
 		      int new_idx = indexing.index(new_state);
-          if (downspins & secondmask) {
+		      if (downspins & secondmask)
 		        hamilton(new_idx, idx) += fermi*t;
-        } else {
-            hamilton(new_idx, idx) -= lila::conj(t) * fermi;
-        }
+		      else 
+			hamilton(new_idx, idx) -= lila::conj(t) * fermi;
 		    }
 		}
 	    }
