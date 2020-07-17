@@ -796,6 +796,60 @@ namespace hydra { namespace models {
     }
 
     template <class coeff_t, class state_t>
+    void TJModelMPI<coeff_t, state_t>::apply_sz
+    (const lila::VectorMPI<coeff_t>& in_vec, lila::VectorMPI<coeff_t>& out_vec,
+      int site)
+    {
+      using utils::popcnt;
+      using utils::gbit;
+      using utils::gbits;
+      assert(site < n_sites_);
+
+      // Allocate out_vec
+      try
+      {
+        out_vec.resize(local_dim_);
+      }
+      catch(...)
+      {
+  	  std::cerr << "[ " << mpi_rank_
+		    << " ] Error: Could not allocate out_vector!" 
+		    << std::endl << std::flush;
+  	  MPI_Abort(MPI_COMM_WORLD, 4);
+    	}
+
+    	state_t spin_mask = (state_t)1 << site;
+
+	    uint64 n_hole_configurations = hs_holes_in_ups_.size();
+	    uint64 upspin_idx=0;
+	    for (state_t upspins : my_upspins_)
+	      {
+		    uint64 upspin_offset = upspin_idx * n_hole_configurations;
+		    state_t upspin = upspins & spin_mask;
+
+        // Upspin is set -> *0.5
+        if (upspin) 
+        {
+          for (uint64 idx=upspin_offset;
+              idx < upspin_offset + n_hole_configurations; ++idx)
+          {
+            out_vec(idx) += 0.5*in_vec(idx);
+          }
+        // Upspin isn't set -> iterate through downspins, *-0.5 if downspin is set
+        } else {
+          for (uint64 idx=upspin_offset;
+              idx < upspin_offset + n_hole_configurations; ++idx)
+          {
+            state_t downspins = downspins_table_[idx];
+            out_vec(idx) -= 0.5 * ((downspins & spin_mask) != 0) * in_vec(idx);
+          }
+        }
+        ++upspin_idx;
+        }
+    }
+
+	
+    template <class coeff_t, class state_t>
     void TJModelMPI<coeff_t, state_t>::initialize()
     {
       assert(qn_.n_upspins + qn_.n_downspins <= n_sites_);

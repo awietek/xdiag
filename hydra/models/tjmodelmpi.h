@@ -46,6 +46,8 @@ namespace hydra { namespace models {
 			     lila::VectorMPI<coeff_t>& out_vec,
 			     bool verbose = false);
 
+      void apply_sz(const lila::VectorMPI<coeff_t>& in_vec, lila::VectorMPI<coeff_t>& out_vec, int site);
+
       hubbard_qn qn() const { return qn_; }
       int n_sites() const { return n_sites_; }
       uint64 local_dim() const { return local_dim_; }
