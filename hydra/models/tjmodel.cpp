@@ -281,7 +281,7 @@ namespace hydra { namespace models {
     template class TJModel<complex>;
 
     template <class coeff_t>
-    lila::Matrix<double> TJModel<coeff_t>::szMatrix(int siteIndex) const
+    lila::Matrix<coeff_t> TJModel<coeff_t>::szMatrix(int siteIndex) const
     {
       using state_t = uint32;
       using hydra::combinatorics::up_hole_to_down;
@@ -325,7 +325,7 @@ namespace hydra { namespace models {
 
 
       // Try allocating the matrix
-      lila::Matrix<double> sz;
+      lila::Matrix<coeff_t> sz;
       try 
 	{
 	  sz.resize(dim_, dim_);
@@ -349,9 +349,9 @@ namespace hydra { namespace models {
 		  bool dn = gbit(dns, siteIndex);
 
       if (up)
-        sz(idx, idx) = 1;
+        sz(idx, idx) = 0.5;
       else if (dn)
-        sz(idx, idx) = -1;
+        sz(idx, idx) = -0.5;
       else
         sz(idx, idx) = 0;
 
