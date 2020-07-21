@@ -48,7 +48,7 @@ namespace hydra { namespace models {
       */
       lila::Matrix<coeff_t> matrix(bool ninj_term=false) const;
 
-      lila::Matrix<double> szMatrix(int siteIndex) const;
+      lila::Matrix<coeff_t> szMatrix(int siteIndex) const;
       lila::Matrix<double> sPlusMatrix(int siteIndex) const;
       lila::Matrix<double> sMinusMatrix(int siteIndex) const;
 
