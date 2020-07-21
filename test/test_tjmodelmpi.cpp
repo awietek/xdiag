@@ -5,8 +5,6 @@
 
 #include "testcases_tjmodel.h"
 
-#include <stdio.h>
-
 using namespace hydra::all;
 using namespace lila;
 
@@ -81,7 +79,6 @@ void test_tjmodelmpi_sz(BondList bondlist,  Couplings couplings)
   for (int nup=1; nup<=n_sites; ++nup)
     for (int ndn=1; ndn<=n_sites-nup; ++ndn)
       {
-        std::cout << "nup=" << nup << " ndn=" << ndn << std::endl;
 	hubbard_qn qn = {nup, ndn};
 	auto model = TJModel<coeff_t>(bondlist, couplings, qn);
 	auto HM = model.matrix();
