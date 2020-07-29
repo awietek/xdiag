@@ -136,67 +136,12 @@ void run_real_complex(std::string real_complex,
       file[label + std::string("_Alphas")] = res.alphas;
       file[label + std::string("_Betas")] = res.betas;
       file[label + std::string("_Eigenvalues")] = res.eigenvalues;
-	  file.close();
   }
 	} 
     }
 
-  // else if (algorithm == "bandlanczos")
-  //   {
-  //     std::vector<int> sites;
-  //     for (auto corr : correlation_list)
-  // 	{
-  // 	  int s1 = corr.first;
-  // 	  int s2 = corr.second;
-  // 	  if (std::find(sites.begin(), sites.end(), s1) == sites.end())
-  // 	    sites.push_back(s1);
-  // 	  if (std::find(sites.begin(), sites.end(), s2) == sites.end())
-  // 	    sites.push_back(s2);
-  // 	}
-  //     for (auto ftype : ftype_list)
-  // 	{  
-  // 	  auto res = hydra::hubbard_dynamical_iterations_bandlanczos_mpi
-  // 	    (model, groundstate, sites, ftype, dyniters, dynprecision, 
-  // 	     verbosity, deflationtol);
-  // 	  auto tmat = res.tmatrix;
-  // 	  auto overlaps = res.overlaps;
-  // 	  std::stringstream line;
-  // 	  if (mpi_rank == 0)
-  // 	    {
-  // 	      line << "# ftype: " << ftype << "\n";
-  // 	      line << "# sites: ";
-  // 	      for (auto site : sites)
-  // 		line << site << " ";
-  // 	      line << "\n";
-  // 	      line << "# tmatrix\n";
-  // 	      of << line.str();
-
-  // 	      // Write the tmatrix
-  // 	      line.str("");
-  // 	      for (auto i : tmat.rows())
-  // 		{
-  // 		  for (auto j : tmat.cols())
-  // 		    line << std::setprecision(20) << tmat(i, j) << " ";
-  // 		  line << "\n";
-  // 		}
-  // 	      of << line.str();
-
-  // 	      // Write the overlaps
-  // 	      line.str("");
-  // 	      line << "# overlaps\n";
-  // 	      of << line.str();
-  // 	      line.str("");
-  // 	      for (auto i : overlaps.rows())
-  // 		{
-  // 		  for (auto j : overlaps.cols())
-  // 		    line << std::setprecision(20) << overlaps(i, j) << " ";
-  // 		  line << "\n";
-  // 		}
-  // 	      of << line.str();
-  // 	    }
-  // 	}
-  //   }  // algorithm bandlanczos
-  
+	file.close();
+ 
 }
 
 int main(int argc, char* argv[])
