@@ -142,7 +142,6 @@ void run_real_complex(std::string real_complex,
   if (mpi_rank == 0) {
 	file.close();
   }
- 
 }
 
 int main(int argc, char* argv[])
