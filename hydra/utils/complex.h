@@ -2,7 +2,7 @@
 #define HYDRA_COMPLEX_H_
 
 #include <lila/all.h>
-#include "typedefs.h"
+#include <hydra/common.h>
 
 namespace hydra {
 

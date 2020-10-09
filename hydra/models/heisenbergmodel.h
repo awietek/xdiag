@@ -24,43 +24,38 @@
 
 #include <lila/matrix.h>
 
-namespace hydra { namespace models {
+namespace hydra {
 
-    using symmetries::CharacterTable;
-    using operators::BondList;
-    using operators::Couplings;
+/*!
+  Class to generate representations of the Heisenberg models
+*/
+template <class bit_t = std_bit_t> class HeisenbergModel {
+public:
+  using state_t = state_spinhalf<bit_t>;
 
-    /*!
-      Class to generate representations of the Heisenberg models
-    */
-    class HeisenbergModel {
-    public:
-      /*! 
-	Defines a Heisenberg model given number of sites and pairs of 
-	neighboring sites with Heisenberg interactions
-      */
-      HeisenbergModel() = default;
-            
-      /*!
-	returns a lila::Matrix of the Heisenberg model given
-	the quantum number (number of upspins).
+  /*!
+    Defines a Heisenberg model given number of sites and pairs of
+    neighboring sites with Heisenberg interactions
+  */
+  HeisenbergModel() = default;
 
-	Usage:
-	@code
+  /*!
+    returns a lila::Matrix of the Heisenberg model given
+    the quantum number (number of upspins).
 
-	@endcode
-      */
-      lila::Matrix<double> matrix(BondList bondlist,
-				  Couplings couplings, int qn) const;
+    Usage:
+    @code
 
-      lila::Matrix<complex> matrix
-      (BondList bondlist, Couplings couplings, int qn,
-       CharacterTable& character_table,
-       std::string representation_name) const;
+    @endcode
+  */
+  lila::Matrix<double> matrix(BondList bondlist, Couplings couplings,
+                              int qn) const;
 
-    };
-    
-  }
-}
+  lila::Matrix<complex> matrix(BondList bondlist, Couplings couplings, int qn,
+                               CharacterTable &character_table,
+                               std::string representation_name) const;
+};
+
+} // namespace hydra
 
 #endif

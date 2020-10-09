@@ -17,32 +17,27 @@
 
 #include <vector>
 
-namespace hydra { namespace symmetries { namespace detail {
-      
-      bool is_valid_permutation(const std::vector<int>& permutation);
+namespace hydra {
+namespace detail {
 
-      template<class state_t, class get_site_val_f, class set_site_val_f>
-      state_t apply_permutation
-      (const state_t& state, const int& n_sites, const int* permutation,
-       get_site_val_f get_site_val, set_site_val_f set_site_val)
-      {
-        state_t tstate = 0;
-	for(int i=0; i < n_sites; ++i)
-	  {
-	    const int val = get_site_val(state, i);
-	    set_site_val(&tstate, permutation[i], val);
-	  }
-	return tstate;
-      }    
+bool is_valid_permutation(const std::vector<int> &permutation);
 
-      template <class hilbertspace_t>
-      double fermi_sign
-      (const typename hilbertspace_t::state_t& state, 
-       const int& n_sites, const int* permutation);
-
-    }
+template <class state_t>
+state_t apply_permutation(state_t const &state, int const &n_sites,
+                          const int *permutation) {
+  state_t tstate = 0;
+  for (int i = 0; i < n_sites; ++i) {
+    const int val = siteval(state, i);
+    set_siteval(&tstate, permutation[i], val);
   }
+  return tstate;
 }
 
-#endif
+template <class hilbertspace_t>
+double fermi_sign(const typename hilbertspace_t::state_t &state,
+                  const int &n_sites, const int *permutation);
 
+} // namespace detail
+} // namespace hydra
+
+#endif

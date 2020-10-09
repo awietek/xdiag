@@ -22,48 +22,25 @@
 
 #include <lila/matrix.h>
 
-namespace hydra { namespace models {
-    
-using symmetries::CharacterTable;
+namespace hydra {
 
-    /*!
-      Class to generate representations of the Heisenberg models
-    */
-    class SpinlessFermions {
-    public:
-      /*! 
-	Defines a spinless fermion model given number of sites, pairs of 
-        hopping sites, and pairs of interacting sites
-      */
-      SpinlessFermions(int n_sites, 
-		       const std::vector<std::pair<int, int>> hoppings,
-		       const std::vector<std::pair<int, int>> interactions);
-      
-      ///  Return all possible quantum numbers, i.e. occupation numbers
-      std::vector<int> quantumnumbers();
-      
-      /*!
-	returns a lila::Matrix of the spinless fermion model given
-	hopping t, interaction strength V, and occupation number.
+class SpinlessFermions {
+public:
+  SpinlessFermions(int n_sites, const std::vector<std::pair<int, int>> hoppings,
+                   const std::vector<std::pair<int, int>> interactions);
 
-	Usage:
-	@code
+  std::vector<int> quantumnumbers();
+  lila::Matrix<double> matrix(double t, double V, int qn) const;
+  lila::Matrix<complex> matrix(double t, double V, int qn,
+                               CharacterTable &character_table,
+                               std::string representation_name) const;
 
-	@endcode
-      */
-      lila::Matrix<double> matrix(double t, double V, int qn) const;
+private:
+  int n_sites_;
+  std::vector<std::pair<int, int>> hoppings_;
+  std::vector<std::pair<int, int>> interactions_;
+};
 
-      lila::Matrix<complex> matrix(double t, double V, int qn, 
-				   CharacterTable& character_table, 
-				   std::string representation_name) const;
-      
-    private:
-      int n_sites_;
-      std::vector<std::pair<int, int>> hoppings_;
-      std::vector<std::pair<int, int>> interactions_;
-    };
-    
-  }
-}
+} // namespace hydra
 
 #endif

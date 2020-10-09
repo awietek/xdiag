@@ -18,80 +18,77 @@
 #include <utility>
 #include <vector>
 
-#include <lila/matrix.h>
-#include <hydra/hilbertspaces/hubbard.h>
+#include <hydra/bases/basis_electron.h>
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
+#include <lila/matrix.h>
 
-namespace hydra { namespace models {
-    using operators::BondList;
-    using operators::Couplings;
+namespace hydra {
 
-    /*!
-      Class to generate representations of the Hubbard models
-    */
-    template <class coeff_t>
-    class HubbardModel {
+/*!
+  Class to generate representations of the Hubbard models
+*/
+template <class coeff_t, class bit_t = std_bit_t, class idx_t = std_idx_t>
+class HubbardModel {
 
-    public:
-      using qn_t = hilbertspaces::hubbard_qn;
+public:
+  using qn_t = qn_electron;
 
-      /*! 
-	Defines a Hubbard model given number of sites and pairs of 
-	neighboring sites with hoppings
-      */
-      HubbardModel(BondList bondlist, Couplings couplings, qn_t qn);
-      
-      /*!
-	returns a lila::Matrix of the Hubbard model given t, U, and
-	the quantum numbers (n_upspins, n_downspins).
-      */
-      lila::Matrix<coeff_t> matrix() const;
+  /*!
+    Defines a Hubbard model given number of sites and pairs of
+    neighboring sites with hoppings
+  */
+  HubbardModel(BondList bondlist, Couplings couplings, qn_t qn);
 
-      /*!
-	returns a lila::Matrix of the Hubbard model given t, U, and
-	the quantum numbers (n_upspins, n_downspins).
-      */
-      void apply_hamiltonian(const lila::Vector<coeff_t>& in_vec,
-			     lila::Vector<coeff_t>& out_vec) const;      
+  /*!
+    returns a lila::Matrix of the Hubbard model given t, U, and
+    the quantum numbers (n_upspins, n_downspins).
+  */
+  lila::Matrix<coeff_t> matrix() const;
 
-      /*!
-	applies a fermion creation/annihilation operator to a state
-      */
-      qn_t apply_fermion
-      (const lila::Vector<coeff_t>& state_before, 
-       lila::Vector<coeff_t>& state_after, std::string type, int site) const;
+  /*!
+    returns a lila::Matrix of the Hubbard model given t, U, and
+    the quantum numbers (n_upspins, n_downspins).
+  */
+  void apply_hamiltonian(const lila::Vector<coeff_t> &in_vec,
+                         lila::Vector<coeff_t> &out_vec) const;
 
-      lila::Matrix<double> szMatrix(int siteIndex) const;
-      lila::Matrix<double> sPlusMatrix(int siteIndex) const;
-      lila::Matrix<double> sMinusMatrix(int siteIndex) const;
+  /*!
+    applies a fermion creation/annihilation operator to a state
+  */
+  qn_t apply_fermion(const lila::Vector<coeff_t> &state_before,
+                     lila::Vector<coeff_t> &state_after, std::string type,
+                     int site) const;
 
-      qn_t qn() const { return qn_; }
-      void set_qn(qn_t qn);
-      int n_sites() const { return n_sites_; }
-      int64 dim() const { return dim_; }
+  lila::Matrix<double> szMatrix(int siteIndex) const;
+  lila::Matrix<double> sPlusMatrix(int siteIndex) const;
+  lila::Matrix<double> sMinusMatrix(int siteIndex) const;
 
-    private:
-      int n_sites_;
-      int64 dim_;
-      qn_t qn_;
+  qn_t qn() const { return qn_; }
+  void set_qn(qn_t qn);
+  int n_sites() const { return n_sites_; }
+  int64 dim() const { return dim_; }
 
-      std::vector<std::pair<int, int>> hoppings_;
-      std::vector<coeff_t> hopping_amplitudes_;
-      std::vector<std::pair<int, int>> currents_;
-      std::vector<coeff_t> current_amplitudes_;
-      std::vector<std::pair<int, int>> interactions_;
-      std::vector<double> interaction_strengths_;
-      std::vector<int> onsites_;
-      std::vector<double> onsite_potentials_;
-      std::vector<std::pair<int,int>> szszs_;
-      std::vector<double> szsz_amplitudes_;
-      std::vector<std::pair<int,int>> exchanges_;
-      std::vector<coeff_t> exchange_amplitudes_;
-      double U_;
-    };
-    
-  }
-}
+private:
+  int n_sites_;
+  int64 dim_;
+  qn_t qn_;
+
+  std::vector<std::pair<int, int>> hoppings_;
+  std::vector<coeff_t> hopping_amplitudes_;
+  std::vector<std::pair<int, int>> currents_;
+  std::vector<coeff_t> current_amplitudes_;
+  std::vector<std::pair<int, int>> interactions_;
+  std::vector<double> interaction_strengths_;
+  std::vector<int> onsites_;
+  std::vector<double> onsite_potentials_;
+  std::vector<std::pair<int, int>> szszs_;
+  std::vector<double> szsz_amplitudes_;
+  std::vector<std::pair<int, int>> exchanges_;
+  std::vector<coeff_t> exchange_amplitudes_;
+  double U_;
+};
+
+} // namespace hydra
 
 #endif

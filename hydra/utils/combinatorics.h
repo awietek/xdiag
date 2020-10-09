@@ -1,8 +1,8 @@
 #ifndef HYDRA_UTILS_COMBINATORICS_
 #define HYDRA_UTILS_COMBINATORICS_
 
-#include "typedefs.h"
-#include "bitops.h"
+#include <hydra/common.h>
+#include <hydra/utils/bitops.h>
 
 namespace hydra { namespace combinatorics {
     
@@ -28,17 +28,15 @@ namespace hydra { namespace combinatorics {
     uint64 get_n_for_pattern(const uint64& pattern, const int& n_sites, 
 			    const int& n_upspins);
 
-    template <class state_t=uint64> 
-    state_t down_hole_to_up(state_t downspins, state_t holes);
-    
-    template <class state_t=uint64> 
-    state_t up_hole_to_down(state_t upspins, state_t holes);
-    
-    template <class state_t=uint64> 
-    state_t up_down_to_hole(state_t upspins, state_t downspins);
-    
-    template <class state_t=uint64> 
-    state_t down_up_to_hole(state_t downspins, state_t upspins);
+    // Functions to convert spin + hole configuration to up/dn configuration
+    template <class bit_t=std_bit_t> 
+    bit_t down_hole_to_up(bit_t downspins, bit_t holes);
+    template <class bit_t=std_bit_t> 
+    bit_t up_hole_to_down(bit_t upspins, bit_t holes);
+    template <class bit_t=std_bit_t> 
+    bit_t up_down_to_hole(bit_t upspins, bit_t downspins);
+    template <class bit_t=std_bit_t> 
+    bit_t down_up_to_hole(bit_t downspins, bit_t upspins);
 
   }  // namespace combinatorics
 }  // namespace hydra
