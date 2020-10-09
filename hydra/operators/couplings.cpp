@@ -16,7 +16,7 @@
 #include <iostream>
 #include "couplings.h"
 
-namespace hydra { namespace operators {
+namespace hydra {
 
     std::vector<std::string> Couplings::couplings() const
     {
@@ -68,6 +68,5 @@ namespace hydra { namespace operators {
       return Couplings(coupling_map);
     }
       
-  }  // namespace operators
 }  // namespace hydra
 

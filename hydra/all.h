@@ -12,16 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef HYDRA_HYDRA_H_
-#define HYDRA_HYDRA_H_
+#ifndef HYDRA_ALL_H_
+#define HYDRA_ALL_H_
 
-#include "hilbertspaces/hubbard.h"
-#include "hilbertspaces/spinhalf.h"
+#include "common.h"
 
-#include "indexing/indexhubbard.h"
-#include "indexing/indextable.h"
-#include "indexing/indexsearch.h"
-#include "indexing/indexspinhalf.h"
+#include "qns/qn_spinhalf.h"
+#include "qns/qn_electron.h"
+#include "qns/qn_tj.h"
+
+#include "states/state_spinhalf.h"
+#include "states/state_electron.h"
+#include "states/state_tj.h"
+
+#include "bases/basis_spinhalf.h"
+#include "bases/basis_electron.h"
+// #include "hilbertspaces/tj.h"
+
+#include "indexing/index_table.h"
+#include "indexing/index_search.h"
+#include "indexing/index_spinhalf.h"
+#include "indexing/index_electron.h"
 #include "indexing/lintable.h"
 
 #include "models/hubbardmodel.h"
@@ -32,7 +43,6 @@
 #include "utils/bitops.h"
 #include "utils/combinatorics.h"
 #include "utils/range.h"
-#include "utils/typedefs.h"
 #include "utils/iochecks.h"
 #include "utils/format.h"
 #include "utils/print.h"
@@ -41,34 +51,15 @@
 #include "operators/bondlist.h"
 #include "operators/couplings.h"
 
-#include "thermodynamics/thermodynamics_detail.h"
-#include "thermodynamics/thermodynamics_exact.h"
-#include "thermodynamics/thermodynamics_tpq.h"
-
-#include "dynamics/continuedfraction.h"
+// #include "thermodynamics/thermodynamics_detail.h"
+// #include "thermodynamics/thermodynamics_exact.h"
+// #include "thermodynamics/thermodynamics_tpq.h"
+// #include "dynamics/continuedfraction.h"
 
 #include "symmetries/spacegroup.h"
 
 #include "parameters/parser.h"
 #include "parameters/parameters_impl.h"
 #include "parameters/parameters.h"
-
-namespace hydra 
-{
-  namespace all
-  {
-    using namespace hydra::dynamics;
-    using namespace hydra::hilbertspaces;
-    using namespace hydra::indexing;
-    using namespace hydra::models;
-    using namespace hydra::operators;
-    using namespace hydra::parameters;
-    using namespace hydra::symmetries;
-    using namespace hydra::thermodynamics;
-    using namespace hydra::utils;
-    using namespace hydra::combinatorics;
-  }
-}
-
 
 #endif

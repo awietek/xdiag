@@ -98,43 +98,43 @@ namespace hydra { namespace indexing {
 
 
     template 
-    class IndexSymmetrized<hilbertspaces::Spinhalf<uint16>, uint16, false>;
+    class IndexSymmetrized<SpinHalf<uint16>, uint16, false>;
     template 
-    class IndexSymmetrized<hilbertspaces::Spinhalf<uint16>, uint32, false>;
+    class IndexSymmetrized<SpinHalf<uint16>, uint32, false>;
     template 
-    class IndexSymmetrized<hilbertspaces::Spinhalf<uint16>, uint64, false>;
+    class IndexSymmetrized<SpinHalf<uint16>, uint64, false>;
     template 
-    class IndexSymmetrized<hilbertspaces::Spinhalf<uint16>, uint16, true>;
+    class IndexSymmetrized<SpinHalf<uint16>, uint16, true>;
     template 
-    class IndexSymmetrized<hilbertspaces::Spinhalf<uint16>, uint32, true>;
+    class IndexSymmetrized<SpinHalf<uint16>, uint32, true>;
     template 
-    class IndexSymmetrized<hilbertspaces::Spinhalf<uint16>, uint64, true>;
+    class IndexSymmetrized<SpinHalf<uint16>, uint64, true>;
 
     template 
-    class IndexSymmetrized<hilbertspaces::Spinhalf<uint32>, uint16, false>;
+    class IndexSymmetrized<SpinHalf<uint32>, uint16, false>;
     template 
-    class IndexSymmetrized<hilbertspaces::Spinhalf<uint32>, uint32, false>;
+    class IndexSymmetrized<SpinHalf<uint32>, uint32, false>;
     template 
-    class IndexSymmetrized<hilbertspaces::Spinhalf<uint32>, uint64, false>;
+    class IndexSymmetrized<SpinHalf<uint32>, uint64, false>;
     template 
-    class IndexSymmetrized<hilbertspaces::Spinhalf<uint32>, uint16, true>;
+    class IndexSymmetrized<SpinHalf<uint32>, uint16, true>;
     template 
-    class IndexSymmetrized<hilbertspaces::Spinhalf<uint32>, uint32, true>;
+    class IndexSymmetrized<SpinHalf<uint32>, uint32, true>;
     template 
-    class IndexSymmetrized<hilbertspaces::Spinhalf<uint32>, uint64, true>;
+    class IndexSymmetrized<SpinHalf<uint32>, uint64, true>;
 
     template 
-    class IndexSymmetrized<hilbertspaces::Spinhalf<uint64>, uint16, false>;
+    class IndexSymmetrized<SpinHalf<uint64>, uint16, false>;
     template 
-    class IndexSymmetrized<hilbertspaces::Spinhalf<uint64>, uint32, false>;
+    class IndexSymmetrized<SpinHalf<uint64>, uint32, false>;
     template 
-    class IndexSymmetrized<hilbertspaces::Spinhalf<uint64>, uint64, false>;
+    class IndexSymmetrized<SpinHalf<uint64>, uint64, false>;
     template 
-    class IndexSymmetrized<hilbertspaces::Spinhalf<uint64>, uint16, true>;
+    class IndexSymmetrized<SpinHalf<uint64>, uint16, true>;
     template 
-    class IndexSymmetrized<hilbertspaces::Spinhalf<uint64>, uint32, true>;
+    class IndexSymmetrized<SpinHalf<uint64>, uint32, true>;
     template 
-    class IndexSymmetrized<hilbertspaces::Spinhalf<uint64>, uint64, true>;
+    class IndexSymmetrized<SpinHalf<uint64>, uint64, true>;
 
   }  // namespace indexing
 }  // namespace hydra

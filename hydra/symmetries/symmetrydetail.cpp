@@ -20,63 +20,62 @@
 
 #include "symmetrydetail.h"
 
-namespace hydra { namespace symmetries { namespace detail {
-      
-      bool is_valid_permutation(const std::vector<int>& permutation)
-      {
-	for (int i = 0; i < (int)permutation.size(); ++i)
-	  if (std::find(permutation.begin(), permutation.end(), i) == 
-	      permutation.end())
-	    return false;
-	return true;  
-      }
+namespace hydra {
+namespace detail {
 
-      template <class state_t>
-      double fermi_sign_spinhalf(const state_t& state, const int& n_sites,
-				 const int* permutation)
-      {
-	std::vector<int> sort(n_sites);
-	int sum=0;
-	int nf, k;
-		
-	for(nf=0, k=0; k < n_sites; ++k)
-	  if ( utils::gbit(state,k) )
-	    {
-	      sort[nf] = permutation[k];
-	      ++nf;
-	    }
-	
-	int old_sum;
-	while (true)
-	  {
-	    old_sum=sum;
-	    for (k = 0; k < (nf-1); ++k)
-	      if (sort[k+1] < sort[k])
-		{
-		  sum++;
-		  std::swap(sort[k+1], sort[k]);
-		}
-	    if (old_sum == sum) break;
-	  }
-	return (sum % 2 ? -1 : 1);
-      }
-
-      using hilbertspaces::Spinhalf;
-
-      template <>
-      double fermi_sign<Spinhalf<uint16>>
-      (const uint16& state,  const int& n_sites, const int* permutation)
-      { return fermi_sign_spinhalf(state, n_sites, permutation); }
-
-      template <>
-      double fermi_sign<Spinhalf<uint32>>
-      (const uint32& state,  const int& n_sites, const int* permutation)
-      { return fermi_sign_spinhalf(state, n_sites, permutation); }
-
-      template <>
-      double fermi_sign<Spinhalf<uint64>>
-      (const uint64& state,  const int& n_sites, const int* permutation)
-      { return fermi_sign_spinhalf(state, n_sites, permutation); }
-    }
-  }
+bool is_valid_permutation(const std::vector<int> &permutation) {
+  for (int i = 0; i < (int)permutation.size(); ++i)
+    if (std::find(permutation.begin(), permutation.end(), i) ==
+        permutation.end())
+      return false;
+  return true;
 }
+
+template <class state_t>
+double fermi_sign_spinhalf(const state_t &state, const int &n_sites,
+                           const int *permutation) {
+  std::vector<int> sort(n_sites);
+  int sum = 0;
+  int nf, k;
+
+  for (nf = 0, k = 0; k < n_sites; ++k)
+    if (utils::gbit(state, k)) {
+      sort[nf] = permutation[k];
+      ++nf;
+    }
+
+  int old_sum;
+  while (true) {
+    old_sum = sum;
+    for (k = 0; k < (nf - 1); ++k)
+      if (sort[k + 1] < sort[k]) {
+        sum++;
+        std::swap(sort[k + 1], sort[k]);
+      }
+    if (old_sum == sum)
+      break;
+  }
+  return (sum % 2 ? -1 : 1);
+}
+
+using hilbertspaces::Spinhalf;
+
+template <>
+double fermi_sign<Spinhalf<uint16>>(const uint16 &state, const int &n_sites,
+                                    const int *permutation) {
+  return fermi_sign_spinhalf(state, n_sites, permutation);
+}
+
+template <>
+double fermi_sign<Spinhalf<uint32>>(const uint32 &state, const int &n_sites,
+                                    const int *permutation) {
+  return fermi_sign_spinhalf(state, n_sites, permutation);
+}
+
+template <>
+double fermi_sign<Spinhalf<uint64>>(const uint64 &state, const int &n_sites,
+                                    const int *permutation) {
+  return fermi_sign_spinhalf(state, n_sites, permutation);
+}
+} // namespace detail
+} // namespace hydra

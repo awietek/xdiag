@@ -15,45 +15,43 @@
 #ifndef HYDRA_SYMMETRIES_CHARACTERTABLE_
 #define HYDRA_SYMMETRIES_CHARACTERTABLE_
 
-#include <string>
 #include <complex>
-#include <vector>
 #include <map>
+#include <string>
+#include <vector>
 
 #include <hydra/symmetries/spacegroup.h>
 
-namespace hydra { namespace symmetries {
+namespace hydra {
+class CharacterTable {
+  using complex = std::complex<double>;
 
-    class CharacterTable
-    {
-      using complex = std::complex<double>;
-    public:
-      CharacterTable(const SpaceGroup& space_group,
-		     const std::vector<std::string>& names,
-		     const std::vector<std::vector<int>>& allowed_symmetries,
-		     const std::vector<std::vector<complex>>& characters);
+public:
+  CharacterTable(const SpaceGroup &space_group,
+                 const std::vector<std::string> &names,
+                 const std::vector<std::vector<int>> &allowed_symmetries,
+                 const std::vector<std::vector<complex>> &characters);
 
-      std::vector<std::string> names() const;
-      SpaceGroup little_group(std::string name) const;
-      int n_symmetries(std::string name) const;
-      std::vector<int> allowed_symmetries(std::string name) const; 
-      complex character(const std::string& name, const int& n_sym) const;
-      std::vector<complex> characters(const std::string& name) const;
-      bool is_real(const std::string& name) const;
+  std::vector<std::string> names() const;
+  SpaceGroup little_group(std::string name) const;
+  int n_symmetries(std::string name) const;
+  std::vector<int> allowed_symmetries(std::string name) const;
+  complex character(const std::string &name, const int &n_sym) const;
+  std::vector<complex> characters(const std::string &name) const;
+  bool is_real(const std::string &name) const;
 
-    private:
-      SpaceGroup space_group_;
-      std::vector<std::string> names_;
-      int n_symmetries_total_;
-      std::map<std::string, int> n_symmetries_;
-      std::map<std::string, std::vector<int>> allowed_symmetries_;
-      std::map<std::string, std::vector<complex>> characters_;
-      std::map<std::string, bool> is_real_;
-    };
+private:
+  SpaceGroup space_group_;
+  std::vector<std::string> names_;
+  int n_symmetries_total_;
+  std::map<std::string, int> n_symmetries_;
+  std::map<std::string, std::vector<int>> allowed_symmetries_;
+  std::map<std::string, std::vector<complex>> characters_;
+  std::map<std::string, bool> is_real_;
+};
 
-    // void Print(const CharacterTable& table);
-    CharacterTable read_charactertable(std::string filename);
-  }
-}
+// void Print(const CharacterTable& table);
+CharacterTable read_charactertable(std::string filename);
+} // namespace hydra
 
 #endif

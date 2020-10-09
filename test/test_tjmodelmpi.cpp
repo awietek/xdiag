@@ -96,8 +96,6 @@ void test_tjmodelmpi_sz(BondList bondlist,  Couplings couplings)
     int random_seed = 42 + 1234567*mpi_rank;
     normal_dist_t<coeff_t> dist(0., 1.);
     normal_gen_t<coeff_t> gen(dist, random_seed);
-
-
     
     auto H = TJModelMPI<coeff_t>(bondlist, couplings, qn);
     auto multiply_H = 

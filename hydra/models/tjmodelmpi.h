@@ -15,138 +15,129 @@
 #ifndef HYDRA_MODELS_TJMODELMPI_
 #define HYDRA_MODELS_TJMODELMPI_
 
-#include <vector>
 #include <unordered_map>
+#include <vector>
 
-#include <hydra/hilbertspaces/spinhalf.h>
-#include <hydra/hilbertspaces/hubbard.h>
-#include <hydra/indexing/indextable.h>
+#include <hydra/qns/qn_tj.h>
+
+#include <hydra/states/state_tj.h>
+
+#include <hydra/bases/basis_electron.h>
+#include <hydra/bases/basis_spinhalf.h>
+
+#include <hydra/indexing/index_table.h>
 #include <hydra/indexing/lintable.h>
+
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
 
 #include <lila/allmpi.h>
 
-using namespace hydra::hilbertspaces;
-using namespace hydra::indexing;
-using namespace hydra::operators;
+namespace hydra {
 
-namespace hydra { namespace models {
+template <class coeff_t, class bit_t = std_bit_t, class idx_t = std_idx_t>
+class TJModelMPI {
+public:
+  TJModelMPI(BondList bondlist, Couplings couplings, qn_tj qn);
 
+  void apply_hamiltonian(lila::VectorMPI<coeff_t> const &in_vec,
+                         lila::VectorMPI<coeff_t> &out_vec,
+                         bool verbose = false);
 
-    template <class coeff_t, class state_t=uint64>
-    class TJModelMPI
-    {
-    public:
+  void apply_sz(const lila::VectorMPI<coeff_t> &in_vec,
+                lila::VectorMPI<coeff_t> &out_vec, int site);
 
-      TJModelMPI(BondList bondlist, Couplings couplings, 
-		 hilbertspaces::hubbard_qn qn);
-      
-      void apply_hamiltonian(lila::VectorMPI<coeff_t> const& in_vec,
-			     lila::VectorMPI<coeff_t>& out_vec,
-			     bool verbose = false);
+  qn_tj qn() const { return qn_; }
+  int n_sites() const { return n_sites_; }
+  idx_t local_dim() const { return local_dim_; }
+  idx_t dim() const { return dim_; }
 
-      void apply_sz(const lila::VectorMPI<coeff_t>& in_vec, lila::VectorMPI<coeff_t>& out_vec, int site);
+private:
+  const int n_sites_;
+  qn_tj qn_;
 
-      hubbard_qn qn() const { return qn_; }
-      int n_sites() const { return n_sites_; }
-      uint64 local_dim() const { return local_dim_; }
-      uint64 dim() const { return dim_; }
+  int mpi_rank_;
+  int mpi_size_;
 
-    private:     
-      const int n_sites_;
-      hubbard_qn qn_;
+  // Dimensions
+  idx_t dim_;
+  idx_t local_dim_;
+  idx_t max_local_dim_;
+  idx_t min_local_dim_;
+  idx_t local_dim_downspins_;
 
-      int mpi_rank_;
-      int mpi_size_;
+  std::vector<std::pair<int, int>> hoppings_;
+  std::vector<coeff_t> hopping_amplitudes_;
+  std::vector<int> onsites_;
+  std::vector<double> onsite_potentials_;
+  std::vector<std::pair<int, int>> szszs_;
+  std::vector<double> szsz_amplitudes_;
+  std::vector<std::pair<int, int>> exchanges_;
+  std::vector<coeff_t> exchange_amplitudes_;
 
-      // Dimensions
-      uint64 dim_;
-      uint64 local_dim_;
-      uint64 max_local_dim_;
-      uint64 min_local_dim_;
-      uint64 local_dim_downspins_;
+  void initialize();
 
-      std::vector<std::pair<int, int>> hoppings_;
-      std::vector<coeff_t> hopping_amplitudes_;
-      std::vector<int> onsites_;
-      std::vector<double> onsite_potentials_;
-      std::vector<std::pair<int,int>> szszs_;
-      std::vector<double> szsz_amplitudes_;
-      std::vector<std::pair<int,int>> exchanges_;
-      std::vector<coeff_t> exchange_amplitudes_;
+  bit_t up_down_to_hole_table(const bit_t &upspins, const bit_t &downspin);
+  bit_t down_up_to_hole_table(const bit_t &upspins, const bit_t &downspin);
 
-      void initialize();
-
-      state_t up_down_to_hole_table(const state_t& upspins,
-				    const state_t& downspin);
-      state_t down_up_to_hole_table(const state_t& upspins,
-				    const state_t& downspin);
-
-      inline int mpi_rank_of_spins(const state_t& spins) const
-      { 
-	state_t x = spins;
-	x = ((x >> 16) ^ x) * 0x45d9f3b;
-	x = ((x >> 16) ^ x) * 0x45d9f3b;
-	x = (x >> 16) ^ x;
-	return x % mpi_size_;
-      }
-
-      Spinhalf<state_t> hs_upspins_;
-      Spinhalf<state_t> hs_downspins_;
-      Spinhalf<state_t> hs_holes_in_ups_;      
-      Spinhalf<state_t> hs_holes_in_downs_;
-      LinTable<Spinhalf<state_t>, uint64> indexing_holes_in_ups_;
-      LinTable<Spinhalf<state_t>, uint64> indexing_holes_in_downs_;
-
-      std::vector<state_t> my_upspins_;
-      std::unordered_map<state_t, uint64> my_upspins_offset_;
-      std::vector<state_t> my_downspins_;
-      std::unordered_map<state_t, uint64> my_downspins_offset_;
-
-    
-      std::vector<int> n_downspins_i_send_forward_;
-      std::vector<int> n_downspins_i_recv_forward_;
-      std::vector<int> n_downspins_i_send_forward_offsets_;
-      std::vector<int> n_downspins_i_recv_forward_offsets_;
-
-      std::vector<state_t> downspins_i_recv_forward_;
-      std::vector<state_t> upspins_i_recv_forward_;
-      std::vector<int> downspins_i_send_forward_offsets_;
-      std::vector<int> downspins_i_recv_forward_offsets_;
-
-      uint64 sum_n_downspins_i_send_forward_;
-      uint64 sum_n_downspins_i_recv_forward_; 
-
-      std::vector<int> n_upspins_i_send_back_;
-      std::vector<int> n_upspins_i_recv_back_;
-      std::vector<int> n_upspins_i_send_back_offsets_;
-      std::vector<int> n_upspins_i_recv_back_offsets_;
-      std::vector<state_t> downspins_i_recv_back_;
-      std::vector<state_t> upspins_i_recv_back_;
-      std::vector<int> upspins_i_send_back_offsets_;
-      std::vector<int> upspins_i_recv_back_offsets_;
-
-      uint64 sum_n_upspins_i_send_back_;
-      uint64 sum_n_upspins_i_recv_back_; 
-
-      uint64 buffer_size_;
-      std::vector<coeff_t> send_buffer_;
-      std::vector<coeff_t> recv_buffer_;
-
-      std::vector<state_t> downspins_i_send_forward_;
-      std::vector<state_t> upspins_i_send_forward_;
-      std::vector<state_t> downspins_i_send_back_;
-      std::vector<state_t> upspins_i_send_back_;
-
-      std::vector<state_t> downspins_table_;
-      std::vector<state_t> upspins_table_;
-
-    };
-  
-
+  inline int mpi_rank_of_spins(const bit_t &spins) const {
+    bit_t x = spins;
+    x = ((x >> 16) ^ x) * 0x45d9f3b;
+    x = ((x >> 16) ^ x) * 0x45d9f3b;
+    x = (x >> 16) ^ x;
+    return x % mpi_size_;
   }
-}
 
+  BasisSpinHalf<bit_t> hs_upspins_;
+  BasisSpinHalf<bit_t> hs_downspins_;
+  BasisSpinHalf<bit_t> hs_holes_in_ups_;
+  BasisSpinHalf<bit_t> hs_holes_in_downs_;
+  LinTable<BasisSpinHalf<bit_t>, idx_t> indexing_holes_in_ups_;
+  LinTable<BasisSpinHalf<bit_t>, idx_t> indexing_holes_in_downs_;
+
+  std::vector<bit_t> my_upspins_;
+  std::unordered_map<bit_t, idx_t> my_upspins_offset_;
+  std::vector<bit_t> my_downspins_;
+  std::unordered_map<bit_t, idx_t> my_downspins_offset_;
+
+  std::vector<int> n_downspins_i_send_forward_;
+  std::vector<int> n_downspins_i_recv_forward_;
+  std::vector<int> n_downspins_i_send_forward_offsets_;
+  std::vector<int> n_downspins_i_recv_forward_offsets_;
+
+  std::vector<bit_t> downspins_i_recv_forward_;
+  std::vector<bit_t> upspins_i_recv_forward_;
+  std::vector<int> downspins_i_send_forward_offsets_;
+  std::vector<int> downspins_i_recv_forward_offsets_;
+
+  idx_t sum_n_downspins_i_send_forward_;
+  idx_t sum_n_downspins_i_recv_forward_;
+
+  std::vector<int> n_upspins_i_send_back_;
+  std::vector<int> n_upspins_i_recv_back_;
+  std::vector<int> n_upspins_i_send_back_offsets_;
+  std::vector<int> n_upspins_i_recv_back_offsets_;
+  std::vector<bit_t> downspins_i_recv_back_;
+  std::vector<bit_t> upspins_i_recv_back_;
+  std::vector<int> upspins_i_send_back_offsets_;
+  std::vector<int> upspins_i_recv_back_offsets_;
+
+  idx_t sum_n_upspins_i_send_back_;
+  idx_t sum_n_upspins_i_recv_back_;
+
+  idx_t buffer_size_;
+  std::vector<coeff_t> send_buffer_;
+  std::vector<coeff_t> recv_buffer_;
+
+  std::vector<bit_t> downspins_i_send_forward_;
+  std::vector<bit_t> upspins_i_send_forward_;
+  std::vector<bit_t> downspins_i_send_back_;
+  std::vector<bit_t> upspins_i_send_back_;
+
+  std::vector<bit_t> downspins_table_;
+  std::vector<bit_t> upspins_table_;
+};
+
+} // namespace hydra
 
 #endif

@@ -18,62 +18,49 @@
 #include <utility>
 #include <vector>
 
-#include <lila/matrix.h>
-#include <hydra/hilbertspaces/hubbard.h>
+#include <hydra/qns/qn_tj.h>
+#include <hydra/bases/basis_electron.h>
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
+#include <lila/matrix.h>
 
-namespace hydra { namespace models {
-    using operators::BondList;
-    using operators::Couplings;
+namespace hydra {
 
-    /*!
-      Class to generate representations of the TJ models
-    */
-    template <class coeff_t>
-    class TJModel {
+template <class coeff_t, class bit_t = std_bit_t, class idx_t = std_idx_t>
+class TJModel {
 
-    public:
-      using qn_t = hilbertspaces::hubbard_qn;
+public:
+  using qn_t = qn_tj;
 
-      /*! 
-	Defines a TJ model given number of sites and pairs of 
-	neighboring sites with hoppings
-      */
-      TJModel(BondList bondlist, Couplings couplings, qn_t qn);
-      
-      /*!
-	returns a lila::Matrix of the TJ model given t, U, and
-	the quantum numbers (n_upspins, n_downspins).
-      */
-      lila::Matrix<coeff_t> matrix(bool ninj_term=false) const;
+  TJModel(BondList bondlist, Couplings couplings, qn_t qn);
 
-      lila::Matrix<coeff_t> szMatrix(int siteIndex) const;
-      lila::Matrix<double> sPlusMatrix(int siteIndex) const;
-      lila::Matrix<double> sMinusMatrix(int siteIndex) const;
+  lila::Matrix<coeff_t> matrix(bool ninj_term = false) const;
 
-      qn_t qn() const { return qn_; }
-      void set_qn(qn_t qn);
-      int n_sites() const { return n_sites_; }
-      int64 dim() const { return dim_; }
+  lila::Matrix<coeff_t> szMatrix(int siteIndex) const;
+  lila::Matrix<double> sPlusMatrix(int siteIndex) const;
+  lila::Matrix<double> sMinusMatrix(int siteIndex) const;
 
-    private:
-      int n_sites_;
-      int64 dim_;
-      qn_t qn_;
+  qn_t qn() const { return qn_; }
+  void set_qn(qn_t qn);
+  int n_sites() const { return n_sites_; }
+  int64 dim() const { return dim_; }
 
-      std::vector<std::pair<int, int>> hoppings_;
-      std::vector<coeff_t> hopping_amplitudes_;
-      std::vector<int> onsites_;
-      std::vector<double> onsite_potentials_;
-      std::vector<std::pair<int,int>> szszs_;
-      std::vector<double> szsz_amplitudes_;
-      std::vector<std::pair<int,int>> exchanges_;
-      std::vector<coeff_t> exchange_amplitudes_;
-      double U_;
-    };
-    
-  }
-}
+private:
+  int n_sites_;
+  int64 dim_;
+  qn_t qn_;
+
+  std::vector<std::pair<int, int>> hoppings_;
+  std::vector<coeff_t> hopping_amplitudes_;
+  std::vector<int> onsites_;
+  std::vector<double> onsite_potentials_;
+  std::vector<std::pair<int, int>> szszs_;
+  std::vector<double> szsz_amplitudes_;
+  std::vector<std::pair<int, int>> exchanges_;
+  std::vector<coeff_t> exchange_amplitudes_;
+  double U_;
+};
+
+} // namespace hydra
 
 #endif

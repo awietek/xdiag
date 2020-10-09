@@ -15,71 +15,58 @@
 #ifndef HYDRA_MODELS_HUBBARDMODELDETAIL_
 #define HYDRA_MODELS_HUBBARDMODELDETAIL_
 
+#include <hydra/common.h>
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
-#include <hydra/utils/typedefs.h>
 
-namespace hydra { namespace models {
+namespace hydra {
+namespace detail {
 
+template <class coeff_t>
+void set_hubbard_terms(BondList bondlist, Couplings couplings,
+                       std::vector<std::pair<int, int>> &hoppings,
+                       std::vector<coeff_t> &hopping_amplitudes,
+                       std::vector<std::pair<int, int>> &currents,
+                       std::vector<coeff_t> &current_amplitudes,
+                       std::vector<std::pair<int, int>> &interactions,
+                       std::vector<double> &interaction_strengths,
+                       std::vector<int> &onsites,
+                       std::vector<double> &onsite_potentials,
+                       std::vector<std::pair<int, int>> &szszs_,
+                       std::vector<double> &szszs_amplitudes_,
+                       std::vector<std::pair<int, int>> &exchanges_,
+                       std::vector<coeff_t> &exchange_amplitudes_, double &U);
 
-    namespace hubbardmodeldetail {
-      using hydra::operators::BondList;
-      using hydra::operators::Couplings;
+template <class coeff_t>
+void set_hoppings(BondList bondlist, Couplings couplings,
+                  std::vector<std::pair<int, int>> &hoppings,
+                  std::vector<coeff_t> &hopping_amplitudes);
 
-      template <class coeff_t>
-      void set_hubbard_terms(BondList bondlist, Couplings couplings,
-			     std::vector<std::pair<int, int>>& hoppings,
-			     std::vector<coeff_t>& hopping_amplitudes,
-			     std::vector<std::pair<int, int>>& currents,
-			     std::vector<coeff_t>& current_amplitudes,
-			     std::vector<std::pair<int, int>>& interactions,
-			     std::vector<double>& interaction_strengths,
-			     std::vector<int>& onsites,
-			     std::vector<double>& onsite_potentials, 
-			     std::vector<std::pair<int,int>>& szszs_,
-			     std::vector<double>& szszs_amplitudes_,
-			     std::vector<std::pair<int,int>>& exchanges_,
-			     std::vector<coeff_t>& exchange_amplitudes_,
-			     double& U);
-      
-      template <class coeff_t>
-      void set_hoppings
-	(BondList bondlist, Couplings couplings,
-	 std::vector<std::pair<int, int>>& hoppings,
-	 std::vector<coeff_t>& hopping_amplitudes);
-      
-      template <class coeff_t>
-      void set_currents
-      (BondList bondlist, Couplings couplings,
-       std::vector<std::pair<int, int>>& currents,
-       std::vector<coeff_t>& current_amplitudes);
+template <class coeff_t>
+void set_currents(BondList bondlist, Couplings couplings,
+                  std::vector<std::pair<int, int>> &currents,
+                  std::vector<coeff_t> &current_amplitudes);
 
-      void set_interactions
-      (BondList bondlist, Couplings couplings,
-       std::vector<std::pair<int, int>>& interactions,
-       std::vector<double>& interaction_strengths);
-      
-      void set_onsites
-      (BondList bondlist, Couplings couplings,
-       std::vector<int>& onsites,
-       std::vector<double>& onsite_potentials);
-      
-      void set_U
-      (Couplings couplings, double& U);
+void set_interactions(BondList bondlist, Couplings couplings,
+                      std::vector<std::pair<int, int>> &interactions,
+                      std::vector<double> &interaction_strengths);
 
-      void set_szszs
-	(BondList bondlist, Couplings couplings,
-	 std::vector<std::pair<int, int>>& szszs,
-	 std::vector<double>& szsz_amplitudes);
-      
-      template <class coeff_t>
-      void set_exchanges
-      (BondList bondlist, Couplings couplings,
-       std::vector<std::pair<int, int>>& exchanges,
-       std::vector<coeff_t>& exchange_amplitudes);
-      
-    }
-  }
-}
+void set_onsites(BondList bondlist, Couplings couplings,
+                 std::vector<int> &onsites,
+                 std::vector<double> &onsite_potentials);
+
+void set_U(Couplings couplings, double &U);
+
+void set_szszs(BondList bondlist, Couplings couplings,
+               std::vector<std::pair<int, int>> &szszs,
+               std::vector<double> &szsz_amplitudes);
+
+template <class coeff_t>
+void set_exchanges(BondList bondlist, Couplings couplings,
+                   std::vector<std::pair<int, int>> &exchanges,
+                   std::vector<coeff_t> &exchange_amplitudes);
+
+} // namespace detail
+} // namespace hydra
 
 #endif

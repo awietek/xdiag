@@ -21,64 +21,61 @@
 
 #include <hydra/parameters/parameters.h>
 
-namespace hydra { namespace operators {
+namespace hydra {
 
-    /*!
-      Datatype for describing a bond and the sites it lives on
+/*!
+  Datatype for describing a bond and the sites it lives on
 
-      A bond is described by its type (e.g. Heisenberg, Ising, Multispin, 
-      Hubbard-U et.), it's coupling constant (i.e. the name of the prefactor)
-      and the sites it lives on
-     */
-    struct Bond
-    {
-      Bond(const std::string& type, const std::string& coupling, 
-	   const std::vector<int>& sites);
-      Bond(const std::string& type, const std::string& coupling, 
-	   const std::vector<int>& sites, const parameters::Parameters& parameters);
-      inline std::string type() const { return type_; }
-      inline std::string coupling() const { return coupling_; } 
-      inline std::vector<int> sites() const { return sites_; }
-      inline int sites(const int& j) const { return sites_[j]; }
-      inline int size() const { return (int)sites_.size(); }
-      inline bool has_parameters() const { return has_parameters_; }
-      inline parameters::Parameters parameters() const { return parameters_; } 
-      
-      std::string type_;
-      std::string coupling_;
-      std::vector<int> sites_;
-      bool has_parameters_;
-      parameters::Parameters parameters_;
-    };
+  A bond is described by its type (e.g. Heisenberg, Ising, Multispin,
+  Hubbard-U et.), it's coupling constant (i.e. the name of the prefactor)
+  and the sites it lives on
+ */
+struct Bond {
+  Bond(const std::string &type, const std::string &coupling,
+       const std::vector<int> &sites);
+  Bond(const std::string &type, const std::string &coupling,
+       const std::vector<int> &sites, const parameters::Parameters &parameters);
+  inline std::string type() const { return type_; }
+  inline std::string coupling() const { return coupling_; }
+  inline std::vector<int> sites() const { return sites_; }
+  inline int sites(const int &j) const { return sites_[j]; }
+  inline int size() const { return (int)sites_.size(); }
+  inline bool has_parameters() const { return has_parameters_; }
+  inline parameters::Parameters parameters() const { return parameters_; }
 
-    std::vector<int> common_sites(Bond b1, Bond b2);
-    
-    /// writes bond to stream 
-    std::ostream& operator<< (std::ostream& out, const Bond& bond);
+  std::string type_;
+  std::string coupling_;
+  std::vector<int> sites_;
+  bool has_parameters_;
+  parameters::Parameters parameters_;
+};
 
-    /// Comparision for bonds, equal if type, coupling and sites are equal
-    bool operator==(const Bond& lhs, const Bond& rhs);
-    
-    /// Datatype for grouping type and coupling names 
-    struct TypeCoupling
-    {
-      TypeCoupling(const std::string& type, const std::string& coupling);
-      inline std::string type() const { return type_; };
-      inline std::string coupling() const { return coupling_; };
+std::vector<int> common_sites(Bond b1, Bond b2);
 
-      std::string type_;
-      std::string coupling_;
-    };
+/// writes bond to stream
+std::ostream &operator<<(std::ostream &out, const Bond &bond);
 
-    /// writes type_coupling to stream 
-    std::ostream& operator<< (std::ostream& out, const TypeCoupling& tc);
+/// Comparision for bonds, equal if type, coupling and sites are equal
+bool operator==(const Bond &lhs, const Bond &rhs);
 
-    /// Comparision for TypeCoupling, equal if type and coupling are equal 
-    bool operator ==(const TypeCoupling& tc1, const TypeCoupling& tc2);
+/// Datatype for grouping type and coupling names
+struct TypeCoupling {
+  TypeCoupling(const std::string &type, const std::string &coupling);
+  inline std::string type() const { return type_; };
+  inline std::string coupling() const { return coupling_; };
 
-    /// Extracts type and coupling from a bond
-    TypeCoupling type_coupling(const Bond& bond);
-  }
-}
+  std::string type_;
+  std::string coupling_;
+};
+
+/// writes type_coupling to stream
+std::ostream &operator<<(std::ostream &out, const TypeCoupling &tc);
+
+/// Comparision for TypeCoupling, equal if type and coupling are equal
+bool operator==(const TypeCoupling &tc1, const TypeCoupling &tc2);
+
+/// Extracts type and coupling from a bond
+TypeCoupling type_coupling(const Bond &bond);
+} // namespace hydra
 
 #endif

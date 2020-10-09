@@ -25,7 +25,7 @@
 namespace hydra { namespace utils {
 
     inline void PrintPretty(const char* identifier, 
-			    const hydra::operators::Bond& bond) 
+			    const Bond& bond) 
     {
       printf("%s:\n", identifier);
       printf("%s %s ", bond.type().c_str(), bond.coupling().c_str());
@@ -35,7 +35,7 @@ namespace hydra { namespace utils {
     }
 
     inline void PrintPretty(const char* identifier, 
-			    const hydra::operators::BondList& bondlist) 
+			    const BondList& bondlist) 
     {
       printf("%s:\n", identifier);
       for (auto bond : bondlist)
@@ -48,7 +48,7 @@ namespace hydra { namespace utils {
     }
 
     inline void PrintPretty(const char* identifier, 
-			    const hydra::operators::Couplings& couplings) 
+			    const Couplings& couplings) 
     {
       printf("%s:\n", identifier);
       for (auto coupling : couplings)
@@ -59,7 +59,7 @@ namespace hydra { namespace utils {
     }
 
     inline void PrintPretty(const char* identifier, 
-			    const hydra::symmetries::SpaceGroup& group)
+			    const SpaceGroup& group)
     {
       int sym_idx=0;
       printf("%s:\n", identifier);
@@ -73,7 +73,7 @@ namespace hydra { namespace utils {
     }
 
     inline void PrintPretty(const char* identifier, 
-			    const hydra::symmetries::CharacterTable& table)
+			    const CharacterTable& table)
     {
       printf("%s:\n", identifier);
       for (auto name : table.names())
