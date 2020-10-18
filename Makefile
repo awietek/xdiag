@@ -1,4 +1,4 @@
-arch = osx
+arch = hshackle_vm
 
 include options.mk
 include sources.mk
