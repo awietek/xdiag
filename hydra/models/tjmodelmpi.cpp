@@ -8,7 +8,6 @@ namespace hydra { namespace models {
 
     using combinatorics::down_hole_to_up;
     using combinatorics::up_hole_to_down;
-
     template <class coeff_t, class state_t>
     TJModelMPI<coeff_t, state_t>::TJModelMPI
     (BondList bondlist, Couplings couplings, hilbertspaces::hubbard_qn qn)
@@ -55,6 +54,37 @@ namespace hydra { namespace models {
 	}
 
       Zeros(out_vec.vector_local());
+
+    // Apply onsite chemical potential
+      int onsite_idx=0;
+      for (auto site : onsites_)
+	{
+	  const double mu = onsite_potentials_[onsite_idx];
+
+	  if (std::abs(mu) > 1e-14)
+	    {
+      uint64 n_hole_configurations = hs_holes_in_ups_.size();
+	    uint64 upspin_idx=0;
+	    for (state_t upspins : my_upspins_)
+	      {
+		    uint64 upspin_offset = upspin_idx * n_hole_configurations;
+
+		  uint64 downspin_offset=0;
+        for(uint64 idx=upspin_offset;
+			idx<upspin_offset + n_hole_configurations; ++idx)
+		    {
+			    state_t downspins = downspins_table_[idx];
+		      auto coeff = 	
+			    mu * ((gbit(upspins, site) + gbit(downspins, site)));
+		      out_vec.vector_local()(idx) -= coeff * in_vec(idx); 
+		      ++downspin_offset;
+		    }
+		  ++upspin_idx;
+		}
+	    }  // (std::abs(mu) > 1e-14)
+
+	  ++onsite_idx;
+	}
 
       // Apply szsz terms
       double t1 = MPI_Wtime();
@@ -846,6 +876,30 @@ namespace hydra { namespace models {
         }
         ++upspin_idx;
         }
+    }
+    
+    template <class coeff_t, class state_t>
+    lila::Matrix<coeff_t> TJModelMPI<coeff_t, state_t>::single_particle_hopping()
+    {
+      //if (mpi_rank_ == 0) 
+      //{
+        // Assemble t_{ij} matrix of hopping elements
+        
+        lila::Matrix<coeff_t> tMatrix;
+        tMatrix.resize(n_sites_, n_sites_);
+      
+        int hopping_idx = 0;
+        for (auto pair : hoppings_)
+        {
+          int s1 = pair.first;
+          int s2 = pair.second;
+          coeff_t t = hopping_amplitudes_[hopping_idx];
+          tMatrix(s1, s2) = t;
+          tMatrix(s2, s1) = lila::conj(t);
+          hopping_idx++;
+        }
+        return tMatrix;
+    //}
     }
 
 	
