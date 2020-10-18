@@ -59,4 +59,6 @@ appsources+= hydra/applications/hubbarded/hubbarded.cpp
 appsources+= hydra/applications/hubbardfulled/hubbardfulled.cpp
 appsources+= hydra/applications/tjed/tjed.cpp
 appsources+= hydra/applications/tjfulled/tjfulled.cpp
+appsources+= hydra/applications/tjspinftlm/tjspinftlm.cpp
+appsources+= hydra/applications/tjonebodydensity/tjonebodydensity.cpp
 
