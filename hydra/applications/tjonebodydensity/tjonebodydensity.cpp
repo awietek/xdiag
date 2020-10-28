@@ -119,11 +119,11 @@ void run_real_complex(std::string real_complex,
   
   std::vector<Bond> bonds;
   for (int i=0;i<n_sites;i++) {
-    for (int j=0;j<n_sites;j++) {
+    for (int j=i;j<n_sites;j++) {
       if (i != j)
       {
         std::vector<int> sites{i, j};
-        std::string hopping_label = std::to_string(i) + std::to_string(j);
+        std::string hopping_label = std::to_string(i) + "_" + std::to_string(j);
         bonds.push_back(Bond("HUBBARDHOP", hopping_label, sites));
       } else {
         std::vector<int> sites{i};
@@ -137,13 +137,17 @@ void run_real_complex(std::string real_complex,
   // Measure diagonal elements first
 
   for (int i=0;i<n_sites;i++) {
+    std::cout << "starting diagonal for site " << i << std::endl;
     std::map<std::string, complex> coupling_map;
     std::string hopping_label = std::to_string(i);
     coupling_map[hopping_label] = -1;
+    std::cout << "initialize couplings" << std::endl;
     Couplings densityCouplings(coupling_map);
+    std::cout << "done initialize couplings" << std::endl;
     auto hoppingH = TJModelMPI<coeff_t>(densityBondlist, densityCouplings, qn);
     hoppingH.apply_hamiltonian(groundstate, perturbedGroundstate, false);
     singleParticleCorrelations(i, i) = Dot(perturbedGroundstate, groundstate);
+    std::cout << "done" << std::endl;
   }
 
   // Then measure off-diagonal elements.
@@ -153,15 +157,16 @@ void run_real_complex(std::string real_complex,
   // hoppings won't work if coeff_t is real, since the ground state will be real.
   // This would not be necessary if, in the future,
   // complex Hamiltonians can act on real ground states.
-
+  std::cout << "starting off-diagonal" << std::endl;
   if (real_complex == std::string("COMPLEX")) {
     for (int i=0;i<n_sites;i++) {
       for (int j=(i+1);j<n_sites;j++) {
+        std::cout << i << " " << j << std::endl;
 
         // First measure <c_i^\dagger c_j + c_j^\dagger c_j>
         
         std::map<std::string, complex> coupling_map;
-        std::string hopping_label = std::to_string(i) + std::to_string(j);
+        std::string hopping_label = std::to_string(i) + "_" + std::to_string(j);
         coupling_map[hopping_label] = 1;
         Couplings densityCouplings(coupling_map);
         auto hopping_symmetric = TJModelMPI<coeff_t>(densityBondlist, densityCouplings, qn);
@@ -178,6 +183,7 @@ void run_real_complex(std::string real_complex,
         singleParticleCorrelations(j, i) = 0.5*(symmetric_expectation - antisymmetric_expectation);
       }
     }
+    std::cout << "end off-diagonal" << std::endl;
   } else {
     for (int i=0;i<n_sites;i++) {
       for (int j=(i+1);j<n_sites;j++) {
