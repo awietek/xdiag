@@ -1,4 +1,4 @@
-arch = hshackle_vm
+arch = hshackle_rc
 
 include options.mk
 include sources.mk
