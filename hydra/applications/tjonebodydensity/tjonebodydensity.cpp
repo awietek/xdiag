@@ -175,7 +175,7 @@ void run_real_complex(std::string real_complex,
         hopping_antisymmetric.apply_hamiltonian(groundstate, perturbedGroundstate, false);
         complex antisymmetric_expectation = complex(0, -1)*Dot(perturbedGroundstate, groundstate);
         singleParticleCorrelations(i, j) = 0.5*(symmetric_expectation + antisymmetric_expectation);
-        singleParticleCorrelations(j, i) = lila::conj(0.5*(symmetric_expectation + antisymmetric_expectation));
+        singleParticleCorrelations(j, i) = 0.5*(symmetric_expectation - antisymmetric_expectation);
       }
     }
   } else {
