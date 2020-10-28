@@ -9,18 +9,6 @@ includes   = -I. -I$(liladir) -I$(limedir) -I$(claradir)/include
 libraries  = -L/opt/hdf5/gnu/mvapich2_ib/lib -lhdf5 -lmkl_rt -L$(limedir)/lib -llime -lhdf5
 endif
 
-ifeq ($(arch), hshackle_vm)
-cc         = mpicxx
-ccopt      = -O3 -mavx -DLILA_USE_MKL
-ccarch     = -std=c++14 -Wall -pedantic -m64 -Wno-return-type-c-linkage
-liladir    = /home/hshackle/lila
-limedir    = /home/hshackle/lime
-claradir    = /home/hshackle/clara
-includes   = -I. -I$(liladir) -I$(limedir) -I$(claradir)/include -I /opt/intel/mkl/include/
-libraries  = -L/opt/hdf5/gnu/mvapich2_ib/lib -L/opt/intel/mkl/lib/intel64/ -lhdf5 -lmkl_rt -L$(limedir)/lib -llime -lhdf5
-endif
-
-
 ifeq ($(arch), osx)
 cc         = mpicxx
 ccopt      = -O3 -mavx -DLILA_USE_ACCELERATE
@@ -42,6 +30,18 @@ limedir    = /home/awietek/Research/Software/lime
 claradir    = /home/awietek/Research/Software/Clara
 includes   = -I. -I$(liladir) -I$(limedir) -I$(claradir)/include
 endif
+
+ifeq ($(arch), hshackle_rc)
+cc         = mpicxx
+ccopt      = -O3 -mavx -DLILA_USE_MKL
+ccarch     = -std=c++11 -Wall -pedantic -m64 -Wno-return-type-c-linkage
+libraries  = -L/opt/hdf5/gnu/mvapich2_ib/lib -lhdf5 -lmkl_rt -DLILA_USE_MKL -L$(limedir)/lib -llime
+liladir    = /n/home12/hshackleton/lila
+limedir    = /n/home12/hshackleton/lime
+claradir   = /n/home12/hshackleton/clara
+includes   = -I. -I$(liladir) -I$(limedir) -I$(claradir)/include
+endif
+
 
 rm     := rm -f
 mkdir  := mkdir -p
