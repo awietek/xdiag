@@ -51,6 +51,8 @@ namespace hydra { namespace models {
 			     lila::VectorMPI<coeff_t>& out_vec,
 			     bool verbose = false);
 
+      lila::Matrix<coeff_t> single_particle_hopping();
+
       hilbertspaces::hubbard_qn apply_fermion
       (const lila::VectorMPI<coeff_t>& in_vec, lila::VectorMPI<coeff_t>& out_vec,
        std::string type, int site);

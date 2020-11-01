@@ -4,6 +4,8 @@
 #include "hubbardmodeldetail.h"
 #include "hubbardmodelmpi.h"
 
+#include <stdio.h>
+
 namespace hydra { namespace models {
     
     using hilbertspaces::Spinhalf;
@@ -1067,6 +1069,31 @@ namespace hydra { namespace models {
 
       return qn_after;
     }
+ 
+    template <class coeff_t, class state_t>
+    lila::Matrix<coeff_t> HubbardModelMPI<coeff_t, state_t>::single_particle_hopping()
+    {
+      //if (mpi_rank_ == 0) 
+      //{
+        // Assemble t_{ij} matrix of hopping elements
+        
+        lila::Matrix<coeff_t> tMatrix;
+        tMatrix.resize(n_sites_, n_sites_);
+      
+        int hopping_idx = 0;
+        for (auto pair : hoppings_)
+        {
+          int s1 = pair.first;
+          int s2 = pair.second;
+          coeff_t t = hopping_amplitudes_[hopping_idx];
+          tMatrix(s1, s2) = t;
+          tMatrix(s2, s1) = lila::conj(t);
+          hopping_idx++;
+        }
+        return tMatrix;
+    //}
+    }
+
 
       
     template <class coeff_t, class state_t>

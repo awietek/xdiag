@@ -10,7 +10,7 @@
 
 lila::LoggerMPI lg;
 
-#include "tjonebodydensity.options.h"
+#include "hubbardonebodydensity.options.h"
 
 template <class coeff_t>
 void run_real_complex(std::string real_complex,
@@ -33,15 +33,15 @@ void run_real_complex(std::string real_complex,
   FileH5 file;
   if (mpi_rank == 0) file = lime::FileH5(outfile, "w!");
 
-  lg.out(1, "Creating {} t-J model for n_upspins={}, n_downspins={}...\n",
+  lg.out(1, "Creating {} Hubbard model for n_upspins={}, n_downspins={}...\n",
       real_complex, qn.n_upspins, qn.n_downspins);
   lg.out(1, "Using {} MPI tasks\n", mpi_size);
   
-  // Create tJ Hamiltonian 
+  // Create Hubbard Hamiltonian 
 
   int n_sites = bondlist.n_sites();
   double t1 = MPI_Wtime();
-  auto H = TJModelMPI<coeff_t>(bondlist, couplings, qn);
+  auto H = HubbardModelMPI<coeff_t>(bondlist, couplings, qn);
   double t2 = MPI_Wtime();
   lg.out(1, "time init: {} secs\n", t2-t1); 
 
@@ -141,7 +141,7 @@ void run_real_complex(std::string real_complex,
     std::string hopping_label = std::to_string(i);
     coupling_map[hopping_label] = -1;
     Couplings densityCouplings(coupling_map);
-    auto hoppingH = TJModelMPI<coeff_t>(densityBondlist, densityCouplings, qn);
+    auto hoppingH = HubbardModelMPI<coeff_t>(densityBondlist, densityCouplings, qn);
     hoppingH.apply_hamiltonian(groundstate, perturbedGroundstate, false);
     singleParticleCorrelations(i, i) = Dot(perturbedGroundstate, groundstate);
   }
@@ -163,14 +163,14 @@ void run_real_complex(std::string real_complex,
         std::string hopping_label = std::to_string(i) + "_" + std::to_string(j);
         coupling_map[hopping_label] = 1;
         Couplings densityCouplings(coupling_map);
-        auto hopping_symmetric = TJModelMPI<coeff_t>(densityBondlist, densityCouplings, qn);
+        auto hopping_symmetric = HubbardModelMPI<coeff_t>(densityBondlist, densityCouplings, qn);
         hopping_symmetric.apply_hamiltonian(groundstate, perturbedGroundstate, false);
         complex symmetric_expectation = Dot(perturbedGroundstate, groundstate);
 
         // Then measure <c_i^\dagger c_j - c_j^\dagger c_i>
         coupling_map[hopping_label] = std::complex<double>(0, 1);
         densityCouplings = Couplings(coupling_map);
-        auto hopping_antisymmetric = TJModelMPI<coeff_t>(densityBondlist, densityCouplings, qn);
+        auto hopping_antisymmetric = HubbardModelMPI<coeff_t>(densityBondlist, densityCouplings, qn);
         hopping_antisymmetric.apply_hamiltonian(groundstate, perturbedGroundstate, false);
         complex antisymmetric_expectation = complex(0, -1)*Dot(perturbedGroundstate, groundstate);
         singleParticleCorrelations(i, j) = 0.5*(symmetric_expectation + antisymmetric_expectation);
@@ -180,11 +180,12 @@ void run_real_complex(std::string real_complex,
   } else {
     for (int i=0;i<n_sites;i++) {
       for (int j=(i+1);j<n_sites;j++) {
+        std::cout << i << " " << j << std::endl;
         std::map<std::string, complex> coupling_map;
-        std::string hopping_label = std::to_string(i) + std::to_string(j);
+        std::string hopping_label = std::to_string(i) + "_" + std::to_string(j);
         coupling_map[hopping_label] = 1;
         Couplings densityCouplings(coupling_map);
-        auto hoppingH = TJModelMPI<coeff_t>(densityBondlist, densityCouplings, qn);
+        auto hoppingH = HubbardModelMPI<coeff_t>(densityBondlist, densityCouplings, qn);
         hoppingH.apply_hamiltonian(groundstate, perturbedGroundstate, false);
         singleParticleCorrelations(i,j) = 0.5*Dot(perturbedGroundstate, groundstate);
         singleParticleCorrelations(j,i) = 0.5*Dot(perturbedGroundstate, groundstate);
