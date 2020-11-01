@@ -9,6 +9,8 @@
 #include "hubbardmodel.h"
 #include "hubbardmodeldetail.h"
 
+#include <stdio.h>
+
 
 namespace hydra { namespace models {
     
@@ -28,6 +30,8 @@ namespace hydra { namespace models {
        onsites_, onsite_potentials_, 
        szszs_, szsz_amplitudes_,
        exchanges_, exchange_amplitudes_, U_);
+
+
     }
 
     template <class coeff_t>
@@ -49,7 +53,8 @@ namespace hydra { namespace models {
       using utils::gbit;
       using utils::gbits;
       using utils::popcnt;
-	
+       
+
       Hubbard<uint32> hs(n_sites_, qn_);
       IndexHubbard<IndexTable<Spinhalf<uint32>, uint32>> indexing(hs);
       int dim = indexing.size();
@@ -91,6 +96,7 @@ namespace hydra { namespace models {
 
       // Apply onsite chemical potential
       int onsite_idx=0;
+
       for (auto site : onsites_)
 	{
 	  const double mu = onsite_potentials_[onsite_idx];
@@ -244,12 +250,29 @@ namespace hydra { namespace models {
           ++exchange_idx;
         }  // for (auto pair: exchanges_)
 
-
-
-
-
       return hamilton;
     }
+
+    template <class coeff_t>
+    lila::Matrix<coeff_t> HubbardModel<coeff_t>::single_particle_hopping()
+    {
+        lila::Matrix<coeff_t> tMatrix;
+        tMatrix.resize(n_sites_, n_sites_);
+      
+        int hopping_idx = 0;
+        for (auto pair : hoppings_)
+        {
+          int s1 = pair.first;
+          int s2 = pair.second;
+          coeff_t t = hopping_amplitudes_[hopping_idx];
+          tMatrix(s1, s2) = t;
+          tMatrix(s2, s1) = lila::conj(t);
+          hopping_idx++;
+        }
+        return tMatrix;
+    }
+
+
 
     template <class coeff_t>
     lila::Matrix<double> HubbardModel<coeff_t>::szMatrix(int siteIndex) const

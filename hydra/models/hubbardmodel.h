@@ -65,6 +65,7 @@ namespace hydra { namespace models {
       lila::Matrix<double> szMatrix(int siteIndex) const;
       lila::Matrix<double> sPlusMatrix(int siteIndex) const;
       lila::Matrix<double> sMinusMatrix(int siteIndex) const;
+      lila::Matrix<coeff_t> single_particle_hopping();
 
       qn_t qn() const { return qn_; }
       void set_qn(qn_t qn);
