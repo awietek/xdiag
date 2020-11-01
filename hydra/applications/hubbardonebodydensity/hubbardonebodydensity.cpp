@@ -143,7 +143,7 @@ void run_real_complex(std::string real_complex,
     Couplings densityCouplings(coupling_map);
     auto hoppingH = HubbardModelMPI<coeff_t>(densityBondlist, densityCouplings, qn);
     hoppingH.apply_hamiltonian(groundstate, perturbedGroundstate, false);
-    singleParticleCorrelations(i, i) = Dot(perturbedGroundstate, groundstate);
+    singleParticleCorrelations(i, i) = Dot(groundstate, perturbedGroundstate);
   }
 
   // Then measure off-diagonal elements.
@@ -165,16 +165,16 @@ void run_real_complex(std::string real_complex,
         Couplings densityCouplings(coupling_map);
         auto hopping_symmetric = HubbardModelMPI<coeff_t>(densityBondlist, densityCouplings, qn);
         hopping_symmetric.apply_hamiltonian(groundstate, perturbedGroundstate, false);
-        complex symmetric_expectation = Dot(perturbedGroundstate, groundstate);
+        complex symmetric_expectation = Dot(groundstate, perturbedGroundstate);
 
         // Then measure <c_i^\dagger c_j - c_j^\dagger c_i>
         coupling_map[hopping_label] = std::complex<double>(0, 1);
         densityCouplings = Couplings(coupling_map);
         auto hopping_antisymmetric = HubbardModelMPI<coeff_t>(densityBondlist, densityCouplings, qn);
         hopping_antisymmetric.apply_hamiltonian(groundstate, perturbedGroundstate, false);
-        complex antisymmetric_expectation = complex(0, -1)*Dot(perturbedGroundstate, groundstate);
-        singleParticleCorrelations(i, j) = 0.5*(symmetric_expectation + antisymmetric_expectation);
-        singleParticleCorrelations(j, i) = 0.5*(symmetric_expectation - antisymmetric_expectation);
+        complex antisymmetric_expectation = complex(0, -1)*Dot(groundstate, perturbedGroundstate);
+        singleParticleCorrelations(i, j) = -0.5*(symmetric_expectation + antisymmetric_expectation);
+        singleParticleCorrelations(j, i) = -0.5*(symmetric_expectation - antisymmetric_expectation);
       }
     }
   } else {
@@ -187,8 +187,9 @@ void run_real_complex(std::string real_complex,
         Couplings densityCouplings(coupling_map);
         auto hoppingH = HubbardModelMPI<coeff_t>(densityBondlist, densityCouplings, qn);
         hoppingH.apply_hamiltonian(groundstate, perturbedGroundstate, false);
-        singleParticleCorrelations(i,j) = 0.5*Dot(perturbedGroundstate, groundstate);
-        singleParticleCorrelations(j,i) = 0.5*Dot(perturbedGroundstate, groundstate);
+        singleParticleCorrelations(i,j) = -0.5*Dot(groundstate, perturbedGroundstate);
+        std::cout << singleParticleCorrelations(i,j) << std::endl;
+        singleParticleCorrelations(j,i) = singleParticleCorrelations(i,j);
       }
     }
   }
