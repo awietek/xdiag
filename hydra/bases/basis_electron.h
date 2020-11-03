@@ -21,7 +21,32 @@
 
 namespace hydra {
 
-template <class bit_t = std_bit_t> class BasisElectronIterator {
+template <class bit_t = std_bit_t> class BasisElectronIterator;
+
+// BasisElectron
+template <class bit_t = std_bit_t> class BasisElectron {
+public:
+  using qn_t = qn_electron;
+  using state_t = state_electron<bit_t>;
+  using iterator_t = BasisElectronIterator<bit_t>;
+
+  BasisElectron(int const &n_sites, qn_t const &qn);
+
+  int n_sites() const;
+  qn_t qn() const;
+  iterator_t begin() const;
+  iterator_t end() const;
+  size_t size() const;
+  size_t rawsize() const;
+
+private:
+  number_t n_sites_;
+  qn_t qn_;
+  iterator_t begin_, end_;
+};
+
+// BasisElectronIterator
+template <class bit_t> class BasisElectronIterator {
 public:
   BasisElectronIterator() = default;
   BasisElectronIterator(BasisSpinHalf<bit_t> const &up,
@@ -53,64 +78,6 @@ private:
   int n_sites_;
   BasisSpinHalfIterator<bit_t> down_begin_, down_end_;
   BasisSpinHalfIterator<bit_t> down_iter_, up_iter_;
-};
-
-/*!
-  Class to generate all configurations of a BasisElectron-type Hilbert space
-  given the number of upspins and downspins on a given number of sites.
-
-  Usage:
-  @code
-  #include <hydra/hilberspaces/hubbard.h>
-
-  using BasisElectron = hydra::hilbertspaces::BasisElectron<>;
-  using hydra::hilbertspaces::hubbard_qn;
-  using hydra::hilbertspaces::Print;
-
-  int n_upspins = 4;
-  int n_downspins = 4;
-  int n_sites = 8;
-
-  hubbard_qn qn = {n_upspins, n_downspins};
-  BasisElectron hs(n_sites, qn);
-  int ctr=0;
-  for (auto state : hs)
-    std::cout << Print(n_sites, state) << std::endl;
-
-  @endcode
-  @tparam bit_type elementary datatype to store up and down configurations
-                     one of uint16, uint32, uint64
-*/
-template <class bit_t = std_bit_t> class BasisElectron {
-public:
-  using qn_t = qn_electron;
-  using state_t = state_electron<bit_t>;
-  using iterator_t = BasisElectronIterator<bit_t>;
-
-  BasisElectron(int const &n_sites, qn_t const &qn);
-
-  /// returns number of sites of the Hilbert space
-  int n_sites() const;
-
-  /// returns the quantum number of the Hilbert space
-  qn_t qn() const;
-
-  /// returns iterator to first configuration of Hilbertspace
-  iterator_t begin() const;
-
-  /// returns iterator to next-to-last configuration of Hilbertspace
-  iterator_t end() const;
-
-  /// returns dimension of the Hilbert space with given quantum numbers
-  size_t size() const;
-
-  /// returns raw dimension with all quantum numbers, i.e. pow(4, n_sites)
-  size_t rawsize() const;
-
-private:
-  number_t n_sites_;
-  qn_t qn_;
-  iterator_t begin_, end_;
 };
 
 } // namespace hydra

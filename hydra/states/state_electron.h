@@ -56,7 +56,7 @@ inline bool operator>=(state_electron<bit_t> const &s1,
 }
 
 // get quantum number
-template <class bit_t> inline qn_electron qn(state_electron<bit_t> const &s) {
+template <class bit_t> inline qn_electron QN(state_electron<bit_t> const &s) {
   return qn_electron({utils::popcnt(s.ups), utils::popcnt(s.dns)});
 }
 

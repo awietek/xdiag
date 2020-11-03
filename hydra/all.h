@@ -17,6 +17,8 @@
 
 #include "common.h"
 
+
+
 #include "qns/qn_spinhalf.h"
 #include "qns/qn_electron.h"
 #include "qns/qn_tj.h"
@@ -26,8 +28,8 @@
 #include "states/state_tj.h"
 
 #include "bases/basis_spinhalf.h"
+#include "bases/basis_tj.h"
 #include "bases/basis_electron.h"
-// #include "hilbertspaces/tj.h"
 
 #include "indexing/index_table.h"
 #include "indexing/index_search.h"
@@ -40,8 +42,11 @@
 #include "models/heisenbergmodel.h"
 #include "models/spinlessfermions.h"
 
+#include "combinatorics/binomial.h"
+#include "combinatorics/up_down_hole.h"
+#include "combinatorics/bit_patterns.h"
+
 #include "utils/bitops.h"
-#include "utils/combinatorics.h"
 #include "utils/range.h"
 #include "utils/iochecks.h"
 #include "utils/format.h"
@@ -50,6 +55,9 @@
 #include "operators/bond.h"
 #include "operators/bondlist.h"
 #include "operators/couplings.h"
+
+#include "entanglement/reduced_density_matrix.h"
+#include "entanglement/entanglement_entropy.h"
 
 // #include "thermodynamics/thermodynamics_detail.h"
 // #include "thermodynamics/thermodynamics_exact.h"

@@ -12,14 +12,21 @@ public:
   using state_t = typename basis_t::state_t;
 
   IndexSearch() = default;
-  IndexSearch(const basis_t &basis);
+  IndexSearch(basis_t const &basis) : basis_(basis) {
+    for (auto state : basis)
+      states_.push_back(state);
+  }
 
-  idx_t index(const state_t &state) const;
-  state_t state(const idx_t &index) const { return states_[index]; }
-  idx_t size() const { return size_; }
+  idx_t index(state_t const &state) const {
+    // Do binary search
+    return std::lower_bound(states_.begin(), states_.end(), state) -
+           states_.begin();
+  }  
+  state_t state(idx_t const &index) const { return states_[index]; }
+  idx_t size() const { return basis_.size(); }
 
 private:
-  idx_t size_;
+  basis_t basis_;
   std::vector<state_t> states_;
 };
 

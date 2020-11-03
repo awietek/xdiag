@@ -1,6 +1,9 @@
 #ifndef HYDRA_QNS_QN_SPINHALF_H_
 #define HYDRA_QNS_QN_SPINHALF_H_
 
+#include <string>
+#include <sstream>
+
 #include <hydra/common.h>
 
 namespace hydra {
@@ -41,7 +44,13 @@ inline bool valid(qn_spinhalf const &qn, number_t const &n_sites) {
   // (unsigned cast checks if positive)
   return ((unsigned)qn.n_up <= n_sites);
 }
-
+  
+inline std::string String(qn_spinhalf qn) {
+  std::stringstream ss;
+  ss << "QN SpinHalf (n_up=" << qn.n_up << ")";
+  return ss.str();
+}
+  
 } // namespace hydra
 
 #endif

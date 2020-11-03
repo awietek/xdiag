@@ -63,7 +63,7 @@ inline bool operator>=(state_spinhalf<bit_t> const &s1,
 }
 
 // get quantum number
-template <class bit_t> inline qn_spinhalf qn(state_spinhalf<bit_t> const &s) {
+template <class bit_t> inline qn_spinhalf QN(state_spinhalf<bit_t> const &s) {
   return qn_spinhalf({utils::popcnt(s.spins)});
 }
 
@@ -71,12 +71,12 @@ template <class bit_t> inline qn_spinhalf qn(state_spinhalf<bit_t> const &s) {
 template <class bit_t, class int_t>
 inline state_spinhalf<bit_t> operator<<(state_spinhalf<bit_t> const &s,
                                         int_t const &L) {
-  return state_spinhalf<bit_t>{s.spins << L};
+  return state_spinhalf<bit_t>{(bit_t)(s.spins << L)};
 }
 template <class bit_t, class int_t>
 inline state_spinhalf<bit_t> operator>>(state_spinhalf<bit_t> const &s,
                                         int_t const &R) {
-  return state_spinhalf<bit_t>{s.spins >> R};
+  return state_spinhalf<bit_t>{(bit_t)(s.spins >> (bit_t)R)};
 }
 template <class bit_t, class int_t>
 inline state_spinhalf<bit_t> &operator<<=(state_spinhalf<bit_t> &s,
@@ -113,7 +113,7 @@ inline state_spinhalf<bit_t> sitevals(state_spinhalf<bit_t> const &s,
 template <class bit_t>
 inline state_spinhalf<bit_t> operator|(state_spinhalf<bit_t> const &s1,
                                        state_spinhalf<bit_t> const &s2) {
-  return state_spinhalf<bit_t>({s1.spins | s2.spins});
+  return state_spinhalf<bit_t>({(bit_t)(s1.spins | s2.spins)});
 }
 
 template <class bit_t>

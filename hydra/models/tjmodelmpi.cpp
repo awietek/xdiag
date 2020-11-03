@@ -2,7 +2,8 @@
 
 #include "hubbardmodeldetail.h"
 #include <hydra/utils/bitops.h>
-#include <hydra/utils/combinatorics.h>
+#include <hydra/combinatorics/up_down_hole.h>
+#include <hydra/combinatorics/binomial.h>
 
 namespace hydra {
 
@@ -257,11 +258,13 @@ void TJModelMPI<coeff_t, bit_t, idx_t>::apply_hamiltonian(
   t1 = MPI_Wtime();
   int hopping_idx = 0;
   for (auto pair : hoppings_) {
-    const int s1 = std::min(pair.first, pair.second);
-    const int s2 = std::max(pair.first, pair.second);
-    const coeff_t t = hopping_amplitudes_[hopping_idx];
-    const bit_t flipmask = ((bit_t)1 << s1) | ((bit_t)1 << s2);
-    const bit_t firstmask = (bit_t)1 << s1;
+    int s1 = std::min(pair.first, pair.second);
+    int s2 = std::max(pair.first, pair.second);
+    coeff_t t = hopping_amplitudes_[hopping_idx];
+    if (pair.first > pair.second) t = lila::conj(t);
+    
+    bit_t flipmask = ((bit_t)1 << s1) | ((bit_t)1 << s2);
+    bit_t firstmask = (bit_t)1 << s1;
 
     idx_t n_hole_configurations = hs_holes_in_ups_.size();
 
@@ -497,11 +500,13 @@ void TJModelMPI<coeff_t, bit_t, idx_t>::apply_hamiltonian(
   std::fill(recv_buffer_.begin(), recv_buffer_.end(),
             0); // clear the recv buffer
   for (auto pair : hoppings_) {
-    const int s1 = std::min(pair.first, pair.second);
-    const int s2 = std::max(pair.first, pair.second);
-    const coeff_t t = hopping_amplitudes_[hopping_idx];
-    const bit_t flipmask = ((bit_t)1 << s1) | ((bit_t)1 << s2);
-    const bit_t firstmask = (bit_t)1 << s1;
+    int s1 = std::min(pair.first, pair.second);
+    int s2 = std::max(pair.first, pair.second);
+    coeff_t t = hopping_amplitudes_[hopping_idx];
+    if (pair.first > pair.second) t = lila::conj(t);
+
+    bit_t flipmask = ((bit_t)1 << s1) | ((bit_t)1 << s2);
+    bit_t firstmask = (bit_t)1 << s1;
 
     if (std::abs(t) > 1e-14) {
       // Loop over all configurations

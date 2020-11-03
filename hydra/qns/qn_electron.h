@@ -1,6 +1,9 @@
 #ifndef HYDRA_QNS_QN_ELECTRON_H_
 #define HYDRA_QNS_QN_ELECTRON_H_
 
+#include <string>
+#include <sstream>
+
 #include <hydra/common.h>
 
 namespace hydra {
@@ -43,6 +46,12 @@ inline bool valid(qn_electron const &qn, number_t const &n_sites) {
   return ((unsigned)qn.n_up <= n_sites) && ((unsigned)qn.n_dn <= n_sites);
 }
 
+inline std::string String(qn_electron qn) {
+  std::stringstream ss;
+  ss << "QN Electron (n_up=" << qn.n_up << ", n_dn=" << qn.n_dn << ")";
+  return ss.str();
 }
+
+} // namespace hydra
 
 #endif

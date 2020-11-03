@@ -1,6 +1,6 @@
 #include "index_spinhalf.h"
 
-#include <hydra/utils/combinatorics.h>
+#include <hydra/combinatorics/bit_patterns.h>
 
 namespace hydra {
 
