@@ -2,6 +2,8 @@
 #include <lila/all.h>
 
 #include <hydra/bases/basis_spinhalf.h>
+#include <hydra/combinatorics/binomial.h>
+#include <hydra/combinatorics/up_down_hole.h>
 #include <hydra/utils/bitops.h>
 
 #include "hubbardmodeldetail.h"
@@ -63,9 +65,9 @@ TJModel<coeff_t, bit_t, idx_t>::matrix(bool ninj_term) const {
   auto basis_holes_in_up = BasisSpinHalf<bit_t>(n_sites_ - nup, ndn);
   for (auto ups : basis_up)
     for (auto holes : basis_holes_in_up) {
-      auto dns = up_hole_to_down(ups, holes);
+      auto dns = up_hole_to_down(ups.spins, holes.spins);
       upspins[idx] = ups.spins;
-      dnspins[idx] = dns.spins;
+      dnspins[idx] = dns;
       ++idx;
     }
   assert(idx == dim_);
@@ -175,6 +177,8 @@ TJModel<coeff_t, bit_t, idx_t>::matrix(bool ninj_term) const {
     int s1 = std::min(pair.first, pair.second);
     int s2 = std::max(pair.first, pair.second);
     coeff_t t = hopping_amplitudes_[hopping_idx];
+    if (pair.first > pair.second) t = lila::conj(t);
+    
     bit_t flipmask = ((bit_t)1 << s1) | ((bit_t)1 << s2);
     bit_t firstmask = (bit_t)1 << s1;
 
@@ -253,9 +257,9 @@ TJModel<coeff_t, bit_t, idx_t>::szMatrix(int siteIndex) const {
   auto hs_holes_in_ups = BasisSpinHalf<bit_t>(n_sites_ - nup, ndn);
   for (auto ups : hs_upspins)
     for (auto holes : hs_holes_in_ups) {
-      auto dns = up_hole_to_down(ups, holes);
+      auto dns = up_hole_to_down(ups.spins, holes.spins);
       upspins[idx] = ups.spins;
-      dnspins[idx] = dns.spins;
+      dnspins[idx] = dns;
       ++idx;
     }
   assert(idx == dim_);
@@ -338,9 +342,9 @@ TJModel<coeff_t, bit_t, idx_t>::sPlusMatrix(int siteIndex) const {
         BasisSpinHalf<bit_t>(n_sites_ - basenup, basendn);
     for (auto ups : hs_baseupspins)
       for (auto holes : hs_holes_in_baseups) {
-        auto dns = up_hole_to_down(ups, holes);
+        auto dns = up_hole_to_down(ups.spins, holes.spins);
         baseupspins[idx] = ups.spins;
-        basednspins[idx] = dns.spins;
+        basednspins[idx] = dns;
         ++idx;
       }
     assert(idx == dim_);
@@ -351,9 +355,9 @@ TJModel<coeff_t, bit_t, idx_t>::sPlusMatrix(int siteIndex) const {
         BasisSpinHalf<bit_t>(n_sites_ - targetnup, targetndn);
     for (auto ups : hs_targetupspins)
       for (auto holes : hs_holes_in_targetups) {
-        auto dns = up_hole_to_down(ups, holes);
+        auto dns = up_hole_to_down(ups.spins, holes.spins);
         targetupspins[idx] = ups.spins;
-        targetdnspins[idx] = dns.spins;
+        targetdnspins[idx] = dns;
         ++idx;
       }
     assert(idx == targetdim);
@@ -456,9 +460,9 @@ TJModel<coeff_t, bit_t, idx_t>::sMinusMatrix(int siteIndex) const {
         BasisSpinHalf<bit_t>(n_sites_ - basenup, basendn);
     for (auto ups : hs_baseupspins)
       for (auto holes : hs_holes_in_baseups) {
-        auto dns = up_hole_to_down(ups, holes);
+        auto dns = up_hole_to_down(ups.spins, holes.spins);
         baseupspins[idx] = ups.spins;
-        basednspins[idx] = dns.spins;
+        basednspins[idx] = dns;
         ++idx;
       }
     assert(idx == dim_);
@@ -469,9 +473,9 @@ TJModel<coeff_t, bit_t, idx_t>::sMinusMatrix(int siteIndex) const {
         BasisSpinHalf<bit_t>(n_sites_ - targetnup, targetndn);
     for (auto ups : hs_targetupspins)
       for (auto holes : hs_holes_in_targetups) {
-        auto dns = up_hole_to_down(ups, holes);
+        auto dns = up_hole_to_down(ups.spins, holes.spins);
         targetupspins[idx] = ups.spins;
-        targetdnspins[idx] = dns.spins;
+        targetdnspins[idx] = dns;
         ++idx;
       }
     assert(idx == targetdim);

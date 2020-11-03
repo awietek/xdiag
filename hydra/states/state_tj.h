@@ -7,8 +7,10 @@
 #include <hydra/qns/qn_tj.h>
 #include <hydra/utils/bitops.h>
 
-#include <hydra/utils/combinatorics.h>
+#include <hydra/combinatorics/up_down_hole.h>
 #include <hydra/states/state_spinhalf.h>
+
+#include <iostream>
 
 namespace hydra {
 
@@ -20,15 +22,14 @@ template <class bit_t = std_bit_t> struct state_tj {
 
 // raw index in 3**N Hilbertspace
 template <class bit_t = std_bit_t>
-inline bit_t rawidx(state_tj<bit_t> const &state, number_t const &n_sites = 0) {
-  bit_t ups = state.ups;
-  bit_t dns = state.dns;
+inline bit_t rawidx(state_tj<bit_t> state, number_t const &n_sites = 0) {
   bit_t idx = 0;
   bit_t base = 1;
-  while (ups && dns) {
-    idx += ((ups & (bit_t)1) | (dns & (bit_t)1) + (ups & (bit_t)1)) * base;
-    ups >>= 1;
-    dns >>= 1;
+  while (state.ups | state.dns) {
+    bit_t local = ((state.ups & (bit_t)1) << 1) | (state.dns & (bit_t)1);
+    idx += local * base;
+    state.ups >>= 1;
+    state.dns >>= 1;
     base *= 3;
   }
   return idx;
@@ -64,7 +65,7 @@ inline bool operator>=(state_tj<bit_t> const &s1, state_tj<bit_t> const &s2) {
 }
 
 // get quantum number
-template <class bit_t> inline qn_tj qn(state_tj<bit_t> const &s) {
+template <class bit_t> inline qn_tj QN(state_tj<bit_t> const &s) {
   return qn_tj({utils::popcnt(s.ups), utils::popcnt(s.dns)});
 }
 

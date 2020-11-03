@@ -4,14 +4,16 @@
 
 #include "basis_electron.h"
 
+#include <hydra/combinatorics/binomial.h>
+
 namespace hydra {
 
 template <class bit_t>
-BasisElectron<bit_t>::BasisElectron(const int &n_sites, const qn_t &qn)
+BasisElectron<bit_t>::BasisElectron(int const &n_sites, qn_t const &qn)
     : n_sites_(n_sites), qn_(qn) {
   assert(valid(qn, n_sites));
   BasisSpinHalf<bit_t> up(n_sites, qn.n_up);
-  BasisSpinHalf<bit_t> down(n_sites, n_sites - qn.n_up);
+  BasisSpinHalf<bit_t> down(n_sites, qn.n_dn);
   begin_ = BasisElectronIterator<bit_t>(
       up, down, {(*up.begin()).spins, (*down.begin()).spins});
   end_ = BasisElectronIterator<bit_t>(

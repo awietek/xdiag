@@ -51,7 +51,7 @@ lila::Matrix<double> HeisenbergModel<bit_t>::matrix(BondList bondlist,
     double J = lila::real(couplings[coupling]);
 
     // Apply Heisenberg operator on sites s1, s2
-    uint64 flipmask = ((uint64)1 << s1) | ((uint64)1 << s2);
+    bit_t flipmask = ((bit_t)1 << s1) | ((bit_t)1 << s2);
     for (int idx = 0; idx < indexing.size(); ++idx) {
       auto state = indexing.state(idx);
 
@@ -70,61 +70,65 @@ lila::Matrix<double> HeisenbergModel<bit_t>::matrix(BondList bondlist,
   return hamilton;
 }
 
-template <class bit_t>
-lila::Matrix<complex>
-HeisenbergModel<bit_t>::matrix(BondList bondlist, Couplings couplings, int qn,
-                               CharacterTable &character_table,
-                               std::string representation_name) const {
-  using utils::gbit;
-  using utils::popcnt;
-  using utils::range;
+// template <class bit_t>
+// lila::Matrix<complex>
+// HeisenbergModel<bit_t>::matrix(BondList bondlist, Couplings couplings, int qn,
+//                                CharacterTable &character_table,
+//                                std::string representation_name) const {
+//   using utils::gbit;
+//   using utils::popcnt;
+//   using utils::range;
 
-  int n_sites = bondlist.n_sites();
+//   int n_sites = bondlist.n_sites();
 
-  BasisSpinHalf<bit_t> hs(n_sites, qn);
-  IndexSymmetrized<BasisSpinHalf<bit_t>> indexing(hs, character_table,
-						  representation_name);
-  std::vector<complex> characters =
-      character_table.characters(representation_name);
-  int dim = indexing.size();
-  lila::Matrix<complex> hamilton(dim, dim);
-  lila::Zeros(hamilton);
+//   BasisSpinHalf<bit_t> hs(n_sites, qn);
+//   IndexSymmetrized<BasisSpinHalf<bit_t>> indexing(hs, character_table,
+//                                                   representation_name);
+//   std::vector<complex> characters =
+//       character_table.characters(representation_name);
+//   int dim = indexing.size();
+//   lila::Matrix<complex> hamilton(dim, dim);
+//   lila::Zeros(hamilton);
 
-  auto heisenberg_bonds = bondlist.bonds_of_type("HEISENBERG");
-  for (auto bond : heisenberg_bonds) {
-    assert(bond.size() == 2); // Heisenberg bonds must have length 2
-    int s1 = bond.sites(0);
-    int s2 = bond.sites(1);
-    std::string coupling = bond.coupling();
-    double J = lila::real(couplings[coupling]);
+//   auto heisenberg_bonds = bondlist.bonds_of_type("HEISENBERG");
+//   for (auto bond : heisenberg_bonds) {
+//     assert(bond.size() == 2); // Heisenberg bonds must have length 2
+//     int s1 = bond.sites(0);
+//     int s2 = bond.sites(1);
+//     std::string coupling = bond.coupling();
+//     double J = lila::real(couplings[coupling]);
 
-    // Apply Heisenberg operator on sites s1, s2
-    uint64 flipmask = ((uint64)1 << s1) | ((uint64)1 << s2);
-    for (int idx : range<>(indexing.size())) {
-      auto state = indexing.state(idx);
+//     // Apply Heisenberg operator on sites s1, s2
+//     bit_t flipmask = ((bit_t)1 << s1) | ((bit_t)1 << s2);
+//     for (int idx : range<>(indexing.size())) {
+//       auto state = indexing.state(idx);
 
-      if (siteval(state, s1) == siteval(state, s2))
-        hamilton(idx, idx) += J / 4.; // Ising
-      else {
-        hamilton(idx, idx) -= J / 4.; // Ising
+//       if (siteval(state, s1) == siteval(state, s2))
+//         hamilton(idx, idx) += J / 4.; // Ising
+//       else {
+//         hamilton(idx, idx) -= J / 4.; // Ising
 
-        // Exchange term
-        state_t new_state = {state.spins ^ flipmask};
-        state_t representative = new_state;
-        int n_sym = indexing.find_representative(&representative);
-        int new_idx = indexing.index(representative);
+//         // Exchange term
+//         state_t new_state = {state.spins ^ flipmask};
+//         state_t representative = new_state;
+//         int n_sym = indexing.find_representative(&representative);
+//         int new_idx = indexing.index(representative);
 
-        if (new_idx != -1) {
-          complex character = characters[n_sym];
-          complex coeff =
-              indexing.norm(new_idx) / indexing.norm(idx) * character * J / 2.;
-          hamilton(new_idx, idx) += coeff;
-        }
-      }
-    }
-  }
+//         if (new_idx != -1) {
+//           complex character = characters[n_sym];
+//           complex coeff =
+//               indexing.norm(new_idx) / indexing.norm(idx) * character * J / 2.;
+//           hamilton(new_idx, idx) += coeff;
+//         }
+//       }
+//     }
+//   }
 
-  return hamilton;
-}
+//   return hamilton;
+// }
+
+// template class HeisenbergModel<uint16>;
+template class HeisenbergModel<uint32>;
+template class HeisenbergModel<uint64>;
 
 } // namespace hydra

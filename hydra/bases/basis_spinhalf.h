@@ -18,18 +18,44 @@
 #include <string>
 
 #include <hydra/common.h>
-#include <hydra/utils/combinatorics.h>
+#include <hydra/combinatorics/bit_patterns.h>
 
 #include <hydra/qns/qn_spinhalf.h>
 #include <hydra/states/state_spinhalf.h>
 
-
 namespace hydra {
 
-template <class bit_t = std_bit_t> class BasisSpinHalfIterator {
+template <class bit_t = std_bit_t> class BasisSpinHalfIterator;
+
+// BasisSpinHalf
+template <class bit_t = std_bit_t> class BasisSpinHalf {
+public:
+  using qn_t = qn_spinhalf;
+  using state_t = state_spinhalf<bit_t>;
+  using iterator_t = BasisSpinHalfIterator<bit_t>;
+
+  BasisSpinHalf() = default;
+  BasisSpinHalf(int const &n_sites, qn_t const &qn);
+  BasisSpinHalf(int const &n_sites, int const &n_up);
+
+  int n_sites() const;
+  qn_t qn() const;
+  iterator_t begin() const;
+  iterator_t end() const;
+  uint64 size() const;
+  uint64 rawsize() const;
+
+private:
+  int n_sites_;
+  qn_t qn_;
+  iterator_t begin_, end_;
+};
+
+// BasisSpinHalfIterator
+template <class bit_t> class BasisSpinHalfIterator {
 public:
   using state_t = state_spinhalf<bit_t>;
-  
+
   BasisSpinHalfIterator() = default;
   BasisSpinHalfIterator(const state_t &state);
 
@@ -47,29 +73,6 @@ public:
 
 private:
   bit_t current_;
-};
-
-template <class bit_t = std_bit_t> class BasisSpinHalf {
-public:
-  using qn_t = qn_spinhalf;
-  using state_t = state_spinhalf<bit_t>;
-  using iterator_t = BasisSpinHalfIterator<bit_t>;
-
-  BasisSpinHalf() = default;
-  BasisSpinHalf(int const &n_sites, qn_t const &qn);
-  BasisSpinHalf(int const &n_sites, int const &qn);
-
-  int n_sites() const;
-  qn_t qn() const;
-  iterator_t begin() const;
-  iterator_t end() const;
-  uint64 size() const;
-  uint64 rawsize() const;
-
-private:
-  int n_sites_;
-  qn_t qn_;
-  iterator_t begin_, end_;
 };
 
 } // namespace hydra

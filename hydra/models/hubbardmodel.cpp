@@ -87,11 +87,14 @@ lila::Matrix<coeff_t> HubbardModel<coeff_t, bit_t, idx_t>::matrix() const {
   // Apply hopping terms
   int hopping_idx = 0;
   for (auto pair : hoppings_) {
-    const int s1 = std::min(pair.first, pair.second);
-    const int s2 = std::max(pair.first, pair.second);
-    const coeff_t t = hopping_amplitudes_[hopping_idx];
-    const bit_t flipmask = ((bit_t)1 << s1) | ((bit_t)1 << s2);
-    const bit_t secondmask = (bit_t)1 << s2;
+    int s1 = std::min(pair.first, pair.second);
+    int s2 = std::max(pair.first, pair.second);
+    coeff_t t = hopping_amplitudes_[hopping_idx];
+    if (pair.first > pair.second)
+      t = lila::conj(t);
+
+    bit_t flipmask = ((bit_t)1 << s1) | ((bit_t)1 << s2);
+    bit_t secondmask = (bit_t)1 << s2;
 
     if (std::abs(t) > 1e-14) {
       for (int idx : range<>(indexing.size())) {
@@ -411,10 +414,13 @@ void HubbardModel<coeff_t, bit_t, idx_t>::apply_hamiltonian(
   // Apply hopping terms
   int hopping_idx = 0;
   for (auto pair : hoppings_) {
-    const int s1 = std::min(pair.first, pair.second);
-    const int s2 = std::max(pair.first, pair.second);
-    const coeff_t t = hopping_amplitudes_[hopping_idx];
-    const bit_t flipmask = ((bit_t)1 << s1) | ((bit_t)1 << s2);
+    int s1 = std::min(pair.first, pair.second);
+    int s2 = std::max(pair.first, pair.second);
+    coeff_t t = hopping_amplitudes_[hopping_idx];
+    if (pair.first > pair.second)
+      t = lila::conj(t);
+
+    bit_t flipmask = ((bit_t)1 << s1) | ((bit_t)1 << s2);
     for (int idx : range<>(indexing.size())) {
       auto state = indexing.state(idx);
       const bit_t &ups = state.ups;
@@ -537,7 +543,6 @@ qn_electron HubbardModel<coeff_t, bit_t, idx_t>::apply_fermion(
   }
   return qn_after;
 }
-
 
 template class HubbardModel<double, uint32, uint16>;
 template class HubbardModel<double, uint32, uint32>;

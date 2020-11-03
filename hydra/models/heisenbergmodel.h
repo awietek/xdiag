@@ -51,9 +51,9 @@ public:
   lila::Matrix<double> matrix(BondList bondlist, Couplings couplings,
                               int qn) const;
 
-  lila::Matrix<complex> matrix(BondList bondlist, Couplings couplings, int qn,
-                               CharacterTable &character_table,
-                               std::string representation_name) const;
+  // lila::Matrix<complex> matrix(BondList bondlist, Couplings couplings, int qn,
+  //                              CharacterTable &character_table,
+  //                              std::string representation_name) const;
 };
 
 } // namespace hydra

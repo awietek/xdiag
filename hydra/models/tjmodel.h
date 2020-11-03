@@ -1,3 +1,4 @@
+
 // Copyright 2020 Alexander Wietek - All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,19 +20,24 @@
 #include <vector>
 
 #include <hydra/qns/qn_tj.h>
-#include <hydra/bases/basis_electron.h>
+#include <hydra/bases/basis_tj.h>
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
 #include <lila/matrix.h>
 
 namespace hydra {
 
-template <class coeff_t, class bit_t = std_bit_t, class idx_t = std_idx_t>
+template <class coeff_t_, class bit_t_ = std_bit_t, class idx_t_ = std_idx_t>
 class TJModel {
 
 public:
+  using coeff_t = coeff_t_;
+  using bit_t = bit_t_;
+  using idx_t = idx_t_;
+  
   using qn_t = qn_tj;
-
+  using basis_t = BasisTJ<bit_t>;
+  
   TJModel(BondList bondlist, Couplings couplings, qn_t qn);
 
   lila::Matrix<coeff_t> matrix(bool ninj_term = false) const;

@@ -5,6 +5,7 @@
 #include "basis_spinhalf.h"
 
 #include <hydra/utils/bitops.h>
+#include <hydra/combinatorics/binomial.h>
 
 namespace hydra {
 

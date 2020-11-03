@@ -1,5 +1,5 @@
-#ifndef HYDRA_INDEXING_INDEXELECTRON_
-#define HYDRA_INDEXING_INDEXELECTRON_
+#ifndef HYDRA_INDEXING_INDEXELECTRON_H_
+#define HYDRA_INDEXING_INDEXELECTRON_H_
 
 #include <vector>
 
@@ -17,7 +17,7 @@ public:
   using qn_t = qn_electron;
 
   IndexElectron() = default;
-  IndexElectron(const basis_t &basis);
+  IndexElectron(basis_t const &basis);
 
   inline idx_t index(const state_t &state) const {
     return index_up_.index({state.ups}) * index_dn_.size() +
@@ -35,6 +35,7 @@ private:
   idx_t size_;
   number_t n_sites_;
   qn_t qn_;
+  BasisSpinHalf<bit_t> basis_up_, basis_dn_;
   IndexSpinHalf<bit_t, idx_t> index_up_, index_dn_;
 };
 

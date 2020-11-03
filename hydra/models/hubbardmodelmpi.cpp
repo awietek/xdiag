@@ -14,7 +14,6 @@ HubbardModelMPI<coeff_t, bit_t, idx_t>::HubbardModelMPI(BondList bondlist,
   MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank_);
   MPI_Comm_size(MPI_COMM_WORLD, &mpi_size_);
 
-
   detail::set_hubbard_terms<coeff_t>(
       bondlist, couplings, hoppings_, hopping_amplitudes_, currents_,
       current_amplitudes_, interactions_, interaction_strengths_, onsites_,
@@ -80,8 +79,9 @@ void HubbardModelMPI<coeff_t, bit_t, idx_t>::apply_hamiltonian(
         for (auto downspins : basis_dn_) // loop over all downspins
         {
           idx_t idx = upspin_offset + downspin_offset;
-          auto coeff = V * (double)((gbit(upspins, s1) + gbit(downspins.spins, s1)) *
-                                    (gbit(upspins, s2) + gbit(downspins.spins, s2)));
+          auto coeff =
+              V * (double)((gbit(upspins, s1) + gbit(downspins.spins, s1)) *
+                           (gbit(upspins, s2) + gbit(downspins.spins, s2)));
           out_vec.vector_local()(idx) += coeff * in_vec(idx);
           ++downspin_offset;
         }
@@ -107,7 +107,8 @@ void HubbardModelMPI<coeff_t, bit_t, idx_t>::apply_hamiltonian(
         {
           idx_t idx = upspin_offset + downspin_offset;
           auto coeff =
-              mu * (double)((gbit(upspins, site) + gbit(downspins.spins, site)));
+              mu *
+              (double)((gbit(upspins, site) + gbit(downspins.spins, site)));
           out_vec.vector_local()(idx) -= coeff * in_vec(idx);
           ++downspin_offset;
         }
@@ -132,8 +133,9 @@ void HubbardModelMPI<coeff_t, bit_t, idx_t>::apply_hamiltonian(
         for (auto downspins : basis_dn_) {
           idx_t idx = upspin_offset + downspin_offset;
           auto coeff =
-              jz * (((double)gbit(upspins, s1) - (double)gbit(downspins.spins, s1)) *
-                    ((double)gbit(upspins, s2) - (double)gbit(downspins.spins, s2)));
+              jz *
+              (((double)gbit(upspins, s1) - (double)gbit(downspins.spins, s1)) *
+               ((double)gbit(upspins, s2) - (double)gbit(downspins.spins, s2)));
           out_vec(idx) += coeff * in_vec(idx);
           ++downspin_offset;
         }
@@ -164,7 +166,8 @@ void HubbardModelMPI<coeff_t, bit_t, idx_t>::apply_hamiltonian(
         for (auto downspins : basis_dn_) {
           if ((popcnt(upspins & flipmask) == 1) &&
               (popcnt(downspins.spins & flipmask) == 1) &&
-              popcnt((downspins.spins & flipmask) & (upspins & flipmask)) == 0) {
+              popcnt((downspins.spins & flipmask) & (upspins & flipmask)) ==
+                  0) {
             bit_t flipped_upspins = upspins ^ flipmask;
             int target = mpi_rank_of_spins(flipped_upspins);
             ++n_states_i_send[target];
@@ -223,7 +226,8 @@ void HubbardModelMPI<coeff_t, bit_t, idx_t>::apply_hamiltonian(
 
           if ((popcnt(upspins & flipmask) == 1) &&
               (popcnt(downspins.spins & flipmask) == 1) &&
-              popcnt((downspins.spins & flipmask) & (upspins & flipmask)) == 0) {
+              popcnt((downspins.spins & flipmask) & (upspins & flipmask)) ==
+                  0) {
             idx_t idx = upspin_offset + downspin_offset;
             bit_t flipped_upspins = upspins ^ flipmask;
             int target = mpi_rank_of_spins(flipped_upspins);
@@ -290,8 +294,7 @@ void HubbardModelMPI<coeff_t, bit_t, idx_t>::apply_hamiltonian(
           if (popcnt(upspins & flipmask) != 1)
             continue;
 
-          bit_t downmask =
-              gbit(upspins, s1) ? (bit_t)1 << s2 : (bit_t)1 << s1;
+          bit_t downmask = gbit(upspins, s1) ? (bit_t)1 << s2 : (bit_t)1 << s1;
 
           for (auto downspins : basis_dn_) {
             if ((downspins.spins & flipmask) == downmask) {
@@ -316,11 +319,14 @@ void HubbardModelMPI<coeff_t, bit_t, idx_t>::apply_hamiltonian(
   t1 = MPI_Wtime();
   int hopping_idx = 0;
   for (auto pair : hoppings_) {
-    const int s1 = std::min(pair.first, pair.second);
-    const int s2 = std::max(pair.first, pair.second);
-    const coeff_t t = hopping_amplitudes_[hopping_idx];
-    const bit_t flipmask = ((bit_t)1 << s1) | ((bit_t)1 << s2);
-    const bit_t secondmask = (bit_t)1 << s2;
+    int s1 = std::min(pair.first, pair.second);
+    int s2 = std::max(pair.first, pair.second);
+    coeff_t t = hopping_amplitudes_[hopping_idx];
+    if (pair.first > pair.second)
+      t = lila::conj(t);
+
+    bit_t flipmask = ((bit_t)1 << s1) | ((bit_t)1 << s2);
+    bit_t secondmask = (bit_t)1 << s2;
 
     if (std::abs(t) > 1e-14) {
       // Loop over all configurations
@@ -363,12 +369,13 @@ void HubbardModelMPI<coeff_t, bit_t, idx_t>::apply_hamiltonian(
   // Apply currents on downspins
   int current_idx = 0;
   for (auto pair : currents_) {
-    const int s1 = std::min(pair.first, pair.second);
-    const int s2 = std::max(pair.first, pair.second);
-    const coeff_t t = current_amplitudes_[current_idx];
-    const bit_t flipmask = ((bit_t)1 << s1) | ((bit_t)1 << s2);
-    // printf("down p1: %d, p2: %d, s1: %d, s2: %d\n",
-    // 	 pair.first, pair.second, s1, s2);
+    int s1 = std::min(pair.first, pair.second);
+    int s2 = std::max(pair.first, pair.second);
+    coeff_t t = current_amplitudes_[current_idx];
+    if (pair.first > pair.second)
+      t = lila::conj(t);
+    
+    bit_t flipmask = ((bit_t)1 << s1) | ((bit_t)1 << s2);
 
     if (std::abs(t) > 1e-14) {
       // Loop over all configurations
@@ -382,10 +389,12 @@ void HubbardModelMPI<coeff_t, bit_t, idx_t>::apply_hamiltonian(
           if (((downspins.spins & flipmask) != 0) &&
               ((downspins.spins & flipmask) != flipmask)) {
             double fermi =
-                popcnt(gbits(downspins.spins, s2 - s1 - 1, s1 + 1)) % 2 == 0 ? 1.
-                                                                       : -1.;
-            double dir =
-                gbit(downspins.spins, pair.first) ? 1. : -1.; // use pair, not s1 s2
+                popcnt(gbits(downspins.spins, s2 - s1 - 1, s1 + 1)) % 2 == 0
+                    ? 1.
+                    : -1.;
+            double dir = gbit(downspins.spins, pair.first)
+                             ? 1.
+                             : -1.; // use pair, not s1 s2
 
             idx_t idx = upspin_offset + downspin_offset;
             bit_t new_downspins = downspins.spins ^ flipmask;
@@ -531,7 +540,7 @@ void HubbardModelMPI<coeff_t, bit_t, idx_t>::apply_hamiltonian(
     bit_t downspins = downspins_i_recv_forward_[idx];
 
     idx_t sorted_idx =
-      my_downspins_offset_[downspins] + index_up_.index({upspins});
+        my_downspins_offset_[downspins] + index_up_.index({upspins});
     send_buffer_[sorted_idx] = recv_buffer_[idx];
   }
   t2 = MPI_Wtime();
@@ -580,11 +589,13 @@ void HubbardModelMPI<coeff_t, bit_t, idx_t>::apply_hamiltonian(
   // Apply hoppings on upspins
   hopping_idx = 0;
   for (auto pair : hoppings_) {
-    const int s1 = std::min(pair.first, pair.second);
-    const int s2 = std::max(pair.first, pair.second);
-    const coeff_t t = hopping_amplitudes_[hopping_idx];
-    const bit_t flipmask = ((bit_t)1 << s1) | ((bit_t)1 << s2);
-    const bit_t secondmask = (bit_t)1 << s2;
+    int s1 = std::min(pair.first, pair.second);
+    int s2 = std::max(pair.first, pair.second);
+    coeff_t t = hopping_amplitudes_[hopping_idx];
+    if (pair.first > pair.second)
+      t = lila::conj(t);
+    bit_t flipmask = ((bit_t)1 << s1) | ((bit_t)1 << s2);
+    bit_t secondmask = (bit_t)1 << s2;
 
     if (std::abs(t) > 1e-14) {
       // Loop over all configurations
@@ -597,7 +608,8 @@ void HubbardModelMPI<coeff_t, bit_t, idx_t>::apply_hamiltonian(
           if (((upspins.spins & flipmask) != 0) &&
               ((upspins.spins & flipmask) != flipmask)) {
             const double fermi =
-                popcnt(gbits(upspins.spins ^ downspins, s2 - s1, s1)) & 1 ? 1. : -1.;
+                popcnt(gbits(upspins.spins ^ downspins, s2 - s1, s1)) & 1 ? 1.
+                                                                          : -1.;
 
             idx_t idx = upspin_offset + downspin_offset;
             bit_t new_upspins = upspins.spins ^ flipmask;
@@ -620,10 +632,13 @@ void HubbardModelMPI<coeff_t, bit_t, idx_t>::apply_hamiltonian(
   // Apply currents on upspins
   current_idx = 0;
   for (auto pair : currents_) {
-    const int s1 = std::min(pair.first, pair.second);
-    const int s2 = std::max(pair.first, pair.second);
-    const coeff_t t = current_amplitudes_[current_idx];
-    const bit_t flipmask = ((bit_t)1 << s1) | ((bit_t)1 << s2);
+    int s1 = std::min(pair.first, pair.second);
+    int s2 = std::max(pair.first, pair.second);
+    coeff_t t = current_amplitudes_[current_idx];
+    if (pair.first > pair.second)
+      t = lila::conj(t);
+
+    bit_t flipmask = ((bit_t)1 << s1) | ((bit_t)1 << s2);
     // printf("up p1: %d, p2: %d, s1: %d, s2: %d\n",
     // 	 pair.first, pair.second, s1, s2);
     if (std::abs(t) > 1e-14) {
@@ -637,9 +652,12 @@ void HubbardModelMPI<coeff_t, bit_t, idx_t>::apply_hamiltonian(
           if (((upspins.spins & flipmask) != 0) &&
               ((upspins.spins & flipmask) != flipmask)) {
             double fermi =
-                popcnt(gbits(upspins.spins, s2 - s1 - 1, s1 + 1)) % 2 == 0 ? 1. : -1.;
-            double dir =
-                gbit(upspins.spins, pair.first) ? 1. : -1.; // use pair, not s1 s2
+                popcnt(gbits(upspins.spins, s2 - s1 - 1, s1 + 1)) % 2 == 0
+                    ? 1.
+                    : -1.;
+            double dir = gbit(upspins.spins, pair.first)
+                             ? 1.
+                             : -1.; // use pair, not s1 s2
             // printf("up p1: %d, p2: %d, s1: %d, s2: %d, v1: %d, v2: %d, dir:
             // %f\n", 	 pair.first, pair.second, s1, s2, gbit(upspins,
             // pair.first), gbit(upspins, pair.second), dir);
@@ -699,9 +717,8 @@ void HubbardModelMPI<coeff_t, bit_t, idx_t>::apply_hamiltonian(
     for (idx_t downspin_idx = 0; downspin_idx < my_downspins_.size();
          ++downspin_idx) {
       idx_t send_idx = n_upspins_i_send_back_offsets_[destination_mpi_rank] +
-                        n_states_already_prepared[destination_mpi_rank]++;
-      idx_t downspin_offset =
-          my_downspins_offset_[my_downspins_[downspin_idx]];
+                       n_states_already_prepared[destination_mpi_rank]++;
+      idx_t downspin_offset = my_downspins_offset_[my_downspins_[downspin_idx]];
       idx_t idx = upspin_offset + downspin_offset;
       send_buffer_[send_idx] = recv_buffer_[idx];
     }
@@ -784,7 +801,7 @@ void HubbardModelMPI<coeff_t, bit_t, idx_t>::apply_hamiltonian(
     bit_t upspins = upspins_i_recv_back_[idx];
     bit_t downspins = downspins_i_recv_back_[idx];
     idx_t sorted_idx =
-      my_upspins_offset_[upspins] + index_dn_.index({downspins});
+        my_upspins_offset_[upspins] + index_dn_.index({downspins});
     send_buffer_[sorted_idx] = recv_buffer_[idx];
   }
 
@@ -922,8 +939,9 @@ qn_electron HubbardModelMPI<coeff_t, bit_t, idx_t>::apply_fermion(
           bit_t new_downspins = downspins.spins;
           new_downspins |= sitemask;
           idx_t new_idx =
-	    upspin_offset_after + index_dn_after.index({new_downspins});
-          double fermi = popcnt(gbits(downspins.spins, site, 0)) % 2 == 0 ? 1. : -1.;
+              upspin_offset_after + index_dn_after.index({new_downspins});
+          double fermi =
+              popcnt(gbits(downspins.spins, site, 0)) % 2 == 0 ? 1. : -1.;
           out_vec.vector_local()(new_idx) += fermi * in_vec.vector_local()(idx);
         }
 
@@ -943,8 +961,9 @@ qn_electron HubbardModelMPI<coeff_t, bit_t, idx_t>::apply_fermion(
           bit_t new_downspins = downspins.spins;
           new_downspins &= antisitemask;
           idx_t new_idx =
-	    upspin_offset_after + index_dn_after.index({new_downspins});
-          double fermi = popcnt(gbits(downspins.spins, site, 0)) % 2 == 0 ? 1. : -1.;
+              upspin_offset_after + index_dn_after.index({new_downspins});
+          double fermi =
+              popcnt(gbits(downspins.spins, site, 0)) % 2 == 0 ? 1. : -1.;
           out_vec.vector_local()(new_idx) += fermi * in_vec.vector_local()(idx);
         }
 
@@ -1072,10 +1091,10 @@ void HubbardModelMPI<coeff_t, bit_t, idx_t>::initialize() {
                       n_downspins_i_recv_forward_.end(), 0);
 
   // Communicate which downstates are sent/received by whom
-  std::vector<bit_t> downspins_i_send_forward_(
-      sum_n_downspins_i_send_forward_, 0);
-  std::vector<bit_t> upspins_i_send_forward_(sum_n_downspins_i_send_forward_,
+  std::vector<bit_t> downspins_i_send_forward_(sum_n_downspins_i_send_forward_,
                                                0);
+  std::vector<bit_t> upspins_i_send_forward_(sum_n_downspins_i_send_forward_,
+                                             0);
 
   // downspins_i_send_forward_ =
   // std::vector<bit_t>(sum_n_downspins_i_send_forward_, 0);
@@ -1088,7 +1107,7 @@ void HubbardModelMPI<coeff_t, bit_t, idx_t>::initialize() {
     for (const bit_t &upspins : my_upspins_) // loop over upspins of process
     {
       idx_t idx = n_downspins_i_send_forward_offsets_[destination_mpi_rank] +
-                   n_downspins_already_prepared[destination_mpi_rank]++;
+                  n_downspins_already_prepared[destination_mpi_rank]++;
       downspins_i_send_forward_[idx] = downspins.spins;
       upspins_i_send_forward_[idx] = upspins;
     }
@@ -1189,11 +1208,10 @@ void HubbardModelMPI<coeff_t, bit_t, idx_t>::initialize() {
   std::vector<idx_t> n_upspins_already_prepared(mpi_size_, 0);
   for (auto upspins : basis_up_) {
     int destination_mpi_rank = mpi_rank_of_spins(upspins.spins);
-    for (const bit_t &downspins :
-         my_downspins_) // loop over upspins of process
+    for (const bit_t &downspins : my_downspins_) // loop over upspins of process
     {
       idx_t idx = n_upspins_i_send_back_offsets_[destination_mpi_rank] +
-                   n_upspins_already_prepared[destination_mpi_rank]++;
+                  n_upspins_already_prepared[destination_mpi_rank]++;
       downspins_i_send_back_[idx] = downspins;
       upspins_i_send_back_[idx] = upspins.spins;
     }

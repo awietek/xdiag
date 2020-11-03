@@ -2,7 +2,7 @@
 
 #include <hydra/bases/basis_spinhalf.h>
 #include <hydra/utils/bitops.h>
-#include <hydra/utils/combinatorics.h>
+#include <hydra/combinatorics/binomial.h>
 
 namespace hydra {
 
