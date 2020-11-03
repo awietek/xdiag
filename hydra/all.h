@@ -51,6 +51,7 @@
 #include "utils/iochecks.h"
 #include "utils/format.h"
 #include "utils/print.h"
+#include "utils/hash.h"
 
 #include "operators/bond.h"
 #include "operators/bondlist.h"

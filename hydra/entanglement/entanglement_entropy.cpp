@@ -5,11 +5,11 @@
 
 namespace hydra {
 
-template <class coeff_t>
-lila::real_t<coeff_t> EntanglementEntropy(TJModel<coeff_t> const &model,
-                                          lila::Vector<coeff_t> const &wf,
-                                          int n_A_sites) {
-  using model_t = TJModel<coeff_t>;
+template <class model_t>
+lila::real_t<typename model_t::coeff_t>
+EntanglementEntropy(model_t const &model, typename model_t::vector_t const &wf,
+                    int n_A_sites) {
+  using coeff_t = typename model_t::coeff_t;
   using qn_t = typename model_t::qn_t;
 
   assert(n_A_sites <= model.n_sites());
@@ -24,11 +24,8 @@ lila::real_t<coeff_t> EntanglementEntropy(TJModel<coeff_t> const &model,
       auto qn_B = qn_tot - qn_A;
 
       if (valid(qn_A, n_A_sites) && valid(qn_B, n_B_sites)) {
-        // std::cout << "Tot  " << String(qn_tot) << std::endl;
-        // std::cout << "A    " << String(qn_A) << std::endl;
-        // std::cout << "B    " << String(qn_B) << std::endl;
 
-        auto rho_A = ReducedDensityMatrix(model, wf, qn_A, n_A_sites);
+        auto rho_A = ReducedDensityMatrix(model, n_A_sites, qn_A, wf);
         assert(lila::close(rho_A, lila::Herm(rho_A)));
 
         auto rho_eigs = lila::EigenvaluesSym(rho_A);
@@ -47,5 +44,13 @@ template double EntanglementEntropy(TJModel<double> const &model,
 
 template double EntanglementEntropy(TJModel<complex> const &model,
                                     lila::Vector<complex> const &wf,
+                                    int n_A_sites);
+
+template double EntanglementEntropy(TJModelMPI<double> const &model,
+                                    lila::VectorMPI<double> const &wf,
+                                    int n_A_sites);
+
+template double EntanglementEntropy(TJModelMPI<complex> const &model,
+                                    lila::VectorMPI<complex> const &wf,
                                     int n_A_sites);
 } // namespace hydra

@@ -31,8 +31,9 @@ public:
   using state_t = state_tj<bit_t>;
   using iterator_t = BasisTJIterator<bit_t>;
 
+  BasisTJ() = default;
   BasisTJ(int const &n_sites, qn_t const &qn);
-
+ 
   int n_sites() const;
   qn_t qn() const;
   iterator_t begin() const;
