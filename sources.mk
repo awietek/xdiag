@@ -29,6 +29,7 @@ sources+= hydra/models/tjmodelmpi.cpp
 
 # sources+= hydra/models/spinlessfermions.cpp
 
+sources+= hydra/mpi/communicator.cpp
 
 sources+= hydra/operators/bond.cpp
 sources+= hydra/operators/bondlist.cpp
@@ -80,6 +81,8 @@ testsources+= test/models/test_hubbardmodel.cpp
 testsources+= test/models/test_hubbardmodelmpi.cpp
 
 testsources+= test/entanglement/test_entanglement_entropy.cpp
+testsources+= test/entanglement/test_entanglement_entropy_mpi.cpp
+testsources+= test/entanglement/test_reduced_density_matrix_mpi.cpp
 
 
 # appsources+= hydra/applications/hubbardopticalftlm/hubbardopticalftlm.cpp
