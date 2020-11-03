@@ -6,6 +6,7 @@
 #include <hydra/common.h>
 #include <hydra/qns/qn_tj.h>
 #include <hydra/utils/bitops.h>
+#include <hydra/utils/hash.h>
 
 #include <hydra/combinatorics/up_down_hole.h>
 #include <hydra/states/state_spinhalf.h>
@@ -70,7 +71,7 @@ template <class bit_t> inline qn_tj QN(state_tj<bit_t> const &s) {
 }
 
 // Shift operators
-  template <class bit_t, class int_t>
+template <class bit_t, class int_t>
 inline state_tj<bit_t> operator<<(state_tj<bit_t> const &s, int_t const &L) {
   return state_tj<bit_t>({s.ups << L, s.dns << L});
 }
@@ -145,6 +146,11 @@ template <class bit_t = std_bit_t>
 inline state_spinhalf<bit_t> down_up_to_hole(state_spinhalf<bit_t> downspins,
                                              state_spinhalf<bit_t> upspins) {
   return {combinatorics::down_up_to_hole(downspins.spins, upspins.spins)};
+}
+
+// Hashing
+template <class bit_t = std_bit_t> bit_t hash(state_tj<bit_t> const &state) {
+  return utils::fast_hash(state.ups) ^ utils::fast_hash(state.dns);
 }
 
 } // namespace hydra

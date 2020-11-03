@@ -22,8 +22,8 @@
 
 #include <hydra/states/state_tj.h>
 
-#include <hydra/bases/basis_electron.h>
 #include <hydra/bases/basis_spinhalf.h>
+#include <hydra/bases/basis_tj.h>
 
 #include <hydra/indexing/index_table.h>
 #include <hydra/indexing/lintable.h>
@@ -35,9 +35,17 @@
 
 namespace hydra {
 
-template <class coeff_t, class bit_t = std_bit_t, class idx_t = std_idx_t>
+template <class coeff_t_, class bit_t_ = std_bit_t, class idx_t_ = std_idx_t>
 class TJModelMPI {
 public:
+  using coeff_t = coeff_t_;
+  using bit_t = bit_t_;
+  using idx_t = idx_t_;
+  using state_t = state_tj<bit_t>;
+  using qn_t = qn_tj;
+  using basis_t = BasisTJ<bit_t>;
+  using vector_t = lila::VectorMPI<coeff_t>;
+
   TJModelMPI(BondList bondlist, Couplings couplings, qn_tj qn);
 
   void apply_hamiltonian(lila::VectorMPI<coeff_t> const &in_vec,
@@ -51,6 +59,8 @@ public:
   int n_sites() const { return n_sites_; }
   idx_t local_dim() const { return local_dim_; }
   idx_t dim() const { return dim_; }
+
+  template <class functor_t> void transverse(functor_t functor) const;
 
 private:
   const int n_sites_;
@@ -137,6 +147,20 @@ private:
   std::vector<bit_t> downspins_table_;
   std::vector<bit_t> upspins_table_;
 };
+
+template <class coeff_t, class bit_t, class idx_t>
+template <class functor_t>
+void TJModelMPI<coeff_t, bit_t, idx_t>::transverse(functor_t functor) const {
+  idx_t n_hole_configurations = hs_holes_in_ups_.size();
+  for (bit_t const &upspins : my_upspins_) {
+    idx_t upspin_offset = my_upspins_offset_.at(upspins);
+    for (idx_t idx = upspin_offset; idx < upspin_offset + n_hole_configurations;
+         ++idx) {
+      bit_t downspins = downspins_table_[idx];
+      functor({upspins, downspins}, idx);
+    }
+  }
+}
 
 } // namespace hydra
 

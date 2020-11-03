@@ -33,10 +33,11 @@ class TJModel {
 public:
   using coeff_t = coeff_t_;
   using bit_t = bit_t_;
-  using idx_t = idx_t_;
-  
+  using idx_t = idx_t_;  
+  using state_t = state_tj<bit_t>;
   using qn_t = qn_tj;
   using basis_t = BasisTJ<bit_t>;
+  using vector_t = lila::Vector<coeff_t>;
   
   TJModel(BondList bondlist, Couplings couplings, qn_t qn);
 
