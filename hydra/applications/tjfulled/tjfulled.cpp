@@ -12,28 +12,28 @@ lila::Logger lg;
 
 template <class coeff_t>
 void run_real_complex(std::string real_complex,
-		      hydra::all::BondList bondlist,
-		      hydra::all::Couplings couplings,
-		      hydra::all::hubbard_qn qn,
+		      hydra::BondList bondlist,
+		      hydra::Couplings couplings,
+		      hydra::qn_tj qn,
 		      bool fulldiag,
 		      std::string outfile)
 {
-  using namespace hydra::all;
+  using namespace hydra;
   using namespace lila;
   using namespace lime;
 
   auto file = lime::FileH5(outfile, "w!");
   
   lg.out(1, "Creating {} t-J matrixfor n_upspins={}, n_downspins={}...\n",
-	 real_complex, qn.n_upspins, qn.n_downspins);
+	 real_complex, qn.n_up, qn.n_dn);
   double t1 = MPI_Wtime();
   auto model = TJModel<coeff_t>(bondlist, couplings, qn);
   auto H = model.matrix();
   double t2 = MPI_Wtime();
   lg.out(1, "done. time: {} secs\n", t2-t1); 
-  lg.out(1, "dim: {}\n", FormatWithCommas(model.dim())); 
+  lg.out(1, "dim: {}\n", utils::FormatWithCommas(model.dim())); 
   lg.out(1, "Diagonalizing...\n",
-	 qn.n_upspins, qn.n_downspins);
+	 qn.n_up, qn.n_dn);
 
   if (fulldiag == 0) {
     t1 = MPI_Wtime();
@@ -64,7 +64,7 @@ void run_real_complex(std::string real_complex,
 
 int main(int argc, char* argv[])
 {
-  using namespace hydra::all;
+  using namespace hydra;
   using namespace lila;
   using namespace lime;
 
@@ -80,7 +80,7 @@ int main(int argc, char* argv[])
 		verbosity, argc, argv);
   lg.set_verbosity(verbosity);  
   
-  check_if_files_exists({latticefile, couplingfile});
+  utils::check_if_files_exists({latticefile, couplingfile});
 
   // Create Hamiltonian
   BondList bondlist = read_bondlist(latticefile);
@@ -88,7 +88,7 @@ int main(int argc, char* argv[])
 
   // Create infrastructure for Hubbard model
   int n_sites = bondlist.n_sites();
-  hubbard_qn qn;
+  qn_tj qn;
   if ((nup == -1)  || (ndown == -1))
     qn = {n_sites/2, n_sites/2};
   else qn = {nup, ndown};

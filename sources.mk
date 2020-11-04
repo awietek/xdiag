@@ -94,4 +94,4 @@ appsources+= hydra/applications/hubbarded/hubbarded.cpp
 appsources+= hydra/applications/hubbardfulled/hubbardfulled.cpp
 appsources+= hydra/applications/tjed/tjed.cpp
 appsources+= hydra/applications/tjfulled/tjfulled.cpp
-
+appsources+= hydra/applications/tjentanglement/tjentanglement.cpp

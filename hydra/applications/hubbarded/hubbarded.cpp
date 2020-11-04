@@ -12,7 +12,7 @@ lila::LoggerMPI lg;
 
 int main(int argc, char* argv[])
 {
-  using namespace hydra::all;
+  using namespace hydra;
   using namespace lila;
   using namespace lime;
 
@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
   FileH5 file;
   if (mpi_rank == 0) file = lime::FileH5(outfile, "w!");
   
-  check_if_files_exists({latticefile, couplingfile});
+  utils::check_if_files_exists({latticefile, couplingfile});
 
   // Create Hamiltonian
   BondList bondlist = read_bondlist(latticefile);
@@ -50,18 +50,18 @@ int main(int argc, char* argv[])
 
   // Create infrastructure for Hubbard model
   int n_sites = bondlist.n_sites();
-  hubbard_qn qn;
+  qn_electron qn;
   if ((nup == -1)  || (ndown == -1))
     qn = {n_sites/2, n_sites/2};
   else qn = {nup, ndown};
       
   lg.out(1, "Creating Hubbard model for n_upspins={}, n_downspins={}...\n",
-	     qn.n_upspins, qn.n_downspins);
+	     qn.n_up, qn.n_dn);
   double t1 = MPI_Wtime();
   auto H = HubbardModelMPI<double>(bondlist, couplings, qn);
   double t2 = MPI_Wtime();
   lg.out(1, "done. time: {} secs\n", t2-t1); 
-  lg.out(1, "dim: {}\n", FormatWithCommas(H.dim())); 
+  lg.out(1, "dim: {}\n", utils::FormatWithCommas(H.dim())); 
   
   // Define multiplication function
   int iter = 0;

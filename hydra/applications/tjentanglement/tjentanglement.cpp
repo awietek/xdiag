@@ -8,7 +8,7 @@
 
 lila::LoggerMPI lg;
 
-#include "tjed.options.h"
+#include "tjentanglement.options.h"
 
 
 template <class coeff_t>
@@ -47,7 +47,7 @@ void run_real_complex(std::string real_complex,
   auto multiply_H = 
     [&H, &iter, verbosity](const VectorMPI<coeff_t>& v, VectorMPI<coeff_t>& w) 
     {
-      bool verbose = (iter==0) && (verbosity > 0);
+      bool verbose = (iter==0) && (verbosity > 1);
       double t1 = MPI_Wtime();
       H.apply_hamiltonian(v, w, verbose);
       double t2 = MPI_Wtime();
@@ -63,8 +63,8 @@ void run_real_complex(std::string real_complex,
   Normalize(startstate);  
 
   // Run Lanczos
-  auto res = LanczosEigenvalues(multiply_H, startstate, precision,
-				neigenvalue, "Eigenvalues", iters);
+  auto res = LanczosEigenvectors(multiply_H, startstate, gen, false);
+
   if (res.exhausted) 
     lg.out("Warning: Lanczos sequence exhausted after {} steps\n", res.eigenvalues.size());
   if (!res.converged) 
@@ -74,12 +74,28 @@ void run_real_complex(std::string real_complex,
   auto betas = res.tmatrix.offdiag();
   betas.push_back(res.beta);
   auto eigenvalues = res.eigenvalues;
+
+  // Compute entanglement entropies
+  int n_sites = bondlist.n_sites();
+  auto gs = res.vectors[0];
+  std::vector<double> svns;
+  for (int b=1; b<=n_sites/2; ++b)
+    {
+      lg.out(1, "Computing SvN b={}\n", b); 
+      double t1 = MPI_Wtime();
+      auto svn = EntanglementEntropy(H, gs, b);
+      double t2 = MPI_Wtime();
+      lg.out(1, "done. time: {} secs\n", t2-t1);
+      svns.push_back(svn);
+    }
+  
   if (mpi_rank == 0)
     {
       file["Alphas"] = alphas;
       file["Betas"] = betas;
       file["Eigenvalues"] = eigenvalues;
       file["Dimension"] = H.dim();
+      file["SvN"] = lila::Vector<double>(svns);
       file.close();
     }
 
