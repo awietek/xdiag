@@ -43,7 +43,7 @@ inline qn_electron operator-(qn_electron const &q1, qn_electron const &q2) {
 }
 inline bool valid(qn_electron const &qn, number_t const &n_sites) {
   // (unsigned cast checks if positive)
-  return ((unsigned)qn.n_up <= n_sites) && ((unsigned)qn.n_dn <= n_sites);
+  return ((number_t)qn.n_up <= n_sites) && ((number_t)qn.n_dn <= n_sites);
 }
 
 inline std::string String(qn_electron qn) {
