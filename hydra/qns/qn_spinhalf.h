@@ -42,7 +42,7 @@ inline qn_spinhalf operator-(qn_spinhalf const &q1, qn_spinhalf const &q2) {
 }
 inline bool valid(qn_spinhalf const &qn, number_t const &n_sites) {
   // (unsigned cast checks if positive)
-  return ((unsigned)qn.n_up <= n_sites);
+  return ((number_t)qn.n_up <= n_sites);
 }
   
 inline std::string String(qn_spinhalf qn) {

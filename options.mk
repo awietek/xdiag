@@ -6,7 +6,7 @@ liladir    = /mnt/home/awietek/Research/Software/lila
 limedir    = /mnt/home/awietek/Research/Software/lime
 claradir    = /mnt/home/awietek/Research/Software/Clara
 includes   = -I. -I$(liladir) -I$(limedir) -I$(claradir)/include
-libraries  = -L/opt/hdf5/gnu/mvapich2_ib/lib -lhdf5 -lmkl_rt -L$(limedir)/lib -llime -lhdf5
+libraries  = -lhdf5 -lmkl_rt -L$(limedir)/lib -llime -lhdf5
 endif
 
 ifeq ($(arch), osx)
