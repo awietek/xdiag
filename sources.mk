@@ -1,47 +1,48 @@
-sources+= hydra/utils/iochecks.cpp
-
 sources+= hydra/combinatorics/binomial.cpp
-sources+= hydra/combinatorics/up_down_hole.cpp
 sources+= hydra/combinatorics/bit_patterns.cpp
 
-sources+= hydra/states/state_spinhalf.cpp
-sources+= hydra/states/state_electron.cpp
-sources+= hydra/states/state_tj.cpp
+# sources+= hydra/combinatorics/up_down_hole.cpp
 
-sources+= hydra/bases/basis_spinhalf.cpp
-sources+= hydra/bases/basis_tj.cpp
-sources+= hydra/bases/basis_electron.cpp
+# sources+= hydra/utils/iochecks.cpp
 
-sources+= hydra/indexing/index_electron.cpp
-sources+= hydra/indexing/index_spinhalf.cpp
+# sources+= hydra/states/state_spinhalf.cpp
+# sources+= hydra/states/state_electron.cpp
+# sources+= hydra/states/state_tj.cpp
 
-# sources+= hydra/indexing/index_symmetrized.cpp
-# sources+= hydra/indexing/index_table.cpp
-sources+= hydra/indexing/lintable.cpp
+# sources+= hydra/bases/basis_spinhalf.cpp
+# sources+= hydra/bases/basis_tj.cpp
+# sources+= hydra/bases/basis_electron.cpp
+
+# sources+= hydra/indexing/index_electron.cpp
+# sources+= hydra/indexing/index_spinhalf.cpp
+
+# # sources+= hydra/indexing/index_symmetrized.cpp
+# # sources+= hydra/indexing/index_table.cpp
+# sources+= hydra/indexing/lintable.cpp
 
 
-sources+= hydra/models/heisenbergmodel.cpp
-sources+= hydra/models/hubbardmodel.cpp
-sources+= hydra/models/hubbardmodelmpi.cpp
-sources+= hydra/models/hubbardmodeldetail.cpp
-sources+= hydra/models/tjmodel.cpp
-sources+= hydra/models/tjmodelmpi.cpp
+# sources+= hydra/models/heisenbergmodel.cpp
+# sources+= hydra/models/hubbardmodel.cpp
+# sources+= hydra/models/hubbardmodelmpi.cpp
+# sources+= hydra/models/hubbardmodeldetail.cpp
+# sources+= hydra/models/tjmodel.cpp
+# sources+= hydra/models/tjmodelmpi.cpp
 
-# sources+= hydra/models/spinlessfermions.cpp
+# # sources+= hydra/models/spinlessfermions.cpp
 
-sources+= hydra/mpi/communicator.cpp
+# sources+= hydra/mpi/communicator.cpp
 
-sources+= hydra/operators/bond.cpp
-sources+= hydra/operators/bondlist.cpp
-sources+= hydra/operators/couplings.cpp
+# sources+= hydra/operators/bond.cpp
+# sources+= hydra/operators/bondlist.cpp
+# sources+= hydra/operators/couplings.cpp
 
-sources+= hydra/parameters/palm_exception.cpp
-sources+= hydra/parameters/parameter_value.cpp
-sources+= hydra/parameters/parameters.cpp
-sources+= hydra/parameters/parser.cpp
+# sources+= hydra/parameters/palm_exception.cpp
+# sources+= hydra/parameters/parameter_value.cpp
+# sources+= hydra/parameters/parameters.cpp
+# sources+= hydra/parameters/parser.cpp
 
-sources+= hydra/entanglement/reduced_density_matrix.cpp
-sources+= hydra/entanglement/entanglement_entropy.cpp
+# sources+= hydra/entanglement/reduced_density_matrix.cpp
+# sources+= hydra/entanglement/entanglement_entropy.cpp
 
 
 # sources+= hydra/symmetries/charactertable.cpp
@@ -54,35 +55,38 @@ sources+= hydra/entanglement/entanglement_entropy.cpp
 
 testsources+= test/tests.cpp
 
-testsources+= test/qns/test_qns.cpp
-testsources+= test/states/test_states.cpp
-testsources+= test/operators/test_bondlist.cpp
-
 testsources+= test/combinatorics/test_binomial.cpp
 testsources+= test/combinatorics/test_bit_patterns.cpp
-testsources+= test/combinatorics/test_up_down_hole.cpp
 
-testsources+= test/bases/test_basis_spinhalf.cpp
-testsources+= test/bases/test_basis_tj.cpp
-testsources+= test/bases/test_basis_electron.cpp
+# testsources+= test/combinatorics/test_up_down_hole.cpp
 
-testsources+= test/indexing/test_index_table.cpp
-testsources+= test/indexing/test_index_search.cpp
+# testsources+= test/qns/test_qns.cpp
+# testsources+= test/states/test_states.cpp
+# testsources+= test/operators/test_bondlist.cpp
 
 
-# testsources+= test/test_charactertable.cpp
-# testsources+= test/test_indexhubbard.cpp
-# testsources+= test/test_lintable.cpp
-# testsources+= test/test_spacegroup.cpp
 
-testsources+= test/models/test_tjmodel.cpp
-testsources+= test/models/test_tjmodelmpi.cpp
-testsources+= test/models/test_hubbardmodel.cpp
-testsources+= test/models/test_hubbardmodelmpi.cpp
+# testsources+= test/bases/test_basis_spinhalf.cpp
+# testsources+= test/bases/test_basis_tj.cpp
+# testsources+= test/bases/test_basis_electron.cpp
 
-testsources+= test/entanglement/test_entanglement_entropy.cpp
-testsources+= test/entanglement/test_entanglement_entropy_mpi.cpp
-testsources+= test/entanglement/test_reduced_density_matrix_mpi.cpp
+# testsources+= test/indexing/test_index_table.cpp
+# testsources+= test/indexing/test_index_search.cpp
+
+
+# # testsources+= test/test_charactertable.cpp
+# # testsources+= test/test_indexhubbard.cpp
+# # testsources+= test/test_lintable.cpp
+# # testsources+= test/test_spacegroup.cpp
+
+# testsources+= test/models/test_tjmodel.cpp
+# testsources+= test/models/test_tjmodelmpi.cpp
+# testsources+= test/models/test_hubbardmodel.cpp
+# testsources+= test/models/test_hubbardmodelmpi.cpp
+
+# testsources+= test/entanglement/test_entanglement_entropy.cpp
+# testsources+= test/entanglement/test_entanglement_entropy_mpi.cpp
+# testsources+= test/entanglement/test_reduced_density_matrix_mpi.cpp
 
 
 # appsources+= hydra/applications/hubbardopticalftlm/hubbardopticalftlm.cpp
