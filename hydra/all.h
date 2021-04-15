@@ -17,58 +17,60 @@
 
 #include "common.h"
 
-
-
-#include "qns/qn_spinhalf.h"
-#include "qns/qn_electron.h"
-#include "qns/qn_tj.h"
-
-#include "states/state_spinhalf.h"
-#include "states/state_electron.h"
-#include "states/state_tj.h"
-
-#include "bases/basis_spinhalf.h"
-#include "bases/basis_tj.h"
-#include "bases/basis_electron.h"
-
-#include "indexing/index_table.h"
-#include "indexing/index_search.h"
-#include "indexing/index_spinhalf.h"
-#include "indexing/index_electron.h"
-#include "indexing/lintable.h"
-
-#include "models/hubbardmodel.h"
-#include "models/tjmodel.h"
-#include "models/heisenbergmodel.h"
-#include "models/spinlessfermions.h"
-
 #include "combinatorics/binomial.h"
-#include "combinatorics/up_down_hole.h"
 #include "combinatorics/bit_patterns.h"
 
-#include "utils/bitops.h"
-#include "utils/range.h"
-#include "utils/iochecks.h"
-#include "utils/format.h"
-#include "utils/print.h"
-#include "utils/hash.h"
+// #include "combinatorics/up_down_hole.h"
 
-#include "operators/bond.h"
-#include "operators/bondlist.h"
-#include "operators/couplings.h"
 
-#include "entanglement/reduced_density_matrix.h"
-#include "entanglement/entanglement_entropy.h"
+// #include "qns/qn_spinhalf.h"
+// #include "qns/qn_electron.h"
+// #include "qns/qn_tj.h"
 
-// #include "thermodynamics/thermodynamics_detail.h"
-// #include "thermodynamics/thermodynamics_exact.h"
-// #include "thermodynamics/thermodynamics_tpq.h"
-// #include "dynamics/continuedfraction.h"
+// #include "states/state_spinhalf.h"
+// #include "states/state_electron.h"
+// #include "states/state_tj.h"
 
-#include "symmetries/spacegroup.h"
+// #include "bases/basis_spinhalf.h"
+// #include "bases/basis_tj.h"
+// #include "bases/basis_electron.h"
 
-#include "parameters/parser.h"
-#include "parameters/parameters_impl.h"
-#include "parameters/parameters.h"
+// #include "indexing/index_table.h"
+// #include "indexing/index_search.h"
+// #include "indexing/index_spinhalf.h"
+// #include "indexing/index_electron.h"
+// #include "indexing/lintable.h"
+
+// #include "models/hubbardmodel.h"
+// #include "models/tjmodel.h"
+// #include "models/heisenbergmodel.h"
+// #include "models/spinlessfermions.h"
+
+
+
+// #include "utils/bitops.h"
+// #include "utils/range.h"
+// #include "utils/iochecks.h"
+// #include "utils/format.h"
+// #include "utils/print.h"
+// #include "utils/hash.h"
+
+// #include "operators/bond.h"
+// #include "operators/bondlist.h"
+// #include "operators/couplings.h"
+
+// #include "entanglement/reduced_density_matrix.h"
+// #include "entanglement/entanglement_entropy.h"
+
+// // #include "thermodynamics/thermodynamics_detail.h"
+// // #include "thermodynamics/thermodynamics_exact.h"
+// // #include "thermodynamics/thermodynamics_tpq.h"
+// // #include "dynamics/continuedfraction.h"
+
+// #include "symmetries/spacegroup.h"
+
+// #include "parameters/parser.h"
+// #include "parameters/parameters_impl.h"
+// #include "parameters/parameters.h"
 
 #endif
