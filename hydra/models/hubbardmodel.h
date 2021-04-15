@@ -25,37 +25,17 @@
 
 namespace hydra {
 
-/*!
-  Class to generate representations of the Hubbard models
-*/
-template <class coeff_t, class bit_t = std_bit_t, class idx_t = std_idx_t>
 class HubbardModel {
 
 public:
-  using qn_t = qn_electron;
 
-  /*!
-    Defines a Hubbard model given number of sites and pairs of
-    neighboring sites with hoppings
-  */
-  HubbardModel(BondList bondlist, Couplings couplings, qn_t qn);
+  HubbardModel(int n_sites, QN qn);
+  lila::Matrix<coeff_t> matrix(BondList bondlist, Couplings couplings) const;
 
-  /*!
-    returns a lila::Matrix of the Hubbard model given t, U, and
-    the quantum numbers (n_upspins, n_downspins).
-  */
-  lila::Matrix<coeff_t> matrix() const;
+  void apply(BondList bondlist, Couplings couplings,
+	     const lila::Vector<coeff_t> &in_vec,
+	     lila::Vector<coeff_t> &out_vec) const;
 
-  /*!
-    returns a lila::Matrix of the Hubbard model given t, U, and
-    the quantum numbers (n_upspins, n_downspins).
-  */
-  void apply_hamiltonian(const lila::Vector<coeff_t> &in_vec,
-                         lila::Vector<coeff_t> &out_vec) const;
-
-  /*!
-    applies a fermion creation/annihilation operator to a state
-  */
   qn_t apply_fermion(const lila::Vector<coeff_t> &state_before,
                      lila::Vector<coeff_t> &state_after, std::string type,
                      int site) const;
@@ -64,8 +44,7 @@ public:
   lila::Matrix<double> sPlusMatrix(int siteIndex) const;
   lila::Matrix<double> sMinusMatrix(int siteIndex) const;
 
-  qn_t qn() const { return qn_; }
-  void set_qn(qn_t qn);
+  qn_t QN() const { return qn_; }
   int n_sites() const { return n_sites_; }
   int64 dim() const { return dim_; }
 
@@ -88,6 +67,16 @@ private:
   std::vector<coeff_t> exchange_amplitudes_;
   double U_;
 };
+
+  lila::Matrix<coeff_t> matrix(BondList bondlist, Couplings couplings, 
+			       HubbardModel const& model);
+  void apply(BondList bondlist, Couplings couplings,
+	     Hu
+
+HubbardModel model, BondList bondlist, Couplings couplings)
+
+
+
 
 } // namespace hydra
 

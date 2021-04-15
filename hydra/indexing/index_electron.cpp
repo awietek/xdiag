@@ -13,16 +13,16 @@ IndexElectron<bit_t, idx_t>::IndexElectron(basis_t const &basis)
     index_dn_(basis_dn_)
 { }
 
-template class IndexElectron<uint16, uint16>;
-template class IndexElectron<uint16, uint32>;
-template class IndexElectron<uint16, uint64>;
+template class IndexElectron<uint16, int16>;
+template class IndexElectron<uint16, int32>;
+template class IndexElectron<uint16, int64>;
   
-template class IndexElectron<uint32, uint16>;
-template class IndexElectron<uint32, uint32>;
-template class IndexElectron<uint32, uint64>;
+template class IndexElectron<uint32, int16>;
+template class IndexElectron<uint32, int32>;
+template class IndexElectron<uint32, int64>;
   
-template class IndexElectron<uint64, uint16>;
-template class IndexElectron<uint64, uint32>;
-template class IndexElectron<uint64, uint64>;
+template class IndexElectron<uint64, int16>;
+template class IndexElectron<uint64, int32>;
+template class IndexElectron<uint64, int64>;
   
 } // namespace hydra
