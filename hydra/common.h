@@ -1,25 +1,25 @@
-#ifndef HYDRA_COMMON_H_
-#define HYDRA_COMMON_H_
+#pragma once
 
 #include <complex>
+#include <lila/all.h>
 
 namespace hydra {
 
-  using int16 = short;
-  using int32 = int;
-  using int64 = long;
-  using uint16 = unsigned short;
-  using uint32 = unsigned int;
-  using uint64 = unsigned long;
-  
-  using std_bit_t = uint64;
-  using number_t = int32;
+inline lila::Logger HydraLog;
 
-  using std_idx_t = uint64;
-  
-  using scomplex = std::complex<float>;
-  using complex = std::complex<double>;
-  
-}
+using int16 = short;
+using int32 = int;
+using int64 = long;
+using uint16 = unsigned short;
+using uint32 = unsigned int;
+using uint64 = unsigned long;
 
-#endif
+using std_bit_t = uint64;
+using number_t = int32;
+
+using idx_t = int64;
+
+using scomplex = std::complex<float>;
+using complex = std::complex<double>;
+
+} // namespace hydra

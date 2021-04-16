@@ -15,14 +15,13 @@
 // nor the Authors make any representations about the suitability of this
 // software for any purpose.  This software is provided ``as is'' without
 // express or implied warranty.
-// 
+//
 //=======================================================================
 
-#ifndef HYDRA_PARAMETERS_OSIRIS_PARAMETERS_IMPL_
-#define HYDRA_PARAMETERS_OSIRIS_PARAMETERS_IMPL_
+#pragma once
 
 //=======================================================================
-// This file includes implementation definitions for the parameter 
+// This file includes implementation definitions for the parameter
 // classes
 //=======================================================================
 
@@ -34,45 +33,39 @@
 //
 // is a function object to output parameters
 //-----------------------------------------------------------------------
-namespace hydra { namespace parameters {
+namespace hydra {
 
-class parameters_output
-{
+class parameters_output {
 private:
-  std::ostream& out;
-  
+  std::ostream &out;
+
 public:
-  parameters_output(std::ostream& o) : out(o) {}
-  inline void operator()(const std::pair<const std::string,parameter_value>& x) const
-    {
-      out << x.first << " = " << x.second << ";\n";
-    }
+  parameters_output(std::ostream &o) : out(o) {}
+  inline void
+  operator()(const std::pair<const std::string, parameter_value> &x) const {
+    out << x.first << " = " << x.second << ";\n";
+  }
 };
 
-class parameters_collection_output
-{
- private:
-  std::ostream& out;
-  
- public:
-  parameters_collection_output(std::ostream& o) : out(o) {}
-  inline void operator()(const std::pair<const std::string,Parameters>& x) const
-    {
-      out << x.first << " {\n";
-      out << x.second;
-      out << "} " << x.first << "\n";
-    }
+class parameters_collection_output {
+private:
+  std::ostream &out;
+
+public:
+  parameters_collection_output(std::ostream &o) : out(o) {}
+  inline void
+  operator()(const std::pair<const std::string, Parameters> &x) const {
+    out << x.first << " {\n";
+    out << x.second;
+    out << "} " << x.first << "\n";
+  }
 };
 
 //=======================================================================
 // functions for reading parameters from a parser
 //-----------------------------------------------------------------------
 
-parser& operator>>(parser&, Parameters&);
-parser& operator>>(parser&, parameters_collection&);
+parser &operator>>(parser &, Parameters &);
+parser &operator>>(parser &, parameters_collection &);
 
-
-}} // namespace hydra::parameters
-//=======================================================================
-#endif
-//=======================================================================
+} // namespace hydra

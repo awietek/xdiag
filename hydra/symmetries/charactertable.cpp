@@ -12,25 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <cassert>
-#include <fstream>
-#include <iostream>
-
 #include "charactertable.h"
 
 namespace hydra {
 
 CharacterTable::CharacterTable(
-    const SpaceGroup &space_group, const std::vector<std::string> &names,
-    const std::vector<std::vector<int>> &allowed_symmetries,
-    const std::vector<std::vector<complex>> &characters)
+    SpaceGroup const &space_group, std::vector<std::string> const &names,
+    std::vector<std::vector<int>> const &allowed_symmetries,
+    std::vector<std::vector<complex>> const &characters)
     : space_group_(space_group), names_(names),
       n_symmetries_total_((int)space_group_.n_symmetries()) {
-  assert(names.size() == allowed_symmetries.size());
-  assert(names.size() == characters.size());
+
+  if (names.size() != allowed_symmetries.size())
+    HydraLog.err("Error constructing Charactertable: "
+                 "names.size() != allowed_symmetries.size()");
+  else if (names.size() != characters.size())
+    HydraLog.err("Error constructing Charactertable: " names.size() !=
+                 characters.size());
 
   for (int idx = 0; idx < (int)names.size(); ++idx) {
     std::string name = names[idx];
+
     assert(allowed_symmetries[idx].size() == characters[idx].size());
     for (int n_sym : allowed_symmetries[idx])
       assert(n_sym < n_symmetries_total_);
@@ -63,33 +65,23 @@ std::vector<int> CharacterTable::allowed_symmetries(std::string name) const {
   return allowed_symmetries_.find(name)->second;
 }
 
-complex CharacterTable::character(const std::string &name,
-                                  const int &n_sym) const {
+complex CharacterTable::character(std::string name, int n_sym) const {
   return characters_.find(name)->second[n_sym];
 }
 
-std::vector<complex> CharacterTable::characters(const std::string &name) const {
+std::vector<complex> CharacterTable::characters(std::string name) const {
   return characters_.find(name)->second;
 }
+  
+std::vector<complex> CharacterTable::characters(std::string name) const {
+  auto characters_complex = characters(name);
+  std::vector<double> characters_real;
+  for (auto char : characters_complex)
+    characters_real.emplace_back(std::real(char));
+  return characters_real;
+}
 
-// void Print(const CharacterTable& table)
-// {
-//   for (auto name : table.names())
-// 	{
-// 	  printf("[Representation]=%s\n", name.c_str());
-// 	  if ( table.is_real(name) ) printf("REAL\n");
-// 	  else printf("COMPLEX\n");
-// 	  printf("[AllowedOps]=%d\n", table.n_symmetries(name));
-// 	  for (int n_sym : table.allowed_symmetries(name))
-// 	    printf("%d ", n_sym);
-// 	  printf("\n");
-// 	  for (int n_sym=0; n_sym < table.n_symmetries(name); ++n_sym)
-// 	    printf("%f %f\n", std::real(table.character(name, n_sym)),
-// 		   std::imag(table.character(name, n_sym)));
-// 	}
-// }
-
-bool CharacterTable::is_real(const std::string &name) const {
+bool CharacterTable::is_real(std::string name) const {
   return is_real_.find(name)->second;
 }
 

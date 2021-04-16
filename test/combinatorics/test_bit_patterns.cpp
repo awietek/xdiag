@@ -2,8 +2,8 @@
 
 #include <hydra/all.h>
 
-TEST_CASE( "combinatorics/bit_patterns", "[combinatorics]" ) {
-  using namespace hydra;
+TEST_CASE( "bit_patterns", "[combinatorics]" ) {
+  using hydra::uint64;
   using namespace hydra::combinatorics;
   
   // Test spin pattern creation and indexing

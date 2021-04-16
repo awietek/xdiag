@@ -1,5 +1,4 @@
-#ifndef HYDRA_COMBINATORICS_BIT_PATTERNS_
-#define HYDRA_COMBINATORICS_BIT_PATTERNS_
+#pragma once
 
 #include <hydra/common.h>
 #include <hydra/utils/bitops.h>
@@ -26,5 +25,3 @@ uint64 get_n_for_pattern(uint64 pattern, int n_sites, int n_upspins);
 
 } // namespace combinatorics
 } // namespace hydra
-
-#endif
