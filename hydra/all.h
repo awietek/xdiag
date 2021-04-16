@@ -12,16 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef HYDRA_ALL_H_
-#define HYDRA_ALL_H_
+#pragma once
 
 #include "common.h"
+#include "utils/bitops.h"
 
 #include "combinatorics/binomial.h"
 #include "combinatorics/bit_patterns.h"
+#include "combinatorics/combinations.h"
+
+#include "indexing/lintable.h"
+
 
 // #include "combinatorics/up_down_hole.h"
-
 
 // #include "qns/qn_spinhalf.h"
 // #include "qns/qn_electron.h"
@@ -39,7 +42,6 @@
 // #include "indexing/index_search.h"
 // #include "indexing/index_spinhalf.h"
 // #include "indexing/index_electron.h"
-// #include "indexing/lintable.h"
 
 // #include "models/hubbardmodel.h"
 // #include "models/tjmodel.h"
@@ -48,7 +50,6 @@
 
 
 
-// #include "utils/bitops.h"
 // #include "utils/range.h"
 // #include "utils/iochecks.h"
 // #include "utils/format.h"
@@ -72,5 +73,3 @@
 // #include "parameters/parser.h"
 // #include "parameters/parameters_impl.h"
 // #include "parameters/parameters.h"
-
-#endif
