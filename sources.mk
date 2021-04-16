@@ -1,5 +1,13 @@
 sources+= hydra/combinatorics/binomial.cpp
 sources+= hydra/combinatorics/bit_patterns.cpp
+sources+= hydra/combinatorics/combinations.cpp
+
+sources+= hydra/parameters/parameter_value.cpp
+sources+= hydra/parameters/parameters.cpp
+sources+= hydra/parameters/parser.cpp
+
+sources+= hydra/indexing/lintable.cpp
+
 
 # sources+= hydra/combinatorics/up_down_hole.cpp
 
@@ -18,7 +26,6 @@ sources+= hydra/combinatorics/bit_patterns.cpp
 
 # # sources+= hydra/indexing/index_symmetrized.cpp
 # # sources+= hydra/indexing/index_table.cpp
-# sources+= hydra/indexing/lintable.cpp
 
 
 # sources+= hydra/models/heisenbergmodel.cpp
@@ -37,9 +44,7 @@ sources+= hydra/combinatorics/bit_patterns.cpp
 # sources+= hydra/operators/couplings.cpp
 
 # sources+= hydra/parameters/palm_exception.cpp
-# sources+= hydra/parameters/parameter_value.cpp
-# sources+= hydra/parameters/parameters.cpp
-# sources+= hydra/parameters/parser.cpp
+
 
 # sources+= hydra/entanglement/reduced_density_matrix.cpp
 # sources+= hydra/entanglement/entanglement_entropy.cpp
@@ -57,6 +62,9 @@ testsources+= test/tests.cpp
 
 testsources+= test/combinatorics/test_binomial.cpp
 testsources+= test/combinatorics/test_bit_patterns.cpp
+testsources+= test/combinatorics/test_combinations.cpp
+
+testsources+= test/indexing/test_lintable.cpp
 
 # testsources+= test/combinatorics/test_up_down_hole.cpp
 
@@ -76,7 +84,6 @@ testsources+= test/combinatorics/test_bit_patterns.cpp
 
 # # testsources+= test/test_charactertable.cpp
 # # testsources+= test/test_indexhubbard.cpp
-# # testsources+= test/test_lintable.cpp
 # # testsources+= test/test_spacegroup.cpp
 
 # testsources+= test/models/test_tjmodel.cpp
