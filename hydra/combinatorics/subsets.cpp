@@ -1,4 +1,4 @@
-#include "combinations.h"
+#include "subsets.h"
 
 namespace hydra {
 namespace combinatorics {
