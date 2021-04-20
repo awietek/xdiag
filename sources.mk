@@ -1,4 +1,5 @@
 sources+= hydra/combinatorics/binomial.cpp
+sources+= hydra/combinatorics/subsets.cpp
 sources+= hydra/combinatorics/bit_patterns.cpp
 sources+= hydra/combinatorics/combinations.cpp
 
@@ -8,6 +9,11 @@ sources+= hydra/parameters/parser.cpp
 
 sources+= hydra/indexing/lintable.cpp
 
+sources+= hydra/models/spinhalf.cpp
+
+sources+= hydra/symmetries/charactertable.cpp
+sources+= hydra/symmetries/spacegroup.cpp
+sources+= hydra/symmetries/symmetry_operations.cpp
 
 # sources+= hydra/combinatorics/up_down_hole.cpp
 
@@ -50,8 +56,7 @@ sources+= hydra/indexing/lintable.cpp
 # sources+= hydra/entanglement/entanglement_entropy.cpp
 
 
-# sources+= hydra/symmetries/charactertable.cpp
-# sources+= hydra/symmetries/spacegroup.cpp
+
 # sources+= hydra/symmetries/symmetrydetail.cpp
 # sources+= hydra/thermodynamics/thermodynamics_detail.cpp
 # sources+= hydra/thermodynamics/thermodynamics_exact.cpp
@@ -61,6 +66,7 @@ sources+= hydra/indexing/lintable.cpp
 testsources+= test/tests.cpp
 
 testsources+= test/combinatorics/test_binomial.cpp
+testsources+= test/combinatorics/test_subsets.cpp
 testsources+= test/combinatorics/test_bit_patterns.cpp
 testsources+= test/combinatorics/test_combinations.cpp
 
