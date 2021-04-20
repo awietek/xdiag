@@ -35,10 +35,10 @@ public:
   CombinationsIterator() = default;
   CombinationsIterator(bit_t state);
 
-  inline bool operator==(const CombinationsIterator<bit_t> &rhs) const {
+  inline bool operator==(CombinationsIterator<bit_t> const &rhs) const {
     return current_ == rhs.current_;
   }
-  inline bool operator!=(const CombinationsIterator<bit_t> &rhs) const {
+  inline bool operator!=(CombinationsIterator<bit_t> const &rhs) const {
     return !operator==(rhs);
   }
   inline CombinationsIterator &operator++() {

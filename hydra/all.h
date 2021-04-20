@@ -18,11 +18,21 @@
 #include "utils/bitops.h"
 
 #include "combinatorics/binomial.h"
+#include "combinatorics/subsets.h"
 #include "combinatorics/bit_patterns.h"
 #include "combinatorics/combinations.h"
 
 #include "indexing/lintable.h"
 
+#include "models/spinhalf.h"
+
+#include "symmetries/spacegroup.h"
+#include "symmetries/charactertable.h"
+#include "symmetries/symmetry_operations.h"
+
+#include "operators/bond.h"
+#include "operators/bondlist.h"
+#include "operators/couplings.h"
 
 // #include "combinatorics/up_down_hole.h"
 
@@ -56,9 +66,7 @@
 // #include "utils/print.h"
 // #include "utils/hash.h"
 
-// #include "operators/bond.h"
-// #include "operators/bondlist.h"
-// #include "operators/couplings.h"
+
 
 // #include "entanglement/reduced_density_matrix.h"
 // #include "entanglement/entanglement_entropy.h"
@@ -68,7 +76,7 @@
 // // #include "thermodynamics/thermodynamics_tpq.h"
 // // #include "dynamics/continuedfraction.h"
 
-// #include "symmetries/spacegroup.h"
+// 
 
 // #include "parameters/parser.h"
 // #include "parameters/parameters_impl.h"

@@ -16,7 +16,7 @@ public:
                  std::vector<std::vector<int>> const& allowed_symmetries,
                  std::vector<std::vector<complex>> const& characters);
 
-  SpaceGroup space_group() const { return SpaceGroup; }
+  SpaceGroup space_group() const { return space_group_; }
   std::vector<std::string> names() const;
   SpaceGroup little_group(std::string name) const;
   int n_symmetries(std::string name) const;
@@ -24,7 +24,7 @@ public:
   complex character(std::string name, int n_sym) const;
   std::vector<complex> characters(std::string name) const;
   std::vector<double> characters_real(std::string name) const;
-  bool is_real(std::string &name) const;
+  bool is_real(std::string name) const;
 
 private:
   SpaceGroup space_group_;

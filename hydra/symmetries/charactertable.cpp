@@ -27,8 +27,8 @@ CharacterTable::CharacterTable(
     HydraLog.err("Error constructing Charactertable: "
                  "names.size() != allowed_symmetries.size()");
   else if (names.size() != characters.size())
-    HydraLog.err("Error constructing Charactertable: " names.size() !=
-                 characters.size());
+    HydraLog.err("Error constructing Charactertable: "
+		 "names.size() != characters.size()");
 
   for (int idx = 0; idx < (int)names.size(); ++idx) {
     std::string name = names[idx];
@@ -73,11 +73,11 @@ std::vector<complex> CharacterTable::characters(std::string name) const {
   return characters_.find(name)->second;
 }
   
-std::vector<complex> CharacterTable::characters(std::string name) const {
+std::vector<double> CharacterTable::characters_real(std::string name) const {
   auto characters_complex = characters(name);
   std::vector<double> characters_real;
-  for (auto char : characters_complex)
-    characters_real.emplace_back(std::real(char));
+  for (complex chi : characters_complex)
+    characters_real.emplace_back(std::real(chi));
   return characters_real;
 }
 
