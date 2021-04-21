@@ -6,7 +6,7 @@
 
 
 
-TEST_CASE( "spacegroup test", "[symmetries/spacegroup]" ) {
+TEST_CASE( "spacegroup", "[symmetries]" ) {
   using namespace hydra::symmetries;
 
   std::vector<std::vector<int>> symmetries;

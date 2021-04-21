@@ -3,7 +3,6 @@
 #include <hydra/common.h>
 
 namespace hydra {
-namespace combinatorics {
 
 template <class bit_t = std_bit_t> class SubsetsIterator;
 
@@ -13,7 +12,7 @@ public:
   using iterator_t = SubsetsIterator<bit_t>;
 
   Subsets() = default;
-  Subsets(int n);
+  explicit Subsets(int n);
 
   int n() const { return n_; }
   idx_t size() const { return size_; };
@@ -49,5 +48,4 @@ private:
   bit_t current_;
 };
 
-} // namespace combinatorics
 } // namespace hydra

@@ -1,8 +1,8 @@
 #pragma once
 
-#include <string>
-#include <sstream>
 #include <hydra/common.h>
+#include <sstream>
+#include <string>
 
 namespace hydra {
 namespace utils {
@@ -27,15 +27,15 @@ inline int popcnt(uint16 x) { return __builtin_popcount(x); }
 inline int popcnt(uint32 x) { return __builtin_popcount(x); }
 inline int popcnt(uint64 x) { return __builtin_popcountll(x); }
 
+} // namespace utils
+
 // bits_to_string
 template <typename bit_t>
 std::string bits_to_string(bit_t bits, int n, bool reverse = true) {
   std::stringstream s;
   for (int i = 0; i < n; ++i)
-    s << gbit(bits, i);
+    s << utils::gbit(bits, i);
   std::string st = s.str();
   return reverse ? std::string(st.rbegin(), st.rend()) : st;
 }
-
-} // namespace utils
 } // namespace hydra

@@ -27,14 +27,18 @@
 #include "models/spinhalf.h"
 
 #include "symmetries/spacegroup.h"
-#include "symmetries/charactertable.h"
-#include "symmetries/symmetry_operations.h"
+#include "symmetries/spinflip.h"
+#include "symmetries/representation.h"
+#include "symmetries/spacegroup_operations.h"
+#include "symmetries/spacegroup_operator.h"
 
 #include "operators/bond.h"
 #include "operators/bondlist.h"
 #include "operators/couplings.h"
 
 // #include "combinatorics/up_down_hole.h"
+// #include "symmetries/charactertable.h"
+
 
 // #include "qns/qn_spinhalf.h"
 // #include "qns/qn_electron.h"

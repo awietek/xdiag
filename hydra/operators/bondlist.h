@@ -23,60 +23,23 @@
 
 namespace hydra {
 
-/*!
-  BondList is a container for organizing interaction types, coupling
-  coupling constants and the sites, interactions act on.
-
-  Usage:
-  \code
-  #include <hydra/all.h>
-
-  using hydra::operators::BondList;
-  using hydra::operators::read_bondlist;
-
-  BondList bondlist = read_bondlist(latticefile);
-  int n_sites = bondlist.n_sites();
-  BondList hopping_list = bondlist.bonds_of_type("HUBBARDHOP");
-  std::vector<std::pair<int, int>> hoppings;
-  for (auto bond : hopping_list)
-    hoppings.push_back({bond.sites()[0], bond.sites()[1]});
-  \endcode
-*/
 class BondList {
   using iterator_t = typename std::vector<Bond>::iterator;
   using const_iterator_t = typename std::vector<Bond>::const_iterator;
 
 public:
-  /// Create empty Bondlist
   BondList() = default;
+  explicit BondList(std::vector<Bond> const& bonds);
+  void operator<<(Bond const& bond);
 
-  /// Create BondList from standard vector of Bond
-  explicit BondList(const std::vector<Bond> &bonds);
-
-  /// Add a Bond to the bondlist
-  void operator<<(const Bond &bond);
-
-  /// returns on how many sites all the bonds live (i.e. max no. site + 1)
   int n_sites() const;
-
-  /// returns vector with names of types
   std::vector<std::string> types() const;
-
-  /// returns vector with names of couplings
   std::vector<std::string> couplings() const;
-
-  /// returns vector names of  with types and couplings
   std::vector<TypeCoupling> types_couplings() const;
-
-  /// returns a BondList with bonds of given type
-  BondList bonds_of_type(const std::string &type) const;
-
-  /// returns a BondList with bonds of given coupling
-  BondList bonds_of_coupling(const std::string &coupling) const;
-
-  /// returns a BondList with bonds of given type and coupling
-  BondList bonds_of_type_coupling(const std::string &type,
-                                  const std::string &coupling) const;
+  BondList bonds_of_type(std::string type) const;
+  BondList bonds_of_coupling(std::string coupling) const;
+  BondList bonds_of_type_coupling(std::string type,
+                                  std::string coupling) const;
 
   iterator_t begin() { return bonds_.begin(); }
   iterator_t end() { return bonds_.end(); }
@@ -94,17 +57,6 @@ private:
   std::vector<Bond> bonds_;
 };
 
-/*!
-  Reads BondList from filename
-
-  Format should be
-  [Interactions]
-  HB J1 0 1
-  HB J2 0 2
-  ...
-  reads a block starting with [Interactions] or [interactions] until next
-  [...] block or if [...] is not found until end of file
-*/
 BondList read_bondlist(std::string filename);
 
 } // namespace hydra

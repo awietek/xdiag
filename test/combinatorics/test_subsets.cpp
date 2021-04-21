@@ -22,7 +22,7 @@ void test_subsets(){
 	    if (ctr != 0) REQUIRE(sub > current);
 	    current = sub;
 	    ++ctr;
-	    REQUIRE(sub < (1 << n));
+	    REQUIRE(sub < ((bit_t)1 << n));
 	  }
 	REQUIRE(ctr == subs.size());
       }

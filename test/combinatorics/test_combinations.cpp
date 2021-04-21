@@ -25,7 +25,7 @@ void test_combinations(){
 	    current = comb;
 	    ++ctr;
 	    REQUIRE(popcnt(comb) == k);
-	    REQUIRE(comb < (1 << n));
+	    REQUIRE(comb < ((bit_t)1 << n));
 	  }
 	REQUIRE(ctr == combs.size());
       }

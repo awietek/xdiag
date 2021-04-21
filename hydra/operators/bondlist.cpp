@@ -26,7 +26,7 @@ namespace hydra {
 
 namespace detail {
 
-std::vector<TypeCoupling> get_types_couplings(const std::vector<Bond> &bonds) {
+std::vector<TypeCoupling> get_types_couplings(std::vector<Bond> const &bonds) {
   std::vector<TypeCoupling> types_couplings;
 
   for (Bond bond : bonds) {
@@ -38,7 +38,7 @@ std::vector<TypeCoupling> get_types_couplings(const std::vector<Bond> &bonds) {
   return types_couplings;
 }
 
-std::vector<std::string> get_types(const std::vector<Bond> &bonds) {
+std::vector<std::string> get_types(std::vector<Bond> const &bonds) {
   std::vector<std::string> types;
   for (Bond bond : bonds)
     if (std::find(types.begin(), types.end(), bond.type()) == types.end())
@@ -46,7 +46,7 @@ std::vector<std::string> get_types(const std::vector<Bond> &bonds) {
   return types;
 }
 
-std::vector<std::string> get_couplings(const std::vector<Bond> &bonds) {
+std::vector<std::string> get_couplings(std::vector<Bond> const &bonds) {
   std::vector<std::string> couplings;
   for (Bond bond : bonds)
     if (std::find(couplings.begin(), couplings.end(), bond.coupling()) ==
@@ -55,8 +55,8 @@ std::vector<std::string> get_couplings(const std::vector<Bond> &bonds) {
   return couplings;
 }
 
-std::vector<Bond> get_bonds_of_type(const std::vector<Bond> &bonds,
-                                    const std::string &type) {
+std::vector<Bond> get_bonds_of_type(std::vector<Bond> const &bonds,
+                                    std::string type) {
   std::vector<Bond> bonds_return;
   for (Bond bond : bonds)
     if (bond.type() == type)
@@ -64,8 +64,8 @@ std::vector<Bond> get_bonds_of_type(const std::vector<Bond> &bonds,
   return bonds_return;
 }
 
-std::vector<Bond> get_bonds_of_coupling(const std::vector<Bond> &bonds,
-                                        const std::string &coupling) {
+std::vector<Bond> get_bonds_of_coupling(std::vector<Bond> const &bonds,
+                                        std::string coupling) {
   std::vector<Bond> bonds_return;
   for (Bond bond : bonds)
     if (bond.coupling() == coupling)
@@ -74,8 +74,8 @@ std::vector<Bond> get_bonds_of_coupling(const std::vector<Bond> &bonds,
 }
 
 std::vector<Bond>
-get_bonds_of_type_coupling(const std::vector<Bond> &bonds,
-                           const TypeCoupling &type_coupling) {
+get_bonds_of_type_coupling(std::vector<Bond> const &bonds,
+                           TypeCoupling const &type_coupling) {
   std::vector<Bond> bonds_return;
   for (Bond bond : bonds)
     if ((bond.type() == type_coupling.type()) &&
@@ -86,7 +86,7 @@ get_bonds_of_type_coupling(const std::vector<Bond> &bonds,
 
 } // namespace detail
 
-BondList::BondList(const std::vector<Bond> &bonds) : bonds_(bonds) {}
+BondList::BondList(std::vector<Bond> const &bonds) : bonds_(bonds) {}
 
 int BondList::n_sites() const {
   int n_sites = 0;
@@ -97,7 +97,7 @@ int BondList::n_sites() const {
   return n_sites;
 }
 
-void BondList::operator<<(const Bond &bond) { bonds_.push_back(bond); }
+void BondList::operator<<(Bond const &bond) { bonds_.push_back(bond); }
 
 std::vector<std::string> BondList::types() const {
   return detail::get_types(bonds_);
@@ -109,16 +109,16 @@ std::vector<TypeCoupling> BondList::types_couplings() const {
   return detail::get_types_couplings(bonds_);
 }
 
-BondList BondList::bonds_of_type(const std::string &type) const {
+BondList BondList::bonds_of_type(std::string type) const {
   return BondList(detail::get_bonds_of_type(bonds_, type));
 }
 
-BondList BondList::bonds_of_coupling(const std::string &coupling) const {
+BondList BondList::bonds_of_coupling(std::string coupling) const {
   return BondList(detail::get_bonds_of_coupling(bonds_, coupling));
 }
 
-BondList BondList::bonds_of_type_coupling(const std::string &type,
-                                          const std::string &coupling) const {
+BondList BondList::bonds_of_type_coupling(std::string type,
+                                          std::string coupling) const {
   return BondList(
       detail::get_bonds_of_type_coupling(bonds_, TypeCoupling(type, coupling)));
 }
@@ -188,11 +188,11 @@ BondList read_bondlist(std::string filename) {
         exit(EXIT_FAILURE);
       }
       paramss = std::stringstream(paramstr);
-      parameters::Parameters parameters;
+      Parameters parameters;
 
       try {
-        parameters::parser prs(paramss);
-        parameters = parameters::Parameters(prs);
+        parser prs(paramss);
+        parameters = Parameters(prs);
       } catch (...) {
         std::cerr << "Error parsing Bond Parameters: parsing failed for:\n"
                   << paramstr << std::endl;
