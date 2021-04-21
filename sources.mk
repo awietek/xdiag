@@ -11,11 +11,18 @@ sources+= hydra/indexing/lintable.cpp
 
 sources+= hydra/models/spinhalf.cpp
 
-sources+= hydra/symmetries/charactertable.cpp
 sources+= hydra/symmetries/spacegroup.cpp
-sources+= hydra/symmetries/symmetry_operations.cpp
+sources+= hydra/symmetries/spinflip.cpp
+sources+= hydra/symmetries/representation.cpp
+sources+= hydra/symmetries/spacegroup_operations.cpp
+sources+= hydra/symmetries/spacegroup_operator.cpp
+
+sources+= hydra/operators/bond.cpp
+sources+= hydra/operators/bondlist.cpp
+sources+= hydra/operators/couplings.cpp
 
 # sources+= hydra/combinatorics/up_down_hole.cpp
+# sources+= hydra/symmetries/charactertable.cpp
 
 # sources+= hydra/utils/iochecks.cpp
 
@@ -45,18 +52,13 @@ sources+= hydra/symmetries/symmetry_operations.cpp
 
 # sources+= hydra/mpi/communicator.cpp
 
-# sources+= hydra/operators/bond.cpp
-# sources+= hydra/operators/bondlist.cpp
-# sources+= hydra/operators/couplings.cpp
+
 
 # sources+= hydra/parameters/palm_exception.cpp
 
 
 # sources+= hydra/entanglement/reduced_density_matrix.cpp
 # sources+= hydra/entanglement/entanglement_entropy.cpp
-
-
-
 # sources+= hydra/symmetries/symmetrydetail.cpp
 # sources+= hydra/thermodynamics/thermodynamics_detail.cpp
 # sources+= hydra/thermodynamics/thermodynamics_exact.cpp
@@ -71,6 +73,19 @@ testsources+= test/combinatorics/test_bit_patterns.cpp
 testsources+= test/combinatorics/test_combinations.cpp
 
 testsources+= test/indexing/test_lintable.cpp
+
+testsources+= test/symmetries/test_spacegroup_operator.cpp
+
+testsources+= test/models/test_spinhalf.cpp
+
+
+# testsources+= test/symmetries/test_spacegroup.cpp
+# testsources+= test/symmetries/test_representation.cpp
+# testsources+= test/symmetries/test_charactertable.cpp
+# testsources+= test/symmetries/test_symmetry_operations.cpp
+
+
+# testsources+= test/test_indexhubbard.cpp
 
 # testsources+= test/combinatorics/test_up_down_hole.cpp
 

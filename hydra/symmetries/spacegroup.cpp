@@ -6,77 +6,44 @@
 
 namespace hydra {
 
-SpaceGroup::SpaceGroup(std::vector<std::vector<int>> const& symmetries)
+template <class bit_t, class SpaceGroupOperator>
+SpaceGroup<bit_t, SpaceGroupOperator>::SpaceGroup(
+    std::vector<std::vector<int>> const &symmetries)
     : n_sites_(symmetries[0].size()), n_symmetries_(symmetries.size()),
-      symmetries_(symmetries), symmetries_internal_(n_sites_ * n_symmetries_) {
+      symmetries_(symmetries), permutation_array_(n_sites_ * n_symmetries_) {
   for (int i = 0; i < (int)symmetries.size(); ++i) {
-    
+
     // Check whether lattice symmetries are well-formed
-    assert((int)symmetries[i].size() == n_sites_);
-    assert(detail::is_valid_permutation(symmetries[i]));
+    if ((int)symmetries[i].size() != n_sites_)
+      HydraLog.err("Error constructing SpaceGroup: "
+                   "there's a symmetry not of length n_sites");
+
+    if (!detail::is_valid_permutation(n_sites_, symmetries[i].data()))
+      HydraLog.err("Error constructing SpaceGroup: "
+                   "there's a symmetry which is not a proper permutation");
+
     std::copy(symmetries[i].begin(), symmetries[i].end(),
-              symmetries_internal_.begin() + i * n_sites_);
+              permutation_array_.begin() + i * n_sites_);
   }
+  spacegroup_operator_ = SpaceGroupOperator(n_sites_, permutation_array_);
 }
 
-SpaceGroup
-SpaceGroup::subgroup(std::vector<int> const& symmetry_numbers) const {
+template <class bit_t, class SpaceGroupOperator>
+SpaceGroup<bit_t, SpaceGroupOperator>
+SpaceGroup<bit_t, SpaceGroupOperator>::subgroup(
+    std::vector<int> const &symmetry_numbers) const {
   std::vector<std::vector<int>> subgroup_symmetries;
   for (int n_sym : symmetry_numbers) {
-    assert((0 <= n_sym) && (n_sym < (int)symmetries_.size()));
+    if ((0 > n_sym) && (n_sym >= (int)symmetries_.size()))
+      HydraLog.err("Error building subgroup of SpaceGroup: "
+                   "invalid symmetry index");
     subgroup_symmetries.push_back(symmetries_[n_sym]);
   }
-  return SpaceGroup(subgroup_symmetries);
+  return SpaceGroup<bit_t, SpaceGroupOperator>(subgroup_symmetries);
 }
 
-SpaceGroup read_spacegroup(std::string filename) {
-  std::vector<std::vector<int>> lattice_symmetries;
-  std::ifstream File(filename.c_str());
-
-  if (File.fail()) {
-    std::cerr << "Error in read_spacegroup: Could not open file"
-              << "with filename [" << filename << "] given. Abort."
-              << std::endl;
-    exit(EXIT_FAILURE);
-  }
-
-  std::string tobeparsed;
-  std::string::size_type pos;
-  // Jump to Sites and parse n_sites
-  File >> tobeparsed;
-  while (tobeparsed.find("[Sites]") == std::string::npos)
-    File >> tobeparsed;
-  pos = tobeparsed.find('=');
-  int n_sites;
-  if (pos != std::string::npos)
-    n_sites = atoi(tobeparsed.substr(pos + 1, std::string::npos).c_str());
-  else
-    n_sites = -1;
-
-  // Jump to SymmetryOps
-  File >> tobeparsed;
-  while (tobeparsed.find("[SymmetryOps]") == std::string::npos)
-    File >> tobeparsed;
-
-  // Read all symmetries
-  int n_symmetries;
-  pos = tobeparsed.find('=');
-  if (pos != std::string::npos)
-    n_symmetries = atoi(tobeparsed.substr(pos + 1, std::string::npos).c_str());
-  else
-    n_symmetries = -1;
-
-  lattice_symmetries.resize(n_symmetries);
-  for (int i = 0; i < n_symmetries; ++i) {
-    File >> tobeparsed;
-    for (int si = 0; si < n_sites; ++si) {
-      int tosite;
-      File >> tosite;
-      lattice_symmetries[i].push_back(tosite);
-    }
-  }
-
-  return SpaceGroup(lattice_symmetries);
-}
+template class SpaceGroup<uint16, SpaceGroupOperator<uint16>>;
+template class SpaceGroup<uint32, SpaceGroupOperator<uint32>>;
+template class SpaceGroup<uint64, SpaceGroupOperator<uint64>>;
 
 } // namespace hydra
