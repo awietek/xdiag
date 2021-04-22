@@ -25,12 +25,15 @@
 #include "indexing/lintable.h"
 
 #include "models/spinhalf.h"
+#include "models/electron.h"
 
 #include "symmetries/spacegroup.h"
 #include "symmetries/spinflip.h"
 #include "symmetries/representation.h"
 #include "symmetries/spacegroup_operations.h"
 #include "symmetries/spacegroup_operator.h"
+#include "symmetries/fermi_sign.h"
+
 
 #include "operators/bond.h"
 #include "operators/bondlist.h"

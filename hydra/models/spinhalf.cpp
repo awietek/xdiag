@@ -60,7 +60,7 @@ Spinhalf<bit_t, SymmetryGroup>::Spinhalf(int n_sites, int sz)
     state = combinatorics::get_next_pattern(state);
     ++idx;
   };
-  bit_t b = ((bit_t)1 << n_upspins_)-1;
+  bit_t b = ((bit_t)1 << n_upspins_) - 1;
   bit_t e = combinatorics::get_next_pattern(b << (n_sites_ - n_upspins_));
   begin_ = SpinhalfIterator<bit_t>(b, 0, advance);
   end_ = SpinhalfIterator<bit_t>(e, size_, advance);
@@ -76,11 +76,14 @@ Spinhalf<bit_t, SymmetryGroup>::Spinhalf(int n_sites,
   detail::fill_states_norms(Subsets<bit_t>(n_sites), symmetry_group, irrep,
                             states_, norms_);
   size_ = (idx_t)states_.size();
+  assert((idx_t)norms_.size() == size_);
   auto advance = [this](bit_t &state, idx_t &idx) {
     state = this->states_[++idx];
   };
-  begin_ = SpinhalfIterator<bit_t>(states_[0], 0, advance);
-  end_ = SpinhalfIterator<bit_t>(states_[size_ - 1], size_, advance);
+  bit_t b = (size_ > 0) ? states_[0] : 0;
+  bit_t e = (size_ > 0) ? states_[size_ - 1] : 0;
+  begin_ = SpinhalfIterator<bit_t>(b, 0, advance);
+  end_ = SpinhalfIterator<bit_t>(e, size_, advance);
 }
 
 template <class bit_t, class SymmetryGroup>
@@ -99,11 +102,14 @@ Spinhalf<bit_t, SymmetryGroup>::Spinhalf(int n_sites, int sz,
                             symmetry_group, irrep, states_, norms_);
 
   size_ = (idx_t)states_.size();
+  assert((idx_t)norms_.size() == size_);
   auto advance = [this](bit_t &state, idx_t &idx) {
     state = this->states_[++idx];
   };
-  begin_ = SpinhalfIterator<bit_t>(states_[0], 0, advance);
-  end_ = SpinhalfIterator<bit_t>(states_[size_ - 1], size_, advance);
+  bit_t b = (size_ > 0) ? states_[0] : 0;
+  bit_t e = (size_ > 0) ? states_[size_ - 1] : 0;
+  begin_ = SpinhalfIterator<bit_t>(b, 0, advance);
+  end_ = SpinhalfIterator<bit_t>(e, size_, advance);
 }
 
 template class Spinhalf<uint16, SpaceGroup<uint16>>;

@@ -57,7 +57,7 @@ std::vector<std::vector<int>> read_permutations(std::string filename) {
   return lattice_symmetries;
 }
 
-namespace detail {
+namespace symmetries {
 
 bool is_valid_permutation(int n_sites, const int *permutation) {
   for (int i = 0; i < n_sites; ++i) {
@@ -79,36 +79,6 @@ bit_t apply_permutation(bit_t state, int n_sites, const int *permutation) {
 template uint16 apply_permutation<uint16>(uint16, int, const int *);
 template uint32 apply_permutation<uint32>(uint32, int, const int *);
 template uint64 apply_permutation<uint64>(uint64, int, const int *);
-
-template <class bit_t>
-double fermi_sign(bit_t state, int n_sites, const int *permutation) {
-  std::vector<int> sort(n_sites); // Bad for performance
-  int sum = 0;
-  int nf, k;
-
-  for (nf = 0, k = 0; k < n_sites; ++k)
-    if (utils::gbit(state, k)) {
-      sort[nf] = permutation[k];
-      ++nf;
-    }
-
-  int old_sum;
-  while (true) {
-    old_sum = sum;
-    for (k = 0; k < (nf - 1); ++k)
-      if (sort[k + 1] < sort[k]) {
-        sum++;
-        std::swap(sort[k + 1], sort[k]);
-      }
-    if (old_sum == sum)
-      break;
-  }
-  return (sum % 2 ? -1 : 1);
-}
-
-template double fermi_sign<uint16>(uint16, int, const int *);
-template double fermi_sign<uint32>(uint32, int, const int *);
-template double fermi_sign<uint64>(uint64, int, const int *);
 
 } // namespace detail
 } // namespace hydra

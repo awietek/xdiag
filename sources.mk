@@ -10,12 +10,14 @@ sources+= hydra/parameters/parser.cpp
 sources+= hydra/indexing/lintable.cpp
 
 sources+= hydra/models/spinhalf.cpp
+sources+= hydra/models/electron.cpp
 
 sources+= hydra/symmetries/spacegroup.cpp
 sources+= hydra/symmetries/spinflip.cpp
 sources+= hydra/symmetries/representation.cpp
 sources+= hydra/symmetries/spacegroup_operations.cpp
 sources+= hydra/symmetries/spacegroup_operator.cpp
+sources+= hydra/symmetries/fermi_sign.cpp
 
 sources+= hydra/operators/bond.cpp
 sources+= hydra/operators/bondlist.cpp
@@ -75,8 +77,10 @@ testsources+= test/combinatorics/test_combinations.cpp
 testsources+= test/indexing/test_lintable.cpp
 
 testsources+= test/symmetries/test_spacegroup_operator.cpp
+testsources+= test/symmetries/test_fermi_sign.cpp
 
 testsources+= test/models/test_spinhalf.cpp
+testsources+= test/models/test_electron.cpp
 
 
 # testsources+= test/symmetries/test_spacegroup.cpp
