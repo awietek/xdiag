@@ -1,20 +1,17 @@
 #pragma once
 
-#include <vector>
 #include <string>
+#include <vector>
 
 namespace hydra {
 std::vector<std::vector<int>> read_permutations(std::string filename);
 
-namespace detail {
+namespace symmetries {
 
 bool is_valid_permutation(int n_sites, const int *permutation);
 
 template <class bit_t>
 bit_t apply_permutation(bit_t state, int n_sites, const int *permutation);
-  
-template <class bit_t>
-double fermi_sign(bit_t state, int n_sites, const int *permutation);
 
-} // namespace detail
+} // namespace symmetries
 } // namespace hydra

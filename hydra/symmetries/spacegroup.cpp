@@ -18,7 +18,7 @@ SpaceGroup<bit_t, SpaceGroupOperator>::SpaceGroup(
       HydraLog.err("Error constructing SpaceGroup: "
                    "there's a symmetry not of length n_sites");
 
-    if (!detail::is_valid_permutation(n_sites_, symmetries[i].data()))
+    if (!symmetries::is_valid_permutation(n_sites_, symmetries[i].data()))
       HydraLog.err("Error constructing SpaceGroup: "
                    "there's a symmetry which is not a proper permutation");
 
