@@ -75,9 +75,10 @@ template <class bit_t> void test_spacegroup_operator(int n_sites) {
 }
 
 TEST_CASE("spacegroup_operator", "[symmetries]") {
+  
   for (int n_sites = 1; n_sites < 6; ++n_sites) {
-    test_spacegroup_operator<uint16>(n_sites);
-    test_spacegroup_operator<uint32>(n_sites);
-    test_spacegroup_operator<uint64>(n_sites);
+    test_spacegroup_operator<hydra::uint16>(n_sites);
+    test_spacegroup_operator<hydra::uint32>(n_sites);
+    test_spacegroup_operator<hydra::uint64>(n_sites);
   }
 }

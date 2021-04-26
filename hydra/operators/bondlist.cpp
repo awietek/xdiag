@@ -123,6 +123,12 @@ BondList BondList::bonds_of_type_coupling(std::string type,
       detail::get_bonds_of_type_coupling(bonds_, TypeCoupling(type, coupling)));
 }
 
+BondList operator+(BondList const & bl1, BondList const & bl2) {
+  auto newbonds = bl1.bonds_;
+  newbonds.insert(newbonds.end(), bl2.begin(), bl2.end());
+  return BondList(newbonds);
+}
+
 BondList read_bondlist(std::string filename) {
   std::vector<Bond> bonds;
 

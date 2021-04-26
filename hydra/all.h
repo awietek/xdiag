@@ -25,7 +25,9 @@
 #include "indexing/lintable.h"
 
 #include "models/spinhalf.h"
-#include "models/electron.h"
+#include "models/electron/electron.h"
+#include "models/electron/electron_matrix.h"
+#include "models/electron/electron_apply.h"
 
 #include "symmetries/spacegroup.h"
 #include "symmetries/spinflip.h"

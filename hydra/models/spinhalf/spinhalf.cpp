@@ -19,10 +19,10 @@ void fill_states_norms(BitsGen &&bits_generator, SymmetryGroup &&symmetry_group,
     if (rep == bits) {
       // Compute norm
       complex amplitude = 0.0;
-      for (int sym = 0; sym < (int)irrep.characters.size(); ++sym) {
+      for (int sym = 0; sym < (int)irrep.size(); ++sym) {
         bit_t derivedstate = symmetry_group.apply(sym, bits);
         if (derivedstate == bits)
-          amplitude += irrep.characters[sym];
+          amplitude += irrep.character(sym);
       }
       if (std::abs(amplitude) > 1e-8) {
         states.push_back(rep);
@@ -37,7 +37,7 @@ template <class bit_t, class SymmetryGroup>
 Spinhalf<bit_t, SymmetryGroup>::Spinhalf(int n_sites)
     : n_sites_(n_sites), sz_conserved_(false), symmetry_group_defined_(false),
       size_((idx_t)1 << n_sites) {
-  auto advance = [this](bit_t &state, idx_t &idx) {
+  auto advance = [](bit_t &state, idx_t &idx) {
     ++state;
     ++idx;
   };
@@ -56,7 +56,7 @@ Spinhalf<bit_t, SymmetryGroup>::Spinhalf(int n_sites, int sz)
     HydraLog.err("Error creating Spinhalf: "
                  "invalid value of sz");
 
-  auto advance = [this](bit_t &state, idx_t &idx) {
+  auto advance = [](bit_t &state, idx_t &idx) {
     state = combinatorics::get_next_pattern(state);
     ++idx;
   };

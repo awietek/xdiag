@@ -42,6 +42,18 @@ SpaceGroup<bit_t, SpaceGroupOperator>::subgroup(
   return SpaceGroup<bit_t, SpaceGroupOperator>(subgroup_symmetries);
 }
 
+template <class bit_t, class SpaceGroupOperator>
+bool SpaceGroup<bit_t, SpaceGroupOperator>::operator==(
+    SpaceGroup const &rhs) const {
+  return (n_sites_ == rhs.n_sites_) && (n_symmetries_ == rhs.n_symmetries_) &&
+         (spacegroup_operator_ == rhs.spacegroup_operator_);
+}
+template <class bit_t, class SpaceGroupOperator>
+bool SpaceGroup<bit_t, SpaceGroupOperator>::operator!=(
+    SpaceGroup const &rhs) const {
+  return !operator==(rhs);
+}
+
 template class SpaceGroup<uint16, SpaceGroupOperator<uint16>>;
 template class SpaceGroup<uint32, SpaceGroupOperator<uint32>>;
 template class SpaceGroup<uint64, SpaceGroupOperator<uint64>>;

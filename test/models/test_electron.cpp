@@ -71,9 +71,8 @@ template <class bit_t> void test_electron(int n_sites) {
         //   std::cout << chi << " ";
         // std::cout << "\n";
 
-        auto irrep = Representation({"K", chis});
+        auto irrep = Representation(chis);
         auto electron = Electron<bit_t>(n_sites, nup, ndn, space_group, irrep);
-
         // print_states(electron);
         // std::cout << "\n";
 
@@ -108,9 +107,9 @@ template <class bit_t> void test_electron(int n_sites) {
 TEST_CASE("electron", "[models]") {
   // test_electron<uint32>(4);
 
-  for (int n_sites=1; n_sites<7; ++n_sites) {
-    test_electron<uint16>(n_sites);
-    test_electron<uint32>(n_sites);
-    test_electron<uint64>(n_sites);
+  for (int n_sites = 1; n_sites < 7; ++n_sites) {
+    test_electron<hydra::uint16>(n_sites);
+    test_electron<hydra::uint32>(n_sites);
+    test_electron<hydra::uint64>(n_sites);
   }
 }

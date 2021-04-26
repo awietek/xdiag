@@ -26,6 +26,10 @@ public:
     return symmetries::fermi_sign_of_permutation(
         state, permutation_array_.data() + sym * n_sites_, fermi_work_.data());
   }
+
+  bool operator==(SpaceGroupOperator const& rhs) const;
+  bool operator!=(SpaceGroupOperator const& rhs) const;
+  
 private:
   int n_sites_;
   int n_sym_;

@@ -26,11 +26,12 @@ namespace hydra {
 class BondList {
   using iterator_t = typename std::vector<Bond>::iterator;
   using const_iterator_t = typename std::vector<Bond>::const_iterator;
+  friend BondList operator+(BondList const &, BondList const &);
 
 public:
   BondList() = default;
-  explicit BondList(std::vector<Bond> const& bonds);
-  void operator<<(Bond const& bond);
+  explicit BondList(std::vector<Bond> const &bonds);
+  void operator<<(Bond const &bond);
 
   int n_sites() const;
   std::vector<std::string> types() const;
@@ -38,8 +39,7 @@ public:
   std::vector<TypeCoupling> types_couplings() const;
   BondList bonds_of_type(std::string type) const;
   BondList bonds_of_coupling(std::string coupling) const;
-  BondList bonds_of_type_coupling(std::string type,
-                                  std::string coupling) const;
+  BondList bonds_of_type_coupling(std::string type, std::string coupling) const;
 
   iterator_t begin() { return bonds_.begin(); }
   iterator_t end() { return bonds_.end(); }
@@ -57,6 +57,7 @@ private:
   std::vector<Bond> bonds_;
 };
 
+BondList operator+(BondList const &, BondList const &);
 BondList read_bondlist(std::string filename);
 
 } // namespace hydra
