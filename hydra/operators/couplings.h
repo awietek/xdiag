@@ -81,6 +81,8 @@ public:
   const_iterator_t cbegin() const { return couplings_.cbegin(); }
   const_iterator_t cend() const { return couplings_.cend(); }
 
+  void clear() { couplings_.clear(); }
+  
 private:
   std::map<std::string, complex> couplings_;
 };

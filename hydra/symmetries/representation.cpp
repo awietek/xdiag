@@ -1,7 +1,19 @@
 #include "representation.h"
 
 namespace hydra {
-std::vector<Representation> read_represenations(std::string filename) {
+
+Representation::Representation(std::vector<complex> const &characters)
+    : characters_(characters) {}
+
+bool Representation::operator==(Representation const &rhs) {
+  return lila::close(characters_, rhs.characters_);
+}
+
+bool Representation::operator!=(Representation const &rhs) {
+  return !operator==(rhs);
+}
+
+Representation read_represenation(std::string filename, std::string repname) {
   std::ifstream File(filename.c_str());
   if (File.fail()) {
     std::cerr << "Error in read_charactertable: Could not open "
@@ -30,7 +42,7 @@ std::vector<Representation> read_represenations(std::string filename) {
   assert(nreps >= 0);
 
   // Loop over all representations
-  std::vector<Representation> representations;
+  bool found = false;
   for (int i = 0; i < nreps; ++i) {
     File >> tobeparsed;
     while (tobeparsed.find("[Representation]") == std::string::npos)
@@ -80,10 +92,17 @@ std::vector<Representation> read_represenations(std::string filename) {
       characters.push_back(re + complex(0, 1) * im);
     }
 
-    representations.push_back({name, characters});
+    auto rep = Representation(characters);
+    if (name == repname) {
+      found = true;
+      return rep;
+    }
   }
+  if (!found)
+    HydraLog.err("Error reading representations: "
+                 "name not found in file");
 
-  return representations;
+  return Representation();
 }
 
 } // namespace hydra

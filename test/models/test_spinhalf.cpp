@@ -41,7 +41,7 @@ template <class bit_t> void test_spinhalf(int n_sites) {
     permutations.push_back(permutation);
   }
   auto space_group = SpaceGroup<bit_t>(permutations);
-  auto irrep = Representation({"Gamma", std::vector<complex>(n_sites, 1.0)});
+  auto irrep = Representation(std::vector<complex>(n_sites, 1.0));
 
   // Space group symmetries / no Sz conservation
   std::cout << "Sz: nA cyclic\n";

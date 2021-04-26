@@ -41,6 +41,9 @@ public:
     return permutation_array_[n_sites_ * sym + site];
   }
 
+  bool operator==(SpaceGroup const& rhs) const;
+  bool operator!=(SpaceGroup const& rhs) const;
+  
 private:
   int n_sites_;
   int n_symmetries_;
