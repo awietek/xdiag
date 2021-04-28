@@ -24,10 +24,11 @@
 
 #include "indexing/lintable.h"
 
-#include "models/spinhalf.h"
+#include "models/spinhalf/spinhalf.h"
 #include "models/electron/electron.h"
 #include "models/electron/electron_matrix.h"
 #include "models/electron/electron_apply.h"
+#include "models/electron/electron_symmetric.h"
 
 #include "symmetries/spacegroup.h"
 #include "symmetries/spinflip.h"
@@ -40,6 +41,8 @@
 #include "operators/bond.h"
 #include "operators/bondlist.h"
 #include "operators/couplings.h"
+
+#include "algebra/diagonalization.h"
 
 // #include "combinatorics/up_down_hole.h"
 // #include "symmetries/charactertable.h"

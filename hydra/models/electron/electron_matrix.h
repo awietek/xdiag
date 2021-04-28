@@ -3,7 +3,7 @@
 #include <lila/all.h>
 
 #include <hydra/common.h>
-#include <hydra/models/electron.h>
+#include <hydra/models/electron/electron.h>
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
 

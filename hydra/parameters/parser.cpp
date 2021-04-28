@@ -102,7 +102,7 @@ parser::token parser::parse_ident() {
   if (the_string == "yes" || the_string == "true" || the_string == "YES" ||
       the_string == "TRUE") {
     val = true;
-    return is_bool;
+    return p_is_bool;
   }
 
   // special identifiers: no, NO, false, FALSE
@@ -110,11 +110,11 @@ parser::token parser::parse_ident() {
   if (the_string == "no" || the_string == "false" || the_string == "NO" ||
       the_string == "FALSE") {
     val = false;
-    return is_bool;
+    return p_is_bool;
   }
 
   val = the_string;
-  return is_string;
+  return p_is_string;
 }
 
 //=======================================================================
@@ -178,7 +178,7 @@ parser::token parser::parse_number() {
     if (isskip(c))
       next_char();
 
-    return is_float;
+    return p_is_float;
   }
 
   // otherwise convert the std::string to an integer
@@ -189,7 +189,7 @@ parser::token parser::parse_number() {
   if (isskip(c))
     next_char();
 
-  return is_integer;
+  return p_is_integer;
 }
 
 //=======================================================================
@@ -249,7 +249,7 @@ char parser::next_token() {
   // starts with a ": std::string
   if (c == '"') {
     parse_string();
-    return is_string;
+    return p_is_string;
   }
 
   // any other non white space character: special token

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <map>
+
 #include <hydra/common.h>
 #include <hydra/indexing/lintable.h>
 #include <hydra/operators/bondlist.h>
@@ -27,14 +29,30 @@ public:
   inline Representation irrep() const { return irrep_; }
 
   inline idx_t size() const { return size_; }
-  inline double ups(idx_t idx) const { return ups_[idx]; }
-  inline double dns(idx_t idx) const { return dns_[idx]; }
+  inline double up(idx_t idx) const { return ups_[idx]; }
+  inline double dn(idx_t idx) const { return dns_[idx]; }
   inline double norm(idx_t idx) const { return norms_[idx]; }
 
-  std::tuple<bit_t, bit_t> representative(bit_t ups, bit_t dns);
+  std::tuple<bit_t, bit_t> representative(bit_t ups, bit_t dns) const;
+  std::tuple<bit_t, bit_t, int> representative_index(bit_t ups,
+                                                     bit_t dns) const;
+  idx_t index(bit_t ups, bit_t dns) const;
+  idx_t index_switch(bit_t ups, bit_t dns) const;
+  inline idx_t index_switch_to_index(idx_t idx) const {
+    return index_not_found(idx) ? invalid_index : index_switch_to_index_[idx];
+  }
 
-  bool operator==(ElectronSymmetric const &rhs);
-  bool operator!=(ElectronSymmetric const &rhs);
+  bool operator==(ElectronSymmetric const &rhs) const;
+  bool operator!=(ElectronSymmetric const &rhs) const;
+
+  std::map<bit_t, std::pair<idx_t, idx_t>> ups_lower_upper_;
+  std::vector<bit_t> dns_;
+
+  std::map<bit_t, std::pair<idx_t, idx_t>> dns_lower_upper_;
+  std::vector<bit_t> ups_;
+
+  std::vector<complex> character_switch_;
+
 
 private:
   int n_sites_;
@@ -43,14 +61,14 @@ private:
   int charge_;
   bool sz_conserved_;
   int sz_;
-  int nup_;
-  int ndn_;
+  int n_up_;
+  int n_dn_;
 
   SymmetryGroup symmetry_group_;
   Representation irrep_;
-  std::vector<bit_t> ups_;
-  std::vector<bit_t> dns_;
+
   std::vector<double> norms_;
+  std::vector<idx_t> index_switch_to_index_;
 
   idx_t size_;
 };
