@@ -1,4 +1,4 @@
-arch = osx
+arch = flatiron_linux
 
 include options.mk
 include sources.mk
@@ -13,7 +13,6 @@ appbinaries = $(subst .cpp,,$(appsources))
 testobjects = $(subst .cpp,.o,$(testsources))
 testdepends = $(subst .cpp,.d,$(testsources))
 depflags = -MT $@ -MMD -MP -MF $*.d
-
 
 
 .PHONY: all 
