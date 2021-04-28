@@ -32,8 +32,8 @@ public:
   
 private:
   int n_sites_;
-  int n_sym_;
   std::vector<int> permutation_array_;
+  int n_sym_;
   mutable std::vector<int> indices_;
   mutable std::vector<int> fermi_work_;
 };

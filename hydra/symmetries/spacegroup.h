@@ -37,6 +37,7 @@ public:
 
   inline int n_sites() const { return n_sites_; }
   inline int n_symmetries() const { return n_symmetries_; }
+  inline int size() const { return n_symmetries_; }
   inline int permutation(int sym, int site) const {
     return permutation_array_[n_sites_ * sym + site];
   }

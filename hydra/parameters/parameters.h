@@ -40,12 +40,12 @@ class parameter;
 //-----------------------------------------------------------------------
 
 typedef enum {
-  is_invalid = 0,
-  is_integer = 3,
-  is_string = 4,
-  is_float = 5,
-  is_complex = 6,
-  is_bool = 7,
+  p_is_invalid = 0,
+  p_is_integer = 3,
+  p_is_string = 4,
+  p_is_float = 5,
+  p_is_complex = 6,
+  p_is_bool = 7,
   eof = 1
 } parameter_value_type;
 
@@ -123,8 +123,8 @@ public:
   // return the type
   parameter_value_type type() const { return the_type; }
   int is_numeric() const {
-    return (type() == is_integer) || (type() == is_float) ||
-           (type() == is_bool) || (type() == is_complex);
+    return (type() == p_is_integer) || (type() == p_is_float) ||
+           (type() == p_is_bool) || (type() == p_is_complex);
   }
 };
 

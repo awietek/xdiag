@@ -8,12 +8,13 @@ template <class bit_t>
 SpaceGroupOperator<bit_t>::SpaceGroupOperator(
     int n_sites, std::vector<int> const &permutation_array)
     : n_sites_(n_sites), permutation_array_(permutation_array),
-      indices_(n_sites, 0), fermi_work_(2 * n_sites, 0) {
+      n_sym_(permutation_array.size() / n_sites),
+      indices_(n_sym_, 0), fermi_work_(2 * n_sites, 0) {
   if (n_sites <= 0)
     HydraLog.err("Error constructing SpaceGroupOperator: "
                  "invalid n_sites");
 
-  n_sym_ = permutation_array.size() / n_sites;
+  ;
 
   if (permutation_array.size() % n_sites != 0)
     HydraLog.err("Error constructing SpaceGroupOperator: "

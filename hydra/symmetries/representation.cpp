@@ -1,15 +1,22 @@
 #include "representation.h"
+#include <numeric>
 
 namespace hydra {
 
 Representation::Representation(std::vector<complex> const &characters)
-    : characters_(characters) {}
+    : characters_(characters), allowed_symmetries_(characters.size(), 0) {
+  std::iota(allowed_symmetries_.begin(), allowed_symmetries_.end(), 0);
+}
 
-bool Representation::operator==(Representation const &rhs) {
+  Representation::Representation(std::vector<complex> const &characters,
+				 std::vector<int> const &allowed_symmetries)
+    : characters_(characters), allowed_symmetries_(allowed_symmetries) {}
+
+bool Representation::operator==(Representation const &rhs) const {
   return lila::close(characters_, rhs.characters_);
 }
 
-bool Representation::operator!=(Representation const &rhs) {
+bool Representation::operator!=(Representation const &rhs) const {
   return !operator==(rhs);
 }
 
@@ -92,7 +99,7 @@ Representation read_represenation(std::string filename, std::string repname) {
       characters.push_back(re + complex(0, 1) * im);
     }
 
-    auto rep = Representation(characters);
+    auto rep = Representation(characters, allowed_ops);
     if (name == repname) {
       found = true;
       return rep;

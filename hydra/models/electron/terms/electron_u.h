@@ -1,7 +1,7 @@
 #pragma once
 
 #include <hydra/common.h>
-#include <hydra/models/electron.h>
+#include <hydra/models/electron/electron.h>
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
 #include <hydra/utils/bitops.h>
@@ -10,7 +10,7 @@ namespace hydra::electron {
 
 template <class bit_t, class Filler>
 void do_U(Couplings const &couplings, Electron<bit_t> const &block,
-          Filler &&filler) {
+          Filler &&fill) {
   using utils::popcnt;
 
   if (couplings.defined("U")) {
@@ -29,7 +29,8 @@ void do_U(Couplings const &couplings, Electron<bit_t> const &block,
       idx_t idx = 0;
       for (auto up : Combinations(n_sites, n_up)) {
         for (auto dn : Combinations(n_sites, n_dn)) {
-          filler(idx, U, up, dn);
+	  double val = U * popcnt(up & dn);
+          fill(idx, val);
           ++idx;
         }
       }

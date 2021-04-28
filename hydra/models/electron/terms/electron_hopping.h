@@ -1,7 +1,7 @@
 #pragma once
 
 #include <hydra/common.h>
-#include <hydra/models/electron.h>
+#include <hydra/models/electron/electron.h>
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
 #include <hydra/utils/bitops.h>
@@ -10,9 +10,15 @@ namespace hydra::electron {
 
 template <class bit_t, class coeff_t, class Filler>
 void do_hopping(BondList const &bonds, Couplings const &couplings,
-                Electron<bit_t> const &block, Filler &&filler) {
+                Electron<bit_t> const &block, Filler &&fill) {
   using utils::gbit;
   using utils::popcnt;
+
+  int n_sites = block.n_sites();
+  int n_up = block.n_up();
+  int n_dn = block.n_dn();
+  idx_t size_up = block.size_up();
+  idx_t size_dn = block.size_dn();
 
   auto hoppings = bonds.bonds_of_type("HOP");
   auto hoppings_up = bonds.bonds_of_type("HOPUP");
@@ -24,8 +30,7 @@ void do_hopping(BondList const &bonds, Couplings const &couplings,
                    "hoppings must have exactly two sites defined");
 
     std::string cpl = hop.coupling();
-    if (couplings.defined(cpl) &&
-        !lila::close(couplings[cpl], coeff_t(0.))) {
+    if (couplings.defined(cpl) && !lila::close(couplings[cpl], (complex)0.)) {
 
       int s1 = hop.site(0);
       int s2 = hop.site(1);
@@ -39,15 +44,21 @@ void do_hopping(BondList const &bonds, Couplings const &couplings,
         idx_t idx_up = 0;
         for (auto up : Combinations(n_sites, n_up)) {
           if (popcnt(up & flipmask) == 1) {
-            coeff_t t =
-                (gbit(up, s1)) ? couplings[cpl] : lila::conj(couplings[cpl]);
+            coeff_t t;
+            if constexpr (is_complex<coeff_t>())
+              t = (gbit(up, s1)) ? couplings[cpl] : lila::conj(couplings[cpl]);
+            else
+	      t = lila::real(couplings[cpl]);
+                
             double fermi = popcnt(up & spacemask) & 1 ? -1. : 1.;
+            coeff_t val = -t * fermi;
+
             bit_t up_flip = up ^ flipmask;
-            idx_t idx_up_flip = block_out.index_up(up_flip);
+            idx_t idx_up_flip = block.index_up(up_flip);
             for (idx_t idx_dn = 0; idx_dn < size_dn; ++idx_dn) {
               idx_t idx_out = idx_up_flip * size_dn + idx_dn;
               idx_t idx_in = idx_up * size_dn + idx_dn;
-              filler(idx_out, idx_in, t, fermi);
+              fill(idx_out, idx_in, val);
             }
           }
           ++idx_up;
@@ -59,18 +70,23 @@ void do_hopping(BondList const &bonds, Couplings const &couplings,
         idx_t idx_dn = 0;
         for (auto dn : Combinations(n_sites, n_dn)) {
           if (popcnt(dn & flipmask) == 1) {
-            coeff_t t =
-                (gbit(dn, s1)) ? couplings[cpl] : lila::conj(couplings[cpl]);
+            coeff_t t;
+            if constexpr (is_complex<coeff_t>())
+              t = (gbit(dn, s1)) ? couplings[cpl] : lila::conj(couplings[cpl]);
+            else
+	      t = lila::real(couplings[cpl]);
 
             double fermi = popcnt(dn & spacemask) & 1 ? -1. : 1.;
+            coeff_t val = -t * fermi;
+
             bit_t dn_flip = dn ^ flipmask;
-            idx_t idx_dn_flip = block_out.index_dn(dn_flip);
+            idx_t idx_dn_flip = block.index_dn(dn_flip);
 
             // TODO: replace this by lila slicing once available
             for (idx_t idx_up = 0; idx_up < size_up; ++idx_up) {
               idx_t idx_out = idx_up * size_dn + idx_dn_flip;
               idx_t idx_in = idx_up * size_dn + idx_dn;
-              filler(idx_out, idx_in, t, fermi);
+              fill(idx_out, idx_in, val);
             }
           }
           ++idx_dn;

@@ -40,57 +40,57 @@ namespace hydra {
 
 // invalid parameter
 
-parameter_value::parameter_value() : the_type(is_invalid) {}
+parameter_value::parameter_value() : the_type(p_is_invalid) {}
 
 // make a string parameter
 
 parameter_value::parameter_value(const std::string &s)
-    : the_string(s), the_type(is_string) {}
+    : the_string(s), the_type(p_is_string) {}
 
 // make an integer parameter
 
 parameter_value::parameter_value(const long l)
-    : valint(l), the_type(is_integer) {}
+    : valint(l), the_type(p_is_integer) {}
 
 // make a floating point parameter
 
 parameter_value::parameter_value(const double d)
-    : valfloat(d), the_type(is_float) {}
+    : valfloat(d), the_type(p_is_float) {}
 
 // make a complex parameter
 
 parameter_value::parameter_value(const complex &d)
-    : valcomplex(d), the_type(is_complex) {}
+    : valcomplex(d), the_type(p_is_complex) {}
 
 // make a bool parameter
 
 parameter_value::parameter_value(const bool b)
-    : valbool(b), the_type(is_bool) {}
+    : valbool(b), the_type(p_is_bool) {}
 
 // copy a parameter
 
 parameter_value::parameter_value(const parameter_value &p)
     : the_string(p.the_string), the_type(p.the_type) {
   switch (the_type) {
-  case is_integer:
+  case p_is_integer:
     valint = p.valint;
     break;
 
-  case is_float:
+  case p_is_float:
     valfloat = p.valfloat;
     break;
 
-  case is_string:
+  case p_is_string:
     break;
 
-  case is_invalid:
+  case p_is_invalid:
     break;
 
-  case is_complex:
+  case p_is_complex:
     valcomplex = p.valcomplex;
     break;
 
-  case is_bool:
+  case p_is_bool:
     valbool = p.valbool;
     break;
 
@@ -110,25 +110,25 @@ parameter_value &parameter_value::operator=(const parameter_value &p) {
   the_type = p.the_type;
 
   switch (the_type) {
-  case is_integer:
+  case p_is_integer:
     valint = p.valint;
     break;
 
-  case is_float:
+  case p_is_float:
     valfloat = p.valfloat;
     break;
 
-  case is_string:
+  case p_is_string:
     break;
 
-  case is_invalid:
+  case p_is_invalid:
     break;
 
-  case is_complex:
+  case p_is_complex:
     valcomplex = p.valcomplex;
     break;
 
-  case is_bool:
+  case p_is_bool:
     valbool = p.valbool;
     break;
 
@@ -142,13 +142,13 @@ parameter_value &parameter_value::operator=(const parameter_value &p) {
 // assign a string
 
 parameter_value &parameter_value::operator=(const std::string &s) {
-  the_type = is_string;
+  the_type = p_is_string;
   the_string = s;
   return *this;
 }
 
 parameter_value &parameter_value::operator=(const char *s) {
-  the_type = is_string;
+  the_type = p_is_string;
   the_string = s;
   return *this;
 }
@@ -156,7 +156,7 @@ parameter_value &parameter_value::operator=(const char *s) {
 // assign a floating point number
 
 parameter_value &parameter_value::operator=(const double s) {
-  the_type = is_float;
+  the_type = p_is_float;
   valfloat = s;
   return *this;
 }
@@ -164,7 +164,7 @@ parameter_value &parameter_value::operator=(const double s) {
 // assign an integer
 
 parameter_value &parameter_value::operator=(const long s) {
-  the_type = is_integer;
+  the_type = p_is_integer;
   valint = s;
   return *this;
 }
@@ -172,7 +172,7 @@ parameter_value &parameter_value::operator=(const long s) {
 // assign a bool
 
 parameter_value &parameter_value::operator=(const bool b) {
-  the_type = is_bool;
+  the_type = p_is_bool;
   valbool = b;
   return *this;
 }
@@ -180,7 +180,7 @@ parameter_value &parameter_value::operator=(const bool b) {
 // assign a complex number
 
 parameter_value &parameter_value::operator=(const complex &c) {
-  the_type = is_complex;
+  the_type = p_is_complex;
   valcomplex = c;
   return *this;
 }
@@ -192,8 +192,8 @@ parameter_value &parameter_value::operator=(const complex &c) {
 // convert to a character array
 
 parameter_value::operator const char *() const {
-  if (the_type != is_string)
-    type_error(is_string);
+  if (the_type != p_is_string)
+    type_error(p_is_string);
 
   return the_string.c_str();
 }
@@ -201,8 +201,8 @@ parameter_value::operator const char *() const {
 // convert to a string
 
 parameter_value::operator const std::string &() const {
-  if (the_type != is_string)
-    type_error(is_string);
+  if (the_type != p_is_string)
+    type_error(p_is_string);
 
   return the_string;
 }
@@ -210,80 +210,80 @@ parameter_value::operator const std::string &() const {
 // convert to a long integer
 
 parameter_value::operator long() const {
-  if (the_type == is_integer)
+  if (the_type == p_is_integer)
     return valint;
-  else if (the_type == is_bool)
+  else if (the_type == p_is_bool)
     return valbool;
   else
-    type_error(is_integer);
+    type_error(p_is_integer);
   return 0; // dummy;
 }
 
 // convert to integer
 
 parameter_value::operator int() const {
-  if (the_type == is_integer)
+  if (the_type == p_is_integer)
     return valint;
-  else if (the_type == is_bool)
+  else if (the_type == p_is_bool)
     return valbool;
   else
-    type_error(is_integer);
+    type_error(p_is_integer);
   return 0; // dummy
 }
 
 // convert to floating point number
 
 parameter_value::operator float() const {
-  if (the_type == is_float)
+  if (the_type == p_is_float)
     return valfloat;
-  else if (the_type == is_integer)
+  else if (the_type == p_is_integer)
     return valint;
-  else if (the_type == is_bool)
+  else if (the_type == p_is_bool)
     return valbool;
   else
-    type_error(is_float);
+    type_error(p_is_float);
   return 0; // dummy
 }
 
 // convert to double precision floating point number
 
 parameter_value::operator double() const {
-  if (the_type == is_float)
+  if (the_type == p_is_float)
     return valfloat;
-  else if (the_type == is_integer)
+  else if (the_type == p_is_integer)
     return valint;
-  else if (the_type == is_bool)
+  else if (the_type == p_is_bool)
     return valbool;
   else
-    type_error(is_float);
+    type_error(p_is_float);
   return 0; // dummy
 }
 
 // convert to complex
 
 parameter_value::operator complex() const {
-  if (the_type == is_complex)
+  if (the_type == p_is_complex)
     return valcomplex;
-  else if (the_type == is_float)
+  else if (the_type == p_is_float)
     return complex(valfloat, 0.);
-  else if (the_type == is_integer)
+  else if (the_type == p_is_integer)
     return complex(valint, 0.);
-  else if (the_type == is_bool)
+  else if (the_type == p_is_bool)
     return complex(double(valbool), 0.);
   else
-    type_error(is_complex);
+    type_error(p_is_complex);
   return complex(0, 0); // dummy
 }
 
 // convert to bool
 
 parameter_value::operator bool() const {
-  if (the_type == is_integer)
+  if (the_type == p_is_integer)
     return valint;
-  else if (the_type == is_bool)
+  else if (the_type == p_is_bool)
     return valbool;
   else
-    type_error(is_bool);
+    type_error(p_is_bool);
   return false; // dummy
 }
 
@@ -296,23 +296,23 @@ parameter_value::operator bool() const {
 void parameter_value::type_error(parameter_value_type expected) const {
   std::string text = "Parameter should be ";
   switch (expected) {
-  case is_integer:
+  case p_is_integer:
     text += "integer";
     break;
 
-  case is_float:
+  case p_is_float:
     text += "floating point";
     break;
 
-  case is_string:
+  case p_is_string:
     text += "string";
     break;
 
-  case is_complex:
+  case p_is_complex:
     text += "complex";
     break;
 
-  case is_bool:
+  case p_is_bool:
     text += "bool";
     break;
 
@@ -323,27 +323,27 @@ void parameter_value::type_error(parameter_value_type expected) const {
   text += " but is ";
 
   switch (expected) {
-  case is_integer:
+  case p_is_integer:
     text += "integer";
     break;
 
-  case is_float:
+  case p_is_float:
     text += "floating point";
     break;
 
-  case is_string:
+  case p_is_string:
     text += "string";
     break;
 
-  case is_complex:
+  case p_is_complex:
     text += "complex";
     break;
 
-  case is_bool:
+  case p_is_bool:
     text += "bool";
     break;
 
-  case is_invalid:
+  case p_is_invalid:
     text += "invalid";
 
   default:
@@ -360,27 +360,27 @@ void parameter_value::type_error(parameter_value_type expected) const {
 
 std::ostream &operator<<(std::ostream &out, const parameter_value &val) {
   switch (val.type()) {
-  case is_integer:
+  case p_is_integer:
     out << ((long)val);
     break;
 
-  case is_float:
+  case p_is_float:
     out << ((double)val);
     break;
 
-    //    case is_complex:
+    //    case p_is_complex:
     //      out << ((complex&) val);
     //      break;
 
-  case is_bool:
+  case p_is_bool:
     out << ((bool)(val) ? "true" : "false");
     break;
 
-  case is_string:
+  case p_is_string:
     out << '"' << ((const char *)val) << '"';
     break;
 
-  case is_invalid:
+  case p_is_invalid:
     out << "invalid";
     break;
 

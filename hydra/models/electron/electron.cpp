@@ -1,7 +1,7 @@
 #include "electron.h"
 
 #include <hydra/combinatorics/binomial.h>
-#include <hydra/models/electron_utils.h>
+#include <hydra/models/electron/electron_utils.h>
 
 namespace hydra {
 

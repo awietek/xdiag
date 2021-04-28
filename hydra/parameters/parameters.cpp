@@ -70,7 +70,7 @@ parser &operator>>(parser &in, Parameters &parms) {
     while (c == ';')
       c = in.next_token_nows();
 
-    if (c == is_string) {
+    if (c == p_is_string) {
       string s(in.value().get_string());
       c = in.next_token_nows();
 
@@ -83,11 +83,11 @@ parser &operator>>(parser &in, Parameters &parms) {
 
       c = in.next_token_nows();
       switch (c) {
-      case is_integer:
-      case is_float:
-      case is_string:
-      case is_bool:
-      case is_complex:
+      case p_is_integer:
+      case p_is_float:
+      case p_is_string:
+      case p_is_bool:
+      case p_is_complex:
         parms[s] = in.value();
         break;
 
@@ -117,7 +117,7 @@ parser &operator>>(parser &in, parameters_collection &parms_coll) {
     while (c == ';')
       c = in.next_token_nows();
 
-    if (c == is_string) {
+    if (c == p_is_string) {
       string s(in.value().get_string());
       c = in.next_token_nows();
       switch (c) {
