@@ -8,9 +8,18 @@ Representation::Representation(std::vector<complex> const &characters)
   std::iota(allowed_symmetries_.begin(), allowed_symmetries_.end(), 0);
 }
 
-  Representation::Representation(std::vector<complex> const &characters,
-				 std::vector<int> const &allowed_symmetries)
+Representation::Representation(std::vector<complex> const &characters,
+                               std::vector<int> const &allowed_symmetries)
     : characters_(characters), allowed_symmetries_(allowed_symmetries) {}
+
+Representation
+Representation::subgroup(std::vector<int> const &symmetry_numbers) const
+{
+  std::vector<complex> sub_characters;
+  for (auto sym : symmetry_numbers)
+    sub_characters.push_back(characters_(sym));
+  return Representation(sub_characters);
+}
 
 bool Representation::operator==(Representation const &rhs) const {
   return lila::close(characters_, rhs.characters_);

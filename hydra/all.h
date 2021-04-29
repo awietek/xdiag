@@ -29,6 +29,7 @@
 #include "models/electron/electron_matrix.h"
 #include "models/electron/electron_apply.h"
 #include "models/electron/electron_symmetric.h"
+#include "models/electron/electron_symmetric_matrix.h"
 
 #include "symmetries/spacegroup.h"
 #include "symmetries/spinflip.h"

@@ -15,6 +15,7 @@ sources+= hydra/models/electron/electron_matrix.cpp
 sources+= hydra/models/electron/electron_apply.cpp
 sources+= hydra/models/electron/electron_utils.cpp
 sources+= hydra/models/electron/electron_symmetric.cpp
+sources+= hydra/models/electron/electron_symmetric_matrix.cpp
 
 sources+= hydra/symmetries/spacegroup.cpp
 sources+= hydra/symmetries/spinflip.cpp
@@ -88,6 +89,7 @@ testsources+= test/models/test_spinhalf.cpp
 testsources+= test/models/test_electron_matrix.cpp
 testsources+= test/models/test_electron_apply.cpp
 testsources+= test/models/test_electron_symmetric.cpp
+testsources+= test/models/test_electron_symmetric_matrix.cpp
 
 
 # testsources+= test/symmetries/test_spacegroup.cpp

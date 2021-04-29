@@ -23,6 +23,7 @@ template <class uint_t> inline void sbit(uint_t &x, int n, uint_t b) {
 }
 
 // popcnt
+inline int popcnt(int x) { return __builtin_popcount(x); }
 inline int popcnt(uint16 x) { return __builtin_popcount(x); }
 inline int popcnt(uint32 x) { return __builtin_popcount(x); }
 inline int popcnt(uint64 x) { return __builtin_popcountll(x); }

@@ -12,4 +12,6 @@ void check_nup_ndn(int n_sites, int nup, int ndn) {
                  "invalid value of ndn");
 }
 
+
+
 } // namespace hydra::electron
