@@ -18,6 +18,8 @@ public:
   inline complex character(int idx) const { return characters_(idx); }
   std::vector<int> allowed_symmetries() const { return allowed_symmetries_; }
 
+  Representation subgroup(std::vector<int> const &symmetry_numbers) const;
+
   inline idx_t size() const { return characters_.size(); }
 
   bool operator==(Representation const &rhs) const;

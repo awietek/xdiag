@@ -5,6 +5,7 @@
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
 #include <hydra/utils/bitops.h>
+#include <hydra/combinatorics/combinations.h>
 
 namespace hydra::electron {
 
@@ -27,8 +28,8 @@ void do_U(Couplings const &couplings, Electron<bit_t> const &block,
     double U = couplings.real("U");
     if (!lila::close(U, 0.)) {
       idx_t idx = 0;
-      for (auto up : Combinations(n_sites, n_up)) {
-        for (auto dn : Combinations(n_sites, n_dn)) {
+      for (bit_t up : Combinations<bit_t>(n_sites, n_up)) {
+        for (bit_t dn : Combinations<bit_t>(n_sites, n_dn)) {
 	  double val = U * popcnt(up & dn);
           fill(idx, val);
           ++idx;
