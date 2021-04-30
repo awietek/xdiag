@@ -34,7 +34,7 @@ SpaceGroup<bit_t, SpaceGroupOperator>::subgroup(
     std::vector<int> const &symmetry_numbers) const {
   std::vector<std::vector<int>> subgroup_symmetries;
   for (int n_sym : symmetry_numbers) {
-    if ((0 > n_sym) && (n_sym >= (int)symmetries_.size()))
+    if ((0 > n_sym) || (n_sym >= (int)symmetries_.size()))
       HydraLog.err("Error building subgroup of SpaceGroup: "
                    "invalid symmetry index");
     subgroup_symmetries.push_back(symmetries_[n_sym]);

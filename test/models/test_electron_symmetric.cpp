@@ -116,7 +116,7 @@ template <class bit_t> void test_electron_chain(int n_sites) {
 TEST_CASE("electron_symmetric", "[models]") {
 
   // Test the Hubbard chain
-  for (int n_sites = 1; n_sites < 10; ++n_sites) {
+  for (int n_sites = 1; n_sites < 8; ++n_sites) {
     test_electron_chain<hydra::uint16>(n_sites);
     test_electron_chain<hydra::uint32>(n_sites);
     test_electron_chain<hydra::uint64>(n_sites);
@@ -142,9 +142,8 @@ TEST_CASE("electron_symmetric", "[models]") {
 
       for (auto [name, mult] : rep_name_mult) {
         auto irrep = read_represenation(lfile, name);
-        auto little_group = space_group.subgroup(irrep.allowed_symmetries());
         auto electron =
-            ElectronSymmetric<uint16>(n_sites, nup, ndn, little_group, irrep);
+            ElectronSymmetric<uint16>(n_sites, nup, ndn, space_group, irrep);
 
         idx_t dim = electron.size() * mult;
         HydraLog.out("Hubbard Triangular 3x3: n_sites: {}, nup: {}, ndn: {}, k: "

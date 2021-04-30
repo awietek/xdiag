@@ -62,38 +62,43 @@ void test_symmetric_spectra(BondList bondlist, Couplings couplings,
 
       // Compute the full spectrum from non-symmetrized block
       auto electron_nosym = Electron<bit_t>(n_sites, nup, ndn);
-      auto H_nosym =
-          matrix_cplx(bondlist, couplings, electron_nosym, electron_nosym);
-      REQUIRE(lila::close(H_nosym, lila::Herm(H_nosym)));
-      auto eigs_nosym = lila::EigenvaluesSym(H_nosym);
+      if (electron_nosym.size() < 1000) {
 
-      lila::Vector<double> eigs_sym;
-      for (int k = 0; k < (int)irreps.size(); ++k) {
-        auto irrep = irreps[k];
-        int multiplicity = multiplicities[k];
+        auto H_nosym =
+            matrix_cplx(bondlist, couplings, electron_nosym, electron_nosym);
+        REQUIRE(lila::close(H_nosym, lila::Herm(H_nosym)));
+        auto eigs_nosym = lila::EigenvaluesSym(H_nosym);
 
-        // HydraLog.out("nup: {}, ndn: {}, k: {}, mult: {}", nup, ndn, k,
-        //              multiplicity);
-        auto electron =
-            ElectronSymmetric<bit_t>(n_sites, nup, ndn, space_group, irrep);
+        lila::Vector<double> eigs_sym;
+        for (int k = 0; k < (int)irreps.size(); ++k) {
+          auto irrep = irreps[k];
+          int multiplicity = multiplicities[k];
 
-        if (electron.size() > 0) {
+          auto electron =
+              ElectronSymmetric<bit_t>(n_sites, nup, ndn, space_group, irrep);
+          // HydraLog.out(
+          //     "nup: {}, ndn: {}, k: {}, mult: {}, dim_nosym: {}, dim_sym: {}",
+          //     nup, ndn, k, multiplicity, electron_nosym.size(),
+          //     electron.size());
 
-          // Compute partial spectrum from symmetrized block
-          auto H_sym = matrix_cplx(bondlist, couplings, electron, electron);
-          REQUIRE(lila::close(H_sym, lila::Herm(H_sym)));
-          auto eigs_sym_k = lila::EigenvaluesSym(H_sym);
+          if (electron.size() > 0) {
 
-          // append all the eigenvalues with multiplicity
-          for (auto eig : eigs_sym_k)
-            for (int i = 0; i < multiplicity; ++i)
-              eigs_sym.push_back(eig);
+            // Compute partial spectrum from symmetrized block
+            auto H_sym = matrix_cplx(bondlist, couplings, electron, electron);
+            REQUIRE(lila::close(H_sym, lila::Herm(H_sym)));
+            auto eigs_sym_k = lila::EigenvaluesSym(H_sym);
+
+            // append all the eigenvalues with multiplicity
+            for (auto eig : eigs_sym_k)
+              for (int i = 0; i < multiplicity; ++i)
+                eigs_sym.push_back(eig);
+          }
         }
-      }
-      std::sort(eigs_sym.begin(), eigs_sym.end());
+        std::sort(eigs_sym.begin(), eigs_sym.end());
 
-      // Check if all eigenvalues agree
-      REQUIRE(lila::close(eigs_sym, eigs_nosym));
+        // Check if all eigenvalues agree
+        REQUIRE(lila::close(eigs_sym, eigs_nosym));
+      }
     }
   }
 }
@@ -139,8 +144,8 @@ TEST_CASE("electron_symmetric_matrix", "[models]") {
     }
     if (k == 1) {
       lila::Matrix<complex> H_correct = {
-          {U2, tm, it, it, tp, 0.},    {tm, U2, tm, tm, 2. * it, tp},
-          {-it, tm, U2, 0., tm, it},     {-it, tm, 0., UU, tm, it},
+          {U2, tm, it, it, tp, 0.},       {tm, U2, tm, tm, 2. * it, tp},
+          {-it, tm, U2, 0., tm, it},      {-it, tm, 0., UU, tm, it},
           {tp, -2. * it, tm, tm, UU, tm}, {0., tp, -it, -it, tm, UU}};
       REQUIRE(lila::close(H_correct, H_sym));
     }
@@ -162,8 +167,34 @@ TEST_CASE("electron_symmetric_matrix", "[models]") {
 
   // Test linear chains
   for (int n_sites = 2; n_sites < 7; ++n_sites) {
-    test_hubbard_symmetric_spectrum_chains<uint16>(n_sites);
-    test_hubbard_symmetric_spectrum_chains<uint32>(n_sites);
-    test_hubbard_symmetric_spectrum_chains<uint64>(n_sites);
+    test_hubbard_symmetric_spectrum_chains<hydra::uint16>(n_sites);
+    test_hubbard_symmetric_spectrum_chains<hydra::uint32>(n_sites);
+    test_hubbard_symmetric_spectrum_chains<hydra::uint64>(n_sites);
   }
+
+  // test a 3x3 triangular lattice
+  HydraLog.out("Hubbard 3x3 triangular, symmetric spectra test");
+  using bit_t = uint16;
+  std::string lfile = "data/triangular.9.Jz1Jz2Jx1Jx2D1.sublattices.tsl.lat";
+
+  bondlist = read_bondlist(lfile);
+  couplings.clear();
+  couplings["T"] = 1.0;
+  couplings["U"] = 5.0;
+  auto permutations = read_permutations(lfile);
+  space_group = SpaceGroup<bit_t>(permutations);
+
+  std::vector<std::pair<std::string, int>> rep_name_mult = {
+      {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
+      {"K0.D3.A1", 1},    {"K0.D3.A2", 1},    {"K0.D3.E", 2},
+      {"K1.D3.A1", 1},    {"K1.D3.A2", 1},    {"K1.D3.E", 2},
+      {"Y.C1.A", 6}};
+  irreps.clear();
+  multiplicities.clear();
+  for (auto [name, mult] : rep_name_mult) {
+    irreps.push_back(read_represenation(lfile, name));
+    multiplicities.push_back(mult);
+  }
+  test_symmetric_spectra(bondlist, couplings, space_group, irreps,
+                         multiplicities);
 }

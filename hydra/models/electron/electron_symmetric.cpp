@@ -43,6 +43,10 @@ ElectronSymmetric<bit_t, SymmetryGroup>::ElectronSymmetric(
 
   electron::check_nup_ndn(n_sites, nup, ndn);
 
+  if (irrep.allowed_symmetries().size() > 0) {
+    symmetry_group_ = symmetry_group.subgroup(irrep.allowed_symmetries());
+  }
+  
   // Compute downspin configurations and up limits
   idx_t idx = 0;
   for (auto ups : Combinations(n_sites, nup)) {
@@ -55,7 +59,7 @@ ElectronSymmetric<bit_t, SymmetryGroup>::ElectronSymmetric(
       // If state is a representative ...
       if ((rep_ups == ups) && (rep_dns == dns)) {
         double norm =
-            electron::compute_norm<bit_t>(ups, dns, symmetry_group, irrep);
+            electron::compute_norm<bit_t>(ups, dns, symmetry_group_, irrep);
 
         // ... and norm is nonzero, register the state and its norm
         if (norm > 1e-6) {  // tolerance big as 1e-6 since root is taken
@@ -82,7 +86,7 @@ ElectronSymmetric<bit_t, SymmetryGroup>::ElectronSymmetric(
       // If state is a (switch) representative ...
       if ((rep_ups_switch == ups) && (rep_dns_switch == dns)) {
         double norm =
-            electron::compute_norm<bit_t>(ups, dns, symmetry_group, irrep);
+            electron::compute_norm<bit_t>(ups, dns, symmetry_group_, irrep);
 
         // ... and has non-zero norm
         if (std::abs(norm) > 1e-6) {   // tolerance big as 1e-6 since root is taken
