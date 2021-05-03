@@ -1,4 +1,4 @@
-#include "electron_matrix.h"
+#include "electron_apply.h"
 
 #include <hydra/combinatorics/combinations.h>
 #include <hydra/utils/bitops.h>
@@ -30,7 +30,6 @@ void apply(BondList const &bonds, Couplings const &couplings,
       bonds, couplings, block_in,
       [&vec_out, &vec_in](idx_t idx_out, idx_t idx_in, double val) {
         vec_out(idx_out) += val * vec_in(idx_in);
-	assert(idx_out < vec_out.size());
       });
 }
 

@@ -32,7 +32,7 @@ LanczosEigenvalues_real(BondList const &bondlist, Couplings const &couplings,
 
   // Run Lanczos
   auto res = LanczosEigenvalues(multiply, startstate, precision, num_eigenvalue,
-                                "Ritz", max_iterations);
+                                "Eigenvalues", max_iterations);
   return res.eigenvalues;
 }
 
@@ -59,7 +59,7 @@ LanczosEigenvalues_cplx(BondList const &bondlist, Couplings const &couplings,
 
   // Run Lanczos
   auto res = LanczosEigenvalues(multiply, startstate, precision, num_eigenvalue,
-                                "Ritz", max_iterations);
+                                "Eigenvalues", max_iterations);
   return res.eigenvalues;
 }
 
