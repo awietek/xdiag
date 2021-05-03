@@ -50,6 +50,9 @@ ElectronSymmetric<bit_t, SymmetryGroup>::ElectronSymmetric(
   // Compute downspin configurations and up limits
   idx_t idx = 0;
   for (auto ups : Combinations(n_sites, nup)) {
+
+    if (symmetry_group_.representative(ups) != ups) continue;
+    
     idx_t lower = idx;
     for (auto dns : Combinations(n_sites, ndn)) {
 
@@ -77,6 +80,9 @@ ElectronSymmetric<bit_t, SymmetryGroup>::ElectronSymmetric(
   // Compute upspin configurations and dn limits
   idx = 0;
   for (auto dns : Combinations(n_sites, ndn)) {
+
+    if (symmetry_group_.representative(dns) != dns) continue;
+    
     idx_t lower = idx;
     for (auto ups : Combinations(n_sites, nup)) {
 
