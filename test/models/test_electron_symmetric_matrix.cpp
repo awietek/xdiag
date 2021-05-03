@@ -7,47 +7,6 @@
 
 using namespace hydra;
 
-std::tuple<BondList, Couplings> get_linear_chain(int n_sites, double t,
-                                                 double U) {
-  // Create model
-  BondList bondlist;
-  for (int s = 0; s < n_sites; ++s)
-    bondlist << Bond("HOP", "T", {s, (s + 1) % n_sites});
-  Couplings couplings;
-  couplings["T"] = t;
-  couplings["U"] = U;
-  return {bondlist, couplings};
-}
-
-template <class bit_t>
-std::tuple<SpaceGroup<bit_t>, std::vector<Representation>, std::vector<int>>
-get_cyclic_group_irreps_mult(int n_sites) {
-  // Create cyclic group as space group
-  std::vector<std::vector<int>> permutations;
-  for (int sym = 0; sym < n_sites; ++sym) {
-    std::vector<int> permutation;
-    for (int site = 0; site < n_sites; ++site) {
-      int newsite = (site + sym) % n_sites;
-      permutation.push_back(newsite);
-    }
-    permutations.push_back(permutation);
-  }
-  auto space_group = SpaceGroup<bit_t>(permutations);
-
-  // Create irreducible representations
-  std::vector<Representation> irreps;
-  std::vector<int> multiplicities;
-  for (int k = 0; k < n_sites; ++k) {
-    std::vector<complex> chis;
-    for (int l = 0; l < n_sites; ++l)
-      chis.push_back({std::cos(2 * M_PI * l * k / n_sites),
-                      std::sin(2 * M_PI * l * k / n_sites)});
-    auto irrep = Representation(chis);
-    irreps.push_back(irrep);
-    multiplicities.push_back(1);
-  }
-  return {space_group, irreps, multiplicities};
-}
 
 template <class bit_t>
 void test_symmetric_spectra(BondList bondlist, Couplings couplings,
@@ -105,7 +64,7 @@ void test_symmetric_spectra(BondList bondlist, Couplings couplings,
 
 template <class bit_t>
 void test_hubbard_symmetric_spectrum_chains(int n_sites) {
-
+  using namespace hydra::testcases::electron;
   HydraLog.out("Hubbard chain, symmetric spectra test, n_sites: {}", n_sites);
   auto [bondlist, couplings] = get_linear_chain(n_sites, 1.0, 5.0);
   auto [space_group, irreps, multiplicities] =
@@ -115,7 +74,8 @@ void test_hubbard_symmetric_spectrum_chains(int n_sites) {
 }
 
 TEST_CASE("electron_symmetric_matrix", "[models]") {
-
+  using namespace hydra::testcases::electron;
+  
   // Check matrices agains Weisse & Fehske
   int n_sites = 4;
   int nup = 3;
