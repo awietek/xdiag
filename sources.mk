@@ -1,7 +1,10 @@
+sources+= hydra/utils/iochecks.cpp
+
 sources+= hydra/combinatorics/binomial.cpp
 sources+= hydra/combinatorics/subsets.cpp
 sources+= hydra/combinatorics/bit_patterns.cpp
 sources+= hydra/combinatorics/combinations.cpp
+sources+= hydra/combinatorics/up_down_hole.cpp
 
 sources+= hydra/parameters/parameter_value.cpp
 sources+= hydra/parameters/parameters.cpp
@@ -17,6 +20,9 @@ sources+= hydra/models/electron/electron_utils.cpp
 sources+= hydra/models/electron/electron_symmetric.cpp
 sources+= hydra/models/electron/electron_symmetric_matrix.cpp
 sources+= hydra/models/electron/electron_symmetric_apply.cpp
+sources+= hydra/models/tj/tj.cpp
+sources+= hydra/models/tj/tj_utils.cpp
+sources+= hydra/models/tj/tj_matrix.cpp
 
 sources+= hydra/symmetries/spacegroup.cpp
 sources+= hydra/symmetries/spinflip.cpp
@@ -93,6 +99,9 @@ testsources+= test/models/test_electron_apply.cpp
 testsources+= test/models/test_electron_symmetric.cpp
 testsources+= test/models/test_electron_symmetric_matrix.cpp
 testsources+= test/models/test_electron_symmetric_apply.cpp
+
+testsources+= test/models/testcases_tj.cpp
+testsources+= test/models/test_tj_matrix.cpp
 
 
 # testsources+= test/symmetries/test_spacegroup.cpp
