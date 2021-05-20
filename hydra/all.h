@@ -16,11 +16,13 @@
 
 #include "common.h"
 #include "utils/bitops.h"
+#include "utils/iochecks.h"
 
 #include "combinatorics/binomial.h"
 #include "combinatorics/subsets.h"
 #include "combinatorics/bit_patterns.h"
 #include "combinatorics/combinations.h"
+#include "combinatorics/up_down_hole.h"
 
 #include "indexing/lintable.h"
 
@@ -31,6 +33,8 @@
 #include "models/electron/electron_symmetric.h"
 #include "models/electron/electron_symmetric_matrix.h"
 #include "models/electron/electron_symmetric_apply.h"
+#include "models/tj/tj.h"
+#include "models/tj/tj_matrix.h"
 
 #include "symmetries/spacegroup.h"
 #include "symmetries/spinflip.h"

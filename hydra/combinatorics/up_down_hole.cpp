@@ -1,10 +1,8 @@
 #include "up_down_hole.h"
 
-namespace hydra {
-namespace combinatorics {
+namespace hydra::combinatorics {
 
-template <class bit_t>
-bit_t down_hole_to_up(bit_t downspins, bit_t holes) {
+template <class bit_t> bit_t down_hole_to_up(bit_t downspins, bit_t holes) {
   bit_t upspins = 0;
   int bit_i_am_testing = 0;
   while (holes) {
@@ -18,8 +16,7 @@ bit_t down_hole_to_up(bit_t downspins, bit_t holes) {
   return upspins;
 }
 
-template <class bit_t>
-bit_t up_hole_to_down(bit_t upspins, bit_t holes) {
+template <class bit_t> bit_t up_hole_to_down(bit_t upspins, bit_t holes) {
   bit_t downspins = 0;
   int bit_i_am_testing = 0;
   while (holes) {
@@ -77,6 +74,4 @@ template uint16 down_up_to_hole<uint16>(uint16, uint16);
 template uint32 down_up_to_hole<uint32>(uint32, uint32);
 template uint64 down_up_to_hole<uint64>(uint64, uint64);
 
-} // namespace combinatorics
-
-} // namespace hydra
+} // namespace hydra::combinatorics
