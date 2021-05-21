@@ -5,6 +5,7 @@
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
 #include <hydra/utils/bitops.h>
+#include <hydra/combinatorics/combinations.h>
 
 namespace hydra::tjdetail {
 
@@ -12,6 +13,7 @@ template <class bit_t, class coeff_t, class Filler>
 void do_hopping(BondList const &bonds, Couplings const &couplings,
                 tJ<bit_t> const &block, Filler &&fill) {
   using utils::gbit;
+  using utils::gbits;
   using utils::popcnt;
 
   int n_sites = block.n_sites();
@@ -80,43 +82,50 @@ void do_hopping(BondList const &bonds, Couplings const &couplings,
 
         idx_t idx_up = 0;
         for (auto up : Combinations<bit_t>(n_sites, n_up)) {
-	// std::cout << s1 << " " << s2 << " "
-	// 	  << bits_to_string(up, 6) << " " 
-	// 	  << bits_to_string(flipmask, 6) << " " 
-	// 	  << bits_to_string(up & flipmask, 6) << " " 
-	// 	  << (up & flipmask) << "\n";
-	if ((up & flipmask) == 0) { // no double occ possible
+
+          if ((up & flipmask) == 0) { // no double occ possible
             auto [dn_lower, dn_upper] = block.dn_limits_for_up_[idx_up];
             for (idx_t idx_in = dn_lower; idx_in < dn_upper; ++idx_in) {
               bit_t dn = block.dns_[idx_in];
 
               if (popcnt(dn & flipmask) == 1) {
                 bit_t dn_flip = dn ^ flipmask;
-                double fermi = popcnt(dn & spacemask) & 1 ? -1. : 1.;
-                coeff_t val = t * fermi;
-
-                if constexpr (is_complex<coeff_t>()) {
-                  if (gbit(dn, s2))
-                    val = lila::conj(val);
-                }
-
                 auto it =
                     std::lower_bound(block.dns_.begin() + dn_lower,
                                      block.dns_.begin() + dn_upper, dn_flip);
                 idx_t idx_out = std::distance(block.dns_.begin(), it);
-                fill(idx_out, idx_in, val);
 
-		// std::cout << s1 << " " << s2 << " " << val << " " 
-		// 	  << bits_to_string(up, 6) << " " << bits_to_string(dn, 6) << " -> " 
-		// 	  << bits_to_string(up, 6) << " " << bits_to_string(dn_flip, 6) << "\n"; 
+                // Complex conjugate for complex coefficients
+                if constexpr (is_complex<coeff_t>()) {
+                  if (gbit(dn, s2)) {
+                    // Take fermi sign into account
+                    if (popcnt(dn & spacemask) & 1) {
+                      fill(idx_out, idx_in, lila::conj(t));
+                    } else {
+                      fill(idx_out, idx_in, -lila::conj(t));
+                    }
+                  } else {
+                    if (popcnt(dn & spacemask) & 1) {
+                      fill(idx_out, idx_in, t);
+                    } else {
+                      fill(idx_out, idx_in, -t);
+                    }
+                  }
+                  // Real case doesnt need complex conjugate
+                } else {
+                  if (popcnt(dn & spacemask) & 1) {
+                    fill(idx_out, idx_in, t);
+                  } else {
+                    fill(idx_out, idx_in, -t);
+                  }
+                }
               }
             }
           }
-          ++idx_up;
+	  ++idx_up;
         }
       }
     }
-  } // for (auto hop :...
+  }
 }
-
 } // namespace hydra::tjdetail

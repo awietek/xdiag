@@ -20,16 +20,13 @@ void apply(BondList const &bonds, Couplings const &couplings,
   assert(block_out.size() == vec_out.size());
 
   lila::Zeros(vec_out);
-  electron::do_U_symmetric(couplings, block_in,
-                           [&vec_out, &vec_in](idx_t idx, double val) {
-                             vec_out(idx) += val * vec_in(idx);
-                           });
-  
-  electron::do_hopping_symmetric<bit_t, complex>(
-      bonds, couplings, block_in,
-      [&vec_out, &vec_in](idx_t idx_out, idx_t idx_in, complex val) {
-        vec_out(idx_out) += val * vec_in(idx_in);
-      });
+  auto fill = [&vec_out, &vec_in](idx_t idx_out, idx_t idx_in, complex val) {
+    vec_out(idx_out) += val * vec_in(idx_in);
+  };
+
+  electron::do_U_symmetric(couplings, block_in, fill);
+  electron::do_hopping_symmetric<bit_t, complex>(bonds, couplings, block_in,
+                                                 fill);
 }
 
 template void apply<uint16, SpaceGroup<uint16>>(

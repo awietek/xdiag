@@ -5,6 +5,7 @@
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
 #include <hydra/utils/bitops.h>
+#include <hydra/combinatorics/combinations.h>
 
 namespace hydra::tjdetail {
 
@@ -55,30 +56,31 @@ void do_ising(BondList const &bonds, Couplings const &couplings,
       idx_t idx_up = 0;
       for (auto up : Combinations<bit_t>(n_sites, n_up)) {
         auto [dn_lower, dn_upper] = block.dn_limits_for_up_[idx_up];
-
+	
         if (popcnt(up & mask) == 2) { // both spins pointing up
           for (idx_t idx = dn_lower; idx < dn_upper; ++idx) {
-            fill(idx, val_same);
+            fill(idx, idx, val_same);
           }
         } else if (up & s1mask) { // s1 is pointing up
           for (idx_t idx = dn_lower; idx < dn_upper; ++idx) {
             bit_t dn = block.dns_[idx];
             if (dn & s2mask)
-              fill(idx, val_diff);
+              fill(idx, idx, val_diff);
           }
         } else if (up & s2mask) { // s2 is pointing up
           for (idx_t idx = dn_lower; idx < dn_upper; ++idx) {
             bit_t dn = block.dns_[idx];
             if (dn & s1mask)
-              fill(idx, val_diff);
+              fill(idx, idx, val_diff);
           }
         } else { // no upspins
           for (idx_t idx = dn_lower; idx < dn_upper; ++idx) {
             bit_t dn = block.dns_[idx];
             if (popcnt(dn & mask) == 2)
-              fill(idx, val_same);
+              fill(idx, idx, val_same);
           }
         }
+	
         ++idx_up;
       }
     }

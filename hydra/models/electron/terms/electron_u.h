@@ -31,7 +31,7 @@ void do_U(Couplings const &couplings, Electron<bit_t> const &block,
       for (bit_t up : Combinations<bit_t>(n_sites, n_up)) {
         for (bit_t dn : Combinations<bit_t>(n_sites, n_dn)) {
 	  double val = U * popcnt(up & dn);
-          fill(idx, val);
+          fill(idx, idx, val);
           ++idx;
         }
       }

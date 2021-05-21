@@ -5,18 +5,18 @@
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
 #include <hydra/utils/bitops.h>
+#include <hydra/combinatorics/combinations.h>
 
 namespace hydra::tjdetail {
 
 template <class bit_t, class Filler>
-void do_down_flips(bit_t up, idx_t idx_up, bit_t up_mask, bit_t dn_mask,
-                   double val, tJ<bit_t> const &block, Filler &&fill) {
-  bit_t mask = up_mask | dn_mask;
-
-
+void do_down_flips(bit_t up, idx_t idx_up, bit_t flipmask, bit_t spacemask,
+                   bit_t dnmask, double val, tJ<bit_t> const &block,
+                   Filler &&fill) {
+  using utils::popcnt;
 
   // Get limits of flipped up
-  bit_t up_flip = up ^ mask;
+  bit_t up_flip = up ^ flipmask;
   idx_t idx_up_flip = block.lintable_up_.index(up_flip);
   auto [dn_lower_flip, dn_upper_flip] = block.dn_limits_for_up_[idx_up_flip];
 
@@ -26,12 +26,17 @@ void do_down_flips(bit_t up, idx_t idx_up, bit_t up_mask, bit_t dn_mask,
   for (idx_t idx_in = dn_lower; idx_in < dn_upper; ++idx_in) {
     bit_t dn = block.dns_[idx_in];
 
-    if (dn & dn_mask) {
-      bit_t dn_flip = dn ^ mask;
+    if (dn & dnmask) {
+      bit_t dn_flip = dn ^ flipmask;
       auto it = std::lower_bound(block.dns_.begin() + dn_lower_flip,
                                  block.dns_.begin() + dn_upper_flip, dn_flip);
       idx_t idx_out = std::distance(block.dns_.begin(), it);
-      fill(idx_out, idx_in, val);
+
+      // decide Fermi sign from down spins
+      if (popcnt(dn & spacemask) & 1)
+        fill(idx_out, idx_in, -val);
+      else
+        fill(idx_out, idx_in, val);
     }
   }
 }
@@ -62,19 +67,37 @@ void do_exchange(BondList const &bonds, Couplings const &couplings,
       double J = lila::real(couplings[cpl]);
       double val = J / 2.;
 
-      int s1 = bond.site(0);
-      int s2 = bond.site(1);
+      int s1 = std::min(bond.site(0), bond.site(1));
+      int s2 = std::max(bond.site(0), bond.site(1));
       bit_t s1mask = (bit_t)1 << s1;
       bit_t s2mask = (bit_t)1 << s2;
-      bit_t mask = s1mask | s2mask;
+      bit_t flipmask = s1mask | s2mask;
+      bit_t spacemask = ((1 << (s2 - s1 - 1)) - 1) << (s1 + 1);
 
       idx_t idx_up = 0;
       for (auto up : Combinations<bit_t>(n_sites, n_up)) {
 
-        if ((up & mask) == s1mask)
-          do_down_flips(up, idx_up, s1mask, s2mask, val, block, fill);
-        else if ((up & mask) == s2mask)
-          do_down_flips(up, idx_up, s2mask, s1mask, val, block, fill);
+        // lower s1, raise, s2
+        if ((up & flipmask) == s1mask) {
+
+          // decide Fermi sign of upspins
+          if (popcnt(up & spacemask) & 1)
+            do_down_flips(up, idx_up, flipmask, spacemask, s2mask, val, block,
+                          fill);
+          else
+            do_down_flips(up, idx_up, flipmask, spacemask, s2mask, -val, block,
+                          fill);
+          // lower s2, raise, s1
+        } else if ((up & flipmask) == s2mask) {
+
+          // decide Fermi sign of upspins
+          if (popcnt(up & spacemask) & 1)
+            do_down_flips(up, idx_up, flipmask, spacemask, s1mask, val, block,
+                          fill);
+          else
+            do_down_flips(up, idx_up, flipmask, spacemask, s1mask, -val, block,
+                          fill);
+        }
 
         ++idx_up;
       }
