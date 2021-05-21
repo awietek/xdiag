@@ -29,7 +29,7 @@ void do_U_symmetric(Couplings const &couplings,
         for (idx_t idx = lower; idx < upper; ++idx) {
           bit_t dn = block.dn(idx);
           double val = U * popcnt(up & dn);
-          fill(idx, val);
+          fill(idx, idx, val);
           // mat(idx, idx) += val;
         }
       }

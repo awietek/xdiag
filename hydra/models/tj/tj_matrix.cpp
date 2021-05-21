@@ -18,25 +18,13 @@ matrix_real(BondList const &bonds, Couplings const &couplings,
   idx_t dim_out = block_out.size();
 
   auto mat = lila::Zeros<double>(dim_out, dim_in);
+  auto fill = [&mat](idx_t idx_out, idx_t idx_in, double val) {
+    mat(idx_out, idx_in) += val;
+  };
 
-  // hopping
-  tjdetail::do_hopping<bit_t, double>(
-      bonds, couplings, block_in,
-      [&mat](idx_t idx_out, idx_t idx_in, double val) {
-        mat(idx_out, idx_in) += val;
-      });
-
-  // Ising
-  tjdetail::do_ising<bit_t>(
-      bonds, couplings, block_in,
-      [&mat](idx_t idx, double val) { mat(idx, idx) += val; });
-
-  // Exchange
-  tjdetail::do_exchange<bit_t>(
-      bonds, couplings, block_in,
-      [&mat](idx_t idx_out, idx_t idx_in, double val) {
-        mat(idx_out, idx_in) += val;
-      });
+  tjdetail::do_hopping<bit_t, double>(bonds, couplings, block_in, fill);
+  tjdetail::do_ising<bit_t>(bonds, couplings, block_in, fill);
+  tjdetail::do_exchange<bit_t>(bonds, couplings, block_in, fill);
   return mat;
 }
 
@@ -49,26 +37,13 @@ matrix_cplx(BondList const &bonds, Couplings const &couplings,
   idx_t dim_out = block_out.size();
 
   auto mat = lila::Zeros<complex>(dim_out, dim_in);
+  auto fill = [&mat](idx_t idx_out, idx_t idx_in, complex val) {
+    mat(idx_out, idx_in) += val;
+  };
 
-  // tj hopping
-  tjdetail::do_hopping<bit_t, complex>(
-      bonds, couplings, block_in,
-      [&mat](idx_t idx_out, idx_t idx_in, complex val) {
-        mat(idx_out, idx_in) += val;
-      });
-
-  // Ising
-  tjdetail::do_ising<bit_t>(
-      bonds, couplings, block_in,
-      [&mat](idx_t idx, complex val) { mat(idx, idx) += val; });
-
-  // Heisenberg
-  tjdetail::do_exchange<bit_t>(
-      bonds, couplings, block_in,
-      [&mat](idx_t idx_out, idx_t idx_in, complex val) {
-        mat(idx_out, idx_in) += val;
-      });
-
+  tjdetail::do_hopping<bit_t, complex>(bonds, couplings, block_in, fill);
+  tjdetail::do_ising<bit_t>(bonds, couplings, block_in, fill);
+  tjdetail::do_exchange<bit_t>(bonds, couplings, block_in, fill);
   return mat;
 }
 

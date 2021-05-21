@@ -3,8 +3,8 @@
 #include <hydra/utils/bitops.h>
 
 #include <hydra/models/electron/electron_utils.h>
-#include <hydra/models/electron/terms/electron_symmetric_u.h>
 #include <hydra/models/electron/terms/electron_symmetric_hopping.h>
+#include <hydra/models/electron/terms/electron_symmetric_u.h>
 
 namespace hydra {
 
@@ -17,16 +17,13 @@ matrix_cplx(BondList const &bonds, Couplings const &couplings,
 
   idx_t dim = block_in.size();
   auto mat = lila::Zeros<complex>(dim, dim);
+  auto fill = [&mat](idx_t idx_out, idx_t idx_in, complex val) {
+    mat(idx_out, idx_in) += val;
+  };
 
-  electron::do_U_symmetric(couplings, block_in, [&mat](idx_t idx, double val) {
-    mat(idx, idx) += val;
-  });
-  
-  electron::do_hopping_symmetric<bit_t, complex>(
-      bonds, couplings, block_in,
-      [&mat](idx_t idx_out, idx_t idx_in, complex val) {
-        mat(idx_out, idx_in) += val;
-      });
+  electron::do_U_symmetric(couplings, block_in, fill);
+  electron::do_hopping_symmetric<bit_t, complex>(bonds, couplings, block_in,
+                                                 fill);
 
   return mat;
 }
