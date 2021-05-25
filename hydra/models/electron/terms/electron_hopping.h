@@ -20,7 +20,7 @@ void do_hopping(BondList const &bonds, Couplings const &couplings,
   idx_t size_up = block.size_up();
   idx_t size_dn = block.size_dn();
 
-  auto hoppings = bonds.bonds_of_type("HOP");
+  auto hoppings = bonds.bonds_of_type("HOP") + bonds.bonds_of_type("HUBBARDHOP");
   auto hoppings_up = bonds.bonds_of_type("HOPUP");
   auto hoppings_dn = bonds.bonds_of_type("HOPDN");
   for (auto hop : hoppings + hoppings_up + hoppings_dn) {
