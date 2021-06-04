@@ -20,11 +20,11 @@ void do_hopping(BondList const &bonds, Couplings const &couplings,
   idx_t size_up = block.size_up();
   idx_t size_dn = block.size_dn();
 
-  auto hoppings = bonds.bonds_of_type("HOP") + bonds.bonds_of_type("HUBBARDHOP");
+  auto hoppings =
+      bonds.bonds_of_type("HOP") + bonds.bonds_of_type("HUBBARDHOP");
   auto hoppings_up = bonds.bonds_of_type("HOPUP");
   auto hoppings_dn = bonds.bonds_of_type("HOPDN");
   for (auto hop : hoppings + hoppings_up + hoppings_dn) {
-
     if (hop.size() != 2)
       HydraLog.err("Error computing Electron hopping: "
                    "hoppings must have exactly two sites defined");
@@ -40,7 +40,8 @@ void do_hopping(BondList const &bonds, Couplings const &couplings,
       bit_t spacemask = (((bit_t)1 << (u - l - 1)) - 1) << (l + 1);
 
       // Apply hoppings on upspins
-      if ((hop.type() == "HOP") || (hop.type() == "HOPUP")) {
+      if ((hop.type() == "HOP") || (hop.type() == "HUBBARDHOP") ||
+          (hop.type() == "HOPUP")) {
         idx_t idx_up = 0;
         for (auto up : Combinations(n_sites, n_up)) {
           if (popcnt(up & flipmask) == 1) {
@@ -48,8 +49,8 @@ void do_hopping(BondList const &bonds, Couplings const &couplings,
             if constexpr (is_complex<coeff_t>())
               t = (gbit(up, s1)) ? couplings[cpl] : lila::conj(couplings[cpl]);
             else
-	      t = lila::real(couplings[cpl]);
-                
+              t = lila::real(couplings[cpl]);
+
             double fermi = popcnt(up & spacemask) & 1 ? -1. : 1.;
             coeff_t val = -t * fermi;
 
@@ -66,7 +67,8 @@ void do_hopping(BondList const &bonds, Couplings const &couplings,
       }
 
       // Apply hoppings on dnspins
-      if ((hop.type() == "HOP") || (hop.type() == "HOPDN")) {
+      if ((hop.type() == "HOP") || (hop.type() == "HUBBARDHOP") ||
+          (hop.type() == "HOPDN")) {
         idx_t idx_dn = 0;
         for (auto dn : Combinations(n_sites, n_dn)) {
           if (popcnt(dn & flipmask) == 1) {
@@ -74,7 +76,7 @@ void do_hopping(BondList const &bonds, Couplings const &couplings,
             if constexpr (is_complex<coeff_t>())
               t = (gbit(dn, s1)) ? couplings[cpl] : lila::conj(couplings[cpl]);
             else
-	      t = lila::real(couplings[cpl]);
+              t = lila::real(couplings[cpl]);
 
             double fermi = popcnt(dn & spacemask) & 1 ? -1. : 1.;
             coeff_t val = -t * fermi;
