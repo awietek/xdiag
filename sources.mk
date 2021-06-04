@@ -27,6 +27,10 @@ sources+= hydra/models/tj/tj_utils.cpp
 sources+= hydra/models/tj/tj_matrix.cpp
 sources+= hydra/models/tj/tj_apply.cpp
 
+sources+= hydra/models/spinhalf/spinhalf.cpp
+sources+= hydra/models/spinhalf/spinhalf_matrix.cpp
+sources+= hydra/models/spinhalf/spinhalf_apply.cpp
+
 sources+= hydra/symmetries/spacegroup.cpp
 sources+= hydra/symmetries/spinflip.cpp
 sources+= hydra/symmetries/representation.cpp
