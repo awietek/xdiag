@@ -10,7 +10,8 @@ libraries  = -lhdf5 -lmkl_rt -L$(limedir)/lib -llime -lhdf5
 endif
 
 ifeq ($(arch), osx)
-cc         = mpicxx
+cc         = clang++
+mpicc      = mpicxx
 ccopt      = -O3 -mavx -DLILA_USE_ACCELERATE
 ccarch     = -std=c++17 -Wall -pedantic -m64 -Wno-return-type-c-linkage
 liladir    = /Users/awietek/Research/Software/lila
