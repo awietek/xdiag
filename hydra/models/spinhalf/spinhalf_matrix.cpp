@@ -21,8 +21,8 @@ matrix_real(BondList const &bonds, Couplings const &couplings,
     mat(idx_out, idx_in) += val;
   };
 
-  spinhalfdetail::do_ising(bonds, couplings, block_in, fill);
-  spinhalfdetail::do_exchange<bit_t, complex>(bonds, couplings, block_in, fill);
+  spinhalfterms::do_ising(bonds, couplings, block_in, fill);
+  spinhalfterms::do_exchange(bonds, couplings, block_in, fill);
 
   return mat;
 }
@@ -40,8 +40,8 @@ matrix_cplx(BondList const &bonds, Couplings const &couplings,
     mat(idx_out, idx_in) += val;
   };
 
-  spinhalfdetail::do_ising(bonds, couplings, block_in, fill);
-  spinhalfdetail::do_exchange<bit_t, complex>(bonds, couplings, block_in, fill);
+  spinhalfterms::do_ising(bonds, couplings, block_in, fill);
+  spinhalfterms::do_exchange(bonds, couplings, block_in, fill);
 
   return mat;
 }

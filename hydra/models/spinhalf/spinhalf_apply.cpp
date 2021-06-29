@@ -3,8 +3,8 @@
 #include <hydra/combinatorics/combinations.h>
 #include <hydra/utils/bitops.h>
 
-#include <hydra/models/spinhalf/terms/spinhalf_hopping.h>
-#include <hydra/models/spinhalf/terms/spinhalf_u.h>
+#include <hydra/models/spinhalf/terms/spinhalf_ising.h>
+#include <hydra/models/spinhalf/terms/spinhalf_exchange.h>
 
 namespace hydra {
 
@@ -21,9 +21,9 @@ void apply(BondList const &bonds, Couplings const &couplings,
   auto fill = [&vec_out, &vec_in](idx_t idx_out, idx_t idx_in, double val) {
     vec_out(idx_out) += val * vec_in(idx_in);
   };
-  
-  spinhalfdetail::do_ising(bonds, couplings, block_in, fill);
-  spinhalfdetail::do_exchange<bit_t, complex>(bonds, couplings, block_in, fill);
+
+  spinhalfterms::do_ising(bonds, couplings, block_in, fill);
+  spinhalfterms::do_exchange(bonds, couplings, block_in, fill);
 }
 
 template <class bit_t>
@@ -40,8 +40,8 @@ void apply(BondList const &bonds, Couplings const &couplings,
     vec_out(idx_out) += val * vec_in(idx_in);
   };
 
-  spinhalfdetail::do_ising(bonds, couplings, block_in, fill);
-  spinhalfdetail::do_exchange<bit_t, complex>(bonds, couplings, block_in, fill);
+  spinhalfterms::do_ising(bonds, couplings, block_in, fill);
+  spinhalfterms::do_exchange(bonds, couplings, block_in, fill);
 }
 
 template void apply<uint16>(BondList const &bonds, Couplings const &couplings,
