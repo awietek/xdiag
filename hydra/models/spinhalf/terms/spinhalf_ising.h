@@ -1,6 +1,7 @@
 #pragma once
-
 #include <tuple>
+
+#include <lila/utils/logger.h>
 
 #include <hydra/combinatorics/combinations.h>
 #include <hydra/common.h>
@@ -21,7 +22,7 @@ void do_ising(BondList const &bonds, Couplings const &couplings,
   for (auto bond : ising) {
 
     if (bond.size() != 2)
-      HydraLog.err("Error computing Spinhalf Ising: "
+      lila::Log.err("Error computing Spinhalf Ising: "
                    "bond must have exactly two sites defined");
 
     std::string coupling = bond.coupling();
@@ -38,7 +39,7 @@ void do_ising(BondList const &bonds, Couplings const &couplings,
       int s1 = bond.site(0);
       int s2 = bond.site(1);
       if (s1 == s2)
-	HydraLog.err("Error computing Spinhalf Ising: "
+	lila::Log.err("Error computing Spinhalf Ising: "
 		     "operator acting on twice the same site");
       bit_t mask = ((bit_t)1 << s1) | ((bit_t)1 << s2);
 

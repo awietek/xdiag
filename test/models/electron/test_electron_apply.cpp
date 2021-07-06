@@ -26,22 +26,22 @@ TEST_CASE("electron_apply", "[models]") {
 
         // Create block and matrix for comparison
         auto block = Electron<uint32>(n_sites, nup, ndn);
-        auto H = matrix_real(bondlist, couplings, block, block);
+        auto H = MatrixReal(bondlist, couplings, block, block);
         REQUIRE(lila::close(H, lila::Herm(H)));
 
         // Check whether apply gives the same as matrix multiplication
         auto v = lila::Random<double>(block.size());
         auto w1 = lila::Mult(H, v);
         auto w2 = lila::ZerosLike(v);
-        apply(bondlist, couplings, block, v, block, w2);
+        Apply(bondlist, couplings, block, v, block, w2);
         REQUIRE(lila::close(w1, w2));
 
         // Compute eigenvalues and compare
         auto evals_mat = lila::EigenvaluesSym(H);
         double e0_mat = evals_mat(0);
-        double e0_app = e0_real(bondlist, couplings, block);
-        HydraLog.out("nup: {}, ndn: {}, e0_mat: {}, e0_app: {}", nup, ndn, e0_mat, e0_app);
-        CHECK(lila::close(e0_mat, e0_app));
+        double e0_app = E0Real(bondlist, couplings, block);
+        lila::Log.out("nup: {}, ndn: {}, e0_mat: {}, e0_app: {}", nup, ndn, e0_mat, e0_app);
+        CHECK(lila::close(e0_mat, e0_app, 1e-6, 1e-6));
       }
   }
 
@@ -58,22 +58,22 @@ TEST_CASE("electron_apply", "[models]") {
 
 	// Create block and matrix for comparison
         auto block = Electron<uint32>(n_sites, nup, ndn);
-        auto H = matrix_cplx(bondlist, couplings, block, block);
+        auto H = MatrixCplx(bondlist, couplings, block, block);
         REQUIRE(lila::close(H, lila::Herm(H)));
 
         // Check whether apply gives the same as matrix multiplication
         auto v = lila::Random<complex>(block.size());
         auto w1 = lila::Mult(H, v);
         auto w2 = lila::ZerosLike(v);
-        apply(bondlist, couplings, block, v, block, w2);
+        Apply(bondlist, couplings, block, v, block, w2);
         REQUIRE(lila::close(w1, w2));
 
         // Compute eigenvalues and compare
         auto evals_mat = lila::EigenvaluesSym(H);
         double e0_mat = evals_mat(0);
-        double e0_app = e0_cplx(bondlist, couplings, block);
-        // HydraLog.out("e0_mat: {}, e0_app: {}", e0_mat, e0_app);
-        REQUIRE(lila::close(e0_mat, e0_app));
+        double e0_app = E0Cplx(bondlist, couplings, block);
+        // lila::Log.out("e0_mat: {}, e0_app: {}", e0_mat, e0_app);
+        CHECK(lila::close(e0_mat, e0_app, 1e-6, 1e-6));
       }
   }
 }

@@ -9,7 +9,7 @@
 namespace hydra {
 
 template <class bit_t>
-void apply(BondList const &bonds, Couplings const &couplings,
+void Apply(BondList const &bonds, Couplings const &couplings,
            SpinhalfMPI<bit_t> const &block_in, lila::Vector<double> const &vec_in,
            SpinhalfMPI<bit_t> const &block_out, lila::Vector<double> &vec_out) {
 
@@ -23,17 +23,17 @@ void apply(BondList const &bonds, Couplings const &couplings,
   // spinhalfterms::do_exchange_mpi(bonds, couplings, block_in);
 }
 
-template void apply<uint16>(BondList const &bonds, Couplings const &couplings,
+template void Apply<uint16>(BondList const &bonds, Couplings const &couplings,
                             SpinhalfMPI<uint16> const &block_in,
                             lila::Vector<double> const &vec_in,
                             SpinhalfMPI<uint16> const &block_out,
                             lila::Vector<double> &vec_out);
-template void apply<uint32>(BondList const &bonds, Couplings const &couplings,
+template void Apply<uint32>(BondList const &bonds, Couplings const &couplings,
                             SpinhalfMPI<uint32> const &block_in,
                             lila::Vector<double> const &vec_in,
                             SpinhalfMPI<uint32> const &block_out,
                             lila::Vector<double> &vec_out);
-template void apply<uint64>(BondList const &bonds, Couplings const &couplings,
+template void Apply<uint64>(BondList const &bonds, Couplings const &couplings,
                             SpinhalfMPI<uint64> const &block_in,
                             lila::Vector<double> const &vec_in,
                             SpinhalfMPI<uint64> const &block_out,

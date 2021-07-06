@@ -1,5 +1,7 @@
 #pragma once
 
+#include <lila/utils/logger.h>
+
 #include <hydra/common.h>
 #include <hydra/models/electron/electron_symmetric.h>
 #include <hydra/models/electron/electron_utils.h>
@@ -25,8 +27,8 @@ void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
   for (auto hop : hoppings + hoppings_up + hoppings_dn) {
 
     if (hop.size() != 2)
-      HydraLog.err("Error computing Electron hopping: "
-                   "hoppings must have exactly two sites defined");
+      lila::Log.err("Error computing Electron hopping: "
+                    "hoppings must have exactly two sites defined");
 
     std::string cpl = hop.coupling();
     if (couplings.defined(cpl) && !lila::close(couplings[cpl], (complex)0.)) {

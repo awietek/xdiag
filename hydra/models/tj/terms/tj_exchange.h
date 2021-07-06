@@ -1,11 +1,13 @@
 #pragma once
 
+#include <lila/utils/logger.h>
+
+#include <hydra/combinatorics/combinations.h>
 #include <hydra/common.h>
 #include <hydra/models/tj/tj.h>
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
 #include <hydra/utils/bitops.h>
-#include <hydra/combinatorics/combinations.h>
 
 namespace hydra::tjdetail {
 
@@ -58,8 +60,8 @@ void do_exchange(BondList const &bonds, Couplings const &couplings,
   for (auto bond : exchange + exchange_tj) {
 
     if (bond.size() != 2)
-      HydraLog.err("Error computing tJ Exchange: "
-                   "bond must have exactly two sites defined");
+      lila::Log.err("Error computing tJ Exchange: "
+                    "bond must have exactly two sites defined");
 
     std::string cpl = bond.coupling();
     if (couplings.defined(cpl) && !lila::close(couplings[cpl], (complex)0.)) {

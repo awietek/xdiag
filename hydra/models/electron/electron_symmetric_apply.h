@@ -10,7 +10,7 @@
 namespace hydra {
 
 template <class bit_t, class SymmetryGroup>
-void apply(BondList const &bonds, Couplings const &couplings,
+void Apply(BondList const &bonds, Couplings const &couplings,
            ElectronSymmetric<bit_t, SymmetryGroup> const &block_in,
            lila::Vector<complex> const &vec_in,
            ElectronSymmetric<bit_t, SymmetryGroup> const &block_out,

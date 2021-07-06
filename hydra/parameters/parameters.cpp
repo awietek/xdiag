@@ -25,6 +25,8 @@
 #include <algorithm>
 #include <fstream>
 
+#include <lila/utils/logger.h>
+
 #include "parameters.h"
 #include "parameters_impl.h"
 #include "parser.h"
@@ -79,7 +81,7 @@ parser &operator>>(parser &in, Parameters &parms) {
       }
 
       if (c != '=')
-        HydraLog.err("= expected in assignmanet while parsing Parameters");
+        lila::Log.err("= expected in assignmanet while parsing Parameters");
 
       c = in.next_token_nows();
       switch (c) {
@@ -92,13 +94,13 @@ parser &operator>>(parser &in, Parameters &parms) {
         break;
 
       default:
-        HydraLog.err("invalid parameter value in input");
+        lila::Log.err("invalid parameter value in input");
       }
 
       // must be followed by a semicolon, comma or newline
       c = in.next_token();
       if ((c != ';') && (c != ',') && (c != '\n'))
-        HydraLog.err(
+        lila::Log.err(
             "semicolon, comma or newline expected while parsing Parameters");
       c = in.next_token_nows();
     } else {
@@ -131,7 +133,7 @@ parser &operator>>(parser &in, parameters_collection &parms_coll) {
         c = in.next_token_nows();
         break;
       default:
-        HydraLog.err("No global values allowed in collection");
+        lila::Log.err("No global values allowed in collection");
       }
     } else {
       in.putback(c);

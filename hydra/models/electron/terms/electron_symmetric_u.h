@@ -17,7 +17,7 @@ void do_U_symmetric(Couplings const &couplings,
   if (couplings.defined("U")) {
 
     if (!couplings.is_real("U")) {
-      HydraLog.err("Error creating Electron matrix: "
+      lila::Log.err("Error creating Electron matrix: "
                    "Hubbard U must be a real number");
     }
 

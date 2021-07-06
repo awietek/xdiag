@@ -7,7 +7,7 @@
 namespace hydra {
 
 template <class bit_t>
-void apply(BondList const &bonds, Couplings const &couplings,
+void Apply(BondList const &bonds, Couplings const &couplings,
            tJ<bit_t> const &block_in, lila::Vector<double> const &vec_in,
            tJ<bit_t> const &block_out, lila::Vector<double> &vec_out) {
 
@@ -27,7 +27,7 @@ void apply(BondList const &bonds, Couplings const &couplings,
 }
 
 template <class bit_t>
-void apply(BondList const &bonds, Couplings const &couplings,
+void Apply(BondList const &bonds, Couplings const &couplings,
            tJ<bit_t> const &block_in, lila::Vector<complex> const &vec_in,
            tJ<bit_t> const &block_out, lila::Vector<complex> &vec_out) {
 
@@ -46,33 +46,33 @@ void apply(BondList const &bonds, Couplings const &couplings,
   tjdetail::do_exchange<bit_t>(bonds, couplings, block_in, fill);
 }
 
-template void apply<uint16>(BondList const &bonds, Couplings const &couplings,
+template void Apply<uint16>(BondList const &bonds, Couplings const &couplings,
                             tJ<uint16> const &block_in,
                             lila::Vector<double> const &vec_in,
                             tJ<uint16> const &block_out,
                             lila::Vector<double> &vec_out);
-template void apply<uint32>(BondList const &bonds, Couplings const &couplings,
+template void Apply<uint32>(BondList const &bonds, Couplings const &couplings,
                             tJ<uint32> const &block_in,
                             lila::Vector<double> const &vec_in,
                             tJ<uint32> const &block_out,
                             lila::Vector<double> &vec_out);
-template void apply<uint64>(BondList const &bonds, Couplings const &couplings,
+template void Apply<uint64>(BondList const &bonds, Couplings const &couplings,
                             tJ<uint64> const &block_in,
                             lila::Vector<double> const &vec_in,
                             tJ<uint64> const &block_out,
                             lila::Vector<double> &vec_out);
 
-template void apply<uint16>(BondList const &bonds, Couplings const &couplings,
+template void Apply<uint16>(BondList const &bonds, Couplings const &couplings,
                             tJ<uint16> const &block_in,
                             lila::Vector<complex> const &vec_in,
                             tJ<uint16> const &block_out,
                             lila::Vector<complex> &vec_out);
-template void apply<uint32>(BondList const &bonds, Couplings const &couplings,
+template void Apply<uint32>(BondList const &bonds, Couplings const &couplings,
                             tJ<uint32> const &block_in,
                             lila::Vector<complex> const &vec_in,
                             tJ<uint32> const &block_out,
                             lila::Vector<complex> &vec_out);
-template void apply<uint64>(BondList const &bonds, Couplings const &couplings,
+template void Apply<uint64>(BondList const &bonds, Couplings const &couplings,
                             tJ<uint64> const &block_in,
                             lila::Vector<complex> const &vec_in,
                             tJ<uint64> const &block_out,

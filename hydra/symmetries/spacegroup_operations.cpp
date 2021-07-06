@@ -1,5 +1,6 @@
 #include "spacegroup_operations.h"
 
+#include <fstream>
 #include <algorithm>
 #include <vector>
 

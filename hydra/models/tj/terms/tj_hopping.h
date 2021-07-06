@@ -1,11 +1,13 @@
 #pragma once
 
+#include <lila/utils/logger.h>
+
+#include <hydra/combinatorics/combinations.h>
 #include <hydra/common.h>
 #include <hydra/models/tj/tj.h>
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
 #include <hydra/utils/bitops.h>
-#include <hydra/combinatorics/combinations.h>
 
 namespace hydra::tjdetail {
 
@@ -27,8 +29,8 @@ void do_hopping(BondList const &bonds, Couplings const &couplings,
   for (auto hop : hoppings + hoppings_up + hoppings_dn) {
 
     if (hop.size() != 2)
-      HydraLog.err("Error computing tJ hopping: "
-                   "hoppings must have exactly two sites defined");
+      lila::Log.err("Error computing tJ hopping: "
+                    "hoppings must have exactly two sites defined");
 
     std::string cpl = hop.coupling();
     if (couplings.defined(cpl) && !lila::close(couplings[cpl], (complex)0.)) {
@@ -122,7 +124,7 @@ void do_hopping(BondList const &bonds, Couplings const &couplings,
               }
             }
           }
-	  ++idx_up;
+          ++idx_up;
         }
       }
     }

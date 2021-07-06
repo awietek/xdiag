@@ -11,12 +11,12 @@ namespace hydra {
 
 template <class bit_t>
 lila::Matrix<double>
-matrix_real(BondList const &bonds, Couplings const &couplings,
-            Spinhalf<bit_t> const &block_in, Spinhalf<bit_t> const &block_out);
-  
+MatrixReal(BondList const &bonds, Couplings const &couplings,
+           Spinhalf<bit_t> const &block_in, Spinhalf<bit_t> const &block_out);
+
 template <class bit_t>
 lila::Matrix<complex>
-matrix_cplx(BondList const &bonds, Couplings const &couplings,
-            Spinhalf<bit_t> const &block_in, Spinhalf<bit_t> const &block_out);
+MatrixCplx(BondList const &bonds, Couplings const &couplings,
+           Spinhalf<bit_t> const &block_in, Spinhalf<bit_t> const &block_out);
 
-}
+} // namespace hydra

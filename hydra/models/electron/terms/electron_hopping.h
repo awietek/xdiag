@@ -1,5 +1,7 @@
 #pragma once
 
+#include <lila/utils/logger.h>
+
 #include <hydra/common.h>
 #include <hydra/models/electron/electron.h>
 #include <hydra/operators/bondlist.h>
@@ -26,7 +28,7 @@ void do_hopping(BondList const &bonds, Couplings const &couplings,
   auto hoppings_dn = bonds.bonds_of_type("HOPDN");
   for (auto hop : hoppings + hoppings_up + hoppings_dn) {
     if (hop.size() != 2)
-      HydraLog.err("Error computing Electron hopping: "
+      lila::Log.err("Error computing Electron hopping: "
                    "hoppings must have exactly two sites defined");
 
     std::string cpl = hop.coupling();

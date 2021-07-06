@@ -26,7 +26,7 @@ TEST_CASE("electron_matrix", "[models]") {
   couplings["T"] = 1.0;
   couplings["U"] = 5.0;
 
-  auto H1 = matrix_real(bondlist, couplings, block, block);
+  auto H1 = MatrixReal(bondlist, couplings, block, block);
 
   double tp = t;
   double tm = -t;
@@ -102,7 +102,7 @@ TEST_CASE("electron_matrix", "[models]") {
     couplings["T"] = 1.0;
     couplings["U"] = U;
     double e0_exact = 0.5 * (U - sqrt(U * U + 16));
-    auto H = matrix_real(bondlist, couplings, block2, block2);
+    auto H = MatrixReal(bondlist, couplings, block2, block2);
     REQUIRE(lila::close(H, lila::Herm(H)));
     auto evecs = lila::EigenvaluesSym(H);
     double e0 = evecs(0);
@@ -139,10 +139,10 @@ TEST_CASE("electron_matrix", "[models]") {
           e0_exact += seigs(i);
 
         auto block3 = Electron<uint32>(n_sites, nup, ndn);
-        auto Hr = matrix_real(bondlist, couplings, block3, block3);
+        auto Hr = MatrixReal(bondlist, couplings, block3, block3);
 	REQUIRE(lila::close(Hr, lila::Herm(Hr)));
         auto evecsr = lila::EigenvaluesSym(Hr);
-        auto Hc = matrix_cplx(bondlist, couplings, block3, block3);
+        auto Hc = MatrixCplx(bondlist, couplings, block3, block3);
 	REQUIRE(lila::close(Hc, lila::Herm(Hc)));
         auto evecsc = lila::EigenvaluesSym(Hc);
 	REQUIRE(lila::close(evecsr, evecsc));
@@ -196,7 +196,7 @@ TEST_CASE("electron_matrix", "[models]") {
           e0_exact += seigs_dn(i);
 
         auto block3 = Electron<uint32>(n_sites, nup, ndn);
-        auto H = matrix_cplx(bondlist, couplings, block3, block3);
+        auto H = MatrixCplx(bondlist, couplings, block3, block3);
 	REQUIRE(lila::close(H, lila::Herm(H)));
         auto evecs = lila::EigenvaluesSym(H);
         double e0 = evecs(0);

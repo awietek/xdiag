@@ -27,7 +27,7 @@ SpinhalfMPI<bit_t>::SpinhalfMPI(int n_sites, int n_up)
   for (auto prefix : Subsets<bit_t>(n_prefix_bits_)) {
     int n_up_prefix = utils::popcnt(prefix);
     int n_up_postfix = n_up - n_up_prefix;
-    if (n_up_postfix < 0)
+    if ((n_up_postfix < 0) || (n_up_postfix > n_postfix_bits_))
       continue;
     if (process(prefix) != mpi_rank_)
       continue;
@@ -46,6 +46,7 @@ SpinhalfMPI<bit_t>::SpinhalfMPI(int n_sites, int n_up)
   }
 
   size_ = idx;
+  dim_ = 0;
   mpi::Allreduce(&size_, &dim_, 1, MPI_SUM, MPI_COMM_WORLD);
 }
 

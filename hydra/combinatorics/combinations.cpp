@@ -1,4 +1,5 @@
 #include "combinations.h"
+#include <lila/utils/logger.h>
 
 namespace hydra {
 
@@ -8,11 +9,11 @@ Combinations<bit_t>::Combinations(int n, int k)
     size_(combinatorics::binomial(n, k))
 {  
   if (k>n)
-    HydraLog.err("Error constructing Combinations: k>n");
+    lila::Log.err("Error constructing Combinations: k>n");
   else if (k<0)
-    HydraLog.err("Error constructing Combinations: k<0");
+    lila::Log.err("Error constructing Combinations: k<0");
   else if (n<0)
-    HydraLog.err("Error constructing Combinations: n<0");
+    lila::Log.err("Error constructing Combinations: n<0");
   else
     {
       bit_t begin = (((bit_t)1 << k) - 1);
