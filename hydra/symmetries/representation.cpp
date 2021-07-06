@@ -1,4 +1,8 @@
 #include "representation.h"
+
+#include <fstream>
+
+#include <lila/utils/logger.h>
 #include <numeric>
 
 namespace hydra {
@@ -13,8 +17,7 @@ Representation::Representation(std::vector<complex> const &characters,
     : characters_(characters), allowed_symmetries_(allowed_symmetries) {}
 
 Representation
-Representation::subgroup(std::vector<int> const &symmetry_numbers) const
-{
+Representation::subgroup(std::vector<int> const &symmetry_numbers) const {
   std::vector<complex> sub_characters;
   for (auto sym : symmetry_numbers)
     sub_characters.push_back(characters_(sym));
@@ -115,8 +118,8 @@ Representation read_represenation(std::string filename, std::string repname) {
     }
   }
   if (!found)
-    HydraLog.err("Error reading representations: "
-                 "name not found in file");
+    lila::Log.err("Error reading representations: "
+                  "name not found in file");
 
   return Representation();
 }

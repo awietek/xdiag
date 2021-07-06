@@ -42,6 +42,19 @@ sources+= hydra/operators/bond.cpp
 sources+= hydra/operators/bondlist.cpp
 sources+= hydra/operators/couplings.cpp
 
+sources+=hydra/linalg/lanczos/lanczos_convergence.cpp
+sources+=hydra/linalg/lanczos/tmatrix.cpp
+
+mpisources+= hydra/mpi/datatype.cpp
+mpisources+= hydra/mpi/allreduce.cpp
+mpisources+= hydra/mpi/alltoall.cpp
+mpisources+= hydra/mpi/timing_mpi.cpp
+mpisources+= hydra/mpi/stable_dot.cpp
+
+mpisources+= hydra/models/spinhalf_mpi/spinhalf_mpi.cpp
+mpisources+= hydra/models/spinhalf_mpi/spinhalf_mpi_apply.cpp
+
+
 
 testsources+= test/tests.cpp
 testsources+= test/combinatorics/test_binomial.cpp
@@ -69,19 +82,12 @@ testsources+= test/models/spinhalf/testcases_spinhalf.cpp
 testsources+= test/models/spinhalf/test_spinhalf_matrix.cpp
 testsources+= test/models/spinhalf/test_spinhalf_apply.cpp
 
-mpisources+= hydra/mpi/datatype.cpp
-mpisources+= hydra/mpi/allreduce.cpp
-mpisources+= hydra/mpi/alltoall.cpp
-
-mpisources+= hydra/models/spinhalf_mpi/spinhalf_mpi.cpp
-mpisources+= hydra/models/spinhalf_mpi/spinhalf_mpi_apply.cpp
 
 
 testmpisources+= testmpi/tests.cpp
-# testmpisources+= testmpi/models/spinhalf_mpi/spinhalf_mpi.cpp
-# testmpisources+= testmpi/models/spinhalf_mpi/spinhalf_mpi_apply.cpp
-
-
+testmpisources+= testmpi/mpi/test_stable_dot.cpp
+testmpisources+= testmpi/models/spinhalf_mpi/test_spinhalf_mpi.cpp
+testmpisources+= testmpi/models/spinhalf_mpi/test_spinhalf_mpi_apply.cpp
 
 
 appsources+= hydra/applications/hubbarded/hubbarded.cpp

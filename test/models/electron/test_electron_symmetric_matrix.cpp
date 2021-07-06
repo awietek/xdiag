@@ -24,7 +24,7 @@ void test_symmetric_spectra(BondList bondlist, Couplings couplings,
       if (electron_nosym.size() < 1000) {
 
         auto H_nosym =
-            matrix_cplx(bondlist, couplings, electron_nosym, electron_nosym);
+            MatrixCplx(bondlist, couplings, electron_nosym, electron_nosym);
         REQUIRE(lila::close(H_nosym, lila::Herm(H_nosym)));
         auto eigs_nosym = lila::EigenvaluesSym(H_nosym);
 
@@ -35,7 +35,7 @@ void test_symmetric_spectra(BondList bondlist, Couplings couplings,
 
           auto electron =
               ElectronSymmetric<bit_t>(n_sites, nup, ndn, space_group, irrep);
-          // HydraLog.out(
+          // lila::Log.out(
           //     "nup: {}, ndn: {}, k: {}, mult: {}, dim_nosym: {}, dim_sym: {}",
           //     nup, ndn, k, multiplicity, electron_nosym.size(),
           //     electron.size());
@@ -43,7 +43,7 @@ void test_symmetric_spectra(BondList bondlist, Couplings couplings,
           if (electron.size() > 0) {
 
             // Compute partial spectrum from symmetrized block
-            auto H_sym = matrix_cplx(bondlist, couplings, electron, electron);
+            auto H_sym = MatrixCplx(bondlist, couplings, electron, electron);
             REQUIRE(lila::close(H_sym, lila::Herm(H_sym)));
             auto eigs_sym_k = lila::EigenvaluesSym(H_sym);
 
@@ -65,7 +65,7 @@ void test_symmetric_spectra(BondList bondlist, Couplings couplings,
 template <class bit_t>
 void test_hubbard_symmetric_spectrum_chains(int n_sites) {
   using namespace hydra::testcases::electron;
-  HydraLog.out("Hubbard chain, symmetric spectra test, n_sites: {}", n_sites);
+  lila::Log.out("Hubbard chain, symmetric spectra test, n_sites: {}", n_sites);
   auto [bondlist, couplings] = get_linear_chain(n_sites, 1.0, 5.0);
   auto [space_group, irreps, multiplicities] =
       get_cyclic_group_irreps_mult<bit_t>(n_sites);
@@ -89,7 +89,7 @@ TEST_CASE("electron_symmetric_matrix", "[models]") {
     auto irrep = irreps[k];
     auto electron =
         ElectronSymmetric<uint16>(n_sites, nup, ndn, space_group, irrep);
-    auto H_sym = matrix_cplx(bondlist, couplings, electron, electron);
+    auto H_sym = MatrixCplx(bondlist, couplings, electron, electron);
     complex U2 = 2 * U;
     complex UU = U;
     complex tp = t;
@@ -133,7 +133,7 @@ TEST_CASE("electron_symmetric_matrix", "[models]") {
   }
 
   // test a 3x3 triangular lattice
-  HydraLog.out("Hubbard 3x3 triangular, symmetric spectra test");
+  lila::Log.out("Hubbard 3x3 triangular, symmetric spectra test");
   using bit_t = uint16;
   std::string lfile = "data/triangular.9.Jz1Jz2Jx1Jx2D1.sublattices.tsl.lat";
 

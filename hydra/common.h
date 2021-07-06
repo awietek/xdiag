@@ -5,8 +5,6 @@
 
 namespace hydra {
 
-inline lila::Logger HydraLog;
-
 using int16 = short;
 using int32 = int;
 using int64 = long;

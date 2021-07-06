@@ -9,7 +9,7 @@
 namespace hydra {
 
 template <class bit_t, class SymmetryGroup>
-void apply(BondList const &bonds, Couplings const &couplings,
+void Apply(BondList const &bonds, Couplings const &couplings,
            ElectronSymmetric<bit_t, SymmetryGroup> const &block_in,
            lila::Vector<complex> const &vec_in,
            ElectronSymmetric<bit_t, SymmetryGroup> const &block_out,
@@ -29,19 +29,19 @@ void apply(BondList const &bonds, Couplings const &couplings,
                                                  fill);
 }
 
-template void apply<uint16, SpaceGroup<uint16>>(
+template void Apply<uint16, SpaceGroup<uint16>>(
     BondList const &bonds, Couplings const &couplings,
     ElectronSymmetric<uint16, SpaceGroup<uint16>> const &block_in,
     lila::Vector<complex> const &vec_in,
     ElectronSymmetric<uint16, SpaceGroup<uint16>> const &block_out,
     lila::Vector<complex> &vec_out);
-template void apply<uint32, SpaceGroup<uint32>>(
+template void Apply<uint32, SpaceGroup<uint32>>(
     BondList const &bonds, Couplings const &couplings,
     ElectronSymmetric<uint32, SpaceGroup<uint32>> const &block_in,
     lila::Vector<complex> const &vec_in,
     ElectronSymmetric<uint32, SpaceGroup<uint32>> const &block_out,
     lila::Vector<complex> &vec_out);
-template void apply<uint64, SpaceGroup<uint64>>(
+template void Apply<uint64, SpaceGroup<uint64>>(
     BondList const &bonds, Couplings const &couplings,
     ElectronSymmetric<uint64, SpaceGroup<uint64>> const &block_in,
     lila::Vector<complex> const &vec_in,

@@ -11,7 +11,7 @@ namespace hydra {
 
 template <class bit_t>
 lila::Matrix<double>
-matrix_real(BondList const &bonds, Couplings const &couplings,
+MatrixReal(BondList const &bonds, Couplings const &couplings,
             tJ<bit_t> const &block_in, tJ<bit_t> const &block_out) {
   assert(block_in == block_out); // only temporary
   idx_t dim_in = block_in.size();
@@ -30,7 +30,7 @@ matrix_real(BondList const &bonds, Couplings const &couplings,
 
 template <class bit_t>
 lila::Matrix<complex>
-matrix_cplx(BondList const &bonds, Couplings const &couplings,
+MatrixCplx(BondList const &bonds, Couplings const &couplings,
             tJ<bit_t> const &block_in, tJ<bit_t> const &block_out) {
   assert(block_in == block_out);
   idx_t dim_in = block_in.size();
@@ -47,30 +47,30 @@ matrix_cplx(BondList const &bonds, Couplings const &couplings,
   return mat;
 }
 
-template lila::Matrix<double> matrix_real<uint16>(BondList const &bonds,
+template lila::Matrix<double> MatrixReal<uint16>(BondList const &bonds,
+                                                 Couplings const &couplings,
+                                                 tJ<uint16> const &block_in,
+                                                 tJ<uint16> const &block_out);
+template lila::Matrix<double> MatrixReal<uint32>(BondList const &bonds,
+                                                 Couplings const &couplings,
+                                                 tJ<uint32> const &block_in,
+                                                 tJ<uint32> const &block_out);
+template lila::Matrix<double> MatrixReal<uint64>(BondList const &bonds,
+                                                 Couplings const &couplings,
+                                                 tJ<uint64> const &block_in,
+                                                 tJ<uint64> const &block_out);
+
+template lila::Matrix<complex> MatrixCplx<uint16>(BondList const &bonds,
                                                   Couplings const &couplings,
                                                   tJ<uint16> const &block_in,
                                                   tJ<uint16> const &block_out);
-template lila::Matrix<double> matrix_real<uint32>(BondList const &bonds,
+template lila::Matrix<complex> MatrixCplx<uint32>(BondList const &bonds,
                                                   Couplings const &couplings,
                                                   tJ<uint32> const &block_in,
                                                   tJ<uint32> const &block_out);
-template lila::Matrix<double> matrix_real<uint64>(BondList const &bonds,
+template lila::Matrix<complex> MatrixCplx<uint64>(BondList const &bonds,
                                                   Couplings const &couplings,
                                                   tJ<uint64> const &block_in,
                                                   tJ<uint64> const &block_out);
-
-template lila::Matrix<complex> matrix_cplx<uint16>(BondList const &bonds,
-                                                   Couplings const &couplings,
-                                                   tJ<uint16> const &block_in,
-                                                   tJ<uint16> const &block_out);
-template lila::Matrix<complex> matrix_cplx<uint32>(BondList const &bonds,
-                                                   Couplings const &couplings,
-                                                   tJ<uint32> const &block_in,
-                                                   tJ<uint32> const &block_out);
-template lila::Matrix<complex> matrix_cplx<uint64>(BondList const &bonds,
-                                                   Couplings const &couplings,
-                                                   tJ<uint64> const &block_in,
-                                                   tJ<uint64> const &block_out);
 
 } // namespace hydra

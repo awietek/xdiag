@@ -7,9 +7,6 @@ namespace hydra::mpi {
 
 template <class TCoeffs>
 int Allreduce(const TCoeffs *sendbuf, TCoeffs *recvbuf, int count, MPI_Op op,
-              MPI_Comm comm) {
-  MPI_Datatype type = datatype<TCoeffs>();
-  return MPI_Allreduce(sendbuf, recvbuf, count, type, op, comm);
-}
+              MPI_Comm comm);
 
 } // namespace hydra::mpi

@@ -1,11 +1,13 @@
 #pragma once
 
+#include <lila/utils/logger.h>
+
+#include <hydra/combinatorics/combinations.h>
 #include <hydra/common.h>
 #include <hydra/models/tj/tj.h>
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
 #include <hydra/utils/bitops.h>
-#include <hydra/combinatorics/combinations.h>
 
 namespace hydra::tjdetail {
 
@@ -26,8 +28,8 @@ void do_ising(BondList const &bonds, Couplings const &couplings,
   for (auto bond : ising + ising_tj) {
 
     if (bond.size() != 2)
-      HydraLog.err("Error computing tJ Ising: "
-                   "bond must have exactly two sites defined");
+      lila::Log.err("Error computing tJ Ising: "
+                    "bond must have exactly two sites defined");
 
     std::string coupling = bond.coupling();
     if (couplings.defined(coupling) &&
@@ -56,7 +58,7 @@ void do_ising(BondList const &bonds, Couplings const &couplings,
       idx_t idx_up = 0;
       for (auto up : Combinations<bit_t>(n_sites, n_up)) {
         auto [dn_lower, dn_upper] = block.dn_limits_for_up_[idx_up];
-	
+
         if (popcnt(up & mask) == 2) { // both spins pointing up
           for (idx_t idx = dn_lower; idx < dn_upper; ++idx) {
             fill(idx, idx, val_same);
@@ -80,7 +82,7 @@ void do_ising(BondList const &bonds, Couplings const &couplings,
               fill(idx, idx, val_same);
           }
         }
-	
+
         ++idx_up;
       }
     }

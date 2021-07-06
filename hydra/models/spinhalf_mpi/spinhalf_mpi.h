@@ -38,7 +38,7 @@ public:
   std::unordered_map<bit_t, std::pair<idx_t, idx_t>> prefix_limits_;
   std::vector<LinTable<bit_t>> postfix_lintables_;
   
-private:
+private: 
   bool sz_conserved_;
   int n_up_;
   int n_dn_;

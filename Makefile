@@ -43,7 +43,7 @@ include $(testmpidepends)
 # different building suites
 .PHONY: test 
 test:  $(objects) $(testobjects) lib 
-	$(cc) $(ccopt) $(ccarch) $(depflags) $(libraries) -Llib -lhydra $(objects) $(testobjects) -o test/tests 
+	$(mpicc) $(ccopt) $(ccarch) $(depflags) $(libraries) -Llib -lhydra $(objects) $(testobjects) -o test/tests 
 
 .PHONY: mpi
 mpi: $(objects) $(mpiobjects) libmpi

@@ -95,7 +95,7 @@ template <class bit_t> void test_electron_chain(int n_sites) {
         auto electron =
             ElectronSymmetric<bit_t>(n_sites, nup, ndn, space_group, irrep);
 
-        HydraLog.out(
+        lila::Log.out(
             "Hubbard Chain: n_sites: {}, nup: {}, ndn: {}, k: {}, size: {}",
             n_sites, nup, ndn, k, electron.size());
         sum_of_dims += electron.size();
@@ -146,9 +146,10 @@ TEST_CASE("electron_symmetric", "[models]") {
             ElectronSymmetric<uint16>(n_sites, nup, ndn, space_group, irrep);
 
         idx_t dim = electron.size() * mult;
-        HydraLog.out("Hubbard Triangular 3x3: n_sites: {}, nup: {}, ndn: {}, k: "
-                     "{}(x{}), size: {}",
-                     n_sites, nup, ndn, name, mult, electron.size());
+        lila::Log.out(
+            "Hubbard Triangular 3x3: n_sites: {}, nup: {}, ndn: {}, k: "
+            "{}(x{}), size: {}",
+            n_sites, nup, ndn, name, mult, electron.size());
         test_indices(electron);
         test_representative_character(electron);
 
@@ -159,7 +160,7 @@ TEST_CASE("electron_symmetric", "[models]") {
       REQUIRE(sum_dim_updn == electron_nosym.size());
       REQUIRE(sum_dim_updn == binomial(n_sites, nup) * binomial(n_sites, ndn));
 
-      // HydraLog.out("size: {} {}", sum_dim_updn, electron_nosym.size());
+      // lila::Log.out("size: {} {}", sum_dim_updn, electron_nosym.size());
     }
   }
   REQUIRE(sum_dim == (idx_t)pow(4, n_sites));

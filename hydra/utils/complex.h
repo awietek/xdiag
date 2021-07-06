@@ -1,5 +1,4 @@
-#ifndef HYDRA_COMPLEX_H_
-#define HYDRA_COMPLEX_H_
+#pragma once
 
 #include <lila/all.h>
 #include <hydra/common.h>
@@ -23,5 +22,3 @@ namespace hydra {
   }
 
 }
-
-#endif

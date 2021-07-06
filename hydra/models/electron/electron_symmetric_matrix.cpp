@@ -10,7 +10,7 @@ namespace hydra {
 
 template <class bit_t, class SymmetryGroup>
 lila::Matrix<complex>
-matrix_cplx(BondList const &bonds, Couplings const &couplings,
+MatrixCplx(BondList const &bonds, Couplings const &couplings,
             ElectronSymmetric<bit_t, SymmetryGroup> const &block_in,
             ElectronSymmetric<bit_t, SymmetryGroup> const &block_out) {
   assert(block_in == block_out); // only temporary
@@ -28,15 +28,15 @@ matrix_cplx(BondList const &bonds, Couplings const &couplings,
   return mat;
 }
 
-template lila::Matrix<complex> matrix_cplx<uint16, SpaceGroup<uint16>>(
+template lila::Matrix<complex> MatrixCplx<uint16, SpaceGroup<uint16>>(
     BondList const &bonds, Couplings const &couplings,
     ElectronSymmetric<uint16, SpaceGroup<uint16>> const &block_in,
     ElectronSymmetric<uint16, SpaceGroup<uint16>> const &block_out);
-template lila::Matrix<complex> matrix_cplx<uint32, SpaceGroup<uint32>>(
+template lila::Matrix<complex> MatrixCplx<uint32, SpaceGroup<uint32>>(
     BondList const &bonds, Couplings const &couplings,
     ElectronSymmetric<uint32, SpaceGroup<uint32>> const &block_in,
     ElectronSymmetric<uint32, SpaceGroup<uint32>> const &block_out);
-template lila::Matrix<complex> matrix_cplx<uint64, SpaceGroup<uint64>>(
+template lila::Matrix<complex> MatrixCplx<uint64, SpaceGroup<uint64>>(
     BondList const &bonds, Couplings const &couplings,
     ElectronSymmetric<uint64, SpaceGroup<uint64>> const &block_in,
     ElectronSymmetric<uint64, SpaceGroup<uint64>> const &block_out);

@@ -12,7 +12,7 @@ void test_tjmodel_e0_real(BondList bonds, Couplings couplings, int nup, int ndn,
   int n_sites = bonds.n_sites();
 
   auto block = tJ<uint32>(n_sites, nup, ndn);
-  auto H = matrix_real(bonds, couplings, block, block);
+  auto H = MatrixReal(bonds, couplings, block, block);
   REQUIRE(lila::close(H, lila::Herm(H)));
 
   auto eigs = lila::EigenvaluesSym(H);
@@ -28,7 +28,7 @@ void test_tjmodel_fulleigs(BondList bonds, Couplings couplings,
     for (int ndn = 0; ndn <= n_sites - nup; ++ndn) {
 
       auto block = tJ<uint32>(n_sites, nup, ndn);
-      auto H = matrix_real(bonds, couplings, block, block);
+      auto H = MatrixReal(bonds, couplings, block, block);
       REQUIRE(lila::close(H, lila::Herm(H)));
       auto eigs = lila::EigenvaluesSym(H);
       for (auto eig : eigs)
@@ -43,7 +43,7 @@ TEST_CASE("tj_matrix", "[tj]") {
   using namespace hydra::testcases::tj;
 
   {
-    HydraLog.out("TJModel: six-site chain test, t=1.0, J=1.0, N=6");
+    lila::Log.out("TJModel: six-site chain test, t=1.0, J=1.0, N=6");
     auto [bonds, cpls] = tJchain(6, 1.0, 1.0);
     std::vector<std::tuple<int, int, double>> nup_ndn_e0 = {
         {0, 0, 0.0},         {0, 1, -2.0},        {0, 2, -2.96081311},
@@ -61,7 +61,7 @@ TEST_CASE("tj_matrix", "[tj]") {
   }
 
   {
-    HydraLog.out("TJModel: six-site chain test, t=1.0, J=0.0, N=6");
+    lila::Log.out("TJModel: six-site chain test, t=1.0, J=0.0, N=6");
     auto [bonds, cpls] = tJchain(6, 1.0, 0.0);
     std::vector<std::tuple<int, int, double>> nup_ndn_e0 = {
         {0, 0, 0.0},         {0, 1, -2.0},        {0, 2, -3.00000000},
@@ -79,37 +79,37 @@ TEST_CASE("tj_matrix", "[tj]") {
   }
 
   for (int L = 3; L <= 6; ++L) {
-    HydraLog.out("TJModel: ALPS full spectrum test, chain N={}", L);
+    lila::Log.out("TJModel: ALPS full spectrum test, chain N={}", L);
     auto [bonds, cpls, eigs] = tJchain_fullspectrum_alps(L);
     test_tjmodel_fulleigs(bonds, cpls, eigs);
   }
 
   {
-    HydraLog.out("TJModel: ALPS full spectrum test, square 2x2");
+    lila::Log.out("TJModel: ALPS full spectrum test, square 2x2");
     auto [bonds, cpls, eigs] = tj_square2x2_fullspectrum_alps();
     test_tjmodel_fulleigs(bonds, cpls, eigs);
   }
 
   for (int N = 3; N <= 6; ++N) {
-    HydraLog.out("TJModel: randomall-to-all complex hermitecity test, N={}", N);
+    lila::Log.out("TJModel: randomall-to-all complex hermitecity test, N={}", N);
 
     auto [bonds, cpls] = tj_alltoall_complex(N);
     for (int nup = 0; nup <= N; ++nup)
       for (int ndn = 0; ndn <= N - nup; ++ndn) {
         auto block = tJ<uint32>(N, nup, ndn);
-        auto H = matrix_cplx(bonds, cpls, block, block);
+        auto H = MatrixCplx(bonds, cpls, block, block);
         REQUIRE(lila::close(H, lila::Herm(H)));
       }
   }
 
   {
-    HydraLog.out("TJModel: Henry's Matlab test, random 3");
+    lila::Log.out("TJModel: Henry's Matlab test, random 3");
     auto [bonds, cpls, eigs] = randomAlltoAll3();
     test_tjmodel_fulleigs(bonds, cpls, eigs);
   }
 
   {
-    HydraLog.out("TJModel: Henry's Matlab test, random 4");
+    lila::Log.out("TJModel: Henry's Matlab test, random 4");
     auto [bonds, cpls, eigs] = randomAlltoAll4();
     test_tjmodel_fulleigs(bonds, cpls, eigs);
   }

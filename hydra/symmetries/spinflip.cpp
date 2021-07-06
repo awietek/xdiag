@@ -1,5 +1,7 @@
 #include "spinflip.h"
 
+#include <lila/utils/logger.h>
+
 namespace hydra {
 
 template <class bit_t>
@@ -15,8 +17,8 @@ Spinflip<bit_t>::subgroup(std::vector<int> const &symmetry_numbers) const {
   else if (symmetry_numbers == std::vector({0}))
     return Spinflip(n_sites, true);
   else
-    HydraLog.err("Error creating subgroup of Spinflip: "
-                 "invalid symmetry numbers specified");
+    lila::Log.err("Error creating subgroup of Spinflip: "
+                  "invalid symmetry numbers specified");
 }
 
 } // namespace hydra

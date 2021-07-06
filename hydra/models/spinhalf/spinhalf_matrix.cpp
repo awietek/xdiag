@@ -10,8 +10,8 @@ namespace hydra {
 
 template <class bit_t>
 lila::Matrix<double>
-matrix_real(BondList const &bonds, Couplings const &couplings,
-            Spinhalf<bit_t> const &block_in, Spinhalf<bit_t> const &block_out) {
+MatrixReal(BondList const &bonds, Couplings const &couplings,
+           Spinhalf<bit_t> const &block_in, Spinhalf<bit_t> const &block_out) {
   assert(block_in == block_out); // only temporary
   idx_t dim_in = block_in.size();
   idx_t dim_out = block_out.size();
@@ -29,8 +29,8 @@ matrix_real(BondList const &bonds, Couplings const &couplings,
 
 template <class bit_t>
 lila::Matrix<complex>
-matrix_cplx(BondList const &bonds, Couplings const &couplings,
-            Spinhalf<bit_t> const &block_in, Spinhalf<bit_t> const &block_out) {
+MatrixCplx(BondList const &bonds, Couplings const &couplings,
+           Spinhalf<bit_t> const &block_in, Spinhalf<bit_t> const &block_out) {
   assert(block_in == block_out);
   idx_t dim_in = block_in.size();
   idx_t dim_out = block_out.size();
@@ -47,29 +47,29 @@ matrix_cplx(BondList const &bonds, Couplings const &couplings,
 }
 
 template lila::Matrix<double>
-matrix_real<uint16>(BondList const &bonds, Couplings const &couplings,
-                    Spinhalf<uint16> const &block_in,
-                    Spinhalf<uint16> const &block_out);
+MatrixReal<uint16>(BondList const &bonds, Couplings const &couplings,
+                   Spinhalf<uint16> const &block_in,
+                   Spinhalf<uint16> const &block_out);
 template lila::Matrix<double>
-matrix_real<uint32>(BondList const &bonds, Couplings const &couplings,
-                    Spinhalf<uint32> const &block_in,
-                    Spinhalf<uint32> const &block_out);
+MatrixReal<uint32>(BondList const &bonds, Couplings const &couplings,
+                   Spinhalf<uint32> const &block_in,
+                   Spinhalf<uint32> const &block_out);
 template lila::Matrix<double>
-matrix_real<uint64>(BondList const &bonds, Couplings const &couplings,
-                    Spinhalf<uint64> const &block_in,
-                    Spinhalf<uint64> const &block_out);
+MatrixReal<uint64>(BondList const &bonds, Couplings const &couplings,
+                   Spinhalf<uint64> const &block_in,
+                   Spinhalf<uint64> const &block_out);
 
 template lila::Matrix<complex>
-matrix_cplx<uint16>(BondList const &bonds, Couplings const &couplings,
-                    Spinhalf<uint16> const &block_in,
-                    Spinhalf<uint16> const &block_out);
+MatrixCplx<uint16>(BondList const &bonds, Couplings const &couplings,
+                   Spinhalf<uint16> const &block_in,
+                   Spinhalf<uint16> const &block_out);
 template lila::Matrix<complex>
-matrix_cplx<uint32>(BondList const &bonds, Couplings const &couplings,
-                    Spinhalf<uint32> const &block_in,
-                    Spinhalf<uint32> const &block_out);
+MatrixCplx<uint32>(BondList const &bonds, Couplings const &couplings,
+                   Spinhalf<uint32> const &block_in,
+                   Spinhalf<uint32> const &block_out);
 template lila::Matrix<complex>
-matrix_cplx<uint64>(BondList const &bonds, Couplings const &couplings,
-                    Spinhalf<uint64> const &block_in,
-                    Spinhalf<uint64> const &block_out);
+MatrixCplx<uint64>(BondList const &bonds, Couplings const &couplings,
+                   Spinhalf<uint64> const &block_in,
+                   Spinhalf<uint64> const &block_out);
 
 } // namespace hydra

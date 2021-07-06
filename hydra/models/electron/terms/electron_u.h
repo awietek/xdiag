@@ -1,5 +1,7 @@
 #pragma once
 
+#include <lila/utils/logger.h>
+
 #include <hydra/common.h>
 #include <hydra/models/electron/electron.h>
 #include <hydra/operators/bondlist.h>
@@ -21,7 +23,7 @@ void do_U(Couplings const &couplings, Electron<bit_t> const &block,
     int n_dn = block.n_dn();
 
     if (!couplings.is_real("U")) {
-      HydraLog.err("Error creating Electron matrix: "
+      lila::Log.err("Error creating Electron matrix: "
                    "Hubbard U must be a real number");
     }
 

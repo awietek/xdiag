@@ -1,5 +1,7 @@
 #pragma once
 
+#include <lila/utils/logger.h>
+
 #include <hydra/combinatorics/combinations.h>
 #include <hydra/common.h>
 #include <hydra/models/electron/electron.h>
@@ -19,8 +21,8 @@ void do_exchange(BondList const &bonds, Couplings const &couplings,
   for (auto bond : exchange) {
 
     if (bond.size() != 2)
-      HydraLog.err("Error computing Spinhalf Exchange: "
-                   "bond must have exactly two sites defined");
+      lila::Log.err("Error computing Spinhalf Exchange: "
+                    "bond must have exactly two sites defined");
 
     std::string coupling = bond.coupling();
     if (couplings.defined(coupling) &&
@@ -35,8 +37,8 @@ void do_exchange(BondList const &bonds, Couplings const &couplings,
       int s1 = bond.site(0);
       int s2 = bond.site(1);
       if (s1 == s2)
-        HydraLog.err("Error computing Spinhalf Exchange: "
-                     "operator acting on twice the same site");
+        lila::Log.err("Error computing Spinhalf Exchange: "
+                      "operator acting on twice the same site");
       bit_t mask = ((bit_t)1 << s1) | ((bit_t)1 << s2);
 
       int n_sites = block.n_sites();

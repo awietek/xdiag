@@ -10,15 +10,15 @@
 namespace hydra {
 
 // template <class bit_t>
-// lila::Matrix<double> matrix_real(BondList const &bonds,
-//                                  Couplings const &couplings,
-//                                  ElectronSymmetric<bit_t> const &block_in,
-//                                  ElectronSymmetric<bit_t> const &block_out);
+// lila::Matrix<double> MatrixReal(BondList const &bonds,
+//                                 Couplings const &couplings,
+//                                 ElectronSymmetric<bit_t> const &block_in,
+//                                 ElectronSymmetric<bit_t> const &block_out);
 
 template <class bit_t, class SymmetryGroup>
 lila::Matrix<complex>
-matrix_cplx(BondList const &bonds, Couplings const &couplings,
-            ElectronSymmetric<bit_t, SymmetryGroup> const &block_in,
-            ElectronSymmetric<bit_t, SymmetryGroup> const &block_out);
+MatrixCplx(BondList const &bonds, Couplings const &couplings,
+           ElectronSymmetric<bit_t, SymmetryGroup> const &block_in,
+           ElectronSymmetric<bit_t, SymmetryGroup> const &block_out);
 
 } // namespace hydra

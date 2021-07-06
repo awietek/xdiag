@@ -2,6 +2,8 @@
 #include <fstream>
 #include <iostream>
 
+#include <lila/utils/logger.h>
+
 #include "spacegroup.h"
 
 namespace hydra {
@@ -15,12 +17,12 @@ SpaceGroup<bit_t, SpaceGroupOperator>::SpaceGroup(
 
     // Check whether lattice symmetries are well-formed
     if ((int)symmetries[i].size() != n_sites_)
-      HydraLog.err("Error constructing SpaceGroup: "
-                   "there's a symmetry not of length n_sites");
+      lila::Log.err("Error constructing SpaceGroup: "
+                    "there's a symmetry not of length n_sites");
 
     if (!symmetries::is_valid_permutation(n_sites_, symmetries[i].data()))
-      HydraLog.err("Error constructing SpaceGroup: "
-                   "there's a symmetry which is not a proper permutation");
+      lila::Log.err("Error constructing SpaceGroup: "
+                    "there's a symmetry which is not a proper permutation");
 
     std::copy(symmetries[i].begin(), symmetries[i].end(),
               permutation_array_.begin() + i * n_sites_);
@@ -35,8 +37,8 @@ SpaceGroup<bit_t, SpaceGroupOperator>::subgroup(
   std::vector<std::vector<int>> subgroup_symmetries;
   for (int n_sym : symmetry_numbers) {
     if ((0 > n_sym) || (n_sym >= (int)symmetries_.size()))
-      HydraLog.err("Error building subgroup of SpaceGroup: "
-                   "invalid symmetry index");
+      lila::Log.err("Error building subgroup of SpaceGroup: "
+                    "invalid symmetry index");
     subgroup_symmetries.push_back(symmetries_[n_sym]);
   }
   return SpaceGroup<bit_t, SpaceGroupOperator>(subgroup_symmetries);
