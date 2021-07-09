@@ -12,6 +12,7 @@ sources+= hydra/parameters/parser.cpp
 
 sources+= hydra/indexing/lintable.cpp
 
+sources+= hydra/models/models.cpp
 sources+= hydra/models/spinhalf/spinhalf.cpp
 
 sources+= hydra/models/electron/electron.cpp
@@ -50,7 +51,11 @@ mpisources+= hydra/mpi/allreduce.cpp
 mpisources+= hydra/mpi/alltoall.cpp
 mpisources+= hydra/mpi/timing_mpi.cpp
 mpisources+= hydra/mpi/stable_dot.cpp
+mpisources+= hydra/mpi/communicator.cpp
 
+sources+= hydra/models/models_mpi.cpp
+
+mpisources+= hydra/models/spinhalf_mpi/terms/get_prefix_postfix_mixed_bonds.cpp
 mpisources+= hydra/models/spinhalf_mpi/spinhalf_mpi.cpp
 mpisources+= hydra/models/spinhalf_mpi/spinhalf_mpi_apply.cpp
 
@@ -86,6 +91,7 @@ testsources+= test/models/spinhalf/test_spinhalf_apply.cpp
 
 testmpisources+= testmpi/tests.cpp
 testmpisources+= testmpi/mpi/test_stable_dot.cpp
+testmpisources+= test/models/spinhalf/testcases_spinhalf.cpp
 testmpisources+= testmpi/models/spinhalf_mpi/test_spinhalf_mpi.cpp
 testmpisources+= testmpi/models/spinhalf_mpi/test_spinhalf_mpi_apply.cpp
 
