@@ -4,7 +4,7 @@
 #include <hydra/utils/bitops.h>
 
 #include <hydra/models/spinhalf_mpi/terms/spinhalf_mpi_ising.h>
-// #include <hydra/models/spinhalf_mpi/terms/spinhalf_mpi_exchange.h>
+#include <hydra/models/spinhalf_mpi/terms/spinhalf_mpi_exchange.h>
 
 namespace hydra {
 
@@ -20,7 +20,7 @@ void Apply(BondList const &bonds, Couplings const &couplings,
   lila::Zeros(vec_out);
   
   spinhalfterms::do_ising_mpi(bonds, couplings, block_in, vec_in, vec_out);
-  // spinhalfterms::do_exchange_mpi(bonds, couplings, block_in);
+  spinhalfterms::do_exchange_mpi(bonds, couplings, block_in, vec_in, vec_out);
 }
 
 template void Apply<uint16>(BondList const &bonds, Couplings const &couplings,
@@ -38,6 +38,5 @@ template void Apply<uint64>(BondList const &bonds, Couplings const &couplings,
                             lila::Vector<double> const &vec_in,
                             SpinhalfMPI<uint64> const &block_out,
                             lila::Vector<double> &vec_out);
-
 
 } // namespace hydra

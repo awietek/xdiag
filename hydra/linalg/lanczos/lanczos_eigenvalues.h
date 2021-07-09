@@ -90,6 +90,13 @@ LanczosEigenvaluesReal(BondList const &bonds, Couplings const &couplings,
 
   using namespace lila;
 
+  // use different seeds for different MPI processes
+  if constexpr (is_mpi_block<Block>) {
+    int mpi_rank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
+    seed += 0x01000193 * mpi_rank;
+  }
+
   // Create random starting vector with normal distributed entries
   normal_dist_t<double> dist(0., 1.);
   normal_gen_t<double> gen(dist, seed);
@@ -108,6 +115,13 @@ LanczosEigenvaluesCplx(BondList const &bonds, Couplings const &couplings,
                        int max_iterations = 1000, double deflation_tol = 1e-7) {
 
   using namespace lila;
+
+  // use different seeds for different MPI processes
+  if constexpr (is_mpi_block<Block>) {
+    int mpi_rank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
+    seed += 0x01000193 * mpi_rank;
+  }
 
   // Create random starting vector with normal distributed entries
   normal_dist_t<complex> dist(0., 1.);
