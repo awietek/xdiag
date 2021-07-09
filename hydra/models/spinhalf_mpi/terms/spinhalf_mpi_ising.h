@@ -32,7 +32,6 @@ void do_ising_mpi(BondList const &bonds, Couplings const &couplings,
       double J = lila::real(couplings[coupling]);
 
       // Set values for same/diff (tJ model definition)
-      std::string type = bond.type();
       double val_same = J / 4.;
       double val_diff = -J / 4.;
 

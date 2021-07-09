@@ -9,7 +9,6 @@ void test_stable_dot(int size){
   int rank;
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-
   auto v = lila::Random<coeff_t>(size + rank);
   auto w = lila::Random<coeff_t>(size + rank);
   

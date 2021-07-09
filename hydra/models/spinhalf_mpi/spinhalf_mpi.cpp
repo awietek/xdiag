@@ -23,7 +23,7 @@ SpinhalfMPI<bit_t>::SpinhalfMPI(int n_sites, int n_up)
   MPI_Comm_size(MPI_COMM_WORLD, &mpi_size_);
 
   // Determine the valid prefixes that belong to my process
-  idx_t idx = 0;
+  size_ = 0;
   for (auto prefix : Subsets<bit_t>(n_prefix_bits_)) {
     int n_up_prefix = utils::popcnt(prefix);
     int n_up_postfix = n_up - n_up_prefix;
@@ -31,12 +31,11 @@ SpinhalfMPI<bit_t>::SpinhalfMPI(int n_sites, int n_up)
       continue;
     if (process(prefix) != mpi_rank_)
       continue;
-
-    idx_t start_idx = idx;
-    idx += combinatorics::binomial(n_postfix_bits_, n_up_postfix);
-    idx_t end_idx = idx;
+    
+    idx_t prefix_size = combinatorics::binomial(n_postfix_bits_, n_up_postfix);
+    prefix_limits_[prefix] = {size_, size_ + prefix_size};
+    size_ += prefix_size;
     prefixes_.push_back(prefix);
-    prefix_limits_[prefix] = {start_idx, end_idx};
   }
 
   // Create the lintables for postfix lookup
@@ -45,7 +44,27 @@ SpinhalfMPI<bit_t>::SpinhalfMPI(int n_sites, int n_up)
         LinTable<bit_t>(n_postfix_bits_, n_up_postfix));
   }
 
-  size_ = idx;
+  // Determine the valid postfixes that belong to my process
+  idx_t size = 0;
+  for (auto postfix : Subsets<bit_t>(n_postfix_bits_)) {
+    int n_up_postfix = utils::popcnt(postfix);
+    int n_up_prefix = n_up - n_up_postfix;
+    if ((n_up_prefix < 0) || (n_up_prefix > n_prefix_bits_))
+      continue;
+    if (process(postfix) != mpi_rank_)
+      continue;
+
+    idx_t postfix_size = combinatorics::binomial(n_prefix_bits_, n_up_prefix);
+    postfix_limits_[postfix] = {size, size + postfix_size};
+    size += postfix_size;
+    postfixes_.push_back(postfix);
+  }
+
+  // Create the lintables for postfix lookup
+  for (int n_up_prefix = 0; n_up_prefix <= n_prefix_bits_; ++n_up_prefix) {
+    prefix_lintables_.push_back(LinTable<bit_t>(n_prefix_bits_, n_up_prefix));
+  }
+
   dim_ = 0;
   mpi::Allreduce(&size_, &dim_, 1, MPI_SUM, MPI_COMM_WORLD);
 }
