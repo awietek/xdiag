@@ -58,14 +58,14 @@ TEST_CASE("spinhalf_mpi_apply", "[spinhalf]") {
 
   using namespace hydra::testcases::spinhalf;
 
-  LogMPI.out("Spinhalf: Heisenberg chain apply test, J=1.0, N=2,..,6");
-  for (int N = 2; N <= 6; ++N) {
+  LogMPI.out("Spinhalf: Heisenberg chain apply test, J=1.0, N=2,..,8");
+  for (int N = 2; N <= 8; ++N) {
     auto [bonds, couplings] = HBchain(N, 1.0);
     test_e0_nompi(bonds, couplings);
   }
 
-  LogMPI.out("Spinhalf: Heisenberg alltoall apply test, N=2,..,6");
-  for (int N = 2; N <= 6; ++N) {
+  LogMPI.out("Spinhalf: Heisenberg alltoall apply test, N=2,..,8");
+  for (int N = 2; N <= 8; ++N) {
     auto [bonds, couplings] = HB_alltoall(N);
     test_e0_nompi(bonds, couplings);
   }

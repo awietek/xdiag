@@ -14,3 +14,4 @@
 #include "models/spinhalf_mpi/terms/get_prefix_postfix_mixed_bonds.h"
 #include "models/spinhalf_mpi/spinhalf_mpi.h"
 #include "models/spinhalf_mpi/spinhalf_mpi_apply.h"
+#include "models/spinhalf_mpi/spinhalf_mpi_fill.h"

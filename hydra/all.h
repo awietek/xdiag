@@ -18,6 +18,7 @@
 #include "models/spinhalf/spinhalf.h"
 #include "models/spinhalf/spinhalf_matrix.h"
 #include "models/spinhalf/spinhalf_apply.h"
+#include "models/spinhalf/spinhalf_fill.h"
 
 #include "models/tj/tj.h"
 #include "models/tj/tj_matrix.h"
