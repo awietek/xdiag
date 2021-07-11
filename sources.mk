@@ -53,7 +53,7 @@ mpisources+= hydra/mpi/timing_mpi.cpp
 mpisources+= hydra/mpi/stable_dot.cpp
 mpisources+= hydra/mpi/communicator.cpp
 
-sources+= hydra/models/models_mpi.cpp
+mpisources+= hydra/models/models_mpi.cpp
 
 mpisources+= hydra/models/spinhalf_mpi/terms/get_prefix_postfix_mixed_bonds.cpp
 mpisources+= hydra/models/spinhalf_mpi/spinhalf_mpi.cpp
