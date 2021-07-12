@@ -43,6 +43,9 @@ sources+= hydra/operators/bond.cpp
 sources+= hydra/operators/bondlist.cpp
 sources+= hydra/operators/couplings.cpp
 
+sources+= hydra/wavefunctions/gpwf_spinhalf.cpp
+
+
 sources+=hydra/linalg/lanczos/lanczos_convergence.cpp
 sources+=hydra/linalg/lanczos/tmatrix.cpp
 
