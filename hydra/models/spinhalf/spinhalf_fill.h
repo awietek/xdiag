@@ -4,7 +4,7 @@
 
 #include <hydra/common.h>
 #include <hydra/models/models.h>
-#include <hydra/models/spinhal/spinhalf.h>
+#include <hydra/models/spinhalf/spinhalf.h>
 
 namespace hydra {
 

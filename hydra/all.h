@@ -42,6 +42,9 @@
 #include "operators/bondlist.h"
 #include "operators/couplings.h"
 
+#include "wavefunctions/gpwf_spinhalf.h"
+
+
 #include "linalg/sparse_diag.h"
 #include "linalg/lanczos/lanczos_generic.h"
 #include "linalg/lanczos/tmatrix.h"
