@@ -1,6 +1,7 @@
 #pragma once
 
 #include <mpi.h>
+#include <iostream>
 #include <string>
 
 #define FMT_HEADER_ONLY
