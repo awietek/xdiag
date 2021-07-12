@@ -11,12 +11,12 @@
 
 namespace hydra {
 
+// Lanczos which  overwrites starting vector v0
 template <class coeff_t, class Block>
-Tmatrix<coeff_t>
-LanczosEigenvalues(BondList const &bonds, Couplings const &couplings,
-                   Block const &block, lila::Vector<coeff_t> &v0,
-                   int num_eigenvalue = 0, double precision = 1e-12,
-                   int max_iterations = 1000, double deflation_tol = 1e-7) {
+Tmatrix<coeff_t> LanczosEigenvaluesInplace(
+    BondList const &bonds, Couplings const &couplings, Block const &block,
+    lila::Vector<coeff_t> &v0, int num_eigenvalue = 0, double precision = 1e-12,
+    int max_iterations = 1000, double deflation_tol = 1e-7) {
 
   using namespace lila;
 
@@ -81,6 +81,17 @@ LanczosEigenvalues(BondList const &bonds, Couplings const &couplings,
   }
 }
 
+// Lanczos which does not overwrite v0
+template <class coeff_t, class Block>
+Tmatrix<coeff_t>
+LanczosEigenvalues(BondList const &bonds, Couplings const &couplings,
+                   Block const &block, lila::Vector<coeff_t> v0,
+                   int num_eigenvalue = 0, double precision = 1e-12,
+                   int max_iterations = 1000, double deflation_tol = 1e-7) {
+  LanczosEigenvaluesInplace(bonds, couplings, block, v0, num_eigenvalue,
+                            precision, max_iterations, deflation_tol)
+}
+
 template <class Block>
 Tmatrix<double>
 LanczosEigenvaluesReal(BondList const &bonds, Couplings const &couplings,
@@ -103,8 +114,8 @@ LanczosEigenvaluesReal(BondList const &bonds, Couplings const &couplings,
   auto v0 = Random(block.size(), gen);
 
   // Run Lanczos algorithm
-  return LanczosEigenvalues(bonds, couplings, block, v0, num_eigenvalue,
-                            precision, max_iterations, deflation_tol);
+  return LanczosEigenvaluesInplace(bonds, couplings, block, v0, num_eigenvalue,
+                                   precision, max_iterations, deflation_tol);
 }
 
 template <class Block>
@@ -129,8 +140,8 @@ LanczosEigenvaluesCplx(BondList const &bonds, Couplings const &couplings,
   auto v0 = Random(block.size(), gen);
 
   // Run Lanczos algorithm
-  return LanczosEigenvalues(bonds, couplings, block, v0, num_eigenvalue,
-                            precision, max_iterations, deflation_tol);
+  return LanczosEigenvaluesInplace(bonds, couplings, block, v0, num_eigenvalue,
+                                   precision, max_iterations, deflation_tol);
 }
 
 } // namespace hydra

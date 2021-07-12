@@ -45,7 +45,6 @@ LanczosGeneric(multiply_f mult, lila::Vector<coeff_t> &v0, dot_f dot,
   // Main Lanczos loop
   int iteration = 0;
   while (!converged(tmatrix) || only_build_vectors) {
-
     // Build vectors
     for (int v_idx = 0; v_idx < coefficients.nrows(); ++v_idx)
       Add(v1, vectors(ALL, v_idx), coefficients(v_idx, iteration));
@@ -70,7 +69,6 @@ LanczosGeneric(multiply_f mult, lila::Vector<coeff_t> &v0, dot_f dot,
     ++iteration;
     if (iteration >= max_iterations)
       break;
-
   }
 
   return {tmatrix, vectors};

@@ -10,8 +10,6 @@ coeff_t StableDot(lila::Vector<coeff_t> const &v, lila::Vector<coeff_t> const &w
 
 namespace detail {
 
-static inline void normalize_sums(int64 *isum);
-
 double stable_dot_product(const uint64 &n, const double *x, const double *y);
 
 double stable_dot_product(const uint64 &n, const float *x, const float *y);

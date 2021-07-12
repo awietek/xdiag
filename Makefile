@@ -1,4 +1,4 @@
-arch = osx
+arch = flatiron_linux
 
 include options.mk
 include sources.mk
@@ -74,7 +74,7 @@ $(appbinaries):
 
 .PHONY: clean
 clean:
-	$(RM) -r $(objects) $(mpiobjects) $(appobjects) $(testobjects) $(depends) $(appdepends) $(testdepends)
+	$(RM) -r $(objects) $(mpiobjects) $(appobjects) $(testobjects) $(testmpiobjects) $(depends) $(appdepends) $(testdepends) $(testmpidepends) $(mpidepends)
 
 .PHONY: rebuild
 rebuild: clean all lib
