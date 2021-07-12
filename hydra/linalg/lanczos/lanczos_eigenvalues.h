@@ -43,9 +43,10 @@ Tmatrix<coeff_t> LanczosEigenvaluesInplace(
     };
 
     auto t0 = rightnow_mpi();
-    [[maybe_unused]] auto [tmat, vectors] =
+    auto [tmat, vectors] =
         LanczosGeneric(mult, v0, stable_dot, converged, max_iterations,
                        Matrix<coeff_t>(), deflation_tol);
+    (void)vectors;
     timing_mpi(t0, rightnow_mpi(), "Lanczos time", 1);
     return tmat;
   }
@@ -73,9 +74,10 @@ Tmatrix<coeff_t> LanczosEigenvaluesInplace(
     };
 
     auto t0 = rightnow();
-    [[maybe_unused]] auto [tmat, vectors] =
+    auto [tmat, vectors] =
         LanczosGeneric(mult, v0, dot, converged, max_iterations,
                        Matrix<coeff_t>(), deflation_tol);
+    (void)vectors;
     timing(t0, rightnow(), "Lanczos time", 1);
     return tmat;
   }
@@ -88,8 +90,8 @@ LanczosEigenvalues(BondList const &bonds, Couplings const &couplings,
                    Block const &block, lila::Vector<coeff_t> v0,
                    int num_eigenvalue = 0, double precision = 1e-12,
                    int max_iterations = 1000, double deflation_tol = 1e-7) {
-  LanczosEigenvaluesInplace(bonds, couplings, block, v0, num_eigenvalue,
-                            precision, max_iterations, deflation_tol)
+  return LanczosEigenvaluesInplace(bonds, couplings, block, v0, num_eigenvalue,
+                                   precision, max_iterations, deflation_tol);
 }
 
 template <class Block>
