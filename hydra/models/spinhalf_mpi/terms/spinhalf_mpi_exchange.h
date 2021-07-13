@@ -73,6 +73,7 @@ void do_exchange_mpi(BondList const &bonds, Couplings const &couplings,
   // Apply the prefix bonds after doing a transpose. then transpose back
   std::vector<coeff_t> send_buffer(vec_in.size(), 0);
   std::vector<coeff_t> recv_buffer(vec_in.size(), 0);
+
   if (prefix_bonds.size() > 0) {
 
     // Transpose prefix/postfix order
@@ -125,27 +126,39 @@ void do_exchange_mpi(BondList const &bonds, Couplings const &couplings,
     // Figure out communication patterns and resize buffers accoringly
     auto [coms_mixed, max_send_size, max_recv_size] =
         spinhalf_mpi_exchange_mixed_com(block, mixed_bonds, couplings);
+
+    printf("hello\n");
     if (max_send_size > send_buffer.size())
       send_buffer.resize(max_send_size);
     if (max_recv_size > recv_buffer.size())
       recv_buffer.resize(max_recv_size);
 
+    printf("hello2\n");
     int bond_idx = 0;
     for (auto bond : mixed_bonds) {
-
+      
       // std::fill(send_buffer.begin(), send_buffer.end(), 0);
       // std::fill(recv_buffer.begin(), recv_buffer.end(), 0);
-
+      printf("aaa1\n");
       // Prepare sending states for this bond
-      auto com = coms_mixed[bond_idx++];
+      auto& com = coms_mixed[bond_idx++];
+      printf("aaa2\n");
+
+      com.flush();
+
+      printf("aaa3\n");
 
       if (coupling_is_zero(bond, couplings))
         continue;
       auto [s1, s2, Jhalf] = get_exchange_s1_s2_Jhalf_mpi(bond, couplings);
+      printf("aaa3\n");
+
       assert(s1 < n_postfix_bits);
       assert(s2 >= n_postfix_bits);
       bit_t prefix_mask = ((bit_t)1 << (s2 - n_postfix_bits));
       bit_t postfix_mask = ((bit_t)1 << s1);
+
+      printf("s1: %d s2: %d\n", s1, s2);
 
       // for (int nt = 0; nt < mpi_size; ++nt) {
       //   if (mpi_rank == nt) {
@@ -231,10 +244,10 @@ void do_exchange_mpi(BondList const &bonds, Couplings const &couplings,
       // printf("\n");
 
       // MPI_Barrier(MPI_COMM_WORLD);
-
+      printf("send\n");
       // Communicate
       com.all_to_all(send_buffer, recv_buffer);
-
+      printf("recv\n");
       // /////// DEBUG print recv buffer
       // for (int nt = 0; nt < mpi_size; ++nt) {
       //   if (mpi_rank == nt) {
@@ -258,7 +271,7 @@ void do_exchange_mpi(BondList const &bonds, Couplings const &couplings,
       // auto recv_offsets = com.n_values_i_recv_offsets();
       std::vector<idx_t> offsets(mpi_size, 0);
       for (auto prefix : Subsets<bit_t>(n_prefix_bits)) {
-
+	std::cout << bits_to_string(prefix, 6) << "\n";
         // Only consider prefix if both itself and flipped version are valid
         int n_up_prefix = utils::popcnt(prefix);
         int n_up_postfix = n_up - n_up_prefix;
@@ -280,6 +293,7 @@ void do_exchange_mpi(BondList const &bonds, Couplings const &couplings,
         int origin_rank = block.process(prefix);
         idx_t origin_offset = recv_offsets[origin_rank];
         idx_t prefix_offset = block.prefix_limits_.at(prefix_flipped).first;
+	std::cout << "asdf\n";
 
         // prefix up, postfix must be dn
         if (prefix & prefix_mask) {
@@ -310,10 +324,15 @@ void do_exchange_mpi(BondList const &bonds, Couplings const &couplings,
               ++offsets[origin_rank];
             }
           }
-        }
+	}
+	std::cout << "asdf2\n";
+
       }
+      printf("uuu1\n");
     }// for (auto bond : mixed_bonds)
+    printf("uuu2\n");
   }
+  printf("uuu3\n");
 }
 
 } // namespace hydra::spinhalfterms
