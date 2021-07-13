@@ -8,10 +8,10 @@
 
 namespace hydra {
 
-template <class bit_t>
+  template <class bit_t, class coeff_t>
 void Apply(BondList const &bonds, Couplings const &couplings,
-           SpinhalfMPI<bit_t> const &block_in, lila::Vector<double> const &vec_in,
-           SpinhalfMPI<bit_t> const &block_out, lila::Vector<double> &vec_out) {
+           SpinhalfMPI<bit_t> const &block_in, lila::Vector<coeff_t> const &vec_in,
+           SpinhalfMPI<bit_t> const &block_out, lila::Vector<coeff_t> &vec_out) {
 
   assert(block_in == block_out); // only temporary
   assert(block_in.size() == vec_in.size());
@@ -38,5 +38,22 @@ template void Apply<uint64>(BondList const &bonds, Couplings const &couplings,
                             lila::Vector<double> const &vec_in,
                             SpinhalfMPI<uint64> const &block_out,
                             lila::Vector<double> &vec_out);
+
+  template void Apply<uint16, complex>(BondList const &bonds, Couplings const &couplings,
+                            SpinhalfMPI<uint16> const &block_in,
+                            lila::Vector<complex> const &vec_in,
+                            SpinhalfMPI<uint16> const &block_out,
+                            lila::Vector<complex> &vec_out);
+  template void Apply<uint32, complex>(BondList const &bonds, Couplings const &couplings,
+                            SpinhalfMPI<uint32> const &block_in,
+                            lila::Vector<complex> const &vec_in,
+                            SpinhalfMPI<uint32> const &block_out,
+                            lila::Vector<complex> &vec_out);
+  template void Apply<uint64, complex>(BondList const &bonds, Couplings const &couplings,
+                            SpinhalfMPI<uint64> const &block_in,
+                            lila::Vector<complex> const &vec_in,
+                            SpinhalfMPI<uint64> const &block_out,
+                            lila::Vector<complex> &vec_out);
+
 
 } // namespace hydra

@@ -7,7 +7,7 @@ using namespace hydra;
 template <class bit_t>
 void test_spinhalf_mpi(int n_sites){
   for (int nup = 0; nup <= n_sites; ++nup) {
-    auto block = SpinhalfMPI<uint32>(n_sites, nup);
+    auto block = Spinhalf<uint32>(n_sites, nup);
     auto block_mpi = SpinhalfMPI<uint32>(n_sites, nup);
 
     auto mysiz = block_mpi.size();
