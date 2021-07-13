@@ -25,7 +25,7 @@ public:
   idx_t recv_buffer_size() const { return recv_buffer_size_; }
 
   template <class T>
-  void add_to_send_buffer(int mpi_rank, T value, std::vector<T> &send_buffer) {
+  void add_to_send_buffer(int mpi_rank, T value, std::vector<T> &send_buffer) const {
     idx_t idx =
         n_values_i_send_offsets_[mpi_rank] + n_values_prepared_[mpi_rank];
     send_buffer[idx] = value;
@@ -38,7 +38,7 @@ public:
 
   template <class T>
   void all_to_all(std::vector<T> const &send_buffer,
-                  std::vector<T> &recv_buffer) {
+                  std::vector<T> &recv_buffer) const {
     Alltoallv<T>(send_buffer.data(), n_values_i_send_.data(),
                  n_values_i_send_offsets_.data(), recv_buffer.data(),
                  n_values_i_recv_.data(), n_values_i_recv_offsets_.data(),
@@ -49,7 +49,7 @@ private:
   int mpi_rank_;
   int mpi_size_;
 
-  std::vector<int> n_values_prepared_;
+  mutable std::vector<int> n_values_prepared_;
 
   std::vector<int> n_values_i_send_;
   std::vector<int> n_values_i_recv_;
