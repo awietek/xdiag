@@ -11,7 +11,7 @@ coeff_t StableDot(lila::Vector<coeff_t> const &v,
                   lila::Vector<coeff_t> const &w) {
   assert(v.size() == w.size());
   uint64 size = v.size();
-  return(detail::stable_dot_product(size, v.data(), w.data()));
+  return detail::stable_dot_product(size, v.data(), w.data());
 }
 
 template float StableDot<float>(lila::Vector<float> const &v,
@@ -22,6 +22,21 @@ template scomplex StableDot<scomplex>(lila::Vector<scomplex> const &v,
                                   lila::Vector<scomplex> const &w);
 template complex StableDot<complex>(lila::Vector<complex> const &v,
                                   lila::Vector<complex> const &w);
+
+
+
+
+template <class coeff_t>
+coeff_t StableNorm(lila::Vector<coeff_t> const &v) {
+  return std::sqrt(StableDot(v, v));
+}
+
+template float StableNorm<float>(lila::Vector<float> const &v);
+template double StableNorm<double>(lila::Vector<double> const &v);
+template scomplex StableNorm<scomplex>(lila::Vector<scomplex> const &v);
+template complex StableNorm<complex>(lila::Vector<complex> const &v);
+
+
 
 } // namespace hydra::mpi
 

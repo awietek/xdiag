@@ -8,6 +8,10 @@ namespace hydra::mpi {
 template <class coeff_t>
 coeff_t StableDot(lila::Vector<coeff_t> const &v, lila::Vector<coeff_t> const &w);
 
+template <class coeff_t>
+coeff_t StableNorm(lila::Vector<coeff_t> const &v);
+
+
 namespace detail {
 
 double stable_dot_product(const uint64 &n, const double *x, const double *y);
