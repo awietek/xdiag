@@ -15,6 +15,8 @@ void Fill(SpinhalfMPI<bit_t> const &block, lila::Vector<coeff_t> &vec,
   
   assert(block.size() == vec.size());
 
+  int n_postfix_bits = block.n_postfix_bits_;
+
   idx_t idx=0;
   for (auto prefix : block.prefixes_) {
     int n_up_prefix = utils::popcnt(prefix);
