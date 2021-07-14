@@ -18,9 +18,13 @@ void test_e0_nompi(BondList bonds, Couplings couplings) {
     auto evals_mat = lila::EigenvaluesSym(H);
     double e0_mat = evals_mat(0);
     double e0_app = E0Real(bonds, couplings, block_mpi);
+    double e0_app_cplx = E0Cplx(bonds, couplings, block_mpi);
+
     LogMPI.out("N: {}, n_up: {}, e0 mat: {:+.10f}, e0 mpi: {:+.10f}", N, nup, e0_mat,
                e0_app);
     REQUIRE(lila::close(e0_mat, e0_app, 1e-6, 1e-6));
+    REQUIRE(lila::close(e0_mat, e0_app_cplx, 1e-6, 1e-6));
+
   }
 }
 
@@ -51,8 +55,11 @@ TEST_CASE("spinhalf_mpi_apply", "[spinhalf]") {
     bonds << Bond("HB", "J", {3, 4});
     bonds << Bond("HB", "J", {4, 5});
 
+    bonds << Bond("HB", "J2", {4, 5});
+
     Couplings couplings;
     couplings["J"] = 1;
+    couplings["J2"] = 0;
     test_e0_nompi(bonds, couplings);
   }
 

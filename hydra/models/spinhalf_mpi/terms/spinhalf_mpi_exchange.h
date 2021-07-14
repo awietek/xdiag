@@ -16,6 +16,7 @@
 #include <hydra/models/spinhalf_mpi/terms/spinhalf_mpi_transpose.h>
 
 #include <hydra/mpi/communicator.h>
+#include <hydra/mpi/timing_mpi.h>
 
 namespace hydra::spinhalfterms {
 
@@ -40,6 +41,7 @@ void do_exchange_mpi(BondList const &bonds, Couplings const &couplings,
 
   /////////
   // Apply postfix bonds, no communication required
+  auto tpost = rightnow_mpi();
   for (auto bond : postfix_bonds) {
     if (coupling_is_zero(bond, couplings))
       continue;
@@ -68,12 +70,14 @@ void do_exchange_mpi(BondList const &bonds, Couplings const &couplings,
       assert(idx_prefix == idx);
     }
   }
+  timing_mpi(tpost, rightnow_mpi(), " (exchange) postfix", 2);
+
 
   /////////
   // Apply the prefix bonds after doing a transpose. then transpose back
   std::vector<coeff_t> send_buffer(vec_in.size(), 0);
   std::vector<coeff_t> recv_buffer(vec_in.size(), 0);
-
+  auto tpre = rightnow_mpi();
   if (prefix_bonds.size() > 0) {
 
     // Transpose prefix/postfix order
@@ -119,159 +123,83 @@ void do_exchange_mpi(BondList const &bonds, Couplings const &couplings,
     }
   }
 
+  timing_mpi(tpre, rightnow_mpi(), " (exchange) prefix", 2);
+
   /////////
   // Apply the mixed bonds
+  auto tmix = rightnow_mpi();
+
   if (mixed_bonds.size() > 0) {
 
     // Figure out communication patterns and resize buffers accoringly
     auto [coms_mixed, max_send_size, max_recv_size] =
         spinhalf_mpi_exchange_mixed_com(block, mixed_bonds, couplings);
 
-    printf("hello\n");
     if (max_send_size > send_buffer.size())
       send_buffer.resize(max_send_size);
     if (max_recv_size > recv_buffer.size())
       recv_buffer.resize(max_recv_size);
 
-    printf("hello2\n");
     int bond_idx = 0;
     for (auto bond : mixed_bonds) {
-      
-      // std::fill(send_buffer.begin(), send_buffer.end(), 0);
-      // std::fill(recv_buffer.begin(), recv_buffer.end(), 0);
-      printf("aaa1\n");
-      // Prepare sending states for this bond
-      auto& com = coms_mixed[bond_idx++];
-      printf("aaa2\n");
-
-      com.flush();
-
-      printf("aaa3\n");
 
       if (coupling_is_zero(bond, couplings))
         continue;
       auto [s1, s2, Jhalf] = get_exchange_s1_s2_Jhalf_mpi(bond, couplings);
-      printf("aaa3\n");
-
       assert(s1 < n_postfix_bits);
       assert(s2 >= n_postfix_bits);
       bit_t prefix_mask = ((bit_t)1 << (s2 - n_postfix_bits));
       bit_t postfix_mask = ((bit_t)1 << s1);
 
-      printf("s1: %d s2: %d\n", s1, s2);
 
-      // for (int nt = 0; nt < mpi_size; ++nt) {
-      //   if (mpi_rank == nt) {
+      std::fill(send_buffer.begin(), send_buffer.end(), 0);
+      std::fill(recv_buffer.begin(), recv_buffer.end(), 0);
 
-          // Loop through all my states and fill them in send buffer
-          idx_t idx = 0;
-          for (auto prefix : block.prefixes_) {
-            int n_up_prefix = utils::popcnt(prefix);
-            int n_up_postfix = n_up - n_up_prefix;
+      // Prepare sending states for this bond
+      auto com = coms_mixed.at(bond_idx++);
 
-            bit_t prefix_flipped = prefix ^ prefix_mask;
-            int target_rank = block.process(prefix_flipped);
+      // Loop through all my states and fill them in send buffer
+      idx_t idx = 0;
+      for (auto prefix : block.prefixes_) {
+        int n_up_prefix = utils::popcnt(prefix);
+        int n_up_postfix = n_up - n_up_prefix;
 
-            // prefix up, postfix must be dn
-            if (prefix & prefix_mask) {
-              for (auto postfix :
-                   Combinations<bit_t>(n_postfix_bits, n_up_postfix)) {
+        bit_t prefix_flipped = prefix ^ prefix_mask;
+        int target_rank = block.process(prefix_flipped);
 
-                // std::cout << s1 << " " << s2 << " [" << mpi_rank << "] "
-                //           << bits_to_string(prefix, 3) << " "
-                //           << bits_to_string(postfix, 3) << " -> "
-                //           << bits_to_string(prefix_flipped, 3) << " "
-                //           << bits_to_string(postfix ^ postfix_mask, 3) << " ["
-                //           << target_rank << "] " << vec_in(idx) << " ";
-                if (!(postfix & postfix_mask)) {
-                  com.add_to_send_buffer(target_rank, vec_in(idx), send_buffer);
-                  // std::cout << "0\n";
-                } // else
-                  // std::cout << "X\n";
-
-                ++idx;
-              }
+        // prefix up, postfix must be dn
+        if (prefix & prefix_mask) {
+          for (auto postfix :
+               Combinations<bit_t>(n_postfix_bits, n_up_postfix)) {
+            if (!(postfix & postfix_mask)) {
+              com.add_to_send_buffer(target_rank, vec_in(idx), send_buffer);
             }
-            // prefix dn, postfix must be up
-            else {
-              for (auto postfix :
-                   Combinations<bit_t>(n_postfix_bits, n_up_postfix)) {
-
-                // std::cout << s1 << " " << s2 << " [" << mpi_rank << "] "
-                //           << bits_to_string(prefix, 3) << " "
-                //           << bits_to_string(postfix, 3) << " -> "
-                //           << bits_to_string(prefix_flipped, 3) << " "
-                //           << bits_to_string(postfix ^ postfix_mask, 3) << " ["
-                //           << target_rank << "] " << vec_in(idx) << " ";
-
-                if (postfix & postfix_mask) {
-                  com.add_to_send_buffer(target_rank, vec_in(idx), send_buffer);
-                  // std::cout << "0\n";
-                } // else
-                  // std::cout << "X\n";
-
-                ++idx;
-              }
-            }
+            ++idx;
           }
-      //   }
-      //   MPI_Barrier(MPI_COMM_WORLD);
-      // }
-      // MPI_Barrier(MPI_COMM_WORLD);
-
-      // printf("\n");
-
-      // MPI_Barrier(MPI_COMM_WORLD);
+        }
+        // prefix dn, postfix must be up
+        else {
+          for (auto postfix :
+               Combinations<bit_t>(n_postfix_bits, n_up_postfix)) {
+            if (postfix & postfix_mask) {
+              com.add_to_send_buffer(target_rank, vec_in(idx), send_buffer);
+            }
+            ++idx;
+          }
+        }
+      }
 
       auto send_offsets = com.n_values_i_send_offsets();
       auto recv_offsets = com.n_values_i_recv_offsets();
 
-      // /////// DEBUG print send buffer
-      // for (int nt = 0; nt < mpi_size; ++nt) {
-      //   if (mpi_rank == nt) {
-      //     std::cout << "[" << mpi_rank << "] send\n";
-      //     for (int sendto = 0; sendto < mpi_size; ++sendto) {
-      //       int from = send_offsets[sendto];
-      //       int to = (sendto == mpi_size - 1) ? com.send_buffer_size()
-      //                                         : send_offsets[sendto + 1];
-      //       for (int idx = from; idx < to; ++idx)
-      //         printf("[%d] -> [%d] %f \n", mpi_rank, sendto, send_buffer[idx]);
-      //     }
-      //     MPI_Barrier(MPI_COMM_WORLD);
-      //   }
-      //   MPI_Barrier(MPI_COMM_WORLD);
-      // }
-      // printf("\n");
-
-      // MPI_Barrier(MPI_COMM_WORLD);
-      printf("send\n");
       // Communicate
       com.all_to_all(send_buffer, recv_buffer);
-      printf("recv\n");
-      // /////// DEBUG print recv buffer
-      // for (int nt = 0; nt < mpi_size; ++nt) {
-      //   if (mpi_rank == nt) {
-      //     std::cout << "[" << mpi_rank << "] recv\n";
-      //     for (int recvfrom = 0; recvfrom < mpi_size; ++recvfrom) {
-      //       int from = recv_offsets[recvfrom];
-      //       int to = (recvfrom == mpi_size - 1) ? com.recv_buffer_size()
-      //                                           : recv_offsets[recvfrom + 1];
-      //       for (int idx = from; idx < to; ++idx)
-      //         printf("[%d] <- [%d] %f \n", mpi_rank, recvfrom,
-      //                recv_buffer[idx]);
-      //     }
-      //   }
-      //   MPI_Barrier(MPI_COMM_WORLD);
-      // }
-    
-      // MPI_Barrier(MPI_COMM_WORLD);
-      // MPI_Abort(MPI_COMM_WORLD, 1);
 
       // Fill received states into vec_out (gnarlyy!!!)
       // auto recv_offsets = com.n_values_i_recv_offsets();
       std::vector<idx_t> offsets(mpi_size, 0);
       for (auto prefix : Subsets<bit_t>(n_prefix_bits)) {
-	std::cout << bits_to_string(prefix, 6) << "\n";
+
         // Only consider prefix if both itself and flipped version are valid
         int n_up_prefix = utils::popcnt(prefix);
         int n_up_postfix = n_up - n_up_prefix;
@@ -293,7 +221,6 @@ void do_exchange_mpi(BondList const &bonds, Couplings const &couplings,
         int origin_rank = block.process(prefix);
         idx_t origin_offset = recv_offsets[origin_rank];
         idx_t prefix_offset = block.prefix_limits_.at(prefix_flipped).first;
-	std::cout << "asdf\n";
 
         // prefix up, postfix must be dn
         if (prefix & prefix_mask) {
@@ -324,15 +251,14 @@ void do_exchange_mpi(BondList const &bonds, Couplings const &couplings,
               ++offsets[origin_rank];
             }
           }
-	}
-	std::cout << "asdf2\n";
-
+        }
       }
-      printf("uuu1\n");
-    }// for (auto bond : mixed_bonds)
-    printf("uuu2\n");
+    } // for (auto bond : mixed_bonds)
+
+    timing_mpi(tmix, rightnow_mpi(), " (exchange) mixed total", 2);
+
+
   }
-  printf("uuu3\n");
 }
 
 } // namespace hydra::spinhalfterms

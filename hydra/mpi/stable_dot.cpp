@@ -27,14 +27,14 @@ template complex StableDot<complex>(lila::Vector<complex> const &v,
 
 
 template <class coeff_t>
-coeff_t StableNorm(lila::Vector<coeff_t> const &v) {
-  return std::sqrt(StableDot(v, v));
+lila::real_t<coeff_t> StableNorm(lila::Vector<coeff_t> const &v) {
+  return lila::real(std::sqrt(StableDot(v, v)));
 }
 
 template float StableNorm<float>(lila::Vector<float> const &v);
 template double StableNorm<double>(lila::Vector<double> const &v);
-template scomplex StableNorm<scomplex>(lila::Vector<scomplex> const &v);
-template complex StableNorm<complex>(lila::Vector<complex> const &v);
+template float StableNorm<scomplex>(lila::Vector<scomplex> const &v);
+template double StableNorm<complex>(lila::Vector<complex> const &v);
 
 
 

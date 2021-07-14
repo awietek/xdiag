@@ -9,9 +9,10 @@
 
 namespace hydra {
 
-  template <class bit_t, class coeff_t>
+template <class bit_t, class coeff_t>
 void Apply(BondList const &bonds, Couplings const &couplings,
-           SpinhalfMPI<bit_t> const &block_in, lila::Vector<coeff_t> const &vec_in,
+           SpinhalfMPI<bit_t> const &block_in,
+           lila::Vector<coeff_t> const &vec_in,
            SpinhalfMPI<bit_t> const &block_out, lila::Vector<coeff_t> &vec_out);
 
 } // namespace hydra

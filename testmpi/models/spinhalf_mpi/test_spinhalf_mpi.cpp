@@ -15,7 +15,7 @@ void test_spinhalf_mpi(int n_sites){
 
     mpi::Allreduce(&mysiz, &mysize, 1, MPI_SUM, MPI_COMM_WORLD);
 
-    REQUIRE(block_mpi.dim() == block.dim());
+    REQUIRE(block_mpi.dim() == block.size());
     REQUIRE(block_mpi.dim() == mysize);
     REQUIRE(block_mpi.dim() == combinatorics::binomial(n_sites, nup));
   }

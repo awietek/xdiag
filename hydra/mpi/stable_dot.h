@@ -9,7 +9,7 @@ template <class coeff_t>
 coeff_t StableDot(lila::Vector<coeff_t> const &v, lila::Vector<coeff_t> const &w);
 
 template <class coeff_t>
-coeff_t StableNorm(lila::Vector<coeff_t> const &v);
+lila::real_t<coeff_t> StableNorm(lila::Vector<coeff_t> const &v);
 
 
 namespace detail {
