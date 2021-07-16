@@ -12,25 +12,26 @@ sources+= hydra/parameters/parser.cpp
 
 sources+= hydra/indexing/lintable.cpp
 
-sources+= hydra/models/models.cpp
-sources+= hydra/models/spinhalf/spinhalf.cpp
+sources+= hydra/models/model_utils.cpp
 
-sources+= hydra/models/electron/electron.cpp
-sources+= hydra/models/electron/electron_matrix.cpp
-sources+= hydra/models/electron/electron_apply.cpp
-sources+= hydra/models/electron/electron_utils.cpp
-sources+= hydra/models/electron/electron_symmetric.cpp
-sources+= hydra/models/electron/electron_symmetric_matrix.cpp
-sources+= hydra/models/electron/electron_symmetric_apply.cpp
+sources+= hydra/models/spinhalf/spinhalf.cpp
+sources+= hydra/models/spinhalf/spinhalf_matrix.cpp
+sources+= hydra/models/spinhalf/spinhalf_apply.cpp
 
 sources+= hydra/models/tj/tj.cpp
 sources+= hydra/models/tj/tj_utils.cpp
 sources+= hydra/models/tj/tj_matrix.cpp
 sources+= hydra/models/tj/tj_apply.cpp
 
-sources+= hydra/models/spinhalf/spinhalf.cpp
-sources+= hydra/models/spinhalf/spinhalf_matrix.cpp
-sources+= hydra/models/spinhalf/spinhalf_apply.cpp
+sources+= hydra/models/electron/electron.cpp
+sources+= hydra/models/electron/electron_matrix.cpp
+sources+= hydra/models/electron/electron_apply.cpp
+sources+= hydra/models/electron/electron_utils.cpp
+
+sources+= hydra/models/electron_symmetric/electron_symmetric.cpp
+sources+= hydra/models/electron_symmetric/electron_symmetric_matrix.cpp
+sources+= hydra/models/electron_symmetric/electron_symmetric_apply.cpp
+
 
 sources+= hydra/symmetries/spacegroup.cpp
 sources+= hydra/symmetries/spinflip.cpp
@@ -56,7 +57,7 @@ mpisources+= hydra/mpi/timing_mpi.cpp
 mpisources+= hydra/mpi/stable_dot.cpp
 mpisources+= hydra/mpi/communicator.cpp
 
-mpisources+= hydra/models/models_mpi.cpp
+mpisources+= hydra/models/model_utils_mpi.cpp
 
 mpisources+= hydra/models/spinhalf_mpi/terms/get_prefix_postfix_mixed_bonds.cpp
 mpisources+= hydra/models/spinhalf_mpi/spinhalf_mpi.cpp
