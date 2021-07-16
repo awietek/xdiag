@@ -3,6 +3,9 @@
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
 
+#include <hydra/symmetries/spacegroup.h>
+#include <hydra/symmetries/representation.h>
+
 namespace hydra::utils {
 
 bool coupling_is_zero(Bond const &bond, Couplings const &couplings);
@@ -25,5 +28,9 @@ double compute_norm(bit_t ups, bit_t dns, SymmetryGroup &&symmetry_group,
   }
   return std::sqrt(std::abs(amplitude));
 }
+
+void check_nup_ndn_tj(int n_sites, int nup, int ndn);
+void check_nup_ndn_electron(int n_sites, int nup, int ndn);
+
 
 } // namespace hydra::utils

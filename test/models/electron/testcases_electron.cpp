@@ -269,19 +269,19 @@ freefermion_alltoall_complex_updn(int n_sites) {
   return std::make_tuple(bondlist, couplings);
 }
 
-std::tuple<BondList, Couplings> tJchain(int n_sites, double t,
-                                               double J) {
+// std::tuple<BondList, Couplings> tJchain(int n_sites, double t,
+//                                                double J) {
 
-  BondList bondlist;
-  Couplings couplings;
-  couplings["T"] = t;
-  couplings["J"] = J;
-  for (int s = 0; s < n_sites; ++s) {
-    bondlist << Bond("HUBBARDHOP", "T", {s, (s + 1) % n_sites});
-    bondlist << Bond("HEISENBERG", "J", {s, (s + 1) % n_sites});
-  }
-  return std::make_tuple(bondlist, couplings);
-}
+//   BondList bondlist;
+//   Couplings couplings;
+//   couplings["T"] = t;
+//   couplings["J"] = J;
+//   for (int s = 0; s < n_sites; ++s) {
+//     bondlist << Bond("HUBBARDHOP", "T", {s, (s + 1) % n_sites});
+//     bondlist << Bond("HEISENBERG", "J", {s, (s + 1) % n_sites});
+//   }
+//   return std::make_tuple(bondlist, couplings);
+// }
 
 std::tuple<BondList, Couplings, lila::Vector<double>>
 randomAlltoAll4NoU() {
