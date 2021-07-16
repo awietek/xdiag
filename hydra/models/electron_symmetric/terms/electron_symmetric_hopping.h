@@ -3,11 +3,11 @@
 #include <lila/utils/logger.h>
 
 #include <hydra/common.h>
-#include <hydra/models/electron/electron_symmetric.h>
-#include <hydra/models/electron/electron_utils.h>
+#include <hydra/models/electron_symmetric/electron_symmetric.h>
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
 #include <hydra/utils/bitops.h>
+#include <hydra/symmetries/symmetry_utils.h>
 
 namespace hydra::electron {
 
@@ -49,7 +49,7 @@ void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
           auto end_up = block.dns_.begin() + upper;
 
           std::vector<int> stable_syms =
-              electron::stabilizer_symmetries(up, symmetry_group);
+	    utils::stabilizer_symmetries(up, symmetry_group);
           auto stable_group = symmetry_group.subgroup(stable_syms);
           auto stable_irrep = irrep.subgroup(stable_syms);
 
@@ -130,7 +130,7 @@ void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
           auto end_dn = block.ups_.begin() + upper;
 
           std::vector<int> stable_syms =
-              electron::stabilizer_symmetries(dn, symmetry_group);
+              utils::stabilizer_symmetries(dn, symmetry_group);
           auto stable_group = symmetry_group.subgroup(stable_syms);
           auto stable_irrep = irrep.subgroup(stable_syms);
 

@@ -15,6 +15,8 @@
 #include "indexing/lintable.h"
 
 #include "models/models.h"
+#include "models/model_utils.h"
+
 #include "models/spinhalf/spinhalf.h"
 #include "models/spinhalf/spinhalf_matrix.h"
 #include "models/spinhalf/spinhalf_apply.h"
@@ -27,9 +29,10 @@
 #include "models/electron/electron.h"
 #include "models/electron/electron_matrix.h"
 #include "models/electron/electron_apply.h"
-#include "models/electron/electron_symmetric.h"
-#include "models/electron/electron_symmetric_matrix.h"
-#include "models/electron/electron_symmetric_apply.h"
+
+#include "models/electron_symmetric/electron_symmetric.h"
+#include "models/electron_symmetric/electron_symmetric_matrix.h"
+#include "models/electron_symmetric/electron_symmetric_apply.h"
 
 #include "symmetries/spacegroup.h"
 #include "symmetries/spinflip.h"
@@ -37,6 +40,7 @@
 #include "symmetries/spacegroup_operations.h"
 #include "symmetries/spacegroup_operator.h"
 #include "symmetries/fermi_sign.h"
+#include "symmetries/symmetry_utils.h"
 
 #include "operators/bond.h"
 #include "operators/bondlist.h"

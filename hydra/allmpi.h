@@ -11,6 +11,8 @@
 #include "mpi/stable_dot.h"
 
 #include "models/models_mpi.h"
+#include "models/model_utils_mpi.h"
+
 #include "models/spinhalf_mpi/terms/get_prefix_postfix_mixed_bonds.h"
 #include "models/spinhalf_mpi/spinhalf_mpi.h"
 #include "models/spinhalf_mpi/spinhalf_mpi_apply.h"

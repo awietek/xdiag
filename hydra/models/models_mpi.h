@@ -16,8 +16,4 @@ template <> struct is_mpi_block_t<SpinhalfMPI<uint32>> {
 template <> struct is_mpi_block_t<SpinhalfMPI<uint64>> {
   static constexpr bool value = true;
 };
-
-std::tuple<int, int, double>
-get_exchange_s1_s2_Jhalf_mpi(Bond const &bond, Couplings const &couplings);
-
 } // namespace hydra

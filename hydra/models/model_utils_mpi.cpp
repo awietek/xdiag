@@ -1,4 +1,4 @@
-#include "models_mpi.h"
+#include "model_utils_mpi.h"
 
 #include <hydra/mpi/logger_mpi.h>
 

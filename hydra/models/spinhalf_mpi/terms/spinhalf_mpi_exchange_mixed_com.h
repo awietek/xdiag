@@ -4,6 +4,9 @@
 
 #include <hydra/common.h>
 #include <hydra/mpi/communicator.h>
+#include <hydra/models/model_utils.h>
+#include <hydra/models/model_utils_mpi.h>
+
 
 namespace hydra::spinhalfterms {
 
