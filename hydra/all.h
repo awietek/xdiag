@@ -26,6 +26,10 @@
 #include "models/tj/tj_matrix.h"
 #include "models/tj/tj_apply.h"
 
+#include "models/tj_symmetric/tj_symmetric.h"
+#include "models/tj_symmetric/tj_symmetric_matrix.h"
+#include "models/tj_symmetric/tj_symmetric_apply.h"
+
 #include "models/electron/electron.h"
 #include "models/electron/electron_matrix.h"
 #include "models/electron/electron_apply.h"

@@ -8,7 +8,6 @@
 #include <hydra/combinatorics/subsets.h>
 
 #include <hydra/models/model_utils.h>
-#include <hydra/models/electron/electron_utils.h>
 
 namespace hydra {
   
@@ -20,7 +19,7 @@ ElectronSymmetric<bit_t, SymmetryGroup>::ElectronSymmetric(
       sz_conserved_(true), sz_(nup - ndn), n_up_(nup), n_dn_(ndn),
       symmetry_group_(symmetry_group), irrep_(irrep) {
 
-  electron::check_nup_ndn(n_sites, nup, ndn);
+  utils::check_nup_ndn_electron(n_sites, nup, ndn);
 
   if (irrep.allowed_symmetries().size() > 0) {
     symmetry_group_ = symmetry_group.subgroup(irrep.allowed_symmetries());

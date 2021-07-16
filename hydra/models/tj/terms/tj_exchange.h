@@ -4,6 +4,7 @@
 
 #include <hydra/combinatorics/combinations.h>
 #include <hydra/common.h>
+#include <hydra/models/model_utils.h>
 #include <hydra/models/tj/tj.h>
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
@@ -64,7 +65,7 @@ void do_exchange(BondList const &bonds, Couplings const &couplings,
                     "bond must have exactly two sites defined");
 
     std::string cpl = bond.coupling();
-    if (couplings.defined(cpl) && !lila::close(couplings[cpl], (complex)0.)) {
+    if (!utils::coupling_is_zero(bond, couplings)) {
 
       double J = lila::real(couplings[cpl]);
       double val = J / 2.;

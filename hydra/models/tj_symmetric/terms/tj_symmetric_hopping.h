@@ -6,14 +6,14 @@
 #include <hydra/models/electron_symmetric/electron_symmetric.h>
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
-#include <hydra/utils/bitops.h>
 #include <hydra/symmetries/symmetry_utils.h>
+#include <hydra/utils/bitops.h>
 
-namespace hydra::electron {
+namespace hydra::tj {
 
 template <class bit_t, class coeff_t, class SymmetryGroup, class Filler>
 void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
-                          ElectronSymmetric<bit_t, SymmetryGroup> const &block,
+                          tJSymmetric<bit_t, SymmetryGroup> const &block,
                           Filler &&fill) {
   using utils::gbit;
   using utils::popcnt;
@@ -27,7 +27,7 @@ void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
   for (auto hop : hoppings + hoppings_up + hoppings_dn) {
 
     if (hop.size() != 2)
-      lila::Log.err("Error computing Electron hopping: "
+      lila::Log.err("Error computing tJ hopping: "
                     "hoppings must have exactly two sites defined");
 
     std::string cpl = hop.coupling();
@@ -49,7 +49,7 @@ void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
           auto end_up = block.dns_.begin() + upper;
 
           std::vector<int> stable_syms =
-	    utils::stabilizer_symmetries(up, symmetry_group);
+              utils::stabilizer_symmetries(up, symmetry_group);
           auto stable_group = symmetry_group.subgroup(stable_syms);
           auto stable_irrep = irrep.subgroup(stable_syms);
 
@@ -213,4 +213,4 @@ void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
     }
   }
 }
-} // namespace hydra::electron
+} // namespace hydra::tj

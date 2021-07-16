@@ -1,0 +1,8 @@
+  /mnt/home/awietek/Research/Software/hydra/test/models/tj_symmetric:
+  total used in directory 577 available 741040128
+  drwxrwxr-x 2 awietek awietek   4096 Jul 16 18:36 .
+  drwxrwxr-x 8 awietek awietek   4096 Jul 16 16:19 ..
+C -rw-rw-r-- 1 awietek awietek   5912 Jul 16 16:30 test_tj_symmetric_matrix.cpp
+  -rw-rw-r-- 1 awietek awietek   5400 Jul 16 16:58 test_tj_symmetric.cpp
+  -rw-rw-r-- 1 awietek awietek  17271 Jul 16 16:58 test_tj_symmetric.d
+  -rw-rw-r-- 1 awietek awietek 328192 Jul 16 16:58 test_tj_symmetric.o
