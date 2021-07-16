@@ -2,9 +2,8 @@
 
 #include <hydra/utils/bitops.h>
 
-#include <hydra/models/electron/electron_utils.h>
-#include <hydra/models/electron/terms/electron_symmetric_hopping.h>
-#include <hydra/models/electron/terms/electron_symmetric_u.h>
+#include <hydra/models/electron_symmetric/terms/electron_symmetric_hopping.h>
+#include <hydra/models/electron_symmetric/terms/electron_symmetric_u.h>
 
 namespace hydra {
 

@@ -3,9 +3,10 @@
 #include <lila/all.h>
 
 #include <hydra/common.h>
-#include <hydra/models/electron/electron_symmetric.h>
+#include <hydra/models/electron_symmetric/electron_symmetric.h>
 #include <hydra/operators/couplings.h>
 #include <hydra/utils/bitops.h>
+#include <hydra/symmetries/symmetry_utils.h>
 
 namespace hydra::electron {
 
