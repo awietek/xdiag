@@ -90,6 +90,7 @@ LanczosEigenvalues(BondList const &bonds, Couplings const &couplings,
                    Block const &block, lila::Vector<coeff_t> v0,
                    int num_eigenvalue = 0, double precision = 1e-12,
                    int max_iterations = 1000, double deflation_tol = 1e-7) {
+
   return LanczosEigenvaluesInplace(bonds, couplings, block, v0, num_eigenvalue,
                                    precision, max_iterations, deflation_tol);
 }

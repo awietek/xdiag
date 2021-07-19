@@ -1,7 +1,7 @@
 ifeq ($(arch), flatiron_linux)
 cc         = clang++
 mpicc      = mpicxx
-ccopt      = -g -mavx -DLILA_USE_MKL
+ccopt      = -O3 -mavx -DLILA_USE_MKL
 ccarch     = -std=c++17 -Wall -pedantic -m64 -Wno-return-type-c-linkage
 liladir    = /mnt/home/awietek/Research/Software/lila
 limedir    = /mnt/home/awietek/Research/Software/lime
