@@ -40,7 +40,7 @@ TEST_CASE("electron_apply", "[models]") {
         auto evals_mat = lila::EigenvaluesSym(H);
         double e0_mat = evals_mat(0);
         double e0_app = E0Real(bondlist, couplings, block);
-        lila::Log.out("nup: {}, ndn: {}, e0_mat: {}, e0_app: {}", nup, ndn, e0_mat, e0_app);
+        // lila::Log.out("nup: {}, ndn: {}, e0_mat: {}, e0_app: {}", nup, ndn, e0_mat, e0_app);
         CHECK(lila::close(e0_mat, e0_app, 1e-6, 1e-6));
       }
   }

@@ -31,8 +31,8 @@ TEST_CASE("tj_apply", "[tj]") {
         auto evals_mat = lila::EigenvaluesSym(H);
         double e0_mat = evals_mat(0);
         double e0_app = E0Real(bonds, cpls, block);
-        lila::Log.out("nup: {}, ndn: {}, e0_mat: {}, e0_app: {}", nup, ndn,
-                     e0_mat, e0_app);
+        // lila::Log.out("nup: {}, ndn: {}, e0_mat: {}, e0_app: {}", nup, ndn,
+        //              e0_mat, e0_app);
         REQUIRE(lila::close(e0_mat, e0_app));
       }
   }
@@ -56,8 +56,8 @@ TEST_CASE("tj_apply", "[tj]") {
         auto evals_mat = lila::EigenvaluesSym(H);
         double e0_mat = evals_mat(0);
         double e0_app = E0Cplx(bonds, cpls, block);
-        lila::Log.out("nup: {}, ndn: {}, e0_mat: {}, e0_app: {}", nup, ndn,
-                     e0_mat, e0_app);
+        // lila::Log.out("nup: {}, ndn: {}, e0_mat: {}, e0_app: {}", nup, ndn,
+        //              e0_mat, e0_app);
         REQUIRE(lila::close(e0_mat, e0_app));
       }
   }

@@ -20,6 +20,9 @@ void test_symmetric_spectra(BondList bondlist, Couplings couplings,
   for (int nup = 0; nup <= n_sites; ++nup) {
     for (int ndn = 0; ndn <= n_sites; ++ndn) {
 
+      if (nup + ndn > n_sites)
+        continue;
+
       // Compute the full spectrum from non-symmetrized block
       auto tj_nosym = tJ<bit_t>(n_sites, nup, ndn);
       if (tj_nosym.size() < 1000) {
@@ -34,15 +37,13 @@ void test_symmetric_spectra(BondList bondlist, Couplings couplings,
           int multiplicity = multiplicities[k];
 
           auto tj = tJSymmetric<bit_t>(n_sites, nup, ndn, space_group, irrep);
-          // lila::Log.out(
-          //     "nup: {}, ndn: {}, k: {}, mult: {}, dim_nosym: {}, dim_sym:
-          //     {}", nup, ndn, k, multiplicity, tj_nosym.size(), tj.size());
 
           if (tj.size() > 0) {
 
             // Compute partial spectrum from symmetrized block
             auto H_sym = MatrixCplx(bondlist, couplings, tj, tj);
             REQUIRE(lila::close(H_sym, lila::Herm(H_sym)));
+
             auto eigs_sym_k = lila::EigenvaluesSym(H_sym);
 
             // append all the eigenvalues with multiplicity

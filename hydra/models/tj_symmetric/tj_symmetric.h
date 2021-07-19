@@ -16,8 +16,8 @@ template <class bit_t, class SymmetryGroup = SpaceGroup<bit_t>>
 class tJSymmetric {
 public:
   tJSymmetric() = default;
-  tJSymmetric(int n_sites, int charge, int sz,
-                    SymmetryGroup symmetry_group, Representation irrep);
+  tJSymmetric(int n_sites, int charge, int sz, SymmetryGroup symmetry_group,
+              Representation irrep);
 
   inline int n_sites() const { return n_sites_; }
   inline int n_up() const { return n_up_; }
@@ -25,8 +25,8 @@ public:
   inline bool charge_conserved() const { return charge_conserved_; }
   inline bool sz_conserved() const { return sz_conserved_; }
 
-  inline SymmetryGroup symmetry_group() const { return symmetry_group_; }
-  inline Representation irrep() const { return irrep_; }
+  inline SymmetryGroup const &symmetry_group() const { return symmetry_group_; }
+  inline Representation const &irrep() const { return irrep_; }
 
   inline idx_t size() const { return size_; }
   inline double up(idx_t idx) const { return ups_[idx]; }
@@ -52,7 +52,6 @@ public:
   std::vector<bit_t> ups_;
 
   std::vector<complex> character_switch_;
-
 
 private:
   int n_sites_;
