@@ -87,6 +87,7 @@ testsources+= test/models/tj/test_tj_apply.cpp
 
 testsources+= test/models/tj_symmetric/test_tj_symmetric.cpp
 testsources+= test/models/tj_symmetric/test_tj_symmetric_matrix.cpp
+testsources+= test/models/tj_symmetric/test_tj_symmetric_apply.cpp
 
 testsources+= test/models/electron/testcases_electron.cpp
 testsources+= test/models/electron/test_electron_matrix.cpp
