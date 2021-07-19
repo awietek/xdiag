@@ -96,9 +96,9 @@ template <class bit_t> void test_tj_chain(int n_sites) {
 
         auto tj = tJSymmetric<bit_t>(n_sites, nup, ndn, space_group, irrep);
 
-        lila::Log.out(
-            "tJ Chain: n_sites: {}, nup: {}, ndn: {}, k: {}, size: {}", n_sites,
-            nup, ndn, k, tj.size());
+        // lila::Log.out(
+        //     "tJ Chain: n_sites: {}, nup: {}, ndn: {}, k: {}, size: {}",
+        //     n_sites, nup, ndn, k, tj.size());
         sum_of_dims += tj.size();
         sum_of_dims_updn += tj.size();
 
@@ -118,12 +118,15 @@ TEST_CASE("tj_symmetric", "[models]") {
 
   // Test the tJ chain
   for (int n_sites = 1; n_sites < 8; ++n_sites) {
+    lila::Log.out("tj_symmetric block test: TJChain {}", n_sites);
+
     test_tj_chain<hydra::uint16>(n_sites);
     test_tj_chain<hydra::uint32>(n_sites);
     test_tj_chain<hydra::uint64>(n_sites);
   }
 
   // test a 3x3 triangular lattice
+  lila::Log.out("tj_symmetric block test: Triangular 3x3");
   int n_sites = 9;
 
   std::vector<std::pair<std::string, int>> rep_name_mult = {
@@ -149,9 +152,9 @@ TEST_CASE("tj_symmetric", "[models]") {
         auto tj = tJSymmetric<uint16>(n_sites, nup, ndn, space_group, irrep);
 
         idx_t dim = tj.size() * mult;
-        lila::Log.out("tJ Triangular 3x3: n_sites: {}, nup: {}, ndn: {}, k: "
-                      "{}(x{}), size: {}",
-                      n_sites, nup, ndn, name, mult, tj.size());
+        // lila::Log.out("tJ Triangular 3x3: n_sites: {}, nup: {}, ndn: {}, k: "
+        //               "{}(x{}), size: {}",
+        //               n_sites, nup, ndn, name, mult, tj.size());
         test_indices(tj);
         test_representative_character(tj);
 
@@ -160,7 +163,8 @@ TEST_CASE("tj_symmetric", "[models]") {
       }
       auto tj_nosym = tJ<uint16>(n_sites, nup, ndn);
       REQUIRE(sum_dim_updn == tj_nosym.size());
-      REQUIRE(sum_dim_updn == binomial(n_sites, nup) * binomial(n_sites-nup, ndn));
+      REQUIRE(sum_dim_updn ==
+              binomial(n_sites, nup) * binomial(n_sites - nup, ndn));
 
       // lila::Log.out("size: {} {}", sum_dim_updn, tj_nosym.size());
     }

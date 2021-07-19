@@ -95,9 +95,9 @@ template <class bit_t> void test_electron_chain(int n_sites) {
         auto electron =
             ElectronSymmetric<bit_t>(n_sites, nup, ndn, space_group, irrep);
 
-        lila::Log.out(
-            "Hubbard Chain: n_sites: {}, nup: {}, ndn: {}, k: {}, size: {}",
-            n_sites, nup, ndn, k, electron.size());
+        // lila::Log.out(
+        //     "Hubbard Chain: n_sites: {}, nup: {}, ndn: {}, k: {}, size: {}",
+        //     n_sites, nup, ndn, k, electron.size());
         sum_of_dims += electron.size();
         sum_of_dims_updn += electron.size();
 
@@ -146,10 +146,10 @@ TEST_CASE("electron_symmetric", "[models]") {
             ElectronSymmetric<uint16>(n_sites, nup, ndn, space_group, irrep);
 
         idx_t dim = electron.size() * mult;
-        lila::Log.out(
-            "Hubbard Triangular 3x3: n_sites: {}, nup: {}, ndn: {}, k: "
-            "{}(x{}), size: {}",
-            n_sites, nup, ndn, name, mult, electron.size());
+        // lila::Log.out(
+        //     "Hubbard Triangular 3x3: n_sites: {}, nup: {}, ndn: {}, k: "
+        //     "{}(x{}), size: {}",
+        //     n_sites, nup, ndn, name, mult, electron.size());
         test_indices(electron);
         test_representative_character(electron);
 
