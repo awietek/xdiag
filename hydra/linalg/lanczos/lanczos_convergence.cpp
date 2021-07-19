@@ -27,6 +27,7 @@ bool ConvergedEigenvalues(Tmatrix<coeff_t> const &tmat, int n_eigenvalue,
     double residue =
         std::abs(eigs(n_eigenvalue) - eigs_previous(n_eigenvalue)) /
         std::abs(eigs(n_eigenvalue));
+
     return (residue < precision);
   }
 }

@@ -21,7 +21,6 @@ void do_down_flips(bit_t up, idx_t idx_up, bit_t mask, bit_t spacemask,
 
   auto &symmetry_group = block.symmetry_group();
   auto &irrep = block.irrep();
-  auto n_sites = block.n_sites();
 
   // get limits of up
   auto it_up = block.ups_lower_upper_.find(up);
