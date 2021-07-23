@@ -43,7 +43,7 @@ void do_exchange_mpi(BondList const &bonds, Couplings const &couplings,
   // Apply postfix bonds, no communication required
   auto tpost = rightnow_mpi();
   for (auto bond : postfix_bonds) {
-    if (coupling_is_zero(bond, couplings))
+    if (utils::coupling_is_zero(bond, couplings))
       continue;
     auto [s1, s2, Jhalf] = get_exchange_s1_s2_Jhalf_mpi(bond, couplings);
     assert(s1 < n_postfix_bits);
@@ -86,7 +86,7 @@ void do_exchange_mpi(BondList const &bonds, Couplings const &couplings,
 
     // Loop over prefix_bonds
     for (auto bond : prefix_bonds) {
-      if (coupling_is_zero(bond, couplings))
+      if (utils::coupling_is_zero(bond, couplings))
         continue;
       auto [s1, s2, Jhalf] = get_exchange_s1_s2_Jhalf_mpi(bond, couplings);
       assert(s1 >= n_postfix_bits);
@@ -143,7 +143,7 @@ void do_exchange_mpi(BondList const &bonds, Couplings const &couplings,
     int bond_idx = 0;
     for (auto bond : mixed_bonds) {
 
-      if (coupling_is_zero(bond, couplings))
+      if (utils::coupling_is_zero(bond, couplings))
         continue;
       auto [s1, s2, Jhalf] = get_exchange_s1_s2_Jhalf_mpi(bond, couplings);
       assert(s1 < n_postfix_bits);

@@ -30,7 +30,7 @@ spinhalf_mpi_exchange_mixed_com(SpinhalfMPI<bit_t> const &block,
 
     std::vector<idx_t> n_states_i_send(mpi_size, 0);
 
-    if (coupling_is_zero(bond, couplings))
+    if (utils::coupling_is_zero(bond, couplings))
       continue;
     auto [s1, s2, Jhalf] = get_exchange_s1_s2_Jhalf_mpi(bond, couplings);
     assert(s1 < n_postfix_bits);
