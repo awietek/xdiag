@@ -66,6 +66,10 @@ mpisources+= hydra/models/spinhalf_mpi/terms/get_prefix_postfix_mixed_bonds.cpp
 mpisources+= hydra/models/spinhalf_mpi/spinhalf_mpi.cpp
 mpisources+= hydra/models/spinhalf_mpi/spinhalf_mpi_apply.cpp
 
+mpisources+= hydra/models/electron_mpi/electron_mpi.cpp
+mpisources+= hydra/models/electron_mpi/electron_mpi_apply.cpp
+
+
 testsources+= test/tests.cpp
 testsources+= test/combinatorics/test_binomial.cpp
 testsources+= test/combinatorics/test_subsets.cpp
