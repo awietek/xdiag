@@ -17,3 +17,6 @@
 #include "models/spinhalf_mpi/spinhalf_mpi.h"
 #include "models/spinhalf_mpi/spinhalf_mpi_apply.h"
 #include "models/spinhalf_mpi/spinhalf_mpi_fill.h"
+
+#include "models/electron_mpi/electron_mpi.h"
+#include "models/electron_mpi/electron_mpi_apply.h"
