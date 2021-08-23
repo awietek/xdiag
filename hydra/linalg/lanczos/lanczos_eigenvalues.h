@@ -13,7 +13,7 @@ namespace hydra {
 
 // Lanczos which  overwrites starting vector v0
 template <class coeff_t, class Block>
-Tmatrix<coeff_t> LanczosEigenvaluesInplace(
+Tmatrix LanczosEigenvaluesInplace(
     BondList const &bonds, Couplings const &couplings, Block const &block,
     lila::Vector<coeff_t> &v0, int num_eigenvalue = 0, double precision = 1e-12,
     int max_iterations = 1000, double deflation_tol = 1e-7) {
@@ -24,28 +24,27 @@ Tmatrix<coeff_t> LanczosEigenvaluesInplace(
   if constexpr (is_mpi_block<Block>) {
 
     int iter = 0;
-    auto mult = [&iter, &bonds, &couplings, &block](Vector<coeff_t> const &v,
-                                                    Vector<coeff_t> &w) {
+    auto mult = [&iter, &bonds, &couplings, &block](
+                    lila::Vector<coeff_t> const &v, lila::Vector<coeff_t> &w) {
       auto ta = rightnow_mpi();
       Apply(bonds, couplings, block, v, block, w);
       timing_mpi(ta, rightnow_mpi(), "MVM", 1);
       ++iter;
     };
 
-    auto stable_dot = [](Vector<coeff_t> const &v,
-                         Vector<coeff_t> const &w) -> coeff_t {
+    auto stable_dot = [](lila::Vector<coeff_t> const &v,
+                         lila::Vector<coeff_t> const &w) -> coeff_t {
       return mpi::StableDot(v, w);
     };
 
-    auto converged = [num_eigenvalue,
-                      precision](Tmatrix<coeff_t> const &tmat) -> bool {
+    auto converged = [num_eigenvalue, precision](Tmatrix const &tmat) -> bool {
       return ConvergedEigenvalues(tmat, num_eigenvalue, precision);
     };
 
     auto t0 = rightnow_mpi();
     auto [tmat, vectors] =
-        LanczosGeneric(mult, v0, stable_dot, converged, max_iterations,
-                       Matrix<coeff_t>(), deflation_tol);
+        LanczosGeneric(mult, v0, stable_dot, converged, lila::Matrix<coeff_t>(),
+                       max_iterations, deflation_tol);
     (void)vectors;
     timing_mpi(t0, rightnow_mpi(), "Lanczos time", 1);
     return tmat;
@@ -55,28 +54,27 @@ Tmatrix<coeff_t> LanczosEigenvaluesInplace(
   else {
 
     int iter = 0;
-    auto mult = [&iter, &bonds, &couplings, &block](Vector<coeff_t> const &v,
-                                                    Vector<coeff_t> &w) {
+    auto mult = [&iter, &bonds, &couplings, &block](
+                    lila::Vector<coeff_t> const &v, lila::Vector<coeff_t> &w) {
       auto ta = rightnow();
       Apply(bonds, couplings, block, v, block, w);
       timing(ta, rightnow(), "MVM", 1);
       ++iter;
     };
 
-    auto dot = [](Vector<coeff_t> const &v,
-                  Vector<coeff_t> const &w) -> coeff_t {
+    auto dot = [](lila::Vector<coeff_t> const &v,
+                  lila::Vector<coeff_t> const &w) -> coeff_t {
       return lila::Dot(v, w);
     };
 
-    auto converged = [num_eigenvalue,
-                      precision](Tmatrix<coeff_t> const &tmat) -> bool {
+    auto converged = [num_eigenvalue, precision](Tmatrix const &tmat) -> bool {
       return ConvergedEigenvalues(tmat, num_eigenvalue, precision);
     };
 
     auto t0 = rightnow();
     auto [tmat, vectors] =
-        LanczosGeneric(mult, v0, dot, converged, max_iterations,
-                       Matrix<coeff_t>(), deflation_tol);
+        LanczosGeneric(mult, v0, dot, converged, lila::Matrix<coeff_t>(),
+                       max_iterations, deflation_tol);
     (void)vectors;
     timing(t0, rightnow(), "Lanczos time", 1);
     return tmat;
@@ -85,22 +83,22 @@ Tmatrix<coeff_t> LanczosEigenvaluesInplace(
 
 // Lanczos which does not overwrite v0
 template <class coeff_t, class Block>
-Tmatrix<coeff_t>
-LanczosEigenvalues(BondList const &bonds, Couplings const &couplings,
-                   Block const &block, lila::Vector<coeff_t> v0,
-                   int num_eigenvalue = 0, double precision = 1e-12,
-                   int max_iterations = 1000, double deflation_tol = 1e-7) {
+Tmatrix LanczosEigenvalues(BondList const &bonds, Couplings const &couplings,
+                           Block const &block, lila::Vector<coeff_t> v0,
+                           int num_eigenvalue = 0, double precision = 1e-12,
+                           int max_iterations = 1000,
+                           double deflation_tol = 1e-7) {
 
   return LanczosEigenvaluesInplace(bonds, couplings, block, v0, num_eigenvalue,
                                    precision, max_iterations, deflation_tol);
 }
 
 template <class Block>
-Tmatrix<double>
-LanczosEigenvaluesReal(BondList const &bonds, Couplings const &couplings,
-                       Block const &block, int num_eigenvalue = 0,
-                       double precision = 1e-12, int seed = 42,
-                       int max_iterations = 1000, double deflation_tol = 1e-7) {
+Tmatrix LanczosEigenvaluesReal(BondList const &bonds,
+                               Couplings const &couplings, Block const &block,
+                               int num_eigenvalue = 0, double precision = 1e-12,
+                               int seed = 42, int max_iterations = 1000,
+                               double deflation_tol = 1e-7) {
 
   using namespace lila;
 
@@ -122,11 +120,11 @@ LanczosEigenvaluesReal(BondList const &bonds, Couplings const &couplings,
 }
 
 template <class Block>
-Tmatrix<complex>
-LanczosEigenvaluesCplx(BondList const &bonds, Couplings const &couplings,
-                       Block const &block, int num_eigenvalue = 0,
-                       double precision = 1e-12, int seed = 42,
-                       int max_iterations = 1000, double deflation_tol = 1e-7) {
+Tmatrix LanczosEigenvaluesCplx(BondList const &bonds,
+                               Couplings const &couplings, Block const &block,
+                               int num_eigenvalue = 0, double precision = 1e-12,
+                               int seed = 42, int max_iterations = 1000,
+                               double deflation_tol = 1e-7) {
 
   using namespace lila;
 

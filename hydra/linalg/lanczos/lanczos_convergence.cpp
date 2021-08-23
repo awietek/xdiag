@@ -4,9 +4,8 @@
 
 namespace hydra {
 
-template <class coeff_t>
-bool ConvergedEigenvalues(Tmatrix<coeff_t> const &tmat, int n_eigenvalue,
-                          lila::real_t<coeff_t> precision) {
+bool ConvergedEigenvalues(Tmatrix const &tmat, int n_eigenvalue,
+                          double precision) {
   int size = tmat.size();
   auto alphas = tmat.alphas();
   auto betas = tmat.betas();
@@ -21,7 +20,7 @@ bool ConvergedEigenvalues(Tmatrix<coeff_t> const &tmat, int n_eigenvalue,
       return false;
 
     auto tmat_previous =
-      Tmatrix<coeff_t>(alphas({0, size - 1}), betas({0, size - 1}));
+      Tmatrix(alphas({0, size - 1}), betas({0, size - 1}));
     auto eigs_previous = tmat_previous.eigenvalues();
 
     double residue =
@@ -32,10 +31,6 @@ bool ConvergedEigenvalues(Tmatrix<coeff_t> const &tmat, int n_eigenvalue,
   }
 }
 
-template bool ConvergedEigenvalues<double>(Tmatrix<double> const &, int,
-                                           double precision);
-template bool ConvergedEigenvalues<complex>(Tmatrix<complex> const &, int,
-                                            double precision);
 
 // template <class coeff_t>
 // bool ConvergedRitz(const Tmatrix<coeff_t> &tmat, int n_eigenvalue,

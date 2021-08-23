@@ -5,30 +5,29 @@
 
 namespace hydra {
 
-template <class coeff_t> class Tmatrix {
+class Tmatrix {
 public:
   using size_type = lila::size_type;
-  using real_type = lila::real_t<coeff_t>;
 
   Tmatrix() = default;
-  Tmatrix(lila::Vector<real_type> const &alphas,
-                 lila::Vector<real_type> const &betas)
+  Tmatrix(lila::Vector<double> const &alphas,
+	  lila::Vector<double> const &betas)
       : alphas_(alphas), betas_(betas) {
     assert(alphas.size() == betas.size());
   }
-  void append(real_type alpha, real_type beta);
+  void append(double alpha, double beta);
 
   size_type size() const {return alphas_.size(); }
 
-  lila::Vector<real_type> const &alphas() const { return alphas_; }
-  lila::Vector<real_type> const &betas() const { return betas_; }
+  lila::Vector<double> const &alphas() const { return alphas_; }
+  lila::Vector<double> const &betas() const { return betas_; }
 
-  lila::Vector<real_type> eigenvalues() const;
-  std::pair<lila::Vector<real_type>, lila::Matrix<real_type>> eigen() const;
+  lila::Vector<double> eigenvalues() const;
+  std::pair<lila::Vector<double>, lila::Matrix<double>> eigen() const;
 
 private:
-  lila::Vector<real_type> alphas_;
-  lila::Vector<real_type> betas_;
+  lila::Vector<double> alphas_;
+  lila::Vector<double> betas_;
 };
 
 } // namespace hydra

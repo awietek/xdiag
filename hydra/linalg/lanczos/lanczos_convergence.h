@@ -5,8 +5,7 @@
 
 namespace hydra {
 
-template <class coeff_t>
-bool ConvergedEigenvalues(Tmatrix<coeff_t> const &tmat, int n_eigenvalue,
-                          lila::real_t<coeff_t> precision);
+bool ConvergedEigenvalues(Tmatrix const &tmat, int n_eigenvalue,
+                          double precision);
 
 } // namespace hydra

@@ -101,7 +101,9 @@ testsources+= test/models/electron_symmetric/test_electron_symmetric.cpp
 testsources+= test/models/electron_symmetric/test_electron_symmetric_matrix.cpp
 testsources+= test/models/electron_symmetric/test_electron_symmetric_apply.cpp
 
-
+testsources+= test/linalg/lanczos/test_lanczos_generic.cpp
+testsources+= test/linalg/lanczos/test_lanczos_eigenvalues.cpp
+testsources+= test/linalg/lanczos/test_lanczos_eigenvector.cpp
 
 testmpisources+= testmpi/tests.cpp
 testmpisources+= testmpi/mpi/test_stable_dot.cpp

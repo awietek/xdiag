@@ -21,9 +21,9 @@ void Apply(BondList const &bonds, Couplings const &couplings,
 
   lila::Zeros(vec_out);
 
-  // auto tis = rightnow_mpi();
-  // electron::do_U_mpi(bonds, couplings, block_in, vec_in, vec_out);
-  // timing_mpi(tis, rightnow_mpi(), " (ising)", 2);
+  auto tis = rightnow_mpi();
+  electron::do_U_mpi(bonds, couplings, block_in, vec_in, vec_out);
+  timing_mpi(tis, rightnow_mpi(), " (U)", 2);
 
   // auto tex = rightnow_mpi();
   // electron::do_hopping_mpi(bonds, couplings, block_in, vec_in, vec_out);
