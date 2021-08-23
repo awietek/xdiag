@@ -54,7 +54,8 @@
 
 
 #include "linalg/sparse_diag.h"
-#include "linalg/lanczos/lanczos_generic.h"
 #include "linalg/lanczos/tmatrix.h"
+#include "linalg/lanczos/lanczos_generic.h"
 #include "linalg/lanczos/lanczos_convergence.h"
 #include "linalg/lanczos/lanczos_eigenvalues.h"
+#include "linalg/lanczos/lanczos_eigenvector.h"
