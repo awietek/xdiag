@@ -2,7 +2,9 @@
 
 #include <hydra/utils/bitops.h>
 
+#include <hydra/models/electron_symmetric/terms/electron_symmetric_exchange.h>
 #include <hydra/models/electron_symmetric/terms/electron_symmetric_hopping.h>
+#include <hydra/models/electron_symmetric/terms/electron_symmetric_ising.h>
 #include <hydra/models/electron_symmetric/terms/electron_symmetric_u.h>
 
 namespace hydra {
@@ -23,6 +25,9 @@ MatrixCplx(BondList const &bonds, Couplings const &couplings,
   electron::do_U_symmetric(couplings, block_in, fill);
   electron::do_hopping_symmetric<bit_t, complex>(bonds, couplings, block_in,
                                                  fill);
+  electron::do_ising_symmetric<bit_t>(bonds, couplings, block_in, fill);
+  electron::do_exchange_symmetric<bit_t, complex>(bonds, couplings, block_in,
+                                                  fill);
   return mat;
 }
 

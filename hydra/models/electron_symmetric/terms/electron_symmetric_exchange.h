@@ -11,12 +11,12 @@
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
 
-namespace hydra::tj {
+namespace hydra::electron {
 
 template <class bit_t, class Filler, class GroupAction>
 void do_down_flips(bit_t up, idx_t idx_up, bit_t mask, bit_t spacemask,
                    bit_t dnmask, double Jhalf,
-                   tJSymmetric<bit_t, GroupAction> const &block,
+                   ElectronSymmetric<bit_t, GroupAction> const &block,
                    Filler &&fill) {
   using utils::popcnt;
 
@@ -85,7 +85,7 @@ void do_down_flips(bit_t up, idx_t idx_up, bit_t mask, bit_t spacemask,
 
 template <class bit_t, class coeff_t, class GroupAction, class Filler>
 void do_exchange_symmetric(BondList const &bonds, Couplings const &couplings,
-                           tJSymmetric<bit_t, GroupAction> const &block,
+                           ElectronSymmetric<bit_t, GroupAction> const &block,
                            Filler &&fill) {
   using utils::gbit;
   using utils::popcnt;
@@ -98,7 +98,7 @@ void do_exchange_symmetric(BondList const &bonds, Couplings const &couplings,
   for (auto bond : exchange + exchange_tj) {
 
     if (bond.size() != 2)
-      lila::Log.err("Error computing tJ exchange: "
+      lila::Log.err("Error computing Electron exchange: "
                     "bonds must have exactly two sites defined");
 
     if (!utils::coupling_is_zero(bond, couplings)) {

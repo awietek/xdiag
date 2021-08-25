@@ -1,7 +1,11 @@
 #pragma once
 
+#include <lila/all.h>
+
 #include <hydra/common.h>
 #include <hydra/indexing/lintable.h>
+#include <hydra/operators/bondlist.h>
+#include <hydra/operators/couplings.h>
 
 namespace hydra {
 
@@ -13,6 +17,9 @@ public:
   inline int n_sites() const { return n_sites_; }
   inline int n_up() const { return n_up_; }
   inline int n_dn() const { return n_dn_; }
+
+  inline LinTable<bit_t> const& lintable_up() const { return lintable_up_; }
+  inline LinTable<bit_t> const& lintable_dn() const { return lintable_dn_; }
 
   inline bool charge_conserved() const { return charge_conserved_; }
   inline bool sz_conserved() const { return sz_conserved_; }
@@ -46,6 +53,7 @@ private:
   idx_t size_up_;
   idx_t size_dn_;
   idx_t size_;
+
 };
 
 } // namespace hydra

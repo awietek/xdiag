@@ -3,8 +3,10 @@
 #include <hydra/combinatorics/combinations.h>
 #include <hydra/utils/bitops.h>
 
-#include <hydra/models/electron/terms/electron_hopping.h>
 #include <hydra/models/electron/terms/electron_u.h>
+#include <hydra/models/electron/terms/electron_hopping.h>
+#include <hydra/models/electron/terms/electron_ising.h>
+#include <hydra/models/electron/terms/electron_exchange.h>
 
 namespace hydra {
 
@@ -24,6 +26,8 @@ void Apply(BondList const &bonds, Couplings const &couplings,
   
   electron::do_U(couplings, block_in, fill);
   electron::do_hopping<bit_t, double>(bonds, couplings, block_in, fill);
+  electron::do_ising<bit_t>(bonds, couplings, block_in, fill);
+  electron::do_exchange<bit_t>(bonds, couplings, block_in, fill);
 }
 
 template <class bit_t>
@@ -42,6 +46,8 @@ void Apply(BondList const &bonds, Couplings const &couplings,
   
   electron::do_U(couplings, block_in, fill);
   electron::do_hopping<bit_t, complex>(bonds, couplings, block_in, fill);
+  electron::do_ising<bit_t>(bonds, couplings, block_in, fill);
+  electron::do_exchange<bit_t>(bonds, couplings, block_in, fill);
 }
 
 template void Apply<uint16>(BondList const &bonds, Couplings const &couplings,
