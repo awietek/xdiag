@@ -35,20 +35,23 @@ sources+= hydra/models/electron_symmetric/electron_symmetric.cpp
 sources+= hydra/models/electron_symmetric/electron_symmetric_matrix.cpp
 sources+= hydra/models/electron_symmetric/electron_symmetric_apply.cpp
 
-
-sources+= hydra/symmetries/spacegroup.cpp
-sources+= hydra/symmetries/spinflip.cpp
+sources+= hydra/symmetries/symmetry_utils.cpp
+sources+= hydra/symmetries/permutation_group.cpp
+sources+= hydra/symmetries/permutation_group_action.cpp
 sources+= hydra/symmetries/representation.cpp
-sources+= hydra/symmetries/spacegroup_operations.cpp
-sources+= hydra/symmetries/spacegroup_operator.cpp
 sources+= hydra/symmetries/fermi_sign.cpp
+
+
+# sources+= hydra/symmetries/spacegroup.cpp
+# sources+= hydra/symmetries/spacegroup_operations.cpp
+# sources+= hydra/symmetries/spacegroup_operator.cpp
+
 
 sources+= hydra/operators/bond.cpp
 sources+= hydra/operators/bondlist.cpp
 sources+= hydra/operators/couplings.cpp
 
 sources+= hydra/wavefunctions/gpwf_spinhalf.cpp
-
 
 sources+=hydra/linalg/lanczos/lanczos_convergence.cpp
 sources+=hydra/linalg/lanczos/tmatrix.cpp
@@ -78,7 +81,7 @@ testsources+= test/combinatorics/test_combinations.cpp
 
 testsources+= test/indexing/test_lintable.cpp
 
-testsources+= test/symmetries/test_spacegroup_operator.cpp
+testsources+= test/symmetries/test_permutation_group_action.cpp
 testsources+= test/symmetries/test_fermi_sign.cpp
 
 testsources+= test/models/spinhalf/testcases_spinhalf.cpp

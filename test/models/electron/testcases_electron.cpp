@@ -15,7 +15,7 @@ std::tuple<BondList, Couplings> get_linear_chain(int n_sites, double t,
 }
 
 template <class bit_t>
-std::tuple<SpaceGroup<bit_t>, std::vector<Representation>>
+std::tuple<PermutationGroup, std::vector<Representation>>
 get_cyclic_group_irreps(int n_sites) {
   // Create cyclic group as space group
   std::vector<std::vector<int>> permutations;
@@ -27,7 +27,7 @@ get_cyclic_group_irreps(int n_sites) {
     }
     permutations.push_back(permutation);
   }
-  auto space_group = SpaceGroup<bit_t>(permutations);
+  auto space_group = PermutationGroup(permutations);
 
   // Create irreducible representations
   std::vector<Representation> irreps;
@@ -42,15 +42,15 @@ get_cyclic_group_irreps(int n_sites) {
   return {space_group, irreps};
 }
 
-template std::tuple<SpaceGroup<uint16>, std::vector<Representation>>
+template std::tuple<PermutationGroup, std::vector<Representation>>
 get_cyclic_group_irreps<uint16>(int n_sites);
-template std::tuple<SpaceGroup<uint32>, std::vector<Representation>>
+template std::tuple<PermutationGroup, std::vector<Representation>>
 get_cyclic_group_irreps<uint32>(int n_sites);
-template std::tuple<SpaceGroup<uint64>, std::vector<Representation>>
+template std::tuple<PermutationGroup, std::vector<Representation>>
 get_cyclic_group_irreps<uint64>(int n_sites);
 
 template <class bit_t>
-std::tuple<SpaceGroup<bit_t>, std::vector<Representation>, std::vector<int>>
+std::tuple<PermutationGroup, std::vector<Representation>, std::vector<int>>
 get_cyclic_group_irreps_mult(int n_sites) {
   // Create cyclic group as space group
   std::vector<std::vector<int>> permutations;
@@ -62,7 +62,7 @@ get_cyclic_group_irreps_mult(int n_sites) {
     }
     permutations.push_back(permutation);
   }
-  auto space_group = SpaceGroup<bit_t>(permutations);
+  auto space_group = PermutationGroup(permutations);
 
   // Create irreducible representations
   std::vector<Representation> irreps;
@@ -79,16 +79,16 @@ get_cyclic_group_irreps_mult(int n_sites) {
   return {space_group, irreps, multiplicities};
 }
 
-template std::tuple<SpaceGroup<uint16>, std::vector<Representation>,
+template std::tuple<PermutationGroup, std::vector<Representation>,
                     std::vector<int>>
 get_cyclic_group_irreps_mult<uint16>(int n_sites);
-template std::tuple<SpaceGroup<uint32>, std::vector<Representation>,
+template std::tuple<PermutationGroup, std::vector<Representation>,
                     std::vector<int>>
 get_cyclic_group_irreps_mult<uint32>(int n_sites);
-  template std::tuple<SpaceGroup<uint64>, std::vector<Representation>,
+template std::tuple<PermutationGroup, std::vector<Representation>,
                     std::vector<int>>
 get_cyclic_group_irreps_mult<uint64>(int n_sites);
-  
+
 std::tuple<BondList, Couplings> heisenberg_triangle() {
   BondList bondlist;
   bondlist << Bond("HEISENBERG", "J", {0, 1});
@@ -238,8 +238,7 @@ std::tuple<BondList, Couplings> freefermion_alltoall(int n_sites) {
   return std::make_tuple(bondlist, couplings);
 }
 
-std::tuple<BondList, Couplings>
-freefermion_alltoall_complex_updn(int n_sites) {
+std::tuple<BondList, Couplings> freefermion_alltoall_complex_updn(int n_sites) {
   std::default_random_engine generator;
   std::normal_distribution<double> distribution(0., 1.);
 
@@ -283,8 +282,7 @@ freefermion_alltoall_complex_updn(int n_sites) {
 //   return std::make_tuple(bondlist, couplings);
 // }
 
-std::tuple<BondList, Couplings, lila::Vector<double>>
-randomAlltoAll4NoU() {
+std::tuple<BondList, Couplings, lila::Vector<double>> randomAlltoAll4NoU() {
   BondList bondlist;
   Couplings couplings;
   // couplings["T01"] = 3;

@@ -3,21 +3,18 @@
 #include <map>
 
 #include <hydra/common.h>
-#include <hydra/indexing/lintable.h>
-#include <hydra/operators/bondlist.h>
-#include <hydra/operators/couplings.h>
-#include <hydra/symmetries/fermi_sign.h>
+#include <hydra/symmetries/permutation_group.h>
+#include <hydra/symmetries/permutation_group_action.h>
 #include <hydra/symmetries/representation.h>
-#include <hydra/symmetries/spacegroup.h>
 
 namespace hydra {
 
-template <class bit_t, class SymmetryGroup = SpaceGroup<bit_t>>
+template <class bit_t = std_bit_t, class GroupAction = PermutationGroupAction>
 class ElectronSymmetric {
 public:
   ElectronSymmetric() = default;
   ElectronSymmetric(int n_sites, int charge, int sz,
-                    SymmetryGroup symmetry_group, Representation irrep);
+                    PermutationGroup permutation_group, Representation irrep);
 
   inline int n_sites() const { return n_sites_; }
   inline int n_up() const { return n_up_; }
@@ -25,8 +22,9 @@ public:
   inline bool charge_conserved() const { return charge_conserved_; }
   inline bool sz_conserved() const { return sz_conserved_; }
 
-  inline SymmetryGroup symmetry_group() const { return symmetry_group_; }
-  inline Representation irrep() const { return irrep_; }
+  inline PermutationGroup const &permutation_group() const { return permutation_group_; }
+  inline GroupAction const &group_action() const { return group_action_; }
+  inline Representation const &irrep() const { return irrep_; }
 
   inline idx_t size() const { return size_; }
   inline double up(idx_t idx) const { return ups_[idx]; }
@@ -53,7 +51,6 @@ public:
 
   std::vector<complex> character_switch_;
 
-
 private:
   int n_sites_;
 
@@ -64,7 +61,8 @@ private:
   int n_up_;
   int n_dn_;
 
-  SymmetryGroup symmetry_group_;
+  PermutationGroup permutation_group_;
+  GroupAction group_action_;
   Representation irrep_;
 
   std::vector<double> norms_;

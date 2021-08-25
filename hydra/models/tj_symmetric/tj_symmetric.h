@@ -3,20 +3,17 @@
 #include <map>
 
 #include <hydra/common.h>
-#include <hydra/indexing/lintable.h>
-#include <hydra/operators/bondlist.h>
-#include <hydra/operators/couplings.h>
-#include <hydra/symmetries/fermi_sign.h>
+#include <hydra/symmetries/permutation_group.h>
+#include <hydra/symmetries/permutation_group_action.h>
 #include <hydra/symmetries/representation.h>
-#include <hydra/symmetries/spacegroup.h>
 
 namespace hydra {
 
-template <class bit_t, class SymmetryGroup = SpaceGroup<bit_t>>
+template <class bit_t = std_bit_t, class GroupAction = PermutationGroupAction>
 class tJSymmetric {
 public:
   tJSymmetric() = default;
-  tJSymmetric(int n_sites, int charge, int sz, SymmetryGroup symmetry_group,
+  tJSymmetric(int n_sites, int charge, int sz, PermutationGroup permutation_group,
               Representation irrep);
 
   inline int n_sites() const { return n_sites_; }
@@ -25,7 +22,8 @@ public:
   inline bool charge_conserved() const { return charge_conserved_; }
   inline bool sz_conserved() const { return sz_conserved_; }
 
-  inline SymmetryGroup const &symmetry_group() const { return symmetry_group_; }
+  inline PermutationGroup const &permutation_group() const { return permutation_group_; }
+  inline GroupAction const &group_action() const { return group_action_; }
   inline Representation const &irrep() const { return irrep_; }
 
   inline idx_t size() const { return size_; }
@@ -63,7 +61,8 @@ private:
   int n_up_;
   int n_dn_;
 
-  SymmetryGroup symmetry_group_;
+  PermutationGroup permutation_group_;
+  GroupAction group_action_;
   Representation irrep_;
 
   std::vector<double> norms_;

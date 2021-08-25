@@ -35,7 +35,7 @@ void test_representative_character(ElectronSymmetric<bit_t> const &electron) {
   int n_sites = electron.n_sites();
   int nup = electron.n_up();
   int ndn = electron.n_dn();
-  auto space_group = electron.symmetry_group();
+  auto space_group = electron.group_action();
   auto irrep = electron.irrep();
   for (auto up : Combinations(n_sites, nup)) {
     for (auto dn : Combinations(n_sites, ndn)) {
@@ -74,7 +74,7 @@ template <class bit_t> void test_electron_chain(int n_sites) {
     }
     permutations.push_back(permutation);
   }
-  auto space_group = SpaceGroup<bit_t>(permutations);
+  auto space_group = PermutationGroup(permutations);
 
   // Create irrep with K momentum
   idx_t sum_of_dims = 0;
@@ -132,8 +132,8 @@ TEST_CASE("electron_symmetric", "[models]") {
       {"Y.C1.A", 6}};
 
   std::string lfile = "data/triangular.9.Jz1Jz2Jx1Jx2D1.sublattices.tsl.lat";
-  auto permutations = read_permutations(lfile);
-  auto space_group = SpaceGroup<uint16>(permutations);
+  auto permutations = hydra::utils::read_permutations(lfile);
+  auto space_group = PermutationGroup(permutations);
 
   idx_t sum_dim = 0;
   for (int nup = 0; nup <= n_sites; ++nup) {

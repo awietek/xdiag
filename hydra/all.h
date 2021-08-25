@@ -38,11 +38,9 @@
 #include "models/electron_symmetric/electron_symmetric_matrix.h"
 #include "models/electron_symmetric/electron_symmetric_apply.h"
 
-#include "symmetries/spacegroup.h"
-#include "symmetries/spinflip.h"
+#include "symmetries/permutation_group.h"
+#include "symmetries/permutation_group_action.h"
 #include "symmetries/representation.h"
-#include "symmetries/spacegroup_operations.h"
-#include "symmetries/spacegroup_operator.h"
 #include "symmetries/fermi_sign.h"
 #include "symmetries/symmetry_utils.h"
 
@@ -51,7 +49,6 @@
 #include "operators/couplings.h"
 
 #include "wavefunctions/gpwf_spinhalf.h"
-
 
 #include "linalg/sparse_diag.h"
 #include "linalg/lanczos/tmatrix.h"

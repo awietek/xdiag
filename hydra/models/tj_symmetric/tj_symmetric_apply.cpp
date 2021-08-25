@@ -9,11 +9,11 @@
 
 namespace hydra {
 
-template <class bit_t, class SymmetryGroup>
+template <class bit_t, class GroupAction>
 void Apply(BondList const &bonds, Couplings const &couplings,
-           tJSymmetric<bit_t, SymmetryGroup> const &block_in,
+           tJSymmetric<bit_t, GroupAction> const &block_in,
            lila::Vector<complex> const &vec_in,
-           tJSymmetric<bit_t, SymmetryGroup> const &block_out,
+           tJSymmetric<bit_t, GroupAction> const &block_out,
            lila::Vector<complex> &vec_out) {
 
   assert(block_in == block_out); // only temporary
@@ -30,23 +30,23 @@ void Apply(BondList const &bonds, Couplings const &couplings,
   tj::do_exchange_symmetric<bit_t, complex>(bonds, couplings, block_in, fill);
 }
 
-template void Apply<uint16, SpaceGroup<uint16>>(
+template void Apply<uint16, PermutationGroupAction>(
     BondList const &bonds, Couplings const &couplings,
-    tJSymmetric<uint16, SpaceGroup<uint16>> const &block_in,
+    tJSymmetric<uint16, PermutationGroupAction> const &block_in,
     lila::Vector<complex> const &vec_in,
-    tJSymmetric<uint16, SpaceGroup<uint16>> const &block_out,
+    tJSymmetric<uint16, PermutationGroupAction> const &block_out,
     lila::Vector<complex> &vec_out);
-template void Apply<uint32, SpaceGroup<uint32>>(
+template void Apply<uint32, PermutationGroupAction>(
     BondList const &bonds, Couplings const &couplings,
-    tJSymmetric<uint32, SpaceGroup<uint32>> const &block_in,
+    tJSymmetric<uint32, PermutationGroupAction> const &block_in,
     lila::Vector<complex> const &vec_in,
-    tJSymmetric<uint32, SpaceGroup<uint32>> const &block_out,
+    tJSymmetric<uint32, PermutationGroupAction> const &block_out,
     lila::Vector<complex> &vec_out);
-template void Apply<uint64, SpaceGroup<uint64>>(
+template void Apply<uint64, PermutationGroupAction>(
     BondList const &bonds, Couplings const &couplings,
-    tJSymmetric<uint64, SpaceGroup<uint64>> const &block_in,
+    tJSymmetric<uint64, PermutationGroupAction> const &block_in,
     lila::Vector<complex> const &vec_in,
-    tJSymmetric<uint64, SpaceGroup<uint64>> const &block_out,
+    tJSymmetric<uint64, PermutationGroupAction> const &block_out,
     lila::Vector<complex> &vec_out);
 
 } // namespace hydra

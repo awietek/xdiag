@@ -6,7 +6,7 @@
 
 using namespace hydra;
 
-template <class bit_t> void test_spacegroup_operator(int n_sites) {
+template <class bit_t> void test_permutation_group_action(int n_sites) {
 
   // test cyclic group
   std::vector<int> permutation_array;
@@ -17,7 +17,8 @@ template <class bit_t> void test_spacegroup_operator(int n_sites) {
     }
   }
 
-  auto sym_op = SpaceGroupOperator<bit_t>(n_sites, permutation_array);
+  auto perm_group = PermutationGroup(n_sites, n_sites, permutation_array);
+  auto sym_op = PermutationGroupAction(perm_group);
 
   // // Print the action on the states
   // for (auto state : Subsets<bit_t>(n_sites)) {
@@ -74,11 +75,11 @@ template <class bit_t> void test_spacegroup_operator(int n_sites) {
   }
 }
 
-TEST_CASE("spacegroup_operator", "[symmetries]") {
+TEST_CASE("permutation_group_action", "[symmetries]") {
   
   for (int n_sites = 1; n_sites < 6; ++n_sites) {
-    test_spacegroup_operator<hydra::uint16>(n_sites);
-    test_spacegroup_operator<hydra::uint32>(n_sites);
-    test_spacegroup_operator<hydra::uint64>(n_sites);
+    test_permutation_group_action<hydra::uint16>(n_sites);
+    test_permutation_group_action<hydra::uint32>(n_sites);
+    test_permutation_group_action<hydra::uint64>(n_sites);
   }
 }

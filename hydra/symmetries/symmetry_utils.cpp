@@ -1,26 +1,25 @@
-#include "spacegroup_operations.h"
+#include "symmetry_utils.h"
 
-#include <fstream>
 #include <algorithm>
-#include <vector>
+#include <fstream>
 
-#include <hydra/utils/bitops.h>
+#include <lila/all.h>
+#include <hydra/common.h>
 
-namespace hydra {
+namespace hydra::utils {
 
 std::vector<std::vector<int>> read_permutations(std::string filename) {
   std::vector<std::vector<int>> lattice_symmetries;
   std::ifstream File(filename.c_str());
 
   if (File.fail()) {
-    std::cerr << "Error in read_spacegroup: Could not open file"
-              << "with filename [" << filename << "] given. Abort."
-              << std::endl;
+    lila::Log.err("Error in read_spacegroup: Could not open file {}", filename);
     exit(EXIT_FAILURE);
   }
 
   std::string tobeparsed;
   std::string::size_type pos;
+
   // Jump to Sites and parse n_sites
   File >> tobeparsed;
   while (tobeparsed.find("[Sites]") == std::string::npos)
@@ -54,15 +53,13 @@ std::vector<std::vector<int>> read_permutations(std::string filename) {
       lattice_symmetries[i].push_back(tosite);
     }
   }
-
   return lattice_symmetries;
 }
 
-namespace symmetries {
-
 bool is_valid_permutation(int n_sites, const int *permutation) {
   for (int i = 0; i < n_sites; ++i) {
-    if (std::find(permutation, permutation + n_sites, i) == permutation + n_sites)
+    if (std::find(permutation, permutation + n_sites, i) ==
+        permutation + n_sites)
       return false;
   }
   return true;
@@ -81,5 +78,4 @@ template uint16 apply_permutation<uint16>(uint16, int, const int *);
 template uint32 apply_permutation<uint32>(uint32, int, const int *);
 template uint64 apply_permutation<uint64>(uint64, int, const int *);
 
-} // namespace detail
-} // namespace hydra
+} // namespace hydra::utils

@@ -9,11 +9,11 @@ std::tuple<BondList, Couplings> get_linear_chain(int n_sites, double t,
                                                  double U);
 
 template <class bit_t>
-std::tuple<SpaceGroup<bit_t>, std::vector<Representation>>
+std::tuple<PermutationGroup, std::vector<Representation>>
 get_cyclic_group_irreps(int n_sites);
 
 template <class bit_t>
-std::tuple<SpaceGroup<bit_t>, std::vector<Representation>, std::vector<int>>
+std::tuple<PermutationGroup, std::vector<Representation>, std::vector<int>>
 get_cyclic_group_irreps_mult(int n_sites);
 
 std::tuple<BondList, Couplings> heisenberg_triangle();

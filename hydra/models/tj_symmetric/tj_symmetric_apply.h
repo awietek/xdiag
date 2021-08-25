@@ -9,11 +9,11 @@
 
 namespace hydra {
 
-template <class bit_t, class SymmetryGroup>
+template <class bit_t, class GroupAction>
 void Apply(BondList const &bonds, Couplings const &couplings,
-           tJSymmetric<bit_t, SymmetryGroup> const &block_in,
+           tJSymmetric<bit_t, GroupAction> const &block_in,
            lila::Vector<complex> const &vec_in,
-           tJSymmetric<bit_t, SymmetryGroup> const &block_out,
+           tJSymmetric<bit_t, GroupAction> const &block_out,
            lila::Vector<complex> &vec_out);
 
 } // namespace hydra

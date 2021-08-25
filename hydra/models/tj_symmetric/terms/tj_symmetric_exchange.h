@@ -3,23 +3,24 @@
 #include <lila/utils/logger.h>
 
 #include <hydra/common.h>
-#include <hydra/models/electron_symmetric/electron_symmetric.h>
+#include <hydra/utils/bitops.h>
+
 #include <hydra/models/model_utils.h>
+#include <hydra/symmetries/symmetry_utils.h>
+
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
-#include <hydra/symmetries/symmetry_utils.h>
-#include <hydra/utils/bitops.h>
 
 namespace hydra::tj {
 
-template <class bit_t, class Filler, class SymmetryGroup>
+template <class bit_t, class Filler, class GroupAction>
 void do_down_flips(bit_t up, idx_t idx_up, bit_t mask, bit_t spacemask,
                    bit_t dnmask, double Jhalf,
-                   tJSymmetric<bit_t, SymmetryGroup> const &block,
+                   tJSymmetric<bit_t, GroupAction> const &block,
                    Filler &&fill) {
   using utils::popcnt;
 
-  auto &symmetry_group = block.symmetry_group();
+  auto &group_action = block.group_action();
   auto &irrep = block.irrep();
 
   // get limits of up
@@ -29,7 +30,7 @@ void do_down_flips(bit_t up, idx_t idx_up, bit_t mask, bit_t spacemask,
   // Get limits of flipped and represeantative up
   bit_t up_flip = up ^ mask;
   auto [up_rep, n_stable_syms, stable_syms] =
-      symmetry_group.representative_indices(up_flip);
+      group_action.representative_indices(up_flip);
   auto it_flip = block.ups_lower_upper_.find(up_rep);
 
   if (it_flip == block.ups_lower_upper_.end()) {
@@ -44,13 +45,13 @@ void do_down_flips(bit_t up, idx_t idx_up, bit_t mask, bit_t spacemask,
     if (dn & dnmask) {
       // Compute flipped representative and symmetry leading to it
       bit_t dn_flip = dn ^ mask;
-      bit_t dn_rep = symmetry_group.apply(stable_syms[0], dn_flip);
+      bit_t dn_rep = group_action.apply(stable_syms[0], dn_flip);
       int rep_sym = stable_syms[0];
 
       // loop over stable symmetries if stabilizer exists on ups
       if (n_stable_syms > 1) {
         for (int n_sym = 1; n_sym < n_stable_syms; ++n_sym) {
-          bit_t dn_trans = symmetry_group.apply(stable_syms[n_sym], dn_flip);
+          bit_t dn_trans = group_action.apply(stable_syms[n_sym], dn_flip);
           if (dn_trans < dn_rep) {
             dn_rep = dn_trans;
             rep_sym = stable_syms[n_sym];
@@ -68,8 +69,8 @@ void do_down_flips(bit_t up, idx_t idx_up, bit_t mask, bit_t spacemask,
       idx_t idx_out = std::distance(block.dns_.begin(), it);
 
       // Compute matrix element
-      double fermi_up = symmetry_group.fermi_sign(rep_sym, up_flip);
-      double fermi_dn = symmetry_group.fermi_sign(rep_sym, dn_flip);
+      double fermi_up = group_action.fermi_sign(rep_sym, up_flip);
+      double fermi_dn = group_action.fermi_sign(rep_sym, dn_flip);
       auto val = Jhalf * fermi_up * fermi_dn * irrep.character(rep_sym) *
                  block.norm(idx_out) / block.norm(idx_in);
 
@@ -82,9 +83,9 @@ void do_down_flips(bit_t up, idx_t idx_up, bit_t mask, bit_t spacemask,
   }
 }
 
-template <class bit_t, class coeff_t, class SymmetryGroup, class Filler>
+template <class bit_t, class coeff_t, class GroupAction, class Filler>
 void do_exchange_symmetric(BondList const &bonds, Couplings const &couplings,
-                           tJSymmetric<bit_t, SymmetryGroup> const &block,
+                           tJSymmetric<bit_t, GroupAction> const &block,
                            Filler &&fill) {
   using utils::gbit;
   using utils::popcnt;
