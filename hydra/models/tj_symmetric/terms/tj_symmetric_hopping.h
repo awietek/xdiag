@@ -3,7 +3,7 @@
 #include <lila/utils/logger.h>
 
 #include <hydra/common.h>
-#include <hydra/models/electron_symmetric/electron_symmetric.h>
+
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
 #include <hydra/symmetries/symmetry_utils.h>
@@ -11,19 +11,20 @@
 
 namespace hydra::tj {
 
-template <class bit_t, class coeff_t, class SymmetryGroup, class Filler>
+template <class bit_t, class coeff_t, class GroupAction, class Filler>
 void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
-                          tJSymmetric<bit_t, SymmetryGroup> const &block,
+                          tJSymmetric<bit_t, GroupAction> const &block,
                           Filler &&fill) {
   using utils::gbit;
   using utils::popcnt;
 
-  auto symmetry_group = block.symmetry_group();
-  auto irrep = block.irrep();
+  auto const &group_action = block.group_action();
+  auto const &irrep = block.irrep();
 
   auto hoppings = bonds.bonds_of_type("HOP");
   auto hoppings_up = bonds.bonds_of_type("HOPUP");
   auto hoppings_dn = bonds.bonds_of_type("HOPDN");
+
   for (auto hop : hoppings + hoppings_up + hoppings_dn) {
 
     if (hop.size() != 2)
@@ -47,11 +48,7 @@ void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
           idx_t upper = lower_upper.second;
           auto begin_up = block.dns_.begin() + lower;
           auto end_up = block.dns_.begin() + upper;
-
-          std::vector<int> stable_syms =
-              utils::stabilizer_symmetries(up, symmetry_group);
-          auto stable_group = symmetry_group.subgroup(stable_syms);
-          auto stable_irrep = irrep.subgroup(stable_syms);
+          std::vector<int> stable_syms = group_action.stabilizer_symmetries(up);
 
           // trivial stabilizer of ups -> no representative lookup -> faster
           if (stable_syms.size() == 1) {
@@ -89,10 +86,17 @@ void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
                 bit_t dn_flip = dn ^ flipmask;
 
                 // Determine the dn representative from stable symmetries
-                auto [dn_flip_rep, dn_flip_rep_sym] =
-                    stable_group.representative_index(dn_flip);
+                bit_t dn_flip_rep = dn_flip;
+                int dn_flip_rep_sym = stable_syms[0];
+                for (auto const &stable_sym : stable_syms) {
+                  bit_t trans = group_action.apply(stable_sym, dn_flip);
+                  if (trans < dn_flip_rep) {
+                    dn_flip_rep = trans;
+                    dn_flip_rep_sym = stable_sym;
+                  }
+                }
 
-                // Look for index os dn flip
+                // Look for index of dn flip
                 auto it = std::lower_bound(begin_up, end_up, dn_flip_rep);
 
                 // if a state has been found
@@ -103,11 +107,11 @@ void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
                                              : lila::conj(couplings[cpl]);
                   double fermi_hop = popcnt(dn & spacemask) & 1 ? -1. : 1.;
                   double fermi_up =
-                      stable_group.fermi_sign(dn_flip_rep_sym, up);
+                      group_action.fermi_sign(dn_flip_rep_sym, up);
                   double fermi_dn =
-                      stable_group.fermi_sign(dn_flip_rep_sym, dn_flip);
+                      group_action.fermi_sign(dn_flip_rep_sym, dn_flip);
                   coeff_t val = -t * fermi_hop * fermi_up * fermi_dn *
-                                stable_irrep.character(dn_flip_rep_sym) *
+                                irrep.character(dn_flip_rep_sym) *
                                 block.norm(idx_out) / block.norm(idx);
 
                   // mat(idx_out, idx) += val;
@@ -128,11 +132,7 @@ void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
           idx_t upper = lower_upper.second;
           auto begin_dn = block.ups_.begin() + lower;
           auto end_dn = block.ups_.begin() + upper;
-
-          std::vector<int> stable_syms =
-              utils::stabilizer_symmetries(dn, symmetry_group);
-          auto stable_group = symmetry_group.subgroup(stable_syms);
-          auto stable_irrep = irrep.subgroup(stable_syms);
+          std::vector<int> stable_syms = group_action.stabilizer_symmetries(dn);
 
           // trivial stabilizer of dns -> no representative lookup -> faster
           if (stable_syms.size() == 1) {
@@ -177,10 +177,17 @@ void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
                 coeff_t chi_switch_in = block.character_switch_[idx];
 
                 // Determine the dn representative from stable symmetries
-                auto [up_flip_rep, up_flip_rep_sym] =
-                    stable_group.representative_index(up_flip);
+                bit_t up_flip_rep = up_flip;
+                int up_flip_rep_sym = stable_syms[0];
+                for (auto const &stable_sym : stable_syms) {
+                  bit_t trans = group_action.apply(stable_sym, up_flip);
+                  if (trans < up_flip_rep) {
+                    up_flip_rep = trans;
+                    up_flip_rep_sym = stable_sym;
+                  }
+                }
 
-                // Look for index os dn flip
+                // Look for index of up flip
                 auto it = std::lower_bound(begin_dn, end_dn, up_flip_rep);
 
                 // if a state has been found
@@ -192,13 +199,13 @@ void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
                                              : lila::conj(couplings[cpl]);
                   double fermi_hop = popcnt(up & spacemask) & 1 ? -1. : 1.;
                   double fermi_up =
-                      stable_group.fermi_sign(up_flip_rep_sym, up_flip);
+                      group_action.fermi_sign(up_flip_rep_sym, up_flip);
                   double fermi_dn =
-                      stable_group.fermi_sign(up_flip_rep_sym, dn);
+                      group_action.fermi_sign(up_flip_rep_sym, dn);
                   coeff_t chi_switch_out =
                       block.character_switch_[idx_out_switch];
                   coeff_t val = -t * fermi_hop * fermi_up * fermi_dn *
-                                stable_irrep.character(up_flip_rep_sym) *
+                                irrep.character(up_flip_rep_sym) *
                                 lila::conj(chi_switch_in) * chi_switch_out *
                                 block.norm(idx_out) / block.norm(idx_in);
 

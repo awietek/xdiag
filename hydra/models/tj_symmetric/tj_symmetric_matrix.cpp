@@ -2,17 +2,17 @@
 
 #include <hydra/utils/bitops.h>
 
-#include <hydra/models/tj_symmetric/terms/tj_symmetric_hopping.h>
 #include <hydra/models/tj_symmetric/terms/tj_symmetric_exchange.h>
+#include <hydra/models/tj_symmetric/terms/tj_symmetric_hopping.h>
 #include <hydra/models/tj_symmetric/terms/tj_symmetric_ising.h>
 
 namespace hydra {
 
-template <class bit_t, class SymmetryGroup>
+template <class bit_t, class GroupAction>
 lila::Matrix<complex>
 MatrixCplx(BondList const &bonds, Couplings const &couplings,
-            tJSymmetric<bit_t, SymmetryGroup> const &block_in,
-            tJSymmetric<bit_t, SymmetryGroup> const &block_out) {
+           tJSymmetric<bit_t, GroupAction> const &block_in,
+           tJSymmetric<bit_t, GroupAction> const &block_out) {
   assert(block_in == block_out); // only temporary
 
   idx_t dim = block_in.size();
@@ -28,17 +28,17 @@ MatrixCplx(BondList const &bonds, Couplings const &couplings,
   return mat;
 }
 
-template lila::Matrix<complex> MatrixCplx<uint16, SpaceGroup<uint16>>(
+template lila::Matrix<complex> MatrixCplx<uint16, PermutationGroupAction>(
     BondList const &bonds, Couplings const &couplings,
-    tJSymmetric<uint16, SpaceGroup<uint16>> const &block_in,
-    tJSymmetric<uint16, SpaceGroup<uint16>> const &block_out);
-template lila::Matrix<complex> MatrixCplx<uint32, SpaceGroup<uint32>>(
+    tJSymmetric<uint16, PermutationGroupAction> const &block_in,
+    tJSymmetric<uint16, PermutationGroupAction> const &block_out);
+template lila::Matrix<complex> MatrixCplx<uint32, PermutationGroupAction>(
     BondList const &bonds, Couplings const &couplings,
-    tJSymmetric<uint32, SpaceGroup<uint32>> const &block_in,
-    tJSymmetric<uint32, SpaceGroup<uint32>> const &block_out);
-template lila::Matrix<complex> MatrixCplx<uint64, SpaceGroup<uint64>>(
+    tJSymmetric<uint32, PermutationGroupAction> const &block_in,
+    tJSymmetric<uint32, PermutationGroupAction> const &block_out);
+template lila::Matrix<complex> MatrixCplx<uint64, PermutationGroupAction>(
     BondList const &bonds, Couplings const &couplings,
-    tJSymmetric<uint64, SpaceGroup<uint64>> const &block_in,
-    tJSymmetric<uint64, SpaceGroup<uint64>> const &block_out);
+    tJSymmetric<uint64, PermutationGroupAction> const &block_in,
+    tJSymmetric<uint64, PermutationGroupAction> const &block_out);
 
 } // namespace hydra

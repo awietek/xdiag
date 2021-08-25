@@ -11,7 +11,7 @@ using namespace hydra;
 
 template <class bit_t>
 void test_symmetric_apply(BondList bondlist, Couplings couplings,
-                          SpaceGroup<bit_t> space_group,
+                          PermutationGroup space_group,
                           std::vector<Representation> irreps) {
   int n_sites = space_group.n_sites();
 
@@ -56,7 +56,7 @@ template <class bit_t> void test_tj_symmetric_apply_chains(int n_sites) {
   auto [bondlist, couplings] = tJchain(n_sites, 1.0, 5.0);
   auto [space_group, irreps, multiplicities] =
       get_cyclic_group_irreps_mult<bit_t>(n_sites);
-  test_symmetric_apply(bondlist, couplings, space_group, irreps);
+  test_symmetric_apply<uint16>(bondlist, couplings, space_group, irreps);
 }
 
 TEST_CASE("tj_symmetric_apply", "[models]") {
@@ -79,8 +79,8 @@ TEST_CASE("tj_symmetric_apply", "[models]") {
   Couplings couplings;
   couplings["T"] = 1.0;
   couplings["U"] = 5.0;
-  auto permutations = read_permutations(lfile);
-  auto space_group = SpaceGroup<bit_t>(permutations);
+  auto permutations = hydra::utils::read_permutations(lfile);
+  auto space_group = PermutationGroup(permutations);
 
   std::vector<std::pair<std::string, int>> rep_name_mult = {
       {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
@@ -92,5 +92,5 @@ TEST_CASE("tj_symmetric_apply", "[models]") {
   for (auto [name, mult] : rep_name_mult) {
     irreps.push_back(read_represenation(lfile, name));
   }
-  test_symmetric_apply(bondlist, couplings, space_group, irreps);
+  test_symmetric_apply<bit_t>(bondlist, couplings, space_group, irreps);
 }

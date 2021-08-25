@@ -10,9 +10,9 @@
 
 namespace hydra::electron {
 
-template <class bit_t, class SymmetryGroup, class Filler>
+template <class bit_t, class GroupAction, class Filler>
 void do_U_symmetric(Couplings const &couplings,
-                    ElectronSymmetric<bit_t, SymmetryGroup> const &block,
+                    ElectronSymmetric<bit_t, GroupAction> const &block,
                     Filler &&fill) {
   using utils::popcnt;
   if (couplings.defined("U")) {

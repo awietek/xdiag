@@ -11,7 +11,7 @@ using namespace hydra;
 
 template <class bit_t>
 void test_symmetric_spectra(BondList bondlist, Couplings couplings,
-                            SpaceGroup<bit_t> space_group,
+                            PermutationGroup space_group,
                             std::vector<Representation> irreps,
                             std::vector<int> multiplicities) {
   int n_sites = space_group.n_sites();
@@ -69,8 +69,8 @@ template <class bit_t> void test_tj_symmetric_spectrum_chains(int n_sites) {
   auto [bondlist, couplings] = tJchain(n_sites, 1.0, 5.0);
   auto [space_group, irreps, multiplicities] =
       get_cyclic_group_irreps_mult<bit_t>(n_sites);
-  test_symmetric_spectra(bondlist, couplings, space_group, irreps,
-                         multiplicities);
+  test_symmetric_spectra<uint32>(bondlist, couplings, space_group, irreps,
+                                 multiplicities);
 }
 
 TEST_CASE("tj_symmetric_matrix", "[models]") {
@@ -86,15 +86,14 @@ TEST_CASE("tj_symmetric_matrix", "[models]") {
 
   // test a 3x3 triangular lattice
   lila::Log.out("Tj 3x3 triangular, symmetric spectra test");
-  using bit_t = uint16;
   std::string lfile = "data/triangular.9.Jz1Jz2Jx1Jx2D1.sublattices.tsl.lat";
 
   auto bondlist = read_bondlist(lfile);
   Couplings couplings;
   couplings["T"] = 1.0;
   couplings["U"] = 5.0;
-  auto permutations = read_permutations(lfile);
-  auto space_group = SpaceGroup<bit_t>(permutations);
+  auto permutations = hydra::utils::read_permutations(lfile);
+  auto space_group = PermutationGroup(permutations);
 
   std::vector<std::pair<std::string, int>> rep_name_mult = {
       {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
@@ -108,6 +107,6 @@ TEST_CASE("tj_symmetric_matrix", "[models]") {
     irreps.push_back(read_represenation(lfile, name));
     multiplicities.push_back(mult);
   }
-  test_symmetric_spectra(bondlist, couplings, space_group, irreps,
-                         multiplicities);
+  test_symmetric_spectra<uint32>(bondlist, couplings, space_group, irreps,
+                                 multiplicities);
 }

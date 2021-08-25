@@ -3,17 +3,18 @@
 #include <lila/all.h>
 
 #include <hydra/common.h>
-#include <hydra/models/electron_symmetric/electron_symmetric.h>
-#include <hydra/models/model_utils.h>
-#include <hydra/operators/couplings.h>
-#include <hydra/symmetries/symmetry_utils.h>
 #include <hydra/utils/bitops.h>
+
+#include <hydra/models/model_utils.h>
+#include <hydra/symmetries/symmetry_utils.h>
+#include <hydra/operators/bondlist.h>
+#include <hydra/operators/couplings.h>
 
 namespace hydra::tj {
 
-template <class bit_t, class SymmetryGroup, class Filler>
+template <class bit_t, class GroupAction, class Filler>
 void do_ising_symmetric(BondList const &bonds, Couplings const &couplings,
-                        tJSymmetric<bit_t, SymmetryGroup> const &block,
+                        tJSymmetric<bit_t, GroupAction> const &block,
                         Filler &&fill) {
   using utils::gbit;
   using utils::popcnt;

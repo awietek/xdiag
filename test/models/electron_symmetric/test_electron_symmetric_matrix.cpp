@@ -7,10 +7,9 @@
 
 using namespace hydra;
 
-
 template <class bit_t>
 void test_symmetric_spectra(BondList bondlist, Couplings couplings,
-                            SpaceGroup<bit_t> space_group,
+                            PermutationGroup space_group,
                             std::vector<Representation> irreps,
                             std::vector<int> multiplicities) {
   int n_sites = space_group.n_sites();
@@ -36,8 +35,8 @@ void test_symmetric_spectra(BondList bondlist, Couplings couplings,
           auto electron =
               ElectronSymmetric<bit_t>(n_sites, nup, ndn, space_group, irrep);
           // lila::Log.out(
-          //     "nup: {}, ndn: {}, k: {}, mult: {}, dim_nosym: {}, dim_sym: {}",
-          //     nup, ndn, k, multiplicity, electron_nosym.size(),
+          //     "nup: {}, ndn: {}, k: {}, mult: {}, dim_nosym: {}, dim_sym:
+          //     {}", nup, ndn, k, multiplicity, electron_nosym.size(),
           //     electron.size());
 
           if (electron.size() > 0) {
@@ -69,13 +68,13 @@ void test_hubbard_symmetric_spectrum_chains(int n_sites) {
   auto [bondlist, couplings] = get_linear_chain(n_sites, 1.0, 5.0);
   auto [space_group, irreps, multiplicities] =
       get_cyclic_group_irreps_mult<bit_t>(n_sites);
-  test_symmetric_spectra(bondlist, couplings, space_group, irreps,
-                         multiplicities);
+  test_symmetric_spectra<uint16>(bondlist, couplings, space_group, irreps,
+                                 multiplicities);
 }
 
 TEST_CASE("electron_symmetric_matrix", "[models]") {
   using namespace hydra::testcases::electron;
-  
+
   // Check matrices agains Weisse & Fehske
   int n_sites = 4;
   int nup = 3;
@@ -141,8 +140,8 @@ TEST_CASE("electron_symmetric_matrix", "[models]") {
   couplings.clear();
   couplings["T"] = 1.0;
   couplings["U"] = 5.0;
-  auto permutations = read_permutations(lfile);
-  space_group = SpaceGroup<bit_t>(permutations);
+  auto permutations = hydra::utils::read_permutations(lfile);
+  space_group = PermutationGroup(permutations);
 
   std::vector<std::pair<std::string, int>> rep_name_mult = {
       {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
@@ -155,6 +154,6 @@ TEST_CASE("electron_symmetric_matrix", "[models]") {
     irreps.push_back(read_represenation(lfile, name));
     multiplicities.push_back(mult);
   }
-  test_symmetric_spectra(bondlist, couplings, space_group, irreps,
-                         multiplicities);
+  test_symmetric_spectra<bit_t>(bondlist, couplings, space_group, irreps,
+                                multiplicities);
 }

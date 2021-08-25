@@ -2,7 +2,7 @@
 
 #include <hydra/utils/bitops.h>
 
-namespace hydra::symmetries {
+namespace hydra::utils {
 template <class bit_t>
 double fermi_sign_of_permutation(bit_t state, const int *permutation,
                                  int *work) {
@@ -77,4 +77,4 @@ template double fermi_sign_of_permutation_sort<uint32>(uint32, const int *,
 template double fermi_sign_of_permutation_sort<uint64>(uint64, const int *,
                                                        int *);
 
-} // namespace hydra::symmetries
+} // namespace hydra::utils

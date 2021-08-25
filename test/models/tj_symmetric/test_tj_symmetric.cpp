@@ -34,7 +34,7 @@ void test_representative_character(tJSymmetric<bit_t> const &tj) {
   int n_sites = tj.n_sites();
   int nup = tj.n_up();
   int ndn = tj.n_dn();
-  auto space_group = tj.symmetry_group();
+  auto space_group = tj.group_action();
   auto irrep = tj.irrep();
   for (auto up : Combinations(n_sites, nup)) {
     for (auto dn : Combinations(n_sites, ndn)) {
@@ -73,7 +73,7 @@ template <class bit_t> void test_tj_chain(int n_sites) {
     }
     permutations.push_back(permutation);
   }
-  auto space_group = SpaceGroup<bit_t>(permutations);
+  auto space_group = PermutationGroup(permutations);
 
   // Create irrep with K momentum
   idx_t sum_of_dims = 0;
@@ -136,8 +136,8 @@ TEST_CASE("tj_symmetric", "[models]") {
       {"Y.C1.A", 6}};
 
   std::string lfile = "data/triangular.9.Jz1Jz2Jx1Jx2D1.sublattices.tsl.lat";
-  auto permutations = read_permutations(lfile);
-  auto space_group = SpaceGroup<uint16>(permutations);
+  auto permutations = hydra::utils::read_permutations(lfile);
+  auto space_group = PermutationGroup(permutations);
 
   idx_t sum_dim = 0;
   for (int nup = 0; nup <= n_sites; ++nup) {
