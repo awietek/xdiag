@@ -30,7 +30,7 @@ void do_down_flips(bit_t up, idx_t idx_up, bit_t flipmask, bit_t spacemask,
 
   for (auto dn : Combinations(n_sites, n_dn)) {
 
-    if (dn & dnmask) {
+    if ((dn & flipmask) == dnmask) {
       bit_t dn_flip = dn ^ flipmask;
       idx_t idx_out = idx_out_offset + block.lintable_dn().index(dn_flip);
 

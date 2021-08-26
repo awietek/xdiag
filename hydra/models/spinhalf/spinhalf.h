@@ -5,7 +5,7 @@
 
 namespace hydra {
 
-template <class bit_t> class Spinhalf {
+template <class bit_t=std_bit_t> class Spinhalf {
 public:
   Spinhalf() = default;
   Spinhalf(int n_sites, int n_up);
