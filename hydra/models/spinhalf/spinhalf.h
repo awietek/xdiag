@@ -5,7 +5,7 @@
 
 namespace hydra {
 
-template <class bit_t=std_bit_t> class Spinhalf {
+template <class bit_t = std_bit_t> class Spinhalf {
 public:
   Spinhalf() = default;
   Spinhalf(int n_sites, int n_up);
@@ -13,15 +13,13 @@ public:
   inline int n_sites() const { return n_sites_; }
 
   inline bool sz_conserved() const { return sz_conserved_; }
-  inline int sz() const {return sz_; }
+  inline int sz() const { return sz_; }
   inline int n_up() const { return n_up_; }
   inline int n_dn() const { return n_dn_; }
-  
+
   inline idx_t size() const { return size_; }
 
-  inline idx_t index(bit_t spins) const {
-    return lintable_.index(spins);
-  }
+  inline idx_t index(bit_t spins) const { return lintable_.index(spins); }
 
   bool operator==(Spinhalf const &rhs) const;
   bool operator!=(Spinhalf const &rhs) const;

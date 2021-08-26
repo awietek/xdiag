@@ -10,7 +10,7 @@
 
 namespace hydra {
 
-template <class bit_t> class SpinhalfMPI {
+template <class bit_t = std_bit_t> class SpinhalfMPI {
 public:
   SpinhalfMPI() = default;
   SpinhalfMPI(int n_sites, int n_up);
