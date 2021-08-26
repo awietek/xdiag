@@ -37,6 +37,18 @@ void test_symmetric_apply(BondList bondlist, Couplings couplings,
           double e0_app = E0Cplx(bondlist, couplings, block);
           // lila::Log.out("e0_mat: {}, e0_app: {}", e0_mat, e0_app);
           REQUIRE(std::abs(e0_mat - e0_app) < 1e-7);
+
+
+	  // Compute eigenvalues with real arithmitic
+	  if (is_real(block.irrep())) {
+	    auto H_real = MatrixReal(bondlist, couplings, block, block);
+	    auto evals_mat_real = lila::EigenvaluesSym(H_real);
+	    REQUIRE(lila::close(evals_mat_real, evals_mat));
+
+	    double e0_mat_real = evals_mat_real(0);
+	    double e0_app_real = E0Real(bondlist, couplings, block);
+	    REQUIRE(std::abs(e0_mat_real - e0_app_real) < 1e-7);
+	  }
         }
       }
     }

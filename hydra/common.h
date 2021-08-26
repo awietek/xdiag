@@ -27,6 +27,13 @@ template <class T> constexpr bool is_complex() {
   return is_complex_t<T>::value;
 }
 
+template <class coeff_t> inline coeff_t complex_to(complex const &cplx) {
+  if constexpr (is_complex<coeff_t>())
+    return cplx;
+  else
+    return lila::real(cplx);
+}
+
 constexpr idx_t invalid_index = -1;
 constexpr bool index_not_found(idx_t idx) { return idx < 0; }
 constexpr bool index_valid(idx_t idx) { return idx >= 0; }

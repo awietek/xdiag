@@ -124,4 +124,13 @@ Representation read_represenation(std::string filename, std::string repname) {
   return Representation();
 }
 
+bool is_complex(Representation const &rep) {
+  for (int i = 0; i < rep.size(); ++i) {
+    if (!lila::close(lila::imag(rep.character(i)), 0.0))
+      return true;
+  }
+  return false;
+}
+bool is_real(Representation const &rep) { return !is_complex(rep); }
+
 } // namespace hydra

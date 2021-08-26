@@ -53,4 +53,18 @@ TypeCoupling type_coupling(const Bond &bond) {
   return TypeCoupling(bond.type(), bond.coupling());
 }
 
+bool is_complex(Bond const &bond) {
+  if (std::find(complex_bond_types.begin(),
+                complex_bond_types.end(),
+                bond.type()) != complex_bond_types.end()) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+bool is_real(Bond const &bond) {
+  return !is_complex(bond);
+}
+
 } // namespace hydra

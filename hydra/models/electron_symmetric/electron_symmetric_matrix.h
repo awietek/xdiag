@@ -10,6 +10,12 @@
 namespace hydra {
 
 template <class bit_t, class GroupAction>
+lila::Matrix<double>
+MatrixReal(BondList const &bonds, Couplings const &couplings,
+           ElectronSymmetric<bit_t, GroupAction> const &block_in,
+           ElectronSymmetric<bit_t, GroupAction> const &block_out);
+  
+template <class bit_t, class GroupAction>
 lila::Matrix<complex>
 MatrixCplx(BondList const &bonds, Couplings const &couplings,
            ElectronSymmetric<bit_t, GroupAction> const &block_in,

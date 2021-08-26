@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 
+#include <hydra/operators/bond_types.h>
 #include <hydra/parameters/parameters.h>
 
 namespace hydra {
@@ -20,7 +21,7 @@ public:
   inline int size() const { return (int)sites_.size(); }
   inline bool has_parameters() const { return has_parameters_; }
   inline Parameters parameters() const { return parameters_; }
-  inline int operator[](int j) const {return site(j); }
+  inline int operator[](int j) const { return site(j); }
 
 private:
   std::string type_;
@@ -49,6 +50,9 @@ std::ostream &operator<<(std::ostream &out, const TypeCoupling &tc);
 
 bool operator==(const TypeCoupling &tc1, const TypeCoupling &tc2);
 
-TypeCoupling type_coupling(const Bond &bond);
+TypeCoupling type_coupling(Bond const &bond);
+
+bool is_complex(Bond const &bond);
+bool is_real(Bond const &bond);
 
 } // namespace hydra
