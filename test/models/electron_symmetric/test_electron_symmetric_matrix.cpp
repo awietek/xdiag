@@ -55,6 +55,7 @@ void test_symmetric_spectra(BondList bondlist, Couplings couplings,
         std::sort(eigs_sym.begin(), eigs_sym.end());
 
         // Check if all eigenvalues agree
+	// lila::Log.out("{} {} {}", nup, ndn, eigs_sym(0));
         REQUIRE(lila::close(eigs_sym, eigs_nosym));
       }
     }
@@ -64,12 +65,20 @@ void test_symmetric_spectra(BondList bondlist, Couplings couplings,
 template <class bit_t>
 void test_hubbard_symmetric_spectrum_chains(int n_sites) {
   using namespace hydra::testcases::electron;
+
+  // Without Heisenberg term
   lila::Log.out("Hubbard chain, symmetric spectra test, n_sites: {}", n_sites);
-  auto [bondlist, couplings] = get_linear_chain(n_sites, 1.0, 5.0);
   auto [space_group, irreps, multiplicities] =
       get_cyclic_group_irreps_mult<bit_t>(n_sites);
-  test_symmetric_spectra<uint16>(bondlist, couplings, space_group, irreps,
-                                 multiplicities);
+  auto [bondlist, couplings] = get_linear_chain(n_sites, 1.0, 5.0);
+  test_symmetric_spectra<bit_t>(bondlist, couplings, space_group, irreps,
+                                multiplicities);
+
+  // With Heisenberg term
+  lila::Log.out("Hubbard chain, symmetric spectra test, n_sites: {} (+ Heisenberg terms)", n_sites);
+  auto [bondlist_hb, couplings_hb] = get_linear_chain_hb(n_sites, 1.0, 5.0, 0.4);
+  test_symmetric_spectra<bit_t>(bondlist_hb, couplings_hb, space_group, irreps,
+                                multiplicities);
 }
 
 TEST_CASE("electron_symmetric_matrix", "[models]") {
@@ -155,6 +164,17 @@ TEST_CASE("electron_symmetric_matrix", "[models]") {
     multiplicities.push_back(mult);
   }
   test_symmetric_spectra<bit_t>(bondlist, couplings, space_group, irreps,
+                                multiplicities);
+
+
+  // test a 3x3 triangular lattice with Heisenberg terms
+  lila::Log.out("Hubbard 3x3 triangular, symmetric spectra test (+ Heisenberg terms)");
+  auto bondlist_hb = bondlist;
+  for (auto bond : bondlist) {
+    bondlist_hb << Bond("HB", "J", {bond[0], bond[1]});
+  }
+  couplings["J"] = 0.4;
+  test_symmetric_spectra<bit_t>(bondlist_hb, couplings, space_group, irreps,
                                 multiplicities);
 
 }

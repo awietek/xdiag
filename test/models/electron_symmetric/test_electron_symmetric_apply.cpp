@@ -45,10 +45,20 @@ void test_symmetric_apply(BondList bondlist, Couplings couplings,
 
 template <class bit_t> void test_hubbard_symmetric_apply_chains(int n_sites) {
   using namespace hydra::testcases::electron;
+
+  // Without Heisenberg term
   lila::Log.out("Hubbard chain, symmetric apply test, n_sites: {}", n_sites);
   auto [bondlist, couplings] = get_linear_chain(n_sites, 1.0, 5.0);
   auto [space_group, irreps] = get_cyclic_group_irreps<bit_t>(n_sites);
   test_symmetric_apply<uint16>(bondlist, couplings, space_group, irreps);
+
+  // With Heisenberg term
+  lila::Log.out(
+      "Hubbard chain, symmetric spectra test, n_sites: {} (+ Heisenberg terms)",
+      n_sites);
+  auto [bondlist_hb, couplings_hb] =
+      get_linear_chain_hb(n_sites, 1.0, 5.0, 0.4);
+  test_symmetric_apply<bit_t>(bondlist_hb, couplings_hb, space_group, irreps);
 }
 
 TEST_CASE("electron_symmetric_apply", "[models]") {
@@ -82,4 +92,14 @@ TEST_CASE("electron_symmetric_apply", "[models]") {
     irreps.push_back(read_represenation(lfile, name));
   }
   test_symmetric_apply<bit_t>(bondlist, couplings, space_group, irreps);
+
+  // test a 3x3 triangular lattice with Heisenberg terms
+  lila::Log.out(
+      "Hubbard 3x3 triangular, symmetric apply test (+ Heisenberg terms)");
+  auto bondlist_hb = bondlist;
+  for (auto bond : bondlist) {
+    bondlist_hb << Bond("HB", "J", {bond[0], bond[1]});
+  }
+  couplings["J"] = 0.4;
+  test_symmetric_apply<bit_t>(bondlist_hb, couplings, space_group, irreps);
 }

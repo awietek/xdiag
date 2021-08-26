@@ -16,10 +16,11 @@ public:
   inline std::string type() const { return type_; }
   inline std::string coupling() const { return coupling_; }
   inline std::vector<int> sites() const { return sites_; }
-  inline int site(int j) const { return sites_[j]; }
+  inline int site(int j) const { return sites_.at(j); }
   inline int size() const { return (int)sites_.size(); }
   inline bool has_parameters() const { return has_parameters_; }
   inline Parameters parameters() const { return parameters_; }
+  inline int operator[](int j) const {return site(j); }
 
 private:
   std::string type_;

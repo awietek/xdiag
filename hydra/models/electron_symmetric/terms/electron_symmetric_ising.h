@@ -57,26 +57,28 @@ void do_ising_symmetric(BondList const &bonds, Couplings const &couplings,
         idx_t lower = lower_upper.first;
         idx_t upper = lower_upper.second;
 
-        if (popcnt(up & mask) == 2) { // both spins pointing up
+        if ((up & mask) == mask) { // both spins pointing up
           for (idx_t idx = lower; idx < upper; ++idx) {
-            fill(idx, idx, val_same);
+            bit_t dn = block.dns_[idx];
+            if (!(dn & mask))
+              fill(idx, idx, val_same);
           }
         } else if (up & s1mask) { // s1 is pointing up
           for (idx_t idx = lower; idx < upper; ++idx) {
             bit_t dn = block.dns_[idx];
-            if (dn & s2mask)
+            if ((dn & mask) == s2mask)
               fill(idx, idx, val_diff);
           }
         } else if (up & s2mask) { // s2 is pointing up
           for (idx_t idx = lower; idx < upper; ++idx) {
             bit_t dn = block.dns_[idx];
-            if (dn & s1mask)
+            if ((dn & mask) == s1mask)
               fill(idx, idx, val_diff);
           }
         } else { // no upspins
           for (idx_t idx = lower; idx < upper; ++idx) {
             bit_t dn = block.dns_[idx];
-            if (popcnt(dn & mask) == 2)
+            if ((dn & mask) == mask)
               fill(idx, idx, val_same);
           }
         }

@@ -42,7 +42,7 @@ void do_down_flips(bit_t up, idx_t idx_up, bit_t mask, bit_t spacemask,
   for (idx_t idx_in = dn_lower; idx_in < dn_upper; ++idx_in) {
     bit_t dn = block.dns_[idx_in];
 
-    if (dn & dnmask) {
+    if ((dn & mask) == dnmask) {
       // Compute flipped representative and symmetry leading to it
       bit_t dn_flip = dn ^ mask;
       bit_t dn_rep = group_action.apply(stable_syms[0], dn_flip);
