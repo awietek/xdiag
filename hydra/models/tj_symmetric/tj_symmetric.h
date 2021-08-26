@@ -13,8 +13,8 @@ template <class bit_t = std_bit_t, class GroupAction = PermutationGroupAction>
 class tJSymmetric {
 public:
   tJSymmetric() = default;
-  tJSymmetric(int n_sites, int charge, int sz, PermutationGroup permutation_group,
-              Representation irrep);
+  tJSymmetric(int n_sites, int charge, int sz,
+              PermutationGroup permutation_group, Representation irrep);
 
   inline int n_sites() const { return n_sites_; }
   inline int n_up() const { return n_up_; }
@@ -22,7 +22,9 @@ public:
   inline bool charge_conserved() const { return charge_conserved_; }
   inline bool sz_conserved() const { return sz_conserved_; }
 
-  inline PermutationGroup const &permutation_group() const { return permutation_group_; }
+  inline PermutationGroup const &permutation_group() const {
+    return permutation_group_;
+  }
   inline GroupAction const &group_action() const { return group_action_; }
   inline Representation const &irrep() const { return irrep_; }
 
