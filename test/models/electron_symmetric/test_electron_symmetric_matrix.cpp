@@ -156,4 +156,5 @@ TEST_CASE("electron_symmetric_matrix", "[models]") {
   }
   test_symmetric_spectra<bit_t>(bondlist, couplings, space_group, irreps,
                                 multiplicities);
+
 }

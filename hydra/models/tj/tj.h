@@ -5,7 +5,7 @@
 
 namespace hydra {
 
-template <class bit_t> class tJ {
+template <class bit_t=std_bit_t> class tJ {
 public:
   tJ() = default;
   tJ(int n_sites, int nup, int ndn);

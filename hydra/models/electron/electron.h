@@ -9,7 +9,7 @@
 
 namespace hydra {
 
-template <class bit_t> class Electron {
+template <class bit_t = std_bit_t> class Electron {
 public:
   Electron() = default;
   Electron(int n_sites, int nup, int ndn);
@@ -18,8 +18,8 @@ public:
   inline int n_up() const { return n_up_; }
   inline int n_dn() const { return n_dn_; }
 
-  inline LinTable<bit_t> const& lintable_up() const { return lintable_up_; }
-  inline LinTable<bit_t> const& lintable_dn() const { return lintable_dn_; }
+  inline LinTable<bit_t> const &lintable_up() const { return lintable_up_; }
+  inline LinTable<bit_t> const &lintable_dn() const { return lintable_dn_; }
 
   inline bool charge_conserved() const { return charge_conserved_; }
   inline bool sz_conserved() const { return sz_conserved_; }
@@ -53,7 +53,6 @@ private:
   idx_t size_up_;
   idx_t size_dn_;
   idx_t size_;
-
 };
 
 } // namespace hydra

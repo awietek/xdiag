@@ -59,21 +59,23 @@ void do_ising(BondList const &bonds, Couplings const &couplings,
       idx_t idx = 0;
       for (auto up : Combinations<bit_t>(n_sites, n_up)) {
 
-        if (popcnt(up & mask) == 2) { // both spins pointing up
-	  idx_t end = idx + combinatorics::binomial(n_sites, n_dn);
-          for (; idx<end; ++idx) {
-            fill(idx, idx, val_same);
+        if ((up & mask) == mask) { // both spins pointing up
+          for (bit_t dn : Combinations<bit_t>(n_sites, n_dn)) {
+            if (!(dn & mask)) {
+              fill(idx, idx, val_same);
+            }
+            ++idx;
           }
         } else if (up & s1mask) { // s1 is pointing up
           for (bit_t dn : Combinations<bit_t>(n_sites, n_dn)) {
-            if (dn & s2mask) {
+            if ((dn & mask) == s2mask) {
               fill(idx, idx, val_diff);
             }
             ++idx;
           }
         } else if (up & s2mask) { // s2 is pointing up
           for (bit_t dn : Combinations<bit_t>(n_sites, n_dn)) {
-            if (dn & s1mask) {
+            if ((dn & mask) == s1mask) {
               fill(idx, idx, val_diff);
             }
             ++idx;
@@ -81,15 +83,14 @@ void do_ising(BondList const &bonds, Couplings const &couplings,
 
         } else { // no upspins
           for (bit_t dn : Combinations<bit_t>(n_sites, n_dn)) {
-            if (popcnt(dn & mask) == 2) {
+            if ((dn & mask) == mask) {
               fill(idx, idx, val_same);
             }
             ++idx;
           }
         }
 
-      }  // for (auto up : ...)
-
+      } // for (auto up : ...)
     }
   }
 }

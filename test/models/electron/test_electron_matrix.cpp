@@ -2,7 +2,9 @@
 
 #include <iostream>
 
+#include "../spinhalf/testcases_spinhalf.h"
 #include "testcases_electron.h"
+
 #include <hydra/all.h>
 
 using namespace hydra;
@@ -140,12 +142,12 @@ TEST_CASE("electron_matrix", "[models]") {
 
         auto block3 = Electron<uint32>(n_sites, nup, ndn);
         auto Hr = MatrixReal(bondlist, couplings, block3, block3);
-	REQUIRE(lila::close(Hr, lila::Herm(Hr)));
+        REQUIRE(lila::close(Hr, lila::Herm(Hr)));
         auto evecsr = lila::EigenvaluesSym(Hr);
         auto Hc = MatrixCplx(bondlist, couplings, block3, block3);
-	REQUIRE(lila::close(Hc, lila::Herm(Hc)));
+        REQUIRE(lila::close(Hc, lila::Herm(Hc)));
         auto evecsc = lila::EigenvaluesSym(Hc);
-	REQUIRE(lila::close(evecsr, evecsc));
+        REQUIRE(lila::close(evecsr, evecsc));
         double e0 = evecsr(0);
         // printf("nup: %d, ndn: %d, dim: %d, e0: %f, e0_exact: %f\n", nup, ndn,
         //        (int)evecs.size(), e0, e0_exact);
@@ -184,7 +186,6 @@ TEST_CASE("electron_matrix", "[models]") {
     }
     auto seigs_dn = lila::EigenvaluesSym(Hs_dn);
 
-    
     for (int nup = 0; nup <= n_sites; ++nup)
       for (int ndn = 0; ndn <= n_sites; ++ndn) {
 
@@ -197,53 +198,74 @@ TEST_CASE("electron_matrix", "[models]") {
 
         auto block3 = Electron<uint32>(n_sites, nup, ndn);
         auto H = MatrixCplx(bondlist, couplings, block3, block3);
-	REQUIRE(lila::close(H, lila::Herm(H)));
+        REQUIRE(lila::close(H, lila::Herm(H)));
         auto evecs = lila::EigenvaluesSym(H);
         double e0 = evecs(0);
         // printf("nup: %d, ndn: %d, dim: %d, e0: %f, e0_exact: %f\n", nup, ndn,
-        //        (int)evecs.size(), e0, e0_exact); 
+        //        (int)evecs.size(), e0, e0_exact);
         REQUIRE(lila::close(e0_exact, e0));
       }
   }
 
-  // /////////////////////////////////////////////////////
-  // // Henry's MATLAB code test (need Heisenberg terms)
-  // printf("HubbardModel: testing full spectrum of Henry's Matlab code\n");
+  // Test Heisenberg terms at half-filling
+  for (int n_sites = 2; n_sites <= 6; ++n_sites) {
+    lila::Log.out("Electron: Heisenberg all-to-all comparison, N={}",
+    n_sites);
 
-  // lila::Vector<double> eigs_correct;
-  // std::tie(bondlist, couplings, eigs_correct) = randomAlltoAll4NoU();
+    int nup = n_sites / 2;
+    int ndn = n_sites - nup;
+    auto block_spinhalf = Spinhalf(n_sites, nup);
+    auto block_electron = Electron(n_sites, nup, ndn);
 
-  // // Compute full spectrum in hydra
-  // n_sites = 4;
-  // lila::Vector<double> all_eigs;
-  // for (int nup = 0; nup <= n_sites; ++nup)
-  //   for (int ndn = 0; ndn <= n_sites; ++ndn) {
-  //     auto block = Electron<uint16>(n_sites, nup, ndn);
-  //     auto H = matrix_real(bondlist, couplings, block, block);
-  //     LilaPrint(H);
-  //     REQUIRE(lila::close(H, lila::Herm(H)));
-  //     auto eigs = lila::EigenvaluesSym(H);
-  //     for (auto eig : eigs)
-  //       all_eigs.push_back(eig);
-  //   }
-  // std::sort(all_eigs.begin(), all_eigs.end());  
-  // LilaPrint(all_eigs);
-  // LilaPrint(eigs_correct);
-  // REQUIRE(lila::close(all_eigs, eigs_correct));
+    auto [bonds, couplings] = testcases::spinhalf::HB_alltoall(n_sites);
+    couplings["U"] = 99999; // gap out doubly occupied sites
+    auto H_spinhalf =
+        MatrixReal(bonds, couplings, block_spinhalf, block_spinhalf);
+    auto H_electron =
+        MatrixReal(bonds, couplings, block_electron, block_electron);
+    REQUIRE(lila::close(H_spinhalf, lila::Herm(H_spinhalf)));
+    REQUIRE(lila::close(H_electron, lila::Herm(H_electron)));
 
-  // std::tie(bondlist, couplings, eigs_correct) = randomAlltoAll4();
-  // all_eigs.clear();
-  // for (int nup = 0; nup <= n_sites; ++nup)
-  //   for (int ndn = 0; ndn <= n_sites; ++ndn) {
-  //     auto block = Electron<uint16>(n_sites, nup, ndn);
-  //     auto H = matrix_real(bondlist, couplings, block, block);
-  //     REQUIRE(lila::close(H, lila::Herm(H)));
-  //     auto eigs = lila::EigenvaluesSym(H);
-  //     for (auto eig : eigs)
-  //       all_eigs.push_back(eig);
-  //   }
-  // std::sort(all_eigs.begin(), all_eigs.end());  
+    auto eigs_spinhalf = lila::EigenvaluesSym(H_spinhalf);
+    auto eigs_electron = lila::EigenvaluesSym(H_electron);
+    for (int idx = 0; idx < eigs_spinhalf.size(); ++idx)
+      REQUIRE(std::abs(eigs_spinhalf(idx) - eigs_electron(idx)) < 1e-5);
+  }
 
-  // REQUIRE(lila::close(all_eigs, eigs_correct));
+  /////////////////////////////////////////////////////
+  // Henry's MATLAB code test (tests Heisenberg terms)
+  printf("Electron: U-hopping-HB full spectrum of Henry's Matlab code\n");
 
+  lila::Vector<double> eigs_correct;
+  std::tie(bondlist, couplings, eigs_correct) = randomAlltoAll4NoU();
+
+  // Compute full spectrum in hydra
+  n_sites = 4;
+  lila::Vector<double> all_eigs;
+  for (int nup = 0; nup <= n_sites; ++nup)
+    for (int ndn = 0; ndn <= n_sites; ++ndn) {
+      auto block = Electron(n_sites, nup, ndn);
+      auto H = MatrixReal(bondlist, couplings, block, block);
+      REQUIRE(lila::close(H, lila::Herm(H)));
+      auto eigs = lila::EigenvaluesSym(H);
+      for (auto eig : eigs)
+        all_eigs.push_back(eig);
+    }
+  std::sort(all_eigs.begin(), all_eigs.end());
+  REQUIRE(lila::close(all_eigs, eigs_correct));
+
+  std::tie(bondlist, couplings, eigs_correct) = randomAlltoAll4();
+  all_eigs.clear();
+  for (int nup = 0; nup <= n_sites; ++nup)
+    for (int ndn = 0; ndn <= n_sites; ++ndn) {
+
+      auto block = Electron(n_sites, nup, ndn);
+      auto H = MatrixReal(bondlist, couplings, block, block);
+      REQUIRE(lila::close(H, lila::Herm(H)));
+      auto eigs = lila::EigenvaluesSym(H);
+      for (auto eig : eigs)
+        all_eigs.push_back(eig);
+    }
+  std::sort(all_eigs.begin(), all_eigs.end());
+  REQUIRE(lila::close(all_eigs, eigs_correct));
 }
