@@ -40,6 +40,18 @@ void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
       int u = std::max(s1, s2);
       bit_t spacemask = (((bit_t)1 << (u - l - 1)) - 1) << (l + 1);
 
+      // Define hopping amplitude
+      coeff_t t = 0;
+      coeff_t tconj = 0;
+      if constexpr (is_complex<coeff_t>()) {
+        t = couplings[cpl];
+        tconj = lila::conj(t);
+      } else {
+        t = lila::real(couplings[cpl]);
+        tconj = lila::real(couplings[cpl]);
+      }
+      coeff_t val = 0;
+
       // Apply hoppings on dnspins
       if ((hop.type() == "HOP") || (hop.type() == "HOPDN")) {
 
@@ -65,14 +77,17 @@ void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
                 // if a state has been found
                 if ((it != end_up) && (*it == dn_flip)) {
                   idx_t idx_out = std::distance(begin_up, it) + lower;
-
-                  coeff_t t = (gbit(dn, s1)) ? couplings[cpl]
-                                             : lila::conj(couplings[cpl]);
                   double fermi_hop = popcnt(dn & spacemask) & 1 ? -1. : 1.;
-                  coeff_t val =
-                      -t * fermi_hop * block.norm(idx_out) / block.norm(idx);
 
-                  // mat(idx_out, idx) += val;
+                  // Complex conjugate t if necessary
+                  if constexpr (is_complex<coeff_t>()) {
+                    val = -(gbit(dn, s1) ? t : tconj) * fermi_hop *
+                          block.norm(idx_out) / block.norm(idx);
+                  } else {
+                    val =
+                        -t * fermi_hop * block.norm(idx_out) / block.norm(idx);
+                  }
+
                   fill(idx_out, idx, val);
                 }
               }
@@ -103,18 +118,23 @@ void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
                 if ((it != end_up) && (*it == dn_flip_rep)) {
                   idx_t idx_out = std::distance(begin_up, it) + lower;
 
-                  coeff_t t = (gbit(dn, s1)) ? couplings[cpl]
-                                             : lila::conj(couplings[cpl]);
                   double fermi_hop = popcnt(dn & spacemask) & 1 ? -1. : 1.;
                   double fermi_up =
                       group_action.fermi_sign(dn_flip_rep_sym, up);
                   double fermi_dn =
                       group_action.fermi_sign(dn_flip_rep_sym, dn_flip);
-                  coeff_t val = -t * fermi_hop * fermi_up * fermi_dn *
-                                irrep.character(dn_flip_rep_sym) *
-                                block.norm(idx_out) / block.norm(idx);
 
-                  // mat(idx_out, idx) += val;
+                  // Complex conjugate t if necessary
+                  if constexpr (is_complex<coeff_t>()) {
+                    val = -(gbit(dn, s1) ? t : tconj) * fermi_hop * fermi_up *
+                          fermi_dn * irrep.character(dn_flip_rep_sym) *
+                          block.norm(idx_out) / block.norm(idx);
+                  } else {
+                    val = -t * fermi_hop * fermi_up * fermi_dn *
+                          lila::real(irrep.character(dn_flip_rep_sym)) *
+                          block.norm(idx_out) / block.norm(idx);
+                  }
+
                   fill(idx_out, idx, val);
                 }
               }
@@ -143,7 +163,8 @@ void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
               if (popcnt(up & flipmask) == 1) {
                 bit_t up_flip = up ^ flipmask;
                 idx_t idx_in = block.index_switch_to_index(idx);
-                coeff_t chi_switch_in = block.character_switch_[idx];
+                coeff_t chi_switch_in =
+                    complex_to<coeff_t>(block.character_switch_[idx]);
 
                 // Look for index of up_flip
                 auto it = std::lower_bound(begin_dn, end_dn, up_flip);
@@ -153,15 +174,20 @@ void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
                   idx_t idx_out_switch = std::distance(begin_dn, it) + lower;
                   idx_t idx_out = block.index_switch_to_index(idx_out_switch);
 
-                  coeff_t t = (gbit(up, s1)) ? couplings[cpl]
-                                             : lila::conj(couplings[cpl]);
                   double fermi_hop = popcnt(up & spacemask) & 1 ? -1. : 1.;
-                  coeff_t chi_switch_out =
-                      block.character_switch_[idx_out_switch];
-                  coeff_t val = -t * fermi_hop * lila::conj(chi_switch_in) *
-                                chi_switch_out * block.norm(idx_out) /
-                                block.norm(idx_in);
-                  // mat(idx_out, idx_in) += val;
+                  coeff_t chi_switch_out = complex_to<coeff_t>(
+                      block.character_switch_[idx_out_switch]);
+
+                  // Complex conjugate t if necessary
+                  if constexpr (is_complex<coeff_t>()) {
+                    val = -(gbit(dn, s1) ? t : tconj) * fermi_hop *
+                          lila::conj(chi_switch_in) * chi_switch_out *
+                          block.norm(idx_out) / block.norm(idx_in);
+                  } else {
+                    val = -t * fermi_hop * chi_switch_in * chi_switch_out *
+                          block.norm(idx_out) / block.norm(idx_in);
+                  }
+
                   fill(idx_out, idx_in, val);
                 }
               }
@@ -174,7 +200,8 @@ void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
               if (popcnt(up & flipmask) == 1) {
                 bit_t up_flip = up ^ flipmask;
                 idx_t idx_in = block.index_switch_to_index(idx);
-                coeff_t chi_switch_in = block.character_switch_[idx];
+                coeff_t chi_switch_in =
+                    complex_to<coeff_t>(block.character_switch_[idx]);
 
                 // Determine the dn representative from stable symmetries
                 bit_t up_flip_rep = up_flip;
@@ -195,21 +222,26 @@ void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
                   idx_t idx_out_switch = std::distance(begin_dn, it) + lower;
                   idx_t idx_out = block.index_switch_to_index(idx_out_switch);
 
-                  coeff_t t = (gbit(up, s1)) ? couplings[cpl]
-                                             : lila::conj(couplings[cpl]);
                   double fermi_hop = popcnt(up & spacemask) & 1 ? -1. : 1.;
                   double fermi_up =
                       group_action.fermi_sign(up_flip_rep_sym, up_flip);
                   double fermi_dn =
                       group_action.fermi_sign(up_flip_rep_sym, dn);
-                  coeff_t chi_switch_out =
-                      block.character_switch_[idx_out_switch];
-                  coeff_t val = -t * fermi_hop * fermi_up * fermi_dn *
-                                irrep.character(up_flip_rep_sym) *
-                                lila::conj(chi_switch_in) * chi_switch_out *
-                                block.norm(idx_out) / block.norm(idx_in);
+                  coeff_t chi_switch_out = complex_to<coeff_t>(
+                      block.character_switch_[idx_out_switch]);
 
-                  // mat(idx_out, idx_in) += val;
+                  // Complex conjugate t if necessary
+                  if constexpr (is_complex<coeff_t>()) {
+                    val = -(gbit(dn, s1) ? t : tconj) * fermi_hop * fermi_up *
+                          fermi_dn * irrep.character(up_flip_rep_sym) *
+                          lila::conj(chi_switch_in) * chi_switch_out *
+                          block.norm(idx_out) / block.norm(idx_in);
+                  } else {
+                    val = -t * fermi_hop * fermi_up * fermi_dn *
+                          lila::real(irrep.character(up_flip_rep_sym)) *
+                          chi_switch_in * chi_switch_out * block.norm(idx_out) /
+                          block.norm(idx_in);
+                  }
                   fill(idx_out, idx_in, val);
                 }
               }

@@ -13,7 +13,7 @@
 
 namespace hydra::electron {
 
-template <class bit_t, class Filler, class GroupAction>
+template <class bit_t, class coeff_t, class Filler, class GroupAction>
 void do_down_flips(bit_t up, idx_t idx_up, bit_t mask, bit_t spacemask,
                    bit_t dnmask, double Jhalf,
                    ElectronSymmetric<bit_t, GroupAction> const &block,
@@ -71,8 +71,9 @@ void do_down_flips(bit_t up, idx_t idx_up, bit_t mask, bit_t spacemask,
       // Compute matrix element
       double fermi_up = group_action.fermi_sign(rep_sym, up_flip);
       double fermi_dn = group_action.fermi_sign(rep_sym, dn_flip);
-      auto val = Jhalf * fermi_up * fermi_dn * irrep.character(rep_sym) *
-                 block.norm(idx_out) / block.norm(idx_in);
+      coeff_t val = Jhalf * fermi_up * fermi_dn *
+                    complex_to<coeff_t>(irrep.character(rep_sym)) *
+                    block.norm(idx_out) / block.norm(idx_in);
 
       // Fermi sign for dn
       if (popcnt(dn & spacemask) & 1)
@@ -126,25 +127,25 @@ void do_exchange_symmetric(BondList const &bonds, Couplings const &couplings,
 
           // decide Fermi sign of upspins
           if (popcnt(up & spacemask) & 1)
-            do_down_flips(up, idx_up, mask, spacemask, s2mask, Jhalf, block,
-                          fill);
+            do_down_flips<bit_t, coeff_t>(up, idx_up, mask, spacemask, s2mask,
+                                          Jhalf, block, fill);
           else
-            do_down_flips(up, idx_up, mask, spacemask, s2mask, -Jhalf, block,
-                          fill);
+            do_down_flips<bit_t, coeff_t>(up, idx_up, mask, spacemask, s2mask,
+                                          -Jhalf, block, fill);
           // lower s2, raise, s1
         } else if ((up & mask) == s2mask) {
 
           // decide Fermi sign of upspins
           if (popcnt(up & spacemask) & 1)
-            do_down_flips(up, idx_up, mask, spacemask, s1mask, Jhalf, block,
-                          fill);
+            do_down_flips<bit_t, coeff_t>(up, idx_up, mask, spacemask, s1mask,
+                                          Jhalf, block, fill);
           else
-            do_down_flips(up, idx_up, mask, spacemask, s1mask, -Jhalf, block,
-                          fill);
+            do_down_flips<bit_t, coeff_t>(up, idx_up, mask, spacemask, s1mask,
+                                          -Jhalf, block, fill);
         }
         ++idx_up;
       }
     }
   }
 }
-} // namespace hydra::tj
+} // namespace hydra::electron

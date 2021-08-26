@@ -32,4 +32,7 @@ private:
 
 Representation read_represenation(std::string filename, std::string repname);
 
+bool is_complex(Representation const &cpls);
+bool is_real(Representation const &cpls);
+
 } // namespace hydra
