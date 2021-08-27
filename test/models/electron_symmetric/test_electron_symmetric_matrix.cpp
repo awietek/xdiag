@@ -76,7 +76,7 @@ void test_hubbard_symmetric_spectrum_chains(int n_sites) {
   // Without Heisenberg term
   lila::Log.out("Hubbard chain, symmetric spectra test, n_sites: {}", n_sites);
   auto [space_group, irreps, multiplicities] =
-      get_cyclic_group_irreps_mult<bit_t>(n_sites);
+      get_cyclic_group_irreps_mult(n_sites);
   auto [bondlist, couplings] = get_linear_chain(n_sites, 1.0, 5.0);
   test_symmetric_spectra<bit_t>(bondlist, couplings, space_group, irreps,
                                 multiplicities);
@@ -99,7 +99,7 @@ TEST_CASE("electron_symmetric_matrix", "[models]") {
   double U = 5.0;
   auto [bondlist, couplings] = get_linear_chain(n_sites, t, U);
   auto [space_group, irreps, multiplicities] =
-      get_cyclic_group_irreps_mult<uint16>(n_sites);
+      get_cyclic_group_irreps_mult(n_sites);
   for (int k = 0; k < (int)irreps.size(); ++k) {
     auto irrep = irreps[k];
     auto electron =

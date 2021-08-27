@@ -43,18 +43,16 @@ void test_symmetric_apply(BondList bondlist, Couplings couplings,
           // lila::Log.out("e0_mat: {}, e0_app: {}", e0_mat, e0_app);
           REQUIRE(std::abs(e0_mat - e0_app) < 1e-7);
 
+          // Compute eigenvalues with real arithmitic
+          if (is_real(block.irrep())) {
+            auto H_real = MatrixReal(bondlist, couplings, block, block);
+            auto evals_mat_real = lila::EigenvaluesSym(H_real);
+            REQUIRE(lila::close(evals_mat_real, evals_mat));
 
-	  // Compute eigenvalues with real arithmitic
-	  if (is_real(block.irrep())) {
-	    auto H_real = MatrixReal(bondlist, couplings, block, block);
-	    auto evals_mat_real = lila::EigenvaluesSym(H_real);
-	    REQUIRE(lila::close(evals_mat_real, evals_mat));
-
-	    double e0_mat_real = evals_mat_real(0);
-	    double e0_app_real = E0Real(bondlist, couplings, block);
-	    REQUIRE(std::abs(e0_mat_real - e0_app_real) < 1e-7);
-	  }
-
+            double e0_mat_real = evals_mat_real(0);
+            double e0_app_real = E0Real(bondlist, couplings, block);
+            REQUIRE(std::abs(e0_mat_real - e0_app_real) < 1e-7);
+          }
         }
       }
     }
@@ -68,7 +66,7 @@ template <class bit_t> void test_tj_symmetric_apply_chains(int n_sites) {
   lila::Log.out("Tj chain, symmetric apply test, n_sites: {}", n_sites);
   auto [bondlist, couplings] = tJchain(n_sites, 1.0, 5.0);
   auto [space_group, irreps, multiplicities] =
-      get_cyclic_group_irreps_mult<bit_t>(n_sites);
+      get_cyclic_group_irreps_mult(n_sites);
   test_symmetric_apply<uint16>(bondlist, couplings, space_group, irreps);
 }
 

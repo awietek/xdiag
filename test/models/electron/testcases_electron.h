@@ -11,11 +11,9 @@ std::tuple<BondList, Couplings> get_linear_chain(int n_sites, double t,
 std::tuple<BondList, Couplings> get_linear_chain_hb(int n_sites, double t,
 						    double U, double J);
 
-template <class bit_t>
 std::tuple<PermutationGroup, std::vector<Representation>>
 get_cyclic_group_irreps(int n_sites);
 
-template <class bit_t>
 std::tuple<PermutationGroup, std::vector<Representation>, std::vector<int>>
 get_cyclic_group_irreps_mult(int n_sites);
 
