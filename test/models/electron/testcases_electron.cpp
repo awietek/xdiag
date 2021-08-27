@@ -30,7 +30,6 @@ std::tuple<BondList, Couplings> get_linear_chain_hb(int n_sites, double t,
   return {bondlist, couplings};
 }
 
-template <class bit_t>
 std::tuple<PermutationGroup, std::vector<Representation>>
 get_cyclic_group_irreps(int n_sites) {
   // Create cyclic group as space group
@@ -58,14 +57,7 @@ get_cyclic_group_irreps(int n_sites) {
   return {space_group, irreps};
 }
 
-template std::tuple<PermutationGroup, std::vector<Representation>>
-get_cyclic_group_irreps<uint16>(int n_sites);
-template std::tuple<PermutationGroup, std::vector<Representation>>
-get_cyclic_group_irreps<uint32>(int n_sites);
-template std::tuple<PermutationGroup, std::vector<Representation>>
-get_cyclic_group_irreps<uint64>(int n_sites);
 
-template <class bit_t>
 std::tuple<PermutationGroup, std::vector<Representation>, std::vector<int>>
 get_cyclic_group_irreps_mult(int n_sites) {
   // Create cyclic group as space group
@@ -95,15 +87,6 @@ get_cyclic_group_irreps_mult(int n_sites) {
   return {space_group, irreps, multiplicities};
 }
 
-template std::tuple<PermutationGroup, std::vector<Representation>,
-                    std::vector<int>>
-get_cyclic_group_irreps_mult<uint16>(int n_sites);
-template std::tuple<PermutationGroup, std::vector<Representation>,
-                    std::vector<int>>
-get_cyclic_group_irreps_mult<uint32>(int n_sites);
-template std::tuple<PermutationGroup, std::vector<Representation>,
-                    std::vector<int>>
-get_cyclic_group_irreps_mult<uint64>(int n_sites);
 
 std::tuple<BondList, Couplings> heisenberg_triangle() {
   BondList bondlist;

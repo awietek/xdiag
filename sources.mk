@@ -40,11 +40,7 @@ sources+= hydra/symmetries/permutation_group.cpp
 sources+= hydra/symmetries/permutation_group_action.cpp
 sources+= hydra/symmetries/representation.cpp
 sources+= hydra/symmetries/fermi_sign.cpp
-
-
-# sources+= hydra/symmetries/spacegroup.cpp
-# sources+= hydra/symmetries/spacegroup_operations.cpp
-# sources+= hydra/symmetries/spacegroup_operator.cpp
+sources+= hydra/symmetries/symmetric_operator.cpp
 
 
 sources+= hydra/operators/bond.cpp
@@ -83,6 +79,7 @@ testsources+= test/indexing/test_lintable.cpp
 
 testsources+= test/symmetries/test_permutation_group_action.cpp
 testsources+= test/symmetries/test_fermi_sign.cpp
+testsources+= test/symmetries/test_symmetric_operator.cpp
 
 testsources+= test/models/spinhalf/testcases_spinhalf.cpp
 testsources+= test/models/spinhalf/test_spinhalf_matrix.cpp

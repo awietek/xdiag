@@ -73,7 +73,7 @@ template <class bit_t> void test_tj_symmetric_spectrum_chains(int n_sites) {
   lila::Log.out("Tj chain, symmetric spectra test, n_sites: {}", n_sites);
   auto [bondlist, couplings] = tJchain(n_sites, 1.0, 5.0);
   auto [space_group, irreps, multiplicities] =
-      get_cyclic_group_irreps_mult<bit_t>(n_sites);
+      get_cyclic_group_irreps_mult(n_sites);
   test_symmetric_spectra<uint32>(bondlist, couplings, space_group, irreps,
                                  multiplicities);
 }

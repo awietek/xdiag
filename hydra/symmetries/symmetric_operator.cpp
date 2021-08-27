@@ -1,17 +1,32 @@
-#pragma once
-
-#include <utility>
-
-#include <hydra/operators/bondlist.h>
-#include <hydra/operators/couplings.h>
-#include <hydra/symmetries/spacegroup.h>
+#include "symmetric_operator.h"
 
 namespace hydra {
 
-template <class bit_t = std_bit_t,
-          class SpaceGroupOperator = SpaceGroupOperator<bit_t>>
 std::pair<BondList, Couplings>
 SymmetricOperator(BondList const &bonds, Couplings const &cpls,
-                  SpaceGroup const &space_group);
+                  PermutationGroup const &group) {
+  BondList bonds_sym;
+  Couplings cpls_sym;
+  int N_group = group.size();
 
+  for (auto bond : bonds) {
+
+    auto type = bond.type();
+    auto cpl = bond.coupling();
+
+    // Create all symmetrized bonds
+    for (int sym_idx = 0; sym_idx < N_group; ++sym_idx) {
+      std::vector<int> sites_sym(bond.size(), 0);
+      for (int site_idx = 0; site_idx < bond.size(); ++site_idx) {
+        sites_sym[site_idx] = group.permutation(sym_idx, bond[site_idx]);
+      }
+      bonds_sym << Bond(type, cpl, sites_sym);
+    }
+
+    cpls_sym[cpl] = cpls[cpl] / (complex)N_group;
+  }
+
+  return {bonds_sym, cpls_sym};
 }
+
+} // namespace hydra

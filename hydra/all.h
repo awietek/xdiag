@@ -43,6 +43,7 @@
 #include "symmetries/representation.h"
 #include "symmetries/fermi_sign.h"
 #include "symmetries/symmetry_utils.h"
+#include "symmetries/symmetric_operator.h"
 
 #include "operators/bond.h"
 #include "operators/bondlist.h"
@@ -51,6 +52,7 @@
 #include "wavefunctions/gpwf_spinhalf.h"
 
 #include "linalg/sparse_diag.h"
+#include "linalg/algebra.h"
 #include "linalg/lanczos/tmatrix.h"
 #include "linalg/lanczos/lanczos_generic.h"
 #include "linalg/lanczos/lanczos_convergence.h"

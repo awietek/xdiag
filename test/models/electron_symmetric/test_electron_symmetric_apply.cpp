@@ -61,7 +61,7 @@ template <class bit_t> void test_hubbard_symmetric_apply_chains(int n_sites) {
   // Without Heisenberg term
   lila::Log.out("Hubbard chain, symmetric apply test, n_sites: {}", n_sites);
   auto [bondlist, couplings] = get_linear_chain(n_sites, 1.0, 5.0);
-  auto [space_group, irreps] = get_cyclic_group_irreps<bit_t>(n_sites);
+  auto [space_group, irreps] = get_cyclic_group_irreps(n_sites);
   test_symmetric_apply<uint16>(bondlist, couplings, space_group, irreps);
 
   // With Heisenberg term

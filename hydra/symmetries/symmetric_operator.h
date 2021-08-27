@@ -4,14 +4,12 @@
 
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
-#include <hydra/symmetries/spacegroup.h>
+#include <hydra/symmetries/permutation_group.h>
 
 namespace hydra {
 
-template <class bit_t = std_bit_t,
-          class SpaceGroupOperator = SpaceGroupOperator<bit_t>>
 std::pair<BondList, Couplings>
 SymmetricOperator(BondList const &bonds, Couplings const &cpls,
-                  SpaceGroup<bit_t, SpaceGroupOperator> const &space_group);
+                  PermutationGroup const & group);
 
 }
