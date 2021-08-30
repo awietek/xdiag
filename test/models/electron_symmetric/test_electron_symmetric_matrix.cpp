@@ -46,12 +46,13 @@ void test_symmetric_spectra(BondList bondlist, Couplings couplings,
             REQUIRE(lila::close(H_sym, lila::Herm(H_sym)));
             auto eigs_sym_k = lila::EigenvaluesSym(H_sym);
 
-	    // Check whether results are the same for real blocks
-	    if (!is_complex(electron.irrep())) {
-	      auto H_sym_real = MatrixReal(bondlist, couplings, electron, electron);
-	      auto eigs_sym_k_real = lila::EigenvaluesSym(H_sym);
-	      REQUIRE(lila::close(eigs_sym_k, eigs_sym_k_real));
-	    }
+            // Check whether results are the same for real blocks
+            if (!is_complex(electron.irrep()) && !(is_complex(couplings))) {
+              auto H_sym_real =
+                  MatrixReal(bondlist, couplings, electron, electron);
+              auto eigs_sym_k_real = lila::EigenvaluesSym(H_sym);
+              REQUIRE(lila::close(eigs_sym_k, eigs_sym_k_real));
+            }
 
             // append all the eigenvalues with multiplicity
             for (auto eig : eigs_sym_k)
@@ -62,7 +63,7 @@ void test_symmetric_spectra(BondList bondlist, Couplings couplings,
         std::sort(eigs_sym.begin(), eigs_sym.end());
 
         // Check if all eigenvalues agree
-	// lila::Log.out("{} {} {}", nup, ndn, eigs_sym(0));
+        // lila::Log.out("{} {} {}", nup, ndn, eigs_sym(0));
         REQUIRE(lila::close(eigs_sym, eigs_nosym));
       }
     }
@@ -82,8 +83,11 @@ void test_hubbard_symmetric_spectrum_chains(int n_sites) {
                                 multiplicities);
 
   // With Heisenberg term
-  lila::Log.out("Hubbard chain, symmetric spectra test, n_sites: {} (+ Heisenberg terms)", n_sites);
-  auto [bondlist_hb, couplings_hb] = get_linear_chain_hb(n_sites, 1.0, 5.0, 0.4);
+  lila::Log.out(
+      "Hubbard chain, symmetric spectra test, n_sites: {} (+ Heisenberg terms)",
+      n_sites);
+  auto [bondlist_hb, couplings_hb] =
+      get_linear_chain_hb(n_sites, 1.0, 5.0, 0.4);
   test_symmetric_spectra<bit_t>(bondlist_hb, couplings_hb, space_group, irreps,
                                 multiplicities);
 }
@@ -173,9 +177,9 @@ TEST_CASE("electron_symmetric_matrix", "[models]") {
   test_symmetric_spectra<bit_t>(bondlist, couplings, space_group, irreps,
                                 multiplicities);
 
-
   // test a 3x3 triangular lattice with Heisenberg terms
-  lila::Log.out("Hubbard 3x3 triangular, symmetric spectra test (+ Heisenberg terms)");
+  lila::Log.out(
+      "Hubbard 3x3 triangular, symmetric spectra test (+ Heisenberg terms)");
   auto bondlist_hb = bondlist;
   for (auto bond : bondlist) {
     bondlist_hb << Bond("HB", "J", {bond[0], bond[1]});
@@ -184,4 +188,31 @@ TEST_CASE("electron_symmetric_matrix", "[models]") {
   test_symmetric_spectra<bit_t>(bondlist_hb, couplings, space_group, irreps,
                                 multiplicities);
 
+  // test a 3x3 triangular lattice with complex hoppings
+  {
+    lila::Log.out("Hubbard 3x3 triangular (complex), symmetric spectra test");
+    using bit_t = uint16;
+    std::string lfile =
+        "data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.lat";
+    BondList bondlist = read_bondlist(lfile);
+    Couplings couplings;
+    couplings["TPHI"] = complex(0.5, 0.5);
+    couplings["U"] = 5.0;
+    auto permutations = hydra::utils::read_permutations(lfile);
+    space_group = PermutationGroup(permutations);
+
+    std::vector<std::pair<std::string, int>> rep_name_mult = {
+        {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
+        {"K0.D3.A1", 1},    {"K0.D3.A2", 1},    {"K0.D3.E", 2},
+        {"K1.D3.A1", 1},    {"K1.D3.A2", 1},    {"K1.D3.E", 2},
+        {"Y.C1.A", 6}};
+    irreps.clear();
+    multiplicities.clear();
+    for (auto [name, mult] : rep_name_mult) {
+      irreps.push_back(read_represenation(lfile, name));
+      multiplicities.push_back(mult);
+    }
+    test_symmetric_spectra<bit_t>(bondlist, couplings, space_group, irreps,
+                                  multiplicities);
+  }
 }
