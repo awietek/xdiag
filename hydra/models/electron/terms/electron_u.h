@@ -9,7 +9,7 @@
 #include <hydra/utils/bitops.h>
 #include <hydra/combinatorics/combinations.h>
 
-namespace hydra::electron {
+namespace hydra::electronterms {
 
 template <class bit_t, class Filler>
 void do_U(Couplings const &couplings, Electron<bit_t> const &block,

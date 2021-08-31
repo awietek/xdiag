@@ -8,7 +8,7 @@
 #include <hydra/operators/couplings.h>
 #include <hydra/utils/bitops.h>
 
-namespace hydra::electron {
+namespace hydra::electronterms {
 
 template <class bit_t, class coeff_t, class Filler>
 void do_hopping(BondList const &bonds, Couplings const &couplings,

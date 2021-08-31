@@ -114,11 +114,11 @@ template <class bit_t> void test_tj_chain(int n_sites) {
   REQUIRE(sum_of_dims == pow(3, n_sites));
 }
 
-TEST_CASE("tj_symmetric", "[models]") {
+TEST_CASE("tJSymmetric", "[models]") {
 
   // Test the tJ chain
   for (int n_sites = 1; n_sites < 8; ++n_sites) {
-    lila::Log.out("tj_symmetric block test: TJChain {}", n_sites);
+    lila::Log.out("tJSymmetric block test: TJChain {}", n_sites);
 
     test_tj_chain<hydra::uint16>(n_sites);
     test_tj_chain<hydra::uint32>(n_sites);
@@ -126,7 +126,7 @@ TEST_CASE("tj_symmetric", "[models]") {
   }
 
   // test a 3x3 triangular lattice
-  lila::Log.out("tj_symmetric block test: Triangular 3x3");
+  lila::Log.out("tJSymmetric block test: Triangular 3x3");
   int n_sites = 9;
 
   std::vector<std::pair<std::string, int>> rep_name_mult = {
@@ -135,7 +135,7 @@ TEST_CASE("tj_symmetric", "[models]") {
       {"K1.D3.A1", 1},    {"K1.D3.A2", 1},    {"K1.D3.E", 2},
       {"Y.C1.A", 6}};
 
-  std::string lfile = "data/triangular.9.Jz1Jz2Jx1Jx2D1.sublattices.tsl.lat";
+  std::string lfile = "data/triangular.9.hop.sublattices.tsl.lat";
   auto permutations = hydra::utils::read_permutations(lfile);
   auto space_group = PermutationGroup(permutations);
 

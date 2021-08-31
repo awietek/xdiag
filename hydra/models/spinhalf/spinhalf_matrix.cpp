@@ -1,10 +1,9 @@
 #include "spinhalf_matrix.h"
 
-#include <hydra/combinatorics/combinations.h>
-#include <hydra/utils/bitops.h>
-
 #include <hydra/models/spinhalf/terms/spinhalf_exchange.h>
 #include <hydra/models/spinhalf/terms/spinhalf_ising.h>
+
+#include <hydra/models/utils/model_utils.h>
 
 namespace hydra {
 
@@ -13,6 +12,10 @@ lila::Matrix<double>
 MatrixReal(BondList const &bonds, Couplings const &couplings,
            Spinhalf<bit_t> const &block_in, Spinhalf<bit_t> const &block_out) {
   assert(block_in == block_out); // only temporary
+
+  utils::check_operator_real(bonds, couplings,
+                             "construct real Spinhalf matrix");
+
   idx_t dim_in = block_in.size();
   idx_t dim_out = block_out.size();
 

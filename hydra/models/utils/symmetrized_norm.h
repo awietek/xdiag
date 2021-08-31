@@ -1,17 +1,27 @@
 #pragma once
 
-#include <hydra/operators/bondlist.h>
-#include <hydra/operators/couplings.h>
-
 #include <hydra/symmetries/representation.h>
 
 namespace hydra::utils {
 
-bool coupling_is_zero(Bond const &bond, Couplings const &couplings);
+template <class bit_t, class GroupAction>
+double symmetrized_norm_spinhalf(bit_t spins, GroupAction &&group_action,
+                                 Representation const &irrep) {
+  assert(group_action.n_symmetries() == irrep.size());
+  complex amplitude = 0.0;
+  for (int sym = 0; sym < group_action.n_symmetries(); ++sym) {
+    bit_t tspins = group_action.apply(sym, spins);
+    if (tspins == spins) {
+      amplitude += irrep.character(sym);
+    }
+  }
+  return std::sqrt(std::abs(amplitude));
+}
 
 template <class bit_t, class GroupAction>
-double compute_norm(bit_t ups, bit_t dns, GroupAction &&group_action,
-                    Representation const &irrep) {
+double symmetrized_norm_electron(bit_t ups, bit_t dns,
+                                 GroupAction &&group_action,
+                                 Representation const &irrep) {
   assert(group_action.n_symmetries() == irrep.size());
   complex amplitude = 0.0;
   for (int sym = 0; sym < group_action.n_symmetries(); ++sym) {
@@ -27,9 +37,5 @@ double compute_norm(bit_t ups, bit_t dns, GroupAction &&group_action,
   }
   return std::sqrt(std::abs(amplitude));
 }
-
-void check_nup_ndn_tj(int n_sites, int nup, int ndn);
-void check_nup_ndn_electron(int n_sites, int nup, int ndn);
-
 
 } // namespace hydra::utils

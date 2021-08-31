@@ -9,7 +9,7 @@
 #include <hydra/symmetries/symmetry_utils.h>
 #include <hydra/utils/bitops.h>
 
-namespace hydra::tj {
+namespace hydra::tjterms {
 
 template <class bit_t, class coeff_t, class GroupAction, class Filler>
 void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,

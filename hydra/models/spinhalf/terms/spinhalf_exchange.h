@@ -4,10 +4,13 @@
 
 #include <hydra/combinatorics/combinations.h>
 #include <hydra/common.h>
-#include <hydra/models/electron/electron.h>
+#include <hydra/models/spinhalf/spinhalf.h>
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
 #include <hydra/utils/bitops.h>
+
+#include <hydra/models/utils/model_utils.h>
+
 
 namespace hydra::spinhalfterms {
 
@@ -24,10 +27,8 @@ void do_exchange(BondList const &bonds, Couplings const &couplings,
       lila::Log.err("Error computing Spinhalf Exchange: "
                     "bond must have exactly two sites defined");
 
-    std::string coupling = bond.coupling();
-    if (couplings.defined(coupling) &&
-        !lila::close(couplings[coupling], (complex)0.)) {
-
+    if (utils::coupling_is_non_zero(bond, couplings)) {
+      std::string coupling = bond.coupling();
       double J = lila::real(couplings[coupling]);
 
       // Set values for same/diff (tJ model definition)

@@ -1,12 +1,11 @@
 #include "electron_apply.h"
 
-#include <hydra/combinatorics/combinations.h>
-#include <hydra/utils/bitops.h>
-
 #include <hydra/models/electron/terms/electron_u.h>
 #include <hydra/models/electron/terms/electron_hopping.h>
 #include <hydra/models/electron/terms/electron_ising.h>
 #include <hydra/models/electron/terms/electron_exchange.h>
+
+#include <hydra/models/utils/model_utils.h>
 
 namespace hydra {
 
@@ -19,15 +18,18 @@ void Apply(BondList const &bonds, Couplings const &couplings,
   assert(block_in.size() == vec_in.size());
   assert(block_out.size() == vec_out.size());
 
+  utils::check_operator_real(bonds, couplings,
+                             "apply real Electron operator");
+
   lila::Zeros(vec_out);
   auto fill = [&vec_out, &vec_in](idx_t idx_out, idx_t idx_in, double val) {
     vec_out(idx_out) += val * vec_in(idx_in);
   };
   
-  electron::do_U(couplings, block_in, fill);
-  electron::do_hopping<bit_t, double>(bonds, couplings, block_in, fill);
-  electron::do_ising<bit_t>(bonds, couplings, block_in, fill);
-  electron::do_exchange<bit_t>(bonds, couplings, block_in, fill);
+  electronterms::do_U(couplings, block_in, fill);
+  electronterms::do_hopping<bit_t, double>(bonds, couplings, block_in, fill);
+  electronterms::do_ising<bit_t>(bonds, couplings, block_in, fill);
+  electronterms::do_exchange<bit_t>(bonds, couplings, block_in, fill);
 }
 
 template <class bit_t>
@@ -44,10 +46,10 @@ void Apply(BondList const &bonds, Couplings const &couplings,
     vec_out(idx_out) += val * vec_in(idx_in);
   };
   
-  electron::do_U(couplings, block_in, fill);
-  electron::do_hopping<bit_t, complex>(bonds, couplings, block_in, fill);
-  electron::do_ising<bit_t>(bonds, couplings, block_in, fill);
-  electron::do_exchange<bit_t>(bonds, couplings, block_in, fill);
+  electronterms::do_U(couplings, block_in, fill);
+  electronterms::do_hopping<bit_t, complex>(bonds, couplings, block_in, fill);
+  electronterms::do_ising<bit_t>(bonds, couplings, block_in, fill);
+  electronterms::do_exchange<bit_t>(bonds, couplings, block_in, fill);
 }
 
 template void Apply<uint16>(BondList const &bonds, Couplings const &couplings,

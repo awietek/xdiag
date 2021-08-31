@@ -1,7 +1,7 @@
 #include "electron.h"
 
 #include <hydra/combinatorics/binomial.h>
-#include <hydra/models/model_utils.h>
+#include <hydra/models/utils/model_utils.h>
 
 namespace hydra {
 
@@ -13,7 +13,7 @@ Electron<bit_t>::Electron(int n_sites, int nup, int ndn)
       size_up_(combinatorics::binomial(n_sites, n_up_)),
       size_dn_(combinatorics::binomial(n_sites, n_dn_)),
       size_(size_up_ * size_dn_) {
-  utils::check_nup_ndn_electron(n_sites, nup, ndn);
+  utils::check_nup_ndn_electron(n_sites, nup, ndn, "Electron");
 }
 
 template <class bit_t>

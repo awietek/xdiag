@@ -5,12 +5,12 @@
 #include <hydra/common.h>
 #include <hydra/utils/bitops.h>
 
-#include <hydra/models/model_utils.h>
+#include <hydra/models/utils/model_utils.h>
 #include <hydra/symmetries/symmetry_utils.h>
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
 
-namespace hydra::tj {
+namespace hydra::tjterms {
 
 template <class bit_t, class GroupAction, class Filler>
 void do_ising_symmetric(BondList const &bonds, Couplings const &couplings,

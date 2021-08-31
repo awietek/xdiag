@@ -7,7 +7,7 @@
 
 using namespace hydra;
 
-TEST_CASE("electron_apply", "[models]") {
+TEST_CASE("Electron_Apply", "[models]") {
   using namespace hydra::testcases::electron;
 
   BondList bondlist;

@@ -4,6 +4,7 @@
 #include <hydra/combinatorics/combinations.h>
 #include <hydra/combinatorics/up_down_hole.h>
 #include <hydra/models/tj/tj_utils.h>
+#include <hydra/models/utils/model_utils.h>
 
 namespace hydra {
 
@@ -16,7 +17,8 @@ tJ<bit_t>::tJ(int n_sites, int nup, int ndn)
       size_up_(binomial(n_sites, nup)),
       size_holes_(binomial(n_sites - nup, ndn)), size_(size_up_ * size_holes_),
       dn_limits_for_up_(size_up_), dns_(size_), lintable_up_(n_sites, nup) {
-  tjdetail::check_nup_ndn(n_sites, nup, ndn);
+
+  utils::check_nup_ndn_tj(n_sites, nup, ndn, "tJ");
 
   // Create dns array storing dn configs within the limits for upspin config
   idx_t idx = 0;

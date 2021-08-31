@@ -104,7 +104,7 @@ template <class bit_t> void test_electron(int n_sites) {
   // HydraLog.out("totaldim: {}, pow: {}\n", total_dim, dim);
 }
 
-TEST_CASE("electron", "[models]") {
+TEST_CASE("Electron", "[models]") {
   // test_electron<uint32>(4);
 
   for (int n_sites = 1; n_sites < 7; ++n_sites) {

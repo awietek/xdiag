@@ -14,6 +14,8 @@ void Apply(BondList const &bonds, Couplings const &couplings,
   assert(block_in == block_out); // only temporary
   assert(block_in.size() == vec_in.size());
   assert(block_out.size() == vec_out.size());
+  utils::check_operator_real(bonds, couplings,
+                             "apply real tJ operator");
 
   lila::Zeros(vec_out);
 
@@ -21,9 +23,9 @@ void Apply(BondList const &bonds, Couplings const &couplings,
     vec_out(idx_out) += val * vec_in(idx_in);
   };
 
-  tjdetail::do_hopping<bit_t, double>(bonds, couplings, block_in, fill);
-  tjdetail::do_ising<bit_t>(bonds, couplings, block_in, fill);
-  tjdetail::do_exchange<bit_t>(bonds, couplings, block_in, fill);
+  tjterms::do_hopping<bit_t, double>(bonds, couplings, block_in, fill);
+  tjterms::do_ising<bit_t>(bonds, couplings, block_in, fill);
+  tjterms::do_exchange<bit_t>(bonds, couplings, block_in, fill);
 }
 
 template <class bit_t>
@@ -41,9 +43,9 @@ void Apply(BondList const &bonds, Couplings const &couplings,
     vec_out(idx_out) += val * vec_in(idx_in);
   };
   
-  tjdetail::do_hopping<bit_t, complex>(bonds, couplings, block_in, fill);
-  tjdetail::do_ising<bit_t>(bonds, couplings, block_in, fill);
-  tjdetail::do_exchange<bit_t>(bonds, couplings, block_in, fill);
+  tjterms::do_hopping<bit_t, complex>(bonds, couplings, block_in, fill);
+  tjterms::do_ising<bit_t>(bonds, couplings, block_in, fill);
+  tjterms::do_exchange<bit_t>(bonds, couplings, block_in, fill);
 }
 
 template void Apply<uint16>(BondList const &bonds, Couplings const &couplings,

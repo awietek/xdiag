@@ -1,11 +1,11 @@
 #include "electron_symmetric_matrix.h"
 
-#include <hydra/utils/bitops.h>
-
 #include <hydra/models/electron_symmetric/terms/electron_symmetric_exchange.h>
 #include <hydra/models/electron_symmetric/terms/electron_symmetric_hopping.h>
 #include <hydra/models/electron_symmetric/terms/electron_symmetric_ising.h>
 #include <hydra/models/electron_symmetric/terms/electron_symmetric_u.h>
+
+#include <hydra/models/utils/model_utils.h>
 
 namespace hydra {
 
@@ -16,12 +16,9 @@ MatrixReal(BondList const &bonds, Couplings const &couplings,
            ElectronSymmetric<bit_t, GroupAction> const &block_out) {
   assert(block_in == block_out); // only temporary
 
-  if (is_complex(bonds))
-    lila::Log.err("Cannot construct real matrix from complex bonds!");
-  if (is_complex(couplings))
-    lila::Log.err("Cannot construct real matrix from complex couplings!");
-  if (is_complex(block_in.irrep()) || is_complex(block_out.irrep()))
-    lila::Log.err("Cannot construct real matrix from complex representation!");
+  utils::check_symmetric_operator_real(
+      bonds, couplings, block_in.irrep(),
+      block_out.irrep(), "construct real ElectronSymmetric matrix");
 
   idx_t dim = block_in.size();
   auto mat = lila::Zeros<double>(dim, dim);
@@ -29,11 +26,11 @@ MatrixReal(BondList const &bonds, Couplings const &couplings,
     mat(idx_out, idx_in) += val;
   };
 
-  electron::do_U_symmetric(couplings, block_in, fill);
-  electron::do_hopping_symmetric<bit_t, double>(bonds, couplings, block_in,
+  electronterms::do_U_symmetric(couplings, block_in, fill);
+  electronterms::do_hopping_symmetric<bit_t, double>(bonds, couplings, block_in,
                                                 fill);
-  electron::do_ising_symmetric<bit_t>(bonds, couplings, block_in, fill);
-  electron::do_exchange_symmetric<bit_t, double>(bonds, couplings, block_in,
+  electronterms::do_ising_symmetric<bit_t>(bonds, couplings, block_in, fill);
+  electronterms::do_exchange_symmetric<bit_t, double>(bonds, couplings, block_in,
                                                  fill);
   return mat;
 }
@@ -64,11 +61,11 @@ MatrixCplx(BondList const &bonds, Couplings const &couplings,
     mat(idx_out, idx_in) += val;
   };
 
-  electron::do_U_symmetric(couplings, block_in, fill);
-  electron::do_hopping_symmetric<bit_t, complex>(bonds, couplings, block_in,
+  electronterms::do_U_symmetric(couplings, block_in, fill);
+  electronterms::do_hopping_symmetric<bit_t, complex>(bonds, couplings, block_in,
                                                  fill);
-  electron::do_ising_symmetric<bit_t>(bonds, couplings, block_in, fill);
-  electron::do_exchange_symmetric<bit_t, complex>(bonds, couplings, block_in,
+  electronterms::do_ising_symmetric<bit_t>(bonds, couplings, block_in, fill);
+  electronterms::do_exchange_symmetric<bit_t, complex>(bonds, couplings, block_in,
                                                   fill);
   return mat;
 }

@@ -9,7 +9,7 @@
 #include <hydra/operators/couplings.h>
 #include <hydra/utils/bitops.h>
 
-namespace hydra::tjdetail {
+namespace hydra::tjterms {
 
 template <class bit_t, class coeff_t, class Filler>
 void do_hopping(BondList const &bonds, Couplings const &couplings,

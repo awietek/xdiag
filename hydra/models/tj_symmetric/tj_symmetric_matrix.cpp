@@ -1,10 +1,10 @@
 #include "tj_symmetric_matrix.h"
 
-#include <hydra/utils/bitops.h>
-
 #include <hydra/models/tj_symmetric/terms/tj_symmetric_exchange.h>
 #include <hydra/models/tj_symmetric/terms/tj_symmetric_hopping.h>
 #include <hydra/models/tj_symmetric/terms/tj_symmetric_ising.h>
+
+#include <hydra/models/utils/model_utils.h>
 
 namespace hydra {
 
@@ -15,12 +15,9 @@ MatrixReal(BondList const &bonds, Couplings const &couplings,
            tJSymmetric<bit_t, GroupAction> const &block_out) {
   assert(block_in == block_out); // only temporary
 
-  if (is_complex(bonds))
-    lila::Log.err("Cannot construct real matrix from complex bonds!");
-  if (is_complex(couplings))
-    lila::Log.err("Cannot construct real matrix from complex couplings!");
-  if (is_complex(block_in.irrep()) || is_complex(block_out.irrep()))
-    lila::Log.err("Cannot construct real matrix from complex representation!");
+  utils::check_symmetric_operator_real(
+      bonds, couplings, block_in.irrep(),
+      block_out.irrep(), "construct real tJSymmetric matrix");
 
   idx_t dim = block_in.size();
   auto mat = lila::Zeros<double>(dim, dim);
@@ -28,9 +25,11 @@ MatrixReal(BondList const &bonds, Couplings const &couplings,
     mat(idx_out, idx_in) += val;
   };
 
-  tj::do_hopping_symmetric<bit_t, double>(bonds, couplings, block_in, fill);
-  tj::do_ising_symmetric<bit_t>(bonds, couplings, block_in, fill);
-  tj::do_exchange_symmetric<bit_t, double>(bonds, couplings, block_in, fill);
+  tjterms::do_hopping_symmetric<bit_t, double>(bonds, couplings, block_in,
+                                               fill);
+  tjterms::do_ising_symmetric<bit_t>(bonds, couplings, block_in, fill);
+  tjterms::do_exchange_symmetric<bit_t, double>(bonds, couplings, block_in,
+                                                fill);
 
   return mat;
 }
@@ -48,7 +47,6 @@ template lila::Matrix<double> MatrixReal<uint64, PermutationGroupAction>(
     tJSymmetric<uint64, PermutationGroupAction> const &block_in,
     tJSymmetric<uint64, PermutationGroupAction> const &block_out);
 
-
 template <class bit_t, class GroupAction>
 lila::Matrix<complex>
 MatrixCplx(BondList const &bonds, Couplings const &couplings,
@@ -62,9 +60,11 @@ MatrixCplx(BondList const &bonds, Couplings const &couplings,
     mat(idx_out, idx_in) += val;
   };
 
-  tj::do_hopping_symmetric<bit_t, complex>(bonds, couplings, block_in, fill);
-  tj::do_ising_symmetric<bit_t>(bonds, couplings, block_in, fill);
-  tj::do_exchange_symmetric<bit_t, complex>(bonds, couplings, block_in, fill);
+  tjterms::do_hopping_symmetric<bit_t, complex>(bonds, couplings, block_in,
+                                                fill);
+  tjterms::do_ising_symmetric<bit_t>(bonds, couplings, block_in, fill);
+  tjterms::do_exchange_symmetric<bit_t, complex>(bonds, couplings, block_in,
+                                                 fill);
 
   return mat;
 }

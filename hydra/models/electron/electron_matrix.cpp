@@ -1,12 +1,11 @@
 #include "electron_matrix.h"
 
-#include <hydra/combinatorics/combinations.h>
-#include <hydra/utils/bitops.h>
-
-#include <hydra/models/electron/terms/electron_u.h>
+#include <hydra/models/electron/terms/electron_exchange.h>
 #include <hydra/models/electron/terms/electron_hopping.h>
 #include <hydra/models/electron/terms/electron_ising.h>
-#include <hydra/models/electron/terms/electron_exchange.h>
+#include <hydra/models/electron/terms/electron_u.h>
+
+#include <hydra/models/utils/model_utils.h>
 
 namespace hydra {
 
@@ -15,6 +14,10 @@ lila::Matrix<double>
 MatrixReal(BondList const &bonds, Couplings const &couplings,
            Electron<bit_t> const &block_in, Electron<bit_t> const &block_out) {
   assert(block_in == block_out); // only temporary
+
+  utils::check_operator_real(bonds, couplings,
+                             "construct real Electron matrix");
+
   idx_t dim_in = block_in.size();
   idx_t dim_out = block_out.size();
 
@@ -23,10 +26,10 @@ MatrixReal(BondList const &bonds, Couplings const &couplings,
     mat(idx_out, idx_in) += val;
   };
 
-  electron::do_U(couplings, block_in, fill);
-  electron::do_hopping<bit_t, double>(bonds, couplings, block_in, fill);
-  electron::do_ising<bit_t>(bonds, couplings, block_in, fill);
-  electron::do_exchange<bit_t>(bonds, couplings, block_in, fill);
+  electronterms::do_U(couplings, block_in, fill);
+  electronterms::do_hopping<bit_t, double>(bonds, couplings, block_in, fill);
+  electronterms::do_ising<bit_t>(bonds, couplings, block_in, fill);
+  electronterms::do_exchange<bit_t>(bonds, couplings, block_in, fill);
   return mat;
 }
 
@@ -43,10 +46,10 @@ MatrixCplx(BondList const &bonds, Couplings const &couplings,
     mat(idx_out, idx_in) += val;
   };
 
-  electron::do_U(couplings, block_in, fill);
-  electron::do_hopping<bit_t, complex>(bonds, couplings, block_in, fill);
-  electron::do_ising<bit_t>(bonds, couplings, block_in, fill);
-  electron::do_exchange<bit_t>(bonds, couplings, block_in, fill);
+  electronterms::do_U(couplings, block_in, fill);
+  electronterms::do_hopping<bit_t, complex>(bonds, couplings, block_in, fill);
+  electronterms::do_ising<bit_t>(bonds, couplings, block_in, fill);
+  electronterms::do_exchange<bit_t>(bonds, couplings, block_in, fill);
   return mat;
 }
 
