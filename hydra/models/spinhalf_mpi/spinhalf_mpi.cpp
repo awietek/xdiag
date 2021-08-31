@@ -19,6 +19,8 @@ SpinhalfMPI<bit_t>::SpinhalfMPI(int n_sites, int n_up)
       n_postfix_bits_(n_sites - n_prefix_bits_), sz_conserved_(true),
       n_up_(n_up), n_dn_(n_sites - n_up), sz_(n_up_ - n_dn_) {
 
+  utils::check_nup_spinhalf(n_sites, nup, "SpinhalfMPI");
+
   MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank_);
   MPI_Comm_size(MPI_COMM_WORLD, &mpi_size_);
 

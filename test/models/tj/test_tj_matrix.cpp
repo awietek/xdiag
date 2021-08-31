@@ -39,7 +39,7 @@ void test_tjmodel_fulleigs(BondList bonds, Couplings couplings,
   REQUIRE(lila::close(all_eigs, exact_eigs));
 }
 
-TEST_CASE("tj_matrix", "[tj]") {
+TEST_CASE("tJ_Matrix", "[tj]") {
   using namespace hydra::testcases::tj;
 
   {

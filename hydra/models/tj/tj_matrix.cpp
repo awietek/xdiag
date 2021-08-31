@@ -1,11 +1,10 @@
 #include "tj_matrix.h"
 
-#include <hydra/combinatorics/combinations.h>
-#include <hydra/utils/bitops.h>
-
 #include <hydra/models/tj/terms/tj_exchange.h>
 #include <hydra/models/tj/terms/tj_hopping.h>
 #include <hydra/models/tj/terms/tj_ising.h>
+
+#include <hydra/models/utils/model_utils.h>
 
 namespace hydra {
 
@@ -17,14 +16,17 @@ MatrixReal(BondList const &bonds, Couplings const &couplings,
   idx_t dim_in = block_in.size();
   idx_t dim_out = block_out.size();
 
+  utils::check_operator_real(bonds, couplings,
+                             "construct real tJ matrix");
+
   auto mat = lila::Zeros<double>(dim_out, dim_in);
   auto fill = [&mat](idx_t idx_out, idx_t idx_in, double val) {
     mat(idx_out, idx_in) += val;
   };
 
-  tjdetail::do_hopping<bit_t, double>(bonds, couplings, block_in, fill);
-  tjdetail::do_ising<bit_t>(bonds, couplings, block_in, fill);
-  tjdetail::do_exchange<bit_t>(bonds, couplings, block_in, fill);
+  tjterms::do_hopping<bit_t, double>(bonds, couplings, block_in, fill);
+  tjterms::do_ising<bit_t>(bonds, couplings, block_in, fill);
+  tjterms::do_exchange<bit_t>(bonds, couplings, block_in, fill);
   return mat;
 }
 
@@ -41,9 +43,9 @@ MatrixCplx(BondList const &bonds, Couplings const &couplings,
     mat(idx_out, idx_in) += val;
   };
 
-  tjdetail::do_hopping<bit_t, complex>(bonds, couplings, block_in, fill);
-  tjdetail::do_ising<bit_t>(bonds, couplings, block_in, fill);
-  tjdetail::do_exchange<bit_t>(bonds, couplings, block_in, fill);
+  tjterms::do_hopping<bit_t, complex>(bonds, couplings, block_in, fill);
+  tjterms::do_ising<bit_t>(bonds, couplings, block_in, fill);
+  tjterms::do_exchange<bit_t>(bonds, couplings, block_in, fill);
   return mat;
 }
 

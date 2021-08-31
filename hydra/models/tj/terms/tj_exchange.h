@@ -4,13 +4,13 @@
 
 #include <hydra/combinatorics/combinations.h>
 #include <hydra/common.h>
-#include <hydra/models/model_utils.h>
+#include <hydra/models/utils/model_utils.h>
 #include <hydra/models/tj/tj.h>
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
 #include <hydra/utils/bitops.h>
 
-namespace hydra::tjdetail {
+namespace hydra::tjterms {
 
 template <class bit_t, class Filler>
 void do_down_flips(bit_t up, idx_t idx_up, bit_t flipmask, bit_t spacemask,

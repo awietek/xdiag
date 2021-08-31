@@ -9,15 +9,14 @@ using namespace hydra;
 
 template <class bit_t>
 void test_symmetric_apply1(BondList bondlist, Couplings couplings,
-                          PermutationGroup space_group,
-                          std::vector<Representation> irreps) {
+			   PermutationGroup space_group,
+			   std::vector<Representation> irreps) {
   int n_sites = space_group.n_sites();
 
   for (int nup = 0; nup <= n_sites; ++nup) {
     for (int ndn = 0; ndn <= n_sites; ++ndn) {
 
       for (auto irrep : irreps) {
-
 
         // Create block and matrix for comparison
         auto block =
@@ -85,7 +84,7 @@ TEST_CASE("electron_symmetric_apply", "[models]") {
   // test a 3x3 triangular lattice
   lila::Log.out("Hubbard 3x3 triangular, symmetric apply test");
   using bit_t = uint16;
-  std::string lfile = "data/triangular.9.Jz1Jz2Jx1Jx2D1.sublattices.tsl.lat";
+  std::string lfile = "data/triangular.9.hop.sublattices.tsl.lat";
 
   auto bondlist = read_bondlist(lfile);
   Couplings couplings;

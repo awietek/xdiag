@@ -92,7 +92,7 @@ void test_hubbard_symmetric_spectrum_chains(int n_sites) {
                                 multiplicities);
 }
 
-TEST_CASE("electron_symmetric_matrix", "[models]") {
+TEST_CASE("ElectronSymmetric_Matrix", "[models]") {
   using namespace hydra::testcases::electron;
 
   // Check matrices agains Weisse & Fehske
@@ -154,7 +154,7 @@ TEST_CASE("electron_symmetric_matrix", "[models]") {
   // test a 3x3 triangular lattice
   lila::Log.out("Hubbard 3x3 triangular, symmetric spectra test");
   using bit_t = uint16;
-  std::string lfile = "data/triangular.9.Jz1Jz2Jx1Jx2D1.sublattices.tsl.lat";
+  std::string lfile = "data/triangular.9.hop.sublattices.tsl.lat";
 
   bondlist = read_bondlist(lfile);
   couplings.clear();

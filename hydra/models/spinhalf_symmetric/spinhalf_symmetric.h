@@ -32,20 +32,20 @@ public:
   bool operator==(SpinhalfSymmetric const &rhs) const;
   bool operator!=(SpinhalfSymmetric const &rhs) const;
 
-private:
+// private:
+  idx_t index(bit_t state) const;
+
   int n_sites_;
 
   bool sz_conserved_;
-  int sz_;
   int n_up_;
   int n_dn_;
+  int sz_;
 
   PermutationGroup permutation_group_;
   GroupAction group_action_;
   Representation irrep_;
 
-  int n_prefix_bits_;
-  std::unordered_map<bit_t, std::pair<idx_t, idx_t>> prefix_range_;
   std::vector<bit_t> states_;
   std::vector<double> norms_;
   idx_t size_;

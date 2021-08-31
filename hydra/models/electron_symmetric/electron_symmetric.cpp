@@ -7,7 +7,8 @@
 #include <hydra/combinatorics/combinations.h>
 #include <hydra/combinatorics/subsets.h>
 
-#include <hydra/models/model_utils.h>
+#include <hydra/models/utils/model_utils.h>
+#include <hydra/models/utils/symmetrized_norm.h>
 
 namespace hydra {
 
@@ -17,16 +18,14 @@ ElectronSymmetric<bit_t, GroupAction>::ElectronSymmetric(
     Representation irrep)
     : n_sites_(n_sites), charge_conserved_(true), charge_(nup + ndn),
       sz_conserved_(true), sz_(nup - ndn), n_up_(nup), n_dn_(ndn),
-      permutation_group_(permutation_group),
-      irrep_(irrep) {
+      permutation_group_(permutation_group), irrep_(irrep) {
 
-  utils::check_nup_ndn_electron(n_sites, nup, ndn);
+  utils::check_nup_ndn_electron(n_sites, nup, ndn, "ElectronSymmetric");
 
   if (irrep.allowed_symmetries().size() > 0) {
     permutation_group_ = permutation_group.subgroup(irrep.allowed_symmetries());
   }
   group_action_ = GroupAction(permutation_group_);
-
 
   // Compute downspin configurations and up limits
   idx_t idx = 0;
@@ -44,7 +43,7 @@ ElectronSymmetric<bit_t, GroupAction>::ElectronSymmetric(
       // If state is a representative ...
       if ((rep_ups == ups) && (rep_dns == dns)) {
         double norm =
-            utils::compute_norm<bit_t>(ups, dns, group_action_, irrep);
+            utils::symmetrized_norm_electron(ups, dns, group_action_, irrep);
 
         // ... and norm is nonzero, register the state and its norm
         if (norm > 1e-6) { // tolerance big as 1e-6 since root is taken
@@ -75,7 +74,7 @@ ElectronSymmetric<bit_t, GroupAction>::ElectronSymmetric(
       // If state is a (switch) representative ...
       if ((rep_ups_switch == ups) && (rep_dns_switch == dns)) {
         double norm =
-            utils::compute_norm<bit_t>(ups, dns, group_action_, irrep);
+            utils::symmetrized_norm_electron(ups, dns, group_action_, irrep);
 
         // ... and has non-zero norm
         if (std::abs(norm) >

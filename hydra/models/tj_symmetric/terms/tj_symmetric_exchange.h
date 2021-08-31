@@ -5,13 +5,13 @@
 #include <hydra/common.h>
 #include <hydra/utils/bitops.h>
 
-#include <hydra/models/model_utils.h>
+#include <hydra/models/utils/model_utils.h>
 #include <hydra/symmetries/symmetry_utils.h>
 
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
 
-namespace hydra::tj {
+namespace hydra::tjterms {
 
 template <class bit_t, class coeff_t, class Filler, class GroupAction>
 void do_down_flips(bit_t up, idx_t idx_up, bit_t mask, bit_t spacemask,

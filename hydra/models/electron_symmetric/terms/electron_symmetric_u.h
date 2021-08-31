@@ -5,10 +5,10 @@
 #include <hydra/common.h>
 #include <hydra/models/electron_symmetric/electron_symmetric.h>
 #include <hydra/operators/couplings.h>
-#include <hydra/utils/bitops.h>
 #include <hydra/symmetries/symmetry_utils.h>
+#include <hydra/utils/bitops.h>
 
-namespace hydra::electron {
+namespace hydra::electronterms {
 
 template <class bit_t, class GroupAction, class Filler>
 void do_U_symmetric(Couplings const &couplings,
@@ -19,7 +19,7 @@ void do_U_symmetric(Couplings const &couplings,
 
     if (!couplings.is_real("U")) {
       lila::Log.err("Error creating Electron matrix: "
-                   "Hubbard U must be a real number");
+                    "Hubbard U must be a real number");
     }
 
     double U = couplings.real("U");
@@ -38,4 +38,4 @@ void do_U_symmetric(Couplings const &couplings,
   }
 }
 
-} // namespace hydra::electron
+} // namespace hydra::electronterms

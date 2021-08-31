@@ -1,10 +1,9 @@
 #include "spinhalf_apply.h"
 
-#include <hydra/combinatorics/combinations.h>
-#include <hydra/utils/bitops.h>
-
 #include <hydra/models/spinhalf/terms/spinhalf_ising.h>
 #include <hydra/models/spinhalf/terms/spinhalf_exchange.h>
+
+#include <hydra/models/utils/model_utils.h>
 
 namespace hydra {
 
@@ -16,6 +15,9 @@ void Apply(BondList const &bonds, Couplings const &couplings,
   assert(block_in == block_out); // only temporary
   assert(block_in.size() == vec_in.size());
   assert(block_out.size() == vec_out.size());
+
+  utils::check_operator_real(bonds, couplings,
+                             "apply real Spinhalf operator");
 
   lila::Zeros(vec_out);
   auto fill = [&vec_out, &vec_in](idx_t idx_out, idx_t idx_in, double val) {

@@ -15,12 +15,17 @@
 #include "indexing/lintable.h"
 
 #include "models/models.h"
-#include "models/model_utils.h"
+#include "models/utils/model_utils.h"
+#include "models/utils/symmetrized_norm.h"
 
 #include "models/spinhalf/spinhalf.h"
 #include "models/spinhalf/spinhalf_matrix.h"
 #include "models/spinhalf/spinhalf_apply.h"
 #include "models/spinhalf/spinhalf_fill.h"
+
+#include "models/spinhalf_symmetric/spinhalf_symmetric.h"
+#include "models/spinhalf_symmetric/spinhalf_symmetric_matrix.h"
+#include "models/spinhalf_symmetric/spinhalf_symmetric_apply.h"
 
 #include "models/tj/tj.h"
 #include "models/tj/tj_matrix.h"

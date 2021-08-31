@@ -131,7 +131,7 @@ TEST_CASE("electron_symmetric", "[models]") {
       {"K1.D3.A1", 1},    {"K1.D3.A2", 1},    {"K1.D3.E", 2},
       {"Y.C1.A", 6}};
 
-  std::string lfile = "data/triangular.9.Jz1Jz2Jx1Jx2D1.sublattices.tsl.lat";
+  std::string lfile = "data/triangular.9.hop.sublattices.tsl.lat";
   auto permutations = hydra::utils::read_permutations(lfile);
   auto space_group = PermutationGroup(permutations);
 

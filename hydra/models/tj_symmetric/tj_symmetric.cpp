@@ -8,7 +8,8 @@
 #include <hydra/combinatorics/subsets.h>
 #include <hydra/combinatorics/up_down_hole.h>
 
-#include <hydra/models/model_utils.h>
+#include <hydra/models/utils/model_utils.h>
+#include <hydra/models/utils/symmetrized_norm.h>
 
 namespace hydra {
 
@@ -20,8 +21,9 @@ tJSymmetric<bit_t, GroupAction>::tJSymmetric(int n_sites, int nup, int ndn,
       sz_conserved_(true), sz_(nup - ndn), n_up_(nup), n_dn_(ndn),
       permutation_group_(permutation_group), irrep_(irrep) {
 
-  utils::check_nup_ndn_tj(n_sites, nup, ndn);
+  utils::check_nup_ndn_tj(n_sites, nup, ndn, "tJSymmetric");
 
+  // if not all symmetries are allowed by irrep, choose a subgroup
   if (irrep.allowed_symmetries().size() > 0) {
     permutation_group_ = permutation_group.subgroup(irrep.allowed_symmetries());
   }
@@ -44,7 +46,7 @@ tJSymmetric<bit_t, GroupAction>::tJSymmetric(int n_sites, int nup, int ndn,
       // If state is a representative ...
       if ((rep_ups == ups) && (rep_dns == dns)) {
         double norm =
-            utils::compute_norm<bit_t>(ups, dns, group_action_, irrep);
+            utils::symmetrized_norm_electron(ups, dns, group_action_, irrep);
 
         // ... and norm is nonzero, register the state and its norm
         if (norm > 1e-6) { // tolerance big as 1e-6 since root is taken
@@ -76,7 +78,7 @@ tJSymmetric<bit_t, GroupAction>::tJSymmetric(int n_sites, int nup, int ndn,
       // If state is a (switch) representative ...
       if ((rep_ups_switch == ups) && (rep_dns_switch == dns)) {
         double norm =
-            utils::compute_norm<bit_t>(ups, dns, group_action_, irrep);
+            utils::symmetrized_norm_electron(ups, dns, group_action_, irrep);
 
         // ... and has non-zero norm
         if (std::abs(norm) >
@@ -108,8 +110,7 @@ tJSymmetric<bit_t, GroupAction>::tJSymmetric(int n_sites, int nup, int ndn,
 template <class bit_t, class GroupAction>
 std::tuple<bit_t, bit_t>
 tJSymmetric<bit_t, GroupAction>::representative(bit_t ups, bit_t dns) const {
-  auto [rep_ups, n_sym, sym_ptr] =
-      group_action_.representative_indices(ups);
+  auto [rep_ups, n_sym, sym_ptr] = group_action_.representative_indices(ups);
   bit_t rep_dns = std::numeric_limits<bit_t>::max();
   for (int i = 0; i < n_sym; ++i) {
     bit_t tdns = group_action_.apply(sym_ptr[i], dns);
@@ -122,9 +123,8 @@ tJSymmetric<bit_t, GroupAction>::representative(bit_t ups, bit_t dns) const {
 template <class bit_t, class GroupAction>
 std::tuple<bit_t, bit_t, int>
 tJSymmetric<bit_t, GroupAction>::representative_index(bit_t ups,
-                                                        bit_t dns) const {
-  auto [rep_ups, n_sym, sym_ptr] =
-    group_action_.representative_indices(ups);
+                                                      bit_t dns) const {
+  auto [rep_ups, n_sym, sym_ptr] = group_action_.representative_indices(ups);
   bit_t rep_dns = std::numeric_limits<bit_t>::max();
   int sym = 0;
   for (int i = 0; i < n_sym; ++i) {
@@ -152,7 +152,7 @@ idx_t tJSymmetric<bit_t, GroupAction>::index(bit_t ups, bit_t dns) const {
 
 template <class bit_t, class GroupAction>
 idx_t tJSymmetric<bit_t, GroupAction>::index_switch(bit_t ups,
-                                                      bit_t dns) const {
+                                                    bit_t dns) const {
   auto it1 = dns_lower_upper_.find(dns);
   if (it1 == dns_lower_upper_.end())
     return invalid_index;

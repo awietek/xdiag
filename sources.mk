@@ -12,11 +12,15 @@ sources+= hydra/parameters/parser.cpp
 
 sources+= hydra/indexing/lintable.cpp
 
-sources+= hydra/models/model_utils.cpp
+sources+= hydra/models/utils/model_utils.cpp
 
 sources+= hydra/models/spinhalf/spinhalf.cpp
 sources+= hydra/models/spinhalf/spinhalf_matrix.cpp
 sources+= hydra/models/spinhalf/spinhalf_apply.cpp
+
+sources+= hydra/models/spinhalf_symmetric/spinhalf_symmetric.cpp
+sources+= hydra/models/spinhalf_symmetric/spinhalf_symmetric_matrix.cpp
+sources+= hydra/models/spinhalf_symmetric/spinhalf_symmetric_apply.cpp
 
 sources+= hydra/models/tj/tj.cpp
 sources+= hydra/models/tj/tj_utils.cpp
@@ -84,6 +88,10 @@ testsources+= test/symmetries/test_symmetric_operator.cpp
 testsources+= test/models/spinhalf/testcases_spinhalf.cpp
 testsources+= test/models/spinhalf/test_spinhalf_matrix.cpp
 testsources+= test/models/spinhalf/test_spinhalf_apply.cpp
+
+testsources+= test/models/spinhalf_symmetric/test_spinhalf_symmetric.cpp
+testsources+= test/models/spinhalf_symmetric/test_spinhalf_symmetric_matrix.cpp
+testsources+= test/models/spinhalf_symmetric/test_spinhalf_symmetric_apply.cpp
 
 testsources+= test/models/tj/testcases_tj.cpp
 testsources+= test/models/tj/test_tj_matrix.cpp

@@ -78,7 +78,7 @@ template <class bit_t> void test_tj_symmetric_spectrum_chains(int n_sites) {
                                  multiplicities);
 }
 
-TEST_CASE("tj_symmetric_matrix", "[models]") {
+TEST_CASE("tJSymmetric_Matrix", "[models]") {
   using namespace hydra::testcases::tj;
   using namespace hydra::testcases::electron;
 
@@ -91,7 +91,7 @@ TEST_CASE("tj_symmetric_matrix", "[models]") {
 
   // test a 3x3 triangular lattice
   lila::Log.out("Tj 3x3 triangular, symmetric spectra test");
-  std::string lfile = "data/triangular.9.Jz1Jz2Jx1Jx2D1.sublattices.tsl.lat";
+  std::string lfile = "data/triangular.9.hop.sublattices.tsl.lat";
 
   auto bondlist = read_bondlist(lfile);
   Couplings couplings;
