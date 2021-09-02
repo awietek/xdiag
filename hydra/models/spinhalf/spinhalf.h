@@ -32,7 +32,7 @@ private:
   int n_dn_;
   int sz_;
 
-  LinTable<bit_t> lintable_;
+  indexing::LinTable<bit_t> lintable_;
   idx_t size_;
 };
 

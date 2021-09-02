@@ -18,8 +18,12 @@ public:
   inline int n_up() const { return n_up_; }
   inline int n_dn() const { return n_dn_; }
 
-  inline LinTable<bit_t> const &lintable_up() const { return lintable_up_; }
-  inline LinTable<bit_t> const &lintable_dn() const { return lintable_dn_; }
+  inline indexing::LinTable<bit_t> const &lintable_up() const {
+    return lintable_up_;
+  }
+  inline indexing::LinTable<bit_t> const &lintable_dn() const {
+    return lintable_dn_;
+  }
 
   inline bool charge_conserved() const { return charge_conserved_; }
   inline bool sz_conserved() const { return sz_conserved_; }
@@ -47,8 +51,8 @@ private:
   int n_up_;
   int n_dn_;
 
-  LinTable<bit_t> lintable_up_;
-  LinTable<bit_t> lintable_dn_;
+  indexing::LinTable<bit_t> lintable_up_;
+  indexing::LinTable<bit_t> lintable_dn_;
 
   idx_t size_up_;
   idx_t size_dn_;

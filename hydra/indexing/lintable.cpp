@@ -3,7 +3,7 @@
 #include <hydra/combinatorics/binomial.h>
 #include <hydra/combinatorics/combinations.h>
 
-namespace hydra {
+namespace hydra::indexing {
 
 template <class bit_t>
 LinTable<bit_t>::LinTable(int n, int k)
@@ -37,4 +37,4 @@ template class LinTable<uint16>;
 template class LinTable<uint32>;
 template class LinTable<uint64>;
 
-} // namespace hydra
+} // namespace hydra::indexing

@@ -5,7 +5,7 @@
 #include <hydra/common.h>
 #include <hydra/utils/bitops.h>
 
-namespace hydra {
+namespace hydra::indexing {
 
 template <class bit_t = std_bit_t> class LinTable {
 public:
@@ -29,4 +29,4 @@ private:
   std::vector<idx_t> right_indices_;
 };
 
-} // namespace hydra
+} // namespace hydra::indexing
