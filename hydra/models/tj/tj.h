@@ -38,7 +38,7 @@ public:
 
   std::vector<std::pair<idx_t, idx_t>> dn_limits_for_up_;
   std::vector<bit_t> dns_;
-  LinTable<bit_t> lintable_up_;
+  indexing::LinTable<bit_t> lintable_up_;
 };
 
 } // namespace hydra

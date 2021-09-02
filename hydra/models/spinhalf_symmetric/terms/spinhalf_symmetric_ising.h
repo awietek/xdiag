@@ -44,15 +44,15 @@ void do_ising_symmetric(BondList const &bonds, Couplings const &couplings,
                       "operator acting on twice the same site");
       bit_t mask = ((bit_t)1 << s1) | ((bit_t)1 << s2);
 
-      idx_t idx = 0;
-      for (bit_t state : block.states_) {
-        if (utils::popcnt(state & mask) & 1) {
+
+      for (idx_t idx = 0; idx < block.size(); ++idx) {
+	bit_t state = block.indexing_.state(idx);
+	if (utils::popcnt(state & mask) & 1) {
           fill(idx, idx, val_diff);
         } else {
           fill(idx, idx, val_same);
         }
-        ++idx;
-      }  // for (bit_t state : ... )
+      }
 
     }
   }

@@ -8,14 +8,18 @@ using namespace hydra;
 using namespace hydra::combinatorics;
 
 template <class bit_t>
-void test_indices_spinhalf_symmetric(SpinhalfSymmetric<bit_t> const &spinhalf) {
-  idx_t idx = 0;
-  for (bit_t state : spinhalf.states_) {
-    bit_t rep = spinhalf.group_action_.representative(state);
+void test_indices_spinhalf_symmetric(SpinhalfSymmetric<bit_t> const &block) {
+  
+  PermutationGroupAction group_action(block.permutation_group());
+  for (idx_t idx = 0; idx < block.size(); ++idx) {
+    bit_t state = block.indexing_.state(idx);
+    bit_t rep = utils::representative(state, group_action);
     REQUIRE(rep == state);
-    idx_t idx2 = spinhalf.index(state);
+    idx_t idx2 = block.indexing_.index(state);
+    // auto norm = block.indexing_.norm(state);
+    // lila::Log.out("{} {} {} ({},{})", idx, state, idx2, lila::real(norm),
+    //               lila::imag(norm));
     REQUIRE(idx == idx2);
-    ++idx;
   }
 }
 

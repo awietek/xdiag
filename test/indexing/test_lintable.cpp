@@ -7,7 +7,7 @@ template <class bit_t>
 void test_lintable(int n, int k){
   using namespace hydra;
   
-  LinTable<bit_t> lin_table(n, k);
+  indexing::LinTable<bit_t> lin_table(n, k);
   
   idx_t idx = 0;
   for (bit_t bits : Combinations<bit_t>(n, k))
@@ -26,4 +26,5 @@ TEST_CASE( "lintable", "[indexing]" ) {
 	test_lintable<hydra::uint32>(n, k);
 	test_lintable<hydra::uint64>(n, k);
       }
+
 }
