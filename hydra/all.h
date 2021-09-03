@@ -45,6 +45,7 @@
 
 #include "symmetries/permutation_group.h"
 #include "symmetries/permutation_group_action.h"
+#include "symmetries/permutation_group_lookup.h"
 #include "symmetries/representation.h"
 #include "symmetries/fermi_sign.h"
 #include "symmetries/symmetry_utils.h"

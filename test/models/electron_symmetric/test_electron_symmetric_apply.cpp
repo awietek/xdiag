@@ -90,7 +90,7 @@ TEST_CASE("electron_symmetric_apply", "[models]") {
   Couplings couplings;
   couplings["T"] = 1.0;
   couplings["U"] = 5.0;
-  auto permutations = hydra::utils::read_permutations(lfile);
+  auto permutations = hydra::read_permutations(lfile);
   auto space_group = PermutationGroup(permutations);
 
   std::vector<std::pair<std::string, int>> rep_name_mult = {
@@ -124,7 +124,7 @@ TEST_CASE("electron_symmetric_apply", "[models]") {
     Couplings couplings;
     couplings["TPHI"] = complex(0.5, 0.5);
     couplings["U"] = 5.0;
-    auto permutations = hydra::utils::read_permutations(lfile);
+    auto permutations = hydra::read_permutations(lfile);
     space_group = PermutationGroup(permutations);
 
     std::vector<std::pair<std::string, int>> rep_name_mult = {

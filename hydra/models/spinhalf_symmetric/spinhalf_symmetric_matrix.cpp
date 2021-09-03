@@ -17,8 +17,8 @@ MatrixReal(BondList const &bonds, Couplings const &couplings,
   assert(block_in == block_out); // only temporary
 
   utils::check_symmetric_operator_real(
-      bonds, couplings, block_in.irrep(),
-      block_out.irrep(), "construct real SpinhalfSymmetric matrix");
+      bonds, couplings, block_in.irrep(), block_out.irrep(),
+      "construct real SpinhalfSymmetric matrix");
 
   idx_t dim = block_in.size();
   auto mat = lila::Zeros<double>(dim, dim);
@@ -27,8 +27,8 @@ MatrixReal(BondList const &bonds, Couplings const &couplings,
   };
 
   spinhalfterms::do_ising_symmetric<bit_t>(bonds, couplings, block_in, fill);
-  spinhalfterms::do_exchange_symmetric<bit_t, double>(bonds, couplings, block_in,
-                                                 fill);
+  spinhalfterms::do_exchange_symmetric<bit_t, double>(bonds, couplings,
+                                                      block_in, fill);
   return mat;
 }
 
@@ -45,6 +45,22 @@ template lila::Matrix<double> MatrixReal<uint64, PermutationGroupAction>(
     SpinhalfSymmetric<uint64, PermutationGroupAction> const &block_in,
     SpinhalfSymmetric<uint64, PermutationGroupAction> const &block_out);
 
+template lila::Matrix<double>
+MatrixReal<uint16, PermutationGroupLookup<uint16>>(
+    BondList const &bonds, Couplings const &couplings,
+    SpinhalfSymmetric<uint16, PermutationGroupLookup<uint16>> const &block_in,
+    SpinhalfSymmetric<uint16, PermutationGroupLookup<uint16>> const &block_out);
+template lila::Matrix<double>
+MatrixReal<uint32, PermutationGroupLookup<uint32>>(
+    BondList const &bonds, Couplings const &couplings,
+    SpinhalfSymmetric<uint32, PermutationGroupLookup<uint32>> const &block_in,
+    SpinhalfSymmetric<uint32, PermutationGroupLookup<uint32>> const &block_out);
+template lila::Matrix<double>
+MatrixReal<uint64, PermutationGroupLookup<uint64>>(
+    BondList const &bonds, Couplings const &couplings,
+    SpinhalfSymmetric<uint64, PermutationGroupLookup<uint64>> const &block_in,
+    SpinhalfSymmetric<uint64, PermutationGroupLookup<uint64>> const &block_out);
+
 template <class bit_t, class GroupAction>
 lila::Matrix<complex>
 MatrixCplx(BondList const &bonds, Couplings const &couplings,
@@ -59,8 +75,8 @@ MatrixCplx(BondList const &bonds, Couplings const &couplings,
   };
 
   spinhalfterms::do_ising_symmetric<bit_t>(bonds, couplings, block_in, fill);
-  spinhalfterms::do_exchange_symmetric<bit_t, complex>(bonds, couplings, block_in,
-                                                  fill);
+  spinhalfterms::do_exchange_symmetric<bit_t, complex>(bonds, couplings,
+                                                       block_in, fill);
   return mat;
 }
 
@@ -76,5 +92,21 @@ template lila::Matrix<complex> MatrixCplx<uint64, PermutationGroupAction>(
     BondList const &bonds, Couplings const &couplings,
     SpinhalfSymmetric<uint64, PermutationGroupAction> const &block_in,
     SpinhalfSymmetric<uint64, PermutationGroupAction> const &block_out);
+
+template lila::Matrix<complex>
+MatrixCplx<uint16, PermutationGroupLookup<uint16>>(
+    BondList const &bonds, Couplings const &couplings,
+    SpinhalfSymmetric<uint16, PermutationGroupLookup<uint16>> const &block_in,
+    SpinhalfSymmetric<uint16, PermutationGroupLookup<uint16>> const &block_out);
+template lila::Matrix<complex>
+MatrixCplx<uint32, PermutationGroupLookup<uint32>>(
+    BondList const &bonds, Couplings const &couplings,
+    SpinhalfSymmetric<uint32, PermutationGroupLookup<uint32>> const &block_in,
+    SpinhalfSymmetric<uint32, PermutationGroupLookup<uint32>> const &block_out);
+template lila::Matrix<complex>
+MatrixCplx<uint64, PermutationGroupLookup<uint64>>(
+    BondList const &bonds, Couplings const &couplings,
+    SpinhalfSymmetric<uint64, PermutationGroupLookup<uint64>> const &block_in,
+    SpinhalfSymmetric<uint64, PermutationGroupLookup<uint64>> const &block_out);
 
 } // namespace hydra

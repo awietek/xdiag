@@ -43,4 +43,8 @@ template class SpinhalfSymmetric<uint16, PermutationGroupAction>;
 template class SpinhalfSymmetric<uint32, PermutationGroupAction>;
 template class SpinhalfSymmetric<uint64, PermutationGroupAction>;
 
+template class SpinhalfSymmetric<uint16, PermutationGroupLookup<uint16>>;
+template class SpinhalfSymmetric<uint32, PermutationGroupLookup<uint32>>;
+template class SpinhalfSymmetric<uint64, PermutationGroupLookup<uint64>>;
+
 } // namespace hydra

@@ -136,7 +136,7 @@ TEST_CASE("tJSymmetric", "[models]") {
       {"Y.C1.A", 6}};
 
   std::string lfile = "data/triangular.9.hop.sublattices.tsl.lat";
-  auto permutations = hydra::utils::read_permutations(lfile);
+  auto permutations = hydra::read_permutations(lfile);
   auto space_group = PermutationGroup(permutations);
 
   idx_t sum_dim = 0;
