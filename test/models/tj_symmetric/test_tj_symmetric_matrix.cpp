@@ -97,7 +97,7 @@ TEST_CASE("tJSymmetric_Matrix", "[models]") {
   Couplings couplings;
   couplings["T"] = 1.0;
   couplings["U"] = 5.0;
-  auto permutations = hydra::utils::read_permutations(lfile);
+  auto permutations = hydra::read_permutations(lfile);
   auto space_group = PermutationGroup(permutations);
 
   std::vector<std::pair<std::string, int>> rep_name_mult = {

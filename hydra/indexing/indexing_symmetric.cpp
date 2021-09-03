@@ -4,6 +4,7 @@
 #include <hydra/combinatorics/combinations.h>
 #include <hydra/models/utils/model_utils.h>
 #include <hydra/symmetries/permutation_group_action.h>
+#include <hydra/symmetries/permutation_group_lookup.h>
 #include <hydra/symmetries/symmetry_utils.h>
 
 namespace hydra::indexing {
@@ -27,6 +28,7 @@ IndexingSymmetric<bit_t, GroupAction>::IndexingSymmetric(
   // Go through non symmetrized states and register representatives
   idx_t idx = 0;
   idx_t n_representatives = 0;
+  lila::tic();
   for (bit_t state : Combinations(n_sites, n_up)) {
 
     bit_t rep = utils::representative(state, group_action);
@@ -44,6 +46,9 @@ IndexingSymmetric<bit_t, GroupAction>::IndexingSymmetric(
     }
     ++idx;
   }
+  lila::toc("pass1");
+
+  lila::tic();
 
   // Go through non symmetrized states and fill indices for all states
   idx = 0;
@@ -61,6 +66,8 @@ IndexingSymmetric<bit_t, GroupAction>::IndexingSymmetric(
     }
     ++idx;
   }
+  lila::toc("pass2");
+
 
   size_ = (idx_t)states_.size();
 }
@@ -68,5 +75,10 @@ IndexingSymmetric<bit_t, GroupAction>::IndexingSymmetric(
 template class IndexingSymmetric<uint16, PermutationGroupAction>;
 template class IndexingSymmetric<uint32, PermutationGroupAction>;
 template class IndexingSymmetric<uint64, PermutationGroupAction>;
+
+template class IndexingSymmetric<uint16, PermutationGroupLookup<uint16>>;
+template class IndexingSymmetric<uint32, PermutationGroupLookup<uint32>>;
+template class IndexingSymmetric<uint64, PermutationGroupLookup<uint64>>;
+
 
 } // namespace hydra::indexing

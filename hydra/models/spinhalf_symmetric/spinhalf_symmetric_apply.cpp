@@ -51,6 +51,25 @@ template void Apply<uint64, PermutationGroupAction>(
     SpinhalfSymmetric<uint64, PermutationGroupAction> const &block_out,
     lila::Vector<double> &vec_out);
 
+template void Apply<uint16, PermutationGroupLookup<uint16>>(
+    BondList const &bonds, Couplings const &couplings,
+    SpinhalfSymmetric<uint16, PermutationGroupLookup<uint16>> const &block_in,
+    lila::Vector<double> const &vec_in,
+    SpinhalfSymmetric<uint16, PermutationGroupLookup<uint16>> const &block_out,
+    lila::Vector<double> &vec_out);
+template void Apply<uint32, PermutationGroupLookup<uint32>>(
+    BondList const &bonds, Couplings const &couplings,
+    SpinhalfSymmetric<uint32, PermutationGroupLookup<uint32>> const &block_in,
+    lila::Vector<double> const &vec_in,
+    SpinhalfSymmetric<uint32, PermutationGroupLookup<uint32>> const &block_out,
+    lila::Vector<double> &vec_out);
+template void Apply<uint64, PermutationGroupLookup<uint64>>(
+    BondList const &bonds, Couplings const &couplings,
+    SpinhalfSymmetric<uint64, PermutationGroupLookup<uint64>> const &block_in,
+    lila::Vector<double> const &vec_in,
+    SpinhalfSymmetric<uint64, PermutationGroupLookup<uint64>> const &block_out,
+    lila::Vector<double> &vec_out);
+
 template <class bit_t, class GroupAction>
 void Apply(BondList const &bonds, Couplings const &couplings,
            SpinhalfSymmetric<bit_t, GroupAction> const &block_in,
@@ -89,6 +108,25 @@ template void Apply<uint64, PermutationGroupAction>(
     SpinhalfSymmetric<uint64, PermutationGroupAction> const &block_in,
     lila::Vector<complex> const &vec_in,
     SpinhalfSymmetric<uint64, PermutationGroupAction> const &block_out,
+    lila::Vector<complex> &vec_out);
+
+template void Apply<uint16, PermutationGroupLookup<uint16>>(
+    BondList const &bonds, Couplings const &couplings,
+    SpinhalfSymmetric<uint16, PermutationGroupLookup<uint16>> const &block_in,
+    lila::Vector<complex> const &vec_in,
+    SpinhalfSymmetric<uint16, PermutationGroupLookup<uint16>> const &block_out,
+    lila::Vector<complex> &vec_out);
+template void Apply<uint32, PermutationGroupLookup<uint32>>(
+    BondList const &bonds, Couplings const &couplings,
+    SpinhalfSymmetric<uint32, PermutationGroupLookup<uint32>> const &block_in,
+    lila::Vector<complex> const &vec_in,
+    SpinhalfSymmetric<uint32, PermutationGroupLookup<uint32>> const &block_out,
+    lila::Vector<complex> &vec_out);
+template void Apply<uint64, PermutationGroupLookup<uint64>>(
+    BondList const &bonds, Couplings const &couplings,
+    SpinhalfSymmetric<uint64, PermutationGroupLookup<uint64>> const &block_in,
+    lila::Vector<complex> const &vec_in,
+    SpinhalfSymmetric<uint64, PermutationGroupLookup<uint64>> const &block_out,
     lila::Vector<complex> &vec_out);
 
 } // namespace hydra

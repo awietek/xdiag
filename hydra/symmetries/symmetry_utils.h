@@ -1,13 +1,15 @@
 #pragma once
 
+#include <hydra/symmetries/representation.h>
 #include <string>
 #include <utility>
 #include <vector>
-#include <hydra/symmetries/representation.h>
+
+namespace hydra {
+std::vector<std::vector<int>> read_permutations(std::string filename);
+}
 
 namespace hydra::utils {
-
-std::vector<std::vector<int>> read_permutations(std::string filename);
 
 bool is_valid_permutation(int n_sites, const int *permutation);
 

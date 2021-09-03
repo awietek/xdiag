@@ -86,7 +86,7 @@ TEST_CASE("SpinhalfSymmetric_Apply", "[models]") {
       {"K.D3.A1", 2},     {"K.D3.A2", 2},     {"K.D3.E", 4},
       {"Y.D1.A", 6},      {"Y.D1.B", 6}};
 
-  auto permutations = hydra::utils::read_permutations(lfile);
+  auto permutations = hydra::read_permutations(lfile);
   auto space_group = PermutationGroup(permutations);
 
   std::vector<Representation> irreps;

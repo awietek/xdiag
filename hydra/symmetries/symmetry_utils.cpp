@@ -3,10 +3,10 @@
 #include <algorithm>
 #include <fstream>
 
-#include <lila/all.h>
 #include <hydra/common.h>
+#include <lila/all.h>
 
-namespace hydra::utils {
+namespace hydra {
 
 std::vector<std::vector<int>> read_permutations(std::string filename) {
   std::vector<std::vector<int>> lattice_symmetries;
@@ -55,6 +55,9 @@ std::vector<std::vector<int>> read_permutations(std::string filename) {
   }
   return lattice_symmetries;
 }
+} // namespace hydra
+
+namespace hydra::utils {
 
 bool is_valid_permutation(int n_sites, const int *permutation) {
   for (int i = 0; i < n_sites; ++i) {
