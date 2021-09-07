@@ -10,10 +10,10 @@ int main() {
   //                     std::string(".J1J2.fsl.pbc.lat");
   // auto irrep = read_represenation(lfile, "Gamma.C4.A");
 
-  int n_sites = 32;
+  int n_sites = 25;
   std::string lfile = std::string("square.") + std::to_string(n_sites) +
                       std::string(".J1J2.fsl.pbc.lat");
-  auto irrep = read_represenation(lfile, "Gamma.D4.A1");
+  auto irrep = read_represenation(lfile, "Sigma1.D1.A");
 
 
   int n_up = n_sites / 2;
@@ -25,14 +25,13 @@ int main() {
   lila::tic();
   auto block = SpinhalfSymmetric<uint32, PermutationGroupLookup<uint32>>(n_sites, n_up, space_group, irrep);
   // auto block = SpinhalfSymmetric<uint32, PermutationGroupAction>(n_sites, n_up, space_group, irrep);
-
   // auto block = SpinhalfSymmetric<uint64, PermutationGroupLookup<uint64>>(n_sites, n_up, space_group, irrep);
   // auto block = SpinhalfSymmetric<uint64, PermutationGroupAction>(n_sites, n_up, space_group, irrep);
 
   lila::toc("build block");
 
   lila::tic();
-  double e0 = E0Real(bondlist, cpls, block);
+  double e0 = E0Cplx(bondlist, cpls, block);
   lila::toc();
   lila::Log.out("e0: {}", e0);
 

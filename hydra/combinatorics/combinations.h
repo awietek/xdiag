@@ -33,22 +33,24 @@ template <class bit_t> class CombinationsIterator {
 public:
 
   CombinationsIterator() = default;
-  CombinationsIterator(bit_t state);
+  CombinationsIterator(bit_t state, idx_t idx);
 
   inline bool operator==(CombinationsIterator<bit_t> const &rhs) const {
-    return current_ == rhs.current_;
+    return idx_ == rhs.idx_;
   }
   inline bool operator!=(CombinationsIterator<bit_t> const &rhs) const {
     return !operator==(rhs);
   }
   inline CombinationsIterator &operator++() {
     current_ = combinatorics::get_next_pattern(current_);
+    ++idx_;
     return *this;
   }
   inline bit_t operator*() const { return current_; }
 
 private:
   bit_t current_;
+  idx_t idx_;
 };
 
 } // namespace hydra

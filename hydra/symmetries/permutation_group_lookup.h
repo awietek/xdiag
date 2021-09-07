@@ -14,6 +14,13 @@ public:
 
   inline int n_sites() const { return n_sites_; }
   inline int n_symmetries() const { return n_symmetries_; }
+  inline PermutationGroup const &permutation_group() const {
+    return permutation_group_;
+  }
+  inline std::vector<int> const &permutation_array() const {
+    return permutation_group_.permutation_array();
+  }
+
   inline bit_t apply(int sym, bit_t state) const {
     return table_prefix_[sym * prefix_size_ + (state >> n_postfix_bits_)] |
            table_postfix_[sym * postfix_size_ + (state & postfix_mask_)];
@@ -34,12 +41,9 @@ private:
   idx_t prefix_size_;
   idx_t postfix_size_;
 
-
   std::vector<bit_t> table_prefix_;
   std::vector<bit_t> table_postfix_;
   
-  bit_t* table_prefix_ptr_;
-  bit_t* table_postfix_ptr_;
 };
 
 } // namespace hydra

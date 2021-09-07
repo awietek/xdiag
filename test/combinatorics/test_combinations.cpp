@@ -16,11 +16,12 @@ void test_combinations(){
 	Combinations<bit_t> combs(n, k);
 	REQUIRE(n == combs.n());
 	REQUIRE(k == combs.k());
-	lila::Log.out("n: {}, k: {}", n, k);
         idx_t ctr=0;
 	bit_t current=0;
 	for (auto comb : combs)
 	  {
+
+
 	    if (ctr != 0) REQUIRE(comb > current);
 	    current = comb;
 	    ++ctr;
@@ -31,7 +32,8 @@ void test_combinations(){
       }
 }
 
-TEST_CASE( "combinations", "[combinatorics/combinations]" ) {
+TEST_CASE( "Combinations", "[combinatorics]" ) {
+  lila::Log.out("Testing Combinations");
   test_combinations<hydra::uint16>();
   test_combinations<hydra::uint32>();
   test_combinations<hydra::uint64>();
