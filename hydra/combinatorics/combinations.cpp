@@ -16,17 +16,15 @@ Combinations<bit_t>::Combinations(int n, int k)
     lila::Log.err("Error constructing Combinations: n<0");
   else
     {
-      bit_t begin = (((bit_t)1 << k) - 1);
-      bit_t end = begin << (n - k);
-      end = combinatorics::get_next_pattern(end);
-      begin_ = CombinationsIterator(begin);
-      end_ = CombinationsIterator(end);
+      bit_t state = ((bit_t)1 << k) - 1;
+      begin_ = CombinationsIterator<bit_t>(state, (idx_t)0);
+      end_ = CombinationsIterator<bit_t>(state, (idx_t)combinatorics::binomial(n, k));
     }
 }
 
 template <class bit_t>
-CombinationsIterator<bit_t>::CombinationsIterator(bit_t state)
-    : current_(state) {}
+CombinationsIterator<bit_t>::CombinationsIterator(bit_t state, idx_t idx)
+  : current_(state) , idx_(idx) {}
 
 template class Combinations<uint16>;
 template class Combinations<uint32>;

@@ -9,7 +9,7 @@
 
 namespace hydra::indexing {
 
-template <class bit_t, class GroupAction>
+  template <class bit_t, class GroupAction>
 IndexingSymmetric<bit_t, GroupAction>::IndexingSymmetric(
     int n_sites, int n_up, PermutationGroup permutation_group,
     Representation irrep)
@@ -28,7 +28,7 @@ IndexingSymmetric<bit_t, GroupAction>::IndexingSymmetric(
   // Go through non symmetrized states and register representatives
   idx_t idx = 0;
   idx_t n_representatives = 0;
-  lila::tic();
+  
   for (bit_t state : Combinations(n_sites, n_up)) {
 
     bit_t rep = utils::representative(state, group_action);
@@ -46,9 +46,6 @@ IndexingSymmetric<bit_t, GroupAction>::IndexingSymmetric(
     }
     ++idx;
   }
-  lila::toc("pass1");
-
-  lila::tic();
 
   // Go through non symmetrized states and fill indices for all states
   idx = 0;
@@ -66,8 +63,6 @@ IndexingSymmetric<bit_t, GroupAction>::IndexingSymmetric(
     }
     ++idx;
   }
-  lila::toc("pass2");
-
 
   size_ = (idx_t)states_.size();
 }

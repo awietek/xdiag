@@ -1,6 +1,8 @@
 #pragma once
 
 #include <hydra/symmetries/representation.h>
+#include <hydra/symmetries/fermi_sign.h>
+
 #include <string>
 #include <utility>
 #include <vector>
@@ -61,6 +63,26 @@ double compute_norm(bit_t state, GroupAction &&group_action,
     if (tstate == state) {
       amplitude += irrep.character(sym);
     }
+  }
+  return std::sqrt(std::abs(amplitude));
+}
+
+template <class bit_t, class GroupAction>
+double compute_norm_fermionic(bit_t state, GroupAction &&group_action,
+                              Representation const &irrep, int *work) {
+  // "work" needs to be allocated of size n_sites
+
+  complex amplitude = 0.0;
+  int n_sites = group_action.n_sites();
+  int *sym_ptr = group_action.permutation_array().data();
+  for (int sym = 0; sym < group_action.n_symmetries(); ++sym) {
+    bit_t tstate = group_action.apply(sym, state);
+    if (tstate == state) {
+      amplitude +=
+          irrep.character(sym) *
+          fermi_sign_of_permutation(state, sym_ptr, work);
+    }
+    sym_ptr += n_sites;
   }
   return std::sqrt(std::abs(amplitude));
 }

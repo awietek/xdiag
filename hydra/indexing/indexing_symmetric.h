@@ -10,7 +10,8 @@
 
 namespace hydra::indexing {
 
-template <class bit_t, class GroupAction> class IndexingSymmetric {
+template <class bit_t, class GroupAction>
+class IndexingSymmetric {
 public:
   IndexingSymmetric() = default;
   IndexingSymmetric(int n_sites, int n_up, PermutationGroup permutation_group,
