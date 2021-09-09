@@ -13,6 +13,8 @@
 #include "combinatorics/up_down_hole.h"
 
 #include "indexing/lintable.h"
+#include "indexing/indexing_symmetric.h"
+#include "indexing/indexing_symmetric_fermionic.h"
 
 #include "models/models.h"
 #include "models/utils/model_utils.h"

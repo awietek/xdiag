@@ -13,7 +13,7 @@ namespace hydra::indexing {
 template <class bit_t, class GroupAction> class IndexingSymmetricFermionic {
 public:
   IndexingSymmetricFermionic() = default;
-  IndexingSymmetricFermionic(int n_sites, int n_up,
+  IndexingSymmetricFermionic(int n_sites, int n_fermions,
                              PermutationGroup permutation_group,
                              Representation irrep);
 

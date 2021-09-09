@@ -1,4 +1,4 @@
-arch = flatiron_linux
+arch = osx
 
 include ../../../options.mk
 

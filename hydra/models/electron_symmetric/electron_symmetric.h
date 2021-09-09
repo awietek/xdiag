@@ -13,7 +13,7 @@ template <class bit_t = std_bit_t, class GroupAction = PermutationGroupAction>
 class ElectronSymmetric {
 public:
   ElectronSymmetric() = default;
-  ElectronSymmetric(int n_sites, int charge, int sz,
+  ElectronSymmetric(int n_sites, int nup, int ndn,
                     PermutationGroup permutation_group, Representation irrep);
 
   inline int n_sites() const { return n_sites_; }
