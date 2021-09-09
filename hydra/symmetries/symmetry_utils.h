@@ -74,7 +74,7 @@ double compute_norm_fermionic(bit_t state, GroupAction &&group_action,
 
   complex amplitude = 0.0;
   int n_sites = group_action.n_sites();
-  int *sym_ptr = group_action.permutation_array().data();
+  const int *sym_ptr = group_action.permutation_array().data();
   for (int sym = 0; sym < group_action.n_symmetries(); ++sym) {
     bit_t tstate = group_action.apply(sym, state);
     if (tstate == state) {

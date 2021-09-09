@@ -12,6 +12,7 @@ sources+= hydra/parameters/parser.cpp
 
 sources+= hydra/indexing/lintable.cpp
 sources+= hydra/indexing/indexing_symmetric.cpp
+sources+= hydra/indexing/indexing_symmetric_fermionic.cpp
 
 sources+= hydra/models/utils/model_utils.cpp
 
