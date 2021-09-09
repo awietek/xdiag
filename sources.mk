@@ -41,6 +41,9 @@ sources+= hydra/models/electron_symmetric/electron_symmetric.cpp
 sources+= hydra/models/electron_symmetric/electron_symmetric_matrix.cpp
 sources+= hydra/models/electron_symmetric/electron_symmetric_apply.cpp
 
+sources+= hydra/models/electron_symmetric/electron_symmetric_v2.cpp
+
+
 sources+= hydra/symmetries/symmetry_utils.cpp
 sources+= hydra/symmetries/permutation_group.cpp
 sources+= hydra/symmetries/permutation_group_action.cpp
