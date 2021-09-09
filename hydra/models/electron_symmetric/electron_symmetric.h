@@ -27,8 +27,8 @@ public:
   inline Representation const &irrep() const { return irrep_; }
 
   inline idx_t size() const { return size_; }
-  inline double up(idx_t idx) const { return ups_[idx]; }
-  inline double dn(idx_t idx) const { return dns_[idx]; }
+  inline bit_t up(idx_t idx) const { return ups_[idx]; }
+  inline bit_t dn(idx_t idx) const { return dns_[idx]; }
   inline double norm(idx_t idx) const { return norms_[idx]; }
 
   std::tuple<bit_t, bit_t> representative(bit_t ups, bit_t dns) const;
@@ -51,7 +51,7 @@ public:
 
   std::vector<complex> character_switch_;
 
-private:
+// private:
   int n_sites_;
 
   bool charge_conserved_;

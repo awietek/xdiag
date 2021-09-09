@@ -5,6 +5,11 @@
 namespace hydra::utils {
 
 template <class bit_t>
+bool fermi_bool_of_permutation(
+    bit_t state, const int *permutation,
+    int *work); // "work" needs to be allocated of size n_sites
+
+template <class bit_t>
 double fermi_sign_of_permutation(
     bit_t state, const int *permutation,
     int *work); // "work" needs to be allocated of size n_sites

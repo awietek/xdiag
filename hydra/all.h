@@ -45,6 +45,9 @@
 #include "models/electron_symmetric/electron_symmetric_matrix.h"
 #include "models/electron_symmetric/electron_symmetric_apply.h"
 
+#include "models/electron_symmetric/electron_symmetric_v2.h"
+
+
 #include "symmetries/permutation_group.h"
 #include "symmetries/permutation_group_action.h"
 #include "symmetries/permutation_group_lookup.h"
