@@ -37,11 +37,13 @@ sources+= hydra/models/electron/electron.cpp
 sources+= hydra/models/electron/electron_matrix.cpp
 sources+= hydra/models/electron/electron_apply.cpp
 
+sources+= hydra/models/electron_symmetric_simple/electron_symmetric_simple.cpp
+sources+= hydra/models/electron_symmetric_simple/electron_symmetric_simple_matrix.cpp
+sources+= hydra/models/electron_symmetric_simple/electron_symmetric_simple_apply.cpp
+
 sources+= hydra/models/electron_symmetric/electron_symmetric.cpp
 sources+= hydra/models/electron_symmetric/electron_symmetric_matrix.cpp
 sources+= hydra/models/electron_symmetric/electron_symmetric_apply.cpp
-
-sources+= hydra/models/electron_symmetric/electron_symmetric_v2.cpp
 
 
 sources+= hydra/symmetries/symmetry_utils.cpp
@@ -111,9 +113,13 @@ testsources+= test/models/electron/testcases_electron.cpp
 testsources+= test/models/electron/test_electron_matrix.cpp
 testsources+= test/models/electron/test_electron_apply.cpp
 
+testsources+= test/models/electron_symmetric_simple/test_electron_symmetric_simple.cpp
+testsources+= test/models/electron_symmetric_simple/test_electron_symmetric_simple_matrix.cpp
+testsources+= test/models/electron_symmetric_simple/test_electron_symmetric_simple_apply.cpp
+
 testsources+= test/models/electron_symmetric/test_electron_symmetric.cpp
 testsources+= test/models/electron_symmetric/test_electron_symmetric_matrix.cpp
-testsources+= test/models/electron_symmetric/test_electron_symmetric_apply.cpp
+
 
 testsources+= test/linalg/lanczos/test_lanczos_generic.cpp
 testsources+= test/linalg/lanczos/test_lanczos_eigenvalues.cpp
