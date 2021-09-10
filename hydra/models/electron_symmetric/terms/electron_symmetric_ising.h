@@ -14,7 +14,7 @@ namespace hydra::electronterms {
 
 template <class bit_t, class GroupAction, class Filler>
 void do_ising_symmetric(BondList const &bonds, Couplings const &couplings,
-                        ElectronSymmetric<bit_t, GroupAction> const &block,
+                        ElectronSymmetricSimple<bit_t, GroupAction> const &block,
                         Filler &&fill) {
 
   using utils::gbit;

@@ -44,7 +44,7 @@ TEST_CASE("symmetric_operator", "[symmetries]") {
         std::vector<double> e0s;
         for (auto irrep : irreps) {
           auto block_sym =
-              ElectronSymmetric(n_sites, nup, ndn, space_group, irrep);
+              ElectronSymmetricSimple(n_sites, nup, ndn, space_group, irrep);
           if (block_sym.size() == 0)
             continue;
           double e0_sector = E0Cplx(bondlist, couplings, block_sym);
@@ -73,7 +73,7 @@ TEST_CASE("symmetric_operator", "[symmetries]") {
         if (deg == 1) {
 
           auto block_sym =
-              ElectronSymmetric(n_sites, nup, ndn, space_group, e0_irrep);
+              ElectronSymmetricSimple(n_sites, nup, ndn, space_group, e0_irrep);
 
           auto [e0_sym2, v0_sym] =
               GroundstateCplx(bondlist, couplings, block_sym);

@@ -5,7 +5,7 @@ int main() {
 
   lila::Log.set_verbosity(1);
 
-  int n_sites = 12;
+  int n_sites = 16;
   std::string lfile = std::string("triangular.") + std::to_string(n_sites) +
                       std::string(".t1t2.pbc.lat");
   auto irrep = read_represenation(lfile, "Gamma.D6.A1");
