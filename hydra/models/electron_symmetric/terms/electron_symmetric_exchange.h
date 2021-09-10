@@ -16,7 +16,7 @@ namespace hydra::electronterms {
 template <class bit_t, class coeff_t, class Filler, class GroupAction>
 void do_down_flips(bit_t up, idx_t idx_up, bit_t mask, bit_t spacemask,
                    bit_t dnmask, double Jhalf,
-                   ElectronSymmetric<bit_t, GroupAction> const &block,
+                   ElectronSymmetricSimple<bit_t, GroupAction> const &block,
                    Filler &&fill) {
   using utils::popcnt;
 
@@ -86,7 +86,7 @@ void do_down_flips(bit_t up, idx_t idx_up, bit_t mask, bit_t spacemask,
 
 template <class bit_t, class coeff_t, class GroupAction, class Filler>
 void do_exchange_symmetric(BondList const &bonds, Couplings const &couplings,
-                           ElectronSymmetric<bit_t, GroupAction> const &block,
+                           ElectronSymmetricSimple<bit_t, GroupAction> const &block,
                            Filler &&fill) {
   using utils::gbit;
   using utils::popcnt;
