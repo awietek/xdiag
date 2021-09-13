@@ -119,7 +119,7 @@ testsources+= test/models/electron_symmetric_simple/test_electron_symmetric_simp
 
 testsources+= test/models/electron_symmetric/test_electron_symmetric.cpp
 testsources+= test/models/electron_symmetric/test_electron_symmetric_matrix.cpp
-
+testsources+= test/models/electron_symmetric/test_electron_symmetric_apply.cpp
 
 testsources+= test/linalg/lanczos/test_lanczos_generic.cpp
 testsources+= test/linalg/lanczos/test_lanczos_eigenvalues.cpp
