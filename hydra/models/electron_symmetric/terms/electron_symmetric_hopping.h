@@ -200,7 +200,7 @@ void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
 
               // Complex conjugate t if necessary
               if constexpr (is_complex<coeff_t>()) {
-                val = -(gbit(dns, s1) ? t : tconj) * fermi *
+                val = -(gbit(ups, s1) ? t : tconj) * fermi *
                       irrep.character(sym) * norms_out[idx_dn_flip] /
                       norms_in[idx_dn];
               } else {
@@ -257,7 +257,7 @@ void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
 
                 // Complex conjugate t if necessary
                 if constexpr (is_complex<coeff_t>()) {
-                  val = -(gbit(dns, s1) ? t : tconj) * fermi *
+                  val = -(gbit(ups, s1) ? t : tconj) * fermi *
                         irrep.character(rep_sym) * norms_out[idx_dn_flip] /
                         norms_in[idx_dn];
                 } else {
