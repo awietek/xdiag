@@ -15,11 +15,11 @@ void test_symmetric_spectra_simple(BondList bondlist, Couplings couplings,
   int n_sites = space_group.n_sites();
   assert(irreps.size() == multiplicities.size());
 
-  // for (int nup = 0; nup <= n_sites; ++nup) {
-  //   for (int ndn = 0; ndn <= n_sites; ++ndn) {
+  for (int nup = 0; nup <= n_sites; ++nup) {
+    for (int ndn = 0; ndn <= n_sites; ++ndn) {
 
-      int nup=1;
-      int ndn=2;
+      // int nup=1;
+      // int ndn=2;
       // Compute the full spectrum from non-symmetrized block
       auto electron_nosym = Electron<bit_t>(n_sites, nup, ndn);
       if (electron_nosym.size() < 1000) {
@@ -71,8 +71,8 @@ void test_symmetric_spectra_simple(BondList bondlist, Couplings couplings,
         // lila::Log.out("{} {} {}", nup, ndn, eigs_sym(0));
         REQUIRE(lila::close(eigs_sym, eigs_nosym));
       }
-  //   }
-  // }
+    }
+  }
 }
 
 template <class bit_t>
@@ -153,7 +153,7 @@ TEST_CASE("ElectronSymmetricSimple_Matrix",
   }
 
   // Test linear chains
-  for (int n_sites = 3; n_sites < 4; ++n_sites) {
+  for (int n_sites = 2; n_sites < 7; ++n_sites) {
     test_hubbard_symmetric_spectrum_chains_simple<hydra::uint16>(n_sites);
     test_hubbard_symmetric_spectrum_chains_simple<hydra::uint32>(n_sites);
     test_hubbard_symmetric_spectrum_chains_simple<hydra::uint64>(n_sites);
