@@ -77,12 +77,12 @@ void do_exchange_symmetric(BondList const &bonds, Couplings const &couplings,
         auto const &norms_out = block.norms_for_up_rep(ups_flip_rep);
 
         // flag whether or not we have a sign change
-        bool fermi_bool = !(bool)(popcnt(ups & spacemask) & 1);
+	bool fermi_up = !(bool)(popcnt(ups & spacemask) & 1);
 
         // trivial up-stabilizer (likely)
         if (sym_upper - sym_lower == 1) {
           int sym = block.syms_up_[sym_lower];
-          fermi_bool ^= block.fermi_bool_up(sym, ups_flip);
+          fermi_up ^= block.fermi_bool_up(sym, ups_flip);
 
           idx_t idx_dn = 0;
           for (bit_t dns : dnss_in) {
@@ -94,8 +94,9 @@ void do_exchange_symmetric(BondList const &bonds, Couplings const &couplings,
               bit_t dns_rep = group_action.apply(sym, dns_flip);
               idx_t idx_dn_flip = block.lintable_dns_.index(dns_rep);
               idx_t idx_out = up_offset_out + idx_dn_flip;
-              fermi_bool ^= (bool)(popcnt(dns & spacemask) & 1);
-              fermi_bool ^= block.fermi_bool_dn(sym, dns_flip);
+	      bool fermi = fermi_up;
+	      fermi ^= (bool)(popcnt(dns & spacemask) & 1);
+              fermi ^= block.fermi_bool_dn(sym, dns_flip);
 
               if constexpr (is_complex<coeff_t>()) {
                 val = Jhalf * irrep.character(sym) * norms_out[idx_dn_flip] /
@@ -105,25 +106,25 @@ void do_exchange_symmetric(BondList const &bonds, Couplings const &couplings,
                       norms_out[idx_dn_flip] / norms_in[idx_dn];
               }
 
-              idx_t idx_out2 = block.index(ups_flip, dns_flip);
-              int n_sites = block.n_sites();
-              lila::Log.out("tri s1: {} s2: {} {};{} -> {};{} -> {};{} idx_in: "
-                            "{}, idx_out: {}/{}, val: {:.4f}",
-                            s1, s2, bits_to_string(ups, n_sites),
-                            bits_to_string(dns, n_sites),
-                            bits_to_string(ups_flip, n_sites),
-                            bits_to_string(dns_flip, n_sites),
-                            bits_to_string(ups_flip_rep, n_sites),
-                            bits_to_string(dns_rep, n_sites), idx_in, idx_out,
-                            idx_out2, lila::real(val));
-              assert(idx_out == idx_out2);
+              // idx_t idx_out2 = block.index(ups_flip, dns_flip);
+              // int n_sites = block.n_sites();
+              // lila::Log.out("tri s1: {} s2: {} {};{} -> {};{} -> {};{} idx_in: "
+              //               "{}, idx_out: {}/{}, val: {:.4f}",
+              //               s1, s2, bits_to_string(ups, n_sites),
+              //               bits_to_string(dns, n_sites),
+              //               bits_to_string(ups_flip, n_sites),
+              //               bits_to_string(dns_flip, n_sites),
+              //               bits_to_string(ups_flip_rep, n_sites),
+              //               bits_to_string(dns_rep, n_sites), idx_in, idx_out,
+              //               idx_out2, lila::real(val));
+              // assert(idx_out == idx_out2);
 
-              lila::Log.out("{} {} {} {} {}", (bool)(popcnt(ups & spacemask) & 1),
-                            block.fermi_bool_up(sym, ups_flip),
-                            (bool)(popcnt(dns & spacemask) & 1),
-                            block.fermi_bool_dn(sym, dns_flip), fermi_bool);
+              // lila::Log.out("{} {} {} {} {}", (bool)(popcnt(ups & spacemask) & 1),
+              //               block.fermi_bool_up(sym, ups_flip),
+              //               (bool)(popcnt(dns & spacemask) & 1),
+              //               block.fermi_bool_dn(sym, dns_flip), fermi);
 
-              if (fermi_bool)
+              if (fermi)
                 fill(idx_out, idx_in, -val);
               else
                 fill(idx_out, idx_in, val);
@@ -134,6 +135,7 @@ void do_exchange_symmetric(BondList const &bonds, Couplings const &couplings,
         } else {
           idx_t idx_dn = 0;
           for (bit_t dns : dnss_in) {
+
             // If  dns can be raised
             if ((dns & mask) == dns_mask) {
 
@@ -151,7 +153,7 @@ void do_exchange_symmetric(BondList const &bonds, Couplings const &couplings,
                   rep_sym = sym;
                 }
               }
-              fermi_bool ^= block.fermi_bool_up(rep_sym, ups_flip);
+
 
               // Find index of rep dns
               auto it =
@@ -160,8 +162,9 @@ void do_exchange_symmetric(BondList const &bonds, Couplings const &couplings,
               if ((it != dnss_out.end()) && (*it == rep_dns)) {
                 idx_t idx_dn_flip = std::distance(dnss_out.begin(), it);
                 idx_t idx_out = up_offset_out + idx_dn_flip;
-                fermi_bool ^= (bool)(popcnt(dns & spacemask) & 1);
-                fermi_bool ^= block.fermi_bool_dn(rep_sym, dns_flip);
+		bool fermi = fermi_up ^ block.fermi_bool_up(rep_sym, ups_flip);
+		fermi ^= (bool)(popcnt(dns & spacemask) & 1);
+		fermi ^= block.fermi_bool_dn(rep_sym, dns_flip);
 
                 if constexpr (is_complex<coeff_t>()) {
                   val = Jhalf * irrep.character(rep_sym) *
@@ -171,25 +174,25 @@ void do_exchange_symmetric(BondList const &bonds, Couplings const &couplings,
                         norms_out[idx_dn_flip] / norms_in[idx_dn];
                 }
 
-                // Debug
-                idx_t idx_out2 = block.index(ups_flip, dns_flip);
-                idx_t idx_in2 = block.index(ups, dns);
+                // // Debug
+                // idx_t idx_out2 = block.index(ups_flip, dns_flip);
+                // idx_t idx_in2 = block.index(ups, dns);
 
-                int n_sites = block.n_sites();
-                lila::Log.out(
-                    "non s1: {} s2: {} {};{} -> {};{} -> {};{} idx_in: "
-                    "{}, idx_out: {}/{}, val: {:.4f}",
-                    s1, s2, bits_to_string(ups, n_sites),
-                    bits_to_string(dns, n_sites),
-                    bits_to_string(ups_flip, n_sites),
-                    bits_to_string(dns, n_sites),
-                    bits_to_string(ups_flip_rep, n_sites),
-                    bits_to_string(rep_dns, n_sites), idx_in, idx_out, idx_out2,
-                    lila::real(val));
-                assert(idx_in == idx_in2);
-                assert(idx_out == idx_out2);
+                // int n_sites = block.n_sites();
+                // lila::Log.out(
+                //     "non s1: {} s2: {} {};{} -> {};{} -> {};{} idx_in: "
+                //     "{}, idx_out: {}/{}, val: {:.4f}",
+                //     s1, s2, bits_to_string(ups, n_sites),
+                //     bits_to_string(dns, n_sites),
+                //     bits_to_string(ups_flip, n_sites),
+                //     bits_to_string(dns_flip, n_sites),
+                //     bits_to_string(ups_flip_rep, n_sites),
+                //     bits_to_string(rep_dns, n_sites), idx_in, idx_out, idx_out2,
+                //     lila::real(val));
+                // assert(idx_in == idx_in2);
+                // assert(idx_out == idx_out2);
 
-                if (fermi_bool)
+                if (fermi)
                   fill(idx_out, idx_in, -val);
                 else
                   fill(idx_out, idx_in, val);
