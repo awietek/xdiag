@@ -59,6 +59,8 @@ template <class bit_t> void test_spinchain_blocks(int n_sites) {
       if (block.size() > 0) {
         test_indices_spinhalf_symmetric(block);
       }
+      lila::Log.out("{} {} {} {}", n_sites, nup, k, block.size());
+
     }
     REQUIRE(sum_of_dims_up == binomial(n_sites, nup));
   }
