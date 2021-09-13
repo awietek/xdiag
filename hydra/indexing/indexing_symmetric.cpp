@@ -37,12 +37,12 @@ IndexingSymmetric<bit_t, GroupAction>::IndexingSymmetric(
 
       double norm = utils::compute_norm(rep, group_action, irrep);
 
-      // if (norm > 1e-6) { // tolerance big as 1e-6 since root is taken
+      if (norm > 1e-6) { // tolerance big as 1e-6 since root is taken
         idx_t idx = lin_table_.index(rep);
         states_.push_back(rep);
         norm_of_raw_state_[idx] = norm;
         index_of_raw_state_[idx] = n_representatives++;
-      // }
+      }
     }
     ++idx;
   }
@@ -56,10 +56,10 @@ IndexingSymmetric<bit_t, GroupAction>::IndexingSymmetric(
 
     if (rep != state) {
       complex norm = norm_of_raw_state_[lin_table_.index(rep)];
-      // if (std::abs(norm) > 1e-6) {
+      if (std::abs(norm) > 1e-6) {
         norm_of_raw_state_[idx] = irrep.character(rep_sym) * norm;
         index_of_raw_state_[idx] = index_of_raw_state_[lin_table_.index(rep)];
-      // }
+      }
     }
     ++idx;
   }
