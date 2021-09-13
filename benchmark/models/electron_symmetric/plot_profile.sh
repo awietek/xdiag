@@ -1,3 +1,3 @@
 #!/bin/bash
 
-pprof --pdf benchmark benchmark.prof > benchmark.pdf
+pprof --pdf benchmark --ignore kmp benchmark.prof > benchmark.pdf

@@ -75,6 +75,21 @@ void do_down_flips(bit_t up, idx_t idx_up, bit_t mask, bit_t spacemask,
                     complex_to<coeff_t>(irrep.character(rep_sym)) *
                     block.norm(idx_out) / block.norm(idx_in);
 
+      // int n_sites = block.n_sites();
+      // lila::Log.out(
+      //     "{};{} -> {};{} -> {};{} idx_in: "
+      //     "{}, idx_out: {}, val: {:.4f}",
+      //     bits_to_string(up, n_sites), bits_to_string(dn, n_sites),
+      //     bits_to_string(up_flip, n_sites), bits_to_string(dn_flip, n_sites),
+      //     bits_to_string(up_rep, n_sites), bits_to_string(dn_rep, n_sites),
+      //     idx_in, idx_out, lila::real(val));
+
+      // lila::Log.out("Jhalf: {}, {} {} {} {}", Jhalf, (bool)(popcnt(up & spacemask) & 1),
+      //                       group_action.fermi_sign(rep_sym, up_flip),
+      //                       (bool)(popcnt(dn & spacemask) & 1),
+      //                       group_action.fermi_sign(rep_sym, dn_flip));
+
+
       // Fermi sign for dn
       if (popcnt(dn & spacemask) & 1)
         fill(idx_out, idx_in, -val);
@@ -85,9 +100,9 @@ void do_down_flips(bit_t up, idx_t idx_up, bit_t mask, bit_t spacemask,
 }
 
 template <class bit_t, class coeff_t, class GroupAction, class Filler>
-void do_exchange_symmetric(BondList const &bonds, Couplings const &couplings,
-                           ElectronSymmetricSimple<bit_t, GroupAction> const &block,
-                           Filler &&fill) {
+void do_exchange_symmetric(
+    BondList const &bonds, Couplings const &couplings,
+    ElectronSymmetricSimple<bit_t, GroupAction> const &block, Filler &&fill) {
   using utils::gbit;
   using utils::popcnt;
 

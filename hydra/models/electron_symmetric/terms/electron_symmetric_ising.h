@@ -14,7 +14,7 @@ namespace hydra::electronterms {
 
 template <class bit_t, class GroupAction, class Filler>
 void do_ising_symmetric(BondList const &bonds, Couplings const &couplings,
-                        ElectronSymmetricSimple<bit_t, GroupAction> const &block,
+                        ElectronSymmetric<bit_t, GroupAction> const &block,
                         Filler &&fill) {
 
   using utils::gbit;
@@ -53,33 +53,33 @@ void do_ising_symmetric(BondList const &bonds, Couplings const &couplings,
       bit_t s2mask = (bit_t)1 << s2;
       bit_t mask = s1mask | s2mask;
 
-      for (auto [up, lower_upper] : block.ups_lower_upper_) {
-        idx_t lower = lower_upper.first;
-        idx_t upper = lower_upper.second;
+      idx_t idx = 0;
+      for (bit_t ups : block.reps_up_) {
+        auto const &dnss = block.dns_for_up_rep(ups);
 
-        if ((up & mask) == mask) { // both spins pointing up
-          for (idx_t idx = lower; idx < upper; ++idx) {
-            bit_t dn = block.dns_[idx];
-            if (!(dn & mask))
+        if ((ups & mask) == mask) { // both spins pointing up
+          for (auto dns : dnss) {
+            if (!(dns & mask))
               fill(idx, idx, val_same);
+            ++idx;
           }
-        } else if (up & s1mask) { // s1 is pointing up
-          for (idx_t idx = lower; idx < upper; ++idx) {
-            bit_t dn = block.dns_[idx];
-            if ((dn & mask) == s2mask)
+        } else if (ups & s1mask) { // s1 is pointing up
+          for (auto dns : dnss) {
+            if ((dns & mask) == s2mask)
               fill(idx, idx, val_diff);
+            ++idx;
           }
-        } else if (up & s2mask) { // s2 is pointing up
-          for (idx_t idx = lower; idx < upper; ++idx) {
-            bit_t dn = block.dns_[idx];
-            if ((dn & mask) == s1mask)
+        } else if (ups & s2mask) { // s2 is pointing up
+          for (auto dns : dnss) {
+            if ((dns & mask) == s1mask)
               fill(idx, idx, val_diff);
+            ++idx;
           }
         } else { // no upspins
-          for (idx_t idx = lower; idx < upper; ++idx) {
-            bit_t dn = block.dns_[idx];
-            if ((dn & mask) == mask)
+          for (auto dns : dnss) {
+            if ((dns & mask) == mask)
               fill(idx, idx, val_same);
+            ++idx;
           }
         }
       }
