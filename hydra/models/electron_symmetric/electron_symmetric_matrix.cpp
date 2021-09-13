@@ -1,9 +1,8 @@
 #include "electron_symmetric_matrix.h"
 
-// #include
-// <hydra/models/electron_symmetric/terms/electron_symmetric_exchange.h>
+#include <hydra/models/electron_symmetric/terms/electron_symmetric_exchange.h>
 #include <hydra/models/electron_symmetric/terms/electron_symmetric_hopping.h>
-// #include <hydra/models/electron_symmetric/terms/electron_symmetric_ising.h>
+#include <hydra/models/electron_symmetric/terms/electron_symmetric_ising.h>
 #include <hydra/models/electron_symmetric/terms/electron_symmetric_u.h>
 
 #include <hydra/models/utils/model_utils.h>
@@ -30,10 +29,10 @@ MatrixReal(BondList const &bonds, Couplings const &couplings,
   electronterms::do_U_symmetric(couplings, block_in, fill);
   electronterms::do_hopping_symmetric<bit_t, double>(bonds, couplings, block_in,
                                                      fill);
-  // electronterms::do_ising_symmetric<bit_t>(bonds, couplings, block_in, fill);
-  // electronterms::do_exchange_symmetric<bit_t, double>(bonds, couplings,
-  // block_in,
-  //                                                fill);
+  electronterms::do_ising_symmetric<bit_t>(bonds, couplings, block_in, fill);
+  electronterms::do_exchange_symmetric<bit_t, double>(bonds, couplings,
+  block_in,
+                                                 fill);
   return mat;
 }
 
@@ -69,10 +68,10 @@ MatrixCplx(BondList const &bonds, Couplings const &couplings,
   electronterms::do_U_symmetric(couplings, block_in, fill);
   electronterms::do_hopping_symmetric<bit_t, complex>(bonds, couplings,
                                                       block_in, fill);
-  // electronterms::do_ising_symmetric<bit_t>(bonds, couplings, block_in, fill);
-  // electronterms::do_exchange_symmetric<bit_t, complex>(bonds, couplings,
-  // block_in,
-  //                                                 fill);
+  electronterms::do_ising_symmetric<bit_t>(bonds, couplings, block_in, fill);
+  electronterms::do_exchange_symmetric<bit_t, complex>(bonds, couplings,
+  block_in,
+                                                  fill);
   return mat;
 }
 

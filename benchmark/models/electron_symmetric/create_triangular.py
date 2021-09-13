@@ -19,12 +19,17 @@ else:
     filename = "t1t2.pbc" 
 
 
-# 12 site lattice
-lattice = quantipy.lattice.Triangular(simulation_torus_matrix = np.array([[2,2],[2,-4]]))
+# # 12 site lattice
+# lattice = quantipy.lattice.Triangular(simulation_torus_matrix = np.array([[2,2],[2,-4]]))
 
 
-# 16 site lattice
-lattice = quantipy.lattice.Triangular(simulation_torus_matrix = np.array([[4,0],[0,4]]))
+# # 16 site lattice
+# lattice = quantipy.lattice.Triangular(simulation_torus_matrix = np.array([[4,0],[0,4]]))
+ 
+
+
+# 18 site lattice
+lattice = quantipy.lattice.Triangular(simulation_torus_matrix = np.array([[1,4],[4,-2]]))
         
 
 ########################
