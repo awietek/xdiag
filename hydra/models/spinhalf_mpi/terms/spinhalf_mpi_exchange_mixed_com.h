@@ -4,8 +4,8 @@
 
 #include <hydra/common.h>
 #include <hydra/mpi/communicator.h>
-#include <hydra/models/model_utils.h>
-#include <hydra/models/model_utils_mpi.h>
+#include <hydra/models/utils/model_utils.h>
+#include <hydra/models/utils/model_utils_mpi.h>
 
 
 namespace hydra::spinhalfterms {
@@ -16,7 +16,8 @@ std::tuple<std::vector<mpi::Communicator>, idx_t, idx_t>
 spinhalf_mpi_exchange_mixed_com(SpinhalfMPI<bit_t> const &block,
                                 BondList const &mixed_bonds,
                                 Couplings const &couplings) {
-
+  using namespace indexing;
+  
   int mpi_size;
   MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
 

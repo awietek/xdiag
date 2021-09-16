@@ -10,9 +10,9 @@ void timing_mpi(double const &t0, double const &t1, std::string msg,
                 int verbosity) {
   auto td = t1 - t0;
   if (msg != "")
-    LogMPI.out(verbosity, "{}: {} secs", msg, td);
+    LogMPI.out(verbosity, "{}: {:.6f} secs", msg, td);
   else
-    LogMPI.out(verbosity, "{} secs", td);
+    LogMPI.out(verbosity, "{:.6f} secs", td);
 }
 
 void tic_mpi(bool begin, std::string msg, int verbosity) {

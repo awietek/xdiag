@@ -40,8 +40,8 @@ private:
   int n_up_;
   int n_dn_;
 
-  LinTable<bit_t> lintable_up_;
-  LinTable<bit_t> lintable_dn_;
+  indexing::LinTable<bit_t> lintable_up_;
+  indexing::LinTable<bit_t> lintable_dn_;
 
   idx_t size_up_;
   idx_t size_dn_;
