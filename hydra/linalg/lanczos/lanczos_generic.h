@@ -1,7 +1,6 @@
 #pragma once
 
 #include <lila/all.h>
-
 #include <hydra/linalg/lanczos/tmatrix.h>
 
 namespace hydra {
@@ -13,6 +12,7 @@ LanczosGeneric(multiply_f mult, lila::Vector<coeff_t> &v0, dot_f dot,
                convergence_f converged,
                lila::Matrix<coeff_t> coefficients = lila::Matrix<coeff_t>(),
                int max_iterations = 1000, double deflation_tol = 1e-7) {
+
   using namespace lila;
   using real = real_t<coeff_t>;
 
@@ -37,6 +37,7 @@ LanczosGeneric(multiply_f mult, lila::Vector<coeff_t> &v0, dot_f dot,
   Zeros(v0);
   real alpha = 0.;
   real beta = 0.;
+
 
   // Normalize start vector or return if norm is zero
   coeff_t v1_norm = norm(v1);

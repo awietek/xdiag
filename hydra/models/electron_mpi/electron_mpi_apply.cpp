@@ -3,7 +3,7 @@
 #include <hydra/combinatorics/combinations.h>
 #include <hydra/utils/bitops.h>
 
-#include <hydra/models/electron_mpi/terms/electron_mpi_hopping.h>
+// #include <hydra/models/electron_mpi/terms/electron_mpi_hopping.h>
 #include <hydra/models/electron_mpi/terms/electron_mpi_u.h>
 
 namespace hydra {
@@ -14,16 +14,15 @@ void Apply(BondList const &bonds, Couplings const &couplings,
            lila::Vector<coeff_t> const &vec_in,
            ElectronMPI<bit_t> const &block_out,
            lila::Vector<coeff_t> &vec_out) {
+  // assert(block_in == block_out); // only temporary
+  // assert(block_in.size() == vec_in.size());
+  // assert(block_out.size() == vec_out.size());
 
-  assert(block_in == block_out); // only temporary
-  assert(block_in.size() == vec_in.size());
-  assert(block_out.size() == vec_out.size());
+  // lila::Zeros(vec_out);
 
-  lila::Zeros(vec_out);
-
-  auto tis = rightnow_mpi();
-  electron::do_U_mpi(bonds, couplings, block_in, vec_in, vec_out);
-  timing_mpi(tis, rightnow_mpi(), " (U)", 2);
+  // auto tis = rightnow_mpi();
+  // electron::do_U_mpi(bonds, couplings, block_in, vec_in, vec_out);
+  // timing_mpi(tis, rightnow_mpi(), " (U)", 2);
 
   // auto tex = rightnow_mpi();
   // electron::do_hopping_mpi(bonds, couplings, block_in, vec_in, vec_out);
