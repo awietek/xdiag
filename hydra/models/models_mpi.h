@@ -1,5 +1,6 @@
 #pragma once
 
+#include <hydra/common.h>
 #include <hydra/models/models.h>
 #include <tuple>
 

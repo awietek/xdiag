@@ -3,6 +3,8 @@
 #include <lila/all.h>
 
 #include <hydra/common.h>
+
+#include <hydra/models/models.h>
 #include <hydra/models/electron_symmetric/electron_symmetric.h>
 #include <hydra/operators/couplings.h>
 #include <hydra/symmetries/symmetry_utils.h>

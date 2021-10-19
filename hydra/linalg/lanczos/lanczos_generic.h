@@ -3,6 +3,7 @@
 #include <lila/all.h>
 
 #include <hydra/linalg/lanczos/tmatrix.h>
+#include <hydra/common.h>
 
 namespace hydra {
 

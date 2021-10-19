@@ -15,6 +15,7 @@ cc         = clang++
 mpicc      = mpicxx
 ccopt      = -O3 -mavx -DLILA_USE_ACCELERATE
 ccarch     = -std=c++17 -Wall -pedantic -m64 -Wno-return-type-c-linkage
+hydradir    = /Users/awietek/Research/Software/hydra
 liladir    = /Users/awietek/Research/Software/lila
 limedir    = /Users/awietek/Research/Software/lime
 claradir    = /Users/awietek/Research/Software/Clara

@@ -56,7 +56,6 @@ testmpi:  $(objects) $(mpiobjects) $(testmpiobjects) libmpi
 .PHONY: apps
 apps: $(objects) $(appobjects) $(appbinaries) lib
 
-
 # Libraries
 .PHONY: lib
 lib: $(objects)
@@ -65,7 +64,6 @@ lib: $(objects)
 .PHONY: libmpi
 libmpi: $(objects) $(mpiobjects)
 	ar rcs lib/libhydra_mpi.a $(objects) $(mpiobjects)
-
 
 $(appbinaries):
 	$(cc) $(ccopt) $(ccarch) $(depflags) $@.o -Llib -lhydra $(libraries) -o bin/$(notdir $@)

@@ -2,6 +2,6 @@
 *.a
 *.d
 *~
-doc/html
+docs/*
 bin/*
 lib/*

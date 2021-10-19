@@ -3,7 +3,7 @@
 #include <lila/utils/logger.h>
 
 #include <hydra/common.h>
-
+#include <hydra/models/models.h>
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
 #include <hydra/symmetries/symmetry_utils.h>

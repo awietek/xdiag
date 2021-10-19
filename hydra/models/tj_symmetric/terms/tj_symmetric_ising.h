@@ -4,7 +4,7 @@
 
 #include <hydra/common.h>
 #include <hydra/utils/bitops.h>
-
+#include <hydra/models/models.h>
 #include <hydra/models/utils/model_utils.h>
 #include <hydra/symmetries/symmetry_utils.h>
 #include <hydra/operators/bondlist.h>

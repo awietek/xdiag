@@ -3,7 +3,7 @@
 #include <map>
 
 #include <hydra/common.h>
-#include <hydra/indexing/indexing_symmetries_fermionic.h>
+#include <hydra/indexing/indexing_symmetric_fermionic.h>
 #include <hydra/symmetries/permutation_group.h>
 #include <hydra/symmetries/permutation_group_action.h>
 #include <hydra/symmetries/representation.h>
