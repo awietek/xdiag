@@ -26,6 +26,9 @@ public:
     return norm_of_raw_state_[lin_table_.index(state)];
   }
 
+  inline auto begin() const { return states_.begin(); }
+  inline auto end() const { return states_.end(); }
+
 private:
   LinTable<bit_t> lin_table_;
   std::vector<bit_t> states_;

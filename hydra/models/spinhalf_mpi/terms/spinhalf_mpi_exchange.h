@@ -25,6 +25,8 @@ void do_exchange_mpi(BondList const &bonds, Couplings const &couplings,
                      SpinhalfMPI<bit_t> const &block,
                      lila::Vector<coeff_t> const &vec_in,
                      lila::Vector<coeff_t> &vec_out) {
+  using namespace indexing;
+
   int mpi_rank, mpi_size;
   MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
   MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
@@ -56,8 +58,10 @@ void do_exchange_mpi(BondList const &bonds, Couplings const &couplings,
     for (auto prefix : block.prefixes_) {
       int n_up_prefix = utils::popcnt(prefix);
       int n_up_postfix = n_up - n_up_prefix;
+
       LinTable<bit_t> const &lintable = block.postfix_lintables_[n_up_postfix];
-      for (auto postfix : Combinations<bit_t>(n_postfix_bits, n_up_postfix)) {
+      auto const& postfixes = block.postfix_states_[n_up_postfix];
+      for (auto postfix : postfixes) {
 
         if (utils::popcnt(postfix & mask) & 1) {
           bit_t new_postfix = postfix ^ mask;
@@ -80,9 +84,13 @@ void do_exchange_mpi(BondList const &bonds, Couplings const &couplings,
   auto tpre = rightnow_mpi();
   if (prefix_bonds.size() > 0) {
 
+
     // Transpose prefix/postfix order
+    auto ttrans1 = rightnow_mpi();
     spinhalf_mpi_transpose(block, vec_in.vector(), send_buffer, recv_buffer,
                            false);
+    timing_mpi(ttrans1, rightnow_mpi(), " (exchange) transpose 1", 2);
+
 
     // Loop over prefix_bonds
     for (auto bond : prefix_bonds) {
@@ -100,8 +108,10 @@ void do_exchange_mpi(BondList const &bonds, Couplings const &couplings,
       for (auto postfix : block.postfixes_) {
         int n_up_postfix = utils::popcnt(postfix);
         int n_up_prefix = n_up - n_up_postfix;
+
         LinTable<bit_t> const &lintable = block.prefix_lintables_[n_up_prefix];
-        for (auto prefix : Combinations<bit_t>(n_prefix_bits, n_up_prefix)) {
+	auto const& prefixes = block.prefix_states_[n_up_prefix];
+        for (auto prefix : prefixes) {
 
           if (utils::popcnt(prefix & mask) & 1) {
             bit_t new_prefix = prefix ^ mask;
@@ -116,7 +126,10 @@ void do_exchange_mpi(BondList const &bonds, Couplings const &couplings,
     }
 
     // Transpose back
+    auto ttrans2 = rightnow_mpi();
     spinhalf_mpi_transpose(block, recv_buffer, send_buffer, recv_buffer, true);
+    timing_mpi(ttrans2, rightnow_mpi(), " (exchange) transpose 2", 2);
+
 
     for (idx_t idx = 0; idx < vec_out.size(); ++idx) {
       vec_out(idx) += send_buffer[idx];
@@ -128,7 +141,7 @@ void do_exchange_mpi(BondList const &bonds, Couplings const &couplings,
   /////////
   // Apply the mixed bonds
   auto tmix = rightnow_mpi();
-
+  double tcom=0;
   if (mixed_bonds.size() > 0) {
 
     // Figure out communication patterns and resize buffers accoringly
@@ -167,10 +180,11 @@ void do_exchange_mpi(BondList const &bonds, Couplings const &couplings,
         bit_t prefix_flipped = prefix ^ prefix_mask;
         int target_rank = block.process(prefix_flipped);
 
+	auto const& postfixes = block.postfix_states_[n_up_postfix];
+
         // prefix up, postfix must be dn
         if (prefix & prefix_mask) {
-          for (auto postfix :
-               Combinations<bit_t>(n_postfix_bits, n_up_postfix)) {
+          for (auto postfix : postfixes) {
             if (!(postfix & postfix_mask)) {
               com.add_to_send_buffer(target_rank, vec_in(idx), send_buffer);
             }
@@ -179,8 +193,7 @@ void do_exchange_mpi(BondList const &bonds, Couplings const &couplings,
         }
         // prefix dn, postfix must be up
         else {
-          for (auto postfix :
-               Combinations<bit_t>(n_postfix_bits, n_up_postfix)) {
+          for (auto postfix : postfixes) {
             if (postfix & postfix_mask) {
               com.add_to_send_buffer(target_rank, vec_in(idx), send_buffer);
             }
@@ -193,7 +206,10 @@ void do_exchange_mpi(BondList const &bonds, Couplings const &couplings,
       auto recv_offsets = com.n_values_i_recv_offsets();
 
       // Communicate
+      double tcom1 = rightnow_mpi();
       com.all_to_all(send_buffer, recv_buffer);
+      double tcom2 = rightnow_mpi();
+      tcom += tcom2 - tcom1;
 
       // Fill received states into vec_out (gnarlyy!!!)
       // auto recv_offsets = com.n_values_i_recv_offsets();
@@ -222,11 +238,13 @@ void do_exchange_mpi(BondList const &bonds, Couplings const &couplings,
         idx_t origin_offset = recv_offsets[origin_rank];
         idx_t prefix_offset = block.prefix_limits_.at(prefix_flipped).first;
 
+	auto const& postfixes = block.postfix_states_[n_up_postfix];
+
         // prefix up, postfix must be dn
         if (prefix & prefix_mask) {
           auto &postfix_lintable = block.postfix_lintables_[n_up_postfix + 1];
-          for (auto postfix :
-               Combinations<bit_t>(n_postfix_bits, n_up_postfix)) {
+	
+          for (auto postfix : postfixes) {
             if (!(postfix & postfix_mask)) {
               bit_t postfix_flipped = postfix ^ postfix_mask;
               idx_t idx_received = origin_offset + offsets[origin_rank];
@@ -240,8 +258,7 @@ void do_exchange_mpi(BondList const &bonds, Couplings const &couplings,
         // prefix dn, postfix must be up
         else {
           auto &postfix_lintable = block.postfix_lintables_[n_up_postfix - 1];
-          for (auto postfix :
-               Combinations<bit_t>(n_postfix_bits, n_up_postfix)) {
+          for (auto postfix : postfixes) {
             if (postfix & postfix_mask) {
               bit_t postfix_flipped = postfix ^ postfix_mask;
               idx_t idx_received = origin_offset + offsets[origin_rank];
@@ -256,7 +273,7 @@ void do_exchange_mpi(BondList const &bonds, Couplings const &couplings,
     } // for (auto bond : mixed_bonds)
 
     timing_mpi(tmix, rightnow_mpi(), " (exchange) mixed total", 2);
-
+    LogMPI.out(2, " (exchange) mixed total (communication): {:.6f} secs", tcom);
 
   }
 }
