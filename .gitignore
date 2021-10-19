@@ -2,5 +2,7 @@
 *.a
 *.d
 *~
-doc/html
-bin/*
+*.prof
+*.pdf
+lib/*
+options.mk

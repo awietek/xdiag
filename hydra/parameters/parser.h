@@ -15,15 +15,14 @@
 // nor the Authors make any representations about the suitability of this
 // software for any purpose.  This software is provided ``as is'' without
 // express or implied warranty.
-// 
+//
 //=======================================================================
 
-#ifndef HYDRA_PARAMETERS_OSIRIS_PARSE_
-#define HYDRA_PARAMETERS_OSIRIS_PARSE_
+#pragma once
 
-#include <iostream>
-#include <complex>
 #include "parameters.h"
+#include <complex>
+#include <iostream>
 
 //=======================================================================
 // parser object
@@ -31,16 +30,17 @@
 // implements a parser on an istream
 //-----------------------------------------------------------------------
 
-namespace hydra { namespace parameters {
+namespace hydra {
 
 class parser {
 public:
   using token = char;
+
 private:
-  std::istream& in;
+  std::istream &in;
   parameter_value val;
   char c;
-  
+
   char put_back_token;
   bool was_put_back;
 
@@ -55,14 +55,11 @@ private:
   char eat_ws();
 
 public:
-  parser(std::istream& i) : in(i), was_put_back(false) { in >> c;}
+  parser(std::istream &i) : in(i), was_put_back(false) { in >> c; }
   char next_token();
   char next_token_nows();
   bool putback(char);
-  const parameter_value& value() const {return val;}
+  const parameter_value &value() const { return val; }
 };
 
-
-}} // namespace hydra::parameters
-
-#endif
+} // namespace hydra
