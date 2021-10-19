@@ -1,74 +1,72 @@
-// Copyright 2019 Alexander Wietek - All Rights Reserved.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//    http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+#pragma once
 
-#ifndef HYDRA_HYDRA_H_
-#define HYDRA_HYDRA_H_
+#include <lila/all.h>
 
-#include "hilbertspaces/hubbard.h"
-#include "hilbertspaces/spinhalf.h"
+#include "common.h"
+#include "utils/bitops.h"
+#include "utils/iochecks.h"
 
-#include "indexing/indexhubbard.h"
-#include "indexing/indextable.h"
-#include "indexing/indexsearch.h"
-#include "indexing/indexspinhalf.h"
+#include "combinatorics/binomial.h"
+#include "combinatorics/bit_patterns.h"
+#include "combinatorics/combinations.h"
+#include "combinatorics/subsets.h"
+#include "combinatorics/up_down_hole.h"
+
+#include "indexing/indexing_symmetric.h"
+#include "indexing/indexing_symmetric_fermionic.h"
 #include "indexing/lintable.h"
 
-#include "models/hubbardmodel.h"
-#include "models/tjmodel.h"
-#include "models/heisenbergmodel.h"
-#include "models/spinlessfermions.h"
+#include "models/models.h"
+#include "models/utils/model_utils.h"
+#include "models/utils/symmetrized_norm.h"
 
-#include "utils/bitops.h"
-#include "utils/combinatorics.h"
-#include "utils/range.h"
-#include "utils/typedefs.h"
-#include "utils/iochecks.h"
-#include "utils/format.h"
-#include "utils/print.h"
+#include "models/spinhalf/spinhalf.h"
+#include "models/spinhalf/spinhalf_apply.h"
+#include "models/spinhalf/spinhalf_fill.h"
+#include "models/spinhalf/spinhalf_matrix.h"
+
+#include "models/spinhalf_symmetric/spinhalf_symmetric.h"
+#include "models/spinhalf_symmetric/spinhalf_symmetric_apply.h"
+#include "models/spinhalf_symmetric/spinhalf_symmetric_matrix.h"
+
+#include "models/tj/tj.h"
+#include "models/tj/tj_apply.h"
+#include "models/tj/tj_matrix.h"
+
+#include "models/tj_symmetric/tj_symmetric.h"
+#include "models/tj_symmetric/tj_symmetric_apply.h"
+#include "models/tj_symmetric/tj_symmetric_matrix.h"
+
+#include "models/electron/electron.h"
+#include "models/electron/electron_apply.h"
+#include "models/electron/electron_matrix.h"
+
+#include "models/electron_symmetric/electron_symmetric.h"
+#include "models/electron_symmetric/electron_symmetric_matrix.h"
+#include "models/electron_symmetric/electron_symmetric_apply.h"
+
+#include "models/electron_symmetric_simple/electron_symmetric_simple.h"
+#include "models/electron_symmetric_simple/electron_symmetric_simple_apply.h"
+#include "models/electron_symmetric_simple/electron_symmetric_simple_matrix.h"
+
+#include "symmetries/fermi_sign.h"
+#include "symmetries/permutation_group.h"
+#include "symmetries/permutation_group_action.h"
+#include "symmetries/permutation_group_lookup.h"
+#include "symmetries/representation.h"
+#include "symmetries/symmetric_operator.h"
+#include "symmetries/symmetry_utils.h"
 
 #include "operators/bond.h"
 #include "operators/bondlist.h"
 #include "operators/couplings.h"
 
-#include "thermodynamics/thermodynamics_detail.h"
-#include "thermodynamics/thermodynamics_exact.h"
-#include "thermodynamics/thermodynamics_tpq.h"
+#include "wavefunctions/gpwf_spinhalf.h"
 
-#include "dynamics/continuedfraction.h"
-
-#include "symmetries/spacegroup.h"
-
-#include "parameters/parser.h"
-#include "parameters/parameters_impl.h"
-#include "parameters/parameters.h"
-
-namespace hydra 
-{
-  namespace all
-  {
-    using namespace hydra::dynamics;
-    using namespace hydra::hilbertspaces;
-    using namespace hydra::indexing;
-    using namespace hydra::models;
-    using namespace hydra::operators;
-    using namespace hydra::parameters;
-    using namespace hydra::symmetries;
-    using namespace hydra::thermodynamics;
-    using namespace hydra::utils;
-    using namespace hydra::combinatorics;
-  }
-}
-
-
-#endif
+#include "linalg/algebra.h"
+#include "linalg/lanczos/lanczos_convergence.h"
+#include "linalg/lanczos/lanczos_eigenvalues.h"
+#include "linalg/lanczos/lanczos_eigenvector.h"
+#include "linalg/lanczos/lanczos_generic.h"
+#include "linalg/lanczos/tmatrix.h"
+#include "linalg/sparse_diag.h"

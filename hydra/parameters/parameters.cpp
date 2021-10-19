@@ -15,7 +15,7 @@
 // nor the Authors make any representations about the suitability of this
 // software for any purpose.  This software is provided ``as is'' without
 // express or implied warranty.
-// 
+//
 //=======================================================================
 
 //=======================================================================
@@ -25,10 +25,11 @@
 #include <algorithm>
 #include <fstream>
 
+#include <lila/utils/logger.h>
+
 #include "parameters.h"
 #include "parameters_impl.h"
 #include "parser.h"
-#include "palm_exception.h"
 
 using namespace std;
 //=======================================================================
@@ -36,29 +37,26 @@ using namespace std;
 //
 // an associative array of parameter values
 //-----------------------------------------------------------------------
-namespace hydra { namespace parameters {
+namespace hydra {
 
-ostream& operator<<(ostream& out, const Parameters& parms)
-{
-  for_each(parms.begin(),parms.end(),parameters_output(out));
+ostream &operator<<(ostream &out, const Parameters &parms) {
+  for_each(parms.begin(), parms.end(), parameters_output(out));
   return out;
 }
 
-ostream& operator<<(ostream& out, const parameters_collection& parms_coll)
-{
-  for_each(parms_coll.begin(),parms_coll.end(),parameters_collection_output(out));
+ostream &operator<<(ostream &out, const parameters_collection &parms_coll) {
+  for_each(parms_coll.begin(), parms_coll.end(),
+           parameters_collection_output(out));
   return out;
 }
 
-istream& operator>>(istream& in, Parameters& parms)
-{
+istream &operator>>(istream &in, Parameters &parms) {
   parser the_parser(in);
   the_parser >> parms;
   return in;
 }
 
-istream& operator>>(istream& in, parameters_collection& parms_coll)
-{
+istream &operator>>(istream &in, parameters_collection &parms_coll) {
   parser the_parser(in);
   the_parser >> parms_coll;
   return in;
@@ -66,118 +64,100 @@ istream& operator>>(istream& in, parameters_collection& parms_coll)
 
 // add new values by parsing the input
 
-parser& operator>>(parser& in, Parameters& parms)
-{
+parser &operator>>(parser &in, Parameters &parms) {
   char c;
-  c=in.next_token_nows();
-  do 
-    {   
-      // ignore extra semi-colons
-      while(c==';')        
-        c=in.next_token_nows();
-      
-      if(c==is_string)
-        {       
-          string s(in.value().get_string());
-	  c=in.next_token_nows();
-	  
-	  if(c=='}') {
-	    return in;
-	  }
+  c = in.next_token_nows();
+  do {
+    // ignore extra semi-colons
+    while (c == ';')
+      c = in.next_token_nows();
 
-          if(c!='=')
-            error ( parse_error("= expected in assignmanet while parsing Parameters") );
-	  
-          c=in.next_token_nows();
-          switch(c)
-            {
-            case is_integer:
-            case is_float:
-            case is_string:
-            case is_bool:
-            case is_complex:
-              parms[s] = in.value();
-              break;
-	      
-            default:                            
-              error(parse_error("invalid parameter value in input"));              
-            }
-	  
-          // must be followed by a semicolon, comma or newline
-          c=in.next_token();
-          if((c!=';')&&(c!=',')&&(c!='\n'))
-            error(parse_error("semicolon, comma or newline expected while parsing Parameters"));
-          c=in.next_token_nows(); 
-        }
-      else 
-        {
-	  in.putback(c);
-          return in;
-        }
-    } while (true);
+    if (c == p_is_string) {
+      string s(in.value().get_string());
+      c = in.next_token_nows();
+
+      if (c == '}') {
+        return in;
+      }
+
+      if (c != '=')
+        lila::Log.err("= expected in assignmanet while parsing Parameters");
+
+      c = in.next_token_nows();
+      switch (c) {
+      case p_is_integer:
+      case p_is_float:
+      case p_is_string:
+      case p_is_bool:
+      case p_is_complex:
+        parms[s] = in.value();
+        break;
+
+      default:
+        lila::Log.err("invalid parameter value in input");
+      }
+
+      // must be followed by a semicolon, comma or newline
+      c = in.next_token();
+      if ((c != ';') && (c != ',') && (c != '\n'))
+        lila::Log.err(
+            "semicolon, comma or newline expected while parsing Parameters");
+      c = in.next_token_nows();
+    } else {
+      in.putback(c);
+      return in;
+    }
+  } while (true);
 }
 
-parser& operator>>(parser& in, parameters_collection& parms_coll)
-{
+parser &operator>>(parser &in, parameters_collection &parms_coll) {
   char c;
-  
-  c=in.next_token_nows();
-  do 
-    {   
-      // ignore extra semi-colons
-      while(c==';')        
-        c=in.next_token_nows();
-      
-      if(c==is_string)
-        {       
-          string s(in.value().get_string());
-	  c=in.next_token_nows();
-	  switch(c) {
-	  case '{': 
-	    // start parsing collection
-	    {
-	      Parameters parm;
-	      in >> parm;
-	      parms_coll[s]=parm;
-	    }
-	    c=in.next_token_nows();
-	    break;
-	  default:
-	    error(parse_error("No global values allowed in collection"));
-	  }
-        }
-      else 
+
+  c = in.next_token_nows();
+  do {
+    // ignore extra semi-colons
+    while (c == ';')
+      c = in.next_token_nows();
+
+    if (c == p_is_string) {
+      string s(in.value().get_string());
+      c = in.next_token_nows();
+      switch (c) {
+      case '{':
+        // start parsing collection
         {
-	  in.putback(c);
-          return in;
+          Parameters parm;
+          in >> parm;
+          parms_coll[s] = parm;
         }
-    } while (true);
+        c = in.next_token_nows();
+        break;
+      default:
+        lila::Log.err("No global values allowed in collection");
+      }
+    } else {
+      in.putback(c);
+      return in;
+    }
+  } while (true);
 }
 
-Parameters::Parameters(parser& p)
-{
-  p >> (*this);
-}
+Parameters::Parameters(parser &p) { p >> (*this); }
 
-parameters_collection::parameters_collection(parser& p)
-{
-  p >> (*this);
-}
+parameters_collection::parameters_collection(parser &p) { p >> (*this); }
 
-Parameters read_parameters(std::string filename)
-{
+Parameters read_parameters(std::string filename) {
   // Open file and handle error
   std::ifstream File(filename.c_str());
-  if(File.fail()) 
-    {
-      std::cerr << "Error in read_parameters: " 
-		<< "Could not open file with filename ["
-		<< filename << "] given. Abort." << std::endl;
-      exit(EXIT_FAILURE);
-    }
+  if (File.fail()) {
+    std::cerr << "Error in read_parameters: "
+              << "Could not open file with filename [" << filename
+              << "] given. Abort." << std::endl;
+    exit(EXIT_FAILURE);
+  }
 
   parser prs(File);
   return Parameters(prs);
 }
-}} // namespace hydra::parameters
+} // namespace hydra
 //=======================================================================

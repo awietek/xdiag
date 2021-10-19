@@ -1,8 +1,7 @@
-#ifndef HYDRA_COMPLEX_H_
-#define HYDRA_COMPLEX_H_
+#pragma once
 
 #include <lila/all.h>
-#include "typedefs.h"
+#include <hydra/common.h>
 
 namespace hydra {
 
@@ -22,6 +21,5 @@ namespace hydra {
     return lila::real(number);
   }
 
-}
 
-#endif
+}
