@@ -1,8 +1,15 @@
 #pragma once
 
+#include <hydra/common.h>
+#include <hydra/models/models.h>
+#include <hydra/operators/bondlist.h>
+#include <hydra/operators/couplings.h>
+
+#include <lila/all.h>
+
 namespace hydra::electron {
 
-template <class bit_t, class Filler>
+template <class bit_t, class coeff_t, class Filler>
 void do_U(Couplings const &couplings, Electron<bit_t> const &block,
           lila::Vector<coeff_t> const &vec_in, lila::Vector<coeff_t> &vec_out) {
 
@@ -14,18 +21,17 @@ void do_U(Couplings const &couplings, Electron<bit_t> const &block,
     double U = lila::real(couplings["U"]);
 
     idx_t idx = 0;
-    for (bit_t ups : my_ups_) // loop over upspins of process
-    {
-      for (bit_t dns :
-           Combinations<bit_t>(n_sites, n_dn)) // loop over all downspins
-      {
-        double coeff = U * (double)popcnt(ups & dns);
-        vec_out(idx) += coeff * vec_in(idx);
-        ++idx;
-      }
-    }
+    // for (bit_t ups : my_ups_) // loop over upspins of process
+    // {
+    //   for (bit_t dns :
+    //        Combinations<bit_t>(n_sites, n_dn)) // loop over all downspins
+    //   {
+    //     double coeff = U * (double)popcnt(ups & dns);
+    //     vec_out(idx) += coeff * vec_in(idx);
+    //     ++idx;
+    //   }
+    // }
   }
-
 }
 
 } // namespace hydra::electron

@@ -39,11 +39,11 @@ public:
 
   std::vector<bit_t> prefixes_;
   std::unordered_map<bit_t, std::pair<idx_t, idx_t>> prefix_limits_;
-  std::vector<LinTable<bit_t>> postfix_lintables_;
+  std::vector<indexing::LinTable<bit_t>> postfix_lintables_;
 
   std::vector<bit_t> postfixes_;
   std::unordered_map<bit_t, std::pair<idx_t, idx_t>> postfix_limits_;
-  std::vector<LinTable<bit_t>> prefix_lintables_;
+  std::vector<indexing::LinTable<bit_t>> prefix_lintables_;
 
 private:
   bool sz_conserved_;

@@ -9,6 +9,10 @@
 #include <hydra/mpi/stable_dot.h>
 #include <hydra/mpi/timing_mpi.h>
 
+#include <hydra/operators/bondlist.h>
+#include <hydra/operators/couplings.h>
+#include <hydra/models/models.h>
+
 #include <lila/all.h>
 
 namespace hydra {
