@@ -25,7 +25,7 @@ Tmatrix LanczosEigenvaluesInplace(
   using namespace lila;
 
   // MPI Lanczos
-  if constexpr (is_mpi_block<Block>) {
+  if constexpr (detail::is_mpi_block<Block>) {
 
     int iter = 0;
     auto mult = [&iter, &bonds, &couplings, &block](
@@ -107,7 +107,7 @@ Tmatrix LanczosEigenvaluesReal(BondList const &bonds,
   using namespace lila;
 
   // use different seeds for different MPI processes
-  if constexpr (is_mpi_block<Block>) {
+  if constexpr (detail::is_mpi_block<Block>) {
     int mpi_rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
     seed += 0x01000193 * mpi_rank;
@@ -133,7 +133,7 @@ Tmatrix LanczosEigenvaluesCplx(BondList const &bonds,
   using namespace lila;
 
   // use different seeds for different MPI processes
-  if constexpr (is_mpi_block<Block>) {
+  if constexpr (detail::is_mpi_block<Block>) {
     int mpi_rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
     seed += 0x01000193 * mpi_rank;
