@@ -72,7 +72,7 @@ template <class bit_t> void test_hubbard_symmetric_apply_chains(int n_sites) {
   test_symmetric_apply1<bit_t>(bondlist_hb, couplings_hb, space_group, irreps);
 }
 
-TEST_CASE("electron_symmetric_apply", "[models]") {
+TEST_CASE("ElectronSymmetric_Apply", "[models][ElectronSymmetric]") {
 
   // Test linear chains
   for (int n_sites = 2; n_sites < 7; ++n_sites) {

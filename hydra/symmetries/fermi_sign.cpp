@@ -3,9 +3,9 @@
 #include <hydra/utils/bitops.h>
 
 namespace hydra::utils {
+
 template <class bit_t>
-double fermi_sign_of_permutation(bit_t state, const int *permutation,
-                                 int *work) {
+bool fermi_bool_of_permutation(bit_t state, const int *permutation, int *work) {
   int n_fermion = 0;
   for (int site = 0; state; ++site) {
     if (state & 1) {
@@ -19,7 +19,14 @@ double fermi_sign_of_permutation(bit_t state, const int *permutation,
     for (int j = i + 1; j < n_fermion; j++)
       if (work[i] > work[j])
         cnt++;
-  return (cnt & 1) ? -1.0 : 1.0;
+
+  return (bool)(cnt & 1);
+}
+
+template <class bit_t>
+double fermi_sign_of_permutation(bit_t state, const int *permutation,
+                                 int *work) {
+  return fermi_bool_of_permutation(state, permutation, work) ? -1.0 : 1.0;
 }
 
 template <class bit_t>
@@ -65,6 +72,10 @@ double fermi_sign_of_permutation_sort(
   }
   return sign;
 }
+
+template bool fermi_bool_of_permutation<uint16>(uint16, const int *, int *);
+template bool fermi_bool_of_permutation<uint32>(uint32, const int *, int *);
+template bool fermi_bool_of_permutation<uint64>(uint64, const int *, int *);
 
 template double fermi_sign_of_permutation<uint16>(uint16, const int *, int *);
 template double fermi_sign_of_permutation<uint32>(uint32, const int *, int *);

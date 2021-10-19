@@ -67,16 +67,15 @@ void do_exchange(BondList const &bonds, Couplings const &couplings,
 
     std::string cpl = bond.coupling();
     if (!utils::coupling_is_zero(bond, couplings)) {
-
-      double J = lila::real(couplings[cpl]);
-      double val = J / 2.;
-
       int s1 = std::min(bond.site(0), bond.site(1));
       int s2 = std::max(bond.site(0), bond.site(1));
       bit_t s1mask = (bit_t)1 << s1;
       bit_t s2mask = (bit_t)1 << s2;
       bit_t flipmask = s1mask | s2mask;
       bit_t spacemask = ((1 << (s2 - s1 - 1)) - 1) << (s1 + 1);
+
+      double J = lila::real(couplings[cpl]);
+      double val = J / 2.;
 
       idx_t idx_up = 0;
       for (auto up : Combinations<bit_t>(n_sites, n_up)) {
@@ -109,4 +108,4 @@ void do_exchange(BondList const &bonds, Couplings const &couplings,
   }
 }
 
-} // namespace hydra::electron
+} // namespace hydra::electronterms

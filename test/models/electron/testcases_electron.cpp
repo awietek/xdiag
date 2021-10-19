@@ -18,14 +18,14 @@ std::tuple<BondList, Couplings> get_linear_chain_hb(int n_sites, double t,
                                                     double U, double J) {
   // Create model
   BondList bondlist;
+  // for (int s = 0; s < n_sites; ++s)
+  //   bondlist << Bond("HOP", "T", {s, (s + 1) % n_sites});
   for (int s = 0; s < n_sites; ++s)
-    bondlist << Bond("HOP", "T", {s, (s + 1) % n_sites});
-  for (int s = 0; s < n_sites; ++s)
-    bondlist << Bond("HB", "J", {s, (s + 1) % n_sites});
+    bondlist << Bond("EXCHANGE", "J", {s, (s + 1) % n_sites});
 
   Couplings couplings;
-  couplings["T"] = t;
-  couplings["U"] = U;
+  // couplings["T"] = t;
+  // couplings["U"] = U;
   couplings["J"] = J;
   return {bondlist, couplings};
 }
