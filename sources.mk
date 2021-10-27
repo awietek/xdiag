@@ -28,9 +28,13 @@ sources+= hydra/models/tj/tj.cpp
 sources+= hydra/models/tj/tj_matrix.cpp
 sources+= hydra/models/tj/tj_apply.cpp
 
-sources+= hydra/models/tj_symmetric/tj_symmetric.cpp
-sources+= hydra/models/tj_symmetric/tj_symmetric_matrix.cpp
-sources+= hydra/models/tj_symmetric/tj_symmetric_apply.cpp
+# sources+= hydra/models/tj_symmetric/tj_symmetric.cpp
+# sources+= hydra/models/tj_symmetric/tj_symmetric_matrix.cpp
+# sources+= hydra/models/tj_symmetric/tj_symmetric_apply.cpp
+
+sources+= hydra/models/tj_symmetric_simple/tj_symmetric_simple.cpp
+sources+= hydra/models/tj_symmetric_simple/tj_symmetric_simple_matrix.cpp
+sources+= hydra/models/tj_symmetric_simple/tj_symmetric_simple_apply.cpp
 
 sources+= hydra/models/electron/electron.cpp
 sources+= hydra/models/electron/electron_matrix.cpp
@@ -104,9 +108,14 @@ testsources+= test/models/tj/testcases_tj.cpp
 testsources+= test/models/tj/test_tj_matrix.cpp
 testsources+= test/models/tj/test_tj_apply.cpp
 
-testsources+= test/models/tj_symmetric/test_tj_symmetric.cpp
-testsources+= test/models/tj_symmetric/test_tj_symmetric_matrix.cpp
-testsources+= test/models/tj_symmetric/test_tj_symmetric_apply.cpp
+# testsources+= test/models/tj_symmetric/test_tj_symmetric.cpp
+# testsources+= test/models/tj_symmetric/test_tj_symmetric_matrix.cpp
+# testsources+= test/models/tj_symmetric/test_tj_symmetric_apply.cpp
+
+testsources+= test/models/tj_symmetric_simple/test_tj_symmetric_simple.cpp
+testsources+= test/models/tj_symmetric_simple/test_tj_symmetric_simple_matrix.cpp
+testsources+= test/models/tj_symmetric_simple/test_tj_symmetric_simple_apply.cpp
+
 
 testsources+= test/models/electron/testcases_electron.cpp
 testsources+= test/models/electron/test_electron_matrix.cpp
