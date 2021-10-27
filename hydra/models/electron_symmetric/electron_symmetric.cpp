@@ -8,44 +8,7 @@
 namespace hydra {
 
 template <class bit_t, class GroupAction, class LinTable>
-void fill_reps_idces_syms_limits(
-    int n_sites, int n_par, GroupAction &&group_action, LinTable &&lintable,
-    std::vector<bit_t> &reps, std::vector<idx_t> &idces, std::vector<int> &syms,
-    std::vector<std::pair<idx_t, idx_t>> &sym_limits) {
-
-  using combinatorics::Combinations;
-
-  // Compute all representatives
-  idx_t idx = 0;
-  for (bit_t state : Combinations<bit_t>(n_sites, n_par)) {
-    bit_t rep = utils::representative(state, group_action);
-    if (rep == state) {
-      idces[idx] = reps.size();
-      reps.push_back(rep);
-    }
-    ++idx;
-  }
-
-  // Compute indices of up-representatives and stabilizer symmetries
-  idx = 0;
-  for (bit_t state : Combinations<bit_t>(n_sites, n_par)) {
-    bit_t rep = utils::representative(state, group_action);
-    idces[idx] = idces[lintable.index(rep)];
-
-    // Determine the symmetries that yield the up-representative
-    idx_t begin = syms.size();
-    for (int sym = 0; sym < group_action.n_symmetries(); ++sym) {
-      if (group_action.apply(sym, state) == rep)
-        syms.push_back(sym);
-    }
-    idx_t end = syms.size();
-    sym_limits[idx] = {begin, end};
-    ++idx;
-  }
-}
-
-template <class bit_t, class GroupAction, class LinTable>
-idx_t fill_states_norms(
+idx_t fill_states_norms_electron(
     int n_sites, int nup, int ndn, GroupAction &&group_action,
     LinTable &&lintable_ups, LinTable &&lintable_dns,
     std::vector<bit_t> const &reps_up, std::vector<idx_t> const &idces_up,
@@ -159,43 +122,23 @@ ElectronSymmetric<bit_t, GroupAction>::ElectronSymmetric(
 
   using combinatorics::Combinations;
 
-  // Compute fermi signs of symmetries acting on all up states
-  std::vector<int> fermi_work(n_sites_, 0);
-  const int *sym_ptr = group_action_.permutation_array().data();
-  for (int sym = 0; sym < n_symmetries_; ++sym) {
-    idx_t idx_up = 0;
-    for (bit_t ups : Combinations<bit_t>(n_sites, nup)) {
-      fermi_bool_ups_table_[sym * raw_ups_size_ + idx_up] =
-          utils::fermi_bool_of_permutation(ups, sym_ptr, fermi_work.data());
-      ++idx_up;
-    }
-    sym_ptr += n_sites;
-  }
+  utils::fill_fermi_bool_table<bit_t>(group_action_, nup, fermi_bool_ups_table_);
+  utils::fill_fermi_bool_table<bit_t>(group_action_, ndn, fermi_bool_dns_table_);
 
-  // Compute fermi signs of symmetries acting on all dn states
-  sym_ptr = group_action_.permutation_array().data();
-  for (int sym = 0; sym < n_symmetries_; ++sym) {
-    idx_t idx_dn = 0;
-    for (bit_t dns : Combinations<bit_t>(n_sites, ndn)) {
-      fermi_bool_dns_table_[sym * raw_dns_size_ + idx_dn] =
-          utils::fermi_bool_of_permutation(dns, sym_ptr, fermi_work.data());
-      ++idx_dn;
-    }
-    sym_ptr += n_sites;
-  }
+  utils::fill_reps_idces_syms_limits(n_sites, nup, group_action_, lintable_ups_,
+                                     reps_up_, idces_up_, syms_up_,
+                                     sym_limits_up_);
+  utils::fill_reps_idces_syms_limits(n_sites, ndn, group_action_, lintable_dns_,
+                                     reps_dn_, idces_dn_, syms_dn_,
+                                     sym_limits_dn_);
 
-  fill_reps_idces_syms_limits(n_sites, nup, group_action_, lintable_ups_,
-                              reps_up_, idces_up_, syms_up_, sym_limits_up_);
-  fill_reps_idces_syms_limits(n_sites, ndn, group_action_, lintable_dns_,
-                              reps_dn_, idces_dn_, syms_dn_, sym_limits_dn_);
-
-  idx_t size_ups = fill_states_norms(
+  idx_t size_ups = fill_states_norms_electron(
       n_sites, nup, ndn, group_action_, lintable_ups_, lintable_dns_, reps_up_,
       idces_up_, syms_up_, sym_limits_up_, fermi_bool_ups_table_,
       fermi_bool_dns_table_, irrep_, up_offsets_, dns_full_, norms_dns_full_,
       dns_for_up_rep_, norms_for_up_rep_);
 
-  idx_t size_dns = fill_states_norms(
+  idx_t size_dns = fill_states_norms_electron(
       n_sites, ndn, nup, group_action_, lintable_dns_, lintable_ups_, reps_dn_,
       idces_dn_, syms_dn_, sym_limits_dn_, fermi_bool_dns_table_,
       fermi_bool_ups_table_, irrep_, dn_offsets_, ups_full_, norms_ups_full_,
