@@ -33,9 +33,13 @@
 #include "models/tj/tj_apply.h"
 #include "models/tj/tj_matrix.h"
 
-#include "models/tj_symmetric/tj_symmetric.h"
-#include "models/tj_symmetric/tj_symmetric_apply.h"
-#include "models/tj_symmetric/tj_symmetric_matrix.h"
+// #include "models/tj_symmetric/tj_symmetric.h"
+// #include "models/tj_symmetric/tj_symmetric_apply.h"
+// #include "models/tj_symmetric/tj_symmetric_matrix.h"
+
+#include "models/tj_symmetric_simple/tj_symmetric_simple.h"
+#include "models/tj_symmetric_simple/tj_symmetric_simple_apply.h"
+#include "models/tj_symmetric_simple/tj_symmetric_simple_matrix.h"
 
 #include "models/electron/electron.h"
 #include "models/electron/electron_apply.h"

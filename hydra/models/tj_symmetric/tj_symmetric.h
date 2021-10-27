@@ -29,31 +29,12 @@ public:
   inline Representation const &irrep() const { return irrep_; }
 
   inline idx_t size() const { return size_; }
-  inline double up(idx_t idx) const { return ups_[idx]; }
-  inline double dn(idx_t idx) const { return dns_[idx]; }
-  inline double norm(idx_t idx) const { return norms_[idx]; }
-
-  std::tuple<bit_t, bit_t> representative(bit_t ups, bit_t dns) const;
-  std::tuple<bit_t, bit_t, int> representative_index(bit_t ups,
-                                                     bit_t dns) const;
-  idx_t index(bit_t ups, bit_t dns) const;
-  idx_t index_switch(bit_t ups, bit_t dns) const;
-  inline idx_t index_switch_to_index(idx_t idx) const {
-    return index_not_found(idx) ? invalid_index : index_switch_to_index_[idx];
-  }
 
   bool operator==(tJSymmetric const &rhs) const;
   bool operator!=(tJSymmetric const &rhs) const;
 
-  std::map<bit_t, std::pair<idx_t, idx_t>> ups_lower_upper_;
-  std::vector<bit_t> dns_;
+  // private:
 
-  std::map<bit_t, std::pair<idx_t, idx_t>> dns_lower_upper_;
-  std::vector<bit_t> ups_;
-
-  std::vector<complex> character_switch_;
-
-private:
   int n_sites_;
 
   bool charge_conserved_;
@@ -66,9 +47,37 @@ private:
   PermutationGroup permutation_group_;
   GroupAction group_action_;
   Representation irrep_;
+  int n_symmetries_;
 
-  std::vector<double> norms_;
-  std::vector<idx_t> index_switch_to_index_;
+  indexing::LinTable<bit_t> lintable_ups_;
+  indexing::LinTable<bit_t> lintable_dns_;
+
+  idx_t raw_ups_size_;
+  idx_t raw_dns_size_;
+  std::vector<bool> fermi_bool_ups_table_;
+  std::vector<bool> fermi_bool_dns_table_;
+
+  std::vector<idx_t> idces_up_;
+  std::vector<bit_t> reps_up_;
+  std::vector<int> syms_up_;
+  std::vector<std::pair<idx_t, idx_t>> sym_limits_up_;
+
+  std::vector<idx_t> idces_dn_;
+  std::vector<bit_t> reps_dn_;
+  std::vector<int> syms_dn_;
+  std::vector<std::pair<idx_t, idx_t>> sym_limits_dn_;
+
+  std::vector<idx_t> up_offsets_;
+  std::vector<bit_t> dns_full_;
+  std::vector<double> norms_dns_full_;
+  std::map<bit_t, std::vector<bit_t>> dns_for_up_rep_;
+  std::map<bit_t, std::vector<double>> norms_for_up_rep_;
+
+  std::vector<idx_t> dn_offsets_;
+  std::vector<bit_t> ups_full_;
+  std::vector<double> norms_ups_full_;
+  std::map<bit_t, std::vector<bit_t>> ups_for_dn_rep_;
+  std::map<bit_t, std::vector<double>> norms_for_dn_rep_;
 
   idx_t size_;
 };
