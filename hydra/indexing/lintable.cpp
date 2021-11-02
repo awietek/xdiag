@@ -13,7 +13,7 @@ LinTable<bit_t>::LinTable(int n, int k)
       left_indices_(left_table_size_, 0), right_indices_(right_table_size_, 0) {
   using combinatorics::binomial;
   using combinatorics::Combinations;
-  using utils::popcnt;
+  using bitops::popcnt;
 
   // Fill offsets on left indices
   for (bit_t left = 0; left < (bit_t)left_table_size_; ++left) {

@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include "../../models/electron/testcases_electron.h"
+#include "../../blocks/electron/testcases_electron.h"
 #include <hydra/all.h>
 
 using namespace hydra;

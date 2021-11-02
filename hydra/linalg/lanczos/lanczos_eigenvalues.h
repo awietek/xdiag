@@ -7,7 +7,7 @@
 #include <hydra/mpi/dot_mpi.h>
 #include <hydra/mpi/timing_mpi.h>
 
-#include <hydra/models/models.h>
+#include <hydra/blocks/blocks.h>
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
 

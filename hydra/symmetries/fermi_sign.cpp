@@ -34,7 +34,7 @@ double fermi_sign_of_permutation_sort(
     bit_t state, const int *permutation,
     int *work) { // "work" needs to be allocated of size 2*n_sites
   int *iota = work;
-  int *to = work + utils::popcnt(state);
+  int *to = work + bitops::popcnt(state);
 
   // find out where fermions are mapped to
   int n_fermion = 0;
