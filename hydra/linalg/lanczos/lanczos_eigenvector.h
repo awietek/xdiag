@@ -11,7 +11,7 @@
 
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
-#include <hydra/models/models.h>
+#include <hydra/blocks/blocks.h>
 
 #include <lila/all.h>
 

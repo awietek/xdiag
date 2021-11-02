@@ -26,7 +26,7 @@ coeff_t GPWFSpinhalf<coeff_t>::coefficient(uint64 state, bool print_work) {
   for (int i = 0; i < n_sites_; ++i) {
 
     // spin at site i is up
-    if (utils::gbit(state, i)) {
+    if (bitops::gbit(state, i)) {
       // for (int k = 0; k < n_up_; ++k)
       //   work_matrix_(k, i) = onebody_wfs_up_(i, k);
       work_matrix_({0, n_up_}, i) = onebody_wfs_up_(i, {0, n_up_});

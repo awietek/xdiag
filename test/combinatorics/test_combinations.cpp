@@ -8,7 +8,7 @@ template <class bit_t>
 void test_combinations(){
   using namespace hydra;
   using namespace hydra::combinatorics;
-  using namespace hydra::utils;
+  using namespace hydra::bitops;
   
   for (int n=0; n<7; ++n)
     for (int k=0; k<=n; ++k)

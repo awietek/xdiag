@@ -2,7 +2,7 @@
 
 #include <hydra/combinatorics/binomial.h>
 #include <hydra/combinatorics/combinations.h>
-#include <hydra/models/utils/model_utils.h>
+#include <hydra/blocks/utils/block_utils.h>
 #include <hydra/symmetries/permutation_group_action.h>
 #include <hydra/symmetries/permutation_group_lookup.h>
 #include <hydra/symmetries/symmetry_utils.h>
