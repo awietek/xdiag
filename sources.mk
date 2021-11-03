@@ -85,6 +85,8 @@ mpisources+= hydra/blocks/electron_mpi/electron_mpi_apply.cpp
 
 
 testsources+= test/tests.cpp
+testsources+= test/bitops/test_bitops.cpp
+
 testsources+= test/combinatorics/test_binomial.cpp
 testsources+= test/combinatorics/test_subsets.cpp
 testsources+= test/combinatorics/test_bit_patterns.cpp

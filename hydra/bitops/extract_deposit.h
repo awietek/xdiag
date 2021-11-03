@@ -35,11 +35,7 @@ constexpr uint64_t pext(uint64_t source, uint64_t mask) noexcept {
 #endif
 
 template <typename bit_t>
-constexpr bit_t deposit(bit_t x, bit_t mask) noexcept {
-#if defined(__BMI2__) && defined(HAS_PEXT_PDEP)
-  return pdep(x, mask);
-// Parallel Bits Deposit implementation w/o BMI2 intrinsics
-#else
+constexpr bit_t pdep_fallback(bit_t x, bit_t mask) noexcept {
   bit_t res = 0;
   for (bit_t bb = 1; mask; bb += bb) {
     if (x & bb) {
@@ -48,6 +44,27 @@ constexpr bit_t deposit(bit_t x, bit_t mask) noexcept {
     mask &= (mask - 1);
   }
   return res;
+}
+
+template <typename bit_t>
+constexpr bit_t pext_fallback(bit_t x, bit_t mask) noexcept {
+  bit_t res = 0;
+  for (bit_t bb = 1; mask; bb += bb) {
+    if (x & mask & -mask) {
+      res |= bb;
+    }
+    mask &= (mask - 1);
+  }
+  return res;
+}
+
+template <typename bit_t>
+constexpr bit_t deposit(bit_t x, bit_t mask) noexcept {
+#if defined(__BMI2__) && defined(HAS_PEXT_PDEP)
+  return pdep(x, mask);
+// Parallel Bits Deposit implementation w/o BMI2 intrinsics
+#else
+  return pdep_fallback(x, mask);
 #endif
 }
 
@@ -57,14 +74,7 @@ constexpr bit_t extract(bit_t x, bit_t mask) noexcept {
   return pext(x, mask);
 // Parallel Bits Extract implementation w/o BMI2 intrinsics
 #else
-  bit_t res = 0;
-  for (bit_t bb = 1; mask; bb += bb) {
-    if (x & mask & -mask) {
-      res |= bb;
-    }
-    mask &= (mask - 1);
-  }
-  return res;
+  return pext_fallback(x, mask);
 #endif
 }
 

@@ -3,7 +3,7 @@
 #include <cstdint>
 
 // (un)comment to use intrinsic BMI1 bextr instruction
-#define HAS_BEXTR
+// #define HAS_BEXTR
 
 #if defined(__BMI__) && defined(HAS_BEXTR)
 #include <immintrin.h>
