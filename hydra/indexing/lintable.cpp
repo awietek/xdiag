@@ -34,8 +34,8 @@ LinTable<bit_t>::LinTable(int n, int k)
   }
 }
 
-template class LinTable<uint16>;
-template class LinTable<uint32>;
-template class LinTable<uint64>;
+template class LinTable<uint16_t>;
+template class LinTable<uint32_t>;
+template class LinTable<uint64_t>;
 
 } // namespace hydra::indexing

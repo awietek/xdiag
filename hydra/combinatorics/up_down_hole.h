@@ -2,7 +2,7 @@
 
 #include <hydra/common.h>
 
-#include <hydra/utils/bitops.h>
+#include <hydra/bitops/bitops.h>
 
 namespace hydra::combinatorics {
 

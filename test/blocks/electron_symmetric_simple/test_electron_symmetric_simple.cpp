@@ -117,9 +117,9 @@ TEST_CASE("ElectronSymmetricSimple", "[models][ElectronSymmetricSimple]") {
 
   // Test the Hubbard chain
   for (int n_sites = 1; n_sites < 7; ++n_sites) {
-    test_electron_chain_simple<hydra::uint16>(n_sites);
-    test_electron_chain_simple<hydra::uint32>(n_sites);
-    test_electron_chain_simple<hydra::uint64>(n_sites);
+    test_electron_chain_simple<uint16_t>(n_sites);
+    test_electron_chain_simple<uint32_t>(n_sites);
+    test_electron_chain_simple<uint64_t>(n_sites);
   }
 
   // // test a 3x3 triangular lattice

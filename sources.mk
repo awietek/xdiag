@@ -1,4 +1,5 @@
 sources+= hydra/utils/iochecks.cpp
+sources+= hydra/bitops/bitops.cpp
 
 sources+= hydra/combinatorics/binomial.cpp
 sources+= hydra/combinatorics/subsets.cpp

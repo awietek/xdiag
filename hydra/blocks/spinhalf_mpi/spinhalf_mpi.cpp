@@ -10,7 +10,7 @@
 #include <hydra/mpi/allreduce.h>
 
 #include <hydra/blocks/utils/block_utils.h>
-#include <hydra/utils/bitops.h>
+#include <hydra/bitops/bitops.h>
 
 namespace hydra {
 
@@ -104,8 +104,8 @@ bool SpinhalfMPI<bit_t>::operator!=(SpinhalfMPI<bit_t> const &rhs) const {
   return !operator==(rhs);
 }
 
-template class SpinhalfMPI<uint16>;
-template class SpinhalfMPI<uint32>;
-template class SpinhalfMPI<uint64>;
+template class SpinhalfMPI<uint16_t>;
+template class SpinhalfMPI<uint32_t>;
+template class SpinhalfMPI<uint64_t>;
 
 } // namespace hydra

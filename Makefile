@@ -4,6 +4,10 @@ include sources.mk
 rm     := rm -f
 mkdir  := mkdir -p
 
+# Additional parameters for compilation
+ccstd   = -std=c++17 
+ccwarn  = -Wall -pedantic -Wno-return-type-c-linkage
+
 objects = $(subst .cpp,.o,$(sources))
 depends = $(subst .cpp,.d,$(sources))
 
@@ -44,7 +48,7 @@ include $(testmpidepends)
 # different building suites
 .PHONY: test 
 test:  $(objects) $(testobjects) lib 
-	$(cc) $(ccopt) $(ccarch) $(depflags) $(libraries) -Llib -lhydra $(objects) $(testobjects) -o test/tests 
+	$(cc) $(ccopt) $(ccstd) $(ccwarn) $(depflags) $(libraries) -Llib -lhydra $(objects) $(testobjects) -o test/tests 
 
 .PHONY: mpi
 mpi: $(objects) $(mpiobjects) libmpi
@@ -52,7 +56,7 @@ mpi: $(objects) $(mpiobjects) libmpi
 
 .PHONY: testmpi 
 testmpi:  $(objects) $(mpiobjects) $(testmpiobjects) libmpi 
-	$(mpicc) $(ccopt) $(ccarch) $(depflags) $(libraries) -Llib -lhydra_mpi $(objects) $(mpiobjects) $(testmpiobjects) -o testmpi/tests 
+	$(mpicc) $(ccopt) $(ccstd) $(ccwarn) $(depflags) $(libraries) -Llib -lhydra_mpi $(objects) $(mpiobjects) $(testmpiobjects) -o testmpi/tests 
 
 .PHONY: apps
 apps: $(objects) $(appobjects) $(appbinaries) lib
@@ -67,7 +71,7 @@ libmpi: $(objects) $(mpiobjects)
 	ar rcs lib/libhydra_mpi.a $(objects) $(mpiobjects)
 
 $(appbinaries):
-	$(cc) $(ccopt) $(ccarch) $(depflags) $@.o -Llib -lhydra $(libraries) -o bin/$(notdir $@)
+	$(cc) $(ccopt) $(ccstd) $(ccwarn) $(depflags) $@.o -Llib -lhydra $(libraries) -o bin/$(notdir $@)
 
 
 
@@ -80,4 +84,4 @@ rebuild: clean all lib
 
 %.o: %.cpp %.d
 %.o: %.cpp 
-	$(cc) $(ccopt) $(ccarch) $(depflags) $(lilabackend) -c $< -o $@ $(includes) -I.
+	$(cc) $(ccopt) $(ccstd) $(ccwarn) $(depflags) $(lilabackend) -c $< -o $@ $(includes) -I.

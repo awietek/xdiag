@@ -61,7 +61,7 @@ template <class bit_t> void test_hubbard_symmetric_apply_chains(int n_sites) {
   lila::Log.out("Hubbard chain, symmetric apply test, n_sites: {}", n_sites);
   auto [bondlist, couplings] = get_linear_chain(n_sites, 1.0, 5.0);
   auto [space_group, irreps] = get_cyclic_group_irreps(n_sites);
-  test_symmetric_apply1<uint16>(bondlist, couplings, space_group, irreps);
+  test_symmetric_apply1<uint16_t>(bondlist, couplings, space_group, irreps);
 
   // With Heisenberg term
   lila::Log.out(
@@ -76,14 +76,14 @@ TEST_CASE("ElectronSymmetric_Apply", "[models][ElectronSymmetric]") {
 
   // Test linear chains
   for (int n_sites = 2; n_sites < 7; ++n_sites) {
-    test_hubbard_symmetric_apply_chains<hydra::uint16>(n_sites);
-    test_hubbard_symmetric_apply_chains<hydra::uint32>(n_sites);
-    test_hubbard_symmetric_apply_chains<hydra::uint64>(n_sites);
+    test_hubbard_symmetric_apply_chains<uint16_t>(n_sites);
+    test_hubbard_symmetric_apply_chains<uint32_t>(n_sites);
+    test_hubbard_symmetric_apply_chains<uint64_t>(n_sites);
   }
 
   // test a 3x3 triangular lattice
   lila::Log.out("Hubbard 3x3 triangular, symmetric apply test");
-  using bit_t = uint16;
+  using bit_t = uint16_t;
   std::string lfile = "data/triangular.9.hop.sublattices.tsl.lat";
 
   auto bondlist = read_bondlist(lfile);
@@ -117,7 +117,7 @@ TEST_CASE("ElectronSymmetric_Apply", "[models][ElectronSymmetric]") {
   // test a 3x3 triangular lattice with complex hoppings
   {
     lila::Log.out("Hubbard 3x3 triangular (complex), symmetric spectra test");
-    using bit_t = uint16;
+    using bit_t = uint16_t;
     std::string lfile =
         "data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.lat";
     BondList bondlist = read_bondlist(lfile);

@@ -34,7 +34,7 @@ void test_combinations(){
 
 TEST_CASE( "Combinations", "[combinatorics]" ) {
   lila::Log.out("Testing Combinations");
-  test_combinations<hydra::uint16>();
-  test_combinations<hydra::uint32>();
-  test_combinations<hydra::uint64>();
+  test_combinations<uint16_t>();
+  test_combinations<uint32_t>();
+  test_combinations<uint64_t>();
 }

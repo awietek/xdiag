@@ -36,23 +36,23 @@ void Apply(BondList const &bonds, Couplings const &couplings,
   do_exchange_symmetric<bit_t, double>(bonds, couplings, block_in, fill);
 }
 
-template void Apply<uint16, PermutationGroupAction>(
+template void Apply<uint16_t, PermutationGroupAction>(
     BondList const &bonds, Couplings const &couplings,
-    ElectronSymmetricSimple<uint16, PermutationGroupAction> const &block_in,
+    ElectronSymmetricSimple<uint16_t, PermutationGroupAction> const &block_in,
     lila::Vector<double> const &vec_in,
-    ElectronSymmetricSimple<uint16, PermutationGroupAction> const &block_out,
+    ElectronSymmetricSimple<uint16_t, PermutationGroupAction> const &block_out,
     lila::Vector<double> &vec_out);
-template void Apply<uint32, PermutationGroupAction>(
+template void Apply<uint32_t, PermutationGroupAction>(
     BondList const &bonds, Couplings const &couplings,
-    ElectronSymmetricSimple<uint32, PermutationGroupAction> const &block_in,
+    ElectronSymmetricSimple<uint32_t, PermutationGroupAction> const &block_in,
     lila::Vector<double> const &vec_in,
-    ElectronSymmetricSimple<uint32, PermutationGroupAction> const &block_out,
+    ElectronSymmetricSimple<uint32_t, PermutationGroupAction> const &block_out,
     lila::Vector<double> &vec_out);
-template void Apply<uint64, PermutationGroupAction>(
+template void Apply<uint64_t, PermutationGroupAction>(
     BondList const &bonds, Couplings const &couplings,
-    ElectronSymmetricSimple<uint64, PermutationGroupAction> const &block_in,
+    ElectronSymmetricSimple<uint64_t, PermutationGroupAction> const &block_in,
     lila::Vector<double> const &vec_in,
-    ElectronSymmetricSimple<uint64, PermutationGroupAction> const &block_out,
+    ElectronSymmetricSimple<uint64_t, PermutationGroupAction> const &block_out,
     lila::Vector<double> &vec_out);
 
 template <class bit_t, class GroupAction>
@@ -78,23 +78,23 @@ void Apply(BondList const &bonds, Couplings const &couplings,
   do_exchange_symmetric<bit_t, complex>(bonds, couplings, block_in, fill);
 }
 
-template void Apply<uint16, PermutationGroupAction>(
+template void Apply<uint16_t, PermutationGroupAction>(
     BondList const &bonds, Couplings const &couplings,
-    ElectronSymmetricSimple<uint16, PermutationGroupAction> const &block_in,
+    ElectronSymmetricSimple<uint16_t, PermutationGroupAction> const &block_in,
     lila::Vector<complex> const &vec_in,
-    ElectronSymmetricSimple<uint16, PermutationGroupAction> const &block_out,
+    ElectronSymmetricSimple<uint16_t, PermutationGroupAction> const &block_out,
     lila::Vector<complex> &vec_out);
-template void Apply<uint32, PermutationGroupAction>(
+template void Apply<uint32_t, PermutationGroupAction>(
     BondList const &bonds, Couplings const &couplings,
-    ElectronSymmetricSimple<uint32, PermutationGroupAction> const &block_in,
+    ElectronSymmetricSimple<uint32_t, PermutationGroupAction> const &block_in,
     lila::Vector<complex> const &vec_in,
-    ElectronSymmetricSimple<uint32, PermutationGroupAction> const &block_out,
+    ElectronSymmetricSimple<uint32_t, PermutationGroupAction> const &block_out,
     lila::Vector<complex> &vec_out);
-template void Apply<uint64, PermutationGroupAction>(
+template void Apply<uint64_t, PermutationGroupAction>(
     BondList const &bonds, Couplings const &couplings,
-    ElectronSymmetricSimple<uint64, PermutationGroupAction> const &block_in,
+    ElectronSymmetricSimple<uint64_t, PermutationGroupAction> const &block_in,
     lila::Vector<complex> const &vec_in,
-    ElectronSymmetricSimple<uint64, PermutationGroupAction> const &block_out,
+    ElectronSymmetricSimple<uint64_t, PermutationGroupAction> const &block_out,
     lila::Vector<complex> &vec_out);
 
 } // namespace hydra

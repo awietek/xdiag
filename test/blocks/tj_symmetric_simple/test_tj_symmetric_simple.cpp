@@ -120,9 +120,9 @@ TEST_CASE("tJSymmetricSimple", "[models]") {
   for (int n_sites = 1; n_sites < 8; ++n_sites) {
     lila::Log.out("tJSymmetricSimple block test: TJChain {}", n_sites);
 
-    test_tj_chain<hydra::uint16>(n_sites);
-    test_tj_chain<hydra::uint32>(n_sites);
-    test_tj_chain<hydra::uint64>(n_sites);
+    test_tj_chain<uint16_t>(n_sites);
+    test_tj_chain<uint32_t>(n_sites);
+    test_tj_chain<uint64_t>(n_sites);
   }
 
   // test a 3x3 triangular lattice
@@ -149,7 +149,7 @@ TEST_CASE("tJSymmetricSimple", "[models]") {
 
       for (auto [name, mult] : rep_name_mult) {
         auto irrep = read_represenation(lfile, name);
-        auto tj = tJSymmetricSimple<uint16>(n_sites, nup, ndn, space_group, irrep);
+        auto tj = tJSymmetricSimple<uint16_t>(n_sites, nup, ndn, space_group, irrep);
 
         idx_t dim = tj.size() * mult;
         // lila::Log.out("tJ Triangular 3x3: n_sites: {}, nup: {}, ndn: {}, k: "
@@ -161,7 +161,7 @@ TEST_CASE("tJSymmetricSimple", "[models]") {
         sum_dim_updn += dim;
         sum_dim += dim;
       }
-      auto tj_nosym = tJ<uint16>(n_sites, nup, ndn);
+      auto tj_nosym = tJ<uint16_t>(n_sites, nup, ndn);
       REQUIRE(sum_dim_updn == tj_nosym.size());
       REQUIRE(sum_dim_updn ==
               binomial(n_sites, nup) * binomial(n_sites - nup, ndn));

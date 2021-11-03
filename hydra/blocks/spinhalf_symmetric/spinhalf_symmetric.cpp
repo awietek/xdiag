@@ -39,12 +39,12 @@ bool SpinhalfSymmetric<bit_t, GroupAction>::operator!=(
   return !operator==(rhs);
 }
 
-template class SpinhalfSymmetric<uint16, PermutationGroupAction>;
-template class SpinhalfSymmetric<uint32, PermutationGroupAction>;
-template class SpinhalfSymmetric<uint64, PermutationGroupAction>;
+template class SpinhalfSymmetric<uint16_t, PermutationGroupAction>;
+template class SpinhalfSymmetric<uint32_t, PermutationGroupAction>;
+template class SpinhalfSymmetric<uint64_t, PermutationGroupAction>;
 
-template class SpinhalfSymmetric<uint16, PermutationGroupLookup<uint16>>;
-template class SpinhalfSymmetric<uint32, PermutationGroupLookup<uint32>>;
-template class SpinhalfSymmetric<uint64, PermutationGroupLookup<uint64>>;
+template class SpinhalfSymmetric<uint16_t, PermutationGroupLookup<uint16_t>>;
+template class SpinhalfSymmetric<uint32_t, PermutationGroupLookup<uint32_t>>;
+template class SpinhalfSymmetric<uint64_t, PermutationGroupLookup<uint64_t>>;
 
 } // namespace hydra

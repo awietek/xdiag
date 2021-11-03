@@ -1,21 +1,15 @@
 #pragma once
 
 #include <complex>
+#include <cstdint>
 #include <lila/all.h>
 
 namespace hydra {
 
-using int16 = short;
-using int32 = int;
-using int64 = long;
-using uint16 = unsigned short;
-using uint32 = unsigned int;
-using uint64 = unsigned long;
+using std_bit_t = uint64_t;
+using number_t = int32_t;
 
-using std_bit_t = uint64;
-using number_t = int32;
-
-using idx_t = int64;
+using idx_t = int64_t;
 
 using scomplex = std::complex<float>;
 using complex = std::complex<double>;

@@ -11,7 +11,7 @@ void test_tjmodel_e0_real(BondList bonds, Couplings couplings, int nup, int ndn,
                           double e0) {
   int n_sites = bonds.n_sites();
 
-  auto block = tJ<uint32>(n_sites, nup, ndn);
+  auto block = tJ<uint32_t>(n_sites, nup, ndn);
   auto H = MatrixReal(bonds, couplings, block, block);
   REQUIRE(lila::close(H, lila::Herm(H)));
 
@@ -27,7 +27,7 @@ void test_tjmodel_fulleigs(BondList bonds, Couplings couplings,
   for (int nup = 0; nup <= n_sites; ++nup)
     for (int ndn = 0; ndn <= n_sites - nup; ++ndn) {
 
-      auto block = tJ<uint32>(n_sites, nup, ndn);
+      auto block = tJ<uint32_t>(n_sites, nup, ndn);
       auto H = MatrixReal(bonds, couplings, block, block);
       REQUIRE(lila::close(H, lila::Herm(H)));
       auto eigs = lila::EigenvaluesSym(H);
@@ -96,7 +96,7 @@ TEST_CASE("tJ_Matrix", "[tj]") {
     auto [bonds, cpls] = tj_alltoall_complex(N);
     for (int nup = 0; nup <= N; ++nup)
       for (int ndn = 0; ndn <= N - nup; ++ndn) {
-        auto block = tJ<uint32>(N, nup, ndn);
+        auto block = tJ<uint32_t>(N, nup, ndn);
         auto H = MatrixCplx(bonds, cpls, block, block);
         REQUIRE(lila::close(H, lila::Herm(H)));
       }

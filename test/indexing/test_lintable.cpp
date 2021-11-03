@@ -22,9 +22,9 @@ TEST_CASE( "lintable", "[indexing]" ) {
   for (int n = 0; n < 10; ++n)
     for (int k = 0; k <= n; ++k)
       {
-	test_lintable<hydra::uint16>(n, k);
-	test_lintable<hydra::uint32>(n, k);
-	test_lintable<hydra::uint64>(n, k);
+	test_lintable<uint16_t>(n, k);
+	test_lintable<uint32_t>(n, k);
+	test_lintable<uint64_t>(n, k);
       }
 
 }

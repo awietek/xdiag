@@ -76,15 +76,15 @@ IndexingSymmetricFermionic<bit_t, GroupAction>::IndexingSymmetricFermionic(
   size_ = (idx_t)states_.size();
 }
 
-template class IndexingSymmetricFermionic<uint16, PermutationGroupAction>;
-template class IndexingSymmetricFermionic<uint32, PermutationGroupAction>;
-template class IndexingSymmetricFermionic<uint64, PermutationGroupAction>;
+template class IndexingSymmetricFermionic<uint16_t, PermutationGroupAction>;
+template class IndexingSymmetricFermionic<uint32_t, PermutationGroupAction>;
+template class IndexingSymmetricFermionic<uint64_t, PermutationGroupAction>;
 
-template class IndexingSymmetricFermionic<uint16,
-                                          PermutationGroupLookup<uint16>>;
-template class IndexingSymmetricFermionic<uint32,
-                                          PermutationGroupLookup<uint32>>;
-template class IndexingSymmetricFermionic<uint64,
-                                          PermutationGroupLookup<uint64>>;
+template class IndexingSymmetricFermionic<uint16_t,
+                                          PermutationGroupLookup<uint16_t>>;
+template class IndexingSymmetricFermionic<uint32_t,
+                                          PermutationGroupLookup<uint32_t>>;
+template class IndexingSymmetricFermionic<uint64_t,
+                                          PermutationGroupLookup<uint64_t>>;
 
 } // namespace hydra::indexing

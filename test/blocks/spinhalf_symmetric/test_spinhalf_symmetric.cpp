@@ -71,9 +71,9 @@ TEST_CASE("SpinhalfSymmetric", "[models]") {
   for (int n_sites = 1; n_sites < 8; ++n_sites) {
     lila::Log.out("SpinhalfSymmetric block test: Spinhalf Chain {}", n_sites);
 
-    test_spinchain_blocks<hydra::uint16>(n_sites);
-    test_spinchain_blocks<hydra::uint32>(n_sites);
-    test_spinchain_blocks<hydra::uint64>(n_sites);
+    test_spinchain_blocks<uint16_t>(n_sites);
+    test_spinchain_blocks<uint32_t>(n_sites);
+    test_spinchain_blocks<uint64_t>(n_sites);
   }
 
   // test a 3x3 triangular lattice
@@ -96,7 +96,7 @@ TEST_CASE("SpinhalfSymmetric", "[models]") {
 
     for (auto [name, mult] : rep_name_mult) {
       auto irrep = read_represenation(lfile, name);
-      auto block = SpinhalfSymmetric<uint16>(n_sites, nup, space_group, irrep);
+      auto block = SpinhalfSymmetric<uint16_t>(n_sites, nup, space_group, irrep);
 
       idx_t dim = block.size() * mult;
       test_indices_spinhalf_symmetric(block);

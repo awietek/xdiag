@@ -3,7 +3,7 @@
 #include <vector>
 
 #include <hydra/common.h>
-#include <hydra/utils/bitops.h>
+#include <hydra/bitops/bitops.h>
 
 namespace hydra::indexing {
 
@@ -14,7 +14,7 @@ public:
 
   inline idx_t index(bit_t bits) const {
     return left_indices_[bits >> n_right_] +
-           right_indices_[bitops::gbits(bits, n_right_, 0)];
+           right_indices_[bitops::gbits(bits, 0, n_right_)];
   }
 
 private:

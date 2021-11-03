@@ -182,8 +182,8 @@ bool tJSymmetricSimple<bit_t, GroupAction>::operator!=(
   return !operator==(rhs);
 }
 
-template class tJSymmetricSimple<uint16, PermutationGroupAction>;
-template class tJSymmetricSimple<uint32, PermutationGroupAction>;
-template class tJSymmetricSimple<uint64, PermutationGroupAction>;
+template class tJSymmetricSimple<uint16_t, PermutationGroupAction>;
+template class tJSymmetricSimple<uint32_t, PermutationGroupAction>;
+template class tJSymmetricSimple<uint64_t, PermutationGroupAction>;
 
 } // namespace hydra

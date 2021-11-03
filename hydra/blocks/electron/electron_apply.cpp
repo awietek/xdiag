@@ -53,36 +53,36 @@ void Apply(BondList const &bonds, Couplings const &couplings,
   do_exchange<bit_t>(bonds, couplings, block_in, fill);
 }
 
-template void Apply<uint16>(BondList const &bonds, Couplings const &couplings,
-                            Electron<uint16> const &block_in,
-                            lila::Vector<double> const &vec_in,
-                            Electron<uint16> const &block_out,
-                            lila::Vector<double> &vec_out);
-template void Apply<uint32>(BondList const &bonds, Couplings const &couplings,
-                            Electron<uint32> const &block_in,
-                            lila::Vector<double> const &vec_in,
-                            Electron<uint32> const &block_out,
-                            lila::Vector<double> &vec_out);
-template void Apply<uint64>(BondList const &bonds, Couplings const &couplings,
-                            Electron<uint64> const &block_in,
-                            lila::Vector<double> const &vec_in,
-                            Electron<uint64> const &block_out,
-                            lila::Vector<double> &vec_out);
+template void Apply<uint16_t>(BondList const &bonds, Couplings const &couplings,
+                              Electron<uint16_t> const &block_in,
+                              lila::Vector<double> const &vec_in,
+                              Electron<uint16_t> const &block_out,
+                              lila::Vector<double> &vec_out);
+template void Apply<uint32_t>(BondList const &bonds, Couplings const &couplings,
+                              Electron<uint32_t> const &block_in,
+                              lila::Vector<double> const &vec_in,
+                              Electron<uint32_t> const &block_out,
+                              lila::Vector<double> &vec_out);
+template void Apply<uint64_t>(BondList const &bonds, Couplings const &couplings,
+                              Electron<uint64_t> const &block_in,
+                              lila::Vector<double> const &vec_in,
+                              Electron<uint64_t> const &block_out,
+                              lila::Vector<double> &vec_out);
 
-template void Apply<uint16>(BondList const &bonds, Couplings const &couplings,
-                            Electron<uint16> const &block_in,
-                            lila::Vector<complex> const &vec_in,
-                            Electron<uint16> const &block_out,
-                            lila::Vector<complex> &vec_out);
-template void Apply<uint32>(BondList const &bonds, Couplings const &couplings,
-                            Electron<uint32> const &block_in,
-                            lila::Vector<complex> const &vec_in,
-                            Electron<uint32> const &block_out,
-                            lila::Vector<complex> &vec_out);
-template void Apply<uint64>(BondList const &bonds, Couplings const &couplings,
-                            Electron<uint64> const &block_in,
-                            lila::Vector<complex> const &vec_in,
-                            Electron<uint64> const &block_out,
-                            lila::Vector<complex> &vec_out);
+template void Apply<uint16_t>(BondList const &bonds, Couplings const &couplings,
+                              Electron<uint16_t> const &block_in,
+                              lila::Vector<complex> const &vec_in,
+                              Electron<uint16_t> const &block_out,
+                              lila::Vector<complex> &vec_out);
+template void Apply<uint32_t>(BondList const &bonds, Couplings const &couplings,
+                              Electron<uint32_t> const &block_in,
+                              lila::Vector<complex> const &vec_in,
+                              Electron<uint32_t> const &block_out,
+                              lila::Vector<complex> &vec_out);
+template void Apply<uint64_t>(BondList const &bonds, Couplings const &couplings,
+                              Electron<uint64_t> const &block_in,
+                              lila::Vector<complex> const &vec_in,
+                              Electron<uint64_t> const &block_out,
+                              lila::Vector<complex> &vec_out);
 
 } // namespace hydra

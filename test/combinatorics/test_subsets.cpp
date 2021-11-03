@@ -29,7 +29,7 @@ void test_subsets(){
 }
 
 TEST_CASE( "subsets", "[combinatorics/subsets]" ) {
-  test_subsets<hydra::uint16>();
-  test_subsets<hydra::uint32>();
-  test_subsets<hydra::uint64>();
+  test_subsets<uint16_t>();
+  test_subsets<uint32_t>();
+  test_subsets<uint64_t>();
 }

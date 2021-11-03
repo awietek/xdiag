@@ -7,21 +7,20 @@
 namespace hydra {
 
 template <class coeff_t>
-coeff_t DotMPI(lila::Vector<coeff_t> const &v,
-                  lila::Vector<coeff_t> const &w) {
+coeff_t DotMPI(lila::Vector<coeff_t> const &v, lila::Vector<coeff_t> const &w) {
   assert(v.size() == w.size());
-  uint64 size = v.size();
+  uint64_t size = v.size();
   return mpi::stable_dot_product(size, v.data(), w.data());
 }
 
 template float DotMPI<float>(lila::Vector<float> const &v,
-                                lila::Vector<float> const &w);
+                             lila::Vector<float> const &w);
 template double DotMPI<double>(lila::Vector<double> const &v,
-                                  lila::Vector<double> const &w);
+                               lila::Vector<double> const &w);
 template scomplex DotMPI<scomplex>(lila::Vector<scomplex> const &v,
-                                      lila::Vector<scomplex> const &w);
+                                   lila::Vector<scomplex> const &w);
 template complex DotMPI<complex>(lila::Vector<complex> const &v,
-                                    lila::Vector<complex> const &w);
+                                 lila::Vector<complex> const &w);
 
 template <class coeff_t>
 lila::real_t<coeff_t> NormMPI(lila::Vector<coeff_t> const &v) {
@@ -41,7 +40,7 @@ namespace hydra::mpi {
 // delivering always an identical result, no matter
 // how the vectors are subdivided.
 
-static inline void normalize_sums(int64 *isum) {
+static inline void normalize_sums(int64_t *isum) {
   for (int j = 0; j < 3; j++) {
     if (isum[j] < 0) {
       isum[j] += ((1ULL) << 60);
@@ -52,11 +51,10 @@ static inline void normalize_sums(int64 *isum) {
   }
 }
 
-inline double stable_dot_product(const uint64 &n, const double *x,
-                                 const double *y) {
+double stable_dot_product(uint64_t n, const double *x, const double *y) {
   double absmax, tmp, fact, r_fact, sig;
-  uint64 i;
-  int64 itmp[4], isum[4], ival1, ival2;
+  uint64_t i;
+  int64_t itmp[4], isum[4], ival1, ival2;
   int iexp;
 
   absmax = 0.;
@@ -116,11 +114,10 @@ inline double stable_dot_product(const uint64 &n, const double *x,
   return sig * tmp * r_fact;
 }
 
-inline double stable_dot_product(const uint64 &n, const float *x,
-                                 const float *y) {
+double stable_dot_product(uint64_t n, const float *x, const float *y) {
   double absmax, tmp, fact, r_fact, sig;
-  uint64 i;
-  int64 itmp[4], isum[4], ival1, ival2;
+  uint64_t i;
+  int64_t itmp[4], isum[4], ival1, ival2;
   int iexp;
 
   absmax = 0.;
@@ -183,11 +180,10 @@ inline double stable_dot_product(const uint64 &n, const float *x,
   return sig * tmp * r_fact;
 }
 
-inline complex stable_dot_product(const uint64 &n, const complex *x,
-                                  const complex *y) {
+complex stable_dot_product(uint64_t n, const complex *x, const complex *y) {
   double absmax, tmp, fact, r_fact, sig;
-  uint64 i;
-  int64 itmp[4], isum[4], ival1, ival2;
+  uint64_t i;
+  int64_t itmp[4], isum[4], ival1, ival2;
   int iexp;
 
   complex ctmp;
@@ -303,11 +299,10 @@ inline complex stable_dot_product(const uint64 &n, const complex *x,
   return complex(realpart, imagpart);
 }
 
-inline scomplex stable_dot_product(const uint64 &n, const scomplex *x,
-                                   const scomplex *y) {
+scomplex stable_dot_product(uint64_t n, const scomplex *x, const scomplex *y) {
   double absmax, tmp, fact, r_fact, sig;
-  uint64 i;
-  int64 itmp[4], isum[4], ival1, ival2;
+  uint64_t i;
+  int64_t itmp[4], isum[4], ival1, ival2;
   int iexp;
 
   complex ctmp;

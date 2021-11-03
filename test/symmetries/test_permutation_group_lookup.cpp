@@ -35,8 +35,8 @@ template <class bit_t> void test_permutation_group_lookup(int n_sites) {
 TEST_CASE("PermutationGroupLookup", "[symmetries]") {
   lila::Log.out("PermutationGroupLookup <-> PermutationGroupAction comparison");
   for (int n_sites = 1; n_sites < 6; ++n_sites) {
-    test_permutation_group_lookup<hydra::uint16>(n_sites);
-    test_permutation_group_lookup<hydra::uint32>(n_sites);
-    test_permutation_group_lookup<hydra::uint64>(n_sites);
+    test_permutation_group_lookup<uint16_t>(n_sites);
+    test_permutation_group_lookup<uint32_t>(n_sites);
+    test_permutation_group_lookup<uint64_t>(n_sites);
   }
 }

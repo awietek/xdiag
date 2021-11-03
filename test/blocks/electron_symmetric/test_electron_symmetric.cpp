@@ -190,9 +190,9 @@ TEST_CASE("ElectronSymmetric", "[models][ElectronSymmetric]") {
 
   // Test the Hubbard chain
   for (int n_sites = 1; n_sites < 7; ++n_sites) {
-    test_electron_chain<hydra::uint16>(n_sites);
-    test_electron_chain<hydra::uint32>(n_sites);
-    test_electron_chain<hydra::uint64>(n_sites);
+    test_electron_chain<uint16_t>(n_sites);
+    test_electron_chain<uint32_t>(n_sites);
+    test_electron_chain<uint64_t>(n_sites);
   }
 
   // test a 3x3 triangular lattice
@@ -217,7 +217,7 @@ TEST_CASE("ElectronSymmetric", "[models][ElectronSymmetric]") {
       for (auto [name, mult] : rep_name_mult) {
         auto irrep = read_represenation(lfile, name);
         auto electron =
-            ElectronSymmetric<uint16>(n_sites, nup, ndn, space_group,
+            ElectronSymmetric<uint16_t>(n_sites, nup, ndn, space_group,
             irrep);
 
         idx_t dim = electron.size() * mult;
@@ -230,7 +230,7 @@ TEST_CASE("ElectronSymmetric", "[models][ElectronSymmetric]") {
         sum_dim_updn += dim;
         sum_dim += dim;
       }
-      auto electron_nosym = Electron<uint16>(n_sites, nup, ndn);
+      auto electron_nosym = Electron<uint16_t>(n_sites, nup, ndn);
       REQUIRE(sum_dim_updn == electron_nosym.size());
       REQUIRE(sum_dim_updn == binomial(n_sites, nup) * binomial(n_sites,
       ndn));

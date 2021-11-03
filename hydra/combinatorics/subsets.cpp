@@ -18,12 +18,12 @@ Subsets<bit_t>::Subsets(int n) : n_(n), size_((idx_t)1 << n) {
 template <class bit_t>
 SubsetsIterator<bit_t>::SubsetsIterator(bit_t state) : current_(state) {}
 
-template class Subsets<uint16>;
-template class Subsets<uint32>;
-template class Subsets<uint64>;
+template class Subsets<uint16_t>;
+template class Subsets<uint32_t>;
+template class Subsets<uint64_t>;
 
-template class SubsetsIterator<uint16>;
-template class SubsetsIterator<uint32>;
-template class SubsetsIterator<uint64>;
+template class SubsetsIterator<uint16_t>;
+template class SubsetsIterator<uint32_t>;
+template class SubsetsIterator<uint64_t>;
 
 } // namespace hydra

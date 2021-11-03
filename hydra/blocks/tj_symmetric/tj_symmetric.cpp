@@ -169,7 +169,7 @@ bool tJSymmetric<bit_t, GroupAction>::operator!=(
   return !operator==(rhs);
 }
 
-template class tJSymmetric<uint16, PermutationGroupAction>;
+template class tJSymmetric<uint16_t, PermutationGroupAction>;
 template class tJSymmetric<uint32, PermutationGroupAction>;
 template class tJSymmetric<uint64, PermutationGroupAction>;
 

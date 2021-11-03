@@ -8,7 +8,7 @@
 #include <hydra/common.h>
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
-#include <hydra/utils/bitops.h>
+#include <hydra/bitops/bitops.h>
 
 #include <hydra/blocks/spinhalf_mpi/terms/get_prefix_postfix_mixed_bonds.h>
 #include <hydra/blocks/spinhalf_mpi/terms/spinhalf_mpi_exchange_mixed_com.h>

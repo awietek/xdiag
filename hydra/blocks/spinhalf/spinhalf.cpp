@@ -24,8 +24,8 @@ bool Spinhalf<bit_t>::operator!=(Spinhalf<bit_t> const &rhs) const {
   return !operator==(rhs);
 }
 
-template class Spinhalf<uint16>;
-template class Spinhalf<uint32>;
-template class Spinhalf<uint64>;
+template class Spinhalf<uint16_t>;
+template class Spinhalf<uint32_t>;
+template class Spinhalf<uint64_t>;
 
 } // namespace hydra

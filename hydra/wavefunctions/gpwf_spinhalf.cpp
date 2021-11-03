@@ -1,6 +1,6 @@
 #include "gpwf_spinhalf.h"
 
-#include <hydra/utils/bitops.h>
+#include <hydra/bitops/bitops.h>
 #include <hydra/utils/complex.h>
 
 namespace hydra {
@@ -20,7 +20,7 @@ GPWFSpinhalf<coeff_t>::GPWFSpinhalf(int n_sites,
 }
 
 template <class coeff_t>
-coeff_t GPWFSpinhalf<coeff_t>::coefficient(uint64 state, bool print_work) {
+coeff_t GPWFSpinhalf<coeff_t>::coefficient(uint64_t state, bool print_work) {
 
   lila::Zeros(work_matrix_);
   for (int i = 0; i < n_sites_; ++i) {

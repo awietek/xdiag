@@ -77,8 +77,8 @@ bit_t apply_permutation(bit_t state, int n_sites, const int *permutation) {
   return tstate;
 }
 
-template uint16 apply_permutation<uint16>(uint16, int, const int *);
-template uint32 apply_permutation<uint32>(uint32, int, const int *);
-template uint64 apply_permutation<uint64>(uint64, int, const int *);
+template uint16_t apply_permutation<uint16_t>(uint16_t, int, const int *);
+template uint32_t apply_permutation<uint32_t>(uint32_t, int, const int *);
+template uint64_t apply_permutation<uint64_t>(uint64_t, int, const int *);
 
 } // namespace hydra::utils

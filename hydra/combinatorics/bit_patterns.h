@@ -1,7 +1,7 @@
 #pragma once
 
+#include <hydra/bitops/bitops.h>
 #include <hydra/common.h>
-#include <hydra/utils/bitops.h>
 
 namespace hydra::combinatorics {
 
@@ -24,7 +24,7 @@ template <class int_t> inline int_t get_next_pattern(const int_t &v) {
   // return v == 0 ? ~v : t | ((((t & -t) / (v & -v)) >> 1) - 1);
 }
 
-uint64 get_nth_pattern(uint64 n, int n_sites, int n_upspins);
-uint64 get_n_for_pattern(uint64 pattern, int n_sites, int n_upspins);
+uint64_t get_nth_pattern(uint64_t n, int n_sites, int n_upspins);
+uint64_t get_n_for_pattern(uint64_t pattern, int n_sites, int n_upspins);
 
 } // namespace hydra::combinatorics

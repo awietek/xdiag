@@ -18,7 +18,7 @@ TEST_CASE("tJ_Apply", "[tj]") {
     for (int nup = 0; nup <= N; ++nup)
       for (int ndn = 0; ndn <= N - nup; ++ndn) {
 
-        auto block = tJ<uint32>(N, nup, ndn);
+        auto block = tJ<uint32_t>(N, nup, ndn);
         auto H = MatrixReal(bonds, cpls, block, block);
         REQUIRE(lila::close(H, lila::Herm(H)));
 
@@ -43,7 +43,7 @@ TEST_CASE("tJ_Apply", "[tj]") {
     auto [bonds, cpls] = tj_alltoall_complex(N);
     for (int nup = 0; nup <= N; ++nup)
       for (int ndn = 0; ndn <= N - nup; ++ndn) {
-        auto block = tJ<uint32>(N, nup, ndn);
+        auto block = tJ<uint32_t>(N, nup, ndn);
         auto H = MatrixCplx(bonds, cpls, block, block);
         REQUIRE(lila::close(H, lila::Herm(H)));
 

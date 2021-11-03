@@ -3,7 +3,7 @@
 #include <lila/all.h>
 
 #include "common.h"
-#include "utils/bitops.h"
+#include "bitops/bitops.h"
 #include "utils/iochecks.h"
 
 #include "combinatorics/binomial.h"

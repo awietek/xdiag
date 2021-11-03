@@ -25,7 +25,7 @@ TEST_CASE("Electron_Apply", "[models]") {
       for (int ndn = 0; ndn <= n_sites; ++ndn) {
 
         // Create block and matrix for comparison
-        auto block = Electron<uint32>(n_sites, nup, ndn);
+        auto block = Electron<uint32_t>(n_sites, nup, ndn);
         auto H = MatrixReal(bondlist, couplings, block, block);
         REQUIRE(lila::close(H, lila::Herm(H)));
 
@@ -58,7 +58,7 @@ TEST_CASE("Electron_Apply", "[models]") {
       for (int ndn = 0; ndn <= n_sites; ++ndn) {
 
         // Create block and matrix for comparison
-        auto block = Electron<uint32>(n_sites, nup, ndn);
+        auto block = Electron<uint32_t>(n_sites, nup, ndn);
         auto H = MatrixCplx(bondlist, couplings, block, block);
         REQUIRE(lila::close(H, lila::Herm(H)));
 

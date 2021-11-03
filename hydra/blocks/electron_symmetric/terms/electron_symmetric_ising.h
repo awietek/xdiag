@@ -3,7 +3,7 @@
 #include <lila/all.h>
 
 #include <hydra/common.h>
-#include <hydra/utils/bitops.h>
+#include <hydra/bitops/bitops.h>
 
 #include <hydra/blocks/blocks.h>
 #include <hydra/blocks/utils/block_utils.h>

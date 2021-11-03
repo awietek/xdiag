@@ -36,20 +36,26 @@ MatrixReal(BondList const &bonds, Couplings const &couplings,
 }
 
 template lila::Matrix<double>
-MatrixReal<uint16, PermutationGroupLookup<uint16>>(
+MatrixReal<uint16_t, PermutationGroupLookup<uint16_t>>(
     BondList const &bonds, Couplings const &couplings,
-    ElectronSymmetric<uint16, PermutationGroupLookup<uint16>> const &block_in,
-    ElectronSymmetric<uint16, PermutationGroupLookup<uint16>> const &block_out);
+    ElectronSymmetric<uint16_t, PermutationGroupLookup<uint16_t>> const
+        &block_in,
+    ElectronSymmetric<uint16_t, PermutationGroupLookup<uint16_t>> const
+        &block_out);
 template lila::Matrix<double>
-MatrixReal<uint32, PermutationGroupLookup<uint32>>(
+MatrixReal<uint32_t, PermutationGroupLookup<uint32_t>>(
     BondList const &bonds, Couplings const &couplings,
-    ElectronSymmetric<uint32, PermutationGroupLookup<uint32>> const &block_in,
-    ElectronSymmetric<uint32, PermutationGroupLookup<uint32>> const &block_out);
+    ElectronSymmetric<uint32_t, PermutationGroupLookup<uint32_t>> const
+        &block_in,
+    ElectronSymmetric<uint32_t, PermutationGroupLookup<uint32_t>> const
+        &block_out);
 template lila::Matrix<double>
-MatrixReal<uint64, PermutationGroupLookup<uint64>>(
+MatrixReal<uint64_t, PermutationGroupLookup<uint64_t>>(
     BondList const &bonds, Couplings const &couplings,
-    ElectronSymmetric<uint64, PermutationGroupLookup<uint64>> const &block_in,
-    ElectronSymmetric<uint64, PermutationGroupLookup<uint64>> const &block_out);
+    ElectronSymmetric<uint64_t, PermutationGroupLookup<uint64_t>> const
+        &block_in,
+    ElectronSymmetric<uint64_t, PermutationGroupLookup<uint64_t>> const
+        &block_out);
 
 template <class bit_t, class GroupAction>
 lila::Matrix<complex>
@@ -74,19 +80,25 @@ MatrixCplx(BondList const &bonds, Couplings const &couplings,
 }
 
 template lila::Matrix<complex>
-MatrixCplx<uint16, PermutationGroupLookup<uint16>>(
+MatrixCplx<uint16_t, PermutationGroupLookup<uint16_t>>(
     BondList const &bonds, Couplings const &couplings,
-    ElectronSymmetric<uint16, PermutationGroupLookup<uint16>> const &block_in,
-    ElectronSymmetric<uint16, PermutationGroupLookup<uint16>> const &block_out);
+    ElectronSymmetric<uint16_t, PermutationGroupLookup<uint16_t>> const
+        &block_in,
+    ElectronSymmetric<uint16_t, PermutationGroupLookup<uint16_t>> const
+        &block_out);
 template lila::Matrix<complex>
-MatrixCplx<uint32, PermutationGroupLookup<uint32>>(
+MatrixCplx<uint32_t, PermutationGroupLookup<uint32_t>>(
     BondList const &bonds, Couplings const &couplings,
-    ElectronSymmetric<uint32, PermutationGroupLookup<uint32>> const &block_in,
-    ElectronSymmetric<uint32, PermutationGroupLookup<uint32>> const &block_out);
+    ElectronSymmetric<uint32_t, PermutationGroupLookup<uint32_t>> const
+        &block_in,
+    ElectronSymmetric<uint32_t, PermutationGroupLookup<uint32_t>> const
+        &block_out);
 template lila::Matrix<complex>
-MatrixCplx<uint64, PermutationGroupLookup<uint64>>(
+MatrixCplx<uint64_t, PermutationGroupLookup<uint64_t>>(
     BondList const &bonds, Couplings const &couplings,
-    ElectronSymmetric<uint64, PermutationGroupLookup<uint64>> const &block_in,
-    ElectronSymmetric<uint64, PermutationGroupLookup<uint64>> const &block_out);
+    ElectronSymmetric<uint64_t, PermutationGroupLookup<uint64_t>> const
+        &block_in,
+    ElectronSymmetric<uint64_t, PermutationGroupLookup<uint64_t>> const
+        &block_out);
 
 } // namespace hydra
