@@ -29,8 +29,8 @@ bool Electron<bit_t>::operator!=(Electron<bit_t> const &rhs) const {
   return !operator==(rhs);
 }
 
-template class Electron<uint16>;
-template class Electron<uint32>;
-template class Electron<uint64>;
+template class Electron<uint16_t>;
+template class Electron<uint32_t>;
+template class Electron<uint64_t>;
 
 } // namespace hydra

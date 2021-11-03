@@ -3,7 +3,6 @@
 
 #include <hydra/common.h>
 #include <hydra/symmetries/permutation_group.h>
-#include <hydra/utils/bitops.h>
 
 namespace hydra {
 

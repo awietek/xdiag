@@ -22,23 +22,23 @@ template <class Block> struct is_mpi_block_t {
   static constexpr bool value = false;
 };
 
-template <> struct is_mpi_block_t<SpinhalfMPI<uint16>> {
+template <> struct is_mpi_block_t<SpinhalfMPI<uint16_t>> {
   static constexpr bool value = true;
 };
-template <> struct is_mpi_block_t<SpinhalfMPI<uint32>> {
+template <> struct is_mpi_block_t<SpinhalfMPI<uint32_t>> {
   static constexpr bool value = true;
 };
-template <> struct is_mpi_block_t<SpinhalfMPI<uint64>> {
+template <> struct is_mpi_block_t<SpinhalfMPI<uint64_t>> {
   static constexpr bool value = true;
 };
 
-template <> struct is_mpi_block_t<ElectronMPI<uint16>> {
+template <> struct is_mpi_block_t<ElectronMPI<uint16_t>> {
   static constexpr bool value = true;
 };
-template <> struct is_mpi_block_t<ElectronMPI<uint32>> {
+template <> struct is_mpi_block_t<ElectronMPI<uint32_t>> {
   static constexpr bool value = true;
 };
-template <> struct is_mpi_block_t<ElectronMPI<uint64>> {
+template <> struct is_mpi_block_t<ElectronMPI<uint64_t>> {
   static constexpr bool value = true;
 };
 

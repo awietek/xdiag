@@ -59,8 +59,8 @@ template <class bit_t> bool tJ<bit_t>::operator!=(tJ<bit_t> const &rhs) const {
   return !operator==(rhs);
 }
 
-template class tJ<uint16>;
-template class tJ<uint32>;
-template class tJ<uint64>;
+template class tJ<uint16_t>;
+template class tJ<uint32_t>;
+template class tJ<uint64_t>;
 
 } // namespace hydra

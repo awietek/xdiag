@@ -9,7 +9,7 @@
 #include <hydra/operators/couplings.h>
 
 #include <hydra/blocks/utils/block_utils.h>
-#include <hydra/utils/bitops.h>
+#include <hydra/bitops/bitops.h>
 
 namespace hydra::terms::spinhalf_symmetric {
 

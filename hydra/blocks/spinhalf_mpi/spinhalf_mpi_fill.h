@@ -5,7 +5,7 @@
 #include <hydra/common.h>
 #include <hydra/combinatorics/combinations.h>
 #include <hydra/blocks/spinhalf_mpi/spinhalf_mpi.h>
-#include <hydra/utils/bitops.h>
+#include <hydra/bitops/bitops.h>
 
 namespace hydra {
 

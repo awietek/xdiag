@@ -58,20 +58,20 @@ template <class bit_t> bit_t down_up_to_hole(bit_t downs, bit_t ups) {
   return holes;
 }
 
-template uint16 down_hole_to_up<uint16>(uint16, uint16);
-template uint32 down_hole_to_up<uint32>(uint32, uint32);
-template uint64 down_hole_to_up<uint64>(uint64, uint64);
+template uint16_t down_hole_to_up<uint16_t>(uint16_t, uint16_t);
+template uint32_t down_hole_to_up<uint32_t>(uint32_t, uint32_t);
+template uint64_t down_hole_to_up<uint64_t>(uint64_t, uint64_t);
 
-template uint16 up_hole_to_down<uint16>(uint16, uint16);
-template uint32 up_hole_to_down<uint32>(uint32, uint32);
-template uint64 up_hole_to_down<uint64>(uint64, uint64);
+template uint16_t up_hole_to_down<uint16_t>(uint16_t, uint16_t);
+template uint32_t up_hole_to_down<uint32_t>(uint32_t, uint32_t);
+template uint64_t up_hole_to_down<uint64_t>(uint64_t, uint64_t);
 
-template uint16 up_down_to_hole<uint16>(uint16, uint16);
-template uint32 up_down_to_hole<uint32>(uint32, uint32);
-template uint64 up_down_to_hole<uint64>(uint64, uint64);
+template uint16_t up_down_to_hole<uint16_t>(uint16_t, uint16_t);
+template uint32_t up_down_to_hole<uint32_t>(uint32_t, uint32_t);
+template uint64_t up_down_to_hole<uint64_t>(uint64_t, uint64_t);
 
-template uint16 down_up_to_hole<uint16>(uint16, uint16);
-template uint32 down_up_to_hole<uint32>(uint32, uint32);
-template uint64 down_up_to_hole<uint64>(uint64, uint64);
+template uint16_t down_up_to_hole<uint16_t>(uint16_t, uint16_t);
+template uint32_t down_up_to_hole<uint32_t>(uint32_t, uint32_t);
+template uint64_t down_up_to_hole<uint64_t>(uint64_t, uint64_t);
 
 } // namespace hydra::combinatorics

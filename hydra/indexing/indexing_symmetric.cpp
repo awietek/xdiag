@@ -69,13 +69,13 @@ IndexingSymmetric<bit_t, GroupAction>::IndexingSymmetric(
   size_ = (idx_t)states_.size();
 }
 
-template class IndexingSymmetric<uint16, PermutationGroupAction>;
-template class IndexingSymmetric<uint32, PermutationGroupAction>;
-template class IndexingSymmetric<uint64, PermutationGroupAction>;
+template class IndexingSymmetric<uint16_t, PermutationGroupAction>;
+template class IndexingSymmetric<uint32_t, PermutationGroupAction>;
+template class IndexingSymmetric<uint64_t, PermutationGroupAction>;
 
-template class IndexingSymmetric<uint16, PermutationGroupLookup<uint16>>;
-template class IndexingSymmetric<uint32, PermutationGroupLookup<uint32>>;
-template class IndexingSymmetric<uint64, PermutationGroupLookup<uint64>>;
+template class IndexingSymmetric<uint16_t, PermutationGroupLookup<uint16_t>>;
+template class IndexingSymmetric<uint32_t, PermutationGroupLookup<uint32_t>>;
+template class IndexingSymmetric<uint64_t, PermutationGroupLookup<uint64_t>>;
 
 
 } // namespace hydra::indexing

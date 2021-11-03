@@ -34,18 +34,18 @@ MatrixReal(BondList const &bonds, Couplings const &couplings,
   return mat;
 }
 
-template lila::Matrix<double> MatrixReal<uint16, PermutationGroupAction>(
+template lila::Matrix<double> MatrixReal<uint16_t, PermutationGroupAction>(
     BondList const &bonds, Couplings const &couplings,
-    tJSymmetricSimple<uint16, PermutationGroupAction> const &block_in,
-    tJSymmetricSimple<uint16, PermutationGroupAction> const &block_out);
-template lila::Matrix<double> MatrixReal<uint32, PermutationGroupAction>(
+    tJSymmetricSimple<uint16_t, PermutationGroupAction> const &block_in,
+    tJSymmetricSimple<uint16_t, PermutationGroupAction> const &block_out);
+template lila::Matrix<double> MatrixReal<uint32_t, PermutationGroupAction>(
     BondList const &bonds, Couplings const &couplings,
-    tJSymmetricSimple<uint32, PermutationGroupAction> const &block_in,
-    tJSymmetricSimple<uint32, PermutationGroupAction> const &block_out);
-template lila::Matrix<double> MatrixReal<uint64, PermutationGroupAction>(
+    tJSymmetricSimple<uint32_t, PermutationGroupAction> const &block_in,
+    tJSymmetricSimple<uint32_t, PermutationGroupAction> const &block_out);
+template lila::Matrix<double> MatrixReal<uint64_t, PermutationGroupAction>(
     BondList const &bonds, Couplings const &couplings,
-    tJSymmetricSimple<uint64, PermutationGroupAction> const &block_in,
-    tJSymmetricSimple<uint64, PermutationGroupAction> const &block_out);
+    tJSymmetricSimple<uint64_t, PermutationGroupAction> const &block_in,
+    tJSymmetricSimple<uint64_t, PermutationGroupAction> const &block_out);
 
 template <class bit_t, class GroupAction>
 lila::Matrix<complex>
@@ -69,17 +69,17 @@ MatrixCplx(BondList const &bonds, Couplings const &couplings,
   return mat;
 }
 
-template lila::Matrix<complex> MatrixCplx<uint16, PermutationGroupAction>(
+template lila::Matrix<complex> MatrixCplx<uint16_t, PermutationGroupAction>(
     BondList const &bonds, Couplings const &couplings,
-    tJSymmetricSimple<uint16, PermutationGroupAction> const &block_in,
-    tJSymmetricSimple<uint16, PermutationGroupAction> const &block_out);
-template lila::Matrix<complex> MatrixCplx<uint32, PermutationGroupAction>(
+    tJSymmetricSimple<uint16_t, PermutationGroupAction> const &block_in,
+    tJSymmetricSimple<uint16_t, PermutationGroupAction> const &block_out);
+template lila::Matrix<complex> MatrixCplx<uint32_t, PermutationGroupAction>(
     BondList const &bonds, Couplings const &couplings,
-    tJSymmetricSimple<uint32, PermutationGroupAction> const &block_in,
-    tJSymmetricSimple<uint32, PermutationGroupAction> const &block_out);
-template lila::Matrix<complex> MatrixCplx<uint64, PermutationGroupAction>(
+    tJSymmetricSimple<uint32_t, PermutationGroupAction> const &block_in,
+    tJSymmetricSimple<uint32_t, PermutationGroupAction> const &block_out);
+template lila::Matrix<complex> MatrixCplx<uint64_t, PermutationGroupAction>(
     BondList const &bonds, Couplings const &couplings,
-    tJSymmetricSimple<uint64, PermutationGroupAction> const &block_in,
-    tJSymmetricSimple<uint64, PermutationGroupAction> const &block_out);
+    tJSymmetricSimple<uint64_t, PermutationGroupAction> const &block_in,
+    tJSymmetricSimple<uint64_t, PermutationGroupAction> const &block_out);
 
 } // namespace hydra

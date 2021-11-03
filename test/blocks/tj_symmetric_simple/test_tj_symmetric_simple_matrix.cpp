@@ -74,7 +74,7 @@ template <class bit_t> void test_tj_symmetric_simple_spectrum_chains(int n_sites
   auto [bondlist, couplings] = tJchain(n_sites, 1.0, 5.0);
   auto [space_group, irreps, multiplicities] =
       get_cyclic_group_irreps_mult(n_sites);
-  test_symmetric_spectra<uint32>(bondlist, couplings, space_group, irreps,
+  test_symmetric_spectra<uint32_t>(bondlist, couplings, space_group, irreps,
                                  multiplicities);
 }
 
@@ -84,9 +84,9 @@ TEST_CASE("tJSymmetricSimple_Matrix", "[models]") {
 
   // Test linear chains
   for (int n_sites = 2; n_sites < 7; ++n_sites) {
-    test_tj_symmetric_simple_spectrum_chains<hydra::uint16>(n_sites);
-    test_tj_symmetric_simple_spectrum_chains<hydra::uint32>(n_sites);
-    test_tj_symmetric_simple_spectrum_chains<hydra::uint64>(n_sites);
+    test_tj_symmetric_simple_spectrum_chains<uint16_t>(n_sites);
+    test_tj_symmetric_simple_spectrum_chains<uint32_t>(n_sites);
+    test_tj_symmetric_simple_spectrum_chains<uint64_t>(n_sites);
   }
 
   // test a 3x3 triangular lattice
@@ -112,6 +112,6 @@ TEST_CASE("tJSymmetricSimple_Matrix", "[models]") {
     irreps.push_back(read_represenation(lfile, name));
     multiplicities.push_back(mult);
   }
-  test_symmetric_spectra<uint32>(bondlist, couplings, space_group, irreps,
+  test_symmetric_spectra<uint32_t>(bondlist, couplings, space_group, irreps,
                                  multiplicities);
 }

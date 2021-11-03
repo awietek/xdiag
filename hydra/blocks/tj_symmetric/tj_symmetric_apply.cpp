@@ -34,11 +34,11 @@ void Apply(BondList const &bonds, Couplings const &couplings,
   do_exchange_symmetric<bit_t, double>(bonds, couplings, block_in, fill);
 }
 
-template void Apply<uint16, PermutationGroupAction>(
+template void Apply<uint16_t, PermutationGroupAction>(
     BondList const &bonds, Couplings const &couplings,
-    tJSymmetric<uint16, PermutationGroupAction> const &block_in,
+    tJSymmetric<uint16_t, PermutationGroupAction> const &block_in,
     lila::Vector<double> const &vec_in,
-    tJSymmetric<uint16, PermutationGroupAction> const &block_out,
+    tJSymmetric<uint16_t, PermutationGroupAction> const &block_out,
     lila::Vector<double> &vec_out);
 template void Apply<uint32, PermutationGroupAction>(
     BondList const &bonds, Couplings const &couplings,
@@ -75,11 +75,11 @@ void Apply(BondList const &bonds, Couplings const &couplings,
   do_exchange_symmetric<bit_t, complex>(bonds, couplings, block_in, fill);
 }
 
-template void Apply<uint16, PermutationGroupAction>(
+template void Apply<uint16_t, PermutationGroupAction>(
     BondList const &bonds, Couplings const &couplings,
-    tJSymmetric<uint16, PermutationGroupAction> const &block_in,
+    tJSymmetric<uint16_t, PermutationGroupAction> const &block_in,
     lila::Vector<complex> const &vec_in,
-    tJSymmetric<uint16, PermutationGroupAction> const &block_out,
+    tJSymmetric<uint16_t, PermutationGroupAction> const &block_out,
     lila::Vector<complex> &vec_out);
 template void Apply<uint32, PermutationGroupAction>(
     BondList const &bonds, Couplings const &couplings,

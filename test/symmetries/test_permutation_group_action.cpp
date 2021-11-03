@@ -79,8 +79,8 @@ template <class bit_t> void test_permutation_group_action(int n_sites) {
 TEST_CASE("PermutationGroupAction", "[symmetries]") {
   
   for (int n_sites = 1; n_sites < 6; ++n_sites) {
-    test_permutation_group_action<hydra::uint16>(n_sites);
-    test_permutation_group_action<hydra::uint32>(n_sites);
-    test_permutation_group_action<hydra::uint64>(n_sites);
+    test_permutation_group_action<uint16_t>(n_sites);
+    test_permutation_group_action<uint32_t>(n_sites);
+    test_permutation_group_action<uint64_t>(n_sites);
   }
 }

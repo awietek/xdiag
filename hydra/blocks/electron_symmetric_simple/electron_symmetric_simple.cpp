@@ -180,8 +180,8 @@ bool ElectronSymmetricSimple<bit_t, GroupAction>::operator!=(
   return !operator==(rhs);
 }
 
-template class ElectronSymmetricSimple<uint16, PermutationGroupAction>;
-template class ElectronSymmetricSimple<uint32, PermutationGroupAction>;
-template class ElectronSymmetricSimple<uint64, PermutationGroupAction>;
+template class ElectronSymmetricSimple<uint16_t, PermutationGroupAction>;
+template class ElectronSymmetricSimple<uint32_t, PermutationGroupAction>;
+template class ElectronSymmetricSimple<uint64_t, PermutationGroupAction>;
 
 } // namespace hydra

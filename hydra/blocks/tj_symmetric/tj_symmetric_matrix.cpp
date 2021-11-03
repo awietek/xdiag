@@ -34,10 +34,10 @@ MatrixReal(BondList const &bonds, Couplings const &couplings,
   return mat;
 }
 
-template lila::Matrix<double> MatrixReal<uint16, PermutationGroupAction>(
+template lila::Matrix<double> MatrixReal<uint16_t, PermutationGroupAction>(
     BondList const &bonds, Couplings const &couplings,
-    tJSymmetric<uint16, PermutationGroupAction> const &block_in,
-    tJSymmetric<uint16, PermutationGroupAction> const &block_out);
+    tJSymmetric<uint16_t, PermutationGroupAction> const &block_in,
+    tJSymmetric<uint16_t, PermutationGroupAction> const &block_out);
 template lila::Matrix<double> MatrixReal<uint32, PermutationGroupAction>(
     BondList const &bonds, Couplings const &couplings,
     tJSymmetric<uint32, PermutationGroupAction> const &block_in,
@@ -69,10 +69,10 @@ MatrixCplx(BondList const &bonds, Couplings const &couplings,
   return mat;
 }
 
-template lila::Matrix<complex> MatrixCplx<uint16, PermutationGroupAction>(
+template lila::Matrix<complex> MatrixCplx<uint16_t, PermutationGroupAction>(
     BondList const &bonds, Couplings const &couplings,
-    tJSymmetric<uint16, PermutationGroupAction> const &block_in,
-    tJSymmetric<uint16, PermutationGroupAction> const &block_out);
+    tJSymmetric<uint16_t, PermutationGroupAction> const &block_in,
+    tJSymmetric<uint16_t, PermutationGroupAction> const &block_out);
 template lila::Matrix<complex> MatrixCplx<uint32, PermutationGroupAction>(
     BondList const &bonds, Couplings const &couplings,
     tJSymmetric<uint32, PermutationGroupAction> const &block_in,

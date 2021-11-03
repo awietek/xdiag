@@ -24,12 +24,12 @@ template <class bit_t>
 CombinationsIterator<bit_t>::CombinationsIterator(bit_t state, idx_t idx)
     : current_(state), idx_(idx) {}
 
-template class Combinations<uint16>;
-template class Combinations<uint32>;
-template class Combinations<uint64>;
+template class Combinations<uint16_t>;
+template class Combinations<uint32_t>;
+template class Combinations<uint64_t>;
 
-template class CombinationsIterator<uint16>;
-template class CombinationsIterator<uint32>;
-template class CombinationsIterator<uint64>;
+template class CombinationsIterator<uint16_t>;
+template class CombinationsIterator<uint32_t>;
+template class CombinationsIterator<uint64_t>;
 
 } // namespace hydra::combinatorics

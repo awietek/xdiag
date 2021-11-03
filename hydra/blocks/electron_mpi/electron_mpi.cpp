@@ -54,8 +54,8 @@ bool ElectronMPI<bit_t>::operator!=(ElectronMPI<bit_t> const &rhs) const {
   return !operator==(rhs);
 }
 
-template class ElectronMPI<uint16>;
-template class ElectronMPI<uint32>;
-template class ElectronMPI<uint64>;
+template class ElectronMPI<uint16_t>;
+template class ElectronMPI<uint32_t>;
+template class ElectronMPI<uint64_t>;
 
 } // namespace hydra

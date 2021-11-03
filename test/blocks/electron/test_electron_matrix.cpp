@@ -21,7 +21,7 @@ TEST_CASE("Electron_Matrix", "[models]") {
   int n_dn = 2;
   double t = 1.0;
   double U = 5.0;
-  auto block = Electron<uint32>(n_sites, n_up, n_dn);
+  auto block = Electron<uint32_t>(n_sites, n_up, n_dn);
 
   for (int i = 0; i < n_sites; ++i)
     bondlist << Bond("HOP", "T", {i, (i + 1) % n_sites});
@@ -97,7 +97,7 @@ TEST_CASE("Electron_Matrix", "[models]") {
   bondlist.clear();
   couplings.clear();
   bondlist << Bond("HOP", "T", {0, 1});
-  auto block2 = Electron<uint32>(2, 1, 1);
+  auto block2 = Electron<uint32_t>(2, 1, 1);
   for (int i = 0; i < 20; ++i) {
     double U = 1.234 * i;
     printf("Electron: two-site exact solution test, U=%f\n", U);
@@ -140,7 +140,7 @@ TEST_CASE("Electron_Matrix", "[models]") {
         for (int i = 0; i < ndn; ++i)
           e0_exact += seigs(i);
 
-        auto block3 = Electron<uint32>(n_sites, nup, ndn);
+        auto block3 = Electron<uint32_t>(n_sites, nup, ndn);
         auto Hr = MatrixReal(bondlist, couplings, block3, block3);
         REQUIRE(lila::close(Hr, lila::Herm(Hr)));
         auto evecsr = lila::EigenvaluesSym(Hr);
@@ -196,7 +196,7 @@ TEST_CASE("Electron_Matrix", "[models]") {
         for (int i = 0; i < ndn; ++i)
           e0_exact += seigs_dn(i);
 
-        auto block3 = Electron<uint32>(n_sites, nup, ndn);
+        auto block3 = Electron<uint32_t>(n_sites, nup, ndn);
         auto H = MatrixCplx(bondlist, couplings, block3, block3);
         REQUIRE(lila::close(H, lila::Herm(H)));
         auto evecs = lila::EigenvaluesSym(H);

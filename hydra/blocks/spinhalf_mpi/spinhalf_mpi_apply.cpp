@@ -1,7 +1,7 @@
 #include "spinhalf_mpi_apply.h"
 
 #include <hydra/combinatorics/combinations.h>
-#include <hydra/utils/bitops.h>
+#include <hydra/bitops/bitops.h>
 
 #include <hydra/blocks/spinhalf_mpi/terms/spinhalf_mpi_exchange.h>
 #include <hydra/blocks/spinhalf_mpi/terms/spinhalf_mpi_ising.h>
@@ -31,39 +31,39 @@ void Apply(BondList const &bonds, Couplings const &couplings,
   timing_mpi(tex, rightnow_mpi(), " (exchange)", 2);
 }
 
-template void Apply<uint16>(BondList const &bonds, Couplings const &couplings,
-                            SpinhalfMPI<uint16> const &block_in,
-                            lila::Vector<double> const &vec_in,
-                            SpinhalfMPI<uint16> const &block_out,
-                            lila::Vector<double> &vec_out);
-template void Apply<uint32>(BondList const &bonds, Couplings const &couplings,
-                            SpinhalfMPI<uint32> const &block_in,
-                            lila::Vector<double> const &vec_in,
-                            SpinhalfMPI<uint32> const &block_out,
-                            lila::Vector<double> &vec_out);
-template void Apply<uint64>(BondList const &bonds, Couplings const &couplings,
-                            SpinhalfMPI<uint64> const &block_in,
-                            lila::Vector<double> const &vec_in,
-                            SpinhalfMPI<uint64> const &block_out,
-                            lila::Vector<double> &vec_out);
+template void Apply<uint16_t>(BondList const &bonds, Couplings const &couplings,
+                              SpinhalfMPI<uint16_t> const &block_in,
+                              lila::Vector<double> const &vec_in,
+                              SpinhalfMPI<uint16_t> const &block_out,
+                              lila::Vector<double> &vec_out);
+template void Apply<uint32_t>(BondList const &bonds, Couplings const &couplings,
+                              SpinhalfMPI<uint32_t> const &block_in,
+                              lila::Vector<double> const &vec_in,
+                              SpinhalfMPI<uint32_t> const &block_out,
+                              lila::Vector<double> &vec_out);
+template void Apply<uint64_t>(BondList const &bonds, Couplings const &couplings,
+                              SpinhalfMPI<uint64_t> const &block_in,
+                              lila::Vector<double> const &vec_in,
+                              SpinhalfMPI<uint64_t> const &block_out,
+                              lila::Vector<double> &vec_out);
 
-template void Apply<uint16, complex>(BondList const &bonds,
-                                     Couplings const &couplings,
-                                     SpinhalfMPI<uint16> const &block_in,
-                                     lila::Vector<complex> const &vec_in,
-                                     SpinhalfMPI<uint16> const &block_out,
-                                     lila::Vector<complex> &vec_out);
-template void Apply<uint32, complex>(BondList const &bonds,
-                                     Couplings const &couplings,
-                                     SpinhalfMPI<uint32> const &block_in,
-                                     lila::Vector<complex> const &vec_in,
-                                     SpinhalfMPI<uint32> const &block_out,
-                                     lila::Vector<complex> &vec_out);
-template void Apply<uint64, complex>(BondList const &bonds,
-                                     Couplings const &couplings,
-                                     SpinhalfMPI<uint64> const &block_in,
-                                     lila::Vector<complex> const &vec_in,
-                                     SpinhalfMPI<uint64> const &block_out,
-                                     lila::Vector<complex> &vec_out);
+template void Apply<uint16_t, complex>(BondList const &bonds,
+                                       Couplings const &couplings,
+                                       SpinhalfMPI<uint16_t> const &block_in,
+                                       lila::Vector<complex> const &vec_in,
+                                       SpinhalfMPI<uint16_t> const &block_out,
+                                       lila::Vector<complex> &vec_out);
+template void Apply<uint32_t, complex>(BondList const &bonds,
+                                       Couplings const &couplings,
+                                       SpinhalfMPI<uint32_t> const &block_in,
+                                       lila::Vector<complex> const &vec_in,
+                                       SpinhalfMPI<uint32_t> const &block_out,
+                                       lila::Vector<complex> &vec_out);
+template void Apply<uint64_t, complex>(BondList const &bonds,
+                                       Couplings const &couplings,
+                                       SpinhalfMPI<uint64_t> const &block_in,
+                                       lila::Vector<complex> const &vec_in,
+                                       SpinhalfMPI<uint64_t> const &block_out,
+                                       lila::Vector<complex> &vec_out);
 
 } // namespace hydra

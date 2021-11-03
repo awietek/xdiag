@@ -52,30 +52,30 @@ MatrixCplx(BondList const &bonds, Couplings const &couplings,
   return mat;
 }
 
-template lila::Matrix<double> MatrixReal<uint16>(BondList const &bonds,
-                                                 Couplings const &couplings,
-                                                 tJ<uint16> const &block_in,
-                                                 tJ<uint16> const &block_out);
-template lila::Matrix<double> MatrixReal<uint32>(BondList const &bonds,
-                                                 Couplings const &couplings,
-                                                 tJ<uint32> const &block_in,
-                                                 tJ<uint32> const &block_out);
-template lila::Matrix<double> MatrixReal<uint64>(BondList const &bonds,
-                                                 Couplings const &couplings,
-                                                 tJ<uint64> const &block_in,
-                                                 tJ<uint64> const &block_out);
+template lila::Matrix<double>
+MatrixReal<uint16_t>(BondList const &bonds, Couplings const &couplings,
+                     tJ<uint16_t> const &block_in,
+                     tJ<uint16_t> const &block_out);
+template lila::Matrix<double>
+MatrixReal<uint32_t>(BondList const &bonds, Couplings const &couplings,
+                     tJ<uint32_t> const &block_in,
+                     tJ<uint32_t> const &block_out);
+template lila::Matrix<double>
+MatrixReal<uint64_t>(BondList const &bonds, Couplings const &couplings,
+                     tJ<uint64_t> const &block_in,
+                     tJ<uint64_t> const &block_out);
 
-template lila::Matrix<complex> MatrixCplx<uint16>(BondList const &bonds,
-                                                  Couplings const &couplings,
-                                                  tJ<uint16> const &block_in,
-                                                  tJ<uint16> const &block_out);
-template lila::Matrix<complex> MatrixCplx<uint32>(BondList const &bonds,
-                                                  Couplings const &couplings,
-                                                  tJ<uint32> const &block_in,
-                                                  tJ<uint32> const &block_out);
-template lila::Matrix<complex> MatrixCplx<uint64>(BondList const &bonds,
-                                                  Couplings const &couplings,
-                                                  tJ<uint64> const &block_in,
-                                                  tJ<uint64> const &block_out);
+template lila::Matrix<complex>
+MatrixCplx<uint16_t>(BondList const &bonds, Couplings const &couplings,
+                     tJ<uint16_t> const &block_in,
+                     tJ<uint16_t> const &block_out);
+template lila::Matrix<complex>
+MatrixCplx<uint32_t>(BondList const &bonds, Couplings const &couplings,
+                     tJ<uint32_t> const &block_in,
+                     tJ<uint32_t> const &block_out);
+template lila::Matrix<complex>
+MatrixCplx<uint64_t>(BondList const &bonds, Couplings const &couplings,
+                     tJ<uint64_t> const &block_in,
+                     tJ<uint64_t> const &block_out);
 
 } // namespace hydra

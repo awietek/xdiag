@@ -60,7 +60,7 @@ lila::Matrix<double> SpinlessFermions::matrix(double t, double V,
     for (auto state : hs) {
       if (((state & flipmask) != 0) && ((state & flipmask) != flipmask)) {
         const double fermi =
-            popcnt(gbits(state, s2 - s1 - 1, s1 + 1)) % 2 == 0 ? 1. : -1.;
+            popcnt(gbits(state, s1 + 1, s2 - s1 - 1)) % 2 == 0 ? 1. : -1.;
         auto new_state = state ^ flipmask;
         int new_idx = indexing.index(new_state);
         hamilton(new_idx, idx) -= fermi * t;
@@ -124,7 +124,7 @@ SpinlessFermions::matrix(double t, double V, int qn,
 
         if (new_idx != -1) {
           double fermi =
-              popcnt(gbits(state, s2 - s1 - 1, s1 + 1)) % 2 == 0 ? 1. : -1.;
+              popcnt(gbits(state, s1 + 1, s2 - s1 - 1)) % 2 == 0 ? 1. : -1.;
           double fermi2 =
               space_group.fermi_sign<Spinhalf<uint64>>(n_sym, new_state);
           complex coeff = -t * fermi * fermi2 * characters[n_sym] *

@@ -54,29 +54,29 @@ MatrixCplx(BondList const &bonds, Couplings const &couplings,
 }
 
 template lila::Matrix<double>
-MatrixReal<uint16>(BondList const &bonds, Couplings const &couplings,
-                   Spinhalf<uint16> const &block_in,
-                   Spinhalf<uint16> const &block_out);
+MatrixReal<uint16_t>(BondList const &bonds, Couplings const &couplings,
+                     Spinhalf<uint16_t> const &block_in,
+                     Spinhalf<uint16_t> const &block_out);
 template lila::Matrix<double>
-MatrixReal<uint32>(BondList const &bonds, Couplings const &couplings,
-                   Spinhalf<uint32> const &block_in,
-                   Spinhalf<uint32> const &block_out);
+MatrixReal<uint32_t>(BondList const &bonds, Couplings const &couplings,
+                     Spinhalf<uint32_t> const &block_in,
+                     Spinhalf<uint32_t> const &block_out);
 template lila::Matrix<double>
-MatrixReal<uint64>(BondList const &bonds, Couplings const &couplings,
-                   Spinhalf<uint64> const &block_in,
-                   Spinhalf<uint64> const &block_out);
+MatrixReal<uint64_t>(BondList const &bonds, Couplings const &couplings,
+                     Spinhalf<uint64_t> const &block_in,
+                     Spinhalf<uint64_t> const &block_out);
 
 template lila::Matrix<complex>
-MatrixCplx<uint16>(BondList const &bonds, Couplings const &couplings,
-                   Spinhalf<uint16> const &block_in,
-                   Spinhalf<uint16> const &block_out);
+MatrixCplx<uint16_t>(BondList const &bonds, Couplings const &couplings,
+                     Spinhalf<uint16_t> const &block_in,
+                     Spinhalf<uint16_t> const &block_out);
 template lila::Matrix<complex>
-MatrixCplx<uint32>(BondList const &bonds, Couplings const &couplings,
-                   Spinhalf<uint32> const &block_in,
-                   Spinhalf<uint32> const &block_out);
+MatrixCplx<uint32_t>(BondList const &bonds, Couplings const &couplings,
+                     Spinhalf<uint32_t> const &block_in,
+                     Spinhalf<uint32_t> const &block_out);
 template lila::Matrix<complex>
-MatrixCplx<uint64>(BondList const &bonds, Couplings const &couplings,
-                   Spinhalf<uint64> const &block_in,
-                   Spinhalf<uint64> const &block_out);
+MatrixCplx<uint64_t>(BondList const &bonds, Couplings const &couplings,
+                     Spinhalf<uint64_t> const &block_in,
+                     Spinhalf<uint64_t> const &block_out);
 
 } // namespace hydra

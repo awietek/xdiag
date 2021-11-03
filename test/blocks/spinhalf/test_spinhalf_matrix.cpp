@@ -15,7 +15,7 @@ TEST_CASE("spinhalf_matrix", "[spinhalf]") {
       for (int nup = 0; nup <= n_sites; ++nup) {
         auto [bonds, couplings, exact_eigs] =
             HBchain_fullspectrum_nup(n_sites, nup);
-        auto block = Spinhalf<uint32>(n_sites, nup);
+        auto block = Spinhalf<uint32_t>(n_sites, nup);
         auto H = MatrixReal(bonds, couplings, block, block);
         REQUIRE(lila::close(H, lila::Herm(H)));
         auto eigs = lila::EigenvaluesSym(H);
@@ -29,8 +29,8 @@ TEST_CASE("spinhalf_matrix", "[spinhalf]") {
       for (int nup = 0; nup <= n_sites; ++nup) {
         auto [bonds, couplings] = HB_alltoall(n_sites);
 
-        auto block = Spinhalf<uint32>(n_sites, nup);
-	auto block_tJ = tJ<uint32>(n_sites, nup, n_sites - nup);
+        auto block = Spinhalf<uint32_t>(n_sites, nup);
+	auto block_tJ = tJ<uint32_t>(n_sites, nup, n_sites - nup);
         auto H = MatrixReal(bonds, couplings, block, block);
         auto H_tJ = MatrixReal(bonds, couplings, block_tJ, block_tJ);
         REQUIRE(lila::close(H, lila::Herm(H)));

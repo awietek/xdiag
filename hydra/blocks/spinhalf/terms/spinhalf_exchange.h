@@ -7,7 +7,7 @@
 #include <hydra/blocks/spinhalf/spinhalf.h>
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
-#include <hydra/utils/bitops.h>
+#include <hydra/bitops/bitops.h>
 
 #include <hydra/blocks/utils/block_utils.h>
 

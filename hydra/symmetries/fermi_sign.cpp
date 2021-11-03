@@ -1,6 +1,6 @@
 #include "fermi_sign.h"
 
-#include <hydra/utils/bitops.h>
+#include <hydra/bitops/bitops.h>
 
 namespace hydra::utils {
 
@@ -73,19 +73,22 @@ double fermi_sign_of_permutation_sort(
   return sign;
 }
 
-template bool fermi_bool_of_permutation<uint16>(uint16, const int *, int *);
-template bool fermi_bool_of_permutation<uint32>(uint32, const int *, int *);
-template bool fermi_bool_of_permutation<uint64>(uint64, const int *, int *);
+template bool fermi_bool_of_permutation<uint16_t>(uint16_t, const int *, int *);
+template bool fermi_bool_of_permutation<uint32_t>(uint32_t, const int *, int *);
+template bool fermi_bool_of_permutation<uint64_t>(uint64_t, const int *, int *);
 
-template double fermi_sign_of_permutation<uint16>(uint16, const int *, int *);
-template double fermi_sign_of_permutation<uint32>(uint32, const int *, int *);
-template double fermi_sign_of_permutation<uint64>(uint64, const int *, int *);
+template double fermi_sign_of_permutation<uint16_t>(uint16_t, const int *,
+                                                    int *);
+template double fermi_sign_of_permutation<uint32_t>(uint32_t, const int *,
+                                                    int *);
+template double fermi_sign_of_permutation<uint64_t>(uint64_t, const int *,
+                                                    int *);
 
-template double fermi_sign_of_permutation_sort<uint16>(uint16, const int *,
-                                                       int *);
-template double fermi_sign_of_permutation_sort<uint32>(uint32, const int *,
-                                                       int *);
-template double fermi_sign_of_permutation_sort<uint64>(uint64, const int *,
-                                                       int *);
+template double fermi_sign_of_permutation_sort<uint16_t>(uint16_t, const int *,
+                                                         int *);
+template double fermi_sign_of_permutation_sort<uint32_t>(uint32_t, const int *,
+                                                         int *);
+template double fermi_sign_of_permutation_sort<uint64_t>(uint64_t, const int *,
+                                                         int *);
 
 } // namespace hydra::utils

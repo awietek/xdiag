@@ -55,8 +55,8 @@ bool PermutationGroupLookup<bit_t>::operator!=(
   return !operator==(rhs);
 }
 
-template class PermutationGroupLookup<uint16>;
-template class PermutationGroupLookup<uint32>;
-template class PermutationGroupLookup<uint64>;
+  template class PermutationGroupLookup<uint16_t>;
+template class PermutationGroupLookup<uint32_t>;
+template class PermutationGroupLookup<uint64_t>;
 
 } // namespace hydra

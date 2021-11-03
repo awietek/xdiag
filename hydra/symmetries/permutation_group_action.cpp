@@ -18,9 +18,9 @@ bit_t PermutationGroupAction::apply(int sym, bit_t state) const {
   return utils::apply_permutation(state, n_sites_,
                                   permutation_array().data() + sym * n_sites_);
 }
-template uint16 PermutationGroupAction::apply<uint16>(int, uint16) const;
-template uint32 PermutationGroupAction::apply<uint32>(int, uint32) const;
-template uint64 PermutationGroupAction::apply<uint64>(int, uint64) const;
+template uint16_t PermutationGroupAction::apply<uint16_t>(int, uint16_t) const;
+template uint32_t PermutationGroupAction::apply<uint32_t>(int, uint32_t) const;
+template uint64_t PermutationGroupAction::apply<uint64_t>(int, uint64_t) const;
 
 template <class bit_t>
 bit_t PermutationGroupAction::representative(bit_t state) const {
@@ -34,9 +34,9 @@ bit_t PermutationGroupAction::representative(bit_t state) const {
   }
   return rep;
 }
-template uint16 PermutationGroupAction::representative<uint16>(uint16) const;
-template uint32 PermutationGroupAction::representative<uint32>(uint32) const;
-template uint64 PermutationGroupAction::representative<uint64>(uint64) const;
+template uint16_t PermutationGroupAction::representative<uint16_t>(uint16_t) const;
+template uint32_t PermutationGroupAction::representative<uint32_t>(uint32_t) const;
+template uint64_t PermutationGroupAction::representative<uint64_t>(uint64_t) const;
 
 template <class bit_t>
 std::tuple<bit_t, int>
@@ -54,12 +54,12 @@ PermutationGroupAction::representative_index(bit_t state) const {
   }
   return {rep, idx};
 }
-template std::tuple<uint16, int>
-    PermutationGroupAction::representative_index<uint16>(uint16) const;
-template std::tuple<uint32, int>
-    PermutationGroupAction::representative_index<uint32>(uint32) const;
-template std::tuple<uint64, int>
-    PermutationGroupAction::representative_index<uint64>(uint64) const;
+template std::tuple<uint16_t, int>
+    PermutationGroupAction::representative_index<uint16_t>(uint16_t) const;
+template std::tuple<uint32_t, int>
+    PermutationGroupAction::representative_index<uint32_t>(uint32_t) const;
+template std::tuple<uint64_t, int>
+    PermutationGroupAction::representative_index<uint64_t>(uint64_t) const;
 
 template <class bit_t>
 std::tuple<bit_t, int, const int *>
@@ -81,21 +81,21 @@ PermutationGroupAction::representative_indices(bit_t state) const {
   return {rep, n_indices, indices_.data()};
 }
 
-template std::tuple<uint16, int, const int *>
-    PermutationGroupAction::representative_indices<uint16>(uint16) const;
-template std::tuple<uint32, int, const int *>
-    PermutationGroupAction::representative_indices<uint32>(uint32) const;
-template std::tuple<uint64, int, const int *>
-    PermutationGroupAction::representative_indices<uint64>(uint64) const;
+template std::tuple<uint16_t, int, const int *>
+    PermutationGroupAction::representative_indices<uint16_t>(uint16_t) const;
+template std::tuple<uint32_t, int, const int *>
+    PermutationGroupAction::representative_indices<uint32_t>(uint32_t) const;
+template std::tuple<uint64_t, int, const int *>
+    PermutationGroupAction::representative_indices<uint64_t>(uint64_t) const;
 
 template <class bit_t>
 double PermutationGroupAction::fermi_sign(int sym, bit_t state) const {
   return utils::fermi_sign_of_permutation(
       state, permutation_array().data() + sym * n_sites_, fermi_work_.data());
 }
-template double PermutationGroupAction::fermi_sign<uint16>(int, uint16) const;
-template double PermutationGroupAction::fermi_sign<uint32>(int, uint32) const;
-template double PermutationGroupAction::fermi_sign<uint64>(int, uint64) const;
+template double PermutationGroupAction::fermi_sign<uint16_t>(int, uint16_t) const;
+template double PermutationGroupAction::fermi_sign<uint32_t>(int, uint32_t) const;
+template double PermutationGroupAction::fermi_sign<uint64_t>(int, uint64_t) const;
 
 template <class bit_t>
 std::vector<int>
@@ -103,11 +103,11 @@ PermutationGroupAction::stabilizer_symmetries(bit_t bits) const {
   return utils::stabilizer_symmetries(bits, *this);
 }
 template std::vector<int>
-    PermutationGroupAction::stabilizer_symmetries<uint16>(uint16) const;
+    PermutationGroupAction::stabilizer_symmetries<uint16_t>(uint16_t) const;
 template std::vector<int>
-    PermutationGroupAction::stabilizer_symmetries<uint32>(uint32) const;
+    PermutationGroupAction::stabilizer_symmetries<uint32_t>(uint32_t) const;
 template std::vector<int>
-    PermutationGroupAction::stabilizer_symmetries<uint64>(uint64) const;
+    PermutationGroupAction::stabilizer_symmetries<uint64_t>(uint64_t) const;
 
 bool PermutationGroupAction::operator==(
     PermutationGroupAction const &rhs) const {

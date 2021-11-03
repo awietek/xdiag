@@ -7,7 +7,7 @@
 #include <hydra/blocks/electron/electron.h>
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
-#include <hydra/utils/bitops.h>
+#include <hydra/bitops/bitops.h>
 
 namespace hydra::terms::electron {
 

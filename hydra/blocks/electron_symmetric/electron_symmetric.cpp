@@ -165,12 +165,12 @@ bool ElectronSymmetric<bit_t, GroupAction>::operator!=(
   return !operator==(rhs);
 }
 
-template class ElectronSymmetric<uint16, PermutationGroupAction>;
-template class ElectronSymmetric<uint32, PermutationGroupAction>;
-template class ElectronSymmetric<uint64, PermutationGroupAction>;
+template class ElectronSymmetric<uint16_t, PermutationGroupAction>;
+template class ElectronSymmetric<uint32_t, PermutationGroupAction>;
+template class ElectronSymmetric<uint64_t, PermutationGroupAction>;
 
-template class ElectronSymmetric<uint16, PermutationGroupLookup<uint16>>;
-template class ElectronSymmetric<uint32, PermutationGroupLookup<uint32>>;
-template class ElectronSymmetric<uint64, PermutationGroupLookup<uint64>>;
+template class ElectronSymmetric<uint16_t, PermutationGroupLookup<uint16_t>>;
+template class ElectronSymmetric<uint32_t, PermutationGroupLookup<uint32_t>>;
+template class ElectronSymmetric<uint64_t, PermutationGroupLookup<uint64_t>>;
 
 } // namespace hydra

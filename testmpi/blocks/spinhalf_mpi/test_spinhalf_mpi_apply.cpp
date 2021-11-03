@@ -9,8 +9,8 @@ using namespace hydra;
 void test_e0_nompi(BondList bonds, Couplings couplings) {
   int N = bonds.n_sites();
   for (int nup = 0; nup <= N; ++nup) {
-    auto block = Spinhalf<uint32>(N, nup);
-    auto block_mpi = SpinhalfMPI<uint32>(N, nup);
+    auto block = Spinhalf<uint32_t>(N, nup);
+    auto block_mpi = SpinhalfMPI<uint32_t>(N, nup);
 
     auto H = MatrixReal(bonds, couplings, block, block);
     REQUIRE(lila::close(H, lila::Herm(H)));

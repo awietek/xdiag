@@ -67,7 +67,7 @@ template <class bit_t> void test_tj_symmetric_simple_apply_chains(int n_sites) {
   auto [bondlist, couplings] = tJchain(n_sites, 1.0, 5.0);
   auto [space_group, irreps, multiplicities] =
       get_cyclic_group_irreps_mult(n_sites);
-  test_symmetric_apply<uint16>(bondlist, couplings, space_group, irreps);
+  test_symmetric_apply<uint16_t>(bondlist, couplings, space_group, irreps);
 }
 
 TEST_CASE("tJSymmetricSimple_Apply", "[models]") {
@@ -76,14 +76,14 @@ TEST_CASE("tJSymmetricSimple_Apply", "[models]") {
 
   // Test linear chains
   for (int n_sites = 2; n_sites < 8; ++n_sites) {
-    test_tj_symmetric_simple_apply_chains<hydra::uint16>(n_sites);
-    test_tj_symmetric_simple_apply_chains<hydra::uint32>(n_sites);
-    test_tj_symmetric_simple_apply_chains<hydra::uint64>(n_sites);
+    test_tj_symmetric_simple_apply_chains<uint16_t>(n_sites);
+    test_tj_symmetric_simple_apply_chains<uint32_t>(n_sites);
+    test_tj_symmetric_simple_apply_chains<uint64_t>(n_sites);
   }
 
   // test a 3x3 triangular lattice
   lila::Log.out("Tj 3x3 triangular, symmetric apply test");
-  using bit_t = uint16;
+  using bit_t = uint16_t;
   std::string lfile = "data/triangular.9.hop.sublattices.tsl.lat";
 
   auto bondlist = read_bondlist(lfile);

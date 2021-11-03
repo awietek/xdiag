@@ -91,9 +91,9 @@ TEST_CASE("SpinhalfSymmetric_Matrix", "[models]") {
 
   // Test linear Heisenberg chains
   for (int n_sites = 3; n_sites < 7; ++n_sites) {
-    test_spinhalf_symmetric_spectrum_chains<hydra::uint16>(n_sites);
-    test_spinhalf_symmetric_spectrum_chains<hydra::uint32>(n_sites);
-    test_spinhalf_symmetric_spectrum_chains<hydra::uint64>(n_sites);
+    test_spinhalf_symmetric_spectrum_chains<uint16_t>(n_sites);
+    test_spinhalf_symmetric_spectrum_chains<uint32_t>(n_sites);
+    test_spinhalf_symmetric_spectrum_chains<uint64_t>(n_sites);
   }
 
   // test a 3x3 triangular lattice
@@ -122,6 +122,6 @@ TEST_CASE("SpinhalfSymmetric_Matrix", "[models]") {
     irreps.push_back(read_represenation(lfile, name));
     multiplicities.push_back(mult);
   }
-  test_spinhalf_symmetric_spectra<uint16>(bondlist, couplings, space_group,
-                                          irreps, multiplicities);
+  test_spinhalf_symmetric_spectra<uint16_t>(bondlist, couplings, space_group,
+                                            irreps, multiplicities);
 }
