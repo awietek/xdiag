@@ -3,9 +3,9 @@
 #include <cstdint>
 
 // (un)comment to use intrinsic popcnt instruction
-#define HAS_POPCNT
+#define USE_POPCNT
 
-#if defined(HAS_POPCNT)
+#if defined(USE_POPCNT)
 #include <immintrin.h>
 #endif
 
@@ -32,7 +32,7 @@ constexpr int swar_popcnt(uint16_t x) noexcept { return swar_popcnt_32((uint32_t
 constexpr int swar_popcnt(uint32_t x) noexcept { return swar_popcnt_32(x); }
 constexpr int swar_popcnt(uint64_t x) noexcept { return swar_popcnt_64(x); }
 
-#if defined(HAS_POPCNT)
+#if defined(USE_POPCNT)
 constexpr int popcnt(int x) noexcept { return __builtin_popcount(x); }
 constexpr int popcnt(uint16_t x) noexcept { return __builtin_popcount(x); }
 constexpr int popcnt(uint32_t x) noexcept { return __builtin_popcount(x); }

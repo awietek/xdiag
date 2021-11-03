@@ -3,16 +3,16 @@
 #include <cstdint>
 
 // (un)comment to use intrinsic BMI2 pext/pdef instruction
-#define HAS_PEXT_PDEP
+#define USE_PEXT_PDEP
 
-#if defined(__BMI2__) && defined(HAS_PEXT_PDEP)
+#if defined(__BMI2__) && defined(USE_PEXT_PDEP)
 #include <immintrin.h>
 #endif
 
 namespace hydra::bitops {
 
 // wrappers around the bmi2 pdep/pext intrinsics
-#if defined(__BMI2__) && defined(HAS_PEXT_PDEP)
+#if defined(__BMI2__) && defined(USE_PEXT_PDEP)
 constexpr uint16_t pdep(uint16_t source, uint16_t mask) noexcept {
   return _pdep_u32((uint32_t)source, (uint32_t)mask);
 }
@@ -60,7 +60,7 @@ constexpr bit_t pext_fallback(bit_t x, bit_t mask) noexcept {
 
 template <typename bit_t>
 constexpr bit_t deposit(bit_t x, bit_t mask) noexcept {
-#if defined(__BMI2__) && defined(HAS_PEXT_PDEP)
+#if defined(__BMI2__) && defined(USE_PEXT_PDEP)
   return pdep(x, mask);
 // Parallel Bits Deposit implementation w/o BMI2 intrinsics
 #else
@@ -70,7 +70,7 @@ constexpr bit_t deposit(bit_t x, bit_t mask) noexcept {
 
 template <typename bit_t>
 constexpr bit_t extract(bit_t x, bit_t mask) noexcept {
-#if defined(__BMI2__) && defined(HAS_PEXT_PDEP)
+#if defined(__BMI2__) && defined(USE_PEXT_PDEP)
   return pext(x, mask);
 // Parallel Bits Extract implementation w/o BMI2 intrinsics
 #else
