@@ -19,7 +19,7 @@ constexpr int swar_popcnt_32(uint32_t x) {
   return x % 63; /* casting out 63 */
 }
 
-constexpr uint64_t swar_popcnt_64(uint64_t x) {
+constexpr int swar_popcnt_64(uint64_t x) {
   const uint64_t m_1 = 0x5555555555555555LLU;
   const uint64_t m_2 = 0x3333333333333333LLU;
   const uint64_t m_4 = 0x0f0f0f0f0f0f0f0fLLU;
@@ -28,6 +28,9 @@ constexpr uint64_t swar_popcnt_64(uint64_t x) {
   x = (x + (x >> 4)) & m_4;
   return (x * 0x0101010101010101LLU) >> 56;
 }
+constexpr int swar_popcnt(uint16_t x) noexcept { return swar_popcnt_32((uint32_t)x); }
+constexpr int swar_popcnt(uint32_t x) noexcept { return swar_popcnt_32(x); }
+constexpr int swar_popcnt(uint64_t x) noexcept { return swar_popcnt_64(x); }
 
 #if defined(HAS_POPCNT)
 constexpr int popcnt(int x) noexcept { return __builtin_popcount(x); }
