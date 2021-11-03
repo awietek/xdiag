@@ -4,10 +4,12 @@
 #include <hydra/linalg/lanczos/lanczos_generic.h>
 #include <hydra/linalg/lanczos/tmatrix.h>
 
+#include <hydra/blocks/blocks.h>
+
 #include <hydra/mpi/dot_mpi.h>
 #include <hydra/mpi/timing_mpi.h>
 
-#include <hydra/blocks/blocks.h>
+
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
 
@@ -26,7 +28,6 @@ Tmatrix LanczosEigenvaluesInplace(
 
   // MPI Lanczos
   if constexpr (detail::is_mpi_block<Block>) {
-
     int iter = 0;
     auto mult = [&iter, &bonds, &couplings, &block](
                     lila::Vector<coeff_t> const &v, lila::Vector<coeff_t> &w) {
@@ -56,7 +57,6 @@ Tmatrix LanczosEigenvaluesInplace(
 
   // Serial Lanczos
   else {
-
     int iter = 0;
     auto mult = [&iter, &bonds, &couplings, &block](
                     lila::Vector<coeff_t> const &v, lila::Vector<coeff_t> &w) {

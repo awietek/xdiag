@@ -10,7 +10,6 @@
 #include <hydra/operators/couplings.h>
 #include <hydra/utils/bitops.h>
 
-#include <hydra/blocks/blocks_mpi.h>
 #include <hydra/blocks/spinhalf_mpi/terms/get_prefix_postfix_mixed_bonds.h>
 #include <hydra/blocks/spinhalf_mpi/terms/spinhalf_mpi_exchange_mixed_com.h>
 #include <hydra/blocks/spinhalf_mpi/terms/spinhalf_mpi_transpose.h>
