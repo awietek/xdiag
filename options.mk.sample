@@ -3,7 +3,7 @@ cc         = clang++
 mpicc      = mpicxx
 
 # Set optimization flags
-ccopt      = -O3 -Ofast -mavx
+ccopt      = -O3 -Ofast -march=native
 
 # Set the directory of the lila headers
 liladir    = /mnt/home/awietek/Research/Software/lila
@@ -18,6 +18,3 @@ libraries   = -lmkl_rt
 # ## Accelerate on OSX
 # lilabackend = -DLILA_USE_ACCELERATE
 # libraries   = -framework Accelerate
-
-# Additional parameters for compilation
-ccarch     = -std=c++17 -Wall -pedantic -m64 -Wno-return-type-c-linkage
