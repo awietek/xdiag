@@ -20,6 +20,7 @@ double E0Real(BondList const &bondlist, Couplings const &couplings,
                                      seed, max_iterations);
   auto eigs = tmat.eigenvalues();
   if (eigs.size() == 0) {
+    LilaPrint(eigs.size());
     lila::Log.err("Error: Tmatrix zero dimensional in E0Real");
     return 0.;
   } else {

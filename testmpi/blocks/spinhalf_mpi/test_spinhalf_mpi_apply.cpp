@@ -59,7 +59,7 @@ TEST_CASE("spinhalf_mpi_apply", "[spinhalf]") {
 
     Couplings couplings;
     couplings["J"] = 1;
-    couplings["J2"] = 0;
+    couplings["J2"] = 0.1;
     test_e0_nompi(bonds, couplings);
   }
 

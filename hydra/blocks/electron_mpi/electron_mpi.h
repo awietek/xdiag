@@ -6,7 +6,6 @@
 #include <hydra/combinatorics/hashes.h>
 #include <hydra/common.h>
 #include <hydra/indexing/lintable.h>
-#include <hydra/blocks/blocks_mpi.h>
 
 namespace hydra {
 
