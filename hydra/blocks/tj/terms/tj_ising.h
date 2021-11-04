@@ -2,12 +2,13 @@
 
 #include <lila/utils/logger.h>
 
+#include <hydra/bitops/bitops.h>
+#include <hydra/blocks/tj/tj.h>
+#include <hydra/blocks/tj/tj_utils.h>
 #include <hydra/combinatorics/combinations.h>
 #include <hydra/common.h>
-#include <hydra/blocks/tj/tj.h>
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
-#include <hydra/bitops/bitops.h>
 
 namespace hydra::terms::tj {
 
@@ -19,7 +20,10 @@ void do_ising(BondList const &bonds, Couplings const &couplings,
   using combinatorics::Combinations;
 
   int n_sites = block.n_sites();
-  int n_up = block.n_up();
+  int nup = block.n_up();
+  int ndn = block.n_dn();
+  int charge = nup + ndn;
+  int n_holes = n_sites - charge;
 
   auto ising = bonds.bonds_of_type("HEISENBERG") +
                bonds.bonds_of_type("ISING") + bonds.bonds_of_type("HB");
@@ -50,44 +54,24 @@ void do_ising(BondList const &bonds, Couplings const &couplings,
         val_diff = -J / 2.;
       }
 
-      int s1 = bond.site(0);
-      int s2 = bond.site(1);
-      bit_t s1mask = (bit_t)1 << s1;
-      bit_t s2mask = (bit_t)1 << s2;
-      bit_t mask = s1mask | s2mask;
+      int s1 = bond[0];
+      int s2 = bond[1];
 
-      idx_t idx_up = 0;
-      for (auto up : Combinations<bit_t>(n_sites, n_up)) {
-        auto [dn_lower, dn_upper] = block.dn_limits_for_up_[idx_up];
-
-        if (popcnt(up & mask) == 2) { // both spins pointing up
-          for (idx_t idx = dn_lower; idx < dn_upper; ++idx) {
+      idx_t idx = 0;
+      for (auto holes : Combinations<bit_t>(n_sites, n_holes)) {
+        int s1c = utils::tj_site_compressed(holes, s1);
+        int s2c = utils::tj_site_compressed(holes, s2);
+        for (auto spins : Combinations<bit_t>(charge, nup)) {
+          if (gbit(spins, s1c) == gbit(spins, s2c)) {
             fill(idx, idx, val_same);
+          } else {
+            fill(idx, idx, val_diff);
           }
-        } else if (up & s1mask) { // s1 is pointing up
-          for (idx_t idx = dn_lower; idx < dn_upper; ++idx) {
-            bit_t dn = block.dns_[idx];
-            if (dn & s2mask)
-              fill(idx, idx, val_diff);
-          }
-        } else if (up & s2mask) { // s2 is pointing up
-          for (idx_t idx = dn_lower; idx < dn_upper; ++idx) {
-            bit_t dn = block.dns_[idx];
-            if (dn & s1mask)
-              fill(idx, idx, val_diff);
-          }
-        } else { // no upspins
-          for (idx_t idx = dn_lower; idx < dn_upper; ++idx) {
-            bit_t dn = block.dns_[idx];
-            if (popcnt(dn & mask) == 2)
-              fill(idx, idx, val_same);
-          }
+          ++idx;
         }
-
-        ++idx_up;
       }
     }
   }
 }
 
-} // namespace hydra::tjdetail
+} // namespace hydra::terms::tj

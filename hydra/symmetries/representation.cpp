@@ -89,14 +89,14 @@ Representation read_represenation(std::string filename, std::string repname) {
       int w;
       File >> w;
       if (!File.good()) {
-        std::cerr << "Read Error in read_charactertable (I)" << std::endl;
+        std::cerr << "Read Error in read_representation (I)" << std::endl;
         exit(EXIT_FAILURE);
       }
       allowed_ops.push_back(w);
     }
 
     if (!File.good()) {
-      std::cerr << "Read Error in read_charactertable (II)" << std::endl;
+      std::cerr << "Read Error in read_representation (II)" << std::endl;
       exit(EXIT_FAILURE);
     }
 
@@ -105,7 +105,7 @@ Representation read_represenation(std::string filename, std::string repname) {
       double re, im;
       File >> re >> im;
       if (!File.good()) {
-        std::cerr << "Read Error in read_charactertable (III)" << std::endl;
+        std::cerr << "Read Error in read_representation (III)" << std::endl;
         exit(EXIT_FAILURE);
       }
       characters.push_back(re + complex(0, 1) * im);

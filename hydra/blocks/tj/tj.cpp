@@ -1,9 +1,9 @@
 #include "tj.h"
 
+#include <hydra/blocks/utils/block_utils.h>
 #include <hydra/combinatorics/binomial.h>
 #include <hydra/combinatorics/combinations.h>
 #include <hydra/combinatorics/up_down_hole.h>
-#include <hydra/blocks/utils/block_utils.h>
 
 namespace hydra {
 
@@ -13,39 +13,10 @@ template <class bit_t>
 tJ<bit_t>::tJ(int n_sites, int nup, int ndn)
     : n_sites_(n_sites), charge_conserved_(true), charge_(nup + ndn),
       sz_conserved_(true), sz_(nup - ndn), n_up_(nup), n_dn_(ndn),
-      size_up_(binomial(n_sites, nup)),
-      size_holes_(binomial(n_sites - nup, ndn)), size_(size_up_ * size_holes_),
-      dn_limits_for_up_(size_up_), dns_(size_), lintable_up_(n_sites, nup) {
-  using combinatorics::Combinations;
-
+      n_holes_(n_sites - charge_), size_holes_(binomial(n_sites, n_holes_)),
+      size_spins_(binomial(charge_, nup)), size_(size_holes_ * size_spins_),
+      lintable_holes_(n_sites, n_holes_), lintable_spins_(charge_, nup) {
   utils::check_nup_ndn_tj(n_sites, nup, ndn, "tJ");
-
-  // Create dns array storing dn configs within the limits for upspin config
-  idx_t idx = 0;
-  idx_t idx_up = 0;
-  for (bit_t up : Combinations<bit_t>(n_sites, nup)) {
-    dn_limits_for_up_[idx_up].first = idx;
-    for (bit_t holes : Combinations<bit_t>(n_sites - nup, ndn)) {
-      bit_t dn = up_hole_to_down(up, holes);
-      dns_[idx] = dn;
-      ++idx;
-    }
-    dn_limits_for_up_[idx_up].second = idx;
-    ++idx_up;
-  }
-  assert(idx_up == size_up_);
-  assert(idx == size_);
-}
-
-template <class bit_t> idx_t tJ<bit_t>::index(bit_t up, bit_t dn) const {
-  idx_t up_idx = lintable_up_.index(up);
-  auto [dn_lower, dn_upper] = dn_limits_for_up_[up_idx];
-  auto it =
-      std::lower_bound(dns_.begin() + dn_lower, dns_.begin() + dn_upper, dn);
-  if ((it == dns_.begin() + dn_upper) || (*it != dn))
-    return invalid_index;
-  else
-    return std::distance(dns_.begin(), it);
 }
 
 template <class bit_t> bool tJ<bit_t>::operator==(tJ<bit_t> const &rhs) const {

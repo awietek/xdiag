@@ -8,6 +8,10 @@ void Tmatrix::append(double alpha, double beta) {
   alphas_.push_back(alpha);
   betas_.push_back(beta);
 }
+void Tmatrix::pop() {
+  alphas_.pop_back();
+  betas_.pop_back();
+}
 
 lila::Vector<double> Tmatrix::eigenvalues() const {
   if (size() == 0)

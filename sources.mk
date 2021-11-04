@@ -108,6 +108,7 @@ testsources+= test/blocks/spinhalf_symmetric/test_spinhalf_symmetric_matrix.cpp
 testsources+= test/blocks/spinhalf_symmetric/test_spinhalf_symmetric_apply.cpp
 
 testsources+= test/blocks/tj/testcases_tj.cpp
+testsources+= test/blocks/tj/test_tj_utils.cpp
 testsources+= test/blocks/tj/test_tj_matrix.cpp
 testsources+= test/blocks/tj/test_tj_apply.cpp
 

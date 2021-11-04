@@ -7,20 +7,15 @@ namespace hydra {
 bool ConvergedEigenvalues(Tmatrix const &tmat, int n_eigenvalue,
                           double precision) {
   int size = tmat.size();
-  auto alphas = tmat.alphas();
-  auto betas = tmat.betas();
-  if (size < 2)
+  if (size <= n_eigenvalue + 1)
     return false;
   else {
-    auto eigs = tmat.eigenvalues();
-
-    if (lila::close(betas(size - 1), 0.))
+    if (lila::close(tmat.betas()(size - 1), 0.))
       return true;
-    if (size <= n_eigenvalue)
-      return false;
 
-    auto tmat_previous =
-      Tmatrix(alphas({0, size - 1}), betas({0, size - 1}));
+    auto eigs = tmat.eigenvalues();
+    auto tmat_previous = tmat;
+    tmat_previous.pop();
     auto eigs_previous = tmat_previous.eigenvalues();
 
     double residue =
@@ -30,7 +25,6 @@ bool ConvergedEigenvalues(Tmatrix const &tmat, int n_eigenvalue,
     return (residue < precision);
   }
 }
-
 
 // template <class coeff_t>
 // bool ConvergedRitz(const Tmatrix<coeff_t> &tmat, int n_eigenvalue,

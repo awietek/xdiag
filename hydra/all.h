@@ -30,6 +30,7 @@
 #include "blocks/spinhalf_symmetric/spinhalf_symmetric_matrix.h"
 
 #include "blocks/tj/tj.h"
+#include "blocks/tj/tj_utils.h"
 #include "blocks/tj/tj_apply.h"
 #include "blocks/tj/tj_matrix.h"
 

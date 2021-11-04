@@ -16,6 +16,7 @@ public:
     assert(alphas.size() == betas.size());
   }
   void append(double alpha, double beta);
+  void pop();
 
   size_type size() const {return alphas_.size(); }
 
