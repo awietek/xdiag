@@ -12,7 +12,6 @@
 
 namespace hydra::terms::tj {
 
-
 template <class bit_t, class Filler>
 void do_exchange(BondList const &bonds, Couplings const &couplings,
                  tJ<bit_t> const &block, Filler &&fill) {

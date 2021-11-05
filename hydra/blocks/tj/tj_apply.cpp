@@ -23,11 +23,8 @@ void Apply(BondList const &bonds, Couplings const &couplings,
     vec_out(idx_out) += val * vec_in(idx_in);
   };
 
-  lila::Log.out("HOP");
   do_hopping<bit_t, double>(bonds, couplings, block_in, fill);
-  lila::Log.out("ISING");
   do_ising<bit_t>(bonds, couplings, block_in, fill);
-  lila::Log.out("EXCHANGE");
   do_exchange<bit_t>(bonds, couplings, block_in, fill);
 }
 

@@ -3,7 +3,6 @@
 #include <hydra/blocks/utils/block_utils.h>
 #include <hydra/combinatorics/binomial.h>
 #include <hydra/combinatorics/combinations.h>
-#include <hydra/combinatorics/up_down_hole.h>
 
 namespace hydra {
 
