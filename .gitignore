@@ -8,3 +8,4 @@ lib/*
 options.mk
 test/tests
 testmpi/tests
+benchmark.prof

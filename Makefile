@@ -4,6 +4,8 @@ include sources.mk
 rm     := rm -f
 mkdir  := mkdir -p
 
+includes = -I$(liladir)
+
 # Additional parameters for compilation
 ccstd   = -std=c++17 
 ccwarn  = -Wall -pedantic -Wno-return-type-c-linkage
