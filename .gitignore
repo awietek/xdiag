@@ -6,3 +6,5 @@
 *.pdf
 lib/*
 options.mk
+test/tests
+testmpi/tests
