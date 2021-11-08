@@ -78,7 +78,7 @@ template <class bit_t> void test_tj_symmetric_simple_spectrum_chains(int n_sites
                                  multiplicities);
 }
 
-TEST_CASE("tJSymmetricSimple_Matrix", "[models]") {
+TEST_CASE("tj_symmetric_simple_matrix", "[models]") {
   using namespace hydra::testcases::tj;
   using namespace hydra::testcases::electron;
 

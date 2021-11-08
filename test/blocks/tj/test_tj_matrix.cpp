@@ -10,13 +10,16 @@ using namespace hydra;
 void test_tjmodel_e0_real(BondList bonds, Couplings couplings, int nup, int ndn,
                           double e0) {
   int n_sites = bonds.n_sites();
+  // if ((nup == 1) && (ndn == 2)) {
+    auto block = tJ<uint32_t>(n_sites, nup, ndn);
+    auto H = MatrixReal(bonds, couplings, block, block);
 
-  auto block = tJ<uint32_t>(n_sites, nup, ndn);
-  auto H = MatrixReal(bonds, couplings, block, block);
-  REQUIRE(lila::close(H, lila::Herm(H)));
-
-  auto eigs = lila::EigenvaluesSym(H);
-  CHECK(std::abs(e0 - eigs(0)) < 1e-6);
+    auto eigs = lila::EigenvaluesSym(H);
+    // LilaPrint(H);
+    lila::Log("nup: {}, ndn: {}, e0: {}, eigs(0): {}", nup, ndn, e0, eigs(0));
+    REQUIRE(lila::close(H, lila::Herm(H)));
+    REQUIRE(std::abs(e0 - eigs(0)) < 1e-6);
+  // }
 }
 
 void test_tjmodel_fulleigs(BondList bonds, Couplings couplings,
@@ -31,12 +34,17 @@ void test_tjmodel_fulleigs(BondList bonds, Couplings couplings,
       auto H = MatrixReal(bonds, couplings, block, block);
       REQUIRE(lila::close(H, lila::Herm(H)));
       auto eigs = lila::EigenvaluesSym(H);
+      // lila::Log("nup {} ndn {}", nup, ndn);
+      // LilaPrint(eigs);
+
       for (auto eig : eigs)
         all_eigs.push_back(eig);
     }
   std::sort(all_eigs.begin(), all_eigs.end());
   REQUIRE(all_eigs.size() == exact_eigs.size());
-  REQUIRE(lila::close(all_eigs, exact_eigs));
+  // LilaPrint(all_eigs);
+  // LilaPrint(exact_eigs);
+  CHECK(lila::close(all_eigs, exact_eigs));
 }
 
 TEST_CASE("tJ_Matrix", "[tj]") {
@@ -91,7 +99,8 @@ TEST_CASE("tJ_Matrix", "[tj]") {
   }
 
   for (int N = 3; N <= 6; ++N) {
-    lila::Log.out("TJModel: randomall-to-all complex hermitecity test, N={}", N);
+    lila::Log.out("TJModel: randomall-to-all complex hermitecity test, N={}",
+                  N);
 
     auto [bonds, cpls] = tj_alltoall_complex(N);
     for (int nup = 0; nup <= N; ++nup)
