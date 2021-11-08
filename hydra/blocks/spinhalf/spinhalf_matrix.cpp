@@ -27,7 +27,7 @@ MatrixReal(BondList const &bonds, Couplings const &couplings,
   };
 
   do_ising(bonds, couplings, block_in, fill);
-  do_exchange(bonds, couplings, block_in, fill);
+  do_exchange<bit_t, double>(bonds, couplings, block_in, fill);
 
   return mat;
 }
@@ -48,7 +48,7 @@ MatrixCplx(BondList const &bonds, Couplings const &couplings,
   };
 
   do_ising(bonds, couplings, block_in, fill);
-  do_exchange(bonds, couplings, block_in, fill);
+  do_exchange<bit_t, complex>(bonds, couplings, block_in, fill);
 
   return mat;
 }

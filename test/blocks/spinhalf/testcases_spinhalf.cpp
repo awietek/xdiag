@@ -1,5 +1,7 @@
 #include "testcases_spinhalf.h"
 
+#include <cmath>
+
 namespace hydra::testcases::spinhalf {
 
 std::tuple<BondList, Couplings> HBchain(int n_sites, double J1, double J2) {
@@ -111,6 +113,108 @@ std::tuple<BondList, Couplings> HB_alltoall(int n_sites) {
       couplings[name] = value;
     }
   return std::make_tuple(bondlist, couplings);
+}
+
+std::tuple<BondList, Couplings, double> triangular_12_complex(int nup,
+                                                              double eta) {
+
+  BondList bonds;
+  bonds << Bond("ISING", "Jz", {0, 5});
+  bonds << Bond("ISING", "Jz", {8, 2});
+  bonds << Bond("ISING", "Jz", {2, 7});
+  bonds << Bond("ISING", "Jz", {1, 4});
+  bonds << Bond("ISING", "Jz", {4, 8});
+  bonds << Bond("ISING", "Jz", {6, 10});
+  bonds << Bond("ISING", "Jz", {10, 0});
+  bonds << Bond("ISING", "Jz", {5, 9});
+  bonds << Bond("ISING", "Jz", {9, 3});
+  bonds << Bond("ISING", "Jz", {3, 6});
+  bonds << Bond("ISING", "Jz", {7, 11});
+  bonds << Bond("ISING", "Jz", {11, 1});
+  bonds << Bond("ISING", "Jz", {0, 8});
+  bonds << Bond("ISING", "Jz", {8, 6});
+  bonds << Bond("ISING", "Jz", {2, 10});
+  bonds << Bond("ISING", "Jz", {1, 9});
+  bonds << Bond("ISING", "Jz", {4, 3});
+  bonds << Bond("ISING", "Jz", {6, 1});
+  bonds << Bond("ISING", "Jz", {10, 4});
+  bonds << Bond("ISING", "Jz", {5, 2});
+  bonds << Bond("ISING", "Jz", {9, 7});
+  bonds << Bond("ISING", "Jz", {3, 11});
+  bonds << Bond("ISING", "Jz", {7, 0});
+  bonds << Bond("ISING", "Jz", {11, 5});
+  bonds << Bond("ISING", "Jz", {0, 4});
+  bonds << Bond("ISING", "Jz", {8, 3});
+  bonds << Bond("ISING", "Jz", {2, 6});
+  bonds << Bond("ISING", "Jz", {1, 5});
+  bonds << Bond("ISING", "Jz", {4, 9});
+  bonds << Bond("ISING", "Jz", {6, 11});
+  bonds << Bond("ISING", "Jz", {10, 1});
+  bonds << Bond("ISING", "Jz", {5, 8});
+  bonds << Bond("ISING", "Jz", {9, 2});
+  bonds << Bond("ISING", "Jz", {3, 7});
+  bonds << Bond("ISING", "Jz", {7, 10});
+  bonds << Bond("ISING", "Jz", {11, 0});
+  bonds << Bond("EXCHANGE", "Jx", {0, 8});
+  bonds << Bond("EXCHANGE", "Jx", {8, 6});
+  bonds << Bond("EXCHANGE", "Jx", {2, 10});
+  bonds << Bond("EXCHANGE", "Jx", {1, 9});
+  bonds << Bond("EXCHANGE", "Jx", {4, 3});
+  bonds << Bond("EXCHANGE", "Jx", {6, 1});
+  bonds << Bond("EXCHANGE", "Jx", {10, 4});
+  bonds << Bond("EXCHANGE", "Jx", {5, 2});
+  bonds << Bond("EXCHANGE", "Jx", {9, 7});
+  bonds << Bond("EXCHANGE", "Jx", {3, 11});
+  bonds << Bond("EXCHANGE", "Jx", {7, 0});
+  bonds << Bond("EXCHANGE", "Jx", {11, 5});
+  bonds << Bond("EXCHANGE", "Jx", {0, 10});
+  bonds << Bond("EXCHANGE", "Jx", {8, 4});
+  bonds << Bond("EXCHANGE", "Jx", {2, 8});
+  bonds << Bond("EXCHANGE", "Jx", {1, 11});
+  bonds << Bond("EXCHANGE", "Jx", {4, 1});
+  bonds << Bond("EXCHANGE", "Jx", {6, 3});
+  bonds << Bond("EXCHANGE", "Jx", {10, 6});
+  bonds << Bond("EXCHANGE", "Jx", {5, 0});
+  bonds << Bond("EXCHANGE", "Jx", {9, 5});
+  bonds << Bond("EXCHANGE", "Jx", {3, 9});
+  bonds << Bond("EXCHANGE", "Jx", {7, 2});
+  bonds << Bond("EXCHANGE", "Jx", {11, 7});
+  bonds << Bond("EXCHANGE", "Jx", {0, 11});
+  bonds << Bond("EXCHANGE", "Jx", {8, 5});
+  bonds << Bond("EXCHANGE", "Jx", {2, 9});
+  bonds << Bond("EXCHANGE", "Jx", {1, 10});
+  bonds << Bond("EXCHANGE", "Jx", {4, 0});
+  bonds << Bond("EXCHANGE", "Jx", {6, 2});
+  bonds << Bond("EXCHANGE", "Jx", {10, 7});
+  bonds << Bond("EXCHANGE", "Jx", {5, 1});
+  bonds << Bond("EXCHANGE", "Jx", {9, 4});
+  bonds << Bond("EXCHANGE", "Jx", {3, 8});
+  bonds << Bond("EXCHANGE", "Jx", {7, 3});
+  bonds << Bond("EXCHANGE", "Jx", {11, 6});
+
+  Couplings cpls;
+  cpls["Jz"] = 1.0;
+  cpls["Jx"] = complex(cos(2 * M_PI * eta), sin(2 * M_PI * eta));
+  lila::Log("Jx {} {}", lila::real(cpls["Jx"]), lila::imag(cpls["Jx"]));
+
+  double e0 = 0;
+  if (nup == 6) {
+    if (eta == 0.00) {
+      e0 = -7.3239616252546069219;
+    } else if (eta == 0.01) {
+      e0 = -7.4775439738976006154;
+    } else if (eta == 0.02) {
+      e0 = -7.810588969572918927;
+    } else if (eta == 0.03) {
+      e0 = -8.1986453574035831338;
+    } else if (eta == 0.04) {
+      e0 = -8.5966264674625048059;
+    } else if (eta == 0.05) {
+      e0 = -8.9863396883370398882;
+    }
+      
+  }
+  return {bonds, cpls, e0};
 }
 
 } // namespace hydra::testcases::spinhalf
