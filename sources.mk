@@ -116,18 +116,18 @@ testsources+= test/blocks/tj/test_tj_apply.cpp
 # testsources+= test/blocks/tj_symmetric/test_tj_symmetric_matrix.cpp
 # testsources+= test/blocks/tj_symmetric/test_tj_symmetric_apply.cpp
 
-testsources+= test/blocks/tj_symmetric_simple/test_tj_symmetric_simple.cpp
-testsources+= test/blocks/tj_symmetric_simple/test_tj_symmetric_simple_matrix.cpp
-testsources+= test/blocks/tj_symmetric_simple/test_tj_symmetric_simple_apply.cpp
+# testsources+= test/blocks/tj_symmetric_simple/test_tj_symmetric_simple.cpp
+# testsources+= test/blocks/tj_symmetric_simple/test_tj_symmetric_simple_matrix.cpp
+# testsources+= test/blocks/tj_symmetric_simple/test_tj_symmetric_simple_apply.cpp
 
 
 testsources+= test/blocks/electron/testcases_electron.cpp
 testsources+= test/blocks/electron/test_electron_matrix.cpp
 testsources+= test/blocks/electron/test_electron_apply.cpp
 
-testsources+= test/blocks/electron_symmetric_simple/test_electron_symmetric_simple.cpp
-testsources+= test/blocks/electron_symmetric_simple/test_electron_symmetric_simple_matrix.cpp
-testsources+= test/blocks/electron_symmetric_simple/test_electron_symmetric_simple_apply.cpp
+# testsources+= test/blocks/electron_symmetric_simple/test_electron_symmetric_simple.cpp
+# testsources+= test/blocks/electron_symmetric_simple/test_electron_symmetric_simple_matrix.cpp
+# testsources+= test/blocks/electron_symmetric_simple/test_electron_symmetric_simple_apply.cpp
 
 testsources+= test/blocks/electron_symmetric/test_electron_symmetric.cpp
 testsources+= test/blocks/electron_symmetric/test_electron_symmetric_matrix.cpp

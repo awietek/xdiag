@@ -22,7 +22,6 @@ void do_exchange(BondList const &bonds, Couplings const &couplings,
   using combinatorics::Combinations;
 
   int n_sites = block.n_sites();
-  int N = n_sites;
   int nup = block.n_up();
   int ndn = block.n_dn();
   int charge = nup + ndn;
@@ -42,6 +41,7 @@ void do_exchange(BondList const &bonds, Couplings const &couplings,
     if (utils::coupling_is_non_zero(bond, couplings)) {
       std::string cpl = bond.coupling();
       double J = lila::real(couplings[cpl]);
+      double Jhalf = J / 2.;
       int s1 = bond[0];
       int s2 = bond[1];
       bit_t flipmask = ((bit_t)1 << s1) | ((bit_t)1 << s2);
@@ -53,31 +53,36 @@ void do_exchange(BondList const &bonds, Couplings const &couplings,
       idx_t idx = 0;
       idx_t holes_idx = 0;
       for (auto holes : Combinations<bit_t>(n_sites, n_holes)) {
+
+        // a hole is present at site -> no Ising term
+        if (popcnt(holes & flipmask) != 0) {
+          holes_idx++;
+          idx += size_spins;
+          continue;
+        }
+
         bit_t not_holes = (~holes) & sitesmask;
         idx_t holes_offset = holes_idx * size_spins;
 
         for (auto spins : Combinations<bit_t>(charge, nup)) {
-          bit_t ups_dns = bitops::deposit(spins, not_holes);
+          bit_t ups = bitops::deposit(spins, not_holes);
 
-          if (popcnt(ups_dns & flipmask) & 1) { // spins are flippable
-            bit_t new_ups_dns = ups_dns ^ flipmask;
-            bit_t new_spins = bitops::extract(new_ups_dns, not_holes);
-
-            // lila::Log("s1: {} s2: {}", s1,  s2);
-            // lila::Log("holes  : {}", bits_to_string(holes, N));
-            // lila::Log("spins  : {}", bits_to_string(spins, N));
-            // lila::Log("upsdns : {}", bits_to_string(ups_dns, N));
-            // lila::Log("mask   : {}", bits_to_string(flipmask, N));
-            // lila::Log("nupsdns: {}", bits_to_string(new_ups_dns, N));
-            // lila::Log("nspins : {}\n", bits_to_string(new_spins, N));
-
-	    double fermi_up = (popcnt(ups_dns & fermimask) & 1) ? 1.0 : -1.0;
-	    double fermi_dn = (popcnt((~ups_dns) & fermimask) & 1) ? -1.0 : 1.0;
-	    double val = J/2 * fermi_up * fermi_dn;
-
+          if (popcnt(ups & flipmask) & 1) { // spins are flippable
+            bit_t new_ups = ups ^ flipmask;
+            bit_t new_spins = bitops::extract(new_ups, not_holes);
             idx_t new_idx =
                 holes_offset + block.lintable_spins_.index(new_spins);
-            fill(new_idx, idx, val);
+           
+	    // Determine Fermi sign
+	    bit_t spins_neg = (~spins) & sitesmask;
+            bit_t dns = bitops::deposit(spins_neg, not_holes);
+            bool fermi_sign = popcnt((ups | dns) & fermimask) & 1;
+            
+	    if (fermi_sign) {
+              fill(new_idx, idx, Jhalf);
+            } else {
+              fill(new_idx, idx, -Jhalf);
+            }
           }
           ++idx;
         }

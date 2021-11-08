@@ -44,6 +44,7 @@ void do_exchange(BondList const &bonds, Couplings const &couplings,
       int n_sites = block.n_sites();
       int n_up = block.n_up();
       idx_t idx = 0;
+
       for (bit_t spins : Combinations<bit_t>(n_sites, n_up)) {
 
         if (bitops::popcnt(spins & mask) & 1) {

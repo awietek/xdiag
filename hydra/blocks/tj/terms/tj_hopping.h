@@ -23,7 +23,6 @@ void do_hopping(BondList const &bonds, Couplings const &couplings,
   using combinatorics::Combinations;
 
   int n_sites = block.n_sites();
-  int N = n_sites;
   int nup = block.n_up();
   int ndn = block.n_dn();
   int n_holes = n_sites - nup - ndn;
@@ -68,7 +67,7 @@ void do_hopping(BondList const &bonds, Couplings const &couplings,
           bit_t not_holes = (~holes) & sitesmask;
           idx_t holes_offset = holes_idx * size_spins;
           bit_t new_holes = holes ^ flipmask;
-	  bit_t not_new_holes = (~new_holes) & sitesmask;
+          bit_t not_new_holes = (~new_holes) & sitesmask;
           idx_t new_holes_idx = block.lintable_holes_.index(new_holes);
           idx_t new_holes_offset = new_holes_idx * size_spins;
 
@@ -94,10 +93,9 @@ void do_hopping(BondList const &bonds, Couplings const &couplings,
               }
               ++idx;
             }
+          }
 
-          } 
-
-	  // Apply hoppings on dnspins
+          // Apply hoppings on dnspins
           if ((hop.type() == "HOP") || (hop.type() == "HOPDN") ||
               (hop.type() == "TJHOP") || (hop.type() == "TJHOPDN")) {
             idx_t idx = holes_offset;
@@ -106,19 +104,11 @@ void do_hopping(BondList const &bonds, Couplings const &couplings,
               bit_t dns = bitops::deposit(spins_neg, not_holes);
               if (popcnt(dns & flipmask) & 1) { // exactly one dnspin
                 bit_t new_dns = dns ^ flipmask;
-                bit_t new_ups = (~new_dns) & sitesmask;
+                bit_t new_ups = ((~new_dns) & not_new_holes) & sitesmask;
                 bit_t new_spins = bitops::extract(new_ups, not_new_holes);
                 idx_t new_idx =
                     new_holes_offset + block.lintable_spins_.index(new_spins);
                 bool fermi_sign = popcnt(dns & fermimask) & 1;
-
-		// lila::Log("holes : {} spins : {}", bits_to_string(holes, N), bits_to_string(spins, charge));
-		// lila::Log("mask  : {}", bits_to_string(flipmask, N));
-		// lila::Log("nholes: {}", bits_to_string(new_holes, N));
-		// lila::Log("dns   : {}", bits_to_string(dns, N));
-		// lila::Log("mask  : {}", bits_to_string(flipmask, N));
-		// lila::Log("ndns  : {}", bits_to_string(new_dns, N));
-		// lila::Log("nholes: {} nspins: {}\n", bits_to_string(new_holes, N), bits_to_string(new_spins, charge));
 
                 // term -t \sum... (negative prefactor!)
                 if (fermi_sign) {
