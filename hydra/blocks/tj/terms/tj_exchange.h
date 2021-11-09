@@ -112,7 +112,7 @@ void do_exchange(BondList const &bonds, Couplings const &couplings,
                   holes_offset + block.lintable_spins_.index(new_spins);
 
               bool fermi_sign = popcnt(not_holes & fermimask) & 1;
-              if (gbit(spins, s1)) {
+              if (gbit(ups, s1)) {
                 fill(new_idx, idx, (fermi_sign) ? Jhalf : -Jhalf);
               } else {
                 fill(new_idx, idx, (fermi_sign) ? Jhalf_conj : -Jhalf_conj);
