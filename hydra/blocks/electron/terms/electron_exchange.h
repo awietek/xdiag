@@ -2,22 +2,22 @@
 
 #include <lila/utils/logger.h>
 
-#include <hydra/combinatorics/combinations.h>
-#include <hydra/common.h>
+#include <hydra/bitops/bitops.h>
 #include <hydra/blocks/electron/electron.h>
 #include <hydra/blocks/utils/block_utils.h>
+#include <hydra/combinatorics/combinations.h>
+#include <hydra/common.h>
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
-#include <hydra/bitops/bitops.h>
 
 namespace hydra::terms::electron {
 
-template <class bit_t, class Filler>
+template <typename bit_t, typename coeff_t, typename Filler>
 void do_down_flips(bit_t up, idx_t idx_up, bit_t flipmask, bit_t spacemask,
-                   bit_t dnmask, double val, Electron<bit_t> const &block,
+                   bit_t dnmask, coeff_t val, Electron<bit_t> const &block,
                    Filler &&fill) {
-  using combinatorics::Combinations;
   using bitops::popcnt;
+  using combinatorics::Combinations;
 
   int n_sites = block.n_sites();
   int n_dn = block.n_dn();
@@ -46,12 +46,12 @@ void do_down_flips(bit_t up, idx_t idx_up, bit_t flipmask, bit_t spacemask,
   }
 }
 
-template <class bit_t, class Filler>
+template <typename bit_t, typename coeff_t, typename Filler>
 void do_exchange(BondList const &bonds, Couplings const &couplings,
                  Electron<bit_t> const &block, Filler &&fill) {
-  using combinatorics::Combinations;
   using bitops::gbit;
   using bitops::popcnt;
+  using combinatorics::Combinations;
 
   int n_sites = block.n_sites();
   int n_up = block.n_up();
@@ -76,8 +76,17 @@ void do_exchange(BondList const &bonds, Couplings const &couplings,
       bit_t flipmask = s1mask | s2mask;
       bit_t spacemask = ((1 << (s2 - s1 - 1)) - 1) << (s1 + 1);
 
-      double J = lila::real(couplings[cpl]);
-      double val = J / 2.;
+      // Set the correct prefactor
+      coeff_t Jhalf;
+      coeff_t Jhalf_conj;
+      if constexpr (is_complex<coeff_t>()) {
+        Jhalf = couplings[cpl] / 2.;
+        Jhalf_conj = lila::conj(Jhalf);
+
+      } else {
+        Jhalf = lila::real(couplings[cpl] / 2.);
+        Jhalf_conj = Jhalf;
+      }
 
       idx_t idx_up = 0;
       for (auto up : Combinations<bit_t>(n_sites, n_up)) {
@@ -87,21 +96,21 @@ void do_exchange(BondList const &bonds, Couplings const &couplings,
 
           // decide Fermi sign of upspins
           if (popcnt(up & spacemask) & 1)
-            do_down_flips(up, idx_up, flipmask, spacemask, s2mask, val, block,
+            do_down_flips(up, idx_up, flipmask, spacemask, s2mask, Jhalf, block,
                           fill);
           else
-            do_down_flips(up, idx_up, flipmask, spacemask, s2mask, -val, block,
-                          fill);
+            do_down_flips(up, idx_up, flipmask, spacemask, s2mask, -Jhalf,
+                          block, fill);
           // lower s2, raise, s1
         } else if ((up & flipmask) == s2mask) {
 
           // decide Fermi sign of upspins
           if (popcnt(up & spacemask) & 1)
-            do_down_flips(up, idx_up, flipmask, spacemask, s1mask, val, block,
-                          fill);
+            do_down_flips(up, idx_up, flipmask, spacemask, s1mask, Jhalf_conj,
+                          block, fill);
           else
-            do_down_flips(up, idx_up, flipmask, spacemask, s1mask, -val, block,
-                          fill);
+            do_down_flips(up, idx_up, flipmask, spacemask, s1mask, -Jhalf_conj,
+                          block, fill);
         }
 
         ++idx_up;

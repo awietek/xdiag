@@ -25,7 +25,7 @@ void Apply(BondList const &bonds, Couplings const &couplings,
 
   do_hopping<bit_t, double>(bonds, couplings, block_in, fill);
   do_ising<bit_t>(bonds, couplings, block_in, fill);
-  do_exchange<bit_t>(bonds, couplings, block_in, fill);
+  do_exchange<bit_t, double>(bonds, couplings, block_in, fill);
 }
 
 template <class bit_t>
@@ -46,7 +46,7 @@ void Apply(BondList const &bonds, Couplings const &couplings,
 
   do_hopping<bit_t, complex>(bonds, couplings, block_in, fill);
   do_ising<bit_t>(bonds, couplings, block_in, fill);
-  do_exchange<bit_t>(bonds, couplings, block_in, fill);
+  do_exchange<bit_t, complex>(bonds, couplings, block_in, fill);
 }
 
 template void Apply<uint16_t>(BondList const &bonds, Couplings const &couplings,
