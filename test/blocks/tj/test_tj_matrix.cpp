@@ -11,14 +11,14 @@ void test_tjmodel_e0_real(BondList bonds, Couplings couplings, int nup, int ndn,
                           double e0) {
   int n_sites = bonds.n_sites();
   // if ((nup == 1) && (ndn == 2)) {
-    auto block = tJ<uint32_t>(n_sites, nup, ndn);
-    auto H = MatrixReal(bonds, couplings, block, block);
+  auto block = tJ<uint32_t>(n_sites, nup, ndn);
+  auto H = MatrixReal(bonds, couplings, block, block);
 
-    auto eigs = lila::EigenvaluesSym(H);
-    // LilaPrint(H);
-    lila::Log("nup: {}, ndn: {}, e0: {}, eigs(0): {}", nup, ndn, e0, eigs(0));
-    REQUIRE(lila::close(H, lila::Herm(H)));
-    REQUIRE(std::abs(e0 - eigs(0)) < 1e-6);
+  auto eigs = lila::EigenvaluesSym(H);
+  // LilaPrint(H);
+  lila::Log("nup: {}, ndn: {}, e0: {}, eigs(0): {}", nup, ndn, e0, eigs(0));
+  REQUIRE(lila::close(H, lila::Herm(H)));
+  REQUIRE(std::abs(e0 - eigs(0)) < 1e-6);
   // }
 }
 
@@ -99,7 +99,7 @@ TEST_CASE("tJ_Matrix", "[tj]") {
   }
 
   for (int N = 3; N <= 6; ++N) {
-    lila::Log.out("TJModel: randomall-to-all complex hermitecity test, N={}",
+    lila::Log.out("TJModel: random all-to-all complex exchange test, N={}",
                   N);
 
     auto [bonds, cpls] = tj_alltoall_complex(N);
@@ -109,6 +109,19 @@ TEST_CASE("tJ_Matrix", "[tj]") {
         auto H = MatrixCplx(bonds, cpls, block, block);
         REQUIRE(lila::close(H, lila::Herm(H)));
       }
+
+    // Check whether eigenvalues agree with HB model
+    for (int nup = 0; nup <= N; ++nup) {
+      int ndn = N - nup;
+      auto block1 = tJ<uint32_t>(N, nup, ndn);
+      auto block2 = Spinhalf<uint32_t>(N, nup);
+      auto H1 = MatrixCplx(bonds, cpls, block1, block1);
+      auto H2 = MatrixCplx(bonds, cpls, block2, block2);
+      auto eigs1 = lila::EigenvaluesSym(H1);
+      auto eigs2 = lila::EigenvaluesSym(H2);
+      lila::Log("eigs1(0): {}, eigs2(0): {}", eigs1(0), eigs2(0));
+      REQUIRE(lila::close(eigs1, eigs2));
+    }
   }
 
   {

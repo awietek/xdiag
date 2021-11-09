@@ -13,7 +13,7 @@
 
 namespace hydra::terms::tj {
 
-template <class bit_t, class Filler>
+template <typename bit_t, typename coeff_t, typename Filler>
 void do_exchange(BondList const &bonds, Couplings const &couplings,
                  tJ<bit_t> const &block, Filler &&fill) {
   using bitops::bits_to_string;
@@ -39,9 +39,21 @@ void do_exchange(BondList const &bonds, Couplings const &couplings,
                     "bonds must have exactly two sites defined");
 
     if (utils::coupling_is_non_zero(bond, couplings)) {
+
+      // Set the correct prefactor
       std::string cpl = bond.coupling();
-      double J = lila::real(couplings[cpl]);
-      double Jhalf = J / 2.;
+      coeff_t Jhalf;
+      coeff_t Jhalf_conj;
+      if constexpr (is_complex<coeff_t>()) {
+        Jhalf = couplings[cpl] / 2.;
+        Jhalf_conj = lila::conj(Jhalf);
+
+      } else {
+        Jhalf = lila::real(couplings[cpl] / 2.);
+        Jhalf_conj = Jhalf;
+      }
+
+      // Prepare bitmasks
       int s1 = bond[0];
       int s2 = bond[1];
       bit_t flipmask = ((bit_t)1 << s1) | ((bit_t)1 << s2);
@@ -64,30 +76,54 @@ void do_exchange(BondList const &bonds, Couplings const &couplings,
         bit_t not_holes = (~holes) & sitesmask;
         idx_t holes_offset = holes_idx * size_spins;
 
-        for (auto spins : Combinations<bit_t>(charge, nup)) {
-          bit_t ups = bitops::deposit(spins, not_holes);
+        if (lila::close(lila::imag(Jhalf), 0.)) { // Real exchange
 
-          if (popcnt(ups & flipmask) & 1) { // spins are flippable
-            bit_t new_ups = ups ^ flipmask;
-            bit_t new_spins = bitops::extract(new_ups, not_holes);
-            idx_t new_idx =
-                holes_offset + block.lintable_spins_.index(new_spins);
-           
-	    // Determine Fermi sign
-	    bit_t spins_neg = (~spins) & sitesmask;
-            bit_t dns = bitops::deposit(spins_neg, not_holes);
-            bool fermi_sign = popcnt((ups | dns) & fermimask) & 1;
-            
-	    if (fermi_sign) {
-              fill(new_idx, idx, Jhalf);
-            } else {
-              fill(new_idx, idx, -Jhalf);
+          for (auto spins : Combinations<bit_t>(charge, nup)) {
+            bit_t ups = bitops::deposit(spins, not_holes);
+
+            if (popcnt(ups & flipmask) & 1) { // spins are flippable
+              bit_t new_ups = ups ^ flipmask;
+              bit_t new_spins = bitops::extract(new_ups, not_holes);
+              idx_t new_idx =
+                  holes_offset + block.lintable_spins_.index(new_spins);
+
+              bool fermi_sign = popcnt(not_holes & fermimask) & 1;
+
+              if (fermi_sign) {
+                fill(new_idx, idx, Jhalf);
+              } else {
+                fill(new_idx, idx, -Jhalf);
+              }
             }
+            ++idx;
           }
-          ++idx;
+        } else { // Complex exchange
+          if (!is_complex<coeff_t>())
+            lila::Log.err(
+                "Cannot compute complex exchange with real block in tJ");
+
+          for (auto spins : Combinations<bit_t>(charge, nup)) {
+            bit_t ups = bitops::deposit(spins, not_holes);
+
+            if (popcnt(ups & flipmask) & 1) { // spins are flippable
+              bit_t new_ups = ups ^ flipmask;
+              bit_t new_spins = bitops::extract(new_ups, not_holes);
+              idx_t new_idx =
+                  holes_offset + block.lintable_spins_.index(new_spins);
+
+              bool fermi_sign = popcnt(not_holes & fermimask) & 1;
+              if (gbit(spins, s1)) {
+                fill(new_idx, idx, (fermi_sign) ? Jhalf : -Jhalf);
+              } else {
+                fill(new_idx, idx, (fermi_sign) ? Jhalf_conj : -Jhalf_conj);
+              }
+            }
+            ++idx;
+          }
         }
+
         ++holes_idx;
-      }
+      } // for (auto holes : ...
     }
   }
 }

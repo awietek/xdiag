@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "../spinhalf/testcases_spinhalf.h"
+#include "../tj/testcases_tj.h"
 #include "testcases_electron.h"
 
 #include <hydra/all.h>
@@ -209,8 +210,7 @@ TEST_CASE("Electron_Matrix", "[models]") {
 
   // Test Heisenberg terms at half-filling
   for (int n_sites = 2; n_sites <= 6; ++n_sites) {
-    lila::Log.out("Electron: Heisenberg all-to-all comparison, N={}",
-    n_sites);
+    lila::Log.out("Electron: Heisenberg all-to-all comparison, N={}", n_sites);
 
     int nup = n_sites / 2;
     int ndn = n_sites - nup;
@@ -268,4 +268,41 @@ TEST_CASE("Electron_Matrix", "[models]") {
     }
   std::sort(all_eigs.begin(), all_eigs.end());
   REQUIRE(lila::close(all_eigs, eigs_correct));
+
+  for (int N = 3; N <= 6; ++N) {
+    lila::Log.out("Electron: random all-to-all complex exchange test, N={}", N);
+
+    auto [bonds, cpls] = hydra::testcases::tj::tj_alltoall_complex(N);
+    for (int nup = 0; nup <= N; ++nup)
+      for (int ndn = 0; ndn <= N - nup; ++ndn) {
+        auto block = Electron<uint32_t>(N, nup, ndn);
+        auto H = MatrixCplx(bonds, cpls, block, block);
+        REQUIRE(lila::close(H, lila::Herm(H)));
+      }
+
+    // Set hoppings to zero
+    for (auto cpl : cpls) {
+      if (cpl.first[0] == 'T') {
+        cpls[cpl.first] = 0.0;
+        // std::cout << cpl.first << " " << cpl.first[0] << "\n";
+      }
+    }
+    cpls["U"] = 1000;
+
+    // Check whether eigenvalues agree with HB model
+    for (int nup = 0; nup <= N; ++nup) {
+      int ndn = N - nup;
+      auto block1 = Electron<uint32_t>(N, nup, ndn);
+      auto block2 = Spinhalf<uint32_t>(N, nup);
+      auto H1 = MatrixCplx(bonds, cpls, block1, block1);
+      auto H2 = MatrixCplx(bonds, cpls, block2, block2);
+      auto eigs1 = lila::EigenvaluesSym(H1);
+      auto eigs2 = lila::EigenvaluesSym(H2);
+      // lila::Log("eigs1(0): {}, eigs2(0): {}", eigs1(0), eigs2(0));
+      lila::Vector<double> eigs1_sub = eigs1({0, eigs2.size()});
+      // LilaPrint(eigs1_sub);
+      // LilaPrint(eigs2);
+      REQUIRE(lila::close(eigs1_sub, eigs2, 1e-6, 1e-6));
+    }
+  }
 }

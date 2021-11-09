@@ -13,7 +13,7 @@
 
 namespace hydra::terms::spinhalf {
 
-template <class bit_t, class coeff_t, class Filler>
+template <typename bit_t, typename coeff_t, typename Filler>
 void do_exchange(BondList const &bonds, Couplings const &couplings,
                  Spinhalf<bit_t> const &block, Filler &&fill) {
   using bitops::gbit;
@@ -40,10 +40,9 @@ void do_exchange(BondList const &bonds, Couplings const &couplings,
       int n_sites = block.n_sites();
       int n_up = block.n_up();
 
+      // Set the correct prefactor
       coeff_t Jhalf;
       coeff_t Jhalf_conj;
-
-      // Set the correct prefactor
       if constexpr (is_complex<coeff_t>()) {
         Jhalf = couplings[coupling] / 2.;
         Jhalf_conj = lila::conj(Jhalf);
@@ -55,7 +54,7 @@ void do_exchange(BondList const &bonds, Couplings const &couplings,
 
       if (lila::close(lila::imag(Jhalf), 0.)) { // Real exchange
 
-	idx_t idx = 0;
+        idx_t idx = 0;
         for (bit_t spins : Combinations<bit_t>(n_sites, n_up)) {
 
           if (bitops::popcnt(spins & mask) & 1) {
@@ -70,7 +69,7 @@ void do_exchange(BondList const &bonds, Couplings const &couplings,
           lila::Log.err(
               "Cannot compute complex exchange with real block in Spinhalf");
 
-	idx_t idx = 0;
+        idx_t idx = 0;
         for (bit_t spins : Combinations<bit_t>(n_sites, n_up)) {
           if (bitops::popcnt(spins & mask) & 1) {
             bit_t new_spins = spins ^ mask;
@@ -80,8 +79,8 @@ void do_exchange(BondList const &bonds, Couplings const &couplings,
             } else {
               fill(new_idx, idx, Jhalf_conj);
             }
-	  }
-	  ++idx;
+          }
+          ++idx;
         }
       }
     }
