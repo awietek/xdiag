@@ -2,7 +2,7 @@
 
 #include <hydra/bitops/bitops.h>
 
-namespace hydra::utils {
+namespace hydra::symmetries {
 
 template <class bit_t>
 bool fermi_bool_of_permutation(bit_t state, const int *permutation, int *work) {

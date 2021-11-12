@@ -4,7 +4,7 @@
 #include <fstream>
 #include <iostream>
 
-#include <hydra/symmetries/symmetry_utils.h>
+#include <hydra/symmetries/symmetry_operations.h>
 #include <lila/utils/logger.h>
 
 namespace hydra {
@@ -20,7 +20,7 @@ PermutationGroup::PermutationGroup(
       lila::Log.err("Error constructing PermutationGroup: "
                     "there's a symmetry not of length n_sites");
 
-    if (!utils::is_valid_permutation(n_sites_, symmetries[i].data()))
+    if (!symmetries::is_valid_permutation(n_sites_, symmetries[i].data()))
       lila::Log.err("Error constructing PermutationGroup: "
                     "there's a symmetry which is not a proper permutation");
 
@@ -38,7 +38,7 @@ PermutationGroup::PermutationGroup(int n_sites, int n_symmetries,
     lila::Log.err("Error constructing PermutationGroup: "
                   "there's a symmetry not of length n_sites");
   for (int i = 0; i < n_symmetries; ++i) {
-    if (!utils::is_valid_permutation(n_sites_,
+    if (!symmetries::is_valid_permutation(n_sites_,
                                      permutation_array_.data() + i * n_sites_))
       lila::Log.err("Error constructing PermutationGroup: "
                     "there's a symmetry which is not a proper permutation");

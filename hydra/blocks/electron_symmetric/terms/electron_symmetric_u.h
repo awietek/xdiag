@@ -7,7 +7,7 @@
 #include <hydra/blocks/electron_symmetric/electron_symmetric.h>
 #include <hydra/blocks/blocks.h>
 #include <hydra/operators/couplings.h>
-#include <hydra/symmetries/symmetry_utils.h>
+#include <hydra/symmetries/symmetry_operations.h>
 #include <hydra/bitops/bitops.h>
 
 namespace hydra::terms::electron_symmetric {

@@ -18,7 +18,6 @@
 
 #include "blocks/blocks.h"
 #include "blocks/utils/block_utils.h"
-#include "blocks/utils/symmetrized_norm.h"
 
 #include "blocks/spinhalf/spinhalf.h"
 #include "blocks/spinhalf/spinhalf_apply.h"
@@ -60,7 +59,7 @@
 #include "symmetries/permutation_group_lookup.h"
 #include "symmetries/representation.h"
 #include "symmetries/symmetric_operator.h"
-#include "symmetries/symmetry_utils.h"
+#include "symmetries/symmetry_operations.h"
 
 #include "operators/bond.h"
 #include "operators/bondlist.h"

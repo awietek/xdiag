@@ -3,17 +3,15 @@
 #include <cassert>
 #include <tuple>
 
+#include <hydra/blocks/utils/block_utils.h>
 #include <hydra/combinatorics/binomial.h>
 #include <hydra/combinatorics/combinations.h>
-#include <hydra/combinatorics/subsets.h>
-#include <hydra/combinatorics/up_down_hole.h>
-
-#include <hydra/models/utils/model_utils.h>
-#include <hydra/models/utils/symmetrized_norm.h>
+#include <hydra/symmetries/fermi_sign.h>
+#include <hydra/symmetries/symmetry_operations.h>
 
 namespace hydra {
 
-template <class bit_t, class GroupAction, class LinTable>
+template <typename bit_t, class GroupAction, class LinTable>
 idx_t fill_states_norms_tj(
     int n_sites, int nup, int ndn, GroupAction &&group_action,
     LinTable &&lintable_ups, LinTable &&lintable_dns,
@@ -32,30 +30,38 @@ idx_t fill_states_norms_tj(
   idx_t raw_ups_size = combinatorics::binomial(n_sites, nup);
   idx_t raw_dns_size = combinatorics::binomial(n_sites, ndn);
 
+  // Compute states without stabilizers
+  idx_t idx = 0;
+  for (bit_t dns : Combinations<bit_t>(n_sites - nup, ndn)) {
+    dns_full[idx] = dns;
+    norms_dns_full[idx++] = 1.0;
+  }
+
   idx_t size = 0;
   idx_t idx_up = 0;
   up_offsets.resize(reps_up.size());
+
   for (bit_t ups : reps_up) {
+
+    bit_t sitesmask = ((bit_t)1 << n_sites) - 1;
+    bit_t not_ups = (~ups) & sitesmask;
 
     up_offsets[idx_up] = size;
 
     // Get the symmetries that stabilize the ups
     auto [sym_lower, sym_upper] = sym_limits_up[lintable_ups.index(ups)];
 
-    std::vector<bit_t> dn_reps;
-    std::vector<double> norms_dn_reps;
+    if ((sym_upper - sym_lower) == 1) {
+      size += raw_dns_size;
+    } else {
+      std::vector<bit_t> dn_reps;
+      std::vector<double> norms_dn_reps;
 
-    for (bit_t holes : Combinations<bit_t>(n_sites - nup, ndn)) {
-      bit_t dns = combinatorics::up_hole_to_down(ups, holes);
-
-      if ((sym_upper - sym_lower) == 1) {
-        dn_reps.push_back(dns);
-        norms_dn_reps.push_back(1.0);
-      } else {
-
-        bit_t dn_rep = dns;
+      for (bit_t dnsc : Combinations<bit_t>(n_sites - nup, ndn)) {
+        bit_t dns = bitops::deposit(dnsc, not_ups);
 
         // Determine dn representative
+        bit_t dn_rep = dns;
         for (idx_t sym_idx = sym_lower; sym_idx < sym_upper; ++sym_idx) {
           int sym = syms_up[sym_idx];
           bit_t tdns = group_action.apply(sym, dns);
@@ -84,19 +90,18 @@ idx_t fill_states_norms_tj(
             }
           }
           double norm = std::sqrt(std::abs(amplitude));
-        }
 
-        // ... and keep state if norm non-zero
-        if (norm > 1e-6) {
-          dn_reps.push_back(dn_rep);
-          norms_dn_reps.push_back(norm);
+          // ... and keep state if norm non-zero
+          if (norm > 1e-6) {
+            dn_reps.push_back(dn_rep);
+            norms_dn_reps.push_back(norm);
+          }
         }
+        dns_for_up_rep[ups] = dn_reps;
+        norms_for_up_rep[ups] = norms_dn_reps;
       }
+      size += dn_reps.size();
     }
-
-    dns_for_up_rep[ups] = dn_reps;
-    norms_for_up_rep[ups] = norms_dn_reps;
-    size += dn_reps.size();
     ++idx_up;
   }
   return size;
@@ -113,28 +118,21 @@ tJSymmetric<bit_t, GroupAction>::tJSymmetric(int n_sites, int nup, int ndn,
               ? permutation_group.subgroup(irrep.allowed_symmetries())
               : permutation_group),
       group_action_(permutation_group_), irrep_(irrep),
-      lintable_ups_(n_sites, nup), lintable_dns_(n_sites, ndn),
-      raw_ups_size_(combinatorics::binomial(n_sites, nup)),
-      raw_dns_size_(combinatorics::binomial(n_sites, ndn)),
-      fermi_bool_ups_table_(raw_ups_size_ * n_symmetries_),
-      fermi_bool_dns_table_(raw_dns_size_ * n_symmetries_),
-      idces_up_(raw_ups_size_), sym_limits_up_(raw_ups_size_, {0, 0}),
-      idces_dn_(raw_dns_size_), sym_limits_dn_(raw_dns_size_, {0, 0}) {
-  using combinatorics::Combinations;
+      n_symmetries_(group_action_.n_symmetries()), lintable_ups_(n_sites, nup),
+      lintable_dns_(n_sites, ndn),
+      fermi_bool_ups_table_(
+          symmetries::fermi_bool_table<bit_t>(nup, group_action_)),
+      fermi_bool_dns_table_(
+          symmetries::fermi_bool_table<bit_t>(ndn, group_action_)) {
 
   utils::check_nup_ndn_tj(n_sites, nup, ndn, "tJSymmetric");
 
-  utils::fill_fermi_bool_table<bit_t>(group_action_, nup,
-                                      fermi_bool_ups_table_);
-  utils::fill_fermi_bool_table<bit_t>(group_action_, ndn,
-                                      fermi_bool_dns_table_);
-
-  utils::fill_reps_idces_syms_limits(n_sites, nup, group_action_, lintable_ups_,
-                                     reps_up_, idces_up_, syms_up_,
-                                     sym_limits_up_);
-  utils::fill_reps_idces_syms_limits(n_sites, ndn, group_action_, lintable_dns_,
-                                     reps_dn_, idces_dn_, syms_dn_,
-                                     sym_limits_dn_);
+  std::tie(reps_up_, idces_up_, syms_up_, sym_limits_up_) =
+      symmetries::representatives_indices_symmetries_limits<bit_t>(
+          nup, group_action_, lintable_ups_);
+  std::tie(reps_dn_, idces_dn_, syms_dn_, sym_limits_dn_) =
+      symmetries::representatives_indices_symmetries_limits<bit_t>(
+          ndn, group_action_, lintable_dns_);
 
   idx_t size_ups = fill_states_norms_tj(
       n_sites, nup, ndn, group_action_, lintable_ups_, lintable_dns_, reps_up_,
@@ -170,7 +168,11 @@ bool tJSymmetric<bit_t, GroupAction>::operator!=(
 }
 
 template class tJSymmetric<uint16_t, PermutationGroupAction>;
-template class tJSymmetric<uint32, PermutationGroupAction>;
-template class tJSymmetric<uint64, PermutationGroupAction>;
+template class tJSymmetric<uint32_t, PermutationGroupAction>;
+template class tJSymmetric<uint64_t, PermutationGroupAction>;
+
+template class tJSymmetric<uint16_t, PermutationGroupLookup<uint16_t>>;
+template class tJSymmetric<uint32_t, PermutationGroupLookup<uint32_t>>;
+template class tJSymmetric<uint64_t, PermutationGroupLookup<uint64_t>>;
 
 } // namespace hydra

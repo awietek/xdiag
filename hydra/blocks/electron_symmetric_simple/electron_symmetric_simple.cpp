@@ -7,8 +7,8 @@
 #include <hydra/combinatorics/combinations.h>
 #include <hydra/combinatorics/subsets.h>
 
+#include <hydra/symmetries/symmetry_operations.h>
 #include <hydra/blocks/utils/block_utils.h>
-#include <hydra/blocks/utils/symmetrized_norm.h>
 
 namespace hydra {
 
@@ -44,7 +44,7 @@ ElectronSymmetricSimple<bit_t, GroupAction>::ElectronSymmetricSimple(
       // If state is a representative ...
       if ((rep_ups == ups) && (rep_dns == dns)) {
         double norm =
-            utils::symmetrized_norm_electron(ups, dns, group_action_, irrep);
+            symmetries::compute_norm_electron(ups, dns, group_action_, irrep);
 
         // ... and norm is nonzero, register the state and its norm
         if (norm > 1e-6) { // tolerance big as 1e-6 since root is taken
@@ -75,7 +75,7 @@ ElectronSymmetricSimple<bit_t, GroupAction>::ElectronSymmetricSimple(
       // If state is a (switch) representative ...
       if ((rep_ups_switch == ups) && (rep_dns_switch == dns)) {
         double norm =
-            utils::symmetrized_norm_electron(ups, dns, group_action_, irrep);
+            symmetries::compute_norm_electron(ups, dns, group_action_, irrep);
 
         // ... and has non-zero norm
         if (std::abs(norm) >

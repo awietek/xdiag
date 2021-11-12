@@ -2,11 +2,11 @@
 
 #include <hydra/symmetries/fermi_sign.h>
 #include <hydra/symmetries/permutation_group_action.h>
-#include <hydra/symmetries/symmetry_utils.h>
+#include <hydra/symmetries/symmetry_operations.h>
 
 namespace hydra {
 
-template <class bit_t>
+template <typename bit_t>
 PermutationGroupLookup<bit_t>::PermutationGroupLookup(
     PermutationGroup const &permutation_group)
     : n_sites_(permutation_group.n_sites()),
@@ -43,19 +43,19 @@ PermutationGroupLookup<bit_t>::PermutationGroupLookup(
   assert(idx == table_postfix_.size());
 }
 
-template <class bit_t>
+template <typename bit_t>
 bool PermutationGroupLookup<bit_t>::operator==(
     PermutationGroupLookup const &rhs) const {
   return (n_sites_ == rhs.n_sites_) && (n_symmetries_ == rhs.n_symmetries_) &&
          (permutation_group_ == rhs.permutation_group_);
 }
-template <class bit_t>
+template <typename bit_t>
 bool PermutationGroupLookup<bit_t>::operator!=(
     PermutationGroupLookup const &rhs) const {
   return !operator==(rhs);
 }
 
-  template class PermutationGroupLookup<uint16_t>;
+template class PermutationGroupLookup<uint16_t>;
 template class PermutationGroupLookup<uint32_t>;
 template class PermutationGroupLookup<uint64_t>;
 

@@ -6,7 +6,7 @@
 #include <hydra/blocks/blocks.h>
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
-#include <hydra/symmetries/symmetry_utils.h>
+#include <hydra/symmetries/symmetry_operations.h>
 #include <hydra/bitops/bitops.h>
 
 namespace hydra::terms::tj_symmetric_simple {

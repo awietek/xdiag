@@ -29,9 +29,9 @@ template <class bit_t> void test_fermi_sign(int n_sites) {
       // std::cout << bits_to_string(state, n_sites) << "\n";
       // std::cout << bits_to_string(tstate, n_sites) << "\n";
 
-      auto fermi1 = hydra::utils::fermi_sign_of_permutation(
+      auto fermi1 = symmetries::fermi_sign_of_permutation(
           state, permutation_array.data() + sym * n_sites, work.data());
-      auto fermi2 = hydra::utils::fermi_sign_of_permutation_sort(
+      auto fermi2 = symmetries::fermi_sign_of_permutation_sort(
           state, permutation_array.data() + sym * n_sites, work.data());
 
       // std::cout << fermi1 << " " << fermi2 << "\n";
