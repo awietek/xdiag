@@ -63,9 +63,9 @@ TEST_CASE("symmetric_operator", "[symmetries]") {
             ++deg;
         }
 
-        // lila::Log.out(
-        //     "N: {}, nup:{} ndn: {}, deg: {}, e0_nosym: {}, e0_sym: {}", n_sites,
-        //     nup, ndn, deg, e0_nosym, e0_sym);
+        lila::Log.out(
+            "N: {}, nup:{} ndn: {}, deg: {}, e0_nosym: {}, e0_sym: {}", n_sites,
+            nup, ndn, deg, e0_nosym, e0_sym);
         REQUIRE(lila::close(e0_sym, e0_nosym));
 
         // Compare correlators only if degeneracy is 1
