@@ -108,6 +108,49 @@ template <typename bit_t> void test_representative_sym_subset(int n_sites) {
   }
 }
 
+template <typename bit_t> void test_compute_norm(int n_sites) {
+  auto group_action = PermutationGroupLookup<bit_t>(cyclic_group(n_sites));
+  std::vector<complex> chis(n_sites, 1.0);
+  Representation irrep(chis);
+  for (bit_t bits : Subsets(n_sites)) {
+    double norm = compute_norm(bits, group_action, irrep);
+    auto stabilizer = stabilizer_symmetries(bits, group_action);
+    REQUIRE(lila::close(norm * norm, (double)stabilizer.size()));
+  }
+}
+
+template <typename bit_t>
+void test_representatives_indices_symmetries_limits(int n_sites) {
+
+  auto group_action = PermutationGroupLookup<bit_t>(cyclic_group(n_sites));
+
+  for (int npar = 0; npar <= n_sites; ++npar) {
+    auto lintable = indexing::LinTable<bit_t>(n_sites, npar);
+    auto [reps, idces, syms, limits] =
+      representatives_indices_symmetries_limits<bit_t>(npar, group_action, lintable);
+
+    idx_t n_reps = reps.size();
+    for (idx_t i=0; i<n_reps; ++i) {
+      REQUIRE(reps[i] == representative(reps[i], group_action));
+    }
+
+    idx_t idx = 0;
+    for (bit_t state : Combinations<bit_t>(n_sites, npar)){
+      idx_t k = idces[idx];
+      bit_t rep = reps[k];
+      REQUIRE(rep == representative(state, group_action));      
+      
+      auto [l, u] = limits[idx];
+      for (idx_t i=l; i<u; ++i){
+	REQUIRE(rep == group_action.apply(syms[i], state));
+      }
+
+      ++idx; 
+    }
+
+  }
+}
+
 TEST_CASE("symmetry_operations", "[symmetries]") {
 
   for (int n_sites = 0; n_sites <= 5; ++n_sites) {
@@ -138,5 +181,17 @@ TEST_CASE("symmetry_operations", "[symmetries]") {
     test_representative_sym_subset<uint16_t>(n_sites);
     test_representative_sym_subset<uint32_t>(n_sites);
     test_representative_sym_subset<uint64_t>(n_sites);
+  }
+
+  for (int n_sites = 0; n_sites <= 5; ++n_sites) {
+    test_compute_norm<uint16_t>(n_sites);
+    test_compute_norm<uint32_t>(n_sites);
+    test_compute_norm<uint64_t>(n_sites);
+  }
+
+  for (int n_sites = 1; n_sites <= 5; ++n_sites) {
+    test_representatives_indices_symmetries_limits<uint16_t>(n_sites);
+    test_representatives_indices_symmetries_limits<uint32_t>(n_sites);
+    test_representatives_indices_symmetries_limits<uint64_t>(n_sites);
   }
 }
