@@ -101,6 +101,7 @@ template <class bit_t> void test_electron_chain(int n_sites) {
               norms2.push_back(norm);
             }
           }
+	  lila::Log("{} {} {} {} {}", n_sites, nup, ndn, ups1.size(), ups2.size());
 
           REQUIRE(ups1.size() == dns1.size());
           REQUIRE(ups1.size() == norms1.size());
@@ -156,6 +157,7 @@ template <class bit_t> void test_electron_chain(int n_sites) {
             }
           }
 
+
           REQUIRE(ups1.size() == dns1.size());
           REQUIRE(ups1.size() == norms1.size());
           REQUIRE(ups1.size() == ups2.size());
@@ -186,7 +188,7 @@ template <class bit_t> void test_electron_chain(int n_sites) {
   REQUIRE(sum_of_dims == pow(4, n_sites));
 }
 
-TEST_CASE("ElectronSymmetric", "[models][ElectronSymmetric]") {
+TEST_CASE("electron_symmetric", "[models][ElectronSymmetric]") {
 
   // Test the Hubbard chain
   for (int n_sites = 1; n_sites < 7; ++n_sites) {

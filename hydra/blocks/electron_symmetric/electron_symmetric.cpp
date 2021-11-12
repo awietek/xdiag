@@ -1,9 +1,10 @@
 #include "electron_symmetric.h"
 
+#include <hydra/blocks/utils/block_utils.h>
 #include <hydra/combinatorics/binomial.h>
 #include <hydra/combinatorics/combinations.h>
 #include <hydra/symmetries/fermi_sign.h>
-#include <hydra/symmetries/symmetry_utils.h>
+#include <hydra/symmetries/symmetry_operations.h>
 
 namespace hydra {
 
@@ -113,24 +114,22 @@ ElectronSymmetric<bit_t, GroupAction>::ElectronSymmetric(
       lintable_dns_(n_sites, ndn),
       raw_ups_size_(combinatorics::binomial(n_sites, nup)),
       raw_dns_size_(combinatorics::binomial(n_sites, ndn)),
-      fermi_bool_ups_table_(raw_ups_size_ * n_symmetries_),
-      fermi_bool_dns_table_(raw_dns_size_ * n_symmetries_),
-      idces_up_(raw_ups_size_), sym_limits_up_(raw_ups_size_, {0, 0}),
-      idces_dn_(raw_dns_size_), sym_limits_dn_(raw_dns_size_, {0, 0}),
+      fermi_bool_ups_table_(
+          symmetries::fermi_bool_table<bit_t>(nup, group_action_)),
+      fermi_bool_dns_table_(
+          symmetries::fermi_bool_table<bit_t>(ndn, group_action_)),
       dns_full_(raw_dns_size_), norms_dns_full_(raw_dns_size_),
       ups_full_(raw_ups_size_), norms_ups_full_(raw_ups_size_) {
 
-  using combinatorics::Combinations;
+  utils::check_nup_ndn_electron(n_sites, nup, ndn, "ElectronSymmetric");
 
-  utils::fill_fermi_bool_table<bit_t>(group_action_, nup, fermi_bool_ups_table_);
-  utils::fill_fermi_bool_table<bit_t>(group_action_, ndn, fermi_bool_dns_table_);
+  std::tie(reps_up_, idces_up_, syms_up_, sym_limits_up_) =
+      symmetries::representatives_indices_symmetries_limits<bit_t>(
+          nup, group_action_, lintable_ups_);
 
-  utils::fill_reps_idces_syms_limits(n_sites, nup, group_action_, lintable_ups_,
-                                     reps_up_, idces_up_, syms_up_,
-                                     sym_limits_up_);
-  utils::fill_reps_idces_syms_limits(n_sites, ndn, group_action_, lintable_dns_,
-                                     reps_dn_, idces_dn_, syms_dn_,
-                                     sym_limits_dn_);
+  std::tie(reps_dn_, idces_dn_, syms_dn_, sym_limits_dn_) =
+      symmetries::representatives_indices_symmetries_limits<bit_t>(
+          ndn, group_action_, lintable_dns_);
 
   idx_t size_ups = fill_states_norms_electron(
       n_sites, nup, ndn, group_action_, lintable_ups_, lintable_dns_, reps_up_,

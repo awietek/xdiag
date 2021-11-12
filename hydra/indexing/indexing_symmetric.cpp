@@ -5,7 +5,7 @@
 #include <hydra/blocks/utils/block_utils.h>
 #include <hydra/symmetries/permutation_group_action.h>
 #include <hydra/symmetries/permutation_group_lookup.h>
-#include <hydra/symmetries/symmetry_utils.h>
+#include <hydra/symmetries/symmetry_operations.h>
 
 namespace hydra::indexing {
 
@@ -33,11 +33,11 @@ IndexingSymmetric<bit_t, GroupAction>::IndexingSymmetric(
   
   for (bit_t state : Combinations(n_sites, n_up)) {
 
-    bit_t rep = utils::representative(state, group_action);
+    bit_t rep = symmetries::representative(state, group_action);
     // register state if it's a representative
     if (rep == state) {
 
-      double norm = utils::compute_norm(rep, group_action, irrep);
+      double norm = symmetries::compute_norm(rep, group_action, irrep);
 
       if (norm > 1e-6) { // tolerance big as 1e-6 since root is taken
         idx_t idx = lin_table_.index(rep);
@@ -54,7 +54,7 @@ IndexingSymmetric<bit_t, GroupAction>::IndexingSymmetric(
   for (bit_t state : Combinations(n_sites, n_up)) {
 
     // Compute the representative of state and the corresponding symmetry
-    auto [rep, rep_sym] = utils::representative_sym(state, group_action);
+    auto [rep, rep_sym] = symmetries::representative_sym(state, group_action);
 
     if (rep != state) {
       complex norm = norm_of_raw_state_[lin_table_.index(rep)];

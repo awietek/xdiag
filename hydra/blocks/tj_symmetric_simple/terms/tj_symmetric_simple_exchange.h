@@ -7,7 +7,7 @@
 
 #include <hydra/blocks/blocks.h>
 #include <hydra/blocks/utils/block_utils.h>
-#include <hydra/symmetries/symmetry_utils.h>
+#include <hydra/symmetries/symmetry_operations.h>
 
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>

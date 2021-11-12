@@ -9,7 +9,7 @@
 #include <hydra/blocks/utils/block_utils.h>
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
-#include <hydra/symmetries/symmetry_utils.h>
+#include <hydra/symmetries/symmetry_operations.h>
 
 namespace hydra::terms::electron_symmetric {
 

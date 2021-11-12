@@ -4,7 +4,6 @@
 #include <hydra/combinatorics/subsets.h>
 
 #include <hydra/blocks/utils/block_utils.h>
-#include <hydra/blocks/utils/symmetrized_norm.h>
 
 namespace hydra {
 

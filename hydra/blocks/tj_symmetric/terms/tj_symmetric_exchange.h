@@ -7,7 +7,7 @@
 
 #include <hydra/models/models.h>
 #include <hydra/models/utils/model_utils.h>
-#include <hydra/symmetries/symmetry_utils.h>
+#include <hydra/symmetries/symmetry_operations.h>
 
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>

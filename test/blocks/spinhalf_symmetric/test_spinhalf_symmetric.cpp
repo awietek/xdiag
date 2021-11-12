@@ -13,7 +13,7 @@ void test_indices_spinhalf_symmetric(SpinhalfSymmetric<bit_t> const &block) {
   PermutationGroupAction group_action(block.permutation_group());
   for (idx_t idx = 0; idx < block.size(); ++idx) {
     bit_t state = block.indexing_.state(idx);
-    bit_t rep = utils::representative(state, group_action);
+    bit_t rep = symmetries::representative(state, group_action);
     REQUIRE(rep == state);
     idx_t idx2 = block.indexing_.index(state);
     // auto norm = block.indexing_.norm(state);
@@ -65,7 +65,7 @@ template <class bit_t> void test_spinchain_blocks(int n_sites) {
   REQUIRE(sum_of_dims == pow(2, n_sites));
 }
 
-TEST_CASE("SpinhalfSymmetric", "[models]") {
+TEST_CASE("spinhalf_symmetric", "[models]") {
 
   // Test the tJ chain
   for (int n_sites = 1; n_sites < 8; ++n_sites) {
