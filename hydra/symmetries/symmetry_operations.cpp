@@ -117,7 +117,7 @@ stabilizer_symmetries<uint64_t, PermutationGroupLookup<uint64_t>>(
 //////////////////////////////////////////////////////////
 template <typename bit_t, class GroupAction>
 bit_t representative(bit_t state, GroupAction const &group_action) {
-  bit_t rep = std::numeric_limits<bit_t>::max();
+  bit_t rep = state;
   for (int sym = 0; sym < group_action.n_symmetries(); ++sym) {
     bit_t tstate = group_action.apply(sym, state);
     if (tstate < rep) {
@@ -144,7 +144,7 @@ template uint64_t representative<uint64_t, PermutationGroupLookup<uint64_t>>(
 template <typename bit_t, class GroupAction>
 bit_t representative_subset(bit_t state, GroupAction const &group_action,
                             std::vector<int> const &syms) {
-  bit_t rep = std::numeric_limits<bit_t>::max();
+  bit_t rep = state;
   for (int sym : syms) {
     assert(sym < group_action.n_symmetries());
     bit_t tstate = group_action.apply(sym, state);
@@ -181,7 +181,7 @@ representative_subset<uint64_t, PermutationGroupLookup<uint64_t>>(
 template <typename bit_t, class GroupAction>
 std::pair<bit_t, int> representative_sym(bit_t state,
                                          GroupAction const &group_action) {
-  bit_t rep = std::numeric_limits<bit_t>::max();
+  bit_t rep = state;
   int rep_sym = 0;
   for (int sym = 0; sym < group_action.n_symmetries(); ++sym) {
     bit_t tstate = group_action.apply(sym, state);
@@ -217,7 +217,7 @@ template <typename bit_t, class GroupAction>
 std::pair<bit_t, int> representative_sym_subset(bit_t state,
                                                 GroupAction const &group_action,
                                                 std::vector<int> const &syms) {
-  bit_t rep = std::numeric_limits<bit_t>::max();
+  bit_t rep = state;
   int rep_sym = 0;
   for (auto sym : syms) {
     assert(sym < group_action.n_symmetries());
