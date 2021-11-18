@@ -127,71 +127,101 @@ void test_representatives_indices_symmetries_limits(int n_sites) {
   for (int npar = 0; npar <= n_sites; ++npar) {
     auto lintable = indexing::LinTable<bit_t>(n_sites, npar);
     auto [reps, idces, syms, limits] =
-      representatives_indices_symmetries_limits<bit_t>(npar, group_action, lintable);
-
+        representatives_indices_symmetries_limits<bit_t>(npar, group_action,
+                                                         lintable);
     idx_t n_reps = reps.size();
-    for (idx_t i=0; i<n_reps; ++i) {
+    for (idx_t i = 0; i < n_reps; ++i) {
       REQUIRE(reps[i] == representative(reps[i], group_action));
     }
 
     idx_t idx = 0;
-    for (bit_t state : Combinations<bit_t>(n_sites, npar)){
+    for (bit_t state : Combinations<bit_t>(n_sites, npar)) {
       idx_t k = idces[idx];
       bit_t rep = reps[k];
-      REQUIRE(rep == representative(state, group_action));      
-      
+      REQUIRE(rep == representative(state, group_action));
+
       auto [l, u] = limits[idx];
-      for (idx_t i=l; i<u; ++i){
-	REQUIRE(rep == group_action.apply(syms[i], state));
+      for (idx_t i = l; i < u; ++i) {
+        REQUIRE(rep == group_action.apply(syms[i], state));
       }
 
-      ++idx; 
+      ++idx;
     }
+  }
+}
 
+template <typename bit_t> void test_fermi_bool_table(int n_sites) {
+  std::vector<int> fermi_work(n_sites, 0);
+
+  auto group_action = PermutationGroupLookup<bit_t>(cyclic_group(n_sites));
+  int n_symmetries = group_action.n_symmetries();
+  for (int npar = 0; npar <= n_sites; ++npar) {
+
+    auto fermi_bool_tbl = fermi_bool_table<bit_t>(npar, group_action);
+    idx_t raw_size = binomial(n_sites, npar);
+
+    const int *sym_ptr = group_action.permutation_array().data();
+    for (int sym = 0; sym < n_symmetries; ++sym) {
+      idx_t idx = 0;
+      for (bit_t state : Combinations<bit_t>(n_sites, npar)) {
+        REQUIRE(fermi_bool_tbl[sym * raw_size + idx] ==
+                fermi_bool_of_permutation(state, sym_ptr, fermi_work.data()));
+        ++idx;
+      }
+      sym_ptr += n_sites;
+    }
   }
 }
 
 TEST_CASE("symmetry_operations", "[symmetries]") {
 
-  for (int n_sites = 0; n_sites <= 5; ++n_sites) {
+  int max_N = 5;
+  
+  for (int n_sites = 0; n_sites <= max_N; ++n_sites) {
     test_stabilizer_symmetries<uint16_t>(n_sites);
     test_stabilizer_symmetries<uint32_t>(n_sites);
     test_stabilizer_symmetries<uint64_t>(n_sites);
   }
 
-  for (int n_sites = 0; n_sites <= 5; ++n_sites) {
+  for (int n_sites = 0; n_sites <= max_N; ++n_sites) {
     test_representative<uint16_t>(n_sites);
     test_representative<uint32_t>(n_sites);
     test_representative<uint64_t>(n_sites);
   }
 
-  for (int n_sites = 0; n_sites <= 5; ++n_sites) {
+  for (int n_sites = 0; n_sites <= max_N; ++n_sites) {
     test_representative_subset<uint16_t>(n_sites);
     test_representative_subset<uint32_t>(n_sites);
     test_representative_subset<uint64_t>(n_sites);
   }
 
-  for (int n_sites = 0; n_sites <= 5; ++n_sites) {
+  for (int n_sites = 0; n_sites <= max_N; ++n_sites) {
     test_representative_sym<uint16_t>(n_sites);
     test_representative_sym<uint32_t>(n_sites);
     test_representative_sym<uint64_t>(n_sites);
   }
 
-  for (int n_sites = 0; n_sites <= 5; ++n_sites) {
+  for (int n_sites = 0; n_sites <= max_N; ++n_sites) {
     test_representative_sym_subset<uint16_t>(n_sites);
     test_representative_sym_subset<uint32_t>(n_sites);
     test_representative_sym_subset<uint64_t>(n_sites);
   }
 
-  for (int n_sites = 0; n_sites <= 5; ++n_sites) {
+  for (int n_sites = 0; n_sites <= max_N; ++n_sites) {
     test_compute_norm<uint16_t>(n_sites);
     test_compute_norm<uint32_t>(n_sites);
     test_compute_norm<uint64_t>(n_sites);
   }
 
-  for (int n_sites = 1; n_sites <= 5; ++n_sites) {
+  for (int n_sites = 0; n_sites <= max_N; ++n_sites) {
     test_representatives_indices_symmetries_limits<uint16_t>(n_sites);
     test_representatives_indices_symmetries_limits<uint32_t>(n_sites);
     test_representatives_indices_symmetries_limits<uint64_t>(n_sites);
+  }
+
+  for (int n_sites = 0; n_sites <= max_N; ++n_sites) {
+    test_fermi_bool_table<uint16_t>(n_sites);
+    test_fermi_bool_table<uint32_t>(n_sites);
+    test_fermi_bool_table<uint64_t>(n_sites);
   }
 }
