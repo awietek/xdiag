@@ -3,13 +3,14 @@
 #include <unordered_map>
 #include <vector>
 
+#include <hydra/blocks/blocks.h>
 #include <hydra/combinatorics/hashes.h>
 #include <hydra/common.h>
 #include <hydra/indexing/lintable.h>
 
 namespace hydra {
 
-template <class bit_t = std_bit_t> class ElectronMPI {
+template <class bit_t> class ElectronMPI {
 
   ElectronMPI() = default;
   ElectronMPI(int n_sites, int nup, int ndn);

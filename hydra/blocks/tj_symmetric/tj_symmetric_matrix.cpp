@@ -1,18 +1,19 @@
 #include "tj_symmetric_matrix.h"
 
-#include <hydra/models/tj_symmetric/terms/tj_symmetric_exchange.h>
-#include <hydra/models/tj_symmetric/terms/tj_symmetric_hopping.h>
-#include <hydra/models/tj_symmetric/terms/tj_symmetric_ising.h>
+#include <hydra/blocks/tj_symmetric/tj_symmetric.h>
+#include <hydra/blocks/tj_symmetric/terms/tj_symmetric_exchange.h>
+// #include <hydra/blocks/tj_symmetric/terms/tj_symmetric_hopping.h>
+// #include <hydra/blocks/tj_symmetric/terms/tj_symmetric_ising.h>
 
-#include <hydra/models/utils/model_utils.h>
+#include <hydra/blocks/utils/block_utils.h>
 
 namespace hydra {
 
-template <class bit_t, class GroupAction>
-lila::Matrix<double>
-MatrixReal(BondList const &bonds, Couplings const &couplings,
-           tJSymmetric<bit_t, GroupAction> const &block_in,
-           tJSymmetric<bit_t, GroupAction> const &block_out) {
+template <class bit_t>
+lila::Matrix<double> MatrixReal(BondList const &bonds,
+                                Couplings const &couplings,
+                                tJSymmetric<bit_t> const &block_in,
+                                tJSymmetric<bit_t> const &block_out) {
   using namespace terms::tj_symmetric;
 
   assert(block_in == block_out); // only temporary
@@ -27,31 +28,34 @@ MatrixReal(BondList const &bonds, Couplings const &couplings,
     mat(idx_out, idx_in) += val;
   };
 
-  do_hopping_symmetric<bit_t, double>(bonds, couplings, block_in, fill);
-  do_ising_symmetric<bit_t>(bonds, couplings, block_in, fill);
-  do_exchange_symmetric<bit_t, double>(bonds, couplings, block_in, fill);
+  auto const &indexing_in = block_in.indexing();
+  // auto const &indexing_out = block_out.indexing();
+
+  // do_hopping_symmetric<bit_t, double>(bonds, couplings, indexing_in, fill);
+  // do_ising_symmetric<bit_t>(bonds, couplings, indexing_in, fill);
+  do_exchange_symmetric<bit_t, double>(bonds, couplings, indexing_in, fill);
 
   return mat;
 }
 
-template lila::Matrix<double> MatrixReal<uint16_t, PermutationGroupAction>(
-    BondList const &bonds, Couplings const &couplings,
-    tJSymmetric<uint16_t, PermutationGroupAction> const &block_in,
-    tJSymmetric<uint16_t, PermutationGroupAction> const &block_out);
-template lila::Matrix<double> MatrixReal<uint32, PermutationGroupAction>(
-    BondList const &bonds, Couplings const &couplings,
-    tJSymmetric<uint32, PermutationGroupAction> const &block_in,
-    tJSymmetric<uint32, PermutationGroupAction> const &block_out);
-template lila::Matrix<double> MatrixReal<uint64, PermutationGroupAction>(
-    BondList const &bonds, Couplings const &couplings,
-    tJSymmetric<uint64, PermutationGroupAction> const &block_in,
-    tJSymmetric<uint64, PermutationGroupAction> const &block_out);
+template lila::Matrix<double>
+MatrixReal<uint16_t>(BondList const &bonds, Couplings const &couplings,
+                     tJSymmetric<uint16_t> const &block_in,
+                     tJSymmetric<uint16_t> const &block_out);
+template lila::Matrix<double>
+MatrixReal<uint32>(BondList const &bonds, Couplings const &couplings,
+                   tJSymmetric<uint32> const &block_in,
+                   tJSymmetric<uint32> const &block_out);
+template lila::Matrix<double>
+MatrixReal<uint64>(BondList const &bonds, Couplings const &couplings,
+                   tJSymmetric<uint64> const &block_in,
+                   tJSymmetric<uint64> const &block_out);
 
-template <class bit_t, class GroupAction>
-lila::Matrix<complex>
-MatrixCplx(BondList const &bonds, Couplings const &couplings,
-           tJSymmetric<bit_t, GroupAction> const &block_in,
-           tJSymmetric<bit_t, GroupAction> const &block_out) {
+template <class bit_t>
+lila::Matrix<complex> MatrixCplx(BondList const &bonds,
+                                 Couplings const &couplings,
+                                 tJSymmetric<bit_t> const &block_in,
+                                 tJSymmetric<bit_t> const &block_out) {
   using namespace terms::tj_symmetric;
 
   assert(block_in == block_out); // only temporary
@@ -62,24 +66,29 @@ MatrixCplx(BondList const &bonds, Couplings const &couplings,
     mat(idx_out, idx_in) += val;
   };
 
-  do_hopping_symmetric<bit_t, complex>(bonds, couplings, block_in, fill);
-  do_ising_symmetric<bit_t>(bonds, couplings, block_in, fill);
-  do_exchange_symmetric<bit_t, complex>(bonds, couplings, block_in, fill);
+  lila::Log("m: {}, n: {}", mat.m(), mat.n());
+
+  auto const &indexing_in = block_in.indexing();
+  // auto const &indexing_out = block_out.indexing();
+
+  // do_hopping_symmetric<bit_t, complex>(bonds, couplings, indexing_in, fill);
+  // do_ising_symmetric<bit_t>(bonds, couplings, indexing_in, fill);
+  do_exchange_symmetric<bit_t, complex>(bonds, couplings, indexing_in, fill);
 
   return mat;
 }
 
-template lila::Matrix<complex> MatrixCplx<uint16_t, PermutationGroupAction>(
-    BondList const &bonds, Couplings const &couplings,
-    tJSymmetric<uint16_t, PermutationGroupAction> const &block_in,
-    tJSymmetric<uint16_t, PermutationGroupAction> const &block_out);
-template lila::Matrix<complex> MatrixCplx<uint32, PermutationGroupAction>(
-    BondList const &bonds, Couplings const &couplings,
-    tJSymmetric<uint32, PermutationGroupAction> const &block_in,
-    tJSymmetric<uint32, PermutationGroupAction> const &block_out);
-template lila::Matrix<complex> MatrixCplx<uint64, PermutationGroupAction>(
-    BondList const &bonds, Couplings const &couplings,
-    tJSymmetric<uint64, PermutationGroupAction> const &block_in,
-    tJSymmetric<uint64, PermutationGroupAction> const &block_out);
+template lila::Matrix<complex>
+MatrixCplx<uint16_t>(BondList const &bonds, Couplings const &couplings,
+                     tJSymmetric<uint16_t> const &block_in,
+                     tJSymmetric<uint16_t> const &block_out);
+template lila::Matrix<complex>
+MatrixCplx<uint32_t>(BondList const &bonds, Couplings const &couplings,
+                     tJSymmetric<uint32_t> const &block_in,
+                     tJSymmetric<uint32_t> const &block_out);
+template lila::Matrix<complex>
+MatrixCplx<uint64_t>(BondList const &bonds, Couplings const &couplings,
+                     tJSymmetric<uint64_t> const &block_in,
+                     tJSymmetric<uint64_t> const &block_out);
 
 } // namespace hydra

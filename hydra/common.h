@@ -4,6 +4,9 @@
 #include <cstdint>
 #include <lila/all.h>
 
+#include <hydra/bitops/bitops.h>
+#define BSTR(x) bitops::bits_to_string(x, n_sites)
+
 namespace hydra {
 
 using std_bit_t = uint64_t;
@@ -32,4 +35,5 @@ constexpr idx_t invalid_index = -1;
 constexpr bool index_not_found(idx_t idx) { return idx < 0; }
 constexpr bool index_valid(idx_t idx) { return idx >= 0; }
 
+  
 } // namespace hydra

@@ -3,13 +3,14 @@
 #include <lila/all.h>
 
 #include <hydra/common.h>
+#include <hydra/blocks/blocks.h>
 #include <hydra/indexing/lintable.h>
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
 
 namespace hydra {
 
-template <class bit_t = std_bit_t> class Electron {
+template <class bit_t> class Electron {
 public:
   Electron() = default;
   Electron(int n_sites, int nup, int ndn);

@@ -37,7 +37,7 @@ IndexingSymmetric<bit_t, GroupAction>::IndexingSymmetric(
     // register state if it's a representative
     if (rep == state) {
 
-      double norm = symmetries::compute_norm(rep, group_action, irrep);
+      double norm = symmetries::norm(rep, group_action, irrep);
 
       if (norm > 1e-6) { // tolerance big as 1e-6 since root is taken
         idx_t idx = lin_table_.index(rep);

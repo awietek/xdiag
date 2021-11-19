@@ -56,4 +56,28 @@ void check_symmetric_operator_real(BondList const &bonds, Couplings const &cpls,
     lila::Log.err("Error: cannot {} real matrix from complex representation!",
                   errmsg);
 }
+
+BondList clean_bondlist(BondList const &bonds, Couplings const &cpls,
+                        std::vector<std::string> desired_bond_types,
+                        int allowed_size) {
+  BondList clean_bonds;
+
+  for (auto type : desired_bond_types) {
+    auto bonds_of_type = bonds.bonds_of_type(type);
+
+    for (auto bond : bonds_of_type) {
+      if (bond.size() != allowed_size) {
+        lila::Log.err("Invalid bond size ({}) found for type {}", bond.size(),
+                      type);
+      }
+
+      if (coupling_is_non_zero(bond, cpls)) {
+        clean_bonds << bond;
+      }
+    }
+  }
+
+  return clean_bonds;
+}
+
 } // namespace hydra::utils

@@ -3,7 +3,6 @@
 #include <hydra/bitops/extract_deposit.h>
 #include <hydra/bitops/gbit.h>
 #include <hydra/bitops/popcnt.h>
-#include <hydra/common.h>
 #include <string>
 
 // #if defined(__BMI__)

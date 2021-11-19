@@ -22,4 +22,9 @@ void check_symmetric_operator_real(BondList const &bonds, Couplings const &cpls,
                                    Representation const &irrep_out,
                                    std::string errmsg);
 
+BondList clean_bondlist(BondList const &bonds, Couplings const &cpls,
+                        std::vector<std::string> desired_bond_types,
+                        int allowed_size);
+
+  
 } // namespace hydra::utils

@@ -1,19 +1,32 @@
 #pragma once
 
+#include <hydra/common.h>
+#include <hydra/symmetries/permutation_group_action.h>
+#include <hydra/symmetries/permutation_group_lookup.h>
+
+// Forward declaration of blocks with default parameters
 namespace hydra {
 
-template <class bit_t> class Spinhalf;
-template <class bit_t, class GroupAction> class SpinhalfSymmetric;
-template <class bit_t> class SpinhalfMPI;
+template <typename bit_t = std_bit_t> class Spinhalf;
+template <typename bit_t = std_bit_t,
+          class GroupAction = PermutationGroupLookup<bit_t>>
+class SpinhalfSymmetric;
+template <typename bit_t = std_bit_t> class SpinhalfMPI;
 
-template <class bit_t> class tJ;
-template <class bit_t, class GroupAction> class tJSymmetric;
-template <class bit_t, class GroupAction> class tJSymmetricSimple;
+template <typename bit_t = std_bit_t> class tJ;
+template <typename bit_t = std_bit_t> class tJSymmetric;
+template <typename bit_t = std_bit_t,
+          class GroupAction = PermutationGroupLookup<bit_t>>
+class tJSymmetricSimple;
 
-template <class bit_t> class Electron;
-template <class bit_t, class GroupAction> class ElectronSymmetric;
-template <class bit_t, class GroupAction> class ElectronSymmetricSimple;
-template <class bit_t> class ElectronMPI;
+template <typename bit_t = std_bit_t> class Electron;
+template <typename bit_t = std_bit_t,
+          class GroupAction = PermutationGroupLookup<bit_t>>
+class ElectronSymmetric;
+template <typename bit_t = std_bit_t,
+          class GroupAction = PermutationGroupLookup<bit_t>>
+class ElectronSymmetricSimple;
+template <typename bit_t = std_bit_t> class ElectronMPI;
 
 } // namespace hydra
 
