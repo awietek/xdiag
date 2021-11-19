@@ -4,11 +4,10 @@
 #include <utility>
 #include <vector>
 
+#include <hydra/blocks/blocks.h>
 #include <hydra/common.h>
 #include <hydra/indexing/lintable.h>
 #include <hydra/symmetries/permutation_group.h>
-#include <hydra/symmetries/permutation_group_action.h>
-#include <hydra/symmetries/permutation_group_lookup.h>
 #include <hydra/symmetries/representation.h>
 
 #include <hydra/operators/bondlist.h>
@@ -16,9 +15,7 @@
 
 namespace hydra {
 
-template <typename bit_t = std_bit_t,
-          class GroupAction = PermutationGroupLookup<bit_t>>
-class ElectronSymmetric {
+template <typename bit_t, class GroupAction> class ElectronSymmetric {
 public:
   ElectronSymmetric() = default;
   ElectronSymmetric(int n_sites, int nup, int ndn,
@@ -40,7 +37,6 @@ public:
 
   bool operator==(ElectronSymmetric const &rhs) const;
   bool operator!=(ElectronSymmetric const &rhs) const;
-
 
   // inline std::pair<bit_t, bit_t> representative(bit_t ups, bit_t dns)
   // const {
@@ -109,8 +105,6 @@ public:
   //   }
   // }
 
-
-
   inline idx_t index(bit_t ups, bit_t dns) const {
     idx_t idx_up = index_up(ups);
     bit_t rep_up = reps_up_[idx_up];
@@ -139,7 +133,6 @@ public:
     }
   }
 
-
   inline idx_t index_up(bit_t ups) const {
     return idces_up_[lintable_ups_.index(ups)];
   }
@@ -147,7 +140,6 @@ public:
   inline idx_t index_dn(bit_t dns) const {
     return idces_dn_[lintable_dns_.index(dns)];
   }
-
 
   inline std::pair<idx_t, idx_t> sym_limits_up(bit_t ups) const {
     return sym_limits_up_[lintable_ups_.index(ups)];
@@ -209,7 +201,7 @@ public:
     }
   }
 
-// private:
+  // private:
   int n_sites_;
 
   bool charge_conserved_;
@@ -255,7 +247,6 @@ public:
   std::map<bit_t, std::vector<double>> norms_for_dn_rep_;
 
   idx_t size_;
-
 };
 
 } // namespace hydra

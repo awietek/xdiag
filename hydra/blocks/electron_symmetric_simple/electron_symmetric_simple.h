@@ -3,6 +3,7 @@
 #include <map>
 
 #include <hydra/common.h>
+#include <hydra/blocks/blocks.h>
 #include <hydra/symmetries/permutation_group.h>
 #include <hydra/symmetries/permutation_group_action.h>
 #include <hydra/symmetries/permutation_group_lookup.h>
@@ -10,7 +11,7 @@
 
 namespace hydra {
 
-template <class bit_t = std_bit_t, class GroupAction = PermutationGroupAction>
+template <class bit_t, class GroupAction>
 class ElectronSymmetricSimple {
 public:
   ElectronSymmetricSimple() = default;

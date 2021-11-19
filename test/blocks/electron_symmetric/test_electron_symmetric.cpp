@@ -24,6 +24,7 @@ void test_indices(ElectronSymmetric<bit_t> const &electron) {
 }
 
 template <class bit_t> void test_electron_chain(int n_sites) {
+  using bitops::bits_to_string;
 
   lila::Log.out("ElectronSymmetric chain test. N: {}", n_sites);
 
@@ -89,9 +90,9 @@ template <class bit_t> void test_electron_chain(int n_sites) {
           std::vector<double> norms2;
           for (bit_t ups : electron2.reps_up_) {
 
+	    
             auto const &dnss = electron2.dns_for_up_rep(ups);
             auto const &norms = electron2.norms_for_up_rep(ups);
-
             for (idx_t idx = 0; idx < dnss.size(); ++idx) {
               bit_t dns = dnss[idx];
               double norm = norms[idx];
@@ -101,8 +102,7 @@ template <class bit_t> void test_electron_chain(int n_sites) {
               norms2.push_back(norm);
             }
           }
-	  lila::Log("{} {} {} {} {}", n_sites, nup, ndn, ups1.size(), ups2.size());
-
+  	  
           REQUIRE(ups1.size() == dns1.size());
           REQUIRE(ups1.size() == norms1.size());
           REQUIRE(ups1.size() == ups2.size());

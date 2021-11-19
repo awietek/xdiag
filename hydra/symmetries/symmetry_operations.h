@@ -47,27 +47,25 @@ std::pair<bit_t, int> representative_sym_subset(bit_t state,
 
 // Computes the norm of a symmetrized state
 template <typename bit_t, class GroupAction>
-double compute_norm(bit_t state, GroupAction const &group_action,
-                    Representation const &irrep);
+double norm(bit_t state, GroupAction const &group_action,
+            Representation const &irrep);
 
 // Computes the norm of a symmetrized state with fermions
 template <typename bit_t, class GroupAction>
-double compute_norm_fermionic(bit_t state, GroupAction const &group_action,
-                              Representation const &irrep);
+double norm_fermionic(bit_t state, GroupAction const &group_action,
+                      Representation const &irrep);
 
 // Computes the norm of a symmetrized state with up/dn electrons
 template <typename bit_t, class GroupAction>
-double compute_norm_electron(bit_t ups, bit_t dns,
-                             GroupAction const &group_action,
-                             Representation const &irrep);
+double norm_electron(bit_t ups, bit_t dns, GroupAction const &group_action,
+                     Representation const &irrep);
 
 // Computes the norm of a symmetrized state with up/dn electrons (subset of
 // syms)
 template <typename bit_t, class GroupAction>
-double compute_norm_electron_subset(bit_t ups, bit_t dns,
-                                    GroupAction const &group_action,
-                                    Representation const &irrep,
-                                    std::vector<int> const &syms);
+double
+norm_electron_subset(bit_t ups, bit_t dns, GroupAction const &group_action,
+                     Representation const &irrep, std::vector<int> const &syms);
 
 // Create a lists of representatives and their symmetries
 template <typename bit_t, class GroupAction, class LinTable>

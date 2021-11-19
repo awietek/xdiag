@@ -30,8 +30,9 @@ sources+= hydra/blocks/tj/tj_matrix.cpp
 sources+= hydra/blocks/tj/tj_apply.cpp
 
 sources+= hydra/blocks/tj_symmetric/tj_symmetric.cpp
-# sources+= hydra/blocks/tj_symmetric/tj_symmetric_matrix.cpp
-# sources+= hydra/blocks/tj_symmetric/tj_symmetric_apply.cpp
+sources+= hydra/blocks/tj_symmetric/tj_symmetric_indexing.cpp
+sources+= hydra/blocks/tj_symmetric/tj_symmetric_matrix.cpp
+sources+= hydra/blocks/tj_symmetric/tj_symmetric_apply.cpp
 
 sources+= hydra/blocks/tj_symmetric_simple/tj_symmetric_simple.cpp
 sources+= hydra/blocks/tj_symmetric_simple/tj_symmetric_simple_matrix.cpp
@@ -113,7 +114,7 @@ testsources+= test/blocks/tj/test_tj_utils.cpp
 testsources+= test/blocks/tj/test_tj_matrix.cpp
 testsources+= test/blocks/tj/test_tj_apply.cpp
 
-# testsources+= test/blocks/tj_symmetric/test_tj_symmetric.cpp
+testsources+= test/blocks/tj_symmetric/test_tj_symmetric.cpp
 # testsources+= test/blocks/tj_symmetric/test_tj_symmetric_matrix.cpp
 # testsources+= test/blocks/tj_symmetric/test_tj_symmetric_apply.cpp
 

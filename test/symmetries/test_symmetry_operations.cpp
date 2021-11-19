@@ -108,14 +108,14 @@ template <typename bit_t> void test_representative_sym_subset(int n_sites) {
   }
 }
 
-template <typename bit_t> void test_compute_norm(int n_sites) {
+template <typename bit_t> void test_norm(int n_sites) {
   auto group_action = PermutationGroupLookup<bit_t>(cyclic_group(n_sites));
   std::vector<complex> chis(n_sites, 1.0);
   Representation irrep(chis);
   for (bit_t bits : Subsets(n_sites)) {
-    double norm = compute_norm(bits, group_action, irrep);
+    double nrm = norm(bits, group_action, irrep);
     auto stabilizer = stabilizer_symmetries(bits, group_action);
-    REQUIRE(lila::close(norm * norm, (double)stabilizer.size()));
+    REQUIRE(lila::close(nrm * nrm, (double)stabilizer.size()));
   }
 }
 
@@ -208,9 +208,9 @@ TEST_CASE("symmetry_operations", "[symmetries]") {
   }
 
   for (int n_sites = 0; n_sites <= max_N; ++n_sites) {
-    test_compute_norm<uint16_t>(n_sites);
-    test_compute_norm<uint32_t>(n_sites);
-    test_compute_norm<uint64_t>(n_sites);
+    test_norm<uint16_t>(n_sites);
+    test_norm<uint32_t>(n_sites);
+    test_norm<uint64_t>(n_sites);
   }
 
   for (int n_sites = 0; n_sites <= max_N; ++n_sites) {

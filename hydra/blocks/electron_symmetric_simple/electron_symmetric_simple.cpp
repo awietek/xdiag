@@ -44,7 +44,7 @@ ElectronSymmetricSimple<bit_t, GroupAction>::ElectronSymmetricSimple(
       // If state is a representative ...
       if ((rep_ups == ups) && (rep_dns == dns)) {
         double norm =
-            symmetries::compute_norm_electron(ups, dns, group_action_, irrep);
+            symmetries::norm_electron(ups, dns, group_action_, irrep);
 
         // ... and norm is nonzero, register the state and its norm
         if (norm > 1e-6) { // tolerance big as 1e-6 since root is taken
@@ -75,7 +75,7 @@ ElectronSymmetricSimple<bit_t, GroupAction>::ElectronSymmetricSimple(
       // If state is a (switch) representative ...
       if ((rep_ups_switch == ups) && (rep_dns_switch == dns)) {
         double norm =
-            symmetries::compute_norm_electron(ups, dns, group_action_, irrep);
+            symmetries::norm_electron(ups, dns, group_action_, irrep);
 
         // ... and has non-zero norm
         if (std::abs(norm) >

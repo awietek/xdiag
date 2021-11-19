@@ -33,7 +33,8 @@
 #include "blocks/tj/tj_apply.h"
 #include "blocks/tj/tj_matrix.h"
 
-// #include "blocks/tj_symmetric/tj_symmetric.h"
+#include "blocks/tj_symmetric/tj_symmetric.h"
+#include "blocks/tj_symmetric/tj_symmetric_indexing.h"
 // #include "blocks/tj_symmetric/tj_symmetric_apply.h"
 // #include "blocks/tj_symmetric/tj_symmetric_matrix.h"
 

@@ -2,8 +2,8 @@
 
 #include <lila/utils/logger.h>
 
-#include <hydra/common.h>
 #include <hydra/bitops/bitops.h>
+#include <hydra/common.h>
 
 #include <hydra/blocks/blocks.h>
 #include <hydra/blocks/utils/block_utils.h>
@@ -18,6 +18,7 @@ template <class bit_t, class coeff_t, class GroupAction, class Filler>
 void do_exchange_symmetric(BondList const &bonds, Couplings const &couplings,
                            ElectronSymmetric<bit_t, GroupAction> const &block,
                            Filler &&fill) {
+  using bitops::bits_to_string;
   using bitops::gbit;
   using bitops::popcnt;
 
@@ -107,11 +108,10 @@ void do_exchange_symmetric(BondList const &bonds, Couplings const &couplings,
                       norms_out[idx_dn_flip] / norms_in[idx_dn];
               }
 
-              // idx_t idx_out2 = block.index(ups_flip, dns_flip);
-              // int n_sites = block.n_sites();
-              // lila::Log.out("tri s1: {} s2: {} {};{} -> {};{} -> {};{}
-              // idx_in: "
-              //               "{}, idx_out: {}/{}, val: {:.4f}",
+              idx_t idx_out2 = block.index(ups_flip, dns_flip);
+              int n_sites = block.n_sites();
+              // lila::Log.out("tri s1: {} s2: {} {};{} -> {};{} -> {};{}  "
+              //               "idx_in: {}, idx_out: {}/{}, val: {:.4f}",
               //               s1, s2, bits_to_string(ups, n_sites),
               //               bits_to_string(dns, n_sites),
               //               bits_to_string(ups_flip, n_sites),
@@ -119,13 +119,24 @@ void do_exchange_symmetric(BondList const &bonds, Couplings const &couplings,
               //               bits_to_string(ups_flip_rep, n_sites),
               //               bits_to_string(dns_rep, n_sites), idx_in,
               //               idx_out, idx_out2, lila::real(val));
-              // assert(idx_out == idx_out2);
+              // lila::Log("-----------------------------------------");
+              // lila::Log("CASE: target-stab-FALSE");
+              // lila::Log("from: {};{}", BSTR(ups), BSTR(dns));
+              // lila::Log("mask: {} {}", BSTR(mask), BSTR(mask));
+              // lila::Log("to  : {};{}", BSTR(ups_flip), BSTR(dns_flip));
+              // lila::Log("rep : {};{}", BSTR(ups_flip_rep), BSTR(dns_rep));
+              // lila::Log("idx_in: {}, idx_out: {}", idx_in, idx_out);
+              // lila::Log("val: {}", lila::real(val));
 
-              // lila::Log.out("{} {} {} {} {}", (bool)(popcnt(ups & spacemask)
-              // & 1),
-              //               block.fermi_bool_up(sym, ups_flip),
-              //               (bool)(popcnt(dns & spacemask) & 1),
-              //               block.fermi_bool_dn(sym, dns_flip), fermi);
+              // assert(idx_out == idx_out2);
+              // lila::Log("fermi_up_hop: {} ",
+              //           (bool)(popcnt(ups & spacemask) & 1));
+              // lila::Log("fermi_up_sym: {} ",
+              //           block.fermi_bool_up(sym, ups_flip));
+	      // lila::Log("fermi_dn_hop: {} ",
+              //           (bool)(popcnt(dns & spacemask) & 1));
+              // lila::Log("fermi_dn_sym: {} ",
+              //           block.fermi_bool_dn(sym, dns_flip));
 
               if (fermi)
                 fill(idx_out, idx_in, -val);
@@ -181,16 +192,25 @@ void do_exchange_symmetric(BondList const &bonds, Couplings const &couplings,
                 // idx_t idx_in2 = block.index(ups, dns);
 
                 // int n_sites = block.n_sites();
-                // lila::Log.out(
-                //     "non s1: {} s2: {} {};{} -> {};{} -> {};{} idx_in: "
-                //     "{}, idx_out: {}/{}, val: {:.4f}",
-                //     s1, s2, bits_to_string(ups, n_sites),
-                //     bits_to_string(dns, n_sites),
-                //     bits_to_string(ups_flip, n_sites),
-                //     bits_to_string(dns_flip, n_sites),
-                //     bits_to_string(ups_flip_rep, n_sites),
-                //     bits_to_string(rep_dns, n_sites), idx_in, idx_out,
-                //     idx_out2, lila::real(val));
+		// lila::Log("-----------------------------------------");
+		// lila::Log("CASE: target-stab-TRUE");
+		// lila::Log("from: {};{}", BSTR(ups), BSTR(dns));
+		// lila::Log("mask: {} {}", BSTR(mask), BSTR(mask));
+		// lila::Log("to  : {};{}", BSTR(ups_flip), BSTR(dns_flip));
+		// lila::Log("rep : {};{}", BSTR(ups_flip_rep), BSTR(rep_dns));
+		// lila::Log("idx_in: {}, idx_out: {}", idx_in, idx_out);
+		// lila::Log("val: {}", lila::real(val));
+		
+		// assert(idx_out == idx_out2);
+		// lila::Log("fermi_up_hop: {} ",
+		// 	  (bool)(popcnt(ups & spacemask) & 1));
+		// lila::Log("fermi_up_sym: {} ",
+		// 	  block.fermi_bool_up(rep_sym, ups_flip));
+		// lila::Log("fermi_dn_hop: {} ",
+		// 	  (bool)(popcnt(dns & spacemask) & 1));
+		// lila::Log("fermi_dn_sym: {} ",
+		// 	  block.fermi_bool_dn(rep_sym, dns_flip));
+		
                 // assert(idx_in == idx_in2);
                 // assert(idx_out == idx_out2);
 

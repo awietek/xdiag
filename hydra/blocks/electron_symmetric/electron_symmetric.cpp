@@ -24,16 +24,14 @@ idx_t fill_states_norms_electron(
 
   using combinatorics::Combinations;
 
-  idx_t raw_ups_size = combinatorics::binomial(n_sites, nup);
-  idx_t raw_dns_size = combinatorics::binomial(n_sites, ndn);
-
-  // Compute states without stabilizers
+  // create full dns states, used when ups have trivial stabilizer
   idx_t idx = 0;
   for (bit_t dns : Combinations<bit_t>(n_sites, ndn)) {
     dns_full[idx] = dns;
     norms_dns_full[idx++] = 1.0;
   }
 
+  // create the dns states, when ups have non-trivial stabilizer
   idx_t size = 0;
   idx_t idx_up = 0;
   up_offsets.resize(reps_up.size());
@@ -44,47 +42,30 @@ idx_t fill_states_norms_electron(
     // Get the symmetries that stabilize the ups
     auto [sym_lower, sym_upper] = sym_limits_up[lintable_ups.index(ups)];
 
+    // ups have trivial stabilizer, we don't store dns, but use dns_full
     if ((sym_upper - sym_lower) == 1) {
-      size += raw_dns_size;
-    } else {
+      size += combinatorics::binomial(n_sites, ndn);
+    }
+
+    // ups have non-trivial stabilizer, we store the dns configurations
+    else {
+
       std::vector<bit_t> dn_reps;
       std::vector<double> norms_dn_reps;
+      std::vector<int> syms_stable(syms_up.begin() + sym_lower,
+                                   syms_up.begin() + sym_upper);
 
       for (bit_t dns : Combinations<bit_t>(n_sites, ndn)) {
 
-        // Determine dn representative
-        bit_t dn_rep = dns;
-        for (idx_t sym_idx = sym_lower; sym_idx < sym_upper; ++sym_idx) {
-          int sym = syms_up[sym_idx];
-          bit_t tdns = group_action.apply(sym, dns);
-          if (tdns < dn_rep)
-            dn_rep = tdns;
-        }
+        bit_t dn_rep =
+            symmetries::representative_subset(dns, group_action, syms_stable);
 
-        // if "dns" is representative
-        if (dns == dn_rep) {
+        if (dns == dn_rep) { // if "dns" is representative
 
-          // Compute its norm ...
-          complex amplitude = 0.0;
-          for (idx_t sym_idx = sym_lower; sym_idx < sym_upper; ++sym_idx) {
-            int sym = syms_up[sym_idx];
-            assert(group_action.apply(sym, ups) == ups);
-            if (group_action.apply(sym, dn_rep) == dn_rep) {
-              bool fermi_up = fermi_bool_ups_table[sym * raw_ups_size +
-                                                   lintable_ups.index(ups)];
-              bool fermi_dn = fermi_bool_dns_table[sym * raw_dns_size +
-                                                   lintable_dns.index(dns)];
-              if (fermi_up == fermi_dn) {
-                amplitude += irrep.character(sym);
-              } else {
-                amplitude -= irrep.character(sym);
-              }
-            }
-          }
-          double norm = std::sqrt(std::abs(amplitude));
-
-          // ... and keep state if norm non-zero
-          if (norm > 1e-6) {
+          double norm = symmetries::norm_electron_subset(ups, dns, group_action,
+                                                         irrep, syms_stable);
+	  
+          if (norm > 1e-6) {  // only keep dns with non-zero norm
             dn_reps.push_back(dn_rep);
             norms_dn_reps.push_back(norm);
           }

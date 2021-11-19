@@ -1,17 +1,14 @@
 #pragma once
 
 #include <hydra/common.h>
+#include <hydra/blocks/blocks.h>
 #include <hydra/indexing/indexing_symmetric.h>
 #include <hydra/symmetries/permutation_group.h>
-#include <hydra/symmetries/permutation_group_action.h>
-#include <hydra/symmetries/permutation_group_lookup.h>
 #include <hydra/symmetries/representation.h>
 
 namespace hydra {
 
-template <class bit_t = std_bit_t,
-          class GroupAction = PermutationGroupLookup<bit_t>>
-class SpinhalfSymmetric {
+template <class bit_t, class GroupAction> class SpinhalfSymmetric {
 public:
   SpinhalfSymmetric() = default;
   SpinhalfSymmetric(int n_sites, int n_up, PermutationGroup permutation_group,

@@ -3,13 +3,12 @@
 #include <map>
 
 #include <hydra/common.h>
-#include <hydra/symmetries/permutation_group.h>
-#include <hydra/symmetries/permutation_group_action.h>
+#include <hydra/blocks/blocks.h>
 #include <hydra/symmetries/representation.h>
 
 namespace hydra {
 
-template <class bit_t = std_bit_t, class GroupAction = PermutationGroupAction>
+template <typename bit_t, class GroupAction>
 class tJSymmetricSimple {
 public:
   tJSymmetricSimple() = default;
@@ -53,7 +52,7 @@ public:
 
   std::vector<complex> character_switch_;
 
-private:
+// private:
   int n_sites_;
 
   bool charge_conserved_;
