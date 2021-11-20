@@ -5,201 +5,72 @@
 #include <hydra/all.h>
 
 using namespace hydra;
-using namespace hydra::combinatorics;
 
-template <class bit_t>
-void test_indices(tJSymmetric<bit_t> const &tj) {
-  // int n_sites = tj.n_sites();
-  
-  idx_t idx = 0;
-  for (bit_t ups : tj.reps_up_) {
-    auto const &dnss = tj.dns_for_up_rep(ups);
-    for (bit_t dns : dnss) {
-      // lila::Log.out("{} {}", bits_to_string(ups, n_sites), bits_to_string(dns, n_sites));
-      idx_t idx2 = tj.index(ups, dns);
-      REQUIRE(idx == idx2);
-      ++idx;
-    }
-  }
-}
+template <typename bit_t>
+void check_dimensions_sum_up(int n_sites, PermutationGroup group,
+                             std::vector<Representation> irreps) {
+  using combinatorics::binomial;
 
-template <class bit_t> void test_tj_chain(int n_sites) {
-  using bitops::bits_to_string;
+  lila::Log.out("tj_symmetric, dimension sum test. N: {}", n_sites);
 
-  lila::Log.out("tJSymmetric chain test. N: {}", n_sites);
-
-  // cyclic group as space group
-  std::vector<std::vector<int>> permutations;
-  for (int sym = 0; sym < n_sites; ++sym) {
-    std::vector<int> permutation;
-    for (int site = 0; site < n_sites; ++site) {
-      int newsite = (site + sym) % n_sites;
-      permutation.push_back(newsite);
-    }
-    permutations.push_back(permutation);
-  }
-  auto space_group = PermutationGroup(permutations);
-
-  // Create irrep with K momentum
   idx_t sum_of_dims = 0;
 
   for (int nup = 0; nup <= n_sites; ++nup) {
-    for (int ndn = 0; ndn <= n_sites; ++ndn) {
+    for (int ndn = 0; ndn <= n_sites - nup; ++ndn) {
       idx_t sum_of_dims_updn = 0;
+      for (auto irrep: irreps) {
 
-      for (int k = 0; k < n_sites; ++k) {
+        auto block = tJSymmetric<bit_t>(n_sites, nup, ndn, group, irrep);
 
-        // lila::Log.out("N: {}, nup: {}, ndn: {}, k:{} ", n_sites, nup, ndn, k);
-
-        // Create characters
-        std::vector<complex> chis;
-        for (int l = 0; l < n_sites; ++l)
-          chis.push_back({std::cos(2 * M_PI * l * k / n_sites),
-                          std::sin(2 * M_PI * l * k / n_sites)});
-        auto irrep = Representation(chis);
-
-        auto tj1 =
-            tJSymmetricSimple<bit_t>(n_sites, nup, ndn, space_group, irrep);
-        auto tj2 =
-            tJSymmetric<bit_t>(n_sites, nup, ndn, space_group, irrep);
-
-        sum_of_dims += tj2.size();
-        sum_of_dims_updn += tj2.size();
-	
-
-	// Compare up, dn order
-        {
-          std::vector<bit_t> ups1;
-          std::vector<bit_t> dns1;
-          std::vector<double> norms1;
-          for (auto [up, lower_upper] : tj1.ups_lower_upper_) {
-            idx_t lower = lower_upper.first;
-            idx_t upper = lower_upper.second;
-
-            for (idx_t idx = lower; idx < upper; ++idx) {
-              bit_t dn = tj1.dns_[idx];
-              double norm = tj1.norms_[idx];
-              ups1.push_back(up);
-              dns1.push_back(dn);
-              norms1.push_back(norm);
-            }
-          }
-
-          std::vector<bit_t> ups2;
-          std::vector<bit_t> dns2;
-          std::vector<double> norms2;
-          for (bit_t ups : tj2.reps_up_) {
-
-	    
-            auto const &dnss = tj2.dns_for_up_rep(ups);
-            auto const &norms = tj2.norms_for_up_rep(ups);
-            for (idx_t idx = 0; idx < dnss.size(); ++idx) {
-              bit_t dns = dnss[idx];
-              double norm = norms[idx];
-
-              ups2.push_back(ups);
-              dns2.push_back(dns);
-              norms2.push_back(norm);
-            }
-          }
-  	  
-          REQUIRE(ups1.size() == dns1.size());
-          REQUIRE(ups1.size() == norms1.size());
-          REQUIRE(ups1.size() == ups2.size());
-          REQUIRE(ups1.size() == dns2.size());
-          REQUIRE(ups1.size() == norms2.size());
-
-          for (idx_t idx = 0; idx < ups1.size(); ++idx) {
-            // lila::Log.out("{};{} {:.4f}  <->  {};{} {:.4f}",
-            //               bits_to_string(ups1[idx], n_sites),
-            //               bits_to_string(dns1[idx], n_sites), norms1[idx],
-            //               bits_to_string(ups2[idx], n_sites),
-            //               bits_to_string(dns2[idx], n_sites), norms2[idx]);
-            REQUIRE(ups1[idx] == ups2[idx]);
-            REQUIRE(dns1[idx] == dns2[idx]);
-            REQUIRE(norms1[idx] == norms2[idx]);
-          }
-        }
-
-	// Compare dn, up order
-        {
-          std::vector<bit_t> ups1;
-          std::vector<bit_t> dns1;
-          std::vector<double> norms1;
-          for (auto [dn, lower_upper] : tj1.dns_lower_upper_) {
-            idx_t lower = lower_upper.first;
-            idx_t upper = lower_upper.second;
-
-            for (idx_t idx = lower; idx < upper; ++idx) {
-              bit_t up = tj1.ups_[idx];
-              double norm = tj1.norms_[tj1.index_switch_to_index(idx)];
-              ups1.push_back(up);
-              dns1.push_back(dn);
-              norms1.push_back(norm);
-            }
-          }
-
-          std::vector<bit_t> ups2;
-          std::vector<bit_t> dns2;
-          std::vector<double> norms2;
-          for (bit_t dns : tj2.reps_dn_) {
-
-            auto const &upss = tj2.ups_for_dn_rep(dns);
-            auto const &norms = tj2.norms_for_dn_rep(dns);
-
-            for (idx_t idx = 0; idx < upss.size(); ++idx) {
-              bit_t ups = upss[idx];
-              double norm = norms[idx];
-
-              ups2.push_back(ups);
-              dns2.push_back(dns);
-              norms2.push_back(norm);
-            }
-          }
-
-
-          REQUIRE(ups1.size() == dns1.size());
-          REQUIRE(ups1.size() == norms1.size());
-          REQUIRE(ups1.size() == ups2.size());
-          REQUIRE(ups1.size() == dns2.size());
-          REQUIRE(ups1.size() == norms2.size());
-
-          for (idx_t idx = 0; idx < ups1.size(); ++idx) {
-            // lila::Log.out("{};{} {:.4f}  <->  {};{} {:.4f}",
-            //               bits_to_string(ups1[idx], n_sites),
-            //               bits_to_string(dns1[idx], n_sites), norms1[idx],
-            //               bits_to_string(ups2[idx], n_sites),
-            //               bits_to_string(dns2[idx], n_sites), norms2[idx]);
-            REQUIRE(ups1[idx] == ups2[idx]);
-            REQUIRE(dns1[idx] == dns2[idx]);
-            REQUIRE(norms1[idx] == norms2[idx]);
-          }
-        }
-
-
-        if (tj2.size() > 0) {
-          test_indices(tj2);
-        }
+        sum_of_dims += block.size();
+        sum_of_dims_updn += block.size();
       }
-      CHECK(sum_of_dims_updn ==
-            binomial(n_sites, nup) * binomial(n_sites, ndn));
+      REQUIRE(sum_of_dims_updn ==
+              binomial(n_sites, nup) * binomial(n_sites - nup, ndn));
     }
   }
-  REQUIRE(sum_of_dims == pow(4, n_sites));
+  REQUIRE(sum_of_dims == pow(3, n_sites));
 }
 
-TEST_CASE("tj_symmetric", "[models][tJSymmetric]") {
+TEST_CASE("tj_symmetric", "[models][tj_symmetric]") {
 
-  // Test the Hubbard chain
+  // Test linear chains
   for (int n_sites = 1; n_sites < 7; ++n_sites) {
-    test_tj_chain<uint16_t>(n_sites);
-    test_tj_chain<uint32_t>(n_sites);
-    test_tj_chain<uint64_t>(n_sites);
+
+    // create cyclic space group
+    std::vector<std::vector<int>> permutations;
+    for (int sym = 0; sym < n_sites; ++sym) {
+      std::vector<int> permutation;
+      for (int site = 0; site < n_sites; ++site) {
+        int newsite = (site + sym) % n_sites;
+        permutation.push_back(newsite);
+      }
+      permutations.push_back(permutation);
+    }
+    auto group = PermutationGroup(permutations);
+
+    // Create irreps
+    std::vector<Representation> irreps;
+    for (int k = 0; k < n_sites; ++k) {
+      std::vector<complex> chis;
+      for (int l = 0; l < n_sites; ++l)
+        chis.push_back({std::cos(2 * M_PI * l * k / n_sites),
+                        std::sin(2 * M_PI * l * k / n_sites)});
+      irreps.push_back(Representation(chis));
+    }
+
+    check_dimensions_sum_up<uint16_t>(n_sites, group, irreps);
+    check_dimensions_sum_up<uint32_t>(n_sites, group, irreps);
+    check_dimensions_sum_up<uint64_t>(n_sites, group, irreps);
   }
 
   // test a 3x3 triangular lattice
   int n_sites = 9;
-  lila::Log.out("tJSymmetric triangular 3x3 test");
+  lila::Log.out("tj_symmetric triangular 3x3 test");
+
+  std::string lfile = "data/triangular.9.hop.sublattices.tsl.lat";
+  auto permutations = hydra::read_permutations(lfile);
+  auto group = PermutationGroup(permutations);
 
   std::vector<std::pair<std::string, int>> rep_name_mult = {
       {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
@@ -207,39 +78,14 @@ TEST_CASE("tj_symmetric", "[models][tJSymmetric]") {
       {"K1.D3.A1", 1},    {"K1.D3.A2", 1},    {"K1.D3.E", 2},
       {"Y.C1.A", 6}};
 
-  std::string lfile = "data/triangular.9.hop.sublattices.tsl.lat";
-  auto permutations = hydra::read_permutations(lfile);
-  auto space_group = PermutationGroup(permutations);
-
-  idx_t sum_dim = 0;
-  for (int nup = 0; nup <= n_sites; ++nup) {
-    for (int ndn = 0; ndn <= n_sites; ++ndn) {
-      idx_t sum_dim_updn = 0;
-
-      for (auto [name, mult] : rep_name_mult) {
-        auto irrep = read_represenation(lfile, name);
-        auto tj =
-            tJSymmetric<uint16_t>(n_sites, nup, ndn, space_group,
-            irrep);
-
-        idx_t dim = tj.size() * mult;
-        // lila::Log.out(
-        //     "Hubbard Triangular 3x3: n_sites: {}, nup: {}, ndn: {}, k: "
-        //     "{}(x{}), size: {}",
-        //     n_sites, nup, ndn, name, mult, tj.size());
-        test_indices(tj);
-
-        sum_dim_updn += dim;
-        sum_dim += dim;
-      }
-      auto tj_nosym = tJ<uint16_t>(n_sites, nup, ndn);
-      REQUIRE(sum_dim_updn == tj_nosym.size());
-      REQUIRE(sum_dim_updn == binomial(n_sites, nup) * binomial(n_sites,
-      ndn));
-
-      // lila::Log.out("size: {} {}", sum_dim_updn, tj_nosym.size());
+  std::vector<Representation> irreps;
+  for (auto [name, mult] : rep_name_mult) {
+    for (int i = 0; i < mult; ++i) {
+      irreps.push_back(read_represenation(lfile, name));
     }
   }
-  REQUIRE(sum_dim == (idx_t)pow(4, n_sites));
 
+  check_dimensions_sum_up<uint16_t>(n_sites, group, irreps);
+  check_dimensions_sum_up<uint32_t>(n_sites, group, irreps);
+  check_dimensions_sum_up<uint64_t>(n_sites, group, irreps);
 }

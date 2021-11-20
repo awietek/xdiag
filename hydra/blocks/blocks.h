@@ -16,7 +16,7 @@ template <typename bit_t = std_bit_t> class SpinhalfMPI;
 template <typename bit_t = std_bit_t> class tJ;
 template <typename bit_t = std_bit_t> class tJSymmetric;
 template <typename bit_t = std_bit_t,
-          class GroupAction = PermutationGroupLookup<bit_t>>
+          class GroupAction = PermutationGroupAction>
 class tJSymmetricSimple;
 
 template <typename bit_t = std_bit_t> class Electron;
@@ -24,7 +24,7 @@ template <typename bit_t = std_bit_t,
           class GroupAction = PermutationGroupLookup<bit_t>>
 class ElectronSymmetric;
 template <typename bit_t = std_bit_t,
-          class GroupAction = PermutationGroupLookup<bit_t>>
+          class GroupAction = PermutationGroupAction>
 class ElectronSymmetricSimple;
 template <typename bit_t = std_bit_t> class ElectronMPI;
 

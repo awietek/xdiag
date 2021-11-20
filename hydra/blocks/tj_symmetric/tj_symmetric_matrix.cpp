@@ -3,7 +3,7 @@
 #include <hydra/blocks/tj_symmetric/tj_symmetric.h>
 #include <hydra/blocks/tj_symmetric/terms/tj_symmetric_exchange.h>
 // #include <hydra/blocks/tj_symmetric/terms/tj_symmetric_hopping.h>
-// #include <hydra/blocks/tj_symmetric/terms/tj_symmetric_ising.h>
+#include <hydra/blocks/tj_symmetric/terms/tj_symmetric_ising.h>
 
 #include <hydra/blocks/utils/block_utils.h>
 
@@ -32,7 +32,7 @@ lila::Matrix<double> MatrixReal(BondList const &bonds,
   // auto const &indexing_out = block_out.indexing();
 
   // do_hopping_symmetric<bit_t, double>(bonds, couplings, indexing_in, fill);
-  // do_ising_symmetric<bit_t>(bonds, couplings, indexing_in, fill);
+  do_ising_symmetric<bit_t, double>(bonds, couplings, indexing_in, fill);
   do_exchange_symmetric<bit_t, double>(bonds, couplings, indexing_in, fill);
 
   return mat;
@@ -66,13 +66,11 @@ lila::Matrix<complex> MatrixCplx(BondList const &bonds,
     mat(idx_out, idx_in) += val;
   };
 
-  lila::Log("m: {}, n: {}", mat.m(), mat.n());
-
   auto const &indexing_in = block_in.indexing();
   // auto const &indexing_out = block_out.indexing();
 
   // do_hopping_symmetric<bit_t, complex>(bonds, couplings, indexing_in, fill);
-  // do_ising_symmetric<bit_t>(bonds, couplings, indexing_in, fill);
+  do_ising_symmetric<bit_t, complex>(bonds, couplings, indexing_in, fill);
   do_exchange_symmetric<bit_t, complex>(bonds, couplings, indexing_in, fill);
 
   return mat;

@@ -3,7 +3,7 @@
 #include <hydra/blocks/tj_symmetric/tj_symmetric.h>
 #include <hydra/blocks/tj_symmetric/terms/tj_symmetric_exchange.h>
 // #include <hydra/blocks/tj_symmetric/terms/tj_symmetric_hopping.h>
-// #include <hydra/blocks/tj_symmetric/terms/tj_symmetric_ising.h>
+#include <hydra/blocks/tj_symmetric/terms/tj_symmetric_ising.h>
 
 #include <hydra/blocks/utils/block_utils.h>
 
@@ -33,7 +33,7 @@ void Apply(BondList const &bonds, Couplings const &couplings,
   // auto const &indexing_out = block_out.indexing();
   
   // do_hopping_symmetric<bit_t, double>(bonds, couplings, block_in, fill);
-  // do_ising_symmetric<bit_t>(bonds, couplings, block_in, fill);
+  do_ising_symmetric<bit_t, double>(bonds, couplings, indexing_in, fill);
   do_exchange_symmetric<bit_t, double>(bonds, couplings, indexing_in, fill);
 }
 
@@ -72,7 +72,7 @@ void Apply(BondList const &bonds, Couplings const &couplings,
   auto const &indexing_in = block_in.indexing();
 
   // do_hopping_symmetric<bit_t, complex>(bonds, couplings, block_in, fill);
-  // do_ising_symmetric<bit_t>(bonds, couplings, block_in, fill);
+  do_ising_symmetric<bit_t, complex>(bonds, couplings, indexing_in, fill);
   do_exchange_symmetric<bit_t, complex>(bonds, couplings, indexing_in, fill);
 }
 

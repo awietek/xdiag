@@ -49,10 +49,10 @@ public:
     bit_t dns_rep = group_action_.apply(sym, dns);
     bit_t dns_rep_c = bitops::extract(dns_rep, not_ups);
 
-    int n_sites = 7;
-    lila::Log("not_ups: {}", BSTR(not_ups));
-    lila::Log("dns_rep: {}", BSTR(dns_rep));
-    lila::Log("dns_rep_c: {}", BSTR(dns_rep_c));
+    // int n_sites = 7;
+    // lila::Log("not_ups: {}", BSTR(not_ups));
+    // lila::Log("dns_rep: {}", BSTR(dns_rep));
+    // lila::Log("dns_rep_c: {}", BSTR(dns_rep_c));
 
     idx_t idx_dns_rep = lintable_dnsc_.index(dns_rep_c);
     bool fermi_dn = (bitops::popcnt(dns & fermimask) & 1);

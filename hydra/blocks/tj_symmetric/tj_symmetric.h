@@ -56,7 +56,7 @@ private:
   indexing::tJSymmetricIndexing<bit_t> const &indexing() const {
     return indexing_;
   }
-
+  
   friend lila::Matrix<double> MatrixReal<bit_t>(BondList const &,
                                                 Couplings const &,
                                                 tJSymmetric<bit_t> const &,

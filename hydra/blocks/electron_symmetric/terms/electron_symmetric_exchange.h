@@ -108,8 +108,8 @@ void do_exchange_symmetric(BondList const &bonds, Couplings const &couplings,
                       norms_out[idx_dn_flip] / norms_in[idx_dn];
               }
 
-              idx_t idx_out2 = block.index(ups_flip, dns_flip);
-              int n_sites = block.n_sites();
+              // idx_t idx_out2 = block.index(ups_flip, dns_flip);
+              // int n_sites = block.n_sites();
               // lila::Log.out("tri s1: {} s2: {} {};{} -> {};{} -> {};{}  "
               //               "idx_in: {}, idx_out: {}/{}, val: {:.4f}",
               //               s1, s2, bits_to_string(ups, n_sites),
