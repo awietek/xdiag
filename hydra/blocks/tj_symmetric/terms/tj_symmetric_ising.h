@@ -1,86 +1,147 @@
 #pragma once
 
-#include <lila/all.h>
-
+#include <hydra/bitops/bitops.h>
+#include <hydra/blocks/utils/block_utils.h>
 #include <hydra/common.h>
-#include <hydra/models/models.h>
-#include <hydra/models/utils/model_utils.h>
+
+#include <hydra/blocks/tj_symmetric/tj_symmetric_indexing.h>
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
-#include <hydra/symmetries/symmetry_operations.h>
-#include <hydra/utils/bitops.h>
 
 namespace hydra::terms::tj_symmetric {
 
-template <class bit_t, class GroupAction, class Filler>
+template <class bit_t, class coeff_t, class Filler>
 void do_ising_symmetric(BondList const &bonds, Couplings const &couplings,
-                        tJSymmetric<bit_t, GroupAction> const &block,
+                        indexing::tJSymmetricIndexing<bit_t> const &indexing,
                         Filler &&fill) {
-  using utils::gbit;
-  using utils::popcnt;
+  using bitops::gbit;
+  using bitops::popcnt;
 
-  auto ising = bonds.bonds_of_type("HEISENBERG") +
-               bonds.bonds_of_type("ISING") + bonds.bonds_of_type("HB");
-  auto ising_tj = bonds.bonds_of_type("TJHEISENBERG") +
-                  bonds.bonds_of_type("TJISING") + bonds.bonds_of_type("TJHB");
+  auto const &group_action = indexing.group_action();
+  int n_sites = group_action.n_sites();
 
-  for (auto bond : ising + ising_tj) {
+  auto clean_bonds = utils::clean_bondlist(
+      bonds, couplings,
+      {"HEISENBERG", "HB", "ISING", "TJHEISENBERG", "TJISING", "TJHB"}, 2);
 
-    if (bond.size() != 2)
-      lila::Log.err("Error computing tJ Ising: "
-                    "bond must have exactly two sites defined");
+  for (auto bond : clean_bonds) {
 
-    if (!utils::coupling_is_zero(bond, couplings)) {
+    std::string type = bond.type();
+    std::string cpl = bond.coupling();
 
-      double J = lila::real(couplings[bond.coupling()]);
+    coeff_t J;
+    if constexpr (is_complex<coeff_t>()) {
+      J = couplings[cpl];
+    } else {
+      J = lila::real(couplings[cpl]);
+    }
 
-      // Set values for same/diff (tJ model definition)
-      std::string type = bond.type();
-      double val_same, val_diff;
-      if ((type == "HEISENBERG") || (type == "ISING") || (type == "HB")) {
-        val_same = J / 4.;
-        val_diff = -J / 4.;
-      } else if ((type == "TJHEISENBERG") || (type == "TJISING") ||
-                 (type == "TJHB")) {
-        val_same = 0.;
-        val_diff = -J / 2.;
-      }
+    int s1 = bond.site(0);
+    int s2 = bond.site(1);
+    if (s1 == s2) {
+      lila::Log.err(
+          "NotImplementedError: Ising bonds two identical sites (tJ block)");
+    }
 
-      int s1 = bond.site(0);
-      int s2 = bond.site(1);
-      bit_t s1mask = (bit_t)1 << s1;
-      bit_t s2mask = (bit_t)1 << s2;
-      bit_t mask = s1mask | s2mask;
+    // Set values for same/diff (tJ model definition)
+    coeff_t val_same, val_diff;
+    if ((type == "HEISENBERG") || (type == "ISING") || (type == "HB")) {
+      val_same = J / 4.;
+      val_diff = -J / 4.;
+    } else if ((type == "TJHEISENBERG") || (type == "TJISING") ||
+               (type == "TJHB")) {
+      val_same = 0.;
+      val_diff = -J / 2.;
+    }
 
-      for (auto [up, lower_upper] : block.ups_lower_upper_) {
-        idx_t lower = lower_upper.first;
-        idx_t upper = lower_upper.second;
+    // bitmasks for fast evaluations
+    bit_t s1mask = (bit_t)1 << s1;
+    bit_t s2mask = (bit_t)1 << s2;
+    bit_t mask = s1mask | s2mask;
+    bit_t sitesmask = ((bit_t)1 << n_sites) - 1;
 
-        if (popcnt(up & mask) == 2) { // both spins pointing up
-          for (idx_t idx = lower; idx < upper; ++idx) {
-            fill(idx, idx, val_same);
+    // Loop over all up configurations
+    for (idx_t idx_up = 0; idx_up < indexing.n_reps_up(); ++idx_up) {
+      bit_t ups = indexing.rep_up(idx_up);
+      idx_t up_offset = indexing.up_offset(idx_up);
+      auto const &dnss = indexing.dns_for_up_rep(ups);
+
+      if (popcnt(ups & mask) == 2) { // both spins pointing up
+        for (idx_t idx = up_offset; idx < up_offset + dnss.size(); ++idx) {
+          fill(idx, idx, val_same);
+        }
+      } else {
+        auto [l, u] = indexing.sym_limits_up(ups);
+        idx_t idx = up_offset;
+
+        // ups have trivial stabilizer => dns need to be deposited
+        if (u - l == 1) {
+          bit_t not_ups = (~ups) & sitesmask;
+
+          if (ups & s1mask) { // s1 is pointing up
+
+            for (auto dnsc : dnss) {
+              bit_t dns = bitops::deposit(dnsc, not_ups);
+              if (dns & s2mask) {
+                fill(idx, idx, val_diff);
+              }
+              ++idx;
+            }
+
+          } else if (ups & s2mask) { // s2 is pointing up
+
+            for (auto dnsc : dnss) {
+              bit_t dns = bitops::deposit(dnsc, not_ups);
+              if (dns & s1mask) {
+                fill(idx, idx, val_diff);
+              }
+              ++idx;
+            }
+
+          } else { // no upspins
+
+            for (auto dnsc : dnss) {
+              bit_t dns = bitops::deposit(dnsc, not_ups);
+              if (popcnt(dns & mask) == 2) {
+                fill(idx, idx, val_same);
+              }
+              ++idx;
+            }
           }
-        } else if (up & s1mask) { // s1 is pointing up
-          for (idx_t idx = lower; idx < upper; ++idx) {
-            bit_t dn = block.dns_[idx];
-            if (dn & s2mask)
-              fill(idx, idx, val_diff);
-          }
-        } else if (up & s2mask) { // s2 is pointing up
-          for (idx_t idx = lower; idx < upper; ++idx) {
-            bit_t dn = block.dns_[idx];
-            if (dn & s1mask)
-              fill(idx, idx, val_diff);
-          }
-        } else { // no upspins
-          for (idx_t idx = lower; idx < upper; ++idx) {
-            bit_t dn = block.dns_[idx];
-            if (popcnt(dn & mask) == 2)
-              fill(idx, idx, val_same);
+        }      // if (syms_up.size() == 1)
+        else { // ups have stabilizer => dns don't need to be deposited
+          if (ups & s1mask) { // s1 is pointing up
+
+            for (auto dns : dnss) {
+              if (dns & s2mask) {
+                fill(idx, idx, val_diff);
+              }
+              ++idx;
+            }
+
+          } else if (ups & s2mask) { // s2 is pointing up
+
+            for (auto dns : dnss) {
+              if (dns & s1mask) {
+                fill(idx, idx, val_diff);
+              }
+              ++idx;
+            }
+
+          } else { // no upspins
+
+            for (auto dns : dnss) {
+              if (popcnt(dns & mask) == 2) {
+                fill(idx, idx, val_same);
+              }
+              ++idx;
+            }
           }
         }
-      }
-    }
-  }
+
+      } // else of if (popcnt(ups & mask) == 2)
+    }   // loop over ups
+  }     // loop over bonds
 }
+
 } // namespace hydra::terms::tj_symmetric

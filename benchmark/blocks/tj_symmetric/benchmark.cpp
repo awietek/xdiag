@@ -35,7 +35,7 @@ int main() {
 
   Couplings cpls;
   cpls["T"] = 0.0;
-  cpls["JZ"] = 0.0;
+  cpls["JZ"] = 0.3;
   cpls["JXY"] = 1.0;
 
   int n_up = n_sites / 2;

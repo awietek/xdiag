@@ -84,9 +84,9 @@ TEST_CASE("tj_symmetric_matrix", "[blocks][tj_symmetric]") {
 
   // Test linear chains
   for (int n_sites = 2; n_sites < 7; ++n_sites) {
-    test_tj_symmetric_spectrum_chains<hydra::uint16>(n_sites);
-    test_tj_symmetric_spectrum_chains<hydra::uint32>(n_sites);
-    test_tj_symmetric_spectrum_chains<hydra::uint64>(n_sites);
+    test_tj_symmetric_spectrum_chains<uint16_t>(n_sites);
+    test_tj_symmetric_spectrum_chains<uint32_t>(n_sites);
+    test_tj_symmetric_spectrum_chains<uint64_t>(n_sites);
   }
 
   // test a 3x3 triangular lattice
