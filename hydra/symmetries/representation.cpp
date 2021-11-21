@@ -8,7 +8,11 @@
 namespace hydra {
 
 Representation::Representation(std::vector<complex> const &characters)
-    : characters_(characters), allowed_symmetries_(characters.size(), 0) {
+    : characters_(characters), characters_real_(characters.size()),
+      allowed_symmetries_(characters.size(), 0) {
+  for (int idx = 0; idx < (int)characters.size(); ++idx) {
+    characters_real_[idx] = std::real(characters[idx]);
+  }
   std::iota(allowed_symmetries_.begin(), allowed_symmetries_.end(), 0);
 }
 
@@ -20,12 +24,12 @@ Representation
 Representation::subgroup(std::vector<int> const &symmetry_numbers) const {
   std::vector<complex> sub_characters;
   for (auto sym : symmetry_numbers)
-    sub_characters.push_back(characters_(sym));
+    sub_characters.push_back(characters_[sym]);
   return Representation(sub_characters);
 }
 
 bool Representation::operator==(Representation const &rhs) const {
-  return lila::close(characters_, rhs.characters_);
+  return lila::close(lila::Vector(characters_), lila::Vector(rhs.characters_));
 }
 
 bool Representation::operator!=(Representation const &rhs) const {

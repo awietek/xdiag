@@ -5,7 +5,7 @@ int main() {
 
   lila::Log.set_verbosity(1);
 
-  int n_sites = 7;
+  int n_sites = 4;
   BondList bondlist;
   for (int s = 0; s < n_sites; ++s) {
     bondlist << Bond("HOP", "T", {s, (s + 1) % n_sites});
@@ -34,12 +34,12 @@ int main() {
   // auto bondlist = read_bondlist(lfile);
 
   Couplings cpls;
-  cpls["T"] = 0.0;
-  cpls["JZ"] = 0.3;
-  cpls["JXY"] = 1.0;
+  cpls["T"] = 1.0;
+  // cpls["JZ"] = 0.3;
+  // cpls["JXY"] = 1.0;
 
-  int n_up = n_sites / 2;
-  int n_dn = n_sites - n_up;
+  int n_up = n_sites / 2 - 1;
+  int n_dn = n_sites / 2 - 1;
   {
 
     for (int k = 0; k < n_sites; ++k) {
@@ -64,7 +64,7 @@ int main() {
 
     // lila::Log.out("TJ e0: {}", e0);
 
-    auto block2 = Spinhalf(n_sites, n_up);
+    auto block2 = tJ(n_sites, n_up, n_dn);
     auto H2 = MatrixReal(bondlist, cpls, block2, block2);
     // LilaPrint(H2);
     LilaPrint(lila::EigenvaluesSym(H2));

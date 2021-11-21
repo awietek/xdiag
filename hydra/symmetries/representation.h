@@ -15,18 +15,23 @@ public:
   Representation(std::vector<complex> const &characters,
                  std::vector<int> const &allowed_symmetries);
 
-  inline complex character(int idx) const { return characters_(idx); }
+  complex character(int idx) const { return characters_.at(idx); }
   std::vector<int> allowed_symmetries() const { return allowed_symmetries_; }
 
+  std::vector<complex> const &characters() const { return characters_; }
+  std::vector<double> const &characters_real() const {
+    return characters_real_;
+  }
   Representation subgroup(std::vector<int> const &symmetry_numbers) const;
 
-  inline idx_t size() const { return characters_.size(); }
+  idx_t size() const { return characters_.size(); }
 
   bool operator==(Representation const &rhs) const;
   bool operator!=(Representation const &rhs) const;
 
 private:
-  lila::Vector<complex> characters_;
+  std::vector<complex> characters_;
+  std::vector<double> characters_real_;
   std::vector<int> allowed_symmetries_;
 };
 

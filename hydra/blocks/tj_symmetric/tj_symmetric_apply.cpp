@@ -1,9 +1,9 @@
 #include "tj_symmetric_apply.h"
 
-#include <hydra/blocks/tj_symmetric/tj_symmetric.h>
 #include <hydra/blocks/tj_symmetric/terms/tj_symmetric_exchange.h>
-// #include <hydra/blocks/tj_symmetric/terms/tj_symmetric_hopping.h>
+#include <hydra/blocks/tj_symmetric/terms/tj_symmetric_hopping.h>
 #include <hydra/blocks/tj_symmetric/terms/tj_symmetric_ising.h>
+#include <hydra/blocks/tj_symmetric/tj_symmetric.h>
 
 #include <hydra/blocks/utils/block_utils.h>
 
@@ -31,27 +31,11 @@ void Apply(BondList const &bonds, Couplings const &couplings,
 
   auto const &indexing_in = block_in.indexing();
   // auto const &indexing_out = block_out.indexing();
-  
-  // do_hopping_symmetric<bit_t, double>(bonds, couplings, block_in, fill);
+
+  do_hopping_symmetric<bit_t, double>(bonds, couplings, indexing_in, fill);
   do_ising_symmetric<bit_t, double>(bonds, couplings, indexing_in, fill);
   do_exchange_symmetric<bit_t, double>(bonds, couplings, indexing_in, fill);
 }
-
-template void Apply<uint16_t>(BondList const &bonds, Couplings const &couplings,
-                              tJSymmetric<uint16_t> const &block_in,
-                              lila::Vector<double> const &vec_in,
-                              tJSymmetric<uint16_t> const &block_out,
-                              lila::Vector<double> &vec_out);
-template void Apply<uint32_t>(BondList const &bonds, Couplings const &couplings,
-                              tJSymmetric<uint32> const &block_in,
-                              lila::Vector<double> const &vec_in,
-                              tJSymmetric<uint32> const &block_out,
-                              lila::Vector<double> &vec_out);
-template void Apply<uint64_t>(BondList const &bonds, Couplings const &couplings,
-                              tJSymmetric<uint64> const &block_in,
-                              lila::Vector<double> const &vec_in,
-                              tJSymmetric<uint64> const &block_out,
-                              lila::Vector<double> &vec_out);
 
 template <class bit_t>
 void Apply(BondList const &bonds, Couplings const &couplings,
@@ -71,25 +55,41 @@ void Apply(BondList const &bonds, Couplings const &couplings,
   };
   auto const &indexing_in = block_in.indexing();
 
-  // do_hopping_symmetric<bit_t, complex>(bonds, couplings, block_in, fill);
+  do_hopping_symmetric<bit_t, complex>(bonds, couplings, indexing_in, fill);
   do_ising_symmetric<bit_t, complex>(bonds, couplings, indexing_in, fill);
   do_exchange_symmetric<bit_t, complex>(bonds, couplings, indexing_in, fill);
 }
 
-template void Apply<uint16_t>(BondList const &bonds, Couplings const &couplings,
-                              tJSymmetric<uint16_t> const &block_in,
-                              lila::Vector<complex> const &vec_in,
-                              tJSymmetric<uint16_t> const &block_out,
-                              lila::Vector<complex> &vec_out);
-template void Apply<uint32_t>(BondList const &bonds, Couplings const &couplings,
-                              tJSymmetric<uint32> const &block_in,
-                              lila::Vector<complex> const &vec_in,
-                              tJSymmetric<uint32> const &block_out,
-                              lila::Vector<complex> &vec_out);
-template void Apply<uint64_t>(BondList const &bonds, Couplings const &couplings,
-                              tJSymmetric<uint64> const &block_in,
-                              lila::Vector<complex> const &vec_in,
-                              tJSymmetric<uint64> const &block_out,
-                              lila::Vector<complex> &vec_out);
+template void Apply<uint16_t>(BondList const &, Couplings const &,
+                              tJSymmetric<uint16_t> const &,
+                              lila::Vector<double> const &,
+                              tJSymmetric<uint16_t> const &,
+                              lila::Vector<double> &);
+template void Apply<uint32_t>(BondList const &, Couplings const &,
+                              tJSymmetric<uint32> const &,
+                              lila::Vector<double> const &,
+                              tJSymmetric<uint32> const &,
+                              lila::Vector<double> &);
+template void Apply<uint64_t>(BondList const &, Couplings const &,
+                              tJSymmetric<uint64> const &,
+                              lila::Vector<double> const &,
+                              tJSymmetric<uint64> const &,
+                              lila::Vector<double> &);
+
+template void Apply<uint16_t>(BondList const &, Couplings const &,
+                              tJSymmetric<uint16_t> const &,
+                              lila::Vector<complex> const &,
+                              tJSymmetric<uint16_t> const &,
+                              lila::Vector<complex> &);
+template void Apply<uint32_t>(BondList const &, Couplings const &,
+                              tJSymmetric<uint32> const &,
+                              lila::Vector<complex> const &,
+                              tJSymmetric<uint32> const &,
+                              lila::Vector<complex> &);
+template void Apply<uint64_t>(BondList const &, Couplings const &,
+                              tJSymmetric<uint64> const &,
+                              lila::Vector<complex> const &,
+                              tJSymmetric<uint64> const &,
+                              lila::Vector<complex> &);
 
 } // namespace hydra

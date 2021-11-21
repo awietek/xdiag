@@ -17,14 +17,13 @@ void do_exchange_symmetric(BondList const &bonds, Couplings const &couplings,
   using bitops::gbit;
   using bitops::popcnt;
 
-  auto clean_bonds = utils::clean_bondlist(
-      bonds, couplings,
-      {"HEISENBERG", "HB", "EXCHANGE", "TJHEISENBERG", "TJHB"}, 2);
   auto const &group_action = indexing.group_action();
   auto const &irrep = indexing.irrep();
   int n_sites = group_action.n_sites();
-  bit_t sitesmask = ((bit_t)1 << n_sites) - 1;
 
+  auto clean_bonds = utils::clean_bondlist(
+      bonds, couplings,
+      {"HEISENBERG", "HB", "EXCHANGE", "TJHEISENBERG", "TJHB"}, 2);
   for (auto bond : clean_bonds) {
 
     // Prepare bitmasks
@@ -36,6 +35,7 @@ void do_exchange_symmetric(BondList const &bonds, Couplings const &couplings,
     int l = std::min(s1, s2);
     int u = std::max(s1, s2);
     bit_t fermimask = (((bit_t)1 << (u - l - 1)) - 1) << (l + 1);
+    bit_t sitesmask = ((bit_t)1 << n_sites) - 1;
 
     // // DEBUG PRINT states
     // lila::Log("\n\n\n");
@@ -107,13 +107,12 @@ void do_exchange_symmetric(BondList const &bonds, Couplings const &couplings,
         int sym = syms_up_out[0];
 
         // Fix the bloch factor
-        coeff_t bloch_factor;
+        coeff_t prefac;
         if constexpr (is_complex<coeff_t>()) {
-          bloch_factor = irrep.character(sym);
+          prefac = -Jhalf * irrep.character(sym);
         } else {
-          bloch_factor = lila::real(irrep.character(sym));
+          prefac = -Jhalf * lila::real(irrep.character(sym));
         }
-        coeff_t prefac = -bloch_factor * Jhalf;
 
         // Fermi-sign of up spins
         bool fermi_up = (popcnt(ups & fermimask) & 1);
@@ -135,7 +134,8 @@ void do_exchange_symmetric(BondList const &bonds, Couplings const &couplings,
               // lila::Log("mask: {} {}", BSTR(flipmask), BSTR(flipmask));
               // lila::Log("to  : {};{}", BSTR(ups_flip), BSTR(dns_flip));
               // bit_t dns_flip_rep = group_action.apply(sym, dns_flip);
-              // lila::Log("rep : {};{}", BSTR(ups_flip_rep), BSTR(dns_flip_rep));
+              // lila::Log("rep : {};{}", BSTR(ups_flip_rep),
+              // BSTR(dns_flip_rep));
 
               auto [idx_dn_flip, fermi_dn] = indexing.index_dn_fermi(
                   dns_flip, sym, not_ups_flip_rep, fermimask);
@@ -147,11 +147,12 @@ void do_exchange_symmetric(BondList const &bonds, Couplings const &couplings,
               idx_t idx_out = up_offset_out + idx_dn_flip;
               // lila::Log("idx_dn: {}, idx_dn_flip: {}", idx_dn, idx_dn_flip);
 
-              // lila::Log("off_in: {}, off_out: {}", up_offset_in, up_offset_out);
-              // lila::Log("idx_in: {}, idx_out: {}", idx_in, idx_out);
-              // lila::Log("val: {}", lila::real(val));
-	      // lila::Log("fill: {}", lila::real((fermi_up ^ fermi_dn) ? -val : val));
-	      
+              // lila::Log("off_in: {}, off_out: {}", up_offset_in,
+              // up_offset_out); lila::Log("idx_in: {}, idx_out: {}", idx_in,
+              // idx_out); lila::Log("val: {}", lila::real(val));
+              // lila::Log("fill: {}", lila::real((fermi_up ^ fermi_dn) ? -val :
+              // val));
+
               fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -val : val);
             }
 
@@ -181,7 +182,8 @@ void do_exchange_symmetric(BondList const &bonds, Couplings const &couplings,
               // lila::Log("mask: {} {}", BSTR(flipmask), BSTR(flipmask));
               // lila::Log("to  : {},{}", BSTR(ups_flip), BSTR(dns_flip));
               // bit_t dns_flip_rep = group_action.apply(sym, dns_flip);
-              // lila::Log("rep : {},{}", BSTR(ups_flip_rep), BSTR(dns_flip_rep));
+              // lila::Log("rep : {},{}", BSTR(ups_flip_rep),
+              // BSTR(dns_flip_rep));
 
               auto [idx_dn_flip, fermi_dn] = indexing.index_dn_fermi(
                   dns_flip, sym, not_ups_flip_rep, fermimask);
@@ -195,7 +197,8 @@ void do_exchange_symmetric(BondList const &bonds, Couplings const &couplings,
               idx_t idx_out = up_offset_out + idx_dn_flip;
               // lila::Log("idx_in: {}, idx_out: {}", idx_in, idx_out);
               // lila::Log("val: {}", lila::real(val));
-	      // lila::Log("fill: {}", lila::real((fermi_up ^ fermi_dn) ? -val : val));
+              // lila::Log("fill: {}", lila::real((fermi_up ^ fermi_dn) ? -val :
+              // val));
               fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -val : val);
             }
             ++idx_dn;
@@ -243,11 +246,12 @@ void do_exchange_symmetric(BondList const &bonds, Couplings const &couplings,
               // lila::Log("to  : {},{}", BSTR(ups_flip), BSTR(dns_flip));
               // bit_t dns_flip_rep = symmetries::representative_subset(
               //     dns_flip, group_action, syms);
-              // lila::Log("rep : {};{}", BSTR(ups_flip_rep), BSTR(dns_flip_rep));
+              // lila::Log("rep : {};{}", BSTR(ups_flip_rep),
+              // BSTR(dns_flip_rep));
               auto [idx_dn_flip, fermi_dn, sym] = indexing.index_dn_fermi_sym(
                   dns_flip, syms, dnss_out, fermimask);
 
-	      // lila::Log("idx_dn: {}, idx_dn_flip: {}", idx_dn, idx_dn_flip);
+              // lila::Log("idx_dn: {}, idx_dn_flip: {}", idx_dn, idx_dn_flip);
 
               if (idx_dn_flip != invalid_index) {
                 bool fermi_up =
@@ -261,7 +265,8 @@ void do_exchange_symmetric(BondList const &bonds, Couplings const &couplings,
                 // lila::Log("idx_in: {}, idx_out: {}", idx_in, idx_out);
                 // lila::Log("val: {}", lila::real(val));
 
-		// lila::Log("fill: {}", lila::real((fermi_up ^ fermi_dn) ? -val : val));
+                // lila::Log("fill: {}", lila::real((fermi_up ^ fermi_dn) ? -val
+                // : val));
 
                 fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -val : val);
               }
@@ -297,7 +302,8 @@ void do_exchange_symmetric(BondList const &bonds, Couplings const &couplings,
               // lila::Log("to  : {};{}", BSTR(ups_flip), BSTR(dns_flip));
               // bit_t dns_flip_rep = symmetries::representative_subset(
               //     dns_flip, group_action, syms);
-              // lila::Log("rep : {};{}", BSTR(ups_flip_rep), BSTR(dns_flip_rep));
+              // lila::Log("rep : {};{}", BSTR(ups_flip_rep),
+              // BSTR(dns_flip_rep));
               auto [idx_dn_flip, fermi_dn, sym] = indexing.index_dn_fermi_sym(
                   dns_flip, syms, dnss_out, fermimask);
 
@@ -317,7 +323,8 @@ void do_exchange_symmetric(BondList const &bonds, Couplings const &couplings,
 
                 // lila::Log("idx_in: {}, idx_out: {}", idx_in, idx_out);
                 // lila::Log("val: {}", lila::real(val));
-		// lila::Log("fill: {}", lila::real((fermi_up ^ fermi_dn) ? -val : val));
+                // lila::Log("fill: {}", lila::real((fermi_up ^ fermi_dn) ? -val
+                // : val));
                 fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -val : val);
               }
             }
