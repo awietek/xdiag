@@ -36,8 +36,9 @@ void do_ising_symmetric(BondList const &bonds, Couplings const &couplings,
       J = lila::real(couplings[cpl]);
     }
 
-    int s1 = bond.site(0);
-    int s2 = bond.site(1);
+    assert(bond.size() == 2);
+    int s1 = bond[0];
+    int s2 = bond[1];
     if (s1 == s2) {
       lila::Log.err(
           "NotImplementedError: Ising bonds two identical sites (tJ block)");

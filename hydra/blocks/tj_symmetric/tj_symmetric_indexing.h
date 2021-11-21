@@ -48,12 +48,6 @@ public:
                                         bit_t fermimask) const {
     bit_t dns_rep = group_action_.apply(sym, dns);
     bit_t dns_rep_c = bitops::extract(dns_rep, not_ups);
-
-    // int n_sites = 7;
-    // lila::Log("not_ups: {}", BSTR(not_ups));
-    // lila::Log("dns_rep: {}", BSTR(dns_rep));
-    // lila::Log("dns_rep_c: {}", BSTR(dns_rep_c));
-
     idx_t idx_dns_rep = lintable_dnsc_.index(dns_rep_c);
     bool fermi_dn = (bitops::popcnt(dns & fermimask) & 1);
     fermi_dn ^= fermi_bool_dn(sym, dns);
@@ -118,6 +112,13 @@ public:
     } else {
       return norms_for_up_rep_.at(ups);
     }
+  }
+
+  idx_t upsc_index(bit_t ups) const {
+    return lintable_upsc_.index(ups);
+  }
+  idx_t dnsc_index(bit_t dns) const {
+    return lintable_dnsc_.index(dns);
   }
 
 private:
