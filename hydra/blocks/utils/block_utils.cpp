@@ -1,5 +1,7 @@
 #include "block_utils.h"
 
+#include <lila/all.h>
+
 namespace hydra::utils {
 
 bool coupling_is_zero(Bond const &bond, Couplings const &couplings) {
@@ -78,6 +80,12 @@ BondList clean_bondlist(BondList const &bonds, Couplings const &cpls,
   }
 
   return clean_bonds;
+}
+
+void warn_if_complex(complex x, std::string msg) {
+  if (!lila::close(lila::imag(x), 0.)) {
+    lila::Log.warn("WarningComplexNumber: {}", msg);
+  }
 }
 
 } // namespace hydra::utils
