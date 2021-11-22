@@ -26,6 +26,13 @@ void do_exchange_symmetric(BondList const &bonds, Couplings const &couplings,
       {"HEISENBERG", "HB", "EXCHANGE", "TJHEISENBERG", "TJHB"}, 2);
   for (auto bond : clean_bonds) {
 
+    std::string cpl = bond.coupling();
+    if constexpr (is_real<coeff_t>()) {
+      utils::warn_if_complex(
+          couplings[cpl],
+          "imaginary part discarded (tj / symmetric / exchange)");
+    }
+
     // Prepare bitmasks
     int s1 = bond[0];
     int s2 = bond[1];
@@ -71,7 +78,6 @@ void do_exchange_symmetric(BondList const &bonds, Couplings const &couplings,
       }
 
       // Set the correct prefactor
-      std::string cpl = bond.coupling();
       coeff_t Jhalf;
       if constexpr (is_complex<coeff_t>()) {
         if (gbit(ups, s1)) {

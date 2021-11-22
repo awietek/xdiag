@@ -33,6 +33,9 @@ void do_ising_symmetric(BondList const &bonds, Couplings const &couplings,
     if constexpr (is_complex<coeff_t>()) {
       J = couplings[cpl];
     } else {
+      utils::warn_if_complex(
+          couplings[cpl],
+          "imaginary part discarded (tj / symmetric / exchange)");
       J = lila::real(couplings[cpl]);
     }
 

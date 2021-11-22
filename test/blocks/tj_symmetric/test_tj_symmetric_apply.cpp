@@ -70,38 +70,76 @@ template <class bit_t> void test_tj_symmetric_apply_chains(int n_sites) {
   test_symmetric_apply<uint16>(bondlist, couplings, space_group, irreps);
 }
 
-TEST_CASE("tJSymmetric_Apply", "[models]") {
+TEST_CASE("tj_symmetric_apply", "[blocks]") {
   using namespace hydra::testcases::tj;
   using namespace hydra::testcases::electron;
 
   // Test linear chains
   for (int n_sites = 2; n_sites < 8; ++n_sites) {
-    test_tj_symmetric_apply_chains<hydra::uint16>(n_sites);
-    test_tj_symmetric_apply_chains<hydra::uint32>(n_sites);
-    test_tj_symmetric_apply_chains<hydra::uint64>(n_sites);
+    test_tj_symmetric_apply_chains<uint16_t>(n_sites);
+    test_tj_symmetric_apply_chains<uint32_t>(n_sites);
+    test_tj_symmetric_apply_chains<uint64_t>(n_sites);
+  }
+  {
+    // test a 3x3 triangular lattice
+    lila::Log.out("Tj 3x3 triangular, symmetric apply test");
+    std::string lfile = "data/triangular.9.hop.sublattices.tsl.lat";
+
+    auto bondlist = read_bondlist(lfile);
+    Couplings couplings;
+    couplings["T"] = 1.0;
+    couplings["U"] = 5.0;
+    auto permutations = hydra::read_permutations(lfile);
+    auto space_group = PermutationGroup(permutations);
+
+    std::vector<std::pair<std::string, int>> rep_name_mult = {
+        {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
+        {"K0.D3.A1", 1},    {"K0.D3.A2", 1},    {"K0.D3.E", 2},
+        {"K1.D3.A1", 1},    {"K1.D3.A2", 1},    {"K1.D3.E", 2},
+        {"Y.C1.A", 6}};
+
+    std::vector<Representation> irreps;
+    for (auto [name, mult] : rep_name_mult) {
+      irreps.push_back(read_represenation(lfile, name));
+    }
+    test_symmetric_apply<uint16_t>(bondlist, couplings, space_group, irreps);
+    test_symmetric_apply<uint32_t>(bondlist, couplings, space_group, irreps);
+    test_symmetric_apply<uint64_t>(bondlist, couplings, space_group, irreps);
   }
 
-  // test a 3x3 triangular lattice
-  lila::Log.out("Tj 3x3 triangular, symmetric apply test");
-  using bit_t = uint16;
-  std::string lfile = "data/triangular.9.hop.sublattices.tsl.lat";
+  {
+    // test a 3x3 triangular lattice with complex flux
+    lila::Log.out("tJ 3x3 triangular staggered, symmetric apply test, complex");
+    std::string lfile =
+        "data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.lat";
 
-  auto bondlist = read_bondlist(lfile);
-  Couplings couplings;
-  couplings["T"] = 1.0;
-  couplings["U"] = 5.0;
-  auto permutations = hydra::read_permutations(lfile);
-  auto space_group = PermutationGroup(permutations);
+    auto bondlist = read_bondlist(lfile);
+    std::vector<double> etas{0.0, 0.1, 0.2, 0.3};
+    auto permutations = hydra::read_permutations(lfile);
+    auto space_group = PermutationGroup(permutations);
 
-  std::vector<std::pair<std::string, int>> rep_name_mult = {
-      {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
-      {"K0.D3.A1", 1},    {"K0.D3.A2", 1},    {"K0.D3.E", 2},
-      {"K1.D3.A1", 1},    {"K1.D3.A2", 1},    {"K1.D3.E", 2},
-      {"Y.C1.A", 6}};
+    std::vector<std::pair<std::string, int>> rep_name_mult = {
+        {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
+        {"K0.D3.A1", 1},    {"K0.D3.A2", 1},    {"K0.D3.E", 2},
+        {"K1.D3.A1", 1},    {"K1.D3.A2", 1},    {"K1.D3.E", 2},
+        {"Y.C1.A", 6}};
 
-  std::vector<Representation> irreps;
-  for (auto [name, mult] : rep_name_mult) {
-    irreps.push_back(read_represenation(lfile, name));
+    std::vector<Representation> irreps;
+    std::vector<int> multiplicities;
+    for (auto [name, mult] : rep_name_mult) {
+      irreps.push_back(read_represenation(lfile, name));
+      multiplicities.push_back(mult);
+    }
+
+    for (auto eta : etas) {
+      lila::Log("eta: {:.2f}", eta);
+      Couplings couplings;
+      couplings["TPHI"] = 1.0 * cos(eta * M_PI);
+      couplings["JPHI"] = 1.0 * sin(2 * eta * M_PI);
+
+      test_symmetric_apply<uint16_t>(bondlist, couplings, space_group, irreps);
+      test_symmetric_apply<uint32_t>(bondlist, couplings, space_group, irreps);
+      test_symmetric_apply<uint64_t>(bondlist, couplings, space_group, irreps);
+    }
   }
-  test_symmetric_apply<bit_t>(bondlist, couplings, space_group, irreps);
 }

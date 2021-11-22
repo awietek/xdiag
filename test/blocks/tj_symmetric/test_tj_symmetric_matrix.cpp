@@ -46,7 +46,7 @@ void test_symmetric_spectra(BondList bondlist, Couplings couplings,
             auto eigs_sym_k = lila::EigenvaluesSym(H_sym);
 
             // Check whether results are the same for real blocks
-            if (!is_complex(tj.irrep())) {
+            if (is_real(tj.irrep()) && is_real(couplings)) {
               auto H_sym_real = MatrixReal(bondlist, couplings, tj, tj);
               auto eigs_sym_k_real = lila::EigenvaluesSym(H_sym);
               REQUIRE(lila::close(eigs_sym_k, eigs_sym_k_real));
@@ -58,6 +58,9 @@ void test_symmetric_spectra(BondList bondlist, Couplings couplings,
           }
         }
         std::sort(eigs_sym.begin(), eigs_sym.end());
+
+        // LilaPrint(eigs_sym(0));
+        // LilaPrint(eigs_nosym(0));
 
         // Check if all eigenvalues agree
         REQUIRE(lila::close(eigs_sym, eigs_nosym));
@@ -124,12 +127,12 @@ TEST_CASE("tj_symmetric_matrix", "[blocks][tj_symmetric]") {
   {
     // test a 3x3 triangular lattice with complex flux
     lila::Log.out(
-        "tJ 3x3 triangular staggered, symmetric spectra test, complex");
+        "tJ 3x3 triangular staggered flux, symmetric spectra test, complex");
     std::string lfile =
         "data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.lat";
 
     auto bondlist = read_bondlist(lfile);
-    std::vector<double> etas{0.0, 0.1, 0.2, 0.3};
+    std::vector<double> etas{0.1, 0.2, 0.3};
     auto permutations = hydra::read_permutations(lfile);
     auto space_group = PermutationGroup(permutations);
 
@@ -149,8 +152,8 @@ TEST_CASE("tj_symmetric_matrix", "[blocks][tj_symmetric]") {
     for (auto eta : etas) {
       lila::Log("eta: {:.2f}", eta);
       Couplings couplings;
-      couplings["TPHI"] = 1.0 * cos(eta * M_PI);
-      couplings["JPHI"] = 1.0 * sin(2 * eta * M_PI);
+      couplings["TPHI"] = complex(cos(eta * M_PI), sin(eta * M_PI));
+      couplings["JPHI"] = complex(cos(2 * eta * M_PI), sin(2 * eta * M_PI));
       test_symmetric_spectra<uint16_t>(bondlist, couplings, space_group, irreps,
                                        multiplicities);
       test_symmetric_spectra<uint32_t>(bondlist, couplings, space_group, irreps,

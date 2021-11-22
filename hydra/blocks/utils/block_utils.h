@@ -25,6 +25,6 @@ void check_symmetric_operator_real(BondList const &bonds, Couplings const &cpls,
 BondList clean_bondlist(BondList const &bonds, Couplings const &cpls,
                         std::vector<std::string> desired_bond_types,
                         int allowed_size);
+void warn_if_complex(complex x, std::string msg = "");
 
-  
 } // namespace hydra::utils

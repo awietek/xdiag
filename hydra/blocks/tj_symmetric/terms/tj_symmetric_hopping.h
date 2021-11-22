@@ -52,6 +52,9 @@ void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
       t = couplings[cpl];
       tconj = lila::conj(t);
     } else {
+      utils::warn_if_complex(
+          couplings[cpl],
+          "imaginary part discarded (tj / symmetric / hopping)");
       t = lila::real(couplings[cpl]);
       tconj = lila::real(couplings[cpl]);
     }

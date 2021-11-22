@@ -116,7 +116,7 @@ testsources+= test/blocks/tj/test_tj_apply.cpp
 
 testsources+= test/blocks/tj_symmetric/test_tj_symmetric.cpp
 testsources+= test/blocks/tj_symmetric/test_tj_symmetric_matrix.cpp
-# testsources+= test/blocks/tj_symmetric/test_tj_symmetric_apply.cpp
+testsources+= test/blocks/tj_symmetric/test_tj_symmetric_apply.cpp
 
 # testsources+= test/blocks/tj_symmetric_simple/test_tj_symmetric_simple.cpp
 # testsources+= test/blocks/tj_symmetric_simple/test_tj_symmetric_simple_matrix.cpp
