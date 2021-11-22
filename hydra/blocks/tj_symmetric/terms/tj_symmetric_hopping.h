@@ -17,6 +17,7 @@ void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
   using bitops::gbit;
   using bitops::popcnt;
 
+  // Get group/irrep info
   auto const &group_action = indexing.group_action();
   auto const &irrep = indexing.irrep();
   std::vector<coeff_t> bloch_factors;
@@ -25,9 +26,10 @@ void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
   } else {
     bloch_factors = irrep.characters_real();
   }
-
+  assert(group_action.n_symmetries() == bloch_factors.size());
   int n_sites = group_action.n_sites();
 
+  // Loop over cleaned-up bonds
   auto clean_bonds =
       utils::clean_bondlist(bonds, couplings, {"HOP", "HOPUP", "HOPDN"}, 2);
   for (auto bond : clean_bonds) {
@@ -61,6 +63,39 @@ void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
     bit_t fermimask = (((bit_t)1 << (u - l - 1)) - 1) << (l + 1);
     bit_t sitesmask = ((bit_t)1 << n_sites) - 1;
 
+    // // DEBUG PRINT states
+    // lila::Log("\n\n\n");
+    // lila::Log("s1: {} s2: {}", s1, s2);
+    // idx_t idx = 0;
+    // for (idx_t idx_up = 0; idx_up < indexing.n_reps_up(); ++idx_up) {
+    //   bit_t ups = indexing.rep_up(idx_up);
+    //   auto syms = indexing.syms_up(ups);
+    //   auto const &dnss = indexing.dns_for_up_rep(ups);
+    //   auto const &norms = indexing.norms_for_up_rep(ups);
+
+    //   if (syms.size() == 1) {
+    //     bit_t not_ups = (~ups) & sitesmask;
+
+    //     idx_t idx_dn = 0;
+    //     for (bit_t dnsc : dnss) {
+    //       bit_t dns = bitops::deposit(dnsc, not_ups);
+    //       lila::Log("{}: {};{} {}", idx, BSTR(ups), BSTR(dns),
+    //       norms[idx_dn]);
+    //       ++idx_dn;
+    //       ++idx;
+    //     }
+    //   } else {
+    //     idx_t idx_dn = 0;
+    //     for (bit_t dns : dnss) {
+    //       lila::Log("{}: {};{} {}", idx, BSTR(ups), BSTR(dns),
+    //       norms[idx_dn]);
+
+    //       ++idx_dn;
+    //       ++idx;
+    //     }
+    //   }
+    // }
+
     // Apply hoppings on dnspins
     if ((type == "HOP") || (type == "HOPDN")) {
 
@@ -69,7 +104,6 @@ void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
 
         // skip if no hopping for dns works
         if (popcnt(ups & flipmask) != 0) {
-          ++idx_up;
           continue;
         }
 
@@ -100,6 +134,18 @@ void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
 
               // fill with correct fermi sign
               bool fermi = popcnt(dns & fermimask) & 1;
+
+              // lila::Log("-----------------------------------------");
+              // lila::Log("HOPDN");
+              // lila::Log("CASE: stab-ups-FALSE");
+              // lila::Log("from: {};{}", BSTR(ups), BSTR(dns));
+              // lila::Log("mask: {} {}", BSTR(0), BSTR(flipmask));
+              // lila::Log("to  : {};{}", BSTR(ups), BSTR(dns_flip));
+              // lila::Log("fermi: {}", fermi);
+              // lila::Log("idx_in: {}, idx_out: {}", idx_in, idx_out);
+              // lila::Log("val: {}", lila::real(val));
+              // lila::Log("fill: {}", lila::real((fermi) ? -val : val));
+
               fill(idx_out, idx_in, (fermi) ? -val : val);
             }
 
@@ -117,8 +163,8 @@ void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
 
             if (popcnt(dns & flipmask) == 1) {
               bit_t dns_flip = dns ^ flipmask;
-              auto [idx_dns_flip, fermi_dn, sym] = indexing.index_dn_fermi_sym(
-                  dns_flip, syms, dnss, fermimask);
+              auto [idx_dns_flip, fermi_dn, sym] =
+                  indexing.index_dn_fermi_sym(dns_flip, syms, dnss, fermimask);
 
               if (idx_dns_flip != invalid_index) {
 
@@ -131,9 +177,25 @@ void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
                   val = -(gbit(dns, s1) ? t : tconj) * bloch_factors[sym] *
                         norms[idx_dns_flip] / norms[idx_dns];
                 } else {
+                  // lila::Log("sz: {}, sym: {}", bloch_factors.size(), sym);
                   val = -t * bloch_factors[sym] * norms[idx_dns_flip] /
                         norms[idx_dns];
                 }
+
+                // lila::Log("-----------------------------------------");
+                // lila::Log("HOPDN");
+                // lila::Log("CASE: stab-ups-TRUE");
+                // lila::Log("from: {};{}", BSTR(ups), BSTR(dns));
+                // lila::Log("mask: {} {}", BSTR(0), BSTR(flipmask));
+                // lila::Log("to  : {};{}", BSTR(ups), BSTR(dns_flip));
+                // lila::Log("sym : {}", sym);
+                // bit_t dns_flip_rep = group_action.apply(sym, dns_flip);
+                // lila::Log("rep : {};{}", BSTR(ups), BSTR(dns_flip_rep));
+                // lila::Log("fermi_up: {}, fermi_dn: {}", fermi_up, fermi_dn);
+                // lila::Log("idx_in: {}, idx_out: {}", idx_in, idx_out);
+                // lila::Log("val: {}", lila::real(val));
+                // lila::Log("fill: {}",
+                //           lila::real((fermi_up ^ fermi_dn) ? -val : val));
 
                 fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -val : val);
               }
@@ -155,7 +217,6 @@ void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
 
         // continue if hopping not possible
         if (popcnt(ups & flipmask) != 1) {
-          ++idx_up;
           continue;
         }
 
@@ -173,8 +234,6 @@ void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
         idx_t up_offset_out = indexing.up_offset(idx_up_flip);
         auto syms_up_out = indexing.syms_up(ups_flip);
         auto const &dnss_out = indexing.dns_for_up_rep(ups_flip_rep);
-
-        // auto const &dnss_out = indexing.dns_for_up_rep(ups_flip_rep);
 
         // Trivial stabilizer of target ups
         if (syms_up_out.size() == 1) {
@@ -195,29 +254,64 @@ void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
           // Origin ups trivial stabilizer -> dns need to be deposited
           if (syms_up_in.size() == 1) {
             idx_t idx_in = up_offset_in;
-            idx_t idx_out = up_offset_out;
-	    bit_t not_ups = (~ups) & sitesmask;
+            bit_t not_ups = (~ups) & sitesmask;
             for (bit_t dnsc : dnss_in) {
               bit_t dns = bitops::deposit(dnsc, not_ups);
-              bool fermi_dn = popcnt(dns & fermimask) & 1;
-              fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -prefac : prefac);
+              if (popcnt(dns & flipmask) == 0) {
+                bit_t dns_rep = group_action.apply(sym, dns);
+                bit_t dns_rep_c = bitops::extract(dns_rep, not_ups_flip_rep);
+                idx_t idx_out = up_offset_out + indexing.dnsc_index(dns_rep_c);
+                bool fermi_dn = indexing.fermi_bool_dn(sym, dns);
+
+                // lila::Log("-----------------------------------------");
+                // lila::Log("HOPUP");
+                // lila::Log("CASE: stab-origin-FALSE stab-target-FALSE");
+                // lila::Log("from: {};{}", BSTR(ups), BSTR(dns));
+                // lila::Log("mask: {} {}", BSTR(flipmask), BSTR(0));
+                // lila::Log("to  : {};{}", BSTR(ups_flip), BSTR(dns));
+                // lila::Log("rep : {};{}", BSTR(ups_flip_rep), BSTR(dns_rep));
+                // lila::Log("idx_in: {}, idx_out: {}", idx_in, idx_out);
+                // lila::Log("val: {}", lila::real(prefac));
+                // lila::Log("fill: {}",
+                //           lila::real((fermi_up ^ fermi_dn) ? -prefac :
+                //           prefac));
+
+                fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -prefac : prefac);
+              }
               ++idx_in;
-              ++idx_out;
             }
           }
           // Origin ups have stabilizer -> dns DONT need to be deposited
           else {
             auto const &norms_in = indexing.norms_for_up_rep(ups);
-	    idx_t idx_dn = 0;
+            idx_t idx_dn = 0;
             idx_t idx_in = up_offset_in;
             for (bit_t dns : dnss_in) {
-              auto [idx_dn_out, fermi_dn] = indexing.index_dn_fermi(
-                  dns, sym, not_ups_flip_rep, fermimask);
-              coeff_t val = prefac / norms_in[idx_dn];
+              if (popcnt(dns & flipmask) == 0) {
 
-              idx_t idx_out = up_offset_out + idx_dn_out;
-              fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -val : val);
-	      ++idx_dn;
+                auto [idx_dn_out, fermi_dn] =
+                    indexing.index_dn_fermi(dns, sym, not_ups_flip_rep);
+                coeff_t val = prefac / norms_in[idx_dn];
+                idx_t idx_out = up_offset_out + idx_dn_out;
+
+                // lila::Log("-----------------------------------------");
+                // lila::Log("HOPUP");
+                // lila::Log("CASE: stab-origin-TRUE stab-target-FALSE");
+                // lila::Log("from: {};{}", BSTR(ups), BSTR(dns));
+                // lila::Log("mask: {} {}", BSTR(flipmask), BSTR(0));
+                // lila::Log("to  : {};{}", BSTR(ups_flip), BSTR(dns));
+                // lila::Log("sym : {}", sym);
+                // bit_t dns_rep = group_action.apply(sym, dns);
+                // lila::Log("rep : {};{}", BSTR(ups_flip_rep), BSTR(dns_rep));
+                // lila::Log("fermi_up: {}, fermi_dn: {}", fermi_up, fermi_dn);
+                // lila::Log("idx_in: {}, idx_out: {}", idx_in, idx_out);
+                // lila::Log("val: {}", lila::real(val));
+                // lila::Log("fill: {}",
+                //           lila::real((fermi_up ^ fermi_dn) ? -val : val));
+
+                fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -val : val);
+              }
+              ++idx_dn;
               ++idx_in;
             }
           }
@@ -244,18 +338,37 @@ void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
           // Origin ups trivial stabilizer -> dns need to be deposited
           if (syms_up_in.size() == 1) {
             idx_t idx_in = up_offset_in;
-	    bit_t not_ups = (~ups) & sitesmask;
+            bit_t not_ups = (~ups) & sitesmask;
             for (bit_t dnsc : dnss_in) {
               bit_t dns = bitops::deposit(dnsc, not_ups);
-              auto [idx_dn_out, fermi_dn, sym] =
-                  indexing.index_dn_fermi_sym(dns, syms, dnss_out, fermimask);
+              if (popcnt(dns & flipmask) == 0) {
 
-              if (idx_dn_out != invalid_index) {
-                idx_t idx_out = up_offset_out + idx_dn_out;
-                bool fermi_up =
-                    fermi_up_hop ^ indexing.fermi_bool_up(sym, ups_flip);
-                coeff_t val = prefacs[sym] * norms_out[idx_dn_out];
-                fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -val : val);
+                auto [idx_dn_out, fermi_dn, sym] =
+                    indexing.index_dn_fermi_sym(dns, syms, dnss_out);
+
+                if (idx_dn_out != invalid_index) {
+                  idx_t idx_out = up_offset_out + idx_dn_out;
+                  bool fermi_up =
+                      fermi_up_hop ^ indexing.fermi_bool_up(sym, ups_flip);
+                  coeff_t val = prefacs[sym] * norms_out[idx_dn_out];
+
+                  // lila::Log("-----------------------------------------");
+                  // lila::Log("HOPUP");
+                  // lila::Log("CASE: stab-origin-FALSE stab-target-TRUE");
+                  // lila::Log("from: {};{}", BSTR(ups), BSTR(dns));
+                  // lila::Log("mask: {} {}", BSTR(flipmask), BSTR(0));
+                  // lila::Log("to  : {};{}", BSTR(ups_flip), BSTR(dns));
+                  // lila::Log("sym : {}", sym);
+                  // bit_t dns_rep = group_action.apply(sym, dns);
+                  // lila::Log("repl: {};{}", BSTR(ups_flip_rep),
+                  // BSTR(dns_rep)); lila::Log("fermi_up: {}, fermi_dn: {}",
+                  // fermi_up, fermi_dn); lila::Log("idx_in: {}, idx_out: {}",
+                  // idx_in, idx_out); lila::Log("val: {}", lila::real(val));
+                  // lila::Log("fill: {}",
+                  //           lila::real((fermi_up ^ fermi_dn) ? -val : val));
+
+                  fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -val : val);
+                }
               }
               ++idx_in;
             }
@@ -264,19 +377,38 @@ void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
           else {
             auto const &norms_in = indexing.norms_for_up_rep(ups);
             idx_t idx_in = up_offset_in;
-	    idx_t idx_dn = 0;
+            idx_t idx_dn = 0;
             for (bit_t dns : dnss_in) {
-              auto [idx_dn_out, fermi_dn, sym] =
-                  indexing.index_dn_fermi_sym(dns, syms, dnss_out, fermimask);
-              if (idx_dn_out != invalid_index) {
-		idx_t idx_out = up_offset_out + idx_dn_out;
-                bool fermi_up =
-                    fermi_up_hop ^ indexing.fermi_bool_up(sym, ups_flip);
-                coeff_t val =
-                    prefacs[sym] * norms_out[idx_dn_out] / norms_in[idx_dn];
-                fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -val : val);
+              if (popcnt(dns & flipmask) == 0) {
+
+                auto [idx_dn_out, fermi_dn, sym] =
+                    indexing.index_dn_fermi_sym(dns, syms, dnss_out);
+                if (idx_dn_out != invalid_index) {
+                  idx_t idx_out = up_offset_out + idx_dn_out;
+                  bool fermi_up =
+                      fermi_up_hop ^ indexing.fermi_bool_up(sym, ups_flip);
+                  coeff_t val =
+                      prefacs[sym] * norms_out[idx_dn_out] / norms_in[idx_dn];
+
+                  // lila::Log("-----------------------------------------");
+                  // lila::Log("HOPUP");
+                  // lila::Log("CASE: stab-origin-TRUE stab-target-TRUE");
+                  // lila::Log("from: {};{}", BSTR(ups), BSTR(dns));
+                  // lila::Log("mask: {} {}", BSTR(flipmask), BSTR(0));
+                  // lila::Log("to  : {};{}", BSTR(ups_flip), BSTR(dns));
+                  // lila::Log("sym : {}", sym);
+                  // bit_t dns_rep = group_action.apply(sym, dns);
+                  // lila::Log("rep : {};{}", BSTR(ups), BSTR(dns_rep));
+                  // lila::Log("fermi_up: {}, fermi_dn: {}", fermi_up,
+                  // fermi_dn); lila::Log("idx_in: {}, idx_out: {}", idx_in,
+                  // idx_out); lila::Log("val: {}", lila::real(val));
+                  // lila::Log("fill: {}",
+                  //           lila::real((fermi_up ^ fermi_dn) ? -val : val));
+
+                  fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -val : val);
+                }
               }
-	      ++idx_dn;
+              ++idx_dn;
               ++idx_in;
             }
           }

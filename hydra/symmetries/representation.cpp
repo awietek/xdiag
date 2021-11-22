@@ -18,7 +18,12 @@ Representation::Representation(std::vector<complex> const &characters)
 
 Representation::Representation(std::vector<complex> const &characters,
                                std::vector<int> const &allowed_symmetries)
-    : characters_(characters), allowed_symmetries_(allowed_symmetries) {}
+    : characters_(characters), characters_real_(characters.size()),
+      allowed_symmetries_(allowed_symmetries) {
+  for (int idx = 0; idx < (int)characters.size(); ++idx) {
+    characters_real_[idx] = std::real(characters[idx]);
+  }
+}
 
 Representation
 Representation::subgroup(std::vector<int> const &symmetry_numbers) const {
