@@ -45,12 +45,12 @@ void test_symmetric_spectra(BondList bondlist, Couplings couplings,
             REQUIRE(lila::close(H_sym, lila::Herm(H_sym)));
             auto eigs_sym_k = lila::EigenvaluesSym(H_sym);
 
-	    // Check whether results are the same for real blocks
-	    if (!is_complex(tj.irrep())) {
-	      auto H_sym_real = MatrixReal(bondlist, couplings, tj, tj);
-	      auto eigs_sym_k_real = lila::EigenvaluesSym(H_sym);
-	      REQUIRE(lila::close(eigs_sym_k, eigs_sym_k_real));
-	    }
+            // Check whether results are the same for real blocks
+            if (!is_complex(tj.irrep())) {
+              auto H_sym_real = MatrixReal(bondlist, couplings, tj, tj);
+              auto eigs_sym_k_real = lila::EigenvaluesSym(H_sym);
+              REQUIRE(lila::close(eigs_sym_k, eigs_sym_k_real));
+            }
             // append all the eigenvalues with multiplicity
             for (auto eig : eigs_sym_k)
               for (int i = 0; i < multiplicity; ++i)
@@ -70,8 +70,8 @@ template <class bit_t> void test_tj_symmetric_spectrum_chains(int n_sites) {
   using namespace hydra::testcases::tj;
   using namespace hydra::testcases::electron;
 
-  lila::Log.out("Tj chain, symmetric spectra test, n_sites: {}", n_sites);
-  auto [bondlist, couplings] = tJchain(n_sites, 1.0, 5.0);
+  lila::Log.out("tJ chain, symmetric spectra test, n_sites: {}", n_sites);
+  auto [bondlist, couplings] = tJchain(n_sites, 1.0, 0.4);
   auto [space_group, irreps, multiplicities] =
       get_cyclic_group_irreps_mult(n_sites);
   test_symmetric_spectra<uint32>(bondlist, couplings, space_group, irreps,
@@ -89,29 +89,74 @@ TEST_CASE("tj_symmetric_matrix", "[blocks][tj_symmetric]") {
     test_tj_symmetric_spectrum_chains<uint64_t>(n_sites);
   }
 
-  // test a 3x3 triangular lattice
-  lila::Log.out("Tj 3x3 triangular, symmetric spectra test");
-  std::string lfile = "data/triangular.9.hop.sublattices.tsl.lat";
+  {
+    // test a 3x3 triangular lattice
+    lila::Log.out("tJ 3x3 triangular, symmetric spectra test");
+    std::string lfile = "data/triangular.9.hop.sublattices.tsl.lat";
 
-  auto bondlist = read_bondlist(lfile);
-  Couplings couplings;
-  couplings["T"] = 1.0;
-  couplings["U"] = 5.0;
-  auto permutations = hydra::read_permutations(lfile);
-  auto space_group = PermutationGroup(permutations);
+    auto bondlist = read_bondlist(lfile);
+    Couplings couplings;
+    couplings["T"] = 1.0;
+    couplings["J"] = 0.4;
+    auto permutations = hydra::read_permutations(lfile);
+    auto space_group = PermutationGroup(permutations);
 
-  std::vector<std::pair<std::string, int>> rep_name_mult = {
-      {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
-      {"K0.D3.A1", 1},    {"K0.D3.A2", 1},    {"K0.D3.E", 2},
-      {"K1.D3.A1", 1},    {"K1.D3.A2", 1},    {"K1.D3.E", 2},
-      {"Y.C1.A", 6}};
+    std::vector<std::pair<std::string, int>> rep_name_mult = {
+        {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
+        {"K0.D3.A1", 1},    {"K0.D3.A2", 1},    {"K0.D3.E", 2},
+        {"K1.D3.A1", 1},    {"K1.D3.A2", 1},    {"K1.D3.E", 2},
+        {"Y.C1.A", 6}};
 
-  std::vector<Representation> irreps;
-  std::vector<int> multiplicities;
-  for (auto [name, mult] : rep_name_mult) {
-    irreps.push_back(read_represenation(lfile, name));
-    multiplicities.push_back(mult);
+    std::vector<Representation> irreps;
+    std::vector<int> multiplicities;
+    for (auto [name, mult] : rep_name_mult) {
+      irreps.push_back(read_represenation(lfile, name));
+      multiplicities.push_back(mult);
+    }
+    test_symmetric_spectra<uint16_t>(bondlist, couplings, space_group, irreps,
+                                     multiplicities);
+    test_symmetric_spectra<uint32_t>(bondlist, couplings, space_group, irreps,
+                                     multiplicities);
+    test_symmetric_spectra<uint64_t>(bondlist, couplings, space_group, irreps,
+                                     multiplicities);
   }
-  test_symmetric_spectra<uint32>(bondlist, couplings, space_group, irreps,
-                                 multiplicities);
+
+  {
+    // test a 3x3 triangular lattice with complex flux
+    lila::Log.out(
+        "tJ 3x3 triangular staggered, symmetric spectra test, complex");
+    std::string lfile =
+        "data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.lat";
+
+    auto bondlist = read_bondlist(lfile);
+    std::vector<double> etas{0.0, 0.1, 0.2, 0.3};
+    auto permutations = hydra::read_permutations(lfile);
+    auto space_group = PermutationGroup(permutations);
+
+    std::vector<std::pair<std::string, int>> rep_name_mult = {
+        {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
+        {"K0.D3.A1", 1},    {"K0.D3.A2", 1},    {"K0.D3.E", 2},
+        {"K1.D3.A1", 1},    {"K1.D3.A2", 1},    {"K1.D3.E", 2},
+        {"Y.C1.A", 6}};
+
+    std::vector<Representation> irreps;
+    std::vector<int> multiplicities;
+    for (auto [name, mult] : rep_name_mult) {
+      irreps.push_back(read_represenation(lfile, name));
+      multiplicities.push_back(mult);
+    }
+
+    for (auto eta : etas) {
+      lila::Log("eta: {:.2f}", eta);
+      Couplings couplings;
+      couplings["TPHI"] = 1.0 * cos(eta * M_PI);
+      couplings["JPHI"] = 1.0 * sin(2 * eta * M_PI);
+      test_symmetric_spectra<uint16_t>(bondlist, couplings, space_group, irreps,
+                                       multiplicities);
+      test_symmetric_spectra<uint32_t>(bondlist, couplings, space_group, irreps,
+                                       multiplicities);
+      test_symmetric_spectra<uint64_t>(bondlist, couplings, space_group, irreps,
+                                       multiplicities);
+    }
+  }
 }

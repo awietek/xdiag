@@ -44,6 +44,15 @@ public:
                                  lintable_dns_.index(dns)];
   }
 
+  std::pair<idx_t, bool> index_dn_fermi(bit_t dns, int sym,
+                                        bit_t not_ups) const {
+    bit_t dns_rep = group_action_.apply(sym, dns);
+    bit_t dns_rep_c = bitops::extract(dns_rep, not_ups);
+    idx_t idx_dns_rep = lintable_dnsc_.index(dns_rep_c);
+    bool fermi_dn = fermi_bool_dn(sym, dns);
+    return {idx_dns_rep, fermi_dn};
+  }
+
   std::pair<idx_t, bool> index_dn_fermi(bit_t dns, int sym, bit_t not_ups,
                                         bit_t fermimask) const {
     bit_t dns_rep = group_action_.apply(sym, dns);
@@ -52,6 +61,20 @@ public:
     bool fermi_dn = (bitops::popcnt(dns & fermimask) & 1);
     fermi_dn ^= fermi_bool_dn(sym, dns);
     return {idx_dns_rep, fermi_dn};
+  }
+
+  std::tuple<idx_t, bool, int>
+  index_dn_fermi_sym(bit_t dns, std::vector<int> const &syms,
+                     std::vector<bit_t> const &dnss_out) const {
+    auto [rep_dns, rep_sym] =
+        symmetries::representative_sym_subset(dns, group_action_, syms);
+    auto it = std::lower_bound(dnss_out.begin(), dnss_out.end(), rep_dns);
+    if ((it != dnss_out.end()) && (*it == rep_dns)) {
+      bool fermi_dn = fermi_bool_dn(rep_sym, dns);
+      return {std::distance(dnss_out.begin(), it), fermi_dn, rep_sym};
+    } else {
+      return {invalid_index, false, rep_sym};
+    }
   }
 
   std::tuple<idx_t, bool, int>
@@ -114,12 +137,8 @@ public:
     }
   }
 
-  idx_t upsc_index(bit_t ups) const {
-    return lintable_upsc_.index(ups);
-  }
-  idx_t dnsc_index(bit_t dns) const {
-    return lintable_dnsc_.index(dns);
-  }
+  idx_t upsc_index(bit_t ups) const { return lintable_upsc_.index(ups); }
+  idx_t dnsc_index(bit_t dns) const { return lintable_dnsc_.index(dns); }
 
 private:
   int n_sites_;

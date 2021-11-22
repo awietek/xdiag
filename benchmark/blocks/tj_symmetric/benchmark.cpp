@@ -5,7 +5,7 @@ int main() {
 
   lila::Log.set_verbosity(1);
 
-  int n_sites = 4;
+  int n_sites = 6;
   BondList bondlist;
   for (int s = 0; s < n_sites; ++s) {
     bondlist << Bond("HOP", "T", {s, (s + 1) % n_sites});
@@ -38,10 +38,11 @@ int main() {
   // cpls["JZ"] = 0.3;
   // cpls["JXY"] = 1.0;
 
-  int n_up = n_sites / 2 - 1;
-  int n_dn = n_sites / 2 - 1;
+  int n_up = 3;
+  int n_dn = 3;
   {
 
+    lila::Vector<double> eigs_sym;
     for (int k = 0; k < n_sites; ++k) {
       lila::Log("k={}", k);
       // Create irrep
@@ -53,11 +54,18 @@ int main() {
       auto block = tJSymmetric(n_sites, n_up, n_dn, space_group, irrep);
       auto H = MatrixCplx(bondlist, cpls, block, block);
       // LilaPrint(H);
-      LilaPrint(lila::EigenvaluesSym(H));
-      lila::Log("--------------------");
-
-
+     
+      auto eigs = lila::EigenvaluesSym(H);
+      LilaPrint(eigs);
+      for (auto eig : eigs)
+	eigs_sym.push_back(eig);
+      
+      // lila::Log("--------------------");
+      // exit(1);
+      
     }
+    std::sort(eigs_sym.begin(), eigs_sym.end());
+
     // lila::tic();
     // double e0 = E0Real(bondlist, cpls, block);
     // lila::toc();
@@ -67,8 +75,15 @@ int main() {
     auto block2 = tJ(n_sites, n_up, n_dn);
     auto H2 = MatrixReal(bondlist, cpls, block2, block2);
     // LilaPrint(H2);
-    LilaPrint(lila::EigenvaluesSym(H2));
-
+    auto eigs_nosym = lila::EigenvaluesSym(H2);
+    LilaPrint(eigs_sym);
+    LilaPrint(eigs_nosym);
+    if (lila::close(eigs_sym, eigs_nosym)) {
+      lila::Log("WORKS!");
+    } else {
+      lila::Log("ERROR!");
+    }
+    
     // lila::tic();
     // auto block3 = Electron(n_sites, n_up, n_dn);
     // lila::toc("build block");
