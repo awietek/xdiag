@@ -132,7 +132,7 @@ TEST_CASE("tj_symmetric_matrix", "[blocks][tj_symmetric]") {
         "data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.lat";
 
     auto bondlist = read_bondlist(lfile);
-    std::vector<double> etas{0.1, 0.2, 0.3};
+    std::vector<double> etas{0.0, 0.1, 0.2, 0.3};
     auto permutations = hydra::read_permutations(lfile);
     auto space_group = PermutationGroup(permutations);
 

@@ -44,7 +44,7 @@ void test_symmetric_apply(BondList bondlist, Couplings couplings,
           REQUIRE(std::abs(e0_mat - e0_app) < 1e-7);
 
           // Compute eigenvalues with real arithmitic
-          if (is_real(block.irrep())) {
+          if (is_real(block.irrep()) && is_real(couplings)) {
             auto H_real = MatrixReal(bondlist, couplings, block, block);
             auto evals_mat_real = lila::EigenvaluesSym(H_real);
             REQUIRE(lila::close(evals_mat_real, evals_mat));
@@ -134,8 +134,8 @@ TEST_CASE("tj_symmetric_apply", "[blocks]") {
     for (auto eta : etas) {
       lila::Log("eta: {:.2f}", eta);
       Couplings couplings;
-      couplings["TPHI"] = 1.0 * cos(eta * M_PI);
-      couplings["JPHI"] = 1.0 * sin(2 * eta * M_PI);
+      couplings["TPHI"] = complex(cos(eta * M_PI), sin(eta * M_PI));
+      couplings["JPHI"] = complex(cos(2 * eta * M_PI), sin(2 * eta * M_PI));
 
       test_symmetric_apply<uint16_t>(bondlist, couplings, space_group, irreps);
       test_symmetric_apply<uint32_t>(bondlist, couplings, space_group, irreps);
