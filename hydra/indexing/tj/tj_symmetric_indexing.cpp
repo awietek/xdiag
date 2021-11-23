@@ -85,7 +85,8 @@ template <class bit_t>
 tJSymmetricIndexing<bit_t>::tJSymmetricIndexing(
     int n_sites, int nup, int ndn, PermutationGroup permutation_group,
     Representation irrep)
-    : group_action_(permutation_group), irrep_(irrep),
+    : n_sites_(n_sites), n_up_(nup), n_dn_(ndn),
+      group_action_(permutation_group), irrep_(irrep),
       raw_ups_size_(combinatorics::binomial(n_sites, nup)),
       raw_dns_size_(combinatorics::binomial(n_sites, ndn)),
       raw_upsc_size_(combinatorics::binomial(n_sites - ndn, nup)),

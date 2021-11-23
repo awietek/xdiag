@@ -46,7 +46,8 @@ TEST_CASE("spinhalf_matrix", "[spinhalf]") {
     lila::Log.out("Spinhalf: triangular N=12 complex exchange");
     int n_sites = 12;
     int nup = 6;
-    std::vector<double> etas = {0.00, 0.01, 0.02, 0.03, 0.04, 0.05};
+    std::vector<double> etas = {0.00, 0.01, 0.02,
+                                0.03, 0.04, 0.05}; // dont change etas :-)
     for (auto eta : etas) {
       auto [bonds, couplings, e0] = triangular_12_complex(nup, eta);
       auto block = Spinhalf<uint32_t>(n_sites, nup);
@@ -56,7 +57,7 @@ TEST_CASE("spinhalf_matrix", "[spinhalf]") {
       auto eigs = lila::EigenvaluesSym(H);
 
       // comment: reference data from Lanczos, only ~10 digits precise
-      lila::Log("eigs(0): {}, e0: {}", eigs(0), e0);
+      // lila::Log("eigs(0): {}, e0: {}", eigs(0), e0);
       REQUIRE(std::abs(eigs(0) - e0) < 1e-8);
     }
   }

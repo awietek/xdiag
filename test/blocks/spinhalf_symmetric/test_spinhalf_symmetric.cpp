@@ -11,11 +11,12 @@ template <class bit_t>
 void test_indices_spinhalf_symmetric(SpinhalfSymmetric<bit_t> const &block) {
   
   PermutationGroupAction group_action(block.permutation_group());
+  auto indexing = block.indexing();
   for (idx_t idx = 0; idx < block.size(); ++idx) {
-    bit_t state = block.indexing_.state(idx);
+    bit_t state = indexing.state(idx);
     bit_t rep = symmetries::representative(state, group_action);
     REQUIRE(rep == state);
-    idx_t idx2 = block.indexing_.index(state);
+    idx_t idx2 = indexing.index(state);
     // auto norm = block.indexing_.norm(state);
     // lila::Log.out("{} {} {} ({},{})", idx, state, idx2, lila::real(norm),
     //               lila::imag(norm));

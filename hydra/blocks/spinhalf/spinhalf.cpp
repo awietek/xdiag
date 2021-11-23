@@ -8,7 +8,7 @@ namespace hydra {
 template <class bit_t>
 Spinhalf<bit_t>::Spinhalf(int n_sites, int n_up)
     : n_sites_(n_sites), sz_conserved_(true), n_up_(n_up),
-      n_dn_(n_sites - n_up), sz_(n_up_ - n_dn_), lintable_(n_sites, n_up),
+      n_dn_(n_sites - n_up), sz_(n_up_ - n_dn_), indexing_(n_sites, n_up),
       size_(combinatorics::binomial(n_sites, n_up)) {
   utils::check_nup_spinhalf(n_sites, n_up, "Spinhalf");
 }

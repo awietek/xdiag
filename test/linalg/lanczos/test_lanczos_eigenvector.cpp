@@ -25,7 +25,7 @@ TEST_CASE("lanczos_eigenvector", "[lanczos]") {
     for (int ndn = 2; ndn <= n_sites / 2; ++ndn) {
 
       // Compute exact evals
-      auto block = Electron<uint32>(n_sites, nup, ndn);
+      auto block = Electron(n_sites, nup, ndn);
       auto H = MatrixReal(bondlist, couplings, block, block);
       auto evals_mat = lila::EigenvaluesSym(H);
 
@@ -41,10 +41,9 @@ TEST_CASE("lanczos_eigenvector", "[lanczos]") {
         auto Hv = v;
         Apply(bondlist, couplings, block, v, block, Hv);
         auto e = Dot(v, Hv);
-	REQUIRE(close(real(e), evals_mat(num_eigenvalue)));
-	REQUIRE(close(imag(e), 0.0));
-	REQUIRE(close(Norm(v), 1.0));
-
+        REQUIRE(close(real(e), evals_mat(num_eigenvalue)));
+        REQUIRE(close(imag(e), 0.0));
+        REQUIRE(close(Norm(v), 1.0));
       }
     }
   printf("Done.\n");
@@ -56,7 +55,7 @@ TEST_CASE("lanczos_eigenvector", "[lanczos]") {
     for (int ndn = 2; ndn <= n_sites / 3; ++ndn) {
 
       // Create block and matrix for comparison
-      auto block = Electron<uint32>(n_sites, nup, ndn);
+      auto block = Electron(n_sites, nup, ndn);
       auto H = MatrixCplx(bondlist, couplings, block, block);
       auto evals_mat = lila::EigenvaluesSym(H);
 
@@ -72,9 +71,9 @@ TEST_CASE("lanczos_eigenvector", "[lanczos]") {
         auto Hv = v;
         Apply(bondlist, couplings, block, v, block, Hv);
         auto e = Dot(v, Hv);
-	REQUIRE(close(real(e), evals_mat(num_eigenvalue)));
-	REQUIRE(close(imag(e), 0.0));
-	REQUIRE(close(Norm(v), 1.0));
+        REQUIRE(close(real(e), evals_mat(num_eigenvalue)));
+        REQUIRE(close(imag(e), 0.0));
+        REQUIRE(close(Norm(v), 1.0));
       }
     }
   printf("Done.\n");

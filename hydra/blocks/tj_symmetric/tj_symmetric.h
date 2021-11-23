@@ -2,13 +2,17 @@
 
 #include <map>
 
+#include <hydra/common.h>
+
 #include <hydra/blocks/blocks.h>
 #include <hydra/blocks/tj_symmetric/tj_symmetric_apply.h>
-#include <hydra/blocks/tj_symmetric/tj_symmetric_indexing.h>
 #include <hydra/blocks/tj_symmetric/tj_symmetric_matrix.h>
-#include <hydra/common.h>
+
+#include <hydra/indexing/tj/tj_symmetric_indexing.h>
+
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
+
 #include <hydra/symmetries/permutation_group.h>
 #include <hydra/symmetries/representation.h>
 
@@ -36,6 +40,10 @@ public:
   bool operator==(tJSymmetric<bit_t> const &rhs) const;
   bool operator!=(tJSymmetric<bit_t> const &rhs) const;
 
+  indexing::tJSymmetricIndexing<bit_t> const &indexing() const {
+    return indexing_;
+  }
+
 private:
   int n_sites_;
 
@@ -53,26 +61,6 @@ private:
   idx_t size_;
 
   indexing::tJSymmetricIndexing<bit_t> indexing_;
-  indexing::tJSymmetricIndexing<bit_t> const &indexing() const {
-    return indexing_;
-  }
-  
-  friend lila::Matrix<double> MatrixReal<bit_t>(BondList const &,
-                                                Couplings const &,
-                                                tJSymmetric<bit_t> const &,
-                                                tJSymmetric<bit_t> const &);
-  friend lila::Matrix<complex> MatrixCplx<bit_t>(BondList const &,
-                                                 Couplings const &,
-                                                 tJSymmetric<bit_t> const &,
-                                                 tJSymmetric<bit_t> const &);
-  friend void Apply<bit_t>(BondList const &, Couplings const &,
-                           tJSymmetric<bit_t> const &,
-                           lila::Vector<double> const &,
-                           tJSymmetric<bit_t> const &, lila::Vector<double> &);
-  friend void Apply<bit_t>(BondList const &, Couplings const &,
-                           tJSymmetric<bit_t> const &,
-                           lila::Vector<complex> const &,
-                           tJSymmetric<bit_t> const &, lila::Vector<complex> &);
 };
 
 } // namespace hydra

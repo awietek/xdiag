@@ -45,6 +45,11 @@ std::pair<bit_t, int> representative_sym_subset(bit_t state,
                                                 GroupAction const &group_action,
                                                 std::vector<int> const &syms);
 
+// Computes the symmetries, which map origin to target
+template <typename bit_t, class GroupAction>
+std::vector<int> mapping_syms(bit_t origin, bit_t target,
+                              GroupAction const &group_action);
+
 // Computes the norm of a symmetrized state
 template <typename bit_t, class GroupAction>
 double norm(bit_t state, GroupAction const &group_action,

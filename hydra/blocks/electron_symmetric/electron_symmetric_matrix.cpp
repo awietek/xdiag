@@ -18,9 +18,9 @@ MatrixReal(BondList const &bonds, Couplings const &couplings,
 
   assert(block_in == block_out); // only temporary
 
-  utils::check_symmetric_operator_real(
-      bonds, couplings, block_in.irrep(), block_out.irrep(),
-      "construct real ElectronSymmetric matrix");
+  utils::check_operator_works_with<double>(bonds, couplings, block_in.irrep(),
+                                           block_out.irrep(),
+                                           "electron_symmetric_matrix");
 
   idx_t dim = block_in.size();
   auto mat = lila::Zeros<double>(dim, dim);

@@ -17,7 +17,7 @@ void test_spinhalf_symmetric_spectra(BondList bondlist, Couplings couplings,
   assert(irreps.size() == multiplicities.size());
 
   for (int nup = 0; nup <= n_sites; ++nup) {
-
+    // lila::Log("Spinhalf Symmetric N: {}, nup: {}", n_sites, nup);
     // Compute the full spectrum from non-symmetrized block
     auto spinhalf_nosym = Spinhalf<bit_t>(n_sites, nup);
 
@@ -28,25 +28,21 @@ void test_spinhalf_symmetric_spectra(BondList bondlist, Couplings couplings,
           MatrixCplx(bondlist, couplings, spinhalf_nosym, spinhalf_nosym);
       REQUIRE(lila::close(H_nosym, lila::Herm(H_nosym)));
       auto eigs_nosym = lila::EigenvaluesSym(H_nosym);
-
       for (int k = 0; k < (int)irreps.size(); ++k) {
         auto irrep = irreps[k];
         int multiplicity = multiplicities[k];
-
         auto spinhalf =
             SpinhalfSymmetric<bit_t>(n_sites, nup, space_group, irrep);
         // lila::Log.out(
         //     "nup: {}, k: {}, mult: {}, dim_nosym: {}, dim_sym: "
         //     "{} ", nup, k, multiplicity, spinhalf_nosym.size(),
         //     spinhalf.size());
-
         if (spinhalf.size() > 0) {
 
           // Compute partial spectrum from symmetrized block
           auto H_sym = MatrixCplx(bondlist, couplings, spinhalf, spinhalf);
           REQUIRE(lila::close(H_sym, lila::Herm(H_sym)));
           auto eigs_sym_k = lila::EigenvaluesSym(H_sym);
-
           // Check whether results are the same for real blocks
           if (!is_complex(spinhalf.irrep()) && !(is_complex(couplings))) {
             auto H_sym_real =
@@ -54,7 +50,6 @@ void test_spinhalf_symmetric_spectra(BondList bondlist, Couplings couplings,
             auto eigs_sym_k_real = lila::EigenvaluesSym(H_sym);
             REQUIRE(lila::close(eigs_sym_k, eigs_sym_k_real));
           }
-
           // append all the eigenvalues with multiplicity
           for (auto eig : eigs_sym_k)
             for (int i = 0; i < multiplicity; ++i)
@@ -68,7 +63,6 @@ void test_spinhalf_symmetric_spectra(BondList bondlist, Couplings couplings,
       // }
       REQUIRE(lila::close(eigs_sym, eigs_nosym));
 
-      // lila::Log.out("{} {} {} {}", n_sites, nup, eigs_sym(0), eigs_nosym(0));
     }
   }
 }
@@ -87,7 +81,7 @@ void test_spinhalf_symmetric_spectrum_chains(int n_sites) {
                                          irreps, multiplicities);
 }
 
-TEST_CASE("SpinhalfSymmetric_Matrix", "[models]") {
+TEST_CASE("spinhalf_symmetric_matrix", "[blocks][spinhalf]") {
 
   // Test linear Heisenberg chains
   for (int n_sites = 3; n_sites < 7; ++n_sites) {
@@ -97,7 +91,7 @@ TEST_CASE("SpinhalfSymmetric_Matrix", "[models]") {
   }
 
   // test a 3x3 triangular lattice
-  lila::Log.out("SpinhalfSymmetric spectra test: Triangular 3x3");
+  lila::Log("SpinhalfSymmetric spectra test: Triangular 3x3");
   std::string lfile = "data/triangular.9.Jz1Jz2Jx1Jx2D1.sublattices.tsl.lat";
 
   auto bondlist = read_bondlist(lfile);
