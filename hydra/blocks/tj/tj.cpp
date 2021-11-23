@@ -12,9 +12,7 @@ template <class bit_t>
 tJ<bit_t>::tJ(int n_sites, int nup, int ndn)
     : n_sites_(n_sites), charge_conserved_(true), charge_(nup + ndn),
       sz_conserved_(true), sz_(nup - ndn), n_up_(nup), n_dn_(ndn),
-      n_holes_(n_sites - charge_), size_holes_(binomial(n_sites, n_holes_)),
-      size_spins_(binomial(charge_, nup)), size_(size_holes_ * size_spins_),
-      lintable_holes_(n_sites, n_holes_), lintable_spins_(charge_, nup) {
+      indexing_(n_sites, nup, ndn), size_(indexing_.size()) {
   utils::check_nup_ndn_tj(n_sites, nup, ndn, "tJ");
 }
 

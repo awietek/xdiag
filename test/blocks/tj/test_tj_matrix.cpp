@@ -15,7 +15,6 @@ void test_tjmodel_e0_real(BondList bonds, Couplings couplings, int nup, int ndn,
   auto H = MatrixReal(bonds, couplings, block, block);
 
   auto eigs = lila::EigenvaluesSym(H);
-  // LilaPrint(H);
   // lila::Log("nup: {}, ndn: {}, e0: {}, eigs(0): {}", nup, ndn, e0, eigs(0));
   REQUIRE(lila::close(H, lila::Herm(H)));
   REQUIRE(std::abs(e0 - eigs(0)) < 1e-6);
@@ -27,8 +26,8 @@ void test_tjmodel_fulleigs(BondList bonds, Couplings couplings,
   int n_sites = bonds.n_sites();
 
   lila::Vector<double> all_eigs;
-  for (int nup = 0; nup <= n_sites; ++nup)
-    for (int ndn = 0; ndn <= n_sites - nup; ++ndn) {
+  for (int ndn = 0; ndn <= n_sites; ++ndn) {
+    for (int nup = 0; nup <= n_sites - ndn; ++nup) {
 
       auto block = tJ<uint32_t>(n_sites, nup, ndn);
       auto H = MatrixReal(bonds, couplings, block, block);
@@ -40,14 +39,15 @@ void test_tjmodel_fulleigs(BondList bonds, Couplings couplings,
       for (auto eig : eigs)
         all_eigs.push_back(eig);
     }
+  }
   std::sort(all_eigs.begin(), all_eigs.end());
   REQUIRE(all_eigs.size() == exact_eigs.size());
   // LilaPrint(all_eigs);
   // LilaPrint(exact_eigs);
-  CHECK(lila::close(all_eigs, exact_eigs));
+  REQUIRE(lila::close(all_eigs, exact_eigs));
 }
 
-TEST_CASE("tJ_Matrix", "[tj]") {
+TEST_CASE("tj_matrix", "[tj]") {
   using namespace hydra::testcases::tj;
 
   {
@@ -99,8 +99,7 @@ TEST_CASE("tJ_Matrix", "[tj]") {
   }
 
   for (int N = 3; N <= 6; ++N) {
-    lila::Log.out("TJModel: random all-to-all complex exchange test, N={}",
-                  N);
+    lila::Log.out("TJModel: random all-to-all complex exchange test, N={}", N);
 
     auto [bonds, cpls] = tj_alltoall_complex(N);
     for (int nup = 0; nup <= N; ++nup)

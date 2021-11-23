@@ -1,16 +1,19 @@
 #pragma once
 
-#include <lila/utils/logger.h>
+#include <hydra/common.h>
 
 #include <hydra/bitops/bitops.h>
+
 #include <hydra/blocks/spinhalf/spinhalf.h>
+#include <hydra/blocks/utils/block_utils.h>
+
 #include <hydra/combinatorics/combinations.h>
-#include <hydra/common.h>
-#include <hydra/indexing/spinhalf/spinhalf_symmetric_indexing.h>
+
+#include <hydra/indexing/spinhalf/spinhalf_indexing.h>
+
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
 
-#include <hydra/blocks/utils/block_utils.h>
 
 namespace hydra::terms::spinhalf {
 
@@ -27,15 +30,13 @@ void do_exchange(BondList const &bonds, Couplings const &couplings,
   auto clean_bonds = utils::clean_bondlist(bonds, couplings,
                                            {"HEISENBERG", "HB", "EXCHANGE"}, 2);
   for (auto bond : clean_bonds) {
+    std::string cpl = bond.coupling();
 
+    utils::check_sites_disjoint(bond);
     int s1 = bond[0];
     int s2 = bond[1];
     bit_t flipmask = ((bit_t)1 << s1) | ((bit_t)1 << s2);
 
-    if (s1 == s2)
-      lila::Log.err("Error: Exchange operator acting on twice the same site");
-
-    std::string cpl = bond.coupling();
     auto [J, J_conj] = utils::get_coupling_and_conj<coeff_t>(couplings, cpl);
     coeff_t Jhalf = J / 2.;
     coeff_t Jhalf_conj = J_conj / 2.;

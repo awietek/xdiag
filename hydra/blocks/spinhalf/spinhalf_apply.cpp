@@ -30,42 +30,36 @@ void Apply(BondList const &bonds, Couplings const &couplings,
   do_exchange<bit_t, coeff_t>(bonds, couplings, indexing_in, fill);
 }
 
-template void Apply<uint16_t, double>(BondList const &bonds,
-                                      Couplings const &couplings,
-                                      Spinhalf<uint16_t> const &block_in,
-                                      lila::Vector<double> const &vec_in,
-                                      Spinhalf<uint16_t> const &block_out,
-                                      lila::Vector<double> &vec_out);
-template void Apply<uint32_t, double>(BondList const &bonds,
-                                      Couplings const &couplings,
-                                      Spinhalf<uint32_t> const &block_in,
-                                      lila::Vector<double> const &vec_in,
-                                      Spinhalf<uint32_t> const &block_out,
-                                      lila::Vector<double> &vec_out);
-template void Apply<uint64_t, double>(BondList const &bonds,
-                                      Couplings const &couplings,
-                                      Spinhalf<uint64_t> const &block_in,
-                                      lila::Vector<double> const &vec_in,
-                                      Spinhalf<uint64_t> const &block_out,
-                                      lila::Vector<double> &vec_out);
+template void Apply<uint16_t, double>(BondList const &, Couplings const &,
+                                      Spinhalf<uint16_t> const &,
+                                      lila::Vector<double> const &,
+                                      Spinhalf<uint16_t> const &,
+                                      lila::Vector<double> &);
+template void Apply<uint32_t, double>(BondList const &, Couplings const &,
+                                      Spinhalf<uint32_t> const &,
+                                      lila::Vector<double> const &,
+                                      Spinhalf<uint32_t> const &,
+                                      lila::Vector<double> &);
+template void Apply<uint64_t, double>(BondList const &, Couplings const &,
+                                      Spinhalf<uint64_t> const &,
+                                      lila::Vector<double> const &,
+                                      Spinhalf<uint64_t> const &,
+                                      lila::Vector<double> &);
 
-template void Apply<uint16_t, complex>(BondList const &bonds,
-                                       Couplings const &couplings,
-                                       Spinhalf<uint16_t> const &block_in,
-                                       lila::Vector<complex> const &vec_in,
-                                       Spinhalf<uint16_t> const &block_out,
-                                       lila::Vector<complex> &vec_out);
-template void Apply<uint32_t, complex>(BondList const &bonds,
-                                       Couplings const &couplings,
-                                       Spinhalf<uint32_t> const &block_in,
-                                       lila::Vector<complex> const &vec_in,
-                                       Spinhalf<uint32_t> const &block_out,
-                                       lila::Vector<complex> &vec_out);
-template void Apply<uint64_t, complex>(BondList const &bonds,
-                                       Couplings const &couplings,
-                                       Spinhalf<uint64_t> const &block_in,
-                                       lila::Vector<complex> const &vec_in,
-                                       Spinhalf<uint64_t> const &block_out,
-                                       lila::Vector<complex> &vec_out);
+template void Apply<uint16_t, complex>(BondList const &, Couplings const &,
+                                       Spinhalf<uint16_t> const &,
+                                       lila::Vector<complex> const &,
+                                       Spinhalf<uint16_t> const &,
+                                       lila::Vector<complex> &);
+template void Apply<uint32_t, complex>(BondList const &, Couplings const &,
+                                       Spinhalf<uint32_t> const &,
+                                       lila::Vector<complex> const &,
+                                       Spinhalf<uint32_t> const &,
+                                       lila::Vector<complex> &);
+template void Apply<uint64_t, complex>(BondList const &, Couplings const &,
+                                       Spinhalf<uint64_t> const &,
+                                       lila::Vector<complex> const &,
+                                       Spinhalf<uint64_t> const &,
+                                       lila::Vector<complex> &);
 
 } // namespace hydra

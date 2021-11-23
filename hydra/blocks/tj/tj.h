@@ -1,7 +1,7 @@
 #pragma once
 
 #include <hydra/common.h>
-#include <hydra/indexing/lintable.h>
+#include <hydra/indexing/tj/tj_indexing.h>
 
 namespace hydra {
 
@@ -22,7 +22,9 @@ public:
   bool operator==(tJ const &rhs) const;
   bool operator!=(tJ const &rhs) const;
 
-  // private:
+  indexing::tJIndexing<bit_t> const &indexing() const { return indexing_; }
+
+private:
   int n_sites_;
   bool charge_conserved_;
   int charge_;
@@ -30,15 +32,9 @@ public:
   int sz_;
   int n_up_;
   int n_dn_;
-  int n_holes_;
 
-  idx_t size_holes_;
-  idx_t size_spins_;
+  indexing::tJIndexing<bit_t> indexing_;
   idx_t size_;
-  
-  indexing::LinTable<bit_t> lintable_holes_;
-  indexing::LinTable<bit_t> lintable_spins_;
-
 };
 
 } // namespace hydra

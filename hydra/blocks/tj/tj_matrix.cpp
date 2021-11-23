@@ -8,74 +8,56 @@
 
 namespace hydra {
 
-template <class bit_t>
-lila::Matrix<double>
-MatrixReal(BondList const &bonds, Couplings const &couplings,
-           tJ<bit_t> const &block_in, tJ<bit_t> const &block_out) {
-  using namespace terms::tj;
+template <typename bit_t, typename coeff_t>
+lila::Matrix<coeff_t>
+MatrixGen(BondList const &bonds, Couplings const &couplings,
+          tJ<bit_t> const &block_in, tJ<bit_t> const &block_out) {
+  using namespace hydra::terms::tj;
 
   assert(block_in == block_out); // only temporary
+
+  utils::check_operator_works_with<coeff_t>(bonds, couplings, "tj_matrix");
   idx_t dim_in = block_in.size();
   idx_t dim_out = block_out.size();
 
-  utils::check_operator_real(bonds, couplings, "construct real tJ matrix");
-
-  auto mat = lila::Zeros<double>(dim_out, dim_in);
-  auto fill = [&mat](idx_t idx_out, idx_t idx_in, double val) {
+  auto mat = lila::Zeros<coeff_t>(dim_out, dim_in);
+  auto fill = [&mat](idx_t idx_out, idx_t idx_in, coeff_t val) {
     mat(idx_out, idx_in) += val;
   };
 
-  do_hopping<bit_t, double>(bonds, couplings, block_in, fill);
-  do_ising<bit_t>(bonds, couplings, block_in, fill);
-  do_exchange<bit_t, double>(bonds, couplings, block_in, fill);
-  return mat;
-}
+  auto const &indexing_in = block_in.indexing();
+  // auto const &indexing_out = block_out.indexing();
 
-template <class bit_t>
-lila::Matrix<complex>
-MatrixCplx(BondList const &bonds, Couplings const &couplings,
-           tJ<bit_t> const &block_in, tJ<bit_t> const &block_out) {
-  using namespace terms::tj;
-
-  assert(block_in == block_out);
-  idx_t dim_in = block_in.size();
-  idx_t dim_out = block_out.size();
-
-  auto mat = lila::Zeros<complex>(dim_out, dim_in);
-  auto fill = [&mat](idx_t idx_out, idx_t idx_in, complex val) {
-    mat(idx_out, idx_in) += val;
-  };
-
-  do_hopping<bit_t, complex>(bonds, couplings, block_in, fill);
-  do_ising<bit_t>(bonds, couplings, block_in, fill);
-  do_exchange<bit_t, complex>(bonds, couplings, block_in, fill);
+  do_hopping<bit_t, coeff_t>(bonds, couplings, indexing_in, fill);
+  do_ising<bit_t, coeff_t>(bonds, couplings, indexing_in, fill);
+  do_exchange<bit_t, coeff_t>(bonds, couplings, indexing_in, fill);
   return mat;
 }
 
 template lila::Matrix<double>
-MatrixReal<uint16_t>(BondList const &bonds, Couplings const &couplings,
-                     tJ<uint16_t> const &block_in,
-                     tJ<uint16_t> const &block_out);
+MatrixGen<uint16_t, double>(BondList const &bonds, Couplings const &couplings,
+                            tJ<uint16_t> const &block_in,
+                            tJ<uint16_t> const &block_out);
 template lila::Matrix<double>
-MatrixReal<uint32_t>(BondList const &bonds, Couplings const &couplings,
-                     tJ<uint32_t> const &block_in,
-                     tJ<uint32_t> const &block_out);
+MatrixGen<uint32_t, double>(BondList const &bonds, Couplings const &couplings,
+                            tJ<uint32_t> const &block_in,
+                            tJ<uint32_t> const &block_out);
 template lila::Matrix<double>
-MatrixReal<uint64_t>(BondList const &bonds, Couplings const &couplings,
-                     tJ<uint64_t> const &block_in,
-                     tJ<uint64_t> const &block_out);
+MatrixGen<uint64_t, double>(BondList const &bonds, Couplings const &couplings,
+                            tJ<uint64_t> const &block_in,
+                            tJ<uint64_t> const &block_out);
 
 template lila::Matrix<complex>
-MatrixCplx<uint16_t>(BondList const &bonds, Couplings const &couplings,
-                     tJ<uint16_t> const &block_in,
-                     tJ<uint16_t> const &block_out);
+MatrixGen<uint16_t, complex>(BondList const &bonds, Couplings const &couplings,
+                             tJ<uint16_t> const &block_in,
+                             tJ<uint16_t> const &block_out);
 template lila::Matrix<complex>
-MatrixCplx<uint32_t>(BondList const &bonds, Couplings const &couplings,
-                     tJ<uint32_t> const &block_in,
-                     tJ<uint32_t> const &block_out);
+MatrixGen<uint32_t, complex>(BondList const &bonds, Couplings const &couplings,
+                             tJ<uint32_t> const &block_in,
+                             tJ<uint32_t> const &block_out);
 template lila::Matrix<complex>
-MatrixCplx<uint64_t>(BondList const &bonds, Couplings const &couplings,
-                     tJ<uint64_t> const &block_in,
-                     tJ<uint64_t> const &block_out);
+MatrixGen<uint64_t, complex>(BondList const &bonds, Couplings const &couplings,
+                             tJ<uint64_t> const &block_in,
+                             tJ<uint64_t> const &block_out);
 
 } // namespace hydra

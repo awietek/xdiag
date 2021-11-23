@@ -23,7 +23,7 @@ tJchain_fullspectrum_alps(int L) {
   cpls["T"] = 1.0;
   cpls["J"] = 1.0;
   for (int s = 0; s < L; ++s) {
-    bonds << Bond("TJHOP", "T", {s, (s + 1) % L});
+    bonds << Bond("HOP", "T", {s, (s + 1) % L});
     bonds << Bond("TJHB", "J", {s, (s + 1) % L});
   }
   lila::Vector<double> eigs;
