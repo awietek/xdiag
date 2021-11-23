@@ -32,23 +32,11 @@ void do_ising_symmetric(BondList const &bonds, Couplings const &couplings,
     std::string type = bond.type();
     std::string cpl = bond.coupling();
 
-    coeff_t J;
-    if constexpr (is_complex<coeff_t>()) {
-      J = couplings[cpl];
-    } else {
-      utils::warn_if_complex(
-          couplings[cpl],
-          "imaginary part discarded (tj / symmetric / exchange)");
-      J = lila::real(couplings[cpl]);
-    }
-
-    assert(bond.size() == 2);
+    utils::check_sites_disjoint(bond);
     int s1 = bond[0];
     int s2 = bond[1];
-    if (s1 == s2) {
-      lila::Log.err(
-          "NotImplementedError: Ising bonds two identical sites (tJ block)");
-    }
+
+    coeff_t J = utils::get_coupling<coeff_t>(couplings, cpl);
 
     // Set values for same/diff (tJ model definition)
     coeff_t val_same, val_diff;
