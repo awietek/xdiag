@@ -22,7 +22,11 @@ lila::Vector<double> Tmatrix::eigenvalues() const {
 }
 
 std::pair<lila::Vector<double>, lila::Matrix<double>> Tmatrix::eigen() const {
-  return lila::EigenSymTridiag(alphas_, betas_);
+  if (size() == 0) {
+    return {lila::Vector<double>(), lila::Matrix<double>()};
+  } else {
+    return lila::EigenSymTridiag(alphas_, betas_);
+  }
 }
 
 } // namespace hydra

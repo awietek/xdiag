@@ -195,7 +195,7 @@ std::tuple<BondList, Couplings, double> triangular_12_complex(int nup,
   Couplings cpls;
   cpls["Jz"] = 1.0;
   cpls["Jx"] = complex(cos(2 * M_PI * eta), sin(2 * M_PI * eta));
-  lila::Log("Jx {} {}", lila::real(cpls["Jx"]), lila::imag(cpls["Jx"]));
+  // lila::Log("Jx {} {}", lila::real(cpls["Jx"]), lila::imag(cpls["Jx"]));
 
   double e0 = 0;
   if (nup == 6) {

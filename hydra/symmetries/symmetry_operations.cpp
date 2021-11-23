@@ -266,6 +266,76 @@ representative_sym_subset<uint64_t, PermutationGroupLookup<uint64_t>>(
 
 //////////////////////////////////////////////////////////
 template <typename bit_t, class GroupAction>
+std::pair<bit_t, std::vector<int>>
+representative_syms(bit_t state, GroupAction const &group_action) {
+  if (group_action.n_symmetries() == 0)
+    return {state, std::vector<int>()};
+
+  bit_t rep = representative(state, group_action);
+  std::vector<int> rep_syms;
+  for (int sym = 0; sym < group_action.n_symmetries(); ++sym) {
+    bit_t tstate = group_action.apply(sym, state);
+    if (tstate == rep) {
+      rep_syms.push_back(sym);
+    }
+  }
+  return {rep, rep_syms};
+}
+
+template std::pair<uint16_t, std::vector<int>>
+representative_syms<uint16_t, PermutationGroupAction>(
+    uint16_t state, PermutationGroupAction const &);
+template std::pair<uint32_t, std::vector<int>>
+representative_syms<uint32_t, PermutationGroupAction>(
+    uint32_t state, PermutationGroupAction const &);
+template std::pair<uint64_t, std::vector<int>>
+representative_syms<uint64_t, PermutationGroupAction>(
+    uint64_t state, PermutationGroupAction const &);
+template std::pair<uint16_t, std::vector<int>>
+representative_syms<uint16_t, PermutationGroupLookup<uint16_t>>(
+    uint16_t state, PermutationGroupLookup<uint16_t> const &);
+template std::pair<uint32_t, std::vector<int>>
+representative_syms<uint32_t, PermutationGroupLookup<uint32_t>>(
+    uint32_t state, PermutationGroupLookup<uint32_t> const &);
+template std::pair<uint64_t, std::vector<int>>
+representative_syms<uint64_t, PermutationGroupLookup<uint64_t>>(
+    uint64_t state, PermutationGroupLookup<uint64_t> const &);
+
+//////////////////////////////////////////////////////////
+template <typename bit_t, class GroupAction>
+std::vector<int> mapping_syms(bit_t origin, bit_t target,
+                              GroupAction const &group_action) {
+  std::vector<int> syms;
+  for (int sym = 0; sym < group_action.n_symmetries(); ++sym) {
+    bit_t tstate = group_action.apply(sym, origin);
+    if (tstate == target) {
+      syms.push_back(sym);
+    }
+  }
+  return syms;
+}
+
+template std::vector<int>
+mapping_syms<uint16_t, PermutationGroupAction>(uint16_t, uint16_t,
+                                               PermutationGroupAction const &);
+template std::vector<int>
+mapping_syms<uint32_t, PermutationGroupAction>(uint32_t, uint32_t,
+                                               PermutationGroupAction const &);
+template std::vector<int>
+mapping_syms<uint64_t, PermutationGroupAction>(uint64_t, uint64_t,
+                                               PermutationGroupAction const &);
+template std::vector<int>
+mapping_syms<uint16_t, PermutationGroupLookup<uint16_t>>(
+    uint16_t, uint16_t, PermutationGroupLookup<uint16_t> const &);
+template std::vector<int>
+mapping_syms<uint32_t, PermutationGroupLookup<uint32_t>>(
+    uint32_t, uint32_t, PermutationGroupLookup<uint32_t> const &);
+template std::vector<int>
+mapping_syms<uint64_t, PermutationGroupLookup<uint64_t>>(
+    uint64_t, uint64_t, PermutationGroupLookup<uint64_t> const &);
+
+//////////////////////////////////////////////////////////
+template <typename bit_t, class GroupAction>
 double norm(bit_t state, GroupAction const &group_action,
             Representation const &irrep) {
   complex amplitude = 0.0;

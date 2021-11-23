@@ -1,62 +1,64 @@
 #pragma once
 
-#include <lila/utils/logger.h>
-
 #include <hydra/common.h>
-#include <hydra/blocks/spinhalf_symmetric/spinhalf_symmetric.h>
-#include <hydra/operators/bondlist.h>
-#include <hydra/operators/couplings.h>
+
 #include <hydra/bitops/bitops.h>
 
+#include <hydra/blocks/spinhalf_symmetric/spinhalf_symmetric.h>
 #include <hydra/blocks/utils/block_utils.h>
+
+#include <hydra/operators/bondlist.h>
+#include <hydra/operators/couplings.h>
 
 namespace hydra::terms::spinhalf_symmetric {
 
-template <class bit_t, class coeff_t, class Filler, class GroupAction>
-void do_exchange_symmetric(BondList const &bonds, Couplings const &couplings,
-                           SpinhalfSymmetric<bit_t, GroupAction> const &block,
-                           Filler &&fill) {
+template <class bit_t, class coeff_t, class Filler>
+void do_exchange_symmetric(
+    BondList const &bonds, Couplings const &couplings,
+    indexing::SpinhalfSymmetricIndexing<bit_t> const &indexing, Filler &&fill) {
+  using bitops::gbit;
 
-  auto exchange = bonds.bonds_of_type("HEISENBERG") +
-                  bonds.bonds_of_type("EXCHANGE") + bonds.bonds_of_type("HB");
+  auto bloch_factors = utils::characters<coeff_t>(indexing.irrep());
+  auto clean_bonds = utils::clean_bondlist(bonds, couplings,
+                                           {"HEISENBERG", "HB", "EXCHANGE"}, 2);
+  for (auto bond : clean_bonds) {
 
-  for (auto bond : exchange) {
+    // Get sites and define flipmask
+    utils::check_sites_disjoint(bond);
+    int s1 = bond[0];
+    int s2 = bond[1];
+    bit_t flipmask = ((bit_t)1 << s1) | ((bit_t)1 << s2);
 
-    if (bond.size() != 2)
-      lila::Log.err("Error computing Spinhalf Exchange: "
-                    "bond must have exactly two sites defined");
+    // Get couplings
+    std::string cpl = bond.coupling();
+    auto [J, J_conj] = utils::get_coupling_and_conj<coeff_t>(couplings, cpl);
+    coeff_t Jhalf = J / 2.;
+    coeff_t Jhalf_conj = J_conj / 2.;
 
-    if (utils::coupling_is_non_zero(bond, couplings)) {
+    // Run through all states and apply bond
+    for (idx_t idx_in = 0; idx_in < indexing.size(); ++idx_in) {
+      bit_t spins_in = indexing.state(idx_in);
 
-      // Get couplings and define flip mask
-      std::string coupling = bond.coupling();
-      double J = lila::real(couplings[coupling]); // TODO: could be complex
-      double Jhalf = J / 2.;
-      int s1 = bond.site(0);
-      int s2 = bond.site(1);
-      if (s1 == s2) {
-        lila::Log.err("Error computing Spinhalf Exchange: "
-                      "operator acting on twice the same site");
-      }
-      bit_t mask = ((bit_t)1 << s1) | ((bit_t)1 << s2);
+      if (bitops::popcnt(spins_in & flipmask) & 1) { // if spins are flippable
 
-      // Run through all states and apply bond
-      for (idx_t idx_in = 0; idx_in < block.size(); ++idx_in) {
-        bit_t state_in = block.indexing_.state(idx_in);
+        bit_t spins_out = spins_in ^ flipmask;
+        auto [idx_out, syms] = indexing.index_syms(spins_out);
 
-        if (bitops::popcnt(state_in & mask) & 1) { // if spins are flippable
-          bit_t state_out = state_in ^ mask;
-          idx_t idx_out = block.indexing_.index(state_out);
-
-          // if new state has non-zero norm, compute element and fill
-          if (idx_out != invalid_index) {
-            auto norm_out =
-                complex_to<coeff_t>(block.indexing_.norm(state_out));
-            auto norm_in = complex_to<coeff_t>(block.indexing_.norm(state_in));
-            fill(idx_out, idx_in, Jhalf * norm_out / norm_in);
+        // if new spins has non-zero norm, compute element and fill
+        if (idx_out != invalid_index) {
+          double norm_out = indexing.norm(idx_out);
+          double norm_in = indexing.norm(idx_in);
+          coeff_t bloch = bloch_factors[syms[0]];
+          if constexpr (is_complex<coeff_t>()) {
+            coeff_t val = (gbit(spins_in, s1) ? Jhalf : Jhalf_conj) * bloch *
+                          norm_out / norm_in;
+            fill(idx_out, idx_in, val);
+          } else {
+            coeff_t val = Jhalf * bloch * norm_out / norm_in;
+            fill(idx_out, idx_in, val);
           }
         }
-      } // for (idx_t idx_in; ...)
+      }
     }
   }
 }

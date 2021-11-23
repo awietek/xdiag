@@ -101,41 +101,6 @@ void test_hubbard_symmetric_spectrum_chains(int n_sites) {
 TEST_CASE("ElectronSymmetric_Matrix", "[models][ElectronSymmetric]") {
   using namespace hydra::testcases::electron;
 
-  lila::Log.out("ElectronSymmetric_Matrix <-> ElectronSymmetricSimple_Matrix "
-                "cross-check");
-  for (int n_sites = 0; n_sites < 7; ++n_sites) {
-    lila::Log.out("N: {}", n_sites);
-    for (int nup = 0; nup < n_sites; ++nup) {
-      for (int ndn = 0; ndn < n_sites; ++ndn) {
-        auto [space_group, irreps, multiplicities] =
-            get_cyclic_group_irreps_mult(n_sites);
-
-        BondList bonds;
-        for (int i = 0; i < n_sites; ++i) {
-          bonds << Bond("HOP", "T", {i, (i + 1) % n_sites});
-        }
-        Couplings cpls;
-        cpls["T"] = 1.0;
-        cpls["U"] = 5.0;
-
-        for (auto irrep : irreps) {
-
-          auto block1 =
-              ElectronSymmetric(n_sites, nup, ndn, space_group, irrep);
-          auto block2 =
-              ElectronSymmetricSimple(n_sites, nup, ndn, space_group, irrep);
-
-          auto Hnew = MatrixCplx(bonds, cpls, block1, block1);
-          auto Hsimple = MatrixCplx(bonds, cpls, block2, block2);
-
-          // LilaPrint(Hnew);
-          // LilaPrint(Hsimple);
-          REQUIRE(lila::close(Hnew, Hsimple));
-        }
-      }
-    }
-  }
-
   //////////////////////////////////////////////////////////////////////////////////////
 
   // Check matrices agains Weisse & Fehske

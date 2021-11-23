@@ -19,6 +19,9 @@ public:
   tJSymmetricIndexing(int n_sites, int nup, int ndn,
                       PermutationGroup permutation_group, Representation irrep);
 
+  inline int n_sites() const { return n_sites_; }
+  inline int n_up() const { return n_up_; }
+  inline int n_dn() const { return n_dn_; }
   PermutationGroupLookup<bit_t> const &group_action() const {
     return group_action_;
   }
@@ -142,6 +145,8 @@ public:
 
 private:
   int n_sites_;
+  int n_up_;
+  int n_dn_;
   PermutationGroupLookup<bit_t> group_action_;
   Representation irrep_;
 

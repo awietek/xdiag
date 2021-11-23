@@ -5,15 +5,15 @@ sources+= hydra/combinatorics/binomial.cpp
 sources+= hydra/combinatorics/subsets.cpp
 sources+= hydra/combinatorics/bit_patterns.cpp
 sources+= hydra/combinatorics/combinations.cpp
-sources+= hydra/combinatorics/up_down_hole.cpp
 
 sources+= hydra/parameters/parameter_value.cpp
 sources+= hydra/parameters/parameters.cpp
 sources+= hydra/parameters/parser.cpp
 
 sources+= hydra/indexing/lintable.cpp
-sources+= hydra/indexing/indexing_symmetric.cpp
-sources+= hydra/indexing/indexing_symmetric_fermionic.cpp
+sources+= hydra/indexing/spinhalf/spinhalf_indexing.cpp
+sources+= hydra/indexing/spinhalf/spinhalf_symmetric_indexing.cpp
+sources+= hydra/indexing/tj/tj_symmetric_indexing.cpp
 
 sources+= hydra/blocks/utils/block_utils.cpp
 
@@ -30,26 +30,16 @@ sources+= hydra/blocks/tj/tj_matrix.cpp
 sources+= hydra/blocks/tj/tj_apply.cpp
 
 sources+= hydra/blocks/tj_symmetric/tj_symmetric.cpp
-sources+= hydra/blocks/tj_symmetric/tj_symmetric_indexing.cpp
 sources+= hydra/blocks/tj_symmetric/tj_symmetric_matrix.cpp
 sources+= hydra/blocks/tj_symmetric/tj_symmetric_apply.cpp
-
-sources+= hydra/blocks/tj_symmetric_simple/tj_symmetric_simple.cpp
-sources+= hydra/blocks/tj_symmetric_simple/tj_symmetric_simple_matrix.cpp
-sources+= hydra/blocks/tj_symmetric_simple/tj_symmetric_simple_apply.cpp
 
 sources+= hydra/blocks/electron/electron.cpp
 sources+= hydra/blocks/electron/electron_matrix.cpp
 sources+= hydra/blocks/electron/electron_apply.cpp
 
-sources+= hydra/blocks/electron_symmetric_simple/electron_symmetric_simple.cpp
-sources+= hydra/blocks/electron_symmetric_simple/electron_symmetric_simple_matrix.cpp
-sources+= hydra/blocks/electron_symmetric_simple/electron_symmetric_simple_apply.cpp
-
 sources+= hydra/blocks/electron_symmetric/electron_symmetric.cpp
 sources+= hydra/blocks/electron_symmetric/electron_symmetric_matrix.cpp
 sources+= hydra/blocks/electron_symmetric/electron_symmetric_apply.cpp
-
 
 sources+= hydra/symmetries/symmetry_operations.cpp
 sources+= hydra/symmetries/permutation_group.cpp
@@ -118,17 +108,9 @@ testsources+= test/blocks/tj_symmetric/test_tj_symmetric.cpp
 testsources+= test/blocks/tj_symmetric/test_tj_symmetric_matrix.cpp
 testsources+= test/blocks/tj_symmetric/test_tj_symmetric_apply.cpp
 
-# testsources+= test/blocks/tj_symmetric_simple/test_tj_symmetric_simple.cpp
-# testsources+= test/blocks/tj_symmetric_simple/test_tj_symmetric_simple_matrix.cpp
-# testsources+= test/blocks/tj_symmetric_simple/test_tj_symmetric_simple_apply.cpp
-
 testsources+= test/blocks/electron/testcases_electron.cpp
 testsources+= test/blocks/electron/test_electron_matrix.cpp
 testsources+= test/blocks/electron/test_electron_apply.cpp
-
-# testsources+= test/blocks/electron_symmetric_simple/test_electron_symmetric_simple.cpp
-# testsources+= test/blocks/electron_symmetric_simple/test_electron_symmetric_simple_matrix.cpp
-# testsources+= test/blocks/electron_symmetric_simple/test_electron_symmetric_simple_apply.cpp
 
 testsources+= test/blocks/electron_symmetric/test_electron_symmetric.cpp
 testsources+= test/blocks/electron_symmetric/test_electron_symmetric_matrix.cpp

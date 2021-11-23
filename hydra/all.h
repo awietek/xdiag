@@ -2,19 +2,20 @@
 
 #include <lila/all.h>
 
-#include "common.h"
 #include "bitops/bitops.h"
+#include "common.h"
 #include "utils/iochecks.h"
 
 #include "combinatorics/binomial.h"
 #include "combinatorics/bit_patterns.h"
 #include "combinatorics/combinations.h"
 #include "combinatorics/subsets.h"
-#include "combinatorics/up_down_hole.h"
 
-#include "indexing/indexing_symmetric.h"
-#include "indexing/indexing_symmetric_fermionic.h"
+#include "indexing/lintable.cpp"
 #include "indexing/lintable.h"
+#include "indexing/spinhalf/spinhalf_indexing.cpp"
+#include "indexing/spinhalf/spinhalf_symmetric_indexing.cpp"
+#include "indexing/tj/tj_symmetric_indexing.cpp"
 
 #include "blocks/blocks.h"
 #include "blocks/utils/block_utils.h"
@@ -29,30 +30,21 @@
 #include "blocks/spinhalf_symmetric/spinhalf_symmetric_matrix.h"
 
 #include "blocks/tj/tj.h"
-#include "blocks/tj/tj_utils.h"
 #include "blocks/tj/tj_apply.h"
 #include "blocks/tj/tj_matrix.h"
+#include "blocks/tj/tj_utils.h"
 
 #include "blocks/tj_symmetric/tj_symmetric.h"
-#include "blocks/tj_symmetric/tj_symmetric_indexing.h"
 // #include "blocks/tj_symmetric/tj_symmetric_apply.h"
 // #include "blocks/tj_symmetric/tj_symmetric_matrix.h"
-
-#include "blocks/tj_symmetric_simple/tj_symmetric_simple.h"
-#include "blocks/tj_symmetric_simple/tj_symmetric_simple_apply.h"
-#include "blocks/tj_symmetric_simple/tj_symmetric_simple_matrix.h"
 
 #include "blocks/electron/electron.h"
 #include "blocks/electron/electron_apply.h"
 #include "blocks/electron/electron_matrix.h"
 
 #include "blocks/electron_symmetric/electron_symmetric.h"
-#include "blocks/electron_symmetric/electron_symmetric_matrix.h"
 #include "blocks/electron_symmetric/electron_symmetric_apply.h"
-
-#include "blocks/electron_symmetric_simple/electron_symmetric_simple.h"
-#include "blocks/electron_symmetric_simple/electron_symmetric_simple_apply.h"
-#include "blocks/electron_symmetric_simple/electron_symmetric_simple_matrix.h"
+#include "blocks/electron_symmetric/electron_symmetric_matrix.h"
 
 #include "symmetries/fermi_sign.h"
 #include "symmetries/permutation_group.h"

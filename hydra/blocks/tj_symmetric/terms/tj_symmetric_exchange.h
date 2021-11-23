@@ -1,16 +1,19 @@
 #pragma once
 
-#include <hydra/bitops/bitops.h>
-#include <hydra/blocks/utils/block_utils.h>
 #include <hydra/common.h>
 
-#include <hydra/blocks/tj_symmetric/tj_symmetric_indexing.h>
+#include <hydra/blocks/utils/block_utils.h>
+
+#include <hydra/bitops/bitops.h>
+
+#include <hydra/indexing/tj/tj_symmetric_indexing.h>
+
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
 
 namespace hydra::terms::tj_symmetric {
 
-template <class bit_t, class coeff_t, class Filler>
+template <typename bit_t, typename coeff_t, class Filler>
 void do_exchange_symmetric(BondList const &bonds, Couplings const &couplings,
                            indexing::tJSymmetricIndexing<bit_t> const &indexing,
                            Filler &&fill) {

@@ -77,7 +77,7 @@ template <class bit_t> void test_tj_symmetric_spectrum_chains(int n_sites) {
   auto [bondlist, couplings] = tJchain(n_sites, 1.0, 0.4);
   auto [space_group, irreps, multiplicities] =
       get_cyclic_group_irreps_mult(n_sites);
-  test_symmetric_spectra<uint32>(bondlist, couplings, space_group, irreps,
+  test_symmetric_spectra<uint32_t>(bondlist, couplings, space_group, irreps,
                                  multiplicities);
 }
 

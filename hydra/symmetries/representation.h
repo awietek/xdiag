@@ -4,7 +4,6 @@
 #include <vector>
 
 #include <hydra/common.h>
-#include <lila/all.h>
 
 namespace hydra {
 
@@ -39,5 +38,7 @@ Representation read_represenation(std::string filename, std::string repname);
 
 bool is_complex(Representation const &cpls);
 bool is_real(Representation const &cpls);
+
+Representation TrivialRepresentation(idx_t size);
 
 } // namespace hydra

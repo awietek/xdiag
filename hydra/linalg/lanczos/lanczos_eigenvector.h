@@ -9,9 +9,9 @@
 #include <hydra/mpi/dot_mpi.h>
 #include <hydra/mpi/timing_mpi.h>
 
+#include <hydra/blocks/blocks.h>
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
-#include <hydra/blocks/blocks.h>
 
 #include <lila/all.h>
 
@@ -45,7 +45,7 @@ LanczosEigenvector(BondList const &bonds, Couplings const &couplings,
     };
 
     auto dot_mpi = [](lila::Vector<coeff_t> const &v,
-                         lila::Vector<coeff_t> const &w) -> coeff_t {
+                      lila::Vector<coeff_t> const &w) -> coeff_t {
       return DotMPI(v, w);
     };
 
@@ -65,9 +65,8 @@ LanczosEigenvector(BondList const &bonds, Couplings const &couplings,
     t0 = rightnow_mpi();
     iter = 0;
     auto [tevals, tevecs] = tmat.eigen();
-    auto coefficients =
-        tevecs({0, tevecs.m()},
-               {0, std::min((size_type)num_eigenvector + 1, tevecs.n())});
+    auto coefficients = tevecs(
+        {0, tevecs.m()}, {0, std::min((idx_t)num_eigenvector + 1, tevecs.n())});
     set_v0(v0);
     std::tie(tmat, vectors) =
         LanczosGeneric(mult, v0, dot_mpi, converged, coefficients,

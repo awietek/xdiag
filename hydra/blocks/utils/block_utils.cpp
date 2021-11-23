@@ -1,6 +1,7 @@
 #include "block_utils.h"
 
 #include <lila/all.h>
+#include <set>
 
 namespace hydra::utils {
 
@@ -49,14 +50,55 @@ void check_operator_real(BondList const &bonds, Couplings const &cpls,
                   errmsg);
 }
 
-void check_symmetric_operator_real(BondList const &bonds, Couplings const &cpls,
-                                   Representation const &irrep_in,
-                                   Representation const &irrep_out,
-                                   std::string errmsg) {
+void check_operator_real(BondList const &bonds, Couplings const &cpls,
+                         Representation const &irrep_in,
+                         Representation const &irrep_out, std::string errmsg) {
   check_operator_real(bonds, cpls, errmsg);
   if (is_complex(irrep_in) || is_complex(irrep_out))
     lila::Log.err("Error: cannot {} real matrix from complex representation!",
                   errmsg);
+}
+
+template <typename coeff_t>
+void check_operator_works_with(BondList const &bonds, Couplings const &cpls,
+                               std::string errmsg) {
+  if constexpr (is_real<coeff_t>()) {
+    check_operator_real(bonds, cpls, errmsg);
+  }
+}
+template void check_operator_works_with<double>(BondList const &,
+                                                Couplings const &, std::string);
+template void check_operator_works_with<complex>(BondList const &,
+                                                 Couplings const &,
+                                                 std::string);
+template <typename coeff_t>
+void check_operator_works_with(BondList const &bonds, Couplings const &cpls,
+                               Representation const &irrep_in,
+                               Representation const &irrep_out,
+                               std::string errmsg) {
+  if constexpr (is_real<coeff_t>()) {
+    check_operator_real(bonds, cpls, irrep_in, irrep_out, errmsg);
+  }
+}
+template void check_operator_works_with<double>(BondList const &,
+                                                Couplings const &,
+                                                Representation const &,
+                                                Representation const &,
+                                                std::string);
+template void check_operator_works_with<complex>(BondList const &,
+                                                 Couplings const &,
+                                                 Representation const &,
+                                                 Representation const &,
+                                                 std::string);
+
+void check_sites_disjoint(std::vector<int> const &sites) {
+  auto set = std::set<int>(sites.begin(), sites.end());
+  if (set.size() != sites.size())
+    lila::Log.err("Error: sites are not disjoint");
+}
+
+void check_sites_disjoint(Bond const &bond) {
+  check_sites_disjoint(bond.sites());
 }
 
 BondList clean_bondlist(BondList const &bonds, Couplings const &cpls,
@@ -78,7 +120,6 @@ BondList clean_bondlist(BondList const &bonds, Couplings const &cpls,
       }
     }
   }
-
   return clean_bonds;
 }
 
@@ -87,5 +128,56 @@ void warn_if_complex(complex x, std::string msg) {
     lila::Log.warn("WarningComplexNumber: {}", msg);
   }
 }
+
+template <class coeff_t>
+coeff_t get_coupling(Couplings const &couplings, std::string cpl) {
+  coeff_t val;
+  if constexpr (is_complex<coeff_t>()) {
+    val = couplings[cpl];
+  } else {
+    utils::warn_if_complex(couplings[cpl], "imaginary part deprecated");
+    val = lila::real(couplings[cpl]);
+  }
+  return val;
+}
+
+template double get_coupling<double>(Couplings const &couplings,
+                                     std::string cpl);
+template complex get_coupling<complex>(Couplings const &couplings,
+                                       std::string cpl);
+
+template <class coeff_t>
+std::pair<coeff_t, coeff_t> get_coupling_and_conj(Couplings const &couplings,
+                                                  std::string cpl) {
+  coeff_t val;
+  coeff_t val_conj;
+  if constexpr (is_complex<coeff_t>()) {
+    val = couplings[cpl];
+    val_conj = lila::conj(val);
+
+  } else {
+    utils::warn_if_complex(couplings[cpl], "imaginary part deprecated");
+    val = lila::real(couplings[cpl]);
+    val_conj = val;
+  }
+  return {val, val_conj};
+}
+
+template std::pair<double, double>
+get_coupling_and_conj<double>(Couplings const &couplings, std::string cpl);
+template std::pair<complex, complex>
+get_coupling_and_conj<complex>(Couplings const &couplings, std::string cpl);
+
+template <class coeff_t>
+std::vector<coeff_t> characters(Representation const &irrep) {
+  if constexpr (is_complex<coeff_t>()) {
+    return irrep.characters();
+  } else {
+    return irrep.characters_real();
+  }
+}
+
+template std::vector<double> characters<double>(Representation const &irrep);
+template std::vector<complex> characters<complex>(Representation const &irrep);
 
 } // namespace hydra::utils

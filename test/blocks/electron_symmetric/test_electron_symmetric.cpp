@@ -10,12 +10,13 @@ using namespace hydra::combinatorics;
 template <class bit_t>
 void test_indices(ElectronSymmetric<bit_t> const &electron) {
   // int n_sites = electron.n_sites();
-  
+
   idx_t idx = 0;
   for (bit_t ups : electron.reps_up_) {
     auto const &dnss = electron.dns_for_up_rep(ups);
     for (bit_t dns : dnss) {
-      // lila::Log.out("{} {}", bits_to_string(ups, n_sites), bits_to_string(dns, n_sites));
+      // lila::Log.out("{} {}", bits_to_string(ups, n_sites),
+      // bits_to_string(dns, n_sites));
       idx_t idx2 = electron.index(ups, dns);
       REQUIRE(idx == idx2);
       ++idx;
@@ -49,7 +50,8 @@ template <class bit_t> void test_electron_chain(int n_sites) {
 
       for (int k = 0; k < n_sites; ++k) {
 
-        // lila::Log.out("N: {}, nup: {}, ndn: {}, k:{} ", n_sites, nup, ndn, k);
+        // lila::Log.out("N: {}, nup: {}, ndn: {}, k:{} ", n_sites, nup, ndn,
+        // k);
 
         // Create characters
         std::vector<complex> chis;
@@ -58,128 +60,11 @@ template <class bit_t> void test_electron_chain(int n_sites) {
                           std::sin(2 * M_PI * l * k / n_sites)});
         auto irrep = Representation(chis);
 
-        auto electron1 =
-            ElectronSymmetricSimple<bit_t>(n_sites, nup, ndn, space_group, irrep);
         auto electron2 =
             ElectronSymmetric<bit_t>(n_sites, nup, ndn, space_group, irrep);
 
         sum_of_dims += electron2.size();
         sum_of_dims_updn += electron2.size();
-	
-
-	// Compare up, dn order
-        {
-          std::vector<bit_t> ups1;
-          std::vector<bit_t> dns1;
-          std::vector<double> norms1;
-          for (auto [up, lower_upper] : electron1.ups_lower_upper_) {
-            idx_t lower = lower_upper.first;
-            idx_t upper = lower_upper.second;
-
-            for (idx_t idx = lower; idx < upper; ++idx) {
-              bit_t dn = electron1.dns_[idx];
-              double norm = electron1.norms_[idx];
-              ups1.push_back(up);
-              dns1.push_back(dn);
-              norms1.push_back(norm);
-            }
-          }
-
-          std::vector<bit_t> ups2;
-          std::vector<bit_t> dns2;
-          std::vector<double> norms2;
-          for (bit_t ups : electron2.reps_up_) {
-
-	    
-            auto const &dnss = electron2.dns_for_up_rep(ups);
-            auto const &norms = electron2.norms_for_up_rep(ups);
-            for (idx_t idx = 0; idx < dnss.size(); ++idx) {
-              bit_t dns = dnss[idx];
-              double norm = norms[idx];
-
-              ups2.push_back(ups);
-              dns2.push_back(dns);
-              norms2.push_back(norm);
-            }
-          }
-  	  
-          REQUIRE(ups1.size() == dns1.size());
-          REQUIRE(ups1.size() == norms1.size());
-          REQUIRE(ups1.size() == ups2.size());
-          REQUIRE(ups1.size() == dns2.size());
-          REQUIRE(ups1.size() == norms2.size());
-
-          for (idx_t idx = 0; idx < ups1.size(); ++idx) {
-            // lila::Log.out("{};{} {:.4f}  <->  {};{} {:.4f}",
-            //               bits_to_string(ups1[idx], n_sites),
-            //               bits_to_string(dns1[idx], n_sites), norms1[idx],
-            //               bits_to_string(ups2[idx], n_sites),
-            //               bits_to_string(dns2[idx], n_sites), norms2[idx]);
-            REQUIRE(ups1[idx] == ups2[idx]);
-            REQUIRE(dns1[idx] == dns2[idx]);
-            REQUIRE(norms1[idx] == norms2[idx]);
-          }
-        }
-
-	// Compare dn, up order
-        {
-          std::vector<bit_t> ups1;
-          std::vector<bit_t> dns1;
-          std::vector<double> norms1;
-          for (auto [dn, lower_upper] : electron1.dns_lower_upper_) {
-            idx_t lower = lower_upper.first;
-            idx_t upper = lower_upper.second;
-
-            for (idx_t idx = lower; idx < upper; ++idx) {
-              bit_t up = electron1.ups_[idx];
-              double norm = electron1.norms_[electron1.index_switch_to_index(idx)];
-              ups1.push_back(up);
-              dns1.push_back(dn);
-              norms1.push_back(norm);
-            }
-          }
-
-          std::vector<bit_t> ups2;
-          std::vector<bit_t> dns2;
-          std::vector<double> norms2;
-          for (bit_t dns : electron2.reps_dn_) {
-
-            auto const &upss = electron2.ups_for_dn_rep(dns);
-            auto const &norms = electron2.norms_for_dn_rep(dns);
-
-            for (idx_t idx = 0; idx < upss.size(); ++idx) {
-              bit_t ups = upss[idx];
-              double norm = norms[idx];
-
-              ups2.push_back(ups);
-              dns2.push_back(dns);
-              norms2.push_back(norm);
-            }
-          }
-
-
-          REQUIRE(ups1.size() == dns1.size());
-          REQUIRE(ups1.size() == norms1.size());
-          REQUIRE(ups1.size() == ups2.size());
-          REQUIRE(ups1.size() == dns2.size());
-          REQUIRE(ups1.size() == norms2.size());
-
-          for (idx_t idx = 0; idx < ups1.size(); ++idx) {
-            // lila::Log.out("{};{} {:.4f}  <->  {};{} {:.4f}",
-            //               bits_to_string(ups1[idx], n_sites),
-            //               bits_to_string(dns1[idx], n_sites), norms1[idx],
-            //               bits_to_string(ups2[idx], n_sites),
-            //               bits_to_string(dns2[idx], n_sites), norms2[idx]);
-            REQUIRE(ups1[idx] == ups2[idx]);
-            REQUIRE(dns1[idx] == dns2[idx]);
-            REQUIRE(norms1[idx] == norms2[idx]);
-          }
-        }
-
-
-        if (electron2.size() > 0) {
-          test_indices(electron2);
-        }
       }
       CHECK(sum_of_dims_updn ==
             binomial(n_sites, nup) * binomial(n_sites, ndn));
@@ -219,8 +104,7 @@ TEST_CASE("electron_symmetric", "[models][ElectronSymmetric]") {
       for (auto [name, mult] : rep_name_mult) {
         auto irrep = read_represenation(lfile, name);
         auto electron =
-            ElectronSymmetric<uint16_t>(n_sites, nup, ndn, space_group,
-            irrep);
+            ElectronSymmetric<uint16_t>(n_sites, nup, ndn, space_group, irrep);
 
         idx_t dim = electron.size() * mult;
         // lila::Log.out(
@@ -234,12 +118,10 @@ TEST_CASE("electron_symmetric", "[models][ElectronSymmetric]") {
       }
       auto electron_nosym = Electron<uint16_t>(n_sites, nup, ndn);
       REQUIRE(sum_dim_updn == electron_nosym.size());
-      REQUIRE(sum_dim_updn == binomial(n_sites, nup) * binomial(n_sites,
-      ndn));
+      REQUIRE(sum_dim_updn == binomial(n_sites, nup) * binomial(n_sites, ndn));
 
       // lila::Log.out("size: {} {}", sum_dim_updn, electron_nosym.size());
     }
   }
   REQUIRE(sum_dim == (idx_t)pow(4, n_sites));
-
 }

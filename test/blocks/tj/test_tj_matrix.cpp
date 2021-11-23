@@ -16,7 +16,7 @@ void test_tjmodel_e0_real(BondList bonds, Couplings couplings, int nup, int ndn,
 
   auto eigs = lila::EigenvaluesSym(H);
   // LilaPrint(H);
-  lila::Log("nup: {}, ndn: {}, e0: {}, eigs(0): {}", nup, ndn, e0, eigs(0));
+  // lila::Log("nup: {}, ndn: {}, e0: {}, eigs(0): {}", nup, ndn, e0, eigs(0));
   REQUIRE(lila::close(H, lila::Herm(H)));
   REQUIRE(std::abs(e0 - eigs(0)) < 1e-6);
   // }
@@ -119,7 +119,7 @@ TEST_CASE("tJ_Matrix", "[tj]") {
       auto H2 = MatrixCplx(bonds, cpls, block2, block2);
       auto eigs1 = lila::EigenvaluesSym(H1);
       auto eigs2 = lila::EigenvaluesSym(H2);
-      lila::Log("eigs1(0): {}, eigs2(0): {}", eigs1(0), eigs2(0));
+      // lila::Log("eigs1(0): {}, eigs2(0): {}", eigs1(0), eigs2(0));
       REQUIRE(lila::close(eigs1, eigs2));
     }
   }

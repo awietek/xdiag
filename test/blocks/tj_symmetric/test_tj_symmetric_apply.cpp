@@ -67,7 +67,7 @@ template <class bit_t> void test_tj_symmetric_apply_chains(int n_sites) {
   auto [bondlist, couplings] = tJchain(n_sites, 1.0, 5.0);
   auto [space_group, irreps, multiplicities] =
       get_cyclic_group_irreps_mult(n_sites);
-  test_symmetric_apply<uint16>(bondlist, couplings, space_group, irreps);
+  test_symmetric_apply<uint16_t>(bondlist, couplings, space_group, irreps);
 }
 
 TEST_CASE("tj_symmetric_apply", "[blocks]") {

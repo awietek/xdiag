@@ -39,7 +39,6 @@ LanczosGeneric(multiply_f mult, lila::Vector<coeff_t> &v0, dot_f dot,
   real alpha = 0.;
   real beta = 0.;
 
-
   // Normalize start vector or return if norm is zero
   coeff_t v1_norm = norm(v1);
   if (!lila::close(v1_norm, (coeff_t)0.)) {
@@ -51,7 +50,6 @@ LanczosGeneric(multiply_f mult, lila::Vector<coeff_t> &v0, dot_f dot,
   // Main Lanczos loop
   int iteration = 0;
   while (!converged(tmatrix) || only_build_vectors) {
-
     // Build vectors from linear combination
     for (int v_idx = 0; v_idx < coefficients.n(); ++v_idx) {
       Add(v1, vectors({0, vectors.m()}, v_idx), coefficients(iteration, v_idx));
