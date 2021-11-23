@@ -11,11 +11,11 @@
 #include "combinatorics/combinations.h"
 #include "combinatorics/subsets.h"
 
-#include "indexing/lintable.cpp"
 #include "indexing/lintable.h"
-#include "indexing/spinhalf/spinhalf_indexing.cpp"
-#include "indexing/spinhalf/spinhalf_symmetric_indexing.cpp"
-#include "indexing/tj/tj_symmetric_indexing.cpp"
+#include "indexing/spinhalf/spinhalf_indexing.h"
+#include "indexing/spinhalf/spinhalf_symmetric_indexing.h"
+#include "indexing/tj/tj_indexing.h"
+#include "indexing/tj/tj_symmetric_indexing.h"
 
 #include "blocks/blocks.h"
 #include "blocks/utils/block_utils.h"
@@ -35,8 +35,8 @@
 #include "blocks/tj/tj_utils.h"
 
 #include "blocks/tj_symmetric/tj_symmetric.h"
-// #include "blocks/tj_symmetric/tj_symmetric_apply.h"
-// #include "blocks/tj_symmetric/tj_symmetric_matrix.h"
+#include "blocks/tj_symmetric/tj_symmetric_apply.h"
+#include "blocks/tj_symmetric/tj_symmetric_matrix.h"
 
 #include "blocks/electron/electron.h"
 #include "blocks/electron/electron_apply.h"

@@ -1,78 +1,74 @@
 #pragma once
 
-#include <lila/utils/logger.h>
+#include <hydra/common.h>
 
 #include <hydra/bitops/bitops.h>
+
 #include <hydra/blocks/tj/tj.h>
-#include <hydra/blocks/tj/tj_utils.h>
+#include <hydra/blocks/utils/block_utils.h>
+
 #include <hydra/combinatorics/combinations.h>
-#include <hydra/common.h>
+
+#include <hydra/indexing/tj/tj_indexing.h>
+
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
 
 namespace hydra::terms::tj {
 
-template <class bit_t, class Filler>
+template <typename bit_t, typename coeff_t, class Filler>
 void do_ising(BondList const &bonds, Couplings const &couplings,
-              tJ<bit_t> const &block, Filler &&fill) {
-  using bitops::bits_to_string;
+              indexing::tJIndexing<bit_t> const &indexing, Filler &&fill) {
   using bitops::gbit;
   using bitops::popcnt;
   using combinatorics::Combinations;
 
-  int n_sites = block.n_sites();
-  int nup = block.n_up();
-  int ndn = block.n_dn();
-  int charge = nup + ndn;
-  int n_holes = n_sites - charge;
-  idx_t size_spins = block.size_spins_;
+  int n_sites = indexing.n_sites();
+  int n_up = indexing.n_up();
+  int n_holes = indexing.n_holes();
+  int n_spins = indexing.n_spins();
+  idx_t size_spins = indexing.size_spins();
 
-  auto ising = bonds.bonds_of_type("HEISENBERG") +
-               bonds.bonds_of_type("ISING") + bonds.bonds_of_type("HB");
-  auto ising_tj = bonds.bonds_of_type("TJHEISENBERG") +
-                  bonds.bonds_of_type("TJISING") + bonds.bonds_of_type("TJHB");
+  auto clean_bonds = utils::clean_bondlist(
+      bonds, couplings,
+      {"HEISENBERG", "HB", "ISING", "TJHEISENBERG", "TJISING", "TJHB"}, 2);
 
-  for (auto bond : ising + ising_tj) {
+  for (auto bond : clean_bonds) {
 
-    if (bond.size() != 2)
-      lila::Log.err("Error computing tJ Ising: "
-                    "bond must have exactly two sites defined");
+    std::string type = bond.type();
+    std::string cpl = bond.coupling();
 
-    std::string coupling = bond.coupling();
-    if (couplings.defined(coupling) &&
-        !lila::close(couplings[coupling], (complex)0.)) {
+    utils::check_sites_disjoint(bond);
+    int s1 = bond[0];
+    int s2 = bond[1];
 
-      double J = lila::real(couplings[coupling]);
+    // Set values for same/diff (tJ block definition)
+    coeff_t J = utils::get_coupling<coeff_t>(couplings, cpl);
 
-      // Set values for same/diff (tJ block definition)
-      std::string type = bond.type();
-      double val_same, val_diff;
-      if ((type == "HEISENBERG") || (type == "ISING") || (type == "HB")) {
-        val_same = J / 4.;
-        val_diff = -J / 4.;
-      } else if ((type == "TJHEISENBERG") || (type == "TJISING") ||
-                 (type == "TJHB")) {
-        val_same = 0.;
-        val_diff = -J / 2.;
-      }
+    coeff_t val_same, val_diff;
+    if ((type == "HEISENBERG") || (type == "ISING") || (type == "HB")) {
+      val_same = J / 4.;
+      val_diff = -J / 4.;
+    } else if ((type == "TJHEISENBERG") || (type == "TJISING") ||
+               (type == "TJHB")) {
+      val_same = 0.;
+      val_diff = -J / 2.;
+    }
 
-      int s1 = bond[0];
-      int s2 = bond[1];
-      bit_t flipmask = ((bit_t)1 << s1) | ((bit_t)1 << s2);
-      bit_t sitesmask = ((bit_t)1 << n_sites) - 1;
+    bit_t flipmask = ((bit_t)1 << s1) | ((bit_t)1 << s2);
+    bit_t sitesmask = ((bit_t)1 << n_sites) - 1;
+    // bit_t spinsmask = ((bit_t)1 << n_spins) - 1;
 
-      idx_t idx = 0;
-      for (auto holes : Combinations<bit_t>(n_sites, n_holes)) {
+    idx_t idx = 0;
+    for (auto holes : Combinations<bit_t>(n_sites, n_holes)) {
 
-        // a hole is present at site -> no Ising term
-        if (popcnt(holes & flipmask) != 0) {
-          idx += size_spins;
-          continue;
-        }
+      // there cannot be a hole on one site
+      if (popcnt(holes & flipmask) == 0) {
 
         bit_t not_holes = (~holes) & sitesmask;
-        for (auto spins : Combinations<bit_t>(charge, nup)) {
+        for (auto spins : Combinations<bit_t>(n_spins, n_up)) {
           bit_t ups_dns = bitops::deposit(spins, not_holes);
+
           if (gbit(ups_dns, s1) == gbit(ups_dns, s2)) {
             fill(idx, idx, val_same);
           } else {
@@ -80,6 +76,9 @@ void do_ising(BondList const &bonds, Couplings const &couplings,
           }
           ++idx;
         }
+        // a hole is present at site -> no Ising term -> skip ahead
+      } else {
+        idx += size_spins;
       }
     }
   }
