@@ -40,27 +40,12 @@ void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
     std::string type = bond.type();
     std::string cpl = bond.coupling();
 
-    assert(bond.size() == 2);
+    utils::check_sites_disjoint(bond);
     int s1 = bond[0];
     int s2 = bond[1];
-    if (s1 == s2) {
-      lila::Log.err(
-          "NotImplementedError: Hopping on two identical sites (tJ block)");
-    }
 
     // Define hopping amplitude
-    coeff_t t = 0;
-    coeff_t tconj = 0;
-    if constexpr (is_complex<coeff_t>()) {
-      t = couplings[cpl];
-      tconj = lila::conj(t);
-    } else {
-      utils::warn_if_complex(
-          couplings[cpl],
-          "imaginary part discarded (tj / symmetric / hopping)");
-      t = lila::real(couplings[cpl]);
-      tconj = lila::real(couplings[cpl]);
-    }
+    auto [t, t_conj] = utils::get_coupling_and_conj<coeff_t>(couplings, cpl);
 
     // Prepare bitmasks
     bit_t flipmask = ((bit_t)1 << s1) | ((bit_t)1 << s2);
@@ -133,7 +118,7 @@ void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
               // Complex conjugate t if necessary
               coeff_t val;
               if constexpr (is_complex<coeff_t>()) {
-                val = -(gbit(dns, s1) ? t : tconj);
+                val = -(gbit(dns, s1) ? t : t_conj);
               } else {
                 val = -t;
               } // Comment: norm is always 1.0 for trivial stabilizers
@@ -180,7 +165,7 @@ void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
                 // Complex conjugate t if necessary
                 coeff_t val;
                 if constexpr (is_complex<coeff_t>()) {
-                  val = -(gbit(dns, s1) ? t : tconj) * bloch_factors[sym] *
+                  val = -(gbit(dns, s1) ? t : t_conj) * bloch_factors[sym] *
                         norms[idx_dns_flip] / norms[idx_dns];
                 } else {
                   // lila::Log("sz: {}, sym: {}", bloch_factors.size(), sym);
@@ -248,7 +233,7 @@ void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
           // Complex conjugate t if necessary
           coeff_t prefac;
           if constexpr (is_complex<coeff_t>()) {
-            prefac = -(gbit(ups, s1) ? t : tconj) * bloch_factors[sym];
+            prefac = -(gbit(ups, s1) ? t : t_conj) * bloch_factors[sym];
           } else {
             prefac = -t * bloch_factors[sym];
           }
@@ -331,7 +316,7 @@ void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
           std::vector<coeff_t> prefacs(irrep.size());
           if constexpr (is_complex<coeff_t>()) {
             for (int i = 0; i < (int)irrep.size(); ++i) {
-              prefacs[i] = -(gbit(ups, s1) ? t : tconj) * irrep.character(i);
+              prefacs[i] = -(gbit(ups, s1) ? t : t_conj) * irrep.character(i);
             }
           } else {
             for (int i = 0; i < (int)irrep.size(); ++i) {

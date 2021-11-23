@@ -30,15 +30,14 @@ void do_exchange_symmetric(BondList const &bonds, Couplings const &couplings,
   for (auto bond : clean_bonds) {
 
     std::string cpl = bond.coupling();
-    if constexpr (is_real<coeff_t>()) {
-      utils::warn_if_complex(
-          couplings[cpl],
-          "imaginary part discarded (tj / symmetric / exchange)");
-    }
 
-    // Prepare bitmasks
+    auto [J, J_conj] = utils::get_coupling_and_conj<coeff_t>(couplings, cpl);
+
+    utils::check_sites_disjoint(bond);
     int s1 = bond[0];
     int s2 = bond[1];
+
+    // Prepare bitmasks
     bit_t s1mask = ((bit_t)1 << s1);
     bit_t s2mask = ((bit_t)1 << s2);
     bit_t flipmask = s1mask | s2mask;
@@ -83,13 +82,9 @@ void do_exchange_symmetric(BondList const &bonds, Couplings const &couplings,
       // Set the correct prefactor
       coeff_t Jhalf;
       if constexpr (is_complex<coeff_t>()) {
-        if (gbit(ups, s1)) {
-          Jhalf = couplings[cpl] / 2.;
-        } else {
-          Jhalf = lila::conj(couplings[cpl] / 2.);
-        }
+        Jhalf = (gbit(ups, s1)) ? J / 2. : J_conj / 2.;
       } else {
-        Jhalf = lila::real(couplings[cpl] / 2.);
+        Jhalf = J / 2.;
       }
 
       // Get the flip masks for up and down spins

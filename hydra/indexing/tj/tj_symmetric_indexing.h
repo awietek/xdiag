@@ -29,13 +29,13 @@ public:
   idx_t size() const { return size_; }
 
   idx_t n_reps_up() const { return reps_up_.size(); }
-  idx_t n_reps_dn() const { return reps_dn_.size(); }
+  // idx_t n_reps_dn() const { return reps_dn_.size(); }
 
   bit_t rep_up(idx_t idx_up) const { return reps_up_.at(idx_up); }
-  bit_t rep_dn(idx_t idx_dn) const { return reps_dn_.at(idx_dn); }
+  // bit_t rep_dn(idx_t idx_dn) const { return reps_dn_.at(idx_dn); }
 
   idx_t up_offset(idx_t idx_up) const { return up_offsets_.at(idx_up); }
-  idx_t dn_offset(idx_t idx_dn) const { return up_offsets_.at(idx_dn); }
+  // idx_t dn_offset(idx_t idx_dn) const { return up_offsets_.at(idx_dn); }
 
   bool fermi_bool_up(int sym, bit_t ups) const {
     return fermi_bool_ups_table_[sym * raw_ups_size_ +
@@ -99,26 +99,26 @@ public:
   std::pair<idx_t, idx_t> sym_limits_up(bit_t ups) const {
     return sym_limits_up_.at(lintable_ups_.index(ups));
   }
-  std::pair<idx_t, idx_t> sym_limits_dn(bit_t dns) const {
-    return sym_limits_dn_.at(lintable_dns_.index(dns));
-  }
+  // std::pair<idx_t, idx_t> sym_limits_dn(bit_t dns) const {
+  //   return sym_limits_dn_.at(lintable_dns_.index(dns));
+  // }
 
   std::vector<int> syms_up(bit_t ups) const {
     auto [l, u] = sym_limits_up(ups);
     return std::vector<int>(syms_up_.begin() + l, syms_up_.begin() + u);
   }
-  std::vector<int> syms_dn(bit_t dns) const {
-    auto [l, u] = sym_limits_dn(dns);
-    return std::vector<int>(syms_dn_.begin() + l, syms_dn_.begin() + u);
-  }
+  // std::vector<int> syms_dn(bit_t dns) const {
+  //   auto [l, u] = sym_limits_dn(dns);
+  //   return std::vector<int>(syms_dn_.begin() + l, syms_dn_.begin() + u);
+  // }
 
   idx_t index_up(bit_t ups) const {
     return idces_up_[lintable_ups_.index(ups)];
   }
 
-  idx_t index_dn(bit_t dns) const {
-    return idces_dn_[lintable_dns_.index(dns)];
-  }
+  // idx_t index_dn(bit_t dns) const {
+  //   return idces_dn_[lintable_dns_.index(dns)];
+  // }
 
   std::vector<bit_t> const &dns_for_up_rep(bit_t ups) const {
     auto [sym_lower, sym_upper] = sym_limits_up(ups);
@@ -140,7 +140,7 @@ public:
     }
   }
 
-  idx_t upsc_index(bit_t ups) const { return lintable_upsc_.index(ups); }
+  // idx_t upsc_index(bit_t ups) const { return lintable_upsc_.index(ups); }
   idx_t dnsc_index(bit_t dns) const { return lintable_dnsc_.index(dns); }
 
 private:
@@ -168,10 +168,10 @@ private:
   std::vector<int> syms_up_;
   std::vector<std::pair<idx_t, idx_t>> sym_limits_up_;
 
-  std::vector<bit_t> reps_dn_;
-  std::vector<idx_t> idces_dn_;
-  std::vector<int> syms_dn_;
-  std::vector<std::pair<idx_t, idx_t>> sym_limits_dn_;
+  // std::vector<bit_t> reps_dn_;
+  // std::vector<idx_t> idces_dn_;
+  // std::vector<int> syms_dn_;
+  // std::vector<std::pair<idx_t, idx_t>> sym_limits_dn_;
 
   std::vector<idx_t> up_offsets_;
   std::vector<bit_t> dns_full_;
@@ -179,11 +179,11 @@ private:
   std::map<bit_t, std::vector<bit_t>> dns_for_up_rep_;
   std::map<bit_t, std::vector<double>> norms_for_up_rep_;
 
-  std::vector<idx_t> dn_offsets_;
-  std::vector<bit_t> ups_full_;
-  std::vector<double> norms_ups_full_;
-  std::map<bit_t, std::vector<bit_t>> ups_for_dn_rep_;
-  std::map<bit_t, std::vector<double>> norms_for_dn_rep_;
+  // std::vector<idx_t> dn_offsets_;
+  // std::vector<bit_t> ups_full_;
+  // std::vector<double> norms_ups_full_;
+  // std::map<bit_t, std::vector<bit_t>> ups_for_dn_rep_;
+  // std::map<bit_t, std::vector<double>> norms_for_dn_rep_;
 
   idx_t size_;
 };

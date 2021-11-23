@@ -93,8 +93,9 @@ tJSymmetricIndexing<bit_t>::tJSymmetricIndexing(
       raw_dnsc_size_(combinatorics::binomial(n_sites - nup, ndn)),
       lintable_ups_(n_sites, nup), lintable_dns_(n_sites, ndn),
       lintable_upsc_(n_sites - ndn, nup), lintable_dnsc_(n_sites - nup, ndn),
-      dns_full_(raw_dnsc_size_), norms_dns_full_(raw_dnsc_size_),
-      ups_full_(raw_upsc_size_), norms_ups_full_(raw_upsc_size_) {
+      dns_full_(raw_dnsc_size_), norms_dns_full_(raw_dnsc_size_)
+      // ups_full_(raw_upsc_size_), norms_ups_full_(raw_upsc_size_)
+{
 
   PermutationGroupLookup<bit_t> group_action(permutation_group);
   fermi_bool_ups_table_ =
@@ -105,9 +106,9 @@ tJSymmetricIndexing<bit_t>::tJSymmetricIndexing(
   std::tie(reps_up_, idces_up_, syms_up_, sym_limits_up_) =
       symmetries::representatives_indices_symmetries_limits<bit_t>(
           nup, group_action, lintable_ups_);
-  std::tie(reps_dn_, idces_dn_, syms_dn_, sym_limits_dn_) =
-      symmetries::representatives_indices_symmetries_limits<bit_t>(
-          ndn, group_action, lintable_dns_);
+  // std::tie(reps_dn_, idces_dn_, syms_dn_, sym_limits_dn_) =
+  //     symmetries::representatives_indices_symmetries_limits<bit_t>(
+  //         ndn, group_action, lintable_dns_);
 
   idx_t size_ups = fill_states_norms_tj(
       n_sites, nup, ndn, group_action, lintable_ups_, lintable_dns_, reps_up_,
@@ -115,13 +116,12 @@ tJSymmetricIndexing<bit_t>::tJSymmetricIndexing(
       fermi_bool_dns_table_, irrep, up_offsets_, dns_full_, norms_dns_full_,
       dns_for_up_rep_, norms_for_up_rep_);
 
-  idx_t size_dns = fill_states_norms_tj(
-      n_sites, ndn, nup, group_action, lintable_dns_, lintable_ups_, reps_dn_,
-      idces_dn_, syms_dn_, sym_limits_dn_, fermi_bool_dns_table_,
-      fermi_bool_ups_table_, irrep, dn_offsets_, ups_full_, norms_ups_full_,
-      ups_for_dn_rep_, norms_for_dn_rep_);
+  // idx_t size_dns = fill_states_norms_tj(
+  //     n_sites, ndn, nup, group_action, lintable_dns_, lintable_ups_, reps_dn_,
+  //     idces_dn_, syms_dn_, sym_limits_dn_, fermi_bool_dns_table_,
+  //     fermi_bool_ups_table_, irrep, dn_offsets_, ups_full_, norms_ups_full_,
+  //     ups_for_dn_rep_, norms_for_dn_rep_);
 
-  assert(size_ups == size_dns);
   size_ = size_ups;
 }
 
