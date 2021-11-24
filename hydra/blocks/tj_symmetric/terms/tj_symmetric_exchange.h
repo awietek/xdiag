@@ -49,7 +49,7 @@ void do_exchange_symmetric(BondList const &bonds, Couplings const &couplings,
     // // DEBUG PRINT states
     // lila::Log("\n\n\n");
     // idx_t idx = 0;
-    // for (idx_t idx_up = 0; idx_up < indexing.n_reps_up(); ++idx_up) {
+    // for (idx_t idx_up = 0; idx_up < indexing.n_rep_ups(); ++idx_up) {
     //   bit_t ups = indexing.rep_up(idx_up);
     //   auto syms = indexing.syms_up(ups);
     //   auto const &dnss = indexing.dns_for_up_rep(ups);
@@ -70,8 +70,8 @@ void do_exchange_symmetric(BondList const &bonds, Couplings const &couplings,
     // }
 
     // Loop over all up configurations
-    for (idx_t idx_up = 0; idx_up < indexing.n_reps_up(); ++idx_up) {
-      bit_t ups = indexing.rep_up(idx_up);
+    for (idx_t idx_ups = 0; idx_ups < indexing.n_rep_ups(); ++idx_ups) {
+      bit_t ups = indexing.rep_ups(idx_ups);
       bit_t not_ups = (~ups) & sitesmask;
 
       // Exchange gives zero continue
@@ -92,19 +92,19 @@ void do_exchange_symmetric(BondList const &bonds, Couplings const &couplings,
 
       // Compute index and rep of flipped ups
       bit_t ups_flip = ups ^ flipmask;
-      idx_t idx_up_flip = indexing.index_up(ups_flip);
-      bit_t ups_flip_rep = indexing.rep_up(idx_up_flip);
+      idx_t idx_ups_flip = indexing.index_ups(ups_flip);
+      bit_t ups_flip_rep = indexing.rep_ups(idx_ups_flip);
       bit_t not_ups_flip_rep = (~ups_flip_rep) & sitesmask;
 
       // Get limits, syms, and dns for ingoing ups
-      idx_t up_offset_in = indexing.up_offset(idx_up);
-      auto syms_up_in = indexing.syms_up(ups);
-      auto const &dnss_in = indexing.dns_for_up_rep(ups);
+      idx_t up_offset_in = indexing.ups_offset(idx_ups);
+      auto syms_up_in = indexing.syms_ups(ups);
+      auto dnss_in = indexing.dns_for_ups_rep(ups);
 
       // Get limits, syms, and dns for outgoing ups
-      idx_t up_offset_out = indexing.up_offset(idx_up_flip);
-      auto syms_up_out = indexing.syms_up(ups_flip);
-      auto const &dnss_out = indexing.dns_for_up_rep(ups_flip_rep);
+      idx_t up_offset_out = indexing.ups_offset(idx_ups_flip);
+      auto syms_up_out = indexing.syms_ups(ups_flip);
+      auto dnss_out = indexing.dns_for_ups_rep(ups_flip_rep);
 
       // Target ups have trivial stabilizer
       if (syms_up_out.size() == 1) {
@@ -120,7 +120,7 @@ void do_exchange_symmetric(BondList const &bonds, Couplings const &couplings,
 
         // Fermi-sign of up spins
         bool fermi_up = (popcnt(ups & fermimask) & 1);
-        fermi_up ^= indexing.fermi_bool_up(sym, ups_flip);
+        fermi_up ^= indexing.fermi_bool_ups(sym, ups_flip);
 
         // Origin ups trivial stabilizer -> dns need to be deposited
         if (syms_up_in.size() == 1) {
@@ -141,7 +141,7 @@ void do_exchange_symmetric(BondList const &bonds, Couplings const &couplings,
               // lila::Log("rep : {};{}", BSTR(ups_flip_rep),
               // BSTR(dns_flip_rep));
 
-              auto [idx_dn_flip, fermi_dn] = indexing.index_dn_fermi(
+              auto [idx_dn_flip, fermi_dn] = indexing.index_dns_fermi(
                   dns_flip, sym, not_ups_flip_rep, fermimask);
 
               // lila::Log("fermi_up: {}, fermi_dn: {}", fermi_up, fermi_dn);
@@ -166,7 +166,7 @@ void do_exchange_symmetric(BondList const &bonds, Couplings const &couplings,
         // Origin ups non-trivial stabilizer -> dns DONT need to be deposited
         else {
 
-          auto const &norms_in = indexing.norms_for_up_rep(ups);
+          auto norms_in = indexing.norms_for_ups_rep(ups);
 
           idx_t idx_dn = 0;
           for (bit_t dns : dnss_in) {
@@ -189,7 +189,7 @@ void do_exchange_symmetric(BondList const &bonds, Couplings const &couplings,
               // lila::Log("rep : {},{}", BSTR(ups_flip_rep),
               // BSTR(dns_flip_rep));
 
-              auto [idx_dn_flip, fermi_dn] = indexing.index_dn_fermi(
+              auto [idx_dn_flip, fermi_dn] = indexing.index_dns_fermi(
                   dns_flip, sym, not_ups_flip_rep, fermimask);
 
               // lila::Log("idx_dn: {}, idx_dn_flip: {}", idx_dn, idx_dn_flip);
@@ -211,8 +211,8 @@ void do_exchange_symmetric(BondList const &bonds, Couplings const &couplings,
       }
       // Target ups have non-trivial stabilizer
       else {
-        auto const &norms_out = indexing.norms_for_up_rep(ups_flip_rep);
-        auto const &syms = syms_up_out;
+        auto norms_out = indexing.norms_for_ups_rep(ups_flip_rep);
+        auto syms = syms_up_out;
 
         // Fix the bloch/prefactors
         std::vector<coeff_t> prefacs(irrep.size());
@@ -252,14 +252,14 @@ void do_exchange_symmetric(BondList const &bonds, Couplings const &couplings,
               //     dns_flip, group_action, syms);
               // lila::Log("rep : {};{}", BSTR(ups_flip_rep),
               // BSTR(dns_flip_rep));
-              auto [idx_dn_flip, fermi_dn, sym] = indexing.index_dn_fermi_sym(
+              auto [idx_dn_flip, fermi_dn, sym] = indexing.index_dns_fermi_sym(
                   dns_flip, syms, dnss_out, fermimask);
 
               // lila::Log("idx_dn: {}, idx_dn_flip: {}", idx_dn, idx_dn_flip);
 
               if (idx_dn_flip != invalid_index) {
                 bool fermi_up =
-                    fermi_up_hop ^ indexing.fermi_bool_up(sym, ups_flip);
+                    fermi_up_hop ^ indexing.fermi_bool_ups(sym, ups_flip);
 
                 // lila::Log("fermi_up: {}, fermi_dn: {}", fermi_up, fermi_dn);
 
@@ -281,7 +281,7 @@ void do_exchange_symmetric(BondList const &bonds, Couplings const &couplings,
         }
         // Origin ups non-trivial stabilizer -> dns DONT need to be deposited
         else {
-          auto const &norms_in = indexing.norms_for_up_rep(ups);
+          auto norms_in = indexing.norms_for_ups_rep(ups);
 
           idx_t idx_dn = 0;
           for (bit_t dns : dnss_in) {
@@ -308,7 +308,7 @@ void do_exchange_symmetric(BondList const &bonds, Couplings const &couplings,
               //     dns_flip, group_action, syms);
               // lila::Log("rep : {};{}", BSTR(ups_flip_rep),
               // BSTR(dns_flip_rep));
-              auto [idx_dn_flip, fermi_dn, sym] = indexing.index_dn_fermi_sym(
+              auto [idx_dn_flip, fermi_dn, sym] = indexing.index_dns_fermi_sym(
                   dns_flip, syms, dnss_out, fermimask);
 
               // lila::Log("idx_dn: {}, idx_dn_flip: {}", idx_dn, idx_dn_flip);
@@ -316,7 +316,7 @@ void do_exchange_symmetric(BondList const &bonds, Couplings const &couplings,
               if (idx_dn_flip != invalid_index) {
 
                 bool fermi_up =
-                    fermi_up_hop ^ indexing.fermi_bool_up(sym, ups_flip);
+                    fermi_up_hop ^ indexing.fermi_bool_ups(sym, ups_flip);
 
                 // lila::Log("fermi_up: {}, fermi_dn: {}", fermi_up, fermi_dn);
 

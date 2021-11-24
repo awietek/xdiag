@@ -7,7 +7,7 @@
 
 using namespace hydra;
 
-TEST_CASE("Electron_Apply", "[models]") {
+TEST_CASE("electron_apply", "[blocks][electron]") {
   using namespace hydra::testcases::electron;
 
   BondList bondlist;
@@ -16,8 +16,9 @@ TEST_CASE("Electron_Apply", "[models]") {
   ///////////////////////////////////////////////////
   // Test Fermion all to all, free fermions (real)
   for (int n_sites = 3; n_sites < 7; ++n_sites) {
-    printf("HubbardModel apply: random all-to-all test (real)\n");
-    printf("N=%d\n", n_sites);
+
+    lila::Log("electron_apply: Hubbard random all-to-all test (real), N: {}",
+              n_sites);
     std::tie(bondlist, couplings) = freefermion_alltoall(n_sites);
     couplings["U"] = 5.0;
 
@@ -49,8 +50,8 @@ TEST_CASE("Electron_Apply", "[models]") {
   // /////////////////
   // Test Fermion all to all, free fermions (cplx, up/dn different)
   for (int n_sites = 3; n_sites < 7; ++n_sites) {
-    printf("HubbardModel: free fermion random all-to-all test, (cplx)\n");
-    printf("N=%d\n", n_sites);
+    lila::Log("electron_apply: Hubbard random all-to-all test (cplx), N: {}",
+              n_sites);
     std::tie(bondlist, couplings) = freefermion_alltoall_complex_updn(n_sites);
     couplings["U"] = 5.0;
 
@@ -80,7 +81,7 @@ TEST_CASE("Electron_Apply", "[models]") {
 
   /////////////////////////////////////////////////////
   // Henry's MATLAB code test (tests Heisenberg terms)
-  printf("Electron: U-hopping-HB apply of Henry's Matlab code\n");
+  lila::Log("electron_apply: U-hopping-HB apply of Henry's Matlab code");
   {
     auto [bondlist, couplings, eigs_correct] = randomAlltoAll4NoU();
 

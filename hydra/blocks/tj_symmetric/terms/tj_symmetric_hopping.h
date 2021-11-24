@@ -90,20 +90,20 @@ void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
     // Apply hoppings on dnspins
     if ((type == "HOP") || (type == "HOPDN")) {
 
-      for (idx_t idx_up = 0; idx_up < indexing.n_reps_up(); ++idx_up) {
-        bit_t ups = indexing.rep_up(idx_up);
+      for (idx_t idx_ups = 0; idx_ups < indexing.n_rep_ups(); ++idx_ups) {
+        bit_t ups = indexing.rep_ups(idx_ups);
 
         // skip if no hopping for dns works
         if (popcnt(ups & flipmask) != 0) {
           continue;
         }
 
-        idx_t up_offset = indexing.up_offset(idx_up);
-        auto const &dnss = indexing.dns_for_up_rep(ups);
-        auto [sym_begin, sym_end] = indexing.sym_limits_up(ups);
+        idx_t up_offset = indexing.ups_offset(idx_ups);
+        auto dnss = indexing.dns_for_ups_rep(ups);
+        auto syms = indexing.syms_ups(ups);
 
         // trivial stabilizer of ups -> dns have to be deposited
-        if (sym_end - sym_begin == 1) {
+        if (syms.size() == 1) {
           bit_t not_ups = (~ups) & sitesmask;
           idx_t idx_in = up_offset;
           for (bit_t dnsc : dnss) {
@@ -145,8 +145,8 @@ void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
         }
         // non-trivial stabilizer of ups -> dns don't have to be deposited
         else {
-          auto syms = indexing.syms_up(ups);
-          auto const &norms = indexing.norms_for_up_rep(ups);
+          auto syms = indexing.syms_ups(ups);
+          auto norms = indexing.norms_for_ups_rep(ups);
 
           idx_t idx_in = up_offset;
           idx_t idx_dns = 0;
@@ -155,12 +155,12 @@ void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
             if (popcnt(dns & flipmask) == 1) {
               bit_t dns_flip = dns ^ flipmask;
               auto [idx_dns_flip, fermi_dn, sym] =
-                  indexing.index_dn_fermi_sym(dns_flip, syms, dnss, fermimask);
+                  indexing.index_dns_fermi_sym(dns_flip, syms, dnss, fermimask);
 
               if (idx_dns_flip != invalid_index) {
 
                 idx_t idx_out = up_offset + idx_dns_flip;
-                bool fermi_up = indexing.fermi_bool_up(sym, ups);
+                bool fermi_up = indexing.fermi_bool_ups(sym, ups);
 
                 // Complex conjugate t if necessary
                 coeff_t val;
@@ -203,8 +203,8 @@ void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
     // Apply hoppings on upspins
     if ((type == "HOP") || (type == "HOPUP")) {
 
-      for (idx_t idx_up = 0; idx_up < indexing.n_reps_up(); ++idx_up) {
-        bit_t ups = indexing.rep_up(idx_up);
+      for (idx_t idx_ups = 0; idx_ups < indexing.n_rep_ups(); ++idx_ups) {
+        bit_t ups = indexing.rep_ups(idx_ups);
 
         // continue if hopping not possible
         if (popcnt(ups & flipmask) != 1) {
@@ -212,23 +212,23 @@ void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
         }
 
         bit_t ups_flip = ups ^ flipmask;
-        idx_t idx_up_flip = indexing.index_up(ups_flip);
-        bit_t ups_flip_rep = indexing.rep_up(idx_up_flip);
+        idx_t idx_ups_flip = indexing.index_ups(ups_flip);
+        bit_t ups_flip_rep = indexing.rep_ups(idx_ups_flip);
         bit_t not_ups_flip_rep = (~ups_flip_rep) & sitesmask;
 
         // Get limits, syms, and dns for ingoing ups
-        idx_t up_offset_in = indexing.up_offset(idx_up);
-        auto syms_up_in = indexing.syms_up(ups);
-        auto const &dnss_in = indexing.dns_for_up_rep(ups);
+        idx_t ups_offset_in = indexing.ups_offset(idx_ups);
+        auto syms_ups_in = indexing.syms_ups(ups);
+        auto dnss_in = indexing.dns_for_ups_rep(ups);
 
         // Get limits, syms, and dns for outgoing ups
-        idx_t up_offset_out = indexing.up_offset(idx_up_flip);
-        auto syms_up_out = indexing.syms_up(ups_flip);
-        auto const &dnss_out = indexing.dns_for_up_rep(ups_flip_rep);
+        idx_t ups_offset_out = indexing.ups_offset(idx_ups_flip);
+        auto syms_ups_out = indexing.syms_ups(ups_flip);
+        auto dnss_out = indexing.dns_for_ups_rep(ups_flip_rep);
 
         // Trivial stabilizer of target ups
-        if (syms_up_out.size() == 1) {
-          int sym = syms_up_out.front();
+        if (syms_ups_out.size() == 1) {
+          int sym = syms_ups_out.front();
 
           // Complex conjugate t if necessary
           coeff_t prefac;
@@ -240,19 +240,19 @@ void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
 
           // Fermi-sign of up spins
           bool fermi_up = (popcnt(ups & fermimask) & 1);
-          fermi_up ^= indexing.fermi_bool_up(sym, ups_flip);
+          fermi_up ^= indexing.fermi_bool_ups(sym, ups_flip);
 
           // Origin ups trivial stabilizer -> dns need to be deposited
-          if (syms_up_in.size() == 1) {
-            idx_t idx_in = up_offset_in;
+          if (syms_ups_in.size() == 1) {
+            idx_t idx_in = ups_offset_in;
             bit_t not_ups = (~ups) & sitesmask;
             for (bit_t dnsc : dnss_in) {
               bit_t dns = bitops::deposit(dnsc, not_ups);
               if (popcnt(dns & flipmask) == 0) {
                 bit_t dns_rep = group_action.apply(sym, dns);
                 bit_t dns_rep_c = bitops::extract(dns_rep, not_ups_flip_rep);
-                idx_t idx_out = up_offset_out + indexing.dnsc_index(dns_rep_c);
-                bool fermi_dn = indexing.fermi_bool_dn(sym, dns);
+                idx_t idx_out = ups_offset_out + indexing.dnsc_index(dns_rep_c);
+                bool fermi_dn = indexing.fermi_bool_dns(sym, dns);
 
                 // lila::Log("-----------------------------------------");
                 // lila::Log("HOPUP");
@@ -274,16 +274,16 @@ void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
           }
           // Origin ups have stabilizer -> dns DONT need to be deposited
           else {
-            auto const &norms_in = indexing.norms_for_up_rep(ups);
+            auto norms_in = indexing.norms_for_ups_rep(ups);
             idx_t idx_dn = 0;
-            idx_t idx_in = up_offset_in;
+            idx_t idx_in = ups_offset_in;
             for (bit_t dns : dnss_in) {
               if (popcnt(dns & flipmask) == 0) {
 
                 auto [idx_dn_out, fermi_dn] =
-                    indexing.index_dn_fermi(dns, sym, not_ups_flip_rep);
+                    indexing.index_dns_fermi(dns, sym, not_ups_flip_rep);
                 coeff_t val = prefac / norms_in[idx_dn];
-                idx_t idx_out = up_offset_out + idx_dn_out;
+                idx_t idx_out = ups_offset_out + idx_dn_out;
 
                 // lila::Log("-----------------------------------------");
                 // lila::Log("HOPUP");
@@ -309,8 +309,8 @@ void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
         }
         // Target ups have non-trivial stabilizer
         else {
-          auto const &norms_out = indexing.norms_for_up_rep(ups_flip_rep);
-          auto const &syms = syms_up_out;
+          auto norms_out = indexing.norms_for_ups_rep(ups_flip_rep);
+          auto syms = syms_ups_out;
 
           // Fix the bloch/prefactors
           std::vector<coeff_t> prefacs(irrep.size());
@@ -327,20 +327,20 @@ void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
           bool fermi_up_hop = (popcnt(ups & fermimask) & 1);
 
           // Origin ups trivial stabilizer -> dns need to be deposited
-          if (syms_up_in.size() == 1) {
-            idx_t idx_in = up_offset_in;
+          if (syms_ups_in.size() == 1) {
+            idx_t idx_in = ups_offset_in;
             bit_t not_ups = (~ups) & sitesmask;
             for (bit_t dnsc : dnss_in) {
               bit_t dns = bitops::deposit(dnsc, not_ups);
               if (popcnt(dns & flipmask) == 0) {
 
                 auto [idx_dn_out, fermi_dn, sym] =
-                    indexing.index_dn_fermi_sym(dns, syms, dnss_out);
+                    indexing.index_dns_fermi_sym(dns, syms, dnss_out);
 
                 if (idx_dn_out != invalid_index) {
-                  idx_t idx_out = up_offset_out + idx_dn_out;
+                  idx_t idx_out = ups_offset_out + idx_dn_out;
                   bool fermi_up =
-                      fermi_up_hop ^ indexing.fermi_bool_up(sym, ups_flip);
+                      fermi_up_hop ^ indexing.fermi_bool_ups(sym, ups_flip);
                   coeff_t val = prefacs[sym] * norms_out[idx_dn_out];
 
                   // lila::Log("-----------------------------------------");
@@ -366,18 +366,18 @@ void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
           }
           // Origin ups non-trivial stabilizer -> dns DONT need to be deposited
           else {
-            auto const &norms_in = indexing.norms_for_up_rep(ups);
-            idx_t idx_in = up_offset_in;
+            auto norms_in = indexing.norms_for_ups_rep(ups);
+            idx_t idx_in = ups_offset_in;
             idx_t idx_dn = 0;
             for (bit_t dns : dnss_in) {
               if (popcnt(dns & flipmask) == 0) {
 
                 auto [idx_dn_out, fermi_dn, sym] =
-                    indexing.index_dn_fermi_sym(dns, syms, dnss_out);
+                    indexing.index_dns_fermi_sym(dns, syms, dnss_out);
                 if (idx_dn_out != invalid_index) {
-                  idx_t idx_out = up_offset_out + idx_dn_out;
+                  idx_t idx_out = ups_offset_out + idx_dn_out;
                   bool fermi_up =
-                      fermi_up_hop ^ indexing.fermi_bool_up(sym, ups_flip);
+                      fermi_up_hop ^ indexing.fermi_bool_ups(sym, ups_flip);
                   coeff_t val =
                       prefacs[sym] * norms_out[idx_dn_out] / norms_in[idx_dn];
 

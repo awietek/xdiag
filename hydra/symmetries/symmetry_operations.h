@@ -1,5 +1,7 @@
 #pragma once
 
+#include <lila/external/gsl/span>
+
 #include <hydra/combinatorics/combinations.h>
 #include <hydra/symmetries/fermi_sign.h>
 #include <hydra/symmetries/representation.h>
@@ -13,6 +15,8 @@ std::vector<std::vector<int>> read_permutations(std::string filename);
 }
 
 namespace hydra::symmetries {
+
+using span_size_t = gsl::span<int const>::size_type;
 
 bool is_valid_permutation(int n_sites, const int *permutation);
 
@@ -31,7 +35,7 @@ bit_t representative(bit_t state, GroupAction const &group_action);
 // Computes the representative using only a specified subset of symmetries
 template <typename bit_t, class GroupAction>
 bit_t representative_subset(bit_t state, GroupAction const &group_action,
-                            std::vector<int> const &syms);
+                            gsl::span<int const> syms);
 
 // Computes the representative of state AND the symmetry that yields it
 template <typename bit_t, class GroupAction>
@@ -43,7 +47,7 @@ std::pair<bit_t, int> representative_sym(bit_t state,
 template <typename bit_t, class GroupAction>
 std::pair<bit_t, int> representative_sym_subset(bit_t state,
                                                 GroupAction const &group_action,
-                                                std::vector<int> const &syms);
+                                                gsl::span<int const> syms);
 
 // Computes the symmetries, which map origin to target
 template <typename bit_t, class GroupAction>
@@ -70,12 +74,12 @@ double norm_electron(bit_t ups, bit_t dns, GroupAction const &group_action,
 template <typename bit_t, class GroupAction>
 double
 norm_electron_subset(bit_t ups, bit_t dns, GroupAction const &group_action,
-                     Representation const &irrep, std::vector<int> const &syms);
+                     Representation const &irrep, gsl::span<int const> syms);
 
 // Create a lists of representatives and their symmetries
 template <typename bit_t, class GroupAction, class LinTable>
 std::tuple<std::vector<bit_t>, std::vector<idx_t>, std::vector<int>,
-           std::vector<std::pair<idx_t, idx_t>>>
+           std::vector<std::pair<span_size_t, span_size_t>>>
 representatives_indices_symmetries_limits(int npar,
                                           GroupAction const &group_action,
                                           LinTable const &lintable);

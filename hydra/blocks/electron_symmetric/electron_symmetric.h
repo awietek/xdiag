@@ -4,6 +4,8 @@
 #include <utility>
 #include <vector>
 
+#include <lila/external/gsl/span>
+
 #include <hydra/blocks/blocks.h>
 #include <hydra/common.h>
 #include <hydra/indexing/lintable.h>
@@ -17,6 +19,8 @@ namespace hydra {
 
 template <typename bit_t, class GroupAction> class ElectronSymmetric {
 public:
+  using span_size_t = gsl::span<int const>::size_type;
+
   ElectronSymmetric() = default;
   ElectronSymmetric(int n_sites, int nup, int ndn,
                     PermutationGroup permutation_group, Representation irrep);
@@ -142,11 +146,13 @@ public:
   }
 
   inline std::pair<idx_t, idx_t> sym_limits_up(bit_t ups) const {
-    return sym_limits_up_[lintable_ups_.index(ups)];
+    auto [start, length] = sym_limits_up_[lintable_ups_.index(ups)];  // HOTFIX
+    return {start, start + length}; 
   }
 
   inline std::pair<idx_t, idx_t> sym_limits_dn(bit_t dns) const {
-    return sym_limits_dn_[lintable_dns_.index(dns)];
+     auto [start, length] = sym_limits_dn_[lintable_dns_.index(dns)];  // HOTFIX
+    return {start, start + length}; 
   }
 
   inline bool fermi_bool_up(int sym, bit_t ups) const {
@@ -227,12 +233,12 @@ public:
   std::vector<idx_t> idces_up_;
   std::vector<bit_t> reps_up_;
   std::vector<int> syms_up_;
-  std::vector<std::pair<idx_t, idx_t>> sym_limits_up_;
+  std::vector<std::pair<span_size_t, span_size_t>> sym_limits_up_;
 
   std::vector<idx_t> idces_dn_;
   std::vector<bit_t> reps_dn_;
   std::vector<int> syms_dn_;
-  std::vector<std::pair<idx_t, idx_t>> sym_limits_dn_;
+  std::vector<std::pair<span_size_t, span_size_t>> sym_limits_dn_;
 
   std::vector<idx_t> up_offsets_;
   std::vector<bit_t> dns_full_;

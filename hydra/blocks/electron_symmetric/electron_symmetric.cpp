@@ -14,7 +14,9 @@ idx_t fill_states_norms_electron(
     LinTable &&lintable_ups, LinTable &&lintable_dns,
     std::vector<bit_t> const &reps_up, std::vector<idx_t> const &idces_up,
     std::vector<int> const &syms_up,
-    std::vector<std::pair<idx_t, idx_t>> const &sym_limits_up,
+    std::vector<std::pair<gsl::span<int const>::size_type,
+                          gsl::span<int const>::size_type>> const
+        &sym_limits_up,
     std::vector<bool> const &fermi_bool_ups_table,
     std::vector<bool> const &fermi_bool_dns_table, Representation const &irrep,
     std::vector<idx_t> &up_offsets, std::vector<bit_t> &dns_full,
@@ -40,7 +42,10 @@ idx_t fill_states_norms_electron(
     up_offsets[idx_up] = size;
 
     // Get the symmetries that stabilize the ups
-    auto [sym_lower, sym_upper] = sym_limits_up[lintable_ups.index(ups)];
+    auto [start, length] = sym_limits_up[lintable_ups.index(ups)];  // HOTFIX
+    idx_t sym_lower = start;
+    idx_t sym_upper = start + length;
+    // auto [sym_lower, sym_upper] = sym_limits_up[lintable_ups.index(ups)];
 
     // ups have trivial stabilizer, we don't store dns, but use dns_full
     if ((sym_upper - sym_lower) == 1) {
@@ -64,8 +69,8 @@ idx_t fill_states_norms_electron(
 
           double norm = symmetries::norm_electron_subset(ups, dns, group_action,
                                                          irrep, syms_stable);
-	  
-          if (norm > 1e-6) {  // only keep dns with non-zero norm
+
+          if (norm > 1e-6) { // only keep dns with non-zero norm
             dn_reps.push_back(dn_rep);
             norms_dn_reps.push_back(norm);
           }
@@ -124,6 +129,7 @@ ElectronSymmetric<bit_t, GroupAction>::ElectronSymmetric(
       fermi_bool_ups_table_, irrep_, dn_offsets_, ups_full_, norms_ups_full_,
       ups_for_dn_rep_, norms_for_dn_rep_);
 
+  // lila::Log("size_ups: {}, size_dns: {}", size_ups, size_dns);
   assert(size_ups == size_dns);
   size_ = size_ups;
 }

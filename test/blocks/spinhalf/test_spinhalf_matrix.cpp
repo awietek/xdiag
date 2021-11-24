@@ -6,11 +6,11 @@
 
 using namespace hydra;
 
-TEST_CASE("spinhalf_matrix", "[spinhalf]") {
+TEST_CASE("spinhalf_matrix", "[models][spinhalf]") {
   using namespace hydra::testcases::spinhalf;
 
   {
-    lila::Log.out("Spinhalf: Heisenberg chain test, J=1.0, N=2,..,6");
+    lila::Log.out("spinhalf_matrix: Heisenberg chain test, J=1.0, N=2,..,6");
     for (int n_sites = 2; n_sites <= 6; ++n_sites)
       for (int nup = 0; nup <= n_sites; ++nup) {
         auto [bonds, couplings, exact_eigs] =
@@ -24,7 +24,7 @@ TEST_CASE("spinhalf_matrix", "[spinhalf]") {
   }
 
   {
-    lila::Log.out("Spinhalf: Heisenberg all-to-all tJ comparison");
+    lila::Log.out("spinhalf_matrix: Heisenberg all-to-all tJ comparison");
     for (int n_sites = 2; n_sites <= 6; ++n_sites)
       for (int nup = 0; nup <= n_sites; ++nup) {
         auto [bonds, couplings] = HB_alltoall(n_sites);
@@ -43,7 +43,7 @@ TEST_CASE("spinhalf_matrix", "[spinhalf]") {
   }
 
   {
-    lila::Log.out("Spinhalf: triangular N=12 complex exchange");
+    lila::Log.out("spinhalf_matrix: triangular N=12 complex exchange");
     int n_sites = 12;
     int nup = 6;
     std::vector<double> etas = {0.00, 0.01, 0.02,

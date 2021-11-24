@@ -11,7 +11,7 @@ void check_dimensions_sum_up(int n_sites, PermutationGroup group,
                              std::vector<Representation> irreps) {
   using combinatorics::binomial;
 
-  lila::Log.out("tj_symmetric, dimension sum test. N: {}", n_sites);
+  lila::Log.out("tj_symmetric: dimension sum test. N: {}", n_sites);
 
   idx_t sum_of_dims = 0;
 
@@ -32,9 +32,10 @@ void check_dimensions_sum_up(int n_sites, PermutationGroup group,
   REQUIRE(sum_of_dims == pow(3, n_sites));
 }
 
-TEST_CASE("tj_symmetric", "[models][tj_symmetric]") {
+TEST_CASE("tj_symmetric", "[blocks][tj_symmetric]") {
 
   // Test linear chains
+  lila::Log("tj_symmetric: chain test");
   for (int n_sites = 1; n_sites < 7; ++n_sites) {
 
     // create cyclic space group
@@ -66,7 +67,7 @@ TEST_CASE("tj_symmetric", "[models][tj_symmetric]") {
 
   // test a 3x3 triangular lattice
   int n_sites = 9;
-  lila::Log.out("tj_symmetric triangular 3x3 test");
+  lila::Log("tj_symmetric: triangular 3x3 test");
 
   std::string lfile = "data/triangular.9.hop.sublattices.tsl.lat";
   auto permutations = hydra::read_permutations(lfile);

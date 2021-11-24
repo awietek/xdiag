@@ -9,8 +9,8 @@ using namespace hydra;
 
 template <class bit_t>
 void test_symmetric_apply1(BondList bondlist, Couplings couplings,
-			   PermutationGroup space_group,
-			   std::vector<Representation> irreps) {
+                           PermutationGroup space_group,
+                           std::vector<Representation> irreps) {
   int n_sites = space_group.n_sites();
 
   for (int nup = 0; nup <= n_sites; ++nup) {
@@ -37,17 +37,16 @@ void test_symmetric_apply1(BondList bondlist, Couplings couplings,
           // lila::Log.out("e0_mat: {}, e0_app: {}", e0_mat, e0_app);
           REQUIRE(std::abs(e0_mat - e0_app) < 1e-7);
 
+          // Compute eigenvalues with real arithmitic
+          if (is_real(block.irrep()) && is_real(couplings)) {
+            auto H_real = MatrixReal(bondlist, couplings, block, block);
+            auto evals_mat_real = lila::EigenvaluesSym(H_real);
+            REQUIRE(lila::close(evals_mat_real, evals_mat));
 
-	  // Compute eigenvalues with real arithmitic
-	  if (is_real(block.irrep()) && is_real(couplings)) {
-	    auto H_real = MatrixReal(bondlist, couplings, block, block);
-	    auto evals_mat_real = lila::EigenvaluesSym(H_real);
-	    REQUIRE(lila::close(evals_mat_real, evals_mat));
-
-	    double e0_mat_real = evals_mat_real(0);
-	    double e0_app_real = E0Real(bondlist, couplings, block);
-	    REQUIRE(std::abs(e0_mat_real - e0_app_real) < 1e-7);
-	  }
+            double e0_mat_real = evals_mat_real(0);
+            double e0_app_real = E0Real(bondlist, couplings, block);
+            REQUIRE(std::abs(e0_mat_real - e0_app_real) < 1e-7);
+          }
         }
       }
     }
@@ -58,21 +57,22 @@ template <class bit_t> void test_hubbard_symmetric_apply_chains(int n_sites) {
   using namespace hydra::testcases::electron;
 
   // Without Heisenberg term
-  lila::Log.out("Hubbard chain, symmetric apply test, n_sites: {}", n_sites);
+  lila::Log.out("electron_symmetric_apply: Hubbard chain, n_sites: {}",
+                n_sites);
   auto [bondlist, couplings] = get_linear_chain(n_sites, 1.0, 5.0);
   auto [space_group, irreps] = get_cyclic_group_irreps(n_sites);
   test_symmetric_apply1<uint16_t>(bondlist, couplings, space_group, irreps);
 
   // With Heisenberg term
-  lila::Log.out(
-      "Hubbard chain, symmetric apply test, n_sites: {} (+ Heisenberg terms)",
-      n_sites);
+  lila::Log.out("electron_symmetric_apply: Hubbard chain, n_sites: {} (+ "
+                "Heisenberg terms)",
+                n_sites);
   auto [bondlist_hb, couplings_hb] =
       get_linear_chain_hb(n_sites, 1.0, 5.0, 0.4);
   test_symmetric_apply1<bit_t>(bondlist_hb, couplings_hb, space_group, irreps);
 }
 
-TEST_CASE("ElectronSymmetric_Apply", "[models][ElectronSymmetric]") {
+TEST_CASE("electron_symmetric_apply", "[blocks][electron_symmetric]") {
 
   // Test linear chains
   for (int n_sites = 2; n_sites < 7; ++n_sites) {
@@ -82,7 +82,7 @@ TEST_CASE("ElectronSymmetric_Apply", "[models][ElectronSymmetric]") {
   }
 
   // test a 3x3 triangular lattice
-  lila::Log.out("Hubbard 3x3 triangular, symmetric apply test");
+  lila::Log.out("electron_symmetric_apply: Hubbard 3x3 triangular");
   using bit_t = uint16_t;
   std::string lfile = "data/triangular.9.hop.sublattices.tsl.lat";
 
@@ -106,7 +106,7 @@ TEST_CASE("ElectronSymmetric_Apply", "[models][ElectronSymmetric]") {
 
   // test a 3x3 triangular lattice with Heisenberg terms
   lila::Log.out(
-      "Hubbard 3x3 triangular, symmetric apply test (+ Heisenberg terms)");
+      "electron_symmetric_apply: Hubbard 3x3 triangular (+ Heisenberg terms)");
   auto bondlist_hb = bondlist;
   for (auto bond : bondlist) {
     bondlist_hb << Bond("HB", "J", {bond[0], bond[1]});
@@ -116,7 +116,7 @@ TEST_CASE("ElectronSymmetric_Apply", "[models][ElectronSymmetric]") {
 
   // test a 3x3 triangular lattice with complex hoppings
   {
-    lila::Log.out("Hubbard 3x3 triangular (complex), symmetric spectra test");
+    lila::Log.out("electron_symmetric_apply: Hubbard 3x3 triangular (complex)");
     using bit_t = uint16_t;
     std::string lfile =
         "data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.lat";
@@ -138,5 +138,4 @@ TEST_CASE("ElectronSymmetric_Apply", "[models][ElectronSymmetric]") {
     }
     test_symmetric_apply1<bit_t>(bondlist, couplings, space_group, irreps);
   }
-
 }

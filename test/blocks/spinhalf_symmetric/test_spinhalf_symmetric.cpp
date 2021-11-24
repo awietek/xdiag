@@ -66,11 +66,11 @@ template <class bit_t> void test_spinchain_blocks(int n_sites) {
   REQUIRE(sum_of_dims == pow(2, n_sites));
 }
 
-TEST_CASE("spinhalf_symmetric", "[models]") {
+TEST_CASE("spinhalf_symmetric", "[blocks][spinhalf_symmetric]") {
 
   // Test the tJ chain
   for (int n_sites = 1; n_sites < 8; ++n_sites) {
-    lila::Log.out("SpinhalfSymmetric block test: Spinhalf Chain {}", n_sites);
+    lila::Log.out("spinhalf_symmetric: block test: Spinhalf Chain {}", n_sites);
 
     test_spinchain_blocks<uint16_t>(n_sites);
     test_spinchain_blocks<uint32_t>(n_sites);
@@ -78,7 +78,7 @@ TEST_CASE("spinhalf_symmetric", "[models]") {
   }
 
   // test a 3x3 triangular lattice
-  lila::Log.out("SpinhalfSymmetric block test: Triangular 3x3");
+  lila::Log.out("spinhalf_symmetric: block test: Triangular 3x3");
   int n_sites = 9;
 
   std::vector<std::pair<std::string, int>> rep_name_mult = {

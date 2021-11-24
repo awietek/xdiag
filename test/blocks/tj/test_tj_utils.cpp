@@ -8,11 +8,11 @@
 
 using namespace hydra;
 
-TEST_CASE("tj_utils", "[tj]") {
+TEST_CASE("tj_utils", "[blocks][tj]") {
   using namespace hydra::combinatorics;
   using namespace hydra::utils;
   using namespace hydra::bitops;
-  lila::Log.out("Testing tj_utils");
+  lila::Log("tj_utils: test");
 
   for (int N = 0; N <= 6; ++N)
     for (int nup = 0; nup <= N; ++nup)

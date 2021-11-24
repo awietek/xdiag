@@ -29,16 +29,16 @@ void test_apply(BondList bonds, Couplings couplings){
 }
 
 
-TEST_CASE("spinhalf_apply", "[spinhalf]") {
+TEST_CASE("spinhalf_apply", "[models][spinhalf]") {
   using namespace hydra::testcases::spinhalf;
 
-  lila::Log.out("Spinhalf: Heisenberg chain apply test, J=1.0, N=2,..,6");
+  lila::Log.out("spinhalf_apply: Heisenberg chain apply test, J=1.0, N=2,..,6");
   for (int N = 2; N <= 6; ++N) {
     auto [bonds, couplings] = HBchain(N, 1.0);
     test_apply(bonds, couplings);
   }
 
-  lila::Log.out("Spinhalf: Heisenberg alltoall apply test, N=2,..,6");
+  lila::Log.out("spinhalf_apply: Heisenberg alltoall apply test, N=2,..,6");
   for (int N = 2; N <= 6; ++N) {
     auto [bonds, couplings] = HB_alltoall(N);
     test_apply(bonds, couplings);

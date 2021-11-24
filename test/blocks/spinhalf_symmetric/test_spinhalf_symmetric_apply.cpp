@@ -52,25 +52,25 @@ void test_spinhalf_symmetric_apply(BondList bondlist, Couplings couplings,
 template <class bit_t> void test_spinhalf_symmetric_apply_chains(int n_sites) {
   using namespace hydra::testcases::spinhalf;
   using hydra::testcases::electron::get_cyclic_group_irreps;
-
-  lila::Log.out("HB chain, symmetric apply test, n_sites: {}", n_sites);
+  lila::Log.out("spinhalf_symmetric_apply: HB chain, N: {}", n_sites);
   auto [space_group, irreps] = get_cyclic_group_irreps(n_sites);
   auto [bondlist, couplings] = HBchain(n_sites, 1.0, 1.0);
   test_spinhalf_symmetric_apply<bit_t>(bondlist, couplings, space_group,
                                        irreps);
 }
 
-TEST_CASE("SpinhalfSymmetric_Apply", "[models]") {
+TEST_CASE("spinhalf_symmetric_apply", "[blocks][spinhalf_symmetric]") {
 
   // Test linear Heisenberg chains
   for (int n_sites = 3; n_sites < 7; ++n_sites) {
+
     test_spinhalf_symmetric_apply_chains<uint16_t>(n_sites);
     test_spinhalf_symmetric_apply_chains<uint32_t>(n_sites);
     test_spinhalf_symmetric_apply_chains<uint64_t>(n_sites);
   }
 
   // test a 3x3 triangular lattice
-  lila::Log.out("SpinhalfSymmetric apply test: Triangular 3x3");
+  lila::Log.out("spinhalf_symmetric_apply: Triangular 3x3");
   std::string lfile = "data/triangular.9.Jz1Jz2Jx1Jx2D1.sublattices.tsl.lat";
 
   auto bondlist = read_bondlist(lfile);

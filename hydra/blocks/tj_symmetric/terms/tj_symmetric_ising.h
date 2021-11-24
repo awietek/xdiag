@@ -56,21 +56,21 @@ void do_ising_symmetric(BondList const &bonds, Couplings const &couplings,
     bit_t sitesmask = ((bit_t)1 << n_sites) - 1;
 
     // Loop over all up configurations
-    for (idx_t idx_up = 0; idx_up < indexing.n_reps_up(); ++idx_up) {
-      bit_t ups = indexing.rep_up(idx_up);
-      idx_t up_offset = indexing.up_offset(idx_up);
-      auto const &dnss = indexing.dns_for_up_rep(ups);
+    for (idx_t idx_up = 0; idx_up < indexing.n_rep_ups(); ++idx_up) {
+      bit_t ups = indexing.rep_ups(idx_up);
+      idx_t ups_offset = indexing.ups_offset(idx_up);
+      auto dnss = indexing.dns_for_ups_rep(ups);
 
       if (popcnt(ups & mask) == 2) { // both spins pointing up
-        for (idx_t idx = up_offset; idx < up_offset + dnss.size(); ++idx) {
+        for (idx_t idx = ups_offset; idx < ups_offset + dnss.size(); ++idx) {
           fill(idx, idx, val_same);
         }
       } else {
-        auto [l, u] = indexing.sym_limits_up(ups);
-        idx_t idx = up_offset;
+        auto syms = indexing.syms_ups(ups);
+        idx_t idx = ups_offset;
 
         // ups have trivial stabilizer => dns need to be deposited
-        if (u - l == 1) {
+        if (syms.size() == 1) {
           bit_t not_ups = (~ups) & sitesmask;
 
           if (ups & s1mask) { // s1 is pointing up
