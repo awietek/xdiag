@@ -2,99 +2,93 @@
 
 #include <lila/utils/logger.h>
 
+#include <hydra/bitops/bitops.h>
+#include <hydra/blocks/electron/electron.h>
 #include <hydra/combinatorics/combinations.h>
 #include <hydra/common.h>
-#include <hydra/blocks/electron/electron.h>
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
-#include <hydra/bitops/bitops.h>
 
-namespace hydra::terms::electron {
+namespace hydra::terms {
 
-template <class bit_t, class Filler>
-void do_ising(BondList const &bonds, Couplings const &couplings,
-              Electron<bit_t> const &block, Filler &&fill) {
+template <class bit_t, class coeff_t, class Filler>
+void electron_ising(BondList const &bonds, Couplings const &couplings,
+                    indexing::ElectronIndexing<bit_t> const &indexing,
+                    Filler &&fill) {
   using bitops::gbit;
   using bitops::popcnt;
   using combinatorics::Combinations;
 
+  int n_sites = indexing.n_sites();
+  int n_up = indexing.n_up();
+  int n_dn = indexing.n_dn();
 
-  int n_sites = block.n_sites();
-  int n_up = block.n_up();
-  int n_dn = block.n_dn();
+  auto clean_bonds = utils::clean_bondlist(
+      bonds, couplings,
+      {"HEISENBERG", "HB", "ISING", "TJHEISENBERG", "TJISING", "TJHB"}, 2);
 
-  auto ising = bonds.bonds_of_type("HEISENBERG") +
-               bonds.bonds_of_type("ISING") + bonds.bonds_of_type("HB");
-  auto ising_tj = bonds.bonds_of_type("TJHEISENBERG") +
-                  bonds.bonds_of_type("TJISING") + bonds.bonds_of_type("TJHB");
+  for (auto bond : clean_bonds) {
 
-  for (auto bond : ising + ising_tj) {
+    std::string type = bond.type();
+    std::string cpl = bond.coupling();
 
-    if (bond.size() != 2)
-      lila::Log.err("Error computing Electron Ising: "
-                    "bond must have exactly two sites defined");
+    utils::check_sites_disjoint(bond);
+    int s1 = std::min(bond.site(0), bond.site(1));
+    int s2 = std::max(bond.site(0), bond.site(1));
 
-    std::string coupling = bond.coupling();
-    if (couplings.defined(coupling) &&
-        !lila::close(couplings[coupling], (complex)0.)) {
+    coeff_t J = utils::get_coupling<coeff_t>(couplings, cpl);
 
-      double J = lila::real(couplings[coupling]);
+    // Set values for same/diff (tJ block definition)
+    coeff_t val_same, val_diff;
+    if ((type == "HEISENBERG") || (type == "ISING") || (type == "HB")) {
+      val_same = J / 4.;
+      val_diff = -J / 4.;
+    } else if ((type == "TJHEISENBERG") || (type == "TJISING") ||
+               (type == "TJHB")) {
+      val_same = 0.;
+      val_diff = -J / 2.;
+    }
 
-      // Set values for same/diff (tJ block definition)
-      std::string type = bond.type();
-      double val_same, val_diff;
-      if ((type == "HEISENBERG") || (type == "ISING") || (type == "HB")) {
-        val_same = J / 4.;
-        val_diff = -J / 4.;
-      } else if ((type == "TJHEISENBERG") || (type == "TJISING") ||
-                 (type == "TJHB")) {
-        val_same = 0.;
-        val_diff = -J / 2.;
-      }
+    bit_t s1mask = (bit_t)1 << s1;
+    bit_t s2mask = (bit_t)1 << s2;
+    bit_t mask = s1mask | s2mask;
 
-      int s1 = bond.site(0);
-      int s2 = bond.site(1);
-      bit_t s1mask = (bit_t)1 << s1;
-      bit_t s2mask = (bit_t)1 << s2;
-      bit_t mask = s1mask | s2mask;
+    idx_t idx = 0;
+    for (auto up : Combinations<bit_t>(n_sites, n_up)) {
 
-      idx_t idx = 0;
-      for (auto up : Combinations<bit_t>(n_sites, n_up)) {
-
-        if ((up & mask) == mask) { // both spins pointing up
-          for (bit_t dn : Combinations<bit_t>(n_sites, n_dn)) {
-            if (!(dn & mask)) {
-              fill(idx, idx, val_same);
-            }
-            ++idx;
+      if ((up & mask) == mask) { // both spins pointing up
+        for (bit_t dn : Combinations<bit_t>(n_sites, n_dn)) {
+          if (!(dn & mask)) {
+            fill(idx, idx, val_same);
           }
-        } else if (up & s1mask) { // s1 is pointing up
-          for (bit_t dn : Combinations<bit_t>(n_sites, n_dn)) {
-            if ((dn & mask) == s2mask) {
-              fill(idx, idx, val_diff);
-            }
-            ++idx;
+          ++idx;
+        }
+      } else if (up & s1mask) { // s1 is pointing up
+        for (bit_t dn : Combinations<bit_t>(n_sites, n_dn)) {
+          if ((dn & mask) == s2mask) {
+            fill(idx, idx, val_diff);
           }
-        } else if (up & s2mask) { // s2 is pointing up
-          for (bit_t dn : Combinations<bit_t>(n_sites, n_dn)) {
-            if ((dn & mask) == s1mask) {
-              fill(idx, idx, val_diff);
-            }
-            ++idx;
+          ++idx;
+        }
+      } else if (up & s2mask) { // s2 is pointing up
+        for (bit_t dn : Combinations<bit_t>(n_sites, n_dn)) {
+          if ((dn & mask) == s1mask) {
+            fill(idx, idx, val_diff);
           }
-
-        } else { // no upspins
-          for (bit_t dn : Combinations<bit_t>(n_sites, n_dn)) {
-            if ((dn & mask) == mask) {
-              fill(idx, idx, val_same);
-            }
-            ++idx;
-          }
+          ++idx;
         }
 
-      } // for (auto up : ...)
-    }
+      } else { // no upspins
+        for (bit_t dn : Combinations<bit_t>(n_sites, n_dn)) {
+          if ((dn & mask) == mask) {
+            fill(idx, idx, val_same);
+          }
+          ++idx;
+        }
+      }
+
+    } // for (auto up : ...)
   }
 }
 
-} // namespace hydra::terms::electron
+} // namespace hydra::terms
