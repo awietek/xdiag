@@ -8,11 +8,11 @@
 
 using namespace hydra;
 
-TEST_CASE("tJ_Apply", "[tj]") {
+TEST_CASE("tj_apply", "[blocks][tj]") {
   using namespace hydra::testcases::tj;
 
   for (int N = 3; N <= 6; ++N) {
-    lila::Log.out("TJModel: random all-to-all real apply=matrix, N={}", N);
+    lila::Log("tj_apply: random all-to-all real apply=matrix, N={}", N);
 
     auto [bonds, cpls] = tj_alltoall(N);
     for (int nup = 0; nup <= N; ++nup)
@@ -38,7 +38,7 @@ TEST_CASE("tJ_Apply", "[tj]") {
   }
 
   for (int N = 3; N <= 6; ++N) {
-    lila::Log.out("TJModel: random all-to-all complex apply=matrix, N={}", N);
+    lila::Log("tj_apply: random all-to-all complex apply=matrix, N={}", N);
 
     auto [bonds, cpls] = tj_alltoall_complex(N);
     for (int nup = 0; nup <= N; ++nup)

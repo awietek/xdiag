@@ -83,27 +83,29 @@ void test_hubbard_symmetric_spectrum_chains(int n_sites) {
       get_cyclic_group_irreps_mult(n_sites);
 
   // Without Heisenberg term
-  lila::Log.out("Hubbard chain, symmetric spectra test, n_sites: {}", n_sites);
+  lila::Log.out("electron_symmetric_matrix: Hubbard chain,n_sites: {}",
+                n_sites);
   auto [bondlist, couplings] = get_linear_chain(n_sites, 1.0, 5.0);
   test_symmetric_spectra<bit_t>(bondlist, couplings, space_group, irreps,
                                 multiplicities);
 
   // With Heisenberg term
-  lila::Log.out(
-      "Hubbard chain, symmetric spectra test, n_sites: {} (+ Heisenberg terms)",
-      n_sites);
+  lila::Log("electron_symmetric_matrix: Hubbard chain,  n_sites: {} (+ "
+            "Heisenberg terms)",
+            n_sites);
   auto [bondlist_hb, couplings_hb] =
       get_linear_chain_hb(n_sites, 1.0, 5.0, 0.4);
   test_symmetric_spectra<bit_t>(bondlist_hb, couplings_hb, space_group, irreps,
                                 multiplicities);
 }
 
-TEST_CASE("ElectronSymmetric_Matrix", "[models][ElectronSymmetric]") {
+TEST_CASE("electron_symmetric_matrix", "[blocks][electron_symmetric]") {
   using namespace hydra::testcases::electron;
 
   //////////////////////////////////////////////////////////////////////////////////////
 
   // Check matrices agains Weisse & Fehske
+  lila::Log("electron_symmetric_matrix: Weisse & Fehske matrix");
   int n_sites = 4;
   int nup = 3;
   int ndn = 2;
@@ -160,7 +162,7 @@ TEST_CASE("ElectronSymmetric_Matrix", "[models][ElectronSymmetric]") {
   }
 
   // test a 3x3 triangular lattice
-  lila::Log.out("Hubbard 3x3 triangular, symmetric spectra test");
+  lila::Log("electron_symmetric_matrix: Hubbard 3x3 triangular");
   using bit_t = uint16_t;
   std::string lfile = "data/triangular.9.hop.sublattices.tsl.lat";
 
@@ -186,8 +188,8 @@ TEST_CASE("ElectronSymmetric_Matrix", "[models][ElectronSymmetric]") {
                                 multiplicities);
 
   // test a 3x3 triangular lattice with Heisenberg terms
-  lila::Log.out(
-      "Hubbard 3x3 triangular, symmetric spectra test (+ Heisenberg terms)");
+  lila::Log(
+      "electron_symmetric_matrix: Hubbard 3x3 triangular(+ Heisenberg terms)");
   auto bondlist_hb = bondlist;
   for (auto bond : bondlist) {
     bondlist_hb << Bond("HB", "J", {bond[0], bond[1]});
@@ -198,8 +200,8 @@ TEST_CASE("ElectronSymmetric_Matrix", "[models][ElectronSymmetric]") {
 
   // test a 3x3 triangular lattice with complex hoppings
   {
-    lila::Log.out("Hubbard 3x3 triangular (complex), symmetric spectra "
-                  "test");
+    lila::Log.out(
+        "electron_symmetric_matrix: Hubbard 3x3 triangular (complex)");
     using bit_t = uint16_t;
     std::string lfile =
         "data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.lat";

@@ -27,7 +27,7 @@ void test_indices(ElectronSymmetric<bit_t> const &electron) {
 template <class bit_t> void test_electron_chain(int n_sites) {
   using bitops::bits_to_string;
 
-  lila::Log.out("ElectronSymmetric chain test. N: {}", n_sites);
+  lila::Log("electron_symmetric: chain block test. N: {}", n_sites);
 
   // cyclic group as space group
   std::vector<std::vector<int>> permutations;
@@ -73,7 +73,7 @@ template <class bit_t> void test_electron_chain(int n_sites) {
   REQUIRE(sum_of_dims == pow(4, n_sites));
 }
 
-TEST_CASE("electron_symmetric", "[models][ElectronSymmetric]") {
+TEST_CASE("electron_symmetric", "[blocks][electron_symmetric]") {
 
   // Test the Hubbard chain
   for (int n_sites = 1; n_sites < 7; ++n_sites) {
@@ -84,7 +84,7 @@ TEST_CASE("electron_symmetric", "[models][ElectronSymmetric]") {
 
   // test a 3x3 triangular lattice
   int n_sites = 9;
-  lila::Log.out("ElectronSymmetric triangular 3x3 test");
+  lila::Log.out("electron_symmetric: triangular 3x3 block test");
 
   std::vector<std::pair<std::string, int>> rep_name_mult = {
       {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
@@ -104,7 +104,7 @@ TEST_CASE("electron_symmetric", "[models][ElectronSymmetric]") {
       for (auto [name, mult] : rep_name_mult) {
         auto irrep = read_represenation(lfile, name);
         auto electron =
-            ElectronSymmetric<uint16_t>(n_sites, nup, ndn, space_group, irrep);
+            ElectronSymmetric(n_sites, nup, ndn, space_group, irrep);
 
         idx_t dim = electron.size() * mult;
         // lila::Log.out(
@@ -116,7 +116,7 @@ TEST_CASE("electron_symmetric", "[models][ElectronSymmetric]") {
         sum_dim_updn += dim;
         sum_dim += dim;
       }
-      auto electron_nosym = Electron<uint16_t>(n_sites, nup, ndn);
+      auto electron_nosym = Electron(n_sites, nup, ndn);
       REQUIRE(sum_dim_updn == electron_nosym.size());
       REQUIRE(sum_dim_updn == binomial(n_sites, nup) * binomial(n_sites, ndn));
 

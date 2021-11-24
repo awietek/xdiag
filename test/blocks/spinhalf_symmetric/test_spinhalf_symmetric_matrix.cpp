@@ -73,7 +73,7 @@ void test_spinhalf_symmetric_spectrum_chains(int n_sites) {
   using hydra::testcases::electron::get_cyclic_group_irreps_mult;
 
   // Without Heisenberg term
-  lila::Log.out("HB chain, symmetric spectra test, n_sites: {}", n_sites);
+  lila::Log.out("spinhalf_symmetric_matrix: HB chain, N: {}", n_sites);
   auto [space_group, irreps, multiplicities] =
       get_cyclic_group_irreps_mult(n_sites);
   auto [bondlist, couplings] = HBchain(n_sites, 1.0, 1.0);
@@ -81,7 +81,7 @@ void test_spinhalf_symmetric_spectrum_chains(int n_sites) {
                                          irreps, multiplicities);
 }
 
-TEST_CASE("spinhalf_symmetric_matrix", "[blocks][spinhalf]") {
+TEST_CASE("spinhalf_symmetric_matrix", "[blocks][spinhalf_symmetric]") {
 
   // Test linear Heisenberg chains
   for (int n_sites = 3; n_sites < 7; ++n_sites) {
@@ -91,7 +91,7 @@ TEST_CASE("spinhalf_symmetric_matrix", "[blocks][spinhalf]") {
   }
 
   // test a 3x3 triangular lattice
-  lila::Log("SpinhalfSymmetric spectra test: Triangular 3x3");
+  lila::Log("spinhalf_symmetric_matrix: Triangular 3x3");
   std::string lfile = "data/triangular.9.Jz1Jz2Jx1Jx2D1.sublattices.tsl.lat";
 
   auto bondlist = read_bondlist(lfile);

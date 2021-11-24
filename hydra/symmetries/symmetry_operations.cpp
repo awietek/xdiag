@@ -146,7 +146,7 @@ template uint64_t representative<uint64_t, PermutationGroupLookup<uint64_t>>(
 //////////////////////////////////////////////////////////
 template <typename bit_t, class GroupAction>
 bit_t representative_subset(bit_t state, GroupAction const &group_action,
-                            std::vector<int> const &syms) {
+                            gsl::span<int const> syms) {
   if (syms.size() == 0)
     return state;
   bit_t rep = std::numeric_limits<bit_t>::max();
@@ -161,26 +161,23 @@ bit_t representative_subset(bit_t state, GroupAction const &group_action,
 }
 
 template uint16_t representative_subset<uint16_t, PermutationGroupAction>(
-    uint16_t state, PermutationGroupAction const &,
-    std::vector<int> const &syms);
+    uint16_t state, PermutationGroupAction const &, gsl::span<int const> syms);
 template uint32_t representative_subset<uint32_t, PermutationGroupAction>(
-    uint32_t state, PermutationGroupAction const &,
-    std::vector<int> const &syms);
+    uint32_t state, PermutationGroupAction const &, gsl::span<int const> syms);
 template uint64_t representative_subset<uint64_t, PermutationGroupAction>(
-    uint64_t state, PermutationGroupAction const &,
-    std::vector<int> const &syms);
+    uint64_t state, PermutationGroupAction const &, gsl::span<int const> syms);
 template uint16_t
 representative_subset<uint16_t, PermutationGroupLookup<uint16_t>>(
     uint16_t state, PermutationGroupLookup<uint16_t> const &,
-    std::vector<int> const &syms);
+    gsl::span<int const> syms);
 template uint32_t
 representative_subset<uint32_t, PermutationGroupLookup<uint32_t>>(
     uint32_t state, PermutationGroupLookup<uint32_t> const &,
-    std::vector<int> const &syms);
+    gsl::span<int const> syms);
 template uint64_t
 representative_subset<uint64_t, PermutationGroupLookup<uint64_t>>(
     uint64_t state, PermutationGroupLookup<uint64_t> const &,
-    std::vector<int> const &syms);
+    gsl::span<int const> syms);
 
 //////////////////////////////////////////////////////////
 template <typename bit_t, class GroupAction>
@@ -223,7 +220,7 @@ representative_sym<uint64_t, PermutationGroupLookup<uint64_t>>(
 template <typename bit_t, class GroupAction>
 std::pair<bit_t, int> representative_sym_subset(bit_t state,
                                                 GroupAction const &group_action,
-                                                std::vector<int> const &syms) {
+                                                gsl::span<int const> syms) {
   if (syms.size() == 0)
     return {state, 0};
   bit_t rep = std::numeric_limits<bit_t>::max();
@@ -241,28 +238,25 @@ std::pair<bit_t, int> representative_sym_subset(bit_t state,
 
 template std::pair<uint16_t, int>
 representative_sym_subset<uint16_t, PermutationGroupAction>(
-    uint16_t state, PermutationGroupAction const &,
-    std::vector<int> const &syms);
+    uint16_t state, PermutationGroupAction const &, gsl::span<int const> syms);
 template std::pair<uint32_t, int>
 representative_sym_subset<uint32_t, PermutationGroupAction>(
-    uint32_t state, PermutationGroupAction const &,
-    std::vector<int> const &syms);
+    uint32_t state, PermutationGroupAction const &, gsl::span<int const> syms);
 template std::pair<uint64_t, int>
 representative_sym_subset<uint64_t, PermutationGroupAction>(
-    uint64_t state, PermutationGroupAction const &,
-    std::vector<int> const &syms);
+    uint64_t state, PermutationGroupAction const &, gsl::span<int const> syms);
 template std::pair<uint16_t, int>
 representative_sym_subset<uint16_t, PermutationGroupLookup<uint16_t>>(
     uint16_t state, PermutationGroupLookup<uint16_t> const &,
-    std::vector<int> const &syms);
+    gsl::span<int const> syms);
 template std::pair<uint32_t, int>
 representative_sym_subset<uint32_t, PermutationGroupLookup<uint32_t>>(
     uint32_t state, PermutationGroupLookup<uint32_t> const &,
-    std::vector<int> const &syms);
+    gsl::span<int const> syms);
 template std::pair<uint64_t, int>
 representative_sym_subset<uint64_t, PermutationGroupLookup<uint64_t>>(
     uint64_t state, PermutationGroupLookup<uint64_t> const &,
-    std::vector<int> const &syms);
+    gsl::span<int const> syms);
 
 //////////////////////////////////////////////////////////
 template <typename bit_t, class GroupAction>
@@ -454,10 +448,9 @@ template double norm_electron<uint64_t, PermutationGroupLookup<uint64_t>>(
 
 //////////////////////////////////////////////////////////
 template <typename bit_t, class GroupAction>
-double norm_electron_subset(bit_t ups, bit_t dns,
-                            GroupAction const &group_action,
-                            Representation const &irrep,
-                            std::vector<int> const &syms) {
+double
+norm_electron_subset(bit_t ups, bit_t dns, GroupAction const &group_action,
+                     Representation const &irrep, gsl::span<int const> syms) {
   assert(group_action.n_symmetries() == irrep.size());
   complex amplitude = 0.0;
   int n_sites = group_action.n_sites();
@@ -491,30 +484,30 @@ double norm_electron_subset(bit_t ups, bit_t dns,
 
 template double norm_electron_subset<uint16_t, PermutationGroupAction>(
     uint16_t, uint16_t, PermutationGroupAction const &, Representation const &,
-    std::vector<int> const &);
+    gsl::span<int const>);
 template double norm_electron_subset<uint32_t, PermutationGroupAction>(
     uint32_t, uint32_t, PermutationGroupAction const &, Representation const &,
-    std::vector<int> const &);
+    gsl::span<int const>);
 template double norm_electron_subset<uint64_t, PermutationGroupAction>(
     uint64_t, uint64_t, PermutationGroupAction const &, Representation const &,
-    std::vector<int> const &);
+    gsl::span<int const>);
 template double
 norm_electron_subset<uint16_t, PermutationGroupLookup<uint16_t>>(
     uint16_t, uint16_t, PermutationGroupLookup<uint16_t> const &,
-    Representation const &, std::vector<int> const &);
+    Representation const &, gsl::span<int const>);
 template double
 norm_electron_subset<uint32_t, PermutationGroupLookup<uint32_t>>(
     uint32_t, uint32_t, PermutationGroupLookup<uint32_t> const &,
-    Representation const &, std::vector<int> const &);
+    Representation const &, gsl::span<int const>);
 template double
 norm_electron_subset<uint64_t, PermutationGroupLookup<uint64_t>>(
     uint64_t, uint64_t, PermutationGroupLookup<uint64_t> const &,
-    Representation const &, std::vector<int> const &);
+    Representation const &, gsl::span<int const>);
 
 //////////////////////////////////////////////////////////
 template <typename bit_t, class GroupAction, class LinTable>
 std::tuple<std::vector<bit_t>, std::vector<idx_t>, std::vector<int>,
-           std::vector<std::pair<idx_t, idx_t>>>
+           std::vector<std::pair<span_size_t, span_size_t>>>
 representatives_indices_symmetries_limits(int n_par,
                                           GroupAction const &group_action,
                                           LinTable const &lintable) {
@@ -526,7 +519,7 @@ representatives_indices_symmetries_limits(int n_par,
   std::vector<bit_t> reps;
   std::vector<idx_t> idces(binomial(n_sites, n_par));
   std::vector<int> syms;
-  std::vector<std::pair<idx_t, idx_t>> sym_limits(binomial(n_sites, n_par));
+  std::vector<std::pair<span_size_t, span_size_t>> sym_limits(binomial(n_sites, n_par));
 
   assert(n_par <= n_sites);
   assert(n_par >= 0);
@@ -549,13 +542,13 @@ representatives_indices_symmetries_limits(int n_par,
     idces[idx] = idces[lintable.index(rep)];
 
     // Determine the symmetries that yield the up-representative
-    idx_t begin = syms.size();
+    span_size_t begin = syms.size();
     for (int sym = 0; sym < group_action.n_symmetries(); ++sym) {
       if (group_action.apply(sym, state) == rep)
         syms.push_back(sym);
     }
-    idx_t end = syms.size();
-    sym_limits[idx] = {begin, end};
+    span_size_t end = syms.size();
+    sym_limits[idx] = {begin, end - begin};
     ++idx;
   }
 
@@ -563,38 +556,38 @@ representatives_indices_symmetries_limits(int n_par,
 }
 
 template std::tuple<std::vector<uint16_t>, std::vector<idx_t>, std::vector<int>,
-                    std::vector<std::pair<idx_t, idx_t>>>
+                    std::vector<std::pair<span_size_t, span_size_t>>>
 representatives_indices_symmetries_limits<uint16_t, PermutationGroupAction,
                                           indexing::LinTable<uint16_t>>(
     int, PermutationGroupAction const &, indexing::LinTable<uint16_t> const &);
 
 template std::tuple<std::vector<uint32_t>, std::vector<idx_t>, std::vector<int>,
-                    std::vector<std::pair<idx_t, idx_t>>>
+                    std::vector<std::pair<span_size_t, span_size_t>>>
 representatives_indices_symmetries_limits<uint32_t, PermutationGroupAction,
                                           indexing::LinTable<uint32_t>>(
     int, PermutationGroupAction const &, indexing::LinTable<uint32_t> const &);
 
 template std::tuple<std::vector<uint64_t>, std::vector<idx_t>, std::vector<int>,
-                    std::vector<std::pair<idx_t, idx_t>>>
+                    std::vector<std::pair<span_size_t, span_size_t>>>
 representatives_indices_symmetries_limits<uint64_t, PermutationGroupAction,
                                           indexing::LinTable<uint64_t>>(
     int, PermutationGroupAction const &, indexing::LinTable<uint64_t> const &);
 template std::tuple<std::vector<uint16_t>, std::vector<idx_t>, std::vector<int>,
-                    std::vector<std::pair<idx_t, idx_t>>>
+                    std::vector<std::pair<span_size_t, span_size_t>>>
 representatives_indices_symmetries_limits<
     uint16_t, PermutationGroupLookup<uint16_t>, indexing::LinTable<uint16_t>>(
     int, PermutationGroupLookup<uint16_t> const &,
     indexing::LinTable<uint16_t> const &);
 
 template std::tuple<std::vector<uint32_t>, std::vector<idx_t>, std::vector<int>,
-                    std::vector<std::pair<idx_t, idx_t>>>
+                    std::vector<std::pair<span_size_t, span_size_t>>>
 representatives_indices_symmetries_limits<
     uint32_t, PermutationGroupLookup<uint32_t>, indexing::LinTable<uint32_t>>(
     int, PermutationGroupLookup<uint32_t> const &,
     indexing::LinTable<uint32_t> const &);
 
 template std::tuple<std::vector<uint64_t>, std::vector<idx_t>, std::vector<int>,
-                    std::vector<std::pair<idx_t, idx_t>>>
+                    std::vector<std::pair<span_size_t, span_size_t>>>
 representatives_indices_symmetries_limits<
     uint64_t, PermutationGroupLookup<uint64_t>, indexing::LinTable<uint64_t>>(
     int, PermutationGroupLookup<uint64_t> const &,

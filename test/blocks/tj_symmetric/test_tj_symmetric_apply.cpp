@@ -63,14 +63,14 @@ template <class bit_t> void test_tj_symmetric_apply_chains(int n_sites) {
   using namespace hydra::testcases::tj;
   using namespace hydra::testcases::electron;
 
-  lila::Log.out("Tj chain, symmetric apply test, n_sites: {}", n_sites);
+  lila::Log("tj_symmetric_apply: tJ chain, symmetric apply test, n_sites: {}", n_sites);
   auto [bondlist, couplings] = tJchain(n_sites, 1.0, 5.0);
   auto [space_group, irreps, multiplicities] =
       get_cyclic_group_irreps_mult(n_sites);
   test_symmetric_apply<uint16_t>(bondlist, couplings, space_group, irreps);
 }
 
-TEST_CASE("tj_symmetric_apply", "[blocks]") {
+TEST_CASE("tj_symmetric_apply", "[blocks][tj_symmetric]") {
   using namespace hydra::testcases::tj;
   using namespace hydra::testcases::electron;
 
@@ -82,7 +82,7 @@ TEST_CASE("tj_symmetric_apply", "[blocks]") {
   }
   {
     // test a 3x3 triangular lattice
-    lila::Log.out("Tj 3x3 triangular, symmetric apply test");
+    lila::Log("tj_symmetric_apply: tJ 3x3 triangular, symmetric apply test");
     std::string lfile = "data/triangular.9.hop.sublattices.tsl.lat";
 
     auto bondlist = read_bondlist(lfile);
@@ -109,7 +109,7 @@ TEST_CASE("tj_symmetric_apply", "[blocks]") {
 
   {
     // test a 3x3 triangular lattice with complex flux
-    lila::Log.out("tJ 3x3 triangular staggered, symmetric apply test, complex");
+    lila::Log("tj_symmetric_apply: tJ 3x3 triangular staggered, symmetric apply test, complex");
     std::string lfile =
         "data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.lat";
 
@@ -132,7 +132,6 @@ TEST_CASE("tj_symmetric_apply", "[blocks]") {
     }
 
     for (auto eta : etas) {
-      lila::Log("eta: {:.2f}", eta);
       Couplings couplings;
       couplings["TPHI"] = complex(cos(eta * M_PI), sin(eta * M_PI));
       couplings["JPHI"] = complex(cos(2 * eta * M_PI), sin(2 * eta * M_PI));
