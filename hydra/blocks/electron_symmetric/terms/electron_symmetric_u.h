@@ -1,37 +1,35 @@
 #pragma once
 
-#include <lila/all.h>
-
 #include <hydra/common.h>
 
-#include <hydra/blocks/electron_symmetric/electron_symmetric.h>
-#include <hydra/blocks/blocks.h>
-#include <hydra/operators/couplings.h>
-#include <hydra/symmetries/symmetry_operations.h>
+#include <hydra/blocks/utils/block_utils.h>
+
 #include <hydra/bitops/bitops.h>
 
-namespace hydra::terms::electron_symmetric {
+#include <hydra/indexing/electron/electron_symmetric_indexing.h>
 
-template <class bit_t, class GroupAction, class Filler>
-void do_U_symmetric(Couplings const &couplings,
-                    ElectronSymmetric<bit_t, GroupAction> const &block,
-                    Filler &&fill) {
-  using bitops::popcnt;
+#include <hydra/operators/bondlist.h>
+#include <hydra/operators/couplings.h>
+
+namespace hydra::terms {
+
+template <typename bit_t, typename coeff_t, class Filler>
+void electron_symmetric_U(
+    Couplings const &couplings,
+    indexing::ElectronSymmetricIndexing<bit_t> const &indexing, Filler &&fill) {
+
   if (couplings.defined("U")) {
 
-    if (!couplings.is_real("U")) {
-      lila::Log.err("Error computing ElectronSymmetric matrix/apply: "
-                    "Hubbard U must be a real number");
-    }
+    coeff_t U = utils::get_coupling<coeff_t>(couplings, "U");
 
-    double U = couplings.real("U");
     if (!lila::close(U, 0.)) {
 
       idx_t idx = 0;
-      for (bit_t ups : block.reps_up_) {
-        auto const &dnss = block.dns_for_up_rep(ups);
+      for (idx_t idx_ups = 0; idx_ups < indexing.n_rep_ups(); ++idx_ups) {
+	bit_t ups = indexing.rep_ups(idx_ups);
+        auto dnss = indexing.dns_for_ups_rep(ups);
         for (bit_t dns : dnss) {
-          double val = U * (double)popcnt(ups & dns);
+          coeff_t val = U * (double)bitops::popcnt(ups & dns);
           fill(idx, idx, val);
           ++idx;
         }
@@ -40,4 +38,4 @@ void do_U_symmetric(Couplings const &couplings,
   }
 }
 
-} // namespace hydra::terms::electron_symmetric
+} // namespace hydra::terms

@@ -1,4 +1,4 @@
-#include "tj_symmetric_indexing.h"
+#include "electron_symmetric_indexing.h"
 
 #include <hydra/combinatorics/combinations.h>
 #include <hydra/symmetries/permutation_group_lookup.h>
@@ -7,16 +7,14 @@
 namespace hydra::indexing {
 
 template <class bit_t>
-tJSymmetricIndexing<bit_t>::tJSymmetricIndexing(
+ElectronSymmetricIndexing<bit_t>::ElectronSymmetricIndexing(
     int n_sites, int nup, int ndn, PermutationGroup permutation_group,
     Representation irrep)
     : n_sites_(n_sites), n_up_(nup), n_dn_(ndn),
       group_action_(permutation_group), irrep_(irrep),
       raw_ups_size_(combinatorics::binomial(n_sites, nup)),
       raw_dns_size_(combinatorics::binomial(n_sites, ndn)),
-      raw_dnsc_size_(combinatorics::binomial(n_sites - nup, ndn)),
-      lintable_ups_(n_sites, nup), lintable_dns_(n_sites, ndn),
-      lintable_dnsc_(n_sites - nup, ndn) {
+      lintable_ups_(n_sites, nup), lintable_dns_(n_sites, ndn) {
 
   using combinatorics::Combinations;
 
@@ -30,15 +28,14 @@ tJSymmetricIndexing<bit_t>::tJSymmetricIndexing(
       symmetries::representatives_indices_symmetries_limits<bit_t>(
           nup, group_action, lintable_ups_);
 
-  // if ups have trivial stabilizer, dns (compressed) are stored in front
-  for (bit_t dns : Combinations<bit_t>(n_sites - nup, ndn)) {
+  // if ups have trivial stabilizer, dns  are stored in front
+  for (bit_t dns : Combinations<bit_t>(n_sites, ndn)) {
     dns_storage_.push_back(dns);
     norms_storage_.push_back(1.0);
   }
 
   ups_offset_.resize(reps_up_.size());
   dns_limits_.resize(reps_up_.size());
-  bit_t sitesmask = ((bit_t)1 << n_sites) - 1;
 
   size_ = 0;
   idx_t idx_up = 0;
@@ -50,22 +47,19 @@ tJSymmetricIndexing<bit_t>::tJSymmetricIndexing(
     // ups have trivial stabilizer -> dns stored in beginning
     if (syms.size() == 1) {
       span_size_t start = 0;
-      span_size_t length = raw_dnsc_size_;
+      span_size_t length = raw_dns_size_;
       dns_limits_[idx_up] = {start, length};
       size_ += length;
       // ups have non-trivial stabilizer, we store the dns configurations
     } else {
-      bit_t not_ups = (~ups) & sitesmask;
-
       span_size_t start = dns_storage_.size();
-      for (bit_t dnsc : Combinations<bit_t>(n_sites - nup, ndn)) {
-        bit_t dns = bitops::deposit(dnsc, not_ups);
+      for (bit_t dns : Combinations<bit_t>(n_sites, ndn)) {
         bit_t dns_rep =
             symmetries::representative_subset(dns, group_action, syms);
         if (dns == dns_rep) {
           double norm = symmetries::norm_electron_subset(ups, dns, group_action,
                                                          irrep, syms);
-          if (norm > 1e-6) { // only keep dns with non-zero norm
+          if (norm > 1e-6) {
             dns_storage_.push_back(dns_rep);
             norms_storage_.push_back(norm);
           }
@@ -80,8 +74,8 @@ tJSymmetricIndexing<bit_t>::tJSymmetricIndexing(
   }
 }
 
-template class tJSymmetricIndexing<uint16_t>;
-template class tJSymmetricIndexing<uint32_t>;
-template class tJSymmetricIndexing<uint64_t>;
+template class ElectronSymmetricIndexing<uint16_t>;
+template class ElectronSymmetricIndexing<uint32_t>;
+template class ElectronSymmetricIndexing<uint64_t>;
 
 } // namespace hydra::indexing

@@ -7,22 +7,22 @@
 using namespace hydra;
 using namespace hydra::combinatorics;
 
-template <class bit_t>
-void test_indices(ElectronSymmetric<bit_t> const &electron) {
-  // int n_sites = electron.n_sites();
+// template <class bit_t>
+// void test_indices(ElectronSymmetric<bit_t> const &electron) {
+//   // int n_sites = electron.n_sites();
 
-  idx_t idx = 0;
-  for (bit_t ups : electron.reps_up_) {
-    auto const &dnss = electron.dns_for_up_rep(ups);
-    for (bit_t dns : dnss) {
-      // lila::Log.out("{} {}", bits_to_string(ups, n_sites),
-      // bits_to_string(dns, n_sites));
-      idx_t idx2 = electron.index(ups, dns);
-      REQUIRE(idx == idx2);
-      ++idx;
-    }
-  }
-}
+//   idx_t idx = 0;
+//   for (bit_t ups : electron.reps_up_) {
+//     auto const &dnss = electron.dns_for_up_rep(ups);
+//     for (bit_t dns : dnss) {
+//       // lila::Log.out("{} {}", bits_to_string(ups, n_sites),
+//       // bits_to_string(dns, n_sites));
+//       idx_t idx2 = electron.index(ups, dns);
+//       REQUIRE(idx == idx2);
+//       ++idx;
+//     }
+//   }
+// }
 
 template <class bit_t> void test_electron_chain(int n_sites) {
   using bitops::bits_to_string;
@@ -111,7 +111,7 @@ TEST_CASE("electron_symmetric", "[blocks][electron_symmetric]") {
         //     "Hubbard Triangular 3x3: n_sites: {}, nup: {}, ndn: {}, k: "
         //     "{}(x{}), size: {}",
         //     n_sites, nup, ndn, name, mult, electron.size());
-        test_indices(electron);
+        // test_indices(electron);
 
         sum_dim_updn += dim;
         sum_dim += dim;

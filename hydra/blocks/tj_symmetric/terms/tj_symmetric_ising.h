@@ -20,8 +20,7 @@ void do_ising_symmetric(BondList const &bonds, Couplings const &couplings,
   using bitops::gbit;
   using bitops::popcnt;
 
-  auto const &group_action = indexing.group_action();
-  int n_sites = group_action.n_sites();
+  int n_sites = indexing.n_sites();
 
   auto clean_bonds = utils::clean_bondlist(
       bonds, couplings,

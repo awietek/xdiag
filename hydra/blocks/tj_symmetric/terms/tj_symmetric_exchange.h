@@ -108,7 +108,7 @@ void do_exchange_symmetric(BondList const &bonds, Couplings const &couplings,
 
       // Target ups have trivial stabilizer
       if (syms_up_out.size() == 1) {
-        int sym = syms_up_out[0];
+        int sym = syms_up_out.front();
 
         // Fix the bloch factor
         coeff_t prefac;
