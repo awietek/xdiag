@@ -29,10 +29,11 @@ void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
   } else {
     bloch_factors = irrep.characters_real();
   }
+  std::vector<coeff_t> prefacs(irrep.size());
+
   assert(group_action.n_symmetries() == bloch_factors.size());
   int n_sites = group_action.n_sites();
 
-  // Loop over cleaned-up bonds
   auto clean_bonds =
       utils::clean_bondlist(bonds, couplings, {"HOP", "HOPUP", "HOPDN"}, 2);
   for (auto bond : clean_bonds) {
@@ -145,7 +146,6 @@ void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
         }
         // non-trivial stabilizer of ups -> dns don't have to be deposited
         else {
-          auto syms = indexing.syms_ups(ups);
           auto norms = indexing.norms_for_ups_rep(ups);
 
           idx_t idx_in = up_offset;
@@ -313,7 +313,6 @@ void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
           auto syms = syms_ups_out;
 
           // Fix the bloch/prefactors
-          std::vector<coeff_t> prefacs(irrep.size());
           if constexpr (is_complex<coeff_t>()) {
             for (int i = 0; i < (int)irrep.size(); ++i) {
               prefacs[i] = -(gbit(ups, s1) ? t : t_conj) * irrep.character(i);

@@ -1,295 +1,216 @@
 #pragma once
 
-#include <lila/utils/logger.h>
-
 #include <hydra/common.h>
-#include <hydra/blocks/electron_symmetric/electron_symmetric.h>
-#include <hydra/blocks/blocks.h>
-#include <hydra/operators/bondlist.h>
-#include <hydra/operators/couplings.h>
-#include <hydra/symmetries/symmetry_operations.h>
 
 #include <hydra/blocks/utils/block_utils.h>
+
 #include <hydra/bitops/bitops.h>
 
-namespace hydra::terms::electron_symmetric {
+#include <hydra/indexing/electron/electron_symmetric_indexing.h>
 
-template <class bit_t, class coeff_t, class GroupAction, class Filler>
-void do_hopping_symmetric(BondList const &bonds, Couplings const &couplings,
-                          ElectronSymmetric<bit_t, GroupAction> const &block,
-                          Filler &&fill) {
+#include <hydra/operators/bondlist.h>
+#include <hydra/operators/couplings.h>
+
+namespace hydra::terms {
+
+template <class bit_t, class coeff_t, class Filler>
+void electron_symmetric_hopping(
+    BondList const &bonds, Couplings const &couplings,
+    indexing::ElectronSymmetricIndexing<bit_t> const &indexing, Filler &&fill) {
   using bitops::gbit;
   using bitops::popcnt;
 
-  auto const &group_action = block.group_action();
-  auto const &irrep = block.irrep();
+  // Get group/irrep info
+  auto const &group_action = indexing.group_action();
+  auto const &irrep = indexing.irrep();
+  std::vector<coeff_t> bloch_factors;
+  if constexpr (is_complex<coeff_t>()) {
+    bloch_factors = irrep.characters();
+  } else {
+    bloch_factors = irrep.characters_real();
+  }
+  std::vector<coeff_t> prefacs(irrep.size());
 
-  auto hoppings = bonds.bonds_of_type("HOP");
-  auto hoppings_up = bonds.bonds_of_type("HOPUP");
-  auto hoppings_dn = bonds.bonds_of_type("HOPDN");
-  for (auto hop : hoppings + hoppings_up + hoppings_dn) {
+  assert(group_action.n_symmetries() == bloch_factors.size());
 
-    if (hop.size() != 2)
-      lila::Log.err("Error computing Electron hopping: "
-                    "hoppings must have exactly two sites defined");
+  auto clean_bonds =
+      utils::clean_bondlist(bonds, couplings, {"HOP", "HOPUP", "HOPDN"}, 2);
+  for (auto bond : clean_bonds) {
 
-    std::string cpl = hop.coupling();
-    if (utils::coupling_is_non_zero(hop, couplings)) {
-      int s1 = hop.site(0);
-      int s2 = hop.site(1);
-      bit_t flipmask = ((bit_t)1 << s1) | ((bit_t)1 << s2);
-      int l = std::min(s1, s2);
-      int u = std::max(s1, s2);
-      bit_t spacemask = (((bit_t)1 << (u - l - 1)) - 1) << (l + 1);
+    std::string type = bond.type();
+    std::string cpl = bond.coupling();
 
-      // Define hopping amplitude
-      coeff_t t = 0;
-      coeff_t tconj = 0;
-      if constexpr (is_complex<coeff_t>()) {
-        t = couplings[cpl];
-        tconj = lila::conj(t);
-      } else {
-        t = lila::real(couplings[cpl]);
-        tconj = lila::real(couplings[cpl]);
-      }
-      coeff_t val = 0;
+    utils::check_sites_disjoint(bond);
+    int s1 = bond[0];
+    int s2 = bond[1];
 
-      // Apply hoppings on dnspins
-      if ((hop.type() == "HOP") || (hop.type() == "HOPDN")) {
+    auto [t, tconj] = utils::get_coupling_and_conj<coeff_t>(couplings, cpl);
 
-        idx_t idx_up = 0;
-        for (bit_t ups : block.reps_up_) {
-          auto const &dnss = block.dns_for_up_rep(ups);
-          auto const &norms = block.norms_for_up_rep(ups);
+    // Prepare bitmasks
+    bit_t flipmask = ((bit_t)1 << s1) | ((bit_t)1 << s2);
+    int l = std::min(s1, s2);
+    int u = std::max(s1, s2);
+    bit_t fermimask = (((bit_t)1 << (u - l - 1)) - 1) << (l + 1);
 
-          idx_t up_offset = block.up_offsets_[idx_up];
-          auto [sym_lower, sym_upper] = block.sym_limits_up(ups);
-          assert(sym_upper - sym_lower > 0);
+    coeff_t val = 0;
 
-          // trivial up-stabilizer (likely)
-          if (sym_upper - sym_lower == 1) {
-            idx_t idx_dn = 0;
-            for (bit_t dns : dnss) {
+    // Apply hoppings on dnspins
+    if ((type == "HOP") || (type == "HOPDN")) {
 
-              // If hopping is possible
-              if (popcnt(dns & flipmask) == 1) {
-                idx_t idx_in = up_offset + idx_dn;
-                bit_t dns_flip = dns ^ flipmask;
-                idx_t idx_dn_flip = block.lintable_dns_.index(dns_flip);
-                idx_t idx_out = up_offset + idx_dn_flip;
-                double fermi_hop = popcnt(dns & spacemask) & 1 ? -1. : 1.;
+      for (idx_t idx_up = 0; idx_up < indexing.n_rep_ups(); ++idx_up) {
+        bit_t ups = indexing.rep_ups(idx_up);
+        idx_t up_offset = indexing.ups_offset(idx_up);
+        auto syms = indexing.syms_ups(ups);
+        auto dnss = indexing.dns_for_ups_rep(ups);
+	auto norms = indexing.norms_for_ups_rep(ups);
 
-                // Complex conjugate t if necessary
-                if constexpr (is_complex<coeff_t>()) {
-                  val = -(gbit(dns, s1) ? t : tconj) * fermi_hop *
-                        norms[idx_dn_flip] / norms[idx_dn];
-                } else {
-                  val = -t * fermi_hop * norms[idx_dn_flip] / norms[idx_dn];
-                }
+        // trivial up-stabilizer (likely)
+        if (syms.size() == 1) {
+          idx_t idx_dn = 0;
+          for (bit_t dns : dnss) {
 
-                fill(idx_out, idx_in, val);
-              }
-              ++idx_dn;
-            }
-            // non-trivial up-stabilizer (unlikely)
-          } else {
-            idx_t idx_dn = 0;
-            for (bit_t dns : dnss) {
+            if (popcnt(dns & flipmask) == 1) {
 
-              // If hopping is possible
-              if (popcnt(dns & flipmask) == 1) {
-                idx_t idx_in = up_offset + idx_dn;
-                bit_t dns_flip = dns ^ flipmask;
-
-                // Determine dns representative
-                bit_t rep_dns = std::numeric_limits<bit_t>::max();
-                int rep_sym = 0;
-                for (idx_t sym_idx = sym_lower; sym_idx < sym_upper;
-                     ++sym_idx) {
-                  int sym = block.syms_up_[sym_idx];
-                  bit_t tdns = group_action.apply(sym, dns_flip);
-                  if (tdns < rep_dns) {
-                    rep_dns = tdns;
-                    rep_sym = sym;
-                  }
-                }
-
-                // Find index of rep dns
-                auto it = std::lower_bound(dnss.begin(), dnss.end(), rep_dns);
-                if ((it != dnss.end()) && (*it == rep_dns)) {
-                  idx_t idx_dn_flip = std::distance(dnss.begin(), it);
-                  idx_t idx_out = up_offset + idx_dn_flip;
-                  double fermi_hop = popcnt(dns & spacemask) & 1 ? -1. : 1.;
-                  if (block.fermi_bool_up(rep_sym, ups) !=
-                      block.fermi_bool_dn(rep_sym, dns_flip))
-                    fermi_hop = -fermi_hop;
-
-                  // Complex conjugate t if necessary
-                  if constexpr (is_complex<coeff_t>()) {
-                    val = -(gbit(dns, s1) ? t : tconj) * fermi_hop *
-                          irrep.character(rep_sym) * norms[idx_dn_flip] /
-                          norms[idx_dn];
-                  } else {
-                    val = -t * fermi_hop *
-                          lila::real(irrep.character(rep_sym)) *
-                          norms[idx_dn_flip] / norms[idx_dn];
-                  }
-
-                  // // Debug
-                  // idx_t idx_out2 = block.index(ups, rep_dns);
-                  // assert(idx_out == idx_out2);
-                  // int n_sites = block.n_sites();
-                  // lila::Log.out("s1: {} s2: {} {};{} -> {};{} -> {};{}
-                  // idx_in: {}, idx_out: {}, val: {:.4f}", s1, s2,
-                  //               bits_to_string(ups, n_sites),
-                  //               bits_to_string(dns, n_sites),
-                  //               bits_to_string(ups, n_sites),
-                  //               bits_to_string(dns_flip, n_sites),
-                  //               bits_to_string(ups, n_sites),
-                  //               bits_to_string(rep_dns, n_sites), idx_in,
-                  //               idx_out, lila::real(val));
-
-                  fill(idx_out, idx_in, val);
-                }
-              }
-
-              ++idx_dn;
-            }
-          }
-
-          ++idx_up;
-        }
-      }
-
-      // Apply hoppings on upspins
-      if ((hop.type() == "HOP") || (hop.type() == "HOPUP")) {
-        idx_t idx_up = 0;
-        for (bit_t ups : block.reps_up_) {
-
-          if (popcnt(ups & flipmask) != 1) {
-            ++idx_up;
-            continue;
-          }
-
-          idx_t up_offset_in = block.up_offsets_[idx_up];
-          auto const &dnss_in = block.dns_for_up_rep(ups);
-          auto const &norms_in = block.norms_for_up_rep(ups);
-
-          bit_t ups_flip = ups ^ flipmask;
-          idx_t idx_up_flip = block.index_up(ups_flip);
-          idx_t up_offset_out = block.up_offsets_[idx_up_flip];
-          bit_t ups_flip_rep = block.reps_up_[idx_up_flip];
-          auto [sym_lower, sym_upper] = block.sym_limits_up(ups_flip);
-          auto const &dnss_out = block.dns_for_up_rep(ups_flip_rep);
-          auto const &norms_out = block.norms_for_up_rep(ups_flip_rep);
-
-          double fermi_hop = popcnt(ups & spacemask) & 1 ? -1. : 1.;
-
-          // trivial up-stabilizer (likely)
-          if (sym_upper - sym_lower == 1) {
-            int sym = block.syms_up_[sym_lower];
-            bool fermi_up = block.fermi_bool_up(sym, ups_flip);
-            idx_t idx_dn = 0;
-            for (bit_t dns : dnss_in) {
-              idx_t idx_in = up_offset_in + idx_dn;
-              bit_t dns_rep = group_action.apply(sym, dns);
-              idx_t idx_dn_flip = block.lintable_dns_.index(dns_rep);
-              idx_t idx_out = up_offset_out + idx_dn_flip;
-              double fermi = fermi_hop;
-              if (fermi_up != block.fermi_bool_dn(sym, dns))
-                fermi = -fermi;
+              idx_t idx_in = up_offset + idx_dn;
+              bit_t dns_flip = dns ^ flipmask;
+              idx_t idx_dn_flip = indexing.index_dns(dns_flip);
+              idx_t idx_out = up_offset + idx_dn_flip;
+              bool fermi = popcnt(dns & fermimask) & 1;
 
               // Complex conjugate t if necessary
               if constexpr (is_complex<coeff_t>()) {
-                val = -(gbit(ups, s1) ? t : tconj) * fermi *
-                      irrep.character(sym) * norms_out[idx_dn_flip] /
-                      norms_in[idx_dn];
+                val = -(gbit(dns, s1) ? t : tconj);
               } else {
-                val = -t * fermi * lila::real(irrep.character(sym)) *
-                      norms_out[idx_dn_flip] / norms_in[idx_dn];
-              }
+                val = -t;
+              } // Comment: norm is always 1.0 for trivial stabilizers
 
-              // idx_t idx_out2 = block.index(ups_flip, dns);
-              // int n_sites = block.n_sites();
-              // lila::Log.out("tri s1: {} s2: {} {};{} -> {};{} -> {};{}
-              // idx_in: "
-              //               "{}, idx_out: {}, val: {:.4f}",
-              //               s1, s2, bits_to_string(ups, n_sites),
-              //               bits_to_string(dns, n_sites),
-              //               bits_to_string(ups_flip, n_sites),
-              //               bits_to_string(dns, n_sites),
-              //               bits_to_string(ups_flip_rep, n_sites),
-              //               bits_to_string(dns_rep, n_sites), idx_in,
-              //               idx_out, lila::real(val));
-              // assert(idx_out == idx_out2);
-
-              fill(idx_out, idx_in, val);
-              ++idx_dn;
+              fill(idx_out, idx_in, fermi ? -val : val);
             }
-            // non-trivial up-stabilizer (unlikely)
-          } else {
-            idx_t idx_dn = 0;
-            for (bit_t dns : dnss_in) {
-              idx_t idx_in = up_offset_in + idx_dn;
 
-              // Determine dns representative
-              bit_t rep_dns = std::numeric_limits<bit_t>::max();
-              int rep_sym = 0;
-              for (idx_t sym_idx = sym_lower; sym_idx < sym_upper; ++sym_idx) {
-                int sym = block.syms_up_[sym_idx];
-                bit_t tdns = group_action.apply(sym, dns);
-                if (tdns < rep_dns) {
-                  rep_dns = tdns;
-                  rep_sym = sym;
-                }
-              }
-              bool fermi_up = block.fermi_bool_up(rep_sym, ups_flip);
+            ++idx_dn;
+          }
 
-              // Find index of rep dns
-              auto it =
-                  std::lower_bound(dnss_out.begin(), dnss_out.end(), rep_dns);
+          // non-trivial up-stabilizer (unlikely)
+        } else {
+          idx_t idx_dns = 0;
+          for (bit_t dns : dnss) {
 
-              if ((it != dnss_out.end()) && (*it == rep_dns)) {
-                idx_t idx_dn_flip = std::distance(dnss_out.begin(), it);
-                idx_t idx_out = up_offset_out + idx_dn_flip;
-                double fermi = fermi_hop;
-                if (fermi_up != block.fermi_bool_dn(rep_sym, dns))
-                  fermi = -fermi;
+            if (popcnt(dns & flipmask) == 1) {
+
+              idx_t idx_in = up_offset + idx_dns;
+              bit_t dns_flip = dns ^ flipmask;
+              auto [idx_dns_flip, fermi_dn, sym] =
+                  indexing.index_dns_fermi_sym(dns_flip, syms, dnss, fermimask);
+
+              if (idx_dns_flip != invalid_index) {
+                idx_t idx_out = up_offset + idx_dns_flip;
+                bool fermi_up = indexing.fermi_bool_ups(sym, ups);
 
                 // Complex conjugate t if necessary
                 if constexpr (is_complex<coeff_t>()) {
-                  val = -(gbit(ups, s1) ? t : tconj) * fermi *
-                        irrep.character(rep_sym) * norms_out[idx_dn_flip] /
-                        norms_in[idx_dn];
+                  val = -(gbit(dns, s1) ? t : tconj) * bloch_factors[sym] *
+                        norms[idx_dns_flip] / norms[idx_dns];
                 } else {
-                  val = -t * fermi * lila::real(irrep.character(rep_sym)) *
-                        norms_out[idx_dn_flip] / norms_in[idx_dn];
+                  val = -t * bloch_factors[sym] * norms[idx_dns_flip] /
+                        norms[idx_dns];
                 }
 
-                // // Debug
-                // idx_t idx_out2 = block.index(ups_flip, dns);
-                // int n_sites = block.n_sites();
-                // lila::Log.out("non s1: {} s2: {} {};{} -> {};{} -> {};{}
-                // idx_in: "
-                //               "{}, idx_out: {}/{}, val: {:.4f}",
-                //               s1, s2, bits_to_string(ups, n_sites),
-                //               bits_to_string(dns, n_sites),
-                //               bits_to_string(ups_flip, n_sites),
-                //               bits_to_string(dns, n_sites),
-                //               bits_to_string(ups_flip_rep, n_sites),
-                //               bits_to_string(rep_dns, n_sites), idx_in,
-                //               idx_out, idx_out2, lila::real(val));
-                // assert(idx_out == idx_out2);
-
-                fill(idx_out, idx_in, val);
+                fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -val : val);
               }
-              ++idx_dn;
+            }
+
+            ++idx_dns;
+          }
+        } // if trivial stabilizer or not
+      }   // loop over ups
+    }     // if dn-hoppings
+
+    // Apply hoppings on upspins
+    if ((type == "HOP") || (type == "HOPUP")) {
+      for (idx_t idx_up = 0; idx_up < indexing.n_rep_ups(); ++idx_up) {
+        bit_t ups = indexing.rep_ups(idx_up);
+
+        bit_t ups_flip = ups ^ flipmask;
+        idx_t idx_ups_flip = indexing.index_ups(ups_flip);
+        bit_t ups_flip_rep = indexing.rep_ups(idx_ups_flip);
+
+        // Get limits, syms, and dns for ingoing ups
+        idx_t ups_offset_in = indexing.ups_offset(idx_up);
+        auto dnss_in = indexing.dns_for_ups_rep(ups);
+        auto norms_in = indexing.norms_for_ups_rep(ups);
+
+        // Get limits, syms, and dns for outgoing ups
+        idx_t ups_offset_out = indexing.ups_offset(idx_ups_flip);
+        auto syms_ups_out = indexing.syms_ups(ups_flip);
+        auto dnss_out = indexing.dns_for_ups_rep(ups_flip_rep);
+        auto norms_out = indexing.norms_for_ups_rep(ups_flip_rep);
+
+        // trivial up-stabilizer (likely)
+        if (syms_ups_out.size() == 1) {
+          int sym = syms_ups_out.front();
+
+          // Complex conjugate t if necessary
+          coeff_t prefac;
+          if constexpr (is_complex<coeff_t>()) {
+            prefac = -(gbit(ups, s1) ? t : tconj) * bloch_factors[sym];
+          } else {
+            prefac = -t * bloch_factors[sym];
+          }
+
+          // Fermi-sign of up spins
+          bool fermi_up = (popcnt(ups & fermimask) & 1);
+          fermi_up ^= indexing.fermi_bool_ups(sym, ups_flip);
+
+          idx_t idx_dn = 0;
+          for (bit_t dns : dnss_in) {
+            idx_t idx_in = ups_offset_in + idx_dn;
+            bit_t dns_rep = group_action.apply(sym, dns);
+            idx_t idx_out = ups_offset_out + indexing.index_dns(dns_rep);
+            bool fermi_dn = indexing.fermi_bool_dns(sym, dns);
+
+            val = prefac / norms_in[idx_dn]; // norms_out = 1.0 in this case
+
+            fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -val : val);
+
+            ++idx_dn;
+          }
+          // non-trivial up-stabilizer (unlikely)
+        } else {
+          bool fermi_up_hop = (popcnt(ups & fermimask) & 1);
+          auto syms = syms_ups_out;
+
+          // Fix the bloch/prefactors
+          if constexpr (is_complex<coeff_t>()) {
+            for (int i = 0; i < (int)irrep.size(); ++i) {
+              prefacs[i] = -(gbit(ups, s1) ? t : tconj) * irrep.character(i);
+            }
+          } else {
+            for (int i = 0; i < (int)irrep.size(); ++i) {
+              prefacs[i] = -t * lila::real(irrep.character(i));
             }
           }
-          ++idx_up;
-        }
-      }
-    }
-  }
+
+          idx_t idx_dn = 0;
+          for (bit_t dns : dnss_in) {
+            idx_t idx_in = ups_offset_in + idx_dn;
+
+            auto [idx_dn_out, fermi_dn, sym] =
+                indexing.index_dns_fermi_sym(dns, syms, dnss_out);
+
+            if (idx_dn_out != invalid_index) {
+              idx_t idx_out = ups_offset_out + idx_dn_out;
+              bool fermi_up =
+                  fermi_up_hop ^ indexing.fermi_bool_ups(sym, ups_flip);
+              coeff_t val =
+                  prefacs[sym] * norms_out[idx_dn_out] / norms_in[idx_dn];
+
+              fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -val : val);
+            }
+            ++idx_dn;
+          }
+        } // if trivial stabilizer or not
+      }   // loop over ups
+    }     // if up-hoppings
+  }       // loop over bonds
 }
-} // namespace hydra::terms::electron_symmetric
+} // namespace hydra::terms

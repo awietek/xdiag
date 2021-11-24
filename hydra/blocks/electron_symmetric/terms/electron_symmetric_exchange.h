@@ -1,232 +1,164 @@
 #pragma once
 
-#include <lila/utils/logger.h>
-
-#include <hydra/bitops/bitops.h>
 #include <hydra/common.h>
 
-#include <hydra/blocks/blocks.h>
 #include <hydra/blocks/utils/block_utils.h>
-#include <hydra/symmetries/symmetry_operations.h>
+
+#include <hydra/bitops/bitops.h>
+
+#include <hydra/indexing/electron/electron_symmetric_indexing.h>
 
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
 
-namespace hydra::terms::electron_symmetric {
+namespace hydra::terms {
 
-template <class bit_t, class coeff_t, class GroupAction, class Filler>
-void do_exchange_symmetric(BondList const &bonds, Couplings const &couplings,
-                           ElectronSymmetric<bit_t, GroupAction> const &block,
-                           Filler &&fill) {
-  using bitops::bits_to_string;
+template <class bit_t, class coeff_t, class Filler>
+void electron_symmetric_exchange(
+    BondList const &bonds, Couplings const &couplings,
+    indexing::ElectronSymmetricIndexing<bit_t> const &indexing, Filler &&fill) {
+
   using bitops::gbit;
   using bitops::popcnt;
 
-  auto const &group_action = block.group_action();
-  auto const &irrep = block.irrep();
+  auto const &irrep = indexing.irrep();
 
-  auto exchange = bonds.bonds_of_type("HEISENBERG") +
-                  bonds.bonds_of_type("EXCHANGE") + bonds.bonds_of_type("HB");
-  auto exchange_tj =
-      bonds.bonds_of_type("TJHEISENBERG") + bonds.bonds_of_type("TJHB");
+  auto clean_bonds = utils::clean_bondlist(
+      bonds, couplings,
+      {"HEISENBERG", "HB", "EXCHANGE", "TJHEISENBERG", "TJHB"}, 2);
 
-  for (auto bond : exchange + exchange_tj) {
+  for (auto bond : clean_bonds) {
 
-    if (bond.size() != 2)
-      lila::Log.err("Error computing Electron exchange: "
-                    "bonds must have exactly two sites defined");
+    std::string cpl = bond.coupling();
 
-    if (!utils::coupling_is_zero(bond, couplings)) {
-      int s1 = std::min(bond.site(0), bond.site(1));
-      int s2 = std::max(bond.site(0), bond.site(1));
-      bit_t s1mask = (bit_t)1 << s1;
-      bit_t s2mask = (bit_t)1 << s2;
-      bit_t mask = ((bit_t)1 << s1) | ((bit_t)1 << s2);
-      bit_t spacemask = ((1 << (s2 - s1 - 1)) - 1)
-                        << (s1 + 1); // used to determine Fermi sign
+    auto [J, J_conj] = utils::get_coupling_and_conj<coeff_t>(couplings, cpl);
 
-      std::string cpl = bond.coupling();
-      double J = lila::real(couplings[cpl]);
-      double Jhalf = J / 2.;
-      coeff_t val;
+    utils::check_sites_disjoint(bond);
+    int s1 = bond[0];
+    int s2 = bond[1];
 
-      // Loop over all up configurations
-      idx_t idx_up = 0;
-      for (bit_t ups : block.reps_up_) {
+    // Prepare bitmasks
+    bit_t s1mask = (bit_t)1 << s1;
+    bit_t s2mask = (bit_t)1 << s2;
+    bit_t flipmask = s1mask | s2mask;
+    int l = std::min(s1, s2);
+    int u = std::max(s1, s2);
+    bit_t fermimask = (((bit_t)1 << (u - l - 1)) - 1) << (l + 1);
 
-        // Exchange gives zero continue
-        if ((popcnt(ups & mask) == 2) || (popcnt(ups & mask) == 0)) {
-          ++idx_up;
-          continue;
-        }
+    // Loop over all up configurations
+    for (idx_t idx_ups = 0; idx_ups < indexing.n_rep_ups(); ++idx_ups) {
+      bit_t ups = indexing.rep_ups(idx_ups);
 
-        // Get the flip masks for up and down spins
-        bit_t dns_mask = ((ups & mask) == s1mask) ? s2mask : s1mask;
-
-        // Get the origin dns for this ups
-        idx_t up_offset_in = block.up_offsets_[idx_up];
-        auto const &dnss_in = block.dns_for_up_rep(ups);
-        auto const &norms_in = block.norms_for_up_rep(ups);
-
-        // Get flipped ups, its representative, symmetries, and target dns
-        bit_t ups_flip = ups ^ mask;
-        idx_t idx_up_flip = block.index_up(ups_flip);
-        idx_t up_offset_out = block.up_offsets_[idx_up_flip];
-        bit_t ups_flip_rep = block.reps_up_[idx_up_flip];
-        auto [sym_lower, sym_upper] = block.sym_limits_up(ups_flip);
-        assert(sym_upper - sym_lower > 0);
-        auto const &dnss_out = block.dns_for_up_rep(ups_flip_rep);
-        auto const &norms_out = block.norms_for_up_rep(ups_flip_rep);
-
-        // flag whether or not we have a sign change
-        bool fermi_up = !(bool)(popcnt(ups & spacemask) & 1);
-
-        // trivial up-stabilizer (likely)
-        if (sym_upper - sym_lower == 1) {
-          int sym = block.syms_up_[sym_lower];
-          fermi_up ^= block.fermi_bool_up(sym, ups_flip);
-
-          idx_t idx_dn = 0;
-          for (bit_t dns : dnss_in) {
-
-            // If  dns can be raised
-            if ((dns & mask) == dns_mask) {
-              idx_t idx_in = up_offset_in + idx_dn;
-              bit_t dns_flip = dns ^ mask;
-              bit_t dns_rep = group_action.apply(sym, dns_flip);
-              idx_t idx_dn_flip = block.lintable_dns_.index(dns_rep);
-              idx_t idx_out = up_offset_out + idx_dn_flip;
-              bool fermi = fermi_up;
-              fermi ^= (bool)(popcnt(dns & spacemask) & 1);
-              fermi ^= block.fermi_bool_dn(sym, dns_flip);
-
-              if constexpr (is_complex<coeff_t>()) {
-                val = Jhalf * irrep.character(sym) * norms_out[idx_dn_flip] /
-                      norms_in[idx_dn];
-              } else {
-                val = Jhalf * lila::real(irrep.character(sym)) *
-                      norms_out[idx_dn_flip] / norms_in[idx_dn];
-              }
-
-              // idx_t idx_out2 = block.index(ups_flip, dns_flip);
-              // int n_sites = block.n_sites();
-              // lila::Log.out("tri s1: {} s2: {} {};{} -> {};{} -> {};{}  "
-              //               "idx_in: {}, idx_out: {}/{}, val: {:.4f}",
-              //               s1, s2, bits_to_string(ups, n_sites),
-              //               bits_to_string(dns, n_sites),
-              //               bits_to_string(ups_flip, n_sites),
-              //               bits_to_string(dns_flip, n_sites),
-              //               bits_to_string(ups_flip_rep, n_sites),
-              //               bits_to_string(dns_rep, n_sites), idx_in,
-              //               idx_out, idx_out2, lila::real(val));
-              // lila::Log("-----------------------------------------");
-              // lila::Log("CASE: target-stab-FALSE");
-              // lila::Log("from: {};{}", BSTR(ups), BSTR(dns));
-              // lila::Log("mask: {} {}", BSTR(mask), BSTR(mask));
-              // lila::Log("to  : {};{}", BSTR(ups_flip), BSTR(dns_flip));
-              // lila::Log("rep : {};{}", BSTR(ups_flip_rep), BSTR(dns_rep));
-              // lila::Log("idx_in: {}, idx_out: {}", idx_in, idx_out);
-              // lila::Log("val: {}", lila::real(val));
-
-              // assert(idx_out == idx_out2);
-              // lila::Log("fermi_up_hop: {} ",
-              //           (bool)(popcnt(ups & spacemask) & 1));
-              // lila::Log("fermi_up_sym: {} ",
-              //           block.fermi_bool_up(sym, ups_flip));
-	      // lila::Log("fermi_dn_hop: {} ",
-              //           (bool)(popcnt(dns & spacemask) & 1));
-              // lila::Log("fermi_dn_sym: {} ",
-              //           block.fermi_bool_dn(sym, dns_flip));
-
-              if (fermi)
-                fill(idx_out, idx_in, -val);
-              else
-                fill(idx_out, idx_in, val);
-            }
-            ++idx_dn;
-          }
-          // non-trivial up-stabilizer (unlikely)
-        } else {
-          idx_t idx_dn = 0;
-          for (bit_t dns : dnss_in) {
-
-            // If  dns can be raised
-            if ((dns & mask) == dns_mask) {
-
-              idx_t idx_in = up_offset_in + idx_dn;
-              bit_t dns_flip = dns ^ mask;
-
-              // Determine dns representative
-              bit_t rep_dns = std::numeric_limits<bit_t>::max();
-              int rep_sym = 0;
-              for (idx_t sym_idx = sym_lower; sym_idx < sym_upper; ++sym_idx) {
-                int sym = block.syms_up_[sym_idx];
-                bit_t tdns = group_action.apply(sym, dns_flip);
-                if (tdns < rep_dns) {
-                  rep_dns = tdns;
-                  rep_sym = sym;
-                }
-              }
-
-              // Find index of rep dns
-              auto it =
-                  std::lower_bound(dnss_out.begin(), dnss_out.end(), rep_dns);
-
-              if ((it != dnss_out.end()) && (*it == rep_dns)) {
-                idx_t idx_dn_flip = std::distance(dnss_out.begin(), it);
-                idx_t idx_out = up_offset_out + idx_dn_flip;
-                bool fermi = fermi_up ^ block.fermi_bool_up(rep_sym, ups_flip);
-                fermi ^= (bool)(popcnt(dns & spacemask) & 1);
-                fermi ^= block.fermi_bool_dn(rep_sym, dns_flip);
-
-                if constexpr (is_complex<coeff_t>()) {
-                  val = Jhalf * irrep.character(rep_sym) *
-                        norms_out[idx_dn_flip] / norms_in[idx_dn];
-                } else {
-                  val = Jhalf * lila::real(irrep.character(rep_sym)) *
-                        norms_out[idx_dn_flip] / norms_in[idx_dn];
-                }
-
-                // // Debug
-                // idx_t idx_out2 = block.index(ups_flip, dns_flip);
-                // idx_t idx_in2 = block.index(ups, dns);
-
-                // int n_sites = block.n_sites();
-		// lila::Log("-----------------------------------------");
-		// lila::Log("CASE: target-stab-TRUE");
-		// lila::Log("from: {};{}", BSTR(ups), BSTR(dns));
-		// lila::Log("mask: {} {}", BSTR(mask), BSTR(mask));
-		// lila::Log("to  : {};{}", BSTR(ups_flip), BSTR(dns_flip));
-		// lila::Log("rep : {};{}", BSTR(ups_flip_rep), BSTR(rep_dns));
-		// lila::Log("idx_in: {}, idx_out: {}", idx_in, idx_out);
-		// lila::Log("val: {}", lila::real(val));
-		
-		// assert(idx_out == idx_out2);
-		// lila::Log("fermi_up_hop: {} ",
-		// 	  (bool)(popcnt(ups & spacemask) & 1));
-		// lila::Log("fermi_up_sym: {} ",
-		// 	  block.fermi_bool_up(rep_sym, ups_flip));
-		// lila::Log("fermi_dn_hop: {} ",
-		// 	  (bool)(popcnt(dns & spacemask) & 1));
-		// lila::Log("fermi_dn_sym: {} ",
-		// 	  block.fermi_bool_dn(rep_sym, dns_flip));
-		
-                // assert(idx_in == idx_in2);
-                // assert(idx_out == idx_out2);
-
-                if (fermi)
-                  fill(idx_out, idx_in, -val);
-                else
-                  fill(idx_out, idx_in, val);
-              }
-            }
-            ++idx_dn;
-          }
-        }
-        ++idx_up;
+      // Exchange gives zero continue
+      if ((popcnt(ups & flipmask) == 2) || (popcnt(ups & flipmask) == 0)) {
+        continue;
       }
-    }
-  }
+
+      // Set the correct prefactor
+      coeff_t Jhalf;
+      if constexpr (is_complex<coeff_t>()) {
+        Jhalf = (gbit(ups, s1)) ? J / 2. : J_conj / 2.;
+      } else {
+        Jhalf = J / 2.;
+      }
+
+      // Get the flip masks for up and down spins
+      bit_t dns_mask = ((ups & flipmask) == s1mask) ? s2mask : s1mask;
+
+      // Compute index and rep of flipped ups
+      bit_t ups_flip = ups ^ flipmask;
+      idx_t idx_ups_flip = indexing.index_ups(ups_flip);
+      bit_t ups_flip_rep = indexing.rep_ups(idx_ups_flip);
+
+      // Get limits, syms, and dns for ingoing ups
+      idx_t up_offset_in = indexing.ups_offset(idx_ups);
+      auto dnss_in = indexing.dns_for_ups_rep(ups);
+      auto norms_in = indexing.norms_for_ups_rep(ups);
+
+      // Get limits, syms, and dns for outgoing ups
+      idx_t up_offset_out = indexing.ups_offset(idx_ups_flip);
+      auto syms_up_out = indexing.syms_ups(ups_flip);
+      auto dnss_out = indexing.dns_for_ups_rep(ups_flip_rep);
+      auto norms_out = indexing.norms_for_ups_rep(ups_flip_rep);
+
+      bool fermi_up = !(bool)(popcnt(ups & fermimask) & 1);
+
+      // trivial up-stabilizer (likely)
+      if (syms_up_out.size() == 1) {
+        int sym = syms_up_out.front();
+        fermi_up ^= indexing.fermi_bool_ups(sym, ups_flip);
+
+        // Fix the bloch factor
+        coeff_t prefac;
+        if constexpr (is_complex<coeff_t>()) {
+          prefac = -Jhalf * irrep.character(sym);
+        } else {
+          prefac = -Jhalf * lila::real(irrep.character(sym));
+        }
+
+        // Fermi-sign of up spins
+        bool fermi_up = (popcnt(ups & fermimask) & 1);
+        fermi_up ^= indexing.fermi_bool_ups(sym, ups_flip);
+
+        idx_t idx_dn = 0;
+        for (bit_t dns : dnss_in) {
+
+          // If  dns can be raised
+          if ((dns & flipmask) == dns_mask) {
+            bit_t dns_flip = dns ^ flipmask;
+            auto [idx_dn_flip, fermi_dn] =
+                indexing.index_dns_fermi(dns_flip, sym, fermimask);
+
+            coeff_t val = prefac / norms_in[idx_dn];
+            idx_t idx_in = up_offset_in + idx_dn;
+            idx_t idx_out = up_offset_out + idx_dn_flip;
+            fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -val : val);
+          }
+          ++idx_dn;
+        }
+        // non-trivial up-stabilizer (unlikely)
+      } else {
+
+        auto syms = syms_up_out;
+
+        // Fix the bloch/prefactors
+        std::vector<coeff_t> prefacs(irrep.size());
+        if constexpr (is_complex<coeff_t>()) {
+          for (int i = 0; i < (int)irrep.size(); ++i) {
+            prefacs[i] = -irrep.character(i) * Jhalf;
+          }
+        } else {
+          for (int i = 0; i < (int)irrep.size(); ++i) {
+            prefacs[i] = -lila::real(irrep.character(i)) * Jhalf;
+          }
+        }
+        bool fermi_up_hop = (popcnt(ups & fermimask) & 1);
+
+        idx_t idx_dn = 0;
+        for (bit_t dns : dnss_in) {
+
+          // If  dns can be raised
+          if ((dns & flipmask) == dns_mask) {
+            bit_t dns_flip = dns ^ flipmask;
+            auto [idx_dn_flip, fermi_dn, sym] = indexing.index_dns_fermi_sym(
+                dns_flip, syms, dnss_out, fermimask);
+
+            if (idx_dn_flip != invalid_index) {
+
+              bool fermi_up =
+                  fermi_up_hop ^ indexing.fermi_bool_ups(sym, ups_flip);
+              coeff_t val =
+                  prefacs[sym] * norms_out[idx_dn_flip] / norms_in[idx_dn];
+              idx_t idx_in = up_offset_in + idx_dn;
+              idx_t idx_out = up_offset_out + idx_dn_flip;
+              fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -val : val);
+            }
+          }
+          ++idx_dn;
+        }
+      } // trivial stabilizer or not
+    }   // loop over ups
+  }     // loop over bonds
 }
 
-} // namespace hydra::terms::electron_symmetric
+} // namespace hydra::terms

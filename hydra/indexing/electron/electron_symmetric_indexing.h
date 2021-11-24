@@ -16,12 +16,13 @@
 
 namespace hydra::indexing {
 
-template <typename bit_t> class tJSymmetricIndexing {
+template <typename bit_t> class ElectronSymmetricIndexing {
 public:
   using span_size_t = gsl::span<int const>::size_type;
 
-  tJSymmetricIndexing(int n_sites, int nup, int ndn,
-                      PermutationGroup permutation_group, Representation irrep);
+  ElectronSymmetricIndexing(int n_sites, int nup, int ndn,
+                            PermutationGroup permutation_group,
+                            Representation irrep);
 
   inline int n_sites() const { return n_sites_; }
   inline int n_up() const { return n_up_; }
@@ -33,24 +34,24 @@ public:
   idx_t size() const { return size_; }
 
   idx_t n_rep_ups() const { return reps_up_.size(); }
-  bit_t rep_ups(idx_t idx_up) const { return reps_up_[idx_up]; }
-  idx_t ups_offset(idx_t idx_up) const { return ups_offset_[idx_up]; }
+  bit_t rep_ups(idx_t idx_ups) const { return reps_up_[idx_ups]; }
+  idx_t ups_offset(idx_t idx_ups) const { return ups_offset_[idx_ups]; }
+
 
   // index and fermi sign for dns with trivial stabilizer
-  std::pair<idx_t, bool> index_dns_fermi(bit_t dns, int sym,
-                                         bit_t not_ups) const {
+  idx_t index_dns(bit_t dns) const { return lintable_dns_.index(dns); }
+
+  std::pair<idx_t, bool> index_dns_fermi(bit_t dns, int sym) const {
     bit_t dns_rep = group_action_.apply(sym, dns);
-    bit_t dns_rep_c = bitops::extract(dns_rep, not_ups);
-    idx_t idx_dns_rep = lintable_dnsc_.index(dns_rep_c);
+    idx_t idx_dns_rep = lintable_dns_.index(dns_rep);
     bool fermi_dns = fermi_bool_dns(sym, dns);
     return {idx_dns_rep, fermi_dns};
   }
 
-  std::pair<idx_t, bool> index_dns_fermi(bit_t dns, int sym, bit_t not_ups,
+  std::pair<idx_t, bool> index_dns_fermi(bit_t dns, int sym,
                                          bit_t fermimask) const {
     bit_t dns_rep = group_action_.apply(sym, dns);
-    bit_t dns_rep_c = bitops::extract(dns_rep, not_ups);
-    idx_t idx_dns_rep = lintable_dnsc_.index(dns_rep_c);
+    idx_t idx_dns_rep = lintable_dns_.index(dns_rep);
     bool fermi_dns = (bitops::popcnt(dns & fermimask) & 1);
     fermi_dns ^= fermi_bool_dns(sym, dns);
     return {idx_dns_rep, fermi_dns};
@@ -136,8 +137,6 @@ public:
                                  lintable_dns_.index(dns)];
   }
 
-  idx_t dnsc_index(bit_t dns) const { return lintable_dnsc_.index(dns); }
-
 private:
   int n_sites_;
   int n_up_;
@@ -147,11 +146,9 @@ private:
 
   idx_t raw_ups_size_;
   idx_t raw_dns_size_;
-  idx_t raw_dnsc_size_;
 
   indexing::LinTable<bit_t> lintable_ups_;
   indexing::LinTable<bit_t> lintable_dns_;
-  indexing::LinTable<bit_t> lintable_dnsc_;
 
   std::vector<bool> fermi_bool_ups_table_;
   std::vector<bool> fermi_bool_dns_table_;
