@@ -42,9 +42,9 @@ void do_ising(BondList const &bonds, Couplings const &couplings,
     int s1 = bond[0];
     int s2 = bond[1];
 
-    // Set values for same/diff (tJ block definition)
     coeff_t J = utils::get_coupling<coeff_t>(couplings, cpl);
 
+    // Set values for same/diff (tJ block definition)
     coeff_t val_same, val_diff;
     if ((type == "HEISENBERG") || (type == "ISING") || (type == "HB")) {
       val_same = J / 4.;
