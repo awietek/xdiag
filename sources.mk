@@ -15,6 +15,7 @@ sources+= hydra/indexing/spinhalf/spinhalf_indexing.cpp
 sources+= hydra/indexing/spinhalf/spinhalf_symmetric_indexing.cpp
 sources+= hydra/indexing/tj/tj_indexing.cpp
 sources+= hydra/indexing/tj/tj_symmetric_indexing.cpp
+sources+= hydra/indexing/electron/electron_indexing.cpp
 
 sources+= hydra/blocks/utils/block_utils.cpp
 
