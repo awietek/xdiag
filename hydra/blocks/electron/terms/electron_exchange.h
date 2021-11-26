@@ -17,7 +17,7 @@ namespace hydra::terms {
 
 template <typename bit_t, typename coeff_t, typename Filler>
 void electron_do_down_flips(bit_t ups, idx_t idx_ups, bit_t flipmask,
-                            bit_t spacemask, int sdn, coeff_t val,
+                            bit_t fermimask, int sdn, coeff_t val,
                             indexing::ElectronIndexing<bit_t> const &indexing,
                             Filler &&fill) {
   using bitops::gbit;
@@ -36,10 +36,18 @@ void electron_do_down_flips(bit_t ups, idx_t idx_ups, bit_t flipmask,
   idx_t idx_in = idx_ups * size_dns;
 
   for (auto dns : Combinations<bit_t>(n_sites, n_dn)) {
-    if (gbit(dns, sdn)) {
+    // lila::Log("in     : {};{} {}", BSTR(ups), BSTR(dns), sdn);
+    // lila::Log("         {} {}", BSTR(flipmask), BSTR(flipmask));
+    // lila::Log("1: {} () 2: {}", (bool)(popcnt(dns & flipmask) == 1), ((bool)gbit(dns, sdn)));
+    if ((popcnt(dns & flipmask) == 1) && ((bool)gbit(dns, sdn))) {
       bit_t dns_flip = dns ^ flipmask;
       idx_t idx_out = idx_out_offset + indexing.index_dns(dns_flip);
-      fill(idx_out, idx_in, (popcnt(dns & spacemask) & 1) ? -val : val);
+
+
+      // lila::Log("out      {};{}", BSTR(ups_flip), BSTR(dns_flip));
+      
+      
+      fill(idx_out, idx_in, (popcnt(dns & fermimask) & 1) ? -val : val);
     }
     ++idx_in;
   }
@@ -90,21 +98,26 @@ void electron_exchange(BondList const &bonds, Couplings const &couplings,
     idx_t idx_up = 0;
     for (auto ups : Combinations<bit_t>(n_sites, n_up)) {
 
-      // Set the correct prefactor
-      coeff_t Jhalf;
-      if constexpr (is_complex<coeff_t>()) {
-        Jhalf = (gbit(ups, s1)) ? J / 2. : J_conj / 2.;
-      } else {
-        Jhalf = J / 2.;
-      }
+      if (popcnt(ups & flipmask) == 1) {
 
-      // decide Fermi sign of upspins
-      if (popcnt(ups & fermimask) & 1) {
-        electron_do_down_flips(ups, idx_up, flipmask, fermimask,
-                               gbit(ups, s1) ? s2 : s1, Jhalf, indexing, fill);
-      } else {
-        electron_do_down_flips(ups, idx_up, flipmask, fermimask,
-                               gbit(ups, s1) ? s2 : s1, -Jhalf, indexing, fill);
+        // Set the correct prefactor
+        coeff_t Jhalf;
+        if constexpr (is_complex<coeff_t>()) {
+          Jhalf = (gbit(ups, s1)) ? J / 2. : J_conj / 2.;
+        } else {
+          Jhalf = J / 2.;
+        }
+
+        // decide Fermi sign of upspins
+        if (popcnt(ups & fermimask) & 1) {
+          electron_do_down_flips(ups, idx_up, flipmask, fermimask,
+                                 gbit(ups, s1) ? s2 : s1, Jhalf, indexing,
+                                 fill);
+        } else {
+          electron_do_down_flips(ups, idx_up, flipmask, fermimask,
+                                 gbit(ups, s1) ? s2 : s1, -Jhalf, indexing,
+                                 fill);
+        }
       }
       ++idx_up;
     }

@@ -10,10 +10,10 @@
 using namespace hydra;
 
 template <class bit_t>
-void test_symmetric_spectra(BondList bondlist, Couplings couplings,
-                            PermutationGroup space_group,
-                            std::vector<Representation> irreps,
-                            std::vector<int> multiplicities) {
+void test_spectra_tj_symmetric(BondList bondlist, Couplings couplings,
+                               PermutationGroup space_group,
+                               std::vector<Representation> irreps,
+                               std::vector<int> multiplicities) {
   int n_sites = space_group.n_sites();
   assert(irreps.size() == multiplicities.size());
 
@@ -79,8 +79,8 @@ template <class bit_t> void test_tj_symmetric_spectrum_chains(int n_sites) {
   auto [bondlist, couplings] = tJchain(n_sites, 1.0, 0.4);
   auto [space_group, irreps, multiplicities] =
       get_cyclic_group_irreps_mult(n_sites);
-  test_symmetric_spectra<uint32_t>(bondlist, couplings, space_group, irreps,
-                                   multiplicities);
+  test_spectra_tj_symmetric<uint32_t>(bondlist, couplings, space_group, irreps,
+                                      multiplicities);
 }
 
 TEST_CASE("tj_symmetric_matrix", "[blocks][tj_symmetric]") {
@@ -118,11 +118,11 @@ TEST_CASE("tj_symmetric_matrix", "[blocks][tj_symmetric]") {
       irreps.push_back(read_represenation(lfile, name));
       multiplicities.push_back(mult);
     }
-    test_symmetric_spectra<uint16_t>(bondlist, couplings, space_group, irreps,
+    test_spectra_tj_symmetric<uint16_t>(bondlist, couplings, space_group, irreps,
                                      multiplicities);
-    test_symmetric_spectra<uint32_t>(bondlist, couplings, space_group, irreps,
+    test_spectra_tj_symmetric<uint32_t>(bondlist, couplings, space_group, irreps,
                                      multiplicities);
-    test_symmetric_spectra<uint64_t>(bondlist, couplings, space_group, irreps,
+    test_spectra_tj_symmetric<uint64_t>(bondlist, couplings, space_group, irreps,
                                      multiplicities);
   }
 
@@ -156,11 +156,11 @@ TEST_CASE("tj_symmetric_matrix", "[blocks][tj_symmetric]") {
       Couplings couplings;
       couplings["TPHI"] = complex(cos(eta * M_PI), sin(eta * M_PI));
       couplings["JPHI"] = complex(cos(2 * eta * M_PI), sin(2 * eta * M_PI));
-      test_symmetric_spectra<uint16_t>(bondlist, couplings, space_group, irreps,
+      test_spectra_tj_symmetric<uint16_t>(bondlist, couplings, space_group, irreps,
                                        multiplicities);
-      test_symmetric_spectra<uint32_t>(bondlist, couplings, space_group, irreps,
+      test_spectra_tj_symmetric<uint32_t>(bondlist, couplings, space_group, irreps,
                                        multiplicities);
-      test_symmetric_spectra<uint64_t>(bondlist, couplings, space_group, irreps,
+      test_spectra_tj_symmetric<uint64_t>(bondlist, couplings, space_group, irreps,
                                        multiplicities);
     }
   }

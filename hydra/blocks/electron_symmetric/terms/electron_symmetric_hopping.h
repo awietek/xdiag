@@ -130,8 +130,11 @@ void electron_symmetric_hopping(
       for (idx_t idx_up = 0; idx_up < indexing.n_rep_ups(); ++idx_up) {
         bit_t ups = indexing.rep_ups(idx_up);
 
+	if (popcnt(ups & flipmask) != 1)
+	  continue;
+	
         bit_t ups_flip = ups ^ flipmask;
-        idx_t idx_ups_flip = indexing.index_ups(ups_flip);
+	idx_t idx_ups_flip = indexing.index_ups(ups_flip);
         bit_t ups_flip_rep = indexing.rep_ups(idx_ups_flip);
 
         // Get limits, syms, and dns for ingoing ups

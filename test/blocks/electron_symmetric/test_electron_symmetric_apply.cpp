@@ -8,9 +8,9 @@
 using namespace hydra;
 
 template <class bit_t>
-void test_symmetric_apply1(BondList bondlist, Couplings couplings,
-                           PermutationGroup space_group,
-                           std::vector<Representation> irreps) {
+void test_electron_symmetric_apply(BondList bondlist, Couplings couplings,
+                                   PermutationGroup space_group,
+                                   std::vector<Representation> irreps) {
   int n_sites = space_group.n_sites();
 
   for (int nup = 0; nup <= n_sites; ++nup) {
@@ -61,7 +61,8 @@ template <class bit_t> void test_hubbard_symmetric_apply_chains(int n_sites) {
                 n_sites);
   auto [bondlist, couplings] = get_linear_chain(n_sites, 1.0, 5.0);
   auto [space_group, irreps] = get_cyclic_group_irreps(n_sites);
-  test_symmetric_apply1<uint16_t>(bondlist, couplings, space_group, irreps);
+  test_electron_symmetric_apply<uint16_t>(bondlist, couplings, space_group,
+                                          irreps);
 
   // With Heisenberg term
   lila::Log.out("electron_symmetric_apply: Hubbard chain, n_sites: {} (+ "
@@ -69,7 +70,8 @@ template <class bit_t> void test_hubbard_symmetric_apply_chains(int n_sites) {
                 n_sites);
   auto [bondlist_hb, couplings_hb] =
       get_linear_chain_hb(n_sites, 1.0, 5.0, 0.4);
-  test_symmetric_apply1<bit_t>(bondlist_hb, couplings_hb, space_group, irreps);
+  test_electron_symmetric_apply<bit_t>(bondlist_hb, couplings_hb, space_group,
+                                       irreps);
 }
 
 TEST_CASE("electron_symmetric_apply", "[blocks][electron_symmetric]") {
@@ -102,7 +104,8 @@ TEST_CASE("electron_symmetric_apply", "[blocks][electron_symmetric]") {
   for (auto [name, mult] : rep_name_mult) {
     irreps.push_back(read_represenation(lfile, name));
   }
-  test_symmetric_apply1<bit_t>(bondlist, couplings, space_group, irreps);
+  test_electron_symmetric_apply<bit_t>(bondlist, couplings, space_group,
+                                       irreps);
 
   // test a 3x3 triangular lattice with Heisenberg terms
   lila::Log.out(
@@ -112,7 +115,8 @@ TEST_CASE("electron_symmetric_apply", "[blocks][electron_symmetric]") {
     bondlist_hb << Bond("HB", "J", {bond[0], bond[1]});
   }
   couplings["J"] = 0.4;
-  test_symmetric_apply1<bit_t>(bondlist_hb, couplings, space_group, irreps);
+  test_electron_symmetric_apply<bit_t>(bondlist_hb, couplings, space_group,
+                                       irreps);
 
   // test a 3x3 triangular lattice with complex hoppings
   {
@@ -136,6 +140,7 @@ TEST_CASE("electron_symmetric_apply", "[blocks][electron_symmetric]") {
     for (auto [name, mult] : rep_name_mult) {
       irreps.push_back(read_represenation(lfile, name));
     }
-    test_symmetric_apply1<bit_t>(bondlist, couplings, space_group, irreps);
+    test_electron_symmetric_apply<bit_t>(bondlist, couplings, space_group,
+                                         irreps);
   }
 }

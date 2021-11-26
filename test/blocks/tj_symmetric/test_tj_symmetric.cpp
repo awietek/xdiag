@@ -7,8 +7,8 @@
 using namespace hydra;
 
 template <typename bit_t>
-void check_dimensions_sum_up(int n_sites, PermutationGroup group,
-                             std::vector<Representation> irreps) {
+void check_dimensions_sum_up_tj_symmetric(int n_sites, PermutationGroup group,
+                                          std::vector<Representation> irreps) {
   using combinatorics::binomial;
 
   lila::Log.out("tj_symmetric: dimension sum test. N: {}", n_sites);
@@ -18,7 +18,7 @@ void check_dimensions_sum_up(int n_sites, PermutationGroup group,
   for (int nup = 0; nup <= n_sites; ++nup) {
     for (int ndn = 0; ndn <= n_sites - nup; ++ndn) {
       idx_t sum_of_dims_updn = 0;
-      for (auto irrep: irreps) {
+      for (auto irrep : irreps) {
 
         auto block = tJSymmetric<bit_t>(n_sites, nup, ndn, group, irrep);
 
@@ -60,9 +60,9 @@ TEST_CASE("tj_symmetric", "[blocks][tj_symmetric]") {
       irreps.push_back(Representation(chis));
     }
 
-    check_dimensions_sum_up<uint16_t>(n_sites, group, irreps);
-    check_dimensions_sum_up<uint32_t>(n_sites, group, irreps);
-    check_dimensions_sum_up<uint64_t>(n_sites, group, irreps);
+    check_dimensions_sum_up_tj_symmetric<uint16_t>(n_sites, group, irreps);
+    check_dimensions_sum_up_tj_symmetric<uint32_t>(n_sites, group, irreps);
+    check_dimensions_sum_up_tj_symmetric<uint64_t>(n_sites, group, irreps);
   }
 
   // test a 3x3 triangular lattice
@@ -86,7 +86,7 @@ TEST_CASE("tj_symmetric", "[blocks][tj_symmetric]") {
     }
   }
 
-  check_dimensions_sum_up<uint16_t>(n_sites, group, irreps);
-  check_dimensions_sum_up<uint32_t>(n_sites, group, irreps);
-  check_dimensions_sum_up<uint64_t>(n_sites, group, irreps);
+  check_dimensions_sum_up_tj_symmetric<uint16_t>(n_sites, group, irreps);
+  check_dimensions_sum_up_tj_symmetric<uint32_t>(n_sites, group, irreps);
+  check_dimensions_sum_up_tj_symmetric<uint64_t>(n_sites, group, irreps);
 }

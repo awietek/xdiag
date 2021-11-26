@@ -10,9 +10,9 @@
 using namespace hydra;
 
 template <class bit_t>
-void test_symmetric_apply(BondList bondlist, Couplings couplings,
-                          PermutationGroup space_group,
-                          std::vector<Representation> irreps) {
+void test_apply_tj_symmetric(BondList bondlist, Couplings couplings,
+			     PermutationGroup space_group,
+			     std::vector<Representation> irreps) {
   int n_sites = space_group.n_sites();
 
   for (int nup = 0; nup <= n_sites; ++nup) {
@@ -67,7 +67,7 @@ template <class bit_t> void test_tj_symmetric_apply_chains(int n_sites) {
   auto [bondlist, couplings] = tJchain(n_sites, 1.0, 5.0);
   auto [space_group, irreps, multiplicities] =
       get_cyclic_group_irreps_mult(n_sites);
-  test_symmetric_apply<uint16_t>(bondlist, couplings, space_group, irreps);
+  test_apply_tj_symmetric<bit_t>(bondlist, couplings, space_group, irreps);
 }
 
 TEST_CASE("tj_symmetric_apply", "[blocks][tj_symmetric]") {
@@ -102,9 +102,9 @@ TEST_CASE("tj_symmetric_apply", "[blocks][tj_symmetric]") {
     for (auto [name, mult] : rep_name_mult) {
       irreps.push_back(read_represenation(lfile, name));
     }
-    test_symmetric_apply<uint16_t>(bondlist, couplings, space_group, irreps);
-    test_symmetric_apply<uint32_t>(bondlist, couplings, space_group, irreps);
-    test_symmetric_apply<uint64_t>(bondlist, couplings, space_group, irreps);
+    test_apply_tj_symmetric<uint16_t>(bondlist, couplings, space_group, irreps);
+    test_apply_tj_symmetric<uint32_t>(bondlist, couplings, space_group, irreps);
+    test_apply_tj_symmetric<uint64_t>(bondlist, couplings, space_group, irreps);
   }
 
   {
@@ -136,9 +136,9 @@ TEST_CASE("tj_symmetric_apply", "[blocks][tj_symmetric]") {
       couplings["TPHI"] = complex(cos(eta * M_PI), sin(eta * M_PI));
       couplings["JPHI"] = complex(cos(2 * eta * M_PI), sin(2 * eta * M_PI));
 
-      test_symmetric_apply<uint16_t>(bondlist, couplings, space_group, irreps);
-      test_symmetric_apply<uint32_t>(bondlist, couplings, space_group, irreps);
-      test_symmetric_apply<uint64_t>(bondlist, couplings, space_group, irreps);
+      test_apply_tj_symmetric<uint16_t>(bondlist, couplings, space_group, irreps);
+      test_apply_tj_symmetric<uint32_t>(bondlist, couplings, space_group, irreps);
+      test_apply_tj_symmetric<uint64_t>(bondlist, couplings, space_group, irreps);
     }
   }
 }
