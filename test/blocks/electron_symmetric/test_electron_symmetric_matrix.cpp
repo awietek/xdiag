@@ -8,10 +8,11 @@
 using namespace hydra;
 
 template <class bit_t>
-void test_symmetric_spectra(BondList bondlist, Couplings couplings,
-                            PermutationGroup space_group,
-                            std::vector<Representation> irreps,
-                            std::vector<int> multiplicities) {
+void test_electron_symmetric_spectra(BondList bondlist, Couplings couplings,
+                                     PermutationGroup space_group,
+                                     std::vector<Representation> irreps,
+                                     std::vector<int> multiplicities) {
+
   int n_sites = space_group.n_sites();
   assert(irreps.size() == multiplicities.size());
 
@@ -65,11 +66,10 @@ void test_symmetric_spectra(BondList bondlist, Couplings couplings,
         std::sort(eigs_sym.begin(), eigs_sym.end());
 
         // Check if all eigenvalues agree
-        // lila::Log.out("{} {} {}", nup, ndn, eigs_sym(0));
-
+        // lila::Log.out("{} {} {} {}", nup, ndn, eigs_sym(0), eigs_nosym(0));
         // LilaPrint(eigs_sym);
         // LilaPrint(eigs_nosym);
-        REQUIRE(lila::close(eigs_sym, eigs_nosym));
+        CHECK(lila::close(eigs_sym, eigs_nosym));
       }
     }
   }
@@ -86,8 +86,8 @@ void test_hubbard_symmetric_spectrum_chains(int n_sites) {
   lila::Log.out("electron_symmetric_matrix: Hubbard chain,n_sites: {}",
                 n_sites);
   auto [bondlist, couplings] = get_linear_chain(n_sites, 1.0, 5.0);
-  test_symmetric_spectra<bit_t>(bondlist, couplings, space_group, irreps,
-                                multiplicities);
+  test_electron_symmetric_spectra<bit_t>(bondlist, couplings, space_group,
+                                         irreps, multiplicities);
 
   // With Heisenberg term
   lila::Log("electron_symmetric_matrix: Hubbard chain,  n_sites: {} (+ "
@@ -95,13 +95,12 @@ void test_hubbard_symmetric_spectrum_chains(int n_sites) {
             n_sites);
   auto [bondlist_hb, couplings_hb] =
       get_linear_chain_hb(n_sites, 1.0, 5.0, 0.4);
-  test_symmetric_spectra<bit_t>(bondlist_hb, couplings_hb, space_group, irreps,
-                                multiplicities);
+  test_electron_symmetric_spectra<bit_t>(bondlist_hb, couplings_hb, space_group,
+                                         irreps, multiplicities);
 }
 
 TEST_CASE("electron_symmetric_matrix", "[blocks][electron_symmetric]") {
   using namespace hydra::testcases::electron;
-
   //////////////////////////////////////////////////////////////////////////////////////
 
   // Check matrices agains Weisse & Fehske
@@ -184,8 +183,8 @@ TEST_CASE("electron_symmetric_matrix", "[blocks][electron_symmetric]") {
     irreps.push_back(read_represenation(lfile, name));
     multiplicities.push_back(mult);
   }
-  test_symmetric_spectra<bit_t>(bondlist, couplings, space_group, irreps,
-                                multiplicities);
+  test_electron_symmetric_spectra<bit_t>(bondlist, couplings, space_group,
+                                         irreps, multiplicities);
 
   // test a 3x3 triangular lattice with Heisenberg terms
   lila::Log(
@@ -195,8 +194,8 @@ TEST_CASE("electron_symmetric_matrix", "[blocks][electron_symmetric]") {
     bondlist_hb << Bond("HB", "J", {bond[0], bond[1]});
   }
   couplings["J"] = 0.4;
-  test_symmetric_spectra<bit_t>(bondlist_hb, couplings, space_group, irreps,
-                                multiplicities);
+  test_electron_symmetric_spectra<bit_t>(bondlist_hb, couplings, space_group,
+                                         irreps, multiplicities);
 
   // test a 3x3 triangular lattice with complex hoppings
   {
@@ -223,7 +222,7 @@ TEST_CASE("electron_symmetric_matrix", "[blocks][electron_symmetric]") {
       irreps.push_back(read_represenation(lfile, name));
       multiplicities.push_back(mult);
     }
-    test_symmetric_spectra<bit_t>(bondlist, couplings, space_group, irreps,
-                                  multiplicities);
+    test_electron_symmetric_spectra<bit_t>(bondlist, couplings, space_group,
+                                           irreps, multiplicities);
   }
 }
