@@ -21,6 +21,7 @@ ElectronSymmetric<bit_t>::ElectronSymmetric(int n_sites, int nup, int ndn,
       irrep_(irrep), indexing_(n_sites, nup, ndn, permutation_group_, irrep),
       size_(indexing_.size()) {
   utils::check_nup_ndn_electron(n_sites, nup, ndn, "ElectronSymmetric");
+  utils::check_n_sites(n_sites, permutation_group);
 }
 
 template <typename bit_t>

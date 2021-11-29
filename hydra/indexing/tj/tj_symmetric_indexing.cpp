@@ -1,5 +1,7 @@
 #include "tj_symmetric_indexing.h"
 
+#include <hydra/blocks/utils/block_utils.h>
+
 #include <hydra/combinatorics/combinations.h>
 #include <hydra/symmetries/permutation_group_lookup.h>
 #include <hydra/symmetries/symmetry_operations.h>
@@ -19,17 +21,23 @@ tJSymmetricIndexing<bit_t>::tJSymmetricIndexing(
       lintable_dnsc_(n_sites - nup, ndn) {
 
   using combinatorics::Combinations;
+  utils::check_n_sites(n_sites, permutation_group);
 
   PermutationGroupLookup<bit_t> group_action(permutation_group);
+  lila::tic();
   fermi_bool_ups_table_ =
       symmetries::fermi_bool_table<bit_t>(nup, group_action);
   fermi_bool_dns_table_ =
       symmetries::fermi_bool_table<bit_t>(ndn, group_action);
+  lila::toc("fbl");
 
+  lila::tic();
   std::tie(reps_up_, idces_up_, syms_up_, sym_limits_up_) =
       symmetries::representatives_indices_symmetries_limits<bit_t>(
           nup, group_action, lintable_ups_);
+  lila::toc("reps");
 
+  lila::tic();
   // if ups have trivial stabilizer, dns (compressed) are stored in front
   for (bit_t dns : Combinations<bit_t>(n_sites - nup, ndn)) {
     dns_storage_.push_back(dns);
@@ -78,6 +86,7 @@ tJSymmetricIndexing<bit_t>::tJSymmetricIndexing(
     }
     ++idx_up;
   }
+  lila::toc("norms");
 }
 
 template class tJSymmetricIndexing<uint16_t>;

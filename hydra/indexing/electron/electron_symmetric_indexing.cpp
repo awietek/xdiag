@@ -1,5 +1,7 @@
 #include "electron_symmetric_indexing.h"
 
+#include <hydra/blocks/utils/block_utils.h>
+
 #include <hydra/combinatorics/combinations.h>
 #include <hydra/symmetries/permutation_group_lookup.h>
 #include <hydra/symmetries/symmetry_operations.h>
@@ -17,6 +19,9 @@ ElectronSymmetricIndexing<bit_t>::ElectronSymmetricIndexing(
       lintable_ups_(n_sites, nup), lintable_dns_(n_sites, ndn) {
 
   using combinatorics::Combinations;
+
+  utils::check_nup_ndn_electron(n_sites, nup, ndn, "Electron");
+  utils::check_n_sites(n_sites, permutation_group);
 
   PermutationGroupLookup<bit_t> group_action(permutation_group);
   fermi_bool_ups_table_ =

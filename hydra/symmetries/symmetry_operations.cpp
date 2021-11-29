@@ -4,9 +4,19 @@
 #include <fstream>
 
 #include <hydra/common.h>
+
+#include <hydra/utils/openmp_utils.h>
+
+#include <hydra/combinatorics/bit_patterns.h>
+#include <hydra/combinatorics/combinations_index.h>
+
 #include <hydra/indexing/lintable.h>
+
 #include <hydra/symmetries/permutation_group_action.h>
 #include <hydra/symmetries/permutation_group_lookup.h>
+
+#include <omp.h>
+#include <unistd.h>
 
 namespace hydra {
 
@@ -513,33 +523,33 @@ representatives_indices_symmetries_limits(int n_par,
                                           LinTable const &lintable) {
 
   using combinatorics::binomial;
-  using combinatorics::Combinations;
+  using combinatorics::CombinationsIndex;
+  using combinatorics::CombinationsIndexThread;
 
   int n_sites = group_action.n_sites();
-  std::vector<bit_t> reps;
-  std::vector<idx_t> idces(binomial(n_sites, n_par));
-  std::vector<int> syms;
-  std::vector<std::pair<span_size_t, span_size_t>> sym_limits(binomial(n_sites, n_par));
+  std::vector<idx_t> idces(binomial(n_sites, n_par), invalid_index);
+  std::vector<std::pair<span_size_t, span_size_t>> sym_limits(
+      binomial(n_sites, n_par));
 
   assert(n_par <= n_sites);
   assert(n_par >= 0);
 
+#ifndef _OPENMP
   // Compute all representatives
-  idx_t idx = 0;
-  for (bit_t state : Combinations<bit_t>(n_sites, n_par)) {
+  for (auto [state, idx] : CombinationsIndex<bit_t>(n_sites, n_par)) {
     bit_t rep = representative(state, group_action);
     if (rep == state) {
       idces[idx] = reps.size();
       reps.push_back(rep);
     }
-    ++idx;
   }
 
   // Compute indices of up-representatives and stabilizer symmetries
-  idx = 0;
-  for (bit_t state : Combinations<bit_t>(n_sites, n_par)) {
+  for (auto [state, idx] : CombinationsIndex<bit_t>(n_sites, n_par)) {
     bit_t rep = representative(state, group_action);
     idces[idx] = idces[lintable.index(rep)];
+
+    assert(idces[idx] != invalid_index);
 
     // Determine the symmetries that yield the up-representative
     span_size_t begin = syms.size();
@@ -549,9 +559,107 @@ representatives_indices_symmetries_limits(int n_par,
     }
     span_size_t end = syms.size();
     sym_limits[idx] = {begin, end - begin};
-    ++idx;
   }
+#else
 
+  // Compute all representatives
+  std::vector<std::vector<bit_t>> reps_thread;
+  std::vector<std::vector<int>> syms_thread;
+
+#pragma omp parallel
+  {
+    int myid = omp_get_thread_num();
+    int rank = omp_get_num_threads();
+
+#pragma omp single
+    { reps_thread.resize(rank); }
+
+    for (auto [state, idx] : CombinationsIndexThread<bit_t>(n_sites, n_par)) {
+      bit_t rep = representative(state, group_action);
+      if (rep == state) {
+        idces[idx] = reps_thread[myid].size(); // just local index
+        reps_thread[myid].push_back(rep);
+      }
+    }
+
+#pragma omp barrier
+
+    idx_t offset = 0;
+    for (int id = 0; id < myid; ++id) {
+      offset += reps_thread[id].size();
+    }
+
+    for (auto [state, idx] : CombinationsIndexThread<bit_t>(n_sites, n_par)) {
+      if (idces[idx] != invalid_index) {
+        idces[idx] += offset;
+      }
+    }
+  } // pragma omp parallel
+
+  std::vector<bit_t> reps = utils::combine_vectors(reps_thread);
+
+  // Compute indices of up-representatives and stabilizer symmetries
+#pragma omp parallel
+  {
+    int myid = omp_get_thread_num();
+    int rank = omp_get_num_threads();
+
+#pragma omp single
+    { syms_thread.resize(rank); }
+
+    for (auto [state, idx] : CombinationsIndexThread<bit_t>(n_sites, n_par)) {
+      bit_t rep = representative(state, group_action);
+
+      assert(bitops::popcnt(rep) == n_par);
+      assert(rep < (bit_t)1 << n_sites);
+      assert(rep <= state);
+
+      idces[idx] = idces[lintable.index(rep)];
+
+      assert(idces[idx] != invalid_index);
+
+      // Determine the symmetries that yield the up-representative
+      span_size_t begin = syms_thread[myid].size();
+      for (int sym = 0; sym < group_action.n_symmetries(); ++sym) {
+        if (group_action.apply(sym, state) == rep)
+          syms_thread[myid].push_back(sym);
+      }
+      span_size_t end = syms_thread[myid].size();
+      sym_limits[idx] = {begin, end - begin};
+    }
+
+#pragma omp barrier
+
+    span_size_t offset = 0;
+    for (int id = 0; id < myid; ++id) {
+      offset += syms_thread[id].size();
+    }
+
+    for (auto [state, idx] : CombinationsIndexThread<bit_t>(n_sites, n_par)) {
+      auto [begin, length] = sym_limits[idx];
+      sym_limits[idx] = {begin + offset, length};
+    }
+
+  } // pragma omp parallel
+
+  // Combine syms
+  std::vector<int> syms = utils::combine_vectors(syms_thread);
+
+#endif
+
+  // lila::Log("reps.size(): {}, syms.size(): {}", reps.size(), syms.size());
+  // for (auto rep : reps)
+  //   lila::Log("rep: {}", rep);
+  // for (auto idx : idces)
+  //   lila::Log("idx: {}", idx);
+
+  // for (auto sym : syms)
+  //   lila::Log("sym: {}", sym);
+
+  // for (auto [b, l] : sym_limits) {
+
+  //   lila::Log("lim: {} {}", b, l);
+  // }
   return {reps, idces, syms, sym_limits};
 }
 
@@ -598,23 +706,75 @@ template <typename bit_t, class GroupAction>
 std::vector<bool> fermi_bool_table(int npar, GroupAction const &group_action) {
 
   using combinatorics::binomial;
-  using combinatorics::Combinations;
+  using combinatorics::CombinationsIndex;
+  using combinatorics::CombinationsIndexThread;
+  using combinatorics::get_next_pattern;
+  using combinatorics::get_nth_pattern;
 
   int n_sites = group_action.n_sites();
   int n_symmetries = group_action.n_symmetries();
   idx_t raw_size = binomial(n_sites, npar);
   std::vector<bool> fermi_bool_table(raw_size * n_symmetries);
-  std::vector<int> fermi_work(n_sites, 0);
   const int *sym_ptr = group_action.permutation_array().data();
+
+#ifndef _OPENMP
+  std::vector<int> fermi_work(n_sites, 0);
   for (int sym = 0; sym < n_symmetries; ++sym) {
-    idx_t idx = 0;
-    for (bit_t state : Combinations<bit_t>(n_sites, npar)) {
+    for (auto [state, idx] : CombinationsIndex<bit_t>(n_sites, npar)) {
       fermi_bool_table[sym * raw_size + idx] =
           fermi_bool_of_permutation(state, sym_ptr, fermi_work.data());
-      ++idx;
     }
     sym_ptr += n_sites;
   }
+#else
+
+
+  for (int sym = 0; sym < n_symmetries; ++sym) {
+
+    std::vector<std::vector<bool>> fermi_bool_table_local;
+
+    // auto t1 = lila::rightnow();
+#pragma omp parallel
+    {
+      int myid = omp_get_thread_num();
+      int rank = omp_get_num_threads();
+
+      std::vector<int> fermi_work(n_sites, 0);
+
+      auto comb = CombinationsIndexThread<bit_t>(n_sites, npar);
+      auto begin = comb.begin();
+      auto end = comb.end();
+      idx_t length = end.idx() - begin.idx();
+
+#pragma omp single
+      { fermi_bool_table_local.resize(rank); }
+
+#pragma omp barrier
+
+      fermi_bool_table_local[myid].resize(length);
+      auto [state, idxl] = *begin;
+
+      for (idx_t idx = 0; idx < length; ++idx) {
+        bool fermi_bool =
+            fermi_bool_of_permutation(state, sym_ptr, fermi_work.data());
+        fermi_bool_table_local[myid][idx] = fermi_bool;
+        state = get_next_pattern(state);
+      }
+    } // pragma omp parallel
+    // lila::timing(t1, lila::rightnow(), "fill");
+
+    // auto t2 = lila::rightnow();
+    auto fermi_bool_table_for_sym =
+        utils::combine_vectors_copy(fermi_bool_table_local);
+    std::copy(fermi_bool_table_for_sym.begin(), fermi_bool_table_for_sym.end(),
+              fermi_bool_table.begin() + sym * raw_size);
+    // lila::timing(t2, lila::rightnow(), "combine");
+    sym_ptr += n_sites;
+  }
+
+
+#endif // ifndef _OPENMP
+
   return fermi_bool_table;
 }
 

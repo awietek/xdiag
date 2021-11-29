@@ -23,6 +23,7 @@ tJSymmetric<bit_t>::tJSymmetric(int n_sites, int nup, int ndn,
               : permutation_group),
       irrep_(irrep), indexing_(n_sites, nup, ndn, permutation_group_, irrep_) {
   utils::check_nup_ndn_tj(n_sites, nup, ndn, "tJSymmetric");
+  utils::check_n_sites(n_sites, permutation_group);
   size_ = indexing_.size();
 }
 

@@ -5,6 +5,7 @@ sources+= hydra/combinatorics/binomial.cpp
 sources+= hydra/combinatorics/subsets.cpp
 sources+= hydra/combinatorics/bit_patterns.cpp
 sources+= hydra/combinatorics/combinations.cpp
+sources+= hydra/combinatorics/combinations_index.cpp
 
 sources+= hydra/parameters/parameter_value.cpp
 sources+= hydra/parameters/parameters.cpp
@@ -85,6 +86,7 @@ testsources+= test/combinatorics/test_binomial.cpp
 testsources+= test/combinatorics/test_subsets.cpp
 testsources+= test/combinatorics/test_bit_patterns.cpp
 testsources+= test/combinatorics/test_combinations.cpp
+testsources+= test/combinatorics/test_combinations_index.cpp
 
 testsources+= test/indexing/test_lintable.cpp
 

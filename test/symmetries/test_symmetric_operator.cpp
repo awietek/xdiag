@@ -8,7 +8,9 @@
 using namespace hydra;
 
 TEST_CASE("symmetric_operator", "[symmetries]") {
-  for (int n_sites = 3; n_sites < 7; ++n_sites) {
+  lila::Log("Testing symmetric_operator");
+
+  for (int n_sites = 3; n_sites < 5; ++n_sites) {
 
     // int n_sites = 6;
     auto [bondlist, couplings] =
@@ -110,4 +112,5 @@ TEST_CASE("symmetric_operator", "[symmetries]") {
       }
     }
   }
+  lila::Log("done");
 }

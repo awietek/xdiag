@@ -158,6 +158,7 @@ template <typename bit_t> void test_fermi_bool_table(int n_sites) {
   for (int npar = 0; npar <= n_sites; ++npar) {
 
     auto fermi_bool_tbl = fermi_bool_table<bit_t>(npar, group_action);
+    // lila::Log("N: {} n: {}", n_sites, npar);
     idx_t raw_size = binomial(n_sites, npar);
 
     const int *sym_ptr = group_action.permutation_array().data();
@@ -170,12 +171,16 @@ template <typename bit_t> void test_fermi_bool_table(int n_sites) {
       }
       sym_ptr += n_sites;
     }
+    
+
+
   }
 }
 
 TEST_CASE("symmetry_operations", "[symmetries]") {
 
-  int max_N = 5;
+  lila::Log("Testing symmetry_operations");
+  int max_N = 6;
   
   for (int n_sites = 0; n_sites <= max_N; ++n_sites) {
     test_stabilizer_symmetries<uint16_t>(n_sites);
@@ -213,7 +218,7 @@ TEST_CASE("symmetry_operations", "[symmetries]") {
     test_norm<uint64_t>(n_sites);
   }
 
-  for (int n_sites = 0; n_sites <= max_N; ++n_sites) {
+  for (int n_sites = 1; n_sites <= max_N; ++n_sites) {
     test_representatives_indices_symmetries_limits<uint16_t>(n_sites);
     test_representatives_indices_symmetries_limits<uint32_t>(n_sites);
     test_representatives_indices_symmetries_limits<uint64_t>(n_sites);
@@ -224,4 +229,5 @@ TEST_CASE("symmetry_operations", "[symmetries]") {
     test_fermi_bool_table<uint32_t>(n_sites);
     test_fermi_bool_table<uint64_t>(n_sites);
   }
+
 }

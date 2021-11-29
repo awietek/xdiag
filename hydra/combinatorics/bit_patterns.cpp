@@ -3,7 +3,7 @@
 
 namespace hydra::combinatorics {
 
-template <class bit_t>
+template <typename bit_t>
 bit_t get_nth_pattern(idx_t n, int n_sites, int n_upspins) {
   bit_t state = 0;
   bit_t counter = n;
@@ -24,7 +24,7 @@ bit_t get_nth_pattern(idx_t n, int n_sites, int n_upspins) {
   return state;
 }
 
-template <class bit_t>
+template <typename bit_t>
 idx_t get_n_for_pattern(bit_t pattern, int n_sites, int n_upspins) {
   idx_t n = 0;
   bit_t workpattern = pattern;

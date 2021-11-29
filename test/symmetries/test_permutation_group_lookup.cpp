@@ -39,4 +39,5 @@ TEST_CASE("PermutationGroupLookup", "[symmetries]") {
     test_permutation_group_lookup<uint32_t>(n_sites);
     test_permutation_group_lookup<uint64_t>(n_sites);
   }
+  lila::Log("done");
 }

@@ -5,10 +5,12 @@
 #include "bitops/bitops.h"
 #include "common.h"
 #include "utils/iochecks.h"
+#include "utils/openmp_utils.h"
 
 #include "combinatorics/binomial.h"
 #include "combinatorics/bit_patterns.h"
 #include "combinatorics/combinations.h"
+#include "combinatorics/combinations_index.h"
 #include "combinatorics/subsets.h"
 
 #include "indexing/lintable.h"

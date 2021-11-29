@@ -6,10 +6,10 @@
 
 namespace hydra::combinatorics {
 
-template <class bit_t = std_bit_t> class CombinationsIterator;
+template <typename bit_t = std_bit_t> class CombinationsIterator;
 
 // Combinations
-template <class bit_t = std_bit_t> class Combinations {
+template <typename bit_t = std_bit_t> class Combinations {
 public:
   using iterator_t = CombinationsIterator<bit_t>;
 
@@ -28,8 +28,9 @@ private:
   iterator_t begin_, end_;
 };
 
+
 // CombinationsIterator
-template <class bit_t> class CombinationsIterator {
+template <typename bit_t> class CombinationsIterator {
 public:
   CombinationsIterator() = default;
   CombinationsIterator(bit_t state, idx_t idx);
