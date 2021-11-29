@@ -14,6 +14,12 @@ bool coupling_is_zero(Bond const &bond, Couplings const &couplings) {
 bool coupling_is_non_zero(Bond const &bond, Couplings const &couplings) {
   return !coupling_is_zero(bond, couplings);
 }
+void check_n_sites(int n_sites, PermutationGroup const &permutation_group) {
+  if (n_sites != permutation_group.n_sites()){
+    lila::Log.err(
+        "Error creating block: n_sites disagrees with permutation_group");
+  }
+}
 
 void check_nup_spinhalf(int n_sites, int nup, std::string block_name) {
   if (n_sites < 0)

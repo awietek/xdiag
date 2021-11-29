@@ -67,20 +67,22 @@ template <class bit_t> void test_permutation_group_action(int n_sites) {
 
     // std::cout << "s " << bits_to_string(state, n_sites) << "\n";
     // std::cout << "r " << bits_to_string(rep, n_sites) << "\n";
-    for (int i=0; i<nsym; ++i){
+    for (int i = 0; i < nsym; ++i) {
       auto tstate = sym_op.apply(sym_ptr[i], state);
       REQUIRE(rep == tstate);
-      // std::cout << "t " << bits_to_string(tstate, n_sites) << " " << sym_ptr[i] << "\n";
+      // std::cout << "t " << bits_to_string(tstate, n_sites) << " " <<
+      // sym_ptr[i] << "\n";
     }
     // std::cout << "\n";
   }
 }
 
 TEST_CASE("PermutationGroupAction", "[symmetries]") {
-  
+  lila::Log("Test PermutationGroupAction");
   for (int n_sites = 1; n_sites < 6; ++n_sites) {
     test_permutation_group_action<uint16_t>(n_sites);
     test_permutation_group_action<uint32_t>(n_sites);
     test_permutation_group_action<uint64_t>(n_sites);
   }
+  lila::Log("done");
 }

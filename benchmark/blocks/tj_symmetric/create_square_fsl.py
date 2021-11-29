@@ -14,26 +14,22 @@ from quantipy.utils.geometryutils import _map_to_simtorus
 ##################################################
 obc=False
 if obc:
-    filename = "tJ.fsl.obc" 
+    filename = "J1J2.fsl.obc" 
 else:
-    filename = "tJ.fsl.pbc" 
+    filename = "J1J2.fsl.pbc" 
 
 
-# 9 site lattice
-lattice = quantipy.lattice.Square(simulation_torus = np.array([[3,0],[0,3]]))
-    
-    
 # # 16 site lattice
 # lattice = quantipy.lattice.Square(simulation_torus = np.array([[4,0],[0,4]]))
     
-# # 20 site lattice
-# lattice = quantipy.lattice.Square(simulation_torus = np.array([[4,2],[-2,4]]))
+# 20 site lattice
+lattice = quantipy.lattice.Square(simulation_torus = np.array([[4,2],[-2,4]]))
 
-# # 25 site lattice
-# lattice = quantipy.lattice.Square(simulation_torus = np.array([[5,0],[0,5]]))
+# 25 site lattice
+lattice = quantipy.lattice.Square(simulation_torus = np.array([[5,0],[0,5]]))
 
-# # 32 site lattice
-# lattice = quantipy.lattice.Square(simulation_torus = np.array([[4,4],[4,-4]]))
+# 32 site lattice
+lattice = quantipy.lattice.Square(simulation_torus = np.array([[4,4],[4,-4]]))
 
 # # 36 site lattice
 # lattice = quantipy.lattice.Square(simulation_torus = np.array([[6,0],[0,6]]))
@@ -49,9 +45,9 @@ for idx, coord in enumerate(lattice.coordinates):
 # for rep in irreps:
 #     print rep, irreps[rep]["k"], len(irreps[rep]["allowed_ops"])
 
-# lattice.plot(coord_idx=False)
-# lattice.plot_brillouinzone(loc="upper left")
-# plt.show()
+lattice.plot(coord_idx=False)
+lattice.plot_brillouinzone(loc="upper left")
+plt.show()
 
 #############################
 # Create sublattice structure
@@ -90,9 +86,9 @@ print(sublattice_structure)
 # model = gm.GenericModel(lattice, maxpg=maxpg, OBC=obc)
 model = gm.GenericModel(lattice, OBC=obc)
 
+
 model.set_nb_interaction(1, int_type='HOP', coupling='T')
-model.set_nb_interaction(1, int_type='ISING', coupling='JZ')
-model.set_nb_interaction(1, int_type='EXCHANGE', coupling='JXY')
+model.set_nb_interaction(1, int_type='HB', coupling='J')
 
 # #HB with SCH
 # model.set_interaction(basis_sites=[0,0,0], cellshifts=[[0,0],[1,0],[1,1]], int_type='GENERICSCH', coupling='Jchi', directed=True, allowed_perms=np.array([[0,1,2],[1,2,0],[2,0,1]]) )

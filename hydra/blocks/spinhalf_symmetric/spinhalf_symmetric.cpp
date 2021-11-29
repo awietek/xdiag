@@ -19,6 +19,7 @@ SpinhalfSymmetric<bit_t>::SpinhalfSymmetric(int n_sites, int n_up,
               : permutation_group),
       irrep_(irrep), indexing_(n_sites, n_up, permutation_group, irrep) {
   utils::check_nup_spinhalf(n_sites, n_up, "SpinhalfSymmetric");
+  utils::check_n_sites(n_sites, permutation_group);
 }
 
 template <typename bit_t>

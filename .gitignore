@@ -9,3 +9,4 @@ options.mk
 test/tests
 testmpi/tests
 benchmark.prof
+benchmark.prof_*

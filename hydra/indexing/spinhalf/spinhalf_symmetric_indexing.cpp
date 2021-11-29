@@ -24,6 +24,7 @@ SpinhalfSymmetricIndexing<bit_t>::SpinhalfSymmetricIndexing(
   using combinatorics::Combinations;
 
   utils::check_nup_spinhalf(n_sites, n_up, "SpinhalfSymmetricIndexing");
+  utils::check_n_sites(n_sites, permutation_group);
 
   // Go through non symmetrized states and register representatives
   idx_t n_reps = 0;

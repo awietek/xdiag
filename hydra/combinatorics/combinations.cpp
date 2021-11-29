@@ -1,5 +1,10 @@
 #include "combinations.h"
+
+#include <omp.h>
+
 #include <lila/utils/logger.h>
+
+#include <hydra/combinatorics/bit_patterns.h>
 
 namespace hydra::combinatorics {
 

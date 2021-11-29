@@ -1,3 +1,3 @@
 #!/bin/bash
 
-pprof --pdf --ignore kmp benchmark benchmark.prof > benchmark.pdf
+pprof --pdf --ignore gomp benchmark benchmark.prof > benchmark.pdf

@@ -5,7 +5,7 @@
 
 namespace hydra::combinatorics {
 
-template <class bit_t> constexpr bit_t get_next_pattern(bit_t v) noexcept {
+template <typename bit_t> constexpr bit_t get_next_pattern(bit_t v) noexcept {
   // Bit twiddling Hack from
   // http://graphics.stanford.edu/~seander/bithacks.html
   // #NextBitPermutation
@@ -24,10 +24,10 @@ template <class bit_t> constexpr bit_t get_next_pattern(bit_t v) noexcept {
   // return v == 0 ? ~v : t | ((((t & -t) / (v & -v)) >> 1) - 1);
 }
 
-template <class bit_t>
+template <typename bit_t>
 bit_t get_nth_pattern(idx_t n, int n_sites, int n_upspins);
 
-template <class bit_t>
+template <typename bit_t>
 idx_t get_n_for_pattern(bit_t pattern, int n_sites, int n_upspins);
 
 } // namespace hydra::combinatorics
