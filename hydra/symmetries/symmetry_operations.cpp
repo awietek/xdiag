@@ -374,7 +374,7 @@ double norm_fermionic(bit_t state, GroupAction const &group_action,
                       Representation const &irrep) {
   complex amplitude = 0.0;
   int n_sites = group_action.n_sites();
-  std::vector<int> work(n_sites);
+  auto work = fermi_work(n_sites);
   const int *sym_ptr = group_action.permutation_array().data();
   for (int sym = 0; sym < group_action.n_symmetries(); ++sym) {
     bit_t tstate = group_action.apply(sym, state);
@@ -413,7 +413,7 @@ double norm_electron(bit_t ups, bit_t dns, GroupAction const &group_action,
   assert(group_action.n_symmetries() == irrep.size());
   complex amplitude = 0.0;
   int n_sites = group_action.n_sites();
-  std::vector<int> work(n_sites);
+  auto work = fermi_work(n_sites);
   const int *sym_ptr = group_action.permutation_array().data();
   for (int sym = 0; sym < group_action.n_symmetries(); ++sym) {
     bit_t tups = group_action.apply(sym, ups);
@@ -464,7 +464,7 @@ norm_electron_subset(bit_t ups, bit_t dns, GroupAction const &group_action,
   assert(group_action.n_symmetries() == irrep.size());
   complex amplitude = 0.0;
   int n_sites = group_action.n_sites();
-  std::vector<int> work(n_sites);
+  auto work = fermi_work(n_sites);
   const int *sym_ptr = group_action.permutation_array().data();
   for (int sym : syms) {
     assert(sym < group_action.n_symmetries());
@@ -535,7 +535,9 @@ representatives_indices_symmetries_limits(int n_par,
   assert(n_par >= 0);
 
 #ifndef _OPENMP
+
   // Compute all representatives
+  std::vector<bit_t> reps;
   for (auto [state, idx] : CombinationsIndex<bit_t>(n_sites, n_par)) {
     bit_t rep = representative(state, group_action);
     if (rep == state) {
@@ -545,6 +547,7 @@ representatives_indices_symmetries_limits(int n_par,
   }
 
   // Compute indices of up-representatives and stabilizer symmetries
+  std::vector<int> syms;
   for (auto [state, idx] : CombinationsIndex<bit_t>(n_sites, n_par)) {
     bit_t rep = representative(state, group_action);
     idces[idx] = idces[lintable.index(rep)];
@@ -718,7 +721,7 @@ std::vector<bool> fermi_bool_table(int npar, GroupAction const &group_action) {
   const int *sym_ptr = group_action.permutation_array().data();
 
 #ifndef _OPENMP
-  std::vector<int> fermi_work(n_sites, 0);
+  auto fermi_work = symmetries::fermi_work(n_sites);
   for (int sym = 0; sym < n_symmetries; ++sym) {
     for (auto [state, idx] : CombinationsIndex<bit_t>(n_sites, npar)) {
       fermi_bool_table[sym * raw_size + idx] =
@@ -727,7 +730,6 @@ std::vector<bool> fermi_bool_table(int npar, GroupAction const &group_action) {
     sym_ptr += n_sites;
   }
 #else
-
 
   for (int sym = 0; sym < n_symmetries; ++sym) {
 
@@ -739,7 +741,7 @@ std::vector<bool> fermi_bool_table(int npar, GroupAction const &group_action) {
       int myid = omp_get_thread_num();
       int rank = omp_get_num_threads();
 
-      std::vector<int> fermi_work(n_sites, 0);
+      auto fermi_work = fermi_work(n_sites);
 
       auto comb = CombinationsIndexThread<bit_t>(n_sites, npar);
       auto begin = comb.begin();
@@ -771,7 +773,6 @@ std::vector<bool> fermi_bool_table(int npar, GroupAction const &group_action) {
     // lila::timing(t2, lila::rightnow(), "combine");
     sym_ptr += n_sites;
   }
-
 
 #endif // ifndef _OPENMP
 

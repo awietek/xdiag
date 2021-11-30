@@ -151,7 +151,7 @@ void test_representatives_indices_symmetries_limits(int n_sites) {
 }
 
 template <typename bit_t> void test_fermi_bool_table(int n_sites) {
-  std::vector<int> fermi_work(n_sites, 0);
+  auto fermi_work = symmetries::fermi_work(n_sites);
 
   auto group_action = PermutationGroupLookup<bit_t>(cyclic_group(n_sites));
   int n_symmetries = group_action.n_symmetries();

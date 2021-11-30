@@ -20,7 +20,8 @@ template <class bit_t> void test_fermi_sign(int n_sites) {
 
   // auto sym_op = SpaceGroupOperator<bit_t>(n_sites, permutation_array);
 
-  std::vector<int> work(2 * n_sites);
+  auto fermi_work = symmetries::fermi_work(n_sites);
+  auto fermi_work_sort = symmetries::fermi_work_sort(n_sites);
   for (auto state : Subsets<bit_t>(n_sites)) {
     for (int sym = 0; sym < n_sites; ++sym) {
 
@@ -30,9 +31,10 @@ template <class bit_t> void test_fermi_sign(int n_sites) {
       // std::cout << bits_to_string(tstate, n_sites) << "\n";
 
       auto fermi1 = symmetries::fermi_sign_of_permutation(
-          state, permutation_array.data() + sym * n_sites, work.data());
+          state, permutation_array.data() + sym * n_sites, fermi_work.data());
       auto fermi2 = symmetries::fermi_sign_of_permutation_sort(
-          state, permutation_array.data() + sym * n_sites, work.data());
+          state, permutation_array.data() + sym * n_sites,
+          fermi_work_sort.data());
 
       // std::cout << fermi1 << " " << fermi2 << "\n";
       // std::cout << "\n";
@@ -42,7 +44,7 @@ template <class bit_t> void test_fermi_sign(int n_sites) {
   }
 }
 
-TEST_CASE("fermi_sign", "[symmetries]") {\
+TEST_CASE("fermi_sign", "[symmetries]") {
   lila::Log("Test fermi_sign");
 
   for (int n_sites = 1; n_sites < 8; ++n_sites) {
