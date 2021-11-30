@@ -5,12 +5,12 @@ int main() {
 
   lila::Log.set_verbosity(1);
 
-  int n_sites = 32;
-  std::string lfile = "square.32.J1J2.fsl.pbc.lat";
+  int n_sites = 20;
+  std::string lfile = "square.20.J1J2.fsl.pbc.lat";
   auto permutations = read_permutations(lfile);
   auto space_group = PermutationGroup(permutations);
   auto bondlist = read_bondlist(lfile);
-  auto irrep = read_represenation(lfile, "Gamma.D4.A1");
+  auto irrep = read_represenation(lfile, "Gamma.C4.A");
 
   Couplings cpls;
   cpls["T"] = 1.0;

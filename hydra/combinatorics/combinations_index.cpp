@@ -20,13 +20,14 @@ CombinationsIndex<bit_t>::CombinationsIndex(int n, int k)
   } else {
     bit_t state = ((bit_t)1 << k) - 1;
     begin_ = CombinationsIndexIterator<bit_t>(state, (idx_t)0);
-    end_ = CombinationsIndexIterator<bit_t>(state,
-                                       (idx_t)combinatorics::binomial(n, k));
+    end_ = CombinationsIndexIterator<bit_t>(
+        state, (idx_t)combinatorics::binomial(n, k));
   }
 }
 
 template <class bit_t>
-CombinationsIndexIterator<bit_t>::CombinationsIndexIterator(bit_t state, idx_t idx)
+CombinationsIndexIterator<bit_t>::CombinationsIndexIterator(bit_t state,
+                                                            idx_t idx)
     : current_(state), idx_(idx) {}
 
 template class CombinationsIndex<uint16_t>;
@@ -37,11 +38,16 @@ template class CombinationsIndexIterator<uint16_t>;
 template class CombinationsIndexIterator<uint32_t>;
 template class CombinationsIndexIterator<uint64_t>;
 
-
 template <typename bit_t>
 std::pair<CombinationsIndexIterator<bit_t>, CombinationsIndexIterator<bit_t>>
 get_omp_combinations_start_end(int n, int k) {
 
+#ifndef _OPENMP
+  bit_t state = ((bit_t)1 << k) - 1;
+  auto start = CombinationsIndexIterator<bit_t>(state, (idx_t)0);
+  auto end = CombinationsIndexIterator<bit_t>(
+      state, (idx_t)combinatorics::binomial(n, k));
+#else
   idx_t myid = omp_get_thread_num();
   idx_t rank = omp_get_num_threads();
   idx_t size = binomial(n, k);
@@ -55,6 +61,7 @@ get_omp_combinations_start_end(int n, int k) {
 
   auto start = CombinationsIndexIterator<bit_t>(start_state, start_idx);
   auto end = CombinationsIndexIterator<bit_t>(end_state, end_idx);
+#endif
   return {start, end};
 }
 
@@ -67,7 +74,6 @@ get_omp_combinations_start_end<uint32_t>(int n, int k);
 template std::pair<CombinationsIndexIterator<uint64_t>,
                    CombinationsIndexIterator<uint64_t>>
 get_omp_combinations_start_end<uint64_t>(int n, int k);
-
 
 template <class bit_t>
 CombinationsIndexThread<bit_t>::CombinationsIndexThread(int n, int k)

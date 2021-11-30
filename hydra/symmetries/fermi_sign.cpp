@@ -1,32 +1,76 @@
 #include "fermi_sign.h"
 
 #include <hydra/bitops/bitops.h>
+#include <limits>
 
 namespace hydra::symmetries {
 
+  
+std::vector<int> fermi_work(int n_sites) {
+  return std::vector<int>(n_sites + 4);
+}
 template <class bit_t>
-bool fermi_bool_of_permutation(bit_t state, const int *permutation, int *work) {
+bool fermi_bool_of_permutation(bit_t state, const int *__restrict permutation,
+                               int *__restrict work) {
   int n_fermion = 0;
-  for (int site = 0; state; ++site) {
-    if (state & 1) {
-      work[n_fermion++] = permutation[site];
-    }
-    state >>= 1;
+  int site = 0;
+  while (state) {
+    int trailing_zeros = __builtin_ctz(state);
+    site += trailing_zeros;
+    work[n_fermion++] = permutation[site++];
+    state >>= trailing_zeros + 1;
   }
 
-  int cnt = 0;
-  for (int i = 0; i < n_fermion; i++)
-    for (int j = i + 1; j < n_fermion; j++)
-      if (work[i] > work[j])
-        cnt++;
+  std::fill(work + n_fermion, work + n_fermion + 4,
+            std::numeric_limits<int>::max());
 
-  return (bool)(cnt & 1);
+  bool fermi = false;
+  for (int i = 0; i < n_fermion; i++) {
+    int worki = work[i];
+
+    // for (int j = i + 1; j < n_fermion; j++) {
+    //   fermi ^= (worki > work[j]);
+    // }
+
+    // Unrolled loop
+    for (int j = i + 1; j < n_fermion; j += 4) {
+      fermi ^= (worki > work[j]);
+      fermi ^= (worki > work[j + 1]);
+      fermi ^= (worki > work[j + 2]);
+      fermi ^= (worki > work[j + 3]);
+      // fermi ^= (worki > work[j + 4]);
+      // fermi ^= (worki > work[j + 5]);  
+      
+    }
+  }
+  return fermi;
+
+  // int n_fermion = 0;
+  // for (int site = 0; state; ++site) {
+  //   if (state & 1) {
+  //     work[n_fermion++] = permutation[site];
+  //   }
+  //   state >>= 1;
+  // }
+
+  // int cnt = 0;
+  // for (int i = 0; i < n_fermion; i++)
+  //   for (int j = i + 1; j < n_fermion; j++)
+  //     if (work[i] > work[j])
+  //       cnt++;
+
+  // return (bool)(cnt & 1);
 }
 
 template <class bit_t>
 double fermi_sign_of_permutation(bit_t state, const int *permutation,
                                  int *work) {
   return fermi_bool_of_permutation(state, permutation, work) ? -1.0 : 1.0;
+}
+
+  
+std::vector<int> fermi_work_sort(int n_sites) {
+  return std::vector<int>(2 * n_sites, 0);
 }
 
 template <class bit_t>
