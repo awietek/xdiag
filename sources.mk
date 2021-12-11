@@ -13,6 +13,7 @@ sources+= hydra/parameters/parser.cpp
 
 sources+= hydra/indexing/lintable.cpp
 sources+= hydra/indexing/spinhalf/spinhalf_indexing.cpp
+sources+= hydra/indexing/spinhalf/spinhalf_indexing_no_sz.cpp
 sources+= hydra/indexing/spinhalf/spinhalf_symmetric_indexing.cpp
 sources+= hydra/indexing/tj/tj_indexing.cpp
 sources+= hydra/indexing/tj/tj_symmetric_indexing.cpp
