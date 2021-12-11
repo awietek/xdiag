@@ -15,14 +15,10 @@
 
 namespace hydra::terms::spinhalf {
 
-template <class bit_t, class coeff_t, class Filler>
+template <typename bit_t, typename coeff_t, class Indexing, class Filler>
 void do_ising(BondList const &bonds, Couplings const &couplings,
-              indexing::SpinhalfIndexing<bit_t> const &indexing,
-              Filler &&fill) {
+              Indexing &&indexing, Filler &&fill) {
   using combinatorics::Combinations;
-
-  int n_sites = indexing.n_sites();
-  int n_up = indexing.n_up();
 
   auto clean_bonds =
       utils::clean_bondlist(bonds, couplings, {"HEISENBERG", "HB", "ISING"}, 2);
@@ -39,7 +35,7 @@ void do_ising(BondList const &bonds, Couplings const &couplings,
     coeff_t val_diff = -J / 4.;
 
     idx_t idx = 0;
-    for (auto spins : Combinations<bit_t>(n_sites, n_up)) {
+    for (auto spins : indexing.states()) {
 
       if (bitops::popcnt(spins & mask) & 1)
         fill(idx, idx, val_diff);

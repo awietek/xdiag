@@ -26,11 +26,15 @@ MatrixGen(BondList const &bonds, Couplings const &couplings,
     mat(idx_out, idx_in) += val;
   };
 
-  auto const &indexing_in = block_in.indexing();
-  // auto const &indexing_out = block_out.indexing();
-
-  do_ising<bit_t, coeff_t>(bonds, couplings, indexing_in, fill);
-  do_exchange<bit_t, coeff_t>(bonds, couplings, indexing_in, fill);
+  if (block_in.sz_conserved()) {
+    auto const &indexing_in = block_in.indexing_sz_conserved();
+    do_ising<bit_t, coeff_t>(bonds, couplings, indexing_in, fill);
+    do_exchange<bit_t, coeff_t>(bonds, couplings, indexing_in, fill);
+  } else {
+    auto const &indexing_in = block_in.indexing_sz_not_conserved();
+    do_ising<bit_t, coeff_t>(bonds, couplings, indexing_in, fill);
+    do_exchange<bit_t, coeff_t>(bonds, couplings, indexing_in, fill);
+  }
 
   return mat;
 }

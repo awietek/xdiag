@@ -15,6 +15,7 @@
 
 #include "indexing/lintable.h"
 #include "indexing/spinhalf/spinhalf_indexing.h"
+#include "indexing/spinhalf/spinhalf_indexing_no_sz.h"
 #include "indexing/spinhalf/spinhalf_symmetric_indexing.h"
 #include "indexing/tj/tj_indexing.h"
 #include "indexing/tj/tj_symmetric_indexing.h"

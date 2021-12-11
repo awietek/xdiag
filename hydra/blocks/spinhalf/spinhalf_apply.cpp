@@ -23,11 +23,15 @@ void Apply(BondList const &bonds, Couplings const &couplings,
     vec_out(idx_out) += val * vec_in(idx_in);
   };
 
-  auto const &indexing_in = block_in.indexing();
-  // auto const &indexing_out = block_out.indexing();
-
-  do_ising<bit_t, coeff_t>(bonds, couplings, indexing_in, fill);
-  do_exchange<bit_t, coeff_t>(bonds, couplings, indexing_in, fill);
+  if (block_in.sz_conserved()) {
+    auto const &indexing_in = block_in.indexing_sz_conserved();
+    do_ising<bit_t, coeff_t>(bonds, couplings, indexing_in, fill);
+    do_exchange<bit_t, coeff_t>(bonds, couplings, indexing_in, fill);
+  } else {
+    auto const &indexing_in = block_in.indexing_sz_not_conserved();
+    do_ising<bit_t, coeff_t>(bonds, couplings, indexing_in, fill);
+    do_exchange<bit_t, coeff_t>(bonds, couplings, indexing_in, fill);
+  }
 }
 
 template void Apply<uint16_t, double>(BondList const &, Couplings const &,

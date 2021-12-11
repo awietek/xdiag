@@ -32,7 +32,9 @@ template <class coeff_t> inline coeff_t complex_to(complex const &cplx) {
     return lila::real(cplx);
 }
 
-  constexpr idx_t invalid_index = (idx_t)-1;
+constexpr idx_t invalid_index = (idx_t)-1;
+constexpr int invalid_n = (idx_t)-1;
+
 constexpr bool index_not_found(idx_t idx) { return idx < 0; }
 constexpr bool index_valid(idx_t idx) { return idx >= 0; }
 
