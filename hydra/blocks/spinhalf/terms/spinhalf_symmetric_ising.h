@@ -1,12 +1,8 @@
 #pragma once
 #include <hydra/common.h>
 
-#include <hydra/combinatorics/combinations.h>
-
 #include <hydra/blocks/spinhalf/spinhalf.h>
 #include <hydra/blocks/utils/block_utils.h>
-
-#include <hydra/indexing/spinhalf/spinhalf_indexing.h>
 
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
@@ -16,10 +12,8 @@
 namespace hydra::terms {
 
 template <typename bit_t, typename coeff_t, class Indexing, class Filler>
-void spinhalf_ising(BondList const &bonds, Couplings const &couplings,
-              Indexing &&indexing, Filler &&fill) {
-  using combinatorics::Combinations;
-
+void spinhalf_symmetric_ising(BondList const &bonds, Couplings const &couplings,
+                              Indexing &&indexing, Filler &&fill) {
   auto clean_bonds =
       utils::clean_bondlist(bonds, couplings, {"HEISENBERG", "HB", "ISING"}, 2);
   for (auto bond : clean_bonds) {
@@ -34,17 +28,15 @@ void spinhalf_ising(BondList const &bonds, Couplings const &couplings,
     coeff_t val_same = J / 4.;
     coeff_t val_diff = -J / 4.;
 
-    idx_t idx = 0;
-    for (auto spins : indexing.states()) {
-
-      if (bitops::popcnt(spins & mask) & 1)
+    for (idx_t idx = 0; idx < indexing.size(); ++idx) {
+      bit_t state = indexing.state(idx);
+      if (bitops::popcnt(state & mask) & 1) {
         fill(idx, idx, val_diff);
-      else
+      } else {
         fill(idx, idx, val_same);
-
-      ++idx;
+      }
     }
   }
 }
 
-} // namespace hydra::terms::spinhalf
+} // namespace hydra::terms

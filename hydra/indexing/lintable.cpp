@@ -10,10 +10,11 @@ LinTable<bit_t>::LinTable(int n, int k)
     : n_(n), k_(k), n_left_(ceil(n / 2.0)), n_right_(n - n_left_),
       left_table_size_((idx_t)1 << n_left_),
       right_table_size_((idx_t)1 << n_right_),
-      left_indices_(left_table_size_, 0), right_indices_(right_table_size_, 0) {
+      left_indices_(left_table_size_, 0), right_indices_(right_table_size_, 0),
+      size_(combinatorics::binomial(n, k)) {
+  using bitops::popcnt;
   using combinatorics::binomial;
   using combinatorics::Combinations;
-  using bitops::popcnt;
 
   // Fill offsets on left indices
   for (bit_t left = 0; left < (bit_t)left_table_size_; ++left) {

@@ -3,6 +3,7 @@ sources+= hydra/bitops/bitops.cpp
 
 sources+= hydra/combinatorics/binomial.cpp
 sources+= hydra/combinatorics/subsets.cpp
+sources+= hydra/combinatorics/subsets_index.cpp
 sources+= hydra/combinatorics/bit_patterns.cpp
 sources+= hydra/combinatorics/combinations.cpp
 sources+= hydra/combinatorics/combinations_index.cpp
@@ -12,9 +13,11 @@ sources+= hydra/parameters/parameters.cpp
 sources+= hydra/parameters/parser.cpp
 
 sources+= hydra/indexing/lintable.cpp
+sources+= hydra/indexing/lintable_raw.cpp
 sources+= hydra/indexing/spinhalf/spinhalf_indexing.cpp
 sources+= hydra/indexing/spinhalf/spinhalf_indexing_no_sz.cpp
 sources+= hydra/indexing/spinhalf/spinhalf_symmetric_indexing.cpp
+sources+= hydra/indexing/spinhalf/spinhalf_symmetric_indexing_no_sz.cpp
 sources+= hydra/indexing/tj/tj_indexing.cpp
 sources+= hydra/indexing/tj/tj_symmetric_indexing.cpp
 sources+= hydra/indexing/electron/electron_indexing.cpp
@@ -25,10 +28,6 @@ sources+= hydra/blocks/utils/block_utils.cpp
 sources+= hydra/blocks/spinhalf/spinhalf.cpp
 sources+= hydra/blocks/spinhalf/spinhalf_matrix.cpp
 sources+= hydra/blocks/spinhalf/spinhalf_apply.cpp
-
-sources+= hydra/blocks/spinhalf_symmetric/spinhalf_symmetric.cpp
-sources+= hydra/blocks/spinhalf_symmetric/spinhalf_symmetric_matrix.cpp
-sources+= hydra/blocks/spinhalf_symmetric/spinhalf_symmetric_apply.cpp
 
 sources+= hydra/blocks/tj/tj.cpp
 sources+= hydra/blocks/tj/tj_matrix.cpp
@@ -53,6 +52,8 @@ sources+= hydra/symmetries/permutation_group_lookup.cpp
 sources+= hydra/symmetries/representation.cpp
 sources+= hydra/symmetries/fermi_sign.cpp
 sources+= hydra/symmetries/symmetric_operator.cpp
+sources+= hydra/symmetries/representative_list.cpp
+sources+= hydra/symmetries/fermi_bool_table.cpp
 
 sources+= hydra/operators/bond.cpp
 sources+= hydra/operators/bondlist.cpp

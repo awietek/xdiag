@@ -14,13 +14,12 @@
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
 
-namespace hydra::terms::spinhalf {
+namespace hydra::terms {
 
 template <typename bit_t, typename coeff_t, class Indexing, class Filler>
-void do_exchange(BondList const &bonds, Couplings const &couplings,
+void spinhalf_exchange(BondList const &bonds, Couplings const &couplings,
                  Indexing &&indexing, Filler &&fill) {
   using bitops::gbit;
-  using combinatorics::Combinations;
 
   auto clean_bonds = utils::clean_bondlist(bonds, couplings,
                                            {"HEISENBERG", "HB", "EXCHANGE"}, 2);

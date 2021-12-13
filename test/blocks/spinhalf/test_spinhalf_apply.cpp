@@ -46,7 +46,6 @@ TEST_CASE("spinhalf_apply", "[models][spinhalf]") {
   lila::Log.out("spinhalf_apply: Heisenberg all-to-all Sz <-> NoSz comparison");
   for (int n_sites = 2; n_sites <= 6; ++n_sites) {
     auto [bonds, couplings] = HB_alltoall(n_sites);
-
     auto block_no_sz = Spinhalf(n_sites);
     auto e0_no_sz = E0Real(bonds, couplings, block_no_sz);
     auto e0s_sz = std::vector<double>();
