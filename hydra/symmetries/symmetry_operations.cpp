@@ -741,7 +741,7 @@ std::vector<bool> fermi_bool_table(int npar, GroupAction const &group_action) {
       int myid = omp_get_thread_num();
       int rank = omp_get_num_threads();
 
-      auto fermi_work = fermi_work(n_sites);
+      auto fermi_work = symmetries::fermi_work(n_sites);
 
       auto comb = CombinationsIndexThread<bit_t>(n_sites, npar);
       auto begin = comb.begin();
