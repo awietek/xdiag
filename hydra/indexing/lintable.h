@@ -2,8 +2,10 @@
 
 #include <vector>
 
-#include <hydra/common.h>
 #include <hydra/bitops/bitops.h>
+#include <hydra/combinatorics/combinations.h>
+#include <hydra/combinatorics/combinations_index.h>
+#include <hydra/common.h>
 
 namespace hydra::indexing {
 
@@ -17,6 +19,15 @@ public:
            right_indices_[bitops::gbits(bits, 0, n_right_)];
   }
 
+  inline combinatorics::Combinations<bit_t> states() const {
+    return combinatorics::Combinations<bit_t>(n_, k_);
+  }
+
+  inline combinatorics::CombinationsIndex<bit_t> states_indices() const {
+    return combinatorics::CombinationsIndex<bit_t>(n_, k_);
+  }
+  inline idx_t size() const { return size_; }
+
 private:
   int n_, k_;
   int n_left_;
@@ -27,6 +38,8 @@ private:
 
   std::vector<idx_t> left_indices_;
   std::vector<idx_t> right_indices_;
+
+  idx_t size_;
 };
 
 } // namespace hydra::indexing

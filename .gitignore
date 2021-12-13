@@ -4,7 +4,8 @@
 *~
 *.prof
 *.pdf
-lib/*
+lib/libhydra.a
+lib/libhydra_mpi.a
 options.mk
 test/tests
 testmpi/tests
