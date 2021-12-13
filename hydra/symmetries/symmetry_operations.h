@@ -76,16 +76,4 @@ double
 norm_electron_subset(bit_t ups, bit_t dns, GroupAction const &group_action,
                      Representation const &irrep, gsl::span<int const> syms);
 
-// Create a lists of representatives and their symmetries
-template <typename bit_t, class GroupAction, class LinTable>
-std::tuple<std::vector<bit_t>, std::vector<idx_t>, std::vector<int>,
-           std::vector<std::pair<span_size_t, span_size_t>>>
-representatives_indices_symmetries_limits(int npar,
-                                          GroupAction const &group_action,
-                                          LinTable const &lintable);
-
-// Creates the table of Fermi signs for a given particle number
-template <typename bit_t, class GroupAction>
-std::vector<bool> fermi_bool_table(int npar, GroupAction const &group_action);
-
 } // namespace hydra::symmetries

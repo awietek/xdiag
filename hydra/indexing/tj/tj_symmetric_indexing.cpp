@@ -8,7 +8,7 @@
 
 namespace hydra::indexing {
 
-template <class bit_t>
+template <typename bit_t>
 tJSymmetricIndexing<bit_t>::tJSymmetricIndexing(
     int n_sites, int nup, int ndn, PermutationGroup permutation_group,
     Representation irrep)

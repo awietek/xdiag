@@ -12,9 +12,12 @@
 #include "combinatorics/combinations.h"
 #include "combinatorics/combinations_index.h"
 #include "combinatorics/subsets.h"
+#include "combinatorics/subsets_index.h"
 
 #include "indexing/lintable.h"
+#include "indexing/lintable_raw.h"
 #include "indexing/spinhalf/spinhalf_indexing.h"
+#include "indexing/spinhalf/spinhalf_indexing_no_sz.h"
 #include "indexing/spinhalf/spinhalf_symmetric_indexing.h"
 #include "indexing/tj/tj_indexing.h"
 #include "indexing/tj/tj_symmetric_indexing.h"
@@ -26,10 +29,6 @@
 #include "blocks/spinhalf/spinhalf_apply.h"
 #include "blocks/spinhalf/spinhalf_fill.h"
 #include "blocks/spinhalf/spinhalf_matrix.h"
-
-#include "blocks/spinhalf_symmetric/spinhalf_symmetric.h"
-#include "blocks/spinhalf_symmetric/spinhalf_symmetric_apply.h"
-#include "blocks/spinhalf_symmetric/spinhalf_symmetric_matrix.h"
 
 #include "blocks/tj/tj.h"
 #include "blocks/tj/tj_apply.h"
@@ -55,6 +54,8 @@
 #include "symmetries/representation.h"
 #include "symmetries/symmetric_operator.h"
 #include "symmetries/symmetry_operations.h"
+#include "symmetries/representative_list.h"
+#include "symmetries/fermi_bool_table.h"
 
 #include "operators/bond.h"
 #include "operators/bondlist.h"

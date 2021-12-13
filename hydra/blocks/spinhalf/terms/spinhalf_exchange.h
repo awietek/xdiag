@@ -14,18 +14,12 @@
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
 
+namespace hydra::terms {
 
-namespace hydra::terms::spinhalf {
-
-template <typename bit_t, typename coeff_t, typename Filler>
-void do_exchange(BondList const &bonds, Couplings const &couplings,
-                 indexing::SpinhalfIndexing<bit_t> const &indexing,
-                 Filler &&fill) {
+template <typename bit_t, typename coeff_t, class Indexing, class Filler>
+void spinhalf_exchange(BondList const &bonds, Couplings const &couplings,
+                 Indexing &&indexing, Filler &&fill) {
   using bitops::gbit;
-  using combinatorics::Combinations;
-
-  int n_sites = indexing.n_sites();
-  int n_up = indexing.n_up();
 
   auto clean_bonds = utils::clean_bondlist(bonds, couplings,
                                            {"HEISENBERG", "HB", "EXCHANGE"}, 2);
@@ -42,7 +36,7 @@ void do_exchange(BondList const &bonds, Couplings const &couplings,
     coeff_t Jhalf_conj = J_conj / 2.;
 
     idx_t idx_in = 0;
-    for (bit_t spins : Combinations<bit_t>(n_sites, n_up)) {
+    for (bit_t spins : indexing.states()) {
       if (bitops::popcnt(spins & flipmask) & 1) {
         bit_t new_spins = spins ^ flipmask;
         idx_t idx_out = indexing.index(new_spins);

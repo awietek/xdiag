@@ -16,7 +16,7 @@ void test_spinhalf_symmetric_apply(BondList bondlist, Couplings couplings,
 
   for (int nup = 0; nup <= n_sites; ++nup) {
     for (auto irrep : irreps) {
-      auto block = SpinhalfSymmetric<bit_t>(n_sites, nup, space_group, irrep);
+      auto block = Spinhalf<bit_t>(n_sites, nup, space_group, irrep);
 
       if (block.size() > 0) {
         auto H = MatrixCplx(bondlist, couplings, block, block);
@@ -49,6 +49,45 @@ void test_spinhalf_symmetric_apply(BondList bondlist, Couplings couplings,
   }
 }
 
+template <class bit_t>
+void test_spinhalf_symmetric_apply_no_sz(BondList bondlist, Couplings couplings,
+                                         PermutationGroup space_group,
+                                         std::vector<Representation> irreps) {
+  int n_sites = space_group.n_sites();
+
+  for (auto irrep : irreps) {
+    auto block = Spinhalf<bit_t>(n_sites, space_group, irrep);
+
+    if (block.size() > 0) {
+      auto H = MatrixCplx(bondlist, couplings, block, block);
+      REQUIRE(lila::close(H, lila::Herm(H)));
+      // Check whether apply gives the same as matrix multiplication
+      auto v = lila::Random<complex>(block.size());
+      auto w1 = lila::Mult(H, v);
+      auto w2 = lila::ZerosLike(v);
+      Apply(bondlist, couplings, block, v, block, w2);
+      REQUIRE(lila::close(w1, w2));
+      // Compute eigenvalues and compare
+      auto evals_mat = lila::EigenvaluesSym(H);
+      double e0_mat = evals_mat(0);
+      double e0_app = E0Cplx(bondlist, couplings, block);
+      // lila::Log.out("e0_mat: {}, e0_app: {}", e0_mat, e0_app);
+      REQUIRE(std::abs(e0_mat - e0_app) < 1e-7);
+
+      // Compute eigenvalues with real arithmitic
+      if (is_real(block.irrep()) && is_real(couplings)) {
+        auto H_real = MatrixReal(bondlist, couplings, block, block);
+        auto evals_mat_real = lila::EigenvaluesSym(H_real);
+        REQUIRE(lila::close(evals_mat_real, evals_mat));
+
+        double e0_mat_real = evals_mat_real(0);
+        double e0_app_real = E0Real(bondlist, couplings, block);
+        REQUIRE(std::abs(e0_mat_real - e0_app_real) < 1e-7);
+      }
+    }
+  }
+}
+
 template <class bit_t> void test_spinhalf_symmetric_apply_chains(int n_sites) {
   using namespace hydra::testcases::spinhalf;
   using hydra::testcases::electron::get_cyclic_group_irreps;
@@ -57,13 +96,14 @@ template <class bit_t> void test_spinhalf_symmetric_apply_chains(int n_sites) {
   auto [bondlist, couplings] = HBchain(n_sites, 1.0, 1.0);
   test_spinhalf_symmetric_apply<bit_t>(bondlist, couplings, space_group,
                                        irreps);
+  test_spinhalf_symmetric_apply_no_sz<bit_t>(bondlist, couplings, space_group,
+                                             irreps);
 }
 
 TEST_CASE("spinhalf_symmetric_apply", "[blocks][spinhalf_symmetric]") {
 
   // Test linear Heisenberg chains
   for (int n_sites = 3; n_sites < 7; ++n_sites) {
-
     test_spinhalf_symmetric_apply_chains<uint16_t>(n_sites);
     test_spinhalf_symmetric_apply_chains<uint32_t>(n_sites);
     test_spinhalf_symmetric_apply_chains<uint64_t>(n_sites);
@@ -95,4 +135,6 @@ TEST_CASE("spinhalf_symmetric_apply", "[blocks][spinhalf_symmetric]") {
   }
   test_spinhalf_symmetric_apply<uint16_t>(bondlist, couplings, space_group,
                                           irreps);
+  test_spinhalf_symmetric_apply_no_sz<uint64_t>(bondlist, couplings,
+                                                space_group, irreps);
 }
