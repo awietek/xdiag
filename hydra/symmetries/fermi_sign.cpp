@@ -21,6 +21,7 @@ bool fermi_bool_of_permutation(bit_t state, const int *__restrict permutation,
     state >>= trailing_zeros + 1;
   }
 
+  // fill potentially extraneous work to use loop unrolling
   std::fill(work + n_fermion, work + n_fermion + 4,
             std::numeric_limits<int>::max());
 
@@ -28,23 +29,17 @@ bool fermi_bool_of_permutation(bit_t state, const int *__restrict permutation,
   for (int i = 0; i < n_fermion; i++) {
     int worki = work[i];
 
-    // for (int j = i + 1; j < n_fermion; j++) {
-    //   fermi ^= (worki > work[j]);
-    // }
-
     // Unrolled loop
     for (int j = i + 1; j < n_fermion; j += 4) {
       fermi ^= (worki > work[j]);
       fermi ^= (worki > work[j + 1]);
       fermi ^= (worki > work[j + 2]);
       fermi ^= (worki > work[j + 3]);
-      // fermi ^= (worki > work[j + 4]);
-      // fermi ^= (worki > work[j + 5]);  
-      
     }
   }
   return fermi;
 
+  // Simple implementation:
   // int n_fermion = 0;
   // for (int site = 0; state; ++site) {
   //   if (state & 1) {

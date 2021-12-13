@@ -3,7 +3,9 @@
 #include <hydra/blocks/utils/block_utils.h>
 
 #include <hydra/combinatorics/combinations.h>
+#include <hydra/symmetries/fermi_bool_table.h>
 #include <hydra/symmetries/permutation_group_lookup.h>
+#include <hydra/symmetries/representative_list.h>
 #include <hydra/symmetries/symmetry_operations.h>
 
 namespace hydra::indexing {
