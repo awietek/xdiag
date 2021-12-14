@@ -2,6 +2,8 @@
 
 #include <vector>
 
+#include <hydra/symmetries/representation.h>
+
 namespace hydra {
 
 class PermutationGroup {
@@ -31,5 +33,8 @@ private:
   int n_symmetries_;
   std::vector<int> permutation_array_; // size = n_symmetries_*n_sites_
 };
+
+PermutationGroup allowed_subgroup(PermutationGroup const &group,
+                                  Representation const &irrep);
 
 } // namespace hydra

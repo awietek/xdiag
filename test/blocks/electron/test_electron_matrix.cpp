@@ -10,6 +10,30 @@
 
 using namespace hydra;
 
+void test_electron_np_no_np_matrix(int n_sites, BondList bonds, Couplings cpls) {
+
+  auto block_full = Electron(n_sites);
+  auto H_full = MatrixCplx(bonds, cpls, block_full, block_full);
+  REQUIRE(lila::close(H_full, lila::Herm(H_full)));
+  auto eigs_full = lila::EigenvaluesSym(H_full);
+
+  lila::Vector<double> all_eigs;
+  for (int nup = 0; nup <= n_sites; ++nup)
+    for (int ndn = 0; ndn <= n_sites; ++ndn) {
+
+      auto block = Electron(n_sites, nup, ndn);
+      auto H = MatrixCplx(bonds, cpls, block, block);
+      REQUIRE(lila::close(H, lila::Herm(H)));
+      auto eigs = lila::EigenvaluesSym(H);
+      // LilaPrint(eigs);
+
+      for (auto eig : eigs)
+        all_eigs.push_back(eig);
+    }
+  std::sort(all_eigs.begin(), all_eigs.end());
+  REQUIRE(lila::close(all_eigs, eigs_full));
+}
+
 TEST_CASE("electron_matrix", "[blocks][electron]") {
   using namespace hydra::testcases::electron;
 
@@ -87,6 +111,9 @@ TEST_CASE("electron_matrix", "[blocks][electron]") {
       {0., 0., 0., 0., 0., tm, 0., 0., 0., 0., 0., 0.,
        0., 0., 0., 0., 0., tm, 0., tp, 0., 0., tm, U2} // 24
   };
+
+  // LilaPrint(H1);
+  // LilaPrint(H1_correct);
 
   REQUIRE(lila::close(lila::Real(H1), H1_correct));
   for (int i = 0; i < 24; ++i)
@@ -275,7 +302,8 @@ TEST_CASE("electron_matrix", "[blocks][electron]") {
   REQUIRE(lila::close(all_eigs, eigs_correct));
 
   for (int N = 3; N <= 6; ++N) {
-    lila::Log.out("electron_matrix: random all-to-all complex exchange test, N={}", N);
+    lila::Log.out(
+        "electron_matrix: random all-to-all complex exchange test, N={}", N);
 
     auto [bonds, cpls] = hydra::testcases::tj::tj_alltoall_complex(N);
     for (int nup = 0; nup <= N; ++nup)
@@ -309,5 +337,13 @@ TEST_CASE("electron_matrix", "[blocks][electron]") {
       // LilaPrint(eigs2);
       REQUIRE(lila::close(eigs1_sub, eigs2, 1e-6, 1e-6));
     }
+  }
+
+  for (int N = 3; N <= 4; ++N) {
+    lila::Log.out("electron_matrix: random all-to-all complex exchange test Np "
+                  "<-> NoNp, N={}",
+                  N);
+    auto [bonds, cpls] = hydra::testcases::tj::tj_alltoall_complex(N);
+    test_electron_np_no_np_matrix(N, bonds, cpls);
   }
 }

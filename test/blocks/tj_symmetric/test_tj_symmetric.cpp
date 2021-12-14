@@ -20,7 +20,7 @@ void check_dimensions_sum_up_tj_symmetric(int n_sites, PermutationGroup group,
       idx_t sum_of_dims_updn = 0;
       for (auto irrep : irreps) {
 
-        auto block = tJSymmetric<bit_t>(n_sites, nup, ndn, group, irrep);
+        auto block = tJ<bit_t>(n_sites, nup, ndn, group, irrep);
 
         sum_of_dims += block.size();
         sum_of_dims_updn += block.size();

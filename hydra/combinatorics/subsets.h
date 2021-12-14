@@ -4,7 +4,7 @@
 
 namespace hydra::combinatorics {
 
-template <class bit_t = std_bit_t> class SubsetsIterator;
+template <class bit_t> class SubsetsIterator;
 
 // Subsets
 template <class bit_t = std_bit_t> class Subsets {
@@ -25,11 +25,30 @@ private:
   iterator_t begin_, end_;
 };
 
+// SubsetsThread
+template <class bit_t = std_bit_t> class SubsetsThread {
+public:
+  using iterator_t = SubsetsIterator<bit_t>;
+
+  SubsetsThread() = default;
+  explicit SubsetsThread(int n);
+
+  int n() const { return n_; }
+  idx_t size() const { return size_; };
+  iterator_t begin() const { return begin_; }
+  iterator_t end() const { return end_; }
+
+private:
+  int n_, k_;
+  idx_t size_;
+  iterator_t begin_, end_;
+};
+
 // SubsetsIterator
 template <class bit_t> class SubsetsIterator {
 public:
   SubsetsIterator() = default;
-  SubsetsIterator(bit_t state);
+  SubsetsIterator(idx_t idx);
 
   inline bool operator==(const SubsetsIterator<bit_t> &rhs) const {
     return current_ == rhs.current_;
@@ -46,5 +65,10 @@ public:
 private:
   bit_t current_;
 };
+
+template <typename bit_t>
+SubsetsThread<bit_t> ThreadStates(Subsets<bit_t> const &si){
+  return SubsetsThread(si.n());
+}
 
 } // namespace hydra::combinatorics

@@ -3,9 +3,27 @@
 #include <iostream>
 
 #include "testcases_electron.h"
+#include "../tj/testcases_tj.h"
 #include <hydra/all.h>
 
 using namespace hydra;
+
+void test_electron_np_no_np_apply(int n_sites, BondList bonds, Couplings cpls) {
+
+  auto block_full = Electron(n_sites);
+  auto e0_full = E0Cplx(bonds, cpls, block_full);
+ 
+
+  lila::Vector<double> e0s;
+  for (int nup = 0; nup <= n_sites; ++nup)
+    for (int ndn = 0; ndn <= n_sites; ++ndn) {
+      auto block = Electron(n_sites, nup, ndn);
+      auto e0 = E0Cplx(bonds, cpls, block);
+      e0s.push_back(e0);
+    }
+  auto e0_np = *std::min_element(e0s.begin(), e0s.end());
+  REQUIRE(lila::close(e0_full, e0_np));
+}
 
 TEST_CASE("electron_apply", "[blocks][electron]") {
   using namespace hydra::testcases::electron;
@@ -128,5 +146,13 @@ TEST_CASE("electron_apply", "[blocks][electron]") {
         // lila::Log.out("e0_mat: {}, e0_app: {}", e0_mat, e0_app);
         CHECK(lila::close(e0_mat, e0_app, 1e-6, 1e-6));
       }
+  }
+
+  for (int N = 3; N <= 5; ++N) {
+    lila::Log.out("electron_apply: random all-to-all complex exchange test Np "
+                  "<-> NoNp, N={}",
+                  N);
+    auto [bonds, cpls] = hydra::testcases::tj::tj_alltoall_complex(N);
+    test_electron_np_no_np_apply(N, bonds, cpls);
   }
 }

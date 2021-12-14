@@ -20,7 +20,7 @@ void test_electron_symmetric_apply(BondList bondlist, Couplings couplings,
 
         // Create block and matrix for comparison
         auto block =
-            ElectronSymmetric<bit_t>(n_sites, nup, ndn, space_group, irrep);
+            Electron<bit_t>(n_sites, nup, ndn, space_group, irrep);
         if (block.size() > 0) {
           auto H = MatrixCplx(bondlist, couplings, block, block);
           REQUIRE(lila::close(H, lila::Herm(H)));

@@ -4,9 +4,6 @@
 
 #include <hydra/common.h>
 
-#include <hydra/blocks/spinhalf/spinhalf_apply.h>
-#include <hydra/blocks/spinhalf/spinhalf_matrix.h>
-
 #include <hydra/indexing/spinhalf/spinhalf_indexing.h>
 #include <hydra/indexing/spinhalf/spinhalf_indexing_no_sz.h>
 #include <hydra/indexing/spinhalf/spinhalf_symmetric_indexing.h>
@@ -55,43 +52,34 @@ private:
   PermutationGroup permutation_group_;
   Representation irrep_;
 
-  using idxng_sz_t = indexing::SpinhalfIndexing<bit_t>;
-  using idxng_no_sz_t = indexing::SpinhalfIndexingNoSz<bit_t>;
-  using idxng_sym_sz_t = indexing::SpinhalfSymmetricIndexing<bit_t>;
-  using idxng_sym_no_sz_t = indexing::SpinhalfSymmetricIndexingNoSz<bit_t>;
+  using indexing_sz_t = indexing::SpinhalfIndexing<bit_t>;
+  using indexing_no_sz_t = indexing::SpinhalfIndexingNoSz<bit_t>;
+  using indexing_sym_sz_t = indexing::SpinhalfSymmetricIndexing<bit_t>;
+  using indexing_sym_no_sz_t = indexing::SpinhalfSymmetricIndexingNoSz<bit_t>;
 
-  std::shared_ptr<idxng_sz_t> indexing_sz_conserved_;
-  std::shared_ptr<idxng_no_sz_t> indexing_sz_not_conserved_;
-  std::shared_ptr<idxng_sym_sz_t> indexing_sym_sz_conserved_;
-  std::shared_ptr<idxng_sym_no_sz_t> indexing_sym_sz_not_conserved_;
+  std::shared_ptr<indexing_sz_t> indexing_sz_;
+  std::shared_ptr<indexing_no_sz_t> indexing_no_sz_;
+  std::shared_ptr<indexing_sym_sz_t> indexing_sym_sz_;
+  std::shared_ptr<indexing_sym_no_sz_t> indexing_sym_no_sz_;
 
   idx_t size_;
 
-  idxng_sz_t const &indexing_sz_conserved() const;
-  idxng_no_sz_t const &indexing_sz_not_conserved() const;
-  idxng_sym_sz_t const &indexing_sym_sz_conserved() const;
-  idxng_sym_no_sz_t const &indexing_sym_sz_not_conserved() const;
+  indexing_sz_t const &indexing_sz() const;
+  indexing_no_sz_t const &indexing_no_sz() const;
+  indexing_sym_sz_t const &indexing_sym_sz() const;
+  indexing_sym_no_sz_t const &indexing_sym_no_sz() const;
 
-  friend void Apply<bit_t, double>(BondList const &bonds,
-                                   Couplings const &couplings,
-                                   Spinhalf<bit_t> const &block_in,
-                                   lila::Vector<double> const &vec_in,
-                                   Spinhalf<bit_t> const &block_out,
-                                   lila::Vector<double> &vec_out);
-  friend void Apply<bit_t, complex>(BondList const &bonds,
-                                    Couplings const &couplings,
-                                    Spinhalf<bit_t> const &block_in,
-                                    lila::Vector<complex> const &vec_in,
-                                    Spinhalf<bit_t> const &block_out,
-                                    lila::Vector<complex> &vec_out);
-  friend lila::Matrix<double>
-  MatrixGen<bit_t, double>(BondList const &bonds, Couplings const &couplings,
-                           Spinhalf<bit_t> const &block_in,
-                           Spinhalf<bit_t> const &block_out);
-  friend lila::Matrix<complex>
-  MatrixGen<bit_t, complex>(BondList const &bonds, Couplings const &couplings,
-                            Spinhalf<bit_t> const &block_in,
-                            Spinhalf<bit_t> const &block_out);
+  template <typename bit_tt, typename coeff_tt>
+  friend void
+  Apply(BondList const &bonds, Couplings const &couplings,
+        Spinhalf<bit_tt> const &block_in, lila::Vector<coeff_tt> const &vec_in,
+        Spinhalf<bit_tt> const &block_out, lila::Vector<coeff_tt> &vec_out);
+
+  template <typename bit_tt, typename coeff_tt>
+  friend lila::Matrix<coeff_tt> MatrixGen(BondList const &bonds,
+                                          Couplings const &couplings,
+                                          Spinhalf<bit_tt> const &block_in,
+                                          Spinhalf<bit_tt> const &block_out);
 };
 
 } // namespace hydra

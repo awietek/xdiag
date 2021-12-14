@@ -5,7 +5,7 @@
 #include <vector>
 
 #include <hydra/common.h>
-#include <hydra/indexing/lintable_raw.h>
+#include <hydra/indexing/subsets_indexing.h>
 #include <hydra/symmetries/permutation_group.h>
 #include <hydra/symmetries/permutation_group_lookup.h>
 #include <hydra/symmetries/representation.h>
@@ -32,14 +32,14 @@ public:
   inline double norm(idx_t idx) const { return norms_[idx]; }
 
   inline idx_t index(bit_t state) const {
-    return index_for_rep_[lin_table_raw_.index(state)];
+    return index_for_rep_[subsets_indexing_.index(state)];
   }
   inline bit_t representative(bit_t raw_state) const {
     return reps_[index(raw_state)];
   }
   inline std::pair<idx_t, gsl::span<int const>>
   index_syms(bit_t raw_state) const {
-    idx_t raw_idx = lin_table_raw_.index(raw_state);
+    idx_t raw_idx = subsets_indexing_.index(raw_state);
     idx_t index = index_for_rep_[raw_idx];
     auto [start, length] = sym_limits_for_rep_[raw_idx];
     return {index, {syms_.data() + start, length}};
@@ -50,7 +50,7 @@ private:
   int n_up_;
   PermutationGroupLookup<bit_t> group_action_;
   Representation irrep_;
-  LinTableRaw<bit_t> lin_table_raw_;
+  SubsetsIndexing<bit_t> subsets_indexing_;
 
   std::vector<bit_t> reps_;
   std::vector<idx_t> index_for_rep_;

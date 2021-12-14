@@ -4,7 +4,7 @@
 
 namespace hydra::combinatorics {
 
-template <class bit_t = std_bit_t> class SubsetsIndexIterator;
+template <class bit_t> class SubsetsIndexIterator;
 
 // SubsetsIndex
 template <class bit_t = std_bit_t> class SubsetsIndex {
@@ -25,13 +25,33 @@ private:
   iterator_t begin_, end_;
 };
 
+// SubsetsIndexThread
+template <typename bit_t = std_bit_t> class SubsetsIndexThread {
+public:
+  using iterator_t = SubsetsIndexIterator<bit_t>;
+
+  SubsetsIndexThread() = default;
+  SubsetsIndexThread(int n);
+
+  int n() const { return n_; }
+  idx_t size() const { return size_; };
+  iterator_t begin() const { return begin_; }
+  iterator_t end() const { return end_; }
+
+private:
+  int n_;
+  idx_t size_;
+  iterator_t begin_, end_;
+};
+
 // SubsetsIndexIterator
 template <class bit_t> class SubsetsIndexIterator {
 public:
   SubsetsIndexIterator() = default;
-  SubsetsIndexIterator(bit_t state);
+  SubsetsIndexIterator(idx_t idx);
 
   inline bool operator==(const SubsetsIndexIterator<bit_t> &rhs) const {
+
     return current_ == rhs.current_;
   }
   inline bool operator!=(const SubsetsIndexIterator<bit_t> &rhs) const {
@@ -48,5 +68,11 @@ public:
 private:
   bit_t current_;
 };
+
+template <typename bit_t>
+inline SubsetsIndexThread<bit_t>
+ThreadStatesIndex(SubsetsIndex<bit_t> const &si) {
+  return SubsetsIndexThread(si.n());
+}
 
 } // namespace hydra::combinatorics

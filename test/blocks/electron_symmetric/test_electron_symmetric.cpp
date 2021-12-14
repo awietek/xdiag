@@ -8,7 +8,7 @@ using namespace hydra;
 using namespace hydra::combinatorics;
 
 // template <class bit_t>
-// void test_indices(ElectronSymmetric<bit_t> const &electron) {
+// void test_indices(Electron<bit_t> const &electron) {
 //   // int n_sites = electron.n_sites();
 
 //   idx_t idx = 0;
@@ -61,7 +61,7 @@ template <class bit_t> void test_electron_chain(int n_sites) {
         auto irrep = Representation(chis);
 
         auto electron2 =
-            ElectronSymmetric<bit_t>(n_sites, nup, ndn, space_group, irrep);
+            Electron<bit_t>(n_sites, nup, ndn, space_group, irrep);
 
         sum_of_dims += electron2.size();
         sum_of_dims_updn += electron2.size();
@@ -104,7 +104,7 @@ TEST_CASE("electron_symmetric", "[blocks][electron_symmetric]") {
       for (auto [name, mult] : rep_name_mult) {
         auto irrep = read_represenation(lfile, name);
         auto electron =
-            ElectronSymmetric(n_sites, nup, ndn, space_group, irrep);
+            Electron(n_sites, nup, ndn, space_group, irrep);
 
         idx_t dim = electron.size() * mult;
         // lila::Log.out(

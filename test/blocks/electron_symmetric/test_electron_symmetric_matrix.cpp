@@ -8,6 +8,50 @@
 using namespace hydra;
 
 template <class bit_t>
+void test_electron_symmetric_spectra_no_np(BondList bondlist,
+                                           Couplings couplings,
+                                           PermutationGroup space_group,
+                                           std::vector<Representation> irreps,
+                                           std::vector<int> multiplicities) {
+  int n_sites = space_group.n_sites();
+
+  auto block_total = Electron(n_sites);
+  if (block_total.size() < 1000) {
+
+    auto H_total = MatrixCplx(bondlist, couplings, block_total, block_total);
+    auto eigs_total = lila::EigenvaluesSym(H_total);
+
+    lila::Vector<double> eigs_all;
+    for (auto irrep : irreps) {
+      auto block_no_np = Electron(n_sites, space_group, irrep);
+      auto H_no_np = MatrixCplx(bondlist, couplings, block_no_np, block_no_np);
+      auto eigs_no_np = lila::EigenvaluesSym(H_no_np);
+      // LilaPrint(eigs_no_np);
+
+      lila::Vector<double> eigs_np_all;
+      for (int nup = 0; nup <= n_sites; ++nup) {
+        for (int ndn = 0; ndn <= n_sites; ++ndn) {
+          auto block_np = Electron(n_sites, nup, ndn, space_group, irrep);
+          auto H_np = MatrixCplx(bondlist, couplings, block_np, block_np);
+          auto eigs_np = lila::EigenvaluesSym(H_np);
+          // LilaPrint(eigs_np);
+          for (auto e : eigs_np) {
+            eigs_np_all.push_back(e);
+            eigs_all.push_back(e);
+          }
+        }
+      }
+      std::sort(eigs_np_all.begin(), eigs_np_all.end());
+      REQUIRE(lila::close(eigs_no_np, eigs_np_all));
+    }
+    std::sort(eigs_all.begin(), eigs_all.end());
+    // LilaPrint(eigs_total);
+    // LilaPrint(eigs_all);
+    REQUIRE(lila::close(eigs_total, eigs_all));
+  }
+}
+
+template <class bit_t>
 void test_electron_symmetric_spectra(BondList bondlist, Couplings couplings,
                                      PermutationGroup space_group,
                                      std::vector<Representation> irreps,
@@ -34,7 +78,7 @@ void test_electron_symmetric_spectra(BondList bondlist, Couplings couplings,
           int multiplicity = multiplicities[k];
 
           auto electron =
-              ElectronSymmetric<bit_t>(n_sites, nup, ndn, space_group, irrep);
+              Electron<bit_t>(n_sites, nup, ndn, space_group, irrep);
           // lila::Log.out(
           //     "nup: {}, ndn: {}, k: {}, mult: {}, dim_nosym: {}, dim_sym:"
           //     "{} ",
@@ -88,6 +132,8 @@ void test_hubbard_symmetric_spectrum_chains(int n_sites) {
   auto [bondlist, couplings] = get_linear_chain(n_sites, 1.0, 5.0);
   test_electron_symmetric_spectra<bit_t>(bondlist, couplings, space_group,
                                          irreps, multiplicities);
+  test_electron_symmetric_spectra_no_np<bit_t>(bondlist, couplings, space_group,
+                                               irreps, multiplicities);
 
   // With Heisenberg term
   lila::Log("electron_symmetric_matrix: Hubbard chain,  n_sites: {} (+ "
@@ -97,6 +143,8 @@ void test_hubbard_symmetric_spectrum_chains(int n_sites) {
       get_linear_chain_hb(n_sites, 1.0, 5.0, 0.4);
   test_electron_symmetric_spectra<bit_t>(bondlist_hb, couplings_hb, space_group,
                                          irreps, multiplicities);
+  test_electron_symmetric_spectra_no_np<bit_t>(
+      bondlist_hb, couplings_hb, space_group, irreps, multiplicities);
 }
 
 TEST_CASE("electron_symmetric_matrix", "[blocks][electron_symmetric]") {
@@ -115,8 +163,7 @@ TEST_CASE("electron_symmetric_matrix", "[blocks][electron_symmetric]") {
       get_cyclic_group_irreps_mult(n_sites);
   for (int k = 0; k < (int)irreps.size(); ++k) {
     auto irrep = irreps[k];
-    auto electron =
-        ElectronSymmetric<uint16_t>(n_sites, nup, ndn, space_group, irrep);
+    auto electron = Electron<uint16_t>(n_sites, nup, ndn, space_group, irrep);
     auto H_sym = MatrixCplx(bondlist, couplings, electron, electron);
     complex U2 = 2 * U;
     complex UU = U;

@@ -14,11 +14,11 @@
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
 
-namespace hydra::terms::tj {
+namespace hydra::terms {
 
-template <typename bit_t, typename coeff_t, class Filler>
-void do_ising(BondList const &bonds, Couplings const &couplings,
-              indexing::tJIndexing<bit_t> const &indexing, Filler &&fill) {
+template <typename bit_t, typename coeff_t, class Indexing, class Filler>
+void tj_ising(BondList const &bonds, Couplings const &couplings,
+              Indexing &&indexing, Filler &&fill) {
   using bitops::gbit;
   using bitops::popcnt;
   using combinatorics::Combinations;
@@ -84,4 +84,4 @@ void do_ising(BondList const &bonds, Couplings const &couplings,
   }
 }
 
-} // namespace hydra::terms::tj
+} // namespace hydra::terms

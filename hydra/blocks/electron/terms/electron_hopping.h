@@ -15,17 +15,12 @@
 
 namespace hydra::terms {
 
-template <class bit_t, class coeff_t, class Filler>
+template <typename bit_t, typename coeff_t, class Indexing, class Filler>
 void electron_hopping(BondList const &bonds, Couplings const &couplings,
-                      indexing::ElectronIndexing<bit_t> const &indexing,
-                      Filler &&fill) {
+                      Indexing &&indexing, Filler &&fill) {
   using bitops::gbit;
   using bitops::popcnt;
-  using combinatorics::Combinations;
 
-  int n_sites = indexing.n_sites();
-  int n_up = indexing.n_up();
-  int n_dn = indexing.n_dn();
   idx_t size_up = indexing.size_ups();
   idx_t size_dn = indexing.size_dns();
 
@@ -50,7 +45,7 @@ void electron_hopping(BondList const &bonds, Couplings const &couplings,
     // Apply hoppings on upspins
     if ((type == "HOP") || (type == "HOPUP")) {
       idx_t idx_up = 0;
-      for (auto up : Combinations(n_sites, n_up)) {
+      for (auto up : indexing.states_ups()) {
         if (popcnt(up & flipmask) == 1) {
           coeff_t t;
           if constexpr (is_complex<coeff_t>())
@@ -76,7 +71,7 @@ void electron_hopping(BondList const &bonds, Couplings const &couplings,
     // Apply hoppings on dnspins
     if ((type == "HOP") || (type == "HOPDN")) {
       idx_t idx_dn = 0;
-      for (auto dn : Combinations(n_sites, n_dn)) {
+      for (auto dn : indexing.states_dns()) {
         if (popcnt(dn & flipmask) == 1) {
           coeff_t t;
           if constexpr (is_complex<coeff_t>())

@@ -5,6 +5,11 @@
 #include <hydra/blocks/electron/terms/electron_ising.h>
 #include <hydra/blocks/electron/terms/electron_u.h>
 
+#include <hydra/blocks/electron/terms/electron_symmetric_exchange.h>
+#include <hydra/blocks/electron/terms/electron_symmetric_hopping.h>
+#include <hydra/blocks/electron/terms/electron_symmetric_ising.h>
+#include <hydra/blocks/electron/terms/electron_symmetric_u.h>
+
 #include <hydra/blocks/utils/block_utils.h>
 
 namespace hydra {
@@ -25,13 +30,51 @@ MatrixGen(BondList const &bonds, Couplings const &couplings,
     mat(idx_out, idx_in) += val;
   };
 
-  auto const &indexing_in = block_in.indexing();
-  // auto const &indexing_out = block_out.indexing();
+  if (block_in.symmetric()) {
 
-  terms::electron_U<bit_t, coeff_t>(couplings, indexing_in, fill);
-  terms::electron_hopping<bit_t, coeff_t>(bonds, couplings, indexing_in, fill);
-  terms::electron_ising<bit_t, coeff_t>(bonds, couplings, indexing_in, fill);
-  terms::electron_exchange<bit_t, coeff_t>(bonds, couplings, indexing_in, fill);
+    if (block_in.charge_conserved() && block_in.sz_conserved()) {
+      auto const &indexing_in = block_in.indexing_sym_np();
+      terms::electron_symmetric_U<bit_t, coeff_t>(couplings, indexing_in, fill);
+      terms::electron_symmetric_hopping<bit_t, coeff_t>(bonds, couplings,
+                                                        indexing_in, fill);
+      terms::electron_symmetric_ising<bit_t, coeff_t>(bonds, couplings,
+                                                      indexing_in, fill);
+      terms::electron_symmetric_exchange<bit_t, coeff_t>(bonds, couplings,
+                                                         indexing_in, fill);
+    } else {
+      auto const &indexing_in = block_in.indexing_sym_no_np();
+      terms::electron_symmetric_U<bit_t, coeff_t>(couplings, indexing_in, fill);
+      terms::electron_symmetric_hopping<bit_t, coeff_t>(bonds, couplings,
+                                                        indexing_in, fill);
+      terms::electron_symmetric_ising<bit_t, coeff_t>(bonds, couplings,
+                                                      indexing_in, fill);
+      terms::electron_symmetric_exchange<bit_t, coeff_t>(bonds, couplings,
+                                                         indexing_in, fill);
+    }
+
+  } else {
+
+    if (block_in.charge_conserved() && block_in.sz_conserved()) {
+      auto const &indexing_in = block_in.indexing_np();
+      terms::electron_U<bit_t, coeff_t>(couplings, indexing_in, fill);
+      terms::electron_hopping<bit_t, coeff_t>(bonds, couplings, indexing_in,
+                                              fill);
+      terms::electron_ising<bit_t, coeff_t>(bonds, couplings, indexing_in,
+                                            fill);
+      terms::electron_exchange<bit_t, coeff_t>(bonds, couplings, indexing_in,
+                                               fill);
+    } else {
+      auto const &indexing_in = block_in.indexing_no_np();
+      terms::electron_U<bit_t, coeff_t>(couplings, indexing_in, fill);
+      terms::electron_hopping<bit_t, coeff_t>(bonds, couplings, indexing_in,
+                                              fill);
+      terms::electron_ising<bit_t, coeff_t>(bonds, couplings, indexing_in,
+                                            fill);
+      terms::electron_exchange<bit_t, coeff_t>(bonds, couplings, indexing_in,
+                                               fill);
+    }
+  }
+
   return mat;
 }
 

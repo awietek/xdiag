@@ -28,13 +28,13 @@ void Apply(BondList const &bonds, Couplings const &couplings,
   if (block_in.symmetric()) {
 
     if (block_in.sz_conserved()) {
-      auto const &indexing_in = block_in.indexing_sym_sz_conserved();
+      auto const &indexing_in = block_in.indexing_sym_sz();
       spinhalf_symmetric_ising<bit_t, coeff_t>(bonds, couplings, indexing_in,
                                                fill);
       spinhalf_symmetric_exchange<bit_t, coeff_t>(bonds, couplings, indexing_in,
                                                   fill);
     } else {
-      auto const &indexing_in = block_in.indexing_sym_sz_not_conserved();
+      auto const &indexing_in = block_in.indexing_sym_no_sz();
       spinhalf_symmetric_ising<bit_t, coeff_t>(bonds, couplings, indexing_in,
                                                fill);
       spinhalf_symmetric_exchange<bit_t, coeff_t>(bonds, couplings, indexing_in,
@@ -44,11 +44,11 @@ void Apply(BondList const &bonds, Couplings const &couplings,
   } else {
 
     if (block_in.sz_conserved()) {
-      auto const &indexing_in = block_in.indexing_sz_conserved();
+      auto const &indexing_in = block_in.indexing_sz();
       spinhalf_ising<bit_t, coeff_t>(bonds, couplings, indexing_in, fill);
       spinhalf_exchange<bit_t, coeff_t>(bonds, couplings, indexing_in, fill);
     } else {
-      auto const &indexing_in = block_in.indexing_sz_not_conserved();
+      auto const &indexing_in = block_in.indexing_no_sz();
       spinhalf_ising<bit_t, coeff_t>(bonds, couplings, indexing_in, fill);
       spinhalf_exchange<bit_t, coeff_t>(bonds, couplings, indexing_in, fill);
     }

@@ -15,17 +15,13 @@
 
 namespace hydra::terms {
 
-template <typename bit_t, typename coeff_t, typename Filler>
+template <typename bit_t, typename coeff_t, class Indexing, class Filler>
 void electron_do_down_flips(bit_t ups, idx_t idx_ups, bit_t flipmask,
                             bit_t fermimask, int sdn, coeff_t val,
-                            indexing::ElectronIndexing<bit_t> const &indexing,
-                            Filler &&fill) {
+                            Indexing &&indexing, Filler &&fill) {
   using bitops::gbit;
   using bitops::popcnt;
-  using combinatorics::Combinations;
 
-  int n_sites = indexing.n_sites();
-  int n_dn = indexing.n_dn();
   idx_t size_dns = indexing.size_dns();
 
   // Get limits of flipped up
@@ -35,35 +31,24 @@ void electron_do_down_flips(bit_t ups, idx_t idx_ups, bit_t flipmask,
   idx_t idx_out_offset = idx_ups_flip * size_dns;
   idx_t idx_in = idx_ups * size_dns;
 
-  for (auto dns : Combinations<bit_t>(n_sites, n_dn)) {
-    // lila::Log("in     : {};{} {}", BSTR(ups), BSTR(dns), sdn);
-    // lila::Log("         {} {}", BSTR(flipmask), BSTR(flipmask));
-    // lila::Log("1: {} () 2: {}", (bool)(popcnt(dns & flipmask) == 1), ((bool)gbit(dns, sdn)));
+  for (auto dns : indexing.states_dns()) {
+
     if ((popcnt(dns & flipmask) == 1) && ((bool)gbit(dns, sdn))) {
       bit_t dns_flip = dns ^ flipmask;
       idx_t idx_out = idx_out_offset + indexing.index_dns(dns_flip);
-
-
-      // lila::Log("out      {};{}", BSTR(ups_flip), BSTR(dns_flip));
-      
-      
       fill(idx_out, idx_in, (popcnt(dns & fermimask) & 1) ? -val : val);
     }
+
     ++idx_in;
   }
 }
 
-template <typename bit_t, typename coeff_t, typename Filler>
+template <typename bit_t, typename coeff_t, class Indexing, class Filler>
 void electron_exchange(BondList const &bonds, Couplings const &couplings,
-                       indexing::ElectronIndexing<bit_t> const &indexing,
-                       Filler &&fill) {
+                       Indexing &&indexing, Filler &&fill) {
 
   using bitops::gbit;
   using bitops::popcnt;
-  using combinatorics::Combinations;
-
-  int n_sites = indexing.n_sites();
-  int n_up = indexing.n_up();
 
   auto clean_bonds = utils::clean_bondlist(
       bonds, couplings,
@@ -96,7 +81,7 @@ void electron_exchange(BondList const &bonds, Couplings const &couplings,
     bit_t fermimask = ((1 << (s2 - s1 - 1)) - 1) << (s1 + 1);
 
     idx_t idx_up = 0;
-    for (auto ups : Combinations<bit_t>(n_sites, n_up)) {
+    for (auto ups : indexing.states_ups()) {
 
       if (popcnt(ups & flipmask) == 1) {
 

@@ -38,8 +38,8 @@ PermutationGroup::PermutationGroup(int n_sites, int n_symmetries,
     lila::Log.err("Error constructing PermutationGroup: "
                   "there's a symmetry not of length n_sites");
   for (int i = 0; i < n_symmetries; ++i) {
-    if (!symmetries::is_valid_permutation(n_sites_,
-                                     permutation_array_.data() + i * n_sites_))
+    if (!symmetries::is_valid_permutation(n_sites_, permutation_array_.data() +
+                                                        i * n_sites_))
       lila::Log.err("Error constructing PermutationGroup: "
                     "there's a symmetry which is not a proper permutation");
   }
@@ -50,9 +50,11 @@ PermutationGroup::subgroup(std::vector<int> const &symmetry_numbers) const {
   std::vector<int> subgroup_permutation_array;
 
   for (int n_sym : symmetry_numbers) {
-    if ((0 > n_sym) || (n_sym >= n_symmetries_))
+
+    if ((0 > n_sym) || (n_sym >= n_symmetries_)) {
       lila::Log.err("Error building subgroup of PermutationGroup: "
                     "invalid symmetry index");
+    }
     subgroup_permutation_array.insert(
         subgroup_permutation_array.end(),
         permutation_array_.begin() + n_sym * n_sites_,
@@ -70,6 +72,18 @@ bool PermutationGroup::operator==(PermutationGroup const &rhs) const {
 
 bool PermutationGroup::operator!=(PermutationGroup const &rhs) const {
   return !operator==(rhs);
+}
+
+PermutationGroup allowed_subgroup(PermutationGroup const &group,
+                                  Representation const &irrep) {
+
+  auto const &allowed_symmetries = irrep.allowed_symmetries();
+
+  if (allowed_symmetries.size() > 0) {
+    return group.subgroup(allowed_symmetries);
+  } else {
+    return group;
+  }
 }
 
 } // namespace hydra
