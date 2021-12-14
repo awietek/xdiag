@@ -14,8 +14,6 @@
 #include <hydra/symmetries/representative_list.h>
 #include <hydra/symmetries/fermi_bool_table.h>
 
-#include <hydra/blocks/tj_symmetric/tj_symmetric_matrix.h>
-
 namespace hydra::indexing {
 
 template <typename bit_t> class tJSymmetricIndexing {

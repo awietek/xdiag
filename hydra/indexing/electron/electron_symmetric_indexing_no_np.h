@@ -6,7 +6,9 @@
 #include <lila/external/gsl/span>
 
 #include <hydra/common.h>
-#include <hydra/indexing/lintable.h>
+
+#include <hydra/indexing/subsets_indexing.h>
+
 #include <hydra/symmetries/permutation_group.h>
 #include <hydra/symmetries/permutation_group_lookup.h>
 #include <hydra/symmetries/representation.h>
@@ -14,13 +16,12 @@
 
 namespace hydra::indexing {
 
-template <typename bit_t> class ElectronSymmetricIndexing {
+template <typename bit_t> class ElectronSymmetricIndexingNoNp {
 public:
   using span_size_t = gsl::span<int const>::size_type;
 
-  ElectronSymmetricIndexing(int n_sites, int nup, int ndn,
-                            PermutationGroup permutation_group,
-                            Representation irrep);
+  ElectronSymmetricIndexingNoNp(int n_sites, PermutationGroup permutation_group,
+                                Representation irrep);
 
   inline int n_sites() const { return n_sites_; }
   inline int n_up() const { return n_up_; }
@@ -144,8 +145,8 @@ private:
   idx_t raw_ups_size_;
   idx_t raw_dns_size_;
 
-  indexing::LinTable<bit_t> lintable_ups_;
-  indexing::LinTable<bit_t> lintable_dns_;
+  indexing::SubsetsIndexing<bit_t> lintable_ups_;
+  indexing::SubsetsIndexing<bit_t> lintable_dns_;
 
   std::vector<bool> fermi_bool_ups_table_;
   std::vector<bool> fermi_bool_dns_table_;

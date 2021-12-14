@@ -9,16 +9,14 @@
 
 #include <hydra/combinatorics/combinations.h>
 
-#include <hydra/indexing/tj/tj_indexing.h>
-
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
 
-namespace hydra::terms::tj {
+namespace hydra::terms {
 
-template <class bit_t, class coeff_t, class Filler>
-void do_hopping(BondList const &bonds, Couplings const &couplings,
-                indexing::tJIndexing<bit_t> const &indexing, Filler &&fill) {
+template <typename bit_t, typename coeff_t, class Indexing, class Filler>
+void tj_hopping(BondList const &bonds, Couplings const &couplings,
+                Indexing &&indexing, Filler &&fill) {
   using bitops::gbit;
   using bitops::popcnt;
   using combinatorics::Combinations;
@@ -120,4 +118,4 @@ void do_hopping(BondList const &bonds, Couplings const &couplings,
     }
   }
 }
-} // namespace hydra::terms::tj
+} // namespace hydra::terms

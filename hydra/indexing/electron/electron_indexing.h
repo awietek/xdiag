@@ -1,6 +1,9 @@
 #pragma once
 
 #include <hydra/common.h>
+
+#include <hydra/combinatorics/combinations.h>
+
 #include <hydra/indexing/lintable.h>
 
 namespace hydra::indexing {
@@ -23,6 +26,14 @@ public:
   }
   inline idx_t index_dns(bit_t dns) const {
     return lintable_dns_.index(dns);
+  }
+
+ inline combinatorics::Combinations<bit_t> states_ups() const {
+    return combinatorics::Combinations<bit_t>(n_sites_, n_up_);
+  }
+
+ inline combinatorics::Combinations<bit_t> states_dns() const {
+    return combinatorics::Combinations<bit_t>(n_sites_, n_dn_);
   }
 
 private:

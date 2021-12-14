@@ -127,8 +127,8 @@ void test_representatives_indices_symmetries_limits(int n_sites) {
   for (int npar = 0; npar <= n_sites; ++npar) {
     auto lintable = indexing::LinTable<bit_t>(n_sites, npar);
     auto [reps, idces, syms, limits] =
-        representatives_indices_symmetries_limits<bit_t>(npar, group_action,
-                                                         lintable);
+        representatives_indices_symmetries_limits<bit_t>(
+            indexing::CombinationsIndexing<bit_t>(n_sites, npar), group_action);
     idx_t n_reps = reps.size();
     for (idx_t i = 0; i < n_reps; ++i) {
       REQUIRE(reps[i] == representative(reps[i], group_action));
@@ -157,7 +157,8 @@ template <typename bit_t> void test_fermi_bool_table(int n_sites) {
   int n_symmetries = group_action.n_symmetries();
   for (int npar = 0; npar <= n_sites; ++npar) {
 
-    auto fermi_bool_tbl = fermi_bool_table<bit_t>(npar, group_action);
+    auto fermi_bool_tbl =
+        fermi_bool_table(Combinations<bit_t>(n_sites, npar), group_action);
     // lila::Log("N: {} n: {}", n_sites, npar);
     idx_t raw_size = binomial(n_sites, npar);
 
@@ -171,9 +172,6 @@ template <typename bit_t> void test_fermi_bool_table(int n_sites) {
       }
       sym_ptr += n_sites;
     }
-    
-
-
   }
 }
 
@@ -181,7 +179,7 @@ TEST_CASE("symmetry_operations", "[symmetries]") {
 
   lila::Log("Testing symmetry_operations");
   int max_N = 6;
-  
+
   for (int n_sites = 0; n_sites <= max_N; ++n_sites) {
     test_stabilizer_symmetries<uint16_t>(n_sites);
     test_stabilizer_symmetries<uint32_t>(n_sites);
@@ -229,5 +227,4 @@ TEST_CASE("symmetry_operations", "[symmetries]") {
     test_fermi_bool_table<uint32_t>(n_sites);
     test_fermi_bool_table<uint64_t>(n_sites);
   }
-
 }

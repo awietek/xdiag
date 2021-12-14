@@ -9,7 +9,7 @@
 
 namespace hydra::indexing {
 
-template <class bit_t = std_bit_t> class LinTable {
+template <class bit_t> class LinTable {
 public:
   LinTable() = default;
   LinTable(int n, int k);

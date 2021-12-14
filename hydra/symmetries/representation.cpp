@@ -20,6 +20,9 @@ Representation::Representation(std::vector<complex> const &characters,
                                std::vector<int> const &allowed_symmetries)
     : characters_(characters), characters_real_(characters.size()),
       allowed_symmetries_(allowed_symmetries) {
+
+  assert(characters.size() == allowed_symmetries.size());
+
   for (int idx = 0; idx < (int)characters.size(); ++idx) {
     characters_real_[idx] = std::real(characters[idx]);
   }

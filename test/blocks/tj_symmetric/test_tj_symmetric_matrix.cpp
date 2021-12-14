@@ -36,7 +36,7 @@ void test_spectra_tj_symmetric(BondList bondlist, Couplings couplings,
           auto irrep = irreps[k];
           int multiplicity = multiplicities[k];
 
-          auto tj = tJSymmetric<bit_t>(n_sites, nup, ndn, space_group, irrep);
+          auto tj = tJ<bit_t>(n_sites, nup, ndn, space_group, irrep);
 
           if (tj.size() > 0) {
 

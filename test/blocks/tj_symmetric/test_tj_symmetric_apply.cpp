@@ -23,7 +23,7 @@ void test_apply_tj_symmetric(BondList bondlist, Couplings couplings,
 
       for (int k = 0; k < (int)irreps.size(); ++k) {
         auto irrep = irreps[k];
-        auto block = tJSymmetric<bit_t>(n_sites, nup, ndn, space_group, irrep);
+        auto block = tJ<bit_t>(n_sites, nup, ndn, space_group, irrep);
 
         if (block.size() > 0) {
           auto H_sym = MatrixCplx(bondlist, couplings, block, block);

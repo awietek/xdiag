@@ -11,11 +11,11 @@
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
 
-namespace hydra::terms::tj {
+namespace hydra::terms {
 
-template <typename bit_t, typename coeff_t, typename Filler>
-void do_exchange(BondList const &bonds, Couplings const &couplings,
-                 indexing::tJIndexing<bit_t> const &indexing, Filler &&fill) {
+template <typename bit_t, typename coeff_t, class Indexing, class Filler>
+void tj_exchange(BondList const &bonds, Couplings const &couplings,
+                 Indexing &&indexing, Filler &&fill) {
   using bitops::gbit;
   using bitops::popcnt;
   using combinatorics::Combinations;
@@ -52,7 +52,6 @@ void do_exchange(BondList const &bonds, Couplings const &couplings,
 
     // bit_t spinsmask = ((bit_t)1 << n_spins) - 1;
 
-
     idx_t idx = 0;
     idx_t holes_idx = 0;
     for (auto holes : Combinations<bit_t>(n_sites, n_holes)) {
@@ -86,7 +85,7 @@ void do_exchange(BondList const &bonds, Couplings const &couplings,
           ++idx;
         }
       } else {
-	idx += size_spins;
+        idx += size_spins;
       }
       ++holes_idx;
     } // for (auto holes : ...)
@@ -94,4 +93,4 @@ void do_exchange(BondList const &bonds, Couplings const &couplings,
   } // for (auto bond : clean_bonds)
 }
 
-} // namespace hydra::terms::tj
+} // namespace hydra::terms

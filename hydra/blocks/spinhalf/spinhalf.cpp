@@ -9,10 +9,9 @@ template <typename bit_t>
 Spinhalf<bit_t>::Spinhalf(int n_sites)
     : n_sites_(n_sites), sz_conserved_(false), n_up_(invalid_n),
       n_dn_(invalid_n), sz_(invalid_n), symmetric_(false), permutation_group_(),
-      irrep_(), indexing_sz_conserved_(),
-      indexing_sz_not_conserved_(std::make_shared<idxng_no_sz_t>(n_sites)),
-      indexing_sym_sz_conserved_(), indexing_sym_sz_not_conserved_(),
-      size_(pow(2, n_sites)) {
+      irrep_(), indexing_sz_(),
+      indexing_no_sz_(std::make_shared<indexing_no_sz_t>(n_sites)),
+      indexing_sym_sz_(), indexing_sym_no_sz_(), size_(pow(2, n_sites)) {
   assert(n_sites >= 0);
 }
 
@@ -21,10 +20,10 @@ Spinhalf<bit_t>::Spinhalf(int n_sites, int n_up)
     : n_sites_(n_sites), sz_conserved_(true), n_up_(n_up),
       n_dn_(n_sites - n_up), sz_(n_up_ - n_dn_), symmetric_(false),
       permutation_group_(), irrep_(),
-      indexing_sz_conserved_(std::make_shared<idxng_sz_t>(n_sites, n_up)),
-      indexing_sz_not_conserved_(), indexing_sym_sz_conserved_(),
-      indexing_sym_sz_not_conserved_(),
+      indexing_sz_(std::make_shared<indexing_sz_t>(n_sites, n_up)),
+      indexing_no_sz_(), indexing_sym_sz_(), indexing_sym_no_sz_(),
       size_(combinatorics::binomial(n_sites, n_up)) {
+  assert(n_sites >= 0);
   utils::check_nup_spinhalf(n_sites, n_up, "Spinhalf");
 }
 
@@ -33,15 +32,12 @@ Spinhalf<bit_t>::Spinhalf(int n_sites, PermutationGroup permutation_group,
                           Representation irrep)
     : n_sites_(n_sites), sz_conserved_(false), n_up_(invalid_n),
       n_dn_(invalid_n), sz_(invalid_n), symmetric_(true),
-      permutation_group_(
-          (irrep.allowed_symmetries().size() > 0)
-              ? permutation_group.subgroup(irrep.allowed_symmetries())
-              : permutation_group),
-      irrep_(irrep), indexing_sz_conserved_(), indexing_sz_not_conserved_(),
-      indexing_sym_sz_conserved_(),
-      indexing_sym_sz_not_conserved_(std::make_shared<idxng_sym_no_sz_t>(
+      permutation_group_(allowed_subgroup(permutation_group, irrep)),
+      irrep_(irrep), indexing_sz_(), indexing_no_sz_(), indexing_sym_sz_(),
+      indexing_sym_no_sz_(std::make_shared<indexing_sym_no_sz_t>(
           n_sites, permutation_group, irrep)),
-      size_(indexing_sym_sz_not_conserved_->size()) {
+      size_(indexing_sym_no_sz_->size()) {
+  assert(n_sites >= 0);
   utils::check_n_sites(n_sites, permutation_group);
 }
 
@@ -51,15 +47,12 @@ Spinhalf<bit_t>::Spinhalf(int n_sites, int n_up,
                           Representation irrep)
     : n_sites_(n_sites), sz_conserved_(true), n_up_(n_up),
       n_dn_(n_sites - n_up), sz_(n_up_ - n_dn_), symmetric_(true),
-      permutation_group_(
-          (irrep.allowed_symmetries().size() > 0)
-              ? permutation_group.subgroup(irrep.allowed_symmetries())
-              : permutation_group),
-      irrep_(irrep), indexing_sz_conserved_(), indexing_sz_not_conserved_(),
-      indexing_sym_sz_conserved_(std::make_shared<idxng_sym_sz_t>(
+      permutation_group_(allowed_subgroup(permutation_group, irrep)),
+      irrep_(irrep), indexing_sz_(), indexing_no_sz_(),
+      indexing_sym_sz_(std::make_shared<indexing_sym_sz_t>(
           n_sites, n_up, permutation_group, irrep)),
-      indexing_sym_sz_not_conserved_(),
-      size_(indexing_sym_sz_conserved_->size()) {
+      indexing_sym_no_sz_(), size_(indexing_sym_sz_->size()) {
+  assert(n_sites >= 0);
   utils::check_nup_spinhalf(n_sites, n_up, "Spinhalf");
   utils::check_n_sites(n_sites, permutation_group);
 }
@@ -79,34 +72,33 @@ bool Spinhalf<bit_t>::operator!=(Spinhalf<bit_t> const &rhs) const {
 
 template <typename bit_t>
 indexing::SpinhalfIndexingNoSz<bit_t> const &
-Spinhalf<bit_t>::indexing_sz_not_conserved() const {
+Spinhalf<bit_t>::indexing_no_sz() const {
   if (sz_conserved_ || symmetric_)
     lila::Log.err("Error: wrong indexing required");
-  return *indexing_sz_not_conserved_;
+  return *indexing_no_sz_;
 }
 
 template <typename bit_t>
-indexing::SpinhalfIndexing<bit_t> const &
-Spinhalf<bit_t>::indexing_sz_conserved() const {
+indexing::SpinhalfIndexing<bit_t> const &Spinhalf<bit_t>::indexing_sz() const {
   if (!sz_conserved_ || symmetric_)
     lila::Log.err("Error: wrong indexing required");
-  return *indexing_sz_conserved_;
+  return *indexing_sz_;
 }
 
 template <typename bit_t>
 indexing::SpinhalfSymmetricIndexingNoSz<bit_t> const &
-Spinhalf<bit_t>::indexing_sym_sz_not_conserved() const {
+Spinhalf<bit_t>::indexing_sym_no_sz() const {
   if (sz_conserved_ || !symmetric_)
     lila::Log.err("Error: wrong indexing required");
-  return *indexing_sym_sz_not_conserved_;
+  return *indexing_sym_no_sz_;
 }
 
 template <typename bit_t>
 indexing::SpinhalfSymmetricIndexing<bit_t> const &
-Spinhalf<bit_t>::indexing_sym_sz_conserved() const {
+Spinhalf<bit_t>::indexing_sym_sz() const {
   if (!sz_conserved_ || !symmetric_)
     lila::Log.err("Error: wrong indexing required");
-  return *indexing_sym_sz_conserved_;
+  return *indexing_sym_sz_;
 }
 
 template class Spinhalf<uint16_t>;
