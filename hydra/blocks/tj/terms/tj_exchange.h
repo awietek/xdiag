@@ -8,8 +8,10 @@
 #include <hydra/blocks/utils/block_utils.h>
 #include <hydra/combinatorics/combinations.h>
 #include <hydra/common.h>
+
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
+#include <hydra/operators/operator_utils.h>
 
 namespace hydra::terms {
 

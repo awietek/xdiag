@@ -62,6 +62,7 @@
 #include "operators/bond.h"
 #include "operators/bondlist.h"
 #include "operators/couplings.h"
+#include "operators/operator_utils.h"
 
 #include "wavefunctions/gpwf_spinhalf.h"
 
