@@ -1,4 +1,5 @@
 sources+= hydra/utils/iochecks.cpp
+sources+= hydra/utils/complex.cpp
 sources+= hydra/bitops/bitops.cpp
 
 sources+= hydra/combinatorics/binomial.cpp
@@ -55,6 +56,8 @@ sources+= hydra/symmetries/symmetric_operator.cpp
 sources+= hydra/operators/bond.cpp
 sources+= hydra/operators/bondlist.cpp
 sources+= hydra/operators/couplings.cpp
+sources+= hydra/operators/operator_utils.cpp
+sources+= hydra/operators/operator_qns.cpp
 
 sources+= hydra/wavefunctions/gpwf_spinhalf.cpp
 
