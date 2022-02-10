@@ -52,7 +52,7 @@ TEST_CASE("spinhalf_matrix", "[models][spinhalf]") {
       auto H_no_sz = MatrixReal(bonds, couplings, block_no_sz, block_no_sz);
       REQUIRE(lila::close(H_no_sz, lila::Herm(H_no_sz)));
       auto eigs_no_sz = lila::EigenvaluesSym(H_no_sz);
-      
+
       lila::Vector<double> eigs_sz_all;
 
       for (int nup = 0; nup <= n_sites; ++nup) {
@@ -87,6 +87,71 @@ TEST_CASE("spinhalf_matrix", "[models][spinhalf]") {
       // comment: reference data from Lanczos, only ~10 digits precise
       // lila::Log("eigs(0): {}, e0: {}", eigs(0), e0);
       REQUIRE(std::abs(eigs(0) - e0) < 1e-8);
+    }
+  }
+
+  // Test S+/S-/Sz
+  {
+    lila::Log.out("spinhalf_matrix: sp sm commutator test");
+
+    for (int n_sites = 2; n_sites < 5; ++n_sites) {
+
+      Couplings cpls;
+      cpls["H"] = 1.0;
+
+      auto block_raw = Spinhalf(n_sites);
+      for (int nup = 1; nup < n_sites; ++nup) {
+
+	auto block = Spinhalf(n_sites, nup);
+	auto blockp = Spinhalf(n_sites, nup + 1);
+	auto blockm = Spinhalf(n_sites, nup - 1);
+
+        for (int i = 0; i < n_sites; ++i)
+          for (int j = 0; j < n_sites; ++j) {
+
+
+            BondList sp_i_m;
+            sp_i_m << Bond("S+", "H", {i});
+            auto sp_i_m_mat = MatrixReal(sp_i_m, cpls, blockm, block);
+            auto sp_i_mat = MatrixReal(sp_i_m, cpls, block_raw, block_raw);
+	    
+
+            BondList sm_j_m;
+            sm_j_m << Bond("S-", "H", {j});
+            auto sm_j_m_mat = MatrixReal(sm_j_m, cpls, block, blockm);
+            auto sm_j_mat = MatrixReal(sm_j_m, cpls, block_raw, block_raw);
+
+            BondList sp_i_p;
+            sp_i_p << Bond("S+", "H", {i});
+            auto sp_i_p_mat = MatrixReal(sp_i_p, cpls, block, blockp);
+
+            BondList sm_j_p;
+            sm_j_p << Bond("S-", "H", {j});
+            auto sm_j_p_mat = MatrixReal(sm_j_p, cpls, blockp, block);
+
+            auto C1 = lila::Mult(sp_i_m_mat, sm_j_m_mat);
+            auto C2 = lila::Mult(sm_j_p_mat, sp_i_p_mat);
+            auto comm = C1 - C2;
+
+
+            auto C1r = lila::Mult(sp_i_mat, sm_j_mat);
+            auto C2r = lila::Mult(sm_j_mat, sp_i_mat);
+            auto commr = C1r - C2r;
+
+            if (i == j) {
+              BondList sz;
+              sz << Bond("SZ", "H", {i});
+              auto sz_mat = MatrixReal(sz, cpls, block, block);
+              auto sz_matr = MatrixReal(sz, cpls, block_raw, block_raw);
+
+              REQUIRE(lila::close(comm, 2.0 * sz_mat));
+              REQUIRE(lila::close(commr, 2.0 * sz_matr));
+            } else {
+              REQUIRE(lila::close(comm, 0.0));
+              REQUIRE(lila::close(commr, 0.0));
+            }
+          }
+      }
     }
   }
 }

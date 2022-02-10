@@ -18,10 +18,12 @@
 #include "indexing/combinations_indexing.h"
 #include "indexing/lintable.h"
 #include "indexing/subsets_indexing.h"
+#include "indexing/indexing_variants.h"
 
-#include "indexing/spinhalf/spinhalf_indexing.h"
+
+#include "indexing/spinhalf/spinhalf_indexing_sz.h"
 #include "indexing/spinhalf/spinhalf_indexing_no_sz.h"
-#include "indexing/spinhalf/spinhalf_symmetric_indexing.h"
+#include "indexing/spinhalf/spinhalf_symmetric_indexing_sz.h"
 #include "indexing/spinhalf/spinhalf_symmetric_indexing_no_sz.h"
 
 #include "indexing/tj/tj_indexing.h"
@@ -63,6 +65,7 @@
 #include "operators/bondlist.h"
 #include "operators/couplings.h"
 #include "operators/operator_utils.h"
+#include "operators/operator_qns.h"
 
 #include "wavefunctions/gpwf_spinhalf.h"
 

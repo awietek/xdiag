@@ -82,6 +82,24 @@ void check_sites_disjoint(Bond const &bond) {
   check_sites_disjoint(bond.sites());
 }
 
+
+BondList clean_bondlist(BondList const &bonds, Couplings const &cpls,
+                        std::vector<std::string> desired_bond_types) {
+  BondList clean_bonds;
+
+  for (auto type : desired_bond_types) {
+    auto bonds_of_type = bonds.bonds_of_type(type);
+
+    for (auto bond : bonds_of_type) {
+
+      if (coupling_is_non_zero(bond, cpls)) {
+        clean_bonds << bond;
+      }
+    }
+  }
+  return clean_bonds;
+}
+
 BondList clean_bondlist(BondList const &bonds, Couplings const &cpls,
                         std::vector<std::string> desired_bond_types,
                         int allowed_size) {

@@ -7,10 +7,10 @@
 #include <hydra/indexing/lintable.h>
 
 namespace hydra::indexing {
-template <typename bit_t> class SpinhalfIndexing {
+template <typename bit_t> class SpinhalfIndexingSz {
 public:
-  SpinhalfIndexing() = default;
-  SpinhalfIndexing(int n_sites, int nup);
+  SpinhalfIndexingSz() = default;
+  SpinhalfIndexingSz(int n_sites, int nup);
 
   inline int n_sites() const { return n_sites_; }
   inline int n_up() const { return n_up_; }

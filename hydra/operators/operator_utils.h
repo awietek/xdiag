@@ -32,6 +32,8 @@ void check_sites_disjoint(std::vector<int> const &sites);
 void check_sites_disjoint(Bond const &bond);
 
 BondList clean_bondlist(BondList const &bonds, Couplings const &cpls,
+                        std::vector<std::string> desired_bond_types);
+BondList clean_bondlist(BondList const &bonds, Couplings const &cpls,
                         std::vector<std::string> desired_bond_types,
                         int allowed_size);
 BondList non_zero_bondlist(BondList const &bonds, Couplings const &cpls);

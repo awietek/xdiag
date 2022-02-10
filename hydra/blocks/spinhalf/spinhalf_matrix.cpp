@@ -1,13 +1,10 @@
 #include "spinhalf_matrix.h"
 
 #include <hydra/blocks/spinhalf/spinhalf.h>
-
-#include <hydra/blocks/spinhalf/terms/spinhalf_exchange.h>
-#include <hydra/blocks/spinhalf/terms/spinhalf_ising.h>
-#include <hydra/blocks/spinhalf/terms/spinhalf_symmetric_exchange.h>
-#include <hydra/blocks/spinhalf/terms/spinhalf_symmetric_ising.h>
-
+#include <hydra/blocks/spinhalf/terms/spinhalf_terms.h>
 #include <hydra/blocks/utils/block_utils.h>
+
+#include <hydra/operators/operator_qns.h>
 
 namespace hydra {
 
@@ -15,9 +12,11 @@ template <typename bit_t, typename coeff_t>
 lila::Matrix<coeff_t>
 MatrixGen(BondList const &bonds, Couplings const &couplings,
           Spinhalf<bit_t> const &block_in, Spinhalf<bit_t> const &block_out) {
-  using namespace hydra::terms;
 
-  assert(block_in == block_out); // only temporary
+  int n_up_out = utils::spinhalf_nup(bonds, couplings, block_in);
+  if (n_up_out != block_out.n_up())
+    lila::Log.err("Incompatible n_up in MatrixGen: {} != {}", n_up_out,
+                  block_out.n_up());
 
   utils::check_operator_works_with<coeff_t>(bonds, couplings,
                                             "spinhalf_matrix");
@@ -29,34 +28,19 @@ MatrixGen(BondList const &bonds, Couplings const &couplings,
     mat(idx_out, idx_in) += val;
   };
 
-  if (block_in.symmetric()) {
+  auto const &indexing_in = block_in.indexing();
+  auto const &indexing_out = block_out.indexing();
 
-    if (block_in.sz_conserved()) {
-      auto const &indexing_in = block_in.indexing_sym_sz();
-      spinhalf_symmetric_ising<bit_t, coeff_t>(bonds, couplings, indexing_in,
-                                               fill);
-      spinhalf_symmetric_exchange<bit_t, coeff_t>(bonds, couplings, indexing_in,
-                                                  fill);
-    } else {
-      auto const &indexing_in = block_in.indexing_sym_no_sz();
-      spinhalf_symmetric_ising<bit_t, coeff_t>(bonds, couplings, indexing_in,
-                                               fill);
-      spinhalf_symmetric_exchange<bit_t, coeff_t>(bonds, couplings, indexing_in,
-                                                  fill);
-    }
-
-  } else {
-
-    if (block_in.sz_conserved()) {
-      auto const &indexing_in = block_in.indexing_sz();
-      spinhalf_ising<bit_t, coeff_t>(bonds, couplings, indexing_in, fill);
-      spinhalf_exchange<bit_t, coeff_t>(bonds, couplings, indexing_in, fill);
-    } else {
-      auto const &indexing_in = block_in.indexing_no_sz();
-      spinhalf_ising<bit_t, coeff_t>(bonds, couplings, indexing_in, fill);
-      spinhalf_exchange<bit_t, coeff_t>(bonds, couplings, indexing_in, fill);
-    }
+  if (block_in == block_out) {
+    terms::spinhalf_ising<bit_t, coeff_t>(bonds, couplings, indexing_in, fill);
+    terms::spinhalf_exchange<bit_t, coeff_t>(bonds, couplings, indexing_in,
+                                             fill);
+    terms::spinhalf_sz<bit_t, coeff_t>(bonds, couplings, indexing_in, fill);
   }
+  terms::spinhalf_spsm<bit_t, coeff_t>(bonds, couplings, indexing_in,
+				       indexing_out, fill, "S+");
+  terms::spinhalf_spsm<bit_t, coeff_t>(bonds, couplings, indexing_in,
+				       indexing_out, fill, "S-");
 
   return mat;
 }

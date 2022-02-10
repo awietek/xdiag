@@ -9,8 +9,6 @@
 
 #include <hydra/combinatorics/combinations.h>
 
-#include <hydra/indexing/spinhalf/spinhalf_indexing.h>
-
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
 #include <hydra/operators/operator_utils.h>
@@ -18,8 +16,9 @@
 namespace hydra::terms {
 
 template <typename bit_t, typename coeff_t, class Indexing, class Filler>
-void spinhalf_exchange(BondList const &bonds, Couplings const &couplings,
-                 Indexing &&indexing, Filler &&fill) {
+void spinhalf_unsymmetric_exchange(BondList const &bonds,
+                                   Couplings const &couplings,
+                                   Indexing &&indexing, Filler &&fill) {
   using bitops::gbit;
 
   auto clean_bonds = utils::clean_bondlist(bonds, couplings,
@@ -53,4 +52,4 @@ void spinhalf_exchange(BondList const &bonds, Couplings const &couplings,
   }
 }
 
-} // namespace hydra::terms::spinhalf
+} // namespace hydra::terms

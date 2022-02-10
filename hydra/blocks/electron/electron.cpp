@@ -6,9 +6,10 @@ namespace hydra {
 
 template <class bit_t>
 Electron<bit_t>::Electron(int n_sites)
-    : n_sites_(n_sites), charge_conserved_(false), charge_(invalid_n),
-      sz_conserved_(false), sz_(invalid_n), n_up_(invalid_n), n_dn_(invalid_n),
-      symmetric_(false), permutation_group_(), irrep_(), indexing_np_(),
+    : n_sites_(n_sites), charge_conserved_(false), charge_(undefined_qn),
+      sz_conserved_(false), sz_(undefined_qn), n_up_(undefined_qn),
+      n_dn_(undefined_qn), symmetric_(false), permutation_group_(), irrep_(),
+      indexing_np_(),
       indexing_no_np_(std::make_shared<indexing_no_np_t>(n_sites)),
       indexing_sym_np_(), indexing_sym_no_np_(),
       size_(indexing_no_np_->size()) {
@@ -30,9 +31,9 @@ Electron<bit_t>::Electron(int n_sites, int nup, int ndn)
 template <typename bit_t>
 Electron<bit_t>::Electron(int n_sites, PermutationGroup permutation_group,
                           Representation irrep)
-    : n_sites_(n_sites), charge_conserved_(false), charge_(invalid_n),
-      sz_conserved_(false), sz_(invalid_n), n_up_(invalid_n), n_dn_(invalid_n),
-      symmetric_(true),
+    : n_sites_(n_sites), charge_conserved_(false), charge_(undefined_qn),
+      sz_conserved_(false), sz_(undefined_qn), n_up_(undefined_qn),
+      n_dn_(undefined_qn), symmetric_(true),
       permutation_group_(allowed_subgroup(permutation_group, irrep)),
       irrep_(irrep), indexing_np_(), indexing_no_np_(), indexing_sym_np_(),
       indexing_sym_no_np_(std::make_shared<indexing_sym_no_np_t>(
