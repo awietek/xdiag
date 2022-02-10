@@ -1,5 +1,9 @@
 #pragma once
 
+#include <hydra/blocks/electron/electron.h>
+#include <hydra/blocks/spinhalf/spinhalf.h>
+#include <hydra/blocks/tj/tj.h>
+
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
 #include <hydra/operators/operator_utils.h>
@@ -8,20 +12,21 @@
 #include <map>
 #include <string>
 #include <utility>
+#include <vector>
 
 namespace hydra::utils {
 
-constexpr int undefined_qn = std::numeric_limits<int>::min();
-constexpr std::pair<int, int> undefined_qns = {undefined_qn, undefined_qn};
-
+const std::vector<std::string> spinhalf_bonds = {
+    "HB", "HEISENBERG", "EXCHANGE", "ISING", "SZ", "SX", "SY", "S+", "S-"};
 const std::map<std::string, int> spinhalf_bond_nup = {
     {"HB", 0},  {"HEISENBERG", 0},    {"EXCHANGE", 0},      {"ISING", 0},
     {"SZ", 0},  {"SX", undefined_qn}, {"SY", undefined_qn}, {"S+", 1},
     {"S-", -1},
 };
 
-int spinhalf_operator_nup(BondList const &bonds, Couplings const &cpls);
-
+const std::vector<std::string> electron_bonds = {
+    "HB", "HEISENBERG", "EXCHANGE", "ISING", "SZ",     "SX", "SY",
+    "S+", "S-",         "Cdagup",   "Cup",   "Cdagdn", "Cdn"};
 const std::map<std::string, std::pair<int, int>> electron_bond_nup_ndn = {
     {"HB", {0, 0}},        {"HEISENBERG", {0, 0}}, {"EXCHANGE", {0, 0}},
     {"ISING", {0, 0}},     {"SZ", {0, 0}},         {"SX", undefined_qns},
@@ -29,9 +34,43 @@ const std::map<std::string, std::pair<int, int>> electron_bond_nup_ndn = {
     {"Cdagup", {1, 0}},    {"Cup", {-1, 0}},       {"Cdagdn", {0, 1}},
     {"Cdn", {0, -1}}};
 
-std::pair<int, int> electron_operator_nup_ndn(BondList const &bonds,
-                                              Couplings const &cpls);
-std::pair<int, int> tj_operator_nup_ndn(BondList const &bonds,
-                                        Couplings const &cpls);
+int spinhalf_nup(BondList const &bonds, Couplings const &cpls);
+std::pair<int, int> tj_nup_ndn(BondList const &bonds, Couplings const &cpls);
+std::pair<int, int> electron_nup_ndn(BondList const &bonds,
+                                     Couplings const &cpls);
+
+template <typename bit_t>
+inline int spinhalf_nup(BondList const &bonds, Couplings const &cpls,
+                        Spinhalf<bit_t> const &spinhalf) {
+  int op_nup = spinhalf_nup(bonds, cpls);
+  if ((op_nup == undefined_qn) || (spinhalf.n_up() == undefined_qn)) {
+    return undefined_qn;
+  } else {
+    return op_nup + spinhalf.n_up();
+  }
+}
+template <typename bit_t>
+inline std::pair<int, int>
+tj_nup_ndn(BondList const &bonds, Couplings const &cpls, tJ<bit_t> const &tj) {
+  auto op_ns = tj_nup_ndn(bonds, cpls);
+  if ((op_ns == undefined_qns) || (tj.n_up() == undefined_qn) ||
+      (tj.n_dn() == undefined_qn)) {
+    return undefined_qns;
+  } else {
+    return {op_ns.first + tj.n_up(), op_ns.second + tj.n_dn()};
+  }
+}
+template <typename bit_t>
+inline std::pair<int, int> electron_nup_ndn(BondList const &bonds,
+                                            Couplings const &cpls,
+                                            Electron<bit_t> const &electron) {
+  auto op_ns = electron_nup_ndn(bonds, cpls);
+  if ((op_ns == undefined_qns) || (electron.n_up() == undefined_qn) ||
+      (electron.n_dn() == undefined_qn)) {
+    return undefined_qns;
+  } else {
+    return {op_ns.first + electron.n_up(), op_ns.second + electron.n_dn()};
+  }
+}
 
 } // namespace hydra::utils

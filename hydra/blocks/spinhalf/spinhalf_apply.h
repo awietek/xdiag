@@ -2,8 +2,10 @@
 
 #include <lila/all.h>
 
-#include <hydra/blocks/blocks.h>
 #include <hydra/common.h>
+
+#include <hydra/blocks/blocks.h>
+
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
 

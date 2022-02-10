@@ -6,8 +6,6 @@
 #include <hydra/blocks/spinhalf/spinhalf.h>
 #include <hydra/blocks/utils/block_utils.h>
 
-#include <hydra/indexing/spinhalf/spinhalf_indexing.h>
-
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
 #include <hydra/operators/operator_utils.h>
@@ -17,10 +15,9 @@
 namespace hydra::terms {
 
 template <typename bit_t, typename coeff_t, class Indexing, class Filler>
-void spinhalf_ising(BondList const &bonds, Couplings const &couplings,
-              Indexing &&indexing, Filler &&fill) {
-  using combinatorics::Combinations;
-
+void spinhalf_unsymmetric_ising(BondList const &bonds,
+                                Couplings const &couplings, Indexing &&indexing,
+                                Filler &&fill) {
   auto clean_bonds =
       utils::clean_bondlist(bonds, couplings, {"HEISENBERG", "HB", "ISING"}, 2);
   for (auto bond : clean_bonds) {
@@ -48,4 +45,4 @@ void spinhalf_ising(BondList const &bonds, Couplings const &couplings,
   }
 }
 
-} // namespace hydra::terms::spinhalf
+} // namespace hydra::terms

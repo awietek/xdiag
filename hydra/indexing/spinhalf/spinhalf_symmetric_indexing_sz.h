@@ -12,12 +12,12 @@
 
 namespace hydra::indexing {
 
-template <typename bit_t> class SpinhalfSymmetricIndexing {
+template <typename bit_t> class SpinhalfSymmetricIndexingSz {
 public:
   using span_size_t = gsl::span<int const>::size_type;
 
-  SpinhalfSymmetricIndexing() = default;
-  SpinhalfSymmetricIndexing(int n_sites, int n_up,
+  SpinhalfSymmetricIndexingSz() = default;
+  SpinhalfSymmetricIndexingSz(int n_sites, int n_up,
                             PermutationGroup permutation_group,
                             Representation irrep);
   inline int n_sites() const { return n_sites_; }

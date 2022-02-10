@@ -4,10 +4,7 @@
 
 #include <hydra/common.h>
 
-#include <hydra/indexing/spinhalf/spinhalf_indexing.h>
-#include <hydra/indexing/spinhalf/spinhalf_indexing_no_sz.h>
-#include <hydra/indexing/spinhalf/spinhalf_symmetric_indexing.h>
-#include <hydra/indexing/spinhalf/spinhalf_symmetric_indexing_no_sz.h>
+#include <hydra/indexing/indexing_variants.h>
 
 #include <hydra/symmetries/permutation_group.h>
 #include <hydra/symmetries/representation.h>
@@ -52,22 +49,11 @@ private:
   PermutationGroup permutation_group_;
   Representation irrep_;
 
-  using indexing_sz_t = indexing::SpinhalfIndexing<bit_t>;
-  using indexing_no_sz_t = indexing::SpinhalfIndexingNoSz<bit_t>;
-  using indexing_sym_sz_t = indexing::SpinhalfSymmetricIndexing<bit_t>;
-  using indexing_sym_no_sz_t = indexing::SpinhalfSymmetricIndexingNoSz<bit_t>;
-
-  std::shared_ptr<indexing_sz_t> indexing_sz_;
-  std::shared_ptr<indexing_no_sz_t> indexing_no_sz_;
-  std::shared_ptr<indexing_sym_sz_t> indexing_sym_sz_;
-  std::shared_ptr<indexing_sym_no_sz_t> indexing_sym_no_sz_;
+  using indexing_t = indexing::SpinhalfIndexing<bit_t>;
+  std::shared_ptr<indexing_t> indexing_;
+  indexing_t const &indexing() const;
 
   idx_t size_;
-
-  indexing_sz_t const &indexing_sz() const;
-  indexing_no_sz_t const &indexing_no_sz() const;
-  indexing_sym_sz_t const &indexing_sym_sz() const;
-  indexing_sym_no_sz_t const &indexing_sym_no_sz() const;
 
   template <typename bit_tt, typename coeff_tt>
   friend void
