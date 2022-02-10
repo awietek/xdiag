@@ -114,8 +114,7 @@ TEST_CASE("spinhalf_matrix", "[models][spinhalf]") {
             sp_i_m << Bond("S+", "H", {i});
             auto sp_i_m_mat = MatrixReal(sp_i_m, cpls, blockm, block);
             auto sp_i_mat = MatrixReal(sp_i_m, cpls, block_raw, block_raw);
-	    
-
+	   
             BondList sm_j_m;
             sm_j_m << Bond("S-", "H", {j});
             auto sm_j_m_mat = MatrixReal(sm_j_m, cpls, block, blockm);
@@ -132,8 +131,6 @@ TEST_CASE("spinhalf_matrix", "[models][spinhalf]") {
             auto C1 = lila::Mult(sp_i_m_mat, sm_j_m_mat);
             auto C2 = lila::Mult(sm_j_p_mat, sp_i_p_mat);
             auto comm = C1 - C2;
-
-
             auto C1r = lila::Mult(sp_i_mat, sm_j_mat);
             auto C2r = lila::Mult(sm_j_mat, sp_i_mat);
             auto commr = C1r - C2r;
@@ -143,7 +140,6 @@ TEST_CASE("spinhalf_matrix", "[models][spinhalf]") {
               sz << Bond("SZ", "H", {i});
               auto sz_mat = MatrixReal(sz, cpls, block, block);
               auto sz_matr = MatrixReal(sz, cpls, block_raw, block_raw);
-
               REQUIRE(lila::close(comm, 2.0 * sz_mat));
               REQUIRE(lila::close(commr, 2.0 * sz_matr));
             } else {
