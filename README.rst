@@ -8,7 +8,7 @@ Hydra
 High-performance Yxact Diagonalization Routines and Algorithms
 --------------------------------------------------------------
 
-A C++ library to perform efficient Exact Diagonalizations of quantum many body systems. The full documentation is available at .. _hamiltonian_tfi.py: hamiltonian_tfi.py
+A C++ library to perform efficient Exact Diagonalizations of quantum many body systems. The full documentation is available at :ref:`awietek.github.io/hydradoc`.
 
 :author: Alexander Wietek
 :license: Apache License 2.0
