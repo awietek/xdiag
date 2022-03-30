@@ -12,7 +12,7 @@ Hydra
 High-performance Yxact Diagonalization Routines and Algorithms
 --------------------------------------------------------------
 
-A C++ library to perform efficient Exact Diagonalizations of quantum many body systems. The full documentation is available at :ref:`awietek.github.io/hydradoc`.
+A C++ library to perform efficient Exact Diagonalizations of quantum many body systems. The full documentation is available at `awietek.github.io/hydradoc <https://awietek.github.io/hydradoc>`_.
 
 :author: Alexander Wietek
 :license: Apache License 2.0
