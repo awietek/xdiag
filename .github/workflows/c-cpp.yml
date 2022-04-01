@@ -19,6 +19,8 @@ jobs:
         cp options.mk.sample options.mk
         liladir=`echo $PWD/lila`
         sed -i "s|/mnt/home/awietek/Research/Software/lila|$liladir|g" options.mk
+        sed -i "s|-DLILA_USE_MKL|-DLILA_USE_LAPACK|g" options.mk
+        sed -i "s|-lmkl_rt|-llapack -lblas|g" options.mk
         cat options.mk
         make
         make test
