@@ -18,7 +18,7 @@ jobs:
     - name: options
       run: |
         cp options.mk.sample options.mk
-	ls
+        ls
     - name: make
       run: make
     - name: make test
