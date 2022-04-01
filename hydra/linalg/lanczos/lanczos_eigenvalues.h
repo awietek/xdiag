@@ -9,7 +9,6 @@
 #include <hydra/mpi/dot_mpi.h>
 #include <hydra/mpi/timing_mpi.h>
 
-
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
 
@@ -108,9 +107,11 @@ Tmatrix LanczosEigenvaluesReal(BondList const &bonds,
 
   // use different seeds for different MPI processes
   if constexpr (detail::is_mpi_block<Block>) {
+#ifdef __MPI
     int mpi_rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
     seed += 0x01000193 * mpi_rank;
+#endif
   }
 
   // Create random starting vector with normal distributed entries
@@ -134,9 +135,11 @@ Tmatrix LanczosEigenvaluesCplx(BondList const &bonds,
 
   // use different seeds for different MPI processes
   if constexpr (detail::is_mpi_block<Block>) {
+#ifdef __MPI
     int mpi_rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
     seed += 0x01000193 * mpi_rank;
+#endif
   }
 
   // Create random starting vector with normal distributed entries

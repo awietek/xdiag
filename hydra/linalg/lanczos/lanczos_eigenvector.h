@@ -144,9 +144,11 @@ LanczosEigenvectorReal(BondList const &bonds, Couplings const &couplings,
 
   // use different seeds for different MPI processes
   if constexpr (detail::is_mpi_block<Block>) {
+#ifdef __MPI
     int mpi_rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
     seed += 0x01000193 * mpi_rank;
+#endif
   }
 
   // Create random starting vector with normal distributed entries
@@ -174,9 +176,11 @@ LanczosEigenvectorCplx(BondList const &bonds, Couplings const &couplings,
 
   // use different seeds for different MPI processes
   if constexpr (detail::is_mpi_block<Block>) {
-    int mpi_rank;
-    MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
-    seed += 0x01000193 * mpi_rank;
+#ifdef __MPI
+      int mpi_rank; 
+      MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
+      seed += 0x01000193 * mpi_rank;
+#endif
   }
 
   // Create random starting vector with normal distributed entries
