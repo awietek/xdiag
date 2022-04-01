@@ -1,6 +1,9 @@
 #pragma once
 
+#ifdef __MPI
 #include <mpi.h>
+#endif
+
 #include <iostream>
 #include <string>
 
@@ -8,6 +11,8 @@
 #include <lila/external/fmt/format.h>
 
 namespace hydra {
+
+#ifdef __MPI
 
 class LoggerMPI {
 public:
@@ -67,6 +72,9 @@ public:
 private:
   int verbosity_;
 };
+#else
+  using LoggerMPI = lila::Logger;
+#endif
 
 inline LoggerMPI LogMPI;
 
