@@ -22,7 +22,7 @@ jobs:
         cat options.mk
         make
         make test
-    - name run tests
+    - name: run tests
       run: |
         cd test
         ./tests
