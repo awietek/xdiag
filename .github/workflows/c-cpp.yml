@@ -13,13 +13,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: lila
-      run: git clone https://github.com/awietek/lila.git
-    - name: options
-      run: |
-        cp options.mk.sample options.mk
-        ls
-    - name: make
-      run: make
     - name: make test
-      run: make test
+      run: |
+        git clone https://github.com/awietek/lila.git
+        cp options.mk.sample options.mk
+        make
+        make test
