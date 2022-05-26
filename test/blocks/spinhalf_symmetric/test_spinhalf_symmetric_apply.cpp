@@ -161,7 +161,8 @@ TEST_CASE("spinhalf_symmetric_apply", "[blocks][spinhalf_symmetric]") {
         {"K.C3.Eb", -5.2045133473640809996},
         {"M.C2.A", -5.756684675081964464},
         {"M.C2.B", -5.7723510325561688816},
-        {"X.C1.A", -5.9030627660522529965}};
+        {"X.C1.A", -5.9030627660522529965}
+    };
 
     auto permutations = hydra::read_permutations(lfile);
     auto space_group = PermutationGroup(permutations);
@@ -172,7 +173,7 @@ TEST_CASE("spinhalf_symmetric_apply", "[blocks][spinhalf_symmetric]") {
       auto irrep = read_represenation(lfile, name);
       auto spinhalf = Spinhalf<uint16_t>(n_sites, n_up, space_group, irrep);
       auto e0 = E0Cplx(bondlist, couplings, spinhalf);
-      lila::Log("{} {:.18f} {:.18f}", name, e0, energy);
+      lila::Log("{} {:.12f} {:.12f}", name, e0, energy);
 
       REQUIRE(std::abs(e0 - energy) < 1e-10);
     }

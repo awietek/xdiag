@@ -49,7 +49,7 @@ TEST_CASE("spinhalf_apply", "[models][spinhalf]") {
     auto block_no_sz = Spinhalf(n_sites);
     auto e0_no_sz = E0Real(bonds, couplings, block_no_sz);
     auto e0s_sz = std::vector<double>();
-    
+
     for (int nup = 0; nup <= n_sites; ++nup) {
       auto block_sz = Spinhalf(n_sites, nup);
       auto e0_sz = E0Real(bonds, couplings, block_sz);
@@ -57,5 +57,27 @@ TEST_CASE("spinhalf_apply", "[models][spinhalf]") {
     }
     auto e0_sz = *std::min_element(e0s_sz.begin(), e0s_sz.end());
     REQUIRE(lila::close(e0_sz, e0_no_sz));
+  }
+
+  {
+    lila::Log("spinhalf_matrix: Triangular J1J2Jchi N=12");
+    std::string lfile = "data/triangular.j1j2jch/"
+                        "triangular.12.j1j2jch.sublattices.fsl.lat";
+
+    auto bondlist = read_bondlist(lfile);
+    Couplings couplings;
+    couplings["J1"] = 1.00;
+    couplings["J2"] = 0.15;
+    couplings["Jchi"] = 0.09;
+
+    int n_sites = 12;
+    int n_up = 6;
+    auto spinhalf = Spinhalf<uint16_t>(n_sites, n_up);
+    auto e0 = E0Cplx(bondlist, couplings, spinhalf);
+    double energy = -6.9456000700824329641;
+	
+    // lila::Log("{:.18f} {:.18f}", e0, energy);
+
+    REQUIRE(lila::close(e0, energy));
   }
 }

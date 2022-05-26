@@ -223,8 +223,10 @@ TEST_CASE("spinhalf_symmetric_matrix", "[blocks][spinhalf_symmetric]") {
     for (auto [name, energy] : rep_name_mult) {
       auto irrep = read_represenation(lfile, name);
       auto spinhalf = Spinhalf<uint16_t>(n_sites, n_up, space_group, irrep);
-      auto H_sym = MatrixCplx(bondlist, couplings, spinhalf, spinhalf);
-      auto eigs = lila::EigenvaluesSym(H_sym);
+      auto H = MatrixCplx(bondlist, couplings, spinhalf, spinhalf);
+      REQUIRE(lila::close(H, lila::Herm(H)));
+
+      auto eigs = lila::EigenvaluesSym(H);
       // lila::Log("{} {:.18f} {:.18f}", name, eigs(0), energy);
 
       REQUIRE(std::abs(eigs(0) - energy) < 1e-10);

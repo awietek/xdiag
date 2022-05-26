@@ -90,6 +90,32 @@ TEST_CASE("spinhalf_matrix", "[models][spinhalf]") {
     }
   }
 
+  {
+    lila::Log("spinhalf_matrix: Triangular J1J2Jchi N=12");
+    std::string lfile = "data/triangular.j1j2jch/"
+                        "triangular.12.j1j2jch.sublattices.fsl.lat";
+
+    auto bondlist = read_bondlist(lfile);
+    Couplings couplings;
+    couplings["J1"] = 1.00;
+    couplings["J2"] = 0.15;
+    couplings["Jchi"] = 0.09;
+
+    int n_sites = 12;
+    int n_up = 6;
+    auto block = Spinhalf<uint16_t>(n_sites, n_up);
+    auto H = MatrixCplx(bondlist, couplings, block, block);
+    REQUIRE(lila::close(H, lila::Herm(H)));
+    
+    auto eigs = lila::EigenvaluesSym(H);
+    double energy = -6.9456000700824329641;
+    
+    // lila::Log("{:.18f} {:.18f}", eigs(0), energy);
+
+    REQUIRE(lila::close(eigs(0), energy));
+
+  }
+
   // Test S+/S-/Sz
   {
     lila::Log.out("spinhalf_matrix: sp sm commutator test");
