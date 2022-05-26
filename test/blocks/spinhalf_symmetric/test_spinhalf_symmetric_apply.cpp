@@ -137,4 +137,44 @@ TEST_CASE("spinhalf_symmetric_apply", "[blocks][spinhalf_symmetric]") {
                                           irreps);
   test_spinhalf_symmetric_apply_no_sz<uint64_t>(bondlist, couplings,
                                                 space_group, irreps);
+
+
+    // test J1-J2-Jchi triangular lattice
+  {
+    lila::Log("spinhalf_symmetric_matrix: Triangular J1J2Jchi N=12");
+    std::string lfile = "data/triangular.j1j2jch/"
+                        "triangular.12.j1j2jch.sublattices.fsl.lat";
+
+    auto bondlist = read_bondlist(lfile);
+    Couplings couplings;
+    couplings["J1"] = 1.00;
+    couplings["J2"] = 0.15;
+    couplings["Jchi"] = 0.09;
+
+    std::vector<std::pair<std::string, double>> rep_name_mult = {
+        {"Gamma.C6.A", -6.9456000700824329641},
+        {"Gamma.C6.B", -5.8410912437873072633},
+        {"Gamma.C6.E1a", -3.8556417248355927541},
+        {"Gamma.C6.E2a", -6.4157243358059030669},
+        {"K.C3.A", -5.9197511811622431921},
+        {"K.C3.Ea", -5.0281703836000861685},
+        {"K.C3.Eb", -5.2045133473640809996},
+        {"M.C2.A", -5.756684675081964464},
+        {"M.C2.B", -5.7723510325561688816},
+        {"X.C1.A", -5.9030627660522529965}};
+
+    auto permutations = hydra::read_permutations(lfile);
+    auto space_group = PermutationGroup(permutations);
+
+    int n_sites = 12;
+    int n_up = 6;
+    for (auto [name, energy] : rep_name_mult) {
+      auto irrep = read_represenation(lfile, name);
+      auto spinhalf = Spinhalf<uint16_t>(n_sites, n_up, space_group, irrep);
+      auto e0 = E0Cplx(bondlist, couplings, spinhalf);
+      lila::Log("{} {:.18f} {:.18f}", name, e0, energy);
+
+      REQUIRE(std::abs(e0 - energy) < 1e-10);
+    }
+  }
 }

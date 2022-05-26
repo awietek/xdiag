@@ -61,7 +61,7 @@ void spinhalf_symmetric_exchange(BondList const &bonds,
         }
       }
     }
-  }
+  } // for (auto bond : clean_bonds)
 }
 
 } // namespace hydra::terms

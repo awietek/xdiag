@@ -7,8 +7,10 @@
 #include <hydra/indexing/indexing_variants.h>
 
 #include <hydra/blocks/spinhalf/terms/spinhalf_symmetric_exchange.h>
+#include <hydra/blocks/spinhalf/terms/spinhalf_symmetric_scalar_chirality.h>
 #include <hydra/blocks/spinhalf/terms/spinhalf_symmetric_ising.h>
 #include <hydra/blocks/spinhalf/terms/spinhalf_unsymmetric_exchange.h>
+#include <hydra/blocks/spinhalf/terms/spinhalf_unsymmetric_scalar_chirality.h>
 #include <hydra/blocks/spinhalf/terms/spinhalf_unsymmetric_ising.h>
 #include <hydra/blocks/spinhalf/terms/spinhalf_unsymmetric_spsm.h>
 #include <hydra/blocks/spinhalf/terms/spinhalf_unsymmetric_sz.h>
@@ -67,6 +69,36 @@ void spinhalf_exchange(BondList const &bonds, Couplings const &couplings,
                         },
                         [&](SpinhalfSymmetricIndexingNoSz<bit_t> const &idxr) {
                           spinhalf_symmetric_exchange<bit_t, coeff_t>(
+                              bonds, couplings, idxr, fill);
+                        },
+                        [&](auto idxr) {
+                          lila::Log.err("Invalid indexing encountered");
+                        }},
+             indexing);
+}
+
+template <typename bit_t, typename coeff_t, class Filler>
+void spinhalf_scalar_chirality(
+    BondList const &bonds, Couplings const &couplings,
+    indexing::SpinhalfIndexing<bit_t> const &indexing, Filler &&fill) {
+
+  using namespace indexing;
+
+  // Multiple dispatch using std::variant / std::visit
+  std::visit(overloaded{[&](SpinhalfIndexingSz<bit_t> const &idxr) {
+                          spinhalf_unsymmetric_scalar_chirality<bit_t, coeff_t>(
+                              bonds, couplings, idxr, fill);
+                        },
+                        [&](SpinhalfIndexingNoSz<bit_t> const &idxr) {
+                          spinhalf_unsymmetric_scalar_chirality<bit_t, coeff_t>(
+                              bonds, couplings, idxr, fill);
+                        },
+                        [&](SpinhalfSymmetricIndexingSz<bit_t> const &idxr) {
+                          spinhalf_symmetric_scalar_chirality<bit_t, coeff_t>(
+                              bonds, couplings, idxr, fill);
+                        },
+                        [&](SpinhalfSymmetricIndexingNoSz<bit_t> const &idxr) {
+                          spinhalf_symmetric_scalar_chirality<bit_t, coeff_t>(
                               bonds, couplings, idxr, fill);
                         },
                         [&](auto idxr) {

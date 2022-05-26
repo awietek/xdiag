@@ -3,7 +3,7 @@
 #include <iostream>
 
 #include <hydra/all.h>
-#include <omp.h>
+// #include <omp.h>
 
 template <typename bit_t> void test_combinations_index() {
   using namespace hydra;

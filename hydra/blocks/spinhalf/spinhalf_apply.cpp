@@ -34,6 +34,8 @@ void Apply(BondList const &bonds, Couplings const &couplings,
     terms::spinhalf_ising<bit_t, coeff_t>(bonds, couplings, indexing_in, fill);
     terms::spinhalf_exchange<bit_t, coeff_t>(bonds, couplings, indexing_in,
                                              fill);
+    terms::spinhalf_scalar_chirality<bit_t, coeff_t>(bonds, couplings,
+                                                     indexing_in, fill);
     terms::spinhalf_sz<bit_t, coeff_t>(bonds, couplings, indexing_in, fill);
   }
   terms::spinhalf_spsm<bit_t, coeff_t>(bonds, couplings, indexing_in,
