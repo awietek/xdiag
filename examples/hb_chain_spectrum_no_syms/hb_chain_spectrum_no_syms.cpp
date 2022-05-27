@@ -28,6 +28,17 @@ int main() {
 
   // Output the eigenvalues
   LilaPrint(eigs);
-  
+
+  /////
+  // Alternatively, compute spectrum without Sz conservation
+
+  // Create spinhalf block without Sz quantum number, ...
+  auto block_no_sz = Spinhalf(n_sites);
+
+  // ... create the Hamiltonian and compute eigenvalues
+  auto H_no_sz = MatrixReal(bonds, couplings, block_no_sz, block_no_sz);
+  auto eigs_no_sz = lila::EigenvaluesSym(H_no_sz);
+  LilaPrint(eigs_no_sz);
+
   return EXIT_SUCCESS;
 }

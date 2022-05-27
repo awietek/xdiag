@@ -1,6 +1,6 @@
 # Define the compiler and the compile options
 cc       = clang++
-copt     = -O3 -Ofast -mavx -std=c++17 -m64 -Wno-return-type-c-linkage
+copt     = -O2 -std=c++17
 
 # Set the directory of lila and hydra here
 liladir  = /Users/awietek/Research/Software/lila
@@ -11,4 +11,4 @@ lilabackend = -DLILA_USE_ACCELERATE
 lapacklib   = -framework Accelerate
 
 all:
-	$(cc) $(copt) -I$(liladir) -I$(hydradir) -L$(hydradir)/lib $(lilabackend) $(lapacklib) -lhydra spinhalf_chain.cpp -o spinhalf_chain
+	$(cc) $(copt) -I$(liladir) -I$(hydradir) -L$(hydradir)/lib $(lilabackend) $(lapacklib) -lhydra tj_random_all_to_all.cpp -o tj_random_all_to_all
