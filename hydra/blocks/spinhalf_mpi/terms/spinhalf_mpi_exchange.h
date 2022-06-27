@@ -3,12 +3,14 @@
 #include <algorithm>
 #include <tuple>
 
+#include <hydra/bitops/bitops.h>
 #include <hydra/combinatorics/combinations.h>
 #include <hydra/combinatorics/subsets.h>
 #include <hydra/common.h>
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
-#include <hydra/bitops/bitops.h>
+#include <hydra/operators/operator_utils.h>
+
 
 #include <hydra/blocks/spinhalf_mpi/terms/get_prefix_postfix_mixed_bonds.h>
 #include <hydra/blocks/spinhalf_mpi/terms/spinhalf_mpi_exchange_mixed_com.h>
@@ -17,13 +19,13 @@
 #include <hydra/mpi/communicator.h>
 #include <hydra/mpi/timing_mpi.h>
 
-namespace hydra::terms::spinhalf_mpi {
+namespace hydra::terms {
 
 template <class bit_t, class coeff_t>
-void do_exchange_mpi(BondList const &bonds, Couplings const &couplings,
-                     SpinhalfMPI<bit_t> const &block,
-                     lila::Vector<coeff_t> const &vec_in,
-                     lila::Vector<coeff_t> &vec_out) {
+void spinhalf_mpi_exchange(BondList const &bonds, Couplings const &couplings,
+                           SpinhalfMPI<bit_t> const &block,
+                           lila::Vector<coeff_t> const &vec_in,
+                           lila::Vector<coeff_t> &vec_out) {
   using namespace indexing;
   using combinatorics::Combinations;
   using combinatorics::Subsets;
@@ -32,10 +34,8 @@ void do_exchange_mpi(BondList const &bonds, Couplings const &couplings,
   MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
   MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
 
-  auto exchange_bonds = bonds.bonds_of_type("HEISENBERG") +
-                        bonds.bonds_of_type("EXCHANGE") +
-                        bonds.bonds_of_type("HB");
-
+  auto exchange_bonds = utils::clean_bondlist(
+      bonds, couplings, {"HEISENBERG", "HB", "EXCHANGE"}, 2);
   int n_up = block.n_up();
   int n_prefix_bits = block.n_prefix_bits_;
   int n_postfix_bits = block.n_postfix_bits_;
@@ -46,8 +46,7 @@ void do_exchange_mpi(BondList const &bonds, Couplings const &couplings,
   // Apply postfix bonds, no communication required
   auto tpost = rightnow_mpi();
   for (auto bond : postfix_bonds) {
-    if (utils::coupling_is_zero(bond, couplings))
-      continue;
+
     auto [s1, s2, Jhalf] = get_exchange_s1_s2_Jhalf_mpi(bond, couplings);
     assert(s1 < n_postfix_bits);
     assert(s2 < n_postfix_bits);
@@ -273,4 +272,4 @@ void do_exchange_mpi(BondList const &bonds, Couplings const &couplings,
   }
 }
 
-} // namespace hydra::terms::spinhalf_mpi
+} // namespace hydra::terms

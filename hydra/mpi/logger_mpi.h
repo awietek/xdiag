@@ -7,6 +7,8 @@
 #include <iostream>
 #include <string>
 
+#include <lila/all.h>
+
 #define FMT_HEADER_ONLY
 #include <lila/external/fmt/format.h>
 

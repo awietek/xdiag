@@ -9,8 +9,7 @@
 #include <hydra/blocks/utils/block_utils.h>
 #include <hydra/blocks/utils/block_utils_mpi.h>
 
-
-namespace hydra::terms::spinhalf_mpi {
+namespace hydra::terms {
 
 // Create a communicator for every mixed bond, and the maximal communicator size
 template <class bit_t>
@@ -20,7 +19,7 @@ spinhalf_mpi_exchange_mixed_com(SpinhalfMPI<bit_t> const &block,
                                 Couplings const &couplings) {
   using namespace indexing;
   using combinatorics::Combinations;
-  
+
   int mpi_size;
   MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
 
@@ -34,8 +33,6 @@ spinhalf_mpi_exchange_mixed_com(SpinhalfMPI<bit_t> const &block,
 
     std::vector<idx_t> n_states_i_send(mpi_size, 0);
 
-    if (utils::coupling_is_zero(bond, couplings))
-      continue;
     auto [s1, s2, Jhalf] = get_exchange_s1_s2_Jhalf_mpi(bond, couplings);
     assert(s1 < n_postfix_bits);
     assert(s2 >= n_postfix_bits);
@@ -74,4 +71,4 @@ spinhalf_mpi_exchange_mixed_com(SpinhalfMPI<bit_t> const &block,
   return {communicators, max_send_size, max_recv_size};
 }
 
-} // namespace hydra::spinhalfterms
+} // namespace hydra::terms

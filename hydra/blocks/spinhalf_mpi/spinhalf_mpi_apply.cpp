@@ -1,10 +1,12 @@
 #include "spinhalf_mpi_apply.h"
 
-#include <hydra/combinatorics/combinations.h>
 #include <hydra/bitops/bitops.h>
+#include <hydra/combinatorics/combinations.h>
 
-#include <hydra/blocks/spinhalf_mpi/terms/spinhalf_mpi_exchange.h>
-#include <hydra/blocks/spinhalf_mpi/terms/spinhalf_mpi_ising.h>
+#include <hydra/operators/operator_qns.h>
+
+#include <hydra/blocks/spinhalf_mpi/terms/spinhalf_mpi_terms.h>
+#include <hydra/blocks/utils/block_utils.h>
 
 namespace hydra {
 
@@ -14,21 +16,37 @@ void Apply(BondList const &bonds, Couplings const &couplings,
            lila::Vector<coeff_t> const &vec_in,
            SpinhalfMPI<bit_t> const &block_out,
            lila::Vector<coeff_t> &vec_out) {
-  using namespace terms::spinhalf_mpi;
 
-  assert(block_in == block_out); // only temporary
+  int n_up_out = utils::spinhalf_nup(bonds, couplings, block_in);
+  if (n_up_out != block_out.n_up())
+    lila::Log.err("Incompatible n_up in Apply: {} != {}", n_up_out,
+                  block_out.n_up());
+
   assert(block_in.size() == vec_in.size());
   assert(block_out.size() == vec_out.size());
 
+  utils::check_operator_works_with<coeff_t>(bonds, couplings, "spinhalf_apply");
+
   lila::Zeros(vec_out);
 
-  auto tis = rightnow_mpi();
-  do_ising_mpi(bonds, couplings, block_in, vec_in, vec_out);
-  timing_mpi(tis, rightnow_mpi(), " (ising)", 2);
+  if (block_in == block_out) {
 
-  auto tex = rightnow_mpi();
-  do_exchange_mpi(bonds, couplings, block_in, vec_in, vec_out);
-  timing_mpi(tex, rightnow_mpi(), " (exchange)", 2);
+    auto tis = rightnow_mpi();
+    terms::spinhalf_mpi_ising(bonds, couplings, block_in, vec_in, vec_out);
+    timing_mpi(tis, rightnow_mpi(), " (ising)", 2);
+
+    auto tex = rightnow_mpi();
+    terms::spinhalf_mpi_exchange(bonds, couplings, block_in, vec_in, vec_out);
+    timing_mpi(tex, rightnow_mpi(), " (exchange)", 2);
+
+    auto tsz = rightnow_mpi();
+    terms::spinhalf_mpi_sz(bonds, couplings, block_in, vec_in, vec_out);
+    timing_mpi(tsz, rightnow_mpi(), " (sz)", 2);
+  }
+  auto tspsm = rightnow_mpi();
+  terms::spinhalf_mpi_spsm(bonds, couplings, block_in, vec_in, vec_out, "S+");
+  terms::spinhalf_mpi_spsm(bonds, couplings, block_in, vec_in, vec_out, "S-");
+  timing_mpi(tspsm, rightnow_mpi(), " (spsm)", 2);
 }
 
 template void Apply<uint16_t>(BondList const &bonds, Couplings const &couplings,

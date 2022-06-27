@@ -1,6 +1,6 @@
 #include "get_prefix_postfix_mixed_bonds.h"
 
-namespace hydra::terms::spinhalf_mpi {
+namespace hydra::terms {
 
 std::tuple<BondList, BondList, BondList>
 get_prefix_postfix_mixed_bonds(BondList const &bonds, int n_postfix_sites) {
@@ -30,4 +30,4 @@ get_prefix_postfix_mixed_bonds(BondList const &bonds, int n_postfix_sites) {
   return {prefix_bonds, postfix_bonds, mixed_bonds};
 }
 
-} // namespace hydra::terms::spinhalf_mpi
+} // namespace hydra::terms

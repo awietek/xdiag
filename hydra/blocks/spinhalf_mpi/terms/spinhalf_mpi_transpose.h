@@ -5,7 +5,7 @@
 #include <hydra/common.h>
 #include <hydra/mpi/communicator.h>
 
-namespace hydra::terms::spinhalf_mpi {
+namespace hydra::terms {
 
 template <class bit_t>
 mpi::Communicator spinhalf_mpi_transpose_com(SpinhalfMPI<bit_t> const &block,
@@ -57,8 +57,7 @@ void spinhalf_mpi_transpose(SpinhalfMPI<bit_t> const &block,
 
   auto &prefix_lintables =
       reverse ? block.postfix_lintables_ : block.prefix_lintables_;
-  auto &postfix_limits =
-      reverse ? block.prefix_limits_ : block.postfix_limits_;
+  auto &postfix_limits = reverse ? block.prefix_limits_ : block.postfix_limits_;
 
   // Set up buffers for communicating
   mpi::Communicator com = spinhalf_mpi_transpose_com(block, reverse);
@@ -108,4 +107,4 @@ void spinhalf_mpi_transpose(SpinhalfMPI<bit_t> const &block,
   std::fill(recv_buffer.begin(), recv_buffer.end(), 0);
 }
 
-} // namespace hydra::spinhalfterms
+} // namespace hydra::terms

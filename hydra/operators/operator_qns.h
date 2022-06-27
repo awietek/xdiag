@@ -39,9 +39,9 @@ std::pair<int, int> tj_nup_ndn(BondList const &bonds, Couplings const &cpls);
 std::pair<int, int> electron_nup_ndn(BondList const &bonds,
                                      Couplings const &cpls);
 
-template <typename bit_t>
+template <class Block>
 inline int spinhalf_nup(BondList const &bonds, Couplings const &cpls,
-                        Spinhalf<bit_t> const &spinhalf) {
+                        Block &&spinhalf) {
   int op_nup = spinhalf_nup(bonds, cpls);
   if ((op_nup == undefined_qn) || (spinhalf.n_up() == undefined_qn)) {
     return undefined_qn;
@@ -49,9 +49,10 @@ inline int spinhalf_nup(BondList const &bonds, Couplings const &cpls,
     return op_nup + spinhalf.n_up();
   }
 }
-template <typename bit_t>
-inline std::pair<int, int>
-tj_nup_ndn(BondList const &bonds, Couplings const &cpls, tJ<bit_t> const &tj) {
+
+template <class Block>
+inline std::pair<int, int> tj_nup_ndn(BondList const &bonds,
+                                      Couplings const &cpls, Block &&tj) {
   auto op_ns = tj_nup_ndn(bonds, cpls);
   if ((op_ns == undefined_qns) || (tj.n_up() == undefined_qn) ||
       (tj.n_dn() == undefined_qn)) {
@@ -60,10 +61,10 @@ tj_nup_ndn(BondList const &bonds, Couplings const &cpls, tJ<bit_t> const &tj) {
     return {op_ns.first + tj.n_up(), op_ns.second + tj.n_dn()};
   }
 }
-template <typename bit_t>
+template <class Block>
 inline std::pair<int, int> electron_nup_ndn(BondList const &bonds,
                                             Couplings const &cpls,
-                                            Electron<bit_t> const &electron) {
+                                            Block &&electron) {
   auto op_ns = electron_nup_ndn(bonds, cpls);
   if ((op_ns == undefined_qns) || (electron.n_up() == undefined_qn) ||
       (electron.n_dn() == undefined_qn)) {
