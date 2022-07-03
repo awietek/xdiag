@@ -50,7 +50,7 @@ include $(testmpidepends)
 # different building suites
 .PHONY: test 
 test:  $(objects) $(testobjects) lib 
-	$(cc) $(ccopt) $(ccstd) $(ccwarn) $(depflags) $(libraries) -Llib -lhydra $(objects) $(testobjects) -o test/tests 
+	$(cc) $(ccopt) $(ccstd) $(ccwarn) $(depflags) $(libraries) $(objects) $(testobjects) -o test/tests 
 
 .PHONY: mpi
 mpi: $(objects) $(mpiobjects) libmpi
@@ -58,7 +58,7 @@ mpi: $(objects) $(mpiobjects) libmpi
 
 .PHONY: testmpi 
 testmpi:  $(objects) $(mpiobjects) $(testmpiobjects) libmpi 
-	$(mpicc) $(ccopt) $(ccstd) $(ccwarn) $(depflags) $(libraries) -Llib -lhydra_mpi $(objects) $(mpiobjects) $(testmpiobjects) -o testmpi/tests 
+	$(mpicc) $(ccopt) $(ccstd) $(ccwarn) $(depflags) $(libraries) $(objects) $(mpiobjects) $(testmpiobjects) -o testmpi/tests 
 
 .PHONY: apps
 apps: $(objects) $(appobjects) $(appbinaries) lib
