@@ -70,7 +70,7 @@ void spinhalf_mpi_spsm(BondList const &bonds, Couplings const &couplings,
   // Apply S+S- if site belongs to prefixes
   auto tpre = rightnow_mpi();
   if (prefix_bonds.size() > 0) {
-    std::vector<coeff_t> send_buffer(vec_in.size(), 0);
+    std::vector<coeff_t> send_buffer(std::max(), 0);
     std::vector<coeff_t> recv_buffer(vec_in.size(), 0);
 
     // Transpose prefix/postfix order

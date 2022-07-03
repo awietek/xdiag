@@ -1,13 +1,11 @@
 #pragma once
 
-#include <unordered_map>
-#include <utility>
-#include <vector>
-
-#include <hydra/blocks/blocks.h>
-#include <hydra/combinatorics/hashes.h>
 #include <hydra/common.h>
-#include <hydra/indexing/lintable.h>
+
+#include <hydra/indexing/spinhalf_mpi/spinhalf_mpi_indexing_sz.h>
+
+#include <hydra/operators/bondlist.h>
+#include <hydra/operators/couplings.h>
 
 namespace hydra {
 
@@ -26,39 +24,35 @@ public:
   inline idx_t size() const { return size_; }
   inline idx_t dim() const { return dim_; }
 
-  inline int process(bit_t prefix) const {
-    return combinatorics::hash_fnv1(prefix) % mpi_size_;
-  }
+  inline int mpi_rank() const { return mpi_rank_; }
+  inline int mpi_size() const { return mpi_size_; }
 
   bool operator==(SpinhalfMPI const &rhs) const;
   bool operator!=(SpinhalfMPI const &rhs) const;
 
-  int n_sites_;
-
-  int n_prefix_bits_;
-  int n_postfix_bits_;
-
-  std::vector<bit_t> prefixes_;
-  std::unordered_map<bit_t, std::pair<idx_t, idx_t>> prefix_limits_;
-  std::vector<indexing::LinTable<bit_t>> postfix_lintables_;
-  std::vector<std::vector<bit_t>> postfix_states_;
-
-  std::vector<bit_t> postfixes_;
-  std::unordered_map<bit_t, std::pair<idx_t, idx_t>> postfix_limits_;
-  std::vector<indexing::LinTable<bit_t>> prefix_lintables_;
-  std::vector<std::vector<bit_t>> prefix_states_;
-
 private:
+  int n_sites_;
   bool sz_conserved_;
   int n_up_;
   int n_dn_;
   int sz_;
+
+  using indexing_t = indexing::SpinhalfMPIIndexingSz<bit_t>;
+  std::shared_ptr<indexing_t> indexing_;
+  inline indexing_t const &indexing() const {return *indexing_; }
 
   idx_t size_;
   idx_t dim_;
 
   int mpi_rank_;
   int mpi_size_;
+
+  template <typename bit_tt, typename coeff_tt>
+  friend void Apply(BondList const &bonds, Couplings const &couplings,
+                    SpinhalfMPI<bit_tt> const &block_in,
+                    lila::Vector<coeff_tt> const &vec_in,
+                    SpinhalfMPI<bit_tt> const &block_out,
+                    lila::Vector<coeff_tt> &vec_out);
 };
 
 } // namespace hydra

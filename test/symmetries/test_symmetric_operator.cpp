@@ -36,7 +36,7 @@ TEST_CASE("symmetric_operator", "[symmetries]") {
         {
           auto &v = v0_nosym;
           auto Hv = v;
-          Apply(bondlist, couplings, block_nosym, v, block_nosym, Hv);
+          Apply(bondlist, couplings, v, Hv);
           auto e = Dot(v, Hv);
           REQUIRE(lila::close(lila::real(e), e0_nosym));
         }
@@ -44,8 +44,7 @@ TEST_CASE("symmetric_operator", "[symmetries]") {
         Representation e0_irrep;
         std::vector<double> e0s;
         for (auto irrep : irreps) {
-          auto block_sym =
-              Electron(n_sites, nup, ndn, space_group, irrep);
+          auto block_sym = Electron(n_sites, nup, ndn, space_group, irrep);
           if (block_sym.size() == 0)
             continue;
           double e0_sector = E0Cplx(bondlist, couplings, block_sym);
@@ -63,22 +62,21 @@ TEST_CASE("symmetric_operator", "[symmetries]") {
             ++deg;
         }
         // lila::Log.out(
-        //     "N: {}, nup:{} ndn: {}, deg: {}, e0_nosym: {}, e0_sym: {}", n_sites,
-        //     nup, ndn, deg, e0_nosym, e0_sym);
+        //     "N: {}, nup:{} ndn: {}, deg: {}, e0_nosym: {}, e0_sym: {}",
+        //     n_sites, nup, ndn, deg, e0_nosym, e0_sym);
         REQUIRE(lila::close(e0_sym, e0_nosym));
 
         // Compare correlators only if degeneracy is 1
         // -> g.s. from non-symmetric calculation is unique and symmetric
         if (deg == 1) {
-          auto block_sym =
-              Electron(n_sites, nup, ndn, space_group, e0_irrep);
+          auto block_sym = Electron(n_sites, nup, ndn, space_group, e0_irrep);
           auto [e0_sym2, v0_sym] =
               GroundstateCplx(bondlist, couplings, block_sym);
           REQUIRE(lila::close(e0_sym, e0_nosym));
           {
             auto &v = v0_sym;
             auto Hv = v;
-            Apply(bondlist, couplings, block_sym, v, block_sym, Hv);
+            Apply(bondlist, couplings, v, Hv);
             auto e = Dot(v, Hv);
             REQUIRE(lila::close(lila::real(e), e0_nosym));
           }
@@ -91,8 +89,8 @@ TEST_CASE("symmetric_operator", "[symmetries]") {
             auto [corr_sym, cpls_sym] =
                 SymmetricOperator(corr_nosym, cpls, space_group);
 
-            auto val_nosym = Inner(corr_nosym, cpls, block_nosym, v0_nosym);
-            auto val_sym = Inner(corr_sym, cpls_sym, block_sym, v0_sym);
+            auto val_nosym = Inner(corr_nosym, cpls, v0_nosym);
+            auto val_sym = Inner(corr_sym, cpls_sym, v0_sym);
             // lila::Log.out("(0,{}) nosym: {}, sym: {}", i,
             // lila::real(val_nosym),
             //               lila::real(val_sym));

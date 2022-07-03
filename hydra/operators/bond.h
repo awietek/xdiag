@@ -11,6 +11,8 @@ namespace hydra {
 
 class Bond {
 public:
+  Bond(std::string type, int site);
+  Bond(std::string type, std::string coupling, int site);
   Bond(std::string type, std::string coupling, std::vector<int> const &sites);
   Bond(std::string type, std::string coupling, std::vector<int> const &sites,
        Parameters const &parameters);

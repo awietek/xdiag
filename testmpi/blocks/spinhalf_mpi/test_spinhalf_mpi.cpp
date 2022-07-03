@@ -11,7 +11,7 @@ void test_spinhalf_mpi(int n_sites){
     auto block_mpi = SpinhalfMPI<bit_t>(n_sites, nup);
 
     auto mysiz = block_mpi.size();
-    lila::size_type mysize = 0;
+    idx_t mysize = 0;
 
     mpi::Allreduce(&mysiz, &mysize, 1, MPI_SUM, MPI_COMM_WORLD);
 

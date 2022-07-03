@@ -6,6 +6,7 @@
 #include <vector>
 
 #include <hydra/linalg/lanczos/lanczos_eigenvalues.h>
+#include <hydra/linalg/state.h>
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
 
@@ -44,9 +45,9 @@ double E0Cplx(BondList const &bondlist, Couplings const &couplings,
 }
 
 template <class Block>
-std::pair<double, lila::Vector<double>>
+std::pair<double, StateReal<Block>>
 GroundstateReal(BondList const &bondlist, Couplings const &couplings,
-                Block &&block, double precision = 1e-12, int seed = 42,
+                Block const &block, double precision = 1e-12, int seed = 42,
                 int max_iterations = 1000) {
 
   auto [tmat, v0] = LanczosEigenvectorReal(bondlist, couplings, block, 0,
@@ -54,25 +55,25 @@ GroundstateReal(BondList const &bondlist, Couplings const &couplings,
   auto eigs = tmat.eigenvalues();
   if (eigs.size() == 0) {
     lila::Log.err("Error: Tmatrix zero dimensional in GroundstateReal");
-    return {0., lila::Vector<double>()};
+    return {0., State<double, Block>()};
   } else {
-    return {tmat.eigenvalues()(0), v0};
+    return {tmat.eigenvalues()(0), State(block, v0)};
   }
 }
 
 template <class Block>
-std::pair<double, lila::Vector<complex>>
+std::pair<double, StateCplx<Block>>
 GroundstateCplx(BondList const &bondlist, Couplings const &couplings,
-                Block &&block, double precision = 1e-12, int seed = 42,
+                Block const &block, double precision = 1e-12, int seed = 42,
                 int max_iterations = 1000) {
   auto [tmat, v0] = LanczosEigenvectorCplx(bondlist, couplings, block, 0,
                                            precision, seed, max_iterations);
   auto eigs = tmat.eigenvalues();
   if (eigs.size() == 0) {
     lila::Log.err("Error: Tmatrix zero dimensional in GroundstateCplx");
-    return {0., lila::Vector<complex>()};
+    return {0., State<complex, Block>()};
   } else {
-    return {tmat.eigenvalues()(0), v0};
+    return {tmat.eigenvalues()(0), State(block, v0)};
   }
 }
 

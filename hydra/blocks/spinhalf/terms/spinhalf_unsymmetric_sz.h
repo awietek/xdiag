@@ -14,7 +14,6 @@ void spinhalf_unsymmetric_sz(BondList const &bonds, Couplings const &couplings,
 
   for (auto bond : clean_bonds) {
 
-    utils::check_sites_disjoint(bond);
     int s = bond[0];
     bit_t mask = ((bit_t)1 << s);
 

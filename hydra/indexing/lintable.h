@@ -14,6 +14,9 @@ public:
   LinTable() = default;
   LinTable(int n, int k);
 
+  inline int n() const {return n_;}
+  inline int k() const {return k_;}
+  
   inline idx_t index(bit_t bits) const {
     return left_indices_[bits >> n_right_] +
            right_indices_[bitops::gbits(bits, 0, n_right_)];

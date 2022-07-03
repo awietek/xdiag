@@ -16,7 +16,7 @@ template <typename bit_t = std_bit_t> class ElectronSymmetric;
 
 template <typename bit_t = std_bit_t> class SpinhalfMPI;
 template <typename bit_t = std_bit_t> class ElectronMPI;
-
+  
 } // namespace hydra
 
 namespace hydra::detail {

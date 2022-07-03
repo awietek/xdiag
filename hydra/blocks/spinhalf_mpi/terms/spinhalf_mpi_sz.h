@@ -1,5 +1,7 @@
 #pragma once
 
+#include <hydra/indexing/spinhalf_mpi/spinhalf_mpi_indexing_sz.h>
+
 #include <hydra/bitops/bitops.h>
 #include <hydra/blocks/spinhalf_mpi/spinhalf_mpi.h>
 #include <hydra/combinatorics/combinations.h>
@@ -12,12 +14,11 @@ namespace hydra::terms {
 
 template <class bit_t, class coeff_t>
 void spinhalf_mpi_sz(BondList const &bonds, Couplings const &couplings,
-                     SpinhalfMPI<bit_t> const &block,
+                     indexing::SpinhalfMPIIndexingSz<bit_t> const &indexing,
                      lila::Vector<coeff_t> const &vec_in,
                      lila::Vector<coeff_t> &vec_out) {
 
-  auto clean_bonds =
-      utils::clean_bondlist(bonds, couplings, {"SZ"}, 1);
+  auto clean_bonds = utils::clean_bondlist(bonds, couplings, {"SZ"}, 1);
 
   for (auto bond : clean_bonds) {
 
@@ -30,18 +31,17 @@ void spinhalf_mpi_sz(BondList const &bonds, Couplings const &couplings,
     coeff_t val_up = H / 2.;
     coeff_t val_dn = -H / 2.;
 
-    int n_postfix_bits = block.n_postfix_bits_;
+    int n_postfix_bits = indexing.n_postfix_bits();
 
     idx_t idx = 0;
-    for (auto prefix : block.prefixes_) {
-      int n_up_prefix = bitops::popcnt(prefix);
-      int n_up_postfix = block.n_up() - n_up_prefix;
-      auto const &postfixes = block.postfix_states_[n_up_postfix];
+    for (auto prefix : indexing.prefixes()) {
+      auto postfixes = indexing.postfixes(prefix);
 
       // site in postfixes
       if (s < n_postfix_bits) {
         for (auto postfix : postfixes) {
-          vec_out(idx) += ((postfix & mask) ? val_up : val_dn) * vec_in(idx);
+          coeff_t val = ((postfix & mask) ? val_up : val_dn);
+          vec_out(idx) += val * vec_in(idx);
           ++idx;
         }
 

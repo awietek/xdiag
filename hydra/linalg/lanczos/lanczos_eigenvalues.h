@@ -103,25 +103,10 @@ Tmatrix LanczosEigenvaluesReal(BondList const &bonds,
                                int seed = 42, int max_iterations = 1000,
                                double deflation_tol = 1e-7) {
 
-  using namespace lila;
-
-  // use different seeds for different MPI processes
-  if constexpr (detail::is_mpi_block<Block>) {
-#ifdef __MPI
-    int mpi_rank;
-    MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
-    seed += 0x01000193 * mpi_rank;
-#endif
-  }
-
-  // Create random starting vector with normal distributed entries
-  normal_dist_t<double> dist(0., 1.);
-  normal_gen_t<double> gen(dist, seed);
-  auto v0 = Random(block.size(), gen);
-
-  // Run Lanczos algorithm
-  return LanczosEigenvaluesInplace(bonds, couplings, block, v0, num_eigenvalue,
-                                   precision, max_iterations, deflation_tol);
+  auto v0 = RandomStateReal(block, seed);
+  return LanczosEigenvaluesInplace(bonds, couplings, block, v0.vector(),
+                                   num_eigenvalue, precision, max_iterations,
+                                   deflation_tol);
 }
 
 template <class Block>
@@ -131,25 +116,10 @@ Tmatrix LanczosEigenvaluesCplx(BondList const &bonds,
                                int seed = 42, int max_iterations = 1000,
                                double deflation_tol = 1e-7) {
 
-  using namespace lila;
-
-  // use different seeds for different MPI processes
-  if constexpr (detail::is_mpi_block<Block>) {
-#ifdef __MPI
-    int mpi_rank;
-    MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
-    seed += 0x01000193 * mpi_rank;
-#endif
-  }
-
-  // Create random starting vector with normal distributed entries
-  normal_dist_t<complex> dist(0., 1.);
-  normal_gen_t<complex> gen(dist, seed);
-  auto v0 = Random(block.size(), gen);
-
-  // Run Lanczos algorithm
-  return LanczosEigenvaluesInplace(bonds, couplings, block, v0, num_eigenvalue,
-                                   precision, max_iterations, deflation_tol);
+  auto v0 = RandomStateCplx(block, seed);
+  return LanczosEigenvaluesInplace(bonds, couplings, block, v0.vector(),
+                                   num_eigenvalue, precision, max_iterations,
+                                   deflation_tol);
 }
 
 } // namespace hydra

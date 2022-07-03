@@ -12,7 +12,7 @@ namespace hydra::terms {
 
 template <class bit_t, class coeff_t>
 void spinhalf_mpi_ising(BondList const &bonds, Couplings const &couplings,
-                        SpinhalfMPI<bit_t> const &block,
+                        indexing::SpinhalfMPIIndexingSz<bit_t> const &indexing,
                         lila::Vector<coeff_t> const &vec_in,
                         lila::Vector<coeff_t> &vec_out) {
 
@@ -21,7 +21,7 @@ void spinhalf_mpi_ising(BondList const &bonds, Couplings const &couplings,
 
   for (auto bond : clean_bonds) {
 
-    // Set values for same/diff 
+    // Set values for same/diff
     std::string cpl = bond.coupling();
     coeff_t J = utils::get_coupling<coeff_t>(couplings, cpl);
     coeff_t val_same = J / 4.;
@@ -33,24 +33,13 @@ void spinhalf_mpi_ising(BondList const &bonds, Couplings const &couplings,
       LogMPI.err("Error computing SpinhalfMPI Ising: "
                  "operator acting on twice the same site");
     bit_t mask = ((bit_t)1 << s1) | ((bit_t)1 << s2);
-    int n_postfix_bits = block.n_postfix_bits_;
+    int n_postfix_bits = indexing.n_postfix_bits();
 
     idx_t idx = 0;
-    for (auto prefix : block.prefixes_) {
-      int n_up_prefix = bitops::popcnt(prefix);
-      int n_up_postfix = block.n_up() - n_up_prefix;
+    for (auto prefix : indexing.prefixes()) {
+
       bit_t prefix_shifted = (prefix << n_postfix_bits);
-
-      auto const &postfixes = block.postfix_states_[n_up_postfix];
-      // // Simple variant
-      // for (auto postfix : postfixes) {
-      //   bit_t state = prefix_shifted | postfix;
-      //   coeff_t val = (bitops::popcnt(state & mask) == 1) ? val_diff :
-      //   val_same; vec_out(idx) += val * vec_in(idx);
-      //   ++idx;
-      // }
-
-      // Fast variant
+      auto postfixes = indexing.postfixes(prefix);
 
       // Both sites are on prefixes
       if ((s1 >= n_postfix_bits) && (s2 >= n_postfix_bits)) {

@@ -12,6 +12,8 @@
 
 #include "blocks/utils/block_utils_mpi.h"
 
+#include "indexing/spinhalf_mpi/spinhalf_mpi_indexing_sz.h"
+
 #include "blocks/spinhalf_mpi/terms/get_prefix_postfix_mixed_bonds.h"
 #include "blocks/spinhalf_mpi/spinhalf_mpi.h"
 #include "blocks/spinhalf_mpi/spinhalf_mpi_apply.h"

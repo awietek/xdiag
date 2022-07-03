@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <tuple>
 
+#include <hydra/indexing/spinhalf_mpi/spinhalf_mpi_indexing_sz.h>
+
 #include <hydra/bitops/bitops.h>
 #include <hydra/combinatorics/combinations.h>
 #include <hydra/combinatorics/subsets.h>
@@ -10,7 +12,6 @@
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
 #include <hydra/operators/operator_utils.h>
-
 
 #include <hydra/blocks/spinhalf_mpi/terms/get_prefix_postfix_mixed_bonds.h>
 #include <hydra/blocks/spinhalf_mpi/terms/spinhalf_mpi_exchange_mixed_com.h>
@@ -22,13 +23,16 @@
 namespace hydra::terms {
 
 template <class bit_t, class coeff_t>
-void spinhalf_mpi_exchange(BondList const &bonds, Couplings const &couplings,
-                           SpinhalfMPI<bit_t> const &block,
-                           lila::Vector<coeff_t> const &vec_in,
-                           lila::Vector<coeff_t> &vec_out) {
+void spinhalf_mpi_exchange(
+    BondList const &bonds, Couplings const &couplings,
+    indexing::SpinhalfMPIIndexingSz<bit_t> const &indexing,
+    lila::Vector<coeff_t> const &vec_in, lila::Vector<coeff_t> &vec_out) {
   using namespace indexing;
   using combinatorics::Combinations;
   using combinatorics::Subsets;
+
+  assert(indexing.size() == vec_in.size());
+  assert(indexing.size() == vec_out.size());
 
   int mpi_rank, mpi_size;
   MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
@@ -36,9 +40,10 @@ void spinhalf_mpi_exchange(BondList const &bonds, Couplings const &couplings,
 
   auto exchange_bonds = utils::clean_bondlist(
       bonds, couplings, {"HEISENBERG", "HB", "EXCHANGE"}, 2);
-  int n_up = block.n_up();
-  int n_prefix_bits = block.n_prefix_bits_;
-  int n_postfix_bits = block.n_postfix_bits_;
+  int n_up = indexing.n_up();
+  int n_prefix_bits = indexing.n_prefix_bits();
+  int n_postfix_bits = indexing.n_postfix_bits();
+
   auto [prefix_bonds, postfix_bonds, mixed_bonds] =
       get_prefix_postfix_mixed_bonds(exchange_bonds, n_postfix_bits);
 
@@ -54,24 +59,19 @@ void spinhalf_mpi_exchange(BondList const &bonds, Couplings const &couplings,
 
     // loop through all postfixes
     idx_t idx = 0;
-    idx_t idx_prefix = 0;
-    for (auto prefix : block.prefixes_) {
-      int n_up_prefix = bitops::popcnt(prefix);
-      int n_up_postfix = n_up - n_up_prefix;
-
-      LinTable<bit_t> const &lintable = block.postfix_lintables_[n_up_postfix];
-      auto const &postfixes = block.postfix_states_[n_up_postfix];
+    for (auto prefix : indexing.prefixes()) {
+      auto const &lintable = indexing.postfix_indexing(prefix);
+      auto const &postfixes = indexing.postfixes(prefix);
+      idx_t prefix_begin = indexing.prefix_begin(prefix);
       for (auto postfix : postfixes) {
 
         if (bitops::popcnt(postfix & mask) & 1) {
           bit_t new_postfix = postfix ^ mask;
-          idx_t new_idx = idx_prefix + lintable.index(new_postfix);
+          idx_t new_idx = prefix_begin + lintable.index(new_postfix);
           vec_out(new_idx) += Jhalf * vec_in(idx);
         }
         ++idx;
       }
-      idx_prefix += combinatorics::binomial(n_postfix_bits, n_up_postfix);
-      assert(idx_prefix == idx);
     }
   }
   timing_mpi(tpost, rightnow_mpi(), " (exchange) postfix", 2);
@@ -85,7 +85,7 @@ void spinhalf_mpi_exchange(BondList const &bonds, Couplings const &couplings,
 
     // Transpose prefix/postfix order
     auto ttrans1 = rightnow_mpi();
-    spinhalf_mpi_transpose(block, vec_in.vector(), send_buffer, recv_buffer,
+    spinhalf_mpi_transpose(indexing, vec_in.vector(), send_buffer, recv_buffer,
                            false);
     timing_mpi(ttrans1, rightnow_mpi(), " (exchange) transpose 1", 2);
 
@@ -101,30 +101,29 @@ void spinhalf_mpi_exchange(BondList const &bonds, Couplings const &couplings,
 
       // loop through all prefixes
       idx_t idx = 0;
-      idx_t idx_postfix = 0;
-      for (auto postfix : block.postfixes_) {
-        int n_up_postfix = bitops::popcnt(postfix);
-        int n_up_prefix = n_up - n_up_postfix;
-
-        LinTable<bit_t> const &lintable = block.prefix_lintables_[n_up_prefix];
-        auto const &prefixes = block.prefix_states_[n_up_prefix];
+      for (auto postfix : indexing.postfixes()) {
+        auto const &lintable = indexing.prefix_indexing(postfix);
+        auto const &prefixes = indexing.prefixes(postfix);
+        idx_t postfix_begin = indexing.postfix_begin(postfix);
         for (auto prefix : prefixes) {
 
           if (bitops::popcnt(prefix & mask) & 1) {
             bit_t new_prefix = prefix ^ mask;
-            idx_t new_idx = idx_postfix + lintable.index(new_prefix);
+            idx_t new_idx = postfix_begin + lintable.index(new_prefix);
             recv_buffer[new_idx] += Jhalf * send_buffer[idx];
+	    // lila::Log("new_idx: {} ({}), idx: {} ({})", new_idx,
+            //         recv_buffer.size(), idx, send_buffer.size());
           }
+
           ++idx;
         }
-        idx_postfix += combinatorics::binomial(n_prefix_bits, n_up_prefix);
-        assert(idx_postfix == idx);
       }
     }
 
     // Transpose back
     auto ttrans2 = rightnow_mpi();
-    spinhalf_mpi_transpose(block, recv_buffer, send_buffer, recv_buffer, true);
+    spinhalf_mpi_transpose(indexing, recv_buffer, send_buffer, recv_buffer,
+                           true);
     timing_mpi(ttrans2, rightnow_mpi(), " (exchange) transpose 2", 2);
 
     for (idx_t idx = 0; idx < vec_out.size(); ++idx) {
@@ -142,7 +141,7 @@ void spinhalf_mpi_exchange(BondList const &bonds, Couplings const &couplings,
 
     // Figure out communication patterns and resize buffers accoringly
     auto [coms_mixed, max_send_size, max_recv_size] =
-        spinhalf_mpi_exchange_mixed_com(block, mixed_bonds, couplings);
+        spinhalf_mpi_exchange_mixed_com(indexing, mixed_bonds, couplings);
 
     if (max_send_size > send_buffer.size())
       send_buffer.resize(max_send_size);
@@ -168,14 +167,11 @@ void spinhalf_mpi_exchange(BondList const &bonds, Couplings const &couplings,
 
       // Loop through all my states and fill them in send buffer
       idx_t idx = 0;
-      for (auto prefix : block.prefixes_) {
-        int n_up_prefix = bitops::popcnt(prefix);
-        int n_up_postfix = n_up - n_up_prefix;
-
+      for (auto prefix : indexing.prefixes()) {
         bit_t prefix_flipped = prefix ^ prefix_mask;
-        int target_rank = block.process(prefix_flipped);
+        int target_rank = indexing.process(prefix_flipped);
 
-        auto const &postfixes = block.postfix_states_[n_up_postfix];
+        auto const &postfixes = indexing.postfixes(prefix);
 
         // prefix up, postfix must be dn
         if (prefix & prefix_mask) {
@@ -225,26 +221,27 @@ void spinhalf_mpi_exchange(BondList const &bonds, Couplings const &couplings,
           continue;
 
         // Only consider prefix if it got sent to this mpi_rank
-        int target_rank = block.process(prefix_flipped);
+        int target_rank = indexing.process(prefix_flipped);
         if (target_rank != mpi_rank)
           continue;
 
-        int origin_rank = block.process(prefix);
+        int origin_rank = indexing.process(prefix);
         idx_t origin_offset = recv_offsets[origin_rank];
-        idx_t prefix_offset = block.prefix_limits_.at(prefix_flipped).first;
 
-        auto const &postfixes = block.postfix_states_[n_up_postfix];
+        auto const &postfixes = indexing.postfixes(prefix);
+        auto const &postfix_flipped_lintable =
+            indexing.postfix_indexing(prefix_flipped);
+        idx_t prefix_flipped_offset = indexing.prefix_begin(prefix_flipped);
 
         // prefix up, postfix must be dn
         if (prefix & prefix_mask) {
-          auto &postfix_lintable = block.postfix_lintables_[n_up_postfix + 1];
-
           for (auto postfix : postfixes) {
             if (!(postfix & postfix_mask)) {
               bit_t postfix_flipped = postfix ^ postfix_mask;
               idx_t idx_received = origin_offset + offsets[origin_rank];
               idx_t idx_target =
-                  prefix_offset + postfix_lintable.index(postfix_flipped);
+                  prefix_flipped_offset +
+                  postfix_flipped_lintable.index(postfix_flipped);
               vec_out(idx_target) += Jhalf * recv_buffer[idx_received];
               ++offsets[origin_rank];
             }
@@ -252,13 +249,13 @@ void spinhalf_mpi_exchange(BondList const &bonds, Couplings const &couplings,
         }
         // prefix dn, postfix must be up
         else {
-          auto &postfix_lintable = block.postfix_lintables_[n_up_postfix - 1];
           for (auto postfix : postfixes) {
             if (postfix & postfix_mask) {
               bit_t postfix_flipped = postfix ^ postfix_mask;
               idx_t idx_received = origin_offset + offsets[origin_rank];
               idx_t idx_target =
-                  prefix_offset + postfix_lintable.index(postfix_flipped);
+                  prefix_flipped_offset +
+                  postfix_flipped_lintable.index(postfix_flipped);
               vec_out(idx_target) += Jhalf * recv_buffer[idx_received];
               ++offsets[origin_rank];
             }

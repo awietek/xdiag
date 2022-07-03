@@ -4,6 +4,12 @@
 
 namespace hydra {
 
+Bond::Bond(std::string type, int site)
+    : Bond(type, "COUPLING_UNDEFINED", std::vector<int>{site}) {}
+
+Bond::Bond(std::string type, std::string coupling, int site)
+    : Bond(type, coupling, std::vector<int>{site}) {}
+
 Bond::Bond(std::string type, std::string coupling,
            std::vector<int> const &sites)
     : type_(type), coupling_(coupling), sites_(sites), has_parameters_(false),
@@ -54,8 +60,7 @@ TypeCoupling type_coupling(const Bond &bond) {
 }
 
 bool is_complex(Bond const &bond) {
-  if (std::find(complex_bond_types.begin(),
-                complex_bond_types.end(),
+  if (std::find(complex_bond_types.begin(), complex_bond_types.end(),
                 bond.type()) != complex_bond_types.end()) {
     return true;
   } else {
@@ -63,8 +68,6 @@ bool is_complex(Bond const &bond) {
   }
 }
 
-bool is_real(Bond const &bond) {
-  return !is_complex(bond);
-}
+bool is_real(Bond const &bond) { return !is_complex(bond); }
 
 } // namespace hydra

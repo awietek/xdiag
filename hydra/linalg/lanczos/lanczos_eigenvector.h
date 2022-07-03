@@ -65,8 +65,7 @@ LanczosEigenvector(BondList const &bonds, Couplings const &couplings,
     t0 = rightnow_mpi();
     iter = 0;
     auto [tevals, tevecs] = tmat.eigen();
-    auto coefficients = tevecs(
-        {0, tevecs.m()}, {0, std::min((idx_t)num_eigenvector + 1, tevecs.n())});
+    auto coefficients = tevecs.col(num_eigenvector);
     set_v0(v0);
     std::tie(tmat, vectors) =
         LanczosGeneric(mult, v0, dot_mpi, converged, coefficients,
@@ -144,11 +143,7 @@ LanczosEigenvectorReal(BondList const &bonds, Couplings const &couplings,
 
   // use different seeds for different MPI processes
   if constexpr (detail::is_mpi_block<Block>) {
-#ifdef __MPI
-    int mpi_rank;
-    MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
-    seed += 0x01000193 * mpi_rank;
-#endif
+    seed += 0x01000193 * block.mpi_rank();
   }
 
   // Create random starting vector with normal distributed entries
@@ -176,11 +171,7 @@ LanczosEigenvectorCplx(BondList const &bonds, Couplings const &couplings,
 
   // use different seeds for different MPI processes
   if constexpr (detail::is_mpi_block<Block>) {
-#ifdef __MPI
-      int mpi_rank; 
-      MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
-      seed += 0x01000193 * mpi_rank;
-#endif
+    seed += 0x01000193 * block.mpi_rank();
   }
 
   // Create random starting vector with normal distributed entries

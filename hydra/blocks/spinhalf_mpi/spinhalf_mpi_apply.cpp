@@ -29,24 +29,34 @@ void Apply(BondList const &bonds, Couplings const &couplings,
 
   lila::Zeros(vec_out);
 
+  auto const &indexing_in = block_in.indexing();
+  auto const &indexing_out = block_out.indexing();
+
   if (block_in == block_out) {
 
     auto tis = rightnow_mpi();
-    terms::spinhalf_mpi_ising(bonds, couplings, block_in, vec_in, vec_out);
+    terms::spinhalf_mpi_ising(bonds, couplings, indexing_in, vec_in, vec_out);
     timing_mpi(tis, rightnow_mpi(), " (ising)", 2);
 
     auto tex = rightnow_mpi();
-    terms::spinhalf_mpi_exchange(bonds, couplings, block_in, vec_in, vec_out);
+    terms::spinhalf_mpi_exchange(bonds, couplings, indexing_in, vec_in,
+                                 vec_out);
+
     timing_mpi(tex, rightnow_mpi(), " (exchange)", 2);
 
-    auto tsz = rightnow_mpi();
-    terms::spinhalf_mpi_sz(bonds, couplings, block_in, vec_in, vec_out);
-    timing_mpi(tsz, rightnow_mpi(), " (sz)", 2);
+    // lila::Log("sz");
+    // auto tsz = rightnow_mpi();
+    // terms::spinhalf_mpi_sz(bonds, couplings, indexing_in, vec_in, vec_out);
+    // timing_mpi(tsz, rightnow_mpi(), " (sz)", 2);
   }
-  auto tspsm = rightnow_mpi();
-  terms::spinhalf_mpi_spsm(bonds, couplings, block_in, vec_in, vec_out, "S+");
-  terms::spinhalf_mpi_spsm(bonds, couplings, block_in, vec_in, vec_out, "S-");
-  timing_mpi(tspsm, rightnow_mpi(), " (spsm)", 2);
+  // auto tspsm = rightnow_mpi();
+  // terms::spinhalf_mpi_spsm(bonds, couplings, indexing_in, vec_in,
+  // indexing_out,
+  //                          vec_out, "S+");
+  // terms::spinhalf_mpi_spsm(bonds, couplings, indexing_in, vec_in,
+  // indexing_out,
+  //                          vec_out, "S-");
+  // timing_mpi(tspsm, rightnow_mpi(), " (spsm)", 2);
 }
 
 template void Apply<uint16_t>(BondList const &bonds, Couplings const &couplings,

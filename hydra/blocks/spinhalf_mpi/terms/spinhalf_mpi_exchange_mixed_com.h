@@ -5,6 +5,8 @@
 #include <hydra/common.h>
 #include <hydra/mpi/communicator.h>
 
+#include <hydra/indexing/spinhalf_mpi/spinhalf_mpi_indexing_sz.h>
+
 #include <hydra/blocks/blocks.h>
 #include <hydra/blocks/utils/block_utils.h>
 #include <hydra/blocks/utils/block_utils_mpi.h>
@@ -14,17 +16,16 @@ namespace hydra::terms {
 // Create a communicator for every mixed bond, and the maximal communicator size
 template <class bit_t>
 std::tuple<std::vector<mpi::Communicator>, idx_t, idx_t>
-spinhalf_mpi_exchange_mixed_com(SpinhalfMPI<bit_t> const &block,
-                                BondList const &mixed_bonds,
-                                Couplings const &couplings) {
-  using namespace indexing;
+spinhalf_mpi_exchange_mixed_com(
+    indexing::SpinhalfMPIIndexingSz<bit_t> const &indexing,
+    BondList const &mixed_bonds, Couplings const &couplings) {
   using combinatorics::Combinations;
 
   int mpi_size;
   MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
 
-  int n_up = block.n_up();
-  int n_postfix_bits = block.n_postfix_bits_;
+  int n_up = indexing.n_up();
+  int n_postfix_bits = indexing.n_postfix_bits();
 
   std::vector<mpi::Communicator> communicators;
   idx_t max_send_size = 0;
@@ -39,23 +40,23 @@ spinhalf_mpi_exchange_mixed_com(SpinhalfMPI<bit_t> const &block,
     bit_t prefix_mask = ((bit_t)1 << (s2 - n_postfix_bits));
     bit_t postfix_mask = ((bit_t)1 << s1);
 
-    for (auto prefix : block.prefixes_) {
+    for (auto prefix : indexing.prefixes()) {
       int n_up_prefix = bitops::popcnt(prefix);
       int n_up_postfix = n_up - n_up_prefix;
 
       bit_t prefix_flipped = prefix ^ prefix_mask;
-      int target_rank = block.process(prefix_flipped);
+      int target_rank = indexing.process(prefix_flipped);
 
       // prefix up, postfix must be dn
       if (prefix & prefix_mask) {
-        for (auto postfix : Combinations<bit_t>(n_postfix_bits, n_up_postfix)) {
+        for (auto postfix : indexing.postfixes(prefix)) {
           n_states_i_send[target_rank] += !(bool)(postfix & postfix_mask);
         }
       }
 
       // prefix dn, postfix must be dn
       if (!(prefix & prefix_mask)) {
-        for (auto postfix : Combinations<bit_t>(n_postfix_bits, n_up_postfix)) {
+        for (auto postfix : indexing.postfixes(prefix)) {
           n_states_i_send[target_rank] += (bool)(postfix & postfix_mask);
         }
       }

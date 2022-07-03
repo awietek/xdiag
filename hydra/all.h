@@ -35,6 +35,7 @@
 #include "indexing/electron/electron_symmetric_indexing_no_np.h"
 
 #include "blocks/blocks.h"
+#include "blocks/target_block.h"
 #include "blocks/utils/block_utils.h"
 
 #include "blocks/spinhalf/spinhalf.h"
@@ -70,6 +71,7 @@
 #include "wavefunctions/gpwf_spinhalf.h"
 
 #include "linalg/algebra.h"
+#include "linalg/state.h"
 #include "linalg/lanczos/lanczos_convergence.h"
 #include "linalg/lanczos/lanczos_eigenvalues.h"
 #include "linalg/lanczos/lanczos_eigenvector.h"

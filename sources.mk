@@ -71,12 +71,13 @@ mpisources+= hydra/mpi/timing_mpi.cpp
 mpisources+= hydra/mpi/dot_mpi.cpp
 mpisources+= hydra/mpi/communicator.cpp
 
-mpisources+= hydra/blocks/utils/block_utils_mpi.cpp
 
+mpisources+= hydra/indexing/spinhalf_mpi/spinhalf_mpi_indexing_sz.cpp
+
+mpisources+= hydra/blocks/utils/block_utils_mpi.cpp
 mpisources+= hydra/blocks/spinhalf_mpi/terms/get_prefix_postfix_mixed_bonds.cpp
 mpisources+= hydra/blocks/spinhalf_mpi/spinhalf_mpi.cpp
 mpisources+= hydra/blocks/spinhalf_mpi/spinhalf_mpi_apply.cpp
-
 mpisources+= hydra/blocks/electron_mpi/electron_mpi.cpp
 mpisources+= hydra/blocks/electron_mpi/electron_mpi_apply.cpp
 

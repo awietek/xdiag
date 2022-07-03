@@ -24,7 +24,7 @@ TEST_CASE( "operator_qns", "[operators]" ) {
   {
     Couplings cpls;
     BondList bl;
-    bl << Bond("S+", "hx", {0});
+    bl << Bond("S+", "hx", 0);
     cpls["hx"] = 1.0;
     REQUIRE(utils::spinhalf_nup(bl, cpls) == 1);
     REQUIRE(utils::tj_nup_ndn(bl, cpls) == std::pair<int,int>{1, -1});
@@ -34,7 +34,7 @@ TEST_CASE( "operator_qns", "[operators]" ) {
   {
     Couplings cpls;
     BondList bl;
-    bl << Bond("S-", "hx", {0});
+    bl << Bond("S-", "hx", 0);
     cpls["hx"] = 1.0;
     REQUIRE(utils::spinhalf_nup(bl, cpls) == -1);
     REQUIRE(utils::tj_nup_ndn(bl, cpls) == std::pair<int,int>{-1, 1});
@@ -45,7 +45,7 @@ TEST_CASE( "operator_qns", "[operators]" ) {
   {
     Couplings cpls;
     BondList bl;
-    bl << Bond(type, "hx", {0});
+    bl << Bond(type, "hx", 0);
     cpls["hx"] = 1.0;
     REQUIRE(utils::spinhalf_nup(bl, cpls) == undefined_qn);
     REQUIRE(utils::tj_nup_ndn(bl, cpls) == undefined_qns);
@@ -55,7 +55,7 @@ TEST_CASE( "operator_qns", "[operators]" ) {
   {
     Couplings cpls;
     BondList bl;
-    bl << Bond("Cdagup", "hx", {0});
+    bl << Bond("Cdagup", "hx", 0);
     cpls["hx"] = 1.0;
     REQUIRE(utils::tj_nup_ndn(bl, cpls) == std::pair<int,int>{1, 0});
     REQUIRE(utils::electron_nup_ndn(bl, cpls) == std::pair<int,int>{1, 0});
@@ -64,7 +64,7 @@ TEST_CASE( "operator_qns", "[operators]" ) {
   {
     Couplings cpls;
     BondList bl;
-    bl << Bond("Cup", "hx", {0});
+    bl << Bond("Cup", "hx", 0);
     cpls["hx"] = 1.0;
     REQUIRE(utils::tj_nup_ndn(bl, cpls) == std::pair<int,int>{-1, 0});
     REQUIRE(utils::electron_nup_ndn(bl, cpls) == std::pair<int,int>{-1, 0});
@@ -72,7 +72,7 @@ TEST_CASE( "operator_qns", "[operators]" ) {
   {
     Couplings cpls;
     BondList bl;
-    bl << Bond("Cdagdn", "hx", {0});
+    bl << Bond("Cdagdn", "hx", 0);
     cpls["hx"] = 1.0;
     REQUIRE(utils::tj_nup_ndn(bl, cpls) == std::pair<int,int>{0, 1});
     REQUIRE(utils::electron_nup_ndn(bl, cpls) == std::pair<int,int>{0, 1});
@@ -80,7 +80,7 @@ TEST_CASE( "operator_qns", "[operators]" ) {
   {
     Couplings cpls;
     BondList bl;
-    bl << Bond("Cdn", "hx", {0});
+    bl << Bond("Cdn", "hx", 0);
     cpls["hx"] = 1.0;
     REQUIRE(utils::tj_nup_ndn(bl, cpls) == std::pair<int,int>{0, -1});
     REQUIRE(utils::electron_nup_ndn(bl, cpls) == std::pair<int,int>{0, -1});
