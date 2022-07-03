@@ -137,21 +137,21 @@ TEST_CASE("spinhalf_matrix", "[models][spinhalf]") {
 
 
             BondList sp_i_m;
-            sp_i_m << Bond("S+", "H", {i});
+            sp_i_m << Bond("S+", "H", i);
             auto sp_i_m_mat = MatrixReal(sp_i_m, cpls, blockm, block);
             auto sp_i_mat = MatrixReal(sp_i_m, cpls, block_raw, block_raw);
 	   
             BondList sm_j_m;
-            sm_j_m << Bond("S-", "H", {j});
+            sm_j_m << Bond("S-", "H", j);
             auto sm_j_m_mat = MatrixReal(sm_j_m, cpls, block, blockm);
             auto sm_j_mat = MatrixReal(sm_j_m, cpls, block_raw, block_raw);
 
             BondList sp_i_p;
-            sp_i_p << Bond("S+", "H", {i});
+            sp_i_p << Bond("S+", "H", i);
             auto sp_i_p_mat = MatrixReal(sp_i_p, cpls, block, blockp);
 
             BondList sm_j_p;
-            sm_j_p << Bond("S-", "H", {j});
+            sm_j_p << Bond("S-", "H", j);
             auto sm_j_p_mat = MatrixReal(sm_j_p, cpls, blockp, block);
 
             auto C1 = lila::Mult(sp_i_m_mat, sm_j_m_mat);
@@ -163,7 +163,7 @@ TEST_CASE("spinhalf_matrix", "[models][spinhalf]") {
 
             if (i == j) {
               BondList sz;
-              sz << Bond("SZ", "H", {i});
+              sz << Bond("SZ", "H", i);
               auto sz_mat = MatrixReal(sz, cpls, block, block);
               auto sz_matr = MatrixReal(sz, cpls, block_raw, block_raw);
               REQUIRE(lila::close(comm, 2.0 * sz_mat));

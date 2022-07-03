@@ -74,7 +74,6 @@ void spinhalf_mpi_transpose(
   int n_postfix_bits =
       reverse ? indexing.n_prefix_bits() : indexing.n_postfix_bits();
 
-  auto postfixes = reverse ? indexing.prefixes() : indexing.postfixes();
   for (auto prefix : combinatorics::Subsets<bit_t>(n_prefix_bits)) {
     int n_up_prefix = bitops::popcnt(prefix);
     int n_up_postfix = indexing.n_up() - n_up_prefix;
@@ -87,29 +86,12 @@ void spinhalf_mpi_transpose(
     if (reverse) {
       prefix_idx = indexing.postfix_indexing(((bit_t)1 << n_up_postfix) - 1)
                        .index(prefix);
-
-      // lila::Log(
-      //     "prefix: {} ({}), n_prefix_bits: {}, n_postfix_bits: {} prefix_idx:
-      //     "
-      //     "{}, size: {}",
-      //     bitops::bits_to_string(prefix, n_prefix_bits),
-      //     bitops::bits_to_string(((bit_t)1 << n_up_prefix) - 1,
-      //     n_prefix_bits), n_prefix_bits, n_postfix_bits, prefix_idx,
-      //     indexing.postfix_indexing(((bit_t)1 << n_up_prefix) - 1).size());
-      // lila::Log("pi: {} ({}) {}", prefix_idx, ((bit_t)1 << n_up_postfix) - 1,
-
-      //
     } else {
       prefix_idx = indexing.prefix_indexing(((bit_t)1 << n_up_postfix) - 1)
                        .index(prefix);
-      // lila::Log("pi: {} ({}) {}", prefix_idx, ((bit_t)1 << n_up_postfix) - 1,
-
-      //           bitops::bits_to_string(prefix, indexing.n_prefix_bits()));
     }
-
-    // auto postfixes =
-    //     reverse ? indexing.prefixes(prefix) : indexing.postfixes(prefix);
-
+    
+    auto postfixes = reverse ? indexing.prefixes() : indexing.postfixes();
     for (auto postfix : postfixes) {
       if (bitops::popcnt(postfix) != n_up_postfix)
         continue;
@@ -123,21 +105,12 @@ void spinhalf_mpi_transpose(
       }
       idx_t idx_sorted = postfix_begin + prefix_idx;
 
-      int n_sites = indexing.n_sites();
-      // lila::Log("{} idx_sorted: {} = {} + {}, idx_received: {}     {} {}",
-      //           reverse ? "revs" : "norm", idx_sorted, postfix_begin,
-      //           prefix_idx, idx_received,
-      //           bitops::bits_to_string(prefix, n_prefix_bits),
-      //           bitops::bits_to_string(postfix, n_postfix_bits));
-
       send_buffer[idx_sorted] = recv_buffer[idx_received];
       ++offsets[origin_rank];
     }
   }
   std::fill(recv_buffer.begin(), recv_buffer.end(), 0);
 
-  // if (reverse)
-  //   exit(1);
 }
 
 } // namespace hydra::terms

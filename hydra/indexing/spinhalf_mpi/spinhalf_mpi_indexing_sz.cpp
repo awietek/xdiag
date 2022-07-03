@@ -121,7 +121,6 @@ SpinhalfMPIIndexingSz<bit_t>::postfix_indexing(bit_t prefix) const {
   int n_up_prefix = bitops::popcnt(prefix);
   int n_up_postfix = n_up_ - n_up_prefix;
   assert(n_up_postfix >= 0);
-  // lila::Log("NNN: {} {}", n_up_prefix, n_up_postfix);
   return postfix_lintables_[n_up_postfix];
 }
 
