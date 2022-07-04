@@ -6,7 +6,7 @@ mkdir  := mkdir -p
 
 # Additional parameters for compilation
 ccstd   = -std=c++17 
-ccwarn  = -Wall -pedantic -Wno-unknown-pragmas
+ccwarn  = -Wall -pedantic -Wno-unknown-pragmas -Wno-return-type-c-linkage
 
 objects = $(subst .cpp,.o,$(sources))
 depends = $(subst .cpp,.d,$(sources))

@@ -16,7 +16,7 @@ Communicator::Communicator(std::vector<idx_t> const &n_values_i_send)
 
   MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank_);
   MPI_Comm_size(MPI_COMM_WORLD, &mpi_size_);
-  assert(n_values_i_send.size() == mpi_size_);
+  assert((int)n_values_i_send.size() == mpi_size_);
   MPI_Alltoall(n_values_i_send_.data(), 1, MPI_INT, n_values_i_recv_.data(), 1,
                MPI_INT, MPI_COMM_WORLD);
 

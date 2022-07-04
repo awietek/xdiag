@@ -3,19 +3,19 @@
 namespace hydra::mpi {
 
 template <> void Buffer::reserve<double>(idx_t size_send, idx_t size_recv) {
-  if (size_send > send_.size()) {
+  if (size_send > (idx_t)send_.size()) {
     send_.resize(size_send);
   }
-  if (size_recv > recv_.size()) {
+  if (size_recv > (idx_t)recv_.size()) {
     recv_.resize(size_recv);
   }
 }
 
 template <> void Buffer::reserve<complex>(idx_t size_send, idx_t size_recv) {
-  if (2 * size_send > send_.size()) {
+  if (2 * size_send > (idx_t)send_.size()) {
     send_.resize(2 * size_send);
   }
-  if (2 * size_recv > recv_.size()) {
+  if (2 * size_recv > (idx_t)recv_.size()) {
     recv_.resize(2 * size_recv);
   }
 }
