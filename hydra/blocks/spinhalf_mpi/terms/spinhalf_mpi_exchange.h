@@ -78,15 +78,19 @@ void spinhalf_mpi_exchange(
 
   /////////
   // Apply the prefix bonds after doing a transpose. then transpose back
-  std::vector<coeff_t> send_buffer(vec_in.size(), 0);
-  std::vector<coeff_t> recv_buffer(vec_in.size(), 0);
+
+  // prepare send/recv buffers
+  idx_t buffer_size = indexing.size_max();
+  mpi::buffer.reserve<coeff_t>(buffer_size);
+  auto send_buffer = mpi::buffer.send<coeff_t>();
+  auto recv_buffer = mpi::buffer.recv<coeff_t>();
+
   auto tpre = rightnow_mpi();
   if (prefix_bonds.size() > 0) {
 
     // Transpose prefix/postfix order
     auto ttrans1 = rightnow_mpi();
-    spinhalf_mpi_transpose(indexing, vec_in.vector(), send_buffer, recv_buffer,
-                           false);
+    spinhalf_mpi_transpose(indexing, vec_in.vector(), false);
     timing_mpi(ttrans1, rightnow_mpi(), " (exchange) transpose 1", 2);
 
     // Loop over prefix_bonds
@@ -111,8 +115,6 @@ void spinhalf_mpi_exchange(
             bit_t new_prefix = prefix ^ mask;
             idx_t new_idx = postfix_begin + lintable.index(new_prefix);
             recv_buffer[new_idx] += Jhalf * send_buffer[idx];
-	    // lila::Log("new_idx: {} ({}), idx: {} ({})", new_idx,
-            //         recv_buffer.size(), idx, send_buffer.size());
           }
 
           ++idx;
@@ -122,8 +124,7 @@ void spinhalf_mpi_exchange(
 
     // Transpose back
     auto ttrans2 = rightnow_mpi();
-    spinhalf_mpi_transpose(indexing, recv_buffer, send_buffer, recv_buffer,
-                           true);
+    spinhalf_mpi_transpose(indexing, recv_buffer, true);
     timing_mpi(ttrans2, rightnow_mpi(), " (exchange) transpose 2", 2);
 
     for (idx_t idx = 0; idx < vec_out.size(); ++idx) {
@@ -143,10 +144,10 @@ void spinhalf_mpi_exchange(
     auto [coms_mixed, max_send_size, max_recv_size] =
         spinhalf_mpi_exchange_mixed_com(indexing, mixed_bonds, couplings);
 
-    if (max_send_size > send_buffer.size())
-      send_buffer.resize(max_send_size);
-    if (max_recv_size > recv_buffer.size())
-      recv_buffer.resize(max_recv_size);
+    // prepare send/recv buffers
+    mpi::buffer.reserve<coeff_t>(max_send_size, max_recv_size);
+    auto send_buffer = mpi::buffer.send<coeff_t>();
+    auto recv_buffer = mpi::buffer.recv<coeff_t>();
 
     int bond_idx = 0;
     for (auto bond : mixed_bonds) {
@@ -159,9 +160,9 @@ void spinhalf_mpi_exchange(
       bit_t prefix_mask = ((bit_t)1 << (s2 - n_postfix_bits));
       bit_t postfix_mask = ((bit_t)1 << s1);
 
-      std::fill(send_buffer.begin(), send_buffer.end(), 0);
-      std::fill(recv_buffer.begin(), recv_buffer.end(), 0);
-
+      mpi::buffer.clean_send();
+      mpi::buffer.clean_recv();
+	
       // Prepare sending states for this bond
       auto com = coms_mixed.at(bond_idx++);
 

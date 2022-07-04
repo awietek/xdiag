@@ -43,7 +43,10 @@ State<coeff_t, Block> RandomState(Block const &block, int seed = 42) {
   if constexpr (detail::is_mpi_block<Block>) {
     seed += 0x01000193 * block.mpi_rank();
   }
-  auto v = lila::Random<coeff_t>(block.size());
+  auto v = lila::Zeros<coeff_t>(block.size());
+  lila::normal_dist_t<coeff_t> dist(0., 1.);
+  lila::normal_gen_t<coeff_t> gen(dist, seed);
+  lila::Random(v, gen);
   return State(block, v);
 }
 template <class Block>

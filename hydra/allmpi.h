@@ -9,6 +9,7 @@
 #include "mpi/logger_mpi.h"
 #include "mpi/timing_mpi.h"
 #include "mpi/dot_mpi.h"
+#include "mpi/buffer.h"
 
 #include "blocks/utils/block_utils_mpi.h"
 

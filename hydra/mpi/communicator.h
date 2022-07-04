@@ -4,6 +4,7 @@
 
 #include <hydra/common.h>
 #include <hydra/mpi/alltoall.h>
+#include <hydra/mpi/buffer.h>
 
 namespace hydra::mpi {
 
@@ -25,9 +26,16 @@ public:
   idx_t recv_buffer_size() const { return recv_buffer_size_; }
 
   template <class T>
-  void add_to_send_buffer(int mpi_rank, T value, std::vector<T> &send_buffer) const {
+  void add_to_send_buffer(int mpi_rank, T value, T *send_buffer) const {
     idx_t idx =
         n_values_i_send_offsets_[mpi_rank] + n_values_prepared_[mpi_rank];
+
+    // if (typeid(T) == typeid(double)){
+    // lila::Log("double idx {}", idx);
+    // } else {
+    //       lila::Log("cplx idx {}", idx);
+    // }
+
     send_buffer[idx] = value;
     ++n_values_prepared_[mpi_rank];
   }
@@ -37,10 +45,9 @@ public:
   }
 
   template <class T>
-  void all_to_all(std::vector<T> const &send_buffer,
-                  std::vector<T> &recv_buffer) const {
-    Alltoallv<T>(send_buffer.data(), n_values_i_send_.data(),
-                 n_values_i_send_offsets_.data(), recv_buffer.data(),
+  void all_to_all(const T *send_buffer, T *recv_buffer) const {
+    Alltoallv<T>(send_buffer, n_values_i_send_.data(),
+                 n_values_i_send_offsets_.data(), buffer.recv<T>(),
                  n_values_i_recv_.data(), n_values_i_recv_offsets_.data(),
                  MPI_COMM_WORLD);
   }

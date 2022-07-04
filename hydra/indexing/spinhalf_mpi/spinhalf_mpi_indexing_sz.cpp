@@ -17,7 +17,8 @@ namespace hydra::indexing {
 template <typename bit_t>
 SpinhalfMPIIndexingSz<bit_t>::SpinhalfMPIIndexingSz(int n_sites, int n_up)
     : n_sites_(n_sites), n_up_(n_up), n_prefix_bits_(n_sites / 2),
-      n_postfix_bits_(n_sites - n_prefix_bits_), size_(0), size_transpose_(0) {
+      n_postfix_bits_(n_sites - n_prefix_bits_), empty_lintable_(), size_(0),
+      size_transpose_(0) {
   using namespace combinatorics;
 
   utils::check_nup_spinhalf(n_sites, n_up, "SpinhalfMPIIndexingSz");
@@ -73,6 +74,8 @@ SpinhalfMPIIndexingSz<bit_t>::SpinhalfMPIIndexingSz(int n_sites, int n_up)
     postfixes_.push_back(postfix);
   }
 
+  size_max_ = std::max(size_, size_transpose_);
+
   // Create the lintables for postfix lookup
   prefix_states_.resize(n_prefix_bits_ + 1);
   for (int n_up_prefix = 0; n_up_prefix <= n_prefix_bits_; ++n_up_prefix) {
@@ -100,7 +103,6 @@ int SpinhalfMPIIndexingSz<bit_t>::process(bit_t prepostfix) const {
   return combinatorics::hash_fnv1(prepostfix) % mpi_size_;
 }
 
-  
 template <typename bit_t>
 gsl::span<bit_t const> SpinhalfMPIIndexingSz<bit_t>::prefixes() const {
   return {prefixes_.data(), prefixes_.size()};
@@ -111,8 +113,12 @@ gsl::span<bit_t const>
 SpinhalfMPIIndexingSz<bit_t>::postfixes(bit_t prefix) const {
   int n_up_prefix = bitops::popcnt(prefix);
   int n_up_postfix = n_up_ - n_up_prefix;
-  assert(n_up_postfix >= 0);
-  return postfix_states_[n_up_postfix];
+  // assert(n_up_postfix >= 0);
+  if ((n_up_postfix >= 0) && (n_up_postfix <= n_up_)) {
+    return postfix_states_[n_up_postfix];
+  } else {
+    return gsl::span<bit_t const>();
+  }
 }
 
 template <typename bit_t>
@@ -120,8 +126,13 @@ LinTable<bit_t> const &
 SpinhalfMPIIndexingSz<bit_t>::postfix_indexing(bit_t prefix) const {
   int n_up_prefix = bitops::popcnt(prefix);
   int n_up_postfix = n_up_ - n_up_prefix;
-  assert(n_up_postfix >= 0);
-  return postfix_lintables_[n_up_postfix];
+  // lila::Log("nup: {} nuppre: {} nuppost: {}", n_up_, n_up_prefix,
+  // n_up_postfix); assert(n_up_postfix >= 0);
+  if ((n_up_postfix >= 0) && (n_up_postfix <= n_up_)) {
+    return postfix_lintables_[n_up_postfix];
+  } else {
+    return empty_lintable_;
+  }
 }
 
 template <typename bit_t>
@@ -134,8 +145,13 @@ gsl::span<bit_t const>
 SpinhalfMPIIndexingSz<bit_t>::prefixes(bit_t postfix) const {
   int n_up_postfix = bitops::popcnt(postfix);
   int n_up_prefix = n_up_ - n_up_postfix;
-  assert(n_up_prefix >= 0);
-  return prefix_states_[n_up_prefix];
+  // assert(n_up_prefix >= 0);
+  // return prefix_states_[n_up_prefix];
+  if ((n_up_prefix >= 0) && (n_up_prefix <= n_up_)) {
+    return prefix_states_[n_up_prefix];
+  } else {
+    return gsl::span<bit_t const>();
+  }
 }
 
 template <typename bit_t>
@@ -143,8 +159,14 @@ LinTable<bit_t> const &
 SpinhalfMPIIndexingSz<bit_t>::prefix_indexing(bit_t postfix) const {
   int n_up_postfix = bitops::popcnt(postfix);
   int n_up_prefix = n_up_ - n_up_postfix;
-  assert(n_up_prefix >= 0);
-  return prefix_lintables_[n_up_prefix];
+  // assert(n_up_prefix >= 0);
+  // return prefix_lintables_[n_up_prefix];
+
+  if ((n_up_prefix >= 0) && (n_up_prefix <= n_up_)) {
+    return prefix_lintables_[n_up_prefix];
+  } else {
+    return empty_lintable_;
+  }
 }
 template class SpinhalfMPIIndexingSz<uint16_t>;
 template class SpinhalfMPIIndexingSz<uint32_t>;

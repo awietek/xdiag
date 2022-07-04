@@ -28,6 +28,11 @@ coeff_t Dot(State<coeff_t, Block> const &v, State<coeff_t, Block> const &w) {
 }
 
 template <class coeff_t, class Block>
+coeff_t Norm(State<coeff_t, Block> const &v) {
+  return std::sqrt(Dot(v, v));
+}
+
+template <class coeff_t, class Block>
 coeff_t Inner(BondList const &bonds, Couplings const &couplings,
               State<coeff_t, Block> const &v) {
   auto Hv = ZeroState<coeff_t, Block>(v.block());

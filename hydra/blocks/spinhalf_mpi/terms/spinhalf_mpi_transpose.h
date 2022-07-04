@@ -3,6 +3,7 @@
 #include <vector>
 
 #include <hydra/common.h>
+#include <hydra/mpi/buffer.h>
 #include <hydra/mpi/communicator.h>
 
 namespace hydra::terms {
@@ -37,16 +38,15 @@ mpi::Communicator spinhalf_mpi_transpose_com(
 
 template <class bit_t, class coeff_t>
 void spinhalf_mpi_transpose(
-    indexing::SpinhalfMPIIndexingSz<bit_t> const &indexing,
-    std::vector<coeff_t> const &vec, std::vector<coeff_t> &send_buffer,
-    std::vector<coeff_t> &recv_buffer, bool reverse = false) {
+    indexing::SpinhalfMPIIndexingSz<bit_t> const &indexing, const coeff_t *vec,
+    bool reverse = false) {
 
   // Set up buffers for communicating
   mpi::Communicator com = spinhalf_mpi_transpose_com(indexing, reverse);
   idx_t buffer_size = std::max(com.recv_buffer_size(), com.send_buffer_size());
-
-  send_buffer.resize(buffer_size);
-  recv_buffer.resize(buffer_size);
+  mpi::buffer.reserve<coeff_t>(buffer_size);
+  auto send_buffer = mpi::buffer.send<coeff_t>();
+  auto recv_buffer = mpi::buffer.recv<coeff_t>();
 
   auto prefixes = reverse ? indexing.postfixes() : indexing.prefixes();
 
@@ -57,6 +57,7 @@ void spinhalf_mpi_transpose(
         reverse ? indexing.prefixes(prefix) : indexing.postfixes(prefix);
     for (auto postfix : postfixes) {
       int target_rank = indexing.process(postfix);
+      // lila::Log("bufsize {}", buffer_size);
       com.add_to_send_buffer(target_rank, vec[idx], send_buffer);
       ++idx;
     }
@@ -90,7 +91,7 @@ void spinhalf_mpi_transpose(
       prefix_idx = indexing.prefix_indexing(((bit_t)1 << n_up_postfix) - 1)
                        .index(prefix);
     }
-    
+
     auto postfixes = reverse ? indexing.prefixes() : indexing.postfixes();
     for (auto postfix : postfixes) {
       if (bitops::popcnt(postfix) != n_up_postfix)
@@ -109,8 +110,14 @@ void spinhalf_mpi_transpose(
       ++offsets[origin_rank];
     }
   }
-  std::fill(recv_buffer.begin(), recv_buffer.end(), 0);
+  mpi::buffer.clean_recv();
+}
 
+template <class bit_t, class coeff_t>
+void spinhalf_mpi_transpose(
+    indexing::SpinhalfMPIIndexingSz<bit_t> const &indexing,
+    std::vector<coeff_t> const &vec, bool reverse = false) {
+  spinhalf_mpi_transpose(indexing, vec.data(), reverse);
 }
 
 } // namespace hydra::terms

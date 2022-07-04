@@ -70,7 +70,7 @@ mpisources+= hydra/mpi/alltoall.cpp
 mpisources+= hydra/mpi/timing_mpi.cpp
 mpisources+= hydra/mpi/dot_mpi.cpp
 mpisources+= hydra/mpi/communicator.cpp
-
+mpisources+= hydra/mpi/buffer.cpp
 
 mpisources+= hydra/indexing/spinhalf_mpi/spinhalf_mpi_indexing_sz.cpp
 

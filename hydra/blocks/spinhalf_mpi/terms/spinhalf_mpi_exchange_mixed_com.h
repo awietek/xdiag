@@ -24,7 +24,6 @@ spinhalf_mpi_exchange_mixed_com(
   int mpi_size;
   MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
 
-  int n_up = indexing.n_up();
   int n_postfix_bits = indexing.n_postfix_bits();
 
   std::vector<mpi::Communicator> communicators;
@@ -41,8 +40,6 @@ spinhalf_mpi_exchange_mixed_com(
     bit_t postfix_mask = ((bit_t)1 << s1);
 
     for (auto prefix : indexing.prefixes()) {
-      int n_up_prefix = bitops::popcnt(prefix);
-      int n_up_postfix = n_up - n_up_prefix;
 
       bit_t prefix_flipped = prefix ^ prefix_mask;
       int target_rank = indexing.process(prefix_flipped);
