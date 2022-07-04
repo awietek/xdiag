@@ -4,11 +4,9 @@ include sources.mk
 rm     := rm -f
 mkdir  := mkdir -p
 
-includes = -I$(liladir)
-
 # Additional parameters for compilation
 ccstd   = -std=c++17 
-ccwarn  = -Wall -pedantic -Wno-return-type-c-linkage
+ccwarn  = -Wall -pedantic -Wno-unknown-pragmas
 
 objects = $(subst .cpp,.o,$(sources))
 depends = $(subst .cpp,.d,$(sources))
@@ -50,7 +48,7 @@ include $(testmpidepends)
 # different building suites
 .PHONY: test 
 test:  $(objects) $(testobjects) lib 
-	$(cc) $(ccopt) $(ccstd) $(ccwarn) $(depflags) $(libraries) $(objects) $(testobjects) -o test/tests 
+	$(cc) $(ccopt) $(ccstd) $(ccwarn) $(depflags) $(libraries) $(objects) $(testobjects) $(openmp) -o test/tests 
 
 .PHONY: mpi
 mpi: $(objects) $(mpiobjects) libmpi
@@ -86,4 +84,4 @@ rebuild: clean all lib
 
 %.o: %.cpp %.d
 %.o: %.cpp 
-	$(cc) $(ccopt) $(ccstd) $(ccwarn) $(depflags) $(lilabackend) -c $< -o $@ $(includes) -I.
+	$(cc) $(ccopt) $(ccstd) $(ccwarn) $(depflags) $(lilabackend) $(enable_mpi) $(openmp) -c $< -o $@ $(includes) -I.
