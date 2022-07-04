@@ -3,7 +3,6 @@
 #include <iostream>
 
 #include <hydra/all.h>
-// #include <omp.h>
 
 template <typename bit_t> void test_combinations_index() {
   using namespace hydra;
@@ -43,7 +42,7 @@ template <typename bit_t> void test_combinations_index() {
       }
 
       // Create states in parallel
-#pragma omp parallel
+#pragma openmp parallel
       {
         for (auto [state, idx] : CombinationsIndexThread<bit_t>(n, k)) {
           states_parallel[idx++] = state;

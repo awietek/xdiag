@@ -54,6 +54,8 @@ void tj_ising(BondList const &bonds, Couplings const &couplings,
                (type == "TJHB")) {
       val_same = 0.;
       val_diff = -J / 2.;
+    } else {
+      continue;
     }
 
     bit_t flipmask = ((bit_t)1 << s1) | ((bit_t)1 << s2);

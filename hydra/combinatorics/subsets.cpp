@@ -19,13 +19,16 @@ template class Subsets<uint32_t>;
 template class Subsets<uint64_t>;
 
 template <class bit_t>
-SubsetsThread<bit_t>::SubsetsThread(int n) : n_(n), size_((idx_t)1 << n) {
+SubsetsThread<bit_t>::SubsetsThread(int n) : n_(n)
+					     // , size_((idx_t)1 << n)
+{
   if (n < 0)
     lila::Log.err("Error constructing Subsets: n<0");
   else {
     auto [begin_idx, end_idx] = get_omp_subsets_start_end(n);
     begin_ = SubsetsIterator<bit_t>(begin_idx);
     end_ = SubsetsIterator<bit_t>(end_idx);
+    size_ = end_idx-begin_idx;
   }
 }
 template class SubsetsThread<uint16_t>;

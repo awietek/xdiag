@@ -12,8 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef HYDRA_UTILS_IOCHECKS_H_
-#define HYDRA_UTILS_IOCHECKS_H_
+#pragma once
 
 #include <string>
 #include <vector>
@@ -30,5 +29,3 @@ namespace hydra { namespace utils {
   }  // namespace utils
 }  // namespace hydra
 
-
-#endif

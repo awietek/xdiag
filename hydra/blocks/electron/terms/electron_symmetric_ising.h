@@ -42,6 +42,8 @@ void electron_symmetric_ising(BondList const &bonds, Couplings const &couplings,
                (type == "TJHB")) {
       val_same = 0.;
       val_diff = -J / 2.;
+    } else {
+      continue;
     }
 
     // bitmasks for fast evaluations

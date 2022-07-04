@@ -25,7 +25,6 @@ TEST_CASE("symmetric_operator", "[symmetries]") {
 
     for (int nup = 0; nup <= n_sites; ++nup) {
       for (int ndn = 0; ndn <= n_sites; ++ndn) {
-
         auto block_nosym = Electron(n_sites, nup, ndn);
         if (block_nosym.size() == 0)
           continue;

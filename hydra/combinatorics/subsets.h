@@ -68,7 +68,7 @@ private:
 
 template <typename bit_t>
 SubsetsThread<bit_t> ThreadStates(Subsets<bit_t> const &si){
-  return SubsetsThread(si.n());
+  return SubsetsThread<bit_t>(si.n());
 }
 
 } // namespace hydra::combinatorics

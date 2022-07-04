@@ -25,22 +25,22 @@ PermutationGroupLookup<bit_t>::PermutationGroupLookup(
   idx_t idx = 0;
   // Fill prefix table with translated prefix states
   for (int sym = 0; sym < n_symmetries_; ++sym) {
-    for (bit_t state = 0; state < prefix_size_; ++state) {
+    for (bit_t state = 0; state < (bit_t)prefix_size_; ++state) {
       table_prefix_[idx++] =
           action.apply(sym, (bit_t)(state << n_postfix_bits_));
     }
   }
-  assert(idx == table_prefix_.size());
+  assert(idx == (idx_t)table_prefix_.size());
 
   // Fill postfix table
   idx = 0;
   for (int sym = 0; sym < n_symmetries_; ++sym) {
-    for (bit_t state = 0; state < postfix_size_; ++state) {
+    for (bit_t state = 0; state < (bit_t)postfix_size_; ++state) {
       table_postfix_[idx++] = action.apply(sym, state);
     }
   }
 
-  assert(idx == table_postfix_.size());
+  assert(idx == (idx_t)table_postfix_.size());
 }
 
 template <typename bit_t>

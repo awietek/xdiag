@@ -74,7 +74,7 @@ private:
 
 template <typename bit_t>
 inline CombinationsThread<bit_t> ThreadStates(Combinations<bit_t> const &si) {
-  return CombinationsThread(si.n(), si.k());
+  return CombinationsThread<bit_t>(si.n(), si.k());
 }
 
 } // namespace hydra::combinatorics

@@ -32,7 +32,7 @@ void electron_symmetric_hopping(BondList const &bonds,
   }
   std::vector<coeff_t> prefacs(irrep.size());
 
-  assert(group_action.n_symmetries() == bloch_factors.size());
+  assert(group_action.n_symmetries() == (int)bloch_factors.size());
 
   auto clean_bonds =
       utils::clean_bondlist(bonds, couplings, {"HOP", "HOPUP", "HOPDN"}, 2);

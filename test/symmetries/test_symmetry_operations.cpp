@@ -141,7 +141,7 @@ void test_representatives_indices_symmetries_limits(int n_sites) {
       REQUIRE(rep == representative(state, group_action));
 
       auto [l, u] = limits[idx];
-      for (idx_t i = l; i < u; ++i) {
+      for (span_size_t i = l; i < u; ++i) {
         REQUIRE(rep == group_action.apply(syms[i], state));
       }
 

@@ -29,7 +29,7 @@ void tj_symmetric_hopping(BondList const &bonds, Couplings const &couplings,
   }
   std::vector<coeff_t> prefacs(irrep.size());
 
-  assert(group_action.n_symmetries() == bloch_factors.size());
+  assert(group_action.n_symmetries() == (int)bloch_factors.size());
   int n_sites = group_action.n_sites();
 
   auto clean_bonds =

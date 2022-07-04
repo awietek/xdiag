@@ -1,5 +1,6 @@
 #pragma once
 
+#ifdef HYDRA_ENABLE_MPI
 #include <mpi.h>
 
 #include <iostream>
@@ -72,5 +73,6 @@ private:
 };
 
 inline LoggerMPI LogMPI;
-
+  
 } // namespace hydra
+#endif

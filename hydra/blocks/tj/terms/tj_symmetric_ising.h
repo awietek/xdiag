@@ -46,6 +46,8 @@ void tj_symmetric_ising(BondList const &bonds, Couplings const &couplings,
                (type == "TJHB")) {
       val_same = 0.;
       val_diff = -J / 2.;
+    } else {
+      continue;
     }
 
     // bitmasks for fast evaluations
@@ -61,7 +63,7 @@ void tj_symmetric_ising(BondList const &bonds, Couplings const &couplings,
       auto dnss = indexing.dns_for_ups_rep(ups);
 
       if (popcnt(ups & mask) == 2) { // both spins pointing up
-        for (idx_t idx = ups_offset; idx < ups_offset + dnss.size(); ++idx) {
+        for (idx_t idx = ups_offset; idx < ups_offset + (idx_t)dnss.size(); ++idx) {
           fill(idx, idx, val_same);
         }
       } else {
