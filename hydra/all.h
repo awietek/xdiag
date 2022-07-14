@@ -6,6 +6,7 @@
 #include "common.h"
 #include "utils/iochecks.h"
 #include "utils/openmp_utils.h"
+#include "utils/print.h"
 
 #include "combinatorics/binomial.h"
 #include "combinatorics/bit_patterns.h"

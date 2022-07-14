@@ -1,6 +1,7 @@
 sources+= hydra/utils/iochecks.cpp
 sources+= hydra/utils/complex.cpp
 sources+= hydra/utils/openmp_utils.cpp
+sources+= hydra/utils/print.cpp
 sources+= hydra/bitops/bitops.cpp
 
 sources+= hydra/combinatorics/binomial.cpp
@@ -64,6 +65,8 @@ sources+= hydra/wavefunctions/gpwf_spinhalf.cpp
 
 sources+=hydra/linalg/lanczos/lanczos_convergence.cpp
 sources+=hydra/linalg/lanczos/tmatrix.cpp
+
+mpisources+= hydra/utils/print_mpi.cpp
 
 mpisources+= hydra/mpi/datatype.cpp
 mpisources+= hydra/mpi/allreduce.cpp

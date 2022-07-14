@@ -3,6 +3,7 @@
 #include <mpi.h>
 #include "all.h"
 
+#include "utils/print_mpi.h"
 #include "mpi/datatype.h"
 #include "mpi/allreduce.h"
 #include "mpi/alltoall.h"

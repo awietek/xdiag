@@ -67,6 +67,16 @@ public:
     if ((rank == 0) && (level <= verbosity_))
       std::cerr << fmt::format(format, args...) << "\n" << std::flush;
   }
+  
+  template <typename... Args>
+  void operator()(const std::string &format, const Args &...args) {
+    out(format, args...);
+  }
+  
+  template <typename... Args>
+  void operator()(int level, const std::string &format, const Args &...args) {
+    out(level, format, args...);
+  }
 
 private:
   int verbosity_;
