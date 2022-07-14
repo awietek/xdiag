@@ -34,7 +34,10 @@ void spinhalf_unsymmetric_exchange(BondList const &bonds,
     auto [J, J_conj] = utils::get_coupling_and_conj<coeff_t>(couplings, cpl);
     coeff_t Jhalf = J / 2.;
     coeff_t Jhalf_conj = J_conj / 2.;
-
+    if constexpr (is_real<coeff_t>()) {  // just to supress "unused" warning
+	assert(Jhalf == Jhalf_conj);
+      }
+    
     idx_t idx_in = 0;
     for (bit_t spins : indexing.states()) {
       if (bitops::popcnt(spins & flipmask) & 1) {

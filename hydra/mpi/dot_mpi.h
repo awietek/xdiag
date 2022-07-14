@@ -1,5 +1,7 @@
 #pragma once
+#ifdef HYDRA_ENABLE_MPI
 
+#include <mpi.h>
 #include <hydra/common.h>
 #include <lila/all.h>
 
@@ -21,3 +23,4 @@ complex stable_dot_product(uint64_t n, const complex *x, const complex *y);
 scomplex stable_dot_product(uint64_t n, const scomplex *x, const scomplex *y);
 
 } // namespace hydra::mpi
+#endif

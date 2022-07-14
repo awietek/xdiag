@@ -1,8 +1,10 @@
 #pragma once
+#ifdef HYDRA_ENABLE_MPI
+
+#include <mpi.h>
+#include <hydra/common.h>
 
 #include <algorithm>
-
-#include <hydra/common.h>
 
 namespace hydra::mpi {
 
@@ -28,3 +30,4 @@ private:
 inline Buffer buffer;
 
 } // namespace hydra::mpi
+#endif

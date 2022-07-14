@@ -40,7 +40,10 @@ void tj_exchange(BondList const &bonds, Couplings const &couplings,
     auto [J, J_conj] = utils::get_coupling_and_conj<coeff_t>(couplings, cpl);
     coeff_t Jhalf = J / 2.;
     coeff_t Jhalf_conj = J_conj / 2.;
-
+    if constexpr (is_real<coeff_t>()) {  // just to supress "unused" warning
+       assert(Jhalf == Jhalf_conj);
+    }
+    
     utils::check_sites_disjoint(bond);
     int s1 = bond[0];
     int s2 = bond[1];

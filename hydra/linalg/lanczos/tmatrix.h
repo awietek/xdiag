@@ -24,6 +24,7 @@ public:
   lila::Vector<double> const &betas() const { return betas_; }
 
   lila::Vector<double> eigenvalues() const;
+  lila::Matrix<double> eigenvectors() const;
   std::pair<lila::Vector<double>, lila::Matrix<double>> eigen() const;
 
 private:

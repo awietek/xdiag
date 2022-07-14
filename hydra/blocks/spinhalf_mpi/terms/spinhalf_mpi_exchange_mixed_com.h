@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <tuple>
 
 #include <hydra/common.h>
 #include <hydra/mpi/communicator.h>
@@ -33,7 +34,8 @@ spinhalf_mpi_exchange_mixed_com(
 
     std::vector<idx_t> n_states_i_send(mpi_size, 0);
 
-    auto [s1, s2, Jhalf] = get_exchange_s1_s2_Jhalf_mpi(bond, couplings);
+    int s1, s2;
+    std::tie(s1, s2, std::ignore) = get_exchange_s1_s2_Jhalf_mpi(bond, couplings);
     assert(s1 < n_postfix_bits);
     assert(s2 >= n_postfix_bits);
     bit_t prefix_mask = ((bit_t)1 << (s2 - n_postfix_bits));

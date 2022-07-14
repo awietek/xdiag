@@ -35,7 +35,10 @@ void spinhalf_symmetric_exchange(BondList const &bonds,
     auto [J, J_conj] = utils::get_coupling_and_conj<coeff_t>(couplings, cpl);
     coeff_t Jhalf = J / 2.;
     coeff_t Jhalf_conj = J_conj / 2.;
-
+    if constexpr (is_real<coeff_t>()) {  // just to supress "unused" warning
+	assert(Jhalf == Jhalf_conj);
+      }
+    
     // Run through all states and apply bond
     for (idx_t idx_in = 0; idx_in < indexing.size(); ++idx_in) {
       bit_t spins_in = indexing.state(idx_in);

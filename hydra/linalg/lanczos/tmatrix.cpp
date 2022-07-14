@@ -21,6 +21,17 @@ lila::Vector<double> Tmatrix::eigenvalues() const {
     return lila::EigenvaluesSymTridiag(alphas_, betas_);
 }
 
+lila::Matrix<double> Tmatrix::eigenvectors() const {
+  if (size() == 0) {
+    return lila::Matrix<double>();
+  }else {
+    lila::Vector<double> eigs;
+    lila::Matrix<double> evecs;
+    std::tie(eigs, evecs) = lila::EigenSymTridiag(alphas_, betas_);
+    return evecs;
+  }
+}
+  
 std::pair<lila::Vector<double>, lila::Matrix<double>> Tmatrix::eigen() const {
   if (size() == 0) {
     return {lila::Vector<double>(), lila::Matrix<double>()};

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <mpi.h>
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
 

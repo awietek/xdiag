@@ -1,5 +1,7 @@
 #pragma once
+#ifdef HYDRA_ENABLE_MPI
 
+#include <mpi.h>
 #include <lila/all.h>
 
 #include <hydra/common.h>
@@ -30,3 +32,4 @@ void Fill(SpinhalfMPI<bit_t> const &block, lila::Vector<coeff_t> &vec,
 }
 
 } // namespace hydra
+#endif

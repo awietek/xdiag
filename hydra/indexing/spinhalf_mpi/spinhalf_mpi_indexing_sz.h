@@ -1,5 +1,6 @@
 #pragma once
 
+#include <mpi.h>
 #include <unordered_map>
 
 #include <hydra/common.h>

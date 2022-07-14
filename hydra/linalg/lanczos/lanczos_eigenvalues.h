@@ -6,8 +6,10 @@
 
 #include <hydra/blocks/blocks.h>
 
+#ifdef HYDRA_ENABLE_MPI
 #include <hydra/mpi/dot_mpi.h>
 #include <hydra/mpi/timing_mpi.h>
+#endif
 
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
@@ -26,6 +28,7 @@ Tmatrix LanczosEigenvaluesInplace(
   using namespace lila;
 
   // MPI Lanczos
+#ifdef HYDRA_ENABLE_MPI
   if constexpr (detail::is_mpi_block<Block>) {
     int iter = 0;
     auto mult = [&iter, &bonds, &couplings, &block](
@@ -53,9 +56,10 @@ Tmatrix LanczosEigenvaluesInplace(
     timing_mpi(t0, rightnow_mpi(), "Lanczos time", 1);
     return tmat;
   }
-
+ 
   // Serial Lanczos
   else {
+#endif
     int iter = 0;
     auto mult = [&iter, &bonds, &couplings, &block](
                     lila::Vector<coeff_t> const &v, lila::Vector<coeff_t> &w) {
@@ -81,7 +85,9 @@ Tmatrix LanczosEigenvaluesInplace(
     (void)vectors;
     timing(t0, rightnow(), "Lanczos time", 1);
     return tmat;
+#ifdef HYDRA_ENABLE_MPI
   }
+#endif
 }
 
 // Lanczos which does not overwrite v0

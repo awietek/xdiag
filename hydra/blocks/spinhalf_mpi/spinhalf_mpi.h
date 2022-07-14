@@ -1,5 +1,7 @@
 #pragma once
+#ifdef HYDRA_ENABLE_MPI
 
+#include <mpi.h>
 #include <hydra/common.h>
 
 #include <hydra/indexing/spinhalf_mpi/spinhalf_mpi_indexing_sz.h>
@@ -56,3 +58,4 @@ private:
 };
 
 } // namespace hydra
+#endif

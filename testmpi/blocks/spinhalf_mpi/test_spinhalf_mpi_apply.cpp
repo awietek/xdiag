@@ -1,3 +1,4 @@
+#include <mpi.h>
 #include "../../catch.hpp"
 
 #include <hydra/allmpi.h>
@@ -33,9 +34,11 @@ void test_sz_sp_sm_energy(BondList bonds, Couplings couplings) {
     auto block = Spinhalf<uint32_t>(N, nup);
     auto block_mpi = SpinhalfMPI<uint32_t>(N, nup);
 
+    
     auto [e0_s, gs_s] = GroundstateReal(bonds, couplings, block);
     auto [e0_p, gs_p] = GroundstateReal(bonds, couplings, block_mpi);
-
+    REQUIRE(std::abs(e0_s - e0_p) < 1e-8);
+    
     for (int i = 0; i < N; ++i) {
       auto bond = Bond("SZ", i);
       double exp_s = Inner(bond, gs_s);

@@ -1,6 +1,6 @@
 #pragma once
-
 #ifdef HYDRA_ENABLE_MPI
+
 #include <mpi.h>
 
 #include <iostream>

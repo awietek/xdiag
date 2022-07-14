@@ -1,5 +1,7 @@
 #pragma once
+#ifdef HYDRA_ENABLE_MPI
 
+#include <mpi.h>
 #include <unordered_map>
 #include <vector>
 
@@ -61,3 +63,4 @@ private:
 };
 
 } // namespace hydra
+#endif

@@ -63,18 +63,10 @@ void electron_exchange(BondList const &bonds, Couplings const &couplings,
     int s2 = std::max(bond.site(0), bond.site(1));
 
     auto [J, J_conj] = utils::get_coupling_and_conj<coeff_t>(couplings, cpl);
-
-    coeff_t Jhalf;
-    coeff_t Jhalf_conj;
-    if constexpr (is_complex<coeff_t>()) {
-      Jhalf = couplings[cpl] / 2.;
-      Jhalf_conj = lila::conj(Jhalf);
-
-    } else {
-      Jhalf = lila::real(couplings[cpl] / 2.);
-      Jhalf_conj = Jhalf;
-    }
-
+    if constexpr (is_real<coeff_t>()) {  // just to supress "unused" warning
+	assert(J == J_conj);
+      }
+    
     // Prepare bitmasks
     bit_t s1mask = (bit_t)1 << s1;
     bit_t s2mask = (bit_t)1 << s2;

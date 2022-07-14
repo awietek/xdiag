@@ -33,6 +33,7 @@ LanczosEigenvector(BondList const &bonds, Couplings const &couplings,
   auto v0 = lila::Zeros<coeff_t>(block.size());
 
   // MPI Lanczos
+#ifdef HYDRA_ENABLE_MPI
   if constexpr (detail::is_mpi_block<Block>) {
 
     int iter = 0;
@@ -64,7 +65,7 @@ LanczosEigenvector(BondList const &bonds, Couplings const &couplings,
     // Rerun for eigenvectors
     t0 = rightnow_mpi();
     iter = 0;
-    auto [tevals, tevecs] = tmat.eigen();
+    auto tevecs = tmat.eigenvectors();
     auto coefficients = tevecs.col(num_eigenvector);
     set_v0(v0);
     std::tie(tmat, vectors) =
@@ -77,7 +78,7 @@ LanczosEigenvector(BondList const &bonds, Couplings const &couplings,
 
   // Serial Lanczos
   else {
-
+#endif
     int iter = 0;
     auto mult = [&iter, &bonds, &couplings, &block](
                     lila::Vector<coeff_t> const &v, lila::Vector<coeff_t> &w) {
@@ -107,14 +108,16 @@ LanczosEigenvector(BondList const &bonds, Couplings const &couplings,
     // Rerun for eigenvectors
     t0 = rightnow();
     iter = 0;
-    auto [tevals, tevecs] = tmat.eigen();
+    auto tevecs = tmat.eigenvectors();
     auto coefficients = tevecs.col(num_eigenvector);
     set_v0(v0);
     std::tie(tmat, evec) = LanczosGeneric(
         mult, v0, dot, converged, coefficients, max_iterations, deflation_tol);
     timing(t0, rightnow(), "Lanczos time (eigenvector run)", 1);
     return {tmat, evec};
+#ifdef HYDRA_ENABLE_MPI
   }
+#endif
 }
 
 // Implementation with user-defined starting vector v0 (does a copy)

@@ -7,47 +7,47 @@ namespace hydra::mpi {
 ///////////////////////////////////////////
 // Alltoall
 template <class TCoeffs>
-int Alltoall(const TCoeffs *sendbuf, int sendcount, TCoeffs *recvbuf,
+int Alltoall(TCoeffs *sendbuf, int sendcount, TCoeffs *recvbuf,
              int recvcount, MPI_Comm comm) {
   MPI_Datatype type = mpi::datatype<TCoeffs>();
   return MPI_Alltoall(sendbuf, sendcount, type, recvbuf, recvcount, type, comm);
 }
 
-template int Alltoall<char>(const char *sendbuf, int sendcount, char *recvbuf,
+template int Alltoall<char>(char *sendbuf, int sendcount, char *recvbuf,
                             int recvcount, MPI_Comm comm);
-template int Alltoall<short>(const short *sendbuf, int sendcount,
+template int Alltoall<short>(short *sendbuf, int sendcount,
                              short *recvbuf, int recvcount, MPI_Comm comm);
-template int Alltoall<int>(const int *sendbuf, int sendcount, int *recvbuf,
+template int Alltoall<int>(int *sendbuf, int sendcount, int *recvbuf,
                            int recvcount, MPI_Comm comm);
-template int Alltoall<long>(const long *sendbuf, int sendcount, long *recvbuf,
+template int Alltoall<long>(long *sendbuf, int sendcount, long *recvbuf,
                             int recvcount, MPI_Comm comm);
-template int Alltoall<long long>(const long long *sendbuf, int sendcount,
+template int Alltoall<long long>(long long *sendbuf, int sendcount,
                                  long long *recvbuf, int recvcount,
                                  MPI_Comm comm);
-template int Alltoall<unsigned char>(const unsigned char *sendbuf,
+template int Alltoall<unsigned char>(unsigned char *sendbuf,
                                      int sendcount, unsigned char *recvbuf,
                                      int recvcount, MPI_Comm comm);
-template int Alltoall<unsigned short>(const unsigned short *sendbuf,
+template int Alltoall<unsigned short>(unsigned short *sendbuf,
                                       int sendcount, unsigned short *recvbuf,
                                       int recvcount, MPI_Comm comm);
-template int Alltoall<unsigned int>(const unsigned int *sendbuf, int sendcount,
+template int Alltoall<unsigned int>(unsigned int *sendbuf, int sendcount,
                                     unsigned int *recvbuf, int recvcount,
                                     MPI_Comm comm);
-template int Alltoall<unsigned long>(const unsigned long *sendbuf,
+template int Alltoall<unsigned long>(unsigned long *sendbuf,
                                      int sendcount, unsigned long *recvbuf,
                                      int recvcount, MPI_Comm comm);
-template int Alltoall<unsigned long long>(const unsigned long long *sendbuf,
+template int Alltoall<unsigned long long>(unsigned long long *sendbuf,
                                           int sendcount,
                                           unsigned long long *recvbuf,
                                           int recvcount, MPI_Comm comm);
-template int Alltoall<float>(const float *sendbuf, int sendcount,
+template int Alltoall<float>(float *sendbuf, int sendcount,
                              float *recvbuf, int recvcount, MPI_Comm comm);
-template int Alltoall<double>(const double *sendbuf, int sendcount,
+template int Alltoall<double>(double *sendbuf, int sendcount,
                               double *recvbuf, int recvcount, MPI_Comm comm);
 
 // Special implementation for complex numbers
 template <>
-int Alltoall<scomplex>(const scomplex *sendbuf, int sendcounts,
+int Alltoall<scomplex>(scomplex *sendbuf, int sendcounts,
                        scomplex *recvbuf, int recvcounts, MPI_Comm comm) {
   int n_mpi_tasks, ret;
   MPI_Comm_size(MPI_COMM_WORLD, &n_mpi_tasks);
@@ -61,7 +61,7 @@ int Alltoall<scomplex>(const scomplex *sendbuf, int sendcounts,
 }
 
 template <>
-int Alltoall<complex>(const complex *sendbuf, int sendcounts, complex *recvbuf,
+int Alltoall<complex>(complex *sendbuf, int sendcounts, complex *recvbuf,
                       int recvcounts, MPI_Comm comm) {
   int n_mpi_tasks, ret;
   MPI_Comm_size(MPI_COMM_WORLD, &n_mpi_tasks);
@@ -77,75 +77,75 @@ int Alltoall<complex>(const complex *sendbuf, int sendcounts, complex *recvbuf,
 ///////////////////////////////////////////
 // Alltoallv
 template <class TCoeffs>
-int Alltoallv(const TCoeffs *sendbuf, const int *sendcounts, const int *sdispls,
-              TCoeffs *recvbuf, const int *recvcounts, const int *rdispls,
+int Alltoallv(TCoeffs *sendbuf, int *sendcounts, int *sdispls,
+              TCoeffs *recvbuf, int *recvcounts, int *rdispls,
               MPI_Comm comm) {
   MPI_Datatype type = mpi::datatype<TCoeffs>();
   return MPI_Alltoallv(sendbuf, sendcounts, sdispls, type, recvbuf, recvcounts,
                        rdispls, type, comm);
 }
 
-template int Alltoallv<char>(const char *sendbuf, const int *sendcounts,
-                             const int *sdispls, char *recvbuf,
-                             const int *recvcounts, const int *rdispls,
+template int Alltoallv<char>(char *sendbuf, int *sendcounts,
+                             int *sdispls, char *recvbuf,
+                             int *recvcounts, int *rdispls,
                              MPI_Comm comm);
-template int Alltoallv<short>(const short *sendbuf, const int *sendcounts,
-                              const int *sdispls, short *recvbuf,
-                              const int *recvcounts, const int *rdispls,
+template int Alltoallv<short>(short *sendbuf, int *sendcounts,
+                              int *sdispls, short *recvbuf,
+                              int *recvcounts, int *rdispls,
                               MPI_Comm comm);
-template int Alltoallv<int>(const int *sendbuf, const int *sendcounts,
-                            const int *sdispls, int *recvbuf,
-                            const int *recvcounts, const int *rdispls,
+template int Alltoallv<int>(int *sendbuf, int *sendcounts,
+                            int *sdispls, int *recvbuf,
+                            int *recvcounts, int *rdispls,
                             MPI_Comm comm);
-template int Alltoallv<long>(const long *sendbuf, const int *sendcounts,
-                             const int *sdispls, long *recvbuf,
-                             const int *recvcounts, const int *rdispls,
+template int Alltoallv<long>(long *sendbuf, int *sendcounts,
+                             int *sdispls, long *recvbuf,
+                             int *recvcounts, int *rdispls,
                              MPI_Comm comm);
-template int Alltoallv<long long>(const long long *sendbuf,
-                                  const int *sendcounts, const int *sdispls,
-                                  long long *recvbuf, const int *recvcounts,
-                                  const int *rdispls, MPI_Comm comm);
-template int Alltoallv<unsigned char>(const unsigned char *sendbuf,
-                                      const int *sendcounts, const int *sdispls,
+template int Alltoallv<long long>(long long *sendbuf,
+                                  int *sendcounts, int *sdispls,
+                                  long long *recvbuf, int *recvcounts,
+                                  int *rdispls, MPI_Comm comm);
+template int Alltoallv<unsigned char>(unsigned char *sendbuf,
+                                      int *sendcounts, int *sdispls,
                                       unsigned char *recvbuf,
-                                      const int *recvcounts, const int *rdispls,
+                                      int *recvcounts, int *rdispls,
                                       MPI_Comm comm);
-template int Alltoallv<unsigned short>(const unsigned short *sendbuf,
-                                       const int *sendcounts,
-                                       const int *sdispls,
+template int Alltoallv<unsigned short>(unsigned short *sendbuf,
+                                       int *sendcounts,
+                                       int *sdispls,
                                        unsigned short *recvbuf,
-                                       const int *recvcounts,
-                                       const int *rdispls, MPI_Comm comm);
-template int Alltoallv<unsigned int>(const unsigned int *sendbuf,
-                                     const int *sendcounts, const int *sdispls,
+                                       int *recvcounts,
+                                       int *rdispls, MPI_Comm comm);
+template int Alltoallv<unsigned int>(unsigned int *sendbuf,
+                                     int *sendcounts, int *sdispls,
                                      unsigned int *recvbuf,
-                                     const int *recvcounts, const int *rdispls,
+                                     int *recvcounts, int *rdispls,
                                      MPI_Comm comm);
-template int Alltoallv<unsigned long>(const unsigned long *sendbuf,
-                                      const int *sendcounts, const int *sdispls,
+template int Alltoallv<unsigned long>(unsigned long *sendbuf,
+                                      int *sendcounts, int *sdispls,
                                       unsigned long *recvbuf,
-                                      const int *recvcounts, const int *rdispls,
+                                      int *recvcounts, int *rdispls,
                                       MPI_Comm comm);
-template int Alltoallv<unsigned long long>(const unsigned long long *sendbuf,
-                                           const int *sendcounts,
-                                           const int *sdispls,
+template int Alltoallv<unsigned long long>(unsigned long long *sendbuf,
+                                           int *sendcounts,
+                                           int *sdispls,
                                            unsigned long long *recvbuf,
-                                           const int *recvcounts,
-                                           const int *rdispls, MPI_Comm comm);
-template int Alltoallv<float>(const float *sendbuf, const int *sendcounts,
-                              const int *sdispls, float *recvbuf,
-                              const int *recvcounts, const int *rdispls,
+                                           int *recvcounts,
+                                           int *rdispls, MPI_Comm comm);
+template int Alltoallv<float>(float *sendbuf, int *sendcounts,
+                              int *sdispls, float *recvbuf,
+                              int *recvcounts, int *rdispls,
                               MPI_Comm comm);
-template int Alltoallv<double>(const double *sendbuf, const int *sendcounts,
-                               const int *sdispls, double *recvbuf,
-                               const int *recvcounts, const int *rdispls,
+template int Alltoallv<double>(double *sendbuf, int *sendcounts,
+                               int *sdispls, double *recvbuf,
+                               int *recvcounts, int *rdispls,
                                MPI_Comm comm);
 
 // Special implementation for complex numbers
 template <>
-int Alltoallv<scomplex>(const scomplex *sendbuf, const int *sendcounts,
-                        const int *sdispls, scomplex *recvbuf,
-                        const int *recvcounts, const int *rdispls,
+int Alltoallv<scomplex>(scomplex *sendbuf, int *sendcounts,
+                        int *sdispls, scomplex *recvbuf,
+                        int *recvcounts, int *rdispls,
                         MPI_Comm comm) {
   int n_mpi_tasks;
   MPI_Comm_size(MPI_COMM_WORLD, &n_mpi_tasks);
@@ -165,9 +165,9 @@ int Alltoallv<scomplex>(const scomplex *sendbuf, const int *sendcounts,
 }
 
 template <>
-int Alltoallv<complex>(const complex *sendbuf, const int *sendcounts,
-                       const int *sdispls, complex *recvbuf,
-                       const int *recvcounts, const int *rdispls,
+int Alltoallv<complex>(complex *sendbuf, int *sendcounts,
+                       int *sdispls, complex *recvbuf,
+                       int *recvcounts, int *rdispls,
                        MPI_Comm comm) {
   int n_mpi_tasks;
   MPI_Comm_size(MPI_COMM_WORLD, &n_mpi_tasks);

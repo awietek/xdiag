@@ -1,3 +1,4 @@
+#include <mpi.h>
 #include "../catch.hpp"
 
 #include <hydra/allmpi.h>

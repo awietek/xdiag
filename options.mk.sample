@@ -1,9 +1,8 @@
 # Choose the Compilers (mpicc only required for compiling the MPI library)
 cc         = clang++
-mpicc      = mpicxx
 
 # Set optimization flags
-ccopt      = -O3 -Ofast -march=native
+ccopt      = -O2 -march=native
 
 # Set the directory of the lila headers
 liladir    = /mnt/home/awietek/Research/Software/lila
@@ -18,3 +17,7 @@ libraries   = -lmkl_rt
 # ## Accelerate on OSX
 # lilabackend = -DLILA_USE_ACCELERATE
 # libraries   = -framework Accelerate
+
+# # To compile the MPI library, uncomment the following lines
+# cc          = mpicxx
+# enable_mpi  = -DHYDRA_ENABLE_MPI
