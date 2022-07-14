@@ -6,7 +6,7 @@ mkdir  := mkdir -p
 
 # Additional parameters for compilation
 ccstd   = -std=c++17 
-ccwarn  = -Wall -pedantic -Wno-unknown-pragmas -Wno-return-type-c-linkage
+ccwarn  = -Wall -pedantic -Wno-unknown-pragmas
 
 objects = $(subst .cpp,.o,$(sources))
 depends = $(subst .cpp,.d,$(sources))
@@ -56,7 +56,7 @@ mpi: $(objects) $(mpiobjects) libmpi
 
 .PHONY: testmpi 
 testmpi:  $(objects) $(mpiobjects) $(testmpiobjects) libmpi 
-	$(mpicc) $(ccopt) $(ccstd) $(ccwarn) $(depflags) $(libraries) $(objects) $(mpiobjects) $(testmpiobjects) -o testmpi/tests 
+	$(cc) $(ccopt) $(ccstd) $(ccwarn) $(depflags) $(libraries) $(objects) $(mpiobjects) $(testmpiobjects) -o testmpi/tests 
 
 .PHONY: apps
 apps: $(objects) $(appobjects) $(appbinaries) lib
