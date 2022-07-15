@@ -4,8 +4,7 @@
 #include <omp.h>
 #endif
 
-#include <lila/utils/logger.h>
-
+#include <hydra/utils/logger.h>
 #include <hydra/combinatorics/bit_patterns.h>
 #include <hydra/combinatorics/combinatorics_omp_utils.h>
 
@@ -15,11 +14,11 @@ template <class bit_t>
 CombinationsIndex<bit_t>::CombinationsIndex(int n, int k)
     : n_(n), k_(k), size_(binomial(n, k)) {
   if (k > n) {
-    lila::Log.err("Error constructing CombinationsIndex: k>n");
+    Log.err("Error constructing CombinationsIndex: k>n");
   } else if (k < 0) {
-    lila::Log.err("Error constructing CombinationsIndex: k<0");
+    Log.err("Error constructing CombinationsIndex: k<0");
   } else if (n < 0) {
-    lila::Log.err("Error constructing CombinationsIndex: n<0");
+    Log.err("Error constructing CombinationsIndex: n<0");
   } else {
     begin_ = CombinationsIndexIterator<bit_t>(n, k, 0);
     end_ = CombinationsIndexIterator<bit_t>(n, k, binomial(n, k));
@@ -43,11 +42,11 @@ template <class bit_t>
 CombinationsIndexThread<bit_t>::CombinationsIndexThread(int n, int k)
     : n_(n), k_(k), size_(combinatorics::binomial(n, k)) {
   if (k > n) {
-    lila::Log.err("Error constructing CombinationsIndexThread: k>n");
+    Log.err("Error constructing CombinationsIndexThread: k>n");
   } else if (k < 0) {
-    lila::Log.err("Error constructing CombinationsIndexThread: k<0");
+    Log.err("Error constructing CombinationsIndexThread: k<0");
   } else if (n < 0) {
-    lila::Log.err("Error constructing CombinationsIndexThread: n<0");
+    Log.err("Error constructing CombinationsIndexThread: n<0");
   } else {
     auto [begin_idx, end_idx] = get_omp_combinations_start_end(n, k);
     begin_ = CombinationsIndexIterator<bit_t>(n, k, begin_idx);

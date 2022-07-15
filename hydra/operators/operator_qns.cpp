@@ -1,6 +1,6 @@
 #include "operator_qns.h"
 
-#include <lila/utils/logger.h>
+#include <hydra/utils/logger.h>
 
 namespace hydra::utils {
 
@@ -12,13 +12,13 @@ int spinhalf_nup(BondList const &bonds, Couplings const &cpls) {
 
   auto type = clean_bonds[0].type();
   if (spinhalf_bond_nup.find(type) == spinhalf_bond_nup.end())
-    lila::Log.warn("Warning: unknown bond type ignored: {}!", type);
+    Log.warn("Warning: unknown bond type ignored: {}!", type);
 
   int nup0 = spinhalf_bond_nup.at(clean_bonds[0].type());
   for (auto bond : clean_bonds) {
     auto type = bond.type();
     if (spinhalf_bond_nup.find(type) == spinhalf_bond_nup.end())
-      lila::Log.warn("Warning: unknown bond type ignored: {}!", type);
+      Log.warn("Warning: unknown bond type ignored: {}!", type);
 
     if (spinhalf_bond_nup.at(type) != nup0)
       return undefined_qn;
@@ -35,13 +35,13 @@ std::pair<int, int> electron_nup_ndn(BondList const &bonds,
 
   auto type = clean_bonds[0].type();
   if (electron_bond_nup_ndn.find(type) == electron_bond_nup_ndn.end())
-    lila::Log.err("Warning: unknown bond type ignored: {}!", type);
+    Log.err("Warning: unknown bond type ignored: {}!", type);
 
   auto nup_ndn0 = electron_bond_nup_ndn.at(clean_bonds[0].type());
   for (auto bond : clean_bonds) {
     auto type = bond.type();
     if (electron_bond_nup_ndn.find(type) == electron_bond_nup_ndn.end())
-      lila::Log.err("Warning: unknown bond type ignored: {}!", type);
+      Log.err("Warning: unknown bond type ignored: {}!", type);
 
     if (electron_bond_nup_ndn.at(type) != nup_ndn0)
       return {undefined_qn, undefined_qn};

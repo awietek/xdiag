@@ -1,5 +1,6 @@
 #include "tj.h"
 
+#include <hydra/utils/logger.h>
 #include <hydra/blocks/utils/block_utils.h>
 
 namespace hydra {
@@ -46,14 +47,14 @@ template <class bit_t> bool tJ<bit_t>::operator!=(tJ<bit_t> const &rhs) const {
 template <typename bit_t>
 indexing::tJIndexing<bit_t> const &tJ<bit_t>::indexing_np() const {
   if (!(charge_conserved_ && sz_conserved_) || symmetric_)
-    lila::Log.err("Error: wrong indexing required");
+    Log.err("Error: wrong indexing required");
   return *indexing_np_;
 }
 
 template <typename bit_t>
 indexing::tJSymmetricIndexing<bit_t> const &tJ<bit_t>::indexing_sym_np() const {
   if (!(charge_conserved_ && sz_conserved_) || !symmetric_)
-    lila::Log.err("Error: wrong indexing required");
+    Log.err("Error: wrong indexing required");
   return *indexing_sym_np_;
 }
 

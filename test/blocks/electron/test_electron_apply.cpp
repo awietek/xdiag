@@ -35,7 +35,7 @@ TEST_CASE("electron_apply", "[blocks][electron]") {
   // Test Fermion all to all, free fermions (real)
   for (int n_sites = 3; n_sites < 7; ++n_sites) {
 
-    lila::Log("electron_apply: Hubbard random all-to-all test (real), N: {}",
+    Log("electron_apply: Hubbard random all-to-all test (real), N: {}",
               n_sites);
     std::tie(bondlist, couplings) = freefermion_alltoall(n_sites);
     couplings["U"] = 5.0;
@@ -59,7 +59,7 @@ TEST_CASE("electron_apply", "[blocks][electron]") {
         auto evals_mat = lila::EigenvaluesSym(H);
         double e0_mat = evals_mat(0);
         double e0_app = E0Real(bondlist, couplings, block);
-        // lila::Log.out("nup: {}, ndn: {}, e0_mat: {}, e0_app: {}", nup, ndn,
+        // Log.out("nup: {}, ndn: {}, e0_mat: {}, e0_app: {}", nup, ndn,
         // e0_mat, e0_app);
         CHECK(lila::close(e0_mat, e0_app, 1e-6, 1e-6));
       }
@@ -68,7 +68,7 @@ TEST_CASE("electron_apply", "[blocks][electron]") {
   // /////////////////
   // Test Fermion all to all, free fermions (cplx, up/dn different)
   for (int n_sites = 3; n_sites < 7; ++n_sites) {
-    lila::Log("electron_apply: Hubbard random all-to-all test (cplx), N: {}",
+    Log("electron_apply: Hubbard random all-to-all test (cplx), N: {}",
               n_sites);
     std::tie(bondlist, couplings) = freefermion_alltoall_complex_updn(n_sites);
     couplings["U"] = 5.0;
@@ -92,14 +92,14 @@ TEST_CASE("electron_apply", "[blocks][electron]") {
         auto evals_mat = lila::EigenvaluesSym(H);
         double e0_mat = evals_mat(0);
         double e0_app = E0Cplx(bondlist, couplings, block);
-        // lila::Log.out("e0_mat: {}, e0_app: {}", e0_mat, e0_app);
+        // Log.out("e0_mat: {}, e0_app: {}", e0_mat, e0_app);
         CHECK(lila::close(e0_mat, e0_app, 1e-6, 1e-6));
       }
   }
 
   /////////////////////////////////////////////////////
   // Henry's MATLAB code test (tests Heisenberg terms)
-  lila::Log("electron_apply: U-hopping-HB apply of Henry's Matlab code");
+  Log("electron_apply: U-hopping-HB apply of Henry's Matlab code");
   {
     auto [bondlist, couplings, eigs_correct] = randomAlltoAll4NoU();
 
@@ -121,7 +121,7 @@ TEST_CASE("electron_apply", "[blocks][electron]") {
         auto evals_mat = lila::EigenvaluesSym(H);
         double e0_mat = evals_mat(0);
         double e0_app = E0Cplx(bondlist, couplings, block);
-        // lila::Log.out("e0_mat: {}, e0_app: {}", e0_mat, e0_app);
+        // Log.out("e0_mat: {}, e0_app: {}", e0_mat, e0_app);
         CHECK(lila::close(e0_mat, e0_app, 1e-6, 1e-6));
       }
 
@@ -143,13 +143,13 @@ TEST_CASE("electron_apply", "[blocks][electron]") {
         auto evals_mat = lila::EigenvaluesSym(H);
         double e0_mat = evals_mat(0);
         double e0_app = E0Cplx(bondlist, couplings, block);
-        // lila::Log.out("e0_mat: {}, e0_app: {}", e0_mat, e0_app);
+        // Log.out("e0_mat: {}, e0_app: {}", e0_mat, e0_app);
         CHECK(lila::close(e0_mat, e0_app, 1e-6, 1e-6));
       }
   }
 
   for (int N = 3; N <= 5; ++N) {
-    lila::Log.out("electron_apply: random all-to-all complex exchange test Np "
+    Log.out("electron_apply: random all-to-all complex exchange test Np "
                   "<-> NoNp, N={}",
                   N);
     auto [bonds, cpls] = hydra::testcases::tj::tj_alltoall_complex(N);

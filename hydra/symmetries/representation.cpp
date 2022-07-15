@@ -2,7 +2,7 @@
 
 #include <fstream>
 
-#include <lila/utils/logger.h>
+#include <hydra/utils/logger.h>
 #include <numeric>
 
 namespace hydra {
@@ -130,8 +130,8 @@ Representation read_represenation(std::string filename, std::string repname) {
     }
   }
   if (!found)
-    lila::Log.err("Error reading representations: "
-                  "name not found in file");
+    Log.err("Error reading representations: "
+	    "name not found in file");
 
   return Representation();
 }

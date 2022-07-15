@@ -5,6 +5,7 @@
 #include <utility>
 #include <vector>
 
+#include <hydra/utils/logger.h>
 #include <hydra/linalg/lanczos/lanczos_eigenvalues.h>
 #include <hydra/linalg/state.h>
 #include <hydra/operators/bondlist.h>
@@ -22,7 +23,7 @@ double E0Real(BondList const &bondlist, Couplings const &couplings,
   auto eigs = tmat.eigenvalues();
   if (eigs.size() == 0) {
     LilaPrint(eigs.size());
-    lila::Log.err("Error: Tmatrix zero dimensional in E0Real");
+    Log.err("Error: Tmatrix zero dimensional in E0Real");
     return 0.;
   } else {
     return tmat.eigenvalues()(0);
@@ -37,7 +38,7 @@ double E0Cplx(BondList const &bondlist, Couplings const &couplings,
                                      seed, max_iterations);
   auto eigs = tmat.eigenvalues();
   if (eigs.size() == 0) {
-    lila::Log.err("Error: Tmatrix zero dimensional in E0Cplx");
+    Log.err("Error: Tmatrix zero dimensional in E0Cplx");
     return 0.;
   } else {
     return tmat.eigenvalues()(0);
@@ -54,7 +55,7 @@ GroundstateReal(BondList const &bondlist, Couplings const &couplings,
                                            precision, seed, max_iterations);
   auto eigs = tmat.eigenvalues();
   if (eigs.size() == 0) {
-    lila::Log.err("Error: Tmatrix zero dimensional in GroundstateReal");
+    Log.err("Error: Tmatrix zero dimensional in GroundstateReal");
     return {0., State<double, Block>()};
   } else {
     return {tmat.eigenvalues()(0), State(block, v0)};
@@ -70,7 +71,7 @@ GroundstateCplx(BondList const &bondlist, Couplings const &couplings,
                                            precision, seed, max_iterations);
   auto eigs = tmat.eigenvalues();
   if (eigs.size() == 0) {
-    lila::Log.err("Error: Tmatrix zero dimensional in GroundstateCplx");
+    Log.err("Error: Tmatrix zero dimensional in GroundstateCplx");
     return {0., State<complex, Block>()};
   } else {
     return {tmat.eigenvalues()(0), State(block, v0)};

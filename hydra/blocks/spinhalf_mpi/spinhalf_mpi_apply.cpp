@@ -1,6 +1,7 @@
 #include "spinhalf_mpi_apply.h"
 
 #include <hydra/bitops/bitops.h>
+#include <hydra/utils/logger.h>
 #include <hydra/combinatorics/combinations.h>
 
 #include <hydra/operators/operator_qns.h>
@@ -19,8 +20,8 @@ void Apply(BondList const &bonds, Couplings const &couplings,
 
   int n_up_out = utils::spinhalf_nup(bonds, couplings, block_in);
   if (n_up_out != block_out.n_up())
-    lila::Log.err("Incompatible n_up in Apply: {} != {}", n_up_out,
-                  block_out.n_up());
+    Log.err("Incompatible n_up in Apply: {} != {}", n_up_out,
+	    block_out.n_up());
 
   assert(block_in.size() == vec_in.size());
   assert(block_out.size() == vec_out.size());

@@ -1,7 +1,6 @@
 #include "subsets_index.h"
 
-#include <lila/utils/logger.h>
-
+#include <hydra/utils/logger.h>
 #include <hydra/combinatorics/combinatorics_omp_utils.h>
 
 namespace hydra::combinatorics {
@@ -9,7 +8,7 @@ namespace hydra::combinatorics {
 template <class bit_t>
 SubsetsIndex<bit_t>::SubsetsIndex(int n) : n_(n), size_((idx_t)1 << n) {
   if (n < 0) {
-    lila::Log.err("Error constructing SubsetsIndex: n<0");
+    Log.err("Error constructing SubsetsIndex: n<0");
   } else {
     begin_ = SubsetsIndexIterator<bit_t>(0);
     end_ = SubsetsIndexIterator<bit_t>((idx_t)1 << n);
@@ -24,7 +23,7 @@ template <class bit_t>
 SubsetsIndexThread<bit_t>::SubsetsIndexThread(int n)
     : n_(n), size_((idx_t)1 << n) {
   if (n < 0) {
-    lila::Log.err("Error constructing SubsetsIndex: n<0");
+    Log.err("Error constructing SubsetsIndex: n<0");
   } else {
     auto [begin_idx, end_idx] = get_omp_subsets_start_end(n);
     begin_ = SubsetsIndexIterator<bit_t>(begin_idx);

@@ -1,5 +1,6 @@
 #include "spinhalf_apply.h"
 
+#include <hydra/utils/logger.h>
 #include <hydra/blocks/spinhalf/terms/spinhalf_terms.h>
 #include <hydra/blocks/utils/block_utils.h>
 
@@ -14,7 +15,7 @@ void Apply(BondList const &bonds, Couplings const &couplings,
 
   int n_up_out = utils::spinhalf_nup(bonds, couplings, block_in);
   if (n_up_out != block_out.n_up())
-    lila::Log.err("Incompatible n_up in Apply: {} != {}", n_up_out,
+    Log.err("Incompatible n_up in Apply: {} != {}", n_up_out,
                   block_out.n_up());
 
   assert(block_in.size() == vec_in.size());

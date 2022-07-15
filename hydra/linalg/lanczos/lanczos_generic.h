@@ -3,6 +3,7 @@
 #include <lila/all.h>
 #include <hydra/linalg/lanczos/tmatrix.h>
 #include <hydra/common.h>
+#include <hydra/utils/logger.h>
 
 namespace hydra {
 
@@ -14,6 +15,8 @@ LanczosGeneric(multiply_f mult, lila::Vector<coeff_t> &v0, dot_f dot,
                lila::Matrix<coeff_t> coefficients = lila::Matrix<coeff_t>(),
                int max_iterations = 1000, double deflation_tol = 1e-7) {
 
+
+  
   using namespace lila;
   using real = real_t<coeff_t>;
 
@@ -65,6 +68,12 @@ LanczosGeneric(multiply_f mult, lila::Vector<coeff_t> &v0, dot_f dot,
     beta = norm(v1);
     tmatrix.append(alpha, beta);
 
+    auto eigs = tmatrix.eigenvalues();
+    Log(2, "alpha: {:.16f}", alpha);
+    Log(2, "beta: {:.16f}", alpha);
+    Log(2, "eigs: {:.8f} {:.8f} {:.8f} {:.8f} {:.8f}",
+	eigs(0), eigs(1), eigs(2), eigs(3), eigs(4));
+    
     // Finish if Lanczos sequence is exhausted
     if (std::abs(beta) > deflation_tol) {
       Scale(1. / (coeff_t)beta, v1);

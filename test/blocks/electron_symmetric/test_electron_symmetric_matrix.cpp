@@ -79,7 +79,7 @@ void test_electron_symmetric_spectra(BondList bondlist, Couplings couplings,
 
           auto electron =
               Electron<bit_t>(n_sites, nup, ndn, space_group, irrep);
-          // lila::Log.out(
+          // Log.out(
           //     "nup: {}, ndn: {}, k: {}, mult: {}, dim_nosym: {}, dim_sym:"
           //     "{} ",
           //     nup, ndn, k, multiplicity, electron_nosym.size(),
@@ -110,7 +110,7 @@ void test_electron_symmetric_spectra(BondList bondlist, Couplings couplings,
         std::sort(eigs_sym.begin(), eigs_sym.end());
 
         // Check if all eigenvalues agree
-        // lila::Log.out("{} {} {} {}", nup, ndn, eigs_sym(0), eigs_nosym(0));
+        // Log.out("{} {} {} {}", nup, ndn, eigs_sym(0), eigs_nosym(0));
         // LilaPrint(eigs_sym);
         // LilaPrint(eigs_nosym);
         CHECK(lila::close(eigs_sym, eigs_nosym));
@@ -127,7 +127,7 @@ void test_hubbard_symmetric_spectrum_chains(int n_sites) {
       get_cyclic_group_irreps_mult(n_sites);
 
   // Without Heisenberg term
-  lila::Log.out("electron_symmetric_matrix: Hubbard chain,n_sites: {}",
+  Log.out("electron_symmetric_matrix: Hubbard chain,n_sites: {}",
                 n_sites);
   auto [bondlist, couplings] = get_linear_chain(n_sites, 1.0, 5.0);
   test_electron_symmetric_spectra<bit_t>(bondlist, couplings, space_group,
@@ -136,7 +136,7 @@ void test_hubbard_symmetric_spectrum_chains(int n_sites) {
                                                irreps, multiplicities);
 
   // With Heisenberg term
-  lila::Log("electron_symmetric_matrix: Hubbard chain,  n_sites: {} (+ "
+  Log("electron_symmetric_matrix: Hubbard chain,  n_sites: {} (+ "
             "Heisenberg terms)",
             n_sites);
   auto [bondlist_hb, couplings_hb] =
@@ -152,7 +152,7 @@ TEST_CASE("electron_symmetric_matrix", "[blocks][electron_symmetric]") {
   //////////////////////////////////////////////////////////////////////////////////////
 
   // Check matrices agains Weisse & Fehske
-  lila::Log("electron_symmetric_matrix: Weisse & Fehske matrix");
+  Log("electron_symmetric_matrix: Weisse & Fehske matrix");
   int n_sites = 4;
   int nup = 3;
   int ndn = 2;
@@ -208,7 +208,7 @@ TEST_CASE("electron_symmetric_matrix", "[blocks][electron_symmetric]") {
   }
 
   // test a 3x3 triangular lattice
-  lila::Log("electron_symmetric_matrix: Hubbard 3x3 triangular");
+  Log("electron_symmetric_matrix: Hubbard 3x3 triangular");
   using bit_t = uint16_t;
   std::string lfile = "data/triangular.9.hop.sublattices.tsl.lat";
 
@@ -234,7 +234,7 @@ TEST_CASE("electron_symmetric_matrix", "[blocks][electron_symmetric]") {
                                          irreps, multiplicities);
 
   // test a 3x3 triangular lattice with Heisenberg terms
-  lila::Log(
+  Log(
       "electron_symmetric_matrix: Hubbard 3x3 triangular(+ Heisenberg terms)");
   auto bondlist_hb = bondlist;
   for (auto bond : bondlist) {
@@ -246,7 +246,7 @@ TEST_CASE("electron_symmetric_matrix", "[blocks][electron_symmetric]") {
 
   // test a 3x3 triangular lattice with complex hoppings
   {
-    lila::Log.out(
+    Log.out(
         "electron_symmetric_matrix: Hubbard 3x3 triangular (complex)");
     using bit_t = uint16_t;
     std::string lfile =

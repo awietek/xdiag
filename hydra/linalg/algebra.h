@@ -3,6 +3,7 @@
 #include <lila/all.h>
 
 #include <hydra/common.h>
+#include <hydra/utils/logger.h>
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
 
@@ -18,7 +19,7 @@ namespace hydra {
 template <class coeff_t, class Block>
 coeff_t Dot(State<coeff_t, Block> const &v, State<coeff_t, Block> const &w) {
   if (v.block() != w.block()) {
-    lila::Log.err("Error: trying to perform Dot product of distinct blocks");
+    Log.err("Error: trying to perform Dot product of distinct blocks");
   }
   if constexpr (detail::is_mpi_block<Block>) {
     return DotMPI(v.vector(), w.vector());

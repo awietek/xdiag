@@ -50,7 +50,7 @@ template <typename bit_t> void test_combinations_index() {
       }
 
       for (idx_t idx = 0; idx < size; ++idx) {
-        // lila::Log("{} {}", states_serial[idx], states_parallel[idx]);
+        // Log("{} {}", states_serial[idx], states_parallel[idx]);
         REQUIRE(states_serial[idx] == states_parallel[idx]);
       }
     }
@@ -58,7 +58,7 @@ template <typename bit_t> void test_combinations_index() {
 }
 
 TEST_CASE("CombinationsIndex", "[combinatorics]") {
-  lila::Log.out("Testing CombinationsIndex");
+  hydra::Log.out("Testing CombinationsIndex");
   test_combinations_index<uint16_t>();
   test_combinations_index<uint32_t>();
   test_combinations_index<uint64_t>();

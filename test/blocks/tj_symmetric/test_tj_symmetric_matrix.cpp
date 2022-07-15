@@ -73,7 +73,7 @@ template <class bit_t> void test_tj_symmetric_spectrum_chains(int n_sites) {
   using namespace hydra::testcases::tj;
   using namespace hydra::testcases::electron;
 
-  lila::Log.out(
+  Log.out(
       "tj_symmetric_matrix: tJ chain, symmetric spectra test, n_sites: {}",
       n_sites);
   auto [bondlist, couplings] = tJchain(n_sites, 1.0, 0.4);
@@ -96,7 +96,7 @@ TEST_CASE("tj_symmetric_matrix", "[blocks][tj_symmetric]") {
 
   {
     // test a 3x3 triangular lattice
-    lila::Log("tj_symmetric_matrix: tJ 3x3 triangular, symmetric spectra test");
+    Log("tj_symmetric_matrix: tJ 3x3 triangular, symmetric spectra test");
     std::string lfile = "data/triangular.9.hop.sublattices.tsl.lat";
 
     auto bondlist = read_bondlist(lfile);
@@ -128,7 +128,7 @@ TEST_CASE("tj_symmetric_matrix", "[blocks][tj_symmetric]") {
 
   {
     // test a 3x3 triangular lattice with complex flux
-    lila::Log("tj_symmetric_matrix: tJ 3x3 triangular staggered flux, "
+    Log("tj_symmetric_matrix: tJ 3x3 triangular staggered flux, "
               "symmetric spectra test, complex");
     std::string lfile =
         "data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.lat";
@@ -152,7 +152,7 @@ TEST_CASE("tj_symmetric_matrix", "[blocks][tj_symmetric]") {
     }
 
     for (auto eta : etas) {
-      // lila::Log("eta: {:.2f}", eta);
+      // Log("eta: {:.2f}", eta);
       Couplings couplings;
       couplings["TPHI"] = complex(cos(eta * M_PI), sin(eta * M_PI));
       couplings["JPHI"] = complex(cos(2 * eta * M_PI), sin(2 * eta * M_PI));

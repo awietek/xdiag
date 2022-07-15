@@ -3,6 +3,7 @@
 #include <hydra/common.h>
 
 #include <hydra/bitops/bitops.h>
+#include <hydra/utils/logger.h>
 
 #include <hydra/blocks/spinhalf/spinhalf.h>
 #include <hydra/blocks/utils/block_utils.h>
@@ -25,7 +26,7 @@ void spinhalf_symmetric_scalar_chirality(BondList const &bonds,
   for (auto bond : clean_bonds) {
 
     if constexpr (!is_complex<coeff_t>()) {  // coeff_t == real
-      lila::Log.warn(
+      Log.warn(
           "Warning: Ignoring SCALARCHIRALITY bonds due to real coefficients");
       break;
     } else {  // coeff_t == complex

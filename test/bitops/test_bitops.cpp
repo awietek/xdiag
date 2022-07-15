@@ -152,10 +152,10 @@ template <typename bit_t> void test_bitops() {
 }
 
 TEST_CASE("bitops", "[bitops]") {
-  lila::Log.out("Testing bitops");
-  lila::Log.set_verbosity(1);
+  Log.out("Testing bitops");
+  Log.set_verbosity(1);
   test_bitops<uint16_t>();
   test_bitops<uint32_t>();
   test_bitops<uint64_t>();
-  lila::Log.set_verbosity(0);
+  Log.set_verbosity(0);
 }

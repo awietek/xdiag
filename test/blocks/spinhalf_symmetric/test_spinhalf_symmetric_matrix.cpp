@@ -17,7 +17,7 @@ void test_spinhalf_symmetric_spectra(BondList bondlist, Couplings couplings,
   assert(irreps.size() == multiplicities.size());
 
   for (int nup = 0; nup <= n_sites; ++nup) {
-    // lila::Log("Spinhalf Symmetric N: {}, nup: {}", n_sites, nup);
+    // Log("Spinhalf Symmetric N: {}, nup: {}", n_sites, nup);
     // Compute the full spectrum from non-symmetrized block
     auto spinhalf_nosym = Spinhalf<bit_t>(n_sites, nup);
 
@@ -32,7 +32,7 @@ void test_spinhalf_symmetric_spectra(BondList bondlist, Couplings couplings,
         auto irrep = irreps[k];
         int multiplicity = multiplicities[k];
         auto spinhalf = Spinhalf<bit_t>(n_sites, nup, space_group, irrep);
-        // lila::Log.out(
+        // Log.out(
         //     "nup: {}, k: {}, mult: {}, dim_nosym: {}, dim_sym: "
         //     "{} ", nup, k, multiplicity, spinhalf_nosym.size(),
         //     spinhalf.size());
@@ -75,7 +75,7 @@ void test_spinhalf_symmetric_spectra_no_sz(BondList bondlist,
   int n_sites = space_group.n_sites();
   assert(irreps.size() == multiplicities.size());
 
-  // lila::Log("Spinhalf Symmetric N: {}, nup: {}", n_sites, nup);
+  // Log("Spinhalf Symmetric N: {}, nup: {}", n_sites, nup);
   // Compute the full spectrum from non-symmetrized block
   auto spinhalf_nosym = Spinhalf<bit_t>(n_sites);
 
@@ -139,7 +139,7 @@ void test_spinhalf_symmetric_spectrum_chains(int n_sites) {
   using hydra::testcases::electron::get_cyclic_group_irreps_mult;
 
   // Without Heisenberg term
-  lila::Log.out("spinhalf_symmetric_matrix: HB chain, N: {}", n_sites);
+  Log.out("spinhalf_symmetric_matrix: HB chain, N: {}", n_sites);
   auto [space_group, irreps, multiplicities] =
       get_cyclic_group_irreps_mult(n_sites);
   auto [bondlist, couplings] = HBchain(n_sites, 1.0, 1.0);
@@ -160,7 +160,7 @@ TEST_CASE("spinhalf_symmetric_matrix", "[blocks][spinhalf_symmetric]") {
 
   // test a 3x3 triangular lattice
   {
-    lila::Log("spinhalf_symmetric_matrix: Triangular 3x3");
+    Log("spinhalf_symmetric_matrix: Triangular 3x3");
     std::string lfile = "data/triangular.9.Jz1Jz2Jx1Jx2D1.sublattices.tsl.lat";
 
     auto bondlist = read_bondlist(lfile);
@@ -193,7 +193,7 @@ TEST_CASE("spinhalf_symmetric_matrix", "[blocks][spinhalf_symmetric]") {
 
   // test J1-J2-Jchi triangular lattice
   {
-    lila::Log("spinhalf_symmetric_matrix: Triangular J1J2Jchi N=12");
+    Log("spinhalf_symmetric_matrix: Triangular J1J2Jchi N=12");
     std::string lfile = "data/triangular.j1j2jch/"
                         "triangular.12.j1j2jch.sublattices.fsl.lat";
 
@@ -227,7 +227,7 @@ TEST_CASE("spinhalf_symmetric_matrix", "[blocks][spinhalf_symmetric]") {
       REQUIRE(lila::close(H, lila::Herm(H)));
 
       auto eigs = lila::EigenvaluesSym(H);
-      // lila::Log("{} {:.18f} {:.18f}", name, eigs(0), energy);
+      // Log("{} {:.18f} {:.18f}", name, eigs(0), energy);
 
       REQUIRE(std::abs(eigs(0) - energy) < 1e-10);
     }

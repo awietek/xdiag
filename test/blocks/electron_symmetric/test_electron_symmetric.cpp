@@ -15,7 +15,7 @@ using namespace hydra::combinatorics;
 //   for (bit_t ups : electron.reps_up_) {
 //     auto const &dnss = electron.dns_for_up_rep(ups);
 //     for (bit_t dns : dnss) {
-//       // lila::Log.out("{} {}", bits_to_string(ups, n_sites),
+//       // Log.out("{} {}", bits_to_string(ups, n_sites),
 //       // bits_to_string(dns, n_sites));
 //       idx_t idx2 = electron.index(ups, dns);
 //       REQUIRE(idx == idx2);
@@ -27,7 +27,7 @@ using namespace hydra::combinatorics;
 template <class bit_t> void test_electron_chain(int n_sites) {
   using bitops::bits_to_string;
 
-  lila::Log("electron_symmetric: chain block test. N: {}", n_sites);
+  Log("electron_symmetric: chain block test. N: {}", n_sites);
 
   // cyclic group as space group
   std::vector<std::vector<int>> permutations;
@@ -50,7 +50,7 @@ template <class bit_t> void test_electron_chain(int n_sites) {
 
       for (int k = 0; k < n_sites; ++k) {
 
-        // lila::Log.out("N: {}, nup: {}, ndn: {}, k:{} ", n_sites, nup, ndn,
+        // Log.out("N: {}, nup: {}, ndn: {}, k:{} ", n_sites, nup, ndn,
         // k);
 
         // Create characters
@@ -84,7 +84,7 @@ TEST_CASE("electron_symmetric", "[blocks][electron_symmetric]") {
 
   // test a 3x3 triangular lattice
   int n_sites = 9;
-  lila::Log.out("electron_symmetric: triangular 3x3 block test");
+  Log.out("electron_symmetric: triangular 3x3 block test");
 
   std::vector<std::pair<std::string, int>> rep_name_mult = {
       {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
@@ -107,7 +107,7 @@ TEST_CASE("electron_symmetric", "[blocks][electron_symmetric]") {
             Electron(n_sites, nup, ndn, space_group, irrep);
 
         idx_t dim = electron.size() * mult;
-        // lila::Log.out(
+        // Log.out(
         //     "Hubbard Triangular 3x3: n_sites: {}, nup: {}, ndn: {}, k: "
         //     "{}(x{}), size: {}",
         //     n_sites, nup, ndn, name, mult, electron.size());
@@ -120,7 +120,7 @@ TEST_CASE("electron_symmetric", "[blocks][electron_symmetric]") {
       REQUIRE(sum_dim_updn == electron_nosym.size());
       REQUIRE(sum_dim_updn == binomial(n_sites, nup) * binomial(n_sites, ndn));
 
-      // lila::Log.out("size: {} {}", sum_dim_updn, electron_nosym.size());
+      // Log.out("size: {} {}", sum_dim_updn, electron_nosym.size());
     }
   }
   REQUIRE(sum_dim == (idx_t)pow(4, n_sites));

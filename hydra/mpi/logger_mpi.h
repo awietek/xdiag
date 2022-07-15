@@ -85,4 +85,5 @@ private:
 inline LoggerMPI LogMPI;
   
 } // namespace hydra
+
 #endif

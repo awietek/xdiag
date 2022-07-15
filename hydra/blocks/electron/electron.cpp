@@ -1,6 +1,7 @@
 #include "electron.h"
 
 #include <hydra/blocks/utils/block_utils.h>
+#include <hydra/utils/logger.h>
 
 namespace hydra {
 
@@ -76,14 +77,14 @@ template <typename bit_t>
 indexing::ElectronIndexingNoNp<bit_t> const &
 Electron<bit_t>::indexing_no_np() const {
   if ((charge_conserved_ && sz_conserved_) || symmetric_)
-    lila::Log.err("Error: wrong indexing required");
+    Log.err("Error: wrong indexing required");
   return *indexing_no_np_;
 }
 
 template <typename bit_t>
 indexing::ElectronIndexing<bit_t> const &Electron<bit_t>::indexing_np() const {
   if (!(charge_conserved_ && sz_conserved_) || symmetric_)
-    lila::Log.err("Error: wrong indexing required");
+    Log.err("Error: wrong indexing required");
   return *indexing_np_;
 }
 
@@ -91,7 +92,7 @@ template <typename bit_t>
 indexing::ElectronSymmetricIndexingNoNp<bit_t> const &
 Electron<bit_t>::indexing_sym_no_np() const {
   if ((charge_conserved_ && sz_conserved_) || !symmetric_)
-    lila::Log.err("Error: wrong indexing required");
+    Log.err("Error: wrong indexing required");
   return *indexing_sym_no_np_;
 }
 
@@ -99,7 +100,7 @@ template <typename bit_t>
 indexing::ElectronSymmetricIndexing<bit_t> const &
 Electron<bit_t>::indexing_sym_np() const {
   if (!(charge_conserved_ && sz_conserved_) || !symmetric_)
-    lila::Log.err("Error: wrong indexing required");
+    Log.err("Error: wrong indexing required");
   return *indexing_sym_np_;
 }
 

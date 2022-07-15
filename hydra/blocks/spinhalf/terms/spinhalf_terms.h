@@ -3,6 +3,7 @@
 #include <variant>
 
 #include <hydra/common.h>
+#include <hydra/utils/logger.h>
 
 #include <hydra/indexing/indexing_variants.h>
 
@@ -42,7 +43,7 @@ void spinhalf_ising(BondList const &bonds, Couplings const &couplings,
                               bonds, couplings, idxr, fill);
                         },
                         [&](auto idxr) {
-                          lila::Log.err("Invalid indexing encountered");
+                          Log.err("Invalid indexing encountered");
                         }},
              indexing);
 }
@@ -72,7 +73,7 @@ void spinhalf_exchange(BondList const &bonds, Couplings const &couplings,
                               bonds, couplings, idxr, fill);
                         },
                         [&](auto idxr) {
-                          lila::Log.err("Invalid indexing encountered");
+                          Log.err("Invalid indexing encountered");
                         }},
              indexing);
 }
@@ -102,7 +103,7 @@ void spinhalf_scalar_chirality(
                               bonds, couplings, idxr, fill);
                         },
                         [&](auto idxr) {
-                          lila::Log.err("Invalid indexing encountered");
+                          Log.err("Invalid indexing encountered");
                         }},
              indexing);
 }
@@ -123,13 +124,13 @@ void spinhalf_sz(BondList const &bonds, Couplings const &couplings,
                               bonds, couplings, idxr, fill);
                         },
                         [&](SpinhalfSymmetricIndexingSz<bit_t> const &idxr) {
-                          // lila::Log.err("Sz (symmetric) not implemented");
+                          // Log.err("Sz (symmetric) not implemented");
                         },
                         [&](SpinhalfSymmetricIndexingNoSz<bit_t> const &idxr) {
-                          // lila::Log.err("Sz (symmetric) not implemented");
+                          // Log.err("Sz (symmetric) not implemented");
                         },
                         [&](auto idxr) {
-                          lila::Log.err("Invalid indexing encountered");
+                          Log.err("Invalid indexing encountered");
                         }},
              indexing);
 }
@@ -156,14 +157,14 @@ void spinhalf_spsm(BondList const &bonds, Couplings const &couplings,
                  },
                  [&](SpinhalfSymmetricIndexingSz<bit_t> const &idxr_in,
                      SpinhalfSymmetricIndexingSz<bit_t> const &idxr_out) {
-                   // lila::Log.err("S+/S- (symmetric) not implemented");
+                   // Log.err("S+/S- (symmetric) not implemented");
                  },
                  [&](SpinhalfSymmetricIndexingNoSz<bit_t> const &idxr_in,
                      SpinhalfSymmetricIndexingNoSz<bit_t> const &idxr_out) {
-                   // lila::Log.err("S+/S- (symmetric) not implemented");
+                   // Log.err("S+/S- (symmetric) not implemented");
                  },
                  [&](auto idxr_in, auto idx_out) {
-                   lila::Log.err("Invalid indexing encountered");
+                   Log.err("Invalid indexing encountered");
                  }},
       indexing_in, indexing_out);
 }

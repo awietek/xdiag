@@ -18,7 +18,7 @@ void test_indices_spinhalf_symmetric(Spinhalf<bit_t> const &block) {
   //   REQUIRE(rep == state);
   //   idx_t idx2 = indexing.index(state);
   //   // auto norm = block.indexing_.norm(state);
-  //   // lila::Log.out("{} {} {} ({},{})", idx, state, idx2, lila::real(norm),
+  //   // Log.out("{} {} {} ({},{})", idx, state, idx2, lila::real(norm),
   //   //               lila::imag(norm));
   //   REQUIRE(idx == idx2);
   // }
@@ -70,7 +70,7 @@ TEST_CASE("spinhalf_symmetric", "[blocks][spinhalf_symmetric]") {
 
   // Test the tJ chain
   for (int n_sites = 1; n_sites < 8; ++n_sites) {
-    lila::Log.out("spinhalf_symmetric: block test: Spinhalf Chain {}", n_sites);
+    Log.out("spinhalf_symmetric: block test: Spinhalf Chain {}", n_sites);
 
     test_spinchain_blocks<uint16_t>(n_sites);
     test_spinchain_blocks<uint32_t>(n_sites);
@@ -78,7 +78,7 @@ TEST_CASE("spinhalf_symmetric", "[blocks][spinhalf_symmetric]") {
   }
 
   // test a 3x3 triangular lattice
-  lila::Log.out("spinhalf_symmetric: block test: Triangular 3x3");
+  Log.out("spinhalf_symmetric: block test: Triangular 3x3");
   int n_sites = 9;
 
   std::vector<std::pair<std::string, int>> rep_name_mult = {

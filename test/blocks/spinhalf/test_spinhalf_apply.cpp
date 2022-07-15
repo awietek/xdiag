@@ -31,19 +31,19 @@ void test_apply(BondList bonds, Couplings couplings) {
 TEST_CASE("spinhalf_apply", "[models][spinhalf]") {
   using namespace hydra::testcases::spinhalf;
 
-  lila::Log.out("spinhalf_apply: Heisenberg chain apply test, J=1.0, N=2,..,6");
+  Log.out("spinhalf_apply: Heisenberg chain apply test, J=1.0, N=2,..,6");
   for (int N = 2; N <= 6; ++N) {
     auto [bonds, couplings] = HBchain(N, 1.0);
     test_apply(bonds, couplings);
   }
 
-  lila::Log.out("spinhalf_apply: Heisenberg alltoall apply test, N=2,..,6");
+  Log.out("spinhalf_apply: Heisenberg alltoall apply test, N=2,..,6");
   for (int N = 2; N <= 6; ++N) {
     auto [bonds, couplings] = HB_alltoall(N);
     test_apply(bonds, couplings);
   }
 
-  lila::Log.out("spinhalf_apply: Heisenberg all-to-all Sz <-> NoSz comparison");
+  Log.out("spinhalf_apply: Heisenberg all-to-all Sz <-> NoSz comparison");
   for (int n_sites = 2; n_sites <= 6; ++n_sites) {
     auto [bonds, couplings] = HB_alltoall(n_sites);
     auto block_no_sz = Spinhalf(n_sites);
@@ -60,7 +60,7 @@ TEST_CASE("spinhalf_apply", "[models][spinhalf]") {
   }
 
   {
-    lila::Log("spinhalf_matrix: Triangular J1J2Jchi N=12");
+    Log("spinhalf_matrix: Triangular J1J2Jchi N=12");
     std::string lfile = "data/triangular.j1j2jch/"
                         "triangular.12.j1j2jch.sublattices.fsl.lat";
 
@@ -76,7 +76,7 @@ TEST_CASE("spinhalf_apply", "[models][spinhalf]") {
     auto e0 = E0Cplx(bondlist, couplings, spinhalf);
     double energy = -6.9456000700824329641;
 	
-    // lila::Log("{:.18f} {:.18f}", e0, energy);
+    // Log("{:.18f} {:.18f}", e0, energy);
 
     REQUIRE(lila::close(e0, energy));
   }

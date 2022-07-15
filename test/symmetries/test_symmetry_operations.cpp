@@ -159,7 +159,7 @@ template <typename bit_t> void test_fermi_bool_table(int n_sites) {
 
     auto fermi_bool_tbl =
         fermi_bool_table(Combinations<bit_t>(n_sites, npar), group_action);
-    // lila::Log("N: {} n: {}", n_sites, npar);
+    // hydra::Log("N: {} n: {}", n_sites, npar);
     idx_t raw_size = binomial(n_sites, npar);
 
     const int *sym_ptr = group_action.permutation_array().data();
@@ -177,7 +177,7 @@ template <typename bit_t> void test_fermi_bool_table(int n_sites) {
 
 TEST_CASE("symmetry_operations", "[symmetries]") {
 
-  lila::Log("Testing symmetry_operations");
+  hydra::Log("Testing symmetry_operations");
   int max_N = 6;
 
   for (int n_sites = 0; n_sites <= max_N; ++n_sites) {

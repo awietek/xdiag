@@ -40,7 +40,7 @@ void test_apply_tj_symmetric(BondList bondlist, Couplings couplings,
           auto evals_mat = lila::EigenvaluesSym(H_sym);
           double e0_mat = evals_mat(0);
           double e0_app = E0Cplx(bondlist, couplings, block);
-          // lila::Log.out("e0_mat: {}, e0_app: {}", e0_mat, e0_app);
+          // Log.out("e0_mat: {}, e0_app: {}", e0_mat, e0_app);
           REQUIRE(std::abs(e0_mat - e0_app) < 1e-7);
 
           // Compute eigenvalues with real arithmitic
@@ -63,7 +63,7 @@ template <class bit_t> void test_tj_symmetric_apply_chains(int n_sites) {
   using namespace hydra::testcases::tj;
   using namespace hydra::testcases::electron;
 
-  lila::Log("tj_symmetric_apply: tJ chain, symmetric apply test, n_sites: {}", n_sites);
+  Log("tj_symmetric_apply: tJ chain, symmetric apply test, n_sites: {}", n_sites);
   auto [bondlist, couplings] = tJchain(n_sites, 1.0, 5.0);
   auto [space_group, irreps, multiplicities] =
       get_cyclic_group_irreps_mult(n_sites);
@@ -82,7 +82,7 @@ TEST_CASE("tj_symmetric_apply", "[blocks][tj_symmetric]") {
   }
   {
     // test a 3x3 triangular lattice
-    lila::Log("tj_symmetric_apply: tJ 3x3 triangular, symmetric apply test");
+    Log("tj_symmetric_apply: tJ 3x3 triangular, symmetric apply test");
     std::string lfile = "data/triangular.9.hop.sublattices.tsl.lat";
 
     auto bondlist = read_bondlist(lfile);
@@ -109,7 +109,7 @@ TEST_CASE("tj_symmetric_apply", "[blocks][tj_symmetric]") {
 
   {
     // test a 3x3 triangular lattice with complex flux
-    lila::Log("tj_symmetric_apply: tJ 3x3 triangular staggered, symmetric apply test, complex");
+    Log("tj_symmetric_apply: tJ 3x3 triangular staggered, symmetric apply test, complex");
     std::string lfile =
         "data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.lat";
 

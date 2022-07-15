@@ -5,7 +5,7 @@
 #include <iostream>
 
 #include <hydra/symmetries/symmetry_operations.h>
-#include <lila/utils/logger.h>
+#include <hydra/utils/logger.h>
 
 namespace hydra {
 
@@ -17,11 +17,11 @@ PermutationGroup::PermutationGroup(
 
     // Check whether lattice symmetries are well-formed
     if ((int)symmetries[i].size() != n_sites_)
-      lila::Log.err("Error constructing PermutationGroup: "
+      Log.err("Error constructing PermutationGroup: "
                     "there's a symmetry not of length n_sites");
 
     if (!symmetries::is_valid_permutation(n_sites_, symmetries[i].data()))
-      lila::Log.err("Error constructing PermutationGroup: "
+      Log.err("Error constructing PermutationGroup: "
                     "there's a symmetry which is not a proper permutation");
 
     std::copy(symmetries[i].begin(), symmetries[i].end(),
@@ -35,12 +35,12 @@ PermutationGroup::PermutationGroup(int n_sites, int n_symmetries,
       permutation_array_(permutation_array) {
 
   if ((int)permutation_array.size() != n_sites * n_symmetries)
-    lila::Log.err("Error constructing PermutationGroup: "
+    Log.err("Error constructing PermutationGroup: "
                   "there's a symmetry not of length n_sites");
   for (int i = 0; i < n_symmetries; ++i) {
     if (!symmetries::is_valid_permutation(n_sites_, permutation_array_.data() +
                                                         i * n_sites_))
-      lila::Log.err("Error constructing PermutationGroup: "
+      Log.err("Error constructing PermutationGroup: "
                     "there's a symmetry which is not a proper permutation");
   }
 }
@@ -52,7 +52,7 @@ PermutationGroup::subgroup(std::vector<int> const &symmetry_numbers) const {
   for (int n_sym : symmetry_numbers) {
 
     if ((0 > n_sym) || (n_sym >= n_symmetries_)) {
-      lila::Log.err("Error building subgroup of PermutationGroup: "
+      Log.err("Error building subgroup of PermutationGroup: "
                     "invalid symmetry index");
     }
     subgroup_permutation_array.insert(

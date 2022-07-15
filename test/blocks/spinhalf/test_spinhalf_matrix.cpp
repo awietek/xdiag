@@ -10,7 +10,7 @@ TEST_CASE("spinhalf_matrix", "[models][spinhalf]") {
   using namespace hydra::testcases::spinhalf;
 
   {
-    lila::Log.out("spinhalf_matrix: Heisenberg chain test, J=1.0, N=2,..,6");
+    Log.out("spinhalf_matrix: Heisenberg chain test, J=1.0, N=2,..,6");
     for (int n_sites = 2; n_sites <= 6; ++n_sites)
       for (int nup = 0; nup <= n_sites; ++nup) {
         auto [bonds, couplings, exact_eigs] =
@@ -24,7 +24,7 @@ TEST_CASE("spinhalf_matrix", "[models][spinhalf]") {
   }
 
   {
-    lila::Log.out("spinhalf_matrix: Heisenberg all-to-all tJ comparison");
+    Log.out("spinhalf_matrix: Heisenberg all-to-all tJ comparison");
     for (int n_sites = 2; n_sites <= 6; ++n_sites)
       for (int nup = 0; nup <= n_sites; ++nup) {
         auto [bonds, couplings] = HB_alltoall(n_sites);
@@ -43,7 +43,7 @@ TEST_CASE("spinhalf_matrix", "[models][spinhalf]") {
   }
 
   {
-    lila::Log.out(
+    Log.out(
         "spinhalf_matrix: Heisenberg all-to-all Sz <-> NoSz comparison");
     for (int n_sites = 2; n_sites <= 6; ++n_sites) {
       auto [bonds, couplings] = HB_alltoall(n_sites);
@@ -71,7 +71,7 @@ TEST_CASE("spinhalf_matrix", "[models][spinhalf]") {
   }
 
   {
-    lila::Log.out("spinhalf_matrix: triangular N=12 complex exchange");
+    Log.out("spinhalf_matrix: triangular N=12 complex exchange");
     int n_sites = 12;
     int nup = 6;
     std::vector<double> etas = {0.00, 0.01, 0.02,
@@ -85,13 +85,13 @@ TEST_CASE("spinhalf_matrix", "[models][spinhalf]") {
       auto eigs = lila::EigenvaluesSym(H);
 
       // comment: reference data from Lanczos, only ~10 digits precise
-      // lila::Log("eigs(0): {}, e0: {}", eigs(0), e0);
+      // Log("eigs(0): {}, e0: {}", eigs(0), e0);
       REQUIRE(std::abs(eigs(0) - e0) < 1e-8);
     }
   }
 
   {
-    lila::Log("spinhalf_matrix: Triangular J1J2Jchi N=12");
+    Log("spinhalf_matrix: Triangular J1J2Jchi N=12");
     std::string lfile = "data/triangular.j1j2jch/"
                         "triangular.12.j1j2jch.sublattices.fsl.lat";
 
@@ -110,7 +110,7 @@ TEST_CASE("spinhalf_matrix", "[models][spinhalf]") {
     auto eigs = lila::EigenvaluesSym(H);
     double energy = -6.9456000700824329641;
     
-    // lila::Log("{:.18f} {:.18f}", eigs(0), energy);
+    // Log("{:.18f} {:.18f}", eigs(0), energy);
 
     REQUIRE(lila::close(eigs(0), energy));
 
@@ -118,7 +118,7 @@ TEST_CASE("spinhalf_matrix", "[models][spinhalf]") {
 
   // Test S+/S-/Sz
   {
-    lila::Log.out("spinhalf_matrix: sp sm commutator test");
+    Log.out("spinhalf_matrix: sp sm commutator test");
 
     for (int n_sites = 2; n_sites < 5; ++n_sites) {
 

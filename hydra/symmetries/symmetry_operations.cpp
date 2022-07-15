@@ -6,6 +6,7 @@
 #include <hydra/common.h>
 
 #include <hydra/utils/openmp_utils.h>
+#include <hydra/utils/logger.h>
 
 #include <hydra/combinatorics/bit_patterns.h>
 #include <hydra/combinatorics/combinations_index.h>
@@ -22,7 +23,7 @@ std::vector<std::vector<int>> read_permutations(std::string filename) {
   std::ifstream File(filename.c_str());
 
   if (File.fail()) {
-    lila::Log.err("Error in read_spacegroup: Could not open file {}", filename);
+    Log.err("Error in read_spacegroup: Could not open file {}", filename);
     exit(EXIT_FAILURE);
   }
 

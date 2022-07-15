@@ -31,7 +31,7 @@ void test_spinhalf_symmetric_apply(BondList bondlist, Couplings couplings,
         auto evals_mat = lila::EigenvaluesSym(H);
         double e0_mat = evals_mat(0);
         double e0_app = E0Cplx(bondlist, couplings, block);
-        // lila::Log.out("e0_mat: {}, e0_app: {}", e0_mat, e0_app);
+        // Log.out("e0_mat: {}, e0_app: {}", e0_mat, e0_app);
         REQUIRE(std::abs(e0_mat - e0_app) < 1e-7);
 
         // Compute eigenvalues with real arithmitic
@@ -71,7 +71,7 @@ void test_spinhalf_symmetric_apply_no_sz(BondList bondlist, Couplings couplings,
       auto evals_mat = lila::EigenvaluesSym(H);
       double e0_mat = evals_mat(0);
       double e0_app = E0Cplx(bondlist, couplings, block);
-      // lila::Log.out("e0_mat: {}, e0_app: {}", e0_mat, e0_app);
+      // Log.out("e0_mat: {}, e0_app: {}", e0_mat, e0_app);
       REQUIRE(std::abs(e0_mat - e0_app) < 1e-7);
 
       // Compute eigenvalues with real arithmitic
@@ -91,7 +91,7 @@ void test_spinhalf_symmetric_apply_no_sz(BondList bondlist, Couplings couplings,
 template <class bit_t> void test_spinhalf_symmetric_apply_chains(int n_sites) {
   using namespace hydra::testcases::spinhalf;
   using hydra::testcases::electron::get_cyclic_group_irreps;
-  lila::Log.out("spinhalf_symmetric_apply: HB chain, N: {}", n_sites);
+  Log.out("spinhalf_symmetric_apply: HB chain, N: {}", n_sites);
   auto [space_group, irreps] = get_cyclic_group_irreps(n_sites);
   auto [bondlist, couplings] = HBchain(n_sites, 1.0, 1.0);
   test_spinhalf_symmetric_apply<bit_t>(bondlist, couplings, space_group,
@@ -110,7 +110,7 @@ TEST_CASE("spinhalf_symmetric_apply", "[blocks][spinhalf_symmetric]") {
   }
 
   // test a 3x3 triangular lattice
-  lila::Log.out("spinhalf_symmetric_apply: Triangular 3x3");
+  Log.out("spinhalf_symmetric_apply: Triangular 3x3");
   std::string lfile = "data/triangular.9.Jz1Jz2Jx1Jx2D1.sublattices.tsl.lat";
 
   auto bondlist = read_bondlist(lfile);
@@ -141,7 +141,7 @@ TEST_CASE("spinhalf_symmetric_apply", "[blocks][spinhalf_symmetric]") {
 
     // test J1-J2-Jchi triangular lattice
   {
-    lila::Log("spinhalf_symmetric_matrix: Triangular J1J2Jchi N=12");
+    Log("spinhalf_symmetric_matrix: Triangular J1J2Jchi N=12");
     std::string lfile = "data/triangular.j1j2jch/"
                         "triangular.12.j1j2jch.sublattices.fsl.lat";
 
@@ -173,7 +173,7 @@ TEST_CASE("spinhalf_symmetric_apply", "[blocks][spinhalf_symmetric]") {
       auto irrep = read_represenation(lfile, name);
       auto spinhalf = Spinhalf<uint16_t>(n_sites, n_up, space_group, irrep);
       auto e0 = E0Cplx(bondlist, couplings, spinhalf);
-      lila::Log("{} {:.12f} {:.12f}", name, e0, energy);
+      Log("{} {:.12f} {:.12f}", name, e0, energy);
 
       REQUIRE(std::abs(e0 - energy) < 1e-10);
     }

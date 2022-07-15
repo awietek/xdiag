@@ -1,6 +1,7 @@
 #include "operator_utils.h"
 
 #include <hydra/utils/complex.h>
+#include <hydra/utils/logger.h>
 
 #include <set>
 
@@ -17,7 +18,7 @@ bool coupling_is_non_zero(Bond const &bond, Couplings const &couplings) {
 }
 void check_n_sites(int n_sites, PermutationGroup const &permutation_group) {
   if (n_sites != permutation_group.n_sites()) {
-    lila::Log.err(
+    Log.err(
         "Error creating block: n_sites disagrees with permutation_group");
   }
 }
@@ -25,9 +26,9 @@ void check_n_sites(int n_sites, PermutationGroup const &permutation_group) {
 void check_operator_real(BondList const &bonds, Couplings const &cpls,
                          std::string errmsg) {
   if (is_complex(bonds))
-    lila::Log.err("Error: cannot {} from complex bonds!", errmsg);
+    Log.err("Error: cannot {} from complex bonds!", errmsg);
   if (is_complex(cpls))
-    lila::Log.err("Error: cannot {} real matrix from complex couplings!",
+    Log.err("Error: cannot {} real matrix from complex couplings!",
                   errmsg);
 }
 
@@ -36,7 +37,7 @@ void check_operator_real(BondList const &bonds, Couplings const &cpls,
                          Representation const &irrep_out, std::string errmsg) {
   check_operator_real(bonds, cpls, errmsg);
   if (is_complex(irrep_in) || is_complex(irrep_out))
-    lila::Log.err("Error: cannot {} real matrix from complex representation!",
+    Log.err("Error: cannot {} real matrix from complex representation!",
                   errmsg);
 }
 
@@ -75,7 +76,7 @@ template void check_operator_works_with<complex>(BondList const &,
 void check_sites_disjoint(std::vector<int> const &sites) {
   auto set = std::set<int>(sites.begin(), sites.end());
   if (set.size() != sites.size())
-    lila::Log.err("Error: sites are not disjoint");
+    Log.err("Error: sites are not disjoint");
 }
 
 void check_sites_disjoint(Bond const &bond) {
@@ -110,8 +111,8 @@ BondList clean_bondlist(BondList const &bonds, Couplings const &cpls,
 
     for (auto bond : bonds_of_type) {
       if (bond.size() != allowed_size) {
-        lila::Log.err("Invalid bond size ({}) found for type {}", bond.size(),
-                      type);
+        Log.err("Invalid bond size ({}) found for type {}", bond.size(),
+		type);
       }
 
       if (coupling_is_non_zero(bond, cpls)) {

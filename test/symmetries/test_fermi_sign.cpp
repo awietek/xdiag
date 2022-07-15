@@ -45,12 +45,12 @@ template <class bit_t> void test_fermi_sign(int n_sites) {
 }
 
 TEST_CASE("fermi_sign", "[symmetries]") {
-  lila::Log("Test fermi_sign");
+  hydra::Log("Test fermi_sign");
 
   for (int n_sites = 1; n_sites < 8; ++n_sites) {
     test_fermi_sign<uint16_t>(n_sites);
     test_fermi_sign<uint32_t>(n_sites);
     test_fermi_sign<uint64_t>(n_sites);
   }
-  lila::Log("done");
+  hydra::Log("done");
 }

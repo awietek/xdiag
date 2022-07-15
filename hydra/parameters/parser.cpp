@@ -31,7 +31,7 @@
 #include <cstdio>
 #include <cstdlib>
 
-#include <lila/utils/logger.h>
+#include <hydra/utils/logger.h>
 
 #include "parser.h"
 
@@ -74,7 +74,7 @@ void parser::parse_string() {
   // if there was a new line or end of file: error
 
   if (c != '"') {
-    lila::Log.err("unterminated string encountered while parsing");
+    Log.err("unterminated string encountered while parsing");
   }
 
   // prefetch the next character
@@ -172,7 +172,7 @@ parser::token parser::parse_number() {
     double the_number;
     // convert the std::string to a floating point number
     if (sscanf(the_string.c_str(), "%lf", &the_number) != 1)
-      lila::Log.err("invalid number encountered while parsing");
+      Log.err("invalid number encountered while parsing");
 
     val = the_number;
 
@@ -210,7 +210,7 @@ parser::token parser::parse_complex() {
   } else
     val = re;
   if (c != ')')
-    lila::Log.err("invalid complex number encountered while parsing");
+    Log.err("invalid complex number encountered while parsing");
   return val.type();
 }
 

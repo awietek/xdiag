@@ -15,7 +15,7 @@ void test_tjmodel_e0_real(BondList bonds, Couplings couplings, int nup, int ndn,
   auto H = MatrixReal(bonds, couplings, block, block);
 
   auto eigs = lila::EigenvaluesSym(H);
-  // lila::Log("nup: {}, ndn: {}, e0: {}, eigs(0): {}", nup, ndn, e0, eigs(0));
+  // Log("nup: {}, ndn: {}, e0: {}, eigs(0): {}", nup, ndn, e0, eigs(0));
   REQUIRE(lila::close(H, lila::Herm(H)));
   REQUIRE(std::abs(e0 - eigs(0)) < 1e-6);
   // }
@@ -33,7 +33,7 @@ void test_tjmodel_fulleigs(BondList bonds, Couplings couplings,
       auto H = MatrixReal(bonds, couplings, block, block);
       REQUIRE(lila::close(H, lila::Herm(H)));
       auto eigs = lila::EigenvaluesSym(H);
-      // lila::Log("nup {} ndn {}", nup, ndn);
+      // Log("nup {} ndn {}", nup, ndn);
       // LilaPrint(eigs);
 
       for (auto eig : eigs)
@@ -51,7 +51,7 @@ TEST_CASE("tj_matrix", "[blocks][tj]") {
   using namespace hydra::testcases::tj;
 
   {
-    lila::Log("tj_matrix: TJModel: six-site chain test, t=1.0, J=1.0, N=6");
+    Log("tj_matrix: TJModel: six-site chain test, t=1.0, J=1.0, N=6");
     auto [bonds, cpls] = tJchain(6, 1.0, 1.0);
     std::vector<std::tuple<int, int, double>> nup_ndn_e0 = {
         {0, 0, 0.0},         {0, 1, -2.0},        {0, 2, -2.96081311},
@@ -69,7 +69,7 @@ TEST_CASE("tj_matrix", "[blocks][tj]") {
   }
 
   {
-    lila::Log.out("tj_matrix: TJModel: six-site chain test, t=1.0, J=0.0, N=6");
+    Log.out("tj_matrix: TJModel: six-site chain test, t=1.0, J=0.0, N=6");
     auto [bonds, cpls] = tJchain(6, 1.0, 0.0);
     std::vector<std::tuple<int, int, double>> nup_ndn_e0 = {
         {0, 0, 0.0},         {0, 1, -2.0},        {0, 2, -3.00000000},
@@ -87,19 +87,19 @@ TEST_CASE("tj_matrix", "[blocks][tj]") {
   }
 
   for (int L = 3; L <= 6; ++L) {
-    lila::Log.out("tj_matrix: ALPS full spectrum test, chain N={}", L);
+    Log.out("tj_matrix: ALPS full spectrum test, chain N={}", L);
     auto [bonds, cpls, eigs] = tJchain_fullspectrum_alps(L);
     test_tjmodel_fulleigs(bonds, cpls, eigs);
   }
 
   {
-    lila::Log.out("tj_matrix: ALPS full spectrum test, square 2x2");
+    Log.out("tj_matrix: ALPS full spectrum test, square 2x2");
     auto [bonds, cpls, eigs] = tj_square2x2_fullspectrum_alps();
     test_tjmodel_fulleigs(bonds, cpls, eigs);
   }
 
   for (int N = 3; N <= 6; ++N) {
-    lila::Log.out("tj_matrix:  random all-to-all complex exchange test, N={}", N);
+    Log.out("tj_matrix:  random all-to-all complex exchange test, N={}", N);
 
     auto [bonds, cpls] = tj_alltoall_complex(N);
     for (int nup = 0; nup <= N; ++nup)
@@ -118,19 +118,19 @@ TEST_CASE("tj_matrix", "[blocks][tj]") {
       auto H2 = MatrixCplx(bonds, cpls, block2, block2);
       auto eigs1 = lila::EigenvaluesSym(H1);
       auto eigs2 = lila::EigenvaluesSym(H2);
-      // lila::Log("eigs1(0): {}, eigs2(0): {}", eigs1(0), eigs2(0));
+      // Log("eigs1(0): {}, eigs2(0): {}", eigs1(0), eigs2(0));
       REQUIRE(lila::close(eigs1, eigs2));
     }
   }
 
   {
-    lila::Log.out("tj_matrix: Henry's Matlab test, random 3");
+    Log.out("tj_matrix: Henry's Matlab test, random 3");
     auto [bonds, cpls, eigs] = randomAlltoAll3();
     test_tjmodel_fulleigs(bonds, cpls, eigs);
   }
 
   {
-    lila::Log.out("tj_matrix: Henry's Matlab test, random 4");
+    Log.out("tj_matrix: Henry's Matlab test, random 4");
     auto [bonds, cpls, eigs] = randomAlltoAll4();
     test_tjmodel_fulleigs(bonds, cpls, eigs);
   }

@@ -12,7 +12,7 @@ TEST_CASE("tj_apply", "[blocks][tj]") {
   using namespace hydra::testcases::tj;
 
   for (int N = 3; N <= 6; ++N) {
-    lila::Log("tj_apply: random all-to-all real apply=matrix, N={}", N);
+    Log("tj_apply: random all-to-all real apply=matrix, N={}", N);
 
     auto [bonds, cpls] = tj_alltoall(N);
     for (int nup = 0; nup <= N; ++nup)
@@ -31,14 +31,14 @@ TEST_CASE("tj_apply", "[blocks][tj]") {
         auto evals_mat = lila::EigenvaluesSym(H);
         double e0_mat = evals_mat(0);
         double e0_app = E0Real(bonds, cpls, block);
-        // lila::Log.out("nup: {}, ndn: {}, e0_mat: {}, e0_app: {}", nup, ndn,
+        // Log.out("nup: {}, ndn: {}, e0_mat: {}, e0_app: {}", nup, ndn,
         //              e0_mat, e0_app);
         REQUIRE(lila::close(e0_mat, e0_app));
       }
   }
 
   for (int N = 3; N <= 6; ++N) {
-    lila::Log("tj_apply: random all-to-all complex apply=matrix, N={}", N);
+    Log("tj_apply: random all-to-all complex apply=matrix, N={}", N);
 
     auto [bonds, cpls] = tj_alltoall_complex(N);
     for (int nup = 0; nup <= N; ++nup)
@@ -56,7 +56,7 @@ TEST_CASE("tj_apply", "[blocks][tj]") {
         auto evals_mat = lila::EigenvaluesSym(H);
         double e0_mat = evals_mat(0);
         double e0_app = E0Cplx(bonds, cpls, block);
-        // lila::Log.out("nup: {}, ndn: {}, e0_mat: {}, e0_app: {}", nup, ndn,
+        // Log.out("nup: {}, ndn: {}, e0_mat: {}, e0_app: {}", nup, ndn,
         //              e0_mat, e0_app);
         REQUIRE(lila::close(e0_mat, e0_app));
       }

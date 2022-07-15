@@ -1,33 +1,33 @@
 #include "block_utils.h"
 
-#include <lila/all.h>
+#include <hydra/utils/logger.h>
 #include <set>
 namespace hydra::utils {
 
 void check_nup_spinhalf(int n_sites, int nup, std::string block_name) {
   if (n_sites < 0)
-    lila::Log.err("Error creating {}: n_sites < 0", block_name);
+    Log.err("Error creating {}: n_sites < 0", block_name);
   if ((nup < 0) || (nup > n_sites))
-    lila::Log.err("Error creating {}: invalid value of nup", block_name);
+    Log.err("Error creating {}: invalid value of nup", block_name);
 }
 
 void check_nup_ndn_electron(int n_sites, int nup, int ndn,
                             std::string block_name) {
   if (n_sites < 0)
-    lila::Log.err("Error creating {}: n_sites < 0", block_name);
+    Log.err("Error creating {}: n_sites < 0", block_name);
   if ((nup < 0) || (nup > n_sites))
-    lila::Log.err("Error creating {}: invalid value of nup", block_name);
+    Log.err("Error creating {}: invalid value of nup", block_name);
   if ((ndn < 0) || (ndn > n_sites))
-    lila::Log.err("Error creating {}: invalid value of ndn", block_name);
+    Log.err("Error creating {}: invalid value of ndn", block_name);
 }
 
 void check_nup_ndn_tj(int n_sites, int nup, int ndn, std::string block_name) {
   if ((nup < 0) || (nup > n_sites))
-    lila::Log.err("Error creating {}: invalid value of nup", block_name);
+    Log.err("Error creating {}: invalid value of nup", block_name);
   if ((ndn < 0) || (ndn > n_sites))
-    lila::Log.err("Error creating {}: invalid value of ndn", block_name);
+    Log.err("Error creating {}: invalid value of ndn", block_name);
   if (nup + ndn > n_sites)
-    lila::Log.err("Error creating {}: invalid value of nup+ndn", block_name);
+    Log.err("Error creating {}: invalid value of nup+ndn", block_name);
 }
 
 template <class coeff_t>

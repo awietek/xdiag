@@ -35,7 +35,7 @@ Tmatrix LanczosEigenvaluesInplace(
                     lila::Vector<coeff_t> const &v, lila::Vector<coeff_t> &w) {
       auto ta = rightnow_mpi();
       Apply(bonds, couplings, block, v, block, w);
-      LogMPI(1, "Lanczos iteration {}", iter);
+      Log(1, "Lanczos iteration {}", iter);
       timing_mpi(ta, rightnow_mpi(), "MVM", 1);
       
       ++iter;
@@ -67,6 +67,7 @@ Tmatrix LanczosEigenvaluesInplace(
                     lila::Vector<coeff_t> const &v, lila::Vector<coeff_t> &w) {
       auto ta = rightnow();
       Apply(bonds, couplings, block, v, block, w);
+      Log(1, "Lanczos iteration {}", iter);
       timing(ta, rightnow(), "MVM", 1);
       ++iter;
     };

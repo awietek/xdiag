@@ -25,7 +25,7 @@
 #include "parameters.h"
 
 #include <iomanip>
-#include <lila/utils/logger.h>
+#include <hydra/utils/logger.h>
 
 //=======================================================================
 // parameter_value
@@ -96,7 +96,7 @@ parameter_value::parameter_value(const parameter_value &p)
     break;
 
   default:
-    lila::Log.err("illegal parameter type in parameter_value::parameter_value");
+    Log.err("illegal parameter type in parameter_value::parameter_value");
   }
 }
 
@@ -134,7 +134,7 @@ parameter_value &parameter_value::operator=(const parameter_value &p) {
     break;
 
   default:
-    lila::Log.err("illegal parameter type in parameter_value::operator=");
+    Log.err("illegal parameter type in parameter_value::operator=");
   }
 
   return *this;
@@ -318,7 +318,7 @@ void parameter_value::type_error(parameter_value_type expected) const {
     break;
 
   default:
-    lila::Log.err("illegal parameter type in parameter_value::type_error");
+    Log.err("illegal parameter type in parameter_value::type_error");
   }
 
   text += " but is ";
@@ -348,11 +348,11 @@ void parameter_value::type_error(parameter_value_type expected) const {
     text += "invalid";
 
   default:
-    lila::Log.err("illegal parameter type in parameter_value::type_error");
+    Log.err("illegal parameter type in parameter_value::type_error");
   }
 
   text += ".\n";
-  lila::Log.err(text);
+  Log.err(text);
 }
 
 //=======================================================================
@@ -386,8 +386,8 @@ std::ostream &operator<<(std::ostream &out, const parameter_value &val) {
     break;
 
   default:
-    lila::Log.err("illegal parameter type in operator<<(ostream&,const "
-                 "parameter_value&)");
+    Log.err("illegal parameter type in operator<<(ostream&,const "
+	    "parameter_value&)");
   }
 
   return out;

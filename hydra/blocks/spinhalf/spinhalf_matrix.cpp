@@ -1,5 +1,6 @@
 #include "spinhalf_matrix.h"
 
+#include <hydra/utils/logger.h>
 #include <hydra/blocks/spinhalf/spinhalf.h>
 #include <hydra/blocks/spinhalf/terms/spinhalf_terms.h>
 #include <hydra/blocks/utils/block_utils.h>
@@ -15,7 +16,7 @@ MatrixGen(BondList const &bonds, Couplings const &couplings,
 
   int n_up_out = utils::spinhalf_nup(bonds, couplings, block_in);
   if (n_up_out != block_out.n_up())
-    lila::Log.err("Incompatible n_up in MatrixGen: {} != {}", n_up_out,
+    Log.err("Incompatible n_up in MatrixGen: {} != {}", n_up_out,
                   block_out.n_up());
 
   utils::check_operator_works_with<coeff_t>(bonds, couplings,

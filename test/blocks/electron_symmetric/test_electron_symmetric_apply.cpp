@@ -34,7 +34,7 @@ void test_electron_symmetric_apply(BondList bondlist, Couplings couplings,
           auto evals_mat = lila::EigenvaluesSym(H);
           double e0_mat = evals_mat(0);
           double e0_app = E0Cplx(bondlist, couplings, block);
-          // lila::Log.out("e0_mat: {}, e0_app: {}", e0_mat, e0_app);
+          // Log.out("e0_mat: {}, e0_app: {}", e0_mat, e0_app);
           REQUIRE(std::abs(e0_mat - e0_app) < 1e-7);
 
           // Compute eigenvalues with real arithmitic
@@ -57,7 +57,7 @@ template <class bit_t> void test_hubbard_symmetric_apply_chains(int n_sites) {
   using namespace hydra::testcases::electron;
 
   // Without Heisenberg term
-  lila::Log.out("electron_symmetric_apply: Hubbard chain, n_sites: {}",
+  Log.out("electron_symmetric_apply: Hubbard chain, n_sites: {}",
                 n_sites);
   auto [bondlist, couplings] = get_linear_chain(n_sites, 1.0, 5.0);
   auto [space_group, irreps] = get_cyclic_group_irreps(n_sites);
@@ -65,7 +65,7 @@ template <class bit_t> void test_hubbard_symmetric_apply_chains(int n_sites) {
                                           irreps);
 
   // With Heisenberg term
-  lila::Log.out("electron_symmetric_apply: Hubbard chain, n_sites: {} (+ "
+  Log.out("electron_symmetric_apply: Hubbard chain, n_sites: {} (+ "
                 "Heisenberg terms)",
                 n_sites);
   auto [bondlist_hb, couplings_hb] =
@@ -84,7 +84,7 @@ TEST_CASE("electron_symmetric_apply", "[blocks][electron_symmetric]") {
   }
 
   // test a 3x3 triangular lattice
-  lila::Log.out("electron_symmetric_apply: Hubbard 3x3 triangular");
+  Log.out("electron_symmetric_apply: Hubbard 3x3 triangular");
   using bit_t = uint16_t;
   std::string lfile = "data/triangular.9.hop.sublattices.tsl.lat";
 
@@ -108,7 +108,7 @@ TEST_CASE("electron_symmetric_apply", "[blocks][electron_symmetric]") {
                                        irreps);
 
   // test a 3x3 triangular lattice with Heisenberg terms
-  lila::Log.out(
+  Log.out(
       "electron_symmetric_apply: Hubbard 3x3 triangular (+ Heisenberg terms)");
   auto bondlist_hb = bondlist;
   for (auto bond : bondlist) {
@@ -120,7 +120,7 @@ TEST_CASE("electron_symmetric_apply", "[blocks][electron_symmetric]") {
 
   // test a 3x3 triangular lattice with complex hoppings
   {
-    lila::Log.out("electron_symmetric_apply: Hubbard 3x3 triangular (complex)");
+    Log.out("electron_symmetric_apply: Hubbard 3x3 triangular (complex)");
     using bit_t = uint16_t;
     std::string lfile =
         "data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.lat";

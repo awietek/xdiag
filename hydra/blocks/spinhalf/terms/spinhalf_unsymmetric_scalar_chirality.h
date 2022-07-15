@@ -1,7 +1,7 @@
 #pragma once
 
 #include <hydra/common.h>
-
+#include <hydra/utils/logger.h>
 #include <hydra/bitops/bitops.h>
 
 #include <hydra/blocks/spinhalf/spinhalf.h>
@@ -26,7 +26,7 @@ void spinhalf_unsymmetric_scalar_chirality(BondList const &bonds,
   for (auto bond : clean_bonds) {
 
     if constexpr (!is_complex<coeff_t>()) {
-      lila::Log.warn(
+      Log.warn(
           "Warning: Ignoring SCALARCHIRALITY bonds due to real coefficients");
       break;
     } else {

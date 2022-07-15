@@ -41,7 +41,7 @@ TEST_CASE("electron_matrix", "[blocks][electron]") {
   Couplings couplings;
 
   // Compare with matrix from Weisse and Fehske
-  lila::Log("electron_matrix: Hubbard Weisse & Fehske");
+  Log("electron_matrix: Hubbard Weisse & Fehske");
   int n_sites = 4;
   int n_up = 3;
   int n_dn = 2;
@@ -129,7 +129,7 @@ TEST_CASE("electron_matrix", "[blocks][electron]") {
   auto block2 = Electron<uint32_t>(2, 1, 1);
   for (int i = 0; i < 20; ++i) {
     double U = 1.234 * i;
-    lila::Log("electron_matrix: two-site exact solution test, U={}", U);
+    Log("electron_matrix: two-site exact solution test, U={}", U);
     couplings["T"] = 1.0;
     couplings["U"] = U;
     double e0_exact = 0.5 * (U - sqrt(U * U + 16));
@@ -144,7 +144,7 @@ TEST_CASE("electron_matrix", "[blocks][electron]") {
   ///////////////////////////////////////////////////
   // Test Fermion all to all, free fermions (real)
   for (int n_sites = 3; n_sites < 7; ++n_sites) {
-    lila::Log(
+    Log(
         "electron_matrix: free fermion random all-to-all test, (real), N={}",
         n_sites);
 
@@ -189,7 +189,7 @@ TEST_CASE("electron_matrix", "[blocks][electron]") {
   //////////////////////////////////////////////////////////////////
   // Test Fermion all to all, free fermions (cplx, up/dn different)
   for (int n_sites = 3; n_sites < 7; ++n_sites) {
-    lila::Log(
+    Log(
         "electron_matrix: free fermion random all-to-all test, (cplx), N={}",
         n_sites);
     std::tie(bondlist, couplings) = freefermion_alltoall_complex_updn(n_sites);
@@ -241,7 +241,7 @@ TEST_CASE("electron_matrix", "[blocks][electron]") {
 
   // Test Heisenberg terms at half-filling
   for (int n_sites = 2; n_sites <= 6; ++n_sites) {
-    lila::Log("electron_matrix: Heisenberg all-to-all comparison test, N={}",
+    Log("electron_matrix: Heisenberg all-to-all comparison test, N={}",
               n_sites);
     int nup = n_sites / 2;
     int ndn = n_sites - nup;
@@ -265,7 +265,7 @@ TEST_CASE("electron_matrix", "[blocks][electron]") {
 
   /////////////////////////////////////////////////////
   // Henry's MATLAB code test (tests Heisenberg terms)
-  lila::Log(
+  Log(
       "electron_matrix: U-hopping-HB full spectrum of Henry's Matlab code");
 
   lila::Vector<double> eigs_correct;
@@ -302,7 +302,7 @@ TEST_CASE("electron_matrix", "[blocks][electron]") {
   REQUIRE(lila::close(all_eigs, eigs_correct));
 
   for (int N = 3; N <= 6; ++N) {
-    lila::Log.out(
+    Log.out(
         "electron_matrix: random all-to-all complex exchange test, N={}", N);
 
     auto [bonds, cpls] = hydra::testcases::tj::tj_alltoall_complex(N);
@@ -331,7 +331,7 @@ TEST_CASE("electron_matrix", "[blocks][electron]") {
       auto H2 = MatrixCplx(bonds, cpls, block2, block2);
       auto eigs1 = lila::EigenvaluesSym(H1);
       auto eigs2 = lila::EigenvaluesSym(H2);
-      // lila::Log("eigs1(0): {}, eigs2(0): {}", eigs1(0), eigs2(0));
+      // Log("eigs1(0): {}, eigs2(0): {}", eigs1(0), eigs2(0));
       lila::Vector<double> eigs1_sub = eigs1({0, eigs2.size()});
       // LilaPrint(eigs1_sub);
       // LilaPrint(eigs2);
@@ -340,7 +340,7 @@ TEST_CASE("electron_matrix", "[blocks][electron]") {
   }
 
   for (int N = 3; N <= 4; ++N) {
-    lila::Log.out("electron_matrix: random all-to-all complex exchange test Np "
+    Log.out("electron_matrix: random all-to-all complex exchange test Np "
                   "<-> NoNp, N={}",
                   N);
     auto [bonds, cpls] = hydra::testcases::tj::tj_alltoall_complex(N);

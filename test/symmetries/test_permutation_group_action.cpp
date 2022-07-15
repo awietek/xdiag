@@ -78,11 +78,11 @@ template <class bit_t> void test_permutation_group_action(int n_sites) {
 }
 
 TEST_CASE("PermutationGroupAction", "[symmetries]") {
-  lila::Log("Test PermutationGroupAction");
+  hydra::Log("Test PermutationGroupAction");
   for (int n_sites = 1; n_sites < 6; ++n_sites) {
     test_permutation_group_action<uint16_t>(n_sites);
     test_permutation_group_action<uint32_t>(n_sites);
     test_permutation_group_action<uint64_t>(n_sites);
   }
-  lila::Log("done");
+  hydra::Log("done");
 }
