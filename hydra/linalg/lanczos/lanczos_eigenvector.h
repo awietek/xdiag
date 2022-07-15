@@ -36,11 +36,12 @@ LanczosEigenvector(BondList const &bonds, Couplings const &couplings,
 #ifdef HYDRA_ENABLE_MPI
   if constexpr (detail::is_mpi_block<Block>) {
 
-    int iter = 0;
+    int iter = 1;
     auto mult = [&iter, &bonds, &couplings, &block](
                     lila::Vector<coeff_t> const &v, lila::Vector<coeff_t> &w) {
       auto ta = rightnow_mpi();
       Apply(bonds, couplings, block, v, block, w);
+      Log(1, "Lanczos iteration {}", iter);
       timing_mpi(ta, rightnow_mpi(), "MVM", 1);
       ++iter;
     };
@@ -64,7 +65,7 @@ LanczosEigenvector(BondList const &bonds, Couplings const &couplings,
 
     // Rerun for eigenvectors
     t0 = rightnow_mpi();
-    iter = 0;
+    iter = 1;
     auto tevecs = tmat.eigenvectors();
     auto coefficients = tevecs.col(num_eigenvector);
     set_v0(v0);
@@ -79,11 +80,12 @@ LanczosEigenvector(BondList const &bonds, Couplings const &couplings,
   // Serial Lanczos
   else {
 #endif
-    int iter = 0;
+    int iter = 1;
     auto mult = [&iter, &bonds, &couplings, &block](
                     lila::Vector<coeff_t> const &v, lila::Vector<coeff_t> &w) {
       auto ta = rightnow();
       Apply(bonds, couplings, block, v, block, w);
+      Log(1, "Lanczos iteration {}", iter);
       timing(ta, rightnow(), "MVM", 1);
       ++iter;
     };
@@ -107,7 +109,7 @@ LanczosEigenvector(BondList const &bonds, Couplings const &couplings,
 
     // Rerun for eigenvectors
     t0 = rightnow();
-    iter = 0;
+    iter = 1;
     auto tevecs = tmat.eigenvectors();
     auto coefficients = tevecs.col(num_eigenvector);
     set_v0(v0);

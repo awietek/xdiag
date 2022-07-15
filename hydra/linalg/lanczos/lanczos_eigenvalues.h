@@ -30,14 +30,13 @@ Tmatrix LanczosEigenvaluesInplace(
   // MPI Lanczos
 #ifdef HYDRA_ENABLE_MPI
   if constexpr (detail::is_mpi_block<Block>) {
-    int iter = 0;
+    int iter = 1;
     auto mult = [&iter, &bonds, &couplings, &block](
                     lila::Vector<coeff_t> const &v, lila::Vector<coeff_t> &w) {
       auto ta = rightnow_mpi();
       Apply(bonds, couplings, block, v, block, w);
       Log(1, "Lanczos iteration {}", iter);
       timing_mpi(ta, rightnow_mpi(), "MVM", 1);
-      
       ++iter;
     };
 
@@ -62,7 +61,7 @@ Tmatrix LanczosEigenvaluesInplace(
   // Serial Lanczos
   else {
 #endif
-    int iter = 0;
+    int iter = 1;
     auto mult = [&iter, &bonds, &couplings, &block](
                     lila::Vector<coeff_t> const &v, lila::Vector<coeff_t> &w) {
       auto ta = rightnow();

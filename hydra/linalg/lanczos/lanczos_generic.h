@@ -70,9 +70,8 @@ LanczosGeneric(multiply_f mult, lila::Vector<coeff_t> &v0, dot_f dot,
 
     auto eigs = tmatrix.eigenvalues();
     Log(2, "alpha: {:.16f}", alpha);
-    Log(2, "beta: {:.16f}", alpha);
-    Log(2, "eigs: {:.8f} {:.8f} {:.8f} {:.8f} {:.8f}",
-	eigs(0), eigs(1), eigs(2), eigs(3), eigs(4));
+    Log(2, "beta: {:.16f}", beta);
+    Log(2, "eigs: {:.16f} {:.16f} {:.16f}", eigs(0), eigs(1), eigs(2));
     
     // Finish if Lanczos sequence is exhausted
     if (std::abs(beta) > deflation_tol) {
