@@ -4,7 +4,7 @@
 #include <mpi.h>
 #include <hydra/mpi/logger_mpi.h>
 #else
-#include <lila/all.h>
+#include <lila/utils/logger.h>
 #endif
 
 namespace hydra {

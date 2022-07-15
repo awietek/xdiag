@@ -7,8 +7,6 @@
 #include <hydra/operators/couplings.h>
 #include <hydra/linalg/lanczos/tmatrix.h>
 
-#define HydraPrintMPI(X) hydra::utils::PrintPrettyMPI(#X,X)
-
 namespace hydra::utils {
 
   void PrintPrettyMPI(const char* identifier, Bond const& bond);

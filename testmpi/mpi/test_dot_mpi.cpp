@@ -1,7 +1,7 @@
 #include <mpi.h>
 #include "../catch.hpp"
 
-#include <hydra/allmpi.h>
+#include <hydra/all.h>
 
 using namespace hydra;
 

@@ -5,8 +5,6 @@
 #include <hydra/linalg/lanczos/tmatrix.h>
 #include <lila/all.h>
 
-#define HydraPrint(X) hydra::utils::PrintPretty(#X,X)
-
 namespace hydra::utils {
 
   void PrintPretty(const char* identifier, Bond const& bond);
