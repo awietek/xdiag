@@ -7,9 +7,9 @@
 
 #if defined(USE_POPCNT)
 
-#ifdef __x86_64__
+#if defined(__x86_64__)
 #include <immintrin.h>
-#elifdef __arm__
+#elif defined(__arm__)
 #include "arm_neon.h"
 #endif
 
