@@ -24,6 +24,8 @@ testdepends = $(subst .cpp,.d,$(testsources))
 testmpiobjects = $(subst .cpp,.o,$(testmpisources))
 testmpidepends = $(subst .cpp,.d,$(testmpisources))
 
+includes=-I$(liladir)
+
 depflags = -MT $@ -MMD -MP -MF $*.d
 
 

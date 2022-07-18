@@ -6,7 +6,13 @@
 #define USE_POPCNT
 
 #if defined(USE_POPCNT)
+
+#ifdef __x86_64__
 #include <immintrin.h>
+#elifdef __arm__
+#include "arm_neon.h"
+#endif
+
 #endif
 
 namespace hydra::bitops {

@@ -6,7 +6,13 @@
 #define USE_PEXT_PDEP
 
 #if defined(__BMI2__) && defined(USE_PEXT_PDEP)
+
+#ifdef __x86_64__
 #include <immintrin.h>
+#elifdef __arm__
+#include "arm_neon.h"
+#endif
+
 #endif
 
 namespace hydra::bitops {
