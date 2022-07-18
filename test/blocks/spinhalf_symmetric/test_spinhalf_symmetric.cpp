@@ -10,7 +10,7 @@ using namespace hydra::combinatorics;
 template <class bit_t>
 void test_indices_spinhalf_symmetric(Spinhalf<bit_t> const &block) {
   
-  PermutationGroupAction group_action(block.permutation_group());
+  GroupAction group_action(block.permutation_group());
   // auto indexing = block.indexing_sym_sz_conserved();
   // for (idx_t idx = 0; idx < block.size(); ++idx) {
   //   bit_t state = indexing.state(idx);

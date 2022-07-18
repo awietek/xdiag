@@ -1,4 +1,4 @@
-#include "../catch.hpp"
+#include "../../catch.hpp"
 
 #include <iostream>
 
@@ -19,8 +19,8 @@ template <class bit_t> void test_permutation_group_lookup(int n_sites) {
   }
 
   auto perm_group = PermutationGroup(n_sites, n_sites, permutation_array);
-  auto action = PermutationGroupAction(perm_group);
-  auto lookup = PermutationGroupLookup<bit_t>(perm_group);
+  auto action = GroupAction(perm_group);
+  auto lookup = GroupActionLookup<bit_t>(perm_group);
 
   // Check whether representative is smallest in orbit
   for (int sym =0; sym< perm_group.size(); ++sym)
@@ -32,8 +32,8 @@ template <class bit_t> void test_permutation_group_lookup(int n_sites) {
   }
 }
 
-TEST_CASE("PermutationGroupLookup", "[symmetries]") {
-  hydra::Log.out("PermutationGroupLookup <-> PermutationGroupAction comparison");
+TEST_CASE("GroupActionLookup", "[symmetries]") {
+  hydra::Log.out("PermutationGroupLookup <-> GroupAction comparison");
   for (int n_sites = 1; n_sites < 6; ++n_sites) {
     test_permutation_group_lookup<uint16_t>(n_sites);
     test_permutation_group_lookup<uint32_t>(n_sites);

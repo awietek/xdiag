@@ -6,10 +6,10 @@
 
 namespace hydra {
 
-template <class bit_t> class PermutationGroupLookup {
+template <class bit_t> class GroupActionLookup {
 public:
-  PermutationGroupLookup() = default;
-  PermutationGroupLookup(PermutationGroup const &permutation_group);
+  GroupActionLookup() = default;
+  GroupActionLookup(PermutationGroup const &permutation_group);
 
   inline int n_sites() const { return n_sites_; }
   inline int n_symmetries() const { return n_symmetries_; }
@@ -25,8 +25,8 @@ public:
            table_postfix_[sym * postfix_size_ + (state & postfix_mask_)];
   }
 
-  bool operator==(PermutationGroupLookup const &rhs) const;
-  bool operator!=(PermutationGroupLookup const &rhs) const;
+  bool operator==(GroupActionLookup const &rhs) const;
+  bool operator!=(GroupActionLookup const &rhs) const;
 
 private:
   int n_sites_;

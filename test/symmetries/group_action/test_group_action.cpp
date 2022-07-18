@@ -1,4 +1,4 @@
-#include "../catch.hpp"
+#include "../../catch.hpp"
 
 #include <iostream>
 
@@ -19,7 +19,7 @@ template <class bit_t> void test_permutation_group_action(int n_sites) {
   }
 
   auto perm_group = PermutationGroup(n_sites, n_sites, permutation_array);
-  auto sym_op = PermutationGroupAction(perm_group);
+  auto sym_op = GroupAction(perm_group);
 
   // // Print the action on the states
   // for (auto state : Subsets<bit_t>(n_sites)) {
@@ -77,8 +77,8 @@ template <class bit_t> void test_permutation_group_action(int n_sites) {
   }
 }
 
-TEST_CASE("PermutationGroupAction", "[symmetries]") {
-  hydra::Log("Test PermutationGroupAction");
+TEST_CASE("GroupAction", "[symmetries]") {
+  hydra::Log("Test GroupAction");
   for (int n_sites = 1; n_sites < 6; ++n_sites) {
     test_permutation_group_action<uint16_t>(n_sites);
     test_permutation_group_action<uint32_t>(n_sites);

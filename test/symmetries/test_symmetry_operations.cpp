@@ -19,7 +19,7 @@ static PermutationGroup cyclic_group(int n_sites) {
 }
 
 template <typename bit_t> void test_stabilizer_symmetries(int n_sites) {
-  auto group_action = PermutationGroupLookup<bit_t>(cyclic_group(n_sites));
+  auto group_action = GroupActionLookup<bit_t>(cyclic_group(n_sites));
 
   for (bit_t bits : Subsets(n_sites)) {
     auto stab_syms = stabilizer_symmetries(bits, group_action);
@@ -30,7 +30,7 @@ template <typename bit_t> void test_stabilizer_symmetries(int n_sites) {
 }
 
 template <typename bit_t> void test_representative(int n_sites) {
-  auto group_action = PermutationGroupLookup<bit_t>(cyclic_group(n_sites));
+  auto group_action = GroupActionLookup<bit_t>(cyclic_group(n_sites));
 
   for (bit_t bits : Subsets(n_sites)) {
     bit_t rep = representative(bits, group_action);
@@ -47,7 +47,7 @@ template <typename bit_t> void test_representative(int n_sites) {
 }
 
 template <typename bit_t> void test_representative_subset(int n_sites) {
-  auto group_action = PermutationGroupLookup<bit_t>(cyclic_group(n_sites));
+  auto group_action = GroupActionLookup<bit_t>(cyclic_group(n_sites));
   std::vector<int> subset;
   for (int i = 0; i < n_sites; i += 2)
     subset.push_back(i);
@@ -67,7 +67,7 @@ template <typename bit_t> void test_representative_subset(int n_sites) {
 }
 
 template <typename bit_t> void test_representative_sym(int n_sites) {
-  auto group_action = PermutationGroupLookup<bit_t>(cyclic_group(n_sites));
+  auto group_action = GroupActionLookup<bit_t>(cyclic_group(n_sites));
 
   for (bit_t bits : Subsets(n_sites)) {
     auto [rep, rsym] = representative_sym(bits, group_action);
@@ -87,7 +87,7 @@ template <typename bit_t> void test_representative_sym(int n_sites) {
 }
 
 template <typename bit_t> void test_representative_sym_subset(int n_sites) {
-  auto group_action = PermutationGroupLookup<bit_t>(cyclic_group(n_sites));
+  auto group_action = GroupActionLookup<bit_t>(cyclic_group(n_sites));
   std::vector<int> subset;
   for (int i = 0; i < n_sites; i += 2)
     subset.push_back(i);
@@ -109,7 +109,7 @@ template <typename bit_t> void test_representative_sym_subset(int n_sites) {
 }
 
 template <typename bit_t> void test_norm(int n_sites) {
-  auto group_action = PermutationGroupLookup<bit_t>(cyclic_group(n_sites));
+  auto group_action = GroupActionLookup<bit_t>(cyclic_group(n_sites));
   std::vector<complex> chis(n_sites, 1.0);
   Representation irrep(chis);
   for (bit_t bits : Subsets(n_sites)) {
@@ -122,7 +122,7 @@ template <typename bit_t> void test_norm(int n_sites) {
 template <typename bit_t>
 void test_representatives_indices_symmetries_limits(int n_sites) {
 
-  auto group_action = PermutationGroupLookup<bit_t>(cyclic_group(n_sites));
+  auto group_action = GroupActionLookup<bit_t>(cyclic_group(n_sites));
 
   for (int npar = 0; npar <= n_sites; ++npar) {
     auto lintable = indexing::LinTable<bit_t>(n_sites, npar);
@@ -153,7 +153,7 @@ void test_representatives_indices_symmetries_limits(int n_sites) {
 template <typename bit_t> void test_fermi_bool_table(int n_sites) {
   auto fermi_work = symmetries::fermi_work(n_sites);
 
-  auto group_action = PermutationGroupLookup<bit_t>(cyclic_group(n_sites));
+  auto group_action = GroupActionLookup<bit_t>(cyclic_group(n_sites));
   int n_symmetries = group_action.n_symmetries();
   for (int npar = 0; npar <= n_sites; ++npar) {
 

@@ -4,6 +4,10 @@
 #include <mpi.h>
 #endif
 
+#ifdef HYDRA_ENABLE_OPENMP
+#include <omp.h>
+#endif
+
 #include <lila/all.h>
 
 #include "bitops/bitops.h"
@@ -62,12 +66,12 @@
 #include "symmetries/fermi_bool_table.h"
 #include "symmetries/fermi_sign.h"
 #include "symmetries/permutation_group.h"
-#include "symmetries/permutation_group_action.h"
-#include "symmetries/permutation_group_lookup.h"
 #include "symmetries/representation.h"
 #include "symmetries/representative_list.h"
 #include "symmetries/symmetric_operator.h"
 #include "symmetries/symmetry_operations.h"
+#include "symmetries/group_action/group_action.h"
+#include "symmetries/group_action/group_action_lookup.h"
 
 #include "operators/bond.h"
 #include "operators/bondlist.h"

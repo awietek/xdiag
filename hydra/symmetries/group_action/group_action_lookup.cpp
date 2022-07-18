@@ -1,13 +1,13 @@
-#include "permutation_group_lookup.h"
+#include "group_action_lookup.h"
 
 #include <hydra/symmetries/fermi_sign.h>
-#include <hydra/symmetries/permutation_group_action.h>
+#include <hydra/symmetries/group_action/group_action.h>
 #include <hydra/symmetries/symmetry_operations.h>
 
 namespace hydra {
 
 template <typename bit_t>
-PermutationGroupLookup<bit_t>::PermutationGroupLookup(
+GroupActionLookup<bit_t>::GroupActionLookup(
     PermutationGroup const &permutation_group)
     : n_sites_(permutation_group.n_sites()),
       n_symmetries_(permutation_group.n_symmetries()),
@@ -20,7 +20,7 @@ PermutationGroupLookup<bit_t>::PermutationGroupLookup(
       table_prefix_(n_symmetries_ * prefix_size_, 0),
       table_postfix_(n_symmetries_ * postfix_size_, 0) {
 
-  auto action = PermutationGroupAction(permutation_group);
+  auto action = GroupAction(permutation_group);
 
   idx_t idx = 0;
   // Fill prefix table with translated prefix states
@@ -44,19 +44,17 @@ PermutationGroupLookup<bit_t>::PermutationGroupLookup(
 }
 
 template <typename bit_t>
-bool PermutationGroupLookup<bit_t>::operator==(
-    PermutationGroupLookup const &rhs) const {
+bool GroupActionLookup<bit_t>::operator==(GroupActionLookup const &rhs) const {
   return (n_sites_ == rhs.n_sites_) && (n_symmetries_ == rhs.n_symmetries_) &&
          (permutation_group_ == rhs.permutation_group_);
 }
 template <typename bit_t>
-bool PermutationGroupLookup<bit_t>::operator!=(
-    PermutationGroupLookup const &rhs) const {
+bool GroupActionLookup<bit_t>::operator!=(GroupActionLookup const &rhs) const {
   return !operator==(rhs);
 }
 
-template class PermutationGroupLookup<uint16_t>;
-template class PermutationGroupLookup<uint32_t>;
-template class PermutationGroupLookup<uint64_t>;
+template class GroupActionLookup<uint16_t>;
+template class GroupActionLookup<uint32_t>;
+template class GroupActionLookup<uint64_t>;
 
 } // namespace hydra

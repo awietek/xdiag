@@ -5,16 +5,16 @@
 
 #include <hydra/common.h>
 
-#include <hydra/utils/openmp_utils.h>
 #include <hydra/utils/logger.h>
+#include <hydra/utils/openmp_utils.h>
 
 #include <hydra/combinatorics/bit_patterns.h>
 #include <hydra/combinatorics/combinations_index.h>
 
 #include <hydra/indexing/lintable.h>
 
-#include <hydra/symmetries/permutation_group_action.h>
-#include <hydra/symmetries/permutation_group_lookup.h>
+#include <hydra/symmetries/group_action/group_action.h>
+#include <hydra/symmetries/group_action/group_action_lookup.h>
 
 namespace hydra {
 
@@ -104,23 +104,23 @@ std::vector<int> stabilizer_symmetries(bit_t bits, GroupAction const &group) {
 }
 
 template std::vector<int>
-stabilizer_symmetries<uint16_t, PermutationGroupAction>(
-    uint16_t bits, PermutationGroupAction const &group);
+stabilizer_symmetries<uint16_t, GroupAction>(uint16_t bits,
+                                             GroupAction const &group);
 template std::vector<int>
-stabilizer_symmetries<uint32_t, PermutationGroupAction>(
-    uint32_t bits, PermutationGroupAction const &group);
+stabilizer_symmetries<uint32_t, GroupAction>(uint32_t bits,
+                                             GroupAction const &group);
 template std::vector<int>
-stabilizer_symmetries<uint64_t, PermutationGroupAction>(
-    uint64_t bits, PermutationGroupAction const &group);
+stabilizer_symmetries<uint64_t, GroupAction>(uint64_t bits,
+                                             GroupAction const &group);
 template std::vector<int>
-stabilizer_symmetries<uint16_t, PermutationGroupLookup<uint16_t>>(
-    uint16_t bits, PermutationGroupLookup<uint16_t> const &group);
+stabilizer_symmetries<uint16_t, GroupActionLookup<uint16_t>>(
+    uint16_t bits, GroupActionLookup<uint16_t> const &group);
 template std::vector<int>
-stabilizer_symmetries<uint32_t, PermutationGroupLookup<uint32_t>>(
-    uint32_t bits, PermutationGroupLookup<uint32_t> const &group);
+stabilizer_symmetries<uint32_t, GroupActionLookup<uint32_t>>(
+    uint32_t bits, GroupActionLookup<uint32_t> const &group);
 template std::vector<int>
-stabilizer_symmetries<uint64_t, PermutationGroupLookup<uint64_t>>(
-    uint64_t bits, PermutationGroupLookup<uint64_t> const &group);
+stabilizer_symmetries<uint64_t, GroupActionLookup<uint64_t>>(
+    uint64_t bits, GroupActionLookup<uint64_t> const &group);
 
 //////////////////////////////////////////////////////////
 template <typename bit_t, class GroupAction>
@@ -138,18 +138,18 @@ bit_t representative(bit_t state, GroupAction const &group_action) {
   return rep;
 }
 
-template uint16_t representative<uint16_t, PermutationGroupAction>(
-    uint16_t state, PermutationGroupAction const &);
-template uint32_t representative<uint32_t, PermutationGroupAction>(
-    uint32_t state, PermutationGroupAction const &);
-template uint64_t representative<uint64_t, PermutationGroupAction>(
-    uint64_t state, PermutationGroupAction const &);
-template uint16_t representative<uint16_t, PermutationGroupLookup<uint16_t>>(
-    uint16_t state, PermutationGroupLookup<uint16_t> const &);
-template uint32_t representative<uint32_t, PermutationGroupLookup<uint32_t>>(
-    uint32_t state, PermutationGroupLookup<uint32_t> const &);
-template uint64_t representative<uint64_t, PermutationGroupLookup<uint64_t>>(
-    uint64_t state, PermutationGroupLookup<uint64_t> const &);
+template uint16_t representative<uint16_t, GroupAction>(uint16_t state,
+                                                        GroupAction const &);
+template uint32_t representative<uint32_t, GroupAction>(uint32_t state,
+                                                        GroupAction const &);
+template uint64_t representative<uint64_t, GroupAction>(uint64_t state,
+                                                        GroupAction const &);
+template uint16_t representative<uint16_t, GroupActionLookup<uint16_t>>(
+    uint16_t state, GroupActionLookup<uint16_t> const &);
+template uint32_t representative<uint32_t, GroupActionLookup<uint32_t>>(
+    uint32_t state, GroupActionLookup<uint32_t> const &);
+template uint64_t representative<uint64_t, GroupActionLookup<uint64_t>>(
+    uint64_t state, GroupActionLookup<uint64_t> const &);
 
 //////////////////////////////////////////////////////////
 template <typename bit_t, class GroupAction>
@@ -168,23 +168,20 @@ bit_t representative_subset(bit_t state, GroupAction const &group_action,
   return rep;
 }
 
-template uint16_t representative_subset<uint16_t, PermutationGroupAction>(
-    uint16_t state, PermutationGroupAction const &, gsl::span<int const> syms);
-template uint32_t representative_subset<uint32_t, PermutationGroupAction>(
-    uint32_t state, PermutationGroupAction const &, gsl::span<int const> syms);
-template uint64_t representative_subset<uint64_t, PermutationGroupAction>(
-    uint64_t state, PermutationGroupAction const &, gsl::span<int const> syms);
-template uint16_t
-representative_subset<uint16_t, PermutationGroupLookup<uint16_t>>(
-    uint16_t state, PermutationGroupLookup<uint16_t> const &,
+template uint16_t representative_subset<uint16_t, GroupAction>(
+    uint16_t state, GroupAction const &, gsl::span<int const> syms);
+template uint32_t representative_subset<uint32_t, GroupAction>(
+    uint32_t state, GroupAction const &, gsl::span<int const> syms);
+template uint64_t representative_subset<uint64_t, GroupAction>(
+    uint64_t state, GroupAction const &, gsl::span<int const> syms);
+template uint16_t representative_subset<uint16_t, GroupActionLookup<uint16_t>>(
+    uint16_t state, GroupActionLookup<uint16_t> const &,
     gsl::span<int const> syms);
-template uint32_t
-representative_subset<uint32_t, PermutationGroupLookup<uint32_t>>(
-    uint32_t state, PermutationGroupLookup<uint32_t> const &,
+template uint32_t representative_subset<uint32_t, GroupActionLookup<uint32_t>>(
+    uint32_t state, GroupActionLookup<uint32_t> const &,
     gsl::span<int const> syms);
-template uint64_t
-representative_subset<uint64_t, PermutationGroupLookup<uint64_t>>(
-    uint64_t state, PermutationGroupLookup<uint64_t> const &,
+template uint64_t representative_subset<uint64_t, GroupActionLookup<uint64_t>>(
+    uint64_t state, GroupActionLookup<uint64_t> const &,
     gsl::span<int const> syms);
 
 //////////////////////////////////////////////////////////
@@ -206,23 +203,20 @@ std::pair<bit_t, int> representative_sym(bit_t state,
 }
 
 template std::pair<uint16_t, int>
-representative_sym<uint16_t, PermutationGroupAction>(
-    uint16_t state, PermutationGroupAction const &);
+representative_sym<uint16_t, GroupAction>(uint16_t state, GroupAction const &);
 template std::pair<uint32_t, int>
-representative_sym<uint32_t, PermutationGroupAction>(
-    uint32_t state, PermutationGroupAction const &);
+representative_sym<uint32_t, GroupAction>(uint32_t state, GroupAction const &);
 template std::pair<uint64_t, int>
-representative_sym<uint64_t, PermutationGroupAction>(
-    uint64_t state, PermutationGroupAction const &);
+representative_sym<uint64_t, GroupAction>(uint64_t state, GroupAction const &);
 template std::pair<uint16_t, int>
-representative_sym<uint16_t, PermutationGroupLookup<uint16_t>>(
-    uint16_t state, PermutationGroupLookup<uint16_t> const &);
+representative_sym<uint16_t, GroupActionLookup<uint16_t>>(
+    uint16_t state, GroupActionLookup<uint16_t> const &);
 template std::pair<uint32_t, int>
-representative_sym<uint32_t, PermutationGroupLookup<uint32_t>>(
-    uint32_t state, PermutationGroupLookup<uint32_t> const &);
+representative_sym<uint32_t, GroupActionLookup<uint32_t>>(
+    uint32_t state, GroupActionLookup<uint32_t> const &);
 template std::pair<uint64_t, int>
-representative_sym<uint64_t, PermutationGroupLookup<uint64_t>>(
-    uint64_t state, PermutationGroupLookup<uint64_t> const &);
+representative_sym<uint64_t, GroupActionLookup<uint64_t>>(
+    uint64_t state, GroupActionLookup<uint64_t> const &);
 
 //////////////////////////////////////////////////////////
 template <typename bit_t, class GroupAction>
@@ -245,25 +239,28 @@ std::pair<bit_t, int> representative_sym_subset(bit_t state,
 }
 
 template std::pair<uint16_t, int>
-representative_sym_subset<uint16_t, PermutationGroupAction>(
-    uint16_t state, PermutationGroupAction const &, gsl::span<int const> syms);
+representative_sym_subset<uint16_t, GroupAction>(uint16_t state,
+                                                 GroupAction const &,
+                                                 gsl::span<int const> syms);
 template std::pair<uint32_t, int>
-representative_sym_subset<uint32_t, PermutationGroupAction>(
-    uint32_t state, PermutationGroupAction const &, gsl::span<int const> syms);
+representative_sym_subset<uint32_t, GroupAction>(uint32_t state,
+                                                 GroupAction const &,
+                                                 gsl::span<int const> syms);
 template std::pair<uint64_t, int>
-representative_sym_subset<uint64_t, PermutationGroupAction>(
-    uint64_t state, PermutationGroupAction const &, gsl::span<int const> syms);
+representative_sym_subset<uint64_t, GroupAction>(uint64_t state,
+                                                 GroupAction const &,
+                                                 gsl::span<int const> syms);
 template std::pair<uint16_t, int>
-representative_sym_subset<uint16_t, PermutationGroupLookup<uint16_t>>(
-    uint16_t state, PermutationGroupLookup<uint16_t> const &,
+representative_sym_subset<uint16_t, GroupActionLookup<uint16_t>>(
+    uint16_t state, GroupActionLookup<uint16_t> const &,
     gsl::span<int const> syms);
 template std::pair<uint32_t, int>
-representative_sym_subset<uint32_t, PermutationGroupLookup<uint32_t>>(
-    uint32_t state, PermutationGroupLookup<uint32_t> const &,
+representative_sym_subset<uint32_t, GroupActionLookup<uint32_t>>(
+    uint32_t state, GroupActionLookup<uint32_t> const &,
     gsl::span<int const> syms);
 template std::pair<uint64_t, int>
-representative_sym_subset<uint64_t, PermutationGroupLookup<uint64_t>>(
-    uint64_t state, PermutationGroupLookup<uint64_t> const &,
+representative_sym_subset<uint64_t, GroupActionLookup<uint64_t>>(
+    uint64_t state, GroupActionLookup<uint64_t> const &,
     gsl::span<int const> syms);
 
 //////////////////////////////////////////////////////////
@@ -285,23 +282,20 @@ representative_syms(bit_t state, GroupAction const &group_action) {
 }
 
 template std::pair<uint16_t, std::vector<int>>
-representative_syms<uint16_t, PermutationGroupAction>(
-    uint16_t state, PermutationGroupAction const &);
+representative_syms<uint16_t, GroupAction>(uint16_t state, GroupAction const &);
 template std::pair<uint32_t, std::vector<int>>
-representative_syms<uint32_t, PermutationGroupAction>(
-    uint32_t state, PermutationGroupAction const &);
+representative_syms<uint32_t, GroupAction>(uint32_t state, GroupAction const &);
 template std::pair<uint64_t, std::vector<int>>
-representative_syms<uint64_t, PermutationGroupAction>(
-    uint64_t state, PermutationGroupAction const &);
+representative_syms<uint64_t, GroupAction>(uint64_t state, GroupAction const &);
 template std::pair<uint16_t, std::vector<int>>
-representative_syms<uint16_t, PermutationGroupLookup<uint16_t>>(
-    uint16_t state, PermutationGroupLookup<uint16_t> const &);
+representative_syms<uint16_t, GroupActionLookup<uint16_t>>(
+    uint16_t state, GroupActionLookup<uint16_t> const &);
 template std::pair<uint32_t, std::vector<int>>
-representative_syms<uint32_t, PermutationGroupLookup<uint32_t>>(
-    uint32_t state, PermutationGroupLookup<uint32_t> const &);
+representative_syms<uint32_t, GroupActionLookup<uint32_t>>(
+    uint32_t state, GroupActionLookup<uint32_t> const &);
 template std::pair<uint64_t, std::vector<int>>
-representative_syms<uint64_t, PermutationGroupLookup<uint64_t>>(
-    uint64_t state, PermutationGroupLookup<uint64_t> const &);
+representative_syms<uint64_t, GroupActionLookup<uint64_t>>(
+    uint64_t state, GroupActionLookup<uint64_t> const &);
 
 //////////////////////////////////////////////////////////
 template <typename bit_t, class GroupAction>
@@ -318,23 +312,17 @@ std::vector<int> mapping_syms(bit_t origin, bit_t target,
 }
 
 template std::vector<int>
-mapping_syms<uint16_t, PermutationGroupAction>(uint16_t, uint16_t,
-                                               PermutationGroupAction const &);
+mapping_syms<uint16_t, GroupAction>(uint16_t, uint16_t, GroupAction const &);
 template std::vector<int>
-mapping_syms<uint32_t, PermutationGroupAction>(uint32_t, uint32_t,
-                                               PermutationGroupAction const &);
+mapping_syms<uint32_t, GroupAction>(uint32_t, uint32_t, GroupAction const &);
 template std::vector<int>
-mapping_syms<uint64_t, PermutationGroupAction>(uint64_t, uint64_t,
-                                               PermutationGroupAction const &);
-template std::vector<int>
-mapping_syms<uint16_t, PermutationGroupLookup<uint16_t>>(
-    uint16_t, uint16_t, PermutationGroupLookup<uint16_t> const &);
-template std::vector<int>
-mapping_syms<uint32_t, PermutationGroupLookup<uint32_t>>(
-    uint32_t, uint32_t, PermutationGroupLookup<uint32_t> const &);
-template std::vector<int>
-mapping_syms<uint64_t, PermutationGroupLookup<uint64_t>>(
-    uint64_t, uint64_t, PermutationGroupLookup<uint64_t> const &);
+mapping_syms<uint64_t, GroupAction>(uint64_t, uint64_t, GroupAction const &);
+template std::vector<int> mapping_syms<uint16_t, GroupActionLookup<uint16_t>>(
+    uint16_t, uint16_t, GroupActionLookup<uint16_t> const &);
+template std::vector<int> mapping_syms<uint32_t, GroupActionLookup<uint32_t>>(
+    uint32_t, uint32_t, GroupActionLookup<uint32_t> const &);
+template std::vector<int> mapping_syms<uint64_t, GroupActionLookup<uint64_t>>(
+    uint64_t, uint64_t, GroupActionLookup<uint64_t> const &);
 
 //////////////////////////////////////////////////////////
 template <typename bit_t, class GroupAction>
@@ -350,21 +338,18 @@ double norm(bit_t state, GroupAction const &group_action,
   return std::sqrt(std::abs(amplitude));
 }
 
-template double
-norm<uint16_t, PermutationGroupAction>(uint16_t, PermutationGroupAction const &,
-                                       Representation const &);
-template double
-norm<uint32_t, PermutationGroupAction>(uint32_t, PermutationGroupAction const &,
-                                       Representation const &);
-template double
-norm<uint64_t, PermutationGroupAction>(uint64_t, PermutationGroupAction const &,
-                                       Representation const &);
-template double norm<uint16_t, PermutationGroupLookup<uint16_t>>(
-    uint16_t, PermutationGroupLookup<uint16_t> const &, Representation const &);
-template double norm<uint32_t, PermutationGroupLookup<uint32_t>>(
-    uint32_t, PermutationGroupLookup<uint32_t> const &, Representation const &);
-template double norm<uint64_t, PermutationGroupLookup<uint64_t>>(
-    uint64_t, PermutationGroupLookup<uint64_t> const &, Representation const &);
+template double norm<uint16_t, GroupAction>(uint16_t, GroupAction const &,
+                                            Representation const &);
+template double norm<uint32_t, GroupAction>(uint32_t, GroupAction const &,
+                                            Representation const &);
+template double norm<uint64_t, GroupAction>(uint64_t, GroupAction const &,
+                                            Representation const &);
+template double norm<uint16_t, GroupActionLookup<uint16_t>>(
+    uint16_t, GroupActionLookup<uint16_t> const &, Representation const &);
+template double norm<uint32_t, GroupActionLookup<uint32_t>>(
+    uint32_t, GroupActionLookup<uint32_t> const &, Representation const &);
+template double norm<uint64_t, GroupActionLookup<uint64_t>>(
+    uint64_t, GroupActionLookup<uint64_t> const &, Representation const &);
 
 //////////////////////////////////////////////////////////
 template <typename bit_t, class GroupAction>
@@ -388,20 +373,23 @@ double norm_fermionic(bit_t state, GroupAction const &group_action,
   return std::sqrt(std::abs(amplitude));
 }
 
-template double norm_fermionic<uint16_t, PermutationGroupAction>(
-    uint16_t state, PermutationGroupAction const &, Representation const &);
-template double norm_fermionic<uint32_t, PermutationGroupAction>(
-    uint32_t state, PermutationGroupAction const &, Representation const &);
-template double norm_fermionic<uint64_t, PermutationGroupAction>(
-    uint64_t state, PermutationGroupAction const &, Representation const &);
-template double norm_fermionic<uint16_t, PermutationGroupLookup<uint16_t>>(
-    uint16_t state, PermutationGroupLookup<uint16_t> const &,
+template double norm_fermionic<uint16_t, GroupAction>(uint16_t state,
+                                                      GroupAction const &,
+                                                      Representation const &);
+template double norm_fermionic<uint32_t, GroupAction>(uint32_t state,
+                                                      GroupAction const &,
+                                                      Representation const &);
+template double norm_fermionic<uint64_t, GroupAction>(uint64_t state,
+                                                      GroupAction const &,
+                                                      Representation const &);
+template double norm_fermionic<uint16_t, GroupActionLookup<uint16_t>>(
+    uint16_t state, GroupActionLookup<uint16_t> const &,
     Representation const &);
-template double norm_fermionic<uint32_t, PermutationGroupLookup<uint32_t>>(
-    uint32_t state, PermutationGroupLookup<uint32_t> const &,
+template double norm_fermionic<uint32_t, GroupActionLookup<uint32_t>>(
+    uint32_t state, GroupActionLookup<uint32_t> const &,
     Representation const &);
-template double norm_fermionic<uint64_t, PermutationGroupLookup<uint64_t>>(
-    uint64_t state, PermutationGroupLookup<uint64_t> const &,
+template double norm_fermionic<uint64_t, GroupActionLookup<uint64_t>>(
+    uint64_t state, GroupActionLookup<uint64_t> const &,
     Representation const &);
 
 //////////////////////////////////////////////////////////
@@ -438,20 +426,23 @@ double norm_electron(bit_t ups, bit_t dns, GroupAction const &group_action,
   return std::sqrt(std::abs(amplitude));
 }
 
-template double norm_electron<uint16_t, PermutationGroupAction>(
-    uint16_t, uint16_t, PermutationGroupAction const &, Representation const &);
-template double norm_electron<uint32_t, PermutationGroupAction>(
-    uint32_t, uint32_t, PermutationGroupAction const &, Representation const &);
-template double norm_electron<uint64_t, PermutationGroupAction>(
-    uint64_t, uint64_t, PermutationGroupAction const &, Representation const &);
-template double norm_electron<uint16_t, PermutationGroupLookup<uint16_t>>(
-    uint16_t, uint16_t, PermutationGroupLookup<uint16_t> const &,
+template double norm_electron<uint16_t, GroupAction>(uint16_t, uint16_t,
+                                                     GroupAction const &,
+                                                     Representation const &);
+template double norm_electron<uint32_t, GroupAction>(uint32_t, uint32_t,
+                                                     GroupAction const &,
+                                                     Representation const &);
+template double norm_electron<uint64_t, GroupAction>(uint64_t, uint64_t,
+                                                     GroupAction const &,
+                                                     Representation const &);
+template double norm_electron<uint16_t, GroupActionLookup<uint16_t>>(
+    uint16_t, uint16_t, GroupActionLookup<uint16_t> const &,
     Representation const &);
-template double norm_electron<uint32_t, PermutationGroupLookup<uint32_t>>(
-    uint32_t, uint32_t, PermutationGroupLookup<uint32_t> const &,
+template double norm_electron<uint32_t, GroupActionLookup<uint32_t>>(
+    uint32_t, uint32_t, GroupActionLookup<uint32_t> const &,
     Representation const &);
-template double norm_electron<uint64_t, PermutationGroupLookup<uint64_t>>(
-    uint64_t, uint64_t, PermutationGroupLookup<uint64_t> const &,
+template double norm_electron<uint64_t, GroupActionLookup<uint64_t>>(
+    uint64_t, uint64_t, GroupActionLookup<uint64_t> const &,
     Representation const &);
 
 //////////////////////////////////////////////////////////
@@ -490,26 +481,23 @@ norm_electron_subset(bit_t ups, bit_t dns, GroupAction const &group_action,
   return std::sqrt(std::abs(amplitude));
 }
 
-template double norm_electron_subset<uint16_t, PermutationGroupAction>(
-    uint16_t, uint16_t, PermutationGroupAction const &, Representation const &,
+template double norm_electron_subset<uint16_t, GroupAction>(
+    uint16_t, uint16_t, GroupAction const &, Representation const &,
     gsl::span<int const>);
-template double norm_electron_subset<uint32_t, PermutationGroupAction>(
-    uint32_t, uint32_t, PermutationGroupAction const &, Representation const &,
+template double norm_electron_subset<uint32_t, GroupAction>(
+    uint32_t, uint32_t, GroupAction const &, Representation const &,
     gsl::span<int const>);
-template double norm_electron_subset<uint64_t, PermutationGroupAction>(
-    uint64_t, uint64_t, PermutationGroupAction const &, Representation const &,
+template double norm_electron_subset<uint64_t, GroupAction>(
+    uint64_t, uint64_t, GroupAction const &, Representation const &,
     gsl::span<int const>);
-template double
-norm_electron_subset<uint16_t, PermutationGroupLookup<uint16_t>>(
-    uint16_t, uint16_t, PermutationGroupLookup<uint16_t> const &,
+template double norm_electron_subset<uint16_t, GroupActionLookup<uint16_t>>(
+    uint16_t, uint16_t, GroupActionLookup<uint16_t> const &,
     Representation const &, gsl::span<int const>);
-template double
-norm_electron_subset<uint32_t, PermutationGroupLookup<uint32_t>>(
-    uint32_t, uint32_t, PermutationGroupLookup<uint32_t> const &,
+template double norm_electron_subset<uint32_t, GroupActionLookup<uint32_t>>(
+    uint32_t, uint32_t, GroupActionLookup<uint32_t> const &,
     Representation const &, gsl::span<int const>);
-template double
-norm_electron_subset<uint64_t, PermutationGroupLookup<uint64_t>>(
-    uint64_t, uint64_t, PermutationGroupLookup<uint64_t> const &,
+template double norm_electron_subset<uint64_t, GroupActionLookup<uint64_t>>(
+    uint64_t, uint64_t, GroupActionLookup<uint64_t> const &,
     Representation const &, gsl::span<int const>);
 
 } // namespace hydra::symmetries

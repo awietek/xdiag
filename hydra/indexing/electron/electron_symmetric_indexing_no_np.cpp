@@ -5,7 +5,6 @@
 #include <hydra/combinatorics/subsets.h>
 
 #include <hydra/symmetries/fermi_bool_table.h>
-#include <hydra/symmetries/permutation_group_lookup.h>
 #include <hydra/symmetries/representative_list.h>
 #include <hydra/symmetries/symmetry_operations.h>
 

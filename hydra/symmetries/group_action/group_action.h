@@ -5,10 +5,10 @@
 
 namespace hydra {
 
-class PermutationGroupAction {
+class GroupAction {
 public:
-  PermutationGroupAction() = default;
-  PermutationGroupAction(PermutationGroup const &permutation_group);
+  GroupAction() = default;
+  GroupAction(PermutationGroup const &permutation_group);
 
   inline int n_sites() const { return n_sites_; }
   inline int n_symmetries() const { return n_symmetries_; }
@@ -29,8 +29,8 @@ public:
   template <class bit_t>
   std::vector<int> stabilizer_symmetries(bit_t state) const;
 
-  bool operator==(PermutationGroupAction const &rhs) const;
-  bool operator!=(PermutationGroupAction const &rhs) const;
+  bool operator==(GroupAction const &rhs) const;
+  bool operator!=(GroupAction const &rhs) const;
 
 private:
   int n_sites_;

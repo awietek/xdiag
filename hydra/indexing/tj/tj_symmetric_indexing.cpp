@@ -5,7 +5,6 @@
 #include <hydra/indexing/combinations_indexing.h>
 
 #include <hydra/combinatorics/combinations.h>
-#include <hydra/symmetries/permutation_group_lookup.h>
 #include <hydra/symmetries/symmetry_operations.h>
 
 namespace hydra::indexing {
