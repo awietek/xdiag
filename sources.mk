@@ -49,11 +49,11 @@ sources+= hydra/blocks/tj/tj_apply.cpp
 
 sources+= hydra/symmetries/symmetry_operations.cpp
 sources+= hydra/symmetries/permutation_group.cpp
-sources+= hydra/symmetries/permutation_group_action.cpp
-sources+= hydra/symmetries/permutation_group_lookup.cpp
 sources+= hydra/symmetries/representation.cpp
 sources+= hydra/symmetries/fermi_sign.cpp
 sources+= hydra/symmetries/symmetric_operator.cpp
+sources+= hydra/symmetries/group_action/group_action.cpp
+sources+= hydra/symmetries/group_action/group_action_lookup.cpp
 
 sources+= hydra/operators/bond.cpp
 sources+= hydra/operators/bondlist.cpp
@@ -97,8 +97,8 @@ testsources+= test/combinatorics/test_combinations_index.cpp
 
 testsources+= test/indexing/test_lintable.cpp
 
-testsources+= test/symmetries/test_permutation_group_action.cpp
-testsources+= test/symmetries/test_permutation_group_lookup.cpp
+testsources+= test/symmetries/group_action/test_group_action.cpp
+testsources+= test/symmetries/group_action/test_group_action_lookup.cpp
 testsources+= test/symmetries/test_fermi_sign.cpp
 testsources+= test/symmetries/test_symmetric_operator.cpp
 testsources+= test/symmetries/test_symmetry_operations.cpp
