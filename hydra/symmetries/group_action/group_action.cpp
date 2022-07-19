@@ -36,7 +36,7 @@ template uint32_t GroupAction::representative<uint32_t>(uint32_t) const;
 template uint64_t GroupAction::representative<uint64_t>(uint64_t) const;
 
 template <class bit_t>
-std::tuple<bit_t, int> GroupAction::representative_index(bit_t state) const {
+std::pair<bit_t, int> GroupAction::representative_index(bit_t state) const {
   bit_t rep = std::numeric_limits<bit_t>::max();
   int idx = 0;
   const int *sym_ptr = permutation_array().data();
@@ -50,18 +50,18 @@ std::tuple<bit_t, int> GroupAction::representative_index(bit_t state) const {
   }
   return {rep, idx};
 }
-template std::tuple<uint16_t, int>
+template std::pair<uint16_t, int>
     GroupAction::representative_index<uint16_t>(uint16_t) const;
-template std::tuple<uint32_t, int>
+template std::pair<uint32_t, int>
     GroupAction::representative_index<uint32_t>(uint32_t) const;
-template std::tuple<uint64_t, int>
+template std::pair<uint64_t, int>
     GroupAction::representative_index<uint64_t>(uint64_t) const;
 
 template <class bit_t>
-std::tuple<bit_t, int, const int *>
+std::pair<bit_t, gsl::span<int const>>
 GroupAction::representative_indices(bit_t state) const {
   bit_t rep = std::numeric_limits<bit_t>::max();
-  int n_indices = 0;
+  gsl::span<int const>::size_type n_indices = 0;
   const int *sym_ptr = permutation_array().data();
   for (int sym = 0; sym < n_symmetries_; ++sym) {
     bit_t trans = symmetries::apply_permutation(state, n_sites_, sym_ptr);
@@ -74,14 +74,14 @@ GroupAction::representative_indices(bit_t state) const {
     }
     sym_ptr += n_sites_;
   }
-  return {rep, n_indices, indices_.data()};
+  return {rep, {indices_.data(), n_indices}};
 }
 
-template std::tuple<uint16_t, int, const int *>
+template std::pair<uint16_t, gsl::span<int const>>
     GroupAction::representative_indices<uint16_t>(uint16_t) const;
-template std::tuple<uint32_t, int, const int *>
+template std::pair<uint32_t, gsl::span<int const>>
     GroupAction::representative_indices<uint32_t>(uint32_t) const;
-template std::tuple<uint64_t, int, const int *>
+template std::pair<uint64_t, gsl::span<int const>>
     GroupAction::representative_indices<uint64_t>(uint64_t) const;
 
 template <class bit_t>

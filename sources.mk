@@ -54,6 +54,8 @@ sources+= hydra/symmetries/fermi_sign.cpp
 sources+= hydra/symmetries/symmetric_operator.cpp
 sources+= hydra/symmetries/group_action/group_action.cpp
 sources+= hydra/symmetries/group_action/group_action_lookup.cpp
+sources+= hydra/symmetries/group_action/group_action_sublattice.cpp
+sources+= hydra/symmetries/group_action/sublattice_stability.cpp
 
 sources+= hydra/operators/bond.cpp
 sources+= hydra/operators/bondlist.cpp

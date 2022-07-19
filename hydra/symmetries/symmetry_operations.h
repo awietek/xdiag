@@ -5,6 +5,7 @@
 #include <hydra/combinatorics/combinations.h>
 #include <hydra/symmetries/fermi_sign.h>
 #include <hydra/symmetries/representation.h>
+#include <lila/external/gsl/span>
 
 #include <string>
 #include <utility>
@@ -22,6 +23,9 @@ bool is_valid_permutation(int n_sites, const int *permutation);
 
 template <typename bit_t>
 bit_t apply_permutation(bit_t state, int n_sites, const int *permutation);
+
+template <typename bit_t>
+bit_t apply_permutation(bit_t state, gsl::span<int const> permutation);
 
 // Computes stabilizing symmetries of "bits" when group is applied
 template <typename bit_t, class GroupAction>

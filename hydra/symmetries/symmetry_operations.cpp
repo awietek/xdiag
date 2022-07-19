@@ -94,6 +94,20 @@ template uint32_t apply_permutation<uint32_t>(uint32_t, int, const int *);
 template uint64_t apply_permutation<uint64_t>(uint64_t, int, const int *);
 
 //////////////////////////////////////////////////////////
+template <typename bit_t>
+bit_t apply_permutation(bit_t state, gsl::span<int const> permutation) {
+  bit_t tstate = 0;
+  for (int site = 0; site < permutation.size(); ++site) {
+    tstate |= ((state >> site) & 1) << permutation[site];
+  }
+  return tstate;
+}
+
+template uint16_t apply_permutation<uint16_t>(uint16_t, gsl::span<int const>);
+template uint32_t apply_permutation<uint32_t>(uint32_t, gsl::span<int const>);
+template uint64_t apply_permutation<uint64_t>(uint64_t, gsl::span<int const>);
+
+//////////////////////////////////////////////////////////
 template <typename bit_t, class GroupAction>
 std::vector<int> stabilizer_symmetries(bit_t bits, GroupAction const &group) {
   std::vector<int> stable_syms;

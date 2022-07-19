@@ -3,6 +3,7 @@
 #include <vector>
 
 #include <hydra/symmetries/representation.h>
+#include <lila/external/gsl/span>
 
 namespace hydra {
 
@@ -23,6 +24,10 @@ public:
   inline int size() const { return n_symmetries_; }
   inline int permutation(int sym, int site) const {
     return permutation_array_[n_sites_ * sym + site];
+  }
+  inline gsl::span<int const> permutation(int sym) const{
+    return gsl::span<int const>(permutation_array_.data() + n_sites_ * sym,
+                                n_sites_);
   }
 
   bool operator==(PermutationGroup const &rhs) const;

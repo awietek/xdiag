@@ -1,42 +1,63 @@
 #include "sublattice_stability.h"
 
 #include <hydra/symmetries/symmetry_operations.h>
+#include <hydra/utils/logger.h>
 
 namespace hydra::symmetries {
 
-bool is_sublattice_stable(int n_sublat, PermutationGroup const &group) {
+bool is_sublattice_permutation(int n_sublat, int sublat,
+                               gsl::span<int const> permutation) {
+  int n_sites = permutation.size();
+  int n_sites_sublat = n_sites / n_sublat;
 
-  int n_symmetries = group.n_symmetries();
-  int n_sites = group.n_sites();
-
-  if ((n_sites % n_sublat) != 0) {
-    return false;
+  // permutation is sublattice stable, if the sublattice
+  // (i.e. indices between begin and end) are mapped to
+  // most significant indices (n_sites-n_sites_sublat) to n_sites
+  int begin = sublat * n_sites_sublat;
+  int end = (sublat + 1) * n_sites_sublat;
+  for (int j = begin; j < end; ++j) {
+    if (permutation[j] >= n_sites - n_sites_sublat) {
+      return false;
+    }
   }
-
-  int n_sublat_symmetries[NSubLats];
-  get_n_sublat_symmetries<NSubLats>(symmetries, &(n_sublat_symmetries[0]));
-
-  if ((uint32)std::accumulate(n_sublat_symmetries,
-                              n_sublat_symmetries + NSubLats,
-                              0) != n_symmetries)
-    return false;
-
-  // Check if symmetries are in valid order for the sublattice description
-  uint32 n_sym = 0;
-  for (uint32 sublat = 0; sublat < NSubLats; ++sublat)
-    for (int i = 0; i < n_sublat_symmetries[sublat]; ++i, ++n_sym)
-      for (uint32 j = sublat * n_sites / NSubLats;
-           j < (sublat + 1) * n_sites / NSubLats; ++j)
-        if (symmetries[n_sym][j] >= n_sites / NSubLats)
-          return false;
-
   return true;
 }
 
-
-get_sublattice_symmetries(int n_sublat, PermutationGroup const &group){
-  
+int which_sublattice_permutation(int n_sublat,
+                                 gsl::span<int const> permutation) {
+  int sublat = HYDRA_SUBLATTICE_UNSTABLE;
+  for (int s = 0; s < n_sublat; ++s) {
+    if (is_sublattice_permutation(n_sublat, s, permutation)) {
+      sublat = s;
+      break;
+    }
+  }
+  return sublat;
 }
 
-  
+bool is_sublattice_stable(int n_sublat, PermutationGroup const &group) {
+
+  for (int sym = 0; sym < group.size(); ++sym) {
+    auto permutation = group.permutation(sym);
+    int sublat = which_sublattice_permutation(n_sublat, permutation);
+    if (sublat == HYDRA_SUBLATTICE_UNSTABLE) {
+      return false;
+    }
+  }
+  return true;
+}
+
+std::vector<int> sublattice_permutations(int n_sublat, int sublat,
+                                         PermutationGroup const &group) {
+  std::vector<int> syms;
+
+  for (int sym = 0; sym < group.size(); ++sym) {
+    auto permutation = group.permutation(sym);
+    if (which_sublattice_permutation(n_sublat, permutation) == sublat) {
+      syms.push_back(sym);
+    }
+  }
+  return syms;
+}
+
 } // namespace hydra::symmetries

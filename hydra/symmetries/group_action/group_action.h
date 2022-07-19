@@ -1,7 +1,9 @@
 #pragma once
 
+#include <lila/external/gsl/span>
+
 #include <hydra/symmetries/permutation_group.h>
-#include <tuple>
+#include <utility>
 
 namespace hydra {
 
@@ -22,9 +24,10 @@ public:
   template <class bit_t> bit_t apply(int sym, bit_t state) const;
   template <class bit_t> bit_t representative(bit_t state) const;
   template <class bit_t>
-  std::tuple<bit_t, int> representative_index(bit_t state) const;
+  std::pair<bit_t, int> representative_index(bit_t state) const;
   template <class bit_t>
-  std::tuple<bit_t, int, const int *> representative_indices(bit_t state) const;
+  std::pair<bit_t, gsl::span<int const>>
+  representative_indices(bit_t state) const;
   template <class bit_t> double fermi_sign(int sym, bit_t state) const;
   template <class bit_t>
   std::vector<int> stabilizer_symmetries(bit_t state) const;

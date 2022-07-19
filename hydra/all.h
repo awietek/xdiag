@@ -72,6 +72,8 @@
 #include "symmetries/symmetry_operations.h"
 #include "symmetries/group_action/group_action.h"
 #include "symmetries/group_action/group_action_lookup.h"
+#include "symmetries/group_action/group_action_sublattice.h"
+#include "symmetries/group_action/sublattice_stability.h"
 
 #include "operators/bond.h"
 #include "operators/bondlist.h"

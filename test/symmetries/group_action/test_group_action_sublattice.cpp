@@ -6,7 +6,7 @@
 
 using namespace hydra;
 
-template <class bit_t> void test_permutation_group_action(int n_sites) {
+template <class bit_t> void test_group_action_sublattice() {
   using combinatorics::Subsets;
 
   // test cyclic group
