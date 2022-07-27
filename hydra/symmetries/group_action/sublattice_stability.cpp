@@ -16,7 +16,7 @@ bool is_sublattice_permutation(int n_sublat, int sublat,
   int begin = sublat * n_sites_sublat;
   int end = (sublat + 1) * n_sites_sublat;
   for (int j = begin; j < end; ++j) {
-    if (permutation[j] >= n_sites - n_sites_sublat) {
+    if (permutation[j] < n_sites - n_sites_sublat) {
       return false;
     }
   }

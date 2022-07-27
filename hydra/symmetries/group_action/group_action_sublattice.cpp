@@ -5,6 +5,8 @@
 #include <hydra/symmetries/group_action/group_action.h>
 #include <hydra/symmetries/group_action/sublattice_stability.h>
 
+#include <hydra/utils/logger.h>
+
 namespace hydra {
 
 template <typename bit_t, int n_sublat>
@@ -16,6 +18,13 @@ GroupActionSublattice<bit_t, n_sublat>::GroupActionSublattice(
       n_sites_sublat_(n_sites_ / n_sublat),
       size_tables_(pow(2, n_sites_sublat_)),
       sublat_mask_(((half_bit_t)1 << n_sites_sublat_) - 1) {
+
+  // Check if permutation group is sublattice stable
+  if (!symmetries::is_sublattice_stable(n_sublat, permutation_group)) {
+    Log.err("Error creating GroupActionSublattice with {} sublattices: "
+            "permutation group is not {}-sublattice stable!",
+            n_sublat, n_sublat);
+  }
 
   int n_trailing = (n_sublat - 1) * n_sites_sublat_;
   auto group_action = GroupAction(permutation_group_);
@@ -33,7 +42,12 @@ GroupActionSublattice<bit_t, n_sublat>::GroupActionSublattice(
     sym_action_[sublat].resize(size_tables_ * n_symmetries_);
 
     // Compute all representative and representative symmetries
+    std::vector<idx_t> rep_syms_begin(size_tables_);
+    std::vector<idx_t> rep_syms_end(size_tables_);
+    ;
     for (half_bit_t bits = 0; bits < (bit_t)size_tables_; ++bits) {
+
+      idx_t idx = (idx_t)bits;
 
       bit_t bits_shifted = (bit_t)bits << sublat * n_sites_sublat_;
 
@@ -42,13 +56,12 @@ GroupActionSublattice<bit_t, n_sublat>::GroupActionSublattice(
       for (int sym : sublat_permutations) {
         bit_t bits_translated = group_action.apply(sym, bits_shifted);
 
-        // Security check: bits are translated to most significant bits
-        if (bits == 0) {
-          assert(bits_translated == 0);
-        } else {
-          assert(bits_translated >= (bit_t)1 << n_trailing);
-          assert((bits_translated & (((bit_t)1 << n_trailing) - 1)) == 0);
-        }
+        // // Security check: bits are translated to least significant bits
+        // if (bits == 0) {
+        //   assert(bits_translated == 0);
+        // } else {
+        //   assert(bits_translated >= (bit_t)1 << n_trailing);
+        // }
 
         if (bits_translated < bits_rep) {
           bits_rep = bits_translated;
@@ -56,22 +69,18 @@ GroupActionSublattice<bit_t, n_sublat>::GroupActionSublattice(
       }
 
       // ... and all the symmetries leading to this representative
-      idx_t rep_syms_begin = rep_syms_array.size();
+      rep_syms_begin[idx] = rep_syms_array.size();
       for (int sym : sublat_permutations) {
         bit_t bits_translated = group_action.apply(sym, bits_shifted);
         if (bits_translated == bits_rep) {
           rep_syms_array.push_back(sym);
         }
       }
-      idx_t rep_syms_end = rep_syms_array.size();
+      rep_syms_end[idx] = rep_syms_array.size();
 
       // Register new representative and representative symmetries
-      idx_t idx = (idx_t)bits;
       half_bit_t rep = (half_bit_t)(bits_rep >> n_trailing);
       reps[idx] = rep;
-      rep_syms[idx] =
-          gsl::span<int const>(rep_syms_array.data() + rep_syms_begin,
-                               rep_syms_end - rep_syms_begin);
 
       // Determine symmetry action on shifted bits
       for (int sym = 0; sym < permutation_group_.size(); ++sym) {
@@ -79,6 +88,13 @@ GroupActionSublattice<bit_t, n_sublat>::GroupActionSublattice(
       }
     }
     rep_syms_array.shrink_to_fit();
+
+    for (half_bit_t bits = 0; bits < (bit_t)size_tables_; ++bits) {
+      idx_t idx = (idx_t)bits;
+      rep_syms[idx] =
+          gsl::span<int const>(rep_syms_array.data() + rep_syms_begin[idx],
+                               rep_syms_end[idx] - rep_syms_begin[idx]);
+    }
   }
 }
 
@@ -116,14 +132,19 @@ bit_t GroupActionSublattice<bit_t, n_sublat>::representative(
   // Apply all sublattice representative symmetries
   bit_t representative = std::numeric_limits<bit_t>::max();
   for (int sublat = 0; sublat < n_sublat; ++sublat) {
+
     if (sublat_rep[sublat] == min_rep) {
+
       for (int sym : rep_syms_[sublat][sublat_state[sublat]]) {
         bit_t candidate = 0;
+
+        // Build the translated state
         for (int sl = 0; sl < n_sublat; ++sl) {
           candidate |= sym_action(sl, sym, sublat_state[sl]);
-          if (candidate < representative) {
-            representative = candidate;
-          }
+        }
+
+        if (candidate < representative) {
+          representative = candidate;
         }
       }
     }
@@ -161,6 +182,7 @@ template class GroupActionSublattice<uint64_t, 4>;
 
 template class GroupActionSublattice<uint16_t, 5>;
 template class GroupActionSublattice<uint32_t, 5>;
-template class GroupActionSublattice<uint64_t, 6>;
+template class GroupActionSublattice<uint64_t, 5>;
+
 
 } // namespace hydra
