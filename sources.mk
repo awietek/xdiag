@@ -101,6 +101,7 @@ testsources+= test/indexing/test_lintable.cpp
 
 testsources+= test/symmetries/group_action/test_group_action.cpp
 testsources+= test/symmetries/group_action/test_group_action_lookup.cpp
+testsources+= test/symmetries/group_action/test_group_action_sublattice.cpp
 testsources+= test/symmetries/test_fermi_sign.cpp
 testsources+= test/symmetries/test_symmetric_operator.cpp
 testsources+= test/symmetries/test_symmetry_operations.cpp
