@@ -24,6 +24,7 @@ sources+= hydra/indexing/spinhalf/spinhalf_indexing_sz.cpp
 sources+= hydra/indexing/spinhalf/spinhalf_indexing_no_sz.cpp
 sources+= hydra/indexing/spinhalf/spinhalf_symmetric_indexing_sz.cpp
 sources+= hydra/indexing/spinhalf/spinhalf_symmetric_indexing_no_sz.cpp
+sources+= hydra/indexing/spinhalf/spinhalf_indexing_sublattice.cpp
 
 sources+= hydra/indexing/tj/tj_indexing.cpp
 sources+= hydra/indexing/tj/tj_symmetric_indexing.cpp
@@ -98,6 +99,7 @@ testsources+= test/combinatorics/test_combinations.cpp
 testsources+= test/combinatorics/test_combinations_index.cpp
 
 testsources+= test/indexing/test_lintable.cpp
+testsources+= test/indexing/spinhalf/test_spinhalf_indexing_sublattice.cpp
 
 testsources+= test/symmetries/group_action/test_group_action.cpp
 testsources+= test/symmetries/group_action/test_group_action_lookup.cpp
