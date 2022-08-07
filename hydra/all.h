@@ -36,6 +36,7 @@
 #include "indexing/spinhalf/spinhalf_indexing_no_sz.h"
 #include "indexing/spinhalf/spinhalf_symmetric_indexing_sz.h"
 #include "indexing/spinhalf/spinhalf_symmetric_indexing_no_sz.h"
+#include "indexing/spinhalf/spinhalf_indexing_sublattice.h"
 
 #include "indexing/tj/tj_indexing.h"
 #include "indexing/tj/tj_symmetric_indexing.h"
@@ -72,8 +73,9 @@
 #include "symmetries/symmetry_operations.h"
 #include "symmetries/group_action/group_action.h"
 #include "symmetries/group_action/group_action_lookup.h"
-#include "symmetries/group_action/group_action_sublattice.h"
 #include "symmetries/group_action/sublattice_stability.h"
+#include "symmetries/group_action/group_action_sublattice.h"
+#include "symmetries/group_action/group_action_operations.h"
 
 #include "operators/bond.h"
 #include "operators/bondlist.h"

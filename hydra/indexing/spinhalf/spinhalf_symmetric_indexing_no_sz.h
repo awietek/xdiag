@@ -6,8 +6,8 @@
 
 #include <hydra/common.h>
 #include <hydra/indexing/subsets_indexing.h>
-#include <hydra/symmetries/permutation_group.h>
 #include <hydra/symmetries/group_action/group_action_lookup.h>
+#include <hydra/symmetries/permutation_group.h>
 #include <hydra/symmetries/representation.h>
 
 namespace hydra::indexing {
@@ -17,14 +17,11 @@ public:
   using span_size_t = gsl::span<int const>::size_type;
 
   SpinhalfSymmetricIndexingNoSz() = default;
-  SpinhalfSymmetricIndexingNoSz(int n_sites, 
-                                PermutationGroup permutation_group,
+  SpinhalfSymmetricIndexingNoSz(int n_sites, PermutationGroup permutation_group,
                                 Representation irrep);
   inline int n_sites() const { return n_sites_; }
 
-  GroupActionLookup<bit_t> const &group_action() const {
-    return group_action_;
-  }
+  GroupActionLookup<bit_t> const &group_action() const { return group_action_; }
   Representation const &irrep() const { return irrep_; }
   inline idx_t size() const { return size_; }
 
@@ -37,6 +34,14 @@ public:
   inline bit_t representative(bit_t raw_state) const {
     return reps_[index(raw_state)];
   }
+
+  inline std::pair<idx_t, int> index_sym(bit_t raw_state) const {
+    idx_t raw_idx = subsets_indexing_.index(raw_state);
+    idx_t index = index_for_rep_[raw_idx];
+    idx_t start = sym_limits_for_rep_[raw_idx].first;
+    return {index, syms_[start]};
+  }
+
   inline std::pair<idx_t, gsl::span<int const>>
   index_syms(bit_t raw_state) const {
     idx_t raw_idx = subsets_indexing_.index(raw_state);

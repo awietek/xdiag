@@ -58,11 +58,11 @@ template <class bit_t> void test_permutation_group_action(int n_sites) {
     auto min = std::min_element(orbit.begin(), orbit.end());
     REQUIRE(*min == rep);
 
-    auto [rep2, sym] = sym_op.representative_index(state);
+    auto [rep2, sym] = sym_op.representative_sym(state);
     REQUIRE(rep2 == rep);
     REQUIRE(rep == sym_op.apply(sym, state));
 
-    auto [rep3, syms] = sym_op.representative_indices(state);
+    auto [rep3, syms] = sym_op.representative_syms(state);
     REQUIRE(rep3 == rep);
 
     for (int sym : syms) {

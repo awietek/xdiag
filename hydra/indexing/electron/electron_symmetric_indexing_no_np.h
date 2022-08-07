@@ -13,6 +13,7 @@
 #include <hydra/symmetries/group_action/group_action_lookup.h>
 #include <hydra/symmetries/representation.h>
 #include <hydra/symmetries/symmetry_operations.h>
+#include <hydra/symmetries/group_action/group_action_operations.h>
 
 namespace hydra::indexing {
 

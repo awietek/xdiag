@@ -7,8 +7,9 @@
 
 #include <hydra/common.h>
 #include <hydra/indexing/lintable.h>
-#include <hydra/symmetries/permutation_group.h>
 #include <hydra/symmetries/group_action/group_action_lookup.h>
+#include <hydra/symmetries/group_action/group_action_operations.h>
+#include <hydra/symmetries/permutation_group.h>
 #include <hydra/symmetries/representation.h>
 #include <hydra/symmetries/symmetry_operations.h>
 
@@ -25,9 +26,7 @@ public:
   inline int n_sites() const { return n_sites_; }
   inline int n_up() const { return n_up_; }
   inline int n_dn() const { return n_dn_; }
-  GroupActionLookup<bit_t> const &group_action() const {
-    return group_action_;
-  }
+  GroupActionLookup<bit_t> const &group_action() const { return group_action_; }
   Representation const &irrep() const { return irrep_; }
   idx_t size() const { return size_; }
 

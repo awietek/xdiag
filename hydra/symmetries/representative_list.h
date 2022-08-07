@@ -7,6 +7,7 @@
 
 #include <hydra/common.h>
 #include <hydra/symmetries/symmetry_operations.h>
+#include <hydra/symmetries/group_action/group_action_operations.h>
 
 namespace hydra::symmetries {
 

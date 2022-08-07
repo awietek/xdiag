@@ -17,7 +17,8 @@ GroupActionSublattice<bit_t, n_sublat>::GroupActionSublattice(
       permutation_group_(permutation_group),
       n_sites_sublat_(n_sites_ / n_sublat),
       size_tables_(pow(2, n_sites_sublat_)),
-      sublat_mask_(((half_bit_t)1 << n_sites_sublat_) - 1) {
+      sublat_mask_(((half_bit_t)1 << n_sites_sublat_) - 1),
+      representative_syms_(n_symmetries_) {
 
   // Check if permutation group is sublattice stable
   if (!symmetries::is_sublattice_stable(n_sublat, permutation_group)) {
@@ -153,6 +154,101 @@ bit_t GroupActionSublattice<bit_t, n_sublat>::representative(
 }
 
 template <typename bit_t, int n_sublat>
+std::pair<bit_t, int>
+GroupActionSublattice<bit_t, n_sublat>::representative_sym(bit_t state) const {
+
+  // Determine sublattice states representatives
+  std::array<half_bit_t, n_sublat> sublat_state;
+  std::array<half_bit_t, n_sublat> sublat_rep;
+  for (int sublat = 0; sublat < n_sublat; ++sublat) {
+    sublat_state[sublat] = (state >> sublat_shift_[sublat]) & sublat_mask_;
+    sublat_rep[sublat] = reps_[sublat][sublat_state[sublat]];
+  }
+
+  // Determine minimal sublattice representative
+  half_bit_t min_rep = sublat_rep[0];
+  for (int sublat = 1; sublat < n_sublat; ++sublat) {
+    if (sublat_rep[sublat] < min_rep) {
+      min_rep = sublat_rep[sublat];
+    }
+  }
+
+  // Apply all sublattice representative symmetries
+  bit_t representative = std::numeric_limits<bit_t>::max();
+  int representative_sym = 0;
+  for (int sublat = 0; sublat < n_sublat; ++sublat) {
+
+    if (sublat_rep[sublat] == min_rep) {
+
+      for (int sym : rep_syms_[sublat][sublat_state[sublat]]) {
+        bit_t candidate = 0;
+
+        // Build the translated state
+        for (int sl = 0; sl < n_sublat; ++sl) {
+          candidate |= sym_action(sl, sym, sublat_state[sl]);
+        }
+
+        if (candidate < representative) {
+          representative = candidate;
+          representative_sym = sym;
+        }
+      }
+    }
+  }
+  return {representative, representative_sym};
+}
+
+template <typename bit_t, int n_sublat>
+std::pair<bit_t, gsl::span<int const>>
+GroupActionSublattice<bit_t, n_sublat>::representative_syms(bit_t state) const {
+
+  // Determine sublattice states representatives
+  std::array<half_bit_t, n_sublat> sublat_state;
+  std::array<half_bit_t, n_sublat> sublat_rep;
+  for (int sublat = 0; sublat < n_sublat; ++sublat) {
+    sublat_state[sublat] = (state >> sublat_shift_[sublat]) & sublat_mask_;
+    sublat_rep[sublat] = reps_[sublat][sublat_state[sublat]];
+  }
+
+  // Determine minimal sublattice representative
+  half_bit_t min_rep = sublat_rep[0];
+  for (int sublat = 1; sublat < n_sublat; ++sublat) {
+    if (sublat_rep[sublat] < min_rep) {
+      min_rep = sublat_rep[sublat];
+    }
+  }
+
+  // Apply all sublattice representative symmetries
+  bit_t representative = std::numeric_limits<bit_t>::max();
+  gsl::span<int const>::size_type n_syms = 0;
+  for (int sublat = 0; sublat < n_sublat; ++sublat) {
+
+    if (sublat_rep[sublat] == min_rep) {
+
+      for (int sym : rep_syms_[sublat][sublat_state[sublat]]) {
+        bit_t candidate = 0;
+
+        // Build the translated state
+        for (int sl = 0; sl < n_sublat; ++sl) {
+          candidate |= sym_action(sl, sym, sublat_state[sl]);
+        }
+
+        if (candidate < representative) {
+          representative = candidate;
+	  n_syms = 1;
+          representative_syms_[0] = sym;
+        } else if (candidate == representative){
+          representative_syms_[n_syms++] = sym;
+	}
+      }
+    }
+  }
+  return {representative, {representative_syms_.data(), n_syms}};
+}
+  
+  
+
+template <typename bit_t, int n_sublat>
 bool GroupActionSublattice<bit_t, n_sublat>::operator==(
     GroupActionSublattice const &rhs) const {
   return (n_sites_ == rhs.n_sites_) && (n_symmetries_ == rhs.n_symmetries_) &&
@@ -183,6 +279,5 @@ template class GroupActionSublattice<uint64_t, 4>;
 template class GroupActionSublattice<uint16_t, 5>;
 template class GroupActionSublattice<uint32_t, 5>;
 template class GroupActionSublattice<uint64_t, 5>;
-
 
 } // namespace hydra

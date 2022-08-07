@@ -6,7 +6,6 @@
 #define USE_PEXT_PDEP
 
 #if defined(__BMI2__) && defined(USE_PEXT_PDEP)
-
 #if defined(__x86_64__)
 #include <immintrin.h>
 #elif defined(__arm__)

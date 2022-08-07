@@ -29,6 +29,27 @@ void compare_actions(Action1 &&action1, Action2 &&action2) {
     auto r2 = action2.representative(bits);
     // Log("1sl bits: {} r1: {} r2: {}", BSTR(bits), BSTR(r1), BSTR(r2));
     REQUIRE(r1 == r2);
+
+    {
+      auto [r1, sym1] = action1.representative_sym(bits);
+      auto [r2, sym2] = action2.representative_sym(bits);
+      REQUIRE(r1 == r2);
+      REQUIRE(action1.apply(sym1, bits) == r1);
+      REQUIRE(action2.apply(sym2, bits) == r2);
+    }
+
+    {
+      auto [r1, syms1] = action1.representative_syms(bits);
+      auto [r2, syms2] = action2.representative_syms(bits);
+      REQUIRE(r1 == r2);
+      REQUIRE(syms1.size() == syms2.size());
+      for (int i = 0; i < syms1.size(); ++i) {
+	int sym1 = syms1[i];
+	int sym2 = syms2[i];
+	REQUIRE(action1.apply(sym1, bits) == r1);
+	REQUIRE(action2.apply(sym2, bits) == r2);
+      }
+    }
   }
 }
 
