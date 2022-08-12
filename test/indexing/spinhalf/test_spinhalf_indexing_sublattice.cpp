@@ -72,7 +72,7 @@ void compare_indices_no_sz(Indexing1 const &indexing1,
   }
 }
 
-template <class bit_t> void test_group_action_sublattice() {
+template <class bit_t> void test_spinhalf_indexing_sublattice() {
   using indexing_no_sz_t = indexing::SpinhalfSymmetricIndexingNoSz<bit_t>;
   using indexing_sz_t = indexing::SpinhalfSymmetricIndexingSz<bit_t>;
   using indexing_sl1_t = indexing::SpinhalfIndexingSublattice<bit_t, 1>;
@@ -238,25 +238,15 @@ template <class bit_t> void test_group_action_sublattice() {
       }
     }
   }
-
-  // // Five sublattice
-  // {
-  //   Log("GroupActionSublattice: 5 sublattice");
-  //   std::string lfile = "data/square.10.heisenberg.5sl.lat";
-  //   auto permutations = hydra::read_permutations(lfile);
-  //   auto perm_group = PermutationGroup(permutations);
-  //   auto action = GroupAction(perm_group);
-  //   auto action_sl = GroupActionSublattice<bit_t, 5>(perm_group);
-  // }
 }
 
 TEST_CASE("SpinhalfIndexingSublattice", "[symmetries]") {
   Log("Test SpinhalfIndexingSublattice");
   Log("uint16_t");
-  test_group_action_sublattice<uint16_t>();
+  test_spinhalf_indexing_sublattice<uint16_t>();
   Log("uint32_t");
-  test_group_action_sublattice<uint32_t>();
+  test_spinhalf_indexing_sublattice<uint32_t>();
   Log("uint64_t");
-  test_group_action_sublattice<uint64_t>();
+  test_spinhalf_indexing_sublattice<uint64_t>();
   Log("Done");
 }
