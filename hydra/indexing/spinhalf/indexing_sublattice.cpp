@@ -1,4 +1,4 @@
-#include "spinhalf_indexing_sublattice.h"
+#include "indexing_sublattice.h"
 
 #include <hydra/combinatorics/subsets.h>
 #include <hydra/symmetries/group_action/group_action_operations.h>
@@ -7,7 +7,7 @@
 
 #include <algorithm>
 
-namespace hydra::indexing {
+namespace hydra::indexing::spinhalf {
 
 template <typename bit_t>
 void compute_rep_search_range(
@@ -33,7 +33,7 @@ void compute_rep_search_range(
 }
 
 template <typename bit_t, int n_sublat>
-SpinhalfIndexingSublattice<bit_t, n_sublat>::SpinhalfIndexingSublattice(
+IndexingSublattice<bit_t, n_sublat>::IndexingSublattice(
     int n_sites, PermutationGroup permutation_group, Representation irrep)
     : n_sites_(n_sites), sz_conserved_(false), n_up_(invalid_n),
       n_postfix_bits_(n_sites - std::min(maximum_prefix_bits, n_sites)),
@@ -53,10 +53,12 @@ SpinhalfIndexingSublattice<bit_t, n_sublat>::SpinhalfIndexingSublattice(
   reps_.shrink_to_fit();
   norms_.shrink_to_fit();
   compute_rep_search_range(reps_, n_postfix_bits_, rep_search_range_);
+  begin_ = iterator_t(reps_, 0);
+  end_ = iterator_t(reps_, reps_.size());
 }
 
 template <typename bit_t, int n_sublat>
-SpinhalfIndexingSublattice<bit_t, n_sublat>::SpinhalfIndexingSublattice(
+IndexingSublattice<bit_t, n_sublat>::IndexingSublattice(
     int n_sites, int n_up, PermutationGroup permutation_group,
     Representation irrep)
     : n_sites_(n_sites), sz_conserved_(true), n_up_(n_up),
@@ -77,10 +79,12 @@ SpinhalfIndexingSublattice<bit_t, n_sublat>::SpinhalfIndexingSublattice(
   reps_.shrink_to_fit();
   norms_.shrink_to_fit();
   compute_rep_search_range(reps_, n_postfix_bits_, rep_search_range_);
+  begin_ = iterator_t(reps_, 0);
+  end_ = iterator_t(reps_, reps_.size());
 }
 
 template <typename bit_t, int n_sublat>
-idx_t SpinhalfIndexingSublattice<bit_t, n_sublat>::index_of_representative(
+idx_t IndexingSublattice<bit_t, n_sublat>::index_of_representative(
     bit_t rep) const {
   bit_t prefix = rep >> n_postfix_bits_;
   auto itr = rep_search_range_.find(prefix);
@@ -91,18 +95,17 @@ idx_t SpinhalfIndexingSublattice<bit_t, n_sublat>::index_of_representative(
     auto it = std::lower_bound(search_range.begin(), search_range.end(), rep);
     return (*it == rep) ? &(*it) - reps_.data() : invalid_index;
   }
-
 }
 
 template <typename bit_t, int n_sublat>
-idx_t SpinhalfIndexingSublattice<bit_t, n_sublat>::index(bit_t state) const {
+idx_t IndexingSublattice<bit_t, n_sublat>::index(bit_t state) const {
   bit_t rep = representative(state);
   return index_of_representative(rep);
 }
 
 template <typename bit_t, int n_sublat>
 std::pair<idx_t, int>
-SpinhalfIndexingSublattice<bit_t, n_sublat>::index_sym(bit_t state) const {
+IndexingSublattice<bit_t, n_sublat>::index_sym(bit_t state) const {
   auto [rep, sym] = group_action_.representative_sym(state);
   idx_t idx = index_of_representative(rep);
   return {idx, sym};
@@ -110,30 +113,30 @@ SpinhalfIndexingSublattice<bit_t, n_sublat>::index_sym(bit_t state) const {
 
 template <typename bit_t, int n_sublat>
 std::pair<idx_t, gsl::span<int const>>
-SpinhalfIndexingSublattice<bit_t, n_sublat>::index_syms(bit_t state) const {
+IndexingSublattice<bit_t, n_sublat>::index_syms(bit_t state) const {
   auto [rep, syms] = group_action_.representative_syms(state);
   idx_t idx = index_of_representative(rep);
   return {idx, syms};
 }
 
-template class SpinhalfIndexingSublattice<uint16_t, 1>;
-template class SpinhalfIndexingSublattice<uint32_t, 1>;
-template class SpinhalfIndexingSublattice<uint64_t, 1>;
+template class IndexingSublattice<uint16_t, 1>;
+template class IndexingSublattice<uint32_t, 1>;
+template class IndexingSublattice<uint64_t, 1>;
 
-template class SpinhalfIndexingSublattice<uint16_t, 2>;
-template class SpinhalfIndexingSublattice<uint32_t, 2>;
-template class SpinhalfIndexingSublattice<uint64_t, 2>;
+template class IndexingSublattice<uint16_t, 2>;
+template class IndexingSublattice<uint32_t, 2>;
+template class IndexingSublattice<uint64_t, 2>;
 
-template class SpinhalfIndexingSublattice<uint16_t, 3>;
-template class SpinhalfIndexingSublattice<uint32_t, 3>;
-template class SpinhalfIndexingSublattice<uint64_t, 3>;
+template class IndexingSublattice<uint16_t, 3>;
+template class IndexingSublattice<uint32_t, 3>;
+template class IndexingSublattice<uint64_t, 3>;
 
-template class SpinhalfIndexingSublattice<uint16_t, 4>;
-template class SpinhalfIndexingSublattice<uint32_t, 4>;
-template class SpinhalfIndexingSublattice<uint64_t, 4>;
+template class IndexingSublattice<uint16_t, 4>;
+template class IndexingSublattice<uint32_t, 4>;
+template class IndexingSublattice<uint64_t, 4>;
 
-template class SpinhalfIndexingSublattice<uint16_t, 5>;
-template class SpinhalfIndexingSublattice<uint32_t, 5>;
-template class SpinhalfIndexingSublattice<uint64_t, 5>;
+template class IndexingSublattice<uint16_t, 5>;
+template class IndexingSublattice<uint32_t, 5>;
+template class IndexingSublattice<uint64_t, 5>;
 
-} // namespace hydra::indexing
+} // namespace hydra::indexing::spinhalf

@@ -1,9 +1,9 @@
 #include "spinhalf_matrix.h"
 
-#include <hydra/utils/logger.h>
 #include <hydra/blocks/spinhalf/spinhalf.h>
-#include <hydra/blocks/spinhalf/terms/spinhalf_terms.h>
+#include <hydra/blocks/spinhalf/terms/apply_terms_dispatch.h>
 #include <hydra/blocks/utils/block_utils.h>
+#include <hydra/utils/logger.h>
 
 #include <hydra/operators/operator_qns.h>
 
@@ -17,7 +17,7 @@ MatrixGen(BondList const &bonds, Couplings const &couplings,
   int n_up_out = utils::spinhalf_nup(bonds, couplings, block_in);
   if (n_up_out != block_out.n_up())
     Log.err("Incompatible n_up in MatrixGen: {} != {}", n_up_out,
-                  block_out.n_up());
+            block_out.n_up());
 
   utils::check_operator_works_with<coeff_t>(bonds, couplings,
                                             "spinhalf_matrix");
@@ -31,20 +31,8 @@ MatrixGen(BondList const &bonds, Couplings const &couplings,
 
   auto const &indexing_in = block_in.indexing();
   auto const &indexing_out = block_out.indexing();
-
-  if (block_in == block_out) {
-    terms::spinhalf_ising<bit_t, coeff_t>(bonds, couplings, indexing_in, fill);
-    terms::spinhalf_exchange<bit_t, coeff_t>(bonds, couplings, indexing_in,
-                                             fill);
-    terms::spinhalf_scalar_chirality<bit_t, coeff_t>(bonds, couplings,
-                                                     indexing_in, fill);
-    terms::spinhalf_sz<bit_t, coeff_t>(bonds, couplings, indexing_in, fill);
-  }
-  terms::spinhalf_spsm<bit_t, coeff_t>(bonds, couplings, indexing_in,
-                                       indexing_out, fill, "S+");
-  terms::spinhalf_spsm<bit_t, coeff_t>(bonds, couplings, indexing_in,
-                                       indexing_out, fill, "S-");
-
+  terms::spinhalf::apply_terms_dispatch<bit_t, coeff_t>(
+      bonds, couplings, indexing_in, indexing_out, fill);
   return mat;
 }
 

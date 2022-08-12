@@ -73,13 +73,13 @@ void compare_indices_no_sz(Indexing1 const &indexing1,
 }
 
 template <class bit_t> void test_spinhalf_indexing_sublattice() {
-  using indexing_no_sz_t = indexing::SpinhalfSymmetricIndexingNoSz<bit_t>;
-  using indexing_sz_t = indexing::SpinhalfSymmetricIndexingSz<bit_t>;
-  using indexing_sl1_t = indexing::SpinhalfIndexingSublattice<bit_t, 1>;
-  using indexing_sl2_t = indexing::SpinhalfIndexingSublattice<bit_t, 2>;
-  using indexing_sl3_t = indexing::SpinhalfIndexingSublattice<bit_t, 3>;
-  using indexing_sl4_t = indexing::SpinhalfIndexingSublattice<bit_t, 4>;
-  using indexing_sl5_t = indexing::SpinhalfIndexingSublattice<bit_t, 5>;
+  using indexing_no_sz_t = indexing::spinhalf::IndexingSymmetricNoSz<bit_t>;
+  using indexing_sz_t = indexing::spinhalf::IndexingSymmetricSz<bit_t>;
+  using indexing_sl1_t = indexing::spinhalf::IndexingSublattice<bit_t, 1>;
+  using indexing_sl2_t = indexing::spinhalf::IndexingSublattice<bit_t, 2>;
+  using indexing_sl3_t = indexing::spinhalf::IndexingSublattice<bit_t, 3>;
+  using indexing_sl4_t = indexing::spinhalf::IndexingSublattice<bit_t, 4>;
+  using indexing_sl5_t = indexing::spinhalf::IndexingSublattice<bit_t, 5>;
 
   {
     Log("SpinhalfIndexingSublattice: 1 sublattice");

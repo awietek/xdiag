@@ -42,8 +42,4 @@ constexpr std::pair<int, int> undefined_qns = {undefined_qn, undefined_qn};
 constexpr bool index_not_found(idx_t idx) { return idx < 0; }
 constexpr bool index_valid(idx_t idx) { return idx >= 0; }
 
-// helper type for visitors
-template <class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
-template <class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
-   
 } // namespace hydra

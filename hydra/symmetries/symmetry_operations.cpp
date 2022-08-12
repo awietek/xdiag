@@ -97,7 +97,7 @@ template uint64_t apply_permutation<uint64_t>(uint64_t, int, const int *);
 template <typename bit_t>
 bit_t apply_permutation(bit_t state, gsl::span<int const> permutation) {
   bit_t tstate = 0;
-  for (int site = 0; site < permutation.size(); ++site) {
+  for (std::size_t site = 0; site < permutation.size(); ++site) {
     tstate |= ((state >> site) & 1) << permutation[site];
   }
   return tstate;

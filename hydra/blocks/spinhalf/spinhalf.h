@@ -16,13 +16,15 @@ namespace hydra {
 
 template <typename bit_t> class Spinhalf {
 public:
+  using indexing_t = indexing::spinhalf::Indexing<bit_t>;
+
   Spinhalf() = default;
   Spinhalf(int n_sites);
   Spinhalf(int n_sites, int n_up);
   Spinhalf(int n_sites, PermutationGroup permutation_group,
-           Representation irrep);
+           Representation irrep, int n_sublat = 0);
   Spinhalf(int n_sites, int n_up, PermutationGroup permutation_group,
-           Representation irrep);
+           Representation irrep, int n_sublat = 0);
 
   inline int n_sites() const { return n_sites_; }
   inline bool sz_conserved() const { return sz_conserved_; }
@@ -39,6 +41,8 @@ public:
   bool operator==(Spinhalf const &rhs) const;
   bool operator!=(Spinhalf const &rhs) const;
 
+  indexing_t const &indexing() const;
+
 private:
   int n_sites_;
   bool sz_conserved_;
@@ -46,26 +50,11 @@ private:
   int n_dn_;
   int sz_;
   bool symmetric_;
+  int n_sublat_;
   PermutationGroup permutation_group_;
   Representation irrep_;
-
-  using indexing_t = indexing::SpinhalfIndexing<bit_t>;
   std::shared_ptr<indexing_t> indexing_;
-  indexing_t const &indexing() const;
-
   idx_t size_;
-
-  template <typename bit_tt, typename coeff_tt>
-  friend void
-  Apply(BondList const &bonds, Couplings const &couplings,
-        Spinhalf<bit_tt> const &block_in, lila::Vector<coeff_tt> const &vec_in,
-        Spinhalf<bit_tt> const &block_out, lila::Vector<coeff_tt> &vec_out);
-
-  template <typename bit_tt, typename coeff_tt>
-  friend lila::Matrix<coeff_tt> MatrixGen(BondList const &bonds,
-                                          Couplings const &couplings,
-                                          Spinhalf<bit_tt> const &block_in,
-                                          Spinhalf<bit_tt> const &block_out);
 };
 
 } // namespace hydra

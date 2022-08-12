@@ -6,20 +6,22 @@
 
 #include <hydra/common.h>
 #include <hydra/indexing/combinations_indexing.h>
+#include <hydra/indexing/spinhalf/symmetric_iterator.h>
+
 #include <hydra/symmetries/group_action/group_action_lookup.h>
 #include <hydra/symmetries/permutation_group.h>
 #include <hydra/symmetries/representation.h>
 
-namespace hydra::indexing {
+namespace hydra::indexing::spinhalf {
 
-template <typename bit_t> class SpinhalfSymmetricIndexingSz {
+template <typename bit_t> class IndexingSymmetricSz {
 public:
+  using iterator_t = SymmetricIterator<bit_t>;
   using span_size_t = gsl::span<int const>::size_type;
 
-  SpinhalfSymmetricIndexingSz() = default;
-  SpinhalfSymmetricIndexingSz(int n_sites, int n_up,
-                              PermutationGroup permutation_group,
-                              Representation irrep);
+  IndexingSymmetricSz() = default;
+  IndexingSymmetricSz(int n_sites, int n_up, PermutationGroup permutation_group,
+                      Representation irrep);
   inline int n_sites() const { return n_sites_; }
   inline int n_up() const { return n_up_; }
   GroupActionLookup<bit_t> const &group_action() const { return group_action_; }
@@ -49,6 +51,9 @@ public:
     return {index, {syms_.data() + start, length}};
   }
 
+  iterator_t begin() const { return begin_; }
+  iterator_t end() const { return end_; }
+
 private:
   int n_sites_;
   int n_up_;
@@ -63,6 +68,7 @@ private:
   std::vector<double> norms_;
 
   idx_t size_;
+  iterator_t begin_, end_;
 };
 
-} // namespace hydra::indexing
+} // namespace hydra::indexing::spinhalf

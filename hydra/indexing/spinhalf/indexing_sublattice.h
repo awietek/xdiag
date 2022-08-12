@@ -4,22 +4,26 @@
 #include <unordered_map>
 
 #include <hydra/common.h>
+
+#include <hydra/indexing/spinhalf/symmetric_iterator.h>
+
 #include <hydra/symmetries/group_action/group_action_sublattice.h>
 #include <hydra/symmetries/permutation_group.h>
 #include <hydra/symmetries/representation.h>
 
-namespace hydra::indexing {
+namespace hydra::indexing::spinhalf {
 
 constexpr int maximum_prefix_bits = 27;
 
-template <typename bit_t, int n_sublat> class SpinhalfIndexingSublattice {
+template <typename bit_t, int n_sublat> class IndexingSublattice {
 public:
-  SpinhalfIndexingSublattice() = default;
-  SpinhalfIndexingSublattice(int n_sites, PermutationGroup permutation_group,
-                             Representation irrep);
-  SpinhalfIndexingSublattice(int n_sites, int n_up,
-                             PermutationGroup permutation_group,
-                             Representation irrep);
+  using iterator_t = SymmetricIterator<bit_t>;
+
+  IndexingSublattice() = default;
+  IndexingSublattice(int n_sites, PermutationGroup permutation_group,
+                     Representation irrep);
+  IndexingSublattice(int n_sites, int n_up, PermutationGroup permutation_group,
+                     Representation irrep);
 
   inline int n_sites() const { return n_sites_; }
   inline bool sz_conserved() const { return sz_conserved_; }
@@ -40,6 +44,9 @@ public:
   std::pair<idx_t, int> index_sym(bit_t raw_state) const;
   std::pair<idx_t, gsl::span<int const>> index_syms(bit_t raw_state) const;
 
+  iterator_t begin() const { return begin_; }
+  iterator_t end() const { return end_; }
+
 private:
   int n_sites_;
   bool sz_conserved_;
@@ -53,7 +60,9 @@ private:
   std::vector<double> norms_;
   std::unordered_map<bit_t, gsl::span<bit_t const>> rep_search_range_;
 
+  iterator_t begin_, end_;
+
   idx_t index_of_representative(bit_t rep) const;
 };
 
-} // namespace hydra::indexing
+} // namespace hydra::indexing::spinhalf

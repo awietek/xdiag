@@ -1,12 +1,12 @@
-#include "spinhalf_symmetric_indexing_no_sz.h"
+#include "indexing_symmetric_no_sz.h"
 
 #include <hydra/blocks/utils/block_utils.h>
 #include <hydra/symmetries/representative_list.h>
 
-namespace hydra::indexing {
+namespace hydra::indexing::spinhalf {
 
 template <class bit_t>
-SpinhalfSymmetricIndexingNoSz<bit_t>::SpinhalfSymmetricIndexingNoSz(
+IndexingSymmetricNoSz<bit_t>::IndexingSymmetricNoSz(
     int n_sites, PermutationGroup permutation_group, Representation irrep)
     : n_sites_(n_sites),
       group_action_(allowed_subgroup(permutation_group, irrep)), irrep_(irrep),
@@ -20,10 +20,12 @@ SpinhalfSymmetricIndexingNoSz<bit_t>::SpinhalfSymmetricIndexingNoSz(
           subsets_indexing_, group_action_, irrep);
 
   size_ = (idx_t)reps_.size();
+  begin_ = iterator_t(reps_, 0);
+  end_ = iterator_t(reps_, size_);
 }
 
-template class SpinhalfSymmetricIndexingNoSz<uint16_t>;
-template class SpinhalfSymmetricIndexingNoSz<uint32_t>;
-template class SpinhalfSymmetricIndexingNoSz<uint64_t>;
+template class IndexingSymmetricNoSz<uint16_t>;
+template class IndexingSymmetricNoSz<uint32_t>;
+template class IndexingSymmetricNoSz<uint64_t>;
 
-} // namespace hydra::indexing
+} // namespace hydra::indexing::spinhalf

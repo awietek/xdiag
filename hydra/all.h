@@ -32,11 +32,12 @@
 #include "indexing/indexing_variants.h"
 
 
-#include "indexing/spinhalf/spinhalf_indexing_sz.h"
-#include "indexing/spinhalf/spinhalf_indexing_no_sz.h"
-#include "indexing/spinhalf/spinhalf_symmetric_indexing_sz.h"
-#include "indexing/spinhalf/spinhalf_symmetric_indexing_no_sz.h"
-#include "indexing/spinhalf/spinhalf_indexing_sublattice.h"
+#include "indexing/spinhalf/indexing_sz.h"
+#include "indexing/spinhalf/indexing_no_sz.h"
+#include "indexing/spinhalf/indexing_symmetric_sz.h"
+#include "indexing/spinhalf/indexing_symmetric_no_sz.h"
+#include "indexing/spinhalf/indexing_sublattice.h"
+#include "indexing/spinhalf/symmetric_iterator.h"
 
 #include "indexing/tj/tj_indexing.h"
 #include "indexing/tj/tj_symmetric_indexing.h"
