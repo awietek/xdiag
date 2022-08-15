@@ -4,7 +4,6 @@
 #include <string>
 #include <vector>
 
-#include <hydra/operators/bond_types.h>
 #include <hydra/parameters/parameters.h>
 
 namespace hydra {

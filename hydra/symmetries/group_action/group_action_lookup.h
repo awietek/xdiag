@@ -21,8 +21,10 @@ public:
   }
 
   inline bit_t apply(int sym, bit_t state) const {
-    return table_prefix_[sym * prefix_size_ + (state >> n_postfix_bits_)] |
-           table_postfix_[sym * postfix_size_ + (state & postfix_mask_)];
+    // return table_prefix_[sym * prefix_size_ + (state >> n_postfix_bits_)] |
+    //        table_postfix_[sym * postfix_size_ + (state & postfix_mask_)];
+    return table_prefix_[(sym << n_prefix_bits_) | (state >> n_postfix_bits_)] |
+           table_postfix_[(sym << n_postfix_bits_) | (state & postfix_mask_)];
   }
 
   bool operator==(GroupActionLookup const &rhs) const;
@@ -42,7 +44,6 @@ private:
 
   std::vector<bit_t> table_prefix_;
   std::vector<bit_t> table_postfix_;
-  
 };
 
 } // namespace hydra

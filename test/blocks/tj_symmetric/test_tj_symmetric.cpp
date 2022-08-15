@@ -29,7 +29,7 @@ void check_dimensions_sum_up_tj_symmetric(int n_sites, PermutationGroup group,
               binomial(n_sites, nup) * binomial(n_sites - nup, ndn));
     }
   }
-  REQUIRE(sum_of_dims == pow(3, n_sites));
+  REQUIRE(sum_of_dims == idx_t(pow(3, n_sites)));
 }
 
 TEST_CASE("tj_symmetric", "[blocks][tj_symmetric]") {

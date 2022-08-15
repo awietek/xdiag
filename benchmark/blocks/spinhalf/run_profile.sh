@@ -1,3 +1,3 @@
 #!/bin/bash
 
-LD_PRELOAD=/mnt/home/awietek/gperftools/lib/libprofiler.so CPUPROFILE=benchmark.prof ./benchmark
+LD_PRELOAD=/home/awietek/Research/Software/gperftools/build/libprofiler.so CPUPROFILE=benchmark.prof ./benchmark

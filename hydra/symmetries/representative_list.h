@@ -6,8 +6,9 @@
 #include <lila/external/gsl/span>
 
 #include <hydra/common.h>
-#include <hydra/symmetries/symmetry_operations.h>
 #include <hydra/symmetries/group_action/group_action_operations.h>
+#include <hydra/symmetries/symmetry_operations.h>
+#include <hydra/utils/logger.h>
 
 namespace hydra::symmetries {
 
@@ -73,7 +74,6 @@ representatives_indices_symmetries_limits_norms(
 
   // Compute all representatives
   for (auto [state, idx] : states_indexing.states_indices()) {
-
     bit_t rep = representative(state, group_action);
 
     // register state if it's a representative and has non-zero norm
@@ -85,24 +85,31 @@ representatives_indices_symmetries_limits_norms(
         norms.push_back(norm);
       }
     }
+  }
 
-    // Compute indices of up-representatives and stabilizer symmetries
-    for (auto [state, idx] : states_indexing.states_indices()) {
+  // Compute indices of up-representatives and stabilizer symmetries
+  for (auto [state, idx] : states_indexing.states_indices()) {
 
-      bit_t rep = representative(state, group_action);
-      idx_t rep_idx = idces[states_indexing.index(rep)];
-      if (rep_idx != invalid_index) { // can be invalid if zero norm
-        idces[idx] = rep_idx;
+    bit_t rep = representative(state, group_action);
+    idx_t rep_idx = idces[states_indexing.index(rep)];
+    if (rep_idx != invalid_index) { // can be invalid if zero norm
+      idces[idx] = rep_idx;
 
-        // Add syms yielding the representative
-        std::vector<int> rep_syms = mapping_syms(state, rep, group_action);
-        span_size_t start = syms.size();
-        syms.insert(syms.end(), rep_syms.begin(), rep_syms.end());
-        span_size_t end = syms.size();
-        sym_limits[idx] = {start, end - start};
-      }
+      // Add syms yielding the representative
+      std::vector<int> rep_syms = mapping_syms(state, rep, group_action);
+      span_size_t start = syms.size();
+      syms.insert(syms.end(), rep_syms.begin(), rep_syms.end());
+      span_size_t end = syms.size();
+      sym_limits[idx] = {start, end - start};
     }
   }
+
+  // Resize to correct size
+  reps.shrink_to_fit();
+  idces.shrink_to_fit();
+  syms.shrink_to_fit();
+  sym_limits.shrink_to_fit();
+  norms.shrink_to_fit();
 
   return {reps, idces, syms, sym_limits, norms};
 }

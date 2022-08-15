@@ -13,10 +13,13 @@
 #include "bitops/bitops.h"
 #include "common.h"
 #include "utils/iochecks.h"
+#include "utils/logger.h"
 #include "utils/openmp_utils.h"
 #include "utils/print.h"
-#include "utils/logger.h"
 #include "utils/print_macro.h"
+
+#include "algebra/algebra.h"
+#include "algebra/state.h"
 
 #include "combinatorics/binomial.h"
 #include "combinatorics/bit_patterns.h"
@@ -27,16 +30,15 @@
 #include "combinatorics/subsets_index.h"
 
 #include "indexing/combinations_indexing.h"
+#include "indexing/indexing_variants.h"
 #include "indexing/lintable.h"
 #include "indexing/subsets_indexing.h"
-#include "indexing/indexing_variants.h"
 
-
-#include "indexing/spinhalf/indexing_sz.h"
 #include "indexing/spinhalf/indexing_no_sz.h"
-#include "indexing/spinhalf/indexing_symmetric_sz.h"
-#include "indexing/spinhalf/indexing_symmetric_no_sz.h"
 #include "indexing/spinhalf/indexing_sublattice.h"
+#include "indexing/spinhalf/indexing_symmetric_no_sz.h"
+#include "indexing/spinhalf/indexing_symmetric_sz.h"
+#include "indexing/spinhalf/indexing_sz.h"
 #include "indexing/spinhalf/symmetric_iterator.h"
 
 #include "indexing/tj/tj_indexing.h"
@@ -68,27 +70,25 @@
 
 #include "symmetries/fermi_bool_table.h"
 #include "symmetries/fermi_sign.h"
+#include "symmetries/group_action/group_action.h"
+#include "symmetries/group_action/group_action_lookup.h"
+#include "symmetries/group_action/group_action_operations.h"
+#include "symmetries/group_action/group_action_sublattice.h"
+#include "symmetries/group_action/sublattice_stability.h"
 #include "symmetries/permutation_group.h"
 #include "symmetries/representation.h"
 #include "symmetries/representative_list.h"
 #include "symmetries/symmetric_operator.h"
 #include "symmetries/symmetry_operations.h"
-#include "symmetries/group_action/group_action.h"
-#include "symmetries/group_action/group_action_lookup.h"
-#include "symmetries/group_action/sublattice_stability.h"
-#include "symmetries/group_action/group_action_sublattice.h"
-#include "symmetries/group_action/group_action_operations.h"
 
 #include "operators/bond.h"
 #include "operators/bondlist.h"
 #include "operators/couplings.h"
-#include "operators/operator_utils.h"
 #include "operators/operator_qns.h"
+#include "operators/operator_utils.h"
 
 #include "wavefunctions/gpwf_spinhalf.h"
 
-#include "linalg/algebra.h"
-#include "linalg/state.h"
 #include "linalg/lanczos/lanczos_convergence.h"
 #include "linalg/lanczos/lanczos_eigenvalues.h"
 #include "linalg/lanczos/lanczos_eigenvector.h"
@@ -97,23 +97,23 @@
 #include "linalg/sparse_diag.h"
 
 #ifdef HYDRA_ENABLE_MPI
-#include "utils/print_mpi.h"
-#include "mpi/datatype.h"
 #include "mpi/allreduce.h"
 #include "mpi/alltoall.h"
+#include "mpi/buffer.h"
+#include "mpi/datatype.h"
+#include "mpi/dot_mpi.h"
 #include "mpi/logger_mpi.h"
 #include "mpi/timing_mpi.h"
-#include "mpi/dot_mpi.h"
-#include "mpi/buffer.h"
+#include "utils/print_mpi.h"
 
 #include "blocks/utils/block_utils_mpi.h"
 
 #include "indexing/spinhalf_mpi/spinhalf_mpi_indexing_sz.h"
 
-#include "blocks/spinhalf_mpi/terms/get_prefix_postfix_mixed_bonds.h"
 #include "blocks/spinhalf_mpi/spinhalf_mpi.h"
 #include "blocks/spinhalf_mpi/spinhalf_mpi_apply.h"
 #include "blocks/spinhalf_mpi/spinhalf_mpi_fill.h"
+#include "blocks/spinhalf_mpi/terms/get_prefix_postfix_mixed_bonds.h"
 
 #include "blocks/electron_mpi/electron_mpi.h"
 #include "blocks/electron_mpi/electron_mpi_apply.h"

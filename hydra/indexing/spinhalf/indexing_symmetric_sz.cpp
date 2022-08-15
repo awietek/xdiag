@@ -2,6 +2,7 @@
 
 #include <hydra/blocks/utils/block_utils.h>
 #include <hydra/symmetries/representative_list.h>
+#include <hydra/utils/logger.h>
 
 namespace hydra::indexing::spinhalf {
 
@@ -12,9 +13,9 @@ IndexingSymmetricSz<bit_t>::IndexingSymmetricSz(
     : n_sites_(n_sites), n_up_(n_up),
       group_action_(allowed_subgroup(permutation_group, irrep)), irrep_(irrep),
       combinations_indexing_(n_sites, n_up) {
-
   utils::check_nup_spinhalf(n_sites, n_up, "IndexingSymmetricSz");
   utils::check_n_sites(n_sites, permutation_group);
+
   std::tie(reps_, index_for_rep_, syms_, sym_limits_for_rep_, norms_) =
       symmetries::representatives_indices_symmetries_limits_norms<bit_t>(
           combinations_indexing_, group_action_, irrep);

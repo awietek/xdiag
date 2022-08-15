@@ -5,11 +5,11 @@
 #include <utility>
 #include <vector>
 
-#include <hydra/utils/logger.h>
+#include <hydra/algebra/state.h>
 #include <hydra/linalg/lanczos/lanczos_eigenvalues.h>
-#include <hydra/linalg/state.h>
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
+#include <hydra/utils/logger.h>
 
 namespace hydra {
 

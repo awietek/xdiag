@@ -60,8 +60,8 @@ TypeCoupling type_coupling(const Bond &bond) {
 }
 
 bool is_complex(Bond const &bond) {
-  if (std::find(complex_bond_types.begin(), complex_bond_types.end(),
-                bond.type()) != complex_bond_types.end()) {
+  auto type = bond.type();
+  if (type == "SCALARCHIRALITY") {
     return true;
   } else {
     return false;
