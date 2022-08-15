@@ -14,6 +14,7 @@
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
 #include <hydra/operators/operator_utils.h>
+#include <hydra/utils/logger.h>
 
 namespace hydra::terms {
 
@@ -35,14 +36,12 @@ void tj_ising(BondList const &bonds, Couplings const &couplings,
       {"HEISENBERG", "HB", "ISING", "TJHEISENBERG", "TJISING", "TJHB"}, 2);
 
   for (auto bond : clean_bonds) {
-
     std::string type = bond.type();
     std::string cpl = bond.coupling();
 
     utils::check_sites_disjoint(bond);
     int s1 = bond[0];
     int s2 = bond[1];
-
     coeff_t J = utils::get_coupling<coeff_t>(couplings, cpl);
 
     // Set values for same/diff (tJ block definition)

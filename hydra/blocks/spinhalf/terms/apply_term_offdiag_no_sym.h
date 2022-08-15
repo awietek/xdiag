@@ -10,7 +10,6 @@ void apply_term_offdiag_no_sym(IndexingIn &&indexing_in,
                                IndexingOut &&indexing_out,
                                NonZeroTerm &&non_zero_term,
                                TermAction &&term_action, Fill &&fill) {
-
   for (auto [spins_in, idx_in] : indexing_in) {
 
     if (non_zero_term(spins_in)) {

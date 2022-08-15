@@ -55,6 +55,7 @@
 #include "blocks/spinhalf/spinhalf_apply.h"
 #include "blocks/spinhalf/spinhalf_fill.h"
 #include "blocks/spinhalf/spinhalf_matrix.h"
+#include "blocks/spinhalf/terms/compile_terms.h"
 
 #include "blocks/electron/electron.h"
 #include "blocks/electron/electron_apply.h"

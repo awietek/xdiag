@@ -11,7 +11,7 @@ TEST_CASE("spinhalf_matrix", "[models][spinhalf]") {
 
   {
     Log.out("spinhalf_matrix: Heisenberg chain test, J=1.0, N=2,..,6");
-    for (int n_sites = 2; n_sites <= 6; ++n_sites)
+    for (int n_sites = 2; n_sites <= 6; ++n_sites) {
       for (int nup = 0; nup <= n_sites; ++nup) {
         auto [bonds, couplings, exact_eigs] =
             HBchain_fullspectrum_nup(n_sites, nup);
@@ -21,6 +21,7 @@ TEST_CASE("spinhalf_matrix", "[models][spinhalf]") {
         auto eigs = lila::EigenvaluesSym(H);
         REQUIRE(lila::close(eigs, exact_eigs));
       }
+    }
   }
 
   {
@@ -43,8 +44,7 @@ TEST_CASE("spinhalf_matrix", "[models][spinhalf]") {
   }
 
   {
-    Log.out(
-        "spinhalf_matrix: Heisenberg all-to-all Sz <-> NoSz comparison");
+    Log.out("spinhalf_matrix: Heisenberg all-to-all Sz <-> NoSz comparison");
     for (int n_sites = 2; n_sites <= 6; ++n_sites) {
       auto [bonds, couplings] = HB_alltoall(n_sites);
 
@@ -83,7 +83,7 @@ TEST_CASE("spinhalf_matrix", "[models][spinhalf]") {
       REQUIRE(lila::close(H, lila::Herm(H)));
 
       auto eigs = lila::EigenvaluesSym(H);
-
+      // LilaPrint(lila::Norm(H));
       // comment: reference data from Lanczos, only ~10 digits precise
       // Log("eigs(0): {}, e0: {}", eigs(0), e0);
       REQUIRE(std::abs(eigs(0) - e0) < 1e-8);
@@ -106,14 +106,13 @@ TEST_CASE("spinhalf_matrix", "[models][spinhalf]") {
     auto block = Spinhalf<uint16_t>(n_sites, n_up);
     auto H = MatrixCplx(bondlist, couplings, block, block);
     REQUIRE(lila::close(H, lila::Herm(H)));
-    
+
     auto eigs = lila::EigenvaluesSym(H);
     double energy = -6.9456000700824329641;
-    
+
     // Log("{:.18f} {:.18f}", eigs(0), energy);
 
     REQUIRE(lila::close(eigs(0), energy));
-
   }
 
   // Test S+/S-/Sz
@@ -128,19 +127,18 @@ TEST_CASE("spinhalf_matrix", "[models][spinhalf]") {
       auto block_raw = Spinhalf(n_sites);
       for (int nup = 1; nup < n_sites; ++nup) {
 
-	auto block = Spinhalf(n_sites, nup);
-	auto blockp = Spinhalf(n_sites, nup + 1);
-	auto blockm = Spinhalf(n_sites, nup - 1);
+        auto block = Spinhalf(n_sites, nup);
+        auto blockp = Spinhalf(n_sites, nup + 1);
+        auto blockm = Spinhalf(n_sites, nup - 1);
 
         for (int i = 0; i < n_sites; ++i)
           for (int j = 0; j < n_sites; ++j) {
-
 
             BondList sp_i_m;
             sp_i_m << Bond("S+", "H", i);
             auto sp_i_m_mat = MatrixReal(sp_i_m, cpls, blockm, block);
             auto sp_i_mat = MatrixReal(sp_i_m, cpls, block_raw, block_raw);
-	   
+
             BondList sm_j_m;
             sm_j_m << Bond("S-", "H", j);
             auto sm_j_m_mat = MatrixReal(sm_j_m, cpls, block, blockm);

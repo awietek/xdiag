@@ -102,6 +102,8 @@ TEST_CASE("tj_matrix", "[blocks][tj]") {
     Log.out("tj_matrix:  random all-to-all complex exchange test, N={}", N);
 
     auto [bonds, cpls] = tj_alltoall_complex(N);
+    auto bonds_hb = bonds.bonds_of_type("HB");
+    
     for (int nup = 0; nup <= N; ++nup)
       for (int ndn = 0; ndn <= N - nup; ++ndn) {
         auto block = tJ<uint32_t>(N, nup, ndn);
@@ -114,8 +116,8 @@ TEST_CASE("tj_matrix", "[blocks][tj]") {
       int ndn = N - nup;
       auto block1 = tJ<uint32_t>(N, nup, ndn);
       auto block2 = Spinhalf<uint32_t>(N, nup);
-      auto H1 = MatrixCplx(bonds, cpls, block1, block1);
-      auto H2 = MatrixCplx(bonds, cpls, block2, block2);
+      auto H1 = MatrixCplx(bonds_hb, cpls, block1, block1);
+      auto H2 = MatrixCplx(bonds_hb, cpls, block2, block2);
       auto eigs1 = lila::EigenvaluesSym(H1);
       auto eigs2 = lila::EigenvaluesSym(H2);
       // Log("eigs1(0): {}, eigs2(0): {}", eigs1(0), eigs2(0));

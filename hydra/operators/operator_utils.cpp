@@ -18,8 +18,7 @@ bool coupling_is_non_zero(Bond const &bond, Couplings const &couplings) {
 }
 void check_n_sites(int n_sites, PermutationGroup const &permutation_group) {
   if (n_sites != permutation_group.n_sites()) {
-    Log.err(
-        "Error creating block: n_sites disagrees with permutation_group");
+    Log.err("Error creating block: n_sites disagrees with permutation_group");
   }
 }
 
@@ -28,8 +27,7 @@ void check_operator_real(BondList const &bonds, Couplings const &cpls,
   if (is_complex(bonds))
     Log.err("Error: cannot {} from complex bonds!", errmsg);
   if (is_complex(cpls))
-    Log.err("Error: cannot {} real matrix from complex couplings!",
-                  errmsg);
+    Log.err("Error: cannot {} real matrix from complex couplings!", errmsg);
 }
 
 void check_operator_real(BondList const &bonds, Couplings const &cpls,
@@ -38,7 +36,7 @@ void check_operator_real(BondList const &bonds, Couplings const &cpls,
   check_operator_real(bonds, cpls, errmsg);
   if (is_complex(irrep_in) || is_complex(irrep_out))
     Log.err("Error: cannot {} real matrix from complex representation!",
-                  errmsg);
+            errmsg);
 }
 
 template <typename coeff_t>
@@ -73,16 +71,22 @@ template void check_operator_works_with<complex>(BondList const &,
                                                  Representation const &,
                                                  std::string);
 
-void check_sites_disjoint(std::vector<int> const &sites) {
+bool sites_disjoint(std::vector<int> const &sites) {
   auto set = std::set<int>(sites.begin(), sites.end());
-  if (set.size() != sites.size())
-    Log.err("Error: sites are not disjoint");
+  return set.size() == sites.size();
+}
+
+bool sites_disjoint(Bond const &bond) { return sites_disjoint(bond.sites()); }
+
+void check_sites_disjoint(std::vector<int> const &sites) {
+  if (!sites_disjoint(sites)) {
+    Log.err("Error: bond sites are not disjoint");
+  }
 }
 
 void check_sites_disjoint(Bond const &bond) {
   check_sites_disjoint(bond.sites());
 }
-
 
 BondList clean_bondlist(BondList const &bonds, Couplings const &cpls,
                         std::vector<std::string> desired_bond_types) {
@@ -111,8 +115,7 @@ BondList clean_bondlist(BondList const &bonds, Couplings const &cpls,
 
     for (auto bond : bonds_of_type) {
       if (bond.size() != allowed_size) {
-        Log.err("Invalid bond size ({}) found for type {}", bond.size(),
-		type);
+        Log.err("Invalid bond size ({}) found for type {}", bond.size(), type);
       }
 
       if (coupling_is_non_zero(bond, cpls)) {

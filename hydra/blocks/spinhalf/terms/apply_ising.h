@@ -19,7 +19,10 @@ void apply_ising(Bond const &bond, Couplings const &couplings,
             bond.size());
   }
 
-  utils::check_sites_disjoint(bond);
+  if (!utils::sites_disjoint(bond)) {
+    Log.err("Error in spinhalf::apply_ising: bond sites are not disjoint");
+  }
+
   int s1 = bond[0];
   int s2 = bond[1];
   bit_t mask = ((bit_t)1 << s1) | ((bit_t)1 << s2);

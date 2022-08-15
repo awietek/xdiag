@@ -22,7 +22,10 @@ void apply_exchange(Bond const &bond, Couplings const &couplings,
             bond.size());
   }
 
-  utils::check_sites_disjoint(bond);
+  if (!utils::sites_disjoint(bond)) {
+    Log.err("Error in spinhalf::apply_exchange: bond sites are not disjoint");
+  }
+
   int s1 = bond[0];
   int s2 = bond[1];
   bit_t flipmask = ((bit_t)1 << s1) | ((bit_t)1 << s2);
@@ -32,6 +35,10 @@ void apply_exchange(Bond const &bond, Couplings const &couplings,
   auto [J, J_conj] = utils::get_coupling_and_conj<coeff_t>(couplings, cpl);
   coeff_t Jhalf = J / 2.;
   coeff_t Jhalf_conj = J_conj / 2.;
+
+  // Log("Jhalf r: {} i: {}", lila::real(Jhalf), lila::imag(Jhalf));
+  // Log("Jhalf_conj r: {} i: {}", lila::real(Jhalf_conj), lila::imag(Jhalf_conj));
+  
   if constexpr (is_real<coeff_t>()) { // just to supress "unused" warning
     assert(Jhalf == Jhalf_conj);
   }
@@ -54,10 +61,13 @@ void apply_exchange(Bond const &bond, Couplings const &couplings,
 
   // Dispatch either symmetric of unsymmetric term application
   if (!lila::close(J, 0.)) {
+
     if constexpr (symmetric) {
-      terms::spinhalf::apply_term_offdiag_sym<bit_t, coeff_t>(
+
+	terms::spinhalf::apply_term_offdiag_sym<bit_t, coeff_t>(
           indexing_in, indexing_out, non_zero_term, term_action, fill);
     } else {
+
       terms::spinhalf::apply_term_offdiag_no_sym<bit_t, coeff_t>(
           indexing_in, indexing_out, non_zero_term, term_action, fill);
     }

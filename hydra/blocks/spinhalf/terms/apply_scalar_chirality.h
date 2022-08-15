@@ -25,12 +25,16 @@ void apply_scalar_chirality(Bond const &bond, Couplings const &couplings,
             bond.size());
   }
 
+  if (!utils::sites_disjoint(bond)) {
+    Log.err("Error in spinhalf::apply_scalar_chirality: bond sites are not "
+            "disjoint");
+  }
+
   if constexpr (is_real<coeff_t>()) {
     Log.err("Error in spinhalf::apply_scalar_chirality: scalar chirality term "
             "cannot be used with real coefficients");
   } else {
 
-    utils::check_sites_disjoint(bond);
     int s1 = bond[0];
     int s2 = bond[1];
     int s3 = bond[2];

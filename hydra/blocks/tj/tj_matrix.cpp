@@ -9,6 +9,7 @@
 #include <hydra/blocks/tj/terms/tj_symmetric_ising.h>
 
 #include <hydra/blocks/utils/block_utils.h>
+#include <hydra/utils/logger.h>
 
 namespace hydra {
 

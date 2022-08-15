@@ -40,6 +40,7 @@ sources+= hydra/blocks/utils/block_utils.cpp
 sources+= hydra/blocks/spinhalf/spinhalf.cpp
 sources+= hydra/blocks/spinhalf/spinhalf_matrix.cpp
 sources+= hydra/blocks/spinhalf/spinhalf_apply.cpp
+sources+= hydra/blocks/spinhalf/terms/compile_terms.cpp
 
 sources+= hydra/blocks/electron/electron.cpp
 sources+= hydra/blocks/electron/electron_matrix.cpp
