@@ -14,13 +14,8 @@ Permutation::Permutation(std::vector<int> const &perm)
   for (int i = 0; i < n_sites_; ++i) {
     if (std::find(permutation_.begin(), permutation_.end(), i) ==
         permutation_.end()) {
-
-      // for (int j =0; j< n_sites_; ++j) {
-      // 	std::cout << permutation_[j] << " ";
-      // }
-      // std::cout << "\n";
       Log.err("Error constructing Permutation: "
-              "invalid permutation array {} {}", n_sites_, i);
+              "invalid permutation array");
     }
   }
 }

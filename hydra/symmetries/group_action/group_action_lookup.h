@@ -9,15 +9,12 @@ namespace hydra {
 template <class bit_t> class GroupActionLookup {
 public:
   GroupActionLookup() = default;
-  GroupActionLookup(PermutationGroup const &permutation_group);
+  explicit GroupActionLookup(PermutationGroup const &permutation_group);
 
   inline int n_sites() const { return n_sites_; }
   inline int n_symmetries() const { return n_symmetries_; }
   inline PermutationGroup const &permutation_group() const {
     return permutation_group_;
-  }
-  inline std::vector<int> const &permutation_array() const {
-    return permutation_group_.permutation_array();
   }
 
   inline bit_t apply(int sym, bit_t state) const {

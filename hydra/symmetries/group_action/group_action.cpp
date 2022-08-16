@@ -1,8 +1,8 @@
 #include "group_action.h"
 
 #include <hydra/symmetries/operations/fermi_sign.h>
-#include <hydra/symmetries/operations/symmetry_operations.h>
 #include <hydra/symmetries/operations/group_action_operations.h>
+#include <hydra/symmetries/operations/symmetry_operations.h>
 
 namespace hydra {
 
@@ -13,8 +13,7 @@ GroupAction::GroupAction(PermutationGroup const &permutation_group)
       fermi_work_(2 * permutation_group.n_sites(), 0) {}
 
 template <class bit_t> bit_t GroupAction::apply(int sym, bit_t state) const {
-  return symmetries::apply_permutation(
-      state, n_sites_, permutation_array().data() + sym * n_sites_);
+  return permutation_group_[sym].apply(state);
 }
 template uint16_t GroupAction::apply<uint16_t>(int, uint16_t) const;
 template uint32_t GroupAction::apply<uint32_t>(int, uint32_t) const;
@@ -22,13 +21,12 @@ template uint64_t GroupAction::apply<uint64_t>(int, uint64_t) const;
 
 template <class bit_t> bit_t GroupAction::representative(bit_t state) const {
   bit_t rep = std::numeric_limits<bit_t>::max();
-  const int *sym_ptr = permutation_array().data();
-  for (int sym = 0; sym < n_symmetries_; ++sym) {
-    bit_t trans = symmetries::apply_permutation(state, n_sites_, sym_ptr);
+
+  for (auto const &p : permutation_group_) {
+    bit_t trans = p.apply(state);
     if (trans < rep) {
       rep = trans;
     }
-    sym_ptr += n_sites_;
   }
   return rep;
 }
@@ -40,14 +38,15 @@ template <class bit_t>
 std::pair<bit_t, int> GroupAction::representative_sym(bit_t state) const {
   bit_t rep = std::numeric_limits<bit_t>::max();
   int idx = 0;
-  const int *sym_ptr = permutation_array().data();
-  for (int sym = 0; sym < n_symmetries_; ++sym) {
-    bit_t trans = symmetries::apply_permutation(state, n_sites_, sym_ptr);
+
+  int sym=0;
+  for (auto const &p : permutation_group_) {
+    bit_t trans = p.apply(state);
     if (trans < rep) {
       rep = trans;
       idx = sym;
     }
-    sym_ptr += n_sites_;
+    ++sym;
   }
   return {rep, idx};
 }
@@ -63,9 +62,10 @@ std::pair<bit_t, gsl::span<int const>>
 GroupAction::representative_syms(bit_t state) const {
   bit_t rep = std::numeric_limits<bit_t>::max();
   gsl::span<int const>::size_type n_indices = 0;
-  const int *sym_ptr = permutation_array().data();
-  for (int sym = 0; sym < n_symmetries_; ++sym) {
-    bit_t trans = symmetries::apply_permutation(state, n_sites_, sym_ptr);
+
+  int sym=0;
+  for (auto const &p : permutation_group_) {
+    bit_t trans = p.apply(state);
     if (trans < rep) {
       rep = trans;
       n_indices = 1;
@@ -73,7 +73,7 @@ GroupAction::representative_syms(bit_t state) const {
     } else if (trans == rep) {
       indices_[n_indices++] = sym;
     }
-    sym_ptr += n_sites_;
+    ++sym;
   }
   return {rep, {indices_.data(), n_indices}};
 }
@@ -87,8 +87,8 @@ template std::pair<uint64_t, gsl::span<int const>>
 
 template <class bit_t>
 double GroupAction::fermi_sign(int sym, bit_t state) const {
-  return symmetries::fermi_sign_of_permutation(
-      state, permutation_array().data() + sym * n_sites_, fermi_work_.data());
+  return symmetries::fermi_sign_of_permutation(state, permutation_group_[sym],
+                                               fermi_work_);
 }
 template double GroupAction::fermi_sign<uint16_t>(int, uint16_t) const;
 template double GroupAction::fermi_sign<uint32_t>(int, uint32_t) const;

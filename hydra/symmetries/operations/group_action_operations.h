@@ -157,17 +157,20 @@ inline double norm_fermionic(bit_t state, GroupAction const &group_action,
   complex amplitude = 0.0;
   int n_sites = group_action.n_sites();
   auto work = fermi_work(n_sites);
-  const int *sym_ptr = group_action.permutation_array().data();
+  auto const &group = group_action.permutation_group();
+
   for (int sym = 0; sym < group_action.n_symmetries(); ++sym) {
+
+    auto const &perm = group[sym];
+
     bit_t tstate = group_action.apply(sym, state);
     if (tstate == state) {
-      if (fermi_bool_of_permutation(state, sym_ptr, work.data())) {
+      if (fermi_bool_of_permutation(state, perm, work)) {
         amplitude -= irrep.character(sym);
       } else {
         amplitude += irrep.character(sym);
       }
     }
-    sym_ptr += n_sites;
   }
   return std::sqrt(std::abs(amplitude));
 }
@@ -181,19 +184,20 @@ inline double norm_electron(bit_t ups, bit_t dns,
   complex amplitude = 0.0;
   int n_sites = group_action.n_sites();
   auto work = fermi_work(n_sites);
-  const int *sym_ptr = group_action.permutation_array().data();
+  auto const &group = group_action.permutation_group();
+
   for (int sym = 0; sym < group_action.n_symmetries(); ++sym) {
+
+    auto const &perm = group[sym];
     bit_t tups = group_action.apply(sym, ups);
 
     if (tups == ups) {
-      bool fermi_bool_ups =
-          fermi_bool_of_permutation(ups, sym_ptr, work.data());
+      bool fermi_bool_ups = fermi_bool_of_permutation(ups, perm, work);
 
       bit_t tdns = group_action.apply(sym, dns);
 
       if (tdns == dns) {
-        bool fermi_bool_dns =
-            fermi_bool_of_permutation(dns, sym_ptr, work.data());
+        bool fermi_bool_dns = fermi_bool_of_permutation(dns, perm, work);
 
         if (fermi_bool_ups == fermi_bool_dns) {
           amplitude += irrep.character(sym);
@@ -202,7 +206,6 @@ inline double norm_electron(bit_t ups, bit_t dns,
         }
       }
     }
-    sym_ptr += n_sites;
   }
   return std::sqrt(std::abs(amplitude));
 }
@@ -217,22 +220,22 @@ norm_electron_subset(bit_t ups, bit_t dns, GroupAction const &group_action,
   complex amplitude = 0.0;
   int n_sites = group_action.n_sites();
   auto work = fermi_work(n_sites);
-  const int *sym_ptr = group_action.permutation_array().data();
+  auto const &group = group_action.permutation_group();
+
   for (int sym : syms) {
     assert(sym < group_action.n_symmetries());
 
-    const int *sym_ptr_current = sym_ptr + sym * n_sites;
+    auto const &perm = group[sym];
+
     bit_t tups = group_action.apply(sym, ups);
 
     if (tups == ups) {
-      bool fermi_bool_ups =
-          fermi_bool_of_permutation(ups, sym_ptr_current, work.data());
+      bool fermi_bool_ups = fermi_bool_of_permutation(ups, perm, work);
 
       bit_t tdns = group_action.apply(sym, dns);
 
       if (tdns == dns) {
-        bool fermi_bool_dns =
-            fermi_bool_of_permutation(dns, sym_ptr_current, work.data());
+        bool fermi_bool_dns = fermi_bool_of_permutation(dns, perm, work);
         if (fermi_bool_ups == fermi_bool_dns) {
           amplitude += irrep.character(sym);
         } else {

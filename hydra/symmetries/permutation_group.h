@@ -1,42 +1,39 @@
 #pragma once
 
-#include <vector>
-
+#include <hydra/symmetries/permutation.h>
 #include <hydra/symmetries/representation.h>
-#include <lila/external/gsl/span>
+#include <vector>
 
 namespace hydra {
 
 class PermutationGroup {
 public:
   PermutationGroup() = default;
-  explicit PermutationGroup(std::vector<std::vector<int>> const &symmetries);
-  PermutationGroup(int n_sites, int n_symmetries,
-                   std::vector<int> const &permutation_array);
-  PermutationGroup subgroup(std::vector<int> const &symmetry_numbers) const;
+  explicit PermutationGroup(std::vector<Permutation> const &permutations);
 
   inline int n_sites() const { return n_sites_; }
   inline int n_symmetries() const { return n_symmetries_; }
-  inline std::vector<int> const &permutation_array() const {
-    return permutation_array_;
+  inline int size() const { return n_symmetries_; }
+
+  inline Permutation const &operator[](int sym) const {
+    return permutations_[sym];
   }
 
-  inline int size() const { return n_symmetries_; }
-  inline int permutation(int sym, int site) const {
-    return permutation_array_[n_sites_ * sym + site];
-  }
-  inline gsl::span<int const> permutation(int sym) const{
-    return gsl::span<int const>(permutation_array_.data() + n_sites_ * sym,
-                                n_sites_);
-  }
+  inline int inverse(int sym) const { return inverse_[sym]; }
 
   bool operator==(PermutationGroup const &rhs) const;
   bool operator!=(PermutationGroup const &rhs) const;
 
+  PermutationGroup subgroup(std::vector<int> const &symmetry_numbers) const;
+
+  inline auto begin() const { return permutations_.begin(); }
+  inline auto end() const { return permutations_.end(); }
+
 private:
   int n_sites_;
   int n_symmetries_;
-  std::vector<int> permutation_array_; // size = n_symmetries_*n_sites_
+  std::vector<Permutation> permutations_;
+  std::vector<int> inverse_;
 };
 
 PermutationGroup allowed_subgroup(PermutationGroup const &group,

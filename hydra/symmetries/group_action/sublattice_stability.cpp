@@ -6,8 +6,8 @@
 namespace hydra::symmetries {
 
 bool is_sublattice_permutation(int n_sublat, int sublat,
-                               gsl::span<int const> permutation) {
-  int n_sites = permutation.size();
+                               Permutation const &permutation) {
+  int n_sites = permutation.n_sites();
   int n_sites_sublat = n_sites / n_sublat;
 
   // permutation is sublattice stable, if the sublattice
@@ -23,8 +23,7 @@ bool is_sublattice_permutation(int n_sublat, int sublat,
   return true;
 }
 
-int which_sublattice_permutation(int n_sublat,
-                                 gsl::span<int const> permutation) {
+int which_sublattice_permutation(int n_sublat, Permutation const &permutation) {
   int sublat = HYDRA_SUBLATTICE_UNSTABLE;
   for (int s = 0; s < n_sublat; ++s) {
     if (is_sublattice_permutation(n_sublat, s, permutation)) {
@@ -37,9 +36,8 @@ int which_sublattice_permutation(int n_sublat,
 
 bool is_sublattice_stable(int n_sublat, PermutationGroup const &group) {
 
-  for (int sym = 0; sym < group.size(); ++sym) {
-    auto permutation = group.permutation(sym);
-    int sublat = which_sublattice_permutation(n_sublat, permutation);
+  for (auto const &perm : group) {
+    int sublat = which_sublattice_permutation(n_sublat, perm);
     if (sublat == HYDRA_SUBLATTICE_UNSTABLE) {
       return false;
     }
@@ -51,11 +49,12 @@ std::vector<int> sublattice_permutations(int n_sublat, int sublat,
                                          PermutationGroup const &group) {
   std::vector<int> syms;
 
-  for (int sym = 0; sym < group.size(); ++sym) {
-    auto permutation = group.permutation(sym);
-    if (which_sublattice_permutation(n_sublat, permutation) == sublat) {
+  int sym = 0;
+  for (auto const &perm : group) {
+    if (which_sublattice_permutation(n_sublat, perm) == sublat) {
       syms.push_back(sym);
     }
+    ++sym;
   }
   return syms;
 }

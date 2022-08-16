@@ -10,15 +10,18 @@ template <class bit_t> void test_permutation_group_action(int n_sites) {
   using combinatorics::Subsets;
 
   // test cyclic group
-  std::vector<int> permutation_array;
+  std::vector<Permutation> permutation_array;
   for (int sym = 0; sym < n_sites; ++sym) {
+
+    std::vector<int> pv;
     for (int site = 0; site < n_sites; ++site) {
       int newsite = (site + sym) % n_sites;
-      permutation_array.push_back(newsite);
+      pv.push_back(newsite);
     }
+    permutation_array.push_back(Permutation(pv));
   }
 
-  auto perm_group = PermutationGroup(n_sites, n_sites, permutation_array);
+  auto perm_group = PermutationGroup(permutation_array);
   auto sym_op = GroupAction(perm_group);
 
   // // Print the action on the states

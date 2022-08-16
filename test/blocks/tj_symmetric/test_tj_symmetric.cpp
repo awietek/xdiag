@@ -38,17 +38,18 @@ TEST_CASE("tj_symmetric", "[blocks][tj_symmetric]") {
   Log("tj_symmetric: chain test");
   for (int n_sites = 1; n_sites < 7; ++n_sites) {
 
-    // create cyclic space group
-    std::vector<std::vector<int>> permutations;
+    // test cyclic group
+    std::vector<Permutation> permutation_array;
     for (int sym = 0; sym < n_sites; ++sym) {
-      std::vector<int> permutation;
+
+      std::vector<int> pv;
       for (int site = 0; site < n_sites; ++site) {
         int newsite = (site + sym) % n_sites;
-        permutation.push_back(newsite);
+        pv.push_back(newsite);
       }
-      permutations.push_back(permutation);
+      permutation_array.push_back(Permutation(pv));
     }
-    auto group = PermutationGroup(permutations);
+    auto group = PermutationGroup(permutation_array);
 
     // Create irreps
     std::vector<Representation> irreps;

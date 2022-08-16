@@ -18,8 +18,8 @@
 
 namespace hydra {
 
-std::vector<std::vector<int>> read_permutations(std::string filename) {
-  std::vector<std::vector<int>> lattice_symmetries;
+std::vector<Permutation> read_permutations(std::string filename) {
+  std::vector<Permutation> lattice_symmetries;
   std::ifstream File(filename.c_str());
 
   if (File.fail()) {
@@ -56,12 +56,15 @@ std::vector<std::vector<int>> read_permutations(std::string filename) {
 
   lattice_symmetries.resize(n_symmetries);
   for (int i = 0; i < n_symmetries; ++i) {
+
+    std::vector<int> pv(n_sites);
     File >> tobeparsed;
     for (int si = 0; si < n_sites; ++si) {
       int tosite;
       File >> tosite;
-      lattice_symmetries[i].push_back(tosite);
+      pv[si] = tosite;
     }
+    lattice_symmetries[i] = Permutation(pv);
   }
   return lattice_symmetries;
 }

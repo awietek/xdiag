@@ -5,13 +5,12 @@
 
 namespace hydra::symmetries {
 
-  
 std::vector<int> fermi_work(int n_sites) {
   return std::vector<int>(n_sites + 4);
 }
 template <class bit_t>
-bool fermi_bool_of_permutation(bit_t state, const int *__restrict permutation,
-                               int *__restrict work) {
+bool fermi_bool_of_permutation(bit_t state, Permutation const &permutation,
+                               std::vector<int> &work) {
   int n_fermion = 0;
   int site = 0;
   while (state) {
@@ -22,7 +21,7 @@ bool fermi_bool_of_permutation(bit_t state, const int *__restrict permutation,
   }
 
   // fill potentially extraneous work to use loop unrolling
-  std::fill(work + n_fermion, work + n_fermion + 4,
+  std::fill(work.data() + n_fermion, work.data() + n_fermion + 4,
             std::numeric_limits<int>::max());
 
   bool fermi = false;
@@ -58,20 +57,19 @@ bool fermi_bool_of_permutation(bit_t state, const int *__restrict permutation,
 }
 
 template <class bit_t>
-double fermi_sign_of_permutation(bit_t state, const int *permutation,
-                                 int *work) {
+double fermi_sign_of_permutation(bit_t state, Permutation const &permutation,
+                                 std::vector<int> &work) {
   return fermi_bool_of_permutation(state, permutation, work) ? -1.0 : 1.0;
 }
 
-  
 std::vector<int> fermi_work_sort(int n_sites) {
   return std::vector<int>(2 * n_sites, 0);
 }
 
 template <class bit_t>
-bool fermi_bool_of_permutation_sort(
-    bit_t state, const int *permutation,
-    int *work) { // "work" needs to be allocated of size 2*n_sites
+bool fermi_bool_of_permutation_sort(bit_t state, Permutation const &permutation,
+                                    std::vector<int> &work) {
+  // "work" needs to be allocated of size 2*n_sites
 
   // int n_fermion = 0;
   // int site = 0;
@@ -91,8 +89,8 @@ bool fermi_bool_of_permutation_sort(
 
   // return true;
 
-  int *iota = work;
-  int *to = work + bitops::popcnt(state);
+  int *iota = work.data();
+  int *to = work.data() + bitops::popcnt(state);
 
   // find out where fermions are mapped to
   int n_fermion = 0;
@@ -132,37 +130,48 @@ bool fermi_bool_of_permutation_sort(
 }
 
 template <class bit_t>
-double fermi_sign_of_permutation_sort(
-    bit_t state, const int *permutation,
-    int *work) { // "work" needs to be allocated of size 2*n_sites
-
+double fermi_sign_of_permutation_sort(bit_t state,
+                                      Permutation const &permutation,
+                                      std::vector<int> &work) {
+  // "work" needs to be allocated of size 2*n_sites
   return (fermi_bool_of_permutation_sort(state, permutation, work)) ? -1.0
                                                                     : 1.0;
 }
+template bool fermi_bool_of_permutation<uint16_t>(uint16_t, Permutation const &,
+                                                  std::vector<int> &);
+template bool fermi_bool_of_permutation<uint32_t>(uint32_t, Permutation const &,
+                                                  std::vector<int> &);
+template bool fermi_bool_of_permutation<uint64_t>(uint64_t, Permutation const &,
+                                                  std::vector<int> &);
 
-template bool fermi_bool_of_permutation<uint16_t>(uint16_t, const int *, int *);
-template bool fermi_bool_of_permutation<uint32_t>(uint32_t, const int *, int *);
-template bool fermi_bool_of_permutation<uint64_t>(uint64_t, const int *, int *);
+template double fermi_sign_of_permutation<uint16_t>(uint16_t,
+                                                    Permutation const &,
+                                                    std::vector<int> &);
+template double fermi_sign_of_permutation<uint32_t>(uint32_t,
+                                                    Permutation const &,
+                                                    std::vector<int> &);
+template double fermi_sign_of_permutation<uint64_t>(uint64_t,
+                                                    Permutation const &,
+                                                    std::vector<int> &);
 
-template double fermi_sign_of_permutation<uint16_t>(uint16_t, const int *,
-                                                    int *);
-template double fermi_sign_of_permutation<uint32_t>(uint32_t, const int *,
-                                                    int *);
-template double fermi_sign_of_permutation<uint64_t>(uint64_t, const int *,
-                                                    int *);
+template bool
+fermi_bool_of_permutation_sort<uint16_t>(uint16_t, Permutation const &,
+                                         std::vector<int> &);
+template bool
+fermi_bool_of_permutation_sort<uint32_t>(uint32_t, Permutation const &,
+                                         std::vector<int> &);
+template bool
+fermi_bool_of_permutation_sort<uint64_t>(uint64_t, Permutation const &,
+                                         std::vector<int> &);
 
-template bool fermi_bool_of_permutation_sort<uint16_t>(uint16_t, const int *,
-                                                       int *);
-template bool fermi_bool_of_permutation_sort<uint32_t>(uint32_t, const int *,
-                                                       int *);
-template bool fermi_bool_of_permutation_sort<uint64_t>(uint64_t, const int *,
-                                                       int *);
-
-template double fermi_sign_of_permutation_sort<uint16_t>(uint16_t, const int *,
-                                                         int *);
-template double fermi_sign_of_permutation_sort<uint32_t>(uint32_t, const int *,
-                                                         int *);
-template double fermi_sign_of_permutation_sort<uint64_t>(uint64_t, const int *,
-                                                         int *);
+template double
+fermi_sign_of_permutation_sort<uint16_t>(uint16_t, Permutation const &,
+                                         std::vector<int> &);
+template double
+fermi_sign_of_permutation_sort<uint32_t>(uint32_t, Permutation const &,
+                                         std::vector<int> &);
+template double
+fermi_sign_of_permutation_sort<uint64_t>(uint64_t, Permutation const &,
+                                         std::vector<int> &);
 
 } // namespace hydra::symmetries

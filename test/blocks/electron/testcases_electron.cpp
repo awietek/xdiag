@@ -32,17 +32,18 @@ std::tuple<BondList, Couplings> get_linear_chain_hb(int n_sites, double t,
 
 std::tuple<PermutationGroup, std::vector<Representation>>
 get_cyclic_group_irreps(int n_sites) {
-  // Create cyclic group as space group
-  std::vector<std::vector<int>> permutations;
+  // test cyclic group
+  std::vector<Permutation> permutation_array;
   for (int sym = 0; sym < n_sites; ++sym) {
-    std::vector<int> permutation;
+
+    std::vector<int> pv;
     for (int site = 0; site < n_sites; ++site) {
       int newsite = (site + sym) % n_sites;
-      permutation.push_back(newsite);
+      pv.push_back(newsite);
     }
-    permutations.push_back(permutation);
+    permutation_array.push_back(Permutation(pv));
   }
-  auto space_group = PermutationGroup(permutations);
+  auto space_group = PermutationGroup(permutation_array);
 
   // Create irreducible representations
   std::vector<Representation> irreps;
@@ -57,20 +58,20 @@ get_cyclic_group_irreps(int n_sites) {
   return {space_group, irreps};
 }
 
-
 std::tuple<PermutationGroup, std::vector<Representation>, std::vector<int>>
 get_cyclic_group_irreps_mult(int n_sites) {
-  // Create cyclic group as space group
-  std::vector<std::vector<int>> permutations;
+  // test cyclic group
+  std::vector<Permutation> permutation_array;
   for (int sym = 0; sym < n_sites; ++sym) {
-    std::vector<int> permutation;
+
+    std::vector<int> pv;
     for (int site = 0; site < n_sites; ++site) {
       int newsite = (site + sym) % n_sites;
-      permutation.push_back(newsite);
+      pv.push_back(newsite);
     }
-    permutations.push_back(permutation);
+    permutation_array.push_back(Permutation(pv));
   }
-  auto space_group = PermutationGroup(permutations);
+  auto space_group = PermutationGroup(permutation_array);
 
   // Create irreducible representations
   std::vector<Representation> irreps;
@@ -86,7 +87,6 @@ get_cyclic_group_irreps_mult(int n_sites) {
   }
   return {space_group, irreps, multiplicities};
 }
-
 
 std::tuple<BondList, Couplings> heisenberg_triangle() {
   BondList bondlist;

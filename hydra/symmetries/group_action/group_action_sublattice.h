@@ -21,15 +21,11 @@ public:
   inline PermutationGroup const &permutation_group() const {
     return permutation_group_;
   }
-  inline std::vector<int> const &permutation_array() const {
-    return permutation_group_.permutation_array();
-  }
 
   bit_t apply(int sym, bit_t state) const;
   bit_t representative(bit_t state) const;
   std::pair<bit_t, int> representative_sym(bit_t state) const;
-  std::pair<bit_t, gsl::span<int const>>
-  representative_syms(bit_t state) const;
+  std::pair<bit_t, gsl::span<int const>> representative_syms(bit_t state) const;
 
   bool operator==(GroupActionSublattice const &rhs) const;
   bool operator!=(GroupActionSublattice const &rhs) const;
@@ -57,8 +53,6 @@ private:
   std::array<std::vector<gsl::span<int const>>, n_sublat> rep_syms_;
   std::array<std::vector<int>, n_sublat> rep_syms_array_;
   std::array<std::vector<bit_t>, n_sublat> sym_action_;
-
-
 };
 
 } // namespace hydra

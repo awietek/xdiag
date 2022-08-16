@@ -9,65 +9,73 @@
 
 namespace hydra {
 
-PermutationGroup::PermutationGroup(
-    std::vector<std::vector<int>> const &symmetries)
-    : n_sites_(symmetries[0].size()), n_symmetries_(symmetries.size()),
-      permutation_array_(n_sites_ * n_symmetries_) {
-  for (int i = 0; i < n_symmetries_; ++i) {
+PermutationGroup::PermutationGroup(std::vector<Permutation> const &permutations)
+    : n_sites_(permutations.size() > 0 ? permutations[0].n_sites() : 0),
+      n_symmetries_(permutations.size()), permutations_(permutations),
+      inverse_(n_symmetries_) {
 
-    // Check whether lattice symmetries are well-formed
-    if ((int)symmetries[i].size() != n_sites_)
-      Log.err("Error constructing PermutationGroup: "
-                    "there's a symmetry not of length n_sites");
-
-    if (!symmetries::is_valid_permutation(n_sites_, symmetries[i].data()))
-      Log.err("Error constructing PermutationGroup: "
-                    "there's a symmetry which is not a proper permutation");
-
-    std::copy(symmetries[i].begin(), symmetries[i].end(),
-              permutation_array_.begin() + i * n_sites_);
+  // Check whether all permutations have same number of sites
+  for (auto p : permutations) {
+    if (p.n_sites() != n_sites_) {
+      Log.err("Error constructing PermutationGroup: not all Permutations have "
+              "the same number of sites");
+    }
   }
-}
 
-PermutationGroup::PermutationGroup(int n_sites, int n_symmetries,
-                                   std::vector<int> const &permutation_array)
-    : n_sites_(n_sites), n_symmetries_(n_symmetries),
-      permutation_array_(permutation_array) {
+  // Check whether identity is contained
+  if (n_sites_ > 0) {
+    auto id = IdentityPermutation(n_sites_);
+    if (std::find(permutations.begin(), permutations.end(), id) ==
+        permutations.end()) {
+      Log.err("Error constructing PermutationGroup: no identity element found");
+    }
+  }
+  
+  // Check multiplication is complete
+  for (auto p1 : permutations) {
+    for (auto p2 : permutations) {
+      auto p = p1 * p2;
+      if (std::find(permutations.begin(), permutations.end(), p) ==
+          permutations.end()) {
+        Log.err("Error constructing PermutationGroup: group multiplication not "
+                "closed");
+      }
+    }
+  }
 
-  if ((int)permutation_array.size() != n_sites * n_symmetries)
-    Log.err("Error constructing PermutationGroup: "
-                  "there's a symmetry not of length n_sites");
-  for (int i = 0; i < n_symmetries; ++i) {
-    if (!symmetries::is_valid_permutation(n_sites_, permutation_array_.data() +
-                                                        i * n_sites_))
-      Log.err("Error constructing PermutationGroup: "
-                    "there's a symmetry which is not a proper permutation");
+  // Check if inverse exists
+  int idx = 0;
+  for (auto p : permutations) {
+    auto pinv = Inverse(p);
+    auto it = std::find(permutations.begin(), permutations.end(), p);
+    if (it == permutations.end()) {
+      Log.err("Error constructing PermutationGroup: inverse element not found");
+    } else {
+      int idx_inv = std::distance(permutations.begin(), it);
+      inverse_[idx] = idx_inv;
+    }
+    idx++;
   }
 }
 
 PermutationGroup
 PermutationGroup::subgroup(std::vector<int> const &symmetry_numbers) const {
-  std::vector<int> subgroup_permutation_array;
+  std::vector<Permutation> subgroup_permutations;
 
   for (int n_sym : symmetry_numbers) {
 
     if ((0 > n_sym) || (n_sym >= n_symmetries_)) {
       Log.err("Error building subgroup of PermutationGroup: "
-                    "invalid symmetry index");
+              "invalid symmetry index");
     }
-    subgroup_permutation_array.insert(
-        subgroup_permutation_array.end(),
-        permutation_array_.begin() + n_sym * n_sites_,
-        permutation_array_.begin() + (n_sym + 1) * n_sites_);
+    subgroup_permutations.push_back(permutations_[n_sym]);
   }
 
-  return PermutationGroup(n_sites_, symmetry_numbers.size(),
-                          subgroup_permutation_array);
+  return PermutationGroup(subgroup_permutations);
 }
 
 bool PermutationGroup::operator==(PermutationGroup const &rhs) const {
-  return (n_sites_ == rhs.n_sites_) && (n_symmetries_ == rhs.n_symmetries_) &&
-         (permutation_array_ == rhs.permutation_array_);
+  return (permutations_ == rhs.permutations_);
 }
 
 bool PermutationGroup::operator!=(PermutationGroup const &rhs) const {

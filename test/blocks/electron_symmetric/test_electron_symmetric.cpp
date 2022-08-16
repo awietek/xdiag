@@ -29,17 +29,18 @@ template <class bit_t> void test_electron_chain(int n_sites) {
 
   Log("electron_symmetric: chain block test. N: {}", n_sites);
 
-  // cyclic group as space group
-  std::vector<std::vector<int>> permutations;
+  // test cyclic group
+  std::vector<Permutation> permutation_array;
   for (int sym = 0; sym < n_sites; ++sym) {
-    std::vector<int> permutation;
+
+    std::vector<int> pv;
     for (int site = 0; site < n_sites; ++site) {
       int newsite = (site + sym) % n_sites;
-      permutation.push_back(newsite);
+      pv.push_back(newsite);
     }
-    permutations.push_back(permutation);
+    permutation_array.push_back(Permutation(pv));
   }
-  auto space_group = PermutationGroup(permutations);
+  auto space_group = PermutationGroup(permutation_array);
 
   // Create irrep with K momentum
   idx_t sum_of_dims = 0;

@@ -8,14 +8,17 @@ using namespace hydra::symmetries;
 
 static PermutationGroup cyclic_group(int n_sites) {
   // test cyclic group
-  std::vector<int> permutation_array;
+  std::vector<Permutation> permutation_array;
   for (int sym = 0; sym < n_sites; ++sym) {
+
+    std::vector<int> pv;
     for (int site = 0; site < n_sites; ++site) {
       int newsite = (site + sym) % n_sites;
-      permutation_array.push_back(newsite);
+      pv.push_back(newsite);
     }
+    permutation_array.push_back(Permutation(pv));
   }
-  return PermutationGroup(n_sites, n_sites, permutation_array);
+  return PermutationGroup(permutation_array);
 }
 
 template <typename bit_t> void test_stabilizer_symmetries(int n_sites) {
@@ -154,6 +157,7 @@ template <typename bit_t> void test_fermi_bool_table(int n_sites) {
   auto fermi_work = symmetries::fermi_work(n_sites);
 
   auto group_action = GroupActionLookup<bit_t>(cyclic_group(n_sites));
+  auto group = group_action.permutation_group();
   int n_symmetries = group_action.n_symmetries();
   for (int npar = 0; npar <= n_sites; ++npar) {
 
@@ -162,22 +166,21 @@ template <typename bit_t> void test_fermi_bool_table(int n_sites) {
     // hydra::Log("N: {} n: {}", n_sites, npar);
     idx_t raw_size = binomial(n_sites, npar);
 
-    const int *sym_ptr = group_action.permutation_array().data();
     for (int sym = 0; sym < n_symmetries; ++sym) {
       idx_t idx = 0;
       for (bit_t state : Combinations<bit_t>(n_sites, npar)) {
         REQUIRE(fermi_bool_tbl[sym * raw_size + idx] ==
-                fermi_bool_of_permutation(state, sym_ptr, fermi_work.data()));
+                fermi_bool_of_permutation(state, group[sym], fermi_work));
         ++idx;
       }
-      sym_ptr += n_sites;
     }
   }
 }
 
 TEST_CASE("symmetry_operations", "[symmetries]") {
+  using namespace hydra;
 
-  hydra::Log("Testing symmetry_operations");
+  Log("Testing symmetry_operations");
   int max_N = 6;
 
   for (int n_sites = 0; n_sites <= max_N; ++n_sites) {

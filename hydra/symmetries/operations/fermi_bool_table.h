@@ -1,8 +1,8 @@
 #pragma once
 
-#include <vector>
-#include <hydra/utils/openmp_utils.h>
 #include <hydra/symmetries/operations/fermi_sign.h>
+#include <hydra/utils/openmp_utils.h>
+#include <vector>
 
 namespace hydra::symmetries {
 
@@ -14,25 +14,26 @@ std::vector<bool> fermi_bool_table(States &&states,
 
   int n_sites = group_action.n_sites();
   int n_symmetries = group_action.n_symmetries();
+  auto const& group = group_action.permutation_group();
   idx_t raw_size = states.size();
   std::vector<bool> fermi_bool_table(raw_size * n_symmetries);
-  const int *sym_ptr = group_action.permutation_array().data();
 
 #ifndef _OPENMP
   auto fermi_work = symmetries::fermi_work(n_sites);
   for (int sym = 0; sym < n_symmetries; ++sym) {
     idx_t idx = 0;
+    auto const &perm = group[sym];
+
     for (auto state : states) {
       fermi_bool_table[sym * raw_size + idx] =
-          fermi_bool_of_permutation(state, sym_ptr, fermi_work.data());
+          fermi_bool_of_permutation(state, perm, fermi_work);
       ++idx;
     }
-    sym_ptr += n_sites;
   }
 #else
 
   for (int sym = 0; sym < n_symmetries; ++sym) {
-
+    auto const &perm = group[sym];
     std::vector<std::vector<bool>> fermi_bool_table_local;
 
     // auto t1 = lila::rightnow();
@@ -50,8 +51,7 @@ std::vector<bool> fermi_bool_table(States &&states,
       auto fermi_work = symmetries::fermi_work(n_sites);
       idx_t idx = 0;
       for (auto state : states_thread) {
-        bool fermi_bool =
-            fermi_bool_of_permutation(state, sym_ptr, fermi_work.data());
+        bool fermi_bool = fermi_bool_of_permutation(state, perm, fermi_work);
         fermi_bool_table_local[myid][idx] = fermi_bool;
         ++idx;
       }

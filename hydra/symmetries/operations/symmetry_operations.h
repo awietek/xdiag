@@ -5,13 +5,14 @@
 #include <hydra/combinatorics/combinations.h>
 #include <hydra/symmetries/operations/fermi_sign.h>
 #include <hydra/symmetries/representation.h>
+#include <hydra/symmetries/permutation.h>
 
 #include <string>
 #include <utility>
 #include <vector>
 
 namespace hydra {
-std::vector<std::vector<int>> read_permutations(std::string filename);
+std::vector<Permutation> read_permutations(std::string filename);
 }
 
 namespace hydra::symmetries {

@@ -17,9 +17,6 @@ public:
   inline PermutationGroup const &permutation_group() const {
     return permutation_group_;
   }
-  inline std::vector<int> const &permutation_array() const {
-    return permutation_group_.permutation_array();
-  }
 
   template <class bit_t> bit_t apply(int sym, bit_t state) const;
   template <class bit_t> bit_t representative(bit_t state) const;

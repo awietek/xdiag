@@ -10,26 +10,28 @@ template <class bit_t> void test_permutation_group_lookup(int n_sites) {
   using combinatorics::Subsets;
 
   // test cyclic group
-  std::vector<int> permutation_array;
+  std::vector<Permutation> permutation_array;
   for (int sym = 0; sym < n_sites; ++sym) {
+
+    std::vector<int> pv;
     for (int site = 0; site < n_sites; ++site) {
       int newsite = (site + sym) % n_sites;
-      permutation_array.push_back(newsite);
+      pv.push_back(newsite);
     }
+    permutation_array.push_back(Permutation(pv));
   }
-
-  auto perm_group = PermutationGroup(n_sites, n_sites, permutation_array);
+  auto perm_group = PermutationGroup(permutation_array);
   auto action = GroupAction(perm_group);
   auto lookup = GroupActionLookup<bit_t>(perm_group);
 
   // Check whether representative is smallest in orbit
-  for (int sym =0; sym< perm_group.size(); ++sym)
-  for (bit_t state : Subsets<bit_t>(n_sites)) {
+  for (int sym = 0; sym < perm_group.size(); ++sym)
+    for (bit_t state : Subsets<bit_t>(n_sites)) {
 
-    auto s1 = action.apply(sym, state);
-    auto s2 = lookup.apply(sym, state);
-    CHECK(s1 == s2);
-  }
+      auto s1 = action.apply(sym, state);
+      auto s2 = lookup.apply(sym, state);
+      CHECK(s1 == s2);
+    }
 }
 
 TEST_CASE("GroupActionLookup", "[symmetries]") {
