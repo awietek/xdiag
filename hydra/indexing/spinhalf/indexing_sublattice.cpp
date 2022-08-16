@@ -1,8 +1,8 @@
 #include "indexing_sublattice.h"
 
 #include <hydra/combinatorics/subsets.h>
-#include <hydra/symmetries/group_action/group_action_operations.h>
-#include <hydra/symmetries/symmetry_operations.h>
+#include <hydra/symmetries/operations/group_action_operations.h>
+#include <hydra/symmetries/operations/symmetry_operations.h>
 #include <hydra/utils/logger.h>
 
 #include <algorithm>

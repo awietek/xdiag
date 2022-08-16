@@ -32,6 +32,16 @@ namespace hydra::utils {
 	       std::real(coupling.second), std::imag(coupling.second));
       }    
   }
+  
+  void PrintPretty(const char* identifier, Permutation const& p) 
+  {
+    printf("%s:\n", identifier);
+    for (int i=0; i<p.n_sites(); ++i)
+      {
+	printf("%d ", p[i]);
+      }
+    printf("\n");
+  }
 
   void PrintPretty(const char* identifier, Tmatrix const& tmat) {
     printf("%s:\n", identifier);

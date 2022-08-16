@@ -5,7 +5,7 @@
 #include <hydra/indexing/combinations_indexing.h>
 
 #include <hydra/combinatorics/combinations.h>
-#include <hydra/symmetries/symmetry_operations.h>
+#include <hydra/symmetries/operations/symmetry_operations.h>
 
 namespace hydra::indexing {
 
@@ -66,8 +66,8 @@ tJSymmetricIndexing<bit_t>::tJSymmetricIndexing(
         bit_t dns_rep =
             symmetries::representative_subset(dns, group_action_, syms);
         if (dns == dns_rep) {
-          double norm = symmetries::norm_electron_subset(ups, dns, group_action_,
-                                                         irrep, syms);
+          double norm = symmetries::norm_electron_subset(
+              ups, dns, group_action_, irrep, syms);
           if (norm > 1e-6) { // only keep dns with non-zero norm
             dns_storage_.push_back(dns_rep);
             norms_storage_.push_back(norm);

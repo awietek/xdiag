@@ -2,6 +2,7 @@
 
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
+#include <hydra/symmetries/permutation.h>
 #include <hydra/linalg/lanczos/tmatrix.h>
 #include <lila/all.h>
 
@@ -10,6 +11,7 @@ namespace hydra::utils {
   void PrintPretty(const char* identifier, Bond const& bond);
   void PrintPretty(const char* identifier, BondList const& bondlist);
   void PrintPretty(const char* identifier, Couplings const& couplings);
+  void PrintPretty(const char* identifier, Permutation const& bond);
 
   template <typename T>
   void PrintPretty(const char* identifier, lila::Vector<T> const& vector){

@@ -1,7 +1,7 @@
 #include "indexing_symmetric_sz.h"
 
 #include <hydra/blocks/utils/block_utils.h>
-#include <hydra/symmetries/representative_list.h>
+#include <hydra/symmetries/operations/representative_list.h>
 #include <hydra/utils/logger.h>
 
 namespace hydra::indexing::spinhalf {

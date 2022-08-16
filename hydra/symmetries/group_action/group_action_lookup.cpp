@@ -1,8 +1,8 @@
 #include "group_action_lookup.h"
 
-#include <hydra/symmetries/fermi_sign.h>
 #include <hydra/symmetries/group_action/group_action.h>
-#include <hydra/symmetries/symmetry_operations.h>
+#include <hydra/symmetries/operations/fermi_sign.h>
+#include <hydra/symmetries/operations/symmetry_operations.h>
 
 namespace hydra {
 

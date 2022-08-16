@@ -6,8 +6,8 @@
 #include <lila/external/gsl/span>
 
 #include <hydra/common.h>
-#include <hydra/symmetries/group_action/group_action_operations.h>
-#include <hydra/symmetries/symmetry_operations.h>
+#include <hydra/symmetries/operations/group_action_operations.h>
+#include <hydra/symmetries/operations/symmetry_operations.h>
 #include <hydra/utils/logger.h>
 
 namespace hydra::symmetries {
@@ -29,13 +29,13 @@ representatives_indices_symmetries_limits(StatesIndexing &&states_indexing,
   // Compute all representatives
   std::vector<bit_t> reps;
   for (auto [state, idx] : states_indexing.states_indices()) {
-    bit_t rep = representative(state, group_action);
-    if (rep == state) {
+    if (is_representative(state, group_action)) {
       idces[idx] = reps.size();
-      reps.push_back(rep);
+      reps.push_back(state);
     }
   }
-
+  reps.shrink_to_fit();
+  
   // Compute indices of up-representatives and stabilizer symmetries
   std::vector<int> syms;
   for (auto [state, idx] : states_indexing.states_indices()) {
@@ -53,6 +53,43 @@ representatives_indices_symmetries_limits(StatesIndexing &&states_indexing,
     span_size_t end = syms.size();
     sym_limits[idx] = {begin, end - begin};
   }
+
+  //   // Compute indices of up-representatives and stabilizer symmetries
+  // std::vector<int> syms;
+  // for (idx_t rep_idx=0; rep_idx<reps.size(); ++rep_idx) {
+  //   bit_t rep = reps[rep_idx];
+
+  //   std::map<bit_t, std::vector<int>> orbits;
+    
+  //   for (int sym = 0; sym < group_action.n_symmetries(); ++sym) {
+  //     bit_t state = group_action.apply(sym, rep);
+  //     if (std::find(orbits.begin(), orbits.end(), state) == orbits.end()){
+  // 	orbits[state] = {sym}
+  //     } else {
+  // 	orbits[state].push_back(sym);
+  //     }
+
+  //     idx_t idx = states_indexing.index(state);
+  //     idces[idx] = idces[rep_idx];
+
+      
+  //   }
+      
+  //   bit_t rep = representative(state, group_action);
+  //   idces[idx] = idces[states_indexing.index(rep)];
+
+  //   assert(idces[idx] != invalid_index);
+
+  //   // Determine the symmetries that yield the up-representative
+  //   span_size_t begin = syms.size();
+  //   for (int sym = 0; sym < group_action.n_symmetries(); ++sym) {
+  //     if (group_action.apply(sym, state) == rep)
+  //       syms.push_back(sym);
+  //   }
+  //   span_size_t end = syms.size();
+  //   sym_limits[idx] = {begin, end - begin};
+  // }
+
 
   return {reps, idces, syms, sym_limits};
 }
@@ -74,14 +111,12 @@ representatives_indices_symmetries_limits_norms(
 
   // Compute all representatives
   for (auto [state, idx] : states_indexing.states_indices()) {
-    bit_t rep = representative(state, group_action);
-
     // register state if it's a representative and has non-zero norm
-    if (rep == state) {
-      double norm = symmetries::norm(rep, group_action, irrep);
+    if (is_representative(state, group_action)) {
+      double norm = symmetries::norm(state, group_action, irrep);
       if (norm > 1e-6) {
         idces[idx] = reps.size();
-        reps.push_back(rep);
+        reps.push_back(state);
         norms.push_back(norm);
       }
     }

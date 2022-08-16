@@ -2,7 +2,7 @@
 
 #include <vector>
 #include <hydra/utils/openmp_utils.h>
-#include <hydra/symmetries/fermi_sign.h>
+#include <hydra/symmetries/operations/fermi_sign.h>
 
 namespace hydra::symmetries {
 

@@ -1,6 +1,6 @@
 #include "sublattice_stability.h"
 
-#include <hydra/symmetries/symmetry_operations.h>
+#include <hydra/symmetries/operations/symmetry_operations.h>
 #include <hydra/utils/logger.h>
 
 namespace hydra::symmetries {

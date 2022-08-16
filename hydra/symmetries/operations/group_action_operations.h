@@ -2,7 +2,7 @@
 #include <lila/external/gsl/span>
 
 #include <hydra/combinatorics/combinations.h>
-#include <hydra/symmetries/fermi_sign.h>
+#include <hydra/symmetries/operations/fermi_sign.h>
 #include <hydra/symmetries/representation.h>
 #include <vector>
 
@@ -34,6 +34,18 @@ inline bit_t representative(bit_t state, GroupAction const &group_action) {
     }
   }
   return rep;
+}
+
+// determine whether a state is a representative
+template <typename bit_t, class GroupAction>
+inline bool is_representative(bit_t state, GroupAction const &group_action) {
+  for (int sym = 0; sym < group_action.n_symmetries(); ++sym) {
+    bit_t tstate = group_action.apply(sym, state);
+    if (tstate < state) {
+      return false;
+    }
+  }
+  return true;
 }
 
 // Computes the representative using only a specified subset of symmetries

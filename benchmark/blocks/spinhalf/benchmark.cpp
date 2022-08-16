@@ -5,15 +5,15 @@ int main() {
 
   Log.set_verbosity(1);
 
-  // int n_sites = 20;
-  // std::string lfile = std::string("square.") + std::to_string(n_sites) +
-  //                     std::string(".J1J2.fsl.pbc.lat");
-  // auto irrep = read_represenation(lfile, "Gamma.C4.A");
-
-  int n_sites = 16;
+  int n_sites = 20;
   std::string lfile = std::string("square.") + std::to_string(n_sites) +
                       std::string(".J1J2.fsl.pbc.lat");
-  auto irrep = read_represenation(lfile, "Gamma.D4.A1");
+  auto irrep = read_represenation(lfile, "Gamma.C4.A");
+
+  // int n_sites = 32;
+  // std::string lfile = std::string("square.") + std::to_string(n_sites) +
+  //                     std::string(".J1J2.fsl.pbc.lat");
+  // auto irrep = read_represenation(lfile, "Gamma.D4.A1");
 
 
   int n_up = n_sites / 2;

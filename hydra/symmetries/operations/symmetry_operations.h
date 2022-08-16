@@ -3,7 +3,7 @@
 #include <lila/external/gsl/span>
 
 #include <hydra/combinatorics/combinations.h>
-#include <hydra/symmetries/fermi_sign.h>
+#include <hydra/symmetries/operations/fermi_sign.h>
 #include <hydra/symmetries/representation.h>
 
 #include <string>

@@ -50,11 +50,12 @@ sources+= hydra/blocks/tj/tj.cpp
 sources+= hydra/blocks/tj/tj_matrix.cpp
 sources+= hydra/blocks/tj/tj_apply.cpp
 
-sources+= hydra/symmetries/symmetry_operations.cpp
+sources+= hydra/symmetries/operations/symmetry_operations.cpp
+sources+= hydra/symmetries/permutation.cpp
 sources+= hydra/symmetries/permutation_group.cpp
 sources+= hydra/symmetries/representation.cpp
-sources+= hydra/symmetries/fermi_sign.cpp
-sources+= hydra/symmetries/symmetric_operator.cpp
+sources+= hydra/symmetries/operations/fermi_sign.cpp
+
 sources+= hydra/symmetries/group_action/group_action.cpp
 sources+= hydra/symmetries/group_action/group_action_lookup.cpp
 sources+= hydra/symmetries/group_action/group_action_sublattice.cpp
@@ -65,6 +66,7 @@ sources+= hydra/operators/bondlist.cpp
 sources+= hydra/operators/couplings.cpp
 sources+= hydra/operators/operator_utils.cpp
 sources+= hydra/operators/operator_qns.cpp
+sources+= hydra/operators/symmetric_operator.cpp
 
 sources+= hydra/wavefunctions/gpwf_spinhalf.cpp
 
@@ -109,6 +111,7 @@ testsources+= test/symmetries/group_action/test_group_action_sublattice.cpp
 testsources+= test/symmetries/test_fermi_sign.cpp
 testsources+= test/symmetries/test_symmetric_operator.cpp
 testsources+= test/symmetries/test_symmetry_operations.cpp
+testsources+= test/symmetries/test_permutation.cpp
 
 testsources+= test/operators/test_operator_qns.cpp
 

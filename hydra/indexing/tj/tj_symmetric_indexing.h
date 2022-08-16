@@ -10,9 +10,9 @@
 #include <hydra/symmetries/permutation_group.h>
 #include <hydra/symmetries/group_action/group_action_lookup.h>
 #include <hydra/symmetries/representation.h>
-#include <hydra/symmetries/symmetry_operations.h>
-#include <hydra/symmetries/representative_list.h>
-#include <hydra/symmetries/fermi_bool_table.h>
+#include <hydra/symmetries/operations/symmetry_operations.h>
+#include <hydra/symmetries/operations/representative_list.h>
+#include <hydra/symmetries/operations/fermi_bool_table.h>
 
 namespace hydra::indexing {
 

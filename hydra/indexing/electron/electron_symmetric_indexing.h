@@ -8,10 +8,10 @@
 #include <hydra/common.h>
 #include <hydra/indexing/lintable.h>
 #include <hydra/symmetries/group_action/group_action_lookup.h>
-#include <hydra/symmetries/group_action/group_action_operations.h>
+#include <hydra/symmetries/operations/group_action_operations.h>
+#include <hydra/symmetries/operations/symmetry_operations.h>
 #include <hydra/symmetries/permutation_group.h>
 #include <hydra/symmetries/representation.h>
-#include <hydra/symmetries/symmetry_operations.h>
 
 namespace hydra::indexing {
 
