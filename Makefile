@@ -27,7 +27,7 @@ testmpidepends = $(subst .cpp,.d,$(testmpisources))
 includes=-I$(liladir)
 
 depflags = -MT $@ -MMD -MP -MF $*.d
-
+openmp = -fopenmp
 
 .PHONY: all 
 all:  $(objects) lib
@@ -50,7 +50,7 @@ include $(testmpidepends)
 # different building suites
 .PHONY: test 
 test:  $(objects) $(testobjects) lib 
-	$(cc) $(ccopt) $(ccstd) $(ccwarn) $(depflags) $(libraries) $(objects) $(testobjects) $(openmp) -o test/tests
+	$(cc) $(ccopt) $(ccstd) $(ccwarn) $(depflags) $(libraries) $(objects) $(testobjects) $(enable_openmp) $(openmp) -o test/tests
 
 .PHONY: mpi
 mpi: $(objects) $(mpiobjects) libmpi
@@ -86,4 +86,4 @@ rebuild: clean all lib
 
 %.o: %.cpp %.d
 %.o: %.cpp 
-	$(cc) $(ccopt) $(ccstd) $(ccwarn) $(depflags) $(lilabackend) $(enable_mpi) $(openmp) -c $< -o $@ $(includes) -I.
+	$(cc) $(ccopt) $(ccstd) $(ccwarn) $(depflags) $(lilabackend) $(enable_mpi) $(enable_openmp) $(openmp) -c $< -o $@ $(includes) -I.
