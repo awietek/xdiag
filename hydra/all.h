@@ -25,7 +25,6 @@
 #include "combinatorics/bit_patterns.h"
 #include "combinatorics/combinations.h"
 #include "combinatorics/combinations_index.h"
-#include "combinatorics/combinatorics_omp_utils.h"
 #include "combinatorics/subsets.h"
 #include "combinatorics/subsets_index.h"
 

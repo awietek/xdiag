@@ -1,12 +1,11 @@
 #include "combinations_index.h"
 
-#ifdef _OPENMP
-#include <omp.h>
-#endif
-
-#include <hydra/utils/logger.h>
 #include <hydra/combinatorics/bit_patterns.h>
-#include <hydra/combinatorics/combinatorics_omp_utils.h>
+#include <hydra/utils/logger.h>
+
+#ifdef HYDRA_ENABLE_OPENMP
+#include <hydra/utils/openmp_utils.h>
+#endif
 
 namespace hydra::combinatorics {
 
@@ -38,6 +37,7 @@ template class CombinationsIndexIterator<uint16_t>;
 template class CombinationsIndexIterator<uint32_t>;
 template class CombinationsIndexIterator<uint64_t>;
 
+#ifdef HYDRA_ENABLE_OPENMP
 template <class bit_t>
 CombinationsIndexThread<bit_t>::CombinationsIndexThread(int n, int k)
     : n_(n), k_(k), size_(combinatorics::binomial(n, k)) {
@@ -57,5 +57,6 @@ CombinationsIndexThread<bit_t>::CombinationsIndexThread(int n, int k)
 template class CombinationsIndexThread<uint16_t>;
 template class CombinationsIndexThread<uint32_t>;
 template class CombinationsIndexThread<uint64_t>;
-
+#endif
+  
 } // namespace hydra::combinatorics

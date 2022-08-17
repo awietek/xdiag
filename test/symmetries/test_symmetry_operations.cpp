@@ -162,8 +162,15 @@ template <typename bit_t> void test_fermi_bool_table(int n_sites) {
   for (int npar = 0; npar <= n_sites; ++npar) {
 
     auto fermi_bool_tbl =
-        fermi_bool_table(Combinations<bit_t>(n_sites, npar), group_action);
+        fermi_bool_table(Combinations<bit_t>(n_sites, npar), group);
     // hydra::Log("N: {} n: {}", n_sites, npar);
+
+#ifdef HYDRA_ENABLE_OPENMP
+    auto t1 =
+        fermi_bool_table_serial(Combinations<bit_t>(n_sites, npar), group);
+    auto t2 = fermi_bool_table_omp(Combinations<bit_t>(n_sites, npar), group);
+    REQUIRE(t1 == t2);
+#endif
     idx_t raw_size = binomial(n_sites, npar);
 
     for (int sym = 0; sym < n_symmetries; ++sym) {

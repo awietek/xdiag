@@ -1,19 +1,25 @@
 #include "indexing_sublattice.h"
 
+#include <hydra/combinatorics/combinations.h>
 #include <hydra/combinatorics/subsets.h>
+
 #include <hydra/symmetries/operations/group_action_operations.h>
 #include <hydra/symmetries/operations/symmetry_operations.h>
 #include <hydra/utils/logger.h>
 
 #include <algorithm>
 
+#ifdef HYDRA_ENABLE_OPENMP
+#include <hydra/utils/openmp_utils.h>
+#endif
+
 namespace hydra::indexing::spinhalf {
 
 template <typename bit_t>
-void compute_rep_search_range(
-    std::vector<bit_t> const &reps, int n_postfix_bits,
-    // std::unordered_map<bit_t, gsl::span<bit_t const>> &rep_search_range) {
-    ska::flat_hash_map<bit_t, gsl::span<bit_t const>> &rep_search_range) {
+ska::flat_hash_map<bit_t, gsl::span<bit_t const>>
+compute_rep_search_range_serial(std::vector<bit_t> const &reps,
+                                int n_postfix_bits) {
+  ska::flat_hash_map<bit_t, gsl::span<bit_t const>> rep_search_range;
 
   if (reps.size() > 0) {
     idx_t start = 0;
@@ -32,7 +38,79 @@ void compute_rep_search_range(
     rep_search_range[previous_prefix] =
         gsl::span<bit_t const>(reps.data() + start, end - start);
   }
+
+  return rep_search_range;
 }
+
+#ifdef HYDRA_ENABLE_OPENMP
+template <typename bit_t>
+ska::flat_hash_map<bit_t, gsl::span<bit_t const>>
+compute_rep_search_range_omp(std::vector<bit_t> const &reps,
+                             int n_postfix_bits) {
+
+  ska::flat_hash_map<bit_t, gsl::span<bit_t const>> rep_search_range;
+
+  if (reps.size() > 0) {
+
+    std::vector<std::vector<std::pair<bit_t, gsl::span<bit_t const>>>>
+        rep_search_range_thread;
+
+#pragma omp parallel
+    {
+      int myid = omp_get_thread_num();
+      int rank = omp_get_num_threads();
+
+#pragma omp single
+      { rep_search_range_thread.resize(rank); }
+
+      auto [start_thread, end_thread] = utils::get_omp_start_end(reps.size());
+
+      // Adjust start/end such that there is no overlaps between threads
+      if ((myid != rank - 1) && (end_thread != 0) &&
+          (end_thread != (idx_t)reps.size())) {
+        while (reps[end_thread - 1] == reps[end_thread]) {
+          ++end_thread;
+        }
+      }
+
+      if ((myid != 0) && (start_thread != 0) &&
+          (end_thread != (idx_t)reps.size())) {
+        while (reps[start_thread + 1] == reps[start_thread]) {
+          ++start_thread;
+        }
+      }
+
+      idx_t start = start_thread;
+      idx_t end = start_thread;
+      bit_t previous_prefix = reps[start] >> n_postfix_bits;
+      for (idx_t idx = start_thread; idx < end_thread; ++idx) {
+        bit_t prefix = reps[idx] >> n_postfix_bits;
+        if (prefix != previous_prefix) {
+
+          rep_search_range_thread[myid].push_back(
+              {previous_prefix,
+               gsl::span<bit_t const>(reps.data() + start, end - start)});
+
+          previous_prefix = prefix;
+          start = end;
+        }
+        ++end;
+      }
+      rep_search_range_thread[myid].push_back(
+          {previous_prefix,
+           gsl::span<bit_t const>(reps.data() + start, end - start)});
+    } // #pragma omp parallel
+
+    for (auto const &prefixes_ranges : rep_search_range_thread) {
+      for (auto [prefix, range] : prefixes_ranges) {
+        rep_search_range[prefix] = range;
+      }
+    }
+  }
+
+  return rep_search_range;
+} // namespace hydra::indexing::spinhalf
+#endif
 
 template <typename bit_t, int n_sublat>
 IndexingSublattice<bit_t, n_sublat>::IndexingSublattice(
@@ -49,7 +127,7 @@ IndexingSublattice<bit_t, n_sublat>::IndexingSublattice(
   for (auto prefix : Subsets<bit_t>(n_leading)) {
 
     // if prefix is not rep, the full state also cannot be rep
-    bit_t prefix_rep = group_action_.reps_[n_sublat-1][prefix];
+    bit_t prefix_rep = group_action_.reps_[n_sublat - 1][prefix];
     if (prefix_rep < prefix) {
       continue;
     }
@@ -69,7 +147,7 @@ IndexingSublattice<bit_t, n_sublat>::IndexingSublattice(
 
   reps_.shrink_to_fit();
   norms_.shrink_to_fit();
-  compute_rep_search_range(reps_, n_postfix_bits_, rep_search_range_);
+  rep_search_range_ = compute_rep_search_range_serial(reps_, n_postfix_bits_);
   begin_ = iterator_t(reps_, 0);
   end_ = iterator_t(reps_, reps_.size());
 }
@@ -82,14 +160,12 @@ IndexingSublattice<bit_t, n_sublat>::IndexingSublattice(
       n_postfix_bits_(n_sites - std::min(maximum_prefix_bits, n_sites)),
       group_action_(allowed_subgroup(permutation_group, irrep)), irrep_(irrep) {
   using bitops::popcnt;
-  using combinatorics::Combinations;
-  using combinatorics::Subsets;
 
   int n_sites_sublat = n_sites_ / n_sublat;
   int n_leading = n_sites_sublat;
   int n_trailing = (n_sublat - 1) * n_sites_sublat;
 
-  for (auto prefix : Subsets<bit_t>(n_leading)) {
+  for (auto prefix : combinatorics::Subsets<bit_t>(n_leading)) {
 
     // if prefix is incompatible with n_up, continue
     int n_up_prefix = popcnt(prefix);
@@ -99,12 +175,14 @@ IndexingSublattice<bit_t, n_sublat>::IndexingSublattice(
     }
 
     // if prefix is not rep, the full state also cannot be rep
-    bit_t prefix_rep = group_action_.reps_[n_sublat-1][prefix];
+    bit_t prefix_rep = group_action_.reps_[n_sublat - 1][prefix];
     if (prefix_rep < prefix) {
-      continue;      
+      continue;
     }
 
-    for (auto postfix : Combinations<bit_t>(n_trailing, n_up_postfix)) {
+#ifndef HYDRA_ENABLE_OPENMP
+    for (auto postfix :
+         combinatorics::Combinations<bit_t>(n_trailing, n_up_postfix)) {
       bit_t state = (prefix << n_trailing) | postfix;
       bit_t rep = representative(state);
       if (state == rep) {
@@ -115,14 +193,54 @@ IndexingSublattice<bit_t, n_sublat>::IndexingSublattice(
         }
       }
     }
-  }
+
+#else
+
+    std::vector<std::vector<bit_t>> reps_thread;
+    std::vector<std::vector<double>> norms_thread;
+#pragma omp parallel
+    {
+      int myid = omp_get_thread_num();
+      int rank = omp_get_num_threads();
+#pragma omp single
+      {
+        reps_thread.resize(rank);
+        norms_thread.resize(rank);
+      }
+
+      // Compute representatives for each thread
+      for (auto postfix :
+           combinatorics::CombinationsThread<bit_t>(n_trailing, n_up_postfix)) {
+        bit_t state = (prefix << n_trailing) | postfix;
+        bit_t rep = representative(state);
+        if (state == rep) {
+          double norm = symmetries::norm(rep, group_action_, irrep);
+          if (std::abs(norm) > 1e-6) {
+            reps_thread[myid].push_back(rep);
+            norms_thread[myid].push_back(norm);
+          }
+        }
+      }
+    } // pragma omp parallel
+
+    auto reps_prefix = utils::combine_vectors(reps_thread);
+    auto norms_prefix = utils::combine_vectors(norms_thread);
+    reps_.insert(reps_.end(), reps_prefix.begin(), reps_prefix.end());
+    norms_.insert(norms_.end(), norms_prefix.begin(), norms_prefix.end());
+#endif
+
+  } // for (auto prefix : ...)
 
   reps_.shrink_to_fit();
   norms_.shrink_to_fit();
-  compute_rep_search_range(reps_, n_postfix_bits_, rep_search_range_);
+#ifdef HYDRA_ENABLE_OPENMP
+  rep_search_range_ = compute_rep_search_range_omp(reps_, n_postfix_bits_);
+#else
+  rep_search_range_ = compute_rep_search_range_serial(reps_, n_postfix_bits_);
+#endif
   begin_ = iterator_t(reps_, 0);
   end_ = iterator_t(reps_, reps_.size());
-}
+} // namespace hydra::indexing::spinhalf
 
 template <typename bit_t, int n_sublat>
 idx_t IndexingSublattice<bit_t, n_sublat>::index_of_representative(

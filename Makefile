@@ -27,7 +27,6 @@ testmpidepends = $(subst .cpp,.d,$(testmpisources))
 includes=-I$(liladir)
 
 depflags = -MT $@ -MMD -MP -MF $*.d
-openmp = -fopenmp
 
 .PHONY: all 
 all:  $(objects) lib

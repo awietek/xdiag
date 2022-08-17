@@ -31,8 +31,11 @@ lattice = quantipy.lattice.Square(simulation_torus = np.array([[5,0],[0,5]]))
 # # 32 site lattice
 # lattice = quantipy.lattice.Square(simulation_torus = np.array([[4,4],[4,-4]]))
 
-# # 36 site lattice
-# lattice = quantipy.lattice.Square(simulation_torus = np.array([[6,0],[0,6]]))
+# 36 site lattice
+lattice = quantipy.lattice.Square(simulation_torus = np.array([[6,0],[0,6]]))
+
+# 40 site lattice
+lattice = quantipy.lattice.Square(simulation_torus = np.array([[6,2],[-2,6]]))
 
 
 ########################
@@ -102,9 +105,9 @@ model.set_nb_interaction(2, int_type='HB', coupling='J2')
 ##################
 # Create modelfile
 ##################
-# model.write(filename='square.' + str(lattice.n_sites) + "." + filename + ".lat", 
-#             sublattice_structure=sublattice_structure)
-model.write(filename='square.' + str(lattice.n_sites) + "." + filename + ".lat")
+model.write(filename='square.' + str(lattice.n_sites) + "." + filename + ".lat", 
+            sublattice_structure=sublattice_structure)
+# model.write(filename='square.' + str(lattice.n_sites) + "." + filename + ".lat")
 
 # irreps = model.symmetries()
 # irrepnames = irreps.keys()

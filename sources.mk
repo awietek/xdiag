@@ -10,7 +10,6 @@ sources+= hydra/combinatorics/subsets_index.cpp
 sources+= hydra/combinatorics/bit_patterns.cpp
 sources+= hydra/combinatorics/combinations.cpp
 sources+= hydra/combinatorics/combinations_index.cpp
-sources+= hydra/combinatorics/combinatorics_omp_utils.cpp
 
 sources+= hydra/parameters/parameter_value.cpp
 sources+= hydra/parameters/parameters.cpp
@@ -55,6 +54,7 @@ sources+= hydra/symmetries/permutation.cpp
 sources+= hydra/symmetries/permutation_group.cpp
 sources+= hydra/symmetries/representation.cpp
 sources+= hydra/symmetries/operations/fermi_sign.cpp
+sources+= hydra/symmetries/operations/fermi_bool_table.cpp
 
 sources+= hydra/symmetries/group_action/group_action.cpp
 sources+= hydra/symmetries/group_action/group_action_lookup.cpp

@@ -29,7 +29,8 @@ template <typename bit_t> void test_combinations_index() {
       REQUIRE(ctr == combs.size());
     }
 
-  // Test
+// Test
+#ifdef HYDRA_ENABLE_OPENMP
   for (int n = 0; n < 7; ++n) {
     for (int k = 0; k <= n; ++k) {
       idx_t size = binomial(n, k);
@@ -55,6 +56,7 @@ template <typename bit_t> void test_combinations_index() {
       }
     }
   }
+#endif
 }
 
 TEST_CASE("CombinationsIndex", "[combinatorics]") {

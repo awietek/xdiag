@@ -1,8 +1,11 @@
 #include "combinations.h"
 
-#include <hydra/utils/logger.h>
 #include <hydra/combinatorics/bit_patterns.h>
-#include <hydra/combinatorics/combinatorics_omp_utils.h>
+#include <hydra/utils/logger.h>
+
+#ifdef HYDRA_ENABLE_OPENMP
+#include <hydra/utils/openmp_utils.h>
+#endif
 
 namespace hydra::combinatorics {
 
@@ -26,6 +29,15 @@ template class Combinations<uint32_t>;
 template class Combinations<uint64_t>;
 
 template <class bit_t>
+CombinationsIterator<bit_t>::CombinationsIterator(int n, int k, idx_t idx)
+    : current_(get_nth_pattern<bit_t>(idx, n, k)), idx_(idx) {}
+
+template class CombinationsIterator<uint16_t>;
+template class CombinationsIterator<uint32_t>;
+template class CombinationsIterator<uint64_t>;
+
+#ifdef HYDRA_ENABLE_OPENMP
+template <class bit_t>
 CombinationsThread<bit_t>::CombinationsThread(int n, int k)
     : n_(n), k_(k), size_(combinatorics::binomial(n, k)) {
   if (k > n) {
@@ -44,13 +56,6 @@ CombinationsThread<bit_t>::CombinationsThread(int n, int k)
 template class CombinationsThread<uint16_t>;
 template class CombinationsThread<uint32_t>;
 template class CombinationsThread<uint64_t>;
-
-template <class bit_t>
-CombinationsIterator<bit_t>::CombinationsIterator(int n, int k, idx_t idx)
-    : current_(get_nth_pattern<bit_t>(idx, n, k)), idx_(idx) {}
-
-template class CombinationsIterator<uint16_t>;
-template class CombinationsIterator<uint32_t>;
-template class CombinationsIterator<uint64_t>;
+#endif
 
 } // namespace hydra::combinatorics

@@ -14,11 +14,21 @@ int main() {
   // std::string lfile = std::string("square.") + std::to_string(n_sites) +
   //                     std::string(".J1J2.fsl.pbc.lat");
   // auto irrep = read_represenation(lfile, "Gamma.D4.A1");
+
+  // int n_sites = 32;
+  // std::string lfile = std::string("square.") + std::to_string(n_sites) +
+  //                     std::string(".J1J2.fsl.pbc.lat");
+  // auto irrep = read_represenation(lfile, "Gamma.D4.A1");
   
-  int n_sites = 32;
+  // int n_sites = 36;
+  // std::string lfile = std::string("square.") + std::to_string(n_sites) +
+  //                     std::string(".J1J2.fsl.pbc.lat");
+  // auto irrep = read_represenation(lfile, "Gamma.D4.A1");
+
+  int n_sites = 40;
   std::string lfile = std::string("square.") + std::to_string(n_sites) +
                       std::string(".J1J2.fsl.pbc.lat");
-  auto irrep = read_represenation(lfile, "Gamma.D4.A1");
+  auto irrep = read_represenation(lfile, "Gamma.C4.A");
 
 
   int n_up = n_sites / 2;
@@ -32,10 +42,10 @@ int main() {
   lila::toc("build block");
   Log("dim: {}", block.size());
   
-  lila::tic();
-  double e0 = E0Real(bondlist, cpls, block);
-  lila::toc();
-  Log.out("e0: {}", e0);
+  // lila::tic();
+  // double e0 = E0Real(bondlist, cpls, block);
+  // lila::toc();
+  // Log.out("e0: {}", e0);
 
   return EXIT_SUCCESS;
 }

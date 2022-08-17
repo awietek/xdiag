@@ -25,9 +25,9 @@ tJSymmetricIndexing<bit_t>::tJSymmetricIndexing(
   utils::check_n_sites(n_sites, permutation_group);
 
   fermi_bool_ups_table_ = symmetries::fermi_bool_table(
-      Combinations<bit_t>(n_sites, nup), group_action_);
+      Combinations<bit_t>(n_sites, nup), permutation_group);
   fermi_bool_dns_table_ = symmetries::fermi_bool_table(
-      Combinations<bit_t>(n_sites, ndn), group_action_);
+      Combinations<bit_t>(n_sites, ndn), permutation_group);
 
   std::tie(reps_up_, idces_up_, syms_up_, sym_limits_up_) =
       symmetries::representatives_indices_symmetries_limits<bit_t>(

@@ -1,11 +1,11 @@
+#ifdef HYDRA_ENABLE_OPENMP
+
 #include "openmp_utils.h"
-#ifdef _OPENMP
 #include <omp.h>
-#endif
 
 namespace hydra::utils {
 
-std::pair<idx_t, idx_t> get_omp_start_end(int size) {
+std::pair<idx_t, idx_t> get_omp_start_end(idx_t size) {
 #ifdef _OPENMP
   idx_t myid = omp_get_thread_num();
   idx_t rank = omp_get_num_threads();
@@ -19,5 +19,7 @@ std::pair<idx_t, idx_t> get_omp_start_end(int size) {
 #endif
   return {start, end};
 }
-  
-}  // namespace hydra::utils
+
+} // namespace hydra::utils
+
+#endif

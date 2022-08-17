@@ -28,26 +28,6 @@ private:
   iterator_t begin_, end_;
 };
 
-// CombinationsThread
-template <typename bit_t = std_bit_t> class CombinationsThread {
-public:
-  using iterator_t = CombinationsIterator<bit_t>;
-
-  CombinationsThread() = default;
-  CombinationsThread(int n, int k);
-
-  int n() const { return n_; }
-  int k() const { return k_; }
-  idx_t size() const { return size_; };
-  iterator_t begin() const { return begin_; }
-  iterator_t end() const { return end_; }
-
-private:
-  int n_, k_;
-  idx_t size_;
-  iterator_t begin_, end_;
-};
-
 // CombinationsIterator
 template <typename bit_t> class CombinationsIterator {
 public:
@@ -72,9 +52,31 @@ private:
   idx_t idx_;
 };
 
+#ifdef HYDRA_ENABLE_OPENMP
+// CombinationsThread
+template <typename bit_t = std_bit_t> class CombinationsThread {
+public:
+  using iterator_t = CombinationsIterator<bit_t>;
+
+  CombinationsThread() = default;
+  CombinationsThread(int n, int k);
+
+  int n() const { return n_; }
+  int k() const { return k_; }
+  idx_t size() const { return size_; };
+  iterator_t begin() const { return begin_; }
+  iterator_t end() const { return end_; }
+
+private:
+  int n_, k_;
+  idx_t size_;
+  iterator_t begin_, end_;
+};
+
 template <typename bit_t>
 inline CombinationsThread<bit_t> ThreadStates(Combinations<bit_t> const &si) {
   return CombinationsThread<bit_t>(si.n(), si.k());
 }
+#endif
 
 } // namespace hydra::combinatorics

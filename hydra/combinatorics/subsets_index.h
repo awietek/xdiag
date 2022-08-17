@@ -25,25 +25,6 @@ private:
   iterator_t begin_, end_;
 };
 
-// SubsetsIndexThread
-template <typename bit_t = std_bit_t> class SubsetsIndexThread {
-public:
-  using iterator_t = SubsetsIndexIterator<bit_t>;
-
-  SubsetsIndexThread() = default;
-  SubsetsIndexThread(int n);
-
-  int n() const { return n_; }
-  idx_t size() const { return size_; };
-  iterator_t begin() const { return begin_; }
-  iterator_t end() const { return end_; }
-
-private:
-  int n_;
-  idx_t size_;
-  iterator_t begin_, end_;
-};
-
 // SubsetsIndexIterator
 template <class bit_t> class SubsetsIndexIterator {
 public:
@@ -69,10 +50,31 @@ private:
   bit_t current_;
 };
 
+#ifdef HYDRA_ENABLE_OPENMP
+// SubsetsIndexThread
+template <typename bit_t = std_bit_t> class SubsetsIndexThread {
+public:
+  using iterator_t = SubsetsIndexIterator<bit_t>;
+
+  SubsetsIndexThread() = default;
+  SubsetsIndexThread(int n);
+
+  int n() const { return n_; }
+  idx_t size() const { return size_; };
+  iterator_t begin() const { return begin_; }
+  iterator_t end() const { return end_; }
+
+private:
+  int n_;
+  idx_t size_;
+  iterator_t begin_, end_;
+};
+
 template <typename bit_t>
 inline SubsetsIndexThread<bit_t>
 ThreadStatesIndex(SubsetsIndex<bit_t> const &si) {
   return SubsetsIndexThread(si.n());
 }
+#endif
 
 } // namespace hydra::combinatorics
