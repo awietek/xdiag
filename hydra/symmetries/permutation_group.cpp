@@ -47,7 +47,7 @@ PermutationGroup::PermutationGroup(std::vector<Permutation> const &permutations)
   int idx = 0;
   for (auto p : permutations) {
     auto pinv = Inverse(p);
-    auto it = std::find(permutations.begin(), permutations.end(), p);
+    auto it = std::find(permutations.begin(), permutations.end(), pinv);
     if (it == permutations.end()) {
       Log.err("Error constructing PermutationGroup: inverse element not found");
     } else {

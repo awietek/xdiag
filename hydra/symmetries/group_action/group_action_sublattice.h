@@ -9,6 +9,11 @@
 
 namespace hydra {
 
+// Forward declaration for friend
+namespace indexing::spinhalf {
+template <typename bit_t, int n_sublat> class IndexingSublattice;
+}
+
 template <typename bit_t, int n_sublat> class GroupActionSublattice {
 public:
   using half_bit_t = bitops::half_bit_t<bit_t>;
@@ -53,6 +58,8 @@ private:
   std::array<std::vector<gsl::span<int const>>, n_sublat> rep_syms_;
   std::array<std::vector<int>, n_sublat> rep_syms_array_;
   std::array<std::vector<bit_t>, n_sublat> sym_action_;
+
+  friend class indexing::spinhalf::IndexingSublattice<bit_t, n_sublat>;
 };
 
 } // namespace hydra

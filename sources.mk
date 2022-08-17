@@ -109,11 +109,12 @@ testsources+= test/symmetries/group_action/test_group_action.cpp
 testsources+= test/symmetries/group_action/test_group_action_lookup.cpp
 testsources+= test/symmetries/group_action/test_group_action_sublattice.cpp
 testsources+= test/symmetries/test_fermi_sign.cpp
-testsources+= test/symmetries/test_symmetric_operator.cpp
 testsources+= test/symmetries/test_symmetry_operations.cpp
 testsources+= test/symmetries/test_permutation.cpp
+testsources+= test/symmetries/test_permutation_group.cpp
 
 testsources+= test/operators/test_operator_qns.cpp
+testsources+= test/operators/test_symmetric_operator.cpp
 
 testsources+= test/blocks/spinhalf/testcases_spinhalf.cpp
 testsources+= test/blocks/spinhalf/test_spinhalf_matrix.cpp

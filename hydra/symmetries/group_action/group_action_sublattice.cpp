@@ -45,7 +45,7 @@ GroupActionSublattice<bit_t, n_sublat>::GroupActionSublattice(
     // Compute all representative and representative symmetries
     std::vector<idx_t> rep_syms_begin(size_tables_);
     std::vector<idx_t> rep_syms_end(size_tables_);
-    ;
+    
     for (half_bit_t bits = 0; bits < (bit_t)size_tables_; ++bits) {
 
       idx_t idx = (idx_t)bits;

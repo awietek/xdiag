@@ -22,7 +22,6 @@ SymmetricOperator(BondList const &bonds, Couplings const &cpls,
       }
       bonds_sym << Bond(type, cpl, sites_sym);
     }
-
     cpls_sym[cpl] = cpls[cpl] / (complex)N_group;
   }
 

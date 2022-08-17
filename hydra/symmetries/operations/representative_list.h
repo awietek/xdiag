@@ -1,5 +1,6 @@
 #pragma once
 
+#include <numeric>
 #include <utility>
 #include <vector>
 
@@ -16,137 +17,114 @@ using span_size_t = gsl::span<int const>::size_type;
 
 template <typename bit_t, class StatesIndexing, class GroupAction>
 inline std::tuple<std::vector<bit_t>, std::vector<idx_t>, std::vector<int>,
-                  std::vector<std::pair<span_size_t, span_size_t>>>
-representatives_indices_symmetries_limits(StatesIndexing &&states_indexing,
-                                          GroupAction &&group_action) {
-
-  using combinatorics::binomial;
-
-  idx_t size = states_indexing.size();
-  std::vector<idx_t> idces(size);
-  std::vector<std::pair<span_size_t, span_size_t>> sym_limits(size);
-
-  // Compute all representatives
-  std::vector<bit_t> reps;
-  for (auto [state, idx] : states_indexing.states_indices()) {
-    if (is_representative(state, group_action)) {
-      idces[idx] = reps.size();
-      reps.push_back(state);
-    }
-  }
-  reps.shrink_to_fit();
-  
-  // Compute indices of up-representatives and stabilizer symmetries
-  std::vector<int> syms;
-  for (auto [state, idx] : states_indexing.states_indices()) {
-    bit_t rep = representative(state, group_action);
-    idces[idx] = idces[states_indexing.index(rep)];
-
-    assert(idces[idx] != invalid_index);
-
-    // Determine the symmetries that yield the up-representative
-    span_size_t begin = syms.size();
-    for (int sym = 0; sym < group_action.n_symmetries(); ++sym) {
-      if (group_action.apply(sym, state) == rep)
-        syms.push_back(sym);
-    }
-    span_size_t end = syms.size();
-    sym_limits[idx] = {begin, end - begin};
-  }
-
-  //   // Compute indices of up-representatives and stabilizer symmetries
-  // std::vector<int> syms;
-  // for (idx_t rep_idx=0; rep_idx<reps.size(); ++rep_idx) {
-  //   bit_t rep = reps[rep_idx];
-
-  //   std::map<bit_t, std::vector<int>> orbits;
-    
-  //   for (int sym = 0; sym < group_action.n_symmetries(); ++sym) {
-  //     bit_t state = group_action.apply(sym, rep);
-  //     if (std::find(orbits.begin(), orbits.end(), state) == orbits.end()){
-  // 	orbits[state] = {sym}
-  //     } else {
-  // 	orbits[state].push_back(sym);
-  //     }
-
-  //     idx_t idx = states_indexing.index(state);
-  //     idces[idx] = idces[rep_idx];
-
-      
-  //   }
-      
-  //   bit_t rep = representative(state, group_action);
-  //   idces[idx] = idces[states_indexing.index(rep)];
-
-  //   assert(idces[idx] != invalid_index);
-
-  //   // Determine the symmetries that yield the up-representative
-  //   span_size_t begin = syms.size();
-  //   for (int sym = 0; sym < group_action.n_symmetries(); ++sym) {
-  //     if (group_action.apply(sym, state) == rep)
-  //       syms.push_back(sym);
-  //   }
-  //   span_size_t end = syms.size();
-  //   sym_limits[idx] = {begin, end - begin};
-  // }
-
-
-  return {reps, idces, syms, sym_limits};
-}
-
-template <typename bit_t, class StatesIndexing, class GroupAction>
-inline std::tuple<std::vector<bit_t>, std::vector<idx_t>, std::vector<int>,
                   std::vector<std::pair<span_size_t, span_size_t>>,
                   std::vector<double>>
 representatives_indices_symmetries_limits_norms(
     StatesIndexing &&states_indexing, GroupAction &&group_action,
     Representation const &irrep) {
   idx_t size = states_indexing.size();
-
-  std::vector<bit_t> reps;
   std::vector<idx_t> idces(size, invalid_index);
-  std::vector<int> syms;
-  std::vector<std::pair<span_size_t, span_size_t>> sym_limits(size);
-  std::vector<double> norms;
 
   // Compute all representatives
+  std::vector<bit_t> reps;
+  std::vector<double> norms;
   for (auto [state, idx] : states_indexing.states_indices()) {
-    // register state if it's a representative and has non-zero norm
     if (is_representative(state, group_action)) {
-      double norm = symmetries::norm(state, group_action, irrep);
-      if (norm > 1e-6) {
+      double nrm = symmetries::norm(state, group_action, irrep);
+      if (std::abs(nrm) > 1e-6) {
         idces[idx] = reps.size();
         reps.push_back(state);
-        norms.push_back(norm);
+        norms.push_back(nrm);
       }
     }
   }
+  reps.shrink_to_fit();
+  norms.shrink_to_fit();
+  idx_t n_reps = reps.size();
 
-  // Compute indices of up-representatives and stabilizer symmetries
-  for (auto [state, idx] : states_indexing.states_indices()) {
+  // Determine the number of syms yielding the representative for each state
+  std::vector<int> n_syms_for_state(size, 0);
+  for (idx_t rep_idx = 0; rep_idx < n_reps; ++rep_idx) {
+    bit_t rep = reps[rep_idx];
 
-    bit_t rep = representative(state, group_action);
-    idx_t rep_idx = idces[states_indexing.index(rep)];
-    if (rep_idx != invalid_index) { // can be invalid if zero norm
+    for (int sym = 0; sym < group_action.n_symmetries(); ++sym) {
+      bit_t state = group_action.apply(sym, rep);
+      idx_t idx = states_indexing.index(state);
       idces[idx] = rep_idx;
-
-      // Add syms yielding the representative
-      std::vector<int> rep_syms = mapping_syms(state, rep, group_action);
-      span_size_t start = syms.size();
-      syms.insert(syms.end(), rep_syms.begin(), rep_syms.end());
-      span_size_t end = syms.size();
-      sym_limits[idx] = {start, end - start};
+      ++n_syms_for_state[idx];
     }
   }
 
-  // Resize to correct size
-  reps.shrink_to_fit();
-  idces.shrink_to_fit();
-  syms.shrink_to_fit();
-  sym_limits.shrink_to_fit();
-  norms.shrink_to_fit();
+  // compute size and allocate syms array
+  idx_t n_syms =
+      std::accumulate(n_syms_for_state.begin(), n_syms_for_state.end(), 0);
+  std::vector<int> syms(n_syms, 0);
+
+  // compute the sym offsets
+  std::vector<int> n_syms_for_state_offset(size, 0);
+  std::exclusive_scan(n_syms_for_state.begin(), n_syms_for_state.end(),
+                      n_syms_for_state_offset.begin(), 0);
+
+  // set the sym_limits
+  std::vector<std::pair<span_size_t, span_size_t>> sym_limits(size);
+  for (idx_t idx = 0; idx < size; ++idx) {
+    sym_limits[idx] = {n_syms_for_state_offset[idx], n_syms_for_state[idx]};
+  }
+
+  // empty n_syms_for_state again, now used as a counter
+  std::fill(n_syms_for_state.begin(), n_syms_for_state.end(), 0);
+
+  // calculate the symmetries yielding the representative
+  auto const &group = group_action.permutation_group();
+  for (idx_t rep_idx = 0; rep_idx < n_reps; ++rep_idx) {
+    bit_t rep = reps[rep_idx];
+
+    for (int sym = 0; sym < group_action.n_symmetries(); ++sym) {
+      bit_t state = group_action.apply(sym, rep);
+      idx_t idx = states_indexing.index(state);
+
+      int sym_inv = group.inverse(sym);
+      idx_t idx_sym = n_syms_for_state_offset[idx] + n_syms_for_state[idx]++;
+      syms[idx_sym] = sym_inv;
+    }
+  }
+
+  // // DEBUG: CHECK
+  // for (auto [state, idx] : states_indexing.states_indices()) {
+  //   idx_t rep_idx = idces[idx];
+  //   if (rep_idx != invalid_index) {
+  //     bit_t rep_lookup = reps[rep_idx];
+  //     bit_t rep_compute = representative(state, group_action);
+  //     assert(rep_lookup == rep_compute);
+  //     // Log("state: {}, rep: {}", state, rep_lookup);
+  //     auto [sbegin, slength] = sym_limits[idx];
+  //     for (int i = sbegin; i < sbegin + slength; ++i) {
+  //       int sym = syms[i];
+  // 	bit_t tstate = group_action.apply(sym, state);
+  // 	// Log("state: {}, rep: {}, tstate: {} sym: {} ", state, rep_lookup, tstate, sym);
+
+  //       assert(tstate == rep_lookup);
+  //     }
+
+  //   } else {
+  //     double nrm = symmetries::norm(state, group_action, irrep);
+  //     assert(std::abs(nrm) < 1e-6);
+  //   }
+  // }
 
   return {reps, idces, syms, sym_limits, norms};
+}
+
+template <typename bit_t, class StatesIndexing, class GroupAction>
+inline std::tuple<std::vector<bit_t>, std::vector<idx_t>, std::vector<int>,
+                  std::vector<std::pair<span_size_t, span_size_t>>>
+representatives_indices_symmetries_limits(StatesIndexing &&states_indexing,
+                                          GroupAction &&group_action) {
+  auto irrep = TrivialRepresentation(group_action.n_symmetries());
+  auto [reps, idces, syms, sym_limits, norms] =
+      representatives_indices_symmetries_limits_norms<bit_t>(
+          states_indexing, group_action, irrep);
+  return {reps, idces, syms, sym_limits};
 }
 
 template <typename bit_t, class States, class GroupAction>

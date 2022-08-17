@@ -1,10 +1,10 @@
 #pragma once
 
 #include <lila/external/gsl/span>
-#include <unordered_map>
-
+// #include <unordered_map>
 #include <hydra/common.h>
 
+#include <hydra/extern/flat_hash_map.h>
 #include <hydra/indexing/spinhalf/symmetric_iterator.h>
 
 #include <hydra/symmetries/group_action/group_action_sublattice.h>
@@ -13,7 +13,7 @@
 
 namespace hydra::indexing::spinhalf {
 
-constexpr int maximum_prefix_bits = 27;
+constexpr int maximum_prefix_bits = 20;
 
 template <typename bit_t, int n_sublat> class IndexingSublattice {
 public:
@@ -58,7 +58,8 @@ private:
 
   std::vector<bit_t> reps_;
   std::vector<double> norms_;
-  std::unordered_map<bit_t, gsl::span<bit_t const>> rep_search_range_;
+  // std::unordered_map<bit_t, gsl::span<bit_t const>> rep_search_range_;
+  ska::flat_hash_map<bit_t, gsl::span<bit_t const>> rep_search_range_;
 
   iterator_t begin_, end_;
 

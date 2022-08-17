@@ -16,7 +16,6 @@ GroupActionLookup<bit_t>::GroupActionLookup(
       postfix_mask_(((bit_t)1 << n_postfix_bits_) - 1),
       prefix_size_(pow(2, n_prefix_bits_)),
       postfix_size_(pow(2, n_postfix_bits_)),
-
       table_prefix_(n_symmetries_ * prefix_size_, 0),
       table_postfix_(n_symmetries_ * postfix_size_, 0) {
 

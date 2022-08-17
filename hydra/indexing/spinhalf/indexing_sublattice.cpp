@@ -12,7 +12,9 @@ namespace hydra::indexing::spinhalf {
 template <typename bit_t>
 void compute_rep_search_range(
     std::vector<bit_t> const &reps, int n_postfix_bits,
-    std::unordered_map<bit_t, gsl::span<bit_t const>> &rep_search_range) {
+    // std::unordered_map<bit_t, gsl::span<bit_t const>> &rep_search_range) {
+    ska::flat_hash_map<bit_t, gsl::span<bit_t const>> &rep_search_range) {
+
   if (reps.size() > 0) {
     idx_t start = 0;
     idx_t end = 0;
@@ -38,18 +40,33 @@ IndexingSublattice<bit_t, n_sublat>::IndexingSublattice(
     : n_sites_(n_sites), sz_conserved_(false), n_up_(invalid_n),
       n_postfix_bits_(n_sites - std::min(maximum_prefix_bits, n_sites)),
       group_action_(allowed_subgroup(permutation_group, irrep)), irrep_(irrep) {
+  using combinatorics::Subsets;
 
-  // find all representatives
-  for (auto state : combinatorics::Subsets<bit_t>(n_sites)) {
-    bit_t rep = representative(state);
-    if (state == rep) {
-      double norm = symmetries::norm(rep, group_action_, irrep);
-      if (std::abs(norm) > 1e-6) {
-        reps_.push_back(rep);
-        norms_.push_back(norm);
+  int n_sites_sublat = n_sites_ / n_sublat;
+  int n_leading = n_sites_sublat;
+  int n_trailing = (n_sublat - 1) * n_sites_sublat;
+
+  for (auto prefix : Subsets<bit_t>(n_leading)) {
+
+    // if prefix is not rep, the full state also cannot be rep
+    bit_t prefix_rep = group_action_.reps_[n_sublat-1][prefix];
+    if (prefix_rep < prefix) {
+      continue;
+    }
+
+    for (auto postfix : Subsets<bit_t>(n_trailing)) {
+      bit_t state = (prefix << n_trailing) | postfix;
+      bit_t rep = representative(state);
+      if (state == rep) {
+        double norm = symmetries::norm(rep, group_action_, irrep);
+        if (std::abs(norm) > 1e-6) {
+          reps_.push_back(rep);
+          norms_.push_back(norm);
+        }
       }
     }
   }
+
   reps_.shrink_to_fit();
   norms_.shrink_to_fit();
   compute_rep_search_range(reps_, n_postfix_bits_, rep_search_range_);
@@ -64,18 +81,42 @@ IndexingSublattice<bit_t, n_sublat>::IndexingSublattice(
     : n_sites_(n_sites), sz_conserved_(true), n_up_(n_up),
       n_postfix_bits_(n_sites - std::min(maximum_prefix_bits, n_sites)),
       group_action_(allowed_subgroup(permutation_group, irrep)), irrep_(irrep) {
+  using bitops::popcnt;
+  using combinatorics::Combinations;
+  using combinatorics::Subsets;
 
-  // find all representatives
-  for (auto state : combinatorics::Combinations<bit_t>(n_sites, n_up)) {
-    bit_t rep = representative(state);
-    if (state == rep) {
-      double norm = symmetries::norm(rep, group_action_, irrep);
-      if (std::abs(norm) > 1e-6) {
-        reps_.push_back(rep);
-        norms_.push_back(norm);
+  int n_sites_sublat = n_sites_ / n_sublat;
+  int n_leading = n_sites_sublat;
+  int n_trailing = (n_sublat - 1) * n_sites_sublat;
+
+  for (auto prefix : Subsets<bit_t>(n_leading)) {
+
+    // if prefix is incompatible with n_up, continue
+    int n_up_prefix = popcnt(prefix);
+    int n_up_postfix = n_up - n_up_prefix;
+    if ((n_up_postfix < 0) || (n_up_postfix > n_trailing)) {
+      continue;
+    }
+
+    // if prefix is not rep, the full state also cannot be rep
+    bit_t prefix_rep = group_action_.reps_[n_sublat-1][prefix];
+    if (prefix_rep < prefix) {
+      continue;      
+    }
+
+    for (auto postfix : Combinations<bit_t>(n_trailing, n_up_postfix)) {
+      bit_t state = (prefix << n_trailing) | postfix;
+      bit_t rep = representative(state);
+      if (state == rep) {
+        double norm = symmetries::norm(rep, group_action_, irrep);
+        if (std::abs(norm) > 1e-6) {
+          reps_.push_back(rep);
+          norms_.push_back(norm);
+        }
       }
     }
   }
+
   reps_.shrink_to_fit();
   norms_.shrink_to_fit();
   compute_rep_search_range(reps_, n_postfix_bits_, rep_search_range_);

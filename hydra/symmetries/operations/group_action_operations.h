@@ -39,6 +39,7 @@ inline bit_t representative(bit_t state, GroupAction const &group_action) {
 // determine whether a state is a representative
 template <typename bit_t, class GroupAction>
 inline bool is_representative(bit_t state, GroupAction const &group_action) {
+
   for (int sym = 0; sym < group_action.n_symmetries(); ++sym) {
     bit_t tstate = group_action.apply(sym, state);
     if (tstate < state) {
