@@ -29,8 +29,9 @@
 #include "combinatorics/subsets_index.h"
 
 #include "indexing/combinations_indexing.h"
+#include "indexing/fermi_table.h"
 #include "indexing/indexing_variants.h"
-#include "indexing/lintable.h"
+#include "indexing/lin_table.h"
 #include "indexing/subsets_indexing.h"
 
 #include "indexing/spinhalf/indexing_no_sz.h"
@@ -71,13 +72,12 @@
 #include "symmetries/group_action/group_action_lookup.h"
 #include "symmetries/group_action/group_action_sublattice.h"
 #include "symmetries/group_action/sublattice_stability.h"
-#include "symmetries/operations/fermi_bool_table.h"
 #include "symmetries/operations/fermi_sign.h"
 #include "symmetries/operations/group_action_operations.h"
 #include "symmetries/operations/representative_list.h"
 #include "symmetries/operations/symmetry_operations.h"
-#include "symmetries/permutation_group.h"
 #include "symmetries/permutation.h"
+#include "symmetries/permutation_group.h"
 #include "symmetries/representation.h"
 
 #include "operators/bond.h"

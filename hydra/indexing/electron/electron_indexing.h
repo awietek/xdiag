@@ -4,7 +4,7 @@
 
 #include <hydra/combinatorics/combinations.h>
 
-#include <hydra/indexing/lintable.h>
+#include <hydra/indexing/lin_table.h>
 
 namespace hydra::indexing {
 

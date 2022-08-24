@@ -8,6 +8,8 @@
 #include <hydra/bitops/bitops.h>
 #define BSTR(x) bitops::bits_to_string(x, n_sites)
 
+#include <hydra/utils/logger.h>
+
 namespace hydra {
 
 using std_bit_t = uint64_t;

@@ -37,7 +37,7 @@ SubsetsIndexThread<bit_t>::SubsetsIndexThread(int n)
   if (n < 0) {
     Log.err("Error constructing SubsetsIndex: n<0");
   } else {
-    auto [begin_idx, end_idx] = get_omp_subsets_start_end(n);
+    auto [begin_idx, end_idx] = utils::get_omp_subsets_start_end(n);
     begin_ = SubsetsIndexIterator<bit_t>(begin_idx);
     end_ = SubsetsIndexIterator<bit_t>(end_idx);
   }

@@ -5,7 +5,7 @@
 #include <hydra/combinatorics/combinations.h>
 #include <hydra/combinatorics/combinations_index.h>
 
-#include <hydra/indexing/lintable.h>
+#include <hydra/indexing/lin_table.h>
 
 namespace hydra::indexing::spinhalf {
 template <typename bit_t> class IndexingSz {

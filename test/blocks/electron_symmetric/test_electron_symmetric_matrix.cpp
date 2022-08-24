@@ -113,7 +113,7 @@ void test_electron_symmetric_spectra(BondList bondlist, Couplings couplings,
         // Log.out("{} {} {} {}", nup, ndn, eigs_sym(0), eigs_nosym(0));
         // LilaPrint(eigs_sym);
         // LilaPrint(eigs_nosym);
-        CHECK(lila::close(eigs_sym, eigs_nosym));
+        REQUIRE(lila::close(eigs_sym, eigs_nosym));
       }
     }
   }
@@ -200,12 +200,13 @@ TEST_CASE("electron_symmetric_matrix", "[blocks][electron_symmetric]") {
     }
   }
 
-  // Test linear chains
-  for (int n_sites = 2; n_sites < 7; ++n_sites) {
-    test_hubbard_symmetric_spectrum_chains<uint16_t>(n_sites);
-    test_hubbard_symmetric_spectrum_chains<uint32_t>(n_sites);
-    test_hubbard_symmetric_spectrum_chains<uint64_t>(n_sites);
-  }
+  // // Test linear chains
+  // for (int n_sites = 2; n_sites < 7; ++n_sites) {
+  //   test_hubbard_symmetric_spectrum_chains<uint16_t>(n_sites);
+  //   test_hubbard_symmetric_spectrum_chains<uint32_t>(n_sites);
+  //   test_hubbard_symmetric_spectrum_chains<uint64_t>(n_sites);
+  // }
+
 
   // test a 3x3 triangular lattice
   Log("electron_symmetric_matrix: Hubbard 3x3 triangular");
@@ -233,43 +234,43 @@ TEST_CASE("electron_symmetric_matrix", "[blocks][electron_symmetric]") {
   test_electron_symmetric_spectra<bit_t>(bondlist, couplings, space_group,
                                          irreps, multiplicities);
 
-  // test a 3x3 triangular lattice with Heisenberg terms
-  Log(
-      "electron_symmetric_matrix: Hubbard 3x3 triangular(+ Heisenberg terms)");
-  auto bondlist_hb = bondlist;
-  for (auto bond : bondlist) {
-    bondlist_hb << Bond("HB", "J", {bond[0], bond[1]});
-  }
-  couplings["J"] = 0.4;
-  test_electron_symmetric_spectra<bit_t>(bondlist_hb, couplings, space_group,
-                                         irreps, multiplicities);
+  // // test a 3x3 triangular lattice with Heisenberg terms
+  // Log(
+  //     "electron_symmetric_matrix: Hubbard 3x3 triangular(+ Heisenberg terms)");
+  // auto bondlist_hb = bondlist;
+  // for (auto bond : bondlist) {
+  //   bondlist_hb << Bond("HB", "J", {bond[0], bond[1]});
+  // }
+  // couplings["J"] = 0.4;
+  // test_electron_symmetric_spectra<bit_t>(bondlist_hb, couplings, space_group,
+  //                                        irreps, multiplicities);
 
-  // test a 3x3 triangular lattice with complex hoppings
-  {
-    Log.out(
-        "electron_symmetric_matrix: Hubbard 3x3 triangular (complex)");
-    using bit_t = uint16_t;
-    std::string lfile =
-        "data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.lat";
-    BondList bondlist = read_bondlist(lfile);
-    Couplings couplings;
-    couplings["TPHI"] = complex(0.5, 0.5);
-    couplings["U"] = 5.0;
-    auto permutations = hydra::read_permutations(lfile);
-    space_group = PermutationGroup(permutations);
+  // // test a 3x3 triangular lattice with complex hoppings
+  // {
+  //   Log.out(
+  //       "electron_symmetric_matrix: Hubbard 3x3 triangular (complex)");
+  //   using bit_t = uint16_t;
+  //   std::string lfile =
+  //       "data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.lat";
+  //   BondList bondlist = read_bondlist(lfile);
+  //   Couplings couplings;
+  //   couplings["TPHI"] = complex(0.5, 0.5);
+  //   couplings["U"] = 5.0;
+  //   auto permutations = hydra::read_permutations(lfile);
+  //   space_group = PermutationGroup(permutations);
 
-    std::vector<std::pair<std::string, int>> rep_name_mult = {
-        {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
-        {"K0.D3.A1", 1},    {"K0.D3.A2", 1},    {"K0.D3.E", 2},
-        {"K1.D3.A1", 1},    {"K1.D3.A2", 1},    {"K1.D3.E", 2},
-        {"Y.C1.A", 6}};
-    irreps.clear();
-    multiplicities.clear();
-    for (auto [name, mult] : rep_name_mult) {
-      irreps.push_back(read_represenation(lfile, name));
-      multiplicities.push_back(mult);
-    }
-    test_electron_symmetric_spectra<bit_t>(bondlist, couplings, space_group,
-                                           irreps, multiplicities);
-  }
+  //   std::vector<std::pair<std::string, int>> rep_name_mult = {
+  //       {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
+  //       {"K0.D3.A1", 1},    {"K0.D3.A2", 1},    {"K0.D3.E", 2},
+  //       {"K1.D3.A1", 1},    {"K1.D3.A2", 1},    {"K1.D3.E", 2},
+  //       {"Y.C1.A", 6}};
+  //   irreps.clear();
+  //   multiplicities.clear();
+  //   for (auto [name, mult] : rep_name_mult) {
+  //     irreps.push_back(read_represenation(lfile, name));
+  //     multiplicities.push_back(mult);
+  //   }
+  //   test_electron_symmetric_spectra<bit_t>(bondlist, couplings, space_group,
+  //                                          irreps, multiplicities);
+  // }
 }

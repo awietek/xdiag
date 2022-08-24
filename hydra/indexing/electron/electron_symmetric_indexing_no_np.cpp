@@ -5,7 +5,6 @@
 #include <hydra/combinatorics/subsets.h>
 
 #include <hydra/symmetries/operations/group_action_operations.h>
-#include <hydra/symmetries/operations/fermi_bool_table.h>
 #include <hydra/symmetries/operations/representative_list.h>
 #include <hydra/symmetries/operations/symmetry_operations.h>
 
@@ -13,21 +12,15 @@ namespace hydra::indexing {
 
 template <class bit_t>
 ElectronSymmetricIndexingNoNp<bit_t>::ElectronSymmetricIndexingNoNp(
-    int n_sites, PermutationGroup permutation_group, Representation irrep)
-    : n_sites_(n_sites),
-      group_action_(allowed_subgroup(permutation_group, irrep)), irrep_(irrep),
-      raw_ups_size_((idx_t)1 << n_sites), raw_dns_size_((idx_t)1 << n_sites),
-      lintable_ups_(n_sites), lintable_dns_(n_sites) {
+    int n_sites, PermutationGroup group, Representation irrep)
+    : n_sites_(n_sites), group_action_(allowed_subgroup(group, irrep)),
+      irrep_(irrep), raw_ups_size_((idx_t)1 << n_sites),
+      raw_dns_size_((idx_t)1 << n_sites), lintable_ups_(n_sites),
+      lintable_dns_(n_sites), fermi_table_(n_sites_, group) {
 
   using combinatorics::Subsets;
 
-  utils::check_n_sites(n_sites, permutation_group);
-
-  fermi_bool_ups_table_ =
-      symmetries::fermi_bool_table(Subsets<bit_t>(n_sites), permutation_group);
-  fermi_bool_dns_table_ =
-      symmetries::fermi_bool_table(Subsets<bit_t>(n_sites), permutation_group);
-
+  utils::check_n_sites(n_sites, group);
   std::tie(reps_up_, idces_up_, syms_up_, sym_limits_up_) =
       symmetries::representatives_indices_symmetries_limits<bit_t>(
           SubsetsIndexing<bit_t>(n_sites), group_action_);

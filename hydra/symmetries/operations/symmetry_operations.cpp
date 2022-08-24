@@ -11,7 +11,7 @@
 #include <hydra/combinatorics/bit_patterns.h>
 #include <hydra/combinatorics/combinations_index.h>
 
-#include <hydra/indexing/lintable.h>
+#include <hydra/indexing/lin_table.h>
 
 #include <hydra/symmetries/group_action/group_action.h>
 #include <hydra/symmetries/group_action/group_action_lookup.h>

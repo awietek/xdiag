@@ -10,25 +10,20 @@
 namespace hydra::indexing {
 
 template <typename bit_t>
-tJSymmetricIndexing<bit_t>::tJSymmetricIndexing(
-    int n_sites, int nup, int ndn, PermutationGroup permutation_group,
-    Representation irrep)
+tJSymmetricIndexing<bit_t>::tJSymmetricIndexing(int n_sites, int nup, int ndn,
+                                                PermutationGroup group,
+                                                Representation irrep)
     : n_sites_(n_sites), n_up_(nup), n_dn_(ndn),
-      group_action_(allowed_subgroup(permutation_group, irrep)), irrep_(irrep),
+      group_action_(allowed_subgroup(group, irrep)), irrep_(irrep),
       raw_ups_size_(combinatorics::binomial(n_sites, nup)),
       raw_dns_size_(combinatorics::binomial(n_sites, ndn)),
       raw_dnsc_size_(combinatorics::binomial(n_sites - nup, ndn)),
       lintable_ups_(n_sites, nup), lintable_dns_(n_sites, ndn),
-      lintable_dnsc_(n_sites - nup, ndn) {
+      lintable_dnsc_(n_sites - nup, ndn), fermi_table_ups_(n_sites, nup, group),
+      fermi_table_dns_(n_sites, ndn, group) {
 
   using combinatorics::Combinations;
-  utils::check_n_sites(n_sites, permutation_group);
-
-  fermi_bool_ups_table_ = symmetries::fermi_bool_table(
-      Combinations<bit_t>(n_sites, nup), permutation_group);
-  fermi_bool_dns_table_ = symmetries::fermi_bool_table(
-      Combinations<bit_t>(n_sites, ndn), permutation_group);
-
+  utils::check_n_sites(n_sites, group);
   std::tie(reps_up_, idces_up_, syms_up_, sym_limits_up_) =
       symmetries::representatives_indices_symmetries_limits<bit_t>(
           lintable_ups_, group_action_);

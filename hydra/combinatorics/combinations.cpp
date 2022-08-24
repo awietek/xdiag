@@ -47,7 +47,7 @@ CombinationsThread<bit_t>::CombinationsThread(int n, int k)
   } else if (n < 0) {
     Log.err("Error constructing Combinations: n<0");
   } else {
-    auto [begin_idx, end_idx] = get_omp_combinations_start_end(n, k);
+    auto [begin_idx, end_idx] = utils::get_omp_combinations_start_end(n, k);
     begin_ = CombinationsIterator<bit_t>(n, k, begin_idx);
     end_ = CombinationsIterator<bit_t>(n, k, end_idx);
   }

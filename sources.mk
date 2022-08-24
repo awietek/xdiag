@@ -15,7 +15,8 @@ sources+= hydra/parameters/parameter_value.cpp
 sources+= hydra/parameters/parameters.cpp
 sources+= hydra/parameters/parser.cpp
 
-sources+= hydra/indexing/lintable.cpp
+sources+= hydra/indexing/lin_table.cpp
+sources+= hydra/indexing/fermi_table.cpp
 sources+= hydra/indexing/combinations_indexing.cpp
 sources+= hydra/indexing/subsets_indexing.cpp
 
@@ -54,7 +55,6 @@ sources+= hydra/symmetries/permutation.cpp
 sources+= hydra/symmetries/permutation_group.cpp
 sources+= hydra/symmetries/representation.cpp
 sources+= hydra/symmetries/operations/fermi_sign.cpp
-sources+= hydra/symmetries/operations/fermi_bool_table.cpp
 
 sources+= hydra/symmetries/group_action/group_action.cpp
 sources+= hydra/symmetries/group_action/group_action_lookup.cpp
@@ -102,7 +102,8 @@ testsources+= test/combinatorics/test_bit_patterns.cpp
 testsources+= test/combinatorics/test_combinations.cpp
 testsources+= test/combinatorics/test_combinations_index.cpp
 
-testsources+= test/indexing/test_lintable.cpp
+testsources+= test/indexing/test_lin_table.cpp
+testsources+= test/indexing/test_fermi_table.cpp
 testsources+= test/indexing/spinhalf/test_spinhalf_indexing_sublattice.cpp
 
 testsources+= test/symmetries/group_action/test_group_action.cpp

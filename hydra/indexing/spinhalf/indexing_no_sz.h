@@ -4,8 +4,6 @@
 
 #include <hydra/combinatorics/subsets_index.h>
 
-#include <hydra/indexing/lintable.h>
-
 namespace hydra::indexing::spinhalf {
 template <typename bit_t> class IndexingNoSz {
 public:

@@ -7,6 +7,7 @@
 
 #include <hydra/common.h>
 
+#include <hydra/indexing/fermi_table.h>
 #include <hydra/indexing/subsets_indexing.h>
 
 #include <hydra/symmetries/group_action/group_action_lookup.h>
@@ -41,7 +42,7 @@ public:
   std::pair<idx_t, bool> index_dns_fermi(bit_t dns, int sym) const {
     bit_t dns_rep = group_action_.apply(sym, dns);
     idx_t idx_dns_rep = lintable_dns_.index(dns_rep);
-    bool fermi_dns = fermi_bool_dns(sym, dns);
+    bool fermi_dns = fermi_table_.sign(sym, dns);
     return {idx_dns_rep, fermi_dns};
   }
 
@@ -50,7 +51,7 @@ public:
     bit_t dns_rep = group_action_.apply(sym, dns);
     idx_t idx_dns_rep = lintable_dns_.index(dns_rep);
     bool fermi_dns = (bitops::popcnt(dns & fermimask) & 1);
-    fermi_dns ^= fermi_bool_dns(sym, dns);
+    fermi_dns ^= fermi_table_.sign(sym, dns);
     return {idx_dns_rep, fermi_dns};
   }
 
@@ -62,7 +63,7 @@ public:
         symmetries::representative_sym_subset(dns, group_action_, syms);
     auto it = std::lower_bound(dnss_out.begin(), dnss_out.end(), rep_dns);
     if ((it != dnss_out.end()) && (*it == rep_dns)) {
-      bool fermi_dns = fermi_bool_dns(rep_sym, dns);
+      bool fermi_dns = fermi_table_.sign(rep_sym, dns);
       return {std::distance(dnss_out.begin(), it), fermi_dns, rep_sym};
     } else {
       return {invalid_index, false, rep_sym};
@@ -77,7 +78,7 @@ public:
     auto it = std::lower_bound(dnss_out.begin(), dnss_out.end(), rep_dns);
     if ((it != dnss_out.end()) && (*it == rep_dns)) {
       bool fermi_dns = (bitops::popcnt(dns & fermimask) & 1);
-      fermi_dns ^= fermi_bool_dns(rep_sym, dns);
+      fermi_dns ^= fermi_table_.sign(rep_sym, dns);
       return {std::distance(dnss_out.begin(), it), fermi_dns, rep_sym};
     } else {
       return {invalid_index, false, rep_sym};
@@ -126,12 +127,10 @@ public:
 
   // Fermi sign when applying sym on states
   bool fermi_bool_ups(int sym, bit_t ups) const {
-    return fermi_bool_ups_table_[sym * raw_ups_size_ +
-                                 lintable_ups_.index(ups)];
+    return fermi_table_.sign(sym, ups);
   }
   bool fermi_bool_dns(int sym, bit_t dns) const {
-    return fermi_bool_dns_table_[sym * raw_dns_size_ +
-                                 lintable_dns_.index(dns)];
+    return fermi_table_.sign(sym, dns);
   }
 
 private:
@@ -147,8 +146,7 @@ private:
   indexing::SubsetsIndexing<bit_t> lintable_ups_;
   indexing::SubsetsIndexing<bit_t> lintable_dns_;
 
-  std::vector<bool> fermi_bool_ups_table_;
-  std::vector<bool> fermi_bool_dns_table_;
+  FermiTableSubsets<bit_t> fermi_table_;
 
   std::vector<bit_t> reps_up_;
   std::vector<idx_t> idces_up_;

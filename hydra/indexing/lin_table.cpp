@@ -1,4 +1,4 @@
-#include "lintable.h"
+#include "lin_table.h"
 
 #include <hydra/combinatorics/binomial.h>
 #include <hydra/combinatorics/combinations.h>
@@ -33,6 +33,16 @@ LinTable<bit_t>::LinTable(int n, int k)
     for (bit_t bits : Combinations<bit_t>(n_right_, k_right))
       right_indices_[bits] = idx++;
   }
+}
+
+template <class bit_t>
+bool LinTable<bit_t>::operator==(LinTable<bit_t> const &rhs) const {
+  return (n_ == rhs.n_) && (k_ == rhs.k_);
+}
+
+template <class bit_t>
+bool LinTable<bit_t>::operator!=(LinTable<bit_t> const &rhs) const {
+  return !operator==(rhs);
 }
 
 template class LinTable<uint16_t>;

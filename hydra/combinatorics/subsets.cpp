@@ -37,7 +37,7 @@ SubsetsThread<bit_t>::SubsetsThread(int n)
   if (n < 0)
     Log.err("Error constructing Subsets: n<0");
   else {
-    auto [begin_idx, end_idx] = get_omp_subsets_start_end(n);
+    auto [begin_idx, end_idx] = utils::get_omp_subsets_start_end(n);
     begin_ = SubsetsIterator<bit_t>(begin_idx);
     end_ = SubsetsIterator<bit_t>(end_idx);
     size_ = end_idx - begin_idx;

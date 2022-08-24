@@ -153,36 +153,7 @@ void test_representatives_indices_symmetries_limits(int n_sites) {
   }
 }
 
-template <typename bit_t> void test_fermi_bool_table(int n_sites) {
-  auto fermi_work = symmetries::fermi_work(n_sites);
 
-  auto group_action = GroupActionLookup<bit_t>(cyclic_group(n_sites));
-  auto group = group_action.permutation_group();
-  int n_symmetries = group_action.n_symmetries();
-  for (int npar = 0; npar <= n_sites; ++npar) {
-
-    auto fermi_bool_tbl =
-        fermi_bool_table(Combinations<bit_t>(n_sites, npar), group);
-    // hydra::Log("N: {} n: {}", n_sites, npar);
-
-#ifdef HYDRA_ENABLE_OPENMP
-    auto t1 =
-        fermi_bool_table_serial(Combinations<bit_t>(n_sites, npar), group);
-    auto t2 = fermi_bool_table_omp(Combinations<bit_t>(n_sites, npar), group);
-    REQUIRE(t1 == t2);
-#endif
-    idx_t raw_size = binomial(n_sites, npar);
-
-    for (int sym = 0; sym < n_symmetries; ++sym) {
-      idx_t idx = 0;
-      for (bit_t state : Combinations<bit_t>(n_sites, npar)) {
-        REQUIRE(fermi_bool_tbl[sym * raw_size + idx] ==
-                fermi_bool_of_permutation(state, group[sym], fermi_work));
-        ++idx;
-      }
-    }
-  }
-}
 
 TEST_CASE("symmetry_operations", "[symmetries]") {
   using namespace hydra;
@@ -232,9 +203,5 @@ TEST_CASE("symmetry_operations", "[symmetries]") {
     test_representatives_indices_symmetries_limits<uint64_t>(n_sites);
   }
 
-  for (int n_sites = 0; n_sites <= max_N; ++n_sites) {
-    test_fermi_bool_table<uint16_t>(n_sites);
-    test_fermi_bool_table<uint32_t>(n_sites);
-    test_fermi_bool_table<uint64_t>(n_sites);
-  }
+
 }

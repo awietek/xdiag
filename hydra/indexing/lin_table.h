@@ -31,6 +31,8 @@ public:
   }
   inline idx_t size() const { return size_; }
 
+  bool operator==(LinTable<bit_t> const &rhs) const;
+  bool operator!=(LinTable<bit_t> const &rhs) const;
 private:
   int n_, k_;
   int n_left_;

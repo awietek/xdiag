@@ -76,6 +76,12 @@ private:
 
 template <typename bit_t>
 inline CombinationsIndexThread<bit_t>
+ThreadStatesIndex(Combinations<bit_t> const &si) {
+  return CombinationsIndexThread(si.n(), si.k());
+}
+
+template <typename bit_t>
+inline CombinationsIndexThread<bit_t>
 ThreadStatesIndex(CombinationsIndex<bit_t> const &si) {
   return CombinationsIndexThread(si.n(), si.k());
 }
