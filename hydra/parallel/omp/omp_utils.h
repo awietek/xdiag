@@ -8,8 +8,9 @@
 #include <omp.h>
 #include <vector>
 
-namespace hydra::utils {
-
+namespace hydra::omp {
+idx_t get_omp_start(idx_t size);
+idx_t get_omp_end(idx_t size);
 std::pair<idx_t, idx_t> get_omp_start_end(idx_t size);
 std::pair<idx_t, idx_t> get_omp_subsets_start_end(int n);
 std::pair<idx_t, idx_t> get_omp_combinations_start_end(int n, int k);
@@ -60,7 +61,6 @@ combine_vectors_copy(std::vector<std::vector<T>> const &vec_of_vec) {
   return total_vec;
 }
 
-
-} // namespace hydra::utils
+} // namespace hydra::omp
 
 #endif // HYDRA_ENABLE_OPENMP

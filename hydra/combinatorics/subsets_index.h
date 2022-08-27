@@ -1,6 +1,7 @@
 #pragma once
 
 #include <hydra/common.h>
+#include <hydra/combinatorics/subsets.h>
 
 namespace hydra::combinatorics {
 

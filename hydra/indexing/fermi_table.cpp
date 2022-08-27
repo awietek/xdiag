@@ -5,7 +5,7 @@
 #include <hydra/symmetries/operations/fermi_sign.h>
 
 #ifdef HYDRA_ENABLE_OPENMP
-#include <hydra/utils/openmp_utils.h>
+#include <hydra/parallel/omp/omp_utils.h>
 #endif
 
 namespace hydra::indexing {
@@ -45,6 +45,10 @@ std::vector<bool> init_fermi_table_omp(States const &states,
     auto const &perm = group[sym];
     std::vector<std::vector<bool>> fermi_bool_table_local;
 
+    // Comment: even though every entry in fermi_bool_table would be
+    // written by only one thread, std::vector<bool> is special and requires
+    // seperate vectors to be built
+    
 #pragma omp parallel
     {
       int myid = omp_get_thread_num();
@@ -59,7 +63,8 @@ std::vector<bool> init_fermi_table_omp(States const &states,
       auto fermi_work = symmetries::fermi_work(n_sites);
       idx_t idx = 0;
       for (auto state : states_thread) {
-        bool fermi_bool = fermi_bool_of_permutation(state, perm, fermi_work);
+        bool fermi_bool =
+            symmetries::fermi_bool_of_permutation(state, perm, fermi_work);
         fermi_bool_table_local[myid].push_back(fermi_bool);
         ++idx;
       }
@@ -73,12 +78,7 @@ std::vector<bool> init_fermi_table_omp(States const &states,
                                   fermi_bool_table_local[id].end());
         }
       }
-      //  auto fermi_bool_table_for_sym =
-      //       utils::combine_vectors_copy(fermi_bool_table_local);
-      //   std::copy(fermi_bool_table_for_sym.begin(),
-      //             fermi_bool_table_for_sym.end(),
-      //             fermi_bool_table.begin() + sym * raw_size);
-      // }
+
     } // pragma omp parallel
   }
 

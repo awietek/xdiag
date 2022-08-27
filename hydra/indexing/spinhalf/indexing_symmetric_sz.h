@@ -41,7 +41,7 @@ public:
     idx_t raw_idx = combinations_indexing_.index(raw_state);
     idx_t index = index_for_rep_[raw_idx];
     idx_t start = sym_limits_for_rep_[raw_idx].first;
-    return {index, syms_[start]};
+    return {index, syms_.at(start)};
   }
   inline std::pair<idx_t, gsl::span<int const>>
   index_syms(bit_t raw_state) const {
@@ -51,9 +51,14 @@ public:
     return {index, {syms_.data() + start, length}};
   }
 
-  iterator_t begin() const { return begin_; }
-  iterator_t end() const { return end_; }
+  inline iterator_t begin() const { return begin_; }
+  inline iterator_t end() const { return end_; }
 
+#ifdef HYDRA_ENABLE_OPENMP
+  iterator_t thread_begin() const;
+  iterator_t thread_end() const;
+#endif
+  
 private:
   int n_sites_;
   int n_up_;

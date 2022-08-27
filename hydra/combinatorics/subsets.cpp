@@ -2,7 +2,7 @@
 #include <hydra/utils/logger.h>
 
 #ifdef HYDRA_ENABLE_OPENMP
-#include <hydra/utils/openmp_utils.h>
+#include <hydra/parallel/omp/omp_utils.h>
 #endif
 
 namespace hydra::combinatorics {
@@ -37,7 +37,7 @@ SubsetsThread<bit_t>::SubsetsThread(int n)
   if (n < 0)
     Log.err("Error constructing Subsets: n<0");
   else {
-    auto [begin_idx, end_idx] = utils::get_omp_subsets_start_end(n);
+    auto [begin_idx, end_idx] = omp::get_omp_subsets_start_end(n);
     begin_ = SubsetsIterator<bit_t>(begin_idx);
     end_ = SubsetsIterator<bit_t>(end_idx);
     size_ = end_idx - begin_idx;

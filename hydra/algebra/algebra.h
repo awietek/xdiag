@@ -10,7 +10,7 @@
 #include <hydra/blocks/blocks.h>
 #include <hydra/blocks/target_block.h>
 
-#include <hydra/mpi/dot_mpi.h>
+#include <hydra/parallel/mpi/dot_mpi.h>
 
 #include <hydra/algebra/state.h>
 

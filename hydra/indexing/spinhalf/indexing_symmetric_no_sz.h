@@ -52,9 +52,14 @@ public:
     return {index, {syms_.data() + start, length}};
   }
 
-  iterator_t begin() const { return begin_; }
-  iterator_t end() const { return end_; }
+  inline iterator_t begin() const { return begin_; }
+  inline iterator_t end() const { return end_; }
 
+#ifdef HYDRA_ENABLE_OPENMP
+  iterator_t thread_begin() const;
+  iterator_t thread_end() const;
+#endif
+  
 private:
   int n_sites_;
   int n_up_;

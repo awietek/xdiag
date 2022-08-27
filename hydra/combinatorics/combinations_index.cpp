@@ -4,7 +4,7 @@
 #include <hydra/utils/logger.h>
 
 #ifdef HYDRA_ENABLE_OPENMP
-#include <hydra/utils/openmp_utils.h>
+#include <hydra/parallel/omp/omp_utils.h>
 #endif
 
 namespace hydra::combinatorics {
@@ -48,7 +48,7 @@ CombinationsIndexThread<bit_t>::CombinationsIndexThread(int n, int k)
   } else if (n < 0) {
     Log.err("Error constructing CombinationsIndexThread: n<0");
   } else {
-    auto [begin_idx, end_idx] = utils::get_omp_combinations_start_end(n, k);
+    auto [begin_idx, end_idx] = omp::get_omp_combinations_start_end(n, k);
     begin_ = CombinationsIndexIterator<bit_t>(n, k, begin_idx);
     end_ = CombinationsIndexIterator<bit_t>(n, k, end_idx);
   }

@@ -6,7 +6,10 @@
 #include <hydra/common.h>
 
 #include <hydra/utils/logger.h>
-#include <hydra/utils/openmp_utils.h>
+
+#ifdef HYDRA_ENABLE_OPENMP
+#include <hydra/parallel/omp/omp_utils.h>
+#endif
 
 #include <hydra/combinatorics/bit_patterns.h>
 #include <hydra/combinatorics/combinations_index.h>

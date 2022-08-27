@@ -6,6 +6,7 @@
 
 #ifdef HYDRA_ENABLE_OPENMP
 #include <omp.h>
+#include "parallel/omp/omp_utils.h"
 #endif
 
 #include <lila/all.h>
@@ -14,7 +15,6 @@
 #include "common.h"
 #include "utils/iochecks.h"
 #include "utils/logger.h"
-#include "utils/openmp_utils.h"
 #include "utils/print.h"
 #include "utils/print_macro.h"
 

@@ -10,7 +10,7 @@
 #include <algorithm>
 
 #ifdef HYDRA_ENABLE_OPENMP
-#include <hydra/utils/openmp_utils.h>
+#include <hydra/parallel/omp/omp_utils.h>
 #endif
 
 namespace hydra::indexing::spinhalf {
@@ -63,7 +63,7 @@ compute_rep_search_range_omp(std::vector<bit_t> const &reps,
 #pragma omp single
       { rep_search_range_thread.resize(rank); }
 
-      auto [start_thread, end_thread] = utils::get_omp_start_end(reps.size());
+      auto [start_thread, end_thread] = omp::get_omp_start_end(reps.size());
 
       // Adjust start/end such that there is no overlaps between threads
       if ((myid != rank - 1) && (end_thread != 0) &&
@@ -223,8 +223,8 @@ IndexingSublattice<bit_t, n_sublat>::IndexingSublattice(
       }
     } // pragma omp parallel
 
-    auto reps_prefix = utils::combine_vectors(reps_thread);
-    auto norms_prefix = utils::combine_vectors(norms_thread);
+    auto reps_prefix = omp::combine_vectors(reps_thread);
+    auto norms_prefix = omp::combine_vectors(norms_thread);
     reps_.insert(reps_.end(), reps_prefix.begin(), reps_prefix.end());
     norms_.insert(norms_.end(), norms_prefix.begin(), norms_prefix.end());
 #endif
@@ -277,6 +277,22 @@ IndexingSublattice<bit_t, n_sublat>::index_syms(bit_t state) const {
   idx_t idx = index_of_representative(rep);
   return {idx, syms};
 }
+
+#ifdef HYDRA_ENABLE_OPENMP
+template <class bit_t, int n_sublat>
+typename IndexingSublattice<bit_t, n_sublat>::iterator_t
+IndexingSublattice<bit_t, n_sublat>::thread_begin() const {
+  idx_t start = omp::get_omp_start(reps_.size());
+  return iterator_t(reps_, start);
+}
+
+template <class bit_t, int n_sublat>
+typename IndexingSublattice<bit_t, n_sublat>::iterator_t
+IndexingSublattice<bit_t, n_sublat>::thread_end() const {
+  idx_t end = omp::get_omp_end(reps_.size());
+  return iterator_t(reps_, end);
+}
+#endif
 
 template class IndexingSublattice<uint16_t, 1>;
 template class IndexingSublattice<uint32_t, 1>;

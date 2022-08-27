@@ -1,8 +1,7 @@
 #pragma once
 
-#include <lila/external/gsl/span>
-// #include <unordered_map>
 #include <hydra/common.h>
+#include <lila/external/gsl/span>
 
 #include <hydra/extern/flat_hash_map.h>
 #include <hydra/indexing/spinhalf/symmetric_iterator.h>
@@ -44,8 +43,13 @@ public:
   std::pair<idx_t, int> index_sym(bit_t raw_state) const;
   std::pair<idx_t, gsl::span<int const>> index_syms(bit_t raw_state) const;
 
-  iterator_t begin() const { return begin_; }
-  iterator_t end() const { return end_; }
+  inline iterator_t begin() const { return begin_; }
+  inline iterator_t end() const { return end_; }
+
+#ifdef HYDRA_ENABLE_OPENMP
+  iterator_t thread_begin() const;
+  iterator_t thread_end() const;
+#endif
 
 private:
   int n_sites_;

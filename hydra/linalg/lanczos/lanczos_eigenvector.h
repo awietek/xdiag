@@ -6,8 +6,10 @@
 #include <hydra/linalg/lanczos/lanczos_generic.h>
 #include <hydra/linalg/lanczos/tmatrix.h>
 
-#include <hydra/mpi/dot_mpi.h>
-#include <hydra/mpi/timing_mpi.h>
+#ifdef HYDRA_ENABLE_MPI
+#include <hydra/parallel/mpi/dot_mpi.h>
+#include <hydra/parallel/mpi/timing_mpi.h>
+#endif
 
 #include <hydra/blocks/blocks.h>
 #include <hydra/operators/bondlist.h>

@@ -20,10 +20,11 @@ public:
     ++idx_;
     return *this;
   }
+    
   inline std::pair<bit_t, idx_t> operator*() const { return {*data_, idx_}; }
 
 private:
-  bit_t const* data_;  // questionable choice
+  bit_t const *data_;
   idx_t idx_;
 };
 

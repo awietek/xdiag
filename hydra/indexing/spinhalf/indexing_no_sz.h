@@ -5,6 +5,7 @@
 #include <hydra/combinatorics/subsets_index.h>
 
 namespace hydra::indexing::spinhalf {
+
 template <typename bit_t> class IndexingNoSz {
 public:
   using iterator_t = combinatorics::SubsetsIndexIterator<bit_t>;
@@ -18,6 +19,11 @@ public:
 
   iterator_t begin() const { return begin_; }
   iterator_t end() const { return end_; }
+
+#ifdef HYDRA_ENABLE_OPENMP
+  iterator_t thread_begin() const;
+  iterator_t thread_end() const;
+#endif
 
 private:
   int n_sites_;

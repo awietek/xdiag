@@ -1,6 +1,7 @@
 #pragma once
 
 #include <hydra/combinatorics/binomial.h>
+#include <hydra/combinatorics/combinations.h>
 #include <hydra/combinatorics/bit_patterns.h>
 #include <hydra/common.h>
 
