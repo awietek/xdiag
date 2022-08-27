@@ -1,8 +1,9 @@
 sources+= hydra/utils/iochecks.cpp
 sources+= hydra/utils/complex.cpp
-sources+= hydra/utils/openmp_utils.cpp
 sources+= hydra/utils/print.cpp
 sources+= hydra/bitops/bitops.cpp
+
+sources+= hydra/parallel/omp/omp_utils.cpp
 
 sources+= hydra/combinatorics/binomial.cpp
 sources+= hydra/combinatorics/subsets.cpp
