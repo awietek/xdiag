@@ -19,8 +19,8 @@ ElectronSymmetricIndexing<bit_t>::ElectronSymmetricIndexing(
       raw_ups_size_(combinatorics::binomial(n_sites, nup)),
       raw_dns_size_(combinatorics::binomial(n_sites, ndn)),
       lintable_ups_(n_sites, nup), lintable_dns_(n_sites, ndn),
-      fermi_table_ups_(n_sites, nup, group),
-      fermi_table_dns_(n_sites, ndn, group) {
+      fermi_table_ups_(n_sites, nup, allowed_subgroup(group, irrep)),
+      fermi_table_dns_(n_sites, ndn, allowed_subgroup(group, irrep)) {
 
   using combinatorics::Combinations;
 

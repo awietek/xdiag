@@ -90,7 +90,7 @@ void test_electron_symmetric_spectra(BondList bondlist, Couplings couplings,
             // Compute partial spectrum from symmetrized block
             auto H_sym = MatrixCplx(bondlist, couplings, electron, electron);
             // LilaPrint(H_sym);
-            REQUIRE(lila::close(H_sym, lila::Herm(H_sym)));
+            CHECK(lila::close(H_sym, lila::Herm(H_sym)));
             auto eigs_sym_k = lila::EigenvaluesSym(H_sym);
 
             // Check whether results are the same for real blocks
@@ -98,7 +98,7 @@ void test_electron_symmetric_spectra(BondList bondlist, Couplings couplings,
               auto H_sym_real =
                   MatrixReal(bondlist, couplings, electron, electron);
               auto eigs_sym_k_real = lila::EigenvaluesSym(H_sym);
-              REQUIRE(lila::close(eigs_sym_k, eigs_sym_k_real));
+              CHECK(lila::close(eigs_sym_k, eigs_sym_k_real));
             }
 
             // append all the eigenvalues with multiplicity
@@ -113,7 +113,7 @@ void test_electron_symmetric_spectra(BondList bondlist, Couplings couplings,
         // Log.out("{} {} {} {}", nup, ndn, eigs_sym(0), eigs_nosym(0));
         // LilaPrint(eigs_sym);
         // LilaPrint(eigs_nosym);
-        REQUIRE(lila::close(eigs_sym, eigs_nosym));
+        CHECK(lila::close(eigs_sym, eigs_nosym));
       }
     }
   }
@@ -161,6 +161,7 @@ TEST_CASE("electron_symmetric_matrix", "[blocks][electron_symmetric]") {
   auto [bondlist, couplings] = get_linear_chain(n_sites, t, U);
   auto [space_group, irreps, multiplicities] =
       get_cyclic_group_irreps_mult(n_sites);
+
   for (int k = 0; k < (int)irreps.size(); ++k) {
     auto irrep = irreps[k];
     auto electron = Electron<uint16_t>(n_sites, nup, ndn, space_group, irrep);

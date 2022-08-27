@@ -97,6 +97,7 @@ TEST_CASE("spinhalf_symmetric", "[blocks][spinhalf_symmetric]") {
     idx_t sum_dim_up = 0;
 
     for (auto [name, mult] : rep_name_mult) {
+
       auto irrep = read_represenation(lfile, name);
       auto block = Spinhalf<uint16_t>(n_sites, nup, space_group, irrep);
 

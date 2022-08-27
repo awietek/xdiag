@@ -40,8 +40,11 @@ public:
   inline std::pair<idx_t, int> index_sym(bit_t raw_state) const {
     idx_t raw_idx = combinations_indexing_.index(raw_state);
     idx_t index = index_for_rep_[raw_idx];
+    if (index == invalid_index) {
+      return {invalid_index, 0};
+    }
     idx_t start = sym_limits_for_rep_[raw_idx].first;
-    return {index, syms_.at(start)};
+    return {index, syms_[start]};
   }
   inline std::pair<idx_t, gsl::span<int const>>
   index_syms(bit_t raw_state) const {
@@ -58,7 +61,7 @@ public:
   iterator_t thread_begin() const;
   iterator_t thread_end() const;
 #endif
-  
+
 private:
   int n_sites_;
   int n_up_;

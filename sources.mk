@@ -106,6 +106,7 @@ testsources+= test/combinatorics/test_combinations_index.cpp
 testsources+= test/indexing/test_lin_table.cpp
 testsources+= test/indexing/test_fermi_table.cpp
 testsources+= test/indexing/spinhalf/test_spinhalf_indexing_sublattice.cpp
+testsources+= test/indexing/spinhalf/test_spinhalf_indexing.cpp
 
 testsources+= test/symmetries/group_action/test_group_action.cpp
 testsources+= test/symmetries/group_action/test_group_action_lookup.cpp

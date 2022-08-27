@@ -19,8 +19,9 @@ tJSymmetricIndexing<bit_t>::tJSymmetricIndexing(int n_sites, int nup, int ndn,
       raw_dns_size_(combinatorics::binomial(n_sites, ndn)),
       raw_dnsc_size_(combinatorics::binomial(n_sites - nup, ndn)),
       lintable_ups_(n_sites, nup), lintable_dns_(n_sites, ndn),
-      lintable_dnsc_(n_sites - nup, ndn), fermi_table_ups_(n_sites, nup, group),
-      fermi_table_dns_(n_sites, ndn, group) {
+      lintable_dnsc_(n_sites - nup, ndn),
+      fermi_table_ups_(n_sites, nup, allowed_subgroup(group, irrep)),
+      fermi_table_dns_(n_sites, ndn, allowed_subgroup(group, irrep)) {
 
   using combinatorics::Combinations;
   utils::check_n_sites(n_sites, group);

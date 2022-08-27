@@ -42,7 +42,7 @@ void test_spectra_tj_symmetric(BondList bondlist, Couplings couplings,
 
             // Compute partial spectrum from symmetrized block
             auto H_sym = MatrixCplx(bondlist, couplings, tj, tj);
-            REQUIRE(lila::close(H_sym, lila::Herm(H_sym)));
+	    REQUIRE(lila::close(H_sym, lila::Herm(H_sym)));
             auto eigs_sym_k = lila::EigenvaluesSym(H_sym);
 
             // Check whether results are the same for real blocks

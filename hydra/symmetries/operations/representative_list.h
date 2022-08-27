@@ -89,29 +89,6 @@ representatives_indices_symmetries_limits_norms(
     }
   }
 
-  // // DEBUG: CHECK
-  // for (auto [state, idx] : states_indexing.states_indices()) {
-  //   idx_t rep_idx = idces[idx];
-  //   if (rep_idx != invalid_index) {
-  //     bit_t rep_lookup = reps[rep_idx];
-  //     bit_t rep_compute = representative(state, group_action);
-  //     assert(rep_lookup == rep_compute);
-  //     // Log("state: {}, rep: {}", state, rep_lookup);
-  //     auto [sbegin, slength] = sym_limits[idx];
-  //     for (int i = sbegin; i < sbegin + slength; ++i) {
-  //       int sym = syms[i];
-  // 	bit_t tstate = group_action.apply(sym, state);
-  // 	// Log("state: {}, rep: {}, tstate: {} sym: {} ", state, rep_lookup, tstate, sym);
-
-  //       assert(tstate == rep_lookup);
-  //     }
-
-  //   } else {
-  //     double nrm = symmetries::norm(state, group_action, irrep);
-  //     assert(std::abs(nrm) < 1e-6);
-  //   }
-  // }
-
   return {reps, idces, syms, sym_limits, norms};
 }
 

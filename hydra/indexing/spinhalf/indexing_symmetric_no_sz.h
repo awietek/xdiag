@@ -40,6 +40,9 @@ public:
   inline std::pair<idx_t, int> index_sym(bit_t raw_state) const {
     idx_t raw_idx = subsets_indexing_.index(raw_state);
     idx_t index = index_for_rep_[raw_idx];
+    if (index == invalid_index) {
+      return {invalid_index, 0};
+    }
     idx_t start = sym_limits_for_rep_[raw_idx].first;
     return {index, syms_[start]};
   }

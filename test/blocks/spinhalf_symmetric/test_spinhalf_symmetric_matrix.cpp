@@ -16,7 +16,7 @@ void test_spinhalf_symmetric_spectra(BondList bondlist, Couplings couplings,
   int n_sites = space_group.n_sites();
   assert(irreps.size() == multiplicities.size());
 
-  for (int nup = 0; nup <= n_sites; ++nup) {
+  for (int nup = 3; nup <= n_sites; ++nup) {
     // Log("Spinhalf Symmetric N: {}, nup: {}", n_sites, nup);
     // Compute the full spectrum from non-symmetrized block
     auto spinhalf_nosym = Spinhalf<bit_t>(n_sites, nup);
@@ -32,16 +32,16 @@ void test_spinhalf_symmetric_spectra(BondList bondlist, Couplings couplings,
         auto irrep = irreps[k];
         int multiplicity = multiplicities[k];
         auto spinhalf = Spinhalf<bit_t>(n_sites, nup, space_group, irrep);
-        // Log.out(
-        //     "nup: {}, k: {}, mult: {}, dim_nosym: {}, dim_sym: "
-        //     "{} ", nup, k, multiplicity, spinhalf_nosym.size(),
-        //     spinhalf.size());
+        // Log.out("nup: {}, k: {}, mult: {}, dim_nosym: {}, dim_sym: "
+        //         "{} ",
+        //         nup, k, multiplicity, spinhalf_nosym.size(), spinhalf.size());
         if (spinhalf.size() > 0) {
 
           // Compute partial spectrum from symmetrized block
           auto H_sym = MatrixCplx(bondlist, couplings, spinhalf, spinhalf);
           REQUIRE(lila::close(H_sym, lila::Herm(H_sym)));
           auto eigs_sym_k = lila::EigenvaluesSym(H_sym);
+
           // Check whether results are the same for real blocks
           if (!is_complex(spinhalf.irrep()) && !(is_complex(couplings))) {
             auto H_sym_real =

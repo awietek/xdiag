@@ -6,8 +6,8 @@
 #include <lila/external/gsl/span>
 
 #include <hydra/common.h>
-#include <hydra/indexing/lin_table.h>
 #include <hydra/indexing/fermi_table.h>
+#include <hydra/indexing/lin_table.h>
 
 #include <hydra/symmetries/group_action/group_action_lookup.h>
 #include <hydra/symmetries/operations/group_action_operations.h>

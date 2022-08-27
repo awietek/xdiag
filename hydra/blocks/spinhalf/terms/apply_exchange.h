@@ -37,8 +37,9 @@ void apply_exchange(Bond const &bond, Couplings const &couplings,
   coeff_t Jhalf_conj = J_conj / 2.;
 
   // Log("Jhalf r: {} i: {}", lila::real(Jhalf), lila::imag(Jhalf));
-  // Log("Jhalf_conj r: {} i: {}", lila::real(Jhalf_conj), lila::imag(Jhalf_conj));
-  
+  // Log("Jhalf_conj r: {} i: {}", lila::real(Jhalf_conj),
+  // lila::imag(Jhalf_conj));
+
   if constexpr (is_real<coeff_t>()) { // just to supress "unused" warning
     assert(Jhalf == Jhalf_conj);
   }
@@ -48,28 +49,44 @@ void apply_exchange(Bond const &bond, Couplings const &couplings,
     return bitops::popcnt(spins & flipmask) & 1;
   };
 
-  // Function to flip spin and get coefficient
-  auto term_action = [&flipmask, &s1, &Jhalf,
-                      &Jhalf_conj](bit_t spins) -> std::pair<bit_t, coeff_t> {
-    bit_t spins_flip = spins ^ flipmask;
-    if constexpr (is_complex<coeff_t>()) {
-      return {spins_flip, bitops::gbit(spins, s1) ? Jhalf : Jhalf_conj};
-    } else {
-      return {spins_flip, Jhalf};
-    }
-  };
-
   // Dispatch either symmetric of unsymmetric term application
   if (!lila::close(J, 0.)) {
 
-    if constexpr (symmetric) {
+    if constexpr (is_real<coeff_t>()) {
 
-	terms::spinhalf::apply_term_offdiag_sym<bit_t, coeff_t>(
-          indexing_in, indexing_out, non_zero_term, term_action, fill);
-    } else {
+      auto term_action = [&flipmask,
+                          &Jhalf](bit_t spins) -> std::pair<bit_t, coeff_t> {
+        bit_t spins_flip = spins ^ flipmask;
+        return {spins_flip, Jhalf};
+      };
 
-      terms::spinhalf::apply_term_offdiag_no_sym<bit_t, coeff_t>(
-          indexing_in, indexing_out, non_zero_term, term_action, fill);
+      if constexpr (symmetric) {
+
+        terms::spinhalf::apply_term_offdiag_sym<bit_t, coeff_t>(
+            indexing_in, indexing_out, non_zero_term, term_action, fill);
+      } else {
+
+        terms::spinhalf::apply_term_offdiag_no_sym<bit_t, coeff_t>(
+            indexing_in, indexing_out, non_zero_term, term_action, fill);
+      }
+
+    } else { // if (is_complex<coeff_t>())
+
+      auto term_action = [&flipmask, &s1, &Jhalf, &Jhalf_conj](
+                             bit_t spins) -> std::pair<bit_t, coeff_t> {
+        bit_t spins_flip = spins ^ flipmask;
+        return {spins_flip, bitops::gbit(spins, s1) ? Jhalf : Jhalf_conj};
+      };
+
+      if constexpr (symmetric) {
+
+        terms::spinhalf::apply_term_offdiag_sym<bit_t, coeff_t>(
+            indexing_in, indexing_out, non_zero_term, term_action, fill);
+      } else {
+
+        terms::spinhalf::apply_term_offdiag_no_sym<bit_t, coeff_t>(
+            indexing_in, indexing_out, non_zero_term, term_action, fill);
+      }
     }
   }
 }
