@@ -15,7 +15,7 @@ idx_t get_omp_end(idx_t size) {
   idx_t myid = omp_get_thread_num();
   idx_t rank = omp_get_num_threads();
   idx_t chunksize = size / rank;
-  idx_t end = (myid == rank - 1) ? size : (myid + 1) * chunksize;
+  return (myid == rank - 1) ? size : (myid + 1) * chunksize;
 }
 
 std::pair<idx_t, idx_t> get_omp_start_end(idx_t size) {
