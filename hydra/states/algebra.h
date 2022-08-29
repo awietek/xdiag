@@ -12,7 +12,10 @@
 
 #include <hydra/parallel/mpi/dot_mpi.h>
 
-#include <hydra/algebra/state.h>
+#include <hydra/states/state.h>
+#include <hydra/states/zero_state.h>
+#include <hydra/states/random_state.h>
+
 
 namespace hydra {
 

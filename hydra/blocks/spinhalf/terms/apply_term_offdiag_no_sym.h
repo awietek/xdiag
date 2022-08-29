@@ -31,7 +31,7 @@ void apply_term_offdiag_no_sym(IndexingIn &&indexing_in,
 #ifdef HYDRA_ENABLE_OPENMP
   idx_t size = indexing_in.size();
 
-#pragma omp parallel for schedule(dynamic)
+#pragma omp parallel for schedule(guided)
   for (idx_t idx_in = 0; idx_in < size; ++idx_in) {
     bit_t spins_in = indexing_in.state(idx_in);
     apply_term_offdiag_no_sym_to_spins<bit_t, coeff_t>(

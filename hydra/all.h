@@ -18,8 +18,11 @@
 #include "utils/print.h"
 #include "utils/print_macro.h"
 
-#include "algebra/algebra.h"
-#include "algebra/state.h"
+#include "states/algebra.h"
+#include "states/state.h"
+#include "states/random_state.h"
+#include "states/zero_state.h"
+#include "states/gpwf_spinhalf.h"
 
 #include "combinatorics/binomial.h"
 #include "combinatorics/bit_patterns.h"
@@ -86,8 +89,6 @@
 #include "operators/operator_qns.h"
 #include "operators/operator_utils.h"
 #include "operators/symmetric_operator.h"
-
-#include "wavefunctions/gpwf_spinhalf.h"
 
 #include "linalg/lanczos/lanczos_convergence.h"
 #include "linalg/lanczos/lanczos_eigenvalues.h"

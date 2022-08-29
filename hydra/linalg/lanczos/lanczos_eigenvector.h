@@ -155,9 +155,7 @@ LanczosEigenvectorReal(BondList const &bonds, Couplings const &couplings,
 
   // Create random starting vector with normal distributed entries
   auto set_v0 = [&seed](lila::Vector<double> &v0) {
-    normal_dist_t<double> dist(0., 1.);
-    normal_gen_t<double> gen(dist, seed);
-    Random(v0, gen);
+    random::fill_random_normal_vector(v0, seed);
   };
 
   // Run Lanczos algorithm
@@ -183,9 +181,7 @@ LanczosEigenvectorCplx(BondList const &bonds, Couplings const &couplings,
 
   // Create random starting vector with normal distributed entries
   auto set_v0 = [&seed](lila::Vector<complex> &v0) {
-    normal_dist_t<complex> dist(0., 1.);
-    normal_gen_t<complex> gen(dist, seed);
-    Random(v0, gen);
+    random::fill_random_normal_vector(v0, seed);
   };
 
   // Run Lanczos algorithm

@@ -12,7 +12,7 @@
 
 namespace hydra::indexing::spinhalf {
 
-constexpr int maximum_prefix_bits = 20;
+constexpr int maximum_prefix_bits = 24;
 
 template <typename bit_t, int n_sublat> class IndexingSublattice {
 public:

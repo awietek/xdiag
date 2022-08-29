@@ -1,8 +1,8 @@
 #pragma once
 
-#include <numeric>
 #include <utility>
 #include <vector>
+#include <numeric>
 
 #include <lila/external/gsl/span>
 

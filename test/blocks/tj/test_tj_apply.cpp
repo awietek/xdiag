@@ -33,7 +33,7 @@ TEST_CASE("tj_apply", "[blocks][tj]") {
         double e0_app = E0Real(bonds, cpls, block);
         // Log.out("nup: {}, ndn: {}, e0_mat: {}, e0_app: {}", nup, ndn,
         //              e0_mat, e0_app);
-        REQUIRE(lila::close(e0_mat, e0_app));
+        REQUIRE(std::abs(e0_mat- e0_app) < 1e-10);
       }
   }
 

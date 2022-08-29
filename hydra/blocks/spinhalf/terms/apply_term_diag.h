@@ -21,7 +21,7 @@ void apply_term_diag(Indexing &&indexing, TermCoeff &&term_coeff, Fill &&fill) {
 #ifdef HYDRA_ENABLE_OPENMP
     idx_t size = indexing.size();
 
-#pragma omp parallel for schedule(static)
+#pragma omp parallel for schedule(guided)
     for (idx_t idx = 0; idx < size; ++idx) {
       bit_t spins = indexing.state(idx);
       apply_term_diag_to_spins<bit_t, coeff_t>(spins, idx, term_coeff, fill);

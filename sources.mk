@@ -69,7 +69,9 @@ sources+= hydra/operators/operator_utils.cpp
 sources+= hydra/operators/operator_qns.cpp
 sources+= hydra/operators/symmetric_operator.cpp
 
-sources+= hydra/wavefunctions/gpwf_spinhalf.cpp
+sources+= hydra/states/gpwf_spinhalf.cpp
+
+sources+= hydra/utils/random_utils.cpp
 
 sources+=hydra/linalg/lanczos/lanczos_convergence.cpp
 sources+=hydra/linalg/lanczos/tmatrix.cpp
@@ -147,6 +149,8 @@ testsources+= test/blocks/electron_symmetric/test_electron_symmetric_apply.cpp
 testsources+= test/linalg/lanczos/test_lanczos_generic.cpp
 testsources+= test/linalg/lanczos/test_lanczos_eigenvalues.cpp
 testsources+= test/linalg/lanczos/test_lanczos_eigenvector.cpp
+
+testsources+= test/states/test_random_state.cpp
 
 testmpisources+= testmpi/tests.cpp
 testmpisources+= testmpi/mpi/test_dot_mpi.cpp

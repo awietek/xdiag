@@ -5,7 +5,7 @@
 #include <utility>
 #include <vector>
 
-#include <hydra/algebra/state.h>
+#include <hydra/states/state.h>
 #include <hydra/linalg/lanczos/lanczos_eigenvalues.h>
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
