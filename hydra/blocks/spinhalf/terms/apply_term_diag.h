@@ -19,15 +19,13 @@ template <typename bit_t, typename coeff_t, class Indexing, class TermCoeff,
 void apply_term_diag(Indexing &&indexing, TermCoeff &&term_coeff, Fill &&fill) {
 
 #ifdef HYDRA_ENABLE_OPENMP
-#pragma omp parallel
-  {
-    auto begin = indexing.thread_begin();
-    auto end = indexing.thread_end();
-    for (auto it = begin; it != end; ++it) {
-      auto [spins, idx] = *it;
+    idx_t size = indexing.size();
+
+#pragma omp parallel for schedule(static)
+    for (idx_t idx = 0; idx < size; ++idx) {
+      bit_t spins = indexing.state(idx);
       apply_term_diag_to_spins<bit_t, coeff_t>(spins, idx, term_coeff, fill);
     }
-  }
 
 #else
   for (auto [spins, idx] : indexing) {

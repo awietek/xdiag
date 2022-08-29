@@ -1,9 +1,9 @@
 #pragma once
 
-#include <lila/all.h>
-#include <hydra/linalg/lanczos/tmatrix.h>
 #include <hydra/common.h>
+#include <hydra/linalg/lanczos/tmatrix.h>
 #include <hydra/utils/logger.h>
+#include <lila/all.h>
 
 namespace hydra {
 
@@ -15,8 +15,6 @@ LanczosGeneric(multiply_f mult, lila::Vector<coeff_t> &v0, dot_f dot,
                lila::Matrix<coeff_t> coefficients = lila::Matrix<coeff_t>(),
                int max_iterations = 1000, double deflation_tol = 1e-7) {
 
-
-  
   using namespace lila;
   using real = real_t<coeff_t>;
 
@@ -41,7 +39,7 @@ LanczosGeneric(multiply_f mult, lila::Vector<coeff_t> &v0, dot_f dot,
   Zeros(v0);
   real alpha = 0.;
   real beta = 0.;
-  
+
   // Normalize start vector or return if norm is zero
   coeff_t v1_norm = norm(v1);
   if (!lila::close(v1_norm, (coeff_t)0.)) {
@@ -71,8 +69,14 @@ LanczosGeneric(multiply_f mult, lila::Vector<coeff_t> &v0, dot_f dot,
     auto eigs = tmatrix.eigenvalues();
     Log(2, "alpha: {:.16f}", alpha);
     Log(2, "beta: {:.16f}", beta);
-    Log(2, "eigs: {:.16f} {:.16f} {:.16f}", eigs(0), eigs(1), eigs(2));
-    
+    if (eigs.size() == 1) {
+      Log(2, "eigs: {:.16f}", eigs(0));
+    } else if (eigs.size() == 2) {
+      Log(2, "eigs: {:.16f} {:.16f}", eigs(0), eigs(1));
+    } else {
+      Log(2, "eigs: {:.16f} {:.16f} {:.16f}", eigs(0), eigs(1), eigs(2));
+    }
+
     // Finish if Lanczos sequence is exhausted
     if (std::abs(beta) > deflation_tol) {
       Scale(1. / (coeff_t)beta, v1);

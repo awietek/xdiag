@@ -47,6 +47,7 @@ template <typename bit_t>
 ska::flat_hash_map<bit_t, gsl::span<bit_t const>>
 compute_rep_search_range_omp(std::vector<bit_t> const &reps,
                              int n_postfix_bits) {
+  //// COMMENT: HAS A BUG DO NOT USE
 
   ska::flat_hash_map<bit_t, gsl::span<bit_t const>> rep_search_range;
 
@@ -234,7 +235,9 @@ IndexingSublattice<bit_t, n_sublat>::IndexingSublattice(
   reps_.shrink_to_fit();
   norms_.shrink_to_fit();
 #ifdef HYDRA_ENABLE_OPENMP
-  rep_search_range_ = compute_rep_search_range_omp(reps_, n_postfix_bits_);
+  // omp version still has a bug, use serial (not so bad performance actually)
+  // rep_search_range_ = compute_rep_search_range_omp(reps_, n_postfix_bits_);
+  rep_search_range_ = compute_rep_search_range_serial(reps_, n_postfix_bits_);
 #else
   rep_search_range_ = compute_rep_search_range_serial(reps_, n_postfix_bits_);
 #endif
@@ -278,21 +281,6 @@ IndexingSublattice<bit_t, n_sublat>::index_syms(bit_t state) const {
   return {idx, syms};
 }
 
-#ifdef HYDRA_ENABLE_OPENMP
-template <class bit_t, int n_sublat>
-typename IndexingSublattice<bit_t, n_sublat>::iterator_t
-IndexingSublattice<bit_t, n_sublat>::thread_begin() const {
-  idx_t start = omp::get_omp_start(reps_.size());
-  return iterator_t(reps_, start);
-}
-
-template <class bit_t, int n_sublat>
-typename IndexingSublattice<bit_t, n_sublat>::iterator_t
-IndexingSublattice<bit_t, n_sublat>::thread_end() const {
-  idx_t end = omp::get_omp_end(reps_.size());
-  return iterator_t(reps_, end);
-}
-#endif
 
 template class IndexingSublattice<uint16_t, 1>;
 template class IndexingSublattice<uint32_t, 1>;

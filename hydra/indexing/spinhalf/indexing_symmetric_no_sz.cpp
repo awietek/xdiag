@@ -3,10 +3,6 @@
 #include <hydra/blocks/utils/block_utils.h>
 #include <hydra/symmetries/operations/representative_list.h>
 
-#ifdef HYDRA_ENABLE_OPENMP
-#include <hydra/parallel/omp/omp_utils.h>
-#endif
-
 namespace hydra::indexing::spinhalf {
 
 template <class bit_t>
@@ -27,22 +23,6 @@ IndexingSymmetricNoSz<bit_t>::IndexingSymmetricNoSz(
   begin_ = iterator_t(reps_, 0);
   end_ = iterator_t(reps_, size_);
 }
-
-#ifdef HYDRA_ENABLE_OPENMP
-template <class bit_t>
-typename IndexingSymmetricNoSz<bit_t>::iterator_t
-IndexingSymmetricNoSz<bit_t>::thread_begin() const {
-  idx_t start = omp::get_omp_start(size_);
-  return iterator_t(reps_, start);
-}
-
-template <class bit_t>
-typename IndexingSymmetricNoSz<bit_t>::iterator_t
-IndexingSymmetricNoSz<bit_t>::thread_end() const {
-  idx_t end = omp::get_omp_end(size_);
-  return iterator_t(reps_, end);
-}
-#endif
 
 template class IndexingSymmetricNoSz<uint16_t>;
 template class IndexingSymmetricNoSz<uint32_t>;

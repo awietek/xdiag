@@ -16,14 +16,10 @@ public:
   inline int n_sites() const { return n_sites_; }
   inline idx_t size() const { return size_; }
   inline idx_t index(bit_t spins) const { return (idx_t)spins; }
+  inline bit_t state(idx_t index) const { return (bit_t)index; }
 
   iterator_t begin() const { return begin_; }
   iterator_t end() const { return end_; }
-
-#ifdef HYDRA_ENABLE_OPENMP
-  iterator_t thread_begin() const;
-  iterator_t thread_end() const;
-#endif
 
 private:
   int n_sites_;

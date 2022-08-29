@@ -46,17 +46,16 @@ void apply_term_offdiag_sym(IndexingIn &&indexing_in,
   }
 
 #ifdef HYDRA_ENABLE_OPENMP
-#pragma omp parallel
-  {
-    auto begin = indexing_in.thread_begin();
-    auto end = indexing_in.thread_end();
-    for (auto it = begin; it != end; ++it) {
-      auto [spins_in, idx_in] = *it;
-      apply_term_offdiag_sym_to_spins(spins_in, idx_in, characters, indexing_in,
-                                      indexing_out, non_zero_term, term_action,
-                                      fill);
-    }
+  idx_t size = indexing_in.size();
+
+#pragma omp parallel for schedule(guided)
+  for (idx_t idx_in = 0; idx_in < size; ++idx_in) {
+    bit_t spins_in = indexing_in.state(idx_in);
+    apply_term_offdiag_sym_to_spins(spins_in, idx_in, characters, indexing_in,
+                                    indexing_out, non_zero_term, term_action,
+                                    fill);
   }
+
 #else
   // Run through all states and apply term
   for (auto [spins_in, idx_in] : indexing_in) {
