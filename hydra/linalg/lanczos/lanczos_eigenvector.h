@@ -14,6 +14,7 @@
 #include <hydra/blocks/blocks.h>
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
+#include <hydra/random/random_utils.h>
 
 #include <lila/all.h>
 
@@ -36,7 +37,7 @@ LanczosEigenvector(BondList const &bonds, Couplings const &couplings,
 
   // MPI Lanczos
 #ifdef HYDRA_ENABLE_MPI
-  if constexpr (detail::is_mpi_block<Block>) {
+  if constexpr (mpi::is_mpi_block<Block>) {
 
     int iter = 1;
     auto mult = [&iter, &bonds, &couplings, &block](
@@ -149,7 +150,7 @@ LanczosEigenvectorReal(BondList const &bonds, Couplings const &couplings,
   using namespace lila;
 
   // use different seeds for different MPI processes
-  if constexpr (detail::is_mpi_block<Block>) {
+  if constexpr (mpi::is_mpi_block<Block>) {
     seed += 0x01000193 * block.mpi_rank();
   }
 
@@ -175,7 +176,7 @@ LanczosEigenvectorCplx(BondList const &bonds, Couplings const &couplings,
   using namespace lila;
 
   // use different seeds for different MPI processes
-  if constexpr (detail::is_mpi_block<Block>) {
+  if constexpr (mpi::is_mpi_block<Block>) {
     seed += 0x01000193 * block.mpi_rank();
   }
 

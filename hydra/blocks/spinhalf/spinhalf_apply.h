@@ -4,7 +4,7 @@
 
 #include <hydra/common.h>
 
-#include <hydra/blocks/blocks.h>
+#include <hydra/blocks/spinhalf/spinhalf.h>
 
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>

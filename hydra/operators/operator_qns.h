@@ -1,9 +1,5 @@
 #pragma once
 
-#include <hydra/blocks/electron/electron.h>
-#include <hydra/blocks/spinhalf/spinhalf.h>
-#include <hydra/blocks/tj/tj.h>
-
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
 #include <hydra/operators/operator_utils.h>

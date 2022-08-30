@@ -16,10 +16,10 @@ template <typename bit_t = std_bit_t> class ElectronSymmetric;
 
 template <typename bit_t = std_bit_t> class SpinhalfMPI;
 template <typename bit_t = std_bit_t> class ElectronMPI;
-  
+
 } // namespace hydra
 
-namespace hydra::detail {
+namespace hydra::mpi {
 template <class Block> struct is_mpi_block_t {
   static constexpr bool value = false;
 };
@@ -47,4 +47,4 @@ template <> struct is_mpi_block_t<ElectronMPI<uint64_t>> {
 template <class Block>
 constexpr bool is_mpi_block = is_mpi_block_t<Block>::value;
 
-} // namespace hydra::detail
+} // namespace hydra::mpi

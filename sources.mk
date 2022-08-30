@@ -12,10 +12,6 @@ sources+= hydra/combinatorics/bit_patterns.cpp
 sources+= hydra/combinatorics/combinations.cpp
 sources+= hydra/combinatorics/combinations_index.cpp
 
-sources+= hydra/parameters/parameter_value.cpp
-sources+= hydra/parameters/parameters.cpp
-sources+= hydra/parameters/parser.cpp
-
 sources+= hydra/indexing/lin_table.cpp
 sources+= hydra/indexing/fermi_table.cpp
 sources+= hydra/indexing/combinations_indexing.cpp
@@ -71,7 +67,7 @@ sources+= hydra/operators/symmetric_operator.cpp
 
 sources+= hydra/states/gpwf_spinhalf.cpp
 
-sources+= hydra/utils/random_utils.cpp
+sources+= hydra/random/random_utils.cpp
 
 sources+=hydra/linalg/lanczos/lanczos_convergence.cpp
 sources+=hydra/linalg/lanczos/tmatrix.cpp

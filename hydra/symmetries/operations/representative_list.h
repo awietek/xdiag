@@ -1,8 +1,8 @@
 #pragma once
 
+#include <numeric>
 #include <utility>
 #include <vector>
-#include <numeric>
 
 #include <lila/external/gsl/span>
 
@@ -62,8 +62,12 @@ representatives_indices_symmetries_limits_norms(
 
   // compute the sym offsets
   std::vector<int> n_syms_for_state_offset(size, 0);
-  std::exclusive_scan(n_syms_for_state.begin(), n_syms_for_state.end(),
-                      n_syms_for_state_offset.begin(), 0);
+
+  // std::exclusive_scan(n_syms_for_state.begin(), n_syms_for_state.end(),
+  //                     n_syms_for_state_offset.begin(), 0);
+
+  std::partial_sum(n_syms_for_state.begin(), n_syms_for_state.end() - 1,
+                   n_syms_for_state_offset.begin() + 1);
 
   // set the sym_limits
   std::vector<std::pair<span_size_t, span_size_t>> sym_limits(size);

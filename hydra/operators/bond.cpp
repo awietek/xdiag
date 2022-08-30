@@ -12,13 +12,7 @@ Bond::Bond(std::string type, std::string coupling, int site)
 
 Bond::Bond(std::string type, std::string coupling,
            std::vector<int> const &sites)
-    : type_(type), coupling_(coupling), sites_(sites), has_parameters_(false),
-      parameters_() {}
-
-Bond::Bond(std::string type, std::string coupling,
-           std::vector<int> const &sites, Parameters const &parameters)
-    : type_(type), coupling_(coupling), sites_(sites), has_parameters_(true),
-      parameters_(parameters) {}
+    : type_(type), coupling_(coupling), sites_(sites) {}
 
 std::vector<int> common_sites(Bond b1, Bond b2) {
   std::vector<int> s1 = b1.sites();

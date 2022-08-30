@@ -29,7 +29,7 @@ Tmatrix LanczosEigenvaluesInplace(
 
   // MPI Lanczos
 #ifdef HYDRA_ENABLE_MPI
-  if constexpr (detail::is_mpi_block<Block>) {
+  if constexpr (mpi::is_mpi_block<Block>) {
     int iter = 1;
     auto mult = [&iter, &bonds, &couplings, &block](
                     lila::Vector<coeff_t> const &v, lila::Vector<coeff_t> &w) {
@@ -57,7 +57,7 @@ Tmatrix LanczosEigenvaluesInplace(
     timing_mpi(t0, rightnow_mpi(), "Lanczos time", 1);
     return tmat;
   }
- 
+
   // Serial Lanczos
   else {
 #endif

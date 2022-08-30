@@ -24,7 +24,7 @@ coeff_t Dot(State<coeff_t, Block> const &v, State<coeff_t, Block> const &w) {
   if (v.block() != w.block()) {
     Log.err("Error: trying to perform Dot product of distinct blocks");
   }
-  if constexpr (detail::is_mpi_block<Block>) {
+  if constexpr (mpi::is_mpi_block<Block>) {
     return DotMPI(v.vector(), w.vector());
   } else {
     return Dot(v.vector(), w.vector());
