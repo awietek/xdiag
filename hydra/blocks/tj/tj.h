@@ -17,12 +17,12 @@
 
 namespace hydra {
 
-template <class bit_t> class tJ {
+template <class bit_t = std_bit_t> class tJ {
 public:
   tJ() = default;
   tJ(int n_sites, int nup, int ndn);
   tJ(int n_sites, int nup, int ndn, PermutationGroup permutation_group,
-           Representation irrep);
+     Representation irrep);
 
   inline int n_sites() const { return n_sites_; }
   inline int n_up() const { return n_up_; }
@@ -72,10 +72,9 @@ private:
         tJ<bit_tt> const &block_out, lila::Vector<coeff_tt> &vec_out);
 
   template <typename bit_tt, typename coeff_tt>
-  friend lila::Matrix<coeff_tt> MatrixGen(BondList const &bonds,
-                                          Couplings const &couplings,
-                                          tJ<bit_tt> const &block_in,
-                                          tJ<bit_tt> const &block_out);
+  friend lila::Matrix<coeff_tt>
+  MatrixGen(BondList const &bonds, Couplings const &couplings,
+            tJ<bit_tt> const &block_in, tJ<bit_tt> const &block_out);
 };
 
 } // namespace hydra

@@ -19,7 +19,7 @@
 
 namespace hydra {
 
-template <class bit_t> class Electron {
+template <class bit_t = std_bit_t> class Electron {
 public:
   Electron() = default;
   Electron(int n_sites);
