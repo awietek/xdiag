@@ -8,7 +8,7 @@ template <class State> void ZeroState(State &state) {
   lila::Zeros(state.vector());
 }
 
-template <class coeff_t, class Block>
+template <class coeff_t = complex, class Block>
 State<coeff_t, Block> ZeroState(Block const &block) {
   auto v = lila::Zeros<coeff_t>(block.size());
   return State(block, v);

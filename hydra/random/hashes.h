@@ -1,28 +1,21 @@
 #pragma once
 
 #include <hydra/common.h>
+#include <hydra/symmetries/permutation.h>
+#include <hydra/symmetries/permutation_group.h>
 
-namespace hydra::combinatorics {
+#include <hydra/blocks/spinhalf/spinhalf.h>
+#include <hydra/blocks/tj/tj.h>
+#include <hydra/blocks/electron/electron.h>
 
-// Fowler–Noll–Vo hash function for uint32_t
-constexpr uint32_t fnv1_prime_uint32_t = 0x01000193;
-constexpr uint32_t fnv1_offset_uint32_t = 0x811c9dc5;
-constexpr uint32_t fnv1_mask_uint32_t =
-    fnv1_prime_uint32_t * fnv1_offset_uint32_t;
-constexpr uint32_t hash_fnv1(uint32_t bits) noexcept {
-  return fnv1_mask_uint32_t ^ bits;
-}
-constexpr uint16_t hash_fnv1(uint16_t bits) noexcept {
-  return (uint16_t)hash_fnv1((uint32_t)bits);
-}
+namespace hydra::random {
 
-// Fowler–Noll–Vo hash function for uint64_t
-constexpr uint64_t fnv1_prime_uint64_t = 0x00000100000001B3;
-constexpr uint64_t fnv1_offset_uint64_t = 0xcbf29ce484222645;
-constexpr uint64_t fnv1_mask_uint64_t =
-    fnv1_prime_uint64_t * fnv1_offset_uint64_t;
-constexpr uint64_t hash_fnv1(uint64_t bits) {
-  return fnv1_mask_uint64_t ^ bits;
-}
+uint32_t hash(Permutation const &perm);
+uint32_t hash(PermutationGroup const &group);
+uint32_t hash(Representation const &irrep);
 
-} // namespace hydra::combinatorics
+template <typename bit_t> uint32_t hash(Spinhalf<bit_t> const &spinhalf);
+template <typename bit_t> uint32_t hash(tJ<bit_t> const &tj);
+template <typename bit_t> uint32_t hash(Electron<bit_t> const &electron);
+
+} // namespace hydra::random

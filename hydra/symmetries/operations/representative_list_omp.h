@@ -21,7 +21,6 @@ representatives_indices_symmetries_limits(int n_par,
                                           LinTable const &lintable) {
 
   using combinatorics::binomial;
-
   using combinatorics::CombinationsIndexThread;
 
   // Compute all representatives

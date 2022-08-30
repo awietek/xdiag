@@ -3,7 +3,7 @@
 
 #ifdef HYDRA_ENABLE_OPENMP
 #include <hydra/parallel/omp/omp_utils.h>
-#include <hydra/combinatorics/hashes.h>
+#include <hydra/random/hash_functions.h>
 #endif
 
 namespace hydra::random {
@@ -80,7 +80,7 @@ void fill_random_normal_vector(lila::Vector<coeff_t> &v, int seed) {
 
     } else {
       std::mt19937 genr(seed);
-      std::mt19937 geni(combinatorics::hash_fnv1((uint32_t)seed));
+      std::mt19937 geni(random::hash_fnv1((uint32_t)seed));
       genr.discard(discard * start);
       geni.discard(discard * start);
 

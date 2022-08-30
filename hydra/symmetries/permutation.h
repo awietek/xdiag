@@ -14,6 +14,7 @@ public:
   Permutation shuffle() const;
 
   inline int n_sites() const { return n_sites_; }
+  inline int size() const { return n_sites_; }
   inline int operator[](int i) const { return permutation_[i]; }
   inline bool operator==(Permutation const &rhs) const {
     return rhs.permutation_ == permutation_;

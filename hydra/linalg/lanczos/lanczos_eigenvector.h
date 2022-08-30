@@ -14,7 +14,10 @@
 #include <hydra/blocks/blocks.h>
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
+
 #include <hydra/random/random_utils.h>
+#include <hydra/random/hashes.h>
+#include <hydra/random/hash_functions.h>
 
 #include <lila/all.h>
 
@@ -155,8 +158,9 @@ LanczosEigenvectorReal(BondList const &bonds, Couplings const &couplings,
   }
 
   // Create random starting vector with normal distributed entries
-  auto set_v0 = [&seed](lila::Vector<double> &v0) {
-    random::fill_random_normal_vector(v0, seed);
+  auto set_v0 = [&seed, &block](lila::Vector<double> &v0) {
+    uint32_t seed_modified = random::hash_combine(seed, random::hash(block));
+    random::fill_random_normal_vector(v0, seed_modified);
   };
 
   // Run Lanczos algorithm
@@ -181,8 +185,9 @@ LanczosEigenvectorCplx(BondList const &bonds, Couplings const &couplings,
   }
 
   // Create random starting vector with normal distributed entries
-  auto set_v0 = [&seed](lila::Vector<complex> &v0) {
-    random::fill_random_normal_vector(v0, seed);
+  auto set_v0 = [&seed, &block](lila::Vector<complex> &v0) {
+    uint32_t seed_modified = random::hash_combine(seed, random::hash(block));
+    random::fill_random_normal_vector(v0, seed_modified);
   };
 
   // Run Lanczos algorithm

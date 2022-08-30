@@ -17,6 +17,8 @@ public:
   State(lila::Vector<coeff_t> const &vector, Block const &block)
       : block_(block), vector_(vector) {}
 
+  coeff_t operator()(idx_t idx) { return vector_(idx); }
+
   Block const &block() const { return block_; }
   lila::Vector<coeff_t> &vector() { return vector_; }
   lila::Vector<coeff_t> const &vector() const { return vector_; }

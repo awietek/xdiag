@@ -10,35 +10,44 @@ using namespace hydra;
 TEST_CASE("random_state", "[states]") {
   using namespace hydra::testcases::electron;
 
-  // Log.out("random state HB chain test");
-  // for (int n_sites = 6; n_sites <= 8; ++n_sites) {
-  //   Log("N={}", n_sites);
-  //   auto [group, irreps] = get_cyclic_group_irreps(n_sites);
+  Log.out("random state Spinhalf distinction test");
+  double first_r = 0.;
+  complex first_c = 0.;
 
-  //   for (int nup = 0; nup <= n_sites; ++nup) {
-  //     for (auto irrep : irreps) {
-  //       auto block = Spinhalf(n_sites, nup, group, irrep);
-  //       auto state_real = RandomStateReal(block);
+  // Test whether random states from different blocks are different
+  for (int n_sites = 6; n_sites <= 8; ++n_sites) {
+    Log("N={}", n_sites);
+    auto [group, irreps] = get_cyclic_group_irreps(n_sites);
+   
+    for (int nup = 0; nup <= n_sites; ++nup) {
+      for (auto irrep : irreps) {
+        auto block = Spinhalf(n_sites, nup, group, irrep);
 
-  //       auto set_real =
-  //           std::set(state_real.vector().begin(), state_real.vector().end());
-  //       REQUIRE(set_real.size() == state_real.size());
-  //       LilaPrint(state_real.vector());
-
-  //       auto state_cplx = RandomStateCplx(block);
-  //       // auto set_cplx =
-  //       //     std::set(state_cplx.vector().begin(),
-  //       state_cplx.vector().end());
-  //       // REQUIRE(set_cplx.size() == state_cplx.size());
-  //       LilaPrint(state_cplx.vector());
-
-  //     }
-  //   }
-  // }
+        if (block.size() > 3) {
+          auto state_real = RandomStateReal(block);
+          auto state_cplx = RandomStateCplx(block);
+          // HydraPrint(state_real.vector());
+          // HydraPrint(state_cplx.vector());
+          if (first_r == 0.) {
+            first_r = state_real(0);
+          } else {
+            REQUIRE(std::abs(state_real(0) - first_r) > 1e-12);
+          }
+          if (first_c == 0.) {
+            first_c = state_cplx(0);
+          } else {
+            REQUIRE(std::abs(state_cplx(0) - first_c) > 1e-12);
+          }
+        }
+      }
+    }
+  }
 #ifdef HYDRA_ENABLE_OPENMP
 
   // Check whether result with multiple threads is the same as with a single
   // thread
+  Log.out("random state Spinhalf omp test");
+
   auto block = Spinhalf(4);
   for (int seed = 0; seed < 10; ++seed) {
     auto state = RandomStateReal(block);

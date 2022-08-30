@@ -1,36 +1,46 @@
 #pragma once
 
 #include <hydra/blocks/blocks.h>
-#include <hydra/states/state.h>
+#include <hydra/random/hash_functions.h>
+#include <hydra/random/hashes.h>
 #include <hydra/random/random_utils.h>
+#include <hydra/states/state.h>
 
 namespace hydra {
 
-template <class State> void RandomState(State &state, uint32_t seed = 42) {
-  if constexpr (mpi::is_mpi_block<typename State::block_t>()) {
+template <class coeff_t, class Block>
+inline void RandomState(State<coeff_t, Block> &state, uint32_t seed = 42) {
+  if constexpr (mpi::is_mpi_block<Block>()) {
     seed += 0x01000193 * state.block.mpi_rank();
   }
-  random::fill_random_normal_vector(state.vector(), seed);
+  uint32_t seed_modified =
+      random::hash_combine(seed, random::hash(state.block()));
+  random::fill_random_normal_vector(state.vector(), seed_modified);
+  lila::Normalize(state.vector());
 }
 
-template <class coeff_t, class Block>
-State<coeff_t, Block> RandomState(Block const &block, uint32_t seed = 42) {
+template <class coeff_t = complex, class Block>
+inline State<coeff_t, Block> RandomState(Block const &block,
+                                         uint32_t seed = 42) {
   if constexpr (mpi::is_mpi_block<Block>) {
     seed += 0x01000193 * block.mpi_rank();
   }
-
   auto v = lila::Zeros<coeff_t>(block.size());
-  random::fill_random_normal_vector(v, seed);
+  uint32_t seed_modified = random::hash_combine(seed, random::hash(block));
+  random::fill_random_normal_vector(v, seed_modified);
+  lila::Normalize(v);
   return State(block, v);
 }
 template <class Block>
-StateReal<Block> RandomStateReal(Block const &block, uint32_t seed = 42) {
-  return RandomState<double, Block>(block);
+inline StateReal<Block> RandomStateReal(Block const &block,
+                                        uint32_t seed = 42) {
+  return RandomState<double, Block>(block, seed);
 }
 
 template <class Block>
-StateCplx<Block> RandomStateCplx(Block const &block, uint32_t seed = 42) {
-  return RandomState<complex, Block>(block);
+inline StateCplx<Block> RandomStateCplx(Block const &block,
+                                        uint32_t seed = 42) {
+  return RandomState<complex, Block>(block, seed);
 }
 
 } // namespace hydra
