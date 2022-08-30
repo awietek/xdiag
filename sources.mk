@@ -68,6 +68,7 @@ sources+= hydra/operators/symmetric_operator.cpp
 sources+= hydra/states/gpwf_spinhalf.cpp
 
 sources+= hydra/random/random_utils.cpp
+sources+= hydra/random/hashes.cpp
 
 sources+=hydra/linalg/lanczos/lanczos_convergence.cpp
 sources+=hydra/linalg/lanczos/tmatrix.cpp
