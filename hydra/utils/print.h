@@ -18,9 +18,13 @@
 
 namespace hydra::utils {
 
+void PrintPretty(const char *identifier, int number);
+void PrintPretty(const char *identifier, uint32_t number);
+void PrintPretty(const char *identifier, uint64_t number);
+void PrintPretty(const char *identifier, int64_t number);
 void PrintPretty(const char *identifier, double number);
 void PrintPretty(const char *identifier, complex number);
-  
+
 void PrintPretty(const char *identifier, Bond const &bond);
 void PrintPretty(const char *identifier, BondList const &bondlist);
 void PrintPretty(const char *identifier, Couplings const &couplings);

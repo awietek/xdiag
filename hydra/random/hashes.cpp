@@ -27,7 +27,10 @@ uint32_t hash(Representation const &irrep) {
   }
   for (auto ch : irrep.characters()) {
     double phase = std::arg(ch) + M_PI;
-    uint32_t angle = uint32_t(phase * 0x9e3779b9);
+    double phase_scattered = std::log(
+        std::abs(std::sin(1.7365529164217 * phase + 2.56381234623457)) +
+        0.1234567);
+    uint32_t angle = uint32_t(std::abs(phase_scattered * 1234567.0));
     h = hash_combine(h, hash_fnv1(angle));
   }
   return h;

@@ -22,10 +22,14 @@ TEST_CASE("random_state", "[states]") {
     for (int nup = 0; nup <= n_sites; ++nup) {
       for (auto irrep : irreps) {
         auto block = Spinhalf(n_sites, nup, group, irrep);
-
+	
         if (block.size() > 3) {
+	  // HydraPrint(irrep);
+	  // HydraPrint(block);
           auto state_real = RandomStateReal(block);
           auto state_cplx = RandomStateCplx(block);
+	  // HydraPrint(state_real);
+	  // HydraPrint(state_real.vector());
           // HydraPrint(state_real.vector());
           // HydraPrint(state_cplx.vector());
           if (first_r == 0.) {

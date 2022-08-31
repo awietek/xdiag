@@ -1,8 +1,41 @@
 #include "print.h"
 
 #include <hydra/random/hashes.h>
+#include <sstream>
 
 namespace hydra::utils {
+
+void PrintPretty(const char *identifier, int number) {
+  printf("%s:\n", identifier);
+  std::stringstream ss;
+  ss.imbue(std::locale("en_US.UTF-8"));
+  ss << number;
+  printf("%s\n", ss.str().c_str());
+}
+
+void PrintPretty(const char *identifier, uint32_t number) {
+  printf("%s:\n", identifier);
+  std::stringstream ss;
+  ss.imbue(std::locale("en_US.UTF-8"));
+  ss << number;
+  printf("%s\n", ss.str().c_str());
+}
+
+void PrintPretty(const char *identifier, uint64_t number) {
+  printf("%s:\n", identifier);
+  std::stringstream ss;
+  ss.imbue(std::locale("en_US.UTF-8"));
+  ss << number;
+  printf("%s\n", ss.str().c_str());
+}
+
+void PrintPretty(const char *identifier, int64_t number) {
+  printf("%s:\n", identifier);
+  std::stringstream ss;
+  ss.imbue(std::locale("en_US.UTF-8"));
+  ss << number;
+  printf("%s\n", ss.str().c_str());
+}
 
 void PrintPretty(const char *identifier, double number) {
   printf("%s:\n", identifier);
@@ -12,9 +45,9 @@ void PrintPretty(const char *identifier, double number) {
 void PrintPretty(const char *identifier, complex number) {
   printf("%s:\n", identifier);
   if (std::imag(number) > 0.) {
-    printf("%.17e + %.17e I\n", std::real(number), std::imag(number));
+    printf("%.17e + %.17eI\n", std::real(number), std::imag(number));
   } else {
-    printf("%.17e - %.17e I\n", std::real(number), -std::imag(number));
+    printf("%.17e - %.17eI\n", std::real(number), -std::imag(number));
   }
 }
 
@@ -62,8 +95,19 @@ void PrintPretty(const char *identifier, PermutationGroup const &group) {
 
 void PrintPretty(const char *identifier, Representation const &irrep) {
   printf("%s:\n", identifier);
-  printf("  size : %ld\n", irrep.size());
-  printf("  ID   : 0x%08x\n", random::hash(irrep));
+  printf("  size      : %ld\n", (long)irrep.size());
+  printf("  characters:");
+  for (auto c : irrep.characters()) {
+    if (std::imag(c) > 0.) {
+      printf("(%.9f + %.9fI) ", std::real(c), std::imag(c));
+    } else if (std::imag(c) == 0.) {
+      printf("(%.9f + %.9fI) ", std::real(c), 0.);
+    } else {
+      printf("(%.9f - %.9fI) ", std::real(c), -std::imag(c));
+    }
+  }
+  printf("\n");
+  printf("  ID        : 0x%08x\n", random::hash(irrep));
 }
 
 template <typename bit_t>
@@ -80,7 +124,8 @@ void PrintPretty(const char *identifier, Spinhalf<bit_t> const &block) {
   if (block.symmetric()) {
     printf("  group    : defined with ID 0x%08x\n",
            random::hash(block.permutation_group()));
-    printf("  irrep    : defined with ID 0x%08x\n", random::hash(block.irrep()));
+    printf("  irrep    : defined with ID 0x%08x\n",
+           random::hash(block.irrep()));
   }
   std::stringstream ss;
   ss.imbue(std::locale("en_US.UTF-8"));
@@ -112,7 +157,8 @@ void PrintPretty(const char *identifier, tJ<bit_t> const &block) {
   if (block.symmetric()) {
     printf("  group    : defined with ID 0x%08x\n",
            random::hash(block.permutation_group()));
-    printf("  irrep    : defined with ID 0x%08x\n", random::hash(block.irrep()));
+    printf("  irrep    : defined with ID 0x%08x\n",
+           random::hash(block.irrep()));
   }
   std::stringstream ss;
   ss.imbue(std::locale("en_US.UTF-8"));
@@ -141,7 +187,8 @@ void PrintPretty(const char *identifier, Electron<bit_t> const &block) {
   if (block.symmetric()) {
     printf("  group    : defined with ID 0x%08x\n",
            random::hash(block.permutation_group()));
-    printf("  irrep    : defined with ID 0x%08x\n", random::hash(block.irrep()));
+    printf("  irrep    : defined with ID 0x%08x\n",
+           random::hash(block.irrep()));
   }
   std::stringstream ss;
   ss.imbue(std::locale("en_US.UTF-8"));
