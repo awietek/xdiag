@@ -27,7 +27,7 @@ TEST_CASE("random_state", "[states]") {
           auto state_real = RandomStateReal(block);
           auto state_cplx = RandomStateCplx(block);
           // HydraPrint(state_real.vector());
-          HydraPrint(state_cplx.vector());
+          // HydraPrint(state_cplx.vector());
           if (first_r == 0.) {
             first_r = state_real(0);
           } else {
