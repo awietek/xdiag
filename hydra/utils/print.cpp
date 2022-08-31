@@ -70,20 +70,23 @@ template <typename bit_t>
 void PrintPretty(const char *identifier, Spinhalf<bit_t> const &block) {
   printf("%s:\n", identifier);
 
-  printf("  n_sites: %d\n", block.n_sites());
+  printf("  n_sites  : %d\n", block.n_sites());
   if (block.sz_conserved()) {
-    printf("  n_up   : %d\n", block.n_up());
+    printf("  n_up     : %d\n", block.n_up());
   } else {
-    printf("  n_up   : not conserved\n");
+    printf("  n_up     : not conserved\n");
   }
 
   if (block.symmetric()) {
-    printf("  group  : defined with ID 0x%08x\n",
+    printf("  group    : defined with ID 0x%08x\n",
            random::hash(block.permutation_group()));
-    printf("  irrep  : defined with ID 0x%08x\n", random::hash(block.irrep()));
+    printf("  irrep    : defined with ID 0x%08x\n", random::hash(block.irrep()));
   }
-
-  printf("  ID     : 0x%08x\n", random::hash(block));
+  std::stringstream ss;
+  ss.imbue(std::locale("en_US.UTF-8"));
+  ss << block.size();
+  printf("  dimension: %s\n", ss.str().c_str());
+  printf("  ID       : 0x%08x\n", random::hash(block));
 }
 template void PrintPretty(const char *identifier,
                           Spinhalf<uint16_t> const &block);
@@ -96,23 +99,26 @@ template <typename bit_t>
 void PrintPretty(const char *identifier, tJ<bit_t> const &block) {
   printf("%s:\n", identifier);
 
-  printf("  n_sites: %d\n", block.n_sites());
+  printf("  n_sites  : %d\n", block.n_sites());
   if (block.sz_conserved() && block.charge_conserved()) {
-    printf("  n_up   : %d\n", block.n_up());
-    printf("  n_dn   : %d\n", block.n_dn());
+    printf("  n_up     : %d\n", block.n_up());
+    printf("  n_dn     : %d\n", block.n_dn());
 
   } else {
-    printf("  n_up   : not conserved\n");
-    printf("  n_dn   : not conserved\n");
+    printf("  n_up     : not conserved\n");
+    printf("  n_dn     : not conserved\n");
   }
 
   if (block.symmetric()) {
-    printf("  group  : defined with ID 0x%08x\n",
+    printf("  group    : defined with ID 0x%08x\n",
            random::hash(block.permutation_group()));
-    printf("  irrep  : defined with ID 0x%08x\n", random::hash(block.irrep()));
+    printf("  irrep    : defined with ID 0x%08x\n", random::hash(block.irrep()));
   }
-
-  printf("  ID     : 0x%08x\n", random::hash(block));
+  std::stringstream ss;
+  ss.imbue(std::locale("en_US.UTF-8"));
+  ss << block.size();
+  printf("  dimension: %s\n", ss.str().c_str());
+  printf("  ID       : 0x%08x\n", random::hash(block));
 }
 template void PrintPretty(const char *identifier, tJ<uint16_t> const &block);
 template void PrintPretty(const char *identifier, tJ<uint32_t> const &block);
@@ -122,23 +128,26 @@ template <typename bit_t>
 void PrintPretty(const char *identifier, Electron<bit_t> const &block) {
   printf("%s:\n", identifier);
 
-  printf("  n_sites: %d\n", block.n_sites());
+  printf("  n_sites  : %d\n", block.n_sites());
   if (block.sz_conserved() && block.charge_conserved()) {
-    printf("  n_up   : %d\n", block.n_up());
-    printf("  n_dn   : %d\n", block.n_dn());
+    printf("  n_up     : %d\n", block.n_up());
+    printf("  n_dn     : %d\n", block.n_dn());
 
   } else {
-    printf("  n_up   : not conserved\n");
-    printf("  n_dn   : not conserved\n");
+    printf("  n_up     : not conserved\n");
+    printf("  n_dn     : not conserved\n");
   }
 
   if (block.symmetric()) {
-    printf("  group  : defined with ID 0x%08x\n",
+    printf("  group    : defined with ID 0x%08x\n",
            random::hash(block.permutation_group()));
-    printf("  irrep  : defined with ID 0x%08x\n", random::hash(block.irrep()));
+    printf("  irrep    : defined with ID 0x%08x\n", random::hash(block.irrep()));
   }
-
-  printf("  ID     : 0x%08x\n", random::hash(block));
+  std::stringstream ss;
+  ss.imbue(std::locale("en_US.UTF-8"));
+  ss << block.size();
+  printf("  dimension: %s\n", ss.str().c_str());
+  printf("  ID       : 0x%08x\n", random::hash(block));
 }
 template void PrintPretty(const char *identifier,
                           Electron<uint16_t> const &block);

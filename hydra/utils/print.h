@@ -54,8 +54,11 @@ void PrintPretty(const char *identifier, State<coeff_t, Block> const &state) {
   } else {
     printf("  cplx state\n");
   }
-  printf("  size: %ld\n", state.size());
-  printf("  norm: %.9e\n", lila::Norm(state.vector()));
+  std::stringstream ss;
+  ss.imbue(std::locale("en_US.UTF-8"));
+  ss << state.size();
+  printf("  dimension: %s\n", ss.str().c_str());
+  printf("  norm     : %.9e\n", lila::Norm(state.vector()));
   PrintPretty((std::string(identifier) + std::string(".block()")).c_str(),
               state.block());
 }

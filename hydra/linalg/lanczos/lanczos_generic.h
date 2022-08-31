@@ -17,7 +17,7 @@ LanczosGeneric(multiply_f mult, lila::Vector<coeff_t> &v0, dot_f dot,
 
   using namespace lila;
   using real = real_t<coeff_t>;
-
+  
   auto norm = [&dot](lila::Vector<coeff_t> const &v) {
     return std::sqrt(lila::real(dot(v, v)));
   };
