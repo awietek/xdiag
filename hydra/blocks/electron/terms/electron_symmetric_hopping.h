@@ -58,6 +58,9 @@ void electron_symmetric_hopping(BondList const &bonds,
     // Apply hoppings on dnspins
     if ((type == "HOP") || (type == "HOPDN")) {
 
+#ifdef HYDRA_ENABLE_OPENMP
+#pragma omp parallel for schedule(guided)
+#endif
       for (idx_t idx_up = 0; idx_up < indexing.n_rep_ups(); ++idx_up) {
         bit_t ups = indexing.rep_ups(idx_up);
         idx_t up_offset = indexing.ups_offset(idx_up);
@@ -128,6 +131,9 @@ void electron_symmetric_hopping(BondList const &bonds,
 
     // Apply hoppings on upspins
     if ((type == "HOP") || (type == "HOPUP")) {
+#ifdef HYDRA_ENABLE_OPENMP
+#pragma omp parallel for schedule(guided)
+#endif
       for (idx_t idx_up = 0; idx_up < indexing.n_rep_ups(); ++idx_up) {
         bit_t ups = indexing.rep_ups(idx_up);
 

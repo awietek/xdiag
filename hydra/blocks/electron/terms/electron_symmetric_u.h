@@ -25,6 +25,9 @@ void electron_symmetric_U(Couplings const &couplings, Indexing &&indexing,
     if (!lila::close(U, 0.)) {
 
       idx_t idx = 0;
+#ifdef HYDRA_ENABLE_OPENMP
+#pragma omp parallel for schedule(guided)
+#endif
       for (idx_t idx_ups = 0; idx_ups < indexing.n_rep_ups(); ++idx_ups) {
         bit_t ups = indexing.rep_ups(idx_ups);
         auto dnss = indexing.dns_for_ups_rep(ups);
