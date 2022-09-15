@@ -1,5 +1,4 @@
 sources+= hydra/utils/iochecks.cpp
-sources+= hydra/utils/complex.cpp
 sources+= hydra/utils/print.cpp
 sources+= hydra/bitops/bitops.cpp
 
@@ -119,38 +118,38 @@ testsources+= test/operators/test_operator_qns.cpp
 testsources+= test/operators/test_symmetric_operator.cpp
 
 testsources+= test/blocks/spinhalf/testcases_spinhalf.cpp
-testsources+= test/blocks/spinhalf/test_spinhalf_matrix.cpp
-testsources+= test/blocks/spinhalf/test_spinhalf_apply.cpp
+# testsources+= test/blocks/spinhalf/test_spinhalf_matrix.cpp
+# testsources+= test/blocks/spinhalf/test_spinhalf_apply.cpp
 
-testsources+= test/blocks/spinhalf_symmetric/test_spinhalf_symmetric.cpp
-testsources+= test/blocks/spinhalf_symmetric/test_spinhalf_symmetric_matrix.cpp
-testsources+= test/blocks/spinhalf_symmetric/test_spinhalf_symmetric_apply.cpp
+# testsources+= test/blocks/spinhalf_symmetric/test_spinhalf_symmetric.cpp
+# testsources+= test/blocks/spinhalf_symmetric/test_spinhalf_symmetric_matrix.cpp
+# testsources+= test/blocks/spinhalf_symmetric/test_spinhalf_symmetric_apply.cpp
 
 testsources+= test/blocks/tj/testcases_tj.cpp
-testsources+= test/blocks/tj/test_tj_utils.cpp
-testsources+= test/blocks/tj/test_tj_matrix.cpp
-testsources+= test/blocks/tj/test_tj_apply.cpp
+# testsources+= test/blocks/tj/test_tj_utils.cpp
+# testsources+= test/blocks/tj/test_tj_matrix.cpp
+# testsources+= test/blocks/tj/test_tj_apply.cpp
 
-testsources+= test/blocks/tj_symmetric/test_tj_symmetric.cpp
-testsources+= test/blocks/tj_symmetric/test_tj_symmetric_matrix.cpp
-testsources+= test/blocks/tj_symmetric/test_tj_symmetric_apply.cpp
+# testsources+= test/blocks/tj_symmetric/test_tj_symmetric.cpp
+# testsources+= test/blocks/tj_symmetric/test_tj_symmetric_matrix.cpp
+# testsources+= test/blocks/tj_symmetric/test_tj_symmetric_apply.cpp
 
 testsources+= test/blocks/electron/testcases_electron.cpp
 testsources+= test/blocks/electron/test_electron_matrix.cpp
 testsources+= test/blocks/electron/test_electron_apply.cpp
 
-testsources+= test/blocks/electron_symmetric/test_electron_symmetric.cpp
-testsources+= test/blocks/electron_symmetric/test_electron_symmetric_matrix.cpp
-testsources+= test/blocks/electron_symmetric/test_electron_symmetric_apply.cpp
+# testsources+= test/blocks/electron_symmetric/test_electron_symmetric.cpp
+# testsources+= test/blocks/electron_symmetric/test_electron_symmetric_matrix.cpp
+# testsources+= test/blocks/electron_symmetric/test_electron_symmetric_apply.cpp
 
-testsources+= test/linalg/lanczos/test_lanczos_generic.cpp
-testsources+= test/linalg/lanczos/test_lanczos_eigenvalues.cpp
-testsources+= test/linalg/lanczos/test_lanczos_eigenvector.cpp
+# testsources+= test/linalg/lanczos/test_lanczos_generic.cpp
+# testsources+= test/linalg/lanczos/test_lanczos_eigenvalues.cpp
+# testsources+= test/linalg/lanczos/test_lanczos_eigenvector.cpp
 
-testsources+= test/states/test_random_state.cpp
+# testsources+= test/states/test_random_state.cpp
 
-testmpisources+= testmpi/tests.cpp
-testmpisources+= testmpi/mpi/test_dot_mpi.cpp
-testmpisources+= test/blocks/spinhalf/testcases_spinhalf.cpp
-testmpisources+= testmpi/blocks/spinhalf_mpi/test_spinhalf_mpi.cpp
-testmpisources+= testmpi/blocks/spinhalf_mpi/test_spinhalf_mpi_apply.cpp
+# testmpisources+= testmpi/tests.cpp
+# testmpisources+= testmpi/mpi/test_dot_mpi.cpp
+# testmpisources+= test/blocks/spinhalf/testcases_spinhalf.cpp
+# testmpisources+= testmpi/blocks/spinhalf_mpi/test_spinhalf_mpi.cpp
+# testmpisources+= testmpi/blocks/spinhalf_mpi/test_spinhalf_mpi_apply.cpp
