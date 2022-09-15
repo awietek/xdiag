@@ -4,7 +4,7 @@
 #include <utility>
 #include <vector>
 
-#include <lila/external/gsl/span>
+#include <extern/gsl/span>
 
 #include <hydra/common.h>
 #include <hydra/symmetries/operations/group_action_operations.h>
@@ -105,6 +105,7 @@ representatives_indices_symmetries_limits(StatesIndexing &&states_indexing,
   auto [reps, idces, syms, sym_limits, norms] =
       representatives_indices_symmetries_limits_norms<bit_t>(
           states_indexing, group_action, irrep);
+  (void)norms;
   return {reps, idces, syms, sym_limits};
 }
 

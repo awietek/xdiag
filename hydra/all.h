@@ -9,7 +9,7 @@
 #include "parallel/omp/omp_utils.h"
 #endif
 
-#include <lila/all.h>
+#include "extern/armadillo/armadillo"
 
 #include "bitops/bitops.h"
 #include "common.h"
@@ -17,6 +17,8 @@
 #include "utils/logger.h"
 #include "utils/print.h"
 #include "utils/print_macro.h"
+#include "utils/precision.h"
+#include "utils/close.h"
 
 #include "states/algebra.h"
 #include "states/state.h"
@@ -37,15 +39,15 @@
 #include "indexing/lin_table.h"
 #include "indexing/subsets_indexing.h"
 
-#include "indexing/spinhalf/indexing_no_sz.h"
-#include "indexing/spinhalf/indexing_sublattice.h"
-#include "indexing/spinhalf/indexing_symmetric_no_sz.h"
-#include "indexing/spinhalf/indexing_symmetric_sz.h"
-#include "indexing/spinhalf/indexing_sz.h"
-#include "indexing/spinhalf/symmetric_iterator.h"
+// #include "indexing/spinhalf/indexing_no_sz.h"
+// #include "indexing/spinhalf/indexing_sublattice.h"
+// #include "indexing/spinhalf/indexing_symmetric_no_sz.h"
+// #include "indexing/spinhalf/indexing_symmetric_sz.h"
+// #include "indexing/spinhalf/indexing_sz.h"
+// #include "indexing/spinhalf/symmetric_iterator.h"
 
-#include "indexing/tj/tj_indexing.h"
-#include "indexing/tj/tj_symmetric_indexing.h"
+// #include "indexing/tj/tj_indexing.h"
+// #include "indexing/tj/tj_symmetric_indexing.h"
 
 #include "indexing/electron/electron_indexing.h"
 #include "indexing/electron/electron_indexing_no_np.h"
@@ -66,10 +68,10 @@
 #include "blocks/electron/electron_apply.h"
 #include "blocks/electron/electron_matrix.h"
 
-#include "blocks/tj/tj.h"
-#include "blocks/tj/tj_apply.h"
-#include "blocks/tj/tj_matrix.h"
-#include "blocks/tj/tj_utils.h"
+// #include "blocks/tj/tj.h"
+// #include "blocks/tj/tj_apply.h"
+// #include "blocks/tj/tj_matrix.h"
+// #include "blocks/tj/tj_utils.h"
 
 #include "symmetries/group_action/group_action.h"
 #include "symmetries/group_action/group_action_lookup.h"

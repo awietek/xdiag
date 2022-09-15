@@ -2,7 +2,7 @@
 
 #include <utility>
 
-#include <lila/all.h>
+#include "extern/armadillo/armadillo"
 
 #include <hydra/common.h>
 
@@ -11,7 +11,7 @@ namespace hydra {
 class Tmatrix {
 public:
   Tmatrix() = default;
-  Tmatrix(lila::Vector<double> const &alphas, lila::Vector<double> const &betas)
+  Tmatrix(std::vector<double> const &alphas, std::vector<double> const &betas)
       : alphas_(alphas), betas_(betas) {
     assert(alphas.size() == betas.size());
   }
@@ -20,16 +20,16 @@ public:
 
   idx_t size() const { return alphas_.size(); }
 
-  lila::Vector<double> const &alphas() const { return alphas_; }
-  lila::Vector<double> const &betas() const { return betas_; }
+  arma::vec const alphas() const { return arma::vec(alphas_); }
+  arma::vec const betas() const { return betas_; }
 
-  lila::Vector<double> eigenvalues() const;
-  lila::Matrix<double> eigenvectors() const;
-  std::pair<lila::Vector<double>, lila::Matrix<double>> eigen() const;
+  arma::vec eigenvalues() const;
+  arma::mat eigenvectors() const;
+  std::pair<arma::vec, arma::mat> eigen() const;
 
 private:
-  lila::Vector<double> alphas_;
-  lila::Vector<double> betas_;
+  std::vector<double> alphas_;
+  std::vector<double> betas_;
 };
 
 } // namespace hydra

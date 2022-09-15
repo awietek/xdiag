@@ -1,6 +1,5 @@
 #include "operator_utils.h"
 
-#include <hydra/utils/complex.h>
 #include <hydra/utils/logger.h>
 
 #include <set>
@@ -10,7 +9,7 @@ namespace hydra::utils {
 bool coupling_is_zero(Bond const &bond, Couplings const &couplings) {
   std::string coupling = bond.coupling();
   return (!couplings.defined(coupling)) ||
-         lila::close(couplings[coupling], (complex)0.);
+         (std::abs(couplings[coupling]) < 1e-12);
 }
 
 bool coupling_is_non_zero(Bond const &bond, Couplings const &couplings) {
@@ -144,8 +143,10 @@ coeff_t get_coupling(Couplings const &couplings, std::string cpl) {
   if constexpr (is_complex<coeff_t>()) {
     val = couplings[cpl];
   } else {
-    utils::warn_if_complex(couplings[cpl], "imaginary part deprecated");
-    val = lila::real(couplings[cpl]);
+    if (std::abs(imag(couplings[cpl])) > 1e-12) {
+      Log.warn("Warning for get_coupling: imaginary part deprecated");
+    }
+    val = real(couplings[cpl]);
   }
   return val;
 }
@@ -162,11 +163,13 @@ std::pair<coeff_t, coeff_t> get_coupling_and_conj(Couplings const &couplings,
   coeff_t val_conj;
   if constexpr (is_complex<coeff_t>()) {
     val = couplings[cpl];
-    val_conj = lila::conj(val);
+    val_conj = conj(val);
 
   } else {
-    utils::warn_if_complex(couplings[cpl], "imaginary part deprecated");
-    val = lila::real(couplings[cpl]);
+    if (std::abs(imag(couplings[cpl])) > 1e-12) {
+      Log.warn("Warning for get_coupling: imaginary part deprecated");
+    }
+    val = real(couplings[cpl]);
     val_conj = val;
   }
   return {val, val_conj};

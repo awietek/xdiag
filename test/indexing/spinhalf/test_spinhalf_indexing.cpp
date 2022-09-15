@@ -31,9 +31,11 @@ void test_spinhalf_indexing_state(Indexing const &indexing, bit_t state) {
     REQUIRE(norm == indexing.norm(idx_rep));
 
     auto [idxr1, sym] = indexing.index_sym(state);
+    (void)idxr1;
     REQUIRE(group_action.apply(sym, state) == rep);
 
     auto [idxr2, syms] = indexing.index_syms(state);
+    (void)idxr2;
     for (int sym : syms) {
       REQUIRE(group_action.apply(sym, state) == rep);
     }

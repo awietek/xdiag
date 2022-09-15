@@ -2,11 +2,12 @@
 
 #ifdef HYDRA_ENABLE_OPENMP
 
-#include <hydra/combinatorics/binomial.h>
-#include <hydra/common.h>
-#include <lila/external/gsl/span>
+#include <extern/gsl/span>
 #include <omp.h>
 #include <vector>
+
+#include <hydra/combinatorics/binomial.h>
+#include <hydra/common.h>
 
 namespace hydra::omp {
 idx_t get_omp_start(idx_t size);

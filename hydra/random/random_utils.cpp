@@ -62,7 +62,7 @@ int random_normal_discard() {
 }
 
 template <typename coeff_t>
-void fill_random_normal_vector(lila::Vector<coeff_t> &v, int seed) {
+void fill_random_normal_vector(arma::Col<coeff_t> &v, int seed) {
 #ifdef HYDRA_ENABLE_OPENMP
 #pragma omp parallel
   {
@@ -99,9 +99,8 @@ void fill_random_normal_vector(lila::Vector<coeff_t> &v, int seed) {
 #endif
 }
 
-template void fill_random_normal_vector<double>(lila::Vector<double> &v,
-                                                int seed);
-template void fill_random_normal_vector<complex>(lila::Vector<complex> &v,
+template void fill_random_normal_vector<double>(arma::Col<double> &v, int seed);
+template void fill_random_normal_vector<complex>(arma::Col<complex> &v,
                                                  int seed);
 
 } // namespace hydra::random

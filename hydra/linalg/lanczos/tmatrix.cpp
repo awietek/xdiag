@@ -1,7 +1,5 @@
 #include "tmatrix.h"
 
-#include <hydra/utils/complex.h>
-
 namespace hydra {
 
 void Tmatrix::append(double alpha, double beta) {
@@ -14,29 +12,53 @@ void Tmatrix::pop() {
   betas_.pop_back();
 }
 
-lila::Vector<double> Tmatrix::eigenvalues() const {
-  if (size() == 0)
-    return lila::Vector<double>();
-  else
-    return lila::EigenvaluesSymTridiag(alphas_, betas_);
+arma::vec Tmatrix::eigenvalues() const {
+  if (size() == 0) {
+    return arma::Col<double>();
+  } else {
+    int N = alphas_.size();
+    assert(N == (int)betas_.size());
+    auto bts = betas()(arma::span(0, N - 1));
+    auto tmat = arma::diagmat(alphas()) + arma::diagmat(bts, 1) +
+                arma::diagmat(bts, -1);
+
+    arma::vec eigs;
+    arma::eig_sym(eigs, tmat);
+    return eigs;
+  }
 }
 
-lila::Matrix<double> Tmatrix::eigenvectors() const {
+arma::mat Tmatrix::eigenvectors() const {
   if (size() == 0) {
-    return lila::Matrix<double>();
-  }else {
-    lila::Vector<double> eigs;
-    lila::Matrix<double> evecs;
-    std::tie(eigs, evecs) = lila::EigenSymTridiag(alphas_, betas_);
+    return arma::Mat<double>();
+  } else {
+    int N = alphas_.size();
+    assert(N == (int)betas_.size());
+    auto bts = betas()(arma::span(0, N - 1));
+    auto tmat = arma::diagmat(alphas()) + arma::diagmat(bts, 1) +
+                arma::diagmat(bts, -1);
+
+    arma::vec eigs;
+    arma::mat evecs;
+    arma::eig_sym(eigs, evecs, tmat);
     return evecs;
   }
 }
-  
-std::pair<lila::Vector<double>, lila::Matrix<double>> Tmatrix::eigen() const {
+
+std::pair<arma::vec, arma::mat> Tmatrix::eigen() const {
   if (size() == 0) {
-    return {lila::Vector<double>(), lila::Matrix<double>()};
+    return {arma::vec(), arma::mat()};
   } else {
-    return lila::EigenSymTridiag(alphas_, betas_);
+    int N = alphas_.size();
+    assert(N == (int)betas_.size());
+    auto bts = betas()(arma::span(0, N - 1));
+    auto tmat = arma::diagmat(alphas()) + arma::diagmat(bts, 1) +
+                arma::diagmat(bts, -1);
+
+    arma::vec eigs;
+    arma::mat evecs;
+    arma::eig_sym(eigs, evecs, tmat);
+    return {eigs, evecs};
   }
 }
 

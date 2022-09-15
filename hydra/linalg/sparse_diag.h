@@ -1,14 +1,15 @@
 #pragma once
 
-#include <lila/all.h>
 #include <tuple>
 #include <utility>
 #include <vector>
 
-#include <hydra/states/state.h>
+#include "extern/armadillo/armadillo"
+
 #include <hydra/linalg/lanczos/lanczos_eigenvalues.h>
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
+#include <hydra/states/state.h>
 #include <hydra/utils/logger.h>
 
 namespace hydra {
@@ -22,7 +23,6 @@ double E0Real(BondList const &bondlist, Couplings const &couplings,
                                      seed, max_iterations);
   auto eigs = tmat.eigenvalues();
   if (eigs.size() == 0) {
-    LilaPrint(eigs.size());
     Log.err("Error: Tmatrix zero dimensional in E0Real");
     return 0.;
   } else {

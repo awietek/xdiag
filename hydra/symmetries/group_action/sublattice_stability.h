@@ -1,7 +1,7 @@
 #pragma once
 
+#include <extern/gsl/span>
 #include <hydra/symmetries/permutation_group.h>
-#include <lila/external/gsl/span>
 
 #define HYDRA_SUBLATTICE_UNSTABLE -1
 

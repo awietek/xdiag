@@ -2,6 +2,8 @@
 
 #include <algorithm>
 
+#include "extern/armadillo/armadillo"
+
 #include <hydra/linalg/lanczos/lanczos_convergence.h>
 #include <hydra/linalg/lanczos/lanczos_generic.h>
 #include <hydra/linalg/lanczos/tmatrix.h>
@@ -15,36 +17,31 @@
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
 
-#include <hydra/random/random_utils.h>
-#include <hydra/random/hashes.h>
 #include <hydra/random/hash_functions.h>
-
-#include <lila/all.h>
+#include <hydra/random/hashes.h>
+#include <hydra/random/random_utils.h>
 
 namespace hydra {
 
 // Implementation with a function setting the starting vector
 template <class coeff_t, class Block, class set_v0_f>
-std::pair<Tmatrix, lila::Vector<coeff_t>>
+std::pair<Tmatrix, arma::Col<coeff_t>>
 LanczosEigenvector(BondList const &bonds, Couplings const &couplings,
                    Block const &block, set_v0_f set_v0, int num_eigenvector = 0,
                    double precision = 1e-12, int max_iterations = 1000,
                    double deflation_tol = 1e-7) {
-
-  using namespace lila;
-
   assert(num_eigenvector >= 0);
 
   // Allocate starting vector
-  auto v0 = lila::Zeros<coeff_t>(block.size());
+  arma::Col<coeff_t> v0 = arma::zeros<arma::Col<coeff_t>>(block.size());
 
   // MPI Lanczos
 #ifdef HYDRA_ENABLE_MPI
   if constexpr (mpi::is_mpi_block<Block>) {
 
     int iter = 1;
-    auto mult = [&iter, &bonds, &couplings, &block](
-                    lila::Vector<coeff_t> const &v, lila::Vector<coeff_t> &w) {
+    auto mult = [&iter, &bonds, &couplings, &block](arma::Col<coeff_t> const &v,
+                                                    arma::Col<coeff_t> &w) {
       auto ta = rightnow_mpi();
       Apply(bonds, couplings, block, v, block, w);
       Log(1, "Lanczos iteration {}", iter);
@@ -52,8 +49,8 @@ LanczosEigenvector(BondList const &bonds, Couplings const &couplings,
       ++iter;
     };
 
-    auto dot_mpi = [](lila::Vector<coeff_t> const &v,
-                      lila::Vector<coeff_t> const &w) -> coeff_t {
+    auto dot_mpi = [](arma::Col<coeff_t> const &v,
+                      arma::Col<coeff_t> const &w) -> coeff_t {
       return DotMPI(v, w);
     };
 
@@ -65,7 +62,7 @@ LanczosEigenvector(BondList const &bonds, Couplings const &couplings,
     auto t0 = rightnow_mpi();
     set_v0(v0);
     auto [tmat, vectors] =
-        LanczosGeneric(mult, v0, dot_mpi, converged, lila::Vector<coeff_t>(),
+        LanczosGeneric(mult, v0, dot_mpi, converged, arma::Col<coeff_t>(),
                        max_iterations, deflation_tol);
     timing_mpi(t0, rightnow_mpi(), "Lanczos time (eigenvalue run)", 1);
 
@@ -87,8 +84,8 @@ LanczosEigenvector(BondList const &bonds, Couplings const &couplings,
   else {
 #endif
     int iter = 1;
-    auto mult = [&iter, &bonds, &couplings, &block](
-                    lila::Vector<coeff_t> const &v, lila::Vector<coeff_t> &w) {
+    auto mult = [&iter, &bonds, &couplings, &block](arma::Col<coeff_t> const &v,
+                                                    arma::Col<coeff_t> &w) {
       auto ta = rightnow();
       Apply(bonds, couplings, block, v, block, w);
       Log(1, "Lanczos iteration {}", iter);
@@ -96,9 +93,9 @@ LanczosEigenvector(BondList const &bonds, Couplings const &couplings,
       ++iter;
     };
 
-    auto dot = [](lila::Vector<coeff_t> const &v,
-                  lila::Vector<coeff_t> const &w) -> coeff_t {
-      return lila::Dot(v, w);
+    auto dot = [](arma::Col<coeff_t> const &v,
+                  arma::Col<coeff_t> const &w) -> coeff_t {
+      return arma::dot(v, w);
     };
 
     auto converged = [num_eigenvector, precision](Tmatrix const &tmat) -> bool {
@@ -109,7 +106,7 @@ LanczosEigenvector(BondList const &bonds, Couplings const &couplings,
     auto t0 = rightnow();
     set_v0(v0);
     auto [tmat, evec] =
-        LanczosGeneric(mult, v0, dot, converged, lila::Vector<coeff_t>(),
+        LanczosGeneric(mult, v0, dot, converged, arma::Col<coeff_t>(),
                        max_iterations, deflation_tol);
     timing(t0, rightnow(), "Lanczos time (first run)", 1);
 
@@ -130,13 +127,13 @@ LanczosEigenvector(BondList const &bonds, Couplings const &couplings,
 
 // Implementation with user-defined starting vector v0 (does a copy)
 template <class coeff_t, class Block>
-std::pair<Tmatrix, lila::Vector<coeff_t>>
+std::pair<Tmatrix, arma::Col<coeff_t>>
 LanczosEigenvector(BondList const &bonds, Couplings const &couplings,
-                   Block const &block, lila::Vector<coeff_t> const &v0,
+                   Block const &block, arma::Col<coeff_t> const &v0,
                    int num_eigenvector = 0, double precision = 1e-12,
                    int max_iterations = 1000, double deflation_tol = 1e-7) {
 
-  auto set_v0 = [&v0](lila::Vector<coeff_t> &v0_copy) { v0_copy = v0; };
+  auto set_v0 = [&v0](arma::Col<coeff_t> &v0_copy) { v0_copy = v0; };
 
   return LanczosEigenvector(bonds, couplings, block, set_v0, num_eigenvector,
                             precision, max_iterations, deflation_tol);
@@ -144,13 +141,11 @@ LanczosEigenvector(BondList const &bonds, Couplings const &couplings,
 
 // Implementation with random real starting vector v0 (does NOT copy)
 template <class Block>
-std::pair<Tmatrix, lila::Vector<double>>
+std::pair<Tmatrix, arma::Col<double>>
 LanczosEigenvectorReal(BondList const &bonds, Couplings const &couplings,
                        Block const &block, int num_eigenvector = 0,
                        double precision = 1e-12, int seed = 42,
                        int max_iterations = 1000, double deflation_tol = 1e-7) {
-
-  using namespace lila;
 
   // use different seeds for different MPI processes
   if constexpr (mpi::is_mpi_block<Block>) {
@@ -158,7 +153,7 @@ LanczosEigenvectorReal(BondList const &bonds, Couplings const &couplings,
   }
 
   // Create random starting vector with normal distributed entries
-  auto set_v0 = [&seed, &block](lila::Vector<double> &v0) {
+  auto set_v0 = [&seed, &block](arma::Col<double> &v0) {
     uint32_t seed_modified = random::hash_combine(seed, random::hash(block));
     random::fill_random_normal_vector(v0, seed_modified);
   };
@@ -171,13 +166,11 @@ LanczosEigenvectorReal(BondList const &bonds, Couplings const &couplings,
 
 // Implementation with random complex starting vector v0 (does NOT copy)
 template <class Block>
-std::pair<Tmatrix, lila::Vector<complex>>
+std::pair<Tmatrix, arma::Col<complex>>
 LanczosEigenvectorCplx(BondList const &bonds, Couplings const &couplings,
                        Block const &block, int num_eigenvector = 0,
                        double precision = 1e-12, int seed = 42,
                        int max_iterations = 1000, double deflation_tol = 1e-7) {
-
-  using namespace lila;
 
   // use different seeds for different MPI processes
   if constexpr (mpi::is_mpi_block<Block>) {
@@ -185,7 +178,7 @@ LanczosEigenvectorCplx(BondList const &bonds, Couplings const &couplings,
   }
 
   // Create random starting vector with normal distributed entries
-  auto set_v0 = [&seed, &block](lila::Vector<complex> &v0) {
+  auto set_v0 = [&seed, &block](arma::Col<complex> &v0) {
     uint32_t seed_modified = random::hash_combine(seed, random::hash(block));
     random::fill_random_normal_vector(v0, seed_modified);
   };

@@ -3,6 +3,8 @@
 #include <fstream>
 
 #include <hydra/utils/logger.h>
+#include <hydra/utils/close.h>
+
 #include <numeric>
 
 namespace hydra {
@@ -37,7 +39,7 @@ Representation::subgroup(std::vector<int> const &symmetry_numbers) const {
 }
 
 bool Representation::operator==(Representation const &rhs) const {
-  return lila::close(lila::Vector(characters_), lila::Vector(rhs.characters_));
+  return close(arma::cx_vec(characters_), arma::cx_vec(rhs.characters_));
 }
 
 bool Representation::operator!=(Representation const &rhs) const {
@@ -131,20 +133,19 @@ Representation read_represenation(std::string filename, std::string repname) {
   }
   if (!found)
     Log.err("Error reading representations: "
-	    "name not found in file");
+            "name not found in file");
 
   return Representation();
 }
 
 bool is_complex(Representation const &rep) {
   for (int i = 0; i < rep.size(); ++i) {
-    if (!lila::close(lila::imag(rep.character(i)), 0.0))
+    if (std::abs(imag(rep.character(i))) > 1e-12)
       return true;
   }
   return false;
 }
 bool is_real(Representation const &rep) { return !is_complex(rep); }
-
 
 Representation TrivialRepresentation(idx_t size) {
   return Representation(std::vector<complex>(size, {1.0, 0.0}));

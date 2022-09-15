@@ -40,7 +40,7 @@ void apply_ising(Bond const &bond, Couplings const &couplings,
     }
   };
 
-  if (!lila::close(J, 0.)) {
+  if (std::abs(J) > 1e-12) {
     terms::spinhalf::apply_term_diag<bit_t, coeff_t>(indexing, term_coeff,
                                                      fill);
   }

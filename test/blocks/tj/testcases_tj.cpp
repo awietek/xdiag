@@ -15,7 +15,7 @@ std::tuple<BondList, Couplings> tJchain(int n_sites, double t, double J) {
   return std::make_tuple(bondlist, couplings);
 }
 
-std::tuple<BondList, Couplings, lila::Vector<double>>
+std::tuple<BondList, Couplings, arma::Col<double>>
 tJchain_fullspectrum_alps(int L) {
 
   BondList bonds;
@@ -26,9 +26,9 @@ tJchain_fullspectrum_alps(int L) {
     bonds << Bond("HOP", "T", {s, (s + 1) % L});
     bonds << Bond("TJHB", "J", {s, (s + 1) % L});
   }
-  lila::Vector<double> eigs;
+  arma::Col<double> eigs;
   if (L == 3) {
-    eigs = lila::Vector<double>(
+    eigs = arma::Col<double>(
         {-3.000000000000000000e+00, -2.000000000000000000e+00,
          -2.000000000000000000e+00, -1.500000000000000222e+00,
          -1.500000000000000000e+00, -1.499999999999999778e+00,
@@ -44,7 +44,7 @@ tJchain_fullspectrum_alps(int L) {
          2.000000000000000000e+00,  2.000000000000000000e+00,
          2.000000000000000000e+00});
   } else if (L == 4) {
-    eigs = lila::Vector<double>(
+    eigs = arma::Col<double>(
         {-3.372281323269014308e+00, -3.000000000000000000e+00,
          -2.802775637731994784e+00, -2.802775637731994784e+00,
          -2.802775637731994784e+00, -2.802775637731994340e+00,
@@ -87,7 +87,7 @@ tJchain_fullspectrum_alps(int L) {
          2.000000000000000444e+00,  2.000000000000000444e+00,
          2.372281323269014752e+00});
   } else if (L == 5) {
-    eigs = lila::Vector<double>({
+    eigs = arma::Col<double>({
         -3.907298272311668264e+00, -3.907298272311666487e+00,
         -3.693052960910438109e+00, -3.693052960910437221e+00,
         -3.693052960910437221e+00, -3.693052960910436333e+00,
@@ -212,7 +212,7 @@ tJchain_fullspectrum_alps(int L) {
         3.236067977499789805e+00,
     });
   } else if (L == 6) {
-    eigs = lila::Vector<double>(
+    eigs = arma::Col<double>(
         {-4.718848588389245258e+00, -4.718848588389242593e+00,
          -4.659018389481651923e+00, -4.659018389481650146e+00,
          -4.659018389481649258e+00, -4.529220480852993447e+00,
@@ -582,7 +582,7 @@ tJchain_fullspectrum_alps(int L) {
   return {bonds, cpls, eigs};
 }
 
-std::tuple<BondList, Couplings, lila::Vector<double>>
+std::tuple<BondList, Couplings, arma::Col<double>>
 tj_square2x2_fullspectrum_alps() {
   BondList bondlist;
   Couplings couplings;
@@ -604,7 +604,7 @@ tj_square2x2_fullspectrum_alps() {
   bondlist << Bond("TJHB", "J", {2, 0});
   bondlist << Bond("TJHB", "J", {1, 3});
   bondlist << Bond("TJHB", "J", {3, 1});
-  auto eigs = lila::Vector<double>(
+  auto eigs = arma::Col<double>(
       {-6.744562646538028616e+00, -6.000000000000000000e+00,
        -5.605551275463989569e+00, -5.605551275463988681e+00,
        -5.605551275463988681e+00, -5.605551275463987793e+00,
@@ -707,7 +707,7 @@ std::tuple<BondList, Couplings> tj_alltoall_complex(int n_sites) {
   return std::make_tuple(bondlist, couplings);
 }
 
-std::tuple<BondList, Couplings, lila::Vector<double>> randomAlltoAll4() {
+std::tuple<BondList, Couplings, arma::Col<double>> randomAlltoAll4() {
   BondList bondlist;
   Couplings couplings;
   couplings["T01"] = 3;
@@ -735,7 +735,7 @@ std::tuple<BondList, Couplings, lila::Vector<double>> randomAlltoAll4() {
   bondlist << Bond("HB", "J13", {1, 3});
   bondlist << Bond("HB", "J23", {2, 3});
 
-  lila::Vector<double> eigs = {
+  arma::Col<double> eigs = {
       11.248037068163532,  11.248037068163532,  11.248037068163525,
       11.065227832307894,  11.065227832307894,  9.306675891741317,
       8.662882010346033,   8.657976760822836,   8.657976760822836,
@@ -767,7 +767,7 @@ std::tuple<BondList, Couplings, lila::Vector<double>> randomAlltoAll4() {
   return {bondlist, couplings, eigs};
 }
 
-std::tuple<BondList, Couplings, lila::Vector<double>> randomAlltoAll3() {
+std::tuple<BondList, Couplings, arma::Col<double>> randomAlltoAll3() {
   BondList bondlist;
   Couplings couplings;
   couplings["T01"] = 1;
@@ -783,7 +783,7 @@ std::tuple<BondList, Couplings, lila::Vector<double>> randomAlltoAll3() {
   bondlist << Bond("HB", "J02", {0, 2});
   bondlist << Bond("HB", "J12", {1, 2});
 
-  lila::Vector<double> eigs = {
+  arma::Col<double> eigs = {
       6.256066270684332,  5.099019513592784,  5.099019513592784,
       4.721070064265688,  4.721070064265687,  4.721070064265685,
       2.366025403784440,  2.366025403784439,  2.219929940881326,

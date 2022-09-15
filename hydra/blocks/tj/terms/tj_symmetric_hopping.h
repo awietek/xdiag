@@ -54,8 +54,8 @@ void tj_symmetric_hopping(BondList const &bonds, Couplings const &couplings,
     bit_t sitesmask = ((bit_t)1 << n_sites) - 1;
 
     // // DEBUG PRINT states
-    // lila::Log("\n\n\n");
-    // lila::Log("s1: {} s2: {}", s1, s2);
+    // Log("\n\n\n");
+    // Log("s1: {} s2: {}", s1, s2);
     // idx_t idx = 0;
     // for (idx_t idx_up = 0; idx_up < indexing.n_reps_up(); ++idx_up) {
     //   bit_t ups = indexing.rep_up(idx_up);
@@ -69,7 +69,7 @@ void tj_symmetric_hopping(BondList const &bonds, Couplings const &couplings,
     //     idx_t idx_dn = 0;
     //     for (bit_t dnsc : dnss) {
     //       bit_t dns = bitops::deposit(dnsc, not_ups);
-    //       lila::Log("{}: {};{} {}", idx, BSTR(ups), BSTR(dns),
+    //       Log("{}: {};{} {}", idx, BSTR(ups), BSTR(dns),
     //       norms[idx_dn]);
     //       ++idx_dn;
     //       ++idx;
@@ -77,7 +77,7 @@ void tj_symmetric_hopping(BondList const &bonds, Couplings const &couplings,
     //   } else {
     //     idx_t idx_dn = 0;
     //     for (bit_t dns : dnss) {
-    //       lila::Log("{}: {};{} {}", idx, BSTR(ups), BSTR(dns),
+    //       Log("{}: {};{} {}", idx, BSTR(ups), BSTR(dns),
     //       norms[idx_dn]);
 
     //       ++idx_dn;
@@ -125,16 +125,16 @@ void tj_symmetric_hopping(BondList const &bonds, Couplings const &couplings,
               // fill with correct fermi sign
               bool fermi = popcnt(dns & fermimask) & 1;
 
-              // lila::Log("-----------------------------------------");
-              // lila::Log("HOPDN");
-              // lila::Log("CASE: stab-ups-FALSE");
-              // lila::Log("from: {};{}", BSTR(ups), BSTR(dns));
-              // lila::Log("mask: {} {}", BSTR(0), BSTR(flipmask));
-              // lila::Log("to  : {};{}", BSTR(ups), BSTR(dns_flip));
-              // lila::Log("fermi: {}", fermi);
-              // lila::Log("idx_in: {}, idx_out: {}", idx_in, idx_out);
-              // lila::Log("val: {}", lila::real(val));
-              // lila::Log("fill: {}", lila::real((fermi) ? -val : val));
+              // Log("-----------------------------------------");
+              // Log("HOPDN");
+              // Log("CASE: stab-ups-FALSE");
+              // Log("from: {};{}", BSTR(ups), BSTR(dns));
+              // Log("mask: {} {}", BSTR(0), BSTR(flipmask));
+              // Log("to  : {};{}", BSTR(ups), BSTR(dns_flip));
+              // Log("fermi: {}", fermi);
+              // Log("idx_in: {}, idx_out: {}", idx_in, idx_out);
+              // Log("val: {}", real(val));
+              // Log("fill: {}", real((fermi) ? -val : val));
 
               fill(idx_out, idx_in, (fermi) ? -val : val);
             }
@@ -166,25 +166,25 @@ void tj_symmetric_hopping(BondList const &bonds, Couplings const &couplings,
                   val = -(gbit(dns, s1) ? t : t_conj) * bloch_factors[sym] *
                         norms[idx_dns_flip] / norms[idx_dns];
                 } else {
-                  // lila::Log("sz: {}, sym: {}", bloch_factors.size(), sym);
+                  // Log("sz: {}, sym: {}", bloch_factors.size(), sym);
                   val = -t * bloch_factors[sym] * norms[idx_dns_flip] /
                         norms[idx_dns];
                 }
 
-                // lila::Log("-----------------------------------------");
-                // lila::Log("HOPDN");
-                // lila::Log("CASE: stab-ups-TRUE");
-                // lila::Log("from: {};{}", BSTR(ups), BSTR(dns));
-                // lila::Log("mask: {} {}", BSTR(0), BSTR(flipmask));
-                // lila::Log("to  : {};{}", BSTR(ups), BSTR(dns_flip));
-                // lila::Log("sym : {}", sym);
+                // Log("-----------------------------------------");
+                // Log("HOPDN");
+                // Log("CASE: stab-ups-TRUE");
+                // Log("from: {};{}", BSTR(ups), BSTR(dns));
+                // Log("mask: {} {}", BSTR(0), BSTR(flipmask));
+                // Log("to  : {};{}", BSTR(ups), BSTR(dns_flip));
+                // Log("sym : {}", sym);
                 // bit_t dns_flip_rep = group_action.apply(sym, dns_flip);
-                // lila::Log("rep : {};{}", BSTR(ups), BSTR(dns_flip_rep));
-                // lila::Log("fermi_up: {}, fermi_dn: {}", fermi_up, fermi_dn);
-                // lila::Log("idx_in: {}, idx_out: {}", idx_in, idx_out);
-                // lila::Log("val: {}", lila::real(val));
-                // lila::Log("fill: {}",
-                //           lila::real((fermi_up ^ fermi_dn) ? -val : val));
+                // Log("rep : {};{}", BSTR(ups), BSTR(dns_flip_rep));
+                // Log("fermi_up: {}, fermi_dn: {}", fermi_up, fermi_dn);
+                // Log("idx_in: {}, idx_out: {}", idx_in, idx_out);
+                // Log("val: {}", real(val));
+                // Log("fill: {}",
+                //           real((fermi_up ^ fermi_dn) ? -val : val));
 
                 fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -val : val);
               }
@@ -252,17 +252,17 @@ void tj_symmetric_hopping(BondList const &bonds, Couplings const &couplings,
                 idx_t idx_out = ups_offset_out + indexing.dnsc_index(dns_rep_c);
                 bool fermi_dn = indexing.fermi_bool_dns(sym, dns);
 
-                // lila::Log("-----------------------------------------");
-                // lila::Log("HOPUP");
-                // lila::Log("CASE: stab-origin-FALSE stab-target-FALSE");
-                // lila::Log("from: {};{}", BSTR(ups), BSTR(dns));
-                // lila::Log("mask: {} {}", BSTR(flipmask), BSTR(0));
-                // lila::Log("to  : {};{}", BSTR(ups_flip), BSTR(dns));
-                // lila::Log("rep : {};{}", BSTR(ups_flip_rep), BSTR(dns_rep));
-                // lila::Log("idx_in: {}, idx_out: {}", idx_in, idx_out);
-                // lila::Log("val: {}", lila::real(prefac));
-                // lila::Log("fill: {}",
-                //           lila::real((fermi_up ^ fermi_dn) ? -prefac :
+                // Log("-----------------------------------------");
+                // Log("HOPUP");
+                // Log("CASE: stab-origin-FALSE stab-target-FALSE");
+                // Log("from: {};{}", BSTR(ups), BSTR(dns));
+                // Log("mask: {} {}", BSTR(flipmask), BSTR(0));
+                // Log("to  : {};{}", BSTR(ups_flip), BSTR(dns));
+                // Log("rep : {};{}", BSTR(ups_flip_rep), BSTR(dns_rep));
+                // Log("idx_in: {}, idx_out: {}", idx_in, idx_out);
+                // Log("val: {}", real(prefac));
+                // Log("fill: {}",
+                //           real((fermi_up ^ fermi_dn) ? -prefac :
                 //           prefac));
 
                 fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -prefac : prefac);
@@ -283,20 +283,20 @@ void tj_symmetric_hopping(BondList const &bonds, Couplings const &couplings,
                 coeff_t val = prefac / norms_in[idx_dn];
                 idx_t idx_out = ups_offset_out + idx_dn_out;
 
-                // lila::Log("-----------------------------------------");
-                // lila::Log("HOPUP");
-                // lila::Log("CASE: stab-origin-TRUE stab-target-FALSE");
-                // lila::Log("from: {};{}", BSTR(ups), BSTR(dns));
-                // lila::Log("mask: {} {}", BSTR(flipmask), BSTR(0));
-                // lila::Log("to  : {};{}", BSTR(ups_flip), BSTR(dns));
-                // lila::Log("sym : {}", sym);
+                // Log("-----------------------------------------");
+                // Log("HOPUP");
+                // Log("CASE: stab-origin-TRUE stab-target-FALSE");
+                // Log("from: {};{}", BSTR(ups), BSTR(dns));
+                // Log("mask: {} {}", BSTR(flipmask), BSTR(0));
+                // Log("to  : {};{}", BSTR(ups_flip), BSTR(dns));
+                // Log("sym : {}", sym);
                 // bit_t dns_rep = group_action.apply(sym, dns);
-                // lila::Log("rep : {};{}", BSTR(ups_flip_rep), BSTR(dns_rep));
-                // lila::Log("fermi_up: {}, fermi_dn: {}", fermi_up, fermi_dn);
-                // lila::Log("idx_in: {}, idx_out: {}", idx_in, idx_out);
-                // lila::Log("val: {}", lila::real(val));
-                // lila::Log("fill: {}",
-                //           lila::real((fermi_up ^ fermi_dn) ? -val : val));
+                // Log("rep : {};{}", BSTR(ups_flip_rep), BSTR(dns_rep));
+                // Log("fermi_up: {}, fermi_dn: {}", fermi_up, fermi_dn);
+                // Log("idx_in: {}, idx_out: {}", idx_in, idx_out);
+                // Log("val: {}", real(val));
+                // Log("fill: {}",
+                //           real((fermi_up ^ fermi_dn) ? -val : val));
 
                 fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -val : val);
               }
@@ -317,7 +317,7 @@ void tj_symmetric_hopping(BondList const &bonds, Couplings const &couplings,
             }
           } else {
             for (int i = 0; i < (int)irrep.size(); ++i) {
-              prefacs[i] = -t * lila::real(irrep.character(i));
+              prefacs[i] = -t * real(irrep.character(i));
             }
           }
 
@@ -340,20 +340,20 @@ void tj_symmetric_hopping(BondList const &bonds, Couplings const &couplings,
                       fermi_up_hop ^ indexing.fermi_bool_ups(sym, ups_flip);
                   coeff_t val = prefacs[sym] * norms_out[idx_dn_out];
 
-                  // lila::Log("-----------------------------------------");
-                  // lila::Log("HOPUP");
-                  // lila::Log("CASE: stab-origin-FALSE stab-target-TRUE");
-                  // lila::Log("from: {};{}", BSTR(ups), BSTR(dns));
-                  // lila::Log("mask: {} {}", BSTR(flipmask), BSTR(0));
-                  // lila::Log("to  : {};{}", BSTR(ups_flip), BSTR(dns));
-                  // lila::Log("sym : {}", sym);
+                  // Log("-----------------------------------------");
+                  // Log("HOPUP");
+                  // Log("CASE: stab-origin-FALSE stab-target-TRUE");
+                  // Log("from: {};{}", BSTR(ups), BSTR(dns));
+                  // Log("mask: {} {}", BSTR(flipmask), BSTR(0));
+                  // Log("to  : {};{}", BSTR(ups_flip), BSTR(dns));
+                  // Log("sym : {}", sym);
                   // bit_t dns_rep = group_action.apply(sym, dns);
-                  // lila::Log("repl: {};{}", BSTR(ups_flip_rep),
-                  // BSTR(dns_rep)); lila::Log("fermi_up: {}, fermi_dn: {}",
-                  // fermi_up, fermi_dn); lila::Log("idx_in: {}, idx_out: {}",
-                  // idx_in, idx_out); lila::Log("val: {}", lila::real(val));
-                  // lila::Log("fill: {}",
-                  //           lila::real((fermi_up ^ fermi_dn) ? -val : val));
+                  // Log("repl: {};{}", BSTR(ups_flip_rep),
+                  // BSTR(dns_rep)); Log("fermi_up: {}, fermi_dn: {}",
+                  // fermi_up, fermi_dn); Log("idx_in: {}, idx_out: {}",
+                  // idx_in, idx_out); Log("val: {}", real(val));
+                  // Log("fill: {}",
+                  //           real((fermi_up ^ fermi_dn) ? -val : val));
 
                   fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -val : val);
                 }
@@ -378,20 +378,20 @@ void tj_symmetric_hopping(BondList const &bonds, Couplings const &couplings,
                   coeff_t val =
                       prefacs[sym] * norms_out[idx_dn_out] / norms_in[idx_dn];
 
-                  // lila::Log("-----------------------------------------");
-                  // lila::Log("HOPUP");
-                  // lila::Log("CASE: stab-origin-TRUE stab-target-TRUE");
-                  // lila::Log("from: {};{}", BSTR(ups), BSTR(dns));
-                  // lila::Log("mask: {} {}", BSTR(flipmask), BSTR(0));
-                  // lila::Log("to  : {};{}", BSTR(ups_flip), BSTR(dns));
-                  // lila::Log("sym : {}", sym);
+                  // Log("-----------------------------------------");
+                  // Log("HOPUP");
+                  // Log("CASE: stab-origin-TRUE stab-target-TRUE");
+                  // Log("from: {};{}", BSTR(ups), BSTR(dns));
+                  // Log("mask: {} {}", BSTR(flipmask), BSTR(0));
+                  // Log("to  : {};{}", BSTR(ups_flip), BSTR(dns));
+                  // Log("sym : {}", sym);
                   // bit_t dns_rep = group_action.apply(sym, dns);
-                  // lila::Log("rep : {};{}", BSTR(ups), BSTR(dns_rep));
-                  // lila::Log("fermi_up: {}, fermi_dn: {}", fermi_up,
-                  // fermi_dn); lila::Log("idx_in: {}, idx_out: {}", idx_in,
-                  // idx_out); lila::Log("val: {}", lila::real(val));
-                  // lila::Log("fill: {}",
-                  //           lila::real((fermi_up ^ fermi_dn) ? -val : val));
+                  // Log("rep : {};{}", BSTR(ups), BSTR(dns_rep));
+                  // Log("fermi_up: {}, fermi_dn: {}", fermi_up,
+                  // fermi_dn); Log("idx_in: {}, idx_out: {}", idx_in,
+                  // idx_out); Log("val: {}", real(val));
+                  // Log("fill: {}",
+                  //           real((fermi_up ^ fermi_dn) ? -val : val));
 
                   fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -val : val);
                 }

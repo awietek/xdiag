@@ -30,8 +30,8 @@ std::tuple<BondList, Couplings> freefermion_alltoall_complex_updn(int n_sites);
 
 // std::tuple<BondList, Couplings> tJchain(int n_sites, double t, double J);
 
-std::tuple<BondList, Couplings, lila::Vector<double>> randomAlltoAll4NoU();
-std::tuple<BondList, Couplings, lila::Vector<double>> randomAlltoAll4();
+std::tuple<BondList, Couplings, arma::Col<double>> randomAlltoAll4NoU();
+std::tuple<BondList, Couplings, arma::Col<double>> randomAlltoAll4();
 
 std::tuple<BondList, Couplings> randomAlltoAll3();
 

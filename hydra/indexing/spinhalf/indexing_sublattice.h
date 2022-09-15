@@ -1,9 +1,9 @@
 #pragma once
 
-#include <hydra/common.h>
-#include <lila/external/gsl/span>
+#include <extern/gsl/span>
+#include <extern/flat_hash_map.h>
 
-#include <hydra/extern/flat_hash_map.h>
+#include <hydra/common.h>
 #include <hydra/indexing/spinhalf/symmetric_iterator.h>
 
 #include <hydra/symmetries/group_action/group_action_sublattice.h>

@@ -26,7 +26,7 @@ void apply_spsm(Bond const &bond, Couplings const &couplings,
   std::string cpl = bond.coupling();
   coeff_t J = utils::get_coupling<coeff_t>(couplings, cpl);
 
-  if (!lila::close(J, 0.)) {
+  if (std::abs(J) > 1e-12) {
 
     if (spsm == "S+") {
       auto non_zero_term = [&mask](bit_t spins) -> bool {

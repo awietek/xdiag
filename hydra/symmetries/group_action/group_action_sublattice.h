@@ -1,6 +1,6 @@
 #pragma once
 
-#include <lila/external/gsl/span>
+#include <extern/gsl/span>
 
 #include <array>
 #include <hydra/bitops/half_bit_types.h>

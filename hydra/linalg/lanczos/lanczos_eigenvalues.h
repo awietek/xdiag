@@ -1,5 +1,7 @@
 #pragma once
 
+#include "extern/armadillo/armadillo"
+
 #include <hydra/linalg/lanczos/lanczos_convergence.h>
 #include <hydra/linalg/lanczos/lanczos_generic.h>
 #include <hydra/linalg/lanczos/tmatrix.h>
@@ -8,13 +10,13 @@
 
 #ifdef HYDRA_ENABLE_MPI
 #include <hydra/parallel/mpi/dot_mpi.h>
-#include <hydra/parallel/mpi/timing_mpi.h>
+#include <hydra/utils/timing_mpi.h>
+#else
+#include <hydra/utils/timing.h>
 #endif
 
 #include <hydra/operators/bondlist.h>
 #include <hydra/operators/couplings.h>
-
-#include <lila/all.h>
 
 namespace hydra {
 
@@ -22,17 +24,15 @@ namespace hydra {
 template <class coeff_t, class Block>
 Tmatrix LanczosEigenvaluesInplace(
     BondList const &bonds, Couplings const &couplings, Block const &block,
-    lila::Vector<coeff_t> &v0, int num_eigenvalue = 0, double precision = 1e-12,
+    arma::Col<coeff_t> &v0, int num_eigenvalue = 0, double precision = 1e-12,
     int max_iterations = 1000, double deflation_tol = 1e-7) {
-
-  using namespace lila;
 
   // MPI Lanczos
 #ifdef HYDRA_ENABLE_MPI
   if constexpr (mpi::is_mpi_block<Block>) {
     int iter = 1;
-    auto mult = [&iter, &bonds, &couplings, &block](
-                    lila::Vector<coeff_t> const &v, lila::Vector<coeff_t> &w) {
+    auto mult = [&iter, &bonds, &couplings, &block](arma::Col<coeff_t> const &v,
+                                                    arma::Col<coeff_t> &w) {
       auto ta = rightnow_mpi();
       Apply(bonds, couplings, block, v, block, w);
       Log(1, "Lanczos iteration {}", iter);
@@ -40,8 +40,8 @@ Tmatrix LanczosEigenvaluesInplace(
       ++iter;
     };
 
-    auto dot_mpi = [](lila::Vector<coeff_t> const &v,
-                      lila::Vector<coeff_t> const &w) -> coeff_t {
+    auto dot_mpi = [](arma::Col<coeff_t> const &v,
+                      arma::Col<coeff_t> const &w) -> coeff_t {
       return DotMPI(v, w);
     };
 
@@ -51,7 +51,7 @@ Tmatrix LanczosEigenvaluesInplace(
 
     auto t0 = rightnow_mpi();
     auto [tmat, vectors] =
-        LanczosGeneric(mult, v0, dot_mpi, converged, lila::Matrix<coeff_t>(),
+        LanczosGeneric(mult, v0, dot_mpi, converged, arma::Mat<coeff_t>(),
                        max_iterations, deflation_tol);
     (void)vectors;
     timing_mpi(t0, rightnow_mpi(), "Lanczos time", 1);
@@ -62,8 +62,8 @@ Tmatrix LanczosEigenvaluesInplace(
   else {
 #endif
     int iter = 1;
-    auto mult = [&iter, &bonds, &couplings, &block](
-                    lila::Vector<coeff_t> const &v, lila::Vector<coeff_t> &w) {
+    auto mult = [&iter, &bonds, &couplings, &block](arma::Col<coeff_t> const &v,
+                                                    arma::Col<coeff_t> &w) {
       auto ta = rightnow();
       Apply(bonds, couplings, block, v, block, w);
       Log(1, "Lanczos iteration {}", iter);
@@ -71,9 +71,9 @@ Tmatrix LanczosEigenvaluesInplace(
       ++iter;
     };
 
-    auto dot = [](lila::Vector<coeff_t> const &v,
-                  lila::Vector<coeff_t> const &w) -> coeff_t {
-      return lila::Dot(v, w);
+    auto dot = [](arma::Col<coeff_t> const &v,
+                  arma::Col<coeff_t> const &w) -> coeff_t {
+      return arma::dot(v, w);
     };
 
     auto converged = [num_eigenvalue, precision](Tmatrix const &tmat) -> bool {
@@ -82,7 +82,7 @@ Tmatrix LanczosEigenvaluesInplace(
 
     auto t0 = rightnow();
     auto [tmat, vectors] =
-        LanczosGeneric(mult, v0, dot, converged, lila::Matrix<coeff_t>(),
+        LanczosGeneric(mult, v0, dot, converged, arma::Mat<coeff_t>(),
                        max_iterations, deflation_tol);
     (void)vectors;
     timing(t0, rightnow(), "Lanczos time", 1);
@@ -95,7 +95,7 @@ Tmatrix LanczosEigenvaluesInplace(
 // Lanczos which does not overwrite v0
 template <class coeff_t, class Block>
 Tmatrix LanczosEigenvalues(BondList const &bonds, Couplings const &couplings,
-                           Block const &block, lila::Vector<coeff_t> v0,
+                           Block const &block, arma::Col<coeff_t> v0,
                            int num_eigenvalue = 0, double precision = 1e-12,
                            int max_iterations = 1000,
                            double deflation_tol = 1e-7) {

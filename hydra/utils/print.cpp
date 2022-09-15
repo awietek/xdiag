@@ -215,4 +215,76 @@ void PrintPretty(const char *identifier, Tmatrix const &tmat) {
   PrintPretty("eigenvalues", tmat.eigenvalues());
 }
 
+void PrintPretty(const char *identifier, const arma::Mat<float> &mat) {
+  printf("%s:\n", identifier);
+  for (uint32_t i = 0; i < mat.n_rows; ++i) {
+    for (uint32_t j = 0; j < mat.n_cols; ++j)
+      printf("%10.8g ", mat(i, j));
+    printf("\n");
+  }
+  printf("\n");
+}
+
+void PrintPretty(const char *identifier, const arma::Mat<double> &mat) {
+  printf("%s:\n", identifier);
+  for (uint32_t i = 0; i < mat.n_rows; ++i) {
+    for (uint32_t j = 0; j < mat.n_cols; ++j)
+      printf("%10.8g ", mat(i, j));
+    printf("\n");
+  }
+  printf("\n");
+}
+
+void PrintPretty(const char *identifier,
+                 const arma::Mat<std::complex<float>> &mat) {
+  printf("%s:\n", identifier);
+  for (uint32_t i = 0; i < mat.n_rows; ++i) {
+    for (uint32_t j = 0; j < mat.n_cols; ++j)
+      printf("%10.8g%-+8.8gj ", mat(i, j).real(), mat(i, j).imag());
+    printf("\n");
+  }
+  printf("\n");
+}
+
+void PrintPretty(const char *identifier,
+                 const arma::Mat<std::complex<double>> &mat) {
+  printf("%s:\n", identifier);
+  for (uint32_t i = 0; i < mat.n_rows; ++i) {
+    for (uint32_t j = 0; j < mat.n_cols; ++j)
+      printf("%10.8g%-+8.8gj ", mat(i, j).real(), mat(i, j).imag());
+    printf("\n");
+  }
+  printf("\n");
+}
+
+inline void PrintPretty(const char *identifier, const arma::Col<float> &vec) {
+  printf("%s:\n", identifier);
+  for (uint32_t i = 0; i < vec.size(); ++i)
+    printf("%10.8g ", vec(i));
+  printf("\n");
+}
+
+inline void PrintPretty(const char *identifier, const arma::Col<double> &vec) {
+  printf("%s:\n", identifier);
+  for (uint32_t i = 0; i < vec.size(); ++i)
+    printf("%10.8g ", vec(i));
+  printf("\n");
+}
+
+inline void PrintPretty(const char *identifier,
+                        const arma::Col<std::complex<float>> &vec) {
+  printf("%s:\n", identifier);
+  for (uint32_t i = 0; i < vec.size(); ++i)
+    printf("%10.8g%-+8.8gj ", vec(i).real(), vec(i).imag());
+  printf("\n");
+}
+
+inline void PrintPretty(const char *identifier,
+                        const arma::Col<std::complex<double>> &vec) {
+  printf("%s:\n", identifier);
+  for (uint32_t i = 0; i < vec.size(); ++i)
+    printf("%10.8g%-+8.8gj ", vec(i).real(), vec(i).imag());
+  printf("\n");
+}
+
 } // namespace hydra::utils

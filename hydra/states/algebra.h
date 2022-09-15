@@ -1,7 +1,5 @@
 #pragma once
 
-#include <lila/all.h>
-
 #include <hydra/common.h>
 #include <hydra/utils/logger.h>
 #include <hydra/operators/bondlist.h>
@@ -27,7 +25,7 @@ coeff_t Dot(State<coeff_t, Block> const &v, State<coeff_t, Block> const &w) {
   if constexpr (mpi::is_mpi_block<Block>) {
     return DotMPI(v.vector(), w.vector());
   } else {
-    return Dot(v.vector(), w.vector());
+    return arma::dot(v.vector(), w.vector());
   }
 }
 

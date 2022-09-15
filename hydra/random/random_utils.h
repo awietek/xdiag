@@ -3,7 +3,8 @@
 #include <random>
 
 #include <hydra/common.h>
-#include <lila/all.h>
+
+#include "extern/armadillo/armadillo"
 
 namespace hydra::random {
 
@@ -20,6 +21,6 @@ int random_uniform_real_discard();
 int random_normal_discard();
 
 template <typename coeff_t>
-void fill_random_normal_vector(lila::Vector<coeff_t> &v, int seed);
+void fill_random_normal_vector(arma::Col<coeff_t> &v, int seed);
 
 } // namespace hydra::random

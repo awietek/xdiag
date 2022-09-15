@@ -94,7 +94,7 @@ void electron_symmetric_exchange(BondList const &bonds,
         if constexpr (is_complex<coeff_t>()) {
           prefac = -Jhalf * irrep.character(sym);
         } else {
-          prefac = -Jhalf * lila::real(irrep.character(sym));
+          prefac = -Jhalf * real(irrep.character(sym));
         }
 
         // Fermi-sign of up spins
@@ -130,7 +130,7 @@ void electron_symmetric_exchange(BondList const &bonds,
           }
         } else {
           for (int i = 0; i < (int)irrep.size(); ++i) {
-            prefacs[i] = -lila::real(irrep.character(i)) * Jhalf;
+            prefacs[i] = -real(irrep.character(i)) * Jhalf;
           }
         }
         bool fermi_up_hop = (popcnt(ups & fermimask) & 1);

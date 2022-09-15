@@ -165,7 +165,7 @@ IndexingSublattice<bit_t, n_sublat>::IndexingSublattice(
   int n_sites_sublat = n_sites_ / n_sublat;
   int n_leading = n_sites_sublat;
   int n_trailing = (n_sublat - 1) * n_sites_sublat;
-
+  Log("a");
   for (auto prefix : combinatorics::Subsets<bit_t>(n_leading)) {
 
     // if prefix is incompatible with n_up, continue
@@ -231,7 +231,7 @@ IndexingSublattice<bit_t, n_sublat>::IndexingSublattice(
 #endif
 
   } // for (auto prefix : ...)
-
+  Log("b");
   reps_.shrink_to_fit();
   norms_.shrink_to_fit();
 #ifdef HYDRA_ENABLE_OPENMP
@@ -241,6 +241,7 @@ IndexingSublattice<bit_t, n_sublat>::IndexingSublattice(
 #else
   rep_search_range_ = compute_rep_search_range_serial(reps_, n_postfix_bits_);
 #endif
+  Log("c");
   begin_ = iterator_t(reps_, 0);
   end_ = iterator_t(reps_, reps_.size());
 } // namespace hydra::indexing::spinhalf

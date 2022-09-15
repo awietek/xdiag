@@ -36,10 +36,6 @@ void apply_exchange(Bond const &bond, Couplings const &couplings,
   coeff_t Jhalf = J / 2.;
   coeff_t Jhalf_conj = J_conj / 2.;
 
-  // Log("Jhalf r: {} i: {}", lila::real(Jhalf), lila::imag(Jhalf));
-  // Log("Jhalf_conj r: {} i: {}", lila::real(Jhalf_conj),
-  // lila::imag(Jhalf_conj));
-
   if constexpr (is_real<coeff_t>()) { // just to supress "unused" warning
     assert(Jhalf == Jhalf_conj);
   }
@@ -50,7 +46,7 @@ void apply_exchange(Bond const &bond, Couplings const &couplings,
   };
 
   // Dispatch either symmetric of unsymmetric term application
-  if (!lila::close(J, 0.)) {
+  if (std::abs(J) > 1e-12) {
 
     if constexpr (is_real<coeff_t>()) {
 

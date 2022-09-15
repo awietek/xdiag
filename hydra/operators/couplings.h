@@ -5,7 +5,6 @@
 #include <vector>
 
 #include <hydra/common.h>
-#include <lila/all.h>
 
 namespace hydra {
 
@@ -32,7 +31,7 @@ public:
   }
 
   bool is_real(const std::string &name) const {
-    return lila::close(std::abs(std::imag(couplings_.find(name)->second)), 0.);
+    return std::abs(std::imag(couplings_.find(name)->second)) < 1e-12;
   }
 
   bool all_real() const {

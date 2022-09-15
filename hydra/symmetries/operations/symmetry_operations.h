@@ -1,6 +1,6 @@
 #pragma once
 
-#include <lila/external/gsl/span>
+#include <extern/gsl/span>
 
 #include <hydra/combinatorics/combinations.h>
 #include <hydra/symmetries/operations/fermi_sign.h>

@@ -41,7 +41,7 @@ void apply_scalar_chirality(Bond const &bond, Couplings const &couplings,
     std::string cpl = bond.coupling();
     complex J = utils::get_coupling<coeff_t>(couplings, cpl);
     complex Jquarter = complex(0, 0.25) * J;
-    complex Jquarter_conj = lila::conj(Jquarter);
+    complex Jquarter_conj = conj(Jquarter);
     bit_t spinmask = ((bit_t)1 << s1) | ((bit_t)1 << s2) | ((bit_t)1 << s3);
 
     // scalar chirality annihilates 000 and 111
@@ -75,7 +75,8 @@ void apply_scalar_chirality(Bond const &bond, Couplings const &couplings,
     };
 
     // Dispatch either symmetric of unsymmetric term application
-    if (!lila::close(J, 0.)) {
+    if (std::abs(J) > 1e-12) {
+
       if constexpr (symmetric) {
         apply_term_offdiag_sym<bit_t, coeff_t>(
             indexing_in, indexing_out, non_zero_term, term_action_cyclic, fill);

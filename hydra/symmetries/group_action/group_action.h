@@ -1,6 +1,6 @@
 #pragma once
 
-#include <lila/external/gsl/span>
+#include <extern/gsl/span>
 
 #include <hydra/symmetries/permutation_group.h>
 #include <utility>

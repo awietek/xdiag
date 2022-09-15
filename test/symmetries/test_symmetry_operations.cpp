@@ -118,7 +118,7 @@ template <typename bit_t> void test_norm(int n_sites) {
   for (bit_t bits : Subsets(n_sites)) {
     double nrm = norm(bits, group_action, irrep);
     auto stabilizer = stabilizer_symmetries(bits, group_action);
-    REQUIRE(lila::close(nrm * nrm, (double)stabilizer.size()));
+    REQUIRE(close(nrm * nrm, (double)stabilizer.size()));
   }
 }
 

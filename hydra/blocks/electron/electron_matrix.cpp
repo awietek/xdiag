@@ -15,9 +15,9 @@
 namespace hydra {
 
 template <typename bit_t, typename coeff_t>
-lila::Matrix<coeff_t>
-MatrixGen(BondList const &bonds, Couplings const &couplings,
-          Electron<bit_t> const &block_in, Electron<bit_t> const &block_out) {
+arma::Mat<coeff_t> MatrixGen(BondList const &bonds, Couplings const &couplings,
+                             Electron<bit_t> const &block_in,
+                             Electron<bit_t> const &block_out) {
   assert(block_in == block_out); // only temporary
 
   utils::check_operator_works_with<coeff_t>(bonds, couplings,
@@ -25,7 +25,8 @@ MatrixGen(BondList const &bonds, Couplings const &couplings,
   idx_t dim_in = block_in.size();
   idx_t dim_out = block_out.size();
 
-  auto mat = lila::Zeros<coeff_t>(dim_out, dim_in);
+  arma::Mat<coeff_t> mat = arma::zeros<arma::Mat<coeff_t>>(dim_out, dim_in);
+
   auto fill = [&mat](idx_t idx_out, idx_t idx_in, coeff_t val) {
     mat(idx_out, idx_in) += val;
   };
@@ -78,28 +79,28 @@ MatrixGen(BondList const &bonds, Couplings const &couplings,
   return mat;
 }
 
-template lila::Matrix<double>
+template arma::Mat<double>
 MatrixGen<uint16_t, double>(BondList const &bonds, Couplings const &couplings,
                             Electron<uint16_t> const &block_in,
                             Electron<uint16_t> const &block_out);
-template lila::Matrix<double>
+template arma::Mat<double>
 MatrixGen<uint32_t, double>(BondList const &bonds, Couplings const &couplings,
                             Electron<uint32_t> const &block_in,
                             Electron<uint32_t> const &block_out);
-template lila::Matrix<double>
+template arma::Mat<double>
 MatrixGen<uint64_t, double>(BondList const &bonds, Couplings const &couplings,
                             Electron<uint64_t> const &block_in,
                             Electron<uint64_t> const &block_out);
 
-template lila::Matrix<complex>
+template arma::Mat<complex>
 MatrixGen<uint16_t, complex>(BondList const &bonds, Couplings const &couplings,
                              Electron<uint16_t> const &block_in,
                              Electron<uint16_t> const &block_out);
-template lila::Matrix<complex>
+template arma::Mat<complex>
 MatrixGen<uint32_t, complex>(BondList const &bonds, Couplings const &couplings,
                              Electron<uint32_t> const &block_in,
                              Electron<uint32_t> const &block_out);
-template lila::Matrix<complex>
+template arma::Mat<complex>
 MatrixGen<uint64_t, complex>(BondList const &bonds, Couplings const &couplings,
                              Electron<uint64_t> const &block_in,
                              Electron<uint64_t> const &block_out);

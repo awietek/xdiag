@@ -1,6 +1,6 @@
 #pragma once
 
-#include <lila/all.h>
+#include "extern/armadillo/armadillo"
 #include <hydra/linalg/lanczos/tmatrix.h>
 
 namespace hydra {

@@ -34,7 +34,7 @@ void apply_sz(Bond const &bond, Couplings const &couplings, Indexing &&indexing,
     }
   };
 
-  if (!lila::close(H, 0.)) {
+  if (std::abs(H) > 1e-12) {
     apply_term_diag<bit_t, coeff_t>(indexing, term_coeff, fill);
   }
 }

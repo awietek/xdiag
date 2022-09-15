@@ -6,7 +6,6 @@
 
 using namespace hydra;
 using namespace hydra::bitops;
-using namespace lila;
 
 template <typename bit_t> void test_bitops() {
 
@@ -37,7 +36,7 @@ template <typename bit_t> void test_bitops() {
     if (do_timing)
       timing(time, rightnow(), "popcnt (slow)", 1);
 
-    time = lila::rightnow();
+    time = rightnow();
     for (int i = 0; i < N; ++i) {
       popcnts2[i] = popcnt(v1[i]);
     }
@@ -61,7 +60,7 @@ template <typename bit_t> void test_bitops() {
     if (do_timing)
       timing(time, rightnow(), "pext (slow)", 1);
 
-    time = lila::rightnow();
+    time = rightnow();
     for (int i = 0; i < N; ++i) {
       pexts2[i] = extract(v1[i], v2[i]);
     }
@@ -85,7 +84,7 @@ template <typename bit_t> void test_bitops() {
     if (do_timing)
       timing(time, rightnow(), "pdep (slow)", 1);
 
-    time = lila::rightnow();
+    time = rightnow();
     for (int i = 0; i < N; ++i) {
       pdeps2[i] = deposit(v1[i], v2[i]);
     }
@@ -111,7 +110,7 @@ template <typename bit_t> void test_bitops() {
     if (do_timing)
       timing(time, rightnow(), "gbit (slow)", 1);
 
-    time = lila::rightnow();
+    time = rightnow();
     for (int i = 0; i < N; ++i) {
       gbits2[i] = gbit(v1[i], n);
     }
@@ -138,7 +137,7 @@ template <typename bit_t> void test_bitops() {
     if (do_timing)
       timing(time, rightnow(), "gbitss (slow)", 1);
 
-    time = lila::rightnow();
+    time = rightnow();
     for (int i = 0; i < N; ++i) {
       gbitss2[i] = gbits(v1[i], n, l);
     }

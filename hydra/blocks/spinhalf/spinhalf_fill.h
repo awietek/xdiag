@@ -1,6 +1,6 @@
 #pragma once
 
-#include <lila/all.h>
+#include "extern/armadillo/armadillo"
 
 #include <hydra/common.h>
 
@@ -13,7 +13,7 @@
 namespace hydra {
 
 template <class bit_t, class coeff_t, class wavefunction_f>
-void Fill(Spinhalf<bit_t> const &block, lila::Vector<coeff_t> &vec,
+void Fill(Spinhalf<bit_t> const &block, arma::Col<coeff_t> &vec,
           wavefunction_f wavefunction) {
   using combinatorics::Combinations;
   using combinatorics::Subsets;

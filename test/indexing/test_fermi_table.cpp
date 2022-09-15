@@ -44,6 +44,7 @@ TEST_CASE("fermi_table", "[symmetries]") {
     Log("chain N={}", n_sites);
     auto [group, irreps] =
         hydra::testcases::electron::get_cyclic_group_irreps(n_sites);
+    (void)irreps;
     test_fermi_bool_table<uint16_t>(group);
     test_fermi_bool_table<uint32_t>(group);
     test_fermi_bool_table<uint64_t>(group);

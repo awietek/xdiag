@@ -196,7 +196,7 @@ void electron_symmetric_hopping(BondList const &bonds,
             }
           } else {
             for (int i = 0; i < (int)irrep.size(); ++i) {
-              prefacs[i] = -t * lila::real(irrep.character(i));
+              prefacs[i] = -t * real(irrep.character(i));
             }
           }
 

@@ -47,7 +47,7 @@ void tj_symmetric_exchange(BondList const &bonds, Couplings const &couplings,
     bit_t sitesmask = ((bit_t)1 << n_sites) - 1;
 
     // // DEBUG PRINT states
-    // lila::Log("\n\n\n");
+    // Log("\n\n\n");
     // idx_t idx = 0;
     // for (idx_t idx_up = 0; idx_up < indexing.n_rep_ups(); ++idx_up) {
     //   bit_t ups = indexing.rep_up(idx_up);
@@ -58,12 +58,12 @@ void tj_symmetric_exchange(BondList const &bonds, Couplings const &couplings,
 
     //     for (bit_t dnsc : dnss) {
     //       bit_t dns = bitops::deposit(dnsc, not_ups);
-    //       lila::Log("{}: {};{}", idx, BSTR(ups), BSTR(dns));
+    //       Log("{}: {};{}", idx, BSTR(ups), BSTR(dns));
     //       ++idx;
     //     }
     //   } else {
     //     for (bit_t dns : dnss) {
-    //       lila::Log("{}: {};{}", idx, BSTR(ups), BSTR(dns));
+    //       Log("{}: {};{}", idx, BSTR(ups), BSTR(dns));
     //       ++idx;
     //     }
     //   }
@@ -115,7 +115,7 @@ void tj_symmetric_exchange(BondList const &bonds, Couplings const &couplings,
         if constexpr (is_complex<coeff_t>()) {
           prefac = -Jhalf * irrep.character(sym);
         } else {
-          prefac = -Jhalf * lila::real(irrep.character(sym));
+          prefac = -Jhalf * real(irrep.character(sym));
         }
 
         // Fermi-sign of up spins
@@ -131,30 +131,30 @@ void tj_symmetric_exchange(BondList const &bonds, Couplings const &couplings,
             if ((dns & flipmask) == dns_mask) { // If  dns can be raised
               bit_t dns_flip = dns ^ flipmask;
 
-              // lila::Log("-----------------------------------------");
-              // lila::Log("CASE: origin-stab-FALSE, target-stab-FALSE");
-              // lila::Log("origin-sym: {}", sym);
-              // lila::Log("from: {};{}", BSTR(ups), BSTR(dns));
-              // lila::Log("mask: {} {}", BSTR(flipmask), BSTR(flipmask));
-              // lila::Log("to  : {};{}", BSTR(ups_flip), BSTR(dns_flip));
+              // Log("-----------------------------------------");
+              // Log("CASE: origin-stab-FALSE, target-stab-FALSE");
+              // Log("origin-sym: {}", sym);
+              // Log("from: {};{}", BSTR(ups), BSTR(dns));
+              // Log("mask: {} {}", BSTR(flipmask), BSTR(flipmask));
+              // Log("to  : {};{}", BSTR(ups_flip), BSTR(dns_flip));
               // bit_t dns_flip_rep = group_action.apply(sym, dns_flip);
-              // lila::Log("rep : {};{}", BSTR(ups_flip_rep),
+              // Log("rep : {};{}", BSTR(ups_flip_rep),
               // BSTR(dns_flip_rep));
 
               auto [idx_dn_flip, fermi_dn] = indexing.index_dns_fermi(
                   dns_flip, sym, not_ups_flip_rep, fermimask);
 
-              // lila::Log("fermi_up: {}, fermi_dn: {}", fermi_up, fermi_dn);
+              // Log("fermi_up: {}, fermi_dn: {}", fermi_up, fermi_dn);
 
               coeff_t val = prefac; // norms are both 1.0 in this case
               idx_t idx_in = up_offset_in + idx_dn;
               idx_t idx_out = up_offset_out + idx_dn_flip;
-              // lila::Log("idx_dn: {}, idx_dn_flip: {}", idx_dn, idx_dn_flip);
+              // Log("idx_dn: {}, idx_dn_flip: {}", idx_dn, idx_dn_flip);
 
-              // lila::Log("off_in: {}, off_out: {}", up_offset_in,
-              // up_offset_out); lila::Log("idx_in: {}, idx_out: {}", idx_in,
-              // idx_out); lila::Log("val: {}", lila::real(val));
-              // lila::Log("fill: {}", lila::real((fermi_up ^ fermi_dn) ? -val :
+              // Log("off_in: {}, off_out: {}", up_offset_in,
+              // up_offset_out); Log("idx_in: {}, idx_out: {}", idx_in,
+              // idx_out); Log("val: {}", real(val));
+              // Log("fill: {}", real((fermi_up ^ fermi_dn) ? -val :
               // val));
 
               fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -val : val);
@@ -174,34 +174,34 @@ void tj_symmetric_exchange(BondList const &bonds, Couplings const &couplings,
             if ((dns & flipmask) == dns_mask) { // If  dns can be raised
               bit_t dns_flip = dns ^ flipmask;
 
-              // lila::Log("-----------------------------------------");
-              // lila::Log("CASE: origin-stab_TRUE, target-stab-FALSE");
-              // lila::Log("origin-stab:");
+              // Log("-----------------------------------------");
+              // Log("CASE: origin-stab_TRUE, target-stab-FALSE");
+              // Log("origin-stab:");
               // for (auto sym : syms_up_in) {
               //   std::cout << sym << " ";
               // }
-              // lila::Log("");
+              // Log("");
 
-              // lila::Log("from: {};{}", BSTR(ups), BSTR(dns));
-              // lila::Log("mask: {} {}", BSTR(flipmask), BSTR(flipmask));
-              // lila::Log("to  : {},{}", BSTR(ups_flip), BSTR(dns_flip));
+              // Log("from: {};{}", BSTR(ups), BSTR(dns));
+              // Log("mask: {} {}", BSTR(flipmask), BSTR(flipmask));
+              // Log("to  : {},{}", BSTR(ups_flip), BSTR(dns_flip));
               // bit_t dns_flip_rep = group_action.apply(sym, dns_flip);
-              // lila::Log("rep : {},{}", BSTR(ups_flip_rep),
+              // Log("rep : {},{}", BSTR(ups_flip_rep),
               // BSTR(dns_flip_rep));
 
               auto [idx_dn_flip, fermi_dn] = indexing.index_dns_fermi(
                   dns_flip, sym, not_ups_flip_rep, fermimask);
 
-              // lila::Log("idx_dn: {}, idx_dn_flip: {}", idx_dn, idx_dn_flip);
-              // lila::Log("fermi_up: {}, fermi_dn: {}", fermi_up, fermi_dn);
+              // Log("idx_dn: {}, idx_dn_flip: {}", idx_dn, idx_dn_flip);
+              // Log("fermi_up: {}, fermi_dn: {}", fermi_up, fermi_dn);
 
               coeff_t val = prefac / norms_in[idx_dn];
 
               idx_t idx_in = up_offset_in + idx_dn;
               idx_t idx_out = up_offset_out + idx_dn_flip;
-              // lila::Log("idx_in: {}, idx_out: {}", idx_in, idx_out);
-              // lila::Log("val: {}", lila::real(val));
-              // lila::Log("fill: {}", lila::real((fermi_up ^ fermi_dn) ? -val :
+              // Log("idx_in: {}, idx_out: {}", idx_in, idx_out);
+              // Log("val: {}", real(val));
+              // Log("fill: {}", real((fermi_up ^ fermi_dn) ? -val :
               // val));
               fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -val : val);
             }
@@ -222,7 +222,7 @@ void tj_symmetric_exchange(BondList const &bonds, Couplings const &couplings,
           }
         } else {
           for (int i = 0; i < (int)irrep.size(); ++i) {
-            prefacs[i] = -lila::real(irrep.character(i)) * Jhalf;
+            prefacs[i] = -real(irrep.character(i)) * Jhalf;
           }
         }
 
@@ -237,39 +237,39 @@ void tj_symmetric_exchange(BondList const &bonds, Couplings const &couplings,
             if ((dns & flipmask) == dns_mask) { // If  dns can be raised
               bit_t dns_flip = dns ^ flipmask;
 
-              // lila::Log("-----------------------------------------");
-              // lila::Log("CASE: origin-stab-FALSE, target-stab-TRUE");
-              // lila::Log("target-stab:");
+              // Log("-----------------------------------------");
+              // Log("CASE: origin-stab-FALSE, target-stab-TRUE");
+              // Log("target-stab:");
               // for (auto sym : syms_up_out) {
               //   std::cout << sym << " ";
               // }
-              // lila::Log("");
+              // Log("");
 
-              // lila::Log("from: {};{}", BSTR(ups), BSTR(dns));
-              // lila::Log("mask: {} {}", BSTR(flipmask), BSTR(flipmask));
-              // lila::Log("to  : {},{}", BSTR(ups_flip), BSTR(dns_flip));
+              // Log("from: {};{}", BSTR(ups), BSTR(dns));
+              // Log("mask: {} {}", BSTR(flipmask), BSTR(flipmask));
+              // Log("to  : {},{}", BSTR(ups_flip), BSTR(dns_flip));
               // bit_t dns_flip_rep = symmetries::representative_subset(
               //     dns_flip, group_action, syms);
-              // lila::Log("rep : {};{}", BSTR(ups_flip_rep),
+              // Log("rep : {};{}", BSTR(ups_flip_rep),
               // BSTR(dns_flip_rep));
               auto [idx_dn_flip, fermi_dn, sym] = indexing.index_dns_fermi_sym(
                   dns_flip, syms, dnss_out, fermimask);
 
-              // lila::Log("idx_dn: {}, idx_dn_flip: {}", idx_dn, idx_dn_flip);
+              // Log("idx_dn: {}, idx_dn_flip: {}", idx_dn, idx_dn_flip);
 
               if (idx_dn_flip != invalid_index) {
                 bool fermi_up =
                     fermi_up_hop ^ indexing.fermi_bool_ups(sym, ups_flip);
 
-                // lila::Log("fermi_up: {}, fermi_dn: {}", fermi_up, fermi_dn);
+                // Log("fermi_up: {}, fermi_dn: {}", fermi_up, fermi_dn);
 
                 coeff_t val = prefacs[sym] * norms_out[idx_dn_flip];
                 idx_t idx_in = up_offset_in + idx_dn;
                 idx_t idx_out = up_offset_out + idx_dn_flip;
-                // lila::Log("idx_in: {}, idx_out: {}", idx_in, idx_out);
-                // lila::Log("val: {}", lila::real(val));
+                // Log("idx_in: {}, idx_out: {}", idx_in, idx_out);
+                // Log("val: {}", real(val));
 
-                // lila::Log("fill: {}", lila::real((fermi_up ^ fermi_dn) ? -val
+                // Log("fill: {}", real((fermi_up ^ fermi_dn) ? -val
                 // : val));
 
                 fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -val : val);
@@ -288,46 +288,46 @@ void tj_symmetric_exchange(BondList const &bonds, Couplings const &couplings,
             if ((dns & flipmask) == dns_mask) { // If  dns can be raised
               bit_t dns_flip = dns ^ flipmask;
 
-              // lila::Log("-----------------------------------------");
-              // lila::Log("CASE: origin-stab-TRUE, target-stab-TRUE");
-              // lila::Log("origin-stab:");
+              // Log("-----------------------------------------");
+              // Log("CASE: origin-stab-TRUE, target-stab-TRUE");
+              // Log("origin-stab:");
               // for (auto sym : syms_up_in) {
               //   std::cout << sym << " ";
               // }
-              // lila::Log("");
-              // lila::Log("target-stab:");
+              // Log("");
+              // Log("target-stab:");
               // for (auto sym : syms_up_out) {
               //   std::cout << sym << " ";
               // }
-              // lila::Log("");
+              // Log("");
 
-              // lila::Log("from: {};{}", BSTR(ups), BSTR(dns));
-              // lila::Log("mask: {} {}", BSTR(flipmask), BSTR(flipmask));
-              // lila::Log("to  : {};{}", BSTR(ups_flip), BSTR(dns_flip));
+              // Log("from: {};{}", BSTR(ups), BSTR(dns));
+              // Log("mask: {} {}", BSTR(flipmask), BSTR(flipmask));
+              // Log("to  : {};{}", BSTR(ups_flip), BSTR(dns_flip));
               // bit_t dns_flip_rep = symmetries::representative_subset(
               //     dns_flip, group_action, syms);
-              // lila::Log("rep : {};{}", BSTR(ups_flip_rep),
+              // Log("rep : {};{}", BSTR(ups_flip_rep),
               // BSTR(dns_flip_rep));
               auto [idx_dn_flip, fermi_dn, sym] = indexing.index_dns_fermi_sym(
                   dns_flip, syms, dnss_out, fermimask);
 
-              // lila::Log("idx_dn: {}, idx_dn_flip: {}", idx_dn, idx_dn_flip);
+              // Log("idx_dn: {}, idx_dn_flip: {}", idx_dn, idx_dn_flip);
 
               if (idx_dn_flip != invalid_index) {
 
                 bool fermi_up =
                     fermi_up_hop ^ indexing.fermi_bool_ups(sym, ups_flip);
 
-                // lila::Log("fermi_up: {}, fermi_dn: {}", fermi_up, fermi_dn);
+                // Log("fermi_up: {}, fermi_dn: {}", fermi_up, fermi_dn);
 
                 coeff_t val =
                     prefacs[sym] * norms_out[idx_dn_flip] / norms_in[idx_dn];
                 idx_t idx_in = up_offset_in + idx_dn;
                 idx_t idx_out = up_offset_out + idx_dn_flip;
 
-                // lila::Log("idx_in: {}, idx_out: {}", idx_in, idx_out);
-                // lila::Log("val: {}", lila::real(val));
-                // lila::Log("fill: {}", lila::real((fermi_up ^ fermi_dn) ? -val
+                // Log("idx_in: {}, idx_out: {}", idx_in, idx_out);
+                // Log("val: {}", real(val));
+                // Log("fill: {}", real((fermi_up ^ fermi_dn) ? -val
                 // : val));
                 fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -val : val);
               }

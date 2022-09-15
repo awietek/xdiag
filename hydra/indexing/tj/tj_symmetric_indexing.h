@@ -3,7 +3,7 @@
 #include <map>
 #include <vector>
 
-#include <lila/external/gsl/span>
+#include <extern/gsl/span>
 
 #include <hydra/common.h>
 #include <hydra/indexing/fermi_table.h>

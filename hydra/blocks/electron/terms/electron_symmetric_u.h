@@ -22,7 +22,7 @@ void electron_symmetric_U(Couplings const &couplings, Indexing &&indexing,
 
     coeff_t U = utils::get_coupling<coeff_t>(couplings, "U");
 
-    if (!lila::close(U, 0.)) {
+    if (std::abs(U) > 1e-12) {
 
       idx_t idx = 0;
 #ifdef HYDRA_ENABLE_OPENMP

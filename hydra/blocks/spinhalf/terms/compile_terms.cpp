@@ -16,7 +16,7 @@ std::pair<BondList, Couplings> compile_terms(BondList const &bonds,
     auto sites = bond.sites();
 
     // Ignore bonds with zero coupling
-    if (lila::close(couplings[cpl], 0.)) {
+    if (std::abs(couplings[cpl]) < 1e-12) {
       continue;
     }
 

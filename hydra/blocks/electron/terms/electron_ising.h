@@ -1,7 +1,5 @@
 #pragma once
 
-#include <lila/utils/logger.h>
-
 #include <hydra/bitops/bitops.h>
 #include <hydra/blocks/electron/electron.h>
 #include <hydra/combinatorics/combinations.h>

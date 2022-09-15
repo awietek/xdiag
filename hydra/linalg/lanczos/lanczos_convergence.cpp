@@ -1,6 +1,5 @@
 #include "lanczos_convergence.h"
 
-#include <hydra/utils/complex.h>
 
 namespace hydra {
 
@@ -10,7 +9,7 @@ bool ConvergedEigenvalues(Tmatrix const &tmat, int n_eigenvalue,
   if (size <= n_eigenvalue + 1)
     return false;
   else {
-    if (lila::close(tmat.betas()(size - 1), 0.))
+    if (std::abs(tmat.betas()(size - 1)) < 1e-8)
       return true;
 
     auto eigs = tmat.eigenvalues();

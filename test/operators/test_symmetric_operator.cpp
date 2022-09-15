@@ -35,7 +35,7 @@ TEST_CASE("symmetric_operator", "[symmetries]") {
           auto Hv = v;
           Apply(bondlist, couplings, v, Hv);
           auto e = Dot(v, Hv);
-          REQUIRE(lila::close(lila::real(e), e0_nosym));
+          REQUIRE(close(real(e), e0_nosym));
         }
         double e0_sym = 9999.0;
         Representation e0_irrep;
@@ -61,7 +61,7 @@ TEST_CASE("symmetric_operator", "[symmetries]") {
         }
         // Log.out("N: {}, nup:{} ndn: {}, deg: {}, e0_nosym: {}, e0_sym: {}",
         //         n_sites, nup, ndn, deg, e0_nosym, e0_sym);
-        REQUIRE(lila::close(e0_sym, e0_nosym));
+        REQUIRE(close(e0_sym, e0_nosym));
 
         // Compare correlators only if degeneracy is 1
         // -> g.s. from non-symmetric calculation is unique and symmetric
@@ -69,13 +69,14 @@ TEST_CASE("symmetric_operator", "[symmetries]") {
           auto block_sym = Electron(n_sites, nup, ndn, space_group, e0_irrep);
           auto [e0_sym2, v0_sym] =
               GroundstateCplx(bondlist, couplings, block_sym);
-          REQUIRE(lila::close(e0_sym, e0_nosym));
+	  (void)e0_sym2;
+          REQUIRE(close(e0_sym, e0_nosym));
           {
             auto &v = v0_sym;
             auto Hv = v;
             Apply(bondlist, couplings, v, Hv);
             auto e = Dot(v, Hv);
-            REQUIRE(lila::close(lila::real(e), e0_nosym));
+            REQUIRE(close(real(e), e0_nosym));
           }
 
           // Measure correlators
@@ -91,9 +92,9 @@ TEST_CASE("symmetric_operator", "[symmetries]") {
             auto val_nosym = Inner(corr_nosym, cpls, v0_nosym);
 
             auto val_sym = Inner(corr_sym, cpls_sym, v0_sym);
-            // Log.out("(0,{}) nosym: {}, sym: {}", i, lila::real(val_nosym),
-            //               lila::real(val_sym));
-            REQUIRE(lila::close(val_nosym, val_sym, 1e-6, 1e-6));
+            // Log.out("(0,{}) nosym: {}, sym: {}", i, real(val_nosym),
+            //               real(val_sym));
+            REQUIRE(close(val_nosym, val_sym, 1e-6, 1e-6));
           }
           // for (int j=0; j<n_sites; ++j) {
           //   BondList corr_nosym;
@@ -101,12 +102,12 @@ TEST_CASE("symmetric_operator", "[symmetries]") {
           //   Couplings cpls;
           //   cpls["J"] = 1.0;
           //   auto val_nosym2 = Inner(corr_nosym, cpls, block_nosym, v0_nosym);
-          //   lila::Log.out("({}, {}) {} {}", j, (i+j)%n_sites,
-          //   lila::real(val_nosym2),
-          //               lila::real(val_nosym));
+          //   Log.out("({}, {}) {} {}", j, (i+j)%n_sites,
+          //   real(val_nosym2),
+          //               real(val_nosym));
           // }
         }
-	// Log("X");
+        // Log("X");
       }
     }
   }

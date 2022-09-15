@@ -20,12 +20,12 @@ std::tuple<BondList, Couplings> HBchain(int n_sites, double J1, double J2) {
   return {bondlist, couplings};
 }
 
-std::tuple<BondList, Couplings, lila::Vector<double>>
+std::tuple<BondList, Couplings, arma::Col<double>>
 HBchain_fullspectrum_nup(int L, int nup) {
 
   auto [bondlist, couplings] = HBchain(L, 1.0);
 
-  lila::Vector<double> eigs;
+  arma::Col<double> eigs;
   if (L == 2) {
     if ((nup == 0) || (nup == 2))
       eigs = {0.5};
@@ -212,7 +212,6 @@ std::tuple<BondList, Couplings, double> triangular_12_complex(int nup,
     } else if (eta == 0.05) {
       e0 = -8.9863396883370398882;
     }
-      
   }
   return {bonds, cpls, e0};
 }

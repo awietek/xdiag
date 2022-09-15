@@ -50,9 +50,9 @@ void electron_hopping(BondList const &bonds, Couplings const &couplings,
         if (popcnt(up & flipmask) == 1) {
           coeff_t t;
           if constexpr (is_complex<coeff_t>())
-            t = (gbit(up, s1)) ? couplings[cpl] : lila::conj(couplings[cpl]);
+            t = (gbit(up, s1)) ? couplings[cpl] : conj(couplings[cpl]);
           else
-            t = lila::real(couplings[cpl]);
+            t = real(couplings[cpl]);
 
           double fermi = popcnt(up & fermimask) & 1 ? -1. : 1.;
           coeff_t val = -t * fermi;
@@ -76,9 +76,9 @@ void electron_hopping(BondList const &bonds, Couplings const &couplings,
         if (popcnt(dn & flipmask) == 1) {
           coeff_t t;
           if constexpr (is_complex<coeff_t>())
-            t = (gbit(dn, s1)) ? couplings[cpl] : lila::conj(couplings[cpl]);
+            t = (gbit(dn, s1)) ? couplings[cpl] : conj(couplings[cpl]);
           else
-            t = lila::real(couplings[cpl]);
+            t = real(couplings[cpl]);
 
           double fermi = popcnt(dn & fermimask) & 1 ? -1. : 1.;
           coeff_t val = -t * fermi;

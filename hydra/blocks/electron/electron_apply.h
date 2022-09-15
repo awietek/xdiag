@@ -1,6 +1,6 @@
 #pragma once
 
-#include <lila/all.h>
+#include "extern/armadillo/armadillo"
 
 #include <hydra/blocks/electron/electron.h>
 #include <hydra/common.h>
@@ -11,7 +11,7 @@ namespace hydra {
 
 template <typename bit_t, typename coeff_t>
 void Apply(BondList const &bonds, Couplings const &couplings,
-           Electron<bit_t> const &block_in, lila::Vector<coeff_t> const &vec_in,
-           Electron<bit_t> const &block_out, lila::Vector<coeff_t> &vec_out);
+           Electron<bit_t> const &block_in, arma::Col<coeff_t> const &vec_in,
+           Electron<bit_t> const &block_out, arma::Col<coeff_t> &vec_out);
 
 } // namespace hydra
