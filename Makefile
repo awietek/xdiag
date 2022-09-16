@@ -47,7 +47,7 @@ include $(testmpidepends)
 # different building suites
 .PHONY: test 
 test:  $(objects) $(testobjects) lib 
-	$(cc) $(ccopt) $(ccstd) $(ccwarn) $(depflags) $(lapack) $(objects) $(testobjects) $(enable_openmp) $(openmp) -o test/tests
+	$(cc) $(ccopt) $(ccstd) $(ccwarn) $(depflags) $(lapack) $(libraries) $(objects) $(testobjects) $(enable_openmp) $(openmp) -o test/tests
 
 .PHONY: mpi
 mpi: $(objects) $(mpiobjects) libmpi
