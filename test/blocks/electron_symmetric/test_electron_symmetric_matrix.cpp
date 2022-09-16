@@ -19,22 +19,31 @@ void test_electron_symmetric_spectra_no_np(BondList bondlist,
   if (block_total.size() < 1000) {
 
     auto H_total = MatrixCplx(bondlist, couplings, block_total, block_total);
-    auto eigs_total = lila::EigenvaluesSym(H_total);
+    REQUIRE(H_total.is_hermitian(1e-8));
 
-    lila::Vector<double> eigs_all;
+    arma::vec eigs_total;
+    arma::eig_sym(eigs_total, H_total);
+
+    std::vector<double> eigs_all;
     for (auto irrep : irreps) {
       auto block_no_np = Electron(n_sites, space_group, irrep);
       auto H_no_np = MatrixCplx(bondlist, couplings, block_no_np, block_no_np);
-      auto eigs_no_np = lila::EigenvaluesSym(H_no_np);
-      // LilaPrint(eigs_no_np);
 
-      lila::Vector<double> eigs_np_all;
+      REQUIRE(H_no_np.is_hermitian(1e-8));
+
+      arma::vec eigs_no_np;
+      arma::eig_sym(eigs_no_np, H_no_np);
+
+      std::vector<double> eigs_np_all;
       for (int nup = 0; nup <= n_sites; ++nup) {
         for (int ndn = 0; ndn <= n_sites; ++ndn) {
           auto block_np = Electron(n_sites, nup, ndn, space_group, irrep);
           auto H_np = MatrixCplx(bondlist, couplings, block_np, block_np);
-          auto eigs_np = lila::EigenvaluesSym(H_np);
-          // LilaPrint(eigs_np);
+          REQUIRE(H_np.is_hermitian(1e-8));
+
+          arma::vec eigs_np;
+          arma::eig_sym(eigs_np, H_np);
+
           for (auto e : eigs_np) {
             eigs_np_all.push_back(e);
             eigs_all.push_back(e);
@@ -42,12 +51,13 @@ void test_electron_symmetric_spectra_no_np(BondList bondlist,
         }
       }
       std::sort(eigs_np_all.begin(), eigs_np_all.end());
-      REQUIRE(lila::close(eigs_no_np, eigs_np_all));
+      // HydraPrint(eigs_no_np);
+      // HydraPrint(arma::vec(eigs_np_all));
+
+      REQUIRE(close(eigs_no_np, arma::vec(eigs_np_all)));
     }
     std::sort(eigs_all.begin(), eigs_all.end());
-    // LilaPrint(eigs_total);
-    // LilaPrint(eigs_all);
-    REQUIRE(lila::close(eigs_total, eigs_all));
+    REQUIRE(close(eigs_total, arma::vec(eigs_all)));
   }
 }
 
@@ -69,10 +79,11 @@ void test_electron_symmetric_spectra(BondList bondlist, Couplings couplings,
 
         auto H_nosym =
             MatrixCplx(bondlist, couplings, electron_nosym, electron_nosym);
-        REQUIRE(lila::close(H_nosym, lila::Herm(H_nosym)));
-        auto eigs_nosym = lila::EigenvaluesSym(H_nosym);
+        REQUIRE(H_nosym.is_hermitian(1e-8));
+        arma::vec eigs_nosym;
+        arma::eig_sym(eigs_nosym, H_nosym);
 
-        lila::Vector<double> eigs_sym;
+        std::vector<double> eigs_sym;
         for (int k = 0; k < (int)irreps.size(); ++k) {
           auto irrep = irreps[k];
           int multiplicity = multiplicities[k];
@@ -89,16 +100,19 @@ void test_electron_symmetric_spectra(BondList bondlist, Couplings couplings,
 
             // Compute partial spectrum from symmetrized block
             auto H_sym = MatrixCplx(bondlist, couplings, electron, electron);
-            // LilaPrint(H_sym);
-            CHECK(lila::close(H_sym, lila::Herm(H_sym)));
-            auto eigs_sym_k = lila::EigenvaluesSym(H_sym);
+            REQUIRE(arma::norm(H_sym - H_sym.t()) < 1e-12);
+
+            // REQUIRE(H_sym.is_hermitian(1e-7));
+            arma::vec eigs_sym_k;
+            arma::eig_sym(eigs_sym_k, H_sym);
 
             // Check whether results are the same for real blocks
             if (!is_complex(electron.irrep()) && !(is_complex(couplings))) {
               auto H_sym_real =
                   MatrixReal(bondlist, couplings, electron, electron);
-              auto eigs_sym_k_real = lila::EigenvaluesSym(H_sym);
-              CHECK(lila::close(eigs_sym_k, eigs_sym_k_real));
+              arma::vec eigs_sym_k_real;
+              arma::eig_sym(eigs_sym_k_real, H_sym_real);
+              REQUIRE(close(eigs_sym_k, eigs_sym_k_real));
             }
 
             // append all the eigenvalues with multiplicity
@@ -111,9 +125,8 @@ void test_electron_symmetric_spectra(BondList bondlist, Couplings couplings,
 
         // Check if all eigenvalues agree
         // Log.out("{} {} {} {}", nup, ndn, eigs_sym(0), eigs_nosym(0));
-        // LilaPrint(eigs_sym);
-        // LilaPrint(eigs_nosym);
-        CHECK(lila::close(eigs_sym, eigs_nosym));
+
+        CHECK(close(arma::vec(eigs_sym), eigs_nosym));
       }
     }
   }
@@ -127,8 +140,7 @@ void test_hubbard_symmetric_spectrum_chains(int n_sites) {
       get_cyclic_group_irreps_mult(n_sites);
 
   // Without Heisenberg term
-  Log.out("electron_symmetric_matrix: Hubbard chain,n_sites: {}",
-                n_sites);
+  Log.out("electron_symmetric_matrix: Hubbard chain,n_sites: {}", n_sites);
   auto [bondlist, couplings] = get_linear_chain(n_sites, 1.0, 5.0);
   test_electron_symmetric_spectra<bit_t>(bondlist, couplings, space_group,
                                          irreps, multiplicities);
@@ -137,8 +149,8 @@ void test_hubbard_symmetric_spectrum_chains(int n_sites) {
 
   // With Heisenberg term
   Log("electron_symmetric_matrix: Hubbard chain,  n_sites: {} (+ "
-            "Heisenberg terms)",
-            n_sites);
+      "Heisenberg terms)",
+      n_sites);
   auto [bondlist_hb, couplings_hb] =
       get_linear_chain_hb(n_sites, 1.0, 5.0, 0.4);
   test_electron_symmetric_spectra<bit_t>(bondlist_hb, couplings_hb, space_group,
@@ -172,32 +184,32 @@ TEST_CASE("electron_symmetric_matrix", "[blocks][electron_symmetric]") {
     complex tm = -t;
     complex it = complex(0, t);
     if (k == 0) {
-      lila::Matrix<complex> H_correct = {
+      arma::Mat<complex> H_correct = {
           {U2, tm, tm, tp, tp, 0.}, {tm, U2, tm, tm, 0., tp},
           {tm, tm, U2, 0., tm, tm}, {tp, tm, 0., UU, tm, tp},
           {tp, 0., tm, tm, UU, tm}, {0., tp, tm, tp, tm, UU}};
-      REQUIRE(lila::close(H_correct, H_sym));
+      REQUIRE(close(H_correct, H_sym));
     }
     if (k == 1) {
-      lila::Matrix<complex> H_correct = {
+      arma::Mat<complex> H_correct = {
           {U2, tm, it, it, tp, 0.},       {tm, U2, tm, tm, 2. * it, tp},
           {-it, tm, U2, 0., tm, it},      {-it, tm, 0., UU, tm, it},
           {tp, -2. * it, tm, tm, UU, tm}, {0., tp, -it, -it, tm, UU}};
-      REQUIRE(lila::close(H_correct, H_sym));
+      REQUIRE(close(H_correct, H_sym));
     }
     if (k == 2) {
-      lila::Matrix<complex> H_correct = {
+      arma::Mat<complex> H_correct = {
           {U2, tm, tp, tm, tp, 0.}, {tm, U2, tm, tm, 0., tp},
           {tp, tm, U2, 0., tm, tp}, {tm, tm, 0., UU, tm, tm},
           {tp, 0., tm, tm, UU, tm}, {0., tp, tp, tm, tm, UU}};
-      REQUIRE(lila::close(H_correct, H_sym));
+      REQUIRE(close(H_correct, H_sym));
     }
     if (k == 3) {
-      lila::Matrix<complex> H_correct = {
+      arma::Mat<complex> H_correct = {
           {U2, tm, -it, -it, tp, 0.},    {tm, U2, tm, tm, -2. * it, tp},
           {it, tm, U2, 0., tm, -it},     {it, tm, 0., UU, tm, -it},
           {tp, 2. * it, tm, tm, UU, tm}, {0., tp, it, it, tm, UU}};
-      REQUIRE(lila::close(H_correct, H_sym));
+      REQUIRE(close(H_correct, H_sym));
     }
   }
 
@@ -207,7 +219,6 @@ TEST_CASE("electron_symmetric_matrix", "[blocks][electron_symmetric]") {
     test_hubbard_symmetric_spectrum_chains<uint32_t>(n_sites);
     test_hubbard_symmetric_spectrum_chains<uint64_t>(n_sites);
   }
-
 
   // test a 3x3 triangular lattice
   Log("electron_symmetric_matrix: Hubbard 3x3 triangular");
@@ -236,8 +247,7 @@ TEST_CASE("electron_symmetric_matrix", "[blocks][electron_symmetric]") {
                                          irreps, multiplicities);
 
   // test a 3x3 triangular lattice with Heisenberg terms
-  Log(
-      "electron_symmetric_matrix: Hubbard 3x3 triangular(+ Heisenberg terms)");
+  Log("electron_symmetric_matrix: Hubbard 3x3 triangular(+ Heisenberg terms)");
   auto bondlist_hb = bondlist;
   for (auto bond : bondlist) {
     bondlist_hb << Bond("HB", "J", {bond[0], bond[1]});
@@ -248,8 +258,7 @@ TEST_CASE("electron_symmetric_matrix", "[blocks][electron_symmetric]") {
 
   // test a 3x3 triangular lattice with complex hoppings
   {
-    Log.out(
-        "electron_symmetric_matrix: Hubbard 3x3 triangular (complex)");
+    Log.out("electron_symmetric_matrix: Hubbard 3x3 triangular (complex)");
     using bit_t = uint16_t;
     std::string lfile =
         "data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.lat";

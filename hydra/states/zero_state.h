@@ -10,7 +10,7 @@ template <class State> void ZeroState(State &state) {
 
 template <class coeff_t = complex, class Block>
 State<coeff_t, Block> ZeroState(Block const &block) {
-  auto v = arma::zeros<arma::Col<coeff_t>>(block.size());
+  arma::Col<coeff_t> v(block.size(), arma::fill::zeros);
   return State(block, v);
 }
 

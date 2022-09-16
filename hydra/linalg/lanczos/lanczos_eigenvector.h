@@ -5,13 +5,9 @@
 #include "extern/armadillo/armadillo"
 
 #include <hydra/linalg/lanczos/lanczos_convergence.h>
-#include <hydra/linalg/lanczos/lanczos_generic.h>
+#include <hydra/linalg/lanczos/lanczos.h>
+#include <hydra/linalg/lanczos/lanczos_build.h>
 #include <hydra/linalg/lanczos/tmatrix.h>
-
-#ifdef HYDRA_ENABLE_MPI
-#include <hydra/parallel/mpi/dot_mpi.h>
-#include <hydra/parallel/mpi/timing_mpi.h>
-#endif
 
 #include <hydra/blocks/blocks.h>
 #include <hydra/operators/bondlist.h>
@@ -32,97 +28,39 @@ LanczosEigenvector(BondList const &bonds, Couplings const &couplings,
                    double deflation_tol = 1e-7) {
   assert(num_eigenvector >= 0);
 
+  int iter = 1;
+  auto mult = [&iter, &bonds, &couplings, &block](arma::Col<coeff_t> const &v,
+                                                  arma::Col<coeff_t> &w) {
+    auto ta = rightnow();
+    Apply(bonds, couplings, block, v, block, w);
+    Log(1, "Lanczos iteration {}", iter);
+    timing(ta, rightnow(), "MVM", 1);
+    ++iter;
+  };
+
+  auto converged = [num_eigenvector, precision](Tmatrix const &tmat) -> bool {
+    return ConvergedEigenvalues(tmat, num_eigenvector, precision);
+  };
+
+  // First run for eigenvalues
+  auto t0 = rightnow();
   // Allocate starting vector
-  arma::Col<coeff_t> v0 = arma::zeros<arma::Col<coeff_t>>(block.size());
+  arma::Col<coeff_t> v0(block.size(), arma::fill::zeros);
+  set_v0(v0);
+  auto tmat = Lanczos(mult, v0, converged, max_iterations, deflation_tol);
+  timing(t0, rightnow(), "Lanczos time (eigenvalue run)", 1);
 
-  // MPI Lanczos
-#ifdef HYDRA_ENABLE_MPI
-  if constexpr (mpi::is_mpi_block<Block>) {
+  // Rerun for eigenvectors
+  t0 = rightnow();
+  iter = 1;
+  auto tevecs = tmat.eigenvectors();
+  arma::vec coefficients = tevecs.col(num_eigenvector);
+  set_v0(v0);
+  arma::Col<coeff_t> evec;
+  std::tie(tmat, evec) = LanczosBuild(mult, v0, coefficients);
+  timing(t0, rightnow(), "Lanczos time (eigenvector run)", 1);
 
-    int iter = 1;
-    auto mult = [&iter, &bonds, &couplings, &block](arma::Col<coeff_t> const &v,
-                                                    arma::Col<coeff_t> &w) {
-      auto ta = rightnow_mpi();
-      Apply(bonds, couplings, block, v, block, w);
-      Log(1, "Lanczos iteration {}", iter);
-      timing_mpi(ta, rightnow_mpi(), "MVM", 1);
-      ++iter;
-    };
-
-    auto dot_mpi = [](arma::Col<coeff_t> const &v,
-                      arma::Col<coeff_t> const &w) -> coeff_t {
-      return DotMPI(v, w);
-    };
-
-    auto converged = [num_eigenvector, precision](Tmatrix const &tmat) -> bool {
-      return ConvergedEigenvalues(tmat, num_eigenvector, precision);
-    };
-
-    // First run for eigenvalues
-    auto t0 = rightnow_mpi();
-    set_v0(v0);
-    auto [tmat, vectors] =
-        LanczosGeneric(mult, v0, dot_mpi, converged, arma::Col<coeff_t>(),
-                       max_iterations, deflation_tol);
-    timing_mpi(t0, rightnow_mpi(), "Lanczos time (eigenvalue run)", 1);
-
-    // Rerun for eigenvectors
-    t0 = rightnow_mpi();
-    iter = 1;
-    auto tevecs = tmat.eigenvectors();
-    auto coefficients = tevecs.col(num_eigenvector);
-    set_v0(v0);
-    std::tie(tmat, vectors) =
-        LanczosGeneric(mult, v0, dot_mpi, converged, coefficients,
-                       max_iterations, deflation_tol);
-    timing_mpi(t0, rightnow_mpi(), "Lanczos time (eigenvector run)", 1);
-
-    return {tmat, vectors};
-  }
-
-  // Serial Lanczos
-  else {
-#endif
-    int iter = 1;
-    auto mult = [&iter, &bonds, &couplings, &block](arma::Col<coeff_t> const &v,
-                                                    arma::Col<coeff_t> &w) {
-      auto ta = rightnow();
-      Apply(bonds, couplings, block, v, block, w);
-      Log(1, "Lanczos iteration {}", iter);
-      timing(ta, rightnow(), "MVM", 1);
-      ++iter;
-    };
-
-    auto dot = [](arma::Col<coeff_t> const &v,
-                  arma::Col<coeff_t> const &w) -> coeff_t {
-      return arma::dot(v, w);
-    };
-
-    auto converged = [num_eigenvector, precision](Tmatrix const &tmat) -> bool {
-      return ConvergedEigenvalues(tmat, num_eigenvector, precision);
-    };
-
-    // First run for eigenvalues
-    auto t0 = rightnow();
-    set_v0(v0);
-    auto [tmat, evec] =
-        LanczosGeneric(mult, v0, dot, converged, arma::Col<coeff_t>(),
-                       max_iterations, deflation_tol);
-    timing(t0, rightnow(), "Lanczos time (first run)", 1);
-
-    // Rerun for eigenvectors
-    t0 = rightnow();
-    iter = 1;
-    auto tevecs = tmat.eigenvectors();
-    auto coefficients = tevecs.col(num_eigenvector);
-    set_v0(v0);
-    std::tie(tmat, evec) = LanczosGeneric(
-        mult, v0, dot, converged, coefficients, max_iterations, deflation_tol);
-    timing(t0, rightnow(), "Lanczos time (eigenvector run)", 1);
-    return {tmat, evec};
-#ifdef HYDRA_ENABLE_MPI
-  }
-#endif
+  return {tmat, evec};
 }
 
 // Implementation with user-defined starting vector v0 (does a copy)

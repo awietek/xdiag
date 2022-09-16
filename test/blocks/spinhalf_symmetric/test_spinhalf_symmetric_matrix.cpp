@@ -22,32 +22,39 @@ void test_spinhalf_symmetric_spectra(BondList bondlist, Couplings couplings,
     auto spinhalf_nosym = Spinhalf<bit_t>(n_sites, nup);
 
     if (spinhalf_nosym.size() < 1000) {
-      lila::Vector<double> eigs_sym;
+      std::vector<double> eigs_sym;
 
       auto H_nosym =
           MatrixCplx(bondlist, couplings, spinhalf_nosym, spinhalf_nosym);
-      REQUIRE(lila::close(H_nosym, lila::Herm(H_nosym)));
-      auto eigs_nosym = lila::EigenvaluesSym(H_nosym);
+
+      REQUIRE(arma::norm(H_nosym - H_nosym.t()) < 1e-8);
+      arma::vec eigs_nosym;
+      arma::eig_sym(eigs_nosym, H_nosym);
+
       for (int k = 0; k < (int)irreps.size(); ++k) {
         auto irrep = irreps[k];
         int multiplicity = multiplicities[k];
         auto spinhalf = Spinhalf<bit_t>(n_sites, nup, space_group, irrep);
         // Log.out("nup: {}, k: {}, mult: {}, dim_nosym: {}, dim_sym: "
         //         "{} ",
-        //         nup, k, multiplicity, spinhalf_nosym.size(), spinhalf.size());
+        //         nup, k, multiplicity, spinhalf_nosym.size(),
+        //         spinhalf.size());
         if (spinhalf.size() > 0) {
 
           // Compute partial spectrum from symmetrized block
           auto H_sym = MatrixCplx(bondlist, couplings, spinhalf, spinhalf);
-          REQUIRE(lila::close(H_sym, lila::Herm(H_sym)));
-          auto eigs_sym_k = lila::EigenvaluesSym(H_sym);
+          REQUIRE(arma::norm(H_sym - H_sym.t()) < 1e-12);
+          arma::vec eigs_sym_k;
+          arma::eig_sym(eigs_sym_k, H_sym);
 
           // Check whether results are the same for real blocks
           if (!is_complex(spinhalf.irrep()) && !(is_complex(couplings))) {
             auto H_sym_real =
                 MatrixReal(bondlist, couplings, spinhalf, spinhalf);
-            auto eigs_sym_k_real = lila::EigenvaluesSym(H_sym);
-            REQUIRE(lila::close(eigs_sym_k, eigs_sym_k_real));
+            arma::vec eigs_sym_k_real;
+            arma::eig_sym(eigs_sym_k_real, H_sym_real);
+
+            REQUIRE(close(eigs_sym_k, eigs_sym_k_real));
           }
           // append all the eigenvalues with multiplicity
           for (auto eig : eigs_sym_k)
@@ -57,11 +64,7 @@ void test_spinhalf_symmetric_spectra(BondList bondlist, Couplings couplings,
       }
       std::sort(eigs_sym.begin(), eigs_sym.end());
 
-      // if (!lila::close(eigs_sym, eigs_nosym)) {
-      // LilaPrint(eigs_sym);
-      // LilaPrint(eigs_nosym);
-      // }
-      REQUIRE(lila::close(eigs_sym, eigs_nosym));
+      REQUIRE(close(arma::vec(eigs_sym), eigs_nosym));
     }
   }
 }
@@ -80,12 +83,14 @@ void test_spinhalf_symmetric_spectra_no_sz(BondList bondlist,
   auto spinhalf_nosym = Spinhalf<bit_t>(n_sites);
 
   if (spinhalf_nosym.size() < 1000) {
-    lila::Vector<double> eigs_sym;
+    std::vector<double> eigs_sym;
 
     auto H_nosym =
         MatrixCplx(bondlist, couplings, spinhalf_nosym, spinhalf_nosym);
-    REQUIRE(lila::close(H_nosym, lila::Herm(H_nosym)));
-    auto eigs_nosym = lila::EigenvaluesSym(H_nosym);
+    REQUIRE(H_nosym.is_hermitian());
+    arma::vec eigs_nosym;
+    arma::eig_sym(eigs_nosym, H_nosym);
+
     for (int k = 0; k < (int)irreps.size(); ++k) {
       auto irrep = irreps[k];
       int multiplicity = multiplicities[k];
@@ -94,31 +99,32 @@ void test_spinhalf_symmetric_spectra_no_sz(BondList bondlist,
 
         // Compute partial spectrum from symmetrized block
         auto H_sym = MatrixCplx(bondlist, couplings, spinhalf, spinhalf);
-        REQUIRE(lila::close(H_sym, lila::Herm(H_sym)));
-        auto eigs_sym_k = lila::EigenvaluesSym(H_sym);
-        // LilaPrint(eigs_sym_k);
+        REQUIRE(arma::norm(H_sym - H_sym.t()) < 1e-12);
 
-        auto eigs_sym_k_sz = lila::Vector<double>();
+        arma::vec eigs_sym_k;
+        arma::eig_sym(eigs_sym_k, H_sym);
+
+        auto eigs_sym_k_sz = std::vector<double>();
         for (int nup = 0; nup <= n_sites; ++nup) {
           auto spinhalf_sz = Spinhalf<bit_t>(n_sites, nup, space_group, irrep);
           auto H_sym_sz =
               MatrixCplx(bondlist, couplings, spinhalf_sz, spinhalf_sz);
-          auto es = lila::EigenvaluesSym(H_sym_sz);
-          // LilaPrint(es);
+          arma::vec es;
+          arma::eig_sym(es, H_sym_sz);
           for (auto e : es)
             eigs_sym_k_sz.push_back(e);
         }
         std::sort(eigs_sym_k_sz.begin(), eigs_sym_k_sz.end());
-        // LilaPrint(eigs_sym_k);
-        // LilaPrint(eigs_sym_k_sz);
 
-        REQUIRE(lila::close(eigs_sym_k, eigs_sym_k_sz));
+        REQUIRE(close(eigs_sym_k, arma::vec(eigs_sym_k_sz)));
 
         // Check whether results are the same for real blocks
         if (!is_complex(spinhalf.irrep()) && !(is_complex(couplings))) {
           auto H_sym_real = MatrixReal(bondlist, couplings, spinhalf, spinhalf);
-          auto eigs_sym_k_real = lila::EigenvaluesSym(H_sym);
-          REQUIRE(lila::close(eigs_sym_k, eigs_sym_k_real));
+
+          arma::vec eigs_sym_k_real;
+          arma::eig_sym(eigs_sym_k_real, H_sym);
+          REQUIRE(close(eigs_sym_k, eigs_sym_k_real));
         }
         // append all the eigenvalues with multiplicity
         for (auto eig : eigs_sym_k)
@@ -127,9 +133,7 @@ void test_spinhalf_symmetric_spectra_no_sz(BondList bondlist,
       }
     }
     std::sort(eigs_sym.begin(), eigs_sym.end());
-    // LilaPrint(eigs_sym);
-    // LilaPrint(eigs_nosym);
-    REQUIRE(lila::close(eigs_sym, eigs_nosym));
+    REQUIRE(close(arma::vec(eigs_sym), eigs_nosym));
   }
 }
 
@@ -224,9 +228,11 @@ TEST_CASE("spinhalf_symmetric_matrix", "[blocks][spinhalf_symmetric]") {
       auto irrep = read_represenation(lfile, name);
       auto spinhalf = Spinhalf<uint16_t>(n_sites, n_up, space_group, irrep);
       auto H = MatrixCplx(bondlist, couplings, spinhalf, spinhalf);
-      REQUIRE(lila::close(H, lila::Herm(H)));
+      REQUIRE(arma::norm(H - H.t()) < 1e-12);
 
-      auto eigs = lila::EigenvaluesSym(H);
+      arma::vec eigs;
+      arma::eig_sym(eigs, H);
+
       // Log("{} {:.18f} {:.18f}", name, eigs(0), energy);
 
       REQUIRE(std::abs(eigs(0) - energy) < 1e-10);

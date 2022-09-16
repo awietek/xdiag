@@ -4,7 +4,6 @@
 
 #include "testcases_tj.h"
 #include <hydra/all.h>
-#include <lila/all.h>
 
 using namespace hydra;
 
@@ -20,20 +19,21 @@ TEST_CASE("tj_apply", "[blocks][tj]") {
 
         auto block = tJ<uint32_t>(N, nup, ndn);
         auto H = MatrixReal(bonds, cpls, block, block);
-        REQUIRE(lila::close(H, lila::Herm(H)));
+        REQUIRE(arma::norm(H - H.t()) < 1e-12);
 
-        auto v = lila::Random<double>(block.size());
-        auto w1 = lila::Mult(H, v);
-        auto w2 = lila::ZerosLike(v);
+        arma::vec v(block.size(), arma::fill::randn);
+        arma::vec w1 = H * v;
+        arma::vec w2(block.size(), arma::fill::zeros);
         Apply(bonds, cpls, block, v, block, w2);
-        REQUIRE(lila::close(w1, w2));
+        REQUIRE(close(w1, w2));
 
-        auto evals_mat = lila::EigenvaluesSym(H);
+        arma::vec evals_mat;
+        arma::eig_sym(evals_mat, H);
         double e0_mat = evals_mat(0);
         double e0_app = E0Real(bonds, cpls, block);
         // Log.out("nup: {}, ndn: {}, e0_mat: {}, e0_app: {}", nup, ndn,
         //              e0_mat, e0_app);
-        REQUIRE(std::abs(e0_mat- e0_app) < 1e-10);
+        REQUIRE(std::abs(e0_mat - e0_app) < 1e-10);
       }
   }
 
@@ -45,20 +45,21 @@ TEST_CASE("tj_apply", "[blocks][tj]") {
       for (int ndn = 0; ndn <= N - nup; ++ndn) {
         auto block = tJ<uint32_t>(N, nup, ndn);
         auto H = MatrixCplx(bonds, cpls, block, block);
-        REQUIRE(lila::close(H, lila::Herm(H)));
-
-        auto v = lila::Random<complex>(block.size());
-        auto w1 = lila::Mult(H, v);
-        auto w2 = lila::ZerosLike(v);
+        REQUIRE(arma::norm(H - H.t()) < 1e-12);
+        arma::cx_vec v(block.size(), arma::fill::randn);
+        arma::cx_vec w1 = H * v;
+        arma::cx_vec w2(block.size(), arma::fill::zeros);
         Apply(bonds, cpls, block, v, block, w2);
-        REQUIRE(lila::close(w1, w2));
+        REQUIRE(close(w1, w2));
 
-        auto evals_mat = lila::EigenvaluesSym(H);
+        arma::vec evals_mat;
+        arma::eig_sym(evals_mat, H);
+
         double e0_mat = evals_mat(0);
         double e0_app = E0Cplx(bonds, cpls, block);
         // Log.out("nup: {}, ndn: {}, e0_mat: {}, e0_app: {}", nup, ndn,
         //              e0_mat, e0_app);
-        REQUIRE(lila::close(e0_mat, e0_app));
+        REQUIRE(close(e0_mat, e0_app));
       }
   }
 }

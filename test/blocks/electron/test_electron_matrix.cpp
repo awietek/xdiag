@@ -29,7 +29,6 @@ void test_electron_np_no_np_matrix(int n_sites, BondList bonds,
 
       arma::Col<double> eigs;
       arma::eig_sym(eigs, H);
-      // LilaPrint(eigs);
 
       for (auto eig : eigs)
         all_eigs.push_back(eig);
@@ -206,7 +205,7 @@ TEST_CASE("electron_matrix", "[blocks][electron]") {
       int s2 = bond.site(1);
       auto name = bond.coupling();
       Hs_up(s1, s2) = -couplings[name];
-      Hs_up(s2, s1) = -couplings[name];
+      Hs_up(s2, s1) = -conj(couplings[name]);
     }
     arma::vec seigs_up;
     arma::eig_sym(seigs_up, Hs_up);
@@ -350,9 +349,9 @@ TEST_CASE("electron_matrix", "[blocks][electron]") {
       arma::eig_sym(eigs2, H2);
 
       // Log("eigs1(0): {}, eigs2(0): {}", eigs1(0), eigs2(0));
-      arma::vec eigs1_sub = eigs1(arma::span(0, eigs2.size()));
-      // LilaPrint(eigs1_sub);
-      // LilaPrint(eigs2);
+      // Log("eigs1.size(): {}, eigs2.size(): {}", eigs1.size(), eigs2.size());
+      
+      arma::vec eigs1_sub = eigs1.subvec(0, eigs2.size()-1);
       REQUIRE(close(eigs1_sub, eigs2, 1e-6, 1e-6));
     }
   }

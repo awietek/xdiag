@@ -45,9 +45,10 @@ void electron_symmetric_hopping(BondList const &bonds,
     int s1 = bond[0];
     int s2 = bond[1];
 
-    auto [t, tconj] = utils::get_coupling_and_conj<coeff_t>(couplings, cpl);
-
-    // Prepare bitmasks
+    coeff_t t, tconj;
+    std::tie(t, tconj) = utils::get_coupling_and_conj<coeff_t>(couplings, cpl);
+    
+    // prepare bitmasks
     bit_t flipmask = ((bit_t)1 << s1) | ((bit_t)1 << s2);
     int l = std::min(s1, s2);
     int u = std::max(s1, s2);
@@ -58,9 +59,9 @@ void electron_symmetric_hopping(BondList const &bonds,
     // Apply hoppings on dnspins
     if ((type == "HOP") || (type == "HOPDN")) {
 
-#ifdef HYDRA_ENABLE_OPENMP
-#pragma omp parallel for schedule(guided)
-#endif
+// #ifdef HYDRA_ENABLE_OPENMP
+// #pragma omp parallel for schedule(guided)
+// #endif
       for (idx_t idx_up = 0; idx_up < indexing.n_rep_ups(); ++idx_up) {
         bit_t ups = indexing.rep_ups(idx_up);
         idx_t up_offset = indexing.ups_offset(idx_up);
@@ -131,9 +132,9 @@ void electron_symmetric_hopping(BondList const &bonds,
 
     // Apply hoppings on upspins
     if ((type == "HOP") || (type == "HOPUP")) {
-#ifdef HYDRA_ENABLE_OPENMP
-#pragma omp parallel for schedule(guided)
-#endif
+// #ifdef HYDRA_ENABLE_OPENMP
+// #pragma omp parallel for schedule(guided)
+// #endif
       for (idx_t idx_up = 0; idx_up < indexing.n_rep_ups(); ++idx_up) {
         bit_t ups = indexing.rep_ups(idx_up);
 

@@ -18,8 +18,6 @@ void test_indices_spinhalf_symmetric(Spinhalf<bit_t> const &block) {
   //   REQUIRE(rep == state);
   //   idx_t idx2 = indexing.index(state);
   //   // auto norm = block.indexing_.norm(state);
-  //   // Log.out("{} {} {} ({},{})", idx, state, idx2, lila::real(norm),
-  //   //               lila::imag(norm));
   //   REQUIRE(idx == idx2);
   // }
 }

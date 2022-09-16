@@ -11,8 +11,8 @@ using namespace hydra;
 
 template <class bit_t>
 void test_apply_tj_symmetric(BondList bondlist, Couplings couplings,
-			     PermutationGroup space_group,
-			     std::vector<Representation> irreps) {
+                             PermutationGroup space_group,
+                             std::vector<Representation> irreps) {
   int n_sites = space_group.n_sites();
 
   for (int nup = 0; nup <= n_sites; ++nup) {
@@ -27,17 +27,18 @@ void test_apply_tj_symmetric(BondList bondlist, Couplings couplings,
 
         if (block.size() > 0) {
           auto H_sym = MatrixCplx(bondlist, couplings, block, block);
-          REQUIRE(lila::close(H_sym, lila::Herm(H_sym)));
+          REQUIRE(arma::norm(H_sym - H_sym.t()) < 1e-12);
 
           // Check whether apply gives the same as matrix multiplication
-          auto v = lila::Random<complex>(block.size());
-          auto w1 = lila::Mult(H_sym, v);
-          auto w2 = lila::ZerosLike(v);
+          arma::cx_vec v(block.size(), arma::fill::randn);
+          arma::cx_vec w1 = H_sym * v;
+          arma::cx_vec w2(block.size(), arma::fill::zeros);
           Apply(bondlist, couplings, block, v, block, w2);
-          REQUIRE(lila::close(w1, w2));
+          REQUIRE(close(w1, w2));
 
           // Compute eigenvalues and compare
-          auto evals_mat = lila::EigenvaluesSym(H_sym);
+          arma::vec evals_mat;
+          arma::eig_sym(evals_mat, H_sym);
           double e0_mat = evals_mat(0);
           double e0_app = E0Cplx(bondlist, couplings, block);
           // Log.out("e0_mat: {}, e0_app: {}", e0_mat, e0_app);
@@ -46,8 +47,11 @@ void test_apply_tj_symmetric(BondList bondlist, Couplings couplings,
           // Compute eigenvalues with real arithmitic
           if (is_real(block.irrep()) && is_real(couplings)) {
             auto H_real = MatrixReal(bondlist, couplings, block, block);
-            auto evals_mat_real = lila::EigenvaluesSym(H_real);
-            REQUIRE(lila::close(evals_mat_real, evals_mat));
+            REQUIRE(arma::norm(H_real - H_real.t()) < 1e-12);
+
+            arma::vec evals_mat_real;
+            arma::eig_sym(evals_mat_real, H_real);
+            REQUIRE(close(evals_mat_real, evals_mat));
 
             double e0_mat_real = evals_mat_real(0);
             double e0_app_real = E0Real(bondlist, couplings, block);
@@ -63,7 +67,8 @@ template <class bit_t> void test_tj_symmetric_apply_chains(int n_sites) {
   using namespace hydra::testcases::tj;
   using namespace hydra::testcases::electron;
 
-  Log("tj_symmetric_apply: tJ chain, symmetric apply test, n_sites: {}", n_sites);
+  Log("tj_symmetric_apply: tJ chain, symmetric apply test, n_sites: {}",
+      n_sites);
   auto [bondlist, couplings] = tJchain(n_sites, 1.0, 5.0);
   auto [space_group, irreps, multiplicities] =
       get_cyclic_group_irreps_mult(n_sites);
@@ -109,7 +114,8 @@ TEST_CASE("tj_symmetric_apply", "[blocks][tj_symmetric]") {
 
   {
     // test a 3x3 triangular lattice with complex flux
-    Log("tj_symmetric_apply: tJ 3x3 triangular staggered, symmetric apply test, complex");
+    Log("tj_symmetric_apply: tJ 3x3 triangular staggered, symmetric apply "
+        "test, complex");
     std::string lfile =
         "data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.lat";
 
@@ -136,9 +142,12 @@ TEST_CASE("tj_symmetric_apply", "[blocks][tj_symmetric]") {
       couplings["TPHI"] = complex(cos(eta * M_PI), sin(eta * M_PI));
       couplings["JPHI"] = complex(cos(2 * eta * M_PI), sin(2 * eta * M_PI));
 
-      test_apply_tj_symmetric<uint16_t>(bondlist, couplings, space_group, irreps);
-      test_apply_tj_symmetric<uint32_t>(bondlist, couplings, space_group, irreps);
-      test_apply_tj_symmetric<uint64_t>(bondlist, couplings, space_group, irreps);
+      test_apply_tj_symmetric<uint16_t>(bondlist, couplings, space_group,
+                                        irreps);
+      test_apply_tj_symmetric<uint32_t>(bondlist, couplings, space_group,
+                                        irreps);
+      test_apply_tj_symmetric<uint64_t>(bondlist, couplings, space_group,
+                                        irreps);
     }
   }
 }

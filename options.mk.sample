@@ -4,20 +4,5 @@ cc         = clang++
 # Set optimization flags
 ccopt      = -O2 -march=native
 
-# Set the directory of the lila headers
-liladir    = /mnt/home/awietek/Research/Software/lila
-includes   = -I$(liladir)
-
 # Choose the BLas/Lapack Backend
-
-## Intel MKL
-lilabackend = -DLILA_USE_MKL
-libraries   = -lmkl_rt
-
-# ## Accelerate on OSX
-# lilabackend = -DLILA_USE_ACCELERATE
-# libraries   = -framework Accelerate
-
-# # To compile the MPI library, uncomment the following lines
-# cc          = mpicxx
-# enable_mpi  = -DHYDRA_ENABLE_MPI
+lapack = -llapack -lblas

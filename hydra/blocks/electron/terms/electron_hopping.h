@@ -86,7 +86,7 @@ void electron_hopping(BondList const &bonds, Couplings const &couplings,
           bit_t dn_flip = dn ^ flipmask;
           idx_t idx_dn_flip = indexing.index_dns(dn_flip);
 
-          // TODO: replace this by lila slicing once available
+          // TODO: replace with slicing
           for (idx_t idx_up = 0; idx_up < size_up; ++idx_up) {
             idx_t idx_out = idx_up * size_dn + idx_dn_flip;
             idx_t idx_in = idx_up * size_dn + idx_dn;

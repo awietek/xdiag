@@ -1,5 +1,8 @@
 #include "tmatrix.h"
 
+#include <hydra/utils/print_macro.h>
+#include <hydra/utils/logger.h>
+
 namespace hydra {
 
 void Tmatrix::append(double alpha, double beta) {
@@ -12,18 +15,29 @@ void Tmatrix::pop() {
   betas_.pop_back();
 }
 
-arma::vec Tmatrix::eigenvalues() const {
+arma::mat Tmatrix::mat() const {
   if (size() == 0) {
-    return arma::Col<double>();
+    return arma::Mat<double>();
+  } else if (size() == 1) {
+    return arma::Mat<double>(1, 1, arma::fill::value(alphas_[0]));
   } else {
     int N = alphas_.size();
     assert(N == (int)betas_.size());
-    auto bts = betas()(arma::span(0, N - 1));
-    auto tmat = arma::diagmat(alphas()) + arma::diagmat(bts, 1) +
-                arma::diagmat(bts, -1);
+    arma::vec bts = betas().subvec(0, N - 2);
+    arma::mat tmat = arma::diagmat(alphas()) + arma::diagmat(bts, 1) +
+                     arma::diagmat(bts, -1);
+    return tmat;
+  }
+}
 
+arma::vec Tmatrix::eigenvalues() const {
+  if (size() == 0) {
+    return arma::Col<double>();
+  } else if (size() == 1) {
+    return arma::Col<double>(1, arma::fill::value(alphas_[0]));
+  } else {
     arma::vec eigs;
-    arma::eig_sym(eigs, tmat);
+    arma::eig_sym(eigs, mat());
     return eigs;
   }
 }
@@ -31,16 +45,12 @@ arma::vec Tmatrix::eigenvalues() const {
 arma::mat Tmatrix::eigenvectors() const {
   if (size() == 0) {
     return arma::Mat<double>();
+  } else if (size() == 1) {
+    return arma::Mat<double>(1, 1, arma::fill::value(1.0));
   } else {
-    int N = alphas_.size();
-    assert(N == (int)betas_.size());
-    auto bts = betas()(arma::span(0, N - 1));
-    auto tmat = arma::diagmat(alphas()) + arma::diagmat(bts, 1) +
-                arma::diagmat(bts, -1);
-
     arma::vec eigs;
     arma::mat evecs;
-    arma::eig_sym(eigs, evecs, tmat);
+    arma::eig_sym(eigs, evecs, mat());
     return evecs;
   }
 }
@@ -48,18 +58,29 @@ arma::mat Tmatrix::eigenvectors() const {
 std::pair<arma::vec, arma::mat> Tmatrix::eigen() const {
   if (size() == 0) {
     return {arma::vec(), arma::mat()};
+  } else if (size() == 1) {
+    return {arma::Col<double>(1, arma::fill::value(alphas_[0])),
+            arma::Mat<double>(1, 1, arma::fill::value(1.0))};
   } else {
-    int N = alphas_.size();
-    assert(N == (int)betas_.size());
-    auto bts = betas()(arma::span(0, N - 1));
-    auto tmat = arma::diagmat(alphas()) + arma::diagmat(bts, 1) +
-                arma::diagmat(bts, -1);
-
     arma::vec eigs;
     arma::mat evecs;
-    arma::eig_sym(eigs, evecs, tmat);
+    arma::eig_sym(eigs, evecs, mat());
     return {eigs, evecs};
   }
 }
 
+void Tmatrix::print_log() const {
+  auto eigs = eigenvalues();
+  double alpha = alphas_[size() - 1];
+  double beta = betas_[size() - 1];
+  Log(2, "alpha: {:.16f}", alpha);
+  Log(2, "beta: {:.16f}", beta);
+  if (eigs.size() == 1) {
+    Log(2, "eigs: {:.16f}", eigs(0));
+  } else if (eigs.size() == 2) {
+    Log(2, "eigs: {:.16f} {:.16f}", eigs(0), eigs(1));
+  } else {
+    Log(2, "eigs: {:.16f} {:.16f} {:.16f}", eigs(0), eigs(1), eigs(2));
+  }
+}
 } // namespace hydra

@@ -20,15 +20,19 @@ void test_spinhalf_symmetric_apply(BondList bondlist, Couplings couplings,
 
       if (block.size() > 0) {
         auto H = MatrixCplx(bondlist, couplings, block, block);
-        REQUIRE(lila::close(H, lila::Herm(H)));
+        REQUIRE(arma::norm(H - H.t()) < 1e-12);
+
         // Check whether apply gives the same as matrix multiplication
-        auto v = lila::Random<complex>(block.size());
-        auto w1 = lila::Mult(H, v);
-        auto w2 = lila::ZerosLike(v);
+        arma::cx_vec v(block.size(), arma::fill::randn);
+        arma::cx_vec w1 = H * v;
+        arma::cx_vec w2(block.size(), arma::fill::zeros);
         Apply(bondlist, couplings, block, v, block, w2);
-        REQUIRE(lila::close(w1, w2));
+        REQUIRE(close(w1, w2));
+
         // Compute eigenvalues and compare
-        auto evals_mat = lila::EigenvaluesSym(H);
+        arma::vec evals_mat;
+        arma::eig_sym(evals_mat, H);
+
         double e0_mat = evals_mat(0);
         double e0_app = E0Cplx(bondlist, couplings, block);
         // Log.out("e0_mat: {}, e0_app: {}", e0_mat, e0_app);
@@ -37,8 +41,10 @@ void test_spinhalf_symmetric_apply(BondList bondlist, Couplings couplings,
         // Compute eigenvalues with real arithmitic
         if (is_real(block.irrep()) && is_real(couplings)) {
           auto H_real = MatrixReal(bondlist, couplings, block, block);
-          auto evals_mat_real = lila::EigenvaluesSym(H_real);
-          REQUIRE(lila::close(evals_mat_real, evals_mat));
+          arma::vec evals_mat_real;
+          arma::eig_sym(evals_mat_real, H_real);
+
+          REQUIRE(close(evals_mat_real, evals_mat));
 
           double e0_mat_real = evals_mat_real(0);
           double e0_app_real = E0Real(bondlist, couplings, block);
@@ -60,15 +66,17 @@ void test_spinhalf_symmetric_apply_no_sz(BondList bondlist, Couplings couplings,
 
     if (block.size() > 0) {
       auto H = MatrixCplx(bondlist, couplings, block, block);
-      REQUIRE(lila::close(H, lila::Herm(H)));
+      REQUIRE(arma::norm(H - H.t()) < 1e-12);
       // Check whether apply gives the same as matrix multiplication
-      auto v = lila::Random<complex>(block.size());
-      auto w1 = lila::Mult(H, v);
-      auto w2 = lila::ZerosLike(v);
+      arma::cx_vec v(block.size(), arma::fill::randn);
+      arma::cx_vec w1 = H * v;
+      arma::cx_vec w2(block.size(), arma::fill::zeros);
       Apply(bondlist, couplings, block, v, block, w2);
-      REQUIRE(lila::close(w1, w2));
+      REQUIRE(close(w1, w2));
       // Compute eigenvalues and compare
-      auto evals_mat = lila::EigenvaluesSym(H);
+      arma::vec evals_mat;
+      arma::eig_sym(evals_mat, H);
+
       double e0_mat = evals_mat(0);
       double e0_app = E0Cplx(bondlist, couplings, block);
       // Log.out("e0_mat: {}, e0_app: {}", e0_mat, e0_app);
@@ -77,8 +85,10 @@ void test_spinhalf_symmetric_apply_no_sz(BondList bondlist, Couplings couplings,
       // Compute eigenvalues with real arithmitic
       if (is_real(block.irrep()) && is_real(couplings)) {
         auto H_real = MatrixReal(bondlist, couplings, block, block);
-        auto evals_mat_real = lila::EigenvaluesSym(H_real);
-        REQUIRE(lila::close(evals_mat_real, evals_mat));
+        arma::vec evals_mat_real;
+        arma::eig_sym(evals_mat_real, H_real);
+
+        REQUIRE(close(evals_mat_real, evals_mat));
 
         double e0_mat_real = evals_mat_real(0);
         double e0_app_real = E0Real(bondlist, couplings, block);
@@ -138,8 +148,7 @@ TEST_CASE("spinhalf_symmetric_apply", "[blocks][spinhalf_symmetric]") {
   test_spinhalf_symmetric_apply_no_sz<uint64_t>(bondlist, couplings,
                                                 space_group, irreps);
 
-
-    // test J1-J2-Jchi triangular lattice
+  // test J1-J2-Jchi triangular lattice
   {
     Log("spinhalf_symmetric_matrix: Triangular J1J2Jchi N=12");
     std::string lfile = "data/triangular.j1j2jch/"
@@ -161,8 +170,7 @@ TEST_CASE("spinhalf_symmetric_apply", "[blocks][spinhalf_symmetric]") {
         {"K.C3.Eb", -5.2045133473640809996},
         {"M.C2.A", -5.756684675081964464},
         {"M.C2.B", -5.7723510325561688816},
-        {"X.C1.A", -5.9030627660522529965}
-    };
+        {"X.C1.A", -5.9030627660522529965}};
 
     auto permutations = hydra::read_permutations(lfile);
     auto space_group = PermutationGroup(permutations);

@@ -10,31 +10,29 @@ using namespace hydra;
 void test_tjmodel_e0_real(BondList bonds, Couplings couplings, int nup, int ndn,
                           double e0) {
   int n_sites = bonds.n_sites();
-  // if ((nup == 1) && (ndn == 2)) {
   auto block = tJ<uint32_t>(n_sites, nup, ndn);
   auto H = MatrixReal(bonds, couplings, block, block);
+  arma::vec eigs;
+  arma::eig_sym(eigs, H);
 
-  auto eigs = lila::EigenvaluesSym(H);
-  // Log("nup: {}, ndn: {}, e0: {}, eigs(0): {}", nup, ndn, e0, eigs(0));
-  REQUIRE(lila::close(H, lila::Herm(H)));
+  REQUIRE(arma::norm(H - H.t()) < 1e-12);
   REQUIRE(std::abs(e0 - eigs(0)) < 1e-6);
-  // }
 }
 
 void test_tjmodel_fulleigs(BondList bonds, Couplings couplings,
-                           lila::Vector<double> exact_eigs) {
+                           arma::Col<double> exact_eigs) {
   int n_sites = bonds.n_sites();
 
-  lila::Vector<double> all_eigs;
+  std::vector<double> all_eigs;
   for (int ndn = 0; ndn <= n_sites; ++ndn) {
     for (int nup = 0; nup <= n_sites - ndn; ++nup) {
 
       auto block = tJ<uint32_t>(n_sites, nup, ndn);
       auto H = MatrixReal(bonds, couplings, block, block);
-      REQUIRE(lila::close(H, lila::Herm(H)));
-      auto eigs = lila::EigenvaluesSym(H);
-      // Log("nup {} ndn {}", nup, ndn);
-      // LilaPrint(eigs);
+      REQUIRE(arma::norm(H - H.t()) < 1e-12);
+
+      arma::vec eigs;
+      arma::eig_sym(eigs, H);
 
       for (auto eig : eigs)
         all_eigs.push_back(eig);
@@ -42,9 +40,7 @@ void test_tjmodel_fulleigs(BondList bonds, Couplings couplings,
   }
   std::sort(all_eigs.begin(), all_eigs.end());
   REQUIRE(all_eigs.size() == exact_eigs.size());
-  // LilaPrint(all_eigs);
-  // LilaPrint(exact_eigs);
-  REQUIRE(lila::close(all_eigs, exact_eigs));
+  REQUIRE(close(arma::vec(all_eigs), exact_eigs));
 }
 
 TEST_CASE("tj_matrix", "[blocks][tj]") {
@@ -103,12 +99,12 @@ TEST_CASE("tj_matrix", "[blocks][tj]") {
 
     auto [bonds, cpls] = tj_alltoall_complex(N);
     auto bonds_hb = bonds.bonds_of_type("HB");
-    
+
     for (int nup = 0; nup <= N; ++nup)
       for (int ndn = 0; ndn <= N - nup; ++ndn) {
         auto block = tJ<uint32_t>(N, nup, ndn);
         auto H = MatrixCplx(bonds, cpls, block, block);
-        REQUIRE(lila::close(H, lila::Herm(H)));
+        REQUIRE(arma::norm(H - H.t()) < 1e-12);
       }
 
     // Check whether eigenvalues agree with HB model
@@ -118,10 +114,12 @@ TEST_CASE("tj_matrix", "[blocks][tj]") {
       auto block2 = Spinhalf<uint32_t>(N, nup);
       auto H1 = MatrixCplx(bonds_hb, cpls, block1, block1);
       auto H2 = MatrixCplx(bonds_hb, cpls, block2, block2);
-      auto eigs1 = lila::EigenvaluesSym(H1);
-      auto eigs2 = lila::EigenvaluesSym(H2);
+      arma::vec eigs1;
+      arma::eig_sym(eigs1, H1);
+      arma::vec eigs2;
+      arma::eig_sym(eigs2, H2);
       // Log("eigs1(0): {}, eigs2(0): {}", eigs1(0), eigs2(0));
-      REQUIRE(lila::close(eigs1, eigs2));
+      REQUIRE(close(eigs1, eigs2));
     }
   }
 

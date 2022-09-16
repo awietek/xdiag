@@ -60,8 +60,8 @@ TEST_CASE("random_state", "[states]") {
     omp_set_num_threads(1);
     auto state2 = RandomStateReal(block);
     auto state_cplx2 = RandomStateCplx(block);
-    REQUIRE(lila::Norm(state.vector() - state2.vector()) < 1e-12);
-    REQUIRE(lila::Norm(state_cplx.vector() - state_cplx2.vector()) < 1e-12);
+    REQUIRE(arma::norm(state.vector() - state2.vector()) < 1e-12);
+    REQUIRE(arma::norm(state_cplx.vector() - state_cplx2.vector()) < 1e-12);
   }
 #endif
 }

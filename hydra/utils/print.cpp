@@ -257,30 +257,30 @@ void PrintPretty(const char *identifier,
   printf("\n");
 }
 
-inline void PrintPretty(const char *identifier, const arma::Col<float> &vec) {
+void PrintPretty(const char *identifier, const arma::Col<float> &vec) {
   printf("%s:\n", identifier);
   for (uint32_t i = 0; i < vec.size(); ++i)
     printf("%10.8g ", vec(i));
   printf("\n");
 }
 
-inline void PrintPretty(const char *identifier, const arma::Col<double> &vec) {
+void PrintPretty(const char *identifier, const arma::Col<double> &vec) {
   printf("%s:\n", identifier);
   for (uint32_t i = 0; i < vec.size(); ++i)
     printf("%10.8g ", vec(i));
   printf("\n");
 }
 
-inline void PrintPretty(const char *identifier,
-                        const arma::Col<std::complex<float>> &vec) {
+void PrintPretty(const char *identifier,
+                 const arma::Col<std::complex<float>> &vec) {
   printf("%s:\n", identifier);
   for (uint32_t i = 0; i < vec.size(); ++i)
     printf("%10.8g%-+8.8gj ", vec(i).real(), vec(i).imag());
   printf("\n");
 }
 
-inline void PrintPretty(const char *identifier,
-                        const arma::Col<std::complex<double>> &vec) {
+void PrintPretty(const char *identifier,
+                 const arma::Col<std::complex<double>> &vec) {
   printf("%s:\n", identifier);
   for (uint32_t i = 0; i < vec.size(); ++i)
     printf("%10.8g%-+8.8gj ", vec(i).real(), vec(i).imag());

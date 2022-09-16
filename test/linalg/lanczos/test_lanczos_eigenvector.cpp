@@ -6,7 +6,6 @@
 #include <hydra/all.h>
 
 using namespace hydra;
-using namespace lila;
 
 TEST_CASE("lanczos_eigenvector", "[lanczos]") {
   using namespace hydra::testcases::electron;
@@ -27,8 +26,9 @@ TEST_CASE("lanczos_eigenvector", "[lanczos]") {
       // Compute exact evals
       auto block = Electron(n_sites, nup, ndn);
       auto H = MatrixReal(bondlist, couplings, block, block);
-      auto evals_mat = lila::EigenvaluesSym(H);
-
+      arma::vec evals_mat;
+      arma::eig_sym(evals_mat, H);
+      
       // Compute evec with Lanczos
       for (int num_eigenvalue = 0; num_eigenvalue < max_num_eigenvalue;
            ++num_eigenvalue) {
@@ -40,10 +40,10 @@ TEST_CASE("lanczos_eigenvector", "[lanczos]") {
         auto &v = evec;
         auto Hv = v;
         Apply(bondlist, couplings, block, v, block, Hv);
-        auto e = Dot(v, Hv);
+        auto e = arma::cdot(v, Hv);
         REQUIRE(close(real(e), evals_mat(num_eigenvalue)));
         REQUIRE(close(imag(e), 0.0));
-        REQUIRE(close(Norm(v), 1.0));
+        REQUIRE(close(arma::norm(v), 1.0));
       }
     }
   printf("Done.\n");
@@ -57,8 +57,9 @@ TEST_CASE("lanczos_eigenvector", "[lanczos]") {
       // Create block and matrix for comparison
       auto block = Electron(n_sites, nup, ndn);
       auto H = MatrixCplx(bondlist, couplings, block, block);
-      auto evals_mat = lila::EigenvaluesSym(H);
-
+      arma::vec evals_mat;
+      arma::eig_sym(evals_mat, H);
+      
       // Compute evec with Lanczos
       for (int num_eigenvalue = 0; num_eigenvalue < max_num_eigenvalue;
            ++num_eigenvalue) {
@@ -70,10 +71,10 @@ TEST_CASE("lanczos_eigenvector", "[lanczos]") {
         auto &v = evec;
         auto Hv = v;
         Apply(bondlist, couplings, block, v, block, Hv);
-        auto e = Dot(v, Hv);
+        auto e = arma::cdot(v, Hv);
         REQUIRE(close(real(e), evals_mat(num_eigenvalue)));
         REQUIRE(close(imag(e), 0.0));
-        REQUIRE(close(Norm(v), 1.0));
+        REQUIRE(close(arma::norm(v), 1.0));
       }
     }
   printf("Done.\n");

@@ -49,7 +49,7 @@ TEST_CASE("electron_apply", "[blocks][electron]") {
 
         // Check whether apply gives the same as matrix multiplication
         arma::cx_vec v(block.size(), arma::fill::randn);
-	arma::cx_vec w1 = H * v;
+        arma::cx_vec w1 = H * v;
         arma::cx_vec w2(block.size(), arma::fill::zeros);
         Apply(bondlist, couplings, block, v, block, w2);
         REQUIRE(close(w1, w2));
@@ -59,9 +59,9 @@ TEST_CASE("electron_apply", "[blocks][electron]") {
         arma::eig_sym(evals_mat, H);
         double e0_mat = evals_mat(0);
         double e0_app = E0Real(bondlist, couplings, block);
-        // Log.out("nup: {}, ndn: {}, e0_mat: {}, e0_app: {}", nup, ndn,
-        // e0_mat, e0_app);
-        CHECK(close(e0_mat, e0_app));
+        // Log.out("nup: {}, ndn: {}, e0_mat: {}, e0_app: {}", nup, ndn, e0_mat,
+        //         e0_app);
+        REQUIRE(close(e0_mat, e0_app));
       }
   }
 
@@ -83,7 +83,7 @@ TEST_CASE("electron_apply", "[blocks][electron]") {
 
         // Check whether apply gives the same as matrix multiplication
         arma::cx_vec v(block.size(), arma::fill::randn);
-	arma::cx_vec w1 = H * v;
+        arma::cx_vec w1 = H * v;
         arma::cx_vec w2(block.size(), arma::fill::zeros);
         Apply(bondlist, couplings, block, v, block, w2);
         REQUIRE(close(w1, w2));
@@ -98,7 +98,7 @@ TEST_CASE("electron_apply", "[blocks][electron]") {
       }
   }
 
-  /////////////////////////////////////////////////////
+  ////////////////////////////
   // Henry's MATLAB code test (tests Heisenberg terms)
   Log("electron_apply: U-hopping-HB apply of Henry's Matlab code");
   {
@@ -113,7 +113,7 @@ TEST_CASE("electron_apply", "[blocks][electron]") {
 
         // Check whether apply gives the same as matrix multiplication
         arma::vec v(block.size(), arma::fill::randn);
-	arma::vec w1 = H * v;
+        arma::vec w1 = H * v;
         arma::vec w2(block.size(), arma::fill::zeros);
         Apply(bondlist, couplings, block, v, block, w2);
         REQUIRE(close(w1, w2));
@@ -136,7 +136,7 @@ TEST_CASE("electron_apply", "[blocks][electron]") {
 
         // Check whether apply gives the same as matrix multiplication
         arma::vec v(block.size(), arma::fill::randn);
-	arma::vec w1 = H * v;
+        arma::vec w1 = H * v;
         arma::vec w2(block.size(), arma::fill::zeros);
         Apply(bondlist, couplings, block, v, block, w2);
         REQUIRE(close(w1, w2));

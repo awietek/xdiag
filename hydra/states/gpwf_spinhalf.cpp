@@ -41,9 +41,6 @@ coeff_t GPWFSpinhalf<coeff_t>::coefficient(uint64_t state, bool print_work) {
   }
   // if (print_work) {
   //   std::cout << n_sites_ << " " << n_up_ << " " << n_dn_ << "\n";
-  //   LilaPrint(Real(onebody_wfs_up_));
-  //   LilaPrint(Real(onebody_wfs_dn_));
-  //   LilaPrint(Real(work_matrix_));
   //   exit(1);
   // }
   return arma::det(work_matrix_);
@@ -53,8 +50,10 @@ template <class coeff_t>
 bool GPWFSpinhalf<coeff_t>::operator==(GPWFSpinhalf<coeff_t> const &other) {
   return ((n_sites_ == other.n_sites_) && (n_up_ == other.n_up_) &&
           (n_dn_ == other.n_dn_) &&
-          (arma::approx_equal(onebody_wfs_up_, other.onebody_wfs_up_, "both", 1e-12, 1e-12)) &&
-          (arma::approx_equal(onebody_wfs_dn_, other.onebody_wfs_dn_, "both", 1e-12, 1e-12)));
+          (arma::approx_equal(onebody_wfs_up_, other.onebody_wfs_up_, "both",
+                              1e-12, 1e-12)) &&
+          (arma::approx_equal(onebody_wfs_dn_, other.onebody_wfs_dn_, "both",
+                              1e-12, 1e-12)));
 }
 
 template class GPWFSpinhalf<double>;

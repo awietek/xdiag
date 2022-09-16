@@ -25,7 +25,7 @@ arma::Mat<coeff_t> MatrixGen(BondList const &bonds, Couplings const &couplings,
   idx_t dim_in = block_in.size();
   idx_t dim_out = block_out.size();
 
-  arma::Mat<coeff_t> mat = arma::zeros<arma::Mat<coeff_t>>(dim_out, dim_in);
+  arma::Mat<coeff_t> mat(dim_out, dim_in, arma::fill::zeros);
 
   auto fill = [&mat](idx_t idx_out, idx_t idx_in, coeff_t val) {
     mat(idx_out, idx_in) += val;

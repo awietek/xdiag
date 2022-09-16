@@ -4,7 +4,6 @@
 
 #include "testcases_tj.h"
 #include <hydra/all.h>
-#include <lila/all.h>
 
 using namespace hydra;
 

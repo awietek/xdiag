@@ -39,15 +39,15 @@
 #include "indexing/lin_table.h"
 #include "indexing/subsets_indexing.h"
 
-// #include "indexing/spinhalf/indexing_no_sz.h"
-// #include "indexing/spinhalf/indexing_sublattice.h"
-// #include "indexing/spinhalf/indexing_symmetric_no_sz.h"
-// #include "indexing/spinhalf/indexing_symmetric_sz.h"
-// #include "indexing/spinhalf/indexing_sz.h"
-// #include "indexing/spinhalf/symmetric_iterator.h"
+#include "indexing/spinhalf/indexing_no_sz.h"
+#include "indexing/spinhalf/indexing_sublattice.h"
+#include "indexing/spinhalf/indexing_symmetric_no_sz.h"
+#include "indexing/spinhalf/indexing_symmetric_sz.h"
+#include "indexing/spinhalf/indexing_sz.h"
+#include "indexing/spinhalf/symmetric_iterator.h"
 
-// #include "indexing/tj/tj_indexing.h"
-// #include "indexing/tj/tj_symmetric_indexing.h"
+#include "indexing/tj/tj_indexing.h"
+#include "indexing/tj/tj_symmetric_indexing.h"
 
 #include "indexing/electron/electron_indexing.h"
 #include "indexing/electron/electron_indexing_no_np.h"
@@ -68,10 +68,10 @@
 #include "blocks/electron/electron_apply.h"
 #include "blocks/electron/electron_matrix.h"
 
-// #include "blocks/tj/tj.h"
-// #include "blocks/tj/tj_apply.h"
-// #include "blocks/tj/tj_matrix.h"
-// #include "blocks/tj/tj_utils.h"
+#include "blocks/tj/tj.h"
+#include "blocks/tj/tj_apply.h"
+#include "blocks/tj/tj_matrix.h"
+#include "blocks/tj/tj_utils.h"
 
 #include "symmetries/group_action/group_action.h"
 #include "symmetries/group_action/group_action_lookup.h"
@@ -95,7 +95,8 @@
 #include "linalg/lanczos/lanczos_convergence.h"
 #include "linalg/lanczos/lanczos_eigenvalues.h"
 #include "linalg/lanczos/lanczos_eigenvector.h"
-#include "linalg/lanczos/lanczos_generic.h"
+#include "linalg/lanczos/lanczos.h"
+#include "linalg/lanczos/lanczos_build.h"
 #include "linalg/lanczos/tmatrix.h"
 #include "linalg/sparse_diag.h"
 

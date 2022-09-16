@@ -20,12 +20,15 @@ public:
 
   idx_t size() const { return alphas_.size(); }
 
-  arma::vec const alphas() const { return arma::vec(alphas_); }
-  arma::vec const betas() const { return betas_; }
+  arma::vec alphas() const { return arma::vec(alphas_); }
+  arma::vec betas() const { return betas_; }
+  arma::mat mat() const;
 
   arma::vec eigenvalues() const;
   arma::mat eigenvectors() const;
   std::pair<arma::vec, arma::mat> eigen() const;
+
+  void print_log() const;
 
 private:
   std::vector<double> alphas_;

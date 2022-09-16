@@ -17,9 +17,10 @@ TEST_CASE("spinhalf_matrix", "[models][spinhalf]") {
             HBchain_fullspectrum_nup(n_sites, nup);
         auto block = Spinhalf<uint32_t>(n_sites, nup);
         auto H = MatrixReal(bonds, couplings, block, block);
-        REQUIRE(lila::close(H, lila::Herm(H)));
-        auto eigs = lila::EigenvaluesSym(H);
-        REQUIRE(lila::close(eigs, exact_eigs));
+        REQUIRE(H.is_hermitian(1e-7));
+        arma::vec eigs;
+        arma::eig_sym(eigs, H);
+        REQUIRE(close(eigs, exact_eigs));
       }
     }
   }
@@ -34,12 +35,15 @@ TEST_CASE("spinhalf_matrix", "[models][spinhalf]") {
         auto block_tJ = tJ<uint32_t>(n_sites, nup, n_sites - nup);
         auto H = MatrixReal(bonds, couplings, block, block);
         auto H_tJ = MatrixReal(bonds, couplings, block_tJ, block_tJ);
-        REQUIRE(lila::close(H, lila::Herm(H)));
-        REQUIRE(lila::close(H_tJ, lila::Herm(H_tJ)));
+        REQUIRE(H.is_hermitian());
+        REQUIRE(H_tJ.is_hermitian());
 
-        auto eigs = lila::EigenvaluesSym(H);
-        auto eigs_tJ = lila::EigenvaluesSym(H_tJ);
-        REQUIRE(lila::close(eigs, eigs_tJ));
+        arma::vec eigs;
+        arma::eig_sym(eigs, H);
+
+        arma::vec eigs_tJ;
+        arma::eig_sym(eigs_tJ, H_tJ);
+        REQUIRE(close(eigs, eigs_tJ));
       }
   }
 
@@ -50,23 +54,25 @@ TEST_CASE("spinhalf_matrix", "[models][spinhalf]") {
 
       auto block_no_sz = Spinhalf(n_sites);
       auto H_no_sz = MatrixReal(bonds, couplings, block_no_sz, block_no_sz);
-      REQUIRE(lila::close(H_no_sz, lila::Herm(H_no_sz)));
-      auto eigs_no_sz = lila::EigenvaluesSym(H_no_sz);
+      REQUIRE(H_no_sz.is_hermitian(1e-8));
+      arma::vec eigs_no_sz;
+      arma::eig_sym(eigs_no_sz, H_no_sz);
 
-      lila::Vector<double> eigs_sz_all;
+      std::vector<double> eigs_sz_all;
 
       for (int nup = 0; nup <= n_sites; ++nup) {
         auto block_sz = Spinhalf(n_sites, nup);
         auto H_sz = MatrixReal(bonds, couplings, block_sz, block_sz);
-        REQUIRE(lila::close(H_sz, lila::Herm(H_sz)));
-        auto eigs_sz = lila::EigenvaluesSym(H_sz);
+        REQUIRE(H_sz.is_hermitian(1e-7));
+        arma::vec eigs_sz;
+        arma::eig_sym(eigs_sz, H_sz);
 
         for (auto eig : eigs_sz)
           eigs_sz_all.push_back(eig);
       }
       std::sort(eigs_sz_all.begin(), eigs_sz_all.end());
 
-      REQUIRE(lila::close(eigs_no_sz, eigs_sz_all));
+      REQUIRE(close(eigs_no_sz, arma::vec(eigs_sz_all)));
     }
   }
 
@@ -80,10 +86,11 @@ TEST_CASE("spinhalf_matrix", "[models][spinhalf]") {
       auto [bonds, couplings, e0] = triangular_12_complex(nup, eta);
       auto block = Spinhalf<uint32_t>(n_sites, nup);
       auto H = MatrixCplx(bonds, couplings, block, block);
-      REQUIRE(lila::close(H, lila::Herm(H)));
+      REQUIRE(H.is_hermitian(1e-8));
 
-      auto eigs = lila::EigenvaluesSym(H);
-      // LilaPrint(lila::Norm(H));
+      arma::vec eigs;
+      arma::eig_sym(eigs, H);
+
       // comment: reference data from Lanczos, only ~10 digits precise
       // Log("eigs(0): {}, e0: {}", eigs(0), e0);
       REQUIRE(std::abs(eigs(0) - e0) < 1e-8);
@@ -105,14 +112,15 @@ TEST_CASE("spinhalf_matrix", "[models][spinhalf]") {
     int n_up = 6;
     auto block = Spinhalf<uint16_t>(n_sites, n_up);
     auto H = MatrixCplx(bondlist, couplings, block, block);
-    REQUIRE(lila::close(H, lila::Herm(H)));
+    REQUIRE(H.is_hermitian(1e-8));
 
-    auto eigs = lila::EigenvaluesSym(H);
+    arma::vec eigs;
+    arma::eig_sym(eigs, H);
     double energy = -6.9456000700824329641;
 
     // Log("{:.18f} {:.18f}", eigs(0), energy);
 
-    REQUIRE(lila::close(eigs(0), energy));
+    REQUIRE(close(eigs(0), energy));
   }
 
   // Test S+/S-/Sz
@@ -152,23 +160,25 @@ TEST_CASE("spinhalf_matrix", "[models][spinhalf]") {
             sm_j_p << Bond("S-", "H", j);
             auto sm_j_p_mat = MatrixReal(sm_j_p, cpls, blockp, block);
 
-            auto C1 = lila::Mult(sp_i_m_mat, sm_j_m_mat);
-            auto C2 = lila::Mult(sm_j_p_mat, sp_i_p_mat);
-            auto comm = C1 - C2;
-            auto C1r = lila::Mult(sp_i_mat, sm_j_mat);
-            auto C2r = lila::Mult(sm_j_mat, sp_i_mat);
-            auto commr = C1r - C2r;
+            auto C1 = sp_i_m_mat * sm_j_m_mat;
+            auto C2 = sm_j_p_mat * sp_i_p_mat;
+            arma::mat comm = C1 - C2;
+            auto C1r = sp_i_mat * sm_j_mat;
+            auto C2r = sm_j_mat * sp_i_mat;
+            arma::mat commr = C1r - C2r;
 
             if (i == j) {
               BondList sz;
               sz << Bond("SZ", "H", i);
               auto sz_mat = MatrixReal(sz, cpls, block, block);
               auto sz_matr = MatrixReal(sz, cpls, block_raw, block_raw);
-              REQUIRE(lila::close(comm, 2.0 * sz_mat));
-              REQUIRE(lila::close(commr, 2.0 * sz_matr));
+              REQUIRE(close(comm, arma::mat(2.0 * sz_mat)));
+              REQUIRE(close(commr, arma::mat(2.0 * sz_matr)));
             } else {
-              REQUIRE(lila::close(comm, 0.0));
-              REQUIRE(lila::close(commr, 0.0));
+              REQUIRE(close(comm, arma::mat(comm.n_rows, comm.n_cols,
+                                            arma::fill::zeros)));
+              REQUIRE(close(commr, arma::mat(commr.n_rows, commr.n_cols,
+                                             arma::fill::zeros)));
             }
           }
       }

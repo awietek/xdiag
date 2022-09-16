@@ -6,7 +6,6 @@
 #include <hydra/all.h>
 
 using namespace hydra;
-using namespace lila;
 
 TEST_CASE("lanczos_eigenvalues", "[lanczos]") {
   using namespace hydra::testcases::electron;
@@ -27,7 +26,8 @@ TEST_CASE("lanczos_eigenvalues", "[lanczos]") {
       // Compute exact evals
       auto block = Electron(n_sites, nup, ndn);
       auto H = MatrixReal(bondlist, couplings, block, block);
-      auto evals_mat = lila::EigenvaluesSym(H);
+      arma::vec evals_mat;
+      arma::eig_sym(evals_mat, H);
 
       // Compute evals with Lanczos
       auto tmat =
@@ -49,12 +49,14 @@ TEST_CASE("lanczos_eigenvalues", "[lanczos]") {
       // Create block and matrix for comparison
       auto block = Electron(n_sites, nup, ndn);
       auto H = MatrixCplx(bondlist, couplings, block, block);
-      auto evals_mat = lila::EigenvaluesSym(H);
-
+      arma::vec evals_mat;
+      arma::eig_sym(evals_mat, H);
+      
       // Compute evals with Lanczos
       auto tmat =
           LanczosEigenvaluesCplx(bondlist, couplings, block, num_eigenvalue);
       auto evals_tmat = tmat.eigenvalues();
+      
       for (int i = 0; i < num_eigenvalue; ++i)
         REQUIRE(close(evals_mat(i), evals_tmat(i)));
     }

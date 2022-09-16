@@ -25,7 +25,7 @@ coeff_t Dot(State<coeff_t, Block> const &v, State<coeff_t, Block> const &w) {
   if constexpr (mpi::is_mpi_block<Block>) {
     return DotMPI(v.vector(), w.vector());
   } else {
-    return arma::dot(v.vector(), w.vector());
+    return arma::cdot(v.vector(), w.vector());
   }
 }
 

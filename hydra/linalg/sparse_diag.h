@@ -21,6 +21,7 @@ double E0Real(BondList const &bondlist, Couplings const &couplings,
 
   auto tmat = LanczosEigenvaluesReal(bondlist, couplings, block, 1, precision,
                                      seed, max_iterations);
+
   auto eigs = tmat.eigenvalues();
   if (eigs.size() == 0) {
     Log.err("Error: Tmatrix zero dimensional in E0Real");

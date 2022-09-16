@@ -26,8 +26,12 @@ TEST_CASE("symmetric_operator", "[symmetries]") {
     for (int nup = 0; nup <= n_sites; ++nup) {
       for (int ndn = 0; ndn <= n_sites; ++ndn) {
         auto block_nosym = Electron(n_sites, nup, ndn);
-        if (block_nosym.size() == 0)
+        if (block_nosym.size() == 0) {
           continue;
+        }
+        // HydraPrint(block_nosym.size());
+        // HydraPrint(MatrixCplx(bondlist, couplings, block_nosym,
+        // block_nosym));
         auto [e0_nosym, v0_nosym] =
             GroundstateCplx(bondlist, couplings, block_nosym);
         {
@@ -35,6 +39,8 @@ TEST_CASE("symmetric_operator", "[symmetries]") {
           auto Hv = v;
           Apply(bondlist, couplings, v, Hv);
           auto e = Dot(v, Hv);
+          // HydraPrint(e);
+          // HydraPrint(e0_nosym);
           REQUIRE(close(real(e), e0_nosym));
         }
         double e0_sym = 9999.0;
@@ -69,13 +75,15 @@ TEST_CASE("symmetric_operator", "[symmetries]") {
           auto block_sym = Electron(n_sites, nup, ndn, space_group, e0_irrep);
           auto [e0_sym2, v0_sym] =
               GroundstateCplx(bondlist, couplings, block_sym);
-	  (void)e0_sym2;
+          (void)e0_sym2;
           REQUIRE(close(e0_sym, e0_nosym));
           {
             auto &v = v0_sym;
             auto Hv = v;
             Apply(bondlist, couplings, v, Hv);
             auto e = Dot(v, Hv);
+            // HydraPrint(e);
+            // HydraPrint(e0_nosym);
             REQUIRE(close(real(e), e0_nosym));
           }
 
@@ -101,7 +109,8 @@ TEST_CASE("symmetric_operator", "[symmetries]") {
           //   corr_nosym << Bond("EXCHANGE", "J", {j, (i+j)%n_sites});
           //   Couplings cpls;
           //   cpls["J"] = 1.0;
-          //   auto val_nosym2 = Inner(corr_nosym, cpls, block_nosym, v0_nosym);
+          //   auto val_nosym2 = Inner(corr_nosym, cpls, block_nosym,
+          // v0_nosym);
           //   Log.out("({}, {}) {} {}", j, (i+j)%n_sites,
           //   real(val_nosym2),
           //               real(val_nosym));
