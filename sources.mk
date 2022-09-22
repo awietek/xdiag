@@ -59,8 +59,7 @@ sources+= hydra/symmetries/group_action/sublattice_stability.cpp
 
 sources+= hydra/operators/bond.cpp
 sources+= hydra/operators/bondlist.cpp
-sources+= hydra/operators/couplings.cpp
-sources+= hydra/operators/operator_utils.cpp
+sources+= hydra/operators/compiler.cpp
 sources+= hydra/operators/operator_qns.cpp
 sources+= hydra/operators/symmetric_operator.cpp
 

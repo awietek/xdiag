@@ -9,12 +9,9 @@
 #include <hydra/symmetries/permutation_group.h>
 #include <hydra/symmetries/representation.h>
 
-#include <hydra/operators/bondlist.h>
-#include <hydra/operators/couplings.h>
-
 namespace hydra {
 
-template <typename bit_t=std_bit_t> class Spinhalf {
+template <typename bit_t = std_bit_t> class Spinhalf {
 public:
   using indexing_t = indexing::spinhalf::Indexing<bit_t>;
 

@@ -1,8 +1,6 @@
 #pragma once
 
 #include <hydra/operators/bondlist.h>
-#include <hydra/operators/couplings.h>
-#include <hydra/operators/operator_utils.h>
 
 #include <limits>
 #include <map>

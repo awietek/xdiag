@@ -8,103 +8,139 @@
 
 namespace hydra {
 
-namespace detail {
-
-std::vector<TypeCoupling> get_types_couplings(std::vector<Bond> const &bonds) {
-  std::vector<TypeCoupling> types_couplings;
-
-  for (Bond bond : bonds) {
-    TypeCoupling tc = type_coupling(bond);
-    if (std::find(types_couplings.begin(), types_couplings.end(), tc) ==
-        types_couplings.end())
-      types_couplings.push_back(tc);
-  }
-  return types_couplings;
-}
-
-std::vector<std::string> get_types(std::vector<Bond> const &bonds) {
-  std::vector<std::string> types;
-  for (Bond bond : bonds)
-    if (std::find(types.begin(), types.end(), bond.type()) == types.end())
-      types.push_back(bond.type());
-  return types;
-}
-
-std::vector<std::string> get_couplings(std::vector<Bond> const &bonds) {
-  std::vector<std::string> couplings;
-  for (Bond bond : bonds)
-    if (std::find(couplings.begin(), couplings.end(), bond.coupling()) ==
-        couplings.end())
-      couplings.push_back(bond.coupling());
-  return couplings;
-}
-
-std::vector<Bond> get_bonds_of_type(std::vector<Bond> const &bonds,
-                                    std::string type) {
-  std::vector<Bond> bonds_return;
-  for (Bond bond : bonds)
-    if (bond.type() == type)
-      bonds_return.push_back(bond);
-  return bonds_return;
-}
-
-std::vector<Bond> get_bonds_of_coupling(std::vector<Bond> const &bonds,
-                                        std::string coupling) {
-  std::vector<Bond> bonds_return;
-  for (Bond bond : bonds)
-    if (bond.coupling() == coupling)
-      bonds_return.push_back(bond);
-  return bonds_return;
-}
-
-std::vector<Bond>
-get_bonds_of_type_coupling(std::vector<Bond> const &bonds,
-                           TypeCoupling const &type_coupling) {
-  std::vector<Bond> bonds_return;
-  for (Bond bond : bonds)
-    if ((bond.type() == type_coupling.type()) &&
-        (bond.coupling() == type_coupling.coupling()))
-      bonds_return.push_back(bond);
-  return bonds_return;
-}
-
-} // namespace detail
-
 BondList::BondList(std::vector<Bond> const &bonds) : bonds_(bonds) {}
-
-int BondList::n_sites() const {
-  int n_sites = 0;
-  for (Bond bond : bonds_)
-    for (int site : bond.sites())
-      n_sites = std::max(n_sites, site + 1);
-
-  return n_sites;
-}
 
 void BondList::operator<<(Bond const &bond) { bonds_.push_back(bond); }
 
-std::vector<std::string> BondList::types() const {
-  return detail::get_types(bonds_);
+bool BondList::coupling_defined(std::string name) {
+  return couplings_.count(name);
 }
-std::vector<std::string> BondList::couplings() const {
-  return detail::get_couplings(bonds_);
+void BondList::set_coupling(std::string name, complex cpl) {
+  couplings_[name] = cpl;
 }
-std::vector<TypeCoupling> BondList::types_couplings() const {
-  return detail::get_types_couplings(bonds_);
+complex BondList::get_coupling(std::string name) const {
+  if (couplings_.count(name)) {
+    return couplings_.at(name);
+  } else {
+    Log.err("Error: undefined coupling in BondList: {}", name);
+    return 0.;
+  }
+}
+
+bool BondList::matrix_defined(std::string name) {
+  return matrices_.count(name);
+}
+void BondList::set_matrix(std::string name, arma::cx_mat mat) {
+  matrices_[name] = mat;
+}
+void BondList::set_matrix(std::string name, arma::mat mat) {
+  matrices_[name] = to_complex(mat);
+}
+arma::cx_mat BondList::get_matrix(std::string name) {
+  if (couplings_.count(name)) {
+    return matrices_.at(name);
+  } else {
+    Log.err("Error: undefined coupling in BondList: {}", name);
+    return 0.;
+  }
+  return matrices_.at(name);
+}
+
+int BondList::size() const { return (int)bonds_.size(); }
+int BondList::clear() {
+  bonds_.clear();
+  couplings_.clear();
+  matrices_.clear();
+}
+
+int BondList::n_sites() const {
+  int n_sites = 0;
+  for (Bond bond : bonds_) {
+    for (int site : bond.sites()) {
+      n_sites = std::max(n_sites, site + 1);
+    }
+  }
+  return n_sites;
 }
 
 BondList BondList::bonds_of_type(std::string type) const {
-  return BondList(detail::get_bonds_of_type(bonds_, type));
+  std::vector<Bond> bonds_return;
+  for (Bond bond : bonds) {
+    if ((bond.type_defined()) && (bond.type() == type)) {
+      bonds_return.push_back(bond);
+    }
+  }
+  return bonds_return;
 }
 
-BondList BondList::bonds_of_coupling(std::string coupling) const {
-  return BondList(detail::get_bonds_of_coupling(bonds_, coupling));
+BondList BondList::bonds_with_matrix() const {
+  std::vector<Bond> bonds_return;
+  for (Bond bond : bonds) {
+    if (bond.matrix_defined()) {
+      bonds_return.push_back(bond);
+    }
+  }
+  return bonds_return;
 }
 
-BondList BondList::bonds_of_type_coupling(std::string type,
-                                          std::string coupling) const {
-  return BondList(
-      detail::get_bonds_of_type_coupling(bonds_, TypeCoupling(type, coupling)));
+bool BondList::is_complex(double precision) const {
+  for (Bond bond : bonds) {
+
+    if (bond.matrix_defined()) {
+      auto mat = bond.matrix();
+      bool matrix_real = std::abs(arma::norm(arma::imag(mat))) < precision;
+
+      bool coupling_real = false;
+      if (bond.coupling_defined()) {
+        coupling_real = std::abs(bond.coupling()) < precision;
+      } else {
+        std::string coupling_name = bond.coupling_name();
+
+        // coupling name defined in couplings
+        if (couplings_.count(coupling_name)) {
+          complex cpl = couplings_[coupling_name];
+          coupling_real = std::abs(cpl) < precision;
+        } else {
+          Log.err("Error: cannot determine whether Bond in BondList is "
+                  "complex/real. Its coupling coefficient is not uniquely "
+                  "determined.")
+        }
+      }
+      return matrix_real && coupling_real;
+    }
+
+    if (bond.type_defined()) {
+
+      // Inherently complex interactions
+      if (std::find(complex_bond_types.begin(), complex_bond_types.end(),
+                    type_) != complex_bond_types.end()) {
+        return true;
+      }
+
+      // if coupling is defined, check whether it has imag. part
+      bool coupling_real = false;
+      if (bond.coupling_defined()) {
+        coupling_real = std::abs(bond.coupling()) < precision;
+      } else {
+        std::string coupling_name = bond.coupling_name();
+
+        // coupling name defined in couplings
+        if (couplings_.count(coupling_name)) {
+          complex cpl = couplings_[coupling_name];
+          coupling_real = std::abs(cpl) < precision;
+        } else {
+          Log.err("Error: cannot determine whether Bond in BondList is "
+                  "complex/real. Its coupling coefficient is not uniquely "
+                  "determined.")
+        }
+      }
+      return coupling_real;
+    }
+  }
+}
+
+bool BondList::is_real(double precision) const {
+  return !is_complex(precision);
 }
 
 BondList operator+(BondList const &bl1, BondList const &bl2) {
@@ -155,13 +191,5 @@ BondList read_bondlist(std::string filename) {
 
   return BondList(bonds);
 }
-
-bool is_complex(BondList const &bonds) {
-  return std::find_if(bonds.begin(), bonds.end(), [](Bond const &bond) {
-           return is_complex(bond);
-         }) != bonds.end();
-}
-
-bool is_real(BondList const &bonds) { return !is_complex(bonds); }
 
 } // namespace hydra

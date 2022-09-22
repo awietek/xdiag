@@ -13,7 +13,6 @@
 #include <hydra/symmetries/representation.h>
 
 #include <hydra/operators/bondlist.h>
-#include <hydra/operators/couplings.h>
 
 namespace hydra {
 
@@ -66,15 +65,14 @@ private:
   indexing_sym_np_t const &indexing_sym_np() const;
 
   template <typename bit_tt, typename coeff_tt>
-  friend void Apply(BondList const &bonds, Couplings const &couplings,
-                    tJ<bit_tt> const &block_in,
+  friend void Apply(BondList const &bonds, tJ<bit_tt> const &block_in,
                     arma::Col<coeff_tt> const &vec_in,
                     tJ<bit_tt> const &block_out, arma::Col<coeff_tt> &vec_out);
 
   template <typename bit_tt, typename coeff_tt>
-  friend arma::Mat<coeff_tt>
-  MatrixGen(BondList const &bonds, Couplings const &couplings,
-            tJ<bit_tt> const &block_in, tJ<bit_tt> const &block_out);
+  friend arma::Mat<coeff_tt> MatrixGen(BondList const &bonds,
+                                       tJ<bit_tt> const &block_in,
+                                       tJ<bit_tt> const &block_out);
 };
 
 } // namespace hydra

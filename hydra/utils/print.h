@@ -7,7 +7,6 @@
 #include <hydra/blocks/tj/tj.h>
 #include <hydra/linalg/lanczos/tmatrix.h>
 #include <hydra/operators/bondlist.h>
-#include <hydra/operators/couplings.h>
 #include <hydra/states/state.h>
 #include <hydra/symmetries/permutation.h>
 #include <hydra/symmetries/permutation_group.h>
@@ -24,7 +23,6 @@ void PrintPretty(const char *identifier, complex number);
 
 void PrintPretty(const char *identifier, Bond const &bond);
 void PrintPretty(const char *identifier, BondList const &bondlist);
-void PrintPretty(const char *identifier, Couplings const &couplings);
 void PrintPretty(const char *identifier, Permutation const &perm);
 void PrintPretty(const char *identifier, PermutationGroup const &group);
 void PrintPretty(const char *identifier, Representation const &irrep);

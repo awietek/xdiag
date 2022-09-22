@@ -87,9 +87,8 @@
 
 #include "operators/bond.h"
 #include "operators/bondlist.h"
-#include "operators/couplings.h"
+#include "operators/compiler.h"
 #include "operators/operator_qns.h"
-#include "operators/operator_utils.h"
 #include "operators/symmetric_operator.h"
 
 #include "linalg/lanczos/lanczos_convergence.h"

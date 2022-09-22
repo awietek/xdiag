@@ -3,8 +3,6 @@
 #include <hydra/bitops/bitops.h>
 #include <hydra/common.h>
 
-#include <hydra/operators/operator_utils.h>
-
 #include <hydra/blocks/spinhalf/terms/apply_term_diag.h>
 
 namespace hydra::terms::spinhalf {
@@ -12,24 +10,20 @@ namespace hydra::terms::spinhalf {
 // Ising term: J S^z_i S^z_j
 
 template <typename bit_t, typename coeff_t, class Indexing, class Fill>
-void apply_ising(Bond const &bond, Couplings const &couplings,
-                 Indexing &&indexing, Fill &&fill) {
-  if (!(bond.size() == 2)) {
-    Log.err("Error in spinhalf::apply_ising: bond has {} sites, expected 2",
-            bond.size());
-  }
-
-  if (!utils::sites_disjoint(bond)) {
-    Log.err("Error in spinhalf::apply_ising: bond sites are not disjoint");
-  }
+void apply_ising(Bond const &bond, Indexing &&indexing, Fill &&fill) {
+  assert(bond.coupling_defined());
+  assert(bond.type_defined() && (bond.type() == "ISING"));
+  assert(bond.size() == 2);
+  assert(bond.sites_disjoint());
 
   int s1 = bond[0];
   int s2 = bond[1];
   bit_t mask = ((bit_t)1 << s1) | ((bit_t)1 << s2);
 
-  coeff_t J = utils::get_coupling<coeff_t>(couplings, bond.coupling());
-  coeff_t val_same = J / 4.;
-  coeff_t val_diff = -J / 4.;
+  coeff_t J = bond.coupling<coeff_t>();
+
+  coeff_t val_same = J / 4.0;
+  coeff_t val_diff = -J / 4.0;
 
   // Function to flip spin and get coefficient
   auto term_coeff = [&mask, &val_same, &val_diff](bit_t spins) -> coeff_t {
@@ -40,10 +34,7 @@ void apply_ising(Bond const &bond, Couplings const &couplings,
     }
   };
 
-  if (std::abs(J) > 1e-12) {
-    terms::spinhalf::apply_term_diag<bit_t, coeff_t>(indexing, term_coeff,
-                                                     fill);
-  }
+  spinhalf::apply_term_diag<bit_t, coeff_t>(indexing, term_coeff, fill);
 }
 
 } // namespace hydra::terms::spinhalf

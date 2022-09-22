@@ -2,7 +2,7 @@
 
 #include <hydra/blocks/spinhalf/spinhalf.h>
 #include <hydra/blocks/spinhalf/terms/apply_terms_dispatch.h>
-#include <hydra/blocks/spinhalf/terms/compile_terms.h>
+#include <hydra/blocks/spinhalf/terms/compile.h>
 
 #include <hydra/blocks/utils/block_utils.h>
 #include <hydra/utils/logger.h>
@@ -12,20 +12,22 @@
 namespace hydra {
 
 template <typename bit_t, typename coeff_t>
-arma::Mat<coeff_t> MatrixGen(BondList const &bonds, Couplings const &couplings,
-                             Spinhalf<bit_t> const &block_in,
-                             Spinhalf<bit_t> const &block_out) {
+arma::Mat<coeff_t>
+matrix_gen(BondList const &bonds, Spinhalf<bit_t> const &block_in,
+           Spinhalf<bit_t> const &block_out, double precision) {
 
-  auto [bonds_c, couplings_c] =
-      terms::spinhalf::compile_terms(bonds, couplings);
+  auto [bonds_c, couplings_c] = spinhalf::compile(bonds, precision);
+
+  if ((is_real<coeff_t>)&&(bonds_c.is_complex())) {
+    Log.err("Error in matrix_gen: trying to create a real matrix from an "
+            "intrisically complex BondList");
+  }
 
   int n_up_out = utils::spinhalf_nup(bonds_c, couplings_c, block_in);
   if (n_up_out != block_out.n_up())
-    Log.err("Incompatible n_up in MatrixGen: {} != {}", n_up_out,
+    Log.err("Incompatible n_up in matrix_gen: {} != {}", n_up_out,
             block_out.n_up());
 
-  utils::check_operator_works_with<coeff_t>(bonds_c, couplings_c,
-                                            "spinhalf_matrix");
   idx_t dim_in = block_in.size();
   idx_t dim_out = block_out.size();
 
@@ -41,30 +43,24 @@ arma::Mat<coeff_t> MatrixGen(BondList const &bonds, Couplings const &couplings,
   return mat;
 }
 
-template arma::Mat<double>
-MatrixGen<uint16_t, double>(BondList const &bonds, Couplings const &couplings,
-                            Spinhalf<uint16_t> const &block_in,
-                            Spinhalf<uint16_t> const &block_out);
-template arma::Mat<double>
-MatrixGen<uint32_t, double>(BondList const &bonds, Couplings const &couplings,
-                            Spinhalf<uint32_t> const &block_in,
-                            Spinhalf<uint32_t> const &block_out);
-template arma::Mat<double>
-MatrixGen<uint64_t, double>(BondList const &bonds, Couplings const &couplings,
-                            Spinhalf<uint64_t> const &block_in,
-                            Spinhalf<uint64_t> const &block_out);
+template arma::Mat<double> matrix_gen<uint16_t, double>(
+    BondList const &bonds, Spinhalf<uint16_t> const &block_in,
+    Spinhalf<uint16_t> const &block_out, double precision);
+template arma::Mat<double> matrix_gen<uint32_t, double>(
+    BondList const &bonds, Spinhalf<uint32_t> const &block_in,
+    Spinhalf<uint32_t> const &block_out, double precision);
+template arma::Mat<double> matrix_gen<uint64_t, double>(
+    BondList const &bonds, Spinhalf<uint64_t> const &block_in,
+    Spinhalf<uint64_t> const &block_out, double precision);
 
-template arma::Mat<complex>
-MatrixGen<uint16_t, complex>(BondList const &bonds, Couplings const &couplings,
-                             Spinhalf<uint16_t> const &block_in,
-                             Spinhalf<uint16_t> const &block_out);
-template arma::Mat<complex>
-MatrixGen<uint32_t, complex>(BondList const &bonds, Couplings const &couplings,
-                             Spinhalf<uint32_t> const &block_in,
-                             Spinhalf<uint32_t> const &block_out);
-template arma::Mat<complex>
-MatrixGen<uint64_t, complex>(BondList const &bonds, Couplings const &couplings,
-                             Spinhalf<uint64_t> const &block_in,
-                             Spinhalf<uint64_t> const &block_out);
+template arma::Mat<complex> matrix_gen<uint16_t, complex>(
+    BondList const &bonds, Spinhalf<uint16_t> const &block_in,
+    Spinhalf<uint16_t> const &block_out, double precision);
+template arma::Mat<complex> matrix_gen<uint32_t, complex>(
+    BondList const &bonds, Spinhalf<uint32_t> const &block_in,
+    Spinhalf<uint32_t> const &block_out, double precision);
+template arma::Mat<complex> matrix_gen<uint64_t, complex>(
+    BondList const &bonds, Spinhalf<uint64_t> const &block_in,
+    Spinhalf<uint64_t> const &block_out, double precision);
 
 } // namespace hydra

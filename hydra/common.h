@@ -39,9 +39,7 @@ constexpr bool index_not_found(idx_t idx) { return idx < 0; }
 constexpr bool index_valid(idx_t idx) { return idx >= 0; }
 
 // Complex real/imag/conj
-template <class coeff_t> struct real_type_struct {
-  typedef coeff_t type;
-};
+template <class coeff_t> struct real_type_struct { typedef coeff_t type; };
 
 template <class coeff_t> struct real_type_struct<std::complex<coeff_t>> {
   typedef coeff_t type;
@@ -77,5 +75,11 @@ inline std::complex<float> conj(std::complex<float> x) { return std::conj(x); }
 inline std::complex<double> conj(std::complex<double> x) {
   return std::conj(x);
 }
-  
+
+inline arma::cx_mat to_cx_mat(arma::mat const &A) {
+  return arma::cx_mat(A, arma::mat(A.n_rows, A.n_cols, arma::fill::zeros));
+}
+
+inline arma::cx_mat to_cx_mat(arma::cx_mat const &A) { return A; }
+
 } // namespace hydra

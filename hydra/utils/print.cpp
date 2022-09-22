@@ -53,7 +53,33 @@ void PrintPretty(const char *identifier, complex number) {
 
 void PrintPretty(const char *identifier, Bond const &bond) {
   printf("%s:\n", identifier);
-  printf("%s %s ", bond.type().c_str(), bond.coupling().c_str());
+
+  if (bond.type_defined()) {
+    printf("  type: %s\n", bond.type().c_str());
+  } else {
+    if (bond.is_real()) {
+      PrintPretty("  matrix", bond.matrix_real());
+    } else {
+      PrintPretty("  matrix", bond.matrix());
+    }
+  }
+  if (bond.coupling_defined()) {
+    complex cpl = bond.coupling();
+
+    if (std::abs(imag(cpl)) < 1e-12) {
+      printf("  coupling: %.13e", real(cpl));
+    } else {
+      if (imag(cpl) > 0.) {
+        printf("  coupling: %.17e + %.17eI\n", real(cpl), std::imag(cpl));
+      } else {
+        printf("  coupling: %.17e - %.17eI\n", real(cpl), -std::imag(cpl));
+      }
+    }
+  } else {
+    printf("  coupling_name: %s\n", bond.coupling_name().c_str());
+  }
+
+  printf("  sites: ");
   for (auto site : bond.sites())
     printf("%d ", site);
   printf("\n");
@@ -62,18 +88,7 @@ void PrintPretty(const char *identifier, Bond const &bond) {
 void PrintPretty(const char *identifier, BondList const &bondlist) {
   printf("%s:\n", identifier);
   for (auto bond : bondlist) {
-    printf("%s %s ", bond.type().c_str(), bond.coupling().c_str());
-    for (auto site : bond.sites())
-      printf("%d ", site);
-    printf("\n");
-  }
-}
-
-void PrintPretty(const char *identifier, Couplings const &couplings) {
-  printf("%s:\n", identifier);
-  for (auto coupling : couplings) {
-    printf("%s %f %f\n", coupling.first.c_str(), std::real(coupling.second),
-           std::imag(coupling.second));
+    PrintPretty("bond", bond);
   }
 }
 
