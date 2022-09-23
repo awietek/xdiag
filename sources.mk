@@ -23,28 +23,31 @@ sources+= hydra/indexing/spinhalf/indexing_symmetric_no_sz.cpp
 sources+= hydra/indexing/spinhalf/indexing_sublattice.cpp
 sources+= hydra/indexing/spinhalf/symmetric_iterator.cpp
 
-sources+= hydra/indexing/tj/tj_indexing.cpp
-sources+= hydra/indexing/tj/tj_symmetric_indexing.cpp
+sources+= hydra/indexing/tj/indexing_np.cpp
+sources+= hydra/indexing/tj/indexing_symmetric_np.cpp
 
-sources+= hydra/indexing/electron/electron_indexing.cpp
-sources+= hydra/indexing/electron/electron_indexing_no_np.cpp
-sources+= hydra/indexing/electron/electron_symmetric_indexing.cpp
-sources+= hydra/indexing/electron/electron_symmetric_indexing_no_np.cpp
+sources+= hydra/indexing/electron/indexing_np.cpp
+sources+= hydra/indexing/electron/indexing_no_np.cpp
+sources+= hydra/indexing/electron/indexing_symmetric_np.cpp
+sources+= hydra/indexing/electron/indexing_symmetric_no_np.cpp
 
 sources+= hydra/blocks/utils/block_utils.cpp
 
 sources+= hydra/blocks/spinhalf/spinhalf.cpp
 sources+= hydra/blocks/spinhalf/spinhalf_matrix.cpp
 sources+= hydra/blocks/spinhalf/spinhalf_apply.cpp
-sources+= hydra/blocks/spinhalf/terms/compile_terms.cpp
+sources+= hydra/blocks/spinhalf/terms/compile.cpp
+sources+= hydra/blocks/spinhalf/terms/qns.cpp
 
 sources+= hydra/blocks/electron/electron.cpp
 sources+= hydra/blocks/electron/electron_matrix.cpp
 sources+= hydra/blocks/electron/electron_apply.cpp
+sources+= hydra/blocks/electron/terms/compile.cpp
 
 sources+= hydra/blocks/tj/tj.cpp
 sources+= hydra/blocks/tj/tj_matrix.cpp
 sources+= hydra/blocks/tj/tj_apply.cpp
+sources+= hydra/blocks/tj/terms/compile.cpp
 
 sources+= hydra/symmetries/operations/symmetry_operations.cpp
 sources+= hydra/symmetries/permutation.cpp
@@ -60,8 +63,8 @@ sources+= hydra/symmetries/group_action/sublattice_stability.cpp
 sources+= hydra/operators/bond.cpp
 sources+= hydra/operators/bondlist.cpp
 sources+= hydra/operators/compiler.cpp
-sources+= hydra/operators/operator_qns.cpp
 sources+= hydra/operators/symmetric_operator.cpp
+sources+= hydra/operators/non_branching_bonds.cpp
 
 sources+= hydra/states/gpwf_spinhalf.cpp
 
@@ -113,8 +116,8 @@ testsources+= test/symmetries/test_symmetry_operations.cpp
 testsources+= test/symmetries/test_permutation.cpp
 testsources+= test/symmetries/test_permutation_group.cpp
 
-testsources+= test/operators/test_operator_qns.cpp
 testsources+= test/operators/test_symmetric_operator.cpp
+testsources+= test/operators/test_non_branching_bonds.cpp
 
 testsources+= test/blocks/spinhalf/testcases_spinhalf.cpp
 testsources+= test/blocks/spinhalf/test_spinhalf_matrix.cpp
