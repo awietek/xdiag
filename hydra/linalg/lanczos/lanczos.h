@@ -12,7 +12,7 @@ namespace hydra {
 
 // Generic Lanczos implementation building multiple vectors
 template <class coeff_t, class multiply_f, class convergence_f>
-Tmatrix Lanczos(multiply_f mult, arma::Col<coeff_t> &v0,
+Tmatrix lanczos(multiply_f mult, arma::Col<coeff_t> &v0,
                 convergence_f converged, int max_iterations = 1000,
                 double deflation_tol = 1e-7) {
 
@@ -53,7 +53,7 @@ Tmatrix Lanczos(multiply_f mult, arma::Col<coeff_t> &v0,
   int iteration = 0;
   while (!converged(tmatrix)) {
 
-    LanczosStep(v0, v1, w, alpha, beta, mult, dot);
+    lanczos_step(v0, v1, w, alpha, beta, mult, dot);
     tmatrix.append(alpha, beta);
     tmatrix.print_log();
 

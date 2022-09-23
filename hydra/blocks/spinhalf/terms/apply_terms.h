@@ -9,7 +9,7 @@
 #include <hydra/blocks/spinhalf/terms/apply_spsm.h>
 #include <hydra/blocks/spinhalf/terms/apply_sz.h>
 
-namespace hydra::terms::spinhalf {
+namespace hydra::spinhalf {
 
 template <typename bit_t, typename coeff_t, bool symmetric, class IndexingIn,
           class IndexingOut, class Fill>
@@ -40,4 +40,4 @@ void apply_terms(BondList const &bonds, IndexingIn const &indexing_in,
   }
 }
 
-} // namespace hydra::terms::spinhalf
+} // namespace hydra::spinhalf

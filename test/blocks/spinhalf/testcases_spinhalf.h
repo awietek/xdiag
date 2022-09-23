@@ -8,14 +8,9 @@
 
 namespace hydra::testcases::spinhalf {
 
-std::tuple<BondList, Couplings> HBchain(int n_sites, double J1, double J2 = 0);
-
-std::tuple<BondList, Couplings, arma::Col<double>>
-HBchain_fullspectrum_nup(int n_sites, int nup);
-
-std::tuple<BondList, Couplings> HB_alltoall(int n_sites);
-
-std::tuple<BondList, Couplings, double> triangular_12_complex(int nup,
-                                                              double eta);
+BondList HBchain(int n_sites, double J1, double J2 = 0);
+std::tuple<BondList, arma::vec> HBchain_fullspectrum_nup(int n_sites, int nup);
+BondList HB_alltoall(int n_sites);
+std::tuple<BondList, double> triangular_12_complex(int nup, double eta);
 
 } // namespace hydra::testcases::spinhalf

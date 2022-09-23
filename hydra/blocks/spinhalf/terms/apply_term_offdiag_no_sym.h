@@ -6,7 +6,7 @@
 #include <hydra/parallel/omp/omp_utils.h>
 #endif
 
-namespace hydra::terms::spinhalf {
+namespace hydra::spinhalf {
 
 template <typename bit_t, typename coeff_t, class IndexingOut,
           class NonZeroTerm, class TermAction, class Fill>
@@ -46,4 +46,4 @@ void apply_term_offdiag_no_sym(IndexingIn &&indexing_in,
 #endif
 }
 
-} // namespace hydra::terms::spinhalf
+} // namespace hydra::spinhalf

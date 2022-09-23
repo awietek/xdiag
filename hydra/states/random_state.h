@@ -9,7 +9,7 @@
 namespace hydra {
 
 template <class coeff_t, class Block>
-inline void RandomState(State<coeff_t, Block> &state, uint32_t seed = 42) {
+inline void random_state(State<coeff_t, Block> &state, uint32_t seed = 42) {
   if constexpr (mpi::is_mpi_block<Block>()) {
     seed += 0x01000193 * state.block.mpi_rank();
   }
@@ -21,8 +21,8 @@ inline void RandomState(State<coeff_t, Block> &state, uint32_t seed = 42) {
 }
 
 template <class coeff_t = complex, class Block>
-inline State<coeff_t, Block> RandomState(Block const &block,
-                                         uint32_t seed = 42) {
+inline State<coeff_t, Block> random_state(Block const &block,
+                                          uint32_t seed = 42) {
   if constexpr (mpi::is_mpi_block<Block>) {
     seed += 0x01000193 * block.mpi_rank();
   }
@@ -35,15 +35,15 @@ inline State<coeff_t, Block> RandomState(Block const &block,
   return State(block, v);
 }
 template <class Block>
-inline StateReal<Block> RandomStateReal(Block const &block,
-                                        uint32_t seed = 42) {
-  return RandomState<double, Block>(block, seed);
+inline StateReal<Block> random_state_real(Block const &block,
+                                          uint32_t seed = 42) {
+  return random_state<double, Block>(block, seed);
 }
 
 template <class Block>
-inline StateCplx<Block> RandomStateCplx(Block const &block,
-                                        uint32_t seed = 42) {
-  return RandomState<complex, Block>(block, seed);
+inline StateCplx<Block> random_state_cplx(Block const &block,
+                                          uint32_t seed = 42) {
+  return random_state<complex, Block>(block, seed);
 }
 
 } // namespace hydra

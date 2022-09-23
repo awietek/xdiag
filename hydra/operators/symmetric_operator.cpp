@@ -2,11 +2,9 @@
 
 namespace hydra {
 
-std::pair<BondList, Couplings>
-SymmetricOperator(BondList const &bonds, Couplings const &cpls,
-                  PermutationGroup const &group) {
+BondList symmetric_operator(BondList const &bonds,
+                            PermutationGroup const &group) {
   BondList bonds_sym;
-  Couplings cpls_sym;
   int N_group = group.size();
 
   for (auto bond : bonds) {
@@ -20,12 +18,11 @@ SymmetricOperator(BondList const &bonds, Couplings const &cpls,
       for (int site_idx = 0; site_idx < bond.size(); ++site_idx) {
         sites_sym[site_idx] = perm[bond[site_idx]];
       }
-      bonds_sym << Bond(type, cpl, sites_sym);
+      bonds_sym << Bond(type, cpl / (complex)N_group, sites_sym);
     }
-    cpls_sym[cpl] = cpls[cpl] / (complex)N_group;
   }
 
-  return {bonds_sym, cpls_sym};
+  return bonds_sym;
 }
 
 } // namespace hydra

@@ -1,6 +1,6 @@
 #include "compiler.h"
 
-namespace hydra::compiler {
+namespace hydra::operators {
 
 bool coupling_defined(Bond const &bond, BondList const &bonds) {
   if (bond.coupling_defined()) {
@@ -20,7 +20,7 @@ bool matrix_defined(Bond const &bond, BondList const &bonds) {
     return true;
   } else {
     std::string type = bond.type();
-    if (bonds.matrix_defined(name)) {
+    if (bonds.matrix_defined(type)) {
       return true;
     } else {
       return false;
@@ -38,7 +38,7 @@ complex coupling(Bond const &bond, BondList const &bonds) {
     return bond.coupling();
   } else {
     std::string name = bond.coupling_name();
-    return bonds.get_coupling(name);
+    return bonds.coupling(name);
   }
 }
 
@@ -52,7 +52,7 @@ arma::cx_mat matrix(Bond const &bond, BondList const &bonds) {
     return bond.matrix();
   } else {
     std::string name = bond.type();
-    return bonds.get_matrix(name);
+    return bonds.matrix(name);
   }
 }
 
@@ -71,7 +71,7 @@ BondList compile_explicit_couplings(BondList const &bonds, double precision,
       if (bond.type_defined()) {
         bonds_compiled << Bond(bond.type(), cpl, bond.sites());
       } else {
-        bonds_compiled << Bond(bond.matrix(), cpl, bond.sites())
+        bonds_compiled << Bond(bond.matrix(), cpl, bond.sites());
       }
     } else {
       if (undefined_behavior == "error") {
@@ -115,7 +115,7 @@ BondList compile_explicit_matrices(BondList const &bonds, double precision,
       if (bond.coupling_defined()) {
         bonds_compiled << Bond(mat, bond.coupling(), bond.sites());
       } else {
-        bonds_compiled << Bond(mat, bond.coupling_name(), bond.sites())
+        bonds_compiled << Bond(mat, bond.coupling_name(), bond.sites());
       }
     } else {
       if (undefined_behavior == "error") {
@@ -144,4 +144,4 @@ BondList compile_explicit(BondList const &bonds, double precision,
   return bonds_compiled;
 }
 
-} // namespace hydra::compiler
+} // namespace hydra::operators

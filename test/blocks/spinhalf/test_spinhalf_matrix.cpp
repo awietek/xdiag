@@ -13,10 +13,9 @@ TEST_CASE("spinhalf_matrix", "[models][spinhalf]") {
     Log.out("spinhalf_matrix: Heisenberg chain test, J=1.0, N=2,..,6");
     for (int n_sites = 2; n_sites <= 6; ++n_sites) {
       for (int nup = 0; nup <= n_sites; ++nup) {
-        auto [bonds, couplings, exact_eigs] =
-            HBchain_fullspectrum_nup(n_sites, nup);
+        auto [bonds, exact_eigs] = HBchain_fullspectrum_nup(n_sites, nup);
         auto block = Spinhalf<uint32_t>(n_sites, nup);
-        auto H = MatrixReal(bonds, couplings, block, block);
+        auto H = matrix_real(bonds, block, block);
         REQUIRE(H.is_hermitian(1e-7));
         arma::vec eigs;
         arma::eig_sym(eigs, H);
@@ -29,12 +28,11 @@ TEST_CASE("spinhalf_matrix", "[models][spinhalf]") {
     Log.out("spinhalf_matrix: Heisenberg all-to-all tJ comparison");
     for (int n_sites = 2; n_sites <= 6; ++n_sites)
       for (int nup = 0; nup <= n_sites; ++nup) {
-        auto [bonds, couplings] = HB_alltoall(n_sites);
-
+        auto bonds = HB_alltoall(n_sites);
         auto block = Spinhalf<uint32_t>(n_sites, nup);
         auto block_tJ = tJ<uint32_t>(n_sites, nup, n_sites - nup);
-        auto H = MatrixReal(bonds, couplings, block, block);
-        auto H_tJ = MatrixReal(bonds, couplings, block_tJ, block_tJ);
+        auto H = matrix_real(bonds, block, block);
+        auto H_tJ = matrix_real(bonds, block_tJ, block_tJ);
         REQUIRE(H.is_hermitian());
         REQUIRE(H_tJ.is_hermitian());
 
@@ -50,10 +48,9 @@ TEST_CASE("spinhalf_matrix", "[models][spinhalf]") {
   {
     Log.out("spinhalf_matrix: Heisenberg all-to-all Sz <-> NoSz comparison");
     for (int n_sites = 2; n_sites <= 6; ++n_sites) {
-      auto [bonds, couplings] = HB_alltoall(n_sites);
-
+      auto bonds = HB_alltoall(n_sites);
       auto block_no_sz = Spinhalf(n_sites);
-      auto H_no_sz = MatrixReal(bonds, couplings, block_no_sz, block_no_sz);
+      auto H_no_sz = matrix_real(bonds, block_no_sz, block_no_sz);
       REQUIRE(H_no_sz.is_hermitian(1e-8));
       arma::vec eigs_no_sz;
       arma::eig_sym(eigs_no_sz, H_no_sz);
@@ -62,7 +59,7 @@ TEST_CASE("spinhalf_matrix", "[models][spinhalf]") {
 
       for (int nup = 0; nup <= n_sites; ++nup) {
         auto block_sz = Spinhalf(n_sites, nup);
-        auto H_sz = MatrixReal(bonds, couplings, block_sz, block_sz);
+        auto H_sz = matrix_real(bonds, block_sz, block_sz);
         REQUIRE(H_sz.is_hermitian(1e-7));
         arma::vec eigs_sz;
         arma::eig_sym(eigs_sz, H_sz);
@@ -83,9 +80,9 @@ TEST_CASE("spinhalf_matrix", "[models][spinhalf]") {
     std::vector<double> etas = {0.00, 0.01, 0.02,
                                 0.03, 0.04, 0.05}; // dont change etas :-)
     for (auto eta : etas) {
-      auto [bonds, couplings, e0] = triangular_12_complex(nup, eta);
+      auto [bonds, e0] = triangular_12_complex(nup, eta);
       auto block = Spinhalf<uint32_t>(n_sites, nup);
-      auto H = MatrixCplx(bonds, couplings, block, block);
+      auto H = matrix_cplx(bonds, block, block);
       REQUIRE(H.is_hermitian(1e-8));
 
       arma::vec eigs;
@@ -103,15 +100,14 @@ TEST_CASE("spinhalf_matrix", "[models][spinhalf]") {
                         "triangular.12.j1j2jch.sublattices.fsl.lat";
 
     auto bondlist = read_bondlist(lfile);
-    Couplings couplings;
-    couplings["J1"] = 1.00;
-    couplings["J2"] = 0.15;
-    couplings["Jchi"] = 0.09;
+    bondlist["J1"] = 1.00;
+    bondlist["J2"] = 0.15;
+    bondlist["Jchi"] = 0.09;
 
     int n_sites = 12;
     int n_up = 6;
     auto block = Spinhalf<uint16_t>(n_sites, n_up);
-    auto H = MatrixCplx(bondlist, couplings, block, block);
+    auto H = matrix_cplx(bondlist, block, block);
     REQUIRE(H.is_hermitian(1e-8));
 
     arma::vec eigs;
@@ -129,9 +125,6 @@ TEST_CASE("spinhalf_matrix", "[models][spinhalf]") {
 
     for (int n_sites = 2; n_sites < 5; ++n_sites) {
 
-      Couplings cpls;
-      cpls["H"] = 1.0;
-
       auto block_raw = Spinhalf(n_sites);
       for (int nup = 1; nup < n_sites; ++nup) {
 
@@ -143,22 +136,22 @@ TEST_CASE("spinhalf_matrix", "[models][spinhalf]") {
           for (int j = 0; j < n_sites; ++j) {
 
             BondList sp_i_m;
-            sp_i_m << Bond("S+", "H", i);
-            auto sp_i_m_mat = MatrixReal(sp_i_m, cpls, blockm, block);
-            auto sp_i_mat = MatrixReal(sp_i_m, cpls, block_raw, block_raw);
+            sp_i_m << Bond("S+", i);
+            auto sp_i_m_mat = matrix_real(sp_i_m, blockm, block);
+            auto sp_i_mat = matrix_real(sp_i_m, block_raw, block_raw);
 
             BondList sm_j_m;
-            sm_j_m << Bond("S-", "H", j);
-            auto sm_j_m_mat = MatrixReal(sm_j_m, cpls, block, blockm);
-            auto sm_j_mat = MatrixReal(sm_j_m, cpls, block_raw, block_raw);
+            sm_j_m << Bond("S-", j);
+            auto sm_j_m_mat = matrix_real(sm_j_m, block, blockm);
+            auto sm_j_mat = matrix_real(sm_j_m, block_raw, block_raw);
 
             BondList sp_i_p;
-            sp_i_p << Bond("S+", "H", i);
-            auto sp_i_p_mat = MatrixReal(sp_i_p, cpls, block, blockp);
+            sp_i_p << Bond("S+", i);
+            auto sp_i_p_mat = matrix_real(sp_i_p, block, blockp);
 
             BondList sm_j_p;
-            sm_j_p << Bond("S-", "H", j);
-            auto sm_j_p_mat = MatrixReal(sm_j_p, cpls, blockp, block);
+            sm_j_p << Bond("S-", j);
+            auto sm_j_p_mat = matrix_real(sm_j_p, blockp, block);
 
             auto C1 = sp_i_m_mat * sm_j_m_mat;
             auto C2 = sm_j_p_mat * sp_i_p_mat;
@@ -169,9 +162,9 @@ TEST_CASE("spinhalf_matrix", "[models][spinhalf]") {
 
             if (i == j) {
               BondList sz;
-              sz << Bond("SZ", "H", i);
-              auto sz_mat = MatrixReal(sz, cpls, block, block);
-              auto sz_matr = MatrixReal(sz, cpls, block_raw, block_raw);
+              sz << Bond("SZ", i);
+              auto sz_mat = matrix_real(sz, block, block);
+              auto sz_matr = matrix_real(sz, block_raw, block_raw);
               REQUIRE(close(comm, arma::mat(2.0 * sz_mat)));
               REQUIRE(close(commr, arma::mat(2.0 * sz_matr)));
             } else {

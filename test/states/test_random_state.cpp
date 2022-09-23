@@ -18,18 +18,18 @@ TEST_CASE("random_state", "[states]") {
   for (int n_sites = 6; n_sites <= 8; ++n_sites) {
     Log("N={}", n_sites);
     auto [group, irreps] = get_cyclic_group_irreps(n_sites);
-   
+
     for (int nup = 0; nup <= n_sites; ++nup) {
       for (auto irrep : irreps) {
         auto block = Spinhalf(n_sites, nup, group, irrep);
-	
+
         if (block.size() > 3) {
-	  // HydraPrint(irrep);
-	  // HydraPrint(block);
-          auto state_real = RandomStateReal(block);
-          auto state_cplx = RandomStateCplx(block);
-	  // HydraPrint(state_real);
-	  // HydraPrint(state_real.vector());
+          // HydraPrint(irrep);
+          // HydraPrint(block);
+          auto state_real = random_state_real(block);
+          auto state_cplx = random_state_cplx(block);
+          // HydraPrint(state_real);
+          // HydraPrint(state_real.vector());
           // HydraPrint(state_real.vector());
           // HydraPrint(state_cplx.vector());
           if (first_r == 0.) {
@@ -54,12 +54,12 @@ TEST_CASE("random_state", "[states]") {
 
   auto block = Spinhalf(4);
   for (int seed = 0; seed < 10; ++seed) {
-    auto state = RandomStateReal(block);
-    auto state_cplx = RandomStateCplx(block);
+    auto state = random_state_real(block);
+    auto state_cplx = random_state_cplx(block);
 
     omp_set_num_threads(1);
-    auto state2 = RandomStateReal(block);
-    auto state_cplx2 = RandomStateCplx(block);
+    auto state2 = random_state_real(block);
+    auto state_cplx2 = random_state_cplx(block);
     REQUIRE(arma::norm(state.vector() - state2.vector()) < 1e-12);
     REQUIRE(arma::norm(state_cplx.vector() - state_cplx2.vector()) < 1e-12);
   }

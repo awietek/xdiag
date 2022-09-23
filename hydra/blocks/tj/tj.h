@@ -1,23 +1,18 @@
 #pragma once
-
-#include <memory>
-
 #include "extern/armadillo/armadillo"
 
 #include <hydra/common.h>
-
-#include <hydra/indexing/tj/tj_indexing.h>
-#include <hydra/indexing/tj/tj_symmetric_indexing.h>
-
+#include <hydra/indexing/indexing_variants.h>
+#include <hydra/operators/bondlist.h>
 #include <hydra/symmetries/permutation_group.h>
 #include <hydra/symmetries/representation.h>
-
-#include <hydra/operators/bondlist.h>
 
 namespace hydra {
 
 template <class bit_t = std_bit_t> class tJ {
 public:
+  using indexing_t = indexing::tj::Indexing<bit_t>;
+
   tJ() = default;
   tJ(int n_sites, int nup, int ndn);
   tJ(int n_sites, int nup, int ndn, PermutationGroup permutation_group,
@@ -40,9 +35,10 @@ public:
   bool operator==(tJ const &rhs) const;
   bool operator!=(tJ const &rhs) const;
 
+  indexing_t const &indexing() const;
+
 private:
   int n_sites_;
-
   bool charge_conserved_;
   int charge_;
   bool sz_conserved_;
@@ -52,27 +48,8 @@ private:
   bool symmetric_;
   PermutationGroup permutation_group_;
   Representation irrep_;
-
-  using indexing_np_t = indexing::tJIndexing<bit_t>;
-  using indexing_sym_np_t = indexing::tJSymmetricIndexing<bit_t>;
-
-  std::shared_ptr<indexing_np_t> indexing_np_;
-  std::shared_ptr<indexing_sym_np_t> indexing_sym_np_;
-
+  std::shared_ptr<indexing_t> indexing_;
   idx_t size_;
-
-  indexing_np_t const &indexing_np() const;
-  indexing_sym_np_t const &indexing_sym_np() const;
-
-  template <typename bit_tt, typename coeff_tt>
-  friend void Apply(BondList const &bonds, tJ<bit_tt> const &block_in,
-                    arma::Col<coeff_tt> const &vec_in,
-                    tJ<bit_tt> const &block_out, arma::Col<coeff_tt> &vec_out);
-
-  template <typename bit_tt, typename coeff_tt>
-  friend arma::Mat<coeff_tt> MatrixGen(BondList const &bonds,
-                                       tJ<bit_tt> const &block_in,
-                                       tJ<bit_tt> const &block_out);
 };
 
 } // namespace hydra

@@ -30,6 +30,10 @@ void check_nup_ndn_tj(int n_sites, int nup, int ndn, std::string block_name) {
     Log.err("Error creating {}: invalid value of nup+ndn", block_name);
 }
 
+void check_n_sites(int n_sites, PermutationGroup const &permutation_group) {
+  assert(n_sites == permutation_group.n_sites());
+}
+
 template <class coeff_t>
 std::vector<coeff_t> characters(Representation const &irrep) {
   if constexpr (is_complex<coeff_t>()) {

@@ -25,7 +25,7 @@ constexpr uint64_t bextr(uint64_t src, uint32_t start, uint32_t len) noexcept {
 
 
 // gbit
-template <class bit_t> constexpr bit_t gbit(bit_t x, uint32_t n) noexcept {
+template <class bit_t> constexpr inline bit_t gbit(bit_t x, uint32_t n) noexcept {
 #if defined(__BMI__) && defined(USE_BEXTR)
   return bextr(x, n, 1);
 #else
@@ -35,7 +35,7 @@ template <class bit_t> constexpr bit_t gbit(bit_t x, uint32_t n) noexcept {
 
 // gbits
 template <class bit_t>
-constexpr bit_t gbits(bit_t src, uint32_t start, uint32_t len) noexcept {
+constexpr inline bit_t gbits(bit_t src, uint32_t start, uint32_t len) noexcept {
 #if defined(__BMI__) && defined(USE_BEXTR)
   return bextr(src, start, len);
 #else

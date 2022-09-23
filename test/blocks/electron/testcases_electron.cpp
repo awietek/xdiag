@@ -2,32 +2,25 @@
 
 namespace hydra::testcases::electron {
 
-std::tuple<BondList, Couplings> get_linear_chain(int n_sites, double t,
-                                                 double U) {
+BondList get_linear_chain(int n_sites, double t, double U) {
   // Create model
   BondList bondlist;
   for (int s = 0; s < n_sites; ++s)
     bondlist << Bond("HOP", "T", {s, (s + 1) % n_sites});
-  Couplings couplings;
-  couplings["T"] = t;
-  couplings["U"] = U;
-  return {bondlist, couplings};
+  bondlist["T"] = t;
+  bondlist["U"] = U;
+  return bondlist;
 }
 
-std::tuple<BondList, Couplings> get_linear_chain_hb(int n_sites, double t,
-                                                    double U, double J) {
+BondList get_linear_chain_hb(int n_sites, double t, double U, double J) {
   // Create model
   BondList bondlist;
   // for (int s = 0; s < n_sites; ++s)
   //   bondlist << Bond("HOP", "T", {s, (s + 1) % n_sites});
   for (int s = 0; s < n_sites; ++s)
     bondlist << Bond("EXCHANGE", "J", {s, (s + 1) % n_sites});
-
-  Couplings couplings;
-  // couplings["T"] = t;
-  // couplings["U"] = U;
-  couplings["J"] = J;
-  return {bondlist, couplings};
+  bondlist["J"] = J;
+  return bondlist;
 }
 
 std::tuple<PermutationGroup, std::vector<Representation>>
@@ -88,23 +81,20 @@ get_cyclic_group_irreps_mult(int n_sites) {
   return {space_group, irreps, multiplicities};
 }
 
-std::tuple<BondList, Couplings> heisenberg_triangle() {
+BondList heisenberg_triangle() {
   BondList bondlist;
   bondlist << Bond("HEISENBERG", "J", {0, 1});
   bondlist << Bond("HEISENBERG", "J", {1, 2});
   bondlist << Bond("HEISENBERG", "J", {2, 0});
-
-  Couplings couplings;
-  couplings["J"] = 1.0;
-  return std::make_tuple(bondlist, couplings);
+  bondlist["J"] = 1.0;
+  return bondlist;
 }
 
-std::tuple<BondList, Couplings> heisenberg_alltoall(int n_sites) {
+BondList heisenberg_alltoall(int n_sites) {
   std::default_random_engine generator;
   std::normal_distribution<double> distribution(0., 1.);
 
   BondList bondlist;
-  Couplings couplings;
   for (int s1 = 0; s1 < n_sites; ++s1)
     for (int s2 = s1 + 1; s2 < n_sites; ++s2) {
       std::stringstream ss;
@@ -112,12 +102,12 @@ std::tuple<BondList, Couplings> heisenberg_alltoall(int n_sites) {
       std::string name = ss.str();
       double value = distribution(generator);
       bondlist << Bond("HEISENBERG", name, {s1, s2});
-      couplings[name] = value;
+      bondlist[name] = value;
     }
-  return std::make_tuple(bondlist, couplings);
+  return bondlist;
 }
 
-std::tuple<BondList, Couplings> heisenberg_kagome15() {
+BondList heisenberg_kagome15() {
 
   BondList bondlist;
   bondlist << Bond("HEISENBERG", "J", {0, 1});
@@ -141,12 +131,11 @@ std::tuple<BondList, Couplings> heisenberg_kagome15() {
   bondlist << Bond("HEISENBERG", "J", {11, 12});
   bondlist << Bond("HEISENBERG", "J", {12, 13});
   bondlist << Bond("HEISENBERG", "J", {13, 14});
-  Couplings couplings;
-  couplings["J"] = 1.0;
-  return std::make_tuple(bondlist, couplings);
+  bondlist["J"] = 1.0;
+  return bondlist;
 }
 
-std::tuple<BondList, Couplings> heisenberg_kagome39() {
+BondList heisenberg_kagome39() {
   BondList bondlist;
   bondlist << Bond("HEISENBERG", "J", {0, 1});
   bondlist << Bond("HEISENBERG", "J", {0, 5});
@@ -214,17 +203,15 @@ std::tuple<BondList, Couplings> heisenberg_kagome39() {
   bondlist << Bond("HEISENBERG", "J", {25, 35});
   bondlist << Bond("HEISENBERG", "J", {25, 36});
   bondlist << Bond("HEISENBERG", "J", {26, 36});
-  Couplings couplings;
-  couplings["J"] = 1.0;
-  return std::make_tuple(bondlist, couplings);
+  bondlist["J"] = 1.0;
+  return bondlist;
 }
 
-std::tuple<BondList, Couplings> freefermion_alltoall(int n_sites) {
+BondList freefermion_alltoall(int n_sites) {
   std::default_random_engine generator;
   std::normal_distribution<double> distribution(0., 1.);
 
   BondList bondlist;
-  Couplings couplings;
   for (int s1 = 0; s1 < n_sites; ++s1)
     for (int s2 = s1 + 1; s2 < n_sites; ++s2) {
       std::stringstream ss;
@@ -232,17 +219,16 @@ std::tuple<BondList, Couplings> freefermion_alltoall(int n_sites) {
       std::string name = ss.str();
       double value = distribution(generator);
       bondlist << Bond("HOP", name, {s1, s2});
-      couplings[name] = value;
+      bondlist[name] = value;
     }
-  return std::make_tuple(bondlist, couplings);
+  return bondlist;
 }
 
-std::tuple<BondList, Couplings> freefermion_alltoall_complex_updn(int n_sites) {
+BondList freefermion_alltoall_complex_updn(int n_sites) {
   std::default_random_engine generator;
   std::normal_distribution<double> distribution(0., 1.);
 
   BondList bondlist;
-  Couplings couplings;
   for (int s1 = 0; s1 < n_sites; ++s1)
     for (int s2 = s1 + 1; s2 < n_sites; ++s2) {
 
@@ -253,7 +239,7 @@ std::tuple<BondList, Couplings> freefermion_alltoall_complex_updn(int n_sites) {
       complex value_up =
           complex(distribution(generator), distribution(generator));
       bondlist << Bond("HOPUP", name_up, {s1, s2});
-      couplings[name_up] = value_up;
+      bondlist[name_up] = value_up;
 
       // Hopping on dnspins
       std::stringstream ss_dn;
@@ -262,53 +248,25 @@ std::tuple<BondList, Couplings> freefermion_alltoall_complex_updn(int n_sites) {
       complex value_dn =
           complex(distribution(generator), distribution(generator));
       bondlist << Bond("HOPDN", name_dn, {s1, s2});
-      couplings[name_dn] = value_dn;
+      bondlist[name_dn] = value_dn;
     }
-  return std::make_tuple(bondlist, couplings);
+  return bondlist;
 }
 
-// std::tuple<BondList, Couplings> tJchain(int n_sites, double t,
-//                                                double J) {
-
-//   BondList bondlist;
-//   Couplings couplings;
-//   couplings["T"] = t;
-//   couplings["J"] = J;
-//   for (int s = 0; s < n_sites; ++s) {
-//     bondlist << Bond("HUBBARDHOP", "T", {s, (s + 1) % n_sites});
-//     bondlist << Bond("HEISENBERG", "J", {s, (s + 1) % n_sites});
-//   }
-//   return std::make_tuple(bondlist, couplings);
-// }
-
-std::tuple<BondList, Couplings, arma::Col<double>> randomAlltoAll4NoU() {
+std::tuple<BondList, arma::Col<double>> randomAlltoAll4NoU() {
   BondList bondlist;
-  Couplings couplings;
-  // couplings["T01"] = 3;
-  // couplings["J01"] = 1;
-  // couplings["T02"] = 3;
-  // couplings["J02"] = -3;
-  // couplings["T03"] = 3;
-  // couplings["J03"] = 5;
-  // couplings["T12"] = 4;
-  // couplings["J12"] = -5;
-  // couplings["T13"] = -1;
-  // couplings["J13"] = -1;
-  // couplings["T23"] = 2;
-  // couplings["J23"] = 1;
-
-  couplings["T01"] = -3;
-  couplings["J01"] = 1;
-  couplings["T02"] = -3;
-  couplings["J02"] = -3;
-  couplings["T03"] = -3;
-  couplings["J03"] = 5;
-  couplings["T12"] = -4;
-  couplings["J12"] = -5;
-  couplings["T13"] = 1;
-  couplings["J13"] = -1;
-  couplings["T23"] = -2;
-  couplings["J23"] = 1;
+  bondlist["T01"] = -3;
+  bondlist["J01"] = 1;
+  bondlist["T02"] = -3;
+  bondlist["J02"] = -3;
+  bondlist["T03"] = -3;
+  bondlist["J03"] = 5;
+  bondlist["T12"] = -4;
+  bondlist["J12"] = -5;
+  bondlist["T13"] = 1;
+  bondlist["J13"] = -1;
+  bondlist["T23"] = -2;
+  bondlist["J23"] = 1;
 
   bondlist << Bond("HOP", "T01", {0, 1});
   bondlist << Bond("HOP", "T02", {0, 2});
@@ -580,39 +538,25 @@ std::tuple<BondList, Couplings, arma::Col<double>> randomAlltoAll4NoU() {
                             17.166681362460491,
                             18.194539570876405};
 
-  return std::make_tuple(bondlist, couplings, eigs);
+  return std::make_tuple(bondlist, eigs);
 }
 
-std::tuple<BondList, Couplings, arma::Col<double>> randomAlltoAll4() {
+std::tuple<BondList, arma::Col<double>> randomAlltoAll4() {
   BondList bondlist;
-  Couplings couplings;
-  // couplings["U"] = 5;
-  // couplings["T01"] = 3;
-  // couplings["J01"] = -1;
-  // couplings["T02"] = -3;
-  // couplings["J02"] = -5;
-  // couplings["T03"] = 3;
-  // couplings["J03"] = -3;
-  // couplings["T12"] = -1;
-  // couplings["J12"] = 1;
-  // couplings["T13"] = -3;
-  // couplings["J13"] = 2;
-  // couplings["T23"] = 0;
-  // couplings["J23"] = -4;
 
-  couplings["U"] = 5;
-  couplings["T01"] = -3;
-  couplings["J01"] = -1;
-  couplings["T02"] = 3;
-  couplings["J02"] = -5;
-  couplings["T03"] = -3;
-  couplings["J03"] = -3;
-  couplings["T12"] = 1;
-  couplings["J12"] = 1;
-  couplings["T13"] = 3;
-  couplings["J13"] = 2;
-  couplings["T23"] = 0;
-  couplings["J23"] = -4;
+  bondlist["U"] = 5;
+  bondlist["T01"] = -3;
+  bondlist["J01"] = -1;
+  bondlist["T02"] = 3;
+  bondlist["J02"] = -5;
+  bondlist["T03"] = -3;
+  bondlist["J03"] = -3;
+  bondlist["T12"] = 1;
+  bondlist["J12"] = 1;
+  bondlist["T13"] = 3;
+  bondlist["J13"] = 2;
+  bondlist["T23"] = 0;
+  bondlist["J23"] = -4;
 
   bondlist << Bond("HOP", "T01", {0, 1});
   bondlist << Bond("HOP", "T02", {0, 2});
@@ -715,32 +659,30 @@ std::tuple<BondList, Couplings, arma::Col<double>> randomAlltoAll4() {
       22.411220290848199,  22.411220290848210,  22.508215798228996,
       25.052426347353144};
 
-  return std::make_tuple(bondlist, couplings, eigs);
+  return std::make_tuple(bondlist, eigs);
 }
 
-std::tuple<BondList, Couplings> randomAlltoAll3() {
+BondList randomAlltoAll3() {
   BondList bondlist;
-  Couplings couplings;
-  couplings["T01"] = 1;
-  couplings["J01"] = -2;
-  couplings["T02"] = 0;
-  couplings["J02"] = -1;
-  couplings["T12"] = -5;
-  couplings["J12"] = -3;
+  bondlist["T01"] = 1;
+  bondlist["J01"] = -2;
+  bondlist["T02"] = 0;
+  bondlist["J02"] = -1;
+  bondlist["T12"] = -5;
+  bondlist["J12"] = -3;
   bondlist << Bond("HUBBARDHOP", "T01", {0, 1});
   bondlist << Bond("HUBBARDHOP", "T02", {0, 2});
   bondlist << Bond("HUBBARDHOP", "T12", {1, 2});
   bondlist << Bond("HEISENBERG", "J01", {0, 1});
   bondlist << Bond("HEISENBERG", "J02", {0, 2});
   bondlist << Bond("HEISENBERG", "J12", {1, 2});
-  return std::make_tuple(bondlist, couplings);
+  return bondlist;
 }
 
-std::tuple<BondList, Couplings> square2x2(double t, double J) {
+BondList square2x2(double t, double J) {
   BondList bondlist;
-  Couplings couplings;
-  couplings["T"] = t;
-  couplings["J"] = J;
+  bondlist["T"] = t;
+  bondlist["J"] = J;
   bondlist << Bond("HUBBARDHOP", "T", {0, 1});
   bondlist << Bond("HUBBARDHOP", "T", {1, 0});
   bondlist << Bond("HUBBARDHOP", "T", {2, 3});
@@ -757,14 +699,13 @@ std::tuple<BondList, Couplings> square2x2(double t, double J) {
   bondlist << Bond("HEISENBERG", "J", {2, 0});
   bondlist << Bond("HEISENBERG", "J", {1, 3});
   bondlist << Bond("HEISENBERG", "J", {3, 1});
-  return std::make_tuple(bondlist, couplings);
+  return bondlist;
 }
 
-std::tuple<BondList, Couplings> square3x3(double t, double J) {
+BondList square3x3(double t, double J) {
   BondList bondlist;
-  Couplings couplings;
-  couplings["T"] = t;
-  couplings["J"] = J;
+  bondlist["T"] = t;
+  bondlist["J"] = J;
   bondlist << Bond("HOP", "T", {0, 1});
   bondlist << Bond("HOP", "T", {1, 2});
   bondlist << Bond("HOP", "T", {2, 0});
@@ -801,7 +742,7 @@ std::tuple<BondList, Couplings> square3x3(double t, double J) {
   bondlist << Bond("HEISENBERG", "J", {2, 5});
   bondlist << Bond("HEISENBERG", "J", {5, 8});
   bondlist << Bond("HEISENBERG", "J", {8, 2});
-  return std::make_tuple(bondlist, couplings);
+  return bondlist;
 }
 
 } // namespace hydra::testcases::electron

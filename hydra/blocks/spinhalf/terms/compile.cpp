@@ -1,18 +1,20 @@
-#include "compile_terms.h"
+#include "compile.h"
+#include <hydra/operators/compiler.h>
 #include <hydra/utils/logger.h>
 
-namespace hydra::terms::spinhalf {
+namespace hydra::spinhalf {
 
-BondList compile(BondList bonds, double precision) {
+BondList compile(BondList const& bonds, double precision) {
 
-  BondList bonds_explicit = compile_explicit(bonds, precision, "keep");
+  BondList bonds_explicit =
+      operators::compile_explicit(bonds, precision, "keep");
   BondList bonds_special;
   BondList bonds_generic;
   for (auto bond : bonds_explicit) {
     if (bond.type_defined()) {
       std::string type = bond.type();
-      if (std::find(valid_types.begin(), valid_types.end(), type) ==
-          valid_types.end()) {
+      if (std::find(special_bond_types.begin(), special_bond_types.end(),
+                    type) == special_bond_types.end()) {
         Log.err("Error compiling BondList: invalid or undefined type found: {}",
                 type);
       } else {
@@ -31,4 +33,4 @@ BondList compile(BondList bonds, double precision) {
   return bonds_special + bonds_generic;
 }
 
-} // namespace hydra::terms::spinhalf
+} // namespace hydra::spinhalf

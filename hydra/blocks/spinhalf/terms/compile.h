@@ -1,11 +1,9 @@
 #pragma once
 
-#include <utility>
-
 #include <hydra/common.h>
 #include <hydra/operators/bondlist.h>
 
-namespace hydra::terms::spinhalf {
+namespace hydra::spinhalf {
 
 const std::vector<std::string> special_bond_types = {
     "HB", "HEISENBERG", "EXCHANGE", "ISING",
@@ -13,4 +11,4 @@ const std::vector<std::string> special_bond_types = {
 
 BondList compile(BondList const &bonds, double precision = 1e-12);
 
-} // namespace hydra::terms::spinhalf
+} // namespace hydra::spinhalf

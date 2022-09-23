@@ -11,8 +11,8 @@ namespace hydra {
 // Lanczos implementation building a single vector
 template <class coeff_t, class multiply_f>
 std::pair<Tmatrix, arma::Mat<coeff_t>>
-LanczosBuild(multiply_f mult, arma::Col<coeff_t> &v0,
-             arma::Col<coeff_t> coefficients, double deflation_tol = 1e-7) {
+lanczos_build(multiply_f mult, arma::Col<coeff_t> &v0,
+              arma::Col<coeff_t> coefficients, double deflation_tol = 1e-7) {
 
 #ifdef HYDRA_ENABLE_MPI
   auto dot = [](arma::Col<coeff_t> const &v,
@@ -31,7 +31,7 @@ LanczosBuild(multiply_f mult, arma::Col<coeff_t> &v0,
   };
 
   auto tmatrix = Tmatrix();
-  auto n_iterations = coefficients.size();
+  int n_iterations = coefficients.size();
 
   arma::Col<coeff_t> vector(v0.size(), arma::fill::zeros);
 
@@ -56,7 +56,7 @@ LanczosBuild(multiply_f mult, arma::Col<coeff_t> &v0,
     // Build vector from linear combination
     vector += coefficients(iteration) * v1;
 
-    LanczosStep(v0, v1, w, alpha, beta, mult, dot);
+    lanczos_step(v0, v1, w, alpha, beta, mult, dot);
     tmatrix.append(alpha, beta);
     tmatrix.print_log();
 
@@ -110,7 +110,7 @@ LanczosBuild(multiply_f mult, arma::Col<coeff_t> &v0,
 
   auto tmatrix = Tmatrix();
   auto n_vectors = coefficients.n_cols;
-  auto n_iterations = coefficients.n_rows;
+  int n_iterations = coefficients.n_rows;
 
   arma::Mat<coeff_t> vectors(v0.size(), n_vectors, arma::fill::zeros);
 
@@ -137,7 +137,7 @@ LanczosBuild(multiply_f mult, arma::Col<coeff_t> &v0,
       vectors.col(v_idx) += coefficients(iteration, v_idx) * v1;
     }
 
-    LanczosStep(v0, v1, w, alpha, beta, mult, dot);
+    lanczos_step(v0, v1, w, alpha, beta, mult, dot);
     tmatrix.append(alpha, beta);
     tmatrix.print_log();
 
@@ -155,9 +155,9 @@ LanczosBuild(multiply_f mult, arma::Col<coeff_t> &v0,
 // Lanczos implementation building multiple vectors
 template <class coeff_t, class multiply_f>
 std::pair<Tmatrix, arma::Mat<coeff_t>>
-LanczosBuild(multiply_f mult, arma::Col<coeff_t> &v0,
-             arma::Mat<real_t<coeff_t>> coefficients,
-             double deflation_tol = 1e-7) {
+lanczos_build(multiply_f mult, arma::Col<coeff_t> &v0,
+              arma::Mat<real_t<coeff_t>> coefficients,
+              double deflation_tol = 1e-7) {
 
   arma::Mat<coeff_t> coefficients_cplx(coefficients.n_rows,
                                        coefficients.n_cols);

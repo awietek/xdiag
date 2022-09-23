@@ -9,7 +9,7 @@
 #include <hydra/blocks/spinhalf/terms/apply_term_offdiag_no_sym.h>
 #include <hydra/blocks/spinhalf/terms/apply_term_offdiag_sym.h>
 
-namespace hydra::terms::spinhalf {
+namespace hydra::spinhalf {
 
 // S+ or S- term: J S^+_i   OR   J S^-_i
 
@@ -54,4 +54,4 @@ void apply_spsm(Bond const &bond, IndexingIn &&indexing_in,
   }
 }
 
-} // namespace hydra::terms::spinhalf
+} // namespace hydra::spinhalf

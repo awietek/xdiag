@@ -20,12 +20,15 @@ public:
 
   bool coupling_defined(std::string name) const;
   void set_coupling(std::string name, complex cpl);
-  complex get_coupling(std::string name) const;
+  template <typename coeff_t = complex>
+  coeff_t coupling(std::string name, double precision = 1e-12) const;
+
+  inline complex &operator[](std::string name) { return couplings_[name]; }
 
   bool matrix_defined(std::string name) const;
   void set_matrix(std::string name, arma::cx_mat mat);
   void set_matrix(std::string name, arma::mat mat);
-  arma::cx_mat get_matrix(std::string name) const;
+  arma::cx_mat matrix(std::string name) const;
 
   int size() const;
   void clear();

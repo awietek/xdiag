@@ -63,8 +63,7 @@ inline bit_t pext_fallback(bit_t x, bit_t mask) noexcept {
   return res;
 }
 
-template <typename bit_t>
-inline bit_t deposit(bit_t x, bit_t mask) noexcept {
+template <typename bit_t> inline bit_t deposit(bit_t x, bit_t mask) noexcept {
 #if defined(__BMI2__) && defined(USE_PEXT_PDEP)
   return pdep(x, mask);
 // Parallel Bits Deposit implementation w/o BMI2 intrinsics
@@ -73,8 +72,7 @@ inline bit_t deposit(bit_t x, bit_t mask) noexcept {
 #endif
 }
 
-template <typename bit_t>
-inline bit_t extract(bit_t x, bit_t mask) noexcept {
+template <typename bit_t> inline bit_t extract(bit_t x, bit_t mask) noexcept {
 #if defined(__BMI2__) && defined(USE_PEXT_PDEP)
   return pext(x, mask);
 // Parallel Bits Extract implementation w/o BMI2 intrinsics

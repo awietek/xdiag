@@ -7,7 +7,7 @@
 
 #include <hydra/blocks/spinhalf/terms/apply_terms.h>
 
-namespace hydra::terms::spinhalf {
+namespace hydra::spinhalf {
 
 using namespace hydra::indexing::spinhalf;
 
@@ -60,4 +60,4 @@ void apply_terms_dispatch(BondList const &bonds,
       indexing_in, indexing_out);
 }
 
-} // namespace hydra::terms::spinhalf
+} // namespace hydra::spinhalf

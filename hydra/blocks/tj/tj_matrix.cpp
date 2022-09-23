@@ -1,27 +1,22 @@
 #include "tj_matrix.h"
 
-#include <hydra/blocks/tj/terms/tj_exchange.h>
-#include <hydra/blocks/tj/terms/tj_hopping.h>
-#include <hydra/blocks/tj/terms/tj_ising.h>
-
-#include <hydra/blocks/tj/terms/tj_symmetric_exchange.h>
-#include <hydra/blocks/tj/terms/tj_symmetric_hopping.h>
-#include <hydra/blocks/tj/terms/tj_symmetric_ising.h>
-
-#include <hydra/blocks/utils/block_utils.h>
-#include <hydra/utils/logger.h>
+#include <hydra/blocks/tj/terms/apply_terms_dispatch.h>
+#include <hydra/blocks/tj/terms/compile.h>
 
 namespace hydra {
 
 template <typename bit_t, typename coeff_t>
-arma::Mat<coeff_t> MatrixGen(BondList const &bonds, Couplings const &couplings,
-                             tJ<bit_t> const &block_in,
-                             tJ<bit_t> const &block_out) {
-  using namespace hydra::terms;
-
+arma::Mat<coeff_t> matrix_gen(BondList const &bonds, tJ<bit_t> const &block_in,
+                              tJ<bit_t> const &block_out) {
   assert(block_in == block_out); // only temporary
 
-  utils::check_operator_works_with<coeff_t>(bonds, couplings, "tj_matrix");
+  BondList bonds_c = tj::compile(bonds, 1e-12);
+
+  if ((is_real<coeff_t>()) && (bonds_c.is_complex())) {
+    Log.err("Error in matrix_gen: trying to create a real matrix from an "
+            "intrisically complex BondList");
+  }
+
   idx_t dim_in = block_in.size();
   idx_t dim_out = block_out.size();
 
@@ -30,52 +25,37 @@ arma::Mat<coeff_t> MatrixGen(BondList const &bonds, Couplings const &couplings,
     mat(idx_out, idx_in) += val;
   };
 
-  if (block_in.symmetric()) {
-
-    if (block_in.charge_conserved() && block_in.sz_conserved()) {
-      auto const &indexing_in = block_in.indexing_sym_np();
-      tj_symmetric_hopping<bit_t, coeff_t>(bonds, couplings, indexing_in, fill);
-      tj_symmetric_ising<bit_t, coeff_t>(bonds, couplings, indexing_in, fill);
-      tj_symmetric_exchange<bit_t, coeff_t>(bonds, couplings, indexing_in,
-                                            fill);
-    }
-
-  } else {
-
-    if (block_in.charge_conserved() && block_in.sz_conserved()) {
-      auto const &indexing_in = block_in.indexing_np();
-      tj_hopping<bit_t, coeff_t>(bonds, couplings, indexing_in, fill);
-      tj_ising<bit_t, coeff_t>(bonds, couplings, indexing_in, fill);
-      tj_exchange<bit_t, coeff_t>(bonds, couplings, indexing_in, fill);
-    }
-  }
+  auto const &indexing_in = block_in.indexing();
+  auto const &indexing_out = block_out.indexing();
+  tj::apply_terms_dispatch<bit_t, coeff_t>(bonds_c, indexing_in, indexing_out,
+                                           fill);
   return mat;
 }
 
 template arma::Mat<double>
-MatrixGen<uint16_t, double>(BondList const &bonds, Couplings const &couplings,
-                            tJ<uint16_t> const &block_in,
-                            tJ<uint16_t> const &block_out);
-template arma::Mat<double>
-MatrixGen<uint32_t, double>(BondList const &bonds, Couplings const &couplings,
-                            tJ<uint32_t> const &block_in,
-                            tJ<uint32_t> const &block_out);
-template arma::Mat<double>
-MatrixGen<uint64_t, double>(BondList const &bonds, Couplings const &couplings,
-                            tJ<uint64_t> const &block_in,
-                            tJ<uint64_t> const &block_out);
-
-template arma::Mat<complex>
-MatrixGen<uint16_t, complex>(BondList const &bonds, Couplings const &couplings,
+matrix_gen<uint16_t, double>(BondList const &bonds,
                              tJ<uint16_t> const &block_in,
                              tJ<uint16_t> const &block_out);
-template arma::Mat<complex>
-MatrixGen<uint32_t, complex>(BondList const &bonds, Couplings const &couplings,
+template arma::Mat<double>
+matrix_gen<uint32_t, double>(BondList const &bonds,
                              tJ<uint32_t> const &block_in,
                              tJ<uint32_t> const &block_out);
-template arma::Mat<complex>
-MatrixGen<uint64_t, complex>(BondList const &bonds, Couplings const &couplings,
+template arma::Mat<double>
+matrix_gen<uint64_t, double>(BondList const &bonds,
                              tJ<uint64_t> const &block_in,
                              tJ<uint64_t> const &block_out);
+
+template arma::Mat<complex>
+matrix_gen<uint16_t, complex>(BondList const &bonds,
+                              tJ<uint16_t> const &block_in,
+                              tJ<uint16_t> const &block_out);
+template arma::Mat<complex>
+matrix_gen<uint32_t, complex>(BondList const &bonds,
+                              tJ<uint32_t> const &block_in,
+                              tJ<uint32_t> const &block_out);
+template arma::Mat<complex>
+matrix_gen<uint64_t, complex>(BondList const &bonds,
+                              tJ<uint64_t> const &block_in,
+                              tJ<uint64_t> const &block_out);
 
 } // namespace hydra

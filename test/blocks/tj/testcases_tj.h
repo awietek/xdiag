@@ -4,18 +4,12 @@
 
 namespace hydra::testcases::tj {
 
-std::tuple<BondList, Couplings> tJchain(int n_sites, double t, double J);
-
-std::tuple<BondList, Couplings, arma::Col<double>>
-tJchain_fullspectrum_alps(int L);
-
-std::tuple<BondList, Couplings, arma::Col<double>>
-tj_square2x2_fullspectrum_alps();
-
-std::tuple<BondList, Couplings> tj_alltoall(int n_sites);
-std::tuple<BondList, Couplings> tj_alltoall_complex(int n_sites);
-
-std::tuple<BondList, Couplings, arma::Col<double>> randomAlltoAll3();
-std::tuple<BondList, Couplings, arma::Col<double>> randomAlltoAll4();
+BondList tJchain(int n_sites, double t, double J);
+std::tuple<BondList, arma::vec> tJchain_fullspectrum_alps(int L);
+std::tuple<BondList, arma::vec> tj_square2x2_fullspectrum_alps();
+BondList tj_alltoall(int n_sites);
+BondList tj_alltoall_complex(int n_sites);
+std::tuple<BondList, arma::vec> randomAlltoAll3();
+std::tuple<BondList, arma::vec> randomAlltoAll4();
 
 } // namespace hydra::testcases::tj

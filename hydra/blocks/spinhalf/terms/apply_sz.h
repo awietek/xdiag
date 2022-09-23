@@ -5,7 +5,7 @@
 
 #include <hydra/blocks/spinhalf/terms/apply_term_diag.h>
 
-namespace hydra::terms::spinhalf {
+namespace hydra::spinhalf {
 
 // Ising term: H S^z_i
 
@@ -34,4 +34,4 @@ void apply_sz(Bond const &bond, Indexing &&indexing, Fill &&fill) {
   spinhalf::apply_term_diag<bit_t, coeff_t>(indexing, term_coeff, fill);
 }
 
-} // namespace hydra::terms::spinhalf
+} // namespace hydra::spinhalf

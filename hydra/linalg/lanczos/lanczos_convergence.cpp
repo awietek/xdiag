@@ -1,10 +1,9 @@
 #include "lanczos_convergence.h"
 
-
 namespace hydra {
 
-bool ConvergedEigenvalues(Tmatrix const &tmat, int n_eigenvalue,
-                          double precision) {
+bool converged_eigenvalues(Tmatrix const &tmat, int n_eigenvalue,
+                           double precision) {
   int size = tmat.size();
   if (size <= n_eigenvalue + 1)
     return false;

@@ -4,12 +4,11 @@
 
 namespace hydra::testcases::spinhalf {
 
-std::tuple<BondList, Couplings> HBchain(int n_sites, double J1, double J2) {
+BondList HBchain(int n_sites, double J1, double J2) {
 
   BondList bondlist;
-  Couplings couplings;
-  couplings["J1"] = J1;
-  couplings["J2"] = J2;
+  bondlist["J1"] = J1;
+  bondlist["J2"] = J2;
 
   for (int s = 0; s < n_sites; ++s) {
     bondlist << Bond("HB", "J1", {s, (s + 1) % n_sites});
@@ -17,13 +16,13 @@ std::tuple<BondList, Couplings> HBchain(int n_sites, double J1, double J2) {
   for (int s = 0; s < n_sites; ++s) {
     bondlist << Bond("HB", "J2", {s, (s + 2) % n_sites});
   }
-  return {bondlist, couplings};
+  return bondlist;
 }
 
-std::tuple<BondList, Couplings, arma::Col<double>>
-HBchain_fullspectrum_nup(int L, int nup) {
+std::tuple<BondList, arma::Col<double>> HBchain_fullspectrum_nup(int L,
+                                                                 int nup) {
 
-  auto [bondlist, couplings] = HBchain(L, 1.0);
+  auto bondlist = HBchain(L, 1.0);
 
   arma::Col<double> eigs;
   if (L == 2) {
@@ -94,15 +93,14 @@ HBchain_fullspectrum_nup(int L, int nup) {
       eigs = {1.5};
     }
   }
-  return {bondlist, couplings, eigs};
+  return {bondlist, eigs};
 }
 
-std::tuple<BondList, Couplings> HB_alltoall(int n_sites) {
+BondList HB_alltoall(int n_sites) {
   std::default_random_engine generator;
   std::normal_distribution<double> distribution(0., 1.);
 
   BondList bondlist;
-  Couplings couplings;
   for (int s1 = 0; s1 < n_sites; ++s1)
     for (int s2 = s1 + 1; s2 < n_sites; ++s2) {
       std::stringstream ss;
@@ -110,13 +108,12 @@ std::tuple<BondList, Couplings> HB_alltoall(int n_sites) {
       std::string name = ss.str();
       double value = distribution(generator);
       bondlist << Bond("HB", name, {s1, s2});
-      couplings[name] = value;
+      bondlist[name] = value;
     }
-  return std::make_tuple(bondlist, couplings);
+  return bondlist;
 }
 
-std::tuple<BondList, Couplings, double> triangular_12_complex(int nup,
-                                                              double eta) {
+std::tuple<BondList, double> triangular_12_complex(int nup, double eta) {
 
   BondList bonds;
   bonds << Bond("ISING", "Jz", {0, 5});
@@ -192,9 +189,8 @@ std::tuple<BondList, Couplings, double> triangular_12_complex(int nup,
   bonds << Bond("EXCHANGE", "Jx", {7, 3});
   bonds << Bond("EXCHANGE", "Jx", {11, 6});
 
-  Couplings cpls;
-  cpls["Jz"] = 1.0;
-  cpls["Jx"] = complex(cos(2 * M_PI * eta), sin(2 * M_PI * eta));
+  bonds["Jz"] = 1.0;
+  bonds["Jx"] = complex(cos(2 * M_PI * eta), sin(2 * M_PI * eta));
   // lila::Log("Jx {} {}", lila::real(cpls["Jx"]), lila::imag(cpls["Jx"]));
 
   double e0 = 0;
@@ -213,7 +209,7 @@ std::tuple<BondList, Couplings, double> triangular_12_complex(int nup,
       e0 = -8.9863396883370398882;
     }
   }
-  return {bonds, cpls, e0};
+  return {bonds, e0};
 }
 
 } // namespace hydra::testcases::spinhalf

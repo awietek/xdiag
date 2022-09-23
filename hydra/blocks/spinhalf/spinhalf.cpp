@@ -70,7 +70,7 @@ Spinhalf<bit_t>::Spinhalf(int n_sites, PermutationGroup permutation_group,
             "eiter 0 (so sublattice coding) or between 1 and 5. Got {}",
             n_sublat);
   }
-  size_ = dimension(*indexing_);
+  size_ = spinhalf::size(*indexing_);
 }
 
 template <typename bit_t>
@@ -114,7 +114,7 @@ Spinhalf<bit_t>::Spinhalf(int n_sites, int n_up,
             "eiter 0 (so sublattice coding) or between 1 and 5. Got {}",
             n_sublat);
   }
-  size_ = dimension(*indexing_);
+  size_ = spinhalf::size(*indexing_);
 }
 
 template <typename bit_t>

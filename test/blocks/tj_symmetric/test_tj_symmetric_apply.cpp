@@ -10,8 +10,7 @@
 using namespace hydra;
 
 template <class bit_t>
-void test_apply_tj_symmetric(BondList bondlist, Couplings couplings,
-                             PermutationGroup space_group,
+void test_apply_tj_symmetric(BondList bondlist, PermutationGroup space_group,
                              std::vector<Representation> irreps) {
   int n_sites = space_group.n_sites();
 
@@ -26,27 +25,28 @@ void test_apply_tj_symmetric(BondList bondlist, Couplings couplings,
         auto block = tJ<bit_t>(n_sites, nup, ndn, space_group, irrep);
 
         if (block.size() > 0) {
-          auto H_sym = MatrixCplx(bondlist, couplings, block, block);
+          auto H_sym = matrix_cplx(bondlist, block, block);
           REQUIRE(arma::norm(H_sym - H_sym.t()) < 1e-12);
 
           // Check whether apply gives the same as matrix multiplication
           arma::cx_vec v(block.size(), arma::fill::randn);
           arma::cx_vec w1 = H_sym * v;
           arma::cx_vec w2(block.size(), arma::fill::zeros);
-          Apply(bondlist, couplings, block, v, block, w2);
+          apply(bondlist, block, v, block, w2);
           REQUIRE(close(w1, w2));
 
           // Compute eigenvalues and compare
           arma::vec evals_mat;
           arma::eig_sym(evals_mat, H_sym);
           double e0_mat = evals_mat(0);
-          double e0_app = E0Cplx(bondlist, couplings, block);
+          double e0_app = e0_cplx(bondlist, block);
+
           // Log.out("e0_mat: {}, e0_app: {}", e0_mat, e0_app);
           REQUIRE(std::abs(e0_mat - e0_app) < 1e-7);
 
           // Compute eigenvalues with real arithmitic
-          if (is_real(block.irrep()) && is_real(couplings)) {
-            auto H_real = MatrixReal(bondlist, couplings, block, block);
+          if (is_real(block.irrep()) && bondlist.is_real()) {
+            auto H_real = matrix_real(bondlist, block, block);
             REQUIRE(arma::norm(H_real - H_real.t()) < 1e-12);
 
             arma::vec evals_mat_real;
@@ -54,7 +54,7 @@ void test_apply_tj_symmetric(BondList bondlist, Couplings couplings,
             REQUIRE(close(evals_mat_real, evals_mat));
 
             double e0_mat_real = evals_mat_real(0);
-            double e0_app_real = E0Real(bondlist, couplings, block);
+            double e0_app_real = e0_real(bondlist, block);
             REQUIRE(std::abs(e0_mat_real - e0_app_real) < 1e-7);
           }
         }
@@ -69,10 +69,11 @@ template <class bit_t> void test_tj_symmetric_apply_chains(int n_sites) {
 
   Log("tj_symmetric_apply: tJ chain, symmetric apply test, n_sites: {}",
       n_sites);
-  auto [bondlist, couplings] = tJchain(n_sites, 1.0, 5.0);
+  auto bondlist = tJchain(n_sites, 1.0, 5.0);
   auto [space_group, irreps, multiplicities] =
       get_cyclic_group_irreps_mult(n_sites);
-  test_apply_tj_symmetric<bit_t>(bondlist, couplings, space_group, irreps);
+  (void)multiplicities;
+  test_apply_tj_symmetric<bit_t>(bondlist, space_group, irreps);
 }
 
 TEST_CASE("tj_symmetric_apply", "[blocks][tj_symmetric]") {
@@ -91,9 +92,8 @@ TEST_CASE("tj_symmetric_apply", "[blocks][tj_symmetric]") {
     std::string lfile = "data/triangular.9.hop.sublattices.tsl.lat";
 
     auto bondlist = read_bondlist(lfile);
-    Couplings couplings;
-    couplings["T"] = 1.0;
-    couplings["U"] = 5.0;
+    bondlist["T"] = 1.0;
+    bondlist["U"] = 5.0;
     auto permutations = hydra::read_permutations(lfile);
     auto space_group = PermutationGroup(permutations);
 
@@ -106,10 +106,11 @@ TEST_CASE("tj_symmetric_apply", "[blocks][tj_symmetric]") {
     std::vector<Representation> irreps;
     for (auto [name, mult] : rep_name_mult) {
       irreps.push_back(read_represenation(lfile, name));
+      (void)mult;
     }
-    test_apply_tj_symmetric<uint16_t>(bondlist, couplings, space_group, irreps);
-    test_apply_tj_symmetric<uint32_t>(bondlist, couplings, space_group, irreps);
-    test_apply_tj_symmetric<uint64_t>(bondlist, couplings, space_group, irreps);
+    test_apply_tj_symmetric<uint16_t>(bondlist, space_group, irreps);
+    test_apply_tj_symmetric<uint32_t>(bondlist, space_group, irreps);
+    test_apply_tj_symmetric<uint64_t>(bondlist, space_group, irreps);
   }
 
   {
@@ -138,16 +139,12 @@ TEST_CASE("tj_symmetric_apply", "[blocks][tj_symmetric]") {
     }
 
     for (auto eta : etas) {
-      Couplings couplings;
-      couplings["TPHI"] = complex(cos(eta * M_PI), sin(eta * M_PI));
-      couplings["JPHI"] = complex(cos(2 * eta * M_PI), sin(2 * eta * M_PI));
+      bondlist["TPHI"] = complex(cos(eta * M_PI), sin(eta * M_PI));
+      bondlist["JPHI"] = complex(cos(2 * eta * M_PI), sin(2 * eta * M_PI));
 
-      test_apply_tj_symmetric<uint16_t>(bondlist, couplings, space_group,
-                                        irreps);
-      test_apply_tj_symmetric<uint32_t>(bondlist, couplings, space_group,
-                                        irreps);
-      test_apply_tj_symmetric<uint64_t>(bondlist, couplings, space_group,
-                                        irreps);
+      test_apply_tj_symmetric<uint16_t>(bondlist, space_group, irreps);
+      test_apply_tj_symmetric<uint32_t>(bondlist, space_group, irreps);
+      test_apply_tj_symmetric<uint64_t>(bondlist, space_group, irreps);
     }
   }
 }

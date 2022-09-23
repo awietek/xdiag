@@ -5,7 +5,7 @@
 
 namespace hydra {
 
-bool ConvergedEigenvalues(Tmatrix const &tmat, int n_eigenvalue,
-                          double precision);
+bool converged_eigenvalues(Tmatrix const &tmat, int n_eigenvalue,
+                           double precision);
 
 } // namespace hydra

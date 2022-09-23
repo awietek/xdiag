@@ -13,12 +13,11 @@ TEST_CASE("symmetric_operator", "[symmetries]") {
   for (int n_sites = 3; n_sites < 5; ++n_sites) {
 
     // int n_sites = 6;
-    auto [bondlist, couplings] =
-        testcases::electron::get_linear_chain(n_sites, 1.0, 5.0);
+    auto bondlist = testcases::electron::get_linear_chain(n_sites, 1.0, 5.0);
     for (int i = 0; i < n_sites; ++i) {
       bondlist << Bond("HB", "J2", {i, (i + 2) % n_sites});
     }
-    couplings["J2"] = 0.321;
+    bondlist["J2"] = 0.321;
 
     auto [space_group, irreps] =
         testcases::electron::get_cyclic_group_irreps(n_sites);
@@ -29,16 +28,12 @@ TEST_CASE("symmetric_operator", "[symmetries]") {
         if (block_nosym.size() == 0) {
           continue;
         }
-        // HydraPrint(block_nosym.size());
-        // HydraPrint(MatrixCplx(bondlist, couplings, block_nosym,
-        // block_nosym));
-        auto [e0_nosym, v0_nosym] =
-            GroundstateCplx(bondlist, couplings, block_nosym);
+        auto [e0_nosym, v0_nosym] = groundstate_cplx(bondlist, block_nosym);
         {
           auto &v = v0_nosym;
           auto Hv = v;
-          Apply(bondlist, couplings, v, Hv);
-          auto e = Dot(v, Hv);
+          apply(bondlist, v, Hv);
+          auto e = dot(v, Hv);
           // HydraPrint(e);
           // HydraPrint(e0_nosym);
           REQUIRE(close(real(e), e0_nosym));
@@ -50,7 +45,7 @@ TEST_CASE("symmetric_operator", "[symmetries]") {
           auto block_sym = Electron(n_sites, nup, ndn, space_group, irrep);
           if (block_sym.size() == 0)
             continue;
-          double e0_sector = E0Cplx(bondlist, couplings, block_sym);
+          double e0_sector = e0_cplx(bondlist, block_sym);
 
           e0s.push_back(e0_sector);
           if (e0_sector < e0_sym) {
@@ -73,15 +68,14 @@ TEST_CASE("symmetric_operator", "[symmetries]") {
         // -> g.s. from non-symmetric calculation is unique and symmetric
         if (deg == 1) {
           auto block_sym = Electron(n_sites, nup, ndn, space_group, e0_irrep);
-          auto [e0_sym2, v0_sym] =
-              GroundstateCplx(bondlist, couplings, block_sym);
+          auto [e0_sym2, v0_sym] = groundstate_cplx(bondlist, block_sym);
           (void)e0_sym2;
           REQUIRE(close(e0_sym, e0_nosym));
           {
             auto &v = v0_sym;
             auto Hv = v;
-            Apply(bondlist, couplings, v, Hv);
-            auto e = Dot(v, Hv);
+            apply(bondlist, v, Hv);
+            auto e = dot(v, Hv);
             // HydraPrint(e);
             // HydraPrint(e0_nosym);
             REQUIRE(close(real(e), e0_nosym));
@@ -91,15 +85,11 @@ TEST_CASE("symmetric_operator", "[symmetries]") {
           for (int i = 1; i < n_sites; ++i) {
             BondList corr_nosym;
             corr_nosym << Bond("HB", "J", {0, i});
-            Couplings cpls;
-            cpls["J"] = 1.0;
+            corr_nosym["J"] = 1.0;
 
-            auto [corr_sym, cpls_sym] =
-                SymmetricOperator(corr_nosym, cpls, space_group);
-
-            auto val_nosym = Inner(corr_nosym, cpls, v0_nosym);
-
-            auto val_sym = Inner(corr_sym, cpls_sym, v0_sym);
+            auto corr_sym = symmetric_operator(corr_nosym, space_group);
+            auto val_nosym = inner(corr_nosym, v0_nosym);
+            auto val_sym = inner(corr_sym, v0_sym);
             // Log.out("(0,{}) nosym: {}, sym: {}", i, real(val_nosym),
             //               real(val_sym));
             REQUIRE(close(val_nosym, val_sym, 1e-6, 1e-6));

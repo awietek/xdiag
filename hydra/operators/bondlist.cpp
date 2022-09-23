@@ -12,42 +12,56 @@ BondList::BondList(std::vector<Bond> const &bonds) : bonds_(bonds) {}
 
 void BondList::operator<<(Bond const &bond) { bonds_.push_back(bond); }
 
-bool BondList::coupling_defined(std::string name) {
+bool BondList::coupling_defined(std::string name) const {
   return couplings_.count(name);
 }
 void BondList::set_coupling(std::string name, complex cpl) {
   couplings_[name] = cpl;
 }
-complex BondList::get_coupling(std::string name) const {
+
+template <typename coeff_t>
+coeff_t BondList::coupling(std::string name, double precision) const {
   if (couplings_.count(name)) {
-    return couplings_.at(name);
+    complex cpl = couplings_.at(name);
+    if constexpr (hydra::is_real<coeff_t>()) {
+      if (std::abs(imag(cpl)) > precision) {
+        Log.err("Error: cannot return real coupling for bond. Imaginary part "
+                "non-negligible.");
+        return 0.;
+      }
+      return real(cpl);
+    } else {
+      (void)precision;
+      return cpl;
+    }
   } else {
     Log.err("Error: undefined coupling in BondList: {}", name);
     return 0.;
   }
 }
+template double BondList::coupling<double>(std::string, double) const;
+template complex BondList::coupling<complex>(std::string, double) const;
 
-bool BondList::matrix_defined(std::string name) {
+bool BondList::matrix_defined(std::string name) const {
   return matrices_.count(name);
 }
 void BondList::set_matrix(std::string name, arma::cx_mat mat) {
   matrices_[name] = mat;
 }
 void BondList::set_matrix(std::string name, arma::mat mat) {
-  matrices_[name] = to_complex(mat);
+  matrices_[name] = to_cx_mat(mat);
 }
-arma::cx_mat BondList::get_matrix(std::string name) {
+arma::cx_mat BondList::matrix(std::string name) const {
   if (couplings_.count(name)) {
     return matrices_.at(name);
   } else {
     Log.err("Error: undefined coupling in BondList: {}", name);
-    return 0.;
   }
   return matrices_.at(name);
 }
 
 int BondList::size() const { return (int)bonds_.size(); }
-int BondList::clear() {
+void BondList::clear() {
   bonds_.clear();
   couplings_.clear();
   matrices_.clear();
@@ -65,26 +79,26 @@ int BondList::n_sites() const {
 
 BondList BondList::bonds_of_type(std::string type) const {
   std::vector<Bond> bonds_return;
-  for (Bond bond : bonds) {
+  for (Bond bond : bonds_) {
     if ((bond.type_defined()) && (bond.type() == type)) {
       bonds_return.push_back(bond);
     }
   }
-  return bonds_return;
+  return BondList(bonds_return);
 }
 
 BondList BondList::bonds_with_matrix() const {
   std::vector<Bond> bonds_return;
-  for (Bond bond : bonds) {
+  for (Bond bond : bonds_) {
     if (bond.matrix_defined()) {
       bonds_return.push_back(bond);
     }
   }
-  return bonds_return;
+  return BondList(bonds_return);
 }
 
 bool BondList::is_complex(double precision) const {
-  for (Bond bond : bonds) {
+  for (Bond bond : bonds_) {
 
     if (bond.matrix_defined()) {
       auto mat = bond.matrix();
@@ -98,22 +112,23 @@ bool BondList::is_complex(double precision) const {
 
         // coupling name defined in couplings
         if (couplings_.count(coupling_name)) {
-          complex cpl = couplings_[coupling_name];
+          complex cpl = couplings_.at(coupling_name);
           coupling_real = std::abs(cpl) < precision;
         } else {
           Log.err("Error: cannot determine whether Bond in BondList is "
                   "complex/real. Its coupling coefficient is not uniquely "
-                  "determined.")
+                  "determined.");
         }
       }
-      return matrix_real && coupling_real;
-    }
+      if ((!matrix_real) || (!coupling_real)) {
+        return true;
+      }
 
-    if (bond.type_defined()) {
+    } else { // bond.type_defined()
 
       // Inherently complex interactions
       if (std::find(complex_bond_types.begin(), complex_bond_types.end(),
-                    type_) != complex_bond_types.end()) {
+                    bond.type()) != complex_bond_types.end()) {
         return true;
       }
 
@@ -126,17 +141,20 @@ bool BondList::is_complex(double precision) const {
 
         // coupling name defined in couplings
         if (couplings_.count(coupling_name)) {
-          complex cpl = couplings_[coupling_name];
+          complex cpl = couplings_.at(coupling_name);
           coupling_real = std::abs(cpl) < precision;
         } else {
           Log.err("Error: cannot determine whether Bond in BondList is "
                   "complex/real. Its coupling coefficient is not uniquely "
-                  "determined.")
+                  "determined.");
         }
       }
-      return coupling_real;
+      if (!coupling_real) {
+        return true;
+      }
     }
   }
+  return false;
 }
 
 bool BondList::is_real(double precision) const {

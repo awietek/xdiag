@@ -1,17 +1,20 @@
 #include "tj.h"
 
-#include <hydra/utils/logger.h>
 #include <hydra/blocks/utils/block_utils.h>
+#include <hydra/utils/logger.h>
 
 namespace hydra {
+
+using namespace indexing;
 
 template <class bit_t>
 tJ<bit_t>::tJ(int n_sites, int nup, int ndn)
     : n_sites_(n_sites), charge_conserved_(true), charge_(nup + ndn),
       sz_conserved_(true), sz_(nup - ndn), n_up_(nup), n_dn_(ndn),
       symmetric_(false), permutation_group_(), irrep_(),
-      indexing_np_(std::make_shared<indexing_np_t>(n_sites, nup, ndn)),
-      indexing_sym_np_(), size_(indexing_np_->size()) {
+      indexing_(std::make_shared<tj::Indexing<bit_t>>(
+          tj::IndexingNp<bit_t>(n_sites, nup, ndn))),
+      size_(tj::size(*indexing_)) {
   assert(n_sites >= 0);
   utils::check_nup_ndn_tj(n_sites, nup, ndn, "tJ");
 }
@@ -23,10 +26,9 @@ tJ<bit_t>::tJ(int n_sites, int nup, int ndn, PermutationGroup permutation_group,
       sz_conserved_(true), sz_(nup - ndn), n_up_(nup), n_dn_(ndn),
       symmetric_(true),
       permutation_group_(allowed_subgroup(permutation_group, irrep)),
-      irrep_(irrep), indexing_np_(),
-      indexing_sym_np_(std::make_shared<indexing_sym_np_t>(
-          n_sites, nup, ndn, permutation_group, irrep)),
-      size_(indexing_sym_np_->size()) {
+      irrep_(irrep), indexing_(std::make_shared<tj::Indexing<bit_t>>(
+                         tj::IndexingNp<bit_t>(n_sites, nup, ndn))),
+      size_(tj::size(*indexing_)) {
   utils::check_nup_ndn_tj(n_sites, nup, ndn, "tJ");
   utils::check_n_sites(n_sites, permutation_group);
 }
@@ -45,17 +47,8 @@ template <class bit_t> bool tJ<bit_t>::operator!=(tJ<bit_t> const &rhs) const {
 }
 
 template <typename bit_t>
-indexing::tJIndexing<bit_t> const &tJ<bit_t>::indexing_np() const {
-  if (!(charge_conserved_ && sz_conserved_) || symmetric_)
-    Log.err("Error: wrong indexing required");
-  return *indexing_np_;
-}
-
-template <typename bit_t>
-indexing::tJSymmetricIndexing<bit_t> const &tJ<bit_t>::indexing_sym_np() const {
-  if (!(charge_conserved_ && sz_conserved_) || !symmetric_)
-    Log.err("Error: wrong indexing required");
-  return *indexing_sym_np_;
+indexing::tj::Indexing<bit_t> const &tJ<bit_t>::indexing() const {
+  return *indexing_;
 }
 
 template class tJ<uint16_t>;

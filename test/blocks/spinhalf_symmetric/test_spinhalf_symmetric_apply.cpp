@@ -9,7 +9,7 @@
 using namespace hydra;
 
 template <class bit_t>
-void test_spinhalf_symmetric_apply(BondList bondlist, Couplings couplings,
+void test_spinhalf_symmetric_apply(BondList bondlist,
                                    PermutationGroup space_group,
                                    std::vector<Representation> irreps) {
   int n_sites = space_group.n_sites();
@@ -19,14 +19,14 @@ void test_spinhalf_symmetric_apply(BondList bondlist, Couplings couplings,
       auto block = Spinhalf<bit_t>(n_sites, nup, space_group, irrep);
 
       if (block.size() > 0) {
-        auto H = MatrixCplx(bondlist, couplings, block, block);
+        auto H = matrix_cplx(bondlist, block, block);
         REQUIRE(arma::norm(H - H.t()) < 1e-12);
 
         // Check whether apply gives the same as matrix multiplication
         arma::cx_vec v(block.size(), arma::fill::randn);
         arma::cx_vec w1 = H * v;
         arma::cx_vec w2(block.size(), arma::fill::zeros);
-        Apply(bondlist, couplings, block, v, block, w2);
+        apply(bondlist, block, v, block, w2);
         REQUIRE(close(w1, w2));
 
         // Compute eigenvalues and compare
@@ -34,20 +34,20 @@ void test_spinhalf_symmetric_apply(BondList bondlist, Couplings couplings,
         arma::eig_sym(evals_mat, H);
 
         double e0_mat = evals_mat(0);
-        double e0_app = E0Cplx(bondlist, couplings, block);
+        double e0_app = e0_cplx(bondlist, block);
         // Log.out("e0_mat: {}, e0_app: {}", e0_mat, e0_app);
         REQUIRE(std::abs(e0_mat - e0_app) < 1e-7);
 
         // Compute eigenvalues with real arithmitic
-        if (is_real(block.irrep()) && is_real(couplings)) {
-          auto H_real = MatrixReal(bondlist, couplings, block, block);
+        if (is_real(block.irrep()) && bondlist.is_real()) {
+          auto H_real = matrix_real(bondlist, block, block);
           arma::vec evals_mat_real;
           arma::eig_sym(evals_mat_real, H_real);
 
           REQUIRE(close(evals_mat_real, evals_mat));
 
           double e0_mat_real = evals_mat_real(0);
-          double e0_app_real = E0Real(bondlist, couplings, block);
+          double e0_app_real = e0_real(bondlist, block);
           REQUIRE(std::abs(e0_mat_real - e0_app_real) < 1e-7);
         }
       }
@@ -56,7 +56,7 @@ void test_spinhalf_symmetric_apply(BondList bondlist, Couplings couplings,
 }
 
 template <class bit_t>
-void test_spinhalf_symmetric_apply_no_sz(BondList bondlist, Couplings couplings,
+void test_spinhalf_symmetric_apply_no_sz(BondList bondlist,
                                          PermutationGroup space_group,
                                          std::vector<Representation> irreps) {
   int n_sites = space_group.n_sites();
@@ -65,33 +65,34 @@ void test_spinhalf_symmetric_apply_no_sz(BondList bondlist, Couplings couplings,
     auto block = Spinhalf<bit_t>(n_sites, space_group, irrep);
 
     if (block.size() > 0) {
-      auto H = MatrixCplx(bondlist, couplings, block, block);
+      auto H = matrix_cplx(bondlist, block, block);
       REQUIRE(arma::norm(H - H.t()) < 1e-12);
       // Check whether apply gives the same as matrix multiplication
       arma::cx_vec v(block.size(), arma::fill::randn);
       arma::cx_vec w1 = H * v;
       arma::cx_vec w2(block.size(), arma::fill::zeros);
-      Apply(bondlist, couplings, block, v, block, w2);
+      apply(bondlist, block, v, block, w2);
       REQUIRE(close(w1, w2));
       // Compute eigenvalues and compare
       arma::vec evals_mat;
       arma::eig_sym(evals_mat, H);
 
       double e0_mat = evals_mat(0);
-      double e0_app = E0Cplx(bondlist, couplings, block);
+      double e0_app = e0_cplx(bondlist, block);
+
       // Log.out("e0_mat: {}, e0_app: {}", e0_mat, e0_app);
       REQUIRE(std::abs(e0_mat - e0_app) < 1e-7);
 
       // Compute eigenvalues with real arithmitic
-      if (is_real(block.irrep()) && is_real(couplings)) {
-        auto H_real = MatrixReal(bondlist, couplings, block, block);
+      if (is_real(block.irrep()) && bondlist.is_real()) {
+        auto H_real = matrix_real(bondlist, block, block);
         arma::vec evals_mat_real;
         arma::eig_sym(evals_mat_real, H_real);
 
         REQUIRE(close(evals_mat_real, evals_mat));
 
         double e0_mat_real = evals_mat_real(0);
-        double e0_app_real = E0Real(bondlist, couplings, block);
+        double e0_app_real = e0_real(bondlist, block);
         REQUIRE(std::abs(e0_mat_real - e0_app_real) < 1e-7);
       }
     }
@@ -103,11 +104,9 @@ template <class bit_t> void test_spinhalf_symmetric_apply_chains(int n_sites) {
   using hydra::testcases::electron::get_cyclic_group_irreps;
   Log.out("spinhalf_symmetric_apply: HB chain, N: {}", n_sites);
   auto [space_group, irreps] = get_cyclic_group_irreps(n_sites);
-  auto [bondlist, couplings] = HBchain(n_sites, 1.0, 1.0);
-  test_spinhalf_symmetric_apply<bit_t>(bondlist, couplings, space_group,
-                                       irreps);
-  test_spinhalf_symmetric_apply_no_sz<bit_t>(bondlist, couplings, space_group,
-                                             irreps);
+  auto bondlist = HBchain(n_sites, 1.0, 1.0);
+  test_spinhalf_symmetric_apply<bit_t>(bondlist, space_group, irreps);
+  test_spinhalf_symmetric_apply_no_sz<bit_t>(bondlist, space_group, irreps);
 }
 
 TEST_CASE("spinhalf_symmetric_apply", "[blocks][spinhalf_symmetric]") {
@@ -124,11 +123,10 @@ TEST_CASE("spinhalf_symmetric_apply", "[blocks][spinhalf_symmetric]") {
   std::string lfile = "data/triangular.9.Jz1Jz2Jx1Jx2D1.sublattices.tsl.lat";
 
   auto bondlist = read_bondlist(lfile);
-  Couplings couplings;
-  couplings["Jz1"] = 1.00;
-  couplings["Jz2"] = 0.23;
-  couplings["Jx1"] = 0.76;
-  couplings["Jx2"] = 0.46;
+  bondlist["Jz1"] = 1.00;
+  bondlist["Jz2"] = 0.23;
+  bondlist["Jx1"] = 0.76;
+  bondlist["Jx2"] = 0.46;
 
   std::vector<std::pair<std::string, int>> rep_name_mult = {
       {"Gamma.D6.A1", 1}, {"Gamma.D6.A2", 1}, {"Gamma.D6.B1", 1},
@@ -141,12 +139,11 @@ TEST_CASE("spinhalf_symmetric_apply", "[blocks][spinhalf_symmetric]") {
 
   std::vector<Representation> irreps;
   for (auto [name, mult] : rep_name_mult) {
+    (void)mult;
     irreps.push_back(read_represenation(lfile, name));
   }
-  test_spinhalf_symmetric_apply<uint16_t>(bondlist, couplings, space_group,
-                                          irreps);
-  test_spinhalf_symmetric_apply_no_sz<uint64_t>(bondlist, couplings,
-                                                space_group, irreps);
+  test_spinhalf_symmetric_apply<uint16_t>(bondlist, space_group, irreps);
+  test_spinhalf_symmetric_apply_no_sz<uint64_t>(bondlist, space_group, irreps);
 
   // test J1-J2-Jchi triangular lattice
   {
@@ -155,10 +152,9 @@ TEST_CASE("spinhalf_symmetric_apply", "[blocks][spinhalf_symmetric]") {
                         "triangular.12.j1j2jch.sublattices.fsl.lat";
 
     auto bondlist = read_bondlist(lfile);
-    Couplings couplings;
-    couplings["J1"] = 1.00;
-    couplings["J2"] = 0.15;
-    couplings["Jchi"] = 0.09;
+    bondlist["J1"] = 1.00;
+    bondlist["J2"] = 0.15;
+    bondlist["Jchi"] = 0.09;
 
     std::vector<std::pair<std::string, double>> rep_name_mult = {
         {"Gamma.C6.A", -6.9456000700824329641},
@@ -180,7 +176,7 @@ TEST_CASE("spinhalf_symmetric_apply", "[blocks][spinhalf_symmetric]") {
     for (auto [name, energy] : rep_name_mult) {
       auto irrep = read_represenation(lfile, name);
       auto spinhalf = Spinhalf<uint16_t>(n_sites, n_up, space_group, irrep);
-      auto e0 = E0Cplx(bondlist, couplings, spinhalf);
+      auto e0 = e0_cplx(bondlist, spinhalf);
       Log("{} {:.12f} {:.12f}", name, e0, energy);
 
       REQUIRE(std::abs(e0 - energy) < 1e-10);

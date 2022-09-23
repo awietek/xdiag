@@ -6,7 +6,7 @@
 #include <hydra/parallel/omp/omp_utils.h>
 #endif
 
-namespace hydra::terms::spinhalf {
+namespace hydra::spinhalf {
 template <typename bit_t, typename coeff_t, class TermCoeff, class Fill>
 void apply_term_diag_to_spins(bit_t spins, idx_t idx, TermCoeff &&term_coeff,
                               Fill &&fill) {
@@ -34,4 +34,4 @@ void apply_term_diag(Indexing &&indexing, TermCoeff &&term_coeff, Fill &&fill) {
 #endif
 }
 
-} // namespace hydra::terms::spinhalf
+} // namespace hydra::spinhalf

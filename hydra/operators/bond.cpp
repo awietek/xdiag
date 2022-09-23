@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <hydra/common.h>
+#include <set>
 
 namespace hydra {
 
@@ -33,14 +34,14 @@ Bond::Bond(std::string type, std::string coupling_name,
 
 // Constructors with bond matrix
 template <typename coeff_t>
-Bond(arma::Mat<coeff_t> const &matrix, int site)
+Bond::Bond(arma::Mat<coeff_t> const &matrix, int site)
     : type_("HYDRA_TYPE_UNDEFINED"), matrix_(to_cx_mat(matrix)), coupling_(1.0),
       coupling_name_("HYDRA_COUPLING_NAMELESS"), sites_({site}) {}
 template Bond::Bond<double>(arma::Mat<double> const &, int);
 template Bond::Bond<complex>(arma::Mat<complex> const &, int);
 
 template <typename coeff_t>
-Bond(arma::Mat<coeff_t> const &matrix, std::vector<int> const &sites)
+Bond::Bond(arma::Mat<coeff_t> const &matrix, std::vector<int> const &sites)
     : type_("HYDRA_TYPE_UNDEFINED"), matrix_(to_cx_mat(matrix)), coupling_(1.0),
       coupling_name_("HYDRA_COUPLING_NAMELESS"), sites_(sites) {}
 template Bond::Bond<double>(arma::Mat<double> const &,
@@ -49,7 +50,7 @@ template Bond::Bond<complex>(arma::Mat<complex> const &,
                              std::vector<int> const &);
 
 template <typename coeff_t>
-Bond(arma::Mat<coeff_t> const &matrix, complex coupling, int site)
+Bond::Bond(arma::Mat<coeff_t> const &matrix, complex coupling, int site)
     : type_("HYDRA_TYPE_UNDEFINED"), matrix_(to_cx_mat(matrix)),
       coupling_(coupling), coupling_name_("HYDRA_COUPLING_NAMELESS"),
       sites_({site}) {}
@@ -57,8 +58,8 @@ template Bond::Bond<double>(arma::Mat<double> const &, complex, int);
 template Bond::Bond<complex>(arma::Mat<complex> const &, complex, int);
 
 template <typename coeff_t>
-Bond(arma::Mat<coeff_t> const &matrix, complex coupling,
-     std::vector<int> const &sites)
+Bond::Bond(arma::Mat<coeff_t> const &matrix, complex coupling,
+           std::vector<int> const &sites)
     : type_("HYDRA_TYPE_UNDEFINED"), matrix_(to_cx_mat(matrix)),
       coupling_(coupling), coupling_name_("HYDRA_COUPLING_NAMELESS"),
       sites_(sites) {}
@@ -68,15 +69,16 @@ template Bond::Bond<complex>(arma::Mat<complex> const &, complex,
                              std::vector<int> const &);
 
 template <typename coeff_t>
-Bond(arma::Mat<coeff_t> const &matrix, std::string coupling_name, int site)
+Bond::Bond(arma::Mat<coeff_t> const &matrix, std::string coupling_name,
+           int site)
     : type_("HYDRA_TYPE_UNDEFINED"), matrix_(to_cx_mat(matrix)), coupling_(0.0),
       coupling_name_(coupling_name), sites_({site}) {}
 template Bond::Bond<double>(arma::Mat<double> const &, std::string, int);
 template Bond::Bond<complex>(arma::Mat<complex> const &, std::string, int);
 
 template <typename coeff_t>
-Bond(arma::Mat<coeff_t> const &matrix, std::string coupling_name,
-     std::vector<int> const &sites)
+Bond::Bond(arma::Mat<coeff_t> const &matrix, std::string coupling_name,
+           std::vector<int> const &sites)
     : type_("HYDRA_TYPE_UNDEFINED"), matrix_(to_cx_mat(matrix)), coupling_(0.0),
       coupling_name_(coupling_name), sites_(sites) {}
 template Bond::Bond<double>(arma::Mat<double> const &,
@@ -86,12 +88,10 @@ template Bond::Bond<complex>(arma::Mat<complex> const &,
                              std::string coupling_name,
                              std::vector<int> const &);
 
-bool Bond::type_defined() const {
-  return coupling_name != "HYDRA_TYPE_UNDEFINED";
-}
+bool Bond::type_defined() const { return (type_ != "HYDRA_TYPE_UNDEFINED"); }
 bool Bond::matrix_defined() const { return !type_defined(); }
 bool Bond::coupling_defined() const {
-  return coupling_name == "HYDRA_COUPLING_NAMELESS";
+  return (coupling_name_ == "HYDRA_COUPLING_NAMELESS");
 }
 bool Bond::coupling_named() const { return !coupling_defined(); }
 bool Bond::sites_disjoint() const {
@@ -114,7 +114,7 @@ arma::cx_mat Bond::matrix() const {
   return matrix_;
 }
 
-arma::cx_mat Bond::matrix_real() const {
+arma::mat Bond::matrix_real() const {
   if (!matrix_defined()) {
     Log.err("Error: cannot get matrix (real part) of bond. Matrix is undefined "
             "for this bond.");
@@ -128,7 +128,7 @@ template <typename coeff_t> coeff_t Bond::coupling(double precision) const {
     Log.err("Error: only coupling_name is defined for this bond!");
   }
 
-  if constexpr (is_real<coeff_t>()) {
+  if constexpr (hydra::is_real<coeff_t>()) {
     if (std::abs(imag(coupling_)) > precision) {
       Log.err("Error: cannot return real coupling for bond. Imaginary part "
               "non-negligible.");
@@ -193,7 +193,7 @@ bool Bond::is_complex(double precision) const {
   }
 }
 
-bool Bond::is_real(double precision) { return !is_complex(precision); }
+bool Bond::is_real(double precision) const { return !is_complex(precision); }
 
 std::vector<int> common_sites(Bond b1, Bond b2) {
   std::vector<int> s1 = b1.sites();

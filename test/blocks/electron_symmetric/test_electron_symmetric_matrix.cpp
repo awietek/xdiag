@@ -9,7 +9,6 @@ using namespace hydra;
 
 template <class bit_t>
 void test_electron_symmetric_spectra_no_np(BondList bondlist,
-                                           Couplings couplings,
                                            PermutationGroup space_group,
                                            std::vector<Representation> irreps,
                                            std::vector<int> multiplicities) {
@@ -18,7 +17,7 @@ void test_electron_symmetric_spectra_no_np(BondList bondlist,
   auto block_total = Electron(n_sites);
   if (block_total.size() < 1000) {
 
-    auto H_total = MatrixCplx(bondlist, couplings, block_total, block_total);
+    auto H_total = matrix_cplx(bondlist, block_total, block_total);
     REQUIRE(H_total.is_hermitian(1e-8));
 
     arma::vec eigs_total;
@@ -27,7 +26,7 @@ void test_electron_symmetric_spectra_no_np(BondList bondlist,
     std::vector<double> eigs_all;
     for (auto irrep : irreps) {
       auto block_no_np = Electron(n_sites, space_group, irrep);
-      auto H_no_np = MatrixCplx(bondlist, couplings, block_no_np, block_no_np);
+      auto H_no_np = matrix_cplx(bondlist, block_no_np, block_no_np);
 
       REQUIRE(H_no_np.is_hermitian(1e-8));
 
@@ -38,7 +37,7 @@ void test_electron_symmetric_spectra_no_np(BondList bondlist,
       for (int nup = 0; nup <= n_sites; ++nup) {
         for (int ndn = 0; ndn <= n_sites; ++ndn) {
           auto block_np = Electron(n_sites, nup, ndn, space_group, irrep);
-          auto H_np = MatrixCplx(bondlist, couplings, block_np, block_np);
+          auto H_np = matrix_cplx(bondlist, block_np, block_np);
           REQUIRE(H_np.is_hermitian(1e-8));
 
           arma::vec eigs_np;
@@ -62,7 +61,7 @@ void test_electron_symmetric_spectra_no_np(BondList bondlist,
 }
 
 template <class bit_t>
-void test_electron_symmetric_spectra(BondList bondlist, Couplings couplings,
+void test_electron_symmetric_spectra(BondList bondlist,
                                      PermutationGroup space_group,
                                      std::vector<Representation> irreps,
                                      std::vector<int> multiplicities) {
@@ -77,8 +76,7 @@ void test_electron_symmetric_spectra(BondList bondlist, Couplings couplings,
       auto electron_nosym = Electron<bit_t>(n_sites, nup, ndn);
       if (electron_nosym.size() < 1000) {
 
-        auto H_nosym =
-            MatrixCplx(bondlist, couplings, electron_nosym, electron_nosym);
+        auto H_nosym = matrix_cplx(bondlist, electron_nosym, electron_nosym);
         REQUIRE(H_nosym.is_hermitian(1e-8));
         arma::vec eigs_nosym;
         arma::eig_sym(eigs_nosym, H_nosym);
@@ -99,7 +97,7 @@ void test_electron_symmetric_spectra(BondList bondlist, Couplings couplings,
           if (electron.size() > 0) {
 
             // Compute partial spectrum from symmetrized block
-            auto H_sym = MatrixCplx(bondlist, couplings, electron, electron);
+            auto H_sym = matrix_cplx(bondlist, electron, electron);
             REQUIRE(arma::norm(H_sym - H_sym.t()) < 1e-12);
 
             // REQUIRE(H_sym.is_hermitian(1e-7));
@@ -107,9 +105,8 @@ void test_electron_symmetric_spectra(BondList bondlist, Couplings couplings,
             arma::eig_sym(eigs_sym_k, H_sym);
 
             // Check whether results are the same for real blocks
-            if (!is_complex(electron.irrep()) && !(is_complex(couplings))) {
-              auto H_sym_real =
-                  MatrixReal(bondlist, couplings, electron, electron);
+            if (is_real(electron.irrep()) && bondlist.is_real()) {
+              auto H_sym_real = matrix_real(bondlist, electron, electron);
               arma::vec eigs_sym_k_real;
               arma::eig_sym(eigs_sym_k_real, H_sym_real);
               REQUIRE(close(eigs_sym_k, eigs_sym_k_real));
@@ -141,22 +138,21 @@ void test_hubbard_symmetric_spectrum_chains(int n_sites) {
 
   // Without Heisenberg term
   Log.out("electron_symmetric_matrix: Hubbard chain,n_sites: {}", n_sites);
-  auto [bondlist, couplings] = get_linear_chain(n_sites, 1.0, 5.0);
-  test_electron_symmetric_spectra<bit_t>(bondlist, couplings, space_group,
-                                         irreps, multiplicities);
-  test_electron_symmetric_spectra_no_np<bit_t>(bondlist, couplings, space_group,
-                                               irreps, multiplicities);
+  auto bondlist = get_linear_chain(n_sites, 1.0, 5.0);
+  test_electron_symmetric_spectra<bit_t>(bondlist, space_group, irreps,
+                                         multiplicities);
+  test_electron_symmetric_spectra_no_np<bit_t>(bondlist, space_group, irreps,
+                                               multiplicities);
 
   // With Heisenberg term
   Log("electron_symmetric_matrix: Hubbard chain,  n_sites: {} (+ "
       "Heisenberg terms)",
       n_sites);
-  auto [bondlist_hb, couplings_hb] =
-      get_linear_chain_hb(n_sites, 1.0, 5.0, 0.4);
-  test_electron_symmetric_spectra<bit_t>(bondlist_hb, couplings_hb, space_group,
-                                         irreps, multiplicities);
-  test_electron_symmetric_spectra_no_np<bit_t>(
-      bondlist_hb, couplings_hb, space_group, irreps, multiplicities);
+  auto bondlist_hb = get_linear_chain_hb(n_sites, 1.0, 5.0, 0.4);
+  test_electron_symmetric_spectra<bit_t>(bondlist_hb, space_group, irreps,
+                                         multiplicities);
+  test_electron_symmetric_spectra_no_np<bit_t>(bondlist_hb, space_group, irreps,
+                                               multiplicities);
 }
 
 TEST_CASE("electron_symmetric_matrix", "[blocks][electron_symmetric]") {
@@ -170,14 +166,14 @@ TEST_CASE("electron_symmetric_matrix", "[blocks][electron_symmetric]") {
   int ndn = 2;
   double t = 1.0;
   double U = 5.0;
-  auto [bondlist, couplings] = get_linear_chain(n_sites, t, U);
+  auto bondlist = get_linear_chain(n_sites, t, U);
   auto [space_group, irreps, multiplicities] =
       get_cyclic_group_irreps_mult(n_sites);
 
   for (int k = 0; k < (int)irreps.size(); ++k) {
     auto irrep = irreps[k];
     auto electron = Electron<uint16_t>(n_sites, nup, ndn, space_group, irrep);
-    auto H_sym = MatrixCplx(bondlist, couplings, electron, electron);
+    auto H_sym = matrix_cplx(bondlist, electron, electron);
     complex U2 = 2 * U;
     complex UU = U;
     complex tp = t;
@@ -226,9 +222,8 @@ TEST_CASE("electron_symmetric_matrix", "[blocks][electron_symmetric]") {
   std::string lfile = "data/triangular.9.hop.sublattices.tsl.lat";
 
   bondlist = read_bondlist(lfile);
-  couplings.clear();
-  couplings["T"] = 1.0;
-  couplings["U"] = 5.0;
+  bondlist["T"] = 1.0;
+  bondlist["U"] = 5.0;
   auto permutations = hydra::read_permutations(lfile);
   space_group = PermutationGroup(permutations);
 
@@ -243,8 +238,8 @@ TEST_CASE("electron_symmetric_matrix", "[blocks][electron_symmetric]") {
     irreps.push_back(read_represenation(lfile, name));
     multiplicities.push_back(mult);
   }
-  test_electron_symmetric_spectra<bit_t>(bondlist, couplings, space_group,
-                                         irreps, multiplicities);
+  test_electron_symmetric_spectra<bit_t>(bondlist, space_group, irreps,
+                                         multiplicities);
 
   // test a 3x3 triangular lattice with Heisenberg terms
   Log("electron_symmetric_matrix: Hubbard 3x3 triangular(+ Heisenberg terms)");
@@ -252,9 +247,9 @@ TEST_CASE("electron_symmetric_matrix", "[blocks][electron_symmetric]") {
   for (auto bond : bondlist) {
     bondlist_hb << Bond("HB", "J", {bond[0], bond[1]});
   }
-  couplings["J"] = 0.4;
-  test_electron_symmetric_spectra<bit_t>(bondlist_hb, couplings, space_group,
-                                         irreps, multiplicities);
+  bondlist_hb["J"] = 0.4;
+  test_electron_symmetric_spectra<bit_t>(bondlist_hb, space_group, irreps,
+                                         multiplicities);
 
   // test a 3x3 triangular lattice with complex hoppings
   {
@@ -263,9 +258,8 @@ TEST_CASE("electron_symmetric_matrix", "[blocks][electron_symmetric]") {
     std::string lfile =
         "data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.lat";
     BondList bondlist = read_bondlist(lfile);
-    Couplings couplings;
-    couplings["TPHI"] = complex(0.5, 0.5);
-    couplings["U"] = 5.0;
+    bondlist["TPHI"] = complex(0.5, 0.5);
+    bondlist["U"] = 5.0;
     auto permutations = hydra::read_permutations(lfile);
     space_group = PermutationGroup(permutations);
 
@@ -280,7 +274,7 @@ TEST_CASE("electron_symmetric_matrix", "[blocks][electron_symmetric]") {
       irreps.push_back(read_represenation(lfile, name));
       multiplicities.push_back(mult);
     }
-    test_electron_symmetric_spectra<bit_t>(bondlist, couplings, space_group,
-                                           irreps, multiplicities);
+    test_electron_symmetric_spectra<bit_t>(bondlist, space_group, irreps,
+                                           multiplicities);
   }
 }

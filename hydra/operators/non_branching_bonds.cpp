@@ -3,9 +3,10 @@
 #include <tuple>
 #include <vector>
 
+#include <hydra/bitops/bitops.h>
 #include <hydra/common.h>
 
-namespace hydra {
+namespace hydra::operators {
 
 BondList non_branching_bonds(Bond const &bond, double precision) {
   if (bond.type_defined()) {
@@ -48,17 +49,19 @@ BondList non_branching_bonds(Bond const &bond, double precision) {
     std::vector<int> forbidden_rows;
     std::vector<std::tuple<int, int, complex>> current_entries;
     std::vector<int> delete_entries;
+    int i = 0;
     for (auto [row, column, coeff] : all_entries) {
 
       if ((std::find(forbidden_rows.begin(), forbidden_rows.end(), row) ==
            forbidden_rows.end()) &&
           (std::find(forbidden_columns.begin(), forbidden_columns.end(),
                      column) == forbidden_columns.end())) {
-        current_entries.push_back(all_entries[i]);
+        current_entries.push_back({row, column, coeff});
         forbidden_rows.push_back(row);
         forbidden_columns.push_back(column);
         delete_entries.push_back(i);
       }
+      ++i;
     }
 
     for (int i = delete_entries.size() - 1; i >= 0; --i)
@@ -82,6 +85,7 @@ BondList non_branching_bonds(Bond const &bond, double precision) {
   }
   return bonds_nb;
 }
+
 BondList non_branching_bonds(BondList const &bonds, double precision) {
   BondList bonds_nb;
   for (Bond bond : bonds) {
@@ -90,4 +94,144 @@ BondList non_branching_bonds(BondList const &bonds, double precision) {
   return bonds_nb;
 }
 
-} // namespace hydra
+bool is_non_branching_bond(Bond const &bond, double precision) {
+  if (bond.type_defined()) {
+    return false;
+  }
+  arma::cx_mat mat = bond.matrix();
+  for (arma::uword i = 0; i < mat.n_rows; ++i) {
+    int non_zero_in_row = 0;
+    for (arma::uword j = 0; j < mat.n_cols; ++j) {
+      if (std::abs(mat(i, j)) > precision) {
+        ++non_zero_in_row;
+      }
+    }
+    if (non_zero_in_row > 1) {
+      return false;
+    }
+  }
+  return true;
+}
+
+template <typename bit_t, typename coeff_t>
+NonBranchingBond<bit_t, coeff_t>::NonBranchingBond(Bond const &bond,
+                                                   double precision)
+    : sites_(bond.sites()), dim_(1 << sites_.size()), mask_(0) {
+  if (!is_non_branching_bond(bond, precision)) {
+    Log.err("Error: trying to create a NonBranchingBond from a Bond which is "
+            "branching");
+  }
+  for (auto s : bond.sites()) {
+    mask_ |= ((bit_t)1 << s);
+  }
+  mask_ = !mask_;
+
+  arma::cx_mat matrix_ = bond.matrix();
+
+  // Matrix dimension is 2**(no. sites of bond)
+  if ((matrix_.n_cols != dim_) || (matrix_.n_rows != dim_)) {
+    Log.err("Error: invalid matrix dimension for non-branching bond matrix.");
+  }
+
+  non_zero_term_ = std::vector<bool>(dim_, false);
+  state_applied_ = std::vector<bit_t>(dim_, 0);
+  coeff_ = std::vector<coeff_t>(dim_, 0.);
+
+  for (bit_t in = 0; in < dim_; ++in) {
+    int non_zero_in_row = 0;
+
+    for (bit_t out = 0; out < dim_; ++out) {
+      if (std::abs(matrix_(in, out)) > precision) {
+        non_zero_term_[in] = true;
+        state_applied_[in] = out;
+        if constexpr (is_real<coeff_t>()) {
+          if (std::abs(imag(matrix_(in, out))) > precision) {
+            Log.err("Error: trying to create a real NonBranchingBond, but "
+                    "found a truly complex matrix entry");
+          }
+          coeff_[in] = real(matrix_(in, out));
+        } else {
+          coeff_[in] = matrix_(in, out);
+        }
+        ++non_zero_in_row;
+      }
+    }
+
+    // security check
+    if (non_zero_term_[in]) {
+      assert(non_zero_in_row == 1);
+    } else {
+      assert(non_zero_in_row == 0);
+    }
+  }
+}
+
+template <typename bit_t, typename coeff_t>
+bool NonBranchingBond<bit_t, coeff_t>::is_diagonal() const {
+  for (bit_t i = 0; i < dim_; ++i) {
+    if ((non_zero_term_[i]) && (state_applied_[i] != i)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+template <typename bit_t, typename coeff_t>
+coeff_t NonBranchingBond<bit_t, coeff_t>::coeff(bit_t local_state) const {
+  return coeff_[local_state];
+}
+
+template <typename bit_t, typename coeff_t>
+std::pair<bit_t, coeff_t>
+NonBranchingBond<bit_t, coeff_t>::state_coeff(bit_t local_state) const {
+  return {state_applied_[local_state], coeff_[local_state]};
+}
+
+template <typename bit_t, typename coeff_t>
+bit_t NonBranchingBond<bit_t, coeff_t>::extract_local_state(bit_t state) const {
+  bit_t local_state = 0;
+  for (int i = 0; i < (int)sites_.size(); ++i) {
+    local_state |= bitops::gbit(state, sites_[i]) << i;
+  }
+  return local_state;
+}
+
+template <typename bit_t, typename coeff_t>
+bit_t NonBranchingBond<bit_t, coeff_t>::deposit_local_state(bit_t local_state,
+                                                            bit_t state) const {
+  state &= mask_; // clear bits on site
+  for (int i = 0; i < (int)sites_.size(); ++i) {
+    state |= bitops::gbit(state, i) << sites_[i];
+  }
+  return state;
+}
+
+template <typename bit_t, typename coeff_t>
+int NonBranchingBond<bit_t, coeff_t>::number_difference() const {
+  int diff = 0;
+  bool first_diff = true;
+  for (bit_t state = 0; state < dim_; ++state) {
+    if (non_zero_term_[state]) {
+      int diff_state =
+          bitops::popcnt(state_applied_[state]) - bitops::popcnt(state);
+      if (first_diff) {
+        diff = diff_state;
+        first_diff = false;
+      } else {
+        if (diff_state != diff) {
+          return undefined_qn;
+        }
+      }
+    }
+  }
+  return diff;
+}
+
+template class NonBranchingBond<uint16_t, double>;
+template class NonBranchingBond<uint32_t, double>;
+template class NonBranchingBond<uint64_t, double>;
+template class NonBranchingBond<uint16_t, complex>;
+template class NonBranchingBond<uint32_t, complex>;
+template class NonBranchingBond<uint64_t, complex>;
+
+} // namespace hydra::operators

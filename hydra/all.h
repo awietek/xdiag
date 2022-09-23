@@ -46,27 +46,27 @@
 #include "indexing/spinhalf/indexing_sz.h"
 #include "indexing/spinhalf/symmetric_iterator.h"
 
-#include "indexing/tj/tj_indexing.h"
-#include "indexing/tj/tj_symmetric_indexing.h"
+#include "indexing/tj/indexing_np.h"
+#include "indexing/tj/indexing_symmetric_np.h"
 
-#include "indexing/electron/electron_indexing.h"
-#include "indexing/electron/electron_indexing_no_np.h"
-#include "indexing/electron/electron_symmetric_indexing.h"
-#include "indexing/electron/electron_symmetric_indexing_no_np.h"
+#include "indexing/electron/indexing_np.h"
+#include "indexing/electron/indexing_no_np.h"
+#include "indexing/electron/indexing_symmetric_np.h"
+#include "indexing/electron/indexing_symmetric_no_np.h"
 
 #include "blocks/blocks.h"
-#include "blocks/target_block.h"
 #include "blocks/utils/block_utils.h"
 
 #include "blocks/spinhalf/spinhalf.h"
 #include "blocks/spinhalf/spinhalf_apply.h"
 #include "blocks/spinhalf/spinhalf_fill.h"
 #include "blocks/spinhalf/spinhalf_matrix.h"
-#include "blocks/spinhalf/terms/compile_terms.h"
+#include "blocks/spinhalf/terms/compile.h"
 
 #include "blocks/electron/electron.h"
 #include "blocks/electron/electron_apply.h"
 #include "blocks/electron/electron_matrix.h"
+#include "blocks/electron/terms/compile.h"
 
 #include "blocks/tj/tj.h"
 #include "blocks/tj/tj_apply.h"
@@ -88,8 +88,8 @@
 #include "operators/bond.h"
 #include "operators/bondlist.h"
 #include "operators/compiler.h"
-#include "operators/operator_qns.h"
 #include "operators/symmetric_operator.h"
+#include "operators/non_branching_bonds.h"
 
 #include "linalg/lanczos/lanczos_convergence.h"
 #include "linalg/lanczos/lanczos_eigenvalues.h"

@@ -7,24 +7,24 @@
 #include "extern/armadillo/armadillo"
 
 #include <hydra/linalg/lanczos/lanczos_eigenvalues.h>
+#include <hydra/linalg/lanczos/lanczos_eigenvector.h>
 #include <hydra/operators/bondlist.h>
-#include <hydra/operators/couplings.h>
 #include <hydra/states/state.h>
 #include <hydra/utils/logger.h>
 
 namespace hydra {
 
 template <class Block>
-double E0Real(BondList const &bondlist, Couplings const &couplings,
-              Block &&block, double precision = 1e-12, int seed = 42,
-              int max_iterations = 1000) {
+double e0_real(BondList const &bondlist, Block const &block,
+               double precision = 1e-12, int seed = 42,
+               int max_iterations = 1000) {
 
-  auto tmat = LanczosEigenvaluesReal(bondlist, couplings, block, 1, precision,
-                                     seed, max_iterations);
+  auto tmat = lanczos_eigenvalues_real(bondlist, block, 1, precision, seed,
+                                       max_iterations);
 
   auto eigs = tmat.eigenvalues();
   if (eigs.size() == 0) {
-    Log.err("Error: Tmatrix zero dimensional in E0Real");
+    Log.err("Error: Tmatrix zero dimensional in e0_real");
     return 0.;
   } else {
     return tmat.eigenvalues()(0);
@@ -32,31 +32,37 @@ double E0Real(BondList const &bondlist, Couplings const &couplings,
 }
 
 template <class Block>
-double E0Cplx(BondList const &bondlist, Couplings const &couplings,
-              Block &&block, double precision = 1e-12, int seed = 42,
-              int max_iterations = 1000) {
-  auto tmat = LanczosEigenvaluesCplx(bondlist, couplings, block, 1, precision,
-                                     seed, max_iterations);
+double e0_cplx(BondList const &bondlist, Block const &block,
+               double precision = 1e-12, int seed = 42,
+               int max_iterations = 1000) {
+  auto tmat = lanczos_eigenvalues_cplx(bondlist, block, 1, precision, seed,
+                                       max_iterations);
   auto eigs = tmat.eigenvalues();
   if (eigs.size() == 0) {
-    Log.err("Error: Tmatrix zero dimensional in E0Cplx");
+    Log.err("Error: Tmatrix zero dimensional in e0_cplx");
     return 0.;
   } else {
     return tmat.eigenvalues()(0);
   }
+}
+
+template <class Block>
+double e0(BondList const &bondlist, Block const &block,
+          double precision = 1e-12, int seed = 42, int max_iterations = 1000) {
+  return e0_cplx(bondlist, block, precision, seed, max_iterations);
 }
 
 template <class Block>
 std::pair<double, StateReal<Block>>
-GroundstateReal(BondList const &bondlist, Couplings const &couplings,
-                Block const &block, double precision = 1e-12, int seed = 42,
-                int max_iterations = 1000) {
+groundstate_real(BondList const &bondlist, Block const &block,
+                 double precision = 1e-12, int seed = 42,
+                 int max_iterations = 1000) {
 
-  auto [tmat, v0] = LanczosEigenvectorReal(bondlist, couplings, block, 0,
-                                           precision, seed, max_iterations);
+  auto [tmat, v0] = lanczos_eigenvector_real(bondlist, block, 0, precision,
+                                             seed, max_iterations);
   auto eigs = tmat.eigenvalues();
   if (eigs.size() == 0) {
-    Log.err("Error: Tmatrix zero dimensional in GroundstateReal");
+    Log.err("Error: Tmatrix zero dimensional in groundstate_real");
     return {0., State<double, Block>()};
   } else {
     return {tmat.eigenvalues()(0), State(block, v0)};
@@ -65,18 +71,26 @@ GroundstateReal(BondList const &bondlist, Couplings const &couplings,
 
 template <class Block>
 std::pair<double, StateCplx<Block>>
-GroundstateCplx(BondList const &bondlist, Couplings const &couplings,
-                Block const &block, double precision = 1e-12, int seed = 42,
-                int max_iterations = 1000) {
-  auto [tmat, v0] = LanczosEigenvectorCplx(bondlist, couplings, block, 0,
-                                           precision, seed, max_iterations);
+groundstate_cplx(BondList const &bondlist, Block const &block,
+                 double precision = 1e-12, int seed = 42,
+                 int max_iterations = 1000) {
+  auto [tmat, v0] = lanczos_eigenvector_cplx(bondlist, block, 0, precision,
+                                             seed, max_iterations);
   auto eigs = tmat.eigenvalues();
   if (eigs.size() == 0) {
-    Log.err("Error: Tmatrix zero dimensional in GroundstateCplx");
+    Log.err("Error: Tmatrix zero dimensional in groundstate_cplx");
     return {0., State<complex, Block>()};
   } else {
     return {tmat.eigenvalues()(0), State(block, v0)};
   }
+}
+
+template <class Block>
+std::pair<double, StateCplx<Block>>
+groundstate(BondList const &bondlist, Block const &block,
+            double precision = 1e-12, int seed = 42,
+            int max_iterations = 1000) {
+  return groundstate_cplx(bondlist, block, precision, seed, max_iterations);
 }
 
 } // namespace hydra

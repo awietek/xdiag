@@ -8,7 +8,7 @@
 #include <hydra/blocks/spinhalf/terms/apply_term_offdiag_no_sym.h>
 #include <hydra/blocks/spinhalf/terms/apply_term_offdiag_sym.h>
 
-namespace hydra::terms::spinhalf {
+namespace hydra::spinhalf {
 
 // Exchange term: J/2 (S^+_i S^-_j + S^-_i S^+_j)
 
@@ -61,4 +61,4 @@ void apply_exchange(Bond const &bond, IndexingIn &&indexing_in,
   }
 }
 
-} // namespace hydra::terms::spinhalf
+} // namespace hydra::spinhalf
