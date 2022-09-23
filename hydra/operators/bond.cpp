@@ -37,25 +37,23 @@ template <typename coeff_t>
 Bond::Bond(arma::Mat<coeff_t> const &matrix, int site)
     : type_("HYDRA_TYPE_UNDEFINED"), matrix_(to_cx_mat(matrix)), coupling_(1.0),
       coupling_name_("HYDRA_COUPLING_NAMELESS"), sites_({site}) {}
-template Bond::Bond<double>(arma::Mat<double> const &, int);
-template Bond::Bond<complex>(arma::Mat<complex> const &, int);
+template Bond::Bond(arma::Mat<double> const &, int);
+template Bond::Bond(arma::Mat<complex> const &, int);
 
 template <typename coeff_t>
 Bond::Bond(arma::Mat<coeff_t> const &matrix, std::vector<int> const &sites)
     : type_("HYDRA_TYPE_UNDEFINED"), matrix_(to_cx_mat(matrix)), coupling_(1.0),
       coupling_name_("HYDRA_COUPLING_NAMELESS"), sites_(sites) {}
-template Bond::Bond<double>(arma::Mat<double> const &,
-                            std::vector<int> const &);
-template Bond::Bond<complex>(arma::Mat<complex> const &,
-                             std::vector<int> const &);
+template Bond::Bond(arma::Mat<double> const &, std::vector<int> const &);
+template Bond::Bond(arma::Mat<complex> const &, std::vector<int> const &);
 
 template <typename coeff_t>
 Bond::Bond(arma::Mat<coeff_t> const &matrix, complex coupling, int site)
     : type_("HYDRA_TYPE_UNDEFINED"), matrix_(to_cx_mat(matrix)),
       coupling_(coupling), coupling_name_("HYDRA_COUPLING_NAMELESS"),
       sites_({site}) {}
-template Bond::Bond<double>(arma::Mat<double> const &, complex, int);
-template Bond::Bond<complex>(arma::Mat<complex> const &, complex, int);
+template Bond::Bond(arma::Mat<double> const &, complex, int);
+template Bond::Bond(arma::Mat<complex> const &, complex, int);
 
 template <typename coeff_t>
 Bond::Bond(arma::Mat<coeff_t> const &matrix, complex coupling,
@@ -63,30 +61,28 @@ Bond::Bond(arma::Mat<coeff_t> const &matrix, complex coupling,
     : type_("HYDRA_TYPE_UNDEFINED"), matrix_(to_cx_mat(matrix)),
       coupling_(coupling), coupling_name_("HYDRA_COUPLING_NAMELESS"),
       sites_(sites) {}
-template Bond::Bond<double>(arma::Mat<double> const &, complex,
-                            std::vector<int> const &);
-template Bond::Bond<complex>(arma::Mat<complex> const &, complex,
-                             std::vector<int> const &);
+template Bond::Bond(arma::Mat<double> const &, complex,
+                    std::vector<int> const &);
+template Bond::Bond(arma::Mat<complex> const &, complex,
+                    std::vector<int> const &);
 
 template <typename coeff_t>
 Bond::Bond(arma::Mat<coeff_t> const &matrix, std::string coupling_name,
            int site)
     : type_("HYDRA_TYPE_UNDEFINED"), matrix_(to_cx_mat(matrix)), coupling_(0.0),
       coupling_name_(coupling_name), sites_({site}) {}
-template Bond::Bond<double>(arma::Mat<double> const &, std::string, int);
-template Bond::Bond<complex>(arma::Mat<complex> const &, std::string, int);
+template Bond::Bond(arma::Mat<double> const &, std::string, int);
+template Bond::Bond(arma::Mat<complex> const &, std::string, int);
 
 template <typename coeff_t>
 Bond::Bond(arma::Mat<coeff_t> const &matrix, std::string coupling_name,
            std::vector<int> const &sites)
     : type_("HYDRA_TYPE_UNDEFINED"), matrix_(to_cx_mat(matrix)), coupling_(0.0),
       coupling_name_(coupling_name), sites_(sites) {}
-template Bond::Bond<double>(arma::Mat<double> const &,
-                            std::string coupling_name,
-                            std::vector<int> const &);
-template Bond::Bond<complex>(arma::Mat<complex> const &,
-                             std::string coupling_name,
-                             std::vector<int> const &);
+template Bond::Bond(arma::Mat<double> const &, std::string coupling_name,
+                    std::vector<int> const &);
+template Bond::Bond(arma::Mat<complex> const &, std::string coupling_name,
+                    std::vector<int> const &);
 
 bool Bond::type_defined() const { return (type_ != "HYDRA_TYPE_UNDEFINED"); }
 bool Bond::matrix_defined() const { return !type_defined(); }
