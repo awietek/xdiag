@@ -4,14 +4,12 @@
 
 #include "extern/armadillo/armadillo"
 
-#include <hydra/linalg/lanczos/lanczos.h>
-#include <hydra/linalg/lanczos/lanczos_build.h>
-#include <hydra/linalg/lanczos/lanczos_convergence.h>
-#include <hydra/linalg/lanczos/tmatrix.h>
-
+#include <hydra/algorithms/lanczos/lanczos.h>
+#include <hydra/algorithms/lanczos/lanczos_build.h>
+#include <hydra/algorithms/lanczos/lanczos_convergence.h>
+#include <hydra/algorithms/lanczos/tmatrix.h>
 #include <hydra/blocks/blocks.h>
 #include <hydra/operators/bondlist.h>
-
 #include <hydra/random/hash_functions.h>
 #include <hydra/random/hashes.h>
 #include <hydra/random/random_utils.h>

@@ -4,8 +4,8 @@
 #include <hydra/blocks/spinhalf/terms/apply_terms_dispatch.h>
 #include <hydra/blocks/spinhalf/terms/compile.h>
 #include <hydra/blocks/spinhalf/terms/qns.h>
-
 #include <hydra/blocks/utils/block_utils.h>
+#include <hydra/operators/compiler.h>
 #include <hydra/utils/logger.h>
 
 namespace hydra {
@@ -16,6 +16,7 @@ arma::Mat<coeff_t> matrix_gen(BondList const &bonds,
                               Spinhalf<bit_t> const &block_out) {
 
   BondList bonds_c = spinhalf::compile(bonds, 1e-12);
+  operators::check_bonds_in_range(bonds, block_in.n_sites());
 
   if ((is_real<coeff_t>()) && (bonds_c.is_complex())) {
     Log.err("Error in matrix_gen: trying to create a real matrix from an "

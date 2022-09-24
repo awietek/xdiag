@@ -8,7 +8,7 @@ BondList compile(BondList const &bonds, double precision) {
 
   BondList bonds_explicit =
       operators::compile_explicit(bonds, precision, "keep");
-
+  
   BondList bonds_special;
   for (auto bond : bonds_explicit) {
     if (bond.type_defined()) {

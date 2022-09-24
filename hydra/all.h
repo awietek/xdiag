@@ -5,26 +5,28 @@
 #endif
 
 #ifdef HYDRA_ENABLE_OPENMP
-#include <omp.h>
 #include "parallel/omp/omp_utils.h"
+#include <omp.h>
 #endif
 
 #include "extern/armadillo/armadillo"
 
 #include "bitops/bitops.h"
 #include "common.h"
+#include "utils/close.h"
 #include "utils/iochecks.h"
 #include "utils/logger.h"
+#include "utils/precision.h"
 #include "utils/print.h"
 #include "utils/print_macro.h"
-#include "utils/precision.h"
-#include "utils/close.h"
 
-#include "states/algebra.h"
-#include "states/state.h"
-#include "states/random_state.h"
-#include "states/zero_state.h"
+#include "algebra/algebra.h"
+#include "algebra/matrix.h"
+
 #include "states/gpwf_spinhalf.h"
+#include "states/random_state.h"
+#include "states/state.h"
+#include "states/zero_state.h"
 
 #include "combinatorics/binomial.h"
 #include "combinatorics/bit_patterns.h"
@@ -49,10 +51,10 @@
 #include "indexing/tj/indexing_np.h"
 #include "indexing/tj/indexing_symmetric_np.h"
 
-#include "indexing/electron/indexing_np.h"
 #include "indexing/electron/indexing_no_np.h"
-#include "indexing/electron/indexing_symmetric_np.h"
+#include "indexing/electron/indexing_np.h"
 #include "indexing/electron/indexing_symmetric_no_np.h"
+#include "indexing/electron/indexing_symmetric_np.h"
 
 #include "blocks/blocks.h"
 #include "blocks/utils/block_utils.h"
@@ -88,16 +90,16 @@
 #include "operators/bond.h"
 #include "operators/bondlist.h"
 #include "operators/compiler.h"
-#include "operators/symmetric_operator.h"
 #include "operators/non_branching_bonds.h"
+#include "operators/symmetric_operator.h"
 
-#include "linalg/lanczos/lanczos_convergence.h"
-#include "linalg/lanczos/lanczos_eigenvalues.h"
-#include "linalg/lanczos/lanczos_eigenvector.h"
-#include "linalg/lanczos/lanczos.h"
-#include "linalg/lanczos/lanczos_build.h"
-#include "linalg/lanczos/tmatrix.h"
-#include "linalg/sparse_diag.h"
+#include "algorithms/lanczos/lanczos.h"
+#include "algorithms/lanczos/lanczos_build.h"
+#include "algorithms/lanczos/lanczos_convergence.h"
+#include "algorithms/lanczos/lanczos_eigenvalues.h"
+#include "algorithms/lanczos/lanczos_eigenvector.h"
+#include "algorithms/lanczos/tmatrix.h"
+#include "algorithms/sparse_diag.h"
 
 #ifdef HYDRA_ENABLE_MPI
 #include "mpi/allreduce.h"

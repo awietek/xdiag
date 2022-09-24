@@ -5,7 +5,7 @@
 #include <hydra/blocks/electron/electron.h>
 #include <hydra/blocks/spinhalf/spinhalf.h>
 #include <hydra/blocks/tj/tj.h>
-#include <hydra/linalg/lanczos/tmatrix.h>
+#include <hydra/algorithms/lanczos/tmatrix.h>
 #include <hydra/operators/bondlist.h>
 #include <hydra/states/state.h>
 #include <hydra/symmetries/permutation.h>

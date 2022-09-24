@@ -6,8 +6,8 @@
 
 #include "extern/armadillo/armadillo"
 
-#include <hydra/linalg/lanczos/lanczos_eigenvalues.h>
-#include <hydra/linalg/lanczos/lanczos_eigenvector.h>
+#include <hydra/algorithms/lanczos/lanczos_eigenvalues.h>
+#include <hydra/algorithms/lanczos/lanczos_eigenvector.h>
 #include <hydra/operators/bondlist.h>
 #include <hydra/states/state.h>
 #include <hydra/utils/logger.h>

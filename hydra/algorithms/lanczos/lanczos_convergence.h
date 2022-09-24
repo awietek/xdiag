@@ -1,7 +1,7 @@
 #pragma once
 
 #include "extern/armadillo/armadillo"
-#include <hydra/linalg/lanczos/tmatrix.h>
+#include <hydra/algorithms/lanczos/tmatrix.h>
 
 namespace hydra {
 

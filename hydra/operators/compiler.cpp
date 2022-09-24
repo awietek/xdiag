@@ -144,4 +144,14 @@ BondList compile_explicit(BondList const &bonds, double precision,
   return bonds_compiled;
 }
 
+void check_bonds_in_range(BondList const &bonds, int n_sites) {
+  for (Bond bond : bonds) {
+    for (int s : bond.sites()) {
+      if (s >= n_sites) {
+        Log.err("Error: bond site exceeds range of {} sites", n_sites);
+      }
+    }
+  }
+}
+
 } // namespace hydra::operators

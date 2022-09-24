@@ -2,8 +2,8 @@
 
 #include "extern/armadillo/armadillo"
 
+#include <hydra/algorithms/lanczos/tmatrix.h>
 #include <hydra/common.h>
-#include <hydra/linalg/lanczos/tmatrix.h>
 #include <hydra/utils/logger.h>
 
 namespace hydra {

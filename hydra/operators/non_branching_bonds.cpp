@@ -121,10 +121,21 @@ NonBranchingBond<bit_t, coeff_t>::NonBranchingBond(Bond const &bond,
     Log.err("Error: trying to create a NonBranchingBond from a Bond which is "
             "branching");
   }
+
+  if (!bond.coupling_defined()) {
+    Log.err("Error: cannot create Nonbranching bond from Bond without having "
+            "its coupling defined.");
+  }
+  coeff_t cpl = bond.coupling<coeff_t>();
+
   for (auto s : bond.sites()) {
     mask_ |= ((bit_t)1 << s);
   }
-  mask_ = !mask_;
+  // int n_sites = 2;
+  // Log("X: {}", BSTR(mask_));
+
+  mask_ = ~mask_;
+  // Log("Y: {}", BSTR(mask_));
 
   arma::cx_mat matrix_ = bond.matrix();
 
@@ -141,17 +152,17 @@ NonBranchingBond<bit_t, coeff_t>::NonBranchingBond(Bond const &bond,
     int non_zero_in_row = 0;
 
     for (bit_t out = 0; out < dim_; ++out) {
-      if (std::abs(matrix_(in, out)) > precision) {
+      if (std::abs(matrix_(out, in)) > precision) {
         non_zero_term_[in] = true;
         state_applied_[in] = out;
         if constexpr (is_real<coeff_t>()) {
-          if (std::abs(imag(matrix_(in, out))) > precision) {
+          if (std::abs(imag(matrix_(out, in))) > precision) {
             Log.err("Error: trying to create a real NonBranchingBond, but "
                     "found a truly complex matrix entry");
           }
-          coeff_[in] = real(matrix_(in, out));
+          coeff_[in] = cpl * real(matrix_(out, in));
         } else {
-          coeff_[in] = matrix_(in, out);
+          coeff_[in] = cpl * matrix_(out, in);
         }
         ++non_zero_in_row;
       }
@@ -164,6 +175,12 @@ NonBranchingBond<bit_t, coeff_t>::NonBranchingBond(Bond const &bond,
       assert(non_zero_in_row == 0);
     }
   }
+
+  // int n_sites = 1;
+  // for (bit_t in = 0; in < dim_; ++in) {
+  //   std::cout << "a " << BSTR(in) << " -> " << BSTR(state_applied_[in]) << " "
+  //             << coeff_[in] << " " << non_zero_term_[in] << std::endl;
+  // }
 }
 
 template <typename bit_t, typename coeff_t>
@@ -176,6 +193,10 @@ bool NonBranchingBond<bit_t, coeff_t>::is_diagonal() const {
   return true;
 }
 
+template <typename bit_t, typename coeff_t>
+bool NonBranchingBond<bit_t, coeff_t>::non_zero_term(bit_t local_state) const {
+  return non_zero_term_[local_state];
+}
 template <typename bit_t, typename coeff_t>
 coeff_t NonBranchingBond<bit_t, coeff_t>::coeff(bit_t local_state) const {
   return coeff_[local_state];
@@ -199,9 +220,15 @@ bit_t NonBranchingBond<bit_t, coeff_t>::extract_local_state(bit_t state) const {
 template <typename bit_t, typename coeff_t>
 bit_t NonBranchingBond<bit_t, coeff_t>::deposit_local_state(bit_t local_state,
                                                             bit_t state) const {
+  // int n_sites = 2;
+  // Log("a: {}", BSTR(state));
+  // Log("mask: {}", BSTR(mask_));
+
   state &= mask_; // clear bits on site
+  // Log("b: {}", BSTR(state));
   for (int i = 0; i < (int)sites_.size(); ++i) {
-    state |= bitops::gbit(state, i) << sites_[i];
+    state |= bitops::gbit(local_state, i) << sites_[i];
+    // Log("c: {}", BSTR(state));
   }
   return state;
 }

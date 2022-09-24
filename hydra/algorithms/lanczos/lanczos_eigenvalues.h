@@ -2,14 +2,12 @@
 
 #include "extern/armadillo/armadillo"
 
-#include <hydra/linalg/lanczos/lanczos.h>
-#include <hydra/linalg/lanczos/lanczos_convergence.h>
-#include <hydra/linalg/lanczos/tmatrix.h>
-
+#include <hydra/algorithms/lanczos/lanczos.h>
+#include <hydra/algorithms/lanczos/lanczos_convergence.h>
+#include <hydra/algorithms/lanczos/tmatrix.h>
 #include <hydra/blocks/blocks.h>
-#include <hydra/utils/timing.h>
-
 #include <hydra/operators/bondlist.h>
+#include <hydra/utils/timing.h>
 
 namespace hydra {
 
@@ -72,6 +70,5 @@ Tmatrix lanczos_eigenvalues_cplx(BondList const &bonds, Block const &block,
   return lanczos_eigenvalues_inplace(bonds, block, v0.vector(), num_eigenvalue,
                                      precision, max_iterations, deflation_tol);
 }
-
 
 } // namespace hydra

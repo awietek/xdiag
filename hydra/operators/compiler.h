@@ -17,5 +17,6 @@ BondList compile_explicit_matrices(BondList const &bonds, double precision,
                                    std::string undefined_behavior);
 BondList compile_explicit(BondList const &bonds, double precision,
                           std::string undefined_behavior);
+void check_bonds_in_range(BondList const &bonds, int n_sites);
 
 } // namespace hydra::operators

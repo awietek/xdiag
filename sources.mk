@@ -71,8 +71,8 @@ sources+= hydra/states/gpwf_spinhalf.cpp
 sources+= hydra/random/random_utils.cpp
 sources+= hydra/random/hashes.cpp
 
-sources+=hydra/linalg/lanczos/lanczos_convergence.cpp
-sources+=hydra/linalg/lanczos/tmatrix.cpp
+sources+=hydra/algorithms/lanczos/lanczos_convergence.cpp
+sources+=hydra/algorithms/lanczos/tmatrix.cpp
 
 mpisources+= hydra/utils/print_mpi.cpp
 
@@ -144,8 +144,8 @@ testsources+= test/blocks/electron_symmetric/test_electron_symmetric.cpp
 testsources+= test/blocks/electron_symmetric/test_electron_symmetric_matrix.cpp
 testsources+= test/blocks/electron_symmetric/test_electron_symmetric_apply.cpp
 
-testsources+= test/linalg/lanczos/test_lanczos_eigenvalues.cpp
-testsources+= test/linalg/lanczos/test_lanczos_eigenvector.cpp
+testsources+= test/algorithms/lanczos/test_lanczos_eigenvalues.cpp
+testsources+= test/algorithms/lanczos/test_lanczos_eigenvector.cpp
 
 testsources+= test/states/test_random_state.cpp
 

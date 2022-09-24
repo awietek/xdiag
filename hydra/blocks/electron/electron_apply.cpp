@@ -2,6 +2,7 @@
 
 #include <hydra/blocks/electron/terms/apply_terms_dispatch.h>
 #include <hydra/blocks/electron/terms/compile.h>
+#include <hydra/operators/compiler.h>
 
 namespace hydra {
 
@@ -15,6 +16,7 @@ void apply(BondList const &bonds, Electron<bit_t> const &block_in,
   assert(block_out.size() == (idx_t)vec_out.size());
 
   BondList bonds_c = electron::compile(bonds, 1e-12);
+  operators::check_bonds_in_range(bonds, block_in.n_sites());
 
   if ((is_real<coeff_t>()) && (bonds_c.is_complex())) {
     Log.err("Error in matrix_gen: trying to create a real matrix from an "
