@@ -78,13 +78,23 @@ int BondList::n_sites() const {
 }
 
 BondList BondList::bonds_of_type(std::string type) const {
-  std::vector<Bond> bonds_return;
+  BondList bonds_return;
   for (Bond bond : bonds_) {
     if ((bond.type_defined()) && (bond.type() == type)) {
-      bonds_return.push_back(bond);
+      if (bond.coupling_named()) {
+        std::string name = bond.coupling_name();
+        bonds_return << Bond(type, name, bond.sites());
+
+        if (coupling_defined(name)) {
+          complex cpl = coupling(name);
+          bonds_return[name] = cpl;
+        }
+      } else {
+        bonds_return << Bond(type, bond.coupling(), bond.sites());
+      }
     }
   }
-  return BondList(bonds_return);
+  return bonds_return;
 }
 
 BondList BondList::bonds_with_matrix() const {
@@ -106,14 +116,14 @@ bool BondList::is_complex(double precision) const {
 
       bool coupling_real = false;
       if (bond.coupling_defined()) {
-        coupling_real = std::abs(bond.coupling()) < precision;
+        coupling_real = std::abs(imag(bond.coupling())) < precision;
       } else {
         std::string coupling_name = bond.coupling_name();
 
         // coupling name defined in couplings
         if (couplings_.count(coupling_name)) {
           complex cpl = couplings_.at(coupling_name);
-          coupling_real = std::abs(cpl) < precision;
+          coupling_real = std::abs(imag(cpl)) < precision;
         } else {
           Log.err("Error: cannot determine whether Bond in BondList is "
                   "complex/real. Its coupling coefficient is not uniquely "
@@ -135,14 +145,14 @@ bool BondList::is_complex(double precision) const {
       // if coupling is defined, check whether it has imag. part
       bool coupling_real = false;
       if (bond.coupling_defined()) {
-        coupling_real = std::abs(bond.coupling()) < precision;
+        coupling_real = std::abs(imag(bond.coupling())) < precision;
       } else {
         std::string coupling_name = bond.coupling_name();
 
         // coupling name defined in couplings
         if (couplings_.count(coupling_name)) {
           complex cpl = couplings_.at(coupling_name);
-          coupling_real = std::abs(cpl) < precision;
+          coupling_real = (std::abs(imag(cpl)) < precision);
         } else {
           Log.err("Error: cannot determine whether Bond in BondList is "
                   "complex/real. Its coupling coefficient is not uniquely "

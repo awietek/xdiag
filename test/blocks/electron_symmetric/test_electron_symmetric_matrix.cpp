@@ -123,6 +123,7 @@ void test_electron_symmetric_spectra(BondList bondlist,
         // Check if all eigenvalues agree
         // Log.out("{} {} {} {}", nup, ndn, eigs_sym(0), eigs_nosym(0));
 
+        // HydraPrint(arma::norm(arma::vec(eigs_sym) - eigs_nosym));
         CHECK(close(arma::vec(eigs_sym), eigs_nosym));
       }
     }
@@ -137,7 +138,7 @@ void test_hubbard_symmetric_spectrum_chains(int n_sites) {
       get_cyclic_group_irreps_mult(n_sites);
 
   // Without Heisenberg term
-  Log.out("electron_symmetric_matrix: Hubbard chain,n_sites: {}", n_sites);
+  Log.out("electron_symmetric_matrix: Hubbard chain, n_sites: {}", n_sites);
   auto bondlist = get_linear_chain(n_sites, 1.0, 5.0);
   test_electron_symmetric_spectra<bit_t>(bondlist, space_group, irreps,
                                          multiplicities);
@@ -145,7 +146,7 @@ void test_hubbard_symmetric_spectrum_chains(int n_sites) {
                                                multiplicities);
 
   // With Heisenberg term
-  Log("electron_symmetric_matrix: Hubbard chain,  n_sites: {} (+ "
+  Log("electron_symmetric_matrix: Hubbard chain, n_sites: {} (+ "
       "Heisenberg terms)",
       n_sites);
   auto bondlist_hb = get_linear_chain_hb(n_sites, 1.0, 5.0, 0.4);
@@ -167,6 +168,7 @@ TEST_CASE("electron_symmetric_matrix", "[blocks][electron_symmetric]") {
   double t = 1.0;
   double U = 5.0;
   auto bondlist = get_linear_chain(n_sites, t, U);
+  bondlist["U"] = U;
   auto [space_group, irreps, multiplicities] =
       get_cyclic_group_irreps_mult(n_sites);
 
@@ -259,6 +261,7 @@ TEST_CASE("electron_symmetric_matrix", "[blocks][electron_symmetric]") {
         "data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.lat";
     BondList bondlist = read_bondlist(lfile);
     bondlist["TPHI"] = complex(0.5, 0.5);
+    bondlist["JPHI"] = 0.;
     bondlist["U"] = 5.0;
     auto permutations = hydra::read_permutations(lfile);
     space_group = PermutationGroup(permutations);

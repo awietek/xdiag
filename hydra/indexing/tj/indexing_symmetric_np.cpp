@@ -1,11 +1,10 @@
 #include "indexing_symmetric_np.h"
 
 #include <hydra/blocks/utils/block_utils.h>
-
-#include <hydra/indexing/combinations_indexing.h>
-
 #include <hydra/combinatorics/combinations.h>
+#include <hydra/indexing/combinations_indexing.h>
 #include <hydra/symmetries/operations/symmetry_operations.h>
+#include <hydra/utils/print_macro.h>
 
 namespace hydra::indexing::tj {
 

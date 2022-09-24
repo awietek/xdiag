@@ -22,12 +22,14 @@ arma::Mat<coeff_t> matrix_gen(BondList const &bonds,
             "intrisically complex BondList");
   }
 
-  int n_up_out = spinhalf::nup(bonds_c) + block_in.n_up();
-  if (n_up_out != block_out.n_up()) {
-    Log.err("Incompatible n_up in matrix_gen: {} != {}", n_up_out,
-            block_out.n_up());
+  if (block_in.n_up() != undefined_qn) {
+    int n_up_out = spinhalf::nup(bonds_c) + block_in.n_up();
+    if (n_up_out != block_out.n_up()) {
+      Log.err("Incompatible n_up in matrix_gen: {} != {}", n_up_out,
+              block_out.n_up());
+    }
   }
-
+  
   idx_t dim_in = block_in.size();
   idx_t dim_out = block_out.size();
 

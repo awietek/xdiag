@@ -76,7 +76,7 @@ template <class bit_t> void test_tj_symmetric_apply_chains(int n_sites) {
   test_apply_tj_symmetric<bit_t>(bondlist, space_group, irreps);
 }
 
-TEST_CASE("tj_symmetric_apply", "[blocks][tj_symmetric]") {
+TEST_CASE("tj_symmetric_apply", "[blocks][tj]") {
   using namespace hydra::testcases::tj;
   using namespace hydra::testcases::electron;
 

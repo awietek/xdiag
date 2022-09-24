@@ -1,6 +1,7 @@
 #include "compile.h"
 #include <hydra/operators/compiler.h>
 #include <hydra/utils/logger.h>
+#include <hydra/utils/print_macro.h>
 
 namespace hydra::tj {
 
@@ -8,6 +9,7 @@ BondList compile(BondList const &bonds, double precision) {
 
   BondList bonds_explicit =
       operators::compile_explicit(bonds, precision, "keep");
+
   BondList bonds_special;
   for (auto bond : bonds_explicit) {
     if (bond.type_defined()) {

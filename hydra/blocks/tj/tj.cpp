@@ -27,7 +27,8 @@ tJ<bit_t>::tJ(int n_sites, int nup, int ndn, PermutationGroup permutation_group,
       symmetric_(true),
       permutation_group_(allowed_subgroup(permutation_group, irrep)),
       irrep_(irrep), indexing_(std::make_shared<tj::Indexing<bit_t>>(
-                         tj::IndexingNp<bit_t>(n_sites, nup, ndn))),
+                         tj::IndexingSymmetricNp<bit_t>(
+                             n_sites, nup, ndn, permutation_group, irrep))),
       size_(tj::size(*indexing_)) {
   utils::check_nup_ndn_tj(n_sites, nup, ndn, "tJ");
   utils::check_n_sites(n_sites, permutation_group);

@@ -8,6 +8,7 @@ BondList compile(BondList const &bonds, double precision) {
 
   BondList bonds_explicit =
       operators::compile_explicit(bonds, precision, "keep");
+
   BondList bonds_special;
   for (auto bond : bonds_explicit) {
     if (bond.type_defined()) {
@@ -30,6 +31,15 @@ BondList compile(BondList const &bonds, double precision) {
       }
     }
   }
+
+  // Set Hubbbbard U term again
+  if (bonds.coupling_defined("U")) {
+    complex coupling = bonds.coupling("U");
+    if (std::abs(coupling) > precision) {
+      bonds_special["U"] = coupling;
+    }
+  }
+
   return bonds_special;
 }
 

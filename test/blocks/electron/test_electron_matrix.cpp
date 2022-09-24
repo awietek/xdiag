@@ -252,7 +252,7 @@ TEST_CASE("electron_matrix", "[blocks][electron]") {
     auto block_electron = Electron(n_sites, nup, ndn);
 
     auto bonds = testcases::spinhalf::HB_alltoall(n_sites);
-    bondlist["U"] = 99999; // gap out doubly occupied sites
+    bonds["U"] = 999999; // gap out doubly occupied sites
     auto H_spinhalf = matrix_real(bonds, block_spinhalf, block_spinhalf);
     auto H_electron = matrix_real(bonds, block_electron, block_electron);
     REQUIRE(H_spinhalf.is_hermitian(1e-8));

@@ -34,19 +34,24 @@ void PrintPretty(const char *identifier, tJ<bit_t> const &block);
 template <typename bit_t>
 void PrintPretty(const char *identifier, Electron<bit_t> const &block);
 
-void PrintPretty(const char *identifier, const arma::Mat<float> &mat);
-void PrintPretty(const char *identifier, const arma::Mat<double> &mat);
-void PrintPretty(const char *identifier,
-                 const arma::Mat<std::complex<float>> &mat);
-void PrintPretty(const char *identifier,
-                 const arma::Mat<std::complex<double>> &mat);
+void PrintPretty(const char *identifier, std::vector<float> const &vec);
+void PrintPretty(const char *identifier, std::vector<double> const &vec);
+void PrintPretty(const char *identifier, std::vector<scomplex> const &vec);
+void PrintPretty(const char *identifier, std::vector<complex> const &vec);
 
-void PrintPretty(const char *identifier, const arma::Col<float> &vec);
-void PrintPretty(const char *identifier, const arma::Col<double> &vec);
+void PrintPretty(const char *identifier, arma::Mat<float> const &mat);
+void PrintPretty(const char *identifier, arma::Mat<double> const &mat);
 void PrintPretty(const char *identifier,
-                 const arma::Col<std::complex<float>> &vec);
+                 arma::Mat<std::complex<float>> const &mat);
 void PrintPretty(const char *identifier,
-                 const arma::Col<std::complex<double>> &vec);
+                 arma::Mat<std::complex<double>> const &mat);
+
+void PrintPretty(const char *identifier, arma::Col<float> const &vec);
+void PrintPretty(const char *identifier, arma::Col<double> const &vec);
+void PrintPretty(const char *identifier,
+                 arma::Col<std::complex<float>> const &vec);
+void PrintPretty(const char *identifier,
+                 arma::Col<std::complex<double>> const &vec);
 
 void PrintPretty(const char *identifier, Tmatrix const &tmat);
 

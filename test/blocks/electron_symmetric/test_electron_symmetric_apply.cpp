@@ -124,6 +124,7 @@ TEST_CASE("electron_symmetric_apply", "[blocks][electron_symmetric]") {
         "data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.lat";
     BondList bondlist = read_bondlist(lfile);
     bondlist["TPHI"] = complex(0.5, 0.5);
+    bondlist["JPHI"] = 0.;
     bondlist["U"] = 5.0;
     auto permutations = hydra::read_permutations(lfile);
     space_group = PermutationGroup(permutations);

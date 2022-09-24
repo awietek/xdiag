@@ -8,7 +8,7 @@
 namespace hydra::spinhalf {
 
 int nup(BondList bonds, double precision) {
-  bonds = operators::compile_explicit(bonds, precision, "error");
+  bonds = operators::compile_explicit(bonds, precision, "keep");
   bonds = operators::non_branching_bonds(bonds, precision);
 
   int nup = 0;
@@ -33,6 +33,7 @@ int nup(BondList bonds, double precision) {
       first_bond = false;
     } else {
       if (nup_bond != nup) {
+        Log("xxx");
         return undefined_qn;
       }
     }

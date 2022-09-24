@@ -17,7 +17,6 @@ template <typename bit_t, typename coeff_t, bool symmetric, class IndexingIn,
           class IndexingOut, class Fill>
 void apply_terms(BondList const &bonds, IndexingIn const &indexing_in,
                  IndexingOut const &indexing_out, Fill &fill) {
-
   if constexpr (symmetric) {
 
     for (auto bond : bonds) {

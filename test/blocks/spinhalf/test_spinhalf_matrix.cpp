@@ -82,7 +82,7 @@ TEST_CASE("spinhalf_matrix", "[models][spinhalf]") {
     for (auto eta : etas) {
       auto [bonds, e0] = triangular_12_complex(nup, eta);
       auto block = Spinhalf<uint32_t>(n_sites, nup);
-      auto H = matrix_cplx(bonds, block, block);
+      auto H = matrix_cplx(bonds, block, block);      
       REQUIRE(H.is_hermitian(1e-8));
 
       arma::vec eigs;

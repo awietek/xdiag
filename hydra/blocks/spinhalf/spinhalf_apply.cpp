@@ -16,10 +16,13 @@ void apply(BondList const &bonds, Spinhalf<bit_t> const &block_in,
 
   BondList bonds_c = spinhalf::compile(bonds);
 
-  int n_up_out = spinhalf::nup(bonds_c) + block_in.n_up();
-  if (n_up_out != block_out.n_up())
-    Log.err("Incompatible n_up in Apply: {} != {}", n_up_out, block_out.n_up());
-
+  if (block_in.n_up() != undefined_qn) {
+    int n_up_out = spinhalf::nup(bonds_c) + block_in.n_up();
+    if (n_up_out != block_out.n_up())
+      Log.err("Incompatible n_up in Apply: {} != {}", n_up_out,
+              block_out.n_up());
+  }
+  
   assert((int64_t)block_in.size() == (int64_t)vec_in.size());
   assert((int64_t)block_out.size() == (int64_t)vec_out.size());
 

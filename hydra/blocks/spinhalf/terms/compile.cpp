@@ -4,7 +4,7 @@
 
 namespace hydra::spinhalf {
 
-BondList compile(BondList const& bonds, double precision) {
+BondList compile(BondList const &bonds, double precision) {
 
   BondList bonds_explicit =
       operators::compile_explicit(bonds, precision, "keep");

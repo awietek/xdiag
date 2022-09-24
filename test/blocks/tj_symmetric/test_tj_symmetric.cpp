@@ -21,7 +21,6 @@ void check_dimensions_sum_up_tj_symmetric(int n_sites, PermutationGroup group,
       for (auto irrep : irreps) {
 
         auto block = tJ<bit_t>(n_sites, nup, ndn, group, irrep);
-
         sum_of_dims += block.size();
         sum_of_dims_updn += block.size();
       }
@@ -32,7 +31,7 @@ void check_dimensions_sum_up_tj_symmetric(int n_sites, PermutationGroup group,
   REQUIRE(sum_of_dims == idx_t(pow(3, n_sites)));
 }
 
-TEST_CASE("tj_symmetric", "[blocks][tj_symmetric]") {
+TEST_CASE("tj_symmetric", "[blocks][tj]") {
 
   // Test linear chains
   Log("tj_symmetric: chain test");

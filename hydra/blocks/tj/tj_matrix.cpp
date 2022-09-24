@@ -9,14 +9,12 @@ template <typename bit_t, typename coeff_t>
 arma::Mat<coeff_t> matrix_gen(BondList const &bonds, tJ<bit_t> const &block_in,
                               tJ<bit_t> const &block_out) {
   assert(block_in == block_out); // only temporary
-
   BondList bonds_c = tj::compile(bonds, 1e-12);
 
   if ((is_real<coeff_t>()) && (bonds_c.is_complex())) {
     Log.err("Error in matrix_gen: trying to create a real matrix from an "
             "intrisically complex BondList");
   }
-
   idx_t dim_in = block_in.size();
   idx_t dim_out = block_out.size();
 

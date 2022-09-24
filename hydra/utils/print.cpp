@@ -230,6 +230,18 @@ void PrintPretty(const char *identifier, Tmatrix const &tmat) {
   PrintPretty("eigenvalues", tmat.eigenvalues());
 }
 
+void PrintPretty(const char *identifier, std::vector<float> const &vec) {
+  PrintPretty(identifier, arma::Col<float>(vec));
+}
+void PrintPretty(const char *identifier, std::vector<double> const &vec) {
+  PrintPretty(identifier, arma::Col<double>(vec));
+}
+void PrintPretty(const char *identifier, std::vector<scomplex> const &vec) {
+  PrintPretty(identifier, arma::Col<scomplex>(vec));
+}
+void PrintPretty(const char *identifier, std::vector<complex> const &vec) {
+  PrintPretty(identifier, arma::Col<complex>(vec));
+}
 void PrintPretty(const char *identifier, const arma::Mat<float> &mat) {
   printf("%s:\n", identifier);
   for (uint32_t i = 0; i < mat.n_rows; ++i) {

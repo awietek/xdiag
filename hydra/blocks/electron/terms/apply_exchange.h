@@ -5,6 +5,7 @@
 #include <hydra/combinatorics/combinations.h>
 #include <hydra/common.h>
 #include <hydra/operators/bond.h>
+#include <hydra/utils/print_macro.h>
 
 namespace hydra::electron {
 
