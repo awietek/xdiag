@@ -47,6 +47,43 @@ TEST_CASE("non_branching_bonds", "[operators]") {
   // HydraPrint(e_dmrg);
   REQUIRE(std::abs(e - e_dmrg) < 1e-8);
 
+  Log.set_verbosity(2);
+  auto [ee, gs] = groundstate(bonds, block);
+  // double tau = -0.1;
+  complex tau = complex(0, -0.1);
+
+  auto gs2 = exp_sym_v(bonds, gs, tau);
+  HydraPrint(norm(gs2));
+
+  gs2.vector() /= norm(gs2);
+  complex eee = inner(bonds, gs2);
+  HydraPrint(e);
+  HydraPrint(ee);
+  HydraPrint(eee);
+  HydraPrint(norm(gs2));
+
+  auto allup = zero_state(block);
+  allup.vector()(block.size() - 1) = 1.0;
+  HydraPrint(norm(allup));
+
+  BondList mag;
+  for (int i = 0; i < N; ++i) {
+    mag << Bond("SZ", i);
+  }
+
+  auto m = inner(mag, allup);
+  HydraPrint(m);
+
+  Log.set_verbosity(0);
+  complex delta_tau = complex(0, -0.1);
+  auto v = allup;
+  for (int t=0; t<100; ++t){
+    v = exp_sym_v(bonds, v, delta_tau);
+    auto m = inner(mag, v);
+    HydraPrint(m);
+  }
+
+  
   // HydraPrint(sx);
   // HydraPrint(sy);
   // HydraPrint(sz);

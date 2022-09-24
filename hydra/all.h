@@ -93,6 +93,7 @@
 #include "operators/non_branching_bonds.h"
 #include "operators/symmetric_operator.h"
 
+#include "algorithms/exp_sym_v.h"
 #include "algorithms/lanczos/lanczos.h"
 #include "algorithms/lanczos/lanczos_build.h"
 #include "algorithms/lanczos/lanczos_convergence.h"

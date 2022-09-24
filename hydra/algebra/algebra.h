@@ -25,7 +25,7 @@ coeff_t dot(State<coeff_t, Block> const &v, State<coeff_t, Block> const &w) {
 
 template <class coeff_t, class Block>
 coeff_t norm(State<coeff_t, Block> const &v) {
-  return std::sqrt(Dot(v, v));
+  return std::sqrt(dot(v, v));
 }
 
 template <class coeff_t, class Block>

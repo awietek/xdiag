@@ -24,6 +24,52 @@ bool converged_eigenvalues(Tmatrix const &tmat, int n_eigenvalue,
   }
 }
 
+bool converged_time_evolution(Tmatrix const &tmat, complex tau,
+                              double precision, double nrm) {
+  int size = tmat.size();
+  if (size < 2)
+    return false;
+  else {
+    // Lanczos sequence exhausted
+    double beta = tmat.betas()(size - 1);
+    if (std::abs(beta) < 1e-8) {
+      return true;
+    }
+
+    // Prepare extended T-matrix for exponentiation
+    auto tmatr = tmat.mat();
+    auto tmat_ext = arma::mat(size + 2, size + 2);
+    for (arma::uword i = 0; i < tmatr.n_rows; ++i) {
+      for (arma::uword j = 0; j < tmatr.n_cols; ++j) {
+        tmat_ext(i, j) = tmatr(i, j);
+      }
+    }
+    int ext_size = size + 2;
+    tmat_ext.resize(ext_size, ext_size);
+
+    tmat_ext(size - 1, size) = beta;
+    tmat_ext(size, size - 1) = beta;
+
+    tmat_ext(size - 1, size) = 0.;
+    tmat_ext(size + 1, size) = 1.;
+
+    // Exponentiate extended T-matrix
+    arma::cx_mat tmat_ext_exp = arma::expmat(tau * tmat_ext);
+    double phi1 = std::abs(nrm * tmat_ext_exp(size, 0));
+    double phi2 = std::abs(nrm * tmat_ext_exp(size + 1, 0));
+
+    double error;
+    if (phi1 > 10 * phi2) {
+      error = phi2;
+    } else if (phi1 > phi2) {
+      error = (phi1 * phi2) / (phi1 - phi2);
+    } else {
+      error = phi1;
+    }
+    return (error < precision);
+  }
+}
+
 // template <class coeff_t>
 // bool ConvergedRitz(const Tmatrix<coeff_t> &tmat, int n_eigenvalue,
 //                    coeff_t precision) {
@@ -53,56 +99,6 @@ bool converged_eigenvalues(Tmatrix const &tmat, int n_eigenvalue,
 // bool ConvergedFixed(const Tmatrix<coeff_t> &tmat, int n_iterations) {
 //   int size = tmat.size();
 //   return size >= n_iterations;
-// }
-
-// template <class coeff_t, class ccoeff_t>
-// bool ConvergedTimeEvolution(const Tmatrix<coeff_t> &tmat, coeff_t beta,
-//                             ccoeff_t tau, coeff_t precision, int max_iter,
-//                             coeff_t nrm) {
-//   int size = tmat.size();
-//   if (size < 2)
-//     return false;
-//   else {
-//     // Lanczos sequence exhausted
-//     if (close(beta, (coeff_t)0.))
-//       return true;
-
-//     // Prepare extended T-matrix for exponentiation
-//     auto tmatr = Matrix<coeff_t>(tmat);
-//     auto tmat_ext = Zeros<ccoeff_t>(size, size);
-//     for (auto i : tmatr.rows())
-//       for (auto j : tmatr.cols())
-//         tmat_ext(i, j) = (ccoeff_t)tmatr(i, j);
-
-//     int ext_size = size + 2;
-//     tmat_ext.resize(ext_size, ext_size);
-
-//     tmat_ext(size - 1, size) = beta;
-//     tmat_ext(size, size - 1) = beta;
-
-//     tmat_ext(size - 1, size) = 0.;
-//     tmat_ext(size + 1, size) = 1.;
-
-//     // Exponentiate extended T-matrix
-//     auto tmat_ext_exp = ExpM(tmat_ext, tau);
-//     coeff_t phi1 = std::abs(nrm * tmat_ext_exp(size, 0));
-//     coeff_t phi2 = std::abs(nrm * tmat_ext_exp(size + 1, 0));
-//     // printf("phi1: %g, phi2: %g\n", phi1, phi2);
-//     coeff_t error;
-//     if (phi1 > 10 * phi2)
-//       error = phi2;
-//     else if (phi1 > phi2)
-//       error = (phi1 * phi2) / (phi1 - phi2);
-//     else
-//       error = phi1;
-//     if ((error < precision) || (size == max_iter - 1)) {
-//       if (size == max_iter - 1)
-//         printf("warning: lanczosTevol not converged in %d steps\n",
-//         max_iter);
-//       return true;
-//     } else
-//       return false;
-//   }
 // }
 
 } // namespace hydra

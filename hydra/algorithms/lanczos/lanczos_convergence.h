@@ -7,5 +7,7 @@ namespace hydra {
 
 bool converged_eigenvalues(Tmatrix const &tmat, int n_eigenvalue,
                            double precision);
+bool converged_time_evolution(Tmatrix const &tmat, complex tau,
+                              double precision, double nrm);
 
 } // namespace hydra
