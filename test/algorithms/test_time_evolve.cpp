@@ -33,8 +33,8 @@ TEST_CASE("time_evolve", "[algorithms]") {
   auto v = time_evolve(bonds, v0, tau);
   arma::cx_mat eHv = expmat(complex(0, -tau) * Hmat) * v0.vector();
 
-  HydraPrint(eHv);
-  HydraPrint(v.vector());
-  HydraPrint(norm(eHv - v.vector()));
+  // HydraPrint(eHv);
+  // HydraPrint(v.vector());
+  // HydraPrint(norm(eHv - v.vector()));
   REQUIRE(norm(eHv - v.vector()) < 1e-8);
 }

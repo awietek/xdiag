@@ -93,7 +93,7 @@ void fill_random_normal_vector(arma::Col<coeff_t> &v, int seed) {
   }
 #else
   std::mt19937 gen(seed);
-  for (idx_t idx = 0; idx < v.size(); ++idx) {
+  for (arma::uword idx = 0; idx < v.size(); ++idx) {
     v(idx) = random::random_normal(gen);
   }
 #endif

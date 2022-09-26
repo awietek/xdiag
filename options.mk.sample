@@ -1,5 +1,5 @@
 # Choose the Compilers (mpicc only required for compiling the MPI library)
-cc         = clang++
+cc         = g++
 
 # Set optimization flags
 ccopt      = -O2 -march=native
