@@ -146,6 +146,8 @@ testsources+= test/blocks/electron_symmetric/test_electron_symmetric_apply.cpp
 
 testsources+= test/algorithms/lanczos/test_lanczos_eigenvalues.cpp
 testsources+= test/algorithms/lanczos/test_lanczos_eigenvector.cpp
+testsources+= test/algorithms/test_exp_sym_v.cpp
+testsources+= test/algorithms/test_time_evolve.cpp
 
 testsources+= test/states/test_random_state.cpp
 

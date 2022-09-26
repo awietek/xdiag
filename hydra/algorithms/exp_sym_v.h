@@ -27,7 +27,7 @@ double exp_sym_v_inplace(multiply_f A, arma::Col<coeff_t> &X, coeff_t tau,
   arma::mat tmatc = tmat.mat();
 
   if (shift) {
-    for (arma::uword i = 0; i < tmat.size(); ++i) {
+    for (int i = 0; i < tmat.size(); ++i) {
       tmatc(i, i) -= e0;
     }
   }
@@ -36,21 +36,22 @@ double exp_sym_v_inplace(multiply_f A, arma::Col<coeff_t> &X, coeff_t tau,
   arma::Col<coeff_t> linear_combination = texp.col(0);
 
   auto [tmat2, vec] = lanczos_build(A, X, linear_combination);
+  (void)tmat2;
   X = vec * norm;
   return e0;
 }
 
 template <typename coeff_t, class multiply_f>
-arma::Col<coeff_t> exp_sym_v(multiply_f A, arma::Col<coeff_t> const &X,
-                             coeff_t tau, double precision = 1e-12) {
-  auto v0 = X;
-  exp_sym_v_inplace(A, v0, tau, precision);
-  return v0;
+arma::Col<coeff_t> exp_sym_v(multiply_f A, arma::Col<coeff_t> X, coeff_t tau,
+                             double precision = 1e-12) {
+  exp_sym_v_inplace(A, X, tau, precision);
+  return X;
 }
 
 template <class StateT>
-StateT exp_sym_v(BondList const &bonds, StateT const &state,
-                 typename StateT::coeff_t tau, double precision = 1e-12) {
+double exp_sym_v_inplace(BondList const &bonds, StateT &state,
+                         typename StateT::coeff_t tau,
+                         double precision = 1e-12) {
   auto const &block = state.block();
 
   using coeff_t = typename StateT::coeff_t;
@@ -65,11 +66,18 @@ StateT exp_sym_v(BondList const &bonds, StateT const &state,
     ++iter;
   };
 
-  auto v0 = state.vector();
+  auto &v0 = state.vector();
   auto t0 = rightnow();
-  exp_sym_v_inplace(mult, v0, tau, precision);
+  double e0 = exp_sym_v_inplace(mult, v0, tau, precision);
   timing(t0, rightnow(), "Lanczos time", 1);
-  return StateT(block, v0);
+  return e0;
+}
+
+template <class StateT>
+StateT exp_sym_v(BondList const &bonds, StateT state,
+                 typename StateT::coeff_t tau, double precision = 1e-12) {
+  exp_sym_v_inplace(bonds, state, tau, precision);
+  return state;
 }
 
 } // namespace hydra

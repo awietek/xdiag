@@ -101,6 +101,7 @@
 #include "algorithms/lanczos/lanczos_eigenvector.h"
 #include "algorithms/lanczos/tmatrix.h"
 #include "algorithms/sparse_diag.h"
+#include "algorithms/time_evolve.h"
 
 #ifdef HYDRA_ENABLE_MPI
 #include "mpi/allreduce.h"
