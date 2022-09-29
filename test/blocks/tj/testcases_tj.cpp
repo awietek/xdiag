@@ -757,6 +757,7 @@ std::tuple<BondList, arma::Col<double>> randomAlltoAll3() {
   BondList bondlist;
   bondlist["T01"] = 1;
   bondlist["J01"] = -2;
+  
   bondlist["T02"] = 0;
   bondlist["J02"] = -1;
   bondlist["T12"] = -5;

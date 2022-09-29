@@ -126,6 +126,8 @@ testsources+= test/blocks/spinhalf/test_spinhalf_apply.cpp
 testsources+= test/blocks/spinhalf_symmetric/test_spinhalf_symmetric.cpp
 testsources+= test/blocks/spinhalf_symmetric/test_spinhalf_symmetric_matrix.cpp
 testsources+= test/blocks/spinhalf_symmetric/test_spinhalf_symmetric_apply.cpp
+testsources+= test/blocks/spinhalf_symmetric/test_kitaev_gamma.cpp
+
 
 testsources+= test/blocks/tj/testcases_tj.cpp
 testsources+= test/blocks/tj/test_tj_utils.cpp

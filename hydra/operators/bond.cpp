@@ -121,7 +121,7 @@ arma::mat Bond::matrix_real() const {
 template <typename coeff_t> coeff_t Bond::coupling(double precision) const {
 
   if (!coupling_defined()) {
-    Log.err("Error: only coupling_name is defined for this bond!");
+    Log.err("Error: only coupling_name is defined for this bond: {}", coupling_name_);
   }
 
   if constexpr (hydra::is_real<coeff_t>()) {

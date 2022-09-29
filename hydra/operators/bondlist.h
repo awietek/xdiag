@@ -22,13 +22,15 @@ public:
   void set_coupling(std::string name, complex cpl);
   template <typename coeff_t = complex>
   coeff_t coupling(std::string name, double precision = 1e-12) const;
-
+  std::map<std::string, complex> const& couplings() const;
+  
   inline complex &operator[](std::string name) { return couplings_[name]; }
 
   bool matrix_defined(std::string name) const;
   void set_matrix(std::string name, arma::cx_mat mat);
   void set_matrix(std::string name, arma::mat mat);
   arma::cx_mat matrix(std::string name) const;
+  std::map<std::string, arma::cx_mat> const& matrices() const;
 
   int size() const;
   void clear();

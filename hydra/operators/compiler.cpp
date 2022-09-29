@@ -1,5 +1,7 @@
 #include "compiler.h"
 
+#include <hydra/utils/print_macro.h>
+
 namespace hydra::operators {
 
 bool coupling_defined(Bond const &bond, BondList const &bonds) {
@@ -59,6 +61,14 @@ arma::cx_mat matrix(Bond const &bond, BondList const &bonds) {
 BondList compile_explicit_couplings(BondList const &bonds, double precision,
                                     std::string undefined_behavior) {
   BondList bonds_compiled;
+
+  for (auto it : bonds.matrices()) {
+    bonds_compiled.set_matrix(it.first, it.second);
+  }
+  for (auto it : bonds.couplings()) {
+    bonds_compiled.set_coupling(it.first, it.second);
+  }
+
   for (Bond bond : bonds) {
 
     if (coupling_defined(bond, bonds)) {
@@ -93,10 +103,18 @@ BondList compile_explicit_couplings(BondList const &bonds, double precision,
 BondList compile_explicit_matrices(BondList const &bonds, double precision,
                                    std::string undefined_behavior) {
   BondList bonds_compiled;
+  for (auto it : bonds.matrices()) {
+    bonds_compiled.set_matrix(it.first, it.second);
+  }
+  for (auto it : bonds.couplings()) {
+    bonds_compiled.set_coupling(it.first, it.second);
+  }
 
   for (Bond bond : bonds) {
 
     if (matrix_defined(bond, bonds)) {
+      // Log("matrix defined");
+      // HydraPrint(bond);
       arma::cx_mat mat = matrix(bond, bonds);
 
       // Go through matrix and set small elements to zero
@@ -118,6 +136,8 @@ BondList compile_explicit_matrices(BondList const &bonds, double precision,
         bonds_compiled << Bond(mat, bond.coupling_name(), bond.sites());
       }
     } else {
+      // Log("matrix not defined");
+      // HydraPrint(bond);
       if (undefined_behavior == "error") {
         Log.err("Error in compile_explicit_matrices: undefined matrix type in "
                 "bond: {}",

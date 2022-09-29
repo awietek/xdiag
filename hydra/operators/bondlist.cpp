@@ -1,10 +1,12 @@
+#include "bondlist.h"
+
 #include <algorithm>
 #include <cassert>
 #include <fstream>
 #include <iostream>
 #include <sstream>
 
-#include "bondlist.h"
+#include <hydra/utils/print_macro.h>
 
 namespace hydra {
 
@@ -42,7 +44,18 @@ coeff_t BondList::coupling(std::string name, double precision) const {
 template double BondList::coupling<double>(std::string, double) const;
 template complex BondList::coupling<complex>(std::string, double) const;
 
+std::map<std::string, complex> const &BondList::couplings() const {
+  return couplings_;
+}
+
 bool BondList::matrix_defined(std::string name) const {
+  // for (auto kv : matrices_) {
+  //   std::string a = kv.first;
+  //   arma::cx_mat b = kv.second;
+  //   std::cout << a << "\n";
+  //   HydraPrint(b);
+  // }
+
   return matrices_.count(name);
 }
 void BondList::set_matrix(std::string name, arma::cx_mat mat) {
@@ -55,9 +68,12 @@ arma::cx_mat BondList::matrix(std::string name) const {
   if (couplings_.count(name)) {
     return matrices_.at(name);
   } else {
-    Log.err("Error: undefined coupling in BondList: {}", name);
+    Log.err("Error: undefined matrix in BondList: {}", name);
   }
   return matrices_.at(name);
+}
+std::map<std::string, arma::cx_mat> const &BondList::matrices() const {
+  return matrices_;
 }
 
 int BondList::size() const { return (int)bonds_.size(); }
@@ -174,7 +190,25 @@ bool BondList::is_real(double precision) const {
 BondList operator+(BondList const &bl1, BondList const &bl2) {
   auto newbonds = bl1.bonds_;
   newbonds.insert(newbonds.end(), bl2.begin(), bl2.end());
-  return BondList(newbonds);
+  BondList blnew = BondList(newbonds);
+  
+  for (auto it : bl1.matrices()) {
+    blnew.set_matrix(it.first, it.second);
+  }
+  
+  for (auto it : bl1.couplings()) {
+    blnew.set_coupling(it.first, it.second);
+  }
+
+  for (auto it : bl2.matrices()) {
+    blnew.set_matrix(it.first, it.second);
+  }
+  
+  for (auto it : bl2.couplings()) {
+    blnew.set_coupling(it.first, it.second);
+  }
+
+  return blnew;
 }
 
 BondList read_bondlist(std::string filename) {
