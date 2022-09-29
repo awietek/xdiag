@@ -9,7 +9,7 @@
 
 #include <algorithm>
 
-#ifdef HYDRA_ENABLE_OPENMP
+#ifdef _OPENMP
 #include <hydra/parallel/omp/omp_utils.h>
 #endif
 
@@ -42,7 +42,7 @@ compute_rep_search_range_serial(std::vector<bit_t> const &reps,
   return rep_search_range;
 }
 
-#ifdef HYDRA_ENABLE_OPENMP
+#ifdef _OPENMP
 template <typename bit_t>
 ska::flat_hash_map<bit_t, gsl::span<bit_t const>>
 compute_rep_search_range_omp(std::vector<bit_t> const &reps,
@@ -181,7 +181,7 @@ IndexingSublattice<bit_t, n_sublat>::IndexingSublattice(
       continue;
     }
 
-#ifndef HYDRA_ENABLE_OPENMP
+#ifndef _OPENMP
     for (auto postfix :
          combinatorics::Combinations<bit_t>(n_trailing, n_up_postfix)) {
       bit_t state = (prefix << n_trailing) | postfix;
@@ -234,7 +234,7 @@ IndexingSublattice<bit_t, n_sublat>::IndexingSublattice(
 
   reps_.shrink_to_fit();
   norms_.shrink_to_fit();
-#ifdef HYDRA_ENABLE_OPENMP
+#ifdef _OPENMP
   // omp version still has a bug, use serial (not so bad performance actually)
   // rep_search_range_ = compute_rep_search_range_omp(reps_, n_postfix_bits_);
   rep_search_range_ = compute_rep_search_range_serial(reps_, n_postfix_bits_);

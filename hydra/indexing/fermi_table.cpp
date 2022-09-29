@@ -4,7 +4,7 @@
 #include <hydra/combinatorics/subsets.h>
 #include <hydra/symmetries/operations/fermi_sign.h>
 
-#ifdef HYDRA_ENABLE_OPENMP
+#ifdef _OPENMP
 #include <hydra/parallel/omp/omp_utils.h>
 #endif
 
@@ -31,7 +31,7 @@ std::vector<bool> init_fermi_table_serial(States const &states,
   return fermi_table;
 }
 
-#ifdef HYDRA_ENABLE_OPENMP
+#ifdef _OPENMP
 template <class States>
 std::vector<bool> init_fermi_table_omp(States const &states,
                                        PermutationGroup const &group) {
@@ -90,7 +90,7 @@ template <class States>
 std::vector<bool> init_fermi_table(States const &states,
                                    PermutationGroup const &group) {
   assert(states.n() == group.n_sites());
-#ifdef HYDRA_ENABLE_OPENMP
+#ifdef _OPENMP
   return init_fermi_table_omp(states, group);
 #else
   return init_fermi_table_serial(states, group);

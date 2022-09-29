@@ -4,7 +4,7 @@
 #include <hydra/combinatorics/binomial.h>
 #include <hydra/combinatorics/combinations_index.h>
 
-#ifdef HYDRA_ENABLE_OPENMP
+#ifdef _OPENMP
 #include <hydra/parallel/omp/omp_utils.h>
 #endif
 
@@ -17,7 +17,7 @@ IndexingSz<bit_t>::IndexingSz(int n_sites, int nup)
       begin_(n_sites, nup, 0), end_(n_sites, nup, size_) {
   utils::check_nup_spinhalf(n_sites, nup, "Spinhalf");
 
-#ifdef HYDRA_ENABLE_OPENMP
+#ifdef _OPENMP
   for (auto [state, idx] :
        combinatorics::CombinationsIndexThread<bit_t>(n_sites, nup)) {
     states_[idx] = state;

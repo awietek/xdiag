@@ -1,7 +1,7 @@
 #include "random_utils.h"
 #include <math.h>
 
-#ifdef HYDRA_ENABLE_OPENMP
+#ifdef _OPENMP
 #include <hydra/parallel/omp/omp_utils.h>
 #include <hydra/random/hash_functions.h>
 #endif
@@ -63,7 +63,7 @@ int random_normal_discard() {
 
 template <typename coeff_t>
 void fill_random_normal_vector(arma::Col<coeff_t> &v, int seed) {
-#ifdef HYDRA_ENABLE_OPENMP
+#ifdef _OPENMP
 #pragma omp parallel
   {
 

@@ -46,7 +46,7 @@ TEST_CASE("random_state", "[states]") {
       }
     }
   }
-#ifdef HYDRA_ENABLE_OPENMP
+#ifdef _OPENMP
 
   // Check whether result with multiple threads is the same as with a single
   // thread

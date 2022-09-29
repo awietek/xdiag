@@ -9,7 +9,7 @@ template <typename bit_t, typename coeff_t, class Indexing, class Filler>
 void apply_symmetric_u(coeff_t U, Indexing &&indexing, Filler &&fill) {
 
   idx_t idx = 0;
-  // #ifdef HYDRA_ENABLE_OPENMP
+  // #ifdef _OPENMP
   // #pragma omp parallel for schedule(guided)
   // #endif
   for (idx_t idx_ups = 0; idx_ups < indexing.n_rep_ups(); ++idx_ups) {

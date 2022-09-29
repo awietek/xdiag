@@ -43,7 +43,7 @@ void apply_symmetric_hopping(Bond const &bond, Indexing &&indexing,
   // Apply hoppings on dnspins
   if (bond.type() == "HOPDN") {
 
-    // #ifdef HYDRA_ENABLE_OPENMP
+    // #ifdef _OPENMP
     // #pragma omp parallel for schedule(guided)
     // #endif
     for (idx_t idx_up = 0; idx_up < indexing.n_rep_ups(); ++idx_up) {
@@ -116,7 +116,7 @@ void apply_symmetric_hopping(Bond const &bond, Indexing &&indexing,
 
   // Apply hoppings on upspins
   if (bond.type() == "HOPUP") {
-    // #ifdef HYDRA_ENABLE_OPENMP
+    // #ifdef _OPENMP
     // #pragma omp parallel for schedule(guided)
     // #endif
     for (idx_t idx_up = 0; idx_up < indexing.n_rep_ups(); ++idx_up) {

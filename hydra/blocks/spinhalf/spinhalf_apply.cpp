@@ -30,7 +30,7 @@ void apply(BondList const &bonds, Spinhalf<bit_t> const &block_in,
   vec_out.zeros();
 
   auto fill = [&vec_out, &vec_in](idx_t idx_out, idx_t idx_in, coeff_t val) {
-#ifdef HYDRA_ENABLE_OPENMP
+#ifdef _OPENMP
     if constexpr (is_real<coeff_t>()) {
       coeff_t x = val * vec_in(idx_in);
       coeff_t *pos = vec_out.memptr();

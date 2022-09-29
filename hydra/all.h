@@ -4,7 +4,7 @@
 #include <mpi.h>
 #endif
 
-#ifdef HYDRA_ENABLE_OPENMP
+#ifdef _OPENMP
 #include "parallel/omp/omp_utils.h"
 #include <omp.h>
 #endif

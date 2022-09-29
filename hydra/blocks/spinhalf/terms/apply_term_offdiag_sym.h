@@ -2,7 +2,7 @@
 
 #include <hydra/common.h>
 
-#ifdef HYDRA_ENABLE_OPENMP
+#ifdef _OPENMP
 #include <hydra/parallel/omp/omp_utils.h>
 #endif
 
@@ -45,7 +45,7 @@ void apply_term_offdiag_sym(IndexingIn &&indexing_in,
     characters = irrep_out.characters_real();
   }
 
-#ifdef HYDRA_ENABLE_OPENMP
+#ifdef _OPENMP
   idx_t size = indexing_in.size();
 
 #pragma omp parallel for schedule(guided)
