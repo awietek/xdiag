@@ -7,7 +7,6 @@
 TEST_CASE("non_branching_bonds", "[operators]") {
   using namespace hydra;
 
-  // Log("hello");
   arma::cx_mat sx(arma::mat({{0., 0.5}, {0.5, 0.}}),
                   arma::mat({{0., 0.}, {0., 0.}}));
   arma::cx_mat sy(arma::mat({{0., 0.}, {0., 0.}}),
@@ -21,13 +20,17 @@ TEST_CASE("non_branching_bonds", "[operators]") {
   arma::cx_mat sm(arma::mat({{0.0, 0.0}, {1.0, 0.0}}),
                   arma::mat({{0., 0.}, {0., 0.0}}));
 
-  for (auto ss : {sx, sy, sz, sp, sm}) {
+  arma::cx_mat ones(arma::mat({{1.0, 1.0}, {1.0, 1.0}}),
+                    arma::mat({{1.0, 1.0}, {1.0, 1.0}}));
+
+  for (auto ss : {ones}) {
     auto bond = Bond(ss, 0);
     auto block = Spinhalf(1);
     auto h = matrix(bond, block);
     REQUIRE(close(h, ss));
   }
 
+  // Check ground state energy of TFI model
   int N = 14;
   double J = 1.0;
   double H = 1.0;
@@ -43,8 +46,6 @@ TEST_CASE("non_branching_bonds", "[operators]") {
   auto block = Spinhalf(N);
   double e = e0(bonds, block);
   double e_dmrg = -7.411918598647893;
-  // HydraPrint(e);
-  // HydraPrint(e_dmrg);
   REQUIRE(std::abs(e - e_dmrg) < 1e-8);
 
   // Log.set_verbosity(2);
@@ -83,7 +84,6 @@ TEST_CASE("non_branching_bonds", "[operators]") {
   //   HydraPrint(m);
   // }
 
-  
   // HydraPrint(sx);
   // HydraPrint(sy);
   // HydraPrint(sz);
