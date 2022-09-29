@@ -47,7 +47,7 @@ private:
   bit_t current_;
 };
 
-#ifdef HYDRA_ENABLE_OPENMP
+#ifdef _OPENMP
 // SubsetsThread
 template <class bit_t = std_bit_t> class SubsetsThread {
 public:

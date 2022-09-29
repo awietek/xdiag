@@ -2,7 +2,7 @@
 
 #include <hydra/utils/logger.h>
 
-#ifdef HYDRA_ENABLE_OPENMP
+#ifdef _OPENMP
 #include <hydra/parallel/omp/omp_utils.h>
 #endif
 
@@ -30,7 +30,7 @@ template class SubsetsIndexIterator<uint16_t>;
 template class SubsetsIndexIterator<uint32_t>;
 template class SubsetsIndexIterator<uint64_t>;
 
-#ifdef HYDRA_ENABLE_OPENMP
+#ifdef _OPENMP
 template <class bit_t>
 SubsetsIndexThread<bit_t>::SubsetsIndexThread(int n)
     : n_(n), size_((idx_t)1 << n) {

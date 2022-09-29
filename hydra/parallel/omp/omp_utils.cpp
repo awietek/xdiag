@@ -1,4 +1,4 @@
-#ifdef HYDRA_ENABLE_OPENMP
+#ifdef _OPENMP
 
 #include "omp_utils.h"
 

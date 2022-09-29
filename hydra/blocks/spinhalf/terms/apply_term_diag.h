@@ -2,7 +2,7 @@
 
 #include <hydra/common.h>
 
-#ifdef HYDRA_ENABLE_OPENMP
+#ifdef _OPENMP
 #include <hydra/parallel/omp/omp_utils.h>
 #endif
 
@@ -18,7 +18,7 @@ template <typename bit_t, typename coeff_t, class Indexing, class TermCoeff,
           class Fill>
 void apply_term_diag(Indexing &&indexing, TermCoeff &&term_coeff, Fill &&fill) {
 
-#ifdef HYDRA_ENABLE_OPENMP
+#ifdef _OPENMP
     idx_t size = indexing.size();
 
 #pragma omp parallel for schedule(guided)

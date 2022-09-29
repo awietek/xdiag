@@ -3,10 +3,6 @@
 #include <hydra/blocks/utils/block_utils.h>
 #include <hydra/combinatorics/binomial.h>
 
-#ifdef HYDRA_ENABLE_OPENMP
-#include <hydra/parallel/omp/omp_utils.h>
-#endif
-
 namespace hydra::indexing::spinhalf {
 
 template <typename bit_t>

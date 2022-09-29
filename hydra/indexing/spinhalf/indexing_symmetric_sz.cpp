@@ -4,10 +4,6 @@
 #include <hydra/symmetries/operations/representative_list.h>
 #include <hydra/utils/logger.h>
 
-#ifdef HYDRA_ENABLE_OPENMP
-#include <hydra/parallel/omp/omp_utils.h>
-#endif
-
 namespace hydra::indexing::spinhalf {
 
 template <class bit_t>

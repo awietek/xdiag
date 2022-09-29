@@ -54,7 +54,7 @@ private:
   idx_t idx_;
 };
 
-#ifdef HYDRA_ENABLE_OPENMP
+#ifdef _OPENMP
 // CombinationsIndexThread
 template <typename bit_t = std_bit_t> class CombinationsIndexThread {
 public:

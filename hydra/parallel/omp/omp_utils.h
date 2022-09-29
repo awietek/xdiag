@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef HYDRA_ENABLE_OPENMP
+#ifdef _OPENMP
 
 #include <extern/gsl/span>
 #include <omp.h>
@@ -64,4 +64,4 @@ combine_vectors_copy(std::vector<std::vector<T>> const &vec_of_vec) {
 
 } // namespace hydra::omp
 
-#endif // HYDRA_ENABLE_OPENMP
+#endif // _OPENMP

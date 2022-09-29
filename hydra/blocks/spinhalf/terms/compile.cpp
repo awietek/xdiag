@@ -1,6 +1,8 @@
 #include "compile.h"
 #include <hydra/operators/compiler.h>
+#include <hydra/operators/non_branching_bonds.h>
 #include <hydra/utils/logger.h>
+#include <hydra/utils/print_macro.h>
 
 namespace hydra::spinhalf {
 
@@ -27,7 +29,11 @@ BondList compile(BondList const &bonds, double precision) {
         }
       }
     } else {
-      bonds_generic << bond;
+      BondList bonds_nb = operators::non_branching_bonds(bond, precision);
+      for (auto b : bonds_nb){
+	HydraPrint(b);
+	bonds_generic << b;
+      }
     }
   }
   return bonds_special + bonds_generic;

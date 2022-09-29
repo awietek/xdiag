@@ -3,7 +3,7 @@
 #include <hydra/combinatorics/bit_patterns.h>
 #include <hydra/utils/logger.h>
 
-#ifdef HYDRA_ENABLE_OPENMP
+#ifdef _OPENMP
 #include <hydra/parallel/omp/omp_utils.h>
 #endif
 
@@ -36,7 +36,7 @@ template class CombinationsIterator<uint16_t>;
 template class CombinationsIterator<uint32_t>;
 template class CombinationsIterator<uint64_t>;
 
-#ifdef HYDRA_ENABLE_OPENMP
+#ifdef _OPENMP
 template <class bit_t>
 CombinationsThread<bit_t>::CombinationsThread(int n, int k)
     : n_(n), k_(k), size_(combinatorics::binomial(n, k)) {

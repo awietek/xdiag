@@ -7,7 +7,7 @@
 
 #include <hydra/utils/logger.h>
 
-#ifdef HYDRA_ENABLE_OPENMP
+#ifdef _OPENMP
 #include <hydra/parallel/omp/omp_utils.h>
 #endif
 

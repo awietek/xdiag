@@ -30,7 +30,7 @@ template <typename bit_t> void test_combinations_index() {
     }
 
 // Test
-#ifdef HYDRA_ENABLE_OPENMP
+#ifdef _OPENMP
   for (int n = 0; n < 7; ++n) {
     for (int k = 0; k <= n; ++k) {
       idx_t size = binomial(n, k);
