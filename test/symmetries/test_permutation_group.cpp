@@ -16,7 +16,7 @@ TEST_CASE("permutation_group", "[symmetries]") {
     auto p = group[sym];
     auto pinv = group[group.inverse(sym)];
     // HydraPrint(p * pinv);
-    auto id = IdentityPermutation(group.n_sites());
+    auto id = identity_permutation(group.n_sites());
     REQUIRE(p * pinv == id);
   }
 

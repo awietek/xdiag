@@ -24,7 +24,7 @@ PermutationGroup::PermutationGroup(std::vector<Permutation> const &permutations)
 
   // Check whether identity is contained
   if (n_sites_ > 0) {
-    auto id = IdentityPermutation(n_sites_);
+    auto id = identity_permutation(n_sites_);
     if (std::find(permutations.begin(), permutations.end(), id) ==
         permutations.end()) {
       Log.err("Error constructing PermutationGroup: no identity element found");
@@ -46,7 +46,7 @@ PermutationGroup::PermutationGroup(std::vector<Permutation> const &permutations)
   // Check if inverse exists
   int idx = 0;
   for (auto p : permutations) {
-    auto pinv = Inverse(p);
+    auto pinv = hydra::inverse(p);
     auto it = std::find(permutations.begin(), permutations.end(), pinv);
     if (it == permutations.end()) {
       Log.err("Error constructing PermutationGroup: inverse element not found");

@@ -8,6 +8,7 @@ class Permutation {
 public:
   Permutation() = default;
   explicit Permutation(std::vector<int> const &perm);
+  Permutation(std::initializer_list<int> perm);
 
   template <typename bit_t> bit_t apply(bit_t state) const;
   Permutation inverse() const;
@@ -28,9 +29,9 @@ private:
   std::vector<int> permutation_;
 };
 
-Permutation IdentityPermutation(int n_sites);
+Permutation identity_permutation(int n_sites);
 Permutation operator*(Permutation const &p1, Permutation const &p2);
-Permutation Inverse(Permutation const &p);
-Permutation Shuffle(Permutation const &p);
+Permutation inverse(Permutation const &p);
+Permutation shuffle(Permutation const &p);
 
 } // namespace hydra

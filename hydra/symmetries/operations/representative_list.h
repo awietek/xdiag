@@ -101,7 +101,7 @@ inline std::tuple<std::vector<bit_t>, std::vector<idx_t>, std::vector<int>,
                   std::vector<std::pair<span_size_t, span_size_t>>>
 representatives_indices_symmetries_limits(StatesIndexing &&states_indexing,
                                           GroupAction &&group_action) {
-  auto irrep = TrivialRepresentation(group_action.n_symmetries());
+  auto irrep = trivial_representation(group_action.n_symmetries());
   auto [reps, idces, syms, sym_limits, norms] =
       representatives_indices_symmetries_limits_norms<bit_t>(
           states_indexing, group_action, irrep);

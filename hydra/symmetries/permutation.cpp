@@ -20,6 +20,9 @@ Permutation::Permutation(std::vector<int> const &perm)
   }
 }
 
+Permutation::Permutation(std::initializer_list<int> perm)
+    : Permutation(std::vector<int>(perm)) {}
+
 template <typename bit_t> bit_t Permutation::apply(bit_t state) const {
   bit_t tstate = 0;
   for (int site = 0; site < n_sites_; ++site) {
@@ -50,7 +53,7 @@ Permutation Permutation::shuffle() const {
   return Permutation(ps);
 }
 
-Permutation IdentityPermutation(int n_sites) {
+Permutation identity_permutation(int n_sites) {
   std::vector<int> perm(n_sites, 0);
   std::iota(perm.begin(), perm.end(), 0);
   return Permutation(perm);
@@ -70,7 +73,7 @@ Permutation operator*(Permutation const &p1, Permutation const &p2) {
   return Permutation(perm);
 }
 
-Permutation Inverse(Permutation const &p) { return p.inverse(); }
-Permutation Shuffle(Permutation const &p) { return p.shuffle(); }
+Permutation inverse(Permutation const &p) { return p.inverse(); }
+Permutation shuffle(Permutation const &p) { return p.shuffle(); }
 
 } // namespace hydra

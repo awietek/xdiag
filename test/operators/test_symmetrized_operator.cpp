@@ -7,8 +7,8 @@
 
 using namespace hydra;
 
-TEST_CASE("symmetric_operator", "[symmetries]") {
-  hydra::Log("Testing symmetric_operator");
+TEST_CASE("symmetrized_operator", "[symmetries]") {
+  hydra::Log("Testing symmetrized_operator");
 
   for (int n_sites = 3; n_sites < 5; ++n_sites) {
 
@@ -87,7 +87,7 @@ TEST_CASE("symmetric_operator", "[symmetries]") {
             corr_nosym << Bond("HB", "J", {0, i});
             corr_nosym["J"] = 1.0;
 
-            auto corr_sym = symmetric_operator(corr_nosym, space_group);
+            auto corr_sym = symmetrized_operator(corr_nosym, space_group);
             auto val_nosym = inner(corr_nosym, v0_nosym);
             auto val_sym = inner(corr_sym, v0_sym);
             // Log.out("(0,{}) nosym: {}, sym: {}", i, real(val_nosym),

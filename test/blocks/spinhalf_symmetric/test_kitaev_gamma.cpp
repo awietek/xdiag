@@ -54,7 +54,9 @@ void run_kitaev_gamma_test(
 }
 
 TEST_CASE("kitaev_gamma", "[blocks][spinhalf_symmetric]") {
+  using namespace hydra;
 
+  Log("Testing Kitaev-Gamma model");
   {
     double K = -.30901699437494742412;
     double G = .95105651629515357210;
@@ -129,4 +131,5 @@ TEST_CASE("kitaev_gamma", "[blocks][spinhalf_symmetric]") {
         {"M2.C2.B", -2.582135618559802559}};
     run_kitaev_gamma_test(K, G, irrep_names_e0);
   }
+  Log("done");
 }

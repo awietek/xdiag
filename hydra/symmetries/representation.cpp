@@ -147,7 +147,7 @@ bool is_complex(Representation const &rep) {
 }
 bool is_real(Representation const &rep) { return !is_complex(rep); }
 
-Representation TrivialRepresentation(idx_t size) {
+Representation trivial_representation(idx_t size) {
   return Representation(std::vector<complex>(size, {1.0, 0.0}));
 }
 

@@ -86,12 +86,13 @@
 #include "symmetries/permutation.h"
 #include "symmetries/permutation_group.h"
 #include "symmetries/representation.h"
+#include "symmetries/generated_group.h"
 
 #include "operators/bond.h"
 #include "operators/bondlist.h"
 #include "operators/compiler.h"
 #include "operators/non_branching_bonds.h"
-#include "operators/symmetric_operator.h"
+#include "operators/symmetrized_operator.h"
 
 #include "algorithms/exp_sym_v.h"
 #include "algorithms/lanczos/lanczos.h"
