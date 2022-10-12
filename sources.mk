@@ -52,6 +52,7 @@ sources+= hydra/blocks/tj/terms/compile.cpp
 sources+= hydra/symmetries/operations/symmetry_operations.cpp
 sources+= hydra/symmetries/permutation.cpp
 sources+= hydra/symmetries/permutation_group.cpp
+sources+= hydra/symmetries/generated_group.cpp
 sources+= hydra/symmetries/representation.cpp
 sources+= hydra/symmetries/operations/fermi_sign.cpp
 
@@ -63,7 +64,7 @@ sources+= hydra/symmetries/group_action/sublattice_stability.cpp
 sources+= hydra/operators/bond.cpp
 sources+= hydra/operators/bondlist.cpp
 sources+= hydra/operators/compiler.cpp
-sources+= hydra/operators/symmetric_operator.cpp
+sources+= hydra/operators/symmetrized_operator.cpp
 sources+= hydra/operators/non_branching_bonds.cpp
 
 sources+= hydra/states/gpwf_spinhalf.cpp
@@ -115,8 +116,9 @@ testsources+= test/symmetries/test_fermi_sign.cpp
 testsources+= test/symmetries/test_symmetry_operations.cpp
 testsources+= test/symmetries/test_permutation.cpp
 testsources+= test/symmetries/test_permutation_group.cpp
+testsources+= test/symmetries/test_generated_group.cpp
 
-testsources+= test/operators/test_symmetric_operator.cpp
+testsources+= test/operators/test_symmetrized_operator.cpp
 testsources+= test/operators/test_non_branching_bonds.cpp
 
 testsources+= test/blocks/spinhalf/testcases_spinhalf.cpp
@@ -127,7 +129,6 @@ testsources+= test/blocks/spinhalf_symmetric/test_spinhalf_symmetric.cpp
 testsources+= test/blocks/spinhalf_symmetric/test_spinhalf_symmetric_matrix.cpp
 testsources+= test/blocks/spinhalf_symmetric/test_spinhalf_symmetric_apply.cpp
 testsources+= test/blocks/spinhalf_symmetric/test_kitaev_gamma.cpp
-
 
 testsources+= test/blocks/tj/testcases_tj.cpp
 testsources+= test/blocks/tj/test_tj_utils.cpp
