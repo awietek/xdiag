@@ -2,6 +2,7 @@
 
 #include <complex>
 #include <cstdint>
+#include <math.h>
 #include <utility>
 
 #include <hydra/bitops/bitops.h>
@@ -21,6 +22,13 @@ using idx_t = int64_t;
 using scomplex = std::complex<float>;
 using complex = std::complex<double>;
 
+using namespace std::literals::complex_literals;
+constexpr double pi = M_PI;
+inline complex operator*(complex a, int b) { return a * (double)b; }
+inline complex operator*(int a, complex b) { return b * a; }
+inline complex operator/(complex a, int b) { return a / (double)b; }
+inline complex operator/(int a, complex b) { return (double)a / b; }
+
 template <class T> struct is_complex_t : public std::false_type {};
 template <class T>
 struct is_complex_t<std::complex<T>> : public std::true_type {};
@@ -39,7 +47,9 @@ constexpr bool index_not_found(idx_t idx) { return idx < 0; }
 constexpr bool index_valid(idx_t idx) { return idx >= 0; }
 
 // Complex real/imag/conj
-template <class coeff_t> struct real_type_struct { typedef coeff_t type; };
+template <class coeff_t> struct real_type_struct {
+  typedef coeff_t type;
+};
 
 template <class coeff_t> struct real_type_struct<std::complex<coeff_t>> {
   typedef coeff_t type;

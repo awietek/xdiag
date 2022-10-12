@@ -8,7 +8,7 @@
 using namespace hydra;
 
 TEST_CASE("symmetrized_operator", "[symmetries]") {
-  hydra::Log("Testing symmetrized_operator");
+  Log("Testing symmetrized_operator");
 
   for (int n_sites = 3; n_sites < 5; ++n_sites) {
 
@@ -28,7 +28,8 @@ TEST_CASE("symmetrized_operator", "[symmetries]") {
         if (block_nosym.size() == 0) {
           continue;
         }
-        auto [e0_nosym, v0_nosym] = groundstate_cplx(bondlist, block_nosym);
+        auto v0_nosym = groundstate_cplx(bondlist, block_nosym);
+        auto e0_nosym = eig0_cplx(bondlist, block_nosym);
         {
           auto &v = v0_nosym;
           auto Hv = v;
@@ -45,7 +46,7 @@ TEST_CASE("symmetrized_operator", "[symmetries]") {
           auto block_sym = Electron(n_sites, nup, ndn, space_group, irrep);
           if (block_sym.size() == 0)
             continue;
-          double e0_sector = e0_cplx(bondlist, block_sym);
+          double e0_sector = eig0_cplx(bondlist, block_sym);
 
           e0s.push_back(e0_sector);
           if (e0_sector < e0_sym) {
@@ -68,8 +69,7 @@ TEST_CASE("symmetrized_operator", "[symmetries]") {
         // -> g.s. from non-symmetric calculation is unique and symmetric
         if (deg == 1) {
           auto block_sym = Electron(n_sites, nup, ndn, space_group, e0_irrep);
-          auto [e0_sym2, v0_sym] = groundstate_cplx(bondlist, block_sym);
-          (void)e0_sym2;
+          auto v0_sym = groundstate_cplx(bondlist, block_sym);
           REQUIRE(close(e0_sym, e0_nosym));
           {
             auto &v = v0_sym;
@@ -110,5 +110,5 @@ TEST_CASE("symmetrized_operator", "[symmetries]") {
       }
     }
   }
-  hydra::Log("done");
+  Log("done");
 }

@@ -24,7 +24,7 @@ void test_apply(BondList bonds) {
     arma::eig_sym(evals_mat, H);
 
     double e0_mat = evals_mat(0);
-    double e0_app = e0_real(bonds, block);
+    double e0_app = eig0_real(bonds, block);
     REQUIRE(close(e0_mat, e0_app));
   }
 }
@@ -48,12 +48,12 @@ TEST_CASE("spinhalf_apply", "[models][spinhalf]") {
   for (int n_sites = 2; n_sites <= 6; ++n_sites) {
     auto bonds = HB_alltoall(n_sites);
     auto block_no_sz = Spinhalf(n_sites);
-    auto e0_no_sz = e0_real(bonds, block_no_sz);
+    auto e0_no_sz = eig0_real(bonds, block_no_sz);
     auto e0s_sz = std::vector<double>();
 
     for (int nup = 0; nup <= n_sites; ++nup) {
       auto block_sz = Spinhalf(n_sites, nup);
-      auto e0_sz = e0_real(bonds, block_sz);
+      auto e0_sz = eig0_real(bonds, block_sz);
       e0s_sz.push_back(e0_sz);
     }
     auto e0_sz = *std::min_element(e0s_sz.begin(), e0s_sz.end());
@@ -73,7 +73,7 @@ TEST_CASE("spinhalf_apply", "[models][spinhalf]") {
     int n_sites = 12;
     int n_up = 6;
     auto spinhalf = Spinhalf<uint16_t>(n_sites, n_up);
-    auto e0 = e0_cplx(bondlist, spinhalf);
+    auto e0 = eig0_cplx(bondlist, spinhalf);
     double energy = -6.9456000700824329641;
 
     // Log("{:.18f} {:.18f}", e0, energy);

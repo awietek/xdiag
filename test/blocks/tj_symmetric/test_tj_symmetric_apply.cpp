@@ -39,7 +39,7 @@ void test_apply_tj_symmetric(BondList bondlist, PermutationGroup space_group,
           arma::vec evals_mat;
           arma::eig_sym(evals_mat, H_sym);
           double e0_mat = evals_mat(0);
-          double e0_app = e0_cplx(bondlist, block);
+          double e0_app = eig0_cplx(bondlist, block);
 
           // Log.out("e0_mat: {}, e0_app: {}", e0_mat, e0_app);
           REQUIRE(std::abs(e0_mat - e0_app) < 1e-7);
@@ -54,7 +54,7 @@ void test_apply_tj_symmetric(BondList bondlist, PermutationGroup space_group,
             REQUIRE(close(evals_mat_real, evals_mat));
 
             double e0_mat_real = evals_mat_real(0);
-            double e0_app_real = e0_real(bondlist, block);
+            double e0_app_real = eig0_real(bondlist, block);
             REQUIRE(std::abs(e0_mat_real - e0_app_real) < 1e-7);
           }
         }

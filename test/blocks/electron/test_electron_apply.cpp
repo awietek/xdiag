@@ -11,13 +11,13 @@ using namespace hydra;
 void test_electron_np_no_np_apply(int n_sites, BondList bonds) {
 
   auto block_full = Electron(n_sites);
-  auto e0_full = e0_cplx(bonds, block_full);
+  auto e0_full = eig0_cplx(bonds, block_full);
 
   std::vector<double> e0s;
   for (int nup = 0; nup <= n_sites; ++nup)
     for (int ndn = 0; ndn <= n_sites; ++ndn) {
       auto block = Electron(n_sites, nup, ndn);
-      auto e0 = e0_cplx(bonds, block);
+      auto e0 = eig0_cplx(bonds, block);
       e0s.push_back(e0);
     }
   auto e0_np = *std::min_element(e0s.begin(), e0s.end());
@@ -57,7 +57,7 @@ TEST_CASE("electron_apply", "[blocks][electron]") {
         arma::vec evals_mat;
         arma::eig_sym(evals_mat, H);
         double e0_mat = evals_mat(0);
-        double e0_app = e0_real(bondlist, block);
+        double e0_app = eig0_real(bondlist, block);
         // Log.out("nup: {}, ndn: {}, e0_mat: {}, e0_app: {}", nup, ndn, e0_mat,
         //         e0_app);
         // REQUIRE(close(e0_mat, e0_app));
@@ -92,7 +92,7 @@ TEST_CASE("electron_apply", "[blocks][electron]") {
         arma::vec evals_mat;
         arma::eig_sym(evals_mat, H);
         double e0_mat = evals_mat(0);
-        double e0_app = e0_cplx(bondlist, block);
+        double e0_app = eig0_cplx(bondlist, block);
         // Log.out("e0_mat: {}, e0_app: {}", e0_mat, e0_app);
         CHECK(close(e0_mat, e0_app));
       }
@@ -122,7 +122,7 @@ TEST_CASE("electron_apply", "[blocks][electron]") {
         arma::vec evals_mat;
         arma::eig_sym(evals_mat, H);
         double e0_mat = evals_mat(0);
-        double e0_app = e0_cplx(bondlist, block);
+        double e0_app = eig0_cplx(bondlist, block);
         // Log.out("e0_mat: {}, e0_app: {}", e0_mat, e0_app);
         CHECK(close(e0_mat, e0_app));
       }
@@ -145,7 +145,7 @@ TEST_CASE("electron_apply", "[blocks][electron]") {
         arma::vec evals_mat;
         arma::eig_sym(evals_mat, H);
         double e0_mat = evals_mat(0);
-        double e0_app = e0_cplx(bondlist, block);
+        double e0_app = eig0_cplx(bondlist, block);
         // Log.out("e0_mat: {}, e0_app: {}", e0_mat, e0_app);
         CHECK(close(e0_mat, e0_app, 1e-6, 1e-6));
       }

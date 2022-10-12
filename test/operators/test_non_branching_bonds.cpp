@@ -44,7 +44,7 @@ TEST_CASE("non_branching_bonds", "[operators]") {
   }
 
   auto block = Spinhalf(N);
-  double e = e0(bonds, block);
+  double e = eig0(bonds, block);
   double e_dmrg = -7.411918598647893;
   REQUIRE(std::abs(e - e_dmrg) < 1e-8);
 

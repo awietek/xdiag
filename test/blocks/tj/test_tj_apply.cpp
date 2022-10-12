@@ -30,7 +30,7 @@ TEST_CASE("tj_apply", "[blocks][tj]") {
         arma::vec evals_mat;
         arma::eig_sym(evals_mat, H);
         double e0_mat = evals_mat(0);
-        double e0_app = e0_real(bonds, block);
+        double e0_app = eig0_real(bonds, block);
         // Log.out("nup: {}, ndn: {}, e0_mat: {}, e0_app: {}", nup, ndn,
         //              e0_mat, e0_app);
         REQUIRE(std::abs(e0_mat - e0_app) < 1e-10);
@@ -56,7 +56,7 @@ TEST_CASE("tj_apply", "[blocks][tj]") {
         arma::eig_sym(evals_mat, H);
 
         double e0_mat = evals_mat(0);
-        double e0_app = e0_cplx(bonds, block);
+        double e0_app = eig0_cplx(bonds, block);
         // Log.out("nup: {}, ndn: {}, e0_mat: {}, e0_app: {}", nup, ndn,
         //              e0_mat, e0_app);
         REQUIRE(close(e0_mat, e0_app));

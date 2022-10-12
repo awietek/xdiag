@@ -34,7 +34,7 @@ void test_spinhalf_symmetric_apply(BondList bondlist,
         arma::eig_sym(evals_mat, H);
 
         double e0_mat = evals_mat(0);
-        double e0_app = e0_cplx(bondlist, block);
+        double e0_app = eig0_cplx(bondlist, block);
         // Log.out("e0_mat: {}, e0_app: {}", e0_mat, e0_app);
         REQUIRE(std::abs(e0_mat - e0_app) < 1e-7);
 
@@ -47,7 +47,7 @@ void test_spinhalf_symmetric_apply(BondList bondlist,
           REQUIRE(close(evals_mat_real, evals_mat));
 
           double e0_mat_real = evals_mat_real(0);
-          double e0_app_real = e0_real(bondlist, block);
+          double e0_app_real = eig0_real(bondlist, block);
           REQUIRE(std::abs(e0_mat_real - e0_app_real) < 1e-7);
         }
       }
@@ -78,7 +78,7 @@ void test_spinhalf_symmetric_apply_no_sz(BondList bondlist,
       arma::eig_sym(evals_mat, H);
 
       double e0_mat = evals_mat(0);
-      double e0_app = e0_cplx(bondlist, block);
+      double e0_app = eig0_cplx(bondlist, block);
 
       // Log.out("e0_mat: {}, e0_app: {}", e0_mat, e0_app);
       REQUIRE(std::abs(e0_mat - e0_app) < 1e-7);
@@ -92,7 +92,7 @@ void test_spinhalf_symmetric_apply_no_sz(BondList bondlist,
         REQUIRE(close(evals_mat_real, evals_mat));
 
         double e0_mat_real = evals_mat_real(0);
-        double e0_app_real = e0_real(bondlist, block);
+        double e0_app_real = eig0_real(bondlist, block);
         REQUIRE(std::abs(e0_mat_real - e0_app_real) < 1e-7);
       }
     }
@@ -176,7 +176,7 @@ TEST_CASE("spinhalf_symmetric_apply", "[blocks][spinhalf_symmetric]") {
     for (auto [name, energy] : rep_name_mult) {
       auto irrep = read_represenation(lfile, name);
       auto spinhalf = Spinhalf<uint16_t>(n_sites, n_up, space_group, irrep);
-      auto e0 = e0_cplx(bondlist, spinhalf);
+      auto e0 = eig0_cplx(bondlist, spinhalf);
       Log("{} {:.12f} {:.12f}", name, e0, energy);
 
       REQUIRE(std::abs(e0 - energy) < 1e-10);
