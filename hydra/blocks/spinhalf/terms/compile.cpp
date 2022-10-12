@@ -12,6 +12,7 @@ BondList compile(BondList const &bonds, double precision) {
       operators::compile_explicit(bonds, precision, "keep");
   BondList bonds_special;
   BondList bonds_generic;
+  
   for (auto bond : bonds_explicit) {
     if (bond.type_defined()) {
       std::string type = bond.type();
@@ -31,7 +32,6 @@ BondList compile(BondList const &bonds, double precision) {
     } else {
       BondList bonds_nb = operators::non_branching_bonds(bond, precision);
       for (auto b : bonds_nb){
-	HydraPrint(b);
 	bonds_generic << b;
       }
     }

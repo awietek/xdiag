@@ -5,6 +5,11 @@
 
 namespace hydra::utils {
 
+void PrintPretty(const char *identifier, std::string str) {
+  printf("%s:\n", identifier);
+  std::cout << str << "\n";
+}
+
 void PrintPretty(const char *identifier, int number) {
   printf("%s:\n", identifier);
   std::stringstream ss;

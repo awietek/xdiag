@@ -2,10 +2,12 @@
 
 #include "extern/armadillo/armadillo"
 
+#include <string>
+
+#include <hydra/algorithms/lanczos/tmatrix.h>
 #include <hydra/blocks/electron/electron.h>
 #include <hydra/blocks/spinhalf/spinhalf.h>
 #include <hydra/blocks/tj/tj.h>
-#include <hydra/algorithms/lanczos/tmatrix.h>
 #include <hydra/operators/bondlist.h>
 #include <hydra/states/state.h>
 #include <hydra/symmetries/permutation.h>
@@ -13,6 +15,8 @@
 #include <hydra/symmetries/representation.h>
 
 namespace hydra::utils {
+
+void PrintPretty(const char *identifier, std::string str);
 
 void PrintPretty(const char *identifier, int number);
 void PrintPretty(const char *identifier, uint32_t number);

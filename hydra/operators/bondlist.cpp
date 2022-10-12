@@ -49,13 +49,6 @@ std::map<std::string, complex> const &BondList::couplings() const {
 }
 
 bool BondList::matrix_defined(std::string name) const {
-  // for (auto kv : matrices_) {
-  //   std::string a = kv.first;
-  //   arma::cx_mat b = kv.second;
-  //   std::cout << a << "\n";
-  //   HydraPrint(b);
-  // }
-
   return matrices_.count(name);
 }
 void BondList::set_matrix(std::string name, arma::cx_mat mat) {
@@ -65,7 +58,7 @@ void BondList::set_matrix(std::string name, arma::mat mat) {
   matrices_[name] = to_cx_mat(mat);
 }
 arma::cx_mat BondList::matrix(std::string name) const {
-  if (couplings_.count(name)) {
+  if (matrices_.count(name)) {
     return matrices_.at(name);
   } else {
     Log.err("Error: undefined matrix in BondList: {}", name);
@@ -191,11 +184,11 @@ BondList operator+(BondList const &bl1, BondList const &bl2) {
   auto newbonds = bl1.bonds_;
   newbonds.insert(newbonds.end(), bl2.begin(), bl2.end());
   BondList blnew = BondList(newbonds);
-  
+
   for (auto it : bl1.matrices()) {
     blnew.set_matrix(it.first, it.second);
   }
-  
+
   for (auto it : bl1.couplings()) {
     blnew.set_coupling(it.first, it.second);
   }
@@ -203,7 +196,7 @@ BondList operator+(BondList const &bl1, BondList const &bl2) {
   for (auto it : bl2.matrices()) {
     blnew.set_matrix(it.first, it.second);
   }
-  
+
   for (auto it : bl2.couplings()) {
     blnew.set_coupling(it.first, it.second);
   }

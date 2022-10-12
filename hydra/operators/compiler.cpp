@@ -113,8 +113,6 @@ BondList compile_explicit_matrices(BondList const &bonds, double precision,
   for (Bond bond : bonds) {
 
     if (matrix_defined(bond, bonds)) {
-      // Log("matrix defined");
-      // HydraPrint(bond);
       arma::cx_mat mat = matrix(bond, bonds);
 
       // Go through matrix and set small elements to zero
@@ -136,8 +134,6 @@ BondList compile_explicit_matrices(BondList const &bonds, double precision,
         bonds_compiled << Bond(mat, bond.coupling_name(), bond.sites());
       }
     } else {
-      // Log("matrix not defined");
-      // HydraPrint(bond);
       if (undefined_behavior == "error") {
         Log.err("Error in compile_explicit_matrices: undefined matrix type in "
                 "bond: {}",
