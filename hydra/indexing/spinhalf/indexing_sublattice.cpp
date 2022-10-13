@@ -282,6 +282,20 @@ IndexingSublattice<bit_t, n_sublat>::index_syms(bit_t state) const {
   return {idx, syms};
 }
 
+template <typename bit_t, int n_sublat>
+bool IndexingSublattice<bit_t, n_sublat>::operator==(
+    IndexingSublattice<bit_t, n_sublat> const &rhs) const {
+  return (n_sites_ == rhs.n_sites_) && (sz_conserved_ == rhs.sz_conserved_) &&
+         (n_postfix_bits_ == rhs.n_postfix_bits_) &&
+         (group_action_ == rhs.group_action_) && (irrep_ == rhs.irrep_);
+}
+
+template <typename bit_t, int n_sublat>
+bool IndexingSublattice<bit_t, n_sublat>::operator!=(
+    IndexingSublattice<bit_t, n_sublat> const &rhs) const {
+  return !operator==(rhs);
+}
+
 template class IndexingSublattice<uint16_t, 1>;
 template class IndexingSublattice<uint32_t, 1>;
 template class IndexingSublattice<uint64_t, 1>;

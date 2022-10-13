@@ -98,7 +98,7 @@ lanczos_eigenvector_real(BondList const &bonds, Block const &block,
                                             max_iterations, deflation_tol);
 }
 
-// Implementation with random complex starting vector v0 (does NOT copy)
+// Implementation with random complex starting vector v0
 template <class Block>
 std::pair<Tmatrix, arma::Col<complex>>
 lanczos_eigenvector_cplx(BondList const &bonds, Block const &block,

@@ -2,10 +2,9 @@
 
 int main() {
   using namespace hydra;
+  using namespace arma;
 
-  Log.set_verbosity(1);
-
-  int n_sites = 24;
+  int n_sites = 16;
   int n_up = n_sites / 2;
 
   // Create nearest-neighbor Heisenberg model
@@ -23,35 +22,49 @@ int main() {
   Permutation perm(translation);
   auto group = generated_group(perm);
 
-  // Determine the ground state block
-  double e0 = 0.;
-  int k0 = 0;
+  // Create the irreps at momenta k
+  std::vector<Representation> irreps;
   for (int k = 0; k < n_sites; ++k) {
-
-    // Create the irrep with momentum "k"
     complex phase = exp(2i * pi * k / n_sites);
     auto irrep = generated_irrep(perm, phase);
-
-    // compute the ground state energy in this sector
-    auto block = Spinhalf(n_sites, n_up, group, irrep);
-    auto e0_k = eig0(bonds, block);
-
-    Log("k: {}, e0: {}", k, e0_k);
-
-    if (e0_k < e0) {
-      e0 = e0_k;
-      k0 = k;
-    }
+    irreps.push_back(irrep);
   }
 
-  // Create the irrep with momentum "k0"
-  complex phase = exp(2i * pi * k0 / n_sites);
-  auto irrep = generated_irrep(perm, phase);
-
-  // Compute ground state
-  auto block = Spinhalf(n_sites, n_up, group, irrep);
+  // compute groundstate (known to be at k=0)
+  Log("Computing ground state ...");
+  auto block = Spinhalf(n_sites, n_up, group, irreps[0]);
   auto gs = groundstate(bonds, block);
-  HydraPrint(gs);
+  Log("done.");
+
+  for (int q = 0; q < n_sites; ++q) {
+
+    Log("Dynamical Lanczos iterations for q={}", q);
+
+    // Compute S(q) |g.s.>
+    auto S_of_q = symmetrized_operator(Bond("SZ", 0), group, irreps[q]);
+    auto block_q = Spinhalf(n_sites, n_up, group, irreps[q]);
+    auto v0 = zero_state(block_q);
+    apply(S_of_q, gs, v0);
+
+    double nrm = norm(v0);
+    v0 /= nrm;
+
+    // Perform 500 Lanczos iterations for dynamics starting from v0
+    auto tmat = lanczos_eigenvalues_inplace(bonds, block_q, v0.vector(), 0, 0.,
+                                            200, 1e-7);
+    auto alphas = tmat.alphas();
+    auto betas = tmat.betas();
+
+    // Write alphas, betas, and norm to file for further processing
+    std::stringstream sstr;
+    sstr << ".N." << n_sites << ".nup." << n_up << ".q." << q << ".txt";
+    alphas.save(std::string("outfiles/alphas") + sstr.str(), raw_ascii);
+    betas.save(std::string("outfiles/betas") + sstr.str(), raw_ascii);
+    std::ofstream of;
+    of.open(std::string("outfiles/norm") + sstr.str());
+    of << nrm;
+    of.close();
+  }
 
   return EXIT_SUCCESS;
 }

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <extern/gsl/span>
 #include <extern/flat_hash_map.h>
+#include <extern/gsl/span>
 
 #include <hydra/common.h>
 #include <hydra/indexing/spinhalf/symmetric_iterator.h>
@@ -45,6 +45,9 @@ public:
 
   inline iterator_t begin() const { return begin_; }
   inline iterator_t end() const { return end_; }
+
+  bool operator==(IndexingSublattice<bit_t, n_sublat> const &rhs) const;
+  bool operator!=(IndexingSublattice<bit_t, n_sublat> const &rhs) const;
 
 private:
   int n_sites_;

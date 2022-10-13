@@ -21,6 +21,9 @@ public:
   iterator_t begin() const { return begin_; }
   iterator_t end() const { return end_; }
 
+  bool operator==(IndexingNoSz const &rhs) const;
+  bool operator!=(IndexingNoSz const &rhs) const;
+
 private:
   int n_sites_;
   idx_t size_;

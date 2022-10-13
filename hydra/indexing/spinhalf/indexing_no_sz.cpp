@@ -11,6 +11,16 @@ IndexingNoSz<bit_t>::IndexingNoSz(int n_sites)
   assert(n_sites_ >= 0);
 }
 
+template <typename bit_t>
+bool IndexingNoSz<bit_t>::operator==(IndexingNoSz<bit_t> const &rhs) const {
+  return (n_sites_ == rhs.n_sites_);
+}
+
+template <typename bit_t>
+bool IndexingNoSz<bit_t>::operator!=(IndexingNoSz<bit_t> const &rhs) const {
+  return !operator==(rhs);
+}
+
 template class IndexingNoSz<uint16_t>;
 template class IndexingNoSz<uint32_t>;
 template class IndexingNoSz<uint64_t>;

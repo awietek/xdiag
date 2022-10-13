@@ -14,3 +14,7 @@ test/tests
 testmpi/tests
 benchmark.prof
 benchmark.prof_*
+examples/hb_chain_dynamical_sf/main
+examples/hb_chain_dynamical_sf/outfiles/*
+examples/hb_chain_dynamical_sf_nosym/main
+examples/hb_chain_dynamical_sf_nosym/outfiles/*

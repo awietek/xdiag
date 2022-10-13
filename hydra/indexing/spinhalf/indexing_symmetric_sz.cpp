@@ -25,6 +25,19 @@ IndexingSymmetricSz<bit_t>::IndexingSymmetricSz(
   end_ = iterator_t(reps_, size_);
 }
 
+template <typename bit_t>
+bool IndexingSymmetricSz<bit_t>::operator==(
+    IndexingSymmetricSz<bit_t> const &rhs) const {
+  return (n_sites_ == rhs.n_sites_) && (n_up_ == rhs.n_up_) &&
+         (group_action_ == rhs.group_action_) && (irrep_ == rhs.irrep_);
+}
+
+template <typename bit_t>
+bool IndexingSymmetricSz<bit_t>::operator!=(
+    IndexingSymmetricSz<bit_t> const &rhs) const {
+  return !operator==(rhs);
+}
+
 template class IndexingSymmetricSz<uint16_t>;
 template class IndexingSymmetricSz<uint32_t>;
 template class IndexingSymmetricSz<uint64_t>;

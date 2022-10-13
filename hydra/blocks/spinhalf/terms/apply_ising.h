@@ -9,8 +9,10 @@ namespace hydra::spinhalf {
 
 // Ising term: J S^z_i S^z_j
 
-template <typename bit_t, typename coeff_t, class Indexing, class Fill>
-void apply_ising(Bond const &bond, Indexing &&indexing, Fill &&fill) {
+template <typename bit_t, typename coeff_t, bool symmetric, class IndexingIn,
+          class IndexingOut, class Fill>
+void apply_ising(Bond const &bond, IndexingIn &&indexing_in,
+                 IndexingOut &&indexing_out, Fill &&fill) {
   assert(bond.coupling_defined());
   assert(bond.type_defined() && (bond.type() == "ISING"));
   assert(bond.size() == 2);
@@ -25,16 +27,35 @@ void apply_ising(Bond const &bond, Indexing &&indexing, Fill &&fill) {
   coeff_t val_same = J / 4.0;
   coeff_t val_diff = -J / 4.0;
 
-  // Function to flip spin and get coefficient
-  auto term_coeff = [&mask, &val_same, &val_diff](bit_t spins) -> coeff_t {
-    if (bitops::popcnt(spins & mask) & 1) {
-      return val_diff;
-    } else {
-      return val_same;
-    }
-  };
+  if (indexing_in == indexing_out) {
 
-  spinhalf::apply_term_diag<bit_t, coeff_t>(indexing, term_coeff, fill);
+    auto term_coeff = [&mask, &val_same, &val_diff](bit_t spins) -> coeff_t {
+      if (bitops::popcnt(spins & mask) & 1) {
+        return val_diff;
+      } else {
+        return val_same;
+      }
+    };
+    spinhalf::apply_term_diag<bit_t, coeff_t>(indexing_in, term_coeff, fill);
+
+  } else {
+    auto non_zero_term = [](bit_t spins) -> bool { return true; };
+    auto term_action = [&mask, &val_same,
+                        &val_diff](bit_t spins) -> std::pair<bit_t, coeff_t> {
+      if (bitops::popcnt(spins & mask) & 1) {
+        return {spins, val_diff};
+      } else {
+        return {spins, val_same};
+      }
+    };
+    if constexpr (symmetric) {
+      spinhalf::apply_term_offdiag_sym<bit_t, coeff_t>(
+          indexing_in, indexing_out, non_zero_term, term_action, fill);
+    } else {
+      spinhalf::apply_term_offdiag_no_sym<bit_t, coeff_t>(
+          indexing_in, indexing_out, non_zero_term, term_action, fill);
+    }
+  }
 }
 
 } // namespace hydra::spinhalf

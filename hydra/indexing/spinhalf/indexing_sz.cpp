@@ -30,6 +30,16 @@ IndexingSz<bit_t>::IndexingSz(int n_sites, int nup)
 #endif
 }
 
+template <typename bit_t>
+bool IndexingSz<bit_t>::operator==(IndexingSz<bit_t> const &rhs) const {
+  return (n_sites_ == rhs.n_sites_) && (n_up_ == rhs.n_up_);
+}
+
+template <typename bit_t>
+bool IndexingSz<bit_t>::operator!=(IndexingSz<bit_t> const &rhs) const {
+  return !operator==(rhs);
+}
+
 template class IndexingSz<uint16_t>;
 template class IndexingSz<uint32_t>;
 template class IndexingSz<uint64_t>;

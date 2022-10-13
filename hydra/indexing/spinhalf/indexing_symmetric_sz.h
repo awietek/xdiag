@@ -57,6 +57,9 @@ public:
   inline iterator_t begin() const { return begin_; }
   inline iterator_t end() const { return end_; }
 
+  bool operator==(IndexingSymmetricSz const &rhs) const;
+  bool operator!=(IndexingSymmetricSz const &rhs) const;
+  
 private:
   int n_sites_;
   int n_up_;

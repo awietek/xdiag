@@ -24,9 +24,11 @@ void apply_terms(BondList const &bonds, IndexingIn const &indexing_in,
         spinhalf::apply_exchange<bit_t, coeff_t, symmetric>(bond, indexing_in,
                                                             indexing_out, fill);
       } else if (bond.type() == "ISING") {
-        spinhalf::apply_ising<bit_t, coeff_t>(bond, indexing_in, fill);
+        spinhalf::apply_ising<bit_t, coeff_t, symmetric>(bond, indexing_in,
+                                                         indexing_out, fill);
       } else if (bond.type() == "SZ") {
-        spinhalf::apply_sz<bit_t, coeff_t>(bond, indexing_in, fill);
+        spinhalf::apply_sz<bit_t, coeff_t, symmetric>(bond, indexing_in,
+                                                      indexing_out, fill);
       } else if (bond.type() == "S+") {
         spinhalf::apply_spsm<bit_t, coeff_t, symmetric>(
             bond, indexing_in, indexing_out, fill, "S+");
