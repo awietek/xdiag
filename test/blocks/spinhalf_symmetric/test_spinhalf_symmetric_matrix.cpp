@@ -198,7 +198,7 @@ TEST_CASE("spinhalf_symmetric_matrix", "[blocks][spinhalf_symmetric]") {
     auto bondlist = read_bondlist(lfile);
     bondlist["J1"] = 1.00;
     bondlist["J2"] = 0.15;
-    bondlist["Jchi"] = 0.09;
+    bondlist["Jchi"] = -0.09;
 
     std::vector<std::pair<std::string, double>> rep_name_mult = {
         {"Gamma.C6.A", -6.9456000700824329641},

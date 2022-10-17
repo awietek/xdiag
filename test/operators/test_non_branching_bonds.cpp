@@ -7,6 +7,7 @@
 TEST_CASE("non_branching_bonds", "[operators]") {
   using namespace hydra;
   using namespace arma;
+  Log("testing non_branching_bonds");
 
   cx_mat sx(mat({{0., 0.5}, {0.5, 0.}}), mat({{0., 0.}, {0., 0.}}));
   cx_mat sy(mat({{0., 0.}, {0., 0.}}), mat({{0., -0.5}, {0.5, 0.}}));
