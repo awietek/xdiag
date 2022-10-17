@@ -30,7 +30,7 @@ void apply_scalar_chirality(Bond const &bond, IndexingIn &&indexing_in,
             "cannot be used with real coefficients");
     (void)J;
   } else {
-    Jquarter = complex(0, 0.25) * J;
+    Jquarter = complex(0, -0.25) * J;
     Jquarter_conj = conj(Jquarter);
   }
 

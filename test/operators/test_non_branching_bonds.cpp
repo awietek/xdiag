@@ -6,22 +6,15 @@
 
 TEST_CASE("non_branching_bonds", "[operators]") {
   using namespace hydra;
+  using namespace arma;
 
-  arma::cx_mat sx(arma::mat({{0., 0.5}, {0.5, 0.}}),
-                  arma::mat({{0., 0.}, {0., 0.}}));
-  arma::cx_mat sy(arma::mat({{0., 0.}, {0., 0.}}),
-                  arma::mat({{0., -0.5}, {0.5, 0.}}));
-  arma::cx_mat sz(arma::mat({{0.5, 0.0}, {0.0, 0.5}}),
-                  arma::mat({{0., 0.}, {0., 0.0}}));
+  cx_mat sx(mat({{0., 0.5}, {0.5, 0.}}), mat({{0., 0.}, {0., 0.}}));
+  cx_mat sy(mat({{0., 0.}, {0., 0.}}), mat({{0., -0.5}, {0.5, 0.}}));
+  cx_mat sz(mat({{0.5, 0.0}, {0.0, -0.5}}), mat({{0., 0.}, {0., 0.0}}));
 
-  arma::cx_mat sp(arma::mat({{0.0, 1.0}, {0.0, 0.0}}),
-                  arma::mat({{0., 0.}, {0., 0.0}}));
-
-  arma::cx_mat sm(arma::mat({{0.0, 0.0}, {1.0, 0.0}}),
-                  arma::mat({{0., 0.}, {0., 0.0}}));
-
-  arma::cx_mat ones(arma::mat({{1.0, 1.0}, {1.0, 1.0}}),
-                    arma::mat({{1.0, 1.0}, {1.0, 1.0}}));
+  cx_mat sp(mat({{0.0, 1.0}, {0.0, 0.0}}), mat({{0., 0.}, {0., 0.0}}));
+  cx_mat sm(mat({{0.0, 0.0}, {1.0, 0.0}}), mat({{0., 0.}, {0., 0.0}}));
+  cx_mat ones(mat({{1.0, 1.0}, {1.0, 1.0}}), mat({{1.0, 1.0}, {1.0, 1.0}}));
 
   for (auto ss : {ones}) {
     auto bond = Bond(ss, 0);
@@ -48,63 +41,120 @@ TEST_CASE("non_branching_bonds", "[operators]") {
   double e_dmrg = -7.411918598647893;
   REQUIRE(std::abs(e - e_dmrg) < 1e-8);
 
-  // Log.set_verbosity(2);
-  // auto [ee, gs] = groundstate(bonds, block);
-  // // double tau = -0.1;
-  // complex tau = complex(0, -0.1);
+  // Check whether random bonds are created correctly
+  for (int r = 0; r < 5; ++r) {
 
-  // auto gs2 = exp_sym_v(bonds, gs, tau);
-  // HydraPrint(norm(gs2));
+    for (int k = 1; k <= 6; ++k) {
+      auto block = Spinhalf(k);
+      int p2 = pow(2, k);
 
-  // gs2.vector() /= norm(gs2);
-  // complex eee = inner(bonds, gs2);
-  // HydraPrint(e);
-  // HydraPrint(ee);
-  // HydraPrint(eee);
-  // HydraPrint(norm(gs2));
+      auto mr = mat(p2, p2, fill::randn);
+      std::vector<int> sites(k);
+      std::iota(sites.begin(), sites.end(), 0);
 
-  // auto allup = zero_state(block);
-  // allup.vector()(block.size() - 1) = 1.0;
-  // HydraPrint(norm(allup));
+      auto bondr = Bond(mr, sites);
+      auto hr = matrix_real(bondr, block);
+      REQUIRE(close(hr, mr));
 
-  // BondList mag;
-  // for (int i = 0; i < N; ++i) {
-  //   mag << Bond("SZ", i);
-  // }
+      auto mc = cx_mat(p2, p2, fill::randn);
+      auto bondc = Bond(mc, sites);
+      auto hc = matrix_cplx(bondc, block);
+      REQUIRE(close(hc, mc));
+    }
+  }
 
-  // auto m = inner(mag, allup);
-  // HydraPrint(m);
+  // compare scalar chirality
+  {
+    auto block6 = Spinhalf(6);
 
-  // Log.set_verbosity(0);
-  // complex delta_tau = complex(0, -0.1);
-  // auto v = allup;
-  // for (int t=0; t<100; ++t){
-  //   v = exp_sym_v(bonds, v, delta_tau);
-  //   auto m = inner(mag, v);
-  //   HydraPrint(m);
-  // }
+    BondList bonds1;
+    bonds1 << Bond("SCALARCHIRALITY", "Jchi", {0, 1, 2});
+    bonds1 << Bond("SCALARCHIRALITY", "Jchi", {1, 2, 3});
+    bonds1 << Bond("SCALARCHIRALITY", "Jchi", {2, 3, 4});
+    bonds1 << Bond("SCALARCHIRALITY", "Jchi", {3, 4, 5});
+    bonds1["Jchi"] = 1.0;
+    auto H1 = matrix(bonds1, block6);
 
-  // HydraPrint(sx);
-  // HydraPrint(sy);
-  // HydraPrint(sz);
+    cx_mat jchimat = kron(sx, kron(sy, sz) - kron(sz, sy)) +
+                     kron(sy, kron(sz, sx) - kron(sx, sz)) +
+                     kron(sz, kron(sx, sy) - kron(sy, sx));
 
-  // auto sx_bond = Bond(sx, 0);
-  // REQUIRE(operators::is_non_branching_bond(sx_bond));
+    BondList bonds2;
+    bonds2 << Bond(jchimat, "Jchi", {0, 1, 2});
+    bonds2 << Bond(jchimat, "Jchi", {1, 2, 3});
+    bonds2 << Bond(jchimat, "Jchi", {2, 3, 4});
+    bonds2 << Bond(jchimat, "Jchi", {3, 4, 5});
+    bonds2["Jchi"] = 1.0;
+    auto H2 = matrix(bonds2, block6);
 
-  // auto block = Spinhalf(1);
-  // HydraPrint(result);
+    REQUIRE(close(H1, H2));
+  }
 
-  // arma::mat sxsx = arma::kron(sx, sx);
-  // auto sxsx_bond = Bond(sxsx, {0, 1});
-  // auto block2 = Spinhalf(2);
-  // auto result2 = matrix_real(sxsx_bond, block2);
-  // HydraPrint(sxsx);
-  // HydraPrint(result2);
+  // compare scalar chirality (12 site kagome)
+  auto block12 = Spinhalf(12);
 
-  // arma::mat sxsx = arma::kron(sx, sx);
-  // auto sxsx_bond = Bond(sxsx, {0, 1});
-  // auto block2 = Spinhalf(2);
-  // auto result2 = matrix_real(sxsx_bond, block2);
-  // HydraPrint(sxsx);
-  // HydraPrint(result2);
+  BondList bonds1;
+  bonds1 << Bond("SCALARCHIRALITY", "Jchi", {0, 4, 6});
+  bonds1 << Bond("SCALARCHIRALITY", "Jchi", {3, 1, 9});
+  bonds1 << Bond("SCALARCHIRALITY", "Jchi", {9, 7, 4});
+  bonds1 << Bond("SCALARCHIRALITY", "Jchi", {4, 2, 10});
+  bonds1 << Bond("SCALARCHIRALITY", "Jchi", {10, 8, 5});
+  bonds1 << Bond("SCALARCHIRALITY", "Jchi", {6, 10, 1});
+  bonds1 << Bond("SCALARCHIRALITY", "Jchi", {1, 5, 7});
+  bonds1 << Bond("SCALARCHIRALITY", "Jchi", {7, 11, 2});
+  bonds1 << Bond("SCALARCHIRALITY", "Jchi", {2, 3, 8});
+  bonds1 << Bond("SCALARCHIRALITY", "Jchi", {8, 9, 0});
+  bonds1 << Bond("SCALARCHIRALITY", "Jchi", {5, 0, 11});
+  bonds1 << Bond("SCALARCHIRALITY", "Jchi", {11, 6, 3});
+  bonds1 << Bond("SCALARCHIRALITY", "Jchi", {4, 10, 6});
+  bonds1 << Bond("SCALARCHIRALITY", "Jchi", {1, 7, 9});
+  bonds1 << Bond("SCALARCHIRALITY", "Jchi", {7, 2, 4});
+  bonds1 << Bond("SCALARCHIRALITY", "Jchi", {2, 8, 10});
+  bonds1 << Bond("SCALARCHIRALITY", "Jchi", {8, 0, 5});
+  bonds1 << Bond("SCALARCHIRALITY", "Jchi", {10, 5, 1});
+  bonds1 << Bond("SCALARCHIRALITY", "Jchi", {5, 11, 7});
+  bonds1 << Bond("SCALARCHIRALITY", "Jchi", {11, 3, 2});
+  bonds1 << Bond("SCALARCHIRALITY", "Jchi", {3, 9, 8});
+  bonds1 << Bond("SCALARCHIRALITY", "Jchi", {9, 4, 0});
+  bonds1 << Bond("SCALARCHIRALITY", "Jchi", {0, 6, 11});
+  bonds1 << Bond("SCALARCHIRALITY", "Jchi", {6, 1, 3});
+  bonds1["Jchi"] = 1.0;
+  auto H1 = matrix(bonds1, block12);
+
+  cx_mat jchimat = kron(kron(sx, sy), sz) + kron(kron(sy, sz), sx) +
+                   kron(kron(sz, sx), sy) - kron(kron(sx, sz), sy) -
+                   kron(kron(sy, sx), sz) - kron(kron(sz, sy), sx);
+
+  BondList bonds2;
+  bonds2 << Bond(jchimat, "Jchi", {0, 4, 6});
+  bonds2 << Bond(jchimat, "Jchi", {3, 1, 9});
+  bonds2 << Bond(jchimat, "Jchi", {9, 7, 4});
+  bonds2 << Bond(jchimat, "Jchi", {4, 2, 10});
+  bonds2 << Bond(jchimat, "Jchi", {10, 8, 5});
+  bonds2 << Bond(jchimat, "Jchi", {6, 10, 1});
+  bonds2 << Bond(jchimat, "Jchi", {1, 5, 7});
+  bonds2 << Bond(jchimat, "Jchi", {7, 11, 2});
+  bonds2 << Bond(jchimat, "Jchi", {2, 3, 8});
+  bonds2 << Bond(jchimat, "Jchi", {8, 9, 0});
+  bonds2 << Bond(jchimat, "Jchi", {5, 0, 11});
+  bonds2 << Bond(jchimat, "Jchi", {11, 6, 3});
+  bonds2 << Bond(jchimat, "Jchi", {4, 10, 6});
+  bonds2 << Bond(jchimat, "Jchi", {1, 7, 9});
+  bonds2 << Bond(jchimat, "Jchi", {7, 2, 4});
+  bonds2 << Bond(jchimat, "Jchi", {2, 8, 10});
+  bonds2 << Bond(jchimat, "Jchi", {8, 0, 5});
+  bonds2 << Bond(jchimat, "Jchi", {10, 5, 1});
+  bonds2 << Bond(jchimat, "Jchi", {5, 11, 7});
+  bonds2 << Bond(jchimat, "Jchi", {11, 3, 2});
+  bonds2 << Bond(jchimat, "Jchi", {3, 9, 8});
+  bonds2 << Bond(jchimat, "Jchi", {9, 4, 0});
+  bonds2 << Bond(jchimat, "Jchi", {0, 6, 11});
+  bonds2 << Bond(jchimat, "Jchi", {6, 1, 3});
+  bonds2["Jchi"] = 1.0;
+  auto H2 = matrix(bonds2, block12);
+
+  // HydraPrint(norm(H1));
+  // HydraPrint(norm(H2));
+
+  REQUIRE(close(H1, H2));
 }
