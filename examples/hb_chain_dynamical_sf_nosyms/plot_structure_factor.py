@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 n_sites = 16
 n_up = n_sites // 2
 
-eta = 0.05
+eta = 0.20
 n_omegas = 100
 max_omega = 4.0
 omegas = np.linspace(0, max_omega, n_omegas)
