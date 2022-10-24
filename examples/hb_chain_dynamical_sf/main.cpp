@@ -49,19 +49,22 @@ int main() {
     double nrm = norm(v0);
     v0 /= nrm;
 
-    // Perform 500 Lanczos iterations for dynamics starting from v0
+    // Perform 200 Lanczos iterations for dynamics starting from v0
     auto tmat = lanczos_eigenvalues_inplace(bonds, block_q, v0.vector(), 0, 0.,
                                             200, 1e-7);
     auto alphas = tmat.alphas();
     auto betas = tmat.betas();
 
     // Write alphas, betas, and norm to file for further processing
-    std::stringstream sstr;
-    sstr << ".N." << n_sites << ".nup." << n_up << ".q." << q << ".txt";
-    alphas.save(std::string("outfiles/alphas") + sstr.str(), raw_ascii);
-    betas.save(std::string("outfiles/betas") + sstr.str(), raw_ascii);
+    alphas.save(
+        fmt::format("outfiles/alphas.N.{}.nup.{}.q.{}.txt", n_sites, n_up, q),
+        raw_ascii);
+    betas.save(
+        fmt::format("outfiles/alphas.N.{}.nup.{}.q.{}.txt", n_sites, n_up, q),
+        raw_ascii);
     std::ofstream of;
-    of.open(std::string("outfiles/norm") + sstr.str());
+    of.open(
+        fmt::format("outfiles/norm.N.{}.nup.{}.q.{}.txt", n_sites, n_up, q));
     of << nrm;
     of.close();
   }
