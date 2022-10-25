@@ -18,6 +18,8 @@ examples/hb_chain_dynamical_sf/main
 examples/hb_chain_dynamical_sf/outfiles/*
 examples/hb_chain_dynamical_sf_nosym/main
 examples/hb_chain_dynamical_sf_nosym/outfiles/*
+examples/hb_chain_dynamical_sf_ftlm/main
+examples/hb_chain_dynamical_sf_ftlm/outfiles/*
 examples/spinhalf_chain/main
 examples/tfi_timeevolve/main
 examples/spinhalf_chain_syms/main
