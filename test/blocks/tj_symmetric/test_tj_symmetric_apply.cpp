@@ -9,7 +9,6 @@
 
 using namespace hydra;
 
-template <class bit_t>
 void test_apply_tj_symmetric(BondList bondlist, PermutationGroup space_group,
                              std::vector<Representation> irreps) {
   int n_sites = space_group.n_sites();
@@ -22,7 +21,7 @@ void test_apply_tj_symmetric(BondList bondlist, PermutationGroup space_group,
 
       for (int k = 0; k < (int)irreps.size(); ++k) {
         auto irrep = irreps[k];
-        auto block = tJ<bit_t>(n_sites, nup, ndn, space_group, irrep);
+        auto block = tJ(n_sites, nup, ndn, space_group, irrep);
 
         if (block.size() > 0) {
           auto H_sym = matrix_cplx(bondlist, block, block);
@@ -63,7 +62,7 @@ void test_apply_tj_symmetric(BondList bondlist, PermutationGroup space_group,
   }
 }
 
-template <class bit_t> void test_tj_symmetric_apply_chains(int n_sites) {
+void test_tj_symmetric_apply_chains(int n_sites) {
   using namespace hydra::testcases::tj;
   using namespace hydra::testcases::electron;
 
@@ -73,7 +72,7 @@ template <class bit_t> void test_tj_symmetric_apply_chains(int n_sites) {
   auto [space_group, irreps, multiplicities] =
       get_cyclic_group_irreps_mult(n_sites);
   (void)multiplicities;
-  test_apply_tj_symmetric<bit_t>(bondlist, space_group, irreps);
+  test_apply_tj_symmetric(bondlist, space_group, irreps);
 }
 
 TEST_CASE("tj_symmetric_apply", "[blocks][tj]") {
@@ -82,9 +81,7 @@ TEST_CASE("tj_symmetric_apply", "[blocks][tj]") {
 
   // Test linear chains
   for (int n_sites = 2; n_sites < 8; ++n_sites) {
-    test_tj_symmetric_apply_chains<uint16_t>(n_sites);
-    test_tj_symmetric_apply_chains<uint32_t>(n_sites);
-    test_tj_symmetric_apply_chains<uint64_t>(n_sites);
+    test_tj_symmetric_apply_chains(n_sites);
   }
   {
     // test a 3x3 triangular lattice
@@ -108,9 +105,7 @@ TEST_CASE("tj_symmetric_apply", "[blocks][tj]") {
       irreps.push_back(read_represenation(lfile, name));
       (void)mult;
     }
-    test_apply_tj_symmetric<uint16_t>(bondlist, space_group, irreps);
-    test_apply_tj_symmetric<uint32_t>(bondlist, space_group, irreps);
-    test_apply_tj_symmetric<uint64_t>(bondlist, space_group, irreps);
+    test_apply_tj_symmetric(bondlist, space_group, irreps);
   }
 
   {
@@ -142,9 +137,7 @@ TEST_CASE("tj_symmetric_apply", "[blocks][tj]") {
       bondlist["TPHI"] = complex(cos(eta * M_PI), sin(eta * M_PI));
       bondlist["JPHI"] = complex(cos(2 * eta * M_PI), sin(2 * eta * M_PI));
 
-      test_apply_tj_symmetric<uint16_t>(bondlist, space_group, irreps);
-      test_apply_tj_symmetric<uint32_t>(bondlist, space_group, irreps);
-      test_apply_tj_symmetric<uint64_t>(bondlist, space_group, irreps);
+      test_apply_tj_symmetric(bondlist, space_group, irreps);
     }
   }
 }

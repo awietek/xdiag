@@ -7,9 +7,11 @@
 #ifdef _OPENMP
 #include "parallel/omp/omp_utils.h"
 #include <omp.h>
+// #include "symmetries/operations/representative_list_omp.h"
 #endif
 
 #include "extern/armadillo/armadillo"
+#include "extern/fmt/core.h"
 
 #include "bitops/bitops.h"
 #include "common.h"
@@ -27,6 +29,7 @@
 #include "states/random_state.h"
 #include "states/state.h"
 #include "states/zero_state.h"
+// #include "states/product_state.h"
 
 #include "combinatorics/binomial.h"
 #include "combinatorics/bit_patterns.h"
@@ -61,7 +64,7 @@
 
 #include "blocks/spinhalf/spinhalf.h"
 #include "blocks/spinhalf/spinhalf_apply.h"
-#include "blocks/spinhalf/spinhalf_fill.h"
+// #include "blocks/spinhalf/spinhalf_fill.h"
 #include "blocks/spinhalf/spinhalf_matrix.h"
 #include "blocks/spinhalf/terms/compile.h"
 
@@ -100,6 +103,7 @@
 #include "algorithms/lanczos/lanczos_convergence.h"
 #include "algorithms/lanczos/lanczos_eigenvalues.h"
 #include "algorithms/lanczos/lanczos_eigenvector.h"
+#include "algorithms/lanczos/lanczos_vector_apply.h"
 #include "algorithms/lanczos/tmatrix.h"
 #include "algorithms/sparse_diag.h"
 #include "algorithms/time_evolve.h"

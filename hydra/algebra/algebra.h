@@ -44,6 +44,22 @@ inline coeff_t inner(Bond const &bond, State<coeff_t, Block> const &v) {
 }
 
 template <class coeff_t, class Block>
+inline coeff_t inner(State<coeff_t, Block> const &w, BondList const &bonds,
+                     State<coeff_t, Block> const &v) {
+  auto Hv = zero_state<coeff_t, Block>(v.block());
+  apply(bonds, v, Hv);
+  return dot(w, Hv);
+}
+
+template <class coeff_t, class Block>
+inline coeff_t inner(State<coeff_t, Block> const &w, Bond const &bond,
+                     State<coeff_t, Block> const &v) {
+  BondList bonds;
+  bonds << bond;
+  return inner(w, bonds, v);
+}
+
+template <class coeff_t, class Block>
 inline void apply(BondList const &bonds, State<coeff_t, Block> const &state_in,
                   State<coeff_t, Block> &state_out) {
   apply(bonds, state_in.block(), state_in.vector(), state_out.block(),
@@ -92,6 +108,26 @@ inline State<complex, Block> &operator/=(State<complex, Block> &X,
 template <class Block>
 inline State<double, Block> &operator/=(State<double, Block> &X, double alpha) {
   X.vector() /= alpha;
+  return X;
+}
+
+template <class Block>
+inline State<complex, Block> &operator*=(State<complex, Block> &X,
+                                         complex alpha) {
+  X.vector() *= alpha;
+  return X;
+}
+
+template <class Block>
+inline State<complex, Block> &operator*=(State<complex, Block> &X,
+                                         double alpha) {
+  X.vector() *= alpha;
+  return X;
+}
+
+template <class Block>
+inline State<double, Block> &operator*=(State<double, Block> &X, double alpha) {
+  X.vector() *= alpha;
   return X;
 }
 

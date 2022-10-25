@@ -7,7 +7,6 @@
 
 using namespace hydra;
 
-template <class bit_t>
 void test_electron_symmetric_spectra_no_np(BondList bondlist,
                                            PermutationGroup space_group,
                                            std::vector<Representation> irreps,
@@ -60,7 +59,6 @@ void test_electron_symmetric_spectra_no_np(BondList bondlist,
   }
 }
 
-template <class bit_t>
 void test_electron_symmetric_spectra(BondList bondlist,
                                      PermutationGroup space_group,
                                      std::vector<Representation> irreps,
@@ -73,7 +71,7 @@ void test_electron_symmetric_spectra(BondList bondlist,
     for (int ndn = 0; ndn <= n_sites; ++ndn) {
 
       // Compute the full spectrum from non-symmetrized block
-      auto electron_nosym = Electron<bit_t>(n_sites, nup, ndn);
+      auto electron_nosym = Electron(n_sites, nup, ndn);
       if (electron_nosym.size() < 1000) {
 
         auto H_nosym = matrix_cplx(bondlist, electron_nosym, electron_nosym);
@@ -86,8 +84,7 @@ void test_electron_symmetric_spectra(BondList bondlist,
           auto irrep = irreps[k];
           int multiplicity = multiplicities[k];
 
-          auto electron =
-              Electron<bit_t>(n_sites, nup, ndn, space_group, irrep);
+          auto electron = Electron(n_sites, nup, ndn, space_group, irrep);
           // Log.out(
           //     "nup: {}, ndn: {}, k: {}, mult: {}, dim_nosym: {}, dim_sym:"
           //     "{} ",
@@ -130,7 +127,6 @@ void test_electron_symmetric_spectra(BondList bondlist,
   }
 }
 
-template <class bit_t>
 void test_hubbard_symmetric_spectrum_chains(int n_sites) {
   using namespace hydra::testcases::electron;
 
@@ -140,20 +136,20 @@ void test_hubbard_symmetric_spectrum_chains(int n_sites) {
   // Without Heisenberg term
   Log.out("electron_symmetric_matrix: Hubbard chain, n_sites: {}", n_sites);
   auto bondlist = get_linear_chain(n_sites, 1.0, 5.0);
-  test_electron_symmetric_spectra<bit_t>(bondlist, space_group, irreps,
-                                         multiplicities);
-  test_electron_symmetric_spectra_no_np<bit_t>(bondlist, space_group, irreps,
-                                               multiplicities);
+  test_electron_symmetric_spectra(bondlist, space_group, irreps,
+                                  multiplicities);
+  test_electron_symmetric_spectra_no_np(bondlist, space_group, irreps,
+                                        multiplicities);
 
   // With Heisenberg term
   Log("electron_symmetric_matrix: Hubbard chain, n_sites: {} (+ "
       "Heisenberg terms)",
       n_sites);
   auto bondlist_hb = get_linear_chain_hb(n_sites, 1.0, 5.0, 0.4);
-  test_electron_symmetric_spectra<bit_t>(bondlist_hb, space_group, irreps,
-                                         multiplicities);
-  test_electron_symmetric_spectra_no_np<bit_t>(bondlist_hb, space_group, irreps,
-                                               multiplicities);
+  test_electron_symmetric_spectra(bondlist_hb, space_group, irreps,
+                                  multiplicities);
+  test_electron_symmetric_spectra_no_np(bondlist_hb, space_group, irreps,
+                                        multiplicities);
 }
 
 TEST_CASE("electron_symmetric_matrix", "[blocks][electron_symmetric]") {
@@ -174,7 +170,7 @@ TEST_CASE("electron_symmetric_matrix", "[blocks][electron_symmetric]") {
 
   for (int k = 0; k < (int)irreps.size(); ++k) {
     auto irrep = irreps[k];
-    auto electron = Electron<uint16_t>(n_sites, nup, ndn, space_group, irrep);
+    auto electron = Electron(n_sites, nup, ndn, space_group, irrep);
     auto H_sym = matrix_cplx(bondlist, electron, electron);
     complex U2 = 2 * U;
     complex UU = U;
@@ -213,14 +209,13 @@ TEST_CASE("electron_symmetric_matrix", "[blocks][electron_symmetric]") {
 
   // Test linear chains
   for (int n_sites = 2; n_sites < 7; ++n_sites) {
-    test_hubbard_symmetric_spectrum_chains<uint16_t>(n_sites);
-    test_hubbard_symmetric_spectrum_chains<uint32_t>(n_sites);
-    test_hubbard_symmetric_spectrum_chains<uint64_t>(n_sites);
+    test_hubbard_symmetric_spectrum_chains(n_sites);
+    test_hubbard_symmetric_spectrum_chains(n_sites);
+    test_hubbard_symmetric_spectrum_chains(n_sites);
   }
 
   // test a 3x3 triangular lattice
   Log("electron_symmetric_matrix: Hubbard 3x3 triangular");
-  using bit_t = uint16_t;
   std::string lfile = "data/triangular.9.hop.sublattices.tsl.lat";
 
   bondlist = read_bondlist(lfile);
@@ -240,8 +235,8 @@ TEST_CASE("electron_symmetric_matrix", "[blocks][electron_symmetric]") {
     irreps.push_back(read_represenation(lfile, name));
     multiplicities.push_back(mult);
   }
-  test_electron_symmetric_spectra<bit_t>(bondlist, space_group, irreps,
-                                         multiplicities);
+  test_electron_symmetric_spectra(bondlist, space_group, irreps,
+                                  multiplicities);
 
   // test a 3x3 triangular lattice with Heisenberg terms
   Log("electron_symmetric_matrix: Hubbard 3x3 triangular(+ Heisenberg terms)");
@@ -250,13 +245,12 @@ TEST_CASE("electron_symmetric_matrix", "[blocks][electron_symmetric]") {
     bondlist_hb << Bond("HB", "J", {bond[0], bond[1]});
   }
   bondlist_hb["J"] = 0.4;
-  test_electron_symmetric_spectra<bit_t>(bondlist_hb, space_group, irreps,
-                                         multiplicities);
+  test_electron_symmetric_spectra(bondlist_hb, space_group, irreps,
+                                  multiplicities);
 
   // test a 3x3 triangular lattice with complex hoppings
   {
     Log.out("electron_symmetric_matrix: Hubbard 3x3 triangular (complex)");
-    using bit_t = uint16_t;
     std::string lfile =
         "data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.lat";
     BondList bondlist = read_bondlist(lfile);
@@ -277,7 +271,7 @@ TEST_CASE("electron_symmetric_matrix", "[blocks][electron_symmetric]") {
       irreps.push_back(read_represenation(lfile, name));
       multiplicities.push_back(mult);
     }
-    test_electron_symmetric_spectra<bit_t>(bondlist, space_group, irreps,
-                                           multiplicities);
+    test_electron_symmetric_spectra(bondlist, space_group, irreps,
+                                    multiplicities);
   }
 }

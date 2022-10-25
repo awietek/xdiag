@@ -92,4 +92,10 @@ inline arma::cx_mat to_cx_mat(arma::mat const &A) {
 
 inline arma::cx_mat to_cx_mat(arma::cx_mat const &A) { return A; }
 
+// Helper type for visitor patterns
+template <class... Ts> struct overloaded : Ts... {
+  using Ts::operator()...;
+};
+template <class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
+
 } // namespace hydra

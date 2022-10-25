@@ -10,7 +10,7 @@ using namespace hydra;
 void test_apply(BondList bonds) {
   int N = bonds.n_sites();
   for (int nup = 0; nup <= N; ++nup) {
-    auto block = Spinhalf<uint32_t>(N, nup);
+    auto block = Spinhalf(N, nup);
     auto H = matrix_real(bonds, block, block);
     REQUIRE(H.is_hermitian(1e-8));
 
@@ -72,7 +72,7 @@ TEST_CASE("spinhalf_apply", "[models][spinhalf]") {
 
     int n_sites = 12;
     int n_up = 6;
-    auto spinhalf = Spinhalf<uint16_t>(n_sites, n_up);
+    auto spinhalf = Spinhalf(n_sites, n_up);
     auto e0 = eig0_cplx(bondlist, spinhalf);
     double energy = -6.9456000700824329641;
 

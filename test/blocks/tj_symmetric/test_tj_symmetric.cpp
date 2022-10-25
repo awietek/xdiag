@@ -6,7 +6,6 @@
 
 using namespace hydra;
 
-template <typename bit_t>
 void check_dimensions_sum_up_tj_symmetric(int n_sites, PermutationGroup group,
                                           std::vector<Representation> irreps) {
   using combinatorics::binomial;
@@ -20,7 +19,7 @@ void check_dimensions_sum_up_tj_symmetric(int n_sites, PermutationGroup group,
       idx_t sum_of_dims_updn = 0;
       for (auto irrep : irreps) {
 
-        auto block = tJ<bit_t>(n_sites, nup, ndn, group, irrep);
+        auto block = tJ(n_sites, nup, ndn, group, irrep);
         sum_of_dims += block.size();
         sum_of_dims_updn += block.size();
       }
@@ -60,9 +59,7 @@ TEST_CASE("tj_symmetric", "[blocks][tj]") {
       irreps.push_back(Representation(chis));
     }
 
-    check_dimensions_sum_up_tj_symmetric<uint16_t>(n_sites, group, irreps);
-    check_dimensions_sum_up_tj_symmetric<uint32_t>(n_sites, group, irreps);
-    check_dimensions_sum_up_tj_symmetric<uint64_t>(n_sites, group, irreps);
+    check_dimensions_sum_up_tj_symmetric(n_sites, group, irreps);
   }
 
   // test a 3x3 triangular lattice
@@ -86,7 +83,5 @@ TEST_CASE("tj_symmetric", "[blocks][tj]") {
     }
   }
 
-  check_dimensions_sum_up_tj_symmetric<uint16_t>(n_sites, group, irreps);
-  check_dimensions_sum_up_tj_symmetric<uint32_t>(n_sites, group, irreps);
-  check_dimensions_sum_up_tj_symmetric<uint64_t>(n_sites, group, irreps);
+  check_dimensions_sum_up_tj_symmetric(n_sites, group, irreps);
 }

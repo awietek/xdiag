@@ -15,54 +15,69 @@
 #include <hydra/indexing/electron/indexing_symmetric_no_np.h>
 #include <hydra/indexing/electron/indexing_symmetric_np.h>
 
-// helper type for visitors
-namespace hydra {
-template <class... Ts> struct overloaded : Ts... {
-  using Ts::operator()...;
-};
-template <class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
+namespace hydra::indexing {
 
-} // namespace hydra
+// clang-format off
+using SpinhalfIndexing = std::variant<
+    spinhalf::IndexingSz<uint16_t>,
+    spinhalf::IndexingNoSz<uint16_t>,
+    spinhalf::IndexingSymmetricSz<uint16_t>,
+    spinhalf::IndexingSymmetricNoSz<uint16_t>,
+    spinhalf::IndexingSublattice<uint16_t, 1>,
+    spinhalf::IndexingSublattice<uint16_t, 2>,
+    spinhalf::IndexingSublattice<uint16_t, 3>,
+    spinhalf::IndexingSublattice<uint16_t, 4>,
+    spinhalf::IndexingSublattice<uint16_t, 5>,
+    spinhalf::IndexingSz<uint32_t>,
+    spinhalf::IndexingNoSz<uint32_t>,
+    spinhalf::IndexingSymmetricSz<uint32_t>,
+    spinhalf::IndexingSymmetricNoSz<uint32_t>,
+    spinhalf::IndexingSublattice<uint32_t, 1>,
+    spinhalf::IndexingSublattice<uint32_t, 2>,
+    spinhalf::IndexingSublattice<uint32_t, 3>,
+    spinhalf::IndexingSublattice<uint32_t, 4>,
+    spinhalf::IndexingSublattice<uint32_t, 5>,
+    spinhalf::IndexingSz<uint64_t>,
+    spinhalf::IndexingNoSz<uint64_t>,
+    spinhalf::IndexingSymmetricSz<uint64_t>,
+    spinhalf::IndexingSymmetricNoSz<uint64_t>,
+    spinhalf::IndexingSublattice<uint64_t, 1>,
+    spinhalf::IndexingSublattice<uint64_t, 2>,
+    spinhalf::IndexingSublattice<uint64_t, 3>,
+    spinhalf::IndexingSublattice<uint64_t, 4>,
+    spinhalf::IndexingSublattice<uint64_t, 5>>;
+// clang-format on
 
-namespace hydra::indexing::spinhalf {
+idx_t size(SpinhalfIndexing const &idxing);
 
-template <typename bit_t>
-using Indexing =
-    std::variant<IndexingSz<bit_t>, IndexingNoSz<bit_t>,
-                 IndexingSymmetricSz<bit_t>, IndexingSymmetricNoSz<bit_t>,
-                 IndexingSublattice<bit_t, 1>, IndexingSublattice<bit_t, 2>,
-                 IndexingSublattice<bit_t, 3>, IndexingSublattice<bit_t, 4>,
-                 IndexingSublattice<bit_t, 5>>;
+// clang-format off
+using ElectronIndexing =
+  std::variant<electron::IndexingNp<uint16_t>,
+	       electron::IndexingNoNp<uint16_t>,
+	       electron::IndexingSymmetricNp<uint16_t>,
+	       electron::IndexingSymmetricNoNp<uint16_t>,
+	       electron::IndexingNp<uint32_t>,
+	       electron::IndexingNoNp<uint32_t>,
+	       electron::IndexingSymmetricNp<uint32_t>,
+	       electron::IndexingSymmetricNoNp<uint32_t>,
+	       electron::IndexingNp<uint64_t>,
+	       electron::IndexingNoNp<uint64_t>,
+	       electron::IndexingSymmetricNp<uint64_t>,
+	       electron::IndexingSymmetricNoNp<uint64_t>>;
+// clang-format on
 
-template <typename bit_t> idx_t size(Indexing<bit_t> const &idxing) {
-  return std::visit(
-      overloaded{[&](auto const &idx) -> idx_t { return idx.size(); }}, idxing);
-}
+idx_t size(ElectronIndexing const &idxing);
 
-} // namespace hydra::indexing::spinhalf
+// clang-format off
+using tJIndexing =
+  std::variant<tj::IndexingNp<uint16_t>,
+	       tj::IndexingSymmetricNp<uint16_t>,
+	       tj::IndexingNp<uint32_t>,
+	       tj::IndexingSymmetricNp<uint32_t>,
+	       tj::IndexingNp<uint64_t>,
+	       tj::IndexingSymmetricNp<uint64_t>>;
+// clang-format on
 
-namespace hydra::indexing::electron {
+idx_t size(tJIndexing const &idxing);
 
-template <typename bit_t>
-using Indexing =
-    std::variant<IndexingNp<bit_t>, IndexingNoNp<bit_t>,
-                 IndexingSymmetricNp<bit_t>, IndexingSymmetricNoNp<bit_t>>;
-
-template <typename bit_t> idx_t size(Indexing<bit_t> const &idxing) {
-  return std::visit(
-      overloaded{[&](auto const &idx) -> idx_t { return idx.size(); }}, idxing);
-}
-
-} // namespace hydra::indexing::electron
-
-namespace hydra::indexing::tj {
-
-template <typename bit_t>
-using Indexing = std::variant<IndexingNp<bit_t>, IndexingSymmetricNp<bit_t>>;
-
-template <typename bit_t> idx_t size(Indexing<bit_t> const &idxing) {
-  return std::visit(
-      overloaded{[&](auto const &idx) -> idx_t { return idx.size(); }}, idxing);
-}
-
-} // namespace hydra::indexing::tj
+} // namespace hydra::indexing

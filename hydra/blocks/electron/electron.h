@@ -3,15 +3,15 @@
 
 #include <hydra/common.h>
 #include <hydra/indexing/indexing_variants.h>
+#include <hydra/operators/bondlist.h>
 #include <hydra/symmetries/permutation_group.h>
 #include <hydra/symmetries/representation.h>
-#include <hydra/operators/bondlist.h>
 
 namespace hydra {
 
-template <class bit_t = std_bit_t> class Electron {
+class Electron {
 public:
-  using indexing_t = indexing::electron::Indexing<bit_t>;
+  using indexing_t = indexing::ElectronIndexing;
 
   Electron() = default;
   Electron(int n_sites);

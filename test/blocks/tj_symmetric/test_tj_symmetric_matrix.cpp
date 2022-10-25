@@ -9,7 +9,6 @@
 
 using namespace hydra;
 
-template <class bit_t>
 void test_spectra_tj_symmetric(BondList bondlist, PermutationGroup space_group,
                                std::vector<Representation> irreps,
                                std::vector<int> multiplicities) {
@@ -23,7 +22,7 @@ void test_spectra_tj_symmetric(BondList bondlist, PermutationGroup space_group,
         continue;
 
       // Compute the full spectrum from non-symmetrized block
-      auto tj_nosym = tJ<bit_t>(n_sites, nup, ndn);
+      auto tj_nosym = tJ(n_sites, nup, ndn);
       if (tj_nosym.size() < 1000) {
 
         auto H_nosym = matrix_cplx(bondlist, tj_nosym, tj_nosym);
@@ -36,7 +35,7 @@ void test_spectra_tj_symmetric(BondList bondlist, PermutationGroup space_group,
           auto irrep = irreps[k];
           int multiplicity = multiplicities[k];
 
-          auto tj = tJ<bit_t>(n_sites, nup, ndn, space_group, irrep);
+          auto tj = tJ(n_sites, nup, ndn, space_group, irrep);
 
           if (tj.size() > 0) {
 
@@ -68,7 +67,7 @@ void test_spectra_tj_symmetric(BondList bondlist, PermutationGroup space_group,
   }
 }
 
-template <class bit_t> void test_tj_symmetric_spectrum_chains(int n_sites) {
+void test_tj_symmetric_spectrum_chains(int n_sites) {
   using namespace hydra::testcases::tj;
   using namespace hydra::testcases::electron;
 
@@ -77,8 +76,7 @@ template <class bit_t> void test_tj_symmetric_spectrum_chains(int n_sites) {
   auto bondlist = tJchain(n_sites, 1.0, 0.4);
   auto [space_group, irreps, multiplicities] =
       get_cyclic_group_irreps_mult(n_sites);
-  test_spectra_tj_symmetric<uint32_t>(bondlist, space_group, irreps,
-                                      multiplicities);
+  test_spectra_tj_symmetric(bondlist, space_group, irreps, multiplicities);
 }
 
 TEST_CASE("tj_symmetric_matrix", "[blocks][tj]") {
@@ -87,9 +85,7 @@ TEST_CASE("tj_symmetric_matrix", "[blocks][tj]") {
 
   // Test linear chains
   for (int n_sites = 2; n_sites < 7; ++n_sites) {
-    test_tj_symmetric_spectrum_chains<uint16_t>(n_sites);
-    test_tj_symmetric_spectrum_chains<uint32_t>(n_sites);
-    test_tj_symmetric_spectrum_chains<uint64_t>(n_sites);
+    test_tj_symmetric_spectrum_chains(n_sites);
   }
 
   {
@@ -115,12 +111,7 @@ TEST_CASE("tj_symmetric_matrix", "[blocks][tj]") {
       irreps.push_back(read_represenation(lfile, name));
       multiplicities.push_back(mult);
     }
-    test_spectra_tj_symmetric<uint16_t>(bondlist, space_group, irreps,
-                                        multiplicities);
-    test_spectra_tj_symmetric<uint32_t>(bondlist, space_group, irreps,
-                                        multiplicities);
-    test_spectra_tj_symmetric<uint64_t>(bondlist, space_group, irreps,
-                                        multiplicities);
+    test_spectra_tj_symmetric(bondlist, space_group, irreps, multiplicities);
   }
 
   {
@@ -152,12 +143,7 @@ TEST_CASE("tj_symmetric_matrix", "[blocks][tj]") {
       // Log("eta: {:.2f}", eta);
       bondlist["TPHI"] = complex(cos(eta * M_PI), sin(eta * M_PI));
       bondlist["JPHI"] = complex(cos(2 * eta * M_PI), sin(2 * eta * M_PI));
-      test_spectra_tj_symmetric<uint16_t>(bondlist, space_group, irreps,
-                                          multiplicities);
-      test_spectra_tj_symmetric<uint32_t>(bondlist, space_group, irreps,
-                                          multiplicities);
-      test_spectra_tj_symmetric<uint64_t>(bondlist, space_group, irreps,
-                                          multiplicities);
+      test_spectra_tj_symmetric(bondlist, space_group, irreps, multiplicities);
     }
   }
 }

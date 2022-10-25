@@ -17,7 +17,7 @@ TEST_CASE("tj_apply", "[blocks][tj]") {
     for (int nup = 0; nup <= N; ++nup)
       for (int ndn = 0; ndn <= N - nup; ++ndn) {
 
-        auto block = tJ<uint32_t>(N, nup, ndn);
+        auto block = tJ(N, nup, ndn);
         auto H = matrix_real(bonds, block, block);
         REQUIRE(arma::norm(H - H.t()) < 1e-12);
 
@@ -43,7 +43,7 @@ TEST_CASE("tj_apply", "[blocks][tj]") {
     auto bonds = tj_alltoall_complex(N);
     for (int nup = 0; nup <= N; ++nup)
       for (int ndn = 0; ndn <= N - nup; ++ndn) {
-        auto block = tJ<uint32_t>(N, nup, ndn);
+        auto block = tJ(N, nup, ndn);
         auto H = matrix_cplx(bonds, block, block);
         REQUIRE(arma::norm(H - H.t()) < 1e-12);
         arma::cx_vec v(block.size(), arma::fill::randn);

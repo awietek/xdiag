@@ -11,6 +11,7 @@ sources+= hydra/combinatorics/bit_patterns.cpp
 sources+= hydra/combinatorics/combinations.cpp
 sources+= hydra/combinatorics/combinations_index.cpp
 
+sources+= hydra/indexing/indexing_variants.cpp
 sources+= hydra/indexing/lin_table.cpp
 sources+= hydra/indexing/fermi_table.cpp
 sources+= hydra/indexing/combinations_indexing.cpp
@@ -68,6 +69,7 @@ sources+= hydra/operators/symmetrized_operator.cpp
 sources+= hydra/operators/non_branching_bonds.cpp
 
 sources+= hydra/states/gpwf_spinhalf.cpp
+# sources+= hydra/states/product_state.cpp
 
 sources+= hydra/random/random_utils.cpp
 sources+= hydra/random/hashes.cpp
@@ -112,8 +114,9 @@ testsources+= test/indexing/spinhalf/test_spinhalf_indexing.cpp
 testsources+= test/symmetries/group_action/test_group_action.cpp
 testsources+= test/symmetries/group_action/test_group_action_lookup.cpp
 testsources+= test/symmetries/group_action/test_group_action_sublattice.cpp
+testsources+= test/symmetries/operations/test_symmetry_operations.cpp
+# testsources+= test/symmetries/operations/test_representative_list_omp.cpp
 testsources+= test/symmetries/test_fermi_sign.cpp
-testsources+= test/symmetries/test_symmetry_operations.cpp
 testsources+= test/symmetries/test_permutation.cpp
 testsources+= test/symmetries/test_permutation_group.cpp
 testsources+= test/symmetries/test_generated_group.cpp

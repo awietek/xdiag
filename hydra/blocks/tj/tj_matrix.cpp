@@ -6,9 +6,9 @@
 
 namespace hydra {
 
-template <typename bit_t, typename coeff_t>
-arma::Mat<coeff_t> matrix_gen(BondList const &bonds, tJ<bit_t> const &block_in,
-                              tJ<bit_t> const &block_out) {
+template <typename coeff_t>
+arma::Mat<coeff_t> matrix_gen(BondList const &bonds, tJ const &block_in,
+                              tJ const &block_out) {
   assert(block_in == block_out); // only temporary
   BondList bonds_c = tj::compile(bonds, 1e-12);
   operators::check_bonds_in_range(bonds, block_in.n_sites());
@@ -27,35 +27,26 @@ arma::Mat<coeff_t> matrix_gen(BondList const &bonds, tJ<bit_t> const &block_in,
 
   auto const &indexing_in = block_in.indexing();
   auto const &indexing_out = block_out.indexing();
-  tj::apply_terms_dispatch<bit_t, coeff_t>(bonds_c, indexing_in, indexing_out,
-                                           fill);
+  tj::apply_terms_dispatch<coeff_t>(bonds_c, indexing_in, indexing_out, fill);
   return mat;
 }
 
-template arma::Mat<double>
-matrix_gen<uint16_t, double>(BondList const &bonds,
-                             tJ<uint16_t> const &block_in,
-                             tJ<uint16_t> const &block_out);
-template arma::Mat<double>
-matrix_gen<uint32_t, double>(BondList const &bonds,
-                             tJ<uint32_t> const &block_in,
-                             tJ<uint32_t> const &block_out);
-template arma::Mat<double>
-matrix_gen<uint64_t, double>(BondList const &bonds,
-                             tJ<uint64_t> const &block_in,
-                             tJ<uint64_t> const &block_out);
+template arma::Mat<double> matrix_gen<double>(BondList const &bonds,
+                                              tJ const &block_in,
+                                              tJ const &block_out);
 
-template arma::Mat<complex>
-matrix_gen<uint16_t, complex>(BondList const &bonds,
-                              tJ<uint16_t> const &block_in,
-                              tJ<uint16_t> const &block_out);
-template arma::Mat<complex>
-matrix_gen<uint32_t, complex>(BondList const &bonds,
-                              tJ<uint32_t> const &block_in,
-                              tJ<uint32_t> const &block_out);
-template arma::Mat<complex>
-matrix_gen<uint64_t, complex>(BondList const &bonds,
-                              tJ<uint64_t> const &block_in,
-                              tJ<uint64_t> const &block_out);
+template arma::Mat<complex> matrix_gen<complex>(BondList const &bonds,
+                                                tJ const &block_in,
+                                                tJ const &block_out);
 
+arma::Mat<double> matrix_real(BondList const &bonds, tJ const &block_in,
+                              tJ const &block_out) {
+  return matrix_gen<double>(bonds, block_in, block_out);
+}
+
+arma::Mat<complex> matrix_cplx(BondList const &bonds, tJ const &block_in,
+                               tJ const &block_out) {
+  return matrix_gen<complex>(bonds, block_in, block_out);
+}
+  
 } // namespace hydra

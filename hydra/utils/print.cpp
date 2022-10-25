@@ -130,8 +130,7 @@ void PrintPretty(const char *identifier, Representation const &irrep) {
   printf("  ID        : 0x%08x\n", random::hash(irrep));
 }
 
-template <typename bit_t>
-void PrintPretty(const char *identifier, Spinhalf<bit_t> const &block) {
+void PrintPretty(const char *identifier, Spinhalf const &block) {
   printf("%s:\n", identifier);
 
   printf("  n_sites  : %d\n", block.n_sites());
@@ -153,15 +152,8 @@ void PrintPretty(const char *identifier, Spinhalf<bit_t> const &block) {
   printf("  dimension: %s\n", ss.str().c_str());
   printf("  ID       : 0x%08x\n", random::hash(block));
 }
-template void PrintPretty(const char *identifier,
-                          Spinhalf<uint16_t> const &block);
-template void PrintPretty(const char *identifier,
-                          Spinhalf<uint32_t> const &block);
-template void PrintPretty(const char *identifier,
-                          Spinhalf<uint64_t> const &block);
 
-template <typename bit_t>
-void PrintPretty(const char *identifier, tJ<bit_t> const &block) {
+void PrintPretty(const char *identifier, tJ const &block) {
   printf("%s:\n", identifier);
 
   printf("  n_sites  : %d\n", block.n_sites());
@@ -186,12 +178,8 @@ void PrintPretty(const char *identifier, tJ<bit_t> const &block) {
   printf("  dimension: %s\n", ss.str().c_str());
   printf("  ID       : 0x%08x\n", random::hash(block));
 }
-template void PrintPretty(const char *identifier, tJ<uint16_t> const &block);
-template void PrintPretty(const char *identifier, tJ<uint32_t> const &block);
-template void PrintPretty(const char *identifier, tJ<uint64_t> const &block);
 
-template <typename bit_t>
-void PrintPretty(const char *identifier, Electron<bit_t> const &block) {
+void PrintPretty(const char *identifier, Electron const &block) {
   printf("%s:\n", identifier);
 
   printf("  n_sites  : %d\n", block.n_sites());
@@ -216,17 +204,6 @@ void PrintPretty(const char *identifier, Electron<bit_t> const &block) {
   printf("  dimension: %s\n", ss.str().c_str());
   printf("  ID       : 0x%08x\n", random::hash(block));
 }
-template void PrintPretty(const char *identifier,
-                          Electron<uint16_t> const &block);
-template void PrintPretty(const char *identifier,
-                          Electron<uint32_t> const &block);
-template void PrintPretty(const char *identifier,
-                          Electron<uint64_t> const &block);
-
-template <typename bit_t>
-void PrintPretty(const char *identifier, tJ<bit_t> const &block);
-template <typename bit_t>
-void PrintPretty(const char *identifier, Electron<bit_t> const &block);
 
 void PrintPretty(const char *identifier, Tmatrix const &tmat) {
   printf("%s:\n", identifier);

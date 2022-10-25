@@ -7,7 +7,6 @@
 
 using namespace hydra;
 
-template <class bit_t>
 void test_electron_symmetric_apply(BondList bondlist,
                                    PermutationGroup space_group,
                                    std::vector<Representation> irreps) {
@@ -19,7 +18,7 @@ void test_electron_symmetric_apply(BondList bondlist,
       for (auto irrep : irreps) {
 
         // Create block and matrix for comparison
-        auto block = Electron<bit_t>(n_sites, nup, ndn, space_group, irrep);
+        auto block = Electron(n_sites, nup, ndn, space_group, irrep);
         if (block.size() > 0) {
           auto H = matrix_cplx(bondlist, block, block);
           REQUIRE(arma::norm(H - H.t()) < 1e-12);
@@ -57,35 +56,32 @@ void test_electron_symmetric_apply(BondList bondlist,
   }
 }
 
-template <class bit_t> void test_hubbard_symmetric_apply_chains(int n_sites) {
+void test_hubbard_symmetric_apply_chains(int n_sites) {
   using namespace hydra::testcases::electron;
 
   // Without Heisenberg term
   Log.out("electron_symmetric_apply: Hubbard chain, n_sites: {}", n_sites);
   auto bondlist = get_linear_chain(n_sites, 1.0, 5.0);
   auto [space_group, irreps] = get_cyclic_group_irreps(n_sites);
-  test_electron_symmetric_apply<uint16_t>(bondlist, space_group, irreps);
+  test_electron_symmetric_apply(bondlist, space_group, irreps);
 
   // With Heisenberg term
   Log.out("electron_symmetric_apply: Hubbard chain, n_sites: {} (+ "
           "Heisenberg terms)",
           n_sites);
   auto bondlist_hb = get_linear_chain_hb(n_sites, 1.0, 5.0, 0.4);
-  test_electron_symmetric_apply<bit_t>(bondlist_hb, space_group, irreps);
+  test_electron_symmetric_apply(bondlist_hb, space_group, irreps);
 }
 
 TEST_CASE("electron_symmetric_apply", "[blocks][electron_symmetric]") {
 
   // Test linear chains
   for (int n_sites = 2; n_sites < 7; ++n_sites) {
-    test_hubbard_symmetric_apply_chains<uint16_t>(n_sites);
-    test_hubbard_symmetric_apply_chains<uint32_t>(n_sites);
-    test_hubbard_symmetric_apply_chains<uint64_t>(n_sites);
+    test_hubbard_symmetric_apply_chains(n_sites);
   }
 
   // test a 3x3 triangular lattice
   Log.out("electron_symmetric_apply: Hubbard 3x3 triangular");
-  using bit_t = uint16_t;
   std::string lfile = "data/triangular.9.hop.sublattices.tsl.lat";
 
   auto bondlist = read_bondlist(lfile);
@@ -104,7 +100,7 @@ TEST_CASE("electron_symmetric_apply", "[blocks][electron_symmetric]") {
     irreps.push_back(read_represenation(lfile, name));
     (void)mult;
   }
-  test_electron_symmetric_apply<bit_t>(bondlist, space_group, irreps);
+  test_electron_symmetric_apply(bondlist, space_group, irreps);
 
   // test a 3x3 triangular lattice with Heisenberg terms
   Log.out(
@@ -114,12 +110,11 @@ TEST_CASE("electron_symmetric_apply", "[blocks][electron_symmetric]") {
     bondlist_hb << Bond("HB", "J", {bond[0], bond[1]});
   }
   bondlist_hb["J"] = 0.4;
-  test_electron_symmetric_apply<bit_t>(bondlist_hb, space_group, irreps);
+  test_electron_symmetric_apply(bondlist_hb, space_group, irreps);
 
   // test a 3x3 triangular lattice with complex hoppings
   {
     Log.out("electron_symmetric_apply: Hubbard 3x3 triangular (complex)");
-    using bit_t = uint16_t;
     std::string lfile =
         "data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.lat";
     BondList bondlist = read_bondlist(lfile);
@@ -139,6 +134,6 @@ TEST_CASE("electron_symmetric_apply", "[blocks][electron_symmetric]") {
       irreps.push_back(read_represenation(lfile, name));
       (void)mult;
     }
-    test_electron_symmetric_apply<bit_t>(bondlist, space_group, irreps);
+    test_electron_symmetric_apply(bondlist, space_group, irreps);
   }
 }

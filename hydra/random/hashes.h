@@ -14,8 +14,8 @@ uint32_t hash(Permutation const &perm);
 uint32_t hash(PermutationGroup const &group);
 uint32_t hash(Representation const &irrep);
 
-template <typename bit_t> uint32_t hash(Spinhalf<bit_t> const &spinhalf);
-template <typename bit_t> uint32_t hash(tJ<bit_t> const &tj);
-template <typename bit_t> uint32_t hash(Electron<bit_t> const &electron);
+uint32_t hash(Spinhalf const &spinhalf);
+uint32_t hash(tJ const &tj);
+uint32_t hash(Electron const &electron);
 
 } // namespace hydra::random

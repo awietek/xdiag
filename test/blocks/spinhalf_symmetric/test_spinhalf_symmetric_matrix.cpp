@@ -8,7 +8,6 @@
 #include <hydra/all.h>
 using namespace hydra;
 
-template <class bit_t>
 void test_spinhalf_symmetric_spectra(BondList bondlist,
                                      PermutationGroup space_group,
                                      std::vector<Representation> irreps,
@@ -19,7 +18,7 @@ void test_spinhalf_symmetric_spectra(BondList bondlist,
   for (int nup = 3; nup <= n_sites; ++nup) {
     // Log("Spinhalf Symmetric N: {}, nup: {}", n_sites, nup);
     // Compute the full spectrum from non-symmetrized block
-    auto spinhalf_nosym = Spinhalf<bit_t>(n_sites, nup);
+    auto spinhalf_nosym = Spinhalf(n_sites, nup);
 
     if (spinhalf_nosym.size() < 1000) {
       std::vector<double> eigs_sym;
@@ -33,7 +32,7 @@ void test_spinhalf_symmetric_spectra(BondList bondlist,
       for (int k = 0; k < (int)irreps.size(); ++k) {
         auto irrep = irreps[k];
         int multiplicity = multiplicities[k];
-        auto spinhalf = Spinhalf<bit_t>(n_sites, nup, space_group, irrep);
+        auto spinhalf = Spinhalf(n_sites, nup, space_group, irrep);
         // Log.out("nup: {}, k: {}, mult: {}, dim_nosym: {}, dim_sym: "
         //         "{} ",
         //         nup, k, multiplicity, spinhalf_nosym.size(),
@@ -67,7 +66,6 @@ void test_spinhalf_symmetric_spectra(BondList bondlist,
   }
 }
 
-template <class bit_t>
 void test_spinhalf_symmetric_spectra_no_sz(BondList bondlist,
                                            PermutationGroup space_group,
                                            std::vector<Representation> irreps,
@@ -77,7 +75,7 @@ void test_spinhalf_symmetric_spectra_no_sz(BondList bondlist,
 
   // Log("Spinhalf Symmetric N: {}, nup: {}", n_sites, nup);
   // Compute the full spectrum from non-symmetrized block
-  auto spinhalf_nosym = Spinhalf<bit_t>(n_sites);
+  auto spinhalf_nosym = Spinhalf(n_sites);
 
   if (spinhalf_nosym.size() < 1000) {
     std::vector<double> eigs_sym;
@@ -90,7 +88,7 @@ void test_spinhalf_symmetric_spectra_no_sz(BondList bondlist,
     for (int k = 0; k < (int)irreps.size(); ++k) {
       auto irrep = irreps[k];
       int multiplicity = multiplicities[k];
-      auto spinhalf = Spinhalf<bit_t>(n_sites, space_group, irrep);
+      auto spinhalf = Spinhalf(n_sites, space_group, irrep);
       if (spinhalf.size() > 0) {
 
         // Compute partial spectrum from symmetrized block
@@ -102,7 +100,7 @@ void test_spinhalf_symmetric_spectra_no_sz(BondList bondlist,
 
         auto eigs_sym_k_sz = std::vector<double>();
         for (int nup = 0; nup <= n_sites; ++nup) {
-          auto spinhalf_sz = Spinhalf<bit_t>(n_sites, nup, space_group, irrep);
+          auto spinhalf_sz = Spinhalf(n_sites, nup, space_group, irrep);
           auto H_sym_sz = matrix_cplx(bondlist, spinhalf_sz, spinhalf_sz);
           arma::vec es;
           arma::eig_sym(es, H_sym_sz);
@@ -132,7 +130,6 @@ void test_spinhalf_symmetric_spectra_no_sz(BondList bondlist,
   }
 }
 
-template <class bit_t>
 void test_spinhalf_symmetric_spectrum_chains(int n_sites) {
   using namespace hydra::testcases::spinhalf;
   using hydra::testcases::electron::get_cyclic_group_irreps_mult;
@@ -142,19 +139,17 @@ void test_spinhalf_symmetric_spectrum_chains(int n_sites) {
   auto [space_group, irreps, multiplicities] =
       get_cyclic_group_irreps_mult(n_sites);
   auto bondlist = HBchain(n_sites, 1.0, 1.0);
-  test_spinhalf_symmetric_spectra<bit_t>(bondlist, space_group, irreps,
-                                         multiplicities);
-  test_spinhalf_symmetric_spectra_no_sz<bit_t>(bondlist, space_group, irreps,
-                                               multiplicities);
+  test_spinhalf_symmetric_spectra(bondlist, space_group, irreps,
+                                  multiplicities);
+  test_spinhalf_symmetric_spectra_no_sz(bondlist, space_group, irreps,
+                                        multiplicities);
 }
 
 TEST_CASE("spinhalf_symmetric_matrix", "[blocks][spinhalf_symmetric]") {
 
   // Test linear Heisenberg chains
   for (int n_sites = 3; n_sites < 7; ++n_sites) {
-    test_spinhalf_symmetric_spectrum_chains<uint16_t>(n_sites);
-    test_spinhalf_symmetric_spectrum_chains<uint32_t>(n_sites);
-    test_spinhalf_symmetric_spectrum_chains<uint64_t>(n_sites);
+    test_spinhalf_symmetric_spectrum_chains(n_sites);
   }
 
   // test a 3x3 triangular lattice
@@ -183,10 +178,10 @@ TEST_CASE("spinhalf_symmetric_matrix", "[blocks][spinhalf_symmetric]") {
       irreps.push_back(read_represenation(lfile, name));
       multiplicities.push_back(mult);
     }
-    test_spinhalf_symmetric_spectra<uint16_t>(bondlist, space_group, irreps,
-                                              multiplicities);
-    test_spinhalf_symmetric_spectra_no_sz<uint32_t>(bondlist, space_group,
-                                                    irreps, multiplicities);
+    test_spinhalf_symmetric_spectra(bondlist, space_group, irreps,
+                                    multiplicities);
+    test_spinhalf_symmetric_spectra_no_sz(bondlist, space_group, irreps,
+                                          multiplicities);
   }
 
   // test J1-J2-Jchi triangular lattice
@@ -219,7 +214,7 @@ TEST_CASE("spinhalf_symmetric_matrix", "[blocks][spinhalf_symmetric]") {
     int n_up = 6;
     for (auto [name, energy] : rep_name_mult) {
       auto irrep = read_represenation(lfile, name);
-      auto spinhalf = Spinhalf<uint16_t>(n_sites, n_up, space_group, irrep);
+      auto spinhalf = Spinhalf(n_sites, n_up, space_group, irrep);
       auto H = matrix_cplx(bondlist, spinhalf, spinhalf);
       REQUIRE(arma::norm(H - H.t()) < 1e-12);
 

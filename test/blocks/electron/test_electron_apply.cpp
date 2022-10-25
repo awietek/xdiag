@@ -42,7 +42,7 @@ TEST_CASE("electron_apply", "[blocks][electron]") {
       for (int ndn = 0; ndn <= n_sites; ++ndn) {
 
         // Create block and matrix for comparison
-        auto block = Electron<uint32_t>(n_sites, nup, ndn);
+        auto block = Electron(n_sites, nup, ndn);
         auto H = matrix_real(bondlist, block, block);
         REQUIRE(H.is_hermitian(1e-8));
 
@@ -77,7 +77,7 @@ TEST_CASE("electron_apply", "[blocks][electron]") {
       for (int ndn = 0; ndn <= n_sites; ++ndn) {
 
         // Create block and matrix for comparison
-        auto block = Electron<uint32_t>(n_sites, nup, ndn);
+        auto block = Electron(n_sites, nup, ndn);
         auto H = matrix_cplx(bondlist, block, block);
         REQUIRE(H.is_hermitian(1e-8));
 

@@ -9,9 +9,9 @@
 
 namespace hydra {
 
-template <typename bit_t, typename coeff_t>
-void apply(BondList const &bonds, Spinhalf<bit_t> const &block_in,
-           arma::Col<coeff_t> const &vec_in, Spinhalf<bit_t> const &block_out,
+template <typename coeff_t>
+void apply(BondList const &bonds, Spinhalf const &block_in,
+           arma::Col<coeff_t> const &vec_in, Spinhalf const &block_out,
            arma::Col<coeff_t> &vec_out) {
 
   BondList bonds_c = spinhalf::compile(bonds);
@@ -53,40 +53,16 @@ void apply(BondList const &bonds, Spinhalf<bit_t> const &block_in,
 
   auto const &indexing_in = block_in.indexing();
   auto const &indexing_out = block_out.indexing();
-  spinhalf::apply_terms_dispatch<bit_t, coeff_t>(bonds_c, indexing_in,
-                                                 indexing_out, fill);
+  spinhalf::apply_terms_dispatch<coeff_t>(bonds_c, indexing_in, indexing_out,
+                                          fill);
 }
 
-template void apply<uint16_t, double>(BondList const &,
-                                      Spinhalf<uint16_t> const &,
-                                      arma::Col<double> const &,
-                                      Spinhalf<uint16_t> const &,
-                                      arma::Col<double> &);
-template void apply<uint32_t, double>(BondList const &,
-                                      Spinhalf<uint32_t> const &,
-                                      arma::Col<double> const &,
-                                      Spinhalf<uint32_t> const &,
-                                      arma::Col<double> &);
-template void apply<uint64_t, double>(BondList const &,
-                                      Spinhalf<uint64_t> const &,
-                                      arma::Col<double> const &,
-                                      Spinhalf<uint64_t> const &,
-                                      arma::Col<double> &);
+template void apply<double>(BondList const &, Spinhalf const &,
+                            arma::Col<double> const &, Spinhalf const &,
+                            arma::Col<double> &);
 
-template void apply<uint16_t, complex>(BondList const &,
-                                       Spinhalf<uint16_t> const &,
-                                       arma::Col<complex> const &,
-                                       Spinhalf<uint16_t> const &,
-                                       arma::Col<complex> &);
-template void apply<uint32_t, complex>(BondList const &,
-                                       Spinhalf<uint32_t> const &,
-                                       arma::Col<complex> const &,
-                                       Spinhalf<uint32_t> const &,
-                                       arma::Col<complex> &);
-template void apply<uint64_t, complex>(BondList const &,
-                                       Spinhalf<uint64_t> const &,
-                                       arma::Col<complex> const &,
-                                       Spinhalf<uint64_t> const &,
-                                       arma::Col<complex> &);
+template void apply<complex>(BondList const &, Spinhalf const &,
+                             arma::Col<complex> const &, Spinhalf const &,
+                             arma::Col<complex> &);
 
 } // namespace hydra

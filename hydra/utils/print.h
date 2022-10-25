@@ -31,12 +31,9 @@ void PrintPretty(const char *identifier, Permutation const &perm);
 void PrintPretty(const char *identifier, PermutationGroup const &group);
 void PrintPretty(const char *identifier, Representation const &irrep);
 
-template <typename bit_t>
-void PrintPretty(const char *identifier, Spinhalf<bit_t> const &block);
-template <typename bit_t>
-void PrintPretty(const char *identifier, tJ<bit_t> const &block);
-template <typename bit_t>
-void PrintPretty(const char *identifier, Electron<bit_t> const &block);
+void PrintPretty(const char *identifier, Spinhalf const &block);
+void PrintPretty(const char *identifier, tJ const &block);
+void PrintPretty(const char *identifier, Electron const &block);
 
 void PrintPretty(const char *identifier, std::vector<float> const &vec);
 void PrintPretty(const char *identifier, std::vector<double> const &vec);

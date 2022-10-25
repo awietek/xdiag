@@ -48,7 +48,7 @@ TEST_CASE("electron_matrix", "[blocks][electron]") {
   int n_dn = 2;
   double t = 1.0;
   double U = 5.0;
-  auto block = Electron<uint32_t>(n_sites, n_up, n_dn);
+  auto block = Electron(n_sites, n_up, n_dn);
 
   for (int i = 0; i < n_sites; ++i)
     bondlist << Bond("HOP", "T", {i, (i + 1) % n_sites});
@@ -123,7 +123,7 @@ TEST_CASE("electron_matrix", "[blocks][electron]") {
   // Test two site exact solution
   bondlist.clear();
   bondlist << Bond("HOP", "T", {0, 1});
-  auto block2 = Electron<uint32_t>(2, 1, 1);
+  auto block2 = Electron(2, 1, 1);
   for (int i = 0; i < 20; ++i) {
     double U = 1.234 * i;
     Log("electron_matrix: two-site exact solution test, U={}", U);
@@ -170,7 +170,7 @@ TEST_CASE("electron_matrix", "[blocks][electron]") {
         for (int i = 0; i < ndn; ++i)
           e0_exact += seigs(i);
 
-        auto block3 = Electron<uint32_t>(n_sites, nup, ndn);
+        auto block3 = Electron(n_sites, nup, ndn);
         auto Hr = matrix_real(bondlist, block3, block3);
         REQUIRE(Hr.is_hermitian(1e-8));
         arma::vec eigsr;
@@ -230,7 +230,7 @@ TEST_CASE("electron_matrix", "[blocks][electron]") {
         for (int i = 0; i < ndn; ++i)
           e0_exact += seigs_dn(i);
 
-        auto block3 = Electron<uint32_t>(n_sites, nup, ndn);
+        auto block3 = Electron(n_sites, nup, ndn);
         auto H = matrix_cplx(bondlist, block3, block3);
         REQUIRE(H.is_hermitian(1e-8));
         arma::vec evecs;
@@ -317,7 +317,7 @@ TEST_CASE("electron_matrix", "[blocks][electron]") {
 
     for (int nup = 0; nup <= N; ++nup)
       for (int ndn = 0; ndn <= N - nup; ++ndn) {
-        auto block = Electron<uint32_t>(N, nup, ndn);
+        auto block = Electron(N, nup, ndn);
         auto H = matrix_cplx(bonds, block, block);
         REQUIRE(H.is_hermitian(1e-8));
       }
@@ -335,8 +335,8 @@ TEST_CASE("electron_matrix", "[blocks][electron]") {
     // Check whether eigenvalues agree with HB model
     for (int nup = 0; nup <= N; ++nup) {
       int ndn = N - nup;
-      auto block1 = Electron<uint32_t>(N, nup, ndn);
-      auto block2 = Spinhalf<uint32_t>(N, nup);
+      auto block1 = Electron(N, nup, ndn);
+      auto block2 = Spinhalf(N, nup);
       auto H1 = matrix_cplx(bonds, block1, block1);
       auto H2 = matrix_cplx(bonds, block2, block2);
       arma::vec eigs1;

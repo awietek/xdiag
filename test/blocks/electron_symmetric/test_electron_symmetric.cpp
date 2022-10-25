@@ -24,7 +24,7 @@ using namespace hydra::combinatorics;
 //   }
 // }
 
-template <class bit_t> void test_electron_chain(int n_sites) {
+void test_electron_chain(int n_sites) {
   using bitops::bits_to_string;
 
   Log("electron_symmetric: chain block test. N: {}", n_sites);
@@ -61,8 +61,7 @@ template <class bit_t> void test_electron_chain(int n_sites) {
                           std::sin(2 * M_PI * l * k / n_sites)});
         auto irrep = Representation(chis);
 
-        auto electron2 =
-            Electron<bit_t>(n_sites, nup, ndn, space_group, irrep);
+        auto electron2 = Electron(n_sites, nup, ndn, space_group, irrep);
 
         sum_of_dims += electron2.size();
         sum_of_dims_updn += electron2.size();
@@ -78,9 +77,7 @@ TEST_CASE("electron_symmetric", "[blocks][electron_symmetric]") {
 
   // Test the Hubbard chain
   for (int n_sites = 1; n_sites < 7; ++n_sites) {
-    test_electron_chain<uint16_t>(n_sites);
-    test_electron_chain<uint32_t>(n_sites);
-    test_electron_chain<uint64_t>(n_sites);
+    test_electron_chain(n_sites);
   }
 
   // test a 3x3 triangular lattice
@@ -104,8 +101,7 @@ TEST_CASE("electron_symmetric", "[blocks][electron_symmetric]") {
 
       for (auto [name, mult] : rep_name_mult) {
         auto irrep = read_represenation(lfile, name);
-        auto electron =
-            Electron(n_sites, nup, ndn, space_group, irrep);
+        auto electron = Electron(n_sites, nup, ndn, space_group, irrep);
 
         idx_t dim = electron.size() * mult;
         // Log.out(

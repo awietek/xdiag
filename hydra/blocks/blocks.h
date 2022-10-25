@@ -5,14 +5,9 @@
 // Forward declaration of blocks with default parameters
 namespace hydra {
 
-template <typename bit_t> class Spinhalf;
-template <typename bit_t> class SpinhalfSymmetric;
-
-template <typename bit_t> class tJ;
-template <typename bit_t> class tJSymmetric;
-
-template <typename bit_t> class Electron;
-template <typename bit_t> class ElectronSymmetric;
+class Spinhalf;
+class tJ;
+class Electron;
 
 template <typename bit_t> class SpinhalfMPI;
 template <typename bit_t> class ElectronMPI;

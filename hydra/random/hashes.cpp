@@ -36,7 +36,7 @@ uint32_t hash(Representation const &irrep) {
   return h;
 }
 
-template <typename bit_t> uint32_t hash(Spinhalf<bit_t> const &spinhalf) {
+uint32_t hash(Spinhalf const &spinhalf) {
   uint32_t h =
       spinhalf.n_sites() == 0 ? 0 : hash_fnv1((uint32_t)spinhalf.n_sites());
   if (spinhalf.sz_conserved()) {
@@ -49,11 +49,7 @@ template <typename bit_t> uint32_t hash(Spinhalf<bit_t> const &spinhalf) {
   return h;
 }
 
-template uint32_t hash(Spinhalf<uint16_t> const &);
-template uint32_t hash(Spinhalf<uint32_t> const &);
-template uint32_t hash(Spinhalf<uint64_t> const &);
-
-template <typename bit_t> uint32_t hash(tJ<bit_t> const &tj) {
+uint32_t hash(tJ const &tj) {
   uint32_t h = tj.n_sites() == 0 ? 0 : hash_fnv1((uint32_t)tj.n_sites());
   if (tj.charge_conserved() && tj.sz_conserved()) {
     h = hash_combine(h, hash_fnv1((uint32_t)tj.n_up()));
@@ -65,11 +61,8 @@ template <typename bit_t> uint32_t hash(tJ<bit_t> const &tj) {
   }
   return h;
 }
-template uint32_t hash(tJ<uint16_t> const &);
-template uint32_t hash(tJ<uint32_t> const &);
-template uint32_t hash(tJ<uint64_t> const &);
 
-template <typename bit_t> uint32_t hash(Electron<bit_t> const &electron) {
+uint32_t hash(Electron const &electron) {
   uint32_t h =
       electron.n_sites() == 0 ? 0 : hash_fnv1((uint32_t)electron.n_sites());
   if (electron.charge_conserved() && electron.sz_conserved()) {
@@ -82,9 +75,5 @@ template <typename bit_t> uint32_t hash(Electron<bit_t> const &electron) {
   }
   return h;
 }
-
-template uint32_t hash(Electron<uint16_t> const &);
-template uint32_t hash(Electron<uint32_t> const &);
-template uint32_t hash(Electron<uint64_t> const &);
 
 } // namespace hydra::random

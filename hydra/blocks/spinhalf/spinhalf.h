@@ -11,9 +11,9 @@
 
 namespace hydra {
 
-template <typename bit_t = std_bit_t> class Spinhalf {
+class Spinhalf {
 public:
-  using indexing_t = indexing::spinhalf::Indexing<bit_t>;
+  using indexing_t = indexing::SpinhalfIndexing;
 
   Spinhalf() = default;
   Spinhalf(int n_sites);

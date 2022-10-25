@@ -14,7 +14,7 @@ TEST_CASE("spinhalf_matrix", "[models][spinhalf]") {
     for (int n_sites = 2; n_sites <= 6; ++n_sites) {
       for (int nup = 0; nup <= n_sites; ++nup) {
         auto [bonds, exact_eigs] = HBchain_fullspectrum_nup(n_sites, nup);
-        auto block = Spinhalf<uint32_t>(n_sites, nup);
+        auto block = Spinhalf(n_sites, nup);
         auto H = matrix_real(bonds, block, block);
         REQUIRE(H.is_hermitian(1e-7));
         arma::vec eigs;
@@ -29,8 +29,8 @@ TEST_CASE("spinhalf_matrix", "[models][spinhalf]") {
     for (int n_sites = 2; n_sites <= 6; ++n_sites)
       for (int nup = 0; nup <= n_sites; ++nup) {
         auto bonds = HB_alltoall(n_sites);
-        auto block = Spinhalf<uint32_t>(n_sites, nup);
-        auto block_tJ = tJ<uint32_t>(n_sites, nup, n_sites - nup);
+        auto block = Spinhalf(n_sites, nup);
+        auto block_tJ = tJ(n_sites, nup, n_sites - nup);
         auto H = matrix_real(bonds, block, block);
         auto H_tJ = matrix_real(bonds, block_tJ, block_tJ);
         REQUIRE(H.is_hermitian());
@@ -81,7 +81,7 @@ TEST_CASE("spinhalf_matrix", "[models][spinhalf]") {
                                 0.03, 0.04, 0.05}; // dont change etas :-)
     for (auto eta : etas) {
       auto [bonds, e0] = triangular_12_complex(nup, eta);
-      auto block = Spinhalf<uint32_t>(n_sites, nup);
+      auto block = Spinhalf(n_sites, nup);
       auto H = matrix_cplx(bonds, block, block);      
       REQUIRE(H.is_hermitian(1e-8));
 
@@ -106,7 +106,7 @@ TEST_CASE("spinhalf_matrix", "[models][spinhalf]") {
 
     int n_sites = 12;
     int n_up = 6;
-    auto block = Spinhalf<uint16_t>(n_sites, n_up);
+    auto block = Spinhalf(n_sites, n_up);
     auto H = matrix_cplx(bondlist, block, block);
     REQUIRE(H.is_hermitian(1e-8));
 

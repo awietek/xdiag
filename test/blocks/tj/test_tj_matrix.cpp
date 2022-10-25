@@ -9,7 +9,7 @@ using namespace hydra;
 
 void test_tjmodel_e0_real(BondList bonds, int nup, int ndn, double e0) {
   int n_sites = bonds.n_sites();
-  auto block = tJ<uint32_t>(n_sites, nup, ndn);
+  auto block = tJ(n_sites, nup, ndn);
   auto H = matrix_real(bonds, block, block);
   arma::vec eigs;
   arma::eig_sym(eigs, H);
@@ -25,7 +25,7 @@ void test_tjmodel_fulleigs(BondList bonds, arma::Col<double> exact_eigs) {
   for (int ndn = 0; ndn <= n_sites; ++ndn) {
     for (int nup = 0; nup <= n_sites - ndn; ++nup) {
 
-      auto block = tJ<uint32_t>(n_sites, nup, ndn);
+      auto block = tJ(n_sites, nup, ndn);
       auto H = matrix_real(bonds, block, block);
       REQUIRE(arma::norm(H - H.t()) < 1e-12);
 
@@ -100,7 +100,7 @@ TEST_CASE("tj_matrix", "[blocks][tj]") {
 
     for (int nup = 0; nup <= N; ++nup)
       for (int ndn = 0; ndn <= N - nup; ++ndn) {
-        auto block = tJ<uint32_t>(N, nup, ndn);
+        auto block = tJ(N, nup, ndn);
         auto H = matrix_cplx(bonds, block, block);
         REQUIRE(arma::norm(H - H.t()) < 1e-12);
       }
@@ -108,8 +108,8 @@ TEST_CASE("tj_matrix", "[blocks][tj]") {
     // Check whether eigenvalues agree with HB model
     for (int nup = 0; nup <= N; ++nup) {
       int ndn = N - nup;
-      auto block1 = tJ<uint32_t>(N, nup, ndn);
-      auto block2 = Spinhalf<uint32_t>(N, nup);
+      auto block1 = tJ(N, nup, ndn);
+      auto block2 = Spinhalf(N, nup);
       auto H1 = matrix_cplx(bonds_hb, block1, block1);
       auto H2 = matrix_cplx(bonds_hb, block2, block2);
       arma::vec eigs1;

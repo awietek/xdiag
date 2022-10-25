@@ -8,7 +8,6 @@
 #include <hydra/all.h>
 using namespace hydra;
 
-template <class bit_t>
 void test_spinhalf_symmetric_apply(BondList bondlist,
                                    PermutationGroup space_group,
                                    std::vector<Representation> irreps) {
@@ -16,7 +15,7 @@ void test_spinhalf_symmetric_apply(BondList bondlist,
 
   for (int nup = 0; nup <= n_sites; ++nup) {
     for (auto irrep : irreps) {
-      auto block = Spinhalf<bit_t>(n_sites, nup, space_group, irrep);
+      auto block = Spinhalf(n_sites, nup, space_group, irrep);
 
       if (block.size() > 0) {
         auto H = matrix_cplx(bondlist, block, block);
@@ -55,14 +54,13 @@ void test_spinhalf_symmetric_apply(BondList bondlist,
   }
 }
 
-template <class bit_t>
 void test_spinhalf_symmetric_apply_no_sz(BondList bondlist,
                                          PermutationGroup space_group,
                                          std::vector<Representation> irreps) {
   int n_sites = space_group.n_sites();
 
   for (auto irrep : irreps) {
-    auto block = Spinhalf<bit_t>(n_sites, space_group, irrep);
+    auto block = Spinhalf(n_sites, space_group, irrep);
 
     if (block.size() > 0) {
       auto H = matrix_cplx(bondlist, block, block);
@@ -99,23 +97,21 @@ void test_spinhalf_symmetric_apply_no_sz(BondList bondlist,
   }
 }
 
-template <class bit_t> void test_spinhalf_symmetric_apply_chains(int n_sites) {
+void test_spinhalf_symmetric_apply_chains(int n_sites) {
   using namespace hydra::testcases::spinhalf;
   using hydra::testcases::electron::get_cyclic_group_irreps;
   Log.out("spinhalf_symmetric_apply: HB chain, N: {}", n_sites);
   auto [space_group, irreps] = get_cyclic_group_irreps(n_sites);
   auto bondlist = HBchain(n_sites, 1.0, 1.0);
-  test_spinhalf_symmetric_apply<bit_t>(bondlist, space_group, irreps);
-  test_spinhalf_symmetric_apply_no_sz<bit_t>(bondlist, space_group, irreps);
+  test_spinhalf_symmetric_apply(bondlist, space_group, irreps);
+  test_spinhalf_symmetric_apply_no_sz(bondlist, space_group, irreps);
 }
 
 TEST_CASE("spinhalf_symmetric_apply", "[blocks][spinhalf_symmetric]") {
 
   // Test linear Heisenberg chains
   for (int n_sites = 3; n_sites < 7; ++n_sites) {
-    test_spinhalf_symmetric_apply_chains<uint16_t>(n_sites);
-    test_spinhalf_symmetric_apply_chains<uint32_t>(n_sites);
-    test_spinhalf_symmetric_apply_chains<uint64_t>(n_sites);
+    test_spinhalf_symmetric_apply_chains(n_sites);
   }
 
   // test a 3x3 triangular lattice
@@ -142,8 +138,8 @@ TEST_CASE("spinhalf_symmetric_apply", "[blocks][spinhalf_symmetric]") {
     (void)mult;
     irreps.push_back(read_represenation(lfile, name));
   }
-  test_spinhalf_symmetric_apply<uint16_t>(bondlist, space_group, irreps);
-  test_spinhalf_symmetric_apply_no_sz<uint64_t>(bondlist, space_group, irreps);
+  test_spinhalf_symmetric_apply(bondlist, space_group, irreps);
+  test_spinhalf_symmetric_apply_no_sz(bondlist, space_group, irreps);
 
   // test J1-J2-Jchi triangular lattice
   {
@@ -175,7 +171,7 @@ TEST_CASE("spinhalf_symmetric_apply", "[blocks][spinhalf_symmetric]") {
     int n_up = 6;
     for (auto [name, energy] : rep_name_mult) {
       auto irrep = read_represenation(lfile, name);
-      auto spinhalf = Spinhalf<uint16_t>(n_sites, n_up, space_group, irrep);
+      auto spinhalf = Spinhalf(n_sites, n_up, space_group, irrep);
       auto e0 = eig0_cplx(bondlist, spinhalf);
       Log("{} {:.12f} {:.12f}", name, e0, energy);
 

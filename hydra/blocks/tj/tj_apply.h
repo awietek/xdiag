@@ -8,9 +8,9 @@
 
 namespace hydra {
 
-template <typename bit_t, typename coeff_t>
-void apply(BondList const &bonds, tJ<bit_t> const &block_in,
-           arma::Col<coeff_t> const &vec_in, tJ<bit_t> const &block_out,
+template <typename coeff_t>
+void apply(BondList const &bonds, tJ const &block_in,
+           arma::Col<coeff_t> const &vec_in, tJ const &block_out,
            arma::Col<coeff_t> &vec_out);
 
 } // namespace hydra

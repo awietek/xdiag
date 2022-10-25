@@ -9,9 +9,9 @@
 
 namespace hydra {
 
-template <class bit_t = std_bit_t> class tJ {
+class tJ {
 public:
-  using indexing_t = indexing::tj::Indexing<bit_t>;
+  using indexing_t = indexing::tJIndexing;
 
   tJ() = default;
   tJ(int n_sites, int nup, int ndn);
