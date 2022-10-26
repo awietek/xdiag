@@ -78,12 +78,11 @@ Tmatrix lanczos_vector_apply_inplace(multiply_f mult, arma::Col<coeff_t> &v0,
   return tmatrix;
 }
 
-template <class coeff_t, class Block, class vector_apply_f>
-Tmatrix lanczos_vector_apply_inplace(BondList const &bonds,
-                                     State<coeff_t, Block> &state_0,
-                                     vector_apply_f vector_apply,
-                                     int max_iterations,
-                                     double deflation_tol = 1e-7) {
+template <class coeff_t, class vector_apply_f>
+Tmatrix
+lanczos_vector_apply_inplace(BondList const &bonds, State<coeff_t> &state_0,
+                             vector_apply_f vector_apply, int max_iterations,
+                             double deflation_tol = 1e-7) {
   auto const &block = state_0.block();
   auto &v0 = state_0.vector();
 
@@ -106,9 +105,8 @@ Tmatrix lanczos_vector_apply_inplace(BondList const &bonds,
   return tmat;
 }
 
-template <class coeff_t, class Block, class vector_apply_f>
-Tmatrix lanczos_vector_apply(BondList const &bonds,
-                             State<coeff_t, Block> state_0,
+template <class coeff_t, class vector_apply_f>
+Tmatrix lanczos_vector_apply(BondList const &bonds, State<coeff_t> state_0,
                              vector_apply_f vector_apply, int max_iterations,
                              double deflation_tol = 1e-7) {
   return lanczos_vector_apply_inplace(bonds, state_0, vector_apply,

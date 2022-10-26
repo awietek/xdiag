@@ -56,8 +56,8 @@ void PrintPretty(const char *identifier,
 
 void PrintPretty(const char *identifier, Tmatrix const &tmat);
 
-template <typename coeff_t, class Block>
-void PrintPretty(const char *identifier, State<coeff_t, Block> const &state) {
+template <typename coeff_t>
+void PrintPretty(const char *identifier, State<coeff_t> const &state) {
   printf("%s:\n", identifier);
   if constexpr (is_real<coeff_t>()) {
     printf("  real state\n");

@@ -12,13 +12,12 @@
 namespace hydra {
 
 // Lanczos which  overwrites starting vector v0
-template <class coeff_t, class Block>
-Tmatrix lanczos_eigenvalues_inplace(BondList const &bonds,
-                                    State<coeff_t, Block> &state_0,
-                                    int num_eigenvalue = 0,
-                                    double precision = 1e-12,
-                                    int max_iterations = 1000,
-                                    double deflation_tol = 1e-7) {
+template <class coeff_t>
+Tmatrix
+lanczos_eigenvalues_inplace(BondList const &bonds, State<coeff_t> &state_0,
+                            int num_eigenvalue = 0, double precision = 1e-12,
+                            int max_iterations = 1000,
+                            double deflation_tol = 1e-7) {
 
   auto const &block = state_0.block();
   auto &v0 = state_0.vector();
@@ -44,46 +43,47 @@ Tmatrix lanczos_eigenvalues_inplace(BondList const &bonds,
 }
 
 // Lanczos which does not overwrite v0
-template <class coeff_t, class Block>
-Tmatrix
-lanczos_eigenvalues(BondList const &bonds, State<coeff_t, Block> state_0,
-                    int num_eigenvalue = 0, double precision = 1e-12,
-                    int max_iterations = 1000, double deflation_tol = 1e-7) {
+template <class coeff_t>
+Tmatrix lanczos_eigenvalues(BondList const &bonds, State<coeff_t> state_0,
+                            int num_eigenvalue = 0, double precision = 1e-12,
+                            int max_iterations = 1000,
+                            double deflation_tol = 1e-7) {
   return lanczos_eigenvalues_inplace(bonds, state_0, num_eigenvalue, precision,
                                      max_iterations, deflation_tol);
 }
 
 // Lanczos which does not overwrite v0
-template <class coeff_t, class Block>
+template <class coeff_t>
 Tmatrix lanczos_eigenvalues(BondList const &bonds, Block const &block,
                             int num_eigenvalue = 0, double precision = 1e-12,
                             int max_iterations = 1000,
                             double deflation_tol = 1e-7) {
-  auto state_0 = random_state(block);
+  auto rstate = RandomState();
+  auto state_0 = State<coeff_t>(block, rstate);
   return lanczos_eigenvalues_inplace(bonds, state_0, num_eigenvalue, precision,
                                      max_iterations, deflation_tol);
 }
 
-template <class Block>
 Tmatrix lanczos_eigenvalues_real(BondList const &bonds, Block const &block,
                                  int num_eigenvalue = 0,
                                  double precision = 1e-12, int seed = 42,
                                  int max_iterations = 1000,
                                  double deflation_tol = 1e-7) {
-  auto state_0 = random_state_real(block, seed);
-  return lanczos_eigenvalues_inplace(bonds, state_0, num_eigenvalue,
-                                     precision, max_iterations, deflation_tol);
+  auto rstate = RandomState(seed);
+  auto state_0 = StateReal(block, rstate);
+  return lanczos_eigenvalues_inplace(bonds, state_0, num_eigenvalue, precision,
+                                     max_iterations, deflation_tol);
 }
 
-template <class Block>
 Tmatrix lanczos_eigenvalues_cplx(BondList const &bonds, Block const &block,
                                  int num_eigenvalue = 0,
                                  double precision = 1e-12, int seed = 42,
                                  int max_iterations = 1000,
                                  double deflation_tol = 1e-7) {
-  auto state_0 = random_state_cplx(block, seed);
-  return lanczos_eigenvalues_inplace(bonds, state_0, num_eigenvalue,
-                                     precision, max_iterations, deflation_tol);
+  auto rstate = RandomState(seed);
+  auto state_0 = StateCplx(block, rstate);
+  return lanczos_eigenvalues_inplace(bonds, state_0, num_eigenvalue, precision,
+                                     max_iterations, deflation_tol);
 }
 
 } // namespace hydra

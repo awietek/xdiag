@@ -69,7 +69,8 @@ sources+= hydra/operators/symmetrized_operator.cpp
 sources+= hydra/operators/non_branching_bonds.cpp
 
 sources+= hydra/states/gpwf_spinhalf.cpp
-# sources+= hydra/states/product_state.cpp
+sources+= hydra/states/product_state.cpp
+sources+= hydra/states/random_state.cpp
 
 sources+= hydra/random/random_utils.cpp
 sources+= hydra/random/hashes.cpp

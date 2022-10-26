@@ -61,7 +61,7 @@ inline void apply(BondList const &bonds, Block const &block_in,
                   arma::Col<coeff_t> &vec_out) {
 
   std::visit(
-      overloaded{[&bonds, &vec_in, &vec_out](auto &&blk_in, auto &&blk_out) {
+      cloverloaded{[&bonds, &vec_in, &vec_out](auto &&blk_in, auto &&blk_out) {
         apply(bonds, blk_in, vec_in, blk_out, vec_out);
       }},
       block_in, block_out);

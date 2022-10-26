@@ -26,10 +26,9 @@
 #include "algebra/matrix.h"
 
 #include "states/gpwf_spinhalf.h"
+#include "states/product_state.h"
 #include "states/random_state.h"
 #include "states/state.h"
-#include "states/zero_state.h"
-// #include "states/product_state.h"
 
 #include "combinatorics/binomial.h"
 #include "combinatorics/bit_patterns.h"
@@ -78,6 +77,7 @@
 #include "blocks/tj/tj_matrix.h"
 #include "blocks/tj/tj_utils.h"
 
+#include "symmetries/generated_group.h"
 #include "symmetries/group_action/group_action.h"
 #include "symmetries/group_action/group_action_lookup.h"
 #include "symmetries/group_action/group_action_sublattice.h"
@@ -89,7 +89,6 @@
 #include "symmetries/permutation.h"
 #include "symmetries/permutation_group.h"
 #include "symmetries/representation.h"
-#include "symmetries/generated_group.h"
 
 #include "operators/bond.h"
 #include "operators/bondlist.h"

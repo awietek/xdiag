@@ -7,7 +7,7 @@
 namespace hydra::indexing::electron {
 
 template <typename bit_t> class IndexingNoNp {
-public:
+public:  
   IndexingNoNp() = default;
   IndexingNoNp(int n_sites);
 
@@ -21,6 +21,9 @@ public:
   inline idx_t size() const { return size_; }
   inline idx_t index_ups(bit_t ups) const { return (idx_t)ups; }
   inline idx_t index_dns(bit_t dns) const { return (idx_t)dns; }
+  inline idx_t index(bit_t ups, bit_t dns) const {
+    return index_ups(ups) * size_dns_ + index_dns(dns);
+  }
 
   inline combinatorics::Subsets<bit_t> states_ups() const {
     return combinatorics::Subsets<bit_t>(n_sites_);

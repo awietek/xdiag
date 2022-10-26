@@ -88,6 +88,7 @@ lanczos_eigenvector_real(BondList const &bonds, Block const &block,
 
   // Create random starting vector with normal distributed entries
   auto set_v0 = [&seed, &block](arma::Col<double> &v0) {
+    auto rstate = RandomState(seed);
     uint32_t seed_modified = random::hash_combine(seed, random::hash(block));
     random::fill_random_normal_vector(v0, seed_modified);
   };
