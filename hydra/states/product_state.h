@@ -15,7 +15,8 @@ public:
 
   ProductState() = default;
   explicit ProductState(std::vector<std::string> const &local_states);
-  inline std::string operator[](int i) const { return local_states_[i]; }
+  inline std::string const &operator[](int i) const { return local_states_[i]; }
+  inline std::string &operator[](int i) { return local_states_[i]; }
   inline int n_sites() const { return local_states_.size(); }
   inline void operator<<(std::string l) { local_states_.push_back(l); }
   inline iterator_t begin() const { return local_states_.begin(); }
