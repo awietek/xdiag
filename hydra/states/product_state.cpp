@@ -133,11 +133,12 @@ std::pair<bit_t, bit_t> get_tj_spins(ProductState const &pstate, int nup = -1,
               "for t-J block");
       ++pnup;
       ++pndn;
-    }
-    if (pstate[s] != "Emp") {
-      Log.err(
-          "Error creating product state: invalid local state encountered: {}",
-          pstate[s]);
+    } else {
+      if (pstate[s] != "Emp") {
+        Log.err(
+            "Error creating product state: invalid local state encountered: {}",
+            pstate[s]);
+      }
     }
   }
 
@@ -208,11 +209,12 @@ std::pair<bit_t, bit_t> get_electron_spins(ProductState const &pstate,
       dns |= ((bit_t)1 << s);
       ++pnup;
       ++pndn;
-    }
-    if (pstate[s] != "Emp") {
-      Log.err(
-          "Error creating product state: invalid local state encountered: {}",
-          pstate[s]);
+    } else {
+      if (pstate[s] != "Emp") {
+        Log.err(
+            "Error creating product state: invalid local state encountered: {}",
+            pstate[s]);
+      }
     }
   }
 

@@ -10,12 +10,12 @@
 
 namespace hydra::random {
 
-uint32_t hash(Permutation const &perm);
-uint32_t hash(PermutationGroup const &group);
-uint32_t hash(Representation const &irrep);
+uint64_t hash(Permutation const &perm);
+uint64_t hash(PermutationGroup const &group);
+uint64_t hash(Representation const &irrep);
 
-uint32_t hash(Spinhalf const &spinhalf);
-uint32_t hash(tJ const &tj);
-uint32_t hash(Electron const &electron);
+uint64_t hash(Spinhalf const &spinhalf);
+uint64_t hash(tJ const &tj);
+uint64_t hash(Electron const &electron);
 
 } // namespace hydra::random

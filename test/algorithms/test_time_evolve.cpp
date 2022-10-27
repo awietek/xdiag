@@ -28,8 +28,11 @@ TEST_CASE("time_evolve", "[algorithms]") {
 
   double tau = 0.1;
 
-  auto v0 = zero_state(block);
-  v0.vector()(block.size() - 1) = 1.0;
+  ProductState pstate;
+  for (int i=0; i<N; ++i) {
+    pstate << "Up";
+  }
+  auto v0 = State(block, pstate);
   auto v = time_evolve(bonds, v0, tau);
   arma::cx_mat eHv = expmat(complex(0, -tau) * Hmat) * v0.vector();
 

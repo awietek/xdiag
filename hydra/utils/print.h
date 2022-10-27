@@ -5,10 +5,15 @@
 #include <string>
 
 #include <hydra/algorithms/lanczos/tmatrix.h>
+
+#include <hydra/blocks/blocks.h>
 #include <hydra/blocks/electron/electron.h>
 #include <hydra/blocks/spinhalf/spinhalf.h>
 #include <hydra/blocks/tj/tj.h>
+
 #include <hydra/operators/bondlist.h>
+#include <hydra/states/product_state.h>
+#include <hydra/states/random_state.h>
 #include <hydra/states/state.h>
 #include <hydra/symmetries/permutation.h>
 #include <hydra/symmetries/permutation_group.h>
@@ -31,9 +36,13 @@ void PrintPretty(const char *identifier, Permutation const &perm);
 void PrintPretty(const char *identifier, PermutationGroup const &group);
 void PrintPretty(const char *identifier, Representation const &irrep);
 
+void PrintPretty(const char *identifier, Block const &block);
 void PrintPretty(const char *identifier, Spinhalf const &block);
 void PrintPretty(const char *identifier, tJ const &block);
 void PrintPretty(const char *identifier, Electron const &block);
+
+void PrintPretty(const char *identifier, RandomState const &rstate);
+void PrintPretty(const char *identifier, ProductState const &pstate);
 
 void PrintPretty(const char *identifier, std::vector<float> const &vec);
 void PrintPretty(const char *identifier, std::vector<double> const &vec);

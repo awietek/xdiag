@@ -4,6 +4,8 @@
 
 #include <hydra/blocks/blocks.h>
 #include <hydra/common.h>
+#include <hydra/states/random_state.h>
+#include <hydra/states/product_state.h>
 
 namespace hydra {
 

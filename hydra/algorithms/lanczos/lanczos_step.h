@@ -10,9 +10,9 @@ namespace hydra {
 
 template <typename coeff_t, class multiply_f, class dot_f>
 
-void lanczos_step(arma::Col<coeff_t> &v0, arma::Col<coeff_t> &v1,
-                  arma::Col<coeff_t> &w, double &alpha, double &beta,
-                  multiply_f mult, dot_f dot) {
+inline void lanczos_step(arma::Col<coeff_t> &v0, arma::Col<coeff_t> &v1,
+                         arma::Col<coeff_t> &w, double &alpha, double &beta,
+                         multiply_f mult, dot_f dot) {
 
   auto norm = [&dot](arma::Col<coeff_t> const &v) {
     return std::sqrt(hydra::real(dot(v, v)));

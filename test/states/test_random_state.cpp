@@ -26,8 +26,8 @@ TEST_CASE("random_state", "[states]") {
         if (block.size() > 3) {
           // HydraPrint(irrep);
           // HydraPrint(block);
-          auto state_real = random_state_real(block);
-          auto state_cplx = random_state_cplx(block);
+          auto state_real = StateReal(block, RandomState());
+          auto state_cplx = StateCplx(block, RandomState());
           // HydraPrint(state_real);
           // HydraPrint(state_real.vector());
           // HydraPrint(state_real.vector());
@@ -54,12 +54,12 @@ TEST_CASE("random_state", "[states]") {
 
   auto block = Spinhalf(4);
   for (int seed = 0; seed < 10; ++seed) {
-    auto state = random_state_real(block);
-    auto state_cplx = random_state_cplx(block);
+    auto state = StateReal(block, RandomState(seed));
+    auto state_cplx = StateCplx(block, RandomState(seed));
 
     omp_set_num_threads(1);
-    auto state2 = random_state_real(block);
-    auto state_cplx2 = random_state_cplx(block);
+    auto state2 = StateReal(block, RandomState(seed));
+    auto state_cplx2 = StateCplx(block, RandomState(seed));
     REQUIRE(arma::norm(state.vector() - state2.vector()) < 1e-12);
     REQUIRE(arma::norm(state_cplx.vector() - state_cplx2.vector()) < 1e-12);
   }

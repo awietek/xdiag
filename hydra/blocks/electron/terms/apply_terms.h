@@ -6,6 +6,7 @@
 #include <hydra/blocks/electron/terms/apply_exchange.h>
 #include <hydra/blocks/electron/terms/apply_hopping.h>
 #include <hydra/blocks/electron/terms/apply_ising.h>
+#include <hydra/blocks/electron/terms/apply_number.h>
 #include <hydra/blocks/electron/terms/apply_u.h>
 
 #include <hydra/blocks/electron/terms/apply_symmetric_exchange.h>
@@ -22,25 +23,26 @@ void apply_terms(BondList const &bonds, IndexingIn const &indexing_in,
 
   if constexpr (symmetric) {
 
-    for (auto bond : bonds) {
+    for (Bond bond : bonds) {
 
       if (bond.type_defined()) {
 
-        if (bond.type() == "EXCHANGE") {
+        std::string type = bond.type();
+
+        if (type == "EXCHANGE") {
           electron::apply_symmetric_exchange<bit_t, coeff_t>(bond, indexing_in,
                                                              fill);
-        } else if (bond.type() == "ISING") {
+        } else if (type == "ISING") {
           electron::apply_symmetric_ising<bit_t, coeff_t>(bond, indexing_in,
                                                           fill);
-        } else if (bond.type() == "HOPUP") {
+        } else if (type == "HOPUP") {
           electron::apply_symmetric_hopping<bit_t, coeff_t>(bond, indexing_in,
                                                             fill);
-        } else if (bond.type() == "HOPDN") {
+        } else if (type == "HOPDN") {
           electron::apply_symmetric_hopping<bit_t, coeff_t>(bond, indexing_in,
                                                             fill);
         } else {
-          Log.err("Error in electron::apply_terms: Unknown bond type {}",
-                  bond.type());
+          Log.err("Error in electron::apply_terms: Unknown bond type {}", type);
         }
       }
     }
@@ -52,21 +54,24 @@ void apply_terms(BondList const &bonds, IndexingIn const &indexing_in,
 
   } else { // not symmetric
 
-    for (auto bond : bonds) {
+    for (Bond bond : bonds) {
 
       if (bond.type_defined()) {
 
-        if (bond.type() == "EXCHANGE") {
+        std::string type = bond.type();
+
+        if (type == "EXCHANGE") {
           electron::apply_exchange<bit_t, coeff_t>(bond, indexing_in, fill);
-        } else if (bond.type() == "ISING") {
+        } else if (type == "ISING") {
           electron::apply_ising<bit_t, coeff_t>(bond, indexing_in, fill);
-        } else if (bond.type() == "HOPUP") {
+        } else if (type == "HOPUP") {
           electron::apply_hopping<bit_t, coeff_t>(bond, indexing_in, fill);
-        } else if (bond.type() == "HOPDN") {
+        } else if (type == "HOPDN") {
           electron::apply_hopping<bit_t, coeff_t>(bond, indexing_in, fill);
+        } else if ((type == "NUMBERUP") || (type == "NUMBERDN")) {
+          electron::apply_number<bit_t, coeff_t>(bond, indexing_in, fill);
         } else {
-          Log.err("Error in electron::apply_terms: Unknown bond type {}",
-                  bond.type());
+          Log.err("Error in electron::apply_terms: Unknown bond type {}", type);
         }
       }
     }

@@ -4,12 +4,12 @@
 namespace hydra {
 idx_t size(Block const &block) {
   return std::visit(
-      overloaded{[&](auto const &blk) -> idx_t { return blk.size(); }}, block);
+      overloaded{[&](auto &&blk) -> idx_t { return blk.size(); }}, block);
 }
 
-idx_t hash(Block const &block) {
+uint64_t hash(Block const &block) {
   return std::visit(
-      overloaded{[&](auto const &blk) -> idx_t { return random::hash(block); }},
+      overloaded{[&](auto &&blk) -> idx_t { return random::hash(blk); }},
       block);
 }
 

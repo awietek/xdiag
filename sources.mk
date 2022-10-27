@@ -32,8 +32,8 @@ sources+= hydra/indexing/electron/indexing_no_np.cpp
 sources+= hydra/indexing/electron/indexing_symmetric_np.cpp
 sources+= hydra/indexing/electron/indexing_symmetric_no_np.cpp
 
+sources+= hydra/blocks/blocks.cpp
 sources+= hydra/blocks/utils/block_utils.cpp
-
 sources+= hydra/blocks/spinhalf/spinhalf.cpp
 sources+= hydra/blocks/spinhalf/spinhalf_matrix.cpp
 sources+= hydra/blocks/spinhalf/spinhalf_apply.cpp
@@ -71,12 +71,17 @@ sources+= hydra/operators/non_branching_bonds.cpp
 sources+= hydra/states/gpwf_spinhalf.cpp
 sources+= hydra/states/product_state.cpp
 sources+= hydra/states/random_state.cpp
+sources+= hydra/states/state.cpp
 
 sources+= hydra/random/random_utils.cpp
 sources+= hydra/random/hashes.cpp
 
-sources+=hydra/algorithms/lanczos/lanczos_convergence.cpp
-sources+=hydra/algorithms/lanczos/tmatrix.cpp
+sources+= hydra/algorithms/lanczos/lanczos_convergence.cpp
+sources+= hydra/algorithms/lanczos/tmatrix.cpp
+sources+= hydra/algorithms/lanczos/lanczos_eigenvector.cpp
+sources+= hydra/algorithms/lanczos/lanczos_eigenvalues.cpp
+sources+= hydra/algorithms/sparse_diag.cpp
+
 
 mpisources+= hydra/utils/print_mpi.cpp
 
@@ -157,6 +162,7 @@ testsources+= test/algorithms/test_exp_sym_v.cpp
 testsources+= test/algorithms/test_time_evolve.cpp
 
 testsources+= test/states/test_random_state.cpp
+testsources+= test/states/test_product_state.cpp
 
 # testmpisources+= testmpi/tests.cpp
 # testmpisources+= testmpi/mpi/test_dot_mpi.cpp

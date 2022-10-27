@@ -6,6 +6,7 @@
 #include <hydra/blocks/tj/terms/apply_exchange.h>
 #include <hydra/blocks/tj/terms/apply_hopping.h>
 #include <hydra/blocks/tj/terms/apply_ising.h>
+#include <hydra/blocks/tj/terms/apply_number.h>
 
 #include <hydra/blocks/tj/terms/apply_symmetric_exchange.h>
 #include <hydra/blocks/tj/terms/apply_symmetric_hopping.h>
@@ -52,6 +53,8 @@ void apply_terms(BondList const &bonds, IndexingIn const &indexing_in,
           tj::apply_hopping<bit_t, coeff_t>(bond, indexing_in, fill);
         } else if (bond.type() == "HOPDN") {
           tj::apply_hopping<bit_t, coeff_t>(bond, indexing_in, fill);
+        } else if ((bond.type() == "NUMBERUP") || (bond.type() == "NUMBERDN")) {
+          tj::apply_number<bit_t, coeff_t>(bond, indexing_in, fill);
         } else {
           Log.err("Error in tj::apply_terms: Unknown bond type {}",
                   bond.type());

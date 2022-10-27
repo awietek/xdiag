@@ -16,11 +16,11 @@ public:
   Combinations() = default;
   Combinations(int n, int k);
 
-  int n() const { return n_; }
-  int k() const { return k_; }
-  idx_t size() const { return size_; };
-  iterator_t begin() const { return begin_; }
-  iterator_t end() const { return end_; }
+  inline int n() const { return n_; }
+  inline int k() const { return k_; }
+  inline idx_t size() const { return size_; };
+  inline iterator_t begin() const { return begin_; }
+  inline iterator_t end() const { return end_; }
 
 private:
   int n_, k_;

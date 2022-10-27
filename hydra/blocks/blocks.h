@@ -14,7 +14,7 @@ namespace hydra {
 using Block = std::variant<Spinhalf, tJ, Electron>;
 
 idx_t size(Block const &block);
-idx_t hash(Block const &block);
+uint64_t hash(Block const &block);
 
 // template <typename bit_t> class SpinhalfMPI;
 // template <typename bit_t> class ElectronMPI;

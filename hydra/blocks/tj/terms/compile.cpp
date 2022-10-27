@@ -29,6 +29,14 @@ BondList compile(BondList const &bonds, double precision) {
         } else if (type == "HOP") {
           bonds_special << Bond("HOPUP", bond.coupling(), bond.sites());
           bonds_special << Bond("HOPDN", bond.coupling(), bond.sites());
+        } else if (type == "NUMBER") {
+          bonds_special << Bond("NUMBERUP", bond.coupling(), bond.sites());
+          bonds_special << Bond("NUMBERDN", bond.coupling(), bond.sites());
+        } else if (type == "SZ") {
+          bonds_special << Bond("NUMBERUP", 0.5 * bond.coupling(),
+                                bond.sites());
+          bonds_special << Bond("NUMBERDN", -0.5 * bond.coupling(),
+                                bond.sites());
         } else {
           bonds_special << bond;
         }

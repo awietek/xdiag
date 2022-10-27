@@ -7,6 +7,10 @@
 #include <hydra/states/state.h>
 #include <hydra/utils/logger.h>
 
+#include <hydra/blocks/electron/electron_apply.h>
+#include <hydra/blocks/spinhalf/spinhalf_apply.h>
+#include <hydra/blocks/tj/tj_apply.h>
+
 namespace hydra {
 
 template <class coeff_t>
@@ -61,9 +65,23 @@ inline void apply(BondList const &bonds, Block const &block_in,
                   arma::Col<coeff_t> &vec_out) {
 
   std::visit(
-      overloaded{[&bonds, &vec_in, &vec_out](auto &&blk_in, auto &&blk_out) {
-        apply(bonds, blk_in, vec_in, blk_out, vec_out);
-      }},
+      overloaded{
+          [&bonds, &vec_in, &vec_out](Spinhalf const &blk_in,
+                                      Spinhalf const &blk_out) {
+            apply(bonds, blk_in, vec_in, blk_out, vec_out);
+          },
+          [&bonds, &vec_in, &vec_out](tJ const &blk_in, tJ const &blk_out) {
+            apply(bonds, blk_in, vec_in, blk_out, vec_out);
+          },
+          [&bonds, &vec_in, &vec_out](Electron const &blk_in,
+                                      Electron const &blk_out) {
+            apply(bonds, blk_in, vec_in, blk_out, vec_out);
+          },
+          [&bonds, &vec_in, &vec_out](auto const &blk_in, auto const &blk_out) {
+            Log.err("Error in apply: Invalid blocks or combination of blocks");
+            apply(bonds, blk_in, vec_in, blk_out, vec_out);
+          },
+      },
       block_in, block_out);
 }
 

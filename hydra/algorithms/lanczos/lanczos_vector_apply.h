@@ -12,11 +12,11 @@ namespace hydra {
 // Lanczos applying a function on every Lanczos vector
 template <class coeff_t, class multiply_f, class convergence_f,
           class vector_apply_f>
-Tmatrix lanczos_vector_apply_inplace(multiply_f mult, arma::Col<coeff_t> &v0,
-                                     vector_apply_f vector_apply,
-                                     convergence_f converged,
-                                     int max_iterations = 1000,
-                                     double deflation_tol = 1e-7) {
+inline Tmatrix
+lanczos_vector_apply_inplace(multiply_f mult, arma::Col<coeff_t> &v0,
+                             vector_apply_f vector_apply,
+                             convergence_f converged, int max_iterations = 1000,
+                             double deflation_tol = 1e-7) {
 
 #ifdef HYDRA_ENABLE_MPI
   auto dot = [](arma::Col<coeff_t> const &v,
@@ -79,7 +79,7 @@ Tmatrix lanczos_vector_apply_inplace(multiply_f mult, arma::Col<coeff_t> &v0,
 }
 
 template <class coeff_t, class vector_apply_f>
-Tmatrix
+inline Tmatrix
 lanczos_vector_apply_inplace(BondList const &bonds, State<coeff_t> &state_0,
                              vector_apply_f vector_apply, int max_iterations,
                              double deflation_tol = 1e-7) {

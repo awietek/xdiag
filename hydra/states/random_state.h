@@ -10,13 +10,14 @@ namespace hydra {
 
 class RandomState {
 public:
-  explicit RandomState(uint32_t seed = 42);
-  inline uint32_t seed() const { return seed_; }
+  explicit RandomState(uint64_t seed = 42);
+  inline uint64_t seed() const { return seed_; }
 
 private:
-  uint32_t seed_;
+  uint64_t seed_;
 };
 
+template <typename coeff_t> class State;
 template <typename coeff_t>
 void fill(RandomState const &rstate, State<coeff_t> &state);
 
