@@ -2,7 +2,6 @@
 
 void measure_density(int n_sites, hydra::StateCplx const &v) {
   using namespace hydra;
-
   for (int i = 0; i < n_sites; ++i) {
     auto sz = inner(Bond("NUMBER", i), v);
     printf("%f ", std::real(sz));
@@ -13,9 +12,9 @@ void measure_density(int n_sites, hydra::StateCplx const &v) {
 int main() {
   using namespace hydra;
 
-  int L = 5;
+  int L = 4;
   double t = 1.0;
-  double J = 0.4;
+  double J = 10.0;
 
   int n_sites = L * L;
   double precision = 1e-12;
@@ -31,9 +30,9 @@ int main() {
       int right = y * L + nx;
       int top = ny * L + x;
       bonds << Bond("HOP", "T", {site, right});
-      bonds << Bond("TJHB", "J", {site, right});
+      bonds << Bond("TJISING", "J", {site, right});
       bonds << Bond("HOP", "T", {site, top});
-      bonds << Bond("TJHB", "J", {site, top});
+      bonds << Bond("TJISING", "J", {site, top});
     }
   }
   bonds["T"] = t;
@@ -41,22 +40,21 @@ int main() {
 
   // Create initial state
   auto pstate = ProductState();
-  for (int i = 0; i < n_sites; ++i) {
-    if ((i % 2) == 0) {
-      pstate << "Up";
-    } else {
-      pstate << "Dn";
+  for (int x = 0; x < L; ++x) {
+    for (int y = 0; y < L; ++y) {
+      if (((x+y) % 2) == 0) {
+	pstate << "Dn";
+      } else {
+	pstate << "Up";
+      }
     }
   }
-  pstate[12] = "Emp";
-  HydraPrint(pstate);
+  pstate[n_sites / 2] = "Emp";
 
-  auto block = tJ(n_sites, 12, 12);
+  auto block = tJ(n_sites, n_sites / 2, n_sites / 2 - 1);
   auto v = State(block, pstate);
-  
   measure_density(n_sites, v);
 
-  
   // Do the time evolution with a step size tau
   double tau = 0.1;
   for (int i = 0; i < 100; ++i) {
