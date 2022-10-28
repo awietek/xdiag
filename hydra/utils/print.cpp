@@ -103,14 +103,14 @@ void PrintPretty(const char *identifier, Permutation const &p) {
     printf("%d ", p[i]);
   }
   printf("\n");
-  printf("  ID: 0x%lx\n", random::hash(p));
+  printf("  ID: 0x%lx\n", (unsigned long)random::hash(p));
 }
 
 void PrintPretty(const char *identifier, PermutationGroup const &group) {
   printf("%s:\n", identifier);
   printf("  n_sites      : %d\n", group.n_sites());
   printf("  n_symmetries : %d\n", group.n_symmetries());
-  printf("  ID           : 0x%lx\n", random::hash(group));
+  printf("  ID           : 0x%lx\n", (unsigned long)random::hash(group));
 }
 
 void PrintPretty(const char *identifier, Representation const &irrep) {
@@ -127,7 +127,7 @@ void PrintPretty(const char *identifier, Representation const &irrep) {
     }
   }
   printf("\n");
-  printf("  ID        : 0x%lx\n", random::hash(irrep));
+  printf("  ID        : 0x%lx\n", (unsigned long)random::hash(irrep));
 }
 
 void PrintPretty(const char *identifier, Block const &block) {
@@ -156,14 +156,15 @@ void PrintPretty(const char *identifier, Spinhalf const &block) {
 
   if (block.symmetric()) {
     printf("  group    : defined with ID 0x%lx\n",
-           random::hash(block.permutation_group()));
-    printf("  irrep    : defined with ID 0x%lx\n", random::hash(block.irrep()));
+           (unsigned long)random::hash(block.permutation_group()));
+    printf("  irrep    : defined with ID 0x%lx\n",
+           (unsigned long)random::hash(block.irrep()));
   }
   std::stringstream ss;
   ss.imbue(std::locale("en_US.UTF-8"));
   ss << block.size();
   printf("  dimension: %s\n", ss.str().c_str());
-  printf("  ID       : 0x%lx\n", random::hash(block));
+  printf("  ID       : 0x%lx\n", (unsigned long)random::hash(block));
 }
 
 void PrintPretty(const char *identifier, tJ const &block) {
@@ -181,14 +182,15 @@ void PrintPretty(const char *identifier, tJ const &block) {
 
   if (block.symmetric()) {
     printf("  group    : defined with ID 0x%lx\n",
-           random::hash(block.permutation_group()));
-    printf("  irrep    : defined with ID 0x%lx\n", random::hash(block.irrep()));
+           (unsigned long)random::hash(block.permutation_group()));
+    printf("  irrep    : defined with ID 0x%lx\n",
+           (unsigned long)random::hash(block.irrep()));
   }
   std::stringstream ss;
   ss.imbue(std::locale("en_US.UTF-8"));
   ss << block.size();
   printf("  dimension: %s\n", ss.str().c_str());
-  printf("  ID       : 0x%lx\n", random::hash(block));
+  printf("  ID       : 0x%lx\n", (unsigned long)random::hash(block));
 }
 
 void PrintPretty(const char *identifier, Electron const &block) {
@@ -206,19 +208,20 @@ void PrintPretty(const char *identifier, Electron const &block) {
 
   if (block.symmetric()) {
     printf("  group    : defined with ID 0x%lx\n",
-           random::hash(block.permutation_group()));
-    printf("  irrep    : defined with ID 0x%lx\n", random::hash(block.irrep()));
+           (unsigned long)random::hash(block.permutation_group()));
+    printf("  irrep    : defined with ID 0x%lx\n",
+           (unsigned long)random::hash(block.irrep()));
   }
   std::stringstream ss;
   ss.imbue(std::locale("en_US.UTF-8"));
   ss << block.size();
   printf("  dimension: %s\n", ss.str().c_str());
-  printf("  ID       : 0x%lx\n", random::hash(block));
+  printf("  ID       : 0x%lx\n", (unsigned long)random::hash(block));
 }
 
 void PrintPretty(const char *identifier, RandomState const &rstate) {
   printf("%s:\n", identifier);
-  printf("  RandomState, seed  : 0x%lx\n", rstate.seed());
+  printf("  RandomState, seed  : 0x%lx\n", (unsigned long)rstate.seed());
 }
 
 void PrintPretty(const char *identifier, ProductState const &pstate) {

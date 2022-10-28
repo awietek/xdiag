@@ -23,3 +23,6 @@ examples/hb_chain_dynamical_sf_ftlm/outfiles/*
 examples/spinhalf_chain/main
 examples/tfi_timeevolve/main
 examples/spinhalf_chain_syms/main
+**main
+**output.txt
+**output.pdf
