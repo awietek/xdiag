@@ -65,7 +65,7 @@ inline void apply(BondList const &bonds, Block const &block_in,
                   arma::Col<coeff_t> &vec_out) {
 
   std::visit(
-      overloaded{
+      variant::overloaded{
           [&bonds, &vec_in, &vec_out](Spinhalf const &blk_in,
                                       Spinhalf const &blk_out) {
             apply(bonds, blk_in, vec_in, blk_out, vec_out);

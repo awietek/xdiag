@@ -132,7 +132,7 @@ void PrintPretty(const char *identifier, Representation const &irrep) {
 
 void PrintPretty(const char *identifier, Block const &block) {
   std::visit(
-      overloaded{
+      variant::overloaded{
           [identifier](Spinhalf const &block) {
             PrintPretty(identifier, block);
           },

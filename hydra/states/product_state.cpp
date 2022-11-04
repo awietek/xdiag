@@ -10,7 +10,7 @@ ProductState::ProductState(std::vector<std::string> const &local_states)
 template <typename coeff_t>
 void fill(ProductState const &pstate, State<coeff_t> &state) {
   auto &vector = state.vector();
-  std::visit(overloaded{[&pstate, &vector](auto &&block) {
+  std::visit(variant::overloaded{[&pstate, &vector](auto &&block) {
                fill(pstate, block, vector);
              }},
              state.block());
@@ -67,7 +67,7 @@ void fill(ProductState const &pstate, Spinhalf const &block,
   check_product_state_not_symmetric(block);
 
   vector.zeros();
-  std::visit(overloaded{
+  std::visit(variant::overloaded{
                  [&pstate, &vector](IndexingSz<uint16_t> const &indexing) {
                    uint16_t spins =
                        get_spinhalf_spins<uint16_t>(pstate, indexing.n_up());
@@ -157,7 +157,7 @@ void fill(ProductState const &pstate, tJ const &block,
   check_product_state_n_sites(block, pstate);
   check_product_state_not_symmetric(block);
   vector.zeros();
-  std::visit(overloaded{
+  std::visit(variant::overloaded{
                  [&pstate, &vector](IndexingNp<uint16_t> const &indexing) {
                    auto [ups, dns] = get_tj_spins<uint16_t>(
                        pstate, indexing.n_up(), indexing.n_dn());
@@ -233,7 +233,7 @@ void fill(ProductState const &pstate, Electron const &block,
   check_product_state_n_sites(block, pstate);
   check_product_state_not_symmetric(block);
   vector.zeros();
-  std::visit(overloaded{
+  std::visit(variant::overloaded{
                  [&pstate, &vector](IndexingNp<uint16_t> const &indexing) {
                    auto [ups, dns] = get_electron_spins<uint16_t>(
                        pstate, indexing.n_up(), indexing.n_dn());

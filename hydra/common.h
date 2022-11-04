@@ -12,6 +12,37 @@
 
 #include "extern/armadillo/armadillo"
 
+namespace hydra::detail {
+
+template <class T> struct is_complex_t : public std::false_type {};
+template <class T>
+struct is_complex_t<std::complex<T>> : public std::true_type {};
+
+// Complex real/imag/conj
+template <class coeff_t> struct real_type_struct { typedef coeff_t type; };
+
+template <class coeff_t> struct real_type_struct<std::complex<coeff_t>> {
+  typedef coeff_t type;
+};
+
+template <class coeff_t> struct complex_type_struct {
+  typedef std::complex<coeff_t> type;
+};
+
+template <class coeff_t> struct complex_type_struct<std::complex<coeff_t>> {
+  typedef std::complex<coeff_t> type;
+};
+
+} // namespace hydra::detail
+
+namespace hydra::variant {
+
+// Helper type for visitor patterns
+template <class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
+template <class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
+
+} // namespace hydra::variant
+
 namespace hydra {
 
 using std_bit_t = uint64_t;
@@ -29,13 +60,12 @@ inline complex operator*(int a, complex b) { return b * a; }
 inline complex operator/(complex a, int b) { return a / (double)b; }
 inline complex operator/(int a, complex b) { return (double)a / b; }
 
-template <class T> struct is_complex_t : public std::false_type {};
-template <class T>
-struct is_complex_t<std::complex<T>> : public std::true_type {};
 template <class T> constexpr bool is_complex() {
-  return is_complex_t<T>::value;
+  return detail::is_complex_t<T>::value;
 }
-template <class T> constexpr bool is_real() { return !is_complex_t<T>::value; }
+template <class T> constexpr bool is_real() {
+  return !detail::is_complex_t<T>::value;
+}
 
 constexpr idx_t invalid_index = (idx_t)-1;
 constexpr int invalid_n = (idx_t)-1;
@@ -46,28 +76,11 @@ constexpr std::pair<int, int> undefined_qns = {undefined_qn, undefined_qn};
 constexpr bool index_not_found(idx_t idx) { return idx < 0; }
 constexpr bool index_valid(idx_t idx) { return idx >= 0; }
 
-// Complex real/imag/conj
-template <class coeff_t> struct real_type_struct {
-  typedef coeff_t type;
-};
-
-template <class coeff_t> struct real_type_struct<std::complex<coeff_t>> {
-  typedef coeff_t type;
-};
-
-template <class coeff_t> struct complex_type_struct {
-  typedef std::complex<coeff_t> type;
-};
-
-template <class coeff_t> struct complex_type_struct<std::complex<coeff_t>> {
-  typedef std::complex<coeff_t> type;
-};
+template <class coeff_t>
+using real_t = typename detail::real_type_struct<coeff_t>::type;
 
 template <class coeff_t>
-using real_t = typename real_type_struct<coeff_t>::type;
-
-template <class coeff_t>
-using complex_t = typename complex_type_struct<coeff_t>::type;
+using complex_t = typename detail::complex_type_struct<coeff_t>::type;
 
 inline float real(float x) { return x; }
 inline double real(double x) { return x; }
@@ -91,11 +104,5 @@ inline arma::cx_mat to_cx_mat(arma::mat const &A) {
 }
 
 inline arma::cx_mat to_cx_mat(arma::cx_mat const &A) { return A; }
-
-// Helper type for visitor patterns
-template <class... Ts> struct overloaded : Ts... {
-  using Ts::operator()...;
-};
-template <class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
 
 } // namespace hydra

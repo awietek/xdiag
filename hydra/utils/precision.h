@@ -2,7 +2,7 @@
 
 #include <hydra/common.h>
 
-namespace hydra {
+namespace hydra::numeric {
 
 // Predifined absolute precision for comparisions
 static constexpr float float_atol =

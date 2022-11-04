@@ -74,7 +74,7 @@ lanczos_build(multiply_f mult, arma::Col<coeff_t> &v0,
 // Lanczos implementation building a single vector
 template <class coeff_t, class multiply_f>
 std::pair<Tmatrix, arma::Col<coeff_t>>
-LanczosBuild(multiply_f mult, arma::Col<coeff_t> &v0,
+lanczos_build(multiply_f mult, arma::Col<coeff_t> &v0,
              arma::Col<real_t<coeff_t>> coefficients,
              double deflation_tol = 1e-7) {
 
@@ -83,13 +83,13 @@ LanczosBuild(multiply_f mult, arma::Col<coeff_t> &v0,
   for (arma::uword i = 0; i < coefficients.size(); ++i) {
     coefficients_cplx(i) = (coeff_t)coefficients(i);
   }
-  return LanczosBuild(mult, v0, coefficients_cplx, deflation_tol);
+  return lanczos_build(mult, v0, coefficients_cplx, deflation_tol);
 }
 
 // Lanczos implementation building multiple vectors
 template <class coeff_t, class multiply_f>
 std::pair<Tmatrix, arma::Mat<coeff_t>>
-LanczosBuild(multiply_f mult, arma::Col<coeff_t> &v0,
+lanczos_build(multiply_f mult, arma::Col<coeff_t> &v0,
              arma::Mat<coeff_t> coefficients, double deflation_tol = 1e-7) {
 
 #ifdef HYDRA_ENABLE_MPI
@@ -168,7 +168,7 @@ lanczos_build(multiply_f mult, arma::Col<coeff_t> &v0,
     }
   }
 
-  return LanczosBuild(mult, v0, coefficients_cplx, deflation_tol);
+  return lanczos_build(mult, v0, coefficients_cplx, deflation_tol);
 }
 
 } // namespace hydra
