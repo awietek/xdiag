@@ -17,7 +17,7 @@ void apply_terms_dispatch(BondList const &bonds,
   using namespace indexing::spinhalf;
 
   std::visit(
-      overloaded{
+      variant::overloaded{
           // uint16_t
           [&](IndexingSz<uint16_t> const &idx_in,
               IndexingSz<uint16_t> const &idx_out) {

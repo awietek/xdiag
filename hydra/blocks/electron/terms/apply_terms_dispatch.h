@@ -16,7 +16,7 @@ void apply_terms_dispatch(BondList const &bonds,
   using namespace indexing::electron;
 
   std::visit(
-      overloaded{
+      variant::overloaded{
           // uint16_t
           [&](IndexingNp<uint16_t> const &idx_in,
               IndexingNp<uint16_t> const &idx_out) {

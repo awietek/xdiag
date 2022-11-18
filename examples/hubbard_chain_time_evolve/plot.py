@@ -10,7 +10,7 @@ plt.colorbar(im)
 plt.title(r"Density evolution of a Hubbard doublon, $\langle n_i(t) \rangle$")
 plt.xlabel("i")
 plt.ylabel("t")
-plt.savefig("hubbard_doublon.pdf")
+plt.savefig("hubbard_doublon.png")
 plt.show()
 
 
