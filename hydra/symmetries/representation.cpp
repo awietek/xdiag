@@ -2,8 +2,8 @@
 
 #include <fstream>
 
-#include <hydra/utils/logger.h>
 #include <hydra/utils/close.h>
+#include <hydra/utils/logger.h>
 
 #include <numeric>
 
@@ -149,6 +149,22 @@ bool is_real(Representation const &rep) { return !is_complex(rep); }
 
 Representation trivial_representation(idx_t size) {
   return Representation(std::vector<complex>(size, {1.0, 0.0}));
+}
+
+Representation operator*(Representation const &r1, Representation const &r2) {
+  if (r1.size() != r2.size()) {
+    Log.err("Error: cannot construct product Representation, sizes not equal");
+  }
+
+  auto c1 = r1.characters();
+  auto c2 = r2.characters();
+  auto c3 = std::vector<complex>(r1.size());
+
+  for (int i = 0; i < (int)r1.size(); ++i) {
+    c3[i] = c1[i] * c2[i];
+  }
+
+  return Representation(c3);
 }
 
 } // namespace hydra

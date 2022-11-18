@@ -41,4 +41,6 @@ bool is_real(Representation const &cpls);
 
 Representation trivial_representation(idx_t size);
 
+Representation operator*(Representation const &r1, Representation const &r2);
+
 } // namespace hydra

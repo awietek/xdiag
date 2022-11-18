@@ -38,6 +38,8 @@ TEST_CASE("time_evolve", "[algorithms]") {
 
   // HydraPrint(eHv);
   // HydraPrint(v.vector());
-  // HydraPrint(norm(eHv - v.vector()));
+  HydraPrint(norm(eHv - v.vector()));
+  HydraPrint(norm(v.vector()));
+
   REQUIRE(norm(eHv - v.vector()) < 1e-8);
 }
