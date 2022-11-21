@@ -2,6 +2,10 @@
 
 #include <hydra/parallel/mpi/dot_mpi.h>
 
+#include <hydra/blocks/electron/electron_apply.h>
+#include <hydra/blocks/spinhalf/spinhalf_apply.h>
+#include <hydra/blocks/tj/tj_apply.h>
+
 namespace hydra {
 
 template <class coeff_t>

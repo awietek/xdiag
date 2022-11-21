@@ -1,5 +1,9 @@
 #include "matrix.h"
 
+#include <hydra/blocks/electron/electron_matrix.h>
+#include <hydra/blocks/spinhalf/spinhalf_matrix.h>
+#include <hydra/blocks/tj/tj_matrix.h>
+
 namespace hydra {
 
 arma::Mat<double> matrix_real(BondList const &bonds, Block const &block_in,

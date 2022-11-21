@@ -3,6 +3,7 @@
 #include <hydra/common.h>
 #include <hydra/operators/bondlist.h>
 #include <hydra/states/state.h>
+#include <hydra/blocks/blocks.h>
 
 namespace hydra {
 
