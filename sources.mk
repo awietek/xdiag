@@ -4,6 +4,9 @@ sources+= hydra/bitops/bitops.cpp
 
 sources+= hydra/parallel/omp/omp_utils.cpp
 
+sources+= hydra/algebra/algebra.cpp
+sources+= hydra/algebra/matrix.cpp
+
 sources+= hydra/combinatorics/binomial.cpp
 sources+= hydra/combinatorics/subsets.cpp
 sources+= hydra/combinatorics/subsets_index.cpp
