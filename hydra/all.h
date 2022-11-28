@@ -1,5 +1,9 @@
 #pragma once
 
+#if __cplusplus < 201703L
+#error "Hydra requires at least C++17"
+#endif
+
 #ifdef HYDRA_ENABLE_MPI
 #include <mpi.h>
 #endif
@@ -21,6 +25,9 @@
 #include "utils/precision.h"
 #include "utils/print.h"
 #include "utils/print_macro.h"
+
+#include "blocks/blocks.h"
+#include "blocks/utils/block_utils.h"
 
 #include "algebra/algebra.h"
 #include "algebra/matrix.h"
@@ -57,9 +64,6 @@
 #include "indexing/electron/indexing_np.h"
 #include "indexing/electron/indexing_symmetric_no_np.h"
 #include "indexing/electron/indexing_symmetric_np.h"
-
-#include "blocks/blocks.h"
-#include "blocks/utils/block_utils.h"
 
 #include "blocks/spinhalf/spinhalf.h"
 #include "blocks/spinhalf/spinhalf_apply.h"

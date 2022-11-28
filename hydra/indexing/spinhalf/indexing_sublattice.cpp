@@ -249,6 +249,7 @@ IndexingSublattice<bit_t, n_sublat>::IndexingSublattice(
 template <typename bit_t, int n_sublat>
 idx_t IndexingSublattice<bit_t, n_sublat>::index_of_representative(
     bit_t rep) const {
+
   bit_t prefix = rep >> n_postfix_bits_;
   auto itr = rep_search_range_.find(prefix);
   if (itr == rep_search_range_.end()) {
@@ -256,7 +257,11 @@ idx_t IndexingSublattice<bit_t, n_sublat>::index_of_representative(
   } else {
     gsl::span<bit_t const> search_range = itr->second;
     auto it = std::lower_bound(search_range.begin(), search_range.end(), rep);
-    return (*it == rep) ? &(*it) - reps_.data() : invalid_index;
+    if ((it != search_range.end()) && (*it == rep)) {
+      return &(*it) - reps_.data();
+    } else {
+      return invalid_index;
+    }
   }
 }
 

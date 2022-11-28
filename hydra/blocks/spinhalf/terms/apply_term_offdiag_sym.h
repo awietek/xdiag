@@ -20,7 +20,7 @@ void apply_term_offdiag_sym_to_spins(bit_t spins_in, idx_t idx_in,
   if (non_zero_term(spins_in)) {
     auto [spins_out, coeff] = term_action(spins_in);
     auto [idx_out, sym] = indexing_out.index_sym(spins_out);
-
+    
     if (idx_out != invalid_index) {
       double norm_out = indexing_out.norm(idx_out);
       double norm_in = indexing_in.norm(idx_in);
