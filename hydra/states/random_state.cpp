@@ -19,5 +19,21 @@ void fill(RandomState const &rstate, State<coeff_t> &state) {
 
 template void fill(RandomState const &, State<double> &);
 template void fill(RandomState const &, State<complex> &);
-  
+
+template <typename coeff_t>
+State<coeff_t> random_state(Block const &block, uint64_t seed) {
+  return State<coeff_t>(block, RandomState(seed));
+}
+
+template State<double> random_state<double>(Block const &block, uint64_t seed);
+template State<complex> random_state<complex>(Block const &block,
+                                              uint64_t seed);
+StateReal random_state_real(Block const &block, uint64_t seed) {
+  return random_state<double>(block, seed);
+}
+
+StateCplx random_state_cplx(Block const &block, uint64_t seed) {
+  return random_state<complex>(block, seed);
+}
+
 } // namespace hydra
