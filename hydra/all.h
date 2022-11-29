@@ -4,7 +4,7 @@
 #error "Hydra requires at least C++17"
 #endif
 
-#ifdef HYDRA_ENABLE_MPI
+#ifdef HYDRA_USE_MPI
 #include <mpi.h>
 #endif
 
@@ -12,6 +12,15 @@
 #include "parallel/omp/omp_utils.h"
 #include <omp.h>
 // #include "symmetries/operations/representative_list_omp.h"
+#endif
+
+#ifdef HYDRA_USE_MKL
+#define ARMA_BLAS_LONG  
+#define ARMA_BLAS_LONG_LONG  
+#endif
+
+#ifdef HYDRA_USE_HDF5
+#define ARMA_USE_HDF5
 #endif
 
 #include "extern/armadillo/armadillo"
