@@ -3,9 +3,11 @@
 #include <extern/gsl/span>
 
 #include <array>
+#include <utility>
+
+#include <hydra/common.h>
 #include <hydra/bitops/half_bit_types.h>
 #include <hydra/symmetries/permutation_group.h>
-#include <utility>
 
 namespace hydra {
 

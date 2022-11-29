@@ -4,6 +4,7 @@
 #include <vector>
 
 #include <hydra/common.h>
+#include <hydra/symmetries/permutation_group.h>
 
 namespace hydra {
 
@@ -40,7 +41,11 @@ bool is_complex(Representation const &cpls);
 bool is_real(Representation const &cpls);
 
 Representation trivial_representation(idx_t size);
+Representation trivial_representation(PermutationGroup const& group);
 
+PermutationGroup allowed_subgroup(PermutationGroup const &group,
+                                  Representation const &irrep);
+  
 Representation operator*(Representation const &r1, Representation const &r2);
 
 } // namespace hydra

@@ -151,6 +151,10 @@ Representation trivial_representation(idx_t size) {
   return Representation(std::vector<complex>(size, {1.0, 0.0}));
 }
 
+Representation trivial_representation(PermutationGroup const &group) {
+  return Representation(std::vector<complex>(group.size(), {1.0, 0.0}));
+}
+
 Representation operator*(Representation const &r1, Representation const &r2) {
   if (r1.size() != r2.size()) {
     Log.err("Error: cannot construct product Representation, sizes not equal");
@@ -165,6 +169,18 @@ Representation operator*(Representation const &r1, Representation const &r2) {
   }
 
   return Representation(c3);
+}
+
+PermutationGroup allowed_subgroup(PermutationGroup const &group,
+                                  Representation const &irrep) {
+
+  auto const &allowed_symmetries = irrep.allowed_symmetries();
+
+  if (allowed_symmetries.size() > 0) {
+    return group.subgroup(allowed_symmetries);
+  } else {
+    return group;
+  }
 }
 
 } // namespace hydra

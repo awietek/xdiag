@@ -82,16 +82,4 @@ bool PermutationGroup::operator!=(PermutationGroup const &rhs) const {
   return !operator==(rhs);
 }
 
-PermutationGroup allowed_subgroup(PermutationGroup const &group,
-                                  Representation const &irrep) {
-
-  auto const &allowed_symmetries = irrep.allowed_symmetries();
-
-  if (allowed_symmetries.size() > 0) {
-    return group.subgroup(allowed_symmetries);
-  } else {
-    return group;
-  }
-}
-
 } // namespace hydra

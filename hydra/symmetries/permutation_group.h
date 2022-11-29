@@ -1,7 +1,6 @@
 #pragma once
 
 #include <hydra/symmetries/permutation.h>
-#include <hydra/symmetries/representation.h>
 #include <vector>
 
 namespace hydra {
@@ -36,7 +35,6 @@ private:
   std::vector<int> inverse_;
 };
 
-PermutationGroup allowed_subgroup(PermutationGroup const &group,
-                                  Representation const &irrep);
+
 
 } // namespace hydra
