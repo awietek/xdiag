@@ -5,6 +5,7 @@
 #include <hydra/algorithms/lanczos/tmatrix.h>
 #include <hydra/common.h>
 #include <hydra/utils/logger.h>
+#include <hydra/utils/print_macro.h>
 
 namespace hydra {
 

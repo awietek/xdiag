@@ -14,15 +14,6 @@
 // #include "symmetries/operations/representative_list_omp.h"
 #endif
 
-#ifdef HYDRA_USE_MKL
-#define ARMA_BLAS_LONG  
-#define ARMA_BLAS_LONG_LONG  
-#endif
-
-#ifdef HYDRA_USE_HDF5
-#define ARMA_USE_HDF5
-#endif
-
 #include "extern/armadillo/armadillo"
 #include "extern/fmt/core.h"
 
