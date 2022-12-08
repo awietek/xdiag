@@ -31,14 +31,13 @@ int main() {
     }
 
     // Compute S(q) |g.s.>
-    auto v0 = zero_state(block);
+    auto v0 = State(block);
     apply(S_of_q, gs, v0);
     double nrm = norm(v0);
     v0 /= nrm;
 
     // Perform 200 Lanczos iterations for dynamics starting from v0
-    auto tmat = lanczos_eigenvalues_inplace(bonds, block, v0.vector(), 0, 0.,
-                                            200, 1e-7);
+    auto tmat = lanczos_eigenvalues_inplace(bonds, v0, 0, 0., 200, 1e-7);
     auto alphas = tmat.alphas();
     auto betas = tmat.betas();
 

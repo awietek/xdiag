@@ -43,15 +43,14 @@ int main() {
     // Compute S(q) |g.s.>
     auto S_of_q = symmetrized_operator(Bond("SZ", 0), group, irreps[q]);
     auto block_q = Spinhalf(n_sites, n_up, group, irreps[q]);
-    auto v0 = zero_state(block_q);
+    auto v0 = State(block_q);
     apply(S_of_q, gs, v0);
 
     double nrm = norm(v0);
     v0 /= nrm;
 
     // Perform 200 Lanczos iterations for dynamics starting from v0
-    auto tmat = lanczos_eigenvalues_inplace(bonds, block_q, v0.vector(), 0, 0.,
-                                            200, 1e-7);
+    auto tmat = lanczos_eigenvalues_inplace(bonds, v0, 0, 0., 200, 1e-7);
     auto alphas = tmat.alphas();
     auto betas = tmat.betas();
 
