@@ -12,7 +12,7 @@ void measure_density(int n_sites, hydra::StateCplx const &v) {
 int main() {
   using namespace hydra;
 
-  int L = 4;
+  int L = 5;
   double t = 1.0;
   double J = 10.0;
 
@@ -50,9 +50,18 @@ int main() {
     }
   }
   pstate[n_sites / 2] = "Emp";
+  Log("a");
+    auto block = tJ(n_sites, n_sites / 2, n_sites / 2 - 1);
+    HydraPrint(block);
+    Log(3, "sleep {}", n_sites);
+  sleep(10);
+  Log("over");
+ 
+  auto v = StateCplx(block, pstate);
 
-  auto block = tJ(n_sites, n_sites / 2, n_sites / 2 - 1);
-  auto v = State(block, pstate);
+  Log("sleep2");
+  sleep(10);
+  Log("over2");
   measure_density(n_sites, v);
 
   // Do the time evolution with a step size tau
