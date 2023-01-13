@@ -141,7 +141,7 @@ void PrintPretty(const char *identifier, Block const &block) {
             PrintPretty(identifier, block);
           },
       },
-      block);
+      block.variant());
 }
 
 void PrintPretty(const char *identifier, Spinhalf const &block) {

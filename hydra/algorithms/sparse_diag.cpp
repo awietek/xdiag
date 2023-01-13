@@ -12,6 +12,10 @@ namespace hydra {
 
 double eig0_real(BondList const &bondlist, Block const &block, double precision,
                  int seed, int max_iterations) {
+  if (block.size() == 0) {
+    Log.err("Error: block zero dimensional in eig0_real");
+    return 0.;
+  }
 
   auto tmat = lanczos_eigenvalues_real(bondlist, block, 1, precision, seed,
                                        max_iterations);
@@ -27,6 +31,11 @@ double eig0_real(BondList const &bondlist, Block const &block, double precision,
 
 double eig0_cplx(BondList const &bondlist, Block const &block, double precision,
                  int seed, int max_iterations) {
+  if (block.size() == 0) {
+    Log.err("Error: block zero dimensional in eig0_cplx");
+    return 0.;
+  }
+
   auto tmat = lanczos_eigenvalues_cplx(bondlist, block, 1, precision, seed,
                                        max_iterations);
   auto eigs = tmat.eigenvalues();
@@ -45,6 +54,10 @@ double eig0(BondList const &bondlist, Block const &block, double precision,
 
 StateReal groundstate_real(BondList const &bondlist, Block const &block,
                            double precision, int seed, int max_iterations) {
+  if (block.size() == 0) {
+    Log.err("Error: block zero dimensional in groundstate_real");
+    return State<double>();
+  }
 
   auto [tmat, v0] = lanczos_eigenvector_real(bondlist, block, 0, precision,
                                              seed, max_iterations);
@@ -59,6 +72,11 @@ StateReal groundstate_real(BondList const &bondlist, Block const &block,
 
 StateCplx groundstate_cplx(BondList const &bondlist, Block const &block,
                            double precision, int seed, int max_iterations) {
+  if (block.size() == 0) {
+    Log.err("Error: block zero dimensional in groundstate_cplx");
+    return State<complex>();
+  }
+
   auto [tmat, v0] = lanczos_eigenvector_cplx(bondlist, block, 0, precision,
                                              seed, max_iterations);
   auto eigs = tmat.eigenvalues();
@@ -79,6 +97,10 @@ std::pair<double, StateReal> eig0_groundstate_real(BondList const &bondlist,
                                                    Block const &block,
                                                    double precision, int seed,
                                                    int max_iterations) {
+  if (block.size() == 0) {
+    Log.err("Error: block zero dimensional in eig0_groundstate_real");
+    return {0., State<double>()};
+  }
 
   auto [tmat, v0] = lanczos_eigenvector_real(bondlist, block, 0, precision,
                                              seed, max_iterations);
@@ -95,6 +117,11 @@ std::pair<double, StateCplx> eig0_groundstate_cplx(BondList const &bondlist,
                                                    Block const &block,
                                                    double precision, int seed,
                                                    int max_iterations) {
+  if (block.size() == 0) {
+    Log.err("Error: block zero dimensional in eig0_groundstate_cplx");
+    return {0., State<complex>()};
+  }
+
   auto [tmat, v0] = lanczos_eigenvector_cplx(bondlist, block, 0, precision,
                                              seed, max_iterations);
   auto eigs = tmat.eigenvalues();

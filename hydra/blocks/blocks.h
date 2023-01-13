@@ -7,15 +7,31 @@
 #include <hydra/blocks/tj/tj.h>
 #include <hydra/blocks/electron/electron.h>
 
-
-// Forward declaration of blocks with default parameters
 namespace hydra {
 
-using Block = std::variant<Spinhalf, tJ, Electron>;
+using block_variant_t = std::variant<Spinhalf, tJ, Electron>;
+  
+class Block {
+public:
+  Block() = default;
+  Block(Spinhalf const& variant);
+  Block(tJ const& variant);
+  Block(Electron const& variant);
+  Block(block_variant_t const& variant);
+  idx_t size() const;
+  uint64_t hash() const;
 
-idx_t size(Block const &block);
-uint64_t hash(Block const &block);
-
+  bool operator==(Block const &rhs) const;
+  bool operator!=(Block const &rhs) const;
+  
+  // Developer
+  block_variant_t & variant();
+  block_variant_t const& variant() const;
+private:
+  block_variant_t variant_;
+};
+  
+  
 // template <typename bit_t> class SpinhalfMPI;
 // template <typename bit_t> class ElectronMPI;
 

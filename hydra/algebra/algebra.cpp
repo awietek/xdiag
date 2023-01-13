@@ -90,10 +90,9 @@ void apply(BondList const &bonds, Block const &block_in,
           },
           [&bonds, &vec_in, &vec_out](auto const &blk_in, auto const &blk_out) {
             Log.err("Error in apply: Invalid blocks or combination of blocks");
-            apply(bonds, blk_in, vec_in, blk_out, vec_out);
           },
       },
-      block_in, block_out);
+      block_in.variant(), block_out.variant());
 }
 template void apply(BondList const &, Block const &, arma::Col<double> const &,
                     Block const &, arma::Col<double> &);

@@ -61,7 +61,7 @@ lanczos_eigenvector(BondList const &bonds, Block const &block, set_v0_f set_v0,
   // First run for eigenvalues
   auto t0 = rightnow();
   // Allocate starting vector
-  arma::Col<coeff_t> v0(size(block), arma::fill::zeros);
+  arma::Col<coeff_t> v0(block.size(), arma::fill::zeros);
   set_v0(v0);
   auto tmat = lanczos(mult, v0, converged, max_iterations, deflation_tol);
   timing(t0, rightnow(), "Lanczos time (eigenvalue run)", 1);

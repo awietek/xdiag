@@ -33,7 +33,7 @@ lanczos_eigenvector_real(BondList const &bonds, Block const &block,
 
   // Create random starting vector with normal distributed entries
   auto set_v0 = [&seed, &block](arma::Col<double> &v0) {
-    uint32_t seed_modified = random::hash_combine(seed, hash(block));
+    uint32_t seed_modified = random::hash_combine(seed, block.hash());
     random::fill_random_normal_vector(v0, seed_modified);
   };
 
@@ -50,7 +50,7 @@ lanczos_eigenvector_cplx(BondList const &bonds, Block const &block,
 
   // Create random starting vector with normal distributed entries
   auto set_v0 = [&seed, &block](arma::Col<complex> &v0) {
-    uint32_t seed_modified = random::hash_combine(seed, hash(block));
+    uint32_t seed_modified = random::hash_combine(seed, block.hash());
     random::fill_random_normal_vector(v0, seed_modified);
   };
 

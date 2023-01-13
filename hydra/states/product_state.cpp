@@ -13,7 +13,7 @@ void fill(ProductState const &pstate, State<coeff_t> &state) {
   std::visit(variant::overloaded{[&pstate, &vector](auto &&block) {
                fill(pstate, block, vector);
              }},
-             state.block());
+    state.block().variant());
 }
 template void fill(ProductState const &pstate, State<double> &state);
 template void fill(ProductState const &pstate, State<complex> &state);
