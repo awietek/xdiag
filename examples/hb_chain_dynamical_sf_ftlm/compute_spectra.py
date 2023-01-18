@@ -1,93 +1,75 @@
 #!/usr/bin/env python
 import numpy as np
-from scipy.linalg import expm
-from scipy.stats import gaussian_kde
-import matplotlib.pyplot as plt
-import h5py
+import pickle
+import pydiag as yd
 
-n_sites = 20
-n_up = n_sites // 2
+n_sites = 16
+iters = 200
 
-n_omegas = 100
-max_omega = 4.0
-omegas = np.linspace(0, max_omega, n_omegas)
-T = 0.1
+seed = 1
+q=1
 
-seeds=range(1, 6, 1)
-qs = range(n_sites)
-beta = 1 / T
+beta = 1.0
 
-prec = 1e-12
-etas = [0.01, 0.02, 0.05, 0.1] 
+directory = "outfiles/N.{}".format(n_sites)
+regex = "outfile.N.{}.nup.(.*).k.(.*).seed.{}.iters.{}.h5".format(n_sites, seed, iters)
 
-# read_data
-for seed in seeds:
-    print("seed", seed)
-
-    alphas = dict()
-    betas = dict()
-    eigs = dict()
-    evecs = dict()
-    tmats = dict()
-    S_of_q = dict()
-
-    # Read data
-    for nup in range(n_sites):
-        outfile = "outfiles/N.{}.nup.{}/seed.{}/outfile.h5".format(n_sites, nup, seed)
-        # print("reading", outfile)
-        with h5py.File(outfile, 'r') as fl:
-            alphas[nup] = fl["alphas"][0]
-            betas[nup] = fl["betas"][0]
-            tmats[nup] = np.diag(alphas[nup]) + np.diag(betas[nup][:-1], k=1) + \
-                                                        np.diag(betas[nup][:-1], k=-1)
-            eigs[nup], evecs[nup] = np.linalg.eigh(tmats[nup])
-            for q in qs:
-                S_of_q[(q, nup)] = np.matrix(fl["s_of_q_{}".format(q)][:]['real'] + 1j*fl["s_of_q_{}".format(q)][:]['imag'])
-
-    e0 = min([e[0] for e in eigs.values()])
-    print("e0", e0)
-
-    for q in qs:    
-        print("computing poles and weigts, q = ", q)
-        poles = []
-        weights = []
-        for nup in range(n_sites):
-            iters = len(alphas[nup])
-            tmat = tmats[nup] - e0 * np.eye(iters)
-            Q = evecs[nup]
-
-            b = expm( - beta * tmats[nup] / 2)[:,0]
-            b_tilde = Q.T @ b
-            A = S_of_q[(q, nup)]
-            A_tilde = (Q.T @ A) @ Q
-            B = S_of_q[(q, nup)].H
-            B_tilde = Q.T @ B @ Q
-
-            eig = eigs[nup] - e0
-            pls = np.add.outer(-eig/2, np.add.outer(eig, -eig/2)).flatten()
-            wgts = 2 * np.pi * np.einsum("a,ab,bc,c->abc", b_tilde, A_tilde, B_tilde, b).flatten()
-
-            idces = np.abs(wgts)>prec
-            print("nup: ", nup, ", n_weights:", len(wgts[idces]))
-            
-            poles += list(pls[idces])
-            weights += list(wgts[idces])
-        poles = np.array(poles)
-        weights = np.array(weights)
-
-        # Broaden using scipy's kernel density estimation
-        diffs = np.subtract.outer(omegas, poles)
-        for eta in etas:
-            print("broadening with eta = ", eta)
-            gaussians = np.exp(-(diffs / (2*eta))**2) / (eta * np.sqrt(2*np.pi))
-            spectrum = gaussians @ weights
-            filename = "data/spectrum.N.{}.q.{}.T.{:.3f}.seed.{}.eta.{}.prec.{}".format(n_sites, q, T, seed, eta, prec)
-            np.save(filename, spectrum)
+data = yd.read_h5_data(directory, regex, tags=["T_alphas", "T_betas"])
+nups = [(nup, 2) if nup != n_sites // 2 else (nup, 1) for nup in range(3)]
+qs = [(q, 1) if q == 0 or q == n_sites // 2 else (q, 2) for q in range(n_sites//2+1)]
 
 
-# p = plt.imshow(spectra.T, origin='lower', extent=[0, n_sites, 0, max_omega],
-#            interpolation=None, aspect='auto')
-# plt.xlabel(r"$q$")
-# plt.ylabel(r"$\omega$")
-# plt.colorbar(p)
-# plt.show()
+# nups = [(nup, 2) if nup != n_sites // 2 else (nup, 1) for nup in range(n_sites//2+1)]
+# qs = [(q, 1) if q == 0 or q == n_sites // 2 else (q, 2) for q in range(n_sites//2+1)]
+
+print("computing e0")
+ensemble = yd.Ensemble(nups, qs)
+T_tridiag = yd.EnsembleTriDiag(ensemble, data, diag_tag="T_alphas", offdiag_tag="T_betas")
+e0s = T_tridiag.eig0()
+e0 = e0s.min()
+print(e0)
+
+print("computing b")
+T = T_tridiag.asarray()
+eT = yd.ensemble_expm( -beta * (T - e0))
+b = eT[:,0]
+
+
+print("computing b_tilde")
+d, Q = T_tridiag.eig()
+Q_dag = yd.ensemble_transpose(Q)
+b_tilde = yd.ensemble_dot(Q_dag, b)
+b_tilde_dag = yd.ensemble_transpose(b)
+
+print("computing R")
+S_diag_tag = "q_{}/S_alphas".format(q)
+S_offdiag_tag = "q_{}/S_betas".format(q)
+A_tag = "q_{}/A".format(q)
+data = yd.read_h5_data(directory, regex,
+                       tags=[S_diag_tag, S_offdiag_tag, A_tag])
+
+S_tridiag = yd.EnsembleTriDiag(ensemble, data, diag_tag=S_diag_tag,
+                               offdiag_tag=S_offdiag_tag,)
+S = S_tridiag.asarray()
+e, R = S_tridiag.eig()
+
+print("computing A_tilde")
+A = yd.EnsembleMatrix(ensemble, data, tag=A_tag)
+A_tilde = yd.ensemble_dot(Q_dag, yd.ensemble_dot(A, R))
+A_tilde_dag = yd.ensemble_conj(yd.ensemble_transpose(A_tilde))
+
+    
+# print("min", ens_e0.min())
+# for block, deg in ensemble:
+#     print("blocks", block, deg)
+
+
+    
+# pkl = "data.pkl"
+# with open(pkl, "wb") as f: # "wb" because we want to write in binary mode
+#     pickle.dump(data, f)
+
+
+# with open(pkl, "rb") as f:
+#     data2 = pickle.load(f)
+#     # print(data2)
