@@ -2,13 +2,13 @@
 
 n_sites=16
 
-# n_ups=`seq 0 1 $n_sites`
+n_ups=`seq 0 1 $n_sites`
 ks=`seq 0 1 $(( n_sites - 1))` 
 seeds=`seq 1 1 10`
 
-n_ups=(0)
-ks=(1) 
-seeds=(1)
+# n_ups=(0)
+# ks=(1) 
+# seeds=(1)
 
 iters=200
 

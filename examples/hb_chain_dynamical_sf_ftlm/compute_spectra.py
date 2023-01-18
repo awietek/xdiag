@@ -54,9 +54,14 @@ S = S_tridiag.asarray()
 e, R = S_tridiag.eig()
 
 print("computing A_tilde")
-A = yd.EnsembleMatrix(ensemble, data, tag=A_tag)
+A = yd.EnsembleArray(ensemble, data, tag=A_tag)
+for block, deg in A.ensemble:
+    print(block, Q_dag.array[block].shape, A.array[block].shape, R.array[block].shape)
+
 A_tilde = yd.ensemble_dot(Q_dag, yd.ensemble_dot(A, R))
-A_tilde_dag = yd.ensemble_conj(yd.ensemble_transpose(A_tilde))
+
+
+# A_tilde_dag = yd.ensemble_conj(yd.ensemble_transpose(A_tilde))
 
     
 # print("min", ens_e0.min())
