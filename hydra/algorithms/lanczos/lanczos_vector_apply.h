@@ -73,8 +73,6 @@ lanczos_vector_apply_inplace(multiply_f mult, arma::Col<coeff_t> &v0,
       break;
   }
 
-  vector_apply(iteration, v1);
-
   return tmatrix;
 }
 
