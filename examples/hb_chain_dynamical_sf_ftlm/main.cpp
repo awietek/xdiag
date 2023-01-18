@@ -92,10 +92,9 @@ int main(int argc, char **argv) {
 
     if (nrm(0) < 1e-12) {
       Log("Zero norm of S(q)|g.s.>");
-      uint64_t z=0;
-      vec alphas(z);
-      vec betas(z);
-      cx_mat A(z, z);
+      vec alphas = zeros(0);
+      vec betas = zeros(0);
+      cx_mat A(0, T.size());
       alphas.save(hdf5_name(outfile, format("q_{}/S_alphas", q), append));
       betas.save(hdf5_name(outfile, format("q_{}/S_betas", q), append));
       A.save(hdf5_name(outfile, format("q_{}/A", q), append));
