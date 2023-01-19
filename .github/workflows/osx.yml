@@ -16,7 +16,7 @@ jobs:
     - name: make test
       run: |
         cp options.mk.sample options.mk
-	sed -i -e 's/lapack = -llapack -lblas/lapack = -framework Accelerate/g' options.mk
+        sed -i -e 's/lapack = -llapack -lblas/lapack = -framework Accelerate/g' options.mk
         make
         make test
     - name: run tests
