@@ -16,6 +16,7 @@ jobs:
     - name: make test
       run: |
         cp options.mk.sample options.mk
+	sed -i -e 's/g++/clang++/g' options.mk
         make
         make test
     - name: run tests
