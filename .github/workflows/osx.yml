@@ -1,4 +1,4 @@
-name: OSX CI
+name: Mac OSX CI
 
 on:
   push:
