@@ -88,7 +88,7 @@ void apply(BondList const &bonds, Block const &block_in,
                                       Electron const &blk_out) {
             apply(bonds, blk_in, vec_in, blk_out, vec_out);
           },
-          [&bonds, &vec_in, &vec_out](auto const &blk_in, auto const &blk_out) {
+          [](auto const &blk_in, auto const &blk_out) {
             Log.err("Error in apply: Invalid blocks or combination of blocks");
           },
       },
