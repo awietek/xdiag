@@ -1,7 +1,8 @@
 ![license](https://img.shields.io/github/license/awietek/hydra)
 ![cpp](https://img.shields.io/badge/C++-17-blue.svg)
 [![docs](https://img.shields.io/badge/Documentation-here-red.svg)](https://awietek.github.io/hydradoc)
-[![C/C++ CI](https://github.com/awietek/hydra/actions/workflows/c-cpp.yml/badge.svg?style=for-the-badge)](https://github.com/awietek/hydra/actions/workflows/c-cpp.yml)
+[![Linux CI](https://github.com/awietek/hydra/actions/workflows/linux.yml/badge.svg?style=for-the-badge)](https://github.com/awietek/hydra/actions/workflows/linux.yml)
+[![Mac OSX CI](https://github.com/awietek/hydra/actions/workflows/macosx.yml/badge.svg?style=for-the-badge)](https://github.com/awietek/hydra/actions/workflows/macosx.yml)
 [![DOI](https://zenodo.org/badge/169422780.svg)](https://zenodo.org/badge/latestdoi/169422780)
 
 
