@@ -1,4 +1,4 @@
-name: linux CI
+name: OSX CI
 
 on:
   push:
