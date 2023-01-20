@@ -1,4 +1,5 @@
 benchmark
+.DS_Store
 *.gcda
 *.gcno
 *.gcov
