@@ -65,6 +65,15 @@ apps: $(objects) $(appobjects) $(appbinaries) lib
 lib: $(objects)
 	ar rcs lib/libhydra.a $(objects)
 
+.PHONY: coverage
+coverage: 
+	gcov -pb $(sources) $(testsources)
+
+.PHONY: gcovr-report
+lcov-report: coverage ## Generate gcovr report
+	mkdir lcov-report
+	gcovr --root . --html --html-details --output lcov-report/coverage.html
+
 .PHONY: libmpi
 libmpi: $(objects) $(mpiobjects)
 	ar rcs lib/libhydra_mpi.a $(objects) $(mpiobjects)
