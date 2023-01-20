@@ -10,6 +10,8 @@ ccwarn  = -Wall -pedantic -Wno-unknown-pragmas
 
 objects = $(subst .cpp,.o,$(sources))
 depends = $(subst .cpp,.d,$(sources))
+gcdas = $(subst .cpp,.gcda,$(sources))
+gcnos = $(subst .cpp,.gcno,$(sources))
 
 mpiobjects = $(subst .cpp,.o,$(mpisources))
 mpidepends = $(subst .cpp,.d,$(mpisources))
@@ -85,7 +87,7 @@ $(appbinaries):
 
 .PHONY: clean
 clean:
-	$(RM) -r $(objects) $(mpiobjects) $(appobjects) $(testobjects) $(testmpiobjects) $(depends) $(appdepends) $(testdepends) $(testmpidepends) $(mpidepends)
+	$(RM) -r $(objects) $(mpiobjects) $(appobjects) $(testobjects) $(testmpiobjects) $(depends) $(appdepends) $(testdepends) $(testmpidepends) $(mpidepends) $(gcdas) $(gcnos)
 
 .PHONY: rebuild
 rebuild: clean all lib
