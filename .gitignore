@@ -1,6 +1,7 @@
 benchmark
 *.gcda
 *.gcno
+*.gcov
 *.o
 *.a
 *.d
