@@ -16,6 +16,7 @@ test/tests
 testmpi/tests
 benchmark.prof
 benchmark.prof_*
+lcov-report
 examples/hb_chain_dynamical_sf/main
 examples/hb_chain_dynamical_sf/outfiles/*
 examples/hb_chain_dynamical_sf_nosym/main
@@ -23,10 +24,12 @@ examples/hb_chain_dynamical_sf_nosym/outfiles/*
 examples/hb_chain_dynamical_sf_ftlm/main
 examples/hb_chain_dynamical_sf_ftlm/outfiles/*
 examples/hb_chain_dynamical_sf_ftlm/data/*
-examples/dynamics_finite_t/hb_chain_dynamical_sf_fulled_nosyms/outfiles/*
 examples/spinhalf_chain/main
 examples/tfi_timeevolve/main
 examples/spinhalf_chain_syms/main
+examples/dynamics_t_0/hb_chain_dynamical_sf_nosyms/outfiles/*
+examples/dynamics_finite_t/hb_chain_dynamical_sf_fulled/outfiles/*
+examples/dynamics_finite_t/hb_chain_dynamical_sf_fulled_nosyms/outfiles/*
 **main
 **output.txt
 **output.pdf

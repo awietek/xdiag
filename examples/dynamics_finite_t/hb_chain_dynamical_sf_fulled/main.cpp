@@ -1,18 +1,22 @@
 #include <filesystem>
 #include <hydra/all.h>
 
-int main() {
+int main(int argc, char** argv) {
   using namespace hydra;
   using namespace arma;
   using fmt::format;
   using hdf5_opts::append;
 
   // Parse input arguments
-  int n_sites = 12;
+  assert(argc == 4);
+  int n_sites = atoi(argv[1]); // number of sites
+  int n_up = atoi(argv[2]);    // number of upspins
+  int k = atoi(argv[3]);       // momentum k
 
   // Define directory / file to store output data
   std::string outdir = format("outfiles/N.{}", n_sites);
-  std::string outfile = format("{}/outfile.N.{}.h5", outdir, n_sites);
+  std::string outfile = format("{}/outfile.N.{}.nup.{}.k.{}.h5",
+			       outdir, n_sites, n_up, k);
   std::filesystem::create_directories(outdir);
 
   // Create nearest-neighbor Heisenberg model
@@ -22,8 +26,21 @@ int main() {
   }
   bonds["J"] = 1.0;
 
-  auto block = Spinhalf(n_sites);
+  // Create the permutation group
+  std::vector<int> translation;
+  for (int s = 0; s < n_sites; ++s) {
+    translation.push_back((s + 1) % n_sites);
+  }
+  Permutation perm(translation);
+  auto group = generated_group(perm);
 
+  // Create the irrep at momentum k
+  complex phase = exp(2i * pi * k / (double)n_sites);
+  auto irrep = generated_irrep(perm, phase);
+  
+  auto block = Spinhalf(n_sites, n_up, group, irrep);
+  HydraPrint(block);
+  
   // Compute eigendecomposition of Hamiltonian
   Log("Creating H");
   mat H = matrix_real(bonds, block);

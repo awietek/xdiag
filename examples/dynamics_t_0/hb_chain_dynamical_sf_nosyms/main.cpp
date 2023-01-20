@@ -4,7 +4,7 @@ int main() {
   using namespace hydra;
   using namespace arma;
 
-  int n_sites = 16;
+  int n_sites = 12;
   int n_up = n_sites / 2;
 
   // Create nearest-neighbor Heisenberg model
@@ -46,7 +46,7 @@ int main() {
         fmt::format("outfiles/alphas.N.{}.nup.{}.q.{}.txt", n_sites, n_up, q),
         raw_ascii);
     betas.save(
-        fmt::format("outfiles/alphas.N.{}.nup.{}.q.{}.txt", n_sites, n_up, q),
+        fmt::format("outfiles/betas.N.{}.nup.{}.q.{}.txt", n_sites, n_up, q),
         raw_ascii);
     std::ofstream of;
     of.open(
