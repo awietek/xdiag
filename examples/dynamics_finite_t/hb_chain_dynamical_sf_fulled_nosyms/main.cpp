@@ -25,11 +25,11 @@ int main() {
   auto block = Spinhalf(n_sites);
 
   // Compute eigendecomposition of Hamiltonian
-  auto H = matrix_real(block, bonds);
+  mat H = matrix_real(bonds, block);
   vec eigval;
   mat eigvec;
   eig_sym(eigval, eigvec, H);
-  eigval.save(hdf5_name(outfile, format("eigenvalues", q), append));
+  eigval.save(hdf5_name(outfile, "eigenvalues", append));
 
   // Loop over different momenta q
   for (int q = 0; q <= n_sites; ++q) {
@@ -42,8 +42,8 @@ int main() {
     }
 
     // Compute matrix elements of S(q)
-    auto S_of_q = matrix_cplx(block, S_of_q_bonds);
-    auto S_of_q_eig = eigvec.t() * S_of_q * eigvec;
+    cx_mat S_of_q = matrix_cplx(S_of_q_bonds, block);
+    cx_mat S_of_q_eig = eigvec.t() * S_of_q * eigvec;
     S_of_q_eig.save(hdf5_name(outfile, format("S_of_q_{}_eig", q), append));
   }
 

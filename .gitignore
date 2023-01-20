@@ -23,6 +23,7 @@ examples/hb_chain_dynamical_sf_nosym/outfiles/*
 examples/hb_chain_dynamical_sf_ftlm/main
 examples/hb_chain_dynamical_sf_ftlm/outfiles/*
 examples/hb_chain_dynamical_sf_ftlm/data/*
+examples/dynamics_finite_t/hb_chain_dynamical_sf_fulled_nosyms/outfiles/*
 examples/spinhalf_chain/main
 examples/tfi_timeevolve/main
 examples/spinhalf_chain_syms/main
