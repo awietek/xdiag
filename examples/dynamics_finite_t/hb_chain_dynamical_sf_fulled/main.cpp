@@ -6,6 +6,7 @@ int main(int argc, char** argv) {
   using namespace arma;
   using fmt::format;
   using hdf5_opts::append;
+  using hdf5_opts::trans;
 
   // Parse input arguments
   assert(argc == 4);
@@ -43,11 +44,11 @@ int main(int argc, char** argv) {
   
   // Compute eigendecomposition of Hamiltonian
   Log("Creating H");
-  mat H = matrix_real(bonds, block);
+  cx_mat H = matrix_cplx(bonds, block);
 
   Log("Diagonalizing H");
   vec eigval;
-  mat eigvec;
+  cx_mat eigvec;
   eig_sym(eigval, eigvec, H);
   eigval.save(hdf5_name(outfile, "eigenvalues", append));
 
@@ -59,14 +60,25 @@ int main(int argc, char** argv) {
     // Create S(q) operator
     BondList S_of_q_bonds;
     for (int s = 0; s < n_sites; ++s) {
-      complex phase = exp(2i * pi * q * s / n_sites);
+      complex phase = exp(2i * pi * q * s / (double)n_sites);
       S_of_q_bonds << Bond("SZ", phase / n_sites, s);
     }
 
+    // Create block at momentum k + q
+    complex phase_q = exp(2i * pi * (k+q) / (double)n_sites);
+    auto irrep_q = generated_irrep(perm, phase_q);
+    auto block_q = Spinhalf(n_sites, n_up, group, irrep_q);
+    cx_mat H_q = matrix(bonds, block_q);
+
+    vec eigval_q;
+    cx_mat eigvec_q;
+    eig_sym(eigval_q, eigvec_q, H_q);
+    eigval.save(hdf5_name(outfile, "eigenvalues", append));
+    
     // Compute matrix elements of S(q)
-    cx_mat S_of_q = matrix_cplx(S_of_q_bonds, block);
-    cx_mat S_of_q_eig = eigvec.t() * S_of_q * eigvec;
-    S_of_q_eig.save(hdf5_name(outfile, format("S_of_q_{}_eig", q), append));
+    cx_mat S_of_q = matrix_cplx(S_of_q_bonds, block, block_q);
+    cx_mat S_of_q_eig = eigvec_q.t() * S_of_q * eigvec;
+    S_of_q_eig.save(hdf5_name(outfile, format("S_of_q_{}_eig", q), append + trans));
   }
 
   return EXIT_SUCCESS;

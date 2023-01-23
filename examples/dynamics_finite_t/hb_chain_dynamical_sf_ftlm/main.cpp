@@ -6,6 +6,7 @@ int main(int argc, char **argv) {
   using namespace arma;
   using fmt::format;
   using hdf5_opts::append;
+  using hdf5_opts::trans;
 
   // Parse input arguments
   assert(argc == 6);
@@ -94,10 +95,8 @@ int main(int argc, char **argv) {
       Log("Zero norm of S(q)|g.s.>");
       vec alphas = zeros(0);
       vec betas = zeros(0);
-      cx_mat A(0, T.size());
       alphas.save(hdf5_name(outfile, format("q_{}/S_alphas", q), append));
       betas.save(hdf5_name(outfile, format("q_{}/S_betas", q), append));
-      A.save(hdf5_name(outfile, format("q_{}/A", q), append));
       continue;
     }
 
@@ -129,7 +128,7 @@ int main(int argc, char **argv) {
       }
       toc();
     }
-    A.save(hdf5_name(outfile, format("q_{}/A", q), append));
+    A.save(hdf5_name(outfile, format("q_{}/A", q), append + trans));
 
     // Remove W vectors
     for (int m = 0; m < S.size(); ++m) {
