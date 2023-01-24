@@ -106,3 +106,19 @@ inline arma::cx_mat to_cx_mat(arma::mat const &A) {
 inline arma::cx_mat to_cx_mat(arma::cx_mat const &A) { return A; }
 
 } // namespace hydra
+
+namespace fmt {
+
+template <> struct formatter<std::complex<double>> {
+  template <typename ParseContext> constexpr auto parse(ParseContext &ctx) {
+    return ctx.begin();
+  }
+
+  template <typename FormatContext>
+  auto format(std::complex<double> const &number, FormatContext &ctx) {
+    return fmt::format_to(ctx.out(), "{0}+i{1}", std::real(number),
+                          std::imag(number));
+  }
+};
+
+} // namespace fmt

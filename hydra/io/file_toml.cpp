@@ -6,6 +6,9 @@
 
 namespace hydra {
 
+FileToml::FileToml(std::string filename, char iomode)
+    : FileToml(filename, std::string(1, iomode)) {}
+
 FileToml::FileToml(std::string filename, std::string iomode)
     : filename_(filename), iomode_(iomode) {
   if ((iomode != "r") && (iomode != "w")) {
@@ -14,8 +17,15 @@ FileToml::FileToml(std::string filename, std::string iomode)
 
   if (iomode == "r") {
     if (!std::filesystem::exists(filename)) {
-      Log.err("Error creating FileToml: file {} for reading does not exist",
+      Log.err("Error reading FileToml: file {} for reading does not exist",
               filename);
+    }
+
+    try {
+      table_ = toml::parse_file(filename);
+    } catch (const toml::parse_error &err) {
+      Log.err("Error reading FileToml: cannot parse {}: \n {}", filename,
+              std::string(err.description()));
     }
   } else if (iomode == "w") {
     try {
@@ -27,30 +37,25 @@ FileToml::FileToml(std::string filename, std::string iomode)
               filename);
     }
   }
-
-  try {
-    table_ = toml::parse_file(filename);
-  } catch (const toml::parse_error &err) {
-    Log.err("Error creating FileToml: cannot parse {}: \n {} \n  ({})",
-            filename, std::string(err.description()));
-  }
 }
 
 FileToml::~FileToml() { write(); }
 
 bool FileToml::defined(std::string key) const {
-  return table_[key].value<std::string>().has_value();
+  return (bool)table_.at_path(key);
 }
 
 io::FileTomlHandler FileToml::operator[](std::string key) {
-  return io::FileTomlHandler(key, *this);
+  return io::FileTomlHandler(key, table_);
 }
 
 void FileToml::write() const {
-  std::ofstream fl;
-  fl.open(filename_, std::ios::out);
-  fl << table_;
-  fl.close();
+  if (iomode_ == "w") {
+    std::ofstream fl;
+    fl.open(filename_, std::ios::out);
+    fl << table_;
+    fl.close();
+  }
 }
 
 bool FileToml::operator==(FileToml const &other) const {

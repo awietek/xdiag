@@ -1,32 +1,31 @@
-# Das ist ein TOML-Dokument.
-title = "TOML Beispiel"
-
-[person]
-name = "Tom Preston-Werner"
-geburtstag = 1979-05-27T07:32:00-08:00
-
-[datenbank]
-adresse = "192.168.1.1"
-ports = [ 8001, 8001, 8002 ]
-verbindungen_max = 5000
-aktiviert = true # booleans
-
-[servers]
-
-  # Einruecken (sowohl Tabs als auch Leerzeichen) ist erlaubt, aber nicht erforderlich
-  [servers.alpha]
-  ip = "10.0.0.1"
-  dc = "eqdc10"
-
-  [servers.beta]
-  ip = "10.0.0.2"
-  dc = "eqdc10"
+title = 'TOML Beispiel'
 
 [clients]
-data = [ ["gamma", "delta"], [1, 2] ]
+data = [ [ 'gamma', 'delta' ], [ 1, 2 ] ]
+hosts = [ 'alpha', 'omega' ]
 
-# Zeilenumbrueche sind in Arrays moeglich
-hosts = [
-  "alpha",
-  "omega"
-]
+[datenbank]
+adresse = '192.168.1.1'
+aktiviert = true
+ports = [ 8001, 8001, 8002 ]
+verbindungen_max = 42
+
+[person]
+geburtstag = 1979-05-27T07:32:00-08:00
+name = 'Tom Preston-Werner'
+
+[servers.alpha]
+dc = 'eqdc10'
+ip = '10.0.0.1'
+
+[servers.beta]
+dc = 'eqdc10'
+ip = '10.0.0.2'
+
+[floating]
+pi = 3.1415
+cplx = [2.3122, 0.1237]
+
+
+[vectors]
+ints = [1, 3, 7, 4, 5]

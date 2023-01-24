@@ -1,22 +1,23 @@
 #pragma once
 
-#include <hydra/io/file_toml.h>
+#include <extern/toml++/toml.h>
+
 #include <string>
 
 namespace hydra::io {
 
-class FileToml;
 class FileTomlHandler {
 public:
-  FileTomlHandler() = default;
-  FileTomlHandler(std::string key, FileToml & file);
+  FileTomlHandler(std::string key, toml::table &file);
+  FileTomlHandler(FileTomlHandler const &) = delete;
+  FileTomlHandler &operator=(FileTomlHandler const &) = delete;
 
   template <class data_t> data_t as();
   template <class data_t> void operator=(data_t const &data);
 
 private:
   std::string key_;
-  FileToml& file_;
+  toml::table &table_;
 };
 
 } // namespace hydra::io

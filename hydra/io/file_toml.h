@@ -6,11 +6,11 @@
 
 namespace hydra {
 
-class FileTomlHandler;
 class FileToml {
 public:
   FileToml() = default;
   ~FileToml();
+  FileToml(std::string filename, char iomode = 'r');
   FileToml(std::string filename, std::string iomode = "r");
 
   bool defined(std::string key) const;
@@ -20,7 +20,6 @@ public:
   bool operator==(FileToml const &other) const;
   bool operator!=(FileToml const &other) const;
 
-  friend class FileTomlHandler;
 private:
   std::string filename_;
   std::string iomode_;
