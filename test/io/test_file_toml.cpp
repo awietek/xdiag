@@ -44,5 +44,19 @@ TEST_CASE("file_toml", "[io]") {
   Log("{}", fl[n].as<complex>());
   REQUIRE(fl.defined(n));
   REQUIRE(fl[n].as<complex>() == 2.3122 + .1237i);
-    
+
+  n = "vectors.ints";
+  for (auto i : fl[n].as<std::vector<int>>()) {
+    Log("i: {}", i);
+  }
+  REQUIRE(fl.defined(n));
+  REQUIRE(fl[n].as<std::vector<int>>() == std::vector<int>{1, 3, 7, 4, 5});
+
+  n = "vectors.floats";
+  for (auto i : fl[n].as<std::vector<double>>()) {
+    Log("i: {}", i);
+  }
+  REQUIRE(fl.defined(n));
+  REQUIRE(fl[n].as<std::vector<double>>() ==
+          std::vector<double>{1.234, 7.654, 3.1415});
 }

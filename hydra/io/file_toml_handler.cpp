@@ -118,6 +118,36 @@ template <> std::string FileTomlHandler::as<std::string>() {
   return retrieve_plain<std::string>(key_, table_);
 }
 
+// std::vectors
+template <> std::vector<int8_t> FileTomlHandler::as<std::vector<int8_t>>() {
+  return retrieve_std_vector<int8_t>(key_, table_);
+}
+template <> std::vector<int16_t> FileTomlHandler::as<std::vector<int16_t>>() {
+  return retrieve_std_vector<int16_t>(key_, table_);
+}
+template <> std::vector<int32_t> FileTomlHandler::as<std::vector<int32_t>>() {
+  return retrieve_std_vector<int32_t>(key_, table_);
+}
+template <> std::vector<int64_t> FileTomlHandler::as<std::vector<int64_t>>() {
+  return retrieve_std_vector<int64_t>(key_, table_);
+}
+template <> std::vector<uint8_t> FileTomlHandler::as<std::vector<uint8_t>>() {
+  return retrieve_std_vector<uint8_t>(key_, table_);
+}
+template <> std::vector<uint16_t> FileTomlHandler::as<std::vector<uint16_t>>() {
+  return retrieve_std_vector<uint16_t>(key_, table_);
+}
+template <> std::vector<uint32_t> FileTomlHandler::as<std::vector<uint32_t>>() {
+  return retrieve_std_vector<uint32_t>(key_, table_);
+}
+template <> std::vector<uint64_t> FileTomlHandler::as<std::vector<uint64_t>>() {
+  return retrieve_std_vector<uint64_t>(key_, table_);
+}
+
+template <> std::vector<double> FileTomlHandler::as<std::vector<double>>() {
+  return retrieve_std_vector<double>(key_, table_);
+}
+
 template <> void FileTomlHandler::operator=(std::string const &value) {
   table_.insert_or_assign(key_, value);
 }
