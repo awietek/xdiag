@@ -7,6 +7,9 @@ sources+= hydra/parallel/omp/omp_utils.cpp
 sources+= hydra/algebra/algebra.cpp
 sources+= hydra/algebra/matrix.cpp
 
+sources+= hydra/io/file_toml.cpp
+sources+= hydra/io/file_toml_handler.cpp
+
 sources+= hydra/combinatorics/binomial.cpp
 sources+= hydra/combinatorics/subsets.cpp
 sources+= hydra/combinatorics/subsets_index.cpp
@@ -108,6 +111,8 @@ mpisources+= hydra/blocks/electron_mpi/electron_mpi_apply.cpp
 
 testsources+= test/tests.cpp
 testsources+= test/bitops/test_bitops.cpp
+
+testsources+= test/io/test_file_toml.cpp
 
 testsources+= test/combinatorics/test_binomial.cpp
 testsources+= test/combinatorics/test_subsets.cpp

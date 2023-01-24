@@ -17,6 +17,9 @@
 #include "extern/armadillo/armadillo"
 #include "extern/fmt/core.h"
 
+#include "io/file_toml.h"
+#include "io/file_toml_handler.h"
+
 #include "bitops/bitops.h"
 #include "common.h"
 #include "utils/close.h"
