@@ -16,6 +16,7 @@ public:
   bool defined(std::string key) const;
   io::FileTomlHandler operator[](std::string key);
   void write() const;
+  void close() const;
 
   bool operator==(FileToml const &other) const;
   bool operator!=(FileToml const &other) const;

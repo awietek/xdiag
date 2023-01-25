@@ -58,6 +58,8 @@ void FileToml::write() const {
   }
 }
 
+void FileToml::close() const { write(); }
+
 bool FileToml::operator==(FileToml const &other) const {
   return (filename_ == other.filename_) && (iomode_ == other.iomode_) &&
          (table_ == other.table_);

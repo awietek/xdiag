@@ -44,10 +44,17 @@ void PrintPretty(const char *identifier, Electron const &block);
 void PrintPretty(const char *identifier, RandomState const &rstate);
 void PrintPretty(const char *identifier, ProductState const &pstate);
 
+void PrintPretty(const char *identifier, std::vector<int> const &vec);
 void PrintPretty(const char *identifier, std::vector<float> const &vec);
 void PrintPretty(const char *identifier, std::vector<double> const &vec);
 void PrintPretty(const char *identifier, std::vector<scomplex> const &vec);
 void PrintPretty(const char *identifier, std::vector<complex> const &vec);
+void PrintPretty(const char *identifier, std::vector<std::string> const &vec);
+
+void PrintPretty(const char *identifier, arma::uvec const &vec);
+void PrintPretty(const char *identifier, arma::ivec const &vec);
+void PrintPretty(const char *identifier, arma::umat const &mat);
+void PrintPretty(const char *identifier, arma::imat const &mat);
 
 void PrintPretty(const char *identifier, arma::Mat<float> const &mat);
 void PrintPretty(const char *identifier, arma::Mat<double> const &mat);

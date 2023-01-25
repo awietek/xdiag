@@ -19,7 +19,9 @@ template <class T>
 struct is_complex_t<std::complex<T>> : public std::true_type {};
 
 // Complex real/imag/conj
-template <class coeff_t> struct real_type_struct { typedef coeff_t type; };
+template <class coeff_t> struct real_type_struct {
+  typedef coeff_t type;
+};
 
 template <class coeff_t> struct real_type_struct<std::complex<coeff_t>> {
   typedef coeff_t type;
@@ -38,7 +40,9 @@ template <class coeff_t> struct complex_type_struct<std::complex<coeff_t>> {
 namespace hydra::variant {
 
 // Helper type for visitor patterns
-template <class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
+template <class... Ts> struct overloaded : Ts... {
+  using Ts::operator()...;
+};
 template <class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
 
 } // namespace hydra::variant
@@ -116,8 +120,13 @@ template <> struct formatter<std::complex<double>> {
 
   template <typename FormatContext>
   auto format(std::complex<double> const &number, FormatContext &ctx) {
-    return fmt::format_to(ctx.out(), "{0}+i{1}", std::real(number),
-                          std::imag(number));
+    if (std::imag(number) < 0.) {
+      return fmt::format_to(ctx.out(), "{0}-i{1}", std::real(number),
+                            -std::imag(number));
+    } else {
+      return fmt::format_to(ctx.out(), "{0}+i{1}", std::real(number),
+                            std::imag(number));
+    }
   }
 };
 

@@ -42,6 +42,22 @@ void PrintPretty(const char *identifier, int64_t number) {
   printf("%s\n", ss.str().c_str());
 }
 
+void PrintPretty(const char *identifier, unsigned long long number) {
+  printf("%s:\n", identifier);
+  std::stringstream ss;
+  ss.imbue(std::locale("en_US.UTF-8"));
+  ss << number;
+  printf("%s\n", ss.str().c_str());
+}
+
+void PrintPretty(const char *identifier, long long number) {
+  printf("%s:\n", identifier);
+  std::stringstream ss;
+  ss.imbue(std::locale("en_US.UTF-8"));
+  ss << number;
+  printf("%s\n", ss.str().c_str());
+}
+
 void PrintPretty(const char *identifier, double number) {
   printf("%s:\n", identifier);
   printf("%.17e\n", number);
@@ -242,6 +258,13 @@ void PrintPretty(const char *identifier, Tmatrix const &tmat) {
   PrintPretty("eigenvalues", tmat.eigenvalues());
 }
 
+void PrintPretty(const char *identifier, std::vector<int> const &vec) {
+  printf("%s:\n", identifier);
+  for (auto s : vec) {
+    printf("%d ", s);
+  }
+  printf("\n");
+}
 void PrintPretty(const char *identifier, std::vector<float> const &vec) {
   PrintPretty(identifier, arma::Col<float>(vec));
 }
@@ -254,83 +277,74 @@ void PrintPretty(const char *identifier, std::vector<scomplex> const &vec) {
 void PrintPretty(const char *identifier, std::vector<complex> const &vec) {
   PrintPretty(identifier, arma::Col<complex>(vec));
 }
+void PrintPretty(const char *identifier, std::vector<std::string> const &vec) {
+  printf("%s:\n", identifier);
+  for (auto s : vec) {
+    printf("%s ", s.c_str());
+  }
+  printf("\n");
+}
+
+void PrintPretty(const char *identifier, arma::uvec const &vec) {
+  printf("%s:\n", identifier);
+  vec.brief_print();
+}
+
+void PrintPretty(const char *identifier, arma::ivec const &vec) {
+  printf("%s:\n", identifier);
+  vec.brief_print();
+}
+
+void PrintPretty(const char *identifier, arma::umat const &mat) {
+  printf("%s:\n", identifier);
+  mat.brief_print();
+}
+
+void PrintPretty(const char *identifier, arma::imat const &mat) {
+  printf("%s:\n", identifier);
+  mat.brief_print();
+}
 void PrintPretty(const char *identifier, const arma::Mat<float> &mat) {
   printf("%s:\n", identifier);
-  // for (uint32_t i = 0; i < mat.n_rows; ++i) {
-  //   for (uint32_t j = 0; j < mat.n_cols; ++j)
-  //     printf("%10.8g ", mat(i, j));
-  //   printf("\n");
-  // }
-  // printf("\n");
   mat.brief_print();
 }
 
 void PrintPretty(const char *identifier, const arma::Mat<double> &mat) {
   printf("%s:\n", identifier);
-  // for (uint32_t i = 0; i < mat.n_rows; ++i) {
-  //   for (uint32_t j = 0; j < mat.n_cols; ++j)
-  //     printf("%10.8g ", mat(i, j));
-  //   printf("\n");
-  // }
-  // printf("\n");
   mat.brief_print();
 }
 
 void PrintPretty(const char *identifier,
                  const arma::Mat<std::complex<float>> &mat) {
   printf("%s:\n", identifier);
-  //   for (uint32_t i = 0; i < mat.n_rows; ++i) {
-  //     for (uint32_t j = 0; j < mat.n_cols; ++j)
-  //       printf("%10.8g%-+8.8gj ", mat(i, j).real(), mat(i, j).imag());
-  //     printf("\n");
-  //   }
-  //   printf("\n");
   mat.brief_print();
 }
 
 void PrintPretty(const char *identifier,
                  const arma::Mat<std::complex<double>> &mat) {
   printf("%s:\n", identifier);
-  // for (uint32_t i = 0; i < mat.n_rows; ++i) {
-  //   for (uint32_t j = 0; j < mat.n_cols; ++j)
-  //     printf("%10.8g%-+8.8gj ", mat(i, j).real(), mat(i, j).imag());
-  //   printf("\n");
-  // }
-  // printf("\n");
   mat.brief_print();
 }
 
 void PrintPretty(const char *identifier, const arma::Col<float> &vec) {
   printf("%s:\n", identifier);
-  // for (uint32_t i = 0; i < vec.size(); ++i)
-  //   printf("%10.8g ", vec(i));
-  // printf("\n");
   vec.brief_print();
 }
 
 void PrintPretty(const char *identifier, const arma::Col<double> &vec) {
   printf("%s:\n", identifier);
-  // for (uint32_t i = 0; i < vec.size(); ++i)
-  //   printf("%10.8g ", vec(i));
-  // printf("\n");
   vec.brief_print();
 }
 
 void PrintPretty(const char *identifier,
                  const arma::Col<std::complex<float>> &vec) {
   printf("%s:\n", identifier);
-  // for (uint32_t i = 0; i < vec.size(); ++i)
-  //   printf("%10.8g%-+8.8gj ", vec(i).real(), vec(i).imag());
-  // printf("\n");
   vec.brief_print();
 }
 
 void PrintPretty(const char *identifier,
                  const arma::Col<std::complex<double>> &vec) {
   printf("%s:\n", identifier);
-  // for (uint32_t i = 0; i < vec.size(); ++i)
-  //   printf("%10.8g%-+8.8gj ", vec(i).real(), vec(i).imag());
-  // printf("\n");
   vec.brief_print();
 }
 
