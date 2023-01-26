@@ -9,6 +9,7 @@ sources+= hydra/algebra/matrix.cpp
 
 sources+= hydra/io/file_toml.cpp
 sources+= hydra/io/file_toml_handler.cpp
+sources+= hydra/io/toml_conversion.cpp
 
 sources+= hydra/combinatorics/binomial.cpp
 sources+= hydra/combinatorics/subsets.cpp
