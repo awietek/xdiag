@@ -13,6 +13,10 @@
 #include <hydra/io/toml_conversion.h>
 #include <hydra/utils/logger.h>
 
+#include <hydra/symmetries/permutation.h>
+#include <hydra/symmetries/permutation_group.h>
+#include <hydra/symmetries/representation.h>
+
 namespace hydra::io {
 
 FileTomlHandler::FileTomlHandler(std::string key, toml::table &table)
@@ -165,6 +169,12 @@ template <> arma::umat FileTomlHandler::as<arma::umat>() const {
       get_toml_array(table_.at_path(key_)));
 }
 
+template <> Permutation FileTomlHandler::as<Permutation>() const {
+  auto array =
+      toml_array_to_std_vector<int>(get_toml_array(table_.at_path(key_)));
+  return Permutation(array);
+}
+
 //////////////////////////////////////////////////////////////////
 // operator=
 
@@ -282,4 +292,9 @@ void FileTomlHandler::operator=<arma::umat>(arma::umat const &value) {
   insert_arma_matrix(key_, value, table_);
 }
 
+template <>
+void FileTomlHandler::operator=<Permutation>(Permutation const &value) {
+  insert_std_vector(key_, value.array(), table_);
+}
+  
 } // namespace hydra::io

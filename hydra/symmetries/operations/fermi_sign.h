@@ -14,7 +14,7 @@ bool fermi_bool_of_permutation(bit_t state, Permutation const &permutation,
 template <class bit_t>
 inline bool fermi_bool_of_permutation(bit_t state,
                                       Permutation const &permutation) {
-  auto work = fermi_work(permutation.n_sites());
+  auto work = fermi_work(permutation.size());
   return fermi_bool_of_permutation(state, permutation, work);
 }
 
@@ -26,7 +26,7 @@ double fermi_sign_of_permutation(bit_t state, Permutation const &permutation,
 template <class bit_t>
 inline bool fermi_sign_of_permutation(bit_t state,
                                       Permutation const &permutation) {
-  auto work = fermi_work(permutation.n_sites());
+  auto work = fermi_work(permutation.size());
   return fermi_sign_of_permutation(state, permutation, work);
 }
 

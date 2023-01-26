@@ -10,13 +10,13 @@
 namespace hydra {
 
 PermutationGroup::PermutationGroup(std::vector<Permutation> const &permutations)
-    : n_sites_(permutations.size() > 0 ? permutations[0].n_sites() : 0),
+    : n_sites_(permutations.size() > 0 ? permutations[0].size() : 0),
       n_symmetries_(permutations.size()), permutations_(permutations),
       inverse_(n_symmetries_) {
 
   // Check whether all permutations have same number of sites
   for (auto p : permutations) {
-    if (p.n_sites() != n_sites_) {
+    if (p.size() != n_sites_) {
       Log.err("Error constructing PermutationGroup: not all Permutations have "
               "the same number of sites");
     }

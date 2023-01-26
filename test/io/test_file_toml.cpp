@@ -192,4 +192,8 @@ TEST_CASE("file_toml", "[io]") {
   REQUIRE(i == ir);
   REQUIRE(close(j, jr));
   REQUIRE(close(k, kr));
+
+  auto p = Permutation({5, 3, 4, 2, 1, 0, 7, 6});
+  fl["perm"] = p;
+  test_write_read(p);
 }

@@ -7,7 +7,7 @@ namespace hydra::symmetries {
 
 bool is_sublattice_permutation(int n_sublat, int sublat,
                                Permutation const &permutation) {
-  int n_sites = permutation.n_sites();
+  int n_sites = permutation.size();
   int n_sites_sublat = n_sites / n_sublat;
 
   // permutation is sublattice stable, if the sublattice

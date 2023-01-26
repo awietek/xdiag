@@ -34,7 +34,7 @@ generated_group_irrep(std::vector<Permutation> const &generators,
             "the number of phases");
   }
 
-  int n_sites = generators[0].n_sites();
+  int n_sites = generators[0].size();
 
   // Check whether all generators have the same number of sites
   for (std::size_t i = 0; i < generators.size(); ++i) {

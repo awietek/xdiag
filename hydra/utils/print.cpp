@@ -99,7 +99,7 @@ void PrintPretty(const char *identifier, BondList const &bondlist) {
 
 void PrintPretty(const char *identifier, Permutation const &p) {
   printf("%s:\n  ", identifier);
-  for (int i = 0; i < p.n_sites(); ++i) {
+  for (int i = 0; i < p.size(); ++i) {
     printf("%d ", p[i]);
   }
   printf("\n");
