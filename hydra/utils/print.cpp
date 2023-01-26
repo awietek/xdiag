@@ -42,22 +42,6 @@ void PrintPretty(const char *identifier, int64_t number) {
   printf("%s\n", ss.str().c_str());
 }
 
-void PrintPretty(const char *identifier, unsigned long long number) {
-  printf("%s:\n", identifier);
-  std::stringstream ss;
-  ss.imbue(std::locale("en_US.UTF-8"));
-  ss << number;
-  printf("%s\n", ss.str().c_str());
-}
-
-void PrintPretty(const char *identifier, long long number) {
-  printf("%s:\n", identifier);
-  std::stringstream ss;
-  ss.imbue(std::locale("en_US.UTF-8"));
-  ss << number;
-  printf("%s\n", ss.str().c_str());
-}
-
 void PrintPretty(const char *identifier, double number) {
   printf("%s:\n", identifier);
   printf("%.17e\n", number);

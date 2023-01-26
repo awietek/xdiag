@@ -30,12 +30,14 @@ TEST_CASE("file_toml", "[io]") {
 
   // Parse String
   std::string n = "title";
+  Log("A");
   Log("{}", fl[n].as<std::string>());
   REQUIRE(fl.defined(n));
   REQUIRE(fl[n].as<std::string>() == "TOML Beispiel");
 
   // Parse integers
   n = "datenbank.verbindungen_max";
+  Log("B");
   Log("{}", fl[n].as<int32_t>());
   REQUIRE(fl.defined(n));
   REQUIRE(fl[n].as<int8_t>() == 42);

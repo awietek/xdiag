@@ -12,7 +12,7 @@ public:
   FileTomlHandler(FileTomlHandler const &) = delete;
   FileTomlHandler &operator=(FileTomlHandler const &) = delete;
 
-  template <class data_t> data_t as();
+  template <class data_t> data_t as() const;
   template <class data_t> void operator=(data_t const &data);
 
 private:
