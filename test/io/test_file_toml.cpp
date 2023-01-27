@@ -15,9 +15,9 @@ template <typename T> void test_write_read(T val) {
 
   fl = FileToml(filename, 'r');
   T val_r = fl[key].as<T>();
+  // HydraPrint(val);
+  // HydraPrint(val_r);
   REQUIRE(val == val_r);
-  HydraPrint(val);
-  HydraPrint(val_r);
 }
 
 TEST_CASE("file_toml", "[io]") {
@@ -30,15 +30,15 @@ TEST_CASE("file_toml", "[io]") {
 
   // Parse String
   std::string n = "title";
-  Log("A");
-  Log("{}", fl[n].as<std::string>());
+  // Log("A");
+  // Log("{}", fl[n].as<std::string>());
   REQUIRE(fl.defined(n));
   REQUIRE(fl[n].as<std::string>() == "TOML Beispiel");
 
   // Parse integers
   n = "datenbank.verbindungen_max";
-  Log("B");
-  Log("{}", fl[n].as<int32_t>());
+  // Log("B");
+  // Log("{}", fl[n].as<int32_t>());
   REQUIRE(fl.defined(n));
   REQUIRE(fl[n].as<int8_t>() == 42);
   REQUIRE(fl[n].as<int16_t>() == 42);
@@ -51,49 +51,49 @@ TEST_CASE("file_toml", "[io]") {
 
   // Parse bool
   n = "datenbank.aktiviert";
-  Log("{}", fl[n].as<bool>());
-  std::cout << fl[n].as<bool>() << "\n";
+  // Log("{}", fl[n].as<bool>());
+  // std::cout << fl[n].as<bool>() << "\n";
   REQUIRE(fl.defined(n));
   REQUIRE(fl[n].as<bool>() == true);
 
   n = "floating.pi";
-  Log("{}", fl[n].as<double>());
+  // Log("{}", fl[n].as<double>());
   REQUIRE(fl.defined(n));
   REQUIRE(fl[n].as<double>() == 3.1415);
 
   n = "floating.cplx";
-  Log("{}", fl[n].as<complex>());
+  // Log("{}", fl[n].as<complex>());
   REQUIRE(fl.defined(n));
   REQUIRE(fl[n].as<complex>() == 2.3122 + .1237i);
 
   n = "vectors.ints";
-  for (auto i : fl[n].as<std::vector<int>>()) {
-    Log("i: {}", i);
-  }
+  // for (auto i : fl[n].as<std::vector<int>>()) {
+  //   Log("i: {}", i);
+  // }
   REQUIRE(fl.defined(n));
   REQUIRE(fl[n].as<std::vector<int>>() == std::vector<int>{1, 3, 7, 4, 5});
 
   n = "vectors.floats";
-  for (auto i : fl[n].as<std::vector<double>>()) {
-    Log("d: {}", i);
-  }
+  // for (auto i : fl[n].as<std::vector<double>>()) {
+  //   Log("d: {}", i);
+  // }
   REQUIRE(fl.defined(n));
   REQUIRE(fl[n].as<std::vector<double>>() ==
           std::vector<double>{1.234, 7.654, 3.1415});
 
   n = "vectors.cplxs";
-  for (auto i : fl[n].as<std::vector<complex>>()) {
-    Log("d: {}", i);
-  }
+  // for (auto i : fl[n].as<std::vector<complex>>()) {
+  //   Log("d: {}", i);
+  // }
   REQUIRE(fl.defined(n));
   REQUIRE(fl[n].as<std::vector<complex>>() ==
           std::vector<complex>{2.3122 + 0.1237i, -12.3122 + 20.1237i,
                                32.3122 - 40.1237i});
 
   n = "clients.hosts";
-  for (auto i : fl[n].as<std::vector<std::string>>()) {
-    Log("s: {}", i);
-  }
+  // for (auto i : fl[n].as<std::vector<std::string>>()) {
+  //   Log("s: {}", i);
+  // }
   REQUIRE(fl.defined(n));
   REQUIRE(fl[n].as<std::vector<std::string>>() ==
           std::vector<std::string>{"alpha", "omega"});
@@ -105,26 +105,26 @@ TEST_CASE("file_toml", "[io]") {
 
   auto sx = fl["pauli.sx"].as<mat>();
   REQUIRE(close(sx, mat{{0.0, 0.5}, {0.5, 0.0}}));
-  HydraPrint(sx);
+  // HydraPrint(sx);
 
   auto sy = fl["pauli.sy"].as<cx_mat>();
   cx_mat syy{{0. + 0.i, 0. - 0.5i}, {0. + 0.5i, 0.0}};
-  HydraPrint(sy);
-  HydraPrint(syy);
+  // HydraPrint(sy);
+  // HydraPrint(syy);
 
   REQUIRE(close(sy, syy));
 
   auto sz = fl["pauli.sz"].as<mat>();
   REQUIRE(close(sz, mat{{0.5, 0.}, {0., -0.5}}));
-  HydraPrint(sz);
+  // HydraPrint(sz);
 
   auto szc = fl["pauli.sz"].as<cx_mat>();
   REQUIRE(close(szc, cx_mat{{0.5 + 0i, 0. + 0i}, {0. + 0i, -0.5 + 0i}}));
-  HydraPrint(szc);
+  // HydraPrint(szc);
 
   auto other = fl["pauli.other"].as<mat>();
   REQUIRE(close(other, mat{{1.0, 2.0, 3.0}, {5.0, 6.0, 7.0}}));
-  HydraPrint(other);
+  // HydraPrint(other);
 
   int a = 42;
   double b = 1.234;
@@ -180,7 +180,7 @@ TEST_CASE("file_toml", "[io]") {
   auto lr = fl["l"].as<imat>();
   auto mr = fl["m"].as<umat>();
 
-  HydraPrint(lr);
+  // HydraPrint(lr);
   REQUIRE(a == ar);
   REQUIRE(b == br);
   REQUIRE(c == cr);
@@ -196,4 +196,72 @@ TEST_CASE("file_toml", "[io]") {
   auto p = Permutation({5, 3, 4, 2, 1, 0, 7, 6});
   fl["perm"] = p;
   test_write_read(p);
+
+  std::string lfile = "data/triangular.j1j2jch/"
+                      "triangular.12.j1j2jch.sublattices.fsl.lat";
+  auto group = PermutationGroup(read_permutations(lfile));
+  test_write_read(group);
+
+  auto irrep = read_represenation(lfile, "X.C1.A");
+  test_write_read(irrep);
+
+  auto bond = Bond("HB", "H", 1);
+  test_write_read(bond);
+
+  bond = Bond("HB", "J1", {1, 2});
+  test_write_read(bond);
+
+  bond = Bond("HB", 1.0, 1);
+  test_write_read(bond);
+
+  bond = Bond("HB", 1.2, {1, 2});
+  test_write_read(bond);
+
+  bond = Bond("HB", 2.1 + 1.2i, 1);
+  test_write_read(bond);
+
+  bond = Bond("HB", 2.1 + 1.2i, {1, 2});
+  test_write_read(bond);
+
+  auto matr = arma::mat(3, 3, arma::fill::randu);
+
+  bond = Bond(matr, "H", 1);
+  test_write_read(bond);
+
+  bond = Bond(matr, "J1", {1, 2});
+  test_write_read(bond);
+
+  bond = Bond(matr, 1.0, 1);
+  test_write_read(bond);
+
+  bond = Bond(matr, 1.2, {1, 2});
+  test_write_read(bond);
+
+  bond = Bond(matr, 2.1 + 1.2i, 1);
+  test_write_read(bond);
+
+  bond = Bond(matr, 2.1 + 1.2i, {1, 2});
+  test_write_read(bond);
+
+
+  auto matc = arma::cx_mat(3, 3, arma::fill::randu);
+
+  bond = Bond(matc, "H", 1);
+  test_write_read(bond);
+
+  bond = Bond(matc, "J1", {1, 2});
+  test_write_read(bond);
+
+  bond = Bond(matc, 1.0, 1);
+  test_write_read(bond);
+
+  bond = Bond(matc, 1.2, {1, 2});
+  test_write_read(bond);
+
+  bond = Bond(matc, 2.1 + 1.2i, 1);
+  test_write_read(bond);
+
+  bond = Bond(matc, 2.1 + 1.2i, {1, 2});
+  test_write_read(bond);
+  
 }

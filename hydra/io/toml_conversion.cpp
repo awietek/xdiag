@@ -257,90 +257,73 @@ template arma::Mat<arma::uword>
 toml_array_to_arma_matrix<arma::uword>(toml::array const &);
 
 template <typename T>
-void insert_std_vector(std::string const &key, std::vector<T> const &value,
-                       toml::table &table) {
+toml::array std_vector_to_toml_array(std::vector<T> const &value) {
   toml::array arr;
   for (auto &&x : value) {
     arr.push_back(x);
   }
-  insert(key, arr, table);
+  return arr;
 }
 template <>
-void insert_std_vector(std::string const &key,
-                       std::vector<uint64_t> const &value, toml::table &table) {
+toml::array std_vector_to_toml_array(std::vector<uint64_t> const &value) {
   toml::array arr;
   for (auto &&x : value) {
     arr.push_back((int64_t)x);
   }
-  insert(key, arr, table);
+  return arr;
 }
 
 template <>
-void insert_std_vector(std::string const &key,
-                       std::vector<complex> const &value, toml::table &table) {
+toml::array std_vector_to_toml_array(std::vector<complex> const &value) {
   toml::array arr;
   for (auto &&x : value) {
     arr.push_back(toml::array{x.real(), x.imag()});
   }
-  insert(key, arr, table);
+  return arr;
 }
 
-template void insert_std_vector(std::string const &,
-                                std::vector<int8_t> const &, toml::table &);
-template void insert_std_vector(std::string const &,
-                                std::vector<int16_t> const &, toml::table &);
-template void insert_std_vector(std::string const &,
-                                std::vector<int32_t> const &, toml::table &);
-template void insert_std_vector(std::string const &,
-                                std::vector<int64_t> const &, toml::table &);
-template void insert_std_vector(std::string const &,
-                                std::vector<uint8_t> const &, toml::table &);
-template void insert_std_vector(std::string const &,
-                                std::vector<uint16_t> const &, toml::table &);
-template void insert_std_vector(std::string const &,
-                                std::vector<uint32_t> const &, toml::table &);
-template void insert_std_vector(std::string const &,
-                                std::vector<double> const &, toml::table &);
-template void insert_std_vector(std::string const &,
-                                std::vector<std::string> const &,
-                                toml::table &);
+template toml::array std_vector_to_toml_array(std::vector<int8_t> const &);
+template toml::array std_vector_to_toml_array(std::vector<int16_t> const &);
+template toml::array std_vector_to_toml_array(std::vector<int32_t> const &);
+template toml::array std_vector_to_toml_array(std::vector<int64_t> const &);
+template toml::array std_vector_to_toml_array(std::vector<uint8_t> const &);
+template toml::array std_vector_to_toml_array(std::vector<uint16_t> const &);
+template toml::array std_vector_to_toml_array(std::vector<uint32_t> const &);
+template toml::array std_vector_to_toml_array(std::vector<double> const &);
+template toml::array std_vector_to_toml_array(std::vector<std::string> const &);
 
 template <typename T>
-void insert_arma_vector(std::string const &key, arma::Col<T> const &value,
-                        toml::table &table) {
+toml::array arma_vector_to_toml_array(arma::Col<T> const &value) {
   toml::array arr;
   for (auto &&x : value) {
     arr.push_back(x);
   }
-  insert(key, arr, table);
+  return arr;
 }
+
 template <>
-void insert_arma_vector(std::string const &key,
-                        arma::Col<arma::uword> const &value,
-                        toml::table &table) {
+toml::array arma_vector_to_toml_array(arma::Col<arma::uword> const &value) {
   toml::array arr;
   for (auto &&x : value) {
     arr.push_back((int64_t)x);
   }
-  insert(key, arr, table);
+  return arr;
 }
+
 template <>
-void insert_arma_vector(std::string const &key, arma::Col<complex> const &value,
-                        toml::table &table) {
+toml::array arma_vector_to_toml_array(arma::Col<complex> const &value) {
   toml::array arr;
   for (auto &&x : value) {
     arr.push_back(toml::array{x.real(), x.imag()});
   }
-  insert(key, arr, table);
+  return arr;
 }
-template void insert_arma_vector(std::string const &, arma::Col<double> const &,
-                                 toml::table &);
-template void insert_arma_vector(std::string const &,
-                                 arma::Col<arma::sword> const &, toml::table &);
+
+template toml::array arma_vector_to_toml_array(arma::Col<double> const &);
+template toml::array arma_vector_to_toml_array(arma::Col<arma::sword> const &);
 
 template <typename T>
-void insert_arma_matrix(std::string const &key, arma::Mat<T> const &mat,
-                        toml::table &table) {
+toml::array arma_matrix_to_toml_array(arma::Mat<T> const &mat) {
   toml::array arr;
   for (arma::uword i = 0; i < mat.n_rows; ++i) {
     toml::array row;
@@ -349,13 +332,11 @@ void insert_arma_matrix(std::string const &key, arma::Mat<T> const &mat,
     }
     arr.push_back(row);
   }
-  insert(key, arr, table);
+  return arr;
 }
 
 template <>
-void insert_arma_matrix(std::string const &key,
-                        arma::Mat<arma::uword> const &mat, toml::table &table) {
-  using namespace arma;
+toml::array arma_matrix_to_toml_array(arma::Mat<arma::uword> const &mat) {
   toml::array arr;
   for (arma::uword i = 0; i < mat.n_rows; ++i) {
     toml::array row;
@@ -364,13 +345,11 @@ void insert_arma_matrix(std::string const &key,
     }
     arr.push_back(row);
   }
-  insert(key, arr, table);
+  return arr;
 }
 
 template <>
-void insert_arma_matrix(std::string const &key, arma::Mat<complex> const &mat,
-                        toml::table &table) {
-  using namespace arma;
+toml::array arma_matrix_to_toml_array(arma::Mat<complex> const &mat) {
   toml::array arr;
   for (arma::uword i = 0; i < mat.n_rows; ++i) {
     toml::array row;
@@ -379,12 +358,158 @@ void insert_arma_matrix(std::string const &key, arma::Mat<complex> const &mat,
     }
     arr.push_back(row);
   }
-  insert(key, arr, table);
+  return arr;
 }
 
-template void insert_arma_matrix(std::string const &, arma::Mat<double> const &,
-                                 toml::table &);
-template void insert_arma_matrix(std::string const &,
-                                 arma::Mat<arma::sword> const &, toml::table &);
+template toml::array arma_matrix_to_toml_array(arma::Mat<double> const &);
+template toml::array arma_matrix_to_toml_array(arma::Mat<arma::sword> const &);
+
+toml::array bond_to_toml_array(Bond const &bond) {
+  toml::array array;
+
+  // Type or Matrix
+  if (bond.type_defined()) {
+    array.push_back(bond.type());
+  } else {
+    assert(bond.matrix_defined());
+    auto mat = bond.matrix();
+    if (arma::norm(arma::imag(mat)) < 1e-12) {
+      array.push_back(arma_matrix_to_toml_array(arma::mat(arma::real(mat))));
+    } else {
+      array.push_back(arma_matrix_to_toml_array(mat));
+    }
+  }
+
+  // Coupling or Coupling name
+  if (bond.coupling_defined()) {
+    complex cpl = bond.coupling();
+
+    if (std::abs(cpl.imag()) < 1e-12) {
+      array.push_back(cpl.real());
+    } else {
+      array.push_back(toml::array{cpl.real(), cpl.imag()});
+    }
+  } else {
+    assert(bond.coupling_named());
+    array.push_back(bond.coupling_name());
+  }
+
+  // Sites
+  if (bond.size() == 1) {
+    array.push_back(bond[0]);
+  } else {
+    array.push_back(std_vector_to_toml_array(bond.sites()));
+  }
+  return array;
+}
+
+Bond toml_array_to_bond(toml::array const &array) {
+  if (array.size() == 3) {
+    auto type_node = array[0].value<std::string>();
+    auto matrix_node = array[0].as_array();
+
+    auto coupling_node = array[1].value<double>();
+    auto coupling_node_cplx = array[1].as_array();
+    auto coupling_name_node = array[1].value<std::string>();
+
+    auto site_node = array[2].value<int>();
+    auto sites_node = array[2].as_array();
+
+    if (type_node) {
+      std::string type = *type_node;
+      if (coupling_node || coupling_node_cplx) {
+        complex coupling = (coupling_node)
+                               ? *coupling_node
+                               : get_toml_value<complex>(*coupling_node_cplx);
+        if (site_node) {
+          int site = *site_node;
+          return Bond(type, coupling, site);
+        } else if (sites_node) {
+          auto sites = toml_array_to_std_vector<int>(*sites_node);
+          return Bond(type, coupling, sites);
+        } else {
+          Log.err(
+              "Error parsing toml to hydra::Bond: third entry must be either a "
+              "single int or vector of ints");
+          return Bond();
+        }
+
+      } else if (coupling_name_node) {
+        std::string coupling_name = *coupling_name_node;
+
+        if (site_node) {
+          int site = *site_node;
+          return Bond(type, coupling_name, site);
+        } else if (sites_node) {
+          auto sites = toml_array_to_std_vector<int>(*sites_node);
+          return Bond(type, coupling_name, sites);
+        } else {
+          Log.err(
+              "Error parsing toml to hydra::Bond: third entry must be either a "
+              "single int or vector of ints");
+          return Bond();
+        }
+
+      } else {
+        Log.err(
+            "Error parsing toml to hydra::Bond: second entry must be either a "
+            "string or a (complex) number");
+        return Bond();
+      }
+
+    } else if (matrix_node) {
+      arma::cx_mat matrix = toml_array_to_arma_matrix<complex>(*matrix_node);
+
+      if (coupling_node || coupling_node_cplx) {
+        complex coupling = (coupling_node)
+                               ? *coupling_node
+                               : get_toml_value<complex>(*coupling_node_cplx);
+
+        if (site_node) {
+          int site = *site_node;
+          return Bond(matrix, coupling, site);
+        } else if (sites_node) {
+          auto sites = toml_array_to_std_vector<int>(*sites_node);
+          return Bond(matrix, coupling, sites);
+        } else {
+          Log.err(
+              "Error parsing toml to hydra::Bond: third entry must be either a "
+              "single int or vector of ints");
+          return Bond();
+        }
+
+      } else if (coupling_name_node) {
+        std::string coupling_name = *coupling_name_node;
+
+        if (site_node) {
+          int site = *site_node;
+          return Bond(matrix, coupling_name, site);
+        } else if (sites_node) {
+          auto sites = toml_array_to_std_vector<int>(*sites_node);
+          return Bond(matrix, coupling_name, sites);
+        } else {
+          Log.err(
+              "Error parsing toml to hydra::Bond: third entry must be either a "
+              "single int or vector of ints");
+          return Bond();
+        }
+      } else {
+        Log.err(
+            "Error parsing toml to hydra::Bond: second entry must be either a "
+            "string or a (complex) number");
+        return Bond();
+      }
+
+    } else {
+      Log.err("Error parsing toml to hydra::Bond: first entry must be either a "
+              "string or a matrix");
+      return Bond();
+    }
+  } else {
+    Log.err("Error parsing toml to hydra::Bond: bond is not an array of "
+            "length 3");
+    return Bond();
+  }
+}
 
 } // namespace hydra::io

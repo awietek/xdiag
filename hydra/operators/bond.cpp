@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <hydra/common.h>
+#include <hydra/utils/close.h>
 #include <set>
 
 namespace hydra {
@@ -121,7 +122,8 @@ arma::mat Bond::matrix_real() const {
 template <typename coeff_t> coeff_t Bond::coupling(double precision) const {
 
   if (!coupling_defined()) {
-    Log.err("Error: only coupling_name is defined for this bond: {}", coupling_name_);
+    Log.err("Error: only coupling_name is defined for this bond: {}",
+            coupling_name_);
   }
 
   if constexpr (hydra::is_real<coeff_t>()) {
@@ -146,6 +148,10 @@ std::string Bond::coupling_name() const {
   return coupling_name_;
 }
 std::vector<int> Bond::sites() const { return sites_; }
+
+int Bond::site(int j) const { return sites_.at(j); }
+int Bond::size() const { return (int)sites_.size(); }
+int Bond::operator[](int j) const { return site(j); }
 
 bool Bond::is_complex(double precision) const {
   if (type_defined()) {
@@ -190,6 +196,12 @@ bool Bond::is_complex(double precision) const {
 }
 
 bool Bond::is_real(double precision) const { return !is_complex(precision); }
+bool Bond::operator==(const Bond &rhs) const {
+  return (type_ == rhs.type_) &&
+         arma::approx_equal(matrix_, rhs.matrix_, "both", 1e-12, 1e-12) &&
+         (close(coupling_, rhs.coupling_)) &&
+         (coupling_name_ == rhs.coupling_name_) && (sites_ == rhs.sites_);
+}
 
 std::vector<int> common_sites(Bond b1, Bond b2) {
   std::vector<int> s1 = b1.sites();
@@ -212,20 +224,6 @@ std::ostream &operator<<(std::ostream &out, const Bond &bond) {
   for (auto site : bond.sites())
     out << site << " ";
   return out;
-}
-
-bool operator==(const Bond &lhs, const Bond &rhs) {
-  if (lhs.coupling_named() && rhs.coupling_named()) {
-    return (lhs.type() == rhs.type()) &&
-           (lhs.coupling_name() == rhs.coupling_name()) &&
-           (lhs.sites() == rhs.sites());
-  } else if ((!lhs.coupling_named()) && (!rhs.coupling_named())) {
-    return (lhs.type() == rhs.type()) &&
-           (std::abs(lhs.coupling() - rhs.coupling()) < 1e-12) &&
-           (lhs.sites() == rhs.sites());
-  } else {
-    return false;
-  }
 }
 
 } // namespace hydra

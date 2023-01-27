@@ -15,6 +15,7 @@ const std::vector<std::string> complex_bond_types = {"SCALARCHIRALITY"};
 class Bond {
 public:
   // Constructors with type name
+  Bond() = default;
   Bond(std::string type, int site);
   Bond(std::string type, std::vector<int> const &sites);
   Bond(std::string type, complex coupling, int site);
@@ -50,15 +51,17 @@ public:
 
   template <typename coeff_t = complex>
   coeff_t coupling(double precision = 1e-12) const;
-  
+
   std::string coupling_name() const;
   std::vector<int> sites() const;
-  inline int site(int j) const { return sites_.at(j); }
-  inline int size() const { return (int)sites_.size(); }
-  inline int operator[](int j) const { return site(j); }
+  int site(int j) const;
+  int size() const;
+  int operator[](int j) const;
 
   bool is_complex(double precision = 1e-12) const;
   bool is_real(double precision = 1e-12) const;
+
+  bool operator==(const Bond &rhs) const;
 
 private:
   std::string type_;
@@ -70,6 +73,5 @@ private:
 
 std::vector<int> common_sites(Bond b1, Bond b2);
 std::ostream &operator<<(std::ostream &out, const Bond &bond);
-bool operator==(const Bond &lhs, const Bond &rhs);
 
 } // namespace hydra

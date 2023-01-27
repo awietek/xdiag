@@ -62,10 +62,11 @@ void PrintPretty(const char *identifier, Bond const &bond) {
   if (bond.type_defined()) {
     printf("  type: %s\n", bond.type().c_str());
   } else {
-    if (bond.is_real()) {
-      PrintPretty("  matrix", bond.matrix_real());
+    auto mat = bond.matrix();
+    if (arma::norm(arma::imag(mat))<1e-12) {
+      PrintPretty("  matrix", arma::mat(arma::real(mat)));
     } else {
-      PrintPretty("  matrix", bond.matrix());
+      PrintPretty("  matrix", mat);
     }
   }
   if (bond.coupling_defined()) {

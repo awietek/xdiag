@@ -175,11 +175,46 @@ template <> Permutation FileTomlHandler::as<Permutation>() const {
   return Permutation(array);
 }
 
+template <> PermutationGroup FileTomlHandler::as<PermutationGroup>() const {
+  auto mat = toml_array_to_arma_matrix<arma::sword>(
+      get_toml_array(table_.at_path(key_)));
+  std::vector<Permutation> perms(mat.n_rows);
+  for (std::size_t i = 0; i < mat.n_rows; ++i) {
+    perms[i] = Permutation(std::vector<int>(mat.begin_row(i), mat.end_row(i)));
+  }
+  return PermutationGroup(perms);
+}
+
+template <> Representation FileTomlHandler::as<Representation>() const {
+  auto character_entry =
+      table_.at_path(key_ + std::string(".characters")).as_array();
+  if (character_entry) {
+    auto characters = toml_array_to_std_vector<complex>(*character_entry);
+    auto allowed_symmetries_entry =
+        table_.at_path(key_ + std::string(".allowed_symmetries")).as_array();
+    if (allowed_symmetries_entry) {
+      auto allowed_symmetries =
+          toml_array_to_std_vector<int>(*allowed_symmetries_entry);
+      return Representation(characters, allowed_symmetries);
+    } else {
+      return Representation(characters);
+    }
+  } else {
+    Log.err("Error reading Representation from toml file: no field "
+            "\"characters\"!");
+    return Representation();
+  }
+}
+
+template <> Bond FileTomlHandler::as<Bond>() const {
+  return Bond(toml_array_to_bond(get_toml_array(table_.at_path(key_))));
+}
+
 //////////////////////////////////////////////////////////////////
 // operator=
 
 template <typename T> void FileTomlHandler::operator=(T const &value) {
-  insert(key_, value, table_);
+  table_.insert_or_assign(key_, value);
 }
 template void FileTomlHandler::operator=<std::string>(std::string const &value);
 template void FileTomlHandler::operator=<int8_t>(int8_t const &value);
@@ -192,109 +227,135 @@ template void FileTomlHandler::operator=<uint32_t>(uint32_t const &value);
 template void FileTomlHandler::operator=<double>(double const &value);
 
 template <> void FileTomlHandler::operator=<uint64_t>(uint64_t const &value) {
-  insert(key_, (int64_t)value, table_);
+  table_.insert_or_assign(key_, (int64_t)value);
 }
 
 template <> void FileTomlHandler::operator=(complex const &value) {
-  insert(key_, toml::array{value.real(), value.imag()}, table_);
+  table_.insert_or_assign(key_, toml::array{value.real(), value.imag()});
 }
 
 template <>
 void FileTomlHandler::operator=
     <std::vector<int8_t>>(std::vector<int8_t> const &value) {
-  insert_std_vector(key_, value, table_);
+  table_.insert_or_assign(key_, std_vector_to_toml_array(value));
 }
 template <>
 void FileTomlHandler::operator=
     <std::vector<int16_t>>(std::vector<int16_t> const &value) {
-  insert_std_vector(key_, value, table_);
+  table_.insert_or_assign(key_, std_vector_to_toml_array(value));
 }
 template <>
 void FileTomlHandler::operator=
     <std::vector<int32_t>>(std::vector<int32_t> const &value) {
-  insert_std_vector(key_, value, table_);
+  table_.insert_or_assign(key_, std_vector_to_toml_array(value));
 }
 template <>
 void FileTomlHandler::operator=
     <std::vector<int64_t>>(std::vector<int64_t> const &value) {
-  insert_std_vector(key_, value, table_);
+  table_.insert_or_assign(key_, std_vector_to_toml_array(value));
 }
 template <>
 void FileTomlHandler::operator=
     <std::vector<uint8_t>>(std::vector<uint8_t> const &value) {
-  insert_std_vector(key_, value, table_);
+  table_.insert_or_assign(key_, std_vector_to_toml_array(value));
 }
 template <>
 void FileTomlHandler::operator=
     <std::vector<uint16_t>>(std::vector<uint16_t> const &value) {
-  insert_std_vector(key_, value, table_);
+  table_.insert_or_assign(key_, std_vector_to_toml_array(value));
 }
 template <>
 void FileTomlHandler::operator=
     <std::vector<uint32_t>>(std::vector<uint32_t> const &value) {
-  insert_std_vector(key_, value, table_);
+  table_.insert_or_assign(key_, std_vector_to_toml_array(value));
 }
 template <>
 void FileTomlHandler::operator=
     <std::vector<uint64_t>>(std::vector<uint64_t> const &value) {
-  insert_std_vector(key_, value, table_);
+  table_.insert_or_assign(key_, std_vector_to_toml_array(value));
 }
 template <>
 void FileTomlHandler::operator=
     <std::vector<double>>(std::vector<double> const &value) {
-  insert_std_vector(key_, value, table_);
+  table_.insert_or_assign(key_, std_vector_to_toml_array(value));
 }
 template <>
 void FileTomlHandler::operator=
     <std::vector<complex>>(std::vector<complex> const &value) {
-  insert_std_vector(key_, value, table_);
+  table_.insert_or_assign(key_, std_vector_to_toml_array(value));
 }
 
 template <>
 void FileTomlHandler::operator=
     <std::vector<std::string>>(std::vector<std::string> const &value) {
-  insert_std_vector(key_, value, table_);
+  table_.insert_or_assign(key_, std_vector_to_toml_array(value));
 }
 
 template <> void FileTomlHandler::operator=<arma::vec>(arma::vec const &value) {
-  insert_arma_vector(key_, value, table_);
+  table_.insert_or_assign(key_, arma_vector_to_toml_array(value));
 }
 
 template <>
 void FileTomlHandler::operator=<arma::cx_vec>(arma::cx_vec const &value) {
-  insert_arma_vector(key_, value, table_);
+  table_.insert_or_assign(key_, arma_vector_to_toml_array(value));
 }
 
 template <>
 void FileTomlHandler::operator=<arma::ivec>(arma::ivec const &value) {
-  insert_arma_vector(key_, value, table_);
+  table_.insert_or_assign(key_, arma_vector_to_toml_array(value));
 }
 
 template <>
 void FileTomlHandler::operator=<arma::uvec>(arma::uvec const &value) {
-  insert_arma_vector(key_, value, table_);
+  table_.insert_or_assign(key_, arma_vector_to_toml_array(value));
 }
 
 template <> void FileTomlHandler::operator=<arma::mat>(arma::mat const &value) {
-  insert_arma_matrix(key_, value, table_);
+  table_.insert_or_assign(key_, arma_matrix_to_toml_array(value));
 }
 template <>
 void FileTomlHandler::operator=<arma::cx_mat>(arma::cx_mat const &value) {
-  insert_arma_matrix(key_, value, table_);
+  table_.insert_or_assign(key_, arma_matrix_to_toml_array(value));
 }
 template <>
 void FileTomlHandler::operator=<arma::imat>(arma::imat const &value) {
-  insert_arma_matrix(key_, value, table_);
+  table_.insert_or_assign(key_, arma_matrix_to_toml_array(value));
 }
 
 template <>
 void FileTomlHandler::operator=<arma::umat>(arma::umat const &value) {
-  insert_arma_matrix(key_, value, table_);
+  table_.insert_or_assign(key_, arma_matrix_to_toml_array(value));
 }
 
 template <>
 void FileTomlHandler::operator=<Permutation>(Permutation const &value) {
-  insert_std_vector(key_, value.array(), table_);
+  table_.insert_or_assign(key_, std_vector_to_toml_array(value.array()));
 }
-  
+
+template <>
+void FileTomlHandler::operator=
+    <PermutationGroup>(PermutationGroup const &group) {
+  arma::imat mat(group.n_symmetries(), group.n_sites());
+  for (int i = 0; i < group.n_symmetries(); ++i) {
+    auto int_vec = group[i].array();
+    std::vector<arma::sword> vec(int_vec.begin(), int_vec.end());
+    mat.row(i) = arma::irowvec(vec);
+  }
+  table_.insert_or_assign(key_, arma_matrix_to_toml_array(mat));
+}
+
+template <>
+void FileTomlHandler::operator=<Representation>(Representation const &rep) {
+  toml::table rep_table;
+  rep_table.insert_or_assign("characters",
+                             std_vector_to_toml_array(rep.characters()));
+  rep_table.insert_or_assign(
+      "allowed_symmetries", std_vector_to_toml_array(rep.allowed_symmetries()));
+  table_.insert_or_assign(key_, rep_table);
+}
+
+template <> void FileTomlHandler::operator=<Bond>(Bond const &bond) {
+  table_.insert_or_assign(key_, bond_to_toml_array(bond));
+}
+
 } // namespace hydra::io

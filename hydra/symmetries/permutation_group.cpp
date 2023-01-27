@@ -30,7 +30,7 @@ PermutationGroup::PermutationGroup(std::vector<Permutation> const &permutations)
       Log.err("Error constructing PermutationGroup: no identity element found");
     }
   }
-  
+
   // Check multiplication is complete
   for (auto p1 : permutations) {
     for (auto p2 : permutations) {
@@ -58,6 +58,14 @@ PermutationGroup::PermutationGroup(std::vector<Permutation> const &permutations)
   }
 }
 
+int PermutationGroup::n_sites() const { return n_sites_; }
+int PermutationGroup::n_symmetries() const { return n_symmetries_; }
+int PermutationGroup::size() const { return n_symmetries_; }
+Permutation const &PermutationGroup::operator[](int sym) const {
+  return permutations_[sym];
+}
+int PermutationGroup::inverse(int sym) const { return inverse_[sym]; }
+
 PermutationGroup
 PermutationGroup::subgroup(std::vector<int> const &symmetry_numbers) const {
   std::vector<Permutation> subgroup_permutations;
@@ -80,6 +88,13 @@ bool PermutationGroup::operator==(PermutationGroup const &rhs) const {
 
 bool PermutationGroup::operator!=(PermutationGroup const &rhs) const {
   return !operator==(rhs);
+}
+
+PermutationGroup::iterator_t PermutationGroup::begin() const {
+  return permutations_.begin();
+}
+PermutationGroup::iterator_t PermutationGroup::end() const {
+  return permutations_.end();
 }
 
 } // namespace hydra
