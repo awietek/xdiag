@@ -1,6 +1,8 @@
 #pragma once
 
+#include <hydra/io/file_toml_handler.h>
 #include <hydra/symmetries/permutation.h>
+
 #include <vector>
 
 namespace hydra {
@@ -9,6 +11,7 @@ class PermutationGroup {
 public:
   PermutationGroup() = default;
   explicit PermutationGroup(std::vector<Permutation> const &permutations);
+  explicit PermutationGroup(io::FileTomlHandler &&hdl);
 
   int n_sites() const;
   int n_symmetries() const;
@@ -21,7 +24,7 @@ public:
 
   PermutationGroup subgroup(std::vector<int> const &symmetry_numbers) const;
 
-  using iterator_t = std::vector<Permutation>::const_iterator; 
+  using iterator_t = std::vector<Permutation>::const_iterator;
   iterator_t begin() const;
   iterator_t end() const;
 

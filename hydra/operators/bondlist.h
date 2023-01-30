@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 
+#include <hydra/io/file_toml_handler.h>
 #include <hydra/operators/bond.h>
 #include <hydra/operators/bondlist_handler.h>
 
@@ -16,6 +17,7 @@ class BondList {
 public:
   BondList() = default;
   explicit BondList(std::vector<Bond> const &bonds);
+  explicit BondList(io::FileTomlHandler &&hdl);
 
   int size() const;
   void clear();
@@ -36,7 +38,7 @@ public:
   BondListHandler operator[](std::string name);
   bool operator==(BondList const &other) const;
   bool operator!=(BondList const &other) const;
-  BondList operator+(BondList const & other);
+  BondList operator+(BondList const &other);
   void operator<<(Bond const &bond);
 
   BondList bonds_of_type(std::string type) const;

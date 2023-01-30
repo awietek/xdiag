@@ -30,6 +30,9 @@ Representation::Representation(std::vector<complex> const &characters,
   }
 }
 
+Representation::Representation(io::FileTomlHandler &&hdl)
+    : Representation(hdl.as<Representation>()) {}
+
 Representation
 Representation::subgroup(std::vector<int> const &symmetry_numbers) const {
   std::vector<complex> sub_characters;
@@ -46,7 +49,7 @@ bool Representation::operator!=(Representation const &rhs) const {
   return !operator==(rhs);
 }
 
-Representation read_represenation(std::string filename, std::string repname) {
+Representation read_representation(std::string filename, std::string repname) {
   std::ifstream File(filename.c_str());
   if (File.fail()) {
     std::cerr << "Error in read_charactertable: Could not open "

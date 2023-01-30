@@ -88,7 +88,7 @@ template <class bit_t> void test_indexing_symmetric() {
   
   for (auto irrep_name : irrep_names) {
     Log("irrep: {}", irrep_name);
-    auto irrep = read_represenation(lfile, irrep_name);
+    auto irrep = read_representation(lfile, irrep_name);
     auto idxng = IndexingSymmetricNoSz<bit_t>(n_sites, perm_group, irrep);
     // check_indexing_symmetric_no_sz<bit_t>(idxng);
 

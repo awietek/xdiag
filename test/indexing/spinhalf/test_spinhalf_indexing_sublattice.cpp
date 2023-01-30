@@ -94,7 +94,7 @@ template <class bit_t> void test_spinhalf_indexing_sublattice() {
         "X.D2.A1",     "X.D2.A2",     "X.D2.B1",     "X.D2.B2"};
 
     for (auto irrep_name : irrep_names) {
-      auto irrep = read_represenation(lfile, irrep_name);
+      auto irrep = read_representation(lfile, irrep_name);
       auto idxng = indexing_no_sz_t(n_sites, perm_group, irrep);
       auto idxng_sl = indexing_sl1_t(n_sites, perm_group, irrep);
       compare_indices_no_sz<bit_t, indexing_no_sz_t, indexing_sl1_t>(idxng,
@@ -121,7 +121,7 @@ template <class bit_t> void test_spinhalf_indexing_sublattice() {
         "X.D2.A1",     "X.D2.A2",     "X.D2.B1",     "X.D2.B2"};
 
     for (auto irrep_name : irrep_names) {
-      auto irrep = read_represenation(lfile, irrep_name);
+      auto irrep = read_representation(lfile, irrep_name);
       auto idxng = indexing_no_sz_t(n_sites, perm_group, irrep);
       auto idxng_sl = indexing_sl2_t(n_sites, perm_group, irrep);
       compare_indices_no_sz<bit_t, indexing_no_sz_t, indexing_sl2_t>(idxng,
@@ -147,7 +147,7 @@ template <class bit_t> void test_spinhalf_indexing_sublattice() {
         "Sigma0.D1.B", "Sigma1.D1.A", "Sigma1.D1.B"};
 
     for (auto irrep_name : irrep_names) {
-      auto irrep = read_represenation(lfile, irrep_name);
+      auto irrep = read_representation(lfile, irrep_name);
       auto idxng = indexing_no_sz_t(n_sites, perm_group, irrep);
       auto idxng_sl = indexing_sl3_t(n_sites, perm_group, irrep);
       compare_indices_no_sz<bit_t, indexing_no_sz_t, indexing_sl3_t>(idxng,
@@ -173,7 +173,7 @@ template <class bit_t> void test_spinhalf_indexing_sublattice() {
         "K.D3.E",      "Y.D1.A",      "Y.D1.B"};
 
     for (auto irrep_name : irrep_names) {
-      auto irrep = read_represenation(lfile, irrep_name);
+      auto irrep = read_representation(lfile, irrep_name);
       auto idxng = indexing_no_sz_t(n_sites, perm_group, irrep);
       auto idxng_sl = indexing_sl3_t(n_sites, perm_group, irrep);
       compare_indices_no_sz<bit_t, indexing_no_sz_t, indexing_sl3_t>(idxng,
@@ -200,7 +200,7 @@ template <class bit_t> void test_spinhalf_indexing_sublattice() {
         "X.D2.A1",     "X.D2.A2",     "X.D2.B1",     "X.D2.B2"};
 
     for (auto irrep_name : irrep_names) {
-      auto irrep = read_represenation(lfile, irrep_name);
+      auto irrep = read_representation(lfile, irrep_name);
       auto idxng = indexing_no_sz_t(n_sites, perm_group, irrep);
       auto idxng_sl = indexing_sl4_t(n_sites, perm_group, irrep);
       compare_indices_no_sz<bit_t, indexing_no_sz_t, indexing_sl4_t>(idxng,
@@ -225,7 +225,7 @@ template <class bit_t> void test_spinhalf_indexing_sublattice() {
         "X.C2.B",     "Z0.C1.A",    "Z1.C1.A",     "Z2.C1.A",     "Z3.C1.A"};
 
     for (auto irrep_name : irrep_names) {
-      auto irrep = read_represenation(lfile, irrep_name);
+      auto irrep = read_representation(lfile, irrep_name);
       auto idxng = indexing_no_sz_t(n_sites, perm_group, irrep);
       auto idxng_sl = indexing_sl5_t(n_sites, perm_group, irrep);
       compare_indices_no_sz<bit_t, indexing_no_sz_t, indexing_sl5_t>(idxng,

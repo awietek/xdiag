@@ -5,6 +5,7 @@
 
 #include <hydra/common.h>
 #include <hydra/symmetries/permutation_group.h>
+#include <hydra/io/file_toml_handler.h>
 
 namespace hydra {
 
@@ -14,6 +15,7 @@ public:
   explicit Representation(std::vector<complex> const &characters);
   Representation(std::vector<complex> const &characters,
                  std::vector<int> const &allowed_symmetries);
+  explicit Representation(io::FileTomlHandler && hdl);
 
   complex character(int idx) const { return characters_.at(idx); }
   std::vector<int> allowed_symmetries() const { return allowed_symmetries_; }
@@ -35,7 +37,7 @@ private:
   std::vector<int> allowed_symmetries_;
 };
 
-Representation read_represenation(std::string filename, std::string repname);
+Representation read_representation(std::string filename, std::string repname);
 
 bool is_complex(Representation const &cpls);
 bool is_real(Representation const &cpls);

@@ -35,7 +35,7 @@ void run_kitaev_gamma_test(
   bonds["K"] = K;
   bonds["G"] = G;
   for (auto [name, e0_reference] : irrep_names_e0) {
-    auto irrep = read_represenation(lfile, name);
+    auto irrep = read_representation(lfile, name);
     auto block = Spinhalf(8, group, irrep);
     // double e0_computed = e0(bonds, block);
     cx_mat H = matrix(bonds, block);

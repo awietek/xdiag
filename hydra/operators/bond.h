@@ -7,6 +7,7 @@
 #include <vector>
 
 #include <hydra/common.h>
+#include <hydra/io/file_toml_handler.h>
 
 namespace hydra {
 
@@ -38,6 +39,8 @@ public:
   template <typename coeff_t>
   Bond(arma::Mat<coeff_t> const &matrix, std::string coupling_name,
        std::vector<int> const &sites);
+
+  explicit Bond(io::FileTomlHandler &&hdl);
 
   bool type_defined() const;
   bool matrix_defined() const;

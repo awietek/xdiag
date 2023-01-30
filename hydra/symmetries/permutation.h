@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <hydra/io/file_toml_handler.h>
 
 namespace hydra {
 
@@ -9,7 +10,8 @@ public:
   Permutation() = default;
   explicit Permutation(std::vector<int> const &array);
   explicit Permutation(std::initializer_list<int> list);
-
+  explicit Permutation(io::FileTomlHandler && hdl);
+  
   template <typename bit_t> bit_t apply(bit_t state) const;
   Permutation inverse() const;
   Permutation shuffle() const;

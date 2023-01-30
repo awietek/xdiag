@@ -85,6 +85,8 @@ template Bond::Bond(arma::Mat<double> const &, std::string coupling_name,
 template Bond::Bond(arma::Mat<complex> const &, std::string coupling_name,
                     std::vector<int> const &);
 
+Bond::Bond(io::FileTomlHandler &&hdl) : Bond(hdl.as<Bond>()) {}
+
 bool Bond::type_defined() const { return (type_ != "HYDRA_TYPE_UNDEFINED"); }
 bool Bond::matrix_defined() const { return !type_defined(); }
 bool Bond::coupling_defined() const {

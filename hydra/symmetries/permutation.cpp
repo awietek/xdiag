@@ -22,6 +22,9 @@ Permutation::Permutation(std::vector<int> const &array)
 Permutation::Permutation(std::initializer_list<int> list)
     : Permutation(std::vector<int>(list)) {}
 
+Permutation::Permutation(io::FileTomlHandler && hdl)
+    : Permutation(hdl.as<Permutation>()) {}
+
 template <typename bit_t> bit_t Permutation::apply(bit_t state) const {
   bit_t tstate = 0;
   for (int site = 0; site < size_; ++site) {

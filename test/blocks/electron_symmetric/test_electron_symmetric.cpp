@@ -100,7 +100,7 @@ TEST_CASE("electron_symmetric", "[blocks][electron_symmetric]") {
       idx_t sum_dim_updn = 0;
 
       for (auto [name, mult] : rep_name_mult) {
-        auto irrep = read_represenation(lfile, name);
+        auto irrep = read_representation(lfile, name);
         auto electron = Electron(n_sites, nup, ndn, space_group, irrep);
 
         idx_t dim = electron.size() * mult;

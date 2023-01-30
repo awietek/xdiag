@@ -97,7 +97,7 @@ TEST_CASE("electron_symmetric_apply", "[blocks][electron_symmetric]") {
       {"Y.C1.A", 6}};
   std::vector<Representation> irreps;
   for (auto [name, mult] : rep_name_mult) {
-    irreps.push_back(read_represenation(lfile, name));
+    irreps.push_back(read_representation(lfile, name));
     (void)mult;
   }
   test_electron_symmetric_apply(bondlist, space_group, irreps);
@@ -131,7 +131,7 @@ TEST_CASE("electron_symmetric_apply", "[blocks][electron_symmetric]") {
         {"Y.C1.A", 6}};
     irreps.clear();
     for (auto [name, mult] : rep_name_mult) {
-      irreps.push_back(read_represenation(lfile, name));
+      irreps.push_back(read_representation(lfile, name));
       (void)mult;
     }
     test_electron_symmetric_apply(bondlist, space_group, irreps);

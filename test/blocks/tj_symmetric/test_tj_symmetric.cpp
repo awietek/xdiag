@@ -79,7 +79,7 @@ TEST_CASE("tj_symmetric", "[blocks][tj]") {
   std::vector<Representation> irreps;
   for (auto [name, mult] : rep_name_mult) {
     for (int i = 0; i < mult; ++i) {
-      irreps.push_back(read_represenation(lfile, name));
+      irreps.push_back(read_representation(lfile, name));
     }
   }
 

@@ -92,7 +92,7 @@ TEST_CASE("spinhalf_symmetric", "[blocks][spinhalf_symmetric]") {
 
     for (auto [name, mult] : rep_name_mult) {
 
-      auto irrep = read_represenation(lfile, name);
+      auto irrep = read_representation(lfile, name);
       auto block = Spinhalf(n_sites, nup, space_group, irrep);
 
       idx_t dim = block.size() * mult;

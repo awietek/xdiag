@@ -203,7 +203,7 @@ TEST_CASE("file_toml", "[io]") {
   auto group = PermutationGroup(read_permutations(lfile));
   test_write_read(group);
 
-  auto irrep = read_represenation(lfile, "X.C1.A");
+  auto irrep = read_representation(lfile, "X.C1.A");
   test_write_read(irrep);
 
   auto bond = Bond("HB", "H", 1);

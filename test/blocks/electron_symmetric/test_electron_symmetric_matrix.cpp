@@ -232,7 +232,7 @@ TEST_CASE("electron_symmetric_matrix", "[blocks][electron_symmetric]") {
   irreps.clear();
   multiplicities.clear();
   for (auto [name, mult] : rep_name_mult) {
-    irreps.push_back(read_represenation(lfile, name));
+    irreps.push_back(read_representation(lfile, name));
     multiplicities.push_back(mult);
   }
   test_electron_symmetric_spectra(bondlist, space_group, irreps,
@@ -268,7 +268,7 @@ TEST_CASE("electron_symmetric_matrix", "[blocks][electron_symmetric]") {
     irreps.clear();
     multiplicities.clear();
     for (auto [name, mult] : rep_name_mult) {
-      irreps.push_back(read_represenation(lfile, name));
+      irreps.push_back(read_representation(lfile, name));
       multiplicities.push_back(mult);
     }
     test_electron_symmetric_spectra(bondlist, space_group, irreps,

@@ -136,7 +136,7 @@ TEST_CASE("spinhalf_symmetric_apply", "[blocks][spinhalf_symmetric]") {
   std::vector<Representation> irreps;
   for (auto [name, mult] : rep_name_mult) {
     (void)mult;
-    irreps.push_back(read_represenation(lfile, name));
+    irreps.push_back(read_representation(lfile, name));
   }
   test_spinhalf_symmetric_apply(bondlist, space_group, irreps);
   test_spinhalf_symmetric_apply_no_sz(bondlist, space_group, irreps);
@@ -170,7 +170,7 @@ TEST_CASE("spinhalf_symmetric_apply", "[blocks][spinhalf_symmetric]") {
     int n_sites = 12;
     int n_up = 6;
     for (auto [name, energy] : rep_name_mult) {
-      auto irrep = read_represenation(lfile, name);
+      auto irrep = read_representation(lfile, name);
       auto spinhalf = Spinhalf(n_sites, n_up, space_group, irrep);
       auto e0 = eig0_cplx(bondlist, spinhalf);
       Log("{} {:.12f} {:.12f}", name, e0, energy);

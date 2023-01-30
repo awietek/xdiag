@@ -102,7 +102,7 @@ TEST_CASE("tj_symmetric_apply", "[blocks][tj]") {
 
     std::vector<Representation> irreps;
     for (auto [name, mult] : rep_name_mult) {
-      irreps.push_back(read_represenation(lfile, name));
+      irreps.push_back(read_representation(lfile, name));
       (void)mult;
     }
     test_apply_tj_symmetric(bondlist, space_group, irreps);
@@ -129,7 +129,7 @@ TEST_CASE("tj_symmetric_apply", "[blocks][tj]") {
     std::vector<Representation> irreps;
     std::vector<int> multiplicities;
     for (auto [name, mult] : rep_name_mult) {
-      irreps.push_back(read_represenation(lfile, name));
+      irreps.push_back(read_representation(lfile, name));
       multiplicities.push_back(mult);
     }
 

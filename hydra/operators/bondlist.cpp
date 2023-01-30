@@ -11,6 +11,7 @@
 namespace hydra {
 
 BondList::BondList(std::vector<Bond> const &bonds) : bonds_(bonds) {}
+BondList::BondList(io::FileTomlHandler &&hdl) : BondList(hdl.as<BondList>()) {}
 
 void BondList::operator<<(Bond const &bond) { bonds_.push_back(bond); }
 

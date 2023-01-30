@@ -175,7 +175,7 @@ TEST_CASE("spinhalf_symmetric_matrix", "[blocks][spinhalf_symmetric]") {
     std::vector<Representation> irreps;
     std::vector<int> multiplicities;
     for (auto [name, mult] : rep_name_mult) {
-      irreps.push_back(read_represenation(lfile, name));
+      irreps.push_back(read_representation(lfile, name));
       multiplicities.push_back(mult);
     }
     test_spinhalf_symmetric_spectra(bondlist, space_group, irreps,
@@ -213,7 +213,7 @@ TEST_CASE("spinhalf_symmetric_matrix", "[blocks][spinhalf_symmetric]") {
     int n_sites = 12;
     int n_up = 6;
     for (auto [name, energy] : rep_name_mult) {
-      auto irrep = read_represenation(lfile, name);
+      auto irrep = read_representation(lfile, name);
       auto spinhalf = Spinhalf(n_sites, n_up, space_group, irrep);
       auto H = matrix_cplx(bondlist, spinhalf, spinhalf);
       REQUIRE(arma::norm(H - H.t()) < 1e-12);
