@@ -69,6 +69,10 @@ std::map<std::string, arma::cx_mat> const &BondList::matrices() const {
   return matrices_;
 }
 
+BondListHandler BondList::operator[](std::string name) {
+  return BondListHandler(name, couplings_, matrices_);
+}
+
 int BondList::size() const { return (int)bonds_.size(); }
 void BondList::clear() {
   bonds_.clear();
@@ -176,28 +180,63 @@ bool BondList::is_complex(double precision) const {
   return false;
 }
 
+BondList::iterator_t BondList::begin() { return bonds_.begin(); }
+BondList::iterator_t BondList::end() { return bonds_.end(); }
+BondList::const_iterator_t BondList::begin() const { return bonds_.begin(); }
+BondList::const_iterator_t BondList::end() const { return bonds_.end(); }
+BondList::const_iterator_t BondList::cbegin() const { return bonds_.cbegin(); }
+BondList::const_iterator_t BondList::cend() const { return bonds_.cend(); }
+
 bool BondList::is_real(double precision) const {
   return !is_complex(precision);
 }
 
-BondList operator+(BondList const &bl1, BondList const &bl2) {
-  auto newbonds = bl1.bonds_;
-  newbonds.insert(newbonds.end(), bl2.begin(), bl2.end());
+bool BondList::operator==(BondList const &other) const {
+  std::vector<std::string> matrices_keys;
+  for (const auto &[key, _] : matrices_) {
+    matrices_keys.push_back(key);
+  }
+
+  std::vector<std::string> other_matrices_keys;
+  for (const auto &[key, _] : other.matrices_) {
+    other_matrices_keys.push_back(key);
+  }
+
+  if (matrices_keys != other_matrices_keys) {
+    return false;
+  } else {
+    for (auto &&key : matrices_keys) {
+      if (!approx_equal(matrices_.at(key), other.matrices_.at(key), "both",
+                        1e-12, 1e-12)) {
+        return false;
+      }
+    }
+  }
+  return (bonds_ == other.bonds_) && (couplings_ == other.couplings_);
+}
+
+bool BondList::operator!=(BondList const &other) const {
+  return !operator==(other);
+}
+
+BondList BondList::operator+(BondList const &other) {
+  auto newbonds = bonds_;
+  newbonds.insert(newbonds.end(), other.begin(), other.end());
   BondList blnew = BondList(newbonds);
 
-  for (auto it : bl1.matrices()) {
+  for (auto it : matrices_) {
     blnew.set_matrix(it.first, it.second);
   }
 
-  for (auto it : bl1.couplings()) {
+  for (auto it : couplings_) {
     blnew.set_coupling(it.first, it.second);
   }
 
-  for (auto it : bl2.matrices()) {
+  for (auto it : other.matrices()) {
     blnew.set_matrix(it.first, it.second);
   }
 
-  for (auto it : bl2.couplings()) {
+  for (auto it : other.couplings()) {
     blnew.set_coupling(it.first, it.second);
   }
 

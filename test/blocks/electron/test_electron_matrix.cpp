@@ -154,8 +154,8 @@ TEST_CASE("electron_matrix", "[blocks][electron]") {
       int s1 = bond.site(0);
       int s2 = bond.site(1);
       auto name = bond.coupling_name();
-      Hs(s1, s2) = -real(bondlist[name]);
-      Hs(s2, s1) = -real(bondlist[name]);
+      Hs(s1, s2) = -bondlist[name].as<double>();
+      Hs(s2, s1) = -bondlist[name].as<double>();
     }
 
     arma::vec seigs;
@@ -201,8 +201,8 @@ TEST_CASE("electron_matrix", "[blocks][electron]") {
       int s1 = bond.site(0);
       int s2 = bond.site(1);
       auto name = bond.coupling_name();
-      Hs_up(s1, s2) = -bondlist[name];
-      Hs_up(s2, s1) = -conj(bondlist[name]);
+      Hs_up(s1, s2) = -bondlist[name].as<complex>();
+      Hs_up(s2, s1) = -conj(bondlist[name].as<complex>());
     }
     arma::vec seigs_up;
     arma::eig_sym(seigs_up, Hs_up);
@@ -214,8 +214,8 @@ TEST_CASE("electron_matrix", "[blocks][electron]") {
       int s1 = bond.site(0);
       int s2 = bond.site(1);
       auto name = bond.coupling_name();
-      Hs_dn(s1, s2) = -bondlist[name];
-      Hs_dn(s2, s1) = -conj(bondlist[name]);
+      Hs_dn(s1, s2) = -bondlist[name].as<complex>();
+      Hs_dn(s2, s1) = -conj(bondlist[name].as<complex>());
     }
     arma::vec seigs_dn;
     arma::eig_sym(seigs_dn, Hs_dn);

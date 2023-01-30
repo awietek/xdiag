@@ -93,9 +93,34 @@ void PrintPretty(const char *identifier, Bond const &bond) {
 
 void PrintPretty(const char *identifier, BondList const &bondlist) {
   printf("%s:\n", identifier);
+  printf("Interactions:\n");
   for (auto bond : bondlist) {
-    PrintPretty("bond", bond);
+    PrintPretty(" bond", bond);
   }
+  if (bondlist.couplings().size() > 0) {
+    printf("Couplings:\n");
+    for (auto && [name, cpl] : bondlist.couplings()){
+      if (std::abs(cpl.imag()) < 1e-12 ){
+	Log("  {}: {}", name, cpl.real());
+      } else {
+	Log("  {}: {}", name, cpl);
+      }
+    }
+  }
+
+  if (bondlist.matrices().size() > 0) {
+    printf("Matrices:\n");
+    for (auto && [name, mat] : bondlist.matrices()){
+      Log(" {}:", name);
+      if (arma::norm(arma::imag(mat))<1e-12){
+	arma::real(mat).brief_print();
+      } else{
+	mat.brief_print();
+      }
+	
+    }
+  }
+  
 }
 
 void PrintPretty(const char *identifier, Permutation const &p) {

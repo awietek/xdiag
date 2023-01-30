@@ -71,6 +71,7 @@ sources+= hydra/symmetries/group_action/sublattice_stability.cpp
 
 sources+= hydra/operators/bond.cpp
 sources+= hydra/operators/bondlist.cpp
+sources+= hydra/operators/bondlist_handler.cpp
 sources+= hydra/operators/compiler.cpp
 sources+= hydra/operators/symmetrized_operator.cpp
 sources+= hydra/operators/non_branching_bonds.cpp

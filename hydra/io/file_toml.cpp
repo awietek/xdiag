@@ -69,4 +69,6 @@ bool FileToml::operator!=(FileToml const &other) const {
   return !operator==(other);
 }
 
+toml::table FileToml::table() const { return table_; }
+
 } // namespace hydra

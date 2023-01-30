@@ -25,6 +25,7 @@ template <> complex get_toml_value<complex>(toml_const_node_view const &node) {
     return complex{real_imag[0], real_imag[1]};
   } else {
     Log.err("Error parsing toml: failed trying to parse complex number!");
+    return complex();
   }
 }
 
@@ -60,6 +61,7 @@ template <> complex get_toml_value<complex>(toml_node_view const &node) {
     return complex{real_imag[0], real_imag[1]};
   } else {
     Log.err("Error parsing toml: failed trying to parse complex number!");
+    return complex();
   }
 }
 
@@ -95,6 +97,7 @@ template <> complex get_toml_value<complex>(toml::node const &node) {
     return complex{real_imag[0], real_imag[1]};
   } else {
     Log.err("Error parsing toml: failed trying to parse complex number!");
+    return complex();
   }
 }
 template bool get_toml_value<bool>(toml::node const &);
@@ -107,7 +110,6 @@ template uint16_t get_toml_value<uint16_t>(toml::node const &);
 template uint32_t get_toml_value<uint32_t>(toml::node const &);
 template uint64_t get_toml_value<uint64_t>(toml::node const &);
 template double get_toml_value<double>(toml::node const &);
-template complex get_toml_value<complex>(toml::node const &);
 template std::string get_toml_value<std::string>(toml::node const &);
 
 toml::array get_toml_array(toml_const_node_view const &node) {
@@ -510,6 +512,96 @@ Bond toml_array_to_bond(toml::array const &array) {
             "length 3");
     return Bond();
   }
+}
+
+BondList toml_array_to_bond_list(toml::array const &array) {
+  BondList bonds;
+  for (std::size_t i = 0; i < array.size(); ++i) {
+    auto bond_array = array[i].as_array();
+    if (bond_array) {
+      bonds << toml_array_to_bond(*bond_array);
+    } else {
+      Log.err("Error parsing toml to hydra::BondList: entry {} is not a "
+              "toml::array",
+              i);
+    }
+  }
+  return bonds;
+}
+
+BondList toml_table_to_bond_list(toml::table const &table) {
+  BondList bonds;
+  auto interactions_opt = table["Interactions"].as_array();
+  if (interactions_opt) {
+    bonds = toml_array_to_bond_list(*interactions_opt);
+  }
+
+  auto couplings_opt = table["Couplings"].as_table();
+  if (couplings_opt) {
+    toml::table couplings = *couplings_opt;
+    for (auto [key_node, value_node] : couplings) {
+      std::string key(key_node.str());
+      auto value = get_toml_value<complex>(value_node);
+      bonds.set_coupling(key, value);
+    }
+  }
+
+  auto matrices_opt = table["Matrices"].as_table();
+  if (matrices_opt) {
+    toml::table matrices = *matrices_opt;
+    for (auto [key_node, value_node] : matrices) {
+      std::string key(key_node.str());
+      auto matrix_arr_opt = value_node.as_array();
+      if (matrix_arr_opt) {
+        auto matrix = toml_array_to_arma_matrix<complex>(*matrix_arr_opt);
+        bonds.set_matrix(key, matrix);
+      } else {
+        Log.err("Error parsing matrix of BondList: matrix is not a toml array");
+      }
+    }
+  }
+  return bonds;
+}
+
+toml::array bond_list_to_toml_array(BondList const &bonds) {
+  toml::array array;
+  for (auto &&bond : bonds) {
+    array.push_back(bond_to_toml_array(bond));
+  }
+  return array;
+}
+
+toml::table bond_list_to_toml_table(BondList const &bonds) {
+  toml::table table;
+  table.insert_or_assign("Interactions", bond_list_to_toml_array(bonds));
+
+  if (bonds.couplings().size() > 0) {
+    toml::table couplings;
+    for (auto &&[name, coupling] : bonds.couplings()) {
+      if (std::abs(coupling.imag()) < 1e-12) {
+        couplings.insert_or_assign(name, coupling.real());
+      } else {
+        couplings.insert_or_assign(
+            name, toml::array{coupling.real(), coupling.imag()});
+      }
+    }
+    table.insert_or_assign("Couplings", couplings);
+  }
+
+  if (bonds.matrices().size() > 0) {
+    toml::table matrices;
+    for (auto &&[name, matrix] : bonds.matrices()) {
+      if (arma::norm(arma::imag(matrix)) < 1e-12) {
+        matrices.insert_or_assign(
+            name, arma_matrix_to_toml_array(arma::mat(arma::real(matrix))));
+      } else {
+        matrices.insert_or_assign(name, arma_matrix_to_toml_array(matrix));
+      }
+    }
+    table.insert_or_assign("Matrices", matrices);
+  }
+
+  return table;
 }
 
 } // namespace hydra::io

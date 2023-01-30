@@ -17,6 +17,9 @@
 #include <hydra/symmetries/permutation_group.h>
 #include <hydra/symmetries/representation.h>
 
+#include <hydra/operators/bond.h>
+#include <hydra/operators/bondlist.h>
+
 namespace hydra::io {
 
 FileTomlHandler::FileTomlHandler(std::string key, toml::table &table)
@@ -210,6 +213,21 @@ template <> Bond FileTomlHandler::as<Bond>() const {
   return Bond(toml_array_to_bond(get_toml_array(table_.at_path(key_))));
 }
 
+template <> BondList FileTomlHandler::as<BondList>() const {
+  auto node = table_.at_path(key_);
+  auto array_opt = node.as_array();
+  auto table_opt = node.as_table();
+  if (array_opt) {
+    return toml_array_to_bond_list(*array_opt);
+  } else if (table_opt) {
+    return toml_table_to_bond_list(*table_opt);
+  } else {
+    Log.err("Error parsing toml file to BondList: entry needs to be either an "
+            "array or a table");
+    return BondList();
+  }
+}
+
 //////////////////////////////////////////////////////////////////
 // operator=
 
@@ -356,6 +374,14 @@ void FileTomlHandler::operator=<Representation>(Representation const &rep) {
 
 template <> void FileTomlHandler::operator=<Bond>(Bond const &bond) {
   table_.insert_or_assign(key_, bond_to_toml_array(bond));
+}
+
+template <> void FileTomlHandler::operator=<BondList>(BondList const &bonds) {
+  if ((bonds.couplings().size() > 0) || (bonds.matrices().size() > 0)) {
+    table_.insert_or_assign(key_, bond_list_to_toml_table(bonds));
+  } else {
+    table_.insert_or_assign(key_, bond_list_to_toml_array(bonds));
+  }
 }
 
 } // namespace hydra::io

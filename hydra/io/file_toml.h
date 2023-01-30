@@ -14,13 +14,15 @@ public:
   FileToml(std::string filename, std::string iomode = "r");
 
   bool defined(std::string key) const;
-  io::FileTomlHandler operator[](std::string key);
   void write() const;
   void close() const;
 
+  io::FileTomlHandler operator[](std::string key);
   bool operator==(FileToml const &other) const;
   bool operator!=(FileToml const &other) const;
 
+  toml::table table() const;
+  
 private:
   std::string filename_;
   std::string iomode_;

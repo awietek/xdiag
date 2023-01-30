@@ -99,6 +99,7 @@
 
 #include "operators/bond.h"
 #include "operators/bondlist.h"
+#include "operators/bondlist_handler.h"
 #include "operators/compiler.h"
 #include "operators/non_branching_bonds.h"
 #include "operators/symmetrized_operator.h"
