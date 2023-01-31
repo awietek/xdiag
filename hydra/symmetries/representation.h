@@ -5,7 +5,7 @@
 
 #include <hydra/common.h>
 #include <hydra/symmetries/permutation_group.h>
-#include <hydra/io/file_toml_handler.h>
+#include <hydra/io/toml/file_toml_handler.h>
 
 namespace hydra {
 

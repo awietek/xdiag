@@ -8,8 +8,14 @@ sources+= hydra/algebra/algebra.cpp
 sources+= hydra/algebra/matrix.cpp
 
 sources+= hydra/io/file_toml.cpp
-sources+= hydra/io/file_toml_handler.cpp
-sources+= hydra/io/toml_conversion.cpp
+sources+= hydra/io/toml/file_toml_handler.cpp
+sources+= hydra/io/toml/toml_conversion.cpp
+
+sources+= hydra/io/file_h5.cpp
+sources+= hydra/io/hdf5/file_h5_handler.cpp
+sources+= hydra/io/hdf5/utils.cpp
+sources+= hydra/io/hdf5/write.cpp
+sources+= hydra/io/hdf5/types.cpp
 
 sources+= hydra/combinatorics/binomial.cpp
 sources+= hydra/combinatorics/subsets.cpp
@@ -115,6 +121,7 @@ testsources+= test/tests.cpp
 testsources+= test/bitops/test_bitops.cpp
 
 testsources+= test/io/test_file_toml.cpp
+testsources+= test/io/test_file_h5.cpp
 
 testsources+= test/combinatorics/test_binomial.cpp
 testsources+= test/combinatorics/test_subsets.cpp

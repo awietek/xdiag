@@ -1,6 +1,6 @@
 #pragma once
 
-#include <hydra/io/file_toml_handler.h>
+#include <hydra/io/toml/file_toml_handler.h>
 #include <hydra/symmetries/permutation.h>
 
 #include <vector>

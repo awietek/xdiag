@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include <hydra/io/file_toml_handler.h>
+#include <hydra/io/toml/file_toml_handler.h>
 #include <hydra/operators/bond.h>
 #include <hydra/operators/bondlist_handler.h>
 

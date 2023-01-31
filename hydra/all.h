@@ -14,14 +14,16 @@
 // #include "symmetries/operations/representative_list_omp.h"
 #endif
 
+#ifdef HYDRA_USE_HDF5
+#define ARMA_USE_HDF5
+#endif
+
 #include "extern/armadillo/armadillo"
 #include "extern/fmt/core.h"
 
-#include "io/file_toml.h"
-#include "io/file_toml_handler.h"
+#include "common.h"
 
 #include "bitops/bitops.h"
-#include "common.h"
 #include "utils/close.h"
 #include "utils/iochecks.h"
 #include "utils/logger.h"
@@ -114,6 +116,14 @@
 #include "algorithms/lanczos/tmatrix.h"
 #include "algorithms/sparse_diag.h"
 #include "algorithms/time_evolve.h"
+
+#include "io/file_toml.h"
+#include "io/toml/file_toml_handler.h"
+#include "io/toml/toml_conversion.h"
+
+#ifdef HYDRA_USE_HDF5
+#include "io/file_h5.h"
+#endif
 
 #ifdef HYDRA_ENABLE_MPI
 #include "mpi/allreduce.h"

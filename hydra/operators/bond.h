@@ -7,7 +7,7 @@
 #include <vector>
 
 #include <hydra/common.h>
-#include <hydra/io/file_toml_handler.h>
+#include <hydra/io/toml/file_toml_handler.h>
 
 namespace hydra {
 

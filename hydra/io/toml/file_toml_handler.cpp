@@ -10,7 +10,7 @@
 #include <vector>
 
 #include <hydra/common.h>
-#include <hydra/io/toml_conversion.h>
+#include <hydra/io/toml/toml_conversion.h>
 #include <hydra/utils/logger.h>
 
 #include <hydra/symmetries/permutation.h>
