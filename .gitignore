@@ -14,6 +14,7 @@ lib/libhydra_mpi.a
 options.mk
 test/tests
 test/data/toml/write.toml
+test/data/hdf5/write.h5
 testmpi/tests
 benchmark.prof
 benchmark.prof_*
