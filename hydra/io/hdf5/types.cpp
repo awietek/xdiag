@@ -1,3 +1,4 @@
+#ifdef HYDRA_USE_HDF5
 #include "types.h"
 
 #include <complex>
@@ -46,3 +47,4 @@ template bool hdf5_datatype_mutable<arma::uword>();
 template bool hdf5_datatype_mutable<double>();
 
 } // namespace hydra::hdf5
+#endif

@@ -1,4 +1,5 @@
 #pragma once
+#ifdef HYDRA_USE_HDF5
 
 #include <string>
 #include <vector>
@@ -13,3 +14,4 @@ std::vector<hid_t> create_groups(hid_t file_id, std::string field,
 void close_groups(std::vector<hid_t> const &groups);
 
 } // namespace hydra::hdf5
+#endif

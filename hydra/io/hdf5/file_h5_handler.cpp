@@ -1,3 +1,4 @@
+#ifdef HYDRA_USE_HDF5
 #include "file_h5_handler.h"
 
 #include <complex>
@@ -49,3 +50,4 @@ template void FileH5Handler::operator=(arma::mat const &);
 template void FileH5Handler::operator=(arma::cx_mat const &);
 
 } // namespace hydra::hdf5
+#endif

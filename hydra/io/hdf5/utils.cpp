@@ -1,5 +1,5 @@
 #include "utils.h"
-
+#ifdef HYDRA_USE_HDF5
 #include <hydra/utils/logger.h>
 
 namespace hydra::hdf5 {
@@ -55,3 +55,4 @@ void close_groups(std::vector<hid_t> const &groups) {
 }
 
 } // namespace hydra::hdf5
+#endif
