@@ -33,6 +33,7 @@ examples/spinhalf_chain_syms/main
 examples/dynamics_t_0/hb_chain_dynamical_sf_nosyms/outfiles/*
 examples/dynamics_finite_t/hb_chain_dynamical_sf_fulled/outfiles/*
 examples/dynamics_finite_t/hb_chain_dynamical_sf_fulled_nosyms/outfiles/*
+examples/dynamics_finite_t/shastry_sutherland_fulled/outfiles/
 **main
 **output.txt
 **output.pdf
