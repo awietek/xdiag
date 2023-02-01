@@ -118,12 +118,7 @@
 #include "algorithms/time_evolve.h"
 
 #include "io/file_toml.h"
-#include "io/toml/file_toml_handler.h"
-#include "io/toml/toml_conversion.h"
-
-#ifdef HYDRA_USE_HDF5
 #include "io/file_h5.h"
-#endif
 
 #ifdef HYDRA_ENABLE_MPI
 #include "mpi/allreduce.h"

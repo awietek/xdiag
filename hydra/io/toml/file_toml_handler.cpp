@@ -6,7 +6,6 @@
 #include <array>
 #include <complex>
 #include <cstdint>
-#include <filesystem>
 #include <vector>
 
 #include <hydra/common.h>

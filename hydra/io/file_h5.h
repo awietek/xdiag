@@ -32,4 +32,17 @@ private:
 };
 
 } // namespace hydra
+
+#else
+namespace hydra {
+class FileH5 {
+public:
+  FileH5() {
+    static_assert(false, "hydra::FileH5 can only be used if compile flag "
+                         "-DHYDRA_USE_HDF5 is set");
+  }
+  FileH5(std::string filename, char iomode = 'r') : FileH5() {}
+  FileH5(std::string filename, std::string iomode = "r") : FileH5() {}
+};
+} // namespace hydra
 #endif

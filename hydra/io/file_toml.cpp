@@ -1,6 +1,6 @@
 #include "file_toml.h"
 
-#include <filesystem>
+#include <fstream>
 
 #include <hydra/utils/logger.h>
 
@@ -16,7 +16,8 @@ FileToml::FileToml(std::string filename, std::string iomode)
   }
 
   if (iomode == "r") {
-    if (!std::filesystem::exists(filename)) {
+    std::ifstream f(filename.c_str());
+    if (!f.good()) {
       Log.err("Error reading FileToml: file {} for reading does not exist",
               filename);
     }
