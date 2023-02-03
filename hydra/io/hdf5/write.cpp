@@ -169,6 +169,7 @@ void write_arma_matrix(hid_t file_id, std::string field,
   hsize_t dims[2];
   dims[0] = data.n_rows;
   dims[1] = data.n_cols;
+  
   hid_t dataspace = H5Screate_simple(2, dims, nullptr);
   std::string name = dataset_name(field);
   hid_t dataset = H5Dcreate(group, name.c_str(), datatype, dataspace,
@@ -176,9 +177,9 @@ void write_arma_matrix(hid_t file_id, std::string field,
   if (dataset != H5I_INVALID_HID) {
 
     arma::Mat<data_t> data_trans = data.st(); // IIIIIEEEEEK
-
     hid_t status = H5Dwrite(dataset, datatype, H5S_ALL, H5S_ALL, H5P_DEFAULT,
                             data_trans.memptr());
+
     if (status < 0) {
       Log.err("Error in hydra hdf5: could not write data for field \"{}\"",
               field);
