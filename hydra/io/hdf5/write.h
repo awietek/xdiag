@@ -22,7 +22,7 @@ void write_arma_vector(hid_t file_id, std::string field,
 
 template <typename data_t>
 void write_arma_matrix(hid_t file_id, std::string field,
-                       arma::Col<data_t> const &data));
+                       arma::Col<data_t> const &data);
 
 template <typename data_t>
 void write(hid_t file_id, std::string field, data_t const &data);
