@@ -11,10 +11,10 @@ J=1.00
 Jd=1.00
 
 seeds = range(1, 21, 1)
-temperatures = np.linspace(0.01, 1.0, 2)
+temperatures = np.linspace(0.01, 1.0, 100)
 
-seeds = [1]
-temperatures = [1.0]
+# seeds = [1]
+# temperatures = [1.0]
 
 
 
@@ -51,16 +51,7 @@ for seed in seeds:
         print("T =", T)
         beta = 1 / T
         tmat_e0 = tmat_arr - e0 * yde.eye_like(tmat_arr)
-
-        for block, d in ensemble:
-            print(block)
-            # print(tmat_arr.array[block])
-            # print(tmat_e0.array[block])
-            print(eigs.array[block])
-            print(np.linalg.eigvalsh(tmat_arr.array[block]))
-            print(np.linalg.eigvalsh(tmat_e0.array[block]))
-            print()
-        
+      
         eT = yde.expm(-beta * tmat_e0)
         b = eT[:,0]
         

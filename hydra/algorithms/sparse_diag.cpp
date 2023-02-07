@@ -11,14 +11,14 @@
 namespace hydra {
 
 double eig0_real(BondList const &bondlist, Block const &block, double precision,
-                 int seed, int max_iterations) {
+                 int max_iterations, uint64_t seed) {
   if (block.size() == 0) {
     Log.warn("Warning: block zero dimensional in eig0_real");
     return std::nan("");
   }
 
-  auto tmat = lanczos_eigenvalues_real(bondlist, block, 1, precision, seed,
-                                       max_iterations);
+  auto tmat = lanczos_eigenvalues_real(bondlist, block, 1, precision,
+                                       max_iterations, seed);
 
   auto eigs = tmat.eigenvalues();
   if (eigs.size() == 0) {
@@ -30,14 +30,14 @@ double eig0_real(BondList const &bondlist, Block const &block, double precision,
 }
 
 double eig0_cplx(BondList const &bondlist, Block const &block, double precision,
-                 int seed, int max_iterations) {
+                 int max_iterations, uint64_t seed) {
   if (block.size() == 0) {
     Log.warn("Warning: block zero dimensional in eig0_cplx");
     return std::nan("");
   }
 
-  auto tmat = lanczos_eigenvalues_cplx(bondlist, block, 1, precision, seed,
-                                       max_iterations);
+  auto tmat = lanczos_eigenvalues_cplx(bondlist, block, 1, precision,
+                                       max_iterations, seed);
   auto eigs = tmat.eigenvalues();
   if (eigs.size() == 0) {
     Log.warn("Warning: Tmatrix zero dimensional in eig0_cplx");
@@ -48,19 +48,20 @@ double eig0_cplx(BondList const &bondlist, Block const &block, double precision,
 }
 
 double eig0(BondList const &bondlist, Block const &block, double precision,
-            int seed, int max_iterations) {
-  return eig0_cplx(bondlist, block, precision, seed, max_iterations);
+            int max_iterations, uint64_t seed) {
+  return eig0_cplx(bondlist, block, precision, max_iterations, seed);
 }
 
 StateReal groundstate_real(BondList const &bondlist, Block const &block,
-                           double precision, int seed, int max_iterations) {
+                           double precision, int max_iterations,
+                           uint64_t seed) {
   if (block.size() == 0) {
     Log.warn("Warning: block zero dimensional in groundstate_real");
     return State<double>(block);
   }
 
   auto [tmat, v0] = lanczos_eigenvector_real(bondlist, block, 0, precision,
-                                             seed, max_iterations);
+                                             max_iterations, seed);
   auto eigs = tmat.eigenvalues();
   if (eigs.size() == 0) {
     Log.warn("Warning: Tmatrix zero dimensional in groundstate_real");
@@ -71,14 +72,15 @@ StateReal groundstate_real(BondList const &bondlist, Block const &block,
 }
 
 StateCplx groundstate_cplx(BondList const &bondlist, Block const &block,
-                           double precision, int seed, int max_iterations) {
+                           double precision, int max_iterations,
+                           uint64_t seed) {
   if (block.size() == 0) {
     Log.warn("Warning: block zero dimensional in groundstate_cplx");
     return State<complex>(block);
   }
 
   auto [tmat, v0] = lanczos_eigenvector_cplx(bondlist, block, 0, precision,
-                                             seed, max_iterations);
+                                             max_iterations, seed);
   auto eigs = tmat.eigenvalues();
   if (eigs.size() == 0) {
     Log.warn("Warning: Tmatrix zero dimensional in groundstate_cplx");
@@ -89,21 +91,20 @@ StateCplx groundstate_cplx(BondList const &bondlist, Block const &block,
 }
 
 StateCplx groundstate(BondList const &bondlist, Block const &block,
-                      double precision, int seed, int max_iterations) {
-  return groundstate_cplx(bondlist, block, precision, seed, max_iterations);
+                      double precision, int max_iterations, uint64_t seed) {
+  return groundstate_cplx(bondlist, block, precision, max_iterations, seed);
 }
 
-std::pair<double, StateReal> eig0_groundstate_real(BondList const &bondlist,
-                                                   Block const &block,
-                                                   double precision, int seed,
-                                                   int max_iterations) {
+std::pair<double, StateReal>
+eig0_groundstate_real(BondList const &bondlist, Block const &block,
+                      double precision, int max_iterations, uint64_t seed) {
   if (block.size() == 0) {
     Log.warn("Warning: block zero dimensional in eig0_groundstate_real");
     return {std::nan(""), State<double>(block)};
   }
 
   auto [tmat, v0] = lanczos_eigenvector_real(bondlist, block, 0, precision,
-                                             seed, max_iterations);
+                                             max_iterations, seed);
   auto eigs = tmat.eigenvalues();
   if (eigs.size() == 0) {
     Log.warn("Warning: Tmatrix zero dimensional in groundstate_real");
@@ -113,17 +114,16 @@ std::pair<double, StateReal> eig0_groundstate_real(BondList const &bondlist,
   }
 }
 
-std::pair<double, StateCplx> eig0_groundstate_cplx(BondList const &bondlist,
-                                                   Block const &block,
-                                                   double precision, int seed,
-                                                   int max_iterations) {
+std::pair<double, StateCplx>
+eig0_groundstate_cplx(BondList const &bondlist, Block const &block,
+                      double precision, int max_iterations, uint64_t seed) {
   if (block.size() == 0) {
     Log.warn("Warning: block zero dimensional in eig0_groundstate_cplx");
     return {std::nan(""), State<complex>()};
   }
 
   auto [tmat, v0] = lanczos_eigenvector_cplx(bondlist, block, 0, precision,
-                                             seed, max_iterations);
+                                             max_iterations, seed);
   auto eigs = tmat.eigenvalues();
   if (eigs.size() == 0) {
     Log.warn("Warning: Tmatrix zero dimensional in groundstate_cplx");
@@ -133,12 +133,11 @@ std::pair<double, StateCplx> eig0_groundstate_cplx(BondList const &bondlist,
   }
 }
 
-std::pair<double, StateCplx> eig0_groundstate(BondList const &bondlist,
-                                              Block const &block,
-                                              double precision, int seed,
-                                              int max_iterations) {
-  return eig0_groundstate_cplx(bondlist, block, precision, seed,
-                               max_iterations);
+std::pair<double, StateCplx>
+eig0_groundstate(BondList const &bondlist, Block const &block, double precision,
+                 int max_iterations, uint64_t seed) {
+  return eig0_groundstate_cplx(bondlist, block, precision, max_iterations,
+                               seed);
 }
 
 } // namespace hydra

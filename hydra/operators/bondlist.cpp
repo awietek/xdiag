@@ -200,6 +200,7 @@ bool BondList::operator==(BondList const &other) const {
 
   std::vector<std::string> other_matrices_keys;
   for (const auto &[key, _] : other.matrices_) {
+    (void)_;
     other_matrices_keys.push_back(key);
   }
 

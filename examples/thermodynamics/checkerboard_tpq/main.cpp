@@ -30,8 +30,6 @@ int main(int argc, char **argv) {
   bonds["JD"] = Jd;
   auto group = PermutationGroup(lfile["Symmetries"]);
   auto irrep = Representation(lfile[kname]);
-  HydraPrint(group);
-  HydraPrint(irrep);
 
   Log("Creating block ...");
   tic();
@@ -43,8 +41,8 @@ int main(int argc, char **argv) {
   tic();
   int n_eig_to_converge = 3;
   int max_iterations = 300;
-  auto tmat = lanczos_eigenvalues(bonds, block, n_eig_to_converge, 1e-12, seed,
-                                  max_iterations, 1e-7);
+  auto tmat = lanczos_eigenvalues(bonds, block, n_eig_to_converge, 1e-12,
+                                  max_iterations, seed, 1e-7);
   toc();
 
   ofile["Alphas"] = tmat.alphas();
