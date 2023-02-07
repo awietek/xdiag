@@ -1,60 +1,50 @@
 #!/usr/bin/env python
 import numpy as np
+from scipy.stats import sem
 import matplotlib.pyplot as plt
-import pydiag as yd
-import pydiag.ensemble as yde
-from collections import OrderedDict
 
-n_sitess = [16, 20]
-J=1.00
-Jd=1.00
+n_sites = 20
+J=1
+Jd=1
+seeds = range(1, 21, 1)
 
-temperatures = np.linspace(0.0001, 10.0, 100)
+# TPQ
+Ess = []
+Qss = []
+for seed in seeds:
+    filename = "moments/moments.checkerboard.{}.J.{:.2f}.Jd.{:.2f}.seed.{}.txt".format(n_sites, J, Jd, seed)
+    data = np.loadtxt(filename)
+    Ts = data[:,0]
+    Es = data[:,2]
+    Qs = data[:,3]
+    plt.plot(Ts, (1 / Ts)**2 * (Qs - Es**2), ":")
+    Ess.append(Es)
+    Qss.append(Qs)
 
-# define ensemble of quantum numbers with degeneracies (qn, deg)
-
-for n_sites in n_sitess:
-
-    # define ensemble of quantum numbers with degeneracies (qn, deg)
-    nups = [(nup, 1) if nup == n_sites // 2 else (nup, 2) for nup in range(n_sites//2+1)]
-    if n_sites == 16:
-        ks = [("Gamma.D4.A1", 1), ("Gamma.D4.A2", 1), ("Gamma.D4.B1", 1),
-              ("Gamma.D4.B2", 1), ("Gamma.D4.E", 2), ("M.D4.A1", 1),
-              ("M.D4.A2", 1), ("M.D4.B1", 1), ("M.D4.B2", 1), ("M.D4.E", 2),
-              ("Sigma.D1.A", 4), ("Sigma.D1.B", 4), ("X.D2.A1", 2),
-              ("X.D2.A2", 2), ("X.D2.B1", 2), ("X.D2.B2", 2)]
-
-    if n_sites == 20:
-        ks = [("Gamma.C4.A", 1), ("Gamma.C4.B", 1), ("Gamma.C4.Ea", 1),
-              ("Gamma.C4.Eb", 1), ("M.C4.A", 1), ("M.C4.B", 1), ("M.C4.Ea", 1),
-              ("M.C4.Eb", 1), ("None0.C1.A", 4), ("None1.C1.A", 4)]
+Ess = np.array(Ess)
+Qss = np.array(Qss)
         
-    ensemble = yde.Ensemble(nups, ks)
+def jackknife(data):
+    """ Resample to Jackknife averages """
+    data_resampled = np.zeros_like(data)
+    for idx in range(data.shape[0]):
+        data_resampled[idx, :] = np.mean(np.delete(data, idx, axis=0), axis=0)
+    return data_resampled
 
-    directory = "outfiles/".format(n_sites)
-    regex = "outfile.checkerboard.{}.J.{:.2f}.Jd.{:.2f}.nup.(.*).k.(.*).h5".format(n_sites, J, Jd)
-
-    data = yd.read_h5_data(directory, regex, tags=["Eigenvalues"])
-    eigs = yde.Array(ensemble, data, tag="Eigenvalues").flatten()
-    e0 = eigs.min().min()
-    eigs -= e0
-
-    specheats = []
-    for T in temperatures:
-        print("T =", T)
-        beta = 1 / T
-        boltzmann = yde.exp(-beta * eigs)
-        partition = yde.sum(boltzmann, degeneracies=True)
-        energy = yde.sum(eigs * boltzmann, degeneracies=True)
-        energy2 = yde.sum(eigs * eigs* boltzmann, degeneracies=True)
-        specheat = (energy2/partition - (energy/partition)**2) / T
-        specheats.append(specheat)
-
-    plt.plot(temperatures, specheats, label=r"$N={}$".format(n_sites))
-
-plt.legend()
+Ess = jackknife(Ess)
+Qss = jackknife(Qss)
+Css = (Qss - Ess**2) / (Ts**2)
+Cs_mean = np.mean(Css, axis=0)
+Cs_error = (Css.shape[0]-1) * sem(Css, axis=0)
+plt.errorbar(Ts, Cs_mean, Cs_error, lw=3, c="tab:red", capsize=5, label="TPQ")
+    
+# Full ED
+filename = "../checkerboard_fulled/moments/moments.checkerboard.{}.J.{:.2f}.Jd.{:.2f}.txt".format(n_sites, J, Jd)
+data = np.loadtxt(filename)
+Ts = data[:,0]
+Cs = data[:,4]
+plt.plot(Ts, Cs, label="full ED", c="k", lw=2, zorder=100)
 plt.xlabel(r"$T$")
-plt.ylabel(r"$C(T)$")
-plt.title(r"$J={:.2f}, J_d={:.2f}$".format(J, Jd))
+plt.xlabel(r"$C$")
 plt.legend()
 plt.show()
