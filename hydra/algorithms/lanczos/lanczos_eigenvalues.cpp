@@ -59,36 +59,35 @@ template Tmatrix lanczos_eigenvalues(BondList const &, State<complex>, int,
 template <class coeff_t>
 Tmatrix lanczos_eigenvalues(BondList const &bonds, Block const &block,
                             int num_eigenvalue, double precision,
-                            int max_iterations, double deflation_tol) {
-  auto rstate = RandomState();
+                            int max_iterations, uint64_t seed,
+                            double deflation_tol) {
+  auto rstate = RandomState(seed);
   auto state_0 = State<coeff_t>(block, rstate);
   return lanczos_eigenvalues_inplace(bonds, state_0, num_eigenvalue, precision,
                                      max_iterations, deflation_tol);
 }
 
 template Tmatrix lanczos_eigenvalues<double>(BondList const &, Block const &,
-                                             int, double, int, double);
+                                             int, double, int, uint64_t,
+                                             double);
 template Tmatrix lanczos_eigenvalues<complex>(BondList const &, Block const &,
-                                              int, double, int, double);
+                                              int, double, int, uint64_t,
+                                              double);
 
 Tmatrix lanczos_eigenvalues_real(BondList const &bonds, Block const &block,
                                  int num_eigenvalue, double precision,
-                                 uint64_t seed, int max_iterations,
+                                 int max_iterations, uint64_t seed,
                                  double deflation_tol) {
-  auto rstate = RandomState(seed);
-  auto state_0 = StateReal(block, rstate);
-  return lanczos_eigenvalues_inplace(bonds, state_0, num_eigenvalue, precision,
-                                     max_iterations, deflation_tol);
+  return lanczos_eigenvalues<double>(bonds, block, num_eigenvalue, precision,
+                                     max_iterations, seed, deflation_tol);
 }
 
 Tmatrix lanczos_eigenvalues_cplx(BondList const &bonds, Block const &block,
                                  int num_eigenvalue, double precision,
-                                 uint64_t seed, int max_iterations,
+                                 int max_iterations, uint64_t seed,
                                  double deflation_tol) {
-  auto rstate = RandomState(seed);
-  auto state_0 = StateCplx(block, rstate);
-  return lanczos_eigenvalues_inplace(bonds, state_0, num_eigenvalue, precision,
-                                     max_iterations, deflation_tol);
+  return lanczos_eigenvalues<complex>(bonds, block, num_eigenvalue, precision,
+                                      max_iterations, seed, deflation_tol);
 }
 
 } // namespace hydra

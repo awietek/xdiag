@@ -15,26 +15,35 @@
 
 namespace hydra {
 
-// Implementation with random real starting vector v0 (does NOT copy)
+// Implementation with random real starting vector
 std::pair<Tmatrix, arma::Col<double>>
 lanczos_eigenvector_real(BondList const &bonds, Block const &block,
                          int num_eigenvector = 0, double precision = 1e-12,
-                         uint64_t seed = 42, int max_iterations = 1000,
+                         int max_iterations = 1000, uint64_t seed = 42,
                          double deflation_tol = 1e-7);
 
-// Implementation with random complex starting vector v0
+// Implementation with random complex starting vector
 std::pair<Tmatrix, arma::Col<complex>>
 lanczos_eigenvector_cplx(BondList const &bonds, Block const &block,
                          int num_eigenvector = 0, double precision = 1e-12,
-                         uint64_t seed = 42, int max_iterations = 1000,
+                         int max_iterations = 1000, uint64_t seed = 42,
                          double deflation_tol = 1e-7);
 
+// Templatex implementation with random starting vector
+template <class coeff_t = complex>
+std::pair<Tmatrix, arma::Col<coeff_t>>
+lanczos_eigenvector(BondList const &bonds, Block const &v0,
+                    int num_eigenvector = 0, double precision = 1e-12,
+                    int max_iterations = 1000, uint64_t seed = 42,
+                    double deflation_tol = 1e-7);
+  
 // Implementation with user-defined starting vector v0 (does a copy)
-template <class coeff_t>
+template <class coeff_t = complex>
 std::pair<Tmatrix, arma::Col<coeff_t>>
 lanczos_eigenvector(BondList const &bonds, State<coeff_t> const &v0,
                     int num_eigenvector = 0, double precision = 1e-12,
-                    int max_iterations = 1000, double deflation_tol = 1e-7);
+                    int max_iterations = 1000, uint64_t seed = 42,
+                    double deflation_tol = 1e-7);
 
 // Implementation with a function setting the starting vector
 template <class coeff_t, class set_v0_f>
