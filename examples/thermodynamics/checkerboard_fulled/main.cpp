@@ -27,8 +27,6 @@ int main(int argc, char **argv) {
   bonds["JD"] = Jd;
   auto group = PermutationGroup(lfile["Symmetries"]);
   auto irrep_k = Representation(lfile[kname]);
-  HydraPrint(group);
-  HydraPrint(irrep_k);
 
   Log("Creating block ...");
   tic();
