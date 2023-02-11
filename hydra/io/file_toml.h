@@ -10,8 +10,8 @@ class FileToml {
 public:
   FileToml() = default;
   ~FileToml();
-  FileToml(std::string filename, char iomode = 'r');
   FileToml(std::string filename, std::string iomode = "r");
+  FileToml(std::string filename, char iomode);
 
   bool defined(std::string key) const;
   void write() const;

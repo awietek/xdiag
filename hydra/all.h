@@ -106,7 +106,7 @@
 #include "operators/non_branching_bonds.h"
 #include "operators/symmetrized_operator.h"
 
-#include "algorithms/exp_sym_v.h"
+#include "algorithms/time_evolution/exp_sym_v.h"
 #include "algorithms/lanczos/lanczos.h"
 #include "algorithms/lanczos/lanczos_build.h"
 #include "algorithms/lanczos/lanczos_convergence.h"
@@ -115,7 +115,8 @@
 #include "algorithms/lanczos/lanczos_vector_apply.h"
 #include "algorithms/lanczos/tmatrix.h"
 #include "algorithms/sparse_diag.h"
-#include "algorithms/time_evolve.h"
+#include "algorithms/time_evolution/time_evolution.h"
+#include "algorithms/norm_estimate.h"
 
 #include "io/file_toml.h"
 #include "io/file_h5.h"

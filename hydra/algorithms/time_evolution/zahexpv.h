@@ -1,0 +1,15 @@
+#pragma once
+//
+// Created by Luke Staszewski on 27.01.23.
+//
+
+#include <extern/armadillo/armadillo>
+#include <functional>
+#include <tuple>
+
+namespace hydra {
+std::tuple<arma::cx_vec, double, double>
+zahexpv(double time,
+        std::function<arma::cx_vec(arma::cx_vec const &)> const &apply_A,
+        arma::cx_vec &v, double anorm, double tol, int m);
+}
