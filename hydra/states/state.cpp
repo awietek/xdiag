@@ -32,4 +32,9 @@ State<coeff_t>::State(Block const &block, RandomState const &rstate)
 template class State<double>;
 template class State<complex>;
 
+StateCplx to_cplx(StateReal const &state) {
+  return StateCplx(state.block(),
+                   arma::conv_to<arma::cx_vec>::from(state.vector()));
+}
+
 } // namespace hydra

@@ -1,5 +1,8 @@
 #include "zahexpv.h"
 
+#include <hydra/algorithms/norm_estimate.h>
+#include <hydra/algorithms/time_evolution/pade_matrix_exponential.h>
+#include <hydra/common.h>
 #include <hydra/utils/logger.h>
 
 namespace hydra {
@@ -7,7 +10,7 @@ namespace hydra {
 std::tuple<double, double>
 zahexpv(double time,
         std::function<arma::cx_vec(arma::cx_vec const &)> const &apply_A,
-        arma::cx_vec &w, double anorm, double tol, int m) {
+        arma::cx_vec &w, double tol, int m, double anorm, int nnorm) {
 
   /* perform the time evolution via mat exponential applied to vector as
   outlined in expokit paper i.e. returns w = eˆ(At)*v, where A is anti-hermitian
@@ -16,13 +19,19 @@ zahexpv(double time,
   on-the-fly, apply_A(v): v -> w = Av v: initial vector to be time evolved
       anorm: an estimate for the norm of H outlined in armadillo docs for
   norm(X, p) p = 'inf'
-      TODO: look at how this norm can be esitimated without knowledge of the
-  entire hamiltonian tol: set the precision of the calculation m: size of the
   krylov space - can be updated but will set to 30 or less probably
   */
 
+  if (anorm == 0.) { // if anorm is default value 0., compute an estimate
+    for (int j = 0; j < nnorm; ++j) {
+      double anormj = norm_estimate(apply_A, apply_A, w.n_rows, 5, j + 1);
+      if (anormj > anorm) {
+        anorm = anormj;
+      }
+    }
+  }
+
   //     parameter initialisation
-  constexpr arma::cx_double i = {0, 1};
   int n = w.size();
   //    m = std::min(m, n);
   int mxrej = 10;
@@ -51,7 +60,7 @@ zahexpv(double time,
   // determining the first time step
   int k1 = 2;
   double xm = 1 / (double)m;
-  double normv = arma::norm(v);
+  double normv = arma::norm(w);
   double beta = normv;
   double fact = pow((m + 1) / exp(1),
                     (m + 1)) *
@@ -76,7 +85,7 @@ zahexpv(double time,
     arma::cx_mat V(n, m + 1, arma::fill::zeros);
 
     // A written in the basis of the krylov space
-    arma::Mat<double> H(m + 2, m + 2, arma::fill::zeros);
+    arma::mat H(m + 2, m + 2, arma::fill::zeros);
 
     V(arma::span(0, n - 1), 0) = (1 / beta) * w;
 
@@ -116,15 +125,10 @@ zahexpv(double time,
     // iteratively selecting the step size until desired tol achieved
     int ireject = 0; // won't do more than 10 iterations per time step
     int mx = mb + k1;
-    arma::cx_mat F;
+    arma::mat F;
     double err_loc = 1;
     while (ireject <= mxrej) {
-      F = ExpM(
-          arma::conv_to<arma::cx_mat>::from(sgn * t_step *
-                                            H.submat(0, 0, mx - 1, mx - 1))
-          //                    -i*arma::conv_to<arma::cx_mat>::from(sgn*t_step*H.submat(0,
-          //                    0, mx-1, mx-1))
-      );
+      F = expm(arma::mat(sgn * t_step * H.submat(0, 0, mx - 1, mx - 1)));
       if (k1 == 0) {    // case of happy break-down
         err_loc = btol; // TODO: try tol vs btol :this was error_local in matlab
                         // imp. should it be err_lco
@@ -153,7 +157,7 @@ zahexpv(double time,
       if (ireject == mxrej) {
         Log.err("Error in zahexpv: The requested tolerance is too high (irej > "
                 "10). Try increasing m (Krylov space dimension) or decreasing "
-                "the precision.")
+                "the precision.");
       }
       ireject++;
 
@@ -161,7 +165,7 @@ zahexpv(double time,
     // if happy - breakdown size of H and F taken as m, and m+1 otherwise
     mx = mb + std::max(0, k1 - 1);
     // get first column of F := F0
-    arma::cx_vec F0 = F(arma::span(0, mx - 1), 0);
+    arma::vec F0 = F(arma::span(0, mx - 1), 0);
     w.zeros();
     w = beta * V(arma::span(0, n - 1), arma::span(0, mx - 1)) * F0;
     beta = norm(w);

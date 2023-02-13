@@ -116,6 +116,8 @@
 #include "algorithms/lanczos/tmatrix.h"
 #include "algorithms/sparse_diag.h"
 #include "algorithms/time_evolution/time_evolution.h"
+#include "algorithms/time_evolution/pade_matrix_exponential.h"
+#include "algorithms/time_evolution/zahexpv.h"
 #include "algorithms/norm_estimate.h"
 
 #include "io/file_toml.h"

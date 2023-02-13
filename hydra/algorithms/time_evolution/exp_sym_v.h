@@ -11,8 +11,9 @@
 namespace hydra {
 
 template <typename coeff_t, class multiply_f>
-double exp_sym_v_inplace(multiply_f A, arma::Col<coeff_t> &X, coeff_t tau,
-                         double precision = 1e-12, bool shift = false) {
+inline double exp_sym_v_inplace(multiply_f A, arma::Col<coeff_t> &X,
+                                coeff_t tau, double precision = 1e-12,
+                                bool shift = false) {
 
   double norm = arma::norm(X);
 
@@ -42,16 +43,16 @@ double exp_sym_v_inplace(multiply_f A, arma::Col<coeff_t> &X, coeff_t tau,
 }
 
 template <typename coeff_t, class multiply_f>
-arma::Col<coeff_t> exp_sym_v(multiply_f A, arma::Col<coeff_t> X, coeff_t tau,
-                             double precision = 1e-12) {
+inline arma::Col<coeff_t> exp_sym_v(multiply_f A, arma::Col<coeff_t> X,
+                                    coeff_t tau, double precision = 1e-12) {
   exp_sym_v_inplace(A, X, tau, precision);
   return X;
 }
 
 template <class StateT>
-double exp_sym_v_inplace(BondList const &bonds, StateT &state,
-                         typename StateT::coeff_t tau,
-                         double precision = 1e-12) {
+inline double exp_sym_v_inplace(BondList const &bonds, StateT &state,
+                                typename StateT::coeff_t tau,
+                                double precision = 1e-12) {
   auto const &block = state.block();
 
   using coeff_t = typename StateT::coeff_t;
@@ -74,8 +75,9 @@ double exp_sym_v_inplace(BondList const &bonds, StateT &state,
 }
 
 template <class StateT>
-StateT exp_sym_v(BondList const &bonds, StateT state,
-                 typename StateT::coeff_t tau, double precision = 1e-12) {
+inline StateT exp_sym_v(BondList const &bonds, StateT state,
+                        typename StateT::coeff_t tau,
+                        double precision = 1e-12) {
   exp_sym_v_inplace(bonds, state, tau, precision);
   return state;
 }

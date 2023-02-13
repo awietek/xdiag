@@ -35,4 +35,6 @@ private:
 using StateReal = State<double>;
 using StateCplx = State<complex>;
 
+StateCplx to_cplx(StateReal const &state);
+
 } // namespace hydra
