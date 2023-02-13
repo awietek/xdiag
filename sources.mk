@@ -96,6 +96,9 @@ sources+= hydra/algorithms/lanczos/lanczos_eigenvector.cpp
 sources+= hydra/algorithms/lanczos/lanczos_eigenvalues.cpp
 sources+= hydra/algorithms/sparse_diag.cpp
 sources+= hydra/algorithms/norm_estimate.cpp
+sources+= hydra/algorithms/time_evolution/zahexpv.cpp
+sources+= hydra/algorithms/time_evolution/time_evolution.cpp
+sources+= hydra/algorithms/time_evolution/pade_matrix_exponential.cpp
 
 
 mpisources+= hydra/utils/print_mpi.cpp
@@ -179,6 +182,9 @@ testsources+= test/algorithms/lanczos/test_lanczos_eigenvector.cpp
 testsources+= test/algorithms/test_exp_sym_v.cpp
 testsources+= test/algorithms/test_time_evolve.cpp
 testsources+= test/algorithms/test_norm_estimate.cpp
+testsources+= test/algorithms/time_evolution/test_time_evolution.cpp
+testsources+= test/algorithms/time_evolution/test_pade.cpp
+
 
 testsources+= test/states/test_random_state.cpp
 testsources+= test/states/test_product_state.cpp
