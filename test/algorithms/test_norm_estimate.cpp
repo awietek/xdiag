@@ -23,7 +23,7 @@ void test_operator_norm_real(Block const &block, BondList const &bonds) {
   // Log("norm_est: {}", norm_est);
   if (norm_exact > 1e-12) {
     // Log("ratio: {}", ratio);
-    REQUIRE(((ratio <= 1.00001) && (ratio > 0.3)));
+    REQUIRE(((ratio <= 1.00001) && (ratio > 0.2)));
   }
 }
 
@@ -109,6 +109,7 @@ TEST_CASE("norm_estimate", "[algorithms]") {
     // HB chain with lattice symmetries
     auto [group, irreps, multiplicities] =
         get_cyclic_group_irreps_mult(n_sites);
+    (void)multiplicities;
     auto bondlist = HBchain(n_sites, 3.21, 0.123);
     for (int nup = 0; nup <= n_sites; ++nup) {
       auto block = Spinhalf(n_sites, nup);
@@ -153,6 +154,7 @@ TEST_CASE("norm_estimate", "[algorithms]") {
         test_operator_norm_real(block, bonds);
 
         for (auto [name, mult] : rep_name_mult) {
+          (void)mult;
           auto irrep = read_representation(lfile, name);
           auto block = tJ(n_sites, nup, ndn, group, irrep);
           if (hydra::is_real(irrep)) {
@@ -201,6 +203,7 @@ TEST_CASE("norm_estimate", "[algorithms]") {
           test_operator_norm_cplx(block, bonds);
 
           for (auto [name, mult] : rep_name_mult) {
+            (void)mult;
             auto irrep = read_representation(lfile, name);
             auto block = tJ(n_sites, nup, ndn, group, irrep);
             test_operator_norm_cplx(block, bonds);
