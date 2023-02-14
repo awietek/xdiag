@@ -84,7 +84,8 @@ template <class bit_t> void test_spinhalf_indexing_sublattice() {
   {
     Log("SpinhalfIndexingSublattice: 1 sublattice");
     int n_sites = 8;
-    std::string lfile = "data/square.8.heisenberg.2sl.lat";
+    std::string lfile =
+        HYDRA_DIRECTORY "/misc/data/square.8.heisenberg.2sl.lat";
     auto permutations = hydra::read_permutations(lfile);
     auto perm_group = PermutationGroup(permutations);
     std::vector<std::string> irrep_names = {
@@ -111,7 +112,8 @@ template <class bit_t> void test_spinhalf_indexing_sublattice() {
   {
     Log("SpinhalfIndexingSublattice: 2 sublattice");
     int n_sites = 8;
-    std::string lfile = "data/square.8.heisenberg.2sl.lat";
+    std::string lfile =
+        HYDRA_DIRECTORY "/misc/data/square.8.heisenberg.2sl.lat";
     auto permutations = hydra::read_permutations(lfile);
     auto perm_group = PermutationGroup(permutations);
     std::vector<std::string> irrep_names = {
@@ -138,7 +140,8 @@ template <class bit_t> void test_spinhalf_indexing_sublattice() {
   {
     Log("SpinhalfIndexingSublattice: 3 sublattice");
     int n_sites = 9;
-    std::string lfile = "data/square.9.heisenberg.3sl.lat";
+    std::string lfile =
+        HYDRA_DIRECTORY "/misc/data/square.9.heisenberg.3sl.lat";
     auto permutations = hydra::read_permutations(lfile);
     auto perm_group = PermutationGroup(permutations);
     std::vector<std::string> irrep_names = {
@@ -164,7 +167,8 @@ template <class bit_t> void test_spinhalf_indexing_sublattice() {
   {
     Log("SpinhalfIndexingSublattice: 3 sublattice (triangular)");
     int n_sites = 9;
-    std::string lfile = "data/triangular.9.Jz1Jz2Jx1Jx2D1.sublattices.tsl.lat";
+    std::string lfile = HYDRA_DIRECTORY
+        "/misc/data/triangular.9.Jz1Jz2Jx1Jx2D1.sublattices.tsl.lat";
     auto permutations = hydra::read_permutations(lfile);
     auto perm_group = PermutationGroup(permutations);
     std::vector<std::string> irrep_names = {
@@ -190,7 +194,8 @@ template <class bit_t> void test_spinhalf_indexing_sublattice() {
   {
     Log("SpinhalfIndexingSublattice: 4 sublattice");
     int n_sites = 8;
-    std::string lfile = "data/square.8.heisenberg.4sl.lat";
+    std::string lfile =
+        HYDRA_DIRECTORY "/misc/data/square.8.heisenberg.4sl.lat";
     auto permutations = hydra::read_permutations(lfile);
     auto perm_group = PermutationGroup(permutations);
     std::vector<std::string> irrep_names = {
@@ -217,7 +222,8 @@ template <class bit_t> void test_spinhalf_indexing_sublattice() {
   {
     Log("SpinhalfIndexingSublattice: 5 sublattice");
     int n_sites = 10;
-    std::string lfile = "data/square.10.heisenberg.5sl.lat";
+    std::string lfile =
+        HYDRA_DIRECTORY "/misc/data/square.10.heisenberg.5sl.lat";
     auto permutations = hydra::read_permutations(lfile);
     auto perm_group = PermutationGroup(permutations);
     std::vector<std::string> irrep_names = {

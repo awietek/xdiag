@@ -44,10 +44,10 @@ void compare_actions(Action1 &&action1, Action2 &&action2) {
       REQUIRE(r1 == r2);
       REQUIRE(syms1.size() == syms2.size());
       for (std::size_t i = 0; i < syms1.size(); ++i) {
-	int sym1 = syms1[i];
-	int sym2 = syms2[i];
-	REQUIRE(action1.apply(sym1, bits) == r1);
-	REQUIRE(action2.apply(sym2, bits) == r2);
+        int sym1 = syms1[i];
+        int sym2 = syms2[i];
+        REQUIRE(action1.apply(sym1, bits) == r1);
+        REQUIRE(action2.apply(sym2, bits) == r2);
       }
     }
   }
@@ -57,7 +57,8 @@ template <class bit_t> void test_group_action_sublattice() {
 
   {
     Log("GroupActionSublattice: 1 sublattice");
-    std::string lfile = "data/square.8.heisenberg.2sl.lat";
+    std::string lfile =
+        HYDRA_DIRECTORY "/misc/data/square.8.heisenberg.2sl.lat";
     auto permutations = hydra::read_permutations(lfile);
     auto perm_group = PermutationGroup(permutations);
     auto action = GroupAction(perm_group);
@@ -68,7 +69,8 @@ template <class bit_t> void test_group_action_sublattice() {
   // Two sublattice
   {
     Log("GroupActionSublattice: 2 sublattice");
-    std::string lfile = "data/square.8.heisenberg.2sl.lat";
+    std::string lfile =
+        HYDRA_DIRECTORY "/misc/data/square.8.heisenberg.2sl.lat";
     auto permutations = hydra::read_permutations(lfile);
     auto perm_group = PermutationGroup(permutations);
     auto action = GroupAction(perm_group);
@@ -79,7 +81,8 @@ template <class bit_t> void test_group_action_sublattice() {
   // Three sublattice
   {
     Log("GroupActionSublattice: 3 sublattice");
-    std::string lfile = "data/square.9.heisenberg.3sl.lat";
+    std::string lfile =
+        HYDRA_DIRECTORY "/misc/data/square.9.heisenberg.3sl.lat";
     auto permutations = hydra::read_permutations(lfile);
     auto perm_group = PermutationGroup(permutations);
     auto action = GroupAction(perm_group);
@@ -90,7 +93,8 @@ template <class bit_t> void test_group_action_sublattice() {
   // Three sublattice (triangular example)
   {
     Log("GroupActionSublattice: 3 sublattice (triangular)");
-    std::string lfile = "data/triangular.9.Jz1Jz2Jx1Jx2D1.sublattices.tsl.lat";
+    std::string lfile = HYDRA_DIRECTORY
+        "/misc/data/triangular.9.Jz1Jz2Jx1Jx2D1.sublattices.tsl.lat";
     auto permutations = hydra::read_permutations(lfile);
     auto perm_group = PermutationGroup(permutations);
     auto action = GroupAction(perm_group);
@@ -101,7 +105,8 @@ template <class bit_t> void test_group_action_sublattice() {
   // Four sublattice
   {
     Log("GroupActionSublattice: 4 sublattice");
-    std::string lfile = "data/square.8.heisenberg.4sl.lat";
+    std::string lfile =
+        HYDRA_DIRECTORY "/misc/data/square.8.heisenberg.4sl.lat";
     auto permutations = hydra::read_permutations(lfile);
     auto perm_group = PermutationGroup(permutations);
     auto action = GroupAction(perm_group);
@@ -111,7 +116,8 @@ template <class bit_t> void test_group_action_sublattice() {
   // Five sublattice
   {
     Log("GroupActionSublattice: 5 sublattice");
-    std::string lfile = "data/square.10.heisenberg.5sl.lat";
+    std::string lfile =
+        HYDRA_DIRECTORY "/misc/data/square.10.heisenberg.5sl.lat";
     auto permutations = hydra::read_permutations(lfile);
     auto perm_group = PermutationGroup(permutations);
     auto action = GroupAction(perm_group);

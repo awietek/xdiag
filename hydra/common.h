@@ -5,6 +5,7 @@
 #include <math.h>
 #include <utility>
 
+#include <hydra/config.h>
 #include <hydra/bitops/bitops.h>
 #define BSTR(x) bitops::bits_to_string(x, n_sites)
 

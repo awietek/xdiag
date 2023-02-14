@@ -51,21 +51,24 @@ TEST_CASE("analytic_case_free_particle_1D", "[time_evolution]") {
   auto psi_0 = State(block, psi_0_list);
 
   // seems to be accurate for times up towards 10^5
-  arma::vec times = arma::logspace(-3, 2, 10);
+  arma::vec times = arma::logspace(-3, 1, 10);
 
   for (auto time : times) {
-    double tol = 1e-2;
-    auto w_expokit = time_evolve(bonds, psi_0, time, tol);
-    arma::cx_vec w_analytic = psi_analytic(time);
+    std::vector<double> tols = {1e-2, 1e-4, 1e-6, 1e-8, 1e-10, 1e-12};
+    for (auto tol : tols) {
+      auto w_expokit = time_evolve(bonds, psi_0, time, tol);
+      arma::cx_vec w_analytic = psi_analytic(time);
 
-    // norm is one so no division here by norm of true
-    auto eps = arma::norm(w_expokit.vector() - w_analytic);
+      // norm is one so no division here by norm of true
+      auto eps = arma::norm(w_expokit.vector() - w_analytic);
 
-    cout << "err: " << eps / time << endl;
-    cout << "time = " << time << endl;
-    w_analytic.print("ana");
-    w_expokit.vector().print("lanc");
-    CHECK(eps / time < tol);
+      cout << "err: " << eps / time << endl;
+      cout << "time = " << time << endl;
+      // w_analytic.print("ana");
+      // w_expokit.vector().print("lanc");
+
+      REQUIRE(eps < 4 * tol);
+    }
   }
 }
 
@@ -143,24 +146,91 @@ TEST_CASE("analytic_case_free_particle_2D", "[time_evolution]") {
   auto psi_0 = State(block, psi_0_list);
 
   // seems to be accurate for times up towards 10^5
-  arma::vec times = arma::logspace(-3, 2, 10);
+  arma::vec times = arma::logspace(-3, 1, 10);
 
   for (auto time : times) {
-    double tol = 1e-10;
-    auto w_expokit = time_evolve(bonds, psi_0, time, tol);
-    arma::cx_vec w_analytic = psi_analytic(time);
+    std::vector<double> tols = {1e-2, 1e-4, 1e-6, 1e-8, 1e-10, 1e-12};
+    for (auto tol : tols) {
+      auto w_expokit = time_evolve(bonds, psi_0, time, tol);
+      arma::cx_vec w_analytic = psi_analytic(time);
 
-    // norm is one so no division here by norm of true
-    auto eps = arma::norm(w_expokit.vector() - w_analytic);
+      // norm is one so no division here by norm of true
+      auto eps = arma::norm(w_expokit.vector() - w_analytic);
 
-    cout << "err: " << eps / time << endl;
-    cout << "time = " << time << endl;
-    w_analytic.print("ana");
-    w_expokit.vector().print("lanc");
+      cout << "tol: " << tol << endl;
+      cout << "err: " << eps << endl;
+      cout << "time = " << time << endl;
+      // w_analytic.print("ana");
+      // w_expokit.vector().print("lanc");
 
-    cout << "norm hydra " << norm(w_expokit) << endl;
-    cout << "norm analytic " << norm(w_analytic) << endl;
+      // cout << "norm hydra " << norm(w_expokit) << endl;
+      // cout << "norm analytic " << norm(w_analytic) << endl;
 
-    CHECK(eps / time < tol);
+      REQUIRE(eps < 4 * tol);
+    }
+  }
+}
+
+TEST_CASE("tj_complex_timeevo", "[time_evolution]") {
+
+  int L = 3;
+  int n_sites = L * L;
+
+  // Create square lattice t-J model
+  BondList bonds;
+  for (int x = 0; x < L; ++x) {
+    for (int y = 0; y < L; ++y) {
+      int nx = (x + 1) % L;
+      int ny = (y + 1) % L;
+
+      int site = y * L + x;
+      int right = y * L + nx;
+      int top = ny * L + x;
+      bonds << Bond("HOP", "T", {site, right});
+      bonds << Bond("TJISING", "J", {site, right});
+      bonds << Bond("HOP", "T", {site, top});
+      bonds << Bond("TJISING", "J", {site, top});
+    }
+  }
+  bonds["T"] = 1.0 + 0.2i;
+  bonds["J"] = 0.4;
+
+  // Create initial state
+  auto pstate = ProductState();
+  for (int x = 0; x < L; ++x) {
+    for (int y = 0; y < L; ++y) {
+      if (((x + y) % 2) == 0) {
+        pstate << "Dn";
+      } else {
+        pstate << "Up";
+      }
+    }
+  }
+  pstate[n_sites / 2] = "Emp";
+  auto block = tJ(n_sites, n_sites / 2, n_sites / 2 - 1);
+
+  auto H = matrix_cplx(bonds, block);
+  auto psi_0 = StateCplx(block, pstate);
+
+  arma::vec times = arma::logspace(-1, 1, 3);
+
+  for (auto time : times) {
+    std::vector<double> tols = {1e-2, 1e-6, 1e-10, 1e-12};
+    for (auto tol : tols) {
+      auto psi = time_evolve(bonds, psi_0, time, tol);
+      cx_vec psi2 = expm(cx_mat(-1.0i * time * H)) * psi_0.vector();
+
+      double eps = norm(psi2 - psi.vector());
+      cout << "tol: " << tol << endl;
+      cout << "err: " << eps << endl;
+      cout << "time = " << time << endl;
+      // w_analytic.print("ana");
+      // w_expokit.vector().print("lanc");
+
+      // cout << "norm hydra " << norm(w_expokit) << endl;
+      // cout << "norm analytic " << norm(w_analytic) << endl;
+
+      REQUIRE(eps < 4 * tol);
+    }
   }
 }

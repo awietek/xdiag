@@ -155,7 +155,8 @@ TEST_CASE("spinhalf_symmetric_matrix", "[blocks][spinhalf_symmetric]") {
   // test a 3x3 triangular lattice
   {
     Log("spinhalf_symmetric_matrix: Triangular 3x3");
-    std::string lfile = "data/triangular.9.Jz1Jz2Jx1Jx2D1.sublattices.tsl.lat";
+    std::string lfile = HYDRA_DIRECTORY
+        "/misc/data/triangular.9.Jz1Jz2Jx1Jx2D1.sublattices.tsl.lat";
 
     auto bondlist = read_bondlist(lfile);
     bondlist["Jz1"] = 1.00;
@@ -187,7 +188,8 @@ TEST_CASE("spinhalf_symmetric_matrix", "[blocks][spinhalf_symmetric]") {
   // test J1-J2-Jchi triangular lattice
   {
     Log("spinhalf_symmetric_matrix: Triangular J1J2Jchi N=12");
-    std::string lfile = "data/triangular.j1j2jch/"
+    std::string lfile =
+        HYDRA_DIRECTORY "/misc/data/triangular.j1j2jch/"
                         "triangular.12.j1j2jch.sublattices.fsl.lat";
 
     auto bondlist = read_bondlist(lfile);

@@ -216,7 +216,8 @@ TEST_CASE("electron_symmetric_matrix", "[blocks][electron_symmetric]") {
 
   // test a 3x3 triangular lattice
   Log("electron_symmetric_matrix: Hubbard 3x3 triangular");
-  std::string lfile = "data/triangular.9.hop.sublattices.tsl.lat";
+  std::string lfile =
+      HYDRA_DIRECTORY "/misc/data/triangular.9.hop.sublattices.tsl.lat";
 
   bondlist = read_bondlist(lfile);
   bondlist["T"] = 1.0;
@@ -251,8 +252,8 @@ TEST_CASE("electron_symmetric_matrix", "[blocks][electron_symmetric]") {
   // test a 3x3 triangular lattice with complex hoppings
   {
     Log.out("electron_symmetric_matrix: Hubbard 3x3 triangular (complex)");
-    std::string lfile =
-        "data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.lat";
+    std::string lfile = HYDRA_DIRECTORY
+        "/misc/data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.lat";
     BondList bondlist = read_bondlist(lfile);
     bondlist["TPHI"] = complex(0.5, 0.5);
     bondlist["JPHI"] = 0.;

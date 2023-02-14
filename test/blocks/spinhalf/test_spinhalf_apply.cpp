@@ -62,7 +62,8 @@ TEST_CASE("spinhalf_apply", "[models][spinhalf]") {
 
   {
     Log("spinhalf_matrix: Triangular J1J2Jchi N=12");
-    std::string lfile = "data/triangular.j1j2jch/"
+    std::string lfile =
+        HYDRA_DIRECTORY "/misc/data/triangular.j1j2jch/"
                         "triangular.12.j1j2jch.sublattices.fsl.lat";
 
     auto bondlist = read_bondlist(lfile);

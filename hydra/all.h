@@ -22,6 +22,7 @@
 #include "extern/fmt/core.h"
 
 #include "common.h"
+#include "config.h"
 
 #include "bitops/bitops.h"
 #include "utils/close.h"

@@ -8,7 +8,8 @@ void run_kitaev_gamma_test(
   using namespace hydra;
   using namespace arma;
 
-  std::string lfile = "data/kitaev_gamma/lattice-files/"
+  std::string lfile =
+      HYDRA_DIRECTORY "/misc/data/kitaev_gamma/lattice-files/"
                       "honeycomb.8.HeisenbergKitaevGamma.fsl.lat";
   auto bonds = read_bondlist(lfile);
   auto group = PermutationGroup(read_permutations(lfile));

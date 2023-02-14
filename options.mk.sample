@@ -1,8 +1,0 @@
-# Choose the Compilers (mpicc only required for compiling the MPI library)
-cc         = g++
-
-# Set optimization flags
-ccopt      = -O2
-
-# Choose the BLas/Lapack Backend
-lapack = -llapack -lblas

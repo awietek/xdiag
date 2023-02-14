@@ -51,7 +51,8 @@ TEST_CASE("fermi_table", "[symmetries]") {
   }
 
   Log("triangular 3x3");
-  std::string lfile = "data/triangular.9.hop.sublattices.tsl.lat";
+  std::string lfile =
+      HYDRA_DIRECTORY "/misc/data/triangular.9.hop.sublattices.tsl.lat";
   auto permutations = hydra::read_permutations(lfile);
   auto group = PermutationGroup(permutations);
   test_fermi_bool_table<uint16_t>(group);

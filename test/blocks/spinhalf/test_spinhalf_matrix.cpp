@@ -82,7 +82,7 @@ TEST_CASE("spinhalf_matrix", "[models][spinhalf]") {
     for (auto eta : etas) {
       auto [bonds, e0] = triangular_12_complex(nup, eta);
       auto block = Spinhalf(n_sites, nup);
-      auto H = matrix_cplx(bonds, block, block);      
+      auto H = matrix_cplx(bonds, block, block);
       REQUIRE(H.is_hermitian(1e-8));
 
       arma::vec eigs;
@@ -96,7 +96,8 @@ TEST_CASE("spinhalf_matrix", "[models][spinhalf]") {
 
   {
     Log("spinhalf_matrix: Triangular J1J2Jchi N=12");
-    std::string lfile = "data/triangular.j1j2jch/"
+    std::string lfile =
+        HYDRA_DIRECTORY "/misc/data/triangular.j1j2jch/"
                         "triangular.12.j1j2jch.sublattices.fsl.lat";
 
     auto bondlist = read_bondlist(lfile);

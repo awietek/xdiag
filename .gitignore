@@ -1,3 +1,5 @@
+build
+build/*
 benchmark
 .DS_Store
 *.gcda
@@ -9,8 +11,6 @@ benchmark
 *~
 *.prof
 *.pdf
-lib/libhydra.a
-lib/libhydra_mpi.a
 options.mk
 test/tests
 test/data/toml/write.toml

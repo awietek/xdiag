@@ -8,7 +8,8 @@ TEST_CASE("permutation_group", "[symmetries]") {
   using namespace hydra;
   Log("Test PermutationGroup");
 
-  std::string lfile = "data/triangular.j1j2jch/"
+  std::string lfile =
+      HYDRA_DIRECTORY "/misc/data/triangular.j1j2jch/"
                       "triangular.12.j1j2jch.sublattices.fsl.lat";
   auto group = PermutationGroup(read_permutations(lfile));
 

@@ -1,0 +1,30 @@
+--- # Code
+Code: QuantumLibrary/EDSLEngineIETL
+gitversion: b2d7082de3f4fd9a366311cd0cdbb30d25ecaee5
+host: laeu-work3
+starttime: Wed Jan 24 11:48:59 2018
+--- # Parameters
+BandLanczos: 1
+BandWidth: 6
+BondmatrixFile: "bondmatrices/bondmatrices.kitaevgamma.SU.2"
+G: 0.5877852522924731371
+HilbertspaceType: "HILBERTSPACE_2_TYPE"
+J: 0
+K: 0.80901699437494745126
+LatticeDescriptionFile: "lattice-files/honeycomb.24.HeisenbergKitaevGamma.fsl.lat"
+MaxIterations: 10000
+Nevals: 6
+OutFile: "outfiles/outfiles.honeycomb.24/outfile.honeycomb.24.HB.Kitaev.Gamma.J.0.K..80901699437494742410.G..58778525229247312915.phi.0.200.k.K1.C1.A"
+representation: "K1.C1.A"
+sites: 24
+--- # Results
+Eigenvalue[0]=-7.8775215937343432415 (1)times
+Eigenvalue[1]=-7.680963027258138176 (1)times
+Eigenvalue[2]=-7.6049670380660154834 (1)times
+Eigenvalue[3]=-7.6049670380659177837 (1)times
+Eigenvalue[4]=-7.5423648420998699038 (1)times
+Eigenvalue[5]=-7.5423648420991655783 (1)times
+--- # Runtime
+Lanczos steps for convergence (precision 9.9999999999999997989e-13): 356
+endtime: Wed Jan 24 12:17:04 2018
+runtime: 1685.3285720348358154 secs

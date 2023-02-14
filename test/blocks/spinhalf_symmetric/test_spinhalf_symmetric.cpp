@@ -82,7 +82,8 @@ TEST_CASE("spinhalf_symmetric", "[blocks][spinhalf_symmetric]") {
       {"K.D3.A1", 2},     {"K.D3.A2", 2},     {"K.D3.E", 4},
       {"Y.D1.A", 6},      {"Y.D1.B", 6}};
 
-  std::string lfile = "data/triangular.9.Jz1Jz2Jx1Jx2D1.sublattices.tsl.lat";
+  std::string lfile = HYDRA_DIRECTORY
+      "/misc/data/triangular.9.Jz1Jz2Jx1Jx2D1.sublattices.tsl.lat";
   auto permutations = hydra::read_permutations(lfile);
   auto space_group = PermutationGroup(permutations);
 

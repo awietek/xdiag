@@ -39,7 +39,6 @@ void test_spinhalf_indexing_state(Indexing const &indexing, bit_t state) {
     for (int sym : syms) {
       REQUIRE(group_action.apply(sym, state) == rep);
     }
-
   }
 }
 
@@ -76,7 +75,8 @@ template <class bit_t> void test_indexing_symmetric() {
 
   Log("IndexingSymmetric: triangular 3x3");
   int n_sites = 9;
-  std::string lfile = "data/triangular.9.Jz1Jz2Jx1Jx2D1.sublattices.tsl.lat";
+  std::string lfile = HYDRA_DIRECTORY
+      "/misc/data/triangular.9.Jz1Jz2Jx1Jx2D1.sublattices.tsl.lat";
   auto permutations = hydra::read_permutations(lfile);
   auto perm_group = PermutationGroup(permutations);
   // std::vector<std::string> irrep_names = {
@@ -85,7 +85,7 @@ template <class bit_t> void test_indexing_symmetric() {
   //     "K.D3.E",      "Y.D1.A",      "Y.D1.B"};
 
   std::vector<std::string> irrep_names = {"Gamma.D6.B2"};
-  
+
   for (auto irrep_name : irrep_names) {
     Log("irrep: {}", irrep_name);
     auto irrep = read_representation(lfile, irrep_name);

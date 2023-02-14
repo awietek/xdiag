@@ -86,7 +86,8 @@ TEST_CASE("tj_symmetric_apply", "[blocks][tj]") {
   {
     // test a 3x3 triangular lattice
     Log("tj_symmetric_apply: tJ 3x3 triangular, symmetric apply test");
-    std::string lfile = "data/triangular.9.hop.sublattices.tsl.lat";
+    std::string lfile =
+        HYDRA_DIRECTORY "/misc/data/triangular.9.hop.sublattices.tsl.lat";
 
     auto bondlist = read_bondlist(lfile);
     bondlist["T"] = 1.0;
@@ -112,8 +113,8 @@ TEST_CASE("tj_symmetric_apply", "[blocks][tj]") {
     // test a 3x3 triangular lattice with complex flux
     Log("tj_symmetric_apply: tJ 3x3 triangular staggered, symmetric apply "
         "test, complex");
-    std::string lfile =
-        "data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.lat";
+    std::string lfile = HYDRA_DIRECTORY
+        "/misc/data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.lat";
 
     auto bondlist = read_bondlist(lfile);
     std::vector<double> etas{0.0, 0.1, 0.2, 0.3};

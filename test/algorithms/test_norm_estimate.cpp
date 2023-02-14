@@ -128,7 +128,7 @@ TEST_CASE("norm_estimate", "[algorithms]") {
 
   {
     Log("norm_estimate for tj_symmetric_matrix: tJ 3x3 triangular s");
-    std::string lfile = "data/triangular.9.hop.sublattices.tsl.lat";
+    std::string lfile = HYDRA_DIRECTORY"/misc/data/triangular.9.hop.sublattices.tsl.lat";
     int n_sites = 9;
     auto bonds = read_bondlist(lfile);
     bonds["T"] = 1.0;
@@ -174,7 +174,7 @@ TEST_CASE("norm_estimate", "[algorithms]") {
     Log("norm_estimate for tj_symmetric_matrix: tJ 3x3 triangular staggered "
         "flux, complex");
     std::string lfile =
-        "data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.lat";
+        HYDRA_DIRECTORY"/misc/data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.lat";
 
     auto bonds = read_bondlist(lfile);
     std::vector<double> etas{0.0, 0.1, 0.2, 0.3};

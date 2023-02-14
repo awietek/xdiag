@@ -6,7 +6,7 @@ template <typename T> void test_write_read(T val) {
   using namespace hydra;
 
   // Test writing
-  std::string filename = "data/toml/write.toml";
+  std::string filename = HYDRA_DIRECTORY"/misc/data/toml/write.toml";
   auto fl = FileToml(filename, 'w');
   std::string key = "val";
 
@@ -26,7 +26,7 @@ TEST_CASE("file_toml", "[io]") {
   using namespace arma;
 
   // Just try to parse everything in the example toml file
-  std::string filename = "data/toml/read.toml";
+  std::string filename = HYDRA_DIRECTORY"/misc/data/toml/read.toml";
   auto fl = FileToml(filename, 'r');
 
   // Parse String
@@ -149,7 +149,7 @@ TEST_CASE("file_toml", "[io]") {
   test_write_read(f);
   test_write_read(i);
 
-  filename = "data/toml/write.toml";
+  filename = HYDRA_DIRECTORY"/misc/data/toml/write.toml";
   fl = FileToml(filename, 'w');
   fl["a"] = a;
   fl["b"] = b;
@@ -198,7 +198,7 @@ TEST_CASE("file_toml", "[io]") {
   fl["perm"] = p;
   test_write_read(p);
 
-  std::string lfile = "data/triangular.j1j2jch/"
+  std::string lfile = HYDRA_DIRECTORY"/misc/data/triangular.j1j2jch/"
                       "triangular.12.j1j2jch.sublattices.fsl.lat";
   auto group = PermutationGroup(read_permutations(lfile));
   test_write_read(group);

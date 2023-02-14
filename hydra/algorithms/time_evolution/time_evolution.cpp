@@ -1,9 +1,9 @@
 #include "time_evolution.h"
 
 #include <hydra/algebra/algebra.h>
-#include <hydra/utils/timing.h>
-#include <hydra/algorithms/time_evolution/zahexpv.h>
 #include <hydra/algorithms/time_evolution/exp_sym_v.h>
+#include <hydra/algorithms/time_evolution/zahexpv.h>
+#include <hydra/utils/timing.h>
 
 namespace hydra {
 
@@ -19,7 +19,7 @@ std::tuple<double, double> time_evolve_inplace(BondList const &bonds,
     auto ta = rightnow();
     auto w = arma::cx_vec(v.n_rows, arma::fill::zeros);
     apply(bonds, block, v, block, w);
-    w *= -1.0i * w;
+    w *= -1.0i;
     Log(2, "Lanczos iteration {}", iter);
     timing(ta, rightnow(), "MVM", 2);
     ++iter;
@@ -28,7 +28,8 @@ std::tuple<double, double> time_evolve_inplace(BondList const &bonds,
 
   auto &v0 = state.vector();
   auto t0 = rightnow();
-  auto [err, hump] = zahexpv(time, apply_A, v0, precision, m, anorm, nnorm);
+  auto [err, hump] =
+      zahexpv(time, apply_A, v0, precision / time, m, anorm, nnorm);
   timing(t0, rightnow(), "Zahexpv time", 1);
   return {err, hump};
 }

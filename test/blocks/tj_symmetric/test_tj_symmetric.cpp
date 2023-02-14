@@ -66,7 +66,8 @@ TEST_CASE("tj_symmetric", "[blocks][tj]") {
   int n_sites = 9;
   Log("tj_symmetric: triangular 3x3 test");
 
-  std::string lfile = "data/triangular.9.hop.sublattices.tsl.lat";
+  std::string lfile =
+      HYDRA_DIRECTORY "/misc/data/triangular.9.hop.sublattices.tsl.lat";
   auto permutations = hydra::read_permutations(lfile);
   auto group = PermutationGroup(permutations);
 
