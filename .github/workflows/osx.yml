@@ -16,9 +16,9 @@ jobs:
     - name: make test
       run: |
         mkdir build
-	cd build
-	cmake ..
-	make
-     - name: run tests
-       run: |
+        cd build
+        cmake ..
+        make
+    - name: run tests
+      run: |
         ./build/test/tests
