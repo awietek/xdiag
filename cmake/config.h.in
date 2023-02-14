@@ -1,0 +1,11 @@
+#pragma once
+#include <string>
+
+#define HYDRA_VERSION "@PROJECT_VERSION@"
+#define HYDRA_DIRECTORY "@PROJECT_SOURCE_DIR@"
+#define HYDRA_HOSTNAME "@HYDRA_HOSTNAME@"
+#define HYDRA_COMPILEDBY "@HYDRA_COMPILEDBY@"
+
+namespace hydra {
+inline const char* git_hash() { return "@HYDRA_GIT_HASH@"; }
+} // namespace hydra
