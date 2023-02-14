@@ -9,7 +9,7 @@ project(
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS "-O3")
+set(CMAKE_CXX_FLAGS "-O3 -Wall -Wextra -Wpedantic")
 
 include(cmake/sources.cmake)
 add_library(hydra STATIC ${HYDRA_SOURCES})
@@ -17,10 +17,11 @@ target_include_directories(hydra PUBLIC .)
 
 add_subdirectory(test)
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
+include(cmake/packages.cmake)
 
-# Create configure file
-find_package(Git)
+
+message( STATUS "-------- Creating config.h -------------")
+find_package(Git REQUIRED)
 
 # Get the Git Hash
 execute_process(COMMAND ${GIT_EXECUTABLE} rev-parse HEAD
@@ -42,43 +43,4 @@ execute_process(COMMAND id -un
 )
 
 configure_file(./cmake/config.h.in ${PROJECT_SOURCE_DIR}/hydra/config.h @ONLY)
-
-# Linear Algebra 
-find_package(MKL)
-if(MKL_FOUND)
-  message("MKL found")
-  add_compile_definitions(HYDRA_USE_MKL)
-  target_include_directories(hydra PUBLIC ${MKL_INCLUDE_DIR})
-  set(lapackblas_libraries ${MKL_LIBRARIES})
-else()
-  message("MKL NOT found, trying conventional Lapack / Blas")
-
-  find_package(BLAS)
-  find_package(LAPACK)
-  if(LAPACK_FOUND AND BLAS_FOUND)
-    message("Lapack / Blas found")
-    set(lapackblas_libraries "${BLAS_LIBRARIES} ${LAPACK_LIBRARIES}")
-  else()
-    message("Lapack / Blas NOT found")
-  endif()
-
-endif()
-
-# OpenMP
-find_package(OpenMP)
-if(OpenMP_CXX_FOUND)
-  message("OpenMP found")
-  target_link_libraries(hydra PUBLIC OpenMP::OpenMP_CXX)
-else()
-  message("OpenMP NOT found")
-endif()
-
-# Hdf5
-find_package(HDF5 COMPONENTS CXX)
-if (HDF5_FOUND) 
-  message("Found hdf5 library")
-  target_include_directories(hydra PUBLIC ${HDF5_CXX_INCLUDE_DIRS})
-  add_compile_definitions(HYDRA_USE_HDF5 ${HDF5_CXX_DEFINITIONS})
-endif()
-
 
