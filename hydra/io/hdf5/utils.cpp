@@ -12,8 +12,7 @@ std::string dataset_name(std::string full_name) {
   return full_name.empty() ? std::string("dataset") : full_name;
 }
 
-std::vector<hid_t> create_groups(hid_t file_id, std::string name,
-                                 bool open_if_exists) {
+std::vector<hid_t> create_groups(hid_t file_id, std::string name) {
   std::vector<hid_t> groups;
   std::size_t loc;
   while ((loc = name.find("/")) != std::string::npos) {

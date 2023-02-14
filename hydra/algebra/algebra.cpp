@@ -90,6 +90,8 @@ void apply(BondList const &bonds, Block const &block_in,
           },
           [](auto const &blk_in, auto const &blk_out) {
             Log.err("Error in apply: Invalid blocks or combination of blocks");
+	    (void) blk_in;
+	    (void) blk_out;
           },
       },
       block_in.variant(), block_out.variant());

@@ -134,6 +134,8 @@ void apply_terms_dispatch(BondList const &bonds,
 
           [&](auto const &idx_in, auto const &idx_out) {
             Log.err("Error in apply_terms_dispatch: Invalid Indexing");
+	    (void) idx_in;
+	    (void) idx_out;
           }},
       indexing_in, indexing_out);
 }

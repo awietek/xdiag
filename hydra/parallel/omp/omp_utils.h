@@ -35,7 +35,7 @@ combine_vectors(std::vector<std::vector<T>> const &vec_of_vec) {
 
   for (auto const &vec : vec_of_vec) {
 
-#pragma openmp parallel for
+#pragma omp parallel for
     for (idx_t i = 0; i < (idx_t)vec.size(); ++i) {
       total_vec[offset + i] = vec[i];
     }

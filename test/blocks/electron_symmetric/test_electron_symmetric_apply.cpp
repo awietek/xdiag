@@ -69,7 +69,7 @@ void test_hubbard_symmetric_apply_chains(int n_sites) {
   Log.out("electron_symmetric_apply: Hubbard chain, n_sites: {} (+ "
           "Heisenberg terms)",
           n_sites);
-  auto bondlist_hb = get_linear_chain_hb(n_sites, 1.0, 5.0, 0.4);
+  auto bondlist_hb = get_linear_chain_hb(n_sites, 0.4);
   test_electron_symmetric_apply(bondlist_hb, space_group, irreps);
 }
 

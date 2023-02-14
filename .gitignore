@@ -13,12 +13,13 @@ benchmark
 *.pdf
 options.mk
 test/tests
-test/data/toml/write.toml
-test/data/hdf5/write.h5
+misc/data/toml/write.toml
+misc/data/hdf5/write.h5
 testmpi/tests
 benchmark.prof
 benchmark.prof_*
 lcov-report
+hydra/config.h
 examples/hb_chain_dynamical_sf/main
 examples/hb_chain_dynamical_sf/outfiles/*
 examples/hb_chain_dynamical_sf_nosym/main

@@ -24,6 +24,8 @@ arma::Mat<double> matrix_real(BondList const &bonds, Block const &block_in,
           [&](auto const &block_in,
               auto const &block_out) -> arma::Mat<double> {
             Log.err("Error in matrix_real: Invalid blocks (combination)!");
+	    (void) block_in;
+	    (void) block_out;
             return arma::mat();
           }},
       block_in.variant(), block_out.variant());
@@ -60,6 +62,8 @@ arma::Mat<complex> matrix_cplx(BondList const &bonds, Block const &block_in,
           },
           [&](auto const &block_in, auto const &block_out) {
             Log.err("Error in matrix_real: Invalid blocks (combination)!");
+	    (void) block_in;
+	    (void) block_out;
             return arma::cx_mat();
           }},
       block_in.variant(), block_out.variant());

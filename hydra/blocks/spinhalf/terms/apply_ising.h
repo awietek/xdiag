@@ -39,7 +39,10 @@ void apply_ising(Bond const &bond, IndexingIn &&indexing_in,
     spinhalf::apply_term_diag<bit_t, coeff_t>(indexing_in, term_coeff, fill);
 
   } else {
-    auto non_zero_term = [](bit_t spins) -> bool { return true; };
+    auto non_zero_term = [](bit_t spins) -> bool {
+      return true;
+      (void)spins;
+    };
     auto term_action = [&mask, &val_same,
                         &val_diff](bit_t spins) -> std::pair<bit_t, coeff_t> {
       if (bitops::popcnt(spins & mask) & 1) {

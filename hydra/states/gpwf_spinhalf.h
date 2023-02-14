@@ -13,7 +13,7 @@ public:
   int n_up() const { return n_up_; }
   int n_dn() const { return n_dn_; }
 
-  coeff_t coefficient(uint64_t state, bool print_work = false);
+  coeff_t coefficient(uint64_t state);
 
   bool operator==(GPWFSpinhalf<coeff_t> const &other);
 

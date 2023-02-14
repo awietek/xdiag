@@ -1,5 +1,4 @@
 #pragma once
-#include <string>
 
 #define HYDRA_VERSION "@PROJECT_VERSION@"
 #define HYDRA_DIRECTORY "@PROJECT_SOURCE_DIR@"

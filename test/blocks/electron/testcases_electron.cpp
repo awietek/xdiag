@@ -12,7 +12,7 @@ BondList get_linear_chain(int n_sites, double t, double U) {
   return bondlist;
 }
 
-BondList get_linear_chain_hb(int n_sites, double t, double U, double J) {
+BondList get_linear_chain_hb(int n_sites, double J) {
   // Create model
   BondList bondlist;
   // for (int s = 0; s < n_sites; ++s)

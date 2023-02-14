@@ -43,7 +43,7 @@ template <typename bit_t> void test_combinations_index() {
       }
 
       // Create states in parallel
-#pragma openmp parallel
+#pragma omp parallel
       {
         for (auto [state, idx] : CombinationsIndexThread<bit_t>(n, k)) {
           states_parallel[idx++] = state;

@@ -7,7 +7,7 @@ namespace hydra::testcases::electron {
 
 BondList get_linear_chain(int n_sites, double t, double U);
 
-BondList get_linear_chain_hb(int n_sites, double t, double U, double J);
+BondList get_linear_chain_hb(int n_sites, double J);
 
 std::tuple<PermutationGroup, std::vector<Representation>>
 get_cyclic_group_irreps(int n_sites);

@@ -16,7 +16,7 @@ namespace hydra::spinhalf {
 template <typename bit_t, typename coeff_t, bool symmetric, class IndexingIn,
           class IndexingOut, class Fill>
 void apply_spsm(Bond const &bond, IndexingIn &&indexing_in,
-                IndexingOut &&indexing_out, Fill &&fill, std::string spsm) {
+                IndexingOut &&indexing_out, Fill &&fill) {
   assert(bond.coupling_defined());
   assert(bond.type_defined());
   assert((bond.type() == "S+") || (bond.type() == "S-"));

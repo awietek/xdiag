@@ -38,7 +38,8 @@ template <>
 StateCplx time_evolve(BondList const &bonds, StateReal state, double time,
                       double precision, int m, double anorm, int nnorm) {
   auto state_cplx = to_cplx(state);
-  auto [err, hump] = time_evolve_inplace(bonds, state_cplx, time, precision);
+  auto [err, hump] =
+      time_evolve_inplace(bonds, state_cplx, time, precision, m, anorm, nnorm);
   Log(2, "error (estimated): {}, hump: {}", err, hump);
   return state_cplx;
 }
@@ -46,7 +47,8 @@ StateCplx time_evolve(BondList const &bonds, StateReal state, double time,
 template <>
 StateCplx time_evolve(BondList const &bonds, StateCplx state, double time,
                       double precision, int m, double anorm, int nnorm) {
-  auto [err, hump] = time_evolve_inplace(bonds, state, time, precision);
+  auto [err, hump] =
+      time_evolve_inplace(bonds, state, time, precision, m, anorm, nnorm);
   Log(2, "error (estimated): {}, hump: {}", err, hump);
   return state;
 }

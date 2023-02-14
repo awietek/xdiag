@@ -15,7 +15,7 @@ using complex = std::complex<double>;
 
 template <typename data_t>
 void write_scalar(hid_t file_id, std::string field, data_t data) {
-  std::vector<hid_t> groups = create_groups(file_id, field, true);
+  std::vector<hid_t> groups = create_groups(file_id, field);
   hid_t group = (groups.size() == 0) ? file_id : groups[groups.size() - 1];
   if (group == H5I_INVALID_HID) {
     Log.err("Error in hydra hdf5: error creating groups for field \"{}\"",
@@ -62,7 +62,7 @@ template <typename data_t>
 void write_std_vector(hid_t file_id, std::string field,
                       std::vector<data_t> const &data) {
 
-  std::vector<hid_t> groups = create_groups(file_id, field, true);
+  std::vector<hid_t> groups = create_groups(file_id, field);
   hid_t group = (groups.size() == 0) ? file_id : groups[groups.size() - 1];
   if (group == H5I_INVALID_HID) {
     Log.err("Error in hydra hdf5: error creating groups for field \"{}\"",
@@ -116,7 +116,7 @@ template <typename data_t>
 void write_arma_vector(hid_t file_id, std::string field,
                        arma::Col<data_t> const &data) {
 
-  std::vector<hid_t> groups = create_groups(file_id, field, true);
+  std::vector<hid_t> groups = create_groups(file_id, field);
   hid_t group = (groups.size() == 0) ? file_id : groups[groups.size() - 1];
   if (group == H5I_INVALID_HID) {
     Log.err("Error in hydra hdf5: error creating groups for field \"{}\"",
@@ -159,7 +159,7 @@ template <typename data_t>
 void write_arma_matrix(hid_t file_id, std::string field,
                        arma::Mat<data_t> const &data) {
 
-  std::vector<hid_t> groups = create_groups(file_id, field, true);
+  std::vector<hid_t> groups = create_groups(file_id, field);
   hid_t group = (groups.size() == 0) ? file_id : groups[groups.size() - 1];
   if (group == H5I_INVALID_HID) {
     Log.err("Error in hydra hdf5: error creating groups for field \"{}\"",

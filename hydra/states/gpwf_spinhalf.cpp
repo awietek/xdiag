@@ -18,7 +18,7 @@ GPWFSpinhalf<coeff_t>::GPWFSpinhalf(int n_sites, arma::Mat<coeff_t> onebody_wfs,
 }
 
 template <class coeff_t>
-coeff_t GPWFSpinhalf<coeff_t>::coefficient(uint64_t state, bool print_work) {
+coeff_t GPWFSpinhalf<coeff_t>::coefficient(uint64_t state) {
 
   work_matrix_.zeros();
   for (int i = 0; i < n_sites_; ++i) {

@@ -11,6 +11,8 @@ void test_electron_symmetric_spectra_no_np(BondList bondlist,
                                            PermutationGroup space_group,
                                            std::vector<Representation> irreps,
                                            std::vector<int> multiplicities) {
+  (void) multiplicities;
+
   int n_sites = space_group.n_sites();
 
   auto block_total = Electron(n_sites);
@@ -145,7 +147,7 @@ void test_hubbard_symmetric_spectrum_chains(int n_sites) {
   Log("electron_symmetric_matrix: Hubbard chain, n_sites: {} (+ "
       "Heisenberg terms)",
       n_sites);
-  auto bondlist_hb = get_linear_chain_hb(n_sites, 1.0, 5.0, 0.4);
+  auto bondlist_hb = get_linear_chain_hb(n_sites, 0.4);
   test_electron_symmetric_spectra(bondlist_hb, space_group, irreps,
                                   multiplicities);
   test_electron_symmetric_spectra_no_np(bondlist_hb, space_group, irreps,
