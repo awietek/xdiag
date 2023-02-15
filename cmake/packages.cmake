@@ -19,8 +19,9 @@ else()
   else()
     message(FATAL_ERROR "No linear algebra backend (e.g. BLAS/Lapack) could be found")
   endif()
-
 endif()
+target_link_libraries(hydra PUBLIC ${lapack_libraries})
+
 
 message( STATUS "-------- Determining if OpenMP is present -------------")
 # OpenMP

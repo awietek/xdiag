@@ -1,5 +1,5 @@
-![license](https://img.shields.io/github/license/awietek/hydra)
-![cpp](https://img.shields.io/badge/C++-17-blue.svg)
+![license](https://img.shields.io/badge/license-Apache%202.0-blue)
+![cpp](https://img.shields.io/badge/C++-17-blue.svg?style=flat&logo=c%2B%2B)
 [![docs](https://img.shields.io/badge/Documentation-here-red.svg)](https://awietek.github.io/hydradoc)
 [![Linux CI](https://github.com/awietek/hydra/actions/workflows/linux.yml/badge.svg?style=for-the-badge)](https://github.com/awietek/hydra/actions/workflows/linux.yml)
 [![Mac OSX CI](https://github.com/awietek/hydra/actions/workflows/osx.yml/badge.svg?style=for-the-badge)](https://github.com/awietek/hydra/actions/workflows/osx.yml)
@@ -19,24 +19,44 @@ A C++ library to perform efficient Exact Diagonalizations of quantum many body s
 - parallelization both with OpenMP and MPI
 - modern C++17 impementation simplifying usage
 
+### Installation:
+Clone this repository first. Afterwards, the **hydra** library can be compiled using the standard CMake instructions
+```bash
+mkdir build
+cd build
+cmake ..
+make
+```
+
 ### Example Code:
 ```cpp
-// Hubbard model on a N=8 linear chain with U/t = 5
-int n_sites = 8;
-int nup = 4;
-int ndn = 4;
+#include <hydra/all.h>
 
-// Create the model, its space group and irreps
-auto [bondlist, couplings] = get_linear_chain(n_sites, 1.0, 5.0);
-auto [space_group, irreps] = get_cyclic_group_irreps(n_sites);
+int main() {
+  using namespace hydra;
 
-// Compute the Hamiltonian matrix
-auto block = Electron(n_sites, nup, ndn, space_group, irrep);
-auto H = MatrixReal(bondlist, couplings, block, block);
+  int n_sites = 16;
+  int nup = n_sites / 2;
 
-// Compute its eigenvalues and print them
-auto evals = lila::EigenvaluesSym(H);
-LilaPrint(evals);
+  // Define the Hilbert space block
+  auto block = Spinhalf(n_sites, nup);
+
+  // Define the nearest-neighbor Heisenberg Hamiltonian
+  BondList bonds;
+  for (int i = 0; i < n_sites; ++i) {
+    bonds << Bond("HB", "J", {i, (i + 1) % n_sites});
+  }
+
+  // Set the coupling constant "J" to one
+  bonds["J"] = 1.0;
+
+  // Compute and print the ground state energy
+  double e0 = eig0(bonds, block);
+  HydraPrint(e0);
+  
+  return EXIT_SUCCESS;
+}
+
 ```
 
 ### Documentation
