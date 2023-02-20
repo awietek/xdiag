@@ -66,6 +66,4 @@ add_executable(tests
   states/test_product_state.cpp
 )
 target_link_libraries(tests PRIVATE hydra)
-
-enable_testing()
 add_test(NAME HydraTest COMMAND tests)

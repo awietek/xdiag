@@ -1,5 +1,9 @@
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
+set(HYDRA_DEFINITIONS "")
+set(HYDRA_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}")
+set(HYDRA_LIBRARIES "${PROJECT_BINARY_DIR}/hydra/libhydra.a")
+
 add_library(hydra STATIC
   utils/iochecks.cpp
   utils/print.cpp
@@ -108,7 +112,7 @@ target_include_directories(hydra PUBLIC ${CMAKE_SOURCE_DIR})
 target_compile_features(hydra PUBLIC cxx_std_17)
 
 if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
-  target_compile_options(myApp PRIVATE /W4)
+  target_compile_options(hydra PRIVATE /W4)
 else ()
   target_compile_options(hydra PRIVATE -Wall -Wextra -Wpedantic)
 endif()
@@ -119,12 +123,19 @@ find_package(BLAS)
 find_package(LAPACK)
 if(MKL_FOUND)
   message(STATUS "Employing IntelMKL as linear algebra backend")
-  target_compile_definitions(hydra PUBLIC HYDRA_USE_MKL)
+  target_compile_definitions(hydra PUBLIC HYDRA_USE_MKL MKL_ILP64)
   target_include_directories(hydra PUBLIC ${MKL_INCLUDE_DIR})
   target_link_libraries(hydra PUBLIC ${MKL_LIBRARIES})
+
+  list(APPEND HYDRA_DEFINITIONS HYDRA_USE_MKL MKL_ILP64)
+  list(APPEND HYDRA_INCLUDE_DIRS ${MKL_INCLUDE_DIR})
+  list(APPEND HYDRA_LIBRARIES ${MKL_LIBRARIES})
+  
 elseif(LAPACK_FOUND AND BLAS_FOUND)
   message(STATUS "Emploging Lapack/Blas as linear algebra backend")
   target_link_libraries(hydra PUBLIC ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
+
+  list(APPEND HYDRA_LIBRARIES ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
 else()
   message(FATAL_ERROR "No linear algebra backend found")
 endif()
@@ -135,6 +146,7 @@ find_package(OpenMP)
 if(OpenMP_CXX_FOUND)
   message(STATUS "Employing OpenMP")
   target_link_libraries(hydra PUBLIC OpenMP::OpenMP_CXX)
+  list(APPEND HYDRA_LIBRARIES OpenMP::OpenMP_CXX)
 endif()
 
 
@@ -145,6 +157,10 @@ if(HDF5_FOUND)
   target_compile_definitions(hydra PUBLIC HYDRA_USE_HDF5 ${HDF5_CXX_DEFINITIONS})
   target_include_directories(hydra PUBLIC ${HDF5_CXX_INCLUDE_DIRS})
   target_link_libraries(hydra PUBLIC ${HDF5_CXX_LIBRARIES} ${HDF5_LIBRARIES})
+
+  list(APPEND HYDRA_DEFINITIONS HYDRA_USE_HDF5 ${HDF5_CXX_DEFINITIONS})
+  list(APPEND HYDRA_INCLUDE_DIRS ${HDF5_CXX_INCLUDE_DIRS})
+  list(APPEND HYDRA_LIBRARIES ${HDF5_CXX_LIBRARIES} ${HDF5_LIBRARIES})
 endif()
 
 message(STATUS "--------         Creating config.h          -------------")
@@ -165,3 +181,4 @@ execute_process(COMMAND id -un
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 configure_file(${CMAKE_SOURCE_DIR}/cmake/config.h.in ${CMAKE_SOURCE_DIR}/hydra/config.h @ONLY)
+configure_file(${CMAKE_SOURCE_DIR}/cmake/hydraConfig.cmake.in ${CMAKE_SOURCE_DIR}/cmake/hydraConfig.cmake @ONLY)
