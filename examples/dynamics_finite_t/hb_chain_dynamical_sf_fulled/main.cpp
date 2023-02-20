@@ -14,6 +14,8 @@ int main(int argc, char** argv) {
   int n_up = atoi(argv[2]);    // number of upspins
   int k = atoi(argv[3]);       // momentum k
 
+  say_hello();
+  
   // Define directory / file to store output data
   std::string outdir = format("outfiles/N.{}", n_sites);
   std::string outfile = format("{}/outfile.N.{}.nup.{}.k.{}.h5",

@@ -1,5 +1,9 @@
 build
 build/*
+examples/*/build
+examples/*/outfiles
+examples/*/build/*
+examples/*/outfiles/*
 benchmark
 .DS_Store
 *.gcda

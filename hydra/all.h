@@ -31,6 +31,7 @@
 #include "utils/precision.h"
 #include "utils/print.h"
 #include "utils/print_macro.h"
+#include "utils/say_hello.h"
 
 #include "blocks/blocks.h"
 #include "blocks/utils/block_utils.h"

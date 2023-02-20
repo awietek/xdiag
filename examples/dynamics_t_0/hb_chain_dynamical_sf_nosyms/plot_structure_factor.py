@@ -2,7 +2,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-n_sites = 16
+n_sites = 12
 n_up = n_sites // 2
 
 eta = 0.05

@@ -11,9 +11,8 @@ void measure_density(int n_sites, hydra::StateCplx const &v) {
 }
 
 int main() {
-  using namespace hydra;
-
-  int n_sites = 10;
+  using namespace hydra;  
+  int n_sites = 8;
   double t = 1.0;
   double U = 8.0;
 
@@ -34,16 +33,16 @@ int main() {
       pstate << "Up";
     }
   }
-  pstate[5] = "UpDn";
+  pstate[3] = "UpDn";
 
-  auto block = Electron(n_sites, 5, 6);
+  auto block = Electron(n_sites, 4, 5);
   auto v = State(block, pstate);
 
   measure_density(n_sites, v);
 
   // Do the time evolution with a step size tau
   double tau = 0.1;
-  for (int i = 0; i < 100; ++i) {
+  for (int i = 0; i < 40; ++i) {
     v = time_evolve(bonds, v, tau, precision);
     measure_density(n_sites, v);
   }

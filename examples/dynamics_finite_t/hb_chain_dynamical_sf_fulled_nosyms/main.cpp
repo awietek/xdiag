@@ -7,6 +7,8 @@ int main() {
   using fmt::format;
   using hdf5_opts::append;
 
+  say_hello();
+  
   // Parse input arguments
   int n_sites = 12;
 

@@ -13,7 +13,7 @@ for n_up in ${n_ups[@]}; do
 for k in ${ks[@]}; do
 for q in ${qs[@]}; do
 
-    ./main $n_sites $n_up $k $q $J $Jd
+    ./build/main $n_sites $n_up $k $q $J $Jd
 
 done
 done

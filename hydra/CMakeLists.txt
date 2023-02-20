@@ -7,6 +7,7 @@ set(HYDRA_LIBRARIES "${PROJECT_BINARY_DIR}/hydra/libhydra.a")
 add_library(hydra STATIC
   utils/iochecks.cpp
   utils/print.cpp
+  utils/say_hello.cpp
   bitops/bitops.cpp
   
   parallel/omp/omp_utils.cpp

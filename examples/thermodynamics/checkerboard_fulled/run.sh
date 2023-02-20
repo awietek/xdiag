@@ -18,7 +18,7 @@ Jd=1.00
 for n_up in ${n_ups[@]}; do
 for k in ${ks[@]}; do
 
-    ./main $n_sites $n_up $k $J $Jd
+    ./build/main $n_sites $n_up $k $J $Jd
 
 done
 done

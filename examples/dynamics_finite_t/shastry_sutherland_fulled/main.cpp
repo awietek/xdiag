@@ -5,6 +5,8 @@ int main(int argc, char **argv) {
   using namespace arma;
   using fmt::format;
 
+  say_hello();
+  
   // Parse input arguments
   assert(argc == 7);
   int n_sites = atoi(argv[1]);              // number of sites
