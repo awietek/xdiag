@@ -12,7 +12,7 @@ void measure_density(int n_sites, hydra::StateCplx const &v) {
 int main() {
   using namespace hydra;
 
-  int L = 5;
+  int L = 3;
   double t = 1.0;
   double J = 10.0;
 
@@ -42,31 +42,23 @@ int main() {
   auto pstate = ProductState();
   for (int x = 0; x < L; ++x) {
     for (int y = 0; y < L; ++y) {
-      if (((x+y) % 2) == 0) {
-	pstate << "Dn";
+      if (((x + y) % 2) == 0) {
+        pstate << "Dn";
       } else {
-	pstate << "Up";
+        pstate << "Up";
       }
     }
   }
   pstate[n_sites / 2] = "Emp";
-  Log("a");
-    auto block = tJ(n_sites, n_sites / 2, n_sites / 2 - 1);
-    HydraPrint(block);
-    Log(3, "sleep {}", n_sites);
-  sleep(10);
-  Log("over");
- 
+  auto block = tJ(n_sites, n_sites / 2, n_sites / 2 - 1);
+
   auto v = StateCplx(block, pstate);
 
-  Log("sleep2");
-  sleep(10);
-  Log("over2");
   measure_density(n_sites, v);
 
   // Do the time evolution with a step size tau
   double tau = 0.1;
-  for (int i = 0; i < 100; ++i) {
+  for (int i = 0; i < 40; ++i) {
     v = time_evolve(bonds, v, tau, precision);
     measure_density(n_sites, v);
   }

@@ -4,6 +4,8 @@ int main() {
   using namespace hydra;
   using namespace arma;
 
+  say_hello();
+  
   int n_sites = 12;
   int n_up = n_sites / 2;
 

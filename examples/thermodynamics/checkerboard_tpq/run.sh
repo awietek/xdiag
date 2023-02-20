@@ -19,7 +19,7 @@ for n_up in ${n_ups[@]}; do
 for k in ${ks[@]}; do
 for seed in ${seeds[@]}; do
 
-    ./main $n_sites $n_up $k $J $Jd $seed
+    ./build/main $n_sites $n_up $k $J $Jd $seed
 
 done
 done
