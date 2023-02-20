@@ -31,7 +31,9 @@ void check_nup_ndn_tj(int n_sites, int nup, int ndn, std::string block_name) {
 }
 
 void check_n_sites(int n_sites, PermutationGroup const &permutation_group) {
-  assert(n_sites == permutation_group.n_sites());
+  if (n_sites != permutation_group.n_sites()) {
+    Log.err("Error: number of sites in permutation group is not n_sites!");
+  }
 }
 
 template <class coeff_t>
