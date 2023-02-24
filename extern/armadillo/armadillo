@@ -18,6 +18,10 @@
 #ifndef ARMA_INCLUDES
 #define ARMA_INCLUDES
 
+#ifdef __INTEL_COMPILER
+#define ARMA_ALLOW_FAKE_GCC
+#endif
+
 #include "armadillo_bits/config.hpp"
 #include "armadillo_bits/compiler_check.hpp"
 

@@ -7,6 +7,7 @@ project(
 )
 
 option(BUILD_TESTS "Build test programs" OFF)
+option(OPTIMIZE_FOR_NATIVE "Build with -march=native" OFF)
 
 # Set release build as default
 if(NOT CMAKE_BUILD_TYPE)

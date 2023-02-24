@@ -298,7 +298,8 @@
 #ifdef _MSC_VER
 #define TOML_ASSUME(...) __assume(__VA_ARGS__)
 #elif TOML_ICC || TOML_CLANG || TOML_HAS_BUILTIN(__builtin_assume)
-#define TOML_ASSUME(...) __builtin_assume(__VA_ARGS__)
+// #define TOML_ASSUME(...) __builtin_assume(__VA_ARGS__)
+#define TOML_ASSUME(...) static_assert(true)
 #else
 #define TOML_ASSUME(...) static_assert(true)
 #endif
