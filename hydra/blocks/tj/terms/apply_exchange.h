@@ -23,7 +23,7 @@ void apply_exchange(Bond const &bond, Indexing &&indexing, Filler &&fill) {
 
   coeff_t J = bond.coupling<coeff_t>();
   coeff_t Jhalf = J / 2.;
-  coeff_t Jhalf_conj = conj(J) / 2.;
+  coeff_t Jhalf_conj = hydra::conj(J) / 2.;
   if constexpr (is_real<coeff_t>()) { // just to supress "unused" warning
     assert(Jhalf == Jhalf_conj);
   }

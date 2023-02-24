@@ -36,7 +36,7 @@ void apply_hopping(Bond const &bond, Indexing &&indexing, Filler &&fill) {
       if (bitops::popcnt(up & flipmask) == 1) {
         coeff_t t;
         if constexpr (is_complex<coeff_t>()) {
-          t = (bitops::gbit(up, s1)) ? traw : conj(traw);
+          t = (bitops::gbit(up, s1)) ? traw : hydra::conj(traw);
         } else {
           t = traw;
         }
@@ -63,7 +63,7 @@ void apply_hopping(Bond const &bond, Indexing &&indexing, Filler &&fill) {
       if (bitops::popcnt(dn & flipmask) == 1) {
         coeff_t t;
         if constexpr (is_complex<coeff_t>()) {
-          t = (bitops::gbit(dn, s1)) ? traw : conj(traw);
+          t = (bitops::gbit(dn, s1)) ? traw : hydra::conj(traw);
         } else {
           t = traw;
         }

@@ -104,7 +104,7 @@ void apply_symmetric_hopping(Bond const &bond, Indexing &&indexing,
             // Complex conjugate t if necessary
             coeff_t val;
             if constexpr (is_complex<coeff_t>()) {
-              val = -(bitops::gbit(dns, s1) ? t : conj(t));
+              val = -(bitops::gbit(dns, s1) ? t : hydra::conj(t));
             } else {
               val = -t;
             } // Comment: norm is always 1.0 for trivial stabilizers
@@ -150,7 +150,7 @@ void apply_symmetric_hopping(Bond const &bond, Indexing &&indexing,
               // Complex conjugate t if necessary
               coeff_t val;
               if constexpr (is_complex<coeff_t>()) {
-                val = -(bitops::gbit(dns, s1) ? t : conj(t)) *
+                val = -(bitops::gbit(dns, s1) ? t : hydra::conj(t)) *
                       bloch_factors[sym] * norms[idx_dns_flip] / norms[idx_dns];
               } else {
                 // Log("sz: {}, sym: {}", bloch_factors.size(), sym);
@@ -218,7 +218,8 @@ void apply_symmetric_hopping(Bond const &bond, Indexing &&indexing,
         // Complex conjugate t if necessary
         coeff_t prefac;
         if constexpr (is_complex<coeff_t>()) {
-          prefac = -(bitops::gbit(ups, s1) ? t : conj(t)) * bloch_factors[sym];
+          prefac = -(bitops::gbit(ups, s1) ? t : hydra::conj(t)) *
+                   bloch_factors[sym];
         } else {
           prefac = -t * bloch_factors[sym];
         }
@@ -300,8 +301,8 @@ void apply_symmetric_hopping(Bond const &bond, Indexing &&indexing,
         // Fix the bloch/prefactors
         if constexpr (is_complex<coeff_t>()) {
           for (int i = 0; i < (int)irrep.size(); ++i) {
-            prefacs[i] =
-                -(bitops::gbit(ups, s1) ? t : conj(t)) * irrep.character(i);
+            prefacs[i] = -(bitops::gbit(ups, s1) ? t : hydra::conj(t)) *
+                         irrep.character(i);
           }
         } else {
           for (int i = 0; i < (int)irrep.size(); ++i) {

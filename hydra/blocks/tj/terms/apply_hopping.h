@@ -43,7 +43,7 @@ void apply_hopping(Bond const &bond, Indexing &&indexing, Filler &&fill) {
       // get hopping parameter (complex conjugate if necessary)
       coeff_t t;
       if constexpr (is_complex<coeff_t>()) {
-        t = (bitops::gbit(holes, s2)) ? traw : conj(traw);
+        t = (bitops::gbit(holes, s2)) ? traw : hydra::conj(traw);
       } else {
         t = traw;
       }

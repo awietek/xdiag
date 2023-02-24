@@ -67,7 +67,7 @@ void apply_symmetric_exchange(Bond const &bond, Indexing &&indexing,
     // Set the correct prefactor
     coeff_t Jhalf;
     if constexpr (is_complex<coeff_t>()) {
-      Jhalf = (bitops::gbit(ups, s1)) ? J / 2. : conj(J) / 2.;
+      Jhalf = (bitops::gbit(ups, s1)) ? J / 2. : hydra::conj(J) / 2.;
     } else {
       Jhalf = J / 2.;
     }

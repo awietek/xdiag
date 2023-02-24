@@ -29,6 +29,7 @@ zahexpv(double time,
         anorm = anormj;
       }
     }
+    Log(1, "norm estimate: {}", anorm);
   }
 
   //     parameter initialisation
@@ -183,7 +184,7 @@ zahexpv(double time,
 
   double err = s_error;
   hump = hump / normv;
-  Log(2, "zaexph finished: # steps = {}, # MVM = {}, est. error: {}, hump: {}",
+  Log(1, "zaexph finished: # steps = {}, # MVM = {}, est. error: {}, hump: {}",
       nstep, nstep * m, err, hump);
   return {err, hump};
 }

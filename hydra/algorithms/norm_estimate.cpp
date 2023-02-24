@@ -1,6 +1,23 @@
 #include "norm_estimate.h"
 
+#include <hydra/algebra/algebra.h>
+#include <hydra/utils/timing.h>
+
 namespace hydra {
+
+double norm_estimate(BondList const &bonds, Block const &block) {
+  int iter = 1;
+  auto apply_A = [&iter, &bonds, &block](arma::cx_vec const &v) {
+    auto ta = rightnow();
+    auto w = arma::cx_vec(v.n_rows, arma::fill::zeros);
+    apply(bonds, block, v, block, w);
+    Log(2, "Norm estimation iteration {}", iter);
+    timing(ta, rightnow(), "MVM", 2);
+    ++iter;
+    return w;
+  };
+  return norm_estimate_cplx(apply_A, apply_A, block.size());
+}
 
 //
 // Implementing the algorithm 4.1 described in

@@ -31,7 +31,7 @@ void apply_scalar_chirality(Bond const &bond, IndexingIn &&indexing_in,
     (void)J;
   } else {
     Jquarter = complex(0, -0.25) * J;
-    Jquarter_conj = conj(Jquarter);
+    Jquarter_conj = hydra::conj(Jquarter);
   }
 
   int s1 = bond[0];

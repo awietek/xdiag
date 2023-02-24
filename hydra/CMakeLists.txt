@@ -112,11 +112,13 @@ add_library(hydra STATIC
 target_include_directories(hydra PUBLIC ${CMAKE_SOURCE_DIR})
 target_compile_features(hydra PUBLIC cxx_std_17)
 
-if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
-  target_compile_options(hydra PRIVATE /W4)
-else ()
-  target_compile_options(hydra PRIVATE -Wall -Wextra -Wpedantic)
+if(OPTIMIZE_FOR_NATIVE)
+message(STATUS "Using -march=native optimizations")
+target_compile_options(hydra PRIVATE -march=native)
+target_compile_options(hydra PRIVATE -mtune=native)
 endif()
+
+target_compile_options(hydra PRIVATE -Wall -Wextra)
   
 message(STATUS "-------- Determining Linear Algebra backend -------------")
 find_package(MKL)

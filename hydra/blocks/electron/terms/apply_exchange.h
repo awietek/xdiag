@@ -60,7 +60,7 @@ void apply_exchange(Bond const &bond, Indexing &&indexing, Filler &&fill) {
       // Set the correct prefactor
       coeff_t Jhalf;
       if constexpr (is_complex<coeff_t>()) {
-        Jhalf = (bitops::gbit(ups, s1)) ? J / 2.0 : conj(J) / 2.0;
+        Jhalf = (bitops::gbit(ups, s1)) ? J / 2.0 : hydra::conj(J) / 2.0;
       } else {
         Jhalf = J / 2.;
       }

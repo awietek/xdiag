@@ -34,7 +34,7 @@ void apply_exchange(Bond const &bond, IndexingIn &&indexing_in,
   std::function<std::pair<bit_t, coeff_t>(bit_t)> term_action;
 
   coeff_t Jhalf = J / 2.0;
-  coeff_t Jhalf_conj = conj(Jhalf);
+  coeff_t Jhalf_conj = hydra::conj(Jhalf);
 
   if constexpr (is_real<coeff_t>()) {
     (void)Jhalf_conj;
