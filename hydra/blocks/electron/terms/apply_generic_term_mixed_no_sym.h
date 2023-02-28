@@ -6,10 +6,12 @@ namespace hydra::electron {
 
 template <typename bit_t, typename coeff_t, class IndexingIn, class IndexingOut,
           class NonZeroTerm, class TermAction, class Fill>
-void apply_term_mixed_no_sym(IndexingIn &&indexing_in,
-                             IndexingOut &&indexing_out,
-                             NonZeroTerm &&non_zero_term,
-                             TermAction &&term_action, Filler &&fill) {
+void apply_generic_term_mixed_no_sym(IndexingIn &&indexing_in,
+                                     IndexingOut &&indexing_out,
+                                     NonZeroTerm &&non_zero_term,
+                                     TermAction &&term_action, Filler &&fill) {
+  Log.err("dont't use apply_generic_term_mixed_no_sym: not at all tested");
+  
   // Applies a term acting on both upspins and dnspins without lattice
   // symmetries
   idx_t size_ups_in = indexing_in.size_ups();

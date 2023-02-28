@@ -65,7 +65,7 @@ TEST_CASE("file_toml", "[io]") {
   n = "floating.cplx";
   // Log("{}", fl[n].as<complex>());
   REQUIRE(fl.defined(n));
-  REQUIRE(fl[n].as<complex>() == 2.3122 + .1237i);
+  REQUIRE(fl[n].as<complex>() == std::complex<double>(2.3122, 0.1237));
 
   n = "vectors.ints";
   // for (auto i : fl[n].as<std::vector<int>>()) {

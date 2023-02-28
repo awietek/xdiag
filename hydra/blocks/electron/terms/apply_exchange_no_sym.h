@@ -36,7 +36,7 @@ void electron_do_down_flips(bit_t ups, idx_t idx_ups, bit_t flipmask,
 }
 
 template <typename bit_t, typename coeff_t, class Indexing, class Filler>
-void apply_exchange(Bond const &bond, Indexing &&indexing, Filler &&fill) {
+void apply_exchange_no_sym(Bond const &bond, Indexing &&indexing, Filler &&fill) {
   assert(bond.coupling_defined());
   assert(bond.type_defined() && (bond.type() == "EXCHANGE"));
   assert(bond.size() == 2);

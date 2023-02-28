@@ -6,7 +6,7 @@
 namespace hydra::electron {
 
 template <typename bit_t, typename coeff_t, class Indexing, class Filler>
-void apply_symmetric_u(coeff_t U, Indexing &&indexing, Filler &&fill) {
+void apply_u_sym(coeff_t U, Indexing &&indexing, Filler &&fill) {
 
   idx_t idx = 0;
   // #ifdef _OPENMP

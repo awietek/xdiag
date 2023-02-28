@@ -54,9 +54,7 @@ TEST_CASE("electron_matrix", "[blocks][electron]") {
     bondlist << Bond("HOP", "T", {i, (i + 1) % n_sites});
   bondlist["T"] = 1.0;
   bondlist["U"] = 5.0;
-
   auto H1 = matrix_real(bondlist, block, block);
-
   double tp = t;
   double tm = -t;
   double UU = U;

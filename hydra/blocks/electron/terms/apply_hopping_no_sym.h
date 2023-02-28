@@ -9,7 +9,7 @@
 namespace hydra::electron {
 
 template <typename bit_t, typename coeff_t, class Indexing, class Filler>
-void apply_hopping(Bond const &bond, Indexing &&indexing, Filler &&fill) {
+void apply_hopping_no_sym(Bond const &bond, Indexing &&indexing, Filler &&fill) {
   assert(bond.coupling_defined());
   assert(bond.type_defined());
   assert((bond.type() == "HOPUP") || (bond.type() == "HOPDN"));

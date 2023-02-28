@@ -50,6 +50,7 @@ add_executable(tests
   blocks/electron/testcases_electron.cpp
   blocks/electron/test_electron_matrix.cpp
   blocks/electron/test_electron_apply.cpp
+  blocks/electron/test_electron_raiselower.cpp
 
   blocks/electron_symmetric/test_electron_symmetric.cpp
   blocks/electron_symmetric/test_electron_symmetric_matrix.cpp

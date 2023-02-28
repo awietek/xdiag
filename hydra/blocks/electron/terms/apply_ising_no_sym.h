@@ -9,7 +9,7 @@
 namespace hydra::electron {
 
 template <typename bit_t, typename coeff_t, class Indexing, class Filler>
-void apply_ising(Bond const &bond, Indexing &&indexing, Filler fill) {
+void apply_ising_no_sym(Bond const &bond, Indexing &&indexing, Filler fill) {
   assert(bond.coupling_defined());
   assert(bond.type_defined() && (bond.type() == "ISING"));
   assert(bond.size() == 2);

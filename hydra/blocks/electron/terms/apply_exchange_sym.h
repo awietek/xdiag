@@ -1,14 +1,13 @@
 #pragma once
 
-#include <hydra/common.h>
 #include <hydra/bitops/bitops.h>
+#include <hydra/common.h>
 #include <hydra/operators/bond.h>
 
 namespace hydra::electron {
 
 template <typename bit_t, typename coeff_t, class Indexing, class Filler>
-void apply_symmetric_exchange(Bond const &bond, Indexing &&indexing,
-                              Filler &&fill) {
+void apply_exchange_sym(Bond const &bond, Indexing &&indexing, Filler &&fill) {
   assert(bond.coupling_defined());
   assert(bond.type_defined() && (bond.type() == "EXCHANGE"));
   assert(bond.size() == 2);

@@ -6,8 +6,9 @@
 namespace hydra::electron {
 
 const std::vector<std::string> special_bond_types = {
-    "HB",    "HEISENBERG", "EXCHANGE", "ISING",    "HOP", "HOPUP",
-    "HOPDN", "NUMBER",     "NUMBERUP", "NUMBERDN", "SZ"};
+    "HB",    "HEISENBERG", "EXCHANGE", "ISING",    "HOP",
+    "HOPUP", "HOPDN",      "NUMBER",   "NUMBERUP", "NUMBERDN",
+    "SZ",    "CDAGUP",     "CDAGDN",   "CUP",      "CDN"};
 
 BondList compile(BondList const &bonds, double precision = 1e-12);
 
