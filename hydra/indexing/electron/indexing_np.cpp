@@ -16,6 +16,32 @@ IndexingNp<bit_t>::IndexingNp(int n_sites, int n_up, int n_dn)
   utils::check_nup_ndn_electron(n_sites, n_up, n_dn, "Electron");
 }
 
+template <typename bit_t> int IndexingNp<bit_t>::n_sites() const {
+  return n_sites_;
+}
+template <typename bit_t> int IndexingNp<bit_t>::n_up() const { return n_up_; }
+template <typename bit_t> int IndexingNp<bit_t>::n_dn() const { return n_dn_; }
+
+template <typename bit_t> idx_t IndexingNp<bit_t>::size_ups() const {
+  return size_ups_;
+}
+template <typename bit_t> idx_t IndexingNp<bit_t>::size_dns() const {
+  return size_dns_;
+}
+template <typename bit_t> idx_t IndexingNp<bit_t>::size() const {
+  return size_;
+}
+
+template <typename bit_t>
+Combinations<bit_t> IndexingNp<bit_t>::states_ups() const {
+  return Combinations<bit_t>(n_sites_, n_up_);
+}
+
+template <typename bit_t>
+Combinations<bit_t> IndexingNp<bit_t>::states_dns() const {
+  return Combinations<bit_t>(n_sites_, n_dn_);
+}
+
 template class IndexingNp<uint16_t>;
 template class IndexingNp<uint32_t>;
 template class IndexingNp<uint64_t>;
