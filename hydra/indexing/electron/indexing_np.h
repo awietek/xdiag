@@ -3,10 +3,13 @@
 #include <hydra/common.h>
 
 #include <hydra/combinatorics/combinations.h>
+#include <hydra/combinatorics/combinations_index.h>
 
 #include <hydra/indexing/lin_table.h>
 
 namespace hydra::indexing::electron {
+
+using namespace combinatorics;
 
 template <typename bit_t> class IndexingNp {
 public:
@@ -26,8 +29,17 @@ public:
     return index_ups(ups) * size_dns_ + index_dns(dns);
   }
 
-  combinatorics::Combinations<bit_t> states_ups() const;
-  combinatorics::Combinations<bit_t> states_dns() const;
+  Combinations<bit_t> states_ups() const;
+  Combinations<bit_t> states_dns() const;
+  CombinationsIndex<bit_t> states_indices_ups() const;
+  CombinationsIndex<bit_t> states_indices_dns() const;
+
+#ifdef _OPENMP
+  CombinationsThread<bit_t> states_ups_thread() const;
+  CombinationsThread<bit_t> states_dns_thread() const;
+  CombinationsIndexThread<bit_t> states_indices_ups_thread() const;
+  CombinationsIndexThread<bit_t> states_indices_dns_thread() const;
+#endif
 
 private:
   int n_sites_;

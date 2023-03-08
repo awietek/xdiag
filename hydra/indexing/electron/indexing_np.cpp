@@ -42,6 +42,40 @@ Combinations<bit_t> IndexingNp<bit_t>::states_dns() const {
   return Combinations<bit_t>(n_sites_, n_dn_);
 }
 
+template <typename bit_t>
+CombinationsIndex<bit_t> IndexingNp<bit_t>::states_indices_ups() const {
+  return CombinationsIndex<bit_t>(n_sites_, n_up_);
+}
+
+template <typename bit_t>
+CombinationsIndex<bit_t> IndexingNp<bit_t>::states_indices_dns() const {
+  return CombinationsIndex<bit_t>(n_sites_, n_dn_);
+}
+
+#ifdef _OPENMP
+template <typename bit_t>
+CombinationsThread<bit_t> IndexingNp<bit_t>::states_ups_thread() const {
+  return CombinationsThread<bit_t>(n_sites_, n_up_);
+}
+
+template <typename bit_t>
+CombinationsThread<bit_t> IndexingNp<bit_t>::states_dns_thread() const {
+  return CombinationsThread<bit_t>(n_sites_, n_dn_);
+}
+
+template <typename bit_t>
+CombinationsIndexThread<bit_t>
+IndexingNp<bit_t>::states_indices_ups_thread() const {
+  return CombinationsIndexThread<bit_t>(n_sites_, n_up_);
+}
+
+template <typename bit_t>
+CombinationsIndexThread<bit_t>
+IndexingNp<bit_t>::states_indices_dns_thread() const {
+  return CombinationsIndexThread<bit_t>(n_sites_, n_dn_);
+}
+#endif
+
 template class IndexingNp<uint16_t>;
 template class IndexingNp<uint32_t>;
 template class IndexingNp<uint64_t>;

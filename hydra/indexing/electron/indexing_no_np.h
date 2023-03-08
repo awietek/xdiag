@@ -3,8 +3,11 @@
 #include <hydra/common.h>
 
 #include <hydra/combinatorics/subsets.h>
+#include <hydra/combinatorics/subsets_index.h>
 
 namespace hydra::indexing::electron {
+
+using namespace combinatorics;
 
 template <typename bit_t> class IndexingNoNp {
 public:
@@ -22,8 +25,17 @@ public:
     return index_ups(ups) * size_dns_ + index_dns(dns);
   }
 
-  combinatorics::Subsets<bit_t> states_ups() const;
-  combinatorics::Subsets<bit_t> states_dns() const;
+  Subsets<bit_t> states_ups() const;
+  Subsets<bit_t> states_dns() const;
+  SubsetsIndex<bit_t> states_indices_ups() const;
+  SubsetsIndex<bit_t> states_indices_dns() const;
+
+#ifdef _OPENMP
+  SubsetsThread<bit_t> states_ups_thread() const;
+  SubsetsThread<bit_t> states_dns_thread() const;
+  SubsetsIndexThread<bit_t> states_indices_ups_thread() const;
+  SubsetsIndexThread<bit_t> states_indices_dns_thread() const;
+#endif
 
 private:
   int n_sites_;

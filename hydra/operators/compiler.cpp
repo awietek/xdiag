@@ -160,13 +160,36 @@ BondList compile_explicit(BondList const &bonds, double precision,
   return bonds_compiled;
 }
 
+void check_bond_in_range(Bond const &bond, int n_sites) {
+  for (int s : bond.sites()) {
+    if (s >= n_sites) {
+      HydraPrint(bond);
+      Log.err("Error: bond site exceeds range of {} sites", n_sites);
+    }
+  }
+}
+
 void check_bonds_in_range(BondList const &bonds, int n_sites) {
   for (Bond bond : bonds) {
-    for (int s : bond.sites()) {
-      if (s >= n_sites) {
-        Log.err("Error: bond site exceeds range of {} sites", n_sites);
-      }
-    }
+    check_bond_in_range(bond, n_sites);
+  }
+}
+
+void check_bond_has_correct_number_of_sites(Bond const &bond, int ns) {
+  if (bond.size() != ns) {
+    HydraPrint(bond);
+    Log.err("Error using {} bond: number of sites found to "
+            "be {} instead of {}",
+            bond.type(), bond.size(), ns);
+  }
+}
+
+void check_bond_has_disjoint_sites(Bond const &bond) {
+  if (!bond.sites_disjoint()) {
+    HydraPrint(bond);
+    Log.err(
+        "Error using {} bond: sites are not mutually distinct from one another",
+        bond.type());
   }
 }
 

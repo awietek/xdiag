@@ -18,8 +18,9 @@ int main() {
     bonds << Bond("ISING", "JZ", {s1, s2});
     bonds << Bond("EXCHANGE", "JEX", {s1, s2});
   }
-  bonds["T"] = 1.0;
-  bonds["JZ"] = 0.0;
+  bonds["T"] = 0.0;
+  
+  bonds["JZ"] = 1.0;
   bonds["JEX"] = 0.0;
 
   auto block = Electron(n_sites, nup, ndn);
