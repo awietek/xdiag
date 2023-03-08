@@ -4,7 +4,9 @@ examples/*/build
 examples/*/outfiles
 examples/*/build/*
 examples/*/outfiles/*
-benchmark
+benchmark/old
+benchmark/*/build
+benchmark/*/build/*
 .DS_Store
 *.gcda
 *.gcno
