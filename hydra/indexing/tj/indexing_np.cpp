@@ -12,7 +12,8 @@ IndexingNp<bit_t>::IndexingNp(int n_sites, int n_up, int n_dn)
     : n_sites_(n_sites), n_up_(n_up), n_dn_(n_dn),
       size_ups_(binomial(n_sites, n_up)),
       size_dncs_(binomial(n_sites - n_up, n_dn)), size_(size_ups_ * size_dncs_),
-      lintable_ups_(n_sites, n_up), lintable_dncs_(n_sites - n_up, n_dn) {
+      sitesmask_(((bit_t)1 << n_sites) - 1), lintable_ups_(n_sites, n_up),
+      lintable_dncs_(n_sites - n_up, n_dn) {
   utils::check_nup_ndn_tj(n_sites, n_up, n_dn, "tJ");
 }
 

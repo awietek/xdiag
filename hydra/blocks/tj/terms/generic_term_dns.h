@@ -2,7 +2,7 @@
 
 #include <functional>
 
-namespace hydra::electron {
+namespace hydra::tj {
 
 template <typename bit_t, typename coeff_t, bool symmetric, bool fermi_ups,
           class IndexingIn, class IndexingOut, class NonZeroTermUps,
@@ -27,7 +27,7 @@ void generic_term_dns(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
 
     for (idx_t idx_up_in = 0; idx_up_in < indexing_in.n_rep_ups();
          ++idx_up_in) {
-      bit_t up_in = indexing.rep_ups(idx_up_in);
+      bit_t up_in = indexing_in.rep_ups(idx_up_in);
 
       if (non_zero_term_ups(up_in)) {
 
@@ -44,14 +44,14 @@ void generic_term_dns(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
         auto norms_out = indexing_out.norms_for_ups_rep(up_in);
 
         // trivial stabilizer of up_in -> dns have to be deposited
-        if (syms.size() == 1) {
+        if (syms_in.size() == 1) {
           idx_t idx_in = up_in_offset;
           for (bit_t dnc_in : dncs_in) {
             idx_t dn_in = bitops::deposit(dnc_in, not_up_in);
             if (non_zero_term_dns(dn_in)) {
               auto [dn_flip, coeff] = term_action(dn_in);
               if ((dn_flip & up_in) == 0) { // tJ constraint
-                bit_t dnc_flip = bitops::extract(dns_flip, not_up_in);
+                bit_t dnc_flip = bitops::extract(dn_flip, not_up_in);
                 idx_t idx_dnc_flip = indexing_out.dnsc_index(dnc_flip);
                 idx_t idx_out = up_out_offset + idx_dnc_flip;
 
@@ -74,13 +74,13 @@ void generic_term_dns(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
             if (non_zero_term_dns(dn_in)) {
               auto [dn_flip, coeff] = term_action(dn_in);
               auto [idx_dn_flip, fermi_dn, sym] =
-                  indexing.index_dns_fermi_sym(dn_flip, syms_out, dncs_out);
+                  indexing_out.index_dns_fermi_sym(dn_flip, syms_out, dncs_out);
 
               if (idx_dn_flip != invalid_index) {
                 idx_t idx_out = up_out_offset + idx_dn_flip;
                 bool fermi_up = indexing_out.fermi_bool_ups(sym, up_in);
                 if constexpr (fermi_ups) {
-                  fermi_up ^= (bool)(bitops::popcnt(up_in) & 1)
+                  fermi_up ^= (bool)(bitops::popcnt(up_in) & 1);
                 }
                 coeff_t val = coeff * bloch_factors[sym] *
                               norms_out[idx_dn_flip] / norms_in[idx_dn_in];
@@ -115,7 +115,7 @@ void generic_term_dns(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
             auto [dn_flip, coeff] = term_action(dn_in);
             if ((up_in & dn_flip) == 0) {
               bit_t dnc_flip = bitops::extract(dn_flip, not_up_in);
-              idx_t idx_dn_flip = indexing_out.index_dnc(dnc_flip);
+              idx_t idx_dn_flip = indexing_out.index_dncs(dnc_flip);
               idx_t idx_out = up_out_offset + idx_dn_flip;
               if constexpr (fermi_ups) {
                 bool fermi_up = (bool)(bitops::popcnt(up_in) & 1);
@@ -132,4 +132,4 @@ void generic_term_dns(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
   }
 }
 
-} // namespace hydra::electron
+} // namespace hydra::tj

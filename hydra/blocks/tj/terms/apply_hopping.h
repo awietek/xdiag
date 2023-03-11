@@ -32,7 +32,7 @@ void apply_hopping(Bond const &bond, Indexing &&indexing, Fill &&fill) {
     bool fermi = bitops::popcnt(spins & fermimask) & 1;
     spins ^= flipmask;
     if constexpr (is_complex<coeff_t>()) {
-      coeff_t tt = (bitops::gbit(spins, s1)) ? t : hydra::conj(t);
+      coeff_t tt = (bitops::gbit(spins, s1)) ? t : conj(t);
       return {spins, fermi ? tt : -tt};
     } else {
       return {spins, fermi ? t : -t};
@@ -47,10 +47,10 @@ void apply_hopping(Bond const &bond, Indexing &&indexing, Fill &&fill) {
         indexing, indexing, non_zero_term, term_action, fill);
   } else if (type == "HOPDN") {
     auto non_zero_term_ups = [&flipmask](bit_t const &ups) -> bool {
-      return (dns & flipmask) == 0;
+      return (ups & flipmask) == 0;
     };
     auto non_zero_term_dns = [&flipmask](bit_t const &dns) -> bool {
-      return bitops::popcnt(ups & flipmask) & 1;
+      return bitops::popcnt(dns & flipmask) & 1;
     };
     tj::generic_term_dns<bit_t, coeff_t, symmetric, false>(
         indexing, indexing, non_zero_term_ups, non_zero_term_dns, term_action,

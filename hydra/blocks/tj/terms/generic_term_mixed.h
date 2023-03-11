@@ -6,7 +6,7 @@ namespace hydra::tj {
 
 template <typename bit_t, typename coeff_t, bool symmetric, class IndexingIn,
           class IndexingOut, class NonZeroTermUps, class NonZeroTermDns,
-          class TermAction, class Fill>
+          class TermActionUps, class TermActionDns, class Fill>
 void generic_term_mixed(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
                         NonZeroTermUps &&non_zero_term_ups,
                         NonZeroTermDns &&non_zero_term_dns,
@@ -29,7 +29,7 @@ void generic_term_mixed(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
 
     for (idx_t up_in_idx = 0; up_in_idx < indexing_in.n_rep_ups();
          ++up_in_idx) {
-      bit_t up_in = indexing_in.rep_ups(up_in_in);
+      bit_t up_in = indexing_in.rep_ups(up_in_idx);
       bit_t not_up_in = (~up_in) & sitesmask;
 
       if (non_zero_term_ups(up_in)) {
@@ -40,38 +40,38 @@ void generic_term_mixed(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
         bit_t not_up_flip_rep = (~up_flip_rep) & sitesmask;
 
         // Get limits, syms, and dns for ingoing ups
-        idx_t up_in_offset = indexing_in.ups_offset(idx_up_in);
-        auto up_in_syms = indexing_in.syms_ups(ups);
-        auto dnss_in = indexing_in.dns_for_ups_rep(ups_in);
-        auto norms_in = indexing_in.norms_for_ups_rep(ups_in);
+        idx_t up_in_offset = indexing_in.ups_offset(up_in_idx);
+        auto up_in_syms = indexing_in.syms_ups(up_in);
+        auto dnss_in = indexing_in.dns_for_ups_rep(up_in);
+        auto norms_in = indexing_in.norms_for_ups_rep(up_in);
 
         // Get limits, syms, and dns for outgoing ups
-        idx_t up_out_offset = indexing_out.ups_offset(idx_ups_flip);
-        auto up_out_syms = indexing_out.syms_ups(ups_flip);
-        auto dnss_out = indexing_out.dns_for_ups_rep(ups_flip_rep);
-        auto norms_out = indexing_out.norms_for_ups_rep(ups_flip_rep);
+        idx_t up_out_offset = indexing_out.ups_offset(idx_up_flip);
+        auto up_out_syms = indexing_out.syms_ups(up_flip);
+        auto dnss_out = indexing_out.dns_for_ups_rep(up_flip_rep);
+        auto norms_out = indexing_out.norms_for_ups_rep(up_flip_rep);
 
         ////////////////////////////////////////////////////////////////////////
         // Trivial stabilizer of target ups
         if (up_out_syms.size() == 1) {
-          int sym = syms_ups_out.front();
+          int sym = up_out_syms.front();
           coeff_t prefac = coeff_up * bloch_factors[sym];
           bool fermi_up = indexing_out.fermi_bool_ups(sym, up_flip);
 
           // Origin ups trivial stabilizer -> dns need to be deposited
           if (up_in_syms.size() == 1) {
-            idx_t idx_in = ups_offset_in;
+            idx_t idx_in = up_in_offset;
             for (bit_t dnc_in : dnss_in) {
               bit_t dn_in = bitops::deposit(dnc_in, not_up_in);
               if (non_zero_term_dns(dn_in)) {
                 auto [dn_flip, coeff_dn] = term_action_dns(dn_in);
 
-                if ((dn_flip & ups_flip) == 0) { // t-J constraint
+                if ((dn_flip & up_flip) == 0) { // t-J constraint
                   bit_t dn_rep = group_action.apply(sym, dn_flip);
-                  bit_t dnc_rep = bitops::extract(dns_rep, not_up_flip_rep);
-                  idx_t dnc_rep_idx = indexing_out.dnsc_index(dns_rep_c);
+                  bit_t dnc_rep = bitops::extract(dn_rep, not_up_flip_rep);
+                  idx_t dnc_rep_idx = indexing_out.dnsc_index(dnc_rep);
                   idx_t idx_out = up_out_offset + dnc_rep_idx;
-                  bool fermi_dn = indexing_out.fermi_bool_dns(sym, dns_flip);
+                  bool fermi_dn = indexing_out.fermi_bool_dns(sym, dn_flip);
                   fill(idx_out, idx_in,
                        (fermi_up ^ fermi_dn) ? -prefac * coeff_dn
                                              : prefac * coeff_dn);
@@ -83,6 +83,7 @@ void generic_term_mixed(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
           // Origin ups have stabilizer -> dns DONT need to be deposited
           else {
             idx_t idx_in = up_in_offset;
+            idx_t idx_dn = 0;
             for (bit_t dn : dnss_in) {
               if (non_zero_term_dns(dn)) {
                 auto [dn_flip, coeff_dn] = term_action_dns(dn);
@@ -91,12 +92,11 @@ void generic_term_mixed(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
                       dn_flip, sym, not_up_flip_rep);
                   coeff_t val = prefac * coeff_dn / norms_in[idx_dn];
                   idx_t idx_out = up_out_offset + idx_dn_out;
-                  fill(idx_out, idx_in,
-                       (fermi_up ^ fermi_dn) ? -prefac * coeff_dn
-                                             : prefac * coeff_dn);
+                  fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -val : val);
                 }
               }
               ++idx_in;
+              ++idx_dn;
             }
           }
         }
@@ -105,27 +105,27 @@ void generic_term_mixed(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
         else {
           std::vector<coeff_t> prefacs(bloch_factors.size());
           for (int i = 0; i < (int)bloch_factors.size(); ++i) {
-            prefacs[i] = coeff * bloch_factors[i];
+            prefacs[i] = coeff_up * bloch_factors[i];
           }
 
           // Origin ups trivial stabilizer -> dns need to be deposited
           if (up_in_syms.size() == 1) {
             idx_t idx_in = up_in_offset;
-            bit_t not_ups = (~ups) & sitesmask;
             for (bit_t dnc : dnss_in) {
-              bit_t dn = bitops::deposit(dnsc, not_ups);
+              bit_t dn = bitops::deposit(dnc, not_up_in);
               if (non_zero_term_dns(dn)) {
                 auto [dn_flip, coeff_dn] = term_action_dns(dn);
 
                 if ((dn_flip & up_flip) == 0) { // t-J constraint
                   auto [idx_dn_out, fermi_dn, sym] =
-                      indexing.index_dns_fermi_sym(dns_flip, syms_ups_out,
-                                                   dnss_out);
+                      indexing_out.index_dns_fermi_sym(dn_flip, up_out_syms,
+                                                       dnss_out);
 
                   if (idx_dn_out != invalid_index) {
-                    idx_t idx_out = ups_offset_out + idx_dn_out;
-                    bool fermi_up = indexing.fermi_bool_ups(sym, up_flip);
-                    coeff_t val = prefacs[sym] * norms_out[idx_dn_out];
+                    idx_t idx_out = up_out_offset + idx_dn_out;
+                    bool fermi_up = indexing_out.fermi_bool_ups(sym, up_flip);
+                    coeff_t val =
+                        prefacs[sym] * coeff_dn * norms_out[idx_dn_out];
                     fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -val : val);
                   }
                 }
@@ -142,12 +142,13 @@ void generic_term_mixed(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
             for (bit_t dn : dnss_in) {
               if (non_zero_term_dns(dn)) {
                 auto [dn_flip, coeff_dn] = term_action_dns(dn);
-                if ((dn_flip & ups_flip) == 0) { // t-J constraint
+                if ((dn_flip & up_flip) == 0) { // t-J constraint
                   auto [idx_dn_out, fermi_dn, sym] =
-                      indexing.index_dns_fermi_sym(dns, syms_ups_out, dnss_out);
+                      indexing_out.index_dns_fermi_sym(dn_flip, up_out_syms,
+                                                       dnss_out);
                   if (idx_dn_out != invalid_index) {
                     idx_t idx_out = up_out_offset + idx_dn_out;
-                    bool fermi_up = indexing.fermi_bool_ups(sym, up_flip);
+                    bool fermi_up = indexing_out.fermi_bool_ups(sym, up_flip);
                     coeff_t val =
                         prefacs[sym] * norms_out[idx_dn_out] / norms_in[idx_dn];
                     fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -val : val);
@@ -171,9 +172,9 @@ void generic_term_mixed(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
 
     auto ups_and_idces = indexing_in.states_indices_ups();
     for (auto [up_in, idx_up_in] : ups_and_idces) {
-      if (non_zero_term(up_in)) {
+      if (non_zero_term_ups(up_in)) {
 
-        auto [up_flip, coeff_up] = term_action(up_in);
+        auto [up_flip, coeff_up] = term_action_ups(up_in);
         bit_t not_up_in = (~up_in) & sitesmask;
         bit_t not_up_flip = (~up_flip) & sitesmask;
         idx_t idx_up_flip = indexing_out.index_ups(up_flip);
@@ -188,9 +189,9 @@ void generic_term_mixed(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
             auto [dn_flip, coeff_dn] = term_action_dns(dn_in);
             if ((dn_flip & up_flip) == 0) { // t-J constraint
               bit_t dnc_out = bitops::extract(dn_in, not_up_flip);
-              idx_t idx_dnc_out = indexing_out.index_dnc(dnc_out);
+              idx_t idx_dnc_out = indexing_out.index_dncs(dnc_out);
               idx_t idx_out = idx_up_flip_offset + idx_dnc_out;
-              fill(idx_out, idx_in, coeff);
+              fill(idx_out, idx_in, coeff_up * coeff_dn);
             }
           }
           ++idx_in;

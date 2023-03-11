@@ -6,7 +6,7 @@
 
 #include <hydra/blocks/tj/terms/generic_term_diag.h>
 
-namespace hydra::electron {
+namespace hydra::tj {
 
 template <typename bit_t, typename coeff_t, bool symmetric, class Indexing,
           class Fill>
@@ -24,15 +24,19 @@ void apply_number(Bond const &bond, Indexing &&indexing, Fill &&fill) {
 
   if (type == "NUMBERUP") {
     auto term_action = [&](bit_t up, bit_t dn) {
+      (void)dn;
       return (up & mask) ? mu : 0.;
     };
-    tj::generic_term_diag(indexing, term_action, fill);
+    tj::generic_term_diag<bit_t, coeff_t, symmetric>(indexing, term_action,
+                                                     fill);
   } else if (type == "NUMBERDN") {
     auto term_action = [&](bit_t up, bit_t dn) {
+      (void)up;
       return (dn & mask) ? mu : 0.;
     };
-    tj::generic_term_diag(indexing, term_action, fill);
+    tj::generic_term_diag<bit_t, coeff_t, symmetric>(indexing, term_action,
+                                                     fill);
   }
 }
 
-} // namespace hydra::electron
+} // namespace hydra::tj

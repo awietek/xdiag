@@ -9,6 +9,7 @@
 #include <hydra/blocks/tj/terms/apply_hopping.h>
 #include <hydra/blocks/tj/terms/apply_ising.h>
 #include <hydra/blocks/tj/terms/apply_number.h>
+#include <hydra/blocks/tj/terms/apply_raise_lower.h>
 
 namespace hydra::tj {
 

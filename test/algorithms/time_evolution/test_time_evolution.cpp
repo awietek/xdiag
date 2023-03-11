@@ -172,7 +172,7 @@ TEST_CASE("analytic_case_free_particle_2D", "[time_evolution]") {
 }
 
 TEST_CASE("tj_complex_timeevo", "[time_evolution]") {
-  Log.set_verbosity(1);
+  Log.set_verbosity(0);
   int L = 3;
   int n_sites = L * L;
 

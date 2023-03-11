@@ -37,10 +37,24 @@ void apply_exchange(Bond const &bond, Indexing &&indexing, Filler &&fill) {
   auto non_zero_term_dns = [&](bit_t dn) {
     return bitops::popcnt(dn & flipmask) == 1;
   };
-  auto term_action_ups = [&](bit_t up) { return up ^ flipmask; };
-  auto term_action_dns = [&](bit_t dn) { return dn ^ flipmask; };
-  tj::generic_term_mixed(indexing, indexing, non_zero_term_ups,
-                         non_zero_term_dns, term_action_ups, term_action_dns,
-                         fill);
+  auto term_action_ups = [&](bit_t up) -> std::pair<bit_t, coeff_t> {
+    bit_t up_flip = up ^ flipmask;
+    if constexpr (is_complex<coeff_t>()) {
+      if (bitops::gbit(up, s1)) {
+        return {up_flip, Jhalf};
+      } else {
+        return {up_flip, Jhalf_conj};
+      }
+    } else {
+      return {up_flip, Jhalf};
+    }
+  };
+  auto term_action_dns = [&](bit_t dn) -> std::pair<bit_t, coeff_t> {
+    return {dn ^ flipmask, 1.0};
+  };
+  tj::generic_term_mixed<bit_t, coeff_t, symmetric>(
+      indexing, indexing, non_zero_term_ups, non_zero_term_dns, term_action_ups,
+      term_action_dns, fill);
+}
 
-} // namespace hydra::electron
+} // namespace hydra::tj

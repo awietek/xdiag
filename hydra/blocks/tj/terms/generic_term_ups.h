@@ -36,7 +36,7 @@ void generic_term_ups(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
 
         // Get limits, syms, and dns for ingoing ups
         idx_t ups_offset_in = indexing_in.ups_offset(idx_up_in);
-        auto syms_ups_in = indexing_in.syms_ups(ups);
+        auto syms_ups_in = indexing_in.syms_ups(ups_in);
         auto dnss_in = indexing_in.dns_for_ups_rep(ups_in);
         auto norms_in = indexing_in.norms_for_ups_rep(ups_in);
 
@@ -53,14 +53,12 @@ void generic_term_ups(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
           coeff_t prefac = coeff * bloch_factors[sym];
           bool fermi_up = indexing_out.fermi_bool_ups(sym, ups_flip);
 
-          idx_t idx_dn = 0;
-
           // Origin ups trivial stabilizer -> dns need to be deposited
           if (syms_ups_in.size() == 1) {
             idx_t idx_in = ups_offset_in;
-            bit_t not_ups = (~ups) & sitesmask;
+            bit_t not_ups_in = (~ups_in) & sitesmask;
             for (bit_t dnsc : dnss_in) {
-              bit_t dns = bitops::deposit(dnsc, not_ups);
+              bit_t dns = bitops::deposit(dnsc, not_ups_in);
               if ((dns & ups_flip) == 0) { // t-J constraint
                 bit_t dns_rep = group_action.apply(sym, dns);
                 bit_t dns_rep_c = bitops::extract(dns_rep, not_ups_flip_rep);
@@ -69,6 +67,7 @@ void generic_term_ups(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
                 bool fermi_dn = indexing_out.fermi_bool_dns(sym, dns);
                 fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -prefac : prefac);
               }
+              ++idx_in;
             }
           }
           // Origin ups have stabilizer -> dns DONT need to be deposited
@@ -83,6 +82,8 @@ void generic_term_ups(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
                 idx_t idx_out = ups_offset_out + idx_dn_out;
                 fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -val : val);
               }
+              ++idx_in;
+              ++idx_dn;
             }
           }
 
@@ -96,19 +97,20 @@ void generic_term_ups(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
 
           // Origin ups trivial stabilizer -> dns need to be deposited
           if (syms_ups_in.size() == 1) {
+            bit_t not_ups_in = (~ups_in) & sitesmask;
+
             idx_t idx_in = ups_offset_in;
-            bit_t not_ups = (~ups) & sitesmask;
             for (bit_t dnsc : dnss_in) {
-              bit_t dns = bitops::deposit(dnsc, not_ups);
+              bit_t dns = bitops::deposit(dnsc, not_ups_in);
 
               if ((dns & ups_flip) == 0) { // t-J constraint
                 auto [idx_dn_out, fermi_dn, sym] =
-                    indexing.index_dns_fermi_sym(dns, syms_ups_out, dnss_out);
+                    indexing_out.index_dns_fermi_sym(dns, syms_ups_out,
+                                                     dnss_out);
 
                 if (idx_dn_out != invalid_index) {
                   idx_t idx_out = ups_offset_out + idx_dn_out;
-                  bool fermi_up =
-                      fermi_up_hop ^ indexing.fermi_bool_ups(sym, ups_flip);
+                  bool fermi_up = indexing_out.fermi_bool_ups(sym, ups_flip);
                   coeff_t val = prefacs[sym] * norms_out[idx_dn_out];
 
                   fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -val : val);
@@ -120,17 +122,16 @@ void generic_term_ups(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
 
           // Origin ups non-trivial stabilizer -> dns DONT need to be deposited
           else {
-            auto norms_in = indexing.norms_for_ups_rep(ups);
             idx_t idx_in = ups_offset_in;
             idx_t idx_dn = 0;
             for (bit_t dns : dnss_in) {
               if ((dns & ups_flip) == 0) { // t-J constraint
                 auto [idx_dn_out, fermi_dn, sym] =
-                    indexing.index_dns_fermi_sym(dns, syms_ups_out, dnss_out);
+                    indexing_out.index_dns_fermi_sym(dns, syms_ups_out,
+                                                     dnss_out);
                 if (idx_dn_out != invalid_index) {
                   idx_t idx_out = ups_offset_out + idx_dn_out;
-                  bool fermi_up =
-                      fermi_up_hop ^ indexing.fermi_bool_ups(sym, ups_flip);
+                  bool fermi_up = indexing_out.fermi_bool_ups(sym, ups_flip);
                   coeff_t val =
                       prefacs[sym] * norms_out[idx_dn_out] / norms_in[idx_dn];
                   fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -val : val);
@@ -169,8 +170,8 @@ void generic_term_ups(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
 
           if ((up_flip & dn_in) == 0) { // tJ constraint
             bit_t dnc_out = bitops::extract(dn_in, not_up_flip);
-            idx_t idx_dnc_out = indexing_out.index_dnc(dnc_out);
-            idx_t idx_out = idx_up_flip_offset + idx_dn_out;
+            idx_t idx_dnc_out = indexing_out.index_dncs(dnc_out);
+            idx_t idx_out = idx_up_flip_offset + idx_dnc_out;
             fill(idx_out, idx_in, coeff);
           }
           ++idx_in;
@@ -178,5 +179,6 @@ void generic_term_ups(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
       }
     }
   }
+}
 
 } // namespace hydra::tj
