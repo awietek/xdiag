@@ -1,107 +1,60 @@
 #pragma once
 
 #include <hydra/bitops/bitops.h>
-#include <hydra/combinatorics/combinations.h>
 #include <hydra/common.h>
 #include <hydra/operators/bond.h>
 
+#include <hydra/blocks/tj/terms/generic_term_dns.h>
+#include <hydra/blocks/tj/terms/generic_term_ups.h>
+
 namespace hydra::tj {
 
-template <typename bit_t, typename coeff_t, class Indexing, class Filler>
-void apply_hopping(Bond const &bond, Indexing &&indexing, Filler &&fill) {
-  using combinatorics::Combinations;
+template <typename bit_t, typename coeff_t, bool symmetric, class Indexing,
+          class Fill>
+void apply_hopping(Bond const &bond, Indexing &&indexing, Fill &&fill) {
   assert(bond.coupling_defined());
   assert(bond.type_defined());
-  assert((bond.type() == "HOPUP") || (bond.type() == "HOPDN"));
   assert(bond.size() == 2);
   assert(bond.sites_disjoint());
 
-  int n_sites = indexing.n_sites();
-  int n_up = indexing.n_up();
-  int n_holes = indexing.n_holes();
-  int n_spins = indexing.n_spins();
-  idx_t size_spins = indexing.size_spins();
+  std::string type = bond.type();
+  assert((type == "HOPUP") || (type == "HOPDN"));
 
-  coeff_t traw = bond.coupling<coeff_t>();
   int s1 = bond[0];
   int s2 = bond[1];
-
-  // Prepare bitmasks
-  bit_t sitesmask = ((bit_t)1 << n_sites) - 1;
-  bit_t spinsmask = ((bit_t)1 << n_spins) - 1;
   bit_t flipmask = ((bit_t)1 << s1) | ((bit_t)1 << s2);
   int l = std::min(s1, s2);
   int u = std::max(s1, s2);
   bit_t fermimask = (((bit_t)1 << (u - l - 1)) - 1) << (l + 1);
+  coeff_t t = bond.coupling<coeff_t>();
 
-  idx_t holes_idx = 0;
-  for (auto holes : Combinations<bit_t>(n_sites, n_holes)) {
-
-    // exactly one hole at sites s1, s2
-    if (bitops::popcnt(holes & flipmask) & 1) {
-
-      // get hopping parameter (complex conjugate if necessary)
-      coeff_t t;
-      if constexpr (is_complex<coeff_t>()) {
-        t = (bitops::gbit(holes, s2)) ? traw : hydra::conj(traw);
-      } else {
-        t = traw;
-      }
-
-      bit_t not_holes = (~holes) & sitesmask;
-      idx_t holes_offset = holes_idx * size_spins;
-      bit_t new_holes = holes ^ flipmask;
-      bit_t not_new_holes = (~new_holes) & sitesmask;
-      idx_t new_holes_idx = indexing.index_holes(new_holes);
-      idx_t new_holes_offset = new_holes_idx * size_spins;
-
-      // Apply hoppings on upspins
-      if (bond.type() == "HOPUP") {
-        idx_t idx = holes_offset;
-        for (auto spins : Combinations<bit_t>(n_spins, n_up)) {
-          bit_t ups = bitops::deposit(spins, not_holes);
-          if (bitops::popcnt(ups & flipmask) & 1) { // exactly one upspin
-            bit_t new_ups = ups ^ flipmask;
-            bit_t new_spins = bitops::extract(new_ups, not_new_holes);
-            idx_t new_idx = new_holes_offset + indexing.index_spins(new_spins);
-            bool fermi_sign = bitops::popcnt(ups & fermimask) & 1;
-
-            // term -t \sum... (negative prefactor!)
-            if (fermi_sign) {
-              fill(new_idx, idx, t);
-            } else {
-              fill(new_idx, idx, -t);
-            }
-          }
-          ++idx;
-        }
-      }
-
-      // Apply hoppings on dnspins
-      if (bond.type() == "HOPDN") {
-        idx_t idx = holes_offset;
-        for (auto spins : Combinations<bit_t>(n_spins, n_up)) {
-          bit_t spins_neg = (~spins) & spinsmask;
-          bit_t dns = bitops::deposit(spins_neg, not_holes);
-          if (bitops::popcnt(dns & flipmask) & 1) { // exactly one dnspin
-            bit_t new_dns = dns ^ flipmask;
-            bit_t new_ups = ((~new_dns) & not_new_holes);
-            bit_t new_spins = bitops::extract(new_ups, not_new_holes);
-            idx_t new_idx = new_holes_offset + indexing.index_spins(new_spins);
-            bool fermi_sign = bitops::popcnt(dns & fermimask) & 1;
-
-            // term -t \sum... (negative prefactor!)
-            if (fermi_sign) {
-              fill(new_idx, idx, t);
-            } else {
-              fill(new_idx, idx, -t);
-            }
-          }
-          ++idx;
-        }
-      } // if dn-hoppings
+  auto term_action = [&](bit_t spins) -> std::pair<bit_t, coeff_t> {
+    bool fermi = bitops::popcnt(spins & fermimask) & 1;
+    spins ^= flipmask;
+    if constexpr (is_complex<coeff_t>()) {
+      coeff_t tt = (bitops::gbit(spins, s1)) ? t : hydra::conj(t);
+      return {spins, fermi ? tt : -tt};
+    } else {
+      return {spins, fermi ? t : -t};
     }
-    ++holes_idx;
+  };
+
+  if (type == "HOPUP") {
+    auto non_zero_term = [&flipmask](bit_t const &ups) -> bool {
+      return bitops::popcnt(ups & flipmask) & 1;
+    };
+    tj::generic_term_ups<bit_t, coeff_t, symmetric>(
+        indexing, indexing, non_zero_term, term_action, fill);
+  } else if (type == "HOPDN") {
+    auto non_zero_term_ups = [&flipmask](bit_t const &ups) -> bool {
+      return (dns & flipmask) == 0;
+    };
+    auto non_zero_term_dns = [&flipmask](bit_t const &dns) -> bool {
+      return bitops::popcnt(ups & flipmask) & 1;
+    };
+    tj::generic_term_dns<bit_t, coeff_t, symmetric, false>(
+        indexing, indexing, non_zero_term_ups, non_zero_term_dns, term_action,
+        fill);
   }
 }
 

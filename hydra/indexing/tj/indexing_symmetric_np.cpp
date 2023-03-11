@@ -78,6 +78,166 @@ IndexingSymmetricNp<bit_t>::IndexingSymmetricNp(int n_sites, int nup, int ndn,
   }
 }
 
+template <typename bit_t>
+inline int IndexingSymmetricNp<bit_t>::n_sites() const {
+  return n_sites_;
+}
+template <typename bit_t> inline int IndexingSymmetricNp<bit_t>::n_up() const {
+  return n_up_;
+}
+template <typename bit_t> inline int IndexingSymmetricNp<bit_t>::n_dn() const {
+  return n_dn_;
+}
+template <typename bit_t>
+GroupActionLookup<bit_t> const &
+IndexingSymmetricNp<bit_t>::group_action() const {
+  return group_action_;
+}
+template <typename bit_t>
+Representation const &IndexingSymmetricNp<bit_t>::irrep() const {
+  return irrep_;
+}
+template <typename bit_t> idx_t IndexingSymmetricNp<bit_t>::size() const {
+  return size_;
+}
+
+template <typename bit_t> idx_t IndexingSymmetricNp<bit_t>::n_rep_ups() const {
+  return reps_up_.size();
+}
+template <typename bit_t>
+bit_t IndexingSymmetricNp<bit_t>::rep_ups(idx_t idx_up) const {
+  return reps_up_[idx_up];
+}
+template <typename bit_t>
+idx_t IndexingSymmetricNp<bit_t>::ups_offset(idx_t idx_up) const {
+  return ups_offset_[idx_up];
+}
+
+// index and fermi sign for dns with trivial stabilizer
+template <typename bit_t>
+std::pair<idx_t, bool>
+IndexingSymmetricNp<bit_t>::index_dns_fermi(bit_t dns, int sym,
+                                            bit_t not_ups) const {
+  bit_t dns_rep = group_action_.apply(sym, dns);
+  bit_t dns_rep_c = bitops::extract(dns_rep, not_ups);
+  idx_t idx_dns_rep = lintable_dnsc_.index(dns_rep_c);
+  bool fermi_dns = fermi_table_dns_.sign(sym, dns);
+  return {idx_dns_rep, fermi_dns};
+}
+
+template <typename bit_t>
+
+std::pair<idx_t, bool>
+IndexingSymmetricNp<bit_t>::index_dns_fermi(bit_t dns, int sym, bit_t not_ups,
+                                            bit_t fermimask) const {
+  bit_t dns_rep = group_action_.apply(sym, dns);
+  bit_t dns_rep_c = bitops::extract(dns_rep, not_ups);
+  idx_t idx_dns_rep = lintable_dnsc_.index(dns_rep_c);
+  bool fermi_dns = (bitops::popcnt(dns & fermimask) & 1);
+  fermi_dns ^= fermi_table_dns_.sign(sym, dns);
+  return {idx_dns_rep, fermi_dns};
+}
+
+// index and fermi sign for dns with non-trivial stabilizer
+template <typename bit_t>
+std::tuple<idx_t, bool, int> IndexingSymmetricNp<bit_t>::index_dns_fermi_sym(
+    bit_t dns, gsl::span<int const> syms,
+    gsl::span<bit_t const> dnss_out) const {
+  auto [rep_dns, rep_sym] =
+      symmetries::representative_sym_subset(dns, group_action_, syms);
+  auto it = std::lower_bound(dnss_out.begin(), dnss_out.end(), rep_dns);
+  if ((it != dnss_out.end()) && (*it == rep_dns)) {
+    bool fermi_dns = fermi_table_dns_.sign(rep_sym, dns);
+    return {std::distance(dnss_out.begin(), it), fermi_dns, rep_sym};
+  } else {
+    return {invalid_index, false, rep_sym};
+  }
+}
+
+template <typename bit_t>
+
+std::tuple<idx_t, bool, int> IndexingSymmetricNp<bit_t>::index_dns_fermi_sym(
+    bit_t dns, gsl::span<int const> syms, gsl::span<bit_t const> dnss_out,
+    bit_t fermimask) const {
+  auto [rep_dns, rep_sym] =
+      symmetries::representative_sym_subset(dns, group_action_, syms);
+  auto it = std::lower_bound(dnss_out.begin(), dnss_out.end(), rep_dns);
+  if ((it != dnss_out.end()) && (*it == rep_dns)) {
+    bool fermi_dns = (bitops::popcnt(dns & fermimask) & 1);
+    fermi_dns ^= fermi_table_dns_.sign(rep_sym, dns);
+    return {std::distance(dnss_out.begin(), it), fermi_dns, rep_sym};
+  } else {
+    return {invalid_index, false, rep_sym};
+  }
+}
+
+// Retrieving index of representative and symmetries for ups
+template <typename bit_t>
+
+idx_t IndexingSymmetricNp<bit_t>::index_ups(bit_t ups) const {
+  return idces_up_[lintable_ups_.index(ups)];
+}
+
+template <typename bit_t>
+gsl::span<int const> IndexingSymmetricNp<bit_t>::syms_ups(bit_t ups) const {
+  idx_t idx_ups = lintable_ups_.index(ups);
+  auto [start, length] = sym_limits_up_[idx_ups];
+  return {syms_up_.data() + start, length};
+}
+
+template <typename bit_t>
+std::pair<idx_t, gsl::span<int const>>
+IndexingSymmetricNp<bit_t>::index_syms_up(bit_t ups) const {
+  idx_t idx_ups = lintable_ups_.index(ups);
+  idx_t index = idces_up_[idx_ups];
+  auto [start, length] = sym_limits_up_[idx_ups];
+  return {index, {syms_up_.data() + start, length}};
+}
+
+// Retrieving dns states and norms for given up configuration
+template <typename bit_t>
+gsl::span<bit_t const>
+IndexingSymmetricNp<bit_t>::dns_for_ups_rep(bit_t ups) const {
+  idx_t idx_ups = index_ups(ups);
+  auto [start, length] = dns_limits_[idx_ups];
+  return {dns_storage_.data() + start, length};
+}
+
+template <typename bit_t>
+gsl::span<double const>
+IndexingSymmetricNp<bit_t>::norms_for_ups_rep(bit_t ups) const {
+  idx_t idx_ups = index_ups(ups);
+  auto [start, length] = dns_limits_[idx_ups];
+  return {norms_storage_.data() + start, length};
+}
+
+template <typename bit_t>
+std::pair<gsl::span<bit_t const>, gsl::span<double const>>
+IndexingSymmetricNp<bit_t>::dns_norms_for_up_rep(bit_t ups) const {
+  idx_t idx_ups = index_ups(ups);
+  auto [start, length] = dns_limits_[idx_ups];
+  auto dnss = gsl::span<bit_t const>{dns_storage_.data() + start, length};
+  auto norms = gsl::span<double const>{norms_storage_.data() + start, length};
+  return {dnss, norms};
+}
+
+// Fermi sign when applying sym on states
+template <typename bit_t>
+
+bool IndexingSymmetricNp<bit_t>::fermi_bool_ups(int sym, bit_t ups) const {
+  return fermi_table_ups_.sign(sym, ups);
+}
+template <typename bit_t>
+
+bool IndexingSymmetricNp<bit_t>::fermi_bool_dns(int sym, bit_t dns) const {
+  return fermi_table_dns_.sign(sym, dns);
+}
+
+template <typename bit_t>
+idx_t IndexingSymmetricNp<bit_t>::dnsc_index(bit_t dns) const {
+  return lintable_dnsc_.index(dns);
+}
+
 template class IndexingSymmetricNp<uint16_t>;
 template class IndexingSymmetricNp<uint32_t>;
 template class IndexingSymmetricNp<uint64_t>;
