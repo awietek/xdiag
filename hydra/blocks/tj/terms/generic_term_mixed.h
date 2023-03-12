@@ -188,10 +188,19 @@ void generic_term_mixed(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
           if (non_zero_term_dns(dn_in)) {
             auto [dn_flip, coeff_dn] = term_action_dns(dn_in);
             if ((dn_flip & up_flip) == 0) { // t-J constraint
-              bit_t dnc_out = bitops::extract(dn_in, not_up_flip);
+              bit_t dnc_out = bitops::extract(dn_flip, not_up_flip);
               idx_t idx_dnc_out = indexing_out.index_dncs(dnc_out);
               idx_t idx_out = idx_up_flip_offset + idx_dnc_out;
-              fill(idx_out, idx_in, coeff_up * coeff_dn);
+	      
+	      // Log("{};{}", BSTR(up_in), BSTR(dn_in));
+	      // Log("{};{}", BSTR(up_flip), BSTR(dn_flip));
+	      // Log("not_up_flip: {}", BSTR(not_up_flip));
+	      // Log("dnc_out: {}", BSTR(dnc_out));
+	      // Log("cup: {}, cdn: {}", coeff_up , coeff_dn);
+	      // Log("in: {} out: {}", idx_in, idx_out);
+	      // Log("");
+
+	      fill(idx_out, idx_in, coeff_up * coeff_dn);
             }
           }
           ++idx_in;

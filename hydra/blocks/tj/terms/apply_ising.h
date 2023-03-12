@@ -15,7 +15,9 @@ void apply_ising(Bond const &bond, Indexing &&indexing, Fill &&fill) {
   assert(bond.type_defined());
   assert(bond.size() == 2);
   assert(bond.sites_disjoint());
-  assert((bond.type() == "ISING") || (bond.type() == "TJISING"));
+
+  std::string type = bond.type();
+  assert((type == "ISING") || (type == "TJISING"));
 
   coeff_t J = bond.coupling<coeff_t>();
   int s1 = bond[0];
@@ -25,13 +27,18 @@ void apply_ising(Bond const &bond, Indexing &&indexing, Fill &&fill) {
 
   // Set values for same/diff (tJ block definition)
   coeff_t val_same, val_diff;
-  if (bond.type() == "ISING") {
+  if (type == "ISING") {
     val_same = J / 4.;
     val_diff = -J / 4.;
-  } else { // (bond.type() == "TJISING")
+  } else { // (type == "TJISING")
     val_same = 0.;
     val_diff = -J / 2.;
+    // val_same = 1.11;
+    // val_diff = 3.21;
   }
+
+  // Log("type: {}", type);
+  // Log("s1: {}, s2: {}", s1, s2);
 
   auto term_action = [&](bit_t up, bit_t dn) -> coeff_t {
     bool b1_up = up & s1_mask;

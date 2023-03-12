@@ -22,7 +22,7 @@ void apply_terms(BondList const &bonds, IndexingIn const &indexing_in,
 
   for (auto bond : bonds_compiled) {
     std::string type = bond.type();
-    if (type == "ISING") {
+    if ((type == "ISING") || (type == "TJISING")) {
       tj::apply_ising<bit_t, coeff_t, symmetric>(bond, indexing_in, fill);
     } else if ((type == "NUMBERUP") || (type == "NUMBERDN")) {
       tj::apply_number<bit_t, coeff_t, symmetric>(bond, indexing_in, fill);

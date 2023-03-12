@@ -36,6 +36,12 @@ void generic_term_diag(Indexing &&indexing, TermAction &&term_action,
       for (bit_t dnc_in : dncs_in) {
         bit_t dn_in = bitops::deposit(dnc_in, not_up_in);
         coeff_t val = term_action(up_in, dn_in);
+
+        // Log("{};{}", BSTR(up_in), BSTR(dn_in));
+        // Log("val: {}", val);
+        // Log("idx: {}", idx);
+        // Log("");
+
         fill(idx, idx, val);
         ++idx;
       }

@@ -2,7 +2,9 @@
 
 #include <iostream>
 
+#include "../spinhalf/testcases_spinhalf.h"
 #include "testcases_tj.h"
+
 #include <hydra/all.h>
 
 using namespace hydra;
@@ -27,6 +29,7 @@ void test_tjmodel_fulleigs(BondList bonds, arma::Col<double> exact_eigs) {
 
       auto block = tJ(n_sites, nup, ndn);
       auto H = matrix_real(bonds, block, block);
+      // H.print();
       REQUIRE(arma::norm(H - H.t()) < 1e-12);
 
       arma::vec eigs;
@@ -38,11 +41,43 @@ void test_tjmodel_fulleigs(BondList bonds, arma::Col<double> exact_eigs) {
   }
   std::sort(all_eigs.begin(), all_eigs.end());
   REQUIRE(all_eigs.size() == exact_eigs.size());
+  // HydraPrint(all_eigs);
+  // HydraPrint(exact_eigs);
   REQUIRE(close(arma::vec(all_eigs), exact_eigs));
 }
 
 TEST_CASE("tj_matrix", "[blocks][tj]") {
   using namespace hydra::testcases::tj;
+
+  {
+    Log("tj_matrix: HB all-to-all comparison");
+    for (int n_sites = 2; n_sites < 7; ++n_sites) {
+      Log("N: {}", n_sites);
+      int nup = n_sites / 2;
+      auto bonds = testcases::spinhalf::HB_alltoall(n_sites);
+      auto block = Spinhalf(n_sites, nup);
+      auto block_tJ = tJ(n_sites, nup, n_sites - nup);
+      auto H = matrix_real(bonds, block, block);
+      auto H_tJ = matrix_real(bonds, block_tJ, block_tJ);
+
+      REQUIRE(H.is_hermitian());
+      REQUIRE(H_tJ.is_hermitian());
+
+      // H.print();
+      // H_tJ.print();
+      
+      arma::vec eigs;
+      arma::eig_sym(eigs, H);
+
+      arma::vec eigs_tJ;
+      arma::eig_sym(eigs_tJ, H_tJ);
+
+      // eigs.print();
+      // eigs_tJ.print();
+	
+      REQUIRE(close(eigs, eigs_tJ));
+    }
+  }
 
   {
     Log("tj_matrix: TJModel: six-site chain test, t=1.0, J=1.0, N=6");
