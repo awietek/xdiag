@@ -55,6 +55,15 @@ void generic_term_dns(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
                 idx_t idx_dnc_flip = indexing_out.dnsc_index(dnc_flip);
                 idx_t idx_out = up_out_offset + idx_dnc_flip;
 
+		// Log("NO stabilizer");
+		// Log("{};{}", BSTR(up_in), BSTR(dn_in));
+		// Log("{};{}", BSTR(up_in), BSTR(dn_flip));
+		// Log("not_up_in: {}", BSTR(not_up_in));
+		// Log("dnc_flip: {}", BSTR(dnc_flip));
+		// Log("coeff: {}", coeff);
+		// Log("in: {} out: {}", idx_in, idx_out);
+		// Log("");
+		
                 if constexpr (fermi_ups) {
                   bool fermi_up = (bool)(bitops::popcnt(up_in) & 1);
                   fill(idx_out, idx_in, fermi_up ? -coeff : coeff);
@@ -63,6 +72,7 @@ void generic_term_dns(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
                 }
               }
             }
+	    ++idx_in;
           }
         }
 
@@ -84,6 +94,15 @@ void generic_term_dns(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
                 }
                 coeff_t val = coeff * bloch_factors[sym] *
                               norms_out[idx_dn_flip] / norms_in[idx_dn_in];
+
+		// Log("YES stabilizer");
+		// Log("{};{}", BSTR(up_in), BSTR(dn_in));
+		// Log("{};{}", BSTR(up_in), BSTR(dn_flip));
+		// Log("not_up_in: {}", BSTR(not_up_in));
+		// Log("coeff: {}", val);
+		// Log("in: {} out: {}", idx_in, idx_out);
+		// Log("");
+	
                 fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -val : val);
               }
             }
@@ -117,6 +136,7 @@ void generic_term_dns(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
               bit_t dnc_flip = bitops::extract(dn_flip, not_up_in);
               idx_t idx_dn_flip = indexing_out.index_dncs(dnc_flip);
               idx_t idx_out = up_out_offset + idx_dn_flip;
+	  
               if constexpr (fermi_ups) {
                 bool fermi_up = (bool)(bitops::popcnt(up_in) & 1);
                 fill(idx_out, idx_in, fermi_up ? -coeff : coeff);

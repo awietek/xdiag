@@ -11,6 +11,8 @@
 #include <hydra/blocks/tj/terms/apply_number.h>
 #include <hydra/blocks/tj/terms/apply_raise_lower.h>
 
+#include <hydra/utils/print_macro.h>
+
 namespace hydra::tj {
 
 template <typename bit_t, typename coeff_t, bool symmetric, class IndexingIn,

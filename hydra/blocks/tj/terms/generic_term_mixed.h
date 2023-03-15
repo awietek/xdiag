@@ -18,7 +18,7 @@ void generic_term_mixed(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
 
   if constexpr (symmetric) {
 
-    auto const &group_action = indexing_out.group_action();
+    // auto const &group_action = indexing_out.group_action();
     auto const &irrep = indexing_out.irrep();
     std::vector<coeff_t> bloch_factors;
     if constexpr (is_complex<coeff_t>()) {
@@ -67,11 +67,9 @@ void generic_term_mixed(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
                 auto [dn_flip, coeff_dn] = term_action_dns(dn_in);
 
                 if ((dn_flip & up_flip) == 0) { // t-J constraint
-                  bit_t dn_rep = group_action.apply(sym, dn_flip);
-                  bit_t dnc_rep = bitops::extract(dn_rep, not_up_flip_rep);
-                  idx_t dnc_rep_idx = indexing_out.dnsc_index(dnc_rep);
-                  idx_t idx_out = up_out_offset + dnc_rep_idx;
-                  bool fermi_dn = indexing_out.fermi_bool_dns(sym, dn_flip);
+                  auto [idx_dn_out, fermi_dn] = indexing_out.index_dns_fermi(
+                      dn_flip, sym, not_up_flip_rep);
+                  idx_t idx_out = up_out_offset + idx_dn_out;
                   fill(idx_out, idx_in,
                        (fermi_up ^ fermi_dn) ? -prefac * coeff_dn
                                              : prefac * coeff_dn);
@@ -80,6 +78,7 @@ void generic_term_mixed(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
               ++idx_in;
             }
           }
+
           // Origin ups have stabilizer -> dns DONT need to be deposited
           else {
             idx_t idx_in = up_in_offset;
@@ -100,7 +99,8 @@ void generic_term_mixed(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
             }
           }
         }
-        ////////////////////////////////////////////////////////////////////////
+
+	////////////////////////////////////////////////////////////////////////
         // Target ups have non-trivial stabilizer
         else {
           std::vector<coeff_t> prefacs(bloch_factors.size());
@@ -120,7 +120,6 @@ void generic_term_mixed(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
                   auto [idx_dn_out, fermi_dn, sym] =
                       indexing_out.index_dns_fermi_sym(dn_flip, up_out_syms,
                                                        dnss_out);
-
                   if (idx_dn_out != invalid_index) {
                     idx_t idx_out = up_out_offset + idx_dn_out;
                     bool fermi_up = indexing_out.fermi_bool_ups(sym, up_flip);
@@ -149,8 +148,8 @@ void generic_term_mixed(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
                   if (idx_dn_out != invalid_index) {
                     idx_t idx_out = up_out_offset + idx_dn_out;
                     bool fermi_up = indexing_out.fermi_bool_ups(sym, up_flip);
-                    coeff_t val =
-                        prefacs[sym] * norms_out[idx_dn_out] / norms_in[idx_dn];
+                    coeff_t val = prefacs[sym] * coeff_dn *
+                                  norms_out[idx_dn_out] / norms_in[idx_dn];
                     fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -val : val);
                   }
                 }
@@ -191,16 +190,16 @@ void generic_term_mixed(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
               bit_t dnc_out = bitops::extract(dn_flip, not_up_flip);
               idx_t idx_dnc_out = indexing_out.index_dncs(dnc_out);
               idx_t idx_out = idx_up_flip_offset + idx_dnc_out;
-	      
-	      // Log("{};{}", BSTR(up_in), BSTR(dn_in));
-	      // Log("{};{}", BSTR(up_flip), BSTR(dn_flip));
-	      // Log("not_up_flip: {}", BSTR(not_up_flip));
-	      // Log("dnc_out: {}", BSTR(dnc_out));
-	      // Log("cup: {}, cdn: {}", coeff_up , coeff_dn);
-	      // Log("in: {} out: {}", idx_in, idx_out);
-	      // Log("");
 
-	      fill(idx_out, idx_in, coeff_up * coeff_dn);
+              // Log("{};{}", BSTR(up_in), BSTR(dn_in));
+              // Log("{};{}", BSTR(up_flip), BSTR(dn_flip));
+              // Log("not_up_flip: {}", BSTR(not_up_flip));
+              // Log("dnc_out: {}", BSTR(dnc_out));
+              // Log("cup: {}, cdn: {}", coeff_up , coeff_dn);
+              // Log("in: {} out: {}", idx_in, idx_out);
+              // Log("");
+
+              fill(idx_out, idx_in, coeff_up * coeff_dn);
             }
           }
           ++idx_in;

@@ -33,8 +33,6 @@ void apply_ising(Bond const &bond, Indexing &&indexing, Fill &&fill) {
   } else { // (type == "TJISING")
     val_same = 0.;
     val_diff = -J / 2.;
-    // val_same = 1.11;
-    // val_diff = 3.21;
   }
 
   // Log("type: {}", type);

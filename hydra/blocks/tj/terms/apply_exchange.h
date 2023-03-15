@@ -23,7 +23,7 @@ void apply_exchange(Bond const &bond, Indexing &&indexing, Filler &&fill) {
   // Log("s1: {} s2: {}", s1, s2);
   coeff_t J = bond.coupling<coeff_t>();
   coeff_t Jhalf = J / 2.;
-  coeff_t Jhalf_conj = hydra::conj(J) / 2.;
+  coeff_t Jhalf_conj = conj(Jhalf);
 
   // Prepare bitmasks
   bit_t flipmask = ((bit_t)1 << s1) | ((bit_t)1 << s2);
@@ -42,8 +42,10 @@ void apply_exchange(Bond const &bond, Indexing &&indexing, Filler &&fill) {
     bit_t up_flip = up ^ flipmask;
     if constexpr (is_complex<coeff_t>()) {
       if (bitops::gbit(up, s1)) {
+	// Log("a {}", Jhalf);
         return {up_flip, fermi_up ? Jhalf : -Jhalf};
       } else {
+	// Log("b {}", Jhalf_conj);
         return {up_flip, fermi_up ? Jhalf_conj : -Jhalf_conj};
       }
     } else {
