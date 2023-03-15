@@ -114,7 +114,7 @@ void generic_term_dns(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
     }
 
   } else { // if not symmetric
-
+    // Log("HELLO dns");
     idx_t size_dncs_in = indexing_in.size_dncs();
     idx_t size_dncs_out = indexing_out.size_dncs();
     auto ups_and_idces = indexing_in.states_indices_ups();
@@ -130,13 +130,16 @@ void generic_term_dns(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
         idx_t idx_in = up_in_offset;
         for (bit_t dnc_in : dncs_in) {
           bit_t dn_in = bitops::deposit(dnc_in, not_up_in);
+ 	  // Log("dns up_in: {}, dn_in: {}", BSTR(up_in), BSTR(dn_in));
+
           if (non_zero_term_dns(dn_in)) {
             auto [dn_flip, coeff] = term_action(dn_in);
             if ((up_in & dn_flip) == 0) {
               bit_t dnc_flip = bitops::extract(dn_flip, not_up_in);
               idx_t idx_dn_flip = indexing_out.index_dncs(dnc_flip);
               idx_t idx_out = up_out_offset + idx_dn_flip;
-	  
+
+	      // Log("dns in: {}, out: {}, coeff: {}", idx_in, idx_out, coeff);
               if constexpr (fermi_ups) {
                 bool fermi_up = (bool)(bitops::popcnt(up_in) & 1);
                 fill(idx_out, idx_in, fermi_up ? -coeff : coeff);

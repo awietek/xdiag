@@ -147,7 +147,7 @@ void generic_term_ups(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
     }     // loop over ups
 
   } else { // if not symmetric
-
+    // Log("HELLO ups");
     idx_t size_dncs_in = indexing_in.size_dncs(); // wouldn't be valid for NoNp
     idx_t size_dncs_out = indexing_out.size_dncs();
     assert(size_dncs_in == size_dncs_out);
@@ -167,11 +167,12 @@ void generic_term_ups(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
             idx_up_in * size_dncs_in; // wouldn't be valid for NoNp (use offset)
         for (bit_t dnc_in : dncs_in) {
           bit_t dn_in = bitops::deposit(dnc_in, not_up_in);
-
+ 	  // Log("ups up_in: {}, dn_in: {}", BSTR(up_in), BSTR(dn_in));
           if ((up_flip & dn_in) == 0) { // tJ constraint
             bit_t dnc_out = bitops::extract(dn_in, not_up_flip);
             idx_t idx_dnc_out = indexing_out.index_dncs(dnc_out);
             idx_t idx_out = idx_up_flip_offset + idx_dnc_out;
+	    // Log("ups in: {}, out: {}, coeff: {}", idx_in, idx_out, coeff);
             fill(idx_out, idx_in, coeff);
           }
           ++idx_in;

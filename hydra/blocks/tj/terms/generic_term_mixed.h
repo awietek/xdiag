@@ -100,7 +100,7 @@ void generic_term_mixed(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
           }
         }
 
-	////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////
         // Target ups have non-trivial stabilizer
         else {
           std::vector<coeff_t> prefacs(bloch_factors.size());
@@ -136,11 +136,13 @@ void generic_term_mixed(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
           // Origin ups non-trivial stabilizer -> dns DONT need to be
           // deposited
           else {
+
             idx_t idx_in = up_in_offset;
             idx_t idx_dn = 0;
             for (bit_t dn : dnss_in) {
               if (non_zero_term_dns(dn)) {
                 auto [dn_flip, coeff_dn] = term_action_dns(dn);
+
                 if ((dn_flip & up_flip) == 0) { // t-J constraint
                   auto [idx_dn_out, fermi_dn, sym] =
                       indexing_out.index_dns_fermi_sym(dn_flip, up_out_syms,
@@ -153,9 +155,9 @@ void generic_term_mixed(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
                     fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -val : val);
                   }
                 }
-                ++idx_in;
-                ++idx_dn;
               }
+              ++idx_in;
+              ++idx_dn;
             }
           }
 

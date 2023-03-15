@@ -9,7 +9,6 @@ BondList compile(BondList const &bonds, double precision) {
   using namespace operators;
 
   BondList bonds_explicit = compile_explicit(bonds, precision, "keep");
-
   BondList bonds_compiled;
   for (auto bond : bonds_explicit) {
     if (bond.type_defined()) {
@@ -35,6 +34,10 @@ BondList compile(BondList const &bonds, double precision) {
           check_bond_has_correct_number_of_sites(bond, 2);
           check_bond_has_disjoint_sites(bond);
           bonds_compiled << Bond("ISING", bond.coupling(), bond.sites());
+        } else if (type == "TJISING") {
+          check_bond_has_correct_number_of_sites(bond, 2);
+          check_bond_has_disjoint_sites(bond);
+          bonds_compiled << Bond("TJISING", bond.coupling(), bond.sites());
         } else if (type == "EXCHANGE") {
           check_bond_has_correct_number_of_sites(bond, 2);
           check_bond_has_disjoint_sites(bond);
@@ -74,6 +77,21 @@ BondList compile(BondList const &bonds, double precision) {
                                  bond.sites());
           bonds_compiled << Bond("NUMBERDN", -0.5 * bond.coupling(),
                                  bond.sites());
+        }
+
+        // Raising Lowering operators
+        else if (type == "CDAGUP") {
+          check_bond_has_correct_number_of_sites(bond, 1);
+          bonds_compiled << Bond("CDAGUP", bond.coupling(), bond.sites());
+        } else if (type == "CDAGDN") {
+          check_bond_has_correct_number_of_sites(bond, 1);
+          bonds_compiled << Bond("CDAGDN", bond.coupling(), bond.sites());
+        } else if (type == "CUP") {
+          check_bond_has_correct_number_of_sites(bond, 1);
+          bonds_compiled << Bond("CUP", bond.coupling(), bond.sites());
+        } else if (type == "CDN") {
+          check_bond_has_correct_number_of_sites(bond, 1);
+          bonds_compiled << Bond("CDN", bond.coupling(), bond.sites());
         }
       }
     }

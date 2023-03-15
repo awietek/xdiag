@@ -9,6 +9,8 @@ using namespace std;
 using namespace arma;
 
 TEST_CASE("analytic_case_free_particle_1D", "[time_evolution]") {
+  Log.set_verbosity(0);
+  
   // some constants
   int n_sites = 17;
   int nup = 1;
@@ -62,8 +64,8 @@ TEST_CASE("analytic_case_free_particle_1D", "[time_evolution]") {
       // norm is one so no division here by norm of true
       auto eps = arma::norm(w_expokit.vector() - w_analytic);
 
-      cout << "err: " << eps / time << endl;
-      cout << "time = " << time << endl;
+      // cout << "err: " << eps / time << endl;
+      // cout << "time = " << time << endl;
       // w_analytic.print("ana");
       // w_expokit.vector().print("lanc");
 
@@ -73,6 +75,8 @@ TEST_CASE("analytic_case_free_particle_1D", "[time_evolution]") {
 }
 
 TEST_CASE("analytic_case_free_particle_2D", "[time_evolution]") {
+  Log.set_verbosity(0);
+  
   // some constants
   int L = 3; // width of square lattice
   int n_sites = L * L;
@@ -157,9 +161,9 @@ TEST_CASE("analytic_case_free_particle_2D", "[time_evolution]") {
       // norm is one so no division here by norm of true
       auto eps = arma::norm(w_expokit.vector() - w_analytic);
 
-      cout << "tol: " << tol << endl;
-      cout << "err: " << eps << endl;
-      cout << "time = " << time << endl;
+      // cout << "tol: " << tol << endl;
+      // cout << "err: " << eps << endl;
+      // cout << "time = " << time << endl;
       // w_analytic.print("ana");
       // w_expokit.vector().print("lanc");
 
@@ -221,9 +225,9 @@ TEST_CASE("tj_complex_timeevo", "[time_evolution]") {
       cx_vec psi2 = expm(cx_mat(-1.0i * time * H)) * psi_0.vector();
 
       double eps = norm(psi2 - psi.vector());
-      cout << "tol: " << tol << endl;
-      cout << "err: " << eps << endl;
-      cout << "time = " << time << endl;
+      // cout << "tol: " << tol << endl;
+      // cout << "err: " << eps << endl;
+      // cout << "time = " << time << endl;
       // w_analytic.print("ana");
       // w_expokit.vector().print("lanc");
 

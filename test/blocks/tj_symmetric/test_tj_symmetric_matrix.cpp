@@ -16,8 +16,8 @@ void test_spectra_tj_symmetric(BondList bondlist, PermutationGroup space_group,
   int n_sites = space_group.n_sites();
   assert(irreps.size() == multiplicities.size());
 
-  for (int nup = 0; nup <= n_sites; ++nup) {
-    for (int ndn = 0; ndn <= n_sites; ++ndn) {
+  for (int nup = 1; nup <= n_sites; ++nup) {
+    for (int ndn = 1; ndn <= n_sites; ++ndn) {
 
       if (nup + ndn > n_sites)
         continue;
@@ -43,12 +43,13 @@ void test_spectra_tj_symmetric(BondList bondlist, PermutationGroup space_group,
             // Compute partial spectrum from symmetrized block
             auto H_sym = matrix_cplx(bondlist, tj, tj);
             // Log("n_sites: {}, nup: {}, ndn: {}, k: {}", n_sites, nup, ndn,
-            // k); HydraPrint(irrep);
+            // k); HydraPrint(irrep); HydraPrint(H_sym);
+
             REQUIRE(arma::norm(H_sym - H_sym.t()) < 1e-12);
+
             arma::vec eigs_sym_k;
             arma::eig_sym(eigs_sym_k, H_sym);
 
-            // HydraPrint(H_sym);
             // HydraPrint(eigs_sym_k);
 
             // Check whether results are the same for real blocks
@@ -138,64 +139,63 @@ TEST_CASE("tj_symmetric_matrix", "[blocks][tj]") {
     test_spectra_tj_symmetric(bondlist, space_group, irreps, multiplicities);
   }
 
-  // {
-  //   // test a 3x3 triangular lattice
-  //   Log("tj_symmetric_matrix: tJ 3x3 triangular, symmetric spectra test");
-  //   std::string lfile =
-  //       HYDRA_DIRECTORY "/misc/data/triangular.9.hop.sublattices.tsl.lat";
+  {
+    // test a 3x3 triangular lattice
+    Log("tj_symmetric_matrix: tJ 3x3 triangular, symmetric spectra test");
+    std::string lfile =
+        HYDRA_DIRECTORY "/misc/data/triangular.9.hop.sublattices.tsl.lat";
 
-  //   auto bondlist = read_bondlist(lfile);
-  //   bondlist["T"] = 1.0;
-  //   bondlist["J"] = 0.4;
-  //   auto permutations = hydra::read_permutations(lfile);
-  //   auto space_group = PermutationGroup(permutations);
+    auto bondlist = read_bondlist(lfile);
+    bondlist["T"] = 1.0;
+    bondlist["J"] = 0.4;
+    auto permutations = hydra::read_permutations(lfile);
+    auto space_group = PermutationGroup(permutations);
 
-  //   std::vector<std::pair<std::string, int>> rep_name_mult = {
-  //       {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
-  //       {"K0.D3.A1", 1},    {"K0.D3.A2", 1},    {"K0.D3.E", 2},
-  //       {"K1.D3.A1", 1},    {"K1.D3.A2", 1},    {"K1.D3.E", 2},
-  //       {"Y.C1.A", 6}};
+    std::vector<std::pair<std::string, int>> rep_name_mult = {
+        {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
+        {"K0.D3.A1", 1},    {"K0.D3.A2", 1},    {"K0.D3.E", 2},
+        {"K1.D3.A1", 1},    {"K1.D3.A2", 1},    {"K1.D3.E", 2},
+        {"Y.C1.A", 6}};
 
-  //   std::vector<Representation> irreps;
-  //   std::vector<int> multiplicities;
-  //   for (auto [name, mult] : rep_name_mult) {
-  //     irreps.push_back(read_representation(lfile, name));
-  //     multiplicities.push_back(mult);
-  //   }
-  //   test_spectra_tj_symmetric(bondlist, space_group, irreps, multiplicities);
-  // }
+    std::vector<Representation> irreps;
+    std::vector<int> multiplicities;
+    for (auto [name, mult] : rep_name_mult) {
+      irreps.push_back(read_representation(lfile, name));
+      multiplicities.push_back(mult);
+    }
+    test_spectra_tj_symmetric(bondlist, space_group, irreps, multiplicities);
+  }
 
-  // {
-  //   // test a 3x3 triangular lattice with complex flux
-  //   Log("tj_symmetric_matrix: tJ 3x3 triangular staggered flux, "
-  //       "symmetric spectra test, complex");
-  //   std::string lfile = HYDRA_DIRECTORY
-  //       "/misc/data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.lat";
+  {
+    // test a 3x3 triangular lattice with complex flux
+    Log("tj_symmetric_matrix: tJ 3x3 triangular staggered flux, "
+        "symmetric spectra test, complex");
+    std::string lfile = HYDRA_DIRECTORY
+        "/misc/data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.lat";
 
-  //   auto bondlist = read_bondlist(lfile);
-  //   std::vector<double> etas{0.0, 0.1, 0.2, 0.3};
-  //   auto permutations = hydra::read_permutations(lfile);
-  //   auto space_group = PermutationGroup(permutations);
+    auto bondlist = read_bondlist(lfile);
+    std::vector<double> etas{0.0, 0.1, 0.2, 0.3};
+    auto permutations = hydra::read_permutations(lfile);
+    auto space_group = PermutationGroup(permutations);
 
-  //   std::vector<std::pair<std::string, int>> rep_name_mult = {
-  //       {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
-  //       {"K0.D3.A1", 1},    {"K0.D3.A2", 1},    {"K0.D3.E", 2},
-  //       {"K1.D3.A1", 1},    {"K1.D3.A2", 1},    {"K1.D3.E", 2},
-  //       {"Y.C1.A", 6}};
+    std::vector<std::pair<std::string, int>> rep_name_mult = {
+        {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
+        {"K0.D3.A1", 1},    {"K0.D3.A2", 1},    {"K0.D3.E", 2},
+        {"K1.D3.A1", 1},    {"K1.D3.A2", 1},    {"K1.D3.E", 2},
+        {"Y.C1.A", 6}};
 
-  //   std::vector<Representation> irreps;
-  //   std::vector<int> multiplicities;
-  //   for (auto [name, mult] : rep_name_mult) {
-  //     irreps.push_back(read_representation(lfile, name));
-  //     multiplicities.push_back(mult);
-  //   }
+    std::vector<Representation> irreps;
+    std::vector<int> multiplicities;
+    for (auto [name, mult] : rep_name_mult) {
+      irreps.push_back(read_representation(lfile, name));
+      multiplicities.push_back(mult);
+    }
 
-  //   for (auto eta : etas) {
-  //     Log("eta: {:.2f}", eta);
-  //     bondlist["TPHI"] = 1.0; //complex(cos(eta * M_PI), sin(eta * M_PI));
-  //     bondlist["JPHI"] = 0.4; //complex(cos(2 * eta * M_PI), sin(2 * eta *
-  //     M_PI)); test_spectra_tj_symmetric(bondlist, space_group, irreps,
-  //     multiplicities);
-  //   }
-  // }
+    for (auto eta : etas) {
+      Log("eta: {:.2f}", eta);
+      bondlist["TPHI"] = 1.0; // complex(cos(eta * M_PI), sin(eta * M_PI));
+      bondlist["JPHI"] = 0.4; // complex(cos(2 * eta * M_PI), sin(2 * eta * M_PI));
+      test_spectra_tj_symmetric(bondlist, space_group, irreps, multiplicities);
+    }
+  }
 }

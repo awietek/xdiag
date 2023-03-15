@@ -42,6 +42,7 @@ add_executable(tests
   blocks/tj/test_tj_utils.cpp
   blocks/tj/test_tj_matrix.cpp
   blocks/tj/test_tj_apply.cpp
+  blocks/tj/test_tj_raiselower.cpp
 
   blocks/tj_symmetric/test_tj_symmetric.cpp
   blocks/tj_symmetric/test_tj_symmetric_matrix.cpp

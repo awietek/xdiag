@@ -21,7 +21,6 @@ void apply_terms(BondList const &bonds, IndexingIn const &indexing_in,
                  IndexingOut const &indexing_out, Fill &fill) {
 
   BondList bonds_compiled = tj::compile(bonds);
-
   for (auto bond : bonds_compiled) {
     std::string type = bond.type();
     if ((type == "ISING") || (type == "TJISING")) {

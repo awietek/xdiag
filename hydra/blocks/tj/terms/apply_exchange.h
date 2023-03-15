@@ -20,7 +20,6 @@ void apply_exchange(Bond const &bond, Indexing &&indexing, Filler &&fill) {
 
   int s1 = bond[0];
   int s2 = bond[1];
-  // Log("s1: {} s2: {}", s1, s2);
   coeff_t J = bond.coupling<coeff_t>();
   coeff_t Jhalf = J / 2.;
   coeff_t Jhalf_conj = conj(Jhalf);

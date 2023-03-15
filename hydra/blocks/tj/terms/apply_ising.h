@@ -35,9 +35,6 @@ void apply_ising(Bond const &bond, Indexing &&indexing, Fill &&fill) {
     val_diff = -J / 2.;
   }
 
-  // Log("type: {}", type);
-  // Log("s1: {}, s2: {}", s1, s2);
-
   auto term_action = [&](bit_t up, bit_t dn) -> coeff_t {
     bool b1_up = up & s1_mask;
     bool b2_up = up & s2_mask;
