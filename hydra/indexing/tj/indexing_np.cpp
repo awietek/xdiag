@@ -32,6 +32,10 @@ template <typename bit_t> idx_t IndexingNp<bit_t>::size_dncs() const {
 template <typename bit_t> idx_t IndexingNp<bit_t>::size() const {
   return size_;
 }
+template <typename bit_t>
+idx_t IndexingNp<bit_t>::ups_offset(idx_t idx_ups) const {
+  return idx_ups * size_dncs_;
+}
 
 template <typename bit_t>
 Combinations<bit_t> IndexingNp<bit_t>::states_ups() const {

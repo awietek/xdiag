@@ -63,7 +63,7 @@ bool valid_nup_ndn(std::string op_str1, std::string op_str2, int nup, int ndn,
   return valid_nup_ndn(nupt, ndnt, n_sites);
 }
 
-TEST_CASE("tj_raise_lower", "[blocks][tj]") {
+TEST_CASE("tj_raise_lower", "[tj]") {
 
   std::vector<std::string> op_strs = {"CDAGUP", "CDAGDN", "CUP", "CDN"};
 

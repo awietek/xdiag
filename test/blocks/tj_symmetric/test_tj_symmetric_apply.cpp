@@ -75,7 +75,7 @@ void test_tj_symmetric_apply_chains(int n_sites) {
   test_apply_tj_symmetric(bondlist, space_group, irreps);
 }
 
-TEST_CASE("tj_symmetric_apply", "[blocks][tj]") {
+TEST_CASE("tj_symmetric_apply", "[tj]") {
   using namespace hydra::testcases::tj;
   using namespace hydra::testcases::electron;
 

@@ -10,13 +10,13 @@ template <typename bit_t, typename coeff_t, bool symmetric, class Indexing,
 void apply_u(coeff_t U, Indexing &&indexing, Filler &&fill) {
 
   if constexpr (symmetric) {
-    idx_t idx = 0;
-    // #ifdef _OPENMP
-    // #pragma omp parallel for schedule(guided)
-    // #endif
+#ifdef _OPENMP
+#pragma omp parallel for schedule(guided)
+#endif
     for (idx_t idx_ups = 0; idx_ups < indexing.n_rep_ups(); ++idx_ups) {
       bit_t ups = indexing.rep_ups(idx_ups);
       auto dnss = indexing.dns_for_ups_rep(ups);
+      idx_t idx = indexing.ups_offset(idx_ups);
       for (bit_t dns : dnss) {
         coeff_t val = U * (double)bitops::popcnt(ups & dns);
         fill(idx, idx, val);
@@ -30,7 +30,7 @@ void apply_u(coeff_t U, Indexing &&indexing, Filler &&fill) {
     {
       auto ups_and_idces = indexing.states_indices_ups_thread();
 #else
-      auto ups_and_idces = indexing.states_indices_ups();
+    auto ups_and_idces = indexing.states_indices_ups();
 #endif
 
       for (auto [up, idx_up] : ups_and_idces) {

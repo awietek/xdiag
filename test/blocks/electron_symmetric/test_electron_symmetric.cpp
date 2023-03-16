@@ -73,7 +73,7 @@ void test_electron_chain(int n_sites) {
   REQUIRE(sum_of_dims == pow(4, n_sites));
 }
 
-TEST_CASE("electron_symmetric", "[blocks][electron_symmetric]") {
+TEST_CASE("electron_symmetric", "[electron]") {
 
   // Test the Hubbard chain
   for (int n_sites = 1; n_sites < 7; ++n_sites) {

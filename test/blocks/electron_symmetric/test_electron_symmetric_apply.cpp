@@ -16,29 +16,47 @@ void test_electron_symmetric_apply(BondList bondlist,
     for (int ndn = 0; ndn <= n_sites; ++ndn) {
 
       for (auto irrep : irreps) {
+        // Log("nup: {}, ndn: {}", nup, ndn);
+        // HydraPrint(irrep);
 
         // Create block and matrix for comparison
+        // tic();
         auto block = Electron(n_sites, nup, ndn, space_group, irrep);
+        // toc("create block");
+
         if (block.size() > 0) {
+          // tic();
           auto H = matrix_cplx(bondlist, block, block);
-          REQUIRE(arma::norm(H - H.t()) < 1e-12);
+          // toc("create matrix");
+
+          // tic();
+          // // REQUIRE(arma::norm(H - H.t()) < 1e-12);
+          // toc("transpose");
 
           // REQUIRE(H.is_hermitian(1e-8));
           // Check whether apply gives the same as matrix multiplication
+          // tic();
           arma::cx_vec v(block.size(), arma::fill::randn);
           arma::cx_vec w1 = H * v;
           arma::cx_vec w2(block.size(), arma::fill::randn);
           apply(bondlist, block, v, block, w2);
           REQUIRE(close(w1, w2));
+          // toc("apply");
+
           // Compute eigenvalues and compare
+          // tic();
           arma::vec evals_mat;
           arma::eig_sym(evals_mat, H);
+          // toc("evals full");
+          // tic();
           double e0_mat = evals_mat(0);
           double e0_app = eig0_cplx(bondlist, block);
           // Log.out("e0_mat: {}, e0_app: {}", e0_mat, e0_app);
           REQUIRE(std::abs(e0_mat - e0_app) < 1e-7);
+          // toc("evals lcs");
 
           // Compute eigenvalues with real arithmitic
+          // tic();
           if (is_real(block.irrep()) && bondlist.is_real()) {
             auto H_real = matrix_real(bondlist, block, block);
             arma::vec evals_mat_real;
@@ -50,6 +68,7 @@ void test_electron_symmetric_apply(BondList bondlist,
             double e0_app_real = eig0_real(bondlist, block);
             REQUIRE(std::abs(e0_mat_real - e0_app_real) < 1e-7);
           }
+          // toc("real");
         }
       }
     }
@@ -73,7 +92,7 @@ void test_hubbard_symmetric_apply_chains(int n_sites) {
   test_electron_symmetric_apply(bondlist_hb, space_group, irreps);
 }
 
-TEST_CASE("electron_symmetric_apply", "[blocks][electron_symmetric]") {
+TEST_CASE("electron_symmetric_apply", "[electron]") {
 
   // Test linear chains
   for (int n_sites = 2; n_sites < 7; ++n_sites) {

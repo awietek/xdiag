@@ -7,7 +7,7 @@
 
 using namespace hydra;
 
-TEST_CASE("tj_apply", "[blocks][tj]") {
+TEST_CASE("tj_apply", "[tj]") {
   using namespace hydra::testcases::tj;
 
   for (int N = 3; N <= 6; ++N) {

@@ -29,11 +29,14 @@ void apply_ising(Bond const &bond, Indexing &&indexing, Fill &&fill) {
 
   if constexpr (symmetric) {
 
-    idx_t idx = 0;
+#ifdef _OPENMP
+#pragma omp parallel for schedule(guided)
+#endif
     for (idx_t idx_ups = 0; idx_ups < indexing.n_rep_ups(); ++idx_ups) {
       bit_t ups = indexing.rep_ups(idx_ups);
       auto dnss = indexing.dns_for_ups_rep(ups);
-
+      idx_t idx = indexing.ups_offset(idx_ups);
+    
       if ((ups & mask) == mask) { // both spins pointing up
         for (bit_t dns : dnss) {
           if (!(dns & mask))

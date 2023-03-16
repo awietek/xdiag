@@ -64,7 +64,7 @@ void test_spinchain_blocks(int n_sites) {
   REQUIRE(sum_of_dims == pow(2, n_sites));
 }
 
-TEST_CASE("spinhalf_symmetric", "[blocks][spinhalf_symmetric]") {
+TEST_CASE("spinhalf_symmetric", "[spinhalf]") {
 
   // Test the tJ chain
   for (int n_sites = 1; n_sites < 8; ++n_sites) {

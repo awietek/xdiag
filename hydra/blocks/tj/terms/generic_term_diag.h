@@ -12,8 +12,13 @@ void generic_term_diag(Indexing &&indexing, TermAction &&term_action,
   bit_t sitesmask = ((bit_t)1 << n_sites) - 1;
 
   if constexpr (symmetric) {
-    idx_t idx = 0;
+
+#ifdef _OPENMP
+#pragma omp parallel for schedule(guided)
+#endif
     for (idx_t idx_up_in = 0; idx_up_in < indexing.n_rep_ups(); ++idx_up_in) {
+      idx_t idx = indexing.ups_offset(idx_up_in);
+
       bit_t up_in = indexing.rep_ups(idx_up_in);
       bit_t not_up_in = (~up_in) & sitesmask;
 
@@ -25,7 +30,6 @@ void generic_term_diag(Indexing &&indexing, TermAction &&term_action,
         for (bit_t dnc_in : dnss_in) {
           idx_t dn_in = bitops::deposit(dnc_in, not_up_in);
           coeff_t val = term_action(up_in, dn_in);
-          // Log("idx: {}, val: {}", idx, val);
           fill(idx, idx, val);
           ++idx;
         }
@@ -35,7 +39,6 @@ void generic_term_diag(Indexing &&indexing, TermAction &&term_action,
       else {
         for (bit_t dn_in : dnss_in) {
           coeff_t val = term_action(up_in, dn_in);
-          // Log("idx: {}, val: {}", idx, val);
           fill(idx, idx, val);
           ++idx;
         }
@@ -44,24 +47,28 @@ void generic_term_diag(Indexing &&indexing, TermAction &&term_action,
   }
 
   else { // if not symmetric
+#ifdef _OPENMP
+#pragma omp parallel
+    {
+      auto ups_and_idces = indexing.states_indices_ups_thread();
+#else
     auto ups_and_idces = indexing.states_indices_ups();
-    idx_t idx = 0;
-    for (auto [up_in, idx_up_in] : ups_and_idces) {
-      bit_t not_up_in = (~up_in) & sitesmask;
-      auto dncs_in = indexing.states_dncs(up_in);
-      for (bit_t dnc_in : dncs_in) {
-        bit_t dn_in = bitops::deposit(dnc_in, not_up_in);
-        coeff_t val = term_action(up_in, dn_in);
-
-        // Log("{};{}", BSTR(up_in), BSTR(dn_in));
-        // Log("val: {}", val);
-        // Log("idx: {}", idx);
-        // Log("");
-
-        fill(idx, idx, val);
-        ++idx;
+#endif
+      for (auto [up_in, idx_up_in] : ups_and_idces) {
+        bit_t not_up_in = (~up_in) & sitesmask;
+        auto dncs_in = indexing.states_dncs(up_in);
+        idx_t idx = indexing.ups_offset(idx_up_in);
+        for (bit_t dnc_in : dncs_in) {
+          bit_t dn_in = bitops::deposit(dnc_in, not_up_in);
+          coeff_t val = term_action(up_in, dn_in);
+          fill(idx, idx, val);
+          ++idx;
+        }
       }
+
+#ifdef _OPENMP
     }
-  }
+#endif
+  } // if not symmetric
 }
 } // namespace hydra::tj

@@ -21,6 +21,9 @@ void generic_term_dns(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
       bloch_factors = irrep.characters_real();
     }
 
+#ifdef _OPENMP
+#pragma omp parallel for schedule(guided)
+#endif
     for (idx_t idx_up = 0; idx_up < indexing_in.n_rep_ups(); ++idx_up) {
       bit_t ups_in = indexing_in.rep_ups(idx_up);
       bit_t ups_out = indexing_out.rep_ups(idx_up);

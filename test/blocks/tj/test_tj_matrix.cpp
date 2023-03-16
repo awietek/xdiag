@@ -46,7 +46,7 @@ void test_tjmodel_fulleigs(BondList bonds, arma::Col<double> exact_eigs) {
   REQUIRE(close(arma::vec(all_eigs), exact_eigs));
 }
 
-TEST_CASE("tj_matrix", "[blocks][tj]") {
+TEST_CASE("tj_matrix", "[tj]") {
   using namespace hydra::testcases::tj;
 
   {

@@ -2,7 +2,7 @@
 
 #include <hydra/all.h>
 
-TEST_CASE("electron_raise_lower", "[blocks][electron]") {
+TEST_CASE("electron_raise_lower", "[electron]") {
   using namespace hydra;
   using namespace arma;
   std::vector<std::string> op_strs = {"CDAGUP", "CDAGDN", "CUP", "CDN"};

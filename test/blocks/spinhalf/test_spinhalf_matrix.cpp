@@ -6,7 +6,7 @@
 
 using namespace hydra;
 
-TEST_CASE("spinhalf_matrix", "[models][spinhalf]") {
+TEST_CASE("spinhalf_matrix", "[spinhalf]") {
   using namespace hydra::testcases::spinhalf;
 
   {

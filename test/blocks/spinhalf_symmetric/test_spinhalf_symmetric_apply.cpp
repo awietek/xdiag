@@ -107,7 +107,7 @@ void test_spinhalf_symmetric_apply_chains(int n_sites) {
   test_spinhalf_symmetric_apply_no_sz(bondlist, space_group, irreps);
 }
 
-TEST_CASE("spinhalf_symmetric_apply", "[blocks][spinhalf_symmetric]") {
+TEST_CASE("spinhalf_symmetric_apply", "[spinhalf]") {
 
   // Test linear Heisenberg chains
   for (int n_sites = 3; n_sites < 7; ++n_sites) {

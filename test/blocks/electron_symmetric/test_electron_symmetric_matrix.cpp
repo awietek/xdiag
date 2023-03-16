@@ -154,7 +154,7 @@ void test_hubbard_symmetric_spectrum_chains(int n_sites) {
                                         multiplicities);
 }
 
-TEST_CASE("electron_symmetric_matrix", "[blocks][electron_symmetric]") {
+TEST_CASE("electron_symmetric_matrix", "[electron]") {
   using namespace hydra::testcases::electron;
   //////////////////////////////////////////////////////////////////////////////////////
 

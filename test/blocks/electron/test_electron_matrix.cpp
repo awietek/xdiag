@@ -36,7 +36,7 @@ void test_electron_np_no_np_matrix(int n_sites, BondList bonds) {
   REQUIRE(close(arma::Col(all_eigs), eigs_full));
 }
 
-TEST_CASE("electron_matrix", "[blocks][electron]") {
+TEST_CASE("electron_matrix", "[electron]") {
   using namespace hydra::testcases::electron;
 
   BondList bondlist;

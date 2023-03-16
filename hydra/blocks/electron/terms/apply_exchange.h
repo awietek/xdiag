@@ -57,6 +57,9 @@ void apply_exchange(Bond const &bond, Indexing &&indexing, Filler &&fill) {
     auto const &irrep = indexing.irrep();
 
     // Loop over all up configurations
+#ifdef _OPENMP
+#pragma omp parallel for schedule(guided)
+#endif
     for (idx_t idx_ups = 0; idx_ups < indexing.n_rep_ups(); ++idx_ups) {
       bit_t ups = indexing.rep_ups(idx_ups);
 
@@ -180,36 +183,35 @@ void apply_exchange(Bond const &bond, Indexing &&indexing, Filler &&fill) {
 #else
     auto ups_and_idces = indexing.states_indices_ups();
 #endif
-    
-    for (auto [ups, idx_up] : ups_and_idces) {
 
-      if (bitops::popcnt(ups & flipmask) == 1) {
+      for (auto [ups, idx_up] : ups_and_idces) {
 
-        // Set the correct prefactor
-        coeff_t Jhalf;
-        if constexpr (is_complex<coeff_t>()) {
-          Jhalf = (bitops::gbit(ups, s1)) ? J / 2.0 : hydra::conj(J) / 2.0;
-        } else {
-          Jhalf = J / 2.;
-        }
+        if (bitops::popcnt(ups & flipmask) == 1) {
 
-        // decide Fermi sign of upspins
-        if (bitops::popcnt(ups & fermimask) & 1) {
-          electron_do_down_flips(ups, idx_up, flipmask, fermimask,
-                                 bitops::gbit(ups, s1) ? s2 : s1, Jhalf,
-                                 indexing, fill);
-        } else {
-          electron_do_down_flips(ups, idx_up, flipmask, fermimask,
-                                 bitops::gbit(ups, s1) ? s2 : s1, -Jhalf,
-                                 indexing, fill);
+          // Set the correct prefactor
+          coeff_t Jhalf;
+          if constexpr (is_complex<coeff_t>()) {
+            Jhalf = (bitops::gbit(ups, s1)) ? J / 2.0 : hydra::conj(J) / 2.0;
+          } else {
+            Jhalf = J / 2.;
+          }
+
+          // decide Fermi sign of upspins
+          if (bitops::popcnt(ups & fermimask) & 1) {
+            electron_do_down_flips(ups, idx_up, flipmask, fermimask,
+                                   bitops::gbit(ups, s1) ? s2 : s1, Jhalf,
+                                   indexing, fill);
+          } else {
+            electron_do_down_flips(ups, idx_up, flipmask, fermimask,
+                                   bitops::gbit(ups, s1) ? s2 : s1, -Jhalf,
+                                   indexing, fill);
+          }
         }
       }
-    }
 
 #ifdef _OPENMP
     }
 #endif
-
   }
 }
 

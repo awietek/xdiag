@@ -29,7 +29,7 @@ void test_apply(BondList bonds) {
   }
 }
 
-TEST_CASE("spinhalf_apply", "[models][spinhalf]") {
+TEST_CASE("spinhalf_apply", "[spinhalf]") {
   using namespace hydra::testcases::spinhalf;
 
   Log.out("spinhalf_apply: Heisenberg chain apply test, J=1.0, N=2,..,6");

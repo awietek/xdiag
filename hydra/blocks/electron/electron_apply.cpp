@@ -24,9 +24,29 @@ void apply(BondList const &bonds, Electron const &block_in,
   }
 
   vec_out.zeros();
+  
   auto fill = [&vec_out, &vec_in](idx_t idx_out, idx_t idx_in, coeff_t val) {
+#ifdef _OPENMP
+    if constexpr (is_real<coeff_t>()) {
+      coeff_t x = val * vec_in(idx_in);
+      coeff_t *pos = vec_out.memptr();
+#pragma omp atomic update
+      pos[idx_out] += x;
+    } else {
+      complex x = val * vec_in(idx_in);
+      complex *pos = vec_out.memptr();
+      double *r = &reinterpret_cast<double(&)[2]>(pos[idx_out])[0];
+      double *i = &reinterpret_cast<double(&)[2]>(pos[idx_out])[1];
+#pragma omp atomic update
+      *r += x.real();
+#pragma omp atomic update
+      *i += x.imag();
+    }
+#else
     vec_out(idx_out) += val * vec_in(idx_in);
+#endif
   };
+  
   auto const &indexing_in = block_in.indexing();
   auto const &indexing_out = block_out.indexing();
   electron::apply_terms_dispatch<coeff_t>(bonds_c, indexing_in, indexing_out,

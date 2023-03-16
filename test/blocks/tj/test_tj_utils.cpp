@@ -7,7 +7,7 @@
 
 using namespace hydra;
 
-TEST_CASE("tj_utils", "[blocks][tj]") {
+TEST_CASE("tj_utils", "[tj]") {
   using namespace hydra::combinatorics;
   using namespace hydra::utils;
   using namespace hydra::bitops;

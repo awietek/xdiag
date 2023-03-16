@@ -24,7 +24,7 @@ void test_electron_np_no_np_apply(int n_sites, BondList bonds) {
   REQUIRE(close(e0_full, e0_np));
 }
 
-TEST_CASE("electron_apply", "[blocks][electron]") {
+TEST_CASE("electron_apply", "[electron]") {
   using namespace hydra::testcases::electron;
 
   BondList bondlist;

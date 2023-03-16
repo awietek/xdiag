@@ -24,11 +24,13 @@ public:
   inline idx_t index_dncs(bit_t dncs) const {
     return lintable_dncs_.index(dncs);
   }
+
   inline idx_t index(bit_t ups, bit_t dns) const {
     bit_t dncs = bitops::extract<bit_t>(dns, (~ups) & sitesmask_);
     return index_ups(ups) * size_dncs_ + index_dncs(dncs);
   }
-  
+
+  idx_t ups_offset(idx_t idx_ups) const;
 
   Combinations<bit_t> states_ups() const;
   Combinations<bit_t> states_dncs(bit_t ups) const;

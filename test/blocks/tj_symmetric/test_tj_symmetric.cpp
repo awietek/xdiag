@@ -30,7 +30,7 @@ void check_dimensions_sum_up_tj_symmetric(int n_sites, PermutationGroup group,
   REQUIRE(sum_of_dims == idx_t(pow(3, n_sites)));
 }
 
-TEST_CASE("tj_symmetric", "[blocks][tj]") {
+TEST_CASE("tj_symmetric", "[tj]") {
 
   // Test linear chains
   Log("tj_symmetric: chain test");

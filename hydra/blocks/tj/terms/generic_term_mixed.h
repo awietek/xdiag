@@ -27,6 +27,9 @@ void generic_term_mixed(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
       bloch_factors = irrep.characters_real();
     }
 
+#ifdef _OPENMP
+#pragma omp parallel for schedule(guided)
+#endif
     for (idx_t up_in_idx = 0; up_in_idx < indexing_in.n_rep_ups();
          ++up_in_idx) {
       bit_t up_in = indexing_in.rep_ups(up_in_idx);
@@ -167,48 +170,44 @@ void generic_term_mixed(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
 
   } else { // if not symmetric
 
-    idx_t size_dncs_in = indexing_in.size_dncs(); // wouldn't be valid for NoNp
-    idx_t size_dncs_out = indexing_out.size_dncs();
-    assert(size_dncs_in == size_dncs_out);
-
+#ifdef _OPENMP
+#pragma omp parallel
+    {
+      auto ups_and_idces = indexing_in.states_indices_ups_thread();
+#else
     auto ups_and_idces = indexing_in.states_indices_ups();
-    for (auto [up_in, idx_up_in] : ups_and_idces) {
-      if (non_zero_term_ups(up_in)) {
+#endif
+      for (auto [up_in, idx_up_in] : ups_and_idces) {
+        if (non_zero_term_ups(up_in)) {
 
-        auto [up_flip, coeff_up] = term_action_ups(up_in);
-        bit_t not_up_in = (~up_in) & sitesmask;
-        bit_t not_up_flip = (~up_flip) & sitesmask;
-        idx_t idx_up_flip = indexing_out.index_ups(up_flip);
-        idx_t idx_up_flip_offset = idx_up_flip * size_dncs_out;
+          auto [up_flip, coeff_up] = term_action_ups(up_in);
+          bit_t not_up_in = (~up_in) & sitesmask;
+          bit_t not_up_flip = (~up_flip) & sitesmask;
+          idx_t idx_up_flip = indexing_out.index_ups(up_flip);
+          idx_t idx_up_flip_offset = indexing_out.ups_offset(idx_up_flip);
 
-        auto dncs_in = indexing_in.states_dncs(up_in);
-        idx_t idx_in =
-            idx_up_in * size_dncs_in; // wouldn't be valid for NoNp (use offset)
-        for (bit_t dnc_in : dncs_in) {
-          bit_t dn_in = bitops::deposit(dnc_in, not_up_in);
-          if (non_zero_term_dns(dn_in)) {
-            auto [dn_flip, coeff_dn] = term_action_dns(dn_in);
-            if ((dn_flip & up_flip) == 0) { // t-J constraint
-              bit_t dnc_out = bitops::extract(dn_flip, not_up_flip);
-              idx_t idx_dnc_out = indexing_out.index_dncs(dnc_out);
-              idx_t idx_out = idx_up_flip_offset + idx_dnc_out;
+          auto dncs_in = indexing_in.states_dncs(up_in);
+          idx_t idx_in = indexing_in.ups_offset(idx_up_in);
 
-              // Log("{};{}", BSTR(up_in), BSTR(dn_in));
-              // Log("{};{}", BSTR(up_flip), BSTR(dn_flip));
-              // Log("not_up_flip: {}", BSTR(not_up_flip));
-              // Log("dnc_out: {}", BSTR(dnc_out));
-              // Log("cup: {}, cdn: {}", coeff_up , coeff_dn);
-              // Log("in: {} out: {}", idx_in, idx_out);
-              // Log("");
-
-              fill(idx_out, idx_in, coeff_up * coeff_dn);
+          for (bit_t dnc_in : dncs_in) {
+            bit_t dn_in = bitops::deposit(dnc_in, not_up_in);
+            if (non_zero_term_dns(dn_in)) {
+              auto [dn_flip, coeff_dn] = term_action_dns(dn_in);
+              if ((dn_flip & up_flip) == 0) { // t-J constraint
+                bit_t dnc_out = bitops::extract(dn_flip, not_up_flip);
+                idx_t idx_dnc_out = indexing_out.index_dncs(dnc_out);
+                idx_t idx_out = idx_up_flip_offset + idx_dnc_out;
+                fill(idx_out, idx_in, coeff_up * coeff_dn);
+              }
             }
+            ++idx_in;
           }
-          ++idx_in;
         }
-      }
-    } // loop over ups
-  }   // if not symmetric
+      } // loop over ups
+#ifdef _OPENMP
+    }
+#endif
+  } // if not symmetric
 }
 
 } // namespace hydra::tj

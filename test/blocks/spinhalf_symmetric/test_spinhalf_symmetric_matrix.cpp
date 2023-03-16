@@ -145,7 +145,7 @@ void test_spinhalf_symmetric_spectrum_chains(int n_sites) {
                                         multiplicities);
 }
 
-TEST_CASE("spinhalf_symmetric_matrix", "[blocks][spinhalf_symmetric]") {
+TEST_CASE("spinhalf_symmetric_matrix", "[spinhalf]") {
 
   // Test linear Heisenberg chains
   for (int n_sites = 3; n_sites < 7; ++n_sites) {

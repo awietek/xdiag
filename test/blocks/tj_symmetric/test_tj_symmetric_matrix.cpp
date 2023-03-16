@@ -88,7 +88,7 @@ void test_tj_symmetric_spectrum_chains(int n_sites) {
   test_spectra_tj_symmetric(bondlist, space_group, irreps, multiplicities);
 }
 
-TEST_CASE("tj_symmetric_matrix", "[blocks][tj]") {
+TEST_CASE("tj_symmetric_matrix", "[tj]") {
   using namespace hydra::testcases::tj;
   using namespace hydra::testcases::electron;
 

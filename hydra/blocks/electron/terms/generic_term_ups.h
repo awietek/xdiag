@@ -21,6 +21,9 @@ void generic_term_ups(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
       bloch_factors = irrep.characters_real();
     }
 
+#ifdef _OPENMP
+#pragma omp parallel for schedule(guided)
+#endif
     for (idx_t idx_up_in = 0; idx_up_in < indexing_in.n_rep_ups();
          ++idx_up_in) {
       bit_t ups_in = indexing_in.rep_ups(idx_up_in);

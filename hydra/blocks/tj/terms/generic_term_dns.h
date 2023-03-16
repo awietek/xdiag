@@ -25,6 +25,9 @@ void generic_term_dns(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
       bloch_factors = irrep.characters_real();
     }
 
+#ifdef _OPENMP
+#pragma omp parallel for schedule(guided)
+#endif
     for (idx_t idx_up_in = 0; idx_up_in < indexing_in.n_rep_ups();
          ++idx_up_in) {
       bit_t up_in = indexing_in.rep_ups(idx_up_in);
@@ -55,15 +58,6 @@ void generic_term_dns(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
                 idx_t idx_dnc_flip = indexing_out.dnsc_index(dnc_flip);
                 idx_t idx_out = up_out_offset + idx_dnc_flip;
 
-		// Log("NO stabilizer");
-		// Log("{};{}", BSTR(up_in), BSTR(dn_in));
-		// Log("{};{}", BSTR(up_in), BSTR(dn_flip));
-		// Log("not_up_in: {}", BSTR(not_up_in));
-		// Log("dnc_flip: {}", BSTR(dnc_flip));
-		// Log("coeff: {}", coeff);
-		// Log("in: {} out: {}", idx_in, idx_out);
-		// Log("");
-		
                 if constexpr (fermi_ups) {
                   bool fermi_up = (bool)(bitops::popcnt(up_in) & 1);
                   fill(idx_out, idx_in, fermi_up ? -coeff : coeff);
@@ -72,7 +66,7 @@ void generic_term_dns(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
                 }
               }
             }
-	    ++idx_in;
+            ++idx_in;
           }
         }
 
@@ -94,15 +88,6 @@ void generic_term_dns(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
                 }
                 coeff_t val = coeff * bloch_factors[sym] *
                               norms_out[idx_dn_flip] / norms_in[idx_dn_in];
-
-		// Log("YES stabilizer");
-		// Log("{};{}", BSTR(up_in), BSTR(dn_in));
-		// Log("{};{}", BSTR(up_in), BSTR(dn_flip));
-		// Log("not_up_in: {}", BSTR(not_up_in));
-		// Log("coeff: {}", val);
-		// Log("in: {} out: {}", idx_in, idx_out);
-		// Log("");
-	
                 fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -val : val);
               }
             }
@@ -114,45 +99,50 @@ void generic_term_dns(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
     }
 
   } else { // if not symmetric
-    // Log("HELLO dns");
-    idx_t size_dncs_in = indexing_in.size_dncs();
-    idx_t size_dncs_out = indexing_out.size_dncs();
+
+#ifdef _OPENMP
+#pragma omp parallel
+    {
+      auto ups_and_idces = indexing_in.states_indices_ups_thread();
+#else
     auto ups_and_idces = indexing_in.states_indices_ups();
-    for (auto [up_in, idx_up_in] : ups_and_idces) {
+#endif
+      for (auto [up_in, idx_up_in] : ups_and_idces) {
 
-      if (non_zero_term_ups(up_in)) {
+        if (non_zero_term_ups(up_in)) {
 
-        idx_t up_in_offset = idx_up_in * size_dncs_in;
-        idx_t up_out_offset = idx_up_in * size_dncs_out;
-        bit_t not_up_in = (~up_in) & sitesmask;
+          idx_t up_in_offset = indexing_in.ups_offset(idx_up_in);
+          idx_t up_out_offset = indexing_out.ups_offset(idx_up_in);
+          bit_t not_up_in = (~up_in) & sitesmask;
 
-        auto dncs_in = indexing_in.states_dncs(up_in);
-        idx_t idx_in = up_in_offset;
-        for (bit_t dnc_in : dncs_in) {
-          bit_t dn_in = bitops::deposit(dnc_in, not_up_in);
- 	  // Log("dns up_in: {}, dn_in: {}", BSTR(up_in), BSTR(dn_in));
+          auto dncs_in = indexing_in.states_dncs(up_in);
+          idx_t idx_in = up_in_offset;
+          for (bit_t dnc_in : dncs_in) {
+            bit_t dn_in = bitops::deposit(dnc_in, not_up_in);
 
-          if (non_zero_term_dns(dn_in)) {
-            auto [dn_flip, coeff] = term_action(dn_in);
-            if ((up_in & dn_flip) == 0) {
-              bit_t dnc_flip = bitops::extract(dn_flip, not_up_in);
-              idx_t idx_dn_flip = indexing_out.index_dncs(dnc_flip);
-              idx_t idx_out = up_out_offset + idx_dn_flip;
+            if (non_zero_term_dns(dn_in)) {
+              auto [dn_flip, coeff] = term_action(dn_in);
+              if ((up_in & dn_flip) == 0) {
+                bit_t dnc_flip = bitops::extract(dn_flip, not_up_in);
+                idx_t idx_dn_flip = indexing_out.index_dncs(dnc_flip);
+                idx_t idx_out = up_out_offset + idx_dn_flip;
 
-	      // Log("dns in: {}, out: {}, coeff: {}", idx_in, idx_out, coeff);
-              if constexpr (fermi_ups) {
-                bool fermi_up = (bool)(bitops::popcnt(up_in) & 1);
-                fill(idx_out, idx_in, fermi_up ? -coeff : coeff);
-              } else {
-                fill(idx_out, idx_in, coeff);
+                if constexpr (fermi_ups) {
+                  bool fermi_up = (bool)(bitops::popcnt(up_in) & 1);
+                  fill(idx_out, idx_in, fermi_up ? -coeff : coeff);
+                } else {
+                  fill(idx_out, idx_in, coeff);
+                }
               }
             }
+            ++idx_in;
           }
-          ++idx_in;
         }
-      }
+      } // loop over ups
+#ifdef _OPENMP
     }
-  }
+#endif
+  } // if not symmetric
 }
 
 } // namespace hydra::tj
