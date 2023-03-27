@@ -14,7 +14,7 @@ namespace hydra {
 class FileH5 {
 public:
   FileH5() = default;
-  FileH5(std::string filename, char iomode = 'r');
+  FileH5(std::string filename, char iomode);
   FileH5(std::string filename, std::string iomode = "r");
   ~FileH5();
 

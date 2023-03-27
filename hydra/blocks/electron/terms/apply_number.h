@@ -10,7 +10,7 @@ void apply_number(Bond const &bond, Indexing &&indexing, Fill fill) {
   assert(bond.size() == 1);
 
   std::string type = bond.type();
-  assert((bond.type() == "NUMBERUP") || (bond.type() == "NUMBERDN"));
+  assert((type == "NUMBERUP") || (type == "NUMBERDN"));
 
   coeff_t mu = bond.coupling<coeff_t>();
   int s = bond.site(0);
