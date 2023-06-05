@@ -11,7 +11,7 @@ q = "M.C1.A"
 J=0.63
 Jd=1.00
 
-temperatures = [0.001, 0.1, 0.2, 0.5]
+T = 0.1
 
 n_omegas = 100           # number of frequencies 
 max_omega = 4.0          # maximum frequency
@@ -63,7 +63,6 @@ for T in temperatures:
     poles = poles[np.abs(weights) > min_weight]
     weights = np.real(weights[np.abs(weights) > min_weight])
 
-    print(weights)
     print(np.sort(poles))
 
     # broaden and plot
