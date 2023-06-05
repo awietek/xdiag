@@ -20,6 +20,7 @@
 
 #include "extern/armadillo/armadillo"
 #include "extern/fmt/core.h"
+#include "extern/clara/clara.hpp"
 
 #include "common.h"
 #include "config.h"
