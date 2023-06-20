@@ -135,6 +135,8 @@ if(MKL_FOUND)
   # Choose correct MKL libraries
   if(OMP_THREADING)
 
+    target_compile_options(hydra PUBLIC -fopenmp)
+    
     if(MKL_THREADING)
       if(CMAKE_CXX_COMPILER_ID STREQUAL "IntelLLVM")
 	set(MKL_LIBRARIES ${MKL_INTERFACE_LIBRARY} ${MKL_THREAD_LAYER_LIBRARY} ${MKL_CORE_LIBRARY})
@@ -177,9 +179,7 @@ else()
   find_package(LAPACK)
   
   if(LAPACK_FOUND AND BLAS_FOUND)
-
     message(STATUS "Emploging Lapack/Blas as linear algebra backend")
-    
     target_link_libraries(hydra PUBLIC ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
     list(APPEND HYDRA_LIBRARIES ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
   else()
