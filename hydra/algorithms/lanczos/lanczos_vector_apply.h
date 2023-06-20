@@ -54,7 +54,6 @@ lanczos_vector_apply_inplace(multiply_f mult, arma::Col<coeff_t> &v0,
   // Main Lanczos loop
   int iteration = 0;
   while (!converged(tmatrix)) {
-
     vector_apply(iteration, v1);
 
     lanczos_step(v0, v1, w, alpha, beta, mult, dot);

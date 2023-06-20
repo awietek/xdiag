@@ -28,7 +28,6 @@ void generic_term_dns(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
       bit_t ups_in = indexing_in.rep_ups(idx_up);
       bit_t ups_out = indexing_out.rep_ups(idx_up);
       assert(ups_out == ups_in);
-      bit_t ups = ups_in;
 
       idx_t ups_offset_in = indexing_out.ups_offset(idx_up);
       auto dnss_in = indexing_in.dns_for_ups_rep(ups_in);
@@ -49,7 +48,7 @@ void generic_term_dns(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
             auto [dns_flip, coeff] = term_action(dns_in);
 
             if constexpr (fermi_ups) { // not ideal to do this here
-              if (bitops::popcnt(ups) & 1) {
+              if (bitops::popcnt(ups_in) & 1) {
                 coeff = -coeff;
               }
             }
@@ -72,7 +71,7 @@ void generic_term_dns(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
             auto [dns_flip, coeff] = term_action(dns_in);
 
             if constexpr (fermi_ups) { // not ideal to do this here
-              if (bitops::popcnt(ups) & 1) {
+              if (bitops::popcnt(ups_in) & 1) {
                 coeff = -coeff;
               }
             }
