@@ -1,0 +1,35 @@
+/Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/Applications/CLion.app/Contents/bin/ninja/mac/ninja -G Ninja -S /Users/lstaszewski/Research/Software/hydra -B /Users/lstaszewski/Research/Software/hydra/cmake-build-debug
+-- The CXX compiler identification is AppleClang 14.0.0.14000029
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /Library/Developer/CommandLineTools/usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Compiler ID     : AppleClang
+-- Compiler version: 14.0.0.14000029
+-- Build type: Debug
+-- -------- Determining Linear Algebra backend -------------
+-- Could NOT find MKL (missing: MKL_LIBRARIES MKL_INCLUDE_DIRS MKL_INTERFACE_LIBRARY MKL_THREAD_LAYER_LIBRARY MKL_CORE_LIBRARY) 
+-- Looking for sgemm_
+-- Looking for sgemm_ - not found
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE  
+-- Looking for dgemm_
+-- Looking for dgemm_ - found
+-- Found BLAS: /Library/Developer/CommandLineTools/SDKs/MacOSX13.0.sdk/System/Library/Frameworks/Accelerate.framework  
+-- Looking for cheev_
+-- Looking for cheev_ - found
+-- Found LAPACK: /Library/Developer/CommandLineTools/SDKs/MacOSX13.0.sdk/System/Library/Frameworks/Accelerate.framework;-lm;-ldl  
+-- Emploging Lapack/Blas as linear algebra backend
+-- --------  Determining if OpenMP is present  -------------
+-- Could NOT find OpenMP_CXX (missing: OpenMP_CXX_FLAGS OpenMP_CXX_LIB_NAMES) 
+-- Could NOT find OpenMP (missing: OpenMP_CXX_FOUND) 
+-- --------   Determining if HDF5 is present   -------------
+-- Found HDF5: /opt/homebrew/Cellar/hdf5/1.12.2_2/lib/libhdf5_cpp.dylib;/opt/homebrew/Cellar/hdf5/1.12.2_2/lib/libhdf5.dylib;/opt/homebrew/opt/libaec/lib/libsz.dylib;/Library/Developer/CommandLineTools/SDKs/MacOSX13.0.sdk/usr/lib/libz.tbd;/Library/Developer/CommandLineTools/SDKs/MacOSX13.0.sdk/usr/lib/libdl.tbd;/Library/Developer/CommandLineTools/SDKs/MacOSX13.0.sdk/usr/lib/libm.tbd (found version "1.12.2") found components: CXX 
+-- Employing HDF5
+-- --------         Creating config.h          -------------
+-- Found Git: /opt/homebrew/bin/git (found version "2.38.1") 
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /Users/lstaszewski/Research/Software/hydra/cmake-build-debug

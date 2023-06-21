@@ -1,0 +1,27 @@
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /Library/Developer/CommandLineTools/usr/bin/c++ 
+Build flags: 
+Id flags:  
+
+The output was:
+1
+ld: library not found for -lc++
+clang: error: linker command failed with exit code 1 (use -v to see invocation)
+
+
+Determining if the function sgemm_ exists failed with the following output:
+Change Dir: /Users/lstaszewski/Research/Software/hydra/cmake-build-debug/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/Applications/CLion.app/Contents/bin/ninja/mac/ninja cmTC_78d3c && [1/2] Building CXX object CMakeFiles/cmTC_78d3c.dir/CheckFunctionExists.cxx.o
+[2/2] Linking CXX executable cmTC_78d3c
+FAILED: cmTC_78d3c 
+: && /Library/Developer/CommandLineTools/usr/bin/c++ -DCHECK_FUNCTION_EXISTS=sgemm_ -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.0.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names  CMakeFiles/cmTC_78d3c.dir/CheckFunctionExists.cxx.o -o cmTC_78d3c   && :
+Undefined symbols for architecture arm64:
+  "_sgemm_", referenced from:
+      _main in CheckFunctionExists.cxx.o
+ld: symbol(s) not found for architecture arm64
+clang: error: linker command failed with exit code 1 (use -v to see invocation)
+ninja: build stopped: subcommand failed.
+
+
+
