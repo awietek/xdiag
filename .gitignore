@@ -1,5 +1,6 @@
 build
 build/*
+cmake-build-debug
 examples/*/build
 examples/*/outfiles
 examples/*/build/*
