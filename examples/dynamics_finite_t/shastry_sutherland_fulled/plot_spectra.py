@@ -63,6 +63,9 @@ for T in temperatures:
     poles = poles[np.abs(weights) > min_weight]
     weights = np.real(weights[np.abs(weights) > min_weight])
 
+    np.save("poles.T.{:.3f}".format(T), poles)
+    np.save("wgts.T.{:.3f}".format(T), weights)
+    
     print(np.sort(poles))
 
     # broaden and plot

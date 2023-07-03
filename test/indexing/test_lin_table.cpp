@@ -1,7 +1,8 @@
 #include "../catch.hpp"
 
 #include <iostream>
-#include <hydra/all.h>
+
+#include <hydra/indexing/lin_table.h>
 
 template <class bit_t>
 void test_lintable(int n, int k){

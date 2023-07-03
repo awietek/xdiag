@@ -1,7 +1,5 @@
 #include "../../catch.hpp"
 
-#include <hydra/all.h>
-
 using namespace hydra;
 using namespace hydra::combinatorics;
 using namespace hydra::symmetries;

@@ -2,7 +2,10 @@
 
 #include <iostream>
 
-#include <hydra/all.h>
+#include <hydra/combinatorics/combinations.h>
+#include <hydra/combinatorics/subsets.h>
+#include <hydra/symmetries/group_action/group_action.h>
+#include <hydra/symmetries/group_action/group_action_lookup.h>
 
 using namespace hydra;
 

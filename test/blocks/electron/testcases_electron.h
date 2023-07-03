@@ -1,7 +1,9 @@
 #pragma once
 
-#include <hydra/all.h>
 #include <random>
+#include <hydra/operators/bondlist.h>
+#include <hydra/symmetries/permutation_group.h>
+#include <hydra/symmetries/representation.h>
 
 namespace hydra::testcases::electron {
 

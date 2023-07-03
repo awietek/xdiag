@@ -2,7 +2,8 @@
 
 #include "../blocks/electron/testcases_electron.h"
 
-#include <hydra/all.h>
+#include <hydra/symmetries/generated_group.h>
+#include <hydra/utils/close.h>
 
 TEST_CASE("generated_group", "[symmetries]") {
   using namespace hydra;

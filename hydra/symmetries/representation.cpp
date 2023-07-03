@@ -3,6 +3,7 @@
 #include <fstream>
 
 #include <hydra/utils/close.h>
+#include <hydra/utils/error.h>
 #include <hydra/utils/logger.h>
 
 #include <numeric>
@@ -160,7 +161,9 @@ Representation trivial_representation(PermutationGroup const &group) {
 
 Representation operator*(Representation const &r1, Representation const &r2) {
   if (r1.size() != r2.size()) {
-    Log.err("Error: cannot construct product Representation, sizes not equal");
+    throw symmetry_error(
+        "Error multiplying Representation: cannot construct product "
+        "Representation, sizes not equal");
   }
 
   auto c1 = r1.characters();

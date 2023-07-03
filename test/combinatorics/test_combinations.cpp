@@ -2,8 +2,7 @@
 
 #include <iostream>
 
-#include <hydra/all.h>
-// #include <omp.h>
+#include <hydra/combinatorics/combinations.h>
 
 template <typename bit_t> void test_combinations() {
   using namespace hydra;

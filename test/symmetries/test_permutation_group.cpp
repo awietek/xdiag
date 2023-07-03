@@ -1,8 +1,9 @@
 #include "../catch.hpp"
 
 #include <iostream>
-
-#include <hydra/all.h>
+#include <hydra/combinatorics/subsets.h>
+#include <hydra/symmetries/permutation_group.h>
+#include <hydra/symmetries/operations/symmetry_operations.h>
 
 TEST_CASE("permutation_group", "[symmetries]") {
   using namespace hydra;

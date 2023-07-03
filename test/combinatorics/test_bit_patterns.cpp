@@ -1,6 +1,7 @@
 #include "../catch.hpp"
 
-#include <hydra/all.h>
+#include <hydra/combinatorics/bit_patterns.h>
+#include <hydra/combinatorics/binomial.h>
 
 TEST_CASE("bit_patterns", "[combinatorics]") {
 

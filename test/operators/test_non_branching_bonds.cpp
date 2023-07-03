@@ -2,7 +2,12 @@
 
 #include <iostream>
 
-#include <hydra/all.h>
+#include <hydra/utils/close.h>
+#include <hydra/operators/non_branching_bonds.h>
+#include <hydra/blocks/spinhalf/spinhalf.h>
+#include <hydra/algebra/algebra.h>
+#include <hydra/algebra/matrix.h>
+#include <hydra/algorithms/sparse_diag.h>
 
 TEST_CASE("non_branching_bonds", "[operators]") {
   using namespace hydra;

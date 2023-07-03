@@ -1,8 +1,10 @@
 #include "../../catch.hpp"
 
 #include "testcases_spinhalf.h"
-#include <hydra/all.h>
 #include <iostream>
+#include <hydra/blocks/spinhalf/spinhalf_matrix.h>
+#include <hydra/algebra/matrix.h>
+#include <hydra/utils/close.h>
 
 using namespace hydra;
 

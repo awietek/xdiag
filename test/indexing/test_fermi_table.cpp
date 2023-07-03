@@ -2,8 +2,11 @@
 
 #include <iostream>
 
-#include <hydra/all.h>
 #include <test/blocks/electron/testcases_electron.h>
+#include <hydra/indexing/fermi_table.h>
+#include <hydra/operators/bondlist.h>
+#include <hydra/symmetries/operations/symmetry_operations.h>
+#include <hydra/symmetries/operations/fermi_sign.h>
 
 using namespace hydra;
 

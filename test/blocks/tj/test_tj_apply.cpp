@@ -3,7 +3,11 @@
 #include <iostream>
 
 #include "testcases_tj.h"
-#include <hydra/all.h>
+#include <hydra/blocks/tj/tj_apply.h>
+#include <hydra/blocks/tj/tj_matrix.h>
+#include <hydra/blocks/spinhalf/spinhalf_matrix.h>
+#include <hydra/algorithms/sparse_diag.h>
+#include <hydra/utils/close.h>
 
 using namespace hydra;
 

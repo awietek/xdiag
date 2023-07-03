@@ -1,6 +1,6 @@
 #pragma once
 
-#include <hydra/all.h>
+#include <hydra/operators/bondlist.h>
 
 namespace hydra::testcases::tj {
 

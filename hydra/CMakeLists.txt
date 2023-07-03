@@ -14,7 +14,9 @@ add_library(hydra STATIC
   
   algebra/algebra.cpp
   algebra/matrix.cpp
-  
+
+  io/args.cpp
+  io/args_handler.cpp
   io/file_toml.cpp
   io/toml/file_toml_handler.cpp
   io/toml/toml_conversion.cpp
@@ -70,7 +72,8 @@ add_library(hydra STATIC
   blocks/tj/tj_apply.cpp
   blocks/tj/terms/compile.cpp
 
-  symmetries/operations/symmetry_operations.cpp
+  symmetries/qn.cpp
+  symmetries/operations/symmetry_operations.cpp	
   symmetries/permutation.cpp
   symmetries/permutation_group.cpp
   symmetries/generated_group.cpp

@@ -1,8 +1,9 @@
 #include "../catch.hpp"
 
-#include <hydra/all.h>
-
 #include <random>
+#include <hydra/utils/timing.h>
+#include <hydra/utils/logger.h>
+#include <hydra/bitops/bitops.h>
 
 using namespace hydra;
 using namespace hydra::bitops;

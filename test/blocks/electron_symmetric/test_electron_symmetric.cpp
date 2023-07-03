@@ -1,8 +1,8 @@
 #include "../../catch.hpp"
 
 #include <iostream>
+#include <hydra/blocks/electron/electron.h>
 
-#include <hydra/all.h>
 
 using namespace hydra;
 using namespace hydra::combinatorics;

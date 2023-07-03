@@ -1,9 +1,10 @@
 #include "../catch.hpp"
 
 #include "../blocks/electron/testcases_electron.h"
-#include <hydra/all.h>
 #include <iostream>
 #include <set>
+
+#include <hydra/states/random_state.h>
 
 using namespace hydra;
 

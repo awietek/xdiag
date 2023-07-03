@@ -2,9 +2,6 @@
 
 #include <iostream>
 
-#include <hydra/all.h>
-
-
 TEST_CASE( "bondlist", "[operators/bondlist]" ) {
   using namespace hydra;
 

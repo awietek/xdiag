@@ -1,9 +1,9 @@
 #include "../catch.hpp"
 
-#include <hydra/all.h>
-
 #include <chrono>
 #include <iostream>
+
+#include <hydra/combinatorics/binomial.h>
 
 TEST_CASE( "binomial", "[combinatorics]" ) {
   using namespace hydra;

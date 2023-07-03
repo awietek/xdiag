@@ -1,6 +1,7 @@
 #include "../catch.hpp"
-
-#include <hydra/all.h>
+#include <hydra/states/product_state.h>
+#include <hydra/algebra/algebra.h>
+#include <hydra/utils/close.h>
 
 using namespace hydra;
 

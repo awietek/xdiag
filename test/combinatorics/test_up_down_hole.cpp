@@ -1,7 +1,5 @@
 #include "../catch.hpp"
 
-#include <hydra/all.h>
-
 template <class bit_t>
 void test_up_down_hole(int n_sites, int n_upspins, int n_downspins) {
   using namespace hydra;

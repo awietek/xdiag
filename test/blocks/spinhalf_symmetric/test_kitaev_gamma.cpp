@@ -1,6 +1,10 @@
 #include "../../catch.hpp"
 
-#include <hydra/all.h>
+#include <hydra/blocks/spinhalf/spinhalf_apply.h>
+#include <hydra/algebra/algebra.h>
+#include <hydra/algebra/matrix.h>
+#include <hydra/algorithms/sparse_diag.h>
+#include <hydra/utils/close.h>
 
 void run_kitaev_gamma_test(
     double K, double G,

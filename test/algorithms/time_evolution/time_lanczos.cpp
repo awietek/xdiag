@@ -1,7 +1,6 @@
 //
 // Created by Luke Staszewski on 08.02.23.
 //
-#include "hydra/all.h"
 #include "lanczos_time_evolve.hpp"
 #include <chrono>
 #include "armadillo"

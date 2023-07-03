@@ -2,10 +2,13 @@
 
 #include <iostream>
 
-#include <hydra/all.h>
-
 #include "../blocks/electron/testcases_electron.h"
 #include "../blocks/spinhalf/testcases_spinhalf.h"
+#include <extern/armadillo/armadillo>
+#include <hydra/utils/logger.h>
+#include <hydra/common.h>
+#include <hydra/algorithms/norm_estimate.h>
+#include <hydra/algebra/matrix.h>
 
 using namespace hydra;
 
@@ -91,7 +94,7 @@ TEST_CASE("norm_estimate", "[algorithms]") {
     }
   }
   for (int n_sites = 2; n_sites < 12; ++n_sites) {
-    HydraPrint(n_sites);
+    // HydraPrint(n_sites);
 
     Log("norm_estimate for Heisenberg all-to-all random, N={}", n_sites);
 

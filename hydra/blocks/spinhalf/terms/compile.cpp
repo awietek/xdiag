@@ -3,6 +3,7 @@
 #include <hydra/operators/non_branching_bonds.h>
 #include <hydra/utils/logger.h>
 #include <hydra/utils/print_macro.h>
+#include <hydra/utils/timing.h>
 
 namespace hydra::spinhalf {
 

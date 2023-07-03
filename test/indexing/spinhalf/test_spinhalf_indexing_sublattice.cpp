@@ -1,8 +1,13 @@
 #include "../../catch.hpp"
 
 #include <iostream>
-
-#include <hydra/all.h>
+#include <hydra/common.h>
+#include <hydra/combinatorics/combinations.h>
+#include <hydra/combinatorics/subsets.h>
+#include <hydra/indexing/spinhalf/indexing_sublattice.h>
+#include <hydra/indexing/spinhalf/indexing_symmetric_sz.h>
+#include <hydra/indexing/spinhalf/indexing_symmetric_no_sz.h>
+#include <hydra/symmetries/operations/symmetry_operations.h>
 
 using namespace hydra;
 

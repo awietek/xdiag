@@ -13,7 +13,7 @@ void fill(ProductState const &pstate, State<coeff_t> &state) {
   std::visit(variant::overloaded{[&pstate, &vector](auto &&block) {
                fill(pstate, block, vector);
              }},
-    state.block().variant());
+             state.block().variant());
 }
 template void fill(ProductState const &pstate, State<double> &state);
 template void fill(ProductState const &pstate, State<complex> &state);
@@ -142,7 +142,7 @@ std::pair<bit_t, bit_t> get_tj_spins(ProductState const &pstate, int nup = -1,
     }
   }
 
-  if ((nup != pnup) && (nup != -1) && (ndn != -1)) {
+  if (((nup != pnup) || (ndn != pndn)) && (nup != -1) && (ndn != -1)) {
     Log.err("Error creating product state: number of up/dn spins incompatible "
             "with block");
   }
@@ -218,7 +218,7 @@ std::pair<bit_t, bit_t> get_electron_spins(ProductState const &pstate,
     }
   }
 
-  if ((nup != pnup) && (nup != -1) && (ndn != -1)) {
+  if (((nup != pnup) || (ndn != pndn)) && (nup != -1) && (ndn != -1)) {
     Log.err("Error creating product state: number of up/dn spins incompatible "
             "with block");
   }

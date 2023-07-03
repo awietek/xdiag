@@ -3,7 +3,8 @@
 #include <iostream>
 
 #include "testcases_tj.h"
-#include <hydra/all.h>
+#include <hydra/combinatorics/combinations.h>
+#include <hydra/blocks/tj/tj_utils.h>
 
 using namespace hydra;
 

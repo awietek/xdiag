@@ -6,7 +6,9 @@
 #include "../tj/testcases_tj.h"
 #include "testcases_electron.h"
 
-#include <hydra/all.h>
+#include <hydra/blocks/electron/electron_matrix.h>
+#include <hydra/algebra/matrix.h>
+#include <hydra/utils/close.h>
 
 using namespace hydra;
 
