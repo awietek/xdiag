@@ -86,7 +86,7 @@ void apply_number(Bond const &bond, Indexing &&indexing, Fill fill) {
 #endif
 
         for (auto [up, idx_up] : ups_and_idces) {
-
+          (void)up;
           idx_t idx = idx_up * indexing.size_dns();
 
           for (bit_t dn : indexing.states_dns()) {

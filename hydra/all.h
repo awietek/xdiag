@@ -20,6 +20,7 @@
 
 #include "extern/armadillo/armadillo"
 #include "extern/fmt/core.h"
+#include "extern/clara/clara.hpp"
 
 #include "common.h"
 #include "config.h"
@@ -118,6 +119,8 @@
 #include "algorithms/lanczos/lanczos_eigenvector.h"
 #include "algorithms/lanczos/lanczos_vector_apply.h"
 #include "algorithms/lanczos/tmatrix.h"
+#include "algorithms/arnoldi/arnoldi.h"
+#include "algorithms/arnoldi/arnoldi_to_disk.h"
 #include "algorithms/sparse_diag.h"
 #include "algorithms/time_evolution/time_evolution.h"
 #include "algorithms/time_evolution/pade_matrix_exponential.h"

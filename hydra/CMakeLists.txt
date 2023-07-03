@@ -116,7 +116,7 @@ target_include_directories(hydra PUBLIC ${CMAKE_SOURCE_DIR})
 target_compile_features(hydra PUBLIC cxx_std_17)
 
 if(OPTIMIZE_FOR_NATIVE)
-message(STATUS "Using -march=native optimizations")
+message(STATUS "Using native architecture optimizations")
 target_compile_options(hydra PRIVATE -march=native)
 target_compile_options(hydra PRIVATE -mtune=native)
 endif()
@@ -125,36 +125,83 @@ target_compile_options(hydra PRIVATE -Wall -Wextra)
   
 message(STATUS "-------- Determining Linear Algebra backend -------------")
 find_package(MKL)
-find_package(BLAS)
-find_package(LAPACK)
 if(MKL_FOUND)
   message(STATUS "Employing IntelMKL as linear algebra backend")
+
   target_compile_definitions(hydra PUBLIC HYDRA_USE_MKL MKL_ILP64)
-  target_include_directories(hydra PUBLIC ${MKL_INCLUDE_DIR})
-  target_link_libraries(hydra PUBLIC ${MKL_LIBRARIES})
-
   list(APPEND HYDRA_DEFINITIONS HYDRA_USE_MKL MKL_ILP64)
+
+  target_include_directories(hydra PUBLIC ${MKL_INCLUDE_DIR})
   list(APPEND HYDRA_INCLUDE_DIRS ${MKL_INCLUDE_DIR})
-  list(APPEND HYDRA_LIBRARIES ${MKL_LIBRARIES})
+
+
+  # Choose correct MKL libraries
+  if(OMP_THREADING)
+
+    target_compile_options(hydra PUBLIC -fopenmp)
+    
+    if(MKL_THREADING)
+      if(CMAKE_CXX_COMPILER_ID STREQUAL "IntelLLVM")
+	set(MKL_LIBRARIES ${MKL_INTERFACE_LIBRARY} ${MKL_THREAD_LAYER_LIBRARY} ${MKL_CORE_LIBRARY})
+      elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+	set(MKL_LIBRARIES ${MKL_INTERFACE_LIBRARY} ${MKL_THREAD_LAYER_LIBRARY} ${MKL_CORE_LIBRARY})
+      else()
+	message(STATUS "OMP and MKL threading only works for GNU and Intel compilers")
+	set(MKL_LIBRARIES ${MKL_INTERFACE_LIBRARY} ${MKL_SEQUENTIAL_LAYER_LIBRARY} ${MKL_CORE_LIBRARY})
+      endif()
+    else()
+      set(MKL_LIBRARIES ${MKL_INTERFACE_LIBRARY} ${MKL_SEQUENTIAL_LAYER_LIBRARY} ${MKL_CORE_LIBRARY})
+    endif()
+
+  else()
+    if(MKL_THREADING)
+      set(MKL_LIBRARIES ${MKL_INTERFACE_LIBRARY} ${MKL_THREAD_LAYER_LIBRARY} ${MKL_CORE_LIBRARY})
+    else()
+      set(MKL_LIBRARIES ${MKL_INTERFACE_LIBRARY} ${MKL_SEQUENTIAL_LAYER_LIBRARY} ${MKL_CORE_LIBRARY})
+    endif()
   
-elseif(LAPACK_FOUND AND BLAS_FOUND)
-  message(STATUS "Emploging Lapack/Blas as linear algebra backend")
-  target_link_libraries(hydra PUBLIC ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
+  endif()
 
-  list(APPEND HYDRA_LIBRARIES ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
+  if(NOT WIN32 AND NOT APPLE)
+    # Added -Wl block to avoid circular dependencies.
+    # https://stackoverflow.com/questions/5651869/what-are-the-start-group-and-end-group-command-line-options
+    # https://software.intel.com/en-us/articles/intel-mkl-link-line-advisor
+    set(MKL_LIBRARIES -Wl,--start-group ${MKL_LIBRARIES} -Wl,--end-group -liomp5 -lpthread -lm -ldl)
+  elseif(APPLE)
+    # MacOS does not support --start-group and --end-group
+    set(MKL_LIBRARIES -Wl,${MKL_LIBRARIES} -Wl, -liomp5 -lpthread -lm -ldl)
+  endif()
+  
+  message(STATUS "MKL libraries: " ${MKL_LIBRARIES})
+  target_link_libraries(hydra PUBLIC ${MKL_LIBRARIES})
+  list(APPEND HYDRA_LIBRARIES ${MKL_LIBRARIES})
+
+# Regular Blas/Lapack backend
 else()
-  message(FATAL_ERROR "No linear algebra backend found")
+  find_package(BLAS)
+  find_package(LAPACK)
+  
+  if(LAPACK_FOUND AND BLAS_FOUND)
+    message(STATUS "Emploging Lapack/Blas as linear algebra backend")
+    target_link_libraries(hydra PUBLIC ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
+    list(APPEND HYDRA_LIBRARIES ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
+  else()
+    message(FATAL_ERROR "No linear algebra backend found")
+  endif()
+
+  if(OMP_THREADING)
+    message(STATUS "--------  Determining if OpenMP is present  -------------")
+    find_package(OpenMP)
+    if(OpenMP_CXX_FOUND)
+      message(STATUS "Employing OpenMP")
+      target_link_libraries(hydra PUBLIC OpenMP::OpenMP_CXX)
+      list(APPEND HYDRA_LIBRARIES OpenMP::OpenMP_CXX)
+    endif()
+  else()
+    message(STATUS "OpenMP disabled")
+  endif()
+  
 endif()
-
-
-message(STATUS "--------  Determining if OpenMP is present  -------------")
-find_package(OpenMP)
-if(OpenMP_CXX_FOUND)
-  message(STATUS "Employing OpenMP")
-  target_link_libraries(hydra PUBLIC OpenMP::OpenMP_CXX)
-  list(APPEND HYDRA_LIBRARIES OpenMP::OpenMP_CXX)
-endif()
-
 
 message(STATUS "--------   Determining if HDF5 is present   -------------")
 find_package(HDF5 COMPONENTS CXX)

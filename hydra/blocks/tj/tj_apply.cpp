@@ -19,7 +19,7 @@ void apply(BondList const &bonds, tJ const &block_in,
   operators::check_bonds_in_range(bonds, block_in.n_sites());
 
   if ((is_real<coeff_t>()) && (bonds_c.is_complex())) {
-    Log.err("Error in matrix_gen: trying to create a real matrix from an "
+    Log.err("Error in apply: trying to create a real matrix from an "
             "intrisically complex BondList");
   }
 

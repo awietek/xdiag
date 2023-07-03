@@ -188,13 +188,15 @@ BondList::const_iterator_t BondList::end() const { return bonds_.end(); }
 BondList::const_iterator_t BondList::cbegin() const { return bonds_.cbegin(); }
 BondList::const_iterator_t BondList::cend() const { return bonds_.cend(); }
 
+  
 bool BondList::is_real(double precision) const {
   return !is_complex(precision);
 }
 
 bool BondList::operator==(BondList const &other) const {
   std::vector<std::string> matrices_keys;
-  for (const auto &[key, _] : matrices_) {
+  for (const auto &[key, val] : matrices_) {
+    (void)val;
     matrices_keys.push_back(key);
   }
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import numpy as np
-import pickle
+import h5py
 import pydiag as yd
 import pydiag.ensemble as yde
 
