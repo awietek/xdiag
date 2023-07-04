@@ -63,9 +63,6 @@ for T in temperatures:
     poles = poles[np.abs(weights) > min_weight]
     weights = np.real(weights[np.abs(weights) > min_weight])
 
-    print(weights)
-    print(np.sort(poles))
-
     # broaden and plot
     diffs = np.subtract.outer(omegas, poles)
     gaussians = np.exp(-(diffs / (2*eta))**2) / (eta * np.sqrt(2*np.pi))
