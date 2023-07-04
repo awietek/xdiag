@@ -1,7 +1,6 @@
 #include "../catch.hpp"
 
 #include <iostream>
-
 #include <hydra/combinatorics/subsets.h>
 
 template <class bit_t>

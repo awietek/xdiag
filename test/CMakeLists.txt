@@ -2,6 +2,7 @@ add_executable(tests
   tests.cpp
   bitops/test_bitops.cpp
 
+  io/test_args.cpp
   io/test_file_toml.cpp
   io/test_file_h5.cpp
 
@@ -25,6 +26,7 @@ add_executable(tests
   symmetries/test_permutation.cpp
   symmetries/test_permutation_group.cpp
   symmetries/test_generated_group.cpp
+  symmetries/test_qn.cpp
 
   operators/test_symmetrized_operator.cpp
   operators/test_non_branching_bonds.cpp

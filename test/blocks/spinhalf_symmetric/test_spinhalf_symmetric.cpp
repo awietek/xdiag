@@ -2,7 +2,12 @@
 
 #include <iostream>
 
-#include <hydra/all.h>
+#include <hydra/blocks/spinhalf/spinhalf_apply.h>
+#include <hydra/algebra/algebra.h>
+#include <hydra/algebra/matrix.h>
+#include <hydra/algorithms/sparse_diag.h>
+#include <hydra/utils/close.h>
+#include <hydra/symmetries/group_action/group_action.h>
 
 using namespace hydra;
 using namespace hydra::combinatorics;

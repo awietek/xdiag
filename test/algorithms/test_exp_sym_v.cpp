@@ -1,8 +1,10 @@
 #include "../catch.hpp"
 
 #include <iostream>
-
-#include <hydra/all.h>
+#include <extern/armadillo/armadillo>
+#include <hydra/utils/logger.h>
+#include <hydra/common.h>
+#include <hydra/algorithms/time_evolution/exp_sym_v.h>
 
 template <class coeff_t>
 void test_exp_sym_v(int n, double precision, int n_tests) {
@@ -23,7 +25,7 @@ void test_exp_sym_v(int n, double precision, int n_tests) {
     arma::Mat<coeff_t> r(1, 1, arma::fill::randn);
     coeff_t tau = r(0, 0);
 
-    HydraPrint(A);
+    // HydraPrint(A);
     std::cout << tau << std::endl;
 
     arma::Col<coeff_t> v0(n, arma::fill::randn);

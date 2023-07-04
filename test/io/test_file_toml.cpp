@@ -2,12 +2,13 @@
 
 #include <hydra/common.h>
 #include <hydra/utils/close.h>
+#include <hydra/io/file_toml.h>
 #include <hydra/operators/bond.h>
 #include <hydra/operators/bondlist.h>
 #include <hydra/symmetries/permutation.h>
-#include <hydra/symmetries/operations/symmetry_operations.h>
+#include <hydra/symmetries/permutation_group.h>
 #include <hydra/symmetries/representation.h>
-#include <hydra/io/file_toml.h>
+#include <hydra/symmetries/operations/symmetry_operations.h>
 
 template <typename T> void test_write_read(T val) {
   using namespace hydra;

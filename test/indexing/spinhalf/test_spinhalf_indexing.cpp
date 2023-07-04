@@ -2,8 +2,12 @@
 
 #include <iostream>
 
-#include <hydra/indexing/spinhalf/indexing_symmetric_no_sz.h>
+#include <iostream>
+#include <hydra/common.h>
+#include <hydra/combinatorics/combinations.h>
+#include <hydra/combinatorics/subsets.h>
 #include <hydra/indexing/spinhalf/indexing_symmetric_sz.h>
+#include <hydra/indexing/spinhalf/indexing_symmetric_no_sz.h>
 #include <hydra/symmetries/operations/symmetry_operations.h>
 #include <hydra/symmetries/operations/group_action_operations.h>
 

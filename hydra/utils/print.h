@@ -15,6 +15,9 @@
 #include <hydra/states/product_state.h>
 #include <hydra/states/random_state.h>
 #include <hydra/states/state.h>
+
+#include <hydra/symmetries/continuous_group.h>
+#include <hydra/symmetries/qn.h>
 #include <hydra/symmetries/permutation.h>
 #include <hydra/symmetries/permutation_group.h>
 #include <hydra/symmetries/representation.h>
@@ -35,7 +38,10 @@ void PrintPretty(const char *identifier, BondList const &bondlist);
 void PrintPretty(const char *identifier, Permutation const &perm);
 void PrintPretty(const char *identifier, PermutationGroup const &group);
 void PrintPretty(const char *identifier, Representation const &irrep);
-
+void PrintPretty(const char *identifier, U1 const &qn);
+void PrintPretty(const char *identifier, QNum const &qn);
+void PrintPretty(const char *identifier, QN const &qn);
+  
 void PrintPretty(const char *identifier, Block const &block);
 void PrintPretty(const char *identifier, Spinhalf const &block);
 void PrintPretty(const char *identifier, tJ const &block);

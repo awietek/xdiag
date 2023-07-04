@@ -3,7 +3,7 @@
 //
 
 #include "../../catch.hpp"
-#include <hydra/all.h>
+#include <hydra/algorithms/time_evolution/pade_matrix_exponential.h>
 
 #include <complex>
 #include <iostream>

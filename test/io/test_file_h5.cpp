@@ -17,7 +17,6 @@ TEST_CASE("file_h5", "[io]") {
   fl["test/to3/group2/asdf"] = 42;
 
   auto mat = arma::cx_mat(3, 5, arma::fill::randn);
-
   fl["a/b/c/mat"] = mat;
 }
 #endif

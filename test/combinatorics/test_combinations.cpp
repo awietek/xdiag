@@ -1,9 +1,7 @@
 #include "../catch.hpp"
 
 #include <iostream>
-
 #include <hydra/combinatorics/combinations.h>
-// #include <omp.h>
 
 template <typename bit_t> void test_combinations() {
   using namespace hydra;

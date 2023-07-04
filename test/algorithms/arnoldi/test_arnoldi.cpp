@@ -6,6 +6,8 @@
 
 #include "../../blocks/electron/testcases_electron.h"
 #include <hydra/algorithms/arnoldi/arnoldi.h>
+#include <hydra/blocks/spinhalf/spinhalf.h>
+#include <hydra/states/random_state.h>
 
 // TODO: write tests for arnoldi_to_disk
 bool check_basis_orthonormality(arma::cx_mat const &Q, double tol = 1e-12) {

@@ -5,7 +5,12 @@
 
 #include <iostream>
 
-#include <hydra/all.h>
+#include <hydra/blocks/spinhalf/spinhalf_apply.h>
+#include <hydra/algebra/algebra.h>
+#include <hydra/algebra/matrix.h>
+#include <hydra/algorithms/sparse_diag.h>
+#include <hydra/utils/close.h>
+
 using namespace hydra;
 
 void test_spinhalf_symmetric_apply(BondList bondlist,

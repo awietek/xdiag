@@ -7,6 +7,7 @@
 #include <hydra/blocks/utils/block_utils.h>
 #include <hydra/operators/compiler.h>
 #include <hydra/utils/logger.h>
+#include <hydra/utils/timing.h>
 
 namespace hydra {
 
@@ -22,13 +23,13 @@ arma::Mat<coeff_t> matrix_gen(BondList const &bonds, Spinhalf const &block_in,
             "intrisically complex BondList");
   }
 
-  if (block_in.n_up() != undefined_qn) {
-    int n_up_out = spinhalf::nup(bonds_c) + block_in.n_up();
-    if (n_up_out != block_out.n_up()) {
-      Log.err("Incompatible n_up in matrix_gen: {} != {}", n_up_out,
-              block_out.n_up());
-    }
-  }
+  // if (block_in.n_up() != undefined_qn) {
+  //   int n_up_out = spinhalf::nup(bonds_c) + block_in.n_up();
+  //   if (n_up_out != block_out.n_up()) {
+  //     Log.err("Incompatible n_up in matrix_gen: {} != {}", n_up_out,
+  //             block_out.n_up());
+  //   }
+  // }
 
   idx_t dim_in = block_in.size();
   idx_t dim_out = block_out.size();
@@ -42,7 +43,7 @@ arma::Mat<coeff_t> matrix_gen(BondList const &bonds, Spinhalf const &block_in,
   auto const &indexing_out = block_out.indexing();
   spinhalf::apply_terms_dispatch<coeff_t>(bonds_c, indexing_in, indexing_out,
                                           fill);
-  return mat;
+ return mat;
 }
 
 template arma::Mat<double> matrix_gen<double>(BondList const &bonds,

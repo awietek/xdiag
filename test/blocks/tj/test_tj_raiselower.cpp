@@ -1,6 +1,9 @@
 #include "../../catch.hpp"
+#include <hydra/blocks/tj/tj_apply.h>
+#include <hydra/blocks/tj/tj_matrix.h>
+#include <hydra/algebra/matrix.h>
+#include <hydra/utils/close.h>
 
-#include <hydra/all.h>
 using namespace hydra;
 using namespace arma;
 

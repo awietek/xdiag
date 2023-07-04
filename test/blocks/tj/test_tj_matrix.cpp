@@ -4,8 +4,11 @@
 
 #include "../spinhalf/testcases_spinhalf.h"
 #include "testcases_tj.h"
+#include <hydra/blocks/tj/tj_matrix.h>
+#include <hydra/blocks/spinhalf/spinhalf.h>
+#include <hydra/blocks/spinhalf/spinhalf_matrix.h>
 
-#include <hydra/all.h>
+#include <hydra/utils/close.h>
 
 using namespace hydra;
 
@@ -65,7 +68,7 @@ TEST_CASE("tj_matrix", "[tj]") {
 
       // H.print();
       // H_tJ.print();
-      
+
       arma::vec eigs;
       arma::eig_sym(eigs, H);
 
@@ -74,7 +77,7 @@ TEST_CASE("tj_matrix", "[tj]") {
 
       // eigs.print();
       // eigs_tJ.print();
-	
+
       REQUIRE(close(eigs, eigs_tJ));
     }
   }

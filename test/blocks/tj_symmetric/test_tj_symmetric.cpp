@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include <hydra/all.h>
+#include <hydra/blocks/tj/tj.h>
 
 using namespace hydra;
 

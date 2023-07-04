@@ -1,8 +1,7 @@
 #include "../catch.hpp"
 
-#include <iostream>
-
 #include <hydra/combinatorics/combinations_index.h>
+#include <iostream>
 
 template <typename bit_t> void test_combinations_index() {
   using namespace hydra;

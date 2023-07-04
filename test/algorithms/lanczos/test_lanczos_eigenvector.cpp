@@ -3,7 +3,9 @@
 #include <iostream>
 
 #include "../../blocks/electron/testcases_electron.h"
-#include <hydra/all.h>
+#include <hydra/algorithms/lanczos/lanczos_eigenvector.h>
+#include <hydra/blocks/electron/electron_matrix.h>
+#include <hydra/utils/close.h>
 
 using namespace hydra;
 

@@ -1,6 +1,16 @@
 #include "../../catch.hpp"
 
-#include <hydra/all.h>
+#include <hydra/combinatorics/combinations.h>
+#include <hydra/combinatorics/subsets.h>
+#include <hydra/indexing/combinations_indexing.h>
+#include <hydra/indexing/subsets_indexing.h>
+#include <hydra/indexing/lin_table.h>
+#include <hydra/symmetries/group_action/group_action_lookup.h>
+#include <hydra/symmetries/operations/symmetry_operations.h>
+#include <hydra/symmetries/permutation_group.h>
+#include <hydra/symmetries/operations/group_action_operations.h>
+#include <hydra/symmetries/operations/representative_list.h>
+#include <hydra/utils/close.h>
 
 using namespace hydra;
 using namespace hydra::combinatorics;
@@ -153,8 +163,6 @@ void test_representatives_indices_symmetries_limits(int n_sites) {
   }
 }
 
-
-
 TEST_CASE("symmetry_operations", "[symmetries]") {
   using namespace hydra;
 
@@ -202,6 +210,4 @@ TEST_CASE("symmetry_operations", "[symmetries]") {
     test_representatives_indices_symmetries_limits<uint32_t>(n_sites);
     test_representatives_indices_symmetries_limits<uint64_t>(n_sites);
   }
-
-
 }

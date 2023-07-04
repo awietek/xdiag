@@ -2,7 +2,10 @@
 
 #include <iostream>
 
-#include <hydra/all.h>
+#include <hydra/common.h>
+#include <hydra/symmetries/permutation.h>
+#include <hydra/combinatorics/subsets.h>
+#include <hydra/symmetries/operations/fermi_sign.h>
 
 using namespace hydra;
 

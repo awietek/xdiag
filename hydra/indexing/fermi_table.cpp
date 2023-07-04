@@ -61,12 +61,10 @@ std::vector<bool> init_fermi_table_omp(States const &states,
       auto states_thread = ThreadStates(states);
       // fermi_bool_table_local[myid].resize(states_thread.size());
       auto fermi_work = symmetries::fermi_work(n_sites);
-      idx_t idx = 0;
       for (auto state : states_thread) {
         bool fermi_bool =
             symmetries::fermi_bool_of_permutation(state, perm, fermi_work);
         fermi_bool_table_local[myid].push_back(fermi_bool);
-        ++idx;
       }
 #pragma omp barrier
 

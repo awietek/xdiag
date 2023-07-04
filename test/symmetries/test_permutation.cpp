@@ -2,7 +2,8 @@
 
 #include <iostream>
 
-#include <hydra/all.h>
+#include <hydra/combinatorics/subsets.h>
+#include <hydra/symmetries/permutation.h>
 
 template <typename bit_t> void test_permutation_apply(int n_sites) {
 

@@ -149,7 +149,7 @@ NonBranchingBond<bit_t, coeff_t>::NonBranchingBond(Bond const &bond,
   coeff_ = std::vector<coeff_t>(dim_, 0.);
 
   for (bit_t in = 0; in < dim_; ++in) {
-    int non_zero_in_row = 0;
+    // int non_zero_in_row = 0;
 
     for (bit_t out = 0; out < dim_; ++out) {
       if (std::abs(matrix_(out, in)) > precision) {
@@ -164,16 +164,16 @@ NonBranchingBond<bit_t, coeff_t>::NonBranchingBond(Bond const &bond,
         } else {
           coeff_[in] = cpl * matrix_(out, in);
         }
-        ++non_zero_in_row;
+        // ++non_zero_in_row;
       }
     }
 
-    // security check
-    if (non_zero_term_[in]) {
-      assert(non_zero_in_row == 1);
-    } else {
-      assert(non_zero_in_row == 0);
-    }
+    // // security check
+    // if (non_zero_term_[in]) {
+    //   assert(non_zero_in_row == 1);
+    // } else {
+    //   assert(non_zero_in_row == 0);
+    // }
   }
 
   // int n_sites = 1;

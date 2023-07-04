@@ -10,6 +10,7 @@
 #include <hydra/common.h>
 
 #include <hydra/utils/print_macro.h>
+#include <hydra/utils/timing.h>
 
 namespace hydra::spinhalf {
 

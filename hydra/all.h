@@ -89,6 +89,8 @@
 #include "blocks/tj/tj_matrix.h"
 #include "blocks/tj/tj_utils.h"
 
+#include "symmetries/qn.h"
+#include "symmetries/continuous_group.h"
 #include "symmetries/generated_group.h"
 #include "symmetries/group_action/group_action.h"
 #include "symmetries/group_action/group_action_lookup.h"
@@ -128,6 +130,7 @@
 
 #include "io/file_h5.h"
 #include "io/file_toml.h"
+#include "io/args.h"
 
 #ifdef HYDRA_ENABLE_MPI
 #include "mpi/allreduce.h"

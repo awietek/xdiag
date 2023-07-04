@@ -2,8 +2,6 @@
 
 #include <iostream>
 
-#include <hydra/all.h>
-
 using namespace hydra;
 
 template <typename bit_t>

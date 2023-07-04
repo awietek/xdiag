@@ -1,6 +1,8 @@
 #include "print.h"
 
 #include <hydra/random/hashes.h>
+#include <hydra/utils/error.h>
+
 #include <sstream>
 
 namespace hydra::utils {
@@ -63,7 +65,7 @@ void PrintPretty(const char *identifier, Bond const &bond) {
     printf("  type: %s\n", bond.type().c_str());
   } else {
     auto mat = bond.matrix();
-    if (arma::norm(arma::imag(mat))<1e-12) {
+    if (arma::norm(arma::imag(mat)) < 1e-12) {
       PrintPretty("  matrix", arma::mat(arma::real(mat)));
     } else {
       PrintPretty("  matrix", mat);
@@ -99,28 +101,26 @@ void PrintPretty(const char *identifier, BondList const &bondlist) {
   }
   if (bondlist.couplings().size() > 0) {
     printf("Couplings:\n");
-    for (auto && [name, cpl] : bondlist.couplings()){
-      if (std::abs(cpl.imag()) < 1e-12 ){
-	Log("  {}: {}", name, cpl.real());
+    for (auto &&[name, cpl] : bondlist.couplings()) {
+      if (std::abs(cpl.imag()) < 1e-12) {
+        Log("  {}: {}", name, cpl.real());
       } else {
-	Log("  {}: {}", name, cpl);
+        Log("  {}: {}", name, cpl);
       }
     }
   }
 
   if (bondlist.matrices().size() > 0) {
     printf("Matrices:\n");
-    for (auto && [name, mat] : bondlist.matrices()){
+    for (auto &&[name, mat] : bondlist.matrices()) {
       Log(" {}:", name);
-      if (arma::norm(arma::imag(mat))<1e-12){
-	arma::real(mat).brief_print();
-      } else{
-	mat.brief_print();
+      if (arma::norm(arma::imag(mat)) < 1e-12) {
+        arma::real(mat).brief_print();
+      } else {
+        mat.brief_print();
       }
-	
     }
   }
-  
 }
 
 void PrintPretty(const char *identifier, Permutation const &p) {
@@ -154,6 +154,44 @@ void PrintPretty(const char *identifier, Representation const &irrep) {
   }
   printf("\n");
   printf("  ID        : 0x%lx\n", (unsigned long)random::hash(irrep));
+}
+
+void PrintPretty(const char *identifier, U1 const &g) {
+  (void)g;
+  printf("%s:\n", identifier);
+  printf("  U(1) group\n");
+}
+
+void PrintPretty(const char *identifier, QNum const &qn) {
+  printf("%s:\n", identifier);
+  std::visit(
+      variant::overloaded{
+          [](U1 g, int i) {
+            (void)g;
+            printf("  QNum, U(1), n=%d\n", i);
+          },
+          [](PermutationGroup const &g, Representation const &i) {
+            printf("  QNum\n");
+            printf("  PermutationGroup\n");
+            printf("    n_sites      : %d\n", g.n_sites());
+            printf("    n_symmetries : %d\n", g.n_symmetries());
+            printf("    ID           : 0x%lx\n\n",
+                   (unsigned long)random::hash(g));
+            printf("  Representation\n");
+            printf("    ID        : 0x%lx\n", (unsigned long)random::hash(i));
+          },
+          [](auto const &g, auto const &i) {
+            (void)g;
+            (void)i;
+            throw symmetry_error(
+                "Error printing QNum: incompatible group or irrep");
+          },
+      },
+      qn.group(), qn.irrep());
+}
+void PrintPretty(const char *identifier, QN const &qn) {
+  (void)identifier;
+  (void)qn;
 }
 
 void PrintPretty(const char *identifier, Block const &block) {

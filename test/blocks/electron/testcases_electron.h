@@ -1,10 +1,11 @@
 #pragma once
 
 #include <hydra/operators/bondlist.h>
+#include <hydra/symmetries/operations/symmetry_operations.h>
 #include <hydra/symmetries/permutation.h>
 #include <hydra/symmetries/permutation_group.h>
 #include <hydra/symmetries/representation.h>
-#include <hydra/symmetries/operations/symmetry_operations.h>
+
 #include <random>
 
 namespace hydra::testcases::electron {

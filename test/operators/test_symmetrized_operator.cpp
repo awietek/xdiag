@@ -4,6 +4,10 @@
 
 #include "../blocks/electron/testcases_electron.h"
 #include <hydra/operators/symmetrized_operator.h>
+#include <hydra/blocks/electron/electron.h>
+#include <hydra/algebra/algebra.h>
+#include <hydra/algorithms/sparse_diag.h>
+#include <hydra/utils/close.h>
 
 using namespace hydra;
 
