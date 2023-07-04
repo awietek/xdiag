@@ -16,6 +16,7 @@ template <class data_t> data_t ArgsHandler::as() const {
     return data_t();
   }
 }
+
 template <class data_t> data_t ArgsHandler::as(data_t const &defaultt) const {
   if (args_.count(key_)) {
     return std::get<data_t>(args_.at(key_));

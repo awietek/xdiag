@@ -3,20 +3,22 @@
 //
 #include "../../catch.hpp"
 #include <extern/armadillo/armadillo>
-#include <hydra/utils/logger.h>
-#include <hydra/common.h>
-#include <hydra/algorithms/time_evolution/time_evolution.h>
-#include <hydra/algorithms/time_evolution/pade_matrix_exponential.h>
-#include <hydra/states/product_state.h>
 #include <hydra/algebra/matrix.h>
+#include <hydra/algorithms/time_evolution/pade_matrix_exponential.h>
+#include <hydra/algorithms/time_evolution/time_evolution.h>
+#include <hydra/common.h>
+#include <hydra/states/product_state.h>
+#include <hydra/utils/logger.h>
+#include <hydra/utils/print_macro.h>
 
 using namespace hydra;
 using namespace std;
 using namespace arma;
 
 TEST_CASE("analytic_case_free_particle_1D", "[time_evolution]") {
+  Log("testing time evolution: analytic_case_free_particle_1D");
   Log.set_verbosity(0);
-  
+
   // some constants
   int n_sites = 17;
   int nup = 1;
@@ -81,8 +83,9 @@ TEST_CASE("analytic_case_free_particle_1D", "[time_evolution]") {
 }
 
 TEST_CASE("analytic_case_free_particle_2D", "[time_evolution]") {
+  Log("testing time evolution: analytic_case_free_particle_2D");
   Log.set_verbosity(0);
-  
+
   // some constants
   int L = 3; // width of square lattice
   int n_sites = L * L;
@@ -182,6 +185,7 @@ TEST_CASE("analytic_case_free_particle_2D", "[time_evolution]") {
 }
 
 TEST_CASE("tj_complex_timeevo", "[time_evolution]") {
+  Log("testing time evolution: tj_complex_timeevo");
   Log.set_verbosity(0);
   int L = 3;
   int n_sites = L * L;
@@ -217,9 +221,11 @@ TEST_CASE("tj_complex_timeevo", "[time_evolution]") {
     }
   }
   pstate[n_sites / 2] = "Emp";
-  auto block = tJ(n_sites, n_sites / 2, n_sites / 2 - 1);
+  auto block = tJ(n_sites, n_sites / 2, n_sites / 2);
 
   auto H = matrix_cplx(bonds, block);
+  HydraPrint(block);
+  HydraPrint(pstate);
   auto psi_0 = StateCplx(block, pstate);
 
   arma::vec times = arma::logspace(-1, 1, 3);

@@ -1,10 +1,28 @@
 #include "args.h"
 
 namespace hydra {
+Arg::Arg(std::string key, std::string val) : key_(key), val_(val) {}
+Arg::Arg(std::string key, const char *val)
+    : key_(key), val_(std::string(val)) {}
+Arg::Arg(std::string key, bool val) : key_(key), val_(val) {}
+Arg::Arg(std::string key, int8_t val) : key_(key), val_(val) {}
+Arg::Arg(std::string key, int16_t val) : key_(key), val_(val) {}
+Arg::Arg(std::string key, int32_t val) : key_(key), val_(val) {}
+Arg::Arg(std::string key, int64_t val) : key_(key), val_(val) {}
+Arg::Arg(std::string key, uint8_t val) : key_(key), val_(val) {}
+Arg::Arg(std::string key, uint16_t val) : key_(key), val_(val) {}
+Arg::Arg(std::string key, uint32_t val) : key_(key), val_(val) {}
+Arg::Arg(std::string key, uint64_t val) : key_(key), val_(val) {}
+Arg::Arg(std::string key, double val) : key_(key), val_(val) {}
+Arg::Arg(std::string key, complex val) : key_(key), val_(val) {}
 
-Args::Args(
-    std::initializer_list<std::pair<std::string, io::args_t>> const &args) {
-  for (auto const &[key, val] : args) {
+std::string Arg::key() const { return key_; }
+io::args_t Arg::val() const { return val_; }
+
+Args::Args(std::initializer_list<Arg> const &args) {
+  for (auto const & arg : args) {
+    std::string key = arg.key();
+    auto val = arg.val();
     args_[key] = val;
   }
 }

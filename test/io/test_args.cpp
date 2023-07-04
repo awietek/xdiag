@@ -1,13 +1,13 @@
 #include "../catch.hpp"
 
 #include <extern/armadillo/armadillo>
-
 #include <hydra/common.h>
 #include <hydra/io/args.h>
 
 TEST_CASE("args", "[io]") {
   using namespace hydra;
   using namespace arma;
+  Log("testing Args");
 
   Args args({{"bool", true},
              {"string", "hello"},

@@ -21,7 +21,7 @@ template <typename coeff_t> struct lanczos_result {
   std::string criterion;
   double anorm;
   arma::vec omegas;
-}
+};
 
 // Lanczos implementation with partial reorthogonalization
 
@@ -78,7 +78,7 @@ lanczos_pro(multiply_f mult, arma::Col<coeff_t> &v0, convergence_f converged,
   } catch (...) {
     Log.err("Error in lanczos_pro: Unable to allocate Lanczos vector matrix, "
             "dim=({},{})",
-            N, ax_iterations);
+            N, max_iterations);
   }
 
   // Allocate Lanczos iteration vectors
@@ -106,7 +106,7 @@ lanczos_pro(multiply_f mult, arma::Col<coeff_t> &v0, convergence_f converged,
   vec_t &r = v0;
 
   // Lanczos iterations
-  for (int iteration = 0; iterations < max_iterations; ++iteration) {
+  for (int iteration = 0; iteration < max_iterations; ++iteration) {
     q_old = q;
     if (abs(betas(iteration)) < deflation_tol) {
       Log(1, "deflation detected at iteration {}", iteration);
@@ -122,14 +122,14 @@ lanczos_pro(multiply_f mult, arma::Col<coeff_t> &v0, convergence_f converged,
     mult(q, w);
 
     // orthogonalization
-    r = w - beta(iteration) * q_old;
-    alpha(iteration) = cdot(q, r);
-    r = r - alpha(iteration) * q;
+    r = w - betas(iteration) * q_old;
+    alphas(iteration) = cdot(q, r);
+    r = r - alphas(iteration) * q;
 
     // Extended local reorthogonalization (is this useful?)
-    beta(iteration + 1) = sqrt(cdot(r, r));
+    betas(iteration + 1) = sqrt(cdot(r, r));
     if (extended_local_reortho &&
-        (beta(iteration + 1) < gamma * beta(iteration))) {
+        (betas(iteration + 1) < gamma * betas(iteration))) {
       if (iteration == 0) {
         double t1 = 0.;
         for (int i = 0; i < 2; ++i) {
@@ -137,30 +137,30 @@ lanczos_pro(multiply_f mult, arma::Col<coeff_t> &v0, convergence_f converged,
           r = r - q * t;
           t1 = t1 + t;
         }
-        alpha(iteration) = alpha(iteration) + t1;
+        alphas(iteration) = alphas(iteration) + t1;
       } else {
         double t1 = cdot(q_old, r);
         double t2 = cdot(q, r);
         r = r - (q_old * t1 + q * t2);
 
-        if (abs(beta(iteration)) > deflation_tol) {
-          beta(iteration) += t1;
+        if (abs(betas(iteration)) > deflation_tol) {
+          betas(iteration) += t1;
         }
-        alpha(iteration) += t2;
+        alphas(iteration) += t2;
       }
     }
 
     // Compute estimate for operator 2-norm (could be updated)
-    mat Tmat = diagmat(alpha(span(0, iteration + 1))) +
+    mat Tmat = diagmat(alphas(span(0, iteration + 1))) +
                diagmat(betas(span(0, iteration)), -1) +
                diagmat(betas(span(0, iteration)), 1);
-    double anorm = sqrt(norm(Tmat.trans() * Tmat, 1));
+    double anorm = sqrt(norm(Tmat.t() * Tmat, 1));
 
     // update omegas (orthogonalities), according to Simon algo
     // Horst D. Simon, The Lanczos algorithm with partial reorthogonalization
-    if ((iteration > 0) && abs(beta(iteration + 1)) > deflation_tol) {
+    if ((iteration > 0) && abs(betas(iteration + 1)) > deflation_tol) {
       double T = eps1 * anorm;
-      double binv = 1 / beta(iteration + 1);
+      double binv = 1 / betas(iteration + 1);
       omegas_old = omegas;
       omegas_old(0) = betas(1) * omegas(1) +
                       (alphas(0) - alphas(iteration)) * omegas(0) -
@@ -170,7 +170,7 @@ lanczos_pro(multiply_f mult, arma::Col<coeff_t> &v0, convergence_f converged,
         omegas_old(k) = betas(k + 1) * omegas(k + 1) +
                         (alphas(k) - alphas(iteration)) * omegas(k) +
                         betas(k) * omegas(k - 1) -
-                        betas(iteration, omega_old(k));
+                        betas(iteration, omegas_old(k));
       }
       for (int k = 1; k < iteration - 2; ++k) {
         omegas_old(k) = binv * (omegas_old(k) + sign(omegas_old(k)) * T);
@@ -179,14 +179,15 @@ lanczos_pro(multiply_f mult, arma::Col<coeff_t> &v0, convergence_f converged,
       swap(omegas, omegas_old);
       omegas(iteration) = eps1;
     }
+    
   } // Lanczos iterations
 
-  mat Tmat = diagmat(alpha(span(0, iteration + 1))) +
-             diagmat(betas(span(0, iteration)), -1) +
-             diagmat(betas(span(0, iteration)), 1);
-  eig_sym(result.eigenvalues, Tmat);
+  // mat Tmat = diagmat(alpha(span(0, iteration + 1))) +
+  //            diagmat(betas(span(0, iteration)), -1) +
+  //            diagmat(betas(span(0, iteration)), 1);
+  // eig_sym(result.eigenvalues, Tmat);
   result.residual = r;
-  
+
   return result;
 }
 

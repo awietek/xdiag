@@ -6,8 +6,11 @@
 
 #include "../../blocks/electron/testcases_electron.h"
 #include <hydra/algorithms/arnoldi/arnoldi.h>
+#include <hydra/algorithms/arnoldi/arnoldi_to_disk.h>
 #include <hydra/blocks/spinhalf/spinhalf.h>
 #include <hydra/states/random_state.h>
+#include <hydra/algebra/matrix.h>
+#include <hydra/algorithms/time_evolution/pade_matrix_exponential.h>
 
 // TODO: write tests for arnoldi_to_disk
 bool check_basis_orthonormality(arma::cx_mat const &Q, double tol = 1e-12) {
@@ -43,6 +46,8 @@ TEST_CASE("ritz_vecs_arnoldi", "[arnoldi]") {
   using namespace hydra;
   using namespace arma;
 
+  Log("testing ritz_vecs_arnoldi");
+  
   // test getting eigenvalues/ eigenvectors for (U + U_dagg) and H
   int n_sites = 6;
   auto block = Spinhalf(n_sites);
