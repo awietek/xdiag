@@ -1,5 +1,6 @@
 .idea
 .idea/*
+misc/dump/*
 build
 build/*
 cmake-build-debug
