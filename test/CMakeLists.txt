@@ -58,7 +58,9 @@ add_executable(tests
   blocks/electron_symmetric/test_electron_symmetric_apply.cpp
 
   algorithms/lanczos/test_lanczos_eigenvalues.cpp
+  algorithms/lanczos/test_lanczos_pro.cpp
   algorithms/lanczos/test_lanczos_eigenvector.cpp
+  algorithms/arnoldi/test_arnoldi.cpp
   algorithms/test_exp_sym_v.cpp
   algorithms/test_norm_estimate.cpp
   algorithms/time_evolution/test_time_evolution.cpp

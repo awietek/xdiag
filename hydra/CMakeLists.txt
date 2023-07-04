@@ -8,6 +8,7 @@ add_library(hydra STATIC
   utils/iochecks.cpp
   utils/print.cpp
   utils/say_hello.cpp
+  utils/read_vectors.cpp
   bitops/bitops.cpp
   
   parallel/omp/omp_utils.cpp
@@ -101,6 +102,7 @@ add_library(hydra STATIC
   algorithms/lanczos/tmatrix.cpp
   algorithms/lanczos/lanczos_eigenvector.cpp
   algorithms/lanczos/lanczos_eigenvalues.cpp
+  algorithms/arnoldi/arnoldi_to_disk.cpp
   algorithms/sparse_diag.cpp
   algorithms/norm_estimate.cpp
   algorithms/time_evolution/zahexpv.cpp

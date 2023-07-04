@@ -3,7 +3,7 @@
 #include <iostream>
 
 #include "../blocks/electron/testcases_electron.h"
-#include <hydra/all.h>
+#include <hydra/operators/symmetrized_operator.h>
 
 using namespace hydra;
 

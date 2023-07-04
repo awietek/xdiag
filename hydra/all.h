@@ -19,8 +19,8 @@
 #endif
 
 #include "extern/armadillo/armadillo"
-#include "extern/fmt/core.h"
 #include "extern/clara/clara.hpp"
+#include "extern/fmt/core.h"
 
 #include "common.h"
 #include "config.h"
@@ -109,24 +109,25 @@
 #include "operators/non_branching_bonds.h"
 #include "operators/symmetrized_operator.h"
 
-#include "algorithms/time_evolution/exp_sym_v.h"
+#include "algorithms/arnoldi/arnoldi.h"
+#include "algorithms/arnoldi/arnoldi_to_disk.h"
 #include "algorithms/lanczos/lanczos.h"
 #include "algorithms/lanczos/lanczos_build.h"
 #include "algorithms/lanczos/lanczos_convergence.h"
 #include "algorithms/lanczos/lanczos_eigenvalues.h"
 #include "algorithms/lanczos/lanczos_eigenvector.h"
+#include "algorithms/lanczos/lanczos_pro.h"
 #include "algorithms/lanczos/lanczos_vector_apply.h"
 #include "algorithms/lanczos/tmatrix.h"
-#include "algorithms/arnoldi/arnoldi.h"
-#include "algorithms/arnoldi/arnoldi_to_disk.h"
-#include "algorithms/sparse_diag.h"
-#include "algorithms/time_evolution/time_evolution.h"
-#include "algorithms/time_evolution/pade_matrix_exponential.h"
-#include "algorithms/time_evolution/zahexpv.h"
 #include "algorithms/norm_estimate.h"
+#include "algorithms/sparse_diag.h"
+#include "algorithms/time_evolution/exp_sym_v.h"
+#include "algorithms/time_evolution/pade_matrix_exponential.h"
+#include "algorithms/time_evolution/time_evolution.h"
+#include "algorithms/time_evolution/zahexpv.h"
 
-#include "io/file_toml.h"
 #include "io/file_h5.h"
+#include "io/file_toml.h"
 
 #ifdef HYDRA_ENABLE_MPI
 #include "mpi/allreduce.h"

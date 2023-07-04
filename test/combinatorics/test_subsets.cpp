@@ -2,13 +2,12 @@
 
 #include <iostream>
 
-#include <hydra/all.h>
+#include <hydra/combinatorics/subsets.h>
 
 template <class bit_t>
 void test_subsets(){
   using namespace hydra;
   using namespace hydra::combinatorics;
-  using namespace hydra::utils;
   
   for (int n=0; n<8; ++n)
       {

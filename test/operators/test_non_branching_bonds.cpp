@@ -1,8 +1,11 @@
 #include "../catch.hpp"
 
 #include <iostream>
-
-#include <hydra/all.h>
+#include <hydra/operators/non_branching_bonds.h>
+#include <hydra/blocks/spinhalf/spinhalf.h>
+#include <hydra/algebra/matrix.h>
+#include <hydra/algorithms/sparse_diag.h>
+#include <hydra/utils/close.h>
 
 TEST_CASE("non_branching_bonds", "[operators]") {
   using namespace hydra;

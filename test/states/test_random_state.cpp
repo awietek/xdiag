@@ -1,7 +1,10 @@
 #include "../catch.hpp"
 
 #include "../blocks/electron/testcases_electron.h"
-#include <hydra/all.h>
+#include <hydra/algebra/algebra.h>
+#include <hydra/states/random_state.h>
+#include <hydra/utils/close.h>
+
 #include <iostream>
 #include <set>
 

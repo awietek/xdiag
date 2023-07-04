@@ -5,8 +5,8 @@
 #include <math.h>
 #include <utility>
 
-#include <hydra/config.h>
 #include <hydra/bitops/bitops.h>
+#include <hydra/config.h>
 #define BSTR(x) bitops::bits_to_string(x, n_sites)
 
 #include <hydra/utils/logger.h>
@@ -78,6 +78,8 @@ constexpr int invalid_n = (idx_t)-1;
 constexpr int undefined_qn = std::numeric_limits<int>::min();
 constexpr std::pair<int, int> undefined_qns = {undefined_qn, undefined_qn};
 
+constexpr double default_double = std::numeric_limits<double>::max();
+
 constexpr bool index_not_found(idx_t idx) { return idx < 0; }
 constexpr bool index_valid(idx_t idx) { return idx >= 0; }
 
@@ -109,6 +111,11 @@ inline arma::cx_mat to_cx_mat(arma::mat const &A) {
 }
 
 inline arma::cx_mat to_cx_mat(arma::cx_mat const &A) { return A; }
+
+inline bool file_exists(std::string filename) {
+  std::ifstream infile(filename.c_str());
+  return infile.good();
+}
 
 } // namespace hydra
 

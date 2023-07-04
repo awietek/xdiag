@@ -1,6 +1,6 @@
 #include "../catch.hpp"
 
-#include <hydra/all.h>
+#include <hydra/combinatorics/binomial.h>
 
 #include <chrono>
 #include <iostream>

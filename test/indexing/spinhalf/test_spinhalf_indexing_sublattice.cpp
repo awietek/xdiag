@@ -2,7 +2,12 @@
 
 #include <iostream>
 
-#include <hydra/all.h>
+#include <hydra/symmetries/operations/symmetry_operations.h>
+#include <hydra/indexing/spinhalf/indexing_sublattice.h>
+#include <hydra/indexing/spinhalf/indexing_symmetric_no_sz.h>
+#include <hydra/indexing/spinhalf/indexing_symmetric_sz.h>
+#include <hydra/combinatorics/combinations.h>
+#include <hydra/combinatorics/subsets.h>
 
 using namespace hydra;
 

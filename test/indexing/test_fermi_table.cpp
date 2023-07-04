@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include <hydra/all.h>
+#include <hydra/indexing/fermi_table.h>
 #include <test/blocks/electron/testcases_electron.h>
 
 using namespace hydra;
