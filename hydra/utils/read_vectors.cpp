@@ -1,6 +1,8 @@
 #include "read_vectors.h"
 
 #include <extern/fmt/format.h>
+#include <extern/fmt/format-inl.h>
+
 #include <hydra/common.h>
 
 namespace hydra {
@@ -18,7 +20,7 @@ arma::Mat<coeff_t> read_vectors(std::string type, std::string path_to_vecs,
       ++n;
     }
   } else if (n < 0) {
-    Log.err(format("Invalid argument for number n of \"{}\" vectors", type));
+    Log.err("Invalid argument for number n of \"{}\" vectors", type);
   }
 
   if (n == 0) {
