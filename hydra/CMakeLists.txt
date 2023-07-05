@@ -106,6 +106,7 @@ add_library(hydra STATIC
   algorithms/lanczos/lanczos_eigenvector.cpp
   algorithms/lanczos/lanczos_eigenvalues.cpp
   algorithms/arnoldi/arnoldi_to_disk.cpp
+  algorithms/gram_schmidt/orthogonalize.cpp
   algorithms/sparse_diag.cpp
   algorithms/norm_estimate.cpp
   algorithms/time_evolution/zahexpv.cpp

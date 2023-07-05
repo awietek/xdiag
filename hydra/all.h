@@ -121,6 +121,7 @@
 #include "algorithms/lanczos/lanczos_pro.h"
 #include "algorithms/lanczos/lanczos_vector_apply.h"
 #include "algorithms/lanczos/tmatrix.h"
+#include "algorithms/gram_schmidt/orthogonalize.h"
 #include "algorithms/norm_estimate.h"
 #include "algorithms/sparse_diag.h"
 #include "algorithms/time_evolution/exp_sym_v.h"
