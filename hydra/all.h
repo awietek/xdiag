@@ -121,6 +121,7 @@
 #include "algorithms/lanczos/lanczos_pro.h"
 #include "algorithms/lanczos/lanczos_vector_apply.h"
 #include "algorithms/lanczos/tmatrix.h"
+#include "algorithms/gram_schmidt/gram_schmidt.h"
 #include "algorithms/gram_schmidt/orthogonalize.h"
 #include "algorithms/norm_estimate.h"
 #include "algorithms/sparse_diag.h"
@@ -144,7 +145,6 @@
 #include "utils/print_mpi.h"
 
 #include "blocks/utils/block_utils_mpi.h"
-
 #include "indexing/spinhalf_mpi/spinhalf_mpi_indexing_sz.h"
 
 #include "blocks/spinhalf_mpi/spinhalf_mpi.h"

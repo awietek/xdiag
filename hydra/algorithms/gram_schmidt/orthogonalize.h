@@ -8,9 +8,9 @@
 
 namespace hydra {
 
-template <typename coeff_t>
-void orthogonalize_inplace(arma::Col<coeff_t> &v, arma::Mat<coeff_t> const &Q,
-                           int64_t max_col = -1, int iterations = 2);
+template <typename vec_t, typename mat_t>
+void orthogonalize_inplace(vec_t &&v, mat_t const &Q, int64_t max_col = -1,
+                           int iterations = 2);
 // orthogonalize vector against columns of an orthonormal matrix
 //
 // Parameters:
@@ -21,10 +21,9 @@ void orthogonalize_inplace(arma::Col<coeff_t> &v, arma::Mat<coeff_t> const &Q,
 //             (default: -1, all columns are orthogonalized agains)
 // iterations: number of repeated orthogonalizations, default 2
 
-template <typename coeff_t>
-arma::Col<coeff_t> orthogonalize(arma::Col<coeff_t> const &v,
-                                 arma::Mat<coeff_t> const &Q,
-                                 int64_t max_col = -1, int iterations = 2);
+template <typename vec_t, typename mat_t>
+vec_t orthogonalize(vec_t const &v, mat_t const &Q, int64_t max_col = -1,
+                    int iterations = 2);
 
 // orthogonalize vector agains columns of an orthonormal matrix
 //
