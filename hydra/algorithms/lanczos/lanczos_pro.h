@@ -1,194 +1,256 @@
-//
-// Created by Alex Wietek on 7/3/23
-//
 #pragma once
-
-#include <string>
+#include <limits>
+#include <random>
 
 #include "extern/armadillo/armadillo"
+
+#include <hydra/algorithms/lanczos/lanczos_step.h>
+#include <hydra/algorithms/lanczos/tmatrix.h>
 #include <hydra/common.h>
 #include <hydra/utils/logger.h>
+#include <hydra/utils/timing.h>
 
 namespace hydra {
 
-template <typename coeff_t> struct lanczos_result {
+template <typename coeff_t> struct lanczos_pro_result {
   arma::vec alphas;
   arma::vec betas;
+  arma::mat tmat;
   arma::vec eigenvalues;
   arma::Mat<coeff_t> V;
-  arma::Col<coeff_t> residual;
   int num_iterations;
   std::string criterion;
-  double anorm;
-  arma::vec omegas;
+  int num_reorthogonalizations;
+  arma::vec orthogonality_levels;
 };
 
-// Lanczos implementation with partial reorthogonalization
+arma::mat compute_omega(arma::vec const &alpha, arma::vec const &beta,
+                        double new_beta, int64_t dim, int last_reortho) {
+  // Computes the estimate of the orthogonality omega
+  // Following Horst D. Simon, The Lanczos algorithm with partial reortho
+  // Mathematics of Computation, Jan 1984, 42, 165, pp. 115-142
+  // could be shortened to only compute last row of omega
 
-// implementation guided by
-// https://github.com/areslp/matlab/blob/master/PROPACK/lanpro.m
-template <class coeff_t, class multiply_f, class convergence_f>
-lanczos_result<coeff_t>
-lanczos_pro(multiply_f mult, arma::Col<coeff_t> &v0, convergence_f converged,
-            int max_iterations = 300, double deflation_tol = 1e-7,
-            double delta = default_double, double eta = default_double,
-            bool extended_local_reortho = true) {
-  // Input:
-  // mult:           multiplication function
-  // v0:             starting vector for iterating
-  // converged:      function to check for convergence
-  // max_iterations: maximal number of iterations
-  // deflation_tol:  tolerance for deflation
-  // delta:          Desired level of orthogonality (default =
-  //                 sqrt(eps/max_iterations)).
-  // eta:            Level of orthogonality after reorthogonalization
-  //                 (default = eps^(3/4)/sqrt(max_iterations)).
-  // extended_local_reortho: flag whether to apply extended local
-  // reorthogonalization
+  // the choice of random numbers theta and psi is a bit black magic,
+  // here we are following exactly Horst Simons suggestions which turn
+  // out to give satisfactory results
+
   using namespace arma;
-  using vec_t = arma::Col<coeff_t>;
-  using mat_t = arma::Mat<coeff_t>;
-
-  lanczos_result<coeff_t> result;
-  result.num_iterations = max_iterations;
-  result.criterion = "unknown";
-
-  // Set default orthogonality levels
   double eps = std::numeric_limits<double>::epsilon();
-  if (delta == default_double) {
-    delta = sqrt(eps / max_iterations);
+
+  std::mt19937_64 generator(42);
+  std::normal_distribution<double> dist1(0.0, 0.3);
+  std::normal_distribution<double> dist2(0.0, 0.6);
+  std::normal_distribution<double> dist3(0.0, 1.5);
+
+  assert(alpha.size() == beta.size());
+  int N = alpha.size();
+  mat omega = zeros(N + 1, N + 1);
+  for (int k = 0; k < N + 1; ++k) {
+    omega(k, k) = 1.0;
   }
-  if (eta == default_double) {
-    eta = std::pow(eps, 0.75) / sqrt(max_iterations);
+  for (int k = 1; k < N + 1; ++k) {
+    omega(k, k - 1) =
+        eps * sqrt((double)dim) * (beta(1) / new_beta) * dist2(generator);
   }
 
-  int64_t N = v0.size();
-  double eps1 = sqrt((double)N) * eps / 2.0;
-  double gamma = 1 / sqrt(2);
+  for (int j = 0; j < N; ++j) {
 
-  vec &alphas = result.alphas;
-  vec &betas = result.betas;
-  alphas = zeros(max_iterations + 1);
-  betas = zeros(max_iterations + 1);
+    if ((j == last_reortho) || (j == last_reortho - 1)) {
+      for (int k = 0; k < j; ++k) {
+        omega(j + 1, k) = eps * dist3(generator);
+      }
+    } else {
 
-  // Allocate Lanczos vector matric
-  mat_t &V = result.V;
+      for (int k = 0; k < j; ++k) {
+        double theta = eps * dist1(generator);
+
+        if (j < N - 1) {
+          theta *= (beta(k + 1) + beta(j + 1));
+        } else {
+          theta *= (beta(k + 1) + new_beta);
+        }
+
+        omega(j + 1, k) = beta(k + 1) * omega(j, k + 1) +
+                          (alpha(k) - alpha(j)) * omega(j, k) + theta;
+        if (k > 0) {
+          omega(j + 1, k) += beta(k) * omega(j, k - 1);
+        }
+        if (j > 0) {
+          omega(j + 1, k) -= beta(j) * omega(j - 1, k);
+        }
+
+        omega(j + 1, k) /= (j == N - 1) ? new_beta : beta(j + 1);
+      }
+    }
+  }
+  return omega;
+}
+
+// Generic Lanczos implementation building multiple vectors
+template <class coeff_t, class multiply_f, class convergence_f>
+lanczos_pro_result<coeff_t>
+lanczos_pro(multiply_f mult, arma::Col<coeff_t> &v0, convergence_f converged,
+            int max_iterations = 300, double orthogonality_level = 1e-8,
+            double deflation_tol = 1e-7,
+            bool compute_orthogonality_level = false) {
+
+  using namespace arma;
+
+#ifdef HYDRA_ENABLE_MPI
+  auto dot = [](Col<coeff_t> const &v, Col<coeff_t> const &w) -> coeff_t {
+    return DotMPI(v, w);
+  };
+#else
+  auto dot = [](Col<coeff_t> const &v, Col<coeff_t> const &w) -> coeff_t {
+    return cdot(v, w);
+  };
+#endif
+
+  auto norm = [&dot](Col<coeff_t> const &v) {
+    return std::sqrt(hydra::real(dot(v, v)));
+  };
+
+  lanczos_pro_result<coeff_t> res;
+
+  // Zero dimensional problem -> return defaults
+  if (v0.size() == 0) {
+    res.num_iterations = 0;
+    res.criterion = "zerodimensional";
+    res.num_reorthogonalizations = 0;
+    return res;
+  }
+
+  auto tmatrix = Tmatrix();
+
+  // Initialize Lanczos vectors and tmatrix
+  auto v1 = v0;
+  Col<coeff_t> w(v0.size(), fill::zeros);
+  v0.zeros();
+  double alpha = 0.;
+  double beta = 0.;
+
+  res.num_reorthogonalizations = 0;
+  std::vector<double> orthogonality_levels;
+
+  // Normalize start vector or return if norm is zero
+  coeff_t v1_norm = norm(v1);
+  if (std::abs(v1_norm) > 1e-12) {
+    v1 /= v1_norm;
+  } else {
+    res.criterion = "v0zero";
+    return res;
+  }
+
+  Mat<coeff_t> &V = res.V;
   try {
-    V = zeros(N, max_iterations);
+    V = Mat<coeff_t>(v0.size(), max_iterations, fill::zeros);
   } catch (...) {
     Log.err("Error in lanczos_pro: Unable to allocate Lanczos vector matrix, "
             "dim=({},{})",
-            N, max_iterations);
+            v0.size(), max_iterations);
   }
+  V.col(0) = v1;
 
-  // Allocate Lanczos iteration vectors
-  vec_t q, q_old;
-  vec_t w;
-  try {
-    // Do I need all of them?
-    q = zeros(N);
-    q_old = zeros(N);
-    w = zeros(N);
-  } catch (...) {
-    Log.err(
-        "Error in lanczos_pro: Unable to allocate Lanczos iteration vectors, "
-        "3 x dim={}",
-        N);
-  }
+  // Main Lanczos loop
+  int iteration = 0;
+  int last_reortho = 1;
+  while (!converged(tmatrix)) {
+    Log(1, "Lanczos (PRO) iteration #{}", iteration + 1);
 
-  // vectors to keep track of orthogonality
-  vec &omegas = result.omegas;
-  omegas = zeros(max_iterations);
-  vec omegas_max = omegas;
-  vec omegas_old = omegas;
+    auto tls0 = rightnow();
 
-  // Initialize with starting vector v0
-  vec_t &r = v0;
+    auto tlsi0 = rightnow();
 
-  // Lanczos iterations
-  for (int iteration = 0; iteration < max_iterations; ++iteration) {
-    q_old = q;
-    if (abs(betas(iteration)) < deflation_tol) {
-      Log(1, "deflation detected at iteration {}", iteration);
-      q = r;
-      result.criterion = "deflation";
-      break;
-    } else {
-      q = r / betas(iteration);
-    }
-    V.col(iteration) = q;
+    lanczos_step(v0, v1, w, alpha, beta, mult, dot);
+    auto tlsi1 = rightnow();
+    timing(tlsi0, tlsi1, "    time MVM", 2);
 
-    // MVM
-    mult(q, w);
+    if (iteration > 1) {
+      Log(2, "    Estimating ortho level ...");
+      auto tom0 = rightnow();
+      mat omega = compute_omega(tmatrix.alphas(), tmatrix.betas(), beta,
+                                v0.size(), last_reortho);
+      auto tom1 = rightnow();
+      timing(tom0, tom1, "    time ortho estimate", 2);
 
-    // orthogonalization
-    r = w - betas(iteration) * q_old;
-    alphas(iteration) = cdot(q, r);
-    r = r - alphas(iteration) * q;
+      double ortho_level_estimate =
+          max(abs(omega(iteration, span(0, iteration - 1))));
 
-    // Extended local reorthogonalization (is this useful?)
-    betas(iteration + 1) = sqrt(cdot(r, r));
-    if (extended_local_reortho &&
-        (betas(iteration + 1) < gamma * betas(iteration))) {
-      if (iteration == 0) {
-        double t1 = 0.;
-        for (int i = 0; i < 2; ++i) {
-          double t = cdot(q, r);
-          r = r - q * t;
-          t1 = t1 + t;
-        }
-        alphas(iteration) = alphas(iteration) + t1;
+      if (compute_orthogonality_level) { // should be used only for testing
+        Mat<coeff_t> ovlps2 = (V.t() * V);
+        Mat<coeff_t> ovlps =
+            ovlps2(span(0, iteration - 1), span(0, iteration - 1));
+        double ortho_level_computed =
+            max(abs(ovlps(iteration - 1, span(0, iteration - 2))));
+        Log(2, "    ortho level estimated: {}, computed: {}",
+            ortho_level_estimate, ortho_level_computed);
+        orthogonality_levels.push_back(ortho_level_computed);
       } else {
-        double t1 = cdot(q_old, r);
-        double t2 = cdot(q, r);
-        r = r - (q_old * t1 + q * t2);
+        Log(2, "    ortho level estimated: {}", ortho_level_estimate);
+        orthogonality_levels.push_back(ortho_level_estimate);
+      }
 
-        if (abs(betas(iteration)) > deflation_tol) {
-          betas(iteration) += t1;
-        }
-        alphas(iteration) += t2;
+      if (ortho_level_estimate > orthogonality_level) {
+        Log(1, "  Performing reorthogonalization");
+        auto to0 = rightnow();
+
+        orthogonalize_inplace(v1, V, iteration - 1);
+        orthogonalize_inplace(v0, V, iteration - 2);
+        beta = norm(v1);
+        last_reortho = iteration;
+        ++res.num_reorthogonalizations;
+
+        auto to1 = rightnow();
+        timing(to0, to1, "  time reortho", 1);
       }
     }
+    tmatrix.append(alpha, beta);
+    tmatrix.print_log();
 
-    // Compute estimate for operator 2-norm (could be updated)
-    mat Tmat = diagmat(alphas(span(0, iteration + 1))) +
-               diagmat(betas(span(0, iteration)), -1) +
-               diagmat(betas(span(0, iteration)), 1);
-    double anorm = sqrt(norm(Tmat.t() * Tmat, 1));
+    ++iteration;
 
-    // update omegas (orthogonalities), according to Simon algo
-    // Horst D. Simon, The Lanczos algorithm with partial reorthogonalization
-    if ((iteration > 0) && abs(betas(iteration + 1)) > deflation_tol) {
-      double T = eps1 * anorm;
-      double binv = 1 / betas(iteration + 1);
-      omegas_old = omegas;
-      omegas_old(0) = betas(1) * omegas(1) +
-                      (alphas(0) - alphas(iteration)) * omegas(0) -
-                      betas(iteration) * omegas_old(0);
-      omegas_old(0) = binv * (omegas_old(0) + sign(omegas_old(0)) * T);
-      for (int k = 1; k < iteration - 2; ++k) {
-        omegas_old(k) = betas(k + 1) * omegas(k + 1) +
-                        (alphas(k) - alphas(iteration)) * omegas(k) +
-                        betas(k) * omegas(k - 1) -
-                        betas(iteration, omegas_old(k));
-      }
-      for (int k = 1; k < iteration - 2; ++k) {
-        omegas_old(k) = binv * (omegas_old(k) + sign(omegas_old(k)) * T);
-      }
-      omegas_old(iteration - 1) = binv * T;
-      swap(omegas, omegas_old);
-      omegas(iteration) = eps1;
+    // Finish if Lanczos sequence is exhausted
+    if (abs(beta) > deflation_tol) {
+      v1 /= beta;
+    } else {
+      res.criterion = "deflation";
+      break;
     }
-    
-  } // Lanczos iterations
 
-  // mat Tmat = diagmat(alpha(span(0, iteration + 1))) +
-  //            diagmat(betas(span(0, iteration)), -1) +
-  //            diagmat(betas(span(0, iteration)), 1);
-  // eig_sym(result.eigenvalues, Tmat);
-  result.residual = r;
+    if (iteration >= max_iterations) {
+      res.criterion = "maxiterations";
+      break;
+    }
 
-  return result;
+    V.col(iteration) = v1;
+
+    auto tls1 = rightnow();
+    timing(tls0, tls1, "time Lanczos step", 1);
+    Log(2, "");
+  }
+
+  if (converged(tmatrix)) {
+    res.criterion = "converged";
+  }
+
+  res.alphas = tmatrix.alphas();
+  res.betas = tmatrix.betas();
+  if (iteration == 1) {
+    res.tmat = diagmat(res.alphas);
+  } else {
+    res.tmat = diagmat(res.alphas) +
+               diagmat(res.betas.subvec(0, iteration - 2), -1) +
+               diagmat(res.betas.subvec(0, iteration - 2), 1);
+  }
+  if (iteration != max_iterations) {
+    res.V = V.head_cols(iteration);
+  }
+  res.eigenvalues = tmatrix.eigenvalues();
+  res.num_iterations = iteration;
+  res.orthogonality_levels = arma::vec(orthogonality_levels);
+
+  return res;
 }
 
 } // namespace hydra
