@@ -28,5 +28,5 @@ arma::Mat<complex> matrix(Bond const &bond, Block const &block_in,
                           Block const &block_out);
 arma::Mat<complex> matrix(BondList const &bonds, Block const &block);
 arma::Mat<complex> matrix(Bond const &bond, Block const &block);
-
+  
 } // namespace hydra

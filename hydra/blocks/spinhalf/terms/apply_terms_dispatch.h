@@ -1,20 +1,22 @@
 #pragma once
 
-#include <hydra/common.h>
-#include <hydra/utils/logger.h>
-
-#include <hydra/indexing/indexing_variants.h>
+#include <functional>
 
 #include <hydra/blocks/spinhalf/terms/apply_terms.h>
+#include <hydra/common.h>
+#include <hydra/indexing/indexing_variants.h>
+#include <hydra/utils/logger.h>
 
-namespace hydra::spinhalf {
+namespace hydra {
 
-template <typename coeff_t, class Fill>
-void apply_terms_dispatch(BondList const &bonds,
-                          indexing::SpinhalfIndexing const &indexing_in,
-                          indexing::SpinhalfIndexing const &indexing_out,
-                          Fill &&fill) {
+template <typename coeff_t, class fill_f>
+void apply_terms_dispatch(BondList const &bonds, Spinhalf const &block_in,
+                          Spinhalf const &block_out, fill_f fill) {
+  using namespace spinhalf;
   using namespace indexing::spinhalf;
+
+  auto const &indexing_in = block_in.indexing();
+  auto const &indexing_out = block_out.indexing();
 
   std::visit(
       variant::overloaded{
@@ -134,10 +136,10 @@ void apply_terms_dispatch(BondList const &bonds,
 
           [&](auto const &idx_in, auto const &idx_out) {
             Log.err("Error in apply_terms_dispatch: Invalid Indexing");
-	    (void) idx_in;
-	    (void) idx_out;
+            (void)idx_in;
+            (void)idx_out;
           }},
       indexing_in, indexing_out);
 }
 
-} // namespace hydra::spinhalf
+} // namespace hydra
