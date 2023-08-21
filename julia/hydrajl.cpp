@@ -1,23 +1,10 @@
+#include "jlcxx/array.hpp"
+#include "jlcxx/const_array.hpp"
 #include "jlcxx/jlcxx.hpp"
 #include "jlcxx/stl.hpp"
-#include "jlcxx/array.hpp"
 #include "jlcxx/tuple.hpp"
-#include "jlcxx/const_array.hpp"
 
 #include <hydra/all.h>
-
-// namespace hydra::julia {
-// auto matrix(std::vector<std::string> const &bond_types,
-//             std::vector<std::string> const &bond_couplings,
-//             std::vector<int> const &bond_n_sites,
-//             std::vector<int> const &bond_sites,
-//             std::vector<std::string> const &coupling_name,
-//             std::vector<std::string> const &coupling_value) {
-//   static double d[2][3] = {{1., 2., 3}, {4., 5., 6.}};
-//   return 1.2; // jlcxx::make_julia_array(d, 3, 2);
-// }
-// } // namespace hydra::julia
-
 
 JLCXX_MODULE define_julia_module(jlcxx::Module &mod) {
   using namespace hydra;
@@ -27,25 +14,38 @@ JLCXX_MODULE define_julia_module(jlcxx::Module &mod) {
       .constructor<std::string, std::string, std::vector<int64_t> const &>();
 
   mod.add_type<BondList>("BondListCxx")
-    .constructor<>()
-    .constructor<std::vector<Bond> const&>()
-    .method("set_coupling", &BondList::set_coupling);
-    
+      .constructor<>()
+      .constructor<std::vector<Bond> const &>()
+      .method("set_coupling", &BondList::set_coupling);
+
   mod.add_type<Spinhalf>("Spinhalf")
-    .constructor<int>()
-    .constructor<int, int>()
-    .method("n_sites", &Spinhalf::n_sites)
-    .method("size", &Spinhalf::size);
+      .constructor<int>()
+      .constructor<int, int>()
+      .method("n_sites", &Spinhalf::n_sites)
+      .method("size", &Spinhalf::size);
 
+  // methods to compute matrices
+  mod.method("matrix_real_cxx",
+             [](double *mat, BondList const &bonds, Spinhalf const &block_in,
+                Spinhalf const &block_out) {
+               matrix_real(mat, bonds, block_in, block_out);
+             });
 
-  mod.method("matrix_cxx", [](BondList const& bonds, Spinhalf const& block) {
-    arma::mat mat = matrix_real(bonds, block);
-    return jlcxx::ArrayRef<double, 2>(true, mat.memptr(), mat.n_rows, mat.n_cols);
+  mod.method("matrix_cplx_cxx", [](double *mat, BondList const &bonds,
+                                   Spinhalf const &block_in,
+                                   Spinhalf const &block_out) {
+    matrix_cplx(reinterpret_cast<complex *>(mat), bonds, block_in, block_out);
   });
-  
-  
+
+  // Computing the ground state energy
+  mod.method("eig0_real_cxx",
+             [](BondList const &bonds, Spinhalf const &block, double precision,
+                int max_iterations, uint64_t seed) {
+               return eig0_real(bonds, block, precision, max_iterations, seed);
+             });
+
   // Print functions
-  mod.method("print_pretty", [](const char* id, Spinhalf const& block){
+  mod.method("print_pretty", [](const char *id, Spinhalf const &block) {
     utils::print_pretty(id, block);
   });
 }
