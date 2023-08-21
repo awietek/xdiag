@@ -7,6 +7,8 @@ project(
 )
 
 option(BUILD_TESTS "Build test programs" OFF)
+option(BUILD_JULIA "Build the Julia wrapper" OFF)
+
 option(OPTIMIZE_FOR_NATIVE "Optimize for native architecture" OFF)
 option(OMP_THREADING "Enable OpenMp threading" ON)
 option(MKL_THREADING "Enable IntelMKL threading" ON)
@@ -27,6 +29,12 @@ if(BUILD_TESTS)
   message(STATUS "Building test programs")
   enable_testing()
   add_subdirectory(test)
+endif()
+
+if(BUILD_JULIA)
+  message(STATUS "Building Julia wrapper")
+  set_property(TARGET hydra PROPERTY POSITION_INDEPENDENT_CODE ON)
+  add_subdirectory(julia)
 endif()
 
 if(SANITIZER)
