@@ -17,7 +17,7 @@ void apply_sz(Bond const &bond, IndexingIn &&indexing_in,
   assert(bond.type_defined() && (bond.type() == "SZ"));
   assert(bond.size() == 1);
 
-  int s = bond[0];
+  int64_t s = bond[0];
   bit_t mask = ((bit_t)1 << s);
 
   coeff_t H = bond.coupling<coeff_t>();

@@ -9,7 +9,7 @@ template <typename bit_t, typename coeff_t, bool symmetric, class IndexingIn,
 void generic_term_ups(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
                       NonZeroTerm &&non_zero_term, TermAction &&term_action,
                       Fill &&fill) {
-  int n_sites = indexing_in.n_sites();
+  int64_t n_sites = indexing_in.n_sites();
   assert(n_sites == indexing_out.n_sites());
   bit_t sitesmask = ((bit_t)1 << n_sites) - 1;
 
@@ -52,7 +52,7 @@ void generic_term_ups(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
         ////////////////////////////////////////////////////////////////////////
         // Trivial stabilizer of target ups
         if (syms_ups_out.size() == 1) {
-          int sym = syms_ups_out.front();
+          int64_t sym = syms_ups_out.front();
           coeff_t prefac = coeff * bloch_factors[sym];
           bool fermi_up = indexing_out.fermi_bool_ups(sym, ups_flip);
 
@@ -94,7 +94,7 @@ void generic_term_ups(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
           // Target ups have non-trivial stabilizer
         } else {
           std::vector<coeff_t> prefacs(bloch_factors.size());
-          for (int i = 0; i < (int)bloch_factors.size(); ++i) {
+          for (int64_t i = 0; i < (int64_t)bloch_factors.size(); ++i) {
             prefacs[i] = coeff * bloch_factors[i];
           }
 

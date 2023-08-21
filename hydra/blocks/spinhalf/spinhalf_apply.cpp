@@ -18,7 +18,7 @@ void apply(BondList const &bonds, Spinhalf const &block_in,
   operators::check_bonds_in_range(bonds, block_in.n_sites());
 
   if (block_in.n_up() != undefined_qn) {
-    int n_up_out = spinhalf::nup(bonds_c) + block_in.n_up();
+    int64_t n_up_out = spinhalf::nup(bonds_c) + block_in.n_up();
     if (n_up_out != block_out.n_up())
       Log.err("Incompatible n_up in Apply: {} != {}", n_up_out,
               block_out.n_up());

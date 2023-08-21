@@ -18,16 +18,16 @@ void apply_exchange(Bond const &bond, Indexing &&indexing, Filler &&fill) {
   std::string type = bond.type();
   assert(type == "EXCHANGE");
 
-  int s1 = bond[0];
-  int s2 = bond[1];
+  int64_t s1 = bond[0];
+  int64_t s2 = bond[1];
   coeff_t J = bond.coupling<coeff_t>();
   coeff_t Jhalf = J / 2.;
   coeff_t Jhalf_conj = conj(Jhalf);
 
   // Prepare bitmasks
   bit_t flipmask = ((bit_t)1 << s1) | ((bit_t)1 << s2);
-  int l = std::min(s1, s2);
-  int u = std::max(s1, s2);
+  int64_t l = std::min(s1, s2);
+  int64_t u = std::max(s1, s2);
   bit_t fermimask = (((bit_t)1 << (u - l - 1)) - 1) << (l + 1);
 
   auto non_zero_term_ups = [&](bit_t up) {

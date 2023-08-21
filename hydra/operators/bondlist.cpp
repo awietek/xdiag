@@ -74,17 +74,17 @@ BondListHandler BondList::operator[](std::string name) {
   return BondListHandler(name, couplings_, matrices_);
 }
 
-int BondList::size() const { return (int)bonds_.size(); }
+int64_t BondList::size() const { return (int64_t)bonds_.size(); }
 void BondList::clear() {
   bonds_.clear();
   couplings_.clear();
   matrices_.clear();
 }
 
-int BondList::n_sites() const {
-  int n_sites = 0;
+int64_t BondList::n_sites() const {
+  int64_t n_sites = 0;
   for (Bond bond : bonds_) {
-    for (int site : bond.sites()) {
+    for (int64_t site : bond.sites()) {
       n_sites = std::max(n_sites, site + 1);
     }
   }
@@ -272,13 +272,13 @@ BondList read_bondlist(std::string filename) {
       break;
 
     std::string type, coupling;
-    std::vector<int> sites;
+    std::vector<int64_t> sites;
     std::stringstream stream(tobeparsed);
     stream >> type;
     stream >> coupling;
 
     // Just parse sites
-    int n;
+    int64_t n;
     while (stream >> n)
       sites.push_back(n);
     bonds.push_back(Bond(type, coupling, sites));

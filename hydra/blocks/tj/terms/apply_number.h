@@ -19,7 +19,7 @@ void apply_number(Bond const &bond, Indexing &&indexing, Fill &&fill) {
   assert((type == "NUMBERUP") || (type == "NUMBERDN"));
 
   coeff_t mu = bond.coupling<coeff_t>();
-  int s = bond.site(0);
+  int64_t s = bond.site(0);
   bit_t mask = (bit_t)1 << s;
 
   if (type == "NUMBERUP") {

@@ -14,16 +14,16 @@ public:
   using indexing_t = indexing::ElectronIndexing;
 
   Electron() = default;
-  Electron(int n_sites);
-  Electron(int n_sites, int nup, int ndn);
-  Electron(int n_sites, PermutationGroup permutation_group,
+  Electron(int64_t n_sites);
+  Electron(int64_t n_sites, int64_t nup, int64_t ndn);
+  Electron(int64_t n_sites, PermutationGroup permutation_group,
            Representation irrep);
-  Electron(int n_sites, int nup, int ndn, PermutationGroup permutation_group,
+  Electron(int64_t n_sites, int64_t nup, int64_t ndn, PermutationGroup permutation_group,
            Representation irrep);
 
-  inline int n_sites() const { return n_sites_; }
-  inline int n_up() const { return n_up_; }
-  inline int n_dn() const { return n_dn_; }
+  inline int64_t n_sites() const { return n_sites_; }
+  inline int64_t n_up() const { return n_up_; }
+  inline int64_t n_dn() const { return n_dn_; }
 
   inline bool charge_conserved() const { return charge_conserved_; }
   inline bool sz_conserved() const { return sz_conserved_; }
@@ -41,13 +41,13 @@ public:
   indexing_t const &indexing() const;
 
 private:
-  int n_sites_;
+  int64_t n_sites_;
   bool charge_conserved_;
-  int charge_;
+  int64_t charge_;
   bool sz_conserved_;
-  int sz_;
-  int n_up_;
-  int n_dn_;
+  int64_t sz_;
+  int64_t n_up_;
+  int64_t n_dn_;
   bool symmetric_;
   PermutationGroup permutation_group_;
   Representation irrep_;

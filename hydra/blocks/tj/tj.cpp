@@ -7,7 +7,7 @@ namespace hydra {
 
 using namespace indexing;
 
-tJ::tJ(int n_sites, int nup, int ndn)
+tJ::tJ(int64_t n_sites, int64_t nup, int64_t ndn)
     : n_sites_(n_sites), charge_conserved_(true), charge_(nup + ndn),
       sz_conserved_(true), sz_(nup - ndn), n_up_(nup), n_dn_(ndn),
       symmetric_(false), permutation_group_(), irrep_() {
@@ -31,7 +31,7 @@ tJ::tJ(int n_sites, int nup, int ndn)
   utils::check_nup_ndn_tj(n_sites, nup, ndn, "tJ");
 }
 
-tJ::tJ(int n_sites, int nup, int ndn, PermutationGroup group,
+tJ::tJ(int64_t n_sites, int64_t nup, int64_t ndn, PermutationGroup group,
        Representation irrep)
     : n_sites_(n_sites), charge_conserved_(true), charge_(nup + ndn),
       sz_conserved_(true), sz_(nup - ndn), n_up_(nup), n_dn_(ndn),

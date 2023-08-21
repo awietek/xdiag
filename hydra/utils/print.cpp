@@ -88,8 +88,9 @@ void PrintPretty(const char *identifier, Bond const &bond) {
   }
 
   printf("  sites: ");
-  for (auto site : bond.sites())
-    printf("%d ", site);
+  for (int64_t site : bond.sites()) {
+    printf("%ld ", site);
+  }
   printf("\n");
 }
 
@@ -211,9 +212,9 @@ void PrintPretty(const char *identifier, Block const &block) {
 void PrintPretty(const char *identifier, Spinhalf const &block) {
   printf("%s:\n", identifier);
 
-  printf("  n_sites  : %d\n", block.n_sites());
+  printf("  n_sites  : %ld\n", block.n_sites());
   if (block.sz_conserved()) {
-    printf("  n_up     : %d\n", block.n_up());
+    printf("  n_up     : %ld\n", block.n_up());
   } else {
     printf("  n_up     : not conserved\n");
   }
@@ -234,10 +235,10 @@ void PrintPretty(const char *identifier, Spinhalf const &block) {
 void PrintPretty(const char *identifier, tJ const &block) {
   printf("%s:\n", identifier);
 
-  printf("  n_sites  : %d\n", block.n_sites());
+  printf("  n_sites  : %ld\n", block.n_sites());
   if (block.sz_conserved() && block.charge_conserved()) {
-    printf("  n_up     : %d\n", block.n_up());
-    printf("  n_dn     : %d\n", block.n_dn());
+    printf("  n_up     : %ld\n", block.n_up());
+    printf("  n_dn     : %ld\n", block.n_dn());
 
   } else {
     printf("  n_up     : not conserved\n");
@@ -260,10 +261,10 @@ void PrintPretty(const char *identifier, tJ const &block) {
 void PrintPretty(const char *identifier, Electron const &block) {
   printf("%s:\n", identifier);
 
-  printf("  n_sites  : %d\n", block.n_sites());
+  printf("  n_sites  : %ld\n", block.n_sites());
   if (block.sz_conserved() && block.charge_conserved()) {
-    printf("  n_up     : %d\n", block.n_up());
-    printf("  n_dn     : %d\n", block.n_dn());
+    printf("  n_up     : %ld\n", block.n_up());
+    printf("  n_dn     : %ld\n", block.n_dn());
 
   } else {
     printf("  n_up     : not conserved\n");

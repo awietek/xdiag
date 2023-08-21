@@ -18,8 +18,8 @@ void apply_ising(Bond const &bond, IndexingIn &&indexing_in,
   assert(bond.size() == 2);
   assert(bond.sites_disjoint());
 
-  int s1 = bond[0];
-  int s2 = bond[1];
+  int64_t s1 = bond[0];
+  int64_t s2 = bond[1];
   bit_t mask = ((bit_t)1 << s1) | ((bit_t)1 << s2);
 
   coeff_t J = bond.coupling<coeff_t>();

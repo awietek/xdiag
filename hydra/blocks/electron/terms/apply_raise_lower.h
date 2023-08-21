@@ -20,7 +20,7 @@ void apply_raise_lower(Bond const &bond, IndexingIn &&indexing_in,
   assert((type == "CDAGUP") || (type == "CDAGDN") || (type == "CUP") ||
          (type == "CDN"));
 
-  int s = bond[0];
+  int64_t s = bond[0];
   bit_t site_mask = (bit_t)1 << s;
   bit_t fermi_mask = site_mask - 1;
   coeff_t c = bond.coupling<coeff_t>();

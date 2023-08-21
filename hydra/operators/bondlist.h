@@ -18,10 +18,10 @@ public:
   BondList() = default;
   explicit BondList(std::vector<Bond> const &bonds);
   explicit BondList(io::FileTomlHandler &&hdl);
-
-  int size() const;
+  
+  int64_t size() const;
   void clear();
-  int n_sites() const;
+  int64_t n_sites() const;
 
   bool coupling_defined(std::string name) const;
   void set_coupling(std::string name, complex cpl);

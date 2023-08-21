@@ -46,7 +46,7 @@ void generic_term_ups(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
 
         // trivial up-stabilizer (likely)
         if (syms_ups_out.size() == 1) {
-          int sym = syms_ups_out.front();
+          int64_t sym = syms_ups_out.front();
           coeff_t prefac = coeff * bloch_factors[sym];
           bool fermi_up = indexing_out.fermi_bool_ups(sym, ups_flip);
 
@@ -66,7 +66,7 @@ void generic_term_ups(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
         } else { // non-trivial up-stabilizer (unlikely)
           auto syms = syms_ups_out;
           std::vector<coeff_t> prefacs(bloch_factors.size());
-          for (int i = 0; i < (int)bloch_factors.size(); ++i) {
+          for (int64_t i = 0; i < (int64_t)bloch_factors.size(); ++i) {
             prefacs[i] = coeff * bloch_factors[i];
           }
 

@@ -20,11 +20,11 @@ void apply_hopping(Bond const &bond, Indexing &&indexing, Fill &&fill) {
   std::string type = bond.type();
   assert((type == "HOPUP") || (type == "HOPDN"));
 
-  int s1 = bond[0];
-  int s2 = bond[1];
+  int64_t s1 = bond[0];
+  int64_t s2 = bond[1];
   bit_t flipmask = ((bit_t)1 << s1) | ((bit_t)1 << s2);
-  int l = std::min(s1, s2);
-  int u = std::max(s1, s2);
+  int64_t l = std::min(s1, s2);
+  int64_t u = std::max(s1, s2);
   bit_t fermimask = (((bit_t)1 << (u - l - 1)) - 1) << (l + 1);
   coeff_t t = bond.coupling<coeff_t>();
 

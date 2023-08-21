@@ -8,82 +8,82 @@
 namespace hydra {
 
 // Constructors with type name
-Bond::Bond(std::string type, int site)
+Bond::Bond(std::string type, int64_t site)
     : type_(type), matrix_(), coupling_(1.0),
       coupling_name_("HYDRA_COUPLING_NAMELESS"), sites_({site}) {}
 
-Bond::Bond(std::string type, std::vector<int> const &sites)
+Bond::Bond(std::string type, std::vector<int64_t> const &sites)
     : type_(type), matrix_(), coupling_(1.0),
       coupling_name_("HYDRA_COUPLING_NAMELESS"), sites_(sites) {}
 
-Bond::Bond(std::string type, complex coupling, int site)
+Bond::Bond(std::string type, complex coupling, int64_t site)
     : type_(type), matrix_(), coupling_(coupling),
       coupling_name_("HYDRA_COUPLING_NAMELESS"), sites_({site}) {}
 
-Bond::Bond(std::string type, complex coupling, std::vector<int> const &sites)
+Bond::Bond(std::string type, complex coupling, std::vector<int64_t> const &sites)
     : type_(type), matrix_(), coupling_(coupling),
       coupling_name_("HYDRA_COUPLING_NAMELESS"), sites_(sites) {}
 
-Bond::Bond(std::string type, std::string coupling_name, int site)
+Bond::Bond(std::string type, std::string coupling_name, int64_t site)
     : type_(type), matrix_(), coupling_(0.0), coupling_name_(coupling_name),
       sites_({site}) {}
 
 Bond::Bond(std::string type, std::string coupling_name,
-           std::vector<int> const &sites)
+           std::vector<int64_t> const &sites)
     : type_(type), matrix_(), coupling_(0.0), coupling_name_(coupling_name),
       sites_(sites) {}
 
 // Constructors with bond matrix
 template <typename coeff_t>
-Bond::Bond(arma::Mat<coeff_t> const &matrix, int site)
+Bond::Bond(arma::Mat<coeff_t> const &matrix, int64_t site)
     : type_("HYDRA_TYPE_UNDEFINED"), matrix_(to_cx_mat(matrix)), coupling_(1.0),
       coupling_name_("HYDRA_COUPLING_NAMELESS"), sites_({site}) {}
-template Bond::Bond(arma::Mat<double> const &, int);
-template Bond::Bond(arma::Mat<complex> const &, int);
+template Bond::Bond(arma::Mat<double> const &, int64_t);
+template Bond::Bond(arma::Mat<complex> const &, int64_t);
 
 template <typename coeff_t>
-Bond::Bond(arma::Mat<coeff_t> const &matrix, std::vector<int> const &sites)
+Bond::Bond(arma::Mat<coeff_t> const &matrix, std::vector<int64_t> const &sites)
     : type_("HYDRA_TYPE_UNDEFINED"), matrix_(to_cx_mat(matrix)), coupling_(1.0),
       coupling_name_("HYDRA_COUPLING_NAMELESS"), sites_(sites) {}
-template Bond::Bond(arma::Mat<double> const &, std::vector<int> const &);
-template Bond::Bond(arma::Mat<complex> const &, std::vector<int> const &);
+template Bond::Bond(arma::Mat<double> const &, std::vector<int64_t> const &);
+template Bond::Bond(arma::Mat<complex> const &, std::vector<int64_t> const &);
 
 template <typename coeff_t>
-Bond::Bond(arma::Mat<coeff_t> const &matrix, complex coupling, int site)
+Bond::Bond(arma::Mat<coeff_t> const &matrix, complex coupling, int64_t site)
     : type_("HYDRA_TYPE_UNDEFINED"), matrix_(to_cx_mat(matrix)),
       coupling_(coupling), coupling_name_("HYDRA_COUPLING_NAMELESS"),
       sites_({site}) {}
-template Bond::Bond(arma::Mat<double> const &, complex, int);
-template Bond::Bond(arma::Mat<complex> const &, complex, int);
+template Bond::Bond(arma::Mat<double> const &, complex, int64_t);
+template Bond::Bond(arma::Mat<complex> const &, complex, int64_t);
 
 template <typename coeff_t>
 Bond::Bond(arma::Mat<coeff_t> const &matrix, complex coupling,
-           std::vector<int> const &sites)
+           std::vector<int64_t> const &sites)
     : type_("HYDRA_TYPE_UNDEFINED"), matrix_(to_cx_mat(matrix)),
       coupling_(coupling), coupling_name_("HYDRA_COUPLING_NAMELESS"),
       sites_(sites) {}
 template Bond::Bond(arma::Mat<double> const &, complex,
-                    std::vector<int> const &);
+                    std::vector<int64_t> const &);
 template Bond::Bond(arma::Mat<complex> const &, complex,
-                    std::vector<int> const &);
+                    std::vector<int64_t> const &);
 
 template <typename coeff_t>
 Bond::Bond(arma::Mat<coeff_t> const &matrix, std::string coupling_name,
-           int site)
+           int64_t site)
     : type_("HYDRA_TYPE_UNDEFINED"), matrix_(to_cx_mat(matrix)), coupling_(0.0),
       coupling_name_(coupling_name), sites_({site}) {}
-template Bond::Bond(arma::Mat<double> const &, std::string, int);
-template Bond::Bond(arma::Mat<complex> const &, std::string, int);
+template Bond::Bond(arma::Mat<double> const &, std::string, int64_t);
+template Bond::Bond(arma::Mat<complex> const &, std::string, int64_t);
 
 template <typename coeff_t>
 Bond::Bond(arma::Mat<coeff_t> const &matrix, std::string coupling_name,
-           std::vector<int> const &sites)
+           std::vector<int64_t> const &sites)
     : type_("HYDRA_TYPE_UNDEFINED"), matrix_(to_cx_mat(matrix)), coupling_(0.0),
       coupling_name_(coupling_name), sites_(sites) {}
 template Bond::Bond(arma::Mat<double> const &, std::string coupling_name,
-                    std::vector<int> const &);
+                    std::vector<int64_t> const &);
 template Bond::Bond(arma::Mat<complex> const &, std::string coupling_name,
-                    std::vector<int> const &);
+                    std::vector<int64_t> const &);
 
 Bond::Bond(io::FileTomlHandler &&hdl) : Bond(hdl.as<Bond>()) {}
 
@@ -94,7 +94,7 @@ bool Bond::coupling_defined() const {
 }
 bool Bond::coupling_named() const { return !coupling_defined(); }
 bool Bond::sites_disjoint() const {
-  auto set = std::set<int>(sites_.begin(), sites_.end());
+  auto set = std::set<int64_t>(sites_.begin(), sites_.end());
   return set.size() == sites_.size();
 }
 
@@ -149,11 +149,11 @@ std::string Bond::coupling_name() const {
   }
   return coupling_name_;
 }
-std::vector<int> Bond::sites() const { return sites_; }
+std::vector<int64_t> Bond::sites() const { return sites_; }
 
-int Bond::site(int j) const { return sites_.at(j); }
-int Bond::size() const { return (int)sites_.size(); }
-int Bond::operator[](int j) const { return site(j); }
+int64_t Bond::site(int64_t j) const { return sites_.at(j); }
+int64_t Bond::size() const { return (int64_t)sites_.size(); }
+int64_t Bond::operator[](int64_t j) const { return site(j); }
 
 bool Bond::is_complex(double precision) const {
   if (type_defined()) {
@@ -205,10 +205,10 @@ bool Bond::operator==(const Bond &rhs) const {
          (coupling_name_ == rhs.coupling_name_) && (sites_ == rhs.sites_);
 }
 
-std::vector<int> common_sites(Bond b1, Bond b2) {
-  std::vector<int> s1 = b1.sites();
-  std::vector<int> s2 = b2.sites();
-  std::vector<int> s12;
+std::vector<int64_t> common_sites(Bond b1, Bond b2) {
+  std::vector<int64_t> s1 = b1.sites();
+  std::vector<int64_t> s2 = b2.sites();
+  std::vector<int64_t> s12;
   std::sort(s1.begin(), s1.end());
   std::sort(s2.begin(), s2.end());
   std::set_intersection(s1.begin(), s1.end(), s2.begin(), s2.end(),

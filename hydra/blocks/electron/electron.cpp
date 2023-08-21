@@ -7,7 +7,7 @@ namespace hydra {
 
 using namespace indexing;
 
-Electron::Electron(int n_sites)
+Electron::Electron(int64_t n_sites)
     : n_sites_(n_sites), charge_conserved_(false), charge_(undefined_qn),
       sz_conserved_(false), sz_(undefined_qn), n_up_(undefined_qn),
       n_dn_(undefined_qn), symmetric_(false), permutation_group_(), irrep_() {
@@ -32,7 +32,7 @@ Electron::Electron(int n_sites)
   assert(n_sites >= 0);
 }
 
-Electron::Electron(int n_sites, int nup, int ndn)
+Electron::Electron(int64_t n_sites, int64_t nup, int64_t ndn)
     : n_sites_(n_sites), charge_conserved_(true), charge_(nup + ndn),
       sz_conserved_(true), sz_(nup - ndn), n_up_(nup), n_dn_(ndn),
       symmetric_(false), permutation_group_(), irrep_() {
@@ -57,7 +57,7 @@ Electron::Electron(int n_sites, int nup, int ndn)
   utils::check_nup_ndn_electron(n_sites, nup, ndn, "Electron");
 }
 
-Electron::Electron(int n_sites, PermutationGroup group, Representation irrep)
+Electron::Electron(int64_t n_sites, PermutationGroup group, Representation irrep)
     : n_sites_(n_sites), charge_conserved_(false), charge_(undefined_qn),
       sz_conserved_(false), sz_(undefined_qn), n_up_(undefined_qn),
       n_dn_(undefined_qn), symmetric_(true),
@@ -84,7 +84,7 @@ Electron::Electron(int n_sites, PermutationGroup group, Representation irrep)
   utils::check_n_sites(n_sites, group);
 }
 
-Electron::Electron(int n_sites, int nup, int ndn, PermutationGroup group,
+Electron::Electron(int64_t n_sites, int64_t nup, int64_t ndn, PermutationGroup group,
                    Representation irrep)
     : n_sites_(n_sites), charge_conserved_(true), charge_(nup + ndn),
       sz_conserved_(true), sz_(nup - ndn), n_up_(nup), n_dn_(ndn),

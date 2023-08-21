@@ -38,7 +38,7 @@ void apply_non_branching(Bond const &bond, IndexingIn &&indexing_in,
       auto [local_spins_new, coeff] = bond_nb.state_coeff(local_spins);
       bit_t spins_new = bond_nb.deposit_local_state(local_spins_new, spins);
 
-      // int n_sites = 2;
+      // int64_t n_sites = 2;
       // Log("spins: {}, local_spins: {}, local_spins_new: {}, spins_new: {}",
       //     BSTR(spins), BSTR(local_spins), BSTR(local_spins_new), BSTR(spins_new));
       // std::cout << "coeff: "<< coeff<< std::endl;

@@ -8,7 +8,7 @@ namespace hydra::electron {
 
 template <typename bit_t, typename coeff_t, class Indexing, class Filler>
 void electron_do_down_flips(bit_t ups, idx_t idx_ups, bit_t flipmask,
-                            bit_t fermimask, int sdn, coeff_t val,
+                            bit_t fermimask, int64_t sdn, coeff_t val,
                             Indexing &&indexing, Filler &&fill) {
   idx_t size_dns = indexing.size_dns();
 
@@ -41,15 +41,15 @@ void apply_exchange(Bond const &bond, Indexing &&indexing, Filler &&fill) {
   assert(bond.sites_disjoint());
 
   coeff_t J = bond.coupling<coeff_t>();
-  int s1 = bond[0];
-  int s2 = bond[1];
+  int64_t s1 = bond[0];
+  int64_t s2 = bond[1];
 
   // Prepare bitmasks
   bit_t s1mask = (bit_t)1 << s1;
   bit_t s2mask = (bit_t)1 << s2;
   bit_t flipmask = s1mask | s2mask;
-  int l = std::min(s1, s2);
-  int u = std::max(s1, s2);
+  int64_t l = std::min(s1, s2);
+  int64_t u = std::max(s1, s2);
   bit_t fermimask = (((bit_t)1 << (u - l - 1)) - 1) << (l + 1);
 
   if constexpr (symmetric) {
@@ -100,7 +100,7 @@ void apply_exchange(Bond const &bond, Indexing &&indexing, Filler &&fill) {
 
       // trivial up-stabilizer (likely)
       if (syms_up_out.size() == 1) {
-        int sym = syms_up_out.front();
+        int64_t sym = syms_up_out.front();
         fermi_up ^= indexing.fermi_bool_ups(sym, ups_flip);
 
         // Fix the bloch factor
@@ -139,11 +139,11 @@ void apply_exchange(Bond const &bond, Indexing &&indexing, Filler &&fill) {
         // Fix the bloch/prefactors
         std::vector<coeff_t> prefacs(irrep.size());
         if constexpr (is_complex<coeff_t>()) {
-          for (int i = 0; i < (int)irrep.size(); ++i) {
+          for (int64_t i = 0; i < (int64_t)irrep.size(); ++i) {
             prefacs[i] = -irrep.character(i) * Jhalf;
           }
         } else {
-          for (int i = 0; i < (int)irrep.size(); ++i) {
+          for (int64_t i = 0; i < (int64_t)irrep.size(); ++i) {
             prefacs[i] = -real(irrep.character(i)) * Jhalf;
           }
         }

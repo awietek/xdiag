@@ -424,11 +424,11 @@ Bond toml_array_to_bond(toml::array const &array) {
                                ? *coupling_node
                                : get_toml_value<complex>(*coupling_node_cplx);
         if (site_node) {
-          std::vector<int> sites;
+          std::vector<int64_t> sites;
           for (std::size_t k = 2; k < array.size(); ++k) {
-            auto site_opt = array[k].value<int>();
+            auto site_opt = array[k].value<int64_t>();
             if (site_opt) {
-              int site = *site_opt;
+              int64_t site = *site_opt;
               sites.push_back(site);
             } else {
               Log.err("Error parsing toml to hydra::Bond: could not convert "
@@ -437,7 +437,7 @@ Bond toml_array_to_bond(toml::array const &array) {
           }
           return Bond(type, coupling, sites);
         } else if (sites_node) {
-          auto sites = toml_array_to_std_vector<int>(*sites_node);
+          auto sites = toml_array_to_std_vector<int64_t>(*sites_node);
           return Bond(type, coupling, sites);
         } else {
           Log.err(
@@ -450,11 +450,11 @@ Bond toml_array_to_bond(toml::array const &array) {
         std::string coupling_name = *coupling_name_node;
 
         if (site_node) {
-          std::vector<int> sites;
+          std::vector<int64_t> sites;
           for (std::size_t k = 2; k < array.size(); ++k) {
-            auto site_opt = array[k].value<int>();
+            auto site_opt = array[k].value<int64_t>();
             if (site_opt) {
-              int site = *site_opt;
+              int64_t site = *site_opt;
               sites.push_back(site);
             } else {
               Log.err("Error parsing toml to hydra::Bond: could not convert "
@@ -463,7 +463,7 @@ Bond toml_array_to_bond(toml::array const &array) {
           }
           return Bond(type, coupling_name, sites);
         } else if (sites_node) {
-          auto sites = toml_array_to_std_vector<int>(*sites_node);
+          auto sites = toml_array_to_std_vector<int64_t>(*sites_node);
           return Bond(type, coupling_name, sites);
         } else {
           Log.err(
@@ -488,11 +488,11 @@ Bond toml_array_to_bond(toml::array const &array) {
                                : get_toml_value<complex>(*coupling_node_cplx);
 
         if (site_node) {
-          std::vector<int> sites;
+          std::vector<int64_t> sites;
           for (std::size_t k = 2; k < array.size(); ++k) {
-            auto site_opt = array[k].value<int>();
+            auto site_opt = array[k].value<int64_t>();
             if (site_opt) {
-              int site = *site_opt;
+              int64_t site = *site_opt;
               sites.push_back(site);
             } else {
               Log.err("Error parsing toml to hydra::Bond: could not convert "
@@ -501,7 +501,7 @@ Bond toml_array_to_bond(toml::array const &array) {
           }
           return Bond(matrix, coupling, sites);
         } else if (sites_node) {
-          auto sites = toml_array_to_std_vector<int>(*sites_node);
+          auto sites = toml_array_to_std_vector<int64_t>(*sites_node);
           return Bond(matrix, coupling, sites);
         } else {
           Log.err(
@@ -514,11 +514,11 @@ Bond toml_array_to_bond(toml::array const &array) {
         std::string coupling_name = *coupling_name_node;
 
         if (site_node) {
-          std::vector<int> sites;
+          std::vector<int64_t> sites;
           for (std::size_t k = 2; k < array.size(); ++k) {
-            auto site_opt = array[k].value<int>();
+            auto site_opt = array[k].value<int64_t>();
             if (site_opt) {
-              int site = *site_opt;
+              int64_t site = *site_opt;
               sites.push_back(site);
             } else {
               Log.err("Error parsing toml to hydra::Bond: could not convert "
@@ -527,7 +527,7 @@ Bond toml_array_to_bond(toml::array const &array) {
           }
           return Bond(matrix, coupling_name, sites);
         } else if (sites_node) {
-          auto sites = toml_array_to_std_vector<int>(*sites_node);
+          auto sites = toml_array_to_std_vector<int64_t>(*sites_node);
           return Bond(matrix, coupling_name, sites);
         } else {
           Log.err(

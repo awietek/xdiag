@@ -160,8 +160,8 @@ BondList compile_explicit(BondList const &bonds, double precision,
   return bonds_compiled;
 }
 
-void check_bond_in_range(Bond const &bond, int n_sites) {
-  for (int s : bond.sites()) {
+void check_bond_in_range(Bond const &bond, int64_t n_sites) {
+  for (int64_t s : bond.sites()) {
     if (s >= n_sites) {
       HydraPrint(bond);
       Log.err("Error: bond site exceeds range of {} sites", n_sites);
@@ -169,13 +169,13 @@ void check_bond_in_range(Bond const &bond, int n_sites) {
   }
 }
 
-void check_bonds_in_range(BondList const &bonds, int n_sites) {
+void check_bonds_in_range(BondList const &bonds, int64_t n_sites) {
   for (Bond bond : bonds) {
     check_bond_in_range(bond, n_sites);
   }
 }
 
-void check_bond_has_correct_number_of_sites(Bond const &bond, int ns) {
+void check_bond_has_correct_number_of_sites(Bond const &bond, int64_t ns) {
   if (bond.size() != ns) {
     HydraPrint(bond);
     Log.err("Error using {} bond: number of sites found to "

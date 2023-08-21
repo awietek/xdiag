@@ -23,7 +23,7 @@ void apply_spsm(Bond const &bond, IndexingIn &&indexing_in,
   assert(bond.size() == 1);
 
   coeff_t J = bond.coupling<coeff_t>();
-  int s = bond[0];
+  int64_t s = bond[0];
   bit_t mask = ((bit_t)1 << s);
 
   // Define actions of bond

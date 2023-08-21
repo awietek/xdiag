@@ -15,8 +15,8 @@ void apply_ising(Bond const &bond, Indexing &&indexing, Fill &&fill) {
   assert(bond.sites_disjoint());
 
   coeff_t J = bond.coupling<coeff_t>();
-  int s1 = bond[0];
-  int s2 = bond[1];
+  int64_t s1 = bond[0];
+  int64_t s2 = bond[1];
 
   // Set values for same/diff (tJ block definition)
   coeff_t val_same = J / 4.;

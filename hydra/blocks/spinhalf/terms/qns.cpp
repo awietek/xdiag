@@ -7,15 +7,15 @@
 
 namespace hydra::spinhalf {
 
-int nup(BondList bonds, double precision) {
+int64_t nup(BondList bonds, double precision) {
   bonds = operators::compile_explicit(bonds, precision, "keep");
   bonds = operators::non_branching_bonds(bonds, precision);
 
-  int nup = 0;
+  int64_t nup = 0;
   bool first_bond = true;
   for (Bond bond : bonds) {
 
-    int nup_bond = 0;
+    int64_t nup_bond = 0;
     if (bond.type_defined()) {
       std::string type = bond.type();
       if (special_bonds_nup.count(type)) {

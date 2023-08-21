@@ -8,7 +8,7 @@ namespace hydra {
 
 using namespace indexing;
 
-Spinhalf::Spinhalf(int n_sites)
+Spinhalf::Spinhalf(int64_t n_sites)
     : n_sites_(n_sites), sz_conserved_(false), n_up_(undefined_qn),
       n_dn_(undefined_qn), sz_(undefined_qn), symmetric_(false), n_sublat_(0),
       permutation_group_(), irrep_(), size_((idx_t)1 << n_sites) {
@@ -31,7 +31,7 @@ Spinhalf::Spinhalf(int n_sites)
   }
 }
 
-Spinhalf::Spinhalf(int n_sites, int n_up)
+Spinhalf::Spinhalf(int64_t n_sites, int64_t n_up)
     : n_sites_(n_sites), sz_conserved_(true), n_up_(n_up),
       n_dn_(n_sites - n_up), sz_(n_up_ - n_dn_), symmetric_(false),
       n_sublat_(0), permutation_group_(), irrep_(),
@@ -58,8 +58,8 @@ Spinhalf::Spinhalf(int n_sites, int n_up)
 
 template <typename bit_t>
 std::shared_ptr<SpinhalfIndexing>
-make_spinhalf_indexing_no_sz(int n_sites, PermutationGroup const &group,
-                             Representation const &irrep, int n_sublat) {
+make_spinhalf_indexing_no_sz(int64_t n_sites, PermutationGroup const &group,
+                             Representation const &irrep, int64_t n_sublat) {
   std::shared_ptr<SpinhalfIndexing> indexing;
   if (n_sublat == 0) {
     indexing = std::make_shared<SpinhalfIndexing>(
@@ -87,8 +87,8 @@ make_spinhalf_indexing_no_sz(int n_sites, PermutationGroup const &group,
   return indexing;
 }
 
-Spinhalf::Spinhalf(int n_sites, PermutationGroup group, Representation irrep,
-                   int n_sublat)
+Spinhalf::Spinhalf(int64_t n_sites, PermutationGroup group, Representation irrep,
+                   int64_t n_sublat)
     : n_sites_(n_sites), sz_conserved_(false), n_up_(undefined_qn),
       n_dn_(undefined_qn), sz_(undefined_qn), symmetric_(true),
       n_sublat_(n_sublat), permutation_group_(allowed_subgroup(group, irrep)),
@@ -117,8 +117,8 @@ Spinhalf::Spinhalf(int n_sites, PermutationGroup group, Representation irrep,
 
 template <typename bit_t>
 std::shared_ptr<SpinhalfIndexing>
-make_spinhalf_indexing_sz(int n_sites, int n_up, PermutationGroup const &group,
-                          Representation const &irrep, int n_sublat) {
+make_spinhalf_indexing_sz(int64_t n_sites, int64_t n_up, PermutationGroup const &group,
+                          Representation const &irrep, int64_t n_sublat) {
   std::shared_ptr<SpinhalfIndexing> indexing;
   if (n_sublat == 0) {
     indexing = std::make_shared<SpinhalfIndexing>(
@@ -146,8 +146,8 @@ make_spinhalf_indexing_sz(int n_sites, int n_up, PermutationGroup const &group,
   return indexing;
 }
 
-Spinhalf::Spinhalf(int n_sites, int n_up, PermutationGroup group,
-                   Representation irrep, int n_sublat)
+Spinhalf::Spinhalf(int64_t n_sites, int64_t n_up, PermutationGroup group,
+                   Representation irrep, int64_t n_sublat)
     : n_sites_(n_sites), sz_conserved_(true), n_up_(n_up),
       n_dn_(n_sites - n_up), sz_(n_up_ - n_dn_), symmetric_(true),
       n_sublat_(n_sublat), permutation_group_(allowed_subgroup(group, irrep)),

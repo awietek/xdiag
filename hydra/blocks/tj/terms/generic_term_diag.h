@@ -8,7 +8,7 @@ template <typename bit_t, typename coeff_t, bool symmetric, class Indexing,
           class TermAction, class Fill>
 void generic_term_diag(Indexing &&indexing, TermAction &&term_action,
                        Fill &&fill) {
-  int n_sites = indexing.n_sites();
+  int64_t n_sites = indexing.n_sites();
   bit_t sitesmask = ((bit_t)1 << n_sites) - 1;
 
   if constexpr (symmetric) {

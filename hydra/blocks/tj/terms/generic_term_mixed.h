@@ -12,7 +12,7 @@ void generic_term_mixed(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
                         NonZeroTermDns &&non_zero_term_dns,
                         TermActionUps &&term_action_ups,
                         TermActionDns &&term_action_dns, Fill &&fill) {
-  int n_sites = indexing_in.n_sites();
+  int64_t n_sites = indexing_in.n_sites();
   assert(n_sites == indexing_out.n_sites());
   bit_t sitesmask = ((bit_t)1 << n_sites) - 1;
 
@@ -57,7 +57,7 @@ void generic_term_mixed(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
         ////////////////////////////////////////////////////////////////////////
         // Trivial stabilizer of target ups
         if (up_out_syms.size() == 1) {
-          int sym = up_out_syms.front();
+          int64_t sym = up_out_syms.front();
           coeff_t prefac = coeff_up * bloch_factors[sym];
           bool fermi_up = indexing_out.fermi_bool_ups(sym, up_flip);
 
@@ -107,7 +107,7 @@ void generic_term_mixed(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
         // Target ups have non-trivial stabilizer
         else {
           std::vector<coeff_t> prefacs(bloch_factors.size());
-          for (int i = 0; i < (int)bloch_factors.size(); ++i) {
+          for (int64_t i = 0; i < (int64_t)bloch_factors.size(); ++i) {
             prefacs[i] = coeff_up * bloch_factors[i];
           }
 

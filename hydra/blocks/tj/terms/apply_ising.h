@@ -20,8 +20,8 @@ void apply_ising(Bond const &bond, Indexing &&indexing, Fill &&fill) {
   assert((type == "ISING") || (type == "TJISING"));
 
   coeff_t J = bond.coupling<coeff_t>();
-  int s1 = bond[0];
-  int s2 = bond[1];
+  int64_t s1 = bond[0];
+  int64_t s2 = bond[1];
   bit_t s1_mask = (bit_t)1 << s1;
   bit_t s2_mask = (bit_t)1 << s2;
 

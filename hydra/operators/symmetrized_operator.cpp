@@ -23,7 +23,7 @@ BondList symmetrized_operator(BondList const &bonds,
                               PermutationGroup const &group,
                               Representation const &irrep) {
   BondList bonds_sym;
-  int N_group = group.size();
+  int64_t N_group = group.size();
 
   for (auto bond : bonds) {
 
@@ -47,12 +47,12 @@ BondList symmetrized_operator(BondList const &bonds,
       std::string type = bond.type();
 
       // Create all symmetrized bonds
-      for (int i = 0; i < N_group; ++i) {
+      for (int64_t i = 0; i < N_group; ++i) {
         Permutation perm = group[i];
         complex bloch = irrep.character(i);
 
-        std::vector<int> sites_sym(bond.size(), 0);
-        for (int site_idx = 0; site_idx < bond.size(); ++site_idx) {
+        std::vector<int64_t> sites_sym(bond.size(), 0);
+        for (int64_t site_idx = 0; site_idx < bond.size(); ++site_idx) {
           sites_sym[site_idx] = perm[bond[site_idx]];
         }
         complex cpl_sym = bloch * coupling / (complex)N_group;
@@ -62,12 +62,12 @@ BondList symmetrized_operator(BondList const &bonds,
       arma::cx_mat mat = bond.matrix();
 
       // Create all symmetrized bonds
-      for (int i = 0; i < N_group; ++i) {
+      for (int64_t i = 0; i < N_group; ++i) {
         Permutation perm = group[i];
         complex bloch = irrep.character(i);
 
-        std::vector<int> sites_sym(bond.size(), 0);
-        for (int site_idx = 0; site_idx < bond.size(); ++site_idx) {
+        std::vector<int64_t> sites_sym(bond.size(), 0);
+        for (int64_t site_idx = 0; site_idx < bond.size(); ++site_idx) {
           sites_sym[site_idx] = perm[bond[site_idx]];
         }
 

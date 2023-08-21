@@ -11,7 +11,7 @@ void generic_term_dns(IndexingIn &&indexing_in, IndexingOut &&indexing_out,
                       NonZeroTermUps &&non_zero_term_ups,
                       NonZeroTermDns &&non_zero_term_dns,
                       TermAction &&term_action, Fill &&fill) {
-  int n_sites = indexing_in.n_sites();
+  int64_t n_sites = indexing_in.n_sites();
   assert(n_sites == indexing_out.n_sites());
   bit_t sitesmask = ((bit_t)1 << n_sites) - 1;
 
