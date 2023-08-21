@@ -4,11 +4,11 @@
 
 #include <mpi.h>
 #include <hydra/utils/print_mpi.h>
-#define HydraPrint(X) hydra::utils::PrintPrettyMPI(#X,X)
+#define HydraPrint(X) hydra::utils::print_pretty_mpi(#X,X)
 
 #else
 
 #include <hydra/utils/print.h>
-#define HydraPrint(X) hydra::utils::PrintPretty(#X,X)
+#define HydraPrint(X) hydra::utils::print_pretty(#X,X)
 
 #endif

@@ -24,62 +24,62 @@
 
 namespace hydra::utils {
 
-void PrintPretty(const char *identifier, std::string str);
+void print_pretty(const char *identifier, std::string str);
 
-void PrintPretty(const char *identifier, int number);
-void PrintPretty(const char *identifier, uint32_t number);
-void PrintPretty(const char *identifier, uint64_t number);
-void PrintPretty(const char *identifier, int64_t number);
-void PrintPretty(const char *identifier, double number);
-void PrintPretty(const char *identifier, complex number);
+void print_pretty(const char *identifier, int number);
+void print_pretty(const char *identifier, uint32_t number);
+void print_pretty(const char *identifier, uint64_t number);
+void print_pretty(const char *identifier, int64_t number);
+void print_pretty(const char *identifier, double number);
+void print_pretty(const char *identifier, complex number);
 
-void PrintPretty(const char *identifier, Bond const &bond);
-void PrintPretty(const char *identifier, BondList const &bondlist);
-void PrintPretty(const char *identifier, Permutation const &perm);
-void PrintPretty(const char *identifier, PermutationGroup const &group);
-void PrintPretty(const char *identifier, Representation const &irrep);
-void PrintPretty(const char *identifier, U1 const &qn);
-void PrintPretty(const char *identifier, QNum const &qn);
-void PrintPretty(const char *identifier, QN const &qn);
+void print_pretty(const char *identifier, Bond const &bond);
+void print_pretty(const char *identifier, BondList const &bondlist);
+void print_pretty(const char *identifier, Permutation const &perm);
+void print_pretty(const char *identifier, PermutationGroup const &group);
+void print_pretty(const char *identifier, Representation const &irrep);
+void print_pretty(const char *identifier, U1 const &qn);
+void print_pretty(const char *identifier, QNum const &qn);
+void print_pretty(const char *identifier, QN const &qn);
   
-void PrintPretty(const char *identifier, Block const &block);
-void PrintPretty(const char *identifier, Spinhalf const &block);
-void PrintPretty(const char *identifier, tJ const &block);
-void PrintPretty(const char *identifier, Electron const &block);
+void print_pretty(const char *identifier, Block const &block);
+void print_pretty(const char *identifier, Spinhalf const &block);
+void print_pretty(const char *identifier, tJ const &block);
+void print_pretty(const char *identifier, Electron const &block);
 
-void PrintPretty(const char *identifier, RandomState const &rstate);
-void PrintPretty(const char *identifier, ProductState const &pstate);
+void print_pretty(const char *identifier, RandomState const &rstate);
+void print_pretty(const char *identifier, ProductState const &pstate);
 
-void PrintPretty(const char *identifier, std::vector<int> const &vec);
-void PrintPretty(const char *identifier, std::vector<float> const &vec);
-void PrintPretty(const char *identifier, std::vector<double> const &vec);
-void PrintPretty(const char *identifier, std::vector<scomplex> const &vec);
-void PrintPretty(const char *identifier, std::vector<complex> const &vec);
-void PrintPretty(const char *identifier, std::vector<std::string> const &vec);
+void print_pretty(const char *identifier, std::vector<int> const &vec);
+void print_pretty(const char *identifier, std::vector<float> const &vec);
+void print_pretty(const char *identifier, std::vector<double> const &vec);
+void print_pretty(const char *identifier, std::vector<scomplex> const &vec);
+void print_pretty(const char *identifier, std::vector<complex> const &vec);
+void print_pretty(const char *identifier, std::vector<std::string> const &vec);
 
-void PrintPretty(const char *identifier, arma::uvec const &vec);
-void PrintPretty(const char *identifier, arma::ivec const &vec);
-void PrintPretty(const char *identifier, arma::umat const &mat);
-void PrintPretty(const char *identifier, arma::imat const &mat);
+void print_pretty(const char *identifier, arma::uvec const &vec);
+void print_pretty(const char *identifier, arma::ivec const &vec);
+void print_pretty(const char *identifier, arma::umat const &mat);
+void print_pretty(const char *identifier, arma::imat const &mat);
 
-void PrintPretty(const char *identifier, arma::Mat<float> const &mat);
-void PrintPretty(const char *identifier, arma::Mat<double> const &mat);
-void PrintPretty(const char *identifier,
+void print_pretty(const char *identifier, arma::Mat<float> const &mat);
+void print_pretty(const char *identifier, arma::Mat<double> const &mat);
+void print_pretty(const char *identifier,
                  arma::Mat<std::complex<float>> const &mat);
-void PrintPretty(const char *identifier,
+void print_pretty(const char *identifier,
                  arma::Mat<std::complex<double>> const &mat);
 
-void PrintPretty(const char *identifier, arma::Col<float> const &vec);
-void PrintPretty(const char *identifier, arma::Col<double> const &vec);
-void PrintPretty(const char *identifier,
+void print_pretty(const char *identifier, arma::Col<float> const &vec);
+void print_pretty(const char *identifier, arma::Col<double> const &vec);
+void print_pretty(const char *identifier,
                  arma::Col<std::complex<float>> const &vec);
-void PrintPretty(const char *identifier,
+void print_pretty(const char *identifier,
                  arma::Col<std::complex<double>> const &vec);
 
-void PrintPretty(const char *identifier, Tmatrix const &tmat);
+void print_pretty(const char *identifier, Tmatrix const &tmat);
 
 template <typename coeff_t>
-void PrintPretty(const char *identifier, State<coeff_t> const &state) {
+void print_pretty(const char *identifier, State<coeff_t> const &state) {
   printf("%s:\n", identifier);
   if constexpr (is_real<coeff_t>()) {
     printf("  real state\n");
@@ -91,7 +91,7 @@ void PrintPretty(const char *identifier, State<coeff_t> const &state) {
   ss << state.size();
   printf("  dimension: %s\n", ss.str().c_str());
   printf("  norm     : %.9e\n", arma::norm(state.vector()));
-  PrintPretty((std::string(identifier) + std::string(".block()")).c_str(),
+  print_pretty((std::string(identifier) + std::string(".block()")).c_str(),
               state.block());
 }
 

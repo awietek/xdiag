@@ -9,12 +9,12 @@
 
 namespace hydra::utils {
 
-  void PrintPrettyMPI(const char* identifier, Bond const& bond);
-  void PrintPrettyMPI(const char* identifier, BondList const& bondlist);
-  void PrintPrettyMPI(const char* identifier, Couplings const& couplings);
+  void print_pretty_mpi(const char* identifier, Bond const& bond);
+  void print_pretty_mpi(const char* identifier, BondList const& bondlist);
+  void print_pretty_mpi(const char* identifier, Couplings const& couplings);
 
   template <typename T>
-  void PrintPrettyMPI(const char* identifier, lila::Vector<T> const& vector){
+  void print_pretty_mpi(const char* identifier, lila::Vector<T> const& vector){
     int myid;
     MPI_Comm_rank(MPI_COMM_WORLD, &myid);
     if (myid == 0) {
@@ -22,7 +22,7 @@ namespace hydra::utils {
     }
   }
   template <typename T>
-  void PrintPrettyMPI(const char* identifier, lila::Matrix<T> const& matrix){
+  void print_pretty_mpi(const char* identifier, lila::Matrix<T> const& matrix){
     int myid;
     MPI_Comm_rank(MPI_COMM_WORLD, &myid);
     if (myid == 0) {
@@ -30,7 +30,7 @@ namespace hydra::utils {
     }
   }
 
-  void PrintPrettyMPI(const char* identifier, Tmatrix const& tmat);
+  void print_pretty_mpi(const char* identifier, Tmatrix const& tmat);
   
 } // namespace hydra::utils
 #endif

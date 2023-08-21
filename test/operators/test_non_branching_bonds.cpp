@@ -29,15 +29,15 @@ TEST_CASE("non_branching_bonds", "[operators]") {
   }
 
   // Check ground state energy of TFI model
-  int N = 14;
+  int64_t N = 14;
   double J = 1.0;
   double H = 1.0;
   BondList bonds;
 
-  for (int i = 0; i < N - 1; ++i) {
+  for (int64_t i = 0; i < N - 1; ++i) {
     bonds << Bond("ISING", J, {i, (i + 1) % N});
   }
-  for (int i = 0; i < N; ++i) {
+  for (int64_t i = 0; i < N; ++i) {
     bonds << Bond(sx, H, i);
   }
 
@@ -47,14 +47,14 @@ TEST_CASE("non_branching_bonds", "[operators]") {
   REQUIRE(std::abs(e - e_dmrg) < 1e-8);
 
   // Check whether random bonds are created correctly
-  for (int r = 0; r < 5; ++r) {
+  for (int64_t r = 0; r < 5; ++r) {
 
-    for (int k = 1; k <= 6; ++k) {
+    for (int64_t k = 1; k <= 6; ++k) {
       auto block = Spinhalf(k);
-      int p2 = pow(2, k);
+      int64_t p2 = pow(2, k);
 
       auto mr = mat(p2, p2, fill::randn);
-      std::vector<int> sites(k);
+      std::vector<int64_t> sites(k);
       std::iota(sites.begin(), sites.end(), 0);
 
       auto bondr = Bond(mr, sites);

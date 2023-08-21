@@ -30,16 +30,22 @@ JLCXX_MODULE define_julia_module(jlcxx::Module &mod) {
     .constructor<>()
     .constructor<std::vector<Bond> const&>()
     .method("set_coupling", &BondList::set_coupling);
-  
-  mod.method("matrix", []() {
-    static double d[2][3] = {{1., 2., 3}, {4., 5., 6.}};
-    return 1.2 ;//jlcxx::make_julia_array(d, 3, 2);
-  });
-  
+    
   mod.add_type<Spinhalf>("Spinhalf")
     .constructor<int>()
     .constructor<int, int>()
     .method("n_sites", &Spinhalf::n_sites)
     .method("size", &Spinhalf::size);
 
+
+  mod.method("matrix_cxx", [](BondList const& bonds, Spinhalf const& block) {
+    arma::mat mat = matrix_real(bonds, block);
+    return jlcxx::ArrayRef<double, 2>(true, mat.memptr(), mat.n_rows, mat.n_cols);
+  });
+  
+  
+  // Print functions
+  mod.method("print_pretty", [](const char* id, Spinhalf const& block){
+    utils::print_pretty(id, block);
+  });
 }

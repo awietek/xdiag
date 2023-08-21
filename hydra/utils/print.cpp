@@ -7,12 +7,12 @@
 
 namespace hydra::utils {
 
-void PrintPretty(const char *identifier, std::string str) {
+void print_pretty(const char *identifier, std::string str) {
   printf("%s:\n", identifier);
   std::cout << str << "\n";
 }
 
-void PrintPretty(const char *identifier, int number) {
+void print_pretty(const char *identifier, int number) {
   printf("%s:\n", identifier);
   std::stringstream ss;
   ss.imbue(std::locale("en_US.UTF-8"));
@@ -20,7 +20,7 @@ void PrintPretty(const char *identifier, int number) {
   printf("%s\n", ss.str().c_str());
 }
 
-void PrintPretty(const char *identifier, uint32_t number) {
+void print_pretty(const char *identifier, uint32_t number) {
   printf("%s:\n", identifier);
   std::stringstream ss;
   ss.imbue(std::locale("en_US.UTF-8"));
@@ -28,7 +28,7 @@ void PrintPretty(const char *identifier, uint32_t number) {
   printf("%s\n", ss.str().c_str());
 }
 
-void PrintPretty(const char *identifier, uint64_t number) {
+void print_pretty(const char *identifier, uint64_t number) {
   printf("%s:\n", identifier);
   std::stringstream ss;
   ss.imbue(std::locale("en_US.UTF-8"));
@@ -36,7 +36,7 @@ void PrintPretty(const char *identifier, uint64_t number) {
   printf("%s\n", ss.str().c_str());
 }
 
-void PrintPretty(const char *identifier, int64_t number) {
+void print_pretty(const char *identifier, int64_t number) {
   printf("%s:\n", identifier);
   std::stringstream ss;
   ss.imbue(std::locale("en_US.UTF-8"));
@@ -44,12 +44,12 @@ void PrintPretty(const char *identifier, int64_t number) {
   printf("%s\n", ss.str().c_str());
 }
 
-void PrintPretty(const char *identifier, double number) {
+void print_pretty(const char *identifier, double number) {
   printf("%s:\n", identifier);
   printf("%.17e\n", number);
 }
 
-void PrintPretty(const char *identifier, complex number) {
+void print_pretty(const char *identifier, complex number) {
   printf("%s:\n", identifier);
   if (std::imag(number) > 0.) {
     printf("%.17e + %.17eI\n", std::real(number), std::imag(number));
@@ -58,7 +58,7 @@ void PrintPretty(const char *identifier, complex number) {
   }
 }
 
-void PrintPretty(const char *identifier, Bond const &bond) {
+void print_pretty(const char *identifier, Bond const &bond) {
   printf("%s:\n", identifier);
 
   if (bond.type_defined()) {
@@ -66,9 +66,9 @@ void PrintPretty(const char *identifier, Bond const &bond) {
   } else {
     auto mat = bond.matrix();
     if (arma::norm(arma::imag(mat)) < 1e-12) {
-      PrintPretty("  matrix", arma::mat(arma::real(mat)));
+      print_pretty("  matrix", arma::mat(arma::real(mat)));
     } else {
-      PrintPretty("  matrix", mat);
+      print_pretty("  matrix", mat);
     }
   }
   if (bond.coupling_defined()) {
@@ -94,11 +94,11 @@ void PrintPretty(const char *identifier, Bond const &bond) {
   printf("\n");
 }
 
-void PrintPretty(const char *identifier, BondList const &bondlist) {
+void print_pretty(const char *identifier, BondList const &bondlist) {
   printf("%s:\n", identifier);
   printf("Interactions:\n");
   for (auto bond : bondlist) {
-    PrintPretty(" bond", bond);
+    print_pretty(" bond", bond);
   }
   if (bondlist.couplings().size() > 0) {
     printf("Couplings:\n");
@@ -124,7 +124,7 @@ void PrintPretty(const char *identifier, BondList const &bondlist) {
   }
 }
 
-void PrintPretty(const char *identifier, Permutation const &p) {
+void print_pretty(const char *identifier, Permutation const &p) {
   printf("%s:\n  ", identifier);
   for (int i = 0; i < p.size(); ++i) {
     printf("%d ", p[i]);
@@ -133,14 +133,14 @@ void PrintPretty(const char *identifier, Permutation const &p) {
   printf("  ID: 0x%lx\n", (unsigned long)random::hash(p));
 }
 
-void PrintPretty(const char *identifier, PermutationGroup const &group) {
+void print_pretty(const char *identifier, PermutationGroup const &group) {
   printf("%s:\n", identifier);
   printf("  n_sites      : %d\n", group.n_sites());
   printf("  n_symmetries : %d\n", group.n_symmetries());
   printf("  ID           : 0x%lx\n", (unsigned long)random::hash(group));
 }
 
-void PrintPretty(const char *identifier, Representation const &irrep) {
+void print_pretty(const char *identifier, Representation const &irrep) {
   printf("%s:\n", identifier);
   printf("  size      : %ld\n", (long)irrep.size());
   printf("  characters:");
@@ -157,13 +157,13 @@ void PrintPretty(const char *identifier, Representation const &irrep) {
   printf("  ID        : 0x%lx\n", (unsigned long)random::hash(irrep));
 }
 
-void PrintPretty(const char *identifier, U1 const &g) {
+void print_pretty(const char *identifier, U1 const &g) {
   (void)g;
   printf("%s:\n", identifier);
   printf("  U(1) group\n");
 }
 
-void PrintPretty(const char *identifier, QNum const &qn) {
+void print_pretty(const char *identifier, QNum const &qn) {
   printf("%s:\n", identifier);
   std::visit(
       variant::overloaded{
@@ -190,26 +190,26 @@ void PrintPretty(const char *identifier, QNum const &qn) {
       },
       qn.group(), qn.irrep());
 }
-void PrintPretty(const char *identifier, QN const &qn) {
+void print_pretty(const char *identifier, QN const &qn) {
   (void)identifier;
   (void)qn;
 }
 
-void PrintPretty(const char *identifier, Block const &block) {
+void print_pretty(const char *identifier, Block const &block) {
   std::visit(
       variant::overloaded{
           [identifier](Spinhalf const &block) {
-            PrintPretty(identifier, block);
+            print_pretty(identifier, block);
           },
-          [identifier](tJ const &block) { PrintPretty(identifier, block); },
+          [identifier](tJ const &block) { print_pretty(identifier, block); },
           [identifier](Electron const &block) {
-            PrintPretty(identifier, block);
+            print_pretty(identifier, block);
           },
       },
       block.variant());
 }
 
-void PrintPretty(const char *identifier, Spinhalf const &block) {
+void print_pretty(const char *identifier, Spinhalf const &block) {
   printf("%s:\n", identifier);
 
   printf("  n_sites  : %ld\n", block.n_sites());
@@ -232,7 +232,7 @@ void PrintPretty(const char *identifier, Spinhalf const &block) {
   printf("  ID       : 0x%lx\n", (unsigned long)random::hash(block));
 }
 
-void PrintPretty(const char *identifier, tJ const &block) {
+void print_pretty(const char *identifier, tJ const &block) {
   printf("%s:\n", identifier);
 
   printf("  n_sites  : %ld\n", block.n_sites());
@@ -258,7 +258,7 @@ void PrintPretty(const char *identifier, tJ const &block) {
   printf("  ID       : 0x%lx\n", (unsigned long)random::hash(block));
 }
 
-void PrintPretty(const char *identifier, Electron const &block) {
+void print_pretty(const char *identifier, Electron const &block) {
   printf("%s:\n", identifier);
 
   printf("  n_sites  : %ld\n", block.n_sites());
@@ -284,12 +284,12 @@ void PrintPretty(const char *identifier, Electron const &block) {
   printf("  ID       : 0x%lx\n", (unsigned long)random::hash(block));
 }
 
-void PrintPretty(const char *identifier, RandomState const &rstate) {
+void print_pretty(const char *identifier, RandomState const &rstate) {
   printf("%s:\n", identifier);
   printf("  RandomState, seed  : 0x%lx\n", (unsigned long)rstate.seed());
 }
 
-void PrintPretty(const char *identifier, ProductState const &pstate) {
+void print_pretty(const char *identifier, ProductState const &pstate) {
   printf("%s:\n", identifier);
   printf("  ProductState, n_sites: %d\n", pstate.n_sites());
   for (auto s : pstate) {
@@ -298,35 +298,35 @@ void PrintPretty(const char *identifier, ProductState const &pstate) {
   printf("\n");
 }
 
-void PrintPretty(const char *identifier, ProductState const &pstate);
+void print_pretty(const char *identifier, ProductState const &pstate);
 
-void PrintPretty(const char *identifier, Tmatrix const &tmat) {
+void print_pretty(const char *identifier, Tmatrix const &tmat) {
   printf("%s:\n", identifier);
-  PrintPretty("alphas", tmat.alphas());
-  PrintPretty("betas", tmat.betas());
-  PrintPretty("eigenvalues", tmat.eigenvalues());
+  print_pretty("alphas", tmat.alphas());
+  print_pretty("betas", tmat.betas());
+  print_pretty("eigenvalues", tmat.eigenvalues());
 }
 
-void PrintPretty(const char *identifier, std::vector<int> const &vec) {
+void print_pretty(const char *identifier, std::vector<int> const &vec) {
   printf("%s:\n", identifier);
   for (auto s : vec) {
     printf("%d ", s);
   }
   printf("\n");
 }
-void PrintPretty(const char *identifier, std::vector<float> const &vec) {
-  PrintPretty(identifier, arma::Col<float>(vec));
+void print_pretty(const char *identifier, std::vector<float> const &vec) {
+  print_pretty(identifier, arma::Col<float>(vec));
 }
-void PrintPretty(const char *identifier, std::vector<double> const &vec) {
-  PrintPretty(identifier, arma::Col<double>(vec));
+void print_pretty(const char *identifier, std::vector<double> const &vec) {
+  print_pretty(identifier, arma::Col<double>(vec));
 }
-void PrintPretty(const char *identifier, std::vector<scomplex> const &vec) {
-  PrintPretty(identifier, arma::Col<scomplex>(vec));
+void print_pretty(const char *identifier, std::vector<scomplex> const &vec) {
+  print_pretty(identifier, arma::Col<scomplex>(vec));
 }
-void PrintPretty(const char *identifier, std::vector<complex> const &vec) {
-  PrintPretty(identifier, arma::Col<complex>(vec));
+void print_pretty(const char *identifier, std::vector<complex> const &vec) {
+  print_pretty(identifier, arma::Col<complex>(vec));
 }
-void PrintPretty(const char *identifier, std::vector<std::string> const &vec) {
+void print_pretty(const char *identifier, std::vector<std::string> const &vec) {
   printf("%s:\n", identifier);
   for (auto s : vec) {
     printf("%s ", s.c_str());
@@ -334,64 +334,64 @@ void PrintPretty(const char *identifier, std::vector<std::string> const &vec) {
   printf("\n");
 }
 
-void PrintPretty(const char *identifier, arma::uvec const &vec) {
+void print_pretty(const char *identifier, arma::uvec const &vec) {
   printf("%s:\n", identifier);
   vec.brief_print();
 }
 
-void PrintPretty(const char *identifier, arma::ivec const &vec) {
+void print_pretty(const char *identifier, arma::ivec const &vec) {
   printf("%s:\n", identifier);
   vec.brief_print();
 }
 
-void PrintPretty(const char *identifier, arma::umat const &mat) {
+void print_pretty(const char *identifier, arma::umat const &mat) {
   printf("%s:\n", identifier);
   mat.brief_print();
 }
 
-void PrintPretty(const char *identifier, arma::imat const &mat) {
+void print_pretty(const char *identifier, arma::imat const &mat) {
   printf("%s:\n", identifier);
   mat.brief_print();
 }
-void PrintPretty(const char *identifier, const arma::Mat<float> &mat) {
-  printf("%s:\n", identifier);
-  mat.brief_print();
-}
-
-void PrintPretty(const char *identifier, const arma::Mat<double> &mat) {
+void print_pretty(const char *identifier, const arma::Mat<float> &mat) {
   printf("%s:\n", identifier);
   mat.brief_print();
 }
 
-void PrintPretty(const char *identifier,
+void print_pretty(const char *identifier, const arma::Mat<double> &mat) {
+  printf("%s:\n", identifier);
+  mat.brief_print();
+}
+
+void print_pretty(const char *identifier,
                  const arma::Mat<std::complex<float>> &mat) {
   printf("%s:\n", identifier);
   mat.brief_print();
 }
 
-void PrintPretty(const char *identifier,
+void print_pretty(const char *identifier,
                  const arma::Mat<std::complex<double>> &mat) {
   printf("%s:\n", identifier);
   mat.brief_print();
 }
 
-void PrintPretty(const char *identifier, const arma::Col<float> &vec) {
+void print_pretty(const char *identifier, const arma::Col<float> &vec) {
   printf("%s:\n", identifier);
   vec.brief_print();
 }
 
-void PrintPretty(const char *identifier, const arma::Col<double> &vec) {
+void print_pretty(const char *identifier, const arma::Col<double> &vec) {
   printf("%s:\n", identifier);
   vec.brief_print();
 }
 
-void PrintPretty(const char *identifier,
+void print_pretty(const char *identifier,
                  const arma::Col<std::complex<float>> &vec) {
   printf("%s:\n", identifier);
   vec.brief_print();
 }
 
-void PrintPretty(const char *identifier,
+void print_pretty(const char *identifier,
                  const arma::Col<std::complex<double>> &vec) {
   printf("%s:\n", identifier);
   vec.brief_print();
