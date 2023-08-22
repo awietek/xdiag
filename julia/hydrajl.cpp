@@ -43,6 +43,23 @@ JLCXX_MODULE define_julia_module(jlcxx::Module &mod) {
                 int max_iterations, uint64_t seed) {
                return eig0_real(bonds, block, precision, max_iterations, seed);
              });
+  mod.method("eig0_cplx_cxx",
+             [](BondList const &bonds, Spinhalf const &block, double precision,
+                int max_iterations, uint64_t seed) {
+               return eig0_cplx(bonds, block, precision, max_iterations, seed);
+             });
+
+  // Computing the ground state
+  mod.method("groundstate_real_cxx", [](BondList const &bonds,
+                                        Spinhalf const &block, double precision,
+                                        int max_iterations, uint64_t seed) {
+    return groundstate_real(bonds, block, precision, max_iterations, seed);
+  });
+  mod.method("groundstate_cplx_cxx", [](BondList const &bonds,
+                                        Spinhalf const &block, double precision,
+                                        int max_iterations, uint64_t seed) {
+    return groundstate_cplx(bonds, block, precision, max_iterations, seed);
+  });
 
   // Print functions
   mod.method("print_pretty", [](const char *id, Spinhalf const &block) {
