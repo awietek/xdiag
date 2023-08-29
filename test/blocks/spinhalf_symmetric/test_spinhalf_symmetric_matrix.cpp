@@ -5,10 +5,10 @@
 
 #include <iostream>
 
-#include <hydra/blocks/spinhalf/spinhalf_apply.h>
 #include <hydra/algebra/algebra.h>
 #include <hydra/algebra/matrix.h>
 #include <hydra/algorithms/sparse_diag.h>
+#include <hydra/blocks/spinhalf/spinhalf_apply.h>
 #include <hydra/utils/close.h>
 
 using namespace hydra;
@@ -16,11 +16,11 @@ using namespace hydra;
 void test_spinhalf_symmetric_spectra(BondList bondlist,
                                      PermutationGroup space_group,
                                      std::vector<Representation> irreps,
-                                     std::vector<int> multiplicities) {
-  int n_sites = space_group.n_sites();
+                                     std::vector<int64_t> multiplicities) {
+  int64_t n_sites = space_group.n_sites();
   assert(irreps.size() == multiplicities.size());
 
-  for (int nup = 3; nup <= n_sites; ++nup) {
+  for (int64_t nup = 3; nup <= n_sites; ++nup) {
     // Log("Spinhalf Symmetric N: {}, nup: {}", n_sites, nup);
     // Compute the full spectrum from non-symmetrized block
     auto spinhalf_nosym = Spinhalf(n_sites, nup);
@@ -28,15 +28,15 @@ void test_spinhalf_symmetric_spectra(BondList bondlist,
     if (spinhalf_nosym.size() < 1000) {
       std::vector<double> eigs_sym;
 
-      auto H_nosym = matrix_cplx(bondlist, spinhalf_nosym, spinhalf_nosym);
+      auto H_nosym = matrixC(bondlist, spinhalf_nosym, spinhalf_nosym);
 
       REQUIRE(arma::norm(H_nosym - H_nosym.t()) < 1e-8);
       arma::vec eigs_nosym;
       arma::eig_sym(eigs_nosym, H_nosym);
 
-      for (int k = 0; k < (int)irreps.size(); ++k) {
+      for (int64_t k = 0; k < (int64_t)irreps.size(); ++k) {
         auto irrep = irreps[k];
-        int multiplicity = multiplicities[k];
+        int64_t multiplicity = multiplicities[k];
         auto spinhalf = Spinhalf(n_sites, nup, space_group, irrep);
         // Log.out("nup: {}, k: {}, mult: {}, dim_nosym: {}, dim_sym: "
         //         "{} ",
@@ -45,14 +45,14 @@ void test_spinhalf_symmetric_spectra(BondList bondlist,
         if (spinhalf.size() > 0) {
 
           // Compute partial spectrum from symmetrized block
-          auto H_sym = matrix_cplx(bondlist, spinhalf, spinhalf);
+          auto H_sym = matrixC(bondlist, spinhalf, spinhalf);
           REQUIRE(arma::norm(H_sym - H_sym.t()) < 1e-12);
           arma::vec eigs_sym_k;
           arma::eig_sym(eigs_sym_k, H_sym);
 
           // Check whether results are the same for real blocks
-          if (is_real(spinhalf.irrep()) && bondlist.is_real()) {
-            auto H_sym_real = matrix_real(bondlist, spinhalf, spinhalf);
+          if (spinhalf.irrep().isreal() && bondlist.isreal()) {
+            auto H_sym_real = matrix(bondlist, spinhalf, spinhalf);
             arma::vec eigs_sym_k_real;
             arma::eig_sym(eigs_sym_k_real, H_sym_real);
 
@@ -60,7 +60,7 @@ void test_spinhalf_symmetric_spectra(BondList bondlist,
           }
           // append all the eigenvalues with multiplicity
           for (auto eig : eigs_sym_k)
-            for (int i = 0; i < multiplicity; ++i)
+            for (int64_t i = 0; i < multiplicity; ++i)
               eigs_sym.push_back(eig);
         }
       }
@@ -74,8 +74,8 @@ void test_spinhalf_symmetric_spectra(BondList bondlist,
 void test_spinhalf_symmetric_spectra_no_sz(BondList bondlist,
                                            PermutationGroup space_group,
                                            std::vector<Representation> irreps,
-                                           std::vector<int> multiplicities) {
-  int n_sites = space_group.n_sites();
+                                           std::vector<int64_t> multiplicities) {
+  int64_t n_sites = space_group.n_sites();
   assert(irreps.size() == multiplicities.size());
 
   // Log("Spinhalf Symmetric N: {}, nup: {}", n_sites, nup);
@@ -85,28 +85,28 @@ void test_spinhalf_symmetric_spectra_no_sz(BondList bondlist,
   if (spinhalf_nosym.size() < 1000) {
     std::vector<double> eigs_sym;
 
-    auto H_nosym = matrix_cplx(bondlist, spinhalf_nosym, spinhalf_nosym);
+    auto H_nosym = matrixC(bondlist, spinhalf_nosym, spinhalf_nosym);
     REQUIRE(H_nosym.is_hermitian());
     arma::vec eigs_nosym;
     arma::eig_sym(eigs_nosym, H_nosym);
 
-    for (int k = 0; k < (int)irreps.size(); ++k) {
+    for (int64_t k = 0; k < (int64_t)irreps.size(); ++k) {
       auto irrep = irreps[k];
-      int multiplicity = multiplicities[k];
+      int64_t multiplicity = multiplicities[k];
       auto spinhalf = Spinhalf(n_sites, space_group, irrep);
       if (spinhalf.size() > 0) {
 
         // Compute partial spectrum from symmetrized block
-        auto H_sym = matrix_cplx(bondlist, spinhalf, spinhalf);
+        auto H_sym = matrixC(bondlist, spinhalf, spinhalf);
         REQUIRE(arma::norm(H_sym - H_sym.t()) < 1e-12);
 
         arma::vec eigs_sym_k;
         arma::eig_sym(eigs_sym_k, H_sym);
 
         auto eigs_sym_k_sz = std::vector<double>();
-        for (int nup = 0; nup <= n_sites; ++nup) {
+        for (int64_t nup = 0; nup <= n_sites; ++nup) {
           auto spinhalf_sz = Spinhalf(n_sites, nup, space_group, irrep);
-          auto H_sym_sz = matrix_cplx(bondlist, spinhalf_sz, spinhalf_sz);
+          auto H_sym_sz = matrixC(bondlist, spinhalf_sz, spinhalf_sz);
           arma::vec es;
           arma::eig_sym(es, H_sym_sz);
           for (auto e : es)
@@ -117,8 +117,8 @@ void test_spinhalf_symmetric_spectra_no_sz(BondList bondlist,
         REQUIRE(close(eigs_sym_k, arma::vec(eigs_sym_k_sz)));
 
         // Check whether results are the same for real blocks
-        if (is_real(spinhalf.irrep()) && bondlist.is_real()) {
-          auto H_sym_real = matrix_real(bondlist, spinhalf, spinhalf);
+        if (spinhalf.irrep().isreal() && bondlist.isreal()) {
+          auto H_sym_real = matrix(bondlist, spinhalf, spinhalf);
 
           arma::vec eigs_sym_k_real;
           arma::eig_sym(eigs_sym_k_real, H_sym);
@@ -126,7 +126,7 @@ void test_spinhalf_symmetric_spectra_no_sz(BondList bondlist,
         }
         // append all the eigenvalues with multiplicity
         for (auto eig : eigs_sym_k)
-          for (int i = 0; i < multiplicity; ++i)
+          for (int64_t i = 0; i < multiplicity; ++i)
             eigs_sym.push_back(eig);
       }
     }
@@ -135,7 +135,7 @@ void test_spinhalf_symmetric_spectra_no_sz(BondList bondlist,
   }
 }
 
-void test_spinhalf_symmetric_spectrum_chains(int n_sites) {
+void test_spinhalf_symmetric_spectrum_chains(int64_t n_sites) {
   using namespace hydra::testcases::spinhalf;
   using hydra::testcases::electron::get_cyclic_group_irreps_mult;
 
@@ -153,7 +153,7 @@ void test_spinhalf_symmetric_spectrum_chains(int n_sites) {
 TEST_CASE("spinhalf_symmetric_matrix", "[spinhalf]") {
 
   // Test linear Heisenberg chains
-  for (int n_sites = 3; n_sites < 7; ++n_sites) {
+  for (int64_t n_sites = 3; n_sites < 7; ++n_sites) {
     test_spinhalf_symmetric_spectrum_chains(n_sites);
   }
 
@@ -169,7 +169,7 @@ TEST_CASE("spinhalf_symmetric_matrix", "[spinhalf]") {
     bondlist["Jx1"] = 0.76;
     bondlist["Jx2"] = 0.46;
 
-    std::vector<std::pair<std::string, int>> rep_name_mult = {
+    std::vector<std::pair<std::string, int64_t>> rep_name_mult = {
         {"Gamma.D6.A1", 1}, {"Gamma.D6.A2", 1}, {"Gamma.D6.B1", 1},
         {"Gamma.D6.B2", 1}, {"Gamma.D6.E1", 2}, {"Gamma.D6.E2", 2},
         {"K.D3.A1", 2},     {"K.D3.A2", 2},     {"K.D3.E", 4},
@@ -179,7 +179,7 @@ TEST_CASE("spinhalf_symmetric_matrix", "[spinhalf]") {
     auto space_group = PermutationGroup(permutations);
 
     std::vector<Representation> irreps;
-    std::vector<int> multiplicities;
+    std::vector<int64_t> multiplicities;
     for (auto [name, mult] : rep_name_mult) {
       irreps.push_back(read_representation(lfile, name));
       multiplicities.push_back(mult);
@@ -217,12 +217,12 @@ TEST_CASE("spinhalf_symmetric_matrix", "[spinhalf]") {
     auto permutations = hydra::read_permutations(lfile);
     auto space_group = PermutationGroup(permutations);
 
-    int n_sites = 12;
-    int n_up = 6;
+    int64_t n_sites = 12;
+    int64_t n_up = 6;
     for (auto [name, energy] : rep_name_mult) {
       auto irrep = read_representation(lfile, name);
       auto spinhalf = Spinhalf(n_sites, n_up, space_group, irrep);
-      auto H = matrix_cplx(bondlist, spinhalf, spinhalf);
+      auto H = matrixC(bondlist, spinhalf, spinhalf);
       REQUIRE(arma::norm(H - H.t()) < 1e-12);
 
       arma::vec eigs;

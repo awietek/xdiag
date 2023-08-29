@@ -61,8 +61,8 @@ public:
   int64_t size() const;
   int64_t operator[](int64_t j) const;
 
-  bool is_complex(double precision = 1e-12) const;
-  bool is_real(double precision = 1e-12) const;
+  bool iscomplex(double precision = 1e-12) const;
+  bool isreal(double precision = 1e-12) const;
 
   bool operator==(const Bond &rhs) const;
 

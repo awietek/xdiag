@@ -13,17 +13,17 @@
 
 namespace hydra::symmetries {
 
-using span_size_t = gsl::span<int const>::size_type;
+using span_size_t = gsl::span<int64_t const>::size_type;
 
 template <typename bit_t, class StatesIndexing, class GroupAction>
-inline std::tuple<std::vector<bit_t>, std::vector<idx_t>, std::vector<int>,
-                  std::vector<std::pair<span_size_t, span_size_t>>,
-                  std::vector<double>>
+inline std::tuple<
+    std::vector<bit_t>, std::vector<int64_t>, std::vector<int64_t>,
+    std::vector<std::pair<span_size_t, span_size_t>>, std::vector<double>>
 representatives_indices_symmetries_limits_norms(
     StatesIndexing &&states_indexing, GroupAction &&group_action,
     Representation const &irrep) {
-  idx_t size = states_indexing.size();
-  std::vector<idx_t> idces(size, invalid_index);
+  int64_t size = states_indexing.size();
+  std::vector<int64_t> idces(size, invalid_index);
 
   // Compute all representatives
   std::vector<bit_t> reps;
@@ -40,28 +40,28 @@ representatives_indices_symmetries_limits_norms(
   }
   reps.shrink_to_fit();
   norms.shrink_to_fit();
-  idx_t n_reps = reps.size();
+  int64_t n_reps = reps.size();
 
   // Determine the number of syms yielding the representative for each state
-  std::vector<int> n_syms_for_state(size, 0);
-  for (idx_t rep_idx = 0; rep_idx < n_reps; ++rep_idx) {
+  std::vector<int64_t> n_syms_for_state(size, 0);
+  for (int64_t rep_idx = 0; rep_idx < n_reps; ++rep_idx) {
     bit_t rep = reps[rep_idx];
 
-    for (int sym = 0; sym < group_action.n_symmetries(); ++sym) {
+    for (int64_t sym = 0; sym < group_action.n_symmetries(); ++sym) {
       bit_t state = group_action.apply(sym, rep);
-      idx_t idx = states_indexing.index(state);
+      int64_t idx = states_indexing.index(state);
       idces[idx] = rep_idx;
       ++n_syms_for_state[idx];
     }
   }
 
   // compute size and allocate syms array
-  idx_t n_syms =
+  int64_t n_syms =
       std::accumulate(n_syms_for_state.begin(), n_syms_for_state.end(), 0);
-  std::vector<int> syms(n_syms, 0);
+  std::vector<int64_t> syms(n_syms, 0);
 
   // compute the sym offsets
-  std::vector<int> n_syms_for_state_offset(size, 0);
+  std::vector<int64_t> n_syms_for_state_offset(size, 0);
 
   // std::exclusive_scan(n_syms_for_state.begin(), n_syms_for_state.end(),
   //                     n_syms_for_state_offset.begin(), 0);
@@ -71,7 +71,7 @@ representatives_indices_symmetries_limits_norms(
 
   // set the sym_limits
   std::vector<std::pair<span_size_t, span_size_t>> sym_limits(size);
-  for (idx_t idx = 0; idx < size; ++idx) {
+  for (int64_t idx = 0; idx < size; ++idx) {
     sym_limits[idx] = {n_syms_for_state_offset[idx], n_syms_for_state[idx]};
   }
 
@@ -80,15 +80,15 @@ representatives_indices_symmetries_limits_norms(
 
   // calculate the symmetries yielding the representative
   auto const &group = group_action.permutation_group();
-  for (idx_t rep_idx = 0; rep_idx < n_reps; ++rep_idx) {
+  for (int64_t rep_idx = 0; rep_idx < n_reps; ++rep_idx) {
     bit_t rep = reps[rep_idx];
 
-    for (int sym = 0; sym < group_action.n_symmetries(); ++sym) {
+    for (int64_t sym = 0; sym < group_action.n_symmetries(); ++sym) {
       bit_t state = group_action.apply(sym, rep);
-      idx_t idx = states_indexing.index(state);
+      int64_t idx = states_indexing.index(state);
 
-      int sym_inv = group.inverse(sym);
-      idx_t idx_sym = n_syms_for_state_offset[idx] + n_syms_for_state[idx]++;
+      int64_t sym_inv = group.inverse(sym);
+      int64_t idx_sym = n_syms_for_state_offset[idx] + n_syms_for_state[idx]++;
       syms[idx_sym] = sym_inv;
     }
   }
@@ -97,7 +97,8 @@ representatives_indices_symmetries_limits_norms(
 }
 
 template <typename bit_t, class StatesIndexing, class GroupAction>
-inline std::tuple<std::vector<bit_t>, std::vector<idx_t>, std::vector<int>,
+inline std::tuple<std::vector<bit_t>, std::vector<int64_t>,
+                  std::vector<int64_t>,
                   std::vector<std::pair<span_size_t, span_size_t>>>
 representatives_indices_symmetries_limits(StatesIndexing &&states_indexing,
                                           GroupAction &&group_action) {
@@ -112,7 +113,7 @@ representatives_indices_symmetries_limits(StatesIndexing &&states_indexing,
 template <typename bit_t, class States, class GroupAction>
 inline std::tuple<std::vector<bit_t>, std::vector<double>,
                   std::vector<std::pair<span_size_t, span_size_t>>,
-                  std::vector<idx_t>, idx_t>
+                  std::vector<int64_t>, int64_t>
 electron_dns_norms_limits_offset_size(std::vector<bit_t> const &reps_up,
                                       States &&states_dns,
                                       GroupAction &&group_action,
@@ -121,7 +122,7 @@ electron_dns_norms_limits_offset_size(std::vector<bit_t> const &reps_up,
   std::vector<bit_t> dns_storage;
   std::vector<double> norms_storage;
   std::vector<std::pair<span_size_t, span_size_t>> dns_limits(reps_up.size());
-  std::vector<idx_t> ups_offset((reps_up.size()));
+  std::vector<int64_t> ups_offset((reps_up.size()));
 
   // if ups have trivial stabilizer, dns  are stored in front
   for (bit_t dns : states_dns) {
@@ -129,8 +130,8 @@ electron_dns_norms_limits_offset_size(std::vector<bit_t> const &reps_up,
     norms_storage.push_back(1.0);
   }
 
-  idx_t size = 0;
-  idx_t idx_up = 0;
+  int64_t size = 0;
+  int64_t idx_up = 0;
   for (bit_t ups : reps_up) {
     ups_offset[idx_up] = size;
     auto syms = mapping_syms(ups, ups, group_action);

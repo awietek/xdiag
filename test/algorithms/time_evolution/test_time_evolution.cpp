@@ -15,7 +15,7 @@ using namespace hydra;
 using namespace std;
 using namespace arma;
 
-TEST_CASE("analytic_case_free_particle_1D", "[time_evolution]") {
+TEST_CASE("analytic_case_free_particle_1D", "[time_evolution]") try {
   Log("testing time evolution: analytic_case_free_particle_1D");
   Log.set_verbosity(0);
 
@@ -54,11 +54,12 @@ TEST_CASE("analytic_case_free_particle_1D", "[time_evolution]") {
   bonds["t"] = t;
   bonds["U"] = 1;
 
-  auto psi_0_list = ProductState();
-  for (int i = 0; i < n_sites; i++)
-    psi_0_list << "Emp";
+  std::vector<std::string> psi_0_list;
+  for (int i = 0; i < n_sites; i++) {
+    psi_0_list.push_back(std::string("Emp"));
+  }
   psi_0_list[0] = "Up";
-  auto psi_0 = State(block, psi_0_list);
+  auto psi_0 = product_state(block, psi_0_list);
 
   // seems to be accurate for times up towards 10^5
   arma::vec times = arma::logspace(-3, 1, 10);
@@ -70,7 +71,7 @@ TEST_CASE("analytic_case_free_particle_1D", "[time_evolution]") {
       arma::cx_vec w_analytic = psi_analytic(time);
 
       // norm is one so no division here by norm of true
-      auto eps = arma::norm(w_expokit.vector() - w_analytic);
+      auto eps = arma::norm(w_expokit.vectorC() - w_analytic);
 
       // cout << "err: " << eps / time << endl;
       // cout << "time = " << time << endl;
@@ -80,9 +81,11 @@ TEST_CASE("analytic_case_free_particle_1D", "[time_evolution]") {
       REQUIRE(eps < 4 * tol);
     }
   }
+} catch (std::exception const &e) {
+  hydra::traceback(e);
 }
 
-TEST_CASE("analytic_case_free_particle_2D", "[time_evolution]") {
+TEST_CASE("analytic_case_free_particle_2D", "[time_evolution]") try {
   Log("testing time evolution: analytic_case_free_particle_2D");
   Log.set_verbosity(0);
 
@@ -152,11 +155,12 @@ TEST_CASE("analytic_case_free_particle_2D", "[time_evolution]") {
   bonds["t1"] = t1;
   bonds["U"] = 1;
 
-  auto psi_0_list = ProductState();
-  for (int i = 0; i < n_sites; i++)
-    psi_0_list << "Emp";
+  std::vector<std::string> psi_0_list;
+  for (int i = 0; i < n_sites; i++) {
+    psi_0_list.push_back(std::string("Emp"));
+  }
   psi_0_list[0] = "Up";
-  auto psi_0 = State(block, psi_0_list);
+  auto psi_0 = product_state(block, psi_0_list);
 
   // seems to be accurate for times up towards 10^5
   arma::vec times = arma::logspace(-3, 1, 10);
@@ -168,7 +172,7 @@ TEST_CASE("analytic_case_free_particle_2D", "[time_evolution]") {
       arma::cx_vec w_analytic = psi_analytic(time);
 
       // norm is one so no division here by norm of true
-      auto eps = arma::norm(w_expokit.vector() - w_analytic);
+      auto eps = arma::norm(w_expokit.vectorC() - w_analytic);
 
       // cout << "tol: " << tol << endl;
       // cout << "err: " << eps << endl;
@@ -182,9 +186,11 @@ TEST_CASE("analytic_case_free_particle_2D", "[time_evolution]") {
       REQUIRE(eps < 4 * tol);
     }
   }
+} catch (std::exception const &e) {
+  hydra::traceback(e);
 }
 
-TEST_CASE("tj_complex_timeevo", "[time_evolution]") {
+TEST_CASE("tj_complex_timeevo", "[time_evolution]") try {
   Log("testing time evolution: tj_complex_timeevo");
   Log.set_verbosity(0);
   int L = 3;
@@ -223,10 +229,11 @@ TEST_CASE("tj_complex_timeevo", "[time_evolution]") {
   pstate[n_sites / 2] = "Emp";
   auto block = tJ(n_sites, n_sites / 2, n_sites / 2);
 
-  auto H = matrix_cplx(bonds, block);
+  auto H = matrixC(bonds, block);
   HydraPrint(block);
   HydraPrint(pstate);
-  auto psi_0 = StateCplx(block, pstate);
+  auto psi_0 = State(block, false);
+  hydra::fill(psi_0, pstate);
 
   arma::vec times = arma::logspace(-1, 1, 3);
 
@@ -234,9 +241,9 @@ TEST_CASE("tj_complex_timeevo", "[time_evolution]") {
     std::vector<double> tols = {1e-2, 1e-6, 1e-10, 1e-12};
     for (auto tol : tols) {
       auto psi = time_evolve(bonds, psi_0, time, tol);
-      cx_vec psi2 = expm(cx_mat(-1.0i * time * H)) * psi_0.vector();
+      cx_vec psi2 = expm(cx_mat(-1.0i * time * H)) * psi_0.vectorC();
 
-      double eps = norm(psi2 - psi.vector());
+      double eps = norm(psi2 - psi.vectorC());
       // cout << "tol: " << tol << endl;
       // cout << "err: " << eps << endl;
       // cout << "time = " << time << endl;
@@ -249,4 +256,6 @@ TEST_CASE("tj_complex_timeevo", "[time_evolution]") {
       REQUIRE(eps < 4 * tol);
     }
   }
+} catch (std::exception const &e) {
+  hydra::traceback(e);
 }

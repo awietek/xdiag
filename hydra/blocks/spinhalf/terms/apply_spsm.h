@@ -3,7 +3,7 @@
 #include <functional>
 #include <string>
 
-#include <hydra/bitops/bitops.h>
+#include <hydra/bits/bitops.h>
 #include <hydra/common.h>
 
 #include <hydra/blocks/spinhalf/terms/apply_term_offdiag_no_sym.h>
@@ -13,10 +13,10 @@ namespace hydra::spinhalf {
 
 // S+ or S- term: J S^+_i   OR   J S^-_i
 
-template <typename bit_t, typename coeff_t, bool symmetric, class IndexingIn,
-          class IndexingOut, class Fill>
-void apply_spsm(Bond const &bond, IndexingIn &&indexing_in,
-                IndexingOut &&indexing_out, Fill &&fill) {
+template <typename bit_t, typename coeff_t, bool symmetric, class BasisIn,
+          class BasisOut, class Fill>
+void apply_spsm(Bond const &bond, BasisIn &&basis_in,
+                BasisOut &&basis_out, Fill &&fill) {
   assert(bond.coupling_defined());
   assert(bond.type_defined());
   assert((bond.type() == "S+") || (bond.type() == "S-"));
@@ -47,10 +47,10 @@ void apply_spsm(Bond const &bond, IndexingIn &&indexing_in,
   // Dispatch either symmetric of unsymmetric term application
   if constexpr (symmetric) {
     spinhalf::apply_term_offdiag_sym<bit_t, coeff_t>(
-        indexing_in, indexing_out, non_zero_term, term_action, fill);
+        basis_in, basis_out, non_zero_term, term_action, fill);
   } else {
     spinhalf::apply_term_offdiag_no_sym<bit_t, coeff_t>(
-        indexing_in, indexing_out, non_zero_term, term_action, fill);
+        basis_in, basis_out, non_zero_term, term_action, fill);
   }
 }
 

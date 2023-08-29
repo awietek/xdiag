@@ -1,6 +1,5 @@
 #pragma once
 
-#include <hydra/bitops/bitops.h>
 #include <hydra/common.h>
 #include <hydra/operators/bond.h>
 
@@ -8,9 +7,9 @@
 
 namespace hydra::tj {
 
-template <typename bit_t, typename coeff_t, bool symmetric, class Indexing,
+template <typename bit_t, typename coeff_t, bool symmetric, class Basis,
           class Fill>
-void apply_ising(Bond const &bond, Indexing &&indexing, Fill &&fill) {
+void apply_ising(Bond const &bond, Basis &&basis, Fill &&fill) {
   assert(bond.coupling_defined());
   assert(bond.type_defined());
   assert(bond.size() == 2);
@@ -50,7 +49,7 @@ void apply_ising(Bond const &bond, Indexing &&indexing, Fill &&fill) {
     }
   };
 
-  tj::generic_term_diag<bit_t, coeff_t, symmetric>(indexing, term_action, fill);
+  tj::generic_term_diag<bit_t, coeff_t, symmetric>(basis, term_action, fill);
 }
 
 } // namespace hydra::tj

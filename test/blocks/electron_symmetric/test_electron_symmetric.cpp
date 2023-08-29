@@ -25,17 +25,17 @@ using namespace hydra::combinatorics;
 // }
 
 void test_electron_chain(int n_sites) {
-  using bitops::bits_to_string;
+  using bits::bits_to_string;
 
   Log("electron_symmetric: chain block test. N: {}", n_sites);
 
   // test cyclic group
   std::vector<Permutation> permutation_array;
-  for (int sym = 0; sym < n_sites; ++sym) {
+  for (int64_t sym = 0; sym < n_sites; ++sym) {
 
-    std::vector<int> pv;
-    for (int site = 0; site < n_sites; ++site) {
-      int newsite = (site + sym) % n_sites;
+    std::vector<int64_t> pv;
+    for (int64_t site = 0; site < n_sites; ++site) {
+      int64_t newsite = (site + sym) % n_sites;
       pv.push_back(newsite);
     }
     permutation_array.push_back(Permutation(pv));
@@ -45,18 +45,18 @@ void test_electron_chain(int n_sites) {
   // Create irrep with K momentum
   idx_t sum_of_dims = 0;
 
-  for (int nup = 0; nup <= n_sites; ++nup) {
-    for (int ndn = 0; ndn <= n_sites; ++ndn) {
+  for (int64_t nup = 0; nup <= n_sites; ++nup) {
+    for (int64_t ndn = 0; ndn <= n_sites; ++ndn) {
       idx_t sum_of_dims_updn = 0;
 
-      for (int k = 0; k < n_sites; ++k) {
+      for (int64_t k = 0; k < n_sites; ++k) {
 
         // Log.out("N: {}, nup: {}, ndn: {}, k:{} ", n_sites, nup, ndn,
         // k);
 
         // Create characters
         std::vector<complex> chis;
-        for (int l = 0; l < n_sites; ++l)
+        for (int64_t l = 0; l < n_sites; ++l)
           chis.push_back({std::cos(2 * M_PI * l * k / n_sites),
                           std::sin(2 * M_PI * l * k / n_sites)});
         auto irrep = Representation(chis);
@@ -76,15 +76,15 @@ void test_electron_chain(int n_sites) {
 TEST_CASE("electron_symmetric", "[electron]") {
 
   // Test the Hubbard chain
-  for (int n_sites = 1; n_sites < 7; ++n_sites) {
+  for (int64_t n_sites = 1; n_sites < 7; ++n_sites) {
     test_electron_chain(n_sites);
   }
 
   // test a 3x3 triangular lattice
-  int n_sites = 9;
+  int64_t n_sites = 9;
   Log.out("electron_symmetric: triangular 3x3 block test");
 
-  std::vector<std::pair<std::string, int>> rep_name_mult = {
+  std::vector<std::pair<std::string, int64_t>> rep_name_mult = {
       {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
       {"K0.D3.A1", 1},    {"K0.D3.A2", 1},    {"K0.D3.E", 2},
       {"K1.D3.A1", 1},    {"K1.D3.A2", 1},    {"K1.D3.E", 2},
@@ -96,8 +96,8 @@ TEST_CASE("electron_symmetric", "[electron]") {
   auto space_group = PermutationGroup(permutations);
 
   idx_t sum_dim = 0;
-  for (int nup = 0; nup <= n_sites; ++nup) {
-    for (int ndn = 0; ndn <= n_sites; ++ndn) {
+  for (int64_t nup = 0; nup <= n_sites; ++nup) {
+    for (int64_t ndn = 0; ndn <= n_sites; ++ndn) {
       idx_t sum_dim_updn = 0;
 
       for (auto [name, mult] : rep_name_mult) {

@@ -7,14 +7,15 @@ set(HYDRA_LIBRARIES "${PROJECT_BINARY_DIR}/hydra/libhydra.a")
 add_library(hydra STATIC
   utils/iochecks.cpp
   utils/print.cpp
+  utils/error.cpp
   utils/say_hello.cpp
   utils/read_vectors.cpp
-  bitops/bitops.cpp
+  bits/bitops.cpp
   
-  parallel/omp/omp_utils.cpp
-  
+  parallel/omp/omp_utils.cpp  
   algebra/algebra.cpp
   algebra/matrix.cpp
+  algebra/apply.cpp
 
   io/args.cpp
   io/args_handler.cpp
@@ -33,45 +34,44 @@ add_library(hydra STATIC
   combinatorics/bit_patterns.cpp
   combinatorics/combinations.cpp
   combinatorics/combinations_index.cpp
-  
-  indexing/indexing_variants.cpp
-  indexing/lin_table.cpp
-  indexing/fermi_table.cpp
-  indexing/combinations_indexing.cpp
-  indexing/subsets_indexing.cpp
-  
-  indexing/spinhalf/indexing_sz.cpp
-  indexing/spinhalf/indexing_no_sz.cpp
-  indexing/spinhalf/indexing_symmetric_sz.cpp
-  indexing/spinhalf/indexing_symmetric_no_sz.cpp
-  indexing/spinhalf/indexing_sublattice.cpp
-  indexing/spinhalf/symmetric_iterator.cpp
+  combinatorics/combinations_indexing.cpp
+  combinatorics/subsets_indexing.cpp
+  combinatorics/lin_table.cpp
+  combinatorics/fermi_table.cpp
+    
+  basis/basis.cpp
 
-  indexing/tj/indexing_np.cpp
-  indexing/tj/indexing_symmetric_np.cpp
+  basis/spinhalf/basis_sz.cpp
+  basis/spinhalf/basis_no_sz.cpp
+  basis/spinhalf/basis_symmetric_sz.cpp
+  basis/spinhalf/basis_symmetric_no_sz.cpp
+  basis/spinhalf/basis_sublattice.cpp
 
-  indexing/electron/indexing_np.cpp
-  indexing/electron/indexing_no_np.cpp
-  indexing/electron/indexing_symmetric_np.cpp
-  indexing/electron/indexing_symmetric_no_np.cpp
+  basis/tj/basis_np.cpp
+  basis/tj/basis_symmetric_np.cpp
+
+  basis/electron/basis_np.cpp
+  basis/electron/basis_no_np.cpp
+  basis/electron/basis_symmetric_np.cpp
+  basis/electron/basis_symmetric_no_np.cpp
 
   blocks/blocks.cpp
-  blocks/utils/block_utils.cpp
+
   blocks/spinhalf/spinhalf.cpp
   blocks/spinhalf/spinhalf_matrix.cpp
   blocks/spinhalf/spinhalf_apply.cpp
-  blocks/spinhalf/terms/compile.cpp
-  blocks/spinhalf/terms/qns.cpp
+  blocks/spinhalf/compile.cpp
+  blocks/spinhalf/qns.cpp
 
   blocks/electron/electron.cpp
   blocks/electron/electron_matrix.cpp
   blocks/electron/electron_apply.cpp
-  blocks/electron/terms/compile.cpp
+  blocks/electron/compile.cpp
 
   blocks/tj/tj.cpp
   blocks/tj/tj_matrix.cpp
   blocks/tj/tj_apply.cpp
-  blocks/tj/terms/compile.cpp
+  blocks/tj/compile.cpp
 
   symmetries/qn.cpp
   symmetries/operations/symmetry_operations.cpp	
@@ -93,24 +93,26 @@ add_library(hydra STATIC
   operators/symmetrized_operator.cpp
   operators/non_branching_bonds.cpp
 
-  states/gpwf_spinhalf.cpp
+  states/gpwf.cpp
   states/product_state.cpp
   states/random_state.cpp
   states/state.cpp
-
+  
   random/random_utils.cpp
-  random/hashes.cpp
+  random/hash.cpp
 
   algorithms/lanczos/lanczos_convergence.cpp
   algorithms/lanczos/tmatrix.cpp
-  algorithms/lanczos/lanczos_eigenvector.cpp
-  algorithms/lanczos/lanczos_eigenvalues.cpp
+  algorithms/lanczos/eigvals_lanczos.cpp
+  algorithms/lanczos/eigs_lanczos.cpp
+  algorithms/sparse_diag.cpp
   algorithms/arnoldi/arnoldi_to_disk.cpp
   algorithms/gram_schmidt/gram_schmidt.cpp
   algorithms/gram_schmidt/orthogonalize.cpp
-  algorithms/sparse_diag.cpp
+
   algorithms/norm_estimate.cpp
   algorithms/time_evolution/zahexpv.cpp
+  algorithms/time_evolution/exp_sym_v.cpp
   algorithms/time_evolution/time_evolution.cpp
   algorithms/time_evolution/pade_matrix_exponential.cpp
 )

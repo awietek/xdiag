@@ -4,29 +4,29 @@
 
 #include "../electron/testcases_electron.h"
 #include "../tj/testcases_tj.h"
-#include <hydra/blocks/tj/tj_apply.h>
 #include <hydra/algebra/matrix.h>
 #include <hydra/algorithms/sparse_diag.h>
+#include <hydra/blocks/tj/tj_apply.h>
 #include <hydra/utils/close.h>
 
 using namespace hydra;
 
 void test_apply_tj_symmetric(BondList bondlist, PermutationGroup space_group,
                              std::vector<Representation> irreps) {
-  int n_sites = space_group.n_sites();
+  int64_t n_sites = space_group.n_sites();
 
-  for (int nup = 0; nup <= n_sites; ++nup) {
-    for (int ndn = 0; ndn <= n_sites; ++ndn) {
+  for (int64_t nup = 0; nup <= n_sites; ++nup) {
+    for (int64_t ndn = 0; ndn <= n_sites; ++ndn) {
 
       if (nup + ndn > n_sites)
         continue;
 
-      for (int k = 0; k < (int)irreps.size(); ++k) {
+      for (int64_t k = 0; k < (int64_t)irreps.size(); ++k) {
         auto irrep = irreps[k];
         auto block = tJ(n_sites, nup, ndn, space_group, irrep);
 
         if (block.size() > 0) {
-          auto H_sym = matrix_cplx(bondlist, block, block);
+          auto H_sym = matrixC(bondlist, block, block);
           REQUIRE(arma::norm(H_sym - H_sym.t()) < 1e-12);
 
           // Check whether apply gives the same as matrix multiplication
@@ -40,14 +40,14 @@ void test_apply_tj_symmetric(BondList bondlist, PermutationGroup space_group,
           arma::vec evals_mat;
           arma::eig_sym(evals_mat, H_sym);
           double e0_mat = evals_mat(0);
-          double e0_app = eig0_cplx(bondlist, block);
+          double e0_app = eigval0(bondlist, block);
 
           // Log.out("e0_mat: {}, e0_app: {}", e0_mat, e0_app);
           REQUIRE(std::abs(e0_mat - e0_app) < 1e-7);
 
           // Compute eigenvalues with real arithmitic
-          if (is_real(block.irrep()) && bondlist.is_real()) {
-            auto H_real = matrix_real(bondlist, block, block);
+          if (block.irrep().isreal() && bondlist.isreal()) {
+            auto H_real = matrix(bondlist, block, block);
             REQUIRE(arma::norm(H_real - H_real.t()) < 1e-12);
 
             arma::vec evals_mat_real;
@@ -55,7 +55,7 @@ void test_apply_tj_symmetric(BondList bondlist, PermutationGroup space_group,
             REQUIRE(close(evals_mat_real, evals_mat));
 
             double e0_mat_real = evals_mat_real(0);
-            double e0_app_real = eig0_real(bondlist, block);
+            double e0_app_real = eigval0(bondlist, block);
             REQUIRE(std::abs(e0_mat_real - e0_app_real) < 1e-7);
           }
         }
@@ -64,7 +64,7 @@ void test_apply_tj_symmetric(BondList bondlist, PermutationGroup space_group,
   }
 }
 
-void test_tj_symmetric_apply_chains(int n_sites) {
+void test_tj_symmetric_apply_chains(int64_t n_sites) {
   using namespace hydra::testcases::tj;
   using namespace hydra::testcases::electron;
 
@@ -82,7 +82,7 @@ TEST_CASE("tj_symmetric_apply", "[tj]") {
   using namespace hydra::testcases::electron;
 
   // Test linear chains
-  for (int n_sites = 2; n_sites < 8; ++n_sites) {
+  for (int64_t n_sites = 2; n_sites < 8; ++n_sites) {
     test_tj_symmetric_apply_chains(n_sites);
   }
   {
@@ -97,7 +97,7 @@ TEST_CASE("tj_symmetric_apply", "[tj]") {
     auto permutations = hydra::read_permutations(lfile);
     auto space_group = PermutationGroup(permutations);
 
-    std::vector<std::pair<std::string, int>> rep_name_mult = {
+    std::vector<std::pair<std::string, int64_t>> rep_name_mult = {
         {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
         {"K0.D3.A1", 1},    {"K0.D3.A2", 1},    {"K0.D3.E", 2},
         {"K1.D3.A1", 1},    {"K1.D3.A2", 1},    {"K1.D3.E", 2},
@@ -123,14 +123,14 @@ TEST_CASE("tj_symmetric_apply", "[tj]") {
     auto permutations = hydra::read_permutations(lfile);
     auto space_group = PermutationGroup(permutations);
 
-    std::vector<std::pair<std::string, int>> rep_name_mult = {
+    std::vector<std::pair<std::string, int64_t>> rep_name_mult = {
         {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
         {"K0.D3.A1", 1},    {"K0.D3.A2", 1},    {"K0.D3.E", 2},
         {"K1.D3.A1", 1},    {"K1.D3.A2", 1},    {"K1.D3.E", 2},
         {"Y.C1.A", 6}};
 
     std::vector<Representation> irreps;
-    std::vector<int> multiplicities;
+    std::vector<int64_t> multiplicities;
     for (auto [name, mult] : rep_name_mult) {
       irreps.push_back(read_representation(lfile, name));
       multiplicities.push_back(mult);

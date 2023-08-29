@@ -1,12 +1,7 @@
 #include "spinhalf_apply.h"
 
 #include <hydra/algebra/generic_operator.h>
-#include <hydra/blocks/spinhalf/terms/apply_terms_dispatch.h>
-#include <hydra/blocks/spinhalf/terms/compile.h>
-#include <hydra/blocks/spinhalf/terms/qns.h>
-#include <hydra/blocks/utils/block_utils.h>
-#include <hydra/operators/compiler.h>
-#include <hydra/utils/logger.h>
+#include <hydra/blocks/spinhalf/compile.h>
 
 namespace hydra {
 

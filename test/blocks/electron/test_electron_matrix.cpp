@@ -15,7 +15,7 @@ using namespace hydra;
 void test_electron_np_no_np_matrix(int n_sites, BondList bonds) {
 
   auto block_full = Electron(n_sites);
-  auto H_full = matrix_cplx(bonds, block_full, block_full);
+  auto H_full = matrixC(bonds, block_full, block_full);
   REQUIRE(H_full.is_hermitian(1e-12));
   arma::Col<double> eigs_full;
   arma::eig_sym(eigs_full, H_full);
@@ -25,7 +25,7 @@ void test_electron_np_no_np_matrix(int n_sites, BondList bonds) {
     for (int ndn = 0; ndn <= n_sites; ++ndn) {
 
       auto block = Electron(n_sites, nup, ndn);
-      auto H = matrix_cplx(bonds, block, block);
+      auto H = matrixC(bonds, block, block);
       REQUIRE(H.is_hermitian(1e-12));
 
       arma::Col<double> eigs;
@@ -56,7 +56,7 @@ TEST_CASE("electron_matrix", "[electron]") {
     bondlist << Bond("HOP", "T", {i, (i + 1) % n_sites});
   bondlist["T"] = 1.0;
   bondlist["U"] = 5.0;
-  auto H1 = matrix_real(bondlist, block, block);
+  auto H1 = matrix(bondlist, block, block);
   double tp = t;
   double tm = -t;
   double UU = U;
@@ -130,7 +130,7 @@ TEST_CASE("electron_matrix", "[electron]") {
     bondlist["T"] = 1.0;
     bondlist["U"] = U;
     double e0_exact = 0.5 * (U - sqrt(U * U + 16));
-    auto H = matrix_real(bondlist, block2, block2);
+    auto H = matrix(bondlist, block2, block2);
     REQUIRE(H.is_hermitian(1e-8));
     arma::Col<double> eigs;
     arma::eig_sym(eigs, H);
@@ -171,11 +171,11 @@ TEST_CASE("electron_matrix", "[electron]") {
           e0_exact += seigs(i);
 
         auto block3 = Electron(n_sites, nup, ndn);
-        auto Hr = matrix_real(bondlist, block3, block3);
+        auto Hr = matrix(bondlist, block3, block3);
         REQUIRE(Hr.is_hermitian(1e-8));
         arma::vec eigsr;
         arma::eig_sym(eigsr, Hr);
-        auto Hc = matrix_cplx(bondlist, block3, block3);
+        auto Hc = matrixC(bondlist, block3, block3);
         REQUIRE(Hc.is_hermitian(1e-8));
         arma::vec eigsc;
         arma::eig_sym(eigsc, Hc);
@@ -231,7 +231,7 @@ TEST_CASE("electron_matrix", "[electron]") {
           e0_exact += seigs_dn(i);
 
         auto block3 = Electron(n_sites, nup, ndn);
-        auto H = matrix_cplx(bondlist, block3, block3);
+        auto H = matrixC(bondlist, block3, block3);
         REQUIRE(H.is_hermitian(1e-8));
         arma::vec evecs;
         arma::eig_sym(evecs, H);
@@ -253,8 +253,8 @@ TEST_CASE("electron_matrix", "[electron]") {
 
     auto bonds = testcases::spinhalf::HB_alltoall(n_sites);
     bonds["U"] = 999999; // gap out doubly occupied sites
-    auto H_spinhalf = matrix_real(bonds, block_spinhalf, block_spinhalf);
-    auto H_electron = matrix_real(bonds, block_electron, block_electron);
+    auto H_spinhalf = matrix(bonds, block_spinhalf, block_spinhalf);
+    auto H_electron = matrix(bonds, block_electron, block_electron);
     REQUIRE(H_spinhalf.is_hermitian(1e-8));
     REQUIRE(H_electron.is_hermitian(1e-8));
 
@@ -281,7 +281,7 @@ TEST_CASE("electron_matrix", "[electron]") {
     for (int nup = 0; nup <= n_sites; ++nup)
       for (int ndn = 0; ndn <= n_sites; ++ndn) {
         auto block = Electron(n_sites, nup, ndn);
-        auto H = matrix_real(bondlist, block, block);
+        auto H = matrix(bondlist, block, block);
         REQUIRE(H.is_hermitian(1e-8));
         arma::vec eigs;
         arma::eig_sym(eigs, H);
@@ -297,7 +297,7 @@ TEST_CASE("electron_matrix", "[electron]") {
       for (int ndn = 0; ndn <= n_sites; ++ndn) {
 
         auto block = Electron(n_sites, nup, ndn);
-        auto H = matrix_real(bondlist, block, block);
+        auto H = matrix(bondlist, block, block);
         REQUIRE(H.is_hermitian(1e-8));
         arma::vec eigs;
         arma::eig_sym(eigs, H);
@@ -318,7 +318,7 @@ TEST_CASE("electron_matrix", "[electron]") {
     for (int nup = 0; nup <= N; ++nup)
       for (int ndn = 0; ndn <= N - nup; ++ndn) {
         auto block = Electron(N, nup, ndn);
-        auto H = matrix_cplx(bonds, block, block);
+        auto H = matrixC(bonds, block, block);
         REQUIRE(H.is_hermitian(1e-8));
       }
 
@@ -337,8 +337,8 @@ TEST_CASE("electron_matrix", "[electron]") {
       int ndn = N - nup;
       auto block1 = Electron(N, nup, ndn);
       auto block2 = Spinhalf(N, nup);
-      auto H1 = matrix_cplx(bonds, block1, block1);
-      auto H2 = matrix_cplx(bonds, block2, block2);
+      auto H1 = matrixC(bonds, block1, block1);
+      auto H2 = matrixC(bonds, block2, block2);
       arma::vec eigs1;
       arma::eig_sym(eigs1, H1);
 

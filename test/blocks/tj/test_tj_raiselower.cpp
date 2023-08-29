@@ -114,11 +114,11 @@ TEST_CASE("tj_raise_lower", "[tj]") {
                 auto op_i = Bond(op_i_str, i);
                 auto op_j = Bond(op_j_str, j);
 
-                auto op_i_m = matrix(op_i, block, block_i);
-                auto op_ij_m = matrix(op_j, block_i, block_ij);
+                auto op_i_m = matrixC(op_i, block, block_i);
+                auto op_ij_m = matrixC(op_j, block_i, block_ij);
 
-                auto op_j_m = matrix(op_j, block, block_j);
-                auto op_ji_m = matrix(op_i, block_j, block_ij);
+                auto op_j_m = matrixC(op_j, block, block_j);
+                auto op_ji_m = matrixC(op_i, block_j, block_ij);
 
                 cx_mat anti_comm = op_ji_m * op_j_m + op_ij_m * op_i_m;
 

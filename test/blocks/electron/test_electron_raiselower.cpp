@@ -28,8 +28,8 @@ TEST_CASE("electron_raise_lower", "[electron]") {
           for (auto op_j_str : op_strs) {
             auto op_i = Bond(op_i_str, i);
             auto op_j = Bond(op_j_str, j);
-            auto op_i_m = matrix(op_i, block);
-            auto op_j_m = matrix(op_j, block);
+            auto op_i_m = matrixC(op_i, block);
+            auto op_j_m = matrixC(op_j, block);
             cx_mat anti_comm = op_i_m * op_j_m + op_j_m * op_i_m;
 
             // Log("{} {}; {} {}", op_i_str, i, op_j_str, j);

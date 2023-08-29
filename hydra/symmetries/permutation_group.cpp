@@ -44,14 +44,14 @@ PermutationGroup::PermutationGroup(std::vector<Permutation> const &permutations)
   }
 
   // Check if inverse exists
-  int idx = 0;
+  int64_t idx = 0;
   for (auto p : permutations) {
     auto pinv = hydra::inverse(p);
     auto it = std::find(permutations.begin(), permutations.end(), pinv);
     if (it == permutations.end()) {
       Log.err("Error constructing PermutationGroup: inverse element not found");
     } else {
-      int idx_inv = std::distance(permutations.begin(), it);
+      int64_t idx_inv = std::distance(permutations.begin(), it);
       inverse_[idx] = idx_inv;
     }
     idx++;
@@ -61,19 +61,19 @@ PermutationGroup::PermutationGroup(std::vector<Permutation> const &permutations)
 PermutationGroup::PermutationGroup(io::FileTomlHandler &&hdl)
     : PermutationGroup(hdl.as<PermutationGroup>()) {}
 
-int PermutationGroup::n_sites() const { return n_sites_; }
-int PermutationGroup::n_symmetries() const { return n_symmetries_; }
-int PermutationGroup::size() const { return n_symmetries_; }
-Permutation const &PermutationGroup::operator[](int sym) const {
+int64_t PermutationGroup::n_sites() const { return n_sites_; }
+int64_t PermutationGroup::n_symmetries() const { return n_symmetries_; }
+int64_t PermutationGroup::size() const { return n_symmetries_; }
+Permutation const &PermutationGroup::operator[](int64_t sym) const {
   return permutations_[sym];
 }
-int PermutationGroup::inverse(int sym) const { return inverse_[sym]; }
+int64_t PermutationGroup::inverse(int64_t sym) const { return inverse_[sym]; }
 
 PermutationGroup
-PermutationGroup::subgroup(std::vector<int> const &symmetry_numbers) const {
+PermutationGroup::subgroup(std::vector<int64_t> const &symmetry_numbers) const {
   std::vector<Permutation> subgroup_permutations;
 
-  for (int n_sym : symmetry_numbers) {
+  for (int64_t n_sym : symmetry_numbers) {
 
     if ((0 > n_sym) || (n_sym >= n_symmetries_)) {
       Log.err("Error building subgroup of PermutationGroup: "

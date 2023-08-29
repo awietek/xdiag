@@ -3,6 +3,8 @@
 #include <iostream>
 
 #include <hydra/algebra/algebra.h>
+#include <hydra/algebra/apply.h>
+
 #include <hydra/algorithms/lanczos/lanczos_pro.h>
 #include <hydra/algorithms/sparse_diag.h>
 #include <hydra/io/file_toml.h>
@@ -155,7 +157,7 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
         Log("   nup: {} k: {}", nup, k);
         // HydraPrint(block);
 
-        auto rstate = random_state_cplx(block);
+        auto rstate = random_state(block, false);
         auto mult = [&bonds, &block](cx_vec const &v, cx_vec &w) {
           apply(bonds, block, v, block, w);
         };
@@ -166,7 +168,7 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
           continue;
         }
 
-        cx_vec v0 = rstate.vector();
+        cx_vec v0 = rstate.vectorC();
 
         double ortho_level = (n_iter > block.size()) ? 0 : 1e-8;
         auto res =
@@ -210,7 +212,7 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
         Log("   nup: {} k: {}", nup, k);
         // HydraPrint(block);
 
-        auto rstate = random_state_cplx(block);
+        auto rstate = random_state(block, false);
         auto mult = [&bonds, &block](cx_vec const &v, cx_vec &w) {
           apply(bonds, block, v, block, w);
         };
@@ -221,7 +223,7 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
           continue;
         }
 
-        cx_vec v0 = rstate.vector();
+        cx_vec v0 = rstate.vectorC();
 
         double ortho_level = (n_iter > block.size()) ? 0 : 1e-8;
         auto res =

@@ -14,8 +14,6 @@
 #include <hydra/combinatorics/bit_patterns.h>
 #include <hydra/combinatorics/combinations_index.h>
 
-#include <hydra/indexing/lin_table.h>
-
 #include <hydra/symmetries/group_action/group_action.h>
 #include <hydra/symmetries/group_action/group_action_lookup.h>
 
@@ -38,7 +36,7 @@ std::vector<Permutation> read_permutations(std::string filename) {
   while (tobeparsed.find("[Sites]") == std::string::npos)
     File >> tobeparsed;
   pos = tobeparsed.find('=');
-  int n_sites;
+  int64_t n_sites;
   if (pos != std::string::npos)
     n_sites = atoi(tobeparsed.substr(pos + 1, std::string::npos).c_str());
   else
@@ -50,7 +48,7 @@ std::vector<Permutation> read_permutations(std::string filename) {
     File >> tobeparsed;
 
   // Read all symmetries
-  int n_symmetries;
+  int64_t n_symmetries;
   pos = tobeparsed.find('=');
   if (pos != std::string::npos)
     n_symmetries = atoi(tobeparsed.substr(pos + 1, std::string::npos).c_str());
@@ -58,12 +56,12 @@ std::vector<Permutation> read_permutations(std::string filename) {
     n_symmetries = -1;
 
   lattice_symmetries.resize(n_symmetries);
-  for (int i = 0; i < n_symmetries; ++i) {
+  for (int64_t i = 0; i < n_symmetries; ++i) {
 
-    std::vector<int> pv(n_sites);
+    std::vector<int64_t> pv(n_sites);
     File >> tobeparsed;
-    for (int si = 0; si < n_sites; ++si) {
-      int tosite;
+    for (int64_t si = 0; si < n_sites; ++si) {
+      int64_t tosite;
       File >> tosite;
       pv[si] = tosite;
     }
@@ -76,8 +74,8 @@ std::vector<Permutation> read_permutations(std::string filename) {
 
 namespace hydra::symmetries {
 
-bool is_valid_permutation(int n_sites, const int *permutation) {
-  for (int i = 0; i < n_sites; ++i) {
+bool is_valid_permutation(int64_t n_sites, const int64_t *permutation) {
+  for (int64_t i = 0; i < n_sites; ++i) {
     if (std::find(permutation, permutation + n_sites, i) ==
         permutation + n_sites)
       return false;
@@ -87,21 +85,21 @@ bool is_valid_permutation(int n_sites, const int *permutation) {
 
 //////////////////////////////////////////////////////////
 template <typename bit_t>
-bit_t apply_permutation(bit_t state, int n_sites, const int *permutation) {
+bit_t apply_permutation(bit_t state, int64_t n_sites, const int64_t *permutation) {
   bit_t tstate = 0;
-  for (int site = 0; site < n_sites; ++site) {
+  for (int64_t site = 0; site < n_sites; ++site) {
     tstate |= ((state >> site) & 1) << permutation[site];
   }
   return tstate;
 }
 
-template uint16_t apply_permutation<uint16_t>(uint16_t, int, const int *);
-template uint32_t apply_permutation<uint32_t>(uint32_t, int, const int *);
-template uint64_t apply_permutation<uint64_t>(uint64_t, int, const int *);
+template uint16_t apply_permutation<uint16_t>(uint16_t, int64_t, const int64_t *);
+template uint32_t apply_permutation<uint32_t>(uint32_t, int64_t, const int64_t *);
+template uint64_t apply_permutation<uint64_t>(uint64_t, int64_t, const int64_t *);
 
 //////////////////////////////////////////////////////////
 template <typename bit_t>
-bit_t apply_permutation(bit_t state, gsl::span<int const> permutation) {
+bit_t apply_permutation(bit_t state, gsl::span<int64_t const> permutation) {
   bit_t tstate = 0;
   for (std::size_t site = 0; site < permutation.size(); ++site) {
     tstate |= ((state >> site) & 1) << permutation[site];
@@ -109,8 +107,8 @@ bit_t apply_permutation(bit_t state, gsl::span<int const> permutation) {
   return tstate;
 }
 
-template uint16_t apply_permutation<uint16_t>(uint16_t, gsl::span<int const>);
-template uint32_t apply_permutation<uint32_t>(uint32_t, gsl::span<int const>);
-template uint64_t apply_permutation<uint64_t>(uint64_t, gsl::span<int const>);
+template uint16_t apply_permutation<uint16_t>(uint16_t, gsl::span<int64_t const>);
+template uint32_t apply_permutation<uint32_t>(uint32_t, gsl::span<int64_t const>);
+template uint64_t apply_permutation<uint64_t>(uint64_t, gsl::span<int64_t const>);
 
 } // namespace hydra::symmetries

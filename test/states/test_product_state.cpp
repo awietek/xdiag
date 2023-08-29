@@ -21,7 +21,9 @@ TEST_CASE("product_state", "[states]") {
       // HydraPrint(pstate);
 
       auto block = Electron(n_sites);
-      auto psi = StateReal(block, pstate);
+      auto psi = State(block, true);
+      fill(psi, pstate);
+      
       int nup = 0;
       int ndn = 0;
       for (int i = 0; i < n_sites; ++i) {
@@ -52,7 +54,9 @@ TEST_CASE("product_state", "[states]") {
       }
 
       auto block2 = Electron(n_sites, nup, ndn);
-      auto psi2 = StateReal(block2, pstate);
+      auto psi2 = State(block2);
+      fill(psi2, pstate);
+      
       for (int i = 0; i < n_sites; ++i) {
         std::string p = pstate[i];
         auto sz = Bond("SZ", i);
@@ -104,7 +108,8 @@ TEST_CASE("product_state", "[states]") {
       }
 
       auto block2 = tJ(n_sites, nup, ndn);
-      auto psi2 = StateReal(block2, pstate);
+      auto psi2 = State(block2);
+      fill(psi2, pstate);
       for (int i = 0; i < n_sites; ++i) {
         std::string p = pstate[i];
         auto sz = Bond("SZ", i);
@@ -141,7 +146,8 @@ TEST_CASE("product_state", "[states]") {
 
       int nup = 0;
       auto block = Spinhalf(n_sites);
-      auto psi = StateReal(block, pstate);
+      auto psi = State(block);
+      fill(psi, pstate);
       for (int i = 0; i < n_sites; ++i) {
         std::string p = pstate[i];
 
@@ -157,7 +163,8 @@ TEST_CASE("product_state", "[states]") {
       }
 
       auto block2 = Spinhalf(n_sites, nup);
-      auto psi2 = StateReal(block2, pstate);
+      auto psi2 = State(block2);
+      fill(psi2, pstate);
       for (int i = 0; i < n_sites; ++i) {
         std::string p = pstate[i];
         auto sz = Bond("SZ", i);

@@ -2,144 +2,146 @@
 
 #include <functional>
 
+#include <hydra/basis/basis.h>
 #include <hydra/blocks/spinhalf/terms/apply_terms.h>
 #include <hydra/common.h>
-#include <hydra/indexing/indexing_variants.h>
 #include <hydra/utils/logger.h>
 
 namespace hydra {
 
 template <typename coeff_t, class fill_f>
 void apply_terms_dispatch(BondList const &bonds, Spinhalf const &block_in,
-                          Spinhalf const &block_out, fill_f fill) {
+                          Spinhalf const &block_out, fill_f fill) try {
   using namespace spinhalf;
-  using namespace indexing::spinhalf;
+  using namespace basis::spinhalf;
 
-  auto const &indexing_in = block_in.indexing();
-  auto const &indexing_out = block_out.indexing();
+  auto const &basis_in = block_in.basis();
+  auto const &basis_out = block_out.basis();
 
   std::visit(
-      variant::overloaded{
+      overload{
           // uint16_t
-          [&](IndexingSz<uint16_t> const &idx_in,
-              IndexingSz<uint16_t> const &idx_out) {
+          [&](BasisSz<uint16_t> const &idx_in,
+              BasisSz<uint16_t> const &idx_out) {
             apply_terms<uint16_t, coeff_t, false>(bonds, idx_in, idx_out, fill);
           },
-          [&](IndexingNoSz<uint16_t> const &idx_in,
-              IndexingNoSz<uint16_t> const &idx_out) {
+          [&](BasisNoSz<uint16_t> const &idx_in,
+              BasisNoSz<uint16_t> const &idx_out) {
             apply_terms<uint16_t, coeff_t, false>(bonds, idx_in, idx_out, fill);
           },
-          [&](IndexingSymmetricSz<uint16_t> const &idx_in,
-              IndexingSymmetricSz<uint16_t> const &idx_out) {
+          [&](BasisSymmetricSz<uint16_t> const &idx_in,
+              BasisSymmetricSz<uint16_t> const &idx_out) {
             apply_terms<uint16_t, coeff_t, true>(bonds, idx_in, idx_out, fill);
           },
-          [&](IndexingSymmetricNoSz<uint16_t> const &idx_in,
-              IndexingSymmetricNoSz<uint16_t> const &idx_out) {
+          [&](BasisSymmetricNoSz<uint16_t> const &idx_in,
+              BasisSymmetricNoSz<uint16_t> const &idx_out) {
             apply_terms<uint16_t, coeff_t, true>(bonds, idx_in, idx_out, fill);
           },
-          [&](IndexingSublattice<uint16_t, 1> const &idx_in,
-              IndexingSublattice<uint16_t, 1> const &idx_out) {
+          [&](BasisSublattice<uint16_t, 1> const &idx_in,
+              BasisSublattice<uint16_t, 1> const &idx_out) {
             apply_terms<uint16_t, coeff_t, true>(bonds, idx_in, idx_out, fill);
           },
-          [&](IndexingSublattice<uint16_t, 2> const &idx_in,
-              IndexingSublattice<uint16_t, 2> const &idx_out) {
+          [&](BasisSublattice<uint16_t, 2> const &idx_in,
+              BasisSublattice<uint16_t, 2> const &idx_out) {
             apply_terms<uint16_t, coeff_t, true>(bonds, idx_in, idx_out, fill);
           },
-          [&](IndexingSublattice<uint16_t, 3> const &idx_in,
-              IndexingSublattice<uint16_t, 3> const &idx_out) {
+          [&](BasisSublattice<uint16_t, 3> const &idx_in,
+              BasisSublattice<uint16_t, 3> const &idx_out) {
             apply_terms<uint16_t, coeff_t, true>(bonds, idx_in, idx_out, fill);
           },
-          [&](IndexingSublattice<uint16_t, 4> const &idx_in,
-              IndexingSublattice<uint16_t, 4> const &idx_out) {
+          [&](BasisSublattice<uint16_t, 4> const &idx_in,
+              BasisSublattice<uint16_t, 4> const &idx_out) {
             apply_terms<uint16_t, coeff_t, true>(bonds, idx_in, idx_out, fill);
           },
-          [&](IndexingSublattice<uint16_t, 5> const &idx_in,
-              IndexingSublattice<uint16_t, 5> const &idx_out) {
+          [&](BasisSublattice<uint16_t, 5> const &idx_in,
+              BasisSublattice<uint16_t, 5> const &idx_out) {
             apply_terms<uint16_t, coeff_t, true>(bonds, idx_in, idx_out, fill);
           },
 
           // uint32_t
-          [&](IndexingSz<uint32_t> const &idx_in,
-              IndexingSz<uint32_t> const &idx_out) {
+          [&](BasisSz<uint32_t> const &idx_in,
+              BasisSz<uint32_t> const &idx_out) {
             apply_terms<uint32_t, coeff_t, false>(bonds, idx_in, idx_out, fill);
           },
-          [&](IndexingNoSz<uint32_t> const &idx_in,
-              IndexingNoSz<uint32_t> const &idx_out) {
+          [&](BasisNoSz<uint32_t> const &idx_in,
+              BasisNoSz<uint32_t> const &idx_out) {
             apply_terms<uint32_t, coeff_t, false>(bonds, idx_in, idx_out, fill);
           },
-          [&](IndexingSymmetricSz<uint32_t> const &idx_in,
-              IndexingSymmetricSz<uint32_t> const &idx_out) {
+          [&](BasisSymmetricSz<uint32_t> const &idx_in,
+              BasisSymmetricSz<uint32_t> const &idx_out) {
             apply_terms<uint32_t, coeff_t, true>(bonds, idx_in, idx_out, fill);
           },
-          [&](IndexingSymmetricNoSz<uint32_t> const &idx_in,
-              IndexingSymmetricNoSz<uint32_t> const &idx_out) {
+          [&](BasisSymmetricNoSz<uint32_t> const &idx_in,
+              BasisSymmetricNoSz<uint32_t> const &idx_out) {
             apply_terms<uint32_t, coeff_t, true>(bonds, idx_in, idx_out, fill);
           },
-          [&](IndexingSublattice<uint32_t, 1> const &idx_in,
-              IndexingSublattice<uint32_t, 1> const &idx_out) {
+          [&](BasisSublattice<uint32_t, 1> const &idx_in,
+              BasisSublattice<uint32_t, 1> const &idx_out) {
             apply_terms<uint32_t, coeff_t, true>(bonds, idx_in, idx_out, fill);
           },
-          [&](IndexingSublattice<uint32_t, 2> const &idx_in,
-              IndexingSublattice<uint32_t, 2> const &idx_out) {
+          [&](BasisSublattice<uint32_t, 2> const &idx_in,
+              BasisSublattice<uint32_t, 2> const &idx_out) {
             apply_terms<uint32_t, coeff_t, true>(bonds, idx_in, idx_out, fill);
           },
-          [&](IndexingSublattice<uint32_t, 3> const &idx_in,
-              IndexingSublattice<uint32_t, 3> const &idx_out) {
+          [&](BasisSublattice<uint32_t, 3> const &idx_in,
+              BasisSublattice<uint32_t, 3> const &idx_out) {
             apply_terms<uint32_t, coeff_t, true>(bonds, idx_in, idx_out, fill);
           },
-          [&](IndexingSublattice<uint32_t, 4> const &idx_in,
-              IndexingSublattice<uint32_t, 4> const &idx_out) {
+          [&](BasisSublattice<uint32_t, 4> const &idx_in,
+              BasisSublattice<uint32_t, 4> const &idx_out) {
             apply_terms<uint32_t, coeff_t, true>(bonds, idx_in, idx_out, fill);
           },
-          [&](IndexingSublattice<uint32_t, 5> const &idx_in,
-              IndexingSublattice<uint32_t, 5> const &idx_out) {
+          [&](BasisSublattice<uint32_t, 5> const &idx_in,
+              BasisSublattice<uint32_t, 5> const &idx_out) {
             apply_terms<uint32_t, coeff_t, true>(bonds, idx_in, idx_out, fill);
           },
 
           // uint64_t
-          [&](IndexingSz<uint64_t> const &idx_in,
-              IndexingSz<uint64_t> const &idx_out) {
+          [&](BasisSz<uint64_t> const &idx_in,
+              BasisSz<uint64_t> const &idx_out) {
             apply_terms<uint64_t, coeff_t, false>(bonds, idx_in, idx_out, fill);
           },
-          [&](IndexingNoSz<uint64_t> const &idx_in,
-              IndexingNoSz<uint64_t> const &idx_out) {
+          [&](BasisNoSz<uint64_t> const &idx_in,
+              BasisNoSz<uint64_t> const &idx_out) {
             apply_terms<uint64_t, coeff_t, false>(bonds, idx_in, idx_out, fill);
           },
-          [&](IndexingSymmetricSz<uint64_t> const &idx_in,
-              IndexingSymmetricSz<uint64_t> const &idx_out) {
+          [&](BasisSymmetricSz<uint64_t> const &idx_in,
+              BasisSymmetricSz<uint64_t> const &idx_out) {
             apply_terms<uint64_t, coeff_t, true>(bonds, idx_in, idx_out, fill);
           },
-          [&](IndexingSymmetricNoSz<uint64_t> const &idx_in,
-              IndexingSymmetricNoSz<uint64_t> const &idx_out) {
+          [&](BasisSymmetricNoSz<uint64_t> const &idx_in,
+              BasisSymmetricNoSz<uint64_t> const &idx_out) {
             apply_terms<uint64_t, coeff_t, true>(bonds, idx_in, idx_out, fill);
           },
-          [&](IndexingSublattice<uint64_t, 1> const &idx_in,
-              IndexingSublattice<uint64_t, 1> const &idx_out) {
+          [&](BasisSublattice<uint64_t, 1> const &idx_in,
+              BasisSublattice<uint64_t, 1> const &idx_out) {
             apply_terms<uint64_t, coeff_t, true>(bonds, idx_in, idx_out, fill);
           },
-          [&](IndexingSublattice<uint64_t, 2> const &idx_in,
-              IndexingSublattice<uint64_t, 2> const &idx_out) {
+          [&](BasisSublattice<uint64_t, 2> const &idx_in,
+              BasisSublattice<uint64_t, 2> const &idx_out) {
             apply_terms<uint64_t, coeff_t, true>(bonds, idx_in, idx_out, fill);
           },
-          [&](IndexingSublattice<uint64_t, 3> const &idx_in,
-              IndexingSublattice<uint64_t, 3> const &idx_out) {
+          [&](BasisSublattice<uint64_t, 3> const &idx_in,
+              BasisSublattice<uint64_t, 3> const &idx_out) {
             apply_terms<uint64_t, coeff_t, true>(bonds, idx_in, idx_out, fill);
           },
-          [&](IndexingSublattice<uint64_t, 4> const &idx_in,
-              IndexingSublattice<uint64_t, 4> const &idx_out) {
+          [&](BasisSublattice<uint64_t, 4> const &idx_in,
+              BasisSublattice<uint64_t, 4> const &idx_out) {
             apply_terms<uint64_t, coeff_t, true>(bonds, idx_in, idx_out, fill);
           },
-          [&](IndexingSublattice<uint64_t, 5> const &idx_in,
-              IndexingSublattice<uint64_t, 5> const &idx_out) {
+          [&](BasisSublattice<uint64_t, 5> const &idx_in,
+              BasisSublattice<uint64_t, 5> const &idx_out) {
             apply_terms<uint64_t, coeff_t, true>(bonds, idx_in, idx_out, fill);
           },
 
           [&](auto const &idx_in, auto const &idx_out) {
-            Log.err("Error in apply_terms_dispatch: Invalid Indexing");
+            HydraThrow(std::logic_error, "Invalid basis or combination of bases");
             (void)idx_in;
             (void)idx_out;
           }},
-      indexing_in, indexing_out);
+      basis_in, basis_out);
+} catch (...) {
+  HydraRethrow("Unable to apply terms on Spinhalf block");
 }
 
 } // namespace hydra

@@ -5,12 +5,12 @@
 #include <iostream>
 
 #include "../../blocks/electron/testcases_electron.h"
+#include <hydra/algebra/matrix.h>
 #include <hydra/algorithms/arnoldi/arnoldi.h>
 #include <hydra/algorithms/arnoldi/arnoldi_to_disk.h>
+#include <hydra/algorithms/time_evolution/pade_matrix_exponential.h>
 #include <hydra/blocks/spinhalf/spinhalf.h>
 #include <hydra/states/random_state.h>
-#include <hydra/algebra/matrix.h>
-#include <hydra/algorithms/time_evolution/pade_matrix_exponential.h>
 
 // TODO: write tests for arnoldi_to_disk
 bool check_basis_orthonormality(arma::cx_mat const &Q, double tol = 1e-12) {
@@ -47,7 +47,7 @@ TEST_CASE("ritz_vecs_arnoldi", "[arnoldi]") {
   using namespace arma;
 
   Log("testing ritz_vecs_arnoldi");
-  
+
   // test getting eigenvalues/ eigenvectors for (U + U_dagg) and H
   int n_sites = 6;
   auto block = Spinhalf(n_sites);
@@ -60,8 +60,8 @@ TEST_CASE("ritz_vecs_arnoldi", "[arnoldi]") {
   bonds["J1"] = 1;
   bonds["J2"] = .5;
 
-  auto state_0 = StateCplx(block, RandomState(42));
-  cx_mat A = complex(0, -1) * matrix_cplx(bonds, block);
+  auto state_0 = random_state(block, false);
+  cx_mat A = complex(0, -1) * matrixC(bonds, block);
   cx_mat U = expm(A);
   cx_mat T = trans(U) + U;
 
@@ -69,36 +69,40 @@ TEST_CASE("ritz_vecs_arnoldi", "[arnoldi]") {
 
   {
     // getting the eigenvalues through arnoldi
-    auto arnoldi_out = arnoldi(apply_T, state_0.vector(), 70, 1e-12, false);
+    auto arnoldi_out = arnoldi(apply_T, state_0.vectorC(), 70, 1e-12, false);
     auto ritz_vals = arnoldi_out.first;
     auto ritz_vecs = arnoldi_out.second;
 
     REQUIRE(check_eigenvector_equation(apply_T, ritz_vecs, ritz_vals, 1e-12));
 
-    auto arnoldi_out_sym = arnoldi(apply_T, state_0.vector(), 70, 1e-12, true);
+    auto arnoldi_out_sym = arnoldi(apply_T, state_0.vectorC(), 70, 1e-12, true);
     auto ritz_vals_sym = arnoldi_out_sym.first;
     auto ritz_vecs_sym = arnoldi_out_sym.second;
 
-    REQUIRE(check_eigenvector_equation(apply_T, ritz_vecs_sym, ritz_vals_sym, 1e-12));
+    REQUIRE(check_eigenvector_equation(apply_T, ritz_vecs_sym, ritz_vals_sym,
+                                       1e-12));
     REQUIRE(check_basis_orthonormality(ritz_vecs_sym));
     REQUIRE(check_eigenvector_equation(apply_T, ritz_vecs_sym, ritz_vals_sym,
                                        1e-12));
   }
 
   {
-    std::string dumpdir = HYDRA_DIRECTORY"/misc/dump";
+    std::string dumpdir = HYDRA_DIRECTORY "/misc/dump";
     // getting the eigenvalues through arnoldi
-    auto [ritz_vals, h] = arnoldi(apply_T, state_0.vector(), dumpdir, 70, 1e-12, false);
+    auto [ritz_vals, h] =
+        arnoldi(apply_T, state_0.vectorC(), dumpdir, 70, 1e-12, false);
 
     auto arno_vecs = read_arnoldi_vectors_cplx(dumpdir);
 
     auto ritz_vecs = read_ritz_vectors_cplx(dumpdir);
     REQUIRE(check_eigenvector_equation(apply_T, ritz_vecs, ritz_vals, 1e-12));
-    auto [ritz_vals_sym, h_sym] = arnoldi(apply_T, state_0.vector(), dumpdir, 70, 1e-12, true);
+    auto [ritz_vals_sym, h_sym] =
+        arnoldi(apply_T, state_0.vectorC(), dumpdir, 70, 1e-12, true);
     auto ritz_vecs_sym = read_ritz_vectors_cplx(dumpdir);
     auto arno_vecs_sym = read_arnoldi_vectors_cplx(dumpdir);
 
-    REQUIRE(check_eigenvector_equation(apply_T, ritz_vecs_sym, ritz_vals_sym, 1e-12));
+    REQUIRE(check_eigenvector_equation(apply_T, ritz_vecs_sym, ritz_vals_sym,
+                                       1e-12));
     REQUIRE(check_basis_orthonormality(arno_vecs_sym));
     REQUIRE(check_basis_orthonormality(ritz_vecs_sym));
     REQUIRE(check_eigenvector_equation(apply_T, ritz_vecs_sym, ritz_vals_sym,

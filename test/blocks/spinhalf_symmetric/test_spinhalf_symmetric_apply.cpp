@@ -5,10 +5,10 @@
 
 #include <iostream>
 
-#include <hydra/blocks/spinhalf/spinhalf_apply.h>
 #include <hydra/algebra/algebra.h>
 #include <hydra/algebra/matrix.h>
 #include <hydra/algorithms/sparse_diag.h>
+#include <hydra/blocks/spinhalf/spinhalf_apply.h>
 #include <hydra/utils/close.h>
 
 using namespace hydra;
@@ -23,7 +23,7 @@ void test_spinhalf_symmetric_apply(BondList bondlist,
       auto block = Spinhalf(n_sites, nup, space_group, irrep);
 
       if (block.size() > 0) {
-        auto H = matrix_cplx(bondlist, block, block);
+        auto H = matrixC(bondlist, block, block);
         REQUIRE(arma::norm(H - H.t()) < 1e-12);
 
         // Check whether apply gives the same as matrix multiplication
@@ -38,20 +38,20 @@ void test_spinhalf_symmetric_apply(BondList bondlist,
         arma::eig_sym(evals_mat, H);
 
         double e0_mat = evals_mat(0);
-        double e0_app = eig0_cplx(bondlist, block);
+        double e0_app = eigval0(bondlist, block);
         // Log.out("e0_mat: {}, e0_app: {}", e0_mat, e0_app);
         REQUIRE(std::abs(e0_mat - e0_app) < 1e-7);
 
         // Compute eigenvalues with real arithmitic
-        if (is_real(block.irrep()) && bondlist.is_real()) {
-          auto H_real = matrix_real(bondlist, block, block);
+        if (block.irrep().isreal() && bondlist.isreal()) {
+          auto H_real = matrix(bondlist, block, block);
           arma::vec evals_mat_real;
           arma::eig_sym(evals_mat_real, H_real);
 
           REQUIRE(close(evals_mat_real, evals_mat));
 
           double e0_mat_real = evals_mat_real(0);
-          double e0_app_real = eig0_real(bondlist, block);
+          double e0_app_real = eigval0(bondlist, block);
           REQUIRE(std::abs(e0_mat_real - e0_app_real) < 1e-7);
         }
       }
@@ -68,7 +68,7 @@ void test_spinhalf_symmetric_apply_no_sz(BondList bondlist,
     auto block = Spinhalf(n_sites, space_group, irrep);
 
     if (block.size() > 0) {
-      auto H = matrix_cplx(bondlist, block, block);
+      auto H = matrixC(bondlist, block, block);
       REQUIRE(arma::norm(H - H.t()) < 1e-12);
       // Check whether apply gives the same as matrix multiplication
       arma::cx_vec v(block.size(), arma::fill::randn);
@@ -81,21 +81,21 @@ void test_spinhalf_symmetric_apply_no_sz(BondList bondlist,
       arma::eig_sym(evals_mat, H);
 
       double e0_mat = evals_mat(0);
-      double e0_app = eig0_cplx(bondlist, block);
+      double e0_app = eigval0(bondlist, block);
 
       // Log.out("e0_mat: {}, e0_app: {}", e0_mat, e0_app);
       REQUIRE(std::abs(e0_mat - e0_app) < 1e-7);
 
       // Compute eigenvalues with real arithmitic
-      if (is_real(block.irrep()) && bondlist.is_real()) {
-        auto H_real = matrix_real(bondlist, block, block);
+      if (block.irrep().isreal() && bondlist.isreal()) {
+        auto H_real = matrix(bondlist, block, block);
         arma::vec evals_mat_real;
         arma::eig_sym(evals_mat_real, H_real);
 
         REQUIRE(close(evals_mat_real, evals_mat));
 
         double e0_mat_real = evals_mat_real(0);
-        double e0_app_real = eig0_real(bondlist, block);
+        double e0_app_real = eigval0(bondlist, block);
         REQUIRE(std::abs(e0_mat_real - e0_app_real) < 1e-7);
       }
     }
@@ -179,7 +179,7 @@ TEST_CASE("spinhalf_symmetric_apply", "[spinhalf]") {
     for (auto [name, energy] : rep_name_mult) {
       auto irrep = read_representation(lfile, name);
       auto spinhalf = Spinhalf(n_sites, n_up, space_group, irrep);
-      auto e0 = eig0_cplx(bondlist, spinhalf);
+      auto e0 = eigval0(bondlist, spinhalf);
       Log("{} {:.12f} {:.12f}", name, e0, energy);
 
       REQUIRE(std::abs(e0 - energy) < 1e-10);

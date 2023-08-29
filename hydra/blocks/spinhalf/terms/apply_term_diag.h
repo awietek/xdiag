@@ -14,21 +14,21 @@ void apply_term_diag_to_spins(bit_t spins, idx_t idx, TermCoeff &&term_coeff,
   fill(idx, idx, coeff);
 }
 
-template <typename bit_t, typename coeff_t, class Indexing, class TermCoeff,
+template <typename bit_t, typename coeff_t, class Basis, class TermCoeff,
           class Fill>
-void apply_term_diag(Indexing &&indexing, TermCoeff &&term_coeff, Fill &&fill) {
+void apply_term_diag(Basis &&basis, TermCoeff &&term_coeff, Fill &&fill) {
 
 #ifdef _OPENMP
-    idx_t size = indexing.size();
+    idx_t size = basis.size();
 
 #pragma omp parallel for schedule(guided)
     for (idx_t idx = 0; idx < size; ++idx) {
-      bit_t spins = indexing.state(idx);
+      bit_t spins = basis.state(idx);
       apply_term_diag_to_spins<bit_t, coeff_t>(spins, idx, term_coeff, fill);
     }
 
 #else
-  for (auto [spins, idx] : indexing) {
+  for (auto [spins, idx] : basis) {
     apply_term_diag_to_spins<bit_t, coeff_t>(spins, idx, term_coeff, fill);
   }
 #endif

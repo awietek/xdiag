@@ -8,7 +8,10 @@
 
 namespace hydra {
 
-double norm_estimate(BondList const &bonds, Block const &block);
+double norm_estimate(BondList const &bonds, block_variant_t const &block);
+
+template <typename block_t>
+double norm_estimate(BondList const &bonds, block_t const &block);
 
 double
 norm_estimate_real(std::function<arma::vec(arma::vec const &)> const &apply_A,

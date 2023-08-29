@@ -3,11 +3,11 @@
 #include <iostream>
 
 #include "../electron/testcases_electron.h"
-#include <hydra/blocks/electron/electron_matrix.h>
-#include <hydra/blocks/electron/electron_apply.h>
 #include <hydra/algebra/algebra.h>
 #include <hydra/algebra/matrix.h>
 #include <hydra/algorithms/sparse_diag.h>
+#include <hydra/blocks/electron/electron_apply.h>
+#include <hydra/blocks/electron/electron_matrix.h>
 #include <hydra/utils/close.h>
 
 using namespace hydra;
@@ -15,14 +15,14 @@ using namespace hydra;
 void test_electron_symmetric_apply(BondList bondlist,
                                    PermutationGroup space_group,
                                    std::vector<Representation> irreps) {
-  int n_sites = space_group.n_sites();
+  int64_t n_sites = space_group.n_sites();
 
-  for (int nup = 0; nup <= n_sites; ++nup) {
-    for (int ndn = 0; ndn <= n_sites; ++ndn) {
+  for (int64_t nup = 0; nup <= n_sites; ++nup) {
+    for (int64_t ndn = 0; ndn <= n_sites; ++ndn) {
 
       for (auto irrep : irreps) {
         // Log("nup: {}, ndn: {}", nup, ndn);
-        // HydraPrint(irrep);
+        // HydraPrint64_t(irrep);
 
         // Create block and matrix for comparison
         // tic();
@@ -31,7 +31,7 @@ void test_electron_symmetric_apply(BondList bondlist,
 
         if (block.size() > 0) {
           // tic();
-          auto H = matrix_cplx(bondlist, block, block);
+          auto H = matrixC(bondlist, block, block);
           // toc("create matrix");
 
           // tic();
@@ -55,22 +55,22 @@ void test_electron_symmetric_apply(BondList bondlist,
           // toc("evals full");
           // tic();
           double e0_mat = evals_mat(0);
-          double e0_app = eig0_cplx(bondlist, block);
+          double e0_app = eigval0(bondlist, block);
           // Log.out("e0_mat: {}, e0_app: {}", e0_mat, e0_app);
           REQUIRE(std::abs(e0_mat - e0_app) < 1e-7);
           // toc("evals lcs");
 
           // Compute eigenvalues with real arithmitic
           // tic();
-          if (is_real(block.irrep()) && bondlist.is_real()) {
-            auto H_real = matrix_real(bondlist, block, block);
+          if (block.irrep().isreal() && bondlist.isreal()) {
+            auto H_real = matrix(bondlist, block, block);
             arma::vec evals_mat_real;
             arma::eig_sym(evals_mat_real, H_real);
 
             REQUIRE(close(evals_mat_real, evals_mat));
 
             double e0_mat_real = evals_mat_real(0);
-            double e0_app_real = eig0_real(bondlist, block);
+            double e0_app_real = eigval0(bondlist, block);
             REQUIRE(std::abs(e0_mat_real - e0_app_real) < 1e-7);
           }
           // toc("real");
@@ -80,7 +80,7 @@ void test_electron_symmetric_apply(BondList bondlist,
   }
 }
 
-void test_hubbard_symmetric_apply_chains(int n_sites) {
+void test_hubbard_symmetric_apply_chains(int64_t n_sites) {
   using namespace hydra::testcases::electron;
 
   // Without Heisenberg term
@@ -100,7 +100,7 @@ void test_hubbard_symmetric_apply_chains(int n_sites) {
 TEST_CASE("electron_symmetric_apply", "[electron]") {
 
   // Test linear chains
-  for (int n_sites = 2; n_sites < 7; ++n_sites) {
+  for (int64_t n_sites = 2; n_sites < 7; ++n_sites) {
     test_hubbard_symmetric_apply_chains(n_sites);
   }
 
@@ -115,7 +115,7 @@ TEST_CASE("electron_symmetric_apply", "[electron]") {
   auto permutations = hydra::read_permutations(lfile);
   auto space_group = PermutationGroup(permutations);
 
-  std::vector<std::pair<std::string, int>> rep_name_mult = {
+  std::vector<std::pair<std::string, int64_t>> rep_name_mult = {
       {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
       {"K0.D3.A1", 1},    {"K0.D3.A2", 1},    {"K0.D3.E", 2},
       {"K1.D3.A1", 1},    {"K1.D3.A2", 1},    {"K1.D3.E", 2},
@@ -149,7 +149,7 @@ TEST_CASE("electron_symmetric_apply", "[electron]") {
     auto permutations = hydra::read_permutations(lfile);
     space_group = PermutationGroup(permutations);
 
-    std::vector<std::pair<std::string, int>> rep_name_mult = {
+    std::vector<std::pair<std::string, int64_t>> rep_name_mult = {
         {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
         {"K0.D3.A1", 1},    {"K0.D3.A2", 1},    {"K0.D3.E", 2},
         {"K1.D3.A1", 1},    {"K1.D3.A2", 1},    {"K1.D3.E", 2},

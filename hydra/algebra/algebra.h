@@ -1,54 +1,38 @@
 #pragma once
 
+#include <hydra/blocks/blocks.h>
 #include <hydra/common.h>
 #include <hydra/operators/bondlist.h>
 #include <hydra/states/state.h>
-#include <hydra/blocks/blocks.h>
 
 namespace hydra {
 
-template <class coeff_t>
-coeff_t dot(State<coeff_t> const &v, State<coeff_t> const &w);
+double norm(State const &v);
 
-template <class coeff_t> real_t<coeff_t> norm(State<coeff_t> const &v);
+// dot
+double dot(State const &v, State const &w);
+complex dotC(State const &v, State const &w);
 
-// inner
-template <class coeff_t>
-coeff_t inner(BondList const &bonds, State<coeff_t> const &v);
-template <class coeff_t>
-coeff_t inner(Bond const &bond, State<coeff_t> const &v);
-template <class coeff_t>
-coeff_t inner(State<coeff_t> const &w, BondList const &bonds,
-              State<coeff_t> const &v);
-template <class coeff_t>
-coeff_t inner(State<coeff_t> const &w, Bond const &bond,
-              State<coeff_t> const &v);
+double inner(BondList const &bonds, State const &v);
+complex innerC(BondList const &bonds, State const &v);
+double inner(Bond const &bonds, State const &v);
+complex innerC(Bond const &bonds, State const &v);
 
-// apply
-template <class coeff_t>
-void apply(BondList const &bonds, Block const &block_in,
-           arma::Col<coeff_t> const &vec_in, Block const &block_out,
-           arma::Col<coeff_t> &vec_out);
-template <class coeff_t>
-void apply(BondList const &bonds, State<coeff_t> const &state_in,
-           State<coeff_t> &state_out);
-template <class coeff_t>
-void apply(Bond const &bond, State<coeff_t> const &state_in,
-           State<coeff_t> &state_out);
+State &operator*=(State &X, complex alpha);
+State &operator*=(State &X, double alpha);
+State &operator/=(State &X, complex alpha);
+State &operator/=(State &X, double alpha);
 
-// template <class coeff_t>
-// void apply(Bond const &bond, complex coeff, State<coeff_t> const &state_in,
-//            State<coeff_t> &state_out);
-// template <class coeff_t>
-// State<coeff_t> apply(Bond const &bond, State<coeff_t> const &state_in);
+// // inner
+// double inner(Bond const &bond, State const &v);
+// double inner(State const &w, BondList const &bonds, State const &v);
+// double inner(State const &w, Bond const &bond, State const &v);
+// complex innerC(BondList const &bonds, State const &v);
+// complex innerC(Bond const &bond, State const &v);
+// complex innerC(State const &w, BondList const &bonds, State const &v);
+// complex innerC(State const &w, Bond const &bond, State const &v);
 
-// scal
-State<complex> &operator/=(State<complex> &X, complex alpha);
-State<complex> &operator/=(State<complex> &X, double alpha);
-State<double> &operator/=(State<double> &X, double alpha);
-
-State<complex> &operator*=(State<complex> &X, complex alpha);
-State<complex> &operator*=(State<complex> &X, double alpha);
-State<double> &operator*=(State<double> &X, double alpha);
+// State &operator*=(State &X, complex alpha);
+// State &operator*=(State &X, double alpha);
 
 } // namespace hydra

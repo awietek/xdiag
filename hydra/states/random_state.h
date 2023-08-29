@@ -1,29 +1,28 @@
 #pragma once
 
-#include <hydra/blocks/blocks.h>
-#include <hydra/random/hash_functions.h>
-#include <hydra/random/hashes.h>
-#include <hydra/random/random_utils.h>
+#include <hydra/common.h>
 #include <hydra/states/state.h>
+#include <hydra/blocks/blocks.h>
 
 namespace hydra {
 
 class RandomState {
 public:
-  explicit RandomState(uint64_t seed = 42);
-  inline uint64_t seed() const { return seed_; }
+  RandomState(int64_t seed = 42, bool normalized = true);
+  int64_t seed() const;
+  bool normalized() const;
 
 private:
-  uint64_t seed_;
+  int64_t seed_;
+  bool normalized_;
 };
 
-template <typename coeff_t> class State;
-template <typename coeff_t>
-void fill(RandomState const &rstate, State<coeff_t> &state);
+void fill(State &state, RandomState const &rstate, int64_t col = 0);
 
-template <typename coeff_t = complex>
-State<coeff_t> random_state(Block const &block, uint64_t seed = 42);
-StateReal random_state_real(Block const &block, uint64_t seed = 42);
-StateCplx random_state_cplx(Block const &block, uint64_t seed = 42);
-  
+State random_state(block_variant_t const &block, bool real = true,
+                   int64_t seed = 42, bool normalized = true);
+template <typename block_t>
+State random_state(block_t const &block, bool real = true, int64_t seed = 42,
+                   bool normalized = true);
+
 } // namespace hydra

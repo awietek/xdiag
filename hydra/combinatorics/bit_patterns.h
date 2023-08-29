@@ -1,6 +1,6 @@
 #pragma once
 
-#include <hydra/bitops/bitops.h>
+#include <hydra/bits/bitops.h>
 #include <hydra/common.h>
 
 namespace hydra::combinatorics {

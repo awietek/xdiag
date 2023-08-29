@@ -1,6 +1,6 @@
 add_executable(tests
   tests.cpp
-  bitops/test_bitops.cpp
+  bits/test_bitops.cpp
 
   io/test_args.cpp
   io/test_file_toml.cpp
@@ -11,11 +11,11 @@ add_executable(tests
   combinatorics/test_bit_patterns.cpp
   combinatorics/test_combinations.cpp
   combinatorics/test_combinations_index.cpp
+  combinatorics/test_lin_table.cpp
+  combinatorics/test_fermi_table.cpp
 
-  indexing/test_lin_table.cpp
-  indexing/test_fermi_table.cpp
-  indexing/spinhalf/test_spinhalf_indexing_sublattice.cpp
-  indexing/spinhalf/test_spinhalf_indexing.cpp
+  basis/spinhalf/test_spinhalf_basis_sublattice.cpp
+  basis/spinhalf/test_spinhalf_basis.cpp
 
   symmetries/group_action/test_group_action.cpp
   symmetries/group_action/test_group_action_lookup.cpp
@@ -41,7 +41,6 @@ add_executable(tests
   blocks/spinhalf_symmetric/test_kitaev_gamma.cpp
 
   blocks/tj/testcases_tj.cpp
-  blocks/tj/test_tj_utils.cpp
   blocks/tj/test_tj_matrix.cpp
   blocks/tj/test_tj_apply.cpp
   blocks/tj/test_tj_raiselower.cpp
@@ -59,9 +58,10 @@ add_executable(tests
   blocks/electron_symmetric/test_electron_symmetric_matrix.cpp
   blocks/electron_symmetric/test_electron_symmetric_apply.cpp
 
-  algorithms/lanczos/test_lanczos_eigenvalues.cpp
+  algorithms/lanczos/test_eigvals_lanczos.cpp
+  algorithms/lanczos/test_eigs_lanczos.cpp
+  
   algorithms/lanczos/test_lanczos_pro.cpp
-  algorithms/lanczos/test_lanczos_eigenvector.cpp
   algorithms/arnoldi/test_arnoldi.cpp
   algorithms/gram_schmidt/test_gram_schmidt.cpp
   algorithms/test_exp_sym_v.cpp

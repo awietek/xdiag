@@ -173,7 +173,7 @@ template <> arma::umat FileTomlHandler::as<arma::umat>() const {
 
 template <> Permutation FileTomlHandler::as<Permutation>() const {
   auto array =
-      toml_array_to_std_vector<int>(get_toml_array(table_.at_path(key_)));
+      toml_array_to_std_vector<int64_t>(get_toml_array(table_.at_path(key_)));
   return Permutation(array);
 }
 
@@ -182,7 +182,7 @@ template <> PermutationGroup FileTomlHandler::as<PermutationGroup>() const {
       get_toml_array(table_.at_path(key_)));
   std::vector<Permutation> perms(mat.n_rows);
   for (std::size_t i = 0; i < mat.n_rows; ++i) {
-    perms[i] = Permutation(std::vector<int>(mat.begin_row(i), mat.end_row(i)));
+    perms[i] = Permutation(std::vector<int64_t>(mat.begin_row(i), mat.end_row(i)));
   }
   return PermutationGroup(perms);
 }
@@ -196,7 +196,7 @@ template <> Representation FileTomlHandler::as<Representation>() const {
         table_.at_path(key_ + std::string(".allowed_symmetries")).as_array();
     if (allowed_symmetries_entry) {
       auto allowed_symmetries =
-          toml_array_to_std_vector<int>(*allowed_symmetries_entry);
+          toml_array_to_std_vector<int64_t>(*allowed_symmetries_entry);
       return Representation(characters, allowed_symmetries);
     } else {
       return Representation(characters);
@@ -353,7 +353,7 @@ template <>
 void FileTomlHandler::operator=
     <PermutationGroup>(PermutationGroup const &group) {
   arma::imat mat(group.n_symmetries(), group.n_sites());
-  for (int i = 0; i < group.n_symmetries(); ++i) {
+  for (int64_t i = 0; i < group.n_symmetries(); ++i) {
     auto int_vec = group[i].array();
     std::vector<arma::sword> vec(int_vec.begin(), int_vec.end());
     mat.row(i) = arma::irowvec(vec);

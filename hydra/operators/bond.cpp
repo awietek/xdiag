@@ -128,7 +128,7 @@ template <typename coeff_t> coeff_t Bond::coupling(double precision) const {
             coupling_name_);
   }
 
-  if constexpr (hydra::is_real<coeff_t>()) {
+  if constexpr (hydra::isreal<coeff_t>()) {
     if (std::abs(imag(coupling_)) > precision) {
       Log.err("Error: cannot return real coupling for bond. Imaginary part "
               "non-negligible.");
@@ -155,7 +155,7 @@ int64_t Bond::site(int64_t j) const { return sites_.at(j); }
 int64_t Bond::size() const { return (int64_t)sites_.size(); }
 int64_t Bond::operator[](int64_t j) const { return site(j); }
 
-bool Bond::is_complex(double precision) const {
+bool Bond::iscomplex(double precision) const {
   if (type_defined()) {
 
     // Inherently complex interactions
@@ -197,7 +197,7 @@ bool Bond::is_complex(double precision) const {
   }
 }
 
-bool Bond::is_real(double precision) const { return !is_complex(precision); }
+bool Bond::isreal(double precision) const { return !iscomplex(precision); }
 bool Bond::operator==(const Bond &rhs) const {
   return (type_ == rhs.type_) &&
          arma::approx_equal(matrix_, rhs.matrix_, "both", 1e-12, 1e-12) &&

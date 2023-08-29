@@ -4,7 +4,7 @@
 
 #include <hydra/common.h>
 
-#include <hydra/indexing/indexing_variants.h>
+#include <hydra/basis/basis.h>
 
 #include <hydra/symmetries/permutation_group.h>
 #include <hydra/symmetries/representation.h>
@@ -13,7 +13,7 @@ namespace hydra {
 
 class Spinhalf {
 public:
-  using indexing_t = indexing::SpinhalfIndexing;
+  using basis_t = basis_spinhalf_variant_t;
 
   Spinhalf() = default;
   Spinhalf(int64_t n_sites);
@@ -33,12 +33,15 @@ public:
     return permutation_group_;
   }
   inline Representation const &irrep() const { return irrep_; }
+
   inline idx_t size() const { return size_; }
+  bool iscomplex(double precision = 1e-12) const;
+  bool isreal(double precision = 1e-12) const;
 
   bool operator==(Spinhalf const &rhs) const;
   bool operator!=(Spinhalf const &rhs) const;
 
-  indexing_t const &indexing() const;
+  basis_t const &basis() const;
 
 private:
   int64_t n_sites_;
@@ -50,7 +53,7 @@ private:
   int64_t n_sublat_;
   PermutationGroup permutation_group_;
   Representation irrep_;
-  std::shared_ptr<indexing_t> indexing_;
+  std::shared_ptr<basis_t> basis_;
   idx_t size_;
 };
 

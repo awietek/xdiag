@@ -70,7 +70,7 @@ void fill_random_normal_vector(arma::Col<coeff_t> &v, int seed) {
     auto [start, end] = omp::get_omp_start_end(v.size());
     int discard = random::random_normal_discard();
 
-    if constexpr (is_real<coeff_t>()) {
+    if constexpr (isreal<coeff_t>()) {
       std::mt19937 gen(seed);
       gen.discard(discard * start);
 

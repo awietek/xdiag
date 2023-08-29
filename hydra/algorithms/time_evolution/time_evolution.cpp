@@ -1,6 +1,8 @@
 #include "time_evolution.h"
 
 #include <hydra/algebra/algebra.h>
+#include <hydra/algebra/apply.h>
+
 #include <hydra/algorithms/time_evolution/exp_sym_v.h>
 #include <hydra/algorithms/time_evolution/zahexpv.h>
 #include <hydra/utils/timing.h>
@@ -8,9 +10,12 @@
 namespace hydra {
 
 std::tuple<double, double> time_evolve_inplace(BondList const &bonds,
-                                               StateCplx &state, double time,
+                                               State &state, double time,
                                                double precision, int m,
                                                double anorm, int nnorm) {
+  if (state.isreal()) {
+    state.make_complex();
+  }
   auto const &block = state.block();
 
   int iter = 1;
@@ -26,7 +31,7 @@ std::tuple<double, double> time_evolve_inplace(BondList const &bonds,
     return w;
   };
 
-  auto &v0 = state.vector();
+  auto v0 = state.vectorC(0, false);
   auto t0 = rightnow();
   auto [err, hump] =
       zahexpv(time, apply_A, v0, precision / time, m, anorm, nnorm);
@@ -34,45 +39,19 @@ std::tuple<double, double> time_evolve_inplace(BondList const &bonds,
   return {err, hump};
 }
 
-template <>
-StateCplx time_evolve(BondList const &bonds, StateReal state, double time,
-                      double precision, int m, double anorm, int nnorm) {
-  auto state_cplx = to_cplx(state);
-  auto [err, hump] =
-      time_evolve_inplace(bonds, state_cplx, time, precision, m, anorm, nnorm);
-  Log(2, "error (estimated): {}, hump: {}", err, hump);
-  return state_cplx;
-}
-
-template <>
-StateCplx time_evolve(BondList const &bonds, StateCplx state, double time,
-                      double precision, int m, double anorm, int nnorm) {
+State time_evolve(BondList const &bonds, State state, double time,
+                  double precision, int m, double anorm, int nnorm) {
   auto [err, hump] =
       time_evolve_inplace(bonds, state, time, precision, m, anorm, nnorm);
   Log(2, "error (estimated): {}, hump: {}", err, hump);
   return state;
 }
 
-template <typename coeff_t>
-double imag_time_evolve_inplace(BondList const &bonds, State<coeff_t> &state,
-                                double time, double precision) {
-  return exp_sym_v_inplace(bonds, state, -time, precision);
+State imag_time_evolve(BondList const &bonds, State const &state, double time,
+                       double precision = 1e-12, int64_t max_iterations = 1000,
+                       double deflation_tol = 1e-7) {
+  return exp_sym_v(bonds, state, -time, false, true, precision, max_iterations,
+                   deflation_tol);
 }
-
-template double imag_time_evolve_inplace(BondList const &, State<double> &,
-                                         double, double);
-template double imag_time_evolve_inplace(BondList const &, State<complex> &,
-                                         double, double);
-
-template <typename coeff_t>
-State<coeff_t> imag_time_evolve(BondList const &bonds, State<coeff_t> state,
-                                double time, double precision) {
-  imag_time_evolve_inplace(bonds, state, time, precision);
-  return state;
-}
-template State<double> imag_time_evolve(BondList const &, State<double>, double,
-                                        double);
-template State<complex> imag_time_evolve(BondList const &, State<complex>,
-                                         double, double);
 
 } // namespace hydra

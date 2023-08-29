@@ -13,20 +13,20 @@ namespace hydra {
 Representation::Representation(std::vector<complex> const &characters)
     : characters_(characters), characters_real_(characters.size()),
       allowed_symmetries_(characters.size(), 0) {
-  for (int idx = 0; idx < (int)characters.size(); ++idx) {
+  for (int64_t idx = 0; idx < (int64_t)characters.size(); ++idx) {
     characters_real_[idx] = std::real(characters[idx]);
   }
   std::iota(allowed_symmetries_.begin(), allowed_symmetries_.end(), 0);
 }
 
 Representation::Representation(std::vector<complex> const &characters,
-                               std::vector<int> const &allowed_symmetries)
+                               std::vector<int64_t> const &allowed_symmetries)
     : characters_(characters), characters_real_(characters.size()),
       allowed_symmetries_(allowed_symmetries) {
 
   assert(characters.size() == allowed_symmetries.size());
 
-  for (int idx = 0; idx < (int)characters.size(); ++idx) {
+  for (int64_t idx = 0; idx < (int64_t)characters.size(); ++idx) {
     characters_real_[idx] = std::real(characters[idx]);
   }
 }
@@ -35,7 +35,7 @@ Representation::Representation(io::FileTomlHandler &&hdl)
     : Representation(hdl.as<Representation>()) {}
 
 Representation
-Representation::subgroup(std::vector<int> const &symmetry_numbers) const {
+Representation::subgroup(std::vector<int64_t> const &symmetry_numbers) const {
   std::vector<complex> sub_characters;
   for (auto sym : symmetry_numbers)
     sub_characters.push_back(characters_[sym]);
@@ -60,7 +60,7 @@ Representation read_representation(std::string filename, std::string repname) {
   }
 
   std::vector<std::string> names;
-  std::vector<std::vector<int>> allowed_symmetries_arr;
+  std::vector<std::vector<int64_t>> allowed_symmetries_arr;
   std::vector<std::vector<complex>> characters_arr;
 
   std::string tobeparsed;
@@ -71,7 +71,7 @@ Representation read_representation(std::string filename, std::string repname) {
   while (tobeparsed.find("[Irreps]") == std::string::npos)
     File >> tobeparsed;
   pos = tobeparsed.find('=');
-  int nreps;
+  int64_t nreps;
   if (pos != std::string::npos)
     nreps = atoi(tobeparsed.substr(pos + 1, std::string::npos).c_str());
   else
@@ -80,7 +80,7 @@ Representation read_representation(std::string filename, std::string repname) {
 
   // Loop over all representations
   bool found = false;
-  for (int i = 0; i < nreps; ++i) {
+  for (int64_t i = 0; i < nreps; ++i) {
     File >> tobeparsed;
     while (tobeparsed.find("[Representation]") == std::string::npos)
       File >> tobeparsed;
@@ -88,14 +88,14 @@ Representation read_representation(std::string filename, std::string repname) {
 
     // Get name of representation
     std::string name = tobeparsed.substr(pos + 1, std::string::npos);
-    std::vector<int> allowed_ops;
+    std::vector<int64_t> allowed_ops;
     std::vector<complex> characters;
 
     // parse number of allowed operations
     while (tobeparsed.find("[AllowedOps]") == std::string::npos)
       File >> tobeparsed;
     pos = tobeparsed.find('=');
-    int n_allowed_ops;
+    int64_t n_allowed_ops;
     if (pos != std::string::npos)
       n_allowed_ops =
           atoi(tobeparsed.substr(pos + 1, std::string::npos).c_str());
@@ -103,8 +103,8 @@ Representation read_representation(std::string filename, std::string repname) {
       n_allowed_ops = -1;
 
     // parse allowed operations
-    for (int so = 0; so < n_allowed_ops; ++so) {
-      int w;
+    for (int64_t so = 0; so < n_allowed_ops; ++so) {
+      int64_t w;
       File >> w;
       if (!File.good()) {
         std::cerr << "Read Error in read_representation (I)" << std::endl;
@@ -119,7 +119,7 @@ Representation read_representation(std::string filename, std::string repname) {
     }
 
     // parse bloch factors
-    for (int so = 0; so < n_allowed_ops; ++so) {
+    for (int64_t so = 0; so < n_allowed_ops; ++so) {
       double re, im;
       File >> re >> im;
       if (!File.good()) {
@@ -142,14 +142,17 @@ Representation read_representation(std::string filename, std::string repname) {
   return Representation();
 }
 
-bool is_complex(Representation const &rep) {
-  for (int i = 0; i < rep.size(); ++i) {
-    if (std::abs(imag(rep.character(i))) > 1e-12)
+bool Representation::iscomplex(double precision) const {
+  for (auto c : characters_) {
+    if (std::abs(imag(c)) > precision) {
       return true;
+    }
   }
   return false;
 }
-bool is_real(Representation const &rep) { return !is_complex(rep); }
+bool Representation::isreal(double precision) const {
+  return !iscomplex(precision);
+}
 
 Representation trivial_representation(idx_t size) {
   return Representation(std::vector<complex>(size, {1.0, 0.0}));
@@ -161,7 +164,7 @@ Representation trivial_representation(PermutationGroup const &group) {
 
 Representation operator*(Representation const &r1, Representation const &r2) {
   if (r1.size() != r2.size()) {
-    throw symmetry_error(
+    throw std::runtime_error(
         "Error multiplying Representation: cannot construct product "
         "Representation, sizes not equal");
   }
@@ -170,7 +173,7 @@ Representation operator*(Representation const &r1, Representation const &r2) {
   auto c2 = r2.characters();
   auto c3 = std::vector<complex>(r1.size());
 
-  for (int i = 0; i < (int)r1.size(); ++i) {
+  for (int64_t i = 0; i < (int64_t)r1.size(); ++i) {
     c3[i] = c1[i] * c2[i];
   }
 

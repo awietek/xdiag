@@ -21,7 +21,7 @@ constexpr uint64_t fnv1_prime_uint64_t = 0x00000100000001B3;
 constexpr uint64_t fnv1_offset_uint64_t = 0xcbf29ce484222645;
 constexpr uint64_t fnv1_mask_uint64_t =
     fnv1_prime_uint64_t * fnv1_offset_uint64_t;
-constexpr uint64_t hash_fnv1(uint64_t bits) {
+constexpr uint64_t hash_fnv1(uint64_t bits) noexcept {
   return fnv1_mask_uint64_t ^ bits;
 }
 

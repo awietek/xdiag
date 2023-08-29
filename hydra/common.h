@@ -5,11 +5,12 @@
 #include <math.h>
 #include <utility>
 
-#include <hydra/bitops/bitops.h>
+#include <hydra/bits/bitops.h>
 #include <hydra/config.h>
-#define BSTR(x) bitops::bits_to_string(x, n_sites)
+#define BSTR(x) bits::bits_to_string(x, n_sites)
 
 #include <hydra/utils/logger.h>
+#include <hydra/utils/error.h>
 
 #include "extern/armadillo/armadillo"
 
@@ -38,24 +39,10 @@ template <class coeff_t> struct complex_type_struct<std::complex<coeff_t>> {
 
 } // namespace hydra::detail
 
-namespace hydra::variant {
-
-// Helper type for visitor patterns
-template <class... Ts> struct overloaded : Ts... {
-  using Ts::operator()...;
-};
-template <class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
-
-} // namespace hydra::variant
-
 namespace hydra {
 
-using std_bit_t = uint64_t;
-using number_t = int32_t;
-
 using idx_t = int64_t;
-
-using scomplex = std::complex<float>;
+using std_bit_t = uint64_t;
 using complex = std::complex<double>;
 
 using namespace std::literals::complex_literals;
@@ -65,10 +52,10 @@ inline complex operator*(int a, complex b) { return b * a; }
 inline complex operator/(complex a, int b) { return a / (double)b; }
 inline complex operator/(int a, complex b) { return (double)a / b; }
 
-template <class T> constexpr bool is_complex() {
+template <class T> constexpr bool iscomplex() {
   return detail::is_complex_t<T>::value;
 }
-template <class T> constexpr bool is_real() {
+template <class T> constexpr bool isreal() {
   return !detail::is_complex_t<T>::value;
 }
 
@@ -116,6 +103,21 @@ inline bool file_exists(std::string filename) {
   std::ifstream infile(filename.c_str());
   return infile.good();
 }
+
+template <typename coeff_t>
+void resize_vector(std::vector<coeff_t> &vec, int64_t size) {
+  try {
+    vec.resize(size);
+  } catch (...) {
+    rethrow(__func__, "Unable to resize vector");
+  }
+}
+
+// Helper type for visitor patterns
+template <class... Ts> struct overload : Ts... {
+  using Ts::operator()...;
+};
+template <class... Ts> overload(Ts...) -> overload<Ts...>;
 
 } // namespace hydra
 

@@ -1,33 +1,20 @@
 #include "blocks.h"
-#include <hydra/random/hashes.h>
 
 namespace hydra {
+int64_t size(block_variant_t const &block) {
+  return std::visit(overload{[&](auto &&blk) -> idx_t { return blk.size(); }},
+                    block);
+}
 
-Block::Block(Spinhalf const &variant) : variant_(variant) {}
-Block::Block(tJ const &variant) : variant_(variant) {}
-Block::Block(Electron const &variant) : variant_(variant) {}
-Block::Block(block_variant_t const &variant) : variant_(variant) {}
-
-idx_t Block::size() const {
+int64_t n_sites(block_variant_t const &block) {
   return std::visit(
-      variant::overloaded{[&](auto &&blk) -> idx_t { return blk.size(); }},
-      variant_);
+      overload{[&](auto &&blk) -> idx_t { return blk.n_sites(); }}, block);
 }
 
-uint64_t Block::hash() const {
-  return std::visit(variant::overloaded{[&](auto &&blk) -> idx_t {
-                      return random::hash(blk);
-                    }},
-                    variant_);
+bool isreal(block_variant_t const &block) {
+  return std::visit(overload{[&](auto &&blk) -> idx_t { return blk.isreal(); }},
+                    block);
 }
 
-block_variant_t &Block::variant() { return variant_; }
-block_variant_t const &Block::variant() const { return variant_; }
-
-bool Block::operator==(Block const &rhs) const {
-  return (variant_ == rhs.variant_);
-}
-
-bool Block::operator!=(Block const &rhs) const { return !operator==(rhs); }
-
+bool iscomplex(block_variant_t const &block) { return !isreal(block); }
 } // namespace hydra

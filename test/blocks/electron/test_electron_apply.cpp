@@ -6,6 +6,7 @@
 #include "testcases_electron.h"
 #include <hydra/blocks/electron/electron_matrix.h>
 #include <hydra/algebra/algebra.h>
+#include <hydra/algebra/apply.h>
 #include <hydra/algorithms/sparse_diag.h>
 #include <hydra/utils/close.h>
 
@@ -14,13 +15,13 @@ using namespace hydra;
 void test_electron_np_no_np_apply(int n_sites, BondList bonds) {
 
   auto block_full = Electron(n_sites);
-  auto e0_full = eig0_cplx(bonds, block_full);
+  auto e0_full = eigval0(bonds, block_full);
 
   std::vector<double> e0s;
   for (int nup = 0; nup <= n_sites; ++nup)
     for (int ndn = 0; ndn <= n_sites; ++ndn) {
       auto block = Electron(n_sites, nup, ndn);
-      auto e0 = eig0_cplx(bonds, block);
+      auto e0 = eigval0(bonds, block);
       e0s.push_back(e0);
     }
   auto e0_np = *std::min_element(e0s.begin(), e0s.end());
@@ -46,7 +47,7 @@ TEST_CASE("electron_apply", "[electron]") {
 
         // Create block and matrix for comparison
         auto block = Electron(n_sites, nup, ndn);
-        auto H = matrix_real(bondlist, block, block);
+        auto H = matrix(bondlist, block, block);
         REQUIRE(H.is_hermitian(1e-8));
 
         // Check whether apply gives the same as matrix multiplication
@@ -60,7 +61,7 @@ TEST_CASE("electron_apply", "[electron]") {
         arma::vec evals_mat;
         arma::eig_sym(evals_mat, H);
         double e0_mat = evals_mat(0);
-        double e0_app = eig0_real(bondlist, block);
+        double e0_app = eigval0(bondlist, block);
         // Log.out("nup: {}, ndn: {}, e0_mat: {}, e0_app: {}", nup, ndn, e0_mat,
         //         e0_app);
         // REQUIRE(close(e0_mat, e0_app));
@@ -81,7 +82,7 @@ TEST_CASE("electron_apply", "[electron]") {
 
         // Create block and matrix for comparison
         auto block = Electron(n_sites, nup, ndn);
-        auto H = matrix_cplx(bondlist, block, block);
+        auto H = matrixC(bondlist, block, block);
         REQUIRE(H.is_hermitian(1e-8));
 
         // Check whether apply gives the same as matrix multiplication
@@ -95,7 +96,7 @@ TEST_CASE("electron_apply", "[electron]") {
         arma::vec evals_mat;
         arma::eig_sym(evals_mat, H);
         double e0_mat = evals_mat(0);
-        double e0_app = eig0_cplx(bondlist, block);
+        double e0_app = eigval0(bondlist, block);
         // Log.out("e0_mat: {}, e0_app: {}", e0_mat, e0_app);
         CHECK(close(e0_mat, e0_app));
       }
@@ -111,7 +112,7 @@ TEST_CASE("electron_apply", "[electron]") {
     for (int nup = 0; nup <= n_sites; ++nup)
       for (int ndn = 0; ndn <= n_sites; ++ndn) {
         auto block = Electron(n_sites, nup, ndn);
-        auto H = matrix_real(bondlist, block, block);
+        auto H = matrix(bondlist, block, block);
         REQUIRE(H.is_hermitian(1e-8));
 
         // Check whether apply gives the same as matrix multiplication
@@ -125,7 +126,7 @@ TEST_CASE("electron_apply", "[electron]") {
         arma::vec evals_mat;
         arma::eig_sym(evals_mat, H);
         double e0_mat = evals_mat(0);
-        double e0_app = eig0_cplx(bondlist, block);
+        double e0_app = eigval0(bondlist, block);
         // Log.out("e0_mat: {}, e0_app: {}", e0_mat, e0_app);
         CHECK(close(e0_mat, e0_app));
       }
@@ -134,7 +135,7 @@ TEST_CASE("electron_apply", "[electron]") {
     for (int nup = 0; nup <= n_sites; ++nup)
       for (int ndn = 0; ndn <= n_sites; ++ndn) {
         auto block = Electron(n_sites, nup, ndn);
-        auto H = matrix_real(bondlist, block, block);
+        auto H = matrix(bondlist, block, block);
         REQUIRE(H.is_hermitian(1e-8));
 
         // Check whether apply gives the same as matrix multiplication
@@ -148,7 +149,7 @@ TEST_CASE("electron_apply", "[electron]") {
         arma::vec evals_mat;
         arma::eig_sym(evals_mat, H);
         double e0_mat = evals_mat(0);
-        double e0_app = eig0_cplx(bondlist, block);
+        double e0_app = eigval0(bondlist, block);
         // Log.out("e0_mat: {}, e0_app: {}", e0_mat, e0_app);
         CHECK(close(e0_mat, e0_app, 1e-6, 1e-6));
       }

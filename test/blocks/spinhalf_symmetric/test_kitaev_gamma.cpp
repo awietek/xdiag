@@ -43,7 +43,7 @@ void run_kitaev_gamma_test(
     auto irrep = read_representation(lfile, name);
     auto block = Spinhalf(8, group, irrep);
     // double e0_computed = e0(bonds, block);
-    cx_mat H = matrix(bonds, block);
+    cx_mat H = matrixC(bonds, block);
 
     vec eigs;
     eig_sym(eigs, H);

@@ -8,7 +8,7 @@
 #include <hydra/algebra/matrix.h>
 #include <hydra/algorithms/sparse_diag.h>
 
-TEST_CASE("non_branching_bonds", "[operators]") {
+TEST_CASE("non_branching_bonds", "[operators]") try {
   using namespace hydra;
   using namespace arma;
   Log("testing non_branching_bonds");
@@ -24,7 +24,7 @@ TEST_CASE("non_branching_bonds", "[operators]") {
   for (auto ss : {ones}) {
     auto bond = Bond(ss, 0);
     auto block = Spinhalf(1);
-    auto h = matrix(bond, block);
+    auto h = matrixC(bond, block);
     REQUIRE(close(h, ss));
   }
 
@@ -42,7 +42,7 @@ TEST_CASE("non_branching_bonds", "[operators]") {
   }
 
   auto block = Spinhalf(N);
-  double e = eig0(bonds, block);
+  double e = eigval0(bonds, block);
   double e_dmrg = -7.411918598647893;
   REQUIRE(std::abs(e - e_dmrg) < 1e-8);
 
@@ -58,12 +58,12 @@ TEST_CASE("non_branching_bonds", "[operators]") {
       std::iota(sites.begin(), sites.end(), 0);
 
       auto bondr = Bond(mr, sites);
-      auto hr = matrix_real(bondr, block);
+      auto hr = matrix(bondr, block);
       REQUIRE(close(hr, mr));
 
       auto mc = cx_mat(p2, p2, fill::randn);
       auto bondc = Bond(mc, sites);
-      auto hc = matrix_cplx(bondc, block);
+      auto hc = matrixC(bondc, block);
       REQUIRE(close(hc, mc));
     }
   }
@@ -78,7 +78,7 @@ TEST_CASE("non_branching_bonds", "[operators]") {
     bonds1 << Bond("SCALARCHIRALITY", "Jchi", {2, 3, 4});
     bonds1 << Bond("SCALARCHIRALITY", "Jchi", {3, 4, 5});
     bonds1["Jchi"] = 1.0;
-    auto H1 = matrix(bonds1, block6);
+    auto H1 = matrixC(bonds1, block6);
 
     cx_mat jchimat = kron(sx, kron(sy, sz) - kron(sz, sy)) +
                      kron(sy, kron(sz, sx) - kron(sx, sz)) +
@@ -90,7 +90,7 @@ TEST_CASE("non_branching_bonds", "[operators]") {
     bonds2 << Bond(jchimat, "Jchi", {2, 3, 4});
     bonds2 << Bond(jchimat, "Jchi", {3, 4, 5});
     bonds2["Jchi"] = 1.0;
-    auto H2 = matrix(bonds2, block6);
+    auto H2 = matrixC(bonds2, block6);
 
     REQUIRE(close(H1, H2));
   }
@@ -124,7 +124,7 @@ TEST_CASE("non_branching_bonds", "[operators]") {
   bonds1 << Bond("SCALARCHIRALITY", "Jchi", {0, 6, 11});
   bonds1 << Bond("SCALARCHIRALITY", "Jchi", {6, 1, 3});
   bonds1["Jchi"] = 1.0;
-  auto H1 = matrix(bonds1, block12);
+  auto H1 = matrixC(bonds1, block12);
 
   cx_mat jchimat = kron(kron(sx, sy), sz) + kron(kron(sy, sz), sx) +
                    kron(kron(sz, sx), sy) - kron(kron(sx, sz), sy) -
@@ -156,10 +156,12 @@ TEST_CASE("non_branching_bonds", "[operators]") {
   bonds2 << Bond(jchimat, "Jchi", {0, 6, 11});
   bonds2 << Bond(jchimat, "Jchi", {6, 1, 3});
   bonds2["Jchi"] = 1.0;
-  auto H2 = matrix(bonds2, block12);
+  auto H2 = matrixC(bonds2, block12);
 
   // HydraPrint(norm(H1));
   // HydraPrint(norm(H2));
 
   REQUIRE(close(H1, H2));
-}
+ } catch (std::exception const& e) {
+  hydra::traceback(e);
+ }

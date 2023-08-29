@@ -2,36 +2,36 @@
 
 namespace hydra::testcases::electron {
 
-BondList get_linear_chain(int n_sites, double t, double U) {
+BondList get_linear_chain(int64_t n_sites, double t, double U) {
   // Create model
   BondList bondlist;
-  for (int s = 0; s < n_sites; ++s)
+  for (int64_t s = 0; s < n_sites; ++s)
     bondlist << Bond("HOP", "T", {s, (s + 1) % n_sites});
   bondlist["T"] = t;
   bondlist["U"] = U;
   return bondlist;
 }
 
-BondList get_linear_chain_hb(int n_sites, double J) {
+BondList get_linear_chain_hb(int64_t n_sites, double J) {
   // Create model
   BondList bondlist;
-  // for (int s = 0; s < n_sites; ++s)
+  // for (int64_t s = 0; s < n_sites; ++s)
   //   bondlist << Bond("HOP", "T", {s, (s + 1) % n_sites});
-  for (int s = 0; s < n_sites; ++s)
+  for (int64_t s = 0; s < n_sites; ++s)
     bondlist << Bond("EXCHANGE", "J", {s, (s + 1) % n_sites});
   bondlist["J"] = J;
   return bondlist;
 }
 
 std::tuple<PermutationGroup, std::vector<Representation>>
-get_cyclic_group_irreps(int n_sites) {
+get_cyclic_group_irreps(int64_t n_sites) {
   // test cyclic group
   std::vector<Permutation> permutation_array;
-  for (int sym = 0; sym < n_sites; ++sym) {
+  for (int64_t sym = 0; sym < n_sites; ++sym) {
 
-    std::vector<int> pv;
-    for (int site = 0; site < n_sites; ++site) {
-      int newsite = (site + sym) % n_sites;
+    std::vector<int64_t> pv;
+    for (int64_t site = 0; site < n_sites; ++site) {
+      int64_t newsite = (site + sym) % n_sites;
       pv.push_back(newsite);
     }
     permutation_array.push_back(Permutation(pv));
@@ -40,9 +40,9 @@ get_cyclic_group_irreps(int n_sites) {
 
   // Create irreducible representations
   std::vector<Representation> irreps;
-  for (int k = 0; k < n_sites; ++k) {
+  for (int64_t k = 0; k < n_sites; ++k) {
     std::vector<complex> chis;
-    for (int l = 0; l < n_sites; ++l)
+    for (int64_t l = 0; l < n_sites; ++l)
       chis.push_back({std::cos(2 * M_PI * l * k / n_sites),
                       std::sin(2 * M_PI * l * k / n_sites)});
     auto irrep = Representation(chis);
@@ -51,15 +51,15 @@ get_cyclic_group_irreps(int n_sites) {
   return {space_group, irreps};
 }
 
-std::tuple<PermutationGroup, std::vector<Representation>, std::vector<int>>
-get_cyclic_group_irreps_mult(int n_sites) {
+std::tuple<PermutationGroup, std::vector<Representation>, std::vector<int64_t>>
+get_cyclic_group_irreps_mult(int64_t n_sites) {
   // test cyclic group
   std::vector<Permutation> permutation_array;
-  for (int sym = 0; sym < n_sites; ++sym) {
+  for (int64_t sym = 0; sym < n_sites; ++sym) {
 
-    std::vector<int> pv;
-    for (int site = 0; site < n_sites; ++site) {
-      int newsite = (site + sym) % n_sites;
+    std::vector<int64_t> pv;
+    for (int64_t site = 0; site < n_sites; ++site) {
+      int64_t newsite = (site + sym) % n_sites;
       pv.push_back(newsite);
     }
     permutation_array.push_back(Permutation(pv));
@@ -68,10 +68,10 @@ get_cyclic_group_irreps_mult(int n_sites) {
 
   // Create irreducible representations
   std::vector<Representation> irreps;
-  std::vector<int> multiplicities;
-  for (int k = 0; k < n_sites; ++k) {
+  std::vector<int64_t> multiplicities;
+  for (int64_t k = 0; k < n_sites; ++k) {
     std::vector<complex> chis;
-    for (int l = 0; l < n_sites; ++l)
+    for (int64_t l = 0; l < n_sites; ++l)
       chis.push_back({std::cos(2 * M_PI * l * k / n_sites),
                       std::sin(2 * M_PI * l * k / n_sites)});
     auto irrep = Representation(chis);
@@ -90,13 +90,13 @@ BondList heisenberg_triangle() {
   return bondlist;
 }
 
-BondList heisenberg_alltoall(int n_sites) {
+BondList heisenberg_alltoall(int64_t n_sites) {
   std::default_random_engine generator;
   std::normal_distribution<double> distribution(0., 1.);
 
   BondList bondlist;
-  for (int s1 = 0; s1 < n_sites; ++s1)
-    for (int s2 = s1 + 1; s2 < n_sites; ++s2) {
+  for (int64_t s1 = 0; s1 < n_sites; ++s1)
+    for (int64_t s2 = s1 + 1; s2 < n_sites; ++s2) {
       std::stringstream ss;
       ss << "J" << s1 << "_" << s2;
       std::string name = ss.str();
@@ -207,13 +207,13 @@ BondList heisenberg_kagome39() {
   return bondlist;
 }
 
-BondList freefermion_alltoall(int n_sites) {
+BondList freefermion_alltoall(int64_t n_sites) {
   std::default_random_engine generator;
   std::normal_distribution<double> distribution(0., 1.);
 
   BondList bondlist;
-  for (int s1 = 0; s1 < n_sites; ++s1)
-    for (int s2 = s1 + 1; s2 < n_sites; ++s2) {
+  for (int64_t s1 = 0; s1 < n_sites; ++s1)
+    for (int64_t s2 = s1 + 1; s2 < n_sites; ++s2) {
       std::stringstream ss;
       ss << "T" << s1 << "_" << s2;
       std::string name = ss.str();
@@ -224,13 +224,13 @@ BondList freefermion_alltoall(int n_sites) {
   return bondlist;
 }
 
-BondList freefermion_alltoall_complex_updn(int n_sites) {
+BondList freefermion_alltoall_complex_updn(int64_t n_sites) {
   std::default_random_engine generator;
   std::normal_distribution<double> distribution(0., 1.);
 
   BondList bondlist;
-  for (int s1 = 0; s1 < n_sites; ++s1)
-    for (int s2 = s1 + 1; s2 < n_sites; ++s2) {
+  for (int64_t s1 = 0; s1 < n_sites; ++s1)
+    for (int64_t s2 = s1 + 1; s2 < n_sites; ++s2) {
 
       // Hopping on upspins
       std::stringstream ss_up;

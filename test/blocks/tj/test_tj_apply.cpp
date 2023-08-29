@@ -3,10 +3,10 @@
 #include <iostream>
 
 #include "testcases_tj.h"
+#include <hydra/algorithms/sparse_diag.h>
+#include <hydra/blocks/spinhalf/spinhalf_matrix.h>
 #include <hydra/blocks/tj/tj_apply.h>
 #include <hydra/blocks/tj/tj_matrix.h>
-#include <hydra/blocks/spinhalf/spinhalf_matrix.h>
-#include <hydra/algorithms/sparse_diag.h>
 #include <hydra/utils/close.h>
 
 using namespace hydra;
@@ -22,7 +22,7 @@ TEST_CASE("tj_apply", "[tj]") {
       for (int ndn = 0; ndn <= N - nup; ++ndn) {
 
         auto block = tJ(N, nup, ndn);
-        auto H = matrix_real(bonds, block, block);
+        auto H = matrix(bonds, block, block);
         REQUIRE(arma::norm(H - H.t()) < 1e-12);
 
         arma::vec v(block.size(), arma::fill::randn);
@@ -34,7 +34,7 @@ TEST_CASE("tj_apply", "[tj]") {
         arma::vec evals_mat;
         arma::eig_sym(evals_mat, H);
         double e0_mat = evals_mat(0);
-        double e0_app = eig0_real(bonds, block);
+        double e0_app = eigval0(bonds, block);
         // Log.out("nup: {}, ndn: {}, e0_mat: {}, e0_app: {}", nup, ndn,
         //              e0_mat, e0_app);
         REQUIRE(std::abs(e0_mat - e0_app) < 1e-10);
@@ -48,7 +48,7 @@ TEST_CASE("tj_apply", "[tj]") {
     for (int nup = 0; nup <= N; ++nup)
       for (int ndn = 0; ndn <= N - nup; ++ndn) {
         auto block = tJ(N, nup, ndn);
-        auto H = matrix_cplx(bonds, block, block);
+        auto H = matrixC(bonds, block, block);
         REQUIRE(arma::norm(H - H.t()) < 1e-12);
         arma::cx_vec v(block.size(), arma::fill::randn);
         arma::cx_vec w1 = H * v;
@@ -60,7 +60,8 @@ TEST_CASE("tj_apply", "[tj]") {
         arma::eig_sym(evals_mat, H);
 
         double e0_mat = evals_mat(0);
-        double e0_app = eig0_cplx(bonds, block);
+        double e0_app = eigval0(bonds, block);
+
         // Log.out("nup: {}, ndn: {}, e0_mat: {}, e0_app: {}", nup, ndn,
         //              e0_mat, e0_app);
         REQUIRE(close(e0_mat, e0_app));

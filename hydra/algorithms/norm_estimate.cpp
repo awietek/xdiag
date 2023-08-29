@@ -3,9 +3,22 @@
 #include <hydra/algebra/algebra.h>
 #include <hydra/utils/timing.h>
 
+#include <hydra/blocks/electron/electron_apply.h>
+#include <hydra/blocks/spinhalf/spinhalf_apply.h>
+#include <hydra/blocks/tj/tj_apply.h>
+
 namespace hydra {
 
-double norm_estimate(BondList const &bonds, Block const &block) {
+double norm_estimate(BondList const &bonds, block_variant_t const &block) try {
+  return std::visit([&](auto &&block) { return norm_estimate(bonds, block); },
+                    block);
+} catch (...) {
+  HydraRethrow("Error dispatching operator norm estimate");
+  return 0.;
+}
+
+template <typename block_t>
+double norm_estimate(BondList const &bonds, block_t const &block) try {
   int iter = 1;
   auto apply_A = [&iter, &bonds, &block](arma::cx_vec const &v) {
     auto ta = rightnow();
@@ -17,7 +30,14 @@ double norm_estimate(BondList const &bonds, Block const &block) {
     return w;
   };
   return norm_estimate_cplx(apply_A, apply_A, block.size());
+} catch (...) {
+  HydraRethrow("Error computing operator norm estimate");
+  return 0.;
 }
+
+template double norm_estimate(BondList const &bonds, Spinhalf const &block);
+template double norm_estimate(BondList const &bonds, tJ const &block);
+template double norm_estimate(BondList const &bonds, Electron const &block);
 
 //
 // Implementing the algorithm 4.1 described in

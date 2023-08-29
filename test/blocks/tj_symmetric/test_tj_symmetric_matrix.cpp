@@ -5,21 +5,21 @@
 #include "../electron/testcases_electron.h"
 #include "../tj/testcases_tj.h"
 
-#include <hydra/blocks/tj/tj_matrix.h>
 #include <hydra/algebra/matrix.h>
+#include <hydra/blocks/tj/tj_matrix.h>
 #include <hydra/utils/close.h>
 
 using namespace hydra;
 
 void test_spectra_tj_symmetric(BondList bondlist, PermutationGroup space_group,
                                std::vector<Representation> irreps,
-                               std::vector<int> multiplicities) {
-  // HydraPrint(bondlist);
-  int n_sites = space_group.n_sites();
+                               std::vector<int64_t> multiplicities) {
+  // HydraPrint64_t(bondlist);
+  int64_t n_sites = space_group.n_sites();
   assert(irreps.size() == multiplicities.size());
 
-  for (int nup = 1; nup <= n_sites; ++nup) {
-    for (int ndn = 1; ndn <= n_sites; ++ndn) {
+  for (int64_t nup = 1; nup <= n_sites; ++nup) {
+    for (int64_t ndn = 1; ndn <= n_sites; ++ndn) {
 
       if (nup + ndn > n_sites)
         continue;
@@ -28,22 +28,22 @@ void test_spectra_tj_symmetric(BondList bondlist, PermutationGroup space_group,
       auto tj_nosym = tJ(n_sites, nup, ndn);
       if (tj_nosym.size() < 1000) {
 
-        auto H_nosym = matrix_cplx(bondlist, tj_nosym, tj_nosym);
+        auto H_nosym = matrixC(bondlist, tj_nosym, tj_nosym);
         REQUIRE(arma::norm(H_nosym - H_nosym.t()) < 1e-12);
         arma::vec eigs_nosym;
         arma::eig_sym(eigs_nosym, H_nosym);
 
         std::vector<double> eigs_sym;
-        for (int k = 0; k < (int)irreps.size(); ++k) {
+        for (int64_t k = 0; k < (int64_t)irreps.size(); ++k) {
           auto irrep = irreps[k];
-          int multiplicity = multiplicities[k];
+          int64_t multiplicity = multiplicities[k];
 
           auto tj = tJ(n_sites, nup, ndn, space_group, irrep);
 
           if (tj.size() > 0) {
 
             // Compute partial spectrum from symmetrized block
-            auto H_sym = matrix_cplx(bondlist, tj, tj);
+            auto H_sym = matrixC(bondlist, tj, tj);
             // Log("n_sites: {}, nup: {}, ndn: {}, k: {}", n_sites, nup, ndn,
             // k); HydraPrint(irrep); HydraPrint(H_sym);
 
@@ -55,15 +55,15 @@ void test_spectra_tj_symmetric(BondList bondlist, PermutationGroup space_group,
             // HydraPrint(eigs_sym_k);
 
             // Check whether results are the same for real blocks
-            if (is_real(tj.irrep()) && bondlist.is_real()) {
-              auto H_sym_real = matrix_real(bondlist, tj, tj);
+            if (tj.irrep().isreal() && bondlist.isreal()) {
+              auto H_sym_real = matrix(bondlist, tj, tj);
               arma::vec eigs_sym_k_real;
               arma::eig_sym(eigs_sym_k_real, H_sym_real);
               REQUIRE(close(eigs_sym_k, eigs_sym_k_real));
             }
             // append all the eigenvalues with multiplicity
             for (auto eig : eigs_sym_k)
-              for (int i = 0; i < multiplicity; ++i)
+              for (int64_t i = 0; i < multiplicity; ++i)
                 eigs_sym.push_back(eig);
           }
         }
@@ -78,7 +78,7 @@ void test_spectra_tj_symmetric(BondList bondlist, PermutationGroup space_group,
   }
 }
 
-void test_tj_symmetric_spectrum_chains(int n_sites) {
+void test_tj_symmetric_spectrum_chains(int64_t n_sites) {
   using namespace hydra::testcases::tj;
   using namespace hydra::testcases::electron;
 
@@ -94,12 +94,12 @@ TEST_CASE("tj_symmetric_matrix", "[tj]") {
   using namespace hydra::testcases::tj;
   using namespace hydra::testcases::electron;
 
-  for (int n_sites = 2; n_sites < 7; ++n_sites) {
+  for (int64_t n_sites = 2; n_sites < 7; ++n_sites) {
     Log.out(
         "tj_symmetric_matrix: HB chain, symmetric spectra test, n_sites: {}",
         n_sites);
     BondList bonds;
-    for (int s = 0; s < n_sites; ++s) {
+    for (int64_t s = 0; s < n_sites; ++s) {
       bonds << Bond("TJHB", {s, (s + 1) % n_sites});
     }
     auto [space_group, irreps, multiplicities] =
@@ -108,7 +108,7 @@ TEST_CASE("tj_symmetric_matrix", "[tj]") {
   }
 
   // Test linear chains
-  for (int n_sites = 2; n_sites < 7; ++n_sites) {
+  for (int64_t n_sites = 2; n_sites < 7; ++n_sites) {
     test_tj_symmetric_spectrum_chains(n_sites);
   }
 
@@ -122,7 +122,7 @@ TEST_CASE("tj_symmetric_matrix", "[tj]") {
     auto permutations = hydra::read_permutations(lfile);
     auto space_group = PermutationGroup(permutations);
 
-    std::vector<std::pair<std::string, int>> rep_name_mult = {
+    std::vector<std::pair<std::string, int64_t>> rep_name_mult = {
         {"Gamma.D4.A1", 1}, {"Gamma.D4.A2", 1}, {"Gamma.D4.B1", 1},
         {"Gamma.D4.B2", 1}, {"Gamma.D4.E", 2},  {"M.D4.A1", 1},
         {"M.D4.A2", 1},     {"M.D4.B1", 1},     {"M.D4.B2", 1},
@@ -131,7 +131,7 @@ TEST_CASE("tj_symmetric_matrix", "[tj]") {
         {"X.D2.B2", 2}};
 
     std::vector<Representation> irreps;
-    std::vector<int> multiplicities;
+    std::vector<int64_t> multiplicities;
     for (auto [name, mult] : rep_name_mult) {
       irreps.push_back(read_representation(lfile, name));
       multiplicities.push_back(mult);
@@ -153,14 +153,14 @@ TEST_CASE("tj_symmetric_matrix", "[tj]") {
     auto permutations = hydra::read_permutations(lfile);
     auto space_group = PermutationGroup(permutations);
 
-    std::vector<std::pair<std::string, int>> rep_name_mult = {
+    std::vector<std::pair<std::string, int64_t>> rep_name_mult = {
         {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
         {"K0.D3.A1", 1},    {"K0.D3.A2", 1},    {"K0.D3.E", 2},
         {"K1.D3.A1", 1},    {"K1.D3.A2", 1},    {"K1.D3.E", 2},
         {"Y.C1.A", 6}};
 
     std::vector<Representation> irreps;
-    std::vector<int> multiplicities;
+    std::vector<int64_t> multiplicities;
     for (auto [name, mult] : rep_name_mult) {
       irreps.push_back(read_representation(lfile, name));
       multiplicities.push_back(mult);
@@ -180,14 +180,14 @@ TEST_CASE("tj_symmetric_matrix", "[tj]") {
     auto permutations = hydra::read_permutations(lfile);
     auto space_group = PermutationGroup(permutations);
 
-    std::vector<std::pair<std::string, int>> rep_name_mult = {
+    std::vector<std::pair<std::string, int64_t>> rep_name_mult = {
         {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
         {"K0.D3.A1", 1},    {"K0.D3.A2", 1},    {"K0.D3.E", 2},
         {"K1.D3.A1", 1},    {"K1.D3.A2", 1},    {"K1.D3.E", 2},
         {"Y.C1.A", 6}};
 
     std::vector<Representation> irreps;
-    std::vector<int> multiplicities;
+    std::vector<int64_t> multiplicities;
     for (auto [name, mult] : rep_name_mult) {
       irreps.push_back(read_representation(lfile, name));
       multiplicities.push_back(mult);
@@ -196,7 +196,8 @@ TEST_CASE("tj_symmetric_matrix", "[tj]") {
     for (auto eta : etas) {
       Log("eta: {:.2f}", eta);
       bondlist["TPHI"] = 1.0; // complex(cos(eta * M_PI), sin(eta * M_PI));
-      bondlist["JPHI"] = 0.4; // complex(cos(2 * eta * M_PI), sin(2 * eta * M_PI));
+      bondlist["JPHI"] =
+          0.4; // complex(cos(2 * eta * M_PI), sin(2 * eta * M_PI));
       test_spectra_tj_symmetric(bondlist, space_group, irreps, multiplicities);
     }
   }

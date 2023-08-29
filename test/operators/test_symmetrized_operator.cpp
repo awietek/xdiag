@@ -3,15 +3,18 @@
 #include <iostream>
 
 #include "../blocks/electron/testcases_electron.h"
-#include <hydra/operators/symmetrized_operator.h>
-#include <hydra/blocks/electron/electron.h>
 #include <hydra/algebra/algebra.h>
+#include <hydra/algebra/apply.h>
 #include <hydra/algorithms/sparse_diag.h>
+#include <hydra/algorithms/lanczos/eigs_lanczos.h>
+#include <hydra/blocks/electron/electron.h>
+#include <hydra/operators/symmetrized_operator.h>
 #include <hydra/utils/close.h>
+#include <hydra/utils/print_macro.h>
 
 using namespace hydra;
 
-TEST_CASE("symmetrized_operator", "[symmetries]") {
+TEST_CASE("symmetrized_operator", "[symmetries]") try {
   Log("Testing symmetrized_operator");
 
   for (int n_sites = 3; n_sites < 5; ++n_sites) {
@@ -32,13 +35,18 @@ TEST_CASE("symmetrized_operator", "[symmetries]") {
         if (block_nosym.size() == 0) {
           continue;
         }
-        auto v0_nosym = groundstate_cplx(bondlist, block_nosym);
-        auto e0_nosym = eig0_cplx(bondlist, block_nosym);
-        {
+        auto [e0_nosym, v0_nosym] = eig0(bondlist, block_nosym);
+
+        // auto res = eigs_lanczos(bondlist, block_nosym);
+	// HydraPrint(res.criterion);
+
+	{
           auto &v = v0_nosym;
           auto Hv = v;
           apply(bondlist, v, Hv);
           auto e = dot(v, Hv);
+	  // HydraPrint(norm(v));
+	  // HydraPrint(block_nosym);
           // HydraPrint(e);
           // HydraPrint(e0_nosym);
           REQUIRE(close(real(e), e0_nosym));
@@ -50,7 +58,7 @@ TEST_CASE("symmetrized_operator", "[symmetries]") {
           auto block_sym = Electron(n_sites, nup, ndn, space_group, irrep);
           if (block_sym.size() == 0)
             continue;
-          double e0_sector = eig0_cplx(bondlist, block_sym);
+          double e0_sector = eigval0(bondlist, block_sym);
 
           e0s.push_back(e0_sector);
           if (e0_sector < e0_sym) {
@@ -73,7 +81,7 @@ TEST_CASE("symmetrized_operator", "[symmetries]") {
         // -> g.s. from non-symmetric calculation is unique and symmetric
         if (deg == 1) {
           auto block_sym = Electron(n_sites, nup, ndn, space_group, e0_irrep);
-          auto v0_sym = groundstate_cplx(bondlist, block_sym);
+          auto [e0_sym2, v0_sym] = eig0(bondlist, block_sym);
           REQUIRE(close(e0_sym, e0_nosym));
           {
             auto &v = v0_sym;
@@ -115,4 +123,6 @@ TEST_CASE("symmetrized_operator", "[symmetries]") {
     }
   }
   Log("done");
+} catch (std::exception const &e) {
+  hydra::traceback(e);
 }

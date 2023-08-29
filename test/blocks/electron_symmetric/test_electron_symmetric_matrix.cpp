@@ -16,15 +16,15 @@ using namespace hydra;
 void test_electron_symmetric_spectra_no_np(BondList bondlist,
                                            PermutationGroup space_group,
                                            std::vector<Representation> irreps,
-                                           std::vector<int> multiplicities) {
+                                           std::vector<int64_t> multiplicities) {
   (void) multiplicities;
 
-  int n_sites = space_group.n_sites();
+  int64_t n_sites = space_group.n_sites();
 
   auto block_total = Electron(n_sites);
   if (block_total.size() < 1000) {
 
-    auto H_total = matrix_cplx(bondlist, block_total, block_total);
+    auto H_total = matrixC(bondlist, block_total, block_total);
     REQUIRE(H_total.is_hermitian(1e-8));
 
     arma::vec eigs_total;
@@ -33,7 +33,7 @@ void test_electron_symmetric_spectra_no_np(BondList bondlist,
     std::vector<double> eigs_all;
     for (auto irrep : irreps) {
       auto block_no_np = Electron(n_sites, space_group, irrep);
-      auto H_no_np = matrix_cplx(bondlist, block_no_np, block_no_np);
+      auto H_no_np = matrixC(bondlist, block_no_np, block_no_np);
 
       REQUIRE(H_no_np.is_hermitian(1e-8));
 
@@ -41,10 +41,10 @@ void test_electron_symmetric_spectra_no_np(BondList bondlist,
       arma::eig_sym(eigs_no_np, H_no_np);
 
       std::vector<double> eigs_np_all;
-      for (int nup = 0; nup <= n_sites; ++nup) {
-        for (int ndn = 0; ndn <= n_sites; ++ndn) {
+      for (int64_t nup = 0; nup <= n_sites; ++nup) {
+        for (int64_t ndn = 0; ndn <= n_sites; ++ndn) {
           auto block_np = Electron(n_sites, nup, ndn, space_group, irrep);
-          auto H_np = matrix_cplx(bondlist, block_np, block_np);
+          auto H_np = matrixC(bondlist, block_np, block_np);
           REQUIRE(H_np.is_hermitian(1e-8));
 
           arma::vec eigs_np;
@@ -70,27 +70,27 @@ void test_electron_symmetric_spectra_no_np(BondList bondlist,
 void test_electron_symmetric_spectra(BondList bondlist,
                                      PermutationGroup space_group,
                                      std::vector<Representation> irreps,
-                                     std::vector<int> multiplicities) {
+                                     std::vector<int64_t> multiplicities) {
 
-  int n_sites = space_group.n_sites();
+  int64_t n_sites = space_group.n_sites();
   assert(irreps.size() == multiplicities.size());
 
-  for (int nup = 0; nup <= n_sites; ++nup) {
-    for (int ndn = 0; ndn <= n_sites; ++ndn) {
+  for (int64_t nup = 0; nup <= n_sites; ++nup) {
+    for (int64_t ndn = 0; ndn <= n_sites; ++ndn) {
 
       // Compute the full spectrum from non-symmetrized block
       auto electron_nosym = Electron(n_sites, nup, ndn);
       if (electron_nosym.size() < 1000) {
 
-        auto H_nosym = matrix_cplx(bondlist, electron_nosym, electron_nosym);
+        auto H_nosym = matrixC(bondlist, electron_nosym, electron_nosym);
         REQUIRE(H_nosym.is_hermitian(1e-8));
         arma::vec eigs_nosym;
         arma::eig_sym(eigs_nosym, H_nosym);
 
         std::vector<double> eigs_sym;
-        for (int k = 0; k < (int)irreps.size(); ++k) {
+        for (int64_t k = 0; k < (int64_t)irreps.size(); ++k) {
           auto irrep = irreps[k];
-          int multiplicity = multiplicities[k];
+          int64_t multiplicity = multiplicities[k];
 
           auto electron = Electron(n_sites, nup, ndn, space_group, irrep);
           // Log.out(
@@ -102,7 +102,7 @@ void test_electron_symmetric_spectra(BondList bondlist,
           if (electron.size() > 0) {
 
             // Compute partial spectrum from symmetrized block
-            auto H_sym = matrix_cplx(bondlist, electron, electron);
+            auto H_sym = matrixC(bondlist, electron, electron);
             REQUIRE(arma::norm(H_sym - H_sym.t()) < 1e-12);
 
             // REQUIRE(H_sym.is_hermitian(1e-7));
@@ -110,8 +110,8 @@ void test_electron_symmetric_spectra(BondList bondlist,
             arma::eig_sym(eigs_sym_k, H_sym);
 
             // Check whether results are the same for real blocks
-            if (is_real(electron.irrep()) && bondlist.is_real()) {
-              auto H_sym_real = matrix_real(bondlist, electron, electron);
+            if (electron.irrep().isreal() && bondlist.isreal()) {
+              auto H_sym_real = matrix(bondlist, electron, electron);
               arma::vec eigs_sym_k_real;
               arma::eig_sym(eigs_sym_k_real, H_sym_real);
               REQUIRE(close(eigs_sym_k, eigs_sym_k_real));
@@ -119,7 +119,7 @@ void test_electron_symmetric_spectra(BondList bondlist,
 
             // append all the eigenvalues with multiplicity
             for (auto eig : eigs_sym_k)
-              for (int i = 0; i < multiplicity; ++i)
+              for (int64_t i = 0; i < multiplicity; ++i)
                 eigs_sym.push_back(eig);
           }
         }
@@ -135,7 +135,7 @@ void test_electron_symmetric_spectra(BondList bondlist,
   }
 }
 
-void test_hubbard_symmetric_spectrum_chains(int n_sites) {
+void test_hubbard_symmetric_spectrum_chains(int64_t n_sites) {
   using namespace hydra::testcases::electron;
 
   auto [space_group, irreps, multiplicities] =
@@ -166,9 +166,9 @@ TEST_CASE("electron_symmetric_matrix", "[electron]") {
 
   // Check matrices agains Weisse & Fehske
   Log("electron_symmetric_matrix: Weisse & Fehske matrix");
-  int n_sites = 4;
-  int nup = 3;
-  int ndn = 2;
+  int64_t n_sites = 4;
+  int64_t nup = 3;
+  int64_t ndn = 2;
   double t = 1.0;
   double U = 5.0;
   auto bondlist = get_linear_chain(n_sites, t, U);
@@ -176,10 +176,10 @@ TEST_CASE("electron_symmetric_matrix", "[electron]") {
   auto [space_group, irreps, multiplicities] =
       get_cyclic_group_irreps_mult(n_sites);
 
-  for (int k = 0; k < (int)irreps.size(); ++k) {
+  for (int64_t k = 0; k < (int64_t)irreps.size(); ++k) {
     auto irrep = irreps[k];
     auto electron = Electron(n_sites, nup, ndn, space_group, irrep);
-    auto H_sym = matrix_cplx(bondlist, electron, electron);
+    auto H_sym = matrixC(bondlist, electron, electron);
     complex U2 = 2 * U;
     complex UU = U;
     complex tp = t;
@@ -216,7 +216,7 @@ TEST_CASE("electron_symmetric_matrix", "[electron]") {
   }
 
   // Test linear chains
-  for (int n_sites = 2; n_sites < 7; ++n_sites) {
+  for (int64_t n_sites = 2; n_sites < 7; ++n_sites) {
     test_hubbard_symmetric_spectrum_chains(n_sites);
     test_hubbard_symmetric_spectrum_chains(n_sites);
     test_hubbard_symmetric_spectrum_chains(n_sites);
@@ -233,7 +233,7 @@ TEST_CASE("electron_symmetric_matrix", "[electron]") {
   auto permutations = hydra::read_permutations(lfile);
   space_group = PermutationGroup(permutations);
 
-  std::vector<std::pair<std::string, int>> rep_name_mult = {
+  std::vector<std::pair<std::string, int64_t>> rep_name_mult = {
       {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
       {"K0.D3.A1", 1},    {"K0.D3.A2", 1},    {"K0.D3.E", 2},
       {"K1.D3.A1", 1},    {"K1.D3.A2", 1},    {"K1.D3.E", 2},
@@ -269,7 +269,7 @@ TEST_CASE("electron_symmetric_matrix", "[electron]") {
     auto permutations = hydra::read_permutations(lfile);
     space_group = PermutationGroup(permutations);
 
-    std::vector<std::pair<std::string, int>> rep_name_mult = {
+    std::vector<std::pair<std::string, int64_t>> rep_name_mult = {
         {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
         {"K0.D3.A1", 1},    {"K0.D3.A2", 1},    {"K0.D3.E", 2},
         {"K1.D3.A1", 1},    {"K1.D3.A2", 1},    {"K1.D3.E", 2},

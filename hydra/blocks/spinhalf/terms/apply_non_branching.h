@@ -2,19 +2,17 @@
 
 #include <functional>
 
-#include <hydra/bitops/bitops.h>
-#include <hydra/common.h>
-
 #include <hydra/blocks/spinhalf/terms/apply_term_offdiag_no_sym.h>
 #include <hydra/blocks/spinhalf/terms/apply_term_offdiag_sym.h>
+#include <hydra/common.h>
 #include <hydra/operators/non_branching_bonds.h>
 
 namespace hydra::spinhalf {
 
-template <typename bit_t, typename coeff_t, bool symmetric, class IndexingIn,
-          class IndexingOut, class Fill>
-void apply_non_branching(Bond const &bond, IndexingIn &&indexing_in,
-                         IndexingOut &&indexing_out, Fill &&fill) {
+template <typename bit_t, typename coeff_t, bool symmetric, class BasisIn,
+          class BasisOut, class Fill>
+void apply_non_branching(Bond const &bond, BasisIn &&basis_in,
+                         BasisOut &&basis_out, Fill &&fill) {
 
   assert(bond.matrix_defined());
   assert(operators::is_non_branching_bond(bond));
@@ -27,7 +25,7 @@ void apply_non_branching(Bond const &bond, IndexingIn &&indexing_in,
       bit_t local_spins = bond_nb.extract_local_state(spins);
       return bond_nb.coeff(local_spins);
     };
-    spinhalf::apply_term_diag<bit_t, coeff_t>(indexing_in, term_coeff, fill);
+    spinhalf::apply_term_diag<bit_t, coeff_t>(basis_in, term_coeff, fill);
   } else {
     auto non_zero_term = [&bond_nb](bit_t spins) -> bool {
       bit_t local_spins = bond_nb.extract_local_state(spins);
@@ -40,7 +38,8 @@ void apply_non_branching(Bond const &bond, IndexingIn &&indexing_in,
 
       // int64_t n_sites = 2;
       // Log("spins: {}, local_spins: {}, local_spins_new: {}, spins_new: {}",
-      //     BSTR(spins), BSTR(local_spins), BSTR(local_spins_new), BSTR(spins_new));
+      //     BSTR(spins), BSTR(local_spins), BSTR(local_spins_new),
+      //     BSTR(spins_new));
       // std::cout << "coeff: "<< coeff<< std::endl;
 
       return {spins_new, coeff};
@@ -49,10 +48,10 @@ void apply_non_branching(Bond const &bond, IndexingIn &&indexing_in,
     // Dispatch either symmetric of unsymmetric term application
     if constexpr (symmetric) {
       spinhalf::apply_term_offdiag_sym<bit_t, coeff_t>(
-          indexing_in, indexing_out, non_zero_term, term_action, fill);
+          basis_in, basis_out, non_zero_term, term_action, fill);
     } else {
       spinhalf::apply_term_offdiag_no_sym<bit_t, coeff_t>(
-          indexing_in, indexing_out, non_zero_term, term_action, fill);
+          basis_in, basis_out, non_zero_term, term_action, fill);
     }
   }
 }

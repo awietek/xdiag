@@ -4,13 +4,14 @@
 #include <hydra/algebra/algebra.h>
 #include <hydra/states/random_state.h>
 #include <hydra/utils/close.h>
+#include <hydra/utils/print_macro.h>
 
 #include <iostream>
 #include <set>
 
 using namespace hydra;
 
-TEST_CASE("random_state", "[states]") {
+TEST_CASE("random_state", "[states]") try {
   using namespace hydra::testcases::electron;
 
   Log.out("random state Spinhalf distinction test");
@@ -29,21 +30,24 @@ TEST_CASE("random_state", "[states]") {
         if (block.size() > 3) {
           // HydraPrint(irrep);
           // HydraPrint(block);
-          auto state_real = StateReal(block, RandomState());
-          auto state_cplx = StateCplx(block, RandomState());
+
+          auto state_real = State(block, true);
+          auto state_cplx = State(block, false);
+          fill(state_real, RandomState());
+          fill(state_cplx, RandomState());
           // HydraPrint(state_real);
           // HydraPrint(state_real.vector());
           // HydraPrint(state_real.vector());
           // HydraPrint(state_cplx.vector());
           if (first_r == 0.) {
-            first_r = state_real(0);
+            first_r = state_real.vector(false)(0);
           } else {
-            REQUIRE(std::abs(state_real(0) - first_r) > 1e-12);
+            REQUIRE(std::abs(state_real.vector(false)(0) - first_r) > 1e-12);
           }
           if (first_c == 0.) {
-            first_c = state_cplx(0);
+            first_c = state_cplx.vectorC(false)(0);
           } else {
-            REQUIRE(std::abs(state_cplx(0) - first_c) > 1e-12);
+            REQUIRE(std::abs(state_cplx.vectorC(false)(0) - first_c) > 1e-12);
           }
         }
       }
@@ -57,14 +61,22 @@ TEST_CASE("random_state", "[states]") {
 
   auto block = Spinhalf(4);
   for (int seed = 0; seed < 10; ++seed) {
-    auto state = StateReal(block, RandomState(seed));
-    auto state_cplx = StateCplx(block, RandomState(seed));
+    auto state = State(block, true);
+    fill(state, RandomState(seed));
+    auto state_cplx = State(block, false);
+    fill(state_cplx, RandomState(false));
 
     omp_set_num_threads(1);
-    auto state2 = StateReal(block, RandomState(seed));
-    auto state_cplx2 = StateCplx(block, RandomState(seed));
+    auto state2 = State(block, true);
+    fill(state2, RandomState(seed));
+    auto state2_cplx = State(block, false);
+    fill(state2_cplx, RandomState(false));
+
+    
     REQUIRE(arma::norm(state.vector() - state2.vector()) < 1e-12);
-    REQUIRE(arma::norm(state_cplx.vector() - state_cplx2.vector()) < 1e-12);
+    REQUIRE(arma::norm(state_cplx.vectorC() - state2_cplx.vectorC()) < 1e-12);
   }
 #endif
-}
+ } catch(std::exception const& e) {
+  hydra::traceback(e);
+ }

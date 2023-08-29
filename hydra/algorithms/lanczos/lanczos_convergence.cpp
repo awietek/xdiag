@@ -1,6 +1,6 @@
 #include "lanczos_convergence.h"
 
-namespace hydra {
+namespace hydra::lanczos {
 
 bool converged_eigenvalues(Tmatrix const &tmat, int n_eigenvalue,
                            double precision) {
@@ -17,8 +17,8 @@ bool converged_eigenvalues(Tmatrix const &tmat, int n_eigenvalue,
     auto eigs_previous = tmat_previous.eigenvalues();
 
     double residue =
-        std::abs(eigs(n_eigenvalue) - eigs_previous(n_eigenvalue)) /
-        std::abs(eigs(n_eigenvalue));
+        std::abs(eigs(n_eigenvalue - 1) - eigs_previous(n_eigenvalue - 1)) /
+        std::abs(eigs(n_eigenvalue - 1));
 
     return (residue < precision);
   }
@@ -101,4 +101,4 @@ bool converged_time_evolution(Tmatrix const &tmat, complex tau,
 //   return size >= n_iterations;
 // }
 
-} // namespace hydra
+} // namespace hydra::lanczos

@@ -5,18 +5,19 @@
 #include "../blocks/electron/testcases_electron.h"
 #include "../blocks/spinhalf/testcases_spinhalf.h"
 #include <extern/armadillo/armadillo>
-#include <hydra/utils/logger.h>
-#include <hydra/common.h>
-#include <hydra/algorithms/norm_estimate.h>
 #include <hydra/algebra/matrix.h>
+#include <hydra/algorithms/norm_estimate.h>
+#include <hydra/common.h>
+#include <hydra/utils/logger.h>
 
 using namespace hydra;
 
-void test_operator_norm_real(Block const &block, BondList const &bonds) {
+template <typename block_t>
+void test_operator_norm_real(block_t const &block, BondList const &bonds) {
   using namespace hydra;
   using namespace arma;
 
-  auto H = matrix_real(bonds, block, block);
+  auto H = matrix(bonds, block, block);
   double norm_exact = norm(H, 1);
   auto apply_H = [&H](vec const &v) { return vec(H * v); };
   double norm_est = norm_estimate_real(apply_H, apply_H, block.size());
@@ -30,11 +31,12 @@ void test_operator_norm_real(Block const &block, BondList const &bonds) {
   }
 }
 
-void test_operator_norm_cplx(Block const &block, BondList const &bonds) {
+template <typename block_t>
+void test_operator_norm_cplx(block_t const &block, BondList const &bonds) {
   using namespace hydra;
   using namespace arma;
 
-  auto H = matrix_cplx(bonds, block, block);
+  auto H = matrixC(bonds, block, block);
   double norm_exact = norm(H, 1);
   auto apply_H = [&H](cx_vec const &v) { return cx_vec(H * v); };
   double norm_est = norm_estimate_cplx(apply_H, apply_H, block.size());
@@ -120,7 +122,7 @@ TEST_CASE("norm_estimate", "[algorithms]") {
       for (auto irrep : irreps) {
         // HydraPrint(irrep);
         auto block = Spinhalf(n_sites, nup, group, irrep);
-        if (hydra::is_real(irrep)) {
+        if (irrep.isreal()) {
           test_operator_norm_real(block, bonds);
         } else {
           test_operator_norm_cplx(block, bonds);
@@ -131,7 +133,8 @@ TEST_CASE("norm_estimate", "[algorithms]") {
 
   {
     Log("norm_estimate for tj_symmetric_matrix: tJ 3x3 triangular s");
-    std::string lfile = HYDRA_DIRECTORY"/misc/data/triangular.9.hop.sublattices.tsl.lat";
+    std::string lfile =
+        HYDRA_DIRECTORY "/misc/data/triangular.9.hop.sublattices.tsl.lat";
     int n_sites = 9;
     auto bonds = read_bondlist(lfile);
     bonds["T"] = 1.0;
@@ -160,7 +163,7 @@ TEST_CASE("norm_estimate", "[algorithms]") {
           (void)mult;
           auto irrep = read_representation(lfile, name);
           auto block = tJ(n_sites, nup, ndn, group, irrep);
-          if (hydra::is_real(irrep)) {
+          if (irrep.isreal()) {
             test_operator_norm_real(block, bonds);
           } else {
             test_operator_norm_cplx(block, bonds);
@@ -176,8 +179,8 @@ TEST_CASE("norm_estimate", "[algorithms]") {
     // test a 3x3 triangular lattice with complex flux
     Log("norm_estimate for tj_symmetric_matrix: tJ 3x3 triangular staggered "
         "flux, complex");
-    std::string lfile =
-        HYDRA_DIRECTORY"/misc/data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.lat";
+    std::string lfile = HYDRA_DIRECTORY
+        "/misc/data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.lat";
 
     auto bonds = read_bondlist(lfile);
     std::vector<double> etas{0.0, 0.1, 0.2, 0.3};

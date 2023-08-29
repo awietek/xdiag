@@ -10,13 +10,13 @@ TEST_CASE("generated_group", "[symmetries]") {
   using hydra::testcases::electron::get_cyclic_group_irreps_mult;
 
   Log("Testing generated_group for linear chain");
-  for (int n_sites = 3; n_sites < 7; ++n_sites) {
+  for (int64_t n_sites = 3; n_sites < 7; ++n_sites) {
     auto [group, irreps, multiplicities] =
         get_cyclic_group_irreps_mult(n_sites);
     (void)multiplicities;
 
-    std::vector<int> translation;
-    for (int s = 0; s < n_sites; ++s) {
+    std::vector<int64_t> translation;
+    for (int64_t s = 0; s < n_sites; ++s) {
       translation.push_back((s + 1) % n_sites);
     }
     Permutation perm(translation);
@@ -24,11 +24,11 @@ TEST_CASE("generated_group", "[symmetries]") {
     auto group2 = generated_group(perm);
     REQUIRE(group == group2);
 
-    for (int k = 0; k < n_sites; ++k) {
+    for (int64_t k = 0; k < n_sites; ++k) {
       auto irrep = irreps[k];
 
       std::vector<complex> chis;
-      for (int l = 0; l < n_sites; ++l) {
+      for (int64_t l = 0; l < n_sites; ++l) {
         chis.push_back({std::cos(2 * M_PI * l * k / n_sites),
                         std::sin(2 * M_PI * l * k / n_sites)});
       }

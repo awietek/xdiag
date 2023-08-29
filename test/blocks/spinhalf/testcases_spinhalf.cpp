@@ -4,23 +4,23 @@
 
 namespace hydra::testcases::spinhalf {
 
-BondList HBchain(int n_sites, double J1, double J2) {
+BondList HBchain(int64_t n_sites, double J1, double J2) {
 
   BondList bondlist;
   bondlist["J1"] = J1;
   bondlist["J2"] = J2;
 
-  for (int s = 0; s < n_sites; ++s) {
+  for (int64_t s = 0; s < n_sites; ++s) {
     bondlist << Bond("HB", "J1", {s, (s + 1) % n_sites});
   }
-  for (int s = 0; s < n_sites; ++s) {
+  for (int64_t s = 0; s < n_sites; ++s) {
     bondlist << Bond("HB", "J2", {s, (s + 2) % n_sites});
   }
   return bondlist;
 }
 
-std::tuple<BondList, arma::Col<double>> HBchain_fullspectrum_nup(int L,
-                                                                 int nup) {
+std::tuple<BondList, arma::Col<double>> HBchain_fullspectrum_nup(int64_t L,
+                                                                 int64_t nup) {
 
   auto bondlist = HBchain(L, 1.0);
 
@@ -96,13 +96,13 @@ std::tuple<BondList, arma::Col<double>> HBchain_fullspectrum_nup(int L,
   return {bondlist, eigs};
 }
 
-BondList HB_alltoall(int n_sites) {
+BondList HB_alltoall(int64_t n_sites) {
   std::default_random_engine generator;
   std::normal_distribution<double> distribution(0., 1.);
 
   BondList bondlist;
-  for (int s1 = 0; s1 < n_sites; ++s1)
-    for (int s2 = s1 + 1; s2 < n_sites; ++s2) {
+  for (int64_t s1 = 0; s1 < n_sites; ++s1)
+    for (int64_t s2 = s1 + 1; s2 < n_sites; ++s2) {
       std::stringstream ss;
       ss << "J" << s1 << "_" << s2;
       std::string name = ss.str();
@@ -113,7 +113,7 @@ BondList HB_alltoall(int n_sites) {
   return bondlist;
 }
 
-std::tuple<BondList, double> triangular_12_complex(int nup, double eta) {
+std::tuple<BondList, double> triangular_12_complex(int64_t nup, double eta) {
 
   BondList bonds;
   bonds << Bond("ISING", "Jz", {0, 5});

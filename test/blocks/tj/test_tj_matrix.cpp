@@ -15,7 +15,7 @@ using namespace hydra;
 void test_tjmodel_e0_real(BondList bonds, int nup, int ndn, double e0) {
   int n_sites = bonds.n_sites();
   auto block = tJ(n_sites, nup, ndn);
-  auto H = matrix_real(bonds, block, block);
+  auto H = matrix(bonds, block, block);
   arma::vec eigs;
   arma::eig_sym(eigs, H);
 
@@ -31,7 +31,7 @@ void test_tjmodel_fulleigs(BondList bonds, arma::Col<double> exact_eigs) {
     for (int nup = 0; nup <= n_sites - ndn; ++nup) {
 
       auto block = tJ(n_sites, nup, ndn);
-      auto H = matrix_real(bonds, block, block);
+      auto H = matrix(bonds, block, block);
       // H.print();
       REQUIRE(arma::norm(H - H.t()) < 1e-12);
 
@@ -60,8 +60,8 @@ TEST_CASE("tj_matrix", "[tj]") {
       auto bonds = testcases::spinhalf::HB_alltoall(n_sites);
       auto block = Spinhalf(n_sites, nup);
       auto block_tJ = tJ(n_sites, nup, n_sites - nup);
-      auto H = matrix_real(bonds, block, block);
-      auto H_tJ = matrix_real(bonds, block_tJ, block_tJ);
+      auto H = matrix(bonds, block, block);
+      auto H_tJ = matrix(bonds, block_tJ, block_tJ);
 
       REQUIRE(H.is_hermitian());
       REQUIRE(H_tJ.is_hermitian());
@@ -139,7 +139,7 @@ TEST_CASE("tj_matrix", "[tj]") {
     for (int nup = 0; nup <= N; ++nup)
       for (int ndn = 0; ndn <= N - nup; ++ndn) {
         auto block = tJ(N, nup, ndn);
-        auto H = matrix_cplx(bonds, block, block);
+        auto H = matrixC(bonds, block, block);
         REQUIRE(arma::norm(H - H.t()) < 1e-12);
       }
 
@@ -148,8 +148,8 @@ TEST_CASE("tj_matrix", "[tj]") {
       int ndn = N - nup;
       auto block1 = tJ(N, nup, ndn);
       auto block2 = Spinhalf(N, nup);
-      auto H1 = matrix_cplx(bonds_hb, block1, block1);
-      auto H2 = matrix_cplx(bonds_hb, block2, block2);
+      auto H1 = matrixC(bonds_hb, block1, block1);
+      auto H2 = matrixC(bonds_hb, block2, block2);
       arma::vec eigs1;
       arma::eig_sym(eigs1, H1);
       arma::vec eigs2;

@@ -26,15 +26,15 @@ void test_indices_spinhalf_symmetric(Spinhalf const &block) {
   // }
 }
 
-void test_spinchain_blocks(int n_sites) {
+void test_spinchain_blocks(int64_t n_sites) {
 
   // test cyclic group
   std::vector<Permutation> permutation_array;
-  for (int sym = 0; sym < n_sites; ++sym) {
+  for (int64_t sym = 0; sym < n_sites; ++sym) {
 
-    std::vector<int> pv;
-    for (int site = 0; site < n_sites; ++site) {
-      int newsite = (site + sym) % n_sites;
+    std::vector<int64_t> pv;
+    for (int64_t site = 0; site < n_sites; ++site) {
+      int64_t newsite = (site + sym) % n_sites;
       pv.push_back(newsite);
     }
     permutation_array.push_back(Permutation(pv));
@@ -43,14 +43,14 @@ void test_spinchain_blocks(int n_sites) {
 
   // Create irrep with K momentum
   idx_t sum_of_dims = 0;
-  for (int nup = 0; nup <= n_sites; ++nup) {
+  for (int64_t nup = 0; nup <= n_sites; ++nup) {
     idx_t sum_of_dims_up = 0;
 
-    for (int k = 0; k < n_sites; ++k) {
+    for (int64_t k = 0; k < n_sites; ++k) {
 
       // Create characters
       std::vector<complex> chis;
-      for (int l = 0; l < n_sites; ++l)
+      for (int64_t l = 0; l < n_sites; ++l)
         chis.push_back({std::cos(2 * M_PI * l * k / n_sites),
                         std::sin(2 * M_PI * l * k / n_sites)});
       auto irrep = Representation(chis);
@@ -72,16 +72,16 @@ void test_spinchain_blocks(int n_sites) {
 TEST_CASE("spinhalf_symmetric", "[spinhalf]") {
 
   // Test the tJ chain
-  for (int n_sites = 1; n_sites < 8; ++n_sites) {
+  for (int64_t n_sites = 1; n_sites < 8; ++n_sites) {
     Log.out("spinhalf_symmetric: block test: Spinhalf Chain {}", n_sites);
     test_spinchain_blocks(n_sites);
   }
 
   // test a 3x3 triangular lattice
   Log.out("spinhalf_symmetric: block test: Triangular 3x3");
-  int n_sites = 9;
+  int64_t n_sites = 9;
 
-  std::vector<std::pair<std::string, int>> rep_name_mult = {
+  std::vector<std::pair<std::string, int64_t>> rep_name_mult = {
       {"Gamma.D6.A1", 1}, {"Gamma.D6.A2", 1}, {"Gamma.D6.B1", 1},
       {"Gamma.D6.B2", 1}, {"Gamma.D6.E1", 2}, {"Gamma.D6.E2", 2},
       {"K.D3.A1", 2},     {"K.D3.A2", 2},     {"K.D3.E", 4},
@@ -93,7 +93,7 @@ TEST_CASE("spinhalf_symmetric", "[spinhalf]") {
   auto space_group = PermutationGroup(permutations);
 
   idx_t sum_dim = 0;
-  for (int nup = 0; nup <= n_sites; ++nup) {
+  for (int64_t nup = 0; nup <= n_sites; ++nup) {
     idx_t sum_dim_up = 0;
 
     for (auto [name, mult] : rep_name_mult) {

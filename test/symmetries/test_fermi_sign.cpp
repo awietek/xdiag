@@ -9,16 +9,16 @@
 
 using namespace hydra;
 
-template <class bit_t> void test_fermi_sign(int n_sites) {
+template <class bit_t> void test_fermi_sign(int64_t n_sites) {
   using combinatorics::Subsets;
 
   // test cyclic group
   std::vector<Permutation> permutation_array;
-  for (int sym = 0; sym < n_sites; ++sym) {
+  for (int64_t sym = 0; sym < n_sites; ++sym) {
 
-    std::vector<int> pv;
-    for (int site = 0; site < n_sites; ++site) {
-      int newsite = (site + sym) % n_sites;
+    std::vector<int64_t> pv;
+    for (int64_t site = 0; site < n_sites; ++site) {
+      int64_t newsite = (site + sym) % n_sites;
       pv.push_back(newsite);
     }
     permutation_array.push_back(Permutation(pv));
@@ -29,7 +29,7 @@ template <class bit_t> void test_fermi_sign(int n_sites) {
   auto fermi_work = symmetries::fermi_work(n_sites);
   auto fermi_work_sort = symmetries::fermi_work_sort(n_sites);
   for (auto state : Subsets<bit_t>(n_sites)) {
-    for (int sym = 0; sym < n_sites; ++sym) {
+    for (int64_t sym = 0; sym < n_sites; ++sym) {
 
       // auto tstate = sym_op.apply(sym, state);
       // std::cout << "sym " << sym << "\n";
@@ -52,7 +52,7 @@ template <class bit_t> void test_fermi_sign(int n_sites) {
 TEST_CASE("fermi_sign", "[symmetries]") {
   hydra::Log("Test fermi_sign");
 
-  for (int n_sites = 1; n_sites < 8; ++n_sites) {
+  for (int64_t n_sites = 1; n_sites < 8; ++n_sites) {
     test_fermi_sign<uint16_t>(n_sites);
     test_fermi_sign<uint32_t>(n_sites);
     test_fermi_sign<uint64_t>(n_sites);
