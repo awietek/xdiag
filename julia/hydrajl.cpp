@@ -25,41 +25,24 @@ JLCXX_MODULE define_julia_module(jlcxx::Module &mod) {
       .method("size", &Spinhalf::size);
 
   // methods to compute matrices
-  mod.method("matrix_real_cxx",
+  mod.method("matrix_cxx",
              [](double *mat, BondList const &bonds, Spinhalf const &block_in,
                 Spinhalf const &block_out) {
-               matrix_real(mat, bonds, block_in, block_out);
+               matrix(mat, bonds, block_in, block_out);
              });
 
-  mod.method("matrix_cplx_cxx", [](double *mat, BondList const &bonds,
-                                   Spinhalf const &block_in,
-                                   Spinhalf const &block_out) {
-    matrix_cplx(reinterpret_cast<complex *>(mat), bonds, block_in, block_out);
+  mod.method("matrixC_cxx", [](double *mat, BondList const &bonds,
+                               Spinhalf const &block_in,
+                               Spinhalf const &block_out) {
+    matrixC(reinterpret_cast<complex *>(mat), bonds, block_in, block_out);
   });
 
   // Computing the ground state energy
-  mod.method("eig0_real_cxx",
+  mod.method("eigval0",
              [](BondList const &bonds, Spinhalf const &block, double precision,
                 int max_iterations, uint64_t seed) {
-               return eig0_real(bonds, block, precision, max_iterations, seed);
+               return eigval0(bonds, block, precision, max_iterations, seed);
              });
-  mod.method("eig0_cplx_cxx",
-             [](BondList const &bonds, Spinhalf const &block, double precision,
-                int max_iterations, uint64_t seed) {
-               return eig0_cplx(bonds, block, precision, max_iterations, seed);
-             });
-
-  // Computing the ground state
-  mod.method("groundstate_real_cxx", [](BondList const &bonds,
-                                        Spinhalf const &block, double precision,
-                                        int max_iterations, uint64_t seed) {
-    return groundstate_real(bonds, block, precision, max_iterations, seed);
-  });
-  mod.method("groundstate_cplx_cxx", [](BondList const &bonds,
-                                        Spinhalf const &block, double precision,
-                                        int max_iterations, uint64_t seed) {
-    return groundstate_cplx(bonds, block, precision, max_iterations, seed);
-  });
 
   // Print functions
   mod.method("print_pretty", [](const char *id, Spinhalf const &block) {
