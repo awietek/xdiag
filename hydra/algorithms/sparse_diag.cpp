@@ -28,10 +28,10 @@ double eigval0(BondList const &bonds, block_variant_t const &block,
   return std::nan("");
 }
 
-std::pair<double, State> eig0(BondList const &bonds,
-                              block_variant_t const &block, double precision,
-                              int64_t max_iterations, bool force_complex,
-                              int64_t random_seed) try {
+std::tuple<double, State> eig0(BondList const &bonds,
+                               block_variant_t const &block, double precision,
+                               int64_t max_iterations, bool force_complex,
+                               int64_t random_seed) try {
   if (size(block) == 0) {
     Log.warn("Warning: block zero dimensional in eigval0");
     return {std::nan(""), State()};

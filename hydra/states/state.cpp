@@ -36,26 +36,21 @@ template State::State(tJ const &, bool, int64_t);
 template State::State(Electron const &, bool, int64_t);
 
 template <typename block_t>
-State::State(block_t const &block, double const *ptr, int64_t size,
+State::State(block_t const &block, double const *ptr, int64_t n_cols,
              int64_t stride)
-    : real_(true), n_rows_(block.size()), n_cols_(size / block.size()),
-      block_(block) {
-  if (n_rows_ * n_cols_ != size) {
-    HydraThrow(std::invalid_argument,
-               "size is not an integer multiple of Block dimension");
-  }
+    : real_(true), n_rows_(block.size()), n_cols_(n_cols), block_(block) {
 
   try {
-    resize_vector(storage_, size);
+    resize_vector(storage_, size());
   } catch (...) {
     HydraThrow(std::runtime_error, "Unable to allocate memory for State");
   }
 
   try {
     if (stride == 1) {
-      std::copy(ptr, ptr + size, storage_.data());
+      std::copy(ptr, ptr + size(), storage_.data());
     } else {
-      for (int64_t i = 0, is = 0; i < size; ++i, is += stride) {
+      for (int64_t i = 0, is = 0; i < size(); ++i, is += stride) {
         storage_[i] = ptr[is];
       }
     }
@@ -68,22 +63,16 @@ template State::State(tJ const &, double const *, int64_t, int64_t);
 template State::State(Electron const &, double const *, int64_t, int64_t);
 
 template <typename block_t>
-State::State(block_t const &block, complex const *ptr, int64_t size)
-    : real_(false), n_rows_(block.size()), n_cols_(size / block.size()),
-      block_(block) {
-  if (n_rows_ * n_cols_ != size) {
-    HydraThrow(std::invalid_argument,
-               "size is not an integer multiple of Block dimension");
-  }
-
+State::State(block_t const &block, complex const *ptr, int64_t n_cols)
+    : real_(false), n_rows_(block.size()), n_cols_(n_cols), block_(block) {
   try {
-    resize_vector(storage_, 2 * size);
+    resize_vector(storage_, 2 * size());
   } catch (...) {
     HydraThrow(std::runtime_error, "Unable to allocate memory for State");
   }
 
   try {
-    std::copy(ptr, ptr + size, reinterpret_cast<complex *>(storage_.data()));
+    std::copy(ptr, ptr + size(), reinterpret_cast<complex *>(storage_.data()));
   } catch (...) {
     HydraThrow(std::runtime_error, "Unable to copy memory for State");
   }
@@ -171,9 +160,8 @@ State State::real() const {
   } else {
     // Return a State with zero values
     double *ptr = storage_.data();
-    int64_t n = size();
-    return std::visit([&](auto &&block) { return State(block, ptr, n, 2); },
-                      block_);
+    return std::visit(
+        [&](auto &&block) { return State(block, ptr, n_cols_, 2); }, block_);
   }
 }
 
@@ -291,7 +279,17 @@ double *State::memptr() { return storage_.data(); }
 complex *State::memptrC() {
   return reinterpret_cast<complex *>(storage_.data());
 }
-double *State::colptr(int64_t col) { return memptr() + col * n_rows_; }
-complex *State::colptrC(int64_t col) { return memptrC() + col * n_rows_; }
+double *State::colptr(int64_t col) {
+  if ((col < 0) || (col >= n_cols_)) {
+    HydraThrow(std::invalid_argument, "Invalid column index requested");
+  }
+  return memptr() + col * n_rows_;
+}
+complex *State::colptrC(int64_t col) {
+  if ((col < 0) || (col >= n_cols_)) {
+    HydraThrow(std::invalid_argument, "Invalid column index requested");
+  }
+  return memptrC() + col * n_rows_;
+}
 
 } // namespace hydra

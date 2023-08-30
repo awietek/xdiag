@@ -43,18 +43,18 @@ public:
 
   // Developer section
   template <typename block_t>
-  State(block_t const &block, double const *ptr, int64_t size,
+  State(block_t const &block, double const *ptr, int64_t n_cols,
         int64_t stride = 1);
 
   template <typename block_t>
-  State(block_t const &block, complex const *ptr, int64_t size);
+  State(block_t const &block, complex const *ptr, int64_t n_cols);
   block_variant_t block() const;
 
   double *memptr();
   complex *memptrC();
   double *colptr(int64_t col);
   complex *colptrC(int64_t col);
-
+  
 private:
   bool real_;
   int64_t n_rows_;

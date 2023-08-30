@@ -13,6 +13,8 @@ void traceback(const std::exception &e, std::size_t depth) {
   } catch (const std::exception &nested) {
     traceback(nested, depth + 1);
   }
-  std::cerr << "\n";
+  if (depth == 0) {
+    std::cerr << "\n";
+  }
 }
 } // namespace hydra
