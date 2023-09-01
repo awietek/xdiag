@@ -1,50 +1,59 @@
 #include "../catch.hpp"
 
 #include <iostream>
-#include <extern/armadillo/armadillo>
-#include <hydra/utils/logger.h>
-#include <hydra/common.h>
+
+#include <hydra/algebra/algebra.h>
+#include <hydra/algebra/matrix.h>
 #include <hydra/algorithms/time_evolution/exp_sym_v.h>
+#include <hydra/blocks/blocks.h>
+#include <hydra/common.h>
+#include <hydra/states/state.h>
+#include <hydra/utils/logger.h>
 
-template <class coeff_t>
-void test_exp_sym_v(int n, double precision, int n_tests) {
+#include "../blocks/spinhalf/testcases_spinhalf.h"
+
+TEST_CASE("exp_sym_v", "[algorithms]") try {
   using namespace hydra;
+  for (int64_t N = 2; N <= 10; ++N) {
+    Log("Testing exp_sym_v on all-to-all HB model, N={}", N);
 
-  // // Log.set_verbosity(2);
-  
-  // for (int seed = 1; seed <= n_tests; ++seed) {
-  //   arma::arma_rng::set_seed(seed);
-  //   arma::Mat<coeff_t> A(n, n, arma::fill::randn);
-  //   A += A.t();
-  //   REQUIRE(A.is_hermitian());
+    auto block = Spinhalf(N);
+    auto psi0 = random_state(block);
+    auto bonds = hydra::testcases::spinhalf::HB_alltoall(N);
 
-  //   arma::vec eigs;
-  //   arma::eig_sym(eigs, A);
-  //   A -= eigs(0) * arma::eye<arma::Mat<coeff_t>>(arma::size(A));
-    
-  //   arma::Mat<coeff_t> r(1, 1, arma::fill::randn);
-  //   coeff_t tau = r(0, 0);
+    {
+      Log("real time");
+      // Real time evolution
+      double t = 1.2345;
+      auto H = matrixC(bonds, block);
+      arma::cx_vec psi_ex = expmat(-1.0I * t * H) * psi0.vector();
+      arma::cx_vec psi = exp_sym_v(bonds, psi0, complex(0, -t)).vectorC();
+      // HydraPrint(norm(psi - psi_ex));
+      REQUIRE(norm(psi - psi_ex) < 1e-10);
+    }
 
-  //   // HydraPrint(A);
-  //   std::cout << tau << std::endl;
+    {
+      Log("imaginary time");
+      // Imaginary time evolution
+      double t = 1.2345;
+      auto H = matrix(bonds, block);
+      arma::vec psi_ex = expmat(-t * H) * psi0.vector();
+      arma::vec psi = exp_sym_v(bonds, psi0, -t).vector();
+      // HydraPrint(norm(psi - psi_ex));
+      REQUIRE(norm(psi - psi_ex) < 1e-10);
+    }
 
-  //   arma::Col<coeff_t> v0(n, arma::fill::randn);
-  //   arma::Col<coeff_t> Av0 = arma::expmat(tau * A) * v0;
+    {
+      Log("complex time");
+      complex t = -1.2345 + 3.2145I;
+      auto H = matrixC(bonds, block);
+      arma::cx_vec psi_ex = expmat(t * H) * psi0.vector();
+      arma::cx_vec psi = exp_sym_v(bonds, psi0, t).vectorC();
+      // HydraPrint(norm(psi - psi_ex));
+      REQUIRE(norm(psi - psi_ex) < 1e-10);
+    }
+  }
 
-  //   auto multiply = [&A](arma::Col<coeff_t> const &v, arma::Col<coeff_t> &w) {
-  //     w = A * v;
-  //   };
-
-  //   arma::Col<coeff_t> Av0_lanczos = exp_sym_v(multiply, v0, tau, precision);
-   
-  //   double e = arma::norm(Av0_lanczos - Av0);
-  //   Log("N: {} e: {} precision: {}", n, e, precision);
-  //   REQUIRE(e < precision);
-  // }
-}
-
-TEST_CASE("exp_sym_v", "[algorithms]") {
-  using namespace hydra;
-  // test_exp_sym_v<double>(5, 1e-8, 2);
-  // test_exp_sym_v<complex>(5, 1e-8, 2);
+} catch (std::exception const &e) {
+  hydra::traceback(e);
 }

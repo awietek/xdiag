@@ -14,7 +14,7 @@ public:
   State(block_variant_t const &block, bool real = true, int64_t n_cols = 1);
 
   template <typename block_t>
-  State(block_t const &block, bool real = true, int64_t n_cols = 1);
+  explicit State(block_t const &block, bool real = true, int64_t n_cols = 1);
 
   template <typename block_t, typename coeff_t>
   State(block_t const &block, arma::Col<coeff_t> const &vector);

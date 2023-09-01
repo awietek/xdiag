@@ -76,6 +76,6 @@ void print_pretty(const char *identifier,
                   arma::Col<std::complex<double>> const &vec);
 
 void print_pretty(const char *identifier, Tmatrix const &tmat);
-  void print_pretty(const char *identifier, State const &state);
+void print_pretty(const char *identifier, State const &state);
 
 } // namespace hydra::utils
