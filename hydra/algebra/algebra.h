@@ -18,6 +18,11 @@ complex innerC(BondList const &bonds, State const &v);
 double inner(Bond const &bonds, State const &v);
 complex innerC(Bond const &bonds, State const &v);
 
+double inner(State const &v, BondList const &bonds, State const &w);
+complex innerC(State const &v, BondList const &bonds, State const &w);
+double inner(State const &v, Bond const &bonds, State const &w);
+complex innerC(State const &v, Bond const &bonds, State const &w);
+
 State &operator*=(State &X, complex alpha);
 State &operator*=(State &X, double alpha);
 State &operator/=(State &X, complex alpha);

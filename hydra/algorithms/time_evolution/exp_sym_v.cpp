@@ -14,13 +14,14 @@ double exp_sym_v_inplace(multiply_f mult, arma::Col<coeff_t> &X, coeff_t tau,
 
   double norm = arma::norm(X);
   auto v0 = X;
-
+  
   auto dot = [](arma::Col<coeff_t> const &v, arma::Col<coeff_t> const &w) {
     return arma::cdot(v, w);
   };
   auto converged = [precision, tau, norm](Tmatrix const &tmat) {
     return lanczos::converged_time_evolution(tmat, tau, precision, norm);
   };
+
   auto operation_void = [](arma::Col<coeff_t> const &) {};
   auto r = lanczos::lanczos(mult, dot, converged, operation_void, v0,
                             max_iterations, deflation_tol);
@@ -36,7 +37,7 @@ double exp_sym_v_inplace(multiply_f mult, arma::Col<coeff_t> &X, coeff_t tau,
 
   // Subtract e0 from diagonal
   if (shift) {
-    for (int64_t i = 0; i < (int64_t)tmat.size(); ++i) {
+    for (int64_t i = 0; i < (int64_t)tmat.n_cols; ++i) {
       tmat(i, i) -= e0;
     }
   }
@@ -58,6 +59,7 @@ double exp_sym_v_inplace(multiply_f mult, arma::Col<coeff_t> &X, coeff_t tau,
 
   lanczos::lanczos(mult2, dot, converged, operation, v0, max_iterations,
                    deflation_tol);
+
   if (!normalize) {
     X *= norm;
   } else {

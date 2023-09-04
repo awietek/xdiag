@@ -63,4 +63,10 @@ private:
   mutable std::vector<double> storage_;
 };
 
+State zero_state(block_variant_t const &block, bool real = true);
+template <typename block_t>
+State zero_state(block_t const &block, bool real = true);
+State zeros_like(State const& state);
+  
+  
 } // namespace hydra

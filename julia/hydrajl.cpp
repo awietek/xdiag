@@ -69,6 +69,9 @@ JLCXX_MODULE define_julia_module(jlcxx::Module &mod) {
       .method("imag", &State::imag)
       .method("make_complex!", &State::make_complex);
 
+  mod.method("zeros_like",
+             [](State const &v) { JULIA_HYDRA_CALL_RETURN(zeros_like(v)); });
+
   mod.method("memptr",
              [](State &state) { JULIA_HYDRA_CALL_RETURN(state.memptr()); });
   mod.method("colptr", [](State &state, int64_t col) {
@@ -94,6 +97,59 @@ JLCXX_MODULE define_julia_module(jlcxx::Module &mod) {
                JULIA_HYDRA_CALL_VOID(matrixC(reinterpret_cast<complex *>(mat),
                                              bonds, block_in, block_out));
              });
+
+  // methods to apply bonds
+  mod.method("apply_cxx", [](BondList const &bonds, State const &v, State &w) {
+    JULIA_HYDRA_CALL_VOID(apply(bonds, v, w));
+  });
+
+  // algebra operations
+  mod.method("norm_cxx",
+             [](State const &v) { JULIA_HYDRA_CALL_RETURN(norm(v)); });
+
+  mod.method("dot_cxx", [](State const &v, State const &w) {
+    JULIA_HYDRA_CALL_RETURN(dot(v, w));
+  });
+
+  mod.method("dotC_cxx", [](State const &v, State const &w) {
+    JULIA_HYDRA_CALL_RETURN(dotC(v, w));
+  });
+
+  mod.method("inner_cxx", [](BondList const &bonds, State const &v) {
+    JULIA_HYDRA_CALL_RETURN(inner(bonds, v));
+  });
+
+  mod.method("innerC_cxx", [](BondList const &bonds, State const &v) {
+    JULIA_HYDRA_CALL_RETURN(innerC(bonds, v));
+  });
+
+  mod.method("inner_cxx",
+             [](State const &v, BondList const &bonds, State const &w) {
+               JULIA_HYDRA_CALL_RETURN(inner(v, bonds, w));
+             });
+
+  mod.method("innerC_cxx",
+             [](State const &v, BondList const &bonds, State const &w) {
+               JULIA_HYDRA_CALL_RETURN(innerC(v, bonds, w));
+             });
+
+  // methods for time evolution
+  mod.method("exp_sym_v_cxx", [](BondList const &bonds, State state, double tau,
+                                 bool normalize, bool shift, double precision,
+                                 int64_t max_iterations, double deflation_tol) {
+    JULIA_HYDRA_CALL_RETURN(exp_sym_v(bonds, state, tau, normalize, shift,
+                                      precision, max_iterations,
+                                      deflation_tol));
+  });
+
+  mod.method("exp_sym_v_cxx", [](BondList const &bonds, State state,
+                                 complex tau, bool normalize, bool shift,
+                                 double precision, int64_t max_iterations,
+                                 double deflation_tol) {
+    JULIA_HYDRA_CALL_RETURN(exp_sym_v(bonds, state, tau, normalize, shift,
+                                      precision, max_iterations,
+                                      deflation_tol));
+  });
 
   // Computing the ground state energy
   mod.method("eigval0_cxx", [](BondList const &bonds, Spinhalf const &block,

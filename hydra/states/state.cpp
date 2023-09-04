@@ -292,4 +292,8 @@ complex *State::colptrC(int64_t col) {
   return memptrC() + col * n_rows_;
 }
 
+State zeros_like(State const &state) {
+  return State(state.block(), state.isreal(), state.n_cols());
+}
+
 } // namespace hydra

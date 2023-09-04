@@ -88,6 +88,38 @@ complex innerC(Bond const &bond, State const &v) try {
   return 0.;
 }
 
+double inner(State const &v, BondList const &bonds, State const &w) try {
+  auto bw = zeros_like(w);
+  apply(bonds, w, bw);
+  return dot(v, bw);
+} catch (...) {
+  rethrow(__func__, "Error computing expectation value using \"inner\"");
+  return 0.;
+}
+
+complex innerC(State const &v, BondList const &bonds, State const &w) try {
+  auto bw = zeros_like(w);
+  apply(bonds, w, bw);
+  return dotC(v, bw);
+} catch (...) {
+  rethrow(__func__, "Error computing expectation value using \"innerC\"");
+  return 0.;
+}
+
+double inner(State const &v, Bond const &bond, State const &w) try {
+  return inner(v, BondList({bond}), w);
+} catch (...) {
+  rethrow(__func__, "Error computing expectation value using \"inner\"");
+  return 0.;
+}
+
+complex innerC(State const &v, Bond const &bond, State const &w) try {
+  return innerC(v, BondList({bond}), w);
+} catch (...) {
+  rethrow(__func__, "Error computing expectation value using \"innerC\"");
+  return 0.;
+}
+
 State &operator*=(State &X, complex alpha) {
   if (X.isreal()) {
     X.make_complex();
