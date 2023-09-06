@@ -4,6 +4,7 @@
 #include <hydra/utils/error.h>
 
 #include <sstream>
+#include <inttypes.h>
 
 namespace hydra::utils {
 
@@ -89,7 +90,7 @@ void print_pretty(const char *identifier, Bond const &bond) {
 
   printf("  sites: ");
   for (int64_t site : bond.sites()) {
-    printf("%ld ", site);
+    printf("%" PRId64 " ", site);
   }
   printf("\n");
 }
@@ -127,7 +128,7 @@ void print_pretty(const char *identifier, BondList const &bondlist) {
 void print_pretty(const char *identifier, Permutation const &p) {
   printf("%s:\n  ", identifier);
   for (int i = 0; i < p.size(); ++i) {
-    printf("%ld ", p[i]);
+    printf("%" PRId64 " ", p[i]);
   }
   printf("\n");
   printf("  ID: 0x%lx\n", (unsigned long)random::hash(p));
@@ -135,14 +136,14 @@ void print_pretty(const char *identifier, Permutation const &p) {
 
 void print_pretty(const char *identifier, PermutationGroup const &group) {
   printf("%s:\n", identifier);
-  printf("  n_sites      : %ld\n", group.n_sites());
-  printf("  n_symmetries : %ld\n", group.n_symmetries());
+  printf("  n_sites      : %" PRId64 "\n", group.n_sites());
+  printf("  n_symmetries : %" PRId64 "\n", group.n_symmetries());
   printf("  ID           : 0x%lx\n", (unsigned long)random::hash(group));
 }
 
 void print_pretty(const char *identifier, Representation const &irrep) {
   printf("%s:\n", identifier);
-  printf("  size      : %ld\n", (long)irrep.size());
+  printf("  size      : %" PRId64 "\n", irrep.size());
   printf("  characters:");
   for (auto c : irrep.characters()) {
     if (std::imag(c) > 0.) {
@@ -173,8 +174,8 @@ void print_pretty(const char *identifier, QNum const &qn) {
                  [](PermutationGroup const &g, Representation const &i) {
                    printf("  QNum\n");
                    printf("  PermutationGroup\n");
-                   printf("    n_sites      : %ld\n", g.n_sites());
-                   printf("    n_symmetries : %ld\n", g.n_symmetries());
+                   printf("    n_sites      : %" PRId64 "\n", g.n_sites());
+                   printf("    n_symmetries : %" PRId64 "\n", g.n_symmetries());
                    printf("    ID           : 0x%lx\n\n",
                           (unsigned long)random::hash(g));
                    printf("  Representation\n");
@@ -212,9 +213,9 @@ void print_pretty(const char *identifier, block_variant_t const &block) {
 void print_pretty(const char *identifier, Spinhalf const &block) {
   printf("%s:\n", identifier);
 
-  printf("  n_sites  : %ld\n", block.n_sites());
+  printf("  n_sites  : %" PRId64 "\n", block.n_sites());
   if (block.sz_conserved()) {
-    printf("  n_up     : %ld\n", block.n_up());
+    printf("  n_up     : %" PRId64 "\n", block.n_up());
   } else {
     printf("  n_up     : not conserved\n");
   }
@@ -235,10 +236,10 @@ void print_pretty(const char *identifier, Spinhalf const &block) {
 void print_pretty(const char *identifier, tJ const &block) {
   printf("%s:\n", identifier);
 
-  printf("  n_sites  : %ld\n", block.n_sites());
+  printf("  n_sites  : %" PRId64 "\n", block.n_sites());
   if (block.sz_conserved() && block.charge_conserved()) {
-    printf("  n_up     : %ld\n", block.n_up());
-    printf("  n_dn     : %ld\n", block.n_dn());
+    printf("  n_up     : %" PRId64 "\n", block.n_up());
+    printf("  n_dn     : %" PRId64 "\n", block.n_dn());
 
   } else {
     printf("  n_up     : not conserved\n");
@@ -261,10 +262,10 @@ void print_pretty(const char *identifier, tJ const &block) {
 void print_pretty(const char *identifier, Electron const &block) {
   printf("%s:\n", identifier);
 
-  printf("  n_sites  : %ld\n", block.n_sites());
+  printf("  n_sites  : %" PRId64 "\n", block.n_sites());
   if (block.sz_conserved() && block.charge_conserved()) {
-    printf("  n_up     : %ld\n", block.n_up());
-    printf("  n_dn     : %ld\n", block.n_dn());
+    printf("  n_up     : %" PRId64 "\n", block.n_up());
+    printf("  n_dn     : %" PRId64 "\n", block.n_dn());
 
   } else {
     printf("  n_up     : not conserved\n");
@@ -291,7 +292,7 @@ void print_pretty(const char *identifier, RandomState const &rstate) {
 
 void print_pretty(const char *identifier, ProductState const &pstate) {
   printf("%s:\n", identifier);
-  printf("  ProductState, n_sites: %ld\n", pstate.n_sites());
+  printf("  ProductState, n_sites: %" PRId64 "\n", pstate.n_sites());
   for (auto s : pstate) {
     printf("%s ", s.c_str());
   }

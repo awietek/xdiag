@@ -26,7 +26,7 @@ TEST_CASE("exp_sym_v", "[algorithms]") try {
       // Real time evolution
       double t = 1.2345;
       auto H = matrixC(bonds, block);
-      arma::cx_vec psi_ex = expmat(-1.0I * t * H) * psi0.vector();
+      arma::cx_vec psi_ex = expmat(complex(0.0, -1.0 * t) * H) * psi0.vector();
       arma::cx_vec psi = exp_sym_v(bonds, psi0, complex(0, -t)).vectorC();
       // HydraPrint(norm(psi - psi_ex));
       REQUIRE(norm(psi - psi_ex) < 1e-10);
@@ -45,7 +45,7 @@ TEST_CASE("exp_sym_v", "[algorithms]") try {
 
     {
       Log("complex time");
-      complex t = -1.2345 + 3.2145I;
+      complex t(-1.2345, 3.2145);
       auto H = matrixC(bonds, block);
       arma::cx_vec psi_ex = expmat(t * H) * psi0.vector();
       arma::cx_vec psi = exp_sym_v(bonds, psi0, t).vectorC();
