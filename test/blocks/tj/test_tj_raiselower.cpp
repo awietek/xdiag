@@ -80,7 +80,7 @@ TEST_CASE("tj_raise_lower", "[tj]") {
         }
 
         auto block = tJ(n_sites, nup, ndn);
-        idx_t D = block.size();
+        int64_t D = block.size();
         cx_mat id(D, D, fill::eye);
         // Log("n_sites: {}, nup: {}, ndn: {}", n_sites, nup, ndn);
 
@@ -175,7 +175,7 @@ TEST_CASE("tj_raise_lower", "[tj]") {
   // for (int n_sites = 2; n_sites < 3; ++n_sites) {
 
   //   auto block = tJ(n_sites);
-  //   idx_t D = block.size();
+  //   int64_t D = block.size();
 
   //   for (int i = 0; i < n_sites; ++i) {
 

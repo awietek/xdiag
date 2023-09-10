@@ -13,8 +13,8 @@ public:
   BasisNp() = default;
   BasisNp(int n_sites, int n_up, int n_dn);
 
-  idx_t size() const;
-  inline idx_t index(bit_t ups, bit_t dns) const {
+  int64_t size() const;
+  inline int64_t index(bit_t ups, bit_t dns) const {
     bit_t dncs = bits::extract<bit_t>(dns, (~ups) & sitesmask_);
     return index_ups(ups) * size_dncs_ + index_dncs(dncs);
   }
@@ -29,18 +29,18 @@ private:
   int n_up_;
   int n_dn_;
 
-  idx_t size_ups_;
-  idx_t size_dncs_;
-  idx_t size_;
+  int64_t size_ups_;
+  int64_t size_dncs_;
+  int64_t size_;
   bit_t sitesmask_;
 
   combinatorics::LinTable<bit_t> lintable_ups_;
   combinatorics::LinTable<bit_t> lintable_dncs_;
 
 public:
-  idx_t size_ups() const;
-  idx_t size_dncs() const;
-  idx_t ups_offset(idx_t idx_ups) const;
+  int64_t size_ups() const;
+  int64_t size_dncs() const;
+  int64_t ups_offset(int64_t idx_ups) const;
 
   combinatorics::Combinations<bit_t> states_ups() const;
   combinatorics::Combinations<bit_t> states_dncs(bit_t ups) const;
@@ -56,8 +56,8 @@ public:
   states_indices_dncs_thread(bit_t ups) const;
 #endif
 
-  inline idx_t index_ups(bit_t ups) const { return lintable_ups_.index(ups); }
-  inline idx_t index_dncs(bit_t dncs) const {
+  inline int64_t index_ups(bit_t ups) const { return lintable_ups_.index(ups); }
+  inline int64_t index_dncs(bit_t dncs) const {
     return lintable_dncs_.index(dncs);
   }
 };

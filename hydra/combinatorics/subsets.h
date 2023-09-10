@@ -12,16 +12,16 @@ public:
   using iterator_t = SubsetsIterator<bit_t>;
 
   Subsets() = default;
-  explicit Subsets(int n);
+  explicit Subsets(int64_t n);
 
-  int n() const { return n_; }
-  idx_t size() const { return size_; };
+  int64_t n() const { return n_; }
+  int64_t size() const { return size_; };
   iterator_t begin() const { return begin_; }
   iterator_t end() const { return end_; }
 
 private:
-  int n_, k_;
-  idx_t size_;
+  int64_t n_, k_;
+  int64_t size_;
   iterator_t begin_, end_;
 };
 
@@ -29,7 +29,7 @@ private:
 template <class bit_t> class SubsetsIterator {
 public:
   SubsetsIterator() = default;
-  SubsetsIterator(idx_t idx);
+  SubsetsIterator(int64_t idx);
 
   inline bool operator==(const SubsetsIterator<bit_t> &rhs) const {
     return current_ == rhs.current_;
@@ -54,16 +54,16 @@ public:
   using iterator_t = SubsetsIterator<bit_t>;
 
   SubsetsThread() = default;
-  explicit SubsetsThread(int n);
+  explicit SubsetsThread(int64_t n);
 
-  int n() const { return n_; }
-  idx_t size() const { return size_; };
+  int64_t n() const { return n_; }
+  int64_t size() const { return size_; };
   iterator_t begin() const { return begin_; }
   iterator_t end() const { return end_; }
 
 private:
-  int n_, k_;
-  idx_t size_;
+  int64_t n_, k_;
+  int64_t size_;
   iterator_t begin_, end_;
 };
 

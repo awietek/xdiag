@@ -13,7 +13,7 @@ template <typename bit_t> void test_combinations_index() {
       CombinationsIndex<bit_t> combs(n, k);
       REQUIRE(n == combs.n());
       REQUIRE(k == combs.k());
-      idx_t ctr = 0;
+      int64_t ctr = 0;
       bit_t current = 0;
       for (auto [comb, idx] : combs) {
 
@@ -32,7 +32,7 @@ template <typename bit_t> void test_combinations_index() {
 #ifdef _OPENMP
   for (int n = 0; n < 7; ++n) {
     for (int k = 0; k <= n; ++k) {
-      idx_t size = binomial(n, k);
+      int64_t size = binomial(n, k);
       std::vector<bit_t> states_serial(size);
       std::vector<bit_t> states_parallel(size);
 
@@ -49,7 +49,7 @@ template <typename bit_t> void test_combinations_index() {
         }
       }
 
-      for (idx_t idx = 0; idx < size; ++idx) {
+      for (int64_t idx = 0; idx < size; ++idx) {
         // Log("{} {}", states_serial[idx], states_parallel[idx]);
         REQUIRE(states_serial[idx] == states_parallel[idx]);
       }

@@ -35,7 +35,7 @@ void spinhalf_mpi_ising(BondList const &bonds, Couplings const &couplings,
     bit_t mask = ((bit_t)1 << s1) | ((bit_t)1 << s2);
     int n_postfix_bits = indexing.n_postfix_bits();
 
-    idx_t idx = 0;
+    int64_t idx = 0;
     for (auto prefix : indexing.prefixes()) {
 
       bit_t prefix_shifted = (prefix << n_postfix_bits);
@@ -45,7 +45,7 @@ void spinhalf_mpi_ising(BondList const &bonds, Couplings const &couplings,
       if ((s1 >= n_postfix_bits) && (s2 >= n_postfix_bits)) {
         coeff_t val =
             (bitops::popcnt(prefix_shifted & mask) & 1) ? val_diff : val_same;
-        idx_t end = idx + postfixes.size();
+        int64_t end = idx + postfixes.size();
         for (; idx < end; ++idx) {
           vec_out(idx) += val * vec_in(idx);
         }

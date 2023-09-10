@@ -41,7 +41,6 @@ template <class coeff_t> struct complex_type_struct<std::complex<coeff_t>> {
 
 namespace hydra {
 
-using idx_t = int64_t;
 using std_bit_t = uint64_t;
 using complex = std::complex<double>;
 
@@ -59,16 +58,16 @@ template <class T> constexpr bool isreal() {
   return !detail::is_complex_t<T>::value;
 }
 
-constexpr idx_t invalid_index = (idx_t)-1;
-constexpr int invalid_n = (idx_t)-1;
+constexpr int64_t invalid_index = (int64_t)-1;
+constexpr int invalid_n = (int64_t)-1;
 
 constexpr int undefined_qn = std::numeric_limits<int>::min();
 constexpr std::pair<int, int> undefined_qns = {undefined_qn, undefined_qn};
 
 constexpr double default_double = std::numeric_limits<double>::max();
 
-constexpr bool index_not_found(idx_t idx) { return idx < 0; }
-constexpr bool index_valid(idx_t idx) { return idx >= 0; }
+constexpr bool index_not_found(int64_t idx) { return idx < 0; }
+constexpr bool index_valid(int64_t idx) { return idx >= 0; }
 
 template <class coeff_t>
 using real_t = typename detail::real_type_struct<coeff_t>::type;

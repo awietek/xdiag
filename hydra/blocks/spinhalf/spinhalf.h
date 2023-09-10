@@ -34,7 +34,7 @@ public:
   }
   inline Representation const &irrep() const { return irrep_; }
 
-  inline idx_t size() const { return size_; }
+  inline int64_t size() const { return size_; }
   bool iscomplex(double precision = 1e-12) const;
   bool isreal(double precision = 1e-12) const;
 
@@ -54,7 +54,7 @@ private:
   PermutationGroup permutation_group_;
   Representation irrep_;
   std::shared_ptr<basis_t> basis_;
-  idx_t size_;
+  int64_t size_;
 };
 
 } // namespace hydra

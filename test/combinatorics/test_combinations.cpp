@@ -13,7 +13,7 @@ template <typename bit_t> void test_combinations() {
       Combinations<bit_t> combs(n, k);
       REQUIRE(n == combs.n());
       REQUIRE(k == combs.k());
-      idx_t ctr = 0;
+      int64_t ctr = 0;
       bit_t current = 0;
       for (auto comb : combs) {
 

@@ -21,7 +21,7 @@ GroupActionLookup<bit_t>::GroupActionLookup(
 
   auto action = GroupAction(permutation_group);
 
-  idx_t idx = 0;
+  int64_t idx = 0;
   // Fill prefix table with translated prefix states
   for (int sym = 0; sym < n_symmetries_; ++sym) {
     for (bit_t state = 0; state < (bit_t)prefix_size_; ++state) {
@@ -29,7 +29,7 @@ GroupActionLookup<bit_t>::GroupActionLookup(
           action.apply(sym, (bit_t)(state << n_postfix_bits_));
     }
   }
-  assert(idx == (idx_t)table_prefix_.size());
+  assert(idx == (int64_t)table_prefix_.size());
 
   // Fill postfix table
   idx = 0;
@@ -39,7 +39,7 @@ GroupActionLookup<bit_t>::GroupActionLookup(
     }
   }
 
-  assert(idx == (idx_t)table_postfix_.size());
+  assert(idx == (int64_t)table_postfix_.size());
 }
 
 template <typename bit_t>

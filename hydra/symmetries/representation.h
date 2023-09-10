@@ -26,7 +26,7 @@ public:
   }
   Representation subgroup(std::vector<int64_t> const &symmetry_numbers) const;
 
-  idx_t size() const { return characters_.size(); }
+  int64_t size() const { return characters_.size(); }
 
   bool iscomplex(double precision = 1e-12) const;
   bool isreal(double precision = 1e-12) const;
@@ -41,7 +41,7 @@ private:
 };
 
 Representation read_representation(std::string filename, std::string repname);
-Representation trivial_representation(idx_t size);
+Representation trivial_representation(int64_t size);
 Representation trivial_representation(PermutationGroup const &group);
 
 PermutationGroup allowed_subgroup(PermutationGroup const &group,

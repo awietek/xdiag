@@ -29,15 +29,15 @@ void generic_term_dns(BasisIn &&basis_in, BasisOut &&basis_out,
 #ifdef _OPENMP
 #pragma omp parallel for schedule(guided)
 #endif
-    for (idx_t idx_up_in = 0; idx_up_in < basis_in.n_rep_ups();
+    for (int64_t idx_up_in = 0; idx_up_in < basis_in.n_rep_ups();
          ++idx_up_in) {
       bit_t up_in = basis_in.rep_ups(idx_up_in);
 
       if (non_zero_term_ups(up_in)) {
 
         bit_t not_up_in = (~up_in) & sitesmask;
-        idx_t up_in_offset = basis_in.ups_offset(idx_up_in);
-        idx_t up_out_offset = basis_out.ups_offset(idx_up_in);
+        int64_t up_in_offset = basis_in.ups_offset(idx_up_in);
+        int64_t up_out_offset = basis_out.ups_offset(idx_up_in);
 
         auto dncs_in = basis_in.dns_for_ups_rep(up_in);
         auto syms_in = basis_in.syms_ups(up_in);
@@ -49,15 +49,15 @@ void generic_term_dns(BasisIn &&basis_in, BasisOut &&basis_out,
 
         // trivial stabilizer of up_in -> dns have to be deposited
         if (syms_in.size() == 1) {
-          idx_t idx_in = up_in_offset;
+          int64_t idx_in = up_in_offset;
           for (bit_t dnc_in : dncs_in) {
-            idx_t dn_in = bits::deposit(dnc_in, not_up_in);
+            int64_t dn_in = bits::deposit(dnc_in, not_up_in);
             if (non_zero_term_dns(dn_in)) {
               auto [dn_flip, coeff] = term_action(dn_in);
               if ((dn_flip & up_in) == 0) { // tJ constraint
                 bit_t dnc_flip = bits::extract(dn_flip, not_up_in);
-                idx_t idx_dnc_flip = basis_out.dnsc_index(dnc_flip);
-                idx_t idx_out = up_out_offset + idx_dnc_flip;
+                int64_t idx_dnc_flip = basis_out.dnsc_index(dnc_flip);
+                int64_t idx_out = up_out_offset + idx_dnc_flip;
 
                 if constexpr (fermi_ups) {
                   bool fermi_up = (bool)(bits::popcnt(up_in) & 1);
@@ -73,8 +73,8 @@ void generic_term_dns(BasisIn &&basis_in, BasisOut &&basis_out,
 
         // non-trivial stabilizer of ups -> dns don't have to be deposited
         else {
-          idx_t idx_in = up_in_offset;
-          idx_t idx_dn_in = 0;
+          int64_t idx_in = up_in_offset;
+          int64_t idx_dn_in = 0;
           for (bit_t dn_in : dncs_in) {
             if (non_zero_term_dns(dn_in)) {
               auto [dn_flip, coeff] = term_action(dn_in);
@@ -82,7 +82,7 @@ void generic_term_dns(BasisIn &&basis_in, BasisOut &&basis_out,
                   basis_out.index_dns_fermi_sym(dn_flip, syms_out, dncs_out);
 
               if (idx_dn_flip != invalid_index) {
-                idx_t idx_out = up_out_offset + idx_dn_flip;
+                int64_t idx_out = up_out_offset + idx_dn_flip;
                 bool fermi_up = basis_out.fermi_bool_ups(sym, up_in);
                 if constexpr (fermi_ups) {
                   fermi_up ^= (bool)(bits::popcnt(up_in) & 1);
@@ -112,12 +112,12 @@ void generic_term_dns(BasisIn &&basis_in, BasisOut &&basis_out,
 
         if (non_zero_term_ups(up_in)) {
 
-          idx_t up_in_offset = basis_in.ups_offset(idx_up_in);
-          idx_t up_out_offset = basis_out.ups_offset(idx_up_in);
+          int64_t up_in_offset = basis_in.ups_offset(idx_up_in);
+          int64_t up_out_offset = basis_out.ups_offset(idx_up_in);
           bit_t not_up_in = (~up_in) & sitesmask;
 
           auto dncs_in = basis_in.states_dncs(up_in);
-          idx_t idx_in = up_in_offset;
+          int64_t idx_in = up_in_offset;
           for (bit_t dnc_in : dncs_in) {
             bit_t dn_in = bits::deposit(dnc_in, not_up_in);
 
@@ -125,8 +125,8 @@ void generic_term_dns(BasisIn &&basis_in, BasisOut &&basis_out,
               auto [dn_flip, coeff] = term_action(dn_in);
               if ((up_in & dn_flip) == 0) {
                 bit_t dnc_flip = bits::extract(dn_flip, not_up_in);
-                idx_t idx_dn_flip = basis_out.index_dncs(dnc_flip);
-                idx_t idx_out = up_out_offset + idx_dn_flip;
+                int64_t idx_dn_flip = basis_out.index_dncs(dnc_flip);
+                int64_t idx_out = up_out_offset + idx_dn_flip;
 
                 if constexpr (fermi_ups) {
                   bool fermi_up = (bool)(bits::popcnt(up_in) & 1);

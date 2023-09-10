@@ -6,7 +6,8 @@
 namespace hydra::combinatorics {
 
 template <class bit_t>
-SubsetsIndexing<bit_t>::SubsetsIndexing(int n) : n_(n), size_((idx_t)1 << n) {
+SubsetsIndexing<bit_t>::SubsetsIndexing(int64_t n)
+    : n_(n), size_((int64_t)1 << n) {
   if (n < 0) {
     Log.err("Error constructing SubsetsIndexing: n<0");
   }

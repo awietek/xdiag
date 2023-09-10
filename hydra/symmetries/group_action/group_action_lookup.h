@@ -11,13 +11,13 @@ public:
   GroupActionLookup() = default;
   explicit GroupActionLookup(PermutationGroup const &permutation_group);
 
-  inline int n_sites() const { return n_sites_; }
-  inline int n_symmetries() const { return n_symmetries_; }
+  inline int64_t n_sites() const { return n_sites_; }
+  inline int64_t n_symmetries() const { return n_symmetries_; }
   inline PermutationGroup const &permutation_group() const {
     return permutation_group_;
   }
 
-  inline bit_t apply(int sym, bit_t state) const {
+  inline bit_t apply(int64_t sym, bit_t state) const {
     // return table_prefix_[sym * prefix_size_ + (state >> n_postfix_bits_)] |
     //        table_postfix_[sym * postfix_size_ + (state & postfix_mask_)];
     return table_prefix_[(sym << n_prefix_bits_) | (state >> n_postfix_bits_)] |
@@ -28,16 +28,16 @@ public:
   bool operator!=(GroupActionLookup const &rhs) const;
 
 private:
-  int n_sites_;
-  int n_symmetries_;
+  int64_t n_sites_;
+  int64_t n_symmetries_;
   PermutationGroup permutation_group_;
 
-  int n_prefix_bits_;
-  int n_postfix_bits_;
+  int64_t n_prefix_bits_;
+  int64_t n_postfix_bits_;
   bit_t postfix_mask_;
 
-  idx_t prefix_size_;
-  idx_t postfix_size_;
+  int64_t prefix_size_;
+  int64_t postfix_size_;
 
   std::vector<bit_t> table_prefix_;
   std::vector<bit_t> table_postfix_;

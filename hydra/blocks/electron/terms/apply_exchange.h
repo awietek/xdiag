@@ -7,23 +7,23 @@
 namespace hydra::electron {
 
 template <typename bit_t, typename coeff_t, class Basis, class Filler>
-void electron_do_down_flips(bit_t ups, idx_t idx_ups, bit_t flipmask,
+void electron_do_down_flips(bit_t ups, int64_t idx_ups, bit_t flipmask,
                             bit_t fermimask, int64_t sdn, coeff_t val,
                             Basis &&basis, Filler &&fill) {
-  idx_t size_dns = basis.size_dns();
+  int64_t size_dns = basis.size_dns();
 
   // Get limits of flipped up
   bit_t ups_flip = ups ^ flipmask;
-  idx_t idx_ups_flip = basis.index_ups(ups_flip);
+  int64_t idx_ups_flip = basis.index_ups(ups_flip);
 
-  idx_t idx_out_offset = idx_ups_flip * size_dns;
-  idx_t idx_in = idx_ups * size_dns;
+  int64_t idx_out_offset = idx_ups_flip * size_dns;
+  int64_t idx_in = idx_ups * size_dns;
 
   for (auto dns : basis.states_dns()) {
 
     if ((bits::popcnt(dns & flipmask) == 1) && ((bool)bits::gbit(dns, sdn))) {
       bit_t dns_flip = dns ^ flipmask;
-      idx_t idx_out = idx_out_offset + basis.index_dns(dns_flip);
+      int64_t idx_out = idx_out_offset + basis.index_dns(dns_flip);
       fill(idx_out, idx_in, (bits::popcnt(dns & fermimask) & 1) ? -val : val);
     }
 
@@ -59,7 +59,7 @@ void apply_exchange(Bond const &bond, Basis &&basis, Filler &&fill) {
 #ifdef _OPENMP
 #pragma omp parallel for schedule(guided)
 #endif
-    for (idx_t idx_ups = 0; idx_ups < basis.n_rep_ups(); ++idx_ups) {
+    for (int64_t idx_ups = 0; idx_ups < basis.n_rep_ups(); ++idx_ups) {
       bit_t ups = basis.rep_ups(idx_ups);
 
       // Exchange gives zero continue
@@ -81,16 +81,16 @@ void apply_exchange(Bond const &bond, Basis &&basis, Filler &&fill) {
 
       // Compute index and rep of flipped ups
       bit_t ups_flip = ups ^ flipmask;
-      idx_t idx_ups_flip = basis.index_ups(ups_flip);
+      int64_t idx_ups_flip = basis.index_ups(ups_flip);
       bit_t ups_flip_rep = basis.rep_ups(idx_ups_flip);
 
       // Get limits, syms, and dns for ingoing ups
-      idx_t up_offset_in = basis.ups_offset(idx_ups);
+      int64_t up_offset_in = basis.ups_offset(idx_ups);
       auto dnss_in = basis.dns_for_ups_rep(ups);
       auto norms_in = basis.norms_for_ups_rep(ups);
 
       // Get limits, syms, and dns for outgoing ups
-      idx_t up_offset_out = basis.ups_offset(idx_ups_flip);
+      int64_t up_offset_out = basis.ups_offset(idx_ups_flip);
       auto syms_up_out = basis.syms_ups(ups_flip);
       auto dnss_out = basis.dns_for_ups_rep(ups_flip_rep);
       auto norms_out = basis.norms_for_ups_rep(ups_flip_rep);
@@ -114,7 +114,7 @@ void apply_exchange(Bond const &bond, Basis &&basis, Filler &&fill) {
         bool fermi_up = (bits::popcnt(ups & fermimask) & 1);
         fermi_up ^= basis.fermi_bool_ups(sym, ups_flip);
 
-        idx_t idx_dn = 0;
+        int64_t idx_dn = 0;
         for (bit_t dns : dnss_in) {
 
           // If  dns can be raised
@@ -124,8 +124,8 @@ void apply_exchange(Bond const &bond, Basis &&basis, Filler &&fill) {
                 basis.index_dns_fermi(dns_flip, sym, fermimask);
 
             coeff_t val = prefac / norms_in[idx_dn];
-            idx_t idx_in = up_offset_in + idx_dn;
-            idx_t idx_out = up_offset_out + idx_dn_flip;
+            int64_t idx_in = up_offset_in + idx_dn;
+            int64_t idx_out = up_offset_out + idx_dn_flip;
             fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -val : val);
           }
           ++idx_dn;
@@ -148,7 +148,7 @@ void apply_exchange(Bond const &bond, Basis &&basis, Filler &&fill) {
         }
         bool fermi_up_hop = (bits::popcnt(ups & fermimask) & 1);
 
-        idx_t idx_dn = 0;
+        int64_t idx_dn = 0;
         for (bit_t dns : dnss_in) {
 
           // If  dns can be raised
@@ -163,8 +163,8 @@ void apply_exchange(Bond const &bond, Basis &&basis, Filler &&fill) {
                   fermi_up_hop ^ basis.fermi_bool_ups(sym, ups_flip);
               coeff_t val =
                   prefacs[sym] * norms_out[idx_dn_flip] / norms_in[idx_dn];
-              idx_t idx_in = up_offset_in + idx_dn;
-              idx_t idx_out = up_offset_out + idx_dn_flip;
+              int64_t idx_in = up_offset_in + idx_dn;
+              int64_t idx_out = up_offset_out + idx_dn_flip;
               fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -val : val);
             }
           }

@@ -74,7 +74,7 @@ void fill_random_normal_vector(arma::Col<coeff_t> &v, int seed) {
       std::mt19937 gen(seed);
       gen.discard(discard * start);
 
-      for (idx_t idx = start; idx < end; ++idx) {
+      for (int64_t idx = start; idx < end; ++idx) {
         v(idx) = random::random_normal(gen);
       }
 
@@ -84,7 +84,7 @@ void fill_random_normal_vector(arma::Col<coeff_t> &v, int seed) {
       genr.discard(discard * start);
       geni.discard(discard * start);
 
-      for (idx_t idx = start; idx < end; ++idx) {
+      for (int64_t idx = start; idx < end; ++idx) {
         auto r = random::random_normal(genr);
         auto i = random::random_normal(geni);
         v(idx) = {r, i};

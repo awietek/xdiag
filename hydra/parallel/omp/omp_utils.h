@@ -10,11 +10,12 @@
 #include <hydra/common.h>
 
 namespace hydra::omp {
-idx_t get_omp_start(idx_t size);
-idx_t get_omp_end(idx_t size);
-std::pair<idx_t, idx_t> get_omp_start_end(idx_t size);
-std::pair<idx_t, idx_t> get_omp_subsets_start_end(int n);
-std::pair<idx_t, idx_t> get_omp_combinations_start_end(int n, int k);
+int64_t get_omp_start(int64_t size);
+int64_t get_omp_end(int64_t size);
+std::pair<int64_t, int64_t> get_omp_start_end(int64_t size);
+std::pair<int64_t, int64_t> get_omp_subsets_start_end(int64_t n);
+std::pair<int64_t, int64_t> get_omp_combinations_start_end(int64_t n,
+                                                           int64_t k);
 
 template <typename T>
 inline gsl::span<T> get_omp_span(std::vector<T> const &vec) {
@@ -25,18 +26,18 @@ inline gsl::span<T> get_omp_span(std::vector<T> const &vec) {
 template <typename T>
 inline std::vector<T>
 combine_vectors(std::vector<std::vector<T>> const &vec_of_vec) {
-  idx_t size = 0;
+  int64_t size = 0;
   for (auto const &vec : vec_of_vec) {
     size += vec.size();
   }
 
   std::vector<T> total_vec(size);
-  idx_t offset = 0;
+  int64_t offset = 0;
 
   for (auto const &vec : vec_of_vec) {
 
 #pragma omp parallel for
-    for (idx_t i = 0; i < (idx_t)vec.size(); ++i) {
+    for (int64_t i = 0; i < (int64_t)vec.size(); ++i) {
       total_vec[offset + i] = vec[i];
     }
     offset += vec.size();
@@ -47,13 +48,13 @@ combine_vectors(std::vector<std::vector<T>> const &vec_of_vec) {
 template <typename T>
 inline std::vector<T>
 combine_vectors_copy(std::vector<std::vector<T>> const &vec_of_vec) {
-  idx_t size = 0;
+  int64_t size = 0;
   for (auto const &vec : vec_of_vec) {
     size += vec.size();
   }
 
   std::vector<T> total_vec(size);
-  idx_t offset = 0;
+  int64_t offset = 0;
 
   for (auto const &vec : vec_of_vec) {
     std::copy(vec.begin(), vec.end(), total_vec.begin() + offset);

@@ -12,6 +12,7 @@ benchmark/old
 benchmark/*/build
 benchmark/*/build/*
 .DS_Store
+*.hpp
 *.gcda
 *.gcno
 *.gcov

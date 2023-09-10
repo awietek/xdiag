@@ -16,8 +16,8 @@ public:
   BasisNoNp() = default;
   BasisNoNp(int n_sites);
 
-  idx_t size() const;
-  inline idx_t index(bit_t ups, bit_t dns) const {
+  int64_t size() const;
+  inline int64_t index(bit_t ups, bit_t dns) const {
     return index_ups(ups) * size_dns_ + index_dns(dns);
   }
 
@@ -26,15 +26,15 @@ public:
 
 private:
   int n_sites_;
-  idx_t size_ups_;
-  idx_t size_dns_;
-  idx_t size_;
+  int64_t size_ups_;
+  int64_t size_dns_;
+  int64_t size_;
 
 public:
-  idx_t size_ups() const;
-  idx_t size_dns() const;
-  inline idx_t index_ups(bit_t ups) const { return (idx_t)ups; }
-  inline idx_t index_dns(bit_t dns) const { return (idx_t)dns; }
+  int64_t size_ups() const;
+  int64_t size_dns() const;
+  inline int64_t index_ups(bit_t ups) const { return (int64_t)ups; }
+  inline int64_t index_dns(bit_t dns) const { return (int64_t)dns; }
 
   Subsets<bit_t> states_ups() const;
   Subsets<bit_t> states_dns() const;

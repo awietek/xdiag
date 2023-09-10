@@ -55,7 +55,7 @@ double norm_estimate(
         &apply_A,
     std::function<arma::Col<coeff_t>(arma::Col<coeff_t> const &)> const
         &apply_A_T,
-    idx_t N, int n_max_attempts, uint64_t seed) {
+    int64_t N, int n_max_attempts, uint64_t seed) {
   using namespace arma;
 
   using vec_t = Col<coeff_t>;
@@ -80,7 +80,7 @@ double norm_estimate(
 
     // v = A e_j
     e.zeros();
-    idx_t j = 0;
+    int64_t j = 0;
     for (; j < N; ++j) {
       if (std::abs(std::abs(x(j)) - xnorm) < 1e-14) {
         e(j) = 1.0;
@@ -103,7 +103,7 @@ double norm_estimate(
 
   // x = (-1)^ ...
   x.zeros();
-  for (idx_t i = 1; i <= N; ++i) {
+  for (int64_t i = 1; i <= N; ++i) {
     if (i % 2 == 0) {
       x(i - 1) = 1.0 * (1.0 + (double)(i - 1) / (double)(N - 1));
     } else {
@@ -124,26 +124,26 @@ template double norm_estimate(
     std::function<arma::Col<double>(arma::Col<double> const &)> const &apply_A,
     std::function<arma::Col<double>(arma::Col<double> const &)> const
         &apply_A_T,
-    idx_t N, int n_max_attempts, uint64_t seed);
+    int64_t N, int n_max_attempts, uint64_t seed);
 
 template double norm_estimate(
     std::function<arma::Col<complex>(arma::Col<complex> const &)> const
         &apply_A,
     std::function<arma::Col<complex>(arma::Col<complex> const &)> const
         &apply_A_T,
-    idx_t N, int n_max_attempts, uint64_t seed);
+    int64_t N, int n_max_attempts, uint64_t seed);
 
 double
 norm_estimate_real(std::function<arma::vec(arma::vec const &)> const &apply_A,
                    std::function<arma::vec(arma::vec const &)> const &apply_A_T,
-                   idx_t N, int n_max_attempts, uint64_t seed) {
+                   int64_t N, int n_max_attempts, uint64_t seed) {
   return norm_estimate<double>(apply_A, apply_A_T, N, n_max_attempts, seed);
 }
 
 double norm_estimate_cplx(
     std::function<arma::cx_vec(arma::cx_vec const &)> const &apply_A,
-    std::function<arma::cx_vec(arma::cx_vec const &)> const &apply_A_T, idx_t N,
-    int n_max_attempts, uint64_t seed) {
+    std::function<arma::cx_vec(arma::cx_vec const &)> const &apply_A_T,
+    int64_t N, int n_max_attempts, uint64_t seed) {
   return norm_estimate<complex>(apply_A, apply_A_T, N, n_max_attempts, seed);
 }
 

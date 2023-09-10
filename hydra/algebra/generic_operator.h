@@ -31,10 +31,10 @@ template <typename coeff_t, typename block_t, class compile_f>
 void generic_matrix(coeff_t *memptr, BondList const &bonds,
                     block_t const &block_in, block_t const &block_out,
                     compile_f compile) try {
-  idx_t dim_in = block_in.size();
-  idx_t dim_out = block_out.size();
+  int64_t dim_in = block_in.size();
+  int64_t dim_out = block_out.size();
   std::fill(memptr, memptr + dim_in * dim_out, 0.0);
-  auto fill = [memptr, &dim_out](idx_t idx_out, idx_t idx_in, coeff_t val) {
+  auto fill = [memptr, &dim_out](int64_t idx_out, int64_t idx_in, coeff_t val) {
     memptr[idx_out + idx_in * dim_out] += val;
   };
   generic_operator<coeff_t>(bonds, block_in, block_out, compile, fill);
@@ -46,8 +46,8 @@ template <typename coeff_t, typename block_t, class compile_f>
 arma::Mat<coeff_t>
 generic_matrix(BondList const &bonds, block_t const &block_in,
                block_t const &block_out, compile_f compile) try {
-  idx_t dim_in = block_in.size();
-  idx_t dim_out = block_out.size();
+  int64_t dim_in = block_in.size();
+  int64_t dim_out = block_out.size();
   arma::Mat<coeff_t> mat(dim_out, dim_in);
   generic_matrix<coeff_t>(mat.memptr(), bonds, block_in, block_out, compile);
   return mat;
@@ -61,10 +61,11 @@ void generic_apply(BondList const &bonds, block_t const &block_in,
                    coeff_t const *vec_in, block_t const &block_out,
                    coeff_t *vec_out, compile_f compile) try {
 
-  idx_t dim_out = block_out.size();
+  int64_t dim_out = block_out.size();
   std::fill(vec_out, vec_out + dim_out, 0.0);
 
-  auto fill = [&vec_out, &vec_in](idx_t idx_out, idx_t idx_in, coeff_t val) {
+  auto fill = [&vec_out, &vec_in](int64_t idx_out, int64_t idx_in,
+                                  coeff_t val) {
 #ifdef _OPENMP
     if constexpr (isreal<coeff_t>()) {
       coeff_t x = val * vec_in[idx_in];

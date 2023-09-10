@@ -6,8 +6,8 @@ using namespace combinatorics;
 
 template <typename bit_t>
 BasisNoNp<bit_t>::BasisNoNp(int n_sites)
-    : n_sites_(n_sites), size_ups_((idx_t)1 << n_sites),
-      size_dns_((idx_t)1 << n_sites), size_(size_ups_ * size_dns_) {
+    : n_sites_(n_sites), size_ups_((int64_t)1 << n_sites),
+      size_dns_((int64_t)1 << n_sites), size_(size_ups_ * size_dns_) {
   if (n_sites < 0) {
     throw(std::invalid_argument("n_sites < 0"));
   }
@@ -16,13 +16,13 @@ BasisNoNp<bit_t>::BasisNoNp(int n_sites)
 template <typename bit_t> int BasisNoNp<bit_t>::n_sites() const {
   return n_sites_;
 }
-template <typename bit_t> idx_t BasisNoNp<bit_t>::size_ups() const {
+template <typename bit_t> int64_t BasisNoNp<bit_t>::size_ups() const {
   return size_ups_;
 }
-template <typename bit_t> idx_t BasisNoNp<bit_t>::size_dns() const {
+template <typename bit_t> int64_t BasisNoNp<bit_t>::size_dns() const {
   return size_dns_;
 }
-template <typename bit_t> idx_t BasisNoNp<bit_t>::size() const {
+template <typename bit_t> int64_t BasisNoNp<bit_t>::size() const {
   return size_;
 }
 

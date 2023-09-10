@@ -12,7 +12,7 @@ namespace hydra::mpi {
 
 class Communicator {
 public:
-  Communicator(std::vector<idx_t> const &n_values_i_send);
+  Communicator(std::vector<int64_t> const &n_values_i_send);
 
   std::vector<int> n_values_i_send() const { return n_values_i_send_; }
   std::vector<int> n_values_i_recv() const { return n_values_i_recv_; }
@@ -24,12 +24,12 @@ public:
     return n_values_i_recv_offsets_;
   }
 
-  idx_t send_buffer_size() const { return send_buffer_size_; }
-  idx_t recv_buffer_size() const { return recv_buffer_size_; }
+  int64_t send_buffer_size() const { return send_buffer_size_; }
+  int64_t recv_buffer_size() const { return recv_buffer_size_; }
 
   template <class T>
   void add_to_send_buffer(int mpi_rank, T value, T *send_buffer) const {
-    idx_t idx =
+    int64_t idx =
         n_values_i_send_offsets_[mpi_rank] + n_values_prepared_[mpi_rank];
 
     // if (typeid(T) == typeid(double)){
@@ -66,8 +66,8 @@ private:
   std::vector<int> n_values_i_send_offsets_;
   std::vector<int> n_values_i_recv_offsets_;
 
-  idx_t send_buffer_size_;
-  idx_t recv_buffer_size_;
+  int64_t send_buffer_size_;
+  int64_t recv_buffer_size_;
 };
 
 } // namespace hydra::mpi

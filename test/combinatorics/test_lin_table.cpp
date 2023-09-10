@@ -7,7 +7,7 @@ template <class bit_t> void test_lintable(int n, int k) {
   using namespace hydra;
   combinatorics::LinTable<bit_t> lin_table(n, k);
 
-  idx_t idx = 0;
+  int64_t idx = 0;
   for (bit_t bits : combinatorics::Combinations<bit_t>(n, k)) {
     REQUIRE(lin_table.index(bits) == idx);
     ++idx;

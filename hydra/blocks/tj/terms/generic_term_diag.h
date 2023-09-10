@@ -17,8 +17,8 @@ void generic_term_diag(Basis &&basis, TermAction &&term_action,
 #ifdef _OPENMP
 #pragma omp parallel for schedule(guided)
 #endif
-    for (idx_t idx_up_in = 0; idx_up_in < basis.n_rep_ups(); ++idx_up_in) {
-      idx_t idx = basis.ups_offset(idx_up_in);
+    for (int64_t idx_up_in = 0; idx_up_in < basis.n_rep_ups(); ++idx_up_in) {
+      int64_t idx = basis.ups_offset(idx_up_in);
 
       bit_t up_in = basis.rep_ups(idx_up_in);
       bit_t not_up_in = (~up_in) & sitesmask;
@@ -29,7 +29,7 @@ void generic_term_diag(Basis &&basis, TermAction &&term_action,
       // Trivial stabilizer of ups -> dns need to be deposited
       if (up_syms.size() == 1) {
         for (bit_t dnc_in : dnss_in) {
-          idx_t dn_in = bits::deposit(dnc_in, not_up_in);
+          int64_t dn_in = bits::deposit(dnc_in, not_up_in);
           coeff_t val = term_action(up_in, dn_in);
           fill(idx, idx, val);
           ++idx;
@@ -58,7 +58,7 @@ void generic_term_diag(Basis &&basis, TermAction &&term_action,
       for (auto [up_in, idx_up_in] : ups_and_idces) {
         bit_t not_up_in = (~up_in) & sitesmask;
         auto dncs_in = basis.states_dncs(up_in);
-        idx_t idx = basis.ups_offset(idx_up_in);
+        int64_t idx = basis.ups_offset(idx_up_in);
         for (bit_t dnc_in : dncs_in) {
           bit_t dn_in = bits::deposit(dnc_in, not_up_in);
           coeff_t val = term_action(up_in, dn_in);

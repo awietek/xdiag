@@ -53,7 +53,7 @@ void spinhalf_mpi_spsm(
     std::string cpl = bond.coupling();
     coeff_t H = utils::get_coupling<coeff_t>(couplings, cpl);
 
-    idx_t idx = 0;
+    int64_t idx = 0;
     for (auto prefix : indexing_in.prefixes()) {
 
       auto const &postfixes = indexing_in.postfixes(prefix);
@@ -62,13 +62,13 @@ void spinhalf_mpi_spsm(
       // lila::Log("nup: {} spsm: {}", n_up, spsm);
       // lila::Log("postfs: {}", postfixes.size());
       // lila::Log("prefix: {}", prefix);
-      idx_t idx_prefix = indexing_out.prefix_begin(prefix);
+      int64_t idx_prefix = indexing_out.prefix_begin(prefix);
 
       if (spsm == "S+") {
         for (auto postfix_in : postfixes) {
           if (!(postfix_in & mask)) {
             bit_t postfix_out = postfix_in | mask;
-            idx_t idx_out = idx_prefix + lintable.index(postfix_out);
+            int64_t idx_out = idx_prefix + lintable.index(postfix_out);
             // lila::Log("S+ s: {} in: {} {};{} -> out: {} {};{}", s, idx,
             //           bitops::bits_to_string(prefix, n_prefix_bits),
             //           bitops::bits_to_string(postfix_in, n_postfix_bits),
@@ -85,7 +85,7 @@ void spinhalf_mpi_spsm(
         for (auto postfix_in : postfixes) {
           if (postfix_in & mask) {
             bit_t postfix_out = postfix_in ^ mask;
-            idx_t idx_out = idx_prefix + lintable.index(postfix_out);
+            int64_t idx_out = idx_prefix + lintable.index(postfix_out);
             // lila::Log("S- s: {} in: {} {};{} -> out: {} {};{}", s, idx,
             //           bitops::bits_to_string(prefix, n_prefix_bits),
             //           bitops::bits_to_string(postfix_in, n_postfix_bits),
@@ -112,7 +112,7 @@ void spinhalf_mpi_spsm(
   if (prefix_bonds.size() > 0) {
 
     // Get communication buffers
-    idx_t buffer_size =
+    int64_t buffer_size =
         std::max(indexing_in.size_max(), indexing_out.size_max());
     mpi::buffer.reserve<coeff_t>(buffer_size);
     auto send_buffer = mpi::buffer.send<coeff_t>();
@@ -132,18 +132,18 @@ void spinhalf_mpi_spsm(
       coeff_t H = utils::get_coupling<coeff_t>(couplings, cpl);
 
       // loop through all postfixes
-      idx_t idx = 0;
+      int64_t idx = 0;
       for (auto postfix : indexing_in.postfixes()) {
 
         auto const &prefixes = indexing_in.prefixes(postfix);
         auto const &lintable = indexing_out.prefix_indexing(postfix);
-        idx_t idx_postfix = indexing_out.postfix_begin(postfix);
+        int64_t idx_postfix = indexing_out.postfix_begin(postfix);
 
         if (spsm == "S+") {
           for (auto prefix_in : prefixes) {
             if (!(prefix_in & mask)) {
               bit_t prefix_out = prefix_in | mask;
-              idx_t idx_out = idx_postfix + lintable.index(prefix_out);
+              int64_t idx_out = idx_postfix + lintable.index(prefix_out);
 
               // int n_sites = indexing_in.n_sites();
               // LogMPI.out("s: {}, bond[0]: {}, n_postfix_bits: {}", s,
@@ -207,7 +207,7 @@ void spinhalf_mpi_spsm(
           for (auto prefix_in : prefixes) {
             if (prefix_in & mask) {
               bit_t prefix_out = prefix_in ^ mask;
-              idx_t idx_out = idx_postfix + lintable.index(prefix_out);
+              int64_t idx_out = idx_postfix + lintable.index(prefix_out);
               recv_buffer[idx_out] += H * send_buffer[idx];
             }
             ++idx;
@@ -223,7 +223,7 @@ void spinhalf_mpi_spsm(
     spinhalf_mpi_transpose(indexing_out, recv_buffer, true);
     timing_mpi(ttrans2, rightnow_mpi(), " (spsm) transpose 2", 2);
 
-    for (idx_t idx = 0; idx < vec_out.size(); ++idx) {
+    for (int64_t idx = 0; idx < vec_out.size(); ++idx) {
       vec_out(idx) += send_buffer[idx];
     }
   }

@@ -17,7 +17,7 @@ TEST_CASE("electron_raise_lower", "[electron]") {
         n_sites);
 
     auto block = Electron(n_sites);
-    idx_t D = block.size();
+    int64_t D = block.size();
 
     cx_mat id(D, D, fill::eye);
 
@@ -55,7 +55,7 @@ TEST_CASE("electron_raise_lower", "[electron]") {
   for (int n_sites = 2; n_sites < 4; ++n_sites) {
 
     auto block = Electron(n_sites);
-    idx_t D = block.size();
+    int64_t D = block.size();
 
     for (int i = 0; i < n_sites; ++i) {
 

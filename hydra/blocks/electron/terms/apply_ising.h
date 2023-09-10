@@ -31,10 +31,10 @@ void apply_ising(Bond const &bond, Basis &&basis, Fill &&fill) {
 #ifdef _OPENMP
 #pragma omp parallel for schedule(guided)
 #endif
-    for (idx_t idx_ups = 0; idx_ups < basis.n_rep_ups(); ++idx_ups) {
+    for (int64_t idx_ups = 0; idx_ups < basis.n_rep_ups(); ++idx_ups) {
       bit_t ups = basis.rep_ups(idx_ups);
       auto dnss = basis.dns_for_ups_rep(ups);
-      idx_t idx = basis.ups_offset(idx_ups);
+      int64_t idx = basis.ups_offset(idx_ups);
     
       if ((ups & mask) == mask) { // both spins pointing up
         for (bit_t dns : dnss) {
@@ -75,7 +75,7 @@ void apply_ising(Bond const &bond, Basis &&basis, Fill &&fill) {
 
       for (auto [up, idx_up] : ups_and_idces) {
 
-        idx_t idx = idx_up * basis.size_dns();
+        int64_t idx = idx_up * basis.size_dns();
 
         if ((up & mask) == mask) { // both spins pointing up
           for (bit_t dn : basis.states_dns()) {

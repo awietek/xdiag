@@ -20,13 +20,13 @@ void apply_number(Bond const &bond, Basis &&basis, Fill fill) {
   if (type == "NUMBERUP") {
 
     if constexpr (symmetric) {
-      idx_t idx = 0;
-      for (idx_t idx_ups = 0; idx_ups < basis.n_rep_ups(); ++idx_ups) {
+      int64_t idx = 0;
+      for (int64_t idx_ups = 0; idx_ups < basis.n_rep_ups(); ++idx_ups) {
         bit_t ups = basis.rep_ups(idx_ups);
         auto dnss = basis.dns_for_ups_rep(ups);
-        idx_t size_dns = dnss.size();
+        int64_t size_dns = dnss.size();
         if (ups & mask) { // check whether bit at s is set
-          idx_t end = idx + size_dns;
+          int64_t end = idx + size_dns;
           for (; idx < end; ++idx) {
             fill(idx, idx, mu);
           }
@@ -45,11 +45,11 @@ void apply_number(Bond const &bond, Basis &&basis, Fill fill) {
       auto ups_and_idces = basis.states_indices_ups();
 #endif
         for (auto [up, idx_up] : ups_and_idces) {
-          idx_t idx = idx_up * basis.size_dns();
+          int64_t idx = idx_up * basis.size_dns();
 
-          idx_t size_dns = basis.size_dns();
+          int64_t size_dns = basis.size_dns();
           if (up & mask) { // check whether bit at s is set
-            idx_t end = idx + size_dns;
+            int64_t end = idx + size_dns;
             for (; idx < end; ++idx) {
               fill(idx, idx, mu);
             }
@@ -64,8 +64,8 @@ void apply_number(Bond const &bond, Basis &&basis, Fill fill) {
   } else if (type == "NUMBERDN") {
 
     if constexpr (symmetric) {
-      idx_t idx = 0;
-      for (idx_t idx_ups = 0; idx_ups < basis.n_rep_ups(); ++idx_ups) {
+      int64_t idx = 0;
+      for (int64_t idx_ups = 0; idx_ups < basis.n_rep_ups(); ++idx_ups) {
         bit_t ups = basis.rep_ups(idx_ups);
         auto dnss = basis.dns_for_ups_rep(ups);
         for (bit_t dns : dnss) {
@@ -87,7 +87,7 @@ void apply_number(Bond const &bond, Basis &&basis, Fill fill) {
 
         for (auto [up, idx_up] : ups_and_idces) {
           (void)up;
-          idx_t idx = idx_up * basis.size_dns();
+          int64_t idx = idx_up * basis.size_dns();
 
           for (bit_t dn : basis.states_dns()) {
             if (dn & mask) {

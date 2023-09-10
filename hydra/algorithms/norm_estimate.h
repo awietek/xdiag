@@ -16,11 +16,11 @@ double norm_estimate(BondList const &bonds, block_t const &block);
 double
 norm_estimate_real(std::function<arma::vec(arma::vec const &)> const &apply_A,
                    std::function<arma::vec(arma::vec const &)> const &apply_A_T,
-                   idx_t N, int n_max_attempts = 5, uint64_t seed = 42);
+                   int64_t N, int n_max_attempts = 5, uint64_t seed = 42);
 
 double norm_estimate_cplx(
     std::function<arma::cx_vec(arma::cx_vec const &)> const &apply_A,
-    std::function<arma::cx_vec(arma::cx_vec const &)> const &apply_A_T, idx_t N,
+    std::function<arma::cx_vec(arma::cx_vec const &)> const &apply_A_T, int64_t N,
     int n_max_attempts = 5, uint64_t seed = 42);
 
 template <typename coeff_t>
@@ -29,6 +29,6 @@ double norm_estimate(
         &apply_A,
     std::function<arma::Col<coeff_t>(arma::Col<coeff_t> const &)> const
         &apply_A_T,
-    idx_t N, int n_max_attempts = 5, uint64_t seed = 42);
+    int64_t N, int n_max_attempts = 5, uint64_t seed = 42);
 
 } // namespace hydra

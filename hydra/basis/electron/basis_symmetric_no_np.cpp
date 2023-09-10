@@ -12,8 +12,8 @@ BasisSymmetricNoNp<bit_t>::BasisSymmetricNoNp(int64_t n_sites,
                                               PermutationGroup group,
                                               Representation irrep)
     : n_sites_(n_sites), group_action_(allowed_subgroup(group, irrep)),
-      irrep_(irrep), raw_ups_size_((idx_t)1 << n_sites),
-      raw_dns_size_((idx_t)1 << n_sites), lintable_ups_(n_sites),
+      irrep_(irrep), raw_ups_size_((int64_t)1 << n_sites),
+      raw_dns_size_((int64_t)1 << n_sites), lintable_ups_(n_sites),
       lintable_dns_(n_sites), fermi_table_(n_sites_, group) {
   if (n_sites < 0) {
     throw(std::invalid_argument("n_sites < 0"));

@@ -31,25 +31,25 @@ void generic_term_mixed(BasisIn &&basis_in, BasisOut &&basis_out,
 #ifdef _OPENMP
 #pragma omp parallel for schedule(guided)
 #endif
-    for (idx_t up_in_idx = 0; up_in_idx < basis_in.n_rep_ups(); ++up_in_idx) {
+    for (int64_t up_in_idx = 0; up_in_idx < basis_in.n_rep_ups(); ++up_in_idx) {
       bit_t up_in = basis_in.rep_ups(up_in_idx);
       bit_t not_up_in = (~up_in) & sitesmask;
 
       if (non_zero_term_ups(up_in)) {
 
         auto [up_flip, coeff_up] = term_action_ups(up_in);
-        idx_t idx_up_flip = basis_out.index_ups(up_flip);
+        int64_t idx_up_flip = basis_out.index_ups(up_flip);
         bit_t up_flip_rep = basis_out.rep_ups(idx_up_flip);
         bit_t not_up_flip_rep = (~up_flip_rep) & sitesmask;
 
         // Get limits, syms, and dns for ingoing ups
-        idx_t up_in_offset = basis_in.ups_offset(up_in_idx);
+        int64_t up_in_offset = basis_in.ups_offset(up_in_idx);
         auto up_in_syms = basis_in.syms_ups(up_in);
         auto dnss_in = basis_in.dns_for_ups_rep(up_in);
         auto norms_in = basis_in.norms_for_ups_rep(up_in);
 
         // Get limits, syms, and dns for outgoing ups
-        idx_t up_out_offset = basis_out.ups_offset(idx_up_flip);
+        int64_t up_out_offset = basis_out.ups_offset(idx_up_flip);
         auto up_out_syms = basis_out.syms_ups(up_flip);
         auto dnss_out = basis_out.dns_for_ups_rep(up_flip_rep);
         auto norms_out = basis_out.norms_for_ups_rep(up_flip_rep);
@@ -63,7 +63,7 @@ void generic_term_mixed(BasisIn &&basis_in, BasisOut &&basis_out,
 
           // Origin ups trivial stabilizer -> dns need to be deposited
           if (up_in_syms.size() == 1) {
-            idx_t idx_in = up_in_offset;
+            int64_t idx_in = up_in_offset;
             for (bit_t dnc_in : dnss_in) {
               bit_t dn_in = bits::deposit(dnc_in, not_up_in);
               if (non_zero_term_dns(dn_in)) {
@@ -72,7 +72,7 @@ void generic_term_mixed(BasisIn &&basis_in, BasisOut &&basis_out,
                 if ((dn_flip & up_flip) == 0) { // t-J constraint
                   auto [idx_dn_out, fermi_dn] =
                       basis_out.index_dns_fermi(dn_flip, sym, not_up_flip_rep);
-                  idx_t idx_out = up_out_offset + idx_dn_out;
+                  int64_t idx_out = up_out_offset + idx_dn_out;
                   fill(idx_out, idx_in,
                        (fermi_up ^ fermi_dn) ? -prefac * coeff_dn
                                              : prefac * coeff_dn);
@@ -84,8 +84,8 @@ void generic_term_mixed(BasisIn &&basis_in, BasisOut &&basis_out,
 
           // Origin ups have stabilizer -> dns DONT need to be deposited
           else {
-            idx_t idx_in = up_in_offset;
-            idx_t idx_dn = 0;
+            int64_t idx_in = up_in_offset;
+            int64_t idx_dn = 0;
             for (bit_t dn : dnss_in) {
               if (non_zero_term_dns(dn)) {
                 auto [dn_flip, coeff_dn] = term_action_dns(dn);
@@ -93,7 +93,7 @@ void generic_term_mixed(BasisIn &&basis_in, BasisOut &&basis_out,
                   auto [idx_dn_out, fermi_dn] =
                       basis_out.index_dns_fermi(dn_flip, sym, not_up_flip_rep);
                   coeff_t val = prefac * coeff_dn / norms_in[idx_dn];
-                  idx_t idx_out = up_out_offset + idx_dn_out;
+                  int64_t idx_out = up_out_offset + idx_dn_out;
                   fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -val : val);
                 }
               }
@@ -113,7 +113,7 @@ void generic_term_mixed(BasisIn &&basis_in, BasisOut &&basis_out,
 
           // Origin ups trivial stabilizer -> dns need to be deposited
           if (up_in_syms.size() == 1) {
-            idx_t idx_in = up_in_offset;
+            int64_t idx_in = up_in_offset;
             for (bit_t dnc : dnss_in) {
               bit_t dn = bits::deposit(dnc, not_up_in);
               if (non_zero_term_dns(dn)) {
@@ -124,7 +124,7 @@ void generic_term_mixed(BasisIn &&basis_in, BasisOut &&basis_out,
                       basis_out.index_dns_fermi_sym(dn_flip, up_out_syms,
                                                     dnss_out);
                   if (idx_dn_out != invalid_index) {
-                    idx_t idx_out = up_out_offset + idx_dn_out;
+                    int64_t idx_out = up_out_offset + idx_dn_out;
                     bool fermi_up = basis_out.fermi_bool_ups(sym, up_flip);
                     coeff_t val =
                         prefacs[sym] * coeff_dn * norms_out[idx_dn_out];
@@ -140,8 +140,8 @@ void generic_term_mixed(BasisIn &&basis_in, BasisOut &&basis_out,
           // deposited
           else {
 
-            idx_t idx_in = up_in_offset;
-            idx_t idx_dn = 0;
+            int64_t idx_in = up_in_offset;
+            int64_t idx_dn = 0;
             for (bit_t dn : dnss_in) {
               if (non_zero_term_dns(dn)) {
                 auto [dn_flip, coeff_dn] = term_action_dns(dn);
@@ -151,7 +151,7 @@ void generic_term_mixed(BasisIn &&basis_in, BasisOut &&basis_out,
                       basis_out.index_dns_fermi_sym(dn_flip, up_out_syms,
                                                     dnss_out);
                   if (idx_dn_out != invalid_index) {
-                    idx_t idx_out = up_out_offset + idx_dn_out;
+                    int64_t idx_out = up_out_offset + idx_dn_out;
                     bool fermi_up = basis_out.fermi_bool_ups(sym, up_flip);
                     coeff_t val = prefacs[sym] * coeff_dn *
                                   norms_out[idx_dn_out] / norms_in[idx_dn];
@@ -183,11 +183,11 @@ void generic_term_mixed(BasisIn &&basis_in, BasisOut &&basis_out,
           auto [up_flip, coeff_up] = term_action_ups(up_in);
           bit_t not_up_in = (~up_in) & sitesmask;
           bit_t not_up_flip = (~up_flip) & sitesmask;
-          idx_t idx_up_flip = basis_out.index_ups(up_flip);
-          idx_t idx_up_flip_offset = basis_out.ups_offset(idx_up_flip);
+          int64_t idx_up_flip = basis_out.index_ups(up_flip);
+          int64_t idx_up_flip_offset = basis_out.ups_offset(idx_up_flip);
 
           auto dncs_in = basis_in.states_dncs(up_in);
-          idx_t idx_in = basis_in.ups_offset(idx_up_in);
+          int64_t idx_in = basis_in.ups_offset(idx_up_in);
 
           for (bit_t dnc_in : dncs_in) {
             bit_t dn_in = bits::deposit(dnc_in, not_up_in);
@@ -195,8 +195,8 @@ void generic_term_mixed(BasisIn &&basis_in, BasisOut &&basis_out,
               auto [dn_flip, coeff_dn] = term_action_dns(dn_in);
               if ((dn_flip & up_flip) == 0) { // t-J constraint
                 bit_t dnc_out = bits::extract(dn_flip, not_up_flip);
-                idx_t idx_dnc_out = basis_out.index_dncs(dnc_out);
-                idx_t idx_out = idx_up_flip_offset + idx_dnc_out;
+                int64_t idx_dnc_out = basis_out.index_dncs(dnc_out);
+                int64_t idx_out = idx_up_flip_offset + idx_dnc_out;
                 fill(idx_out, idx_in, coeff_up * coeff_dn);
               }
             }

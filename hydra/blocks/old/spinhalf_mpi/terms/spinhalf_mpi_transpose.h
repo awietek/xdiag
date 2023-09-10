@@ -14,7 +14,7 @@ mpi::Communicator spinhalf_mpi_transpose_com(
     bool reverse = false) {
 
   // Determine how many states I send
-  std::vector<idx_t> n_states_i_send(indexing.mpi_size(), 0);
+  std::vector<int64_t> n_states_i_send(indexing.mpi_size(), 0);
 
   if (reverse) {
     for (auto postfix : indexing.postfixes()) {
@@ -43,7 +43,7 @@ void spinhalf_mpi_transpose(
 
   // Set up buffers for communicating
   mpi::Communicator com = spinhalf_mpi_transpose_com(indexing, reverse);
-  idx_t buffer_size = std::max(com.recv_buffer_size(), com.send_buffer_size());
+  int64_t buffer_size = std::max(com.recv_buffer_size(), com.send_buffer_size());
   mpi::buffer.reserve<coeff_t>(buffer_size);
   auto send_buffer = mpi::buffer.send<coeff_t>();
   auto recv_buffer = mpi::buffer.recv<coeff_t>();
@@ -51,7 +51,7 @@ void spinhalf_mpi_transpose(
   auto prefixes = reverse ? indexing.postfixes() : indexing.prefixes();
 
   // Fill send buffer
-  idx_t idx = 0;
+  int64_t idx = 0;
   for (auto prefix : prefixes) {
     auto postfixes =
         reverse ? indexing.prefixes(prefix) : indexing.postfixes(prefix);
@@ -68,7 +68,7 @@ void spinhalf_mpi_transpose(
 
   // Sort reveived coefficients to postfix ordering (this is gnarly!!!)
   auto recv_offsets = com.n_values_i_recv_offsets();
-  std::vector<idx_t> offsets(indexing.mpi_size(), 0);
+  std::vector<int64_t> offsets(indexing.mpi_size(), 0);
 
   int n_prefix_bits =
       reverse ? indexing.n_postfix_bits() : indexing.n_prefix_bits();
@@ -82,8 +82,8 @@ void spinhalf_mpi_transpose(
       continue;
 
     int origin_rank = indexing.process(prefix);
-    idx_t origin_offset = recv_offsets[origin_rank];
-    idx_t prefix_idx = 0;
+    int64_t origin_offset = recv_offsets[origin_rank];
+    int64_t prefix_idx = 0;
     if (reverse) {
       prefix_idx = indexing.postfix_indexing(((bit_t)1 << n_up_postfix) - 1)
                        .index(prefix);
@@ -97,14 +97,14 @@ void spinhalf_mpi_transpose(
       if (bitops::popcnt(postfix) != n_up_postfix)
         continue;
 
-      idx_t idx_received = origin_offset + offsets[origin_rank];
-      idx_t postfix_begin = 0;
+      int64_t idx_received = origin_offset + offsets[origin_rank];
+      int64_t postfix_begin = 0;
       if (reverse) {
         postfix_begin = indexing.prefix_begin(postfix);
       } else {
         postfix_begin = indexing.postfix_begin(postfix);
       }
-      idx_t idx_sorted = postfix_begin + prefix_idx;
+      int64_t idx_sorted = postfix_begin + prefix_idx;
 
       send_buffer[idx_sorted] = recv_buffer[idx_received];
       ++offsets[origin_rank];

@@ -29,8 +29,8 @@ IndexingSymmetricFermionic<bit_t, GroupAction>::IndexingSymmetricFermionic(
   auto group_action = GroupAction(permutation_group);
 
   // Go through non symmetrized states and register representatives
-  idx_t idx = 0;
-  idx_t n_representatives = 0;
+  int64_t idx = 0;
+  int64_t n_representatives = 0;
   std::vector<int> fermi_work(n_sites, 0);
 
   for (bit_t state : Combinations(n_sites, n_fermions)) {
@@ -42,7 +42,7 @@ IndexingSymmetricFermionic<bit_t, GroupAction>::IndexingSymmetricFermionic(
       double norm = symmetries::norm_fermionic(rep, group_action, irrep);
 
       if (norm > 1e-6) { // tolerance big as 1e-6 since root is taken
-        idx_t idx = lin_table_.index(rep);
+        int64_t idx = lin_table_.index(rep);
         states_.push_back(rep);
         norm_of_raw_state_[idx] = norm;
         index_of_raw_state_[idx] = n_representatives++;
@@ -72,7 +72,7 @@ IndexingSymmetricFermionic<bit_t, GroupAction>::IndexingSymmetricFermionic(
     ++idx;
   }
 
-  size_ = (idx_t)states_.size();
+  size_ = (int64_t)states_.size();
 }
 
 template class IndexingSymmetricFermionic<uint16_t, PermutationGroupAction>;

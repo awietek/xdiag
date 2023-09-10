@@ -13,11 +13,11 @@ void check_dimensions_sum_up_tj_symmetric(int64_t n_sites, PermutationGroup grou
 
   Log.out("tj_symmetric: dimension sum test. N: {}", n_sites);
 
-  idx_t sum_of_dims = 0;
+  int64_t sum_of_dims = 0;
 
   for (int64_t nup = 0; nup <= n_sites; ++nup) {
     for (int64_t ndn = 0; ndn <= n_sites - nup; ++ndn) {
-      idx_t sum_of_dims_updn = 0;
+      int64_t sum_of_dims_updn = 0;
       for (auto irrep : irreps) {
 
         auto block = tJ(n_sites, nup, ndn, group, irrep);

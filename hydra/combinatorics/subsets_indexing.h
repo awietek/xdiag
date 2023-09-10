@@ -11,11 +11,11 @@ namespace hydra::combinatorics {
 template <class bit_t> class SubsetsIndexing {
 public:
   SubsetsIndexing() = default;
-  SubsetsIndexing(int n);
+  SubsetsIndexing(int64_t n);
 
-  inline idx_t index(bit_t state) const { return (idx_t)state; }
-  inline bit_t operator[](idx_t idx) const { return (bit_t)idx; }
-  inline idx_t size() const { return size_; }
+  inline int64_t index(bit_t state) const { return (int64_t)state; }
+  inline bit_t operator[](int64_t idx) const { return (bit_t)idx; }
+  inline int64_t size() const { return size_; }
 
   inline combinatorics::Subsets<bit_t> states() const {
     return combinatorics::Subsets<bit_t>(n_);
@@ -25,8 +25,8 @@ public:
   }
 
 private:
-  int n_;
-  idx_t size_;
+  int64_t n_;
+  int64_t size_;
 };
 
 } // namespace hydra::combinatorics

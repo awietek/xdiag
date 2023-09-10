@@ -18,7 +18,7 @@ public:
   void append(double alpha, double beta);
   void pop();
 
-  idx_t size() const { return alphas_.size(); }
+  int64_t size() const { return alphas_.size(); }
 
   arma::vec alphas() const { return arma::vec(alphas_); }
   arma::vec betas() const { return betas_; }

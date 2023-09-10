@@ -10,7 +10,7 @@ using namespace basis;
 Spinhalf::Spinhalf(int64_t n_sites)
     : n_sites_(n_sites), sz_conserved_(false), n_up_(undefined_qn),
       n_dn_(undefined_qn), sz_(undefined_qn), symmetric_(false), n_sublat_(0),
-      permutation_group_(), irrep_(), size_((idx_t)1 << n_sites) {
+      permutation_group_(), irrep_(), size_((int64_t)1 << n_sites) {
 
   if (n_sites < 0) {
     throw(std::invalid_argument("n_sites < 0"));

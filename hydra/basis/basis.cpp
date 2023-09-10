@@ -2,19 +2,19 @@
 
 namespace hydra {
 
-idx_t size(basis_spinhalf_variant_t const &idxing) {
+int64_t size(basis_spinhalf_variant_t const &idxing) {
   return std::visit(
-      overload{[&](auto const &idx) -> idx_t { return idx.size(); }}, idxing);
+      overload{[&](auto const &idx) -> int64_t { return idx.size(); }}, idxing);
 }
 
-idx_t size(basis_electron_variant_t const &idxing) {
+int64_t size(basis_electron_variant_t const &idxing) {
   return std::visit(
-      overload{[&](auto const &idx) -> idx_t { return idx.size(); }}, idxing);
+      overload{[&](auto const &idx) -> int64_t { return idx.size(); }}, idxing);
 }
 
-idx_t size(basis_tj_variant_t const &idxing) {
+int64_t size(basis_tj_variant_t const &idxing) {
   return std::visit(
-      overload{[&](auto const &idx) -> idx_t { return idx.size(); }}, idxing);
+      overload{[&](auto const &idx) -> int64_t { return idx.size(); }}, idxing);
 }
 
 template <typename bit_t>

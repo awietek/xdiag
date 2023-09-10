@@ -50,7 +50,7 @@ SpinhalfMPIIndexingSz<bit_t>::SpinhalfMPIIndexingSz(int n_sites, int n_up)
 
     std::vector<bit_t> postfixes_nup(
         combinatorics::binomial(n_postfix_bits_, n_up_postfix), 0);
-    idx_t pf_idx = 0;
+    int64_t pf_idx = 0;
     for (auto pf : Combinations<bit_t>(n_postfix_bits_, n_up_postfix)) {
       postfixes_nup[pf_idx++] = pf;
     }
@@ -83,7 +83,7 @@ SpinhalfMPIIndexingSz<bit_t>::SpinhalfMPIIndexingSz(int n_sites, int n_up)
 
     std::vector<bit_t> prefixes_nup(
         combinatorics::binomial(n_prefix_bits_, n_up_prefix), 0);
-    idx_t pf_idx = 0;
+    int64_t pf_idx = 0;
     for (auto pf : Combinations<bit_t>(n_prefix_bits_, n_up_prefix)) {
       prefixes_nup[pf_idx++] = pf;
     }

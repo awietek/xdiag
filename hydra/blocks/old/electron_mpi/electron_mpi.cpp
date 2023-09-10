@@ -25,7 +25,7 @@ ElectronMPI<bit_t>::ElectronMPI(int n_sites, int nup, int ndn)
   mpi::Allreduce(&size_, &dim_, 1, MPI_SUM, MPI_COMM_WORLD);
 
   // Determine the upspin configurations of this process
-  idx_t offset = 0;
+  int64_t offset = 0;
   for (auto ups : Combinations<bit_t>(n_sites, nup))
     if (process(ups) == mpi_rank_) {
       my_ups_.push_back(ups);

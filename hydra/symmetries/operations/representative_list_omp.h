@@ -14,14 +14,14 @@
 namespace hydra::symmetries {
 
 template <typename bit_t, class StatesIndexing, class GroupAction>
-std::tuple<std::vector<bit_t>, std::vector<idx_t>, std::vector<int>,
+std::tuple<std::vector<bit_t>, std::vector<int64_t>, std::vector<int>,
            std::vector<std::pair<span_size_t, span_size_t>>>
 representatives_indices_symmetries_limits_norms_omp(
     StatesIndexing &&states_indexing, GroupAction &&group_action,
     Representation const &irrep) {
 
-  idx_t size = states_indexing.size();
-  std::vector<idx_t> idces(size, invalid_index);
+  int64_t size = states_indexing.size();
+  std::vector<int64_t> idces(size, invalid_index);
 
   // Compute all representatives
   std::vector<std::vector<bit_t>> reps_thread;
@@ -47,7 +47,7 @@ representatives_indices_symmetries_limits_norms_omp(
 
 #pragma omp barrier
 
-    idx_t offset = 0;
+    int64_t offset = 0;
     for (int id = 0; id < myid; ++id) {
       offset += reps_thread[id].size();
     }

@@ -10,7 +10,7 @@ namespace hydra::spinhalf {
 
 template <typename bit_t, typename coeff_t, class BasisOut,
           class NonZeroTerm, class TermAction, class Fill>
-void apply_term_offdiag_no_sym_to_spins(bit_t spins_in, idx_t idx_in,
+void apply_term_offdiag_no_sym_to_spins(bit_t spins_in, int64_t idx_in,
                                         BasisOut &&basis_out,
                                         NonZeroTerm &&non_zero_term,
                                         TermAction &&term_action, Fill &&fill) {
@@ -29,10 +29,10 @@ void apply_term_offdiag_no_sym(BasisIn &&basis_in,
                                NonZeroTerm &&non_zero_term,
                                TermAction &&term_action, Fill &&fill) {
 #ifdef _OPENMP
-  idx_t size = basis_in.size();
+  int64_t size = basis_in.size();
 
 #pragma omp parallel for schedule(guided)
-  for (idx_t idx_in = 0; idx_in < size; ++idx_in) {
+  for (int64_t idx_in = 0; idx_in < size; ++idx_in) {
     bit_t spins_in = basis_in.state(idx_in);
     apply_term_offdiag_no_sym_to_spins<bit_t, coeff_t>(
         spins_in, idx_in, basis_out, non_zero_term, term_action, fill);

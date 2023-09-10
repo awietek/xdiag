@@ -58,16 +58,16 @@ void spinhalf_mpi_exchange(
     bit_t mask = ((bit_t)1 << s1) | ((bit_t)1 << s2);
 
     // loop through all postfixes
-    idx_t idx = 0;
+    int64_t idx = 0;
     for (auto prefix : indexing.prefixes()) {
       auto const &lintable = indexing.postfix_indexing(prefix);
       auto const &postfixes = indexing.postfixes(prefix);
-      idx_t prefix_begin = indexing.prefix_begin(prefix);
+      int64_t prefix_begin = indexing.prefix_begin(prefix);
       for (auto postfix : postfixes) {
 
         if (bitops::popcnt(postfix & mask) & 1) {
           bit_t new_postfix = postfix ^ mask;
-          idx_t new_idx = prefix_begin + lintable.index(new_postfix);
+          int64_t new_idx = prefix_begin + lintable.index(new_postfix);
           vec_out(new_idx) += Jhalf * vec_in(idx);
         }
         ++idx;
@@ -80,7 +80,7 @@ void spinhalf_mpi_exchange(
   // Apply the prefix bonds after doing a transpose. then transpose back
 
   // prepare send/recv buffers
-  idx_t buffer_size = indexing.size_max();
+  int64_t buffer_size = indexing.size_max();
   mpi::buffer.reserve<coeff_t>(buffer_size);
   auto send_buffer = mpi::buffer.send<coeff_t>();
   auto recv_buffer = mpi::buffer.recv<coeff_t>();
@@ -104,16 +104,16 @@ void spinhalf_mpi_exchange(
                    ((bit_t)1 << (s2 - n_postfix_bits));
 
       // loop through all prefixes
-      idx_t idx = 0;
+      int64_t idx = 0;
       for (auto postfix : indexing.postfixes()) {
         auto const &lintable = indexing.prefix_indexing(postfix);
         auto const &prefixes = indexing.prefixes(postfix);
-        idx_t postfix_begin = indexing.postfix_begin(postfix);
+        int64_t postfix_begin = indexing.postfix_begin(postfix);
         for (auto prefix : prefixes) {
 
           if (bitops::popcnt(prefix & mask) & 1) {
             bit_t new_prefix = prefix ^ mask;
-            idx_t new_idx = postfix_begin + lintable.index(new_prefix);
+            int64_t new_idx = postfix_begin + lintable.index(new_prefix);
             recv_buffer[new_idx] += Jhalf * send_buffer[idx];
           }
 
@@ -127,7 +127,7 @@ void spinhalf_mpi_exchange(
     spinhalf_mpi_transpose(indexing, recv_buffer, true);
     timing_mpi(ttrans2, rightnow_mpi(), " (exchange) transpose 2", 2);
 
-    for (idx_t idx = 0; idx < vec_out.size(); ++idx) {
+    for (int64_t idx = 0; idx < vec_out.size(); ++idx) {
       vec_out(idx) += send_buffer[idx];
     }
   }
@@ -167,7 +167,7 @@ void spinhalf_mpi_exchange(
       auto com = coms_mixed.at(bond_idx++);
 
       // Loop through all my states and fill them in send buffer
-      idx_t idx = 0;
+      int64_t idx = 0;
       for (auto prefix : indexing.prefixes()) {
         bit_t prefix_flipped = prefix ^ prefix_mask;
         int target_rank = indexing.process(prefix_flipped);
@@ -205,7 +205,7 @@ void spinhalf_mpi_exchange(
 
       // Fill received states into vec_out (gnarlyy!!!)
       // auto recv_offsets = com.n_values_i_recv_offsets();
-      std::vector<idx_t> offsets(mpi_size, 0);
+      std::vector<int64_t> offsets(mpi_size, 0);
       for (auto prefix : Subsets<bit_t>(n_prefix_bits)) {
 
         // Only consider prefix if both itself and flipped version are valid
@@ -227,23 +227,23 @@ void spinhalf_mpi_exchange(
           continue;
 
         int origin_rank = indexing.process(prefix);
-        idx_t origin_offset = recv_offsets[origin_rank];
+        int64_t origin_offset = recv_offsets[origin_rank];
 
         auto const &postfixes = indexing.postfixes(prefix);
         auto const &postfix_flipped_lintable =
             indexing.postfix_indexing(prefix_flipped);
-        idx_t prefix_flipped_offset = indexing.prefix_begin(prefix_flipped);
+        int64_t prefix_flipped_offset = indexing.prefix_begin(prefix_flipped);
 
         // prefix up, postfix must be dn
         if (prefix & prefix_mask) {
           for (auto postfix : postfixes) {
             if (!(postfix & postfix_mask)) {
               bit_t postfix_flipped = postfix ^ postfix_mask;
-              idx_t idx_received = origin_offset + offsets[origin_rank];
-              idx_t idx_target =
+              int64_t idx_received = origin_offset + offsets[origin_rank];
+              int64_t int64_target =
                   prefix_flipped_offset +
                   postfix_flipped_lintable.index(postfix_flipped);
-              vec_out(idx_target) += Jhalf * recv_buffer[idx_received];
+              vec_out(int64_target) += Jhalf * recv_buffer[idx_received];
               ++offsets[origin_rank];
             }
           }
@@ -253,11 +253,11 @@ void spinhalf_mpi_exchange(
           for (auto postfix : postfixes) {
             if (postfix & postfix_mask) {
               bit_t postfix_flipped = postfix ^ postfix_mask;
-              idx_t idx_received = origin_offset + offsets[origin_rank];
-              idx_t idx_target =
+              int64_t idx_received = origin_offset + offsets[origin_rank];
+              int64_t int64_target =
                   prefix_flipped_offset +
                   postfix_flipped_lintable.index(postfix_flipped);
-              vec_out(idx_target) += Jhalf * recv_buffer[idx_received];
+              vec_out(int64_target) += Jhalf * recv_buffer[idx_received];
               ++offsets[origin_rank];
             }
           }

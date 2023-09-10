@@ -6,7 +6,7 @@
 
 namespace hydra::mpi {
 
-Communicator::Communicator(std::vector<idx_t> const &n_values_i_send)
+Communicator::Communicator(std::vector<int64_t> const &n_values_i_send)
     : n_values_prepared_(n_values_i_send.size(), 0),
       n_values_i_recv_(n_values_i_send.size(), 0),
       n_values_i_send_offsets_(n_values_i_send.size(), 0),

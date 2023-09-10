@@ -16,8 +16,8 @@ template <typename bit_t, class Basis1, class Basis2>
 void compare_state(bit_t state, Basis1 const &basis1, Basis2 const &basis2) {
   auto ga1 = basis1.group_action();
   auto ga2 = basis2.group_action();
-  idx_t idx1 = basis1.index(state);
-  idx_t idx2 = basis2.index(state);
+  int64_t idx1 = basis1.index(state);
+  int64_t idx2 = basis2.index(state);
   if (idx1 != invalid_index) {
     REQUIRE(idx1 == idx2);
     bit_t rep1 = basis1.representative(state);
@@ -50,7 +50,7 @@ void compare_state(bit_t state, Basis1 const &basis1, Basis2 const &basis2) {
 template <typename bit_t, class Basis1, class Basis2>
 void compare_indices_sz(Basis1 const &basis1, Basis2 const &basis2, int nup) {
   REQUIRE(basis1.size() == basis2.size());
-  for (idx_t idx = 0; idx < basis1.size(); ++idx) {
+  for (int64_t idx = 0; idx < basis1.size(); ++idx) {
     REQUIRE(basis1.state(idx) == basis2.state(idx));
   }
 
@@ -64,7 +64,7 @@ void compare_indices_sz(Basis1 const &basis1, Basis2 const &basis2, int nup) {
 template <typename bit_t, class Basis1, class Basis2>
 void compare_indices_no_sz(Basis1 const &basis1, Basis2 const &basis2) {
   REQUIRE(basis1.size() == basis2.size());
-  for (idx_t idx = 0; idx < basis1.size(); ++idx) {
+  for (int64_t idx = 0; idx < basis1.size(); ++idx) {
     REQUIRE(basis1.state(idx) == basis2.state(idx));
   }
 

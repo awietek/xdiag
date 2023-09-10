@@ -143,14 +143,14 @@ void test_representatives_indices_symmetries_limits(int64_t n_sites) {
         representatives_indices_symmetries_limits<bit_t>(
             combinatorics::CombinationsIndexing<bit_t>(n_sites, npar),
             group_action);
-    idx_t n_reps = reps.size();
-    for (idx_t i = 0; i < n_reps; ++i) {
+    int64_t n_reps = reps.size();
+    for (int64_t i = 0; i < n_reps; ++i) {
       REQUIRE(reps[i] == representative(reps[i], group_action));
     }
 
-    idx_t idx = 0;
+    int64_t idx = 0;
     for (bit_t state : Combinations<bit_t>(n_sites, npar)) {
-      idx_t k = idces[idx];
+      int64_t k = idces[idx];
       bit_t rep = reps[k];
       REQUIRE(rep == representative(state, group_action));
 

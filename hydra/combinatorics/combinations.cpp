@@ -10,7 +10,7 @@
 namespace hydra::combinatorics {
 
 template <class bit_t>
-Combinations<bit_t>::Combinations(int n, int k)
+Combinations<bit_t>::Combinations(int64_t n, int64_t k)
     : n_(n), k_(k), size_(combinatorics::binomial(n, k)) {
   if (k > n) {
     Log.err("Error constructing Combinations: k>n");
@@ -19,8 +19,8 @@ Combinations<bit_t>::Combinations(int n, int k)
   } else if (n < 0) {
     Log.err("Error constructing Combinations: n<0");
   } else {
-    begin_ = CombinationsIterator<bit_t>(n, k, (idx_t)0);
-    end_ = CombinationsIterator<bit_t>(n, k, (idx_t)binomial(n, k));
+    begin_ = CombinationsIterator<bit_t>(n, k, (int64_t)0);
+    end_ = CombinationsIterator<bit_t>(n, k, (int64_t)binomial(n, k));
   }
 }
 
@@ -29,7 +29,8 @@ template class Combinations<uint32_t>;
 template class Combinations<uint64_t>;
 
 template <class bit_t>
-CombinationsIterator<bit_t>::CombinationsIterator(int n, int k, idx_t idx)
+CombinationsIterator<bit_t>::CombinationsIterator(int64_t n, int64_t k,
+                                                  int64_t idx)
     : current_(get_nth_pattern<bit_t>(idx, n, k)), idx_(idx) {}
 
 template class CombinationsIterator<uint16_t>;
@@ -38,7 +39,7 @@ template class CombinationsIterator<uint64_t>;
 
 #ifdef _OPENMP
 template <class bit_t>
-CombinationsThread<bit_t>::CombinationsThread(int n, int k)
+CombinationsThread<bit_t>::CombinationsThread(int64_t n, int64_t k)
     : n_(n), k_(k), size_(combinatorics::binomial(n, k)) {
   if (k > n) {
     Log.err("Error constructing Combinations: k>n");

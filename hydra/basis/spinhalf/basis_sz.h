@@ -17,9 +17,9 @@ public:
 
   iterator_t begin() const;
   iterator_t end() const;
-  inline idx_t index(bit_t spins) const { return lintable_.index(spins); }
-  inline bit_t state(idx_t index) const { return states_[index]; }
-  idx_t size() const;
+  inline int64_t index(bit_t spins) const { return lintable_.index(spins); }
+  inline bit_t state(int64_t index) const { return states_[index]; }
+  int64_t size() const;
 
   int64_t n_sites() const;
   int64_t n_up() const;
@@ -33,7 +33,7 @@ private:
   int64_t n_up_;
   combinatorics::LinTable<bit_t> lintable_;
   std::vector<bit_t> states_;
-  idx_t size_;
+  int64_t size_;
   iterator_t begin_, end_;
 };
 

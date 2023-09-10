@@ -13,7 +13,7 @@ void test_subsets(){
 	Subsets<bit_t> subs(n);
 	REQUIRE(n == subs.n());
 	
-        idx_t ctr=0;
+        int64_t ctr=0;
 	bit_t current=0;
 	for (auto sub : subs)
 	  {

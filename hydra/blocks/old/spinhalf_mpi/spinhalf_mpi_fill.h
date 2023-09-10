@@ -20,7 +20,7 @@ void Fill(SpinhalfMPI<bit_t> const &block, lila::Vector<coeff_t> &vec,
 
   int n_postfix_bits = block.n_postfix_bits_;
 
-  idx_t idx=0;
+  int64_t idx=0;
   for (auto prefix : block.prefixes_) {
     int n_up_prefix = bitops::popcnt(prefix);
     int n_up_postfix = block.n_up() - n_up_prefix;

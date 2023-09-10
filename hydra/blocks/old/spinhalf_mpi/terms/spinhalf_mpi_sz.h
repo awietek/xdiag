@@ -33,7 +33,7 @@ void spinhalf_mpi_sz(BondList const &bonds, Couplings const &couplings,
 
     int n_postfix_bits = indexing.n_postfix_bits();
 
-    idx_t idx = 0;
+    int64_t idx = 0;
     for (auto prefix : indexing.prefixes()) {
       auto postfixes = indexing.postfixes(prefix);
 
@@ -51,7 +51,7 @@ void spinhalf_mpi_sz(BondList const &bonds, Couplings const &couplings,
         bit_t prefix_shifted = (prefix << n_postfix_bits);
         coeff_t val = (prefix_shifted & mask) ? val_up : val_dn;
 
-        for (idx_t start = idx; idx < start + (idx_t)postfixes.size(); ++idx) {
+        for (int64_t start = idx; idx < start + (int64_t)postfixes.size(); ++idx) {
           vec_out(idx) += val * vec_in(idx);
         }
       }

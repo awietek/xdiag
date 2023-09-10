@@ -16,7 +16,7 @@ namespace hydra::terms {
 
 // Create a communicator for every mixed bond, and the maximal communicator size
 template <class bit_t>
-std::tuple<std::vector<mpi::Communicator>, idx_t, idx_t>
+std::tuple<std::vector<mpi::Communicator>, int64_t, int64_t>
 spinhalf_mpi_exchange_mixed_com(
     indexing::SpinhalfMPIIndexingSz<bit_t> const &indexing,
     BondList const &mixed_bonds, Couplings const &couplings) {
@@ -28,11 +28,11 @@ spinhalf_mpi_exchange_mixed_com(
   int n_postfix_bits = indexing.n_postfix_bits();
 
   std::vector<mpi::Communicator> communicators;
-  idx_t max_send_size = 0;
-  idx_t max_recv_size = 0;
+  int64_t max_send_size = 0;
+  int64_t max_recv_size = 0;
   for (auto bond : mixed_bonds) {
 
-    std::vector<idx_t> n_states_i_send(mpi_size, 0);
+    std::vector<int64_t> n_states_i_send(mpi_size, 0);
 
     int s1, s2;
     std::tie(s1, s2, std::ignore) = get_exchange_s1_s2_Jhalf_mpi(bond, couplings);

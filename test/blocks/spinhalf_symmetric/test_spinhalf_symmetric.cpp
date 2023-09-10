@@ -16,11 +16,11 @@ void test_indices_spinhalf_symmetric(Spinhalf const &block) {
 
   GroupAction group_action(block.permutation_group());
   // auto indexing = block.indexing_sym_sz_conserved();
-  // for (idx_t idx = 0; idx < block.size(); ++idx) {
+  // for (int64_t idx = 0; idx < block.size(); ++idx) {
   //   bit_t state = indexing.state(idx);
   //   bit_t rep = symmetries::representative(state, group_action);
   //   REQUIRE(rep == state);
-  //   idx_t idx2 = indexing.index(state);
+  //   int64_t idx2 = indexing.index(state);
   //   // auto norm = block.indexing_.norm(state);
   //   REQUIRE(idx == idx2);
   // }
@@ -42,9 +42,9 @@ void test_spinchain_blocks(int64_t n_sites) {
   auto space_group = PermutationGroup(permutation_array);
 
   // Create irrep with K momentum
-  idx_t sum_of_dims = 0;
+  int64_t sum_of_dims = 0;
   for (int64_t nup = 0; nup <= n_sites; ++nup) {
-    idx_t sum_of_dims_up = 0;
+    int64_t sum_of_dims_up = 0;
 
     for (int64_t k = 0; k < n_sites; ++k) {
 
@@ -92,16 +92,16 @@ TEST_CASE("spinhalf_symmetric", "[spinhalf]") {
   auto permutations = hydra::read_permutations(lfile);
   auto space_group = PermutationGroup(permutations);
 
-  idx_t sum_dim = 0;
+  int64_t sum_dim = 0;
   for (int64_t nup = 0; nup <= n_sites; ++nup) {
-    idx_t sum_dim_up = 0;
+    int64_t sum_dim_up = 0;
 
     for (auto [name, mult] : rep_name_mult) {
 
       auto irrep = read_representation(lfile, name);
       auto block = Spinhalf(n_sites, nup, space_group, irrep);
 
-      idx_t dim = block.size() * mult;
+      int64_t dim = block.size() * mult;
       test_indices_spinhalf_symmetric(block);
 
       sum_dim_up += dim;
@@ -109,5 +109,5 @@ TEST_CASE("spinhalf_symmetric", "[spinhalf]") {
     }
     REQUIRE(sum_dim_up == binomial(n_sites, nup));
   }
-  REQUIRE(sum_dim == (idx_t)pow(2, n_sites));
+  REQUIRE(sum_dim == (int64_t)pow(2, n_sites));
 }

@@ -17,8 +17,8 @@ public:
   BasisNp() = default;
   BasisNp(int n_sites, int n_up, int n_dn);
 
-  idx_t size() const;
-  inline idx_t index(bit_t ups, bit_t dns) const {
+  int64_t size() const;
+  inline int64_t index(bit_t ups, bit_t dns) const {
     return index_ups(ups) * size_dns_ + index_dns(dns);
   }
 
@@ -32,9 +32,9 @@ private:
   int n_up_;
   int n_dn_;
 
-  idx_t size_ups_;
-  idx_t size_dns_;
-  idx_t size_;
+  int64_t size_ups_;
+  int64_t size_dns_;
+  int64_t size_;
 
   combinatorics::LinTable<bit_t> lintable_ups_;
   combinatorics::LinTable<bit_t> lintable_dns_;
@@ -52,10 +52,10 @@ public:
   CombinationsIndexThread<bit_t> states_indices_dns_thread() const;
 #endif
 
-  idx_t size_ups() const;
-  idx_t size_dns() const;
-  inline idx_t index_ups(bit_t ups) const { return lintable_ups_.index(ups); }
-  inline idx_t index_dns(bit_t dns) const { return lintable_dns_.index(dns); }
+  int64_t size_ups() const;
+  int64_t size_dns() const;
+  inline int64_t index_ups(bit_t ups) const { return lintable_ups_.index(ups); }
+  inline int64_t index_dns(bit_t dns) const { return lintable_dns_.index(dns); }
 };
 
 } // namespace hydra::basis::electron

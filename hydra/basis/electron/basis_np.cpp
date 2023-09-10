@@ -26,13 +26,13 @@ template <typename bit_t> int BasisNp<bit_t>::n_sites() const {
 template <typename bit_t> int BasisNp<bit_t>::n_up() const { return n_up_; }
 template <typename bit_t> int BasisNp<bit_t>::n_dn() const { return n_dn_; }
 
-template <typename bit_t> idx_t BasisNp<bit_t>::size_ups() const {
+template <typename bit_t> int64_t BasisNp<bit_t>::size_ups() const {
   return size_ups_;
 }
-template <typename bit_t> idx_t BasisNp<bit_t>::size_dns() const {
+template <typename bit_t> int64_t BasisNp<bit_t>::size_dns() const {
   return size_dns_;
 }
-template <typename bit_t> idx_t BasisNp<bit_t>::size() const { return size_; }
+template <typename bit_t> int64_t BasisNp<bit_t>::size() const { return size_; }
 
 template <typename bit_t>
 Combinations<bit_t> BasisNp<bit_t>::states_ups() const {

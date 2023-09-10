@@ -23,8 +23,8 @@ public:
   inline int n_up() const { return n_up_; }
   inline int n_dn() const { return n_dn_; }
 
-  inline idx_t size() const { return size_; }
-  inline idx_t dim() const { return dim_; }
+  inline int64_t size() const { return size_; }
+  inline int64_t dim() const { return dim_; }
 
   inline int mpi_rank() const { return mpi_rank_; }
   inline int mpi_size() const { return mpi_size_; }
@@ -43,8 +43,8 @@ private:
   std::shared_ptr<indexing_t> indexing_;
   inline indexing_t const &indexing() const {return *indexing_; }
 
-  idx_t size_;
-  idx_t dim_;
+  int64_t size_;
+  int64_t dim_;
 
   int mpi_rank_;
   int mpi_size_;

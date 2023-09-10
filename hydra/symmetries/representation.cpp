@@ -154,7 +154,7 @@ bool Representation::isreal(double precision) const {
   return !iscomplex(precision);
 }
 
-Representation trivial_representation(idx_t size) {
+Representation trivial_representation(int64_t size) {
   return Representation(std::vector<complex>(size, {1.0, 0.0}));
 }
 

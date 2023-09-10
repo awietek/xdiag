@@ -19,7 +19,7 @@ void test_spinhalf_basis_state(Basis const &basis, bit_t state) {
   auto const &group_action = basis.group_action();
   auto const &irrep = basis.irrep();
 
-  idx_t idx_rep = basis.index(state);
+  int64_t idx_rep = basis.index(state);
   if (idx_rep == invalid_index) {
     double norm = symmetries::norm(state, group_action, irrep);
     REQUIRE(std::abs(norm) < 1e-6);

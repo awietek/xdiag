@@ -15,13 +15,13 @@ std::vector<bool> init_fermi_table_serial(States const &states,
                                           PermutationGroup const &group) {
   int64_t n_sites = group.n_sites();
   int64_t n_symmetries = group.n_symmetries();
-  idx_t raw_size = states.size();
+  int64_t raw_size = states.size();
   std::vector<bool> fermi_table(raw_size * n_symmetries);
   auto fermi_work = symmetries::fermi_work(n_sites);
   for (int64_t sym = 0; sym < n_symmetries; ++sym) {
     auto const &perm = group[sym];
 
-    idx_t idx = 0;
+    int64_t idx = 0;
     for (auto state : states) {
       fermi_table[sym * raw_size + idx] =
           symmetries::fermi_bool_of_permutation(state, perm, fermi_work);
@@ -37,7 +37,7 @@ std::vector<bool> init_fermi_table_omp(States const &states,
                                        PermutationGroup const &group) {
   int64_t n_sites = group.n_sites();
   int64_t n_symmetries = group.n_symmetries();
-  idx_t raw_size = states.size();
+  int64_t raw_size = states.size();
   std::vector<bool> fermi_bool_table;
   fermi_bool_table.reserve(raw_size * n_symmetries);
 

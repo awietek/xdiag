@@ -11,13 +11,13 @@ using namespace hydra::combinatorics;
 // void test_indices(Electron<bit_t> const &electron) {
 //   // int n_sites = electron.n_sites();
 
-//   idx_t idx = 0;
+//   int64_t idx = 0;
 //   for (bit_t ups : electron.reps_up_) {
 //     auto const &dnss = electron.dns_for_up_rep(ups);
 //     for (bit_t dns : dnss) {
 //       // Log.out("{} {}", bits_to_string(ups, n_sites),
 //       // bits_to_string(dns, n_sites));
-//       idx_t idx2 = electron.index(ups, dns);
+//       int64_t idx2 = electron.index(ups, dns);
 //       REQUIRE(idx == idx2);
 //       ++idx;
 //     }
@@ -43,11 +43,11 @@ void test_electron_chain(int n_sites) {
   auto space_group = PermutationGroup(permutation_array);
 
   // Create irrep with K momentum
-  idx_t sum_of_dims = 0;
+  int64_t sum_of_dims = 0;
 
   for (int64_t nup = 0; nup <= n_sites; ++nup) {
     for (int64_t ndn = 0; ndn <= n_sites; ++ndn) {
-      idx_t sum_of_dims_updn = 0;
+      int64_t sum_of_dims_updn = 0;
 
       for (int64_t k = 0; k < n_sites; ++k) {
 
@@ -95,16 +95,16 @@ TEST_CASE("electron_symmetric", "[electron]") {
   auto permutations = hydra::read_permutations(lfile);
   auto space_group = PermutationGroup(permutations);
 
-  idx_t sum_dim = 0;
+  int64_t sum_dim = 0;
   for (int64_t nup = 0; nup <= n_sites; ++nup) {
     for (int64_t ndn = 0; ndn <= n_sites; ++ndn) {
-      idx_t sum_dim_updn = 0;
+      int64_t sum_dim_updn = 0;
 
       for (auto [name, mult] : rep_name_mult) {
         auto irrep = read_representation(lfile, name);
         auto electron = Electron(n_sites, nup, ndn, space_group, irrep);
 
-        idx_t dim = electron.size() * mult;
+        int64_t dim = electron.size() * mult;
         // Log.out(
         //     "Hubbard Triangular 3x3: n_sites: {}, nup: {}, ndn: {}, k: "
         //     "{}(x{}), size: {}",
@@ -121,5 +121,5 @@ TEST_CASE("electron_symmetric", "[electron]") {
       // Log.out("size: {} {}", sum_dim_updn, electron_nosym.size());
     }
   }
-  REQUIRE(sum_dim == (idx_t)pow(4, n_sites));
+  REQUIRE(sum_dim == (int64_t)pow(4, n_sites));
 }

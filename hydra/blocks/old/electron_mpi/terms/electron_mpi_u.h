@@ -21,7 +21,7 @@ void do_U(Couplings const &couplings, Electron<bit_t> const &block,
 
   //   double U = lila::real(couplings["U"]);
 
-  //   idx_t idx = 0;
+  //   int64_t idx = 0;
   //   for (bit_t ups : my_ups_) // loop over upspins of process
   //   {
   //     for (bit_t dns :

@@ -31,33 +31,33 @@ public:
   inline int64_t n_dn() const { return n_dn_; }
   GroupActionLookup<bit_t> const &group_action() const { return group_action_; }
   Representation const &irrep() const { return irrep_; }
-  idx_t size() const { return size_; }
+  int64_t size() const { return size_; }
 
-  idx_t n_rep_ups() const { return reps_up_.size(); }
-  bit_t rep_ups(idx_t idx_ups) const { return reps_up_[idx_ups]; }
-  idx_t ups_offset(idx_t idx_ups) const { return ups_offset_[idx_ups]; }
+  int64_t n_rep_ups() const { return reps_up_.size(); }
+  bit_t rep_ups(int64_t idx_ups) const { return reps_up_[idx_ups]; }
+  int64_t ups_offset(int64_t idx_ups) const { return ups_offset_[idx_ups]; }
 
   // index and fermi sign for dns with trivial stabilizer
-  idx_t index_dns(bit_t dns) const { return lintable_dns_.index(dns); }
+  int64_t index_dns(bit_t dns) const { return lintable_dns_.index(dns); }
 
-  std::pair<idx_t, bool> index_dns_fermi(bit_t dns, int64_t sym) const {
+  std::pair<int64_t, bool> index_dns_fermi(bit_t dns, int64_t sym) const {
     bit_t dns_rep = group_action_.apply(sym, dns);
-    idx_t idx_dns_rep = lintable_dns_.index(dns_rep);
+    int64_t idx_dns_rep = lintable_dns_.index(dns_rep);
     bool fermi_dns = fermi_table_.sign(sym, dns);
     return {idx_dns_rep, fermi_dns};
   }
 
-  std::pair<idx_t, bool> index_dns_fermi(bit_t dns, int64_t sym,
+  std::pair<int64_t, bool> index_dns_fermi(bit_t dns, int64_t sym,
                                          bit_t fermimask) const {
     bit_t dns_rep = group_action_.apply(sym, dns);
-    idx_t idx_dns_rep = lintable_dns_.index(dns_rep);
+    int64_t idx_dns_rep = lintable_dns_.index(dns_rep);
     bool fermi_dns = (bits::popcnt(dns & fermimask) & 1);
     fermi_dns ^= fermi_table_.sign(sym, dns);
     return {idx_dns_rep, fermi_dns};
   }
 
   // index and fermi sign for dns with non-trivial stabilizer
-  std::tuple<idx_t, bool, int64_t>
+  std::tuple<int64_t, bool, int64_t>
   index_dns_fermi_sym(bit_t dns, gsl::span<int64_t const> syms,
                       gsl::span<bit_t const> dnss_out) const {
     auto [rep_dns, rep_sym] =
@@ -71,7 +71,7 @@ public:
     }
   }
 
-  std::tuple<idx_t, bool, int64_t>
+  std::tuple<int64_t, bool, int64_t>
   index_dns_fermi_sym(bit_t dns, gsl::span<int64_t const> syms,
                       gsl::span<bit_t const> dnss_out, bit_t fermimask) const {
     auto [rep_dns, rep_sym] =
@@ -87,40 +87,40 @@ public:
   }
 
   // Retrieving index of representative and symmetries for ups
-  idx_t index_ups(bit_t ups) const {
+  int64_t index_ups(bit_t ups) const {
     return idces_up_[lintable_ups_.index(ups)];
   }
 
   gsl::span<int64_t const> syms_ups(bit_t ups) const {
-    idx_t idx_ups = lintable_ups_.index(ups);
+    int64_t idx_ups = lintable_ups_.index(ups);
     auto [start, length] = sym_limits_up_[idx_ups];
     return {syms_up_.data() + start, length};
   }
 
-  inline std::pair<idx_t, gsl::span<int64_t const>>
+  inline std::pair<int64_t, gsl::span<int64_t const>>
   index_syms_up(bit_t ups) const {
-    idx_t idx_ups = lintable_ups_.index(ups);
-    idx_t index = idces_up_[idx_ups];
+    int64_t idx_ups = lintable_ups_.index(ups);
+    int64_t index = idces_up_[idx_ups];
     auto [start, length] = sym_limits_up_[idx_ups];
     return {index, {syms_up_.data() + start, length}};
   }
 
   // Retrieving dns states and norms for given up configuration
   gsl::span<bit_t const> dns_for_ups_rep(bit_t ups) const {
-    idx_t idx_ups = index_ups(ups);
+    int64_t idx_ups = index_ups(ups);
     auto [start, length] = dns_limits_[idx_ups];
     return {dns_storage_.data() + start, length};
   }
 
   gsl::span<double const> norms_for_ups_rep(bit_t ups) const {
-    idx_t idx_ups = index_ups(ups);
+    int64_t idx_ups = index_ups(ups);
     auto [start, length] = dns_limits_[idx_ups];
     return {norms_storage_.data() + start, length};
   }
 
   std::pair<gsl::span<bit_t const>, gsl::span<double const>>
   dns_norms_for_up_rep(bit_t ups) const {
-    idx_t idx_ups = index_ups(ups);
+    int64_t idx_ups = index_ups(ups);
     auto [start, length] = dns_limits_[idx_ups];
     auto dnss = gsl::span<bit_t const>{dns_storage_.data() + start, length};
     auto norms = gsl::span<double const>{norms_storage_.data() + start, length};
@@ -142,24 +142,24 @@ private:
   GroupActionLookup<bit_t> group_action_;
   Representation irrep_;
 
-  idx_t raw_ups_size_;
-  idx_t raw_dns_size_;
+  int64_t raw_ups_size_;
+  int64_t raw_dns_size_;
 
   combinatorics::SubsetsIndexing<bit_t> lintable_ups_;
   combinatorics::SubsetsIndexing<bit_t> lintable_dns_;
   combinatorics::FermiTableSubsets<bit_t> fermi_table_;
 
   std::vector<bit_t> reps_up_;
-  std::vector<idx_t> idces_up_;
+  std::vector<int64_t> idces_up_;
   std::vector<int64_t> syms_up_;
   std::vector<std::pair<span_size_t, span_size_t>> sym_limits_up_;
 
   std::vector<bit_t> dns_storage_;
   std::vector<double> norms_storage_;
-  std::vector<idx_t> ups_offset_;
+  std::vector<int64_t> ups_offset_;
   std::vector<std::pair<span_size_t, span_size_t>> dns_limits_;
 
-  idx_t size_;
+  int64_t size_;
 };
 
 } // namespace hydra::basis::electron

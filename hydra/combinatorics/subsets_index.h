@@ -13,16 +13,16 @@ public:
   using iterator_t = SubsetsIndexIterator<bit_t>;
 
   SubsetsIndex() = default;
-  explicit SubsetsIndex(int n);
+  explicit SubsetsIndex(int64_t n);
 
-  int n() const { return n_; }
-  idx_t size() const { return size_; };
+  int64_t n() const { return n_; }
+  int64_t size() const { return size_; };
   iterator_t begin() const { return begin_; }
   iterator_t end() const { return end_; }
 
 private:
-  int n_, k_;
-  idx_t size_;
+  int64_t n_, k_;
+  int64_t size_;
   iterator_t begin_, end_;
 };
 
@@ -30,7 +30,7 @@ private:
 template <class bit_t> class SubsetsIndexIterator {
 public:
   SubsetsIndexIterator() = default;
-  SubsetsIndexIterator(idx_t idx);
+  SubsetsIndexIterator(int64_t idx);
 
   inline bool operator==(const SubsetsIndexIterator<bit_t> &rhs) const {
 
@@ -43,8 +43,8 @@ public:
     ++current_;
     return *this;
   }
-  inline std::pair<bit_t, idx_t> operator*() const {
-    return {current_, (idx_t)current_};
+  inline std::pair<bit_t, int64_t> operator*() const {
+    return {current_, (int64_t)current_};
   }
 
 private:
@@ -58,16 +58,16 @@ public:
   using iterator_t = SubsetsIndexIterator<bit_t>;
 
   SubsetsIndexThread() = default;
-  SubsetsIndexThread(int n);
+  SubsetsIndexThread(int64_t n);
 
-  int n() const { return n_; }
-  idx_t size() const { return size_; };
+  int64_t n() const { return n_; }
+  int64_t size() const { return size_; };
   iterator_t begin() const { return begin_; }
   iterator_t end() const { return end_; }
 
 private:
-  int n_;
-  idx_t size_;
+  int64_t n_;
+  int64_t size_;
   iterator_t begin_, end_;
 };
 

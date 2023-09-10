@@ -1,8 +1,8 @@
 #pragma once
 #ifdef HYDRA_ENABLE_MPI
 
-#include <mpi.h>
 #include <hydra/common.h>
+#include <mpi.h>
 
 #include <algorithm>
 
@@ -12,10 +12,11 @@ class Buffer {
 public:
   Buffer() = default;
 
-  template <typename coeff_t> void reserve(idx_t size) {
+  template <typename coeff_t> void reserve(int64_t size) {
     reserve<coeff_t>(size, size);
   }
-  template <typename coeff_t> void reserve(idx_t size_send, idx_t size_recv);
+  template <typename coeff_t>
+  void reserve(int64_t size_send, int64_t size_recv);
   template <typename coeff_t> coeff_t *send();
   template <typename coeff_t> coeff_t *recv();
 

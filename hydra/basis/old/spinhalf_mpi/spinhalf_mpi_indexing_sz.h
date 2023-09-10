@@ -20,17 +20,17 @@ public:
   inline int n_up() const { return n_up_; }
   inline int n_prefix_bits() const { return n_prefix_bits_; }
   inline int n_postfix_bits() const { return n_postfix_bits_; }
-  inline idx_t size() const { return size_; }
-  inline idx_t size_transpose() const { return size_transpose_; }
-  inline idx_t size_max() const { return size_max_; }
-  inline idx_t dim() const { return dim_; }
+  inline int64_t size() const { return size_; }
+  inline int64_t size_transpose() const { return size_transpose_; }
+  inline int64_t size_max() const { return size_max_; }
+  inline int64_t dim() const { return dim_; }
 
   int process(bit_t prepostfix) const;
   inline int mpi_rank() const { return mpi_rank_; }
   inline int mpi_size() const { return mpi_size_; }
 
   gsl::span<bit_t const> prefixes() const;
-  idx_t prefix_begin(bit_t prefix) const {
+  int64_t prefix_begin(bit_t prefix) const {
     // for (auto [p, b] : prefix_begin_)
     // 	lila::Log("pi: {} p: {} b: {}", prefix, p, b);
     if (prefix_begin_.find(prefix) != prefix_begin_.end()) {
@@ -43,7 +43,7 @@ public:
   LinTable<bit_t> const &postfix_indexing(bit_t prefix) const;
 
   gsl::span<bit_t const> postfixes() const;
-  idx_t postfix_begin(bit_t postfix) const {
+  int64_t postfix_begin(bit_t postfix) const {
     // for (auto [p, b] : postfix_begin_)
     //   lila::Log("#{} pi: {} p: {} b: {}, presize: {}", mpi_rank_, postfix, p,
     //   b, prefixes(postfix).size());
@@ -68,19 +68,19 @@ private:
   indexing::LinTable<bit_t> empty_lintable_;
 
   std::vector<bit_t> prefixes_;
-  std::unordered_map<bit_t, idx_t> prefix_begin_;
+  std::unordered_map<bit_t, int64_t> prefix_begin_;
   std::vector<indexing::LinTable<bit_t>> postfix_lintables_;
   std::vector<std::vector<bit_t>> postfix_states_;
 
   std::vector<bit_t> postfixes_;
-  std::unordered_map<bit_t, idx_t> postfix_begin_;
+  std::unordered_map<bit_t, int64_t> postfix_begin_;
   std::vector<indexing::LinTable<bit_t>> prefix_lintables_;
   std::vector<std::vector<bit_t>> prefix_states_;
 
-  idx_t size_;
-  idx_t size_transpose_;
-  idx_t size_max_;
-  idx_t dim_;
+  int64_t size_;
+  int64_t size_transpose_;
+  int64_t size_max_;
+  int64_t dim_;
 
   int mpi_rank_;
   int mpi_size_;

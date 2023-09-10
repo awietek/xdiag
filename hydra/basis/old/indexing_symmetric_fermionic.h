@@ -17,9 +17,9 @@ public:
                              PermutationGroup permutation_group,
                              Representation irrep);
 
-  inline idx_t size() const { return size_; }
-  inline bit_t state(idx_t idx) const { return states_[idx]; }
-  inline idx_t index(bit_t state) const {
+  inline int64_t size() const { return size_; }
+  inline bit_t state(int64_t idx) const { return states_[idx]; }
+  inline int64_t index(bit_t state) const {
     return index_of_raw_state_[lin_table_.index(state)];
   }
   inline complex norm(bit_t state) const {
@@ -32,10 +32,10 @@ public:
 private:
   LinTable<bit_t> lin_table_;
   std::vector<bit_t> states_;
-  std::vector<idx_t> index_of_raw_state_;
+  std::vector<int64_t> index_of_raw_state_;
   std::vector<complex> norm_of_raw_state_;
 
-  idx_t size_;
+  int64_t size_;
 };
 
 } // namespace hydra::indexing

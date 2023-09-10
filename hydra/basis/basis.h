@@ -74,9 +74,9 @@ using basis_tj_variant_t =
 	       basis::tj::BasisSymmetricNp<uint64_t>>;
 // clang-format on
 
-idx_t size(basis_spinhalf_variant_t const &idxing);
-idx_t size(basis_tj_variant_t const &idxing);
-idx_t size(basis_electron_variant_t const &idxing);
+int64_t size(basis_spinhalf_variant_t const &idxing);
+int64_t size(basis_tj_variant_t const &idxing);
+int64_t size(basis_electron_variant_t const &idxing);
 
 template <typename bit_t> bool has_bit_t(basis_spinhalf_variant_t const &);
 template <typename bit_t> bool has_bit_t(basis_tj_variant_t const &);
