@@ -7,7 +7,7 @@ namespace hydra::basis::tj {
 using namespace combinatorics;
 
 template <typename bit_t>
-BasisNp<bit_t>::BasisNp(int n_sites, int n_up, int n_dn)
+BasisNp<bit_t>::BasisNp(int64_t n_sites, int64_t n_up, int64_t n_dn)
     : n_sites_(n_sites), n_up_(n_up), n_dn_(n_dn),
       size_ups_(binomial(n_sites, n_up)),
       size_dncs_(binomial(n_sites - n_up, n_dn)), size_(size_ups_ * size_dncs_),
@@ -22,11 +22,11 @@ BasisNp<bit_t>::BasisNp(int n_sites, int n_up, int n_dn)
   }
 }
 
-template <typename bit_t> int BasisNp<bit_t>::n_sites() const {
+template <typename bit_t> int64_t BasisNp<bit_t>::n_sites() const {
   return n_sites_;
 }
-template <typename bit_t> int BasisNp<bit_t>::n_up() const { return n_up_; }
-template <typename bit_t> int BasisNp<bit_t>::n_dn() const { return n_dn_; }
+template <typename bit_t> int64_t BasisNp<bit_t>::n_up() const { return n_up_; }
+template <typename bit_t> int64_t BasisNp<bit_t>::n_dn() const { return n_dn_; }
 
 template <typename bit_t> int64_t BasisNp<bit_t>::size_ups() const {
   return size_ups_;

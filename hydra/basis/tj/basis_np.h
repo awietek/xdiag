@@ -11,7 +11,7 @@ public:
   using bit_type = bit_t;
 
   BasisNp() = default;
-  BasisNp(int n_sites, int n_up, int n_dn);
+  BasisNp(int64_t n_sites, int64_t n_up, int64_t n_dn);
 
   int64_t size() const;
   inline int64_t index(bit_t ups, bit_t dns) const {
@@ -19,15 +19,15 @@ public:
     return index_ups(ups) * size_dncs_ + index_dncs(dncs);
   }
 
-  int n_sites() const;
-  int n_up() const;
-  int n_dn() const;
+  int64_t n_sites() const;
+  int64_t n_up() const;
+  int64_t n_dn() const;
   static constexpr bool np_conserved() { return true; }
 
 private:
-  int n_sites_;
-  int n_up_;
-  int n_dn_;
+  int64_t n_sites_;
+  int64_t n_up_;
+  int64_t n_dn_;
 
   int64_t size_ups_;
   int64_t size_dncs_;

@@ -7,14 +7,14 @@ namespace hydra {
 
 template <typename coeff_t, class multiply_f>
 double exp_sym_v_inplace(multiply_f mult, arma::Col<coeff_t> &X, coeff_t tau,
-                         bool normalize = false, bool shift = false,
+                         bool normalize = false, double shift = 0,
                          double precision = 1e-12,
                          int64_t max_iterations = 1000,
                          double deflation_tol = 1e-7) try {
 
   double norm = arma::norm(X);
   auto v0 = X;
-  
+
   auto dot = [](arma::Col<coeff_t> const &v, arma::Col<coeff_t> const &w) {
     return arma::cdot(v, w);
   };
@@ -35,10 +35,10 @@ double exp_sym_v_inplace(multiply_f mult, arma::Col<coeff_t> &X, coeff_t tau,
             arma::diagmat(r.betas.head(r.betas.size() - 1), -1);
   }
 
-  // Subtract e0 from diagonal
-  if (shift) {
+  // Subtract shift from diagonal
+  if (shift != 0.) {
     for (int64_t i = 0; i < (int64_t)tmat.n_cols; ++i) {
-      tmat(i, i) -= e0;
+      tmat(i, i) -= shift;
     }
   }
 
@@ -74,7 +74,7 @@ double exp_sym_v_inplace(multiply_f mult, arma::Col<coeff_t> &X, coeff_t tau,
 }
 
 State exp_sym_v(BondList const &bonds, State state, double tau, bool normalize,
-                bool shift, double precision, int64_t max_iterations,
+                double shift, double precision, int64_t max_iterations,
                 double deflation_tol) try {
   auto const &block = state.block();
 
@@ -104,7 +104,7 @@ State exp_sym_v(BondList const &bonds, State state, double tau, bool normalize,
 }
 
 State exp_sym_v(BondList const &bonds, State state, complex tau, bool normalize,
-                bool shift, double precision, int64_t max_iterations,
+                double shift, double precision, int64_t max_iterations,
                 double deflation_tol) try {
   auto const &block = state.block();
   state.make_complex();

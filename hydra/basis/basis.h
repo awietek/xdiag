@@ -89,4 +89,21 @@ int64_t index(basis_tj_variant_t const &, bit_t ups, bit_t dns);
 template <typename bit_t>
 int64_t index(basis_electron_variant_t const &, bit_t ups, bit_t dns);
 
+#ifdef HYDRA_ENABLE_DISTRIBUTED
+
+// clang-format off
+using basis_distributed_tj_variant_t =
+  std::variant<basis::distributed_tj::BasisNp<uint16_t>,
+	       basis::distributed_tj::BasisNp<uint32_t>,
+	       basis::distributed_tj::BasisNp<uint64_t>>;
+// clang-format on
+
+int64_t size(basis_distributed_tj_variant_t const &idxing);
+int64_t local_size(basis_distributed_tj_variant_t const &idxing);
+
+  template <typename bit_t>
+bool has_bit_t(basis_distributed_tj_variant_t const &);
+
+#endif
+
 } // namespace hydra

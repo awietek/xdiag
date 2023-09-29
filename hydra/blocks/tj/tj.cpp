@@ -79,6 +79,21 @@ tJ::tJ(int64_t n_sites, int64_t nup, int64_t ndn, PermutationGroup group,
   }
 }
 
+int64_t tJ::n_sites() const { return n_sites_; }
+int64_t tJ::n_up() const { return n_up_; }
+int64_t tJ::n_dn() const { return n_dn_; }
+
+bool tJ::charge_conserved() const { return charge_conserved_; }
+bool tJ::sz_conserved() const { return sz_conserved_; }
+
+bool tJ::symmetric() const { return symmetric_; }
+PermutationGroup const &tJ::permutation_group() const {
+  return permutation_group_;
+}
+Representation const &tJ::irrep() const { return irrep_; }
+
+int64_t tJ::size() const { return size_; }
+
 bool tJ::iscomplex(double precision) const {
   return symmetric_ ? irrep_.iscomplex(precision) : false;
 }
