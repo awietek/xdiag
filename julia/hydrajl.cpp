@@ -135,7 +135,7 @@ JLCXX_MODULE define_julia_module(jlcxx::Module &mod) {
 
   // methods for time evolution
   mod.method("exp_sym_v_cxx", [](BondList const &bonds, State state, double tau,
-                                 bool normalize, bool shift, double precision,
+                                 bool normalize, double shift, double precision,
                                  int64_t max_iterations, double deflation_tol) {
     JULIA_HYDRA_CALL_RETURN(exp_sym_v(bonds, state, tau, normalize, shift,
                                       precision, max_iterations,
@@ -143,7 +143,7 @@ JLCXX_MODULE define_julia_module(jlcxx::Module &mod) {
   });
 
   mod.method("exp_sym_v_cxx", [](BondList const &bonds, State state,
-                                 complex tau, bool normalize, bool shift,
+                                 complex tau, bool normalize, double shift,
                                  double precision, int64_t max_iterations,
                                  double deflation_tol) {
     JULIA_HYDRA_CALL_RETURN(exp_sym_v(bonds, state, tau, normalize, shift,
