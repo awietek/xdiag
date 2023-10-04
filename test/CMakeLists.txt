@@ -75,6 +75,7 @@ set(HYDRA_TEST_SOURCES
 
 set(HYDRA_TEST_DISTRIBUTED_SOURCES
   parallel/mpi/test_cdot_distributed.cpp
+  basis/tj_distributed/test_basis_np.cpp
 )
 
 if(BUILD_DISTRIBUTED)

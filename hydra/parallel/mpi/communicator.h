@@ -10,6 +10,7 @@ namespace hydra::mpi {
 
 class Communicator {
 public:
+  Communicator() = default;
   Communicator(std::vector<int64_t> const &n_values_i_send);
 
   std::vector<int> n_values_i_send() const { return n_values_i_send_; }

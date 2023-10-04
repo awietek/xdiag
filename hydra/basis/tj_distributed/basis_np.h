@@ -1,12 +1,12 @@
 #pragma once
-#ifdef HYDRA_ENABLE_MPI
+#ifdef HYDRA_USE_MPI
 
-#include <extern/gsl/span>
+#include "extern/gsl/span"
 
 #include <hydra/bits/bitops.h>
 #include <hydra/combinatorics/lin_table.h>
 #include <hydra/common.h>
-#include <hydra/mpi/communicator.h>
+#include <hydra/parallel/mpi/communicator.h>
 #include <hydra/random/hash_functions.h>
 
 namespace hydra::basis::tj_distributed {
@@ -14,7 +14,6 @@ namespace hydra::basis::tj_distributed {
 template <typename bit_t> class BasisNp {
 public:
   using bit_type = bit_t;
-  using gsl::span;
 
   BasisNp() = default;
   BasisNp(int64_t n_sites, int64_t n_up, int64_t n_dn);
@@ -22,7 +21,7 @@ public:
   int64_t n_sites() const;
   int64_t n_up() const;
   int64_t n_dn() const;
-  static constexpr bool np_conserved() const { return true; }
+  static constexpr bool np_conserved() { return true; }
 
   int64_t size() const;
   int64_t size_local() const;
@@ -58,11 +57,11 @@ private:
   mpi::Communicator transpose_communicator_r_;
 
   std::vector<bit_t> my_ups_;
-  std::vector<span<bit_t>> my_dns_for_ups_;
+  std::vector<gsl::span<bit_t>> my_dns_for_ups_;
   std::vector<bit_t> my_dns_for_ups_storage_;
 
   std::vector<bit_t> my_dns_;
-  std::vector<span<bit_t>> my_ups_for_dns_;
+  std::vector<gsl::span<bit_t>> my_ups_for_dns_;
   std::vector<bit_t> my_ups_for_dns_storage_;
 
   // combinatorics::LinTable<bit_t> lintable_ups_;

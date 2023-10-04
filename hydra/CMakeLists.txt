@@ -126,6 +126,8 @@ set(HYDRA_DISTRIBUTED_SOURCES
   parallel/mpi/cdot_distributed.cpp
   parallel/mpi/timing_mpi.cpp
   parallel/mpi/logger_mpi.cpp
+
+  basis/tj_distributed/basis_np.cpp
 )
 
 if(BUILD_DISTRIBUTED)
