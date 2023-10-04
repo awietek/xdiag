@@ -8,10 +8,18 @@ project(
 
 option(BUILD_TESTS "Build test programs" OFF)
 option(BUILD_JULIA "Build the Julia wrapper" OFF)
+option(BUILD_DISTRIBUTED "Build the library for distibuted computing" OFF)
 
 option(OPTIMIZE_FOR_NATIVE "Optimize for native architecture" OFF)
-option(OMP_THREADING "Enable OpenMp threading" ON)
-option(MKL_THREADING "Enable IntelMKL threading" ON)
+
+if(BUILD_DISTRIBUTED)
+  find_package(MPI REQUIRED)
+  option(OMP_THREADING "Enable OpenMp threading" OFF)
+  option(MKL_THREADING "Enable IntelMKL threading" OFF)
+else()
+  option(OMP_THREADING "Enable OpenMp threading" ON)
+  option(MKL_THREADING "Enable IntelMKL threading" ON)
+endif()
 option(SANITIZER "Build with -fsanitize=address" OFF)
 
 message(STATUS "Compiler ID     : " ${CMAKE_CXX_COMPILER_ID})
