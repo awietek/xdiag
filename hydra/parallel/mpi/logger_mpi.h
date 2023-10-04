@@ -1,15 +1,13 @@
 #pragma once
-#ifdef HYDRA_ENABLE_MPI
+#ifdef HYDRA_USE_MPI
 
 #include <mpi.h>
 
 #include <iostream>
 #include <string>
 
-#include <lila/all.h>
-
 #define FMT_HEADER_ONLY
-#include <lila/external/fmt/format.h>
+#include "extern/fmt/format.h"
 
 namespace hydra {
 

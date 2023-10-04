@@ -17,6 +17,7 @@ inline void rethrow2(const char *file, const char *func, int line,
   ss << "       Line    : " << line << "\n";
   ss << "       ";
   auto sep = " : ";
+  (void)sep;
   using expand = int[];
   void(expand{0, ((ss << args), sep = ", ", 0)...});
   // figure out what kind of exception is active

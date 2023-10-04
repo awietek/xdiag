@@ -1,4 +1,4 @@
-#include "dot_mpi.h"
+#include "cdot_distributed.h"
 
 #include <cmath>
 #include <cstring>
@@ -7,30 +7,29 @@
 namespace hydra {
 
 template <class coeff_t>
-coeff_t DotMPI(lila::Vector<coeff_t> const &v, lila::Vector<coeff_t> const &w) {
-  assert(v.size() == w.size());
-  uint64_t size = v.size();
-  return mpi::stable_dot_product(size, v.data(), w.data());
+coeff_t cdot_distributed(arma::Col<coeff_t> const &v,
+                         arma::Col<coeff_t> const &w) try {
+  if (v.n_rows != w.n_rows) {
+    throw(std::runtime_error("vector size does not match"));
+  }
+  uint64_t size = v.n_rows;
+  return mpi::stable_dot_product(size, v.memptr(), w.memptr());
+} catch (...) {
+  HydraRethrow("Error computing distributed dot product");
+  return 0.;
 }
 
-template float DotMPI<float>(lila::Vector<float> const &v,
-                             lila::Vector<float> const &w);
-template double DotMPI<double>(lila::Vector<double> const &v,
-                               lila::Vector<double> const &w);
-template scomplex DotMPI<scomplex>(lila::Vector<scomplex> const &v,
-                                   lila::Vector<scomplex> const &w);
-template complex DotMPI<complex>(lila::Vector<complex> const &v,
-                                 lila::Vector<complex> const &w);
+template double cdot_distributed<double>(arma::Col<double> const &v,
+                                         arma::Col<double> const &w);
+template complex cdot_distributed<complex>(arma::Col<complex> const &v,
+                                           arma::Col<complex> const &w);
 
-template <class coeff_t>
-lila::real_t<coeff_t> NormMPI(lila::Vector<coeff_t> const &v) {
-  return lila::real(std::sqrt(DotMPI(v, v)));
+template <class coeff_t> double norm_distributed(arma::Col<coeff_t> const &v) {
+  return std::real(std::sqrt(cdot_distributed(v, v)));
 }
 
-template float NormMPI<float>(lila::Vector<float> const &v);
-template double NormMPI<double>(lila::Vector<double> const &v);
-template float NormMPI<scomplex>(lila::Vector<scomplex> const &v);
-template double NormMPI<complex>(lila::Vector<complex> const &v);
+template double norm_distributed<double>(arma::Col<double> const &v);
+template double norm_distributed<complex>(arma::Col<complex> const &v);
 
 } // namespace hydra
 

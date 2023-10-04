@@ -1,10 +1,9 @@
-#pragma once
-
 #include <mpi.h>
 #include <string>
+#include <iostream>
 
 #define FMT_HEADER_ONLY
-#include <lila/external/fmt/format.h>
+#include "extern/fmt/format.h"
 
 namespace hydra {
 

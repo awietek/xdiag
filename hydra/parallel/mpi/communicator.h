@@ -1,12 +1,10 @@
 #pragma once
-#ifdef HYDRA_ENABLE_MPI
-
-#include <mpi.h>
-#include <lila/all.h>
+#ifdef HYDRA_USE_MPI
 
 #include <hydra/common.h>
-#include <hydra/mpi/alltoall.h>
-#include <hydra/mpi/buffer.h>
+#include <hydra/parallel/mpi/alltoall.h>
+#include <hydra/parallel/mpi/buffer.h>
+#include <mpi.h>
 
 namespace hydra::mpi {
 
@@ -48,10 +46,11 @@ public:
 
   template <class T>
   void all_to_all(const T *send_buffer, T *recv_buffer) const {
-    Alltoallv<T>(const_cast<T*>(send_buffer), const_cast<int*>(n_values_i_send_.data()),
-                 const_cast<int*>(n_values_i_send_offsets_.data()), buffer.recv<T>(),
-                 const_cast<int*>(n_values_i_recv_.data()),
-		 const_cast<int*>(n_values_i_recv_offsets_.data()),
+    Alltoallv<T>(const_cast<T *>(send_buffer),
+                 const_cast<int *>(n_values_i_send_.data()),
+                 const_cast<int *>(n_values_i_send_offsets_.data()),
+                 buffer.recv<T>(), const_cast<int *>(n_values_i_recv_.data()),
+                 const_cast<int *>(n_values_i_recv_offsets_.data()),
                  MPI_COMM_WORLD);
   }
 

@@ -1,21 +1,22 @@
 #pragma once
-#ifdef HYDRA_ENABLE_MPI
+#ifdef HYDRA_USE_MPI
 
-#include <mpi.h>
+#include "extern/armadillo/armadillo"
 #include <hydra/common.h>
-#include <lila/all.h>
+#include <mpi.h>
 
 namespace hydra {
 
 template <class coeff_t>
-coeff_t DotMPI(lila::Vector<coeff_t> const &v, lila::Vector<coeff_t> const &w);
+coeff_t cdot_distributed(arma::Col<coeff_t> const &v,
+			 arma::Col<coeff_t> const &w);
 
-template <class coeff_t>
-lila::real_t<coeff_t> NormMPI(lila::Vector<coeff_t> const &v);
+template <class coeff_t> double norm_distributed(arma::Col<coeff_t> const &v);
 
 } // namespace hydra
 
 namespace hydra::mpi {
+using scomplex = std::complex<float>;
 
 double stable_dot_product(uint64_t n, const double *x, const double *y);
 double stable_dot_product(uint64_t n, const float *x, const float *y);

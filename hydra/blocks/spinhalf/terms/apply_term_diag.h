@@ -28,8 +28,10 @@ void apply_term_diag(Basis &&basis, TermCoeff &&term_coeff, Fill &&fill) {
   }
 
 #else
-  for (auto [spins, idx] : basis) {
+  int64_t idx = 0;
+  for (auto spins : basis) {
     apply_term_diag_to_spins<bit_t, coeff_t>(spins, idx, term_coeff, fill);
+    ++idx;
   }
 #endif
 }

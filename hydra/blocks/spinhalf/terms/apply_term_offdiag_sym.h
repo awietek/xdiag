@@ -58,10 +58,12 @@ void apply_term_offdiag_sym(BasisIn &&basis_in,
 
 #else
   // Run through all states and apply term
-  for (auto [spins_in, idx_in] : basis_in) {
+  int64_t idx_in=0;
+  for (auto spins_in : basis_in) {
     apply_term_offdiag_sym_to_spins(spins_in, idx_in, characters, basis_in,
                                     basis_out, non_zero_term, term_action,
                                     fill);
+    ++idx_in;
   }
 #endif
 }

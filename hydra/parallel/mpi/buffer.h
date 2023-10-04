@@ -1,5 +1,5 @@
 #pragma once
-#ifdef HYDRA_ENABLE_MPI
+#ifdef HYDRA_USE_MPI
 
 #include <hydra/common.h>
 #include <mpi.h>

@@ -4,7 +4,7 @@ set(HYDRA_DEFINITIONS "")
 set(HYDRA_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}")
 set(HYDRA_LIBRARIES "${PROJECT_BINARY_DIR}/hydra/libhydra.a")
 
-add_library(hydra STATIC
+set(HYDRA_SOURCES
   utils/iochecks.cpp
   utils/print.cpp
   utils/error.cpp
@@ -117,34 +117,55 @@ add_library(hydra STATIC
   algorithms/time_evolution/pade_matrix_exponential.cpp
 )
 
+set(HYDRA_DISTRIBUTED_SOURCES
+  parallel/mpi/allreduce.cpp
+  parallel/mpi/alltoall.cpp
+  parallel/mpi/buffer.cpp
+  parallel/mpi/communicator.cpp
+  parallel/mpi/datatype.cpp
+  parallel/mpi/cdot_distributed.cpp
+  parallel/mpi/timing_mpi.cpp
+  parallel/mpi/logger_mpi.cpp
+)
 
-target_include_directories(hydra PUBLIC ${CMAKE_SOURCE_DIR})
-target_compile_features(hydra PUBLIC cxx_std_17)
+if(BUILD_DISTRIBUTED)
+  message(STATUS "-------- BUILDING DISTRIBUTED HYDRA LIBRARY -------------")
+  add_library(hydra_distributed STATIC ${HYDRA_SOURCES} ${HYDRA_DISTRIBUTED_SOURCES})
+  target_compile_definitions(hydra_distributed PUBLIC HYDRA_USE_MPI)
+  set(HYDRA_LIBRARY hydra_distributed)
+else()
+  message(STATUS "-------- BUILDING NORMAL HYDRA LIBRARY -------------")
+  add_library(hydra STATIC ${HYDRA_SOURCES})
+  set(HYDRA_LIBRARY hydra)
+endif()
+
+target_include_directories(${HYDRA_LIBRARY} PUBLIC ${CMAKE_SOURCE_DIR})
+target_compile_features(${HYDRA_LIBRARY} PUBLIC cxx_std_17)
 
 if(OPTIMIZE_FOR_NATIVE)
 message(STATUS "Using native architecture optimizations")
-target_compile_options(hydra PRIVATE -march=native)
-target_compile_options(hydra PRIVATE -mtune=native)
+target_compile_options(${HYDRA_LIBRARY} PRIVATE -march=native)
+target_compile_options(${HYDRA_LIBRARY} PRIVATE -mtune=native)
 endif()
 
-target_compile_options(hydra PRIVATE -Wall -Wextra)
+target_compile_options(${HYDRA_LIBRARY} PRIVATE -Wall -Wextra)
   
 message(STATUS "-------- Determining Linear Algebra backend -------------")
 find_package(MKL)
 if(MKL_FOUND)
   message(STATUS "Employing IntelMKL as linear algebra backend")
 
-  target_compile_definitions(hydra PUBLIC HYDRA_USE_MKL MKL_ILP64)
+  target_compile_definitions(${HYDRA_LIBRARY} PUBLIC HYDRA_USE_MKL MKL_ILP64)
   list(APPEND HYDRA_DEFINITIONS HYDRA_USE_MKL MKL_ILP64)
 
-  target_include_directories(hydra PUBLIC ${MKL_INCLUDE_DIR})
+  target_include_directories(${HYDRA_LIBRARY} PUBLIC ${MKL_INCLUDE_DIR})
   list(APPEND HYDRA_INCLUDE_DIRS ${MKL_INCLUDE_DIR})
 
 
   # Choose correct MKL libraries
   if(OMP_THREADING)
 
-    target_compile_options(hydra PUBLIC -fopenmp)
+    target_compile_options(${HYDRA_LIBRARY} PUBLIC -fopenmp)
     
     if(MKL_THREADING)
       if(CMAKE_CXX_COMPILER_ID STREQUAL "IntelLLVM")
@@ -179,7 +200,7 @@ if(MKL_FOUND)
   endif()
   
   message(STATUS "MKL libraries: " ${MKL_LIBRARIES})
-  target_link_libraries(hydra PUBLIC ${MKL_LIBRARIES})
+  target_link_libraries(${HYDRA_LIBRARY} PUBLIC ${MKL_LIBRARIES})
   list(APPEND HYDRA_LIBRARIES ${MKL_LIBRARIES})
 
 # Regular Blas/Lapack backend
@@ -189,7 +210,7 @@ else()
   
   if(LAPACK_FOUND AND BLAS_FOUND)
     message(STATUS "Emploging Lapack/Blas as linear algebra backend")
-    target_link_libraries(hydra PUBLIC ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
+    target_link_libraries(${HYDRA_LIBRARY} PUBLIC ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
     list(APPEND HYDRA_LIBRARIES ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
   else()
     message(FATAL_ERROR "No linear algebra backend found")
@@ -200,7 +221,7 @@ else()
     find_package(OpenMP)
     if(OpenMP_CXX_FOUND)
       message(STATUS "Employing OpenMP")
-      target_link_libraries(hydra PUBLIC OpenMP::OpenMP_CXX)
+      target_link_libraries(${HYDRA_LIBRARY} PUBLIC OpenMP::OpenMP_CXX)
       list(APPEND HYDRA_LIBRARIES OpenMP::OpenMP_CXX)
     endif()
   else()
@@ -213,9 +234,9 @@ message(STATUS "--------   Determining if HDF5 is present   -------------")
 find_package(HDF5 COMPONENTS CXX)
 if(HDF5_FOUND)
   message(STATUS "Employing HDF5")
-  target_compile_definitions(hydra PUBLIC HYDRA_USE_HDF5 ${HDF5_CXX_DEFINITIONS})
-  target_include_directories(hydra PUBLIC ${HDF5_CXX_INCLUDE_DIRS})
-  target_link_libraries(hydra PUBLIC ${HDF5_CXX_LIBRARIES} ${HDF5_LIBRARIES})
+  target_compile_definitions(${HYDRA_LIBRARY} PUBLIC HYDRA_USE_HDF5 ${HDF5_CXX_DEFINITIONS})
+  target_include_directories(${HYDRA_LIBRARY} PUBLIC ${HDF5_CXX_INCLUDE_DIRS})
+  target_link_libraries(${HYDRA_LIBRARY} PUBLIC ${HDF5_CXX_LIBRARIES} ${HDF5_LIBRARIES})
 
   list(APPEND HYDRA_DEFINITIONS HYDRA_USE_HDF5 ${HDF5_CXX_DEFINITIONS})
   list(APPEND HYDRA_INCLUDE_DIRS ${HDF5_CXX_INCLUDE_DIRS})

@@ -1,8 +1,8 @@
 #pragma once
-#ifdef HYDRA_ENABLE_MPI
+#ifdef HYDRA_USE_MPI
 
 #include <mpi.h>
-#include <hydra/mpi/logger_mpi.h>
+#include <hydra/parallel/mpi/logger_mpi.h>
 
 namespace hydra {
 

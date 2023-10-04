@@ -1,5 +1,4 @@
-add_executable(tests
-  tests.cpp
+set(HYDRA_TEST_SOURCES
   bits/test_bitops.cpp
 
   io/test_args.cpp
@@ -72,5 +71,24 @@ add_executable(tests
   states/test_random_state.cpp
   states/test_product_state.cpp
 )
-target_link_libraries(tests PRIVATE hydra)
-add_test(NAME HydraTest COMMAND tests)
+
+
+set(HYDRA_TEST_DISTRIBUTED_SOURCES
+  parallel/mpi/test_cdot_distributed.cpp
+)
+
+if(BUILD_DISTRIBUTED)
+  # normal tests
+  add_executable(tests tests.cpp ${HYDRA_TEST_SOURCES})
+  target_link_libraries(tests PRIVATE hydra_distributed MPI::MPI_CXX)
+  add_test(NAME HydraTest COMMAND tests)
+
+  # distributed tests
+  add_executable(tests_distributed tests_distributed.cpp ${HYDRA_TEST_DISTRIBUTED_SOURCES})
+  target_link_libraries(tests_distributed PRIVATE hydra_distributed MPI::MPI_CXX)
+  add_test(NAME HydraTestDistributed COMMAND tests_distributed)
+else()
+  add_executable(tests tests.cpp ${HYDRA_TEST_SOURCES})
+  target_link_libraries(tests PRIVATE hydra)
+  add_test(NAME HydraTest COMMAND tests)
+endif()
