@@ -64,10 +64,16 @@ private:
   std::vector<gsl::span<bit_t>> my_ups_for_dns_;
   std::vector<bit_t> my_ups_for_dns_storage_;
 
-  // combinatorics::LinTable<bit_t> lintable_ups_;
-  // combinatorics::LinTable<bit_t> lintable_dns_;
-  // combinatorics::LinTable<bit_t> lintable_upsc_;
-  // combinatorics::LinTable<bit_t> lintable_dnsc_;
+  combinatorics::LinTable<bit_t> lintable_ups_;
+  combinatorics::LinTable<bit_t> lintable_dns_;
+  combinatorics::LinTable<bit_t> lintable_upsc_;
+  combinatorics::LinTable<bit_t> lintable_dnsc_;
+
+public:
+  std::vector<bit_t> const &my_ups() const;
+  std::vector<gsl::span<bit_t>> const &my_dns_for_ups() const;
+  std::vector<bit_t> const &my_dns() const;
+  std::vector<gsl::span<bit_t>> const &my_ups_for_dns() const;
 };
 
 } // namespace hydra::basis::tj_distributed

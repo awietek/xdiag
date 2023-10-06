@@ -2,6 +2,7 @@
 
 #include <hydra/combinatorics/binomial.h>
 #include <hydra/combinatorics/combinations.h>
+#include <hydra/parallel/mpi/allreduce.h>
 
 namespace hydra::basis::tj_distributed {
 
@@ -51,6 +52,9 @@ BasisNp<bit_t>::BasisNp(int64_t n_sites, int64_t n_up, int64_t n_dn)
     my_dns_for_ups_.push_back(gsl::span(
         my_dns_for_ups_storage_.data() + dns_start, dns_end - dns_start));
   }
+  assert(my_dns_for_ups_storage_.size() ==
+         my_ups_.size() * binomial(n_sites - n_up, n_dn));
+  size_local_ = my_dns_for_ups_storage_.size();
 
   // compute forward transpose communicator going from ups / dns to dns / ups
   std::vector<int64_t> n_states_i_send(mpi_size_, 0);
@@ -90,9 +94,65 @@ BasisNp<bit_t>::BasisNp(int64_t n_sites, int64_t n_up, int64_t n_dn)
     my_ups_for_dns_.push_back(gsl::span(
         my_ups_for_dns_storage_.data() + ups_start, ups_end - ups_start));
   }
+  assert(my_ups_for_dns_storage_.size() ==
+         my_dns_.size() * binomial(n_sites, n_up));
+  size_local_transpose_ = my_ups_for_dns_storage_.size();
+
+  // compute reverse transpose communicator going from ups / dns to dns / ups
+  std::vector<int64_t> n_states_i_send_r(mpi_size_, 0);
+  for (std::size_t i = 0; i < my_dns_.size(); ++i) {
+    for (auto ups : my_ups_for_dns_[i]) {
+      int target = rank(ups);
+      ++n_states_i_send_r[target];
+    }
+  }
+  transpose_communicator_r_ = mpi::Communicator(n_states_i_send_r);
+
+  int64_t size_max_f = 0;
+  int64_t size_max_r = 0;
+  mpi::Allreduce(&size_local_, &size_max_f, 1, MPI_MAX, MPI_COMM_WORLD);
+  mpi::Allreduce(&size_local_transpose_, &size_max_r, 1, MPI_MAX,
+                 MPI_COMM_WORLD);
+  size_max_ = std::max(size_max_f, size_max_r);
+
+  int64_t size_min_f = 0;
+  int64_t size_min_r = 0;
+  mpi::Allreduce(&size_local_, &size_min_f, 1, MPI_MIN, MPI_COMM_WORLD);
+  mpi::Allreduce(&size_local_transpose_, &size_min_r, 1, MPI_MIN,
+                 MPI_COMM_WORLD);
+  size_min_ = std::min(size_min_f, size_min_r);
 }
 
 template <typename bit_t> int64_t BasisNp<bit_t>::size() const { return size_; }
+template <typename bit_t> int64_t BasisNp<bit_t>::size_local() const {
+  return size_local_;
+}
+template <typename bit_t> int64_t BasisNp<bit_t>::size_local_transpose() const {
+  return size_local_transpose_;
+}
+template <typename bit_t> int64_t BasisNp<bit_t>::size_max() const {
+  return size_max_;
+}
+template <typename bit_t> int64_t BasisNp<bit_t>::size_min() const {
+  return size_min_;
+}
+
+template <typename bit_t>
+std::vector<bit_t> const &BasisNp<bit_t>::my_ups() const {
+  return my_ups_;
+}
+template <typename bit_t>
+std::vector<gsl::span<bit_t>> const &BasisNp<bit_t>::my_dns_for_ups() const {
+  return my_dns_for_ups_;
+}
+template <typename bit_t>
+std::vector<bit_t> const &BasisNp<bit_t>::my_dns() const {
+  return my_dns_;
+}
+template <typename bit_t>
+std::vector<gsl::span<bit_t>> const &BasisNp<bit_t>::my_ups_for_dns() const {
+  return my_ups_for_dns_;
+}
 
 template class BasisNp<uint16_t>;
 template class BasisNp<uint32_t>;
