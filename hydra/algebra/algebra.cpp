@@ -17,7 +17,7 @@ double norm(State const &v) try {
 
 double dot(State const &v, State const &w) try {
   if ((v.isreal()) && (w.isreal())) {
-    return arma::dot(v.matrix(false), w.matrix(false));
+    return arma::dot(v.matrix(), w.matrix());
   } else {
     throw std::logic_error("Unable to compute real dot product of a complex "
                            "state, consider using dotC instead.");

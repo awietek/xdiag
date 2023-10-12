@@ -21,20 +21,18 @@ public:
   Electron(int64_t n_sites, int64_t nup, int64_t ndn,
            PermutationGroup permutation_group, Representation irrep);
 
-  inline int64_t n_sites() const { return n_sites_; }
-  inline int64_t n_up() const { return n_up_; }
-  inline int64_t n_dn() const { return n_dn_; }
+  int64_t n_sites() const;
+  int64_t n_up() const;
+  int64_t n_dn() const;
 
-  inline bool charge_conserved() const { return charge_conserved_; }
-  inline bool sz_conserved() const { return sz_conserved_; }
+  bool charge_conserved() const;
+  bool sz_conserved() const;
 
-  inline bool symmetric() const { return symmetric_; }
-  inline PermutationGroup const &permutation_group() const {
-    return permutation_group_;
-  }
-  inline Representation const &irrep() const { return irrep_; }
+  bool symmetric() const;
+  PermutationGroup const &permutation_group() const;
+  Representation const &irrep() const;
 
-  inline int64_t size() const { return size_; }
+  int64_t size() const;
   bool iscomplex(double precision = 1e-12) const;
   bool isreal(double precision = 1e-12) const;
 
