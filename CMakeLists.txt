@@ -50,3 +50,21 @@ if(SANITIZER)
     target_compile_options(hydra PUBLIC -fsanitize=address)
     target_link_options(hydra PUBLIC -fsanitize=address)
 endif()
+
+install(DIRECTORY "${CMAKE_SOURCE_DIR}/hydra" # source directory
+  DESTINATION "include" # target directory
+  FILES_MATCHING # install only matched files
+  PATTERN "*.h" # select header files
+)
+
+install(TARGETS hydra
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+)
+
+if(BUILD_JULIA)
+install(TARGETS hydrajl
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+)
+endif()
