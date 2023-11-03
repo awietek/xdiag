@@ -31,7 +31,7 @@ TEST_CASE("tj_distributed_basis_np", "[tj_distributed]") {
           if (idx_ups != 0) {
             REQUIRE(ups > ups_before);
           }
-          auto dnss = basis.my_dns_for_ups()[idx_ups];
+          auto dnss = basis.my_dns_for_ups(idx_ups);
 
           int64_t idx_dns = 0;
           bit_t dns_before = 0;
@@ -61,7 +61,7 @@ TEST_CASE("tj_distributed_basis_np", "[tj_distributed]") {
           if (idx_dns != 0) {
             REQUIRE(dns > dns_before);
           }
-          auto upss = basis.my_ups_for_dns()[idx_dns];
+          auto upss = basis.my_ups_for_dns(idx_dns);
 
           int64_t idx_ups = 0;
           bit_t ups_before = 0;

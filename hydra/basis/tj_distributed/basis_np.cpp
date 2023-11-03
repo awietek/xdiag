@@ -142,16 +142,16 @@ std::vector<bit_t> const &BasisNp<bit_t>::my_ups() const {
   return my_ups_;
 }
 template <typename bit_t>
-std::vector<gsl::span<bit_t>> const &BasisNp<bit_t>::my_dns_for_ups() const {
-  return my_dns_for_ups_;
+gsl::span<bit_t>BasisNp<bit_t>::my_dns_for_ups(int64_t idx_ups) const {
+  return my_dns_for_ups_[idx_ups];
 }
 template <typename bit_t>
 std::vector<bit_t> const &BasisNp<bit_t>::my_dns() const {
   return my_dns_;
 }
 template <typename bit_t>
-std::vector<gsl::span<bit_t>> const &BasisNp<bit_t>::my_ups_for_dns() const {
-  return my_ups_for_dns_;
+gsl::span<bit_t> BasisNp<bit_t>::my_ups_for_dns(int64_t idx_dns) const {
+  return my_ups_for_dns_[idx_dns];
 }
 
 template class BasisNp<uint16_t>;

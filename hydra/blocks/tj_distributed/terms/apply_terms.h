@@ -21,17 +21,17 @@ void apply_terms(BondList const &bonds, BasisIn const &basis_in,
     std::string type = bond.type();
     if ((type == "ISING") || (type == "TJISING")) {
       tj_distributed::apply_ising<bit_t, coeff_t>(bond, basis_in, fill);
-    } else if ((type == "NUMBERUP") || (type == "NUMBERDN")) {
-      tj_distributed::apply_number<bit_t, coeff_t>(bond, basis_in, fill);
-    } else if (type == "EXCHANGE") {
-      tj_distributed::apply_exchange<bit_t, coeff_t>(bond, basis_in, fill);
-    } else if ((type == "HOPUP") || (type == "HOPDN")) {
-      tj_distributed::apply_hopping<bit_t, coeff_t>(bond, basis_in, fill);
-    } else if ((type == "CDAGUP") || (type == "CUP") || (type == "CDAGDN") ||
-               (type == "CDN")) {
-      tj_distributed::apply_raise_lower<bit_t, coeff_t>(bond, basis_in,
-                                                        basis_out, fill);
-    }
+    }//  else if ((type == "NUMBERUP") || (type == "NUMBERDN")) {
+    //   tj_distributed::apply_number<bit_t, coeff_t>(bond, basis_in, fill);
+    // } else if (type == "EXCHANGE") {
+    //   tj_distributed::apply_exchange<bit_t, coeff_t>(bond, basis_in, fill);
+    // } else if ((type == "HOPUP") || (type == "HOPDN")) {
+    //   tj_distributed::apply_hopping<bit_t, coeff_t>(bond, basis_in, fill);
+    // } else if ((type == "CDAGUP") || (type == "CUP") || (type == "CDAGDN") ||
+    //            (type == "CDN")) {
+    //   tj_distributed::apply_raise_lower<bit_t, coeff_t>(bond, basis_in,
+    //                                                     basis_out, fill);
+    // }
   }
 }
 

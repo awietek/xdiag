@@ -16,6 +16,9 @@ if(BUILD_DISTRIBUTED)
   find_package(MPI REQUIRED)
   option(OMP_THREADING "Enable OpenMp threading" OFF)
   option(MKL_THREADING "Enable IntelMKL threading" OFF)
+  if(BUILD_JULIA)
+    message(FATAL_ERROR "Option clash, cannot build Julia library with Distributed, disable either BUILD_JULIA or BUILD_DISTRIBUTED")
+  endif()
 else()
   option(OMP_THREADING "Enable OpenMp threading" ON)
   option(MKL_THREADING "Enable IntelMKL threading" ON)
@@ -57,10 +60,18 @@ install(DIRECTORY "${CMAKE_SOURCE_DIR}/hydra" # source directory
   PATTERN "*.h" # select header files
 )
 
+
+if(BUILD_DISTRIBUTED)
+install(TARGETS hydra_distributed
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+)
+else()
 install(TARGETS hydra
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
 )
+endif()
 
 if(BUILD_JULIA)
 install(TARGETS hydrajl

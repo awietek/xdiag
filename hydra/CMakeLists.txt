@@ -128,6 +128,7 @@ set(HYDRA_DISTRIBUTED_SOURCES
   parallel/mpi/logger_mpi.cpp
 
   basis/tj_distributed/basis_np.cpp
+  blocks/tj_distributed/tj_distributed.cpp
 )
 
 if(BUILD_DISTRIBUTED)

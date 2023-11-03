@@ -35,7 +35,31 @@ void apply_ising(Bond const &bond, Basis &&basis, Fill &&fill) {
     val_diff = -J / 2.;
   }
 
-  
+  auto term_action = [&](bit_t up, bit_t dn) -> coeff_t {
+    bool b1_up = up & s1_mask;
+    bool b2_up = up & s2_mask;
+    bool b1_dn = dn & s1_mask;
+    bool b2_dn = dn & s2_mask;
+
+    if ((b1_up && b2_up) || (b1_dn && b2_dn)) {
+      return val_same;
+    } else if ((b1_up && b2_dn) || (b1_dn && b2_up)) {
+      return val_diff;
+    } else {
+      return 0.;
+    }
+  };
+
+  int64_t idx_up = 0;
+  int64_t idx = 0;
+  for (bit_t up : basis.my_ups()) {
+    for (bit_t dn : basis.my_dns_for_ups[idx_up]) {
+      coeff_t val = term_action(up, dn);
+      fill(idx, idx, val);
+      ++idx;
+    }
+  }
+  ++idx_ups
 }
 
 } // namespace hydra::tj_distributed

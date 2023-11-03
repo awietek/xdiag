@@ -71,9 +71,9 @@ private:
 
 public:
   std::vector<bit_t> const &my_ups() const;
-  std::vector<gsl::span<bit_t>> const &my_dns_for_ups() const;
+  gsl::span<bit_t> my_dns_for_ups(int64_t idx_ups) const;
   std::vector<bit_t> const &my_dns() const;
-  std::vector<gsl::span<bit_t>> const &my_ups_for_dns() const;
+  gsl::span<bit_t> my_ups_for_dns(int64_t idx_dns) const;
 };
 
 } // namespace hydra::basis::tj_distributed
