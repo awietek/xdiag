@@ -1,4 +1,4 @@
-#include "distributed_tj.h"
+#include "tj_distributed.h"
 
 namespace hydra {
 
@@ -9,14 +9,14 @@ int64_t tJDistributed::n_sites() const { return n_sites_; }
 int64_t tJDistributed::n_up() const { return n_up_; }
 int64_t tJDistributed::n_dn() const { return n_dn_; }
 
-int_t tJDistributed::size() const { return size_; }
-idx_t tJDistributed::local_size() const { return local_size_; }
+int64_t tJDistributed::size() const { return size_; }
+int64_t tJDistributed::local_size() const { return local_size_; }
 
-bool tJDistributed::iscomplex(double precision = 1e-12) const {
+bool tJDistributed::iscomplex(double precision) const {
   (void)precision;
   return false;
 }
-bool tJDistributed::isreal(double precision = 1e-12) const {
+bool tJDistributed::isreal(double precision) const {
   return !iscomplex(precision);
 }
 
@@ -25,10 +25,10 @@ bool tJDistributed::operator==(tJDistributed const &rhs) const {
          (n_dn_ == rhs.n_dn_);
 }
 bool tJDistributed::operator!=(tJDistributed const &rhs) const {
-  return !opertor == (rhs);
+  return !operator==(rhs);
 }
 
-basis_distributed_tj_variant_t const &tJDistributed::basis() const {
+basis_tj_distributed_variant_t const &tJDistributed::basis() const {
   return *basis_;
 }
 } // namespace hydra
