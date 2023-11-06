@@ -22,6 +22,10 @@ combinatorics::SubsetsIterator<bit_t> BasisNoSz<bit_t>::end() const {
   return end_;
 }
 
+template <typename bit_t> int64_t BasisNoSz<bit_t>::dim() const {
+  return size_;
+}
+
 template <typename bit_t> int64_t BasisNoSz<bit_t>::size() const {
   return size_;
 }

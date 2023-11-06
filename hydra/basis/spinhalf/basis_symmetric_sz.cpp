@@ -41,6 +41,10 @@ typename std::vector<bit_t>::const_iterator
 BasisSymmetricSz<bit_t>::end() const {
   return reps_.end();
 }
+
+template <class bit_t> int64_t BasisSymmetricSz<bit_t>::dim() const {
+  return size_;
+}
 template <class bit_t> int64_t BasisSymmetricSz<bit_t>::size() const {
   return size_;
 }

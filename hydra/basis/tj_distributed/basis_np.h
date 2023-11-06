@@ -23,10 +23,9 @@ public:
   int64_t n_dn() const;
   static constexpr bool np_conserved() { return true; }
 
+  int64_t dim() const;
   int64_t size() const;
-  int64_t size_local() const;
-
-  int64_t size_local_transpose() const;
+  int64_t size_transpose() const;
   int64_t size_max() const;
   int64_t size_min() const;
 
@@ -43,9 +42,9 @@ private:
   int64_t n_up_;
   int64_t n_dn_;
 
+  int64_t dim_;
   int64_t size_;
-  int64_t size_local_;
-  int64_t size_local_transpose_;
+  int64_t size_transpose_;
   int64_t size_max_;
   int64_t size_min_;
 

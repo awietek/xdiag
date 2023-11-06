@@ -3,6 +3,7 @@
 #include <hydra/blocks/tj/tj_matrix.h>
 #include <hydra/algebra/matrix.h>
 #include <hydra/utils/close.h>
+#include <hydra/utils/print_macro.h>
 
 using namespace hydra;
 using namespace arma;
@@ -120,8 +121,8 @@ TEST_CASE("tj_raise_lower", "[tj]") {
                 auto op_j_m = matrixC(op_j, block, block_j);
                 auto op_ji_m = matrixC(op_i, block_j, block_ij);
 
-                cx_mat anti_comm = op_ji_m * op_j_m + op_ij_m * op_i_m;
-
+		cx_mat anti_comm = op_ji_m * op_j_m + op_ij_m * op_i_m;
+		
                 // check the non-fermionic commutation relations of the t-J
                 // model
                 // see arxiv.org/abs/0706,4236 (tJ model then and now ... Jozef

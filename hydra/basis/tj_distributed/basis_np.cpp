@@ -12,14 +12,14 @@ BasisNp<bit_t>::BasisNp(int64_t n_sites, int64_t n_up, int64_t n_dn)
   using namespace combinatorics;
 
   if (n_sites < 0) {
-    throw(std::invalid_argument("n_sites < 0"));
+    HydraThrow(std::invalid_argument, "n_sites < 0");
   } else if ((n_up < 0) || (n_dn < 0)) {
-    throw(std::invalid_argument("nup < 0 or ndn < 0"));
+    HydraThrow(std::invalid_argument, "nup < 0 or ndn < 0");
   } else if ((n_up + n_dn) > n_sites) {
-    throw(std::invalid_argument("nup + ndn > n_sites"));
+    HydraThrow(std::invalid_argument, "nup + ndn > n_sites");
   }
 
-  size_ = binomial(n_sites, n_up) * binomial(n_sites - n_up, n_dn);
+  dim_ = binomial(n_sites, n_up) * binomial(n_sites - n_up, n_dn);
   MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank_);
   MPI_Comm_size(MPI_COMM_WORLD, &mpi_size_);
   sitesmask_ = ((bit_t)1 << n_sites) - 1;
@@ -54,7 +54,7 @@ BasisNp<bit_t>::BasisNp(int64_t n_sites, int64_t n_up, int64_t n_dn)
   }
   assert(my_dns_for_ups_storage_.size() ==
          my_ups_.size() * binomial(n_sites - n_up, n_dn));
-  size_local_ = my_dns_for_ups_storage_.size();
+  size_ = my_dns_for_ups_storage_.size();
 
   // compute forward transpose communicator going from ups / dns to dns / ups
   std::vector<int64_t> n_states_i_send(mpi_size_, 0);
@@ -96,7 +96,7 @@ BasisNp<bit_t>::BasisNp(int64_t n_sites, int64_t n_up, int64_t n_dn)
   }
   assert(my_ups_for_dns_storage_.size() ==
          my_dns_.size() * binomial(n_sites, n_up));
-  size_local_transpose_ = my_ups_for_dns_storage_.size();
+  size_transpose_ = my_ups_for_dns_storage_.size();
 
   // compute reverse transpose communicator going from ups / dns to dns / ups
   std::vector<int64_t> n_states_i_send_r(mpi_size_, 0);
@@ -108,27 +108,24 @@ BasisNp<bit_t>::BasisNp(int64_t n_sites, int64_t n_up, int64_t n_dn)
   }
   transpose_communicator_r_ = mpi::Communicator(n_states_i_send_r);
 
+  // compute maximal size and size_transpose between processes
   int64_t size_max_f = 0;
   int64_t size_max_r = 0;
-  mpi::Allreduce(&size_local_, &size_max_f, 1, MPI_MAX, MPI_COMM_WORLD);
-  mpi::Allreduce(&size_local_transpose_, &size_max_r, 1, MPI_MAX,
-                 MPI_COMM_WORLD);
+  mpi::Allreduce(&size_, &size_max_f, 1, MPI_MAX, MPI_COMM_WORLD);
+  mpi::Allreduce(&size_transpose_, &size_max_r, 1, MPI_MAX, MPI_COMM_WORLD);
   size_max_ = std::max(size_max_f, size_max_r);
 
   int64_t size_min_f = 0;
   int64_t size_min_r = 0;
-  mpi::Allreduce(&size_local_, &size_min_f, 1, MPI_MIN, MPI_COMM_WORLD);
-  mpi::Allreduce(&size_local_transpose_, &size_min_r, 1, MPI_MIN,
-                 MPI_COMM_WORLD);
+  mpi::Allreduce(&size_, &size_min_f, 1, MPI_MIN, MPI_COMM_WORLD);
+  mpi::Allreduce(&size_transpose_, &size_min_r, 1, MPI_MIN, MPI_COMM_WORLD);
   size_min_ = std::min(size_min_f, size_min_r);
 }
 
+template <typename bit_t> int64_t BasisNp<bit_t>::dim() const { return dim_; }
 template <typename bit_t> int64_t BasisNp<bit_t>::size() const { return size_; }
-template <typename bit_t> int64_t BasisNp<bit_t>::size_local() const {
-  return size_local_;
-}
-template <typename bit_t> int64_t BasisNp<bit_t>::size_local_transpose() const {
-  return size_local_transpose_;
+template <typename bit_t> int64_t BasisNp<bit_t>::size_transpose() const {
+  return size_transpose_;
 }
 template <typename bit_t> int64_t BasisNp<bit_t>::size_max() const {
   return size_max_;
@@ -142,7 +139,7 @@ std::vector<bit_t> const &BasisNp<bit_t>::my_ups() const {
   return my_ups_;
 }
 template <typename bit_t>
-gsl::span<bit_t>BasisNp<bit_t>::my_dns_for_ups(int64_t idx_ups) const {
+gsl::span<bit_t> BasisNp<bit_t>::my_dns_for_ups(int64_t idx_ups) const {
   return my_dns_for_ups_[idx_ups];
 }
 template <typename bit_t>

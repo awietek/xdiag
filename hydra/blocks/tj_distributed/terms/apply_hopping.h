@@ -4,13 +4,12 @@
 #include <hydra/common.h>
 #include <hydra/operators/bond.h>
 
-#include <hydra/blocks/tj/terms/generic_term_dns.h>
-#include <hydra/blocks/tj/terms/generic_term_ups.h>
+#include <hydra/blocks/tj_distributed/terms/generic_term_dns.h>
+#include <hydra/blocks/tj_distributed/terms/generic_term_ups.h>
 
-namespace hydra::tj {
+namespace hydra::tj_distributed {
 
-template <typename bit_t, typename coeff_t, bool symmetric, class Basis,
-          class Fill>
+template <typename bit_t, typename coeff_t, class Basis, class Fill>
 void apply_hopping(Bond const &bond, Basis &&basis, Fill &&fill) {
   assert(bond.coupling_defined());
   assert(bond.type_defined());
@@ -43,7 +42,7 @@ void apply_hopping(Bond const &bond, Basis &&basis, Fill &&fill) {
     auto non_zero_term = [&flipmask](bit_t const &ups) -> bool {
       return bits::popcnt(ups & flipmask) & 1;
     };
-    tj::generic_term_ups<bit_t, coeff_t, symmetric>(
+    tj_distributed::generic_term_ups<bit_t, coeff_t>(
         basis, basis, non_zero_term, term_action, fill);
   } else if (type == "HOPDN") {
     auto non_zero_term_ups = [&flipmask](bit_t const &ups) -> bool {
@@ -52,10 +51,9 @@ void apply_hopping(Bond const &bond, Basis &&basis, Fill &&fill) {
     auto non_zero_term_dns = [&flipmask](bit_t const &dns) -> bool {
       return bits::popcnt(dns & flipmask) & 1;
     };
-    tj::generic_term_dns<bit_t, coeff_t, symmetric, false>(
-        basis, basis, non_zero_term_ups, non_zero_term_dns, term_action,
-        fill);
+    tj_distributed::generic_term_dns<bit_t, coeff_t, false>(
+        basis, basis, non_zero_term_ups, non_zero_term_dns, term_action, fill);
   }
 }
 
-} // namespace hydra::tj
+} // namespace hydra::tj_distributed

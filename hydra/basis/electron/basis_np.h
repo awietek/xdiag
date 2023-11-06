@@ -18,6 +18,8 @@ public:
   BasisNp(int n_sites, int n_up, int n_dn);
 
   int64_t size() const;
+  int64_t dim() const;
+
   inline int64_t index(bit_t ups, bit_t dns) const {
     return index_ups(ups) * size_dns_ + index_dns(dns);
   }

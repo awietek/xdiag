@@ -129,6 +129,7 @@ set(HYDRA_DISTRIBUTED_SOURCES
 
   basis/tj_distributed/basis_np.cpp
   blocks/tj_distributed/tj_distributed.cpp
+  blocks/tj_distributed/tj_distributed_apply.cpp
 )
 
 if(BUILD_DISTRIBUTED)

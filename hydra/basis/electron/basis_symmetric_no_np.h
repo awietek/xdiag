@@ -22,33 +22,39 @@ template <typename bit_t> class BasisSymmetricNoNp {
 public:
   using span_size_t = gsl::span<int64_t const>::size_type;
   using bit_type = bit_t;
-  
+
   BasisSymmetricNoNp(int64_t n_sites, PermutationGroup permutation_group,
                      Representation irrep);
 
-  inline int64_t n_sites() const { return n_sites_; }
-  inline int64_t n_up() const { return n_up_; }
-  inline int64_t n_dn() const { return n_dn_; }
-  GroupActionLookup<bit_t> const &group_action() const { return group_action_; }
-  Representation const &irrep() const { return irrep_; }
-  int64_t size() const { return size_; }
+  int64_t n_sites() const;
+  int64_t n_up() const;
+  int64_t n_dn() const;
 
-  int64_t n_rep_ups() const { return reps_up_.size(); }
-  bit_t rep_ups(int64_t idx_ups) const { return reps_up_[idx_ups]; }
-  int64_t ups_offset(int64_t idx_ups) const { return ups_offset_[idx_ups]; }
+  int64_t dim() const;
+  int64_t size() const;
+
+  GroupActionLookup<bit_t> const &group_action() const;
+  Representation const &irrep() const;
+
+  inline int64_t n_rep_ups() const { return reps_up_.size(); }
+  inline bit_t rep_ups(int64_t idx_ups) const { return reps_up_[idx_ups]; }
+  inline int64_t ups_offset(int64_t idx_ups) const {
+    return ups_offset_[idx_ups];
+  }
 
   // index and fermi sign for dns with trivial stabilizer
-  int64_t index_dns(bit_t dns) const { return lintable_dns_.index(dns); }
+  inline int64_t index_dns(bit_t dns) const { return lintable_dns_.index(dns); }
 
-  std::pair<int64_t, bool> index_dns_fermi(bit_t dns, int64_t sym) const {
+  inline std::pair<int64_t, bool> index_dns_fermi(bit_t dns,
+                                                  int64_t sym) const {
     bit_t dns_rep = group_action_.apply(sym, dns);
     int64_t idx_dns_rep = lintable_dns_.index(dns_rep);
     bool fermi_dns = fermi_table_.sign(sym, dns);
     return {idx_dns_rep, fermi_dns};
   }
 
-  std::pair<int64_t, bool> index_dns_fermi(bit_t dns, int64_t sym,
-                                         bit_t fermimask) const {
+  inline std::pair<int64_t, bool> index_dns_fermi(bit_t dns, int64_t sym,
+                                                  bit_t fermimask) const {
     bit_t dns_rep = group_action_.apply(sym, dns);
     int64_t idx_dns_rep = lintable_dns_.index(dns_rep);
     bool fermi_dns = (bits::popcnt(dns & fermimask) & 1);
@@ -57,7 +63,7 @@ public:
   }
 
   // index and fermi sign for dns with non-trivial stabilizer
-  std::tuple<int64_t, bool, int64_t>
+  inline std::tuple<int64_t, bool, int64_t>
   index_dns_fermi_sym(bit_t dns, gsl::span<int64_t const> syms,
                       gsl::span<bit_t const> dnss_out) const {
     auto [rep_dns, rep_sym] =
@@ -71,7 +77,7 @@ public:
     }
   }
 
-  std::tuple<int64_t, bool, int64_t>
+  inline std::tuple<int64_t, bool, int64_t>
   index_dns_fermi_sym(bit_t dns, gsl::span<int64_t const> syms,
                       gsl::span<bit_t const> dnss_out, bit_t fermimask) const {
     auto [rep_dns, rep_sym] =
@@ -87,11 +93,11 @@ public:
   }
 
   // Retrieving index of representative and symmetries for ups
-  int64_t index_ups(bit_t ups) const {
+  inline int64_t index_ups(bit_t ups) const {
     return idces_up_[lintable_ups_.index(ups)];
   }
 
-  gsl::span<int64_t const> syms_ups(bit_t ups) const {
+  inline gsl::span<int64_t const> syms_ups(bit_t ups) const {
     int64_t idx_ups = lintable_ups_.index(ups);
     auto [start, length] = sym_limits_up_[idx_ups];
     return {syms_up_.data() + start, length};
@@ -106,19 +112,19 @@ public:
   }
 
   // Retrieving dns states and norms for given up configuration
-  gsl::span<bit_t const> dns_for_ups_rep(bit_t ups) const {
+  inline gsl::span<bit_t const> dns_for_ups_rep(bit_t ups) const {
     int64_t idx_ups = index_ups(ups);
     auto [start, length] = dns_limits_[idx_ups];
     return {dns_storage_.data() + start, length};
   }
 
-  gsl::span<double const> norms_for_ups_rep(bit_t ups) const {
+  inline gsl::span<double const> norms_for_ups_rep(bit_t ups) const {
     int64_t idx_ups = index_ups(ups);
     auto [start, length] = dns_limits_[idx_ups];
     return {norms_storage_.data() + start, length};
   }
 
-  std::pair<gsl::span<bit_t const>, gsl::span<double const>>
+  inline std::pair<gsl::span<bit_t const>, gsl::span<double const>>
   dns_norms_for_up_rep(bit_t ups) const {
     int64_t idx_ups = index_ups(ups);
     auto [start, length] = dns_limits_[idx_ups];
@@ -128,10 +134,10 @@ public:
   }
 
   // Fermi sign when applying sym on states
-  bool fermi_bool_ups(int64_t sym, bit_t ups) const {
+  inline bool fermi_bool_ups(int64_t sym, bit_t ups) const {
     return fermi_table_.sign(sym, ups);
   }
-  bool fermi_bool_dns(int64_t sym, bit_t dns) const {
+  inline bool fermi_bool_dns(int64_t sym, bit_t dns) const {
     return fermi_table_.sign(sym, dns);
   }
 

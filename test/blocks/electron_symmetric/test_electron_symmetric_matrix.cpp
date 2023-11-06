@@ -9,6 +9,7 @@
 #include <hydra/algebra/matrix.h>
 #include <hydra/algorithms/sparse_diag.h>
 #include <hydra/utils/close.h>
+#include <hydra/utils/print_macro.h>
 
 
 using namespace hydra;
@@ -128,8 +129,12 @@ void test_electron_symmetric_spectra(BondList bondlist,
         // Check if all eigenvalues agree
         // Log.out("{} {} {} {}", nup, ndn, eigs_sym(0), eigs_nosym(0));
 
-        // HydraPrint(arma::norm(arma::vec(eigs_sym) - eigs_nosym));
-        CHECK(close(arma::vec(eigs_sym), eigs_nosym));
+	// if (!close(arma::vec(eigs_sym), eigs_nosym)){
+	//   HydraPrint(arma::norm(arma::vec(eigs_sym) - eigs_nosym));
+	//   HydraPrint(eigs_sym);
+	//   HydraPrint(eigs_nosym);
+	// }
+        REQUIRE(close(arma::vec(eigs_sym), eigs_nosym));
       }
     }
   }

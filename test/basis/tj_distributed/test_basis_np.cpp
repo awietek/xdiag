@@ -46,10 +46,10 @@ TEST_CASE("tj_distributed_basis_np", "[tj_distributed]") {
           REQUIRE(idx_dns == combinatorics::binomial(n_sites - n_up, n_dn));
           ups_before = ups;
         }
-        REQUIRE(size_local == basis.size_local());
+        REQUIRE(size_local == basis.size());
         int64_t total_size = 0;
         mpi::Allreduce(&size_local, &total_size, 1, MPI_SUM, MPI_COMM_WORLD);
-        REQUIRE(total_size == basis.size());
+        REQUIRE(total_size == basis.dim());
 
         // dns/ ups order
         bit_t dns_before = 0;
@@ -76,10 +76,10 @@ TEST_CASE("tj_distributed_basis_np", "[tj_distributed]") {
           REQUIRE(idx_ups == combinatorics::binomial(n_sites - n_dn, n_up));
           dns_before = dns;
         }
-        REQUIRE(size_local_transpose == basis.size_local_transpose());
+        REQUIRE(size_local_transpose == basis.size_transpose());
         total_size = 0;
         mpi::Allreduce(&size_local_transpose, &total_size, 1, MPI_SUM, MPI_COMM_WORLD);
-        REQUIRE(total_size == basis.size());
+        REQUIRE(total_size == basis.dim());
 
         // Log("{} {} {} {} {}", n_sites, n_up, n_dn, basis.size_max(),
         //     basis.size_min());

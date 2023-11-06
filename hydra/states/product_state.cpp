@@ -21,23 +21,43 @@ ProductState::iterator_t ProductState::end() const {
 
 void fill(State &state, ProductState const &pstate, int64_t col) try {
   if (state.n_sites() != pstate.n_sites()) {
-    throw(std::logic_error(
-        "State and ProductState do not have the same number of sites"));
+    HydraThrow(std::logic_error,
+               "State and ProductState do not have the same number of sites");
   } else if (col >= state.n_cols()) {
-    throw(std::invalid_argument(
-        "Column index larger than number of columns in State"));
+    HydraThrow(std::invalid_argument,
+               "Column index larger than number of columns in State");
   }
   auto const &block = state.block();
 
   if (state.isreal()) {
     arma::vec v = state.vector(col, false);
-    std::visit([&](auto &&block) { fill(block, v, pstate); }, block);
+    std::visit(
+        overload{[&](Spinhalf const &block) { fill(block, v, pstate); },
+                 [&](tJ const &block) { fill(block, v, pstate); },
+                 [&](Electron const &block) { fill(block, v, pstate); },
+                 [&](auto &&) {
+                   HydraThrow(
+                       std::runtime_error,
+                       "Cannot fill product state for given block (maybe not "
+                       "implemented)");
+                 }},
+        block);
   } else {
     arma::cx_vec v = state.vectorC(col, false);
-    std::visit([&](auto &&block) { fill(block, v, pstate); }, block);
+    std::visit(
+        overload{[&](Spinhalf const &block) { fill(block, v, pstate); },
+                 [&](tJ const &block) { fill(block, v, pstate); },
+                 [&](Electron const &block) { fill(block, v, pstate); },
+                 [&](auto &&) {
+                   HydraThrow(
+                       std::runtime_error,
+                       "Cannot fill product state for given block (maybe not "
+                       "implemented)");
+                 }},
+        block);
   }
 } catch (...) {
-  rethrow(__func__, "Unable to fill State with ProductState");
+  HydraRethrow("Unable to fill State with ProductState");
 }
 
 template <typename bit_t>
@@ -50,17 +70,17 @@ static bit_t spinhalf_bits(ProductState const &pstate, int64_t nup = -1) try {
       ++pnup;
     } else {
       if (pstate[s] != "Dn") {
-        throw(std::logic_error("Invalid local state encountered"));
+        HydraThrow(std::logic_error, "Invalid local state encountered");
       }
     }
   }
   if ((nup != pnup) && (nup != -1)) {
-    throw(std::logic_error(
-        "ProductState does not have correct nup for Spinhalf block"));
+    HydraThrow(std::logic_error,
+               "ProductState does not have correct nup for Spinhalf block");
   }
   return spins;
 } catch (...) {
-  rethrow(__func__, "Unable to compute Spinhalf bits for ProductState");
+  HydraRethrow("Unable to compute Spinhalf bits for ProductState");
   return 0;
 }
 
@@ -76,7 +96,7 @@ static int64_t spinhalf_index(basis_t const &basis,
   }
   return basis.index(spins);
 } catch (...) {
-  rethrow(__func__, "Cannot determine index of ProductState");
+  HydraRethrow("Cannot determine index of ProductState");
   return 0;
 }
 
@@ -94,15 +114,16 @@ void fill(Spinhalf const &block, arma::Col<coeff_t> &vec,
           [&](BasisNoSz<uint32_t> const &b) { return spinhalf_index(b, p); },
           [&](BasisNoSz<uint64_t> const &b) { return spinhalf_index(b, p); },
           [&](auto &&) {
-            throw(std::logic_error(
-                "Cannot create a ProductState for the given type of Basis"));
+            HydraThrow(
+                std::logic_error,
+                "Cannot create a ProductState for the given type of Basis");
             return (int64_t)-1;
           }},
       basis);
   vec.zeros();
   vec(idx) = 1.0;
 } catch (...) {
-  rethrow(__func__, "Unable to fill State of Spinhalf block with ProductState");
+  HydraRethrow("Unable to fill State of Spinhalf block with ProductState");
 }
 
 template void fill(Spinhalf const &, arma::vec &, ProductState const &);
@@ -124,24 +145,24 @@ std::pair<bit_t, bit_t> tj_bits(ProductState const &pstate, int64_t nup = -1,
       dns |= ((bit_t)1 << s);
       ++pndn;
     } else if (pstate[s] == "UpDn") {
-      throw(std::logic_error("doubly occupied sites not allowed "
-                             "for t-J block"));
+      HydraThrow(std::logic_error, "doubly occupied sites not allowed "
+                                   "for t-J block");
       ++pnup;
       ++pndn;
     } else {
       if (pstate[s] != "Emp") {
-        throw(std::logic_error("Invalid local state encountered"));
+        HydraThrow(std::logic_error, "Invalid local state encountered");
       }
     }
   }
 
   if (((nup != pnup) || (ndn != pndn)) && (nup != -1) && (ndn != -1)) {
-    throw(std::logic_error(
-        "ProductState does not have correct (nup, ndn) for tJ block"));
+    HydraThrow(std::logic_error,
+               "ProductState does not have correct (nup, ndn) for tJ block");
   }
   return {ups, dns};
 } catch (...) {
-  rethrow(__func__, "Unable to compute tJ bits for ProductState");
+  HydraRethrow("Unable to compute tJ bits for ProductState");
   return {0, 0};
 }
 
@@ -156,7 +177,7 @@ static int64_t tj_index(basis_t const &b, ProductState const &pstate) try {
     return b.index(ups, dns);
   }
 } catch (...) {
-  rethrow(__func__, "Cannot determine index of ProductState");
+  HydraRethrow("Cannot determine index of ProductState");
   return 0;
 }
 
@@ -170,15 +191,16 @@ void fill(tJ const &block, arma::Col<coeff_t> &vec, ProductState const &p) try {
           [&](BasisNp<uint32_t> const &b) { return tj_index(b, p); },
           [&](BasisNp<uint64_t> const &b) { return tj_index(b, p); },
           [&](auto &&) {
-            throw(std::logic_error(
-                "Cannot create a ProductState for the given type of Basis"));
+            HydraThrow(
+                std::logic_error,
+                "Cannot create a ProductState for the given type of Basis");
             return (int64_t)-1;
           }},
       basis);
   vec.zeros();
   vec(idx) = 1.0;
 } catch (...) {
-  rethrow(__func__, "Unable to fill State of tJ block with ProductState");
+  HydraRethrow("Unable to fill State of tJ block with ProductState");
 }
 
 template void fill(tJ const &, arma::vec &, ProductState const &);
@@ -206,18 +228,19 @@ std::pair<bit_t, bit_t> electron_bits(ProductState const &pstate,
       ++pndn;
     } else {
       if (pstate[s] != "Emp") {
-        throw(std::logic_error("Invalid local state encountered"));
+        HydraThrow(std::logic_error, "Invalid local state encountered");
       }
     }
   }
 
   if (((nup != pnup) || (ndn != pndn)) && (nup != -1) && (ndn != -1)) {
-    throw(std::logic_error(
-        "ProductState does not have correct (nup, ndn) for Electron block"));
+    HydraThrow(
+        std::logic_error,
+        "ProductState does not have correct (nup, ndn) for Electron block");
   }
   return {ups, dns};
 } catch (...) {
-  rethrow(__func__, "Unable to compute Electron bits for ProductState");
+  HydraRethrow("Unable to compute Electron bits for ProductState");
   return {0, 0};
 }
 
@@ -233,7 +256,7 @@ static int64_t electron_index(basis_t const &b,
     return b.index(ups, dns);
   }
 } catch (...) {
-  rethrow(__func__, "Cannot determine index of ProductState");
+  HydraRethrow("Cannot determine index of ProductState");
   return 0;
 }
 
@@ -251,15 +274,16 @@ void fill(Electron const &block, arma::Col<coeff_t> &vec,
           [&](BasisNoNp<uint32_t> const &b) { return electron_index(b, p); },
           [&](BasisNoNp<uint64_t> const &b) { return electron_index(b, p); },
           [&](auto &&) {
-            throw(std::logic_error(
-                "Cannot create a ProductState for the given type of Basis"));
+            HydraThrow(
+                std::logic_error,
+                "Cannot create a ProductState for the given type of Basis");
             return (int64_t)-1;
           }},
       basis);
   vec.zeros();
   vec(idx) = 1.0;
 } catch (...) {
-  rethrow(__func__, "Unable to fill State of Electron block with ProductState");
+  HydraRethrow("Unable to fill State of Electron block with ProductState");
 }
 
 template void fill(Electron const &, arma::vec &, ProductState const &);

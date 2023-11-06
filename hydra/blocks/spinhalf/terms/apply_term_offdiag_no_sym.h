@@ -18,7 +18,7 @@ void apply_term_offdiag_no_sym_to_spins(bit_t spins_in, int64_t idx_in,
     auto [spins_out, coeff] = term_action(spins_in);
     auto idx_out = basis_out.index(spins_out);
     assert(idx_out != invalid_index);
-    fill(idx_out, idx_in, coeff);
+    fill(idx_in, idx_out, coeff);
   }
 }
 

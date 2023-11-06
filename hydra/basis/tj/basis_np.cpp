@@ -35,6 +35,7 @@ template <typename bit_t> int64_t BasisNp<bit_t>::size_dncs() const {
   return size_dncs_;
 }
 template <typename bit_t> int64_t BasisNp<bit_t>::size() const { return size_; }
+template <typename bit_t> int64_t BasisNp<bit_t>::dim() const { return size_; }
 template <typename bit_t>
 int64_t BasisNp<bit_t>::ups_offset(int64_t idx_ups) const {
   return idx_ups * size_dncs_;

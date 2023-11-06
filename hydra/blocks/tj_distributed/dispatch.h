@@ -1,16 +1,16 @@
 #pragma once
-#ifdef HYDRA_ENABLE_MPI
+#ifdef HYDRA_USE_MPI
+
+#include <hydra/common.h>
 
 #include <hydra/basis/basis.h>
 #include <hydra/blocks/tj_distributed/terms/apply_terms.h>
-#include <hydra/common.h>
 
-namespace hydra {
+namespace hydra::tj_distributed {
 
 template <typename coeff_t, class fill_f>
-void apply_terms_dispatch(BondList const &bonds, tJDistributed const &block_in,
-                          tJDistributed const &block_out, fill_f &&fill) try {
-  using namespace tj_distributed;
+inline void dispatch(BondList const &bonds, tJDistributed const &block_in,
+                     tJDistributed const &block_out, fill_f &&fill) try {
   using namespace basis::tj_distributed;
 
   auto const &basis_in = block_in.basis();
@@ -41,6 +41,6 @@ void apply_terms_dispatch(BondList const &bonds, tJDistributed const &block_in,
   HydraRethrow("Unable to apply terms on tJ block");
 }
 
-} // namespace hydra
+} // namespace hydra::tj_distributed
 
 #endif

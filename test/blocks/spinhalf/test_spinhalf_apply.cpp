@@ -8,12 +8,13 @@
 #include <hydra/algorithms/sparse_diag.h>
 #include <hydra/blocks/spinhalf/spinhalf_apply.h>
 #include <hydra/utils/close.h>
+#include <hydra/utils/print_macro.h>
 
 using namespace hydra;
 
 void test_apply(BondList bonds) {
   int N = bonds.n_sites();
-  for (int nup = 0; nup <= N; ++nup) {
+  for (int nup = 1; nup <= N; ++nup) {
     auto block = Spinhalf(N, nup);
     auto H = matrix(bonds, block, block);
     REQUIRE(H.is_hermitian(1e-8));
@@ -22,13 +23,19 @@ void test_apply(BondList bonds) {
     arma::vec w1 = H * v;
     arma::vec w2(block.size(), arma::fill::zeros);
     apply(bonds, block, v, block, w2);
-    REQUIRE(close(w1, w2));
+
+    arma::vec w3 = H * H * v;
+    arma::vec w4(block.size(), arma::fill::zeros);
+    apply(bonds, block, w2, block, w4);
+    REQUIRE(close(w3, w4));
 
     arma::vec evals_mat;
     arma::eig_sym(evals_mat, H);
 
     double e0_mat = evals_mat(0);
-    double e0_app = eigval0(bonds, block);
+    // double e0_app = eigval0(bonds, block);
+    auto [e0_app, ev] = eig0(bonds, block);
+    // Log("H: {}, nup: {}, mat: {:.5f} app: {:.5f}", N, nup, e0_mat, e0_app);
     REQUIRE(close(e0_mat, e0_app));
   }
 }

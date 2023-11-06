@@ -2,14 +2,13 @@
 
 #include <hydra/combinatorics/combinations.h>
 #include <hydra/symmetries/operations/symmetry_operations.h>
-#include <hydra/utils/print_macro.h>
 
 namespace hydra::basis::tj {
 
 template <typename bit_t>
-BasisSymmetricNp<bit_t>::BasisSymmetricNp(int64_t n_sites, int64_t nup, int64_t ndn,
-                                                PermutationGroup group,
-                                                Representation irrep)
+BasisSymmetricNp<bit_t>::BasisSymmetricNp(int64_t n_sites, int64_t nup,
+                                          int64_t ndn, PermutationGroup group,
+                                          Representation irrep)
     : n_sites_(n_sites), n_up_(nup), n_dn_(ndn),
       group_action_(allowed_subgroup(group, irrep)), irrep_(irrep),
       raw_ups_size_(combinatorics::binomial(n_sites, nup)),
@@ -97,8 +96,7 @@ template <typename bit_t> inline int64_t BasisSymmetricNp<bit_t>::n_dn() const {
   return n_dn_;
 }
 template <typename bit_t>
-GroupActionLookup<bit_t> const &
-BasisSymmetricNp<bit_t>::group_action() const {
+GroupActionLookup<bit_t> const &BasisSymmetricNp<bit_t>::group_action() const {
   return group_action_;
 }
 template <typename bit_t>
@@ -106,6 +104,9 @@ Representation const &BasisSymmetricNp<bit_t>::irrep() const {
   return irrep_;
 }
 template <typename bit_t> int64_t BasisSymmetricNp<bit_t>::size() const {
+  return size_;
+}
+template <typename bit_t> int64_t BasisSymmetricNp<bit_t>::dim() const {
   return size_;
 }
 
@@ -125,7 +126,7 @@ int64_t BasisSymmetricNp<bit_t>::ups_offset(int64_t idx_up) const {
 template <typename bit_t>
 std::pair<int64_t, bool>
 BasisSymmetricNp<bit_t>::index_dns_fermi(bit_t dns, int64_t sym,
-                                            bit_t not_ups) const {
+                                         bit_t not_ups) const {
   bit_t dns_rep = group_action_.apply(sym, dns);
   bit_t dns_rep_c = bits::extract(dns_rep, not_ups);
   int64_t idx_dns_rep = lintable_dnsc_.index(dns_rep_c);
@@ -137,7 +138,7 @@ template <typename bit_t>
 
 std::pair<int64_t, bool>
 BasisSymmetricNp<bit_t>::index_dns_fermi(bit_t dns, int64_t sym, bit_t not_ups,
-                                            bit_t fermimask) const {
+                                         bit_t fermimask) const {
   bit_t dns_rep = group_action_.apply(sym, dns);
   bit_t dns_rep_c = bits::extract(dns_rep, not_ups);
   int64_t idx_dns_rep = lintable_dnsc_.index(dns_rep_c);

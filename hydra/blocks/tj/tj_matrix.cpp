@@ -1,15 +1,25 @@
 #include "tj_matrix.h"
 
-#include <hydra/algebra/generic_operator.h>
+#include <hydra/algebra/fill.h>
 #include <hydra/blocks/tj/compile.h>
-#include <hydra/operators/compiler.h>
+#include <hydra/blocks/tj/dispatch.h>
 
 namespace hydra {
 
 template <typename coeff_t>
 arma::Mat<coeff_t> matrix_gen(BondList const &bonds, tJ const &block_in,
                               tJ const &block_out) try {
-  return generic_matrix<coeff_t>(bonds, block_in, block_out, tj::compile);
+  BondList bondsc = tj::compile(bonds, 1e-12);
+
+  int64_t m = block_out.size();
+  int64_t n = block_in.dim();
+  arma::Mat<coeff_t> mat(m, n, arma::fill::zeros);
+  auto fill = [&](int64_t idx_in, int64_t idx_out, coeff_t val) {
+    return fill_matrix(mat, idx_in, idx_out, val);
+  };
+
+  tj::dispatch<coeff_t>(bondsc, block_in, block_out, fill);
+  return mat;
 } catch (...) {
   HydraRethrow("Cannot create matrix from tJ block");
   return arma::Mat<coeff_t>();
@@ -34,7 +44,15 @@ arma::cx_mat matrixC(BondList const &bonds, tJ const &block_in,
 template <typename coeff_t>
 void matrix_gen(coeff_t *mat, BondList const &bonds, tJ const &block_in,
                 tJ const &block_out) try {
-  generic_matrix<coeff_t>(mat, bonds, block_in, block_out, tj::compile);
+  BondList bondsc = tj::compile(bonds, 1e-12);
+
+  int64_t m = block_out.size();
+  auto fill = [&](int64_t idx_in, int64_t idx_out, coeff_t val) {
+    return fill_matrix(mat, idx_out, idx_in, m, val);
+  };
+
+  tj::dispatch<coeff_t>(bondsc, block_in, block_out, fill);
+
 } catch (...) {
   HydraRethrow("Cannot create matrix from tJ block");
 }

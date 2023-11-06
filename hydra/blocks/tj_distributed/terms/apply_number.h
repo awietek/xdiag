@@ -5,10 +5,9 @@
 
 #include <hydra/blocks/tj/terms/generic_term_diag.h>
 
-namespace hydra::tj {
+namespace hydra::tj_distributed {
 
-template <typename bit_t, typename coeff_t, bool symmetric, class Basis,
-          class Fill>
+template <typename bit_t, typename coeff_t, class Basis, class Fill>
 void apply_number(Bond const &bond, Basis &&basis, Fill &&fill) {
   assert(bond.coupling_defined());
   assert(bond.type_defined());
@@ -26,16 +25,14 @@ void apply_number(Bond const &bond, Basis &&basis, Fill &&fill) {
       (void)dn;
       return (up & mask) ? mu : 0.;
     };
-    tj::generic_term_diag<bit_t, coeff_t, symmetric>(basis, term_action,
-                                                     fill);
+    tj_distributed::generic_term_diag<bit_t, coeff_t>(basis, term_action, fill);
   } else if (type == "NUMBERDN") {
     auto term_action = [&](bit_t up, bit_t dn) {
       (void)up;
       return (dn & mask) ? mu : 0.;
     };
-    tj::generic_term_diag<bit_t, coeff_t, symmetric>(basis, term_action,
-                                                     fill);
+    tj_distributed::generic_term_diag<bit_t, coeff_t>(basis, term_action, fill);
   }
 }
 
-} // namespace hydra::tj
+} // namespace hydra::tj_distributed

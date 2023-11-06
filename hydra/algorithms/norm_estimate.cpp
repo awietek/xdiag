@@ -1,11 +1,8 @@
 #include "norm_estimate.h"
 
 #include <hydra/algebra/algebra.h>
+#include <hydra/algebra/apply.h>
 #include <hydra/utils/timing.h>
-
-#include <hydra/blocks/electron/electron_apply.h>
-#include <hydra/blocks/spinhalf/spinhalf_apply.h>
-#include <hydra/blocks/tj/tj_apply.h>
 
 namespace hydra {
 

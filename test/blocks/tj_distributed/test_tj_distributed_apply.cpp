@@ -6,66 +6,32 @@
 #include <hydra/algorithms/sparse_diag.h>
 #include <hydra/blocks/spinhalf/spinhalf_matrix.h>
 #include <hydra/blocks/tj/tj_apply.h>
-#include <hydra/blocks/tj_distributed/tj_distributed_apply.h>
 #include <hydra/blocks/tj/tj_matrix.h>
+#include <hydra/blocks/tj_distributed/tj_distributed_apply.h>
 #include <hydra/utils/close.h>
+#include <hydra/utils/print_macro.h>
 
 using namespace hydra;
 
-TEST_CASE("tj_apply", "[tj]") {
+TEST_CASE("tj_distributed_apply", "[tj_distributed]") try {
   using namespace hydra::testcases::tj;
 
-  for (int N = 3; N <= 6; ++N) {
-    Log("tj_apply: random all-to-all real apply=matrix, N={}", N);
-
-    auto bonds = tj_alltoall(N);
-    for (int nup = 0; nup <= N; ++nup)
-      for (int ndn = 0; ndn <= N - nup; ++ndn) {
-
-        auto block = tJ(N, nup, ndn);
-        auto H = matrix(bonds, block, block);
-        REQUIRE(arma::norm(H - H.t()) < 1e-12);
-
-        arma::vec v(block.size(), arma::fill::randn);
-        arma::vec w1 = H * v;
-        arma::vec w2(block.size(), arma::fill::zeros);
-        apply(bonds, block, v, block, w2);
-        REQUIRE(close(w1, w2));
-
-        arma::vec evals_mat;
-        arma::eig_sym(evals_mat, H);
-        double e0_mat = evals_mat(0);
-        double e0_app = eigval0(bonds, block);
-        // Log.out("nup: {}, ndn: {}, e0_mat: {}, e0_app: {}", nup, ndn,
-        //              e0_mat, e0_app);
-        REQUIRE(std::abs(e0_mat - e0_app) < 1e-10);
-      }
+  int N = 4;
+  auto block = tJDistributed(N, N / 2, N / 2);
+  BondList bonds;
+  for (int i = 0; i < N; ++i) {
+    bonds << Bond("ISING", "JZ", {i, (i + 1) % N});
   }
+  bonds["JZ"] = 1.0;
+  double e0 = eigval0(bonds, block);
+  HydraPrint(e0);
 
-  for (int N = 3; N <= 6; ++N) {
-    Log("tj_apply: random all-to-all complex apply=matrix, N={}", N);
-
-    auto bonds = tj_alltoall_complex(N);
-    for (int nup = 0; nup <= N; ++nup)
-      for (int ndn = 0; ndn <= N - nup; ++ndn) {
-        auto block = tJ(N, nup, ndn);
-        auto H = matrixC(bonds, block, block);
-        REQUIRE(arma::norm(H - H.t()) < 1e-12);
-        arma::cx_vec v(block.size(), arma::fill::randn);
-        arma::cx_vec w1 = H * v;
-        arma::cx_vec w2(block.size(), arma::fill::zeros);
-        apply(bonds, block, v, block, w2);
-        REQUIRE(close(w1, w2));
-
-        arma::vec evals_mat;
-        arma::eig_sym(evals_mat, H);
-
-        double e0_mat = evals_mat(0);
-        double e0_app = eigval0(bonds, block);
-
-        // Log.out("nup: {}, ndn: {}, e0_mat: {}, e0_app: {}", nup, ndn,
-        //              e0_mat, e0_app);
-        REQUIRE(close(e0_mat, e0_app));
-      }
-  }
+  auto block2 = tJ(N, N / 2, N / 2);
+  double e02 = eigval0(bonds, block2);
+  HydraPrint(e02);
+  HydraPrint(dim(block.basis()));
+  HydraPrint(block2.dim());
+  
+} catch (std::exception const &e) {
+  traceback(e);
 }

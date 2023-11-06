@@ -2,7 +2,6 @@
 #ifdef HYDRA_USE_MPI
 
 #include <hydra/common.h>
-
 #include <hydra/basis/basis.h>
 
 namespace hydra {
@@ -18,8 +17,17 @@ public:
   int64_t n_up() const;
   int64_t n_dn() const;
 
+  int64_t dim() const;
   int64_t size() const;
-  int64_t local_size() const;
+  int64_t size_max() const;
+  int64_t size_min() const;
+
+  bool charge_conserved() const;
+  bool sz_conserved() const;
+
+  bool symmetric() const;
+  PermutationGroup permutation_group() const;
+  Representation irrep() const;
 
   bool iscomplex(double precision = 1e-12) const;
   bool isreal(double precision = 1e-12) const;
@@ -34,8 +42,8 @@ private:
   int64_t n_dn_;
 
   std::shared_ptr<basis_t> basis_;
+  int64_t dim_;
   int64_t size_;
-  int64_t local_size_;
 };
 
 } // namespace hydra

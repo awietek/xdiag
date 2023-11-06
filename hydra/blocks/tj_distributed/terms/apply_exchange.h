@@ -4,12 +4,11 @@
 #include <hydra/common.h>
 #include <hydra/operators/bond.h>
 
-#include <hydra/blocks/tj/terms/generic_term_mixed.h>
+#include <hydra/blocks/tj_distributed/terms/generic_term_mixed.h>
 
-namespace hydra::tj {
+namespace hydra::tj_distributed {
 
-template <typename bit_t, typename coeff_t, bool symmetric, class Basis,
-          class Filler>
+template <typename bit_t, typename coeff_t, class Basis, class Filler>
 void apply_exchange(Bond const &bond, Basis &&basis, Filler &&fill) {
   assert(bond.coupling_defined());
   assert(bond.type_defined());
@@ -41,10 +40,10 @@ void apply_exchange(Bond const &bond, Basis &&basis, Filler &&fill) {
     bit_t up_flip = up ^ flipmask;
     if constexpr (iscomplex<coeff_t>()) {
       if (bits::gbit(up, s1)) {
-	// Log("a {}", Jhalf);
+        // Log("a {}", Jhalf);
         return {up_flip, fermi_up ? Jhalf : -Jhalf};
       } else {
-	// Log("b {}", Jhalf_conj);
+        // Log("b {}", Jhalf_conj);
         return {up_flip, fermi_up ? Jhalf_conj : -Jhalf_conj};
       }
     } else {
@@ -55,9 +54,9 @@ void apply_exchange(Bond const &bond, Basis &&basis, Filler &&fill) {
     bool fermi_dn = bits::popcnt(dn & fermimask) & 1;
     return {dn ^ flipmask, fermi_dn ? -1.0 : 1.0};
   };
-  tj::generic_term_mixed<bit_t, coeff_t, symmetric>(
+  tj_distributed::generic_term_mixed<bit_t, coeff_t>(
       basis, basis, non_zero_term_ups, non_zero_term_dns, term_action_ups,
       term_action_dns, fill);
 }
 
-} // namespace hydra::tj
+} // namespace hydra::tj_distributed

@@ -24,7 +24,7 @@ void electron_do_down_flips(bit_t ups, int64_t idx_ups, bit_t flipmask,
     if ((bits::popcnt(dns & flipmask) == 1) && ((bool)bits::gbit(dns, sdn))) {
       bit_t dns_flip = dns ^ flipmask;
       int64_t idx_out = idx_out_offset + basis.index_dns(dns_flip);
-      fill(idx_out, idx_in, (bits::popcnt(dns & fermimask) & 1) ? -val : val);
+      fill(idx_in, idx_out, (bits::popcnt(dns & fermimask) & 1) ? -val : val);
     }
 
     ++idx_in;
@@ -126,7 +126,7 @@ void apply_exchange(Bond const &bond, Basis &&basis, Filler &&fill) {
             coeff_t val = prefac / norms_in[idx_dn];
             int64_t idx_in = up_offset_in + idx_dn;
             int64_t idx_out = up_offset_out + idx_dn_flip;
-            fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -val : val);
+            fill(idx_in, idx_out, (fermi_up ^ fermi_dn) ? -val : val);
           }
           ++idx_dn;
         }
@@ -165,7 +165,7 @@ void apply_exchange(Bond const &bond, Basis &&basis, Filler &&fill) {
                   prefacs[sym] * norms_out[idx_dn_flip] / norms_in[idx_dn];
               int64_t idx_in = up_offset_in + idx_dn;
               int64_t idx_out = up_offset_out + idx_dn_flip;
-              fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -val : val);
+              fill(idx_in, idx_out, (fermi_up ^ fermi_dn) ? -val : val);
             }
           }
           ++idx_dn;

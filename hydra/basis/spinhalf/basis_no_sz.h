@@ -16,7 +16,9 @@ public:
 
   iterator_t begin() const;
   iterator_t end() const;
+  int64_t dim() const;
   int64_t size() const;
+
   inline int64_t index(bit_t spins) const { return (int64_t)spins; }
   inline bit_t state(int64_t index) const { return (bit_t)index; }
 

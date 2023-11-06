@@ -5,12 +5,11 @@
 #include <hydra/common.h>
 #include <hydra/utils/logger.h>
 
-namespace hydra {
+namespace hydra::electron {
 
 template <typename coeff_t, class Fill>
-void apply_terms_dispatch(BondList const &bonds, Electron const &block_in,
-                          Electron const &block_out, Fill &&fill) try {
-  using namespace electron;
+inline void dispatch(BondList const &bonds, Electron const &block_in,
+                     Electron const &block_out, Fill &&fill) try {
   using namespace basis::electron;
 
   auto const &basis_in = block_in.basis();
@@ -72,7 +71,8 @@ void apply_terms_dispatch(BondList const &bonds, Electron const &block_in,
             apply_terms<uint64_t, coeff_t, true>(bonds, idx_in, idx_out, fill);
           },
           [&](auto const &idx_in, auto const &idx_out) {
-            HydraThrow(std::logic_error, "Invalid basis or combination of bases");
+            HydraThrow(std::logic_error,
+                       "Invalid basis or combination of bases");
             (void)idx_in;
             (void)idx_out;
           }},
@@ -81,4 +81,4 @@ void apply_terms_dispatch(BondList const &bonds, Electron const &block_in,
   HydraRethrow("Unable to apply terms on Electron block");
 }
 
-} // namespace hydra
+} // namespace hydra::electron

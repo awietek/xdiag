@@ -7,6 +7,7 @@
 
 #include <hydra/states/random_state.h>
 #include <hydra/utils/timing.h>
+#include <hydra/utils/print_macro.h>
 
 namespace hydra {
 
@@ -26,7 +27,7 @@ eigs_lanczos_result_t eigs_lanczos(BondList const &bonds,
   bool cplx = bonds.iscomplex() || iscomplex(block) || force_complex;
   State state0(block, !cplx);
   fill(state0, RandomState(random_seed));
-
+  
   // Perform first run to compute eigenvalues
   auto r = eigvals_lanczos(bonds, block, neigvals, precision, max_iterations,
                            force_complex, deflation_tol, random_seed);
@@ -37,7 +38,7 @@ eigs_lanczos_result_t eigs_lanczos(BondList const &bonds,
     tmat += arma::diagmat(r.betas.head(r.betas.size() - 1), 1) +
             arma::diagmat(r.betas.head(r.betas.size() - 1), -1);
   }
-  
+
   arma::vec reigs;
   arma::mat revecs;
   try {
@@ -63,9 +64,7 @@ eigs_lanczos_result_t eigs_lanczos(BondList const &bonds,
       timing(ta, rightnow(), "MVM", 1);
       ++iter;
     };
-    auto dot = [](arma::cx_vec const &v, arma::cx_vec const &w) {
-      return arma::cdot(v, w);
-    };
+    auto dot = cdot_product(block);
     auto operation = [&eigenvectors, &revecs, &iter,
                       neigvals](arma::cx_vec const &v) {
       eigenvectors.matrixC(false) +=
@@ -85,9 +84,7 @@ eigs_lanczos_result_t eigs_lanczos(BondList const &bonds,
       timing(ta, rightnow(), "MVM", 1);
       ++iter;
     };
-    auto dot = [](arma::vec const &v, arma::vec const &w) {
-      return arma::dot(v, w);
-    };
+    auto dot = dot_product(block);
     auto operation = [&eigenvectors, &revecs, &iter,
                       neigvals](arma::vec const &v) {
       eigenvectors.matrix(false) +=

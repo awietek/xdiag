@@ -1,7 +1,7 @@
 #pragma once
 
-#include <vector>
 #include <hydra/bits/bitops.h>
+#include <vector>
 
 namespace hydra::tj {
 
@@ -73,7 +73,7 @@ void generic_term_mixed(BasisIn &&basis_in, BasisOut &&basis_out,
                   auto [idx_dn_out, fermi_dn] =
                       basis_out.index_dns_fermi(dn_flip, sym, not_up_flip_rep);
                   int64_t idx_out = up_out_offset + idx_dn_out;
-                  fill(idx_out, idx_in,
+                  fill(idx_in, idx_out,
                        (fermi_up ^ fermi_dn) ? -prefac * coeff_dn
                                              : prefac * coeff_dn);
                 }
@@ -94,7 +94,7 @@ void generic_term_mixed(BasisIn &&basis_in, BasisOut &&basis_out,
                       basis_out.index_dns_fermi(dn_flip, sym, not_up_flip_rep);
                   coeff_t val = prefac * coeff_dn / norms_in[idx_dn];
                   int64_t idx_out = up_out_offset + idx_dn_out;
-                  fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -val : val);
+                  fill(idx_in, idx_out, (fermi_up ^ fermi_dn) ? -val : val);
                 }
               }
               ++idx_in;
@@ -128,7 +128,7 @@ void generic_term_mixed(BasisIn &&basis_in, BasisOut &&basis_out,
                     bool fermi_up = basis_out.fermi_bool_ups(sym, up_flip);
                     coeff_t val =
                         prefacs[sym] * coeff_dn * norms_out[idx_dn_out];
-                    fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -val : val);
+                    fill(idx_in, idx_out, (fermi_up ^ fermi_dn) ? -val : val);
                   }
                 }
               }
@@ -155,7 +155,7 @@ void generic_term_mixed(BasisIn &&basis_in, BasisOut &&basis_out,
                     bool fermi_up = basis_out.fermi_bool_ups(sym, up_flip);
                     coeff_t val = prefacs[sym] * coeff_dn *
                                   norms_out[idx_dn_out] / norms_in[idx_dn];
-                    fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -val : val);
+                    fill(idx_in, idx_out, (fermi_up ^ fermi_dn) ? -val : val);
                   }
                 }
               }
@@ -197,7 +197,7 @@ void generic_term_mixed(BasisIn &&basis_in, BasisOut &&basis_out,
                 bit_t dnc_out = bits::extract(dn_flip, not_up_flip);
                 int64_t idx_dnc_out = basis_out.index_dncs(dnc_out);
                 int64_t idx_out = idx_up_flip_offset + idx_dnc_out;
-                fill(idx_out, idx_in, coeff_up * coeff_dn);
+                fill(idx_in, idx_out, coeff_up * coeff_dn);
               }
             }
             ++idx_in;

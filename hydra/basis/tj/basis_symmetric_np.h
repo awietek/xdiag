@@ -25,10 +25,13 @@ public:
   BasisSymmetricNp(int64_t n_sites, int64_t nup, int64_t ndn,
                    PermutationGroup permutation_group, Representation irrep);
 
-  int64_t size() const;
   int64_t n_sites() const;
   int64_t n_up() const;
   int64_t n_dn() const;
+
+  int64_t dim() const;
+  int64_t size() const;
+
   GroupActionLookup<bit_t> const &group_action() const;
   Representation const &irrep() const;
 

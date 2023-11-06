@@ -1,4 +1,5 @@
 #pragma once
+#ifdef HYDRA_USE_MPI
 
 #include "extern/armadillo/armadillo"
 
@@ -14,3 +15,4 @@ void apply(BondList const &bonds, tJDistributed const &block_in,
            arma::Col<coeff_t> &vec_out);
 
 } // namespace hydra
+#endif

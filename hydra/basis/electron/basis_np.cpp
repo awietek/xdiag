@@ -32,6 +32,8 @@ template <typename bit_t> int64_t BasisNp<bit_t>::size_ups() const {
 template <typename bit_t> int64_t BasisNp<bit_t>::size_dns() const {
   return size_dns_;
 }
+
+template <typename bit_t> int64_t BasisNp<bit_t>::dim() const { return size_; }
 template <typename bit_t> int64_t BasisNp<bit_t>::size() const { return size_; }
 
 template <typename bit_t>

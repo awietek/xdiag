@@ -11,12 +11,12 @@ Spinhalf::Spinhalf(int64_t n_sites)
     : n_sites_(n_sites), sz_conserved_(false), n_up_(undefined_qn),
       n_dn_(undefined_qn), sz_(undefined_qn), symmetric_(false), n_sublat_(0),
       permutation_group_(), irrep_(), size_((int64_t)1 << n_sites) {
-
-  if (n_sites < 0) {
-    throw(std::invalid_argument("n_sites < 0"));
-  }
-
   try {
+
+    if (n_sites < 0) {
+      HydraThrow(std::invalid_argument, "n_sites < 0");
+    }
+
     if (n_sites < 16) {
       basis_ =
           std::make_shared<basis_t>(spinhalf::BasisNoSz<uint16_t>(n_sites));
@@ -27,11 +27,12 @@ Spinhalf::Spinhalf(int64_t n_sites)
       basis_ =
           std::make_shared<basis_t>(spinhalf::BasisNoSz<uint64_t>(n_sites));
     } else {
-      throw(std::runtime_error(
-          "blocks with more than 64 sites currently not implemented"));
+      HydraThrow(std::runtime_error,
+                 "blocks with more than 64 sites currently not implemented");
     }
+
   } catch (...) {
-    rethrow(__func__, "Cannot create Basis for Spinhalf");
+    HydraRethrow("Cannot create Basis for Spinhalf");
   }
 }
 
@@ -40,14 +41,14 @@ Spinhalf::Spinhalf(int64_t n_sites, int64_t n_up)
       n_dn_(n_sites - n_up), sz_(n_up_ - n_dn_), symmetric_(false),
       n_sublat_(0), permutation_group_(), irrep_(),
       size_(combinatorics::binomial(n_sites, n_up)) {
-
-  if (n_sites < 0) {
-    throw(std::invalid_argument("n_sites < 0"));
-  } else if ((n_up < 0) || (n_up > n_sites)) {
-    throw(std::invalid_argument("Invalid value of nup"));
-  }
-
   try {
+
+    if (n_sites < 0) {
+      HydraThrow(std::invalid_argument, "n_sites < 0");
+    } else if ((n_up < 0) || (n_up > n_sites)) {
+      HydraThrow(std::invalid_argument, "Invalid value of nup");
+    }
+
     if (n_sites < 16) {
       basis_ =
           std::make_shared<basis_t>(spinhalf::BasisSz<uint16_t>(n_sites, n_up));
@@ -58,18 +59,19 @@ Spinhalf::Spinhalf(int64_t n_sites, int64_t n_up)
       basis_ =
           std::make_shared<basis_t>(spinhalf::BasisSz<uint64_t>(n_sites, n_up));
     } else {
-      throw(std::runtime_error(
-          "blocks with more than 64 sites currently not implemented"));
+      HydraThrow(std::runtime_error,
+                 "blocks with more than 64 sites currently not implemented");
     }
+
   } catch (...) {
-    rethrow(__func__, "Cannot create Basis for Spinhalf");
+    HydraRethrow("Cannot create Basis for Spinhalf");
   }
 }
 
 template <typename bit_t>
 std::shared_ptr<basis_spinhalf_variant_t>
 make_spinhalf_basis_no_sz(int64_t n_sites, PermutationGroup const &group,
-                          Representation const &irrep, int64_t n_sublat) {
+                          Representation const &irrep, int64_t n_sublat) try {
 
   std::shared_ptr<basis_spinhalf_variant_t> basis;
   if (n_sublat == 0) {
@@ -91,11 +93,15 @@ make_spinhalf_basis_no_sz(int64_t n_sites, PermutationGroup const &group,
     basis = std::make_shared<basis_spinhalf_variant_t>(
         spinhalf::BasisSublattice<bit_t, 5>(n_sites, group, irrep));
   } else {
-    Log.err("Error creating Spinhalf: invalid n_sublat specified. Must be "
-            "eiter 0 (so sublattice coding) or between 1 and 5. Got {}",
-            n_sublat);
+    HydraThrow(std::runtime_error,
+               "Invalid n_sublat specified. Must be "
+               "eiter 0 (so sublattice coding) or between 1 and 5. ");
   }
   return basis;
+} catch (...) {
+  HydraRethrow("Cannot create Basis for Spinhalf without sz conservation but "
+               "with permutation symmetries");
+  return std::shared_ptr<basis_spinhalf_variant_t>();
 }
 
 Spinhalf::Spinhalf(int64_t n_sites, PermutationGroup group,
@@ -104,22 +110,23 @@ Spinhalf::Spinhalf(int64_t n_sites, PermutationGroup group,
       n_dn_(undefined_qn), sz_(undefined_qn), symmetric_(true),
       n_sublat_(n_sublat), permutation_group_(allowed_subgroup(group, irrep)),
       irrep_(irrep) {
-
-  if (n_sites < 0) {
-    throw(std::invalid_argument("n_sites < 0"));
-  } else if (n_sites != group.n_sites()) {
-    throw(std::logic_error(
-        "n_sites does not match the n_sites in PermutationGroup"));
-  } else if (permutation_group_.size() != irrep.size()) {
-    std::cout<<"2asdf\n";
-    throw(std::logic_error("PermutationGroup and Representation do not have "
-                           "same number of elements"));
-  } else if ((n_sublat < 0) || (n_sublat > 5)) {
-    throw(std::invalid_argument("number of sublattices must either be 0 (no "
-                                "sublattice) or between 1 and 5"));
-  }
-
   try {
+
+    if (n_sites < 0) {
+      HydraThrow(std::invalid_argument, "n_sites < 0");
+    } else if (n_sites != group.n_sites()) {
+      HydraThrow(std::logic_error,
+                 "n_sites does not match the n_sites in PermutationGroup");
+    } else if (permutation_group_.size() != irrep.size()) {
+      HydraThrow(std::logic_error,
+                 "PermutationGroup and Representation do not have "
+                 "same number of elements");
+    } else if ((n_sublat < 0) || (n_sublat > 5)) {
+      HydraThrow(std::invalid_argument,
+                 "number of sublattices must either be 0 (no "
+                 "sublattice) or between 1 and 5");
+    }
+
     if (n_sites < 16) {
       basis_ =
           make_spinhalf_basis_no_sz<uint16_t>(n_sites, group, irrep, n_sublat);
@@ -134,8 +141,9 @@ Spinhalf::Spinhalf(int64_t n_sites, PermutationGroup group,
           "blocks with more than 64 sites currently not implemented"));
     }
     size_ = hydra::size(*basis_);
+
   } catch (...) {
-    rethrow(__func__, "Cannot create Basis for Spinhalf");
+    HydraRethrow("Cannot create Basis for Spinhalf");
   }
 }
 
@@ -143,7 +151,7 @@ template <typename bit_t>
 std::shared_ptr<basis_spinhalf_variant_t>
 make_spinhalf_basis_sz(int64_t n_sites, int64_t n_up,
                        PermutationGroup const &group,
-                       Representation const &irrep, int64_t n_sublat) {
+                       Representation const &irrep, int64_t n_sublat) try {
   std::shared_ptr<basis_spinhalf_variant_t> basis;
   if (n_sublat == 0) {
     basis = std::make_shared<basis_spinhalf_variant_t>(
@@ -164,11 +172,15 @@ make_spinhalf_basis_sz(int64_t n_sites, int64_t n_up,
     basis = std::make_shared<basis_spinhalf_variant_t>(
         spinhalf::BasisSublattice<bit_t, 5>(n_sites, n_up, group, irrep));
   } else {
-    Log.err("Error creating Spinhalf: invalid n_sublat specified. Must be "
-            "eiter 0 (so sublattice coding) or between 1 and 5. Got {}",
-            n_sublat);
+    HydraThrow(std::invalid_argument,
+               "Invalid n_sublat specified. Must be "
+               "eiter 0 (so sublattice coding) or between 1 and 5.");
   }
   return basis;
+} catch (...) {
+  HydraRethrow("Cannot create Basis for Spinhalf witt sz conservation and "
+               "with permutation symmetries");
+  return std::shared_ptr<basis_spinhalf_variant_t>();
 }
 
 Spinhalf::Spinhalf(int64_t n_sites, int64_t n_up, PermutationGroup group,
@@ -177,23 +189,24 @@ Spinhalf::Spinhalf(int64_t n_sites, int64_t n_up, PermutationGroup group,
       n_dn_(n_sites - n_up), sz_(n_up_ - n_dn_), symmetric_(true),
       n_sublat_(n_sublat), permutation_group_(allowed_subgroup(group, irrep)),
       irrep_(irrep) {
-  if (n_sites < 0) {
-    throw(std::invalid_argument("n_sites < 0"));
-  } else if ((n_up < 0) || (n_up > n_sites)) {
-    throw(std::invalid_argument("Invalid value of nup"));
-  } else if (n_sites != group.n_sites()) {
-    throw(std::logic_error(
-        "n_sites does not match the n_sites in PermutationGroup"));
-  } else if (permutation_group_.size() != irrep.size()) {
-    std::cout<<"1asdf\n";
-    throw(std::logic_error("PermutationGroup and Representation do not have "
-                           "same number of elements"));
-  } else if ((n_sublat < 0) || (n_sublat > 5)) {
-    throw(std::invalid_argument("number of sublattices must either be 0 (no "
-                                "sublattice) or between 1 and 5"));
-  }
-
   try {
+    if (n_sites < 0) {
+      HydraThrow(std::invalid_argument, "n_sites < 0");
+    } else if ((n_up < 0) || (n_up > n_sites)) {
+      HydraThrow(std::invalid_argument, "Invalid value of nup");
+    } else if (n_sites != group.n_sites()) {
+      HydraThrow(std::logic_error,
+                 "n_sites does not match the n_sites in PermutationGroup");
+    } else if (permutation_group_.size() != irrep.size()) {
+      HydraThrow(std::logic_error,
+                 "PermutationGroup and Representation do not have "
+                 "same number of elements");
+    } else if ((n_sublat < 0) || (n_sublat > 5)) {
+      HydraThrow(std::invalid_argument,
+                 "number of sublattices must either be 0 (no "
+                 "sublattice) or between 1 and 5");
+    }
+
     if (n_sites < 16) {
       basis_ = make_spinhalf_basis_sz<uint16_t>(n_sites, n_up, group, irrep,
                                                 n_sublat);
@@ -204,15 +217,30 @@ Spinhalf::Spinhalf(int64_t n_sites, int64_t n_up, PermutationGroup group,
       basis_ = make_spinhalf_basis_sz<uint64_t>(n_sites, n_up, group, irrep,
                                                 n_sublat);
     } else {
-      throw(std::runtime_error(
-          "blocks with more than 64 sites currently not implemented"));
+      HydraThrow(std::runtime_error,
+                 "blocks with more than 64 sites currently not implemented");
     }
     size_ = hydra::size(*basis_);
 
   } catch (...) {
-    rethrow(__func__, "Cannot create Basis for Spinhalf");
+    HydraRethrow("Cannot create Basis for Spinhalf");
   }
 }
+
+int64_t Spinhalf::n_sites() const { return n_sites_; }
+bool Spinhalf::sz_conserved() const { return sz_conserved_; }
+int64_t Spinhalf::sz() const { return sz_; }
+int64_t Spinhalf::n_up() const { return n_up_; }
+int64_t Spinhalf::n_dn() const { return n_dn_; }
+
+bool Spinhalf::symmetric() const { return symmetric_; }
+PermutationGroup Spinhalf::permutation_group() const {
+  return permutation_group_;
+}
+Representation Spinhalf::irrep() const { return irrep_; }
+
+int64_t Spinhalf::dim() const { return size_; }
+int64_t Spinhalf::size() const { return size_; }
 
 bool Spinhalf::iscomplex(double precision) const {
   return symmetric_ ? irrep_.iscomplex(precision) : false;

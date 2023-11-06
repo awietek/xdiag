@@ -246,11 +246,18 @@ typename std::vector<bit_t>::const_iterator
 BasisSublattice<bit_t, n_sublat>::begin() const {
   return reps_.begin();
 }
+
 template <typename bit_t, int n_sublat>
 typename std::vector<bit_t>::const_iterator
 BasisSublattice<bit_t, n_sublat>::end() const {
   return reps_.end();
 }
+
+template <typename bit_t, int n_sublat>
+int64_t BasisSublattice<bit_t, n_sublat>::dim() const {
+  return size();
+}
+
 template <typename bit_t, int n_sublat>
 int64_t BasisSublattice<bit_t, n_sublat>::size() const {
   return reps_.size();

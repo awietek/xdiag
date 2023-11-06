@@ -13,7 +13,9 @@ public:
   BasisNp() = default;
   BasisNp(int64_t n_sites, int64_t n_up, int64_t n_dn);
 
+  int64_t dim() const;
   int64_t size() const;
+
   inline int64_t index(bit_t ups, bit_t dns) const {
     bit_t dncs = bits::extract<bit_t>(dns, (~ups) & sitesmask_);
     return index_ups(ups) * size_dncs_ + index_dncs(dncs);

@@ -58,7 +58,7 @@ void generic_term_ups(BasisIn &&basis_in, BasisOut &&basis_out,
 
             coeff_t val =
                 prefac / norms_in[idx_dn]; // norms_out = 1.0 in this case
-            fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -val : val);
+            fill(idx_in, idx_out, (fermi_up ^ fermi_dn) ? -val : val);
             ++idx_dn;
           }
 
@@ -82,7 +82,7 @@ void generic_term_ups(BasisIn &&basis_in, BasisOut &&basis_out,
               coeff_t val =
                   prefacs[sym] * norms_out[idx_dn_out] / norms_in[idx_dn];
 
-              fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -val : val);
+              fill(idx_in, idx_out, (fermi_up ^ fermi_dn) ? -val : val);
             }
             ++idx_dn;
           }
@@ -117,7 +117,7 @@ void generic_term_ups(BasisIn &&basis_in, BasisOut &&basis_out,
 
           for (int64_t idx_out = idx_out_start, idx_in = idx_in_start;
                idx_out < idx_out_end; ++idx_out, ++idx_in) {
-            fill(idx_out, idx_in, coeff);
+            fill(idx_in, idx_out, coeff);
           }
         }
       }

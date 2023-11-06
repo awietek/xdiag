@@ -42,6 +42,7 @@ combinatorics::CombinationsIterator<bit_t> BasisSz<bit_t>::end() const {
   return end_;
 }
 
+template <typename bit_t> int64_t BasisSz<bit_t>::dim() const { return size_; }
 template <typename bit_t> int64_t BasisSz<bit_t>::size() const { return size_; }
 template <typename bit_t> int64_t BasisSz<bit_t>::n_sites() const {
   return n_sites_;

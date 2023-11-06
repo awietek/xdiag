@@ -16,6 +16,7 @@ void fill(State &state, RandomState const &rstate, int64_t col) try {
   int64_t seed = rstate.seed();
   int64_t seed_modified =
       random::hash_combine(seed, random::hash(state.block()));
+  
   if (state.isreal()) {
     auto v = state.vector(col, false);
     random::fill_random_normal_vector(v, seed_modified);
@@ -28,7 +29,7 @@ void fill(State &state, RandomState const &rstate, int64_t col) try {
     state /= nrm;
   }
 } catch (...) {
-  rethrow(__func__, "Unable to fill State with a RandomState");
+  HydraRethrow("Unable to fill State with a RandomState");
 }
 
 State random_state(block_variant_t const &block, bool real, int64_t seed,

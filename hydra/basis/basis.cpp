@@ -2,19 +2,24 @@
 
 namespace hydra {
 
+int64_t dim(basis_spinhalf_variant_t const &idxing) {
+  return std::visit([&](auto &&idx) { return idx.dim(); }, idxing);
+}
+int64_t dim(basis_electron_variant_t const &idxing) {
+  return std::visit([&](auto &&idx) { return idx.dim(); }, idxing);
+}
+int64_t dim(basis_tj_variant_t const &idxing) {
+  return std::visit([&](auto &&idx) { return idx.dim(); }, idxing);
+}
+
 int64_t size(basis_spinhalf_variant_t const &idxing) {
-  return std::visit(
-      overload{[&](auto const &idx) -> int64_t { return idx.size(); }}, idxing);
+  return std::visit([&](auto &&idx) { return idx.size(); }, idxing);
 }
-
 int64_t size(basis_electron_variant_t const &idxing) {
-  return std::visit(
-      overload{[&](auto const &idx) -> int64_t { return idx.size(); }}, idxing);
+  return std::visit([&](auto &&idx) { return idx.size(); }, idxing);
 }
-
 int64_t size(basis_tj_variant_t const &idxing) {
-  return std::visit(
-      overload{[&](auto const &idx) -> int64_t { return idx.size(); }}, idxing);
+  return std::visit([&](auto &&idx) { return idx.size(); }, idxing);
 }
 
 template <typename bit_t>
@@ -198,5 +203,49 @@ template <typename bit_t> bool has_bit_t(basis_tj_variant_t const &basis) try {
 template bool has_bit_t<uint16_t>(basis_tj_variant_t const &basis);
 template bool has_bit_t<uint32_t>(basis_tj_variant_t const &basis);
 template bool has_bit_t<uint64_t>(basis_tj_variant_t const &basis);
+
+#ifdef HYDRA_USE_MPI
+
+int64_t dim(basis_tj_distributed_variant_t const &idxing) {
+  return std::visit([](auto &&idx) { return idx.dim(); }, idxing);
+}
+int64_t size(basis_tj_distributed_variant_t const &idxing) {
+  return std::visit([](auto &&idx) { return idx.size(); }, idxing);
+}
+
+int64_t size_max(basis_tj_distributed_variant_t const &idxing) {
+  return std::visit([](auto &&idx) { return idx.size_max(); }, idxing);
+}
+
+int64_t size_min(basis_tj_distributed_variant_t const &idxing) {
+  return std::visit([](auto &&idx) { return idx.size_min(); }, idxing);
+}
+
+template <typename bit_t>
+bool has_bit_t(basis_tj_distributed_variant_t const &basis) try {
+  using namespace basis::tj_distributed;
+  using std::is_same;
+  return std::visit(
+      overload{[](BasisNp<uint16_t> const &) {
+                 return is_same<bit_t, uint16_t>::value;
+               },
+               [](BasisNp<uint32_t> const &) {
+                 return is_same<bit_t, uint32_t>::value;
+               },
+               [](BasisNp<uint64_t> const &) {
+                 return is_same<bit_t, uint64_t>::value;
+               },
+               [](auto &&) { throw(std::logic_error("Invalid Basis type")); }},
+      basis);
+} catch (...) {
+  rethrow(__func__, "Unable to tell bit type of Electron basis");
+  return false;
+}
+
+template bool has_bit_t<uint16_t>(basis_tj_distributed_variant_t const &basis);
+template bool has_bit_t<uint32_t>(basis_tj_distributed_variant_t const &basis);
+template bool has_bit_t<uint64_t>(basis_tj_distributed_variant_t const &basis);
+
+#endif
 
 } // namespace hydra

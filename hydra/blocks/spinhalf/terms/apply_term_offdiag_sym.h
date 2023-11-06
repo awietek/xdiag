@@ -26,7 +26,7 @@ void apply_term_offdiag_sym_to_spins(bit_t spins_in, int64_t idx_in,
       double norm_in = basis_in.norm(idx_in);
       coeff_t bloch = characters[sym];
       coeff_t val = coeff * bloch * norm_out / norm_in;
-      fill(idx_out, idx_in, val);
+      fill(idx_in, idx_out, val);
     }
   }
 }
