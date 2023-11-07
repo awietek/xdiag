@@ -41,6 +41,8 @@ BasisNp<bit_t>::BasisNp(int64_t n_sites, int64_t n_up, int64_t n_dn)
   for (auto ups : my_ups_) {
     bit_t not_ups = (~ups) & sitesmask_;
 
+    my_ups_offset_[ups] = my_dns_for_ups_storage_.size();
+
     // Create all dns for my ups configurations
     int64_t dns_start = my_dns_for_ups_storage_.size();
     for (auto dnsc : Combinations<bit_t>(n_sites - n_up, n_dn)) {
@@ -83,6 +85,8 @@ BasisNp<bit_t>::BasisNp(int64_t n_sites, int64_t n_up, int64_t n_dn)
   for (auto dns : my_dns_) {
     bit_t not_dns = (~dns) & sitesmask_;
 
+    my_dns_offset_[dns] = my_ups_for_dns_storage_.size();
+
     // Create all ups for my dns configurations
     int64_t ups_start = my_ups_for_dns_storage_.size();
     for (auto upsc : Combinations<bit_t>(n_sites - n_dn, n_up)) {
@@ -121,6 +125,12 @@ BasisNp<bit_t>::BasisNp(int64_t n_sites, int64_t n_up, int64_t n_dn)
   mpi::Allreduce(&size_transpose_, &size_min_r, 1, MPI_MIN, MPI_COMM_WORLD);
   size_min_ = std::min(size_min_f, size_min_r);
 }
+template <typename bit_t> int64_t BasisNp<bit_t>::n_sites() const {
+  return n_sites_;
+}
+template <typename bit_t> int64_t BasisNp<bit_t>::n_up() const { return n_up_; }
+
+template <typename bit_t> int64_t BasisNp<bit_t>::n_dn() const { return n_dn_; }
 
 template <typename bit_t> int64_t BasisNp<bit_t>::dim() const { return dim_; }
 template <typename bit_t> int64_t BasisNp<bit_t>::size() const { return size_; }
@@ -138,13 +148,28 @@ template <typename bit_t>
 std::vector<bit_t> const &BasisNp<bit_t>::my_ups() const {
   return my_ups_;
 }
+
+template <typename bit_t>
+int64_t BasisNp<bit_t>::my_ups_offset(bit_t ups) const {
+  return my_ups_offset_.at(ups);
+}
+
 template <typename bit_t>
 gsl::span<bit_t> BasisNp<bit_t>::my_dns_for_ups(int64_t idx_ups) const {
   return my_dns_for_ups_[idx_ups];
 }
 template <typename bit_t>
+bit_t BasisNp<bit_t>::my_dns_for_ups_storage(int64_t idx) const {
+  return my_dns_for_ups_storage_[idx];
+}
+
+template <typename bit_t>
 std::vector<bit_t> const &BasisNp<bit_t>::my_dns() const {
   return my_dns_;
+}
+template <typename bit_t>
+int64_t BasisNp<bit_t>::my_dns_offset(bit_t dns) const {
+  return my_dns_offset_.at(dns);
 }
 template <typename bit_t>
 gsl::span<bit_t> BasisNp<bit_t>::my_ups_for_dns(int64_t idx_dns) const {

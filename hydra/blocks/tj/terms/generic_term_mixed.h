@@ -198,6 +198,8 @@ void generic_term_mixed(BasisIn &&basis_in, BasisOut &&basis_out,
                 int64_t idx_dnc_out = basis_out.index_dncs(dnc_out);
                 int64_t idx_out = idx_up_flip_offset + idx_dnc_out;
                 fill(idx_in, idx_out, coeff_up * coeff_dn);
+                // Log("tJ in: {} out: {} coeff: {}", idx_in, idx_out,
+                //     coeff_up * coeff_dn);
               }
             }
             ++idx_in;

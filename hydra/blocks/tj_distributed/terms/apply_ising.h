@@ -7,8 +7,10 @@
 
 namespace hydra::tj_distributed {
 
-template <typename bit_t, typename coeff_t, class Basis, class Fill>
-void apply_ising(Bond const &bond, Basis &&basis, Fill &&fill) {
+template <typename bit_t, typename coeff_t, class Basis>
+void apply_ising(Bond const &bond, Basis &&basis,
+                 arma::Col<coeff_t> const &vec_in,
+                 arma::Col<coeff_t> &vec_out) try {
   assert(bond.coupling_defined());
   assert(bond.type_defined());
   assert(bond.size() == 2);
@@ -48,7 +50,10 @@ void apply_ising(Bond const &bond, Basis &&basis, Fill &&fill) {
     }
   };
 
-  tj_distributed::generic_term_diag<bit_t, coeff_t>(basis, term_action, fill);
+  tj_distributed::generic_term_diag<bit_t, coeff_t>(basis, term_action, vec_in,
+                                                    vec_out);
+} catch (...) {
+  HydraRethrow("Unable to apply Ising term form \"tJDistributed\" block");
 }
 
 } // namespace hydra::tj_distributed

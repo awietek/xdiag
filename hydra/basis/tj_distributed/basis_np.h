@@ -1,6 +1,8 @@
 #pragma once
 #ifdef HYDRA_USE_MPI
 
+#include <unordered_map>
+
 #include "extern/gsl/span"
 
 #include <hydra/bits/bitops.h>
@@ -56,10 +58,12 @@ private:
   mpi::Communicator transpose_communicator_r_;
 
   std::vector<bit_t> my_ups_;
+  std::unordered_map<bit_t, int64_t> my_ups_offset_;
   std::vector<gsl::span<bit_t>> my_dns_for_ups_;
   std::vector<bit_t> my_dns_for_ups_storage_;
 
   std::vector<bit_t> my_dns_;
+  std::unordered_map<bit_t, int64_t> my_dns_offset_;
   std::vector<gsl::span<bit_t>> my_ups_for_dns_;
   std::vector<bit_t> my_ups_for_dns_storage_;
 
@@ -70,8 +74,12 @@ private:
 
 public:
   std::vector<bit_t> const &my_ups() const;
+  int64_t my_ups_offset(bit_t ups) const;
   gsl::span<bit_t> my_dns_for_ups(int64_t idx_ups) const;
+  bit_t my_dns_for_ups_storage(int64_t idx) const;
+
   std::vector<bit_t> const &my_dns() const;
+  int64_t my_dns_offset(bit_t dns) const;
   gsl::span<bit_t> my_ups_for_dns(int64_t idx_dns) const;
 };
 
