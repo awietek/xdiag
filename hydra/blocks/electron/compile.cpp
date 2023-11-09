@@ -4,7 +4,7 @@
 
 namespace hydra::electron {
 
-BondList compile(BondList const &bonds, double precision) {
+BondList compile(BondList const &bonds, double precision) try {
   using namespace operators;
 
   BondList bonds_explicit = compile_explicit(bonds, precision, "keep");
@@ -15,8 +15,8 @@ BondList compile(BondList const &bonds, double precision) {
       std::string type = bond.type();
       if (std::find(special_bond_types.begin(), special_bond_types.end(),
                     type) == special_bond_types.end()) {
-        Log.err("Error compiling BondList: invalid or undefined type found: {}",
-                type);
+        HydraThrow(std::runtime_error,
+                   std::string("Invalid or undefined type found ") + type);
       } else {
 
         // Exchange and Ising terms
@@ -96,6 +96,9 @@ BondList compile(BondList const &bonds, double precision) {
   }
 
   return bonds_compiled;
+} catch (...) {
+  HydraRethrow("Unable to compile BondList");
+  return BondList();
 }
 
 } // namespace hydra::electron

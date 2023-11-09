@@ -35,43 +35,4 @@ bool isdistributed(block_variant_t const &block) {
                     block);
 }
 
-std::function<double(arma::vec const &, arma::vec const &)>
-dot_product(block_variant_t const &block) {
-
-#ifdef HYDRA_USE_MPI
-  if (isdistributed(block)) {
-    return [](arma::vec const &v, arma::vec const &w) {
-      return cdot_distributed(v, w);
-    };
-  } else {
-#else
-  (void)block;
-#endif
-    return
-        [](arma::vec const &v, arma::vec const &w) { return arma::dot(v, w); };
-#ifdef HYDRA_USE_MPI
-  }
-
-#endif
-}
-
-std::function<complex(arma::cx_vec const &, arma::cx_vec const &)>
-cdot_product(block_variant_t const &block) {
-#ifdef HYDRA_USE_MPI
-  if (isdistributed(block)) {
-    return [](arma::cx_vec const &v, arma::cx_vec const &w) {
-      return cdot_distributed(v, w);
-    };
-  } else {
-#else
-  (void)block;
-#endif
-    return [](arma::cx_vec const &v, arma::cx_vec const &w) {
-      return arma::cdot(v, w);
-    };
-#ifdef HYDRA_USE_MPI
-  }
-#endif
-}
-
 } // namespace hydra

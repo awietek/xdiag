@@ -27,11 +27,5 @@ bool isreal(block_variant_t const &block);
 bool iscomplex(block_variant_t const &block);
 bool isdistributed(block_variant_t const &block);
 
-// Returns the proper dot product (distributed or not)
-std::function<double(arma::vec const &, arma::vec const &)>
-dot_product(block_variant_t const &block);
-
-std::function<complex(arma::cx_vec const &, arma::cx_vec const &)>
-cdot_product(block_variant_t const &block);
 
 } // namespace hydra

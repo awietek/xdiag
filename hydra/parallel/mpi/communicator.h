@@ -24,13 +24,26 @@ public:
 
   int64_t n_values_prepared(int mpi_rank) const;
 
-  template <class T>
-  void add_to_send_buffer(int mpi_rank, T value, T *send_buffer) const;
-
   void flush();
 
   template <class T>
-  void all_to_all(const T *send_buffer, T *recv_buffer) const;
+  inline void add_to_send_buffer(int mpi_rank, T value, T *send_buffer) const {
+    int64_t idx =
+        n_values_i_send_offsets_[mpi_rank] + n_values_prepared_[mpi_rank];
+    send_buffer[idx] = value;
+    ++n_values_prepared_[mpi_rank];
+  }
+
+  template <class T>
+  inline void all_to_all(const T *send_buffer, T *recv_buffer) const {
+    Alltoallv<T>(const_cast<T *>(send_buffer),
+                 const_cast<int *>(n_values_i_send_.data()),
+                 const_cast<int *>(n_values_i_send_offsets_.data()),
+                 const_cast<T *>(recv_buffer),
+                 const_cast<int *>(n_values_i_recv_.data()),
+                 const_cast<int *>(n_values_i_recv_offsets_.data()),
+                 MPI_COMM_WORLD);
+  }
 
 private:
   int mpi_rank_;

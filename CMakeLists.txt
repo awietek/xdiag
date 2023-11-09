@@ -50,8 +50,13 @@ endif()
 
 if(SANITIZER)
     message(STATUS "Compiling with sanitizers")
-    target_compile_options(hydra PUBLIC -fsanitize=address)
-    target_link_options(hydra PUBLIC -fsanitize=address)
+    if(BUILD_DISTRIBUTED)
+	target_compile_options(hydra_distributed PUBLIC -fsanitize=address)
+    	target_link_options(hydra_distributed PUBLIC -fsanitize=address)
+    else()			      
+    	target_compile_options(hydra PUBLIC -fsanitize=address)
+    	target_link_options(hydra PUBLIC -fsanitize=address)
+    endif()			      
 endif()
 
 install(DIRECTORY "${CMAKE_SOURCE_DIR}/hydra" # source directory

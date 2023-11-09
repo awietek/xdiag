@@ -54,37 +54,8 @@ int64_t Communicator::n_values_prepared(int mpi_rank) const {
   return n_values_prepared_[mpi_rank];
 }
 
-template <class T>
-void Communicator::add_to_send_buffer(int mpi_rank, T value,
-                                      T *send_buffer) const {
-  int64_t idx =
-      n_values_i_send_offsets_[mpi_rank] + n_values_prepared_[mpi_rank];
-  send_buffer[idx] = value;
-  ++n_values_prepared_[mpi_rank];
-}
-template void
-Communicator::add_to_send_buffer<double>(int, double value,
-                                         double *send_buffer) const;
-template void
-Communicator::add_to_send_buffer<complex>(int, complex value,
-                                          complex *send_buffer) const;
-
 void Communicator::flush() {
   std::fill(n_values_prepared_.begin(), n_values_prepared_.end(), 0);
 }
-
-template <class T>
-void Communicator::all_to_all(const T *send_buffer, T *recv_buffer) const {
-  Alltoallv<T>(
-      const_cast<T *>(send_buffer), const_cast<int *>(n_values_i_send_.data()),
-      const_cast<int *>(n_values_i_send_offsets_.data()),
-      const_cast<T *>(recv_buffer), const_cast<int *>(n_values_i_recv_.data()),
-      const_cast<int *>(n_values_i_recv_offsets_.data()), MPI_COMM_WORLD);
-}
-
-template void Communicator::all_to_all<double>(const double *send_buffer,
-                                               double *recv_buffer) const;
-template void Communicator::all_to_all<complex>(const complex *send_buffer,
-                                                complex *recv_buffer) const;
 
 } // namespace hydra::mpi

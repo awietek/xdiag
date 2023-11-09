@@ -9,8 +9,8 @@ namespace hydra::tj_distributed {
 
 template <typename bit_t, typename coeff_t, class Basis>
 void apply_ising(Bond const &bond, Basis &&basis,
-                 arma::Col<coeff_t> const &vec_in,
-                 arma::Col<coeff_t> &vec_out) try {
+                 const coeff_t* vec_in,
+                 coeff_t * vec_out) try {
   assert(bond.coupling_defined());
   assert(bond.type_defined());
   assert(bond.size() == 2);

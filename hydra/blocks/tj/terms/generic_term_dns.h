@@ -11,7 +11,7 @@ template <typename bit_t, typename coeff_t, bool symmetric, bool fermi_ups,
 void generic_term_dns(BasisIn &&basis_in, BasisOut &&basis_out,
                       NonZeroTermUps &&non_zero_term_ups,
                       NonZeroTermDns &&non_zero_term_dns,
-                      TermAction &&term_action, Fill &&fill) {
+                      TermAction &&term_action, Fill &&fill) try {
   int64_t n_sites = basis_in.n_sites();
   assert(n_sites == basis_out.n_sites());
   bit_t sitesmask = ((bit_t)1 << n_sites) - 1;
@@ -143,6 +143,8 @@ void generic_term_dns(BasisIn &&basis_in, BasisOut &&basis_out,
     }
 #endif
   } // if not symmetric
+} catch (...) {
+  HydraRethrow("Unable to apply generic term on dn spins");
 }
 
 } // namespace hydra::tj

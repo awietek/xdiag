@@ -9,71 +9,90 @@
 #define FMT_HEADER_ONLY
 #include "extern/fmt/format.h"
 
+#include <hydra/utils/error.h>
+
 namespace hydra {
 
 class LoggerMPI {
 public:
   LoggerMPI() : verbosity_(0){};
 
-  void set_verbosity(int verbosity) { verbosity_ = verbosity; }
-  int verbosity() { return verbosity_; }
+  inline void set_verbosity(int verbosity) { verbosity_ = verbosity; }
+  inline int verbosity() { return verbosity_; }
 
   template <typename... Args>
-  void out(const std::string &format, const Args &...args) {
+  inline void out(const std::string &format, const Args &...args) try {
     int rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     if (rank == 0)
       std::cout << fmt::format(format, args...) << "\n";
+  } catch (...) {
+    HydraRethrow("Unable to print output using LoggerMPI");
   }
 
   template <typename... Args>
-  void warn(const std::string &format, const Args &...args) {
+  inline void warn(const std::string &format, const Args &...args) try {
     int rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     if (rank == 0)
       std::cout << fmt::format(format, args...) << "\n" << std::flush;
+  } catch (...) {
+    HydraRethrow("Unable to print output using LoggerMPI");
   }
 
   template <typename... Args>
-  void err(const std::string &format, const Args &...args) {
+  inline void err(const std::string &format, const Args &...args) try {
     int rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     if (rank == 0)
       std::cerr << fmt::format(format, args...) << "\n" << std::flush;
+  } catch (...) {
+    HydraRethrow("Unable to print output using LoggerMPI");
   }
 
   template <typename... Args>
-  void out(int level, const std::string &format, const Args &...args) {
+  inline void out(int level, const std::string &format, const Args &...args) try {
     int rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     if ((rank == 0) && (level <= verbosity_))
       std::cout << fmt::format(format, args...) << "\n";
+  } catch (...) {
+    HydraRethrow("Unable to print output using LoggerMPI");
   }
 
   template <typename... Args>
-  void warn(int level, const std::string &format, const Args &...args) {
+  inline void warn(int level, const std::string &format, const Args &...args) try {
     int rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     if ((rank == 0) && (level <= verbosity_))
       std::cout << fmt::format(format, args...) << "\n" << std::flush;
+  } catch (...) {
+    HydraRethrow("Unable to print output using LoggerMPI");
   }
 
   template <typename... Args>
-  void err(int level, const std::string &format, const Args &...args) {
+  inline void err(int level, const std::string &format, const Args &...args) try {
     int rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     if ((rank == 0) && (level <= verbosity_))
       std::cerr << fmt::format(format, args...) << "\n" << std::flush;
+  } catch (...) {
+    HydraRethrow("Unable to print output using LoggerMPI");
   }
-  
+
   template <typename... Args>
-  void operator()(const std::string &format, const Args &...args) {
+  inline void operator()(const std::string &format, const Args &...args) try {
     out(format, args...);
+  } catch (...) {
+    HydraRethrow("Unable to print output using LoggerMPI");
   }
-  
+
   template <typename... Args>
-  void operator()(int level, const std::string &format, const Args &...args) {
+  inline void operator()(int level, const std::string &format,
+                  const Args &...args) try {
     out(level, format, args...);
+  } catch (...) {
+    HydraRethrow("Unable to print output using LoggerMPI");
   }
 
 private:
@@ -81,7 +100,7 @@ private:
 };
 
 inline LoggerMPI LogMPI;
-  
+
 } // namespace hydra
 
 #endif

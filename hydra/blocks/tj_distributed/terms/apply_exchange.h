@@ -12,9 +12,8 @@
 namespace hydra::tj_distributed {
 
 template <typename bit_t, typename coeff_t, class Basis>
-void apply_exchange(Bond const &bond, Basis &&basis,
-                    arma::Col<coeff_t> const &vec_in,
-                    arma::Col<coeff_t> &vec_out) try {
+void apply_exchange(Bond const &bond, Basis &&basis, const coeff_t *vec_in,
+                    coeff_t *vec_out) try {
   assert(bond.coupling_defined());
   assert(bond.type_defined());
   assert(bond.size() == 2);
@@ -75,7 +74,7 @@ void apply_exchange(Bond const &bond, Basis &&basis,
 
       for (bit_t dn : basis.my_dns_for_ups(idx_up)) {
         if (popcnt(dn & flipmask) == 1) {
-          comm.add_to_send_buffer(target, vec_in(idx),
+          comm.add_to_send_buffer(target, vec_in[idx],
                                   mpi::buffer.send<coeff_t>());
         }
         ++idx;
@@ -84,11 +83,6 @@ void apply_exchange(Bond const &bond, Basis &&basis,
       idx += n_dn_configurations;
     }
     ++idx_up;
-  }
-
-  // Check, whether correct number of states has been prepared
-  for (int m = 0; m < mpi_size; ++m) {
-    assert(comm.n_states_prepared(m) == comm.n_values_i_send(m));
   }
 
   // Alltoall called
@@ -130,20 +124,15 @@ void apply_exchange(Bond const &bond, Basis &&basis,
             bool fermi_dn = bits::popcnt(dn & fermimask) & 1;
 
             if constexpr (isreal<coeff_t>()) {
-              vec_out(target_idx) += ((fermi_up ^ fermi_dn) ? Jhalf : -Jhalf) *
+              vec_out[target_idx] += ((fermi_up ^ fermi_dn) ? Jhalf : -Jhalf) *
                                      mpi::buffer.recv<coeff_t>()[recv_idx];
             } else {
               if (up_s1_set) {
-                // Log("tJd in: {} out: {} coeff: {}", recv_idx, target_idx,
-                //     (fermi_up ^ fermi_dn) ? Jhalf : -Jhalf);
-
-                vec_out(target_idx) +=
+                vec_out[target_idx] +=
                     ((fermi_up ^ fermi_dn) ? Jhalf : -Jhalf) *
                     mpi::buffer.recv<coeff_t>()[recv_idx];
               } else {
-		   // Log("tJd in: {} out: {} coeff: {}", recv_idx, target_idx,
-                   //  (fermi_up ^ fermi_dn) ? Jhalf_conj : -Jhalf_conj);
-                vec_out(target_idx) +=
+                vec_out[target_idx] +=
                     ((fermi_up ^ fermi_dn) ? Jhalf_conj : -Jhalf_conj) *
                     mpi::buffer.recv<coeff_t>()[recv_idx];
               }

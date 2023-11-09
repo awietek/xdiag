@@ -49,7 +49,7 @@ Combinations<bit_t> BasisNp<bit_t>::states_ups() const {
 template <typename bit_t>
 Combinations<bit_t> BasisNp<bit_t>::states_dncs(bit_t ups) const {
   (void)ups;
-  assert(bitops::popcnt(ups) == n_up_);
+  assert(bits::popcnt(ups) == n_up_);
   return Combinations<bit_t>(n_sites_ - n_up_, n_dn_);
 }
 
@@ -61,7 +61,7 @@ CombinationsIndex<bit_t> BasisNp<bit_t>::states_indices_ups() const {
 template <typename bit_t>
 CombinationsIndex<bit_t> BasisNp<bit_t>::states_indices_dncs(bit_t ups) const {
   (void)ups;
-  assert(bitops::popcnt(ups) == n_up_);
+  assert(bits::popcnt(ups) == n_up_);
   return CombinationsIndex<bit_t>(n_sites_ - n_up_, n_dn_);
 }
 
@@ -74,7 +74,7 @@ CombinationsThread<bit_t> BasisNp<bit_t>::states_ups_thread() const {
 template <typename bit_t>
 CombinationsThread<bit_t> BasisNp<bit_t>::states_dncs_thread(bit_t ups) const {
   (void)ups;
-  assert(bitops::popcnt(ups) == n_up_);
+  assert(bits::popcnt(ups) == n_up_);
   return CombinationsThread<bit_t>(n_sites_ - n_up_, n_dn_);
 }
 
@@ -88,7 +88,7 @@ template <typename bit_t>
 CombinationsIndexThread<bit_t>
 BasisNp<bit_t>::states_indices_dncs_thread(bit_t ups) const {
   (void)ups;
-  assert(bitops::popcnt(ups) == n_up_);
+  assert(bits::popcnt(ups) == n_up_);
   return CombinationsIndexThread<bit_t>(n_sites_ - n_up_, n_dn_);
 }
 #endif

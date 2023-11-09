@@ -1,4 +1,5 @@
 #include "eigvals_lanczos.h"
+#include <hydra/algebra/algebra.h>
 #include <hydra/algebra/apply.h>
 #include <hydra/algorithms/lanczos/lanczos.h>
 #include <hydra/algorithms/lanczos/lanczos_convergence.h>
@@ -46,9 +47,11 @@ eigvals_lanczos(BondList const &bonds, block_variant_t const &block,
     };
 
     auto operation = [](arma::cx_vec const &) {};
-    auto dot = cdot_product(block);
+    auto dotf = [&block](arma::cx_vec const &v, arma::cx_vec const &w) {
+      return dot(block, v, w);
+    };
 
-    r = lanczos::lanczos(mult, dot, converged, operation, v0, max_iterations,
+    r = lanczos::lanczos(mult, dotf, converged, operation, v0, max_iterations,
                          deflation_tol);
 
     // Setup real Lanczos run
@@ -63,9 +66,11 @@ eigvals_lanczos(BondList const &bonds, block_variant_t const &block,
     };
 
     auto operation = [](arma::vec const &) {};
-    auto dot = dot_product(block);
+    auto dotf = [&block](arma::vec const &v, arma::vec const &w) {
+      return dot(block, v, w);
+    };
 
-    r = lanczos::lanczos(mult, dot, converged, operation, v0, max_iterations,
+    r = lanczos::lanczos(mult, dotf, converged, operation, v0, max_iterations,
                          deflation_tol);
   }
   return {r.alphas, r.betas, r.eigenvalues, r.niterations, r.criterion};

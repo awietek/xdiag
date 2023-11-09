@@ -20,7 +20,7 @@ void apply_scalar_chirality(Bond const &bond, BasisIn &&basis_in,
   assert(bond.type_defined() && (bond.type() == "SCALARCHIRALITY"));
   assert(bond.size() == 3);
   assert(bond.sites_disjoint());
-  assert(is_complex<coeff_t>());
+  assert(iscomplex<coeff_t>());
 
   complex J = bond.coupling();
   coeff_t Jquarter = 0.;

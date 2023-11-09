@@ -9,8 +9,9 @@
 
 namespace hydra::tj_distributed {
 
-template <typename bit_t, typename coeff_t, class Basis, class Fill>
-void apply_hopping(Bond const &bond, Basis &&basis, Fill &&fill) {
+template <typename bit_t, typename coeff_t, class Basis>
+void apply_hopping(Bond const &bond, Basis &&basis, const coeff_t *vec_in,
+                   coeff_t *vec_out) try {
   assert(bond.coupling_defined());
   assert(bond.type_defined());
   assert(bond.size() == 2);
@@ -31,7 +32,7 @@ void apply_hopping(Bond const &bond, Basis &&basis, Fill &&fill) {
     bool fermi = bits::popcnt(spins & fermimask) & 1;
     spins ^= flipmask;
     if constexpr (iscomplex<coeff_t>()) {
-      coeff_t tt = (bits::gbit(spins, s1)) ? t : conj(t);
+      coeff_t tt = (bits::gbit(spins, s2)) ? t : conj(t);
       return {spins, fermi ? tt : -tt};
     } else {
       return {spins, fermi ? t : -t};
@@ -39,21 +40,39 @@ void apply_hopping(Bond const &bond, Basis &&basis, Fill &&fill) {
   };
 
   if (type == "HOPUP") {
-    auto non_zero_term = [&flipmask](bit_t const &ups) -> bool {
+
+    // Define annihilation conditions
+    auto non_zero_term_dns = [&flipmask](bit_t const &dns) -> bool {
+      return (dns & flipmask) == 0;
+    };
+    auto non_zero_term_ups = [&flipmask](bit_t const &ups) -> bool {
       return bits::popcnt(ups & flipmask) & 1;
     };
+
+    // Call generic term function
     tj_distributed::generic_term_ups<bit_t, coeff_t>(
-        basis, basis, non_zero_term, term_action, fill);
+        basis, basis, non_zero_term_ups, non_zero_term_dns, term_action, vec_in,
+        vec_out);
   } else if (type == "HOPDN") {
+
+    // Define annihilation conditions
     auto non_zero_term_ups = [&flipmask](bit_t const &ups) -> bool {
       return (ups & flipmask) == 0;
     };
     auto non_zero_term_dns = [&flipmask](bit_t const &dns) -> bool {
       return bits::popcnt(dns & flipmask) & 1;
     };
+
+    // Call generic term function
     tj_distributed::generic_term_dns<bit_t, coeff_t, false>(
-        basis, basis, non_zero_term_ups, non_zero_term_dns, term_action, fill);
+        basis, basis, non_zero_term_ups, non_zero_term_dns, term_action, vec_in,
+        vec_out);
+  } else {
+    HydraThrow(std::runtime_error,
+               std::string("Invalid type given to apply_hopping: ") + type)
   }
+} catch (...) {
+  HydraRethrow("Unable to apply hopping term for \"tJDistributed\" block");
 }
 
 } // namespace hydra::tj_distributed

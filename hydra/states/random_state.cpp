@@ -24,7 +24,7 @@ void fill(State &state, RandomState const &rstate, int64_t col) try {
     auto v = state.vectorC(col, false);
     random::fill_random_normal_vector(v, seed_modified);
   }
-  if (rstate.normalized()) {
+  if (rstate.normalized()){
     double nrm = norm(state);
     state /= nrm;
   }

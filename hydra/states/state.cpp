@@ -170,6 +170,8 @@ void State::make_complex() try {
   HydraRethrow("Error transforming to complex State");
 }
 
+int64_t State::dim() const { return hydra::dim(block_); }
+
 int64_t State::size() const { return n_rows_ * n_cols_; }
 int64_t State::n_rows() const { return n_rows_; }
 int64_t State::n_cols() const { return n_cols_; }
