@@ -112,7 +112,7 @@ void apply_exchange(Bond const &bond, Basis &&basis, const coeff_t *vec_in,
     for (bit_t up : ups_i_get_from_proc[m]) {
       if (popcnt(up & flipmask) == 1) {
         bool fermi_up = bits::popcnt(up & fermimask) & 1;
-        bool up_s1_set = bits::gbit(up, s1);
+        bool up_s1_set = bits::gbit(up, s2);
 
         int64_t up_offset = basis.my_ups_offset(up);
 
@@ -120,7 +120,7 @@ void apply_exchange(Bond const &bond, Basis &&basis, const coeff_t *vec_in,
              target_idx < up_offset + n_dn_configurations; ++target_idx) {
           bit_t dn = basis.my_dns_for_ups_storage(target_idx);
 
-          if (popcnt(dn & flipmask) == 1) {
+          if (bits::popcnt(dn & flipmask) == 1) {
             bool fermi_dn = bits::popcnt(dn & fermimask) & 1;
 
             if constexpr (isreal<coeff_t>()) {

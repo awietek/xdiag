@@ -14,6 +14,8 @@
 TEST_CASE("time_evolution_distributed", "[time_evolution]") try {
   using namespace hydra;
 
+  Log("Test time_evolution_distributed");
+  
   int L = 3;
   int n_sites = L * L;
 
@@ -28,13 +30,18 @@ TEST_CASE("time_evolution_distributed", "[time_evolution]") try {
       int right = y * L + nx;
       int top = ny * L + x;
       bonds << Bond("HOP", "T", {site, right});
-      bonds << Bond("TJISING", "J", {site, right});
+      bonds << Bond("TJISING", "JZ", {site, right});
+      bonds << Bond("EXCHANGE", "JEX", {site, right});
+
       bonds << Bond("HOP", "T", {site, top});
-      bonds << Bond("TJISING", "J", {site, top});
+      bonds << Bond("TJISING", "JZ", {site, top});
+      bonds << Bond("EXCHANGE", "JEX", {site, top});
+
     }
   }
   bonds["T"] = 1.0 + 0.2i;
-  bonds["J"] = 0.4;
+  bonds["JZ"] = 0.4;
+  bonds["JEX"] = 0.3 + 1.23i;
 
   // Create initial state
   auto pstate = ProductState();
@@ -74,7 +81,7 @@ TEST_CASE("time_evolution_distributed", "[time_evolution]") try {
   double tol = 1e-12;
   for (auto time : times) {
     auto psi = time_evolve(bonds, psi_0, time, tol);
-    auto psid = time_evolve(bonds, psi_0d, -time, tol);
+    auto psid = time_evolve(bonds, psi_0d, time, tol);
     for (int s = 0; s < n_sites; ++s) {
       auto n = innerC(Bond("NUMBER", s), psi);
       auto nd = innerC(Bond("NUMBER", s), psid);

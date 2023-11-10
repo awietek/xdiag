@@ -32,7 +32,7 @@ void apply_hopping(Bond const &bond, Basis &&basis, const coeff_t *vec_in,
     bool fermi = bits::popcnt(spins & fermimask) & 1;
     spins ^= flipmask;
     if constexpr (iscomplex<coeff_t>()) {
-      coeff_t tt = (bits::gbit(spins, s2)) ? t : conj(t);
+      coeff_t tt = (bits::gbit(spins, s1)) ? t : conj(t);
       return {spins, fermi ? tt : -tt};
     } else {
       return {spins, fermi ? t : -t};
