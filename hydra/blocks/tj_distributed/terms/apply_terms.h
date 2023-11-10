@@ -22,6 +22,9 @@ void apply_terms(BondList const &bonds, BasisIn const &basis_in,
     if ((type == "ISING") || (type == "TJISING")) {
       tj_distributed::apply_ising<bit_t, coeff_t>(
           bond, basis_in, vec_in.memptr(), vec_out.memptr());
+    } else if ((type == "NUMBERUP") || (type == "NUMBERDN")) {
+      tj_distributed::apply_number<bit_t, coeff_t>(
+          bond, basis_in, vec_in.memptr(), vec_out.memptr());
     } else if (type == "EXCHANGE") {
       tj_distributed::apply_exchange<bit_t, coeff_t>(
           bond, basis_in, vec_in.memptr(), vec_out.memptr());
@@ -31,13 +34,15 @@ void apply_terms(BondList const &bonds, BasisIn const &basis_in,
     } else if (type == "HOPUP") {
       continue;
     } else {
-      HydraThrow(std::runtime_error,
-                 "Unknown bond type for \"tJDistributed\" block");
+      HydraThrow(
+          std::runtime_error,
+          std::string("Unknown bond type for \"tJDistributed\" block: ") +
+              type);
     }
   }
 
   // Bonds applied in dn/up order
-  
+
   // Perform a transpose to dn/up order
   basis_in.transpose(vec_in.memptr());
 
@@ -55,11 +60,14 @@ void apply_terms(BondList const &bonds, BasisIn const &basis_in,
       tj_distributed::apply_hopping<bit_t, coeff_t>(
           bond, basis_in, vec_in_trans, vec_out_trans);
     } else if ((type == "ISING") || (type == "TJISING") ||
-               (type == "EXCHANGE") || (type == "HOPDN")) {
+               (type == "EXCHANGE") || (type == "HOPDN") ||
+	       (type == "NUMBERUP") || (type == "NUMBERDN")) {
       continue;
     } else {
-      HydraThrow(std::runtime_error,
-                 "Unknown bond type for \"tJDistributed\" block");
+      HydraThrow(
+          std::runtime_error,
+          std::string("Unknown bond type for \"tJDistributed\" block: ") +
+              type);
     }
   }
 

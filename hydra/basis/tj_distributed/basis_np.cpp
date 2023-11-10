@@ -232,6 +232,17 @@ template <typename bit_t> int64_t BasisNp<bit_t>::n_up() const { return n_up_; }
 
 template <typename bit_t> int64_t BasisNp<bit_t>::n_dn() const { return n_dn_; }
 
+template <typename bit_t>
+int64_t BasisNp<bit_t>::index(bit_t up, bit_t dn) const {
+  if (rank(up) != mpi_rank_) {
+    return invalid_index;
+  } else {
+    bit_t not_up = (~up) & sitesmask_;
+    bit_t dnc = bits::extract(dn, not_up);
+    return my_ups_offset(up) + index_dncs(dnc);
+  }
+}
+
 template <typename bit_t> int64_t BasisNp<bit_t>::dim() const { return dim_; }
 template <typename bit_t> int64_t BasisNp<bit_t>::size() const { return size_; }
 template <typename bit_t> int64_t BasisNp<bit_t>::size_transpose() const {
@@ -293,6 +304,7 @@ void BasisNp<bit_t>::transpose(const coeff_t *in_vec, coeff_t *out_vec) const {
       ++idx;
     }
   }
+
   assert(idx == size_);
   comm.all_to_all(send_buffer, recv_buffer);
 
@@ -324,10 +336,8 @@ void BasisNp<bit_t>::transpose_r(coeff_t const *in_vec,
                                  coeff_t *out_vec) const {
   // transforms a vector in up/dn order to dn/up order
   // result of transpose is stored in send_buffer
-
   auto comm = transpose_communicator_r_;
   mpi::buffer.reserve<coeff_t>(std::max(size_, size_transpose_));
-
   coeff_t *send_buffer = mpi::buffer.send<coeff_t>();
   coeff_t *recv_buffer = mpi::buffer.recv<coeff_t>();
 
@@ -341,6 +351,7 @@ void BasisNp<bit_t>::transpose_r(coeff_t const *in_vec,
     }
   }
   assert(idx == size_transpose_);
+
   comm.all_to_all(send_buffer, recv_buffer);
 
   // Sort to proper order
@@ -355,6 +366,7 @@ void BasisNp<bit_t>::transpose_r(coeff_t const *in_vec,
       send_buffer[sorted_idx] = recv_buffer[idx];
     }
   }
+
   mpi::buffer.clean_recv();
 }
 

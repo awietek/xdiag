@@ -3,6 +3,7 @@
 #include <hydra/algebra/apply.h>
 
 #ifdef HYDRA_USE_MPI
+#include <hydra/parallel/mpi/allreduce.h>
 #include <hydra/parallel/mpi/cdot_distributed.h>
 #endif
 
@@ -34,6 +35,7 @@ double dot(State const &v, State const &w) try {
     HydraThrow(std::logic_error,
                "Cannot compute dot product of state with more than one column");
   }
+  Log("rci {} {}", v.isreal(), w.isreal());
 
   if ((v.isreal()) && (w.isreal())) {
     return dot(v.vector(0, false), w.vector(0, false));
@@ -393,4 +395,39 @@ double norm(block_variant_t const &block, arma::Col<coeff_t> const &v) try {
 
 template double norm(block_variant_t const &, arma::Col<double> const &);
 template double norm(block_variant_t const &, arma::Col<complex> const &);
+
+template <typename coeff_t>
+double norm1(block_variant_t const &block, arma::Col<coeff_t> const &v) try {
+  double nrm = arma::norm(v, 1);
+#ifdef HYDRA_USE_MPI
+  if (isdistributed(block)) {
+    mpi::Allreduce((double*)MPI_IN_PLACE, &nrm, 1, MPI_SUM, MPI_COMM_WORLD);
+  }
+#endif
+  return nrm;
+} catch (...) {
+  HydraRethrow("unable to compute 1-norm for given block");
+  return 0;
+}
+
+template double norm1(block_variant_t const &, arma::Col<double> const &);
+template double norm1(block_variant_t const &, arma::Col<complex> const &);
+
+template <typename coeff_t>
+double norminf(block_variant_t const &block, arma::Col<coeff_t> const &v) try {
+  double nrm = arma::norm(v, "inf");
+#ifdef HYDRA_USE_MPI
+  if (isdistributed(block)) {
+    mpi::Allreduce((double*)MPI_IN_PLACE, &nrm, 1, MPI_MAX, MPI_COMM_WORLD);
+  }
+#endif
+  return nrm;
+} catch (...) {
+  HydraRethrow("unable to compute maximum norm for given block");
+  return 0;
+}
+
+template double norminf(block_variant_t const &, arma::Col<double> const &);
+template double norminf(block_variant_t const &, arma::Col<complex> const &);
+
 } // namespace hydra

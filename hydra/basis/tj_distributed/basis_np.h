@@ -25,6 +25,8 @@ public:
   int64_t n_dn() const;
   static constexpr bool np_conserved() { return true; }
 
+  int64_t index(bit_t up, bit_t dn) const;
+  
   int64_t dim() const;
   int64_t size() const;
   int64_t size_transpose() const;

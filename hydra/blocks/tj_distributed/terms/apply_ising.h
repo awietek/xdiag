@@ -53,7 +53,7 @@ void apply_ising(Bond const &bond, Basis &&basis,
   tj_distributed::generic_term_diag<bit_t, coeff_t>(basis, term_action, vec_in,
                                                     vec_out);
 } catch (...) {
-  HydraRethrow("Unable to apply Ising term form \"tJDistributed\" block");
+  HydraRethrow("Unable to apply Ising term for \"tJDistributed\" block");
 }
 
 } // namespace hydra::tj_distributed

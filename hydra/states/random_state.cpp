@@ -16,7 +16,7 @@ void fill(State &state, RandomState const &rstate, int64_t col) try {
   int64_t seed = rstate.seed();
   int64_t seed_modified =
       random::hash_combine(seed, random::hash(state.block()));
-  
+
   if (state.isreal()) {
     auto v = state.vector(col, false);
     random::fill_random_normal_vector(v, seed_modified);
@@ -24,7 +24,7 @@ void fill(State &state, RandomState const &rstate, int64_t col) try {
     auto v = state.vectorC(col, false);
     random::fill_random_normal_vector(v, seed_modified);
   }
-  if (rstate.normalized()){
+  if (rstate.normalized()) {
     double nrm = norm(state);
     state /= nrm;
   }
@@ -50,4 +50,8 @@ State random_state(block_t const &block, bool real, int64_t seed,
 template State random_state(Spinhalf const &, bool, int64_t, bool);
 template State random_state(tJ const &, bool, int64_t, bool);
 template State random_state(Electron const &, bool, int64_t, bool);
+#ifdef HYDRA_USE_MPI
+template State random_state(tJDistributed const &, bool, int64_t, bool);
+#endif
+
 } // namespace hydra

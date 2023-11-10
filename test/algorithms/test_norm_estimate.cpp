@@ -20,7 +20,7 @@ void test_operator_norm_real(block_t const &block, BondList const &bonds) {
   auto H = matrix(bonds, block, block);
   double norm_exact = norm(H, 1);
   auto apply_H = [&H](vec const &v) { return vec(H * v); };
-  double norm_est = norm_estimate_real(apply_H, apply_H, block.size());
+  double norm_est = norm_estimate(bonds, block);
   double ratio = norm_est / norm_exact;
 
   // Log("norm_exact: {}", norm_exact);
@@ -38,8 +38,7 @@ void test_operator_norm_cplx(block_t const &block, BondList const &bonds) {
 
   auto H = matrixC(bonds, block, block);
   double norm_exact = norm(H, 1);
-  auto apply_H = [&H](cx_vec const &v) { return cx_vec(H * v); };
-  double norm_est = norm_estimate_cplx(apply_H, apply_H, block.size());
+  double norm_est = norm_estimate(bonds, block);
   double ratio = norm_est / norm_exact;
 
   // Log("norm_exact: {}", norm_exact);
@@ -68,9 +67,7 @@ TEST_CASE("norm_estimate", "[algorithms]") {
       arma_rng::set_seed(seed);
       mat A(n, n, fill::randn);
       double norm_exact = norm(A, 1);
-      auto apply_A = [&A](arma::vec const &v) { return vec(A * v); };
-      auto apply_A_T = [&A](arma::vec const &v) { return vec(A.t() * v); };
-      double norm_est = norm_estimate_real(apply_A, apply_A_T, n);
+      double norm_est = norm_estimate(A);
       double ratio = norm_est / norm_exact;
       // Log("ratio: {}", ratio);
       // Log("norm_exact: {}", norm_exact);
@@ -83,11 +80,7 @@ TEST_CASE("norm_estimate", "[algorithms]") {
       arma_rng::set_seed(seed);
       cx_mat A(n, n, fill::randn);
       double norm_exact = norm(A, 1);
-      auto apply_A = [&A](arma::cx_vec const &v) { return cx_vec(A * v); };
-      auto apply_A_T = [&A](arma::cx_vec const &v) {
-        return cx_vec(A.t() * v);
-      };
-      double norm_est = norm_estimate_cplx(apply_A, apply_A_T, n);
+      double norm_est = norm_estimate(A);
       double ratio = norm_est / norm_exact;
       // Log("ratio: {}", ratio);
       // Log("norm_exact: {}", norm_exact);

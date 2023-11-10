@@ -28,6 +28,15 @@ private:
   std::vector<std::string> local_states_;
 };
 
+State product_state(block_variant_t const &block,
+                    std::vector<std::string> const &local_state,
+                    bool real = true);
+
+template <typename block_t>
+State product_state(block_t const &block,
+                    std::vector<std::string> const &local_state,
+                    bool real = true);
+
 void fill(State &state, ProductState const &pstate, int64_t col = 0);
 
 template <typename coeff_t>
@@ -41,13 +50,10 @@ template <typename coeff_t>
 void fill(Electron const &block, arma::Col<coeff_t> &vec,
           ProductState const &pstate);
 
-State product_state(block_variant_t const &block,
-                    std::vector<std::string> const &local_state,
-                    bool real = true);
-
-template <typename block_t>
-State product_state(block_t const &block,
-                    std::vector<std::string> const &local_state,
-                    bool real = true);
+#ifdef HYDRA_USE_MPI
+template <typename coeff_t>
+void fill(tJDistributed const &block, arma::Col<coeff_t> &vec,
+          ProductState const &pstate);
+#endif
 
 } // namespace hydra

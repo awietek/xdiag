@@ -111,7 +111,6 @@ set(HYDRA_SOURCES
   algorithms/gram_schmidt/orthogonalize.cpp
 
   algorithms/norm_estimate.cpp
-  algorithms/time_evolution/zahexpv.cpp
   algorithms/time_evolution/exp_sym_v.cpp
   algorithms/time_evolution/time_evolution.cpp
   algorithms/time_evolution/pade_matrix_exponential.cpp
