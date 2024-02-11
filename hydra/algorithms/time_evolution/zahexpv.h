@@ -79,8 +79,6 @@ zahexpv(double time, apply_A_f &&apply_A, dot_f &&dot, arma::cx_vec &w,
   // conditioned ) expokit paper still stipulates algorithm can work even if if
   // hump > 1
   double hump = normv;
-  int rnk;
-  MPI_Comm_rank(MPI_COMM_WORLD, &rnk);
 
   // the actual time evolution
   while (t_now < t_out) {
