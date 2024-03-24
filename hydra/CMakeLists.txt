@@ -154,7 +154,7 @@ else()
   add_library(hydra STATIC)
   set(HYDRA_LIBRARY hydra PARENT_SCOPE)
   set(HYDRA_LIBRARY hydra)
-  target_sources(hydra_distributed
+  target_sources(hydra
     PRIVATE
     ${HYDRA_SOURCES}
   )
