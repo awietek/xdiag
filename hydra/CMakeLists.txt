@@ -1,9 +1,5 @@
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
-set(HYDRA_DEFINITIONS "")
-set(HYDRA_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/include")
-set(HYDRA_LIBRARIES "${CMAKE_SOURCE_DIR}/lib/libhydra.a")
-
 set(HYDRA_SOURCES
   utils/iochecks.cpp
   utils/print.cpp
@@ -134,6 +130,7 @@ if(BUILD_DISTRIBUTED)
   message(STATUS "-------- BUILDING DISTRIBUTED HYDRA LIBRARY -------------")
   add_library(hydra_distributed STATIC ${HYDRA_SOURCES} ${HYDRA_DISTRIBUTED_SOURCES})
   target_include_directories(hydra_distributed PUBLIC ${MPI_CXX_INCLUDE_PATH})
+  target_link_libraries(hydra_distributed PUBLIC ${MPI_CXX_LIBRARIES})
   target_compile_definitions(hydra_distributed PUBLIC HYDRA_USE_MPI)
   set(HYDRA_LIBRARY hydra_distributed)
 else()
@@ -157,56 +154,40 @@ message(STATUS "-------- Determining Linear Algebra backend -------------")
 find_package(MKL)
 if(MKL_FOUND)
   message(STATUS "Employing IntelMKL as linear algebra backend")
-
   target_compile_definitions(${HYDRA_LIBRARY} PUBLIC HYDRA_USE_MKL MKL_ILP64)
-  list(APPEND HYDRA_DEFINITIONS HYDRA_USE_MKL MKL_ILP64)
-
   target_include_directories(${HYDRA_LIBRARY} PUBLIC ${MKL_INCLUDE_DIR})
-  list(APPEND HYDRA_INCLUDE_DIRS ${MKL_INCLUDE_DIR})
-
-
-  # Choose correct MKL libraries
-  if(OMP_THREADING)
-
-    target_compile_options(${HYDRA_LIBRARY} PUBLIC -fopenmp)
     
-    if(MKL_THREADING)
-      if(CMAKE_CXX_COMPILER_ID STREQUAL "IntelLLVM")
-	set(MKL_LIBRARIES ${MKL_INTERFACE_LIBRARY} ${MKL_THREAD_LAYER_LIBRARY} ${MKL_CORE_LIBRARY})
-      elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-	set(MKL_LIBRARIES ${MKL_INTERFACE_LIBRARY} ${MKL_THREAD_LAYER_LIBRARY} ${MKL_CORE_LIBRARY})
-      else()
-	message(STATUS "OMP and MKL threading only works for GNU and Intel compilers")
-	set(MKL_LIBRARIES ${MKL_INTERFACE_LIBRARY} ${MKL_SEQUENTIAL_LAYER_LIBRARY} ${MKL_CORE_LIBRARY})
-      endif()
-    else()
-      set(MKL_LIBRARIES ${MKL_INTERFACE_LIBRARY} ${MKL_SEQUENTIAL_LAYER_LIBRARY} ${MKL_CORE_LIBRARY})
-    endif()
+  add_library(mkl_intel_ilp64 SHARED IMPORTED GLOBAL)
+  add_library(mkl_sequential SHARED IMPORTED GLOBAL)
+  add_library(mkl_core SHARED IMPORTED GLOBAL)
 
+  set_target_properties(mkl_intel_ilp64 PROPERTIES IMPORTED_LOCATION
+    ${MKL_INTERFACE_LIBRARY}
+    IMPORTED_LINK_INTERFACE_MULTIPLICITY 3)
+  
+  if(MKL_THREADING)
+    set_target_properties(mkl_sequential PROPERTIES IMPORTED_LOCATION
+      ${MKL_THREAD_LAYER_LIBRARY}
+      IMPORTED_LINK_INTERFACE_MULTIPLICITY 3)
   else()
-    if(MKL_THREADING)
-      set(MKL_LIBRARIES ${MKL_INTERFACE_LIBRARY} ${MKL_THREAD_LAYER_LIBRARY} ${MKL_CORE_LIBRARY})
-    else()
-      set(MKL_LIBRARIES ${MKL_INTERFACE_LIBRARY} ${MKL_SEQUENTIAL_LAYER_LIBRARY} ${MKL_CORE_LIBRARY})
-    endif()
-  
+    set_target_properties(mkl_sequential PROPERTIES IMPORTED_LOCATION
+      ${MKL_SEQUENTIAL_LAYER_LIBRARY}
+      IMPORTED_LINK_INTERFACE_MULTIPLICITY 3)
   endif()
 
-  if(NOT WIN32 AND NOT APPLE)
-    # Added -Wl block to avoid circular dependencies.
-    # https://stackoverflow.com/questions/5651869/what-are-the-start-group-and-end-group-command-line-options
-    # https://software.intel.com/en-us/articles/intel-mkl-link-line-advisor
-    set(MKL_LIBRARIES -Wl,--start-group ${MKL_LIBRARIES} -Wl,--end-group -liomp5 -lpthread -lm -ldl)
-  elseif(APPLE)
-    # MacOS does not support --start-group and --end-group
-    set(MKL_LIBRARIES -Wl,${MKL_LIBRARIES} -Wl, -liomp5 -lpthread -lm -ldl)
-  endif()
-  
-  message(STATUS "MKL libraries: " ${MKL_LIBRARIES})
+  set_target_properties(mkl_core PROPERTIES IMPORTED_LOCATION
+    ${MKL_CORE_LIBRARY}
+    IMPORTED_LINK_INTERFACE_MULTIPLICITY 3)
+
+  set_target_properties(mkl_sequential PROPERTIES INTERFACE_LINK_LIBRARIES mkl_core)
+  set_target_properties(mkl_core       PROPERTIES INTERFACE_LINK_LIBRARIES mkl_sequential)
+
+  set(MKL_LIBRARIES mkl_intel_ilp64 mkl_sequential mkl_core dl pthread)
+
+  target_link_libraries(${HYDRA_LIBRARY} PUBLIC ${MKL_INTERFACE_LIBRARY} ${MKL_SEQUENTIAL_LAYER_LIBRARY} ${MKL_CORE_LIBRARY})
   target_link_libraries(${HYDRA_LIBRARY} PUBLIC ${MKL_LIBRARIES})
-  list(APPEND HYDRA_LIBRARIES ${MKL_LIBRARIES})
 
-# Regular Blas/Lapack backend
+  # Regular Blas/Lapack backend
 else()
   find_package(BLAS)
   find_package(LAPACK)
@@ -214,7 +195,6 @@ else()
   if(LAPACK_FOUND AND BLAS_FOUND)
     message(STATUS "Emploging Lapack/Blas as linear algebra backend")
     target_link_libraries(${HYDRA_LIBRARY} PUBLIC ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
-    list(APPEND HYDRA_LIBRARIES ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
   else()
     message(FATAL_ERROR "No linear algebra backend found")
   endif()
@@ -225,7 +205,6 @@ else()
     if(OpenMP_CXX_FOUND)
       message(STATUS "Employing OpenMP")
       target_link_libraries(${HYDRA_LIBRARY} PUBLIC OpenMP::OpenMP_CXX)
-      list(APPEND HYDRA_LIBRARIES OpenMP::OpenMP_CXX)
     endif()
   else()
     message(STATUS "OpenMP disabled")
@@ -239,11 +218,9 @@ if(HDF5_FOUND)
   message(STATUS "Employing HDF5")
   target_compile_definitions(${HYDRA_LIBRARY} PUBLIC HYDRA_USE_HDF5 ${HDF5_CXX_DEFINITIONS})
   target_include_directories(${HYDRA_LIBRARY} PUBLIC ${HDF5_CXX_INCLUDE_DIRS})
-  target_link_libraries(${HYDRA_LIBRARY} PUBLIC ${HDF5_CXX_LIBRARIES} ${HDF5_LIBRARIES})
+  message(STATUS "HDF5 LIBS" ${HDF5_CXX_LIBRARIES} ${HDF5_LIBRARIES})
 
-  list(APPEND HYDRA_DEFINITIONS HYDRA_USE_HDF5 ${HDF5_CXX_DEFINITIONS})
-  list(APPEND HYDRA_INCLUDE_DIRS ${HDF5_CXX_INCLUDE_DIRS})
-  list(APPEND HYDRA_LIBRARIES ${HDF5_CXX_LIBRARIES} ${HDF5_LIBRARIES})
+  target_link_libraries(${HYDRA_LIBRARY} PUBLIC ${HDF5_CXX_LIBRARIES} ${HDF5_LIBRARIES})
 endif()
 
 message(STATUS "--------         Creating config.h          -------------")

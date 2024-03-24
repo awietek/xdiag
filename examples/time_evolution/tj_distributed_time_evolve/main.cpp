@@ -1,6 +1,6 @@
 #include <hydra/all.h>
 
-void measure_density(int n_sites, hydra::StateCplx const &v) {
+void measure_density(int n_sites, hydra::State const &v) {
   using namespace hydra;
   int rank;
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
@@ -19,7 +19,8 @@ int main() {
   using namespace hydra;
 
   int L = 4;
-  int W = 4 double t = 1.0;
+  int W = 4;
+  double t = 1.0;
   double J = 0.4;
   double mu_0 = 2;
 
@@ -54,7 +55,7 @@ int main() {
   bonds["MUNEG"] = mu_0;
 
   auto block = tJDistributed(n_sites, n_sites / 2, n_sites / 2 - 1);
-  auto v = groundstate(bonds, block);
+  auto [e0, v] = eig0(bonds, block);
 
   bonds["MUPLUS"] = 0;
   bonds["MUNEG"] = 0;
