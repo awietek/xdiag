@@ -1,16 +1,16 @@
 #include <hydra/all.h>
 
-void measure_density(int n_sites, hydra::StateCplx const &v) {
-  using namespace hydra;
+using namespace hydra;
+
+void measure_density(int n_sites, State const &v) {
   for (int i = 0; i < n_sites; ++i) {
-    auto sz = inner(Bond("NUMBER", i), v);
+    auto sz = innerC(Bond("NUMBER", i), v);
     printf("%f ", std::real(sz));
   }
   printf("\n");
 }
 
 int main() {
-  using namespace hydra;
 
   int L = 3;
   double t = 1.0;
@@ -38,24 +38,15 @@ int main() {
   bonds["T"] = t;
   bonds["J"] = J;
 
-  // Create initial state
-  auto pstate = ProductState();
-  for (int x = 0; x < L; ++x) {
-    for (int y = 0; y < L; ++y) {
-      if (((x + y) % 2) == 0) {
-        pstate << "Dn";
-      } else {
-        pstate << "Up";
-      }
-    }
-  }
-  pstate[n_sites / 2] = "Emp";
   auto block = tJ(n_sites, n_sites / 2, n_sites / 2 - 1);
-
-  auto v = StateCplx(block, pstate);
+  bonds["J"] = J / 2;
+  auto [e0, v] = eig0(bonds, block);
 
   measure_density(n_sites, v);
 
+  bonds["J"] = J;
+
+  
   // Do the time evolution with a step size tau
   double tau = 0.1;
   for (int i = 0; i < 40; ++i) {
