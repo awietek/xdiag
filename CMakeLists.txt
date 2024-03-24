@@ -12,6 +12,28 @@ option(BUILD_DISTRIBUTED "Build the library for distibuted computing" OFF)
 
 option(OPTIMIZE_FOR_NATIVE "Optimize for native architecture" OFF)
 
+
+# Set a different default install prefix than system dirs
+if(DEFINED CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+    message(
+        STATUS
+        "CMAKE_INSTALL_PREFIX is not set\n"
+        "Default value: ${CMAKE_INSTALL_PREFIX}\n"
+        "Will set it to ${CMAKE_SOURCE_DIR}/install"
+    )
+    set(CMAKE_INSTALL_PREFIX
+        "${CMAKE_SOURCE_DIR}/install"
+        CACHE PATH "Where the library will be installed to" FORCE
+    )
+else()
+    message(
+        STATUS
+        "CMAKE_INSTALL_PREFIX was already set\n"
+        "Current value: ${CMAKE_INSTALL_PREFIX}"
+    )
+endif()
+  
+
 if(BUILD_DISTRIBUTED)
   find_package(MPI REQUIRED)
   option(OMP_THREADING "Enable OpenMp threading" OFF)
@@ -59,8 +81,9 @@ if(SANITIZER)
     endif()			      
 endif()
 
+
 install(DIRECTORY "${CMAKE_SOURCE_DIR}/hydra" # source directory
-  DESTINATION "include" # target directory
+  DESTINATION include
   FILES_MATCHING # install only matched files
   PATTERN "*.h" # select header files
 )
@@ -71,21 +94,15 @@ if(BUILD_DISTRIBUTED)
     LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib
   )
-  
-  include(CMakePackageConfigHelpers)
-  
+
+  include(CMakePackageConfigHelpers)	
+
   # generate the config file that includes the exports
   configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/hydraConfig.cmake.in
     "${CMAKE_CURRENT_BINARY_DIR}/hydra_distributedConfig.cmake"
     INSTALL_DESTINATION "lib/cmake/hydra_distributed"
     NO_SET_AND_CHECK_MACRO
     NO_CHECK_REQUIRED_COMPONENTS_MACRO
-  )
-  
-  target_include_directories(hydra_distributed
-    INTERFACE
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-    $<INSTALL_INTERFACE:include>
   )
   
   write_basic_package_version_file(
@@ -121,9 +138,9 @@ else()
   )
   
   target_include_directories(hydra
-    INTERFACE
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-    $<INSTALL_INTERFACE:include>
+    PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
   )
   
   write_basic_package_version_file(

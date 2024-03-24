@@ -1,5 +1,4 @@
-include
-lib
+install
 cmake_commands.txt
 .idea
 .idea/*
