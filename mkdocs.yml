@@ -1,1 +1,3 @@
-site_name: My Docs
+site_name: Hydra Documentation
+theme:
+  name: material
