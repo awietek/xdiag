@@ -3,7 +3,7 @@
 
 #include <unordered_map>
 
-#include "extern/gsl/span"
+#include <hydra/extern/gsl/span>
 
 #include <hydra/bits/bitops.h>
 #include <hydra/combinatorics/lin_table.h>

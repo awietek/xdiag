@@ -13,7 +13,7 @@
 #include <hydra/utils/logger.h>
 #include <hydra/utils/error.h>
 
-#include "extern/armadillo/armadillo"
+#include <hydra/extern/armadillo/armadillo>
 
 namespace hydra::detail {
 

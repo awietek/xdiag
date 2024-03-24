@@ -1,8 +1,8 @@
 #pragma once
 
 #include <array>
-#include <extern/armadillo/armadillo>
-#include <extern/toml++/toml.h>
+#include <hydra/extern/armadillo/armadillo>
+#include <hydra/extern/toml++/toml.h>
 #include <hydra/operators/bond.h>
 #include <hydra/operators/bondlist.h>
 #include <vector>

@@ -129,42 +129,48 @@ set(HYDRA_DISTRIBUTED_SOURCES
 if(BUILD_DISTRIBUTED)
   message(STATUS "-------- BUILDING DISTRIBUTED HYDRA LIBRARY -------------")
   add_library(hydra_distributed STATIC)
+  set(HYDRA_LIBRARY hydra_distributed PARENT_SCOPE)
+  set(HYDRA_LIBRARY hydra_distributed)
   target_sources(hydra_distributed
     PRIVATE
-    basis/tj_distributed/basis_np.cpp
+    ${HYDRA_SOURCES} ${HYDRA_DISTRIBUTED_SOURCES}
   )
   
   target_include_directories(hydra_distributed
       PRIVATE
           # where the library itself will look for its internal headers
-          ${CMAKE_CURRENT_SOURCE_DIR}/hydra
+          ${CMAKE_SOURCE_DIR}
       PUBLIC
           # where top-level project will look for the library's public headers 
-          $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+          $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}>
           # where external projects will look for the library's public headers  
           $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
   )
 
-
   target_link_libraries(hydra_distributed PUBLIC ${MPI_CXX_LIBRARIES})
   target_compile_definitions(hydra_distributed PUBLIC HYDRA_USE_MPI)
-  set(HYDRA_LIBRARY hydra_distributed)
 else()
   message(STATUS "-------- BUILDING NORMAL HYDRA LIBRARY -------------")
-  add_library(hydra STATIC ${HYDRA_SOURCES})
+  add_library(hydra STATIC)
+  set(HYDRA_LIBRARY hydra PARENT_SCOPE)
   set(HYDRA_LIBRARY hydra)
+  target_sources(hydra_distributed
+    PRIVATE
+    ${HYDRA_SOURCES}
+  )
+  target_include_directories(hydra
+      PRIVATE
+          # where the library itself will look for its internal headers
+          ${CMAKE_SOURCE_DIR}
+      PUBLIC
+          # where top-level project will look for the library's public headers 
+          $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}>
+          # where external projects will look for the library's public headers  
+          $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+  )
 endif()
 
-target_include_directories(${HYDRA_LIBRARY} PUBLIC ${CMAKE_SOURCE_DIR})
-target_compile_features(${HYDRA_LIBRARY} PUBLIC cxx_std_17)
 
-if(OPTIMIZE_FOR_NATIVE)
-message(STATUS "Using native architecture optimizations")
-target_compile_options(${HYDRA_LIBRARY} PRIVATE -march=native)
-target_compile_options(${HYDRA_LIBRARY} PRIVATE -mtune=native)
-endif()
-
-target_compile_options(${HYDRA_LIBRARY} PRIVATE -Wall -Wextra)
   
 message(STATUS "-------- Determining Linear Algebra backend -------------")
 find_package(MKL)
@@ -257,4 +263,3 @@ execute_process(COMMAND id -un
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 configure_file(${CMAKE_SOURCE_DIR}/cmake/config.h.in ${CMAKE_SOURCE_DIR}/hydra/config.h @ONLY)
-configure_file(${CMAKE_SOURCE_DIR}/cmake/hydraConfig.cmake.in ${CMAKE_SOURCE_DIR}/cmake/hydraConfig.cmake @ONLY)

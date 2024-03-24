@@ -1,5 +1,5 @@
 #pragma once
-#include "extern/armadillo/armadillo"
+#include <hydra/extern/armadillo/armadillo>
 
 #include <hydra/operators/bond.h>
 #include <hydra/operators/bondlist.h>

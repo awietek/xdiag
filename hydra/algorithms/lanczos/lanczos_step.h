@@ -1,6 +1,6 @@
 #pragma once
 
-#include "extern/armadillo/armadillo"
+#include <hydra/extern/armadillo/armadillo>
 
 #include <hydra/algorithms/lanczos/tmatrix.h>
 #include <hydra/algorithms/gram_schmidt/orthogonalize.h>

@@ -4,7 +4,7 @@
 #include <utility>
 #include <vector>
 
-#include <extern/gsl/span>
+#include <hydra/extern/gsl/span>
 
 #include <hydra/common.h>
 #include <hydra/symmetries/operations/group_action_operations.h>

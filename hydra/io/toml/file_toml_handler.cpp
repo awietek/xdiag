@@ -1,7 +1,7 @@
 #include "file_toml_handler.h"
 
-#include <extern/armadillo/armadillo>
-#include <extern/toml++/toml.h>
+#include <hydra/extern/armadillo/armadillo>
+#include <hydra/extern/toml++/toml.h>
 
 #include <array>
 #include <complex>

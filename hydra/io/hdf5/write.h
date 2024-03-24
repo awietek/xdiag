@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include <extern/armadillo/armadillo>
+#include <hydra/extern/armadillo/armadillo>
 #include <hdf5.h>
 
 namespace hydra::hdf5 {

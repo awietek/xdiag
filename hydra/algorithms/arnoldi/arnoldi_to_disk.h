@@ -2,8 +2,8 @@
 // Created by Luke Staszewski on 13.06.23.
 //
 #pragma once
-#include <extern/armadillo/armadillo>
-#include <extern/fmt/format.h>
+#include <hydra/extern/armadillo/armadillo>
+#include <hydra/extern/fmt/format.h>
 #include <hydra/utils/logger.h>
 #include <hydra/utils/timing.h>
 #include <string>

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <extern/armadillo/armadillo>
+#include <hydra/extern/armadillo/armadillo>
 #include <hydra/blocks/blocks.h>
 #include <hydra/operators/bondlist.h>
 #include <hydra/states/state.h>

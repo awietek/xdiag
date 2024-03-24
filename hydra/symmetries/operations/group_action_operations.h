@@ -1,5 +1,5 @@
 #pragma once
-#include <extern/gsl/span>
+#include <hydra/extern/gsl/span>
 
 #include <hydra/combinatorics/combinations.h>
 #include <hydra/symmetries/operations/fermi_sign.h>

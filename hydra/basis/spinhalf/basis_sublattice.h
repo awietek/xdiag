@@ -1,7 +1,7 @@
 #pragma once
 
-#include <extern/flat_hash_map.h>
-#include <extern/gsl/span>
+#include <hydra/extern/flat_hash_map.h>
+#include <hydra/extern/gsl/span>
 
 #include <hydra/common.h>
 

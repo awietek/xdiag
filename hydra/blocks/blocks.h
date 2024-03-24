@@ -3,7 +3,7 @@
 #include <functional>
 #include <variant>
 
-#include <extern/armadillo/armadillo>
+#include <hydra/extern/armadillo/armadillo>
 
 #include <hydra/common.h>
 

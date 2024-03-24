@@ -3,7 +3,7 @@
 //
 #include <algorithm>
 #include <cmath>
-#include <extern/armadillo/armadillo>
+#include <hydra/extern/armadillo/armadillo>
 #include <hydra/common.h>
 
 namespace hydra {

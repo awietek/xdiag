@@ -58,6 +58,9 @@ message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
 
 add_subdirectory(hydra)
 
+target_compile_features(${HYDRA_LIBRARY} PUBLIC cxx_std_17)
+
+
 if(BUILD_TESTS)
   message(STATUS "Building test programs")
   enable_testing()
@@ -81,6 +84,12 @@ if(SANITIZER)
     endif()			      
 endif()
 
+if(OPTIMIZE_FOR_NATIVE)
+message(STATUS "Using native architecture optimizations")
+target_compile_options(${HYDRA_LIBRARY} PRIVATE -march=native)
+target_compile_options(${HYDRA_LIBRARY} PRIVATE -mtune=native)
+endif()
+
 
 install(DIRECTORY "${CMAKE_SOURCE_DIR}/hydra" # source directory
   DESTINATION include
@@ -88,78 +97,56 @@ install(DIRECTORY "${CMAKE_SOURCE_DIR}/hydra" # source directory
   PATTERN "*.h" # select header files
 )
 
-if(BUILD_DISTRIBUTED)
-  install(TARGETS hydra_distributed
-    EXPORT hydra_distributedConfig
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib
-  )
+install(DIRECTORY "${CMAKE_SOURCE_DIR}/hydra/extern" # source directory
+  DESTINATION include/hydra
+  FILES_MATCHING # install only matched files
+  PATTERN "*" # select header files
+)
 
-  include(CMakePackageConfigHelpers)	
+include(GNUInstallDirs)
 
-  # generate the config file that includes the exports
-  configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/hydraConfig.cmake.in
-    "${CMAKE_CURRENT_BINARY_DIR}/hydra_distributedConfig.cmake"
-    INSTALL_DESTINATION "lib/cmake/hydra_distributed"
-    NO_SET_AND_CHECK_MACRO
-    NO_CHECK_REQUIRED_COMPONENTS_MACRO
-  )
-  
-  write_basic_package_version_file(
-    "${CMAKE_CURRENT_BINARY_DIR}/hydra_distributedConfigVersion.cmake"
-    VERSION "${hydra_distributed_VERSION_MAJOR}.${hydra_distributed_VERSION_MINOR}"
+# install the target and create export-set
+install(TARGETS ${HYDRA_LIBRARY}
+    EXPORT "${HYDRA_LIBRARY}Targets"
+    # these get default values from GNUInstallDirs, no need to set them
+    #RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} # bin
+    #LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} # lib
+    #ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} # lib
+    # except for public headers, as we want them to be inside a library folder
+    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} # include
+)
+
+install(EXPORT "${HYDRA_LIBRARY}Targets"
+  FILE "${HYDRA_LIBRARY}Targets.cmake"
+  # NAMESPACE ${namespace}::
+  DESTINATION lib/cmake/${HYDRA_LIBRARY}
+)
+
+include(CMakePackageConfigHelpers)	
+
+# generate the version file for the config file
+write_basic_package_version_file(
+    "${CMAKE_CURRENT_BINARY_DIR}/${HYDRA_LIBRARY}ConfigVersion.cmake"
+    VERSION "${version}"
     COMPATIBILITY AnyNewerVersion
-  )
+)
+# create config file
+configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/${HYDRA_LIBRARY}Config.cmake.in
+    "${CMAKE_CURRENT_BINARY_DIR}/${HYDRA_LIBRARY}Config.cmake"
+    INSTALL_DESTINATION cmake
+)
 
-  install(FILES
-    ${CMAKE_CURRENT_BINARY_DIR}/hydra_distributedConfig.cmake
-    ${CMAKE_CURRENT_BINARY_DIR}/hydra_distributedConfigVersion.cmake
-    DESTINATION lib/cmake/hydra_distributed
-  )
+install(FILES
+  ${CMAKE_CURRENT_BINARY_DIR}/${HYDRA_LIBRARY}Config.cmake
+  ${CMAKE_CURRENT_BINARY_DIR}/${HYDRA_LIBRARY}ConfigVersion.cmake
+  DESTINATION lib/cmake/${HYDRA_LIBRARY}
+)
 
-  export(EXPORT hydra_distributedConfig
-    FILE "${CMAKE_CURRENT_BINARY_DIR}/hydra_distributedConfig.cmake"
-  )
-else()
-  install(TARGETS hydra
-    EXPORT hydraConfig
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib
-  )
+export(EXPORT ${HYDRA_LIBRARY}Targets
+  FILE "${CMAKE_CURRENT_BINARY_DIR}/cmake/${HYDRA_LIBRARY}Targets.cmake"
+  # NAMESPACE ${namespace}::
+)
 
-  include(CMakePackageConfigHelpers)
-  
-  # generate the config file that includes the exports
-  configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/hydraConfig.cmake.in
-    "${CMAKE_CURRENT_BINARY_DIR}/hydraConfig.cmake"
-    INSTALL_DESTINATION "lib/cmake/hydra"
-    NO_SET_AND_CHECK_MACRO
-    NO_CHECK_REQUIRED_COMPONENTS_MACRO
-  )
-  
-  target_include_directories(hydra
-    PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
-  )
-  
-  write_basic_package_version_file(
-    "${CMAKE_CURRENT_BINARY_DIR}/hydraConfigVersion.cmake"
-    VERSION "${hydra_VERSION_MAJOR}.${hydra_VERSION_MINOR}"
-    COMPATIBILITY AnyNewerVersion
-  )
-
-  install(FILES
-    ${CMAKE_CURRENT_BINARY_DIR}/hydraConfig.cmake
-    ${CMAKE_CURRENT_BINARY_DIR}/hydraConfigVersion.cmake
-    DESTINATION lib/cmake/hydra
-  )
-
-  export(EXPORT hydraConfig
-    FILE "${CMAKE_CURRENT_BINARY_DIR}/hydraConfig.cmake"
-  )
-
-endif()
 
 if(BUILD_JULIA)
   install(TARGETS hydrajl

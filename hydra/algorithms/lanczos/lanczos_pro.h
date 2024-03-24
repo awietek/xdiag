@@ -2,7 +2,7 @@
 #include <limits>
 #include <random>
 
-#include "extern/armadillo/armadillo"
+#include <hydra/extern/armadillo/armadillo>
 
 #include <hydra/algorithms/lanczos/lanczos_step.h>
 #include <hydra/algorithms/lanczos/tmatrix.h>

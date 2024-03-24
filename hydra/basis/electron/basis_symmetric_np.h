@@ -3,7 +3,7 @@
 #include <map>
 #include <vector>
 
-#include <extern/gsl/span>
+#include <hydra/extern/gsl/span>
 
 #include <hydra/combinatorics/fermi_table.h>
 #include <hydra/combinatorics/lin_table.h>

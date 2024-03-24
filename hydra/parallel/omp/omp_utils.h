@@ -2,7 +2,7 @@
 
 #ifdef _OPENMP
 
-#include <extern/gsl/span>
+#include <hydra/extern/gsl/span>
 #include <omp.h>
 #include <vector>
 

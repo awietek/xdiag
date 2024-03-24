@@ -3,7 +3,7 @@
 // Created by Luke Staszewski on 27.01.23.
 //
 
-#include <extern/armadillo/armadillo>
+#include <hydra/extern/armadillo/armadillo>
 #include <tuple>
 
 #include <hydra/algorithms/norm_estimate.h>

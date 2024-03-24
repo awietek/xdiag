@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include <extern/armadillo/armadillo>
+#include <hydra/extern/armadillo/armadillo>
 #include <hydra/common.h>
 
 namespace hydra {

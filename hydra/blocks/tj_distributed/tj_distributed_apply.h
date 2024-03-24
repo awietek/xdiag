@@ -1,7 +1,7 @@
 #pragma once
 #ifdef HYDRA_USE_MPI
 
-#include "extern/armadillo/armadillo"
+#include <hydra/extern/armadillo/armadillo>
 
 #include <hydra/blocks/tj_distributed/tj_distributed.h>
 #include <hydra/common.h>

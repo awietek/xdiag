@@ -7,7 +7,7 @@
 #include <string>
 
 #define FMT_HEADER_ONLY
-#include "extern/fmt/format.h"
+#include <hydra/extern/fmt/format.h>
 
 #include <hydra/utils/error.h>
 
