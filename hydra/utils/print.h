@@ -47,6 +47,10 @@ void print_pretty(const char *identifier, Spinhalf const &block);
 void print_pretty(const char *identifier, tJ const &block);
 void print_pretty(const char *identifier, Electron const &block);
 
+#ifdef HYDRA_USE_MPI
+void print_pretty(const char *identifier, tJDistributed const &block);
+#endif
+
 void print_pretty(const char *identifier, RandomState const &rstate);
 void print_pretty(const char *identifier, ProductState const &pstate);
 

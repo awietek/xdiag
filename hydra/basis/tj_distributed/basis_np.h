@@ -85,7 +85,7 @@ public:
   }
 
   inline int rank(bit_t spins) const { // mpi ranks are ints
-    return (int)(random::hash_fnv1(spins) % mpi_size_);
+    return (int)(random::hash_div3(spins) % mpi_size_);
   };
   inline int64_t index_dncs(bit_t dncs) const {
     return lintable_dncs_.index(dncs);

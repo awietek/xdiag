@@ -2,7 +2,7 @@
 #include <chrono>
 #include <string>
 
-#include <hydra/utils/logger_serial.h>
+#include <hydra/utils/logger.h>
 
 namespace hydra {
   
@@ -21,9 +21,9 @@ void timing(time_point<Clock, Duration> const &t0,
   auto td = duration_cast<microseconds>(t1 - t0).count();
   double tds = (double)td / 1000000;
   if (msg != "")
-    LogSerial.out(verbosity, "{}: {:.5f} secs", msg, tds);
+    Log.out(verbosity, "{}: {:.5f} secs", msg, tds);
   else
-    LogSerial.out(verbosity, "{:.5f} secs", tds);
+    Log.out(verbosity, "{:.5f} secs", tds);
 }
 
 inline void tic(bool begin = true, std::string msg = "", int verbosity = 0) {

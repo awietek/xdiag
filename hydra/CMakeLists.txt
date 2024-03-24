@@ -128,8 +128,24 @@ set(HYDRA_DISTRIBUTED_SOURCES
 
 if(BUILD_DISTRIBUTED)
   message(STATUS "-------- BUILDING DISTRIBUTED HYDRA LIBRARY -------------")
-  add_library(hydra_distributed STATIC ${HYDRA_SOURCES} ${HYDRA_DISTRIBUTED_SOURCES})
-  target_include_directories(hydra_distributed PUBLIC ${MPI_CXX_INCLUDE_PATH})
+  add_library(hydra_distributed STATIC)
+  target_sources(hydra_distributed
+    PRIVATE
+    basis/tj_distributed/basis_np.cpp
+  )
+  
+  target_include_directories(hydra_distributed
+      PRIVATE
+          # where the library itself will look for its internal headers
+          ${CMAKE_CURRENT_SOURCE_DIR}/hydra
+      PUBLIC
+          # where top-level project will look for the library's public headers 
+          $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+          # where external projects will look for the library's public headers  
+          $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+  )
+
+
   target_link_libraries(hydra_distributed PUBLIC ${MPI_CXX_LIBRARIES})
   target_compile_definitions(hydra_distributed PUBLIC HYDRA_USE_MPI)
   set(HYDRA_LIBRARY hydra_distributed)

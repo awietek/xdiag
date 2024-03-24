@@ -6,7 +6,7 @@ project(
   LANGUAGES CXX
 )
 
-find_package(hydra_distributed REQUIRED HINTS "/home/awietek/Research/Software/hydra")
 
+find_package(hydra_distributed REQUIRED  HINTS "/Users/awietek/Research/Software/hydra/install")
 add_executable(main main.cpp)
 target_link_libraries(main PUBLIC hydra_distributed)

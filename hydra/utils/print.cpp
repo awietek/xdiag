@@ -197,6 +197,7 @@ void print_pretty(const char *identifier, QN const &qn) {
 }
 
 void print_pretty(const char *identifier, block_variant_t const &block) {
+  printf("llllll\n");
   std::visit(
       overload{
           [identifier](Spinhalf const &block) {
@@ -266,6 +267,7 @@ void print_pretty(const char *identifier, tJ const &block) {
 
 #ifdef HYDRA_USE_MPI
 void print_pretty(const char *identifier, tJDistributed const &block) {
+
   int rank, size;
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   MPI_Comm_size(MPI_COMM_WORLD, &size);
@@ -291,7 +293,7 @@ void print_pretty(const char *identifier, tJDistributed const &block) {
     
     std::stringstream ss;
     ss.imbue(std::locale("en_US.UTF-8"));
-    ss << block.size();
+    ss << block.dim();
     printf("  dimension: %s\n", ss.str().c_str());
 
     std::stringstream ssmax;
@@ -304,7 +306,7 @@ void print_pretty(const char *identifier, tJDistributed const &block) {
 
     std::stringstream ssavg;
     ssavg.imbue(std::locale("en_US.UTF-8"));
-    ssavg << block.size() / size;
+    ssavg << block.dim() / size;
     
     printf("  dimension (max local): %s\n", ssmax.str().c_str());
     printf("  dimension (min local): %s\n", ssmin.str().c_str());
