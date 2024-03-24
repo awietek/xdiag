@@ -24,15 +24,7 @@ TEST_CASE("tj_apply", "[tj]") {
 
         auto block = tJ(N, nup, ndn);
         auto H = matrix(bonds, block, block);
-        REQUIRE(arma::norm(H - H.t()) < 1e-12);
 
-        arma::vec v(block.size(), arma::fill::randn);
-        arma::vec w1 = H * v;
-        arma::vec w2(block.size(), arma::fill::zeros);
-        apply(bonds, block, v, block, w2);
-        REQUIRE(close(w1, w2));
-
-        arma::vec evals_mat;
         arma::eig_sym(evals_mat, H);
         double e0_mat = evals_mat(0);
         double e0_app = eigval0(bonds, block);

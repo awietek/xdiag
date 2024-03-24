@@ -2,7 +2,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 set(HYDRA_DEFINITIONS "")
 set(HYDRA_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}")
-set(HYDRA_LIBRARIES "${PROJECT_BINARY_DIR}/hydra/libhydra.a")
+set(HYDRA_LIBRARIES "${CMAKE_SOURCE_DIR}/lib/libhydra.a")
 
 set(HYDRA_SOURCES
   utils/iochecks.cpp
