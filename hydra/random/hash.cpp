@@ -81,4 +81,22 @@ uint64_t hash(Electron const &electron) {
   return h;
 }
 
+#ifdef HYDRA_USE_MPI
+uint64_t hash(tJDistributed const &tj) {
+  uint64_t h = tj.n_sites() == 0 ? 0 : hash_fnv1((uint64_t)tj.n_sites());
+  if (tj.charge_conserved() && tj.sz_conserved()) {
+    h = hash_combine(h, hash_fnv1((uint64_t)tj.n_up()));
+    h = hash_combine(h, hash_fnv1((uint64_t)tj.n_dn()));
+  }
+  if (tj.symmetric()) {
+    h = hash_combine(h, hash(tj.permutation_group()));
+    h = hash_combine(h, hash(tj.irrep()));
+  }
+  int mpi_rank;
+  MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
+  h = hash_combine(h, hash_fnv1((uint64_t)mpi_rank));
+  return h;
+}
+#endif
+
 } // namespace hydra::random

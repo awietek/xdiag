@@ -16,7 +16,7 @@ namespace hydra::spinhalf {
 template <typename bit_t, typename coeff_t, bool symmetric, class BasisIn,
           class BasisOut, class Fill>
 void apply_terms(BondList const &bonds, BasisIn const &basis_in,
-                 BasisOut const &basis_out, Fill &fill) {
+                 BasisOut const &basis_out, Fill &fill) try {
   for (auto bond : bonds) {
 
     if (bond.type_defined()) {
@@ -39,14 +39,16 @@ void apply_terms(BondList const &bonds, BasisIn const &basis_in,
         spinhalf::apply_scalar_chirality<bit_t, coeff_t, symmetric>(
             bond, basis_in, basis_out, fill);
       } else {
-        Log.err("Error in spinhalf::apply_terms: Unknown bond type {}",
-                bond.type());
+        HydraThrow(std::runtime_error,
+                   "Error in spinhalf::apply_terms: Unknown bond type");
       }
     } else {
       spinhalf::apply_non_branching<bit_t, coeff_t, symmetric>(bond, basis_in,
                                                                basis_out, fill);
     }
   }
+} catch (...) {
+  HydraRethrow("Cannot apply terms for \"Spinhalf\" block");
 }
 
 } // namespace hydra::spinhalf

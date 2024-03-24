@@ -19,9 +19,9 @@ inline void lanczos_step(arma::Col<coeff_t> &v0, arma::Col<coeff_t> &v1,
   auto norm = [&dot](arma::Col<coeff_t> const &v) {
     return std::sqrt(hydra::real(dot(v, v)));
   };
-
+  
   mult(v1, w); // MVM
-  alpha = hydra::real(dot(v1, w));
+  alpha = hydra::real(dot(v1, w)); 
   w -= alpha * v1;
   w -= beta * v0;
   v0 = v1;

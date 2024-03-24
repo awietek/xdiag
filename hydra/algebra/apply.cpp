@@ -1,11 +1,7 @@
 #include "apply.h"
 
-#include <variant>
-
-#include <hydra/blocks/electron/electron_apply.h>
-#include <hydra/blocks/spinhalf/spinhalf_apply.h>
-#include <hydra/blocks/tj/tj_apply.h>
 #include <hydra/common.h>
+#include <variant>
 
 namespace hydra {
 
@@ -19,7 +15,7 @@ void apply(BondList const &bonds, block_variant_t const &block_in,
       },
       block_in, block_out);
 } catch (...) {
-  rethrow(__func__, "Error dispatching apply");
+  HydraRethrow("Error dispatching apply");
 }
 
 template void apply(BondList const &, block_variant_t const &,
@@ -39,17 +35,19 @@ void apply(BondList const &bonds, State const &v, State &w) try {
       arma::cx_vec wvec = w.vectorC(0, false);
       apply(bonds, v.block(), vvec, w.block(), wvec);
     } else {
-      throw(std::logic_error(
+      HydraThrow(
+          std::logic_error,
           "Apply operator only works if both states are complex or both states "
           "are real and the operator is real. Consider Making the vectors "
-          "complex first by using method .make_complex()."));
+          "complex first by using method .make_complex().");
     }
   } else {
-    throw(std::runtime_error("Applying a BondList to a state with multiple "
-                             "columns not yet implemented"));
+    HydraThrow(std::runtime_error,
+               "Applying a BondList to a state with multiple "
+               "columns not yet implemented");
   }
 } catch (...) {
-  rethrow(__func__, "Cannot apply BondList to State");
+  HydraRethrow("Cannot apply BondList to State");
 }
 
 } // namespace hydra

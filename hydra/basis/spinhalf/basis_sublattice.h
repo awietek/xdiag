@@ -28,6 +28,7 @@ public:
   iterator_t begin() const;
   iterator_t end() const;
   int64_t size() const;
+  int64_t dim() const;
 
   int64_t index(bit_t state) const;
   inline bit_t state(int64_t idx) const { return reps_[idx]; }

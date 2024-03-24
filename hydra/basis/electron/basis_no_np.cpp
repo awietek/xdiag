@@ -25,13 +25,14 @@ template <typename bit_t> int64_t BasisNoNp<bit_t>::size_dns() const {
 template <typename bit_t> int64_t BasisNoNp<bit_t>::size() const {
   return size_;
 }
+template <typename bit_t> int64_t BasisNoNp<bit_t>::dim() const {
+  return size_;
+}
 
-template <typename bit_t>
-Subsets<bit_t> BasisNoNp<bit_t>::states_ups() const {
+template <typename bit_t> Subsets<bit_t> BasisNoNp<bit_t>::states_ups() const {
   return Subsets<bit_t>(n_sites_);
 }
-template <typename bit_t>
-Subsets<bit_t> BasisNoNp<bit_t>::states_dns() const {
+template <typename bit_t> Subsets<bit_t> BasisNoNp<bit_t>::states_dns() const {
   return Subsets<bit_t>(n_sites_);
 }
 
@@ -57,14 +58,12 @@ SubsetsThread<bit_t> BasisNoNp<bit_t>::states_dns_thread() const {
 }
 
 template <typename bit_t>
-SubsetsIndexThread<bit_t>
-BasisNoNp<bit_t>::states_indices_ups_thread() const {
+SubsetsIndexThread<bit_t> BasisNoNp<bit_t>::states_indices_ups_thread() const {
   return SubsetsIndexThread<bit_t>(n_sites_);
 }
 
 template <typename bit_t>
-SubsetsIndexThread<bit_t>
-BasisNoNp<bit_t>::states_indices_dns_thread() const {
+SubsetsIndexThread<bit_t> BasisNoNp<bit_t>::states_indices_dns_thread() const {
   return SubsetsIndexThread<bit_t>(n_sites_);
 }
 #endif

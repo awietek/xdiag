@@ -30,6 +30,7 @@ public:
   State imag() const;
   void make_complex();
 
+  int64_t dim() const;
   int64_t size() const;
   int64_t n_rows() const;
   int64_t n_cols() const;
@@ -57,6 +58,8 @@ public:
   
 private:
   bool real_;
+
+  int64_t dim_;
   int64_t n_rows_;
   int64_t n_cols_;
   block_variant_t block_;

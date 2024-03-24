@@ -11,10 +11,7 @@ namespace hydra {
 class Tmatrix {
 public:
   Tmatrix() = default;
-  Tmatrix(std::vector<double> const &alphas, std::vector<double> const &betas)
-      : alphas_(alphas), betas_(betas) {
-    assert(alphas.size() == betas.size());
-  }
+  Tmatrix(std::vector<double> const &alphas, std::vector<double> const &betas);
   void append(double alpha, double beta);
   void pop();
 
@@ -30,6 +27,9 @@ public:
 
   void print_log() const;
 
+  bool operator==(Tmatrix const& rhs) const;
+  bool operator!=(Tmatrix const& rhs) const;
+  
 private:
   std::vector<double> alphas_;
   std::vector<double> betas_;

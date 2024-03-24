@@ -32,11 +32,17 @@ typename std::vector<bit_t>::const_iterator
 BasisSymmetricNoSz<bit_t>::begin() const {
   return reps_.begin();
 }
+  
 template <class bit_t>
 typename std::vector<bit_t>::const_iterator
 BasisSymmetricNoSz<bit_t>::end() const {
   return reps_.end();
 }
+  
+template <class bit_t> int64_t BasisSymmetricNoSz<bit_t>::dim() const {
+  return size_;
+}
+  
 template <class bit_t> int64_t BasisSymmetricNoSz<bit_t>::size() const {
   return size_;
 }

@@ -1,5 +1,7 @@
 #include "toml_conversion.h"
 
+#include <cassert>
+
 #include <hydra/common.h>
 #include <hydra/utils/logger.h>
 

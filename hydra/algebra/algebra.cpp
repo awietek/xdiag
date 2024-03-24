@@ -2,57 +2,91 @@
 
 #include <hydra/algebra/apply.h>
 
+#ifdef HYDRA_USE_MPI
+#include <hydra/parallel/mpi/allreduce.h>
+#include <hydra/parallel/mpi/cdot_distributed.h>
+#endif
+
 namespace hydra {
 
 double norm(State const &v) try {
-  if (v.isreal()) {
-    return arma::norm(v.matrix(false));
+  if (v.n_cols() > 1) {
+    HydraThrow(std::logic_error,
+               "Cannot compute norm of state with more than one column");
   } else {
-    return arma::norm(v.matrixC(false));
+    if (v.isreal()) {
+      return norm(v.block(), v.vector(0, false));
+    } else {
+      return norm(v.block(), v.vectorC(0, false));
+    }
   }
 } catch (...) {
-  rethrow(__func__, "Unable compute norm of State");
+  HydraRethrow("Unable compute norm of State");
   return 0.;
 }
 
 double dot(State const &v, State const &w) try {
+  if (v.block() != w.block()) {
+    HydraThrow(std::logic_error,
+               "Cannot form dot product for states on different blocks");
+  }
+
+  if ((v.n_cols() > 1) || (w.n_cols() > 1)) {
+    HydraThrow(std::logic_error,
+               "Cannot compute dot product of state with more than one column");
+  }
+  Log("rci {} {}", v.isreal(), w.isreal());
+
   if ((v.isreal()) && (w.isreal())) {
-    return arma::dot(v.matrix(), w.matrix());
+    return dot(v.vector(0, false), w.vector(0, false));
   } else {
-    throw std::logic_error("Unable to compute real dot product of a complex "
-                           "state, consider using dotC instead.");
+    HydraThrow(std::logic_error,
+               "Unable to compute real dot product of a complex "
+               "state, consider using dotC instead.");
   }
 } catch (...) {
-  rethrow(__func__, "Unable compute dot product of two States");
+  HydraRethrow("Unable compute dot product of two States");
   return 0.;
 }
 
 complex dotC(State const &v, State const &w) try {
+  if (v.block() != w.block()) {
+    HydraThrow(std::logic_error,
+               "Cannot form dot product for states on different blocks");
+  }
+
+  if ((v.n_cols() > 1) || (w.n_cols() > 1)) {
+    HydraThrow(
+        std::logic_error,
+        "Cannot compute dotC product of state with more than one column");
+  }
   if ((v.isreal()) && (w.isreal())) {
-    return arma::dot(v.matrix(false), w.matrix(false));
+    return dot(v.block(), v.vector(0, false), w.vector(0, false));
   } else if ((v.isreal()) && (w.iscomplex())) {
     State v2;
     try {
       v2 = v;
       v2.make_complex();
     } catch (...) {
-      throw(std::runtime_error("Unable to create intermediate complex State"));
+      HydraThrow(std::runtime_error,
+                 "Unable to create intermediate complex State");
     }
-    return arma::cdot(v2.matrixC(false), w.matrixC(false));
+    return dot(v.block(), v2.vectorC(0, false), w.vectorC(0, false));
   } else if ((w.isreal()) && (v.iscomplex())) {
     State w2;
     try {
       w2 = w;
       w2.make_complex();
     } catch (...) {
-      throw(std::runtime_error("Unable to create intermediate complex State"));
+      HydraThrow(std::runtime_error,
+                 "Unable to create intermediate complex State");
     }
-    return arma::cdot(v.matrixC(false), w.matrixC(false));
+    return dot(v.block(), v.vectorC(0, false), w.vectorC(0, false));
   } else {
-    return arma::cdot(v.matrixC(false), w.matrixC(false));
+    return dot(v.block(), v.vectorC(0, false), w.vectorC(0, false));
   }
 } catch (...) {
-  rethrow(__func__, "Unable compute dot product of two States");
+  HydraRethrow("Unable compute dotC product of two States");
   return 0.;
 }
 
@@ -61,7 +95,7 @@ double inner(BondList const &bonds, State const &v) try {
   apply(bonds, v, w);
   return dot(w, v);
 } catch (...) {
-  rethrow(__func__, "Error computing expectation value using \"inner\"");
+  HydraRethrow("Error computing expectation value using \"inner\"");
   return 0.;
 }
 
@@ -70,21 +104,21 @@ complex innerC(BondList const &bonds, State const &v) try {
   apply(bonds, v, w);
   return dotC(w, v);
 } catch (...) {
-  rethrow(__func__, "Error computing expectation value using \"innerC\"");
+  HydraRethrow("Error computing expectation value using \"innerC\"");
   return 0.;
 }
 
 double inner(Bond const &bond, State const &v) try {
   return inner(BondList({bond}), v);
 } catch (...) {
-  rethrow(__func__, "Error computing expectation value using \"inner\"");
+  HydraRethrow("Error computing expectation value using \"inner\"");
   return 0.;
 }
 
 complex innerC(Bond const &bond, State const &v) try {
   return innerC(BondList({bond}), v);
 } catch (...) {
-  rethrow(__func__, "Error computing expectation value using \"innerC\"");
+  HydraRethrow("Error computing expectation value using \"innerC\"");
   return 0.;
 }
 
@@ -93,7 +127,7 @@ double inner(State const &v, BondList const &bonds, State const &w) try {
   apply(bonds, w, bw);
   return dot(v, bw);
 } catch (...) {
-  rethrow(__func__, "Error computing expectation value using \"inner\"");
+  HydraRethrow("Error computing expectation value using \"inner\"");
   return 0.;
 }
 
@@ -102,21 +136,21 @@ complex innerC(State const &v, BondList const &bonds, State const &w) try {
   apply(bonds, w, bw);
   return dotC(v, bw);
 } catch (...) {
-  rethrow(__func__, "Error computing expectation value using \"innerC\"");
+  HydraRethrow("Error computing expectation value using \"innerC\"");
   return 0.;
 }
 
 double inner(State const &v, Bond const &bond, State const &w) try {
   return inner(v, BondList({bond}), w);
 } catch (...) {
-  rethrow(__func__, "Error computing expectation value using \"inner\"");
+  HydraRethrow("Error computing expectation value using \"inner\"");
   return 0.;
 }
 
 complex innerC(State const &v, Bond const &bond, State const &w) try {
   return innerC(v, BondList({bond}), w);
 } catch (...) {
-  rethrow(__func__, "Error computing expectation value using \"innerC\"");
+  HydraRethrow("Error computing expectation value using \"innerC\"");
   return 0.;
 }
 
@@ -314,5 +348,86 @@ State &operator/=(State &X, double alpha) {
 //   X.vector() *= alpha;
 //   return X;
 // }
+
+double dot(block_variant_t const &block, arma::vec const &v,
+           arma::vec const &w) try {
+#ifdef HYDRA_USE_MPI
+  if (isdistributed(block)) {
+    return cdot_distributed(v, w);
+  } else {
+#else
+  (void)block;
+#endif
+    return arma::dot(v, w);
+#ifdef HYDRA_USE_MPI
+  }
+#endif
+} catch (...) {
+  HydraRethrow("unable to compute dot product for given block");
+  return 0;
+}
+
+complex dot(block_variant_t const &block, arma::cx_vec const &v,
+            arma::cx_vec const &w) try {
+#ifdef HYDRA_USE_MPI
+  if (isdistributed(block)) {
+    return cdot_distributed(v, w);
+  } else {
+#else
+  (void)block;
+#endif
+    return arma::cdot(v, w);
+#ifdef HYDRA_USE_MPI
+  }
+#endif
+} catch (...) {
+  HydraRethrow("unable to compute dot product for given block");
+  return 0;
+}
+
+template <typename coeff_t>
+double norm(block_variant_t const &block, arma::Col<coeff_t> const &v) try {
+  return std::sqrt(hydra::real(dot(block, v, v)));
+} catch (...) {
+  HydraRethrow("unable to compute norm for given block");
+  return 0;
+}
+
+template double norm(block_variant_t const &, arma::Col<double> const &);
+template double norm(block_variant_t const &, arma::Col<complex> const &);
+
+template <typename coeff_t>
+double norm1(block_variant_t const &block, arma::Col<coeff_t> const &v) try {
+  double nrm = arma::norm(v, 1);
+#ifdef HYDRA_USE_MPI
+  if (isdistributed(block)) {
+    mpi::Allreduce((double*)MPI_IN_PLACE, &nrm, 1, MPI_SUM, MPI_COMM_WORLD);
+  }
+#endif
+  return nrm;
+} catch (...) {
+  HydraRethrow("unable to compute 1-norm for given block");
+  return 0;
+}
+
+template double norm1(block_variant_t const &, arma::Col<double> const &);
+template double norm1(block_variant_t const &, arma::Col<complex> const &);
+
+template <typename coeff_t>
+double norminf(block_variant_t const &block, arma::Col<coeff_t> const &v) try {
+  double nrm = arma::norm(v, "inf");
+#ifdef HYDRA_USE_MPI
+  if (isdistributed(block)) {
+    mpi::Allreduce((double*)MPI_IN_PLACE, &nrm, 1, MPI_MAX, MPI_COMM_WORLD);
+  }
+#endif
+  return nrm;
+} catch (...) {
+  HydraRethrow("unable to compute maximum norm for given block");
+  return 0;
+}
+
+template double norminf(block_variant_t const &, arma::Col<double> const &);
+template double norminf(block_variant_t const &, arma::Col<complex> const &);
 
 } // namespace hydra

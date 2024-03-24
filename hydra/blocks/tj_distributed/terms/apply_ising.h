@@ -1,16 +1,16 @@
 #pragma once
-#ifdef HYDRA_ENABLE_MPI
 
 #include <hydra/common.h>
 #include <hydra/operators/bond.h>
 
-#include <hydra/blocks/tj/terms/generic_term_diag.h>
+#include <hydra/blocks/tj_distributed/terms/generic_term_diag.h>
 
 namespace hydra::tj_distributed {
 
-template <typename bit_t, typename coeff_t, bool symmetric, class Basis,
-          class Fill>
-void apply_ising(Bond const &bond, Basis &&basis, Fill &&fill) {
+template <typename bit_t, typename coeff_t, class Basis>
+void apply_ising(Bond const &bond, Basis &&basis,
+                 const coeff_t* vec_in,
+                 coeff_t * vec_out) try {
   assert(bond.coupling_defined());
   assert(bond.type_defined());
   assert(bond.size() == 2);
@@ -50,17 +50,10 @@ void apply_ising(Bond const &bond, Basis &&basis, Fill &&fill) {
     }
   };
 
-  int64_t idx_up = 0;
-  int64_t idx = 0;
-  for (bit_t up : basis.my_ups()) {
-    for (bit_t dn : basis.my_dns_for_ups[idx_up]) {
-      coeff_t val = term_action(up, dn);
-      fill(idx, idx, val);
-      ++idx;
-    }
-  }
-  ++idx_ups
+  tj_distributed::generic_term_diag<bit_t, coeff_t>(basis, term_action, vec_in,
+                                                    vec_out);
+} catch (...) {
+  HydraRethrow("Unable to apply Ising term for \"tJDistributed\" block");
 }
 
 } // namespace hydra::tj_distributed
-#endif

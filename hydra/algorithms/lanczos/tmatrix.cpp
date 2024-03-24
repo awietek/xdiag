@@ -1,9 +1,17 @@
 #include "tmatrix.h"
 
-#include <hydra/utils/print_macro.h>
+#include <cassert>
+
 #include <hydra/utils/logger.h>
+#include <hydra/utils/print_macro.h>
 
 namespace hydra {
+
+Tmatrix::Tmatrix(std::vector<double> const &alphas,
+                 std::vector<double> const &betas)
+    : alphas_(alphas), betas_(betas) {
+  assert(alphas.size() == betas.size());
+}
 
 void Tmatrix::append(double alpha, double beta) {
   alphas_.push_back(alpha);
@@ -83,4 +91,10 @@ void Tmatrix::print_log() const {
     Log(2, "eigs: {:.16f} {:.16f} {:.16f}", eigs(0), eigs(1), eigs(2));
   }
 }
+
+bool Tmatrix::operator==(Tmatrix const &rhs) const {
+  return (alphas_ == rhs.alphas_) && (betas_ == rhs.betas_);
+}
+bool Tmatrix::operator!=(Tmatrix const &rhs) const { return !operator==(rhs); }
+
 } // namespace hydra

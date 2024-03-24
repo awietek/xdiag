@@ -158,6 +158,7 @@ PermutationGroup const &Electron::permutation_group() const {
 }
 Representation const &Electron::irrep() const { return irrep_; }
 
+int64_t Electron::dim() const { return size_; }
 int64_t Electron::size() const { return size_; }
 
 bool Electron::iscomplex(double precision) const {

@@ -2,9 +2,9 @@
 
 #include "extern/armadillo/armadillo"
 
-#include <hydra/blocks/blocks.h>
 #include <hydra/common.h>
 #include <hydra/operators/bondlist.h>
+#include <hydra/blocks/spinhalf/spinhalf.h>
 
 namespace hydra {
 

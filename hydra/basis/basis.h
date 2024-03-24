@@ -15,6 +15,10 @@
 #include <hydra/basis/electron/basis_symmetric_no_np.h>
 #include <hydra/basis/electron/basis_symmetric_np.h>
 
+#ifdef HYDRA_USE_MPI
+#include <hydra/basis/tj_distributed/basis_np.h>
+#endif
+
 namespace hydra {
 
 // clang-format off
@@ -74,6 +78,10 @@ using basis_tj_variant_t =
 	       basis::tj::BasisSymmetricNp<uint64_t>>;
 // clang-format on
 
+int64_t dim(basis_spinhalf_variant_t const &idxing);
+int64_t dim(basis_tj_variant_t const &idxing);
+int64_t dim(basis_electron_variant_t const &idxing);
+
 int64_t size(basis_spinhalf_variant_t const &idxing);
 int64_t size(basis_tj_variant_t const &idxing);
 int64_t size(basis_electron_variant_t const &idxing);
@@ -89,20 +97,22 @@ int64_t index(basis_tj_variant_t const &, bit_t ups, bit_t dns);
 template <typename bit_t>
 int64_t index(basis_electron_variant_t const &, bit_t ups, bit_t dns);
 
-#ifdef HYDRA_ENABLE_DISTRIBUTED
+#ifdef HYDRA_USE_MPI
 
 // clang-format off
-using basis_distributed_tj_variant_t =
-  std::variant<basis::distributed_tj::BasisNp<uint16_t>,
-	       basis::distributed_tj::BasisNp<uint32_t>,
-	       basis::distributed_tj::BasisNp<uint64_t>>;
+using basis_tj_distributed_variant_t =
+  std::variant<basis::tj_distributed::BasisNp<uint16_t>,
+	       basis::tj_distributed::BasisNp<uint32_t>,
+	       basis::tj_distributed::BasisNp<uint64_t>>;
 // clang-format on
 
-int64_t size(basis_distributed_tj_variant_t const &idxing);
-int64_t local_size(basis_distributed_tj_variant_t const &idxing);
+int64_t dim(basis_tj_distributed_variant_t const &idxing);
+int64_t size(basis_tj_distributed_variant_t const &idxing);
+int64_t size_max(basis_tj_distributed_variant_t const &idxing);
+int64_t size_min(basis_tj_distributed_variant_t const &idxing);
 
-  template <typename bit_t>
-bool has_bit_t(basis_distributed_tj_variant_t const &);
+template <typename bit_t>
+bool has_bit_t(basis_tj_distributed_variant_t const &);
 
 #endif
 

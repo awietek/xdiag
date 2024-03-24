@@ -7,20 +7,20 @@
 
 namespace hydra::spinhalf {
 
-BondList compile(BondList const &bonds, double precision) {
+BondList compile(BondList const &bonds, double precision) try {
 
   BondList bonds_explicit =
       operators::compile_explicit(bonds, precision, "keep");
   BondList bonds_special;
   BondList bonds_generic;
-  
+
   for (auto bond : bonds_explicit) {
     if (bond.type_defined()) {
       std::string type = bond.type();
       if (std::find(special_bond_types.begin(), special_bond_types.end(),
                     type) == special_bond_types.end()) {
-        Log.err("Error compiling BondList: invalid or undefined type found: {}",
-                type);
+        HydraThrow(std::runtime_error,
+                   std::string("Invalid or undefined type found ") + type);
       } else {
 
         if ((type == "HB") || (type == "HEISENBERG")) {
@@ -32,12 +32,15 @@ BondList compile(BondList const &bonds, double precision) {
       }
     } else {
       BondList bonds_nb = operators::non_branching_bonds(bond, precision);
-      for (auto b : bonds_nb){
-	bonds_generic << b;
+      for (auto b : bonds_nb) {
+        bonds_generic << b;
       }
     }
   }
   return bonds_special + bonds_generic;
+} catch (...) {
+  HydraRethrow("Unable to compile BondList");
+  return BondList();
 }
 
 } // namespace hydra::spinhalf

@@ -33,4 +33,29 @@ Communicator::Communicator(std::vector<int64_t> const &n_values_i_send)
       std::accumulate(n_values_i_recv_.begin(), n_values_i_recv_.end(), 0);
 }
 
+int64_t Communicator::n_values_i_send(int mpi_rank) const {
+  return n_values_i_send_[mpi_rank];
+}
+int64_t Communicator::n_values_i_recv(int mpi_rank) const {
+  return n_values_i_recv_[mpi_rank];
+}
+
+int64_t Communicator::n_values_i_send_offsets(int mpi_rank) const {
+  return n_values_i_send_offsets_[mpi_rank];
+}
+int64_t Communicator::n_values_i_recv_offsets(int mpi_rank) const {
+  return n_values_i_recv_offsets_[mpi_rank];
+}
+
+int64_t Communicator::send_buffer_size() const { return send_buffer_size_; }
+int64_t Communicator::recv_buffer_size() const { return recv_buffer_size_; }
+
+int64_t Communicator::n_values_prepared(int mpi_rank) const {
+  return n_values_prepared_[mpi_rank];
+}
+
+void Communicator::flush() {
+  std::fill(n_values_prepared_.begin(), n_values_prepared_.end(), 0);
+}
+
 } // namespace hydra::mpi

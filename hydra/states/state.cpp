@@ -5,7 +5,8 @@
 namespace hydra {
 
 State::State(block_variant_t const &block, bool real, int64_t n_cols)
-    : real_(real), n_rows_(hydra::size(block)), n_cols_(n_cols), block_(block) {
+    : real_(real), dim_(hydra::dim(block)), n_rows_(hydra::size(block)),
+      n_cols_(n_cols), block_(block) {
   try {
     if (real) {
       resize_vector(storage_, size());
@@ -13,13 +14,14 @@ State::State(block_variant_t const &block, bool real, int64_t n_cols)
       resize_vector(storage_, 2 * size());
     }
   } catch (...) {
-    HydraThrow(std::runtime_error, "Unable to allocate memory for State");
+    HydraRethrow("Unable to allocate memory for State");
   }
 }
 
 template <typename block_t>
 State::State(block_t const &block, bool real, int64_t n_cols)
-    : real_(real), n_rows_(block.size()), n_cols_(n_cols), block_(block) {
+    : real_(real), dim_(block.dim()), n_rows_(block.size()), n_cols_(n_cols),
+      block_(block) {
   try {
     if (real) {
       resize_vector(storage_, size());
@@ -27,13 +29,9 @@ State::State(block_t const &block, bool real, int64_t n_cols)
       resize_vector(storage_, 2 * size());
     }
   } catch (...) {
-    HydraThrow(std::runtime_error, "Unable to allocate memory for State");
+    HydraRethrow("Unable to allocate memory for State");
   }
 }
-
-template State::State(Spinhalf const &, bool, int64_t);
-template State::State(tJ const &, bool, int64_t);
-template State::State(Electron const &, bool, int64_t);
 
 template <typename block_t>
 State::State(block_t const &block, double const *ptr, int64_t n_cols,
@@ -58,9 +56,6 @@ State::State(block_t const &block, double const *ptr, int64_t n_cols,
     HydraThrow(std::runtime_error, "Unable to copy memory for State");
   }
 }
-template State::State(Spinhalf const &, double const *, int64_t, int64_t);
-template State::State(tJ const &, double const *, int64_t, int64_t);
-template State::State(Electron const &, double const *, int64_t, int64_t);
 
 template <typename block_t>
 State::State(block_t const &block, complex const *ptr, int64_t n_cols)
@@ -77,9 +72,6 @@ State::State(block_t const &block, complex const *ptr, int64_t n_cols)
     HydraThrow(std::runtime_error, "Unable to copy memory for State");
   }
 }
-template State::State(Spinhalf const &block, complex const *ptr, int64_t size);
-template State::State(tJ const &block, complex const *ptr, int64_t size);
-template State::State(Electron const &block, complex const *ptr, int64_t size);
 
 template <typename block_t, typename coeff_t>
 State::State(block_t const &block, arma::Col<coeff_t> const &vector)
@@ -108,13 +100,6 @@ State::State(block_t const &block, arma::Col<coeff_t> const &vector)
   }
 }
 
-template State::State(Spinhalf const &block, arma::Col<double> const &vector);
-template State::State(tJ const &block, arma::Col<double> const &vector);
-template State::State(Electron const &block, arma::Col<double> const &vector);
-template State::State(Spinhalf const &block, arma::Col<complex> const &vector);
-template State::State(tJ const &block, arma::Col<complex> const &vector);
-template State::State(Electron const &block, arma::Col<complex> const &vector);
-
 template <typename block_t, typename coeff_t>
 State::State(block_t const &block, arma::Mat<coeff_t> const &matrix)
     : real_(hydra::isreal<coeff_t>()), n_rows_(matrix.n_rows),
@@ -142,13 +127,6 @@ State::State(block_t const &block, arma::Mat<coeff_t> const &matrix)
     HydraThrow(std::runtime_error, "Unable to copy memory for State");
   }
 }
-
-template State::State(Spinhalf const &block, arma::Mat<double> const &vector);
-template State::State(tJ const &block, arma::Mat<double> const &vector);
-template State::State(Electron const &block, arma::Mat<double> const &vector);
-template State::State(Spinhalf const &block, arma::Mat<complex> const &vector);
-template State::State(tJ const &block, arma::Mat<complex> const &vector);
-template State::State(Electron const &block, arma::Mat<complex> const &vector);
 
 int64_t State::n_sites() const { return hydra::n_sites(block_); }
 bool State::isreal() const { return real_; }
@@ -191,6 +169,8 @@ void State::make_complex() try {
 } catch (...) {
   HydraRethrow("Error transforming to complex State");
 }
+
+int64_t State::dim() const { return hydra::dim(block_); }
 
 int64_t State::size() const { return n_rows_ * n_cols_; }
 int64_t State::n_rows() const { return n_rows_; }
@@ -295,5 +275,47 @@ complex *State::colptrC(int64_t col) {
 State zeros_like(State const &state) {
   return State(state.block(), state.isreal(), state.n_cols());
 }
+
+template State::State(Spinhalf const &, bool, int64_t);
+template State::State(tJ const &, bool, int64_t);
+template State::State(Electron const &, bool, int64_t);
+
+template State::State(Spinhalf const &, double const *, int64_t, int64_t);
+template State::State(tJ const &, double const *, int64_t, int64_t);
+template State::State(Electron const &, double const *, int64_t, int64_t);
+
+template State::State(Spinhalf const &block, complex const *, int64_t size);
+template State::State(tJ const &block, complex const *, int64_t size);
+template State::State(Electron const &block, complex const *, int64_t size);
+
+template State::State(Spinhalf const &block, arma::Col<double> const &vector);
+template State::State(tJ const &block, arma::Col<double> const &vector);
+template State::State(Electron const &block, arma::Col<double> const &vector);
+template State::State(Spinhalf const &block, arma::Col<complex> const &vector);
+template State::State(tJ const &block, arma::Col<complex> const &vector);
+template State::State(Electron const &block, arma::Col<complex> const &vector);
+
+template State::State(Spinhalf const &block, arma::Mat<double> const &vector);
+template State::State(tJ const &block, arma::Mat<double> const &vector);
+template State::State(Electron const &block, arma::Mat<double> const &vector);
+template State::State(Spinhalf const &block, arma::Mat<complex> const &vector);
+template State::State(tJ const &block, arma::Mat<complex> const &vector);
+template State::State(Electron const &block, arma::Mat<complex> const &vector);
+
+#ifdef HYDRA_USE_MPI
+template State::State(tJDistributed const &, bool, int64_t);
+template State::State(tJDistributed const &, double const *, int64_t, int64_t);
+template State::State(tJDistributed const &block, complex const *ptr,
+                      int64_t size);
+template State::State(tJDistributed const &block,
+                      arma::Col<double> const &vector);
+template State::State(tJDistributed const &block,
+                      arma::Col<complex> const &vector);
+template State::State(tJDistributed const &block,
+                      arma::Mat<double> const &vector);
+template State::State(tJDistributed const &block,
+                      arma::Mat<complex> const &vector);
+
+#endif
 
 } // namespace hydra

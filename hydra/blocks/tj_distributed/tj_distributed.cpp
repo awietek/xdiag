@@ -1,22 +1,67 @@
-#include "distributed_tj.h"
+#include "tj_distributed.h"
+
+#include <hydra/combinatorics/binomial.h>
 
 namespace hydra {
 
 tJDistributed::tJDistributed(int64_t n_sites, int64_t n_up, int64_t n_dn)
-    : n_sites_(n_sites), n_up_(n_up), n_dn_(n_dn) {}
+    : n_sites_(n_sites), n_up_(n_up), n_dn_(n_dn) {
+  using namespace basis::tj_distributed;
+  using combinatorics::binomial;
+
+  try {
+    if (n_sites < 0) {
+      HydraThrow(std::invalid_argument, "n_sites < 0");
+    } else if ((n_up < 0) || (n_dn < 0)) {
+      HydraThrow(std::invalid_argument, "n_up < 0 or n_dn < 0");
+    } else if ((n_up + n_dn) > n_sites) {
+      HydraThrow(std::invalid_argument, "n_up + n_dn > n_sites");
+    }
+
+    if (n_sites < 16) {
+      basis_ =
+          std::make_shared<basis_t>(BasisNp<uint16_t>(n_sites, n_up, n_dn));
+    } else if (n_sites < 32) {
+      basis_ =
+          std::make_shared<basis_t>(BasisNp<uint32_t>(n_sites, n_up, n_dn));
+    } else if (n_sites < 64) {
+      basis_ =
+          std::make_shared<basis_t>(BasisNp<uint64_t>(n_sites, n_up, n_dn));
+    } else {
+      HydraThrow(std::runtime_error,
+                 "blocks with more than 64 sites currently not implemented");
+    }
+    dim_ = hydra::dim(*basis_);
+    assert(dim_ == binomial(n_sites, n_up) * binomial(n_sites - n_up, n_dn));
+    size_ = hydra::size(*basis_);
+  } catch (...) {
+    HydraRethrow("Cannot create Basis for tJDistributed");
+  }
+}
 
 int64_t tJDistributed::n_sites() const { return n_sites_; }
 int64_t tJDistributed::n_up() const { return n_up_; }
 int64_t tJDistributed::n_dn() const { return n_dn_; }
 
-int_t tJDistributed::size() const { return size_; }
-idx_t tJDistributed::local_size() const { return local_size_; }
+int64_t tJDistributed::dim() const { return dim_; }
+int64_t tJDistributed::size() const { return size_; }
+int64_t tJDistributed::size_max() const { return hydra::size_max(*basis_); }
+int64_t tJDistributed::size_min() const { return hydra::size_min(*basis_); }
 
-bool tJDistributed::iscomplex(double precision = 1e-12) const {
+bool tJDistributed::charge_conserved() const { return true; }
+bool tJDistributed::sz_conserved() const { return true; }
+
+bool tJDistributed::symmetric() const { return false; }
+PermutationGroup tJDistributed::permutation_group() const {
+  return PermutationGroup();
+}
+Representation tJDistributed::irrep() const { return Representation(); }
+
+bool tJDistributed::iscomplex(double precision) const {
   (void)precision;
   return false;
 }
-bool tJDistributed::isreal(double precision = 1e-12) const {
+bool tJDistributed::isreal(double precision) const {
   return !iscomplex(precision);
 }
 
@@ -25,10 +70,10 @@ bool tJDistributed::operator==(tJDistributed const &rhs) const {
          (n_dn_ == rhs.n_dn_);
 }
 bool tJDistributed::operator!=(tJDistributed const &rhs) const {
-  return !opertor == (rhs);
+  return !operator==(rhs);
 }
 
-basis_distributed_tj_variant_t const &tJDistributed::basis() const {
+basis_tj_distributed_variant_t const &tJDistributed::basis() const {
   return *basis_;
 }
 } // namespace hydra

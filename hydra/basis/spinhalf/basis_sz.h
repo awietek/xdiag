@@ -17,10 +17,12 @@ public:
 
   iterator_t begin() const;
   iterator_t end() const;
-  inline int64_t index(bit_t spins) const { return lintable_.index(spins); }
-  inline bit_t state(int64_t index) const { return states_[index]; }
+  int64_t dim() const;
   int64_t size() const;
 
+  inline int64_t index(bit_t spins) const { return lintable_.index(spins); }
+  inline bit_t state(int64_t index) const { return states_[index]; }
+  
   int64_t n_sites() const;
   int64_t n_up() const;
   static constexpr bool sz_conserved() { return true; }

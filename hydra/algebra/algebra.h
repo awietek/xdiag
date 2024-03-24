@@ -7,7 +7,10 @@
 
 namespace hydra {
 
+// Various norms
 double norm(State const &v);
+double norm1(State const &v);
+double norminf(State const &v);
 
 // dot
 double dot(State const &v, State const &w);
@@ -39,5 +42,19 @@ State &operator/=(State &X, double alpha);
 
 // State &operator*=(State &X, complex alpha);
 // State &operator*=(State &X, double alpha);
+
+double dot(block_variant_t const &block, arma::vec const &v,
+           arma::vec const &w);
+complex dot(block_variant_t const &block, arma::cx_vec const &v,
+            arma::cx_vec const &w);
+
+template <typename coeff_t>
+double norm(block_variant_t const &block, arma::Col<coeff_t> const &v);
+
+template <typename coeff_t>
+double norm1(block_variant_t const &block, arma::Col<coeff_t> const &v);
+
+template <typename coeff_t>
+double norminf(block_variant_t const &block, arma::Col<coeff_t> const &v);
 
 } // namespace hydra

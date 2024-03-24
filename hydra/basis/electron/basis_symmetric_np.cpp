@@ -42,6 +42,32 @@ BasisSymmetricNp<bit_t>::BasisSymmetricNp(int64_t n_sites, int64_t nup,
           reps_up_, Combinations<bit_t>(n_sites, ndn), group_action_, irrep_);
 }
 
+template <class bit_t> int64_t BasisSymmetricNp<bit_t>::n_sites() const {
+  return n_sites_;
+}
+template <class bit_t> int64_t BasisSymmetricNp<bit_t>::n_up() const {
+  return n_up_;
+}
+template <class bit_t> int64_t BasisSymmetricNp<bit_t>::n_dn() const {
+  return n_dn_;
+}
+
+template <class bit_t> int64_t BasisSymmetricNp<bit_t>::dim() const {
+  return size_;
+}
+template <class bit_t> int64_t BasisSymmetricNp<bit_t>::size() const {
+  return size_;
+}
+
+template <class bit_t>
+GroupActionLookup<bit_t> const &BasisSymmetricNp<bit_t>::group_action() const {
+  return group_action_;
+}
+template <class bit_t>
+Representation const &BasisSymmetricNp<bit_t>::irrep() const {
+  return irrep_;
+}
+
 template class BasisSymmetricNp<uint16_t>;
 template class BasisSymmetricNp<uint32_t>;
 template class BasisSymmetricNp<uint64_t>;

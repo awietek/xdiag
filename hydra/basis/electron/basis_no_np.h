@@ -16,7 +16,9 @@ public:
   BasisNoNp() = default;
   BasisNoNp(int n_sites);
 
+  int64_t dim() const;
   int64_t size() const;
+
   inline int64_t index(bit_t ups, bit_t dns) const {
     return index_ups(ups) * size_dns_ + index_dns(dns);
   }

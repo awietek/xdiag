@@ -5,14 +5,12 @@
 #include <hydra/common.h>
 #include <hydra/utils/logger.h>
 
-namespace hydra {
+namespace hydra::tj {
 
 template <typename coeff_t, class fill_f>
-void apply_terms_dispatch(BondList const &bonds, tJ const &block_in,
-                          tJ const &block_out, fill_f &&fill) try {
-  using namespace tj;
+inline void dispatch(BondList const &bonds, tJ const &block_in,
+                     tJ const &block_out, fill_f &&fill) try {
   using namespace basis::tj;
-
   auto const &basis_in = block_in.basis();
   auto const &basis_out = block_out.basis();
 
@@ -46,7 +44,8 @@ void apply_terms_dispatch(BondList const &bonds, tJ const &block_in,
             apply_terms<uint64_t, coeff_t, true>(bonds, idx_in, idx_out, fill);
           },
           [&](auto const &idx_in, auto const &idx_out) {
-            HydraThrow(std::logic_error, "Invalid basis or combination of bases");
+            HydraThrow(std::logic_error,
+                       "Invalid basis or combination of bases");
             (void)idx_in;
             (void)idx_out;
           }},
@@ -55,4 +54,4 @@ void apply_terms_dispatch(BondList const &bonds, tJ const &block_in,
   HydraRethrow("Unable to apply terms on tJ block");
 }
 
-} // namespace hydra
+} // namespace hydra::tj

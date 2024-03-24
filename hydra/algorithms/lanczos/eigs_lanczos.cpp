@@ -1,11 +1,12 @@
 #include "eigs_lanczos.h"
-
+#include <hydra/algebra/algebra.h>
 #include <hydra/algebra/apply.h>
 #include <hydra/algorithms/lanczos/eigvals_lanczos.h>
 #include <hydra/algorithms/lanczos/lanczos.h>
 #include <hydra/algorithms/lanczos/lanczos_convergence.h>
 
 #include <hydra/states/random_state.h>
+#include <hydra/utils/print_macro.h>
 #include <hydra/utils/timing.h>
 
 namespace hydra {
@@ -37,7 +38,7 @@ eigs_lanczos_result_t eigs_lanczos(BondList const &bonds,
     tmat += arma::diagmat(r.betas.head(r.betas.size() - 1), 1) +
             arma::diagmat(r.betas.head(r.betas.size() - 1), -1);
   }
-  
+
   arma::vec reigs;
   arma::mat revecs;
   try {
@@ -63,8 +64,8 @@ eigs_lanczos_result_t eigs_lanczos(BondList const &bonds,
       timing(ta, rightnow(), "MVM", 1);
       ++iter;
     };
-    auto dot = [](arma::cx_vec const &v, arma::cx_vec const &w) {
-      return arma::cdot(v, w);
+    auto dotf = [&block](arma::cx_vec const &v, arma::cx_vec const &w) {
+      return dot(block, v, w);
     };
     auto operation = [&eigenvectors, &revecs, &iter,
                       neigvals](arma::cx_vec const &v) {
@@ -72,7 +73,7 @@ eigs_lanczos_result_t eigs_lanczos(BondList const &bonds,
           kron(v, revecs.submat(iter - 1, 0, iter - 1, neigvals - 1));
     };
 
-    lanczos::lanczos(mult, dot, converged, operation, v0, r.niterations,
+    lanczos::lanczos(mult, dotf, converged, operation, v0, r.niterations,
                      deflation_tol);
 
     // Setup real Lanczos run
@@ -85,15 +86,15 @@ eigs_lanczos_result_t eigs_lanczos(BondList const &bonds,
       timing(ta, rightnow(), "MVM", 1);
       ++iter;
     };
-    auto dot = [](arma::vec const &v, arma::vec const &w) {
-      return arma::dot(v, w);
+    auto dotf = [&block](arma::vec const &v, arma::vec const &w) {
+      return dot(block, v, w);
     };
     auto operation = [&eigenvectors, &revecs, &iter,
                       neigvals](arma::vec const &v) {
       eigenvectors.matrix(false) +=
           kron(v, revecs.submat(iter - 1, 0, iter - 1, neigvals - 1));
     };
-    lanczos::lanczos(mult, dot, converged, operation, v0, r.niterations,
+    lanczos::lanczos(mult, dotf, converged, operation, v0, r.niterations,
                      deflation_tol);
   }
 

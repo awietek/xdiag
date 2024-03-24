@@ -55,7 +55,7 @@ void generic_term_dns(BasisIn &&basis_in, BasisOut &&basis_out,
 
             int64_t idx_dns_flip = basis_out.index_dns(dns_flip);
             int64_t idx_out = ups_offset_out + idx_dns_flip;
-            fill(idx_out, idx_in, coeff);
+            fill(idx_in, idx_out, coeff);
           }
           ++dns_in_idx;
         }
@@ -87,7 +87,7 @@ void generic_term_dns(BasisIn &&basis_in, BasisOut &&basis_out,
               coeff_t val =
                   coeff * norms_out[idx_dns_flip] / norms_in[dns_in_idx];
 
-              fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -val : val);
+              fill(idx_in, idx_out, (fermi_up ^ fermi_dn) ? -val : val);
             }
           }
 
@@ -129,7 +129,7 @@ void generic_term_dns(BasisIn &&basis_in, BasisOut &&basis_out,
             int64_t idx_in = idx_dns_in;
             for (bit_t ups : basis_in.states_ups()) {
               bool fermi = bits::popcnt(ups) & 1;
-              fill(idx_out, idx_in, fermi ? coeff : -coeff);
+              fill(idx_in, idx_out, fermi ? coeff : -coeff);
               idx_out += size_dns_out;
               idx_in += size_dns_in;
             }
@@ -137,7 +137,7 @@ void generic_term_dns(BasisIn &&basis_in, BasisOut &&basis_out,
             for (int64_t idx_out = idx_out_start, idx_in = idx_dns_in;
                  idx_out < idx_out_end;
                  idx_out += size_dns_out, idx_in += size_dns_in) {
-              fill(idx_out, idx_in, coeff);
+              fill(idx_in, idx_out, coeff);
             }
           }
         }

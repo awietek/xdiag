@@ -5,6 +5,7 @@
 #include <hydra/blocks/spinhalf/spinhalf_matrix.h>
 #include <hydra/algebra/matrix.h>
 #include <hydra/utils/close.h>
+#include <hydra/utils/print_macro.h>
 
 using namespace hydra;
 

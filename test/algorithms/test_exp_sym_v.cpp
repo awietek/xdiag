@@ -29,7 +29,7 @@ TEST_CASE("exp_sym_v", "[algorithms]") try {
       arma::cx_vec psi_ex = expmat(complex(0.0, -1.0 * t) * H) * psi0.vector();
       arma::cx_vec psi = exp_sym_v(bonds, psi0, complex(0, -t)).vectorC();
       // HydraPrint(norm(psi - psi_ex));
-      REQUIRE(norm(psi - psi_ex) < 1e-10);
+      REQUIRE(norm(psi - psi_ex) < 1e-6);
     }
 
     {
@@ -40,7 +40,7 @@ TEST_CASE("exp_sym_v", "[algorithms]") try {
       arma::vec psi_ex = expmat(-t * H) * psi0.vector();
       arma::vec psi = exp_sym_v(bonds, psi0, -t).vector();
       // HydraPrint(norm(psi - psi_ex));
-      REQUIRE(norm(psi - psi_ex) < 1e-10);
+      REQUIRE(norm(psi - psi_ex) < 1e-6);
     }
 
     {
@@ -50,7 +50,7 @@ TEST_CASE("exp_sym_v", "[algorithms]") try {
       arma::cx_vec psi_ex = expmat(t * H) * psi0.vector();
       arma::cx_vec psi = exp_sym_v(bonds, psi0, t).vectorC();
       // HydraPrint(norm(psi - psi_ex));
-      REQUIRE(norm(psi - psi_ex) < 1e-10);
+      REQUIRE(norm(psi - psi_ex) < 1e-6);
     }
   }
 

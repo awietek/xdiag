@@ -30,7 +30,6 @@ set(HYDRA_TEST_SOURCES
   operators/test_symmetrized_operator.cpp
   operators/test_non_branching_bonds.cpp
 
-  blocks/spinhalf/testcases_spinhalf.cpp
   blocks/spinhalf/test_spinhalf_matrix.cpp
   blocks/spinhalf/test_spinhalf_apply.cpp
 
@@ -39,7 +38,6 @@ set(HYDRA_TEST_SOURCES
   blocks/spinhalf_symmetric/test_spinhalf_symmetric_apply.cpp
   blocks/spinhalf_symmetric/test_kitaev_gamma.cpp
 
-  blocks/tj/testcases_tj.cpp
   blocks/tj/test_tj_matrix.cpp
   blocks/tj/test_tj_apply.cpp
   blocks/tj/test_tj_raiselower.cpp
@@ -48,7 +46,6 @@ set(HYDRA_TEST_SOURCES
   blocks/tj_symmetric/test_tj_symmetric_matrix.cpp
   blocks/tj_symmetric/test_tj_symmetric_apply.cpp
 
-  blocks/electron/testcases_electron.cpp
   blocks/electron/test_electron_matrix.cpp
   blocks/electron/test_electron_apply.cpp
   blocks/electron/test_electron_raiselower.cpp
@@ -72,25 +69,32 @@ set(HYDRA_TEST_SOURCES
   states/test_product_state.cpp
 )
 
+set(HYDRA_TESTCASES_SOURCES
+  blocks/spinhalf/testcases_spinhalf.cpp
+  blocks/tj/testcases_tj.cpp
+  blocks/electron/testcases_electron.cpp
+)
+
 
 set(HYDRA_TEST_DISTRIBUTED_SOURCES
   parallel/mpi/test_cdot_distributed.cpp
   basis/tj_distributed/test_basis_np.cpp
   blocks/tj_distributed/test_tj_distributed_apply.cpp
+  algorithms/time_evolution/test_time_evolution_distributed.cpp
 )
 
 if(BUILD_DISTRIBUTED)
   # normal tests
-  add_executable(tests tests.cpp ${HYDRA_TEST_SOURCES})
+  add_executable(tests tests.cpp ${HYDRA_TEST_SOURCES} ${HYDRA_TESTCASES_SOURCES})
   target_link_libraries(tests PRIVATE hydra_distributed MPI::MPI_CXX)
   add_test(NAME HydraTest COMMAND tests)
 
   # distributed tests
-  add_executable(tests_distributed tests_distributed.cpp ${HYDRA_TEST_DISTRIBUTED_SOURCES})
+  add_executable(tests_distributed tests_distributed.cpp ${HYDRA_TEST_DISTRIBUTED_SOURCES} ${HYDRA_TESTCASES_SOURCES})
   target_link_libraries(tests_distributed PRIVATE hydra_distributed MPI::MPI_CXX)
   add_test(NAME HydraTestDistributed COMMAND tests_distributed)
 else()
-  add_executable(tests tests.cpp ${HYDRA_TEST_SOURCES})
+  add_executable(tests tests.cpp ${HYDRA_TEST_SOURCES} ${HYDRA_TESTCASES_SOURCES})
   target_link_libraries(tests PRIVATE hydra)
   add_test(NAME HydraTest COMMAND tests)
 endif()

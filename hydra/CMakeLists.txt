@@ -111,7 +111,6 @@ set(HYDRA_SOURCES
   algorithms/gram_schmidt/orthogonalize.cpp
 
   algorithms/norm_estimate.cpp
-  algorithms/time_evolution/zahexpv.cpp
   algorithms/time_evolution/exp_sym_v.cpp
   algorithms/time_evolution/time_evolution.cpp
   algorithms/time_evolution/pade_matrix_exponential.cpp
@@ -120,15 +119,15 @@ set(HYDRA_SOURCES
 set(HYDRA_DISTRIBUTED_SOURCES
   parallel/mpi/allreduce.cpp
   parallel/mpi/alltoall.cpp
-  parallel/mpi/buffer.cpp
   parallel/mpi/communicator.cpp
   parallel/mpi/datatype.cpp
   parallel/mpi/cdot_distributed.cpp
   parallel/mpi/timing_mpi.cpp
-  parallel/mpi/logger_mpi.cpp
+  parallel/mpi/buffer.cpp
 
   basis/tj_distributed/basis_np.cpp
   blocks/tj_distributed/tj_distributed.cpp
+  blocks/tj_distributed/tj_distributed_apply.cpp
 )
 
 if(BUILD_DISTRIBUTED)

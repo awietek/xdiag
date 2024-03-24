@@ -7,12 +7,11 @@
 #include <hydra/common.h>
 #include <hydra/utils/logger.h>
 
-namespace hydra {
+namespace hydra::spinhalf {
 
 template <typename coeff_t, class fill_f>
-void apply_terms_dispatch(BondList const &bonds, Spinhalf const &block_in,
-                          Spinhalf const &block_out, fill_f fill) try {
-  using namespace spinhalf;
+inline void dispatch(BondList const &bonds, Spinhalf const &block_in,
+                     Spinhalf const &block_out, fill_f fill) try {
   using namespace basis::spinhalf;
 
   auto const &basis_in = block_in.basis();
@@ -135,7 +134,8 @@ void apply_terms_dispatch(BondList const &bonds, Spinhalf const &block_in,
           },
 
           [&](auto const &idx_in, auto const &idx_out) {
-            HydraThrow(std::logic_error, "Invalid basis or combination of bases");
+            HydraThrow(std::logic_error,
+                       "Invalid basis or combination of bases");
             (void)idx_in;
             (void)idx_out;
           }},
@@ -144,4 +144,4 @@ void apply_terms_dispatch(BondList const &bonds, Spinhalf const &block_in,
   HydraRethrow("Unable to apply terms on Spinhalf block");
 }
 
-} // namespace hydra
+} // namespace hydra::spinhalf

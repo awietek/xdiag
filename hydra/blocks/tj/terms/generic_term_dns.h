@@ -11,7 +11,7 @@ template <typename bit_t, typename coeff_t, bool symmetric, bool fermi_ups,
 void generic_term_dns(BasisIn &&basis_in, BasisOut &&basis_out,
                       NonZeroTermUps &&non_zero_term_ups,
                       NonZeroTermDns &&non_zero_term_dns,
-                      TermAction &&term_action, Fill &&fill) {
+                      TermAction &&term_action, Fill &&fill) try {
   int64_t n_sites = basis_in.n_sites();
   assert(n_sites == basis_out.n_sites());
   bit_t sitesmask = ((bit_t)1 << n_sites) - 1;
@@ -29,8 +29,7 @@ void generic_term_dns(BasisIn &&basis_in, BasisOut &&basis_out,
 #ifdef _OPENMP
 #pragma omp parallel for schedule(guided)
 #endif
-    for (int64_t idx_up_in = 0; idx_up_in < basis_in.n_rep_ups();
-         ++idx_up_in) {
+    for (int64_t idx_up_in = 0; idx_up_in < basis_in.n_rep_ups(); ++idx_up_in) {
       bit_t up_in = basis_in.rep_ups(idx_up_in);
 
       if (non_zero_term_ups(up_in)) {
@@ -61,9 +60,9 @@ void generic_term_dns(BasisIn &&basis_in, BasisOut &&basis_out,
 
                 if constexpr (fermi_ups) {
                   bool fermi_up = (bool)(bits::popcnt(up_in) & 1);
-                  fill(idx_out, idx_in, fermi_up ? -coeff : coeff);
+                  fill(idx_in, idx_out, fermi_up ? -coeff : coeff);
                 } else {
-                  fill(idx_out, idx_in, coeff);
+                  fill(idx_in, idx_out, coeff);
                 }
               }
             }
@@ -89,7 +88,7 @@ void generic_term_dns(BasisIn &&basis_in, BasisOut &&basis_out,
                 }
                 coeff_t val = coeff * bloch_factors[sym] *
                               norms_out[idx_dn_flip] / norms_in[idx_dn_in];
-                fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -val : val);
+                fill(idx_in, idx_out, (fermi_up ^ fermi_dn) ? -val : val);
               }
             }
             ++idx_dn_in;
@@ -130,9 +129,9 @@ void generic_term_dns(BasisIn &&basis_in, BasisOut &&basis_out,
 
                 if constexpr (fermi_ups) {
                   bool fermi_up = (bool)(bits::popcnt(up_in) & 1);
-                  fill(idx_out, idx_in, fermi_up ? -coeff : coeff);
+                  fill(idx_in, idx_out, fermi_up ? -coeff : coeff);
                 } else {
-                  fill(idx_out, idx_in, coeff);
+                  fill(idx_in, idx_out, coeff);
                 }
               }
             }
@@ -144,6 +143,8 @@ void generic_term_dns(BasisIn &&basis_in, BasisOut &&basis_out,
     }
 #endif
   } // if not symmetric
+} catch (...) {
+  HydraRethrow("Unable to apply generic term on dn spins");
 }
 
 } // namespace hydra::tj

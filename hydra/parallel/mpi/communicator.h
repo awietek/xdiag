@@ -13,44 +13,34 @@ public:
   Communicator() = default;
   Communicator(std::vector<int64_t> const &n_values_i_send);
 
-  std::vector<int> n_values_i_send() const { return n_values_i_send_; }
-  std::vector<int> n_values_i_recv() const { return n_values_i_recv_; }
+  int64_t n_values_i_send(int mpi_rank) const;
+  int64_t n_values_i_recv(int mpi_rank) const;
 
-  std::vector<int> n_values_i_send_offsets() const {
-    return n_values_i_send_offsets_;
-  }
-  std::vector<int> n_values_i_recv_offsets() const {
-    return n_values_i_recv_offsets_;
-  }
+  int64_t n_values_i_send_offsets(int mpi_rank) const;
+  int64_t n_values_i_recv_offsets(int mpi_rank) const;
 
-  int64_t send_buffer_size() const { return send_buffer_size_; }
-  int64_t recv_buffer_size() const { return recv_buffer_size_; }
+  int64_t send_buffer_size() const;
+  int64_t recv_buffer_size() const;
+
+  int64_t n_values_prepared(int mpi_rank) const;
+
+  void flush();
 
   template <class T>
-  void add_to_send_buffer(int mpi_rank, T value, T *send_buffer) const {
+  inline void add_to_send_buffer(int mpi_rank, T value, T *send_buffer) const {
     int64_t idx =
         n_values_i_send_offsets_[mpi_rank] + n_values_prepared_[mpi_rank];
-
-    // if (typeid(T) == typeid(double)){
-    // lila::Log("double idx {}", idx);
-    // } else {
-    //       lila::Log("cplx idx {}", idx);
-    // }
-
     send_buffer[idx] = value;
     ++n_values_prepared_[mpi_rank];
   }
 
-  void flush() {
-    std::fill(n_values_prepared_.begin(), n_values_prepared_.end(), 0);
-  }
-
   template <class T>
-  void all_to_all(const T *send_buffer, T *recv_buffer) const {
+  inline void all_to_all(const T *send_buffer, T *recv_buffer) const {
     Alltoallv<T>(const_cast<T *>(send_buffer),
                  const_cast<int *>(n_values_i_send_.data()),
                  const_cast<int *>(n_values_i_send_offsets_.data()),
-                 const_cast<T *>(recv_buffer), const_cast<int *>(n_values_i_recv_.data()),
+                 const_cast<T *>(recv_buffer),
+                 const_cast<int *>(n_values_i_recv_.data()),
                  const_cast<int *>(n_values_i_recv_offsets_.data()),
                  MPI_COMM_WORLD);
   }

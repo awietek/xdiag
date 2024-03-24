@@ -1,5 +1,7 @@
 #include "fermi_table.h"
 
+#include <cassert>
+
 #include <hydra/combinatorics/combinations.h>
 #include <hydra/combinatorics/subsets.h>
 #include <hydra/symmetries/operations/fermi_sign.h>

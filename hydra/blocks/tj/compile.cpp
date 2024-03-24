@@ -5,18 +5,18 @@
 
 namespace hydra::tj {
 
-BondList compile(BondList const &bonds, double precision) {
+BondList compile(BondList const &bonds, double precision) try {
   using namespace operators;
-
   BondList bonds_explicit = compile_explicit(bonds, precision, "keep");
   BondList bonds_compiled;
   for (auto bond : bonds_explicit) {
     if (bond.type_defined()) {
       std::string type = bond.type();
-      if (std::find(special_bond_types.begin(), special_bond_types.end(),
-                    type) == special_bond_types.end()) {
-        Log.err("Error compiling BondList: invalid or undefined type found: {}",
-                type);
+      if (std::find(tj::special_bond_types.begin(),
+                    tj::special_bond_types.end(),
+                    type) == tj::special_bond_types.end()) {
+        HydraThrow(std::runtime_error,
+                   std::string("Invalid or undefined type found ") + type);
       } else {
 
         // Exchange and Ising terms
@@ -97,6 +97,9 @@ BondList compile(BondList const &bonds, double precision) {
     }
   }
   return bonds_compiled;
+} catch (...) {
+  HydraRethrow("Unable to compile BondList");
+  return BondList();
 }
 
 } // namespace hydra::tj

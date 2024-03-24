@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <math.h>
 #include <utility>
+#include <cassert>
 
 #include <hydra/bits/bitops.h>
 #include <hydra/config.h>

@@ -24,6 +24,7 @@ public:
 
   iterator_t begin() const;
   iterator_t end() const;
+  int64_t dim() const;
   int64_t size() const;
 
   inline int64_t index(bit_t state) const {

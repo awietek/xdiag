@@ -9,7 +9,7 @@ template <typename bit_t, typename coeff_t, bool symmetric, class BasisIn,
           class BasisOut, class NonZeroTerm, class TermAction, class Fill>
 void generic_term_ups(BasisIn &&basis_in, BasisOut &&basis_out,
                       NonZeroTerm &&non_zero_term, TermAction &&term_action,
-                      Fill &&fill) {
+                      Fill &&fill) try {
   int64_t n_sites = basis_in.n_sites();
   assert(n_sites == basis_out.n_sites());
   bit_t sitesmask = ((bit_t)1 << n_sites) - 1;
@@ -68,7 +68,7 @@ void generic_term_ups(BasisIn &&basis_in, BasisOut &&basis_out,
                 int64_t idx_out =
                     ups_offset_out + basis_out.dnsc_index(dns_rep_c);
                 bool fermi_dn = basis_out.fermi_bool_dns(sym, dns);
-                fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -prefac : prefac);
+                fill(idx_in, idx_out, (fermi_up ^ fermi_dn) ? -prefac : prefac);
               }
               ++idx_in;
             }
@@ -83,7 +83,7 @@ void generic_term_ups(BasisIn &&basis_in, BasisOut &&basis_out,
                     basis_out.index_dns_fermi(dns, sym, not_ups_flip_rep);
                 coeff_t val = prefac / norms_in[idx_dn];
                 int64_t idx_out = ups_offset_out + idx_dn_out;
-                fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -val : val);
+                fill(idx_in, idx_out, (fermi_up ^ fermi_dn) ? -val : val);
               }
               ++idx_in;
               ++idx_dn;
@@ -115,7 +115,7 @@ void generic_term_ups(BasisIn &&basis_in, BasisOut &&basis_out,
                   bool fermi_up = basis_out.fermi_bool_ups(sym, ups_flip);
                   coeff_t val = prefacs[sym] * norms_out[idx_dn_out];
 
-                  fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -val : val);
+                  fill(idx_in, idx_out, (fermi_up ^ fermi_dn) ? -val : val);
                 }
               }
               ++idx_in;
@@ -135,7 +135,7 @@ void generic_term_ups(BasisIn &&basis_in, BasisOut &&basis_out,
                   bool fermi_up = basis_out.fermi_bool_ups(sym, ups_flip);
                   coeff_t val =
                       prefacs[sym] * norms_out[idx_dn_out] / norms_in[idx_dn];
-                  fill(idx_out, idx_in, (fermi_up ^ fermi_dn) ? -val : val);
+                  fill(idx_in, idx_out, (fermi_up ^ fermi_dn) ? -val : val);
                 }
               }
               ++idx_dn;
@@ -172,7 +172,7 @@ void generic_term_ups(BasisIn &&basis_in, BasisOut &&basis_out,
               bit_t dnc_out = bits::extract(dn_in, not_up_flip);
               int64_t idx_dnc_out = basis_out.index_dncs(dnc_out);
               int64_t idx_out = idx_up_flip_offset + idx_dnc_out;
-              fill(idx_out, idx_in, coeff);
+              fill(idx_in, idx_out, coeff);
             }
             ++idx_in;
           }
@@ -182,6 +182,8 @@ void generic_term_ups(BasisIn &&basis_in, BasisOut &&basis_out,
     }
 #endif
   } // if not symmetric
+}catch (...) {
+  HydraRethrow("Unable to apply generic term on up spins");
 }
 
 } // namespace hydra::tj

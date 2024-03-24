@@ -5,6 +5,11 @@
 #include <hydra/operators/bondlist.h>
 #include <hydra/states/state.h>
 
+#include <hydra/blocks/electron/electron_apply.h>
+#include <hydra/blocks/spinhalf/spinhalf_apply.h>
+#include <hydra/blocks/tj/tj_apply.h>
+#include <hydra/blocks/tj_distributed/tj_distributed_apply.h>
+
 namespace hydra {
 
 void apply(BondList const &bonds, State const &v, State &w);
