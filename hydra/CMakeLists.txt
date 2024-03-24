@@ -1,7 +1,7 @@
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 set(HYDRA_DEFINITIONS "")
-set(HYDRA_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}")
+set(HYDRA_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/include")
 set(HYDRA_LIBRARIES "${CMAKE_SOURCE_DIR}/lib/libhydra.a")
 
 set(HYDRA_SOURCES
@@ -133,6 +133,7 @@ set(HYDRA_DISTRIBUTED_SOURCES
 if(BUILD_DISTRIBUTED)
   message(STATUS "-------- BUILDING DISTRIBUTED HYDRA LIBRARY -------------")
   add_library(hydra_distributed STATIC ${HYDRA_SOURCES} ${HYDRA_DISTRIBUTED_SOURCES})
+  target_include_directories(hydra_distributed PUBLIC ${MPI_CXX_INCLUDE_PATH})
   target_compile_definitions(hydra_distributed PUBLIC HYDRA_USE_MPI)
   set(HYDRA_LIBRARY hydra_distributed)
 else()
