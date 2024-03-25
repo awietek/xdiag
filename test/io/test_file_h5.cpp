@@ -1,6 +1,6 @@
 #include "../catch.hpp"
 
-#include <extern/armadillo/armadillo>
+#include <hydra/extern/armadillo/armadillo>
 #include <hydra/common.h>
 #include <hydra/io/file_h5.h>
 

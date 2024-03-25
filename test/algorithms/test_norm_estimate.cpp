@@ -4,7 +4,7 @@
 
 #include "../blocks/electron/testcases_electron.h"
 #include "../blocks/spinhalf/testcases_spinhalf.h"
-#include <extern/armadillo/armadillo>
+#include <hydra/extern/armadillo/armadillo>
 #include <hydra/algebra/matrix.h>
 #include <hydra/algorithms/norm_estimate.h>
 #include <hydra/common.h>

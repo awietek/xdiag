@@ -2,7 +2,7 @@
 // Created by Luke Staszewski on 30.01.23.
 //
 #include "../../catch.hpp"
-#include <extern/armadillo/armadillo>
+#include <hydra/extern/armadillo/armadillo>
 #include <hydra/algebra/matrix.h>
 #include <hydra/algorithms/time_evolution/pade_matrix_exponential.h>
 #include <hydra/algorithms/time_evolution/time_evolution.h>
