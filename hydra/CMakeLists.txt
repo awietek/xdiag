@@ -179,9 +179,9 @@ if(MKL_FOUND)
   target_compile_definitions(${HYDRA_LIBRARY} PUBLIC HYDRA_USE_MKL MKL_ILP64)
   target_include_directories(${HYDRA_LIBRARY} PUBLIC ${MKL_INCLUDE_DIR})
     
-  add_library(mkl_intel_ilp64 SHARED IMPORTED GLOBAL)
-  add_library(mkl_sequential SHARED IMPORTED GLOBAL)
-  add_library(mkl_core SHARED IMPORTED GLOBAL)
+  add_library(mkl_intel_ilp64 STATIC)
+  add_library(mkl_sequential STATIC)
+  add_library(mkl_core STATIC)
 
   set_target_properties(mkl_intel_ilp64 PROPERTIES IMPORTED_LOCATION
     ${MKL_INTERFACE_LIBRARY}
@@ -206,7 +206,6 @@ if(MKL_FOUND)
 
   set(MKL_LIBRARIES mkl_intel_ilp64 mkl_sequential mkl_core dl pthread)
 
-  target_link_libraries(${HYDRA_LIBRARY} PUBLIC ${MKL_INTERFACE_LIBRARY} ${MKL_SEQUENTIAL_LAYER_LIBRARY} ${MKL_CORE_LIBRARY})
   target_link_libraries(${HYDRA_LIBRARY} PUBLIC ${MKL_LIBRARIES})
 
   # Regular Blas/Lapack backend
@@ -227,6 +226,8 @@ else()
     if(OpenMP_CXX_FOUND)
       message(STATUS "Employing OpenMP")
       target_link_libraries(${HYDRA_LIBRARY} PUBLIC OpenMP::OpenMP_CXX)
+    else()
+      message(STATUS "OpenMP not found")
     endif()
   else()
     message(STATUS "OpenMP disabled")

@@ -86,15 +86,15 @@ set(HYDRA_TEST_DISTRIBUTED_SOURCES
 if(BUILD_DISTRIBUTED)
   # normal tests
   add_executable(tests tests.cpp ${HYDRA_TEST_SOURCES} ${HYDRA_TESTCASES_SOURCES})
-  target_link_libraries(tests PRIVATE hydra_distributed MPI::MPI_CXX)
+  target_link_libraries(tests PUBLIC hydra_distributed MPI::MPI_CXX)
   add_test(NAME HydraTest COMMAND tests)
 
   # distributed tests
   add_executable(tests_distributed tests_distributed.cpp ${HYDRA_TEST_DISTRIBUTED_SOURCES} ${HYDRA_TESTCASES_SOURCES})
-  target_link_libraries(tests_distributed PRIVATE hydra_distributed MPI::MPI_CXX)
+  target_link_libraries(tests_distributed PUBLIC hydra_distributed MPI::MPI_CXX)
   add_test(NAME HydraTestDistributed COMMAND tests_distributed)
 else()
   add_executable(tests tests.cpp ${HYDRA_TEST_SOURCES} ${HYDRA_TESTCASES_SOURCES})
-  target_link_libraries(tests PRIVATE hydra)
+  target_link_libraries(tests PUBLIC hydra)
   add_test(NAME HydraTest COMMAND tests)
 endif()
