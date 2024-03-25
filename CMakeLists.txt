@@ -90,9 +90,6 @@ target_compile_options(${HYDRA_LIBRARY} PRIVATE -march=native)
 target_compile_options(${HYDRA_LIBRARY} PRIVATE -mtune=native)
 endif()
 
-
-target_link_libraries(${HYDRA_LIBRARY} PUBLIC armadillo)
-
 install(DIRECTORY "${CMAKE_SOURCE_DIR}/hydra" # source directory
   DESTINATION include
   FILES_MATCHING # install only matched files
