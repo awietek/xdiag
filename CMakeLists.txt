@@ -61,10 +61,10 @@ add_subdirectory(hydra)
 target_compile_features(${HYDRA_LIBRARY} PUBLIC cxx_std_17)
 
 
-if(BUILD_TESTS)
+if(BUILD_TESTING)
   message(STATUS "Building test programs")
   enable_testing()
-  add_subdirectory(test)
+  add_subdirectory(tests)
 endif()
 
 if(BUILD_JULIA)
@@ -90,6 +90,8 @@ target_compile_options(${HYDRA_LIBRARY} PRIVATE -march=native)
 target_compile_options(${HYDRA_LIBRARY} PRIVATE -mtune=native)
 endif()
 
+
+target_link_libraries(${HYDRA_LIBRARY} PUBLIC armadillo)
 
 install(DIRECTORY "${CMAKE_SOURCE_DIR}/hydra" # source directory
   DESTINATION include
