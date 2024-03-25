@@ -1,3 +1,9 @@
 site_name: Hydra Documentation
 theme:
   name: material
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      auto_title: true
+  - pymdownx.superfences 
