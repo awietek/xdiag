@@ -176,12 +176,12 @@ message(STATUS "-------- Determining Linear Algebra backend -------------")
 find_package(MKL)
 if(MKL_FOUND)
   message(STATUS "Employing IntelMKL as linear algebra backend")
-  target_compile_definitions(${HYDRA_LIBRARY} PUBLIC HYDRA_USE_MKL MKL_ILP64)
+  target_compile_definitions(${HYDRA_LIBRARY} PUBLIC HYDRA_USE_MKL)
   target_include_directories(${HYDRA_LIBRARY} PUBLIC ${MKL_INCLUDE_DIR})
     
-  add_library(mkl_intel_ilp64 STATIC)
-  add_library(mkl_sequential STATIC)
-  add_library(mkl_core STATIC)
+  add_library(mkl_intel_ilp64 STATIC IMPORTED)
+  add_library(mkl_sequential STATIC IMPORTED)
+  add_library(mkl_core STATIC IMPORTED)
 
   set_target_properties(mkl_intel_ilp64 PROPERTIES IMPORTED_LOCATION
     ${MKL_INTERFACE_LIBRARY}

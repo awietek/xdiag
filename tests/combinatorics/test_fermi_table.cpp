@@ -6,7 +6,7 @@
 #include <hydra/operators/bondlist.h>
 #include <hydra/symmetries/operations/fermi_sign.h>
 #include <hydra/symmetries/operations/symmetry_operations.h>
-#include <test/blocks/electron/testcases_electron.h>
+#include <tests/blocks/electron/testcases_electron.h>
 
 using namespace hydra;
 
