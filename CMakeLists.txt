@@ -43,7 +43,7 @@ if(BUILD_DISTRIBUTED)
   endif()
 else()
   option(OMP_THREADING "Enable OpenMp threading" ON)
-  option(MKL_THREADING "Enable IntelMKL threading" ON)
+  option(MKL_THREADING "Enable IntelMKL threading" OFF)
 endif()
 option(SANITIZER "Build with -fsanitize=address" OFF)
 
@@ -145,7 +145,6 @@ export(EXPORT ${HYDRA_LIBRARY}Targets
   FILE "${CMAKE_CURRENT_BINARY_DIR}/cmake/${HYDRA_LIBRARY}Targets.cmake"
   # NAMESPACE ${namespace}::
 )
-
 
 if(BUILD_JULIA)
   install(TARGETS hydrajl
