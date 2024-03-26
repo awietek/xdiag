@@ -188,10 +188,13 @@ if(MKL_FOUND)
     IMPORTED_LINK_INTERFACE_MULTIPLICITY 3)
   
   if(MKL_THREADING)
+message(STATUS "MKL THREAD ${MKL_THREAD_LAYER_LIBRARY}")
     set_target_properties(mkl_sequential PROPERTIES IMPORTED_LOCATION
       ${MKL_THREAD_LAYER_LIBRARY}
       IMPORTED_LINK_INTERFACE_MULTIPLICITY 3)
   else()
+message(STATUS "MKL SEQ ${MKL_SEQUENTIAL_LAYER_LIBRARY}")
+
     set_target_properties(mkl_sequential PROPERTIES IMPORTED_LOCATION
       ${MKL_SEQUENTIAL_LAYER_LIBRARY}
       IMPORTED_LINK_INTERFACE_MULTIPLICITY 3)
@@ -203,6 +206,8 @@ if(MKL_FOUND)
 
   set_target_properties(mkl_sequential PROPERTIES INTERFACE_LINK_LIBRARIES mkl_core)
   set_target_properties(mkl_core       PROPERTIES INTERFACE_LINK_LIBRARIES mkl_sequential)
+
+
 
   set(MKL_LIBRARIES mkl_intel_ilp64 mkl_sequential mkl_core dl pthread)
 
