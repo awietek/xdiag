@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.19)
 
 project(
   tj_square_time_evolve
@@ -6,6 +6,6 @@ project(
   LANGUAGES CXX
 )
 
-find_package(hydra REQUIRED HINTS "/Users/awietek/Research/Software/hydra/install")
+find_package(hydra REQUIRED HINTS "/home/awietek/Research/Software/hydra/install")
 add_executable(main main.cpp)
-target_link_libraries(main PUBLIC hydra)
+target_link_libraries(main PUBLIC hydra::hydra)

@@ -1,5 +1,3 @@
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
-
 set(HYDRA_SOURCES
   utils/iochecks.cpp
   utils/print.cpp
@@ -126,94 +124,67 @@ set(HYDRA_DISTRIBUTED_SOURCES
   blocks/tj_distributed/tj_distributed_apply.cpp
 )
 
-if(BUILD_DISTRIBUTED)
-  message(STATUS "-------- BUILDING DISTRIBUTED HYDRA LIBRARY -------------")
-  add_library(hydra_distributed STATIC)
-  set(HYDRA_LIBRARY hydra_distributed PARENT_SCOPE)
-  set(HYDRA_LIBRARY hydra_distributed)
-  target_sources(hydra_distributed
-    PRIVATE
-    ${HYDRA_SOURCES} ${HYDRA_DISTRIBUTED_SOURCES}
-  )
-  
-  target_include_directories(hydra_distributed
-      PRIVATE
-          # where the library itself will look for its internal headers
-          ${CMAKE_SOURCE_DIR}
-      PUBLIC
-          # where top-level project will look for the library's public headers 
-          $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}>
-          # where external projects will look for the library's public headers  
-          $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
-  )
+add_library(${HYDRA_LIBRARY})
+add_library(${HYDRA_LIBRARY}::${HYDRA_LIBRARY} ALIAS ${HYDRA_LIBRARY})
+set_target_properties(${HYDRA_LIBRARY} PROPERTIES
+  VERSION ${hydra_VERSION}
+  SOVERSION ${hydra_VERSION_MAJOR})
+target_include_directories(
+    ${HYDRA_LIBRARY} PUBLIC "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>")
+target_compile_features(${HYDRA_LIBRARY} PUBLIC cxx_std_17)
 
+if(HYDRA_DISTRIBUTED)
+  message(STATUS "-------- BUILDING DISTRIBUTED HYDRA LIBRARY -------------")
+  target_sources(${HYDRA_LIBRARY} PRIVATE ${HYDRA_SOURCES} ${HYDRA_DISTRIBUTED_SOURCES})
+
+  find_package(MPI REQUIRED)
   target_link_libraries(hydra_distributed PUBLIC ${MPI_CXX_LIBRARIES})
   target_compile_definitions(hydra_distributed PUBLIC HYDRA_USE_MPI)
 else()
   message(STATUS "-------- BUILDING NORMAL HYDRA LIBRARY -------------")
-  add_library(hydra STATIC)
-  set(HYDRA_LIBRARY hydra PARENT_SCOPE)
-  set(HYDRA_LIBRARY hydra)
-  target_sources(hydra
-    PRIVATE
-    ${HYDRA_SOURCES}
-  )
-  target_include_directories(hydra
-      PRIVATE
-          # where the library itself will look for its internal headers
-          ${CMAKE_SOURCE_DIR}
-      PUBLIC
-          # where top-level project will look for the library's public headers 
-          $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}>
-          # where external projects will look for the library's public headers  
-          $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
-  )
+  target_sources(${HYDRA_LIBRARY} PRIVATE ${HYDRA_SOURCES})
 endif()
-
 
   
 message(STATUS "-------- Determining Linear Algebra backend -------------")
+
+###########################################################################
+# try to get the Intel MKL if possible and link statically
 find_package(MKL)
 if(MKL_FOUND)
   message(STATUS "Employing IntelMKL as linear algebra backend")
   target_compile_definitions(${HYDRA_LIBRARY} PUBLIC HYDRA_USE_MKL)
   target_include_directories(${HYDRA_LIBRARY} PUBLIC ${MKL_INCLUDE_DIR})
-    
+
+  # the following lines are needed to link MKL statically correctly
   add_library(mkl_intel_ilp64 STATIC IMPORTED)
   add_library(mkl_sequential STATIC IMPORTED)
   add_library(mkl_core STATIC IMPORTED)
-
+  
   set_target_properties(mkl_intel_ilp64 PROPERTIES IMPORTED_LOCATION
     ${MKL_INTERFACE_LIBRARY}
     IMPORTED_LINK_INTERFACE_MULTIPLICITY 3)
   
-  if(MKL_THREADING)
-message(STATUS "MKL THREAD ${MKL_THREAD_LAYER_LIBRARY}")
-    set_target_properties(mkl_sequential PROPERTIES IMPORTED_LOCATION
-      ${MKL_THREAD_LAYER_LIBRARY}
-      IMPORTED_LINK_INTERFACE_MULTIPLICITY 3)
-  else()
-message(STATUS "MKL SEQ ${MKL_SEQUENTIAL_LAYER_LIBRARY}")
-
-    set_target_properties(mkl_sequential PROPERTIES IMPORTED_LOCATION
-      ${MKL_SEQUENTIAL_LAYER_LIBRARY}
-      IMPORTED_LINK_INTERFACE_MULTIPLICITY 3)
-  endif()
-
+  set_target_properties(mkl_sequential PROPERTIES IMPORTED_LOCATION
+    ${MKL_SEQUENTIAL_LAYER_LIBRARY}
+    IMPORTED_LINK_INTERFACE_MULTIPLICITY 3)
+  
   set_target_properties(mkl_core PROPERTIES IMPORTED_LOCATION
     ${MKL_CORE_LIBRARY}
     IMPORTED_LINK_INTERFACE_MULTIPLICITY 3)
 
+  target_compile_definitions(mkl_intel_ilp64 INTERFACE MKL_ILP64)
   set_target_properties(mkl_sequential PROPERTIES INTERFACE_LINK_LIBRARIES mkl_core)
   set_target_properties(mkl_core       PROPERTIES INTERFACE_LINK_LIBRARIES mkl_sequential)
 
+  foreach(mkl_lib IN LISTS mkl_intel_ilp6 mkl_sequential mkl_core)
+    target_include_directories(mkl_lib PUBLIC ${MKL_INCLUDE_DIR})
+  endforeach()  
+  
+  target_link_libraries(${HYDRA_LIBRARY} PUBLIC mkl_intel_ilp64 mkl_sequential mkl_core dl pthread)
 
-
-  set(MKL_LIBRARIES mkl_intel_ilp64 mkl_sequential mkl_core dl pthread)
-
-  target_link_libraries(${HYDRA_LIBRARY} PUBLIC ${MKL_LIBRARIES})
-
-  # Regular Blas/Lapack backend
+###########################################################################
+# Regular Blas/Lapack backend
 else()
   find_package(BLAS)
   find_package(LAPACK)
@@ -224,20 +195,23 @@ else()
   else()
     message(FATAL_ERROR "No linear algebra backend found")
   endif()
+endif()
 
-  if(OMP_THREADING)
-    message(STATUS "--------  Determining if OpenMP is present  -------------")
-    find_package(OpenMP)
-    if(OpenMP_CXX_FOUND)
-      message(STATUS "Employing OpenMP")
-      target_link_libraries(${HYDRA_LIBRARY} PUBLIC OpenMP::OpenMP_CXX)
-    else()
-      message(STATUS "OpenMP not found")
-    endif()
-  else()
-    message(STATUS "OpenMP disabled")
-  endif()
+
+###########################################################################
+# Get OpenMP
+if (NOT HYDRA_DISTRIBTUED AND NOT HYDRA_DISABLE_THREADING)
+  message(STATUS "--------  Determining if OpenMP is present  -------------")
+  find_package(OpenMP)
   
+  if(OpenMP_CXX_FOUND)
+    message(STATUS "Employing OpenMP")
+    target_link_libraries(${HYDRA_LIBRARY} PUBLIC OpenMP::OpenMP_CXX)
+  else()
+    message(STATUS "OpenMP not found")
+  endif()
+else()  
+  message(STATUS "OpenMP disabled")
 endif()
 
 message(STATUS "--------   Determining if HDF5 is present   -------------")

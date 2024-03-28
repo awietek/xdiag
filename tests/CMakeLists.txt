@@ -75,7 +75,6 @@ set(HYDRA_TESTCASES_SOURCES
   blocks/electron/testcases_electron.cpp
 )
 
-
 set(HYDRA_TEST_DISTRIBUTED_SOURCES
   parallel/mpi/test_cdot_distributed.cpp
   basis/tj_distributed/test_basis_np.cpp
@@ -83,18 +82,12 @@ set(HYDRA_TEST_DISTRIBUTED_SOURCES
   algorithms/time_evolution/test_time_evolution_distributed.cpp
 )
 
-if(BUILD_DISTRIBUTED)
-  # normal tests
-  add_executable(tests tests.cpp ${HYDRA_TEST_SOURCES} ${HYDRA_TESTCASES_SOURCES})
-  target_link_libraries(tests PUBLIC hydra_distributed MPI::MPI_CXX)
-  add_test(NAME HydraTest COMMAND tests)
+add_executable(tests tests.cpp ${HYDRA_TEST_SOURCES} ${HYDRA_TESTCASES_SOURCES})
+target_link_libraries(tests PUBLIC ${HYDRA_LIBRARY})
+add_test(NAME HydraTest COMMAND tests)
 
-  # distributed tests
+if(HYDRA_DISTRIBUTED)
   add_executable(tests_distributed tests_distributed.cpp ${HYDRA_TEST_DISTRIBUTED_SOURCES} ${HYDRA_TESTCASES_SOURCES})
-  target_link_libraries(tests_distributed PUBLIC hydra_distributed MPI::MPI_CXX)
+  target_link_libraries(tests_distributed PUBLIC ${HYDRA_LIBRARY})
   add_test(NAME HydraTestDistributed COMMAND tests_distributed)
-else()
-  add_executable(tests tests.cpp ${HYDRA_TEST_SOURCES} ${HYDRA_TESTCASES_SOURCES})
-  target_link_libraries(tests PUBLIC hydra)
-  add_test(NAME HydraTest COMMAND tests)
 endif()
