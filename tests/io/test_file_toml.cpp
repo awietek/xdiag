@@ -276,7 +276,7 @@ TEST_CASE("file_toml", "[io]") {
   test_write_read(bonds);
 
   bonds["J1"] = 1.0;
-  bonds["J2"] = 0.2 - 0.1i;
+  bonds["J2"] = (complex)(0.2 - 0.1i);
   test_write_read(bonds);
 
   bonds["M1"] = arma::mat(3, 4, arma::fill::randu);

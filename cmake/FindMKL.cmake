@@ -123,8 +123,8 @@ if (MKL_INCLUDE_DIR AND
       set(ABI "-m64")
     endif()
 
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DMKL_ILP64 ${ABI}")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DMKL_ILP64 ${ABI}")
+    # set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DMKL_ILP64 ${ABI}")
+    # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DMKL_ILP64 ${ABI}")
 
 else()
   set(MKL_INCLUDE_DIRS "")
@@ -132,7 +132,6 @@ else()
   set(MKL_INTERFACE_LIBRARY "")
   set(MKL_THREAD_LAYER_LIBRARY "")
   set(MKL_CORE_LIBRARY "")
-
 endif()
 
 # Handle the QUIETLY and REQUIRED arguments and set MKL_FOUND to TRUE if

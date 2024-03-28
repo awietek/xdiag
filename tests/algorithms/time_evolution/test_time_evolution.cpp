@@ -212,7 +212,7 @@ TEST_CASE("tj_complex_timeevo", "[time_evolution]") try {
       bonds << Bond("TJISING", "J", {site, top});
     }
   }
-  bonds["T"] = 1.0 + 0.2i;
+  bonds["T"] = (std::complex<double>)(1.0 + 0.2i);
   bonds["J"] = 0.4;
 
   // Create initial state
