@@ -133,6 +133,11 @@ target_include_directories(
     ${HYDRA_LIBRARY} PUBLIC "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>")
 target_compile_features(${HYDRA_LIBRARY} PUBLIC cxx_std_17)
 
+if (CMAKE_CXX_COMPILER_ID STREQUAL "IntelLLVM")
+  message(STATUS "switching to precise floating point arithmetic of IntelLLVM") 
+  target_compile_options(${HYDRA_LIBRARY} PUBLIC -fp-model precise)
+endif()
+
 if(HYDRA_DISTRIBUTED)
   message(STATUS "--------- BUILDING DISTRIBUTED HYDRA LIBRARY ------------")
   target_sources(${HYDRA_LIBRARY} PRIVATE ${HYDRA_SOURCES} ${HYDRA_DISTRIBUTED_SOURCES})
