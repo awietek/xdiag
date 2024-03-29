@@ -134,14 +134,14 @@ target_include_directories(
 target_compile_features(${HYDRA_LIBRARY} PUBLIC cxx_std_17)
 
 if(HYDRA_DISTRIBUTED)
-  message(STATUS "-------- BUILDING DISTRIBUTED HYDRA LIBRARY -------------")
+  message(STATUS "--------- BUILDING DISTRIBUTED HYDRA LIBRARY ------------")
   target_sources(${HYDRA_LIBRARY} PRIVATE ${HYDRA_SOURCES} ${HYDRA_DISTRIBUTED_SOURCES})
 
   find_package(MPI REQUIRED)
   target_link_libraries(hydra_distributed PUBLIC ${MPI_CXX_LIBRARIES})
   target_compile_definitions(hydra_distributed PUBLIC HYDRA_USE_MPI)
 else()
-  message(STATUS "-------- BUILDING NORMAL HYDRA LIBRARY -------------")
+  message(STATUS "--------    BUILDING NORMAL HYDRA LIBRARY   -------------")
   target_sources(${HYDRA_LIBRARY} PRIVATE ${HYDRA_SOURCES})
 endif()
 
@@ -193,7 +193,7 @@ else()
   find_package(LAPACK)
   
   if(LAPACK_FOUND AND BLAS_FOUND)
-    message(STATUS "Emploging Lapack/Blas as linear algebra backend")
+    message(STATUS "Employing Lapack/Blas as linear algebra backend")
     target_link_libraries(${HYDRA_LIBRARY} PUBLIC ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
   else()
     message(FATAL_ERROR "No linear algebra backend found")
