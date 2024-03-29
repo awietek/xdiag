@@ -19,4 +19,4 @@ jobs:
         cmake --build build
     - name: run tests
       run: |
-        ./build/test/tests
+        ./build/tests/tests
