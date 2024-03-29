@@ -1,6 +1,6 @@
 #include <mpi.h>
 
-#include <test/catch.hpp>
+#include <tests/catch.hpp>
 #include <hydra/parallel/mpi/allreduce.h>
 #include <hydra/parallel/mpi/cdot_distributed.h>
 
