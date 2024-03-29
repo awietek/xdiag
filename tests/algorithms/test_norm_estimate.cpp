@@ -57,7 +57,7 @@ TEST_CASE("norm_estimate", "[algorithms]") {
   using namespace hydra;
   using namespace arma;
 
-  Log.set_verbosity(2);
+  Log.set_verbosity(1);
 
   for (int n = 50; n <= 350; n += 50) {
     Log("norm_estimate for random real non-hermitian matrices, D={}", n);

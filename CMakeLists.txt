@@ -92,8 +92,13 @@ add_subdirectory(hydra)
 # target_include_directories(
 #   ${HYDRA_LIBRARY} PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>")
 
-
-
+# Add sanitizers to debug mode
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+  message(STATUS "Adding Sanitizers to debug build")
+  target_compile_options(${HYDRA_LIBRARY} PUBLIC -fsanitize=address)
+  target_link_options(${HYDRA_LIBRARY} PUBLIC -fsanitize=address)
+endif()
+  
 #########################################################
 # Testing
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)

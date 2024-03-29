@@ -1,6 +1,8 @@
 site_name: Hydra Documentation
 theme:
   name: material
+  palette:
+    scheme: slate
 
 markdown_extensions:
   - attr_list
@@ -8,4 +10,14 @@ markdown_extensions:
   - pymdownx.highlight:
       anchor_linenums: true
       auto_title: false
-  - pymdownx.superfences 
+  - pymdownx.superfences
+  - pymdownx.arithmatex:
+      generic: true
+
+extra_javascript:
+  - javascripts/katex.js
+  - https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/katex.min.js
+  - https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/contrib/auto-render.min.js
+
+extra_css:
+  - https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/katex.min.css
