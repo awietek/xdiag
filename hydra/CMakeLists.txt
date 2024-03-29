@@ -125,7 +125,7 @@ set(HYDRA_DISTRIBUTED_SOURCES
 )
 
 add_library(${HYDRA_LIBRARY})
-add_library(${HYDRA_LIBRARY}::${HYDRA_LIBRARY} ALIAS ${HYDRA_LIBRARY})
+add_library(hydra::${HYDRA_LIBRARY} ALIAS ${HYDRA_LIBRARY})
 set_target_properties(${HYDRA_LIBRARY} PROPERTIES
   VERSION ${hydra_VERSION}
   SOVERSION ${hydra_VERSION_MAJOR})
@@ -161,16 +161,16 @@ if(MKL_FOUND)
   add_library(mkl_sequential STATIC IMPORTED)
   add_library(mkl_core STATIC IMPORTED)
   
-  set_target_properties(mkl_intel_ilp64 PROPERTIES IMPORTED_LOCATION
-    ${MKL_INTERFACE_LIBRARY}
+  set_target_properties(mkl_intel_ilp64 PROPERTIES
+    IMPORTED_LOCATION ${MKL_INTERFACE_LIBRARY}
     IMPORTED_LINK_INTERFACE_MULTIPLICITY 3)
   
-  set_target_properties(mkl_sequential PROPERTIES IMPORTED_LOCATION
-    ${MKL_SEQUENTIAL_LAYER_LIBRARY}
+  set_target_properties(mkl_sequential PROPERTIES
+    IMPORTED_LOCATION ${MKL_SEQUENTIAL_LAYER_LIBRARY}
     IMPORTED_LINK_INTERFACE_MULTIPLICITY 3)
   
-  set_target_properties(mkl_core PROPERTIES IMPORTED_LOCATION
-    ${MKL_CORE_LIBRARY}
+  set_target_properties(mkl_core PROPERTIES
+    IMPORTED_LOCATION ${MKL_CORE_LIBRARY}
     IMPORTED_LINK_INTERFACE_MULTIPLICITY 3)
 
   target_compile_definitions(mkl_intel_ilp64 INTERFACE MKL_ILP64)
@@ -183,6 +183,9 @@ if(MKL_FOUND)
   
   target_link_libraries(${HYDRA_LIBRARY} PUBLIC mkl_intel_ilp64 mkl_sequential mkl_core dl pthread)
 
+  get_filename_component(MKL_LIB_DIR ${MKL_CORE_LIBRARY} DIRECTORY)
+  target_link_directories(${HYDRA_LIBRARY} PUBLIC ${MKL_LIB_DIR})
+  
 ###########################################################################
 # Regular Blas/Lapack backend
 else()
@@ -199,8 +202,12 @@ endif()
 
 
 ###########################################################################
-# Get OpenMP
-if (NOT HYDRA_DISTRIBTUED AND NOT HYDRA_DISABLE_THREADING)
+# OpenMP
+if(HYDRA_DISABLE_OPENMP)
+  message(STATUS "-------   OpenMP support has been disabled    -----------")
+elseif(HYDRA_DISTRIBUTED)
+  message(STATUS "------- OpenMP disabled for distributed library ---------")
+else()
   message(STATUS "--------  Determining if OpenMP is present  -------------")
   find_package(OpenMP)
   
@@ -210,21 +217,27 @@ if (NOT HYDRA_DISTRIBTUED AND NOT HYDRA_DISABLE_THREADING)
   else()
     message(STATUS "OpenMP not found")
   endif()
-else()  
-  message(STATUS "OpenMP disabled")
 endif()
 
-message(STATUS "--------   Determining if HDF5 is present   -------------")
-find_package(HDF5 COMPONENTS CXX)
-if(HDF5_FOUND)
-  message(STATUS "Employing HDF5")
-  target_compile_definitions(${HYDRA_LIBRARY} PUBLIC HYDRA_USE_HDF5 ${HDF5_CXX_DEFINITIONS})
-  target_include_directories(${HYDRA_LIBRARY} PUBLIC ${HDF5_CXX_INCLUDE_DIRS})
-  message(STATUS "HDF5 LIBS" ${HDF5_CXX_LIBRARIES} ${HDF5_LIBRARIES})
-
-  target_link_libraries(${HYDRA_LIBRARY} PUBLIC ${HDF5_CXX_LIBRARIES} ${HDF5_LIBRARIES})
+###########################################################################
+# HDF5
+if(HYDRA_DISABLE_HDF5)
+  message(STATUS "--------   HDF5 support has been disabled   -------------")
+else()
+  message(STATUS "--------   Determining if HDF5 is present   -------------")
+  find_package(HDF5 COMPONENTS CXX)
+  if(HDF5_FOUND)
+    message(STATUS "Employing HDF5")
+    target_compile_definitions(${HYDRA_LIBRARY} PUBLIC HYDRA_USE_HDF5 ${HDF5_CXX_DEFINITIONS})
+    target_include_directories(${HYDRA_LIBRARY} PUBLIC ${HDF5_CXX_INCLUDE_DIRS})
+    target_link_libraries(${HYDRA_LIBRARY} PUBLIC ${HDF5_CXX_LIBRARIES} ${HDF5_LIBRARIES})
+  else()
+    message(STATUS "HDF5 not found")
+  endif()
 endif()
 
+###########################################################################
+# creating a config header with source code information
 message(STATUS "--------         Creating config.h          -------------")
 find_package(Git REQUIRED)
 execute_process(COMMAND ${GIT_EXECUTABLE} rev-parse HEAD
@@ -232,6 +245,7 @@ execute_process(COMMAND ${GIT_EXECUTABLE} rev-parse HEAD
  OUTPUT_VARIABLE   HYDRA_GIT_HASH
  OUTPUT_STRIP_TRAILING_WHITESPACE
 )
+
 execute_process(COMMAND hostname 
     OUTPUT_VARIABLE HYDRA_HOSTNAME 
     RESULT_VARIABLE returncode 
