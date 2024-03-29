@@ -69,7 +69,7 @@ elseif (HYDRA_JULIA_WRAPPER)
 
   #library must be built as a shared library for the wrapper
   if (NOT HYDRA_SHARED_LIBS)
-    message(MESSAGE "Forcing build of a shared library for the julia wrapper")
+    message(STATUS "Forcing build of a shared library for the julia wrapper")
   endif()
   set(BUILD_SHARED_LIBS On)
 elseif (HYDRA_DISTRIBUTED)
@@ -113,9 +113,8 @@ if (BUILD_TESTING)
   endif()
 endif()
 
-if(BUILD_JULIA)
-  message(STATUS "----------- Building Julia wrapper -----------")
-  set_property(TARGET hydra PROPERTY POSITION_INDEPENDENT_CODE ON)
+if(HYDRA_JULIA_WRAPPER)
+  message(STATUS "-----------    Building Julia wrapper       -------------")
   add_subdirectory(julia)
 endif()
 
@@ -169,21 +168,20 @@ write_basic_package_version_file(
     cmake/${HYDRA_LIBRARY}ConfigVersion.cmake
     COMPATIBILITY SameMajorVersion)
 
-  install(FILES
+install(FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/cmake/${HYDRA_LIBRARY}Config.cmake"
     "${CMAKE_CURRENT_BINARY_DIR}/cmake/${HYDRA_LIBRARY}ConfigVersion.cmake"
     DESTINATION "${HYDRA_INSTALL_CMAKEDIR}"
     COMPONENT ${HYDRA_LIBRARY}_Development)
 
-# if(BUILD_JULIA)
-#   install(TARGETS hydrajl
-#     EXPORT hydrajlConfig
-#     LIBRARY DESTINATION lib
-#     ARCHIVE DESTINATION lib
-#   )
+if(HYDRA_JULIA_WRAPPER)
 
-#   install(EXPORT hydrajlConfig
-#     FILE hydrajlConfig.cmake
-#     DESTINATION lib/cmake/hydra
-#   )
-# endif()
+  install(TARGETS hydrajl
+    EXPORT hydrajl_Targets
+    LIBRARY COMPONENT ${HYDRA_LIBRARY}_Runtime
+    NAMELINK_COMPONENT ${HYDRA_LIBRARY}_Development
+    ARCHIVE COMPONENT ${HYDRA_LIBRARY}_Development
+    INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+  )
+ 
+endif()
