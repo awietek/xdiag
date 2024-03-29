@@ -34,7 +34,6 @@ double norm_estimate(apply_A_f &&apply_A, apply_A_T_f &&apply_A_T,
   // size: size of the local vector (only different from dim when distributed)
   // n_max_attempts: number of attempts to compute norm
   // seed: random seed
-
   using vec_t = arma::Col<coeff_t>;
 
   arma::arma_rng::set_seed(seed);
@@ -49,6 +48,7 @@ double norm_estimate(apply_A_f &&apply_A, apply_A_T_f &&apply_A_T,
 
   double gamma = norm1(v);
   vec_t xsi = arma::sign(v);
+
   vec_t x = apply_A_T(xsi);
 
   for (int k = 2; k <= n_max_attempts; ++k) {
@@ -159,13 +159,15 @@ template <typename coeff_t>
 double norm_estimate(arma::Mat<coeff_t> const &A, int64_t n_max_attempts,
                      uint64_t seed) try {
   auto apply_A = [&A](arma::Col<coeff_t> const &v) { return A * v; };
-  auto apply_A_T = [&A](arma::Col<coeff_t> const &v) { return A.t() * v; };
+  auto apply_A_T = [&A](arma::Col<coeff_t> const &v) {
+    arma::Col<coeff_t> vv = A.t() * v;
+    return vv;
+  };
   auto norm_f = [](arma::Col<coeff_t> const &v) { return arma::norm(v); };
   auto norm1_f = [](arma::Col<coeff_t> const &v) { return arma::norm(v, 1); };
   auto norminf_f = [](arma::Col<coeff_t> const &v) {
     return arma::norm(v, "inf");
   };
-
   return norm_estimate<coeff_t>(apply_A, apply_A_T, norm_f, norm1_f, norminf_f,
                                 A.n_cols, A.n_cols, n_max_attempts, seed);
 

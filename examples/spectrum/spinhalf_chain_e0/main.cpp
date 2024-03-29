@@ -1,7 +1,8 @@
 #include <hydra/all.h>
 
-int main() {
-  using namespace hydra;
+using namespace hydra;
+
+int main() try {
 
   int n_sites = 16;
   int nup = n_sites / 2;
@@ -19,8 +20,9 @@ int main() {
   bonds["J"] = 1.0;
 
   // Compute and print the ground state energy
-  double e0 = eig0(bonds, block);
-  HydraPrint(e0);
-  
-  return EXIT_SUCCESS;
+  double e0 = eigval0(bonds, block);
+  Log("Ground state energy: {:.12f}", e0);
+
+} catch (std::exception const &e) {
+  traceback(e);
 }

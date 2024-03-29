@@ -21,7 +21,7 @@ in a second step. Here we explain how to compile the library.
 
 - **Download** the source code using [git](https://git-scm.com/)
   ```bash
-  cd /path/where/hydra/should/be
+  cd /path/to/where/hydra/should/be
   git clone https://github.com/awietek/hydra.git
   ```
 
