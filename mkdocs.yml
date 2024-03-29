@@ -3,7 +3,9 @@ theme:
   name: material
 
 markdown_extensions:
+  - attr_list
+  - admonition
   - pymdownx.highlight:
       anchor_linenums: true
-      auto_title: true
+      auto_title: false
   - pymdownx.superfences 

@@ -6,11 +6,12 @@ project(
   LANGUAGES CXX
 )
 
-option(HYDRA_DISTRIBUTED "Build the library for distibuted computing" OFF)
-option(HYDRA_JULIA_WRAPPER "Build the Julia wrapper" OFF)
-option(HYDRA_BUILD_TESTING "Build the tests" OFF)
-option(HYDRA_DISABLE_THREADING "Determine whether library should be compiled without threading" OFF)
-option(HYDRA_OPTIMIZE_FOR_NATIVE "Optimize for native architecture" OFF)
+option(BUILD_TESTING "Build the tests" Off)
+option(HYDRA_DISTRIBUTED "Build the distibuted parallelization libraries" Off)
+option(HYDRA_JULIA_WRAPPER "Build the Julia wrapper" Off)
+option(HYDRA_DISABLE_OPENMP "Disables the library being compiled with OpenMP" Off)
+option(HYDRA_DISABLE_HDF5 "Disables the library being compiled with HDF5" Off)
+option(HYDRA_OPTIMIZE_FOR_NATIVE "Optimize for native architecture" Off)
 
 message(STATUS "Compiler ID     : " ${CMAKE_CXX_COMPILER_ID})
 message(STATUS "Compiler version: " ${CMAKE_CXX_COMPILER_VERSION})
@@ -80,13 +81,16 @@ endif()
 # include main library
 add_subdirectory(hydra)
 
-## Generate the export header for SomeLib and attach it to the target
-include(GenerateExportHeader)
-generate_export_header(${HYDRA_LIBRARY} EXPORT_FILE_NAME include/hydra/export.h)
-target_compile_definitions(
-    ${HYDRA_LIBRARY} PUBLIC "$<$<NOT:$<BOOL:${BUILD_SHARED_LIBS}>>:HYDRA_STATIC_DEFINE>")
-target_include_directories(
-  ${HYDRA_LIBRARY} PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>")
+
+## would be needed for visibility contron in shared objects ->
+
+# # Generate the export header for SomeLib and attach it to the target
+# include(GenerateExportHeader)
+# generate_export_header(${HYDRA_LIBRARY} EXPORT_FILE_NAME include/hydra/export.h)
+# target_compile_definitions(
+#     ${HYDRA_LIBRARY} PUBLIC "$<$<NOT:$<BOOL:${BUILD_SHARED_LIBS}>>:HYDRA_STATIC_DEFINE>")
+# target_include_directories(
+#   ${HYDRA_LIBRARY} PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>")
 
 
 
@@ -95,10 +99,13 @@ target_include_directories(
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     include(CTest)
 endif()
-enable_testing()
-if((CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME OR HYDRA_BUILD_TESTING) AND BUILD_TESTING)
-  message(STATUS "Building test programs")
-  add_subdirectory(tests)
+
+if (BUILD_TESTING)
+  enable_testing()
+  if((CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME) AND BUILD_TESTING)
+    message(STATUS "Building test programs" ${HYDRA_BUILD_TESTING} ${BUILD_TESTING})
+    add_subdirectory(tests)
+  endif()
 endif()
 
 if(BUILD_JULIA)
@@ -158,7 +165,6 @@ write_basic_package_version_file(
     COMPATIBILITY SameMajorVersion)
 
   install(FILES
-    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/${HYDRA_LIBRARY}FindMKL.cmake"
     "${CMAKE_CURRENT_SOURCE_DIR}/cmake/${HYDRA_LIBRARY}Config.cmake"
     "${CMAKE_CURRENT_BINARY_DIR}/cmake/${HYDRA_LIBRARY}ConfigVersion.cmake"
     DESTINATION "${HYDRA_INSTALL_CMAKEDIR}"

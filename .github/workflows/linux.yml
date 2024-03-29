@@ -15,10 +15,8 @@ jobs:
     - uses: actions/checkout@v3
     - name: make test
       run: |
-        mkdir build
-        cd build
-        cmake .. -DBUILD_TESTS=ON
-        make
+        cmake -S . -B build -D BUILD_TESTING=On
+	cmake --build build
     - name: run tests
       run: |
         ./build/test/tests
