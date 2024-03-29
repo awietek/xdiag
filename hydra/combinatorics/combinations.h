@@ -14,17 +14,17 @@ public:
   using iterator_t = CombinationsIterator<bit_t>;
 
   Combinations() = default;
-  Combinations(int n, int k);
+  Combinations(int64_t n, int64_t k);
 
-  inline int n() const { return n_; }
-  inline int k() const { return k_; }
-  inline idx_t size() const { return size_; };
+  inline int64_t n() const { return n_; }
+  inline int64_t k() const { return k_; }
+  inline int64_t size() const { return size_; };
   inline iterator_t begin() const { return begin_; }
   inline iterator_t end() const { return end_; }
 
 private:
-  int n_, k_;
-  idx_t size_;
+  int64_t n_, k_;
+  int64_t size_;
   iterator_t begin_, end_;
 };
 
@@ -32,7 +32,7 @@ private:
 template <typename bit_t> class CombinationsIterator {
 public:
   CombinationsIterator() = default;
-  CombinationsIterator(int n, int k, idx_t idx);
+  CombinationsIterator(int64_t n, int64_t k, int64_t idx);
 
   inline bool operator==(CombinationsIterator<bit_t> const &rhs) const {
     return idx_ == rhs.idx_;
@@ -49,7 +49,7 @@ public:
 
 private:
   bit_t current_;
-  idx_t idx_;
+  int64_t idx_;
 };
 
 #ifdef _OPENMP
@@ -59,17 +59,17 @@ public:
   using iterator_t = CombinationsIterator<bit_t>;
 
   CombinationsThread() = default;
-  CombinationsThread(int n, int k);
+  CombinationsThread(int64_t n, int64_t k);
 
-  int n() const { return n_; }
-  int k() const { return k_; }
-  idx_t size() const { return size_; };
+  int64_t n() const { return n_; }
+  int64_t k() const { return k_; }
+  int64_t size() const { return size_; };
   iterator_t begin() const { return begin_; }
   iterator_t end() const { return end_; }
 
 private:
-  int n_, k_;
-  idx_t size_;
+  int64_t n_, k_;
+  int64_t size_;
   iterator_t begin_, end_;
 };
 

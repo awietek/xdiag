@@ -2,7 +2,7 @@
 
 #include <utility>
 
-#include "extern/armadillo/armadillo"
+#include <hydra/extern/armadillo/armadillo>
 
 #include <hydra/common.h>
 
@@ -11,14 +11,11 @@ namespace hydra {
 class Tmatrix {
 public:
   Tmatrix() = default;
-  Tmatrix(std::vector<double> const &alphas, std::vector<double> const &betas)
-      : alphas_(alphas), betas_(betas) {
-    assert(alphas.size() == betas.size());
-  }
+  Tmatrix(std::vector<double> const &alphas, std::vector<double> const &betas);
   void append(double alpha, double beta);
   void pop();
 
-  idx_t size() const { return alphas_.size(); }
+  int64_t size() const { return alphas_.size(); }
 
   arma::vec alphas() const { return arma::vec(alphas_); }
   arma::vec betas() const { return betas_; }
@@ -30,6 +27,9 @@ public:
 
   void print_log() const;
 
+  bool operator==(Tmatrix const& rhs) const;
+  bool operator!=(Tmatrix const& rhs) const;
+  
 private:
   std::vector<double> alphas_;
   std::vector<double> betas_;

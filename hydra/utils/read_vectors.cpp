@@ -1,7 +1,7 @@
 #include "read_vectors.h"
 
-#include <extern/fmt/format.h>
-#include <extern/fmt/format-inl.h>
+#include <hydra/extern/fmt/format.h>
+#include <hydra/extern/fmt/format-inl.h>
 
 #include <hydra/common.h>
 

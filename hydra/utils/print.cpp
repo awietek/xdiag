@@ -1,8 +1,9 @@
 #include "print.h"
 
-#include <hydra/random/hashes.h>
+#include <hydra/random/hash.h>
 #include <hydra/utils/error.h>
 
+#include <inttypes.h>
 #include <sstream>
 
 namespace hydra::utils {
@@ -89,7 +90,7 @@ void print_pretty(const char *identifier, Bond const &bond) {
 
   printf("  sites: ");
   for (int64_t site : bond.sites()) {
-    printf("%ld ", site);
+    printf("%" PRId64 " ", site);
   }
   printf("\n");
 }
@@ -127,7 +128,7 @@ void print_pretty(const char *identifier, BondList const &bondlist) {
 void print_pretty(const char *identifier, Permutation const &p) {
   printf("%s:\n  ", identifier);
   for (int i = 0; i < p.size(); ++i) {
-    printf("%d ", p[i]);
+    printf("%" PRId64 " ", p[i]);
   }
   printf("\n");
   printf("  ID: 0x%lx\n", (unsigned long)random::hash(p));
@@ -135,14 +136,14 @@ void print_pretty(const char *identifier, Permutation const &p) {
 
 void print_pretty(const char *identifier, PermutationGroup const &group) {
   printf("%s:\n", identifier);
-  printf("  n_sites      : %d\n", group.n_sites());
-  printf("  n_symmetries : %d\n", group.n_symmetries());
+  printf("  n_sites      : %" PRId64 "\n", group.n_sites());
+  printf("  n_symmetries : %" PRId64 "\n", group.n_symmetries());
   printf("  ID           : 0x%lx\n", (unsigned long)random::hash(group));
 }
 
 void print_pretty(const char *identifier, Representation const &irrep) {
   printf("%s:\n", identifier);
-  printf("  size      : %ld\n", (long)irrep.size());
+  printf("  size      : %" PRId64 "\n", irrep.size());
   printf("  characters:");
   for (auto c : irrep.characters()) {
     if (std::imag(c) > 0.) {
@@ -165,39 +166,40 @@ void print_pretty(const char *identifier, U1 const &g) {
 
 void print_pretty(const char *identifier, QNum const &qn) {
   printf("%s:\n", identifier);
-  std::visit(
-      variant::overloaded{
-          [](U1 g, int i) {
-            (void)g;
-            printf("  QNum, U(1), n=%d\n", i);
-          },
-          [](PermutationGroup const &g, Representation const &i) {
-            printf("  QNum\n");
-            printf("  PermutationGroup\n");
-            printf("    n_sites      : %d\n", g.n_sites());
-            printf("    n_symmetries : %d\n", g.n_symmetries());
-            printf("    ID           : 0x%lx\n\n",
-                   (unsigned long)random::hash(g));
-            printf("  Representation\n");
-            printf("    ID        : 0x%lx\n", (unsigned long)random::hash(i));
-          },
-          [](auto const &g, auto const &i) {
-            (void)g;
-            (void)i;
-            throw symmetry_error(
-                "Error printing QNum: incompatible group or irrep");
-          },
-      },
-      qn.group(), qn.irrep());
+  std::visit(overload{
+                 [](U1 g, int i) {
+                   (void)g;
+                   printf("  QNum, U(1), n=%d\n", i);
+                 },
+                 [](PermutationGroup const &g, Representation const &i) {
+                   printf("  QNum\n");
+                   printf("  PermutationGroup\n");
+                   printf("    n_sites      : %" PRId64 "\n", g.n_sites());
+                   printf("    n_symmetries : %" PRId64 "\n", g.n_symmetries());
+                   printf("    ID           : 0x%lx\n\n",
+                          (unsigned long)random::hash(g));
+                   printf("  Representation\n");
+                   printf("    ID        : 0x%lx\n",
+                          (unsigned long)random::hash(i));
+                 },
+                 [](auto const &g, auto const &i) {
+                   (void)g;
+                   (void)i;
+                   throw std::runtime_error(
+                       "Error printing QNum: incompatible group or irrep");
+                 },
+             },
+             qn.group(), qn.irrep());
 }
 void print_pretty(const char *identifier, QN const &qn) {
   (void)identifier;
   (void)qn;
 }
 
-void print_pretty(const char *identifier, Block const &block) {
+void print_pretty(const char *identifier, block_variant_t const &block) {
+  printf("llllll\n");
   std::visit(
-      variant::overloaded{
+      overload{
           [identifier](Spinhalf const &block) {
             print_pretty(identifier, block);
           },
@@ -205,16 +207,21 @@ void print_pretty(const char *identifier, Block const &block) {
           [identifier](Electron const &block) {
             print_pretty(identifier, block);
           },
+#ifdef HYDRA_USE_MPI
+          [identifier](tJDistributed const &block) {
+            print_pretty(identifier, block);
+          },
+#endif
       },
-      block.variant());
+      block);
 }
 
 void print_pretty(const char *identifier, Spinhalf const &block) {
   printf("%s:\n", identifier);
 
-  printf("  n_sites  : %ld\n", block.n_sites());
+  printf("  n_sites  : %" PRId64 "\n", block.n_sites());
   if (block.sz_conserved()) {
-    printf("  n_up     : %ld\n", block.n_up());
+    printf("  n_up     : %" PRId64 "\n", block.n_up());
   } else {
     printf("  n_up     : not conserved\n");
   }
@@ -235,10 +242,10 @@ void print_pretty(const char *identifier, Spinhalf const &block) {
 void print_pretty(const char *identifier, tJ const &block) {
   printf("%s:\n", identifier);
 
-  printf("  n_sites  : %ld\n", block.n_sites());
+  printf("  n_sites  : %" PRId64 "\n", block.n_sites());
   if (block.sz_conserved() && block.charge_conserved()) {
-    printf("  n_up     : %ld\n", block.n_up());
-    printf("  n_dn     : %ld\n", block.n_dn());
+    printf("  n_up     : %" PRId64 "\n", block.n_up());
+    printf("  n_dn     : %" PRId64 "\n", block.n_dn());
 
   } else {
     printf("  n_up     : not conserved\n");
@@ -258,13 +265,66 @@ void print_pretty(const char *identifier, tJ const &block) {
   printf("  ID       : 0x%lx\n", (unsigned long)random::hash(block));
 }
 
+#ifdef HYDRA_USE_MPI
+void print_pretty(const char *identifier, tJDistributed const &block) {
+
+  int rank, size;
+  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+  MPI_Comm_size(MPI_COMM_WORLD, &size);
+  if (rank == 0) {
+    printf("%s:\n", identifier);
+
+    printf("  n_sites  : %" PRId64 "\n", block.n_sites());
+    if (block.sz_conserved() && block.charge_conserved()) {
+      printf("  n_up     : %" PRId64 "\n", block.n_up());
+      printf("  n_dn     : %" PRId64 "\n", block.n_dn());
+
+    } else {
+      printf("  n_up     : not conserved\n");
+      printf("  n_dn     : not conserved\n");
+    }
+
+    if (block.symmetric()) {
+      printf("  group    : defined with ID 0x%lx\n",
+             (unsigned long)random::hash(block.permutation_group()));
+      printf("  irrep    : defined with ID 0x%lx\n",
+             (unsigned long)random::hash(block.irrep()));
+    }
+    
+    std::stringstream ss;
+    ss.imbue(std::locale("en_US.UTF-8"));
+    ss << block.dim();
+    printf("  dimension: %s\n", ss.str().c_str());
+
+    std::stringstream ssmax;
+    ssmax.imbue(std::locale("en_US.UTF-8"));
+    ssmax << block.size_max();
+
+    std::stringstream ssmin;
+    ssmin.imbue(std::locale("en_US.UTF-8"));
+    ssmin << block.size_min();
+
+    std::stringstream ssavg;
+    ssavg.imbue(std::locale("en_US.UTF-8"));
+    ssavg << block.dim() / size;
+    
+    printf("  dimension (max local): %s\n", ssmax.str().c_str());
+    printf("  dimension (min local): %s\n", ssmin.str().c_str());
+    printf("  dimension (avg local): %s\n", ssavg.str().c_str());
+    
+    
+    printf("  ID       : 0x%lx\n", (unsigned long)random::hash(block));
+  }
+}
+#endif
+
 void print_pretty(const char *identifier, Electron const &block) {
   printf("%s:\n", identifier);
 
-  printf("  n_sites  : %ld\n", block.n_sites());
+  printf("  n_sites  : %" PRId64 "\n", block.n_sites());
   if (block.sz_conserved() && block.charge_conserved()) {
-    printf("  n_up     : %ld\n", block.n_up());
-    printf("  n_dn     : %ld\n", block.n_dn());
+    printf("  n_up     : %" PRId64 "\n", block.n_up());
+    printf("  n_dn     : %" PRId64 "\n", block.n_dn());
 
   } else {
     printf("  n_up     : not conserved\n");
@@ -291,7 +351,7 @@ void print_pretty(const char *identifier, RandomState const &rstate) {
 
 void print_pretty(const char *identifier, ProductState const &pstate) {
   printf("%s:\n", identifier);
-  printf("  ProductState, n_sites: %d\n", pstate.n_sites());
+  printf("  ProductState, n_sites: %" PRId64 "\n", pstate.n_sites());
   for (auto s : pstate) {
     printf("%s ", s.c_str());
   }
@@ -319,9 +379,6 @@ void print_pretty(const char *identifier, std::vector<float> const &vec) {
 }
 void print_pretty(const char *identifier, std::vector<double> const &vec) {
   print_pretty(identifier, arma::Col<double>(vec));
-}
-void print_pretty(const char *identifier, std::vector<scomplex> const &vec) {
-  print_pretty(identifier, arma::Col<scomplex>(vec));
 }
 void print_pretty(const char *identifier, std::vector<complex> const &vec) {
   print_pretty(identifier, arma::Col<complex>(vec));
@@ -364,13 +421,13 @@ void print_pretty(const char *identifier, const arma::Mat<double> &mat) {
 }
 
 void print_pretty(const char *identifier,
-                 const arma::Mat<std::complex<float>> &mat) {
+                  const arma::Mat<std::complex<float>> &mat) {
   printf("%s:\n", identifier);
   mat.brief_print();
 }
 
 void print_pretty(const char *identifier,
-                 const arma::Mat<std::complex<double>> &mat) {
+                  const arma::Mat<std::complex<double>> &mat) {
   printf("%s:\n", identifier);
   mat.brief_print();
 }
@@ -386,15 +443,30 @@ void print_pretty(const char *identifier, const arma::Col<double> &vec) {
 }
 
 void print_pretty(const char *identifier,
-                 const arma::Col<std::complex<float>> &vec) {
+                  const arma::Col<std::complex<float>> &vec) {
   printf("%s:\n", identifier);
   vec.brief_print();
 }
 
 void print_pretty(const char *identifier,
-                 const arma::Col<std::complex<double>> &vec) {
+                  const arma::Col<std::complex<double>> &vec) {
   printf("%s:\n", identifier);
   vec.brief_print();
+}
+
+void print_pretty(const char *identifier, State const &state) {
+  printf("%s:\n", identifier);
+  if (state.isreal()) {
+    printf("  real state\n");
+  } else {
+    printf("  cplx state\n");
+  }
+  std::stringstream ss;
+  ss.imbue(std::locale("en_US.UTF-8"));
+  ss << state.size();
+  printf("  dimension: %s\n", ss.str().c_str());
+  print_pretty((std::string(identifier) + std::string(".block()")).c_str(),
+               state.block());
 }
 
 } // namespace hydra::utils

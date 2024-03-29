@@ -21,8 +21,44 @@ constexpr uint64_t fnv1_prime_uint64_t = 0x00000100000001B3;
 constexpr uint64_t fnv1_offset_uint64_t = 0xcbf29ce484222645;
 constexpr uint64_t fnv1_mask_uint64_t =
     fnv1_prime_uint64_t * fnv1_offset_uint64_t;
-constexpr uint64_t hash_fnv1(uint64_t bits) {
+constexpr uint64_t hash_fnv1(uint64_t bits) noexcept {
   return fnv1_mask_uint64_t ^ bits;
+}
+
+inline uint64_t hash_div3(uint64_t bits) noexcept {
+  uint64_t A = 0;
+  uint64_t B = 0;
+  uint64_t C = 0;
+  int cnt = 0;
+  while (bits) {
+    A |= (bits & 1) << cnt;
+    B |= (bits & 2) << (cnt - 1);
+    C |= (bits & 4) << (cnt - 2);
+    bits >>= 3;
+    ++cnt;
+  }
+  uint64_t num = A * 1357911 + B * 1197531 + C * 2739651;
+  return (123456789 * num + 987654321) % 3000000019ULL;
+}
+
+inline uint32_t hash_div3(uint32_t bits) noexcept {
+  uint32_t A = 0;
+  uint32_t B = 0;
+  uint32_t C = 0;
+  int cnt = 0;
+  while (bits) {
+    A |= (bits & 1) << cnt;
+    B |= (bits & 2) << (cnt - 1);
+    C |= (bits & 4) << (cnt - 2);
+    bits >>= 3;
+    ++cnt;
+  }
+  uint32_t num = A * 1357911 + B * 1197531 + C * 2739651;
+  return (123456789 * num + 987654321) % 3000000019ULL;
+}
+
+inline uint16_t hash_div3(uint16_t bits) noexcept {
+  return (uint16_t)hash_div3((uint32_t)bits);
 }
 
 // Taken from boost::hash_combine

@@ -4,7 +4,7 @@
 
 #include <hydra/common.h>
 
-#include "extern/armadillo/armadillo"
+#include <hydra/extern/armadillo/armadillo>
 
 namespace hydra::random {
 

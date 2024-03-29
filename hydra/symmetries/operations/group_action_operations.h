@@ -1,5 +1,5 @@
 #pragma once
-#include <extern/gsl/span>
+#include <hydra/extern/gsl/span>
 
 #include <hydra/combinatorics/combinations.h>
 #include <hydra/symmetries/operations/fermi_sign.h>
@@ -10,10 +10,10 @@ namespace hydra::symmetries {
 
 // Computes stabilizing symmetries of "bits" when group is applied
 template <typename bit_t, class GroupAction>
-inline std::vector<int> stabilizer_symmetries(bit_t bits,
-                                              GroupAction const &group) {
-  std::vector<int> stable_syms;
-  for (int sym = 0; sym < group.n_symmetries(); ++sym)
+inline std::vector<int64_t> stabilizer_symmetries(bit_t bits,
+                                                  GroupAction const &group) {
+  std::vector<int64_t> stable_syms;
+  for (int64_t sym = 0; sym < group.n_symmetries(); ++sym)
     if (group.apply(sym, bits) == bits)
       stable_syms.push_back(sym);
   return stable_syms;
@@ -27,7 +27,7 @@ inline bit_t representative(bit_t state, GroupAction const &group_action) {
     return state;
 
   bit_t rep = std::numeric_limits<bit_t>::max();
-  for (int sym = 0; sym < group_action.n_symmetries(); ++sym) {
+  for (int64_t sym = 0; sym < group_action.n_symmetries(); ++sym) {
     bit_t tstate = group_action.apply(sym, state);
     if (tstate < rep) {
       rep = tstate;
@@ -40,7 +40,7 @@ inline bit_t representative(bit_t state, GroupAction const &group_action) {
 template <typename bit_t, class GroupAction>
 inline bool is_representative(bit_t state, GroupAction const &group_action) {
 
-  for (int sym = 0; sym < group_action.n_symmetries(); ++sym) {
+  for (int64_t sym = 0; sym < group_action.n_symmetries(); ++sym) {
     bit_t tstate = group_action.apply(sym, state);
     if (tstate < state) {
       return false;
@@ -52,11 +52,11 @@ inline bool is_representative(bit_t state, GroupAction const &group_action) {
 // Computes the representative using only a specified subset of symmetries
 template <typename bit_t, class GroupAction>
 inline bit_t representative_subset(bit_t state, GroupAction const &group_action,
-                                   gsl::span<int const> syms) {
+                                   gsl::span<int64_t const> syms) {
   if (syms.size() == 0)
     return state;
   bit_t rep = std::numeric_limits<bit_t>::max();
-  for (int sym : syms) {
+  for (int64_t sym : syms) {
     assert(sym < group_action.n_symmetries());
     bit_t tstate = group_action.apply(sym, state);
     if (tstate < rep) {
@@ -68,13 +68,13 @@ inline bit_t representative_subset(bit_t state, GroupAction const &group_action,
 
 // Computes the representative of state AND the symmetry that yields it
 template <typename bit_t, class GroupAction>
-inline std::pair<bit_t, int>
+inline std::pair<bit_t, int64_t>
 representative_sym(bit_t state, GroupAction const &group_action) {
   if (group_action.n_symmetries() == 0)
     return {state, 0};
   bit_t rep = std::numeric_limits<bit_t>::max();
-  int rep_sym = 0;
-  for (int sym = 0; sym < group_action.n_symmetries(); ++sym) {
+  int64_t rep_sym = 0;
+  for (int64_t sym = 0; sym < group_action.n_symmetries(); ++sym) {
     bit_t tstate = group_action.apply(sym, state);
     if (tstate < rep) {
       rep = tstate;
@@ -87,13 +87,13 @@ representative_sym(bit_t state, GroupAction const &group_action) {
 // Computes the representative/symmetry using only a specified subset of
 // symmetries
 template <typename bit_t, class GroupAction>
-inline std::pair<bit_t, int>
+inline std::pair<bit_t, int64_t>
 representative_sym_subset(bit_t state, GroupAction const &group_action,
-                          gsl::span<int const> syms) {
+                          gsl::span<int64_t const> syms) {
   if (syms.size() == 0)
     return {state, 0};
   bit_t rep = std::numeric_limits<bit_t>::max();
-  int rep_sym = 0;
+  int64_t rep_sym = 0;
   for (auto sym : syms) {
     assert(sym < group_action.n_symmetries());
     bit_t tstate = group_action.apply(sym, state);
@@ -107,14 +107,14 @@ representative_sym_subset(bit_t state, GroupAction const &group_action,
 
 // Computes the representative of state and all symmetries that yield it
 template <typename bit_t, class GroupAction>
-inline std::pair<bit_t, std::vector<int>>
+inline std::pair<bit_t, std::vector<int64_t>>
 representative_syms(bit_t state, GroupAction const &group_action) {
   if (group_action.n_symmetries() == 0)
-    return {state, std::vector<int>()};
+    return {state, std::vector<int64_t>()};
 
   bit_t rep = representative(state, group_action);
-  std::vector<int> rep_syms;
-  for (int sym = 0; sym < group_action.n_symmetries(); ++sym) {
+  std::vector<int64_t> rep_syms;
+  for (int64_t sym = 0; sym < group_action.n_symmetries(); ++sym) {
     bit_t tstate = group_action.apply(sym, state);
     if (tstate == rep) {
       rep_syms.push_back(sym);
@@ -125,10 +125,10 @@ representative_syms(bit_t state, GroupAction const &group_action) {
 
 // Computes the symmetries, which map origin to target
 template <typename bit_t, class GroupAction>
-inline std::vector<int> mapping_syms(bit_t origin, bit_t target,
-                                     GroupAction const &group_action) {
-  std::vector<int> syms;
-  for (int sym = 0; sym < group_action.n_symmetries(); ++sym) {
+inline std::vector<int64_t> mapping_syms(bit_t origin, bit_t target,
+                                         GroupAction const &group_action) {
+  std::vector<int64_t> syms;
+  for (int64_t sym = 0; sym < group_action.n_symmetries(); ++sym) {
     bit_t tstate = group_action.apply(sym, origin);
     if (tstate == target) {
       syms.push_back(sym);
@@ -142,7 +142,7 @@ template <typename bit_t, class GroupAction>
 double norm(bit_t state, GroupAction const &group_action,
             Representation const &irrep) {
   complex amplitude = 0.0;
-  for (int sym = 0; sym < group_action.n_symmetries(); ++sym) {
+  for (int64_t sym = 0; sym < group_action.n_symmetries(); ++sym) {
     bit_t tstate = group_action.apply(sym, state);
     if (tstate == state) {
       amplitude += irrep.character(sym);
@@ -156,11 +156,11 @@ template <typename bit_t, class GroupAction>
 inline double norm_fermionic(bit_t state, GroupAction const &group_action,
                              Representation const &irrep) {
   complex amplitude = 0.0;
-  int n_sites = group_action.n_sites();
+  int64_t n_sites = group_action.n_sites();
   auto work = fermi_work(n_sites);
   auto const &group = group_action.permutation_group();
 
-  for (int sym = 0; sym < group_action.n_symmetries(); ++sym) {
+  for (int64_t sym = 0; sym < group_action.n_symmetries(); ++sym) {
 
     auto const &perm = group[sym];
 
@@ -183,11 +183,11 @@ inline double norm_electron(bit_t ups, bit_t dns,
                             Representation const &irrep) {
   assert(group_action.n_symmetries() == irrep.size());
   complex amplitude = 0.0;
-  int n_sites = group_action.n_sites();
+  int64_t n_sites = group_action.n_sites();
   auto work = fermi_work(n_sites);
   auto const &group = group_action.permutation_group();
 
-  for (int sym = 0; sym < group_action.n_symmetries(); ++sym) {
+  for (int64_t sym = 0; sym < group_action.n_symmetries(); ++sym) {
 
     auto const &perm = group[sym];
     bit_t tups = group_action.apply(sym, ups);
@@ -214,16 +214,17 @@ inline double norm_electron(bit_t ups, bit_t dns,
 // Computes the norm of a symmetrized state with up/dn electrons (subset of
 // syms)
 template <typename bit_t, class GroupAction>
-inline double
-norm_electron_subset(bit_t ups, bit_t dns, GroupAction const &group_action,
-                     Representation const &irrep, gsl::span<int const> syms) {
+inline double norm_electron_subset(bit_t ups, bit_t dns,
+                                   GroupAction const &group_action,
+                                   Representation const &irrep,
+                                   gsl::span<int64_t const> syms) {
   assert(group_action.n_symmetries() == irrep.size());
   complex amplitude = 0.0;
-  int n_sites = group_action.n_sites();
+  int64_t n_sites = group_action.n_sites();
   auto work = fermi_work(n_sites);
   auto const &group = group_action.permutation_group();
 
-  for (int sym : syms) {
+  for (int64_t sym : syms) {
     assert(sym < group_action.n_symmetries());
 
     auto const &perm = group[sym];

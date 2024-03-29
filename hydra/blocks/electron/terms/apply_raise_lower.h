@@ -2,16 +2,16 @@
 
 #include <string>
 
-#include <hydra/bitops/bitops.h>
+#include <hydra/bits/bitops.h>
 #include <hydra/blocks/electron/terms/generic_term_dns.h>
 #include <hydra/blocks/electron/terms/generic_term_ups.h>
 
 namespace hydra::electron {
 
-template <typename bit_t, typename coeff_t, bool symmetric, class IndexingIn,
-          class IndexingOut, class Fill>
-void apply_raise_lower(Bond const &bond, IndexingIn &&indexing_in,
-                       IndexingOut &&indexing_out, Fill &&fill) {
+template <typename bit_t, typename coeff_t, bool symmetric, class BasisIn,
+          class BasisOut, class Fill>
+void apply_raise_lower(Bond const &bond, BasisIn &&basis_in,
+                       BasisOut &&basis_out, Fill &&fill) {
   assert(bond.coupling_defined());
   assert(bond.type_defined());
   assert(bond.size() == 1);
@@ -31,17 +31,17 @@ void apply_raise_lower(Bond const &bond, IndexingIn &&indexing_in,
       return (spins & site_mask) == 0;
     };
     auto term_action = [&](bit_t spins) -> std::pair<bit_t, coeff_t> {
-      bool fermi = bitops::popcnt(spins & fermi_mask) & 1;
+      bool fermi = bits::popcnt(spins & fermi_mask) & 1;
       return {spins ^ site_mask, fermi ? -c : c};
     };
 
     if (type == "CDAGUP") {
       electron::generic_term_ups<bit_t, coeff_t, symmetric>(
-          indexing_in, indexing_out, non_zero_term, term_action, fill);
+          basis_in, basis_out, non_zero_term, term_action, fill);
     } else if (type == "CDAGDN") {
 
       electron::generic_term_dns<bit_t, coeff_t, symmetric, true>(
-          indexing_in, indexing_out, non_zero_term, term_action, fill);
+          basis_in, basis_out, non_zero_term, term_action, fill);
     }
 
     // Lowering operators
@@ -50,16 +50,16 @@ void apply_raise_lower(Bond const &bond, IndexingIn &&indexing_in,
       return (spins & site_mask);
     };
     auto term_action = [&](bit_t spins) -> std::pair<bit_t, coeff_t> {
-      bool fermi = bitops::popcnt(spins & fermi_mask) & 1;
+      bool fermi = bits::popcnt(spins & fermi_mask) & 1;
       return {spins ^ site_mask, fermi ? -c : c};
     };
 
     if (type == "CUP") {
       electron::generic_term_ups<bit_t, coeff_t, symmetric>(
-          indexing_in, indexing_out, non_zero_term, term_action, fill);
+          basis_in, basis_out, non_zero_term, term_action, fill);
     } else if (type == "CDN") {
       electron::generic_term_dns<bit_t, coeff_t, symmetric, true>(
-          indexing_in, indexing_out, non_zero_term, term_action, fill);
+          basis_in, basis_out, non_zero_term, term_action, fill);
     }
   }
 }

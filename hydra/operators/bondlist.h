@@ -18,7 +18,7 @@ public:
   BondList() = default;
   explicit BondList(std::vector<Bond> const &bonds);
   explicit BondList(io::FileTomlHandler &&hdl);
-  
+
   int64_t size() const;
   void clear();
   int64_t n_sites() const;
@@ -35,17 +35,18 @@ public:
   arma::cx_mat matrix(std::string name) const;
   std::map<std::string, arma::cx_mat> const &matrices() const;
 
+  BondList bonds_of_type(std::string type) const;
+  BondList bonds_with_matrix() const;
+
+  bool iscomplex(double precision = 1e-12) const;
+  bool isreal(double precision = 1e-12) const;
+  bool ishermitian(double precision = 1e-12) const;
+
   BondListHandler operator[](std::string name);
   bool operator==(BondList const &other) const;
   bool operator!=(BondList const &other) const;
   BondList operator+(BondList const &other);
   void operator<<(Bond const &bond);
-
-  BondList bonds_of_type(std::string type) const;
-  BondList bonds_with_matrix() const;
-
-  bool is_complex(double precision = 1e-12) const;
-  bool is_real(double precision = 1e-12) const;
 
   iterator_t begin();
   iterator_t end();

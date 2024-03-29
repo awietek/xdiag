@@ -1,6 +1,6 @@
 #pragma once
 
-#include <hydra/bitops/bitops.h>
+#include <hydra/bits/bitops.h>
 #include <hydra/common.h>
 
 #include <hydra/blocks/spinhalf/terms/apply_term_offdiag_no_sym.h>
@@ -10,22 +10,22 @@ namespace hydra::spinhalf {
 
 // Scalar chirality term: J S*(S x S)
 
-template <typename bit_t, typename coeff_t, bool symmetric, class IndexingIn,
-          class IndexingOut, class Fill>
-void apply_scalar_chirality(Bond const &bond, IndexingIn &&indexing_in,
-                            IndexingOut &&indexing_out, Fill &&fill) {
-  using bitops::gbit;
+template <typename bit_t, typename coeff_t, bool symmetric, class BasisIn,
+          class BasisOut, class Fill>
+void apply_scalar_chirality(Bond const &bond, BasisIn &&basis_in,
+                            BasisOut &&basis_out, Fill &&fill) {
+  using bits::gbit;
 
   assert(bond.coupling_defined());
   assert(bond.type_defined() && (bond.type() == "SCALARCHIRALITY"));
   assert(bond.size() == 3);
   assert(bond.sites_disjoint());
-  assert(is_complex<coeff_t>());
+  assert(iscomplex<coeff_t>());
 
   complex J = bond.coupling();
   coeff_t Jquarter = 0.;
   coeff_t Jquarter_conj = 0.;
-  if constexpr (is_real<coeff_t>()) {
+  if constexpr (isreal<coeff_t>()) {
     Log.err("Error in spinhalf::apply_scalar_chirality: scalar chirality term "
             "cannot be used with real coefficients");
     (void)J;
@@ -72,15 +72,15 @@ void apply_scalar_chirality(Bond const &bond, IndexingIn &&indexing_in,
   // Dispatch either symmetric of unsymmetric term application
   if constexpr (symmetric) {
     spinhalf::apply_term_offdiag_sym<bit_t, coeff_t>(
-        indexing_in, indexing_out, non_zero_term, term_action_cyclic, fill);
+        basis_in, basis_out, non_zero_term, term_action_cyclic, fill);
     spinhalf::apply_term_offdiag_sym<bit_t, coeff_t>(
-        indexing_in, indexing_out, non_zero_term, term_action_acyclic, fill);
+        basis_in, basis_out, non_zero_term, term_action_acyclic, fill);
 
   } else {
     spinhalf::apply_term_offdiag_no_sym<bit_t, coeff_t>(
-        indexing_in, indexing_out, non_zero_term, term_action_cyclic, fill);
+        basis_in, basis_out, non_zero_term, term_action_cyclic, fill);
     spinhalf::apply_term_offdiag_no_sym<bit_t, coeff_t>(
-        indexing_in, indexing_out, non_zero_term, term_action_acyclic, fill);
+        basis_in, basis_out, non_zero_term, term_action_acyclic, fill);
   }
 }
 

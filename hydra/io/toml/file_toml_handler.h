@@ -1,6 +1,6 @@
 #pragma once
 
-#include <extern/toml++/toml.h>
+#include <hydra/extern/toml++/toml.h>
 #include <string>
 
 namespace hydra::io {

@@ -13,26 +13,26 @@ public:
   explicit PermutationGroup(std::vector<Permutation> const &permutations);
   explicit PermutationGroup(io::FileTomlHandler &&hdl);
 
-  int n_sites() const;
-  int n_symmetries() const;
-  int size() const;
-  Permutation const &operator[](int sym) const;
-  int inverse(int sym) const;
+  int64_t n_sites() const;
+  int64_t n_symmetries() const;
+  int64_t size() const;
+  Permutation const &operator[](int64_t sym) const;
+  int64_t inverse(int64_t sym) const;
 
   bool operator==(PermutationGroup const &rhs) const;
   bool operator!=(PermutationGroup const &rhs) const;
 
-  PermutationGroup subgroup(std::vector<int> const &symmetry_numbers) const;
+  PermutationGroup subgroup(std::vector<int64_t> const &symmetry_numbers) const;
 
   using iterator_t = std::vector<Permutation>::const_iterator;
   iterator_t begin() const;
   iterator_t end() const;
 
 private:
-  int n_sites_;
-  int n_symmetries_;
+  int64_t n_sites_;
+  int64_t n_symmetries_;
   std::vector<Permutation> permutations_;
-  std::vector<int> inverse_;
+  std::vector<int64_t> inverse_;
 };
 
 } // namespace hydra

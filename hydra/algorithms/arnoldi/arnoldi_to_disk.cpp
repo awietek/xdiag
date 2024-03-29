@@ -1,6 +1,6 @@
 #include "arnoldi_to_disk.h"
 
-#include <extern/fmt/format.h>
+#include <hydra/extern/fmt/format.h>
 #include <hydra/common.h>
 #include <hydra/utils/read_vectors.h>
 

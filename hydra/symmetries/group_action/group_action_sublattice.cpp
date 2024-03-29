@@ -27,7 +27,7 @@ GroupActionSublattice<bit_t, n_sublat>::GroupActionSublattice(
             n_sublat, n_sublat);
   }
 
-  int n_trailing = (n_sublat - 1) * n_sites_sublat_;
+  int64_t n_trailing = (n_sublat - 1) * n_sites_sublat_;
   auto group_action = GroupAction(permutation_group_);
 
   for (int sublat = 0; sublat < n_sublat; ++sublat) {
@@ -43,18 +43,18 @@ GroupActionSublattice<bit_t, n_sublat>::GroupActionSublattice(
     sym_action_[sublat].resize(size_tables_ * n_symmetries_);
 
     // Compute all representative and representative symmetries
-    std::vector<idx_t> rep_syms_begin(size_tables_);
-    std::vector<idx_t> rep_syms_end(size_tables_);
-    
+    std::vector<int64_t> rep_syms_begin(size_tables_);
+    std::vector<int64_t> rep_syms_end(size_tables_);
+
     for (half_bit_t bits = 0; bits < (bit_t)size_tables_; ++bits) {
 
-      idx_t idx = (idx_t)bits;
+      int64_t idx = (int64_t)bits;
 
       bit_t bits_shifted = (bit_t)bits << sublat * n_sites_sublat_;
 
       // determine the sublattice representatives ...
       bit_t bits_rep = std::numeric_limits<bit_t>::max();
-      for (int sym : sublat_permutations) {
+      for (int64_t sym : sublat_permutations) {
         bit_t bits_translated = group_action.apply(sym, bits_shifted);
 
         // // Security check: bits are translated to least significant bits
@@ -71,7 +71,7 @@ GroupActionSublattice<bit_t, n_sublat>::GroupActionSublattice(
 
       // ... and all the symmetries leading to this representative
       rep_syms_begin[idx] = rep_syms_array.size();
-      for (int sym : sublat_permutations) {
+      for (int64_t sym : sublat_permutations) {
         bit_t bits_translated = group_action.apply(sym, bits_shifted);
         if (bits_translated == bits_rep) {
           rep_syms_array.push_back(sym);
@@ -84,23 +84,23 @@ GroupActionSublattice<bit_t, n_sublat>::GroupActionSublattice(
       reps[idx] = rep;
 
       // Determine symmetry action on shifted bits
-      for (int sym = 0; sym < permutation_group_.size(); ++sym) {
+      for (int64_t sym = 0; sym < permutation_group_.size(); ++sym) {
         sym_action(sublat, sym, bits) = group_action.apply(sym, bits_shifted);
       }
     }
     rep_syms_array.shrink_to_fit();
 
     for (half_bit_t bits = 0; bits < (bit_t)size_tables_; ++bits) {
-      idx_t idx = (idx_t)bits;
+      int64_t idx = (int64_t)bits;
       rep_syms[idx] =
-          gsl::span<int const>(rep_syms_array.data() + rep_syms_begin[idx],
-                               rep_syms_end[idx] - rep_syms_begin[idx]);
+          gsl::span<int64_t const>(rep_syms_array.data() + rep_syms_begin[idx],
+                                   rep_syms_end[idx] - rep_syms_begin[idx]);
     }
   }
 }
 
 template <typename bit_t, int n_sublat>
-bit_t GroupActionSublattice<bit_t, n_sublat>::apply(int sym,
+bit_t GroupActionSublattice<bit_t, n_sublat>::apply(int64_t sym,
                                                     bit_t state) const {
   bit_t translated = 0;
   for (int sublat = 0; sublat < n_sublat; ++sublat) {
@@ -136,7 +136,7 @@ bit_t GroupActionSublattice<bit_t, n_sublat>::representative(
 
     if (sublat_rep[sublat] == min_rep) {
 
-      for (int sym : rep_syms_[sublat][sublat_state[sublat]]) {
+      for (int64_t sym : rep_syms_[sublat][sublat_state[sublat]]) {
         bit_t candidate = 0;
 
         // Build the translated state
@@ -154,7 +154,7 @@ bit_t GroupActionSublattice<bit_t, n_sublat>::representative(
 }
 
 template <typename bit_t, int n_sublat>
-std::pair<bit_t, int>
+std::pair<bit_t, int64_t>
 GroupActionSublattice<bit_t, n_sublat>::representative_sym(bit_t state) const {
 
   // Determine sublattice states representatives
@@ -175,16 +175,16 @@ GroupActionSublattice<bit_t, n_sublat>::representative_sym(bit_t state) const {
 
   // Apply all sublattice representative symmetries
   bit_t representative = std::numeric_limits<bit_t>::max();
-  int representative_sym = 0;
+  int64_t representative_sym = 0;
   for (int sublat = 0; sublat < n_sublat; ++sublat) {
 
     if (sublat_rep[sublat] == min_rep) {
 
-      for (int sym : rep_syms_[sublat][sublat_state[sublat]]) {
+      for (int64_t sym : rep_syms_[sublat][sublat_state[sublat]]) {
         bit_t candidate = 0;
 
         // Build the translated state
-        for (int sl = 0; sl < n_sublat; ++sl) {
+        for (int64_t sl = 0; sl < n_sublat; ++sl) {
           candidate |= sym_action(sl, sym, sublat_state[sl]);
         }
 
@@ -199,7 +199,7 @@ GroupActionSublattice<bit_t, n_sublat>::representative_sym(bit_t state) const {
 }
 
 template <typename bit_t, int n_sublat>
-std::pair<bit_t, gsl::span<int const>>
+std::pair<bit_t, gsl::span<int64_t const>>
 GroupActionSublattice<bit_t, n_sublat>::representative_syms(bit_t state) const {
 
   // Determine sublattice states representatives
@@ -220,12 +220,12 @@ GroupActionSublattice<bit_t, n_sublat>::representative_syms(bit_t state) const {
 
   // Apply all sublattice representative symmetries
   bit_t representative = std::numeric_limits<bit_t>::max();
-  gsl::span<int const>::size_type n_syms = 0;
+  gsl::span<int64_t const>::size_type n_syms = 0;
   for (int sublat = 0; sublat < n_sublat; ++sublat) {
 
     if (sublat_rep[sublat] == min_rep) {
 
-      for (int sym : rep_syms_[sublat][sublat_state[sublat]]) {
+      for (int64_t sym : rep_syms_[sublat][sublat_state[sublat]]) {
         bit_t candidate = 0;
 
         // Build the translated state
@@ -235,18 +235,16 @@ GroupActionSublattice<bit_t, n_sublat>::representative_syms(bit_t state) const {
 
         if (candidate < representative) {
           representative = candidate;
-	  n_syms = 1;
+          n_syms = 1;
           representative_syms_[0] = sym;
-        } else if (candidate == representative){
+        } else if (candidate == representative) {
           representative_syms_[n_syms++] = sym;
-	}
+        }
       }
     }
   }
   return {representative, {representative_syms_.data(), n_syms}};
 }
-  
-  
 
 template <typename bit_t, int n_sublat>
 bool GroupActionSublattice<bit_t, n_sublat>::operator==(

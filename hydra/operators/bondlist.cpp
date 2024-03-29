@@ -26,7 +26,7 @@ template <typename coeff_t>
 coeff_t BondList::coupling(std::string name, double precision) const {
   if (couplings_.count(name)) {
     complex cpl = couplings_.at(name);
-    if constexpr (hydra::is_real<coeff_t>()) {
+    if constexpr (hydra::isreal<coeff_t>()) {
       if (std::abs(imag(cpl)) > precision) {
         Log.err("Error: cannot return real coupling for bond. Imaginary part "
                 "non-negligible.");
@@ -121,7 +121,7 @@ BondList BondList::bonds_with_matrix() const {
   return BondList(bonds_return);
 }
 
-bool BondList::is_complex(double precision) const {
+bool BondList::iscomplex(double precision) const {
   for (Bond bond : bonds_) {
 
     if (bond.matrix_defined()) {
@@ -188,9 +188,10 @@ BondList::const_iterator_t BondList::end() const { return bonds_.end(); }
 BondList::const_iterator_t BondList::cbegin() const { return bonds_.cbegin(); }
 BondList::const_iterator_t BondList::cend() const { return bonds_.cend(); }
 
-  
-bool BondList::is_real(double precision) const {
-  return !is_complex(precision);
+bool BondList::isreal(double precision) const { return !iscomplex(precision); }
+bool BondList::ishermitian(double precision) const {
+  (void) precision;
+  return true; // implement this
 }
 
 bool BondList::operator==(BondList const &other) const {

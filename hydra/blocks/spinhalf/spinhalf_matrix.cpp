@@ -1,64 +1,74 @@
 #include "spinhalf_matrix.h"
 
-#include <hydra/algebra/generic_operator.h>
-
-#include <hydra/blocks/spinhalf/spinhalf.h>
-#include <hydra/blocks/spinhalf/terms/apply_terms_dispatch.h>
-#include <hydra/blocks/spinhalf/terms/compile.h>
-#include <hydra/blocks/spinhalf/terms/qns.h>
-#include <hydra/blocks/utils/block_utils.h>
-#include <hydra/operators/compiler.h>
-#include <hydra/utils/logger.h>
-#include <hydra/utils/timing.h>
+#include <hydra/algebra/fill.h>
+#include <hydra/blocks/spinhalf/compile.h>
+#include <hydra/blocks/spinhalf/dispatch.h>
 
 namespace hydra {
 
 template <typename coeff_t>
 arma::Mat<coeff_t> matrix_gen(BondList const &bonds, Spinhalf const &block_in,
-                              Spinhalf const &block_out) {
-  return generic_matrix<coeff_t>(bonds, block_in, block_out, spinhalf::compile);
+                              Spinhalf const &block_out) try {
+  BondList bondsc = spinhalf::compile(bonds, 1e-12);
+
+  int64_t m = block_out.size();
+  int64_t n = block_in.dim();
+  arma::Mat<coeff_t> mat(m, n, arma::fill::zeros);
+  auto fill = [&](int64_t idx_in, int64_t idx_out, coeff_t val) {
+    fill_matrix(mat, idx_in, idx_out, val);
+  };
+
+  spinhalf::dispatch<coeff_t>(bondsc, block_in, block_out, fill);
+  return mat;
+} catch (...) {
+  HydraRethrow("Cannot create matrix from \"Spinhalf\" block");
+  return arma::Mat<coeff_t>();
 }
 
-template arma::Mat<double> matrix_gen<double>(BondList const &bonds,
-                                              Spinhalf const &block_in,
-                                              Spinhalf const &block_out);
-
-template arma::Mat<complex> matrix_gen<complex>(BondList const &bonds,
-                                                Spinhalf const &block_in,
-                                                Spinhalf const &block_out);
-
-arma::Mat<double> matrix_real(BondList const &bonds, Spinhalf const &block_in,
-                              Spinhalf const &block_out) {
+arma::mat matrix(BondList const &bonds, Spinhalf const &block_in,
+                 Spinhalf const &block_out) try {
   return matrix_gen<double>(bonds, block_in, block_out);
+} catch (...) {
+  HydraRethrow("Cannot create matrix from \"Spinhalf\" block");
+  return arma::mat();
 }
 
-arma::Mat<complex> matrix_cplx(BondList const &bonds, Spinhalf const &block_in,
-                               Spinhalf const &block_out) {
+arma::cx_mat matrixC(BondList const &bonds, Spinhalf const &block_in,
+                     Spinhalf const &block_out) try {
   return matrix_gen<complex>(bonds, block_in, block_out);
+} catch (...) {
+  HydraRethrow("Cannot create matrix from \"Spinhalf\" block");
+  return arma::cx_mat();
 }
 
 template <typename coeff_t>
 void matrix_gen(coeff_t *mat, BondList const &bonds, Spinhalf const &block_in,
-                Spinhalf const &block_out) {
-  generic_matrix<coeff_t>(mat, bonds, block_in, block_out, spinhalf::compile);
+                Spinhalf const &block_out) try {
+  BondList bondsc = spinhalf::compile(bonds, 1e-12);
+
+  int64_t m = block_out.size();
+  auto fill = [&](int64_t idx_in, int64_t idx_out, coeff_t val) {
+    return fill_matrix(mat, idx_in, idx_out, m, val);
+  };
+
+  spinhalf::dispatch<coeff_t>(bondsc, block_in, block_out, fill);
+
+} catch (...) {
+  HydraRethrow("Cannot create matrix from \"Spinhalf\" block");
 }
 
-template void matrix_gen<double>(double *mat, BondList const &bonds,
-                                 Spinhalf const &block_in,
-                                 Spinhalf const &block_out);
-
-template void matrix_gen<complex>(complex *mat, BondList const &bonds,
-                                  Spinhalf const &block_in,
-                                  Spinhalf const &block_out);
-
-void matrix_real(double *mat, BondList const &bonds, Spinhalf const &block_in,
-                 Spinhalf const &block_out) {
+void matrix(double *mat, BondList const &bonds, Spinhalf const &block_in,
+            Spinhalf const &block_out) try {
   return matrix_gen<double>(mat, bonds, block_in, block_out);
+} catch (...) {
+  HydraRethrow("Cannot create matrix from \"Spinhalf\" block");
 }
 
-void matrix_cplx(complex *mat, BondList const &bonds, Spinhalf const &block_in,
-                 Spinhalf const &block_out) {
+void matrixC(complex *mat, BondList const &bonds, Spinhalf const &block_in,
+             Spinhalf const &block_out) try {
   return matrix_gen<complex>(mat, bonds, block_in, block_out);
+} catch (...) {
+  HydraRethrow("Cannot create matrix from \"Spinhalf\" block");
 }
 
 } // namespace hydra

@@ -1,32 +1,31 @@
 #pragma once
-#include "extern/armadillo/armadillo"
+#include <hydra/extern/armadillo/armadillo>
 
-#include <hydra/blocks/blocks.h>
-#include <hydra/common.h>
 #include <hydra/operators/bond.h>
 #include <hydra/operators/bondlist.h>
 
+#include <hydra/blocks/electron/electron_matrix.h>
+#include <hydra/blocks/spinhalf/spinhalf_matrix.h>
+#include <hydra/blocks/tj/tj_matrix.h>
+
 namespace hydra {
 
-arma::Mat<double> matrix_real(BondList const &bond, Block const &block_in,
-                              Block const &block_out);
-arma::Mat<double> matrix_real(Bond const &bond, Block const &block_in,
-                              Block const &block_out);
-arma::Mat<double> matrix_real(BondList const &bonds, Block const &block);
-arma::Mat<double> matrix_real(Bond const &bond, Block const &block);
+// real matrices
+template <typename block_t>
+arma::mat matrix(Bond const &bond, block_t const &block_in,
+                 block_t const &block_out);
+template <typename block_t>
+arma::mat matrix(BondList const &bonds, block_t const &block);
+template <typename block_t>
+arma::mat matrix(Bond const &bond, block_t const &block);
 
-arma::Mat<complex> matrix_cplx(BondList const &bond, Block const &block_in,
-                               Block const &block_out);
-arma::Mat<complex> matrix_cplx(Bond const &bond, Block const &block_in,
-                               Block const &block_out);
-arma::Mat<complex> matrix_cplx(BondList const &bonds, Block const &block);
-arma::Mat<complex> matrix_cplx(Bond const &bond, Block const &block);
+// complex matrices
+template <typename block_t>
+arma::cx_mat matrixC(Bond const &bond, block_t const &block_in,
+                     block_t const &block_out);
+template <typename block_t>
+arma::cx_mat matrixC(BondList const &bonds, block_t const &block);
+template <typename block_t>
+arma::cx_mat matrixC(Bond const &bond, block_t const &block);
 
-arma::Mat<complex> matrix(BondList const &bonds, Block const &block_in,
-                          Block const &block_out);
-arma::Mat<complex> matrix(Bond const &bond, Block const &block_in,
-                          Block const &block_out);
-arma::Mat<complex> matrix(BondList const &bonds, Block const &block);
-arma::Mat<complex> matrix(Bond const &bond, Block const &block);
-  
 } // namespace hydra

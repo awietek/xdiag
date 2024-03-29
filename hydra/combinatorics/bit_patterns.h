@@ -1,6 +1,6 @@
 #pragma once
 
-#include <hydra/bitops/bitops.h>
+#include <hydra/bits/bitops.h>
 #include <hydra/common.h>
 
 namespace hydra::combinatorics {
@@ -25,9 +25,9 @@ template <typename bit_t> constexpr bit_t get_next_pattern(bit_t v) noexcept {
 }
 
 template <typename bit_t>
-bit_t get_nth_pattern(idx_t n, int n_sites, int n_upspins);
+bit_t get_nth_pattern(int64_t n, int64_t n_sites, int64_t n_upspins);
 
 template <typename bit_t>
-idx_t get_n_for_pattern(bit_t pattern, int n_sites, int n_upspins);
+int64_t get_n_for_pattern(bit_t pattern, int64_t n_sites, int64_t n_upspins);
 
 } // namespace hydra::combinatorics

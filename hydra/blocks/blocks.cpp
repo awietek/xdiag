@@ -1,33 +1,38 @@
 #include "blocks.h"
-#include <hydra/random/hashes.h>
+
+#include <hydra/parallel/mpi/cdot_distributed.h>
 
 namespace hydra {
 
-Block::Block(Spinhalf const &variant) : variant_(variant) {}
-Block::Block(tJ const &variant) : variant_(variant) {}
-Block::Block(Electron const &variant) : variant_(variant) {}
-Block::Block(block_variant_t const &variant) : variant_(variant) {}
-
-idx_t Block::size() const {
-  return std::visit(
-      variant::overloaded{[&](auto &&blk) -> idx_t { return blk.size(); }},
-      variant_);
+int64_t dim(block_variant_t const &block) {
+  return std::visit([&](auto &&blk) { return blk.dim(); }, block);
 }
 
-uint64_t Block::hash() const {
-  return std::visit(variant::overloaded{[&](auto &&blk) -> idx_t {
-                      return random::hash(blk);
-                    }},
-                    variant_);
+int64_t size(block_variant_t const &block) {
+  return std::visit([&](auto &&blk) { return blk.size(); }, block);
 }
 
-block_variant_t &Block::variant() { return variant_; }
-block_variant_t const &Block::variant() const { return variant_; }
-
-bool Block::operator==(Block const &rhs) const {
-  return (variant_ == rhs.variant_);
+int64_t n_sites(block_variant_t const &block) {
+  return std::visit([&](auto &&blk) { return blk.n_sites(); }, block);
 }
 
-bool Block::operator!=(Block const &rhs) const { return !operator==(rhs); }
+bool isreal(block_variant_t const &block) {
+  return std::visit([&](auto &&blk) { return blk.isreal(); }, block);
+}
+
+bool iscomplex(block_variant_t const &block) { return !isreal(block); }
+
+bool isdistributed(block_variant_t const &block) {
+  return std::visit(overload{
+                        [&](Spinhalf const &) -> bool { return false; },
+                        [&](tJ const &) -> bool { return false; },
+                        [&](Electron const &) -> bool { return false; },
+#ifdef HYDRA_USE_MPI
+                        [&](tJDistributed const &) -> bool { return true; },
+#endif
+                        [&](auto &&) -> bool { return false; },
+                    },
+                    block);
+}
 
 } // namespace hydra

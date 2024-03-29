@@ -1,39 +1,57 @@
 #include "random_state.h"
 
+#include <hydra/algebra/algebra.h>
+#include <hydra/random/hash.h>
+#include <hydra/random/hash_functions.h>
+#include <hydra/random/random_utils.h>
+
 namespace hydra {
 
-RandomState::RandomState(uint64_t seed) : seed_(seed) {}
+RandomState::RandomState(int64_t seed, bool normalized)
+    : seed_(seed), normalized_(normalized) {}
+int64_t RandomState::seed() const { return seed_; }
+bool RandomState::normalized() const { return normalized_; }
 
-template <typename coeff_t>
-void fill(RandomState const &rstate, State<coeff_t> &state) {
-  uint64_t seed = rstate.seed();
+void fill(State &state, RandomState const &rstate, int64_t col) try {
+  int64_t seed = rstate.seed();
+  int64_t seed_modified =
+      random::hash_combine(seed, random::hash(state.block()));
 
-  // the random numbers should be different for different blocks
-  uint64_t seed_modified = random::hash_combine(seed, state.block().hash());
-  random::fill_random_normal_vector(state.vector(), seed_modified);
-
-  // normalize
-  coeff_t norm = arma::norm(state.vector());
-  state.vector() /= norm;
+  if (state.isreal()) {
+    auto v = state.vector(col, false);
+    random::fill_random_normal_vector(v, seed_modified);
+  } else {
+    auto v = state.vectorC(col, false);
+    random::fill_random_normal_vector(v, seed_modified);
+  }
+  if (rstate.normalized()) {
+    double nrm = norm(state);
+    state /= nrm;
+  }
+} catch (...) {
+  HydraRethrow("Unable to fill State with a RandomState");
 }
 
-template void fill(RandomState const &, State<double> &);
-template void fill(RandomState const &, State<complex> &);
-
-template <typename coeff_t>
-State<coeff_t> random_state(Block const &block, uint64_t seed) {
-  return State<coeff_t>(block, RandomState(seed));
+State random_state(block_variant_t const &block, bool real, int64_t seed,
+                   bool normalized) {
+  return std::visit(
+      [&](auto &&block) { return random_state(block, real, seed, normalized); },
+      block);
 }
 
-template State<double> random_state<double>(Block const &block, uint64_t seed);
-template State<complex> random_state<complex>(Block const &block,
-                                              uint64_t seed);
-StateReal random_state_real(Block const &block, uint64_t seed) {
-  return random_state<double>(block, seed);
+template <typename block_t>
+State random_state(block_t const &block, bool real, int64_t seed,
+                   bool normalized) {
+  auto state = State(block, real);
+  auto rstate = RandomState(seed, normalized);
+  fill(state, rstate);
+  return state;
 }
-
-StateCplx random_state_cplx(Block const &block, uint64_t seed) {
-  return random_state<complex>(block, seed);
-}
+template State random_state(Spinhalf const &, bool, int64_t, bool);
+template State random_state(tJ const &, bool, int64_t, bool);
+template State random_state(Electron const &, bool, int64_t, bool);
+#ifdef HYDRA_USE_MPI
+template State random_state(tJDistributed const &, bool, int64_t, bool);
+#endif
 
 } // namespace hydra

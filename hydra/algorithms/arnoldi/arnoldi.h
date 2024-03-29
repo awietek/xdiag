@@ -2,7 +2,7 @@
 // Created by Luke Staszewski on 13.06.23.
 //
 #pragma once
-#include <extern/armadillo/armadillo>
+#include <hydra/extern/armadillo/armadillo>
 #include <utility>
 
 namespace hydra {

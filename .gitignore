@@ -1,3 +1,5 @@
+install
+cmake_commands.txt
 .idea
 .idea/*
 misc/dump/*

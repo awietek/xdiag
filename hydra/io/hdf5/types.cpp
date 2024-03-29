@@ -3,7 +3,7 @@
 
 #include <complex>
 #include <cstdint>
-#include <extern/armadillo/armadillo>
+#include <hydra/extern/armadillo/armadillo>
 
 namespace hydra::hdf5 {
 

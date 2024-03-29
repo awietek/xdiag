@@ -9,12 +9,12 @@
 namespace hydra::combinatorics {
 
 template <class bit_t>
-SubsetsIndex<bit_t>::SubsetsIndex(int n) : n_(n), size_((idx_t)1 << n) {
+SubsetsIndex<bit_t>::SubsetsIndex(int64_t n) : n_(n), size_((int64_t)1 << n) {
   if (n < 0) {
     Log.err("Error constructing SubsetsIndex: n<0");
   } else {
     begin_ = SubsetsIndexIterator<bit_t>(0);
-    end_ = SubsetsIndexIterator<bit_t>((idx_t)1 << n);
+    end_ = SubsetsIndexIterator<bit_t>((int64_t)1 << n);
   }
 }
 
@@ -23,7 +23,7 @@ template class SubsetsIndex<uint32_t>;
 template class SubsetsIndex<uint64_t>;
 
 template <class bit_t>
-SubsetsIndexIterator<bit_t>::SubsetsIndexIterator(idx_t idx)
+SubsetsIndexIterator<bit_t>::SubsetsIndexIterator(int64_t idx)
     : current_((bit_t)idx) {}
 
 template class SubsetsIndexIterator<uint16_t>;
@@ -32,8 +32,8 @@ template class SubsetsIndexIterator<uint64_t>;
 
 #ifdef _OPENMP
 template <class bit_t>
-SubsetsIndexThread<bit_t>::SubsetsIndexThread(int n)
-    : n_(n), size_((idx_t)1 << n) {
+SubsetsIndexThread<bit_t>::SubsetsIndexThread(int64_t n)
+    : n_(n), size_((int64_t)1 << n) {
   if (n < 0) {
     Log.err("Error constructing SubsetsIndex: n<0");
   } else {

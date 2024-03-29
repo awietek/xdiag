@@ -1,0 +1,22 @@
+#pragma once
+
+#include <hydra/bits/extract_deposit.h>
+#include <hydra/bits/gbit.h>
+#include <hydra/bits/popcnt.h>
+#include <string>
+
+// #if defined(__BMI__)
+// #warning has BMI1
+// #endif
+
+// #if defined(__BMI2__)
+// #warning has BMI2
+// #endif
+
+namespace hydra::bits {
+
+// bits_to_string
+template <typename bit_t>
+std::string bits_to_string(bit_t bits, int n, bool reverse = true);
+
+} // namespace hydra::bits

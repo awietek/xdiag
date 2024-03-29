@@ -1,6 +1,6 @@
 #pragma once
 
-#include "extern/armadillo/armadillo"
+#include <hydra/extern/armadillo/armadillo>
 
 #include <ostream>
 #include <string>
@@ -19,6 +19,8 @@ public:
   Bond() = default;
   Bond(std::string type, int64_t site);
   Bond(std::string type, std::vector<int64_t> const &sites);
+  Bond(std::string type, double coupling, int64_t site);
+  Bond(std::string type, double coupling, std::vector<int64_t> const &sites);
   Bond(std::string type, complex coupling, int64_t site);
   Bond(std::string type, complex coupling, std::vector<int64_t> const &sites);
   Bond(std::string type, std::string coupling_name, int64_t site);
@@ -26,16 +28,23 @@ public:
        std::vector<int64_t> const &sites);
 
   // Constructors with bond matrix
-  template <typename coeff_t> Bond(arma::Mat<coeff_t> const &matrix, int64_t site);
+  template <typename coeff_t>
+  Bond(arma::Mat<coeff_t> const &matrix, int64_t site);
   template <typename coeff_t>
   Bond(arma::Mat<coeff_t> const &matrix, std::vector<int64_t> const &sites);
+  template <typename coeff_t>
+  Bond(arma::Mat<coeff_t> const &matrix, double coupling, int64_t site);
+  template <typename coeff_t>
+  Bond(arma::Mat<coeff_t> const &matrix, double coupling,
+       std::vector<int64_t> const &sites);
   template <typename coeff_t>
   Bond(arma::Mat<coeff_t> const &matrix, complex coupling, int64_t site);
   template <typename coeff_t>
   Bond(arma::Mat<coeff_t> const &matrix, complex coupling,
        std::vector<int64_t> const &sites);
   template <typename coeff_t>
-  Bond(arma::Mat<coeff_t> const &matrix, std::string coupling_name, int64_t site);
+  Bond(arma::Mat<coeff_t> const &matrix, std::string coupling_name,
+       int64_t site);
   template <typename coeff_t>
   Bond(arma::Mat<coeff_t> const &matrix, std::string coupling_name,
        std::vector<int64_t> const &sites);
@@ -61,8 +70,8 @@ public:
   int64_t size() const;
   int64_t operator[](int64_t j) const;
 
-  bool is_complex(double precision = 1e-12) const;
-  bool is_real(double precision = 1e-12) const;
+  bool iscomplex(double precision = 1e-12) const;
+  bool isreal(double precision = 1e-12) const;
 
   bool operator==(const Bond &rhs) const;
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "extern/armadillo/armadillo"
+#include <hydra/extern/armadillo/armadillo>
 
 #include <string>
 
@@ -17,9 +17,9 @@
 #include <hydra/states/state.h>
 
 #include <hydra/symmetries/continuous_group.h>
-#include <hydra/symmetries/qn.h>
 #include <hydra/symmetries/permutation.h>
 #include <hydra/symmetries/permutation_group.h>
+#include <hydra/symmetries/qn.h>
 #include <hydra/symmetries/representation.h>
 
 namespace hydra::utils {
@@ -41,11 +41,15 @@ void print_pretty(const char *identifier, Representation const &irrep);
 void print_pretty(const char *identifier, U1 const &qn);
 void print_pretty(const char *identifier, QNum const &qn);
 void print_pretty(const char *identifier, QN const &qn);
-  
-void print_pretty(const char *identifier, Block const &block);
+
+void print_pretty(const char *identifier, block_variant_t const &block);
 void print_pretty(const char *identifier, Spinhalf const &block);
 void print_pretty(const char *identifier, tJ const &block);
 void print_pretty(const char *identifier, Electron const &block);
+
+#ifdef HYDRA_USE_MPI
+void print_pretty(const char *identifier, tJDistributed const &block);
+#endif
 
 void print_pretty(const char *identifier, RandomState const &rstate);
 void print_pretty(const char *identifier, ProductState const &pstate);
@@ -53,7 +57,6 @@ void print_pretty(const char *identifier, ProductState const &pstate);
 void print_pretty(const char *identifier, std::vector<int> const &vec);
 void print_pretty(const char *identifier, std::vector<float> const &vec);
 void print_pretty(const char *identifier, std::vector<double> const &vec);
-void print_pretty(const char *identifier, std::vector<scomplex> const &vec);
 void print_pretty(const char *identifier, std::vector<complex> const &vec);
 void print_pretty(const char *identifier, std::vector<std::string> const &vec);
 
@@ -65,34 +68,18 @@ void print_pretty(const char *identifier, arma::imat const &mat);
 void print_pretty(const char *identifier, arma::Mat<float> const &mat);
 void print_pretty(const char *identifier, arma::Mat<double> const &mat);
 void print_pretty(const char *identifier,
-                 arma::Mat<std::complex<float>> const &mat);
+                  arma::Mat<std::complex<float>> const &mat);
 void print_pretty(const char *identifier,
-                 arma::Mat<std::complex<double>> const &mat);
+                  arma::Mat<std::complex<double>> const &mat);
 
 void print_pretty(const char *identifier, arma::Col<float> const &vec);
 void print_pretty(const char *identifier, arma::Col<double> const &vec);
 void print_pretty(const char *identifier,
-                 arma::Col<std::complex<float>> const &vec);
+                  arma::Col<std::complex<float>> const &vec);
 void print_pretty(const char *identifier,
-                 arma::Col<std::complex<double>> const &vec);
+                  arma::Col<std::complex<double>> const &vec);
 
 void print_pretty(const char *identifier, Tmatrix const &tmat);
-
-template <typename coeff_t>
-void print_pretty(const char *identifier, State<coeff_t> const &state) {
-  printf("%s:\n", identifier);
-  if constexpr (is_real<coeff_t>()) {
-    printf("  real state\n");
-  } else {
-    printf("  cplx state\n");
-  }
-  std::stringstream ss;
-  ss.imbue(std::locale("en_US.UTF-8"));
-  ss << state.size();
-  printf("  dimension: %s\n", ss.str().c_str());
-  printf("  norm     : %.9e\n", arma::norm(state.vector()));
-  print_pretty((std::string(identifier) + std::string(".block()")).c_str(),
-              state.block());
-}
+void print_pretty(const char *identifier, State const &state);
 
 } // namespace hydra::utils

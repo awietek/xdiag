@@ -3,7 +3,7 @@
 #include <tuple>
 #include <vector>
 
-#include <hydra/bitops/bitops.h>
+#include <hydra/bits/bitops.h>
 #include <hydra/common.h>
 
 namespace hydra::operators {
@@ -155,7 +155,7 @@ NonBranchingBond<bit_t, coeff_t>::NonBranchingBond(Bond const &bond,
       if (std::abs(matrix_(out, in)) > precision) {
         non_zero_term_[in] = true;
         state_applied_[in] = out;
-        if constexpr (is_real<coeff_t>()) {
+        if constexpr (isreal<coeff_t>()) {
           if (std::abs(imag(matrix_(out, in))) > precision) {
             Log.err("Error: trying to create a real NonBranchingBond, but "
                     "found a truly complex matrix entry");
@@ -178,7 +178,8 @@ NonBranchingBond<bit_t, coeff_t>::NonBranchingBond(Bond const &bond,
 
   // int64_t n_sites = 1;
   // for (bit_t in = 0; in < dim_; ++in) {
-  //   std::cout << "a " << BSTR(in) << " -> " << BSTR(state_applied_[in]) << " "
+  //   std::cout << "a " << BSTR(in) << " -> " << BSTR(state_applied_[in]) << "
+  //   "
   //             << coeff_[in] << " " << non_zero_term_[in] << std::endl;
   // }
 }
@@ -212,7 +213,7 @@ template <typename bit_t, typename coeff_t>
 bit_t NonBranchingBond<bit_t, coeff_t>::extract_local_state(bit_t state) const {
   bit_t local_state = 0;
   for (int64_t i = 0; i < (int64_t)sites_.size(); ++i) {
-    local_state |= bitops::gbit(state, sites_[i]) << i;
+    local_state |= bits::gbit(state, sites_[i]) << i;
   }
   return local_state;
 }
@@ -227,7 +228,7 @@ bit_t NonBranchingBond<bit_t, coeff_t>::deposit_local_state(bit_t local_state,
   state &= mask_; // clear bits on site
   // Log("b: {}", BSTR(state));
   for (int64_t i = 0; i < (int64_t)sites_.size(); ++i) {
-    state |= bitops::gbit(local_state, i) << sites_[i];
+    state |= bits::gbit(local_state, i) << sites_[i];
     // Log("c: {}", BSTR(state));
   }
   return state;
@@ -240,7 +241,7 @@ int64_t NonBranchingBond<bit_t, coeff_t>::number_difference() const {
   for (bit_t state = 0; state < dim_; ++state) {
     if (non_zero_term_[state]) {
       int64_t diff_state =
-          bitops::popcnt(state_applied_[state]) - bitops::popcnt(state);
+          bits::popcnt(state_applied_[state]) - bits::popcnt(state);
       if (first_diff) {
         diff = diff_state;
         first_diff = false;

@@ -15,30 +15,45 @@ public:
 
   ProductState() = default;
   explicit ProductState(std::vector<std::string> const &local_states);
-  inline std::string const &operator[](int i) const { return local_states_[i]; }
-  inline std::string &operator[](int i) { return local_states_[i]; }
-  inline int n_sites() const { return local_states_.size(); }
-  inline void operator<<(std::string l) { local_states_.push_back(l); }
-  inline iterator_t begin() const { return local_states_.begin(); }
-  inline iterator_t end() const { return local_states_.end(); }
+
+  std::string const &operator[](int64_t i) const;
+  std::string &operator[](int64_t i);
+
+  int64_t n_sites() const;
+  void operator<<(std::string l);
+  iterator_t begin() const;
+  iterator_t end() const;
 
 private:
   std::vector<std::string> local_states_;
 };
 
-template <typename coeff_t> class State;
+State product_state(block_variant_t const &block,
+                    std::vector<std::string> const &local_state,
+                    bool real = true);
+
+template <typename block_t>
+State product_state(block_t const &block,
+                    std::vector<std::string> const &local_state,
+                    bool real = true);
+
+void fill(State &state, ProductState const &pstate, int64_t col = 0);
 
 template <typename coeff_t>
-void fill(ProductState const &pstate, State<coeff_t> &state);
+void fill(Spinhalf const &block, arma::Col<coeff_t> &vec,
+          ProductState const &pstate);
 
 template <typename coeff_t>
-void fill(ProductState const &pstate, Spinhalf const &block,
-          arma::Col<coeff_t> &vector);
+void fill(tJ const &block, arma::Col<coeff_t> &vec, ProductState const &pstate);
+
 template <typename coeff_t>
-void fill(ProductState const &pstate, tJ const &block,
-          arma::Col<coeff_t> &vector);
+void fill(Electron const &block, arma::Col<coeff_t> &vec,
+          ProductState const &pstate);
+
+#ifdef HYDRA_USE_MPI
 template <typename coeff_t>
-void fill(ProductState const &pstate, Electron const &block,
-          arma::Col<coeff_t> &vector);
+void fill(tJDistributed const &block, arma::Col<coeff_t> &vec,
+          ProductState const &pstate);
+#endif
 
 } // namespace hydra

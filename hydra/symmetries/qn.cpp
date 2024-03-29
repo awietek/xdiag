@@ -22,10 +22,10 @@ bool QNum::operator!=(QNum const &rhs) const { return !operator==(rhs); }
 
 QNum QNum::operator*(QNum const &other) const {
   return std::visit(
-      variant::overloaded{
+      overload{
           [&](U1 const &g1, U1 const &g2, int const &i1, int const &i2) {
             if (g1 != g2) {
-              throw symmetry_error(
+              throw std::runtime_error(
                   "Error multiplying QNum: U(1) groups not identical");
             }
             return QNum(g1, i1 + i2);
@@ -33,7 +33,7 @@ QNum QNum::operator*(QNum const &other) const {
           [&](PermutationGroup const &g1, PermutationGroup const &g2,
               Representation const &i1, Representation const &i2) {
             if (g1 != g2) {
-              throw symmetry_error(
+              throw std::runtime_error(
                   "Error multiplying QNum: permutation groups not"
                   "identical");
             }
@@ -41,7 +41,7 @@ QNum QNum::operator*(QNum const &other) const {
             try {
               return QNum(g1, i1 * i2);
             } catch (...) {
-              throw symmetry_error(
+              throw std::runtime_error(
                   "Error multiplying QNum: unable to multiplyRepresentation");
             }
           },
@@ -50,7 +50,7 @@ QNum QNum::operator*(QNum const &other) const {
             (void)g2;
             (void)i1;
             (void)i2;
-            throw symmetry_error(
+            throw std::runtime_error(
                 "Error multiplying QNum: incompatible group or irrep");
             return QNum();
           }},
@@ -85,7 +85,7 @@ QN QN::operator*(QN const &other) const {
                  std::inserter(keys_other, keys_other.end()),
                  [](auto pair) { return pair.first; });
   if (keys != keys_other) {
-    throw symmetry_error(
+    throw std::runtime_error(
         "Error multiplying QN: labels are not the same for the two QNs");
   }
 
@@ -95,7 +95,7 @@ QN QN::operator*(QN const &other) const {
       QNum qnr = qn * other.qnums_.at(label);
       labels_qnums.push_back({label, qnr});
     } catch (...) {
-      throw symmetry_error(
+      throw std::runtime_error(
           std::string(
               "Error multiplying QN: unable to multiply QNum with label ") +
           label);

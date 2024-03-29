@@ -1,40 +1,75 @@
 #pragma once
 
-#include "extern/armadillo/armadillo"
-
+#include <hydra/extern/armadillo/armadillo>
 #include <hydra/blocks/blocks.h>
 #include <hydra/common.h>
 
 namespace hydra {
 
-class ProductState;
-class RandomState;
-
-template <typename coeff_tt = complex> class State {
+class State {
 public:
-  using coeff_t = coeff_tt;
-
+  // Interface
   State() = default;
-  State(Block const &block);
-  State(Block const &block, arma::Col<coeff_t> const &vector);
-  State(Block const &block, ProductState const &pstate);
-  State(Block const &block, RandomState const &rstate);
 
-  coeff_t operator()(idx_t idx) { return vector_(idx); }
+  State(block_variant_t const &block, bool real = true, int64_t n_cols = 1);
 
-  Block const &block() const { return block_; }
-  arma::Col<coeff_t> &vector() { return vector_; }
-  arma::Col<coeff_t> const &vector() const { return vector_; }
-  idx_t size() const { return vector_.size(); }
+  template <typename block_t>
+  explicit State(block_t const &block, bool real = true, int64_t n_cols = 1);
 
+  template <typename block_t, typename coeff_t>
+  State(block_t const &block, arma::Col<coeff_t> const &vector);
+
+  template <typename block_t, typename coeff_t>
+  State(block_t const &block, arma::Mat<coeff_t> const &matrix);
+
+  int64_t n_sites() const;
+  bool isreal() const;
+  bool iscomplex() const;
+
+  State real() const;
+  State imag() const;
+  void make_complex();
+
+  int64_t dim() const;
+  int64_t size() const;
+  int64_t n_rows() const;
+  int64_t n_cols() const;
+
+  State col(int64_t n, bool copy = true) const;
+
+  arma::vec vector(int64_t n = 0, bool copy = true) const;
+  arma::mat matrix(bool copy = true) const;
+  arma::cx_vec vectorC(int64_t n = 0, bool copy = true) const;
+  arma::cx_mat matrixC(bool copy = true) const;
+
+  // Developer section
+  template <typename block_t>
+  State(block_t const &block, double const *ptr, int64_t n_cols,
+        int64_t stride = 1);
+
+  template <typename block_t>
+  State(block_t const &block, complex const *ptr, int64_t n_cols);
+  block_variant_t block() const;
+
+  double *memptr();
+  complex *memptrC();
+  double *colptr(int64_t col);
+  complex *colptrC(int64_t col);
+  
 private:
-  Block block_;
-  arma::Col<coeff_t> vector_;
+  bool real_;
+
+  int64_t dim_;
+  int64_t n_rows_;
+  int64_t n_cols_;
+  block_variant_t block_;
+  mutable std::vector<double> storage_;
 };
 
-using StateReal = State<double>;
-using StateCplx = State<complex>;
-
-StateCplx to_cplx(StateReal const &state);
-
+State zero_state(block_variant_t const &block, bool real = true);
+template <typename block_t>
+State zero_state(block_t const &block, bool real = true);
+State zeros_like(State const& state);
+  
+  
 } // namespace hydra

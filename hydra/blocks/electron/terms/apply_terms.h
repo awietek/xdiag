@@ -1,10 +1,9 @@
 #pragma once
 
-#include <hydra/bitops/bitops.h>
 #include <hydra/common.h>
 #include <hydra/utils/print_macro.h>
 
-#include <hydra/blocks/electron/terms/compile.h>
+#include <hydra/blocks/electron/compile.h>
 
 #include <hydra/blocks/electron/terms/apply_exchange.h>
 #include <hydra/blocks/electron/terms/apply_hopping.h>
@@ -15,13 +14,13 @@
 
 namespace hydra::electron {
 
-template <typename bit_t, typename coeff_t, bool symmetric, class IndexingIn,
-          class IndexingOut, class Fill>
-void apply_terms(BondList const &bonds, IndexingIn const &indexing_in,
-                 IndexingOut const &indexing_out, Fill &fill) {
+template <typename bit_t, typename coeff_t, bool symmetric, class BasisIn,
+          class BasisOut, class Fill>
+void apply_terms(BondList const &bonds, BasisIn const &basis_in,
+                 BasisOut const &basis_out, Fill &fill) {
 
   BondList bonds_compiled = electron::compile(bonds);
-  
+
   // Separate bond acting on ups, dns, diagonally or fully mixing
   BondList bonds_ups;
   BondList bonds_dns;
@@ -48,36 +47,33 @@ void apply_terms(BondList const &bonds, IndexingIn const &indexing_in,
   for (auto bond : bonds_diag) {
     std::string type = bond.type();
     if (type == "ISING") {
-      electron::apply_ising<bit_t, coeff_t, symmetric>(bond, indexing_in, fill);
+      electron::apply_ising<bit_t, coeff_t, symmetric>(bond, basis_in, fill);
     } else if ((type == "NUMBERUP") || (type == "NUMBERDN")) {
-      electron::apply_number<bit_t, coeff_t, symmetric>(bond, indexing_in,
-                                                        fill);
+      electron::apply_number<bit_t, coeff_t, symmetric>(bond, basis_in, fill);
     }
   }
 
   if (bonds.coupling_defined("U")) {
     coeff_t U = bonds.coupling<coeff_t>("U");
-    electron::apply_u<bit_t, coeff_t, symmetric>(U, indexing_in, fill);
+    electron::apply_u<bit_t, coeff_t, symmetric>(U, basis_in, fill);
   }
 
   // terms on both ups and dns
   for (auto bond : bonds_mixed) {
     std::string type = bond.type();
     if (type == "EXCHANGE") {
-      electron::apply_exchange<bit_t, coeff_t, symmetric>(bond, indexing_in,
-                                                          fill);
+      electron::apply_exchange<bit_t, coeff_t, symmetric>(bond, basis_in, fill);
     }
   }
 
   // terms acting only on ups
   for (auto bond : bonds_ups) {
-    std::string type = bond.type();	
+    std::string type = bond.type();
     if (type == "HOPUP") {
-      electron::apply_hopping<bit_t, coeff_t, symmetric>(bond, indexing_in,
-                                                         fill);
+      electron::apply_hopping<bit_t, coeff_t, symmetric>(bond, basis_in, fill);
     } else if ((type == "CDAGUP") || (type == "CUP")) {
-      electron::apply_raise_lower<bit_t, coeff_t, symmetric>(
-          bond, indexing_in, indexing_out, fill);
+      electron::apply_raise_lower<bit_t, coeff_t, symmetric>(bond, basis_in,
+                                                             basis_out, fill);
     }
   }
 
@@ -85,11 +81,10 @@ void apply_terms(BondList const &bonds, IndexingIn const &indexing_in,
   for (auto bond : bonds_dns) {
     std::string type = bond.type();
     if (type == "HOPDN") {
-      electron::apply_hopping<bit_t, coeff_t, symmetric>(bond, indexing_in,
-                                                         fill);
+      electron::apply_hopping<bit_t, coeff_t, symmetric>(bond, basis_in, fill);
     } else if ((type == "CDAGDN") || (type == "CDN")) {
-      electron::apply_raise_lower<bit_t, coeff_t, symmetric>(
-          bond, indexing_in, indexing_out, fill);
+      electron::apply_raise_lower<bit_t, coeff_t, symmetric>(bond, basis_in,
+                                                             basis_out, fill);
     }
   }
 }

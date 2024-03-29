@@ -1,34 +1,42 @@
 #include "tj.h"
 
-#include <hydra/blocks/utils/block_utils.h>
 #include <hydra/utils/logger.h>
 
 namespace hydra {
 
-using namespace indexing;
+using namespace basis;
 
 tJ::tJ(int64_t n_sites, int64_t nup, int64_t ndn)
     : n_sites_(n_sites), charge_conserved_(true), charge_(nup + ndn),
       sz_conserved_(true), sz_(nup - ndn), n_up_(nup), n_dn_(ndn),
       symmetric_(false), permutation_group_(), irrep_() {
 
-  if (n_sites <= 0) {
-    Log.err("Error creating tJ: number of sites must be a positive integer");
-  } else if (n_sites < 16) {
-    indexing_ = std::make_shared<tJIndexing>(
-        tj::IndexingNp<uint16_t>(n_sites, nup, ndn));
-  } else if (n_sites < 32) {
-    indexing_ = std::make_shared<tJIndexing>(
-        tj::IndexingNp<uint32_t>(n_sites, nup, ndn));
-  } else if (n_sites < 64) {
-    indexing_ = std::make_shared<tJIndexing>(
-        tj::IndexingNp<uint64_t>(n_sites, nup, ndn));
-  } else {
-    Log.err("Error creating tJ: blocks with more than 64 sites currently "
-            "not implemented");
+  try {
+    if (n_sites < 0) {
+      HydraThrow(std::invalid_argument, "n_sites < 0");
+    } else if ((nup < 0) || (ndn < 0)) {
+      HydraThrow(std::invalid_argument, "nup < 0 or ndn < 0");
+    } else if ((nup + ndn) > n_sites) {
+      HydraThrow(std::invalid_argument, "nup + ndn > n_sites");
+    }
+
+    if (n_sites < 16) {
+      basis_ =
+          std::make_shared<basis_t>(tj::BasisNp<uint16_t>(n_sites, nup, ndn));
+    } else if (n_sites < 32) {
+      basis_ =
+          std::make_shared<basis_t>(tj::BasisNp<uint32_t>(n_sites, nup, ndn));
+    } else if (n_sites < 64) {
+      basis_ =
+          std::make_shared<basis_t>(tj::BasisNp<uint64_t>(n_sites, nup, ndn));
+    } else {
+      HydraThrow(std::runtime_error,
+                 "blocks with more than 64 sites currently not implemented");
+    }
+    size_ = hydra::size(*basis_);
+  } catch (...) {
+    HydraRethrow("Cannot create Basis for tJ");
   }
-  size_ = indexing::size(*indexing_);
-  utils::check_nup_ndn_tj(n_sites, nup, ndn, "tJ");
 }
 
 tJ::tJ(int64_t n_sites, int64_t nup, int64_t ndn, PermutationGroup group,
@@ -37,26 +45,61 @@ tJ::tJ(int64_t n_sites, int64_t nup, int64_t ndn, PermutationGroup group,
       sz_conserved_(true), sz_(nup - ndn), n_up_(nup), n_dn_(ndn),
       symmetric_(true), permutation_group_(allowed_subgroup(group, irrep)),
       irrep_(irrep) {
+  try {
+    if (n_sites < 0) {
+      HydraThrow(std::invalid_argument, "n_sites < 0");
+    } else if ((nup < 0) || (ndn < 0)) {
+      HydraThrow(std::invalid_argument, "nup < 0 or ndn < 0");
+    } else if ((nup + ndn) > n_sites) {
+      HydraThrow(std::invalid_argument, "nup + ndn > n_sites");
+    } else if (n_sites != group.n_sites()) {
+      HydraThrow(std::logic_error,
+                 "n_sites does not match the n_sites in PermutationGroup");
+    } else if (permutation_group_.size() != irrep.size()) {
+      HydraThrow(std::logic_error,
+                 "PermutationGroup and Representation do not have "
+                 "same number of elements");
+    }
 
-  if (n_sites <= 0) {
-    Log.err("Error creating tJ: number of sites must be a positive integer");
-  } else if (n_sites < 16) {
-    indexing_ = std::make_shared<tJIndexing>(
-        tj::IndexingSymmetricNp<uint16_t>(n_sites, nup, ndn, group, irrep));
-  } else if (n_sites < 32) {
-    indexing_ = std::make_shared<tJIndexing>(
-        tj::IndexingSymmetricNp<uint32_t>(n_sites, nup, ndn, group, irrep));
-  } else if (n_sites < 64) {
-    indexing_ = std::make_shared<tJIndexing>(
-        tj::IndexingSymmetricNp<uint64_t>(n_sites, nup, ndn, group, irrep));
-  } else {
-    Log.err("Error creating tJ: blocks with more than 64 sites currently "
-            "not implemented");
+    if (n_sites < 16) {
+      basis_ = std::make_shared<basis_t>(
+          tj::BasisSymmetricNp<uint16_t>(n_sites, nup, ndn, group, irrep));
+    } else if (n_sites < 32) {
+      basis_ = std::make_shared<basis_t>(
+          tj::BasisSymmetricNp<uint32_t>(n_sites, nup, ndn, group, irrep));
+    } else if (n_sites < 64) {
+      basis_ = std::make_shared<basis_t>(
+          tj::BasisSymmetricNp<uint64_t>(n_sites, nup, ndn, group, irrep));
+    } else {
+      HydraThrow(std::runtime_error,
+                 "blocks with more than 64 sites currently not implemented");
+    }
+    size_ = hydra::size(*basis_);
+  } catch (...) {
+    HydraRethrow("Cannot create Basis for tJ");
   }
-  size_ = indexing::size(*indexing_);
-  utils::check_nup_ndn_tj(n_sites, nup, ndn, "tJ");
-  utils::check_n_sites(n_sites, group);
 }
+
+int64_t tJ::n_sites() const { return n_sites_; }
+int64_t tJ::n_up() const { return n_up_; }
+int64_t tJ::n_dn() const { return n_dn_; }
+
+bool tJ::charge_conserved() const { return charge_conserved_; }
+bool tJ::sz_conserved() const { return sz_conserved_; }
+
+bool tJ::symmetric() const { return symmetric_; }
+PermutationGroup const &tJ::permutation_group() const {
+  return permutation_group_;
+}
+Representation const &tJ::irrep() const { return irrep_; }
+
+int64_t tJ::dim() const { return size_; }
+int64_t tJ::size() const { return size_; }
+
+bool tJ::iscomplex(double precision) const {
+  return symmetric_ ? irrep_.iscomplex(precision) : false;
+}
+bool tJ::isreal(double precision) const { return !iscomplex(precision); }
 
 bool tJ::operator==(tJ const &rhs) const {
   return (n_sites_ == rhs.n_sites_) &&
@@ -68,6 +111,6 @@ bool tJ::operator==(tJ const &rhs) const {
 }
 bool tJ::operator!=(tJ const &rhs) const { return !operator==(rhs); }
 
-indexing::tJIndexing const &tJ::indexing() const { return *indexing_; }
+basis_tj_variant_t const &tJ::basis() const { return *basis_; }
 
 } // namespace hydra

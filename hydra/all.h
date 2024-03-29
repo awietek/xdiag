@@ -9,149 +9,155 @@
 #endif
 
 #ifdef _OPENMP
-#include "parallel/omp/omp_utils.h"
+#include <hydra/parallel/omp/omp_utils.h>
 #include <omp.h>
-// #include "symmetries/operations/representative_list_omp.h"
+// #include <hydra/symmetries/operations/representative_list_omp.h>
 #endif
 
 #ifdef HYDRA_USE_HDF5
 #define ARMA_USE_HDF5
 #endif
 
-#include "extern/armadillo/armadillo"
-#include "extern/clara/clara.hpp"
-#include "extern/fmt/core.h"
+#include <hydra/extern/armadillo/armadillo>
+#include <hydra/extern/clara/clara.hpp>
+#include <hydra/extern/fmt/core.h>
 
-#include "common.h"
-#include "config.h"
+#include <hydra/common.h>
+#include <hydra/config.h>
 
-#include "bitops/bitops.h"
-#include "utils/close.h"
-#include "utils/iochecks.h"
-#include "utils/logger.h"
-#include "utils/precision.h"
-#include "utils/print.h"
-#include "utils/print_macro.h"
-#include "utils/say_hello.h"
+#include <hydra/bits/bitops.h>
+#include <hydra/utils/close.h>
+#include <hydra/utils/iochecks.h>
+#include <hydra/utils/logger.h>
+#include <hydra/utils/precision.h>
+#include <hydra/utils/print.h>
+#include <hydra/utils/print_macro.h>
+#include <hydra/utils/say_hello.h>
 
-#include "blocks/blocks.h"
-#include "blocks/utils/block_utils.h"
+#include <hydra/algebra/algebra.h>
+#include <hydra/algebra/apply.h>
+#include <hydra/algebra/matrix.h>
 
-#include "algebra/algebra.h"
-#include "algebra/matrix.h"
+// Includes for different block types
+#include <hydra/blocks/blocks.h>
 
-#include "states/gpwf_spinhalf.h"
-#include "states/product_state.h"
-#include "states/random_state.h"
-#include "states/state.h"
+#include <hydra/blocks/spinhalf/compile.h>
+#include <hydra/blocks/spinhalf/spinhalf.h>
+#include <hydra/blocks/spinhalf/spinhalf_apply.h>
+#include <hydra/blocks/spinhalf/spinhalf_matrix.h>
 
-#include "combinatorics/binomial.h"
-#include "combinatorics/bit_patterns.h"
-#include "combinatorics/combinations.h"
-#include "combinatorics/combinations_index.h"
-#include "combinatorics/subsets.h"
-#include "combinatorics/subsets_index.h"
+#include <hydra/blocks/electron/compile.h>
+#include <hydra/blocks/electron/electron.h>
+#include <hydra/blocks/electron/electron_apply.h>
+#include <hydra/blocks/electron/electron_matrix.h>
 
-#include "indexing/combinations_indexing.h"
-#include "indexing/fermi_table.h"
-#include "indexing/indexing_variants.h"
-#include "indexing/lin_table.h"
-#include "indexing/subsets_indexing.h"
+#include <hydra/blocks/tj/compile.h>
+#include <hydra/blocks/tj/tj.h>
+#include <hydra/blocks/tj/tj_apply.h>
+#include <hydra/blocks/tj/tj_matrix.h>
 
-#include "indexing/spinhalf/indexing_no_sz.h"
-#include "indexing/spinhalf/indexing_sublattice.h"
-#include "indexing/spinhalf/indexing_symmetric_no_sz.h"
-#include "indexing/spinhalf/indexing_symmetric_sz.h"
-#include "indexing/spinhalf/indexing_sz.h"
-#include "indexing/spinhalf/symmetric_iterator.h"
+#include <hydra/states/fill.h>
+#include <hydra/states/gpwf.h>
+#include <hydra/states/product_state.h>
+#include <hydra/states/random_state.h>
+#include <hydra/states/state.h>
 
-#include "indexing/tj/indexing_np.h"
-#include "indexing/tj/indexing_symmetric_np.h"
+#include <hydra/random/hash.h>
+#include <hydra/random/hash_functions.h>
+#include <hydra/random/random_utils.h>
 
-#include "indexing/electron/indexing_no_np.h"
-#include "indexing/electron/indexing_np.h"
-#include "indexing/electron/indexing_symmetric_no_np.h"
-#include "indexing/electron/indexing_symmetric_np.h"
+#include <hydra/combinatorics/binomial.h>
+#include <hydra/combinatorics/bit_patterns.h>
+#include <hydra/combinatorics/combinations.h>
+#include <hydra/combinatorics/combinations_index.h>
+#include <hydra/combinatorics/combinations_indexing.h>
+#include <hydra/combinatorics/fermi_table.h>
+#include <hydra/combinatorics/lin_table.h>
+#include <hydra/combinatorics/subsets.h>
+#include <hydra/combinatorics/subsets_index.h>
+#include <hydra/combinatorics/subsets_indexing.h>
 
-#include "blocks/spinhalf/spinhalf.h"
-#include "blocks/spinhalf/spinhalf_apply.h"
-// #include "blocks/spinhalf/spinhalf_fill.h"
-#include "blocks/spinhalf/spinhalf_matrix.h"
-#include "blocks/spinhalf/terms/compile.h"
+#include <hydra/basis/basis.h>
 
-#include "blocks/electron/electron.h"
-#include "blocks/electron/electron_apply.h"
-#include "blocks/electron/electron_matrix.h"
-#include "blocks/electron/terms/compile.h"
+#include <hydra/basis/spinhalf/basis_no_sz.h>
+#include <hydra/basis/spinhalf/basis_sublattice.h>
+#include <hydra/basis/spinhalf/basis_symmetric_no_sz.h>
+#include <hydra/basis/spinhalf/basis_symmetric_sz.h>
+#include <hydra/basis/spinhalf/basis_sz.h>
 
-#include "blocks/tj/tj.h"
-#include "blocks/tj/tj_apply.h"
-#include "blocks/tj/tj_matrix.h"
-#include "blocks/tj/tj_utils.h"
+#include <hydra/basis/tj/basis_np.h>
+#include <hydra/basis/tj/basis_symmetric_np.h>
 
-#include "symmetries/qn.h"
-#include "symmetries/continuous_group.h"
-#include "symmetries/generated_group.h"
-#include "symmetries/group_action/group_action.h"
-#include "symmetries/group_action/group_action_lookup.h"
-#include "symmetries/group_action/group_action_sublattice.h"
-#include "symmetries/group_action/sublattice_stability.h"
-#include "symmetries/operations/fermi_sign.h"
-#include "symmetries/operations/group_action_operations.h"
-#include "symmetries/operations/representative_list.h"
-#include "symmetries/operations/symmetry_operations.h"
-#include "symmetries/permutation.h"
-#include "symmetries/permutation_group.h"
-#include "symmetries/representation.h"
+#include <hydra/basis/electron/basis_no_np.h>
+#include <hydra/basis/electron/basis_np.h>
+#include <hydra/basis/electron/basis_symmetric_no_np.h>
+#include <hydra/basis/electron/basis_symmetric_np.h>
 
-#include "operators/bond.h"
-#include "operators/bondlist.h"
-#include "operators/bondlist_handler.h"
-#include "operators/compiler.h"
-#include "operators/non_branching_bonds.h"
-#include "operators/symmetrized_operator.h"
+#include <hydra/symmetries/continuous_group.h>
+#include <hydra/symmetries/generated_group.h>
+#include <hydra/symmetries/group_action/group_action.h>
+#include <hydra/symmetries/group_action/group_action_lookup.h>
+#include <hydra/symmetries/group_action/group_action_sublattice.h>
+#include <hydra/symmetries/group_action/sublattice_stability.h>
+#include <hydra/symmetries/operations/fermi_sign.h>
+#include <hydra/symmetries/operations/group_action_operations.h>
+#include <hydra/symmetries/operations/representative_list.h>
+#include <hydra/symmetries/operations/symmetry_operations.h>
+#include <hydra/symmetries/permutation.h>
+#include <hydra/symmetries/permutation_group.h>
+#include <hydra/symmetries/qn.h>
+#include <hydra/symmetries/representation.h>
 
-#include "algorithms/arnoldi/arnoldi.h"
-#include "algorithms/arnoldi/arnoldi_to_disk.h"
-#include "algorithms/lanczos/lanczos.h"
-#include "algorithms/lanczos/lanczos_build.h"
-#include "algorithms/lanczos/lanczos_convergence.h"
-#include "algorithms/lanczos/lanczos_eigenvalues.h"
-#include "algorithms/lanczos/lanczos_eigenvector.h"
-#include "algorithms/lanczos/lanczos_pro.h"
-#include "algorithms/lanczos/lanczos_vector_apply.h"
-#include "algorithms/lanczos/tmatrix.h"
-#include "algorithms/gram_schmidt/gram_schmidt.h"
-#include "algorithms/gram_schmidt/orthogonalize.h"
-#include "algorithms/norm_estimate.h"
-#include "algorithms/sparse_diag.h"
-#include "algorithms/time_evolution/exp_sym_v.h"
-#include "algorithms/time_evolution/pade_matrix_exponential.h"
-#include "algorithms/time_evolution/time_evolution.h"
-#include "algorithms/time_evolution/zahexpv.h"
+#include <hydra/operators/bond.h>
+#include <hydra/operators/bondlist.h>
+#include <hydra/operators/bondlist_handler.h>
+#include <hydra/operators/compiler.h>
+#include <hydra/operators/non_branching_bonds.h>
+#include <hydra/operators/symmetrized_operator.h>
 
-#include "io/file_h5.h"
-#include "io/file_toml.h"
-#include "io/args.h"
+
+#include <hydra/algorithms/norm_estimate.h>
+#include <hydra/algorithms/sparse_diag.h>
+
+#include <hydra/algorithms/lanczos/lanczos.h>
+#include <hydra/algorithms/lanczos/eigs_lanczos.h>
+#include <hydra/algorithms/lanczos/eigvals_lanczos.h>
+#include <hydra/algorithms/lanczos/lanczos_convergence.h>
+#include <hydra/algorithms/lanczos/tmatrix.h>
+#include <hydra/algorithms/lanczos/lanczos_pro.h>
+
+#include <hydra/algorithms/arnoldi/arnoldi.h>
+#include <hydra/algorithms/arnoldi/arnoldi_to_disk.h>
+#include <hydra/algorithms/gram_schmidt/gram_schmidt.h>
+#include <hydra/algorithms/gram_schmidt/orthogonalize.h>
+
+#include <hydra/algorithms/time_evolution/exp_sym_v.h>
+#include <hydra/algorithms/time_evolution/pade_matrix_exponential.h>
+#include <hydra/algorithms/time_evolution/time_evolution.h>
+#include <hydra/algorithms/time_evolution/zahexpv.h>
+
+#include <hydra/io/args.h>
+#include <hydra/io/file_h5.h>
+#include <hydra/io/file_toml.h>
 
 #ifdef HYDRA_ENABLE_MPI
-#include "mpi/allreduce.h"
-#include "mpi/alltoall.h"
-#include "mpi/buffer.h"
-#include "mpi/datatype.h"
-#include "mpi/dot_mpi.h"
-#include "mpi/logger_mpi.h"
-#include "mpi/timing_mpi.h"
-#include "utils/print_mpi.h"
+#include <hydra/mpi/allreduce.h>
+#include <hydra/mpi/alltoall.h>
+#include <hydra/mpi/buffer.h>
+#include <hydra/mpi/datatype.h>
+#include <hydra/mpi/dot_mpi.h>
+#include <hydra/mpi/logger_mpi.h>
+#include <hydra/mpi/timing_mpi.h>
+#include <hydra/utils/print_mpi.h>
 
-#include "blocks/utils/block_utils_mpi.h"
-#include "indexing/spinhalf_mpi/spinhalf_mpi_indexing_sz.h"
+#include <hydra/basis/spinhalf_mpi/spinhalf_mpi_basis_sz.h>
+#include <hydra/blocks/utils/block_utils_mpi.h>
 
-#include "blocks/spinhalf_mpi/spinhalf_mpi.h"
-#include "blocks/spinhalf_mpi/spinhalf_mpi_apply.h"
-#include "blocks/spinhalf_mpi/spinhalf_mpi_fill.h"
-#include "blocks/spinhalf_mpi/terms/get_prefix_postfix_mixed_bonds.h"
+#include <hydra/blocks/spinhalf_mpi/spinhalf_mpi.h>
+#include <hydra/blocks/spinhalf_mpi/spinhalf_mpi_apply.h>
+#include <hydra/blocks/spinhalf_mpi/spinhalf_mpi_fill.h>
+#include <hydra/blocks/spinhalf_mpi/terms/get_prefix_postfix_mixed_bonds.h>
 
-#include "blocks/electron_mpi/electron_mpi.h"
-#include "blocks/electron_mpi/electron_mpi_apply.h"
+#include <hydra/blocks/electron_mpi/electron_mpi.h>
+#include <hydra/blocks/electron_mpi/electron_mpi_apply.h>
 #endif
