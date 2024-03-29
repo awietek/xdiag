@@ -16,7 +16,7 @@ jobs:
     - name: make test
       run: |
         cmake -S . -B build -D BUILD_TESTING=On
-	cmake --build build
+        cmake --build build
     - name: run tests
       run: |
         ./build/test/tests
