@@ -1,9 +1,6 @@
-install
-cmake_commands.txt
-.idea
-.idea/*
-misc/dump/*
 build
+install
+misc/dump/*
 build/*
 cmake-build-debug
 examples/*/build
@@ -31,7 +28,6 @@ testmpi/tests
 benchmark.prof
 benchmark.prof_*
 lcov-report
-cmake/hydraConfig.cmake
 hydra/config.h
 examples/hb_chain_dynamical_sf/main
 examples/hb_chain_dynamical_sf/outfiles/*
