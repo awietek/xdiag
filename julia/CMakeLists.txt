@@ -1,12 +1,12 @@
-# get julia cxxwrap path
-execute_process(COMMAND julia -e "using CxxWrap; ; println(CxxWrap.prefix_path())"
- WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
- OUTPUT_VARIABLE JULIA_CXXWRAP_DIR
- OUTPUT_STRIP_TRAILING_WHITESPACE
-)
+# # get julia cxxwrap path
+# execute_process(COMMAND julia -e "using CxxWrap; ; println(CxxWrap.prefix_path())"
+#  WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+#  OUTPUT_VARIABLE JULIA_CXXWRAP_DIR
+#  OUTPUT_STRIP_TRAILING_WHITESPACE
+# )
 
-set(JlCxx_DIR "${JULIA_CXXWRAP_DIR}/lib/cmake/JlCxx")
-message(STATUS "JlCxx_DIR: " ${JlCxx_DIR})
+# set(JlCxx_DIR "${JULIA_CXXWRAP_DIR}/lib/cmake/JlCxx")
+# message(STATUS "JlCxx_DIR: " ${JlCxx_DIR})
 
 find_package(JlCxx REQUIRED)
 get_target_property(JlCxx_location JlCxx::cxxwrap_julia LOCATION)
