@@ -15,7 +15,7 @@ get_filename_component(JlCxx_location ${JlCxx_location} DIRECTORY)
 message(STATUS ${JlCxx_location})
 add_library(hydrajl SHARED hydrajl.cpp)
 
-target_include_directories(hydrajl PRIVATE ${JlCxx_DIR}/../../include ${JlCxx_DIR}/../../include/julia)
+target_include_directories(hydrajl PRIVATE ${JlCxx_DIR}/../../../include ${JlCxx_DIR}/../../../include/julia)
 target_link_libraries(hydrajl PRIVATE JlCxx::cxxwrap_julia)
 target_link_libraries(hydrajl PRIVATE JlCxx::cxxwrap_julia_stl)
 target_link_libraries(hydrajl PRIVATE ${JLCXX_TARGET} ${JLCXX_STL_TARGET} ${Julia_LIBRARY})
