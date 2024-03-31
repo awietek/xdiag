@@ -2130,7 +2130,7 @@ auto write_int(OutputIt out, UInt value, unsigned prefix,
 }
 
 // Writes a localized value.
-FMT_API auto write_loc(appender out, loc_value value,
+FMT_API inline auto write_loc(appender out, loc_value value,
                        const format_specs<>& specs, locale_ref loc) -> bool;
 template <typename OutputIt, typename Char>
 inline auto write_loc(OutputIt, loc_value, const format_specs<Char>&,
@@ -3922,7 +3922,7 @@ template <typename Char> struct udl_arg {
 #endif  // FMT_USE_USER_DEFINED_LITERALS
 
 template <typename Locale, typename Char>
-auto vformat(const Locale& loc, basic_string_view<Char> fmt,
+inline auto vformat(const Locale& loc, basic_string_view<Char> fmt,
              basic_format_args<buffer_context<type_identity_t<Char>>> args)
     -> std::basic_string<Char> {
   auto buf = basic_memory_buffer<Char>();

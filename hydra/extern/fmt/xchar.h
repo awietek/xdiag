@@ -96,7 +96,7 @@ auto join(std::initializer_list<T> list, wstring_view sep)
 }
 
 template <typename Char, FMT_ENABLE_IF(!std::is_same<Char, char>::value)>
-auto vformat(basic_string_view<Char> format_str,
+inline auto vformat(basic_string_view<Char> format_str,
              basic_format_args<buffer_context<type_identity_t<Char>>> args)
     -> std::basic_string<Char> {
   auto buf = basic_memory_buffer<Char>();
