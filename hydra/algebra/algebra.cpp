@@ -35,7 +35,6 @@ double dot(State const &v, State const &w) try {
     HydraThrow(std::logic_error,
                "Cannot compute dot product of state with more than one column");
   }
-  Log("rci {} {}", v.isreal(), w.isreal());
 
   if ((v.isreal()) && (w.isreal())) {
     return dot(v.vector(0, false), w.vector(0, false));
