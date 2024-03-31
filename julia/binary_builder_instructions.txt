@@ -1,9 +1,8 @@
 dependencies:
 
-Julia_jll
 libjulia_jll
 libcxxwrap_julia_jll
-MKL_jll
+OpenBLAS_jll
 HDF5_jll
 
 
@@ -18,6 +17,15 @@ cmake --install build
 commands (binary builder):
 
 cd hydra
-cmake -DCMAKE_INSTALL_PREFIX=$prefix -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TARGET_TOOLCHAIN} -DCMAKE_BUILD_TYPE=Release -DHYDRA_JULIA_WRAPPER=On -DJlCxx_DIR=$prefix/lib/cmake -S . -B build
-cmake --build build --verbose -j$nproc
+cmake -DCMAKE_INSTALL_PREFIX=$prefix -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TARGET_TOOLCHAIN} -DCMAKE_BUILD_TYPE=Release -DHYDRA_JULIA_WRAPPER=On -DJlCxx_DIR=$prefix/lib/cmake -DBLAS_LIBRARIES=${libdir}/libopenblas64_.so -DLAPACK_LIBRARIES=${libdir}/libopenblas64_.so -S . -B build
+cmake --build build --verbose
 cmake --install build
+
+
+
+cd hydra
+cmake -DCMAKE_INSTALL_PREFIX=$prefix -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TARGET_TOOLCHAIN} -DCMAKE_BUILD_TYPE=Release -DHYDRA_JULIA_WRAPPER=On -DJlCxx_DIR=$prefix/lib/cmake -DBLAS_LIBRARIES=${libdir}/libopenblas64_.${dlext} -DLAPACK_LIBRARIES=${libdir}/libopenblas64_.${dlext} -S . -B build
+cmake --build build --verbose -j${nproc}
+cmake --install build
+
+use GCC version minimum possible
