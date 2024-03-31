@@ -194,10 +194,9 @@ if(MKL_FOUND)
 ###########################################################################
 # Regular Blas/Lapack backend
 else()
-  find_package(BLAS)
   find_package(LAPACK)
   
-  if(LAPACK_FOUND AND BLAS_FOUND)
+  if(LAPACK_FOUND)
     message(STATUS "Employing Lapack/Blas as linear algebra backend")
     target_link_libraries(${HYDRA_LIBRARY} PUBLIC ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
   else()

@@ -18,45 +18,7 @@ inline void dispatch(BondList const &bonds, Spinhalf const &block_in,
   auto const &basis_out = block_out.basis();
 
   std::visit(
-      overload{
-          // uint16_t
-          [&](BasisSz<uint16_t> const &idx_in,
-              BasisSz<uint16_t> const &idx_out) {
-            apply_terms<uint16_t, coeff_t, false>(bonds, idx_in, idx_out, fill);
-          },
-          [&](BasisNoSz<uint16_t> const &idx_in,
-              BasisNoSz<uint16_t> const &idx_out) {
-            apply_terms<uint16_t, coeff_t, false>(bonds, idx_in, idx_out, fill);
-          },
-          [&](BasisSymmetricSz<uint16_t> const &idx_in,
-              BasisSymmetricSz<uint16_t> const &idx_out) {
-            apply_terms<uint16_t, coeff_t, true>(bonds, idx_in, idx_out, fill);
-          },
-          [&](BasisSymmetricNoSz<uint16_t> const &idx_in,
-              BasisSymmetricNoSz<uint16_t> const &idx_out) {
-            apply_terms<uint16_t, coeff_t, true>(bonds, idx_in, idx_out, fill);
-          },
-          [&](BasisSublattice<uint16_t, 1> const &idx_in,
-              BasisSublattice<uint16_t, 1> const &idx_out) {
-            apply_terms<uint16_t, coeff_t, true>(bonds, idx_in, idx_out, fill);
-          },
-          [&](BasisSublattice<uint16_t, 2> const &idx_in,
-              BasisSublattice<uint16_t, 2> const &idx_out) {
-            apply_terms<uint16_t, coeff_t, true>(bonds, idx_in, idx_out, fill);
-          },
-          [&](BasisSublattice<uint16_t, 3> const &idx_in,
-              BasisSublattice<uint16_t, 3> const &idx_out) {
-            apply_terms<uint16_t, coeff_t, true>(bonds, idx_in, idx_out, fill);
-          },
-          [&](BasisSublattice<uint16_t, 4> const &idx_in,
-              BasisSublattice<uint16_t, 4> const &idx_out) {
-            apply_terms<uint16_t, coeff_t, true>(bonds, idx_in, idx_out, fill);
-          },
-          [&](BasisSublattice<uint16_t, 5> const &idx_in,
-              BasisSublattice<uint16_t, 5> const &idx_out) {
-            apply_terms<uint16_t, coeff_t, true>(bonds, idx_in, idx_out, fill);
-          },
-
+	     overload{
           // uint32_t
           [&](BasisSz<uint32_t> const &idx_in,
               BasisSz<uint32_t> const &idx_out) {
@@ -74,26 +36,7 @@ inline void dispatch(BondList const &bonds, Spinhalf const &block_in,
               BasisSymmetricNoSz<uint32_t> const &idx_out) {
             apply_terms<uint32_t, coeff_t, true>(bonds, idx_in, idx_out, fill);
           },
-          [&](BasisSublattice<uint32_t, 1> const &idx_in,
-              BasisSublattice<uint32_t, 1> const &idx_out) {
-            apply_terms<uint32_t, coeff_t, true>(bonds, idx_in, idx_out, fill);
-          },
-          [&](BasisSublattice<uint32_t, 2> const &idx_in,
-              BasisSublattice<uint32_t, 2> const &idx_out) {
-            apply_terms<uint32_t, coeff_t, true>(bonds, idx_in, idx_out, fill);
-          },
-          [&](BasisSublattice<uint32_t, 3> const &idx_in,
-              BasisSublattice<uint32_t, 3> const &idx_out) {
-            apply_terms<uint32_t, coeff_t, true>(bonds, idx_in, idx_out, fill);
-          },
-          [&](BasisSublattice<uint32_t, 4> const &idx_in,
-              BasisSublattice<uint32_t, 4> const &idx_out) {
-            apply_terms<uint32_t, coeff_t, true>(bonds, idx_in, idx_out, fill);
-          },
-          [&](BasisSublattice<uint32_t, 5> const &idx_in,
-              BasisSublattice<uint32_t, 5> const &idx_out) {
-            apply_terms<uint32_t, coeff_t, true>(bonds, idx_in, idx_out, fill);
-          },
+
 
           // uint64_t
           [&](BasisSz<uint64_t> const &idx_in,

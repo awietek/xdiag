@@ -17,10 +17,7 @@ Spinhalf::Spinhalf(int64_t n_sites)
       HydraThrow(std::invalid_argument, "n_sites < 0");
     }
 
-    if (n_sites < 16) {
-      basis_ =
-          std::make_shared<basis_t>(spinhalf::BasisNoSz<uint16_t>(n_sites));
-    } else if (n_sites < 32) {
+    if (n_sites < 32) {
       basis_ =
           std::make_shared<basis_t>(spinhalf::BasisNoSz<uint32_t>(n_sites));
     } else if (n_sites < 64) {
@@ -49,10 +46,7 @@ Spinhalf::Spinhalf(int64_t n_sites, int64_t n_up)
       HydraThrow(std::invalid_argument, "Invalid value of nup");
     }
 
-    if (n_sites < 16) {
-      basis_ =
-          std::make_shared<basis_t>(spinhalf::BasisSz<uint16_t>(n_sites, n_up));
-    } else if (n_sites < 32) {
+    if (n_sites < 32) {
       basis_ =
           std::make_shared<basis_t>(spinhalf::BasisSz<uint32_t>(n_sites, n_up));
     } else if (n_sites < 64) {
@@ -127,13 +121,7 @@ Spinhalf::Spinhalf(int64_t n_sites, PermutationGroup group,
                  "sublattice) or between 1 and 5");
     }
 
-    if (n_sites < 16) {
-      basis_ =
-          make_spinhalf_basis_no_sz<uint16_t>(n_sites, group, irrep, n_sublat);
-    } else if (n_sites < 32) {
-      basis_ =
-          make_spinhalf_basis_no_sz<uint32_t>(n_sites, group, irrep, n_sublat);
-    } else if (n_sites < 64) {
+    if (n_sites < 64) {
       basis_ =
           make_spinhalf_basis_no_sz<uint64_t>(n_sites, group, irrep, n_sublat);
     } else {
@@ -207,13 +195,7 @@ Spinhalf::Spinhalf(int64_t n_sites, int64_t n_up, PermutationGroup group,
                  "sublattice) or between 1 and 5");
     }
 
-    if (n_sites < 16) {
-      basis_ = make_spinhalf_basis_sz<uint16_t>(n_sites, n_up, group, irrep,
-                                                n_sublat);
-    } else if (n_sites < 32) {
-      basis_ = make_spinhalf_basis_sz<uint32_t>(n_sites, n_up, group, irrep,
-                                                n_sublat);
-    } else if (n_sites < 64) {
+    if (n_sites < 64) {
       basis_ = make_spinhalf_basis_sz<uint64_t>(n_sites, n_up, group, irrep,
                                                 n_sublat);
     } else {
