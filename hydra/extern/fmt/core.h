@@ -631,7 +631,7 @@ enum {
   pointer_set = set(type::pointer_type)
 };
 
-FMT_NORETURN FMT_API inline void throw_format_error(const char* message);
+FMT_NORETURN FMT_API void throw_format_error(const char* message);
 
 struct error_handler {
   constexpr error_handler() = default;

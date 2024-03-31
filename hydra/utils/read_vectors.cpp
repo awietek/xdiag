@@ -1,8 +1,6 @@
 #include "read_vectors.h"
 
-#include <hydra/extern/fmt/format.h>
-#include <hydra/extern/fmt/format-inl.h>
-
+#include <sstream>
 #include <hydra/common.h>
 
 namespace hydra {
@@ -13,10 +11,14 @@ arma::Mat<coeff_t> read_vectors(std::string type, std::string path_to_vecs,
   using namespace arma;
   using namespace fmt;
 
+  std::stringstream ss;
+  ss << type << "/" << path_to_vecs << "_" << n << ".arm";
+  std::string filename = ss.str();
+  
   // get number of vecs if n=-1
   if (n == 0) {
     n = 0;
-    while (file_exists(format("{}/{}_{}.arm", type, path_to_vecs, n))) {
+    while (file_exists(filename)) {
       ++n;
     }
   } else if (n < 0) {
@@ -26,7 +28,6 @@ arma::Mat<coeff_t> read_vectors(std::string type, std::string path_to_vecs,
   if (n == 0) {
     return Mat<coeff_t>();
   } else {
-    std::string filename = format("{}/{}_{}.arm", type, path_to_vecs, 0);
     if (!file_exists(filename)) {
       Log.err("Unable to read \"{}\" vector from file {}", type, filename);
     }
@@ -38,7 +39,6 @@ arma::Mat<coeff_t> read_vectors(std::string type, std::string path_to_vecs,
     Avecs.col(0) = v;
 
     for (int i = 1; i < n; ++i) {
-      std::string filename = format("{}/{}_{}.arm", type, path_to_vecs, n);
       if (!file_exists(filename)) {
         Log.err("Unable to read \"{}\" vector from file {}", type, filename);
       }
