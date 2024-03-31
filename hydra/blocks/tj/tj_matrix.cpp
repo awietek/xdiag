@@ -44,7 +44,7 @@ void matrix_gen(coeff_t *mat, BondList const &bonds, tJ const &block_in,
 
   int64_t m = block_out.size();
   auto fill = [&](int64_t idx_in, int64_t idx_out, coeff_t val) {
-    return fill_matrix(mat, idx_out, idx_in, m, val);
+    return fill_matrix(mat, idx_in, idx_out, m, val);
   };
 
   tj::dispatch<coeff_t>(bondsc, block_in, block_out, fill);
