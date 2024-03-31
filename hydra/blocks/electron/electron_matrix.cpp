@@ -15,11 +15,7 @@ arma::Mat<coeff_t> matrix_gen(BondList const &bonds, Electron const &block_in,
   int64_t m = block_out.size();
   int64_t n = block_in.dim();
   arma::Mat<coeff_t> mat(m, n, arma::fill::zeros);
-  auto fill = [&](int64_t idx_in, int64_t idx_out, coeff_t val) {
-    return fill_matrix(mat, idx_in, idx_out, val);
-  };
-
-  electron::dispatch<coeff_t>(bondsc, block_in, block_out, fill);
+  matrix_gen(mat.memptr(), bonds, block_in, block_out);
   return mat;
 
 } catch (...) {
