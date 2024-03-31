@@ -2130,7 +2130,7 @@ auto write_int(OutputIt out, UInt value, unsigned prefix,
 }
 
 // Writes a localized value.
-FMT_API inline auto write_loc(appender out, loc_value value,
+FMT_API auto write_loc(appender out, loc_value value,
                        const format_specs<>& specs, locale_ref loc) -> bool;
 template <typename OutputIt, typename Char>
 inline auto write_loc(OutputIt, loc_value, const format_specs<Char>&,

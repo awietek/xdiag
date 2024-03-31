@@ -111,7 +111,7 @@ template <typename Char> FMT_FUNC Char decimal_point_impl(locale_ref) {
 }
 #endif
 
-FMT_FUNC inline auto write_loc(appender out, loc_value value,
+FMT_FUNC auto write_loc(appender out, loc_value value,
                         const format_specs<>& specs, locale_ref loc) -> bool {
 #ifndef FMT_STATIC_THOUSANDS_SEPARATOR
   auto locale = loc.get<std::locale>();
@@ -136,7 +136,7 @@ template <typename Locale> format_facet<Locale>::format_facet(Locale& loc) {
 }
 
 template <>
-FMT_API FMT_FUNC inline auto format_facet<std::locale>::do_put(
+FMT_API FMT_FUNC auto format_facet<std::locale>::do_put(
     appender out, loc_value val, const format_specs<>& specs) const -> bool {
   return val.visit(
       detail::loc_writer<>{out, specs, separator_, grouping_, decimal_point_});
@@ -1415,7 +1415,7 @@ FMT_FUNC void report_system_error(int error_code,
   report_error(format_system_error, error_code, message);
 }
 
-FMT_FUNC inline std::string vformat(string_view fmt, format_args args) {
+FMT_FUNC std::string vformat(string_view fmt, format_args args) {
   // Don't optimize the "{}" case to keep the binary size small and because it
   // can be better optimized in fmt::format anyway.
   auto buffer = memory_buffer();
