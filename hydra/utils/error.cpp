@@ -1,11 +1,14 @@
 #include "error.h"
 
 #include <iomanip> // std::setw
+#include <variant>
 
+#ifdef _APPLE_
 /// DIRTY HACK to make std::visit work on old MacOS versions
 const char* std::bad_variant_access::what() const noexcept {
     return "bad_variant_access";
 }
+#endif
 
 namespace hydra {
 void traceback(const std::exception &e, std::size_t depth) {
