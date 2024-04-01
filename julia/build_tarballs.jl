@@ -7,7 +7,7 @@ version = v"0.2.0"
 
 # Collection of sources required to complete build
 sources = [
-    GitSource("https://github.com/awietek/hydra.git", "93a64b425622378f2bb60074eb677666279967a7")
+    GitSource("https://github.com/awietek/hydra.git", "fe6bb3717fbf27185129895bd74b251d313f4c81")
 ]
 
 # Bash recipe for building across all platforms

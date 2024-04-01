@@ -202,3 +202,4 @@ Supported Platforms:
 
 
 julia --color=yes build_tarballs.jl --verbose  --debug --deploy=local
+julia --color=yes build_tarballs.jl --debug --deploy=local
