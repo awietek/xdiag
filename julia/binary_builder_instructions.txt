@@ -1,6 +1,8 @@
 dependencies:
 
 libjulia_jll
+libjulia
+
 libcxxwrap_julia_jll
 OpenBLAS_jll
 HDF5_jll
@@ -118,7 +120,7 @@ FLAGS+=(-Dopenblas_LIBRARY="${libdir}/libopenblas64_.${dlext}")
 FLAGS+=(-DLAPACK_LIBRARY="${libdir}/libopenblas64_.${dlext}")
 
 
-# redifine BLASLAPACK symbols
+# redefine BLASLAPACK symbols
 SYMB_DEFS=()
 for sym in sasum dasum snrm2 dnrm2 sdot ddot sgemv dgemv cgemv zgemv sgemm dgemm cgemm zgemm ssyrk dsyrk cherk zherk; do SYMB_DEFS+=("-D${sym}=${sym}_64"); done
 
@@ -144,7 +146,22 @@ for sym in cgbcon cgbsv cgbsvx cgbtrf cgbtrs cgecon cgees cgeev cgeevx cgehrd cg
 
 export CXXFLAGS="${SYMB_DEFS[@]}"
 
+if [[ "${target}" == *-apple-* ]]; then
+    export MACOSX_DEPLOYMENT_TARGET=10.14
+fi
+
 cmake -DCMAKE_INSTALL_PREFIX=$prefix -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TARGET_TOOLCHAIN} -DCMAKE_BUILD_TYPE=Release -DHYDRA_JULIA_WRAPPER=On -DJlCxx_DIR=$prefix/lib/cmake -DBLAS_LIBRARIES=${libdir}/libopenblas64_.${dlext} -DLAPACK_LIBRARIES=${libdir}/libopenblas64_.${dlext} -S . -B build
 
 cmake --build build --verbose -j4
 cmake --install build
+
+
+
+### setting GNU compiler on mac osx x86_64  (apparently std::visit doesn't work there)
+cmake -DCMAKE_INSTALL_PREFIX=$prefix -DCMAKE_CXX_COMPILER=g++ -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TARGET_TOOLCHAIN%.*}_gcc.cmake -DCMAKE_BUILD_TYPE=Release -DHYDRA_JULIA_WRAPPER=On -DJlCxx_DIR=$prefix/lib/cmake -DBLAS_LIBRARIES=${libdir}/libopenblas64_.${dlext} -DLAPACK_LIBRARIES=${libdir}/libopenblas64_.${dlext} -S . -B build
+
+
+## otherwise clang seems to know std::visit if deployment target 10.14 is set
+export MACOSX_DEPLOYMENT_TARGET=10.14
+
+
