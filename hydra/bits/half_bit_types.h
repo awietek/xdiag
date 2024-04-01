@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>
+
 namespace hydra::bits {
 
 template <class bit_t> struct half_bit_type_traits;
