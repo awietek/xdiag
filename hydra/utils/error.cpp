@@ -3,7 +3,7 @@
 #include <iomanip> // std::setw
 #include <variant>
 
-#ifdef _APPLE_
+#ifdef __APPLE__
 /// DIRTY HACK to make std::visit work on old MacOS versions
 const char* std::bad_variant_access::what() const noexcept {
     return "bad_variant_access";

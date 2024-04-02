@@ -45,22 +45,34 @@ if [[ "${target}" == *-apple-* ]]; then
 
 else
 
-    cmake -DCMAKE_INSTALL_PREFIX=$prefix -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TARGET_TOOLCHAIN} -DCMAKE_BUILD_TYPE=Release -DHYDRA_JULIA_WRAPPER=On -DJlCxx_DIR=$prefix/lib/cmake -DBLAS_LIBRARIES=${libdir}/libopenblas64_.${dlext} -DLAPACK_LIBRARIES=${libdir}/libopenblas64_.${dlext}-S . -B build
+    cmake -DCMAKE_INSTALL_PREFIX=$prefix -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TARGET_TOOLCHAIN} -DCMAKE_BUILD_TYPE=Release -DHYDRA_JULIA_WRAPPER=On -DJlCxx_DIR=$prefix/lib/cmake -DBLAS_LIBRARIES=${libdir}/libopenblas64_.${dlext} -DLAPACK_LIBRARIES=${libdir}/libopenblas64_.${dlext} -S . -B build
 
 fi
 
-cmake --build build -j${nproc}
+cmake --build build -j4
 cmake --install build
 
 """
 
 # These are the platforms we will build for by default, unless further
 # platforms are passed in on the command line
-platforms = supported_platforms()
+# platforms = supported_platforms()
+platforms =  [
+    # Platform("x86_64", "linux"; libc="glibc"),
+    # Platform("aarch64", "linux"; libc="glibc"),
+    # Platform("powerpc64le", "linux"; libc="glibc"),
+    # Platform("x86_64", "linux"; libc="musl"),
+    # Platform("aarch64", "linux"; libc="musl"),
+    # Platform("powerpc64le", "linux"; libc="musl"),
+    # Platform("x86_64", "windows"; ),
+    Platform("x86_64", "macos"; ),
+    # Platform("aarch64", "macos"; )
+]
 
 # The products that we will ensure are always built
 products = [
-    ExecutableProduct("hydrajl", :hydrajl)
+    LibraryProduct("libhydra", :hydra),
+    LibraryProduct("libhydrajl", :hydrajl)
 ]
 
 # Dependencies that must be installed before this package can be built
