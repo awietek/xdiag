@@ -1,11 +1,11 @@
 #include "../../catch.hpp"
-#include <hydra/blocks/tj/tj_apply.h>
-#include <hydra/blocks/tj/tj_matrix.h>
-#include <hydra/algebra/matrix.h>
-#include <hydra/utils/close.h>
-#include <hydra/utils/print_macro.h>
+#include <xdiag/blocks/tj/tj_apply.h>
+#include <xdiag/blocks/tj/tj_matrix.h>
+#include <xdiag/algebra/matrix.h>
+#include <xdiag/utils/close.h>
+#include <xdiag/utils/print_macro.h>
 
-using namespace hydra;
+using namespace xdiag;
 using namespace arma;
 
 std::pair<int, int> target_nup_ndn(std::string op_str, int nup, int ndn) {

@@ -17,11 +17,11 @@ for seed in ${seeds[@]}; do
 for nup in ${nups[@]}; do
 for k in ${ks[@]}; do
 
-    outdir="/data/condmat/awietek/Research/Software/hydra/examples/dynamics_finite_t/shastry_sutherland_ftlm/outfiles/shastry.$n_sites.HB.J.Jd.fsl/J.$J.Jd.$Jd/q.$q/seed.$seed"
+    outdir="/data/condmat/awietek/Research/Software/xdiag/examples/dynamics_finite_t/shastry_sutherland_ftlm/outfiles/shastry.$n_sites.HB.J.Jd.fsl/J.$J.Jd.$Jd/q.$q/seed.$seed"
     mkdir -p $outdir
     outfile="$outdir/outfile.shastry.$n_sites.HB.J.Jd.fsl.J.$J.Jd.$Jd.q.$q.seed.$seed.nup.$nup.k.$k.niter.$niter.h5"
 
-    dumpdir="/scratch/awietek/Research/Software/hydra/examples/dynamics_finite_t/shastry_sutherland_ftlm/dumpfiles/shastry.$n_sites.HB.J.Jd.fsl/J.$J.Jd.$Jd/q.$q/seed.$seed/nup.$nup.k.$k.niter.$niter"
+    dumpdir="/scratch/awietek/Research/Software/xdiag/examples/dynamics_finite_t/shastry_sutherland_ftlm/dumpfiles/shastry.$n_sites.HB.J.Jd.fsl/J.$J.Jd.$Jd/q.$q/seed.$seed/nup.$nup.k.$k.niter.$niter"
     mkdir -p $dumpdir    
     
     ./build/main \

@@ -6,11 +6,11 @@ project(
   LANGUAGES CXX
 )
 
-find_package(hydra REQUIRED HINTS "../../../")
+find_package(xdiag REQUIRED HINTS "../../../")
 add_executable(main main.cpp)
 
 target_compile_features(main PUBLIC cxx_std_17)
-target_compile_definitions(main PUBLIC ${HYDRA_DEFINITIONS})
-target_link_libraries(main PUBLIC ${HYDRA_LIBRARIES})
-target_include_directories(main PUBLIC ${HYDRA_INCLUDE_DIRS})
+target_compile_definitions(main PUBLIC ${XDIAG_DEFINITIONS})
+target_link_libraries(main PUBLIC ${XDIAG_LIBRARIES})
+target_include_directories(main PUBLIC ${XDIAG_INCLUDE_DIRS})
 set(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING "Build type" FORCE)

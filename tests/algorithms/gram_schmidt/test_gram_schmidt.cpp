@@ -2,11 +2,11 @@
 
 #include <iostream>
 
-#include <hydra/algorithms/gram_schmidt/gram_schmidt.h>
-#include <hydra/utils/print_macro.h>
+#include <xdiag/algorithms/gram_schmidt/gram_schmidt.h>
+#include <xdiag/utils/print_macro.h>
 
 TEST_CASE("gram_schmidt", "[algorithms]") {
-  using namespace hydra;
+  using namespace xdiag;
   using namespace arma;
 
   Log("testing gram_schmidt");

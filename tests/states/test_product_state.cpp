@@ -1,10 +1,10 @@
 #include "../catch.hpp"
 
-#include <hydra/states/product_state.h>
-#include <hydra/algebra/algebra.h>
-#include <hydra/utils/close.h>
+#include <xdiag/states/product_state.h>
+#include <xdiag/algebra/algebra.h>
+#include <xdiag/utils/close.h>
 
-using namespace hydra;
+using namespace xdiag;
 
 TEST_CASE("product_state", "[states]") {
 
@@ -18,7 +18,7 @@ TEST_CASE("product_state", "[states]") {
       std::sample(ps.begin(), ps.end(), std::back_inserter(pss), n_sites,
                   std::mt19937(i));
       auto pstate = ProductState(pss);
-      // HydraPrint(pstate);
+      // XDiagPrint(pstate);
 
       auto block = Electron(n_sites);
       auto psi = State(block, true);
@@ -93,7 +93,7 @@ TEST_CASE("product_state", "[states]") {
       std::sample(ps.begin(), ps.end(), std::back_inserter(pss), n_sites,
                   std::mt19937(i));
       auto pstate = ProductState(pss);
-      // HydraPrint(pstate);
+      // XDiagPrint(pstate);
 
       int nup = 0;
       int ndn = 0;
@@ -142,7 +142,7 @@ TEST_CASE("product_state", "[states]") {
       std::sample(ps.begin(), ps.end(), std::back_inserter(pss), n_sites,
                   std::mt19937(i));
       auto pstate = ProductState(pss);
-      // HydraPrint(pstate);
+      // XDiagPrint(pstate);
 
       int nup = 0;
       auto block = Spinhalf(n_sites);

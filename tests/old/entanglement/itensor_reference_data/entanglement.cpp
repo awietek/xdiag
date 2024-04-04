@@ -1,14 +1,14 @@
 #include <cstdlib>
 #include <itensor/all.h>
-#include <hydra/all.h>
+#include <xdiag/all.h>
 #include <iomanip>
 
 #include "../testcases_entanglement_entropy.h"
 
 int main(int argc, char *argv[]) {
   using namespace itensor;
-  using namespace hydra;
-  using namespace hydra::entanglementtestcases;
+  using namespace xdiag;
+  using namespace xdiag::entanglementtestcases;
   
   std::cout << std::setprecision(16);
 

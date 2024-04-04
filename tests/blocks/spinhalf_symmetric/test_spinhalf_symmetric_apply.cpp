@@ -5,13 +5,13 @@
 
 #include <iostream>
 
-#include <hydra/algebra/algebra.h>
-#include <hydra/algebra/matrix.h>
-#include <hydra/algorithms/sparse_diag.h>
-#include <hydra/blocks/spinhalf/spinhalf_apply.h>
-#include <hydra/utils/close.h>
+#include <xdiag/algebra/algebra.h>
+#include <xdiag/algebra/matrix.h>
+#include <xdiag/algorithms/sparse_diag.h>
+#include <xdiag/blocks/spinhalf/spinhalf_apply.h>
+#include <xdiag/utils/close.h>
 
-using namespace hydra;
+using namespace xdiag;
 
 void test_spinhalf_symmetric_apply(BondList bondlist,
                                    PermutationGroup space_group,
@@ -103,8 +103,8 @@ void test_spinhalf_symmetric_apply_no_sz(BondList bondlist,
 }
 
 void test_spinhalf_symmetric_apply_chains(int n_sites) {
-  using namespace hydra::testcases::spinhalf;
-  using hydra::testcases::electron::get_cyclic_group_irreps;
+  using namespace xdiag::testcases::spinhalf;
+  using xdiag::testcases::electron::get_cyclic_group_irreps;
   Log.out("spinhalf_symmetric_apply: HB chain, N: {}", n_sites);
   auto [space_group, irreps] = get_cyclic_group_irreps(n_sites);
   auto bondlist = HBchain(n_sites, 1.0, 1.0);
@@ -121,7 +121,7 @@ TEST_CASE("spinhalf_symmetric_apply", "[spinhalf]") {
 
   // test a 3x3 triangular lattice
   Log.out("spinhalf_symmetric_apply: Triangular 3x3");
-  std::string lfile = HYDRA_DIRECTORY
+  std::string lfile = XDIAG_DIRECTORY
       "/misc/data/triangular.9.Jz1Jz2Jx1Jx2D1.sublattices.tsl.lat";
 
   auto bondlist = read_bondlist(lfile);
@@ -136,7 +136,7 @@ TEST_CASE("spinhalf_symmetric_apply", "[spinhalf]") {
       {"K.D3.A1", 2},     {"K.D3.A2", 2},     {"K.D3.E", 4},
       {"Y.D1.A", 6},      {"Y.D1.B", 6}};
 
-  auto permutations = hydra::read_permutations(lfile);
+  auto permutations = xdiag::read_permutations(lfile);
   auto space_group = PermutationGroup(permutations);
 
   std::vector<Representation> irreps;
@@ -151,7 +151,7 @@ TEST_CASE("spinhalf_symmetric_apply", "[spinhalf]") {
   {
     Log("spinhalf_symmetric_matrix: Triangular J1J2Jchi N=12");
     std::string lfile =
-        HYDRA_DIRECTORY "/misc/data/triangular.j1j2jch/"
+        XDIAG_DIRECTORY "/misc/data/triangular.j1j2jch/"
                         "triangular.12.j1j2jch.sublattices.fsl.lat";
 
     auto bondlist = read_bondlist(lfile);
@@ -171,7 +171,7 @@ TEST_CASE("spinhalf_symmetric_apply", "[spinhalf]") {
         {"M.C2.B", -5.7723510325561688816},
         {"X.C1.A", -5.9030627660522529965}};
 
-    auto permutations = hydra::read_permutations(lfile);
+    auto permutations = xdiag::read_permutations(lfile);
     auto space_group = PermutationGroup(permutations);
 
     int n_sites = 12;

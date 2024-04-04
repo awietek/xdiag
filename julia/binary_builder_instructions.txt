@@ -11,22 +11,22 @@ HDF5_jll
 commands (local):
 
 JLCXX_DIR=`julia -e "using CxxWrap; ; println(CxxWrap.prefix_path())"`/lib/cmake/JlCxx
-cmake -DHYDRA_JULIA_WRAPPER=On -D JlCxx_DIR=$JLCXX_DIR -S . -B build
+cmake -DXDIAG_JULIA_WRAPPER=On -D JlCxx_DIR=$JLCXX_DIR -S . -B build
 cmake --build build --verbose -j$nproc
 cmake --install build
 
 
 commands (binary builder):
 
-cd hydra
-cmake -DCMAKE_INSTALL_PREFIX=$prefix -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TARGET_TOOLCHAIN} -DCMAKE_BUILD_TYPE=Release -DHYDRA_JULIA_WRAPPER=On -DJlCxx_DIR=$prefix/lib/cmake -DBLAS_LIBRARIES=${libdir}/libopenblas64_.so -DLAPACK_LIBRARIES=${libdir}/libopenblas64_.so -S . -B build
+cd xdiag
+cmake -DCMAKE_INSTALL_PREFIX=$prefix -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TARGET_TOOLCHAIN} -DCMAKE_BUILD_TYPE=Release -DXDIAG_JULIA_WRAPPER=On -DJlCxx_DIR=$prefix/lib/cmake -DBLAS_LIBRARIES=${libdir}/libopenblas64_.so -DLAPACK_LIBRARIES=${libdir}/libopenblas64_.so -S . -B build
 cmake --build build --verbose
 cmake --install build
 
 
 
-cd hydra
-cmake -DCMAKE_INSTALL_PREFIX=$prefix -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TARGET_TOOLCHAIN} -DCMAKE_BUILD_TYPE=Release -DHYDRA_JULIA_WRAPPER=On -DJlCxx_DIR=$prefix/lib/cmake -DBLAS_LIBRARIES=${libdir}/libopenblas64_.${dlext} -DLAPACK_LIBRARIES=${libdir}/libopenblas64_.${dlext} -S . -B build
+cd xdiag
+cmake -DCMAKE_INSTALL_PREFIX=$prefix -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TARGET_TOOLCHAIN} -DCMAKE_BUILD_TYPE=Release -DXDIAG_JULIA_WRAPPER=On -DJlCxx_DIR=$prefix/lib/cmake -DBLAS_LIBRARIES=${libdir}/libopenblas64_.${dlext} -DLAPACK_LIBRARIES=${libdir}/libopenblas64_.${dlext} -S . -B build
 cmake --build build --verbose -j4
 cmake --install build
 
@@ -129,7 +129,7 @@ for sym in cgbcon cgbsv cgbsvx cgbtrf cgbtrs cgecon cgees cgeev cgeevx cgehrd cg
 export CXXFLAGS="${SYMB_DEFS[@]}"
 
 
-cmake "${FLAGS[@]}" -DHYDRA_JULIA_WRAPPER=On -DJlCxx_DIR=$prefix/lib/cmake  -S . -B build
+cmake "${FLAGS[@]}" -DXDIAG_JULIA_WRAPPER=On -DJlCxx_DIR=$prefix/lib/cmake  -S . -B build
 
 
 
@@ -137,7 +137,7 @@ cmake "${FLAGS[@]}" -DHYDRA_JULIA_WRAPPER=On -DJlCxx_DIR=$prefix/lib/cmake  -S .
 #####################
 #####################
 #####################
-cd hydra
+cd xdiag
 
 # Redefining BLAS_LAPACK symbols to use with OpenBLAS
 # Redefining BLAS_LAPACK symbols to use with OpenBLAS
@@ -155,11 +155,11 @@ if [[ "${target}" == *-apple-* ]]; then
 
 
     # Finding OpenMP is a bit complicated
-    cmake -DCMAKE_INSTALL_PREFIX=$prefix -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TARGET_TOOLCHAIN} -DCMAKE_BUILD_TYPE=Release -DHYDRA_JULIA_WRAPPER=On -DJlCxx_DIR=$prefix/lib/cmake -DBLAS_LIBRARIES=${libdir}/libopenblas64_.${dlext} -DLAPACK_LIBRARIES=${libdir}/libopenblas64_.${dlext} -DOpenMP_libgomp_LIBRARY=${libdir}/libgomp.dylib -DOpenMP_ROOT=${libdir} -D OpenMP_CXX_LIB_NAMES="libgomp" -DOpenMP_CXX_FLAGS="-fopenmp=libgomp -Wno-unused-command-line-argument"  -S . -B build
+    cmake -DCMAKE_INSTALL_PREFIX=$prefix -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TARGET_TOOLCHAIN} -DCMAKE_BUILD_TYPE=Release -DXDIAG_JULIA_WRAPPER=On -DJlCxx_DIR=$prefix/lib/cmake -DBLAS_LIBRARIES=${libdir}/libopenblas64_.${dlext} -DLAPACK_LIBRARIES=${libdir}/libopenblas64_.${dlext} -DOpenMP_libgomp_LIBRARY=${libdir}/libgomp.dylib -DOpenMP_ROOT=${libdir} -D OpenMP_CXX_LIB_NAMES="libgomp" -DOpenMP_CXX_FLAGS="-fopenmp=libgomp -Wno-unused-command-line-argument"  -S . -B build
 
 else
 
-    cmake -DCMAKE_INSTALL_PREFIX=$prefix -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TARGET_TOOLCHAIN} -DCMAKE_BUILD_TYPE=Release -DHYDRA_JULIA_WRAPPER=On -DJlCxx_DIR=$prefix/lib/cmake -DBLAS_LIBRARIES=${libdir}/libopenblas64_.${dlext} -DLAPACK_LIBRARIES=${libdir}/libopenblas64_.${dlext} -S . -B build
+    cmake -DCMAKE_INSTALL_PREFIX=$prefix -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TARGET_TOOLCHAIN} -DCMAKE_BUILD_TYPE=Release -DXDIAG_JULIA_WRAPPER=On -DJlCxx_DIR=$prefix/lib/cmake -DBLAS_LIBRARIES=${libdir}/libopenblas64_.${dlext} -DLAPACK_LIBRARIES=${libdir}/libopenblas64_.${dlext} -S . -B build
 
 fi
 
@@ -168,7 +168,7 @@ cmake --install build
 
 
 ### OSX openmp
-cmake -DCMAKE_INSTALL_PREFIX=$prefix -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TARGET_TOOLCHAIN} -DCMAKE_BUILD_TYPE=Release -DHYDRA_JULIA_WRAPPER=On -DJlCxx_DIR=$prefix/lib/cmake -DBLAS_LIBRARIES=${libdir}/libopenblas64_.${dlext} -DLAPACK_LIBRARIES=${libdir}/libopenblas64_.${dlext} OpenMP_ROOT=${libdir} -S . -B build 
+cmake -DCMAKE_INSTALL_PREFIX=$prefix -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TARGET_TOOLCHAIN} -DCMAKE_BUILD_TYPE=Release -DXDIAG_JULIA_WRAPPER=On -DJlCxx_DIR=$prefix/lib/cmake -DBLAS_LIBRARIES=${libdir}/libopenblas64_.${dlext} -DLAPACK_LIBRARIES=${libdir}/libopenblas64_.${dlext} OpenMP_ROOT=${libdir} -S . -B build 
 
 
 
@@ -216,17 +216,17 @@ julia --color=yes build_tarballs.jl --debug --deploy=local
 $ use -fno-rtti (probably doesnt work due to fmt lib)
 
 [03:15:58] ld64.lld: error: undefined symbol: typeinfo for std::bad_variant_access
-[03:15:58] >>> referenced by CMakeFiles/hydra.dir/utils/print.cpp.o:(symbol std::__1::__throw_bad_variant_access()+0x1f)
+[03:15:58] >>> referenced by CMakeFiles/xdiag.dir/utils/print.cpp.o:(symbol std::__1::__throw_bad_variant_access()+0x1f)
 [03:15:58]
 [03:15:58] ld64.lld: error: undefined symbol: vtable for std::bad_variant_access
-[03:15:58] >>> referenced by CMakeFiles/hydra.dir/utils/print.cpp.o:(symbol std::__1::__throw_bad_variant_access()+0x11)
+[03:15:58] >>> referenced by CMakeFiles/xdiag.dir/utils/print.cpp.o:(symbol std::__1::__throw_bad_variant_access()+0x11)
 [03:15:58] clang-16: error: linker command failed with exit code 1 (use -v to see invocation)
-[03:15:58] make[2]: *** [hydra/CMakeFiles/hydra.dir/build.make:1556: hydra/libhydra.1.0.0.dylib] Error 1
-[03:15:58] make[2]: Leaving directory '/workspace/srcdir/hydra/build'
-[03:15:58] make[1]: *** [CMakeFiles/Makefile2:116: hydra/CMakeFiles/hydra.dir/all] Error 2
-[03:15:58] make[1]: Leaving directory '/workspace/srcdir/hydra/build'
+[03:15:58] make[2]: *** [xdiag/CMakeFiles/xdiag.dir/build.make:1556: xdiag/libxdiag.1.0.0.dylib] Error 1
+[03:15:58] make[2]: Leaving directory '/workspace/srcdir/xdiag/build'
+[03:15:58] make[1]: *** [CMakeFiles/Makefile2:116: xdiag/CMakeFiles/xdiag.dir/all] Error 2
+[03:15:58] make[1]: Leaving directory '/workspace/srcdir/xdiag/build'
 [03:15:58] make: *** [Makefile:136: all] Error 2
 [03:15:59]  ---> cmake --build build -j4
 [03:15:59]  ---> cmake --build build -j4
 [03:15:59] Previous command exited with 2
-ERROR: LoadError: Build for hydra on x86_64-apple-darwin did not complete successfully
+ERROR: LoadError: Build for xdiag on x86_64-apple-darwin did not complete successfully

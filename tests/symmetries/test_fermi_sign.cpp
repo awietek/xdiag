@@ -2,12 +2,12 @@
 
 #include <iostream>
 
-#include <hydra/common.h>
-#include <hydra/symmetries/permutation.h>
-#include <hydra/combinatorics/subsets.h>
-#include <hydra/symmetries/operations/fermi_sign.h>
+#include <xdiag/common.h>
+#include <xdiag/symmetries/permutation.h>
+#include <xdiag/combinatorics/subsets.h>
+#include <xdiag/symmetries/operations/fermi_sign.h>
 
-using namespace hydra;
+using namespace xdiag;
 
 template <class bit_t> void test_fermi_sign(int64_t n_sites) {
   using combinatorics::Subsets;
@@ -50,12 +50,12 @@ template <class bit_t> void test_fermi_sign(int64_t n_sites) {
 }
 
 TEST_CASE("fermi_sign", "[symmetries]") {
-  hydra::Log("Test fermi_sign");
+  xdiag::Log("Test fermi_sign");
 
   for (int64_t n_sites = 1; n_sites < 8; ++n_sites) {
     test_fermi_sign<uint16_t>(n_sites);
     test_fermi_sign<uint32_t>(n_sites);
     test_fermi_sign<uint64_t>(n_sites);
   }
-  hydra::Log("done");
+  xdiag::Log("done");
 }

@@ -1,11 +1,11 @@
 #include "../../catch.hpp"
 
 #include <iostream>
-#include <hydra/blocks/electron/electron.h>
+#include <xdiag/blocks/electron/electron.h>
 
 
-using namespace hydra;
-using namespace hydra::combinatorics;
+using namespace xdiag;
+using namespace xdiag::combinatorics;
 
 // template <class bit_t>
 // void test_indices(Electron<bit_t> const &electron) {
@@ -91,8 +91,8 @@ TEST_CASE("electron_symmetric", "[electron]") {
       {"Y.C1.A", 6}};
 
   std::string lfile =
-      HYDRA_DIRECTORY "/misc/data/triangular.9.hop.sublattices.tsl.lat";
-  auto permutations = hydra::read_permutations(lfile);
+      XDIAG_DIRECTORY "/misc/data/triangular.9.hop.sublattices.tsl.lat";
+  auto permutations = xdiag::read_permutations(lfile);
   auto space_group = PermutationGroup(permutations);
 
   int64_t sum_dim = 0;

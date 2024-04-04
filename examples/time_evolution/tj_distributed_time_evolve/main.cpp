@@ -1,6 +1,6 @@
-#include <hydra/all.h>
+#include <xdiag/all.h>
 
-using namespace hydra;
+using namespace xdiag;
 
 void measure_density(int n_sites, State const &v) {
   int rank;
@@ -61,7 +61,7 @@ int main(int argc, char **argv) try {
 
   auto block = tJDistributed(n_sites, n_sites / 2 - 1, n_sites / 2 - 1);
 
-  HydraPrint(block);
+  XDiagPrint(block);
 
   Log.set_verbosity(2);
   tic();

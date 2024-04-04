@@ -1,5 +1,5 @@
 #include <extern/clara/clara.hpp>
-#include <hydra/all.h>
+#include <xdiag/all.h>
 
 void parse_cmdline(std::string &latfile, double &J, double &Jd, int &nup,
                    std::string &k, std::string &q, int &seed, int &niter,
@@ -46,7 +46,7 @@ void parse_cmdline(std::string &latfile, double &J, double &Jd, int &nup,
 }
 
 int main(int argc, char **argv) {
-  using namespace hydra;
+  using namespace xdiag;
   using namespace arma;
   using fmt::format;
 

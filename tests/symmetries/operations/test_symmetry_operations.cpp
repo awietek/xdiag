@@ -1,20 +1,20 @@
 #include "../../catch.hpp"
 
-#include <hydra/combinatorics/combinations.h>
-#include <hydra/combinatorics/combinations_indexing.h>
-#include <hydra/combinatorics/lin_table.h>
-#include <hydra/combinatorics/subsets.h>
-#include <hydra/combinatorics/subsets_indexing.h>
-#include <hydra/symmetries/group_action/group_action_lookup.h>
-#include <hydra/symmetries/operations/group_action_operations.h>
-#include <hydra/symmetries/operations/representative_list.h>
-#include <hydra/symmetries/operations/symmetry_operations.h>
-#include <hydra/symmetries/permutation_group.h>
-#include <hydra/utils/close.h>
+#include <xdiag/combinatorics/combinations.h>
+#include <xdiag/combinatorics/combinations_indexing.h>
+#include <xdiag/combinatorics/lin_table.h>
+#include <xdiag/combinatorics/subsets.h>
+#include <xdiag/combinatorics/subsets_indexing.h>
+#include <xdiag/symmetries/group_action/group_action_lookup.h>
+#include <xdiag/symmetries/operations/group_action_operations.h>
+#include <xdiag/symmetries/operations/representative_list.h>
+#include <xdiag/symmetries/operations/symmetry_operations.h>
+#include <xdiag/symmetries/permutation_group.h>
+#include <xdiag/utils/close.h>
 
-using namespace hydra;
-using namespace hydra::combinatorics;
-using namespace hydra::symmetries;
+using namespace xdiag;
+using namespace xdiag::combinatorics;
+using namespace xdiag::symmetries;
 
 static PermutationGroup cyclic_group(int64_t n_sites) {
   // test cyclic group
@@ -165,7 +165,7 @@ void test_representatives_indices_symmetries_limits(int64_t n_sites) {
 }
 
 TEST_CASE("symmetry_operations", "[symmetries]") {
-  using namespace hydra;
+  using namespace xdiag;
 
   Log("Testing symmetry_operations");
   int64_t max_N = 6;

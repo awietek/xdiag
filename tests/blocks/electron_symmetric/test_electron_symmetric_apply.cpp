@@ -3,14 +3,14 @@
 #include <iostream>
 
 #include "../electron/testcases_electron.h"
-#include <hydra/algebra/algebra.h>
-#include <hydra/algebra/matrix.h>
-#include <hydra/algorithms/sparse_diag.h>
-#include <hydra/blocks/electron/electron_apply.h>
-#include <hydra/blocks/electron/electron_matrix.h>
-#include <hydra/utils/close.h>
+#include <xdiag/algebra/algebra.h>
+#include <xdiag/algebra/matrix.h>
+#include <xdiag/algorithms/sparse_diag.h>
+#include <xdiag/blocks/electron/electron_apply.h>
+#include <xdiag/blocks/electron/electron_matrix.h>
+#include <xdiag/utils/close.h>
 
-using namespace hydra;
+using namespace xdiag;
 
 void test_electron_symmetric_apply(BondList bondlist,
                                    PermutationGroup space_group,
@@ -22,7 +22,7 @@ void test_electron_symmetric_apply(BondList bondlist,
 
       for (auto irrep : irreps) {
         // Log("nup: {}, ndn: {}", nup, ndn);
-        // HydraPrint64_t(irrep);
+        // XDiagPrint64_t(irrep);
 
         // Create block and matrix for comparison
         // tic();
@@ -81,7 +81,7 @@ void test_electron_symmetric_apply(BondList bondlist,
 }
 
 void test_hubbard_symmetric_apply_chains(int64_t n_sites) {
-  using namespace hydra::testcases::electron;
+  using namespace xdiag::testcases::electron;
 
   // Without Heisenberg term
   Log.out("electron_symmetric_apply: Hubbard chain, n_sites: {}", n_sites);
@@ -107,12 +107,12 @@ TEST_CASE("electron_symmetric_apply", "[electron]") {
   // test a 3x3 triangular lattice
   Log.out("electron_symmetric_apply: Hubbard 3x3 triangular");
   std::string lfile =
-      HYDRA_DIRECTORY "/misc/data/triangular.9.hop.sublattices.tsl.lat";
+      XDIAG_DIRECTORY "/misc/data/triangular.9.hop.sublattices.tsl.lat";
 
   auto bondlist = read_bondlist(lfile);
   bondlist["T"] = 1.0;
   bondlist["U"] = 5.0;
-  auto permutations = hydra::read_permutations(lfile);
+  auto permutations = xdiag::read_permutations(lfile);
   auto space_group = PermutationGroup(permutations);
 
   std::vector<std::pair<std::string, int64_t>> rep_name_mult = {
@@ -140,13 +140,13 @@ TEST_CASE("electron_symmetric_apply", "[electron]") {
   // test a 3x3 triangular lattice with complex hoppings
   {
     Log.out("electron_symmetric_apply: Hubbard 3x3 triangular (complex)");
-    std::string lfile = HYDRA_DIRECTORY
+    std::string lfile = XDIAG_DIRECTORY
         "/misc/data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.lat";
     BondList bondlist = read_bondlist(lfile);
     bondlist["TPHI"] = complex(0.5, 0.5);
     bondlist["JPHI"] = 0.;
     bondlist["U"] = 5.0;
-    auto permutations = hydra::read_permutations(lfile);
+    auto permutations = xdiag::read_permutations(lfile);
     space_group = PermutationGroup(permutations);
 
     std::vector<std::pair<std::string, int64_t>> rep_name_mult = {

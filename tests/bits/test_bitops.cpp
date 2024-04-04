@@ -1,12 +1,12 @@
 #include "../catch.hpp"
 
 #include <random>
-#include <hydra/utils/timing.h>
-#include <hydra/utils/logger.h>
-#include <hydra/bits/bitops.h>
+#include <xdiag/utils/timing.h>
+#include <xdiag/utils/logger.h>
+#include <xdiag/bits/bitops.h>
 
-using namespace hydra;
-using namespace hydra::bits;
+using namespace xdiag;
+using namespace xdiag::bits;
 
 template <typename bit_t> void test_bitops() {
 

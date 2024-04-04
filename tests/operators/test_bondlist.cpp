@@ -1,10 +1,10 @@
 #include "../catch.hpp"
 
-#include <hydra/operators/bondlist.h>
+#include <xdiag/operators/bondlist.h>
 #include <iostream>
 
 TEST_CASE("bondlist", "[operators/bondlist]") {
-  using namespace hydra;
+  using namespace xdiag;
 
   BondList bl;
   bl << Bond("HB", "J1", {0, 1});

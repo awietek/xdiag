@@ -5,15 +5,15 @@
 #include "../spinhalf/testcases_spinhalf.h"
 #include "../tj/testcases_tj.h"
 
-#include <hydra/algorithms/sparse_diag.h>
-#include <hydra/blocks/spinhalf/spinhalf_matrix.h>
-#include <hydra/blocks/tj/tj_apply.h>
-#include <hydra/blocks/tj/tj_matrix.h>
-#include <hydra/blocks/tj_distributed/tj_distributed_apply.h>
-#include <hydra/utils/close.h>
-#include <hydra/utils/print_macro.h>
+#include <xdiag/algorithms/sparse_diag.h>
+#include <xdiag/blocks/spinhalf/spinhalf_matrix.h>
+#include <xdiag/blocks/tj/tj_apply.h>
+#include <xdiag/blocks/tj/tj_matrix.h>
+#include <xdiag/blocks/tj_distributed/tj_distributed_apply.h>
+#include <xdiag/utils/close.h>
+#include <xdiag/utils/print_macro.h>
 
-using namespace hydra;
+using namespace xdiag;
 
 void test_tjdistributed_e0_real(BondList bonds, int nup, int ndn, double e0) {
   int n_sites = bonds.n_sites();
@@ -23,7 +23,7 @@ void test_tjdistributed_e0_real(BondList bonds, int nup, int ndn, double e0) {
 }
 
 TEST_CASE("tj_distributed_apply", "[tj_distributed]") try {
-  using namespace hydra::testcases::tj;
+  using namespace xdiag::testcases::tj;
 
   Log("tj_distributed_apply test");
   int N = 4;
@@ -57,7 +57,7 @@ TEST_CASE("tj_distributed_apply", "[tj_distributed]") try {
   for (int n_sites = 2; n_sites < 8; ++n_sites) {
     // Log("N: {}", n_sites);
     auto bonds = testcases::spinhalf::HB_alltoall(n_sites);
-    // HydraPrint(bonds);
+    // XDiagPrint(bonds);
     for (int nup = 0; nup <= n_sites; ++nup) {
       auto block = Spinhalf(n_sites, nup);
       auto block_tJ = tJDistributed(n_sites, nup, n_sites - nup);

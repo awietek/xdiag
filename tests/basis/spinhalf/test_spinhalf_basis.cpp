@@ -3,15 +3,15 @@
 #include <iostream>
 
 #include <iostream>
-#include <hydra/common.h>
-#include <hydra/combinatorics/combinations.h>
-#include <hydra/combinatorics/subsets.h>
-#include <hydra/basis/spinhalf/basis_symmetric_sz.h>
-#include <hydra/basis/spinhalf/basis_symmetric_no_sz.h>
-#include <hydra/symmetries/operations/symmetry_operations.h>
-#include <hydra/symmetries/operations/group_action_operations.h>
+#include <xdiag/common.h>
+#include <xdiag/combinatorics/combinations.h>
+#include <xdiag/combinatorics/subsets.h>
+#include <xdiag/basis/spinhalf/basis_symmetric_sz.h>
+#include <xdiag/basis/spinhalf/basis_symmetric_no_sz.h>
+#include <xdiag/symmetries/operations/symmetry_operations.h>
+#include <xdiag/symmetries/operations/group_action_operations.h>
 
-using namespace hydra;
+using namespace xdiag;
 
 template <typename bit_t, class Basis>
 void test_spinhalf_basis_state(Basis const &basis, bit_t state) {
@@ -78,13 +78,13 @@ void check_basis_symmetric_no_sz(
 
 template <class bit_t> void test_basis_symmetric() {
 
-  using namespace hydra::basis::spinhalf;
+  using namespace xdiag::basis::spinhalf;
 
   Log("BasisSymmetric: triangular 3x3");
   int n_sites = 9;
-  std::string lfile = HYDRA_DIRECTORY
+  std::string lfile = XDIAG_DIRECTORY
       "/misc/data/triangular.9.Jz1Jz2Jx1Jx2D1.sublattices.tsl.lat";
-  auto permutations = hydra::read_permutations(lfile);
+  auto permutations = xdiag::read_permutations(lfile);
   auto perm_group = PermutationGroup(permutations);
   // std::vector<std::string> irrep_names = {
   //     "Gamma.D6.A1", "Gamma.D6.A2", "Gamma.D6.B1", "Gamma.D6.B2",

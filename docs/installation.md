@@ -4,7 +4,7 @@ title: Installation
 
 ## C++ Compilation
 
-Using hydra with C++ is a two-step process. First the `hydra` library needs
+Using XDiag with C++ is a two-step process. First the `xdiag` library needs
 to be compiled and installed. Therafter, application codes are compiled
 in a second step. Here we explain how to compile the library.
 
@@ -21,13 +21,13 @@ in a second step. Here we explain how to compile the library.
 
 - **Download** the source code using [git](https://git-scm.com/)
   ```bash
-  cd /path/to/where/hydra/should/be
-  git clone https://github.com/awietek/hydra.git
+  cd /path/to/where/xdiag/should/be
+  git clone https://github.com/awietek/xdiag.git
   ```
 
 - **Compile the default library**
   ``` bash
-  cd hydra
+  cd xdiag
   cmake -S . -B build
   cmake --build build
   cmake --install build
@@ -36,11 +36,11 @@ in a second step. Here we explain how to compile the library.
 
 - **Compile the distributed library**
 
-    To use the distributed computing features of `hydra`, the distributed
+    To use the distributed computing features of `xdiag`, the distributed
     library has to be built which requires [MPI](https://en.wikipedia.org/wiki/Message_Passing_Interface).
     ``` bash
-    cd hydra
-    cmake -S . -B build -D HYDRA_DISTRIBUTED=On
+    cd xdiag
+    cmake -S . -B build -D XDIAG_DISTRIBUTED=On
     cmake --build build
     cmake --install build
     ```
@@ -70,7 +70,7 @@ in a second step. Here we explain how to compile the library.
 
     !!! warning 
 
-        If the `hydra` library is compiled with a certain compiler, it is
+        If the `xdiag` library is compiled with a certain compiler, it is
         advisable to also compile the application codes with the same compiler.
 
 - **Setting the install path**
@@ -85,7 +85,7 @@ in a second step. Here we explain how to compile the library.
     To disable support for [HDF5](https://www.hdfgroup.org/solutions/hdf5/)
     or [OpenMP](https://www.openmp.org/) support, use
     ```bash
-    cmake -S . -B build -D HYDRA_DISABLE_OPENMP=On -D HYDRA_DISABLE_HDF5=On
+    cmake -S . -B build -D XDIAG_DISABLE_OPENMP=On -D XDIAG_DISABLE_HDF5=On
     ```
     
 - **Building and running tests**

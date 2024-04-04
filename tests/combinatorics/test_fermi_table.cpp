@@ -2,13 +2,13 @@
 
 #include <iostream>
 
-#include <hydra/combinatorics/fermi_table.h>
-#include <hydra/operators/bondlist.h>
-#include <hydra/symmetries/operations/fermi_sign.h>
-#include <hydra/symmetries/operations/symmetry_operations.h>
+#include <xdiag/combinatorics/fermi_table.h>
+#include <xdiag/operators/bondlist.h>
+#include <xdiag/symmetries/operations/fermi_sign.h>
+#include <xdiag/symmetries/operations/symmetry_operations.h>
 #include <tests/blocks/electron/testcases_electron.h>
 
-using namespace hydra;
+using namespace xdiag;
 
 template <typename bit_t>
 void test_fermi_bool_table(PermutationGroup const &group) {
@@ -40,13 +40,13 @@ void test_fermi_bool_table(PermutationGroup const &group) {
   }
 }
 TEST_CASE("fermi_table", "[symmetries]") {
-  hydra::Log("Test fermi_table");
+  xdiag::Log("Test fermi_table");
   int max_N = 6;
 
   for (int n_sites = 0; n_sites <= max_N; ++n_sites) {
     Log("chain N={}", n_sites);
     auto [group, irreps] =
-        hydra::testcases::electron::get_cyclic_group_irreps(n_sites);
+        xdiag::testcases::electron::get_cyclic_group_irreps(n_sites);
     (void)irreps;
     test_fermi_bool_table<uint16_t>(group);
     test_fermi_bool_table<uint32_t>(group);
@@ -55,8 +55,8 @@ TEST_CASE("fermi_table", "[symmetries]") {
 
   Log("triangular 3x3");
   std::string lfile =
-      HYDRA_DIRECTORY "/misc/data/triangular.9.hop.sublattices.tsl.lat";
-  auto permutations = hydra::read_permutations(lfile);
+      XDIAG_DIRECTORY "/misc/data/triangular.9.hop.sublattices.tsl.lat";
+  auto permutations = xdiag::read_permutations(lfile);
   auto group = PermutationGroup(permutations);
   test_fermi_bool_table<uint16_t>(group);
   test_fermi_bool_table<uint32_t>(group);

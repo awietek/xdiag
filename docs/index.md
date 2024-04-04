@@ -5,14 +5,14 @@ title: Home
 
 ![license](https://img.shields.io/badge/license-Apache%202.0-blue)
 ![cpp](https://img.shields.io/badge/C++-17-blue.svg?logo=c%2B%2B)
-[![Linux CI](https://github.com/awietek/hydra/actions/workflows/linux.yml/badge.svg?style=for-the-badge)](https://github.com/awietek/hydra/actions/workflows/linux.yml)
-[![Mac OSX CI](https://github.com/awietek/hydra/actions/workflows/osx.yml/badge.svg?style=for-the-badge)](https://github.com/awietek/hydra/actions/workflows/osx.yml)
+[![Linux CI](https://github.com/awietek/xdiag/actions/workflows/linux.yml/badge.svg?style=for-the-badge)](https://github.com/awietek/xdiag/actions/workflows/linux.yml)
+[![Mac OSX CI](https://github.com/awietek/xdiag/actions/workflows/osx.yml/badge.svg?style=for-the-badge)](https://github.com/awietek/xdiag/actions/workflows/osx.yml)
 
 [Quick Start](quickstart.md){ .md-button .md-button--primary }
-[Code on GitHub](https://github.com/awietek/hydra){ .md-button .md-button--secondary }
+[Code on GitHub](https://github.com/awietek/xdiag){ .md-button .md-button--secondary }
 
 ## Overview
-Hydra is a C++ library for performing Exact Diagonalizations of
+XDiag is a C++ library for performing Exact Diagonalizations of
 quantum many-body systems. Key features include optimized combinatorical
 algorithms for navigating Hilbert spaces, iterative linear algebra algorithms,
  shared and distributed memory parallelization.

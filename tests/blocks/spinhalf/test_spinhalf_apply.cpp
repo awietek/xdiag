@@ -3,14 +3,14 @@
 #include <iostream>
 
 #include "testcases_spinhalf.h"
-#include <hydra/algebra/algebra.h>
-#include <hydra/algebra/matrix.h>
-#include <hydra/algorithms/sparse_diag.h>
-#include <hydra/blocks/spinhalf/spinhalf_apply.h>
-#include <hydra/utils/close.h>
-#include <hydra/utils/print_macro.h>
+#include <xdiag/algebra/algebra.h>
+#include <xdiag/algebra/matrix.h>
+#include <xdiag/algorithms/sparse_diag.h>
+#include <xdiag/blocks/spinhalf/spinhalf_apply.h>
+#include <xdiag/utils/close.h>
+#include <xdiag/utils/print_macro.h>
 
-using namespace hydra;
+using namespace xdiag;
 
 void test_apply(BondList bonds) {
   int N = bonds.n_sites();
@@ -41,7 +41,7 @@ void test_apply(BondList bonds) {
 }
 
 TEST_CASE("spinhalf_apply", "[spinhalf]") {
-  using namespace hydra::testcases::spinhalf;
+  using namespace xdiag::testcases::spinhalf;
 
   Log.out("spinhalf_apply: Heisenberg chain apply test, J=1.0, N=2,..,6");
   for (int N = 2; N <= 6; ++N) {
@@ -74,7 +74,7 @@ TEST_CASE("spinhalf_apply", "[spinhalf]") {
   {
     Log("spinhalf_matrix: Triangular J1J2Jchi N=12");
     std::string lfile =
-        HYDRA_DIRECTORY "/misc/data/triangular.j1j2jch/"
+        XDIAG_DIRECTORY "/misc/data/triangular.j1j2jch/"
                         "triangular.12.j1j2jch.sublattices.fsl.lat";
 
     auto bondlist = read_bondlist(lfile);

@@ -1,11 +1,11 @@
 #include "../catch.hpp"
 
-#include <hydra/extern/armadillo/armadillo>
-#include <hydra/common.h>
-#include <hydra/io/args.h>
+#include <xdiag/extern/armadillo/armadillo>
+#include <xdiag/common.h>
+#include <xdiag/io/args.h>
 
 TEST_CASE("args", "[io]") {
-  using namespace hydra;
+  using namespace xdiag;
   using namespace arma;
   Log("testing Args");
 
