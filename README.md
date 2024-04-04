@@ -59,7 +59,7 @@ int main() {
 ```
 
 ### Documentation
-The full documentation is available at [awietek.github.io/xdiag](https://awietek.github.io/xdiag).
+The full documentation is available at [awietek.github.io/XDiag](https://awietek.github.io/XDiag).
 
 ### About
 author:   Alexander Wietek
