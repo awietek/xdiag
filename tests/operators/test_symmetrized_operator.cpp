@@ -3,16 +3,16 @@
 #include <iostream>
 
 #include "../blocks/electron/testcases_electron.h"
-#include <hydra/algebra/algebra.h>
-#include <hydra/algebra/apply.h>
-#include <hydra/algorithms/sparse_diag.h>
-#include <hydra/algorithms/lanczos/eigs_lanczos.h>
-#include <hydra/blocks/electron/electron.h>
-#include <hydra/operators/symmetrized_operator.h>
-#include <hydra/utils/close.h>
-#include <hydra/utils/print_macro.h>
+#include <xdiag/algebra/algebra.h>
+#include <xdiag/algebra/apply.h>
+#include <xdiag/algorithms/sparse_diag.h>
+#include <xdiag/algorithms/lanczos/eigs_lanczos.h>
+#include <xdiag/blocks/electron/electron.h>
+#include <xdiag/operators/symmetrized_operator.h>
+#include <xdiag/utils/close.h>
+#include <xdiag/utils/print_macro.h>
 
-using namespace hydra;
+using namespace xdiag;
 
 TEST_CASE("symmetrized_operator", "[symmetries]") try {
   Log("Testing symmetrized_operator");
@@ -38,17 +38,17 @@ TEST_CASE("symmetrized_operator", "[symmetries]") try {
         auto [e0_nosym, v0_nosym] = eig0(bondlist, block_nosym);
 
         // auto res = eigs_lanczos(bondlist, block_nosym);
-	// HydraPrint(res.criterion);
+	// XDiagPrint(res.criterion);
 
 	{
           auto &v = v0_nosym;
           auto Hv = v;
           apply(bondlist, v, Hv);
           auto e = dot(v, Hv);
-	  // HydraPrint(norm(v));
-	  // HydraPrint(block_nosym);
-          // HydraPrint(e);
-          // HydraPrint(e0_nosym);
+	  // XDiagPrint(norm(v));
+	  // XDiagPrint(block_nosym);
+          // XDiagPrint(e);
+          // XDiagPrint(e0_nosym);
           REQUIRE(close(real(e), e0_nosym));
         }
         double e0_sym = 9999.0;
@@ -88,8 +88,8 @@ TEST_CASE("symmetrized_operator", "[symmetries]") try {
             auto Hv = v;
             apply(bondlist, v, Hv);
             auto e = dot(v, Hv);
-            // HydraPrint(e);
-            // HydraPrint(e0_nosym);
+            // XDiagPrint(e);
+            // XDiagPrint(e0_nosym);
             REQUIRE(close(real(e), e0_nosym));
           }
 
@@ -124,5 +124,5 @@ TEST_CASE("symmetrized_operator", "[symmetries]") try {
   }
   Log("done");
 } catch (std::exception const &e) {
-  hydra::traceback(e);
+  xdiag::traceback(e);
 }

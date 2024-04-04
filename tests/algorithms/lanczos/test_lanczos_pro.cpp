@@ -2,20 +2,20 @@
 
 #include <iostream>
 
-#include <hydra/algebra/algebra.h>
-#include <hydra/algebra/apply.h>
+#include <xdiag/algebra/algebra.h>
+#include <xdiag/algebra/apply.h>
 
-#include <hydra/algorithms/lanczos/lanczos_pro.h>
-#include <hydra/algorithms/sparse_diag.h>
-#include <hydra/io/file_toml.h>
-#include <hydra/operators/bondlist.h>
-#include <hydra/symmetries/permutation_group.h>
-#include <hydra/symmetries/representation.h>
-#include <hydra/utils/close.h>
-#include <hydra/utils/print_macro.h>
+#include <xdiag/algorithms/lanczos/lanczos_pro.h>
+#include <xdiag/algorithms/sparse_diag.h>
+#include <xdiag/io/file_toml.h>
+#include <xdiag/operators/bondlist.h>
+#include <xdiag/symmetries/permutation_group.h>
+#include <xdiag/symmetries/representation.h>
+#include <xdiag/utils/close.h>
+#include <xdiag/utils/print_macro.h>
 
 TEST_CASE("lanczos_pro", "[lanczos]") {
-  using namespace hydra;
+  using namespace xdiag;
   using namespace arma;
 
   Log.set_verbosity(0);
@@ -36,7 +36,7 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
 
     int niter = 500;
     auto res = lanczos_pro(mult, v0, conv, niter, ortho_level, 1e-7, true);
-    // HydraPrint(res.num_reorthogonalizations);
+    // XDiagPrint(res.num_reorthogonalizations);
     mat V = res.V;
     double total_orthogonality = norm(V.t() * V - eye(niter, niter));
     REQUIRE(total_orthogonality < niter * ortho_level);
@@ -57,7 +57,7 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
 
     int niter = 1111;
     auto res = lanczos_pro(mult, v0, conv, niter, ortho_level, 1e-7, true);
-    // HydraPrint(res.num_reorthogonalizations);
+    // XDiagPrint(res.num_reorthogonalizations);
 
     REQUIRE(res.num_iterations == N); // exact deflation
 
@@ -68,8 +68,8 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
     vec eigs;
     eig_sym(eigs, A);
     vec eigs_lcs = res.eigenvalues;
-    // HydraPrint(eigs);
-    // HydraPrint(eigs_lcs);
+    // XDiagPrint(eigs);
+    // XDiagPrint(eigs_lcs);
     REQUIRE(close(eigs, eigs_lcs)); // exact eigenvalue solution
 
     mat tmat = res.tmat;
@@ -92,7 +92,7 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
 
     int niter = 500;
     auto res = lanczos_pro(mult, v0, conv, niter, ortho_level, 1e-7, true);
-    // HydraPrint(res.num_reorthogonalizations);
+    // XDiagPrint(res.num_reorthogonalizations);
 
     cx_mat V = res.V;
     double total_orthogonality = norm(V.t() * V - eye(niter, niter));
@@ -114,7 +114,7 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
 
     int niter = 1111;
     auto res = lanczos_pro(mult, v0, conv, niter, ortho_level, 1e-7, true);
-    // HydraPrint(res.num_reorthogonalizations);
+    // XDiagPrint(res.num_reorthogonalizations);
 
     REQUIRE(res.num_iterations == N); // exact deflation
 
@@ -125,8 +125,8 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
     vec eigs;
     eig_sym(eigs, A);
     vec eigs_lcs = res.eigenvalues;
-    // HydraPrint(eigs);
-    // HydraPrint(eigs_lcs);
+    // XDiagPrint(eigs);
+    // XDiagPrint(eigs_lcs);
     REQUIRE(close(eigs, eigs_lcs)); // exact eigenvalue solution
 
     cx_mat tmatc(res.tmat, mat(N, N, fill::zeros));
@@ -138,7 +138,7 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
     Log("  shastry sutherland N=16 ortho levels");
 
     std::string lfilename =
-        HYDRA_DIRECTORY "/misc/data/shastry.16.HB.J.Jd.fsl.toml";
+        XDIAG_DIRECTORY "/misc/data/shastry.16.HB.J.Jd.fsl.toml";
     auto lfile = FileToml(lfilename, 'r');
     auto bonds = BondList(lfile["Interactions"]);
     int n_sites = bonds.n_sites();
@@ -155,7 +155,7 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
         auto block = Spinhalf(n_sites, nup, group, irrep);
 
         Log("   nup: {} k: {}", nup, k);
-        // HydraPrint(block);
+        // XDiagPrint(block);
 
         auto rstate = random_state(block, false);
         auto mult = [&bonds, &block](cx_vec const &v, cx_vec &w) {
@@ -174,12 +174,12 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
         auto res =
             lanczos_pro(mult, v0, conv, n_iter, ortho_level, 1e-7, false);
 
-        // HydraPrint(res.num_reorthogonalizations);
+        // XDiagPrint(res.num_reorthogonalizations);
         int n_iter2 = res.num_iterations;
 
         cx_mat V = res.V;
-        // HydraPrint(res.num_iterations);
-        // HydraPrint(cx_mat(V.t() * V ));
+        // XDiagPrint(res.num_iterations);
+        // XDiagPrint(cx_mat(V.t() * V ));
         double total_orthogonality = norm(V.t() * V - eye(n_iter2, n_iter2));
         if (n_iter > block.size()) {
           CHECK(total_orthogonality < 1e-6);
@@ -194,7 +194,7 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
     Log("  shastry sutherland N=20 ortho levels");
 
     std::string lfilename =
-        HYDRA_DIRECTORY "/misc/data/shastry.20.HB.J.Jd.fsl.toml";
+        XDIAG_DIRECTORY "/misc/data/shastry.20.HB.J.Jd.fsl.toml";
     auto lfile = FileToml(lfilename, 'r');
     auto bonds = BondList(lfile["Interactions"]);
     int n_sites = bonds.n_sites();
@@ -210,7 +210,7 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
         auto block = Spinhalf(n_sites, nup, group, irrep);
 
         Log("   nup: {} k: {}", nup, k);
-        // HydraPrint(block);
+        // XDiagPrint(block);
 
         auto rstate = random_state(block, false);
         auto mult = [&bonds, &block](cx_vec const &v, cx_vec &w) {
@@ -229,7 +229,7 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
         auto res =
             lanczos_pro(mult, v0, conv, n_iter, ortho_level, 1e-7, false);
 
-        // HydraPrint(res.num_reorthogonalizations);
+        // XDiagPrint(res.num_reorthogonalizations);
         int n_iter2 = res.num_iterations;
         cx_mat V = res.V;
         double total_orthogonality = norm(V.t() * V - eye(n_iter2, n_iter2));

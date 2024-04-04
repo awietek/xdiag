@@ -2,15 +2,15 @@
 
 #include "testcases_spinhalf.h"
 #include <iostream>
-#include <hydra/blocks/spinhalf/spinhalf_matrix.h>
-#include <hydra/algebra/matrix.h>
-#include <hydra/utils/close.h>
-#include <hydra/utils/print_macro.h>
+#include <xdiag/blocks/spinhalf/spinhalf_matrix.h>
+#include <xdiag/algebra/matrix.h>
+#include <xdiag/utils/close.h>
+#include <xdiag/utils/print_macro.h>
 
-using namespace hydra;
+using namespace xdiag;
 
 TEST_CASE("spinhalf_matrix", "[spinhalf]") {
-  using namespace hydra::testcases::spinhalf;
+  using namespace xdiag::testcases::spinhalf;
 
   {
     Log.out("spinhalf_matrix: Heisenberg chain test, J=1.0, N=2,..,6");
@@ -100,7 +100,7 @@ TEST_CASE("spinhalf_matrix", "[spinhalf]") {
   {
     Log("spinhalf_matrix: Triangular J1J2Jchi N=12");
     std::string lfile =
-        HYDRA_DIRECTORY "/misc/data/triangular.j1j2jch/"
+        XDIAG_DIRECTORY "/misc/data/triangular.j1j2jch/"
                         "triangular.12.j1j2jch.sublattices.fsl.lat";
 
     auto bondlist = read_bondlist(lfile);

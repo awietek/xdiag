@@ -1,4 +1,4 @@
-set(HYDRA_TEST_SOURCES
+set(XDIAG_TEST_SOURCES
   bits/test_bitops.cpp
 
   io/test_args.cpp
@@ -69,25 +69,25 @@ set(HYDRA_TEST_SOURCES
   states/test_product_state.cpp
 )
 
-set(HYDRA_TESTCASES_SOURCES
+set(XDIAG_TESTCASES_SOURCES
   blocks/spinhalf/testcases_spinhalf.cpp
   blocks/tj/testcases_tj.cpp
   blocks/electron/testcases_electron.cpp
 )
 
-set(HYDRA_TEST_DISTRIBUTED_SOURCES
+set(XDIAG_TEST_DISTRIBUTED_SOURCES
   parallel/mpi/test_cdot_distributed.cpp
   basis/tj_distributed/test_basis_np.cpp
   blocks/tj_distributed/test_tj_distributed_apply.cpp
   algorithms/time_evolution/test_time_evolution_distributed.cpp
 )
 
-add_executable(tests tests.cpp ${HYDRA_TEST_SOURCES} ${HYDRA_TESTCASES_SOURCES})
-target_link_libraries(tests PUBLIC ${HYDRA_LIBRARY})
-add_test(NAME HydraTest COMMAND tests)
+add_executable(tests tests.cpp ${XDIAG_TEST_SOURCES} ${XDIAG_TESTCASES_SOURCES})
+target_link_libraries(tests PUBLIC ${XDIAG_LIBRARY})
+add_test(NAME XdiagTest COMMAND tests)
 
-if(HYDRA_DISTRIBUTED)
-  add_executable(tests_distributed tests_distributed.cpp ${HYDRA_TEST_DISTRIBUTED_SOURCES} ${HYDRA_TESTCASES_SOURCES})
-  target_link_libraries(tests_distributed PUBLIC ${HYDRA_LIBRARY})
-  add_test(NAME HydraTestDistributed COMMAND tests_distributed)
+if(XDIAG_DISTRIBUTED)
+  add_executable(tests_distributed tests_distributed.cpp ${XDIAG_TEST_DISTRIBUTED_SOURCES} ${XDIAG_TESTCASES_SOURCES})
+  target_link_libraries(tests_distributed PUBLIC ${XDIAG_LIBRARY})
+  add_test(NAME XdiagTestDistributed COMMAND tests_distributed)
 endif()

@@ -30,7 +30,7 @@ testmpi/tests
 benchmark.prof
 benchmark.prof_*
 lcov-report
-hydra/config.h
+xdiag/config.h
 examples/hb_chain_dynamical_sf/main
 examples/hb_chain_dynamical_sf/outfiles/*
 examples/hb_chain_dynamical_sf_nosym/main

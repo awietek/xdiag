@@ -4,13 +4,13 @@
 
 #include "../tj/testcases_tj.h"
 #include "testcases_electron.h"
-#include <hydra/blocks/electron/electron_matrix.h>
-#include <hydra/algebra/algebra.h>
-#include <hydra/algebra/apply.h>
-#include <hydra/algorithms/sparse_diag.h>
-#include <hydra/utils/close.h>
+#include <xdiag/blocks/electron/electron_matrix.h>
+#include <xdiag/algebra/algebra.h>
+#include <xdiag/algebra/apply.h>
+#include <xdiag/algorithms/sparse_diag.h>
+#include <xdiag/utils/close.h>
 
-using namespace hydra;
+using namespace xdiag;
 
 void test_electron_np_no_np_apply(int n_sites, BondList bonds) {
 
@@ -29,7 +29,7 @@ void test_electron_np_no_np_apply(int n_sites, BondList bonds) {
 }
 
 TEST_CASE("electron_apply", "[electron]") {
-  using namespace hydra::testcases::electron;
+  using namespace xdiag::testcases::electron;
 
   BondList bondlist;
 
@@ -159,7 +159,7 @@ TEST_CASE("electron_apply", "[electron]") {
     Log.out("electron_apply: random all-to-all complex exchange test Np "
             "<-> NoNp, N={}",
             N);
-    auto bonds = hydra::testcases::tj::tj_alltoall_complex(N);
+    auto bonds = xdiag::testcases::tj::tj_alltoall_complex(N);
     test_electron_np_no_np_apply(N, bonds);
   }
 }

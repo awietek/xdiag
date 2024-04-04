@@ -3,14 +3,14 @@
 #include <iostream>
 
 #include "../../blocks/electron/testcases_electron.h"
-#include <hydra/algorithms/lanczos/eigvals_lanczos.h>
-#include <hydra/blocks/electron/electron_matrix.h>
-#include <hydra/utils/close.h>
+#include <xdiag/algorithms/lanczos/eigvals_lanczos.h>
+#include <xdiag/blocks/electron/electron_matrix.h>
+#include <xdiag/utils/close.h>
 
-using namespace hydra;
+using namespace xdiag;
 
 TEST_CASE("eigvals_lanczos", "[lanczos]") {
-  using namespace hydra::testcases::electron;
+  using namespace xdiag::testcases::electron;
 
   BondList bondlist;
   bondlist["U"] = 5.0;

@@ -30,14 +30,14 @@ title: Examples
 
 ## Application CMakeLists.txt
 
-- Normal hydra library
+- Normal xdiag library
 
     ??? example "source"
         ```cmake 
         --8<-- "examples/hello_world/CMakeLists.txt"
         ```
 
-- Distributed hydra library
+- Distributed xdiag library
 
     ??? example "source"
         ```cmake 

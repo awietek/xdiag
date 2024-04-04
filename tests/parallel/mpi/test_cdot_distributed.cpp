@@ -1,12 +1,12 @@
 #include <mpi.h>
 
 #include <tests/catch.hpp>
-#include <hydra/parallel/mpi/allreduce.h>
-#include <hydra/parallel/mpi/cdot_distributed.h>
+#include <xdiag/parallel/mpi/allreduce.h>
+#include <xdiag/parallel/mpi/cdot_distributed.h>
 
-#include <hydra/utils/print_macro.h>
+#include <xdiag/utils/print_macro.h>
 
-using namespace hydra;
+using namespace xdiag;
 
 template <class coeff_t>
 void test_stable_dot(int size){

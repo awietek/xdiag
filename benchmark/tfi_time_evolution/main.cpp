@@ -1,7 +1,7 @@
-#include <hydra/all.h>
+#include <xdiag/all.h>
 
 int main() {
-  using namespace hydra;
+  using namespace xdiag;
   using namespace arma;
   using fmt::format;
 
@@ -54,7 +54,7 @@ int main() {
   } else if ((N % 4) == 2) {
     block = Spinhalf(N, group, irrep, 2);
   }
-  HydraPrint(block);
+  XDiagPrint(block);
 
   // Create magnetization operator
   BondList mag;
@@ -65,7 +65,7 @@ int main() {
   // Create all-up starting state
   auto v = State(block);
   v.vector()(0) = 1.0;
-  HydraPrint(inner(mag, v));
+  XDiagPrint(inner(mag, v));
 
   // Estimate the operator norms
   double anorm1 = norm_estimate(bonds1, block);
@@ -73,7 +73,7 @@ int main() {
   Log("Estimated operator norms:");
   Log("H1: {}", anorm1);
   Log("H2: {}", anorm2);
-  
+
   for (int i = 0; i < n_steps; ++i) {
 
     Log("At time evolution step {}", i + 1);
@@ -83,7 +83,7 @@ int main() {
     v = time_evolve(bonds2, v, tau, precision, 10, anorm2);
 
     // Perform measurement
-    HydraPrint(inner(mag, v));
+    XDiagPrint(inner(mag, v));
   }
 
   return EXIT_SUCCESS;

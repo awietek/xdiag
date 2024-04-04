@@ -2,15 +2,15 @@
 
 #include <iostream>
 
-#include <hydra/blocks/spinhalf/spinhalf_apply.h>
-#include <hydra/algebra/algebra.h>
-#include <hydra/algebra/matrix.h>
-#include <hydra/algorithms/sparse_diag.h>
-#include <hydra/utils/close.h>
-#include <hydra/symmetries/group_action/group_action.h>
+#include <xdiag/blocks/spinhalf/spinhalf_apply.h>
+#include <xdiag/algebra/algebra.h>
+#include <xdiag/algebra/matrix.h>
+#include <xdiag/algorithms/sparse_diag.h>
+#include <xdiag/utils/close.h>
+#include <xdiag/symmetries/group_action/group_action.h>
 
-using namespace hydra;
-using namespace hydra::combinatorics;
+using namespace xdiag;
+using namespace xdiag::combinatorics;
 
 void test_indices_spinhalf_symmetric(Spinhalf const &block) {
 
@@ -87,9 +87,9 @@ TEST_CASE("spinhalf_symmetric", "[spinhalf]") {
       {"K.D3.A1", 2},     {"K.D3.A2", 2},     {"K.D3.E", 4},
       {"Y.D1.A", 6},      {"Y.D1.B", 6}};
 
-  std::string lfile = HYDRA_DIRECTORY
+  std::string lfile = XDIAG_DIRECTORY
       "/misc/data/triangular.9.Jz1Jz2Jx1Jx2D1.sublattices.tsl.lat";
-  auto permutations = hydra::read_permutations(lfile);
+  auto permutations = xdiag::read_permutations(lfile);
   auto space_group = PermutationGroup(permutations);
 
   int64_t sum_dim = 0;

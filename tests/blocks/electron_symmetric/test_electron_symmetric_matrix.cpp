@@ -3,16 +3,16 @@
 #include <iostream>
 
 #include "../electron/testcases_electron.h"
-#include <hydra/blocks/electron/electron_matrix.h>
-#include <hydra/blocks/electron/electron_apply.h>
-#include <hydra/algebra/algebra.h>
-#include <hydra/algebra/matrix.h>
-#include <hydra/algorithms/sparse_diag.h>
-#include <hydra/utils/close.h>
-#include <hydra/utils/print_macro.h>
+#include <xdiag/blocks/electron/electron_matrix.h>
+#include <xdiag/blocks/electron/electron_apply.h>
+#include <xdiag/algebra/algebra.h>
+#include <xdiag/algebra/matrix.h>
+#include <xdiag/algorithms/sparse_diag.h>
+#include <xdiag/utils/close.h>
+#include <xdiag/utils/print_macro.h>
 
 
-using namespace hydra;
+using namespace xdiag;
 
 void test_electron_symmetric_spectra_no_np(BondList bondlist,
                                            PermutationGroup space_group,
@@ -58,8 +58,8 @@ void test_electron_symmetric_spectra_no_np(BondList bondlist,
         }
       }
       std::sort(eigs_np_all.begin(), eigs_np_all.end());
-      // HydraPrint(eigs_no_np);
-      // HydraPrint(arma::vec(eigs_np_all));
+      // XDiagPrint(eigs_no_np);
+      // XDiagPrint(arma::vec(eigs_np_all));
 
       REQUIRE(close(eigs_no_np, arma::vec(eigs_np_all)));
     }
@@ -130,9 +130,9 @@ void test_electron_symmetric_spectra(BondList bondlist,
         // Log.out("{} {} {} {}", nup, ndn, eigs_sym(0), eigs_nosym(0));
 
 	// if (!close(arma::vec(eigs_sym), eigs_nosym)){
-	//   HydraPrint(arma::norm(arma::vec(eigs_sym) - eigs_nosym));
-	//   HydraPrint(eigs_sym);
-	//   HydraPrint(eigs_nosym);
+	//   XDiagPrint(arma::norm(arma::vec(eigs_sym) - eigs_nosym));
+	//   XDiagPrint(eigs_sym);
+	//   XDiagPrint(eigs_nosym);
 	// }
         REQUIRE(close(arma::vec(eigs_sym), eigs_nosym));
       }
@@ -141,7 +141,7 @@ void test_electron_symmetric_spectra(BondList bondlist,
 }
 
 void test_hubbard_symmetric_spectrum_chains(int64_t n_sites) {
-  using namespace hydra::testcases::electron;
+  using namespace xdiag::testcases::electron;
 
   auto [space_group, irreps, multiplicities] =
       get_cyclic_group_irreps_mult(n_sites);
@@ -166,7 +166,7 @@ void test_hubbard_symmetric_spectrum_chains(int64_t n_sites) {
 }
 
 TEST_CASE("electron_symmetric_matrix", "[electron]") {
-  using namespace hydra::testcases::electron;
+  using namespace xdiag::testcases::electron;
   //////////////////////////////////////////////////////////////////////////////////////
 
   // Check matrices agains Weisse & Fehske
@@ -230,12 +230,12 @@ TEST_CASE("electron_symmetric_matrix", "[electron]") {
   // test a 3x3 triangular lattice
   Log("electron_symmetric_matrix: Hubbard 3x3 triangular");
   std::string lfile =
-      HYDRA_DIRECTORY "/misc/data/triangular.9.hop.sublattices.tsl.lat";
+      XDIAG_DIRECTORY "/misc/data/triangular.9.hop.sublattices.tsl.lat";
 
   bondlist = read_bondlist(lfile);
   bondlist["T"] = 1.0;
   bondlist["U"] = 5.0;
-  auto permutations = hydra::read_permutations(lfile);
+  auto permutations = xdiag::read_permutations(lfile);
   space_group = PermutationGroup(permutations);
 
   std::vector<std::pair<std::string, int64_t>> rep_name_mult = {
@@ -265,13 +265,13 @@ TEST_CASE("electron_symmetric_matrix", "[electron]") {
   // test a 3x3 triangular lattice with complex hoppings
   {
     Log.out("electron_symmetric_matrix: Hubbard 3x3 triangular (complex)");
-    std::string lfile = HYDRA_DIRECTORY
+    std::string lfile = XDIAG_DIRECTORY
         "/misc/data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.lat";
     BondList bondlist = read_bondlist(lfile);
     bondlist["TPHI"] = complex(0.5, 0.5);
     bondlist["JPHI"] = 0.;
     bondlist["U"] = 5.0;
-    auto permutations = hydra::read_permutations(lfile);
+    auto permutations = xdiag::read_permutations(lfile);
     space_group = PermutationGroup(permutations);
 
     std::vector<std::pair<std::string, int64_t>> rep_name_mult = {

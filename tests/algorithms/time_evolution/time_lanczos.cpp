@@ -7,12 +7,12 @@
 
 using namespace std;
 using namespace arma;
-using namespace hydra;
+using namespace xdiag;
 
 int main(){
     cout << "timing the lanczos algorithm ... ";
 
-    // defining a model with hydra
+    // defining a model with xdiag
     int n_sites, nup, ndn;
     n_sites = 10; nup = 3; ndn = 3;
     double t, t1, U;
@@ -37,13 +37,13 @@ int main(){
     cout << norm(psi.vector()) << endl;
     cout << "time taken: " <<  (toc - tic).count()*1e-9 << endl;
 
-    // timing with last hydra
+    // timing with last xdiag
 
     auto tic1 = chrono::high_resolution_clock::now();
     auto psi_1 = time_evolve(bonds, psi_0, time, 1e-2);
     auto toc1 = chrono::high_resolution_clock::now();
     cout << norm(psi.vector()) << endl;
-    cout << "time taken hydra: " <<  (toc1 - tic1).count()*1e-9 << endl;
+    cout << "time taken xdiag: " <<  (toc1 - tic1).count()*1e-9 << endl;
     return 0;
 }
 

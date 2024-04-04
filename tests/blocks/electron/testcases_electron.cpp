@@ -1,6 +1,6 @@
 #include "testcases_electron.h"
 
-namespace hydra::testcases::electron {
+namespace xdiag::testcases::electron {
 
 BondList get_linear_chain(int64_t n_sites, double t, double U) {
   // Create model
@@ -745,4 +745,4 @@ BondList square3x3(double t, double J) {
   return bondlist;
 }
 
-} // namespace hydra::testcases::electron
+} // namespace xdiag::testcases::electron

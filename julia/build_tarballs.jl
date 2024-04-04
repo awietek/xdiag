@@ -2,24 +2,28 @@
 # `julia build_tarballs.jl --help` to see a usage message.
 using BinaryBuilder, Pkg
 
-# # See https://github.com/JuliaLang/Pkg.jl/issues/2942
-# # Once this Pkg issue is resolved, this must be removed
-# uuid = Base.UUID("a83860b7-747b-57cf-bf1f-3e79990d037f")
-# delete!(Pkg.Types.get_last_stdlibs(v"1.6.3"), uuid)
+# See https://github.com/JuliaLang/Pkg.jl/issues/2942
+# Once this Pkg issue is resolved, this must be removed
+uuid = Base.UUID("a83860b7-747b-57cf-bf1f-3e79990d037f")
+delete!(Pkg.Types.get_last_stdlibs(v"1.6.3"), uuid)
 
 
-name = "hydra"
+name = "xdiag"
 version = v"0.2.0"
+
+include("common.jl")
 
 # Collection of sources required to complete build
 sources = [
-    GitSource("https://github.com/awietek/hydra.git", "c385004c73658dbd43b6c67fda51ec2a424817ee")
+    GitSource("https://github.com/awietek/xdiag.git", "1cf38cbc5adbbb46fc26ed5045979caf1c4b66c8")
 ]
 
 # Bash recipe for building across all platforms
 script = raw"""
 cd $WORKSPACE/srcdir
-cd hydra
+cd xdiag
+
+Julia_PREFIX=${prefix}
 
 # Redefining BLAS_LAPACK symbols to use with OpenBLAS
 SYMB_DEFS=()
@@ -41,11 +45,11 @@ if [[ "${target}" == *-apple-* ]]; then
 
 
     # Finding OpenMP is a bit complicated
-    cmake -DCMAKE_INSTALL_PREFIX=$prefix -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TARGET_TOOLCHAIN} -DCMAKE_BUILD_TYPE=Release -DHYDRA_JULIA_WRAPPER=On -DJlCxx_DIR=$prefix/lib/cmake -DBLAS_LIBRARIES=${libdir}/libopenblas64_.${dlext} -DLAPACK_LIBRARIES=${libdir}/libopenblas64_.${dlext} -DOpenMP_libgomp_LIBRARY=${libdir}/libgomp.dylib -DOpenMP_ROOT=${libdir} -D OpenMP_CXX_LIB_NAMES="libgomp" -DOpenMP_CXX_FLAGS="-fopenmp=libgomp -Wno-unused-command-line-argument"  -S . -B build
+    cmake -DJulia_PREFIX=$Julia_PREFIX -DCMAKE_INSTALL_PREFIX=$prefix -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TARGET_TOOLCHAIN} -DCMAKE_BUILD_TYPE=Release -DXDIAG_JULIA_WRAPPER=On -DJlCxx_DIR=$prefix/lib/cmake -DBLAS_LIBRARIES=${libdir}/libopenblas64_.${dlext} -DLAPACK_LIBRARIES=${libdir}/libopenblas64_.${dlext} -DOpenMP_libgomp_LIBRARY=${libdir}/libgomp.dylib -DOpenMP_ROOT=${libdir} -D OpenMP_CXX_LIB_NAMES="libgomp" -DOpenMP_CXX_FLAGS="-fopenmp=libgomp -Wno-unused-command-line-argument"  -S . -B build
 
 else
 
-    cmake -DCMAKE_INSTALL_PREFIX=$prefix -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TARGET_TOOLCHAIN} -DCMAKE_BUILD_TYPE=Release -DHYDRA_JULIA_WRAPPER=On -DJlCxx_DIR=$prefix/lib/cmake -DBLAS_LIBRARIES=${libdir}/libopenblas64_.${dlext} -DLAPACK_LIBRARIES=${libdir}/libopenblas64_.${dlext} -S . -B build
+    cmake -DJulia_PREFIX=$Julia_PREFIX -DCMAKE_INSTALL_PREFIX=$prefix -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TARGET_TOOLCHAIN} -DCMAKE_BUILD_TYPE=Release -DXDIAG_JULIA_WRAPPER=On -DJlCxx_DIR=$prefix/lib/cmake -DBLAS_LIBRARIES=${libdir}/libopenblas64_.${dlext} -DLAPACK_LIBRARIES=${libdir}/libopenblas64_.${dlext} -S . -B build
 
 fi
 
@@ -54,30 +58,53 @@ cmake --install build
 
 """
 
+# # These are the platforms we will build for by default, unless further
+# # platforms are passed in on the command line
+# # platforms = supported_platforms()
+# platforms =  [
+#     # Platform("x86_64", "linux"; libc="glibc"),
+#     # Platform("aarch64", "linux"; libc="glibc"),
+#     # Platform("powerpc64le", "linux"; libc="glibc"),
+#     # Platform("x86_64", "linux"; libc="musl"),
+#     # Platform("aarch64", "linux"; libc="musl"),
+#     # Platform("powerpc64le", "linux"; libc="musl"),
+#     # Platform("x86_64", "windows"; ),
+#     Platform("x86_64", "macos"; ),
+#     # Platform("aarch64", "macos"; )
+# ]
+
+
 # These are the platforms we will build for by default, unless further
 # platforms are passed in on the command line
-# platforms = supported_platforms()
-platforms =  [
-    # Platform("x86_64", "linux"; libc="glibc"),
-    # Platform("aarch64", "linux"; libc="glibc"),
-    # Platform("powerpc64le", "linux"; libc="glibc"),
-    # Platform("x86_64", "linux"; libc="musl"),
-    # Platform("aarch64", "linux"; libc="musl"),
-    # Platform("powerpc64le", "linux"; libc="musl"),
-    # Platform("x86_64", "windows"; ),
-    Platform("x86_64", "macos"; ),
-    # Platform("aarch64", "macos"; )
-]
+platforms = vcat(libjulia_platforms.(julia_versions)...)
+
+# We don't have Qt5 for Musl platforms
+# filter!(p -> libc(p) != "musl", platforms) 
+# filter!(p -> os(p) == "macos" && arch(p) == "x86_64" && p.tags["julia_version"] != "1.12.0", platforms)
+# filter!(p -> os(p) == "macos" && arch(p) == "aarch64" && p.tags["julia_version"] != "1.12.0", platforms)
+filter!(p -> os(p) == "linux" && arch(p) == "x86_64" && p.tags["julia_version"] != "1.12.0" && libc(p) != "musl", platforms)
+
+
+println("Building for platforms")
+for p in platforms
+    @show p
+end
+
 
 # The products that we will ensure are always built
 products = [
-    LibraryProduct("libhydra", :hydra),
-    LibraryProduct("libhydrajl", :hydrajl)
+    LibraryProduct("libxdiag", :xdiag),
+    LibraryProduct("libxdiagjl", :xdiagjl)
 ]
 
 # Dependencies that must be installed before this package can be built
 dependencies = [
-    Dependency(PackageSpec(name="libjulia_jll", uuid="5ad3ddd2-0711-543a-b040-befd59781bbf"))
+    # BuildDependency(PackageSpec(;name="libjulia_jll", version=v"1.10.7"))
+    # Dependency(PackageSpec(name="libjulia_jll", uuid="5ad3ddd2-0711-543a-b040-befd59781bbf"))
+    # BuildDependency(PackageSpec(name="Julia_jll", version=v"1.4.1"))
+    # Dependency(PackageSpec(name="libcxxwrap_julia_jll", uuid="3eaa8342-bff7-56a5-9981-c04077f7cee7"))
+    # BuildDependency(PackageSpec(name="Julia_jll", version=v"1.4.1"))
+    BuildDependency(PackageSpec(;name="libjulia_jll", version=v"1.10.7"))
     Dependency(PackageSpec(name="libcxxwrap_julia_jll", uuid="3eaa8342-bff7-56a5-9981-c04077f7cee7"))
     Dependency(PackageSpec(name="OpenBLAS_jll", uuid="4536629a-c528-5b80-bd46-f80d51c5b363"))
     Dependency(PackageSpec(name="HDF5_jll", uuid="0234f1f7-429e-5d53-9886-15a909be8d59"))

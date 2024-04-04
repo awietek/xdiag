@@ -1,18 +1,18 @@
 #include "../../catch.hpp"
 
-#include <hydra/algebra/algebra.h>
-#include <hydra/algebra/apply.h>
-#include <hydra/algorithms/time_evolution/time_evolution.h>
-#include <hydra/blocks/blocks.h>
-#include <hydra/blocks/tj/tj.h>
-#include <hydra/blocks/tj_distributed/tj_distributed.h>
-#include <hydra/states/product_state.h>
-#include <hydra/states/random_state.h>
-#include <hydra/states/state.h>
-#include <hydra/utils/close.h>
+#include <xdiag/algebra/algebra.h>
+#include <xdiag/algebra/apply.h>
+#include <xdiag/algorithms/time_evolution/time_evolution.h>
+#include <xdiag/blocks/blocks.h>
+#include <xdiag/blocks/tj/tj.h>
+#include <xdiag/blocks/tj_distributed/tj_distributed.h>
+#include <xdiag/states/product_state.h>
+#include <xdiag/states/random_state.h>
+#include <xdiag/states/state.h>
+#include <xdiag/utils/close.h>
 
 TEST_CASE("time_evolution_distributed", "[time_evolution]") try {
-  using namespace hydra;
+  using namespace xdiag;
 
   Log("Test time_evolution_distributed");
   
@@ -92,5 +92,5 @@ TEST_CASE("time_evolution_distributed", "[time_evolution]") try {
   }
 
 } catch (std::exception const &e) {
-  hydra::traceback(e);
+  xdiag::traceback(e);
 }

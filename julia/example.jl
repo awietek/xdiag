@@ -1,4 +1,4 @@
-using YxDiag
+using XDiag
 
 # block = Spinhalf(2, 1)
 # bond = Bond("HB", "J", [1, 2])
