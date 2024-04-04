@@ -2,16 +2,16 @@
 // Created by Luke Staszewski on 30.01.23.
 //
 #include "../../catch.hpp"
-#include <hydra/extern/armadillo/armadillo>
-#include <hydra/algebra/matrix.h>
-#include <hydra/algorithms/time_evolution/pade_matrix_exponential.h>
-#include <hydra/algorithms/time_evolution/time_evolution.h>
-#include <hydra/common.h>
-#include <hydra/states/product_state.h>
-#include <hydra/utils/logger.h>
-#include <hydra/utils/print_macro.h>
+#include <xdiag/extern/armadillo/armadillo>
+#include <xdiag/algebra/matrix.h>
+#include <xdiag/algorithms/time_evolution/pade_matrix_exponential.h>
+#include <xdiag/algorithms/time_evolution/time_evolution.h>
+#include <xdiag/common.h>
+#include <xdiag/states/product_state.h>
+#include <xdiag/utils/logger.h>
+#include <xdiag/utils/print_macro.h>
 
-using namespace hydra;
+using namespace xdiag;
 using namespace std;
 using namespace arma;
 
@@ -45,7 +45,7 @@ TEST_CASE("analytic_case_free_particle_1D", "[time_evolution]") try {
     return psi;
   };
 
-  // time evolve using hydra (numerically)
+  // time evolve using xdiag (numerically)
   auto block = Electron(n_sites, nup, ndn);
   BondList bonds;
   for (int i = 0; i < n_sites; i++) {
@@ -82,7 +82,7 @@ TEST_CASE("analytic_case_free_particle_1D", "[time_evolution]") try {
     }
   }
 } catch (std::exception const &e) {
-  hydra::traceback(e);
+  xdiag::traceback(e);
 }
 
 TEST_CASE("analytic_case_free_particle_2D", "[time_evolution]") try {
@@ -132,7 +132,7 @@ TEST_CASE("analytic_case_free_particle_2D", "[time_evolution]") try {
     return psi;
   };
 
-  // time evolve using hydra (numerically)
+  // time evolve using xdiag (numerically)
   auto block = Electron(n_sites, nup, ndn);
   BondList bonds;
   for (int i = 0; i < L; i++) {
@@ -180,14 +180,14 @@ TEST_CASE("analytic_case_free_particle_2D", "[time_evolution]") try {
       // w_analytic.print("ana");
       // w_expokit.vector().print("lanc");
 
-      // cout << "norm hydra " << norm(w_expokit) << endl;
+      // cout << "norm xdiag " << norm(w_expokit) << endl;
       // cout << "norm analytic " << norm(w_analytic) << endl;
 
       REQUIRE(eps < 4 * tol);
     }
   }
 } catch (std::exception const &e) {
-  hydra::traceback(e);
+  xdiag::traceback(e);
 }
 
 TEST_CASE("tj_complex_timeevo", "[time_evolution]") try {
@@ -230,10 +230,10 @@ TEST_CASE("tj_complex_timeevo", "[time_evolution]") try {
   auto block = tJ(n_sites, n_sites / 2, n_sites / 2);
 
   auto H = matrixC(bonds, block);
-  HydraPrint(block);
-  HydraPrint(pstate);
+  XDiagPrint(block);
+  XDiagPrint(pstate);
   auto psi_0 = State(block, false);
-  hydra::fill(psi_0, pstate);
+  xdiag::fill(psi_0, pstate);
 
   arma::vec times = arma::logspace(-1, 1, 3);
 
@@ -250,12 +250,12 @@ TEST_CASE("tj_complex_timeevo", "[time_evolution]") try {
       // w_analytic.print("ana");
       // w_expokit.vector().print("lanc");
 
-      // cout << "norm hydra " << norm(w_expokit) << endl;
+      // cout << "norm xdiag " << norm(w_expokit) << endl;
       // cout << "norm analytic " << norm(w_analytic) << endl;
 
       REQUIRE(eps < 4 * tol);
     }
   }
 } catch (std::exception const &e) {
-  hydra::traceback(e);
+  xdiag::traceback(e);
 }

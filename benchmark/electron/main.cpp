@@ -1,7 +1,7 @@
-#include <hydra/all.h>
+#include <xdiag/all.h>
 
 int main() {
-  using namespace hydra;
+  using namespace xdiag;
   using namespace arma;
   using fmt::format;
 
@@ -24,9 +24,9 @@ int main() {
   bonds["JEX"] = 0.0;
 
   auto block = Electron(n_sites, nup, ndn);
-  HydraPrint(block);
+  XDiagPrint(block);
   auto e0 = eig0(bonds, block);
-  HydraPrint(e0);
+  XDiagPrint(e0);
 
   return EXIT_SUCCESS;
 }

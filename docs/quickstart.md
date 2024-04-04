@@ -4,12 +4,12 @@ title: Quick start
 
 ## Hello World
 
-Let us set up our first program using the `hydra` library. For this we need to create two files. The first is the actual `C++` code.
+Let us set up our first program using the `xdiag` library. For this we need to create two files. The first is the actual `C++` code.
 
 ```C++
-#include <hydra/all.h>
+#include <xdiag/all.h>
 
-using namespace hydra;
+using namespace xdiag;
 
 int main() try {
   say_hello();
@@ -18,7 +18,7 @@ int main() try {
 }
 ```
 
-The function `say_hello()` prints out a welcome message, which also contains information which exact hydra version is used. What is maybe a bit unfamiliar is the `try / catch` block. Hydra implements a traceback mechanism for runtime errors, which is activated by this idiom. While not stricly necessary here, it is a good practice to make use of this.
+The function `say_hello()` prints out a welcome message, which also contains information which exact XDiag version is used. What is maybe a bit unfamiliar is the `try / catch` block. XDiag implements a traceback mechanism for runtime errors, which is activated by this idiom. While not stricly necessary here, it is a good practice to make use of this.
 
 Now that the application program is written, we next need to set up the compilation instructions using [CMake](https://cmake.org/). To do so we create a second file called `CMakeLists.txt` in the same directory.
 
@@ -30,20 +30,20 @@ project(
   LANGUAGES CXX
 )
 
-find_package(hydra REQUIRED HINTS "/path/to/hydra/install")
+find_package(xdiag REQUIRED HINTS "/path/to/xdiag/install")
 add_executable(main main.cpp)
-target_link_libraries(main PUBLIC hydra::hydra)
+target_link_libraries(main PUBLIC xdiag::xdiag)
 ```
 
-You should replace `"/path/to/hydra/install"` with the appropriate directory where your hydra library is installed after compilation. This exact `CMakeLists.txt` file can be used to compile any hydra application.
+You should replace `"/path/to/xdiag/install"` with the appropriate directory where your XDiag library is installed after compilation. This exact `CMakeLists.txt` file can be used to compile any XDiag application.
 
 !!! info
 
-    For using the distributed hydra library the last line of the above
+    For using the distributed XDiag library the last line of the above
     `CMakeLists.txt` should be changed to
 
     ```cmake
-    target_link_libraries(main PUBLIC hydra::hydra_distributed)
+    target_link_libraries(main PUBLIC xdiag::xdiag_distributed)
     ```
 
 We then compile the application code,
@@ -53,7 +53,7 @@ cmake -S . -B build
 cmake --build build
 ```
 
-and finally run our first `hydra` application.
+and finally run our first `xdiag` application.
 
 ```bash
 ./build/main
@@ -73,9 +73,9 @@ $i$ and $j$.
 The following code, sets up the Hilbert space, defines the Hamiltonian and finally calls an iterative eigenvalue solver to compute the ground state energy.
 
 ```C++
-#include <hydra/all.h>
+#include <xdiag/all.h>
 
-using namespace hydra;
+using namespace xdiag;
 
 int main() try {
 

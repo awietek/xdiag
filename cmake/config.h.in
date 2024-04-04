@@ -1,10 +1,10 @@
 #pragma once
 
-#define HYDRA_VERSION "@PROJECT_VERSION@"
-#define HYDRA_DIRECTORY "@PROJECT_SOURCE_DIR@"
-#define HYDRA_HOSTNAME "@HYDRA_HOSTNAME@"
-#define HYDRA_COMPILEDBY "@HYDRA_COMPILEDBY@"
+#define XDIAG_VERSION "@PROJECT_VERSION@"
+#define XDIAG_DIRECTORY "@PROJECT_SOURCE_DIR@"
+#define XDIAG_HOSTNAME "@XDIAG_HOSTNAME@"
+#define XDIAG_COMPILEDBY "@XDIAG_COMPILEDBY@"
 
-namespace hydra {
-inline const char* git_hash() { return "@HYDRA_GIT_HASH@"; }
-} // namespace hydra
+namespace xdiag {
+inline const char *git_hash() { return "@XDIAG_GIT_HASH@"; }
+} // namespace xdiag

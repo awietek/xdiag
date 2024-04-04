@@ -3,16 +3,16 @@
 #include <iostream>
 
 #include "testcases_tj.h"
-#include <hydra/algorithms/sparse_diag.h>
-#include <hydra/blocks/spinhalf/spinhalf_matrix.h>
-#include <hydra/blocks/tj/tj_apply.h>
-#include <hydra/blocks/tj/tj_matrix.h>
-#include <hydra/utils/close.h>
+#include <xdiag/algorithms/sparse_diag.h>
+#include <xdiag/blocks/spinhalf/spinhalf_matrix.h>
+#include <xdiag/blocks/tj/tj_apply.h>
+#include <xdiag/blocks/tj/tj_matrix.h>
+#include <xdiag/utils/close.h>
 
-using namespace hydra;
+using namespace xdiag;
 
 TEST_CASE("tj_apply", "[tj]") {
-  using namespace hydra::testcases::tj;
+  using namespace xdiag::testcases::tj;
 
   for (int N = 3; N <= 6; ++N) {
     Log("tj_apply: random all-to-all real apply=matrix, N={}", N);

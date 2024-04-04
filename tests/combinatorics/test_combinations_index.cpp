@@ -1,12 +1,12 @@
 #include "../catch.hpp"
 
-#include <hydra/combinatorics/combinations_index.h>
+#include <xdiag/combinatorics/combinations_index.h>
 #include <iostream>
 
 template <typename bit_t> void test_combinations_index() {
-  using namespace hydra;
-  using namespace hydra::combinatorics;
-  using namespace hydra::bits;
+  using namespace xdiag;
+  using namespace xdiag::combinatorics;
+  using namespace xdiag::bits;
 
   for (int n = 0; n < 7; ++n)
     for (int k = 0; k <= n; ++k) {
@@ -59,7 +59,7 @@ template <typename bit_t> void test_combinations_index() {
 }
 
 TEST_CASE("CombinationsIndex", "[combinatorics]") {
-  hydra::Log.out("Testing CombinationsIndex");
+  xdiag::Log.out("Testing CombinationsIndex");
   test_combinations_index<uint16_t>();
   test_combinations_index<uint32_t>();
   test_combinations_index<uint64_t>();

@@ -1,16 +1,16 @@
 #include "../../catch.hpp"
 #include <mpi.h>
 
-#include <hydra/basis/tj_distributed/basis_np.h>
-#include <hydra/bits/bitops.h>
-#include <hydra/combinatorics/binomial.h>
-#include <hydra/parallel/mpi/allreduce.h>
-#include <hydra/utils/close.h>
-#include <hydra/utils/print_macro.h>
+#include <xdiag/basis/tj_distributed/basis_np.h>
+#include <xdiag/bits/bitops.h>
+#include <xdiag/combinatorics/binomial.h>
+#include <xdiag/parallel/mpi/allreduce.h>
+#include <xdiag/utils/close.h>
+#include <xdiag/utils/print_macro.h>
 
 template <typename bit_t, typename coeff_t>
 void test_tj_distributed_basis_np_transpose() {
-  using namespace hydra;
+  using namespace xdiag;
 
   int mpi_rank, mpi_size;
   MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
@@ -135,7 +135,7 @@ void test_tj_distributed_basis_np_transpose() {
 }
 
 template <typename bit_t> void test_tj_distributed_basis_np() {
-  using namespace hydra;
+  using namespace xdiag;
 
   int mpi_rank, mpi_size;
   MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
@@ -157,7 +157,7 @@ template <typename bit_t> void test_tj_distributed_basis_np() {
         for (int64_t idx_ups = 0; idx_ups < (int64_t)basis.my_ups().size();
              ++idx_ups) {
           bit_t ups = basis.my_ups()[idx_ups];
-          REQUIRE(hydra::bits::popcnt(ups) == n_up);
+          REQUIRE(xdiag::bits::popcnt(ups) == n_up);
           if (idx_ups != 0) {
             REQUIRE(ups > ups_before);
           }
@@ -166,7 +166,7 @@ template <typename bit_t> void test_tj_distributed_basis_np() {
           int64_t idx_dns = 0;
           bit_t dns_before = 0;
           for (auto dns : dnss) {
-            REQUIRE(hydra::bits::popcnt(dns) == n_dn);
+            REQUIRE(xdiag::bits::popcnt(dns) == n_dn);
             if (idx_dns != 0) {
               REQUIRE(dns > dns_before);
             }
@@ -187,7 +187,7 @@ template <typename bit_t> void test_tj_distributed_basis_np() {
         for (int64_t idx_dns = 0; idx_dns < (int64_t)basis.my_dns().size();
              ++idx_dns) {
           bit_t dns = basis.my_dns()[idx_dns];
-          REQUIRE(hydra::bits::popcnt(dns) == n_dn);
+          REQUIRE(xdiag::bits::popcnt(dns) == n_dn);
           if (idx_dns != 0) {
             REQUIRE(dns > dns_before);
           }
@@ -196,7 +196,7 @@ template <typename bit_t> void test_tj_distributed_basis_np() {
           int64_t idx_ups = 0;
           bit_t ups_before = 0;
           for (auto ups : upss) {
-            REQUIRE(hydra::bits::popcnt(ups) == n_up);
+            REQUIRE(xdiag::bits::popcnt(ups) == n_up);
             if (idx_ups != 0) {
               REQUIRE(ups > ups_before);
             }
@@ -220,7 +220,7 @@ template <typename bit_t> void test_tj_distributed_basis_np() {
 }
 
 TEST_CASE("tj_distributed_basis_np", "[tj_distributed]") {
-  using namespace hydra;
+  using namespace xdiag;
 
   Log("tj_distributed_basis_np transpose test (uint16_t, double)");
   test_tj_distributed_basis_np_transpose<uint16_t, double>();

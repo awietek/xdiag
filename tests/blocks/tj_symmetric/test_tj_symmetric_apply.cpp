@@ -4,12 +4,12 @@
 
 #include "../electron/testcases_electron.h"
 #include "../tj/testcases_tj.h"
-#include <hydra/algebra/matrix.h>
-#include <hydra/algorithms/sparse_diag.h>
-#include <hydra/blocks/tj/tj_apply.h>
-#include <hydra/utils/close.h>
+#include <xdiag/algebra/matrix.h>
+#include <xdiag/algorithms/sparse_diag.h>
+#include <xdiag/blocks/tj/tj_apply.h>
+#include <xdiag/utils/close.h>
 
-using namespace hydra;
+using namespace xdiag;
 
 void test_apply_tj_symmetric(BondList bondlist, PermutationGroup space_group,
                              std::vector<Representation> irreps) {
@@ -65,8 +65,8 @@ void test_apply_tj_symmetric(BondList bondlist, PermutationGroup space_group,
 }
 
 void test_tj_symmetric_apply_chains(int64_t n_sites) {
-  using namespace hydra::testcases::tj;
-  using namespace hydra::testcases::electron;
+  using namespace xdiag::testcases::tj;
+  using namespace xdiag::testcases::electron;
 
   Log("tj_symmetric_apply: tJ chain, symmetric apply test, n_sites: {}",
       n_sites);
@@ -78,8 +78,8 @@ void test_tj_symmetric_apply_chains(int64_t n_sites) {
 }
 
 TEST_CASE("tj_symmetric_apply", "[tj]") {
-  using namespace hydra::testcases::tj;
-  using namespace hydra::testcases::electron;
+  using namespace xdiag::testcases::tj;
+  using namespace xdiag::testcases::electron;
 
   // Test linear chains
   for (int64_t n_sites = 2; n_sites < 8; ++n_sites) {
@@ -89,12 +89,12 @@ TEST_CASE("tj_symmetric_apply", "[tj]") {
     // test a 3x3 triangular lattice
     Log("tj_symmetric_apply: tJ 3x3 triangular, symmetric apply test");
     std::string lfile =
-        HYDRA_DIRECTORY "/misc/data/triangular.9.hop.sublattices.tsl.lat";
+        XDIAG_DIRECTORY "/misc/data/triangular.9.hop.sublattices.tsl.lat";
 
     auto bondlist = read_bondlist(lfile);
     bondlist["T"] = 1.0;
     bondlist["U"] = 5.0;
-    auto permutations = hydra::read_permutations(lfile);
+    auto permutations = xdiag::read_permutations(lfile);
     auto space_group = PermutationGroup(permutations);
 
     std::vector<std::pair<std::string, int64_t>> rep_name_mult = {
@@ -115,12 +115,12 @@ TEST_CASE("tj_symmetric_apply", "[tj]") {
     // test a 3x3 triangular lattice with complex flux
     Log("tj_symmetric_apply: tJ 3x3 triangular staggered, symmetric apply "
         "test, complex");
-    std::string lfile = HYDRA_DIRECTORY
+    std::string lfile = XDIAG_DIRECTORY
         "/misc/data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.lat";
 
     auto bondlist = read_bondlist(lfile);
     std::vector<double> etas{0.0, 0.1, 0.2, 0.3};
-    auto permutations = hydra::read_permutations(lfile);
+    auto permutations = xdiag::read_permutations(lfile);
     auto space_group = PermutationGroup(permutations);
 
     std::vector<std::pair<std::string, int64_t>> rep_name_mult = {

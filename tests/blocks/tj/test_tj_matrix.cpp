@@ -4,13 +4,13 @@
 
 #include "../spinhalf/testcases_spinhalf.h"
 #include "testcases_tj.h"
-#include <hydra/blocks/tj/tj_matrix.h>
-#include <hydra/blocks/spinhalf/spinhalf.h>
-#include <hydra/blocks/spinhalf/spinhalf_matrix.h>
+#include <xdiag/blocks/tj/tj_matrix.h>
+#include <xdiag/blocks/spinhalf/spinhalf.h>
+#include <xdiag/blocks/spinhalf/spinhalf_matrix.h>
 
-#include <hydra/utils/close.h>
+#include <xdiag/utils/close.h>
 
-using namespace hydra;
+using namespace xdiag;
 
 void test_tjmodel_e0_real(BondList bonds, int nup, int ndn, double e0) {
   int n_sites = bonds.n_sites();
@@ -44,13 +44,13 @@ void test_tjmodel_fulleigs(BondList bonds, arma::Col<double> exact_eigs) {
   }
   std::sort(all_eigs.begin(), all_eigs.end());
   REQUIRE(all_eigs.size() == exact_eigs.size());
-  // HydraPrint(all_eigs);
-  // HydraPrint(exact_eigs);
+  // XDiagPrint(all_eigs);
+  // XDiagPrint(exact_eigs);
   REQUIRE(close(arma::vec(all_eigs), exact_eigs));
 }
 
 TEST_CASE("tj_matrix", "[tj]") {
-  using namespace hydra::testcases::tj;
+  using namespace xdiag::testcases::tj;
 
   {
     Log("tj_matrix: HB all-to-all comparison");

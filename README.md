@@ -1,12 +1,12 @@
 ![license](https://img.shields.io/badge/license-Apache%202.0-blue)
 ![cpp](https://img.shields.io/badge/C++-17-blue.svg?style=flat&logo=c%2B%2B)
-[![docs](https://img.shields.io/badge/Documentation-here-red.svg)](https://awietek.github.io/hydradoc)
-[![Linux CI](https://github.com/awietek/hydra/actions/workflows/linux.yml/badge.svg?style=for-the-badge)](https://github.com/awietek/hydra/actions/workflows/linux.yml)
-[![Mac OSX CI](https://github.com/awietek/hydra/actions/workflows/osx.yml/badge.svg?style=for-the-badge)](https://github.com/awietek/hydra/actions/workflows/osx.yml)
+[![docs](https://img.shields.io/badge/Documentation-here-red.svg)](https://awietek.github.io/xdiag)
+[![Linux CI](https://github.com/awietek/xdiag/actions/workflows/linux.yml/badge.svg?style=for-the-badge)](https://github.com/awietek/xdiag/actions/workflows/linux.yml)
+[![Mac OSX CI](https://github.com/awietek/xdiag/actions/workflows/osx.yml/badge.svg?style=for-the-badge)](https://github.com/awietek/xdiag/actions/workflows/osx.yml)
 [![DOI](https://zenodo.org/badge/169422780.svg)](https://zenodo.org/badge/latestdoi/169422780)
 
 
-# Hydra
+# Xdiag
 ## High-performance Yxact Diagonalization Routines and Algorithms
 
 A C++ library to perform efficient Exact Diagonalizations of quantum many body systems. 
@@ -20,20 +20,19 @@ A C++ library to perform efficient Exact Diagonalizations of quantum many body s
 - modern C++17 impementation simplifying usage
 
 ### Installation:
-Clone this repository first. Afterwards, the **hydra** library can be compiled using the standard CMake instructions
+Clone this repository first. Afterwards, the **xdiag** library can be compiled using the standard CMake instructions
 ```bash
-mkdir build
-cd build
-cmake ..
-make
+cmake -S . -B build
+cmake --build build
+cmake --install build
 ```
 
 ### Example Code:
 ```cpp
-#include <hydra/all.h>
+#include <xdiag/all.h>
 
 int main() {
-  using namespace hydra;
+  using namespace xdiag;
 
   int n_sites = 16;
   int nup = n_sites / 2;
@@ -52,7 +51,7 @@ int main() {
 
   // Compute and print the ground state energy
   double e0 = eig0(bonds, block);
-  HydraPrint(e0);
+  XdiagPrint(e0);
   
   return EXIT_SUCCESS;
 }
@@ -60,7 +59,7 @@ int main() {
 ```
 
 ### Documentation
-The full documentation is available at [awietek.github.io/hydradoc](https://awietek.github.io/hydradoc).
+The full documentation is available at [awietek.github.io/xdiag](https://awietek.github.io/xdiag).
 
 ### About
 author:   Alexander Wietek

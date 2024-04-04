@@ -1,8 +1,8 @@
 #include <filesystem>
-#include <hydra/all.h>
+#include <xdiag/all.h>
 
 int main(int argc, char **argv) {
-  using namespace hydra;
+  using namespace xdiag;
   using namespace arma;
   using fmt::format;
   using hdf5_opts::append;
@@ -71,7 +71,7 @@ int main(int argc, char **argv) {
 
   ////////////////////////////////////////////////////////
   Log("Computing ground state ...");
-  HydraPrint(block);
+  XDiagPrint(block);
   auto gs = groundstate(bonds, block);
 
   for (int q = 0; q < n_sites; ++q) {

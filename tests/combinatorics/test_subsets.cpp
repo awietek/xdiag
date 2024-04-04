@@ -1,12 +1,12 @@
 #include "../catch.hpp"
 
 #include <iostream>
-#include <hydra/combinatorics/subsets.h>
+#include <xdiag/combinatorics/subsets.h>
 
 template <class bit_t>
 void test_subsets(){
-  using namespace hydra;
-  using namespace hydra::combinatorics;
+  using namespace xdiag;
+  using namespace xdiag::combinatorics;
   
   for (int n=0; n<8; ++n)
       {

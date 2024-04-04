@@ -1,6 +1,6 @@
 #include "testcases_tj.h"
 
-namespace hydra::testcases::tj {
+namespace xdiag::testcases::tj {
 
 BondList tJchain(int n_sites, double t, double J) {
 
@@ -783,4 +783,4 @@ std::tuple<BondList, arma::Col<double>> randomAlltoAll3() {
   return {bondlist, eigs};
 }
 
-} // namespace hydra::testcases::tj
+} // namespace xdiag::testcases::tj

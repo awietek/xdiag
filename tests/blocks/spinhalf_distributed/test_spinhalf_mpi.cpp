@@ -1,9 +1,9 @@
 #include <mpi.h>
 #include "../../catch.hpp"
 
-#include <hydra/all.h>
+#include <xdiag/all.h>
 
-using namespace hydra;
+using namespace xdiag;
 
 template <class bit_t>
 void test_spinhalf_mpi(int n_sites){

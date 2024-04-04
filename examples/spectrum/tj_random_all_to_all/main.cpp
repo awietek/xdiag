@@ -1,7 +1,7 @@
-#include <hydra/all.h>
+#include <xdiag/all.h>
 
 int main() {
-  using namespace hydra;
+  using namespace xdiag;
   using namespace arma;
 
   int n_sites = 8;

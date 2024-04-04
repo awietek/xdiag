@@ -1,20 +1,20 @@
 #include "../catch.hpp"
 
-#include <hydra/common.h>
-#include <hydra/utils/close.h>
-#include <hydra/io/file_toml.h>
-#include <hydra/operators/bond.h>
-#include <hydra/operators/bondlist.h>
-#include <hydra/symmetries/permutation.h>
-#include <hydra/symmetries/permutation_group.h>
-#include <hydra/symmetries/representation.h>
-#include <hydra/symmetries/operations/symmetry_operations.h>
+#include <xdiag/common.h>
+#include <xdiag/utils/close.h>
+#include <xdiag/io/file_toml.h>
+#include <xdiag/operators/bond.h>
+#include <xdiag/operators/bondlist.h>
+#include <xdiag/symmetries/permutation.h>
+#include <xdiag/symmetries/permutation_group.h>
+#include <xdiag/symmetries/representation.h>
+#include <xdiag/symmetries/operations/symmetry_operations.h>
 
 template <typename T> void test_write_read(T val) {
-  using namespace hydra;
+  using namespace xdiag;
 
   // Test writing
-  std::string filename = HYDRA_DIRECTORY"/misc/data/toml/write.toml";
+  std::string filename = XDIAG_DIRECTORY"/misc/data/toml/write.toml";
   auto fl = FileToml(filename, 'w');
   std::string key = "val";
 
@@ -24,17 +24,17 @@ template <typename T> void test_write_read(T val) {
   fl = FileToml(filename, 'r');
   T val_r = fl[key].as<T>();
 
-  // HydraPrint(val);
-  // HydraPrint(val_r);
+  // XDiagPrint(val);
+  // XDiagPrint(val_r);
   REQUIRE(val == val_r);
 }
 
 TEST_CASE("file_toml", "[io]") {
-  using namespace hydra;
+  using namespace xdiag;
   using namespace arma;
 
   // Just try to parse everything in the example toml file
-  std::string filename = HYDRA_DIRECTORY"/misc/data/toml/read.toml";
+  std::string filename = XDIAG_DIRECTORY"/misc/data/toml/read.toml";
   auto fl = FileToml(filename, 'r');
 
   // Parse String
@@ -114,26 +114,26 @@ TEST_CASE("file_toml", "[io]") {
 
   auto sx = fl["pauli.sx"].as<mat>();
   REQUIRE(close(sx, mat{{0.0, 0.5}, {0.5, 0.0}}));
-  // HydraPrint(sx);
+  // XDiagPrint(sx);
 
   auto sy = fl["pauli.sy"].as<cx_mat>();
   cx_mat syy{{0. + 0.i, 0. - 0.5i}, {0. + 0.5i, 0.0}};
-  // HydraPrint(sy);
-  // HydraPrint(syy);
+  // XDiagPrint(sy);
+  // XDiagPrint(syy);
 
   REQUIRE(close(sy, syy));
 
   auto sz = fl["pauli.sz"].as<mat>();
   REQUIRE(close(sz, mat{{0.5, 0.}, {0., -0.5}}));
-  // HydraPrint(sz);
+  // XDiagPrint(sz);
 
   auto szc = fl["pauli.sz"].as<cx_mat>();
   REQUIRE(close(szc, cx_mat{{0.5 + 0i, 0. + 0i}, {0. + 0i, -0.5 + 0i}}));
-  // HydraPrint(szc);
+  // XDiagPrint(szc);
 
   auto other = fl["pauli.other"].as<mat>();
   REQUIRE(close(other, mat{{1.0, 2.0, 3.0}, {5.0, 6.0, 7.0}}));
-  // HydraPrint(other);
+  // XDiagPrint(other);
 
   int a = 42;
   double b = 1.234;
@@ -157,7 +157,7 @@ TEST_CASE("file_toml", "[io]") {
   test_write_read(f);
   test_write_read(i);
 
-  filename = HYDRA_DIRECTORY"/misc/data/toml/write.toml";
+  filename = XDIAG_DIRECTORY"/misc/data/toml/write.toml";
   fl = FileToml(filename, 'w');
   fl["a"] = a;
   fl["b"] = b;
@@ -189,7 +189,7 @@ TEST_CASE("file_toml", "[io]") {
   auto lr = fl["l"].as<imat>();
   auto mr = fl["m"].as<umat>();
 
-  // HydraPrint(lr);
+  // XDiagPrint(lr);
   REQUIRE(a == ar);
   REQUIRE(b == br);
   REQUIRE(c == cr);
@@ -206,7 +206,7 @@ TEST_CASE("file_toml", "[io]") {
   fl["perm"] = p;
   test_write_read(p);
 
-  std::string lfile = HYDRA_DIRECTORY"/misc/data/triangular.j1j2jch/"
+  std::string lfile = XDIAG_DIRECTORY"/misc/data/triangular.j1j2jch/"
                       "triangular.12.j1j2jch.sublattices.fsl.lat";
   auto group = PermutationGroup(read_permutations(lfile));
   test_write_read(group);

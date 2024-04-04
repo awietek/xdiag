@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-using namespace hydra;
+using namespace xdiag;
 
 template <typename bit_t>
 void test_electron_symmetric_indexing(PermutationGroup const &group,
@@ -22,7 +22,7 @@ TEST_CASE("electron_symmetric_indexing", "[indexing]") {
   for (int n_sites = 0; n_sites <= max_N; ++n_sites) {
     Log("chain N={}", n_sites);
     auto [group, irreps] =
-        hydra::testcases::electron::get_cyclic_group_irreps(n_sites);
+        xdiag::testcases::electron::get_cyclic_group_irreps(n_sites);
     test_fermi_bool_table<uint16_t>(group);
     test_fermi_bool_table<uint32_t>(group);
     test_fermi_bool_table<uint64_t>(group);
@@ -31,7 +31,7 @@ TEST_CASE("electron_symmetric_indexing", "[indexing]") {
   Log("3x3 triangular");
   using bit_t = uint16_t;
   std::string lfile = "data/triangular.9.hop.sublattices.tsl.lat";
-  auto permutations = hydra::read_permutations(lfile);
+  auto permutations = xdiag::read_permutations(lfile);
   auto group = PermutationGroup(permutations);
 
   std::vector<std::pair<std::string, int>> rep_name_mult = {

@@ -1,6 +1,6 @@
-#include <hydra/all.h>
+#include <xdiag/all.h>
 
-using namespace hydra;
+using namespace xdiag;
 
 int main() try {
   say_hello();

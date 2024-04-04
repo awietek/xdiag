@@ -2,12 +2,12 @@
 
 #include <iostream>
 
-#include <hydra/combinatorics/subsets.h>
-#include <hydra/symmetries/permutation.h>
+#include <xdiag/combinatorics/subsets.h>
+#include <xdiag/symmetries/permutation.h>
 
 template <typename bit_t> void test_permutation_apply(int64_t n_sites) {
 
-  using namespace hydra;
+  using namespace xdiag;
 
   for (int64_t i = 0; i < 20; ++i) {
     auto id = identity_permutation(n_sites);
@@ -24,7 +24,7 @@ template <typename bit_t> void test_permutation_apply(int64_t n_sites) {
 }
 
 TEST_CASE("permutation", "[symmetries]") {
-  using namespace hydra;
+  using namespace xdiag;
   Log("Test Permutation");
 
   // Test if identity is correct

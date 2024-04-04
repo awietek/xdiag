@@ -1,7 +1,7 @@
-#include <hydra/all.h>
+#include <xdiag/all.h>
 
-void measure_density(int n_sites, hydra::StateCplx const &v) {
-  using namespace hydra;
+void measure_density(int n_sites, xdiag::StateCplx const &v) {
+  using namespace xdiag;
 
   for (int i = 0; i < n_sites; ++i) {
     auto sz = inner(Bond("NUMBER", i), v);
@@ -11,7 +11,7 @@ void measure_density(int n_sites, hydra::StateCplx const &v) {
 }
 
 int main() {
-  using namespace hydra;  
+  using namespace xdiag;  
   int n_sites = 8;
   double t = 1.0;
   double U = 8.0;

@@ -2,13 +2,13 @@
 
 #include <iostream>
 
-#include <hydra/combinatorics/combinations.h>
-#include <hydra/combinatorics/subsets.h>
-#include <hydra/symmetries/group_action/group_action.h>
-#include <hydra/symmetries/group_action/group_action_sublattice.h>
-#include <hydra/symmetries/operations/symmetry_operations.h>
+#include <xdiag/combinatorics/combinations.h>
+#include <xdiag/combinatorics/subsets.h>
+#include <xdiag/symmetries/group_action/group_action.h>
+#include <xdiag/symmetries/group_action/group_action_sublattice.h>
+#include <xdiag/symmetries/operations/symmetry_operations.h>
 
-using namespace hydra;
+using namespace xdiag;
 
 template <class Action1, class Action2>
 void compare_actions(Action1 &&action1, Action2 &&action2) {
@@ -62,8 +62,8 @@ template <class bit_t> void test_group_action_sublattice() {
   {
     Log("GroupActionSublattice: 1 sublattice");
     std::string lfile =
-        HYDRA_DIRECTORY "/misc/data/square.8.heisenberg.2sl.lat";
-    auto permutations = hydra::read_permutations(lfile);
+        XDIAG_DIRECTORY "/misc/data/square.8.heisenberg.2sl.lat";
+    auto permutations = xdiag::read_permutations(lfile);
     auto perm_group = PermutationGroup(permutations);
     auto action = GroupAction(perm_group);
     auto action_sl = GroupActionSublattice<bit_t, 1>(perm_group);
@@ -74,8 +74,8 @@ template <class bit_t> void test_group_action_sublattice() {
   {
     Log("GroupActionSublattice: 2 sublattice");
     std::string lfile =
-        HYDRA_DIRECTORY "/misc/data/square.8.heisenberg.2sl.lat";
-    auto permutations = hydra::read_permutations(lfile);
+        XDIAG_DIRECTORY "/misc/data/square.8.heisenberg.2sl.lat";
+    auto permutations = xdiag::read_permutations(lfile);
     auto perm_group = PermutationGroup(permutations);
     auto action = GroupAction(perm_group);
     auto action_sl = GroupActionSublattice<bit_t, 2>(perm_group);
@@ -86,8 +86,8 @@ template <class bit_t> void test_group_action_sublattice() {
   {
     Log("GroupActionSublattice: 3 sublattice");
     std::string lfile =
-        HYDRA_DIRECTORY "/misc/data/square.9.heisenberg.3sl.lat";
-    auto permutations = hydra::read_permutations(lfile);
+        XDIAG_DIRECTORY "/misc/data/square.9.heisenberg.3sl.lat";
+    auto permutations = xdiag::read_permutations(lfile);
     auto perm_group = PermutationGroup(permutations);
     auto action = GroupAction(perm_group);
     auto action_sl = GroupActionSublattice<bit_t, 3>(perm_group);
@@ -97,9 +97,9 @@ template <class bit_t> void test_group_action_sublattice() {
   // Three sublattice (triangular example)
   {
     Log("GroupActionSublattice: 3 sublattice (triangular)");
-    std::string lfile = HYDRA_DIRECTORY
+    std::string lfile = XDIAG_DIRECTORY
         "/misc/data/triangular.9.Jz1Jz2Jx1Jx2D1.sublattices.tsl.lat";
-    auto permutations = hydra::read_permutations(lfile);
+    auto permutations = xdiag::read_permutations(lfile);
     auto perm_group = PermutationGroup(permutations);
     auto action = GroupAction(perm_group);
     auto action_sl = GroupActionSublattice<bit_t, 3>(perm_group);
@@ -110,8 +110,8 @@ template <class bit_t> void test_group_action_sublattice() {
   {
     Log("GroupActionSublattice: 4 sublattice");
     std::string lfile =
-        HYDRA_DIRECTORY "/misc/data/square.8.heisenberg.4sl.lat";
-    auto permutations = hydra::read_permutations(lfile);
+        XDIAG_DIRECTORY "/misc/data/square.8.heisenberg.4sl.lat";
+    auto permutations = xdiag::read_permutations(lfile);
     auto perm_group = PermutationGroup(permutations);
     auto action = GroupAction(perm_group);
     auto action_sl = GroupActionSublattice<bit_t, 4>(perm_group);
@@ -121,8 +121,8 @@ template <class bit_t> void test_group_action_sublattice() {
   {
     Log("GroupActionSublattice: 5 sublattice");
     std::string lfile =
-        HYDRA_DIRECTORY "/misc/data/square.10.heisenberg.5sl.lat";
-    auto permutations = hydra::read_permutations(lfile);
+        XDIAG_DIRECTORY "/misc/data/square.10.heisenberg.5sl.lat";
+    auto permutations = xdiag::read_permutations(lfile);
     auto perm_group = PermutationGroup(permutations);
     auto action = GroupAction(perm_group);
     auto action_sl = GroupActionSublattice<bit_t, 5>(perm_group);

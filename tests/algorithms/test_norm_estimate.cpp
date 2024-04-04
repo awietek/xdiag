@@ -4,17 +4,17 @@
 
 #include "../blocks/electron/testcases_electron.h"
 #include "../blocks/spinhalf/testcases_spinhalf.h"
-#include <hydra/extern/armadillo/armadillo>
-#include <hydra/algebra/matrix.h>
-#include <hydra/algorithms/norm_estimate.h>
-#include <hydra/common.h>
-#include <hydra/utils/logger.h>
+#include <xdiag/extern/armadillo/armadillo>
+#include <xdiag/algebra/matrix.h>
+#include <xdiag/algorithms/norm_estimate.h>
+#include <xdiag/common.h>
+#include <xdiag/utils/logger.h>
 
-using namespace hydra;
+using namespace xdiag;
 
 template <typename block_t>
 void test_operator_norm_real(block_t const &block, BondList const &bonds) {
-  using namespace hydra;
+  using namespace xdiag;
   using namespace arma;
 
   auto H = matrix(bonds, block, block);
@@ -33,7 +33,7 @@ void test_operator_norm_real(block_t const &block, BondList const &bonds) {
 
 template <typename block_t>
 void test_operator_norm_cplx(block_t const &block, BondList const &bonds) {
-  using namespace hydra;
+  using namespace xdiag;
   using namespace arma;
 
   auto H = matrixC(bonds, block, block);
@@ -51,10 +51,10 @@ void test_operator_norm_cplx(block_t const &block, BondList const &bonds) {
 
 TEST_CASE("norm_estimate", "[algorithms]") {
 
-  using namespace hydra::testcases::spinhalf;
-  using hydra::testcases::electron::get_cyclic_group_irreps_mult;
+  using namespace xdiag::testcases::spinhalf;
+  using xdiag::testcases::electron::get_cyclic_group_irreps_mult;
 
-  using namespace hydra;
+  using namespace xdiag;
   using namespace arma;
 
   Log.set_verbosity(1);
@@ -89,12 +89,12 @@ TEST_CASE("norm_estimate", "[algorithms]") {
     }
   }
   for (int n_sites = 2; n_sites < 12; ++n_sites) {
-    // HydraPrint(n_sites);
+    // XDiagPrint(n_sites);
 
     Log("norm_estimate for Heisenberg all-to-all random, N={}", n_sites);
 
     // Random HB alltoall
-    auto bonds = hydra::testcases::spinhalf::HB_alltoall(n_sites);
+    auto bonds = xdiag::testcases::spinhalf::HB_alltoall(n_sites);
     auto block = Spinhalf(n_sites);
     test_operator_norm_real(block, bonds);
     for (int nup = 0; nup <= n_sites; ++nup) {
@@ -113,7 +113,7 @@ TEST_CASE("norm_estimate", "[algorithms]") {
       auto block = Spinhalf(n_sites, nup);
       test_operator_norm_real(block, bonds);
       for (auto irrep : irreps) {
-        // HydraPrint(irrep);
+        // XDiagPrint(irrep);
         auto block = Spinhalf(n_sites, nup, group, irrep);
         if (irrep.isreal()) {
           test_operator_norm_real(block, bonds);
@@ -127,12 +127,12 @@ TEST_CASE("norm_estimate", "[algorithms]") {
   {
     Log("norm_estimate for tj_symmetric_matrix: tJ 3x3 triangular s");
     std::string lfile =
-        HYDRA_DIRECTORY "/misc/data/triangular.9.hop.sublattices.tsl.lat";
+        XDIAG_DIRECTORY "/misc/data/triangular.9.hop.sublattices.tsl.lat";
     int n_sites = 9;
     auto bonds = read_bondlist(lfile);
     bonds["T"] = 1.0;
     bonds["J"] = 0.4;
-    auto permutations = hydra::read_permutations(lfile);
+    auto permutations = xdiag::read_permutations(lfile);
     auto group = PermutationGroup(permutations);
 
     std::vector<std::pair<std::string, int>> rep_name_mult = {
@@ -172,12 +172,12 @@ TEST_CASE("norm_estimate", "[algorithms]") {
     // test a 3x3 triangular lattice with complex flux
     Log("norm_estimate for tj_symmetric_matrix: tJ 3x3 triangular staggered "
         "flux, complex");
-    std::string lfile = HYDRA_DIRECTORY
+    std::string lfile = XDIAG_DIRECTORY
         "/misc/data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.lat";
 
     auto bonds = read_bondlist(lfile);
     std::vector<double> etas{0.0, 0.1, 0.2, 0.3};
-    auto permutations = hydra::read_permutations(lfile);
+    auto permutations = xdiag::read_permutations(lfile);
     auto group = PermutationGroup(permutations);
 
     std::vector<std::pair<std::string, int>> rep_name_mult = {

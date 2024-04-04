@@ -1,6 +1,6 @@
 #include "../catch.hpp"
 
-#include <hydra/all.h>
+#include <xdiag/all.h>
 #include <iomanip>
 #include <lila/all.h>
 #include <random>
@@ -8,8 +8,8 @@
 #include "testcases_entanglement_entropy.h"
 
 using namespace lila;
-using namespace hydra;
-using namespace hydra::entanglementtestcases;
+using namespace xdiag;
+using namespace xdiag::entanglementtestcases;
 
 template <class coeff_t>
 void test_tJ_entanglement_entropy(int N, BondList bondlist, Couplings couplings,

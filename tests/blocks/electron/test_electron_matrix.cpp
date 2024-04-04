@@ -6,11 +6,11 @@
 #include "../tj/testcases_tj.h"
 #include "testcases_electron.h"
 
-#include <hydra/blocks/electron/electron_matrix.h>
-#include <hydra/algebra/matrix.h>
-#include <hydra/utils/close.h>
+#include <xdiag/blocks/electron/electron_matrix.h>
+#include <xdiag/algebra/matrix.h>
+#include <xdiag/utils/close.h>
 
-using namespace hydra;
+using namespace xdiag;
 
 void test_electron_np_no_np_matrix(int n_sites, BondList bonds) {
 
@@ -39,7 +39,7 @@ void test_electron_np_no_np_matrix(int n_sites, BondList bonds) {
 }
 
 TEST_CASE("electron_matrix", "[electron]") {
-  using namespace hydra::testcases::electron;
+  using namespace xdiag::testcases::electron;
 
   BondList bondlist;
 
@@ -275,7 +275,7 @@ TEST_CASE("electron_matrix", "[electron]") {
 
     auto [bondlist, eigs_correct] = randomAlltoAll4NoU();
 
-    // Compute full spectrum in hydra
+    // Compute full spectrum in xdiag
     n_sites = 4;
     std::vector<double> all_eigs;
     for (int nup = 0; nup <= n_sites; ++nup)
@@ -313,7 +313,7 @@ TEST_CASE("electron_matrix", "[electron]") {
     Log.out("electron_matrix: random all-to-all complex exchange test, N={}",
             N);
 
-    auto bonds = hydra::testcases::tj::tj_alltoall_complex(N);
+    auto bonds = xdiag::testcases::tj::tj_alltoall_complex(N);
 
     for (int nup = 0; nup <= N; ++nup)
       for (int ndn = 0; ndn <= N - nup; ++ndn) {
@@ -357,7 +357,7 @@ TEST_CASE("electron_matrix", "[electron]") {
     Log.out("electron_matrix: random all-to-all complex exchange test Np "
             "<-> NoNp, N={}",
             N);
-    auto bonds = hydra::testcases::tj::tj_alltoall_complex(N);
+    auto bonds = xdiag::testcases::tj::tj_alltoall_complex(N);
     test_electron_np_no_np_matrix(N, bonds);
   }
 }

@@ -1,6 +1,6 @@
-#include <hydra/all.h>
+#include <xdiag/all.h>
 
-using namespace hydra;
+using namespace xdiag;
 
 void measure_density(int n_sites, State const &v) {
   for (int i = 0; i < n_sites; ++i) {

@@ -1,15 +1,15 @@
 #include "../catch.hpp"
 
-#include <hydra/extern/armadillo/armadillo>
-#include <hydra/common.h>
-#include <hydra/io/file_h5.h>
+#include <xdiag/extern/armadillo/armadillo>
+#include <xdiag/common.h>
+#include <xdiag/io/file_h5.h>
 
-#ifdef HYDRA_USE_HDF5
+#ifdef XDIAG_USE_HDF5
 TEST_CASE("file_h5", "[io]") {
-  using namespace hydra;
+  using namespace xdiag;
   using namespace arma;
 
-  std::string filename = HYDRA_DIRECTORY "/misc/data/hdf5/write.h5";
+  std::string filename = XDIAG_DIRECTORY "/misc/data/hdf5/write.h5";
   auto fl = FileH5(filename, "w!");
   fl["val"] = 12;
   fl["test/to"] = 22;
