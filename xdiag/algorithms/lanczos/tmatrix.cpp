@@ -1,9 +1,9 @@
-#include "tmatrix.h"
+#include "tmatrix.hpp"
 
 #include <cassert>
 
-#include <xdiag/utils/logger.h>
-#include <xdiag/utils/print_macro.h>
+#include <xdiag/utils/logger.hpp>
+#include <xdiag/utils/print_macro.hpp>
 
 namespace xdiag {
 

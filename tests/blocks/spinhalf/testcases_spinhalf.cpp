@@ -1,4 +1,4 @@
-#include "testcases_spinhalf.h"
+#include "testcases_spinhalf.hpp"
 
 #include <cmath>
 

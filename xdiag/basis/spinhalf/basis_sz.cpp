@@ -1,10 +1,9 @@
-#include "basis_sz.h"
+#include "basis_sz.hpp"
 
-#include <xdiag/combinatorics/binomial.h>
-#include <xdiag/combinatorics/combinations_index.h>
-
+#include <xdiag/combinatorics/binomial.hpp>
+#include <xdiag/combinatorics/combinations_index.hpp>
 #ifdef _OPENMP
-#include <xdiag/parallel/omp/omp_utils.h>
+#include <xdiag/parallel/omp/omp_utils.hpp>
 #endif
 
 namespace xdiag::basis::spinhalf {

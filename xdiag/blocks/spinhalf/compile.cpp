@@ -1,9 +1,10 @@
-#include "compile.h"
-#include <xdiag/operators/compiler.h>
-#include <xdiag/operators/non_branching_bonds.h>
-#include <xdiag/utils/logger.h>
-#include <xdiag/utils/print_macro.h>
-#include <xdiag/utils/timing.h>
+#include "compile.hpp"
+
+#include <xdiag/operators/compiler.hpp>
+#include <xdiag/operators/non_branching_bonds.hpp>
+#include <xdiag/utils/logger.hpp>
+#include <xdiag/utils/print_macro.hpp>
+#include <xdiag/utils/timing.hpp>
 
 namespace xdiag::spinhalf {
 

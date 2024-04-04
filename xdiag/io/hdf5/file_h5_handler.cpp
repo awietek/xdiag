@@ -1,10 +1,10 @@
 #ifdef XDIAG_USE_HDF5
-#include "file_h5_handler.h"
+#include "file_h5_handler.hpp"
 
 #include <complex>
 #include <vector>
 
-#include <xdiag/io/hdf5/write.h>
+#include <xdiag/io/hdf5/write.hpp>
 
 namespace xdiag::hdf5 {
 

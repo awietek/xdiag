@@ -1,11 +1,11 @@
-#include "permutation_group.h"
+#include "permutation_group.hpp"
 
 #include <cassert>
 #include <fstream>
 #include <iostream>
 
-#include <xdiag/symmetries/operations/symmetry_operations.h>
-#include <xdiag/utils/logger.h>
+#include <xdiag/symmetries/operations/symmetry_operations.hpp>
+#include <xdiag/utils/logger.hpp>
 
 namespace xdiag {
 

@@ -1,10 +1,10 @@
-#include "combinations.h"
+#include "combinations.hpp"
 
-#include <xdiag/combinatorics/bit_patterns.h>
-#include <xdiag/utils/logger.h>
+#include <xdiag/combinatorics/bit_patterns.hpp>
+#include <xdiag/utils/logger.hpp>
 
 #ifdef _OPENMP
-#include <xdiag/parallel/omp/omp_utils.h>
+#include <xdiag/parallel/omp/omp_utils.hpp>
 #endif
 
 namespace xdiag::combinatorics {

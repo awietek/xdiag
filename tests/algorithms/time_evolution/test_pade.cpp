@@ -3,8 +3,8 @@
 //
 
 #include "../../catch.hpp"
-#include <xdiag/algorithms/time_evolution/pade_matrix_exponential.h>
-#include <xdiag/utils/logger.h>
+#include <xdiag/algorithms/time_evolution/pade_matrix_exponential.hpp>
+#include <xdiag/utils/logger.hpp>
 
 #include <complex>
 #include <iostream>

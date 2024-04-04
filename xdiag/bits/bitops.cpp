@@ -1,4 +1,4 @@
-#include "bitops.h"
+#include "bitops.hpp"
 
 #include <sstream>
 

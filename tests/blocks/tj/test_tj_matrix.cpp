@@ -2,13 +2,12 @@
 
 #include <iostream>
 
-#include "../spinhalf/testcases_spinhalf.h"
-#include "testcases_tj.h"
-#include <xdiag/blocks/tj/tj_matrix.h>
-#include <xdiag/blocks/spinhalf/spinhalf.h>
-#include <xdiag/blocks/spinhalf/spinhalf_matrix.h>
-
-#include <xdiag/utils/close.h>
+#include "../spinhalf/testcases_spinhalf.hpp"
+#include "testcases_tj.hpp"
+#include <xdiag/blocks/spinhalf/spinhalf.hpp>
+#include <xdiag/blocks/spinhalf/spinhalf_matrix.hpp>
+#include <xdiag/blocks/tj/tj_matrix.hpp>
+#include <xdiag/utils/close.hpp>
 
 using namespace xdiag;
 

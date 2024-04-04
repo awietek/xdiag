@@ -1,6 +1,6 @@
-#include "tj_distributed.h"
+#include "tj_distributed.hpp"
 
-#include <xdiag/combinatorics/binomial.h>
+#include <xdiag/combinatorics/binomial.hpp>
 
 namespace xdiag {
 

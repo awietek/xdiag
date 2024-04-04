@@ -3,8 +3,9 @@
 //
 #include <algorithm>
 #include <cmath>
+
 #include <xdiag/extern/armadillo/armadillo>
-#include <xdiag/common.h>
+#include <xdiag/common.hpp>
 
 namespace xdiag {
 

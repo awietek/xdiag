@@ -1,7 +1,8 @@
-#include "read_vectors.h"
+#include "read_vectors.hpp"
 
 #include <sstream>
-#include <xdiag/common.h>
+
+#include <xdiag/common.hpp>
 
 namespace xdiag {
 

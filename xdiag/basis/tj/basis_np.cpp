@@ -1,6 +1,6 @@
-#include "basis_np.h"
+#include "basis_np.hpp"
 
-#include <xdiag/combinatorics/binomial.h>
+#include <xdiag/combinatorics/binomial.hpp>
 
 namespace xdiag::basis::tj {
 

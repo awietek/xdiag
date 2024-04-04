@@ -1,9 +1,9 @@
 #include <mpi.h>
 #include "../../catch.hpp"
 
-#include <xdiag/all.h>
+#include <xdiag/all.hpp>
 
-#include "../../../test/blocks/spinhalf/testcases_spinhalf.h"
+#include "../../../test/blocks/spinhalf/testcases_spinhalf.hpp"
 
 using namespace xdiag;
 

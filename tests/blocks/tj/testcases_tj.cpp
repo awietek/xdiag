@@ -1,4 +1,4 @@
-#include "testcases_tj.h"
+#include "testcases_tj.hpp"
 
 namespace xdiag::testcases::tj {
 

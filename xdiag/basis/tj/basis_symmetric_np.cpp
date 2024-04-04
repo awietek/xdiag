@@ -1,7 +1,7 @@
-#include "basis_symmetric_np.h"
+#include "basis_symmetric_np.hpp"
 
-#include <xdiag/combinatorics/combinations.h>
-#include <xdiag/symmetries/operations/symmetry_operations.h>
+#include <xdiag/combinatorics/combinations.hpp>
+#include <xdiag/symmetries/operations/symmetry_operations.hpp>
 
 namespace xdiag::basis::tj {
 

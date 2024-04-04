@@ -1,6 +1,6 @@
-#include "basis_no_sz.h"
+#include "basis_no_sz.hpp"
 
-#include <xdiag/combinatorics/binomial.h>
+#include <xdiag/combinatorics/binomial.hpp>
 
 namespace xdiag::basis::spinhalf {
 

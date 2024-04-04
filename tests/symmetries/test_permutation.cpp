@@ -2,8 +2,8 @@
 
 #include <iostream>
 
-#include <xdiag/combinatorics/subsets.h>
-#include <xdiag/symmetries/permutation.h>
+#include <xdiag/combinatorics/subsets.hpp>
+#include <xdiag/symmetries/permutation.hpp>
 
 template <typename bit_t> void test_permutation_apply(int64_t n_sites) {
 

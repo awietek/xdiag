@@ -2,12 +2,13 @@
 
 #include <iostream>
 
-#include <xdiag/blocks/tj/tj.h>
-#include <xdiag/utils/print_macro.h>
+#include <xdiag/blocks/tj/tj.hpp>
+#include <xdiag/utils/print_macro.hpp>
 
 using namespace xdiag;
 
-void check_dimensions_sum_up_tj_symmetric(int64_t n_sites, PermutationGroup group,
+void check_dimensions_sum_up_tj_symmetric(int64_t n_sites,
+                                          PermutationGroup group,
                                           std::vector<Representation> irreps) {
   using combinatorics::binomial;
 
@@ -29,7 +30,7 @@ void check_dimensions_sum_up_tj_symmetric(int64_t n_sites, PermutationGroup grou
     }
   }
   int64_t p = 1;
-  for (int64_t i=0; i<n_sites; ++i){
+  for (int64_t i = 0; i < n_sites; ++i) {
     p *= 3;
   }
   REQUIRE(sum_of_dims == p);

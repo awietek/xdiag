@@ -1,5 +1,5 @@
 #ifdef XDIAG_USE_HDF5
-#include "types.h"
+#include "types.hpp"
 
 #include <complex>
 #include <cstdint>

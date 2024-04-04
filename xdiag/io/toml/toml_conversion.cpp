@@ -1,9 +1,9 @@
-#include "toml_conversion.h"
+#include "toml_conversion.hpp"
 
 #include <cassert>
 
-#include <xdiag/common.h>
-#include <xdiag/utils/logger.h>
+#include <xdiag/common.hpp>
+#include <xdiag/utils/logger.hpp>
 
 namespace xdiag::io {
 

@@ -1,13 +1,13 @@
 #ifdef XDIAG_USE_HDF5
-#include "write.h"
+#include "write.hpp"
 
 #include <complex>
 #include <cstdint>
 #include <vector>
 
-#include <xdiag/io/hdf5/types.h>
-#include <xdiag/io/hdf5/utils.h>
-#include <xdiag/utils/logger.h>
+#include <xdiag/io/hdf5/types.hpp>
+#include <xdiag/io/hdf5/utils.hpp>
+#include <xdiag/utils/logger.hpp>
 
 namespace xdiag::hdf5 {
 

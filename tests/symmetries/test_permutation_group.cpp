@@ -1,9 +1,10 @@
 #include "../catch.hpp"
 
 #include <iostream>
-#include <xdiag/combinatorics/subsets.h>
-#include <xdiag/symmetries/permutation_group.h>
-#include <xdiag/symmetries/operations/symmetry_operations.h>
+
+#include <xdiag/combinatorics/subsets.hpp>
+#include <xdiag/symmetries/permutation_group.hpp>
+#include <xdiag/symmetries/operations/symmetry_operations.hpp>
 
 TEST_CASE("permutation_group", "[symmetries]") {
   using namespace xdiag;

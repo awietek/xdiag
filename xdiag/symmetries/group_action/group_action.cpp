@@ -1,8 +1,8 @@
-#include "group_action.h"
+#include "group_action.hpp"
 
-#include <xdiag/symmetries/operations/fermi_sign.h>
-#include <xdiag/symmetries/operations/group_action_operations.h>
-#include <xdiag/symmetries/operations/symmetry_operations.h>
+#include <xdiag/symmetries/operations/fermi_sign.hpp>
+#include <xdiag/symmetries/operations/group_action_operations.hpp>
+#include <xdiag/symmetries/operations/symmetry_operations.hpp>
 
 namespace xdiag {
 

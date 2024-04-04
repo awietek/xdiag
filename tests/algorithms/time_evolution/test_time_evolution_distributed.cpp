@@ -1,15 +1,15 @@
 #include "../../catch.hpp"
 
-#include <xdiag/algebra/algebra.h>
-#include <xdiag/algebra/apply.h>
-#include <xdiag/algorithms/time_evolution/time_evolution.h>
-#include <xdiag/blocks/blocks.h>
-#include <xdiag/blocks/tj/tj.h>
-#include <xdiag/blocks/tj_distributed/tj_distributed.h>
-#include <xdiag/states/product_state.h>
-#include <xdiag/states/random_state.h>
-#include <xdiag/states/state.h>
-#include <xdiag/utils/close.h>
+#include <xdiag/algebra/algebra.hpp>
+#include <xdiag/algebra/apply.hpp>
+#include <xdiag/algorithms/time_evolution/time_evolution.hpp>
+#include <xdiag/blocks/blocks.hpp>
+#include <xdiag/blocks/tj/tj.hpp>
+#include <xdiag/blocks/tj_distributed/tj_distributed.hpp>
+#include <xdiag/states/product_state.hpp>
+#include <xdiag/states/random_state.hpp>
+#include <xdiag/states/state.hpp>
+#include <xdiag/utils/close.hpp>
 
 TEST_CASE("time_evolution_distributed", "[time_evolution]") try {
   using namespace xdiag;

@@ -1,7 +1,8 @@
-#include "cdot_distributed.h"
+#include "cdot_distributed.hpp"
 
 #include <cmath>
 #include <cstring>
+
 #include <mpi.h>
 
 namespace xdiag {

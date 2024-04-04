@@ -1,15 +1,15 @@
 #include "../../catch.hpp"
 
-#include "../electron/testcases_electron.h"
-#include "../spinhalf/testcases_spinhalf.h"
-
 #include <iostream>
 
-#include <xdiag/algebra/algebra.h>
-#include <xdiag/algebra/matrix.h>
-#include <xdiag/algorithms/sparse_diag.h>
-#include <xdiag/blocks/spinhalf/spinhalf_apply.h>
-#include <xdiag/utils/close.h>
+#include "../electron/testcases_electron.hpp"
+#include "../spinhalf/testcases_spinhalf.hpp"
+
+#include <xdiag/algebra/algebra.hpp>
+#include <xdiag/algebra/matrix.hpp>
+#include <xdiag/algorithms/sparse_diag.hpp>
+#include <xdiag/blocks/spinhalf/spinhalf_apply.hpp>
+#include <xdiag/utils/close.hpp>
 
 using namespace xdiag;
 
@@ -71,10 +71,9 @@ void test_spinhalf_symmetric_spectra(BondList bondlist,
   }
 }
 
-void test_spinhalf_symmetric_spectra_no_sz(BondList bondlist,
-                                           PermutationGroup space_group,
-                                           std::vector<Representation> irreps,
-                                           std::vector<int64_t> multiplicities) {
+void test_spinhalf_symmetric_spectra_no_sz(
+    BondList bondlist, PermutationGroup space_group,
+    std::vector<Representation> irreps, std::vector<int64_t> multiplicities) {
   int64_t n_sites = space_group.n_sites();
   assert(irreps.size() == multiplicities.size());
 

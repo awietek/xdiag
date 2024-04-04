@@ -2,10 +2,10 @@
 
 #include <iostream>
 
-#include <xdiag/combinatorics/combinations.h>
-#include <xdiag/combinatorics/subsets.h>
-#include <xdiag/symmetries/group_action/group_action.h>
-#include <xdiag/symmetries/group_action/group_action_lookup.h>
+#include <xdiag/combinatorics/combinations.hpp>
+#include <xdiag/combinatorics/subsets.hpp>
+#include <xdiag/symmetries/group_action/group_action.hpp>
+#include <xdiag/symmetries/group_action/group_action_lookup.hpp>
 
 using namespace xdiag;
 

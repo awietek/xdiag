@@ -1,7 +1,7 @@
-#include "spinhalf.h"
+#include "spinhalf.hpp"
 
-#include <xdiag/combinatorics/binomial.h>
-#include <xdiag/utils/logger.h>
+#include <xdiag/combinatorics/binomial.hpp>
+#include <xdiag/utils/logger.hpp>
 
 namespace xdiag {
 

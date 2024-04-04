@@ -1,14 +1,14 @@
 #include "../catch.hpp"
 
-#include <xdiag/common.h>
-#include <xdiag/utils/close.h>
-#include <xdiag/io/file_toml.h>
-#include <xdiag/operators/bond.h>
-#include <xdiag/operators/bondlist.h>
-#include <xdiag/symmetries/permutation.h>
-#include <xdiag/symmetries/permutation_group.h>
-#include <xdiag/symmetries/representation.h>
-#include <xdiag/symmetries/operations/symmetry_operations.h>
+#include <xdiag/common.hpp>
+#include <xdiag/utils/close.hpp>
+#include <xdiag/io/file_toml.hpp>
+#include <xdiag/operators/bond.hpp>
+#include <xdiag/operators/bondlist.hpp>
+#include <xdiag/symmetries/permutation.hpp>
+#include <xdiag/symmetries/permutation_group.hpp>
+#include <xdiag/symmetries/representation.hpp>
+#include <xdiag/symmetries/operations/symmetry_operations.hpp>
 
 template <typename T> void test_write_read(T val) {
   using namespace xdiag;

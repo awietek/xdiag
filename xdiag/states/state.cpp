@@ -1,6 +1,6 @@
-#include "state.h"
+#include "state.hpp"
 
-#include <xdiag/blocks/blocks.h>
+#include <xdiag/blocks/blocks.hpp>
 
 namespace xdiag {
 

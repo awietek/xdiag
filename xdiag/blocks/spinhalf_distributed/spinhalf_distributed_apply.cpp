@@ -1,8 +1,8 @@
-#include "tj_apply.h"
+#include "tj_apply.hpp"
 
-#include <xdiag/algebra/fill.h>
-#include <xdiag/blocks/tj/compile.h>
-#include <xdiag/blocks/tj/dispatch.h>
+#include <xdiag/algebra/fill.hpp>
+#include <xdiag/blocks/tj/compile.hpp>
+#include <xdiag/blocks/tj/dispatch.hpp>
 
 namespace xdiag {
 template <typename coeff_t>

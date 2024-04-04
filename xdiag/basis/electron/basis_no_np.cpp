@@ -1,4 +1,4 @@
-#include "basis_no_np.h"
+#include "basis_no_np.hpp"
 
 namespace xdiag::basis::electron {
 

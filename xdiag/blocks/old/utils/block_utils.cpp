@@ -1,6 +1,6 @@
-#include "block_utils.h"
+#include "block_utils.hpp"
 
-#include <xdiag/utils/logger.h>
+#include <xdiag/utils/logger.hpp>
 #include <set>
 namespace xdiag::utils {
 

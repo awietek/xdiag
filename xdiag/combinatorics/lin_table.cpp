@@ -1,8 +1,8 @@
-#include "lin_table.h"
+#include "lin_table.hpp"
 
-#include <xdiag/bits/bitops.h>
-#include <xdiag/combinatorics/binomial.h>
-#include <xdiag/combinatorics/combinations.h>
+#include <xdiag/bits/bitops.hpp>
+#include <xdiag/combinatorics/binomial.hpp>
+#include <xdiag/combinatorics/combinations.hpp>
 
 namespace xdiag::combinatorics {
 

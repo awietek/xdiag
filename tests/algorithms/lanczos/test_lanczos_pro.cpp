@@ -2,17 +2,16 @@
 
 #include <iostream>
 
-#include <xdiag/algebra/algebra.h>
-#include <xdiag/algebra/apply.h>
-
-#include <xdiag/algorithms/lanczos/lanczos_pro.h>
-#include <xdiag/algorithms/sparse_diag.h>
-#include <xdiag/io/file_toml.h>
-#include <xdiag/operators/bondlist.h>
-#include <xdiag/symmetries/permutation_group.h>
-#include <xdiag/symmetries/representation.h>
-#include <xdiag/utils/close.h>
-#include <xdiag/utils/print_macro.h>
+#include <xdiag/algebra/algebra.hpp>
+#include <xdiag/algebra/apply.hpp>
+#include <xdiag/algorithms/lanczos/lanczos_pro.hpp>
+#include <xdiag/algorithms/sparse_diag.hpp>
+#include <xdiag/io/file_toml.hpp>
+#include <xdiag/operators/bondlist.hpp>
+#include <xdiag/symmetries/permutation_group.hpp>
+#include <xdiag/symmetries/representation.hpp>
+#include <xdiag/utils/close.hpp>
+#include <xdiag/utils/print_macro.hpp>
 
 TEST_CASE("lanczos_pro", "[lanczos]") {
   using namespace xdiag;

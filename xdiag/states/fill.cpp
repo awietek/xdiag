@@ -1,10 +1,10 @@
-#include "fill.h"
+#include "fill.hpp"
 
 #include <variant>
 
-#include <xdiag/blocks/electron/electron.h>
-#include <xdiag/blocks/spinhalf/spinhalf.h>
-#include <xdiag/blocks/tj/tj.h>
+#include <xdiag/blocks/electron/electron.hpp>
+#include <xdiag/blocks/spinhalf/spinhalf.hpp>
+#include <xdiag/blocks/tj/tj.hpp>
 
 namespace xdiag {
 

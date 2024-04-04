@@ -1,8 +1,8 @@
 #include "../catch.hpp"
 
+#include <xdiag/common.hpp>
 #include <xdiag/extern/armadillo/armadillo>
-#include <xdiag/common.h>
-#include <xdiag/io/args.h>
+#include <xdiag/io/args.hpp>
 
 TEST_CASE("args", "[io]") {
   using namespace xdiag;

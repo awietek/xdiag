@@ -1,8 +1,8 @@
-#include "tj_matrix.h"
+#include "tj_matrix.hpp"
 
-#include <xdiag/algebra/fill.h>
-#include <xdiag/blocks/tj/compile.h>
-#include <xdiag/blocks/tj/dispatch.h>
+#include <xdiag/algebra/fill.hpp>
+#include <xdiag/blocks/tj/compile.hpp>
+#include <xdiag/blocks/tj/dispatch.hpp>
 
 namespace xdiag {
 

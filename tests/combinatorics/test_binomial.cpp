@@ -3,7 +3,7 @@
 #include <chrono>
 #include <iostream>
 
-#include <xdiag/combinatorics/binomial.h>
+#include <xdiag/combinatorics/binomial.hpp>
 
 TEST_CASE( "binomial", "[combinatorics]" ) {
   using namespace xdiag;

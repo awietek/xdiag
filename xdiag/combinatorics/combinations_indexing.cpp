@@ -1,7 +1,7 @@
-#include "combinations_indexing.h"
+#include "combinations_indexing.hpp"
 
-#include <xdiag/combinatorics/binomial.h>
-#include <xdiag/utils/logger.h>
+#include <xdiag/combinatorics/binomial.hpp>
+#include <xdiag/utils/logger.hpp>
 
 namespace xdiag::combinatorics {
 

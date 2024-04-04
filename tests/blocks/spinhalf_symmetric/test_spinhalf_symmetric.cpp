@@ -2,12 +2,12 @@
 
 #include <iostream>
 
-#include <xdiag/blocks/spinhalf/spinhalf_apply.h>
-#include <xdiag/algebra/algebra.h>
-#include <xdiag/algebra/matrix.h>
-#include <xdiag/algorithms/sparse_diag.h>
-#include <xdiag/utils/close.h>
-#include <xdiag/symmetries/group_action/group_action.h>
+#include <xdiag/blocks/spinhalf/spinhalf_apply.hpp>
+#include <xdiag/algebra/algebra.hpp>
+#include <xdiag/algebra/matrix.hpp>
+#include <xdiag/algorithms/sparse_diag.hpp>
+#include <xdiag/utils/close.hpp>
+#include <xdiag/symmetries/group_action/group_action.hpp>
 
 using namespace xdiag;
 using namespace xdiag::combinatorics;

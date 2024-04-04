@@ -1,21 +1,19 @@
-#include "symmetry_operations.h"
+#include "symmetry_operations.hpp"
 
 #include <algorithm>
 #include <fstream>
 
-#include <xdiag/common.h>
+#include <xdiag/common.hpp>
 
-#include <xdiag/utils/logger.h>
+#include <xdiag/utils/logger.hpp>
+#include <xdiag/combinatorics/bit_patterns.hpp>
+#include <xdiag/combinatorics/combinations_index.hpp>
+#include <xdiag/symmetries/group_action/group_action.hpp>
+#include <xdiag/symmetries/group_action/group_action_lookup.hpp>
 
 #ifdef _OPENMP
-#include <xdiag/parallel/omp/omp_utils.h>
+#include <xdiag/parallel/omp/omp_utils.hpp>
 #endif
-
-#include <xdiag/combinatorics/bit_patterns.h>
-#include <xdiag/combinatorics/combinations_index.h>
-
-#include <xdiag/symmetries/group_action/group_action.h>
-#include <xdiag/symmetries/group_action/group_action_lookup.h>
 
 namespace xdiag {
 

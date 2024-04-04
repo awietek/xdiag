@@ -1,7 +1,7 @@
 #include "../../catch.hpp"
 
 #include <iostream>
-#include <xdiag/blocks/electron/electron.h>
+#include <xdiag/blocks/electron/electron.hpp>
 
 
 using namespace xdiag;

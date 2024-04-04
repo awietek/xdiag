@@ -1,12 +1,13 @@
 #include "../../catch.hpp"
+
 #include <mpi.h>
 
-#include <xdiag/basis/tj_distributed/basis_np.h>
-#include <xdiag/bits/bitops.h>
-#include <xdiag/combinatorics/binomial.h>
-#include <xdiag/parallel/mpi/allreduce.h>
-#include <xdiag/utils/close.h>
-#include <xdiag/utils/print_macro.h>
+#include <xdiag/basis/tj_distributed/basis_np.hpp>
+#include <xdiag/bits/bitops.hpp>
+#include <xdiag/combinatorics/binomial.hpp>
+#include <xdiag/parallel/mpi/allreduce.hpp>
+#include <xdiag/utils/close.hpp>
+#include <xdiag/utils/print_macro.hpp>
 
 template <typename bit_t, typename coeff_t>
 void test_tj_distributed_basis_np_transpose() {

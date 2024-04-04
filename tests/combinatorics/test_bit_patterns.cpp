@@ -1,7 +1,7 @@
 #include "../catch.hpp"
 
-#include <xdiag/combinatorics/bit_patterns.h>
-#include <xdiag/combinatorics/binomial.h>
+#include <xdiag/combinatorics/bit_patterns.hpp>
+#include <xdiag/combinatorics/binomial.hpp>
 
 TEST_CASE("bit_patterns", "[combinatorics]") {
 

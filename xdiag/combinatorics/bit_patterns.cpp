@@ -1,5 +1,6 @@
-#include "bit_patterns.h"
-#include "binomial.h"
+#include "bit_patterns.hpp"
+
+#include <xdiag/combinatorics/binomial.hpp>
 
 namespace xdiag::combinatorics {
 

@@ -1,8 +1,8 @@
-#include "gram_schmidt.h"
+#include "gram_schmidt.hpp"
 
-#include <xdiag/algorithms/gram_schmidt/orthogonalize.h>
-#include <xdiag/utils/close.h>
-#include <xdiag/utils/logger.h>
+#include <xdiag/algorithms/gram_schmidt/orthogonalize.hpp>
+#include <xdiag/utils/close.hpp>
+#include <xdiag/utils/logger.hpp>
 
 namespace xdiag {
 template <typename coeff_t>

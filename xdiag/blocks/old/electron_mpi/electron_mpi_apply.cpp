@@ -1,10 +1,9 @@
-#include "electron_mpi_apply.h"
+#include "electron_mpi_apply.hpp"
 
-#include <xdiag/combinatorics/combinations.h>
-#include <xdiag/bitops/bitops.h>
-
-// #include <xdiag/blocks/electron_mpi/terms/electron_mpi_hopping.h>
-#include <xdiag/blocks/electron_mpi/terms/electron_mpi_u.h>
+#include <xdiag/bitops/bitops.hpp>
+#include <xdiag/combinatorics/combinations.hpp>
+// #include <xdiag/blocks/electron_mpi/terms/electron_mpi_hopping.hpp>
+#include <xdiag/blocks/electron_mpi/terms/electron_mpi_u.hpp>
 
 namespace xdiag {
 

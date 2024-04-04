@@ -1,8 +1,9 @@
-#include "say_hello.h"
+#include "say_hello.hpp"
 
-#include <xdiag/config.h>
 #include <iostream>
 #include <sstream>
+
+#include <xdiag/config.hpp>
 
 namespace xdiag {
 

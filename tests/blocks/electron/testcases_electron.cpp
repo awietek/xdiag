@@ -1,4 +1,4 @@
-#include "testcases_electron.h"
+#include "testcases_electron.hpp"
 
 namespace xdiag::testcases::electron {
 

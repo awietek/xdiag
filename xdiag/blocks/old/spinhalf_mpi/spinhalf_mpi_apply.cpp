@@ -1,13 +1,13 @@
-#include "spinhalf_mpi_apply.h"
+#include "spinhalf_mpi_apply.hpp"
 
-#include <xdiag/bitops/bitops.h>
-#include <xdiag/utils/logger.h>
-#include <xdiag/combinatorics/combinations.h>
+#include <xdiag/bitops/bitops.hpp>
+#include <xdiag/utils/logger.hpp>
+#include <xdiag/combinatorics/combinations.hpp>
 
-#include <xdiag/operators/operator_qns.h>
+#include <xdiag/operators/operator_qns.hpp>
 
-#include <xdiag/blocks/spinhalf_mpi/terms/spinhalf_mpi_terms.h>
-#include <xdiag/blocks/utils/block_utils.h>
+#include <xdiag/blocks/spinhalf_mpi/terms/spinhalf_mpi_terms.hpp>
+#include <xdiag/blocks/utils/block_utils.hpp>
 
 namespace xdiag {
 

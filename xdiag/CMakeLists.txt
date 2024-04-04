@@ -242,7 +242,7 @@ endif()
 
 ###########################################################################
 # creating a config header with source code information
-message(STATUS "--------         Creating config.h          -------------")
+message(STATUS "--------         Creating config.hpp        -------------")
 find_package(Git REQUIRED)
 execute_process(COMMAND ${GIT_EXECUTABLE} rev-parse HEAD
  WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
@@ -260,4 +260,4 @@ execute_process(COMMAND id -un
     RESULT_VARIABLE returncode
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
-configure_file(${CMAKE_SOURCE_DIR}/cmake/config.h.in ${CMAKE_SOURCE_DIR}/xdiag/config.h @ONLY)
+configure_file(${CMAKE_SOURCE_DIR}/cmake/config.hpp.in ${CMAKE_SOURCE_DIR}/xdiag/config.hpp @ONLY)

@@ -1,7 +1,9 @@
-#include "hash.h"
+#include "hash.hpp"
+
 #include <complex>
-#include <xdiag/random/hash_functions.h>
 #include <variant>
+
+#include <xdiag/random/hash_functions.hpp>
 
 namespace xdiag::random {
 

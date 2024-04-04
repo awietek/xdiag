@@ -1,4 +1,4 @@
-#include "timing_mpi.h"
+#include "timing_mpi.hpp"
 
 #include <mpi.h>
 

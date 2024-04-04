@@ -2,13 +2,13 @@
 
 #include <iostream>
 
-#include "../blocks/electron/testcases_electron.h"
-#include "../blocks/spinhalf/testcases_spinhalf.h"
+#include "../blocks/electron/testcases_electron.hpp"
+#include "../blocks/spinhalf/testcases_spinhalf.hpp"
+#include <xdiag/algebra/matrix.hpp>
+#include <xdiag/algorithms/norm_estimate.hpp>
+#include <xdiag/common.hpp>
 #include <xdiag/extern/armadillo/armadillo>
-#include <xdiag/algebra/matrix.h>
-#include <xdiag/algorithms/norm_estimate.h>
-#include <xdiag/common.h>
-#include <xdiag/utils/logger.h>
+#include <xdiag/utils/logger.hpp>
 
 using namespace xdiag;
 

@@ -1,6 +1,6 @@
-#include "blocks.h"
+#include "blocks.hpp"
 
-#include <xdiag/parallel/mpi/cdot_distributed.h>
+#include <xdiag/parallel/mpi/cdot_distributed.hpp>
 
 namespace xdiag {
 

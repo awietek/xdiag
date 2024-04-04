@@ -1,6 +1,6 @@
-#include "orthogonalize.h"
+#include "orthogonalize.hpp"
 
-#include <xdiag/utils/logger.h>
+#include <xdiag/utils/logger.hpp>
 
 namespace xdiag {
 

@@ -1,4 +1,4 @@
-#include "basis.h"
+#include "basis.hpp"
 
 namespace xdiag {
 

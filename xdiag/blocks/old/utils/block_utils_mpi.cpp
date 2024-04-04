@@ -1,6 +1,6 @@
-#include "block_utils_mpi.h"
+#include "block_utils_mpi.hpp"
 
-#include <xdiag/mpi/logger_mpi.h>
+#include <xdiag/mpi/logger_mpi.hpp>
 
 namespace xdiag {
 

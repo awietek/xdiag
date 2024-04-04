@@ -1,4 +1,4 @@
-#include "datatype.h"
+#include "datatype.hpp"
 
 namespace xdiag::mpi {
 

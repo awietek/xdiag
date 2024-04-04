@@ -1,6 +1,6 @@
-#include "alltoall.h"
+#include "alltoall.hpp"
 
-#include <xdiag/parallel/mpi/datatype.h>
+#include <xdiag/parallel/mpi/datatype.hpp>
 
 namespace xdiag::mpi {
 

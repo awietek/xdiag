@@ -1,9 +1,9 @@
-#include "random_state.h"
+#include "random_state.hpp"
 
-#include <xdiag/algebra/algebra.h>
-#include <xdiag/random/hash.h>
-#include <xdiag/random/hash_functions.h>
-#include <xdiag/random/random_utils.h>
+#include <xdiag/algebra/algebra.hpp>
+#include <xdiag/random/hash.hpp>
+#include <xdiag/random/hash_functions.hpp>
+#include <xdiag/random/random_utils.hpp>
 
 namespace xdiag {
 

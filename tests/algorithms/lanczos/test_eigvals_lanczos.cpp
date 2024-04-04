@@ -2,10 +2,11 @@
 
 #include <iostream>
 
-#include "../../blocks/electron/testcases_electron.h"
-#include <xdiag/algorithms/lanczos/eigvals_lanczos.h>
-#include <xdiag/blocks/electron/electron_matrix.h>
-#include <xdiag/utils/close.h>
+#include "../../blocks/electron/testcases_electron.hpp"
+
+#include <xdiag/algorithms/lanczos/eigvals_lanczos.hpp>
+#include <xdiag/blocks/electron/electron_matrix.hpp>
+#include <xdiag/utils/close.hpp>
 
 using namespace xdiag;
 

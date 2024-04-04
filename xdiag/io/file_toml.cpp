@@ -1,8 +1,8 @@
-#include "file_toml.h"
+#include "file_toml.hpp"
 
 #include <fstream>
 
-#include <xdiag/utils/logger.h>
+#include <xdiag/utils/logger.hpp>
 
 namespace xdiag {
 

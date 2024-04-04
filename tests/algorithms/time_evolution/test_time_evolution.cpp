@@ -3,13 +3,13 @@
 //
 #include "../../catch.hpp"
 #include <xdiag/extern/armadillo/armadillo>
-#include <xdiag/algebra/matrix.h>
-#include <xdiag/algorithms/time_evolution/pade_matrix_exponential.h>
-#include <xdiag/algorithms/time_evolution/time_evolution.h>
-#include <xdiag/common.h>
-#include <xdiag/states/product_state.h>
-#include <xdiag/utils/logger.h>
-#include <xdiag/utils/print_macro.h>
+#include <xdiag/algebra/matrix.hpp>
+#include <xdiag/algorithms/time_evolution/pade_matrix_exponential.hpp>
+#include <xdiag/algorithms/time_evolution/time_evolution.hpp>
+#include <xdiag/common.hpp>
+#include <xdiag/states/product_state.hpp>
+#include <xdiag/utils/logger.hpp>
+#include <xdiag/utils/print_macro.hpp>
 
 using namespace xdiag;
 using namespace std;

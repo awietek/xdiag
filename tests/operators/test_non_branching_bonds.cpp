@@ -1,12 +1,12 @@
 #include "../catch.hpp"
 
 #include <iostream>
-#include <xdiag/utils/close.h>
-#include <xdiag/operators/non_branching_bonds.h>
-#include <xdiag/blocks/spinhalf/spinhalf.h>
-#include <xdiag/algebra/algebra.h>
-#include <xdiag/algebra/matrix.h>
-#include <xdiag/algorithms/sparse_diag.h>
+#include <xdiag/utils/close.hpp>
+#include <xdiag/operators/non_branching_bonds.hpp>
+#include <xdiag/blocks/spinhalf/spinhalf.hpp>
+#include <xdiag/algebra/algebra.hpp>
+#include <xdiag/algebra/matrix.hpp>
+#include <xdiag/algorithms/sparse_diag.hpp>
 
 TEST_CASE("non_branching_bonds", "[operators]") try {
   using namespace xdiag;

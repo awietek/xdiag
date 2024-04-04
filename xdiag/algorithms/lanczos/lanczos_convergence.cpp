@@ -1,4 +1,4 @@
-#include "lanczos_convergence.h"
+#include "lanczos_convergence.hpp"
 
 namespace xdiag::lanczos {
 

@@ -2,13 +2,13 @@
 
 #include <iostream>
 
-#include <xdiag/basis/spinhalf/basis_sublattice.h>
-#include <xdiag/basis/spinhalf/basis_symmetric_no_sz.h>
-#include <xdiag/basis/spinhalf/basis_symmetric_sz.h>
-#include <xdiag/combinatorics/combinations.h>
-#include <xdiag/combinatorics/subsets.h>
-#include <xdiag/common.h>
-#include <xdiag/symmetries/operations/symmetry_operations.h>
+#include <xdiag/basis/spinhalf/basis_sublattice.hpp>
+#include <xdiag/basis/spinhalf/basis_symmetric_no_sz.hpp>
+#include <xdiag/basis/spinhalf/basis_symmetric_sz.hpp>
+#include <xdiag/combinatorics/combinations.hpp>
+#include <xdiag/combinatorics/subsets.hpp>
+#include <xdiag/common.hpp>
+#include <xdiag/symmetries/operations/symmetry_operations.hpp>
 
 using namespace xdiag;
 

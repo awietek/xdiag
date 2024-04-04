@@ -2,11 +2,11 @@
 
 #include <iostream>
 
-#include <xdiag/combinatorics/fermi_table.h>
-#include <xdiag/operators/bondlist.h>
-#include <xdiag/symmetries/operations/fermi_sign.h>
-#include <xdiag/symmetries/operations/symmetry_operations.h>
-#include <tests/blocks/electron/testcases_electron.h>
+#include <xdiag/combinatorics/fermi_table.hpp>
+#include <xdiag/operators/bondlist.hpp>
+#include <xdiag/symmetries/operations/fermi_sign.hpp>
+#include <xdiag/symmetries/operations/symmetry_operations.hpp>
+#include <tests/blocks/electron/testcases_electron.hpp>
 
 using namespace xdiag;
 

@@ -4,13 +4,14 @@
 #include "../../catch.hpp"
 #include <iostream>
 
-#include "../../blocks/electron/testcases_electron.h"
-#include <xdiag/algebra/matrix.h>
-#include <xdiag/algorithms/arnoldi/arnoldi.h>
-#include <xdiag/algorithms/arnoldi/arnoldi_to_disk.h>
-#include <xdiag/algorithms/time_evolution/pade_matrix_exponential.h>
-#include <xdiag/blocks/spinhalf/spinhalf.h>
-#include <xdiag/states/random_state.h>
+#include "../../blocks/electron/testcases_electron.hpp"
+
+#include <xdiag/algebra/matrix.hpp>
+#include <xdiag/algorithms/arnoldi/arnoldi.hpp>
+#include <xdiag/algorithms/arnoldi/arnoldi_to_disk.hpp>
+#include <xdiag/algorithms/time_evolution/pade_matrix_exponential.hpp>
+#include <xdiag/blocks/spinhalf/spinhalf.hpp>
+#include <xdiag/states/random_state.hpp>
 
 // TODO: write tests for arnoldi_to_disk
 bool check_basis_orthonormality(arma::cx_mat const &Q, double tol = 1e-12) {

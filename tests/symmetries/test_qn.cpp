@@ -2,8 +2,8 @@
 
 #include <iostream>
 
-#include "../blocks/electron/testcases_electron.h"
-#include <xdiag/symmetries/qn.h>
+#include "../blocks/electron/testcases_electron.hpp"
+#include <xdiag/symmetries/qn.hpp>
 
 
 TEST_CASE("QN", "[symmetries]") {

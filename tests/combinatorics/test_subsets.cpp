@@ -1,7 +1,7 @@
 #include "../catch.hpp"
 
 #include <iostream>
-#include <xdiag/combinatorics/subsets.h>
+#include <xdiag/combinatorics/subsets.hpp>
 
 template <class bit_t>
 void test_subsets(){

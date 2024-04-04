@@ -1,4 +1,4 @@
-#include "allreduce.h"
+#include "allreduce.hpp"
 
 namespace xdiag::mpi {
 

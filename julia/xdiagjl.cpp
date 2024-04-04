@@ -4,7 +4,7 @@
 #include "jlcxx/stl.hpp"
 #include "jlcxx/tuple.hpp"
 
-#include <xdiag/all.h>
+#include <xdiag/all.hpp>
 
 #define JULIA_XDIAG_CALL_VOID(CMD)                                             \
   try {                                                                        \

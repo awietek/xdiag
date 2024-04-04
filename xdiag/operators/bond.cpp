@@ -1,9 +1,10 @@
-#include "bond.h"
+#include "bond.hpp"
 
-#include <algorithm>
-#include <xdiag/common.h>
-#include <xdiag/utils/close.h>
 #include <set>
+#include <algorithm>
+
+#include <xdiag/common.hpp>
+#include <xdiag/utils/close.hpp>
 
 namespace xdiag {
 

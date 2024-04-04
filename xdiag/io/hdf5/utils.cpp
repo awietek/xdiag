@@ -1,6 +1,6 @@
-#include "utils.h"
+#include "utils.hpp"
 #ifdef XDIAG_USE_HDF5
-#include <xdiag/utils/logger.h>
+#include <xdiag/utils/logger.hpp>
 
 namespace xdiag::hdf5 {
 

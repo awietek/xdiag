@@ -1,16 +1,16 @@
 #include "../../catch.hpp"
 
-#include <xdiag/combinatorics/combinations.h>
-#include <xdiag/combinatorics/combinations_indexing.h>
-#include <xdiag/combinatorics/lin_table.h>
-#include <xdiag/combinatorics/subsets.h>
-#include <xdiag/combinatorics/subsets_indexing.h>
-#include <xdiag/symmetries/group_action/group_action_lookup.h>
-#include <xdiag/symmetries/operations/group_action_operations.h>
-#include <xdiag/symmetries/operations/representative_list.h>
-#include <xdiag/symmetries/operations/symmetry_operations.h>
-#include <xdiag/symmetries/permutation_group.h>
-#include <xdiag/utils/close.h>
+#include <xdiag/combinatorics/combinations.hpp>
+#include <xdiag/combinatorics/combinations_indexing.hpp>
+#include <xdiag/combinatorics/lin_table.hpp>
+#include <xdiag/combinatorics/subsets.hpp>
+#include <xdiag/combinatorics/subsets_indexing.hpp>
+#include <xdiag/symmetries/group_action/group_action_lookup.hpp>
+#include <xdiag/symmetries/operations/group_action_operations.hpp>
+#include <xdiag/symmetries/operations/representative_list.hpp>
+#include <xdiag/symmetries/operations/symmetry_operations.hpp>
+#include <xdiag/symmetries/permutation_group.hpp>
+#include <xdiag/utils/close.hpp>
 
 using namespace xdiag;
 using namespace xdiag::combinatorics;

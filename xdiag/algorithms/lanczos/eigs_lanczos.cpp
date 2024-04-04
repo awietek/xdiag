@@ -1,13 +1,14 @@
-#include "eigs_lanczos.h"
-#include <xdiag/algebra/algebra.h>
-#include <xdiag/algebra/apply.h>
-#include <xdiag/algorithms/lanczos/eigvals_lanczos.h>
-#include <xdiag/algorithms/lanczos/lanczos.h>
-#include <xdiag/algorithms/lanczos/lanczos_convergence.h>
+#include "eigs_lanczos.hpp"
 
-#include <xdiag/states/random_state.h>
-#include <xdiag/utils/print_macro.h>
-#include <xdiag/utils/timing.h>
+#include <xdiag/algebra/algebra.hpp>
+#include <xdiag/algebra/apply.hpp>
+#include <xdiag/algorithms/lanczos/eigvals_lanczos.hpp>
+#include <xdiag/algorithms/lanczos/lanczos.hpp>
+#include <xdiag/algorithms/lanczos/lanczos_convergence.hpp>
+
+#include <xdiag/states/random_state.hpp>
+#include <xdiag/utils/print_macro.hpp>
+#include <xdiag/utils/timing.hpp>
 
 namespace xdiag {
 

@@ -1,9 +1,9 @@
-#include "norm_estimate.h"
+#include "norm_estimate.hpp"
 
-#include <xdiag/algebra/algebra.h>
-#include <xdiag/algebra/apply.h>
-#include <xdiag/random/hash.h>
-#include <xdiag/utils/timing.h>
+#include <xdiag/algebra/algebra.hpp>
+#include <xdiag/algebra/apply.hpp>
+#include <xdiag/random/hash.hpp>
+#include <xdiag/utils/timing.hpp>
 
 namespace xdiag {
 
