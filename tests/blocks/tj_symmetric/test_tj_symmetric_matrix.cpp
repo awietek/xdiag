@@ -2,12 +2,12 @@
 
 #include <iostream>
 
-#include "../electron/testcases_electron.h"
-#include "../tj/testcases_tj.h"
+#include "../electron/testcases_electron.hpp"
+#include "../tj/testcases_tj.hpp"
 
-#include <xdiag/algebra/matrix.h>
-#include <xdiag/blocks/tj/tj_matrix.h>
-#include <xdiag/utils/close.h>
+#include <xdiag/algebra/matrix.hpp>
+#include <xdiag/blocks/tj/tj_matrix.hpp>
+#include <xdiag/utils/close.hpp>
 
 using namespace xdiag;
 

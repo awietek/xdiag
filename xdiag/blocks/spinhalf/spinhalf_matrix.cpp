@@ -1,8 +1,8 @@
-#include "spinhalf_matrix.h"
+#include "spinhalf_matrix.hpp"
 
-#include <xdiag/algebra/fill.h>
-#include <xdiag/blocks/spinhalf/compile.h>
-#include <xdiag/blocks/spinhalf/dispatch.h>
+#include <xdiag/algebra/fill.hpp>
+#include <xdiag/blocks/spinhalf/compile.hpp>
+#include <xdiag/blocks/spinhalf/dispatch.hpp>
 
 namespace xdiag {
 

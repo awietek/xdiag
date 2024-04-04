@@ -1,11 +1,11 @@
 #include "../catch.hpp"
 
-#include <xdiag/all.h>
+#include <xdiag/all.hpp>
 #include <iomanip>
-#include <lila/all.h>
+#include <lila/all.hpp>
 #include <random>
 
-#include "testcases_entanglement_entropy.h"
+#include "testcases_entanglement_entropy.hpp"
 
 using namespace lila;
 using namespace xdiag;

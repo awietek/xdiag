@@ -1,7 +1,8 @@
-#include "bondlist_handler.h"
+#include "bondlist_handler.hpp"
 
 #include <algorithm>
-#include <xdiag/utils/logger.h>
+
+#include <xdiag/utils/logger.hpp>
 
 namespace xdiag {
 

@@ -1,10 +1,10 @@
-#include "non_branching_bonds.h"
+#include "non_branching_bonds.hpp"
 
 #include <tuple>
 #include <vector>
 
-#include <xdiag/bits/bitops.h>
-#include <xdiag/common.h>
+#include <xdiag/bits/bitops.hpp>
+#include <xdiag/common.hpp>
 
 namespace xdiag::operators {
 

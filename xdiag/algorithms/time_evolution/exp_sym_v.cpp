@@ -1,7 +1,7 @@
-#include "exp_sym_v.h"
+#include "exp_sym_v.hpp"
 
-#include <xdiag/algebra/apply.h>
-#include <xdiag/algorithms/lanczos/lanczos_convergence.h>
+#include <xdiag/algebra/apply.hpp>
+#include <xdiag/algorithms/lanczos/lanczos_convergence.hpp>
 
 namespace xdiag {
 

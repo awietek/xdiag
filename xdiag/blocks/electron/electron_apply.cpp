@@ -1,8 +1,8 @@
-#include "electron_apply.h"
+#include "electron_apply.hpp"
 
-#include <xdiag/algebra/fill.h>
-#include <xdiag/blocks/electron/compile.h>
-#include <xdiag/blocks/electron/dispatch.h>
+#include <xdiag/algebra/fill.hpp>
+#include <xdiag/blocks/electron/compile.hpp>
+#include <xdiag/blocks/electron/dispatch.hpp>
 
 namespace xdiag {
 

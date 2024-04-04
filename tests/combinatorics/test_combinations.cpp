@@ -1,7 +1,7 @@
 #include "../catch.hpp"
 
 #include <iostream>
-#include <xdiag/combinatorics/combinations.h>
+#include <xdiag/combinatorics/combinations.hpp>
 
 template <typename bit_t> void test_combinations() {
   using namespace xdiag;

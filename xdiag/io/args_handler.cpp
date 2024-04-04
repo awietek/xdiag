@@ -1,6 +1,6 @@
-#include "args_handler.h"
+#include "args_handler.hpp"
 
-#include <xdiag/utils/logger.h>
+#include <xdiag/utils/logger.hpp>
 
 namespace xdiag::io {
 

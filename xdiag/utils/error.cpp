@@ -1,4 +1,4 @@
-#include "error.h"
+#include "error.hpp"
 
 #include <iomanip> // std::setw
 #include <variant>

@@ -2,13 +2,13 @@
 
 #include <iostream>
 
-#include "../tj/testcases_tj.h"
-#include "testcases_electron.h"
-#include <xdiag/blocks/electron/electron_matrix.h>
-#include <xdiag/algebra/algebra.h>
-#include <xdiag/algebra/apply.h>
-#include <xdiag/algorithms/sparse_diag.h>
-#include <xdiag/utils/close.h>
+#include "../tj/testcases_tj.hpp"
+#include "testcases_electron.hpp"
+#include <xdiag/blocks/electron/electron_matrix.hpp>
+#include <xdiag/algebra/algebra.hpp>
+#include <xdiag/algebra/apply.hpp>
+#include <xdiag/algorithms/sparse_diag.hpp>
+#include <xdiag/utils/close.hpp>
 
 using namespace xdiag;
 

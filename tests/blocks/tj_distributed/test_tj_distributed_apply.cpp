@@ -2,16 +2,15 @@
 
 #include <iostream>
 
-#include "../spinhalf/testcases_spinhalf.h"
-#include "../tj/testcases_tj.h"
-
-#include <xdiag/algorithms/sparse_diag.h>
-#include <xdiag/blocks/spinhalf/spinhalf_matrix.h>
-#include <xdiag/blocks/tj/tj_apply.h>
-#include <xdiag/blocks/tj/tj_matrix.h>
-#include <xdiag/blocks/tj_distributed/tj_distributed_apply.h>
-#include <xdiag/utils/close.h>
-#include <xdiag/utils/print_macro.h>
+#include "../spinhalf/testcases_spinhalf.hpp"
+#include "../tj/testcases_tj.hpp"
+#include <xdiag/algorithms/sparse_diag.hpp>
+#include <xdiag/blocks/spinhalf/spinhalf_matrix.hpp>
+#include <xdiag/blocks/tj/tj_apply.hpp>
+#include <xdiag/blocks/tj/tj_matrix.hpp>
+#include <xdiag/blocks/tj_distributed/tj_distributed_apply.hpp>
+#include <xdiag/utils/close.hpp>
+#include <xdiag/utils/print_macro.hpp>
 
 using namespace xdiag;
 

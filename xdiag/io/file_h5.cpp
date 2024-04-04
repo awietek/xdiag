@@ -1,8 +1,8 @@
 #ifdef XDIAG_USE_HDF5
 
-#include "file_h5.h"
+#include "file_h5.hpp"
 
-#include <xdiag/utils/logger.h>
+#include <xdiag/utils/logger.hpp>
 
 namespace xdiag {
 

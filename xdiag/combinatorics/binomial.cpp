@@ -1,4 +1,5 @@
-#include "binomial.h"
+#include "binomial.hpp"
+
 #include <array>
 
 namespace xdiag::combinatorics {

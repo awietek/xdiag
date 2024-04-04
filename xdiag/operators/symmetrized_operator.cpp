@@ -1,4 +1,4 @@
-#include "symmetrized_operator.h"
+#include "symmetrized_operator.hpp"
 
 namespace xdiag {
 

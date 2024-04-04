@@ -1,8 +1,8 @@
-#include "basis_np.h"
+#include "basis_np.hpp"
 
-#include <xdiag/combinatorics/binomial.h>
-#include <xdiag/combinatorics/combinations.h>
-#include <xdiag/parallel/mpi/allreduce.h>
+#include <xdiag/combinatorics/binomial.hpp>
+#include <xdiag/combinatorics/combinations.hpp>
+#include <xdiag/parallel/mpi/allreduce.hpp>
 
 namespace xdiag::basis::tj_distributed {
 

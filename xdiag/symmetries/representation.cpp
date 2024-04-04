@@ -1,10 +1,10 @@
-#include "representation.h"
+#include "representation.hpp"
 
 #include <fstream>
 
-#include <xdiag/utils/close.h>
-#include <xdiag/utils/error.h>
-#include <xdiag/utils/logger.h>
+#include <xdiag/utils/close.hpp>
+#include <xdiag/utils/error.hpp>
+#include <xdiag/utils/logger.hpp>
 
 #include <numeric>
 

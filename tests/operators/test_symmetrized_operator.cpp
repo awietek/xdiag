@@ -2,15 +2,15 @@
 
 #include <iostream>
 
-#include "../blocks/electron/testcases_electron.h"
-#include <xdiag/algebra/algebra.h>
-#include <xdiag/algebra/apply.h>
-#include <xdiag/algorithms/sparse_diag.h>
-#include <xdiag/algorithms/lanczos/eigs_lanczos.h>
-#include <xdiag/blocks/electron/electron.h>
-#include <xdiag/operators/symmetrized_operator.h>
-#include <xdiag/utils/close.h>
-#include <xdiag/utils/print_macro.h>
+#include "../blocks/electron/testcases_electron.hpp"
+#include <xdiag/algebra/algebra.hpp>
+#include <xdiag/algebra/apply.hpp>
+#include <xdiag/algorithms/sparse_diag.hpp>
+#include <xdiag/algorithms/lanczos/eigs_lanczos.hpp>
+#include <xdiag/blocks/electron/electron.hpp>
+#include <xdiag/operators/symmetrized_operator.hpp>
+#include <xdiag/utils/close.hpp>
+#include <xdiag/utils/print_macro.hpp>
 
 using namespace xdiag;
 

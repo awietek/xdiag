@@ -1,6 +1,6 @@
-#include "apply.h"
+#include "apply.hpp"
 
-#include <xdiag/common.h>
+#include <xdiag/common.hpp>
 #include <variant>
 
 namespace xdiag {

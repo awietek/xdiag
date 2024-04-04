@@ -1,7 +1,8 @@
-#include "fermi_sign.h"
+#include "fermi_sign.hpp"
 
-#include <xdiag/bits/bitops.h>
 #include <limits>
+
+#include <xdiag/bits/bitops.hpp>
 
 namespace xdiag::symmetries {
 

@@ -1,4 +1,4 @@
-#include "product_state.h"
+#include "product_state.hpp"
 
 namespace xdiag {
 

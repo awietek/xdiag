@@ -1,8 +1,8 @@
 #include "../catch.hpp"
 
 #include <xdiag/extern/armadillo/armadillo>
-#include <xdiag/common.h>
-#include <xdiag/io/file_h5.h>
+#include <xdiag/common.hpp>
+#include <xdiag/io/file_h5.hpp>
 
 #ifdef XDIAG_USE_HDF5
 TEST_CASE("file_h5", "[io]") {

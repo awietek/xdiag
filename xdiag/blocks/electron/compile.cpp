@@ -1,6 +1,6 @@
-#include "compile.h"
-#include <xdiag/operators/compiler.h>
-#include <xdiag/utils/logger.h>
+#include "compile.hpp"
+#include <xdiag/operators/compiler.hpp>
+#include <xdiag/utils/logger.hpp>
 
 namespace xdiag::electron {
 

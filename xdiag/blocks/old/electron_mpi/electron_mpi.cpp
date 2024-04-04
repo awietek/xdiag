@@ -1,10 +1,10 @@
-#include "electron_mpi.h"
+#include "electron_mpi.hpp"
 
 #include <mpi.h>
 
-#include <xdiag/combinatorics/binomial.h>
-#include <xdiag/combinatorics/combinations.h>
-#include <xdiag/mpi/allreduce.h>
+#include <xdiag/combinatorics/binomial.hpp>
+#include <xdiag/combinatorics/combinations.hpp>
+#include <xdiag/mpi/allreduce.hpp>
 
 namespace xdiag {
 

@@ -1,14 +1,15 @@
-#include "eigvals_lanczos.h"
-#include <xdiag/algebra/algebra.h>
-#include <xdiag/algebra/apply.h>
-#include <xdiag/algorithms/lanczos/lanczos.h>
-#include <xdiag/algorithms/lanczos/lanczos_convergence.h>
+#include "eigvals_lanczos.hpp"
 
-#include <xdiag/states/random_state.h>
-#include <xdiag/utils/timing.h>
+#include <xdiag/algebra/algebra.hpp>
+#include <xdiag/algebra/apply.hpp>
+#include <xdiag/algorithms/lanczos/lanczos.hpp>
+#include <xdiag/algorithms/lanczos/lanczos_convergence.hpp>
+
+#include <xdiag/states/random_state.hpp>
+#include <xdiag/utils/timing.hpp>
 
 #ifdef XDIAG_USE_MPI
-#include <xdiag/parallel/mpi/cdot_distributed.h>
+#include <xdiag/parallel/mpi/cdot_distributed.hpp>
 #endif
 
 namespace xdiag {

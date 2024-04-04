@@ -1,16 +1,16 @@
-#include "spinhalf_mpi.h"
+#include "spinhalf_mpi.hpp"
 
 #include <mpi.h>
 
-#include <xdiag/combinatorics/binomial.h>
-#include <xdiag/combinatorics/combinations.h>
-#include <xdiag/combinatorics/hashes.h>
-#include <xdiag/combinatorics/subsets.h>
+#include <xdiag/combinatorics/binomial.hpp>
+#include <xdiag/combinatorics/combinations.hpp>
+#include <xdiag/combinatorics/hashes.hpp>
+#include <xdiag/combinatorics/subsets.hpp>
 
-#include <xdiag/mpi/allreduce.h>
+#include <xdiag/mpi/allreduce.hpp>
 
-#include <xdiag/bitops/bitops.h>
-#include <xdiag/blocks/utils/block_utils.h>
+#include <xdiag/bitops/bitops.hpp>
+#include <xdiag/blocks/utils/block_utils.hpp>
 
 namespace xdiag {
 

@@ -1,9 +1,9 @@
 #include "../catch.hpp"
 
-#include "../blocks/electron/testcases_electron.h"
+#include "../blocks/electron/testcases_electron.hpp"
 
-#include <xdiag/symmetries/generated_group.h>
-#include <xdiag/utils/close.h>
+#include <xdiag/symmetries/generated_group.hpp>
+#include <xdiag/utils/close.hpp>
 
 TEST_CASE("generated_group", "[symmetries]") {
   using namespace xdiag;

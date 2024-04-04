@@ -1,6 +1,6 @@
 #ifdef _OPENMP
 
-#include "omp_utils.h"
+#include "omp_utils.hpp"
 
 namespace xdiag::omp {
 

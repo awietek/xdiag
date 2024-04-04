@@ -1,6 +1,6 @@
-#include "basis_symmetric_no_sz.h"
+#include "basis_symmetric_no_sz.hpp"
 
-#include <xdiag/symmetries/operations/representative_list.h>
+#include <xdiag/symmetries/operations/representative_list.hpp>
 
 namespace xdiag::basis::spinhalf {
 

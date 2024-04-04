@@ -1,6 +1,6 @@
-#include "tj.h"
+#include "tj.hpp"
 
-#include <xdiag/utils/logger.h>
+#include <xdiag/utils/logger.hpp>
 
 namespace xdiag {
 

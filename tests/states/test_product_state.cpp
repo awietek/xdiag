@@ -1,8 +1,8 @@
 #include "../catch.hpp"
 
-#include <xdiag/states/product_state.h>
-#include <xdiag/algebra/algebra.h>
-#include <xdiag/utils/close.h>
+#include <xdiag/states/product_state.hpp>
+#include <xdiag/algebra/algebra.hpp>
+#include <xdiag/utils/close.hpp>
 
 using namespace xdiag;
 

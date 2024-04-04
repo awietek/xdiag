@@ -1,7 +1,7 @@
-#include "basis_symmetric_sz.h"
+#include "basis_symmetric_sz.hpp"
 
-#include <xdiag/symmetries/operations/representative_list.h>
-#include <xdiag/utils/logger.h>
+#include <xdiag/symmetries/operations/representative_list.hpp>
+#include <xdiag/utils/logger.hpp>
 
 namespace xdiag::basis::spinhalf {
 

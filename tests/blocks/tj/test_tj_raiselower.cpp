@@ -1,9 +1,9 @@
 #include "../../catch.hpp"
-#include <xdiag/blocks/tj/tj_apply.h>
-#include <xdiag/blocks/tj/tj_matrix.h>
-#include <xdiag/algebra/matrix.h>
-#include <xdiag/utils/close.h>
-#include <xdiag/utils/print_macro.h>
+#include <xdiag/blocks/tj/tj_apply.hpp>
+#include <xdiag/blocks/tj/tj_matrix.hpp>
+#include <xdiag/algebra/matrix.hpp>
+#include <xdiag/utils/close.hpp>
+#include <xdiag/utils/print_macro.hpp>
 
 using namespace xdiag;
 using namespace arma;

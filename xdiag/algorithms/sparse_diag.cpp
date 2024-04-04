@@ -1,8 +1,8 @@
-#include "sparse_diag.h"
+#include "sparse_diag.hpp"
 
-#include <xdiag/algorithms/lanczos/eigs_lanczos.h>
-#include <xdiag/algorithms/lanczos/eigvals_lanczos.h>
-#include <xdiag/utils/logger.h>
+#include <xdiag/algorithms/lanczos/eigs_lanczos.hpp>
+#include <xdiag/algorithms/lanczos/eigvals_lanczos.hpp>
+#include <xdiag/utils/logger.hpp>
 
 namespace xdiag {
 

@@ -1,13 +1,11 @@
-#include "time_evolution.h"
+#include "time_evolution.hpp"
 
-#include <xdiag/algebra/algebra.h>
-#include <xdiag/algebra/apply.h>
-
-#include <xdiag/algorithms/norm_estimate.h>
-#include <xdiag/algorithms/time_evolution/exp_sym_v.h>
-#include <xdiag/algorithms/time_evolution/zahexpv.h>
-
-#include <xdiag/utils/timing.h>
+#include <xdiag/algebra/algebra.hpp>
+#include <xdiag/algebra/apply.hpp>
+#include <xdiag/algorithms/norm_estimate.hpp>
+#include <xdiag/algorithms/time_evolution/exp_sym_v.hpp>
+#include <xdiag/algorithms/time_evolution/zahexpv.hpp>
+#include <xdiag/utils/timing.hpp>
 
 namespace xdiag {
 

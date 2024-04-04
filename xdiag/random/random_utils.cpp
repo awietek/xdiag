@@ -1,9 +1,10 @@
-#include "random_utils.h"
+#include "random_utils.hpp"
+
 #include <math.h>
 
 #ifdef _OPENMP
-#include <xdiag/parallel/omp/omp_utils.h>
-#include <xdiag/random/hash_functions.h>
+#include <xdiag/parallel/omp/omp_utils.hpp>
+#include <xdiag/random/hash_functions.hpp>
 #endif
 
 namespace xdiag::random {

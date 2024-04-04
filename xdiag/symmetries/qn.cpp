@@ -1,9 +1,9 @@
-#include "qn.h"
+#include "qn.hpp"
 
 #include <iterator>
 #include <set>
 
-#include <xdiag/utils/error.h>
+#include <xdiag/utils/error.hpp>
 
 namespace xdiag {
 

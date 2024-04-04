@@ -1,11 +1,11 @@
-#include "basis_symmetric_np.h"
+#include "basis_symmetric_np.hpp"
 
-#include <xdiag/combinatorics/combinations_indexing.h>
-#include <xdiag/combinatorics/fermi_table.h>
+#include <xdiag/combinatorics/combinations_indexing.hpp>
+#include <xdiag/combinatorics/fermi_table.hpp>
 
-#include <xdiag/symmetries/operations/group_action_operations.h>
-#include <xdiag/symmetries/operations/representative_list.h>
-#include <xdiag/symmetries/operations/symmetry_operations.h>
+#include <xdiag/symmetries/operations/group_action_operations.hpp>
+#include <xdiag/symmetries/operations/representative_list.hpp>
+#include <xdiag/symmetries/operations/symmetry_operations.hpp>
 
 namespace xdiag::basis::electron {
 

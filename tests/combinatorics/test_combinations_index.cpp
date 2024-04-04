@@ -1,6 +1,6 @@
 #include "../catch.hpp"
 
-#include <xdiag/combinatorics/combinations_index.h>
+#include <xdiag/combinatorics/combinations_index.hpp>
 #include <iostream>
 
 template <typename bit_t> void test_combinations_index() {

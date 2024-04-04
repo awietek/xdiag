@@ -1,8 +1,8 @@
-#include "tj_distributed_apply.h"
+#include "tj_distributed_apply.hpp"
 
-#include <xdiag/algebra/fill.h>
-#include <xdiag/blocks/tj/compile.h>
-#include <xdiag/blocks/tj_distributed/dispatch.h>
+#include <xdiag/algebra/fill.hpp>
+#include <xdiag/blocks/tj/compile.hpp>
+#include <xdiag/blocks/tj_distributed/dispatch.hpp>
 
 namespace xdiag {
 

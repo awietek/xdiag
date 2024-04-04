@@ -2,15 +2,15 @@
 
 #include <iostream>
 
-#include <xdiag/algebra/algebra.h>
-#include <xdiag/algebra/matrix.h>
-#include <xdiag/algorithms/time_evolution/exp_sym_v.h>
-#include <xdiag/blocks/blocks.h>
-#include <xdiag/common.h>
-#include <xdiag/states/state.h>
-#include <xdiag/utils/logger.h>
+#include "../blocks/spinhalf/testcases_spinhalf.hpp"
 
-#include "../blocks/spinhalf/testcases_spinhalf.h"
+#include <xdiag/algebra/algebra.hpp>
+#include <xdiag/algebra/matrix.hpp>
+#include <xdiag/algorithms/time_evolution/exp_sym_v.hpp>
+#include <xdiag/blocks/blocks.hpp>
+#include <xdiag/common.hpp>
+#include <xdiag/states/state.hpp>
+#include <xdiag/utils/logger.hpp>
 
 TEST_CASE("exp_sym_v", "[algorithms]") try {
   using namespace xdiag;

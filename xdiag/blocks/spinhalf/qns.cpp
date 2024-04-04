@@ -1,9 +1,9 @@
-#include "qns.h"
+#include "qns.hpp"
 
 #include <algorithm>
 
-#include <xdiag/operators/compiler.h>
-#include <xdiag/operators/non_branching_bonds.h>
+#include <xdiag/operators/compiler.hpp>
+#include <xdiag/operators/non_branching_bonds.hpp>
 
 namespace xdiag::spinhalf {
 

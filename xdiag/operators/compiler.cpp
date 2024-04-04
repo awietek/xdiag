@@ -1,6 +1,6 @@
-#include "compiler.h"
+#include "compiler.hpp"
 
-#include <xdiag/utils/print_macro.h>
+#include <xdiag/utils/print_macro.hpp>
 
 namespace xdiag::operators {
 

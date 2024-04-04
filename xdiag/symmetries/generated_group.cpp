@@ -1,5 +1,7 @@
-#include <xdiag/symmetries/generated_group.h>
-#include <xdiag/utils/print_macro.h>
+#include "generated_group.hpp"
+
+#include <xdiag/symmetries/generated_group.hpp>
+#include <xdiag/utils/print_macro.hpp>
 
 namespace xdiag {
 

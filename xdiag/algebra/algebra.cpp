@@ -1,10 +1,10 @@
-#include "algebra.h"
+#include "algebra.hpp"
 
-#include <xdiag/algebra/apply.h>
+#include <xdiag/algebra/apply.hpp>
 
 #ifdef XDIAG_USE_MPI
-#include <xdiag/parallel/mpi/allreduce.h>
-#include <xdiag/parallel/mpi/cdot_distributed.h>
+#include <xdiag/parallel/mpi/allreduce.hpp>
+#include <xdiag/parallel/mpi/cdot_distributed.hpp>
 #endif
 
 namespace xdiag {

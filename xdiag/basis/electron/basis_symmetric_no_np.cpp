@@ -1,9 +1,9 @@
-#include "basis_symmetric_no_np.h"
+#include "basis_symmetric_no_np.hpp"
 
-#include <xdiag/combinatorics/subsets.h>
-#include <xdiag/symmetries/operations/group_action_operations.h>
-#include <xdiag/symmetries/operations/representative_list.h>
-#include <xdiag/symmetries/operations/symmetry_operations.h>
+#include <xdiag/combinatorics/subsets.hpp>
+#include <xdiag/symmetries/operations/group_action_operations.hpp>
+#include <xdiag/symmetries/operations/representative_list.hpp>
+#include <xdiag/symmetries/operations/symmetry_operations.hpp>
 
 namespace xdiag::basis::electron {
 

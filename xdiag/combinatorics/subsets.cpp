@@ -1,8 +1,8 @@
-#include "subsets.h"
-#include <xdiag/utils/logger.h>
+#include "subsets.hpp"
+#include <xdiag/utils/logger.hpp>
 
 #ifdef _OPENMP
-#include <xdiag/parallel/omp/omp_utils.h>
+#include <xdiag/parallel/omp/omp_utils.hpp>
 #endif
 
 namespace xdiag::combinatorics {

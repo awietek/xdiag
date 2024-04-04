@@ -1,8 +1,9 @@
-#include "communicator.h"
-#include <mpi.h>
-#include <vector>
+#include "communicator.hpp"
 
+#include <vector>
 #include <numeric>
+
+#include <mpi.h>
 
 namespace xdiag::mpi {
 

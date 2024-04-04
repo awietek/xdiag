@@ -1,8 +1,8 @@
-#include "arnoldi_to_disk.h"
+#include "arnoldi_to_disk.hpp"
 
-#include <xdiag/extern/fmt/format.h>
-#include <xdiag/common.h>
-#include <xdiag/utils/read_vectors.h>
+#include <xdiag/extern/fmt/format.hpp>
+#include <xdiag/common.hpp>
+#include <xdiag/utils/read_vectors.hpp>
 
 namespace xdiag {
 

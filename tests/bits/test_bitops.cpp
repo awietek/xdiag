@@ -1,9 +1,10 @@
 #include "../catch.hpp"
 
 #include <random>
-#include <xdiag/utils/timing.h>
-#include <xdiag/utils/logger.h>
-#include <xdiag/bits/bitops.h>
+
+#include <xdiag/utils/timing.hpp>
+#include <xdiag/utils/logger.hpp>
+#include <xdiag/bits/bitops.hpp>
 
 using namespace xdiag;
 using namespace xdiag::bits;

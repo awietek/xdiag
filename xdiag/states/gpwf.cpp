@@ -1,5 +1,6 @@
-#include "gpwf.h"
-#include <xdiag/bits/bitops.h>
+#include "gpwf.hpp"
+
+#include <xdiag/bits/bitops.hpp>
 
 namespace xdiag {
 

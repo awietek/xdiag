@@ -1,8 +1,8 @@
-#include "spinhalf_apply.h"
+#include "spinhalf_apply.hpp"
 
-#include <xdiag/algebra/fill.h>
-#include <xdiag/blocks/spinhalf/compile.h>
-#include <xdiag/blocks/spinhalf/dispatch.h>
+#include <xdiag/algebra/fill.hpp>
+#include <xdiag/blocks/spinhalf/compile.hpp>
+#include <xdiag/blocks/spinhalf/dispatch.hpp>
 
 namespace xdiag {
 
@@ -11,7 +11,7 @@ void apply(BondList const &bonds, Spinhalf const &block_in,
            arma::Col<coeff_t> const &vec_in, Spinhalf const &block_out,
            arma::Col<coeff_t> &vec_out) try {
   vec_out.zeros();
-  
+
   BondList bondsc = spinhalf::compile(bonds, 1e-12);
   auto fill = [&](int64_t idx_in, int64_t idx_out, coeff_t val) {
     return fill_apply(vec_in, vec_out, idx_in, idx_out, val);

@@ -1,6 +1,6 @@
 #include "../catch.hpp"
 
-#include <xdiag/combinatorics/lin_table.h>
+#include <xdiag/combinatorics/lin_table.hpp>
 #include <iostream>
 
 template <class bit_t> void test_lintable(int n, int k) {

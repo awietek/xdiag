@@ -1,11 +1,11 @@
 #include "../../catch.hpp"
 
-#include <xdiag/blocks/electron/electron_matrix.h>
-#include <xdiag/blocks/electron/electron_apply.h>
-#include <xdiag/algebra/algebra.h>
-#include <xdiag/algebra/matrix.h>
-#include <xdiag/algorithms/sparse_diag.h>
-#include <xdiag/utils/close.h>
+#include <xdiag/algebra/algebra.hpp>
+#include <xdiag/algebra/matrix.hpp>
+#include <xdiag/algorithms/sparse_diag.hpp>
+#include <xdiag/blocks/electron/electron_apply.hpp>
+#include <xdiag/blocks/electron/electron_matrix.hpp>
+#include <xdiag/utils/close.hpp>
 
 TEST_CASE("electron_raise_lower", "[electron]") {
   using namespace xdiag;

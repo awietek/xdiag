@@ -1,7 +1,8 @@
-#include "compile.h"
-#include <xdiag/operators/compiler.h>
-#include <xdiag/utils/logger.h>
-#include <xdiag/utils/print_macro.h>
+#include "compile.hpp"
+
+#include <xdiag/operators/compiler.hpp>
+#include <xdiag/utils/logger.hpp>
+#include <xdiag/utils/print_macro.hpp>
 
 namespace xdiag::tj {
 

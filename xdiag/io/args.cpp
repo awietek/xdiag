@@ -1,4 +1,4 @@
-#include "args.h"
+#include "args.hpp"
 
 namespace xdiag {
 Arg::Arg(std::string key, std::string val) : key_(key), val_(val) {}

@@ -1,13 +1,13 @@
-#include "fermi_table.h"
+#include "fermi_table.hpp"
 
 #include <cassert>
 
-#include <xdiag/combinatorics/combinations.h>
-#include <xdiag/combinatorics/subsets.h>
-#include <xdiag/symmetries/operations/fermi_sign.h>
+#include <xdiag/combinatorics/combinations.hpp>
+#include <xdiag/combinatorics/subsets.hpp>
+#include <xdiag/symmetries/operations/fermi_sign.hpp>
 
 #ifdef _OPENMP
-#include <xdiag/parallel/omp/omp_utils.h>
+#include <xdiag/parallel/omp/omp_utils.hpp>
 #endif
 
 namespace xdiag::combinatorics {

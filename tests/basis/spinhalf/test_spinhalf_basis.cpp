@@ -3,13 +3,13 @@
 #include <iostream>
 
 #include <iostream>
-#include <xdiag/common.h>
-#include <xdiag/combinatorics/combinations.h>
-#include <xdiag/combinatorics/subsets.h>
-#include <xdiag/basis/spinhalf/basis_symmetric_sz.h>
-#include <xdiag/basis/spinhalf/basis_symmetric_no_sz.h>
-#include <xdiag/symmetries/operations/symmetry_operations.h>
-#include <xdiag/symmetries/operations/group_action_operations.h>
+#include <xdiag/common.hpp>
+#include <xdiag/combinatorics/combinations.hpp>
+#include <xdiag/combinatorics/subsets.hpp>
+#include <xdiag/basis/spinhalf/basis_symmetric_sz.hpp>
+#include <xdiag/basis/spinhalf/basis_symmetric_no_sz.hpp>
+#include <xdiag/symmetries/operations/symmetry_operations.hpp>
+#include <xdiag/symmetries/operations/group_action_operations.hpp>
 
 using namespace xdiag;
 

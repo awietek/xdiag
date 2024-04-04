@@ -1,6 +1,6 @@
 #include "../catch.hpp"
 
-#include <xdiag/operators/bondlist.h>
+#include <xdiag/operators/bondlist.hpp>
 #include <iostream>
 
 TEST_CASE("bondlist", "[operators/bondlist]") {

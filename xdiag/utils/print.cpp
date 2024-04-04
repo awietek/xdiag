@@ -1,10 +1,10 @@
-#include "print.h"
-
-#include <xdiag/random/hash.h>
-#include <xdiag/utils/error.h>
+#include "print.hpp"
 
 #include <inttypes.h>
 #include <sstream>
+
+#include <xdiag/random/hash.hpp>
+#include <xdiag/utils/error.hpp>
 
 namespace xdiag::utils {
 

@@ -1,23 +1,20 @@
-#include "file_toml_handler.h"
-
-#include <xdiag/extern/armadillo/armadillo>
-#include <xdiag/extern/toml++/toml.h>
+#include "file_toml_handler.hpp"
 
 #include <array>
 #include <complex>
 #include <cstdint>
 #include <vector>
 
-#include <xdiag/common.h>
-#include <xdiag/io/toml/toml_conversion.h>
-#include <xdiag/utils/logger.h>
-
-#include <xdiag/symmetries/permutation.h>
-#include <xdiag/symmetries/permutation_group.h>
-#include <xdiag/symmetries/representation.h>
-
-#include <xdiag/operators/bond.h>
-#include <xdiag/operators/bondlist.h>
+#include <xdiag/common.hpp>
+#include <xdiag/extern/armadillo/armadillo>
+#include <xdiag/extern/toml++/toml.hpp>
+#include <xdiag/io/toml/toml_conversion.hpp>
+#include <xdiag/operators/bond.hpp>
+#include <xdiag/operators/bondlist.hpp>
+#include <xdiag/symmetries/permutation.hpp>
+#include <xdiag/symmetries/permutation_group.hpp>
+#include <xdiag/symmetries/representation.hpp>
+#include <xdiag/utils/logger.hpp>
 
 namespace xdiag::io {
 
@@ -182,7 +179,8 @@ template <> PermutationGroup FileTomlHandler::as<PermutationGroup>() const {
       get_toml_array(table_.at_path(key_)));
   std::vector<Permutation> perms(mat.n_rows);
   for (std::size_t i = 0; i < mat.n_rows; ++i) {
-    perms[i] = Permutation(std::vector<int64_t>(mat.begin_row(i), mat.end_row(i)));
+    perms[i] =
+        Permutation(std::vector<int64_t>(mat.begin_row(i), mat.end_row(i)));
   }
   return PermutationGroup(perms);
 }

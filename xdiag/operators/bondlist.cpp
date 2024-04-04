@@ -1,4 +1,4 @@
-#include "bondlist.h"
+#include "bondlist.hpp"
 
 #include <algorithm>
 #include <cassert>
@@ -6,7 +6,7 @@
 #include <iostream>
 #include <sstream>
 
-#include <xdiag/utils/print_macro.h>
+#include <xdiag/utils/print_macro.hpp>
 
 namespace xdiag {
 

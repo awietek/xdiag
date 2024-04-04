@@ -1,16 +1,16 @@
-#include "basis_sublattice.h"
+#include "basis_sublattice.hpp"
 
-#include <xdiag/combinatorics/combinations.h>
-#include <xdiag/combinatorics/subsets.h>
+#include <xdiag/combinatorics/combinations.hpp>
+#include <xdiag/combinatorics/subsets.hpp>
 
-#include <xdiag/symmetries/operations/group_action_operations.h>
-#include <xdiag/symmetries/operations/symmetry_operations.h>
-#include <xdiag/utils/logger.h>
+#include <xdiag/symmetries/operations/group_action_operations.hpp>
+#include <xdiag/symmetries/operations/symmetry_operations.hpp>
+#include <xdiag/utils/logger.hpp>
 
 #include <algorithm>
 
 #ifdef _OPENMP
-#include <xdiag/parallel/omp/omp_utils.h>
+#include <xdiag/parallel/omp/omp_utils.hpp>
 #endif
 
 namespace xdiag::basis::spinhalf {

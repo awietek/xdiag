@@ -2,10 +2,10 @@
 
 #include <iostream>
 
-#include <xdiag/common.h>
-#include <xdiag/symmetries/permutation.h>
-#include <xdiag/combinatorics/subsets.h>
-#include <xdiag/symmetries/operations/fermi_sign.h>
+#include <xdiag/common.hpp>
+#include <xdiag/symmetries/permutation.hpp>
+#include <xdiag/combinatorics/subsets.hpp>
+#include <xdiag/symmetries/operations/fermi_sign.hpp>
 
 using namespace xdiag;
 

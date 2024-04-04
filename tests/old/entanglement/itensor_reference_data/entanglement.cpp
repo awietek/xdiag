@@ -1,9 +1,9 @@
 #include <cstdlib>
-#include <itensor/all.h>
-#include <xdiag/all.h>
+#include <itensor/all.hpp>
+#include <xdiag/all.hpp>
 #include <iomanip>
 
-#include "../testcases_entanglement_entropy.h"
+#include "../testcases_entanglement_entropy.hpp"
 
 int main(int argc, char *argv[]) {
   using namespace itensor;

@@ -1,8 +1,8 @@
-#include "matrix.h"
+#include "matrix.hpp"
 
-#include <xdiag/blocks/electron/electron_matrix.h>
-#include <xdiag/blocks/spinhalf/spinhalf_matrix.h>
-#include <xdiag/blocks/tj/tj_matrix.h>
+#include <xdiag/blocks/electron/electron_matrix.hpp>
+#include <xdiag/blocks/spinhalf/spinhalf_matrix.hpp>
+#include <xdiag/blocks/tj/tj_matrix.hpp>
 
 namespace xdiag {
 

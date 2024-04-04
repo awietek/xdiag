@@ -1,10 +1,10 @@
 #include "../catch.hpp"
 
-#include "../blocks/electron/testcases_electron.h"
-#include <xdiag/algebra/algebra.h>
-#include <xdiag/states/random_state.h>
-#include <xdiag/utils/close.h>
-#include <xdiag/utils/print_macro.h>
+#include "../blocks/electron/testcases_electron.hpp"
+#include <xdiag/algebra/algebra.hpp>
+#include <xdiag/states/random_state.hpp>
+#include <xdiag/utils/close.hpp>
+#include <xdiag/utils/print_macro.hpp>
 
 #include <iostream>
 #include <set>

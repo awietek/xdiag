@@ -1,9 +1,9 @@
-#include "electron_matrix.h"
+#include "electron_matrix.hpp"
 
-#include <xdiag/algebra/fill.h>
-#include <xdiag/blocks/electron/compile.h>
-#include <xdiag/blocks/electron/dispatch.h>
-#include <xdiag/operators/compiler.h>
+#include <xdiag/algebra/fill.hpp>
+#include <xdiag/blocks/electron/compile.hpp>
+#include <xdiag/blocks/electron/dispatch.hpp>
+#include <xdiag/operators/compiler.hpp>
 
 namespace xdiag {
 

@@ -2,13 +2,13 @@
 
 #include <iostream>
 
-#include "../spinhalf/testcases_spinhalf.h"
-#include "../tj/testcases_tj.h"
-#include "testcases_electron.h"
+#include "../spinhalf/testcases_spinhalf.hpp"
+#include "../tj/testcases_tj.hpp"
+#include "testcases_electron.hpp"
 
-#include <xdiag/blocks/electron/electron_matrix.h>
-#include <xdiag/algebra/matrix.h>
-#include <xdiag/utils/close.h>
+#include <xdiag/algebra/matrix.hpp>
+#include <xdiag/blocks/electron/electron_matrix.hpp>
+#include <xdiag/utils/close.hpp>
 
 using namespace xdiag;
 

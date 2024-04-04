@@ -1,11 +1,10 @@
-#include "group_action_sublattice.h"
+#include "group_action_sublattice.hpp"
 
 #include <limits>
 
-#include <xdiag/symmetries/group_action/group_action.h>
-#include <xdiag/symmetries/group_action/sublattice_stability.h>
-
-#include <xdiag/utils/logger.h>
+#include <xdiag/symmetries/group_action/group_action.hpp>
+#include <xdiag/symmetries/group_action/sublattice_stability.hpp>
+#include <xdiag/utils/logger.hpp>
 
 namespace xdiag {
 

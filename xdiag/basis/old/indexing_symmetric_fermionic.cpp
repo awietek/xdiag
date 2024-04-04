@@ -1,12 +1,12 @@
-#include "indexing_symmetric_fermionic.h"
+#include "indexing_symmetric_fermionic.hpp"
 
-#include <xdiag/blocks/utils/block_utils.h>
-#include <xdiag/combinatorics/binomial.h>
-#include <xdiag/combinatorics/combinations.h>
-#include <xdiag/symmetries/fermi_sign.h>
-#include <xdiag/symmetries/permutation_group_action.h>
-#include <xdiag/symmetries/permutation_group_lookup.h>
-#include <xdiag/symmetries/symmetry_operations.h>
+#include <xdiag/blocks/utils/block_utils.hpp>
+#include <xdiag/combinatorics/binomial.hpp>
+#include <xdiag/combinatorics/combinations.hpp>
+#include <xdiag/symmetries/fermi_sign.hpp>
+#include <xdiag/symmetries/permutation_group_action.hpp>
+#include <xdiag/symmetries/permutation_group_lookup.hpp>
+#include <xdiag/symmetries/symmetry_operations.hpp>
 
 namespace xdiag::indexing {
 
