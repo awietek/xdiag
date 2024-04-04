@@ -15,7 +15,7 @@ include("common.jl")
 
 # Collection of sources required to complete build
 sources = [
-    GitSource("https://github.com/awietek/xdiag.git", "1cf38cbc5adbbb46fc26ed5045979caf1c4b66c8")
+    GitSource("https://github.com/awietek/xdiag.git", "1dfcaf2f5edd662b6c4a009448ec70dafaa417e4")
 ]
 
 # Bash recipe for building across all platforms
