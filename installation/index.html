@@ -458,7 +458,7 @@ in a second step. Here we explain how to compile the library.</p>
 </li>
 <li>
 <p><strong>Compile the default library</strong>
-  <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nb">cd</span><span class="w"> </span>xdiag
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nb">cd</span><span class="w"> </span>XDiag
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>cmake<span class="w"> </span>-S<span class="w"> </span>.<span class="w"> </span>-B<span class="w"> </span>build
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>cmake<span class="w"> </span>--build<span class="w"> </span>build
 <a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>cmake<span class="w"> </span>--install<span class="w"> </span>build
@@ -469,11 +469,17 @@ in a second step. Here we explain how to compile the library.</p>
 <p><strong>Compile the distributed library</strong></p>
 <p>To use the distributed computing features of <code>xdiag</code>, the distributed
 library has to be built which requires <a href="https://en.wikipedia.org/wiki/Message_Passing_Interface">MPI</a>.
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nb">cd</span><span class="w"> </span>xdiag
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nb">cd</span><span class="w"> </span>XDiag
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>cmake<span class="w"> </span>-S<span class="w"> </span>.<span class="w"> </span>-B<span class="w"> </span>build<span class="w"> </span>-D<span class="w"> </span><span class="nv">XDIAG_DISTRIBUTED</span><span class="o">=</span>On
 <a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>cmake<span class="w"> </span>--build<span class="w"> </span>build
 <a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>cmake<span class="w"> </span>--install<span class="w"> </span>build
 </code></pre></div></p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>It might be necessary to explicitly define MPI compiler, e.g. <code>mpicxx</code> like this
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>cmake<span class="w"> </span>-S<span class="w"> </span>.<span class="w"> </span>-B<span class="w"> </span>build<span class="w"> </span>-D<span class="w"> </span><span class="nv">XDIAG_DISTRIBUTED</span><span class="o">=</span>On<span class="w"> </span>-D<span class="w"> </span><span class="nv">CMAKE_CXX_COMPILER</span><span class="o">=</span>mpicxx
+</code></pre></div></p>
+</div>
 </li>
 </ul>
 <h3 id="advanced-compilation">Advanced Compilation</h3>
@@ -481,19 +487,19 @@ library has to be built which requires <a href="https://en.wikipedia.org/wiki/Me
 <li>
 <p><strong>Parallel compilation</strong>
     To speed up the compilation process, the build step can be performed in parallel using the <code>-j</code> flag</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>cmake<span class="w"> </span>--build<span class="w"> </span>build<span class="w"> </span>-j
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>cmake<span class="w"> </span>--build<span class="w"> </span>build<span class="w"> </span>-j
 </code></pre></div>
 </li>
 <li>
 <p><strong>Listing compile options</strong></p>
 <p>The available compilation options can be displayed using
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>cmake<span class="w"> </span>-L<span class="w"> </span>.
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>cmake<span class="w"> </span>-L<span class="w"> </span>.
 </code></pre></div></p>
 </li>
 <li>
 <p><strong>Choosing a certain compiler</strong></p>
 <p>The compiler (e.g. <code>icpx</code>) can be specified using
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>cmake<span class="w"> </span>-S<span class="w"> </span>.<span class="w"> </span>-B<span class="w"> </span>build<span class="w"> </span>-D<span class="w"> </span><span class="nv">CMAKE_CXX_COMPILER</span><span class="o">=</span>icpx
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>cmake<span class="w"> </span>-S<span class="w"> </span>.<span class="w"> </span>-B<span class="w"> </span>build<span class="w"> </span>-D<span class="w"> </span><span class="nv">CMAKE_CXX_COMPILER</span><span class="o">=</span>icpx
 </code></pre></div></p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
@@ -504,22 +510,22 @@ advisable to also compile the application codes with the same compiler.</p>
 <li>
 <p><strong>Setting the install path</strong></p>
 <p>In the installation step, the install directory can be set in the following way
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>cmake<span class="w"> </span>--install<span class="w"> </span>build<span class="w"> </span>--prefix<span class="w"> </span>/my/install/prefix
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>cmake<span class="w"> </span>--install<span class="w"> </span>build<span class="w"> </span>--prefix<span class="w"> </span>/my/install/prefix
 </code></pre></div></p>
 </li>
 <li>
 <p><strong>Disabling HDF5/OpenMP</strong></p>
 <p>To disable support for <a href="https://www.hdfgroup.org/solutions/hdf5/">HDF5</a>
 or <a href="https://www.openmp.org/">OpenMP</a> support, use
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>cmake<span class="w"> </span>-S<span class="w"> </span>.<span class="w"> </span>-B<span class="w"> </span>build<span class="w"> </span>-D<span class="w"> </span><span class="nv">XDIAG_DISABLE_OPENMP</span><span class="o">=</span>On<span class="w"> </span>-D<span class="w"> </span><span class="nv">XDIAG_DISABLE_HDF5</span><span class="o">=</span>On
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>cmake<span class="w"> </span>-S<span class="w"> </span>.<span class="w"> </span>-B<span class="w"> </span>build<span class="w"> </span>-D<span class="w"> </span><span class="nv">XDIAG_DISABLE_OPENMP</span><span class="o">=</span>On<span class="w"> </span>-D<span class="w"> </span><span class="nv">XDIAG_DISABLE_HDF5</span><span class="o">=</span>On
 </code></pre></div></p>
 </li>
 <li>
 <p><strong>Building and running tests</strong></p>
 <p>To compile and run the testing programs, use
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>cmake<span class="w"> </span>-S<span class="w"> </span>.<span class="w"> </span>-B<span class="w"> </span>build<span class="w"> </span>-D<span class="w"> </span><span class="nv">BUILD_TESTING</span><span class="o">=</span>On
-<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>cmake<span class="w"> </span>--build<span class="w"> </span>build
-<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>build/tests/tests
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>cmake<span class="w"> </span>-S<span class="w"> </span>.<span class="w"> </span>-B<span class="w"> </span>build<span class="w"> </span>-D<span class="w"> </span><span class="nv">BUILD_TESTING</span><span class="o">=</span>On
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>cmake<span class="w"> </span>--build<span class="w"> </span>build
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>build/tests/tests
 </code></pre></div></p>
 </li>
 </ul>
