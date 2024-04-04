@@ -18,7 +18,7 @@
     
     
       
-        <title>Quick start - Hydra Documentation</title>
+        <title>Quick start - XDiag Documentation</title>
       
     
     
@@ -86,7 +86,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href=".." title="Hydra Documentation" class="md-header__button md-logo" aria-label="Hydra Documentation" data-md-component="logo">
+    <a href=".." title="XDiag Documentation" class="md-header__button md-logo" aria-label="XDiag Documentation" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -100,7 +100,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            Hydra Documentation
+            XDiag Documentation
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -181,13 +181,13 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href=".." title="Hydra Documentation" class="md-nav__button md-logo" aria-label="Hydra Documentation" data-md-component="logo">
+    <a href=".." title="XDiag Documentation" class="md-nav__button md-logo" aria-label="XDiag Documentation" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
 
     </a>
-    Hydra Documentation
+    XDiag Documentation
   </label>
   
   <ul class="md-nav__list" data-md-scrollfix>
@@ -386,10 +386,10 @@
   <h1>Quick start</h1>
 
 <h2 id="hello-world">Hello World</h2>
-<p>Let us set up our first program using the <code>hydra</code> library. For this we need to create two files. The first is the actual <code>C++</code> code.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;hydra/all.h&gt;</span>
+<p>Let us set up our first program using the <code>xdiag</code> library. For this we need to create two files. The first is the actual <code>C++</code> code.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;xdiag/all.h&gt;</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">hydra</span><span class="p">;</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">xdiag</span><span class="p">;</span>
 <a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">  </span><span class="n">say_hello</span><span class="p">();</span>
@@ -397,7 +397,7 @@
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">  </span><span class="n">traceback</span><span class="p">(</span><span class="n">e</span><span class="p">);</span>
 <a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="p">}</span>
 </code></pre></div>
-<p>The function <code>say_hello()</code> prints out a welcome message, which also contains information which exact hydra version is used. What is maybe a bit unfamiliar is the <code>try / catch</code> block. Hydra implements a traceback mechanism for runtime errors, which is activated by this idiom. While not stricly necessary here, it is a good practice to make use of this.</p>
+<p>The function <code>say_hello()</code> prints out a welcome message, which also contains information which exact XDiag version is used. What is maybe a bit unfamiliar is the <code>try / catch</code> block. XDiag implements a traceback mechanism for runtime errors, which is activated by this idiom. While not stricly necessary here, it is a good practice to make use of this.</p>
 <p>Now that the application program is written, we next need to set up the compilation instructions using <a href="https://cmake.org/">CMake</a>. To do so we create a second file called <code>CMakeLists.txt</code> in the same directory.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nb">cmake_minimum_required</span><span class="p">(</span><span class="s">VERSION</span><span class="w"> </span><span class="s">3.19</span><span class="p">)</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
@@ -406,23 +406,23 @@
 <a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">  </span><span class="s">LANGUAGES</span><span class="w"> </span><span class="s">CXX</span>
 <a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="p">)</span>
 <a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>
-<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="nb">find_package</span><span class="p">(</span><span class="s">hydra</span><span class="w"> </span><span class="s">REQUIRED</span><span class="w"> </span><span class="s">HINTS</span><span class="w"> </span><span class="s2">&quot;/path/to/hydra/install&quot;</span><span class="p">)</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="nb">find_package</span><span class="p">(</span><span class="s">xdiag</span><span class="w"> </span><span class="s">REQUIRED</span><span class="w"> </span><span class="s">HINTS</span><span class="w"> </span><span class="s2">&quot;/path/to/xdiag/install&quot;</span><span class="p">)</span>
 <a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="nb">add_executable</span><span class="p">(</span><span class="s">main</span><span class="w"> </span><span class="s">main.cpp</span><span class="p">)</span>
-<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="nb">target_link_libraries</span><span class="p">(</span><span class="s">main</span><span class="w"> </span><span class="s">PUBLIC</span><span class="w"> </span><span class="s">hydra::hydra</span><span class="p">)</span>
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="nb">target_link_libraries</span><span class="p">(</span><span class="s">main</span><span class="w"> </span><span class="s">PUBLIC</span><span class="w"> </span><span class="s">xdiag::xdiag</span><span class="p">)</span>
 </code></pre></div>
-<p>You should replace <code>"/path/to/hydra/install"</code> with the appropriate directory where your hydra library is installed after compilation. This exact <code>CMakeLists.txt</code> file can be used to compile any hydra application.</p>
+<p>You should replace <code>"/path/to/xdiag/install"</code> with the appropriate directory where your XDiag library is installed after compilation. This exact <code>CMakeLists.txt</code> file can be used to compile any XDiag application.</p>
 <div class="admonition info">
 <p class="admonition-title">Info</p>
-<p>For using the distributed hydra library the last line of the above
+<p>For using the distributed XDiag library the last line of the above
 <code>CMakeLists.txt</code> should be changed to</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nb">target_link_libraries</span><span class="p">(</span><span class="s">main</span><span class="w"> </span><span class="s">PUBLIC</span><span class="w"> </span><span class="s">hydra::hydra_distributed</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nb">target_link_libraries</span><span class="p">(</span><span class="s">main</span><span class="w"> </span><span class="s">PUBLIC</span><span class="w"> </span><span class="s">xdiag::xdiag_distributed</span><span class="p">)</span>
 </code></pre></div>
 </div>
 <p>We then compile the application code,</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>cmake<span class="w"> </span>-S<span class="w"> </span>.<span class="w"> </span>-B<span class="w"> </span>build
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>cmake<span class="w"> </span>--build<span class="w"> </span>build
 </code></pre></div>
-<p>and finally run our first <code>hydra</code> application.</p>
+<p>and finally run our first <code>xdiag</code> application.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>./build/main
 </code></pre></div>
 <h2 id="computing-the-ground-state-energy-of-a-spin-chain">Computing the ground state energy of a spin chain</h2>
@@ -433,9 +433,9 @@ a periodic chain lattice in one dimension. The Hamiltonian is given by</p>
 and <span class="arithmatex">\(\langle i,j \rangle\)</span> denotes summation over nearest-meighbor sites
 <span class="arithmatex">\(i\)</span> and <span class="arithmatex">\(j\)</span>.</p>
 <p>The following code, sets up the Hilbert space, defines the Hamiltonian and finally calls an iterative eigenvalue solver to compute the ground state energy.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;hydra/all.h&gt;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;xdiag/all.h&gt;</span>
 <a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
-<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">hydra</span><span class="p">;</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">xdiag</span><span class="p">;</span>
 <a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>
 <a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
 <a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>
