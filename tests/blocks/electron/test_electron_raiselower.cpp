@@ -1,14 +1,14 @@
 #include "../../catch.hpp"
 
-#include <hydra/blocks/electron/electron_matrix.h>
-#include <hydra/blocks/electron/electron_apply.h>
-#include <hydra/algebra/algebra.h>
-#include <hydra/algebra/matrix.h>
-#include <hydra/algorithms/sparse_diag.h>
-#include <hydra/utils/close.h>
+#include <xdiag/blocks/electron/electron_matrix.h>
+#include <xdiag/blocks/electron/electron_apply.h>
+#include <xdiag/algebra/algebra.h>
+#include <xdiag/algebra/matrix.h>
+#include <xdiag/algorithms/sparse_diag.h>
+#include <xdiag/utils/close.h>
 
 TEST_CASE("electron_raise_lower", "[electron]") {
-  using namespace hydra;
+  using namespace xdiag;
   using namespace arma;
   std::vector<std::string> op_strs = {"CDAGUP", "CDAGDN", "CUP", "CDN"};
 

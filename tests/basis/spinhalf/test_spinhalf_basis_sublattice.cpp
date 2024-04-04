@@ -2,15 +2,15 @@
 
 #include <iostream>
 
-#include <hydra/basis/spinhalf/basis_sublattice.h>
-#include <hydra/basis/spinhalf/basis_symmetric_no_sz.h>
-#include <hydra/basis/spinhalf/basis_symmetric_sz.h>
-#include <hydra/combinatorics/combinations.h>
-#include <hydra/combinatorics/subsets.h>
-#include <hydra/common.h>
-#include <hydra/symmetries/operations/symmetry_operations.h>
+#include <xdiag/basis/spinhalf/basis_sublattice.h>
+#include <xdiag/basis/spinhalf/basis_symmetric_no_sz.h>
+#include <xdiag/basis/spinhalf/basis_symmetric_sz.h>
+#include <xdiag/combinatorics/combinations.h>
+#include <xdiag/combinatorics/subsets.h>
+#include <xdiag/common.h>
+#include <xdiag/symmetries/operations/symmetry_operations.h>
 
-using namespace hydra;
+using namespace xdiag;
 
 template <typename bit_t, class Basis1, class Basis2>
 void compare_state(bit_t state, Basis1 const &basis1, Basis2 const &basis2) {
@@ -88,8 +88,8 @@ template <class bit_t> void test_spinhalf_basis_sublattice() {
     Log("basis_spinhalf_sublattice: 1 sublattice");
     int n_sites = 8;
     std::string lfile =
-        HYDRA_DIRECTORY "/misc/data/square.8.heisenberg.2sl.lat";
-    auto permutations = hydra::read_permutations(lfile);
+        XDIAG_DIRECTORY "/misc/data/square.8.heisenberg.2sl.lat";
+    auto permutations = xdiag::read_permutations(lfile);
     auto perm_group = PermutationGroup(permutations);
     std::vector<std::string> irrep_names = {
         "Gamma.D4.A1", "Gamma.D4.A2", "Gamma.D4.B1", "Gamma.D4.B2",
@@ -117,8 +117,8 @@ template <class bit_t> void test_spinhalf_basis_sublattice() {
     Log("basis_spinhalf_sublattice: 2 sublattice");
     int n_sites = 8;
     std::string lfile =
-        HYDRA_DIRECTORY "/misc/data/square.8.heisenberg.2sl.lat";
-    auto permutations = hydra::read_permutations(lfile);
+        XDIAG_DIRECTORY "/misc/data/square.8.heisenberg.2sl.lat";
+    auto permutations = xdiag::read_permutations(lfile);
     auto perm_group = PermutationGroup(permutations);
     std::vector<std::string> irrep_names = {
         "Gamma.D4.A1", "Gamma.D4.A2", "Gamma.D4.B1", "Gamma.D4.B2",
@@ -144,8 +144,8 @@ template <class bit_t> void test_spinhalf_basis_sublattice() {
     Log("basis_spinhalf_sublattice: 3 sublattice");
     int n_sites = 9;
     std::string lfile =
-        HYDRA_DIRECTORY "/misc/data/square.9.heisenberg.3sl.lat";
-    auto permutations = hydra::read_permutations(lfile);
+        XDIAG_DIRECTORY "/misc/data/square.9.heisenberg.3sl.lat";
+    auto permutations = xdiag::read_permutations(lfile);
     auto perm_group = PermutationGroup(permutations);
     std::vector<std::string> irrep_names = {
         "Gamma.D2.A1", "Gamma.D2.A2", "Gamma.D2.B1",
@@ -169,9 +169,9 @@ template <class bit_t> void test_spinhalf_basis_sublattice() {
   {
     Log("basis_spinhalf_sublattice: 3 sublattice (triangular)");
     int n_sites = 9;
-    std::string lfile = HYDRA_DIRECTORY
+    std::string lfile = XDIAG_DIRECTORY
         "/misc/data/triangular.9.Jz1Jz2Jx1Jx2D1.sublattices.tsl.lat";
-    auto permutations = hydra::read_permutations(lfile);
+    auto permutations = xdiag::read_permutations(lfile);
     auto perm_group = PermutationGroup(permutations);
     std::vector<std::string> irrep_names = {
         "Gamma.D6.A1", "Gamma.D6.A2", "Gamma.D6.B1", "Gamma.D6.B2",
@@ -196,8 +196,8 @@ template <class bit_t> void test_spinhalf_basis_sublattice() {
     Log("basis_spinhalf_sublattice: 4 sublattice");
     int n_sites = 8;
     std::string lfile =
-        HYDRA_DIRECTORY "/misc/data/square.8.heisenberg.4sl.lat";
-    auto permutations = hydra::read_permutations(lfile);
+        XDIAG_DIRECTORY "/misc/data/square.8.heisenberg.4sl.lat";
+    auto permutations = xdiag::read_permutations(lfile);
     auto perm_group = PermutationGroup(permutations);
     std::vector<std::string> irrep_names = {
         "Gamma.D4.A1", "Gamma.D4.A2", "Gamma.D4.B1", "Gamma.D4.B2",
@@ -223,8 +223,8 @@ template <class bit_t> void test_spinhalf_basis_sublattice() {
     Log("basis_spinhalf_sublattice: 5 sublattice");
     int n_sites = 10;
     std::string lfile =
-        HYDRA_DIRECTORY "/misc/data/square.10.heisenberg.5sl.lat";
-    auto permutations = hydra::read_permutations(lfile);
+        XDIAG_DIRECTORY "/misc/data/square.10.heisenberg.5sl.lat";
+    auto permutations = xdiag::read_permutations(lfile);
     auto perm_group = PermutationGroup(permutations);
     std::vector<std::string> irrep_names = {
         "Gamma.C2.A", "Gamma.C2.B", "Delta0.C1.A", "Delta1.C1.A", "X.C2.A",

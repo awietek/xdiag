@@ -48,7 +48,7 @@ for seed in seeds:
     for cutoff in cutoffs:
         for niter_eval in niter_evals:
             print("@ seed: {}, cutoff: {}, niter: {}".format(seed, cutoff, niter_eval))
-            directory = "/data/condmat/awietek/Research/Software/hydra/examples/dynamics_finite_t/shastry_sutherland_ftlm/outfiles/shastry.{}.HB.J.Jd.fsl/J.{:.2f}.Jd.{:.2f}/q.{}/seed.{}/".format(n_sites, J, Jd, q, seed)
+            directory = "/data/condmat/awietek/Research/Software/xdiag/examples/dynamics_finite_t/shastry_sutherland_ftlm/outfiles/shastry.{}.HB.J.Jd.fsl/J.{:.2f}.Jd.{:.2f}/q.{}/seed.{}/".format(n_sites, J, Jd, q, seed)
             regex = "outfile.shastry.{}.HB.J.Jd.fsl.J.{:.2f}.Jd.{:.2f}.q.{}.seed.{}.nup.(.*).k.(.*).niter.{}.h5".format(n_sites, J, Jd, q, seed, niter)
 
             print("Reading data")
@@ -166,7 +166,7 @@ for seed in seeds:
             #             print("f1: {:.3e} f2: {:.3e} f3: {:.3e} f4: {:.3e}".format(f1, f2, f3, f4))
             #             print()
                         
-            directory = "/data/condmat/awietek/Research/Software/hydra/examples/dynamics_finite_t/shastry_sutherland_ftlm/poles_weights/shastry.{}.HB.J.Jd.fsl/J.{:.2f}.Jd.{:.2f}/q.{}/T.{:.4f}/niter.{}.cutoff.{}".format(n_sites, J, Jd, q, temperature, niter_eval, cutoff)
+            directory = "/data/condmat/awietek/Research/Software/xdiag/examples/dynamics_finite_t/shastry_sutherland_ftlm/poles_weights/shastry.{}.HB.J.Jd.fsl/J.{:.2f}.Jd.{:.2f}/q.{}/T.{:.4f}/niter.{}.cutoff.{}".format(n_sites, J, Jd, q, temperature, niter_eval, cutoff)
             filename = "poles.weights.shastry.{}.HB.J.Jd.fsl.J.{:.2f}.Jd.{:.2f}.q.{}.T.{:.4f}.niter.{}.cutoff.{}.seed.{}.h5".format(n_sites, J, Jd, q, temperature, niter_eval, cutoff, seed)
             if not os.path.exists(directory):
                 os.makedirs(directory)

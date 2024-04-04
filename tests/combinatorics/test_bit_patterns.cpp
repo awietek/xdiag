@@ -1,12 +1,12 @@
 #include "../catch.hpp"
 
-#include <hydra/combinatorics/bit_patterns.h>
-#include <hydra/combinatorics/binomial.h>
+#include <xdiag/combinatorics/bit_patterns.h>
+#include <xdiag/combinatorics/binomial.h>
 
 TEST_CASE("bit_patterns", "[combinatorics]") {
 
-  using namespace hydra;
-  using namespace hydra::combinatorics;
+  using namespace xdiag;
+  using namespace xdiag::combinatorics;
 
   using bit_t = uint64_t;
 

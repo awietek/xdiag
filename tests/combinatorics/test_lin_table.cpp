@@ -1,10 +1,10 @@
 #include "../catch.hpp"
 
-#include <hydra/combinatorics/lin_table.h>
+#include <xdiag/combinatorics/lin_table.h>
 #include <iostream>
 
 template <class bit_t> void test_lintable(int n, int k) {
-  using namespace hydra;
+  using namespace xdiag;
   combinatorics::LinTable<bit_t> lin_table(n, k);
 
   int64_t idx = 0;

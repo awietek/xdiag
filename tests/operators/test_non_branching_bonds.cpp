@@ -1,15 +1,15 @@
 #include "../catch.hpp"
 
 #include <iostream>
-#include <hydra/utils/close.h>
-#include <hydra/operators/non_branching_bonds.h>
-#include <hydra/blocks/spinhalf/spinhalf.h>
-#include <hydra/algebra/algebra.h>
-#include <hydra/algebra/matrix.h>
-#include <hydra/algorithms/sparse_diag.h>
+#include <xdiag/utils/close.h>
+#include <xdiag/operators/non_branching_bonds.h>
+#include <xdiag/blocks/spinhalf/spinhalf.h>
+#include <xdiag/algebra/algebra.h>
+#include <xdiag/algebra/matrix.h>
+#include <xdiag/algorithms/sparse_diag.h>
 
 TEST_CASE("non_branching_bonds", "[operators]") try {
-  using namespace hydra;
+  using namespace xdiag;
   using namespace arma;
   Log("testing non_branching_bonds");
 
@@ -158,10 +158,10 @@ TEST_CASE("non_branching_bonds", "[operators]") try {
   bonds2["Jchi"] = 1.0;
   auto H2 = matrixC(bonds2, block12);
 
-  // HydraPrint(norm(H1));
-  // HydraPrint(norm(H2));
+  // XDiagPrint(norm(H1));
+  // XDiagPrint(norm(H2));
 
   REQUIRE(close(H1, H2));
  } catch (std::exception const& e) {
-  hydra::traceback(e);
+  xdiag::traceback(e);
  }

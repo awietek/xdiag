@@ -1,8 +1,8 @@
 #include <filesystem>
-#include <hydra/all.h>
+#include <xdiag/all.h>
 
 int main(int argc, char** argv) {
-  using namespace hydra;
+  using namespace xdiag;
   using namespace arma;
   using fmt::format;
   using hdf5_opts::append;
@@ -42,7 +42,7 @@ int main(int argc, char** argv) {
   auto irrep = generated_irrep(perm, phase);
   
   auto block = Spinhalf(n_sites, n_up, group, irrep);
-  HydraPrint(block);
+  XDiagPrint(block);
   
   // Compute eigendecomposition of Hamiltonian
   Log("Creating H");

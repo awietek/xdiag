@@ -1,11 +1,11 @@
-#ifndef HYDRA_TEST_TESTCASES_ENTANGLEMENT_ENTROPY_H_
-#define HYDRA_TEST_TESTCASES_ENTANGLEMENT_ENTROPY_H_
+#ifndef XDIAG_TEST_TESTCASES_ENTANGLEMENT_ENTROPY_H_
+#define XDIAG_TEST_TESTCASES_ENTANGLEMENT_ENTROPY_H_
 
 #include <vector>
 
-#include <hydra/all.h>
+#include <xdiag/all.h>
 
-namespace hydra {
+namespace xdiag {
 namespace entanglementtestcases {
 
 inline std::tuple<BondList, Couplings> tJchain_model(int n_sites) {
@@ -1180,5 +1180,5 @@ tJrandom_e0_entropies(int n_sites, qn_tj qn, bool real = false) {
 }
 
 } // namespace entanglementtestcases
-} // namespace hydra
+} // namespace xdiag
 #endif

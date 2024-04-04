@@ -1,8 +1,8 @@
 #include "../../catch.hpp"
 
-using namespace hydra;
-using namespace hydra::combinatorics;
-using namespace hydra::symmetries;
+using namespace xdiag;
+using namespace xdiag::combinatorics;
+using namespace xdiag::symmetries;
 
 static PermutationGroup cyclic_group(int n_sites) {
   // test cyclic group
@@ -41,7 +41,7 @@ void test_representatives_indices_symmetries_limits_omp(int n_sites) {
 }
 
 TEST_CASE("representative_list_omp", "[symmetries]") {
-  using namespace hydra;
+  using namespace xdiag;
 
 #ifdef _OPENMP
   Log("testing representative_list_omp");

@@ -1,7 +1,7 @@
-#include <hydra/all.h>
+#include <xdiag/all.h>
 
 int main() {
-  using namespace hydra;
+  using namespace xdiag;
 
   int n_sites = 16;
   int nup = n_sites / 2;

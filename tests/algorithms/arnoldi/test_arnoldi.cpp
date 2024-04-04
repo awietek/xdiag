@@ -5,12 +5,12 @@
 #include <iostream>
 
 #include "../../blocks/electron/testcases_electron.h"
-#include <hydra/algebra/matrix.h>
-#include <hydra/algorithms/arnoldi/arnoldi.h>
-#include <hydra/algorithms/arnoldi/arnoldi_to_disk.h>
-#include <hydra/algorithms/time_evolution/pade_matrix_exponential.h>
-#include <hydra/blocks/spinhalf/spinhalf.h>
-#include <hydra/states/random_state.h>
+#include <xdiag/algebra/matrix.h>
+#include <xdiag/algorithms/arnoldi/arnoldi.h>
+#include <xdiag/algorithms/arnoldi/arnoldi_to_disk.h>
+#include <xdiag/algorithms/time_evolution/pade_matrix_exponential.h>
+#include <xdiag/blocks/spinhalf/spinhalf.h>
+#include <xdiag/states/random_state.h>
 
 // TODO: write tests for arnoldi_to_disk
 bool check_basis_orthonormality(arma::cx_mat const &Q, double tol = 1e-12) {
@@ -34,7 +34,7 @@ bool check_eigenvector_equation(mult const &H, arma::cx_mat eigvecs, B eigvals,
     H(eigvecs.col(i), w);
     double diff = arma::norm(w - eigvals(i) * eigvecs.col(i));
     if (diff > tol) {
-      hydra::Log.warn("eigenvector {} doesn't satisfy eigvec eq., diff = {}", i,
+      xdiag::Log.warn("eigenvector {} doesn't satisfy eigvec eq., diff = {}", i,
                       diff);
       return false;
     }
@@ -43,7 +43,7 @@ bool check_eigenvector_equation(mult const &H, arma::cx_mat eigvecs, B eigvals,
 }
 
 TEST_CASE("ritz_vecs_arnoldi", "[arnoldi]") {
-  using namespace hydra;
+  using namespace xdiag;
   using namespace arma;
 
   Log("testing ritz_vecs_arnoldi");
@@ -87,7 +87,7 @@ TEST_CASE("ritz_vecs_arnoldi", "[arnoldi]") {
   }
 
   {
-    std::string dumpdir = HYDRA_DIRECTORY "/misc/dump";
+    std::string dumpdir = XDIAG_DIRECTORY "/misc/dump";
     // getting the eigenvalues through arnoldi
     auto [ritz_vals, h] =
         arnoldi(apply_T, state_0.vectorC(), dumpdir, 70, 1e-12, false);

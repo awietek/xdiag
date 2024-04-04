@@ -1,17 +1,17 @@
 cmake_minimum_required(VERSION 3.19)
 
 project(
-  hydra
-  VERSION 1.0.0
+  XDiag
+  VERSION 0.2.0
   LANGUAGES CXX
 )
 
 option(BUILD_TESTING "Build the tests" Off)
-option(HYDRA_DISTRIBUTED "Build the distibuted parallelization libraries" Off)
-option(HYDRA_JULIA_WRAPPER "Build the Julia wrapper" Off)
-option(HYDRA_DISABLE_OPENMP "Disables the library being compiled with OpenMP" Off)
-option(HYDRA_DISABLE_HDF5 "Disables the library being compiled with HDF5" Off)
-option(HYDRA_OPTIMIZE_FOR_NATIVE "Optimize for native architecture" Off)
+option(XDIAG_DISTRIBUTED "Build the distibuted parallelization libraries" Off)
+option(XDIAG_JULIA_WRAPPER "Build the Julia wrapper" Off)
+option(XDIAG_DISABLE_OPENMP "Disables the library being compiled with OpenMP" Off)
+option(XDIAG_DISABLE_HDF5 "Disables the library being compiled with HDF5" Off)
+option(XDIAG_OPTIMIZE_FOR_NATIVE "Optimize for native architecture" Off)
 
 message(STATUS "Compiler ID     : " ${CMAKE_CXX_COMPILER_ID})
 message(STATUS "Compiler version: " ${CMAKE_CXX_COMPILER_VERSION})
@@ -57,46 +57,46 @@ endif()
 # endif ()
 
 ## Let SomeLib_SHARED_LIBS override BUILD_SHARED_LIBS
-if (DEFINED HYDRA_SHARED_LIBS)
-    set(BUILD_SHARED_LIBS "${HYDRA_SHARED_LIBS}")
+if (DEFINED XDIAG_SHARED_LIBS)
+    set(BUILD_SHARED_LIBS "${XDIAG_SHARED_LIBS}")
 endif ()
 
 # determine which library is being built
-if (HYDRA_JULIA_WRAPPER AND HYDRA_DISTRIBUTED)
+if (XDIAG_JULIA_WRAPPER AND XDIAG_DISTRIBUTED)
   message(FATAL_ERROR "The julia wrapper cannot be build with distributed components")
-elseif (HYDRA_JULIA_WRAPPER)
-  set(HYDRA_LIBRARY "hydra")
+elseif (XDIAG_JULIA_WRAPPER)
+  set(XDIAG_LIBRARY "xdiag")
 
   #library must be built as a shared library for the wrapper
-  if (NOT HYDRA_SHARED_LIBS)
+  if (NOT XDIAG_SHARED_LIBS)
     message(STATUS "Forcing build of a shared library for the julia wrapper")
   endif()
   set(BUILD_SHARED_LIBS On)
-elseif (HYDRA_DISTRIBUTED)
-  set(HYDRA_LIBRARY "hydra_distributed")
+elseif (XDIAG_DISTRIBUTED)
+  set(XDIAG_LIBRARY "xdiag_distributed")
 else()
-  set(HYDRA_LIBRARY "hydra")
+  set(XDIAG_LIBRARY "xdiag")
 endif()
 
 # include main library
-add_subdirectory(hydra)
+add_subdirectory(xdiag)
 
 
 ## would be needed for visibility contron in shared objects ->
 
 # # Generate the export header for SomeLib and attach it to the target
 # include(GenerateExportHeader)
-# generate_export_header(${HYDRA_LIBRARY} EXPORT_FILE_NAME include/hydra/export.h)
+# generate_export_header(${XDIAG_LIBRARY} EXPORT_FILE_NAME include/xdiag/export.h)
 # target_compile_definitions(
-#     ${HYDRA_LIBRARY} PUBLIC "$<$<NOT:$<BOOL:${BUILD_SHARED_LIBS}>>:HYDRA_STATIC_DEFINE>")
+#     ${XDIAG_LIBRARY} PUBLIC "$<$<NOT:$<BOOL:${BUILD_SHARED_LIBS}>>:XDIAG_STATIC_DEFINE>")
 # target_include_directories(
-#   ${HYDRA_LIBRARY} PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>")
+#   ${XDIAG_LIBRARY} PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>")
 
 # Add sanitizers to debug mode
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
   message(STATUS "Adding Sanitizers to debug build")
-  target_compile_options(${HYDRA_LIBRARY} PUBLIC -fsanitize=address)
-  target_link_options(${HYDRA_LIBRARY} PUBLIC -fsanitize=address)
+  target_compile_options(${XDIAG_LIBRARY} PUBLIC -fsanitize=address)
+  target_link_options(${XDIAG_LIBRARY} PUBLIC -fsanitize=address)
 endif()
   
 #########################################################
@@ -113,26 +113,26 @@ if (BUILD_TESTING)
   endif()
 endif()
 
-if(HYDRA_JULIA_WRAPPER)
+if(XDIAG_JULIA_WRAPPER)
   message(STATUS "-----------    Building Julia wrapper       -------------")
   add_subdirectory(julia)
 endif()
 
-if(HYDRA_OPTIMIZE_FOR_NATIVE)
+if(XDIAG_OPTIMIZE_FOR_NATIVE)
 message(STATUS "Using native architecture optimizations")
-target_compile_options(${HYDRA_LIBRARY} PRIVATE -march=native)
-target_compile_options(${HYDRA_LIBRARY} PRIVATE -mtune=native)
+target_compile_options(${XDIAG_LIBRARY} PRIVATE -march=native)
+target_compile_options(${XDIAG_LIBRARY} PRIVATE -mtune=native)
 endif()
 
 # Install the headers
-install(DIRECTORY "${CMAKE_SOURCE_DIR}/hydra" # source directory
+install(DIRECTORY "${CMAKE_SOURCE_DIR}/xdiag" # source directory
   DESTINATION include
   FILES_MATCHING # install only matched files
   PATTERN "*.h" # select header files
 )
 
-install(DIRECTORY "${CMAKE_SOURCE_DIR}/hydra/extern" # source directory
-  DESTINATION include/hydra
+install(DIRECTORY "${CMAKE_SOURCE_DIR}/xdiag/extern" # source directory
+  DESTINATION include/xdiag
   FILES_MATCHING # install only matched files
   PATTERN "*" # select header files
 )
@@ -140,16 +140,16 @@ install(DIRECTORY "${CMAKE_SOURCE_DIR}/hydra/extern" # source directory
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 
-if (NOT DEFINED ${HYDRA_INSTALL_CMAKEDIR})
-  set(HYDRA_INSTALL_CMAKEDIR "${CMAKE_INSTALL_LIBDIR}/cmake/${HYDRA_LIBRARY}"
-    CACHE STRING "Path to ${HYDRA_LIBRARY} CMake files")
+if (NOT DEFINED ${XDIAG_INSTALL_CMAKEDIR})
+  set(XDIAG_INSTALL_CMAKEDIR "${CMAKE_INSTALL_LIBDIR}/cmake/${XDIAG_LIBRARY}"
+    CACHE STRING "Path to ${XDIAG_LIBRARY} CMake files")
 endif ()
 
-install(TARGETS ${HYDRA_LIBRARY} EXPORT ${HYDRA_LIBRARY}_Targets
-        RUNTIME COMPONENT ${HYDRA_LIBRARY}_Runtime
-        LIBRARY COMPONENT ${HYDRA_LIBRARY}_Runtime
-        NAMELINK_COMPONENT ${HYDRA_LIBRARY}_Development
-        ARCHIVE COMPONENT ${HYDRA_LIBRARY}_Development
+install(TARGETS ${XDIAG_LIBRARY} EXPORT ${XDIAG_LIBRARY}_Targets
+        RUNTIME COMPONENT ${XDIAG_LIBRARY}_Runtime
+        LIBRARY COMPONENT ${XDIAG_LIBRARY}_Runtime
+        NAMELINK_COMPONENT ${XDIAG_LIBRARY}_Development
+        ARCHIVE COMPONENT ${XDIAG_LIBRARY}_Development
         INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
 
 if (BUILD_SHARED_LIBS)
@@ -158,29 +158,29 @@ else ()
     set(type static)
 endif ()
 
-install(EXPORT ${HYDRA_LIBRARY}_Targets
-        DESTINATION "${HYDRA_INSTALL_CMAKEDIR}"
-        NAMESPACE hydra::
-        FILE ${HYDRA_LIBRARY}-${type}-targets.cmake
-        COMPONENT ${HYDRA_LIBRARY}_Development)
+install(EXPORT ${XDIAG_LIBRARY}_Targets
+        DESTINATION "${XDIAG_INSTALL_CMAKEDIR}"
+        NAMESPACE xdiag::
+        FILE ${XDIAG_LIBRARY}-${type}-targets.cmake
+        COMPONENT ${XDIAG_LIBRARY}_Development)
 
 write_basic_package_version_file(
-    cmake/${HYDRA_LIBRARY}ConfigVersion.cmake
+    cmake/${XDIAG_LIBRARY}ConfigVersion.cmake
     COMPATIBILITY SameMajorVersion)
 
 install(FILES
-    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/${HYDRA_LIBRARY}Config.cmake"
-    "${CMAKE_CURRENT_BINARY_DIR}/cmake/${HYDRA_LIBRARY}ConfigVersion.cmake"
-    DESTINATION "${HYDRA_INSTALL_CMAKEDIR}"
-    COMPONENT ${HYDRA_LIBRARY}_Development)
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/${XDIAG_LIBRARY}Config.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/cmake/${XDIAG_LIBRARY}ConfigVersion.cmake"
+    DESTINATION "${XDIAG_INSTALL_CMAKEDIR}"
+    COMPONENT ${XDIAG_LIBRARY}_Development)
 
-if(HYDRA_JULIA_WRAPPER)
+if(XDIAG_JULIA_WRAPPER)
 
-  install(TARGETS hydrajl
-    EXPORT hydrajl_Targets
-    LIBRARY COMPONENT ${HYDRA_LIBRARY}_Runtime
-    NAMELINK_COMPONENT ${HYDRA_LIBRARY}_Development
-    ARCHIVE COMPONENT ${HYDRA_LIBRARY}_Development
+  install(TARGETS xdiagjl
+    EXPORT xdiagjl_Targets
+    LIBRARY COMPONENT ${XDIAG_LIBRARY}_Runtime
+    NAMELINK_COMPONENT ${XDIAG_LIBRARY}_Development
+    ARCHIVE COMPONENT ${XDIAG_LIBRARY}_Development
     INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
   )
  

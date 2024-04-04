@@ -3,11 +3,11 @@
 #include <chrono>
 #include <iostream>
 
-#include <hydra/combinatorics/binomial.h>
+#include <xdiag/combinatorics/binomial.h>
 
 TEST_CASE( "binomial", "[combinatorics]" ) {
-  using namespace hydra;
-  using namespace hydra::combinatorics;
+  using namespace xdiag;
+  using namespace xdiag::combinatorics;
 
   // Check Pascals triangle manually
   REQUIRE(binomial(1, -1) == 0);

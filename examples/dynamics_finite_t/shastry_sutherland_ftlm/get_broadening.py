@@ -54,7 +54,7 @@ for cutoff in cutoffs:
 
         for seed_idx, seed in enumerate(seeds):
 
-            directory = "/data/condmat/awietek/Research/Software/hydra/examples/dynamics_finite_t/shastry_sutherland_ftlm/poles_weights/shastry.{}.HB.J.Jd.fsl/J.{:.2f}.Jd.{:.2f}/q.{}/T.{:.4f}/niter.{}.cutoff.{}".format(n_sites, J, Jd, q, temperature, niter, cutoff)
+            directory = "/data/condmat/awietek/Research/Software/xdiag/examples/dynamics_finite_t/shastry_sutherland_ftlm/poles_weights/shastry.{}.HB.J.Jd.fsl/J.{:.2f}.Jd.{:.2f}/q.{}/T.{:.4f}/niter.{}.cutoff.{}".format(n_sites, J, Jd, q, temperature, niter, cutoff)
             filename = "poles.weights.shastry.{}.HB.J.Jd.fsl.J.{:.2f}.Jd.{:.2f}.q.{}.T.{:.4f}.niter.{}.cutoff.{}.seed.{}.h5".format(n_sites, J, Jd, q, temperature, niter, cutoff, seed)
             if not os.path.exists(directory):
                 os.makedirs(directory)

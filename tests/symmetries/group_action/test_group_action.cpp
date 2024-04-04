@@ -2,11 +2,11 @@
 
 #include <iostream>
 
-#include <hydra/combinatorics/combinations.h>
-#include <hydra/combinatorics/subsets.h>
-#include <hydra/symmetries/group_action/group_action.h>
+#include <xdiag/combinatorics/combinations.h>
+#include <xdiag/combinatorics/subsets.h>
+#include <xdiag/symmetries/group_action/group_action.h>
 
-using namespace hydra;
+using namespace xdiag;
 
 template <class bit_t> void test_permutation_group_action(int64_t n_sites) {
   using combinatorics::Subsets;
@@ -78,11 +78,11 @@ template <class bit_t> void test_permutation_group_action(int64_t n_sites) {
 }
 
 TEST_CASE("GroupAction", "[symmetries]") {
-  hydra::Log("Test GroupAction");
+  xdiag::Log("Test GroupAction");
   for (int64_t n_sites = 1; n_sites < 6; ++n_sites) {
     test_permutation_group_action<uint16_t>(n_sites);
     test_permutation_group_action<uint32_t>(n_sites);
     test_permutation_group_action<uint64_t>(n_sites);
   }
-  hydra::Log("done");
+  xdiag::Log("done");
 }

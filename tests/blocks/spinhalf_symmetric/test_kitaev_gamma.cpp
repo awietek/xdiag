@@ -1,19 +1,19 @@
 #include "../../catch.hpp"
 
-#include <hydra/blocks/spinhalf/spinhalf_apply.h>
-#include <hydra/algebra/algebra.h>
-#include <hydra/algebra/matrix.h>
-#include <hydra/algorithms/sparse_diag.h>
-#include <hydra/utils/close.h>
+#include <xdiag/blocks/spinhalf/spinhalf_apply.h>
+#include <xdiag/algebra/algebra.h>
+#include <xdiag/algebra/matrix.h>
+#include <xdiag/algorithms/sparse_diag.h>
+#include <xdiag/utils/close.h>
 
 void run_kitaev_gamma_test(
     double K, double G,
     std::vector<std::pair<std::string, double>> irrep_names_e0) {
-  using namespace hydra;
+  using namespace xdiag;
   using namespace arma;
 
   std::string lfile =
-      HYDRA_DIRECTORY "/misc/data/kitaev_gamma/lattice-files/"
+      XDIAG_DIRECTORY "/misc/data/kitaev_gamma/lattice-files/"
                       "honeycomb.8.HeisenbergKitaevGamma.fsl.lat";
   auto bonds = read_bondlist(lfile);
   auto group = PermutationGroup(read_permutations(lfile));
@@ -49,17 +49,17 @@ void run_kitaev_gamma_test(
     eig_sym(eigs, H);
     double e0_computed = eigs(0);
 
-    // HydraPrint(K);
-    // HydraPrint(G);
-    // HydraPrint(name);
-    // HydraPrint(e0_reference);
-    // HydraPrint(e0_computed);
+    // XDiagPrint(K);
+    // XDiagPrint(G);
+    // XDiagPrint(name);
+    // XDiagPrint(e0_reference);
+    // XDiagPrint(e0_computed);
     REQUIRE(close(e0_reference, e0_computed));
   }
 }
 
 TEST_CASE("kitaev_gamma", "[blocks][spinhalf_symmetric]") {
-  using namespace hydra;
+  using namespace xdiag;
 
   Log("Testing Kitaev-Gamma model");
   {

@@ -2,10 +2,10 @@
 
 #include <iostream>
 
-#include <hydra/blocks/tj/tj.h>
-#include <hydra/utils/print_macro.h>
+#include <xdiag/blocks/tj/tj.h>
+#include <xdiag/utils/print_macro.h>
 
-using namespace hydra;
+using namespace xdiag;
 
 void check_dimensions_sum_up_tj_symmetric(int64_t n_sites, PermutationGroup group,
                                           std::vector<Representation> irreps) {
@@ -72,8 +72,8 @@ TEST_CASE("tj_symmetric", "[tj]") {
   Log("tj_symmetric: triangular 3x3 test");
 
   std::string lfile =
-      HYDRA_DIRECTORY "/misc/data/triangular.9.hop.sublattices.tsl.lat";
-  auto permutations = hydra::read_permutations(lfile);
+      XDIAG_DIRECTORY "/misc/data/triangular.9.hop.sublattices.tsl.lat";
+  auto permutations = xdiag::read_permutations(lfile);
   auto group = PermutationGroup(permutations);
 
   std::vector<std::pair<std::string, int64_t>> rep_name_mult = {

@@ -1,8 +1,8 @@
 #include <filesystem>
-#include <hydra/all.h>
+#include <xdiag/all.h>
 
 int main(int argc, char **argv) {
-  using namespace hydra;
+  using namespace xdiag;
   using namespace arma;
   using fmt::format;
 

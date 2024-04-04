@@ -2,12 +2,12 @@
 
 #include "../blocks/electron/testcases_electron.h"
 
-#include <hydra/symmetries/generated_group.h>
-#include <hydra/utils/close.h>
+#include <xdiag/symmetries/generated_group.h>
+#include <xdiag/utils/close.h>
 
 TEST_CASE("generated_group", "[symmetries]") {
-  using namespace hydra;
-  using hydra::testcases::electron::get_cyclic_group_irreps_mult;
+  using namespace xdiag;
+  using xdiag::testcases::electron::get_cyclic_group_irreps_mult;
 
   Log("Testing generated_group for linear chain");
   for (int64_t n_sites = 3; n_sites < 7; ++n_sites) {

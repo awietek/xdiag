@@ -1,18 +1,18 @@
 #include "../catch.hpp"
 
 #include "../blocks/electron/testcases_electron.h"
-#include <hydra/algebra/algebra.h>
-#include <hydra/states/random_state.h>
-#include <hydra/utils/close.h>
-#include <hydra/utils/print_macro.h>
+#include <xdiag/algebra/algebra.h>
+#include <xdiag/states/random_state.h>
+#include <xdiag/utils/close.h>
+#include <xdiag/utils/print_macro.h>
 
 #include <iostream>
 #include <set>
 
-using namespace hydra;
+using namespace xdiag;
 
 TEST_CASE("random_state", "[states]") try {
-  using namespace hydra::testcases::electron;
+  using namespace xdiag::testcases::electron;
 
   Log.out("random state Spinhalf distinction test");
   double first_r = 0.;
@@ -28,17 +28,17 @@ TEST_CASE("random_state", "[states]") try {
         auto block = Spinhalf(n_sites, nup, group, irrep);
 
         if (block.size() > 3) {
-          // HydraPrint(irrep);
-          // HydraPrint(block);
+          // XDiagPrint(irrep);
+          // XDiagPrint(block);
 
           auto state_real = State(block, true);
           auto state_cplx = State(block, false);
           fill(state_real, RandomState());
           fill(state_cplx, RandomState());
-          // HydraPrint(state_real);
-          // HydraPrint(state_real.vector());
-          // HydraPrint(state_real.vector());
-          // HydraPrint(state_cplx.vector());
+          // XDiagPrint(state_real);
+          // XDiagPrint(state_real.vector());
+          // XDiagPrint(state_real.vector());
+          // XDiagPrint(state_cplx.vector());
           if (first_r == 0.) {
             first_r = state_real.vector(false)(0);
           } else {
@@ -78,5 +78,5 @@ TEST_CASE("random_state", "[states]") try {
   }
 #endif
  } catch(std::exception const& e) {
-  hydra::traceback(e);
+  xdiag::traceback(e);
  }

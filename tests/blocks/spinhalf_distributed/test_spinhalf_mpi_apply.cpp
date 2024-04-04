@@ -1,11 +1,11 @@
 #include <mpi.h>
 #include "../../catch.hpp"
 
-#include <hydra/all.h>
+#include <xdiag/all.h>
 
 #include "../../../test/blocks/spinhalf/testcases_spinhalf.h"
 
-using namespace hydra;
+using namespace xdiag;
 
 void test_e0_nompi(BondList bonds, Couplings couplings) {
   int N = bonds.n_sites();
@@ -126,7 +126,7 @@ void test_sz_sp_sm_commutators(int n_sites) {
 
 TEST_CASE("spinhalf_mpi_apply", "[spinhalf]") {
 
-  using namespace hydra::testcases::spinhalf;
+  using namespace xdiag::testcases::spinhalf;
 
   {
     LogMPI.out("SpinhalfMPI: manual N=6 spin chain test");

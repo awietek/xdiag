@@ -1,8 +1,8 @@
 #pragma once
 
-#include <hydra/operators/bondlist.h>
+#include <xdiag/operators/bondlist.h>
 
-namespace hydra::testcases::tj {
+namespace xdiag::testcases::tj {
 
 BondList tJchain(int n_sites, double t, double J);
 std::tuple<BondList, arma::vec> tJchain_fullspectrum_alps(int L);
@@ -12,4 +12,4 @@ BondList tj_alltoall_complex(int n_sites);
 std::tuple<BondList, arma::vec> randomAlltoAll3();
 std::tuple<BondList, arma::vec> randomAlltoAll4();
 
-} // namespace hydra::testcases::tj
+} // namespace xdiag::testcases::tj
