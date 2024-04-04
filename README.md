@@ -6,7 +6,7 @@
 [![DOI](https://zenodo.org/badge/169422780.svg)](https://zenodo.org/badge/latestdoi/169422780)
 
 
-# Xdiag
+# XDiag
 ## High-performance Yxact Diagonalization Routines and Algorithms
 
 A C++ library to perform efficient Exact Diagonalizations of quantum many body systems. 
