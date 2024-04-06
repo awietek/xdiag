@@ -4,6 +4,7 @@ julia/products
 site
 misc/dump/*
 build/*
+docs/autoreference
 cmake-build-debug
 examples/*/build
 examples/*/outfiles

@@ -1,6 +1,6 @@
 #include "print.hpp"
 
-#include <inttypes.h>
+#include <cinttypes>
 #include <sstream>
 
 #include <xdiag/random/hash.hpp>
