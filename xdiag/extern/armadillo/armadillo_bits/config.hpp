@@ -15,7 +15,7 @@
 // limitations under the License.
 // ------------------------------------------------------------------------
 
-#ifdef HYDRA_USE_MKL
+#ifdef XDIAG_USE_MKL
 #define ARMA_64BIT_WORD
 #define ARMA_BLAS_LONG_LONG
 #else
@@ -23,7 +23,7 @@
 #define ARMA_BLAS_UNDERSCORE
 #endif
 
-#ifdef HYDRA_USE_HDF5
+#ifdef XDIAG_USE_HDF5
 #define ARMA_USE_HDF5
 #endif
 

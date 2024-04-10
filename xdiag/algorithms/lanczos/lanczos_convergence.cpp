@@ -3,7 +3,7 @@
 namespace xdiag::lanczos {
 
 bool converged_eigenvalues(Tmatrix const &tmat, int n_eigenvalue,
-                           double precision) {
+                           double precision) try {
   int size = tmat.size();
   if (size <= n_eigenvalue + 1)
     return false;
@@ -22,10 +22,13 @@ bool converged_eigenvalues(Tmatrix const &tmat, int n_eigenvalue,
 
     return (residue < precision);
   }
+} catch (...) {
+  XDiagRethrow("Error computing convergence of tridiagonal matrix eigenvalues");
+  return false;
 }
 
 bool converged_time_evolution(Tmatrix const &tmat, complex tau,
-                              double precision, double nrm) {
+                              double precision, double nrm) try {
   int size = tmat.size();
   if (size < 2)
     return false;
@@ -68,6 +71,9 @@ bool converged_time_evolution(Tmatrix const &tmat, complex tau,
     }
     return (error < precision);
   }
+} catch (...) {
+  XDiagRethrow("Error computing convergence of tridiagonal matrix time evolution");
+  return false;
 }
 
 // template <class coeff_t>
