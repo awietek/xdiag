@@ -1,4 +1,4 @@
-#include <xdiag/all.h>
+#include <xdiag/all.hpp>
 
 using namespace xdiag;
 

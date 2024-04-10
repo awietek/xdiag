@@ -1,5 +1,5 @@
 #include <filesystem>
-#include <xdiag/all.h>
+#include <xdiag/all.hpp>
 
 int main() {
   using namespace xdiag;
