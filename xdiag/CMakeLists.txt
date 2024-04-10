@@ -182,7 +182,7 @@ if(MKL_FOUND)
   set_target_properties(mkl_sequential PROPERTIES INTERFACE_LINK_LIBRARIES mkl_core)
   set_target_properties(mkl_core       PROPERTIES INTERFACE_LINK_LIBRARIES mkl_sequential)
 
-  foreach(mkl_lib IN LISTS mkl_intel_ilp6 mkl_sequential mkl_core)
+  foreach(mkl_lib IN LISTS mkl_intel_ilp64 mkl_sequential mkl_core)
     target_include_directories(mkl_lib PUBLIC ${MKL_INCLUDE_DIR})
   endforeach()  
   

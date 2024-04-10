@@ -11,10 +11,9 @@
 namespace xdiag {
 
 template <typename coeff_t, class multiply_f, class dot_f>
-
 inline void lanczos_step(arma::Col<coeff_t> &v0, arma::Col<coeff_t> &v1,
                          arma::Col<coeff_t> &w, double &alpha, double &beta,
-                         multiply_f mult, dot_f dot) {
+                         multiply_f mult, dot_f dot) try {
 
   auto norm = [&dot](arma::Col<coeff_t> const &v) {
     return std::sqrt(xdiag::real(dot(v, v)));
@@ -27,13 +26,15 @@ inline void lanczos_step(arma::Col<coeff_t> &v0, arma::Col<coeff_t> &v1,
   v0 = v1;
   v1 = w;
   beta = norm(v1);
+} catch (...) {
+  XDiagRethrow("Error performing Lanczos step");
 }
 
-  template <typename coeff_t, class multiply_f, class dot_f>
+template <typename coeff_t, class multiply_f, class dot_f>
 inline void lanczos_step_ortho(arma::Col<coeff_t> &v0, arma::Col<coeff_t> &v1,
 			       arma::Col<coeff_t> &w, double &alpha, double &beta,
 			       multiply_f mult, dot_f dot, arma::Mat<coeff_t> const& V,
-			       int64_t iteration) {
+			       int64_t iteration) try {
 
   auto norm = [&dot](arma::Col<coeff_t> const &v) {
     return std::sqrt(xdiag::real(dot(v, v)));
@@ -45,6 +46,8 @@ inline void lanczos_step_ortho(arma::Col<coeff_t> &v0, arma::Col<coeff_t> &v1,
   v0 = v1;
   v1 = w;
   beta = norm(v1);
+} catch (...) {
+  XDiagRethrow("Error performing Lanczos step with orthogonalization");
 }
 
   
