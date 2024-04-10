@@ -1,4 +1,4 @@
-#include <xdiag/all.h>
+#include <xdiag/all.hpp>
 
 void measure_density(int n_sites, xdiag::StateCplx const &v) {
   using namespace xdiag;
