@@ -31,7 +31,7 @@ testmpi/tests
 benchmark.prof
 benchmark.prof_*
 lcov-report
-xdiag/config.h
+xdiag/config.hpp
 examples/hb_chain_dynamical_sf/main
 examples/hb_chain_dynamical_sf/outfiles/*
 examples/hb_chain_dynamical_sf_nosym/main

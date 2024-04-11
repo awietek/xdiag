@@ -15,6 +15,9 @@ get_filename_component(JlCxx_location ${JlCxx_location} DIRECTORY)
 message(STATUS ${JlCxx_location})
 add_library(xdiagjl SHARED xdiagjl.cpp)
 
+set_target_properties(xdiagjl PROPERTIES
+  VERSION ${xdiag_VERSION}
+  SOVERSION ${xdiag_VERSION_MAJOR})
 target_include_directories(xdiagjl PRIVATE ${JlCxx_DIR}/../../../include ${JlCxx_DIR}/../../../include/julia)
 target_link_libraries(xdiagjl PRIVATE JlCxx::cxxwrap_julia)
 target_link_libraries(xdiagjl PRIVATE JlCxx::cxxwrap_julia_stl)
