@@ -85,8 +85,13 @@ platforms = vcat(libjulia_platforms.(julia_versions)...)
 # filter!(p -> os(p) == "linux" && arch(p) == "x86_64" && p.tags["julia_version"] != "1.12.0" && libc(p) != "musl", platforms)
 
 
-filter!(p -> (arch(p) == "x86_64" || arch(p) == "aarch64") && p.tags["julia_version"] == "1.10.0" && libc(p) != "musl", platforms)
+# filter!(p -> (arch(p) == "x86_64" || arch(p) == "aarch64") && p.tags["julia_version"] == "1.10.0" && libc(p) != "musl", platforms)
 
+
+filter!(p -> (os(p) == "linux" && libc(p) != "musl" && arch(p) == "x86_64" &&
+    (p.tags["julia_version"] == "1.10.0" || p.tags["julia_version"] == "1.9.0")) ||
+    os(p) == "macos" && arch(p) == "aarch64" &&
+    (p.tags["julia_version"] == "1.10.0" || p.tags["julia_version"] == "1.9.0"))
 
 println("Building for platforms")
 for p in platforms
