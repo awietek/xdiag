@@ -17,6 +17,8 @@ message(STATUS "Compiler ID     : " ${CMAKE_CXX_COMPILER_ID})
 message(STATUS "Compiler version: " ${CMAKE_CXX_COMPILER_VERSION})
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+include("cmake/sources.cmake")
+
 
 # Set release build as default
 if(NOT CMAKE_BUILD_TYPE)
@@ -65,21 +67,24 @@ endif ()
 if (XDIAG_JULIA_WRAPPER AND XDIAG_DISTRIBUTED)
   message(FATAL_ERROR "The julia wrapper cannot be build with distributed components")
 elseif (XDIAG_JULIA_WRAPPER)
-  set(XDIAG_LIBRARY "xdiag")
-
+  set(XDIAG_LIBRARY "xdiagjl")
+  
   #library must be built as a shared library for the wrapper
   if (NOT XDIAG_SHARED_LIBS)
     message(STATUS "Forcing build of a shared library for the julia wrapper")
   endif()
   set(BUILD_SHARED_LIBS On)
+
+  add_subdirectory(julia)
+
 elseif (XDIAG_DISTRIBUTED)
   set(XDIAG_LIBRARY "xdiag_distributed")
+  add_subdirectory(xdiag)
 else()
   set(XDIAG_LIBRARY "xdiag")
+  add_subdirectory(xdiag)
 endif()
 
-# include main library
-add_subdirectory(xdiag)
 
 
 ## would be needed for visibility contron in shared objects ->
@@ -98,7 +103,120 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
   target_compile_options(${XDIAG_LIBRARY} PUBLIC -fsanitize=address)
   target_link_options(${XDIAG_LIBRARY} PUBLIC -fsanitize=address)
 endif()
+
+
   
+message(STATUS "-------- Determining Linear Algebra backend -------------")
+
+###########################################################################
+# try to get the Intel MKL if possible and link statically
+find_package(MKL)
+if(MKL_FOUND)
+  message(STATUS "Employing IntelMKL as linear algebra backend")
+  target_compile_definitions(${XDIAG_LIBRARY} PUBLIC XDIAG_USE_MKL)
+  target_include_directories(${XDIAG_LIBRARY} PUBLIC ${MKL_INCLUDE_DIR})
+
+  # the following lines are needed to link MKL statically correctly
+  add_library(mkl_intel_ilp64 STATIC IMPORTED)
+  add_library(mkl_sequential STATIC IMPORTED)
+  add_library(mkl_core STATIC IMPORTED)
+  
+  set_target_properties(mkl_intel_ilp64 PROPERTIES
+    IMPORTED_LOCATION ${MKL_INTERFACE_LIBRARY}
+    IMPORTED_LINK_INTERFACE_MULTIPLICITY 3)
+  
+  set_target_properties(mkl_sequential PROPERTIES
+    IMPORTED_LOCATION ${MKL_SEQUENTIAL_LAYER_LIBRARY}
+    IMPORTED_LINK_INTERFACE_MULTIPLICITY 3)
+  
+  set_target_properties(mkl_core PROPERTIES
+    IMPORTED_LOCATION ${MKL_CORE_LIBRARY}
+    IMPORTED_LINK_INTERFACE_MULTIPLICITY 3)
+
+  target_compile_definitions(mkl_intel_ilp64 INTERFACE MKL_ILP64)
+  set_target_properties(mkl_sequential PROPERTIES INTERFACE_LINK_LIBRARIES mkl_core)
+  set_target_properties(mkl_core       PROPERTIES INTERFACE_LINK_LIBRARIES mkl_sequential)
+
+  foreach(mkl_lib IN LISTS mkl_intel_ilp64 mkl_sequential mkl_core)
+    target_include_directories(mkl_lib PUBLIC ${MKL_INCLUDE_DIR})
+  endforeach()  
+  
+  target_link_libraries(${XDIAG_LIBRARY} PUBLIC mkl_intel_ilp64 mkl_sequential mkl_core dl pthread)
+
+  get_filename_component(MKL_LIB_DIR ${MKL_CORE_LIBRARY} DIRECTORY)
+  target_link_directories(${XDIAG_LIBRARY} PUBLIC ${MKL_LIB_DIR})
+  
+###########################################################################
+# Regular Blas/Lapack backend
+else()
+  find_package(LAPACK)
+  
+  if(LAPACK_FOUND)
+    message(STATUS "Employing Lapack/Blas as linear algebra backend")
+    target_link_libraries(${XDIAG_LIBRARY} PUBLIC ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
+  else()
+    message(FATAL_ERROR "No linear algebra backend found")
+  endif()
+endif()
+
+
+###########################################################################
+# OpenMP
+if(XDIAG_DISABLE_OPENMP)
+  message(STATUS "-------   OpenMP support has been disabled    -----------")
+elseif(XDIAG_DISTRIBUTED)
+  message(STATUS "------- OpenMP disabled for distributed library ---------")
+else()
+  message(STATUS "--------  Determining if OpenMP is present  -------------")
+  find_package(OpenMP)
+  
+  if(OpenMP_CXX_FOUND)
+    message(STATUS "Employing OpenMP")
+    target_link_libraries(${XDIAG_LIBRARY} PUBLIC OpenMP::OpenMP_CXX)
+  else()
+    message(STATUS "OpenMP not found")
+  endif()
+endif()
+
+###########################################################################
+# HDF5
+if(XDIAG_DISABLE_HDF5)
+  message(STATUS "--------   HDF5 support has been disabled   -------------")
+else()
+  message(STATUS "--------   Determining if HDF5 is present   -------------")
+  find_package(HDF5 COMPONENTS CXX)
+  if(HDF5_FOUND)
+    message(STATUS "Employing HDF5")
+    target_compile_definitions(${XDIAG_LIBRARY} PUBLIC XDIAG_USE_HDF5 ${HDF5_CXX_DEFINITIONS})
+    target_include_directories(${XDIAG_LIBRARY} PUBLIC ${HDF5_CXX_INCLUDE_DIRS})
+    target_link_libraries(${XDIAG_LIBRARY} PUBLIC ${HDF5_CXX_LIBRARIES} ${HDF5_LIBRARIES})
+  else()
+    message(STATUS "HDF5 not found")
+  endif()
+endif()
+
+###########################################################################
+# creating a config header with source code information
+message(STATUS "--------         Creating config.hpp        -------------")
+find_package(Git REQUIRED)
+execute_process(COMMAND ${GIT_EXECUTABLE} rev-parse HEAD
+ WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+ OUTPUT_VARIABLE   XDIAG_GIT_HASH
+ OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+execute_process(COMMAND hostname 
+    OUTPUT_VARIABLE XDIAG_HOSTNAME 
+    RESULT_VARIABLE returncode 
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+execute_process(COMMAND id -un 
+    OUTPUT_VARIABLE XDIAG_COMPILEDBY
+    RESULT_VARIABLE returncode
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+configure_file(${CMAKE_SOURCE_DIR}/cmake/config.hpp.in ${CMAKE_SOURCE_DIR}/xdiag/config.hpp @ONLY)
+
 #########################################################
 # Testing
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
@@ -111,11 +229,6 @@ if (BUILD_TESTING)
     message(STATUS "-----------    Building test programs      --------------")
     add_subdirectory(tests)
   endif()
-endif()
-
-if(XDIAG_JULIA_WRAPPER)
-  message(STATUS "-----------    Building Julia wrapper       -------------")
-  add_subdirectory(julia)
 endif()
 
 if(XDIAG_OPTIMIZE_FOR_NATIVE)
@@ -173,15 +286,3 @@ install(FILES
     "${CMAKE_CURRENT_BINARY_DIR}/cmake/${XDIAG_LIBRARY}ConfigVersion.cmake"
     DESTINATION "${XDIAG_INSTALL_CMAKEDIR}"
     COMPONENT ${XDIAG_LIBRARY}_Development)
-
-if(XDIAG_JULIA_WRAPPER)
-
-  install(TARGETS xdiagjl
-    EXPORT xdiagjl_Targets
-    LIBRARY COMPONENT ${XDIAG_LIBRARY}_Runtime
-    NAMELINK_COMPONENT ${XDIAG_LIBRARY}_Development
-    ARCHIVE COMPONENT ${XDIAG_LIBRARY}_Development
-    INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
-  )
- 
-endif()

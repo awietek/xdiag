@@ -101,7 +101,6 @@ end
 
 # The products that we will ensure are always built
 products = [
-    LibraryProduct("libxdiag", :xdiag),
     LibraryProduct("libxdiagjl", :xdiagjl)
 ]
 

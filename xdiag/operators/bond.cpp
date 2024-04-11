@@ -1,7 +1,7 @@
 #include "bond.hpp"
 
-#include <set>
 #include <algorithm>
+#include <set>
 
 #include <xdiag/common.hpp>
 #include <xdiag/utils/close.hpp>
@@ -11,50 +11,100 @@ namespace xdiag {
 // Constructors with type name
 Bond::Bond(std::string type, int64_t site)
     : type_(type), matrix_(), coupling_(1.0),
-      coupling_name_("XDIAG_COUPLING_NAMELESS"), sites_({site}) {}
+      coupling_name_("XDIAG_COUPLING_NAMELESS"), sites_({site}) {
+  if (site < 0) {
+    XDiagThrow(std::runtime_error, "Error: site of bond < 0");
+  }
+}
 
 Bond::Bond(std::string type, std::vector<int64_t> const &sites)
     : type_(type), matrix_(), coupling_(1.0),
-      coupling_name_("XDIAG_COUPLING_NAMELESS"), sites_(sites) {}
+      coupling_name_("XDIAG_COUPLING_NAMELESS"), sites_(sites) {
+  for (auto site : sites) {
+    if (site < 0) {
+      XDiagThrow(std::runtime_error, "Error: site of bond < 0");
+    }
+  }
+}
 
 Bond::Bond(std::string type, complex coupling, int64_t site)
     : type_(type), matrix_(), coupling_(coupling),
-      coupling_name_("XDIAG_COUPLING_NAMELESS"), sites_({site}) {}
+      coupling_name_("XDIAG_COUPLING_NAMELESS"), sites_({site}) {
+  if (site < 0) {
+    XDiagThrow(std::runtime_error, "Error: site of bond < 0");
+  }
+}
 
 Bond::Bond(std::string type, complex coupling,
            std::vector<int64_t> const &sites)
     : type_(type), matrix_(), coupling_(coupling),
-      coupling_name_("XDIAG_COUPLING_NAMELESS"), sites_(sites) {}
+      coupling_name_("XDIAG_COUPLING_NAMELESS"), sites_(sites) {
+  for (auto site : sites) {
+    if (site < 0) {
+      XDiagThrow(std::runtime_error, "Error: site of bond < 0");
+    }
+  }
+}
 
 Bond::Bond(std::string type, double coupling, int64_t site)
     : type_(type), matrix_(), coupling_(coupling),
-      coupling_name_("XDIAG_COUPLING_NAMELESS"), sites_({site}) {}
+      coupling_name_("XDIAG_COUPLING_NAMELESS"), sites_({site}) {
+  if (site < 0) {
+    XDiagThrow(std::runtime_error, "Error: site of bond < 0");
+  }
+}
 
 Bond::Bond(std::string type, double coupling, std::vector<int64_t> const &sites)
     : type_(type), matrix_(), coupling_(coupling),
-      coupling_name_("XDIAG_COUPLING_NAMELESS"), sites_(sites) {}
+      coupling_name_("XDIAG_COUPLING_NAMELESS"), sites_(sites) {
+  for (auto site : sites) {
+    if (site < 0) {
+      XDiagThrow(std::runtime_error, "Error: site of bond < 0");
+    }
+  }
+}
 
 Bond::Bond(std::string type, std::string coupling_name, int64_t site)
     : type_(type), matrix_(), coupling_(0.0), coupling_name_(coupling_name),
-      sites_({site}) {}
+      sites_({site}) {
+  if (site < 0) {
+    XDiagThrow(std::runtime_error, "Error: site of bond < 0");
+  }
+}
 
 Bond::Bond(std::string type, std::string coupling_name,
            std::vector<int64_t> const &sites)
     : type_(type), matrix_(), coupling_(0.0), coupling_name_(coupling_name),
-      sites_(sites) {}
+      sites_(sites) {
+  for (auto site : sites) {
+    if (site < 0) {
+      XDiagThrow(std::runtime_error, "Error: site of bond < 0");
+    }
+  }
+}
 
 // Constructors with bond matrix
 template <typename coeff_t>
 Bond::Bond(arma::Mat<coeff_t> const &matrix, int64_t site)
     : type_("XDIAG_TYPE_UNDEFINED"), matrix_(to_cx_mat(matrix)), coupling_(1.0),
-      coupling_name_("XDIAG_COUPLING_NAMELESS"), sites_({site}) {}
+      coupling_name_("XDIAG_COUPLING_NAMELESS"), sites_({site}) {
+  if (site < 0) {
+    XDiagThrow(std::runtime_error, "Error: site of bond < 0");
+  }
+}
 template Bond::Bond(arma::Mat<double> const &, int64_t);
 template Bond::Bond(arma::Mat<complex> const &, int64_t);
 
 template <typename coeff_t>
 Bond::Bond(arma::Mat<coeff_t> const &matrix, std::vector<int64_t> const &sites)
     : type_("XDIAG_TYPE_UNDEFINED"), matrix_(to_cx_mat(matrix)), coupling_(1.0),
-      coupling_name_("XDIAG_COUPLING_NAMELESS"), sites_(sites) {}
+      coupling_name_("XDIAG_COUPLING_NAMELESS"), sites_(sites) {
+  for (auto site : sites) {
+    if (site < 0) {
+      XDiagThrow(std::runtime_error, "Error: site of bond < 0");
+    }
+  }
+}
 template Bond::Bond(arma::Mat<double> const &, std::vector<int64_t> const &);
 template Bond::Bond(arma::Mat<complex> const &, std::vector<int64_t> const &);
 
@@ -62,7 +112,11 @@ template <typename coeff_t>
 Bond::Bond(arma::Mat<coeff_t> const &matrix, double coupling, int64_t site)
     : type_("XDIAG_TYPE_UNDEFINED"), matrix_(to_cx_mat(matrix)),
       coupling_(coupling), coupling_name_("XDIAG_COUPLING_NAMELESS"),
-      sites_({site}) {}
+      sites_({site}) {
+  if (site < 0) {
+    XDiagThrow(std::runtime_error, "Error: site of bond < 0");
+  }
+}
 template Bond::Bond(arma::Mat<double> const &, double, int64_t);
 template Bond::Bond(arma::Mat<complex> const &, double, int64_t);
 
@@ -71,7 +125,13 @@ Bond::Bond(arma::Mat<coeff_t> const &matrix, double coupling,
            std::vector<int64_t> const &sites)
     : type_("XDIAG_TYPE_UNDEFINED"), matrix_(to_cx_mat(matrix)),
       coupling_(coupling), coupling_name_("XDIAG_COUPLING_NAMELESS"),
-      sites_(sites) {}
+      sites_(sites) {
+  for (auto site : sites) {
+    if (site < 0) {
+      XDiagThrow(std::runtime_error, "Error: site of bond < 0");
+    }
+  }
+}
 template Bond::Bond(arma::Mat<double> const &, double,
                     std::vector<int64_t> const &);
 template Bond::Bond(arma::Mat<complex> const &, double,
@@ -81,7 +141,11 @@ template <typename coeff_t>
 Bond::Bond(arma::Mat<coeff_t> const &matrix, complex coupling, int64_t site)
     : type_("XDIAG_TYPE_UNDEFINED"), matrix_(to_cx_mat(matrix)),
       coupling_(coupling), coupling_name_("XDIAG_COUPLING_NAMELESS"),
-      sites_({site}) {}
+      sites_({site}) {
+  if (site < 0) {
+    XDiagThrow(std::runtime_error, "Error: site of bond < 0");
+  }
+}
 template Bond::Bond(arma::Mat<double> const &, complex, int64_t);
 template Bond::Bond(arma::Mat<complex> const &, complex, int64_t);
 
@@ -90,7 +154,13 @@ Bond::Bond(arma::Mat<coeff_t> const &matrix, complex coupling,
            std::vector<int64_t> const &sites)
     : type_("XDIAG_TYPE_UNDEFINED"), matrix_(to_cx_mat(matrix)),
       coupling_(coupling), coupling_name_("XDIAG_COUPLING_NAMELESS"),
-      sites_(sites) {}
+      sites_(sites) {
+  for (auto site : sites) {
+    if (site < 0) {
+      XDiagThrow(std::runtime_error, "Error: site of bond < 0");
+    }
+  }
+}
 template Bond::Bond(arma::Mat<double> const &, complex,
                     std::vector<int64_t> const &);
 template Bond::Bond(arma::Mat<complex> const &, complex,
@@ -100,7 +170,11 @@ template <typename coeff_t>
 Bond::Bond(arma::Mat<coeff_t> const &matrix, std::string coupling_name,
            int64_t site)
     : type_("XDIAG_TYPE_UNDEFINED"), matrix_(to_cx_mat(matrix)), coupling_(0.0),
-      coupling_name_(coupling_name), sites_({site}) {}
+      coupling_name_(coupling_name), sites_({site}) {
+  if (site < 0) {
+    XDiagThrow(std::runtime_error, "Error: site of bond < 0");
+  }
+}
 template Bond::Bond(arma::Mat<double> const &, std::string, int64_t);
 template Bond::Bond(arma::Mat<complex> const &, std::string, int64_t);
 
@@ -108,7 +182,13 @@ template <typename coeff_t>
 Bond::Bond(arma::Mat<coeff_t> const &matrix, std::string coupling_name,
            std::vector<int64_t> const &sites)
     : type_("XDIAG_TYPE_UNDEFINED"), matrix_(to_cx_mat(matrix)), coupling_(0.0),
-      coupling_name_(coupling_name), sites_(sites) {}
+      coupling_name_(coupling_name), sites_(sites) {
+  for (auto site : sites) {
+    if (site < 0) {
+      XDiagThrow(std::runtime_error, "Error: site of bond < 0");
+    }
+  }
+}
 template Bond::Bond(arma::Mat<double> const &, std::string coupling_name,
                     std::vector<int64_t> const &);
 template Bond::Bond(arma::Mat<complex> const &, std::string coupling_name,

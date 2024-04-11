@@ -56,18 +56,10 @@ lanczos_result_t lanczos(mult_f mult, dot_f dot, converged_f converged,
   int64_t iteration = 0;
   std::string criterion;
   while (!converged(tmatrix)) {
-    Log("here");
     operation(v1);
-    Log("a");
-
     lanczos_step(v0, v1, w, alpha, beta, mult, dot);
-    Log("b");
-
     tmatrix.append(alpha, beta);
-    Log("c");
-
     tmatrix.print_log();
-    Log("d");
 
     ++iteration;
 
@@ -78,14 +70,11 @@ lanczos_result_t lanczos(mult_f mult, dot_f dot, converged_f converged,
       criterion = "deflated";
       break;
     }
-    Log("e");
     if (iteration >= max_iterations) {
       criterion = "maxiterations";
       break;
     }
-    Log("f");
   }
-    Log("there");
 
   if (converged(tmatrix)) {
     criterion = "converged";

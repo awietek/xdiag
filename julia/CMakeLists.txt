@@ -1,25 +1,23 @@
-# # get julia cxxwrap path
-# execute_process(COMMAND julia -e "using CxxWrap; ; println(CxxWrap.prefix_path())"
-#  WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
-#  OUTPUT_VARIABLE JULIA_CXXWRAP_DIR
-#  OUTPUT_STRIP_TRAILING_WHITESPACE
-# )
-
-# set(JlCxx_DIR "${JULIA_CXXWRAP_DIR}/lib/cmake/JlCxx")
-# message(STATUS "JlCxx_DIR: " ${JlCxx_DIR})
+message(STATUS "------   BUILDING JULIA WRAPPER XDIAG LIBRARY   ----------")
 
 find_package(JlCxx REQUIRED)
 get_target_property(JlCxx_location JlCxx::cxxwrap_julia LOCATION)
 get_filename_component(JlCxx_location ${JlCxx_location} DIRECTORY)
 
 message(STATUS ${JlCxx_location})
-add_library(xdiagjl SHARED xdiagjl.cpp)
+list(TRANSFORM XDIAG_SOURCES PREPEND "../xdiag/")
 
-set_target_properties(xdiagjl PROPERTIES
-  VERSION ${xdiag_VERSION}
-  SOVERSION ${xdiag_VERSION_MAJOR})
-target_include_directories(xdiagjl PRIVATE ${JlCxx_DIR}/../../../include ${JlCxx_DIR}/../../../include/julia)
-target_link_libraries(xdiagjl PRIVATE JlCxx::cxxwrap_julia)
-target_link_libraries(xdiagjl PRIVATE JlCxx::cxxwrap_julia_stl)
-target_link_libraries(xdiagjl PRIVATE ${JLCXX_TARGET} ${JLCXX_STL_TARGET} ${Julia_LIBRARY})
-target_link_libraries(xdiagjl PRIVATE ${XDIAG_LIBRARY})
+add_library(${XDIAG_LIBRARY} SHARED xdiagjl.cpp ${XDIAG_SOURCES})
+
+target_include_directories(
+  ${XDIAG_LIBRARY} PUBLIC "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>")
+target_compile_features(${XDIAG_LIBRARY} PUBLIC cxx_std_17)
+
+# set_target_properties(${XDIAG_LIBRARY} PROPERTIES
+#   VERSION ${xdiag_VERSION}
+#   SOVERSION ${xdiag_VERSION_MAJOR})
+
+target_include_directories(${XDIAG_LIBRARY} PRIVATE ${JlCxx_DIR}/../../../include ${JlCxx_DIR}/../../../include/julia)
+target_link_libraries(${XDIAG_LIBRARY} PRIVATE JlCxx::cxxwrap_julia)
+target_link_libraries(${XDIAG_LIBRARY} PRIVATE JlCxx::cxxwrap_julia_stl)
+target_link_libraries(${XDIAG_LIBRARY} PRIVATE ${JLCXX_TARGET} ${JLCXX_STL_TARGET} ${Julia_LIBRARY})
