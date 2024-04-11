@@ -49,9 +49,6 @@ arma::vec Tmatrix::eigenvalues() const try {
   } else {
     arma::vec eigs;
     arma::eig_sym(eigs, mat());
-    XDiagPrint(mat());
-    XDiagPrint(eigs);
-    
     return eigs;
   }
 } catch (...) {
@@ -93,18 +90,11 @@ std::pair<arma::vec, arma::mat> Tmatrix::eigen() const try {
 }
 
 void Tmatrix::print_log() const try {
-  Log("x");
   auto eigs = eigenvalues();
-  Log("y");
   double alpha = alphas_[size() - 1];
   double beta = betas_[size() - 1];
-  Log("z");
   Log(2, "alpha: {:.16f}", alpha);
   Log(2, "beta: {:.16f}", beta);
-  Log("w");
-  Log("eigs.size() = {}", eigs.size());
-    Log("alphas.size() = {}", alphas_.size());
-    Log("betas.size() = {}", betas_.size());
   if (eigs.size() == 1) {
     Log(2, "eigs: {:.16f}", eigs(0));
   } else if (eigs.size() == 2) {
@@ -112,7 +102,6 @@ void Tmatrix::print_log() const try {
   } else {
     Log(2, "eigs: {:.16f} {:.16f} {:.16f}", eigs(0), eigs(1), eigs(2));
   }
-    Log("ww");
 } catch (...) {
   XDiagRethrow("Error printing logging of Tmatrix");
 }

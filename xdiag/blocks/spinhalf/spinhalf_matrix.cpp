@@ -41,14 +41,12 @@ template <typename coeff_t>
 void matrix_gen(coeff_t *mat, BondList const &bonds, Spinhalf const &block_in,
                 Spinhalf const &block_out) try {
   BondList bondsc = spinhalf::compile(bonds, 1e-12);
-
   int64_t m = block_out.size();
+
   auto fill = [&](int64_t idx_in, int64_t idx_out, coeff_t val) {
     return fill_matrix(mat, idx_in, idx_out, m, val);
   };
-
   spinhalf::dispatch<coeff_t>(bondsc, block_in, block_out, fill);
-
 } catch (...) {
   XDiagRethrow("Cannot create matrix from \"Spinhalf\" block");
 }
