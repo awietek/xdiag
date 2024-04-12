@@ -1,6 +1,7 @@
 build
 install
 julia/products
+julia/build_tarballs.jl
 site
 misc/dump/*
 build/*

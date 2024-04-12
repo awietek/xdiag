@@ -8,15 +8,16 @@ uuid = Base.UUID("a83860b7-747b-57cf-bf1f-3e79990d037f")
 delete!(Pkg.Types.get_last_stdlibs(v"1.6.3"), uuid)
 
 
-name = "xdiag"
+name = "XDiag"
 version = v"0.2.0"
 
 include("common.jl")
 
 # Collection of sources required to complete build
 sources = [
-    GitSource("https://github.com/awietek/xdiag.git", "1dfcaf2f5edd662b6c4a009448ec70dafaa417e4")
+    GitSource("https://github.com/awietek/xdiag.git", "4a03a8b23c5506e1442bf2531bc1de15d6d448ec")
 ]
+
 
 # Bash recipe for building across all platforms
 script = raw"""
@@ -88,10 +89,16 @@ platforms = vcat(libjulia_platforms.(julia_versions)...)
 # filter!(p -> (arch(p) == "x86_64" || arch(p) == "aarch64") && p.tags["julia_version"] == "1.10.0" && libc(p) != "musl", platforms)
 
 
+# filter!(p -> (os(p) == "linux" && libc(p) != "musl" && arch(p) == "x86_64" &&
+#     (p.tags["julia_version"] == "1.10.0" || p.tags["julia_version"] == "1.9.0")) ||
+#     os(p) == "macos" && arch(p) == "aarch64" &&
+#     (p.tags["julia_version"] == "1.10.0" || p.tags["julia_version"] == "1.9.0"), platforms)
+
+# filter!(p ->  os(p) == "macos" && arch(p) == "aarch64" && p.tags["julia_version"] == "1.10.0", platforms)
+
 filter!(p -> (os(p) == "linux" && libc(p) != "musl" && arch(p) == "x86_64" &&
-    (p.tags["julia_version"] == "1.10.0" || p.tags["julia_version"] == "1.9.0")) ||
-    os(p) == "macos" && arch(p) == "aarch64" &&
-    (p.tags["julia_version"] == "1.10.0" || p.tags["julia_version"] == "1.9.0"))
+    p.tags["julia_version"] == "1.10.0" , platforms)
+
 
 println("Building for platforms")
 for p in platforms
@@ -119,4 +126,4 @@ dependencies = [
 ]
 
 # Build the tarballs, and possibly a `build.jl` as well.
-build_tarballs(ARGS, name, version, sources, script, platforms, products, dependencies; julia_compat="1.6", preferred_gcc_version = v"12.1.0")
+build_tarballs(ARGS, name, version, sources, script, platforms, products, dependencies; julia_compat="1.6", preferred_gcc_version = v"8.1.0")
