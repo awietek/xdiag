@@ -2,6 +2,15 @@
 title: Installation
 ---
 
+## Julia Installation
+
+In the Julia REPL to the package mode and add the following two packages
+```julia
+]
+add https://github.com/awietek/XDiag_jll.jl.git
+add https://github.com/awietek/XDiag.jl.git
+```
+
 ## C++ Compilation
 
 Using XDiag with C++ is a two-step process. First the `xdiag` library needs
