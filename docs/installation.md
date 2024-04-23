@@ -36,7 +36,7 @@ in a second step. Here we explain how to compile the library.
 
 - **Compile the default library**
   ``` bash
-  cd XDiag
+  cd xdiag
   cmake -S . -B build
   cmake --build build
   cmake --install build
@@ -48,7 +48,7 @@ in a second step. Here we explain how to compile the library.
     To use the distributed computing features of `xdiag`, the distributed
     library has to be built which requires [MPI](https://en.wikipedia.org/wiki/Message_Passing_Interface).
     ``` bash
-    cd XDiag
+    cd xdiag
     cmake -S . -B build -D XDIAG_DISTRIBUTED=On
     cmake --build build
     cmake --install build

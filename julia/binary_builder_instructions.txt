@@ -1,8 +1,19 @@
-julia --color=yes build_tarballs.jl --verbose  --debug --deploy=local
+julia --color=yes build_tarballs.jl --verbose --deploy=local
+julia --color=yes build_tarballs.jl --verbose --skip-build --deploy=awietek/XDiag_jll.jl
+
+cd /Users/awietek/.julia/dev/XDiag_jll
+git init
+git remote add origin https://github.com/awietek/XDiag_jll.jl.git
+
+if overwriting a release, delete it on github beforehand
+
+julia --color=yes build_tarballs.jl --verbose --debug --deploy=local
 julia --color=yes build_tarballs.jl --debug --deploy=local
 
-toml++ requires gcc 8
-
+toml++ requires gcc 8 and even gcc 9 on windows
+HDF5 dependence causes issues not finding the libhdf5.so when precompiling in Julia
+HDF5 dependence fix for the above problem caused it not to compile on windows
+-> dropping hdf5 dependency
 
 dependencies:
 
