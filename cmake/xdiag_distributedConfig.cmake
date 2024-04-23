@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.19)
 
+find_package(HDF5 COMPONENTS CXX)
+
 set(xdiag_distributed_known_comps static shared)
 set(xdiag_distributed_comp_static NO)
 set(xdiag_distributed_comp_shared NO)

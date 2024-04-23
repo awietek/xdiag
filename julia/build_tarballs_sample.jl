@@ -15,7 +15,7 @@ include("common.jl")
 
 # Collection of sources required to complete build
 sources = [
-    GitSource("https://github.com/awietek/xdiag.git", "4a03a8b23c5506e1442bf2531bc1de15d6d448ec")
+    GitSource("https://github.com/awietek/xdiag.git", "1770d1d9efc1f189d62cd2b1888911a5cbb57eb9")
 ]
 
 
@@ -46,11 +46,11 @@ if [[ "${target}" == *-apple-* ]]; then
 
 
     # Finding OpenMP is a bit complicated
-    cmake -DJulia_PREFIX=$Julia_PREFIX -DCMAKE_INSTALL_PREFIX=$prefix -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TARGET_TOOLCHAIN} -DCMAKE_BUILD_TYPE=Release -DXDIAG_JULIA_WRAPPER=On -DJlCxx_DIR=$prefix/lib/cmake -DBLAS_LIBRARIES=${libdir}/libopenblas64_.${dlext} -DLAPACK_LIBRARIES=${libdir}/libopenblas64_.${dlext} -DOpenMP_libgomp_LIBRARY=${libdir}/libgomp.dylib -DOpenMP_ROOT=${libdir} -D OpenMP_CXX_LIB_NAMES="libgomp" -DOpenMP_CXX_FLAGS="-fopenmp=libgomp -Wno-unused-command-line-argument"  -S . -B build
+    cmake -D XDIAG_DISABLE_HDF5=On -DJulia_PREFIX=$Julia_PREFIX -DCMAKE_INSTALL_PREFIX=$prefix -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TARGET_TOOLCHAIN} -DCMAKE_BUILD_TYPE=Release -DXDIAG_JULIA_WRAPPER=On -DJlCxx_DIR=$prefix/lib/cmake -DBLAS_LIBRARIES=${libdir}/libopenblas64_.${dlext} -DLAPACK_LIBRARIES=${libdir}/libopenblas64_.${dlext} -DOpenMP_libgomp_LIBRARY=${libdir}/libgomp.dylib -DOpenMP_ROOT=${libdir} -D OpenMP_CXX_LIB_NAMES="libgomp" -DOpenMP_CXX_FLAGS="-fopenmp=libgomp -Wno-unused-command-line-argument"  -S . -B build
 
 else
 
-    cmake -DJulia_PREFIX=$Julia_PREFIX -DCMAKE_INSTALL_PREFIX=$prefix -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TARGET_TOOLCHAIN} -DCMAKE_BUILD_TYPE=Release -DXDIAG_JULIA_WRAPPER=On -DJlCxx_DIR=$prefix/lib/cmake -DBLAS_LIBRARIES=${libdir}/libopenblas64_.${dlext} -DLAPACK_LIBRARIES=${libdir}/libopenblas64_.${dlext} -S . -B build
+    cmake -D XDIAG_DISABLE_HDF5=On -DJulia_PREFIX=$Julia_PREFIX -DCMAKE_INSTALL_PREFIX=$prefix -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TARGET_TOOLCHAIN} -DCMAKE_BUILD_TYPE=Release -DXDIAG_JULIA_WRAPPER=On -DJlCxx_DIR=$prefix/lib/cmake -DBLAS_LIBRARIES=${libdir}/libopenblas64_.${dlext} -DLAPACK_LIBRARIES=${libdir}/libopenblas64_.${dlext} -S . -B build
 
 fi
 
@@ -89,15 +89,29 @@ platforms = vcat(libjulia_platforms.(julia_versions)...)
 # filter!(p -> (arch(p) == "x86_64" || arch(p) == "aarch64") && p.tags["julia_version"] == "1.10.0" && libc(p) != "musl", platforms)
 
 
+# filter!(p -> (os(p) == "linux" && libc(p) != "musl" && arch(p) == "x86_64") || (os(p) == "macos" && arch(p) == "aarch64"), platforms)
+
+
 # filter!(p -> (os(p) == "linux" && libc(p) != "musl" && arch(p) == "x86_64" &&
-#     (p.tags["julia_version"] == "1.10.0" || p.tags["julia_version"] == "1.9.0")) ||
-#     os(p) == "macos" && arch(p) == "aarch64" &&
-#     (p.tags["julia_version"] == "1.10.0" || p.tags["julia_version"] == "1.9.0"), platforms)
+#     (p.tags["julia_version"] == "1.10.0" || p.tags["julia_version"] == "1.9.0" || p.tags["julia_version"] == "1.8.2")) ||
+#     (os(p) == "macos" && arch(p) == "aarch64" &&
+#     (p.tags["julia_version"] == "1.10.0" || p.tags["julia_version"] == "1.9.0" || p.tags["julia_version"] == "1.8.2")), platforms)
 
 # filter!(p ->  os(p) == "macos" && arch(p) == "aarch64" && p.tags["julia_version"] == "1.10.0", platforms)
 
-filter!(p -> (os(p) == "linux" && libc(p) != "musl" && arch(p) == "x86_64" &&
-    p.tags["julia_version"] == "1.10.0" , platforms)
+# filter!(p -> (os(p) == "linux" && libc(p) != "musl" && arch(p) == "x86_64" &&
+#     p.tags["julia_version"] == "1.9.0"), platforms)
+
+filter!(p -> (
+    # (os(p) == "linux" && libc(p) != "musl" && arch(p) == "x86_64") ||
+    # (os(p) == "linux" && libc(p) != "musl" && arch(p) == "aarch64") ||
+    # (os(p) == "macos" && arch(p) == "x86_64") ||
+    # (os(p) == "macos" && arch(p) == "aarch64") ||
+    (os(p) == "windows" && arch(p) == "x86_64")) &&
+    p.tags["julia_version"] !="1.6.3" &&
+    p.tags["julia_version"] !="1.11.0" &&
+    p.tags["julia_version"] !="1.12.0", platforms)
+
 
 
 println("Building for platforms")
@@ -118,12 +132,13 @@ dependencies = [
     # BuildDependency(PackageSpec(name="Julia_jll", version=v"1.4.1"))
     # Dependency(PackageSpec(name="libcxxwrap_julia_jll", uuid="3eaa8342-bff7-56a5-9981-c04077f7cee7"))
     # BuildDependency(PackageSpec(name="Julia_jll", version=v"1.4.1"))
+    # Dependency(PackageSpec(name="HDF5_jll", uuid="0234f1f7-429e-5d53-9886-15a909be8d59"); compat="~1.14.0")
+    # Dependency(PackageSpec(name="HDF5_jll", uuid="0234f1f7-429e-5d53-9886-15a909be8d59"))
     BuildDependency(PackageSpec(;name="libjulia_jll", version=v"1.10.7"))
     Dependency(PackageSpec(name="libcxxwrap_julia_jll", uuid="3eaa8342-bff7-56a5-9981-c04077f7cee7"))
     Dependency(PackageSpec(name="OpenBLAS_jll", uuid="4536629a-c528-5b80-bd46-f80d51c5b363"))
-    Dependency(PackageSpec(name="HDF5_jll", uuid="0234f1f7-429e-5d53-9886-15a909be8d59"))
     Dependency(PackageSpec(name="CompilerSupportLibraries_jll", uuid="e66e0078-7015-5450-92f7-15fbd957f2ae"))
 ]
 
 # Build the tarballs, and possibly a `build.jl` as well.
-build_tarballs(ARGS, name, version, sources, script, platforms, products, dependencies; julia_compat="1.6", preferred_gcc_version = v"8.1.0")
+build_tarballs(ARGS, name, version, sources, script, platforms, products, dependencies; julia_compat="1.6", preferred_gcc_version = v"9.1.0")

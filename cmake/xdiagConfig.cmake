@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.19)
 
 find_package(OpenMP)
+find_package(HDF5 COMPONENTS CXX)
   
 set(xdiag_known_comps static shared)
 set(xdiag_comp_static NO)
