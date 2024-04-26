@@ -24,7 +24,7 @@ template <typename coeff_t> struct lanczos_pro_result {
   arma::vec orthogonality_levels;
 };
 
-arma::mat compute_omega(arma::vec const &alpha, arma::vec const &beta,
+inline arma::mat compute_omega(arma::vec const &alpha, arma::vec const &beta,
                         double new_beta, int64_t dim, int last_reortho) {
   // Computes the estimate of the orthogonality omega
   // Following Horst D. Simon, The Lanczos algorithm with partial reortho
@@ -89,7 +89,7 @@ arma::mat compute_omega(arma::vec const &alpha, arma::vec const &beta,
 
 // Generic Lanczos implementation building multiple vectors
 template <class coeff_t, class multiply_f, class convergence_f>
-lanczos_pro_result<coeff_t>
+inline lanczos_pro_result<coeff_t>
 lanczos_pro(multiply_f mult, arma::Col<coeff_t> &v0, convergence_f converged,
             int max_iterations = 300, double orthogonality_level = 1e-8,
             double deflation_tol = 1e-7,

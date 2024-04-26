@@ -7,7 +7,10 @@ get_filename_component(JlCxx_location ${JlCxx_location} DIRECTORY)
 message(STATUS ${JlCxx_location})
 list(TRANSFORM XDIAG_SOURCES PREPEND "../xdiag/")
 
-add_library(${XDIAG_LIBRARY} SHARED xdiagjl.cpp ${XDIAG_SOURCES})
+message(STATUS ${JlCxx_location})
+list(TRANSFORM XDIAG_JULIA_SOURCES PREPEND "src/")
+
+add_library(${XDIAG_LIBRARY} SHARED ${XDIAG_SOURCES} ${XDIAG_JULIA_SOURCES})
 
 target_include_directories(
   ${XDIAG_LIBRARY} PUBLIC "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>")

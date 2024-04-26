@@ -123,3 +123,10 @@ set(XDIAG_DISTRIBUTED_SOURCES
   blocks/tj_distributed/tj_distributed.cpp
   blocks/tj_distributed/tj_distributed_apply.cpp
 )
+
+set(XDIAG_JULIA_SOURCES
+  xdiagjl.cpp
+  operators.cpp
+  utils.cpp
+  blocks.cpp
+)
