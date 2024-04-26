@@ -4,9 +4,8 @@ title: Installation
 
 ## Julia Installation
 
-In the Julia REPL to the package mode and add the following two packages
+Enter the package mode using `]` in the Julia REPL and add the following two packages
 ```julia
-]
 add https://github.com/awietek/XDiag_jll.jl.git
 add https://github.com/awietek/XDiag.jl.git
 ```
@@ -131,3 +130,16 @@ in a second step. Here we explain how to compile the library.
     cmake --install build
     ```
     The julia wrapper library can then be found in the install dir as `libxdiagjl.so`, (or the corresponding library format on non-Linux systems).
+	
+## Building Documentation
+The source files for the documentation can be found in the directory `docs`. The documentation is built using [Material for MKDocs](https://squidfunk.github.io/mkdocs-material/). To work on it locally, it can be served using 
+
+```bash
+mkdocs serve
+```
+
+from the `xdiag` root source directory. A local build of the documentation can then be accessed in a webbrowser at the adress
+
+```
+127.0.0.1:8000
+```

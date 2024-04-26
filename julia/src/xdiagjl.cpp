@@ -1,82 +1,19 @@
-#include "jlcxx/array.hpp"
-#include "jlcxx/const_array.hpp"
-#include "jlcxx/jlcxx.hpp"
-#include "jlcxx/stl.hpp"
-#include "jlcxx/tuple.hpp"
-
-#include <xdiag/all.hpp>
-
-#define JULIA_XDIAG_CALL_VOID(CMD)                                             \
-  try {                                                                        \
-    CMD;                                                                       \
-  } catch (std::exception const &e) {                                          \
-    traceback(e);                                                              \
-    throw(std::runtime_error("Error occurred in xdiag C++ core library"));     \
-  }
-
-#define JULIA_XDIAG_CALL_RETURN(CMD)                                           \
-  try {                                                                        \
-    return CMD;                                                                \
-  } catch (std::exception const &e) {                                          \
-    traceback(e);                                                              \
-    throw(std::runtime_error("Error occurred in xdiag C++ core library"));     \
-    return decltype(CMD)();                                                    \
-  }
-
-#define JULIA_XDIAG_CALL_ASSIGN(LVALUE, CMD)                                   \
-  try {                                                                        \
-    LVALUE = CMD;                                                              \
-  } catch (std::exception const &e) {                                          \
-    traceback(e);                                                              \
-    throw(std::runtime_error("Error occurred in xdiag C++ core library"));     \
-    return decltype(CMD)();                                                    \
-  }
+#include <julia/src/xdiagjl.hpp>
+#include <julia/src/operators.hpp>
+#include <julia/src/blocks.hpp>
+#include <julia/src/utils.hpp>
 
 JLCXX_MODULE define_julia_module(jlcxx::Module &mod) {
   using namespace xdiag;
 
-  mod.add_type<Bond>("BondCxx")
-      .constructor<>()
-      .constructor<std::string, std::string, std::vector<int64_t> const &>()
-      .constructor<std::string, complex, std::vector<int64_t> const &>()
-      .constructor<std::string, double, std::vector<int64_t> const &>()
-      .method("isreal", &Bond::isreal)
-      .method("iscomplex", &Bond::iscomplex);
-
-  mod.add_type<BondList>("BondListCxx")
-      .constructor<>()
-      .constructor<std::vector<Bond> const &>()
-      .method("set_coupling", &BondList::set_coupling)
-      .method("isreal", &BondList::isreal)
-      .method("iscomplex", &BondList::iscomplex);
-
-  mod.add_type<Spinhalf>("Spinhalf")
-      .constructor<int64_t>()
-      .constructor<int64_t, int64_t>()
-      .method("n_sites", &Spinhalf::n_sites)
-      .method("size", &Spinhalf::size)
-      .method("isreal", &Spinhalf::isreal)
-      .method("iscomplex", &Spinhalf::iscomplex);
-
-  mod.add_type<tJ>("tJ")
-      .constructor<int64_t, int64_t, int64_t>()
-      .method("n_sites", &tJ::n_sites)
-      .method("n_up", &tJ::n_up)
-      .method("n_dn", &tJ::n_dn)
-      .method("size", &tJ::size)
-      .method("isreal", &tJ::isreal)
-      .method("iscomplex", &tJ::iscomplex);
-
-  mod.add_type<Electron>("Electron")
-      .constructor<int64_t>()
-      .constructor<int64_t, int64_t, int64_t>()
-      .method("n_sites", &Electron::n_sites)
-      .method("n_up", &Electron::n_up)
-      .method("n_dn", &Electron::n_dn)
-      .method("size", &Electron::size)
-      .method("isreal", &Electron::isreal)
-      .method("iscomplex", &Electron::iscomplex);
-
+  julia::define_say_hello(mod);
+  
+  julia::define_bond(mod);
+  julia::define_bondlist(mod);
+  julia::define_spinhalf(mod);
+  julia::define_tj(mod);
+  julia::define_electron(mod);
+    
   mod.add_type<State>("State")
       .constructor<>()
       .constructor<Spinhalf const &, bool, int64_t>()

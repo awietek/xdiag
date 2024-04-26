@@ -4,42 +4,59 @@ title: Examples
 
 ## Basic examples
 
-- Hello World
+<div class="grid cards" markdown>
 
-    ??? example "source"
-        ```c++ 
-        --8<-- "examples/hello_world/main.cpp"
-        ```
-	
-- Ground state energy of a spin chain
+-   :material-file-document:{ .lg .middle } __Hello World__
 
-    ??? example "source"
-        ```c++ 
-        --8<-- "examples/spectrum/spinhalf_chain_e0/main.cpp"
-        ```
+    ---
+
+    Prints out a greeting containing information on the version of the code.
+
+    [source](examples/hello_world.md) :simple-cplusplus: :simple-julia:
+
+-   :material-file-document:{ .lg .middle } __Groundstate energy__
+
+    ---
+
+    Computes the ground state energy of a simple Heisenberg spin $S=1/2$ chain
+
+    [source](examples/spinhalf_chain_e0.md) :simple-cplusplus: :simple-julia:
+
+</div>
 
 ## Distributed examples
 
+<div class="grid cards" markdown>
 
-- Time-evolution of a $t$-$J$ model
+-   :material-file-document:{ .lg .middle } __$t$-$J$ time evolution__
 
-    ??? example "source"
-        ```c++ 
-        --8<-- "examples/time_evolution/tj_distributed_time_evolve/main.cpp"
-        ```
+    ---
 
-## Application CMakeLists.txt
+    Computes the time evolution of a state in the $t$-$J$ model with distributed parallelization
 
-- Normal xdiag library
+    [source](examples/tj_distributed_time_evolve.md) :simple-cplusplus: 
 
-    ??? example "source"
-        ```cmake 
-        --8<-- "examples/hello_world/CMakeLists.txt"
-        ```
+</div>
 
-- Distributed xdiag library
+<!-- - Time-evolution of a $t$-$J$ model -->
 
-    ??? example "source"
-        ```cmake 
-        --8<-- "examples/time_evolution/tj_distributed_time_evolve/CMakeLists.txt"
-        ```
+<!--     ??? example "source" -->
+<!--         ```c++  -->
+<!--         --8<-- "examples/time_evolution/tj_distributed_time_evolve/main.cpp" -->
+<!--         ``` -->
+
+<!-- ## Application CMakeLists.txt -->
+
+<!-- - Normal xdiag library -->
+
+<!--     ??? example "source" -->
+<!--         ```cmake  -->
+<!--         --8<-- "examples/hello_world/CMakeLists.txt" -->
+<!--         ``` -->
+
+<!-- - Distributed xdiag library -->
+
+<!--     ??? example "source" -->
+<!--         ```cmake  -->
+<!--         --8<-- "examples/time_evolution/tj_distributed_time_evolve/CMakeLists.txt" -->
+<!--         ``` -->
