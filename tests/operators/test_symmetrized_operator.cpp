@@ -38,17 +38,17 @@ TEST_CASE("symmetrized_operator", "[symmetries]") try {
         auto [e0_nosym, v0_nosym] = eig0(bondlist, block_nosym);
 
         // auto res = eigs_lanczos(bondlist, block_nosym);
-	// XDiagPrint(res.criterion);
+	// XDIAG_PRINT(res.criterion);
 
 	{
           auto &v = v0_nosym;
           auto Hv = v;
           apply(bondlist, v, Hv);
           auto e = dot(v, Hv);
-	  // XDiagPrint(norm(v));
-	  // XDiagPrint(block_nosym);
-          // XDiagPrint(e);
-          // XDiagPrint(e0_nosym);
+	  // XDIAG_PRINT(norm(v));
+	  // XDIAG_PRINT(block_nosym);
+          // XDIAG_PRINT(e);
+          // XDIAG_PRINT(e0_nosym);
           REQUIRE(close(real(e), e0_nosym));
         }
         double e0_sym = 9999.0;
@@ -88,8 +88,8 @@ TEST_CASE("symmetrized_operator", "[symmetries]") try {
             auto Hv = v;
             apply(bondlist, v, Hv);
             auto e = dot(v, Hv);
-            // XDiagPrint(e);
-            // XDiagPrint(e0_nosym);
+            // XDIAG_PRINT(e);
+            // XDIAG_PRINT(e0_nosym);
             REQUIRE(close(real(e), e0_nosym));
           }
 

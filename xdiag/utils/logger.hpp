@@ -14,4 +14,6 @@ inline auto & Log = LogMPI;
 inline auto & Log = LogSerial;
 #endif
 
+void set_verbosity(int64_t level);
+  
 }

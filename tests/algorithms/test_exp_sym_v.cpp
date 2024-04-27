@@ -28,7 +28,7 @@ TEST_CASE("exp_sym_v", "[algorithms]") try {
       auto H = matrixC(bonds, block);
       arma::cx_vec psi_ex = expmat(complex(0.0, -1.0 * t) * H) * psi0.vector();
       arma::cx_vec psi = exp_sym_v(bonds, psi0, complex(0, -t)).vectorC();
-      // XDiagPrint(norm(psi - psi_ex));
+      // XDIAG_PRINT(norm(psi - psi_ex));
       REQUIRE(norm(psi - psi_ex) < 1e-6);
     }
 
@@ -39,7 +39,7 @@ TEST_CASE("exp_sym_v", "[algorithms]") try {
       auto H = matrix(bonds, block);
       arma::vec psi_ex = expmat(-t * H) * psi0.vector();
       arma::vec psi = exp_sym_v(bonds, psi0, -t).vector();
-      // XDiagPrint(norm(psi - psi_ex));
+      // XDIAG_PRINT(norm(psi - psi_ex));
       REQUIRE(norm(psi - psi_ex) < 1e-6);
     }
 
@@ -49,7 +49,7 @@ TEST_CASE("exp_sym_v", "[algorithms]") try {
       auto H = matrixC(bonds, block);
       arma::cx_vec psi_ex = expmat(t * H) * psi0.vector();
       arma::cx_vec psi = exp_sym_v(bonds, psi0, t).vectorC();
-      // XDiagPrint(norm(psi - psi_ex));
+      // XDIAG_PRINT(norm(psi - psi_ex));
       REQUIRE(norm(psi - psi_ex) < 1e-6);
     }
   }

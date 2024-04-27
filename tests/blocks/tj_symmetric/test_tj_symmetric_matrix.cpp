@@ -14,7 +14,7 @@ using namespace xdiag;
 void test_spectra_tj_symmetric(BondList bondlist, PermutationGroup space_group,
                                std::vector<Representation> irreps,
                                std::vector<int64_t> multiplicities) {
-  // XDiagPrint64_t(bondlist);
+  // XDIAG_PRINT(bondlist);
   int64_t n_sites = space_group.n_sites();
   assert(irreps.size() == multiplicities.size());
 
@@ -45,14 +45,14 @@ void test_spectra_tj_symmetric(BondList bondlist, PermutationGroup space_group,
             // Compute partial spectrum from symmetrized block
             auto H_sym = matrixC(bondlist, tj, tj);
             // Log("n_sites: {}, nup: {}, ndn: {}, k: {}", n_sites, nup, ndn,
-            // k); XDiagPrint(irrep); XDiagPrint(H_sym);
+            // k); XDIAG_PRINT(irrep); XDIAG_PRINT(H_sym);
 
             REQUIRE(arma::norm(H_sym - H_sym.t()) < 1e-12);
 
             arma::vec eigs_sym_k;
             arma::eig_sym(eigs_sym_k, H_sym);
 
-            // XDiagPrint(eigs_sym_k);
+            // XDIAG_PRINT(eigs_sym_k);
 
             // Check whether results are the same for real blocks
             if (tj.irrep().isreal() && bondlist.isreal()) {
@@ -70,8 +70,8 @@ void test_spectra_tj_symmetric(BondList bondlist, PermutationGroup space_group,
         std::sort(eigs_sym.begin(), eigs_sym.end());
 
         // Check if all eigenvalues agree
-        // XDiagPrint(eigs_sym);
-        // XDiagPrint(eigs_nosym);
+        // XDIAG_PRINT(eigs_sym);
+        // XDIAG_PRINT(eigs_nosym);
         REQUIRE(close(arma::vec(eigs_sym), eigs_nosym));
       }
     }

@@ -14,6 +14,7 @@ BondList::BondList(std::vector<Bond> const &bonds) : bonds_(bonds) {}
 BondList::BondList(io::FileTomlHandler &&hdl) : BondList(hdl.as<BondList>()) {}
 
 void BondList::operator<<(Bond const &bond) { bonds_.push_back(bond); }
+void BondList::operator+=(Bond const &bond) { bonds_.push_back(bond); }
 
 bool BondList::coupling_defined(std::string name) const {
   return couplings_.count(name);

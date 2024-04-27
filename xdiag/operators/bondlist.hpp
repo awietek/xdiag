@@ -46,7 +46,9 @@ public:
   bool operator==(BondList const &other) const;
   bool operator!=(BondList const &other) const;
   BondList operator+(BondList const &other);
+
   void operator<<(Bond const &bond);
+  void operator+=(Bond const &bond);
 
   iterator_t begin();
   iterator_t end();

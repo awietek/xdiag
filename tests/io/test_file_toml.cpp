@@ -24,8 +24,8 @@ template <typename T> void test_write_read(T val) {
   fl = FileToml(filename, 'r');
   T val_r = fl[key].as<T>();
 
-  // XDiagPrint(val);
-  // XDiagPrint(val_r);
+  // XDIAG_PRINT(val);
+  // XDIAG_PRINT(val_r);
   REQUIRE(val == val_r);
 }
 
@@ -114,26 +114,26 @@ TEST_CASE("file_toml", "[io]") {
 
   auto sx = fl["pauli.sx"].as<mat>();
   REQUIRE(close(sx, mat{{0.0, 0.5}, {0.5, 0.0}}));
-  // XDiagPrint(sx);
+  // XDIAG_PRINT(sx);
 
   auto sy = fl["pauli.sy"].as<cx_mat>();
   cx_mat syy{{0. + 0.i, 0. - 0.5i}, {0. + 0.5i, 0.0}};
-  // XDiagPrint(sy);
-  // XDiagPrint(syy);
+  // XDIAG_PRINT(sy);
+  // XDIAG_PRINT(syy);
 
   REQUIRE(close(sy, syy));
 
   auto sz = fl["pauli.sz"].as<mat>();
   REQUIRE(close(sz, mat{{0.5, 0.}, {0., -0.5}}));
-  // XDiagPrint(sz);
+  // XDIAG_PRINT(sz);
 
   auto szc = fl["pauli.sz"].as<cx_mat>();
   REQUIRE(close(szc, cx_mat{{0.5 + 0i, 0. + 0i}, {0. + 0i, -0.5 + 0i}}));
-  // XDiagPrint(szc);
+  // XDIAG_PRINT(szc);
 
   auto other = fl["pauli.other"].as<mat>();
   REQUIRE(close(other, mat{{1.0, 2.0, 3.0}, {5.0, 6.0, 7.0}}));
-  // XDiagPrint(other);
+  // XDIAG_PRINT(other);
 
   int a = 42;
   double b = 1.234;
@@ -189,7 +189,7 @@ TEST_CASE("file_toml", "[io]") {
   auto lr = fl["l"].as<imat>();
   auto mr = fl["m"].as<umat>();
 
-  // XDiagPrint(lr);
+  // XDIAG_PRINT(lr);
   REQUIRE(a == ar);
   REQUIRE(b == br);
   REQUIRE(c == cr);

@@ -58,8 +58,8 @@ void test_electron_symmetric_spectra_no_np(BondList bondlist,
         }
       }
       std::sort(eigs_np_all.begin(), eigs_np_all.end());
-      // XDiagPrint(eigs_no_np);
-      // XDiagPrint(arma::vec(eigs_np_all));
+      // XDIAG_PRINT(eigs_no_np);
+      // XDIAG_PRINT(arma::vec(eigs_np_all));
 
       REQUIRE(close(eigs_no_np, arma::vec(eigs_np_all)));
     }
@@ -130,9 +130,9 @@ void test_electron_symmetric_spectra(BondList bondlist,
         // Log.out("{} {} {} {}", nup, ndn, eigs_sym(0), eigs_nosym(0));
 
 	// if (!close(arma::vec(eigs_sym), eigs_nosym)){
-	//   XDiagPrint(arma::norm(arma::vec(eigs_sym) - eigs_nosym));
-	//   XDiagPrint(eigs_sym);
-	//   XDiagPrint(eigs_nosym);
+	//   XDIAG_PRINT(arma::norm(arma::vec(eigs_sym) - eigs_nosym));
+	//   XDIAG_PRINT(eigs_sym);
+	//   XDIAG_PRINT(eigs_nosym);
 	// }
         REQUIRE(close(arma::vec(eigs_sym), eigs_nosym));
       }

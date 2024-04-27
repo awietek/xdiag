@@ -24,9 +24,9 @@ int main() {
   bonds["JEX"] = 0.0;
 
   auto block = Electron(n_sites, nup, ndn);
-  XDiagPrint(block);
+  XDIAG_PRINT(block);
   auto e0 = eig0(bonds, block);
-  XDiagPrint(e0);
+  XDIAG_PRINT(e0);
 
   return EXIT_SUCCESS;
 }

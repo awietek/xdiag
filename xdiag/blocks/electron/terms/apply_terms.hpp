@@ -36,7 +36,6 @@ void apply_terms(BondList const &bonds, BasisIn const &basis_in,
     } else if (type == "EXCHANGE") {
       bonds_mixed << bond;
     } else {
-      XDiagPrint(bond);
       Log.err("Error: Unknown bond of type {}", type);
     }
   }

@@ -3,7 +3,7 @@
 namespace xdiag::julia {
 
 void define_bond(jlcxx::Module &mod) {
-  mod.add_type<Bond>("BondCxx")
+  mod.add_type<Bond>("cxx_Bond")
       .constructor<>()
       .constructor<std::string, std::string, std::vector<int64_t> const &>()
       .constructor<std::string, complex, std::vector<int64_t> const &>()
@@ -13,7 +13,7 @@ void define_bond(jlcxx::Module &mod) {
 }
 
 void define_bondlist(jlcxx::Module &mod) {
-  mod.add_type<BondList>("BondListCxx")
+  mod.add_type<BondList>("cxx_BondList")
       .constructor<>()
       .constructor<std::vector<Bond> const &>()
       .method("set_coupling", &BondList::set_coupling)

@@ -4,35 +4,27 @@ title: Quick start
 
 ## Hello World
 
-Let us set up our first program using the `xdiag` library. For this we need to create two files. The first is the actual `C++` code.
+Let us set up our first program using the `xdiag` library. 
 
-```C++
-#include <xdiag/all.h>
+=== "C++"
+	```c++ 
+	--8<-- "examples/hello_world/main.cpp"
+	```
 
-using namespace xdiag;
+=== "Julia"
 
-int main() try {
-  say_hello();
-} catch (std::exception const &e) {
-  traceback(e);
-}
-```
+	```julia 
+	--8<-- "examples/hello_world/main.jl"
+	```
 
-The function `say_hello()` prints out a welcome message, which also contains information which exact XDiag version is used. What is maybe a bit unfamiliar is the `try / catch` block. XDiag implements a traceback mechanism for runtime errors, which is activated by this idiom. While not stricly necessary here, it is a good practice to make use of this.
+The function `say_hello()` prints out a welcome message, which also contains information which exact XDiag version is used.
+
+In Julia this is all there is to it. For the C++ code we need to create two files to compile the program. The first is the actual `C++` code. What is maybe a bit unfamiliar is the `try / catch` block. XDiag implements a traceback mechanism for runtime errors, which is activated by this idiom. While not stricly necessary here, it is a good practice to make use of this.
 
 Now that the application program is written, we next need to set up the compilation instructions using [CMake](https://cmake.org/). To do so we create a second file called `CMakeLists.txt` in the same directory.
 
 ```cmake
-cmake_minimum_required(VERSION 3.19)
-
-project(
-  hello_world
-  LANGUAGES CXX
-)
-
-find_package(xdiag REQUIRED HINTS "/path/to/xdiag/install")
-add_executable(main main.cpp)
-target_link_libraries(main PUBLIC xdiag::xdiag)
+--8<-- "examples/hello_world/CMakeLists.txt"
 ```
 
 You should replace `"/path/to/xdiag/install"` with the appropriate directory where your XDiag library is installed after compilation. This exact `CMakeLists.txt` file can be used to compile any XDiag application.
@@ -72,33 +64,13 @@ $i$ and $j$.
 
 The following code, sets up the Hilbert space, defines the Hamiltonian and finally calls an iterative eigenvalue solver to compute the ground state energy.
 
-```C++
-#include <xdiag/all.h>
+=== "C++"
+	```c++
+	--8<-- "examples/spectrum/spinhalf_chain_e0/main.cpp"
+	```
 
-using namespace xdiag;
+=== "Julia"
+	```julia
+	--8<-- "examples/spectrum/spinhalf_chain_e0/main.jl"
+	```
 
-int main() try {
-
-  int n_sites = 16;
-  int nup = n_sites / 2;
-
-  // Define the Hilbert space block
-  auto block = Spinhalf(n_sites, nup);
-
-  // Define the nearest-neighbor Heisenberg Hamiltonian
-  BondList bonds;
-  for (int i = 0; i < n_sites; ++i) {
-    bonds << Bond("HB", "J", {i, (i + 1) % n_sites});
-  }
-
-  // Set the coupling constant "J" to one
-  bonds["J"] = 1.0;
-
-  // Compute and print the ground state energy
-  double e0 = eigval0(bonds, block);
-  Log("Ground state energy: {:.12f}", e0);
-
-} catch (std::exception const &e) {
-  traceback(e);
-}
-```

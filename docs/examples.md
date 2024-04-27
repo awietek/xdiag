@@ -38,25 +38,24 @@ title: Examples
 
 </div>
 
-<!-- - Time-evolution of a $t$-$J$ model -->
+## CMakeLists.txt for applications
 
-<!--     ??? example "source" -->
-<!--         ```c++  -->
-<!--         --8<-- "examples/time_evolution/tj_distributed_time_evolve/main.cpp" -->
-<!--         ``` -->
+<div class="grid cards" markdown>
 
-<!-- ## Application CMakeLists.txt -->
+-   :material-file-document:{ .lg .middle } __Normal XDiag__
 
-<!-- - Normal xdiag library -->
+    ---
 
-<!--     ??? example "source" -->
-<!--         ```cmake  -->
-<!--         --8<-- "examples/hello_world/CMakeLists.txt" -->
-<!--         ``` -->
+    Template `CMakeLists.txt` which can be used to compile applications with the **normal** XDiag library.
 
-<!-- - Distributed xdiag library -->
+    [source](examples/cmake_normal.md) :simple-cmake: 
 
-<!--     ??? example "source" -->
-<!--         ```cmake  -->
-<!--         --8<-- "examples/time_evolution/tj_distributed_time_evolve/CMakeLists.txt" -->
-<!--         ``` -->
+-   :material-file-document:{ .lg .middle } __Distributed XDiag__
+
+    ---
+
+    Template `CMakeLists.txt` which can be used to compile applications with the **distributed** XDiag library.
+	
+    [source](examples/cmake_distributed.md) :simple-cmake:
+
+</div>

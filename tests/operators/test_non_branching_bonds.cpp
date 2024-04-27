@@ -158,8 +158,8 @@ TEST_CASE("non_branching_bonds", "[operators]") try {
   bonds2["Jchi"] = 1.0;
   auto H2 = matrixC(bonds2, block12);
 
-  // XDiagPrint(norm(H1));
-  // XDiagPrint(norm(H2));
+  // XDIAG_PRINT(norm(H1));
+  // XDIAG_PRINT(norm(H2));
 
   REQUIRE(close(H1, H2));
  } catch (std::exception const& e) {

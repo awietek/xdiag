@@ -28,17 +28,17 @@ TEST_CASE("random_state", "[states]") try {
         auto block = Spinhalf(n_sites, nup, group, irrep);
 
         if (block.size() > 3) {
-          // XDiagPrint(irrep);
-          // XDiagPrint(block);
+          // XDIAG_PRINT(irrep);
+          // XDIAG_PRINT(block);
 
           auto state_real = State(block, true);
           auto state_cplx = State(block, false);
           fill(state_real, RandomState());
           fill(state_cplx, RandomState());
-          // XDiagPrint(state_real);
-          // XDiagPrint(state_real.vector());
-          // XDiagPrint(state_real.vector());
-          // XDiagPrint(state_cplx.vector());
+          // XDIAG_PRINT(state_real);
+          // XDIAG_PRINT(state_real.vector());
+          // XDIAG_PRINT(state_real.vector());
+          // XDIAG_PRINT(state_cplx.vector());
           if (first_r == 0.) {
             first_r = state_real.vector(false)(0);
           } else {
