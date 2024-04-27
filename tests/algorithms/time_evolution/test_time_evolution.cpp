@@ -230,8 +230,8 @@ TEST_CASE("tj_complex_timeevo", "[time_evolution]") try {
   auto block = tJ(n_sites, n_sites / 2, n_sites / 2);
 
   auto H = matrixC(bonds, block);
-  XDiagPrint(block);
-  XDiagPrint(pstate);
+  XDIAG_PRINT(block);
+  XDIAG_PRINT(pstate);
   auto psi_0 = State(block, false);
   xdiag::fill(psi_0, pstate);
 

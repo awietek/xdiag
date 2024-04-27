@@ -89,7 +89,7 @@ TEST_CASE("norm_estimate", "[algorithms]") {
     }
   }
   for (int n_sites = 2; n_sites < 12; ++n_sites) {
-    // XDiagPrint(n_sites);
+    // XDIAG_PRINT(n_sites);
 
     Log("norm_estimate for Heisenberg all-to-all random, N={}", n_sites);
 
@@ -113,7 +113,7 @@ TEST_CASE("norm_estimate", "[algorithms]") {
       auto block = Spinhalf(n_sites, nup);
       test_operator_norm_real(block, bonds);
       for (auto irrep : irreps) {
-        // XDiagPrint(irrep);
+        // XDIAG_PRINT(irrep);
         auto block = Spinhalf(n_sites, nup, group, irrep);
         if (irrep.isreal()) {
           test_operator_norm_real(block, bonds);

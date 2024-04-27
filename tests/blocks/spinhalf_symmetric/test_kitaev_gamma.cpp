@@ -49,11 +49,11 @@ void run_kitaev_gamma_test(
     eig_sym(eigs, H);
     double e0_computed = eigs(0);
 
-    // XDiagPrint(K);
-    // XDiagPrint(G);
-    // XDiagPrint(name);
-    // XDiagPrint(e0_reference);
-    // XDiagPrint(e0_computed);
+    // XDIAG_PRINT(K);
+    // XDIAG_PRINT(G);
+    // XDIAG_PRINT(name);
+    // XDIAG_PRINT(e0_reference);
+    // XDIAG_PRINT(e0_computed);
     REQUIRE(close(e0_reference, e0_computed));
   }
 }

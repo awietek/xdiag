@@ -2,6 +2,7 @@ set(XDIAG_SOURCES
   utils/iochecks.cpp
   utils/print.cpp
   utils/error.cpp
+  utils/logger.cpp
   utils/say_hello.cpp
   utils/read_vectors.cpp
   bits/bitops.cpp

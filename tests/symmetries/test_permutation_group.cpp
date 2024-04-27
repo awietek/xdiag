@@ -18,7 +18,7 @@ TEST_CASE("permutation_group", "[symmetries]") {
   for (int sym = 0; sym < group.size(); ++sym) {
     auto p = group[sym];
     auto pinv = group[group.inverse(sym)];
-    // XDiagPrint(p * pinv);
+    // XDIAG_PRINT(p * pinv);
     auto id = identity_permutation(group.n_sites());
     REQUIRE(p * pinv == id);
   }

@@ -71,7 +71,7 @@ int main(int argc, char **argv) {
 
   ////////////////////////////////////////////////////////
   Log("Computing ground state ...");
-  XDiagPrint(block);
+  XDIAG_PRINT(block);
   auto gs = groundstate(bonds, block);
 
   for (int q = 0; q < n_sites; ++q) {

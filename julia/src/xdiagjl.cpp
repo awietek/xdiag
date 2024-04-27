@@ -7,6 +7,7 @@ JLCXX_MODULE define_julia_module(jlcxx::Module &mod) {
   using namespace xdiag;
 
   julia::define_say_hello(mod);
+  julia::define_set_verbosity(mod);
   
   julia::define_bond(mod);
   julia::define_bondlist(mod);

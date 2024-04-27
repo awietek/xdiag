@@ -54,7 +54,7 @@ int main() {
   } else if ((N % 4) == 2) {
     block = Spinhalf(N, group, irrep, 2);
   }
-  XDiagPrint(block);
+  XDIAG_PRINT(block);
 
   // Create magnetization operator
   BondList mag;
@@ -65,7 +65,7 @@ int main() {
   // Create all-up starting state
   auto v = State(block);
   v.vector()(0) = 1.0;
-  XDiagPrint(inner(mag, v));
+  XDIAG_PRINT(inner(mag, v));
 
   // Estimate the operator norms
   double anorm1 = norm_estimate(bonds1, block);
@@ -83,7 +83,7 @@ int main() {
     v = time_evolve(bonds2, v, tau, precision, 10, anorm2);
 
     // Perform measurement
-    XDiagPrint(inner(mag, v));
+    XDIAG_PRINT(inner(mag, v));
   }
 
   return EXIT_SUCCESS;
