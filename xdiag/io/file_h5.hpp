@@ -18,17 +18,19 @@ public:
   FileH5(std::string filename, std::string iomode = "r");
   ~FileH5();
 
+  void close();
+
   hdf5::FileH5Handler operator[](std::string key);
 
   bool operator==(FileH5 const &other) const;
   bool operator!=(FileH5 const &other) const;
 
-  void close();
 
 private:
   std::string filename_;
   std::string iomode_;
   hid_t file_id_;
+  bool closed_;
 };
 
 } // namespace xdiag
