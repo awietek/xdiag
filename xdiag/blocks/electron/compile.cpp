@@ -15,8 +15,7 @@ BondList compile(BondList const &bonds, double precision) try {
       std::string type = bond.type();
       if (std::find(special_bond_types.begin(), special_bond_types.end(),
                     type) == special_bond_types.end()) {
-        XDiagThrow(std::runtime_error,
-                   std::string("Invalid or undefined type found ") + type);
+        XDIAG_THROW(std::string("Invalid or undefined type found ") + type);
       } else {
 
         // Exchange and Ising terms
@@ -96,8 +95,8 @@ BondList compile(BondList const &bonds, double precision) try {
   }
 
   return bonds_compiled;
-} catch (...) {
-  XDiagRethrow("Unable to compile BondList");
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
   return BondList();
 }
 

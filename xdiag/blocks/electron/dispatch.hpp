@@ -71,14 +71,13 @@ inline void dispatch(BondList const &bonds, Electron const &block_in,
             apply_terms<uint64_t, coeff_t, true>(bonds, idx_in, idx_out, fill);
           },
           [&](auto const &idx_in, auto const &idx_out) {
-            XDiagThrow(std::logic_error,
-                       "Invalid basis or combination of bases");
+            XDIAG_THROW("Invalid basis or combination of bases");
             (void)idx_in;
             (void)idx_out;
           }},
       basis_in, basis_out);
-} catch (...) {
-  XDiagRethrow("Unable to apply terms on Electron block");
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
 }
 
 } // namespace xdiag::electron

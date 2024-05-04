@@ -161,3 +161,4 @@
 #include <xdiag/blocks/electron_mpi/electron_mpi.hpp>
 #include <xdiag/blocks/electron_mpi/electron_mpi_apply.hpp>
 #endif
+

@@ -43,6 +43,9 @@ void matrix_gen(coeff_t *mat, BondList const &bonds, tJ const &block_in,
   BondList bondsc = tj::compile(bonds, 1e-12);
 
   int64_t m = block_out.size();
+  int64_t n = block_in.size();
+  std::fill(mat, mat + m*n, 0);
+  
   auto fill = [&](int64_t idx_in, int64_t idx_out, coeff_t val) {
     return fill_matrix(mat, idx_in, idx_out, m, val);
   };

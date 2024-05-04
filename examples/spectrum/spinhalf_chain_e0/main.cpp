@@ -7,7 +7,7 @@ int main() try {
   int n_sites = 16;
   int nup = n_sites / 2;
   Spinhalf block(n_sites, nup);
-  XDIAG_PRINT(block);
+
   // Define the nearest-neighbor Heisenberg model
   BondList bonds;
   for (int i = 0; i < n_sites; ++i) {

@@ -11,6 +11,7 @@ option(XDIAG_DISTRIBUTED "Build the distibuted parallelization libraries" Off)
 option(XDIAG_JULIA_WRAPPER "Build the Julia wrapper" Off)
 option(XDIAG_DISABLE_OPENMP "Disables the library being compiled with OpenMP" Off)
 option(XDIAG_DISABLE_HDF5 "Disables the library being compiled with HDF5" Off)
+option(XDIAG_DISABLE_COLOR "Disables the library outputting colored texts" Off)
 option(XDIAG_OPTIMIZE_FOR_NATIVE "Optimize for native architecture" Off)
 
 message(STATUS "Compiler ID     : " ${CMAKE_CXX_COMPILER_ID})

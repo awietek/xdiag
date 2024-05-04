@@ -130,4 +130,5 @@ set(XDIAG_JULIA_SOURCES
   operators.cpp
   utils.cpp
   blocks.cpp
+  matrix.cpp
 )
