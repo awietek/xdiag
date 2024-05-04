@@ -10,16 +10,16 @@
 #define JULIA_XDIAG_CALL_VOID(CMD)                                             \
   try {                                                                        \
     CMD;                                                                       \
-  } catch (std::exception const &e) {                                          \
-    traceback(e);                                                              \
+  } catch (xdiag::Error const &e) {                                            \
+    xdiag::error_trace(e);                                                     \
     throw(std::runtime_error("Error occurred in xdiag C++ core library"));     \
   }
 
 #define JULIA_XDIAG_CALL_RETURN(CMD)                                           \
   try {                                                                        \
     return CMD;                                                                \
-  } catch (std::exception const &e) {                                          \
-    traceback(e);                                                              \
+  } catch (xdiag::Error const &e) {                                            \
+    xdiag::error_trace(e);                                                     \
     throw(std::runtime_error("Error occurred in xdiag C++ core library"));     \
     return decltype(CMD)();                                                    \
   }
@@ -27,8 +27,8 @@
 #define JULIA_XDIAG_CALL_ASSIGN(LVALUE, CMD)                                   \
   try {                                                                        \
     LVALUE = CMD;                                                              \
-  } catch (std::exception const &e) {                                          \
-    traceback(e);                                                              \
+  } catch (xdiag::Error const &e) {                                            \
+    xdiag::error_trace(e);                                                     \
     throw(std::runtime_error("Error occurred in xdiag C++ core library"));     \
     return decltype(CMD)();                                                    \
   }

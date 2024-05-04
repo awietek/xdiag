@@ -2,6 +2,7 @@
 #include <julia/src/operators.hpp>
 #include <julia/src/blocks.hpp>
 #include <julia/src/utils.hpp>
+#include <julia/src/matrix.hpp>
 
 JLCXX_MODULE define_julia_module(jlcxx::Module &mod) {
   using namespace xdiag;
@@ -14,6 +15,8 @@ JLCXX_MODULE define_julia_module(jlcxx::Module &mod) {
   julia::define_spinhalf(mod);
   julia::define_tj(mod);
   julia::define_electron(mod);
+
+  julia::define_matrix_cxx(mod);
     
   mod.add_type<State>("State")
       .constructor<>()
@@ -55,43 +58,7 @@ JLCXX_MODULE define_julia_module(jlcxx::Module &mod) {
     JULIA_XDIAG_CALL_RETURN(state.colptrC(col));
   });
 
-  // methods to compute matrices
-  mod.method("matrix_cxx",
-             [](double *mat, BondList const &bonds, Spinhalf const &block_in,
-                Spinhalf const &block_out) {
-               JULIA_XDIAG_CALL_VOID(matrix(mat, bonds, block_in, block_out));
-             });
-
-  mod.method("matrixC_cxx",
-             [](complex *mat, BondList const &bonds, Spinhalf const &block_in,
-                Spinhalf const &block_out) {
-               JULIA_XDIAG_CALL_VOID(matrixC(reinterpret_cast<complex *>(mat),
-                                             bonds, block_in, block_out));
-             });
-
-  mod.method("matrix_cxx", [](double *mat, BondList const &bonds,
-                              tJ const &block_in, tJ const &block_out) {
-    JULIA_XDIAG_CALL_VOID(matrix(mat, bonds, block_in, block_out));
-  });
-
-  mod.method("matrixC_cxx", [](complex *mat, BondList const &bonds,
-                               tJ const &block_in, tJ const &block_out) {
-    JULIA_XDIAG_CALL_VOID(
-        matrixC(reinterpret_cast<complex *>(mat), bonds, block_in, block_out));
-  });
-
-  mod.method("matrix_cxx",
-             [](double *mat, BondList const &bonds, Electron const &block_in,
-                Electron const &block_out) {
-               JULIA_XDIAG_CALL_VOID(matrix(mat, bonds, block_in, block_out));
-             });
-
-  mod.method("matrixC_cxx",
-             [](complex *mat, BondList const &bonds, Electron const &block_in,
-                Electron const &block_out) {
-               JULIA_XDIAG_CALL_VOID(matrixC(reinterpret_cast<complex *>(mat),
-                                             bonds, block_in, block_out));
-             });
+ 
 
   // methods to apply bonds
   mod.method("apply_cxx", [](BondList const &bonds, State const &v, State &w) {
