@@ -4,6 +4,7 @@
 #include <string>
 
 #include <hdf5.h>
+#include <xdiag/io/hdf5/file_h5_subview.hpp>
 
 namespace xdiag::hdf5 {
 
@@ -15,6 +16,10 @@ public:
   FileH5Handler &operator=(FileH5Handler const &) = delete;
 
   template <class data_t> void operator=(data_t const &data);
+
+  hdf5::FileH5Submat col(int col_number);
+  hdf5::FileH5Subcube slice(int slice_number);
+
 
 private:
   hid_t file_id_;

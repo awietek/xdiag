@@ -25,8 +25,15 @@ void write_scalar(hid_t file_id, std::string field, data_t data) {
   hid_t datatype = hdf5_datatype<data_t>();
   hid_t dataspace = H5Screate(H5S_SCALAR);
   std::string name = dataset_name(field);
-  hid_t dataset = H5Dcreate(group, name.c_str(), datatype, dataspace,
-                            H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+
+  hid_t dataset;
+  if(H5Lexists(file_id, field.c_str(), H5P_DEFAULT)){
+    dataset = H5Dopen(file_id, field.c_str(), H5P_DEFAULT);
+  } else {
+    dataset = H5Dcreate(group, name.c_str(), datatype, dataspace,
+                              H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+  }
+
   if (dataset != H5I_INVALID_HID) {
     hid_t status =
         H5Dwrite(dataset, datatype, H5S_ALL, H5S_ALL, H5P_DEFAULT, &data);
@@ -73,8 +80,15 @@ void write_std_vector(hid_t file_id, std::string field,
   dims[0] = data.size();
   hid_t dataspace = H5Screate_simple(1, dims, nullptr);
   std::string name = dataset_name(field);
-  hid_t dataset = H5Dcreate(group, name.c_str(), datatype, dataspace,
-                            H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+  
+  hid_t dataset;
+  if(H5Lexists(file_id, field.c_str(), H5P_DEFAULT)){
+    dataset = H5Dopen(file_id, field.c_str(), H5P_DEFAULT);
+  } else {
+    dataset = H5Dcreate(group, name.c_str(), datatype, dataspace,
+                              H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+  }
+
   if (dataset != H5I_INVALID_HID) {
     hid_t status =
         H5Dwrite(dataset, datatype, H5S_ALL, H5S_ALL, H5P_DEFAULT, data.data());
@@ -127,8 +141,16 @@ void write_arma_vector(hid_t file_id, std::string field,
   dims[0] = data.n_elem;
   hid_t dataspace = H5Screate_simple(1, dims, nullptr);
   std::string name = dataset_name(field);
-  hid_t dataset = H5Dcreate(group, name.c_str(), datatype, dataspace,
-                            H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+
+  hid_t dataset;
+  if(H5Lexists(file_id, field.c_str(), H5P_DEFAULT)){
+    dataset = H5Dopen(file_id, field.c_str(), H5P_DEFAULT);
+  } else {
+    dataset = H5Dcreate(group, name.c_str(), datatype, dataspace,
+                              H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+  }
+
+
   if (dataset != H5I_INVALID_HID) {
     hid_t status = H5Dwrite(dataset, datatype, H5S_ALL, H5S_ALL, H5P_DEFAULT,
                             data.memptr());
@@ -155,6 +177,9 @@ template void write_arma_vector(hid_t, std::string,
 template void write_arma_vector(hid_t, std::string, arma::Col<double> const &);
 template void write_arma_vector(hid_t, std::string, arma::Col<complex> const &);
 
+
+
+
 template <typename data_t>
 void write_arma_matrix(hid_t file_id, std::string field,
                        arma::Mat<data_t> const &data) {
@@ -167,18 +192,24 @@ void write_arma_matrix(hid_t file_id, std::string field,
   }
   hid_t datatype = hdf5_datatype<data_t>();
   hsize_t dims[2];
-  dims[0] = data.n_rows;
-  dims[1] = data.n_cols;
+  dims[1] = data.n_rows;
+  dims[0] = data.n_cols;
   
   hid_t dataspace = H5Screate_simple(2, dims, nullptr);
   std::string name = dataset_name(field);
-  hid_t dataset = H5Dcreate(group, name.c_str(), datatype, dataspace,
-                            H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+  
+  hid_t dataset;
+  if(H5Lexists(file_id, field.c_str(), H5P_DEFAULT)){
+    dataset = H5Dopen(file_id, field.c_str(), H5P_DEFAULT);
+  } else {
+    dataset = H5Dcreate(group, name.c_str(), datatype, dataspace,
+                              H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+  }
+
   if (dataset != H5I_INVALID_HID) {
 
-    arma::Mat<data_t> data_trans = data.st(); // IIIIIEEEEEK
     hid_t status = H5Dwrite(dataset, datatype, H5S_ALL, H5S_ALL, H5P_DEFAULT,
-                            data_trans.memptr());
+                            data.memptr());
 
     if (status < 0) {
       Log.err("Error in xdiag hdf5: could not write data for field \"{}\"",
@@ -202,6 +233,203 @@ template void write_arma_matrix(hid_t, std::string,
                                 arma::Mat<arma::uword> const &);
 template void write_arma_matrix(hid_t, std::string, arma::Mat<double> const &);
 template void write_arma_matrix(hid_t, std::string, arma::Mat<complex> const &);
+
+
+// arma cubes ================================================================== 
+
+template <typename data_t>
+void write_arma_cube(hid_t file_id, std::string field,
+                       arma::Cube<data_t> const &data) {
+
+  std::vector<hid_t> groups = create_groups(file_id, field);
+  hid_t group = (groups.size() == 0) ? file_id : groups[groups.size() - 1];
+  if (group == H5I_INVALID_HID) {
+    Log.err("Error in xdiag hdf5: error creating groups for field \"{}\"",
+            field);
+  }
+  hid_t datatype = hdf5_datatype<data_t>();
+  hsize_t dims[3];
+  dims[2] = data.n_rows;
+  dims[1] = data.n_cols;
+  dims[0] = data.n_slices;
+  
+  hid_t dataspace = H5Screate_simple(3, dims, nullptr);
+  std::string name = dataset_name(field);
+  
+  hid_t dataset;
+  if(H5Lexists(file_id, field.c_str(), H5P_DEFAULT)){
+    dataset = H5Dopen(file_id, field.c_str(), H5P_DEFAULT);
+  } else {
+    dataset = H5Dcreate(group, name.c_str(), datatype, dataspace,
+                              H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+  }
+
+  if (dataset != H5I_INVALID_HID) {
+
+    hid_t status = H5Dwrite(dataset, datatype, H5S_ALL, H5S_ALL, H5P_DEFAULT,
+                            data.memptr());
+
+    if (status < 0) {
+      Log.err("Error in xdiag hdf5: could not write data for field \"{}\"",
+              field);
+    }
+  } else {
+    Log.err("Error in xdiag hdf5: error creating dataset for field \"{}\"",
+            field);
+  }
+  H5Dclose(dataset);
+  H5Sclose(dataspace);
+  if (hdf5_datatype_mutable<data_t>()) {
+    H5Tclose(datatype);
+  }
+  close_groups(groups);
+}
+
+template void write_arma_cube(hid_t, std::string,
+                                arma::Cube<arma::sword> const &);
+template void write_arma_cube(hid_t, std::string,
+                                arma::Cube<arma::uword> const &);
+template void write_arma_cube(hid_t, std::string, arma::Cube<double> const &);
+template void write_arma_cube(hid_t, std::string, arma::Cube<complex> const &);
+
+
+
+// submatrix operations ======================================================== 
+template <typename data_t>
+void write_arma_col(hid_t file_id, std::string field, int col_number, arma::Col<data_t> const &data){
+
+  std::vector<hid_t> groups = create_groups(file_id, field);
+  hid_t group = (groups.size() == 0) ? file_id : groups[groups.size() - 1];
+  if (group == H5I_INVALID_HID) {
+    Log.err("Error in xdiag hdf5: error creating groups for field \"{}\"",
+            field);
+  }
+  if(!H5Lexists(file_id, field.c_str(), H5P_DEFAULT)){
+    Log.err("data set must exist to append col.");
+  }
+  // load the old dataset 
+  hid_t dataset = H5Dopen(file_id, field.c_str(), H5P_DEFAULT);
+
+  // reshape the col into an arma mat
+  arma::Mat<data_t> data_r(data.n_elem, 1);
+  data_r.col(0) = data;
+
+  // create the mem space for the new dataset
+  hsize_t rank = 2;
+  hsize_t dims[2];
+  dims[1] = data_r.n_rows;
+  dims[0] = data_r.n_cols;
+  hid_t mem_space = H5Screate_simple(rank, dims, NULL); // shape of new data
+  hid_t file_space = H5Dget_space(dataset); // shape of disk data
+
+  // create the hyperslab
+  hsize_t start[2];
+  start[1] = 0;
+  start[0] = col_number;
+
+  hsize_t count[2];
+  count[1] = data_r.n_rows;
+  count[0] = 1;
+
+  H5Sselect_hyperslab(file_space, H5S_SELECT_SET, start, NULL, count, NULL);
+
+  hid_t datatype = hdf5_datatype<data_t>();
+  std::string name = dataset_name(field);
+  
+  if (dataset != H5I_INVALID_HID) {
+    hid_t status = H5Dwrite(dataset, datatype, mem_space, file_space, H5P_DEFAULT, data_r.memptr());
+
+    if (status < 0) {
+      Log.err("Error in xdiag hdf5: could not append col data for field \"{}\"", field);
+    }
+  } else {
+    Log.err("Error in xdiag hdf5: error opening dataset for field \"{}\"", field);
+  }
+  H5Sclose(file_space);
+  H5Sclose(mem_space);
+  H5Dclose(dataset);
+
+  if (hdf5_datatype_mutable<data_t>()) {
+    H5Tclose(datatype);
+  }
+  close_groups(groups);
+}
+
+template void write_arma_col(hid_t, std::string, int col_number, arma::Col<arma::sword> const &);
+template void write_arma_col(hid_t, std::string, int col_number, arma::Col<arma::uword> const &);
+template void write_arma_col(hid_t, std::string, int col_number, arma::Col<double> const &);
+template void write_arma_col(hid_t, std::string, int col_number, arma::Col<complex> const &);
+
+// updata and dynamically allocat the memspace?
+template <typename data_t>
+void write_arma_slice(hid_t file_id, std::string field, int slice_number, arma::Mat<data_t> const &data){
+
+  std::vector<hid_t> groups = create_groups(file_id, field);
+  hid_t group = (groups.size() == 0) ? file_id : groups[groups.size() - 1];
+  if (group == H5I_INVALID_HID) {
+    Log.err("Error in xdiag hdf5: error creating groups for field \"{}\"",
+            field);
+  }
+  if(!H5Lexists(file_id, field.c_str(), H5P_DEFAULT)){
+    Log.err("data set must exist to append col.");
+  }
+  // load the old dataset 
+  hid_t dataset = H5Dopen(file_id, field.c_str(), H5P_DEFAULT);
+
+  // reshape the col into an arma mat
+  arma::Cube<data_t> data_r(data.n_rows, data.n_cols, 1);
+  data_r.slice(0) = data;
+
+
+  // create the mem space for the new dataset
+  hsize_t rank = 3;
+  hsize_t dims[3];
+  dims[2] = data_r.n_rows;
+  dims[1] = data_r.n_cols;
+  dims[0] = data_r.n_slices;
+  hid_t mem_space = H5Screate_simple(rank, dims, NULL); // shape of new data
+  hid_t file_space = H5Dget_space(dataset); // shape of disk data
+
+  // create the hyperslab
+  hsize_t start[3];
+  start[2] = 0;
+  start[1] = 0;
+  start[0] = slice_number;
+
+  hsize_t count[3];
+  count[2] = data_r.n_rows;
+  count[1] = data_r.n_cols;
+  count[0] = 1;
+
+  H5Sselect_hyperslab(file_space, H5S_SELECT_SET, start, NULL, count, NULL);
+
+  hid_t datatype = hdf5_datatype<data_t>();
+  std::string name = dataset_name(field);
+  
+  if (dataset != H5I_INVALID_HID) {
+    hid_t status = H5Dwrite(dataset, datatype, mem_space, file_space, H5P_DEFAULT, data_r.memptr());
+
+    if (status < 0) {
+      Log.err("Error in xdiag hdf5: could not append col data for field \"{}\"", field);
+    }
+  } else {
+    Log.err("Error in xdiag hdf5: error opening dataset for field \"{}\"", field);
+  }
+  H5Sclose(file_space);
+  H5Sclose(mem_space);
+  H5Dclose(dataset);
+
+  if (hdf5_datatype_mutable<data_t>()) {
+    H5Tclose(datatype);
+  }
+  close_groups(groups);
+}
+
+template void write_arma_slice(hid_t, std::string, int slice_number, arma::Mat<arma::sword> const &);
+template void write_arma_slice(hid_t, std::string, int slice_number, arma::Mat<arma::uword> const &);
+template void write_arma_slice(hid_t, std::string, int slice_number, arma::Mat<double> const &);
+template void write_arma_slice(hid_t, std::string, int slice_number, arma::Mat<complex> const &);
+
 
 template <> void write(hid_t file_id, std::string field, int8_t const &data) {
   write_scalar(file_id, field, data);
@@ -316,6 +544,26 @@ void write(hid_t file_id, std::string field, arma::Mat<double> const &data) {
 template <>
 void write(hid_t file_id, std::string field, arma::Mat<complex> const &data) {
   write_arma_matrix(file_id, field, data);
+}
+
+template <>
+void write(hid_t file_id, std::string field,
+           arma::Cube<arma::sword> const &data) {
+  write_arma_cube(file_id, field, data);
+}
+template <>
+void write(hid_t file_id, std::string field,
+           arma::Cube<arma::uword> const &data) {
+  write_arma_cube(file_id, field, data);
+}
+
+template <>
+void write(hid_t file_id, std::string field, arma::Cube<double> const &data) {
+  write_arma_cube(file_id, field, data);
+}
+template <>
+void write(hid_t file_id, std::string field, arma::Cube<complex> const &data) {
+  write_arma_cube(file_id, field, data);
 }
 
 } // namespace xdiag::hdf5

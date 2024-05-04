@@ -19,6 +19,7 @@ set(XDIAG_SOURCES
   io/toml/toml_conversion.cpp
   io/file_h5.cpp
   io/hdf5/file_h5_handler.cpp
+  io/hdf5/file_h5_subview.cpp
   io/hdf5/utils.cpp
   io/hdf5/write.cpp
   io/hdf5/types.cpp
