@@ -74,7 +74,12 @@ void error_trace(Error const &error) {
   std::cerr << "Stacktrace (C++):\n";
   int64_t idx = 1;
   for (auto message : error.messages()) {
-    std::cerr << " [" << std::setw(2) << idx << "]: " << message << "\n";
+    if (idx < 10) {
+      std::cerr << " [" << idx << "] " << message << "\n";
+    } else {
+      std::cerr << "[" << idx << "] " << message << "\n";
+
+    }
     ++idx;
   }
 }

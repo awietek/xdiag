@@ -12,7 +12,7 @@
     CMD;                                                                       \
   } catch (xdiag::Error const &e) {                                            \
     xdiag::error_trace(e);                                                     \
-    throw(std::runtime_error("Error occurred in xdiag C++ core library"));     \
+    throw(std::runtime_error("Error occurred in XDiag C++ core library"));     \
   }
 
 #define JULIA_XDIAG_CALL_RETURN(CMD)                                           \
@@ -20,7 +20,7 @@
     return CMD;                                                                \
   } catch (xdiag::Error const &e) {                                            \
     xdiag::error_trace(e);                                                     \
-    throw(std::runtime_error("Error occurred in xdiag C++ core library"));     \
+    throw(std::runtime_error("Error occurred in XDiag C++ core library"));     \
     return decltype(CMD)();                                                    \
   }
 
@@ -29,6 +29,6 @@
     LVALUE = CMD;                                                              \
   } catch (xdiag::Error const &e) {                                            \
     xdiag::error_trace(e);                                                     \
-    throw(std::runtime_error("Error occurred in xdiag C++ core library"));     \
+    throw(std::runtime_error("Error occurred in XDiag C++ core library"));     \
     return decltype(CMD)();                                                    \
   }
