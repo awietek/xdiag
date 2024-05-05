@@ -36,12 +36,20 @@ void say_hello() {
 '--'     '----''-----'`     '---'  '.(_,_).'    `'-...-'
 )";
 #else
-  auto c1 = fg(fmt::color::blue);
-  auto c2 = fg(fmt::color::orange);
-  auto c3 = fg(fmt::color::red);
-  auto c4 = fg(fmt::color::magenta);
-  auto c5 = fg(fmt::color::green);
+  // // standard
+  // auto c1 = fg(fmt::color::blue);
+  // auto c2 = fg(fmt::color::orange);
+  // auto c3 = fg(fmt::color::red);
+  // auto c4 = fg(fmt::color::magenta);
+  // auto c5 = fg(fmt::color::green);
 
+  // spring
+  auto c1 = fg(fmt::rgb(0xAFDDD5));
+  auto c2 = fg(fmt::rgb(0xFFA700));
+  auto c3 = fg(fmt::rgb(0xFFCCCD));
+  auto c4 = fg(fmt::rgb(0xF56093));
+  auto c5 = fg(fmt::rgb(0x64864A));
+  
   std::vector<std::string> lines(9);
 
   lines[0] = std::string(" _____     __   ______     ") +
