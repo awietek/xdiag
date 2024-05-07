@@ -13,7 +13,7 @@ void generic_term_mixed(BasisIn &&basis_in, BasisOut &&basis_out,
                         NonZeroTermUps &&non_zero_term_ups,
                         NonZeroTermDns &&non_zero_term_dns,
                         TermActionUps &&term_action_ups,
-                        TermActionDns &&term_action_dns, Fill &&fill) try {
+                        TermActionDns &&term_action_dns, Fill &&fill) {
   int64_t n_sites = basis_in.n_sites();
   assert(n_sites == basis_out.n_sites());
   bit_t sitesmask = ((bit_t)1 << n_sites) - 1;
@@ -211,8 +211,6 @@ void generic_term_mixed(BasisIn &&basis_in, BasisOut &&basis_out,
     }
 #endif
   } // if not symmetric
-} catch (...) {
-  XDiagRethrow("Unable to apply generic mixed term");
 }
 
 } // namespace xdiag::tj

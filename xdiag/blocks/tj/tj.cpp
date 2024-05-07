@@ -11,32 +11,22 @@ tJ::tJ(int64_t n_sites, int64_t nup, int64_t ndn)
       sz_conserved_(true), sz_(nup - ndn), n_up_(nup), n_dn_(ndn),
       symmetric_(false), permutation_group_(), irrep_() {
 
-  try {
-    if (n_sites < 0) {
-      XDiagThrow(std::invalid_argument, "n_sites < 0");
-    } else if ((nup < 0) || (ndn < 0)) {
-      XDiagThrow(std::invalid_argument, "nup < 0 or ndn < 0");
-    } else if ((nup + ndn) > n_sites) {
-      XDiagThrow(std::invalid_argument, "nup + ndn > n_sites");
-    }
-
-    if (n_sites < 16) {
-      basis_ =
-          std::make_shared<basis_t>(tj::BasisNp<uint16_t>(n_sites, nup, ndn));
-    } else if (n_sites < 32) {
-      basis_ =
-          std::make_shared<basis_t>(tj::BasisNp<uint32_t>(n_sites, nup, ndn));
-    } else if (n_sites < 64) {
-      basis_ =
-          std::make_shared<basis_t>(tj::BasisNp<uint64_t>(n_sites, nup, ndn));
-    } else {
-      XDiagThrow(std::runtime_error,
-                 "blocks with more than 64 sites currently not implemented");
-    }
-    size_ = xdiag::size(*basis_);
-  } catch (...) {
-    XDiagRethrow("Cannot create Basis for tJ");
+  if (n_sites < 0) {
+    XDIAG_THROW("Invalid argument: n_sites < 0");
+  } else if ((nup < 0) || (ndn < 0)) {
+    XDIAG_THROW("Invalid argument: (nup < 0) or (ndn < 0)");
+  } else if ((nup + ndn) > n_sites) {
+    XDIAG_THROW("Invalid argument: nup + ndn > n_sites");
+  } else if (n_sites < 32) {
+    basis_ =
+        std::make_shared<basis_t>(tj::BasisNp<uint32_t>(n_sites, nup, ndn));
+  } else if (n_sites < 64) {
+    basis_ =
+        std::make_shared<basis_t>(tj::BasisNp<uint64_t>(n_sites, nup, ndn));
+  } else {
+    XDIAG_THROW("blocks with more than 64 sites currently not implemented");
   }
+  size_ = xdiag::size(*basis_);
 }
 
 tJ::tJ(int64_t n_sites, int64_t nup, int64_t ndn, PermutationGroup group,
@@ -45,39 +35,28 @@ tJ::tJ(int64_t n_sites, int64_t nup, int64_t ndn, PermutationGroup group,
       sz_conserved_(true), sz_(nup - ndn), n_up_(nup), n_dn_(ndn),
       symmetric_(true), permutation_group_(allowed_subgroup(group, irrep)),
       irrep_(irrep) {
-  try {
-    if (n_sites < 0) {
-      XDiagThrow(std::invalid_argument, "n_sites < 0");
-    } else if ((nup < 0) || (ndn < 0)) {
-      XDiagThrow(std::invalid_argument, "nup < 0 or ndn < 0");
-    } else if ((nup + ndn) > n_sites) {
-      XDiagThrow(std::invalid_argument, "nup + ndn > n_sites");
-    } else if (n_sites != group.n_sites()) {
-      XDiagThrow(std::logic_error,
-                 "n_sites does not match the n_sites in PermutationGroup");
-    } else if (permutation_group_.size() != irrep.size()) {
-      XDiagThrow(std::logic_error,
-                 "PermutationGroup and Representation do not have "
-                 "same number of elements");
-    }
 
-    if (n_sites < 16) {
-      basis_ = std::make_shared<basis_t>(
-          tj::BasisSymmetricNp<uint16_t>(n_sites, nup, ndn, group, irrep));
-    } else if (n_sites < 32) {
-      basis_ = std::make_shared<basis_t>(
-          tj::BasisSymmetricNp<uint32_t>(n_sites, nup, ndn, group, irrep));
-    } else if (n_sites < 64) {
-      basis_ = std::make_shared<basis_t>(
-          tj::BasisSymmetricNp<uint64_t>(n_sites, nup, ndn, group, irrep));
-    } else {
-      XDiagThrow(std::runtime_error,
-                 "blocks with more than 64 sites currently not implemented");
-    }
-    size_ = xdiag::size(*basis_);
-  } catch (...) {
-    XDiagRethrow("Cannot create Basis for tJ");
+  if (n_sites < 0) {
+    XDIAG_THROW("Invalid argument: n_sites < 0");
+  } else if ((nup < 0) || (ndn < 0)) {
+    XDIAG_THROW("Invalid argument: (nup < 0) or (ndn < 0)");
+  } else if ((nup + ndn) > n_sites) {
+    XDIAG_THROW("Invalid argument: nup + ndn > n_sites");
+  } else if (n_sites != group.n_sites()) {
+    XDIAG_THROW("n_sites does not match the n_sites in PermutationGroup");
+  } else if (permutation_group_.size() != irrep.size()) {
+    XDIAG_THROW("PermutationGroup and Representation do not have "
+                "same number of elements");
+  } else if (n_sites < 32) {
+    basis_ = std::make_shared<basis_t>(
+        tj::BasisSymmetricNp<uint32_t>(n_sites, nup, ndn, group, irrep));
+  } else if (n_sites < 64) {
+    basis_ = std::make_shared<basis_t>(
+        tj::BasisSymmetricNp<uint64_t>(n_sites, nup, ndn, group, irrep));
+  } else {
+    XDIAG_THROW("blocks with more than 64 sites currently not implemented");
   }
+  size_ = xdiag::size(*basis_);
 }
 
 int64_t tJ::n_sites() const { return n_sites_; }

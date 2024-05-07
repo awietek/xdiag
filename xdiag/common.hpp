@@ -107,7 +107,7 @@ void resize_vector(std::vector<coeff_t> &vec, int64_t size) {
   try {
     vec.resize(size);
   } catch (...) {
-    rethrow(__func__, "Unable to resize vector");
+    XDIAG_THROW("Unable to resize vector");
   }
 }
 

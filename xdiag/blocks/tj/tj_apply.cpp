@@ -16,8 +16,8 @@ void apply(BondList const &bonds, tJ const &block_in,
     return fill_apply(vec_in, vec_out, idx_in, idx_out, val);
   };
   tj::dispatch<coeff_t>(bondsc, block_in, block_out, fill);
-} catch (...) {
-  XDiagRethrow("Cannot apply bonds on vector for \"tJ\" block");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 template void apply<double>(BondList const &, tJ const &,

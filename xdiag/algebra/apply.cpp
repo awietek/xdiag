@@ -1,7 +1,7 @@
 #include "apply.hpp"
 
-#include <xdiag/common.hpp>
 #include <variant>
+#include <xdiag/common.hpp>
 
 namespace xdiag {
 
@@ -14,8 +14,8 @@ void apply(BondList const &bonds, block_variant_t const &block_in,
         apply(bonds, block_in, vec_in, block_out, vec_out);
       },
       block_in, block_out);
-} catch (...) {
-  XDiagRethrow("Error dispatching apply");
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
 }
 
 template void apply(BondList const &, block_variant_t const &,
@@ -35,19 +35,17 @@ void apply(BondList const &bonds, State const &v, State &w) try {
       arma::cx_vec wvec = w.vectorC(0, false);
       apply(bonds, v.block(), vvec, w.block(), wvec);
     } else {
-      XDiagThrow(
-          std::logic_error,
+      XDIAG_THROW(
           "Apply operator only works if both states are complex or both states "
           "are real and the operator is real. Consider Making the vectors "
           "complex first by using method .make_complex().");
     }
   } else {
-    XDiagThrow(std::runtime_error,
-               "Applying a BondList to a state with multiple "
-               "columns not yet implemented");
+    XDIAG_THROW("Applying a BondList to a state with multiple "
+                "columns not yet implemented");
   }
-} catch (...) {
-  XDiagRethrow("Cannot apply BondList to State");
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
 }
 
 } // namespace xdiag

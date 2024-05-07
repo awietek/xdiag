@@ -16,15 +16,15 @@ double eigval0(BondList const &bonds, block_variant_t const &block,
 
   auto res = eigvals_lanczos(bonds, block, 1, precision, max_iterations,
                              force_complex, 1e-7, random_seed);
-  
+
   if (res.eigenvalues.size() == 0) {
     Log.warn("Warning: Tmatrix zero dimensional in eig0_cplx");
     return std::nan("");
   } else {
     return res.eigenvalues(0);
   }
-} catch (...) {
-  XDiagRethrow("Unable to compute ground state energy");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
   return std::nan("");
 }
 
@@ -45,8 +45,8 @@ std::tuple<double, State> eig0(BondList const &bonds,
   } else {
     return {res.eigenvalues(0), res.eigenvectors};
   }
-} catch (...) {
-  XDiagRethrow("Unable to compute ground state");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
   return {std::nan(""), State()};
 }
 

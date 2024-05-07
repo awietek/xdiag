@@ -11,8 +11,8 @@ namespace xdiag {
 
 double norm(State const &v) try {
   if (v.n_cols() > 1) {
-    XDiagThrow(std::logic_error,
-               "Cannot compute norm of state with more than one column");
+    XDIAG_THROW("Cannot compute norm of state with more than one column");
+    return 0;
   } else {
     if (v.isreal()) {
       return norm(v.block(), v.vector(0, false));
@@ -20,43 +20,42 @@ double norm(State const &v) try {
       return norm(v.block(), v.vectorC(0, false));
     }
   }
-} catch (...) {
-  XDiagRethrow("Unable compute norm of State");
-  return 0.;
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
+  return 0;
 }
 
 double dot(State const &v, State const &w) try {
   if (v.block() != w.block()) {
-    XDiagThrow(std::logic_error,
-               "Cannot form dot product for states on different blocks");
+    XDIAG_THROW("Cannot form dot product for states on different blocks");
+    return 0;
   }
 
   if ((v.n_cols() > 1) || (w.n_cols() > 1)) {
-    XDiagThrow(std::logic_error,
-               "Cannot compute dot product of state with more than one column");
+    XDIAG_THROW(
+        "Cannot compute dot product of state with more than one column");
+    return 0;
   }
 
   if ((v.isreal()) && (w.isreal())) {
     return dot(v.vector(0, false), w.vector(0, false));
   } else {
-    XDiagThrow(std::logic_error,
-               "Unable to compute real dot product of a complex "
-               "state, consider using dotC instead.");
+    XDIAG_THROW("Unable to compute real dot product of a complex "
+                "state, consider using dotC instead.");
+    return 0;
   }
-} catch (...) {
-  XDiagRethrow("Unable compute dot product of two States");
-  return 0.;
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
+  return 0;
 }
 
 complex dotC(State const &v, State const &w) try {
   if (v.block() != w.block()) {
-    XDiagThrow(std::logic_error,
-               "Cannot form dot product for states on different blocks");
+    XDIAG_THROW("Cannot form dot product for states on different blocks");
   }
 
   if ((v.n_cols() > 1) || (w.n_cols() > 1)) {
-    XDiagThrow(
-        std::logic_error,
+    XDIAG_THROW(
         "Cannot compute dotC product of state with more than one column");
   }
   if ((v.isreal()) && (w.isreal())) {
@@ -67,8 +66,7 @@ complex dotC(State const &v, State const &w) try {
       v2 = v;
       v2.make_complex();
     } catch (...) {
-      XDiagThrow(std::runtime_error,
-                 "Unable to create intermediate complex State");
+      XDIAG_THROW("Unable to create intermediate complex State");
     }
     return dot(v.block(), v2.vectorC(0, false), w.vectorC(0, false));
   } else if ((w.isreal()) && (v.iscomplex())) {
@@ -77,83 +75,82 @@ complex dotC(State const &v, State const &w) try {
       w2 = w;
       w2.make_complex();
     } catch (...) {
-      XDiagThrow(std::runtime_error,
-                 "Unable to create intermediate complex State");
+      XDIAG_THROW("Unable to create intermediate complex State");
     }
     return dot(v.block(), v.vectorC(0, false), w.vectorC(0, false));
   } else {
     return dot(v.block(), v.vectorC(0, false), w.vectorC(0, false));
   }
-} catch (...) {
-  XDiagRethrow("Unable compute dotC product of two States");
-  return 0.;
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
+  return 0;
 }
 
 double inner(BondList const &bonds, State const &v) try {
   auto w = v;
   apply(bonds, v, w);
   return dot(w, v);
-} catch (...) {
-  XDiagRethrow("Error computing expectation value using \"inner\"");
-  return 0.;
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
+  return 0;
 }
 
 complex innerC(BondList const &bonds, State const &v) try {
   auto w = v;
   apply(bonds, v, w);
   return dotC(w, v);
-} catch (...) {
-  XDiagRethrow("Error computing expectation value using \"innerC\"");
-  return 0.;
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
+  return 0;
 }
 
 double inner(Bond const &bond, State const &v) try {
   return inner(BondList({bond}), v);
-} catch (...) {
-  XDiagRethrow("Error computing expectation value using \"inner\"");
-  return 0.;
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
+  return 0;
 }
 
 complex innerC(Bond const &bond, State const &v) try {
   return innerC(BondList({bond}), v);
-} catch (...) {
-  XDiagRethrow("Error computing expectation value using \"innerC\"");
-  return 0.;
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
+  return 0;
 }
 
 double inner(State const &v, BondList const &bonds, State const &w) try {
   auto bw = zeros_like(w);
   apply(bonds, w, bw);
   return dot(v, bw);
-} catch (...) {
-  XDiagRethrow("Error computing expectation value using \"inner\"");
-  return 0.;
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
+  return 0;
 }
 
 complex innerC(State const &v, BondList const &bonds, State const &w) try {
   auto bw = zeros_like(w);
   apply(bonds, w, bw);
   return dotC(v, bw);
-} catch (...) {
-  XDiagRethrow("Error computing expectation value using \"innerC\"");
-  return 0.;
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
+  return 0;
 }
 
 double inner(State const &v, Bond const &bond, State const &w) try {
   return inner(v, BondList({bond}), w);
-} catch (...) {
-  XDiagRethrow("Error computing expectation value using \"inner\"");
-  return 0.;
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
+  return 0;
 }
 
 complex innerC(State const &v, Bond const &bond, State const &w) try {
   return innerC(v, BondList({bond}), w);
-} catch (...) {
-  XDiagRethrow("Error computing expectation value using \"innerC\"");
-  return 0.;
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
+  return 0;
 }
 
-State &operator*=(State &X, complex alpha) {
+State &operator*=(State &X, complex alpha) try {
   if (X.isreal()) {
     X.make_complex();
     X.matrixC(false) *= alpha;
@@ -161,16 +158,24 @@ State &operator*=(State &X, complex alpha) {
     X.matrixC(false) *= alpha;
   }
   return X;
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
+  return X;
 }
-State &operator*=(State &X, double alpha) {
+
+State &operator*=(State &X, double alpha) try {
   if (X.isreal()) {
     X.matrix(false) *= alpha;
   } else {
     X.matrixC(false) *= alpha;
   }
   return X;
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
+  return X;
 }
-State &operator/=(State &X, complex alpha) {
+
+State &operator/=(State &X, complex alpha) try {
   if (X.isreal()) {
     X.make_complex();
     X.matrixC(false) /= alpha;
@@ -178,13 +183,20 @@ State &operator/=(State &X, complex alpha) {
     X.matrixC(false) /= alpha;
   }
   return X;
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
+  return X;
 }
-State &operator/=(State &X, double alpha) {
+
+State &operator/=(State &X, double alpha) try {
   if (X.isreal()) {
     X.matrix(false) /= alpha;
   } else {
     X.matrixC(false) /= alpha;
   }
+  return X;
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
   return X;
 }
 
@@ -361,8 +373,8 @@ double dot(block_variant_t const &block, arma::vec const &v,
 #ifdef XDIAG_USE_MPI
   }
 #endif
-} catch (...) {
-  XDiagRethrow("unable to compute dot product for given block");
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
   return 0;
 }
 
@@ -379,16 +391,16 @@ complex dot(block_variant_t const &block, arma::cx_vec const &v,
 #ifdef XDIAG_USE_MPI
   }
 #endif
-} catch (...) {
-  XDiagRethrow("unable to compute dot product for given block");
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
   return 0;
 }
 
 template <typename coeff_t>
 double norm(block_variant_t const &block, arma::Col<coeff_t> const &v) try {
   return std::sqrt(xdiag::real(dot(block, v, v)));
-} catch (...) {
-  XDiagRethrow("unable to compute norm for given block");
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
   return 0;
 }
 
@@ -404,8 +416,8 @@ double norm1(block_variant_t const &block, arma::Col<coeff_t> const &v) try {
   }
 #endif
   return nrm;
-} catch (...) {
-  XDiagRethrow("unable to compute 1-norm for given block");
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
   return 0;
 }
 
@@ -421,8 +433,8 @@ double norminf(block_variant_t const &block, arma::Col<coeff_t> const &v) try {
   }
 #endif
   return nrm;
-} catch (...) {
-  XDiagRethrow("unable to compute maximum norm for given block");
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
   return 0;
 }
 

@@ -52,8 +52,8 @@ std::tuple<double, double> time_evolve_inplace(BondList const &bonds,
 
   timing(t0, rightnow(), "Zahexpv time", 1);
   return {err, hump};
-} catch (...) {
-  XDiagRethrow("Unable to perform inplace time evolution");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
   return {0., 0.};
 }
 
@@ -64,8 +64,8 @@ State time_evolve(BondList const &bonds, State state, double time,
       time_evolve_inplace(bonds, state, time, precision, m, anorm, nnorm);
   Log(2, "error (estimated): {}, hump: {}", err, hump);
   return state;
-} catch (...) {
-  XDiagRethrow("Unable to perform real time evolution");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
   return State();
 }
 
@@ -74,8 +74,8 @@ State imag_time_evolve(BondList const &bonds, State const &state, double time,
                        double deflation_tol = 1e-7) try {
   return exp_sym_v(bonds, state, -time, false, true, precision, max_iterations,
                    deflation_tol);
-} catch (...) {
-  XDiagRethrow("Unable to perform imaginary time evolution");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
   return State();
 }
 

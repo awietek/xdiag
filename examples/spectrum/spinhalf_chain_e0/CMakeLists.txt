@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 3.19)
 
-project(
-  spinhalf_chain_e0
-)
+project(spinhalf_chain_e0)
 
 find_package(xdiag REQUIRED HINTS "../../../install")
 add_executable(main main.cpp)

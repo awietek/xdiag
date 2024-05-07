@@ -14,7 +14,7 @@ State::State(block_variant_t const &block, bool real, int64_t n_cols)
       resize_vector(storage_, 2 * size());
     }
   } catch (...) {
-    XDiagRethrow("Unable to allocate memory for State");
+    XDIAG_THROW("Unable to allocate memory for State");
   }
 }
 
@@ -29,7 +29,7 @@ State::State(block_t const &block, bool real, int64_t n_cols)
       resize_vector(storage_, 2 * size());
     }
   } catch (...) {
-    XDiagRethrow("Unable to allocate memory for State");
+    XDIAG_THROW("Unable to allocate memory for State");
   }
 }
 
@@ -41,7 +41,7 @@ State::State(block_t const &block, double const *ptr, int64_t n_cols,
   try {
     resize_vector(storage_, size());
   } catch (...) {
-    XDiagThrow(std::runtime_error, "Unable to allocate memory for State");
+    XDIAG_THROW("Unable to allocate memory for State");
   }
 
   try {
@@ -53,7 +53,7 @@ State::State(block_t const &block, double const *ptr, int64_t n_cols,
       }
     }
   } catch (...) {
-    XDiagThrow(std::runtime_error, "Unable to copy memory for State");
+    XDIAG_THROW("Unable to allocate memory for State");
   }
 }
 
@@ -63,13 +63,13 @@ State::State(block_t const &block, complex const *ptr, int64_t n_cols)
   try {
     resize_vector(storage_, 2 * size());
   } catch (...) {
-    XDiagThrow(std::runtime_error, "Unable to allocate memory for State");
+    XDIAG_THROW("Unable to allocate memory for State");
   }
 
   try {
     std::copy(ptr, ptr + size(), reinterpret_cast<complex *>(storage_.data()));
   } catch (...) {
-    XDiagThrow(std::runtime_error, "Unable to copy memory for State");
+    XDIAG_THROW("Unable to allocate memory for State");
   }
 }
 
@@ -78,8 +78,7 @@ State::State(block_t const &block, arma::Col<coeff_t> const &vector)
     : real_(xdiag::isreal<coeff_t>()), n_rows_(block.size()), n_cols_(1),
       block_(block) {
   if (block.size() != (int64_t)vector.n_rows) {
-    XDiagThrow(std::invalid_argument,
-               "Block dimension not equal to vector dimension");
+    XDIAG_THROW("Block dimension not equal to vector dimension");
   }
 
   try {
@@ -89,14 +88,14 @@ State::State(block_t const &block, arma::Col<coeff_t> const &vector)
       resize_vector(storage_, 2 * size());
     }
   } catch (...) {
-    XDiagThrow(std::runtime_error, "Unable to allocate memory for State");
+    XDIAG_THROW("Unable to allocate memory for State");
   }
 
   try {
     std::copy(vector.memptr(), vector.memptr() + size(),
               reinterpret_cast<coeff_t *>(storage_.data()));
   } catch (...) {
-    XDiagThrow(std::runtime_error, "Unable to copy memory for State");
+    XDIAG_THROW("Unable to copy memory for State");
   }
 }
 
@@ -106,8 +105,7 @@ State::State(block_t const &block, arma::Mat<coeff_t> const &matrix)
       n_cols_(matrix.n_cols), block_(block) {
 
   if (block.size() != (int64_t)matrix.n_rows) {
-    XDiagThrow(std::invalid_argument,
-               "Block dimension not equal to number of rows in matrix");
+    XDIAG_THROW("Block dimension not equal to number of rows in matrix");
   }
 
   try {
@@ -117,14 +115,14 @@ State::State(block_t const &block, arma::Mat<coeff_t> const &matrix)
       resize_vector(storage_, 2 * size());
     }
   } catch (...) {
-    XDiagThrow(std::runtime_error, "Unable to allocate memory for State");
+    XDIAG_THROW("Unable to allocate memory for State");
   }
 
   try {
     std::copy(matrix.memptr(), matrix.memptr() + size(),
               reinterpret_cast<coeff_t *>(storage_.data()));
   } catch (...) {
-    XDiagThrow(std::runtime_error, "Unable to copy memory for State");
+    XDIAG_THROW("Unable to copy memory for State");
   }
 }
 
@@ -132,7 +130,7 @@ int64_t State::n_sites() const { return xdiag::n_sites(block_); }
 bool State::isreal() const { return real_; }
 bool State::iscomplex() const { return !isreal(); }
 
-State State::real() const {
+State State::real() const try {
   if (isreal()) {
     return (*this);
   } else {
@@ -141,14 +139,20 @@ State State::real() const {
     return std::visit(
         [&](auto &&block) { return State(block, ptr, n_cols_, 2); }, block_);
   }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+  return (*this);
 }
 
-State State::imag() const {
+State State::imag() const try { // TODO: DOES THIS DO WHAT IT"S SUPPOSED TO?
   if (isreal()) {
     return (*this);
   } else {
     return State(block_, true, n_cols_);
   }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+  return (*this);
 }
 
 void State::make_complex() try {
@@ -158,7 +162,7 @@ void State::make_complex() try {
     try {
       resize_vector(storage_, 2 * size());
     } catch (...) {
-      XDiagThrow(std::runtime_error, "Unable to allocate memory for State");
+      XDIAG_THROW("Unable to allocate memory for State");
     }
 
     double *ptr = storage_.data();
@@ -166,8 +170,8 @@ void State::make_complex() try {
       std::swap(ptr[i << 1], ptr[i]);
     }
   }
-} catch (...) {
-  XDiagRethrow("Error transforming to complex State");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 int64_t State::dim() const { return xdiag::dim(block_); }
@@ -179,8 +183,7 @@ block_variant_t State::block() const { return block_; }
 
 State State::col(int64_t n, bool copy) const try {
   if (n >= n_cols_) {
-    XDiagThrow(std::invalid_argument,
-               "Column index larger than the number of columns");
+    XDIAG_THROW("Column index larger than the number of columns");
   }
   if (real_) {
     return std::visit([&](auto &&b) { return State(b, vector(n, copy)); },
@@ -189,69 +192,63 @@ State State::col(int64_t n, bool copy) const try {
     return std::visit([&](auto &&b) { return State(b, vectorC(n, copy)); },
                       block_);
   }
-} catch (...) {
-  XDiagRethrow("Unable to retrieve column State");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
   return State();
 }
 
 arma::vec State::vector(int64_t n, bool copy) const try {
   if (!real_) {
-    XDiagThrow(std::logic_error,
-               "Cannot return a real armadillo vector from a "
-               "complex State (maybe use vectorC(...) instead)");
+    XDIAG_THROW("Cannot return a real armadillo vector from a "
+                "complex State (maybe use vectorC(...) instead)");
   } else if (n >= n_cols_) {
-    XDiagThrow(std::invalid_argument,
-               "Column index larger than the number of columns");
+    XDIAG_THROW("Column index larger than the number of columns");
   } else if (n < 0) {
-    XDiagThrow(std::invalid_argument, "Negative column index");
+    XDIAG_THROW("Negative column index");
   }
   return arma::vec(storage_.data() + n * n_rows_, n_rows_, copy, !copy);
-} catch (...) {
-  XDiagRethrow("Unable to access real vector of State");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
   return arma::vec();
 }
 
 arma::mat State::matrix(bool copy) const try {
   if (!real_) {
-    XDiagThrow(std::logic_error,
-               "Cannot return a real armadillo matrix from a "
-               "complex state (maybe use matrixC(...) instead)");
+    XDIAG_THROW("Cannot return a real armadillo matrix from a "
+                "complex state (maybe use matrixC(...) instead)");
   }
   return arma::mat(storage_.data(), n_rows_, n_cols_, copy, !copy);
-} catch (...) {
-  XDiagRethrow("Unable to access real matrix of State");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
   return arma::mat();
 }
 
 arma::cx_vec State::vectorC(int64_t n, bool copy) const try {
   if (real_) {
-    XDiagThrow(std::logic_error,
-               "Cannot return a complex armadillo vector from a "
-               "real State (maybe use vector(...) instead)");
+    XDIAG_THROW("Cannot return a complex armadillo vector from a "
+                "real State (maybe use vector(...) instead)");
   } else if (n >= n_cols_) {
-    XDiagThrow(std::invalid_argument,
-               "Column index larger than the number of columns");
+    XDIAG_THROW("Column index larger than the number of columns");
   } else if (n < 0) {
-    XDiagThrow(std::invalid_argument, "Negative column index");
+    XDIAG_THROW("Negative column index");
   }
   return arma::cx_vec(reinterpret_cast<complex *>(storage_.data()) +
                           n * n_rows_,
                       n_rows_, copy, !copy);
-} catch (...) {
-  XDiagRethrow("Unable to access complex vector of State");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
   return arma::cx_vec();
 }
 
 arma::cx_mat State::matrixC(bool copy) const try {
   if (real_) {
-    XDiagThrow(std::logic_error,
-               "Cannot return a complex armadillo matrix from a "
-               "real state (maybe use matrix(...) instead)");
+    XDIAG_THROW("Cannot return a complex armadillo matrix from a "
+                "real state (maybe use matrix(...) instead)");
   }
   return arma::cx_mat(reinterpret_cast<complex *>(storage_.data()), n_rows_,
                       n_cols_, copy, !copy);
-} catch (...) {
-  XDiagRethrow("Unable to access complex matrix of State");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
   return arma::cx_mat();
 }
 
@@ -261,13 +258,13 @@ complex *State::memptrC() {
 }
 double *State::colptr(int64_t col) {
   if ((col < 0) || (col >= n_cols_)) {
-    XDiagThrow(std::invalid_argument, "Invalid column index requested");
+    XDIAG_THROW("Invalid column index requested");
   }
   return memptr() + col * n_rows_;
 }
 complex *State::colptrC(int64_t col) {
   if ((col < 0) || (col >= n_cols_)) {
-    XDiagThrow(std::invalid_argument, "Invalid column index requested");
+    XDIAG_THROW("Invalid column index requested");
   }
   return memptrC() + col * n_rows_;
 }

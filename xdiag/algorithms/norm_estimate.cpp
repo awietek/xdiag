@@ -106,8 +106,8 @@ double norm_estimate(BondList const &bonds, block_variant_t const &block,
         return norm_estimate(bonds, block, n_max_attempts, seed);
       },
       block);
-} catch (...) {
-  XDiagRethrow("Error dispatching operator norm estimate");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
   return 0.;
 }
 
@@ -138,8 +138,8 @@ double norm_estimate(BondList const &bonds, block_t const &block,
   return norm_estimate<complex>(apply_A, apply_A, norm_f, norm1_f, norminf_f,
                                 block.dim(), block.size(), n_max_attempts,
                                 seed);
-} catch (...) {
-  XDiagRethrow("Error computing operator norm estimate");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
   return 0.;
 }
 
@@ -171,8 +171,8 @@ double norm_estimate(arma::Mat<coeff_t> const &A, int64_t n_max_attempts,
   return norm_estimate<coeff_t>(apply_A, apply_A_T, norm_f, norm1_f, norminf_f,
                                 A.n_cols, A.n_cols, n_max_attempts, seed);
 
-} catch (...) {
-  XDiagRethrow("Error computing matrix norm estimate");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
   return 0.;
 }
 

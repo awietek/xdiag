@@ -47,11 +47,9 @@ template State product_state(Electron const &block,
 
 void fill(State &state, ProductState const &pstate, int64_t col) try {
   if (state.n_sites() != pstate.n_sites()) {
-    XDiagThrow(std::logic_error,
-               "State and ProductState do not have the same number of sites");
+    XDIAG_THROW("State and ProductState do not have the same number of sites");
   } else if (col >= state.n_cols()) {
-    XDiagThrow(std::invalid_argument,
-               "Column index larger than number of columns in State");
+    XDIAG_THROW("Column index larger than number of columns in State");
   }
   auto const &block = state.block();
 
@@ -65,8 +63,7 @@ void fill(State &state, ProductState const &pstate, int64_t col) try {
                  [&](tJDistributed const &block) { fill(block, v, pstate); },
 #endif
                  [&](auto &&) {
-                   XDiagThrow(
-                       std::runtime_error,
+                   XDIAG_THROW(
                        "Cannot fill product state for given block (maybe not "
                        "implemented)");
                  }},
@@ -81,15 +78,14 @@ void fill(State &state, ProductState const &pstate, int64_t col) try {
                  [&](tJDistributed const &block) { fill(block, v, pstate); },
 #endif
                  [&](auto &&) {
-                   XDiagThrow(
-                       std::runtime_error,
+                   XDIAG_THROW(
                        "Cannot fill product state for given block (maybe not "
                        "implemented)");
                  }},
         block);
   }
-} catch (...) {
-  XDiagRethrow("Unable to fill State with ProductState");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 template <typename bit_t>
@@ -102,17 +98,16 @@ static bit_t spinhalf_bits(ProductState const &pstate, int64_t nup = -1) try {
       ++pnup;
     } else {
       if (pstate[s] != "Dn") {
-        XDiagThrow(std::logic_error, "Invalid local state encountered");
+        XDIAG_THROW("Invalid local state encountered");
       }
     }
   }
   if ((nup != pnup) && (nup != -1)) {
-    XDiagThrow(std::logic_error,
-               "ProductState does not have correct nup for Spinhalf block");
+    XDIAG_THROW("ProductState does not have correct nup for Spinhalf block");
   }
   return spins;
-} catch (...) {
-  XDiagRethrow("Unable to compute Spinhalf bits for ProductState");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
   return 0;
 }
 
@@ -127,8 +122,8 @@ static int64_t spinhalf_index(basis_t const &basis,
     spins = spinhalf_bits<bit_t>(pstate);
   }
   return basis.index(spins);
-} catch (...) {
-  XDiagRethrow("Cannot determine index of ProductState");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
   return 0;
 }
 
@@ -146,16 +141,15 @@ void fill(Spinhalf const &block, arma::Col<coeff_t> &vec,
           [&](BasisNoSz<uint32_t> const &b) { return spinhalf_index(b, p); },
           [&](BasisNoSz<uint64_t> const &b) { return spinhalf_index(b, p); },
           [&](auto &&) {
-            XDiagThrow(
-                std::logic_error,
+            XDIAG_THROW(
                 "Cannot create a ProductState for the given type of Basis");
             return (int64_t)-1;
           }},
       basis);
   vec.zeros();
   vec(idx) = 1.0;
-} catch (...) {
-  XDiagRethrow("Unable to fill State of Spinhalf block with ProductState");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 template void fill(Spinhalf const &, arma::vec &, ProductState const &);
@@ -177,24 +171,22 @@ std::pair<bit_t, bit_t> tj_bits(ProductState const &pstate, int64_t nup = -1,
       dns |= ((bit_t)1 << s);
       ++pndn;
     } else if (pstate[s] == "UpDn") {
-      XDiagThrow(std::logic_error, "doubly occupied sites not allowed "
-                                   "for t-J block");
+      XDIAG_THROW("doubly occupied sites not allowed for t-J block");
       ++pnup;
       ++pndn;
     } else {
       if (pstate[s] != "Emp") {
-        XDiagThrow(std::logic_error, "Invalid local state encountered");
+        XDIAG_THROW("Invalid local state encountered");
       }
     }
   }
 
   if (((nup != pnup) || (ndn != pndn)) && (nup != -1) && (ndn != -1)) {
-    XDiagThrow(std::logic_error,
-               "ProductState does not have correct (nup, ndn) for tJ block");
+    XDIAG_THROW("ProductState does not have correct (nup, ndn) for tJ block");
   }
   return {ups, dns};
-} catch (...) {
-  XDiagRethrow("Unable to compute tJ bits for ProductState");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
   return {0, 0};
 }
 
@@ -208,8 +200,8 @@ static int64_t tj_index(basis_t const &b, ProductState const &pstate) try {
     auto [ups, dns] = tj_bits<bit_t>(pstate, -1, -1);
     return b.index(ups, dns);
   }
-} catch (...) {
-  XDiagRethrow("Cannot determine index of ProductState");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
   return 0;
 }
 
@@ -223,16 +215,15 @@ void fill(tJ const &block, arma::Col<coeff_t> &vec, ProductState const &p) try {
           [&](BasisNp<uint32_t> const &b) { return tj_index(b, p); },
           [&](BasisNp<uint64_t> const &b) { return tj_index(b, p); },
           [&](auto &&) {
-            XDiagThrow(
-                std::logic_error,
+            XDIAG_THROW(
                 "Cannot create a ProductState for the given type of Basis");
             return (int64_t)-1;
           }},
       basis);
   vec.zeros();
   vec(idx) = 1.0;
-} catch (...) {
-  XDiagRethrow("Unable to fill State of tJ block with ProductState");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 template void fill(tJ const &, arma::vec &, ProductState const &);
@@ -260,19 +251,18 @@ std::pair<bit_t, bit_t> electron_bits(ProductState const &pstate,
       ++pndn;
     } else {
       if (pstate[s] != "Emp") {
-        XDiagThrow(std::logic_error, "Invalid local state encountered");
+        XDIAG_THROW("Invalid local state encountered");
       }
     }
   }
 
   if (((nup != pnup) || (ndn != pndn)) && (nup != -1) && (ndn != -1)) {
-    XDiagThrow(
-        std::logic_error,
+    XDIAG_THROW(
         "ProductState does not have correct (nup, ndn) for Electron block");
   }
   return {ups, dns};
-} catch (...) {
-  XDiagRethrow("Unable to compute Electron bits for ProductState");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
   return {0, 0};
 }
 
@@ -287,8 +277,8 @@ static int64_t electron_index(basis_t const &b,
     auto [ups, dns] = electron_bits<bit_t>(pstate, -1, -1);
     return b.index(ups, dns);
   }
-} catch (...) {
-  XDiagRethrow("Cannot determine index of ProductState");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
   return 0;
 }
 
@@ -306,16 +296,15 @@ void fill(Electron const &block, arma::Col<coeff_t> &vec,
           [&](BasisNoNp<uint32_t> const &b) { return electron_index(b, p); },
           [&](BasisNoNp<uint64_t> const &b) { return electron_index(b, p); },
           [&](auto &&) {
-            XDiagThrow(
-                std::logic_error,
+            XDIAG_THROW(
                 "Cannot create a ProductState for the given type of Basis");
             return (int64_t)-1;
           }},
       basis);
   vec.zeros();
   vec(idx) = 1.0;
-} catch (...) {
-  XDiagRethrow("Unable to fill State of Electron block with ProductState");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 template void fill(Electron const &, arma::vec &, ProductState const &);
@@ -333,8 +322,8 @@ static int64_t tj_distributed_index(basis_t const &b,
     auto [ups, dns] = tj_bits<bit_t>(pstate, -1, -1);
     return b.index(ups, dns);
   }
-} catch (...) {
-  XDiagRethrow("Cannot determine index of ProductState");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
   return 0;
 }
 
@@ -351,8 +340,7 @@ void fill(tJDistributed const &block, arma::Col<coeff_t> &vec,
           [&](BasisNp<uint32_t> const &b) { return tj_index(b, p); },
           [&](BasisNp<uint64_t> const &b) { return tj_index(b, p); },
           [&](auto &&) {
-            XDiagThrow(
-                std::logic_error,
+            XDIAG_THROW(
                 "Cannot create a ProductState for the given type of Basis");
             return (int64_t)-1;
           }},
@@ -361,8 +349,8 @@ void fill(tJDistributed const &block, arma::Col<coeff_t> &vec,
   if (idx != invalid_index) {
     vec(idx) = 1.0;
   }
-} catch (...) {
-  XDiagRethrow("Unable to fill State of tJDistributed block with ProductState");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 template void fill(tJDistributed const &, arma::vec &, ProductState const &);

@@ -1,7 +1,8 @@
 #include <xdiag/all.hpp>
 
-int main() {
-  using namespace xdiag;
+using namespace xdiag;
+
+int main() try {
 
   int n_sites = 16;
   int nup = n_sites / 2;
@@ -30,9 +31,9 @@ int main() {
 
     // Compute the groundstate energy
     auto block = Spinhalf(n_sites, nup, group, irrep);
-    double e0 = eig0(bonds, block);
+    double e0 = eigval0(bonds, block);
     Log("k: {}, e0: {}", k, e0);
   }
-
-  return EXIT_SUCCESS;
+} catch (Error e) {
+  error_trace(e);
 }

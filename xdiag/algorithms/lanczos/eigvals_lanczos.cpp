@@ -21,10 +21,10 @@ eigvals_lanczos(BondList const &bonds, block_variant_t const &block,
                 int64_t random_seed) try {
 
   if (neigvals < 1) {
-    XDiagThrow(std::invalid_argument, "Argument \"neigvals\" needs to be >= 1");
+    XDIAG_THROW("Argument \"neigvals\" needs to be >= 1");
   }
   if (!bonds.ishermitian()) {
-    XDiagThrow(std::invalid_argument, "Input BondList is not hermitian");
+    XDIAG_THROW("Input BondList is not hermitian");
   }
   bool cplx = bonds.iscomplex() || iscomplex(block) || force_complex;
   State state0(block, !cplx);
@@ -75,8 +75,8 @@ eigvals_lanczos(BondList const &bonds, block_variant_t const &block,
                          deflation_tol);
   }
   return {r.alphas, r.betas, r.eigenvalues, r.niterations, r.criterion};
-} catch (...) {
-  XDiagRethrow("Error performing eigenvalue Lanczos algorithm");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
   return eigvals_lanczos_result_t();
 }
 } // namespace xdiag

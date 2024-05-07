@@ -8,8 +8,8 @@ namespace xdiag {
 class Permutation {
 public:
   Permutation() = default;
+  explicit Permutation(std::vector<int32_t> const &array);
   explicit Permutation(std::vector<int64_t> const &array);
-  explicit Permutation(std::initializer_list<int64_t> list);
   explicit Permutation(io::FileTomlHandler && hdl);
   
   template <typename bit_t> bit_t apply(bit_t state) const;
@@ -23,7 +23,6 @@ public:
   
   std::vector<int64_t> const& array() const;
 private:
-  int64_t size_;
   std::vector<int64_t> array_;
 };
 

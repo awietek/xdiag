@@ -68,8 +68,8 @@ double exp_sym_v_inplace(multiply_f mult, arma::Col<coeff_t> &X, coeff_t tau,
   }
 
   return e0;
-} catch (...) {
-  XDiagRethrow("Error computing exponential times vector");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
   return 0.;
 }
 
@@ -98,8 +98,8 @@ State exp_sym_v(BondList const &bonds, State state, double tau, bool normalize,
     return exp_sym_v(bonds, state, complex(tau), normalize, shift, precision,
                      max_iterations, deflation_tol);
   }
-} catch (...) {
-  XDiagRethrow("Error computing exponential of BondList times State");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
   return State();
 }
 
@@ -121,8 +121,8 @@ State exp_sym_v(BondList const &bonds, State state, complex tau, bool normalize,
   exp_sym_v_inplace(mult, v, tau, normalize, shift, precision, max_iterations,
                     deflation_tol);
   return state;
-} catch (...) {
-  XDiagRethrow("Error computing complex exponential of BondList times State");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
   return State();
 }
 } // namespace xdiag

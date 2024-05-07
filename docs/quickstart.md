@@ -6,20 +6,20 @@ title: Quick start
 
 Let us set up our first program using the `xdiag` library. 
 
-=== "C++"
-	```c++ 
-	--8<-- "examples/hello_world/main.cpp"
-	```
-
 === "Julia"
 
 	```julia 
 	--8<-- "examples/hello_world/main.jl"
 	```
+	
+=== "C++"
+	```c++ 
+	--8<-- "examples/hello_world/main.cpp"
+	```
 
-The function `say_hello()` prints out a welcome message, which also contains information which exact XDiag version is used.
+The function `say_hello()` prints out a welcome message, which also contains information which exact XDiag version is used. In Julia this is all there is to it.
 
-In Julia this is all there is to it. For the C++ code we need to create two files to compile the program. The first is the actual `C++` code. What is maybe a bit unfamiliar is the `try / catch` block. XDiag implements a traceback mechanism for runtime errors, which is activated by this idiom. While not stricly necessary here, it is a good practice to make use of this.
+For the C++ code we need to create two files to compile the program. The first is the actual `C++` code. What is maybe a bit unfamiliar is the `try / catch` block. XDiag implements a traceback mechanism for runtime errors, which is activated by this idiom. While not stricly necessary here, it is a good practice to make use of this.
 
 Now that the application program is written, we next need to set up the compilation instructions using [CMake](https://cmake.org/). To do so we create a second file called `CMakeLists.txt` in the same directory.
 
