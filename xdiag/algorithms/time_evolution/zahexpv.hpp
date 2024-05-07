@@ -3,8 +3,8 @@
 // Created by Luke Staszewski on 27.01.23.
 //
 
-#include <xdiag/extern/armadillo/armadillo>
 #include <tuple>
+#include <xdiag/extern/armadillo/armadillo>
 
 #include <xdiag/algorithms/norm_estimate.hpp>
 #include <xdiag/algorithms/time_evolution/pade_matrix_exponential.hpp>
@@ -165,8 +165,7 @@ zahexpv(double time, apply_A_f &&apply_A, dot_f &&dot, arma::cx_vec &w,
       s = pow(10, (floor(log10(t_step)) - 1));
       t_step = ceil(t_step / s) * s;
       if (ireject == mxrej) {
-        XDiagThrow(
-            std::runtime_error,
+        XDIAG_THROW(
             "The requested tolerance is too high (irej > "
             "10). Try increasing m (Krylov space dimension) or decreasing "
             "the precision.");
@@ -199,8 +198,8 @@ zahexpv(double time, apply_A_f &&apply_A, dot_f &&dot, arma::cx_vec &w,
   Log(1, "zaexph finished: # steps = {}, # MVM = {}, est. error: {}, hump: {}",
       nstep, nstep * m, err, hump);
   return {err, hump};
-} catch (...) {
-  XDiagRethrow("Error exponentiating antihermitian matrix");
+} catch (Error const& e) {
+  XDIAG_RETHROW(e);
   return {0., 0.};
 }
 

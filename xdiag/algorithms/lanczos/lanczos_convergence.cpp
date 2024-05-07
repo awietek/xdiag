@@ -22,8 +22,8 @@ bool converged_eigenvalues(Tmatrix const &tmat, int n_eigenvalue,
 
     return (residue < precision);
   }
-} catch (...) {
-  XDiagRethrow("Error computing convergence of tridiagonal matrix eigenvalues");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
   return false;
 }
 
@@ -71,8 +71,8 @@ bool converged_time_evolution(Tmatrix const &tmat, complex tau,
     }
     return (error < precision);
   }
-} catch (...) {
-  XDiagRethrow("Error computing convergence of tridiagonal matrix time evolution");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
   return false;
 }
 

@@ -12,26 +12,16 @@ Electron::Electron(int64_t n_sites)
       n_dn_(undefined_qn), symmetric_(false), permutation_group_(), irrep_() {
 
   if (n_sites < 0) {
-    throw(std::invalid_argument("n_sites < 0"));
+    XDIAG_THROW("Invalid argument: n_sites < 0");
+  } else if (n_sites < 32) {
+    basis_ = std::make_shared<basis_t>(electron::BasisNoNp<uint32_t>(n_sites));
+  } else if (n_sites < 64) {
+    basis_ = std::make_shared<basis_t>(electron::BasisNoNp<uint64_t>(n_sites));
+  } else {
+    XDIAG_THROW(
+        "Spinhalf blocks with more than 64 sites currently not implemented");
   }
-  try {
-    if (n_sites < 16) {
-      basis_ =
-          std::make_shared<basis_t>(electron::BasisNoNp<uint16_t>(n_sites));
-    } else if (n_sites < 32) {
-      basis_ =
-          std::make_shared<basis_t>(electron::BasisNoNp<uint32_t>(n_sites));
-    } else if (n_sites < 64) {
-      basis_ =
-          std::make_shared<basis_t>(electron::BasisNoNp<uint64_t>(n_sites));
-    } else {
-      throw(std::runtime_error(
-          "blocks with more than 64 sites currently not implemented"));
-    }
-    size_ = xdiag::size(*basis_);
-  } catch (...) {
-    rethrow(__func__, "Cannot create Basis for Electron");
-  }
+  size_ = xdiag::size(*basis_);
 }
 
 Electron::Electron(int64_t n_sites, int64_t nup, int64_t ndn)
@@ -40,31 +30,21 @@ Electron::Electron(int64_t n_sites, int64_t nup, int64_t ndn)
       symmetric_(false), permutation_group_(), irrep_() {
 
   if (n_sites < 0) {
-    throw(std::invalid_argument("n_sites < 0"));
+    XDIAG_THROW("Invalid argument: n_sites < 0");
   } else if ((nup < 0) || (nup > n_sites)) {
-    throw(std::invalid_argument("Invalid value of nup"));
+    XDIAG_THROW("Invalid argument: (nup < 0) or (nup > n_sites)");
   } else if ((ndn < 0) || (ndn > n_sites)) {
-    throw(std::invalid_argument("Invalid value of ndn"));
+    XDIAG_THROW("Invalid argument: (ndn < 0) or (ndn > n_sites)");
+  } else if (n_sites < 32) {
+    basis_ = std::make_shared<basis_t>(
+        electron::BasisNp<uint32_t>(n_sites, nup, ndn));
+  } else if (n_sites < 64) {
+    basis_ = std::make_shared<basis_t>(
+        electron::BasisNp<uint64_t>(n_sites, nup, ndn));
+  } else {
+    XDIAG_THROW("blocks with more than 64 sites currently not implemented");
   }
-
-  try {
-    if (n_sites < 16) {
-      basis_ = std::make_shared<basis_t>(
-          electron::BasisNp<uint16_t>(n_sites, nup, ndn));
-    } else if (n_sites < 32) {
-      basis_ = std::make_shared<basis_t>(
-          electron::BasisNp<uint32_t>(n_sites, nup, ndn));
-    } else if (n_sites < 64) {
-      basis_ = std::make_shared<basis_t>(
-          electron::BasisNp<uint64_t>(n_sites, nup, ndn));
-    } else {
-      throw(std::runtime_error(
-          "blocks with more than 64 sites currently not implemented"));
-    }
-    size_ = xdiag::size(*basis_);
-  } catch (...) {
-    rethrow(__func__, "Cannot create Basis for Electron");
-  }
+  size_ = xdiag::size(*basis_);
 }
 
 Electron::Electron(int64_t n_sites, PermutationGroup group,
@@ -75,33 +55,22 @@ Electron::Electron(int64_t n_sites, PermutationGroup group,
       permutation_group_(allowed_subgroup(group, irrep)), irrep_(irrep) {
 
   if (n_sites < 0) {
-    throw(std::invalid_argument("n_sites < 0"));
+    XDIAG_THROW("Invalid argument: n_sites < 0");
   } else if (n_sites != group.n_sites()) {
-    throw(std::logic_error(
-        "n_sites does not match the n_sites in PermutationGroup"));
+    XDIAG_THROW("n_sites does not match the n_sites in PermutationGroup");
   } else if (permutation_group_.size() != irrep.size()) {
-    throw(std::logic_error("PermutationGroup and Representation do not have "
-                           "same number of elements"));
+    XDIAG_THROW("PermutationGroup and Representation do not have "
+                "same number of elements");
+  } else if (n_sites < 32) {
+    basis_ = std::make_shared<basis_t>(
+        electron::BasisSymmetricNoNp<uint32_t>(n_sites, group, irrep));
+  } else if (n_sites < 64) {
+    basis_ = std::make_shared<basis_t>(
+        electron::BasisSymmetricNoNp<uint64_t>(n_sites, group, irrep));
+  } else {
+    XDIAG_THROW("blocks with more than 64 sites currently not implemented");
   }
-
-  try {
-    if (n_sites < 16) {
-      basis_ = std::make_shared<basis_t>(
-          electron::BasisSymmetricNoNp<uint16_t>(n_sites, group, irrep));
-    } else if (n_sites < 32) {
-      basis_ = std::make_shared<basis_t>(
-          electron::BasisSymmetricNoNp<uint32_t>(n_sites, group, irrep));
-    } else if (n_sites < 64) {
-      basis_ = std::make_shared<basis_t>(
-          electron::BasisSymmetricNoNp<uint64_t>(n_sites, group, irrep));
-    } else {
-      throw(std::runtime_error(
-          "blocks with more than 64 sites currently not implemented"));
-    }
-    size_ = xdiag::size(*basis_);
-  } catch (...) {
-    rethrow(__func__, "Cannot create Basis for Electron");
-  }
+  size_ = xdiag::size(*basis_);
 }
 
 Electron::Electron(int64_t n_sites, int64_t nup, int64_t ndn,
@@ -112,37 +81,26 @@ Electron::Electron(int64_t n_sites, int64_t nup, int64_t ndn,
       irrep_(irrep) {
 
   if (n_sites < 0) {
-    throw(std::invalid_argument("n_sites < 0"));
+    XDIAG_THROW("Invalid argument: n_sites < 0");
   } else if ((nup < 0) || (nup > n_sites)) {
-    throw(std::invalid_argument("Invalid value of nup"));
+    XDIAG_THROW("Invalid argument: (nup < 0) or (nup > n_sites)");
   } else if ((ndn < 0) || (ndn > n_sites)) {
-    throw(std::invalid_argument("Invalid value of ndn"));
+    XDIAG_THROW("Invalid argument: (ndn < 0) or (ndn > n_sites)");
   } else if (n_sites != group.n_sites()) {
-    throw(std::logic_error(
-        "n_sites does not match the n_sites in PermutationGroup"));
+    XDIAG_THROW("n_sites does not match the n_sites in PermutationGroup");
   } else if (permutation_group_.size() != irrep.size()) {
-    throw(std::logic_error("PermutationGroup and Representation do not have "
-                           "same number of elements"));
+    XDIAG_THROW("PermutationGroup and Representation do not have "
+                "same number of elements");
+  } else if (n_sites < 32) {
+    basis_ = std::make_shared<basis_t>(
+        electron::BasisSymmetricNp<uint32_t>(n_sites, nup, ndn, group, irrep));
+  } else if (n_sites < 64) {
+    basis_ = std::make_shared<basis_t>(
+        electron::BasisSymmetricNp<uint64_t>(n_sites, nup, ndn, group, irrep));
+  } else {
+    XDIAG_THROW("blocks with more than 64 sites currently not implemented");
   }
-
-  try {
-    if (n_sites < 16) {
-      basis_ = std::make_shared<basis_t>(electron::BasisSymmetricNp<uint16_t>(
-          n_sites, nup, ndn, group, irrep));
-    } else if (n_sites < 32) {
-      basis_ = std::make_shared<basis_t>(electron::BasisSymmetricNp<uint32_t>(
-          n_sites, nup, ndn, group, irrep));
-    } else if (n_sites < 64) {
-      basis_ = std::make_shared<basis_t>(electron::BasisSymmetricNp<uint64_t>(
-          n_sites, nup, ndn, group, irrep));
-    } else {
-      throw(std::runtime_error(
-          "blocks with more than 64 sites currently not implemented"));
-    }
-    size_ = xdiag::size(*basis_);
-  } catch (...) {
-    rethrow(__func__, "Cannot create Basis for Electron");
-  }
+  size_ = xdiag::size(*basis_);
 }
 
 int64_t Electron::n_sites() const { return n_sites_; }

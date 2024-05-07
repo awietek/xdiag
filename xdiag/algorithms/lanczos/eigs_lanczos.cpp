@@ -19,10 +19,10 @@ eigs_lanczos_result_t eigs_lanczos(BondList const &bonds,
                                    double deflation_tol,
                                    int64_t random_seed) try {
   if (neigvals < 1) {
-    throw(std::invalid_argument("Argument \"neigvals\" needs to be >= 1"));
+    XDIAG_THROW("Argument \"neigvals\" needs to be >= 1");
   }
   if (!bonds.ishermitian()) {
-    throw(std::invalid_argument("Input BondList is not hermitian"));
+    XDIAG_THROW("Input BondList is not hermitian");
   }
 
   bool cplx = bonds.iscomplex() || iscomplex(block) || force_complex;
@@ -45,7 +45,7 @@ eigs_lanczos_result_t eigs_lanczos(BondList const &bonds,
   try {
     arma::eig_sym(reigs, revecs, tmat);
   } catch (...) {
-    XDiagThrow(std::runtime_error, "Error diagonalizing tridiagonal matrix");
+    XDIAG_THROW("Error diagonalizing tridiagonal matrix");
   }
 
   auto converged = [](Tmatrix const &) -> bool { return false; };
@@ -101,8 +101,8 @@ eigs_lanczos_result_t eigs_lanczos(BondList const &bonds,
 
   return {r.alphas,     r.betas,       r.eigenvalues,
           eigenvectors, r.niterations, r.criterion};
-} catch (...) {
-  XDiagRethrow("Error performing eigenvector Lanczos algorithm");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
   return eigs_lanczos_result_t();
 }
 } // namespace xdiag

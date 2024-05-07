@@ -37,7 +37,7 @@ arma::mat Tmatrix::mat() const try {
     return tmat;
   }
 } catch (...) {
-  XDiagRethrow("Error creating full matrix out of the tridiagonal matrix");
+  XDIAG_THROW("cannot armadillo matrix from Tmatrix");
   return arma::mat();
 }
 
@@ -52,7 +52,7 @@ arma::vec Tmatrix::eigenvalues() const try {
     return eigs;
   }
 } catch (...) {
-  XDiagRethrow("Error computing eigenvalues of tridiagonal matrix");
+  XDIAG_THROW("cannot compute eigenvalues of Tmatrix");
   return arma::vec();
 }
 
@@ -68,7 +68,7 @@ arma::mat Tmatrix::eigenvectors() const try {
     return evecs;
   }
 } catch (...) {
-  XDiagRethrow("Error computing eigenvectors of tridiagonal matrix");
+  XDIAG_THROW("cannot compute eigenvectors of Tmatrix");
   return arma::mat();
 }
 
@@ -85,7 +85,7 @@ std::pair<arma::vec, arma::mat> Tmatrix::eigen() const try {
     return {eigs, evecs};
   }
 } catch (...) {
-  XDiagRethrow("Error computing eigendecomposition of tridiagonal matrix");
+  XDIAG_THROW("cannot compute eigendecomposition of Tmatrix");
   return std::pair<arma::vec, arma::mat>();
 }
 
@@ -103,7 +103,7 @@ void Tmatrix::print_log() const try {
     Log(2, "eigs: {:.16f} {:.16f} {:.16f}", eigs(0), eigs(1), eigs(2));
   }
 } catch (...) {
-  XDiagRethrow("Error printing logging of Tmatrix");
+  XDIAG_THROW("cannot logging of Tmatrix");
 }
 
 bool Tmatrix::operator==(Tmatrix const &rhs) const {

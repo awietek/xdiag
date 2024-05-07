@@ -32,11 +32,9 @@ bool matrix_defined(Bond const &bond, BondList const &bonds) {
 
 complex coupling(Bond const &bond, BondList const &bonds) try {
   if (!coupling_defined(bond, bonds)) {
-    XDiagThrow(
-        std::runtime_error,
-        std::string(
-            "Error: the following coupling is neither defined by Bond nor ") +
-            bond.coupling_name());
+    XDIAG_THROW(
+        fmt::format("coupling \"{}\" is neither defined by Bond nor BondList",
+                    bond.coupling_name()));
   }
   if (bond.coupling_defined()) {
     return bond.coupling();
@@ -44,19 +42,18 @@ complex coupling(Bond const &bond, BondList const &bonds) try {
     std::string name = bond.coupling_name();
     return bonds.coupling(name);
   }
-} catch (...) {
-  XDiagRethrow("Cannot retrieve coupling from Bond");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
   return 0.;
 }
 
 arma::cx_mat matrix(Bond const &bond, BondList const &bonds) try {
   if (!matrix_defined(bond, bonds)) {
-    XDiagThrow(
-        std::runtime_error,
+    XDIAG_THROW(
         std::string(
             "Error: the following matrix type is neither defined by Bond nor "
             "BondList") +
-            bond.type());
+        bond.type());
   }
   if (bond.matrix_defined()) {
     return bond.matrix();
@@ -64,8 +61,8 @@ arma::cx_mat matrix(Bond const &bond, BondList const &bonds) try {
     std::string name = bond.type();
     return bonds.matrix(name);
   }
-} catch (...) {
-  XDiagRethrow("Cannot retrieve matrix from Bond");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
   return arma::cx_mat();
 }
 
@@ -96,23 +93,19 @@ BondList compile_explicit_couplings(BondList const &bonds, double precision,
       }
     } else {
       if (undefined_behavior == "error") {
-        XDiagThrow(std::runtime_error,
-                   std::string("Error: undefined coupling in bond: ") +
-                       bond.coupling_name());
+        XDIAG_THROW(std::string("undefined coupling in bond: ") +
+                    bond.coupling_name());
       } else if (undefined_behavior == "keep") {
         bonds_compiled << bond;
       } else if (undefined_behavior == "ignore") {
       } else {
-        XDiagThrow(std::runtime_error,
-                   std::string(
-                       "Error: "
-                       "undefined_behaviour must be one of error/keep/ignore"));
+        XDIAG_THROW("undefined_behaviour must be one of error/keep/ignore");
       }
     }
   }
   return bonds_compiled;
-} catch (...) {
-  XDiagRethrow("Cannot compile BondList to explicit couplings");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
   return BondList();
 }
 
@@ -151,23 +144,20 @@ BondList compile_explicit_matrices(BondList const &bonds, double precision,
       }
     } else {
       if (undefined_behavior == "error") {
-        XDiagThrow(std::runtime_error,
-                   std::string("Error: undefined matrix in bond: ") +
-                       bond.coupling_name());
+        XDIAG_THROW(std::string("undefined matrix in bond: ") +
+                    bond.coupling_name());
       } else if (undefined_behavior == "keep") {
         bonds_compiled << bond;
       } else if (undefined_behavior == "ignore") {
       } else {
-        XDiagThrow(
-            std::runtime_error,
-            std::string(
-                "Error: undefined_behaviour must be one of error/keep/ignore"));
+        XDIAG_THROW(
+            "Error: undefined_behaviour must be one of error/keep/ignore");
       }
     }
   }
   return bonds_compiled;
-} catch (...) {
-  XDiagRethrow("Cannot compile BondList to explicit matrices");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
   return BondList();
 }
 
@@ -179,30 +169,29 @@ BondList compile_explicit(BondList const &bonds, double precision,
   bonds_compiled =
       compile_explicit_matrices(bonds_compiled, precision, undefined_behavior);
   return bonds_compiled;
-} catch (...) {
-  XDiagRethrow("Cannot compile explicit BondList");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
   return BondList();
 }
 
 void check_bond_in_range(Bond const &bond, int64_t n_sites) try {
   for (int64_t s : bond.sites()) {
     if (s >= n_sites) {
-      XDiagThrow(std::runtime_error,
-                 std::string("Error: bond site number ") + std::to_string(s) +
-                     std::string("exceeds range of number of sites = ") +
-                     std::to_string(n_sites));
+      XDIAG_THROW(std::string("Error: bond site number ") + std::to_string(s) +
+                  std::string("exceeds range of number of sites = ") +
+                  std::to_string(n_sites));
     }
   }
-} catch (...) {
-  XDiagRethrow("Bond not in range of number of sites");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 void check_bonds_in_range(BondList const &bonds, int64_t n_sites) try {
   for (Bond bond : bonds) {
     check_bond_in_range(bond, n_sites);
   }
-} catch (...) {
-  XDiagRethrow("BondList not in range of number of sites");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 void check_bond_has_correct_number_of_sites(Bond const &bond, int64_t ns) try {
@@ -210,8 +199,7 @@ void check_bond_has_correct_number_of_sites(Bond const &bond, int64_t ns) try {
     std::string msg = std::string("bond of type \"") + bond.type() +
                       std::string("\": number of sites given is ") +
                       std::to_string(bond.size()) +
-                      std::string(" while expected ") +
-                      std::to_string(ns);
+                      std::string(" while expected ") + std::to_string(ns);
     XDIAG_THROW(msg);
   }
 } catch (Error const &e) {
@@ -220,12 +208,11 @@ void check_bond_has_correct_number_of_sites(Bond const &bond, int64_t ns) try {
 
 void check_bond_has_disjoint_sites(Bond const &bond) try {
   if (!bond.sites_disjoint()) {
-    XDiagThrow(std::runtime_error,
-               std::string("bond of type \"") + bond.type() +
-                   std::string("\": sites are not disjoint as expected."));
+    XDIAG_THROW(std::string("bond of type \"") + bond.type() +
+                std::string("\": sites are not disjoint as expected."));
   }
-} catch (...) {
-  XDiagRethrow("Bond does not have disjoint sites which is required");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 } // namespace xdiag::operators

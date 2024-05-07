@@ -3,31 +3,40 @@
 #include <numeric>
 
 #include <xdiag/symmetries/operations/symmetry_operations.hpp>
+#include <xdiag/utils/error.hpp>
 #include <xdiag/utils/logger.hpp>
 
 namespace xdiag {
 
-Permutation::Permutation(std::vector<int64_t> const &array)
-    : size_(array.size()), array_(array) {
-
-  // Check if permutation is valid
-  for (int64_t i = 0; i < size_; ++i) {
-    if (std::find(array_.begin(), array_.end(), i) == array_.end()) {
-      Log.err("Error constructing Permutation: "
-              "invalid permutation array");
+void check_valid_permutation(std::vector<int64_t> const &array) {
+  for (int64_t i = 0; i < array.size(); ++i) {
+    if (std::find(array.begin(), array.end(), i) == array.end()) {
+      XDIAG_THROW("Error constructing Permutation: "
+                  "invalid permutation array");
     }
   }
 }
 
-Permutation::Permutation(std::initializer_list<int64_t> list)
-    : Permutation(std::vector<int64_t>(list)) {}
+Permutation::Permutation(std::vector<int32_t> const &array)
+    : array_(array.size()) {
+  int64_t idx = 0;
+  for (int32_t p : array) {
+    array_[idx] = p;
+    ++idx;
+  }
+  check_valid_permutation(array_);
+}
 
-Permutation::Permutation(io::FileTomlHandler && hdl)
+Permutation::Permutation(std::vector<int64_t> const &array) : array_(array) {
+  check_valid_permutation(array_);
+}
+
+Permutation::Permutation(io::FileTomlHandler &&hdl)
     : Permutation(hdl.as<Permutation>()) {}
 
 template <typename bit_t> bit_t Permutation::apply(bit_t state) const {
   bit_t tstate = 0;
-  for (int64_t site = 0; site < size_; ++site) {
+  for (int64_t site = 0; site < array_.size(); ++site) {
     tstate |= ((state >> site) & 1) << array_[site];
   }
   return tstate;
@@ -38,7 +47,7 @@ template uint32_t Permutation::apply<uint32_t>(uint32_t state) const;
 template uint64_t Permutation::apply<uint64_t>(uint64_t state) const;
 
 Permutation Permutation::inverse() const {
-  std::vector<int64_t> perm_inv(size_, 0);
+  std::vector<int64_t> perm_inv(array_.size(), 0);
   int64_t idx = 0;
   for (auto p : array_) {
     perm_inv[p] = idx;
@@ -55,7 +64,7 @@ Permutation Permutation::shuffle() const {
   return Permutation(ps);
 }
 
-int64_t Permutation::size() const { return size_; }
+int64_t Permutation::size() const { return array_.size(); }
 int64_t Permutation::operator[](int64_t i) const { return array_[i]; }
 bool Permutation::operator==(Permutation const &rhs) const {
   return rhs.array_ == array_;
@@ -72,11 +81,12 @@ Permutation identity_permutation(int64_t size) {
   return Permutation(array);
 }
 
-Permutation operator*(Permutation const &p1, Permutation const &p2) {
+Permutation operator*(Permutation const &p1, Permutation const &p2) try {
   if (p1.size() != p2.size()) {
-    Log.err("Error multiplying Permutation: the two permutations do not have "
-            "the same number of sites. p1.size()={}, p2.size()={}",
-            p1.size(), p2.size());
+    XDIAG_THROW(fmt::format(
+        "Error multiplying Permutation: the two permutations do not have "
+        "the same number of sites. p1.size()={}, p2.size()={}",
+        p1.size(), p2.size()));
   }
   int64_t size = p1.size();
   std::vector<int64_t> array(size, 0);
@@ -84,6 +94,9 @@ Permutation operator*(Permutation const &p1, Permutation const &p2) {
     array[i] = p1[p2[i]];
   }
   return Permutation(array);
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+  return Permutation();
 }
 
 Permutation inverse(Permutation const &p) { return p.inverse(); }

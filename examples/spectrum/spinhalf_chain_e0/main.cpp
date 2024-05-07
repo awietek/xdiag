@@ -20,6 +20,6 @@ int main() try {
   
   Log("Ground state energy: {:.12f}", e0);
   
-} catch (std::exception const &e) {
-  traceback(e);
+} catch (Error e) {
+  error_trace(e);
 }

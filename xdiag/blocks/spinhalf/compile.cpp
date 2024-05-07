@@ -20,10 +20,9 @@ BondList compile(BondList const &bonds, double precision) try {
       std::string type = bond.type();
       if (std::find(special_bond_types.begin(), special_bond_types.end(),
                     type) == special_bond_types.end()) {
-        XDiagThrow(std::runtime_error,
-                   std::string("Invalid or undefined type found ") + type);
+        XDIAG_THROW(std::string("Invalid or undefined type: \"") + type +
+                    std::string("\""));
       } else {
-
         if ((type == "HB") || (type == "HEISENBERG")) {
           bonds_special << Bond("ISING", bond.coupling(), bond.sites());
           bonds_special << Bond("EXCHANGE", bond.coupling(), bond.sites());
@@ -39,8 +38,8 @@ BondList compile(BondList const &bonds, double precision) try {
     }
   }
   return bonds_special + bonds_generic;
-} catch (...) {
-  XDiagRethrow("Unable to compile BondList");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
   return BondList();
 }
 

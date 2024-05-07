@@ -28,8 +28,8 @@ void fill(State &state, RandomState const &rstate, int64_t col) try {
     double nrm = norm(state);
     state /= nrm;
   }
-} catch (...) {
-  XDiagRethrow("Unable to fill State with a RandomState");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 State random_state(block_variant_t const &block, bool real, int64_t seed,

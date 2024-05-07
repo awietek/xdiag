@@ -18,7 +18,7 @@ inline void dispatch(BondList const &bonds, Spinhalf const &block_in,
   auto const &basis_out = block_out.basis();
 
   std::visit(
-	     overload{
+      overload{
           // uint32_t
           [&](BasisSz<uint32_t> const &idx_in,
               BasisSz<uint32_t> const &idx_out) {
@@ -36,7 +36,6 @@ inline void dispatch(BondList const &bonds, Spinhalf const &block_in,
               BasisSymmetricNoSz<uint32_t> const &idx_out) {
             apply_terms<uint32_t, coeff_t, true>(bonds, idx_in, idx_out, fill);
           },
-
 
           // uint64_t
           [&](BasisSz<uint64_t> const &idx_in,
@@ -77,14 +76,13 @@ inline void dispatch(BondList const &bonds, Spinhalf const &block_in,
           },
 
           [&](auto const &idx_in, auto const &idx_out) {
-            XDiagThrow(std::logic_error,
-                       "Invalid basis or combination of bases");
+            XDIAG_THROW("Invalid basis or combination of bases");
             (void)idx_in;
             (void)idx_out;
           }},
       basis_in, basis_out);
-} catch (...) {
-  XDiagRethrow("Unable to apply terms on Spinhalf block");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 } // namespace xdiag::spinhalf

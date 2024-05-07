@@ -108,10 +108,10 @@ bool has_bit_t(basis_spinhalf_variant_t const &basis) try {
                [](BasisSublattice<uint64_t, 5> const &) {
                  return is_same<bit_t, uint64_t>::value;
                },
-               [](auto &&) { throw(std::logic_error("Invalid Basis type")); }},
+               [](auto &&) { XDIAG_THROW("Invalid Basis type"); }},
       basis);
-} catch (...) {
-  rethrow(__func__, "Unable to tell bit type of Spinhalf basis");
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
   return false;
 }
 
@@ -160,10 +160,10 @@ bool has_bit_t(basis_electron_variant_t const &basis) try {
                [](BasisSymmetricNoNp<uint64_t> const &) {
                  return is_same<bit_t, uint64_t>::value;
                },
-               [](auto &&) { throw(std::logic_error("Invalid Basis type")); }},
+               [](auto &&) { XDIAG_THROW("Invalid Basis type"); }},
       basis);
-} catch (...) {
-  rethrow(__func__, "Unable to tell bit type of Electron basis");
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
   return false;
 }
 
@@ -193,10 +193,10 @@ template <typename bit_t> bool has_bit_t(basis_tj_variant_t const &basis) try {
                [](BasisSymmetricNp<uint64_t> const &) {
                  return is_same<bit_t, uint64_t>::value;
                },
-               [](auto &&) { throw(std::logic_error("Invalid Basis type")); }},
+               [](auto &&) { XDIAG_THROW("Invalid Basis type"); }},
       basis);
-} catch (...) {
-  rethrow(__func__, "Unable to tell bit type of Electron basis");
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
   return false;
 }
 
@@ -235,10 +235,10 @@ bool has_bit_t(basis_tj_distributed_variant_t const &basis) try {
                [](BasisNp<uint64_t> const &) {
                  return is_same<bit_t, uint64_t>::value;
                },
-               [](auto &&) { throw(std::logic_error("Invalid Basis type")); }},
+               [](auto &&) { XDIAG_THROW("Invalid Basis type"); }},
       basis);
-} catch (...) {
-  rethrow(__func__, "Unable to tell bit type of Electron basis");
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
   return false;
 }
 

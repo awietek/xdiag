@@ -1,5 +1,11 @@
 using XDiag
 say_hello()
-block = Electron(2, 1, 1);
-bond = Bond("HB", 1.0, [0]);
-mat = matrix(bond, block);
+
+block = Spinhalf(2);
+    
+bonds = BondList()
+bonds += Bond("HB", "J", [0])
+bonds["J"] = 1.0;
+
+set_verbosity(2);             # set verbosity for monitoring progress
+e0 = eigval0(bonds, block);   # compute ground state energy

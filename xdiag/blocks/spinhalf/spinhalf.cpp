@@ -11,25 +11,16 @@ Spinhalf::Spinhalf(int64_t n_sites)
     : n_sites_(n_sites), sz_conserved_(false), n_up_(undefined_qn),
       n_dn_(undefined_qn), sz_(undefined_qn), symmetric_(false), n_sublat_(0),
       permutation_group_(), irrep_(), size_((int64_t)1 << n_sites) {
-  try {
 
-    if (n_sites < 0) {
-      XDiagThrow(std::invalid_argument, "n_sites < 0");
-    }
-
-    if (n_sites < 32) {
-      basis_ =
-          std::make_shared<basis_t>(spinhalf::BasisNoSz<uint32_t>(n_sites));
-    } else if (n_sites < 64) {
-      basis_ =
-          std::make_shared<basis_t>(spinhalf::BasisNoSz<uint64_t>(n_sites));
-    } else {
-      XDiagThrow(std::runtime_error,
-                 "blocks with more than 64 sites currently not implemented");
-    }
-
-  } catch (...) {
-    XDiagRethrow("Cannot create Basis for Spinhalf");
+  if (n_sites < 0) {
+    XDIAG_THROW("Invalid argument: n_sites < 0");
+  } else if (n_sites < 32) {
+    basis_ = std::make_shared<basis_t>(spinhalf::BasisNoSz<uint32_t>(n_sites));
+  } else if (n_sites < 64) {
+    basis_ = std::make_shared<basis_t>(spinhalf::BasisNoSz<uint64_t>(n_sites));
+  } else {
+    XDIAG_THROW(
+        "Spinhalf blocks with more than 64 sites currently not implemented");
   }
 }
 
@@ -38,27 +29,22 @@ Spinhalf::Spinhalf(int64_t n_sites, int64_t n_up)
       n_dn_(n_sites - n_up), sz_(n_up_ - n_dn_), symmetric_(false),
       n_sublat_(0), permutation_group_(), irrep_(),
       size_(combinatorics::binomial(n_sites, n_up)) {
-  try {
 
-    if (n_sites < 0) {
-      XDiagThrow(std::invalid_argument, "n_sites < 0");
-    } else if ((n_up < 0) || (n_up > n_sites)) {
-      XDiagThrow(std::invalid_argument, "Invalid value of nup");
-    }
-
-    if (n_sites < 32) {
-      basis_ =
-          std::make_shared<basis_t>(spinhalf::BasisSz<uint32_t>(n_sites, n_up));
-    } else if (n_sites < 64) {
-      basis_ =
-          std::make_shared<basis_t>(spinhalf::BasisSz<uint64_t>(n_sites, n_up));
-    } else {
-      XDiagThrow(std::runtime_error,
-                 "blocks with more than 64 sites currently not implemented");
-    }
-
-  } catch (...) {
-    XDiagRethrow("Cannot create Basis for Spinhalf");
+  if (n_sites < 0) {
+    XDIAG_THROW("Invalid argument: n_sites < 0");
+  } else if (n_up < 0) {
+    XDIAG_THROW("Invalid argument: n_up < 0");
+  } else if (n_up > n_sites) {
+    XDIAG_THROW("Invalid argument: n_up > n_sites");
+  } else if (n_sites < 32) {
+    basis_ =
+        std::make_shared<basis_t>(spinhalf::BasisSz<uint32_t>(n_sites, n_up));
+  } else if (n_sites < 64) {
+    basis_ =
+        std::make_shared<basis_t>(spinhalf::BasisSz<uint64_t>(n_sites, n_up));
+  } else {
+    XDIAG_THROW(
+        "Spinhalf blocks with more than 64 sites currently not implemented");
   }
 }
 
@@ -87,14 +73,12 @@ make_spinhalf_basis_no_sz(int64_t n_sites, PermutationGroup const &group,
     basis = std::make_shared<basis_spinhalf_variant_t>(
         spinhalf::BasisSublattice<bit_t, 5>(n_sites, group, irrep));
   } else {
-    XDiagThrow(std::runtime_error,
-               "Invalid n_sublat specified. Must be "
-               "eiter 0 (so sublattice coding) or between 1 and 5. ");
+    XDIAG_THROW("Invalid n_sublat specified. Must be "
+                "eiter 0 (so sublattice coding) or between 1 and 5. ");
   }
   return basis;
-} catch (...) {
-  XDiagRethrow("Cannot create Basis for Spinhalf without sz conservation but "
-               "with permutation symmetries");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
   return std::shared_ptr<basis_spinhalf_variant_t>();
 }
 
@@ -104,35 +88,24 @@ Spinhalf::Spinhalf(int64_t n_sites, PermutationGroup group,
       n_dn_(undefined_qn), sz_(undefined_qn), symmetric_(true),
       n_sublat_(n_sublat), permutation_group_(allowed_subgroup(group, irrep)),
       irrep_(irrep) {
-  try {
 
-    if (n_sites < 0) {
-      XDiagThrow(std::invalid_argument, "n_sites < 0");
-    } else if (n_sites != group.n_sites()) {
-      XDiagThrow(std::logic_error,
-                 "n_sites does not match the n_sites in PermutationGroup");
-    } else if (permutation_group_.size() != irrep.size()) {
-      XDiagThrow(std::logic_error,
-                 "PermutationGroup and Representation do not have "
-                 "same number of elements");
-    } else if ((n_sublat < 0) || (n_sublat > 5)) {
-      XDiagThrow(std::invalid_argument,
-                 "number of sublattices must either be 0 (no "
-                 "sublattice) or between 1 and 5");
-    }
-
-    if (n_sites < 64) {
-      basis_ =
-          make_spinhalf_basis_no_sz<uint64_t>(n_sites, group, irrep, n_sublat);
-    } else {
-      throw(std::runtime_error(
-          "blocks with more than 64 sites currently not implemented"));
-    }
-    size_ = xdiag::size(*basis_);
-
-  } catch (...) {
-    XDiagRethrow("Cannot create Basis for Spinhalf");
+  if (n_sites < 0) {
+    XDIAG_THROW("Invalid argument: n_sites < 0");
+  } else if (n_sites != group.n_sites()) {
+    XDIAG_THROW("n_sites does not match the n_sites in PermutationGroup");
+  } else if (permutation_group_.size() != irrep.size()) {
+    XDIAG_THROW("PermutationGroup and Representation do not have "
+                "same number of elements");
+  } else if ((n_sublat < 0) || (n_sublat > 5)) {
+    XDIAG_THROW("number of sublattices must either be 0 (no "
+                "sublattice) or between 1 and 5");
+  } else if (n_sites < 64) {
+    basis_ =
+        make_spinhalf_basis_no_sz<uint64_t>(n_sites, group, irrep, n_sublat);
+  } else {
+    XDIAG_THROW("blocks with more than 64 sites currently not implemented");
   }
+  size_ = xdiag::size(*basis_);
 }
 
 template <typename bit_t>
@@ -160,14 +133,12 @@ make_spinhalf_basis_sz(int64_t n_sites, int64_t n_up,
     basis = std::make_shared<basis_spinhalf_variant_t>(
         spinhalf::BasisSublattice<bit_t, 5>(n_sites, n_up, group, irrep));
   } else {
-    XDiagThrow(std::invalid_argument,
-               "Invalid n_sublat specified. Must be "
-               "eiter 0 (so sublattice coding) or between 1 and 5.");
+    XDIAG_THROW("Invalid n_sublat specified. Must be "
+                "eiter 0 (so sublattice coding) or between 1 and 5.");
   }
   return basis;
-} catch (...) {
-  XDiagRethrow("Cannot create Basis for Spinhalf witt sz conservation and "
-               "with permutation symmetries");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
   return std::shared_ptr<basis_spinhalf_variant_t>();
 }
 
@@ -177,36 +148,27 @@ Spinhalf::Spinhalf(int64_t n_sites, int64_t n_up, PermutationGroup group,
       n_dn_(n_sites - n_up), sz_(n_up_ - n_dn_), symmetric_(true),
       n_sublat_(n_sublat), permutation_group_(allowed_subgroup(group, irrep)),
       irrep_(irrep) {
-  try {
-    if (n_sites < 0) {
-      XDiagThrow(std::invalid_argument, "n_sites < 0");
-    } else if ((n_up < 0) || (n_up > n_sites)) {
-      XDiagThrow(std::invalid_argument, "Invalid value of nup");
-    } else if (n_sites != group.n_sites()) {
-      XDiagThrow(std::logic_error,
-                 "n_sites does not match the n_sites in PermutationGroup");
-    } else if (permutation_group_.size() != irrep.size()) {
-      XDiagThrow(std::logic_error,
-                 "PermutationGroup and Representation do not have "
-                 "same number of elements");
-    } else if ((n_sublat < 0) || (n_sublat > 5)) {
-      XDiagThrow(std::invalid_argument,
-                 "number of sublattices must either be 0 (no "
-                 "sublattice) or between 1 and 5");
-    }
-
-    if (n_sites < 64) {
-      basis_ = make_spinhalf_basis_sz<uint64_t>(n_sites, n_up, group, irrep,
-                                                n_sublat);
-    } else {
-      XDiagThrow(std::runtime_error,
-                 "blocks with more than 64 sites currently not implemented");
-    }
-    size_ = xdiag::size(*basis_);
-
-  } catch (...) {
-    XDiagRethrow("Cannot create Basis for Spinhalf");
+  if (n_sites < 0) {
+    XDIAG_THROW("Invalid argument: n_sites < 0");
+  } else if (n_up < 0) {
+    XDIAG_THROW("Invalid argument: n_up < 0");
+  } else if (n_up > n_sites) {
+    XDIAG_THROW("Invalid argument: n_up > n_sites");
+  } else if (n_sites != group.n_sites()) {
+    XDIAG_THROW("n_sites does not match the n_sites in PermutationGroup");
+  } else if (permutation_group_.size() != irrep.size()) {
+    XDIAG_THROW("PermutationGroup and Representation do not have "
+                "same number of elements");
+  } else if ((n_sublat < 0) || (n_sublat > 5)) {
+    XDIAG_THROW("Invalid n_sublat specified. Must be "
+                "eiter 0 (so sublattice coding) or between 1 and 5.");
+  } else if (n_sites < 64) {
+    basis_ =
+        make_spinhalf_basis_sz<uint64_t>(n_sites, n_up, group, irrep, n_sublat);
+  } else {
+    XDIAG_THROW("blocks with more than 64 sites currently not implemented");
   }
+  size_ = xdiag::size(*basis_);
 }
 
 int64_t Spinhalf::n_sites() const { return n_sites_; }

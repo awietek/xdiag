@@ -38,7 +38,7 @@ lanczos_result_t lanczos(mult_f mult, dot_f dot, converged_f converged,
     w.zeros();
     v0.zeros();
   } catch (...) {
-    XDiagThrow(std::runtime_error, "Cannot allocate Lanczos vectors");
+    XDIAG_THROW("Cannot allocate Lanczos vectors");
   }
 
   double alpha = 0.;
@@ -82,8 +82,8 @@ lanczos_result_t lanczos(mult_f mult, dot_f dot, converged_f converged,
 
   return lanczos_result_t{tmatrix.alphas(), tmatrix.betas(),
                           tmatrix.eigenvalues(), iteration, criterion};
-} catch (...) {
-  XDiagRethrow("Error performing Lanczos algorithm");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
   return lanczos_result_t();
 }
 

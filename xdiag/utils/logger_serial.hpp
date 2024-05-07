@@ -17,65 +17,49 @@ public:
   inline int verbosity() { return verbosity_; }
 
   template <typename... Args>
-  inline void out(const std::string &format, const Args &...args) try {
+  inline void out(const std::string &format, const Args &...args) {
     std::cout << fmt::format(format, args...) << "\n";
-  } catch (...) {
-    XDiagRethrow("Unable to print output using Logger");
   }
 
   template <typename... Args>
-  inline void warn(const std::string &format, const Args &...args) try {
+  inline void warn(const std::string &format, const Args &...args) {
     std::cout << fmt::format(format, args...) << "\n" << std::flush;
-  } catch (...) {
-    XDiagRethrow("Unable to print output using Logger");
   }
 
   template <typename... Args>
-  inline void err(const std::string &format, const Args &...args) try {
+  inline void err(const std::string &format, const Args &...args) {
     std::cerr << fmt::format(format, args...) << "\n" << std::flush;
     exit(EXIT_FAILURE);
-  } catch (...) {
-    XDiagRethrow("Unable to print output using Logger");
   }
 
   template <typename... Args>
-  inline void out(int level, const std::string &format, const Args &...args) try {
+  inline void out(int level, const std::string &format, const Args &...args) {
     if (level <= verbosity_)
       std::cout << fmt::format(format, args...) << "\n";
-  } catch (...) {
-    XDiagRethrow("Unable to print output using Logger");
   }
 
   template <typename... Args>
-  inline void warn(int level, const std::string &format, const Args &...args) try {
+  inline void warn(int level, const std::string &format, const Args &...args) {
     if (level <= verbosity_)
       std::cout << fmt::format(format, args...) << "\n" << std::flush;
-  } catch (...) {
-    XDiagRethrow("Unable to print output using Logger");
   }
 
   template <typename... Args>
-  inline void err(int level, const std::string &format, const Args &...args) try {
+  inline void err(int level, const std::string &format, const Args &...args) {
     if (level <= verbosity_)
       std::cerr << fmt::format(format, args...) << "\n" << std::flush;
     exit(EXIT_FAILURE);
-  } catch (...) {
-    XDiagRethrow("Unable to print output using Logger");
   }
 
   template <typename... Args>
-  inline void operator()(const std::string &format, const Args &...args) try {
+  inline void operator()(const std::string &format, const Args &...args) {
     out(format, args...);
-  } catch (...) {
-    XDiagRethrow("Unable to print output using Logger");
   }
 
   template <typename... Args>
   inline void operator()(int level, const std::string &format,
-                  const Args &...args) try {
+                         const Args &...args) {
     out(level, format, args...);
-  } catch (...) {
-    XDiagRethrow("Unable to print output using Logger");
   }
 
 private:

@@ -38,16 +38,15 @@ void apply_terms(BondList const &bonds, BasisIn const &basis_in,
         spinhalf::apply_scalar_chirality<bit_t, coeff_t, symmetric>(
             bond, basis_in, basis_out, fill);
       } else {
-        XDiagThrow(std::runtime_error,
-                   "Error in spinhalf::apply_terms: Unknown bond type");
+        XDIAG_THROW(fmt::format("Error in spinhalf::apply_terms: Unknown bond type \"{}\"", bond.type()));
       }
     } else {
       spinhalf::apply_non_branching<bit_t, coeff_t, symmetric>(bond, basis_in,
                                                                basis_out, fill);
     }
   }
-} catch (...) {
-  XDiagRethrow("Cannot apply terms for \"Spinhalf\" block");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 } // namespace xdiag::spinhalf
