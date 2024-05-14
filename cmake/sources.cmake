@@ -132,4 +132,5 @@ set(XDIAG_JULIA_SOURCES
   utils.cpp
   blocks.cpp
   matrix.cpp
+  symmetries.cpp
 )

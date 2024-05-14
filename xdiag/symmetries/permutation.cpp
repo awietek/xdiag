@@ -11,8 +11,7 @@ namespace xdiag {
 void check_valid_permutation(std::vector<int64_t> const &array) {
   for (int64_t i = 0; i < array.size(); ++i) {
     if (std::find(array.begin(), array.end(), i) == array.end()) {
-      XDIAG_THROW("Error constructing Permutation: "
-                  "invalid permutation array");
+      XDIAG_THROW("invalid permutation array");
     }
   }
 }
@@ -30,6 +29,9 @@ Permutation::Permutation(std::vector<int32_t> const &array)
 Permutation::Permutation(std::vector<int64_t> const &array) : array_(array) {
   check_valid_permutation(array_);
 }
+
+Permutation::Permutation(std::initializer_list<int64_t> list)
+    : Permutation(std::vector<int64_t>(list)) {}
 
 Permutation::Permutation(io::FileTomlHandler &&hdl)
     : Permutation(hdl.as<Permutation>()) {}
@@ -73,7 +75,7 @@ bool Permutation::operator!=(Permutation const &rhs) const {
   return !operator==(rhs);
 }
 
-std::vector<int64_t> const &Permutation::array() const { return array_; }
+std::vector<int64_t> Permutation::array() const { return array_; }
 
 Permutation identity_permutation(int64_t size) {
   std::vector<int64_t> array(size, 0);
@@ -81,10 +83,9 @@ Permutation identity_permutation(int64_t size) {
   return Permutation(array);
 }
 
-Permutation operator*(Permutation const &p1, Permutation const &p2) try {
+Permutation multiply(Permutation const &p1, Permutation const &p2) try {
   if (p1.size() != p2.size()) {
-    XDIAG_THROW(fmt::format(
-        "Error multiplying Permutation: the two permutations do not have "
+    XDIAG_THROW(fmt::format("the two permutations do not have "
         "the same number of sites. p1.size()={}, p2.size()={}",
         p1.size(), p2.size()));
   }
@@ -94,6 +95,13 @@ Permutation operator*(Permutation const &p1, Permutation const &p2) try {
     array[i] = p1[p2[i]];
   }
   return Permutation(array);
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+  return Permutation();
+}
+
+Permutation operator*(Permutation const &p1, Permutation const &p2) try {
+  return multiply(p1, p2);
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
   return Permutation();

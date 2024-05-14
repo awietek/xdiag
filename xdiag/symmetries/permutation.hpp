@@ -10,6 +10,7 @@ public:
   Permutation() = default;
   explicit Permutation(std::vector<int32_t> const &array);
   explicit Permutation(std::vector<int64_t> const &array);
+  explicit Permutation(std::initializer_list<int64_t> list);
   explicit Permutation(io::FileTomlHandler && hdl);
   
   template <typename bit_t> bit_t apply(bit_t state) const;
@@ -21,12 +22,13 @@ public:
   bool operator==(Permutation const &rhs) const;
   bool operator!=(Permutation const &rhs) const;
   
-  std::vector<int64_t> const& array() const;
+  std::vector<int64_t> array() const;
 private:
   std::vector<int64_t> array_;
 };
 
 Permutation identity_permutation(int64_t size);
+Permutation multiply(Permutation const &p1, Permutation const &p2);
 Permutation operator*(Permutation const &p1, Permutation const &p2);
 Permutation inverse(Permutation const &p);
 Permutation shuffle(Permutation const &p);

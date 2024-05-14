@@ -3,6 +3,7 @@
 #include <julia/src/blocks.hpp>
 #include <julia/src/utils.hpp>
 #include <julia/src/matrix.hpp>
+#include <julia/src/symmetries.hpp>
 
 JLCXX_MODULE define_julia_module(jlcxx::Module &mod) {
   using namespace xdiag;
@@ -17,7 +18,10 @@ JLCXX_MODULE define_julia_module(jlcxx::Module &mod) {
   julia::define_electron(mod);
 
   julia::define_matrix_cxx(mod);
-    
+
+  julia::define_permutation(mod);
+
+  
   mod.add_type<State>("State")
       .constructor<>()
       .constructor<Spinhalf const &, bool, int64_t>()
@@ -197,5 +201,9 @@ JLCXX_MODULE define_julia_module(jlcxx::Module &mod) {
 
   mod.method("print_pretty", [](const char *id, BondList const &bonds) {
     utils::print_pretty(id, bonds);
+  });
+
+  mod.method("print_pretty", [](const char *id, Permutation const &perm) {
+    utils::print_pretty(id, perm);
   });
 }
