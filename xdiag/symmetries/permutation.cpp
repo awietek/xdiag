@@ -85,9 +85,10 @@ Permutation identity_permutation(int64_t size) {
 
 Permutation multiply(Permutation const &p1, Permutation const &p2) try {
   if (p1.size() != p2.size()) {
-    XDIAG_THROW(fmt::format("the two permutations do not have "
-        "the same number of sites. p1.size()={}, p2.size()={}",
-        p1.size(), p2.size()));
+    XDIAG_THROW(
+        fmt::format("the two permutations do not have "
+                    "the same number of sites. p1.size()={}, p2.size()={}",
+                    p1.size(), p2.size()));
   }
   int64_t size = p1.size();
   std::vector<int64_t> array(size, 0);
@@ -109,5 +110,6 @@ Permutation operator*(Permutation const &p1, Permutation const &p2) try {
 
 Permutation inverse(Permutation const &p) { return p.inverse(); }
 Permutation shuffle(Permutation const &p) { return p.shuffle(); }
+int64_t size(Permutation const &p) { return p.size(); }
 
 } // namespace xdiag

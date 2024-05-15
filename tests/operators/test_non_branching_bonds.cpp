@@ -162,6 +162,6 @@ TEST_CASE("non_branching_bonds", "[operators]") try {
   // XDIAG_PRINT(norm(H2));
 
   REQUIRE(close(H1, H2));
- } catch (std::exception const& e) {
-  xdiag::traceback(e);
+ } catch (xdiag::Error e) {
+  xdiag::error_trace(e);
  }

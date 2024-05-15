@@ -123,6 +123,6 @@ TEST_CASE("symmetrized_operator", "[symmetries]") try {
     }
   }
   Log("done");
-} catch (std::exception const &e) {
-  xdiag::traceback(e);
+ } catch (xdiag::Error e) {
+  xdiag::error_trace(e);
 }

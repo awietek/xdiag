@@ -30,6 +30,14 @@ Computes the lowest lying eigenvalue of an operator.
 
 ##Definition
 
+=== "Julia"
+
+	``` julia
+	eig0(bonds::BondList, block::Spinhalf;
+	     precision::Real=1e-12, maxiter::Integer=1000,
+         force_complex::Bool=false, seed::Integer=42)
+	```
+
 === "C++"
 
 	```c++
@@ -39,12 +47,6 @@ Computes the lowest lying eigenvalue of an operator.
 		 bool force_complex = false, int64_t random_seed = 42);
 	```
 
-=== "Julia"
+# Source
 
-	``` julia
-	function eig0(bonds::BondList, block::Spinhalf;
-	 	          precision::Real=1e-12, maxiter::Integer=1000,
-                  force_complex::Bool=false, seed::Integer=42)
-	```
-
-Source: [sparse_diag.hpp](https://github.com/awietek/xdiag/blob/master/xdiag/algorithms/sparse_diag.hpp)
+[sparse_diag.hpp](https://github.com/awietek/xdiag/blob/master/xdiag/algorithms/sparse_diag.hpp)

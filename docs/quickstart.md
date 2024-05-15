@@ -64,13 +64,12 @@ $i$ and $j$.
 
 The following code, sets up the Hilbert space, defines the Hamiltonian and finally calls an iterative eigenvalue solver to compute the ground state energy.
 
-=== "C++"
-	```c++
-	--8<-- "examples/spectrum/spinhalf_chain_e0/main.cpp"
-	```
-
 === "Julia"
 	```julia
 	--8<-- "examples/spectrum/spinhalf_chain_e0/main.jl"
 	```
 
+=== "C++"
+	```c++
+	--8<-- "examples/spectrum/spinhalf_chain_e0/main.cpp"
+	```
