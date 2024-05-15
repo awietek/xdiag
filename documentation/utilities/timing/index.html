@@ -16,7 +16,7 @@
     
     
       
-        <title>eigval0 - XDiag Documentation</title>
+        <title>Timing - XDiag Documentation</title>
       
     
     
@@ -70,7 +70,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#eigval0" class="md-skip">
+        <a href="#timing" class="md-skip">
           Skip to content
         </a>
       
@@ -106,7 +106,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              eigval0
+              Timing
             
           </span>
         </div>
@@ -319,36 +319,18 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#parameters" class="md-nav__link">
+  <a href="#simple-timing-using-tic-toc" class="md-nav__link">
     <span class="md-ellipsis">
-      Parameters
+      Simple timing using tic() / toc()
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#returns" class="md-nav__link">
+  <a href="#detailed-timing" class="md-nav__link">
     <span class="md-ellipsis">
-      Returns
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#definition" class="md-nav__link">
-    <span class="md-ellipsis">
-      Definition
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#source" class="md-nav__link">
-    <span class="md-ellipsis">
-      Source
+      Detailed timing
     </span>
   </a>
   
@@ -369,11 +351,25 @@
                   
 
 
-<h1 id="eigval0">eigval0</h1>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">eigval0</span><span class="p">(</span><span class="n">bondlist</span><span class="p">,</span><span class="w"> </span><span class="n">block</span><span class="p">;</span><span class="w"> </span><span class="n">precision</span><span class="p">,</span><span class="w"> </span><span class="n">max_iterations</span><span class="p">,</span><span class="w"> </span><span class="n">force_complex</span><span class="p">,</span><span class="w"> </span><span class="n">random_seed</span><span class="p">)</span>
+<h1 id="timing">Timing</h1>
+<p>In standard C++ measuring time is a bit awkward. To quickly monitor the CPU time spent by XDiag by simple functions.</p>
+<h2 id="simple-timing-using-tic-toc">Simple timing using tic() / toc()</h2>
+<p>Similar as in Matlab one can use <code>tic()</code> and <code>toc()</code> to measure the time spent between two points in the code. </p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">tic</span><span class="p">();</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kt">double</span><span class="w"> </span><span class="n">e0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eigval0</span><span class="p">(</span><span class="n">bonds</span><span class="p">,</span><span class="w"> </span><span class="n">block</span><span class="p">);</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">toc</span><span class="p">();</span>
 </code></pre></div>
-<p>Computes the lowest lying eigenvalue of an operator.</p>
-<h2 id="parameters">Parameters</h2>
+<p><code>toc()</code> will output the time spent since the last time <code>tic()</code> has been called.</p>
+<h2 id="detailed-timing">Detailed timing</h2>
+<p>To get the present time, simply call </p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">time</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rightnow</span><span class="p">();</span>
+</code></pre></div>
+<p>A timing (in second) between two time points can be written to output using</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">timing</span><span class="p">(</span><span class="n">begin</span><span class="p">,</span><span class="w"> </span><span class="n">end</span><span class="p">);</span>
+</code></pre></div>
+<p>This can even be accompanied by a message about what is being timed and a verbosity level (see <a href="utilities/logging.md">Logging</a>) can also be set. The full call signature is</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">timing</span><span class="p">(</span><span class="n">begin</span><span class="p">,</span><span class="w"> </span><span class="n">end</span><span class="p">,</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="n">level</span><span class="p">);</span>
+</code></pre></div>
 <table>
 <thead>
 <tr>
@@ -384,80 +380,33 @@
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;">bondlist</td>
-<td style="text-align: left;">BondList defining the bonds of the operator</td>
+<td style="text-align: left;">begin</td>
+<td style="text-align: left;">starting time computed using <code>rightnow()</code></td>
 <td></td>
 </tr>
 <tr>
-<td style="text-align: left;">block</td>
-<td style="text-align: left;">block on which the operator is defined</td>
+<td style="text-align: left;">end</td>
+<td style="text-align: left;">end time computed using <code>rightnow()</code></td>
 <td></td>
 </tr>
 <tr>
-<td style="text-align: left;">precision</td>
-<td style="text-align: left;">accuracy of the computed ground state</td>
-<td>1e-12</td>
+<td style="text-align: left;">message</td>
+<td style="text-align: left;">message string to be prepended to timing</td>
+<td>""</td>
 </tr>
 <tr>
-<td style="text-align: left;">max_iterations</td>
-<td style="text-align: left;">maximum number of iterations</td>
-<td>1000</td>
-</tr>
-<tr>
-<td style="text-align: left;">force_complex</td>
-<td style="text-align: left;">whether or not computation should be forced to have complex arithmetic</td>
-<td>false</td>
-</tr>
-<tr>
-<td style="text-align: left;">random_seed</td>
-<td style="text-align: left;">random seed for setting up the initial vector</td>
-<td>42</td>
+<td style="text-align: left;">level</td>
+<td style="text-align: left;">verbosity level at which timing is printed</td>
+<td>0</td>
 </tr>
 </tbody>
 </table>
-<h2 id="returns">Returns</h2>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;">real number</td>
-<td style="text-align: left;">lowest lying eigenvalue</td>
-</tr>
-</tbody>
-</table>
-<h2 id="definition">Definition</h2>
-<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Julia</label><label for="__tabbed_1_2">C++</label></div>
-<div class="tabbed-content">
-<div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">eig0</span><span class="p">(</span><span class="n">bonds</span><span class="o">::</span><span class="kt">BondList</span><span class="p">,</span><span class="w"> </span><span class="n">block</span><span class="o">::</span><span class="kt">Union</span><span class="p">{</span><span class="kt">Spinhalf</span><span class="p">,</span><span class="kt">Electron</span><span class="p">,</span><span class="kt">tJ</span><span class="p">};</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">          </span><span class="n">precision</span><span class="o">::</span><span class="kt">Real</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">,</span><span class="w"> </span><span class="n">maxiter</span><span class="o">::</span><span class="kt">Integer</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">          </span><span class="n">force_complex</span><span class="o">::</span><span class="kt">Bool</span><span class="o">=</span><span class="nb">false</span><span class="p">,</span><span class="w"> </span><span class="n">seed</span><span class="o">::</span><span class="kt">Integer</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
-</code></pre></div>
-</div>
-<div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kt">double</span><span class="w"> </span><span class="nf">eigval0</span><span class="p">(</span><span class="n">BondList</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">bondlist</span><span class="p">,</span><span class="w"> </span><span class="n">block_variant_t</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">block</span><span class="p">,</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">               </span><span class="kt">double</span><span class="w"> </span><span class="n">precision</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1e-12</span><span class="p">,</span><span class="w"> </span><span class="kt">int64_t</span><span class="w"> </span><span class="n">max_iterations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1000</span><span class="p">,</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">               </span><span class="kt">bool</span><span class="w"> </span><span class="n">force_complex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">,</span><span class="w"> </span><span class="kt">int64_t</span><span class="w"> </span><span class="n">random_seed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">42</span><span class="p">);</span>
-</code></pre></div>
-</div>
-</div>
-</div>
-<h2 id="source">Source</h2>
-<p><a href="https://github.com/awietek/xdiag/blob/master/xdiag/algorithms/sparse_diag.hpp">sparse_diag.hpp</a></p>
 
 
 
 
 
 
-
-  
-  
 
 
 
