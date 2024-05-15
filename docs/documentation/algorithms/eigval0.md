@@ -30,10 +30,20 @@ Computes the lowest lying eigenvalue of an operator.
 
 ##Definition
 
-```c++
-double eigval0(BondList const &bondlist, block_variant_t const &block,
-               double precision = 1e-12, int64_t max_iterations = 1000,
-               bool force_complex = false, int64_t random_seed = 42);
-```
+=== "Julia"
+	```julia
+	eig0(bonds::BondList, block::Union{Spinhalf,Electron,tJ};
+              precision::Real=1e-12, maxiter::Integer=1000,
+              force_complex::Bool=false, seed::Integer=42)
+	```
 
-Source: [sparse_diag.hpp](https://github.com/awietek/xdiag/blob/master/xdiag/algorithms/sparse_diag.hpp)
+=== "C++"
+    ```c++
+    double eigval0(BondList const &bondlist, block_variant_t const &block,
+                   double precision = 1e-12, int64_t max_iterations = 1000,
+                   bool force_complex = false, int64_t random_seed = 42);
+    ```
+
+## Source
+
+[sparse_diag.hpp](https://github.com/awietek/xdiag/blob/master/xdiag/algorithms/sparse_diag.hpp)

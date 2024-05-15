@@ -2,12 +2,7 @@
 
 ## Setting the verbosity
 
-Algorithms implemented in XDiag do not output anything during their execution by default. However, it is typically useful to get some information on how the code is performing and even intermediary results at runtime. For this, the verbosity of the internal XDiag logging can be set using the function `set_verbosity`, which is defined as ([logger.hpp](https://github.com/awietek/xdiag/blob/master/xdiag/utils/logger.hpp))
-
-=== "C++"
-	```c++ 
-    void set_verbosity(int64_t level);
-	```
+Algorithms implemented in XDiag do not output anything during their execution by default. However, it is typically useful to get some information on how the code is performing and even intermediary results at runtime. For this, the verbosity of the internal XDiag logging can be set using the function `set_verbosity`, which is defined as 
 
 === "Julia"
 
@@ -15,6 +10,11 @@ Algorithms implemented in XDiag do not output anything during their execution by
 	set_verbosity(level::Integer);
 	```
 	
+=== "C++"
+	```c++ 
+    void set_verbosity(int64_t level);
+	```
+
 There are several levels of verbosity, defining how much information is shown.
 
 | level | outputed information |
@@ -25,11 +25,6 @@ There are several levels of verbosity, defining how much information is shown.
 
 For example, when computing a ground state energy using the [eigval0](algorithms/eigval0.md) function, we can set a higher verbosity level using
 
-=== "C++"
-	```c++ 
-    set_verbosity(2);
-	double e0 = eigval0(bonds, block);
-	```
 
 === "Julia"
 
@@ -37,6 +32,13 @@ For example, when computing a ground state energy using the [eigval0](algorithms
     set_verbosity(2);
     e0 = eigval0(bonds, block);
 	```
+
+=== "C++"
+	```c++ 
+    set_verbosity(2);
+	double e0 = eigval0(bonds, block);
+	```
+
 This will print detailed information, which can look like this
 
 ```text
@@ -75,3 +77,7 @@ This message will only appear if the global verbosity level is set to a value $\
 ```c++
 Log("pi is around {:.4f} and the answer is {}", 3.141592, 42);
 ```
+
+## Source
+
+[logger.hpp](https://github.com/awietek/xdiag/blob/master/xdiag/utils/logger.hpp)

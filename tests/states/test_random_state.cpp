@@ -72,11 +72,10 @@ TEST_CASE("random_state", "[states]") try {
     auto state2_cplx = State(block, false);
     fill(state2_cplx, RandomState(false));
 
-    
     REQUIRE(arma::norm(state.vector() - state2.vector()) < 1e-12);
     REQUIRE(arma::norm(state_cplx.vectorC() - state2_cplx.vectorC()) < 1e-12);
   }
 #endif
- } catch(std::exception const& e) {
-  xdiag::traceback(e);
- }
+} catch (xdiag::Error e) {
+  xdiag::error_trace(e);
+}

@@ -54,6 +54,6 @@ TEST_CASE("exp_sym_v", "[algorithms]") try {
     }
   }
 
-} catch (std::exception const &e) {
-  xdiag::traceback(e);
+} catch (xdiag::Error e) {
+  xdiag::error_trace(e);
 }

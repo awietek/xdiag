@@ -87,8 +87,8 @@ TEST_CASE("eigs_lanczos", "[lanczos]") {
         REQUIRE(close(imag(e), 0.0));
 
       }
-      } catch(std::exception const& e){
-	traceback(e);
+      } catch(Error e){
+        error_trace(e);
       }
     }
   printf("Done.\n");

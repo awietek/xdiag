@@ -2,11 +2,11 @@
 // Created by Luke Staszewski on 30.01.23.
 //
 #include "../../catch.hpp"
-#include <xdiag/extern/armadillo/armadillo>
 #include <xdiag/algebra/matrix.hpp>
 #include <xdiag/algorithms/time_evolution/pade_matrix_exponential.hpp>
 #include <xdiag/algorithms/time_evolution/time_evolution.hpp>
 #include <xdiag/common.hpp>
+#include <xdiag/extern/armadillo/armadillo>
 #include <xdiag/states/product_state.hpp>
 #include <xdiag/utils/logger.hpp>
 #include <xdiag/utils/print_macro.hpp>
@@ -81,8 +81,8 @@ TEST_CASE("analytic_case_free_particle_1D", "[time_evolution]") try {
       REQUIRE(eps < 4 * tol);
     }
   }
-} catch (std::exception const &e) {
-  xdiag::traceback(e);
+} catch (xdiag::Error e) {
+  xdiag::error_trace(e);
 }
 
 TEST_CASE("analytic_case_free_particle_2D", "[time_evolution]") try {
@@ -186,8 +186,8 @@ TEST_CASE("analytic_case_free_particle_2D", "[time_evolution]") try {
       REQUIRE(eps < 4 * tol);
     }
   }
-} catch (std::exception const &e) {
-  xdiag::traceback(e);
+} catch (xdiag::Error e) {
+  xdiag::error_trace(e);
 }
 
 TEST_CASE("tj_complex_timeevo", "[time_evolution]") try {
@@ -256,6 +256,6 @@ TEST_CASE("tj_complex_timeevo", "[time_evolution]") try {
       REQUIRE(eps < 4 * tol);
     }
   }
-} catch (std::exception const &e) {
-  xdiag::traceback(e);
+} catch (xdiag::Error e) {
+  xdiag::error_trace(e);
 }

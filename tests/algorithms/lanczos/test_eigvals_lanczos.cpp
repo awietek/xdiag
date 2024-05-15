@@ -39,8 +39,8 @@ TEST_CASE("eigvals_lanczos", "[lanczos]") {
           // lila::Log("a: {}, b: {}", evals_mat(i), evals_tmat(i));
           REQUIRE(close(evals_mat(i), evals(i)));
         }
-      } catch (std::exception const &e) {
-        traceback(e);
+      } catch (Error e) {
+        error_trace(e);
       }
     }
   printf("Done.\n");

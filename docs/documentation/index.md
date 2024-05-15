@@ -2,7 +2,7 @@
 title: Overview
 ---
 
-# Documentation
+#Documentation
 
 ## Algorithms
 
@@ -20,6 +20,11 @@ title: Overview
 
 ## Distributed Blocks
 
+## Symmetries
+|                                          |                                          |
+|:-----------------------------------------|:-----------------------------------------|
+| [Permutation](symmetries/permutation.md) | Class describing permutations of indices |
+
 ## Utilities
 
 |                                         |                                                                       |
@@ -27,4 +32,3 @@ title: Overview
 | [Logging](utilities/logging.md)         | Controling what is written to standard output                         |
 | [Timing](utilities/timing.md)           | Measurng wall time straightforwardly        (:simple-cplusplus: only) |
 | [XDIAG_PRINT](utilities/xdiag_print.md) | Macro for printing debugging information (:simple-cplusplus: only)    |
-
