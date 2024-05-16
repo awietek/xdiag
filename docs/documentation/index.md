@@ -11,19 +11,14 @@ title: Overview
 | [eigval0](algorithms/eigval0.md) | Computes the lowest lying eigenvalue of an operator                 |
 | [eig0](algorithms/eig0.md)       | Computes the lowest lying eigenvalue and eigenvector of an operator |
 
-### Lanczos
-
-### Time evolution
-
-
-## Blocks
-
-## Distributed Blocks
 
 ## Symmetries
-|                                          |                                          |
-|:-----------------------------------------|:-----------------------------------------|
-| [Permutation](symmetries/permutation.md) | Class describing permutations of indices |
+
+|                                                     |                                                             |
+|:----------------------------------------------------|:------------------------------------------------------------|
+| [Permutation](symmetries/permutation.md)            | Permutations of indices or lattice sites (class)            |
+| [PermutationGroup](symmetries/permutation_group.md) | A group of permutations (class)                             |
+| [Representation](symmetries/representation.md)      | A (1D) irreducible representation of a finite group (class) |
 
 ## Utilities
 

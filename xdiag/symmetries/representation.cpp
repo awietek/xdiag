@@ -10,6 +10,9 @@
 
 namespace xdiag {
 
+Representation::Representation(std::initializer_list<complex> list)
+    : Representation(std::vector<complex>(list)) {}
+
 Representation::Representation(std::vector<complex> const &characters)
     : characters_(characters), characters_real_(characters.size()),
       allowed_symmetries_(characters.size(), 0) {
@@ -34,6 +37,20 @@ Representation::Representation(std::vector<complex> const &characters,
 Representation::Representation(io::FileTomlHandler &&hdl)
     : Representation(hdl.as<Representation>()) {}
 
+complex Representation::character(int64_t idx) const {
+  return characters_.at(idx);
+}
+std::vector<int64_t> Representation::allowed_symmetries() const {
+  return allowed_symmetries_;
+}
+
+std::vector<complex> const &Representation::characters() const {
+  return characters_;
+}
+std::vector<double> const &Representation::characters_real() const {
+  return characters_real_;
+}
+
 Representation
 Representation::subgroup(std::vector<int64_t> const &symmetry_numbers) const {
   std::vector<complex> sub_characters;
@@ -41,6 +58,7 @@ Representation::subgroup(std::vector<int64_t> const &symmetry_numbers) const {
     sub_characters.push_back(characters_[sym]);
   return Representation(sub_characters);
 }
+int64_t Representation::size() const { return characters_.size(); }
 
 bool Representation::operator==(Representation const &rhs) const {
   return close(arma::cx_vec(characters_), arma::cx_vec(rhs.characters_));
@@ -162,11 +180,11 @@ Representation trivial_representation(PermutationGroup const &group) {
   return Representation(std::vector<complex>(group.size(), {1.0, 0.0}));
 }
 
-Representation operator*(Representation const &r1, Representation const &r2) {
+Representation multiply(Representation const &r1,
+                        Representation const &r2) try {
   if (r1.size() != r2.size()) {
-    throw std::runtime_error(
-        "Error multiplying Representation: cannot construct product "
-        "Representation, sizes not equal");
+    XDIAG_THROW("Cannot construct product Representation, sizes of two inputs "
+                "are not equal.");
   }
 
   auto c1 = r1.characters();
@@ -178,6 +196,17 @@ Representation operator*(Representation const &r1, Representation const &r2) {
   }
 
   return Representation(c3);
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+  return Representation();
+}
+
+Representation operator*(Representation const &r1,
+                         Representation const &r2) try {
+  return multiply(r1, r2);
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+  return Representation();
 }
 
 PermutationGroup allowed_subgroup(PermutationGroup const &group,

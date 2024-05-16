@@ -162,3 +162,5 @@
 #include <xdiag/blocks/electron_mpi/electron_mpi_apply.hpp>
 #endif
 
+#undef XDIAG_THROW
+#undef XDIAG_RETHROW
