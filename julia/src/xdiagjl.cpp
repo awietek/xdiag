@@ -19,8 +19,10 @@ JLCXX_MODULE define_julia_module(jlcxx::Module &mod) {
 
   julia::define_matrix_cxx(mod);
 
+  // Symmetries
   julia::define_permutation(mod);
-
+  julia::define_permutation_group(mod);
+  julia::define_representation(mod);
   
   mod.add_type<State>("State")
       .constructor<>()
@@ -206,4 +208,13 @@ JLCXX_MODULE define_julia_module(jlcxx::Module &mod) {
   mod.method("print_pretty", [](const char *id, Permutation const &perm) {
     utils::print_pretty(id, perm);
   });
+
+  mod.method("print_pretty", [](const char *id, PermutationGroup const &group) {
+    utils::print_pretty(id, group);
+  });
+
+  mod.method("print_pretty", [](const char *id, Representation const &irrep) {
+    utils::print_pretty(id, irrep);
+  });
 }
+

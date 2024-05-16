@@ -10,7 +10,7 @@ public:
   Permutation() = default;
   explicit Permutation(std::vector<int32_t> const &array);
   explicit Permutation(std::vector<int64_t> const &array);
-  explicit Permutation(std::initializer_list<int64_t> list);
+  Permutation(std::initializer_list<int64_t> list);
   explicit Permutation(io::FileTomlHandler &&hdl);
 
   template <typename bit_t> bit_t apply(bit_t state) const;
@@ -32,7 +32,7 @@ Permutation identity_permutation(int64_t size);
 Permutation multiply(Permutation const &p1, Permutation const &p2);
 Permutation operator*(Permutation const &p1, Permutation const &p2);
 Permutation inverse(Permutation const &p);
-int64_t size(Permutation const &p);
 Permutation shuffle(Permutation const &p);
+int64_t size(Permutation const &p);
 
 } // namespace xdiag

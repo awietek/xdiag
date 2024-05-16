@@ -12,21 +12,19 @@ namespace xdiag {
 class Representation {
 public:
   Representation() = default;
+  Representation(std::initializer_list<complex> list);
   explicit Representation(std::vector<complex> const &characters);
   Representation(std::vector<complex> const &characters,
                  std::vector<int64_t> const &allowed_symmetries);
   explicit Representation(io::FileTomlHandler &&hdl);
 
-  complex character(int64_t idx) const { return characters_.at(idx); }
-  std::vector<int64_t> allowed_symmetries() const { return allowed_symmetries_; }
+  complex character(int64_t idx) const;
+  std::vector<int64_t> allowed_symmetries() const;
+  std::vector<complex> const &characters() const;
+  std::vector<double> const &characters_real() const;
 
-  std::vector<complex> const &characters() const { return characters_; }
-  std::vector<double> const &characters_real() const {
-    return characters_real_;
-  }
   Representation subgroup(std::vector<int64_t> const &symmetry_numbers) const;
-
-  int64_t size() const { return characters_.size(); }
+  int64_t size() const;
 
   bool iscomplex(double precision = 1e-12) const;
   bool isreal(double precision = 1e-12) const;
@@ -47,6 +45,7 @@ Representation trivial_representation(PermutationGroup const &group);
 PermutationGroup allowed_subgroup(PermutationGroup const &group,
                                   Representation const &irrep);
 
+Representation multiply(Representation const &r1, Representation const &r2);
 Representation operator*(Representation const &r1, Representation const &r2);
 
 } // namespace xdiag
