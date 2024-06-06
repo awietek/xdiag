@@ -21,3 +21,20 @@
   -webkit-mask-image: var(--md-admonition-icon--method);
           mask-image: var(--md-admonition-icon--method);
 }
+
+.md-typeset__table {
+    width: 100%;
+}
+table th:first-of-type {
+    width: 20%;
+}
+table th:nth-of-type(2) {
+    width: 70%;
+}
+table th:nth-of-type(3) {
+    width: 10%;
+}
+table th:nth-of-type(4) {
+    width: 30%;
+}
+

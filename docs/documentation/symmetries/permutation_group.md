@@ -6,7 +6,7 @@ title: Permutation
 
 ## Constructor
 
-Creates an PermutationGroup out of a vector of Permutations.
+Creates an PermutationGroup out of a vector of [Permutation](permutation.md) objects.
 
 === "Julia"
 	```julia

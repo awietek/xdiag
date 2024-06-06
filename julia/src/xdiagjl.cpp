@@ -1,15 +1,21 @@
 #include <julia/src/xdiagjl.hpp>
 #include <julia/src/operators.hpp>
+#include <julia/src/symmetries.hpp>
+
 #include <julia/src/blocks.hpp>
 #include <julia/src/utils.hpp>
 #include <julia/src/matrix.hpp>
-#include <julia/src/symmetries.hpp>
 
 JLCXX_MODULE define_julia_module(jlcxx::Module &mod) {
   using namespace xdiag;
 
   julia::define_say_hello(mod);
   julia::define_set_verbosity(mod);
+
+  // Symmetries
+  julia::define_permutation(mod);
+  julia::define_permutation_group(mod);
+  julia::define_representation(mod);
   
   julia::define_bond(mod);
   julia::define_bondlist(mod);
@@ -19,10 +25,7 @@ JLCXX_MODULE define_julia_module(jlcxx::Module &mod) {
 
   julia::define_matrix_cxx(mod);
 
-  // Symmetries
-  julia::define_permutation(mod);
-  julia::define_permutation_group(mod);
-  julia::define_representation(mod);
+
   
   mod.add_type<State>("State")
       .constructor<>()
@@ -209,9 +212,9 @@ JLCXX_MODULE define_julia_module(jlcxx::Module &mod) {
     utils::print_pretty(id, perm);
   });
 
-  mod.method("print_pretty", [](const char *id, PermutationGroup const &group) {
-    utils::print_pretty(id, group);
-  });
+  // mod.method("print_pretty", [](const char *id, PermutationGroup const &group) {
+  //   utils::print_pretty(id, group);
+  // });
 
   mod.method("print_pretty", [](const char *id, Representation const &irrep) {
     utils::print_pretty(id, irrep);

@@ -17,9 +17,15 @@ public:
   Spinhalf(int64_t n_sites);
   Spinhalf(int64_t n_sites, int64_t n_up);
   Spinhalf(int64_t n_sites, PermutationGroup permutation_group,
-           Representation irrep, int64_t n_sublat = 0);
+           Representation irrep);
   Spinhalf(int64_t n_sites, int64_t n_up, PermutationGroup permutation_group,
-           Representation irrep, int64_t n_sublat = 0);
+           Representation irrep);
+
+  // Constructors with sublattice coding
+  Spinhalf(int64_t n_sites, PermutationGroup permutation_group,
+           Representation irrep, int64_t n_sublat);
+  Spinhalf(int64_t n_sites, int64_t n_up, PermutationGroup permutation_group,
+           Representation irrep, int64_t n_sublat);
 
   int64_t n_sites() const;
   bool sz_conserved() const;

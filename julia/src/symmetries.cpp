@@ -21,6 +21,7 @@ void define_permutation_group(jlcxx::Module &mod) {
       .method("inverse", &PermutationGroup::inverse)
       .method("n_sites", &PermutationGroup::n_sites)
       .method("size", &PermutationGroup::size);
+
 }
 
 void define_representation(jlcxx::Module &mod) {
