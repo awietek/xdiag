@@ -14,10 +14,10 @@ TEST_CASE("QN", "[symmetries]") {
   QNum q2(g, 3);
   QNum q3(g, 5);
   auto qn = q1 * q2;
-  // XDIAG_PRINT(q1);
-  // XDIAG_PRINT(q2);
-  // XDIAG_PRINT(q3);
-  // XDIAG_PRINT(qn);
+  // XDIAG_SHOW(q1);
+  // XDIAG_SHOW(q2);
+  // XDIAG_SHOW(q3);
+  // XDIAG_SHOW(qn);
   REQUIRE(qn == q3);
 
   int n_sites = 5;
@@ -27,9 +27,9 @@ TEST_CASE("QN", "[symmetries]") {
   QNum qq2(space_group, irreps[2]);
   QNum qq3(space_group, irreps[3]);
   auto qqn = qq1 * qq2;
-  // XDIAG_PRINT(qq1);
-  // XDIAG_PRINT(qq2);
-  // XDIAG_PRINT(qq3);
-  // XDIAG_PRINT(qqn);
+  // XDIAG_SHOW(qq1);
+  // XDIAG_SHOW(qq2);
+  // XDIAG_SHOW(qq3);
+  // XDIAG_SHOW(qqn);
   REQUIRE(qqn == qq3);
 }

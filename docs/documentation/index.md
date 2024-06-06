@@ -30,8 +30,8 @@ title: Overview
 
 ## Utilities
 
-|                                         |                                               |                                   |
-|:----------------------------------------|:----------------------------------------------|----------------------------------:|
-| [Logging](utilities/logging.md)         | Controling what is written to standard output | :simple-cplusplus: :simple-julia: |
-| [Timing](utilities/timing.md)           | Measurng wall time straightforwardly          | :simple-cplusplus:                |
-| [XDIAG_PRINT](utilities/xdiag_print.md) | Macro for printing debugging information      | :simple-cplusplus:                |
+|                                       |                                               |                                   |
+|:--------------------------------------|:----------------------------------------------|----------------------------------:|
+| [Logging](utilities/logging.md)       | Controling what is written to standard output | :simple-cplusplus: :simple-julia: |
+| [Timing](utilities/timing.md)         | Measurng wall time straightforwardly          |                :simple-cplusplus: |
+| [XDIAG_SHOW](utilities/xdiag_show.md) | Macro for printing debugging information      |                :simple-cplusplus: |

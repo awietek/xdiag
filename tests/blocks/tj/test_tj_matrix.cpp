@@ -43,8 +43,8 @@ void test_tjmodel_fulleigs(BondList bonds, arma::Col<double> exact_eigs) {
   }
   std::sort(all_eigs.begin(), all_eigs.end());
   REQUIRE(all_eigs.size() == exact_eigs.size());
-  // XDIAG_PRINT(all_eigs);
-  // XDIAG_PRINT(exact_eigs);
+  // XDIAG_SHOW(all_eigs);
+  // XDIAG_SHOW(exact_eigs);
   REQUIRE(close(arma::vec(all_eigs), exact_eigs));
 }
 

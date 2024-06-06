@@ -56,7 +56,7 @@ TEST_CASE("tj_distributed_apply", "[tj_distributed]") try {
   for (int n_sites = 2; n_sites < 8; ++n_sites) {
     // Log("N: {}", n_sites);
     auto bonds = testcases::spinhalf::HB_alltoall(n_sites);
-    // XDIAG_PRINT(bonds);
+    // XDIAG_SHOW(bonds);
     for (int nup = 0; nup <= n_sites; ++nup) {
       auto block = Spinhalf(n_sites, nup);
       auto block_tJ = tJDistributed(n_sites, nup, n_sites - nup);

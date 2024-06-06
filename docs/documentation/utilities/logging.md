@@ -23,8 +23,7 @@ There are several levels of verbosity, defining how much information is shown.
 | 1     | some information     |
 | 2     | detailed information |
 
-For example, when computing a ground state energy using the [eigval0](algorithms/eigval0.md) function, we can set a higher verbosity level using
-
+For example, when computing a ground state energy using the [eigval0](../algorithms/eigval0.md) function, we can set a higher verbosity level using
 
 === "Julia"
 

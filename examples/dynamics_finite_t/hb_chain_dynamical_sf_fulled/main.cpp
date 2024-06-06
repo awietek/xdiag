@@ -42,7 +42,7 @@ int main(int argc, char** argv) {
   auto irrep = generated_irrep(perm, phase);
   
   auto block = Spinhalf(n_sites, n_up, group, irrep);
-  XDIAG_PRINT(block);
+  XDIAG_SHOW(block);
   
   // Compute eigendecomposition of Hamiltonian
   Log("Creating H");
