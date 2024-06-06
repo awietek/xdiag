@@ -83,6 +83,10 @@ make_spinhalf_basis_no_sz(int64_t n_sites, PermutationGroup const &group,
 }
 
 Spinhalf::Spinhalf(int64_t n_sites, PermutationGroup group,
+                   Representation irrep)
+    : Spinhalf(n_sites, group, irrep, 0) {}
+
+Spinhalf::Spinhalf(int64_t n_sites, PermutationGroup group,
                    Representation irrep, int64_t n_sublat)
     : n_sites_(n_sites), sz_conserved_(false), n_up_(undefined_qn),
       n_dn_(undefined_qn), sz_(undefined_qn), symmetric_(true),
@@ -141,6 +145,10 @@ make_spinhalf_basis_sz(int64_t n_sites, int64_t n_up,
   XDIAG_RETHROW(e);
   return std::shared_ptr<basis_spinhalf_variant_t>();
 }
+
+Spinhalf::Spinhalf(int64_t n_sites, int64_t n_up, PermutationGroup group,
+                   Representation irrep)
+    : Spinhalf(n_sites, n_up, group, irrep, 0) {}
 
 Spinhalf::Spinhalf(int64_t n_sites, int64_t n_up, PermutationGroup group,
                    Representation irrep, int64_t n_sublat)
