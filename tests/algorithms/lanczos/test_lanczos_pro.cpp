@@ -35,7 +35,7 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
 
     int niter = 500;
     auto res = lanczos_pro(mult, v0, conv, niter, ortho_level, 1e-7, true);
-    // XDIAG_PRINT(res.num_reorthogonalizations);
+    // XDIAG_SHOW(res.num_reorthogonalizations);
     mat V = res.V;
     double total_orthogonality = norm(V.t() * V - eye(niter, niter));
     REQUIRE(total_orthogonality < niter * ortho_level);
@@ -56,7 +56,7 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
 
     int niter = 1111;
     auto res = lanczos_pro(mult, v0, conv, niter, ortho_level, 1e-7, true);
-    // XDIAG_PRINT(res.num_reorthogonalizations);
+    // XDIAG_SHOW(res.num_reorthogonalizations);
 
     REQUIRE(res.num_iterations == N); // exact deflation
 
@@ -67,8 +67,8 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
     vec eigs;
     eig_sym(eigs, A);
     vec eigs_lcs = res.eigenvalues;
-    // XDIAG_PRINT(eigs);
-    // XDIAG_PRINT(eigs_lcs);
+    // XDIAG_SHOW(eigs);
+    // XDIAG_SHOW(eigs_lcs);
     REQUIRE(close(eigs, eigs_lcs)); // exact eigenvalue solution
 
     mat tmat = res.tmat;
@@ -91,7 +91,7 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
 
     int niter = 500;
     auto res = lanczos_pro(mult, v0, conv, niter, ortho_level, 1e-7, true);
-    // XDIAG_PRINT(res.num_reorthogonalizations);
+    // XDIAG_SHOW(res.num_reorthogonalizations);
 
     cx_mat V = res.V;
     double total_orthogonality = norm(V.t() * V - eye(niter, niter));
@@ -113,7 +113,7 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
 
     int niter = 1111;
     auto res = lanczos_pro(mult, v0, conv, niter, ortho_level, 1e-7, true);
-    // XDIAG_PRINT(res.num_reorthogonalizations);
+    // XDIAG_SHOW(res.num_reorthogonalizations);
 
     REQUIRE(res.num_iterations == N); // exact deflation
 
@@ -124,8 +124,8 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
     vec eigs;
     eig_sym(eigs, A);
     vec eigs_lcs = res.eigenvalues;
-    // XDIAG_PRINT(eigs);
-    // XDIAG_PRINT(eigs_lcs);
+    // XDIAG_SHOW(eigs);
+    // XDIAG_SHOW(eigs_lcs);
     REQUIRE(close(eigs, eigs_lcs)); // exact eigenvalue solution
 
     cx_mat tmatc(res.tmat, mat(N, N, fill::zeros));
@@ -154,7 +154,7 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
         auto block = Spinhalf(n_sites, nup, group, irrep);
 
         Log("   nup: {} k: {}", nup, k);
-        // XDIAG_PRINT(block);
+        // XDIAG_SHOW(block);
 
         auto rstate = random_state(block, false);
         auto mult = [&bonds, &block](cx_vec const &v, cx_vec &w) {
@@ -173,12 +173,12 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
         auto res =
             lanczos_pro(mult, v0, conv, n_iter, ortho_level, 1e-7, false);
 
-        // XDIAG_PRINT(res.num_reorthogonalizations);
+        // XDIAG_SHOW(res.num_reorthogonalizations);
         int n_iter2 = res.num_iterations;
 
         cx_mat V = res.V;
-        // XDIAG_PRINT(res.num_iterations);
-        // XDIAG_PRINT(cx_mat(V.t() * V ));
+        // XDIAG_SHOW(res.num_iterations);
+        // XDIAG_SHOW(cx_mat(V.t() * V ));
         double total_orthogonality = norm(V.t() * V - eye(n_iter2, n_iter2));
         if (n_iter > block.size()) {
           CHECK(total_orthogonality < 1e-6);
@@ -209,7 +209,7 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
         auto block = Spinhalf(n_sites, nup, group, irrep);
 
         Log("   nup: {} k: {}", nup, k);
-        // XDIAG_PRINT(block);
+        // XDIAG_SHOW(block);
 
         auto rstate = random_state(block, false);
         auto mult = [&bonds, &block](cx_vec const &v, cx_vec &w) {
@@ -228,7 +228,7 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
         auto res =
             lanczos_pro(mult, v0, conv, n_iter, ortho_level, 1e-7, false);
 
-        // XDIAG_PRINT(res.num_reorthogonalizations);
+        // XDIAG_SHOW(res.num_reorthogonalizations);
         int n_iter2 = res.num_iterations;
         cx_mat V = res.V;
         double total_orthogonality = norm(V.t() * V - eye(n_iter2, n_iter2));

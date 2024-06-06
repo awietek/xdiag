@@ -15,8 +15,8 @@ template <typename T> inline void print_pretty_mpi(const char *id, T X) {
 }
 
 } // namespace xdiag::utils
-#define XDIAG_PRINT(X) xdiag::utils::print_pretty_mpi(#X, X)
+#define XDIAG_SHOW(X) xdiag::utils::print_pretty_mpi(#X, X)
 
 #else
-#define XDIAG_PRINT(X) xdiag::utils::print_pretty(#X, X)
+#define XDIAG_SHOW(X) xdiag::utils::print_pretty(#X, X)
 #endif

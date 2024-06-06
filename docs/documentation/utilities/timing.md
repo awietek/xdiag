@@ -27,7 +27,7 @@ A timing (in second) between two time points can be written to output using
 timing(begin, end);
 ```
 
-This can even be accompanied by a message about what is being timed and a verbosity level (see [Logging](utilities/logging.md)) can also be set. The full call signature is
+This can even be accompanied by a message about what is being timed and a verbosity level (see [Logging](logging.md)) can also be set. The full call signature is
 
 ```c++
 timing(begin, end, message, level);

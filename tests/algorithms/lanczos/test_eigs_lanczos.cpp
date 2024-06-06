@@ -42,16 +42,16 @@ TEST_CASE("eigs_lanczos", "[lanczos]") {
       for (int num_eigenvalue = 0; num_eigenvalue < max_num_eigenvalue;
            ++num_eigenvalue) {
         auto v = res.eigenvectors.col(num_eigenvalue);
-	// XDIAG_PRINT(norm(v));
+	// XDIAG_SHOW(norm(v));
 	REQUIRE(close(norm(v), 1.0));
 
         auto Hv = v;
         apply(bondlist, v, Hv);
         double e = dot(v, Hv);
 
-	// XDIAG_PRINT(num_eigenvalue);
-	// XDIAG_PRINT(e);
-	// XDIAG_PRINT(evals_mat(num_eigenvalue));
+	// XDIAG_SHOW(num_eigenvalue);
+	// XDIAG_SHOW(e);
+	// XDIAG_SHOW(evals_mat(num_eigenvalue));
         REQUIRE(close(real(e), evals_mat(num_eigenvalue)));
         REQUIRE(close(imag(e), 0.0));
       }

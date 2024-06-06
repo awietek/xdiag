@@ -11,8 +11,8 @@ int main() try {
 Permutation p1 = {0, 2, 1, 3};
 Permutation p2 = {2, 0, 1, 3};
 
-XDIAG_PRINT(inverse(p1));
-XDIAG_PRINT(p1*p2);
+XDIAG_SHOW(inverse(p1));
+XDIAG_SHOW(p1*p2);
 // --8<-- [end:Permutation]
 }
 
@@ -24,9 +24,9 @@ Permutation p2 = {1, 2, 0};
 Permutation p3 = {2, 0, 1};
 auto C3 = PermutationGroup({p1, p2, p3});
 
-XDIAG_PRINT(C3.size());
-XDIAG_PRINT(C3.n_sites());
-XDIAG_PRINT(C3.inverse(1)); // = 2
+XDIAG_SHOW(C3.size());
+XDIAG_SHOW(C3.n_sites());
+XDIAG_SHOW(C3.inverse(1)); // = 2
 // --8<-- [end:PermutationGroup]
 }
 
@@ -36,7 +36,7 @@ XDIAG_PRINT(C3.inverse(1)); // = 2
 Representation r1 = {1, -1, 1, -1};
 Representation r2 = {1, 1i, -1, -1i};
 
-XDIAG_PRINT(r1 * r2);
+XDIAG_SHOW(r1 * r2);
 // --8<-- [end:Representation]
 }
 
@@ -48,11 +48,11 @@ int nup = 2;
 
 // without Sz conservation
 auto block = Spinhalf(N);
-XDIAG_PRINT(block);
+XDIAG_SHOW(block);
 
 // with Sz conservation
 auto block_sz = Spinhalf(N, nup);
-XDIAG_PRINT(block_sz);
+XDIAG_SHOW(block_sz);
 
 // with symmetries, without Sz
 Permutation p1 = {0, 1, 2, 3};
@@ -62,14 +62,14 @@ Permutation p4 = {3, 0, 1, 2};
 auto group = PermutationGroup({p1, p2, p3, p4});
 auto irrep = Representation({1, -1, 1, -1});
 auto block_sym = Spinhalf(N, group, irrep);
-XDIAG_PRINT(block_sym);
+XDIAG_SHOW(block_sym);
 
 // with symmetries and Sz
 auto block_sym_sz = Spinhalf(N, nup, group, irrep);
-XDIAG_PRINT(block_sym_sz);
+XDIAG_SHOW(block_sym_sz);
 
-XDIAG_PRINT(block_sym_sz.n_sites());
-XDIAG_PRINT(block_sym_sz.size());
+XDIAG_SHOW(block_sym_sz.n_sites());
+XDIAG_SHOW(block_sym_sz.size());
 // --8<-- [end:Spinhalf]
 }
 
@@ -81,7 +81,7 @@ int ndn = 1;
 
 // without permutation symmetries
 auto block = tJ(N, nup, ndn);
-XDIAG_PRINT(block);
+XDIAG_SHOW(block);
 
 // with permutation symmetries
 auto p1 = Permutation({0, 1, 2, 3});
@@ -91,10 +91,10 @@ auto p4 = Permutation({3, 0, 1, 2});
 auto group = PermutationGroup({p1, p2, p3, p4});
 auto irrep = Representation({1, -1, 1, -1});
 auto block_sym = tJ(N, nup, ndn, group, irrep);
-XDIAG_PRINT(block_sym);
+XDIAG_SHOW(block_sym);
 
-XDIAG_PRINT(block_sym.n_sites());
-XDIAG_PRINT(block_sym.size());
+XDIAG_SHOW(block_sym.n_sites());
+XDIAG_SHOW(block_sym.size());
 // --8<-- [end:tJ]
 }
 
@@ -106,11 +106,11 @@ int ndn = 1;
 
 // without number conservation
 auto block = Electron(N);
-XDIAG_PRINT(block);
+XDIAG_SHOW(block);
 
 // with number conservation
 auto block_np = Electron(N, nup, ndn);
-XDIAG_PRINT(block_np);
+XDIAG_SHOW(block_np);
 
 // with symmetries, without number conservation
 auto p1 = Permutation({0, 1, 2, 3});
@@ -120,14 +120,14 @@ auto p4 = Permutation({3, 0, 1, 2});
 auto group = PermutationGroup({p1, p2, p3, p4});
 auto irrep = Representation({1, -1, 1, -1});
 auto block_sym = Electron(N, group, irrep);
-XDIAG_PRINT(block_sym);
+XDIAG_SHOW(block_sym);
 
 // with symmetries and number conservation
 auto block_sym_np = Electron(N, nup, ndn, group, irrep);
-XDIAG_PRINT(block_sym_np);
+XDIAG_SHOW(block_sym_np);
 
-XDIAG_PRINT(block_sym_np.n_sites());
-XDIAG_PRINT(block_sym_np.size());
+XDIAG_SHOW(block_sym_np.n_sites());
+XDIAG_SHOW(block_sym_np.size());
 // --8<-- [end:Electron]
  
   // clang-format on

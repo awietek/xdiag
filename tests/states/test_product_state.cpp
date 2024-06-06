@@ -18,7 +18,7 @@ TEST_CASE("product_state", "[states]") {
       std::sample(ps.begin(), ps.end(), std::back_inserter(pss), n_sites,
                   std::mt19937(i));
       auto pstate = ProductState(pss);
-      // XDIAG_PRINT(pstate);
+      // XDIAG_SHOW(pstate);
 
       auto block = Electron(n_sites);
       auto psi = State(block, true);
@@ -93,7 +93,7 @@ TEST_CASE("product_state", "[states]") {
       std::sample(ps.begin(), ps.end(), std::back_inserter(pss), n_sites,
                   std::mt19937(i));
       auto pstate = ProductState(pss);
-      // XDIAG_PRINT(pstate);
+      // XDIAG_SHOW(pstate);
 
       int nup = 0;
       int ndn = 0;
@@ -142,7 +142,7 @@ TEST_CASE("product_state", "[states]") {
       std::sample(ps.begin(), ps.end(), std::back_inserter(pss), n_sites,
                   std::mt19937(i));
       auto pstate = ProductState(pss);
-      // XDIAG_PRINT(pstate);
+      // XDIAG_SHOW(pstate);
 
       int nup = 0;
       auto block = Spinhalf(n_sites);

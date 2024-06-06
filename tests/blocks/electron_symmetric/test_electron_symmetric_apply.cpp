@@ -22,7 +22,7 @@ void test_electron_symmetric_apply(BondList bondlist,
 
       for (auto irrep : irreps) {
         // Log("nup: {}, ndn: {}", nup, ndn);
-        // XDIAG_PRINT64_t(irrep);
+        // XDIAG_SHOW(irrep);
 
         // Create block and matrix for comparison
         // tic();
