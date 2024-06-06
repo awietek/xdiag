@@ -326,9 +326,9 @@
 
 
 <h1 id="debug-printing">Debug printing</h1>
-<p>For quick debugging in C++, XDiag features a simple macro which outputs the name and content of a variable calles <code>XDIAG_PRINT(x)</code>. For example</p>
+<p>For quick debugging in C++, XDiag features a simple macro which outputs the name and content of a variable calles <code>XDIAG_SHOW(x)</code>. For example</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">Spinhalf</span><span class="w"> </span><span class="nf">block</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span><span class="w"> </span><span class="mi">8</span><span class="p">);</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">XDIAG_PRINT</span><span class="p">(</span><span class="n">block</span><span class="p">);</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">XDIAG_SHOW</span><span class="p">(</span><span class="n">block</span><span class="p">);</span>
 </code></pre></div>
 <p>will write an output similar to</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>block:
@@ -337,7 +337,7 @@
 <a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>  dimension: 12,870
 <a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>  ID       : 0xa9127434d66b9878
 </code></pre></div>
-<p>The <code>XDIAG_PRINT(x)</code> macro can be used on any XDiag object and several other standard C++ objects as well.</p>
+<p>The <code>XDIAG_SHOW(x)</code> macro can be used on any XDiag object and several other standard C++ objects as well.</p>
 
 
 
