@@ -77,4 +77,4 @@ Creates a block object for $t-J$ type Hilbert spaces.
 	--8<-- "examples/usage_examples/main.cpp:tJ"
 	```
 
-**Source** [spinhalf.hpp](https://github.com/awietek/xdiag/blob/master/xdiag/blocks/tj/tj.hpp)
+**Source** [tj.hpp](https://github.com/awietek/xdiag/blob/master/xdiag/blocks/tj/tj.hpp)

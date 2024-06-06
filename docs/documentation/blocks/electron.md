@@ -82,4 +82,4 @@ Creates a block object for Electron (spinful fermion) type Hilbert spaces.
 	--8<-- "examples/usage_examples/main.cpp:Electron"
 	```
 
-**Source** [spinhalf.hpp](https://github.com/awietek/xdiag/blob/master/xdiag/blocks/electron/electron.hpp)
+**Source** [electron.hpp](https://github.com/awietek/xdiag/blob/master/xdiag/blocks/electron/electron.hpp)
