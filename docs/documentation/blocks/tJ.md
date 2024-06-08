@@ -2,22 +2,11 @@
 title: tJ
 ---
 
-# tJ
+Representation of a block in a  $t-J$ type Hilbert space. 
+
+**Source** [tj.hpp](https://github.com/awietek/xdiag/blob/master/xdiag/blocks/tj/tj.hpp)
 
 ## Constructors
-
-Creates a block object for $t-J$ type Hilbert spaces. 
-
-
-???+ method "Parameters"
-
-    | Name    | Description                                                                                                     |
-    |:--------|:----------------------------------------------------------------------------------------------------------------|
-    | n_sites | number of sites (integer)                                                                                       |
-    | n_up    | number of "up" electrons (integer)                                                                              |
-    | n_dn    | number of "dn" electrons (integer)                                                                              |
-    | group   | [PermutationGroup](../symmetries/permutation_group.md) defining the permutation symmetries                      |
-    | irrep   | [Representation](../symmetries/representation.md) defining the irreducible representation of the symmetry group |
 
 === "Julia"
 	```julia
@@ -32,6 +21,15 @@ Creates a block object for $t-J$ type Hilbert spaces.
     tJ(int64_t n_sites, int64_t n_up, int64_t n_dn, 
 	   PermutationGroup group, Representation irrep);
 	```
+
+
+| Name    | Description                                                                                |   |
+|:--------|:-------------------------------------------------------------------------------------------|---|
+| n_sites | number of sites (integer)                                                                  |   |
+| n_up    | number of "up" electrons (integer)                                                         |   |
+| n_dn    | number of "dn" electrons (integer)                                                         |   |
+| group   | [PermutationGroup](../symmetries/permutation_group.md) defining the permutation symmetries |   |
+| irrep   | Irreducible [Representation](../symmetries/representation.md)  of the symmetry group       |   |
 
 
 ## Methods
@@ -63,6 +61,21 @@ Creates a block object for $t-J$ type Hilbert spaces.
 		```c++
 		int64_t size() const;
 		```
+		
+??? method "isreal"
+	Returns whether the block can be used with real arithmetic. 
+	Complex arithmetic is needed when a
+	[Representation](../symmetries/representation.md) is genuinely complex.
+
+	=== "Julia"
+		```julia
+	    isreal(block::tJ; precision::Real=1e-12)
+		```
+
+	=== "C++"	
+		```c++
+		int64_t isreal(double precision = 1e-12) const;
+		```
 
 
 ## Usage Example
@@ -77,4 +90,3 @@ Creates a block object for $t-J$ type Hilbert spaces.
 	--8<-- "examples/usage_examples/main.cpp:tJ"
 	```
 
-**Source** [tj.hpp](https://github.com/awietek/xdiag/blob/master/xdiag/blocks/tj/tj.hpp)

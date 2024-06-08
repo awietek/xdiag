@@ -129,6 +129,67 @@ XDIAG_SHOW(block_sym_np);
 XDIAG_SHOW(block_sym_np.n_sites());
 XDIAG_SHOW(block_sym_np.size());
 // --8<-- [end:Electron]
+
+{
+// --8<-- [start:matrix]
+// Creates matrix H_{k=2} in Eq (18.23) of https://link.springer.com/content/pdf/10.1007/978-3-540-74686-7_18.pdf
+int N = 4;
+int nup = 3;
+int ndn = 2;
+
+// Define a Hubbard chain model
+auto bonds = BondList();
+for (int i=0; i< N; ++i){
+  bonds += Bond("HOP", "T", {i, (i+1) % N});
+}
+bonds["T"] = 1.0;
+bonds["U"] = 5.0;
+
+// Create the a permutation group
+auto p1 = Permutation({0, 1, 2, 3});
+auto p2 = Permutation({1, 2, 3, 0});
+auto p3 = Permutation({2, 3, 0, 1});
+auto p4 = Permutation({3, 0, 1, 2});
+auto group = PermutationGroup({p1, p2, p3, p4});
+auto irrep = Representation({1, -1, 1, -1});
+auto block = Electron(N, nup, ndn, group, irrep);
+
+auto H = matrix(bonds, block);
+H.print();
+// --8<-- [end:matrix]
+}
+
+{
+// --8<-- [start:eigval0]
+int N = 8;
+int nup = N / 2;
+auto block = Spinhalf(N, nup);
+    
+// Define the nearest-neighbor Heisenberg model
+auto bonds = BondList();
+for (int i=0; i<N; ++i) {
+  bonds += Bond("HB", "J", {i, (i+1) / N});
+}
+bonds["J"] = 1.0;
+double e0 = eigval0(bonds, block);
+// --8<-- [end:eigval0]
+}
+
+{
+// --8<-- [start:eig0]
+int N = 8;
+int nup = N / 2;
+auto block = Spinhalf(N, nup);
+    
+// Define the nearest-neighbor Heisenberg model
+auto bonds = BondList();
+for (int i=0; i<N; ++i) {
+  bonds += Bond("HB", "J", {i, (i+1) / N});
+}
+bonds["J"] = 1.0;
+auto [e0, gs] = eig0(bonds, block);
+// --8<-- [end:eig0]
+}
  
   // clang-format on
 
