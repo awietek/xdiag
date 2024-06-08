@@ -33,11 +33,11 @@ Creates a Representation from a vector of complex numbers
 
 
 ??? method "isreal"
-	Returns the whether or not the Representation is real.
+	Returns the whether or not the Representation is real, I.E. the characters are real numbers and do not have an imaginary part.
 
 	=== "Julia"
 		```julia
-		isreal(irrep::Representation; precision::Float64=1e-12)
+		isreal(irrep::Representation; precision::Real=1e-12)
 		```
 
 	=== "C++"	

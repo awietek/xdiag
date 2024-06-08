@@ -12,6 +12,10 @@ title: Overview
 | [eigval0](algorithms/eigval0.md) | Computes the lowest lying eigenvalue of an operator                 | :simple-cplusplus: :simple-julia: |
 | [eig0](algorithms/eig0.md)       | Computes the lowest lying eigenvalue and eigenvector of an operator | :simple-cplusplus: :simple-julia: |
 
+## Algebra
+|                             |                                                                  |                                   |
+|:----------------------------|:-----------------------------------------------------------------|----------------------------------:|
+| [matrix](algebra/matrix.md) | Creates the full matrix representation of an operator on a block | :simple-cplusplus: :simple-julia: |
 
 ## Blocks
 |                                |                                            |                                   |

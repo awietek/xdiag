@@ -4,14 +4,14 @@ using namespace xdiag;
 
 int main() try {
   
-  int n_sites = 16;
-  int nup = n_sites / 2;
-  Spinhalf block(n_sites, nup);
+  int N = 16;
+  int nup = N / 2;
+  Spinhalf block(N, nup);
 
   // Define the nearest-neighbor Heisenberg model
   BondList bonds;
-  for (int i = 0; i < n_sites; ++i) {
-    bonds += Bond("HB", "J", {i, (i + 1) % n_sites});
+  for (int i = 0; i < N; ++i) {
+    bonds += Bond("HB", "J", {i, (i + 1) % N});
   }
   bonds["J"] = 1.0;
 

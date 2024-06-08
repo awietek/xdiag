@@ -1,14 +1,14 @@
 using XDiag
 
 let 
-    n_sites = 16;
-    nup = n_sites ÷ 2;
-    block = Spinhalf(n_sites, nup);
+    N = 16;
+    nup = N ÷ 2;
+    block = Spinhalf(N, nup);
     
     # Define the nearest-neighbor Heisenberg model
     bonds = BondList()
-    for i in 1:n_sites
-        bonds += Bond("HB", "J", [i-1, i % n_sites])
+    for i in 1:N
+        bonds += Bond("HB", "J", [i-1, i % N])
     end
     bonds["J"] = 1.0;
 

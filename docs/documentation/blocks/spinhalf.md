@@ -2,22 +2,12 @@
 title: Spinhalf
 ---
 
-# Spinhalf
+Representation of a block in a spin $S=1/2$  Hilbert space. 
+
+**Source** [spinhalf.hpp](https://github.com/awietek/xdiag/blob/master/xdiag/blocks/spinhalf/spinhalf.hpp)
+
 
 ## Constructors
-
-Creates a block object for spin $S=1/2$ type Hilbert spaces. 
-
-
-???+ method "Parameters"
-
-    | Name    | Description                                                                                                     |
-    |:--------|:----------------------------------------------------------------------------------------------------------------|
-    | n_sites | number of sites (integer)                                                                                       |
-    | n_up    | number of "up" spin setting spin (integer)                                                                      |
-    | group   | [PermutationGroup](../symmetries/permutation_group.md) defining the permutation symmetries                      |
-    | irrep   | [Representation](../symmetries/representation.md) defining the irreducible representation of the symmetry group |
-
 === "Julia"
 	```julia
 	Spinhalf(n_sites::Integer)
@@ -36,6 +26,13 @@ Creates a block object for spin $S=1/2$ type Hilbert spaces.
     Spinhalf(int64_t n_sites, int64_t n_up, PermutationGroup group,
              Representation irrep);
 	```
+	
+| Name    | Description                                                                                |   |
+|:--------|:-------------------------------------------------------------------------------------------|---|
+| n_sites | number of sites (integer)                                                                  |   |
+| n_up    | number of "up" spin setting spin (integer)                                                 |   |
+| group   | [PermutationGroup](../symmetries/permutation_group.md) defining the permutation symmetries |   |
+| irrep   | Irreducible [Representation](../symmetries/representation.md)  of the symmetry group       |   |
 
 
 ## Methods
@@ -68,6 +65,20 @@ Creates a block object for spin $S=1/2$ type Hilbert spaces.
 		int64_t size() const;
 		```
 
+??? method "isreal"
+	Returns whether the block can be used with real arithmetic. 
+	Complex arithmetic is needed when a
+	[Representation](../symmetries/representation.md) is genuinely complex.
+
+	=== "Julia"
+		```julia
+	    isreal(block::Spinhalf; precision::Real=1e-12)
+		```
+
+	=== "C++"	
+		```c++
+		int64_t isreal(double precision = 1e-12) const;
+		```
 
 ## Usage Example
 
@@ -81,4 +92,3 @@ Creates a block object for spin $S=1/2$ type Hilbert spaces.
 	--8<-- "examples/usage_examples/main.cpp:Spinhalf"
 	```
 
-**Source** [spinhalf.hpp](https://github.com/awietek/xdiag/blob/master/xdiag/blocks/spinhalf/spinhalf.hpp)

@@ -113,3 +113,67 @@ block_sym_np = Electron(N, nup, ndn, group, irrep)
 @show n_sites(block_sym_np)
 @show size(block_sym_np)
 # --8<-- [end:Electron]
+
+
+# --8<-- [start:matrix]
+let
+    # Creates matrix H_{k=2} in Eq (18.23) of https://link.springer.com/content/pdf/10.1007/978-3-540-74686-7_18.pdf
+    N = 4
+    nup = 3
+    ndn = 2
+
+    # Define a Hubbard chain model
+    bonds = BondList()
+    for i in 1:N
+        bonds += Bond("HOP", "T", [i-1, i % N])
+    end
+    bonds["T"] = 1.0;
+    bonds["U"] = 5.0;
+
+    # Create the a permutation group
+    p1 = Permutation([0, 1, 2, 3])
+    p2 = Permutation([1, 2, 3, 0])
+    p3 = Permutation([2, 3, 0, 1])
+    p4 = Permutation([3, 0, 1, 2])
+    group = PermutationGroup([p1, p2, p3, p4])
+    irrep = Representation([1, -1, 1, -1])
+    block = Electron(N, nup, ndn, group, irrep)
+
+    H = matrix(bonds, block)
+    display(H)
+end
+# --8<-- [end:matrix]
+
+# --8<-- [start:eigval0]
+let 
+    N = 8;
+    nup = N ÷ 2;
+    block = Spinhalf(N, nup);
+    
+    # Define the nearest-neighbor Heisenberg model
+    bonds = BondList()
+    for i in 1:N
+        bonds += Bond("HB", "J", [i-1, i % N])
+    end
+    bonds["J"] = 1.0;
+
+    e0 = eigval0(bonds, block);
+end
+# --8<-- [end:eigval0]
+
+# --8<-- [start:eig0]
+let 
+    N = 8;
+    nup = N ÷ 2;
+    block = Spinhalf(N, nup);
+    
+    # Define the nearest-neighbor Heisenberg model
+    bonds = BondList()
+    for i in 1:N
+        bonds += Bond("HB", "J", [i-1, i % N])
+    end
+    bonds["J"] = 1.0;
+
+    e0, gs = eig0(bonds, block);
+end
+# --8<-- [end:eig0]
