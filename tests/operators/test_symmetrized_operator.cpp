@@ -5,8 +5,8 @@
 #include "../blocks/electron/testcases_electron.hpp"
 #include <xdiag/algebra/algebra.hpp>
 #include <xdiag/algebra/apply.hpp>
-#include <xdiag/algorithms/sparse_diag.hpp>
 #include <xdiag/algorithms/lanczos/eigs_lanczos.hpp>
+#include <xdiag/algorithms/sparse_diag.hpp>
 #include <xdiag/blocks/electron/electron.hpp>
 #include <xdiag/operators/symmetrized_operator.hpp>
 #include <xdiag/utils/close.hpp>
@@ -37,16 +37,16 @@ TEST_CASE("symmetrized_operator", "[symmetries]") try {
         }
         auto [e0_nosym, v0_nosym] = eig0(bondlist, block_nosym);
 
-        // auto res = eigs_lanczos(bondlist, block_nosym);
-	// XDIAG_SHOW(res.criterion);
+        auto res = eigs_lanczos(bondlist, block_nosym);
+        // XDIAG_SHOW(res.eigenvalues);
+        // XDIAG_SHOW(res.criterion);
 
-	{
+        {
           auto &v = v0_nosym;
-          auto Hv = v;
-          apply(bondlist, v, Hv);
-          auto e = dot(v, Hv);
-	  // XDIAG_SHOW(norm(v));
-	  // XDIAG_SHOW(block_nosym);
+          // Log("v real {}", v.isreal());
+          auto e = inner(bondlist, v);
+          // XDIAG_SHOW(norm(v));
+          // XDIAG_SHOW(block_nosym);
           // XDIAG_SHOW(e);
           // XDIAG_SHOW(e0_nosym);
           REQUIRE(close(real(e), e0_nosym));
@@ -123,6 +123,6 @@ TEST_CASE("symmetrized_operator", "[symmetries]") try {
     }
   }
   Log("done");
- } catch (xdiag::Error e) {
+} catch (xdiag::Error e) {
   xdiag::error_trace(e);
 }

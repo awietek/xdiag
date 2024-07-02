@@ -27,6 +27,7 @@ void test_electron_symmetric_apply(BondList bondlist,
         // Create block and matrix for comparison
         // tic();
         auto block = Electron(n_sites, nup, ndn, space_group, irrep);
+        // Log("block.isreal {}", isreal(block));
         // toc("create block");
 
         if (block.size() > 0) {
