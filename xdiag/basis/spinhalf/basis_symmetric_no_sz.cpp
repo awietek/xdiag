@@ -20,7 +20,6 @@ BasisSymmetricNoSz<bit_t>::BasisSymmetricNoSz(int64_t n_sites,
     throw(std::logic_error("PermutationGroup and Representation do not have "
                            "same number of elements"));
   }
-
   std::tie(reps_, index_for_rep_, syms_, sym_limits_for_rep_, norms_) =
       symmetries::representatives_indices_symmetries_limits_norms<bit_t>(
           subsets_basis_, group_action_, irrep);

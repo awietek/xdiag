@@ -4,9 +4,9 @@
 
 #include "../../blocks/electron/testcases_electron.hpp"
 
-#include <xdiag/algorithms/lanczos/eigs_lanczos.hpp>
-#include <xdiag/algebra/apply.hpp>
 #include <xdiag/algebra/algebra.hpp>
+#include <xdiag/algebra/apply.hpp>
+#include <xdiag/algorithms/lanczos/eigs_lanczos.hpp>
 
 #include <xdiag/blocks/electron/electron_matrix.hpp>
 #include <xdiag/utils/close.hpp>
@@ -42,16 +42,16 @@ TEST_CASE("eigs_lanczos", "[lanczos]") {
       for (int num_eigenvalue = 0; num_eigenvalue < max_num_eigenvalue;
            ++num_eigenvalue) {
         auto v = res.eigenvectors.col(num_eigenvalue);
-	// XDIAG_SHOW(norm(v));
-	REQUIRE(close(norm(v), 1.0));
+        // XDIAG_SHOW(norm(v));
+        REQUIRE(close(norm(v), 1.0));
 
         auto Hv = v;
         apply(bondlist, v, Hv);
         double e = dot(v, Hv);
 
-	// XDIAG_SHOW(num_eigenvalue);
-	// XDIAG_SHOW(e);
-	// XDIAG_SHOW(evals_mat(num_eigenvalue));
+        // XDIAG_SHOW(num_eigenvalue);
+        // XDIAG_SHOW(e);
+        // XDIAG_SHOW(evals_mat(num_eigenvalue));
         REQUIRE(close(real(e), evals_mat(num_eigenvalue)));
         REQUIRE(close(imag(e), 0.0));
       }
@@ -72,22 +72,21 @@ TEST_CASE("eigs_lanczos", "[lanczos]") {
 
       // Compute evec with Lanczos
       try {
-      auto res =
-          eigs_lanczos(bondlist, block, max_num_eigenvalue, 1e-12, 1000, true);
+        auto res = eigs_lanczos(bondlist, block, max_num_eigenvalue, 1e-12,
+                                1000, true);
 
-      // Compute energy of eigenvector
-      for (int num_eigenvalue = 0; num_eigenvalue < max_num_eigenvalue;
-           ++num_eigenvalue) {
-        auto v = res.eigenvectors.col(num_eigenvalue);
-        REQUIRE(close(norm(v), 1.0));
-        auto Hv = v;
-        apply(bondlist, v, Hv);
-        auto e = dotC(v, Hv);
-        REQUIRE(close(real(e), evals_mat(num_eigenvalue)));
-        REQUIRE(close(imag(e), 0.0));
-
-      }
-      } catch(Error e){
+        // Compute energy of eigenvector
+        for (int num_eigenvalue = 0; num_eigenvalue < max_num_eigenvalue;
+             ++num_eigenvalue) {
+          auto v = res.eigenvectors.col(num_eigenvalue);
+          REQUIRE(close(norm(v), 1.0));
+          auto Hv = v;
+          apply(bondlist, v, Hv);
+          auto e = dotC(v, Hv);
+          REQUIRE(close(real(e), evals_mat(num_eigenvalue)));
+          REQUIRE(close(imag(e), 0.0));
+        }
+      } catch (Error e) {
         error_trace(e);
       }
     }

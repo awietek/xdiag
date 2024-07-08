@@ -4,8 +4,8 @@
 #include <utility>
 #include <vector>
 
-#include <xdiag/extern/gsl/span>
 #include <xdiag/common.hpp>
+#include <xdiag/extern/gsl/span>
 #include <xdiag/symmetries/operations/group_action_operations.hpp>
 #include <xdiag/symmetries/operations/symmetry_operations.hpp>
 #include <xdiag/utils/logger.hpp>
@@ -20,29 +20,47 @@ inline std::tuple<
     std::vector<std::pair<span_size_t, span_size_t>>, std::vector<double>>
 representatives_indices_symmetries_limits_norms(
     StatesIndexing &&states_indexing, GroupAction &&group_action,
-    Representation const &irrep) {
+    Representation const &irrep) try {
   int64_t size = states_indexing.size();
-  std::vector<int64_t> idces(size, invalid_index);
+
+  std::vector<int64_t> idces;
+  try {
+    idces.resize(size, invalid_index);
+  } catch (...) {
+    XDIAG_THROW("Cannot allocate memory for index array");
+  }
 
   // Compute all representatives
   std::vector<bit_t> reps;
   std::vector<double> norms;
-  for (auto [state, idx] : states_indexing.states_indices()) {
-    if (is_representative(state, group_action)) {
-      double nrm = symmetries::norm(state, group_action, irrep);
-      if (std::abs(nrm) > 1e-6) {
-        idces[idx] = reps.size();
-        reps.push_back(state);
-        norms.push_back(nrm);
+
+  try {
+    for (auto [state, idx] : states_indexing.states_indices()) {
+      if (is_representative(state, group_action)) {
+        double nrm = symmetries::norm(state, group_action, irrep);
+        if (std::abs(nrm) > 1e-6) {
+          idces[idx] = reps.size();
+          reps.push_back(state);
+          norms.push_back(nrm);
+        }
       }
     }
+    reps.shrink_to_fit();
+    norms.shrink_to_fit();
+  } catch (...) {
+    XDIAG_THROW("Unable to compute idces or norms, likely out-of-memory");
   }
-  reps.shrink_to_fit();
-  norms.shrink_to_fit();
+
   int64_t n_reps = reps.size();
 
   // Determine the number of syms yielding the representative for each state
-  std::vector<int64_t> n_syms_for_state(size, 0);
+  std::vector<int64_t> n_syms_for_state;
+  try {
+    n_syms_for_state.resize(size, 0);
+  } catch (...) {
+    XDIAG_THROW("Cannot allocate memory for n_syms_for_state array");
+  }
+
   for (int64_t rep_idx = 0; rep_idx < n_reps; ++rep_idx) {
     bit_t rep = reps[rep_idx];
 
@@ -55,13 +73,23 @@ representatives_indices_symmetries_limits_norms(
   }
 
   // compute size and allocate syms array
-  int64_t n_syms =
-      std::accumulate(n_syms_for_state.begin(), n_syms_for_state.end(), 0);
-  std::vector<int64_t> syms(n_syms, 0);
+  int64_t n_syms = std::accumulate(n_syms_for_state.begin(),
+                                   n_syms_for_state.end(), (int64_t)0);
+
+  std::vector<int64_t> syms;
+  try {
+    syms.resize(n_syms, 0);
+  } catch (...) {
+    XDIAG_THROW("Cannot allocate memory for symmetry array");
+  }
 
   // compute the sym offsets
-  std::vector<int64_t> n_syms_for_state_offset(size, 0);
-
+  std::vector<int64_t> n_syms_for_state_offset;
+  try {
+    n_syms_for_state_offset.resize(size, 0);
+  } catch (...) {
+    XDIAG_THROW("Cannot allocate memory for n_syms_for_state_offset array");
+  }
   // std::exclusive_scan(n_syms_for_state.begin(), n_syms_for_state.end(),
   //                     n_syms_for_state_offset.begin(), 0);
 
@@ -69,7 +97,13 @@ representatives_indices_symmetries_limits_norms(
                    n_syms_for_state_offset.begin() + 1);
 
   // set the sym_limits
-  std::vector<std::pair<span_size_t, span_size_t>> sym_limits(size);
+  std::vector<std::pair<span_size_t, span_size_t>> sym_limits;
+  try {
+    sym_limits.resize(size);
+  } catch (...) {
+    XDIAG_THROW("Cannot allocate memory for symmetry limits array");
+  }
+
   for (int64_t idx = 0; idx < size; ++idx) {
     sym_limits[idx] = {n_syms_for_state_offset[idx], n_syms_for_state[idx]};
   }
@@ -93,6 +127,11 @@ representatives_indices_symmetries_limits_norms(
   }
 
   return {reps, idces, syms, sym_limits, norms};
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+  return std::tuple<
+      std::vector<bit_t>, std::vector<int64_t>, std::vector<int64_t>,
+      std::vector<std::pair<span_size_t, span_size_t>>, std::vector<double>>();
 }
 
 template <typename bit_t, class StatesIndexing, class GroupAction>
@@ -100,13 +139,18 @@ inline std::tuple<std::vector<bit_t>, std::vector<int64_t>,
                   std::vector<int64_t>,
                   std::vector<std::pair<span_size_t, span_size_t>>>
 representatives_indices_symmetries_limits(StatesIndexing &&states_indexing,
-                                          GroupAction &&group_action) {
+                                          GroupAction &&group_action) try {
   auto irrep = trivial_representation(group_action.n_symmetries());
   auto [reps, idces, syms, sym_limits, norms] =
       representatives_indices_symmetries_limits_norms<bit_t>(
           states_indexing, group_action, irrep);
   (void)norms;
   return {reps, idces, syms, sym_limits};
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+  return std::tuple<std::vector<bit_t>, std::vector<int64_t>,
+                    std::vector<int64_t>,
+                    std::vector<std::pair<span_size_t, span_size_t>>>();
 }
 
 template <typename bit_t, class States, class GroupAction>
@@ -116,7 +160,7 @@ inline std::tuple<std::vector<bit_t>, std::vector<double>,
 electron_dns_norms_limits_offset_size(std::vector<bit_t> const &reps_up,
                                       States &&states_dns,
                                       GroupAction &&group_action,
-                                      Representation const &irrep) {
+                                      Representation const &irrep) try {
 
   std::vector<bit_t> dns_storage;
   std::vector<double> norms_storage;
@@ -164,5 +208,10 @@ electron_dns_norms_limits_offset_size(std::vector<bit_t> const &reps_up,
   }
 
   return {dns_storage, norms_storage, dns_limits, ups_offset, size};
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+  return std::tuple<std::vector<bit_t>, std::vector<double>,
+                    std::vector<std::pair<span_size_t, span_size_t>>,
+                    std::vector<int64_t>, int64_t>();
 }
 } // namespace xdiag::symmetries
