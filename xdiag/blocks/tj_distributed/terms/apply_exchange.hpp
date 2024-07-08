@@ -13,7 +13,7 @@ namespace xdiag::tj_distributed {
 
 template <typename bit_t, typename coeff_t, class Basis>
 void apply_exchange(Bond const &bond, Basis &&basis, const coeff_t *vec_in,
-                    coeff_t *vec_out) try {
+                    coeff_t *vec_out) {
   assert(bond.coupling_defined());
   assert(bond.type_defined());
   assert(bond.size() == 2);
@@ -144,9 +144,6 @@ void apply_exchange(Bond const &bond, Basis &&basis, const coeff_t *vec_in,
     }
 
   } // loop over processes
-
-} catch (...) {
-  XDiagRethrow("Unable to apply Exchange term for \"tJDistributed\" block");
 }
 
 } // namespace xdiag::tj_distributed

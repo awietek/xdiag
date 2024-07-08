@@ -11,7 +11,7 @@ namespace xdiag::tj_distributed {
 
 template <typename bit_t, typename coeff_t, class Basis>
 void apply_hopping(Bond const &bond, Basis &&basis, const coeff_t *vec_in,
-                   coeff_t *vec_out) try {
+                   coeff_t *vec_out) {
   assert(bond.coupling_defined());
   assert(bond.type_defined());
   assert(bond.size() == 2);
@@ -67,12 +67,7 @@ void apply_hopping(Bond const &bond, Basis &&basis, const coeff_t *vec_in,
     tj_distributed::generic_term_dns<bit_t, coeff_t, false>(
         basis, basis, non_zero_term_ups, non_zero_term_dns, term_action, vec_in,
         vec_out);
-  } else {
-    XDiagThrow(std::runtime_error,
-               std::string("Invalid type given to apply_hopping: ") + type)
   }
-} catch (...) {
-  XDiagRethrow("Unable to apply hopping term for \"tJDistributed\" block");
 }
 
 } // namespace xdiag::tj_distributed

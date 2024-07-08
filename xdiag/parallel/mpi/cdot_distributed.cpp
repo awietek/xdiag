@@ -15,9 +15,8 @@ coeff_t cdot_distributed(arma::Col<coeff_t> const &v,
   }
   uint64_t size = v.n_rows;
   return mpi::stable_dot_product(size, v.memptr(), w.memptr());
-} catch (...) {
-  XDiagRethrow("Error computing distributed dot product");
-  return 0.;
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 template double cdot_distributed<double>(arma::Col<double> const &v,
@@ -25,8 +24,11 @@ template double cdot_distributed<double>(arma::Col<double> const &v,
 template complex cdot_distributed<complex>(arma::Col<complex> const &v,
                                            arma::Col<complex> const &w);
 
-template <class coeff_t> double norm_distributed(arma::Col<coeff_t> const &v) {
+template <class coeff_t>
+double norm_distributed(arma::Col<coeff_t> const &v) try {
   return std::real(std::sqrt(cdot_distributed(v, v)));
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 template double norm_distributed<double>(arma::Col<double> const &v);

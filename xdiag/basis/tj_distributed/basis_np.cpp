@@ -14,11 +14,11 @@ BasisNp<bit_t>::BasisNp(int64_t n_sites, int64_t n_up, int64_t n_dn)
   using namespace combinatorics;
   try {
     if (n_sites < 0) {
-      XDiagThrow(std::invalid_argument, "n_sites < 0");
+      XDIAG_THROW("n_sites < 0");
     } else if ((n_up < 0) || (n_dn < 0)) {
-      XDiagThrow(std::invalid_argument, "nup < 0 or ndn < 0");
+      XDIAG_THROW("nup < 0 or ndn < 0");
     } else if ((n_up + n_dn) > n_sites) {
-      XDiagThrow(std::invalid_argument, "nup + ndn > n_sites");
+      XDIAG_THROW("nup + ndn > n_sites");
     }
 
     dim_ = binomial(n_sites, n_up) * binomial(n_sites - n_up, n_dn);
@@ -220,9 +220,8 @@ BasisNp<bit_t>::BasisNp(int64_t n_sites, int64_t n_up, int64_t n_dn)
     mpi::Allreduce(&size_, &size_min_f, 1, MPI_MIN, MPI_COMM_WORLD);
     mpi::Allreduce(&size_transpose_, &size_min_r, 1, MPI_MIN, MPI_COMM_WORLD);
     size_min_ = std::min(size_min_f, size_min_r);
-  } catch (...) {
-    XDiagRethrow("Unable to create BasisNp (particle number conserving) for "
-                 "\"tJDistributed\" block");
+  } catch (Error const &e) {
+    XDIAG_RETHROW(e);
   }
 }
 template <typename bit_t> int64_t BasisNp<bit_t>::n_sites() const {
@@ -285,7 +284,8 @@ gsl::span<bit_t> BasisNp<bit_t>::my_ups_for_dns(int64_t idx_dns) const {
 
 template <typename bit_t>
 template <typename coeff_t>
-void BasisNp<bit_t>::transpose(const coeff_t *in_vec, coeff_t *out_vec) const {
+void BasisNp<bit_t>::transpose(const coeff_t *in_vec, coeff_t *out_vec) const
+    try {
   // transforms a vector in up/dn order to dn/up order
   // result of transpose is stored in send_buffer
 
@@ -321,6 +321,8 @@ void BasisNp<bit_t>::transpose(const coeff_t *in_vec, coeff_t *out_vec) const {
     }
   }
   mpi::buffer.clean_recv();
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 template void BasisNp<uint16_t>::transpose(const double *, double *) const;
@@ -332,8 +334,8 @@ template void BasisNp<uint64_t>::transpose(const complex *, complex *) const;
 
 template <typename bit_t>
 template <typename coeff_t>
-void BasisNp<bit_t>::transpose_r(coeff_t const *in_vec,
-                                 coeff_t *out_vec) const {
+void BasisNp<bit_t>::transpose_r(coeff_t const *in_vec, coeff_t *out_vec) const
+    try {
   // transforms a vector in up/dn order to dn/up order
   // result of transpose is stored in send_buffer
   auto comm = transpose_communicator_r_;
@@ -368,6 +370,8 @@ void BasisNp<bit_t>::transpose_r(coeff_t const *in_vec,
   }
 
   mpi::buffer.clean_recv();
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 template void BasisNp<uint16_t>::transpose_r(const double *, double *) const;

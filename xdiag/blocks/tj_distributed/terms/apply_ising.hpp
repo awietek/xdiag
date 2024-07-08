@@ -1,15 +1,14 @@
 #pragma once
 
+#include <xdiag/blocks/tj_distributed/terms/generic_term_diag.hpp>
 #include <xdiag/common.hpp>
 #include <xdiag/operators/bond.hpp>
-#include <xdiag/blocks/tj_distributed/terms/generic_term_diag.hpp>
 
 namespace xdiag::tj_distributed {
 
 template <typename bit_t, typename coeff_t, class Basis>
-void apply_ising(Bond const &bond, Basis &&basis,
-                 const coeff_t* vec_in,
-                 coeff_t * vec_out) try {
+void apply_ising(Bond const &bond, Basis &&basis, const coeff_t *vec_in,
+                 coeff_t *vec_out) {
   assert(bond.coupling_defined());
   assert(bond.type_defined());
   assert(bond.size() == 2);
@@ -51,8 +50,6 @@ void apply_ising(Bond const &bond, Basis &&basis,
 
   tj_distributed::generic_term_diag<bit_t, coeff_t>(basis, term_action, vec_in,
                                                     vec_out);
-} catch (...) {
-  XDiagRethrow("Unable to apply Ising term for \"tJDistributed\" block");
 }
 
 } // namespace xdiag::tj_distributed

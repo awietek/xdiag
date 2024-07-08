@@ -25,8 +25,8 @@ public:
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     if (rank == 0)
       std::cout << fmt::format(format, args...) << "\n";
-  } catch (...) {
-    XDiagRethrow("Unable to print output using LoggerMPI");
+  } catch (Error const &e) {
+    XDIAG_RETHROW(e);
   }
 
   template <typename... Args>
@@ -35,8 +35,8 @@ public:
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     if (rank == 0)
       std::cout << fmt::format(format, args...) << "\n" << std::flush;
-  } catch (...) {
-    XDiagRethrow("Unable to print output using LoggerMPI");
+  } catch (Error const &e) {
+    XDIAG_RETHROW(e);
   }
 
   template <typename... Args>
@@ -45,8 +45,8 @@ public:
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     if (rank == 0)
       std::cerr << fmt::format(format, args...) << "\n" << std::flush;
-  } catch (...) {
-    XDiagRethrow("Unable to print output using LoggerMPI");
+  } catch (Error const &e) {
+    XDIAG_RETHROW(e);
   }
 
   template <typename... Args>
@@ -56,8 +56,8 @@ public:
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     if ((rank == 0) && (level <= verbosity_))
       std::cout << fmt::format(format, args...) << "\n";
-  } catch (...) {
-    XDiagRethrow("Unable to print output using LoggerMPI");
+  } catch (Error const &e) {
+    XDIAG_RETHROW(e);
   }
 
   template <typename... Args>
@@ -67,8 +67,8 @@ public:
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     if ((rank == 0) && (level <= verbosity_))
       std::cout << fmt::format(format, args...) << "\n" << std::flush;
-  } catch (...) {
-    XDiagRethrow("Unable to print output using LoggerMPI");
+  } catch (Error const &e) {
+    XDIAG_RETHROW(e);
   }
 
   template <typename... Args>
@@ -78,23 +78,23 @@ public:
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     if ((rank == 0) && (level <= verbosity_))
       std::cerr << fmt::format(format, args...) << "\n" << std::flush;
-  } catch (...) {
-    XDiagRethrow("Unable to print output using LoggerMPI");
+  } catch (Error const &e) {
+    XDIAG_RETHROW(e);
   }
 
   template <typename... Args>
   inline void operator()(const std::string &format, const Args &...args) try {
     out(format, args...);
-  } catch (...) {
-    XDiagRethrow("Unable to print output using LoggerMPI");
+  } catch (Error const &e) {
+    XDIAG_RETHROW(e);
   }
 
   template <typename... Args>
   inline void operator()(int level, const std::string &format,
                          const Args &...args) try {
     out(level, format, args...);
-  } catch (...) {
-    XDiagRethrow("Unable to print output using LoggerMPI");
+  } catch (Error const &e) {
+    XDIAG_RETHROW(e);
   }
 
 private:
@@ -122,8 +122,8 @@ public:
       }
       MPI_Barrier(MPI_COMM_WORLD);
     }
-  } catch (...) {
-    XDiagRethrow("Unable to print output using LoggerMPI");
+  } catch (Error const &e) {
+    XDIAG_RETHROW(e);
   }
 
   template <typename... Args>
@@ -139,8 +139,8 @@ public:
       }
       MPI_Barrier(MPI_COMM_WORLD);
     }
-  } catch (...) {
-    XDiagRethrow("Unable to print output using LoggerMPI");
+  } catch (Error const &e) {
+    XDIAG_RETHROW(e);
   }
 
   template <typename... Args>
@@ -156,8 +156,8 @@ public:
       }
       MPI_Barrier(MPI_COMM_WORLD);
     }
-  } catch (...) {
-    XDiagRethrow("Unable to print output using LoggerMPI");
+  } catch (Error const &e) {
+    XDIAG_RETHROW(e);
   }
 
   template <typename... Args>
@@ -173,8 +173,8 @@ public:
       }
       MPI_Barrier(MPI_COMM_WORLD);
     }
-  } catch (...) {
-    XDiagRethrow("Unable to print output using LoggerMPI");
+  } catch (Error const &e) {
+    XDIAG_RETHROW(e);
   }
 
   template <typename... Args>
@@ -191,8 +191,8 @@ public:
       }
       MPI_Barrier(MPI_COMM_WORLD);
     }
-  } catch (...) {
-    XDiagRethrow("Unable to print output using LoggerMPI");
+  } catch (Error const &e) {
+    XDIAG_RETHROW(e);
   }
 
   template <typename... Args>
@@ -209,23 +209,23 @@ public:
       }
       MPI_Barrier(MPI_COMM_WORLD);
     }
-  } catch (...) {
-    XDiagRethrow("Unable to print output using LoggerMPI");
+  } catch (Error const &e) {
+    XDIAG_RETHROW(e);
   }
 
   template <typename... Args>
   inline void operator()(const std::string &format, const Args &...args) try {
     out(format, args...);
-  } catch (...) {
-    XDiagRethrow("Unable to print output using LoggerMPI");
+  } catch (Error const &e) {
+    XDIAG_RETHROW(e);
   }
 
   template <typename... Args>
   inline void operator()(int level, const std::string &format,
                          const Args &...args) try {
     out(level, format, args...);
-  } catch (...) {
-    XDiagRethrow("Unable to print output using LoggerMPI");
+  } catch (Error const &e) {
+    XDIAG_RETHROW(e);
   }
 
 private:

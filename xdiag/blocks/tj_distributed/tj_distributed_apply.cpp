@@ -14,8 +14,8 @@ void apply(BondList const &bonds, tJDistributed const &block_in,
   BondList bondsc = tj::compile(bonds, 1e-12);
   tj_distributed::dispatch<coeff_t>(bondsc, block_in, vec_in, block_out,
                                     vec_out);
-} catch (...) {
-  XDiagRethrow("Cannot apply bonds on vector for \"tJDistributed\" block");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 template void apply<double>(BondList const &, tJDistributed const &,

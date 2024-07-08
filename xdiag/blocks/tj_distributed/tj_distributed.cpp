@@ -11,11 +11,11 @@ tJDistributed::tJDistributed(int64_t n_sites, int64_t n_up, int64_t n_dn)
 
   try {
     if (n_sites < 0) {
-      XDiagThrow(std::invalid_argument, "n_sites < 0");
+      XDIAG_THROW("n_sites < 0");
     } else if ((n_up < 0) || (n_dn < 0)) {
-      XDiagThrow(std::invalid_argument, "n_up < 0 or n_dn < 0");
+      XDIAG_THROW("n_up < 0 or n_dn < 0");
     } else if ((n_up + n_dn) > n_sites) {
-      XDiagThrow(std::invalid_argument, "n_up + n_dn > n_sites");
+      XDIAG_THROW("n_up + n_dn > n_sites");
     }
 
     if (n_sites < 16) {
@@ -28,14 +28,13 @@ tJDistributed::tJDistributed(int64_t n_sites, int64_t n_up, int64_t n_dn)
       basis_ =
           std::make_shared<basis_t>(BasisNp<uint64_t>(n_sites, n_up, n_dn));
     } else {
-      XDiagThrow(std::runtime_error,
-                 "blocks with more than 64 sites currently not implemented");
+      XDIAG_THROW("blocks with more than 64 sites currently not implemented");
     }
     dim_ = xdiag::dim(*basis_);
     assert(dim_ == binomial(n_sites, n_up) * binomial(n_sites - n_up, n_dn));
     size_ = xdiag::size(*basis_);
-  } catch (...) {
-    XDiagRethrow("Cannot create Basis for tJDistributed");
+  } catch (Error const &e) {
+    XDIAG_RETHROW(e);
   }
 }
 

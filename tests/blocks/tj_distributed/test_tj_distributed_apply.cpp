@@ -159,6 +159,6 @@ TEST_CASE("tj_distributed_apply", "[tj_distributed]") try {
       }
     }
   }
-} catch (std::exception const &e) {
-  traceback(e);
+} catch (Error e) {
+  error_trace(e);
 }

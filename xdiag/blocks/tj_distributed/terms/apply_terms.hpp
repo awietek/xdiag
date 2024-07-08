@@ -33,10 +33,9 @@ void apply_terms(BondList const &bonds, BasisIn const &basis_in,
     } else if (type == "HOPUP") {
       continue;
     } else {
-      XDiagThrow(
-          std::runtime_error,
+      XDIAG_THROW(
           std::string("Unknown bond type for \"tJDistributed\" block: ") +
-              type);
+          type);
     }
   }
 
@@ -63,10 +62,9 @@ void apply_terms(BondList const &bonds, BasisIn const &basis_in,
                (type == "NUMBERUP") || (type == "NUMBERDN")) {
       continue;
     } else {
-      XDiagThrow(
-          std::runtime_error,
+      XDIAG_THROW(
           std::string("Unknown bond type for \"tJDistributed\" block: ") +
-              type);
+          type);
     }
   }
 
@@ -79,8 +77,8 @@ void apply_terms(BondList const &bonds, BasisIn const &basis_in,
     vec_out[i] += send[i];
   }
 
-} catch (...) {
-  XDiagRethrow("Unable to apply terms for \"tJDistributed\" block");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 } // namespace xdiag::tj_distributed
