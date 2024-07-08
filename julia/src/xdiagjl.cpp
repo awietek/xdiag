@@ -122,66 +122,9 @@ JLCXX_MODULE define_julia_module(jlcxx::Module &mod) {
                JULIA_XDIAG_CALL_RETURN(innerC(v, bonds, w));
              });
 
-  // methods for time evolution
-  mod.method("exp_sym_v_cxx", [](BondList const &bonds, State state, double tau,
-                                 bool normalize, double shift, double precision,
-                                 int64_t max_iterations, double deflation_tol) {
-    JULIA_XDIAG_CALL_RETURN(exp_sym_v(bonds, state, tau, normalize, shift,
-                                      precision, max_iterations,
-                                      deflation_tol));
-  });
 
-  mod.method("exp_sym_v_cxx", [](BondList const &bonds, State state,
-                                 complex tau, bool normalize, double shift,
-                                 double precision, int64_t max_iterations,
-                                 double deflation_tol) {
-    JULIA_XDIAG_CALL_RETURN(exp_sym_v(bonds, state, tau, normalize, shift,
-                                      precision, max_iterations,
-                                      deflation_tol));
-  });
 
-  // Computing the ground state energy
-  mod.method("eigval0_cxx", [](BondList const &bonds, Spinhalf const &block,
-                               double precision, int max_iterations,
-                               bool force_complex, uint64_t seed) {
-    JULIA_XDIAG_CALL_RETURN(
-        eigval0(bonds, block, precision, max_iterations, force_complex, seed));
-  });
 
-  mod.method("eigval0_cxx", [](BondList const &bonds, tJ const &block,
-                               double precision, int max_iterations,
-                               bool force_complex, uint64_t seed) {
-    JULIA_XDIAG_CALL_RETURN(
-        eigval0(bonds, block, precision, max_iterations, force_complex, seed));
-  });
-
-  mod.method("eigval0_cxx", [](BondList const &bonds, Electron const &block,
-                               double precision, int max_iterations,
-                               bool force_complex, uint64_t seed) {
-    JULIA_XDIAG_CALL_RETURN(
-        eigval0(bonds, block, precision, max_iterations, force_complex, seed));
-  });
-
-  mod.method("eig0_cxx", [](BondList const &bonds, Spinhalf const &block,
-                            double precision, int max_iterations,
-                            bool force_complex, uint64_t seed) {
-    JULIA_XDIAG_CALL_RETURN(
-        eig0(bonds, block, precision, max_iterations, force_complex, seed));
-  });
-
-  mod.method("eig0_cxx", [](BondList const &bonds, tJ const &block,
-                            double precision, int max_iterations,
-                            bool force_complex, uint64_t seed) {
-    JULIA_XDIAG_CALL_RETURN(
-        eig0(bonds, block, precision, max_iterations, force_complex, seed));
-  });
-
-  mod.method("eig0_cxx", [](BondList const &bonds, Electron const &block,
-                            double precision, int max_iterations,
-                            bool force_complex, uint64_t seed) {
-    JULIA_XDIAG_CALL_RETURN(
-        eig0(bonds, block, precision, max_iterations, force_complex, seed));
-  });
 
   // Print functions
   mod.method("print_pretty", [](const char *id, Spinhalf const &block) {

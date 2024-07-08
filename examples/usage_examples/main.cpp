@@ -168,7 +168,7 @@ auto block = Spinhalf(N, nup);
 // Define the nearest-neighbor Heisenberg model
 auto bonds = BondList();
 for (int i=0; i<N; ++i) {
-  bonds += Bond("HB", "J", {i, (i+1) / N});
+  bonds += Bond("HB", "J", {i, (i+1) % N});
 }
 bonds["J"] = 1.0;
 double e0 = eigval0(bonds, block);
@@ -184,7 +184,7 @@ auto block = Spinhalf(N, nup);
 // Define the nearest-neighbor Heisenberg model
 auto bonds = BondList();
 for (int i=0; i<N; ++i) {
-  bonds += Bond("HB", "J", {i, (i+1) / N});
+  bonds += Bond("HB", "J", {i, (i+1) % N});
 }
 bonds["J"] = 1.0;
 auto [e0, gs] = eig0(bonds, block);

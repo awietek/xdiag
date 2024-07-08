@@ -21,7 +21,7 @@ in a second step. Here we explain how to compile the library.
 * A C++ compiler that supports C++17 (`g++`, `clang`, or Intel's `icpx`)
 * [git](https://git-scm.com/) version control system
 * [CMake](https://cmake.org/) build system generator 
-* A linear algebra backend (Blas/Lapack, IntelMKL or Accelerate on OSX)
+* A linear algebra backend (BLAS/LAPACK, Intel MKL or Accelerate on OSX)
 * **optional** [HDF5](https://www.hdfgroup.org/solutions/hdf5/), [OpenMP](https://www.openmp.org/)
 * **optional** [MPI](https://en.wikipedia.org/wiki/Message_Passing_Interface) for the distributed library
 
