@@ -91,6 +91,6 @@ TEST_CASE("time_evolution_distributed", "[time_evolution]") try {
     Log("\n");
   }
 
-} catch (std::exception const &e) {
-  xdiag::traceback(e);
+ } catch (xdiag::Error e) {
+  error_trace(e);
 }

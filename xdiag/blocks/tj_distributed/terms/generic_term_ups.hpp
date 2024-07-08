@@ -12,7 +12,7 @@ void generic_term_ups(BasisIn &&basis_in, BasisOut &&basis_out,
                       NonZeroTermUps &&non_zero_term_ups,
                       NonZeroTermDns &&non_zero_term_dns,
                       TermAction &&term_action, const coeff_t *vec_in,
-                      coeff_t *vec_out) try {
+                      coeff_t *vec_out) {
 
   int64_t n_sites = basis_in.n_sites();
   assert(n_sites == basis_out.n_sites());
@@ -58,8 +58,6 @@ void generic_term_ups(BasisIn &&basis_in, BasisOut &&basis_out,
 
     ++idx_dn;
   } // for(const bit_t& upspins : my_upspins_)
-} catch (...) {
-  XDiagRethrow("Unable to apply generic term on up spins");
 }
 
 } // namespace xdiag::tj_distributed
