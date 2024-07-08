@@ -9,7 +9,7 @@ target_compile_features(${XDIAG_LIBRARY} PUBLIC cxx_std_17)
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "IntelLLVM")
   message(STATUS "switching to precise floating point arithmetic of IntelLLVM") 
-  target_compile_options(${XDIAG_LIBRARY} PUBLIC -fp-model precise)
+  target_compile_options(${XDIAG_LIBRARY} PRIVATE -fp-model precise)
 endif()
 
 if(XDIAG_DISTRIBUTED)

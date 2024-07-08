@@ -37,7 +37,7 @@ TEST_CASE("eigvals_lanczos", "[lanczos]") {
         auto evals = res.eigenvalues;
         for (int i = 0; i < num_eigenvalue; ++i) {
           // lila::Log("a: {}, b: {}", evals_mat(i), evals_tmat(i));
-          REQUIRE(close(evals_mat(i), evals(i)));
+          REQUIRE(std::abs(evals_mat(i) - evals(i)) < 1e-7 );
         }
       } catch (Error e) {
         error_trace(e);
