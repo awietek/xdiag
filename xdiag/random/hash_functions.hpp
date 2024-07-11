@@ -30,14 +30,27 @@ inline uint64_t hash_div3(uint64_t bits) noexcept {
   uint64_t B = 0;
   uint64_t C = 0;
   int cnt = 0;
+  // int n_sites = 3;
+  // std::cout << "bits " << BSTR(bits) << "\n";
+
   while (bits) {
     A |= (bits & 1) << cnt;
-    B |= (bits & 2) << (cnt - 1);
-    C |= (bits & 4) << (cnt - 2);
+    B |= (bits & 2) << cnt;
+    C |= (bits & 4) << cnt;
     bits >>= 3;
     ++cnt;
   }
+  B >>= 1;
+  C >>= 2;
+
+  // std::cout << "64 A " << A << " B " << B << " C " << C << "\n";
+
   uint64_t num = A * 1357911 + B * 1197531 + C * 2739651;
+
+  // std::cout << "num1 " << num << "\n";
+  // std::cout << "num2 " << (123456789 * num + 987654321) % 3000000019ULL << "\n\n";
+  
+
   return (123456789 * num + 987654321) % 3000000019ULL;
 }
 
@@ -48,12 +61,20 @@ inline uint32_t hash_div3(uint32_t bits) noexcept {
   int cnt = 0;
   while (bits) {
     A |= (bits & 1) << cnt;
-    B |= (bits & 2) << (cnt - 1);
-    C |= (bits & 4) << (cnt - 2);
+    B |= (bits & 2) << cnt;
+    C |= (bits & 4) << cnt;
     bits >>= 3;
     ++cnt;
   }
+  B >>= 1;
+  C >>= 2;
+  // std::cout << "bits " << bits << "\n";
+  // std::cout << "32 A " << A << " B " << B << " C " << C << "\n";
+
   uint32_t num = A * 1357911 + B * 1197531 + C * 2739651;
+
+  //   std::cout << "num1 " << num << "\n";
+  // std::cout << "num2 " << (123456789 * num + 987654321) % 3000000019ULL << "\n\n";
   return (123456789 * num + 987654321) % 3000000019ULL;
 }
 
