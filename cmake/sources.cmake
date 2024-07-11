@@ -121,6 +121,7 @@ set(XDIAG_DISTRIBUTED_SOURCES
   parallel/mpi/timing_mpi.cpp
   parallel/mpi/buffer.cpp
 
+  basis/spinhalf_distributed/basis_sz.cpp
   basis/tj_distributed/basis_np.cpp
   blocks/tj_distributed/tj_distributed.cpp
   blocks/tj_distributed/tj_distributed_apply.cpp
