@@ -9,8 +9,8 @@
 #endif
 
 #ifdef _OPENMP
-#include <xdiag/parallel/omp/omp_utils.hpp>
 #include <omp.h>
+#include <xdiag/parallel/omp/omp_utils.hpp>
 // #include <xdiag/symmetries/operations/representative_list_omp.hpp>
 #endif
 
@@ -110,21 +110,19 @@
 
 #include <xdiag/operators/bond.hpp>
 #include <xdiag/operators/bondlist.hpp>
-#include <xdiag/operators/bondlist_handler.hpp>
 #include <xdiag/operators/compiler.hpp>
 #include <xdiag/operators/non_branching_bonds.hpp>
 #include <xdiag/operators/symmetrized_operator.hpp>
 
-
 #include <xdiag/algorithms/norm_estimate.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
 
-#include <xdiag/algorithms/lanczos/lanczos.hpp>
 #include <xdiag/algorithms/lanczos/eigs_lanczos.hpp>
 #include <xdiag/algorithms/lanczos/eigvals_lanczos.hpp>
+#include <xdiag/algorithms/lanczos/lanczos.hpp>
 #include <xdiag/algorithms/lanczos/lanczos_convergence.hpp>
-#include <xdiag/algorithms/lanczos/tmatrix.hpp>
 #include <xdiag/algorithms/lanczos/lanczos_pro.hpp>
+#include <xdiag/algorithms/lanczos/tmatrix.hpp>
 
 #include <xdiag/algorithms/arnoldi/arnoldi.hpp>
 #include <xdiag/algorithms/arnoldi/arnoldi_to_disk.hpp>

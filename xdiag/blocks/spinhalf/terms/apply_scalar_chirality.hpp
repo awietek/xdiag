@@ -12,7 +12,7 @@ namespace xdiag::spinhalf {
 template <typename bit_t, typename coeff_t, bool symmetric, class BasisIn,
           class BasisOut, class Fill>
 void apply_scalar_chirality(Bond const &bond, BasisIn &&basis_in,
-                            BasisOut &&basis_out, Fill &&fill) {
+                            BasisOut &&basis_out, Fill &&fill) try {
   using bits::gbit;
 
   assert(bond.coupling_defined());
@@ -21,7 +21,7 @@ void apply_scalar_chirality(Bond const &bond, BasisIn &&basis_in,
   assert(bond.sites_disjoint());
   assert(iscomplex<coeff_t>());
 
-  complex J = bond.coupling();
+  complex J = bond.coupling<complex>();
   coeff_t Jquarter = 0.;
   coeff_t Jquarter_conj = 0.;
   if constexpr (isreal<coeff_t>()) {
@@ -81,6 +81,8 @@ void apply_scalar_chirality(Bond const &bond, BasisIn &&basis_in,
     spinhalf::apply_term_offdiag_no_sym<bit_t, coeff_t>(
         basis_in, basis_out, non_zero_term, term_action_acyclic, fill);
   }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 } // namespace xdiag::spinhalf

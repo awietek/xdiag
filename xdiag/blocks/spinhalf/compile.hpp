@@ -5,10 +5,7 @@
 
 namespace xdiag::spinhalf {
 
-const std::vector<std::string> special_bond_types = {
-    "HB", "HEISENBERG", "EXCHANGE", "ISING",
-    "SZ", "S+",         "S-",       "SCALARCHIRALITY"};
-
-BondList compile(BondList const &bonds, double precision = 1e-12);
+BondList compile(BondList const &bonds, int64_t n_sites,
+                 double precision = 1e-12);
 
 } // namespace xdiag::spinhalf

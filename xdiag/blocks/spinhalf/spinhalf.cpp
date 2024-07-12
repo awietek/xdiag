@@ -7,7 +7,7 @@ namespace xdiag {
 
 using namespace basis;
 
-Spinhalf::Spinhalf(int64_t n_sites)
+Spinhalf::Spinhalf(int64_t n_sites) try
     : n_sites_(n_sites), sz_conserved_(false), n_up_(undefined_qn),
       n_dn_(undefined_qn), sz_(undefined_qn), symmetric_(false), n_sublat_(0),
       permutation_group_(), irrep_(), size_((int64_t)1 << n_sites) {
@@ -22,13 +22,17 @@ Spinhalf::Spinhalf(int64_t n_sites)
     XDIAG_THROW(
         "Spinhalf blocks with more than 64 sites currently not implemented");
   }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
-Spinhalf::Spinhalf(int64_t n_sites, int64_t n_up)
+Spinhalf::Spinhalf(int64_t n_sites, int64_t n_up) try
     : n_sites_(n_sites), sz_conserved_(true), n_up_(n_up),
       n_dn_(n_sites - n_up), sz_(n_up_ - n_dn_), symmetric_(false),
       n_sublat_(0), permutation_group_(), irrep_(),
       size_(combinatorics::binomial(n_sites, n_up)) {
+
+  check_dimension_works_with_blas_int_size(size_);
 
   if (n_sites < 0) {
     XDIAG_THROW("Invalid argument: n_sites < 0");
@@ -46,6 +50,8 @@ Spinhalf::Spinhalf(int64_t n_sites, int64_t n_up)
     XDIAG_THROW(
         "Spinhalf blocks with more than 64 sites currently not implemented");
   }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 template <typename bit_t>
@@ -83,11 +89,14 @@ make_spinhalf_basis_no_sz(int64_t n_sites, PermutationGroup const &group,
 }
 
 Spinhalf::Spinhalf(int64_t n_sites, PermutationGroup group,
-                   Representation irrep)
-    : Spinhalf(n_sites, group, irrep, 0) {}
+                   Representation irrep) try
+    : Spinhalf(n_sites, group, irrep, 0) {
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
 
 Spinhalf::Spinhalf(int64_t n_sites, PermutationGroup group,
-                   Representation irrep, int64_t n_sublat)
+                   Representation irrep, int64_t n_sublat) try
     : n_sites_(n_sites), sz_conserved_(false), n_up_(undefined_qn),
       n_dn_(undefined_qn), sz_(undefined_qn), symmetric_(true),
       n_sublat_(n_sublat), permutation_group_(allowed_subgroup(group, irrep)),
@@ -110,6 +119,9 @@ Spinhalf::Spinhalf(int64_t n_sites, PermutationGroup group,
     XDIAG_THROW("blocks with more than 64 sites currently not implemented");
   }
   size_ = xdiag::size(*basis_);
+  check_dimension_works_with_blas_int_size(size_);
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 template <typename bit_t>
@@ -147,11 +159,14 @@ make_spinhalf_basis_sz(int64_t n_sites, int64_t n_up,
 }
 
 Spinhalf::Spinhalf(int64_t n_sites, int64_t n_up, PermutationGroup group,
-                   Representation irrep)
-    : Spinhalf(n_sites, n_up, group, irrep, 0) {}
+                   Representation irrep) try
+    : Spinhalf(n_sites, n_up, group, irrep, 0) {
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
 
 Spinhalf::Spinhalf(int64_t n_sites, int64_t n_up, PermutationGroup group,
-                   Representation irrep, int64_t n_sublat)
+                   Representation irrep, int64_t n_sublat) try
     : n_sites_(n_sites), sz_conserved_(true), n_up_(n_up),
       n_dn_(n_sites - n_up), sz_(n_up_ - n_dn_), symmetric_(true),
       n_sublat_(n_sublat), permutation_group_(allowed_subgroup(group, irrep)),
@@ -177,6 +192,9 @@ Spinhalf::Spinhalf(int64_t n_sites, int64_t n_up, PermutationGroup group,
     XDIAG_THROW("blocks with more than 64 sites currently not implemented");
   }
   size_ = xdiag::size(*basis_);
+  check_dimension_works_with_blas_int_size(size_);
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 int64_t Spinhalf::n_sites() const { return n_sites_; }

@@ -61,38 +61,7 @@ void print_pretty(const char *identifier, complex number) {
 
 void print_pretty(const char *identifier, Bond const &bond) {
   printf("%s:\n", identifier);
-
-  if (bond.type_defined()) {
-    printf("  type: %s\n", bond.type().c_str());
-  } else {
-    auto mat = bond.matrix();
-    if (arma::norm(arma::imag(mat)) < 1e-12) {
-      print_pretty("  matrix", arma::mat(arma::real(mat)));
-    } else {
-      print_pretty("  matrix", mat);
-    }
-  }
-  if (bond.coupling_defined()) {
-    complex cpl = bond.coupling();
-
-    if (std::abs(imag(cpl)) < 1e-12) {
-      printf("  coupling: %.13e", real(cpl));
-    } else {
-      if (imag(cpl) > 0.) {
-        printf("  coupling: %.17e + %.17eI\n", real(cpl), std::imag(cpl));
-      } else {
-        printf("  coupling: %.17e - %.17eI\n", real(cpl), -std::imag(cpl));
-      }
-    }
-  } else {
-    printf("  coupling_name: %s\n", bond.coupling_name().c_str());
-  }
-
-  printf("  sites: ");
-  for (int64_t site : bond.sites()) {
-    printf("%" PRId64 " ", site);
-  }
-  printf("\n");
+  std::cout << bond;
 }
 
 void print_pretty(const char *identifier, BondList const &bondlist) {
@@ -103,24 +72,9 @@ void print_pretty(const char *identifier, BondList const &bondlist) {
   }
   if (bondlist.couplings().size() > 0) {
     printf("Couplings:\n");
-    for (auto &&[name, cpl] : bondlist.couplings()) {
-      if (std::abs(cpl.imag()) < 1e-12) {
-        Log("  {}: {}", name, cpl.real());
-      } else {
-        Log("  {}: {}", name, cpl);
-      }
-    }
-  }
-
-  if (bondlist.matrices().size() > 0) {
-    printf("Matrices:\n");
-    for (auto &&[name, mat] : bondlist.matrices()) {
-      Log(" {}:", name);
-      if (arma::norm(arma::imag(mat)) < 1e-12) {
-        arma::real(mat).brief_print();
-      } else {
-        mat.brief_print();
-      }
+    for (auto name : bondlist.couplings()) {
+      auto cpl = bondlist[name];
+      std::visit([](auto &&arg) { std::cout << arg << "\n"; }, cpl);
     }
   }
 }
@@ -290,7 +244,7 @@ void print_pretty(const char *identifier, tJDistributed const &block) {
       printf("  irrep    : defined with ID 0x%lx\n",
              (unsigned long)random::hash(block.irrep()));
     }
-    
+
     std::stringstream ss;
     ss.imbue(std::locale("en_US.UTF-8"));
     ss << block.dim();
@@ -307,12 +261,11 @@ void print_pretty(const char *identifier, tJDistributed const &block) {
     std::stringstream ssavg;
     ssavg.imbue(std::locale("en_US.UTF-8"));
     ssavg << block.dim() / size;
-    
+
     printf("  dimension (max local): %s\n", ssmax.str().c_str());
     printf("  dimension (min local): %s\n", ssmin.str().c_str());
     printf("  dimension (avg local): %s\n", ssavg.str().c_str());
-    
-    
+
     printf("  ID       : 0x%lx\n", (unsigned long)random::hash(block));
   }
 }

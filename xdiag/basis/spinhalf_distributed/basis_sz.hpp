@@ -41,9 +41,10 @@ public:
   std::vector<bit_t> const &prefix_states(bit_t postfix) const;
 
   inline int rank(bit_t spins) const {
-    // return (int)random::hash_fnv1(spins) % mpi_size_;
     return (int)(random::hash_div3(spins) % mpi_size_);
   };
+
+  mpi::CommPattern &comm_pattern();
   mpi::Communicator transpose_communicator(bool reverse) const;
 
   bool operator==(BasisSz const &rhs) const;
@@ -74,6 +75,10 @@ private:
   std::unordered_map<bit_t, int64_t> postfix_begin_;
   std::vector<combinatorics::LinTable<bit_t>> prefix_lintables_;
   std::vector<std::vector<bit_t>> prefix_states_;
+
+  mpi::CommPattern comm_pattern_;
+  mpi::Communicator transpose_communicator_;
+  mpi::Communicator transpose_communicator_reverse_;
 };
 
 } // namespace xdiag::basis::spinhalf_distributed

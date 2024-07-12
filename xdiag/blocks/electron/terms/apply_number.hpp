@@ -13,7 +13,7 @@ void apply_number(Bond const &bond, Basis &&basis, Fill fill) {
   assert((type == "NUMBERUP") || (type == "NUMBERDN"));
 
   coeff_t mu = bond.coupling<coeff_t>();
-  int64_t s = bond.site(0);
+  int64_t s = bond[0];
 
   bit_t mask = (bit_t)1 << s;
 

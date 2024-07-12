@@ -57,7 +57,6 @@ set(XDIAG_SOURCES
   blocks/spinhalf/spinhalf_matrix.cpp
   blocks/spinhalf/spinhalf_apply.cpp
   blocks/spinhalf/compile.cpp
-  blocks/spinhalf/qns.cpp
 
   blocks/electron/electron.cpp
   blocks/electron/electron_matrix.cpp
@@ -84,7 +83,6 @@ set(XDIAG_SOURCES
 
   operators/bond.cpp
   operators/bondlist.cpp
-  operators/bondlist_handler.cpp
   operators/compiler.cpp
   operators/symmetrized_operator.cpp
   operators/non_branching_bonds.cpp

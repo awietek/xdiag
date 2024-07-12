@@ -374,7 +374,7 @@ template <> void FileTomlHandler::operator=<Bond>(Bond const &bond) {
 }
 
 template <> void FileTomlHandler::operator=<BondList>(BondList const &bonds) {
-  if ((bonds.couplings().size() > 0) || (bonds.matrices().size() > 0)) {
+  if (bonds.couplings().size() > 0) {
     table_.insert_or_assign(key_, bond_list_to_toml_table(bonds));
   } else {
     table_.insert_or_assign(key_, bond_list_to_toml_array(bonds));

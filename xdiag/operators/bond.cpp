@@ -8,311 +8,128 @@
 
 namespace xdiag {
 
-// Constructors with type name
-Bond::Bond(std::string type, int64_t site)
-    : type_(type), matrix_(), coupling_(1.0),
-      coupling_name_("XDIAG_COUPLING_NAMELESS"), sites_({site}) {
-  if (site < 0) {
-    XDIAG_THROW("site of Bond < 0");
-  }
+Bond::Bond(std::string type, coupling_t coupling,
+           std::vector<int64_t> const &sites) try
+    : type_(type), coupling_(coupling), sites_(sites) {
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
-Bond::Bond(std::string type, std::vector<int64_t> const &sites)
-    : type_(type), matrix_(), coupling_(1.0),
-      coupling_name_("XDIAG_COUPLING_NAMELESS"), sites_(sites) {
-  for (auto site : sites) {
-    if (site < 0) {
-      XDIAG_THROW("site of Bond < 0");
-    }
-  }
+Bond::Bond(std::string type, coupling_t coupling, int64_t site) try
+    : type_(type), coupling_(coupling), sites_({site}) {
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
-Bond::Bond(std::string type, complex coupling, int64_t site)
-    : type_(type), matrix_(), coupling_(coupling),
-      coupling_name_("XDIAG_COUPLING_NAMELESS"), sites_({site}) {
-  if (site < 0) {
-    XDIAG_THROW("site of Bond < 0");
-  }
+std::string Bond::type() const { return type_; }
+
+template <typename T> bool Bond::coupling_is() const {
+  return std::holds_alternative<T>(coupling_);
+};
+template bool Bond::coupling_is<std::string>() const;
+template bool Bond::coupling_is<double>() const;
+template bool Bond::coupling_is<complex>() const;
+template bool Bond::coupling_is<arma::mat>() const;
+template bool Bond::coupling_is<arma::cx_mat>() const;
+
+template <typename T> T Bond::coupling() const try {
+  return std::get<T>(coupling_);
+} catch (std::bad_variant_access const &ex) {
+  XDIAG_THROW("Invalid type given when retrieving coupling");
+  return T();
 }
+template std::string Bond::coupling<std::string>() const;
+template double Bond::coupling<double>() const;
+template arma::mat Bond::coupling<arma::mat>() const;
 
-Bond::Bond(std::string type, complex coupling,
-           std::vector<int64_t> const &sites)
-    : type_(type), matrix_(), coupling_(coupling),
-      coupling_name_("XDIAG_COUPLING_NAMELESS"), sites_(sites) {
-  for (auto site : sites) {
-    if (site < 0) {
-      XDIAG_THROW("site of Bond < 0");
-    }
-  }
-}
-
-Bond::Bond(std::string type, double coupling, int64_t site)
-    : type_(type), matrix_(), coupling_(coupling),
-      coupling_name_("XDIAG_COUPLING_NAMELESS"), sites_({site}) {
-  if (site < 0) {
-    XDIAG_THROW("site of Bond < 0");
-  }
-}
-
-Bond::Bond(std::string type, double coupling, std::vector<int64_t> const &sites)
-    : type_(type), matrix_(), coupling_(coupling),
-      coupling_name_("XDIAG_COUPLING_NAMELESS"), sites_(sites) {
-  for (auto site : sites) {
-    if (site < 0) {
-      XDIAG_THROW("site of Bond < 0");
-    }
-  }
-}
-
-Bond::Bond(std::string type, std::string coupling_name, int64_t site)
-    : type_(type), matrix_(), coupling_(0.0), coupling_name_(coupling_name),
-      sites_({site}) {
-  if (site < 0) {
-    XDIAG_THROW("site of Bond < 0");
-  }
-}
-
-Bond::Bond(std::string type, std::string coupling_name,
-           std::vector<int64_t> const &sites)
-    : type_(type), matrix_(), coupling_(0.0), coupling_name_(coupling_name),
-      sites_(sites) {
-  for (auto site : sites) {
-    if (site < 0) {
-      XDIAG_THROW("site of Bond < 0");
-    }
-  }
-}
-
-// Constructors with bond matrix
-template <typename coeff_t>
-Bond::Bond(arma::Mat<coeff_t> const &matrix, int64_t site)
-    : type_("XDIAG_TYPE_UNDEFINED"), matrix_(to_cx_mat(matrix)), coupling_(1.0),
-      coupling_name_("XDIAG_COUPLING_NAMELESS"), sites_({site}) {
-  if (site < 0) {
-    XDIAG_THROW("site of Bond < 0");
-  }
-}
-template Bond::Bond(arma::Mat<double> const &, int64_t);
-template Bond::Bond(arma::Mat<complex> const &, int64_t);
-
-template <typename coeff_t>
-Bond::Bond(arma::Mat<coeff_t> const &matrix, std::vector<int64_t> const &sites)
-    : type_("XDIAG_TYPE_UNDEFINED"), matrix_(to_cx_mat(matrix)), coupling_(1.0),
-      coupling_name_("XDIAG_COUPLING_NAMELESS"), sites_(sites) {
-  for (auto site : sites) {
-    if (site < 0) {
-      XDIAG_THROW("site of Bond < 0");
-    }
-  }
-}
-template Bond::Bond(arma::Mat<double> const &, std::vector<int64_t> const &);
-template Bond::Bond(arma::Mat<complex> const &, std::vector<int64_t> const &);
-
-template <typename coeff_t>
-Bond::Bond(arma::Mat<coeff_t> const &matrix, double coupling, int64_t site)
-    : type_("XDIAG_TYPE_UNDEFINED"), matrix_(to_cx_mat(matrix)),
-      coupling_(coupling), coupling_name_("XDIAG_COUPLING_NAMELESS"),
-      sites_({site}) {
-  if (site < 0) {
-    XDIAG_THROW("site of Bond < 0");
-  }
-}
-template Bond::Bond(arma::Mat<double> const &, double, int64_t);
-template Bond::Bond(arma::Mat<complex> const &, double, int64_t);
-
-template <typename coeff_t>
-Bond::Bond(arma::Mat<coeff_t> const &matrix, double coupling,
-           std::vector<int64_t> const &sites)
-    : type_("XDIAG_TYPE_UNDEFINED"), matrix_(to_cx_mat(matrix)),
-      coupling_(coupling), coupling_name_("XDIAG_COUPLING_NAMELESS"),
-      sites_(sites) {
-  for (auto site : sites) {
-    if (site < 0) {
-      XDIAG_THROW("site of Bond < 0");
-    }
-  }
-}
-template Bond::Bond(arma::Mat<double> const &, double,
-                    std::vector<int64_t> const &);
-template Bond::Bond(arma::Mat<complex> const &, double,
-                    std::vector<int64_t> const &);
-
-template <typename coeff_t>
-Bond::Bond(arma::Mat<coeff_t> const &matrix, complex coupling, int64_t site)
-    : type_("XDIAG_TYPE_UNDEFINED"), matrix_(to_cx_mat(matrix)),
-      coupling_(coupling), coupling_name_("XDIAG_COUPLING_NAMELESS"),
-      sites_({site}) {
-  if (site < 0) {
-    XDIAG_THROW("site of Bond < 0");
-  }
-}
-template Bond::Bond(arma::Mat<double> const &, complex, int64_t);
-template Bond::Bond(arma::Mat<complex> const &, complex, int64_t);
-
-template <typename coeff_t>
-Bond::Bond(arma::Mat<coeff_t> const &matrix, complex coupling,
-           std::vector<int64_t> const &sites)
-    : type_("XDIAG_TYPE_UNDEFINED"), matrix_(to_cx_mat(matrix)),
-      coupling_(coupling), coupling_name_("XDIAG_COUPLING_NAMELESS"),
-      sites_(sites) {
-  for (auto site : sites) {
-    if (site < 0) {
-      XDIAG_THROW("site of Bond < 0");
-    }
-  }
-}
-template Bond::Bond(arma::Mat<double> const &, complex,
-                    std::vector<int64_t> const &);
-template Bond::Bond(arma::Mat<complex> const &, complex,
-                    std::vector<int64_t> const &);
-
-template <typename coeff_t>
-Bond::Bond(arma::Mat<coeff_t> const &matrix, std::string coupling_name,
-           int64_t site)
-    : type_("XDIAG_TYPE_UNDEFINED"), matrix_(to_cx_mat(matrix)), coupling_(0.0),
-      coupling_name_(coupling_name), sites_({site}) {
-  if (site < 0) {
-    XDIAG_THROW("site of Bond < 0");
-  }
-}
-template Bond::Bond(arma::Mat<double> const &, std::string, int64_t);
-template Bond::Bond(arma::Mat<complex> const &, std::string, int64_t);
-
-template <typename coeff_t>
-Bond::Bond(arma::Mat<coeff_t> const &matrix, std::string coupling_name,
-           std::vector<int64_t> const &sites)
-    : type_("XDIAG_TYPE_UNDEFINED"), matrix_(to_cx_mat(matrix)), coupling_(0.0),
-      coupling_name_(coupling_name), sites_(sites) {
-  for (auto site : sites) {
-    if (site < 0) {
-      XDIAG_THROW("site of Bond < 0");
-    }
-  }
-}
-template Bond::Bond(arma::Mat<double> const &, std::string coupling_name,
-                    std::vector<int64_t> const &);
-template Bond::Bond(arma::Mat<complex> const &, std::string coupling_name,
-                    std::vector<int64_t> const &);
-
-Bond::Bond(io::FileTomlHandler &&hdl) : Bond(hdl.as<Bond>()) {}
-
-bool Bond::type_defined() const { return (type_ != "XDIAG_TYPE_UNDEFINED"); }
-bool Bond::matrix_defined() const { return !type_defined(); }
-bool Bond::coupling_defined() const {
-  return (coupling_name_ == "XDIAG_COUPLING_NAMELESS");
-}
-bool Bond::coupling_named() const { return !coupling_defined(); }
-bool Bond::sites_disjoint() const {
-  auto set = std::set<int64_t>(sites_.begin(), sites_.end());
-  return set.size() == sites_.size();
-}
-
-std::string Bond::type() const {
-  if (!type_defined()) {
-    XDIAG_THROW("cannot get type of bond. Type is undefined for this bond.");
-  }
-  return type_;
-}
-
-arma::cx_mat Bond::matrix() const {
-  if (!matrix_defined()) {
-    XDIAG_THROW("cannot get matrix of bond. Type is undefined for this bond.");
-  }
-  return matrix_;
-}
-
-arma::mat Bond::matrix_real() const {
-  if (!matrix_defined()) {
-    XDIAG_THROW("cannot get matrix (real part) of bond. Type is undefined for "
-                "this bond.");
-  }
-  return arma::real(matrix_);
-}
-
-template <typename coeff_t> coeff_t Bond::coupling(double precision) const {
-
-  if (!coupling_defined()) {
-    XDIAG_THROW(
-        fmt::format("Error: only coupling_name is defined for this bond: {}",
-                    coupling_name_));
-  }
-
-  if constexpr (xdiag::isreal<coeff_t>()) {
-    if (std::abs(imag(coupling_)) > precision) {
-      XDIAG_THROW("Error: cannot return real coupling for bond. Imaginary part "
-                  "non-negligible.");
-      return 0.;
-    }
-    return real(coupling_);
+template <> complex Bond::coupling<complex>() const try {
+  if (coupling_is<double>()) {
+    return complex(coupling<double>(), 0.0);
   } else {
-    (void)precision;
-    return coupling_;
+    return std::get<complex>(coupling_);
   }
+} catch (std::bad_variant_access const &ex) {
+  XDIAG_THROW("Invalid type given when retrieving coupling");
+  return complex();
 }
-template double Bond::coupling<double>(double) const;
-template complex Bond::coupling<complex>(double) const;
 
-std::string Bond::coupling_name() const {
-  if (!coupling_named()) {
-    XDIAG_THROW("no coupling_name is defined for this bond");
-  }
-  return coupling_name_;
-}
-std::vector<int64_t> Bond::sites() const { return sites_; }
-
-int64_t Bond::site(int64_t j) const { return sites_.at(j); }
-int64_t Bond::size() const { return (int64_t)sites_.size(); }
-int64_t Bond::operator[](int64_t j) const { return site(j); }
-
-bool Bond::iscomplex(double precision) const {
-  if (type_defined()) {
-
-    // Inherently complex interactions
-    if (std::find(complex_bond_types.begin(), complex_bond_types.end(),
-                  type_) != complex_bond_types.end()) {
-      return true;
-    }
-
-    // if coupling is defined, check whether it has imag. part
-    if (coupling_defined()) {
-      if (std::abs(imag(coupling_)) > precision) {
-        return true;
-      } else {
-        return false;
-      }
-    } else {
-      XDIAG_THROW("cannot determine if bond is complex if coupling is named!");
-    }
-
-    // By default we assume bonds are real
-    return false;
-
-    // matrix defined
+template <> arma::cx_mat Bond::coupling<arma::cx_mat>() const try {
+  if (coupling_is<arma::mat>()) {
+    arma::mat mat_r = coupling<arma::mat>();
+    arma::mat mat_i = arma::mat(mat_r.n_rows, mat_r.n_cols, arma::fill::zeros);
+    return arma::cx_mat(mat_r, mat_i);
   } else {
-    bool matrix_real = (arma::norm(arma::imag(matrix_)) < precision);
-
-    // if coupling is defined, check whether it has imag. part
-    if (coupling_defined()) {
-      bool coupling_real = (std::abs(imag(coupling_)) < precision);
-      return !(matrix_real && coupling_real);
-    } else {
-      XDIAG_THROW("cannot determine if bond is complex if coupling is named!");
-    }
-
-    // Dummy, should not happen
-    return matrix_real;
+    std::get<arma::cx_mat>(coupling_);
   }
+} catch (std::bad_variant_access const &ex) {
+  XDIAG_THROW("Invalid type given when retrieving coupling");
+  return arma::cx_mat();
+}
+coupling_t Bond::coupling() const { return coupling_; }
+std::string Bond::coupling_type_string() const try {
+  if (std::holds_alternative<std::string>(coupling_)) {
+    return "std::string";
+  } else if (std::holds_alternative<double>(coupling_)) {
+    return "double";
+  } else if (std::holds_alternative<complex>(coupling_)) {
+    return "complex";
+  } else if (std::holds_alternative<arma::mat>(coupling_)) {
+    return "arma::mat";
+  } else if (std::holds_alternative<arma::cx_mat>(coupling_)) {
+    return "arma::cx_mat";
+  } else {
+    XDIAG_THROW("Invalid coupling type found");
+  }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+  return "";
 }
 
-bool Bond::isreal(double precision) const { return !iscomplex(precision); }
+int64_t Bond::size() const { return sites_.size(); }
+int64_t Bond::operator[](int64_t idx) const try {
+  return sites_.at(idx);
+} catch (std::out_of_range const &exc) {
+  XDIAG_THROW("Site index out of range for Bond");
+  return 0;
+}
+std::vector<int64_t> const &Bond::sites() const { return sites_; }
+
+bool Bond::isexplicit() const try {
+  return !coupling_is<std::string>();
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+  return false;
+}
+
+bool Bond::isreal() const try {
+  if (coupling_is<std::string>()) {
+    XDIAG_THROW("Cannot determine whether coupling is real, since coupling is "
+                "set to a std::string value");
+  } else {
+    return coupling_is<double>() || coupling_is<arma::mat>();
+  }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+  return false;
+}
+
+bool Bond::ismatrix() const {
+  return coupling_is<arma::mat>() || coupling_is<arma::cx_mat>();
+}
+
 bool Bond::operator==(const Bond &rhs) const {
-  return (type_ == rhs.type_) &&
-         arma::approx_equal(matrix_, rhs.matrix_, "both", 1e-12, 1e-12) &&
-         (close(coupling_, rhs.coupling_)) &&
-         (coupling_name_ == rhs.coupling_name_) && (sites_ == rhs.sites_);
+  return (type_ == rhs.type_) && (coupling_ == rhs.coupling_) &&
+         (sites_ == rhs.sites_);
+}
+bool Bond::operator!=(const Bond &rhs) const { return !operator==(rhs); }
+
+bool sites_disjoint(Bond const &bond) {
+  auto const &sites = bond.sites();
+  auto set = std::set<int64_t>(sites.begin(), sites.end());
+  return set.size() == sites.size();
 }
 
-std::vector<int64_t> common_sites(Bond b1, Bond b2) {
+std::vector<int64_t> common_sites(Bond const &b1, Bond const &b2) {
   std::vector<int64_t> s1 = b1.sites();
   std::vector<int64_t> s2 = b2.sites();
   std::vector<int64_t> s12;
@@ -323,16 +140,30 @@ std::vector<int64_t> common_sites(Bond b1, Bond b2) {
   return s12;
 }
 
-std::ostream &operator<<(std::ostream &out, const Bond &bond) {
+std::ostream &operator<<(std::ostream &out, const Bond &bond) try {
 
-  if (bond.coupling_named()) {
-    out << bond.type() << " " << bond.coupling_name() << " ";
+  if (bond.coupling_is<std::string>()) {
+    out << bond.type() << " " << bond.coupling<std::string>() << " ";
+  } else if (bond.coupling_is<double>()) {
+    out << bond.type() << " " << bond.coupling<double>() << " ";
+  } else if (bond.coupling_is<complex>()) {
+    out << bond.type() << " " << bond.coupling<complex>() << " ";
+  } else if (bond.coupling_is<arma::mat>()) {
+    out << bond.type() << " " << bond.coupling<arma::mat>() << " ";
+  } else if (bond.coupling_is<arma::cx_mat>()) {
+    out << bond.type() << " " << bond.coupling<arma::cx_mat>() << " ";
   } else {
-    out << bond.type() << " " << bond.coupling() << " ";
+    XDIAG_THROW("Unable to print Bond");
   }
-  for (auto site : bond.sites())
+
+  for (int64_t site : bond.sites()) {
     out << site << " ";
+  }
+  return out;
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
   return out;
 }
+
 
 } // namespace xdiag

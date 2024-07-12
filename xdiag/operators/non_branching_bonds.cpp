@@ -8,19 +8,17 @@
 
 namespace xdiag::operators {
 
-BondList non_branching_bonds(Bond const &bond, double precision) {
-  if (bond.type_defined()) {
-    return BondList({bond});
-  }
-
-  arma::cx_mat mat = bond.matrix();
+template <typename coeff_t>
+std::vector<arma::Mat<coeff_t>>
+decompose_matrix_to_nonbranching(arma::Mat<coeff_t> const &mat,
+                                 double precision) try {
   int64_t m = (int64_t)mat.n_rows;
   int64_t n = (int64_t)mat.n_cols;
   if (m != n) {
-    Log.err("Error: bond matrix is not square");
+    XDIAG_THROW("Error: bond matrix is not square");
   }
 
-  std::vector<std::tuple<int64_t, int64_t, complex>> all_entries;
+  std::vector<std::tuple<int64_t, int64_t, coeff_t>> all_entries;
 
   // Get diagonal elements
   for (int64_t i = 0; i < n; ++i) {
@@ -42,12 +40,12 @@ BondList non_branching_bonds(Bond const &bond, double precision) {
   }
 
   // Reduce to minimal number of non-branching terms
-  std::vector<arma::cx_mat> mats_nb;
+  std::vector<arma::Mat<coeff_t>> mats_nb;
 
   while (all_entries.size() != 0) {
     std::vector<int64_t> forbidden_columns;
     std::vector<int64_t> forbidden_rows;
-    std::vector<std::tuple<int64_t, int64_t, complex>> current_entries;
+    std::vector<std::tuple<int64_t, int64_t, coeff_t>> current_entries;
     std::vector<int64_t> delete_entries;
     int64_t i = 0;
     for (auto [row, column, coeff] : all_entries) {
@@ -68,22 +66,39 @@ BondList non_branching_bonds(Bond const &bond, double precision) {
       all_entries.erase(all_entries.begin() + delete_entries[i]);
 
     // Create non-branching matrix
-    arma::cx_mat mat_nb(m, n, arma::fill::zeros);
+    arma::Mat<coeff_t> mat_nb(m, n, arma::fill::zeros);
     for (auto [i, j, coeff] : current_entries) {
       mat_nb(i, j) = coeff;
     }
     mats_nb.push_back(mat_nb);
   }
 
+  // Create the bonds from the nonbranchin matrices
   BondList bonds_nb;
-  for (arma::cx_mat mat_nb : mats_nb) {
-    if (bond.coupling_defined()) {
-      bonds_nb << Bond(mat_nb, bond.coupling(), bond.sites());
-    } else {
-      bonds_nb << Bond(mat_nb, bond.coupling_name(), bond.sites());
-    }
+  for (auto mat_nb : mats_nb) {
+    bonds_nb << Bond("NONBRANCHINGBOND", mat_nb, bond.sites());
   }
   return bonds_nb;
+
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+  return BondListstd::vector<arma::Mat<coeff_t>>();
+}
+
+BondList non_branching_bonds(Bond const &bond, double precision) try {
+  if (bond.coupling_is<arma::mat>()) {
+    arma::mat mat = bond.coupling<arma::mat>();
+    return decompose_matrix_to_nonbranching(mat, precision);
+  } else if (bond.coupling_is<arma::cx_mat>()) {
+    arma::cx_mat mat = bond.coupling<arma::cx_mat>();
+    return decompose_matrix_to_nonbranching(mat, precision);
+  } else {
+    XDIAG_THROW(
+        "Cannot convert bond to nonbranching bonds. Coupling is not a matrix");
+  }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+  return BondList();
 }
 
 BondList non_branching_bonds(BondList const &bonds, double precision) {
@@ -94,11 +109,8 @@ BondList non_branching_bonds(BondList const &bonds, double precision) {
   return bonds_nb;
 }
 
-bool is_non_branching_bond(Bond const &bond, double precision) {
-  if (bond.type_defined()) {
-    return false;
-  }
-  arma::cx_mat mat = bond.matrix();
+template <typename coeff_t>
+bool is_non_branching_matrix(arma::Mat<coeff_t> const &mat) {
   for (arma::uword i = 0; i < mat.n_rows; ++i) {
     int64_t non_zero_in_row = 0;
     for (arma::uword j = 0; j < mat.n_cols; ++j) {
@@ -110,21 +122,34 @@ bool is_non_branching_bond(Bond const &bond, double precision) {
       return false;
     }
   }
-  return true;
+}
+
+bool is_non_branching_bond(Bond const &bond, double precision) {
+  if (bond.coupling_is<arma::mat>()) {
+    arma::mat mat = bond.coupling<arma::mat>();
+    return is_non_branchin_matrix(mat, precision);
+  } else if (bond.coupling_is<arma::cx_mat>()) {
+    arma::cx_mat mat = bond.coupling<arma::cx_mat>();
+    return is_non_branchin_matrix(mat, precision);
+  } else {
+    return false;
+  }
 }
 
 template <typename bit_t, typename coeff_t>
 NonBranchingBond<bit_t, coeff_t>::NonBranchingBond(Bond const &bond,
-                                                   double precision)
+                                                   double precision) try
     : sites_(bond.sites()), dim_(1 << sites_.size()), mask_(0) {
   if (!is_non_branching_bond(bond, precision)) {
-    Log.err("Error: trying to create a NonBranchingBond from a Bond which is "
-            "branching");
+    XDIAG_THROW(
+        "Error: trying to create a NonBranchingBond from a Bond which is "
+        "branching");
   }
 
   if (!bond.coupling_defined()) {
-    Log.err("Error: cannot create Nonbranching bond from Bond without having "
-            "its coupling defined.");
+    XDIAG_THROW(
+        "Error: cannot create Nonbranching bond from Bond without having "
+        "its coupling defined.");
   }
   coeff_t cpl = bond.coupling<coeff_t>();
 
@@ -141,7 +166,8 @@ NonBranchingBond<bit_t, coeff_t>::NonBranchingBond(Bond const &bond,
 
   // Matrix dimension is 2**(no. sites of bond)
   if ((matrix_.n_cols != dim_) || (matrix_.n_rows != dim_)) {
-    Log.err("Error: invalid matrix dimension for non-branching bond matrix.");
+    XDIAG_THROW(
+        "Error: invalid matrix dimension for non-branching bond matrix.");
   }
 
   non_zero_term_ = std::vector<bool>(dim_, false);
@@ -157,8 +183,8 @@ NonBranchingBond<bit_t, coeff_t>::NonBranchingBond(Bond const &bond,
         state_applied_[in] = out;
         if constexpr (isreal<coeff_t>()) {
           if (std::abs(imag(matrix_(out, in))) > precision) {
-            Log.err("Error: trying to create a real NonBranchingBond, but "
-                    "found a truly complex matrix entry");
+            XDIAG_THROW("Error: trying to create a real NonBranchingBond, but "
+                        "found a truly complex matrix entry");
           }
           coeff_[in] = cpl * real(matrix_(out, in));
         } else {
@@ -178,10 +204,13 @@ NonBranchingBond<bit_t, coeff_t>::NonBranchingBond(Bond const &bond,
 
   // int64_t n_sites = 1;
   // for (bit_t in = 0; in < dim_; ++in) {
-  //   std::cout << "a " << BSTR(in) << " -> " << BSTR(state_applied_[in]) << "
+  //   std::cout << "a " << BSTR(in) << " -> " << BSTR(state_applied_[in]) <<
+  //   "
   //   "
   //             << coeff_[in] << " " << non_zero_term_[in] << std::endl;
   // }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 template <typename bit_t, typename coeff_t>

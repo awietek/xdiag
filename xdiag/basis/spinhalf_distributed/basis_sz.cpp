@@ -82,16 +82,13 @@ BasisSz<bit_t>::BasisSz(int64_t n_sites, int64_t n_up)
   size_ = binomial(n_sites, n_up);
   size_local_ = fill_tables(
       n_sites, n_up, n_prefix_bits_,
-      [this, &n_sites](bit_t spins) {
-        Log("rank {} {} {}", BSTR(spins), this->rank(spins));
-        return rank(spins);
-      },
-      prefixes_, prefix_begin_, postfix_lintables_, postfix_states_);
+      [this](bit_t spins) { return rank(spins); }, prefixes_, prefix_begin_,
+      postfix_lintables_, postfix_states_);
 
   size_local_transpose_ = fill_tables(
       n_sites, n_up, n_postfix_bits_,
-      [this](bit_t spins) { return rank(spins); }, postfixes_,
-      postfix_begin_, prefix_lintables_, prefix_states_);
+      [this](bit_t spins) { return rank(spins); }, postfixes_, postfix_begin_,
+      prefix_lintables_, prefix_states_);
 
   // Compute max/min number of states stored locally
   int64_t size_max;
@@ -116,6 +113,26 @@ BasisSz<bit_t>::BasisSz(int64_t n_sites, int64_t n_up)
   mpi::Allreduce(&size_local_transpose_, &size_transpose, 1, MPI_SUM,
                  MPI_COMM_WORLD);
   assert(size_transpose == size_);
+
+  // Create the transpose communicator
+  std::vector<int64_t> n_states_i_send(mpi_size_, 0);
+  for (bit_t prefix : prefixes()) {
+    for (bit_t postfix : postfixes(prefix)) {
+      int target_rank = rank(postfix);
+      ++n_states_i_send[target_rank];
+    }
+  }
+  transpose_communicator_ = mpi::Communicator(n_states_i_send);
+
+  // Create the transpose communicator (reverse)
+  std::vector<int64_t> n_states_i_send_reverse(mpi_size_, 0);
+  for (bit_t postfix : postfixes()) {
+    for (bit_t prefix : prefixes(postfix)) {
+      int target_rank = rank(prefix);
+        ++n_states_i_send_reverse[target_rank;
+    }
+  }
+  transpose_communicator_reverse_ = mpi::Communicator(n_states_i_send_reverse);
 }
 
 template <typename bit_t> int64_t BasisSz<bit_t>::n_sites() const {
@@ -185,6 +202,11 @@ std::vector<bit_t> const &BasisSz<bit_t>::prefix_states(bit_t postfix) const {
   int n_up_postfix = bits::popcnt(postfix);
   int n_up_prefix = n_up_ - n_up_postfix;
   return prefix_states_[n_up_prefix];
+}
+
+mpi::CommPattern &BasisSz<bit_t>::comm_pattern() { return comm_pattern_; }
+mpi::Communicator BasisSz<bit_t>::transpose_communicator(bool reverse) const {
+  return reverse ? transpose_communicator_reverse_ : transpose_communicator_;
 }
 
 template class BasisSz<uint32_t>;

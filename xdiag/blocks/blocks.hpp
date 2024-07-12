@@ -3,12 +3,12 @@
 #include <functional>
 #include <variant>
 
-#include <xdiag/extern/armadillo/armadillo>
-#include <xdiag/common.hpp>
 #include <xdiag/blocks/electron/electron.hpp>
 #include <xdiag/blocks/spinhalf/spinhalf.hpp>
 #include <xdiag/blocks/tj/tj.hpp>
 #include <xdiag/blocks/tj_distributed/tj_distributed.hpp>
+#include <xdiag/common.hpp>
+#include <xdiag/extern/armadillo/armadillo>
 
 namespace xdiag {
 
@@ -24,6 +24,5 @@ int64_t n_sites(block_variant_t const &block);
 bool isreal(block_variant_t const &block);
 bool iscomplex(block_variant_t const &block);
 bool isdistributed(block_variant_t const &block);
-
 
 } // namespace xdiag

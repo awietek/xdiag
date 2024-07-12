@@ -41,10 +41,10 @@ int64_t Communicator::n_values_i_recv(int mpi_rank) const {
   return n_values_i_recv_[mpi_rank];
 }
 
-int64_t Communicator::n_values_i_send_offsets(int mpi_rank) const {
+int64_t Communicator::n_values_i_send_offset(int mpi_rank) const {
   return n_values_i_send_offsets_[mpi_rank];
 }
-int64_t Communicator::n_values_i_recv_offsets(int mpi_rank) const {
+int64_t Communicator::n_values_i_recv_offset(int mpi_rank) const {
   return n_values_i_recv_offsets_[mpi_rank];
 }
 

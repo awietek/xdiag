@@ -3,7 +3,6 @@
 using namespace xdiag;
 
 int main() try {
-  
   int N = 16;
   int nup = N / 2;
   Spinhalf block(N, nup);
@@ -17,9 +16,9 @@ int main() try {
 
   set_verbosity(2);                  // set verbosity for monitoring progress
   double e0 = eigval0(bonds, block); // compute ground state energy
-  
+
   Log("Ground state energy: {:.12f}", e0);
-  
+
 } catch (Error e) {
   error_trace(e);
 }

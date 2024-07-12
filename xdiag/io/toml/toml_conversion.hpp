@@ -20,11 +20,11 @@ template <typename T> T get_toml_value(toml::node const &node);
 toml::array get_toml_array(toml_const_node_view const &node);
 toml::array get_toml_array(toml_node_view const &node);
 toml::array get_toml_array(toml::node const &node);
-
+  
 // toml -> xdiag
 template <typename T, std::size_t size>
 std::array<T, size> toml_array_to_std_array(toml::array const &toml_array);
-
+  
 template <typename T>
 std::vector<T> toml_array_to_std_vector(toml::array const &toml_array);
 

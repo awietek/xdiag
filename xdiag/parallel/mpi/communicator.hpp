@@ -17,8 +17,8 @@ public:
   int64_t n_values_i_send(int mpi_rank) const;
   int64_t n_values_i_recv(int mpi_rank) const;
 
-  int64_t n_values_i_send_offsets(int mpi_rank) const;
-  int64_t n_values_i_recv_offsets(int mpi_rank) const;
+  int64_t n_values_i_send_offset(int mpi_rank) const;
+  int64_t n_values_i_recv_offset(int mpi_rank) const;
 
   int64_t send_buffer_size() const;
   int64_t recv_buffer_size() const;

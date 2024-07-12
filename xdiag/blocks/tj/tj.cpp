@@ -6,7 +6,7 @@ namespace xdiag {
 
 using namespace basis;
 
-tJ::tJ(int64_t n_sites, int64_t nup, int64_t ndn)
+tJ::tJ(int64_t n_sites, int64_t nup, int64_t ndn) try
     : n_sites_(n_sites), charge_conserved_(true), charge_(nup + ndn),
       sz_conserved_(true), sz_(nup - ndn), n_up_(nup), n_dn_(ndn),
       symmetric_(false), permutation_group_(), irrep_() {
@@ -27,10 +27,13 @@ tJ::tJ(int64_t n_sites, int64_t nup, int64_t ndn)
     XDIAG_THROW("blocks with more than 64 sites currently not implemented");
   }
   size_ = xdiag::size(*basis_);
+  check_dimension_works_with_blas_int_size(size_);
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 tJ::tJ(int64_t n_sites, int64_t nup, int64_t ndn, PermutationGroup group,
-       Representation irrep)
+       Representation irrep) try
     : n_sites_(n_sites), charge_conserved_(true), charge_(nup + ndn),
       sz_conserved_(true), sz_(nup - ndn), n_up_(nup), n_dn_(ndn),
       symmetric_(true), permutation_group_(allowed_subgroup(group, irrep)),
@@ -57,6 +60,9 @@ tJ::tJ(int64_t n_sites, int64_t nup, int64_t ndn, PermutationGroup group,
     XDIAG_THROW("blocks with more than 64 sites currently not implemented");
   }
   size_ = xdiag::size(*basis_);
+  check_dimension_works_with_blas_int_size(size_);
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 int64_t tJ::n_sites() const { return n_sites_; }

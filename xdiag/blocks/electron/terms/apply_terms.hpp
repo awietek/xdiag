@@ -15,7 +15,7 @@ namespace xdiag::electron {
 template <typename bit_t, typename coeff_t, bool symmetric, class BasisIn,
           class BasisOut, class Fill>
 void apply_terms(BondList const &bonds, BasisIn const &basis_in,
-                 BasisOut const &basis_out, Fill &fill) {
+                 BasisOut const &basis_out, Fill &fill) try {
 
   BondList bonds_compiled = electron::compile(bonds);
 
@@ -27,14 +27,14 @@ void apply_terms(BondList const &bonds, BasisIn const &basis_in,
   for (auto bond : bonds_compiled) {
     std::string type = bond.type();
     if ((type == "HOPUP") || (type == "CDAGUP") || (type == "CUP")) {
-      bonds_ups << bond;
+      bonds_ups += bond;
     } else if ((type == "HOPDN") || (type == "CDAGDN") || (type == "CDN")) {
-      bonds_dns << bond;
+      bonds_dns += bond;
     } else if ((type == "ISING") || (type == "NUMBERUP") ||
                (type == "NUMBERDN")) {
-      bonds_diag << bond;
+      bonds_diag += bond;
     } else if (type == "EXCHANGE") {
-      bonds_mixed << bond;
+      bonds_mixed += bond;
     } else {
       Log.err("Error: Unknown bond of type {}", type);
     }
@@ -51,8 +51,13 @@ void apply_terms(BondList const &bonds, BasisIn const &basis_in,
   }
 
   if (bonds.coupling_defined("U")) {
-    coeff_t U = bonds.coupling<coeff_t>("U");
-    electron::apply_u<bit_t, coeff_t, symmetric>(U, basis_in, fill);
+    coupling_t U = bonds["U"];
+    if (std::holds_alternative<double>(U)){
+      electron::apply_u<bit_t, coeff_t, symmetric>(std::get<double>(U),
+                                                   basis_in, fill);
+    } else {
+      XDIAG_THROW("Coupling U must either be a real number");
+    }
   }
 
   // terms on both ups and dns
@@ -84,6 +89,8 @@ void apply_terms(BondList const &bonds, BasisIn const &basis_in,
                                                              basis_out, fill);
     }
   }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 } // namespace xdiag::electron

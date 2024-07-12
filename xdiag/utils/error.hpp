@@ -32,6 +32,9 @@ void error_trace(Error const &error);
 
 std::string cut_file(const char *file);
 
+// common error checks
+void check_dimension_works_with_blas_int_size(int64_t dim);
+
 } // namespace xdiag
 
 #define XDIAG_THROW(message)                                                   \

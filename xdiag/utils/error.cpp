@@ -6,6 +6,7 @@
 #ifndef XDIAG_DISABLE_COLOR
 #include <xdiag/extern/fmt/color.hpp>
 #endif
+#include <xdiag/extern/armadillo/armadillo>
 
 #ifdef __APPLE__
 /// DIRTY HACK to make std::visit work on old MacOS versions
@@ -78,10 +79,30 @@ void error_trace(Error const &error) {
       std::cerr << " [" << idx << "] " << message << "\n";
     } else {
       std::cerr << "[" << idx << "] " << message << "\n";
-
     }
     ++idx;
   }
+}
+
+void check_dimension_works_with_blas_int_size(int64_t dim) try {
+  // Backend 32 bit Blas implementation
+  if ((sizeof(arma::blas_int) == 4) && (dim > ((int64_t)1 << 31) - 2)) {
+    XDIAG_THROW("Trying to create a block whose dimension is too large for the "
+                "backend BLAS routines. Your backend BLAS routines have a 32 "
+                "bit interface, and a vector beyond a dimension of 2^31 cannot "
+                "be represented. If you want to still perform this "
+                "calculation, you will need to compile XDiag with a 64 bit "
+                "backend, for example the ILP64 interface of IntelMKL.");
+  }
+  // Backend 64 bit Blas implementation
+  else if ((sizeof(arma::blas_int) == 8) && (dim > ((int64_t)1 << 63) - 2)) {
+    XDIAG_THROW(
+        "Trying to create a block whose dimension is too large for the "
+        "backend BLAS routines. The block dimension requested is larger than"
+        "2^63 which anyway is not feasible");
+  }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 } // namespace xdiag
