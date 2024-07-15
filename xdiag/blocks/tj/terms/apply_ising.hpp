@@ -17,7 +17,10 @@ void apply_ising(Bond const &bond, Basis &&basis, Fill &&fill) {
   std::string type = bond.type();
   assert((type == "ISING") || (type == "TJISING"));
 
-  coeff_t J = bond.coupling<coeff_t>();
+  Coupling cpl = bond.coupling();
+  assert(cpl.isexplicit() && !cpl.ismatrix());
+  coeff_t J = cpl.as<coeff_t>();
+  
   int64_t s1 = bond[0];
   int64_t s2 = bond[1];
   bit_t s1_mask = (bit_t)1 << s1;

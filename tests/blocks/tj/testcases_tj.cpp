@@ -1,4 +1,5 @@
 #include "testcases_tj.hpp"
+#include <xdiag/utils/print_macro.hpp>
 
 namespace xdiag::testcases::tj {
 
@@ -8,8 +9,8 @@ BondList tJchain(int n_sites, double t, double J) {
   bondlist["T"] = t;
   bondlist["J"] = J;
   for (int s = 0; s < n_sites; ++s) {
-    bondlist << Bond("HOP", "T", {s, (s + 1) % n_sites});
-    bondlist << Bond("HB", "J", {s, (s + 1) % n_sites});
+    bondlist += Bond("HOP", "T", {s, (s + 1) % n_sites});
+    bondlist += Bond("HB", "J", {s, (s + 1) % n_sites});
   }
   return bondlist;
 }
@@ -20,8 +21,8 @@ std::tuple<BondList, arma::Col<double>> tJchain_fullspectrum_alps(int L) {
   bonds["T"] = 1.0;
   bonds["J"] = 1.0;
   for (int s = 0; s < L; ++s) {
-    bonds << Bond("HOP", "T", {s, (s + 1) % L});
-    bonds << Bond("TJHB", "J", {s, (s + 1) % L});
+    bonds += Bond("HOP", "T", {s, (s + 1) % L});
+    bonds += Bond("TJHB", "J", {s, (s + 1) % L});
   }
   arma::Col<double> eigs;
   if (L == 3) {
@@ -581,22 +582,22 @@ tj_square2x2_fullspectrum_alps() {
   BondList bondlist;
   bondlist["T"] = 1.0;
   bondlist["J"] = 1.0;
-  bondlist << Bond("HOP", "T", {0, 1});
-  bondlist << Bond("HOP", "T", {1, 0});
-  bondlist << Bond("HOP", "T", {2, 3});
-  bondlist << Bond("HOP", "T", {3, 2});
-  bondlist << Bond("HOP", "T", {0, 2});
-  bondlist << Bond("HOP", "T", {2, 0});
-  bondlist << Bond("HOP", "T", {1, 3});
-  bondlist << Bond("HOP", "T", {3, 1});
-  bondlist << Bond("TJHB", "J", {0, 1});
-  bondlist << Bond("TJHB", "J", {1, 0});
-  bondlist << Bond("TJHB", "J", {2, 3});
-  bondlist << Bond("TJHB", "J", {3, 2});
-  bondlist << Bond("TJHB", "J", {0, 2});
-  bondlist << Bond("TJHB", "J", {2, 0});
-  bondlist << Bond("TJHB", "J", {1, 3});
-  bondlist << Bond("TJHB", "J", {3, 1});
+  bondlist += Bond("HOP", "T", {0, 1});
+  bondlist += Bond("HOP", "T", {1, 0});
+  bondlist += Bond("HOP", "T", {2, 3});
+  bondlist += Bond("HOP", "T", {3, 2});
+  bondlist += Bond("HOP", "T", {0, 2});
+  bondlist += Bond("HOP", "T", {2, 0});
+  bondlist += Bond("HOP", "T", {1, 3});
+  bondlist += Bond("HOP", "T", {3, 1});
+  bondlist += Bond("TJHB", "J", {0, 1});
+  bondlist += Bond("TJHB", "J", {1, 0});
+  bondlist += Bond("TJHB", "J", {2, 3});
+  bondlist += Bond("TJHB", "J", {3, 2});
+  bondlist += Bond("TJHB", "J", {0, 2});
+  bondlist += Bond("TJHB", "J", {2, 0});
+  bondlist += Bond("TJHB", "J", {1, 3});
+  bondlist += Bond("TJHB", "J", {3, 1});
   auto eigs =
       arma::Col<double>({-6.744562646538028616e+00, -6.000000000000000000e+00,
                          -5.605551275463989569e+00, -5.605551275463988681e+00,
@@ -653,7 +654,7 @@ BondList tj_alltoall(int n_sites) {
       ss << "T" << s1 << "_" << s2;
       std::string name = ss.str();
       double value = distribution(generator);
-      bondlist << Bond("HOP", name, {s1, s2});
+      bondlist += Bond("HOP", name, {s1, s2});
       bondlist[name] = value;
     }
   for (int s1 = 0; s1 < n_sites; ++s1)
@@ -662,7 +663,7 @@ BondList tj_alltoall(int n_sites) {
       ss << "J" << s1 << "_" << s2;
       std::string name = ss.str();
       double value = distribution(generator);
-      bondlist << Bond("HB", name, {s1, s2});
+      bondlist += Bond("HB", name, {s1, s2});
       bondlist[name] = value;
     }
   return bondlist;
@@ -679,7 +680,7 @@ BondList tj_alltoall_complex(int n_sites) {
       ss << "T" << s1 << "_" << s2;
       std::string name = ss.str();
       complex value = complex(distribution(generator), distribution(generator));
-      bondlist << Bond("HOP", name, {s1, s2});
+      bondlist += Bond("HOP", name, {s1, s2});
       bondlist[name] = value;
     }
   for (int s1 = 0; s1 < n_sites; ++s1)
@@ -688,7 +689,7 @@ BondList tj_alltoall_complex(int n_sites) {
       ss << "J" << s1 << "_" << s2;
       std::string name = ss.str();
       double value = distribution(generator);
-      bondlist << Bond("HB", name, {s1, s2});
+      bondlist += Bond("HB", name, {s1, s2});
       bondlist[name] = value;
     }
   return bondlist;
@@ -708,18 +709,18 @@ std::tuple<BondList, arma::Col<double>> randomAlltoAll4() {
   bondlist["J13"] = 1;
   bondlist["T23"] = -4;
   bondlist["J23"] = 4;
-  bondlist << Bond("HOP", "T01", {0, 1});
-  bondlist << Bond("HOP", "T02", {0, 2});
-  bondlist << Bond("HOP", "T03", {0, 3});
-  bondlist << Bond("HOP", "T12", {1, 2});
-  bondlist << Bond("HOP", "T13", {1, 3});
-  bondlist << Bond("HOP", "T23", {2, 3});
-  bondlist << Bond("HB", "J01", {0, 1});
-  bondlist << Bond("HB", "J02", {0, 2});
-  bondlist << Bond("HB", "J03", {0, 3});
-  bondlist << Bond("HB", "J12", {1, 2});
-  bondlist << Bond("HB", "J13", {1, 3});
-  bondlist << Bond("HB", "J23", {2, 3});
+  bondlist += Bond("HOP", "T01", {0, 1});
+  bondlist += Bond("HOP", "T02", {0, 2});
+  bondlist += Bond("HOP", "T03", {0, 3});
+  bondlist += Bond("HOP", "T12", {1, 2});
+  bondlist += Bond("HOP", "T13", {1, 3});
+  bondlist += Bond("HOP", "T23", {2, 3});
+  bondlist += Bond("HB", "J01", {0, 1});
+  bondlist += Bond("HB", "J02", {0, 2});
+  bondlist += Bond("HB", "J03", {0, 3});
+  bondlist += Bond("HB", "J12", {1, 2});
+  bondlist += Bond("HB", "J13", {1, 3});
+  bondlist += Bond("HB", "J23", {2, 3});
 
   arma::Col<double> eigs = {
       11.248037068163532,  11.248037068163532,  11.248037068163525,
@@ -762,12 +763,12 @@ std::tuple<BondList, arma::Col<double>> randomAlltoAll3() {
   bondlist["J02"] = -1;
   bondlist["T12"] = -5;
   bondlist["J12"] = -3;
-  bondlist << Bond("HOP", "T01", {0, 1});
-  bondlist << Bond("HOP", "T02", {0, 2});
-  bondlist << Bond("HOP", "T12", {1, 2});
-  bondlist << Bond("HB", "J01", {0, 1});
-  bondlist << Bond("HB", "J02", {0, 2});
-  bondlist << Bond("HB", "J12", {1, 2});
+  bondlist += Bond("HOP", "T01", {0, 1});
+  bondlist += Bond("HOP", "T02", {0, 2});
+  bondlist += Bond("HOP", "T12", {1, 2});
+  bondlist += Bond("HB", "J01", {0, 1});
+  bondlist += Bond("HB", "J02", {0, 2});
+  bondlist += Bond("HB", "J12", {1, 2});
 
   arma::Col<double> eigs = {
       6.256066270684332,  5.099019513592784,  5.099019513592784,

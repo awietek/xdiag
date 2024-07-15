@@ -22,7 +22,7 @@ TEST_CASE("non_branching_bonds", "[operators]") try {
   cx_mat ones(mat({{1.0, 1.0}, {1.0, 1.0}}), mat({{1.0, 1.0}, {1.0, 1.0}}));
 
   for (auto ss : {ones}) {
-    auto bond = Bond(ss, 0);
+    auto bond = Bond("MAT", ss, 0);
     auto block = Spinhalf(1);
     auto h = matrixC(bond, block);
     REQUIRE(close(h, ss));
@@ -35,10 +35,10 @@ TEST_CASE("non_branching_bonds", "[operators]") try {
   BondList bonds;
 
   for (int64_t i = 0; i < N - 1; ++i) {
-    bonds << Bond("ISING", J, {i, (i + 1) % N});
+    bonds += Bond("ISING", J, {i, (i + 1) % N});
   }
   for (int64_t i = 0; i < N; ++i) {
-    bonds << Bond(sx, H, i);
+    bonds += Bond("SX", sx, i);
   }
 
   auto block = Spinhalf(N);
@@ -57,12 +57,12 @@ TEST_CASE("non_branching_bonds", "[operators]") try {
       std::vector<int64_t> sites(k);
       std::iota(sites.begin(), sites.end(), 0);
 
-      auto bondr = Bond(mr, sites);
+      auto bondr = Bond("MR", mr, sites);
       auto hr = matrix(bondr, block);
       REQUIRE(close(hr, mr));
 
       auto mc = cx_mat(p2, p2, fill::randn);
-      auto bondc = Bond(mc, sites);
+      auto bondc = Bond("MC", mc, sites);
       auto hc = matrixC(bondc, block);
       REQUIRE(close(hc, mc));
     }
@@ -73,10 +73,10 @@ TEST_CASE("non_branching_bonds", "[operators]") try {
     auto block6 = Spinhalf(6);
 
     BondList bonds1;
-    bonds1 << Bond("SCALARCHIRALITY", "Jchi", {0, 1, 2});
-    bonds1 << Bond("SCALARCHIRALITY", "Jchi", {1, 2, 3});
-    bonds1 << Bond("SCALARCHIRALITY", "Jchi", {2, 3, 4});
-    bonds1 << Bond("SCALARCHIRALITY", "Jchi", {3, 4, 5});
+    bonds1 += Bond("SCALARCHIRALITY", "Jchi", {0, 1, 2});
+    bonds1 += Bond("SCALARCHIRALITY", "Jchi", {1, 2, 3});
+    bonds1 += Bond("SCALARCHIRALITY", "Jchi", {2, 3, 4});
+    bonds1 += Bond("SCALARCHIRALITY", "Jchi", {3, 4, 5});
     bonds1["Jchi"] = 1.0;
     auto H1 = matrixC(bonds1, block6);
 
@@ -85,11 +85,10 @@ TEST_CASE("non_branching_bonds", "[operators]") try {
                      kron(sz, kron(sx, sy) - kron(sy, sx));
 
     BondList bonds2;
-    bonds2 << Bond(jchimat, "Jchi", {0, 1, 2});
-    bonds2 << Bond(jchimat, "Jchi", {1, 2, 3});
-    bonds2 << Bond(jchimat, "Jchi", {2, 3, 4});
-    bonds2 << Bond(jchimat, "Jchi", {3, 4, 5});
-    bonds2["Jchi"] = 1.0;
+    bonds2 += Bond("Jchi", jchimat, {0, 1, 2});
+    bonds2 += Bond("Jchi", jchimat, {1, 2, 3});
+    bonds2 += Bond("Jchi", jchimat, {2, 3, 4});
+    bonds2 += Bond("Jchi", jchimat, {3, 4, 5});
     auto H2 = matrixC(bonds2, block6);
 
     REQUIRE(close(H1, H2));
@@ -99,30 +98,30 @@ TEST_CASE("non_branching_bonds", "[operators]") try {
   auto block12 = Spinhalf(12);
 
   BondList bonds1;
-  bonds1 << Bond("SCALARCHIRALITY", "Jchi", {0, 4, 6});
-  bonds1 << Bond("SCALARCHIRALITY", "Jchi", {3, 1, 9});
-  bonds1 << Bond("SCALARCHIRALITY", "Jchi", {9, 7, 4});
-  bonds1 << Bond("SCALARCHIRALITY", "Jchi", {4, 2, 10});
-  bonds1 << Bond("SCALARCHIRALITY", "Jchi", {10, 8, 5});
-  bonds1 << Bond("SCALARCHIRALITY", "Jchi", {6, 10, 1});
-  bonds1 << Bond("SCALARCHIRALITY", "Jchi", {1, 5, 7});
-  bonds1 << Bond("SCALARCHIRALITY", "Jchi", {7, 11, 2});
-  bonds1 << Bond("SCALARCHIRALITY", "Jchi", {2, 3, 8});
-  bonds1 << Bond("SCALARCHIRALITY", "Jchi", {8, 9, 0});
-  bonds1 << Bond("SCALARCHIRALITY", "Jchi", {5, 0, 11});
-  bonds1 << Bond("SCALARCHIRALITY", "Jchi", {11, 6, 3});
-  bonds1 << Bond("SCALARCHIRALITY", "Jchi", {4, 10, 6});
-  bonds1 << Bond("SCALARCHIRALITY", "Jchi", {1, 7, 9});
-  bonds1 << Bond("SCALARCHIRALITY", "Jchi", {7, 2, 4});
-  bonds1 << Bond("SCALARCHIRALITY", "Jchi", {2, 8, 10});
-  bonds1 << Bond("SCALARCHIRALITY", "Jchi", {8, 0, 5});
-  bonds1 << Bond("SCALARCHIRALITY", "Jchi", {10, 5, 1});
-  bonds1 << Bond("SCALARCHIRALITY", "Jchi", {5, 11, 7});
-  bonds1 << Bond("SCALARCHIRALITY", "Jchi", {11, 3, 2});
-  bonds1 << Bond("SCALARCHIRALITY", "Jchi", {3, 9, 8});
-  bonds1 << Bond("SCALARCHIRALITY", "Jchi", {9, 4, 0});
-  bonds1 << Bond("SCALARCHIRALITY", "Jchi", {0, 6, 11});
-  bonds1 << Bond("SCALARCHIRALITY", "Jchi", {6, 1, 3});
+  bonds1 += Bond("SCALARCHIRALITY", "Jchi", {0, 4, 6});
+  bonds1 += Bond("SCALARCHIRALITY", "Jchi", {3, 1, 9});
+  bonds1 += Bond("SCALARCHIRALITY", "Jchi", {9, 7, 4});
+  bonds1 += Bond("SCALARCHIRALITY", "Jchi", {4, 2, 10});
+  bonds1 += Bond("SCALARCHIRALITY", "Jchi", {10, 8, 5});
+  bonds1 += Bond("SCALARCHIRALITY", "Jchi", {6, 10, 1});
+  bonds1 += Bond("SCALARCHIRALITY", "Jchi", {1, 5, 7});
+  bonds1 += Bond("SCALARCHIRALITY", "Jchi", {7, 11, 2});
+  bonds1 += Bond("SCALARCHIRALITY", "Jchi", {2, 3, 8});
+  bonds1 += Bond("SCALARCHIRALITY", "Jchi", {8, 9, 0});
+  bonds1 += Bond("SCALARCHIRALITY", "Jchi", {5, 0, 11});
+  bonds1 += Bond("SCALARCHIRALITY", "Jchi", {11, 6, 3});
+  bonds1 += Bond("SCALARCHIRALITY", "Jchi", {4, 10, 6});
+  bonds1 += Bond("SCALARCHIRALITY", "Jchi", {1, 7, 9});
+  bonds1 += Bond("SCALARCHIRALITY", "Jchi", {7, 2, 4});
+  bonds1 += Bond("SCALARCHIRALITY", "Jchi", {2, 8, 10});
+  bonds1 += Bond("SCALARCHIRALITY", "Jchi", {8, 0, 5});
+  bonds1 += Bond("SCALARCHIRALITY", "Jchi", {10, 5, 1});
+  bonds1 += Bond("SCALARCHIRALITY", "Jchi", {5, 11, 7});
+  bonds1 += Bond("SCALARCHIRALITY", "Jchi", {11, 3, 2});
+  bonds1 += Bond("SCALARCHIRALITY", "Jchi", {3, 9, 8});
+  bonds1 += Bond("SCALARCHIRALITY", "Jchi", {9, 4, 0});
+  bonds1 += Bond("SCALARCHIRALITY", "Jchi", {0, 6, 11});
+  bonds1 += Bond("SCALARCHIRALITY", "Jchi", {6, 1, 3});
   bonds1["Jchi"] = 1.0;
   auto H1 = matrixC(bonds1, block12);
 
@@ -131,31 +130,30 @@ TEST_CASE("non_branching_bonds", "[operators]") try {
                    kron(kron(sy, sx), sz) - kron(kron(sz, sy), sx);
 
   BondList bonds2;
-  bonds2 << Bond(jchimat, "Jchi", {0, 4, 6});
-  bonds2 << Bond(jchimat, "Jchi", {3, 1, 9});
-  bonds2 << Bond(jchimat, "Jchi", {9, 7, 4});
-  bonds2 << Bond(jchimat, "Jchi", {4, 2, 10});
-  bonds2 << Bond(jchimat, "Jchi", {10, 8, 5});
-  bonds2 << Bond(jchimat, "Jchi", {6, 10, 1});
-  bonds2 << Bond(jchimat, "Jchi", {1, 5, 7});
-  bonds2 << Bond(jchimat, "Jchi", {7, 11, 2});
-  bonds2 << Bond(jchimat, "Jchi", {2, 3, 8});
-  bonds2 << Bond(jchimat, "Jchi", {8, 9, 0});
-  bonds2 << Bond(jchimat, "Jchi", {5, 0, 11});
-  bonds2 << Bond(jchimat, "Jchi", {11, 6, 3});
-  bonds2 << Bond(jchimat, "Jchi", {4, 10, 6});
-  bonds2 << Bond(jchimat, "Jchi", {1, 7, 9});
-  bonds2 << Bond(jchimat, "Jchi", {7, 2, 4});
-  bonds2 << Bond(jchimat, "Jchi", {2, 8, 10});
-  bonds2 << Bond(jchimat, "Jchi", {8, 0, 5});
-  bonds2 << Bond(jchimat, "Jchi", {10, 5, 1});
-  bonds2 << Bond(jchimat, "Jchi", {5, 11, 7});
-  bonds2 << Bond(jchimat, "Jchi", {11, 3, 2});
-  bonds2 << Bond(jchimat, "Jchi", {3, 9, 8});
-  bonds2 << Bond(jchimat, "Jchi", {9, 4, 0});
-  bonds2 << Bond(jchimat, "Jchi", {0, 6, 11});
-  bonds2 << Bond(jchimat, "Jchi", {6, 1, 3});
-  bonds2["Jchi"] = 1.0;
+  bonds2 += Bond("Jchi", jchimat, {0, 4, 6});
+  bonds2 += Bond("Jchi", jchimat, {3, 1, 9});
+  bonds2 += Bond("Jchi", jchimat, {9, 7, 4});
+  bonds2 += Bond("Jchi", jchimat, {4, 2, 10});
+  bonds2 += Bond("Jchi", jchimat, {10, 8, 5});
+  bonds2 += Bond("Jchi", jchimat, {6, 10, 1});
+  bonds2 += Bond("Jchi", jchimat, {1, 5, 7});
+  bonds2 += Bond("Jchi", jchimat, {7, 11, 2});
+  bonds2 += Bond("Jchi", jchimat, {2, 3, 8});
+  bonds2 += Bond("Jchi", jchimat, {8, 9, 0});
+  bonds2 += Bond("Jchi", jchimat, {5, 0, 11});
+  bonds2 += Bond("Jchi", jchimat, {11, 6, 3});
+  bonds2 += Bond("Jchi", jchimat, {4, 10, 6});
+  bonds2 += Bond("Jchi", jchimat, {1, 7, 9});
+  bonds2 += Bond("Jchi", jchimat, {7, 2, 4});
+  bonds2 += Bond("Jchi", jchimat, {2, 8, 10});
+  bonds2 += Bond("Jchi", jchimat, {8, 0, 5});
+  bonds2 += Bond("Jchi", jchimat, {10, 5, 1});
+  bonds2 += Bond("Jchi", jchimat, {5, 11, 7});
+  bonds2 += Bond("Jchi", jchimat, {11, 3, 2});
+  bonds2 += Bond("Jchi", jchimat, {3, 9, 8});
+  bonds2 += Bond("Jchi", jchimat, {9, 4, 0});
+  bonds2 += Bond("Jchi", jchimat, {0, 6, 11});
+  bonds2 += Bond("Jchi", jchimat, {6, 1, 3});
   auto H2 = matrixC(bonds2, block12);
 
   // XDIAG_SHOW(norm(H1));

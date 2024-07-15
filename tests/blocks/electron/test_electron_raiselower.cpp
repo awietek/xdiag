@@ -26,8 +26,8 @@ TEST_CASE("electron_raise_lower", "[electron]") {
 
         for (auto op_i_str : op_strs) {
           for (auto op_j_str : op_strs) {
-            auto op_i = Bond(op_i_str, i);
-            auto op_j = Bond(op_j_str, j);
+            auto op_i = Bond(op_i_str, 1.0, i);
+            auto op_j = Bond(op_j_str, 1.0, j);
             auto op_i_m = matrixC(op_i, block);
             auto op_j_m = matrixC(op_j, block);
             cx_mat anti_comm = op_i_m * op_j_m + op_j_m * op_i_m;
@@ -61,20 +61,20 @@ TEST_CASE("electron_raise_lower", "[electron]") {
 
       // Check whether NUMBERUP agrees
       {
-        auto bond = Bond("NUMBERUP", i);
+        auto bond = Bond("NUMBERUP", 1.0, i);
         auto m = matrix(bond, block);
-        auto mi1 = matrix(Bond("CDAGUP", i), block);
-        auto mi2 = matrix(Bond("CUP", i), block);
+        auto mi1 = matrix(Bond("CDAGUP", 1.0, i), block);
+        auto mi2 = matrix(Bond("CUP", 1.0, i), block);
         auto mm = mi1 * mi2;
         REQUIRE(norm(mm - m) < 1e-12);
       }
 
       // Check whether NUMBERDN agrees
       {
-        auto bond = Bond("NUMBERDN", i);
+        auto bond = Bond("NUMBERDN", 1.0, i);
         auto m = matrix(bond, block);
-        auto mi1 = matrix(Bond("CDAGDN", i), block);
-        auto mi2 = matrix(Bond("CDN", i), block);
+        auto mi1 = matrix(Bond("CDAGDN", 1.0, i), block);
+        auto mi2 = matrix(Bond("CDN", 1.0, i), block);
         auto mm = mi1 * mi2;
         REQUIRE(norm(mm - m) < 1e-12);
       }
@@ -84,43 +84,43 @@ TEST_CASE("electron_raise_lower", "[electron]") {
 
           // Check whether HOPUP agrees
           {
-            auto bond = Bond("HOPUP", {i, j});
+            auto bond = Bond("HOPUP", 1.0, {i, j});
             auto m = matrix(bond, block);
-            auto m1 = matrix(Bond("CDAGUP", i), block);
-            auto m2 = matrix(Bond("CUP", j), block);
-            auto m3 = matrix(Bond("CDAGUP", j), block);
-            auto m4 = matrix(Bond("CUP", i), block);
+            auto m1 = matrix(Bond("CDAGUP", 1.0, i), block);
+            auto m2 = matrix(Bond("CUP", 1.0, j), block);
+            auto m3 = matrix(Bond("CDAGUP", 1.0, j), block);
+            auto m4 = matrix(Bond("CUP", 1.0, i), block);
             auto mm = -m1 * m2 - m3 * m4;
             REQUIRE(norm(mm - m) < 1e-12);
           }
 
           // Check whether HOPDN agrees
           {
-            auto bond = Bond("HOPDN", {i, j});
+            auto bond = Bond("HOPDN", 1.0, {i, j});
             auto m = matrix(bond, block);
-            auto m1 = matrix(Bond("CDAGDN", i), block);
-            auto m2 = matrix(Bond("CDN", j), block);
-            auto m3 = matrix(Bond("CDAGDN", j), block);
-            auto m4 = matrix(Bond("CDN", i), block);
+            auto m1 = matrix(Bond("CDAGDN", 1.0, i), block);
+            auto m2 = matrix(Bond("CDN", 1.0, j), block);
+            auto m3 = matrix(Bond("CDAGDN", 1.0, j), block);
+            auto m4 = matrix(Bond("CDN", 1.0, i), block);
             auto mm = -m1 * m2 - m3 * m4;
             REQUIRE(norm(mm - m) < 1e-12);
           }
 
           // Check whether ISING agrees
           {
-            auto bond = Bond("ISING", {i, j});
+            auto bond = Bond("ISING", 1.0, {i, j});
             auto m = matrix(bond, block);
 
-            auto mi1 = matrix(Bond("CDAGUP", i), block);
-            auto mi2 = matrix(Bond("CUP", i), block);
-            auto mi3 = matrix(Bond("CDAGDN", i), block);
-            auto mi4 = matrix(Bond("CDN", i), block);
+            auto mi1 = matrix(Bond("CDAGUP", 1.0, i), block);
+            auto mi2 = matrix(Bond("CUP", 1.0, i), block);
+            auto mi3 = matrix(Bond("CDAGDN", 1.0, i), block);
+            auto mi4 = matrix(Bond("CDN", 1.0, i), block);
             auto szi = 0.5 * mi1 * mi2 - 0.5 * mi3 * mi4;
 
-            auto mj1 = matrix(Bond("CDAGUP", j), block);
-            auto mj2 = matrix(Bond("CUP", j), block);
-            auto mj3 = matrix(Bond("CDAGDN", j), block);
-            auto mj4 = matrix(Bond("CDN", j), block);
+            auto mj1 = matrix(Bond("CDAGUP", 1.0, j), block);
+            auto mj2 = matrix(Bond("CUP", 1.0, j), block);
+            auto mj3 = matrix(Bond("CDAGDN", 1.0, j), block);
+            auto mj4 = matrix(Bond("CDN", 1.0, j), block);
             auto szj = 0.5 * mj1 * mj2 - 0.5 * mj3 * mj4;
 
             auto mm = szi * szj;
@@ -129,20 +129,20 @@ TEST_CASE("electron_raise_lower", "[electron]") {
 
           // Check whether EXCHANGE agrees
           {
-            auto bond = Bond("EXCHANGE", {i, j});
+            auto bond = Bond("EXCHANGE", 1.0, {i, j});
             auto m = matrix(bond, block);
 
-            auto mi1 = matrix(Bond("CDAGUP", i), block);
-            auto mi2 = matrix(Bond("CUP", i), block);
-            auto mi3 = matrix(Bond("CDAGDN", i), block);
-            auto mi4 = matrix(Bond("CDN", i), block);
+            auto mi1 = matrix(Bond("CDAGUP", 1.0, i), block);
+            auto mi2 = matrix(Bond("CUP", 1.0, i), block);
+            auto mi3 = matrix(Bond("CDAGDN", 1.0, i), block);
+            auto mi4 = matrix(Bond("CDN", 1.0, i), block);
             auto spi = mi1 * mi4;
             auto smi = mi3 * mi2;
 
-            auto mj1 = matrix(Bond("CDAGUP", j), block);
-            auto mj2 = matrix(Bond("CUP", j), block);
-            auto mj3 = matrix(Bond("CDAGDN", j), block);
-            auto mj4 = matrix(Bond("CDN", j), block);
+            auto mj1 = matrix(Bond("CDAGUP", 1.0, j), block);
+            auto mj2 = matrix(Bond("CUP", 1.0, j), block);
+            auto mj3 = matrix(Bond("CDAGDN", 1.0, j), block);
+            auto mj4 = matrix(Bond("CDN", 1.0, j), block);
             auto spj = mj1 * mj4;
             auto smj = mj3 * mj2;
 

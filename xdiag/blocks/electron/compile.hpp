@@ -5,10 +5,6 @@
 
 namespace xdiag::electron {
 
-const std::vector<std::string> special_bond_types = {
-    "HB",       "EXCHANGE", "ISING", "HOP",    "HOPUP",  "HOPDN", "NUMBER",
-    "NUMBERUP", "NUMBERDN", "SZ",    "CDAGUP", "CDAGDN", "CUP",   "CDN"};
-
-BondList compile(BondList const &bonds, double precision = 1e-12);
+BondList compile(BondList const &bonds, int64_t n_sites, double precision);
 
 } // namespace xdiag::electron

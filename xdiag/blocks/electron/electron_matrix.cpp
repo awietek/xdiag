@@ -9,40 +9,35 @@ namespace xdiag {
 
 template <typename coeff_t>
 arma::Mat<coeff_t> matrix_gen(BondList const &bonds, Electron const &block_in,
-                              Electron const &block_out) try {
-  BondList bondsc = electron::compile(bonds, 1e-12);
-
+                              Electron const &block_out,
+                              double zero_precision) try {
   int64_t m = block_out.size();
   int64_t n = block_in.dim();
   arma::Mat<coeff_t> mat(m, n, arma::fill::zeros);
-  matrix_gen(mat.memptr(), bonds, block_in, block_out);
+  matrix_gen(mat.memptr(), bonds, block_in, block_out, zero_precision);
   return mat;
 
 } catch (Error const &error) {
   XDIAG_RETHROW(error);
-  return arma::Mat<coeff_t>();
 }
 
 arma::mat matrix(BondList const &bonds, Electron const &block_in,
-                 Electron const &block_out) try {
-  return matrix_gen<double>(bonds, block_in, block_out);
+                 Electron const &block_out, double zero_precision) try {
+  return matrix_gen<double>(bonds, block_in, block_out, zero_precision);
 } catch (Error const &error) {
   XDIAG_RETHROW(error);
-  return arma::mat();
 }
 
 arma::cx_mat matrixC(BondList const &bonds, Electron const &block_in,
-                     Electron const &block_out) try {
-  return matrix_gen<complex>(bonds, block_in, block_out);
+                     Electron const &block_out, double zero_precision) try {
+  return matrix_gen<complex>(bonds, block_in, block_out, zero_precision);
 } catch (Error const &error) {
   XDIAG_RETHROW(error);
-  return arma::cx_mat();
 }
 
 template <typename coeff_t>
 void matrix_gen(coeff_t *mat, BondList const &bonds, Electron const &block_in,
-                Electron const &block_out) try {
-  BondList bondsc = electron::compile(bonds, 1e-12);
+                Electron const &block_out, double zero_precision) try {
   int64_t m = block_out.size();
   int64_t n = block_in.size();
   std::fill(mat, mat + m * n, 0);
@@ -51,21 +46,21 @@ void matrix_gen(coeff_t *mat, BondList const &bonds, Electron const &block_in,
     return fill_matrix(mat, idx_in, idx_out, m, val);
   };
 
-  electron::dispatch<coeff_t>(bondsc, block_in, block_out, fill);
+  electron::dispatch<coeff_t>(bonds, block_in, block_out, fill, zero_precision);
 } catch (Error const &error) {
   XDIAG_RETHROW(error);
 }
 
 void matrix(double *mat, BondList const &bonds, Electron const &block_in,
-            Electron const &block_out) try {
-  return matrix_gen<double>(mat, bonds, block_in, block_out);
+            Electron const &block_out, double zero_precision) try {
+  return matrix_gen<double>(mat, bonds, block_in, block_out, zero_precision);
 } catch (Error const &error) {
   XDIAG_RETHROW(error);
 }
 
 void matrixC(complex *mat, BondList const &bonds, Electron const &block_in,
-             Electron const &block_out) try {
-  return matrix_gen<complex>(mat, bonds, block_in, block_out);
+             Electron const &block_out, double zero_precision) try {
+  return matrix_gen<complex>(mat, bonds, block_in, block_out, zero_precision);
 } catch (Error const &error) {
   XDIAG_RETHROW(error);
 }

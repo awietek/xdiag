@@ -140,21 +140,21 @@ TEST_CASE("spinhalf_matrix", "[spinhalf]") {
           for (int j = 0; j < n_sites; ++j) {
 
             BondList sp_i_m;
-            sp_i_m << Bond("S+", i);
+            sp_i_m += Bond("S+", 1.0, i);
             auto sp_i_m_mat = matrix(sp_i_m, blockm, block);
             auto sp_i_mat = matrix(sp_i_m, block_raw, block_raw);
 
             BondList sm_j_m;
-            sm_j_m << Bond("S-", j);
+            sm_j_m += Bond("S-", 1.0, j);
             auto sm_j_m_mat = matrix(sm_j_m, block, blockm);
             auto sm_j_mat = matrix(sm_j_m, block_raw, block_raw);
 
             BondList sp_i_p;
-            sp_i_p << Bond("S+", i);
+            sp_i_p += Bond("S+", 1.0, i);
             auto sp_i_p_mat = matrix(sp_i_p, block, blockp);
 
             BondList sm_j_p;
-            sm_j_p << Bond("S-", j);
+            sm_j_p += Bond("S-", 1.0, j);
             auto sm_j_p_mat = matrix(sm_j_p, blockp, block);
 
             auto C1 = sp_i_m_mat * sm_j_m_mat;
@@ -166,7 +166,7 @@ TEST_CASE("spinhalf_matrix", "[spinhalf]") {
 
             if (i == j) {
               BondList sz;
-              sz << Bond("SZ", i);
+              sz += Bond("SZ", 1.0, i);
               auto sz_mat = matrix(sz, block, block);
               auto sz_matr = matrix(sz, block_raw, block_raw);
               REQUIRE(close(comm, arma::mat(2.0 * sz_mat)));

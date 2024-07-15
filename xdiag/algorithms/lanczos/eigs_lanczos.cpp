@@ -20,12 +20,12 @@ eigs_lanczos_result_t eigs_lanczos(BondList const &bonds,
   if (neigvals < 1) {
     XDIAG_THROW("Argument \"neigvals\" needs to be >= 1");
   }
-  if (!bonds.ishermitian()) {
-    XDIAG_THROW("Input BondList is not hermitian");
-  }
+  // if (!bonds.ishermitian()) {
+  //   XDIAG_THROW("Input BondList is not hermitian");
+  // }
 
-  bool cplx = bonds.iscomplex() || iscomplex(block) || force_complex ||
-              state0.iscomplex();
+  bool cplx =
+      !bonds.isreal() || iscomplex(block) || force_complex || !state0.isreal();
   if (cplx) {
     state0.make_complex();
   }
@@ -118,11 +118,11 @@ eigs_lanczos_result_t eigs_lanczos(BondList const &bonds,
   if (neigvals < 1) {
     XDIAG_THROW("Argument \"neigvals\" needs to be >= 1");
   }
-  if (!bonds.ishermitian()) {
-    XDIAG_THROW("Input BondList is not hermitian");
-  }
+  // if (!bonds.ishermitian()) {
+  //   XDIAG_THROW("Input BondList is not hermitian");
+  // }
 
-  bool cplx = bonds.iscomplex() || iscomplex(block) || force_complex;
+  bool cplx = (!bonds.isreal()) || iscomplex(block) || force_complex;
   State state0(block, !cplx);
   fill(state0, RandomState(random_seed));
 

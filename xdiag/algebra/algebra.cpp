@@ -34,7 +34,6 @@ double dot(State const &v, State const &w) try {
   if ((v.n_cols() > 1) || (w.n_cols() > 1)) {
     XDIAG_THROW(
         "Cannot compute dot product of state with more than one column");
-    return 0;
   }
 
   if ((v.isreal()) && (w.isreal())) {
@@ -42,11 +41,9 @@ double dot(State const &v, State const &w) try {
   } else {
     XDIAG_THROW("Unable to compute real dot product of a complex "
                 "state, consider using dotC instead.");
-    return 0;
   }
 } catch (Error const &error) {
   XDIAG_RETHROW(error);
-  return 0;
 }
 
 complex dotC(State const &v, State const &w) try {
@@ -60,7 +57,7 @@ complex dotC(State const &v, State const &w) try {
   }
   if ((v.isreal()) && (w.isreal())) {
     return dot(v.block(), v.vector(0, false), w.vector(0, false));
-  } else if ((v.isreal()) && (w.iscomplex())) {
+  } else if ((v.isreal()) && (!w.isreal())) {
     State v2;
     try {
       v2 = v;
@@ -69,7 +66,7 @@ complex dotC(State const &v, State const &w) try {
       XDIAG_THROW("Unable to create intermediate complex State");
     }
     return dot(v.block(), v2.vectorC(0, false), w.vectorC(0, false));
-  } else if ((w.isreal()) && (v.iscomplex())) {
+  } else if ((w.isreal()) && (!v.isreal())) {
     State w2;
     try {
       w2 = w;
@@ -77,78 +74,87 @@ complex dotC(State const &v, State const &w) try {
     } catch (...) {
       XDIAG_THROW("Unable to create intermediate complex State");
     }
-    return dot(v.block(), v.vectorC(0, false), w.vectorC(0, false));
+    return dot(v.block(), v.vectorC(0, false), w2.vectorC(0, false));
   } else {
     return dot(v.block(), v.vectorC(0, false), w.vectorC(0, false));
   }
 } catch (Error const &error) {
   XDIAG_RETHROW(error);
-  return 0;
 }
 
 double inner(BondList const &bonds, State const &v) try {
-  auto w = v;
-  apply(bonds, v, w);
-  return dot(w, v);
+  if (v.isreal() && bonds.isreal()) {
+    auto w = v;
+    apply(bonds, v, w);
+    return dot(w, v);
+  } else {
+    XDIAG_THROW("\"inner\" function computing product <psi | O | psi> can only "
+                "be called if both the state and the bonds are real. Maybe use "
+                "innerC(...)");
+  }
 } catch (Error const &error) {
   XDIAG_RETHROW(error);
-  return 0;
-}
-
-complex innerC(BondList const &bonds, State const &v) try {
-  auto w = v;
-  apply(bonds, v, w);
-  return dotC(w, v);
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
-  return 0;
 }
 
 double inner(Bond const &bond, State const &v) try {
   return inner(BondList({bond}), v);
 } catch (Error const &error) {
   XDIAG_RETHROW(error);
-  return 0;
+}
+
+complex innerC(BondList const &bonds, State const &v) try {
+  if (v.isreal() && bonds.isreal()) {
+    auto w = v;
+    apply(bonds, v, w);
+    return (complex)dot(w, v);
+  } else if (v.isreal() && !bonds.isreal()) {
+    auto v2 = v;
+    auto w = v2;
+    v2.make_complex();
+    apply(bonds, v2, w);
+    return dotC(w, v);
+  } else {
+    auto w = v;
+    apply(bonds, v, w);
+    return dotC(w, v);
+  }
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
 }
 
 complex innerC(Bond const &bond, State const &v) try {
   return innerC(BondList({bond}), v);
 } catch (Error const &error) {
   XDIAG_RETHROW(error);
-  return 0;
 }
 
-double inner(State const &v, BondList const &bonds, State const &w) try {
-  auto bw = zeros_like(w);
-  apply(bonds, w, bw);
-  return dot(v, bw);
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
-  return 0;
-}
+// double inner(State const &v, BondList const &bonds, State const &w) try {
+//   auto bw = zeros_like(w);
+//   apply(bonds, w, bw);
+//   return dot(v, bw);
+// } catch (Error const &error) {
+//   XDIAG_RETHROW(error);
+// }
 
-complex innerC(State const &v, BondList const &bonds, State const &w) try {
-  auto bw = zeros_like(w);
-  apply(bonds, w, bw);
-  return dotC(v, bw);
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
-  return 0;
-}
+// complex innerC(State const &v, BondList const &bonds, State const &w) try {
+//   auto bw = zeros_like(w);
+//   apply(bonds, w, bw);
+//   return dotC(v, bw);
+// } catch (Error const &error) {
+//   XDIAG_RETHROW(error);
+// }
 
-double inner(State const &v, Bond const &bond, State const &w) try {
-  return inner(v, BondList({bond}), w);
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
-  return 0;
-}
+// double inner(State const &v, Bond const &bond, State const &w) try {
+//   return inner(v, BondList({bond}), w);
+// } catch (Error const &error) {
+//   XDIAG_RETHROW(error);
+// }
 
-complex innerC(State const &v, Bond const &bond, State const &w) try {
-  return innerC(v, BondList({bond}), w);
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
-  return 0;
-}
+// complex innerC(State const &v, Bond const &bond, State const &w) try {
+//   return innerC(v, BondList({bond}), w);
+// } catch (Error const &error) {
+//   XDIAG_RETHROW(error);
+// }
 
 State &operator*=(State &X, complex alpha) try {
   if (X.isreal()) {
@@ -160,7 +166,6 @@ State &operator*=(State &X, complex alpha) try {
   return X;
 } catch (Error const &error) {
   XDIAG_RETHROW(error);
-  return X;
 }
 
 State &operator*=(State &X, double alpha) try {
@@ -172,7 +177,6 @@ State &operator*=(State &X, double alpha) try {
   return X;
 } catch (Error const &error) {
   XDIAG_RETHROW(error);
-  return X;
 }
 
 State &operator/=(State &X, complex alpha) try {
@@ -185,7 +189,6 @@ State &operator/=(State &X, complex alpha) try {
   return X;
 } catch (Error const &error) {
   XDIAG_RETHROW(error);
-  return X;
 }
 
 State &operator/=(State &X, double alpha) try {
@@ -197,7 +200,6 @@ State &operator/=(State &X, double alpha) try {
   return X;
 } catch (Error const &error) {
   XDIAG_RETHROW(error);
-  return X;
 }
 
 // template <class coeff_t>
@@ -375,7 +377,6 @@ double dot(block_variant_t const &block, arma::vec const &v,
 #endif
 } catch (Error const &error) {
   XDIAG_RETHROW(error);
-  return 0;
 }
 
 complex dot(block_variant_t const &block, arma::cx_vec const &v,
@@ -393,7 +394,6 @@ complex dot(block_variant_t const &block, arma::cx_vec const &v,
 #endif
 } catch (Error const &error) {
   XDIAG_RETHROW(error);
-  return 0;
 }
 
 template <typename coeff_t>
@@ -401,7 +401,6 @@ double norm(block_variant_t const &block, arma::Col<coeff_t> const &v) try {
   return std::sqrt(xdiag::real(dot(block, v, v)));
 } catch (Error const &error) {
   XDIAG_RETHROW(error);
-  return 0;
 }
 
 template double norm(block_variant_t const &, arma::Col<double> const &);
@@ -418,7 +417,6 @@ double norm1(block_variant_t const &block, arma::Col<coeff_t> const &v) try {
   return nrm;
 } catch (Error const &error) {
   XDIAG_RETHROW(error);
-  return 0;
 }
 
 template double norm1(block_variant_t const &, arma::Col<double> const &);
@@ -435,7 +433,6 @@ double norminf(block_variant_t const &block, arma::Col<coeff_t> const &v) try {
   return nrm;
 } catch (Error const &error) {
   XDIAG_RETHROW(error);
-  return 0;
 }
 
 template double norminf(block_variant_t const &, arma::Col<double> const &);

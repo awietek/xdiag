@@ -37,8 +37,12 @@ void check_dimension_works_with_blas_int_size(int64_t dim);
 
 } // namespace xdiag
 
+// comment: throw 0; necessary to let compiler know there need not be a return
+// value
 #define XDIAG_THROW(message)                                                   \
-  xdiag::throw_error(message, __FILE__, __func__, __LINE__);
+  xdiag::throw_error(message, __FILE__, __func__, __LINE__);                   \
+  throw 0;
 
 #define XDIAG_RETHROW(error)                                                   \
-  xdiag::rethrow_error(error, __FILE__, __func__, __LINE__);
+  xdiag::rethrow_error(error, __FILE__, __func__, __LINE__);                   \
+  throw 0;

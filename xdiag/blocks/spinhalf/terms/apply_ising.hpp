@@ -17,11 +17,13 @@ void apply_ising(Bond const &bond, BasisIn &&basis_in, BasisOut &&basis_out,
   assert(bond.size() == 2);
   assert(bond.sites_disjoint());
 
+  Coupling cpl = bond.coupling();
+  assert(cpl.isexplicit() && !cpl.ismatrix());
+
+  coeff_t J = cpl.as<coeff_t>();
   int64_t s1 = bond[0];
   int64_t s2 = bond[1];
   bit_t mask = ((bit_t)1 << s1) | ((bit_t)1 << s2);
-
-  coeff_t J = bond.coupling<coeff_t>();
 
   coeff_t val_same = J / 4.0;
   coeff_t val_diff = -J / 4.0;

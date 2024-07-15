@@ -10,10 +10,11 @@ namespace xdiag::spinhalf {
 
 BondList compile(BondList const &bonds, int64_t n_sites, double precision) try {
   using namespace operators;
-
   BondList bonds_explicit = make_explicit(bonds);
+  BondList bonds_clean = clean_zeros(bonds_explicit, precision);
+
   BondList bonds_compiled;
-  for (auto bond : bonds_explicit) {
+  for (auto bond : bonds_clean) {
 
     if (bond.ismatrix()) {
       BondList bonds_nb = non_branching_bonds(bond, precision);
@@ -51,7 +52,6 @@ BondList compile(BondList const &bonds, int64_t n_sites, double precision) try {
   return bonds_compiled;
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
-  return BondList();
 }
 
 } // namespace xdiag::spinhalf

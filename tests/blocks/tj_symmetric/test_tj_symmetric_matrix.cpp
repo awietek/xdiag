@@ -100,7 +100,7 @@ TEST_CASE("tj_symmetric_matrix", "[tj]") {
         n_sites);
     BondList bonds;
     for (int64_t s = 0; s < n_sites; ++s) {
-      bonds << Bond("TJHB", {s, (s + 1) % n_sites});
+      bonds += Bond("TJHB", 1.0, {s, (s + 1) % n_sites});
     }
     auto [space_group, irreps, multiplicities] =
         get_cyclic_group_irreps_mult(n_sites);

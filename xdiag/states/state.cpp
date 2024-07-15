@@ -128,7 +128,6 @@ State::State(block_t const &block, arma::Mat<coeff_t> const &matrix)
 
 int64_t State::n_sites() const { return xdiag::n_sites(block_); }
 bool State::isreal() const { return real_; }
-bool State::iscomplex() const { return !isreal(); }
 
 State State::real() const try {
   if (isreal()) {

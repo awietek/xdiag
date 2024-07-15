@@ -55,8 +55,8 @@ TEST_CASE("ritz_vecs_arnoldi", "[arnoldi]") {
   BondList bonds;
 
   for (int i = 0; i < n_sites; ++i) {
-    bonds << Bond("HB", "J1", {i, (i + 1) % n_sites});
-    bonds << Bond("HB", "J2", {i, (i + 2) % n_sites});
+    bonds += Bond("HB", "J1", {i, (i + 1) % n_sites});
+    bonds += Bond("HB", "J2", {i, (i + 2) % n_sites});
   }
   bonds["J1"] = 1;
   bonds["J2"] = .5;

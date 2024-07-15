@@ -26,7 +26,10 @@ void apply_hopping(Bond const &bond, Basis &&basis, Fill &&fill) {
   int64_t l = std::min(s1, s2);
   int64_t u = std::max(s1, s2);
   bit_t fermimask = (((bit_t)1 << (u - l - 1)) - 1) << (l + 1);
-  coeff_t t = bond.coupling<coeff_t>();
+
+  Coupling cpl = bond.coupling();
+  assert(cpl.isexplicit() && !cpl.ismatrix());
+  coeff_t t = cpl.as<coeff_t>();
 
   auto non_zero_term = [&flipmask](bit_t const &spins) -> bool {
     return bits::popcnt(spins & flipmask) & 1;

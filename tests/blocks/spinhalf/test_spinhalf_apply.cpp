@@ -12,8 +12,7 @@
 
 using namespace xdiag;
 
-void test_apply(BondList bonds) {
-  int N = bonds.n_sites();
+void test_apply(int N, BondList bonds) {
   for (int nup = 1; nup <= N; ++nup) {
     auto block = Spinhalf(N, nup);
     auto H = matrix(bonds, block, block);
@@ -46,13 +45,13 @@ TEST_CASE("spinhalf_apply", "[spinhalf]") {
   Log.out("spinhalf_apply: Heisenberg chain apply test, J=1.0, N=2,..,6");
   for (int N = 2; N <= 6; ++N) {
     auto bonds = HBchain(N, 1.0);
-    test_apply(bonds);
+    test_apply(N, bonds);
   }
 
   Log.out("spinhalf_apply: Heisenberg alltoall apply test, N=2,..,6");
   for (int N = 2; N <= 6; ++N) {
     auto bonds = HB_alltoall(N);
-    test_apply(bonds);
+    test_apply(N, bonds);
   }
 
   Log.out("spinhalf_apply: Heisenberg all-to-all Sz <-> NoSz comparison");

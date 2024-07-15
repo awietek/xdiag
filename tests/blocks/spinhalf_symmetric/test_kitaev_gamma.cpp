@@ -1,9 +1,9 @@
 #include "../../catch.hpp"
 
-#include <xdiag/blocks/spinhalf/spinhalf_apply.hpp>
 #include <xdiag/algebra/algebra.hpp>
 #include <xdiag/algebra/matrix.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
+#include <xdiag/blocks/spinhalf/spinhalf_apply.hpp>
 #include <xdiag/utils/close.hpp>
 
 void run_kitaev_gamma_test(
@@ -22,23 +22,21 @@ void run_kitaev_gamma_test(
   cx_mat sy(mat({{0., 0.}, {0., 0.}}), mat({{0., -0.5}, {0.5, 0.}}));
   cx_mat sz(mat({{0.5, 0.0}, {0.0, -0.5}}), mat({{0., 0.}, {0., 0.0}}));
 
-  cx_mat kx = kron(sx, sx);
-  cx_mat ky = kron(sy, sy);
-  cx_mat kz = kron(sz, sz);
-  cx_mat gx = kron(sy, sz) + kron(sz, sy);
-  cx_mat gy = kron(sx, sz) + kron(sz, sx);
-  cx_mat gz = kron(sx, sy) + kron(sy, sx);
-
-  bonds.set_matrix("GENERICKITAEVX", kx);
-  bonds.set_matrix("GENERICKITAEVY", ky);
-  bonds.set_matrix("GENERICKITAEVZ", kz);
-  bonds.set_matrix("GENERICGAMMAX", gx);
-  bonds.set_matrix("GENERICGAMMAY", gy);
-  bonds.set_matrix("GENERICGAMMAZ", gz);
+  cx_mat kx = K * kron(sx, sx);
+  cx_mat ky = K * kron(sy, sy);
+  cx_mat kz = K * kron(sz, sz);
+  cx_mat gx = G * (kron(sy, sz) + kron(sz, sy));
+  cx_mat gy = G * (kron(sx, sz) + kron(sz, sx));
+  cx_mat gz = G * (kron(sx, sy) + kron(sy, sx));
 
   bonds["J"] = 0.;
-  bonds["K"] = K;
-  bonds["G"] = G;
+  bonds["KX"] = kx;
+  bonds["KY"] = ky;
+  bonds["KZ"] = kz;
+  bonds["GX"] = gx;
+  bonds["GY"] = gy;
+  bonds["GZ"] = gz;
+
   for (auto [name, e0_reference] : irrep_names_e0) {
     auto irrep = read_representation(lfile, name);
     auto block = Spinhalf(8, group, irrep);

@@ -6,6 +6,6 @@
 
 namespace xdiag::tj {
 
-BondList compile(BondList const &bonds, double precision = 1e-12);
+BondList compile(BondList const &bonds, int64_t n_sites, double precision);
 
 } // namespace xdiag::tj

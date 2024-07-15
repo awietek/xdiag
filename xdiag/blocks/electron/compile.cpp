@@ -4,11 +4,13 @@
 
 namespace xdiag::electron {
 
-BondList compile(BondList const &bonds, int64_t n_sites) try {
+BondList compile(BondList const &bonds, int64_t n_sites, double precision) try {
   using namespace operators;
   BondList bonds_explicit = make_explicit(bonds);
+  BondList bonds_clean = clean_zeros(bonds_explicit, precision);
+
   BondList bonds_compiled;
-  for (auto bond : bonds_explicit) {
+  for (auto bond : bonds_clean) {
     std::string type = bond.type();
 
     // Exchange and Ising terms
@@ -49,16 +51,16 @@ BondList compile(BondList const &bonds, int64_t n_sites) try {
       bonds_compiled += Bond("NUMBERDN", bond.coupling(), bond.sites());
     } else if (type == "SZ") {
       check_bond(bond, n_sites, 1, false, "number");
-      if (bond.coupling_is<double>()) {
+      if (bond.coupling().is<double>()) {
         bonds_compiled +=
-            Bond("NUMBERUP", 0.5 * bond.coupling<double>(), bond.sites());
+            Bond("NUMBERUP", 0.5 * bond.coupling().as<double>(), bond.sites());
         bonds_compiled +=
-            Bond("NUMBERDN", -0.5 * bond.coupling<double>(), bond.sites());
-      } else if (bond.coupling_is<complex>()) {
+            Bond("NUMBERDN", -0.5 * bond.coupling().as<double>(), bond.sites());
+      } else if (bond.coupling().is<complex>()) {
         bonds_compiled +=
-            Bond("NUMBERUP", 0.5 * bond.coupling<complex>(), bond.sites());
-        bonds_compiled +=
-            Bond("NUMBERDN", -0.5 * bond.coupling<complex>(), bond.sites());
+            Bond("NUMBERUP", 0.5 * bond.coupling().as<complex>(), bond.sites());
+        bonds_compiled += Bond("NUMBERDN", -0.5 * bond.coupling().as<complex>(),
+                               bond.sites());
       }
     }
 
@@ -80,7 +82,7 @@ BondList compile(BondList const &bonds, int64_t n_sites) try {
     }
   }
   // Set Hubbbbard U term again
-  if (bonds.coupling_defined("U")) {
+  if (bonds.defined("U")) {
     bonds_compiled["U"] = bonds["U"];
   }
 

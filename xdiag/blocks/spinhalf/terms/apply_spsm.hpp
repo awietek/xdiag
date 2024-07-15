@@ -21,7 +21,10 @@ void apply_spsm(Bond const &bond, BasisIn &&basis_in, BasisOut &&basis_out,
   assert((bond.type() == "S+") || (bond.type() == "S-"));
   assert(bond.size() == 1);
 
-  coeff_t J = bond.coupling<coeff_t>();
+  Coupling cpl = bond.coupling();
+  assert(cpl.isexplicit() && !cpl.ismatrix());
+
+  coeff_t J = cpl.as<coeff_t>();
   int64_t s = bond[0];
   bit_t mask = ((bit_t)1 << s);
 

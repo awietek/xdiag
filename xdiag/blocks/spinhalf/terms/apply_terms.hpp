@@ -15,8 +15,12 @@ namespace xdiag::spinhalf {
 template <typename bit_t, typename coeff_t, bool symmetric, class BasisIn,
           class BasisOut, class Fill>
 void apply_terms(BondList const &bonds, BasisIn const &basis_in,
-                 BasisOut const &basis_out, Fill &fill) try {
-  for (auto bond : bonds) {
+                 BasisOut const &basis_out, Fill &fill,
+                 double zero_precision) try {
+  BondList bonds_compiled =
+      spinhalf::compile(bonds, basis_in.n_sites(), zero_precision);
+
+  for (auto bond : bonds_compiled) {
 
     if (bond.type() == "EXCHANGE") {
       spinhalf::apply_exchange<bit_t, coeff_t, symmetric>(bond, basis_in,

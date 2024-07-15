@@ -6,7 +6,7 @@ BondList get_linear_chain(int64_t n_sites, double t, double U) {
   // Create model
   BondList bondlist;
   for (int64_t s = 0; s < n_sites; ++s)
-    bondlist << Bond("HOP", "T", {s, (s + 1) % n_sites});
+    bondlist += Bond("HOP", "T", {s, (s + 1) % n_sites});
   bondlist["T"] = t;
   bondlist["U"] = U;
   return bondlist;
@@ -16,9 +16,9 @@ BondList get_linear_chain_hb(int64_t n_sites, double J) {
   // Create model
   BondList bondlist;
   // for (int64_t s = 0; s < n_sites; ++s)
-  //   bondlist << Bond("HOP", "T", {s, (s + 1) % n_sites});
+  //   bondlist += Bond("HOP", "T", {s, (s + 1) % n_sites});
   for (int64_t s = 0; s < n_sites; ++s)
-    bondlist << Bond("EXCHANGE", "J", {s, (s + 1) % n_sites});
+    bondlist += Bond("EXCHANGE", "J", {s, (s + 1) % n_sites});
   bondlist["J"] = J;
   return bondlist;
 }
@@ -83,9 +83,9 @@ get_cyclic_group_irreps_mult(int64_t n_sites) {
 
 BondList heisenberg_triangle() {
   BondList bondlist;
-  bondlist << Bond("HEISENBERG", "J", {0, 1});
-  bondlist << Bond("HEISENBERG", "J", {1, 2});
-  bondlist << Bond("HEISENBERG", "J", {2, 0});
+  bondlist += Bond("HB", "J", {0, 1});
+  bondlist += Bond("HB", "J", {1, 2});
+  bondlist += Bond("HB", "J", {2, 0});
   bondlist["J"] = 1.0;
   return bondlist;
 }
@@ -101,7 +101,7 @@ BondList heisenberg_alltoall(int64_t n_sites) {
       ss << "J" << s1 << "_" << s2;
       std::string name = ss.str();
       double value = distribution(generator);
-      bondlist << Bond("HEISENBERG", name, {s1, s2});
+      bondlist += Bond("HB", name, {s1, s2});
       bondlist[name] = value;
     }
   return bondlist;
@@ -110,99 +110,99 @@ BondList heisenberg_alltoall(int64_t n_sites) {
 BondList heisenberg_kagome15() {
 
   BondList bondlist;
-  bondlist << Bond("HEISENBERG", "J", {0, 1});
-  bondlist << Bond("HEISENBERG", "J", {0, 5});
-  bondlist << Bond("HEISENBERG", "J", {1, 2});
-  bondlist << Bond("HEISENBERG", "J", {1, 6});
-  bondlist << Bond("HEISENBERG", "J", {2, 3});
-  bondlist << Bond("HEISENBERG", "J", {2, 6});
-  bondlist << Bond("HEISENBERG", "J", {2, 10});
-  bondlist << Bond("HEISENBERG", "J", {3, 4});
-  bondlist << Bond("HEISENBERG", "J", {3, 10});
-  bondlist << Bond("HEISENBERG", "J", {3, 14});
-  bondlist << Bond("HEISENBERG", "J", {4, 5});
-  bondlist << Bond("HEISENBERG", "J", {4, 14});
-  bondlist << Bond("HEISENBERG", "J", {6, 7});
-  bondlist << Bond("HEISENBERG", "J", {7, 8});
-  bondlist << Bond("HEISENBERG", "J", {8, 9});
-  bondlist << Bond("HEISENBERG", "J", {9, 10});
-  bondlist << Bond("HEISENBERG", "J", {9, 11});
-  bondlist << Bond("HEISENBERG", "J", {10, 11});
-  bondlist << Bond("HEISENBERG", "J", {11, 12});
-  bondlist << Bond("HEISENBERG", "J", {12, 13});
-  bondlist << Bond("HEISENBERG", "J", {13, 14});
+  bondlist += Bond("HB", "J", {0, 1});
+  bondlist += Bond("HB", "J", {0, 5});
+  bondlist += Bond("HB", "J", {1, 2});
+  bondlist += Bond("HB", "J", {1, 6});
+  bondlist += Bond("HB", "J", {2, 3});
+  bondlist += Bond("HB", "J", {2, 6});
+  bondlist += Bond("HB", "J", {2, 10});
+  bondlist += Bond("HB", "J", {3, 4});
+  bondlist += Bond("HB", "J", {3, 10});
+  bondlist += Bond("HB", "J", {3, 14});
+  bondlist += Bond("HB", "J", {4, 5});
+  bondlist += Bond("HB", "J", {4, 14});
+  bondlist += Bond("HB", "J", {6, 7});
+  bondlist += Bond("HB", "J", {7, 8});
+  bondlist += Bond("HB", "J", {8, 9});
+  bondlist += Bond("HB", "J", {9, 10});
+  bondlist += Bond("HB", "J", {9, 11});
+  bondlist += Bond("HB", "J", {10, 11});
+  bondlist += Bond("HB", "J", {11, 12});
+  bondlist += Bond("HB", "J", {12, 13});
+  bondlist += Bond("HB", "J", {13, 14});
   bondlist["J"] = 1.0;
   return bondlist;
 }
 
 BondList heisenberg_kagome39() {
   BondList bondlist;
-  bondlist << Bond("HEISENBERG", "J", {0, 1});
-  bondlist << Bond("HEISENBERG", "J", {0, 5});
-  bondlist << Bond("HEISENBERG", "J", {0, 27});
-  bondlist << Bond("HEISENBERG", "J", {0, 28});
-  bondlist << Bond("HEISENBERG", "J", {1, 2});
-  bondlist << Bond("HEISENBERG", "J", {1, 6});
-  bondlist << Bond("HEISENBERG", "J", {1, 28});
-  bondlist << Bond("HEISENBERG", "J", {2, 3});
-  bondlist << Bond("HEISENBERG", "J", {2, 6});
-  bondlist << Bond("HEISENBERG", "J", {2, 10});
-  bondlist << Bond("HEISENBERG", "J", {3, 4});
-  bondlist << Bond("HEISENBERG", "J", {3, 10});
-  bondlist << Bond("HEISENBERG", "J", {3, 14});
-  bondlist << Bond("HEISENBERG", "J", {4, 5});
-  bondlist << Bond("HEISENBERG", "J", {4, 14});
-  bondlist << Bond("HEISENBERG", "J", {4, 38});
-  bondlist << Bond("HEISENBERG", "J", {5, 27});
-  bondlist << Bond("HEISENBERG", "J", {5, 38});
-  bondlist << Bond("HEISENBERG", "J", {6, 7});
-  bondlist << Bond("HEISENBERG", "J", {6, 29});
-  bondlist << Bond("HEISENBERG", "J", {7, 8});
-  bondlist << Bond("HEISENBERG", "J", {7, 19});
-  bondlist << Bond("HEISENBERG", "J", {7, 29});
-  bondlist << Bond("HEISENBERG", "J", {8, 9});
-  bondlist << Bond("HEISENBERG", "J", {8, 15});
-  bondlist << Bond("HEISENBERG", "J", {8, 19});
-  bondlist << Bond("HEISENBERG", "J", {9, 10});
-  bondlist << Bond("HEISENBERG", "J", {9, 11});
-  bondlist << Bond("HEISENBERG", "J", {9, 15});
-  bondlist << Bond("HEISENBERG", "J", {10, 11});
-  bondlist << Bond("HEISENBERG", "J", {11, 12});
-  bondlist << Bond("HEISENBERG", "J", {11, 18});
-  bondlist << Bond("HEISENBERG", "J", {12, 13});
-  bondlist << Bond("HEISENBERG", "J", {12, 18});
-  bondlist << Bond("HEISENBERG", "J", {12, 26});
-  bondlist << Bond("HEISENBERG", "J", {13, 14});
-  bondlist << Bond("HEISENBERG", "J", {13, 26});
-  bondlist << Bond("HEISENBERG", "J", {13, 37});
-  bondlist << Bond("HEISENBERG", "J", {14, 37});
-  bondlist << Bond("HEISENBERG", "J", {15, 16});
-  bondlist << Bond("HEISENBERG", "J", {15, 22});
-  bondlist << Bond("HEISENBERG", "J", {16, 17});
-  bondlist << Bond("HEISENBERG", "J", {16, 22});
-  bondlist << Bond("HEISENBERG", "J", {16, 33});
-  bondlist << Bond("HEISENBERG", "J", {17, 18});
-  bondlist << Bond("HEISENBERG", "J", {17, 23});
-  bondlist << Bond("HEISENBERG", "J", {17, 33});
-  bondlist << Bond("HEISENBERG", "J", {18, 23});
-  bondlist << Bond("HEISENBERG", "J", {19, 20});
-  bondlist << Bond("HEISENBERG", "J", {19, 30});
-  bondlist << Bond("HEISENBERG", "J", {20, 21});
-  bondlist << Bond("HEISENBERG", "J", {20, 30});
-  bondlist << Bond("HEISENBERG", "J", {20, 31});
-  bondlist << Bond("HEISENBERG", "J", {21, 22});
-  bondlist << Bond("HEISENBERG", "J", {21, 31});
-  bondlist << Bond("HEISENBERG", "J", {21, 32});
-  bondlist << Bond("HEISENBERG", "J", {22, 32});
-  bondlist << Bond("HEISENBERG", "J", {23, 24});
-  bondlist << Bond("HEISENBERG", "J", {23, 34});
-  bondlist << Bond("HEISENBERG", "J", {24, 25});
-  bondlist << Bond("HEISENBERG", "J", {24, 34});
-  bondlist << Bond("HEISENBERG", "J", {24, 35});
-  bondlist << Bond("HEISENBERG", "J", {25, 26});
-  bondlist << Bond("HEISENBERG", "J", {25, 35});
-  bondlist << Bond("HEISENBERG", "J", {25, 36});
-  bondlist << Bond("HEISENBERG", "J", {26, 36});
+  bondlist += Bond("HB", "J", {0, 1});
+  bondlist += Bond("HB", "J", {0, 5});
+  bondlist += Bond("HB", "J", {0, 27});
+  bondlist += Bond("HB", "J", {0, 28});
+  bondlist += Bond("HB", "J", {1, 2});
+  bondlist += Bond("HB", "J", {1, 6});
+  bondlist += Bond("HB", "J", {1, 28});
+  bondlist += Bond("HB", "J", {2, 3});
+  bondlist += Bond("HB", "J", {2, 6});
+  bondlist += Bond("HB", "J", {2, 10});
+  bondlist += Bond("HB", "J", {3, 4});
+  bondlist += Bond("HB", "J", {3, 10});
+  bondlist += Bond("HB", "J", {3, 14});
+  bondlist += Bond("HB", "J", {4, 5});
+  bondlist += Bond("HB", "J", {4, 14});
+  bondlist += Bond("HB", "J", {4, 38});
+  bondlist += Bond("HB", "J", {5, 27});
+  bondlist += Bond("HB", "J", {5, 38});
+  bondlist += Bond("HB", "J", {6, 7});
+  bondlist += Bond("HB", "J", {6, 29});
+  bondlist += Bond("HB", "J", {7, 8});
+  bondlist += Bond("HB", "J", {7, 19});
+  bondlist += Bond("HB", "J", {7, 29});
+  bondlist += Bond("HB", "J", {8, 9});
+  bondlist += Bond("HB", "J", {8, 15});
+  bondlist += Bond("HB", "J", {8, 19});
+  bondlist += Bond("HB", "J", {9, 10});
+  bondlist += Bond("HB", "J", {9, 11});
+  bondlist += Bond("HB", "J", {9, 15});
+  bondlist += Bond("HB", "J", {10, 11});
+  bondlist += Bond("HB", "J", {11, 12});
+  bondlist += Bond("HB", "J", {11, 18});
+  bondlist += Bond("HB", "J", {12, 13});
+  bondlist += Bond("HB", "J", {12, 18});
+  bondlist += Bond("HB", "J", {12, 26});
+  bondlist += Bond("HB", "J", {13, 14});
+  bondlist += Bond("HB", "J", {13, 26});
+  bondlist += Bond("HB", "J", {13, 37});
+  bondlist += Bond("HB", "J", {14, 37});
+  bondlist += Bond("HB", "J", {15, 16});
+  bondlist += Bond("HB", "J", {15, 22});
+  bondlist += Bond("HB", "J", {16, 17});
+  bondlist += Bond("HB", "J", {16, 22});
+  bondlist += Bond("HB", "J", {16, 33});
+  bondlist += Bond("HB", "J", {17, 18});
+  bondlist += Bond("HB", "J", {17, 23});
+  bondlist += Bond("HB", "J", {17, 33});
+  bondlist += Bond("HB", "J", {18, 23});
+  bondlist += Bond("HB", "J", {19, 20});
+  bondlist += Bond("HB", "J", {19, 30});
+  bondlist += Bond("HB", "J", {20, 21});
+  bondlist += Bond("HB", "J", {20, 30});
+  bondlist += Bond("HB", "J", {20, 31});
+  bondlist += Bond("HB", "J", {21, 22});
+  bondlist += Bond("HB", "J", {21, 31});
+  bondlist += Bond("HB", "J", {21, 32});
+  bondlist += Bond("HB", "J", {22, 32});
+  bondlist += Bond("HB", "J", {23, 24});
+  bondlist += Bond("HB", "J", {23, 34});
+  bondlist += Bond("HB", "J", {24, 25});
+  bondlist += Bond("HB", "J", {24, 34});
+  bondlist += Bond("HB", "J", {24, 35});
+  bondlist += Bond("HB", "J", {25, 26});
+  bondlist += Bond("HB", "J", {25, 35});
+  bondlist += Bond("HB", "J", {25, 36});
+  bondlist += Bond("HB", "J", {26, 36});
   bondlist["J"] = 1.0;
   return bondlist;
 }
@@ -218,7 +218,7 @@ BondList freefermion_alltoall(int64_t n_sites) {
       ss << "T" << s1 << "_" << s2;
       std::string name = ss.str();
       double value = distribution(generator);
-      bondlist << Bond("HOP", name, {s1, s2});
+      bondlist += Bond("HOP", name, {s1, s2});
       bondlist[name] = value;
     }
   return bondlist;
@@ -238,7 +238,7 @@ BondList freefermion_alltoall_complex_updn(int64_t n_sites) {
       std::string name_up = ss_up.str();
       complex value_up =
           complex(distribution(generator), distribution(generator));
-      bondlist << Bond("HOPUP", name_up, {s1, s2});
+      bondlist += Bond("HOPUP", name_up, {s1, s2});
       bondlist[name_up] = value_up;
 
       // Hopping on dnspins
@@ -247,7 +247,7 @@ BondList freefermion_alltoall_complex_updn(int64_t n_sites) {
       std::string name_dn = ss_dn.str();
       complex value_dn =
           complex(distribution(generator), distribution(generator));
-      bondlist << Bond("HOPDN", name_dn, {s1, s2});
+      bondlist += Bond("HOPDN", name_dn, {s1, s2});
       bondlist[name_dn] = value_dn;
     }
   return bondlist;
@@ -268,18 +268,18 @@ std::tuple<BondList, arma::Col<double>> randomAlltoAll4NoU() {
   bondlist["T23"] = -2;
   bondlist["J23"] = 1;
 
-  bondlist << Bond("HOP", "T01", {0, 1});
-  bondlist << Bond("HOP", "T02", {0, 2});
-  bondlist << Bond("HOP", "T03", {0, 3});
-  bondlist << Bond("HOP", "T12", {1, 2});
-  bondlist << Bond("HOP", "T13", {1, 3});
-  bondlist << Bond("HOP", "T23", {2, 3});
-  bondlist << Bond("HEISENBERG", "J01", {0, 1});
-  bondlist << Bond("HEISENBERG", "J02", {0, 2});
-  bondlist << Bond("HEISENBERG", "J03", {0, 3});
-  bondlist << Bond("HEISENBERG", "J12", {1, 2});
-  bondlist << Bond("HEISENBERG", "J13", {1, 3});
-  bondlist << Bond("HEISENBERG", "J23", {2, 3});
+  bondlist += Bond("HOP", "T01", {0, 1});
+  bondlist += Bond("HOP", "T02", {0, 2});
+  bondlist += Bond("HOP", "T03", {0, 3});
+  bondlist += Bond("HOP", "T12", {1, 2});
+  bondlist += Bond("HOP", "T13", {1, 3});
+  bondlist += Bond("HOP", "T23", {2, 3});
+  bondlist += Bond("HB", "J01", {0, 1});
+  bondlist += Bond("HB", "J02", {0, 2});
+  bondlist += Bond("HB", "J03", {0, 3});
+  bondlist += Bond("HB", "J12", {1, 2});
+  bondlist += Bond("HB", "J13", {1, 3});
+  bondlist += Bond("HB", "J23", {2, 3});
 
   arma::Col<double> eigs = {-17.035603173216636,
                             -16.054529653295518,
@@ -558,18 +558,18 @@ std::tuple<BondList, arma::Col<double>> randomAlltoAll4() {
   bondlist["T23"] = 0;
   bondlist["J23"] = -4;
 
-  bondlist << Bond("HOP", "T01", {0, 1});
-  bondlist << Bond("HOP", "T02", {0, 2});
-  bondlist << Bond("HOP", "T03", {0, 3});
-  bondlist << Bond("HOP", "T12", {1, 2});
-  bondlist << Bond("HOP", "T13", {1, 3});
-  bondlist << Bond("HOP", "T23", {2, 3});
-  bondlist << Bond("HEISENBERG", "J01", {0, 1});
-  bondlist << Bond("HEISENBERG", "J02", {0, 2});
-  bondlist << Bond("HEISENBERG", "J03", {0, 3});
-  bondlist << Bond("HEISENBERG", "J12", {1, 2});
-  bondlist << Bond("HEISENBERG", "J13", {1, 3});
-  bondlist << Bond("HEISENBERG", "J23", {2, 3});
+  bondlist += Bond("HOP", "T01", {0, 1});
+  bondlist += Bond("HOP", "T02", {0, 2});
+  bondlist += Bond("HOP", "T03", {0, 3});
+  bondlist += Bond("HOP", "T12", {1, 2});
+  bondlist += Bond("HOP", "T13", {1, 3});
+  bondlist += Bond("HOP", "T23", {2, 3});
+  bondlist += Bond("HB", "J01", {0, 1});
+  bondlist += Bond("HB", "J02", {0, 2});
+  bondlist += Bond("HB", "J03", {0, 3});
+  bondlist += Bond("HB", "J12", {1, 2});
+  bondlist += Bond("HB", "J13", {1, 3});
+  bondlist += Bond("HB", "J23", {2, 3});
 
   arma::Col<double> eigs = {
       -12.270231830055396, -12.270231830055389, -10.733666336755952,
@@ -670,12 +670,12 @@ BondList randomAlltoAll3() {
   bondlist["J02"] = -1;
   bondlist["T12"] = -5;
   bondlist["J12"] = -3;
-  bondlist << Bond("HUBBARDHOP", "T01", {0, 1});
-  bondlist << Bond("HUBBARDHOP", "T02", {0, 2});
-  bondlist << Bond("HUBBARDHOP", "T12", {1, 2});
-  bondlist << Bond("HEISENBERG", "J01", {0, 1});
-  bondlist << Bond("HEISENBERG", "J02", {0, 2});
-  bondlist << Bond("HEISENBERG", "J12", {1, 2});
+  bondlist += Bond("HOP", "T01", {0, 1});
+  bondlist += Bond("HOP", "T02", {0, 2});
+  bondlist += Bond("HOP", "T12", {1, 2});
+  bondlist += Bond("HB", "J01", {0, 1});
+  bondlist += Bond("HB", "J02", {0, 2});
+  bondlist += Bond("HB", "J12", {1, 2});
   return bondlist;
 }
 
@@ -683,22 +683,22 @@ BondList square2x2(double t, double J) {
   BondList bondlist;
   bondlist["T"] = t;
   bondlist["J"] = J;
-  bondlist << Bond("HUBBARDHOP", "T", {0, 1});
-  bondlist << Bond("HUBBARDHOP", "T", {1, 0});
-  bondlist << Bond("HUBBARDHOP", "T", {2, 3});
-  bondlist << Bond("HUBBARDHOP", "T", {3, 2});
-  bondlist << Bond("HUBBARDHOP", "T", {0, 2});
-  bondlist << Bond("HUBBARDHOP", "T", {2, 0});
-  bondlist << Bond("HUBBARDHOP", "T", {1, 3});
-  bondlist << Bond("HUBBARDHOP", "T", {3, 1});
-  bondlist << Bond("HEISENBERG", "J", {0, 1});
-  bondlist << Bond("HEISENBERG", "J", {1, 0});
-  bondlist << Bond("HEISENBERG", "J", {2, 3});
-  bondlist << Bond("HEISENBERG", "J", {3, 2});
-  bondlist << Bond("HEISENBERG", "J", {0, 2});
-  bondlist << Bond("HEISENBERG", "J", {2, 0});
-  bondlist << Bond("HEISENBERG", "J", {1, 3});
-  bondlist << Bond("HEISENBERG", "J", {3, 1});
+  bondlist += Bond("HOP", "T", {0, 1});
+  bondlist += Bond("HOP", "T", {1, 0});
+  bondlist += Bond("HOP", "T", {2, 3});
+  bondlist += Bond("HOP", "T", {3, 2});
+  bondlist += Bond("HOP", "T", {0, 2});
+  bondlist += Bond("HOP", "T", {2, 0});
+  bondlist += Bond("HOP", "T", {1, 3});
+  bondlist += Bond("HOP", "T", {3, 1});
+  bondlist += Bond("HB", "J", {0, 1});
+  bondlist += Bond("HB", "J", {1, 0});
+  bondlist += Bond("HB", "J", {2, 3});
+  bondlist += Bond("HB", "J", {3, 2});
+  bondlist += Bond("HB", "J", {0, 2});
+  bondlist += Bond("HB", "J", {2, 0});
+  bondlist += Bond("HB", "J", {1, 3});
+  bondlist += Bond("HB", "J", {3, 1});
   return bondlist;
 }
 
@@ -706,42 +706,42 @@ BondList square3x3(double t, double J) {
   BondList bondlist;
   bondlist["T"] = t;
   bondlist["J"] = J;
-  bondlist << Bond("HOP", "T", {0, 1});
-  bondlist << Bond("HOP", "T", {1, 2});
-  bondlist << Bond("HOP", "T", {2, 0});
-  bondlist << Bond("HOP", "T", {3, 4});
-  bondlist << Bond("HOP", "T", {4, 5});
-  bondlist << Bond("HOP", "T", {5, 3});
-  bondlist << Bond("HOP", "T", {6, 7});
-  bondlist << Bond("HOP", "T", {7, 8});
-  bondlist << Bond("HOP", "T", {8, 6});
-  bondlist << Bond("HOP", "T", {0, 3});
-  bondlist << Bond("HOP", "T", {3, 6});
-  bondlist << Bond("HOP", "T", {6, 0});
-  bondlist << Bond("HOP", "T", {1, 4});
-  bondlist << Bond("HOP", "T", {4, 7});
-  bondlist << Bond("HOP", "T", {7, 1});
-  bondlist << Bond("HOP", "T", {2, 5});
-  bondlist << Bond("HOP", "T", {5, 8});
-  bondlist << Bond("HOP", "T", {8, 2});
-  bondlist << Bond("HEISENBERG", "J", {0, 1});
-  bondlist << Bond("HEISENBERG", "J", {1, 2});
-  bondlist << Bond("HEISENBERG", "J", {2, 0});
-  bondlist << Bond("HEISENBERG", "J", {3, 4});
-  bondlist << Bond("HEISENBERG", "J", {4, 5});
-  bondlist << Bond("HEISENBERG", "J", {5, 3});
-  bondlist << Bond("HEISENBERG", "J", {6, 7});
-  bondlist << Bond("HEISENBERG", "J", {7, 8});
-  bondlist << Bond("HEISENBERG", "J", {8, 6});
-  bondlist << Bond("HEISENBERG", "J", {0, 3});
-  bondlist << Bond("HEISENBERG", "J", {3, 6});
-  bondlist << Bond("HEISENBERG", "J", {6, 0});
-  bondlist << Bond("HEISENBERG", "J", {1, 4});
-  bondlist << Bond("HEISENBERG", "J", {4, 7});
-  bondlist << Bond("HEISENBERG", "J", {7, 1});
-  bondlist << Bond("HEISENBERG", "J", {2, 5});
-  bondlist << Bond("HEISENBERG", "J", {5, 8});
-  bondlist << Bond("HEISENBERG", "J", {8, 2});
+  bondlist += Bond("HOP", "T", {0, 1});
+  bondlist += Bond("HOP", "T", {1, 2});
+  bondlist += Bond("HOP", "T", {2, 0});
+  bondlist += Bond("HOP", "T", {3, 4});
+  bondlist += Bond("HOP", "T", {4, 5});
+  bondlist += Bond("HOP", "T", {5, 3});
+  bondlist += Bond("HOP", "T", {6, 7});
+  bondlist += Bond("HOP", "T", {7, 8});
+  bondlist += Bond("HOP", "T", {8, 6});
+  bondlist += Bond("HOP", "T", {0, 3});
+  bondlist += Bond("HOP", "T", {3, 6});
+  bondlist += Bond("HOP", "T", {6, 0});
+  bondlist += Bond("HOP", "T", {1, 4});
+  bondlist += Bond("HOP", "T", {4, 7});
+  bondlist += Bond("HOP", "T", {7, 1});
+  bondlist += Bond("HOP", "T", {2, 5});
+  bondlist += Bond("HOP", "T", {5, 8});
+  bondlist += Bond("HOP", "T", {8, 2});
+  bondlist += Bond("HB", "J", {0, 1});
+  bondlist += Bond("HB", "J", {1, 2});
+  bondlist += Bond("HB", "J", {2, 0});
+  bondlist += Bond("HB", "J", {3, 4});
+  bondlist += Bond("HB", "J", {4, 5});
+  bondlist += Bond("HB", "J", {5, 3});
+  bondlist += Bond("HB", "J", {6, 7});
+  bondlist += Bond("HB", "J", {7, 8});
+  bondlist += Bond("HB", "J", {8, 6});
+  bondlist += Bond("HB", "J", {0, 3});
+  bondlist += Bond("HB", "J", {3, 6});
+  bondlist += Bond("HB", "J", {6, 0});
+  bondlist += Bond("HB", "J", {1, 4});
+  bondlist += Bond("HB", "J", {4, 7});
+  bondlist += Bond("HB", "J", {7, 1});
+  bondlist += Bond("HB", "J", {2, 5});
+  bondlist += Bond("HB", "J", {5, 8});
+  bondlist += Bond("HB", "J", {8, 2});
   return bondlist;
 }
 

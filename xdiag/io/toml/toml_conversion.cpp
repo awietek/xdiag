@@ -16,7 +16,6 @@ template <typename T> T get_toml_value(toml_const_node_view const &node) try {
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
-  return T();
 }
 
 template <>
@@ -34,7 +33,6 @@ complex get_toml_value<complex>(toml_const_node_view const &node) try {
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
-  return 0.;
 }
 
 template bool get_toml_value<bool>(toml_const_node_view const &);
@@ -58,7 +56,6 @@ template <typename T> T get_toml_value(toml_node_view const &node) try {
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
-  return T();
 }
 
 template <> complex get_toml_value<complex>(toml_node_view const &node) try {
@@ -71,11 +68,9 @@ template <> complex get_toml_value<complex>(toml_node_view const &node) try {
     return complex{real_imag[0], real_imag[1]};
   } else {
     XDIAG_THROW("Error parsing toml: failed trying to parse complex number!");
-    return complex();
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
-  return 0.;
 }
 
 template bool get_toml_value<bool>(toml_node_view const &);
@@ -99,7 +94,6 @@ template <typename T> T get_toml_value(toml::node const &node) try {
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
-  return T();
 }
 
 template <> complex get_toml_value<complex>(toml::node const &node) try {
@@ -115,7 +109,6 @@ template <> complex get_toml_value<complex>(toml::node const &node) try {
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
-  return 0.;
 }
 template bool get_toml_value<bool>(toml::node const &);
 template int8_t get_toml_value<int8_t>(toml::node const &);
@@ -138,7 +131,6 @@ toml::array get_toml_array(toml_const_node_view const &node) try {
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
-  return toml::array();
 }
 
 toml::array get_toml_array(toml_node_view const &node) try {
@@ -147,11 +139,9 @@ toml::array get_toml_array(toml_node_view const &node) try {
     return *arr;
   } else {
     XDIAG_THROW("Error parsing toml: node does not contain an array!");
-    return toml::array();
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
-  return toml::array();
 }
 
 toml::array get_toml_array(toml::node const &node) try {
@@ -163,7 +153,6 @@ toml::array get_toml_array(toml::node const &node) try {
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
-  return toml::array();
 }
 
 template <typename T, std::size_t size>
@@ -182,7 +171,6 @@ std::array<T, size> toml_array_to_std_array(toml::array const &toml_array) try {
   return array;
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
-  return std::array<T, size>();
 }
 
 template std::array<double, 2>
@@ -198,7 +186,6 @@ std::vector<T> toml_array_to_std_vector(toml::array const &toml_array) try {
   return vector;
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
-  return std::vector<T>();
 }
 
 template std::vector<int8_t>
@@ -234,7 +221,6 @@ arma::Col<T> toml_array_to_arma_vector(toml::array const &toml_array) try {
   return vector;
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
-  return arma::Col<T>();
 }
 
 template arma::Col<double>
@@ -283,7 +269,6 @@ arma::Mat<T> toml_array_to_arma_matrix(toml::array const &toml_array) try {
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
-  return arma::Mat<T>();
 }
 
 template arma::Mat<double>
@@ -304,7 +289,6 @@ toml::array std_vector_to_toml_array(std::vector<T> const &value) try {
   return arr;
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
-  return toml::array();
 }
 
 template <>
@@ -316,7 +300,6 @@ toml::array std_vector_to_toml_array(std::vector<uint64_t> const &value) try {
   return arr;
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
-  return toml::array();
 }
 
 template <>
@@ -328,7 +311,6 @@ toml::array std_vector_to_toml_array(std::vector<complex> const &value) try {
   return arr;
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
-  return toml::array();
 }
 
 template toml::array std_vector_to_toml_array(std::vector<int8_t> const &);
@@ -350,7 +332,6 @@ toml::array arma_vector_to_toml_array(arma::Col<T> const &value) try {
   return arr;
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
-  return toml::array();
 }
 
 template <>
@@ -362,7 +343,6 @@ toml::array arma_vector_to_toml_array(arma::Col<arma::uword> const &value) try {
   return arr;
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
-  return toml::array();
 }
 
 template <>
@@ -374,7 +354,6 @@ toml::array arma_vector_to_toml_array(arma::Col<complex> const &value) try {
   return arr;
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
-  return toml::array();
 }
 
 template toml::array arma_vector_to_toml_array(arma::Col<double> const &);
@@ -393,7 +372,6 @@ toml::array arma_matrix_to_toml_array(arma::Mat<T> const &mat) try {
   return arr;
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
-  return toml::array();
 }
 
 template <>
@@ -409,7 +387,6 @@ toml::array arma_matrix_to_toml_array(arma::Mat<arma::uword> const &mat) try {
   return arr;
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
-  return toml::array();
 }
 
 template <>
@@ -438,36 +415,35 @@ toml::array bond_to_toml_array(Bond const &bond) try {
   array.push_back(bond.type());
 
   // Coupling
-  if (bond.coupling_is<std::string>()) {
-    array.push_back(bond.coupling<std::string>());
-  } else if (bond.coupling_is<double>()) {
-    array.push_back(bond.coupling<double>());
-  } else if (bond.coupling_is<complex>()) {
-    complex cpl = bond.coupling<complex>();
+  if (bond.coupling().is<std::string>()) {
+    array.push_back(bond.coupling().as<std::string>());
+  } else if (bond.coupling().is<double>()) {
+    array.push_back(bond.coupling().as<double>());
+  } else if (bond.coupling().is<complex>()) {
+    complex cpl = bond.coupling().as<complex>();
     array.push_back(toml::array{cpl.real(), cpl.imag()});
-  } else if (bond.coupling_is<arma::mat>()) {
-    arma::mat mat = bond.coupling<arma::mat>();
+  } else if (bond.coupling().is<arma::mat>()) {
+    arma::mat mat = bond.coupling().as<arma::mat>();
     array.push_back(arma_matrix_to_toml_array(mat));
-  } else if (bond.coupling_is<arma::cx_mat>()) {
-    arma::cx_mat mat = bond.coupling<arma::cx_mat>();
+  } else if (bond.coupling().is<arma::cx_mat>()) {
+    arma::cx_mat mat = bond.coupling().as<arma::cx_mat>();
     array.push_back(arma_matrix_to_toml_array(mat));
   } else {
     XDIAG_THROW("Unable to convert Bond to toml array ");
   }
 
   // Sites
-  if (bond.size() == 1) {
-    array.push_back(bond[0]);
-  } else {
-    array.push_back(std_vector_to_toml_array(bond.sites()));
+  for (int i = 0; i < bond.size(); ++i) {
+    array.push_back(bond[i]);
   }
+
   return array;
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
 Bond toml_array_to_bond(toml::array const &array) try {
-  if (array.size() != 3) {
+  if (array.size() < 3) {
     XDIAG_THROW(
         "Error parsing toml to xdiag::Bond: toml array must have exactly three "
         "entries.\n"
@@ -490,17 +466,16 @@ Bond toml_array_to_bond(toml::array const &array) try {
 
   // then get the sites
   std::vector<int64_t> sites;
-  auto site_node = array[2].value<int64_t>();
-  auto sites_node = array[2].as_array();
-  if (site_node) {
-    sites = {*site_node};
-  } else if (sites_node) {
-    sites = toml_array_to_std_vector<int64_t>(*sites_node);
-  } else {
-    XDIAG_THROW("Error parsing toml to xdiag::Bond: third entry must either "
-                "be a single integer or a 1D array of integers");
-  }
+  for (int i = 2; i < array.size(); ++i) {
+    auto site_node = array[i].value<int64_t>();
+    if (site_node) {
+      sites.push_back(*site_node);
 
+    } else {
+      XDIAG_THROW("Error parsing toml to xdiag::Bond: third and onward entries "
+                  "must be integers");
+    }
+  }
   // then get the coupling
   auto coupling_node_string = array[1].value<std::string>();
   auto coupling_node_double = array[1].value<double>();
@@ -534,14 +509,27 @@ Bond toml_array_to_bond(toml::array const &array) try {
                     "the second entry defining the coupling. However, it is "
                     "found to be empty");
       }
-      auto real_array = mat_array.value<double>();
-      auto cplx_array = mat_array.as_array();
-      if (real_array) {
-        arma::mat coupling = toml_array_to_arma_matrix<double>(mat_array);
-        return Bond(type, coupling, sites);
-      } else if (cplx_array) {
-        arma::cx_mat coupling = toml_array_to_arma_matrix<complex>(mat_array);
-        return Bond(type, coupling, sites);
+      auto mat2_array = mat_array[0].as_array();
+      if (mat2_array) {
+        if (mat2_array->size() == 0) {
+          XDIAG_THROW(
+              "Error parsing toml to xdiag::Bond: an array was handed to "
+              "the second entry defining the coupling. However, it is "
+              "found to be empty");
+        }
+        auto real_array = (*mat2_array)[0].value<double>();
+        auto cplx_array = (*mat2_array)[0].as_array();
+
+        if (real_array) {
+          arma::mat coupling = toml_array_to_arma_matrix<double>(mat_array);
+          return Bond(type, coupling, sites);
+        } else if (cplx_array) {
+          arma::cx_mat coupling = toml_array_to_arma_matrix<complex>(mat_array);
+          return Bond(type, coupling, sites);
+        } else {
+          XDIAG_THROW("Error parsing toml to xdiag::Bond: Invalid form of the "
+                      "coupling.");
+        }
       } else {
         XDIAG_THROW("Error parsing toml to xdiag::Bond: Invalid form of the "
                     "coupling.");
@@ -550,13 +538,15 @@ Bond toml_array_to_bond(toml::array const &array) try {
       XDIAG_THROW("Error parsing toml to xdiag::Bond: Invalid form of the "
                   "coupling.");
     }
+  } else {
+    XDIAG_THROW("Error parsing toml to xdiag::Bond: Invalid form of the "
+                "coupling.");
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
-  return Bond();
 }
 
-BondList toml_array_to_bond_list(toml::array const &array) {
+BondList toml_array_to_bond_list(toml::array const &array) try {
   BondList bonds;
   for (std::size_t i = 0; i < array.size(); ++i) {
     auto bond_array = array[i].as_array();
@@ -570,9 +560,11 @@ BondList toml_array_to_bond_list(toml::array const &array) {
     }
   }
   return bonds;
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
-BondList toml_table_to_bond_list(toml::table const &table) {
+BondList toml_table_to_bond_list(toml::table const &table) try {
   BondList bonds;
   auto interactions_opt = table["Interactions"].as_array();
   if (interactions_opt) {
@@ -584,20 +576,58 @@ BondList toml_table_to_bond_list(toml::table const &table) {
     toml::table couplings = *couplings_opt;
     for (auto [key_node, value_node] : couplings) {
       std::string key(key_node.str());
-      auto value = get_toml_value<complex>(value_node);
-      bonds[key] = value;
+
+      auto val = value_node.value<double>();
+      if (val) {
+        auto value = get_toml_value<double>(value_node);
+        bonds[key] = value;
+      } else {
+        if (value_node.as_array()->size() == 0) {
+          XDIAG_THROW("Invalid format of coupling in BondList")
+        }
+
+        auto val = *value_node.as_array();
+        auto val_real = val[0].value<double>();
+        auto val_array = val[0].as_array();
+        if (val_real) {
+          auto value = get_toml_value<complex>(value_node);
+          bonds[key] = value;
+        }
+        if (val_array) {
+          auto val = *(val_array->as_array());
+
+          auto val2_real = val[0].value<double>();
+          auto val2_arr = val[0].as_array();
+          if (val2_real) {
+            auto value =
+                toml_array_to_arma_matrix<double>(*value_node.as_array());
+            bonds[key] = value;
+          } else if (val2_arr) {
+            auto value =
+                toml_array_to_arma_matrix<complex>(*value_node.as_array());
+            bonds[key] = value;
+
+          } else {
+            XDIAG_THROW("Invalid format of coupling in BondList")
+          }
+        }
+      }
     }
   }
 
   return bonds;
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
-toml::array bond_list_to_toml_array(BondList const &bonds) {
+toml::array bond_list_to_toml_array(BondList const &bonds) try {
   toml::array array;
   for (auto &&bond : bonds) {
     array.push_back(bond_to_toml_array(bond));
   }
   return array;
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 toml::table bond_list_to_toml_table(BondList const &bonds) try {
@@ -607,20 +637,20 @@ toml::table bond_list_to_toml_table(BondList const &bonds) try {
   if (bonds.couplings().size() > 0) {
     toml::table couplings;
     for (auto name : bonds.couplings()) {
-      coupling_t cpl = bonds[name];
-      if (std::holds_alternative<std::string>(cpl)) {
-        couplings.insert_or_assign(name, std::get<std::string>(cpl));
-      } else if (std::holds_alternative<double>(cpl)) {
-        couplings.insert_or_assign(name, std::get<double>(cpl));
-      } else if (std::holds_alternative<complex>(cpl)) {
-        complex c = std::get<complex>(cpl);
+      Coupling cpl = bonds[name];
+      if (cpl.is<std::string>()) {
+        couplings.insert_or_assign(name, cpl.as<std::string>());
+      } else if (cpl.is<double>()) {
+        couplings.insert_or_assign(name, cpl.as<double>());
+      } else if (cpl.is<complex>()) {
+        complex c = cpl.as<complex>();
         couplings.insert_or_assign(name, toml::array{c.real(), c.imag()});
-      } else if (std::holds_alternative<arma::mat>(cpl)) {
+      } else if (cpl.is<arma::mat>()) {
         couplings.insert_or_assign(
-            name, arma_matrix_to_toml_array(std::get<arma::mat>(cpl)));
-      } else if (std::holds_alternative<arma::cx_mat>(cpl)) {
+            name, arma_matrix_to_toml_array(cpl.as<arma::mat>()));
+      } else if (cpl.is<arma::cx_mat>()) {
         couplings.insert_or_assign(
-            name, arma_matrix_to_toml_array(std::get<arma::cx_mat>(cpl)));
+            name, arma_matrix_to_toml_array(cpl.as<arma::cx_mat>()));
       } else {
         XDIAG_THROW("Unable to convert BondList to toml");
       }
@@ -630,7 +660,6 @@ toml::table bond_list_to_toml_table(BondList const &bonds) try {
   return table;
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
-  return toml::table();
 }
 
 } // namespace xdiag::io

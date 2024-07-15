@@ -1,20 +1,21 @@
 #include "../catch.hpp"
 
 #include <xdiag/common.hpp>
-#include <xdiag/utils/close.hpp>
 #include <xdiag/io/file_toml.hpp>
 #include <xdiag/operators/bond.hpp>
 #include <xdiag/operators/bondlist.hpp>
+#include <xdiag/symmetries/operations/symmetry_operations.hpp>
 #include <xdiag/symmetries/permutation.hpp>
 #include <xdiag/symmetries/permutation_group.hpp>
 #include <xdiag/symmetries/representation.hpp>
-#include <xdiag/symmetries/operations/symmetry_operations.hpp>
+#include <xdiag/utils/close.hpp>
+#include <xdiag/utils/print_macro.hpp>
 
-template <typename T> void test_write_read(T val) {
+template <typename T> void test_write_read(T val) try {
   using namespace xdiag;
 
   // Test writing
-  std::string filename = XDIAG_DIRECTORY"/misc/data/toml/write.toml";
+  std::string filename = XDIAG_DIRECTORY "/misc/data/toml/write.toml";
   auto fl = FileToml(filename, 'w');
   std::string key = "val";
 
@@ -27,14 +28,16 @@ template <typename T> void test_write_read(T val) {
   // XDIAG_SHOW(val);
   // XDIAG_SHOW(val_r);
   REQUIRE(val == val_r);
+ } catch (xdiag::Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
-TEST_CASE("file_toml", "[io]") {
+TEST_CASE("file_toml", "[io]") try {
   using namespace xdiag;
   using namespace arma;
 
   // Just try to parse everything in the example toml file
-  std::string filename = XDIAG_DIRECTORY"/misc/data/toml/read.toml";
+  std::string filename = XDIAG_DIRECTORY "/misc/data/toml/read.toml";
   auto fl = FileToml(filename, 'r');
 
   // Parse String
@@ -157,7 +160,7 @@ TEST_CASE("file_toml", "[io]") {
   test_write_read(f);
   test_write_read(i);
 
-  filename = XDIAG_DIRECTORY"/misc/data/toml/write.toml";
+  filename = XDIAG_DIRECTORY "/misc/data/toml/write.toml";
   fl = FileToml(filename, 'w');
   fl["a"] = a;
   fl["b"] = b;
@@ -206,7 +209,8 @@ TEST_CASE("file_toml", "[io]") {
   fl["perm"] = p;
   test_write_read(p);
 
-  std::string lfile = XDIAG_DIRECTORY"/misc/data/triangular.j1j2jch/"
+  std::string lfile =
+      XDIAG_DIRECTORY "/misc/data/triangular.j1j2jch/"
                       "triangular.12.j1j2jch.sublattices.fsl.lat";
   auto group = PermutationGroup(read_permutations(lfile));
   test_write_read(group);
@@ -234,42 +238,18 @@ TEST_CASE("file_toml", "[io]") {
 
   auto matr = arma::mat(3, 3, arma::fill::randu);
 
-  bond = Bond(matr, "H", 1);
+  bond = Bond("H", matr, 1);
   test_write_read(bond);
 
-  bond = Bond(matr, "J1", {1, 2});
-  test_write_read(bond);
-
-  bond = Bond(matr, 1.0, 1);
-  test_write_read(bond);
-
-  bond = Bond(matr, 1.2, {1, 2});
-  test_write_read(bond);
-
-  bond = Bond(matr, 2.1 + 1.2i, 1);
-  test_write_read(bond);
-
-  bond = Bond(matr, 2.1 + 1.2i, {1, 2});
+  bond = Bond("J1", matr, {1, 2});
   test_write_read(bond);
 
   auto matc = arma::cx_mat(3, 3, arma::fill::randu);
 
-  bond = Bond(matc, "H", 1);
+  bond = Bond("H", matc, 1);
   test_write_read(bond);
 
-  bond = Bond(matc, "J1", {1, 2});
-  test_write_read(bond);
-
-  bond = Bond(matc, 1.0, 1);
-  test_write_read(bond);
-
-  bond = Bond(matc, 1.2, {1, 2});
-  test_write_read(bond);
-
-  bond = Bond(matc, 2.1 + 1.2i, 1);
-  test_write_read(bond);
-
-  bond = Bond(matc, 2.1 + 1.2i, {1, 2});
+  bond = Bond("J1", matc, {1, 2});
   test_write_read(bond);
 
   auto bonds = read_bondlist(lfile);
@@ -282,5 +262,7 @@ TEST_CASE("file_toml", "[io]") {
   bonds["M1"] = arma::mat(3, 4, arma::fill::randu);
   bonds["M2"] = arma::cx_mat(3, 4, arma::fill::randu);
   test_write_read(bonds);
-  
+
+ } catch (xdiag::Error const &e) {
+  XDIAG_RETHROW(e);
 }

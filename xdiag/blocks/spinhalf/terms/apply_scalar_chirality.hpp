@@ -21,7 +21,10 @@ void apply_scalar_chirality(Bond const &bond, BasisIn &&basis_in,
   assert(bond.sites_disjoint());
   assert(iscomplex<coeff_t>());
 
-  complex J = bond.coupling<complex>();
+  Coupling cpl = bond.coupling();
+  assert(cpl.isexplicit() && !cpl.ismatrix());
+
+  complex J = cpl.as<complex>();
   coeff_t Jquarter = 0.;
   coeff_t Jquarter_conj = 0.;
   if constexpr (isreal<coeff_t>()) {

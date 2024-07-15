@@ -17,11 +17,14 @@ void apply_exchange(Bond const &bond, Basis &&basis, Filler &&fill) {
   std::string type = bond.type();
   assert(type == "EXCHANGE");
 
-  int64_t s1 = bond[0];
-  int64_t s2 = bond[1];
-  coeff_t J = bond.coupling<coeff_t>();
+  Coupling cpl = bond.coupling();
+  assert(cpl.isexplicit() && !cpl.ismatrix());
+  coeff_t J = cpl.as<coeff_t>();
   coeff_t Jhalf = J / 2.;
   coeff_t Jhalf_conj = conj(Jhalf);
+
+  int64_t s1 = bond[0];
+  int64_t s2 = bond[1];
 
   // Prepare bitmasks
   bit_t flipmask = ((bit_t)1 << s1) | ((bit_t)1 << s2);

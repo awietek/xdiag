@@ -72,33 +72,34 @@ decompose_matrix_to_nonbranching(arma::Mat<coeff_t> const &mat,
     }
     mats_nb.push_back(mat_nb);
   }
-
-  // Create the bonds from the nonbranchin matrices
-  BondList bonds_nb;
-  for (auto mat_nb : mats_nb) {
-    bonds_nb << Bond("NONBRANCHINGBOND", mat_nb, bond.sites());
-  }
-  return bonds_nb;
-
+  return mats_nb;
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
-  return BondListstd::vector<arma::Mat<coeff_t>>();
 }
 
 BondList non_branching_bonds(Bond const &bond, double precision) try {
-  if (bond.coupling_is<arma::mat>()) {
-    arma::mat mat = bond.coupling<arma::mat>();
-    return decompose_matrix_to_nonbranching(mat, precision);
-  } else if (bond.coupling_is<arma::cx_mat>()) {
-    arma::cx_mat mat = bond.coupling<arma::cx_mat>();
-    return decompose_matrix_to_nonbranching(mat, precision);
+  if (bond.coupling().is<arma::mat>()) {
+    arma::mat mat = bond.coupling().as<arma::mat>();
+    auto mats_nb = decompose_matrix_to_nonbranching(mat, precision);
+    BondList bonds_nb;
+    for (auto mat_nb : mats_nb) {
+      bonds_nb += Bond("NONBRANCHINGBOND", mat_nb, bond.sites());
+    }
+    return bonds_nb;
+  } else if (bond.coupling().is<arma::cx_mat>()) {
+    arma::cx_mat mat = bond.coupling().as<arma::cx_mat>();
+    auto mats_nb = decompose_matrix_to_nonbranching(mat, precision);
+    BondList bonds_nb;
+    for (auto mat_nb : mats_nb) {
+      bonds_nb += Bond("NONBRANCHINGBOND", mat_nb, bond.sites());
+    }
+    return bonds_nb;
   } else {
     XDIAG_THROW(
         "Cannot convert bond to nonbranching bonds. Coupling is not a matrix");
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
-  return BondList();
 }
 
 BondList non_branching_bonds(BondList const &bonds, double precision) {
@@ -110,7 +111,7 @@ BondList non_branching_bonds(BondList const &bonds, double precision) {
 }
 
 template <typename coeff_t>
-bool is_non_branching_matrix(arma::Mat<coeff_t> const &mat) {
+bool is_non_branching_matrix(arma::Mat<coeff_t> const &mat, double precision) {
   for (arma::uword i = 0; i < mat.n_rows; ++i) {
     int64_t non_zero_in_row = 0;
     for (arma::uword j = 0; j < mat.n_cols; ++j) {
@@ -122,15 +123,16 @@ bool is_non_branching_matrix(arma::Mat<coeff_t> const &mat) {
       return false;
     }
   }
+  return true;
 }
 
 bool is_non_branching_bond(Bond const &bond, double precision) {
-  if (bond.coupling_is<arma::mat>()) {
-    arma::mat mat = bond.coupling<arma::mat>();
-    return is_non_branchin_matrix(mat, precision);
-  } else if (bond.coupling_is<arma::cx_mat>()) {
-    arma::cx_mat mat = bond.coupling<arma::cx_mat>();
-    return is_non_branchin_matrix(mat, precision);
+  if (bond.coupling().is<arma::mat>()) {
+    arma::mat mat = bond.coupling().as<arma::mat>();
+    return is_non_branching_matrix(mat, precision);
+  } else if (bond.coupling().is<arma::cx_mat>()) {
+    arma::cx_mat mat = bond.coupling().as<arma::cx_mat>();
+    return is_non_branching_matrix(mat, precision);
   } else {
     return false;
   }
@@ -140,18 +142,15 @@ template <typename bit_t, typename coeff_t>
 NonBranchingBond<bit_t, coeff_t>::NonBranchingBond(Bond const &bond,
                                                    double precision) try
     : sites_(bond.sites()), dim_(1 << sites_.size()), mask_(0) {
-  if (!is_non_branching_bond(bond, precision)) {
-    XDIAG_THROW(
-        "Error: trying to create a NonBranchingBond from a Bond which is "
-        "branching");
+  if (!bond.ismatrix()) {
+    XDIAG_THROW("Error constructing NonBranchingBond: the coupling of the bond "
+                "must be an explicit matrix");
   }
 
-  if (!bond.coupling_defined()) {
+  if (!is_non_branching_bond(bond, precision)) {
     XDIAG_THROW(
-        "Error: cannot create Nonbranching bond from Bond without having "
-        "its coupling defined.");
+        "trying to create a NonBranchingBond from a Bond which is branching");
   }
-  coeff_t cpl = bond.coupling<coeff_t>();
 
   for (auto s : bond.sites()) {
     mask_ |= ((bit_t)1 << s);
@@ -162,7 +161,7 @@ NonBranchingBond<bit_t, coeff_t>::NonBranchingBond(Bond const &bond,
   mask_ = ~mask_;
   // Log("Y: {}", BSTR(mask_));
 
-  arma::cx_mat matrix_ = bond.matrix();
+  arma::cx_mat matrix_ = bond.coupling().as<arma::cx_mat>();
 
   // Matrix dimension is 2**(no. sites of bond)
   if ((matrix_.n_cols != dim_) || (matrix_.n_rows != dim_)) {
@@ -186,9 +185,9 @@ NonBranchingBond<bit_t, coeff_t>::NonBranchingBond(Bond const &bond,
             XDIAG_THROW("Error: trying to create a real NonBranchingBond, but "
                         "found a truly complex matrix entry");
           }
-          coeff_[in] = cpl * real(matrix_(out, in));
+          coeff_[in] = real(matrix_(out, in));
         } else {
-          coeff_[in] = cpl * matrix_(out, in);
+          coeff_[in] = matrix_(out, in);
         }
         // ++non_zero_in_row;
       }

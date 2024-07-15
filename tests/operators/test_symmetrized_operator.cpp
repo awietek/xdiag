@@ -22,9 +22,10 @@ TEST_CASE("symmetrized_operator", "[symmetries]") try {
     // int n_sites = 6;
     auto bondlist = testcases::electron::get_linear_chain(n_sites, 1.0, 5.0);
     for (int i = 0; i < n_sites; ++i) {
-      bondlist << Bond("HB", "J2", {i, (i + 2) % n_sites});
+      bondlist += Bond("HB", "J2", {i, (i + 2) % n_sites});
     }
     bondlist["J2"] = 0.321;
+    bondlist["T"] = 0;
 
     auto [space_group, irreps] =
         testcases::electron::get_cyclic_group_irreps(n_sites);
@@ -35,6 +36,7 @@ TEST_CASE("symmetrized_operator", "[symmetries]") try {
         if (block_nosym.size() == 0) {
           continue;
         }
+	// XDIAG_SHOW(bondlist);
         auto [e0_nosym, v0_nosym] = eig0(bondlist, block_nosym);
 
         auto res = eigs_lanczos(bondlist, block_nosym);
@@ -86,7 +88,9 @@ TEST_CASE("symmetrized_operator", "[symmetries]") try {
           {
             auto &v = v0_sym;
             auto Hv = v;
+	    // Log("UUU");
             apply(bondlist, v, Hv);
+	    // Log("VVV");
             auto e = dot(v, Hv);
             // XDIAG_SHOW(e);
             // XDIAG_SHOW(e0_nosym);
@@ -96,19 +100,23 @@ TEST_CASE("symmetrized_operator", "[symmetries]") try {
           // Measure correlators
           for (int i = 1; i < n_sites; ++i) {
             BondList corr_nosym;
-            corr_nosym << Bond("HB", "J", {0, i});
+            corr_nosym += Bond("HB", "J", {0, i});
             corr_nosym["J"] = 1.0;
 
             auto corr_sym = symmetrized_operator(corr_nosym, space_group);
+	    // Log("XXX");
             auto val_nosym = inner(corr_nosym, v0_nosym);
-            auto val_sym = inner(corr_sym, v0_sym);
+	    // Log("YYY {} {}", corr_sym.isreal(), v0_sym.isreal());
+	    // XDIAG_SHOW(corr_sym);
+            auto val_sym = innerC(corr_sym, v0_sym);
+	    // Log("ZZZ");
             // Log.out("(0,{}) nosym: {}, sym: {}", i, real(val_nosym),
             //               real(val_sym));
             REQUIRE(close(val_nosym, val_sym, 1e-6, 1e-6));
           }
           // for (int j=0; j<n_sites; ++j) {
           //   BondList corr_nosym;
-          //   corr_nosym << Bond("EXCHANGE", "J", {j, (i+j)%n_sites});
+          //   corr_nosym += Bond("EXCHANGE", "J", {j, (i+j)%n_sites});
           //   Couplings cpls;
           //   cpls["J"] = 1.0;
           //   auto val_nosym2 = Inner(corr_nosym, cpls, block_nosym,

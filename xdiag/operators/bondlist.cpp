@@ -12,15 +12,16 @@ namespace xdiag {
 
 BondList::BondList(std::vector<Bond> const &bonds) : bonds_(bonds) {}
 int64_t BondList::size() const { return bonds_.size(); }
-coupling_t &BondList::operator[](std::string name) { return coupling_[name]; }
-coupling_t const &BondList::operator[](std::string name) const {
-  return coupling_.at(name);
-}
-bool BondList::coupling_defined(std::string name) {
-  return couplings_.find(name) == couplings_.end();
+Coupling &BondList::operator[](std::string name) { return couplings_[name]; }
+Coupling const &BondList::operator[](std::string name) const {
+  return couplings_.at(name);
 }
 
-std::vector<std::string> const &couplings() const {
+bool BondList::defined(std::string name) const {
+  return couplings_.find(name) != couplings_.end();
+}
+
+std::vector<std::string> BondList::couplings() const {
   std::vector<std::string> names;
   for (auto const &cpl : couplings_) {
     names.push_back(cpl.first);
@@ -28,14 +29,19 @@ std::vector<std::string> const &couplings() const {
   return names;
 }
 
-bool BondList::isreal() const {
-  std::all_of(bonds_.begin(), bonds_.end(),
-              [](Bond const &b) { return b.isreal(); });
+bool BondList::isreal() const try {
+  BondList bonds_explicit = make_explicit(*this);
+  return std::all_of(bonds_explicit.begin(), bonds_explicit.end(),
+                     [](Bond const &b) { return b.isreal(); });
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
-bool BondList::isexplicit() const {
-  std::all_of(bonds_.begin(), bonds_.end(),
-              [](Bond const &b) { return b.isexplicit(); });
+bool BondList::isexplicit() const try {
+  return std::all_of(bonds_.begin(), bonds_.end(),
+                     [](Bond const &b) { return b.isexplicit(); });
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 void BondList::operator+=(Bond const &bond) { bonds_.push_back(bond); }
@@ -48,7 +54,7 @@ void BondList::operator+=(BondList const &bonds) try {
   // Add possible couplings
   for (auto it = bonds.couplings_.begin(); it != bonds.couplings_.end(); it++) {
     std::string name = it->first;
-    coupling_t cpl = it->second;
+    Coupling cpl = it->second;
 
     // if name does not exist yet, add coupling
     if (couplings_.find(name) == couplings_.end()) {
@@ -67,21 +73,35 @@ void BondList::operator+=(BondList const &bonds) try {
   XDIAG_RETHROW(e);
 }
 
-BondList operator+(Bond const &bond) const {
+BondList BondList::operator+(Bond const &bond) const {
   BondList new_bonds = *this;
   new_bonds += bond;
   return new_bonds;
 }
 
-BondList operator+(BondList const &bonds) const try {
+BondList BondList::operator+(BondList const &bonds) const try {
   BondList new_bonds = *this;
   new_bonds += bonds;
+  return new_bonds;
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
 bool BondList::operator==(BondList const &other) const {
-  return (bonds_ == other.bonds_) && (couplings_ == other.couplings_);
+  if (bonds_ != other.bonds_) {
+    return false;
+  }
+  auto c1s = couplings();
+  auto c2s = other.couplings();
+  if (c1s != c2s) {
+    return false;
+  }
+  for (std::string c : c1s) {
+    if (couplings_.at(c) != other.couplings_.at(c)) {
+      return false;
+    }
+  }
+  return true;
 }
 bool BondList::operator!=(BondList const &other) const {
   return !operator==(other);
@@ -98,18 +118,18 @@ BondList make_explicit(BondList const &bonds) try {
   BondList explicit_bonds;
   for (auto const &bond : bonds) {
     if (bond.isexplicit()) {
-      explicit_bonds.push_back(bond);
+      explicit_bonds += bond;
     } else {
-      std::string name = bond.coupling<std::string>();
-      if (bonds.coupling_defined(name)) {
+      std::string name = bond.coupling().as<std::string>();
+      if (bonds.defined(name)) {
         std::string type = bond.type();
-        coupling_t cpl = bonds[name];
-        if (std::holds_alternative<std::string>(cpl)) {
+        Coupling cpl = bonds[name];
+        if (!cpl.isexplicit()) {
           XDIAG_THROW(fmt::format("Unable to make BondList explicit: coupling "
                                   "\"{}\" is yet a string",
                                   name));
         }
-        explicit_bonds.push_back(type, cpl, bond.sites());
+        explicit_bonds += Bond(type, cpl, bond.sites());
       } else {
         XDIAG_THROW(fmt::format(
             "Unable to make BondList explicit: coupling \"{}\" is not defined",
@@ -117,8 +137,19 @@ BondList make_explicit(BondList const &bonds) try {
       }
     }
   }
+  return explicit_bonds;
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
+}
+
+BondList bonds_of_type(std::string type, BondList const &bonds) {
+  BondList new_bonds;
+  for (auto const &bond : bonds) {
+    if (bond.type() == type) {
+      new_bonds += bond;
+    }
+  }
+  return new_bonds;
 }
 
 BondList read_bondlist(std::string filename) {

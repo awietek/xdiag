@@ -81,6 +81,7 @@ set(XDIAG_SOURCES
   symmetries/group_action/group_action_sublattice.cpp
   symmetries/group_action/sublattice_stability.cpp
 
+  operators/coupling.cpp
   operators/bond.cpp
   operators/bondlist.cpp
   operators/compiler.cpp

@@ -7,7 +7,6 @@ namespace xdiag::operators {
 
 BondList non_branching_bonds(Bond const &bond, double precision = 1e-12);
 BondList non_branching_bonds(BondList const &bonds, double precision = 1e-12);
-
 bool is_non_branching_bond(Bond const &bond, double precision = 1e-12);
 
 template <typename bit_t, typename coeff_t> class NonBranchingBond {

@@ -139,8 +139,8 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
     std::string lfilename =
         XDIAG_DIRECTORY "/misc/data/shastry.16.HB.J.Jd.fsl.toml";
     auto lfile = FileToml(lfilename, 'r');
-    auto bonds = BondList(lfile["Interactions"]);
-    int n_sites = bonds.n_sites();
+    auto bonds = lfile["Interactions"].as<BondList>();
+    int n_sites = 16;
     bonds["J"] = 0.63;
     bonds["Jd"] = 1.00;
     auto group = PermutationGroup(lfile["Symmetries"]);
@@ -195,8 +195,8 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
     std::string lfilename =
         XDIAG_DIRECTORY "/misc/data/shastry.20.HB.J.Jd.fsl.toml";
     auto lfile = FileToml(lfilename, 'r');
-    auto bonds = BondList(lfile["Interactions"]);
-    int n_sites = bonds.n_sites();
+    auto bonds = lfile["Interactions"].as<BondList>();
+    int n_sites = 20;
     bonds["J"] = 0.63;
     bonds["Jd"] = 1.00;
     auto group = PermutationGroup(lfile["Symmetries"]);

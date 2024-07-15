@@ -53,7 +53,7 @@ TEST_CASE("electron_matrix", "[electron]") {
   auto block = Electron(n_sites, n_up, n_dn);
 
   for (int i = 0; i < n_sites; ++i)
-    bondlist << Bond("HOP", "T", {i, (i + 1) % n_sites});
+    bondlist += Bond("HOP", "T", {i, (i + 1) % n_sites});
   bondlist["T"] = 1.0;
   bondlist["U"] = 5.0;
   auto H1 = matrix(bondlist, block, block);
@@ -121,22 +121,24 @@ TEST_CASE("electron_matrix", "[electron]") {
 
   //////////////////////////////////
   // Test two site exact solution
-  bondlist.clear();
-  bondlist << Bond("HOP", "T", {0, 1});
-  auto block2 = Electron(2, 1, 1);
-  for (int i = 0; i < 20; ++i) {
-    double U = 1.234 * i;
-    Log("electron_matrix: two-site exact solution test, U={}", U);
-    bondlist["T"] = 1.0;
-    bondlist["U"] = U;
-    double e0_exact = 0.5 * (U - sqrt(U * U + 16));
-    auto H = matrix(bondlist, block2, block2);
-    REQUIRE(H.is_hermitian(1e-8));
-    arma::Col<double> eigs;
-    arma::eig_sym(eigs, H);
-    double e0 = eigs(0);
-    // printf("e0: %f, e0_exact: %f\n", e0, e0_exact);
-    REQUIRE(close(e0_exact, e0));
+  {
+    BondList bondlist;
+    bondlist += Bond("HOP", "T", {0, 1});
+    auto block2 = Electron(2, 1, 1);
+    for (int i = 0; i < 20; ++i) {
+      double U = 1.234 * i;
+      Log("electron_matrix: two-site exact solution test, U={}", U);
+      bondlist["T"] = 1.0;
+      bondlist["U"] = U;
+      double e0_exact = 0.5 * (U - sqrt(U * U + 16));
+      auto H = matrix(bondlist, block2, block2);
+      REQUIRE(H.is_hermitian(1e-8));
+      arma::Col<double> eigs;
+      arma::eig_sym(eigs, H);
+      double e0 = eigs(0);
+      // printf("e0: %f, e0_exact: %f\n", e0, e0_exact);
+      REQUIRE(close(e0_exact, e0));
+    }
   }
 
   ///////////////////////////////////////////////////
@@ -150,10 +152,10 @@ TEST_CASE("electron_matrix", "[electron]") {
     // Create single particle matrix
     arma::Mat<double> Hs(n_sites, n_sites, arma::fill::zeros);
     for (auto bond : bondlist) {
-      assert(bond.size() == 2);
-      int s1 = bond.site(0);
-      int s2 = bond.site(1);
-      auto name = bond.coupling_name();
+      REQUIRE(bond.size() == 2);
+      int s1 = bond[0];
+      int s2 = bond[1];
+      auto name = bond.coupling().as<std::string>();
       Hs(s1, s2) = -bondlist[name].as<double>();
       Hs(s2, s1) = -bondlist[name].as<double>();
     }
@@ -196,11 +198,11 @@ TEST_CASE("electron_matrix", "[electron]") {
 
     // Create single particle matrix for upspins
     arma::cx_mat Hs_up(n_sites, n_sites, arma::fill::zeros);
-    for (auto bond : bondlist.bonds_of_type("HOPUP")) {
+    for (auto bond : bonds_of_type("HOPUP", bondlist)) {
       assert(bond.size() == 2);
-      int s1 = bond.site(0);
-      int s2 = bond.site(1);
-      auto name = bond.coupling_name();
+      int s1 = bond[0];
+      int s2 = bond[1];
+      auto name = bond.coupling().as<std::string>();
       Hs_up(s1, s2) = -bondlist[name].as<complex>();
       Hs_up(s2, s1) = -conj(bondlist[name].as<complex>());
     }
@@ -209,11 +211,11 @@ TEST_CASE("electron_matrix", "[electron]") {
 
     // Create single particle matrix for dnspins
     arma::cx_mat Hs_dn(n_sites, n_sites, arma::fill::zeros);
-    for (auto bond : bondlist.bonds_of_type("HOPDN")) {
+    for (auto bond : bonds_of_type("HOPDN", bondlist)) {
       assert(bond.size() == 2);
-      int s1 = bond.site(0);
-      int s2 = bond.site(1);
-      auto name = bond.coupling_name();
+      int s1 = bond[0];
+      int s2 = bond[1];
+      auto name = bond.coupling().as<std::string>();
       Hs_dn(s1, s2) = -bondlist[name].as<complex>();
       Hs_dn(s2, s1) = -conj(bondlist[name].as<complex>());
     }

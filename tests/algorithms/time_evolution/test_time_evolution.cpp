@@ -49,7 +49,7 @@ TEST_CASE("analytic_case_free_particle_1D", "[time_evolution]") try {
   auto block = Electron(n_sites, nup, ndn);
   BondList bonds;
   for (int i = 0; i < n_sites; i++) {
-    bonds << Bond("HOP", "t", {i, (i + 1) % n_sites});
+    bonds += Bond("HOP", "t", {i, (i + 1) % n_sites});
   }
   bonds["t"] = t;
   bonds["U"] = 1;
@@ -141,14 +141,14 @@ TEST_CASE("analytic_case_free_particle_2D", "[time_evolution]") try {
       // nearest neighbour hops
       int s_up_hop = L * ((i + 1) % L) + j;
       int s_dn_hop = L * i + (j + 1) % L;
-      bonds << Bond("HOP", "t", {s, s_up_hop});
-      bonds << Bond("HOP", "t", {s, s_dn_hop});
+      bonds += Bond("HOP", "t", {s, s_up_hop});
+      bonds += Bond("HOP", "t", {s, s_dn_hop});
 
       // next nearest neighbour hops
       int s_across_up = L * ((i + 1) % L) + (j + 1) % L;
       int s_across_dn = L * ((L + (i - 1) % L) % L) + (j + 1) % L;
-      bonds << Bond("HOP", "t1", {s, s_across_up});
-      bonds << Bond("HOP", "t1", {s, s_across_dn});
+      bonds += Bond("HOP", "t1", {s, s_across_up});
+      bonds += Bond("HOP", "t1", {s, s_across_dn});
     }
   }
   bonds["t"] = t;
@@ -206,10 +206,10 @@ TEST_CASE("tj_complex_timeevo", "[time_evolution]") try {
       int site = y * L + x;
       int right = y * L + nx;
       int top = ny * L + x;
-      bonds << Bond("HOP", "T", {site, right});
-      bonds << Bond("TJISING", "J", {site, right});
-      bonds << Bond("HOP", "T", {site, top});
-      bonds << Bond("TJISING", "J", {site, top});
+      bonds += Bond("HOP", "T", {site, right});
+      bonds += Bond("TJISING", "J", {site, right});
+      bonds += Bond("HOP", "T", {site, top});
+      bonds += Bond("TJISING", "J", {site, top});
     }
   }
   bonds["T"] = (std::complex<double>)(1.0 + 0.2i);

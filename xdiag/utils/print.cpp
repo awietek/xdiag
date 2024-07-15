@@ -2,6 +2,7 @@
 
 #include <cinttypes>
 #include <sstream>
+#include <variant>
 
 #include <xdiag/random/hash.hpp>
 #include <xdiag/utils/error.hpp>
@@ -73,8 +74,8 @@ void print_pretty(const char *identifier, BondList const &bondlist) {
   if (bondlist.couplings().size() > 0) {
     printf("Couplings:\n");
     for (auto name : bondlist.couplings()) {
-      auto cpl = bondlist[name];
-      std::visit([](auto &&arg) { std::cout << arg << "\n"; }, cpl);
+      Coupling cpl = bondlist[name];
+      std::cout << name << ": " << cpl << "\n";
     }
   }
 }

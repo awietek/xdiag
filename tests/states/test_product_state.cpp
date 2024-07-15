@@ -1,7 +1,7 @@
 #include "../catch.hpp"
 
-#include <xdiag/states/product_state.hpp>
 #include <xdiag/algebra/algebra.hpp>
+#include <xdiag/states/product_state.hpp>
 #include <xdiag/utils/close.hpp>
 
 using namespace xdiag;
@@ -23,15 +23,15 @@ TEST_CASE("product_state", "[states]") {
       auto block = Electron(n_sites);
       auto psi = State(block, true);
       fill(psi, pstate);
-      
+
       int nup = 0;
       int ndn = 0;
       for (int i = 0; i < n_sites; ++i) {
         std::string p = pstate[i];
-        auto sz = Bond("SZ", i);
+        auto sz = Bond("SZ", 1.0, i);
         auto szc = inner(sz, psi);
 
-        auto n = Bond("NUMBER", i);
+        auto n = Bond("NUMBER", 1.0, i);
         auto nc = inner(n, psi);
 
         if (p == "Emp") {
@@ -56,13 +56,13 @@ TEST_CASE("product_state", "[states]") {
       auto block2 = Electron(n_sites, nup, ndn);
       auto psi2 = State(block2);
       fill(psi2, pstate);
-      
+
       for (int i = 0; i < n_sites; ++i) {
         std::string p = pstate[i];
-        auto sz = Bond("SZ", i);
+        auto sz = Bond("SZ", 1.0, i);
         auto szc = inner(sz, psi2);
 
-        auto n = Bond("NUMBER", i);
+        auto n = Bond("NUMBER", 1.0, i);
         auto nc = inner(n, psi2);
 
         if (p == "Emp") {
@@ -112,10 +112,10 @@ TEST_CASE("product_state", "[states]") {
       fill(psi2, pstate);
       for (int i = 0; i < n_sites; ++i) {
         std::string p = pstate[i];
-        auto sz = Bond("SZ", i);
+        auto sz = Bond("SZ", 1.0, i);
         auto szc = inner(sz, psi2);
 
-        auto n = Bond("NUMBER", i);
+        auto n = Bond("NUMBER", 1.0, i);
         auto nc = inner(n, psi2);
 
         if (p == "Emp") {
@@ -151,14 +151,14 @@ TEST_CASE("product_state", "[states]") {
       for (int i = 0; i < n_sites; ++i) {
         std::string p = pstate[i];
 
-        auto sz = Bond("SZ", i);
+        auto sz = Bond("SZ", 1.0, i);
         auto szc = inner(sz, psi);
-	
+
         if (p == "Up") {
           REQUIRE(close(szc, 0.5));
           ++nup;
         } else if (p == "Dn") {
-	  REQUIRE(close(szc, -0.5));
+          REQUIRE(close(szc, -0.5));
         }
       }
 
@@ -167,7 +167,7 @@ TEST_CASE("product_state", "[states]") {
       fill(psi2, pstate);
       for (int i = 0; i < n_sites; ++i) {
         std::string p = pstate[i];
-        auto sz = Bond("SZ", i);
+        auto sz = Bond("SZ", 1.0, i);
         auto szc = inner(sz, psi2);
 
         if (p == "Up") {

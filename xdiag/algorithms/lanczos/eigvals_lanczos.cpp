@@ -23,13 +23,14 @@ eigvals_lanczos(BondList const &bonds, block_variant_t const &block,
   if (neigvals < 1) {
     XDIAG_THROW("Argument \"neigvals\" needs to be >= 1");
   }
-  if (!bonds.ishermitian()) {
-    XDIAG_THROW("Input BondList is not hermitian");
-  }
-  bool cplx = bonds.iscomplex() || iscomplex(block) || force_complex ||
-              state0.iscomplex();
-  if (state0.iscomplex() && !iscomplex(block)) {
-    Log(1, "warning: starting REAL block diagonalization with COMPLEX startstate");
+  // if (!bonds.ishermitian()) {
+  //   XDIAG_THROW("Input BondList is not hermitian");
+  // }
+  bool cplx =
+      !bonds.isreal() || iscomplex(block) || force_complex || !state0.isreal();
+  if (!state0.isreal() && !iscomplex(block)) {
+    Log(1,
+        "warning: starting REAL block diagonalization with COMPLEX startstate");
   }
 
   auto converged = [neigvals, precision](Tmatrix const &tmat) -> bool {
@@ -92,11 +93,11 @@ eigvals_lanczos(BondList const &bonds, block_variant_t const &block,
   if (neigvals < 1) {
     XDIAG_THROW("Argument \"neigvals\" needs to be >= 1");
   }
-  if (!bonds.ishermitian()) {
-    XDIAG_THROW("Input BondList is not hermitian");
-  }
+  // if (!bonds.ishermitian()) {
+  //   XDIAG_THROW("Input BondList is not hermitian");
+  // }
 
-  bool cplx = bonds.iscomplex() || iscomplex(block) || force_complex;
+  bool cplx = (!bonds.isreal()) || iscomplex(block) || force_complex;
   State state0(block, !cplx);
   fill(state0, RandomState(random_seed));
 

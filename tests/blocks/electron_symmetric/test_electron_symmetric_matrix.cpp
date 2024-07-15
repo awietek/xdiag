@@ -256,7 +256,7 @@ TEST_CASE("electron_symmetric_matrix", "[electron]") {
   Log("electron_symmetric_matrix: Hubbard 3x3 triangular(+ Heisenberg terms)");
   auto bondlist_hb = bondlist;
   for (auto bond : bondlist) {
-    bondlist_hb << Bond("HB", "J", {bond[0], bond[1]});
+    bondlist_hb += Bond("HB", "J", {bond[0], bond[1]});
   }
   bondlist_hb["J"] = 0.4;
   test_electron_symmetric_spectra(bondlist_hb, space_group, irreps,

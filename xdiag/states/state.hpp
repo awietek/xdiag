@@ -8,7 +8,6 @@ namespace xdiag {
 
 class State {
 public:
-  // Interface
   State() = default;
 
   State(block_variant_t const &block, bool real = true, int64_t n_cols = 1);
@@ -24,7 +23,6 @@ public:
 
   int64_t n_sites() const;
   bool isreal() const;
-  bool iscomplex() const;
 
   State real() const;
   State imag() const;

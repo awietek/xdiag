@@ -12,10 +12,10 @@ public:
   explicit BondList(std::vector<Bond> const &bonds);
 
   int64_t size() const;
-  coupling_t &operator[](std::string name);
-  coupling_t const &operator[](std::string name) const;
-  std::vector<std::string> const &couplings() const;
-  bool coupling_defined(std::string name) const;
+  bool defined(std::string name) const;
+  Coupling &operator[](std::string name);
+  Coupling const &operator[](std::string name) const;
+  std::vector<std::string> couplings() const;
 
   bool isreal() const;
   bool isexplicit() const;
@@ -40,10 +40,13 @@ public:
 
 private:
   std::vector<Bond> bonds_;
-  std::map<std::string, coupling_t> couplings_;
+  std::map<std::string, Coupling> couplings_;
 };
 
+BondList bonds_of_type(std::string type, BondList const &bonds);
 BondList make_explicit(BondList const &bonds);
+
+// legacy function, can be removed later
 BondList read_bondlist(std::string filename);
 
 } // namespace xdiag

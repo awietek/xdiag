@@ -23,7 +23,10 @@ void apply_raise_lower(Bond const &bond, BasisIn &&basis_in,
   int64_t s = bond[0];
   bit_t site_mask = (bit_t)1 << s;
   bit_t fermi_mask = site_mask - 1;
-  coeff_t c = bond.coupling<coeff_t>();
+
+  Coupling cpl = bond.coupling();
+  assert(cpl.isexplicit() && !cpl.ismatrix());
+  coeff_t c = cpl.as<coeff_t>();
 
   // Raising operators
   if ((type == "CDAGUP") || (type == "CDAGDN")) {

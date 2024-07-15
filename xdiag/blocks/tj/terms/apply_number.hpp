@@ -16,7 +16,10 @@ void apply_number(Bond const &bond, Basis &&basis, Fill &&fill) {
   std::string type = bond.type();
   assert((type == "NUMBERUP") || (type == "NUMBERDN"));
 
-  coeff_t mu = bond.coupling<coeff_t>();
+  Coupling cpl = bond.coupling();
+  assert(cpl.isexplicit() && !cpl.ismatrix());
+  coeff_t mu = cpl.as<coeff_t>();
+
   int64_t s = bond[0];
   bit_t mask = (bit_t)1 << s;
 

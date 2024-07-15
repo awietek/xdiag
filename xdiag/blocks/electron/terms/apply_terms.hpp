@@ -15,9 +15,11 @@ namespace xdiag::electron {
 template <typename bit_t, typename coeff_t, bool symmetric, class BasisIn,
           class BasisOut, class Fill>
 void apply_terms(BondList const &bonds, BasisIn const &basis_in,
-                 BasisOut const &basis_out, Fill &fill) try {
+                 BasisOut const &basis_out, Fill &fill,
+                 double zero_precision) try {
 
-  BondList bonds_compiled = electron::compile(bonds);
+  BondList bonds_compiled =
+      electron::compile(bonds, basis_in.n_sites(), zero_precision);
 
   // Separate bond acting on ups, dns, diagonally or fully mixing
   BondList bonds_ups;
@@ -50,11 +52,12 @@ void apply_terms(BondList const &bonds, BasisIn const &basis_in,
     }
   }
 
-  if (bonds.coupling_defined("U")) {
-    coupling_t U = bonds["U"];
-    if (std::holds_alternative<double>(U)){
-      electron::apply_u<bit_t, coeff_t, symmetric>(std::get<double>(U),
-                                                   basis_in, fill);
+  if (bonds.defined("U")) {
+    Coupling cpl = bonds["U"];
+
+    if (cpl.is<double>()) {
+      double U = cpl.as<double>();
+      electron::apply_u<bit_t, coeff_t, symmetric>(U, basis_in, fill);
     } else {
       XDIAG_THROW("Coupling U must either be a real number");
     }

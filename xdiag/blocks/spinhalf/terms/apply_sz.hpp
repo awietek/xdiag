@@ -16,10 +16,13 @@ void apply_sz(Bond const &bond, BasisIn &&basis_in, BasisOut &&basis_out,
   assert(bond.type_defined() && (bond.type() == "SZ"));
   assert(bond.size() == 1);
 
+  Coupling cpl = bond.coupling();
+  assert(cpl.isexplicit() && !cpl.ismatrix());
+  coeff_t H = cpl.as<coeff_t>();
+
   int64_t s = bond[0];
   bit_t mask = ((bit_t)1 << s);
 
-  coeff_t H = bond.coupling<coeff_t>();
   coeff_t val_up = H / 2.;
   coeff_t val_dn = -H / 2.;
 

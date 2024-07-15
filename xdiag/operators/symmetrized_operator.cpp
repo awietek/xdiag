@@ -1,5 +1,7 @@
 #include "symmetrized_operator.hpp"
 
+#include <xdiag/operators/compiler.hpp>
+
 namespace xdiag {
 
 BondList symmetrized_operator(Bond const &bond, PermutationGroup const &group) {
@@ -21,63 +23,31 @@ BondList symmetrized_operator(BondList const &bonds,
 
 BondList symmetrized_operator(BondList const &bonds,
                               PermutationGroup const &group,
-                              Representation const &irrep) {
+                              Representation const &irrep) try {
   BondList bonds_sym;
   int64_t N_group = group.size();
+  BondList bonds_explicit = make_explicit(bonds);
+  for (auto bond : bonds_explicit) {
 
-  for (auto bond : bonds) {
+    std::string type = bond.type();
+    Coupling coupling = bond.coupling();
 
-    complex coupling = 0.;
+    // Create all symmetrized bonds
+    for (int64_t i = 0; i < N_group; ++i) {
+      Permutation perm = group[i];
+      complex bloch = irrep.character(i);
 
-    if (bond.coupling_named()) {
-      std::string name = bond.coupling_name();
-      if (bonds.coupling_defined(name)) {
-        coupling = bonds.coupling(name);
-      } else {
-        Log.err(
-            "Error in symmetrized_operator: coupling with name {} undefined "
-            "in BondList",
-            name);
+      std::vector<int64_t> sites_sym(bond.size(), 0);
+      for (int64_t site_idx = 0; site_idx < bond.size(); ++site_idx) {
+        sites_sym[site_idx] = perm[bond[site_idx]];
       }
-    } else {
-      coupling = bond.coupling();
-    }
-
-    if (bond.type_defined()) {
-      std::string type = bond.type();
-
-      // Create all symmetrized bonds
-      for (int64_t i = 0; i < N_group; ++i) {
-        Permutation perm = group[i];
-        complex bloch = irrep.character(i);
-
-        std::vector<int64_t> sites_sym(bond.size(), 0);
-        for (int64_t site_idx = 0; site_idx < bond.size(); ++site_idx) {
-          sites_sym[site_idx] = perm[bond[site_idx]];
-        }
-        complex cpl_sym = bloch * coupling / (complex)N_group;
-        bonds_sym << Bond(type, cpl_sym, sites_sym);
-      }
-    } else {
-      arma::cx_mat mat = bond.matrix();
-
-      // Create all symmetrized bonds
-      for (int64_t i = 0; i < N_group; ++i) {
-        Permutation perm = group[i];
-        complex bloch = irrep.character(i);
-
-        std::vector<int64_t> sites_sym(bond.size(), 0);
-        for (int64_t site_idx = 0; site_idx < bond.size(); ++site_idx) {
-          sites_sym[site_idx] = perm[bond[site_idx]];
-        }
-
-        complex cpl_sym = bloch * coupling / (complex)N_group;
-        bonds_sym << Bond(mat, cpl_sym, sites_sym);
-      }
+      Coupling cpl_sym = bloch * coupling / (complex)N_group;
+      bonds_sym += Bond(type, cpl_sym, sites_sym);
     }
   }
-
   return bonds_sym;
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 } // namespace xdiag
