@@ -13,23 +13,23 @@ namespace xdiag::spinhalf {
 
 template <typename bit_t, typename coeff_t, bool symmetric, class BasisIn,
           class BasisOut, class Fill>
-void apply_exchange(Bond const &bond, BasisIn &&basis_in, BasisOut &&basis_out,
+void apply_exchange(Op const &op, BasisIn &&basis_in, BasisOut &&basis_out,
                     Fill &&fill) {
 
-  assert(bond.coupling_defined());
-  assert(bond.type_defined() && (bond.type() == "EXCHANGE"));
-  assert(bond.size() == 2);
-  assert(bond.sites_disjoint());
+  assert(op.coupling_defined());
+  assert(op.type_defined() && (op.type() == "EXCHANGE"));
+  assert(op.size() == 2);
+  assert(op.sites_disjoint());
 
-  Coupling cpl = bond.coupling();
+  Coupling cpl = op.coupling();
   assert(cpl.isexplicit() && !cpl.ismatrix());
   
   coeff_t J = cpl.as<coeff_t>();
-  int64_t s1 = bond[0];
-  int64_t s2 = bond[1];
+  int64_t s1 = op[0];
+  int64_t s2 = op[1];
   bit_t flipmask = ((bit_t)1 << s1) | ((bit_t)1 << s2);
 
-  // Define actions of bond
+  // Define actions of op
   auto non_zero_term = [&flipmask](bit_t spins) -> bool {
     return bits::popcnt(spins & flipmask) & 1;
   };

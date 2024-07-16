@@ -28,10 +28,10 @@ TEST_CASE("product_state", "[states]") {
       int ndn = 0;
       for (int i = 0; i < n_sites; ++i) {
         std::string p = pstate[i];
-        auto sz = Bond("SZ", 1.0, i);
+        auto sz = Op("SZ", 1.0, i);
         auto szc = inner(sz, psi);
 
-        auto n = Bond("NUMBER", 1.0, i);
+        auto n = Op("NUMBER", 1.0, i);
         auto nc = inner(n, psi);
 
         if (p == "Emp") {
@@ -59,10 +59,10 @@ TEST_CASE("product_state", "[states]") {
 
       for (int i = 0; i < n_sites; ++i) {
         std::string p = pstate[i];
-        auto sz = Bond("SZ", 1.0, i);
+        auto sz = Op("SZ", 1.0, i);
         auto szc = inner(sz, psi2);
 
-        auto n = Bond("NUMBER", 1.0, i);
+        auto n = Op("NUMBER", 1.0, i);
         auto nc = inner(n, psi2);
 
         if (p == "Emp") {
@@ -112,10 +112,10 @@ TEST_CASE("product_state", "[states]") {
       fill(psi2, pstate);
       for (int i = 0; i < n_sites; ++i) {
         std::string p = pstate[i];
-        auto sz = Bond("SZ", 1.0, i);
+        auto sz = Op("SZ", 1.0, i);
         auto szc = inner(sz, psi2);
 
-        auto n = Bond("NUMBER", 1.0, i);
+        auto n = Op("NUMBER", 1.0, i);
         auto nc = inner(n, psi2);
 
         if (p == "Emp") {
@@ -151,7 +151,7 @@ TEST_CASE("product_state", "[states]") {
       for (int i = 0; i < n_sites; ++i) {
         std::string p = pstate[i];
 
-        auto sz = Bond("SZ", 1.0, i);
+        auto sz = Op("SZ", 1.0, i);
         auto szc = inner(sz, psi);
 
         if (p == "Up") {
@@ -167,7 +167,7 @@ TEST_CASE("product_state", "[states]") {
       fill(psi2, pstate);
       for (int i = 0; i < n_sites; ++i) {
         std::string p = pstate[i];
-        auto sz = Bond("SZ", 1.0, i);
+        auto sz = Op("SZ", 1.0, i);
         auto szc = inner(sz, psi2);
 
         if (p == "Up") {
@@ -186,35 +186,35 @@ TEST_CASE("product_state", "[states]") {
   //   auto block = Electron(4, 2, 2);
   //   auto psi = StateReal(block, pstate);
 
-  //   auto sz0 = Bond("SZ", 0);
+  //   auto sz0 = Op("SZ", 0);
   //   complex sz0c = inner(sz0, psi);
   //   REQUIRE(close(sz0c, 0.5));
 
-  //   auto sz1 = Bond("SZ", 1);
+  //   auto sz1 = Op("SZ", 1);
   //   complex sz1c = inner(sz1, psi);
   //   REQUIRE(close(sz1c, -0.5));
 
-  //   auto sz2 = Bond("SZ", 2);
+  //   auto sz2 = Op("SZ", 2);
   //   complex sz2c = inner(sz2, psi);
   //   REQUIRE(close(sz2c, 0.));
 
-  //   auto sz3 = Bond("SZ", 3);
+  //   auto sz3 = Op("SZ", 3);
   //   complex sz3c = inner(sz3, psi);
   //   REQUIRE(close(sz3c, 0.));
 
-  //   auto n0 = Bond("NUMBER", 0);
+  //   auto n0 = Op("NUMBER", 0);
   //   complex n0c = inner(n0, psi);
   //   REQUIRE(close(n0c, 1.0));
 
-  //   auto n1 = Bond("NUMBER", 1);
+  //   auto n1 = Op("NUMBER", 1);
   //   complex n1c = inner(n1, psi);
   //   REQUIRE(close(n1c, 1.0));
 
-  //   auto n2 = Bond("NUMBER", 2);
+  //   auto n2 = Op("NUMBER", 2);
   //   complex n2c = inner(n2, psi);
   //   REQUIRE(close(n2c, 2.));
 
-  //   auto n3 = Bond("NUMBER", 3);
+  //   auto n3 = Op("NUMBER", 3);
   //   complex n3c = inner(n3, psi);
   //   REQUIRE(close(n3c, 0.));
   // }
@@ -223,35 +223,35 @@ TEST_CASE("product_state", "[states]") {
   //   auto block = tJ(4, 2, 1);
   //   auto psi = StateReal(block, pstate);
 
-  //   auto sz0 = Bond("SZ", 0);
+  //   auto sz0 = Op("SZ", 0);
   //   complex sz0c = inner(sz0, psi);
   //   REQUIRE(close(sz0c, 0.5));
 
-  //   auto sz1 = Bond("SZ", 1);
+  //   auto sz1 = Op("SZ", 1);
   //   complex sz1c = inner(sz1, psi);
   //   REQUIRE(close(sz1c, -0.5));
 
-  //   auto sz2 = Bond("SZ", 2);
+  //   auto sz2 = Op("SZ", 2);
   //   complex sz2c = inner(sz2, psi);
   //   REQUIRE(close(sz2c, 0.5));
 
-  //   auto sz3 = Bond("SZ", 3);
+  //   auto sz3 = Op("SZ", 3);
   //   complex sz3c = inner(sz3, psi);
   //   REQUIRE(close(sz3c, 0.));
 
-  //   auto n0 = Bond("NUMBER", 0);
+  //   auto n0 = Op("NUMBER", 0);
   //   complex n0c = inner(n0, psi);
   //   REQUIRE(close(n0c, 1.0));
 
-  //   auto n1 = Bond("NUMBER", 1);
+  //   auto n1 = Op("NUMBER", 1);
   //   complex n1c = inner(n1, psi);
   //   REQUIRE(close(n1c, 1.0));
 
-  //   auto n2 = Bond("NUMBER", 2);
+  //   auto n2 = Op("NUMBER", 2);
   //   complex n2c = inner(n2, psi);
   //   REQUIRE(close(n2c, 1.));
 
-  //   auto n3 = Bond("NUMBER", 3);
+  //   auto n3 = Op("NUMBER", 3);
   //   complex n3c = inner(n3, psi);
   //   REQUIRE(close(n3c, 0.));
   // }
@@ -261,19 +261,19 @@ TEST_CASE("product_state", "[states]") {
   //   auto block = Spinhalf(4, 2);
   //   auto psi = StateReal(block, pstate);
 
-  //   auto sz0 = Bond("SZ", 0);
+  //   auto sz0 = Op("SZ", 0);
   //   complex sz0c = inner(sz0, psi);
   //   REQUIRE(close(sz0c, 0.5));
 
-  //   auto sz1 = Bond("SZ", 1);
+  //   auto sz1 = Op("SZ", 1);
   //   complex sz1c = inner(sz1, psi);
   //   REQUIRE(close(sz1c, -0.5));
 
-  //   auto sz2 = Bond("SZ", 2);
+  //   auto sz2 = Op("SZ", 2);
   //   complex sz2c = inner(sz2, psi);
   //   REQUIRE(close(sz2c, 0.5));
 
-  //   auto sz3 = Bond("SZ", 3);
+  //   auto sz3 = Op("SZ", 3);
   //   complex sz3c = inner(sz3, psi);
   //   REQUIRE(close(sz3c, -0.5));
   // }

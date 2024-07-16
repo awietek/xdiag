@@ -18,12 +18,12 @@ int main() {
 
   double precision = 1e-12;
 
-  BondList bonds;
+  OpSum ops;
   for (int i = 0; i < n_sites; ++i) {
-    bonds << Bond("HOP", "T", {i, (i + 1) % n_sites});
+    ops << Op("HOP", "T", {i, (i + 1) % n_sites});
   }
-  bonds["T"] = t;
-  bonds["U"] = U;
+  ops["T"] = t;
+  ops["U"] = U;
 
   auto pstate = ProductState();
   for (int i = 0; i < n_sites; ++i) {
@@ -43,7 +43,7 @@ int main() {
   // Do the time evolution with a step size tau
   double tau = 0.1;
   for (int i = 0; i < 40; ++i) {
-    v = time_evolve(bonds, v, tau, precision);
+    v = time_evolve(ops, v, tau, precision);
     measure_density(n_sites, v);
   }
 

@@ -52,17 +52,17 @@ TEST_CASE("ritz_vecs_arnoldi", "[arnoldi]") {
   // test getting eigenvalues/ eigenvectors for (U + U_dagg) and H
   int n_sites = 6;
   auto block = Spinhalf(n_sites);
-  BondList bonds;
+  OpSum ops;
 
   for (int i = 0; i < n_sites; ++i) {
-    bonds += Bond("HB", "J1", {i, (i + 1) % n_sites});
-    bonds += Bond("HB", "J2", {i, (i + 2) % n_sites});
+    ops += Op("HB", "J1", {i, (i + 1) % n_sites});
+    ops += Op("HB", "J2", {i, (i + 2) % n_sites});
   }
-  bonds["J1"] = 1;
-  bonds["J2"] = .5;
+  ops["J1"] = 1;
+  ops["J2"] = .5;
 
   auto state_0 = random_state(block, false);
-  cx_mat A = complex(0, -1) * matrixC(bonds, block);
+  cx_mat A = complex(0, -1) * matrixC(ops, block);
   cx_mat U = expm(A);
   cx_mat T = trans(U) + U;
 

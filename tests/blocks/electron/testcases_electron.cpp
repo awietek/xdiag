@@ -2,25 +2,25 @@
 
 namespace xdiag::testcases::electron {
 
-BondList get_linear_chain(int64_t n_sites, double t, double U) {
+OpSum get_linear_chain(int64_t n_sites, double t, double U) {
   // Create model
-  BondList bondlist;
+  OpSum ops;
   for (int64_t s = 0; s < n_sites; ++s)
-    bondlist += Bond("HOP", "T", {s, (s + 1) % n_sites});
-  bondlist["T"] = t;
-  bondlist["U"] = U;
-  return bondlist;
+    ops += Op("HOP", "T", {s, (s + 1) % n_sites});
+  ops["T"] = t;
+  ops["U"] = U;
+  return ops;
 }
 
-BondList get_linear_chain_hb(int64_t n_sites, double J) {
+OpSum get_linear_chain_hb(int64_t n_sites, double J) {
   // Create model
-  BondList bondlist;
+  OpSum ops;
   // for (int64_t s = 0; s < n_sites; ++s)
-  //   bondlist += Bond("HOP", "T", {s, (s + 1) % n_sites});
+  //   ops += Op("HOP", "T", {s, (s + 1) % n_sites});
   for (int64_t s = 0; s < n_sites; ++s)
-    bondlist += Bond("EXCHANGE", "J", {s, (s + 1) % n_sites});
-  bondlist["J"] = J;
-  return bondlist;
+    ops += Op("EXCHANGE", "J", {s, (s + 1) % n_sites});
+  ops["J"] = J;
+  return ops;
 }
 
 std::tuple<PermutationGroup, std::vector<Representation>>
@@ -81,154 +81,154 @@ get_cyclic_group_irreps_mult(int64_t n_sites) {
   return {space_group, irreps, multiplicities};
 }
 
-BondList heisenberg_triangle() {
-  BondList bondlist;
-  bondlist += Bond("HB", "J", {0, 1});
-  bondlist += Bond("HB", "J", {1, 2});
-  bondlist += Bond("HB", "J", {2, 0});
-  bondlist["J"] = 1.0;
-  return bondlist;
+OpSum heisenberg_triangle() {
+  OpSum ops;
+  ops += Op("HB", "J", {0, 1});
+  ops += Op("HB", "J", {1, 2});
+  ops += Op("HB", "J", {2, 0});
+  ops["J"] = 1.0;
+  return ops;
 }
 
-BondList heisenberg_alltoall(int64_t n_sites) {
+OpSum heisenberg_alltoall(int64_t n_sites) {
   std::default_random_engine generator;
   std::normal_distribution<double> distribution(0., 1.);
 
-  BondList bondlist;
+  OpSum ops;
   for (int64_t s1 = 0; s1 < n_sites; ++s1)
     for (int64_t s2 = s1 + 1; s2 < n_sites; ++s2) {
       std::stringstream ss;
       ss << "J" << s1 << "_" << s2;
       std::string name = ss.str();
       double value = distribution(generator);
-      bondlist += Bond("HB", name, {s1, s2});
-      bondlist[name] = value;
+      ops += Op("HB", name, {s1, s2});
+      ops[name] = value;
     }
-  return bondlist;
+  return ops;
 }
 
-BondList heisenberg_kagome15() {
+OpSum heisenberg_kagome15() {
 
-  BondList bondlist;
-  bondlist += Bond("HB", "J", {0, 1});
-  bondlist += Bond("HB", "J", {0, 5});
-  bondlist += Bond("HB", "J", {1, 2});
-  bondlist += Bond("HB", "J", {1, 6});
-  bondlist += Bond("HB", "J", {2, 3});
-  bondlist += Bond("HB", "J", {2, 6});
-  bondlist += Bond("HB", "J", {2, 10});
-  bondlist += Bond("HB", "J", {3, 4});
-  bondlist += Bond("HB", "J", {3, 10});
-  bondlist += Bond("HB", "J", {3, 14});
-  bondlist += Bond("HB", "J", {4, 5});
-  bondlist += Bond("HB", "J", {4, 14});
-  bondlist += Bond("HB", "J", {6, 7});
-  bondlist += Bond("HB", "J", {7, 8});
-  bondlist += Bond("HB", "J", {8, 9});
-  bondlist += Bond("HB", "J", {9, 10});
-  bondlist += Bond("HB", "J", {9, 11});
-  bondlist += Bond("HB", "J", {10, 11});
-  bondlist += Bond("HB", "J", {11, 12});
-  bondlist += Bond("HB", "J", {12, 13});
-  bondlist += Bond("HB", "J", {13, 14});
-  bondlist["J"] = 1.0;
-  return bondlist;
+  OpSum ops;
+  ops += Op("HB", "J", {0, 1});
+  ops += Op("HB", "J", {0, 5});
+  ops += Op("HB", "J", {1, 2});
+  ops += Op("HB", "J", {1, 6});
+  ops += Op("HB", "J", {2, 3});
+  ops += Op("HB", "J", {2, 6});
+  ops += Op("HB", "J", {2, 10});
+  ops += Op("HB", "J", {3, 4});
+  ops += Op("HB", "J", {3, 10});
+  ops += Op("HB", "J", {3, 14});
+  ops += Op("HB", "J", {4, 5});
+  ops += Op("HB", "J", {4, 14});
+  ops += Op("HB", "J", {6, 7});
+  ops += Op("HB", "J", {7, 8});
+  ops += Op("HB", "J", {8, 9});
+  ops += Op("HB", "J", {9, 10});
+  ops += Op("HB", "J", {9, 11});
+  ops += Op("HB", "J", {10, 11});
+  ops += Op("HB", "J", {11, 12});
+  ops += Op("HB", "J", {12, 13});
+  ops += Op("HB", "J", {13, 14});
+  ops["J"] = 1.0;
+  return ops;
 }
 
-BondList heisenberg_kagome39() {
-  BondList bondlist;
-  bondlist += Bond("HB", "J", {0, 1});
-  bondlist += Bond("HB", "J", {0, 5});
-  bondlist += Bond("HB", "J", {0, 27});
-  bondlist += Bond("HB", "J", {0, 28});
-  bondlist += Bond("HB", "J", {1, 2});
-  bondlist += Bond("HB", "J", {1, 6});
-  bondlist += Bond("HB", "J", {1, 28});
-  bondlist += Bond("HB", "J", {2, 3});
-  bondlist += Bond("HB", "J", {2, 6});
-  bondlist += Bond("HB", "J", {2, 10});
-  bondlist += Bond("HB", "J", {3, 4});
-  bondlist += Bond("HB", "J", {3, 10});
-  bondlist += Bond("HB", "J", {3, 14});
-  bondlist += Bond("HB", "J", {4, 5});
-  bondlist += Bond("HB", "J", {4, 14});
-  bondlist += Bond("HB", "J", {4, 38});
-  bondlist += Bond("HB", "J", {5, 27});
-  bondlist += Bond("HB", "J", {5, 38});
-  bondlist += Bond("HB", "J", {6, 7});
-  bondlist += Bond("HB", "J", {6, 29});
-  bondlist += Bond("HB", "J", {7, 8});
-  bondlist += Bond("HB", "J", {7, 19});
-  bondlist += Bond("HB", "J", {7, 29});
-  bondlist += Bond("HB", "J", {8, 9});
-  bondlist += Bond("HB", "J", {8, 15});
-  bondlist += Bond("HB", "J", {8, 19});
-  bondlist += Bond("HB", "J", {9, 10});
-  bondlist += Bond("HB", "J", {9, 11});
-  bondlist += Bond("HB", "J", {9, 15});
-  bondlist += Bond("HB", "J", {10, 11});
-  bondlist += Bond("HB", "J", {11, 12});
-  bondlist += Bond("HB", "J", {11, 18});
-  bondlist += Bond("HB", "J", {12, 13});
-  bondlist += Bond("HB", "J", {12, 18});
-  bondlist += Bond("HB", "J", {12, 26});
-  bondlist += Bond("HB", "J", {13, 14});
-  bondlist += Bond("HB", "J", {13, 26});
-  bondlist += Bond("HB", "J", {13, 37});
-  bondlist += Bond("HB", "J", {14, 37});
-  bondlist += Bond("HB", "J", {15, 16});
-  bondlist += Bond("HB", "J", {15, 22});
-  bondlist += Bond("HB", "J", {16, 17});
-  bondlist += Bond("HB", "J", {16, 22});
-  bondlist += Bond("HB", "J", {16, 33});
-  bondlist += Bond("HB", "J", {17, 18});
-  bondlist += Bond("HB", "J", {17, 23});
-  bondlist += Bond("HB", "J", {17, 33});
-  bondlist += Bond("HB", "J", {18, 23});
-  bondlist += Bond("HB", "J", {19, 20});
-  bondlist += Bond("HB", "J", {19, 30});
-  bondlist += Bond("HB", "J", {20, 21});
-  bondlist += Bond("HB", "J", {20, 30});
-  bondlist += Bond("HB", "J", {20, 31});
-  bondlist += Bond("HB", "J", {21, 22});
-  bondlist += Bond("HB", "J", {21, 31});
-  bondlist += Bond("HB", "J", {21, 32});
-  bondlist += Bond("HB", "J", {22, 32});
-  bondlist += Bond("HB", "J", {23, 24});
-  bondlist += Bond("HB", "J", {23, 34});
-  bondlist += Bond("HB", "J", {24, 25});
-  bondlist += Bond("HB", "J", {24, 34});
-  bondlist += Bond("HB", "J", {24, 35});
-  bondlist += Bond("HB", "J", {25, 26});
-  bondlist += Bond("HB", "J", {25, 35});
-  bondlist += Bond("HB", "J", {25, 36});
-  bondlist += Bond("HB", "J", {26, 36});
-  bondlist["J"] = 1.0;
-  return bondlist;
+OpSum heisenberg_kagome39() {
+  OpSum ops;
+  ops += Op("HB", "J", {0, 1});
+  ops += Op("HB", "J", {0, 5});
+  ops += Op("HB", "J", {0, 27});
+  ops += Op("HB", "J", {0, 28});
+  ops += Op("HB", "J", {1, 2});
+  ops += Op("HB", "J", {1, 6});
+  ops += Op("HB", "J", {1, 28});
+  ops += Op("HB", "J", {2, 3});
+  ops += Op("HB", "J", {2, 6});
+  ops += Op("HB", "J", {2, 10});
+  ops += Op("HB", "J", {3, 4});
+  ops += Op("HB", "J", {3, 10});
+  ops += Op("HB", "J", {3, 14});
+  ops += Op("HB", "J", {4, 5});
+  ops += Op("HB", "J", {4, 14});
+  ops += Op("HB", "J", {4, 38});
+  ops += Op("HB", "J", {5, 27});
+  ops += Op("HB", "J", {5, 38});
+  ops += Op("HB", "J", {6, 7});
+  ops += Op("HB", "J", {6, 29});
+  ops += Op("HB", "J", {7, 8});
+  ops += Op("HB", "J", {7, 19});
+  ops += Op("HB", "J", {7, 29});
+  ops += Op("HB", "J", {8, 9});
+  ops += Op("HB", "J", {8, 15});
+  ops += Op("HB", "J", {8, 19});
+  ops += Op("HB", "J", {9, 10});
+  ops += Op("HB", "J", {9, 11});
+  ops += Op("HB", "J", {9, 15});
+  ops += Op("HB", "J", {10, 11});
+  ops += Op("HB", "J", {11, 12});
+  ops += Op("HB", "J", {11, 18});
+  ops += Op("HB", "J", {12, 13});
+  ops += Op("HB", "J", {12, 18});
+  ops += Op("HB", "J", {12, 26});
+  ops += Op("HB", "J", {13, 14});
+  ops += Op("HB", "J", {13, 26});
+  ops += Op("HB", "J", {13, 37});
+  ops += Op("HB", "J", {14, 37});
+  ops += Op("HB", "J", {15, 16});
+  ops += Op("HB", "J", {15, 22});
+  ops += Op("HB", "J", {16, 17});
+  ops += Op("HB", "J", {16, 22});
+  ops += Op("HB", "J", {16, 33});
+  ops += Op("HB", "J", {17, 18});
+  ops += Op("HB", "J", {17, 23});
+  ops += Op("HB", "J", {17, 33});
+  ops += Op("HB", "J", {18, 23});
+  ops += Op("HB", "J", {19, 20});
+  ops += Op("HB", "J", {19, 30});
+  ops += Op("HB", "J", {20, 21});
+  ops += Op("HB", "J", {20, 30});
+  ops += Op("HB", "J", {20, 31});
+  ops += Op("HB", "J", {21, 22});
+  ops += Op("HB", "J", {21, 31});
+  ops += Op("HB", "J", {21, 32});
+  ops += Op("HB", "J", {22, 32});
+  ops += Op("HB", "J", {23, 24});
+  ops += Op("HB", "J", {23, 34});
+  ops += Op("HB", "J", {24, 25});
+  ops += Op("HB", "J", {24, 34});
+  ops += Op("HB", "J", {24, 35});
+  ops += Op("HB", "J", {25, 26});
+  ops += Op("HB", "J", {25, 35});
+  ops += Op("HB", "J", {25, 36});
+  ops += Op("HB", "J", {26, 36});
+  ops["J"] = 1.0;
+  return ops;
 }
 
-BondList freefermion_alltoall(int64_t n_sites) {
+OpSum freefermion_alltoall(int64_t n_sites) {
   std::default_random_engine generator;
   std::normal_distribution<double> distribution(0., 1.);
 
-  BondList bondlist;
+  OpSum ops;
   for (int64_t s1 = 0; s1 < n_sites; ++s1)
     for (int64_t s2 = s1 + 1; s2 < n_sites; ++s2) {
       std::stringstream ss;
       ss << "T" << s1 << "_" << s2;
       std::string name = ss.str();
       double value = distribution(generator);
-      bondlist += Bond("HOP", name, {s1, s2});
-      bondlist[name] = value;
+      ops += Op("HOP", name, {s1, s2});
+      ops[name] = value;
     }
-  return bondlist;
+  return ops;
 }
 
-BondList freefermion_alltoall_complex_updn(int64_t n_sites) {
+OpSum freefermion_alltoall_complex_updn(int64_t n_sites) {
   std::default_random_engine generator;
   std::normal_distribution<double> distribution(0., 1.);
 
-  BondList bondlist;
+  OpSum ops;
   for (int64_t s1 = 0; s1 < n_sites; ++s1)
     for (int64_t s2 = s1 + 1; s2 < n_sites; ++s2) {
 
@@ -238,8 +238,8 @@ BondList freefermion_alltoall_complex_updn(int64_t n_sites) {
       std::string name_up = ss_up.str();
       complex value_up =
           complex(distribution(generator), distribution(generator));
-      bondlist += Bond("HOPUP", name_up, {s1, s2});
-      bondlist[name_up] = value_up;
+      ops += Op("HOPUP", name_up, {s1, s2});
+      ops[name_up] = value_up;
 
       // Hopping on dnspins
       std::stringstream ss_dn;
@@ -247,39 +247,39 @@ BondList freefermion_alltoall_complex_updn(int64_t n_sites) {
       std::string name_dn = ss_dn.str();
       complex value_dn =
           complex(distribution(generator), distribution(generator));
-      bondlist += Bond("HOPDN", name_dn, {s1, s2});
-      bondlist[name_dn] = value_dn;
+      ops += Op("HOPDN", name_dn, {s1, s2});
+      ops[name_dn] = value_dn;
     }
-  return bondlist;
+  return ops;
 }
 
-std::tuple<BondList, arma::Col<double>> randomAlltoAll4NoU() {
-  BondList bondlist;
-  bondlist["T01"] = -3;
-  bondlist["J01"] = 1;
-  bondlist["T02"] = -3;
-  bondlist["J02"] = -3;
-  bondlist["T03"] = -3;
-  bondlist["J03"] = 5;
-  bondlist["T12"] = -4;
-  bondlist["J12"] = -5;
-  bondlist["T13"] = 1;
-  bondlist["J13"] = -1;
-  bondlist["T23"] = -2;
-  bondlist["J23"] = 1;
+std::tuple<OpSum, arma::Col<double>> randomAlltoAll4NoU() {
+  OpSum ops;
+  ops["T01"] = -3;
+  ops["J01"] = 1;
+  ops["T02"] = -3;
+  ops["J02"] = -3;
+  ops["T03"] = -3;
+  ops["J03"] = 5;
+  ops["T12"] = -4;
+  ops["J12"] = -5;
+  ops["T13"] = 1;
+  ops["J13"] = -1;
+  ops["T23"] = -2;
+  ops["J23"] = 1;
 
-  bondlist += Bond("HOP", "T01", {0, 1});
-  bondlist += Bond("HOP", "T02", {0, 2});
-  bondlist += Bond("HOP", "T03", {0, 3});
-  bondlist += Bond("HOP", "T12", {1, 2});
-  bondlist += Bond("HOP", "T13", {1, 3});
-  bondlist += Bond("HOP", "T23", {2, 3});
-  bondlist += Bond("HB", "J01", {0, 1});
-  bondlist += Bond("HB", "J02", {0, 2});
-  bondlist += Bond("HB", "J03", {0, 3});
-  bondlist += Bond("HB", "J12", {1, 2});
-  bondlist += Bond("HB", "J13", {1, 3});
-  bondlist += Bond("HB", "J23", {2, 3});
+  ops += Op("HOP", "T01", {0, 1});
+  ops += Op("HOP", "T02", {0, 2});
+  ops += Op("HOP", "T03", {0, 3});
+  ops += Op("HOP", "T12", {1, 2});
+  ops += Op("HOP", "T13", {1, 3});
+  ops += Op("HOP", "T23", {2, 3});
+  ops += Op("HB", "J01", {0, 1});
+  ops += Op("HB", "J02", {0, 2});
+  ops += Op("HB", "J03", {0, 3});
+  ops += Op("HB", "J12", {1, 2});
+  ops += Op("HB", "J13", {1, 3});
+  ops += Op("HB", "J23", {2, 3});
 
   arma::Col<double> eigs = {-17.035603173216636,
                             -16.054529653295518,
@@ -538,38 +538,38 @@ std::tuple<BondList, arma::Col<double>> randomAlltoAll4NoU() {
                             17.166681362460491,
                             18.194539570876405};
 
-  return std::make_tuple(bondlist, eigs);
+  return std::make_tuple(ops, eigs);
 }
 
-std::tuple<BondList, arma::Col<double>> randomAlltoAll4() {
-  BondList bondlist;
+std::tuple<OpSum, arma::Col<double>> randomAlltoAll4() {
+  OpSum ops;
 
-  bondlist["U"] = 5;
-  bondlist["T01"] = -3;
-  bondlist["J01"] = -1;
-  bondlist["T02"] = 3;
-  bondlist["J02"] = -5;
-  bondlist["T03"] = -3;
-  bondlist["J03"] = -3;
-  bondlist["T12"] = 1;
-  bondlist["J12"] = 1;
-  bondlist["T13"] = 3;
-  bondlist["J13"] = 2;
-  bondlist["T23"] = 0;
-  bondlist["J23"] = -4;
+  ops["U"] = 5;
+  ops["T01"] = -3;
+  ops["J01"] = -1;
+  ops["T02"] = 3;
+  ops["J02"] = -5;
+  ops["T03"] = -3;
+  ops["J03"] = -3;
+  ops["T12"] = 1;
+  ops["J12"] = 1;
+  ops["T13"] = 3;
+  ops["J13"] = 2;
+  ops["T23"] = 0;
+  ops["J23"] = -4;
 
-  bondlist += Bond("HOP", "T01", {0, 1});
-  bondlist += Bond("HOP", "T02", {0, 2});
-  bondlist += Bond("HOP", "T03", {0, 3});
-  bondlist += Bond("HOP", "T12", {1, 2});
-  bondlist += Bond("HOP", "T13", {1, 3});
-  bondlist += Bond("HOP", "T23", {2, 3});
-  bondlist += Bond("HB", "J01", {0, 1});
-  bondlist += Bond("HB", "J02", {0, 2});
-  bondlist += Bond("HB", "J03", {0, 3});
-  bondlist += Bond("HB", "J12", {1, 2});
-  bondlist += Bond("HB", "J13", {1, 3});
-  bondlist += Bond("HB", "J23", {2, 3});
+  ops += Op("HOP", "T01", {0, 1});
+  ops += Op("HOP", "T02", {0, 2});
+  ops += Op("HOP", "T03", {0, 3});
+  ops += Op("HOP", "T12", {1, 2});
+  ops += Op("HOP", "T13", {1, 3});
+  ops += Op("HOP", "T23", {2, 3});
+  ops += Op("HB", "J01", {0, 1});
+  ops += Op("HB", "J02", {0, 2});
+  ops += Op("HB", "J03", {0, 3});
+  ops += Op("HB", "J12", {1, 2});
+  ops += Op("HB", "J13", {1, 3});
+  ops += Op("HB", "J23", {2, 3});
 
   arma::Col<double> eigs = {
       -12.270231830055396, -12.270231830055389, -10.733666336755952,
@@ -659,90 +659,90 @@ std::tuple<BondList, arma::Col<double>> randomAlltoAll4() {
       22.411220290848199,  22.411220290848210,  22.508215798228996,
       25.052426347353144};
 
-  return std::make_tuple(bondlist, eigs);
+  return std::make_tuple(ops, eigs);
 }
 
-BondList randomAlltoAll3() {
-  BondList bondlist;
-  bondlist["T01"] = 1;
-  bondlist["J01"] = -2;
-  bondlist["T02"] = 0;
-  bondlist["J02"] = -1;
-  bondlist["T12"] = -5;
-  bondlist["J12"] = -3;
-  bondlist += Bond("HOP", "T01", {0, 1});
-  bondlist += Bond("HOP", "T02", {0, 2});
-  bondlist += Bond("HOP", "T12", {1, 2});
-  bondlist += Bond("HB", "J01", {0, 1});
-  bondlist += Bond("HB", "J02", {0, 2});
-  bondlist += Bond("HB", "J12", {1, 2});
-  return bondlist;
+OpSum randomAlltoAll3() {
+  OpSum ops;
+  ops["T01"] = 1;
+  ops["J01"] = -2;
+  ops["T02"] = 0;
+  ops["J02"] = -1;
+  ops["T12"] = -5;
+  ops["J12"] = -3;
+  ops += Op("HOP", "T01", {0, 1});
+  ops += Op("HOP", "T02", {0, 2});
+  ops += Op("HOP", "T12", {1, 2});
+  ops += Op("HB", "J01", {0, 1});
+  ops += Op("HB", "J02", {0, 2});
+  ops += Op("HB", "J12", {1, 2});
+  return ops;
 }
 
-BondList square2x2(double t, double J) {
-  BondList bondlist;
-  bondlist["T"] = t;
-  bondlist["J"] = J;
-  bondlist += Bond("HOP", "T", {0, 1});
-  bondlist += Bond("HOP", "T", {1, 0});
-  bondlist += Bond("HOP", "T", {2, 3});
-  bondlist += Bond("HOP", "T", {3, 2});
-  bondlist += Bond("HOP", "T", {0, 2});
-  bondlist += Bond("HOP", "T", {2, 0});
-  bondlist += Bond("HOP", "T", {1, 3});
-  bondlist += Bond("HOP", "T", {3, 1});
-  bondlist += Bond("HB", "J", {0, 1});
-  bondlist += Bond("HB", "J", {1, 0});
-  bondlist += Bond("HB", "J", {2, 3});
-  bondlist += Bond("HB", "J", {3, 2});
-  bondlist += Bond("HB", "J", {0, 2});
-  bondlist += Bond("HB", "J", {2, 0});
-  bondlist += Bond("HB", "J", {1, 3});
-  bondlist += Bond("HB", "J", {3, 1});
-  return bondlist;
+OpSum square2x2(double t, double J) {
+  OpSum ops;
+  ops["T"] = t;
+  ops["J"] = J;
+  ops += Op("HOP", "T", {0, 1});
+  ops += Op("HOP", "T", {1, 0});
+  ops += Op("HOP", "T", {2, 3});
+  ops += Op("HOP", "T", {3, 2});
+  ops += Op("HOP", "T", {0, 2});
+  ops += Op("HOP", "T", {2, 0});
+  ops += Op("HOP", "T", {1, 3});
+  ops += Op("HOP", "T", {3, 1});
+  ops += Op("HB", "J", {0, 1});
+  ops += Op("HB", "J", {1, 0});
+  ops += Op("HB", "J", {2, 3});
+  ops += Op("HB", "J", {3, 2});
+  ops += Op("HB", "J", {0, 2});
+  ops += Op("HB", "J", {2, 0});
+  ops += Op("HB", "J", {1, 3});
+  ops += Op("HB", "J", {3, 1});
+  return ops;
 }
 
-BondList square3x3(double t, double J) {
-  BondList bondlist;
-  bondlist["T"] = t;
-  bondlist["J"] = J;
-  bondlist += Bond("HOP", "T", {0, 1});
-  bondlist += Bond("HOP", "T", {1, 2});
-  bondlist += Bond("HOP", "T", {2, 0});
-  bondlist += Bond("HOP", "T", {3, 4});
-  bondlist += Bond("HOP", "T", {4, 5});
-  bondlist += Bond("HOP", "T", {5, 3});
-  bondlist += Bond("HOP", "T", {6, 7});
-  bondlist += Bond("HOP", "T", {7, 8});
-  bondlist += Bond("HOP", "T", {8, 6});
-  bondlist += Bond("HOP", "T", {0, 3});
-  bondlist += Bond("HOP", "T", {3, 6});
-  bondlist += Bond("HOP", "T", {6, 0});
-  bondlist += Bond("HOP", "T", {1, 4});
-  bondlist += Bond("HOP", "T", {4, 7});
-  bondlist += Bond("HOP", "T", {7, 1});
-  bondlist += Bond("HOP", "T", {2, 5});
-  bondlist += Bond("HOP", "T", {5, 8});
-  bondlist += Bond("HOP", "T", {8, 2});
-  bondlist += Bond("HB", "J", {0, 1});
-  bondlist += Bond("HB", "J", {1, 2});
-  bondlist += Bond("HB", "J", {2, 0});
-  bondlist += Bond("HB", "J", {3, 4});
-  bondlist += Bond("HB", "J", {4, 5});
-  bondlist += Bond("HB", "J", {5, 3});
-  bondlist += Bond("HB", "J", {6, 7});
-  bondlist += Bond("HB", "J", {7, 8});
-  bondlist += Bond("HB", "J", {8, 6});
-  bondlist += Bond("HB", "J", {0, 3});
-  bondlist += Bond("HB", "J", {3, 6});
-  bondlist += Bond("HB", "J", {6, 0});
-  bondlist += Bond("HB", "J", {1, 4});
-  bondlist += Bond("HB", "J", {4, 7});
-  bondlist += Bond("HB", "J", {7, 1});
-  bondlist += Bond("HB", "J", {2, 5});
-  bondlist += Bond("HB", "J", {5, 8});
-  bondlist += Bond("HB", "J", {8, 2});
-  return bondlist;
+OpSum square3x3(double t, double J) {
+  OpSum ops;
+  ops["T"] = t;
+  ops["J"] = J;
+  ops += Op("HOP", "T", {0, 1});
+  ops += Op("HOP", "T", {1, 2});
+  ops += Op("HOP", "T", {2, 0});
+  ops += Op("HOP", "T", {3, 4});
+  ops += Op("HOP", "T", {4, 5});
+  ops += Op("HOP", "T", {5, 3});
+  ops += Op("HOP", "T", {6, 7});
+  ops += Op("HOP", "T", {7, 8});
+  ops += Op("HOP", "T", {8, 6});
+  ops += Op("HOP", "T", {0, 3});
+  ops += Op("HOP", "T", {3, 6});
+  ops += Op("HOP", "T", {6, 0});
+  ops += Op("HOP", "T", {1, 4});
+  ops += Op("HOP", "T", {4, 7});
+  ops += Op("HOP", "T", {7, 1});
+  ops += Op("HOP", "T", {2, 5});
+  ops += Op("HOP", "T", {5, 8});
+  ops += Op("HOP", "T", {8, 2});
+  ops += Op("HB", "J", {0, 1});
+  ops += Op("HB", "J", {1, 2});
+  ops += Op("HB", "J", {2, 0});
+  ops += Op("HB", "J", {3, 4});
+  ops += Op("HB", "J", {4, 5});
+  ops += Op("HB", "J", {5, 3});
+  ops += Op("HB", "J", {6, 7});
+  ops += Op("HB", "J", {7, 8});
+  ops += Op("HB", "J", {8, 6});
+  ops += Op("HB", "J", {0, 3});
+  ops += Op("HB", "J", {3, 6});
+  ops += Op("HB", "J", {6, 0});
+  ops += Op("HB", "J", {1, 4});
+  ops += Op("HB", "J", {4, 7});
+  ops += Op("HB", "J", {7, 1});
+  ops += Op("HB", "J", {2, 5});
+  ops += Op("HB", "J", {5, 8});
+  ops += Op("HB", "J", {8, 2});
+  return ops;
 }
 
 } // namespace xdiag::testcases::electron

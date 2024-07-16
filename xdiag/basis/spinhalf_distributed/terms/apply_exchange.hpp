@@ -4,30 +4,30 @@
 #include <tuple>
 
 #include <xdiag/extern/armadillo/armadillo>
-#include <xdiag/operators/bondlist.hpp>
+#include <xdiag/operators/opsum.hpp>
 
 namespace xdiag::basis::spinhalf_distributed {
 
 template <class basis_t, typename coeff_t>
-void apply_exchange_postfix(Bond const &bond, basis_t const &basis,
+void apply_exchange_postfix(Op const &op, basis_t const &basis,
                             arma::Col<coeff_t> const &vec_in,
                             arma::Col<coeff_t> &vec_out) try {
   using bit_t = typename basis::bit_t;
 
   assert(basis.size() == vec_in.size());
   assert(basis.size() == vec_out.size());
-  assert(bond.type() == "EXCHANGE");
-  assert(bond.size() == 2);
-  int64_t s1 = bond[0];
-  int64_t s2 = bond[1];
+  assert(op.type() == "EXCHANGE");
+  assert(op.size() == 2);
+  int64_t s1 = op[0];
+  int64_t s2 = op[1];
   assert((s1 >= 0) && (s2 >= 0));
 
   if (s1 == s2) {
-    XDIAG_THROW("EXCHANGE bond with both sites equal not implemented yet");
+    XDIAG_THROW("EXCHANGE Op with both sites equal not implemented yet");
   }
 
-  assert(bond.coupling_is<coeff_t>());
-  coeff_t J = bond.coupling<coeff_t>();
+  assert(op.coupling_is<coeff_t>());
+  coeff_t J = op.coupling<coeff_t>();
   coeff_t Jhalf = J / 2.0;
 
   int64_t n_prefix_bits = basis.n_prefix_bits();
@@ -56,25 +56,25 @@ void apply_exchange_postfix(Bond const &bond, basis_t const &basis,
 }
 
 template <class basis_t, typename coeff_t>
-void apply_exchange_prefix(Bond const &bond, basis_t const &basis,
+void apply_exchange_prefix(Op const &op, basis_t const &basis,
                            arma::Col<coeff_t> const &vec_in,
                            arma::Col<coeff_t> &vec_out) try {
   using bit_t = typename basis::bit_t;
 
   assert(basis.size() == vec_in.size());
   assert(basis.size() == vec_out.size());
-  assert(bond.type() == "EXCHANGE");
-  assert(bond.size() == 2);
-  int64_t s1 = bond[0];
-  int64_t s2 = bond[1];
+  assert(op.type() == "EXCHANGE");
+  assert(op.size() == 2);
+  int64_t s1 = op[0];
+  int64_t s2 = op[1];
   assert((s1 >= 0) && (s2 >= 0));
 
   if (s1 == s2) {
-    XDIAG_THROW("EXCHANGE bond with both sites equal not implemented yet");
+    XDIAG_THROW("EXCHANGE Op with both sites equal not implemented yet");
   }
 
-  assert(bond.coupling_is<coeff_t>());
-  coeff_t J = bond.coupling<coeff_t>();
+  assert(op.coupling_is<coeff_t>());
+  coeff_t J = op.coupling<coeff_t>();
   coeff_t Jhalf = J / 2.0;
 
   int64_t n_prefix_bits = basis.n_prefix_bits();
@@ -103,7 +103,7 @@ void apply_exchange_prefix(Bond const &bond, basis_t const &basis,
 }
 
 template <class basis_t, typename coeff_t>
-void apply_exchange_mixed(Bond const &bond, basis_t const &basis,
+void apply_exchange_mixed(Op const &op, basis_t const &basis,
                           arma::Col<coeff_t> const &vec_in,
                           arma::Col<coeff_t> &vec_out) try {
   using bit_t = typename basis::bit_t;
@@ -113,30 +113,30 @@ void apply_exchange_mixed(Bond const &bond, basis_t const &basis,
 
   assert(basis.size() == vec_in.size());
   assert(basis.size() == vec_out.size());
-  assert(bond.type() == "EXCHANGE");
-  assert(bond.size() == 2);
-  int64_t s1 = bond[0];
-  int64_t s2 = bond[1];
+  assert(op.type() == "EXCHANGE");
+  assert(op.size() == 2);
+  int64_t s1 = op[0];
+  int64_t s2 = op[1];
   assert((s1 >= 0) && (s2 >= 0));
 
   if (s1 == s2) {
-    XDIAG_THROW("EXCHANGE bond with both sites equal not implemented yet");
+    XDIAG_THROW("EXCHANGE Op with both sites equal not implemented yet");
   }
   int64_t ss1 = std::min(s1, s2);
   int64_t ss2 = std::max(s1, s2);
   bit_t prefix_mask = ((bit_t)1 << (ss2 - n_postfix_bits));
   bit_t postfix_mask = ((bit_t)1 << s11);
 
-  assert(bond.coupling_is<coeff_t>());
-  coeff_t J = bond.coupling<coeff_t>();
+  assert(op.coupling_is<coeff_t>());
+  coeff_t J = op.coupling<coeff_t>();
   coeff_t Jhalf = J / 2.0;
 
   int64_t n_postfix_bits = basis.n_postfix_bits();
 
   mpi::Communicator comm;
   // Check whether communication pattern has already been determined
-  if (basis.comm_pattern().contains(bond)) {
-    comm = basis.comm_pattern[bond];
+  if (basis.comm_pattern().contains(op)) {
+    comm = basis.comm_pattern[op];
   }
   // if not, compute it anew
   else {
@@ -163,7 +163,7 @@ void apply_exchange_mixed(Bond const &bond, basis_t const &basis,
     }
 
     auto comm = mpi::Communicator(n_states_i_send);
-    basis.comm_pattern[bond] = comm;
+    basis.comm_pattern[op] = comm;
   }
 
   // prepare send/recv buffers

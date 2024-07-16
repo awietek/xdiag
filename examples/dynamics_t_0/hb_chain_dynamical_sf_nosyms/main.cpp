@@ -10,17 +10,17 @@ int main() {
   int n_up = n_sites / 2;
 
   // Create nearest-neighbor Heisenberg model
-  BondList bonds;
+  OpSum ops;
   for (int s = 0; s < n_sites; ++s) {
-    bonds << Bond("HB", "J", {s, (s + 1) % n_sites});
+    ops << Op("HB", "J", {s, (s + 1) % n_sites});
   }
-  bonds["J"] = 1.0;
+  ops["J"] = 1.0;
 
   // compute groundstate (known to be at k=0)
   Log("Computing ground state ...");
   auto block = Spinhalf(n_sites, n_up);
-  // auto gs = groundstate(bonds, block);
-  auto resgs = eigs_lanczos(bonds, block);
+  // auto gs = groundstate(ops, block);
+  auto resgs = eigs_lanczos(ops, block);
   auto gs = resgs.eigenvectors.col(0);
   gs.make_complex();
   Log("done.");
@@ -30,9 +30,9 @@ int main() {
     Log("Dynamical Lanczos iterations for q={}", q);
 
     complex phase = exp(2i * pi * q / n_sites);
-    BondList S_of_q;
+    OpSum S_of_q;
     for (int s = 0; s < n_sites; ++s) {
-      S_of_q << Bond("SZ", pow(phase, s) / n_sites, s);
+      S_of_q << Op("SZ", pow(phase, s) / n_sites, s);
     }
 
     // Compute S(q) |g.s.>
@@ -43,7 +43,7 @@ int main() {
     v0 /= nrm;
 
     // Perform 200 Lanczos iterations for dynamics starting from v0
-    auto res = eigvals_lanczos(bonds, block, v0, 1, 0., 200, true, 1e-7);
+    auto res = eigvals_lanczos(ops, block, v0, 1, 0., 200, true, 1e-7);
     auto alphas = res.alphas;
     auto betas = res.betas;
 

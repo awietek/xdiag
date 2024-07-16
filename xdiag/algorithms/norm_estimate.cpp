@@ -99,11 +99,11 @@ double norm_estimate(apply_A_f &&apply_A, apply_A_T_f &&apply_A_T,
   return gamma;
 }
 
-double norm_estimate(BondList const &bonds, block_variant_t const &block,
+double norm_estimate(OpSum const &ops, block_variant_t const &block,
                      int64_t n_max_attempts, uint64_t seed) try {
   return std::visit(
       [&](auto &&block) {
-        return norm_estimate(bonds, block, n_max_attempts, seed);
+        return norm_estimate(ops, block, n_max_attempts, seed);
       },
       block);
 } catch (Error const &e) {
@@ -112,13 +112,13 @@ double norm_estimate(BondList const &bonds, block_variant_t const &block,
 }
 
 template <typename block_t>
-double norm_estimate(BondList const &bonds, block_t const &block,
+double norm_estimate(OpSum const &ops, block_t const &block,
                      int64_t n_max_attempts, uint64_t seed) try {
   int iter = 1;
-  auto apply_A = [&iter, &bonds, &block](arma::cx_vec const &v) {
+  auto apply_A = [&iter, &ops, &block](arma::cx_vec const &v) {
     auto ta = rightnow();
     auto w = arma::cx_vec(v.n_rows, arma::fill::zeros);
-    apply(bonds, block, v, block, w);
+    apply(ops, block, v, block, w);
     Log(2, "Norm estimation iteration {}", iter);
     timing(ta, rightnow(), "MVM", 2);
     ++iter;
@@ -143,14 +143,14 @@ double norm_estimate(BondList const &bonds, block_t const &block,
   return 0.;
 }
 
-template double norm_estimate(BondList const &bonds, Spinhalf const &block,
-                              int64_t, uint64_t);
-template double norm_estimate(BondList const &bonds, tJ const &block, int64_t,
+template double norm_estimate(OpSum const &ops, Spinhalf const &block, int64_t,
                               uint64_t);
-template double norm_estimate(BondList const &bonds, Electron const &block,
-                              int64_t, uint64_t);
+template double norm_estimate(OpSum const &ops, tJ const &block, int64_t,
+                              uint64_t);
+template double norm_estimate(OpSum const &ops, Electron const &block, int64_t,
+                              uint64_t);
 #ifdef XDIAG_USE_MPI
-template double norm_estimate(BondList const &bonds, tJDistributed const &block,
+template double norm_estimate(OpSum const &ops, tJDistributed const &block,
                               int64_t, uint64_t);
 
 #endif

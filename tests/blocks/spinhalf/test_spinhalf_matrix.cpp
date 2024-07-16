@@ -16,9 +16,9 @@ TEST_CASE("spinhalf_matrix", "[spinhalf]") {
     Log.out("spinhalf_matrix: Heisenberg chain test, J=1.0, N=2,..,6");
     for (int n_sites = 2; n_sites <= 6; ++n_sites) {
       for (int nup = 0; nup <= n_sites; ++nup) {
-        auto [bonds, exact_eigs] = HBchain_fullspectrum_nup(n_sites, nup);
+        auto [ops, exact_eigs] = HBchain_fullspectrum_nup(n_sites, nup);
         auto block = Spinhalf(n_sites, nup);
-        auto H = matrix(bonds, block, block);
+        auto H = matrix(ops, block, block);
         REQUIRE(H.is_hermitian(1e-7));
         arma::vec eigs;
         arma::eig_sym(eigs, H);
@@ -31,11 +31,11 @@ TEST_CASE("spinhalf_matrix", "[spinhalf]") {
     Log.out("spinhalf_matrix: Heisenberg all-to-all tJ comparison");
     for (int n_sites = 2; n_sites <= 6; ++n_sites)
       for (int nup = 0; nup <= n_sites; ++nup) {
-        auto bonds = HB_alltoall(n_sites);
+        auto ops = HB_alltoall(n_sites);
         auto block = Spinhalf(n_sites, nup);
         auto block_tJ = tJ(n_sites, nup, n_sites - nup);
-        auto H = matrix(bonds, block, block);
-        auto H_tJ = matrix(bonds, block_tJ, block_tJ);
+        auto H = matrix(ops, block, block);
+        auto H_tJ = matrix(ops, block_tJ, block_tJ);
         REQUIRE(H.is_hermitian());
         REQUIRE(H_tJ.is_hermitian());
 
@@ -51,9 +51,9 @@ TEST_CASE("spinhalf_matrix", "[spinhalf]") {
   {
     Log.out("spinhalf_matrix: Heisenberg all-to-all Sz <-> NoSz comparison");
     for (int n_sites = 2; n_sites <= 6; ++n_sites) {
-      auto bonds = HB_alltoall(n_sites);
+      auto ops = HB_alltoall(n_sites);
       auto block_no_sz = Spinhalf(n_sites);
-      auto H_no_sz = matrix(bonds, block_no_sz, block_no_sz);
+      auto H_no_sz = matrix(ops, block_no_sz, block_no_sz);
       REQUIRE(H_no_sz.is_hermitian(1e-8));
       arma::vec eigs_no_sz;
       arma::eig_sym(eigs_no_sz, H_no_sz);
@@ -62,7 +62,7 @@ TEST_CASE("spinhalf_matrix", "[spinhalf]") {
 
       for (int nup = 0; nup <= n_sites; ++nup) {
         auto block_sz = Spinhalf(n_sites, nup);
-        auto H_sz = matrix(bonds, block_sz, block_sz);
+        auto H_sz = matrix(ops, block_sz, block_sz);
         REQUIRE(H_sz.is_hermitian(1e-7));
         arma::vec eigs_sz;
         arma::eig_sym(eigs_sz, H_sz);
@@ -83,9 +83,9 @@ TEST_CASE("spinhalf_matrix", "[spinhalf]") {
     std::vector<double> etas = {0.00, 0.01, 0.02,
                                 0.03, 0.04, 0.05}; // dont change etas :-)
     for (auto eta : etas) {
-      auto [bonds, e0] = triangular_12_complex(nup, eta);
+      auto [ops, e0] = triangular_12_complex(nup, eta);
       auto block = Spinhalf(n_sites, nup);
-      auto H = matrixC(bonds, block, block);
+      auto H = matrixC(ops, block, block);
       REQUIRE(H.is_hermitian(1e-8));
 
       arma::vec eigs;
@@ -103,15 +103,15 @@ TEST_CASE("spinhalf_matrix", "[spinhalf]") {
         XDIAG_DIRECTORY "/misc/data/triangular.j1j2jch/"
                         "triangular.12.j1j2jch.sublattices.fsl.lat";
 
-    auto bondlist = read_bondlist(lfile);
-    bondlist["J1"] = 1.00;
-    bondlist["J2"] = 0.15;
-    bondlist["Jchi"] = 0.09;
+    auto ops = read_opsum(lfile);
+    ops["J1"] = 1.00;
+    ops["J2"] = 0.15;
+    ops["Jchi"] = 0.09;
 
     int n_sites = 12;
     int n_up = 6;
     auto block = Spinhalf(n_sites, n_up);
-    auto H = matrixC(bondlist, block, block);
+    auto H = matrixC(ops, block, block);
     REQUIRE(H.is_hermitian(1e-8));
 
     arma::vec eigs;
@@ -139,22 +139,22 @@ TEST_CASE("spinhalf_matrix", "[spinhalf]") {
         for (int i = 0; i < n_sites; ++i)
           for (int j = 0; j < n_sites; ++j) {
 
-            BondList sp_i_m;
-            sp_i_m += Bond("S+", 1.0, i);
+            OpSum sp_i_m;
+            sp_i_m += Op("S+", 1.0, i);
             auto sp_i_m_mat = matrix(sp_i_m, blockm, block);
             auto sp_i_mat = matrix(sp_i_m, block_raw, block_raw);
 
-            BondList sm_j_m;
-            sm_j_m += Bond("S-", 1.0, j);
+            OpSum sm_j_m;
+            sm_j_m += Op("S-", 1.0, j);
             auto sm_j_m_mat = matrix(sm_j_m, block, blockm);
             auto sm_j_mat = matrix(sm_j_m, block_raw, block_raw);
 
-            BondList sp_i_p;
-            sp_i_p += Bond("S+", 1.0, i);
+            OpSum sp_i_p;
+            sp_i_p += Op("S+", 1.0, i);
             auto sp_i_p_mat = matrix(sp_i_p, block, blockp);
 
-            BondList sm_j_p;
-            sm_j_p += Bond("S-", 1.0, j);
+            OpSum sm_j_p;
+            sm_j_p += Op("S-", 1.0, j);
             auto sm_j_p_mat = matrix(sm_j_p, blockp, block);
 
             auto C1 = sp_i_m_mat * sm_j_m_mat;
@@ -165,8 +165,8 @@ TEST_CASE("spinhalf_matrix", "[spinhalf]") {
             arma::mat commr = C1r - C2r;
 
             if (i == j) {
-              BondList sz;
-              sz += Bond("SZ", 1.0, i);
+              OpSum sz;
+              sz += Op("SZ", 1.0, i);
               auto sz_mat = matrix(sz, block, block);
               auto sz_matr = matrix(sz, block_raw, block_raw);
               REQUIRE(close(comm, arma::mat(2.0 * sz_mat)));

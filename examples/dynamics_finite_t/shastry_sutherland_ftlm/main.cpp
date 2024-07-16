@@ -69,12 +69,12 @@ int main(int argc, char **argv) {
   auto lfile = FileToml(latfile, 'r');
   auto ofile = FileH5(outfile, "w!");
 
-  auto bonds = BondList(lfile["Interactions"]);
-  bonds["J"] = J;
-  bonds["Jd"] = Jd;
+  auto ops = OpSum(lfile["Interactions"]);
+  ops["J"] = J;
+  ops["Jd"] = Jd;
   auto group = PermutationGroup(lfile["Symmetries"]);
   auto irrep_k = Representation(lfile[k]);
-  int n_sites = bonds.n_sites();
+  int n_sites = ops.n_sites();
 
   Log("Creating block nup: {}, k: {} ...", nup, k);
   auto block_k = Spinhalf(n_sites, nup, group, irrep_k);
@@ -97,7 +97,7 @@ int main(int argc, char **argv) {
     vec.save(filename);
     toc();
   };
-  auto T = lanczos_vector_apply_inplace(bonds, rstate, dump_V, niter);
+  auto T = lanczos_vector_apply_inplace(ops, rstate, dump_V, niter);
   ofile["AlphasT"] = T.alphas();
   ofile["BetasT"] = T.betas();
 
@@ -108,15 +108,15 @@ int main(int argc, char **argv) {
   ofile["DimKQ"] = block_k_q.size();
 
   Log("Computing ground state |gs> and S(q)|gs>...");
-  auto gs = groundstate(bonds, block_k);
+  auto gs = groundstate(ops, block_k);
   mat coords = lfile["Coordinates"].as<mat>();
   auto qq = lfile[q + std::string(".momentum")].as<vec>();
-  BondList S_of_q;
+  OpSum S_of_q;
   for (int site = 0; site < n_sites; ++site) {
     complex phase =
         std::exp(std::complex<double>(0, 1.0) *
                  (qq(0) * coords(site, 0) + qq(1) * coords(site, 1)));
-    S_of_q << Bond("SZ", phase / n_sites, site);
+    S_of_q << Op("SZ", phase / n_sites, site);
   }
   auto s_of_q_gs = StateCplx(block_k_q);
   apply(S_of_q, gs, s_of_q_gs);
@@ -135,7 +135,7 @@ int main(int argc, char **argv) {
       Log("writing W vector {} (q={}) -> {}", iteration, q, filename);
       vec.save(filename);
     };
-    auto S = lanczos_vector_apply_inplace(bonds, s_of_q_gs, dump_W, niter);
+    auto S = lanczos_vector_apply_inplace(ops, s_of_q_gs, dump_W, niter);
     ofile["AlphasS"] = S.alphas();
     ofile["BetasS"] = S.betas();
 

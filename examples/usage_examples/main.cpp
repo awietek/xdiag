@@ -138,12 +138,12 @@ int nup = 3;
 int ndn = 2;
 
 // Define a Hubbard chain model
-auto bonds = BondList();
+auto ops = OpSum();
 for (int i=0; i< N; ++i){
-  bonds += Bond("HOP", "T", {i, (i+1) % N});
+  ops += Op("HOP", "T", {i, (i+1) % N});
 }
-bonds["T"] = 1.0;
-bonds["U"] = 5.0;
+ops["T"] = 1.0;
+ops["U"] = 5.0;
 
 // Create the a permutation group
 auto p1 = Permutation({0, 1, 2, 3});
@@ -154,7 +154,7 @@ auto group = PermutationGroup({p1, p2, p3, p4});
 auto irrep = Representation({1, -1, 1, -1});
 auto block = Electron(N, nup, ndn, group, irrep);
 
-auto H = matrix(bonds, block);
+auto H = matrix(ops, block);
 H.print();
 // --8<-- [end:matrix]
 }
@@ -166,12 +166,12 @@ int nup = N / 2;
 auto block = Spinhalf(N, nup);
     
 // Define the nearest-neighbor Heisenberg model
-auto bonds = BondList();
+auto ops = OpSum();
 for (int i=0; i<N; ++i) {
-  bonds += Bond("HB", "J", {i, (i+1) % N});
+  ops += Op("HB", "J", {i, (i+1) % N});
 }
-bonds["J"] = 1.0;
-double e0 = eigval0(bonds, block);
+ops["J"] = 1.0;
+double e0 = eigval0(ops, block);
 // --8<-- [end:eigval0]
 }
 
@@ -182,12 +182,12 @@ int nup = N / 2;
 auto block = Spinhalf(N, nup);
     
 // Define the nearest-neighbor Heisenberg model
-auto bonds = BondList();
+auto ops = OpSum();
 for (int i=0; i<N; ++i) {
-  bonds += Bond("HB", "J", {i, (i+1) % N});
+  ops += Op("HB", "J", {i, (i+1) % N});
 }
-bonds["J"] = 1.0;
-auto [e0, gs] = eig0(bonds, block);
+ops["J"] = 1.0;
+auto [e0, gs] = eig0(ops, block);
 // --8<-- [end:eig0]
 }
  

@@ -10,21 +10,21 @@ namespace xdiag::tj {
 
 template <typename bit_t, typename coeff_t, bool symmetric, class BasisIn,
           class BasisOut, class Fill>
-void apply_raise_lower(Bond const &bond, BasisIn &&basis_in,
+void apply_raise_lower(Op const &op, BasisIn &&basis_in,
                        BasisOut &&basis_out, Fill &&fill) {
-  assert(bond.coupling_defined());
-  assert(bond.type_defined());
-  assert(bond.size() == 1);
+  assert(op.coupling_defined());
+  assert(op.type_defined());
+  assert(op.size() == 1);
 
-  std::string type = bond.type();
+  std::string type = op.type();
   assert((type == "CDAGUP") || (type == "CDAGDN") || (type == "CUP") ||
          (type == "CDN"));
 
-  int64_t s = bond[0];
+  int64_t s = op[0];
   bit_t site_mask = (bit_t)1 << s;
   bit_t fermi_mask = site_mask - 1;
 
-  Coupling cpl = bond.coupling();
+  Coupling cpl = op.coupling();
   assert(cpl.isexplicit() && !cpl.ismatrix());
   coeff_t c = cpl.as<coeff_t>();
 

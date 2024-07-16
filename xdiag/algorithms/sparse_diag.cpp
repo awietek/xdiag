@@ -6,15 +6,15 @@
 
 namespace xdiag {
 
-double eigval0(BondList const &bonds, block_variant_t const &block,
-               double precision, int64_t max_iterations, bool force_complex,
+double eigval0(OpSum const &ops, block_variant_t const &block, double precision,
+               int64_t max_iterations, bool force_complex,
                int64_t random_seed) try {
   if (dim(block) == 0) {
     Log.warn("Warning: block zero dimensional in eigval0");
     return std::nan("");
   }
 
-  auto res = eigvals_lanczos(bonds, block, 1, precision, max_iterations,
+  auto res = eigvals_lanczos(ops, block, 1, precision, max_iterations,
                              force_complex, 1e-7, random_seed);
 
   if (res.eigenvalues.size() == 0) {
@@ -28,15 +28,14 @@ double eigval0(BondList const &bonds, block_variant_t const &block,
   return std::nan("");
 }
 
-std::tuple<double, State> eig0(BondList const &bonds,
-                               block_variant_t const &block, double precision,
-                               int64_t max_iterations, bool force_complex,
-                               int64_t random_seed) try {
+std::tuple<double, State> eig0(OpSum const &ops, block_variant_t const &block,
+                               double precision, int64_t max_iterations,
+                               bool force_complex, int64_t random_seed) try {
   if (dim(block) == 0) {
     Log.warn("Warning: block zero dimensional in eigval0");
     return {std::nan(""), State()};
   }
-  auto res = eigs_lanczos(bonds, block, 1, precision, max_iterations,
+  auto res = eigs_lanczos(ops, block, 1, precision, max_iterations,
                           force_complex, 1e-7, random_seed);
 
   if (res.eigenvalues.size() == 0) {

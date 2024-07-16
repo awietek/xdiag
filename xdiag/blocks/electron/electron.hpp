@@ -2,7 +2,6 @@
 
 #include <xdiag/basis/basis.hpp>
 #include <xdiag/common.hpp>
-#include <xdiag/operators/bondlist.hpp>
 #include <xdiag/symmetries/permutation_group.hpp>
 #include <xdiag/symmetries/representation.hpp>
 

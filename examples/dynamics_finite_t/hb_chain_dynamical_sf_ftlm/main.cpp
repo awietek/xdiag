@@ -30,11 +30,11 @@ int main(int argc, char **argv) {
   std::filesystem::create_directories(scratchdir);
 
   // Create nearest-neighbor Heisenberg model
-  BondList bonds;
+  OpSum ops;
   for (int s = 0; s < n_sites; ++s) {
-    bonds << Bond("HB", "J", {s, (s + 1) % n_sites});
+    ops += Op("HB", "J", {s, (s + 1) % n_sites});
   }
-  bonds["J"] = 1.0;
+  ops["J"] = 1.0;
 
   // Create the permutation group
   std::vector<int> translation;
@@ -65,19 +65,19 @@ int main(int argc, char **argv) {
     Log("writing V vector {} -> {}", iteration, filename);
     vec.save(filename);
   };
-  auto T = lanczos_vector_apply_inplace(bonds, rstate, dump_V, n_iters);
+  auto T = lanczos_vector_apply_inplace(ops, rstate, dump_V, n_iters);
   T.alphas().save(hdf5_name(outfile, "T_alphas", append));
   T.betas().save(hdf5_name(outfile, "T_betas", append));
 
   ////////////////////////////////////////////////////////
   Log("Computing ground state ...");
   XDIAG_SHOW(block);
-  auto gs = groundstate(bonds, block);
+  auto gs = groundstate(ops, block);
 
   for (int q = 0; q < n_sites; ++q) {
 
     Log("Creating S(q)|g.s.> (q={}) ...", q);
-    auto S_of_q = symmetrized_operator(Bond("SZ", 0), group, irreps[q]);
+    auto S_of_q = symmetrized_operator(Op("SZ", 0), group, irreps[q]);
     auto block_q = Spinhalf(n_sites, n_up, group, irreps[k] * irreps[q]);
     ivec dim_q(1);
     dim_q(0) = block_q.size();
@@ -106,7 +106,7 @@ int main(int argc, char **argv) {
       Log("writing W vector {} (q={}) -> {}", iteration, q, filename);
       vec.save(filename);
     };
-    auto S = lanczos_vector_apply_inplace(bonds, w0, dump_W, n_iters);
+    auto S = lanczos_vector_apply_inplace(ops, w0, dump_W, n_iters);
     S.alphas().save(hdf5_name(outfile, format("q_{}/S_alphas", q), append));
     S.betas().save(hdf5_name(outfile, format("q_{}/S_betas", q), append));
 

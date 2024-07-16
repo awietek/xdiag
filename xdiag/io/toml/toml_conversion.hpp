@@ -5,8 +5,8 @@
 
 #include <xdiag/extern/armadillo/armadillo>
 #include <xdiag/extern/toml++/toml.hpp>
-#include <xdiag/operators/bond.hpp>
-#include <xdiag/operators/bondlist.hpp>
+#include <xdiag/operators/op.hpp>
+#include <xdiag/operators/opsum.hpp>
 
 namespace xdiag::io {
 
@@ -34,9 +34,9 @@ arma::Col<T> toml_array_to_arma_vector(toml::array const &toml_array);
 template <typename T>
 arma::Mat<T> toml_array_to_arma_matrix(toml::array const &toml_array);
 
-Bond toml_array_to_bond(toml::array const &array);
-BondList toml_array_to_bond_list(toml::array const &array);
-BondList toml_table_to_bond_list(toml::table const &array);
+Op toml_array_to_op(toml::array const &array);
+OpSum toml_array_to_op_list(toml::array const &array);
+OpSum toml_table_to_op_list(toml::table const &array);
 
 // xdiag -> toml
 template <typename T>
@@ -48,8 +48,8 @@ toml::array arma_vector_to_toml_array(arma::Col<T> const &value);
 template <typename T>
 toml::array arma_matrix_to_toml_array(arma::Mat<T> const &value);
 
-toml::array bond_to_toml_array(Bond const &bond);
-toml::array bond_list_to_toml_array(BondList const &bonds);
-toml::table bond_list_to_toml_table(BondList const &bonds);
+toml::array op_to_toml_array(Op const &op);
+toml::array op_list_to_toml_array(OpSum const &ops);
+toml::table op_list_to_toml_table(OpSum const &ops);
 
 } // namespace xdiag::io

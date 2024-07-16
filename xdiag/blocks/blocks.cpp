@@ -20,8 +20,6 @@ bool isreal(block_variant_t const &block) {
   return std::visit([&](auto &&blk) { return blk.isreal(); }, block);
 }
 
-bool iscomplex(block_variant_t const &block) { return !isreal(block); }
-
 bool isdistributed(block_variant_t const &block) {
   return std::visit(overload{
                         [&](Spinhalf const &) -> bool { return false; },

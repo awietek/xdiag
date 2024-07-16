@@ -8,52 +8,53 @@
 #include <xdiag/blocks/electron/terms/apply_raise_lower.hpp>
 #include <xdiag/blocks/electron/terms/apply_u.hpp>
 #include <xdiag/common.hpp>
+#include <xdiag/operators/opsum.hpp>
 #include <xdiag/utils/print_macro.hpp>
 
 namespace xdiag::electron {
 
 template <typename bit_t, typename coeff_t, bool symmetric, class BasisIn,
           class BasisOut, class Fill>
-void apply_terms(BondList const &bonds, BasisIn const &basis_in,
+void apply_terms(OpSum const &ops, BasisIn const &basis_in,
                  BasisOut const &basis_out, Fill &fill,
                  double zero_precision) try {
 
-  BondList bonds_compiled =
-      electron::compile(bonds, basis_in.n_sites(), zero_precision);
+  OpSum ops_compiled =
+      electron::compile(ops, basis_in.n_sites(), zero_precision);
 
-  // Separate bond acting on ups, dns, diagonally or fully mixing
-  BondList bonds_ups;
-  BondList bonds_dns;
-  BondList bonds_diag;
-  BondList bonds_mixed;
-  for (auto bond : bonds_compiled) {
-    std::string type = bond.type();
+  // Separate op acting on ups, dns, diagonally or fully mixing
+  OpSum ops_ups;
+  OpSum ops_dns;
+  OpSum ops_diag;
+  OpSum ops_mixed;
+  for (auto op : ops_compiled) {
+    std::string type = op.type();
     if ((type == "HOPUP") || (type == "CDAGUP") || (type == "CUP")) {
-      bonds_ups += bond;
+      ops_ups += op;
     } else if ((type == "HOPDN") || (type == "CDAGDN") || (type == "CDN")) {
-      bonds_dns += bond;
+      ops_dns += op;
     } else if ((type == "ISING") || (type == "NUMBERUP") ||
                (type == "NUMBERDN")) {
-      bonds_diag += bond;
+      ops_diag += op;
     } else if (type == "EXCHANGE") {
-      bonds_mixed += bond;
+      ops_mixed += op;
     } else {
-      Log.err("Error: Unknown bond of type {}", type);
+      Log.err("Error: Unknown Op of type {}", type);
     }
   }
 
   // Diagonal terms
-  for (auto bond : bonds_diag) {
-    std::string type = bond.type();
+  for (auto op : ops_diag) {
+    std::string type = op.type();
     if (type == "ISING") {
-      electron::apply_ising<bit_t, coeff_t, symmetric>(bond, basis_in, fill);
+      electron::apply_ising<bit_t, coeff_t, symmetric>(op, basis_in, fill);
     } else if ((type == "NUMBERUP") || (type == "NUMBERDN")) {
-      electron::apply_number<bit_t, coeff_t, symmetric>(bond, basis_in, fill);
+      electron::apply_number<bit_t, coeff_t, symmetric>(op, basis_in, fill);
     }
   }
 
-  if (bonds.defined("U")) {
-    Coupling cpl = bonds["U"];
+  if (ops.defined("U")) {
+    Coupling cpl = ops["U"];
 
     if (cpl.is<double>()) {
       double U = cpl.as<double>();
@@ -64,31 +65,31 @@ void apply_terms(BondList const &bonds, BasisIn const &basis_in,
   }
 
   // terms on both ups and dns
-  for (auto bond : bonds_mixed) {
-    std::string type = bond.type();
+  for (auto op : ops_mixed) {
+    std::string type = op.type();
     if (type == "EXCHANGE") {
-      electron::apply_exchange<bit_t, coeff_t, symmetric>(bond, basis_in, fill);
+      electron::apply_exchange<bit_t, coeff_t, symmetric>(op, basis_in, fill);
     }
   }
 
   // terms acting only on ups
-  for (auto bond : bonds_ups) {
-    std::string type = bond.type();
+  for (auto op : ops_ups) {
+    std::string type = op.type();
     if (type == "HOPUP") {
-      electron::apply_hopping<bit_t, coeff_t, symmetric>(bond, basis_in, fill);
+      electron::apply_hopping<bit_t, coeff_t, symmetric>(op, basis_in, fill);
     } else if ((type == "CDAGUP") || (type == "CUP")) {
-      electron::apply_raise_lower<bit_t, coeff_t, symmetric>(bond, basis_in,
+      electron::apply_raise_lower<bit_t, coeff_t, symmetric>(op, basis_in,
                                                              basis_out, fill);
     }
   }
 
   // terms acting only on dns
-  for (auto bond : bonds_dns) {
-    std::string type = bond.type();
+  for (auto op : ops_dns) {
+    std::string type = op.type();
     if (type == "HOPDN") {
-      electron::apply_hopping<bit_t, coeff_t, symmetric>(bond, basis_in, fill);
+      electron::apply_hopping<bit_t, coeff_t, symmetric>(op, basis_in, fill);
     } else if ((type == "CDAGDN") || (type == "CDN")) {
-      electron::apply_raise_lower<bit_t, coeff_t, symmetric>(bond, basis_in,
+      electron::apply_raise_lower<bit_t, coeff_t, symmetric>(op, basis_in,
                                                              basis_out, fill);
     }
   }

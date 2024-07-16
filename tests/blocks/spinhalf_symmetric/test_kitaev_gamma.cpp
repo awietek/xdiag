@@ -15,7 +15,7 @@ void run_kitaev_gamma_test(
   std::string lfile =
       XDIAG_DIRECTORY "/misc/data/kitaev_gamma/lattice-files/"
                       "honeycomb.8.HeisenbergKitaevGamma.fsl.lat";
-  auto bonds = read_bondlist(lfile);
+  auto ops = read_opsum(lfile);
   auto group = PermutationGroup(read_permutations(lfile));
 
   cx_mat sx(mat({{0., 0.5}, {0.5, 0.}}), mat({{0., 0.}, {0., 0.}}));
@@ -29,19 +29,19 @@ void run_kitaev_gamma_test(
   cx_mat gy = G * (kron(sx, sz) + kron(sz, sx));
   cx_mat gz = G * (kron(sx, sy) + kron(sy, sx));
 
-  bonds["J"] = 0.;
-  bonds["KX"] = kx;
-  bonds["KY"] = ky;
-  bonds["KZ"] = kz;
-  bonds["GX"] = gx;
-  bonds["GY"] = gy;
-  bonds["GZ"] = gz;
+  ops["J"] = 0.;
+  ops["KX"] = kx;
+  ops["KY"] = ky;
+  ops["KZ"] = kz;
+  ops["GX"] = gx;
+  ops["GY"] = gy;
+  ops["GZ"] = gz;
 
   for (auto [name, e0_reference] : irrep_names_e0) {
     auto irrep = read_representation(lfile, name);
     auto block = Spinhalf(8, group, irrep);
-    // double e0_computed = e0(bonds, block);
-    cx_mat H = matrixC(bonds, block);
+    // double e0_computed = e0(ops, block);
+    cx_mat H = matrixC(ops, block);
 
     vec eigs;
     eig_sym(eigs, H);

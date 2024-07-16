@@ -8,7 +8,8 @@
 #include <xdiag/blocks/spinhalf/spinhalf.hpp>
 #include <xdiag/blocks/tj/tj.hpp>
 #include <xdiag/extern/armadillo/armadillo>
-#include <xdiag/operators/bondlist.hpp>
+#include <xdiag/operators/op.hpp>
+#include <xdiag/operators/opsum.hpp>
 #include <xdiag/states/product_state.hpp>
 #include <xdiag/states/random_state.hpp>
 #include <xdiag/states/state.hpp>
@@ -29,8 +30,8 @@ void print_pretty(const char *identifier, int64_t number);
 void print_pretty(const char *identifier, double number);
 void print_pretty(const char *identifier, complex number);
 
-void print_pretty(const char *identifier, Bond const &bond);
-void print_pretty(const char *identifier, BondList const &bondlist);
+void print_pretty(const char *identifier, Op const &op);
+void print_pretty(const char *identifier, OpSum const &ops);
 void print_pretty(const char *identifier, Permutation const &perm);
 void print_pretty(const char *identifier, PermutationGroup const &group);
 void print_pretty(const char *identifier, Representation const &irrep);

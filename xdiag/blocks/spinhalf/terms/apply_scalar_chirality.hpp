@@ -11,17 +11,17 @@ namespace xdiag::spinhalf {
 
 template <typename bit_t, typename coeff_t, bool symmetric, class BasisIn,
           class BasisOut, class Fill>
-void apply_scalar_chirality(Bond const &bond, BasisIn &&basis_in,
+void apply_scalar_chirality(Op const &op, BasisIn &&basis_in,
                             BasisOut &&basis_out, Fill &&fill) try {
   using bits::gbit;
 
-  assert(bond.coupling_defined());
-  assert(bond.type_defined() && (bond.type() == "SCALARCHIRALITY"));
-  assert(bond.size() == 3);
-  assert(bond.sites_disjoint());
+  assert(op.coupling_defined());
+  assert(op.type_defined() && (op.type() == "SCALARCHIRALITY"));
+  assert(op.size() == 3);
+  assert(op.sites_disjoint());
   assert(iscomplex<coeff_t>());
 
-  Coupling cpl = bond.coupling();
+  Coupling cpl = op.coupling();
   assert(cpl.isexplicit() && !cpl.ismatrix());
 
   complex J = cpl.as<complex>();
@@ -36,9 +36,9 @@ void apply_scalar_chirality(Bond const &bond, BasisIn &&basis_in,
     Jquarter_conj = xdiag::conj(Jquarter);
   }
 
-  int64_t s1 = bond[0];
-  int64_t s2 = bond[1];
-  int64_t s3 = bond[2];
+  int64_t s1 = op[0];
+  int64_t s2 = op[1];
+  int64_t s3 = op[2];
   bit_t spinmask = ((bit_t)1 << s1) | ((bit_t)1 << s2) | ((bit_t)1 << s3);
 
   // scalar chirality annihilates 000 and 111

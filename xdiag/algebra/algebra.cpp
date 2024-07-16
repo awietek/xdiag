@@ -82,76 +82,76 @@ complex dotC(State const &v, State const &w) try {
   XDIAG_RETHROW(error);
 }
 
-double inner(BondList const &bonds, State const &v) try {
-  if (v.isreal() && bonds.isreal()) {
+double inner(OpSum const &ops, State const &v) try {
+  if (v.isreal() && ops.isreal()) {
     auto w = v;
-    apply(bonds, v, w);
+    apply(ops, v, w);
     return dot(w, v);
   } else {
     XDIAG_THROW("\"inner\" function computing product <psi | O | psi> can only "
-                "be called if both the state and the bonds are real. Maybe use "
-                "innerC(...)");
+                "be called if both the state and the Ops are real. Maybe use "
+                "innerC(...) instead.");
   }
 } catch (Error const &error) {
   XDIAG_RETHROW(error);
 }
 
-double inner(Bond const &bond, State const &v) try {
-  return inner(BondList({bond}), v);
+double inner(Op const &op, State const &v) try {
+  return inner(OpSum({op}), v);
 } catch (Error const &error) {
   XDIAG_RETHROW(error);
 }
 
-complex innerC(BondList const &bonds, State const &v) try {
-  if (v.isreal() && bonds.isreal()) {
+complex innerC(OpSum const &ops, State const &v) try {
+  if (v.isreal() && ops.isreal()) {
     auto w = v;
-    apply(bonds, v, w);
+    apply(ops, v, w);
     return (complex)dot(w, v);
-  } else if (v.isreal() && !bonds.isreal()) {
+  } else if (v.isreal() && !ops.isreal()) {
     auto v2 = v;
     auto w = v2;
     v2.make_complex();
-    apply(bonds, v2, w);
+    apply(ops, v2, w);
     return dotC(w, v);
   } else {
     auto w = v;
-    apply(bonds, v, w);
+    apply(ops, v, w);
     return dotC(w, v);
   }
 } catch (Error const &error) {
   XDIAG_RETHROW(error);
 }
 
-complex innerC(Bond const &bond, State const &v) try {
-  return innerC(BondList({bond}), v);
+complex innerC(Op const &op, State const &v) try {
+  return innerC(OpSum({op}), v);
 } catch (Error const &error) {
   XDIAG_RETHROW(error);
 }
 
-// double inner(State const &v, BondList const &bonds, State const &w) try {
+// double inner(State const &v, OpSum const &ops, State const &w) try {
 //   auto bw = zeros_like(w);
-//   apply(bonds, w, bw);
+//   apply(ops, w, bw);
 //   return dot(v, bw);
 // } catch (Error const &error) {
 //   XDIAG_RETHROW(error);
 // }
 
-// complex innerC(State const &v, BondList const &bonds, State const &w) try {
+// complex innerC(State const &v, OpSum const &ops, State const &w) try {
 //   auto bw = zeros_like(w);
-//   apply(bonds, w, bw);
+//   apply(ops, w, bw);
 //   return dotC(v, bw);
 // } catch (Error const &error) {
 //   XDIAG_RETHROW(error);
 // }
 
-// double inner(State const &v, Bond const &bond, State const &w) try {
-//   return inner(v, BondList({bond}), w);
+// double inner(State const &v, Op const &op, State const &w) try {
+//   return inner(v, OpSum({op}), w);
 // } catch (Error const &error) {
 //   XDIAG_RETHROW(error);
 // }
 
-// complex innerC(State const &v, Bond const &bond, State const &w) try {
-//   return innerC(v, BondList({bond}), w);
+// complex innerC(State const &v, Op const &op, State const &w) try {
+//   return innerC(v, OpSum({op}), w);
 // } catch (Error const &error) {
 //   XDIAG_RETHROW(error);
 // }
@@ -223,64 +223,64 @@ State &operator/=(State &X, double alpha) try {
 // template double norm(State<complex> const &);
 
 // template <class coeff_t>
-// coeff_t inner(BondList const &bonds, State<coeff_t> const &v) {
+// coeff_t inner(OpSum const &ops, State<coeff_t> const &v) {
 //   auto Hv = State<coeff_t>(v.block());
-//   apply(bonds, v, Hv);
+//   apply(ops, v, Hv);
 //   return dot(v, Hv);
 // }
-// template double inner(BondList const &, State<double> const &);
-// template complex inner(BondList const &, State<complex> const &);
+// template double inner(OpSum const &, State<double> const &);
+// template complex inner(OpSum const &, State<complex> const &);
 
 // template <class coeff_t>
-// coeff_t inner(Bond const &bond, State<coeff_t> const &v) {
-//   BondList bonds;
-//   bonds << bond;
-//   return inner(bonds, v);
+// coeff_t inner(Op const &op, State<coeff_t> const &v) {
+//   OpSum ops;
+//   ops << op;
+//   return inner(ops, v);
 // }
-// template double inner(Bond const &, State<double> const &);
-// template complex inner(Bond const &, State<complex> const &);
+// template double inner(Op const &, State<double> const &);
+// template complex inner(Op const &, State<complex> const &);
 
 // template <class coeff_t>
-// coeff_t inner(State<coeff_t> const &w, BondList const &bonds,
+// coeff_t inner(State<coeff_t> const &w, OpSum const &ops,
 //               State<coeff_t> const &v) {
 //   auto Hv = State<coeff_t>(w.block());
-//   apply(bonds, v, Hv);
+//   apply(ops, v, Hv);
 //   return dot(w, Hv);
 // }
-// template double inner(State<double> const &, BondList const &,
+// template double inner(State<double> const &, OpSum const &,
 //                       State<double> const &);
-// template complex inner(State<complex> const &, BondList const &,
+// template complex inner(State<complex> const &, OpSum const &,
 //                        State<complex> const &);
 
 // template <class coeff_t>
-// coeff_t inner(State<coeff_t> const &w, Bond const &bond,
+// coeff_t inner(State<coeff_t> const &w, Op const &op,
 //               State<coeff_t> const &v) {
-//   BondList bonds;
-//   bonds << bond;
-//   return inner(w, bonds, v);
+//   OpSum ops;
+//   ops << op;
+//   return inner(w, ops, v);
 // }
-// template double inner(State<double> const &, Bond const &,
+// template double inner(State<double> const &, Op const &,
 //                       State<double> const &);
-// template complex inner(State<complex> const &, Bond const &,
+// template complex inner(State<complex> const &, Op const &,
 //                        State<complex> const &);
 
 // template <class coeff_t>
-// void apply(BondList const &bonds, Block const &block_in,
+// void apply(OpSum const &ops, Block const &block_in,
 //            arma::Col<coeff_t> const &vec_in, Block const &block_out,
 //            arma::Col<coeff_t> &vec_out) {
 
 //   std::visit(
 //       variant::overloaded{
-//           [&bonds, &vec_in, &vec_out](Spinhalf const &blk_in,
+//           [&ops, &vec_in, &vec_out](Spinhalf const &blk_in,
 //                                       Spinhalf const &blk_out) {
-//             apply(bonds, blk_in, vec_in, blk_out, vec_out);
+//             apply(ops, blk_in, vec_in, blk_out, vec_out);
 //           },
-//           [&bonds, &vec_in, &vec_out](tJ const &blk_in, tJ const &blk_out) {
-//             apply(bonds, blk_in, vec_in, blk_out, vec_out);
+//           [&ops, &vec_in, &vec_out](tJ const &blk_in, tJ const &blk_out) {
+//             apply(ops, blk_in, vec_in, blk_out, vec_out);
 //           },
-//           [&bonds, &vec_in, &vec_out](Electron const &blk_in,
+//           [&ops, &vec_in, &vec_out](Electron const &blk_in,
 //                                       Electron const &blk_out) {
-//             apply(bonds, blk_in, vec_in, blk_out, vec_out);
+//             apply(ops, blk_in, vec_in, blk_out, vec_out);
 //           },
 //           [](auto const &blk_in, auto const &blk_out) {
 //             Log.err("Error in apply: Invalid blocks or combination of
@@ -289,47 +289,47 @@ State &operator/=(State &X, double alpha) try {
 //       },
 //       block_in.variant(), block_out.variant());
 // }
-// template void apply(BondList const &, Block const &, arma::Col<double> const
+// template void apply(OpSum const &, Block const &, arma::Col<double> const
 // &,
 //                     Block const &, arma::Col<double> &);
-// template void apply(BondList const &, Block const &, arma::Col<complex> const
+// template void apply(OpSum const &, Block const &, arma::Col<complex> const
 // &,
 //                     Block const &, arma::Col<complex> &);
 
 // template <class coeff_t>
-// void apply(BondList const &bonds, State<coeff_t> const &state_in,
+// void apply(OpSum const &ops, State<coeff_t> const &state_in,
 //            State<coeff_t> &state_out) {
-//   apply(bonds, state_in.block(), state_in.vector(), state_out.block(),
+//   apply(ops, state_in.block(), state_in.vector(), state_out.block(),
 //         state_out.vector());
 // }
-// template void apply(BondList const &, State<double> const &, State<double>
-// &); template void apply(BondList const &, State<complex> const &,
+// template void apply(OpSum const &, State<double> const &, State<double>
+// &); template void apply(OpSum const &, State<complex> const &,
 // State<complex> &);
 
 // template <class coeff_t>
-// void apply(Bond const &bond, State<coeff_t> const &state_in,
+// void apply(Op const &op, State<coeff_t> const &state_in,
 //            State<coeff_t> &state_out) {
-//   BondList bonds;
-//   bonds << bond;
-//   apply(bonds, state_in, state_out);
+//   OpSum ops;
+//   ops << op;
+//   apply(ops, state_in, state_out);
 // }
-// template void apply(Bond const &, State<double> const &, State<double> &);
-// template void apply(Bond const &, State<complex> const &, State<complex> &);
+// template void apply(Op const &, State<double> const &, State<double> &);
+// template void apply(Op const &, State<complex> const &, State<complex> &);
 
 // // template <class coeff_t>
-// // void apply(Bond const &bond, complex coeff, State<coeff_t> const
+// // void apply(Op const &op, complex coeff, State<coeff_t> const
 // &state_in,
 // //            State<coeff_t> &state_out) {
-// //   BondList bonds;
-// //   bonds << bond;
-// //   apply(bonds, state_in, state_out);
+// //   OpSum ops;
+// //   ops << op;
+// //   apply(ops, state_in, state_out);
 // // }
 
 // // template <class coeff_t>
-// // State<coeff_t> apply(Bond const &bond, State<coeff_t> const &state_in) {
-// //   BondList bonds;
-// //   bonds << bond;
-// //   return apply(bonds, state_in);
+// // State<coeff_t> apply(Op const &op, State<coeff_t> const &state_in) {
+// //   OpSum ops;
+// //   ops << op;
+// //   return apply(ops, state_in);
 // // }
 
 // State<complex> &operator/=(State<complex> &X, complex alpha) {

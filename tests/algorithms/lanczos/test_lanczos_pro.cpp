@@ -7,7 +7,7 @@
 #include <xdiag/algorithms/lanczos/lanczos_pro.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
 #include <xdiag/io/file_toml.hpp>
-#include <xdiag/operators/bondlist.hpp>
+#include <xdiag/operators/opsum.hpp>
 #include <xdiag/symmetries/permutation_group.hpp>
 #include <xdiag/symmetries/representation.hpp>
 #include <xdiag/utils/close.hpp>
@@ -139,10 +139,10 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
     std::string lfilename =
         XDIAG_DIRECTORY "/misc/data/shastry.16.HB.J.Jd.fsl.toml";
     auto lfile = FileToml(lfilename, 'r');
-    auto bonds = lfile["Interactions"].as<BondList>();
+    auto ops = lfile["Interactions"].as<OpSum>();
     int n_sites = 16;
-    bonds["J"] = 0.63;
-    bonds["Jd"] = 1.00;
+    ops["J"] = 0.63;
+    ops["Jd"] = 1.00;
     auto group = PermutationGroup(lfile["Symmetries"]);
 
     std::vector<std::string> irrep_names = {"Gamma.C1.A", "M.C1.A", "X0.C1.A",
@@ -157,8 +157,8 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
         // XDIAG_SHOW(block);
 
         auto rstate = random_state(block, false);
-        auto mult = [&bonds, &block](cx_vec const &v, cx_vec &w) {
-          apply(bonds, block, v, block, w);
+        auto mult = [&ops, &block](cx_vec const &v, cx_vec &w) {
+          apply(ops, block, v, block, w);
         };
         auto conv = [](Tmatrix) { return false; };
         int n_iter = 500;
@@ -195,10 +195,10 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
     std::string lfilename =
         XDIAG_DIRECTORY "/misc/data/shastry.20.HB.J.Jd.fsl.toml";
     auto lfile = FileToml(lfilename, 'r');
-    auto bonds = lfile["Interactions"].as<BondList>();
+    auto ops = lfile["Interactions"].as<OpSum>();
     int n_sites = 20;
-    bonds["J"] = 0.63;
-    bonds["Jd"] = 1.00;
+    ops["J"] = 0.63;
+    ops["Jd"] = 1.00;
     auto group = PermutationGroup(lfile["Symmetries"]);
 
     std::vector<std::string> irrep_names = {"Gamma.C1.A"};
@@ -212,8 +212,8 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
         // XDIAG_SHOW(block);
 
         auto rstate = random_state(block, false);
-        auto mult = [&bonds, &block](cx_vec const &v, cx_vec &w) {
-          apply(bonds, block, v, block, w);
+        auto mult = [&ops, &block](cx_vec const &v, cx_vec &w) {
+          apply(ops, block, v, block, w);
         };
         auto conv = [](Tmatrix) { return false; };
         int n_iter = 500;

@@ -47,12 +47,12 @@ TEST_CASE("analytic_case_free_particle_1D", "[time_evolution]") try {
 
   // time evolve using xdiag (numerically)
   auto block = Electron(n_sites, nup, ndn);
-  BondList bonds;
+  OpSum ops;
   for (int i = 0; i < n_sites; i++) {
-    bonds += Bond("HOP", "t", {i, (i + 1) % n_sites});
+    ops += Op("HOP", "t", {i, (i + 1) % n_sites});
   }
-  bonds["t"] = t;
-  bonds["U"] = 1;
+  ops["t"] = t;
+  ops["U"] = 1;
 
   std::vector<std::string> psi_0_list;
   for (int i = 0; i < n_sites; i++) {
@@ -67,7 +67,7 @@ TEST_CASE("analytic_case_free_particle_1D", "[time_evolution]") try {
   for (auto time : times) {
     std::vector<double> tols = {1e-2, 1e-4, 1e-6, 1e-8, 1e-10, 1e-12};
     for (auto tol : tols) {
-      auto w_expokit = time_evolve(bonds, psi_0, time, tol);
+      auto w_expokit = time_evolve(ops, psi_0, time, tol);
       arma::cx_vec w_analytic = psi_analytic(time);
 
       // norm is one so no division here by norm of true
@@ -134,26 +134,26 @@ TEST_CASE("analytic_case_free_particle_2D", "[time_evolution]") try {
 
   // time evolve using xdiag (numerically)
   auto block = Electron(n_sites, nup, ndn);
-  BondList bonds;
+  OpSum ops;
   for (int i = 0; i < L; i++) {
     for (int j = 0; j < L; j++) {
       int s = L * i + j;
       // nearest neighbour hops
       int s_up_hop = L * ((i + 1) % L) + j;
       int s_dn_hop = L * i + (j + 1) % L;
-      bonds += Bond("HOP", "t", {s, s_up_hop});
-      bonds += Bond("HOP", "t", {s, s_dn_hop});
+      ops += Op("HOP", "t", {s, s_up_hop});
+      ops += Op("HOP", "t", {s, s_dn_hop});
 
       // next nearest neighbour hops
       int s_across_up = L * ((i + 1) % L) + (j + 1) % L;
       int s_across_dn = L * ((L + (i - 1) % L) % L) + (j + 1) % L;
-      bonds += Bond("HOP", "t1", {s, s_across_up});
-      bonds += Bond("HOP", "t1", {s, s_across_dn});
+      ops += Op("HOP", "t1", {s, s_across_up});
+      ops += Op("HOP", "t1", {s, s_across_dn});
     }
   }
-  bonds["t"] = t;
-  bonds["t1"] = t1;
-  bonds["U"] = 1;
+  ops["t"] = t;
+  ops["t1"] = t1;
+  ops["U"] = 1;
 
   std::vector<std::string> psi_0_list;
   for (int i = 0; i < n_sites; i++) {
@@ -168,7 +168,7 @@ TEST_CASE("analytic_case_free_particle_2D", "[time_evolution]") try {
   for (auto time : times) {
     std::vector<double> tols = {1e-2, 1e-4, 1e-6, 1e-8, 1e-10, 1e-12};
     for (auto tol : tols) {
-      auto w_expokit = time_evolve(bonds, psi_0, time, tol);
+      auto w_expokit = time_evolve(ops, psi_0, time, tol);
       arma::cx_vec w_analytic = psi_analytic(time);
 
       // norm is one so no division here by norm of true
@@ -197,7 +197,7 @@ TEST_CASE("tj_complex_timeevo", "[time_evolution]") try {
   int n_sites = L * L;
 
   // Create square lattice t-J model
-  BondList bonds;
+  OpSum ops;
   for (int x = 0; x < L; ++x) {
     for (int y = 0; y < L; ++y) {
       int nx = (x + 1) % L;
@@ -206,14 +206,14 @@ TEST_CASE("tj_complex_timeevo", "[time_evolution]") try {
       int site = y * L + x;
       int right = y * L + nx;
       int top = ny * L + x;
-      bonds += Bond("HOP", "T", {site, right});
-      bonds += Bond("TJISING", "J", {site, right});
-      bonds += Bond("HOP", "T", {site, top});
-      bonds += Bond("TJISING", "J", {site, top});
+      ops += Op("HOP", "T", {site, right});
+      ops += Op("TJISING", "J", {site, right});
+      ops += Op("HOP", "T", {site, top});
+      ops += Op("TJISING", "J", {site, top});
     }
   }
-  bonds["T"] = (std::complex<double>)(1.0 + 0.2i);
-  bonds["J"] = 0.4;
+  ops["T"] = (std::complex<double>)(1.0 + 0.2i);
+  ops["J"] = 0.4;
 
   // Create initial state
   auto pstate = ProductState();
@@ -229,7 +229,7 @@ TEST_CASE("tj_complex_timeevo", "[time_evolution]") try {
   pstate[n_sites / 2] = "Emp";
   auto block = tJ(n_sites, n_sites / 2, n_sites / 2);
 
-  auto H = matrixC(bonds, block);
+  auto H = matrixC(ops, block);
   XDIAG_SHOW(block);
   XDIAG_SHOW(pstate);
   auto psi_0 = State(block, false);
@@ -240,7 +240,7 @@ TEST_CASE("tj_complex_timeevo", "[time_evolution]") try {
   for (auto time : times) {
     std::vector<double> tols = {1e-2, 1e-6, 1e-10, 1e-12};
     for (auto tol : tols) {
-      auto psi = time_evolve(bonds, psi_0, time, tol);
+      auto psi = time_evolve(ops, psi_0, time, tol);
       cx_vec psi2 = expm(cx_mat(-1.0i * time * H)) * psi_0.vectorC();
 
       double eps = norm(psi2 - psi.vectorC());

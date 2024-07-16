@@ -27,9 +27,9 @@ int main(int argc, char **argv) {
   std::filesystem::create_directories(odir);
   auto ofile = FileH5(format("{}/{}", odir, ofilename), "w!");
 
-  auto bonds = BondList(lfile["Interactions"]);
-  bonds["J"] = J;
-  bonds["JD"] = Jd;
+  auto ops = OpSum(lfile["Interactions"]);
+  ops["J"] = J;
+  ops["JD"] = Jd;
   auto group = PermutationGroup(lfile["Symmetries"]);
   auto irrep = Representation(lfile[kname]);
 
@@ -43,8 +43,8 @@ int main(int argc, char **argv) {
   tic();
   int n_eig_to_converge = 3;
   int max_iterations = 300;
-  auto tmat = eigvals_lanczos(bonds, block, n_eig_to_converge, 1e-12,
-                                  max_iterations, seed, 1e-7);
+  auto tmat = eigvals_lanczos(ops, block, n_eig_to_converge, 1e-12,
+                              max_iterations, seed, 1e-7);
   toc();
 
   ofile["Alphas"] = tmat.alphas;

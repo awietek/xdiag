@@ -7,19 +7,19 @@
 
 using namespace xdiag;
 
-void test_e0_nompi(BondList bonds, Couplings couplings) {
-  int N = bonds.n_sites();
+void test_e0_nompi(OpSum ops, Couplings couplings) {
+  int N = ops.n_sites();
   for (int nup = 0; nup <= N; ++nup) {
     auto block = Spinhalf<uint32_t>(N, nup);
     auto block_mpi = SpinhalfMPI<uint32_t>(N, nup);
 
-    auto H = MatrixReal(bonds, couplings, block, block);
+    auto H = MatrixReal(ops, couplings, block, block);
     REQUIRE(lila::close(H, lila::Herm(H)));
 
     auto evals_mat = lila::EigenvaluesSym(H);
     double e0_mat = evals_mat(0);
-    double e0_app = E0Real(bonds, couplings, block_mpi);
-    double e0_app_cplx = E0Cplx(bonds, couplings, block_mpi);
+    double e0_app = E0Real(ops, couplings, block_mpi);
+    double e0_app_cplx = E0Cplx(ops, couplings, block_mpi);
 
     LogMPI.out("N: {}, n_up: {}, e0 mat: {:+.10f}, e0 mpi: {:+.10f}", N, nup,
                e0_mat, e0_app);
@@ -28,21 +28,21 @@ void test_e0_nompi(BondList bonds, Couplings couplings) {
   }
 }
 
-void test_sz_sp_sm_energy(BondList bonds, Couplings couplings) {
-  int N = bonds.n_sites();
+void test_sz_sp_sm_energy(OpSum ops, Couplings couplings) {
+  int N = ops.n_sites();
   for (int nup = 0; nup <= N; ++nup) {
     auto block = Spinhalf<uint32_t>(N, nup);
     auto block_mpi = SpinhalfMPI<uint32_t>(N, nup);
 
     
-    auto [e0_s, gs_s] = GroundstateReal(bonds, couplings, block);
-    auto [e0_p, gs_p] = GroundstateReal(bonds, couplings, block_mpi);
+    auto [e0_s, gs_s] = GroundstateReal(ops, couplings, block);
+    auto [e0_p, gs_p] = GroundstateReal(ops, couplings, block_mpi);
     REQUIRE(std::abs(e0_s - e0_p) < 1e-8);
     
     for (int i = 0; i < N; ++i) {
-      auto bond = Bond("SZ", i);
-      double exp_s = Inner(bond, gs_s);
-      double exp_p = Inner(bond, gs_p);
+      auto op = Op("SZ", i);
+      double exp_s = Inner(op, gs_s);
+      double exp_p = Inner(op, gs_p);
 
       // LogMPI.out("N: {}, n_up: {}, sz_s: {:+.10f}, sz_p: {:+.10f}", N, nup,
       //            exp_s, exp_p);
@@ -50,10 +50,10 @@ void test_sz_sp_sm_energy(BondList bonds, Couplings couplings) {
       REQUIRE(lila::close(exp_s, exp_p));
 
       if (nup < N - 1) {
-        bond = Bond("S+", i);
-        auto sz_i_gs_s = Apply(bond, gs_s);
+        op = Op("S+", i);
+        auto sz_i_gs_s = Apply(op, gs_s);
         double dot_s = Dot(sz_i_gs_s, sz_i_gs_s);
-        auto sz_i_gs_p = Apply(bond, gs_p);
+        auto sz_i_gs_p = Apply(op, gs_p);
         double dot_p = Dot(sz_i_gs_p, sz_i_gs_p);
 
         LogMPI.out("N: {}, n_up: {}, i: {} dot_s+: {:+.10f}, dot_p+: {:+.10f}",
@@ -62,10 +62,10 @@ void test_sz_sp_sm_energy(BondList bonds, Couplings couplings) {
       }
 
       if (nup > 0) {
-        bond = Bond("S-", i);
-        auto sz_i_gs_s = Apply(bond, gs_s);
+        op = Op("S-", i);
+        auto sz_i_gs_s = Apply(op, gs_s);
         double dot_s = Dot(sz_i_gs_s, sz_i_gs_s);
-        auto sz_i_gs_p = Apply(bond, gs_p);
+        auto sz_i_gs_p = Apply(op, gs_p);
         double dot_p = Dot(sz_i_gs_p, sz_i_gs_p);
 
         LogMPI.out("N: {}, n_up: {}, i: {} dot_s-: {:+.10f}, dot_p-: {:+.10f}",
@@ -85,11 +85,11 @@ void test_sz_sp_sm_commutators(int n_sites) {
     for (int i = 0; i < n_sites; ++i)
       for (int j = 0; j < n_sites; ++j) {
 
-        auto sp_i = Bond("S+", i);
-        auto sm_i = Bond("S-", i);
-        auto sp_j = Bond("S+", j);
-        auto sm_j = Bond("S-", j);
-        auto sz_i = Bond("SZ", i);
+        auto sp_i = Op("S+", i);
+        auto sm_i = Op("S-", i);
+        auto sp_j = Op("S+", j);
+        auto sm_j = Op("S-", j);
+        auto sz_i = Op("SZ", i);
 
         auto rvec = RandomState<double>(block);
         rvec.vector() /= lila::Norm(rvec.vector());
@@ -131,52 +131,52 @@ TEST_CASE("spinhalf_mpi_apply", "[spinhalf]") {
   {
     LogMPI.out("SpinhalfMPI: manual N=6 spin chain test");
 
-    BondList bonds;
+    OpSum ops;
     std::string type = "ISING";
-    bonds << Bond(type, "J", {0, 1});
-    bonds << Bond(type, "J", {1, 2});
-    bonds << Bond(type, "J", {2, 3});
-    bonds << Bond(type, "J", {3, 4});
-    bonds << Bond(type, "J", {4, 5});
-    bonds << Bond(type, "J", {5, 0});
+    ops << Op(type, "J", {0, 1});
+    ops << Op(type, "J", {1, 2});
+    ops << Op(type, "J", {2, 3});
+    ops << Op(type, "J", {3, 4});
+    ops << Op(type, "J", {4, 5});
+    ops << Op(type, "J", {5, 0});
 
-    // postfix bonds
-    bonds << Bond("HB", "J", {0, 1});
-    bonds << Bond("HB", "J", {1, 2});
+    // postfix ops
+    ops << Op("HB", "J", {0, 1});
+    ops << Op("HB", "J", {1, 2});
 
-    // mixed bonds
-    bonds << Bond("HB", "J", {2, 3});
-    bonds << Bond("HB", "J", {1, 4});
-    bonds << Bond("HB", "J", {0, 3});
+    // mixed ops
+    ops << Op("HB", "J", {2, 3});
+    ops << Op("HB", "J", {1, 4});
+    ops << Op("HB", "J", {0, 3});
 
-    // Prefix bonds
-    bonds << Bond("HB", "J", {3, 4});
-    bonds << Bond("HB", "J", {4, 5});
-    bonds << Bond("HB", "J2", {4, 5});
+    // Prefix ops
+    ops << Op("HB", "J", {3, 4});
+    ops << Op("HB", "J", {4, 5});
+    ops << Op("HB", "J2", {4, 5});
 
     Couplings couplings;
     couplings["J"] = 1;
     couplings["J2"] = 0.1;
-    test_e0_nompi(bonds, couplings);
+    test_e0_nompi(ops, couplings);
   }
 
   LogMPI.out("SpinhalfMPI: Heisenberg chain apply test, J=1.0, N=2,..,8");
   for (int N = 2; N <= 8; ++N) {
-    auto [bonds, couplings] = HBchain(N, 1.0);
-    test_e0_nompi(bonds, couplings);
+    auto [ops, couplings] = HBchain(N, 1.0);
+    test_e0_nompi(ops, couplings);
   }
 
   LogMPI.out("SpinhalfMPI: Heisenberg alltoall apply test, N=2,..,8");
   for (int N = 2; N <= 8; ++N) {
-    auto [bonds, couplings] = HB_alltoall(N);
-    test_e0_nompi(bonds, couplings);
+    auto [ops, couplings] = HB_alltoall(N);
+    test_e0_nompi(ops, couplings);
   }
 
   // Test S+, S-, Sz operators
   LogMPI.out("SpinhalfMPI: Heisenberg chain Sz,S+,S- test, N=2,..,8");
   for (int N = 6; N <= 6; ++N) {
-    auto [bonds, couplings] = HBchain(N, 1.0);
-    test_sz_sp_sm_energy(bonds, couplings);
+    auto [ops, couplings] = HBchain(N, 1.0);
+    test_sz_sp_sm_energy(ops, couplings);
   }
 
   // Test S+, S-, Sz operators

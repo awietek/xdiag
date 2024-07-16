@@ -11,10 +11,10 @@
 
 using namespace xdiag;
 
-void test_spectra_tj_symmetric(BondList bondlist, PermutationGroup space_group,
+void test_spectra_tj_symmetric(OpSum ops, PermutationGroup space_group,
                                std::vector<Representation> irreps,
                                std::vector<int64_t> multiplicities) {
-  // XDIAG_SHOW(bondlist);
+  // XDIAG_SHOW(ops);
   int64_t n_sites = space_group.n_sites();
   assert(irreps.size() == multiplicities.size());
 
@@ -28,7 +28,7 @@ void test_spectra_tj_symmetric(BondList bondlist, PermutationGroup space_group,
       auto tj_nosym = tJ(n_sites, nup, ndn);
       if (tj_nosym.size() < 1000) {
 
-        auto H_nosym = matrixC(bondlist, tj_nosym, tj_nosym);
+        auto H_nosym = matrixC(ops, tj_nosym, tj_nosym);
         REQUIRE(arma::norm(H_nosym - H_nosym.t()) < 1e-12);
         arma::vec eigs_nosym;
         arma::eig_sym(eigs_nosym, H_nosym);
@@ -43,7 +43,7 @@ void test_spectra_tj_symmetric(BondList bondlist, PermutationGroup space_group,
           if (tj.size() > 0) {
 
             // Compute partial spectrum from symmetrized block
-            auto H_sym = matrixC(bondlist, tj, tj);
+            auto H_sym = matrixC(ops, tj, tj);
             // Log("n_sites: {}, nup: {}, ndn: {}, k: {}", n_sites, nup, ndn,
             // k); XDIAG_SHOW(irrep); XDIAG_SHOW(H_sym);
 
@@ -55,8 +55,8 @@ void test_spectra_tj_symmetric(BondList bondlist, PermutationGroup space_group,
             // XDIAG_SHOW(eigs_sym_k);
 
             // Check whether results are the same for real blocks
-            if (tj.irrep().isreal() && bondlist.isreal()) {
-              auto H_sym_real = matrix(bondlist, tj, tj);
+            if (tj.irrep().isreal() && ops.isreal()) {
+              auto H_sym_real = matrix(ops, tj, tj);
               arma::vec eigs_sym_k_real;
               arma::eig_sym(eigs_sym_k_real, H_sym_real);
               REQUIRE(close(eigs_sym_k, eigs_sym_k_real));
@@ -84,10 +84,10 @@ void test_tj_symmetric_spectrum_chains(int64_t n_sites) {
 
   Log.out("tj_symmetric_matrix: tJ chain, symmetric spectra test, n_sites: {}",
           n_sites);
-  auto bondlist = tJchain(n_sites, 0.0, 1.0);
+  auto ops = tJchain(n_sites, 0.0, 1.0);
   auto [space_group, irreps, multiplicities] =
       get_cyclic_group_irreps_mult(n_sites);
-  test_spectra_tj_symmetric(bondlist, space_group, irreps, multiplicities);
+  test_spectra_tj_symmetric(ops, space_group, irreps, multiplicities);
 }
 
 TEST_CASE("tj_symmetric_matrix", "[tj]") {
@@ -98,13 +98,13 @@ TEST_CASE("tj_symmetric_matrix", "[tj]") {
     Log.out(
         "tj_symmetric_matrix: HB chain, symmetric spectra test, n_sites: {}",
         n_sites);
-    BondList bonds;
+    OpSum ops;
     for (int64_t s = 0; s < n_sites; ++s) {
-      bonds += Bond("TJHB", 1.0, {s, (s + 1) % n_sites});
+      ops += Op("TJHB", 1.0, {s, (s + 1) % n_sites});
     }
     auto [space_group, irreps, multiplicities] =
         get_cyclic_group_irreps_mult(n_sites);
-    test_spectra_tj_symmetric(bonds, space_group, irreps, multiplicities);
+    test_spectra_tj_symmetric(ops, space_group, irreps, multiplicities);
   }
 
   // Test linear chains
@@ -118,7 +118,7 @@ TEST_CASE("tj_symmetric_matrix", "[tj]") {
     std::string lfile =
         XDIAG_DIRECTORY "/misc/data/square.8.heisenberg.2sl.lat";
 
-    auto bondlist = read_bondlist(lfile);
+    auto ops = read_opsum(lfile);
     auto permutations = xdiag::read_permutations(lfile);
     auto space_group = PermutationGroup(permutations);
 
@@ -137,8 +137,8 @@ TEST_CASE("tj_symmetric_matrix", "[tj]") {
       multiplicities.push_back(mult);
     }
 
-    bondlist["J"] = 1.0;
-    test_spectra_tj_symmetric(bondlist, space_group, irreps, multiplicities);
+    ops["J"] = 1.0;
+    test_spectra_tj_symmetric(ops, space_group, irreps, multiplicities);
   }
 
   {
@@ -147,9 +147,9 @@ TEST_CASE("tj_symmetric_matrix", "[tj]") {
     std::string lfile =
         XDIAG_DIRECTORY "/misc/data/triangular.9.hop.sublattices.tsl.lat";
 
-    auto bondlist = read_bondlist(lfile);
-    bondlist["T"] = 1.0;
-    bondlist["J"] = 0.4;
+    auto ops = read_opsum(lfile);
+    ops["T"] = 1.0;
+    ops["J"] = 0.4;
     auto permutations = xdiag::read_permutations(lfile);
     auto space_group = PermutationGroup(permutations);
 
@@ -165,7 +165,7 @@ TEST_CASE("tj_symmetric_matrix", "[tj]") {
       irreps.push_back(read_representation(lfile, name));
       multiplicities.push_back(mult);
     }
-    test_spectra_tj_symmetric(bondlist, space_group, irreps, multiplicities);
+    test_spectra_tj_symmetric(ops, space_group, irreps, multiplicities);
   }
 
   {
@@ -175,7 +175,7 @@ TEST_CASE("tj_symmetric_matrix", "[tj]") {
     std::string lfile = XDIAG_DIRECTORY
         "/misc/data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.lat";
 
-    auto bondlist = read_bondlist(lfile);
+    auto ops = read_opsum(lfile);
     std::vector<double> etas{0.0, 0.1, 0.2, 0.3};
     auto permutations = xdiag::read_permutations(lfile);
     auto space_group = PermutationGroup(permutations);
@@ -195,10 +195,10 @@ TEST_CASE("tj_symmetric_matrix", "[tj]") {
 
     for (auto eta : etas) {
       Log("eta: {:.2f}", eta);
-      bondlist["TPHI"] = 1.0; // complex(cos(eta * M_PI), sin(eta * M_PI));
-      bondlist["JPHI"] =
+      ops["TPHI"] = 1.0; // complex(cos(eta * M_PI), sin(eta * M_PI));
+      ops["JPHI"] =
           0.4; // complex(cos(2 * eta * M_PI), sin(2 * eta * M_PI));
-      test_spectra_tj_symmetric(bondlist, space_group, irreps, multiplicities);
+      test_spectra_tj_symmetric(ops, space_group, irreps, multiplicities);
     }
   }
 }

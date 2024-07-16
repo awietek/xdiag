@@ -108,11 +108,11 @@
 #include <xdiag/symmetries/qn.hpp>
 #include <xdiag/symmetries/representation.hpp>
 
-#include <xdiag/operators/bond.hpp>
-#include <xdiag/operators/bondlist.hpp>
 #include <xdiag/operators/compiler.hpp>
-#include <xdiag/operators/non_branching_bonds.hpp>
-#include <xdiag/operators/symmetrized_operator.hpp>
+#include <xdiag/operators/non_branching_op.hpp>
+#include <xdiag/operators/op.hpp>
+#include <xdiag/operators/opsum.hpp>
+#include <xdiag/operators/symmetrize.hpp>
 
 #include <xdiag/algorithms/norm_estimate.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>

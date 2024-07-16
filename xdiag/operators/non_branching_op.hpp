@@ -1,17 +1,13 @@
 #pragma once
 
-#include <xdiag/operators/bond.hpp>
-#include <xdiag/operators/bondlist.hpp>
+#include <xdiag/operators/op.hpp>
+#include <xdiag/operators/opsum.hpp>
 
 namespace xdiag::operators {
 
-BondList non_branching_bonds(Bond const &bond, double precision = 1e-12);
-BondList non_branching_bonds(BondList const &bonds, double precision = 1e-12);
-bool is_non_branching_bond(Bond const &bond, double precision = 1e-12);
-
-template <typename bit_t, typename coeff_t> class NonBranchingBond {
+template <typename bit_t, typename coeff_t> class NonBranchingOp {
 public:
-  explicit NonBranchingBond(Bond const &bond, double precision = 1e-12);
+  explicit NonBranchingOp(Op const &op, double precision = 1e-12);
   bool is_diagonal() const;
   coeff_t coeff(bit_t local_state) const;
   std::pair<bit_t, coeff_t> state_coeff(bit_t local_state) const;
@@ -29,5 +25,9 @@ private:
   std::vector<bit_t> state_applied_;
   std::vector<coeff_t> coeff_;
 };
+
+OpSum non_branching_ops(Op const &op, double precision = 1e-12);
+OpSum non_branching_ops(OpSum const &ops, double precision = 1e-12);
+bool is_non_branching_op(Op const &op, double precision = 1e-12);
 
 } // namespace xdiag::operators

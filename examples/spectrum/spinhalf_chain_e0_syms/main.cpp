@@ -8,11 +8,11 @@ int main() try {
   int nup = n_sites / 2;
 
   // Define the nearest-neighbor Heisenberg Hamiltonian
-  BondList bonds;
+  OpSum ops;
   for (int i = 0; i < n_sites; ++i) {
-    bonds << Bond("HB", "J", {i, (i + 1) % n_sites});
+    ops += Op("HB", "J", {i, (i + 1) % n_sites});
   }
-  bonds["J"] = 1.0;
+  ops["J"] = 1.0;
 
   // Create the permutation group
   std::vector<int> translation;
@@ -31,7 +31,7 @@ int main() try {
 
     // Compute the groundstate energy
     auto block = Spinhalf(n_sites, nup, group, irrep);
-    double e0 = eigval0(bonds, block);
+    double e0 = eigval0(ops, block);
     Log("k: {}, e0: {}", k, e0);
   }
 } catch (Error e) {

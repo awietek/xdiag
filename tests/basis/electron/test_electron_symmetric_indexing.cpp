@@ -45,7 +45,7 @@ TEST_CASE("electron_symmetric_indexing", "[indexing]") {
     irreps.push_back(read_represenation(lfile, name));
     multiplicities.push_back(mult);
   }
-  test_electron_symmetric_spectra<bit_t>(bondlist, couplings, space_group,
+  test_electron_symmetric_spectra<bit_t>(ops, couplings, space_group,
                                          irreps, multiplicities);
   Log("done");
 }

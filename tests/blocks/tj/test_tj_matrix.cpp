@@ -12,10 +12,10 @@
 
 using namespace xdiag;
 
-void test_tjmodel_e0_real(BondList bonds, int n_sites, int nup, int ndn,
+void test_tjmodel_e0_real(OpSum ops, int n_sites, int nup, int ndn,
                           double e0) {
   auto block = tJ(n_sites, nup, ndn);
-  auto H = matrix(bonds, block, block);
+  auto H = matrix(ops, block, block);
   arma::vec eigs;
   arma::eig_sym(eigs, H);
 
@@ -23,7 +23,7 @@ void test_tjmodel_e0_real(BondList bonds, int n_sites, int nup, int ndn,
   REQUIRE(std::abs(e0 - eigs(0)) < 1e-6);
 }
 
-void test_tjmodel_fulleigs(BondList bonds, int n_sites,
+void test_tjmodel_fulleigs(OpSum ops, int n_sites,
                            arma::Col<double> exact_eigs) {
 
   std::vector<double> all_eigs;
@@ -31,7 +31,7 @@ void test_tjmodel_fulleigs(BondList bonds, int n_sites,
     for (int nup = 0; nup <= n_sites - ndn; ++nup) {
 
       auto block = tJ(n_sites, nup, ndn);
-      auto H = matrix(bonds, block, block);
+      auto H = matrix(ops, block, block);
       // H.print();
       REQUIRE(arma::norm(H - H.t()) < 1e-12);
 
@@ -57,11 +57,11 @@ TEST_CASE("tj_matrix", "[tj]") try {
     for (int n_sites = 2; n_sites < 7; ++n_sites) {
       Log("N: {}", n_sites);
       int nup = n_sites / 2;
-      auto bonds = testcases::spinhalf::HB_alltoall(n_sites);
+      auto ops = testcases::spinhalf::HB_alltoall(n_sites);
       auto block = Spinhalf(n_sites, nup);
       auto block_tJ = tJ(n_sites, nup, n_sites - nup);
-      auto H = matrix(bonds, block, block);
-      auto H_tJ = matrix(bonds, block_tJ, block_tJ);
+      auto H = matrix(ops, block, block);
+      auto H_tJ = matrix(ops, block_tJ, block_tJ);
 
       REQUIRE(H.is_hermitian());
       REQUIRE(H_tJ.is_hermitian());
@@ -84,7 +84,7 @@ TEST_CASE("tj_matrix", "[tj]") try {
 
   {
     Log("tj_matrix: TJModel: six-site chain test, t=1.0, J=1.0, N=6");
-    auto bonds = tJchain(6, 1.0, 1.0);
+    auto ops = tJchain(6, 1.0, 1.0);
     std::vector<std::tuple<int, int, double>> nup_ndn_e0 = {
         {0, 0, 0.0},         {0, 1, -2.0},        {0, 2, -2.96081311},
         {0, 3, -3.79610527}, {0, 4, -2.46081311}, {0, 5, -0.99999999},
@@ -97,12 +97,12 @@ TEST_CASE("tj_matrix", "[tj]") try {
         {4, 2, -2.11803398}, {5, 0, -0.99999999}, {5, 1, -0.49999999},
         {6, 0, 1.500000000}};
     for (auto [nup, ndn, e0] : nup_ndn_e0)
-      test_tjmodel_e0_real(bonds, 6, nup, ndn, e0);
+      test_tjmodel_e0_real(ops, 6, nup, ndn, e0);
   }
 
   {
     Log.out("tj_matrix: TJModel: six-site chain test, t=1.0, J=0.0, N=6");
-    auto bonds = tJchain(6, 1.0, 0.0);
+    auto ops = tJchain(6, 1.0, 0.0);
     std::vector<std::tuple<int, int, double>> nup_ndn_e0 = {
         {0, 0, 0.0},         {0, 1, -2.0},        {0, 2, -3.00000000},
         {0, 3, -4.00000000}, {0, 4, -2.99999999}, {0, 5, -2.00000000},
@@ -115,38 +115,38 @@ TEST_CASE("tj_matrix", "[tj]") try {
         {4, 2, 0.000000000}, {5, 0, -2.00000000}, {5, 1, 0.000000000},
         {6, 0, 0.000000000}};
     for (auto [nup, ndn, e0] : nup_ndn_e0)
-      test_tjmodel_e0_real(bonds, 6, nup, ndn, e0);
+      test_tjmodel_e0_real(ops, 6, nup, ndn, e0);
   }
 
   for (int L = 3; L <= 6; ++L) {
     Log.out("tj_matrix: ALPS full spectrum test, chain N={}", L);
-    auto [bonds, eigs] = tJchain_fullspectrum_alps(L);
-    test_tjmodel_fulleigs(bonds, L, eigs);
+    auto [ops, eigs] = tJchain_fullspectrum_alps(L);
+    test_tjmodel_fulleigs(ops, L, eigs);
   }
 
   {
     Log.out("tj_matrix: ALPS full spectrum test, square 2x2");
-    auto [bonds, eigs] = tj_square2x2_fullspectrum_alps();
-    test_tjmodel_fulleigs(bonds, 4, eigs);
+    auto [ops, eigs] = tj_square2x2_fullspectrum_alps();
+    test_tjmodel_fulleigs(ops, 4, eigs);
   }
 
   for (int N = 3; N <= 6; ++N) {
     Log.out("tj_matrix:  random all-to-all complex exchange test, N={}", N);
 
-    auto bonds = tj_alltoall_complex(N);
-    BondList bonds_hb;
-    for (auto bond : bonds) {
-      if (bond.type() == "HB") {
-        bonds_hb += bond;
-        std::string name = bond.coupling().as<std::string>();
-        bonds_hb[name] = bonds[name];
+    auto ops = tj_alltoall_complex(N);
+    OpSum ops_hb;
+    for (auto op : ops) {
+      if (op.type() == "HB") {
+        ops_hb += op;
+        std::string name = op.coupling().as<std::string>();
+        ops_hb[name] = ops[name];
       }
     }
 
     for (int nup = 0; nup <= N; ++nup)
       for (int ndn = 0; ndn <= N - nup; ++ndn) {
         auto block = tJ(N, nup, ndn);
-        auto H = matrixC(bonds, block, block);
+        auto H = matrixC(ops, block, block);
         REQUIRE(arma::norm(H - H.t()) < 1e-12);
       }
 
@@ -156,8 +156,8 @@ TEST_CASE("tj_matrix", "[tj]") try {
       auto block1 = tJ(N, nup, ndn);
       auto block2 = Spinhalf(N, nup);
 
-      auto H1 = matrixC(bonds_hb, block1, block1);
-      auto H2 = matrixC(bonds_hb, block2, block2);
+      auto H1 = matrixC(ops_hb, block1, block1);
+      auto H2 = matrixC(ops_hb, block2, block2);
       arma::vec eigs1;
       arma::eig_sym(eigs1, H1);
       arma::vec eigs2;
@@ -169,14 +169,14 @@ TEST_CASE("tj_matrix", "[tj]") try {
 
   {
     Log.out("tj_matrix: Henry's Matlab test, random 3");
-    auto [bonds, eigs] = randomAlltoAll3();
-    test_tjmodel_fulleigs(bonds, 3, eigs);
+    auto [ops, eigs] = randomAlltoAll3();
+    test_tjmodel_fulleigs(ops, 3, eigs);
   }
 
   {
     Log.out("tj_matrix: Henry's Matlab test, random 4");
-    auto [bonds, eigs] = randomAlltoAll4();
-    test_tjmodel_fulleigs(bonds, 4, eigs);
+    auto [ops, eigs] = randomAlltoAll4();
+    test_tjmodel_fulleigs(ops, 4, eigs);
   }
 } catch (Error e) {
   xdiag::error_trace(e);

@@ -3,7 +3,7 @@
 #include <xdiag/bits/bitops.hpp>
 #include <xdiag/combinatorics/combinations.hpp>
 #include <xdiag/common.hpp>
-#include <xdiag/operators/bond.hpp>
+#include <xdiag/operators/op.hpp>
 #include <xdiag/parallel/mpi/buffer.hpp>
 #include <xdiag/parallel/mpi/communicator.hpp>
 
@@ -12,13 +12,13 @@
 namespace xdiag::tj_distributed {
 
 template <typename bit_t, typename coeff_t, class Basis>
-void apply_exchange(Bond const &bond, Basis &&basis, const coeff_t *vec_in,
+void apply_exchange(Op const &op, Basis &&basis, const coeff_t *vec_in,
                     coeff_t *vec_out) {
-  assert(bond.coupling_defined());
-  assert(bond.type_defined());
-  assert(bond.size() == 2);
-  assert(bond.sites_disjoint());
-  std::string type = bond.type();
+  assert(op.coupling_defined());
+  assert(op.type_defined());
+  assert(op.size() == 2);
+  assert(op.sites_disjoint());
+  std::string type = op.type();
   assert(type == "EXCHANGE");
 
   int mpi_size;
@@ -26,9 +26,9 @@ void apply_exchange(Bond const &bond, Basis &&basis, const coeff_t *vec_in,
 
   using namespace bits;
 
-  int64_t s1 = bond[0];
-  int64_t s2 = bond[1];
-  coeff_t J = bond.coupling<coeff_t>();
+  int64_t s1 = op[0];
+  int64_t s2 = op[1];
+  coeff_t J = op.coupling<coeff_t>();
   coeff_t Jhalf = J / 2.;
   coeff_t Jhalf_conj = xdiag::conj(Jhalf);
   bit_t flipmask = ((bit_t)1 << s1) | ((bit_t)1 << s2);

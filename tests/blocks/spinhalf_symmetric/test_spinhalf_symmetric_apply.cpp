@@ -12,8 +12,7 @@
 
 using namespace xdiag;
 
-void test_spinhalf_symmetric_apply(BondList bondlist,
-                                   PermutationGroup space_group,
+void test_spinhalf_symmetric_apply(OpSum ops, PermutationGroup space_group,
                                    std::vector<Representation> irreps) {
   int n_sites = space_group.n_sites();
 
@@ -22,14 +21,14 @@ void test_spinhalf_symmetric_apply(BondList bondlist,
       auto block = Spinhalf(n_sites, nup, space_group, irrep);
 
       if (block.size() > 0) {
-        auto H = matrixC(bondlist, block, block);
+        auto H = matrixC(ops, block, block);
         REQUIRE(arma::norm(H - H.t()) < 1e-12);
 
         // Check whether apply gives the same as matrix multiplication
         arma::cx_vec v(block.size(), arma::fill::randn);
         arma::cx_vec w1 = H * v;
         arma::cx_vec w2(block.size(), arma::fill::zeros);
-        apply(bondlist, block, v, block, w2);
+        apply(ops, block, v, block, w2);
         REQUIRE(close(w1, w2));
 
         // Compute eigenvalues and compare
@@ -37,20 +36,20 @@ void test_spinhalf_symmetric_apply(BondList bondlist,
         arma::eig_sym(evals_mat, H);
 
         double e0_mat = evals_mat(0);
-        double e0_app = eigval0(bondlist, block);
+        double e0_app = eigval0(ops, block);
         // Log.out("e0_mat: {}, e0_app: {}", e0_mat, e0_app);
         REQUIRE(std::abs(e0_mat - e0_app) < 1e-7);
 
         // Compute eigenvalues with real arithmitic
-        if (block.irrep().isreal() && bondlist.isreal()) {
-          auto H_real = matrix(bondlist, block, block);
+        if (block.irrep().isreal() && ops.isreal()) {
+          auto H_real = matrix(ops, block, block);
           arma::vec evals_mat_real;
           arma::eig_sym(evals_mat_real, H_real);
 
           REQUIRE(close(evals_mat_real, evals_mat));
 
           double e0_mat_real = evals_mat_real(0);
-          double e0_app_real = eigval0(bondlist, block);
+          double e0_app_real = eigval0(ops, block);
           REQUIRE(std::abs(e0_mat_real - e0_app_real) < 1e-7);
         }
       }
@@ -58,7 +57,7 @@ void test_spinhalf_symmetric_apply(BondList bondlist,
   }
 }
 
-void test_spinhalf_symmetric_apply_no_sz(BondList bondlist,
+void test_spinhalf_symmetric_apply_no_sz(OpSum ops,
                                          PermutationGroup space_group,
                                          std::vector<Representation> irreps) {
   int n_sites = space_group.n_sites();
@@ -67,34 +66,34 @@ void test_spinhalf_symmetric_apply_no_sz(BondList bondlist,
     auto block = Spinhalf(n_sites, space_group, irrep);
 
     if (block.size() > 0) {
-      auto H = matrixC(bondlist, block, block);
+      auto H = matrixC(ops, block, block);
       REQUIRE(arma::norm(H - H.t()) < 1e-12);
       // Check whether apply gives the same as matrix multiplication
       arma::cx_vec v(block.size(), arma::fill::randn);
       arma::cx_vec w1 = H * v;
       arma::cx_vec w2(block.size(), arma::fill::zeros);
-      apply(bondlist, block, v, block, w2);
+      apply(ops, block, v, block, w2);
       REQUIRE(close(w1, w2));
       // Compute eigenvalues and compare
       arma::vec evals_mat;
       arma::eig_sym(evals_mat, H);
 
       double e0_mat = evals_mat(0);
-      double e0_app = eigval0(bondlist, block);
+      double e0_app = eigval0(ops, block);
 
       // Log.out("e0_mat: {}, e0_app: {}", e0_mat, e0_app);
       REQUIRE(std::abs(e0_mat - e0_app) < 1e-7);
 
       // Compute eigenvalues with real arithmitic
-      if (block.irrep().isreal() && bondlist.isreal()) {
-        auto H_real = matrix(bondlist, block, block);
+      if (block.irrep().isreal() && ops.isreal()) {
+        auto H_real = matrix(ops, block, block);
         arma::vec evals_mat_real;
         arma::eig_sym(evals_mat_real, H_real);
 
         REQUIRE(close(evals_mat_real, evals_mat));
 
         double e0_mat_real = evals_mat_real(0);
-        double e0_app_real = eigval0(bondlist, block);
+        double e0_app_real = eigval0(ops, block);
         REQUIRE(std::abs(e0_mat_real - e0_app_real) < 1e-7);
       }
     }
@@ -106,9 +105,9 @@ void test_spinhalf_symmetric_apply_chains(int n_sites) {
   using xdiag::testcases::electron::get_cyclic_group_irreps;
   Log.out("spinhalf_symmetric_apply: HB chain, N: {}", n_sites);
   auto [space_group, irreps] = get_cyclic_group_irreps(n_sites);
-  auto bondlist = HBchain(n_sites, 1.0, 1.0);
-  test_spinhalf_symmetric_apply(bondlist, space_group, irreps);
-  test_spinhalf_symmetric_apply_no_sz(bondlist, space_group, irreps);
+  auto ops = HBchain(n_sites, 1.0, 1.0);
+  test_spinhalf_symmetric_apply(ops, space_group, irreps);
+  test_spinhalf_symmetric_apply_no_sz(ops, space_group, irreps);
 }
 
 TEST_CASE("spinhalf_symmetric_apply", "[spinhalf]") {
@@ -123,11 +122,11 @@ TEST_CASE("spinhalf_symmetric_apply", "[spinhalf]") {
   std::string lfile = XDIAG_DIRECTORY
       "/misc/data/triangular.9.Jz1Jz2Jx1Jx2D1.sublattices.tsl.lat";
 
-  auto bondlist = read_bondlist(lfile);
-  bondlist["Jz1"] = 1.00;
-  bondlist["Jz2"] = 0.23;
-  bondlist["Jx1"] = 0.76;
-  bondlist["Jx2"] = 0.46;
+  auto ops = read_opsum(lfile);
+  ops["Jz1"] = 1.00;
+  ops["Jz2"] = 0.23;
+  ops["Jx1"] = 0.76;
+  ops["Jx2"] = 0.46;
 
   std::vector<std::pair<std::string, int>> rep_name_mult = {
       {"Gamma.D6.A1", 1}, {"Gamma.D6.A2", 1}, {"Gamma.D6.B1", 1},
@@ -143,8 +142,8 @@ TEST_CASE("spinhalf_symmetric_apply", "[spinhalf]") {
     (void)mult;
     irreps.push_back(read_representation(lfile, name));
   }
-  test_spinhalf_symmetric_apply(bondlist, space_group, irreps);
-  test_spinhalf_symmetric_apply_no_sz(bondlist, space_group, irreps);
+  test_spinhalf_symmetric_apply(ops, space_group, irreps);
+  test_spinhalf_symmetric_apply_no_sz(ops, space_group, irreps);
 
   // test J1-J2-Jchi triangular lattice
   {
@@ -153,10 +152,10 @@ TEST_CASE("spinhalf_symmetric_apply", "[spinhalf]") {
         XDIAG_DIRECTORY "/misc/data/triangular.j1j2jch/"
                         "triangular.12.j1j2jch.sublattices.fsl.lat";
 
-    auto bondlist = read_bondlist(lfile);
-    bondlist["J1"] = 1.00;
-    bondlist["J2"] = 0.15;
-    bondlist["Jchi"] = -0.09;
+    auto ops = read_opsum(lfile);
+    ops["J1"] = 1.00;
+    ops["J2"] = 0.15;
+    ops["Jchi"] = -0.09;
 
     std::vector<std::pair<std::string, double>> rep_name_mult = {
         {"Gamma.C6.A", -6.9456000700824329641},
@@ -178,7 +177,7 @@ TEST_CASE("spinhalf_symmetric_apply", "[spinhalf]") {
     for (auto [name, energy] : rep_name_mult) {
       auto irrep = read_representation(lfile, name);
       auto spinhalf = Spinhalf(n_sites, n_up, space_group, irrep);
-      auto e0 = eigval0(bondlist, spinhalf);
+      auto e0 = eigval0(ops, spinhalf);
       Log("{} {:.12f} {:.12f}", name, e0, energy);
 
       REQUIRE(std::abs(e0 - energy) < 1e-10);

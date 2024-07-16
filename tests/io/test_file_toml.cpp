@@ -2,8 +2,8 @@
 
 #include <xdiag/common.hpp>
 #include <xdiag/io/file_toml.hpp>
-#include <xdiag/operators/bond.hpp>
-#include <xdiag/operators/bondlist.hpp>
+#include <xdiag/operators/op.hpp>
+#include <xdiag/operators/opsum.hpp>
 #include <xdiag/symmetries/operations/symmetry_operations.hpp>
 #include <xdiag/symmetries/permutation.hpp>
 #include <xdiag/symmetries/permutation_group.hpp>
@@ -28,14 +28,14 @@ template <typename T> void test_write_read(T val) try {
   // XDIAG_SHOW(val);
   // XDIAG_SHOW(val_r);
   REQUIRE(val == val_r);
- } catch (xdiag::Error const &e) {
+} catch (xdiag::Error const &e) {
   XDIAG_RETHROW(e);
 }
 
 TEST_CASE("file_toml", "[io]") try {
   using namespace xdiag;
   using namespace arma;
-
+  
   // Just try to parse everything in the example toml file
   std::string filename = XDIAG_DIRECTORY "/misc/data/toml/read.toml";
   auto fl = FileToml(filename, 'r');
@@ -218,51 +218,51 @@ TEST_CASE("file_toml", "[io]") try {
   auto irrep = read_representation(lfile, "X.C1.A");
   test_write_read(irrep);
 
-  auto bond = Bond("HB", "H", 1);
-  test_write_read(bond);
+  auto op = Op("HB", "H", 1);
+  test_write_read(op);
 
-  bond = Bond("HB", "J1", {1, 2});
-  test_write_read(bond);
+  op = Op("HB", "J1", {1, 2});
+  test_write_read(op);
 
-  bond = Bond("HB", 1.0, 1);
-  test_write_read(bond);
+  op = Op("HB", 1.0, 1);
+  test_write_read(op);
 
-  bond = Bond("HB", 1.2, {1, 2});
-  test_write_read(bond);
+  op = Op("HB", 1.2, {1, 2});
+  test_write_read(op);
 
-  bond = Bond("HB", 2.1 + 1.2i, 1);
-  test_write_read(bond);
+  op = Op("HB", 2.1 + 1.2i, 1);
+  test_write_read(op);
 
-  bond = Bond("HB", 2.1 + 1.2i, {1, 2});
-  test_write_read(bond);
+  op = Op("HB", 2.1 + 1.2i, {1, 2});
+  test_write_read(op);
 
   auto matr = arma::mat(3, 3, arma::fill::randu);
 
-  bond = Bond("H", matr, 1);
-  test_write_read(bond);
+  op = Op("H", matr, 1);
+  test_write_read(op);
 
-  bond = Bond("J1", matr, {1, 2});
-  test_write_read(bond);
+  op = Op("J1", matr, {1, 2});
+  test_write_read(op);
 
   auto matc = arma::cx_mat(3, 3, arma::fill::randu);
 
-  bond = Bond("H", matc, 1);
-  test_write_read(bond);
+  op = Op("H", matc, 1);
+  test_write_read(op);
 
-  bond = Bond("J1", matc, {1, 2});
-  test_write_read(bond);
+  op = Op("J1", matc, {1, 2});
+  test_write_read(op);
 
-  auto bonds = read_bondlist(lfile);
-  test_write_read(bonds);
+  auto ops = read_opsum(lfile);
+  test_write_read(ops);
 
-  bonds["J1"] = 1.0;
-  bonds["J2"] = (complex)(0.2 - 0.1i);
-  test_write_read(bonds);
+  ops["J1"] = 1.0;
+  ops["J2"] = (complex)(0.2 - 0.1i);
+  test_write_read(ops);
 
-  bonds["M1"] = arma::mat(3, 4, arma::fill::randu);
-  bonds["M2"] = arma::cx_mat(3, 4, arma::fill::randu);
-  test_write_read(bonds);
+  ops["M1"] = arma::mat(3, 4, arma::fill::randu);
+  ops["M2"] = arma::cx_mat(3, 4, arma::fill::randu);
+  test_write_read(ops);
 
- } catch (xdiag::Error const &e) {
+} catch (xdiag::Error const &e) {
   XDIAG_RETHROW(e);
 }

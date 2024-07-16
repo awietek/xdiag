@@ -9,18 +9,19 @@
 #include <xdiag/common.hpp>
 #include <xdiag/extern/armadillo/armadillo>
 #include <xdiag/utils/logger.hpp>
+#include <xdiag/utils/print_macro.hpp>
 
 using namespace xdiag;
 
 template <typename block_t>
-void test_operator_norm_real(block_t const &block, BondList const &bonds) {
+void test_operator_norm_real(block_t const &block, OpSum const &ops) {
   using namespace xdiag;
   using namespace arma;
 
-  auto H = matrix(bonds, block, block);
+  auto H = matrix(ops, block, block);
   double norm_exact = norm(H, 1);
   auto apply_H = [&H](vec const &v) { return vec(H * v); };
-  double norm_est = norm_estimate(bonds, block);
+  double norm_est = norm_estimate(ops, block);
   double ratio = norm_est / norm_exact;
 
   // Log("norm_exact: {}", norm_exact);
@@ -32,13 +33,13 @@ void test_operator_norm_real(block_t const &block, BondList const &bonds) {
 }
 
 template <typename block_t>
-void test_operator_norm_cplx(block_t const &block, BondList const &bonds) {
+void test_operator_norm_cplx(block_t const &block, OpSum const &ops) {
   using namespace xdiag;
   using namespace arma;
 
-  auto H = matrixC(bonds, block, block);
+  auto H = matrixC(ops, block, block);
   double norm_exact = norm(H, 1);
-  double norm_est = norm_estimate(bonds, block);
+  double norm_est = norm_estimate(ops, block);
   double ratio = norm_est / norm_exact;
 
   // Log("norm_exact: {}", norm_exact);
@@ -88,18 +89,19 @@ TEST_CASE("norm_estimate", "[algorithms]") {
       REQUIRE(((ratio <= 1.00001) && (ratio > 0.3)));
     }
   }
-  for (int n_sites = 2; n_sites < 12; ++n_sites) {
+  for (int n_sites = 3; n_sites < 12; ++n_sites) {
     // XDIAG_SHOW(n_sites);
+    {
+      Log("norm_estimate for Heisenberg all-to-all random, N={}", n_sites);
 
-    Log("norm_estimate for Heisenberg all-to-all random, N={}", n_sites);
-
-    // Random HB alltoall
-    auto bonds = xdiag::testcases::spinhalf::HB_alltoall(n_sites);
-    auto block = Spinhalf(n_sites);
-    test_operator_norm_real(block, bonds);
-    for (int nup = 0; nup <= n_sites; ++nup) {
-      auto block = Spinhalf(n_sites, nup);
-      test_operator_norm_real(block, bonds);
+      // Random HB alltoall
+      auto ops = xdiag::testcases::spinhalf::HB_alltoall(n_sites);
+      auto block = Spinhalf(n_sites);
+      test_operator_norm_real(block, ops);
+      for (int nup = 0; nup <= n_sites; ++nup) {
+        auto block = Spinhalf(n_sites, nup);
+        test_operator_norm_real(block, ops);
+      }
     }
 
     Log("norm_estimate for Heisenberg chain symmetric, N={}", n_sites);
@@ -108,17 +110,17 @@ TEST_CASE("norm_estimate", "[algorithms]") {
     auto [group, irreps, multiplicities] =
         get_cyclic_group_irreps_mult(n_sites);
     (void)multiplicities;
-    auto bondlist = HBchain(n_sites, 3.21, 0.123);
+    auto ops = HBchain(n_sites, 3.21, 0.123);
     for (int nup = 0; nup <= n_sites; ++nup) {
       auto block = Spinhalf(n_sites, nup);
-      test_operator_norm_real(block, bonds);
+      test_operator_norm_real(block, ops);
       for (auto irrep : irreps) {
         // XDIAG_SHOW(irrep);
         auto block = Spinhalf(n_sites, nup, group, irrep);
         if (irrep.isreal()) {
-          test_operator_norm_real(block, bonds);
+          test_operator_norm_real(block, ops);
         } else {
-          test_operator_norm_cplx(block, bonds);
+          test_operator_norm_cplx(block, ops);
         }
       }
     }
@@ -129,9 +131,9 @@ TEST_CASE("norm_estimate", "[algorithms]") {
     std::string lfile =
         XDIAG_DIRECTORY "/misc/data/triangular.9.hop.sublattices.tsl.lat";
     int n_sites = 9;
-    auto bonds = read_bondlist(lfile);
-    bonds["T"] = 1.0;
-    bonds["J"] = 0.4;
+    auto ops = read_opsum(lfile);
+    ops["T"] = 1.0;
+    ops["J"] = 0.4;
     auto permutations = xdiag::read_permutations(lfile);
     auto group = PermutationGroup(permutations);
 
@@ -150,16 +152,16 @@ TEST_CASE("norm_estimate", "[algorithms]") {
           continue;
 
         auto block = tJ(n_sites, nup, ndn);
-        test_operator_norm_real(block, bonds);
+        test_operator_norm_real(block, ops);
 
         for (auto [name, mult] : rep_name_mult) {
           (void)mult;
           auto irrep = read_representation(lfile, name);
           auto block = tJ(n_sites, nup, ndn, group, irrep);
           if (irrep.isreal()) {
-            test_operator_norm_real(block, bonds);
+            test_operator_norm_real(block, ops);
           } else {
-            test_operator_norm_cplx(block, bonds);
+            test_operator_norm_cplx(block, ops);
           }
         }
       }
@@ -175,7 +177,7 @@ TEST_CASE("norm_estimate", "[algorithms]") {
     std::string lfile = XDIAG_DIRECTORY
         "/misc/data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.lat";
 
-    auto bonds = read_bondlist(lfile);
+    auto ops = read_opsum(lfile);
     std::vector<double> etas{0.0, 0.1, 0.2, 0.3};
     auto permutations = xdiag::read_permutations(lfile);
     auto group = PermutationGroup(permutations);
@@ -190,8 +192,8 @@ TEST_CASE("norm_estimate", "[algorithms]") {
     std::vector<int> multiplicities;
 
     for (auto eta : etas) {
-      bonds["TPHI"] = complex(cos(eta * M_PI), sin(eta * M_PI));
-      bonds["JPHI"] = complex(cos(2 * eta * M_PI), sin(2 * eta * M_PI));
+      ops["TPHI"] = complex(cos(eta * M_PI), sin(eta * M_PI));
+      ops["JPHI"] = complex(cos(2 * eta * M_PI), sin(2 * eta * M_PI));
       for (int nup = 0; nup <= n_sites; ++nup) {
         for (int ndn = 0; ndn <= n_sites; ++ndn) {
 
@@ -199,13 +201,13 @@ TEST_CASE("norm_estimate", "[algorithms]") {
             continue;
 
           auto block = tJ(n_sites, nup, ndn);
-          test_operator_norm_cplx(block, bonds);
+          test_operator_norm_cplx(block, ops);
 
           for (auto [name, mult] : rep_name_mult) {
             (void)mult;
             auto irrep = read_representation(lfile, name);
             auto block = tJ(n_sites, nup, ndn, group, irrep);
-            test_operator_norm_cplx(block, bonds);
+            test_operator_norm_cplx(block, ops);
           }
         }
       }

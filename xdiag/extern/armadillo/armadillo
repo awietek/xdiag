@@ -14,6 +14,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // ------------------------------------------------------------------------
+
+// Redifinition of "Op" to avoid name colission with xdiag::Op (#undef at bottom)
+#define Op OPP
+
 #define ARMA_DONT_USE_WRAPPER
 
 #ifndef ARMA_INCLUDES
@@ -821,3 +825,4 @@ namespace arma
 #include "armadillo_bits/compiler_setup_post.hpp"
 
 #endif
+#undef Op

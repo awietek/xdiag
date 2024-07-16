@@ -24,9 +24,9 @@ int main(int argc, char **argv) {
           n_sites, J, Jd, n_up, kname),
       "w!");
 
-  auto bonds = BondList(lfile["Interactions"]);
-  bonds["J"] = J;
-  bonds["JD"] = Jd;
+  auto ops = OpSum(lfile["Interactions"]);
+  ops["J"] = J;
+  ops["JD"] = Jd;
   auto group = PermutationGroup(lfile["Symmetries"]);
   auto irrep_k = Representation(lfile[kname]);
 
@@ -38,7 +38,7 @@ int main(int argc, char **argv) {
 
   Log("Creating matrix ...");
   tic();
-  auto H = matrix(bonds, block_k);
+  auto H = matrix(ops, block_k);
   toc();
 
   Log("Diagonalizing ...");

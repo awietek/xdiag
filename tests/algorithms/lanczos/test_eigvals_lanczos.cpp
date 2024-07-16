@@ -13,27 +13,27 @@ using namespace xdiag;
 TEST_CASE("eigvals_lanczos", "[lanczos]") {
   using namespace xdiag::testcases::electron;
 
-  BondList bondlist;
-  bondlist["U"] = 5.0;
+  OpSum ops;
+  ops["U"] = 5.0;
 
   int n_sites = 6;
   int num_eigenvalue = 1;
 
   printf("eigvals_lanczos real test ...\n");
-  bondlist = freefermion_alltoall(n_sites);
+  ops = freefermion_alltoall(n_sites);
 
   for (int nup = 0; nup <= n_sites; ++nup)
     for (int ndn = 0; ndn <= n_sites; ++ndn) {
 
       // Compute exact evals
       auto block = Electron(n_sites, nup, ndn);
-      auto H = matrix(bondlist, block, block);
+      auto H = matrix(ops, block, block);
       arma::vec evals_mat;
       arma::eig_sym(evals_mat, H);
 
       // Compute evals with Lanczos
       try {
-        auto res = eigvals_lanczos(bondlist, block, num_eigenvalue);
+        auto res = eigvals_lanczos(ops, block, num_eigenvalue);
         auto evals = res.eigenvalues;
         for (int i = 0; i < num_eigenvalue; ++i) {
           // lila::Log("a: {}, b: {}", evals_mat(i), evals_tmat(i));
@@ -46,19 +46,19 @@ TEST_CASE("eigvals_lanczos", "[lanczos]") {
   printf("Done.\n");
 
   printf("eigvals_lanczos cplx test ...\n");
-  bondlist = freefermion_alltoall_complex_updn(n_sites);
+  ops = freefermion_alltoall_complex_updn(n_sites);
 
   for (int nup = 0; nup <= n_sites; ++nup)
     for (int ndn = 0; ndn <= n_sites; ++ndn) {
 
       // Create block and matrix for comparison
       auto block = Electron(n_sites, nup, ndn);
-      auto H = matrixC(bondlist, block, block);
+      auto H = matrixC(ops, block, block);
       arma::vec evals_mat;
       arma::eig_sym(evals_mat, H);
 
       // Compute evals with Lanczos
-      auto res = eigvals_lanczos(bondlist, block, num_eigenvalue);
+      auto res = eigvals_lanczos(ops, block, num_eigenvalue);
       auto evals = res.eigenvalues;
 
       for (int i = 0; i < num_eigenvalue; ++i)

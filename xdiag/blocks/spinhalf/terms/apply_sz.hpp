@@ -10,17 +10,17 @@ namespace xdiag::spinhalf {
 
 template <typename bit_t, typename coeff_t, bool symmetric, class BasisIn,
           class BasisOut, class Fill>
-void apply_sz(Bond const &bond, BasisIn &&basis_in, BasisOut &&basis_out,
+void apply_sz(Op const &op, BasisIn &&basis_in, BasisOut &&basis_out,
               Fill &&fill) {
-  assert(bond.coupling_defined());
-  assert(bond.type_defined() && (bond.type() == "SZ"));
-  assert(bond.size() == 1);
+  assert(op.coupling_defined());
+  assert(op.type_defined() && (op.type() == "SZ"));
+  assert(op.size() == 1);
 
-  Coupling cpl = bond.coupling();
+  Coupling cpl = op.coupling();
   assert(cpl.isexplicit() && !cpl.ismatrix());
   coeff_t H = cpl.as<coeff_t>();
 
-  int64_t s = bond[0];
+  int64_t s = op[0];
   bit_t mask = ((bit_t)1 << s);
 
   coeff_t val_up = H / 2.;

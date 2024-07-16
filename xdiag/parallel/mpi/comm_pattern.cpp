@@ -2,32 +2,32 @@
 
 namespace xdiag::mpi {
 
-bool CommPattern::contains(Bond const &bond) {
-  return comm_for_bond_.count(bond);
+bool CommPattern::contains(Op const &op) {
+  return comm_for_op_.count(op);
 }
 
-Communicator const &CommPattern::operator[](Bond const &bond) const try {
-  if (contains(bond)) {
-    return comm_for_bond_.at(bond);
+Communicator const &CommPattern::operator[](Op const &op) const try {
+  if (contains(op)) {
+    return comm_for_op_.at(op);
   } else {
-    XDIAG_THROW("Cannot find communicator for bond");
+    XDIAG_THROW("Cannot find communicator for Op");
     return Communicator();
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
-  Communicator &CommPattern::operator[](Bond const &bond try {
-  if (contains(bond)) {
-    return comm_for_bond_[bond];
+  Communicator &CommPattern::operator[](Op const &op try {
+  if (contains(op)) {
+    return comm_for_op_[op];
   } else {
-    XDIAG_THROW("Cannot find communicator for bond");
+    XDIAG_THROW("Cannot find communicator for op");
     return Communicator();
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
-Communicator &operator[](Bond const &bond);
+Communicator &operator[](Op const &op);
 
   } // namespace xdiag::mpi

@@ -8,7 +8,7 @@
 namespace xdiag::tj_distributed {
 
 template <typename coeff_t>
-inline void dispatch(BondList const &bonds, tJDistributed const &block_in,
+inline void dispatch(OpSum const &ops, tJDistributed const &block_in,
                      arma::Col<coeff_t> const &vec_in,
                      tJDistributed const &block_out,
                      arma::Col<coeff_t> &vec_out) try {
@@ -20,17 +20,17 @@ inline void dispatch(BondList const &bonds, tJDistributed const &block_in,
   std::visit(overload{// uint16_t
                       [&](BasisNp<uint16_t> const &idx_in,
                           BasisNp<uint16_t> const &idx_out) {
-                        apply_terms<uint16_t, coeff_t>(bonds, idx_in, vec_in,
+                        apply_terms<uint16_t, coeff_t>(ops, idx_in, vec_in,
                                                        idx_out, vec_out);
                       },
                       [&](BasisNp<uint32_t> const &idx_in,
                           BasisNp<uint32_t> const &idx_out) {
-                        apply_terms<uint32_t, coeff_t>(bonds, idx_in, vec_in,
+                        apply_terms<uint32_t, coeff_t>(ops, idx_in, vec_in,
                                                        idx_out, vec_out);
                       },
                       [&](BasisNp<uint64_t> const &idx_in,
                           BasisNp<uint64_t> const &idx_out) {
-                        apply_terms<uint64_t, coeff_t>(bonds, idx_in, vec_in,
+                        apply_terms<uint64_t, coeff_t>(ops, idx_in, vec_in,
                                                        idx_out, vec_out);
                       },
                       [&](auto const &idx_in, auto const &idx_out) {

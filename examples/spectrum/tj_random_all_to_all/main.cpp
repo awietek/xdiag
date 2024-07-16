@@ -7,7 +7,7 @@ int main() {
   int n_sites = 8;
 
   // Create the Hamiltonian
-  BondList bonds;
+  OpSum ops;
   auto T_mat = mat(n_sites, n_sites, fill::randn);
   auto J_mat = mat(n_sites, n_sites, fill::randn);
   for (int i = 0; i < n_sites; ++i) {
@@ -16,13 +16,13 @@ int main() {
 
         // Define hoppings
         std::string T = fmt::format("T{}{}", i, j);
-        bonds << Bond("HOP", T, {i, j});
-        bonds[T] = T_mat(i, j);
+        ops += Op("HOP", T, {i, j});
+        ops[T] = T_mat(i, j);
 
         // Define Heisenberg interactions
         std::string J = fmt::format("J{}{}", i, j);
-        bonds << Bond("HB", J, {i, j});
-        bonds[J] = J_mat(i, j);
+        ops += Op("HB", J, {i, j});
+        ops[J] = J_mat(i, j);
       }
     }
   }
@@ -33,7 +33,7 @@ int main() {
   auto block = tJ(n_sites, n_up, n_dn);
 
   // Compute the full Hamiltonian matrix
-  auto H = matrixC(bonds, block);
+  auto H = matrixC(ops, block);
 
   // Compute all eigenvalues of H
   vec eigs;

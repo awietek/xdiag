@@ -4,25 +4,25 @@
 
 namespace xdiag::testcases::spinhalf {
 
-BondList HBchain(int64_t n_sites, double J1, double J2) {
+OpSum HBchain(int64_t n_sites, double J1, double J2) {
 
-  BondList bondlist;
-  bondlist["J1"] = J1;
-  bondlist["J2"] = J2;
+  OpSum ops;
+  ops["J1"] = J1;
+  ops["J2"] = J2;
 
   for (int64_t s = 0; s < n_sites; ++s) {
-    bondlist += Bond("HB", "J1", {s, (s + 1) % n_sites});
+    ops += Op("HB", "J1", {s, (s + 1) % n_sites});
   }
   for (int64_t s = 0; s < n_sites; ++s) {
-    bondlist += Bond("HB", "J2", {s, (s + 2) % n_sites});
+    ops += Op("HB", "J2", {s, (s + 2) % n_sites});
   }
-  return bondlist;
+  return ops;
 }
 
-std::tuple<BondList, arma::Col<double>> HBchain_fullspectrum_nup(int64_t L,
+std::tuple<OpSum, arma::Col<double>> HBchain_fullspectrum_nup(int64_t L,
                                                                  int64_t nup) {
 
-  auto bondlist = HBchain(L, 1.0);
+  auto ops = HBchain(L, 1.0);
 
   arma::Col<double> eigs;
   if (L == 2) {
@@ -93,104 +93,104 @@ std::tuple<BondList, arma::Col<double>> HBchain_fullspectrum_nup(int64_t L,
       eigs = {1.5};
     }
   }
-  return {bondlist, eigs};
+  return {ops, eigs};
 }
 
-BondList HB_alltoall(int64_t n_sites) {
+OpSum HB_alltoall(int64_t n_sites) {
   std::default_random_engine generator;
   std::normal_distribution<double> distribution(0., 1.);
 
-  BondList bondlist;
+  OpSum ops;
   for (int64_t s1 = 0; s1 < n_sites; ++s1)
     for (int64_t s2 = s1 + 1; s2 < n_sites; ++s2) {
       std::stringstream ss;
       ss << "J" << s1 << "_" << s2;
       std::string name = ss.str();
       double value = distribution(generator);
-      bondlist += Bond("HB", name, {s1, s2});
-      bondlist[name] = value;
+      ops += Op("HB", name, {s1, s2});
+      ops[name] = value;
     }
-  return bondlist;
+  return ops;
 }
 
-std::tuple<BondList, double> triangular_12_complex(int64_t nup, double eta) {
+std::tuple<OpSum, double> triangular_12_complex(int64_t nup, double eta) {
 
-  BondList bonds;
-  bonds += Bond("ISING", "Jz", {0, 5});
-  bonds += Bond("ISING", "Jz", {8, 2});
-  bonds += Bond("ISING", "Jz", {2, 7});
-  bonds += Bond("ISING", "Jz", {1, 4});
-  bonds += Bond("ISING", "Jz", {4, 8});
-  bonds += Bond("ISING", "Jz", {6, 10});
-  bonds += Bond("ISING", "Jz", {10, 0});
-  bonds += Bond("ISING", "Jz", {5, 9});
-  bonds += Bond("ISING", "Jz", {9, 3});
-  bonds += Bond("ISING", "Jz", {3, 6});
-  bonds += Bond("ISING", "Jz", {7, 11});
-  bonds += Bond("ISING", "Jz", {11, 1});
-  bonds += Bond("ISING", "Jz", {0, 8});
-  bonds += Bond("ISING", "Jz", {8, 6});
-  bonds += Bond("ISING", "Jz", {2, 10});
-  bonds += Bond("ISING", "Jz", {1, 9});
-  bonds += Bond("ISING", "Jz", {4, 3});
-  bonds += Bond("ISING", "Jz", {6, 1});
-  bonds += Bond("ISING", "Jz", {10, 4});
-  bonds += Bond("ISING", "Jz", {5, 2});
-  bonds += Bond("ISING", "Jz", {9, 7});
-  bonds += Bond("ISING", "Jz", {3, 11});
-  bonds += Bond("ISING", "Jz", {7, 0});
-  bonds += Bond("ISING", "Jz", {11, 5});
-  bonds += Bond("ISING", "Jz", {0, 4});
-  bonds += Bond("ISING", "Jz", {8, 3});
-  bonds += Bond("ISING", "Jz", {2, 6});
-  bonds += Bond("ISING", "Jz", {1, 5});
-  bonds += Bond("ISING", "Jz", {4, 9});
-  bonds += Bond("ISING", "Jz", {6, 11});
-  bonds += Bond("ISING", "Jz", {10, 1});
-  bonds += Bond("ISING", "Jz", {5, 8});
-  bonds += Bond("ISING", "Jz", {9, 2});
-  bonds += Bond("ISING", "Jz", {3, 7});
-  bonds += Bond("ISING", "Jz", {7, 10});
-  bonds += Bond("ISING", "Jz", {11, 0});
-  bonds += Bond("EXCHANGE", "Jx", {0, 8});
-  bonds += Bond("EXCHANGE", "Jx", {8, 6});
-  bonds += Bond("EXCHANGE", "Jx", {2, 10});
-  bonds += Bond("EXCHANGE", "Jx", {1, 9});
-  bonds += Bond("EXCHANGE", "Jx", {4, 3});
-  bonds += Bond("EXCHANGE", "Jx", {6, 1});
-  bonds += Bond("EXCHANGE", "Jx", {10, 4});
-  bonds += Bond("EXCHANGE", "Jx", {5, 2});
-  bonds += Bond("EXCHANGE", "Jx", {9, 7});
-  bonds += Bond("EXCHANGE", "Jx", {3, 11});
-  bonds += Bond("EXCHANGE", "Jx", {7, 0});
-  bonds += Bond("EXCHANGE", "Jx", {11, 5});
-  bonds += Bond("EXCHANGE", "Jx", {0, 10});
-  bonds += Bond("EXCHANGE", "Jx", {8, 4});
-  bonds += Bond("EXCHANGE", "Jx", {2, 8});
-  bonds += Bond("EXCHANGE", "Jx", {1, 11});
-  bonds += Bond("EXCHANGE", "Jx", {4, 1});
-  bonds += Bond("EXCHANGE", "Jx", {6, 3});
-  bonds += Bond("EXCHANGE", "Jx", {10, 6});
-  bonds += Bond("EXCHANGE", "Jx", {5, 0});
-  bonds += Bond("EXCHANGE", "Jx", {9, 5});
-  bonds += Bond("EXCHANGE", "Jx", {3, 9});
-  bonds += Bond("EXCHANGE", "Jx", {7, 2});
-  bonds += Bond("EXCHANGE", "Jx", {11, 7});
-  bonds += Bond("EXCHANGE", "Jx", {0, 11});
-  bonds += Bond("EXCHANGE", "Jx", {8, 5});
-  bonds += Bond("EXCHANGE", "Jx", {2, 9});
-  bonds += Bond("EXCHANGE", "Jx", {1, 10});
-  bonds += Bond("EXCHANGE", "Jx", {4, 0});
-  bonds += Bond("EXCHANGE", "Jx", {6, 2});
-  bonds += Bond("EXCHANGE", "Jx", {10, 7});
-  bonds += Bond("EXCHANGE", "Jx", {5, 1});
-  bonds += Bond("EXCHANGE", "Jx", {9, 4});
-  bonds += Bond("EXCHANGE", "Jx", {3, 8});
-  bonds += Bond("EXCHANGE", "Jx", {7, 3});
-  bonds += Bond("EXCHANGE", "Jx", {11, 6});
+  OpSum ops;
+  ops += Op("ISING", "Jz", {0, 5});
+  ops += Op("ISING", "Jz", {8, 2});
+  ops += Op("ISING", "Jz", {2, 7});
+  ops += Op("ISING", "Jz", {1, 4});
+  ops += Op("ISING", "Jz", {4, 8});
+  ops += Op("ISING", "Jz", {6, 10});
+  ops += Op("ISING", "Jz", {10, 0});
+  ops += Op("ISING", "Jz", {5, 9});
+  ops += Op("ISING", "Jz", {9, 3});
+  ops += Op("ISING", "Jz", {3, 6});
+  ops += Op("ISING", "Jz", {7, 11});
+  ops += Op("ISING", "Jz", {11, 1});
+  ops += Op("ISING", "Jz", {0, 8});
+  ops += Op("ISING", "Jz", {8, 6});
+  ops += Op("ISING", "Jz", {2, 10});
+  ops += Op("ISING", "Jz", {1, 9});
+  ops += Op("ISING", "Jz", {4, 3});
+  ops += Op("ISING", "Jz", {6, 1});
+  ops += Op("ISING", "Jz", {10, 4});
+  ops += Op("ISING", "Jz", {5, 2});
+  ops += Op("ISING", "Jz", {9, 7});
+  ops += Op("ISING", "Jz", {3, 11});
+  ops += Op("ISING", "Jz", {7, 0});
+  ops += Op("ISING", "Jz", {11, 5});
+  ops += Op("ISING", "Jz", {0, 4});
+  ops += Op("ISING", "Jz", {8, 3});
+  ops += Op("ISING", "Jz", {2, 6});
+  ops += Op("ISING", "Jz", {1, 5});
+  ops += Op("ISING", "Jz", {4, 9});
+  ops += Op("ISING", "Jz", {6, 11});
+  ops += Op("ISING", "Jz", {10, 1});
+  ops += Op("ISING", "Jz", {5, 8});
+  ops += Op("ISING", "Jz", {9, 2});
+  ops += Op("ISING", "Jz", {3, 7});
+  ops += Op("ISING", "Jz", {7, 10});
+  ops += Op("ISING", "Jz", {11, 0});
+  ops += Op("EXCHANGE", "Jx", {0, 8});
+  ops += Op("EXCHANGE", "Jx", {8, 6});
+  ops += Op("EXCHANGE", "Jx", {2, 10});
+  ops += Op("EXCHANGE", "Jx", {1, 9});
+  ops += Op("EXCHANGE", "Jx", {4, 3});
+  ops += Op("EXCHANGE", "Jx", {6, 1});
+  ops += Op("EXCHANGE", "Jx", {10, 4});
+  ops += Op("EXCHANGE", "Jx", {5, 2});
+  ops += Op("EXCHANGE", "Jx", {9, 7});
+  ops += Op("EXCHANGE", "Jx", {3, 11});
+  ops += Op("EXCHANGE", "Jx", {7, 0});
+  ops += Op("EXCHANGE", "Jx", {11, 5});
+  ops += Op("EXCHANGE", "Jx", {0, 10});
+  ops += Op("EXCHANGE", "Jx", {8, 4});
+  ops += Op("EXCHANGE", "Jx", {2, 8});
+  ops += Op("EXCHANGE", "Jx", {1, 11});
+  ops += Op("EXCHANGE", "Jx", {4, 1});
+  ops += Op("EXCHANGE", "Jx", {6, 3});
+  ops += Op("EXCHANGE", "Jx", {10, 6});
+  ops += Op("EXCHANGE", "Jx", {5, 0});
+  ops += Op("EXCHANGE", "Jx", {9, 5});
+  ops += Op("EXCHANGE", "Jx", {3, 9});
+  ops += Op("EXCHANGE", "Jx", {7, 2});
+  ops += Op("EXCHANGE", "Jx", {11, 7});
+  ops += Op("EXCHANGE", "Jx", {0, 11});
+  ops += Op("EXCHANGE", "Jx", {8, 5});
+  ops += Op("EXCHANGE", "Jx", {2, 9});
+  ops += Op("EXCHANGE", "Jx", {1, 10});
+  ops += Op("EXCHANGE", "Jx", {4, 0});
+  ops += Op("EXCHANGE", "Jx", {6, 2});
+  ops += Op("EXCHANGE", "Jx", {10, 7});
+  ops += Op("EXCHANGE", "Jx", {5, 1});
+  ops += Op("EXCHANGE", "Jx", {9, 4});
+  ops += Op("EXCHANGE", "Jx", {3, 8});
+  ops += Op("EXCHANGE", "Jx", {7, 3});
+  ops += Op("EXCHANGE", "Jx", {11, 6});
 
-  bonds["Jz"] = 1.0;
-  bonds["Jx"] = complex(cos(2 * M_PI * eta), sin(2 * M_PI * eta));
+  ops["Jz"] = 1.0;
+  ops["Jx"] = complex(cos(2 * M_PI * eta), sin(2 * M_PI * eta));
   // lila::Log("Jx {} {}", lila::real(cpls["Jx"]), lila::imag(cpls["Jx"]));
 
   double e0 = 0;
@@ -209,7 +209,7 @@ std::tuple<BondList, double> triangular_12_complex(int64_t nup, double eta) {
       e0 = -8.9863396883370398882;
     }
   }
-  return {bonds, e0};
+  return {ops, e0};
 }
 
 } // namespace xdiag::testcases::spinhalf

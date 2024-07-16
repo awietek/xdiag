@@ -20,7 +20,7 @@ TEST_CASE("time_evolution_distributed", "[time_evolution]") try {
   int n_sites = L * L;
 
   // Create square lattice t-J model
-  BondList bonds;
+  OpSum ops;
   for (int x = 0; x < L; ++x) {
     for (int y = 0; y < L; ++y) {
       int nx = (x + 1) % L;
@@ -29,19 +29,19 @@ TEST_CASE("time_evolution_distributed", "[time_evolution]") try {
       int site = y * L + x;
       int right = y * L + nx;
       int top = ny * L + x;
-      bonds << Bond("HOP", "T", {site, right});
-      bonds << Bond("TJISING", "JZ", {site, right});
-      bonds << Bond("EXCHANGE", "JEX", {site, right});
+      ops << Op("HOP", "T", {site, right});
+      ops << Op("TJISING", "JZ", {site, right});
+      ops << Op("EXCHANGE", "JEX", {site, right});
 
-      bonds << Bond("HOP", "T", {site, top});
-      bonds << Bond("TJISING", "JZ", {site, top});
-      bonds << Bond("EXCHANGE", "JEX", {site, top});
+      ops << Op("HOP", "T", {site, top});
+      ops << Op("TJISING", "JZ", {site, top});
+      ops << Op("EXCHANGE", "JEX", {site, top});
 
     }
   }
-  bonds["T"] = 1.0 + 0.2i;
-  bonds["JZ"] = 0.4;
-  bonds["JEX"] = 0.3 + 1.23i;
+  ops["T"] = 1.0 + 0.2i;
+  ops["JZ"] = 0.4;
+  ops["JEX"] = 0.3 + 1.23i;
 
   // Create initial state
   auto pstate = ProductState();
@@ -65,13 +65,13 @@ TEST_CASE("time_evolution_distributed", "[time_evolution]") try {
 
 
   auto H_psi_0 = State(block, false);
-  apply(bonds, psi_0, H_psi_0);
+  apply(ops, psi_0, H_psi_0);
   auto H_psi_0d = State(blockd, false);
-  apply(bonds, psi_0d, H_psi_0d);
+  apply(ops, psi_0d, H_psi_0d);
   
   for (int s = 0; s < n_sites; ++s) {
-    auto n = innerC(Bond("NUMBER", s), H_psi_0);
-    auto nd = innerC(Bond("NUMBER", s), H_psi_0d);
+    auto n = innerC(Op("NUMBER", s), H_psi_0);
+    auto nd = innerC(Op("NUMBER", s), H_psi_0d);
     // Log("i {} {} {}", s, n, nd);
     REQUIRE(close(n, nd));
   }
@@ -80,11 +80,11 @@ TEST_CASE("time_evolution_distributed", "[time_evolution]") try {
   arma::vec times = arma::logspace(-1, 1, 3);
   double tol = 1e-12;
   for (auto time : times) {
-    auto psi = time_evolve(bonds, psi_0, time, tol);
-    auto psid = time_evolve(bonds, psi_0d, time, tol);
+    auto psi = time_evolve(ops, psi_0, time, tol);
+    auto psid = time_evolve(ops, psi_0d, time, tol);
     for (int s = 0; s < n_sites; ++s) {
-      auto n = innerC(Bond("NUMBER", s), psi);
-      auto nd = innerC(Bond("NUMBER", s), psid);
+      auto n = innerC(Op("NUMBER", s), psi);
+      auto nd = innerC(Op("NUMBER", s), psid);
       Log("{} {} {} {:.6f}", s, n, nd, time);
       REQUIRE(std::abs(n - nd) < 1e-6);
     }

@@ -9,8 +9,8 @@
 #include <xdiag/extern/armadillo/armadillo>
 #include <xdiag/extern/toml++/toml.hpp>
 #include <xdiag/io/toml/toml_conversion.hpp>
-#include <xdiag/operators/bond.hpp>
-#include <xdiag/operators/bondlist.hpp>
+#include <xdiag/operators/op.hpp>
+#include <xdiag/operators/opsum.hpp>
 #include <xdiag/symmetries/permutation.hpp>
 #include <xdiag/symmetries/permutation_group.hpp>
 #include <xdiag/symmetries/representation.hpp>
@@ -206,22 +206,22 @@ template <> Representation FileTomlHandler::as<Representation>() const {
   }
 }
 
-template <> Bond FileTomlHandler::as<Bond>() const {
-  return Bond(toml_array_to_bond(get_toml_array(table_.at_path(key_))));
+template <> Op FileTomlHandler::as<Op>() const {
+  return Op(toml_array_to_op(get_toml_array(table_.at_path(key_))));
 }
 
-template <> BondList FileTomlHandler::as<BondList>() const {
+template <> OpSum FileTomlHandler::as<OpSum>() const {
   auto node = table_.at_path(key_);
   auto array_opt = node.as_array();
   auto table_opt = node.as_table();
   if (array_opt) {
-    return toml_array_to_bond_list(*array_opt);
+    return toml_array_to_op_list(*array_opt);
   } else if (table_opt) {
-    return toml_table_to_bond_list(*table_opt);
+    return toml_table_to_op_list(*table_opt);
   } else {
-    Log.err("Error parsing toml file to BondList: entry needs to be either an "
+    Log.err("Error parsing toml file to OpSum: entry needs to be either an "
             "array or a table");
-    return BondList();
+    return OpSum();
   }
 }
 
@@ -369,15 +369,15 @@ void FileTomlHandler::operator=<Representation>(Representation const &rep) {
   table_.insert_or_assign(key_, rep_table);
 }
 
-template <> void FileTomlHandler::operator=<Bond>(Bond const &bond) {
-  table_.insert_or_assign(key_, bond_to_toml_array(bond));
+template <> void FileTomlHandler::operator=<Op>(Op const &op) {
+  table_.insert_or_assign(key_, op_to_toml_array(op));
 }
 
-template <> void FileTomlHandler::operator=<BondList>(BondList const &bonds) {
-  if (bonds.couplings().size() > 0) {
-    table_.insert_or_assign(key_, bond_list_to_toml_table(bonds));
+template <> void FileTomlHandler::operator=<OpSum>(OpSum const &ops) {
+  if (ops.couplings().size() > 0) {
+    table_.insert_or_assign(key_, op_list_to_toml_table(ops));
   } else {
-    table_.insert_or_assign(key_, bond_list_to_toml_array(bonds));
+    table_.insert_or_assign(key_, op_list_to_toml_array(ops));
   }
 }
 

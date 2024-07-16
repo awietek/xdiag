@@ -2,22 +2,22 @@
 
 #include <xdiag/blocks/tj/terms/generic_term_diag.hpp>
 #include <xdiag/common.hpp>
-#include <xdiag/operators/bond.hpp>
+#include <xdiag/operators/op.hpp>
 
 namespace xdiag::tj_distributed {
 
 template <typename bit_t, typename coeff_t, class Basis>
-void apply_number(Bond const &bond, Basis &&basis, const coeff_t *vec_in,
+void apply_number(Op const &op, Basis &&basis, const coeff_t *vec_in,
                   coeff_t *vec_out) {
-  assert(bond.coupling_defined());
-  assert(bond.type_defined());
-  assert(bond.size() == 1);
+  assert(op.coupling_defined());
+  assert(op.type_defined());
+  assert(op.size() == 1);
 
-  std::string type = bond.type();
+  std::string type = op.type();
   assert((type == "NUMBERUP") || (type == "NUMBERDN"));
 
-  coeff_t mu = bond.coupling<coeff_t>();
-  int64_t s = bond.site(0);
+  coeff_t mu = op.coupling<coeff_t>();
+  int64_t s = op.site(0);
   bit_t mask = (bit_t)1 << s;
 
   if (type == "NUMBERUP") {

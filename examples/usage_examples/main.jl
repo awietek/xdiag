@@ -123,12 +123,12 @@ let
     ndn = 2
 
     # Define a Hubbard chain model
-    bonds = BondList()
+    ops = OpSum()
     for i in 1:N
-        bonds += Bond("HOP", "T", [i-1, i % N])
+        ops += Op("HOP", "T", [i-1, i % N])
     end
-    bonds["T"] = 1.0;
-    bonds["U"] = 5.0;
+    ops["T"] = 1.0;
+    ops["U"] = 5.0;
 
     # Create the a permutation group
     p1 = Permutation([0, 1, 2, 3])
@@ -139,7 +139,7 @@ let
     irrep = Representation([1, -1, 1, -1])
     block = Electron(N, nup, ndn, group, irrep)
 
-    H = matrix(bonds, block)
+    H = matrix(ops, block)
     display(H)
 end
 # --8<-- [end:matrix]
@@ -151,13 +151,13 @@ let
     block = Spinhalf(N, nup);
     
     # Define the nearest-neighbor Heisenberg model
-    bonds = BondList()
+    ops = OpSum()
     for i in 1:N
-        bonds += Bond("HB", "J", [i-1, i % N])
+        ops += Op("HB", "J", [i-1, i % N])
     end
-    bonds["J"] = 1.0;
+    ops["J"] = 1.0;
 
-    e0 = eigval0(bonds, block);
+    e0 = eigval0(ops, block);
 end
 # --8<-- [end:eigval0]
 
@@ -168,12 +168,12 @@ let
     block = Spinhalf(N, nup);
     
     # Define the nearest-neighbor Heisenberg model
-    bonds = BondList()
+    ops = OpSum()
     for i in 1:N
-        bonds += Bond("HB", "J", [i-1, i % N])
+        ops += Op("HB", "J", [i-1, i % N])
     end
-    bonds["J"] = 1.0;
+    ops["J"] = 1.0;
 
-    e0, gs = eig0(bonds, block);
+    e0, gs = eig0(ops, block);
 end
 # --8<-- [end:eig0]

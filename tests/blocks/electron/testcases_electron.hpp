@@ -1,6 +1,6 @@
 #pragma once
 
-#include <xdiag/operators/bondlist.hpp>
+#include <xdiag/operators/opsum.hpp>
 #include <xdiag/symmetries/operations/symmetry_operations.hpp>
 #include <xdiag/symmetries/permutation.hpp>
 #include <xdiag/symmetries/permutation_group.hpp>
@@ -10,9 +10,9 @@
 
 namespace xdiag::testcases::electron {
 
-BondList get_linear_chain(int64_t n_sites, double t, double U);
+OpSum get_linear_chain(int64_t n_sites, double t, double U);
 
-BondList get_linear_chain_hb(int64_t n_sites, double J);
+OpSum get_linear_chain_hb(int64_t n_sites, double J);
 
 std::tuple<PermutationGroup, std::vector<Representation>>
 get_cyclic_group_irreps(int64_t n_sites);
@@ -20,26 +20,26 @@ get_cyclic_group_irreps(int64_t n_sites);
 std::tuple<PermutationGroup, std::vector<Representation>, std::vector<int64_t>>
 get_cyclic_group_irreps_mult(int64_t n_sites);
 
-BondList heisenberg_triangle();
+OpSum heisenberg_triangle();
 
-BondList heisenberg_alltoall(int64_t n_sites);
+OpSum heisenberg_alltoall(int64_t n_sites);
 
-BondList heisenberg_kagome15();
-BondList heisenberg_kagome39();
+OpSum heisenberg_kagome15();
+OpSum heisenberg_kagome39();
 
-BondList freefermion_alltoall(int64_t n_sites);
+OpSum freefermion_alltoall(int64_t n_sites);
 
-BondList freefermion_alltoall_complex_updn(int64_t n_sites);
+OpSum freefermion_alltoall_complex_updn(int64_t n_sites);
 
-// BondList tJchain(int64_t n_sites, double t, double J);
+// OpSum tJchain(int64_t n_sites, double t, double J);
 
-std::tuple<BondList, arma::Col<double>> randomAlltoAll4NoU();
-std::tuple<BondList, arma::Col<double>> randomAlltoAll4();
+std::tuple<OpSum, arma::Col<double>> randomAlltoAll4NoU();
+std::tuple<OpSum, arma::Col<double>> randomAlltoAll4();
 
-BondList randomAlltoAll3();
+OpSum randomAlltoAll3();
 
-BondList square2x2(double t, double J);
+OpSum square2x2(double t, double J);
 
-BondList square3x3(double t, double J);
+OpSum square3x3(double t, double J);
 
 } // namespace xdiag::testcases::electron

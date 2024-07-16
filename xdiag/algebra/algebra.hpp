@@ -2,7 +2,7 @@
 
 #include <xdiag/blocks/blocks.hpp>
 #include <xdiag/common.hpp>
-#include <xdiag/operators/bondlist.hpp>
+#include <xdiag/operators/opsum.hpp>
 #include <xdiag/states/state.hpp>
 
 namespace xdiag {
@@ -16,11 +16,11 @@ double norminf(State const &v);
 double dot(State const &v, State const &w);
 complex dotC(State const &v, State const &w);
 
-double inner(BondList const &bonds, State const &v);
-double inner(Bond const &bond, State const &v);
+double inner(OpSum const &ops, State const &v);
+double inner(Op const &op, State const &v);
 
-complex innerC(BondList const &bonds, State const &v);
-complex innerC(Bond const &bond, State const &v);
+complex innerC(OpSum const &ops, State const &v);
+complex innerC(Op const &op, State const &v);
 
 // arithmetic operators
 State &operator*=(State &X, complex alpha);

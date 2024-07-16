@@ -20,7 +20,7 @@ int main() {
   double precision = 1e-12;
 
   // Create square lattice t-J model
-  BondList bonds;
+  OpSum ops;
   for (int x = 0; x < L; ++x) {
     for (int y = 0; y < L; ++y) {
       int nx = (x + 1) % L;
@@ -29,28 +29,28 @@ int main() {
       int site = y * L + x;
       int right = y * L + nx;
       int top = ny * L + x;
-      bonds << Bond("HOP", "T", {site, right});
-      bonds << Bond("TJISING", "J", {site, right});
-      bonds << Bond("HOP", "T", {site, top});
-      bonds << Bond("TJISING", "J", {site, top});
+      ops += Op("HOP", "T", {site, right});
+      ops += Op("TJISING", "J", {site, right});
+      ops += Op("HOP", "T", {site, top});
+      ops += Op("TJISING", "J", {site, top});
     }
   }
-  bonds["T"] = t;
-  bonds["J"] = J;
+  ops["T"] = t;
+  ops["J"] = J;
 
   auto block = tJ(n_sites, n_sites / 2, n_sites / 2 - 1);
-  bonds["J"] = J / 2;
-  auto [e0, v] = eig0(bonds, block);
+  ops["J"] = J / 2;
+  auto [e0, v] = eig0(ops, block);
 
   measure_density(n_sites, v);
 
-  bonds["J"] = J;
+  ops["J"] = J;
 
   
   // Do the time evolution with a step size tau
   double tau = 0.1;
   for (int i = 0; i < 40; ++i) {
-    v = time_evolve(bonds, v, tau, precision);
+    v = time_evolve(ops, v, tau, precision);
     measure_density(n_sites, v);
   }
 

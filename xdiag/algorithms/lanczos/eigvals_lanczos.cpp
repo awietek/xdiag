@@ -15,20 +15,19 @@
 namespace xdiag {
 
 eigvals_lanczos_result_t
-eigvals_lanczos(BondList const &bonds, block_variant_t const &block,
-                State &state0, int64_t neigvals, double precision,
-                int64_t max_iterations, bool force_complex,
-                double deflation_tol) try {
+eigvals_lanczos(OpSum const &ops, block_variant_t const &block, State &state0,
+                int64_t neigvals, double precision, int64_t max_iterations,
+                bool force_complex, double deflation_tol) try {
 
   if (neigvals < 1) {
     XDIAG_THROW("Argument \"neigvals\" needs to be >= 1");
   }
-  // if (!bonds.ishermitian()) {
-  //   XDIAG_THROW("Input BondList is not hermitian");
+  // if (!ops.ishermitian()) {
+  //   XDIAG_THROW("Input OpSum is not hermitian");
   // }
   bool cplx =
-      !bonds.isreal() || iscomplex(block) || force_complex || !state0.isreal();
-  if (!state0.isreal() && !iscomplex(block)) {
+      !ops.isreal() || !isreal(block) || force_complex || !state0.isreal();
+  if (!state0.isreal() && !isreal(block)) {
     Log(1,
         "warning: starting REAL block diagonalization with COMPLEX startstate");
   }
@@ -42,10 +41,9 @@ eigvals_lanczos(BondList const &bonds, block_variant_t const &block,
   if (cplx) {
     state0.make_complex();
     arma::cx_vec v0 = state0.vectorC(0, false);
-    auto mult = [&iter, &bonds, &block](arma::cx_vec const &v,
-                                        arma::cx_vec &w) {
+    auto mult = [&iter, &ops, &block](arma::cx_vec const &v, arma::cx_vec &w) {
       auto ta = rightnow();
-      apply(bonds, block, v, block, w);
+      apply(ops, block, v, block, w);
       Log(1, "Lanczos iteration {}", iter);
       timing(ta, rightnow(), "MVM", 1);
       ++iter;
@@ -62,9 +60,9 @@ eigvals_lanczos(BondList const &bonds, block_variant_t const &block,
     // Setup real Lanczos run
   } else {
     arma::vec v0 = state0.vector(0, false);
-    auto mult = [&iter, &bonds, &block](arma::vec const &v, arma::vec &w) {
+    auto mult = [&iter, &ops, &block](arma::vec const &v, arma::vec &w) {
       auto ta = rightnow();
-      apply(bonds, block, v, block, w);
+      apply(ops, block, v, block, w);
       Log(1, "Lanczos iteration {}", iter);
       timing(ta, rightnow(), "MVM", 1);
       ++iter;
@@ -85,7 +83,7 @@ eigvals_lanczos(BondList const &bonds, block_variant_t const &block,
 }
 
 eigvals_lanczos_result_t
-eigvals_lanczos(BondList const &bonds, block_variant_t const &block,
+eigvals_lanczos(OpSum const &ops, block_variant_t const &block,
                 int64_t neigvals, double precision, int64_t max_iterations,
                 bool force_complex, double deflation_tol,
                 int64_t random_seed) try {
@@ -93,15 +91,15 @@ eigvals_lanczos(BondList const &bonds, block_variant_t const &block,
   if (neigvals < 1) {
     XDIAG_THROW("Argument \"neigvals\" needs to be >= 1");
   }
-  // if (!bonds.ishermitian()) {
-  //   XDIAG_THROW("Input BondList is not hermitian");
+  // if (!ops.ishermitian()) {
+  //   XDIAG_THROW("Input OpSum is not hermitian");
   // }
 
-  bool cplx = (!bonds.isreal()) || iscomplex(block) || force_complex;
+  bool cplx = (!ops.isreal()) || !isreal(block) || force_complex;
   State state0(block, !cplx);
   fill(state0, RandomState(random_seed));
 
-  auto r = eigvals_lanczos(bonds, block, state0, neigvals, precision,
+  auto r = eigvals_lanczos(ops, block, state0, neigvals, precision,
                            max_iterations, force_complex, deflation_tol);
 
   return {r.alphas, r.betas, r.eigenvalues, r.niterations, r.criterion};

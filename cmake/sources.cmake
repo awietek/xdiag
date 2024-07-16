@@ -82,11 +82,11 @@ set(XDIAG_SOURCES
   symmetries/group_action/sublattice_stability.cpp
 
   operators/coupling.cpp
-  operators/bond.cpp
-  operators/bondlist.cpp
+  operators/op.cpp
+  operators/opsum.cpp
   operators/compiler.cpp
-  operators/symmetrized_operator.cpp
-  operators/non_branching_bonds.cpp
+  operators/symmetrize.cpp
+  operators/non_branching_op.cpp
 
   states/gpwf.cpp
   states/product_state.cpp

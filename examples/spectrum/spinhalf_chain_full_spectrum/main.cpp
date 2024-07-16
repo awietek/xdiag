@@ -12,16 +12,16 @@ int main() {
   auto block = Spinhalf(n_sites, n_up);
 
   // Define Heisenberg chain with interaction-type HB and coupling J
-  BondList bonds;
+  OpSum ops;
   for (int s = 0; s < n_sites; ++s) {
-    bonds << Bond("HB", "J", {s, (s + 1) % n_sites});
+    ops << Op("HB", "J", {s, (s + 1) % n_sites});
   }
 
   // Set the coupling J to 1.0
-  bonds["J"] = 1.0;
+  ops["J"] = 1.0;
 
   // Compute the full Hamiltonian matrix (real, double precision)
-  auto H = matrix(bonds, block);
+  auto H = matrix(ops, block);
 
   // Perform a full diagonalization
   vec eigval;

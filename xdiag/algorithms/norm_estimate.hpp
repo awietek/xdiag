@@ -4,18 +4,18 @@
 
 #include <xdiag/blocks/blocks.hpp>
 #include <xdiag/common.hpp>
-#include <xdiag/operators/bondlist.hpp>
+#include <xdiag/operators/opsum.hpp>
 
 namespace xdiag {
 
 // Returns an estimate of the 1-norm of an operator (needed by some iterative
 // algorithms)
 
-double norm_estimate(BondList const &bonds, block_variant_t const &block,
+double norm_estimate(OpSum const &ops, block_variant_t const &block,
                      int64_t n_max_attempts = 5, uint64_t seed = 42);
 
 template <typename block_t>
-double norm_estimate(BondList const &bonds, block_t const &block,
+double norm_estimate(OpSum const &ops, block_t const &block,
                      int64_t n_max_attempts = 5, uint64_t seed = 42);
 
 template <typename coeff_t>

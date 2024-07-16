@@ -73,17 +73,17 @@ double exp_sym_v_inplace(multiply_f mult, arma::Col<coeff_t> &X, coeff_t tau,
   return 0.;
 }
 
-State exp_sym_v(BondList const &bonds, State state, double tau, bool normalize,
+State exp_sym_v(OpSum const &ops, State state, double tau, bool normalize,
                 double shift, double precision, int64_t max_iterations,
                 double deflation_tol) try {
   auto const &block = state.block();
 
   // Real time evolution is possible
-  if (state.isreal() && bonds.isreal()) {
+  if (state.isreal() && ops.isreal()) {
     int iter = 1;
-    auto mult = [&iter, &bonds, &block](arma::vec const &v, arma::vec &w) {
+    auto mult = [&iter, &ops, &block](arma::vec const &v, arma::vec &w) {
       auto ta = rightnow();
-      apply(bonds, block, v, block, w);
+      apply(ops, block, v, block, w);
       Log(2, "Lanczos iteration {}", iter);
       timing(ta, rightnow(), "MVM", 1);
       ++iter;
@@ -95,7 +95,7 @@ State exp_sym_v(BondList const &bonds, State state, double tau, bool normalize,
 
     // Refer to complex time evolution
   } else {
-    return exp_sym_v(bonds, state, complex(tau), normalize, shift, precision,
+    return exp_sym_v(ops, state, complex(tau), normalize, shift, precision,
                      max_iterations, deflation_tol);
   }
 } catch (Error const &e) {
@@ -103,16 +103,16 @@ State exp_sym_v(BondList const &bonds, State state, double tau, bool normalize,
   return State();
 }
 
-State exp_sym_v(BondList const &bonds, State state, complex tau, bool normalize,
+State exp_sym_v(OpSum const &ops, State state, complex tau, bool normalize,
                 double shift, double precision, int64_t max_iterations,
                 double deflation_tol) try {
   auto const &block = state.block();
   state.make_complex();
 
   int iter = 1;
-  auto mult = [&iter, &bonds, &block](arma::cx_vec const &v, arma::cx_vec &w) {
+  auto mult = [&iter, &ops, &block](arma::cx_vec const &v, arma::cx_vec &w) {
     auto ta = rightnow();
-    apply(bonds, block, v, block, w);
+    apply(ops, block, v, block, w);
     Log(2, "Lanczos iteration {}", iter);
     timing(ta, rightnow(), "MVM", 1);
     ++iter;

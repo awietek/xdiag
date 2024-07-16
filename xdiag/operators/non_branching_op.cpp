@@ -1,8 +1,7 @@
-#include "non_branching_bonds.hpp"
+#include "non_branching_op.hpp"
 
 #include <tuple>
 #include <vector>
-
 #include <xdiag/bits/bitops.hpp>
 #include <xdiag/common.hpp>
 
@@ -15,7 +14,7 @@ decompose_matrix_to_nonbranching(arma::Mat<coeff_t> const &mat,
   int64_t m = (int64_t)mat.n_rows;
   int64_t n = (int64_t)mat.n_cols;
   if (m != n) {
-    XDIAG_THROW("Error: bond matrix is not square");
+    XDIAG_THROW("Error: Op matrix is not square");
   }
 
   std::vector<std::tuple<int64_t, int64_t, coeff_t>> all_entries;
@@ -77,37 +76,37 @@ decompose_matrix_to_nonbranching(arma::Mat<coeff_t> const &mat,
   XDIAG_RETHROW(e);
 }
 
-BondList non_branching_bonds(Bond const &bond, double precision) try {
-  if (bond.coupling().is<arma::mat>()) {
-    arma::mat mat = bond.coupling().as<arma::mat>();
+OpSum non_branching_ops(Op const &op, double precision) try {
+  if (op.coupling().is<arma::mat>()) {
+    arma::mat mat = op.coupling().as<arma::mat>();
     auto mats_nb = decompose_matrix_to_nonbranching(mat, precision);
-    BondList bonds_nb;
+    OpSum ops_nb;
     for (auto mat_nb : mats_nb) {
-      bonds_nb += Bond("NONBRANCHINGBOND", mat_nb, bond.sites());
+      ops_nb += Op("NONBRANCHINGOP", mat_nb, op.sites());
     }
-    return bonds_nb;
-  } else if (bond.coupling().is<arma::cx_mat>()) {
-    arma::cx_mat mat = bond.coupling().as<arma::cx_mat>();
+    return ops_nb;
+  } else if (op.coupling().is<arma::cx_mat>()) {
+    arma::cx_mat mat = op.coupling().as<arma::cx_mat>();
     auto mats_nb = decompose_matrix_to_nonbranching(mat, precision);
-    BondList bonds_nb;
+    OpSum ops_nb;
     for (auto mat_nb : mats_nb) {
-      bonds_nb += Bond("NONBRANCHINGBOND", mat_nb, bond.sites());
+      ops_nb += Op("NONBRANCHINGOP", mat_nb, op.sites());
     }
-    return bonds_nb;
+    return ops_nb;
   } else {
     XDIAG_THROW(
-        "Cannot convert bond to nonbranching bonds. Coupling is not a matrix");
+        "Cannot convert Op to nonbranching OpSum. Coupling is not a matrix");
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
-BondList non_branching_bonds(BondList const &bonds, double precision) {
-  BondList bonds_nb;
-  for (Bond bond : bonds) {
-    bonds_nb = bonds_nb + non_branching_bonds(bond, precision);
+OpSum non_branching_ops(OpSum const &ops, double precision) {
+  OpSum ops_nb;
+  for (Op const &op : ops) {
+    ops_nb = ops_nb + non_branching_ops(op, precision);
   }
-  return bonds_nb;
+  return ops_nb;
 }
 
 template <typename coeff_t>
@@ -126,12 +125,12 @@ bool is_non_branching_matrix(arma::Mat<coeff_t> const &mat, double precision) {
   return true;
 }
 
-bool is_non_branching_bond(Bond const &bond, double precision) {
-  if (bond.coupling().is<arma::mat>()) {
-    arma::mat mat = bond.coupling().as<arma::mat>();
+bool is_non_branching_op(Op const &op, double precision) {
+  if (op.coupling().is<arma::mat>()) {
+    arma::mat mat = op.coupling().as<arma::mat>();
     return is_non_branching_matrix(mat, precision);
-  } else if (bond.coupling().is<arma::cx_mat>()) {
-    arma::cx_mat mat = bond.coupling().as<arma::cx_mat>();
+  } else if (op.coupling().is<arma::cx_mat>()) {
+    arma::cx_mat mat = op.coupling().as<arma::cx_mat>();
     return is_non_branching_matrix(mat, precision);
   } else {
     return false;
@@ -139,20 +138,20 @@ bool is_non_branching_bond(Bond const &bond, double precision) {
 }
 
 template <typename bit_t, typename coeff_t>
-NonBranchingBond<bit_t, coeff_t>::NonBranchingBond(Bond const &bond,
-                                                   double precision) try
-    : sites_(bond.sites()), dim_(1 << sites_.size()), mask_(0) {
-  if (!bond.ismatrix()) {
-    XDIAG_THROW("Error constructing NonBranchingBond: the coupling of the bond "
+NonBranchingOp<bit_t, coeff_t>::NonBranchingOp(Op const &op,
+                                               double precision) try
+    : sites_(op.sites()), dim_(1 << sites_.size()), mask_(0) {
+  if (!op.ismatrix()) {
+    XDIAG_THROW("Error constructing NonBranchingOp: the coupling of the Op "
                 "must be an explicit matrix");
   }
 
-  if (!is_non_branching_bond(bond, precision)) {
+  if (!is_non_branching_op(op, precision)) {
     XDIAG_THROW(
-        "trying to create a NonBranchingBond from a Bond which is branching");
+        "trying to create a NonBranchingOp from a Op which is branching");
   }
 
-  for (auto s : bond.sites()) {
+  for (auto s : op.sites()) {
     mask_ |= ((bit_t)1 << s);
   }
   // int64_t n_sites = 2;
@@ -161,12 +160,14 @@ NonBranchingBond<bit_t, coeff_t>::NonBranchingBond(Bond const &bond,
   mask_ = ~mask_;
   // Log("Y: {}", BSTR(mask_));
 
-  arma::cx_mat matrix_ = bond.coupling().as<arma::cx_mat>();
+  arma::cx_mat matrix_ = op.coupling().as<arma::cx_mat>();
 
-  // Matrix dimension is 2**(no. sites of bond)
+  // Matrix dimension is 2**(no. sites of op)
   if ((matrix_.n_cols != dim_) || (matrix_.n_rows != dim_)) {
-    XDIAG_THROW(
-        "Error: invalid matrix dimension for non-branching bond matrix.");
+    XDIAG_THROW(fmt::format(
+        "Error: invalid matrix dimension for non-branching Op matrix. Expected "
+        "dim={}, but received n_rows={} and n_cols={}.",
+        dim_, matrix_.n_rows, matrix_.n_cols));
   }
 
   non_zero_term_ = std::vector<bool>(dim_, false);
@@ -182,7 +183,7 @@ NonBranchingBond<bit_t, coeff_t>::NonBranchingBond(Bond const &bond,
         state_applied_[in] = out;
         if constexpr (isreal<coeff_t>()) {
           if (std::abs(imag(matrix_(out, in))) > precision) {
-            XDIAG_THROW("Error: trying to create a real NonBranchingBond, but "
+            XDIAG_THROW("Error: trying to create a real NonBranchingOp, but "
                         "found a truly complex matrix entry");
           }
           coeff_[in] = real(matrix_(out, in));
@@ -213,7 +214,7 @@ NonBranchingBond<bit_t, coeff_t>::NonBranchingBond(Bond const &bond,
 }
 
 template <typename bit_t, typename coeff_t>
-bool NonBranchingBond<bit_t, coeff_t>::is_diagonal() const {
+bool NonBranchingOp<bit_t, coeff_t>::is_diagonal() const {
   for (bit_t i = 0; i < dim_; ++i) {
     if ((non_zero_term_[i]) && (state_applied_[i] != i)) {
       return false;
@@ -223,22 +224,22 @@ bool NonBranchingBond<bit_t, coeff_t>::is_diagonal() const {
 }
 
 template <typename bit_t, typename coeff_t>
-bool NonBranchingBond<bit_t, coeff_t>::non_zero_term(bit_t local_state) const {
+bool NonBranchingOp<bit_t, coeff_t>::non_zero_term(bit_t local_state) const {
   return non_zero_term_[local_state];
 }
 template <typename bit_t, typename coeff_t>
-coeff_t NonBranchingBond<bit_t, coeff_t>::coeff(bit_t local_state) const {
+coeff_t NonBranchingOp<bit_t, coeff_t>::coeff(bit_t local_state) const {
   return coeff_[local_state];
 }
 
 template <typename bit_t, typename coeff_t>
 std::pair<bit_t, coeff_t>
-NonBranchingBond<bit_t, coeff_t>::state_coeff(bit_t local_state) const {
+NonBranchingOp<bit_t, coeff_t>::state_coeff(bit_t local_state) const {
   return {state_applied_[local_state], coeff_[local_state]};
 }
 
 template <typename bit_t, typename coeff_t>
-bit_t NonBranchingBond<bit_t, coeff_t>::extract_local_state(bit_t state) const {
+bit_t NonBranchingOp<bit_t, coeff_t>::extract_local_state(bit_t state) const {
   bit_t local_state = 0;
   for (int64_t i = 0; i < (int64_t)sites_.size(); ++i) {
     local_state |= bits::gbit(state, sites_[i]) << i;
@@ -247,8 +248,8 @@ bit_t NonBranchingBond<bit_t, coeff_t>::extract_local_state(bit_t state) const {
 }
 
 template <typename bit_t, typename coeff_t>
-bit_t NonBranchingBond<bit_t, coeff_t>::deposit_local_state(bit_t local_state,
-                                                            bit_t state) const {
+bit_t NonBranchingOp<bit_t, coeff_t>::deposit_local_state(bit_t local_state,
+                                                          bit_t state) const {
   // int64_t n_sites = 2;
   // Log("a: {}", BSTR(state));
   // Log("mask: {}", BSTR(mask_));
@@ -263,7 +264,7 @@ bit_t NonBranchingBond<bit_t, coeff_t>::deposit_local_state(bit_t local_state,
 }
 
 template <typename bit_t, typename coeff_t>
-int64_t NonBranchingBond<bit_t, coeff_t>::number_difference() const {
+int64_t NonBranchingOp<bit_t, coeff_t>::number_difference() const {
   int64_t diff = 0;
   bool first_diff = true;
   for (bit_t state = 0; state < dim_; ++state) {
@@ -283,11 +284,11 @@ int64_t NonBranchingBond<bit_t, coeff_t>::number_difference() const {
   return diff;
 }
 
-template class NonBranchingBond<uint16_t, double>;
-template class NonBranchingBond<uint32_t, double>;
-template class NonBranchingBond<uint64_t, double>;
-template class NonBranchingBond<uint16_t, complex>;
-template class NonBranchingBond<uint32_t, complex>;
-template class NonBranchingBond<uint64_t, complex>;
+template class NonBranchingOp<uint16_t, double>;
+template class NonBranchingOp<uint32_t, double>;
+template class NonBranchingOp<uint64_t, double>;
+template class NonBranchingOp<uint16_t, complex>;
+template class NonBranchingOp<uint32_t, complex>;
+template class NonBranchingOp<uint64_t, complex>;
 
 } // namespace xdiag::operators

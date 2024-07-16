@@ -1,55 +1,55 @@
 #include "compile.hpp"
 
 #include <xdiag/operators/compiler.hpp>
-#include <xdiag/operators/non_branching_bonds.hpp>
+#include <xdiag/operators/non_branching_op.hpp>
 #include <xdiag/utils/logger.hpp>
 #include <xdiag/utils/print_macro.hpp>
 #include <xdiag/utils/timing.hpp>
 
 namespace xdiag::spinhalf {
 
-BondList compile(BondList const &bonds, int64_t n_sites, double precision) try {
+OpSum compile(OpSum const &ops, int64_t n_sites, double precision) try {
   using namespace operators;
-  BondList bonds_explicit = make_explicit(bonds);
-  BondList bonds_clean = clean_zeros(bonds_explicit, precision);
+  OpSum ops_explicit = make_explicit(ops);
+  OpSum ops_clean = clean_zeros(ops_explicit, precision);
 
-  BondList bonds_compiled;
-  for (auto bond : bonds_clean) {
+  OpSum ops_compiled;
+  for (auto op : ops_clean) {
 
-    if (bond.ismatrix()) {
-      BondList bonds_nb = non_branching_bonds(bond, precision);
-      bonds_compiled += bonds_nb;
+    if (op.ismatrix()) {
+      OpSum ops_nb = non_branching_ops(op, precision);
+      ops_compiled += ops_nb;
     } else {
-      std::string type = bond.type();
+      std::string type = op.type();
 
       if (type == "HB") {
-        check_bond(bond, n_sites, 2, true, "number");
-        bonds_compiled += Bond("ISING", bond.coupling(), bond.sites());
-        bonds_compiled += Bond("EXCHANGE", bond.coupling(), bond.sites());
+        check_op(op, n_sites, 2, true, "number");
+        ops_compiled += Op("ISING", op.coupling(), op.sites());
+        ops_compiled += Op("EXCHANGE", op.coupling(), op.sites());
       } else if (type == "ISING") {
-        check_bond(bond, n_sites, 2, true, "number");
-        bonds_compiled += bond;
+        check_op(op, n_sites, 2, true, "number");
+        ops_compiled += op;
       } else if (type == "EXCHANGE") {
-        check_bond(bond, n_sites, 2, true, "number");
-        bonds_compiled += bond;
+        check_op(op, n_sites, 2, true, "number");
+        ops_compiled += op;
       } else if (type == "SZ") {
-        check_bond(bond, n_sites, 1, false, "number");
-        bonds_compiled += bond;
+        check_op(op, n_sites, 1, false, "number");
+        ops_compiled += op;
       } else if (type == "S+") {
-        check_bond(bond, n_sites, 1, false, "number");
-        bonds_compiled += bond;
+        check_op(op, n_sites, 1, false, "number");
+        ops_compiled += op;
       } else if (type == "S-") {
-        check_bond(bond, n_sites, 1, false, "number");
-        bonds_compiled += bond;
+        check_op(op, n_sites, 1, false, "number");
+        ops_compiled += op;
       } else if (type == "SCALARCHIRALITY") {
-        check_bond(bond, n_sites, 3, true, "number");
-        bonds_compiled += bond;
+        check_op(op, n_sites, 3, true, "number");
+        ops_compiled += op;
       } else {
         XDIAG_THROW(fmt::format("Invalid or undefined type: \"{}\"", type));
       }
     }
   }
-  return bonds_compiled;
+  return ops_compiled;
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }

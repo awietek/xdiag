@@ -3,7 +3,7 @@
 #include <xdiag/basis/basis.hpp>
 #include <xdiag/common.hpp>
 #include <xdiag/extern/armadillo/armadillo>
-#include <xdiag/operators/bondlist.hpp>
+#include <xdiag/operators/opsum.hpp>
 #include <xdiag/symmetries/permutation_group.hpp>
 #include <xdiag/symmetries/representation.hpp>
 

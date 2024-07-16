@@ -2,7 +2,7 @@
 
 #include <xdiag/bits/bitops.hpp>
 #include <xdiag/common.hpp>
-#include <xdiag/operators/bond.hpp>
+#include <xdiag/operators/op.hpp>
 
 namespace xdiag::electron {
 
@@ -33,17 +33,17 @@ void electron_do_down_flips(bit_t ups, int64_t idx_ups, bit_t flipmask,
 
 template <typename bit_t, typename coeff_t, bool symmetric, class Basis,
           class Filler>
-void apply_exchange(Bond const &bond, Basis &&basis, Filler &&fill) {
-  assert(bond.coupling_defined());
-  assert(bond.type_defined() && (bond.type() == "EXCHANGE"));
-  assert(bond.size() == 2);
-  assert(bond.sites_disjoint());
+void apply_exchange(Op const &op, Basis &&basis, Filler &&fill) {
+  assert(op.coupling_defined());
+  assert(op.type_defined() && (op.type() == "EXCHANGE"));
+  assert(op.size() == 2);
+  assert(op.sites_disjoint());
 
-  Coupling cpl = bond.coupling();
+  Coupling cpl = op.coupling();
   assert(cpl.isexplicit() && !cpl.ismatrix());
   coeff_t J = cpl.as<coeff_t>();
-  int64_t s1 = bond[0];
-  int64_t s2 = bond[1];
+  int64_t s1 = op[0];
+  int64_t s2 = op[1];
 
   // Prepare bitmasks
   bit_t s1mask = (bit_t)1 << s1;

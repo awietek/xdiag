@@ -60,21 +60,21 @@ void print_pretty(const char *identifier, complex number) {
   }
 }
 
-void print_pretty(const char *identifier, Bond const &bond) {
+void print_pretty(const char *identifier, Op const &op) {
   printf("%s:\n", identifier);
-  std::cout << bond;
+  std::cout << op;
 }
 
-void print_pretty(const char *identifier, BondList const &bondlist) {
+void print_pretty(const char *identifier, OpSum const &ops) {
   printf("%s:\n", identifier);
   printf("Interactions:\n");
-  for (auto bond : bondlist) {
-    print_pretty(" bond", bond);
+  for (auto op : ops) {
+    print_pretty(" op", op);
   }
-  if (bondlist.couplings().size() > 0) {
+  if (ops.couplings().size() > 0) {
     printf("Couplings:\n");
-    for (auto name : bondlist.couplings()) {
-      Coupling cpl = bondlist[name];
+    for (auto name : ops.couplings()) {
+      Coupling cpl = ops[name];
       std::cout << name << ": " << cpl << "\n";
     }
   }

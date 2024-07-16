@@ -7,7 +7,7 @@
 namespace xdiag {
 
 template <typename coeff_t>
-void apply(BondList const &bonds, Spinhalf const &block_in,
+void apply(OpSum const &ops, Spinhalf const &block_in,
            arma::Col<coeff_t> const &vec_in, Spinhalf const &block_out,
            arma::Col<coeff_t> &vec_out, double zero_precision) try {
   vec_out.zeros();
@@ -16,16 +16,16 @@ void apply(BondList const &bonds, Spinhalf const &block_in,
     return fill_apply(vec_in, vec_out, idx_in, idx_out, val);
   };
 
-  spinhalf::dispatch<coeff_t>(bonds, block_in, block_out, fill, zero_precision);
+  spinhalf::dispatch<coeff_t>(ops, block_in, block_out, fill, zero_precision);
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
-template void apply<double>(BondList const &, Spinhalf const &,
+template void apply<double>(OpSum const &, Spinhalf const &,
                             arma::Col<double> const &, Spinhalf const &,
                             arma::Col<double> &, double);
 
-template void apply<complex>(BondList const &, Spinhalf const &,
+template void apply<complex>(OpSum const &, Spinhalf const &,
                              arma::Col<complex> const &, Spinhalf const &,
                              arma::Col<complex> &, double);
 

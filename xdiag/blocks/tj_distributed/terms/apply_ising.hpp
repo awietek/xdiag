@@ -2,24 +2,24 @@
 
 #include <xdiag/blocks/tj_distributed/terms/generic_term_diag.hpp>
 #include <xdiag/common.hpp>
-#include <xdiag/operators/bond.hpp>
+#include <xdiag/operators/op.hpp>
 
 namespace xdiag::tj_distributed {
 
 template <typename bit_t, typename coeff_t, class Basis>
-void apply_ising(Bond const &bond, Basis &&basis, const coeff_t *vec_in,
+void apply_ising(Op const &op, Basis &&basis, const coeff_t *vec_in,
                  coeff_t *vec_out) {
-  assert(bond.coupling_defined());
-  assert(bond.type_defined());
-  assert(bond.size() == 2);
-  assert(bond.sites_disjoint());
+  assert(op.coupling_defined());
+  assert(op.type_defined());
+  assert(op.size() == 2);
+  assert(op.sites_disjoint());
 
-  std::string type = bond.type();
+  std::string type = op.type();
   assert((type == "ISING") || (type == "TJISING"));
 
-  coeff_t J = bond.coupling<coeff_t>();
-  int64_t s1 = bond[0];
-  int64_t s2 = bond[1];
+  coeff_t J = op.coupling<coeff_t>();
+  int64_t s1 = op[0];
+  int64_t s2 = op[1];
   bit_t s1_mask = (bit_t)1 << s1;
   bit_t s2_mask = (bit_t)1 << s2;
 

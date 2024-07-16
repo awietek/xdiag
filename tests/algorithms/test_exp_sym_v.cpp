@@ -19,15 +19,15 @@ TEST_CASE("exp_sym_v", "[algorithms]") try {
 
     auto block = Spinhalf(N);
     auto psi0 = random_state(block);
-    auto bonds = xdiag::testcases::spinhalf::HB_alltoall(N);
+    auto ops = xdiag::testcases::spinhalf::HB_alltoall(N);
 
     {
       Log("real time");
       // Real time evolution
       double t = 1.2345;
-      auto H = matrixC(bonds, block);
+      auto H = matrixC(ops, block);
       arma::cx_vec psi_ex = expmat(complex(0.0, -1.0 * t) * H) * psi0.vector();
-      arma::cx_vec psi = exp_sym_v(bonds, psi0, complex(0, -t)).vectorC();
+      arma::cx_vec psi = exp_sym_v(ops, psi0, complex(0, -t)).vectorC();
       // XDIAG_SHOW(norm(psi - psi_ex));
       REQUIRE(norm(psi - psi_ex) < 1e-6);
     }
@@ -36,9 +36,9 @@ TEST_CASE("exp_sym_v", "[algorithms]") try {
       Log("imaginary time");
       // Imaginary time evolution
       double t = 1.2345;
-      auto H = matrix(bonds, block);
+      auto H = matrix(ops, block);
       arma::vec psi_ex = expmat(-t * H) * psi0.vector();
-      arma::vec psi = exp_sym_v(bonds, psi0, -t).vector();
+      arma::vec psi = exp_sym_v(ops, psi0, -t).vector();
       // XDIAG_SHOW(norm(psi - psi_ex));
       REQUIRE(norm(psi - psi_ex) < 1e-6);
     }
@@ -46,9 +46,9 @@ TEST_CASE("exp_sym_v", "[algorithms]") try {
     {
       Log("complex time");
       complex t(-1.2345, 3.2145);
-      auto H = matrixC(bonds, block);
+      auto H = matrixC(ops, block);
       arma::cx_vec psi_ex = expmat(t * H) * psi0.vector();
-      arma::cx_vec psi = exp_sym_v(bonds, psi0, t).vectorC();
+      arma::cx_vec psi = exp_sym_v(ops, psi0, t).vectorC();
       // XDIAG_SHOW(norm(psi - psi_ex));
       REQUIRE(norm(psi - psi_ex) < 1e-6);
     }

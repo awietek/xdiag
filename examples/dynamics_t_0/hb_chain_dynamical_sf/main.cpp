@@ -10,11 +10,11 @@ int main() {
   int n_up = n_sites / 2;
 
   // Create nearest-neighbor Heisenberg model
-  BondList bonds;
+  OpSum ops;
   for (int s = 0; s < n_sites; ++s) {
-    bonds << Bond("HB", "J", {s, (s + 1) % n_sites});
+    ops << Op("HB", "J", {s, (s + 1) % n_sites});
   }
-  bonds["J"] = 1.0;
+  ops["J"] = 1.0;
 
   // Create the permutation group
   std::vector<int> translation;
@@ -35,7 +35,7 @@ int main() {
   // compute groundstate (known to be at k=0)
   Log("Computing ground state ...");
   auto block = Spinhalf(n_sites, n_up, group, irreps[0]);
-  auto [e0, gs] = eig0(bonds, block);
+  auto [e0, gs] = eig0(ops, block);
   // auto gs = resgs.eigenvectors.col(0);
   gs.make_complex();
   Log("done.");
@@ -45,7 +45,7 @@ int main() {
     Log("Dynamical Lanczos iterations for q={}", q);
 
     // Compute S(q) |g.s.>
-    auto S_of_q = symmetrized_operator(Bond("SZ", 0), group, irreps[q]);
+    auto S_of_q = symmetrized_operator(Op("SZ", 0), group, irreps[q]);
     auto block_q = Spinhalf(n_sites, n_up, group, irreps[q]);
     auto v0 = State(block_q);
     v0.make_complex();
@@ -56,7 +56,7 @@ int main() {
     v0 /= nrm;
 
     // Perform 200 Lanczos iterations for dynamics starting from v0
-    auto res = eigvals_lanczos(bonds, block_q, v0, 1, 0., 200, true, 1e-7);
+    auto res = eigvals_lanczos(ops, block_q, v0, 1, 0., 200, true, 1e-7);
     auto alphas = res.alphas;
     auto betas = res.betas;
 

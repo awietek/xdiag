@@ -21,8 +21,8 @@ using block_variant_t = std::variant<Spinhalf, tJ, Electron>;
 int64_t dim(block_variant_t const &block);
 int64_t size(block_variant_t const &block);
 int64_t n_sites(block_variant_t const &block);
+
 bool isreal(block_variant_t const &block);
-bool iscomplex(block_variant_t const &block);
 bool isdistributed(block_variant_t const &block);
 
 } // namespace xdiag

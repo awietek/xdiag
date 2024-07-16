@@ -2,25 +2,25 @@
 
 #include <xdiag/blocks/tj/terms/generic_term_diag.hpp>
 #include <xdiag/common.hpp>
-#include <xdiag/operators/bond.hpp>
+#include <xdiag/operators/op.hpp>
 
 namespace xdiag::tj {
 
 template <typename bit_t, typename coeff_t, bool symmetric, class Basis,
           class Fill>
-void apply_number(Bond const &bond, Basis &&basis, Fill &&fill) {
-  assert(bond.coupling_defined());
-  assert(bond.type_defined());
-  assert(bond.size() == 1);
+void apply_number(Op const &op, Basis &&basis, Fill &&fill) {
+  assert(op.coupling_defined());
+  assert(op.type_defined());
+  assert(op.size() == 1);
 
-  std::string type = bond.type();
+  std::string type = op.type();
   assert((type == "NUMBERUP") || (type == "NUMBERDN"));
 
-  Coupling cpl = bond.coupling();
+  Coupling cpl = op.coupling();
   assert(cpl.isexplicit() && !cpl.ismatrix());
   coeff_t mu = cpl.as<coeff_t>();
 
-  int64_t s = bond[0];
+  int64_t s = op[0];
   bit_t mask = (bit_t)1 << s;
 
   if (type == "NUMBERUP") {

@@ -9,10 +9,9 @@
 
 namespace xdiag {
 
-std::tuple<double, double> time_evolve_inplace(BondList const &bonds,
-                                               State &state, double time,
-                                               double precision, int64_t m,
-                                               double anorm,
+std::tuple<double, double> time_evolve_inplace(OpSum const &ops, State &state,
+                                               double time, double precision,
+                                               int64_t m, double anorm,
                                                int64_t nnorm) try {
   if (state.isreal()) {
     state.make_complex();
@@ -21,7 +20,7 @@ std::tuple<double, double> time_evolve_inplace(BondList const &bonds,
 
   if (anorm == 0.) { // if anorm is default value 0., compute an estimate
     for (int64_t j = 0; j < nnorm; ++j) {
-      double anormj = norm_estimate(bonds, block);
+      double anormj = norm_estimate(ops, block);
       if (anormj > anorm) {
         anorm = anormj;
       }
@@ -30,10 +29,10 @@ std::tuple<double, double> time_evolve_inplace(BondList const &bonds,
   }
 
   int64_t iter = 1;
-  auto apply_A = [&iter, &bonds, &block](arma::cx_vec const &v) {
+  auto apply_A = [&iter, &ops, &block](arma::cx_vec const &v) {
     auto ta = rightnow();
     auto w = arma::cx_vec(v.n_rows, arma::fill::zeros);
-    apply(bonds, block, v, block, w);
+    apply(ops, block, v, block, w);
     w *= -1.0i;
     Log(2, "Lanczos iteration {}", iter);
     timing(ta, rightnow(), "MVM", 2);
@@ -57,11 +56,10 @@ std::tuple<double, double> time_evolve_inplace(BondList const &bonds,
   return {0., 0.};
 }
 
-State time_evolve(BondList const &bonds, State state, double time,
-                  double precision, int64_t m, double anorm,
-                  int64_t nnorm) try {
+State time_evolve(OpSum const &ops, State state, double time, double precision,
+                  int64_t m, double anorm, int64_t nnorm) try {
   auto [err, hump] =
-      time_evolve_inplace(bonds, state, time, precision, m, anorm, nnorm);
+      time_evolve_inplace(ops, state, time, precision, m, anorm, nnorm);
   Log(2, "error (estimated): {}, hump: {}", err, hump);
   return state;
 } catch (Error const &e) {
@@ -69,10 +67,10 @@ State time_evolve(BondList const &bonds, State state, double time,
   return State();
 }
 
-State imag_time_evolve(BondList const &bonds, State const &state, double time,
+State imag_time_evolve(OpSum const &ops, State const &state, double time,
                        double precision = 1e-12, int64_t max_iterations = 1000,
                        double deflation_tol = 1e-7) try {
-  return exp_sym_v(bonds, state, -time, false, true, precision, max_iterations,
+  return exp_sym_v(ops, state, -time, false, true, precision, max_iterations,
                    deflation_tol);
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
