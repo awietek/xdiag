@@ -45,4 +45,4 @@ jobs:
 
     - name: run tests
       run: |
-        ./build/tests/tests_distributed
+        mpirun -np 4 ./build/tests/tests_distributed
