@@ -1,4 +1,12 @@
-# this method does not use Github Actions cache--good for infrequent simple runs
+name: Intel MPI CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+
 jobs:
 
   linux-intel-oneapi:
