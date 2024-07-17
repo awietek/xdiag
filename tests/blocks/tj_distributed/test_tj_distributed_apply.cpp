@@ -14,8 +14,7 @@
 
 using namespace xdiag;
 
-void test_tjdistributed_e0_real(OpSum ops, int nup, int ndn, double e0) {
-  int n_sites = ops.n_sites();
+void test_tjdistributed_e0_real(OpSum ops, int n_sites, int nup, int ndn, double e0) {
   auto block = tJDistributed(n_sites, nup, ndn);
   double e0c = eigval0(ops, block);
   REQUIRE(std::abs(e0 - e0c) < 1e-6);
@@ -33,10 +32,10 @@ TEST_CASE("tj_distributed_apply", "[tj_distributed]") try {
       auto block = tJDistributed(N, nup, ndn);
       OpSum ops;
       for (int i = 0; i < N; ++i) {
-        ops << Op("ISING", "Jz", {i, (i + 1) % N});
-        ops << Op("EXCHANGE", "Jx", {i, (i + 1) % N});
-        ops << Op("HOPDN", "TDN", {i, (i + 1) % N});
-        ops << Op("HOPUP", "TUP", {i, (i + 1) % N});
+        ops += Op("ISING", "Jz", {i, (i + 1) % N});
+        ops += Op("EXCHANGE", "Jx", {i, (i + 1) % N});
+        ops += Op("HOPDN", "TDN", {i, (i + 1) % N});
+        ops += Op("HOPUP", "TUP", {i, (i + 1) % N});
       }
       ops["Jz"] = 1.32;
       ops["Jx"] = complex(.432, .576);
@@ -82,7 +81,7 @@ TEST_CASE("tj_distributed_apply", "[tj_distributed]") try {
         {4, 2, -2.11803398}, {5, 0, -0.99999999}, {5, 1, -0.49999999},
         {6, 0, 1.500000000}};
     for (auto [nup, ndn, e0] : nup_ndn_e0) {
-      test_tjdistributed_e0_real(ops, nup, ndn, e0);
+      test_tjdistributed_e0_real(ops, 6, nup, ndn, e0);
     }
   }
 
@@ -101,7 +100,7 @@ TEST_CASE("tj_distributed_apply", "[tj_distributed]") try {
         {4, 2, 0.000000000}, {5, 0, -2.00000000}, {5, 1, 0.000000000},
         {6, 0, 0.000000000}};
     for (auto [nup, ndn, e0] : nup_ndn_e0) {
-      test_tjdistributed_e0_real(ops, nup, ndn, e0);
+      test_tjdistributed_e0_real(ops, 6, nup, ndn, e0);
     }
   }
 

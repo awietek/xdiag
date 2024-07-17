@@ -117,7 +117,7 @@ BasisSz<bit_t>::BasisSz(int64_t n_sites, int64_t n_up)
   // Create the transpose communicator
   std::vector<int64_t> n_states_i_send(mpi_size_, 0);
   for (bit_t prefix : prefixes()) {
-    for (bit_t postfix : postfixes(prefix)) {
+    for (bit_t postfix : postfix_states(prefix)) {
       int target_rank = rank(postfix);
       ++n_states_i_send[target_rank];
     }
@@ -127,9 +127,9 @@ BasisSz<bit_t>::BasisSz(int64_t n_sites, int64_t n_up)
   // Create the transpose communicator (reverse)
   std::vector<int64_t> n_states_i_send_reverse(mpi_size_, 0);
   for (bit_t postfix : postfixes()) {
-    for (bit_t prefix : prefixes(postfix)) {
+    for (bit_t prefix : prefix_states(postfix)) {
       int target_rank = rank(prefix);
-        ++n_states_i_send_reverse[target_rank;
+      ++n_states_i_send_reverse[target_rank];
     }
   }
   transpose_communicator_reverse_ = mpi::Communicator(n_states_i_send_reverse);
@@ -204,7 +204,11 @@ std::vector<bit_t> const &BasisSz<bit_t>::prefix_states(bit_t postfix) const {
   return prefix_states_[n_up_prefix];
 }
 
-mpi::CommPattern &BasisSz<bit_t>::comm_pattern() { return comm_pattern_; }
+template <typename bit_t> mpi::CommPattern &BasisSz<bit_t>::comm_pattern() {
+  return comm_pattern_;
+}
+
+template <typename bit_t>
 mpi::Communicator BasisSz<bit_t>::transpose_communicator(bool reverse) const {
   return reverse ? transpose_communicator_reverse_ : transpose_communicator_;
 }

@@ -17,12 +17,12 @@ void apply(OpSum const &ops, tJDistributed const &block_in,
   XDIAG_RETHROW(e);
 }
 
-template void apply<double>(OpSum const &, tJDistributed const &,
-                            arma::Col<double> const &, tJDistributed const &,
-                            arma::Col<double> &, double);
+template void apply(OpSum const &, tJDistributed const &,
+                    arma::Col<double> const &, tJDistributed const &,
+                    arma::Col<double> &, double);
 
-template void apply<complex>(OpSum const &, tJDistributed const &,
-                             arma::Col<complex> const &, tJDistributed const &,
-                             arma::Col<complex> &, double);
+template void apply(OpSum const &, tJDistributed const &,
+                    arma::Col<complex> const &, tJDistributed const &,
+                    arma::Col<complex> &, double);
 
 } // namespace xdiag

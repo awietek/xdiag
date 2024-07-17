@@ -97,7 +97,7 @@ void check_dimension_works_with_blas_int_size(int64_t dim) try {
                 "backend, for example the ILP64 interface of IntelMKL.");
   }
   // Backend 64 bit Blas implementation
-  else if ((sizeof(arma::blas_int) == 8) && (dim > ((int64_t)1 << 63) - 2)) {
+  else if ((sizeof(arma::blas_int) == 8) && (dim > ((int64_t)1 << 62) - 2)) {
     XDIAG_THROW(
         "Trying to create a block whose dimension is too large for the "
         "backend BLAS routines. The block dimension requested is larger than"

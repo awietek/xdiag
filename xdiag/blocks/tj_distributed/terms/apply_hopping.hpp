@@ -20,13 +20,16 @@ void apply_hopping(Op const &op, Basis &&basis, const coeff_t *vec_in,
   std::string type = op.type();
   assert((type == "HOPUP") || (type == "HOPDN"));
 
+  Coupling cpl = op.coupling();
+  assert(cpl.isexplicit() && !cpl.ismatrix());
+  coeff_t t = cpl.as<coeff_t>();
+
   int64_t s1 = op[0];
   int64_t s2 = op[1];
   bit_t flipmask = ((bit_t)1 << s1) | ((bit_t)1 << s2);
   int64_t l = std::min(s1, s2);
   int64_t u = std::max(s1, s2);
   bit_t fermimask = (((bit_t)1 << (u - l - 1)) - 1) << (l + 1);
-  coeff_t t = op.coupling<coeff_t>();
 
   auto term_action = [&](bit_t spins) -> std::pair<bit_t, coeff_t> {
     bool fermi = bits::popcnt(spins & fermimask) & 1;

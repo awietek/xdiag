@@ -14,6 +14,8 @@ namespace xdiag::tj_distributed {
 template <typename bit_t, typename coeff_t, class Basis>
 void apply_exchange(Op const &op, Basis &&basis, const coeff_t *vec_in,
                     coeff_t *vec_out) {
+  using namespace bits;
+
   assert(op.coupling_defined());
   assert(op.type_defined());
   assert(op.size() == 2);
@@ -24,13 +26,15 @@ void apply_exchange(Op const &op, Basis &&basis, const coeff_t *vec_in,
   int mpi_size;
   MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
 
-  using namespace bits;
+  Coupling cpl = op.coupling();
+  assert(cpl.isexplicit() && !cpl.ismatrix());
+  coeff_t J = cpl.as<coeff_t>();
+  coeff_t Jhalf = J / 2.;
+  coeff_t Jhalf_conj = conj(Jhalf);
 
   int64_t s1 = op[0];
   int64_t s2 = op[1];
-  coeff_t J = op.coupling<coeff_t>();
-  coeff_t Jhalf = J / 2.;
-  coeff_t Jhalf_conj = xdiag::conj(Jhalf);
+
   bit_t flipmask = ((bit_t)1 << s1) | ((bit_t)1 << s2);
 
   int64_t l = std::min(s1, s2);

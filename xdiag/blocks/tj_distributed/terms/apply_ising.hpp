@@ -17,7 +17,10 @@ void apply_ising(Op const &op, Basis &&basis, const coeff_t *vec_in,
   std::string type = op.type();
   assert((type == "ISING") || (type == "TJISING"));
 
-  coeff_t J = op.coupling<coeff_t>();
+  Coupling cpl = op.coupling();
+  assert(cpl.isexplicit() && !cpl.ismatrix());
+  coeff_t J = cpl.as<coeff_t>();
+
   int64_t s1 = op[0];
   int64_t s2 = op[1];
   bit_t s1_mask = (bit_t)1 << s1;

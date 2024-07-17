@@ -15,7 +15,7 @@ TEST_CASE("time_evolution_distributed", "[time_evolution]") try {
   using namespace xdiag;
 
   Log("Test time_evolution_distributed");
-  
+
   int L = 3;
   int n_sites = L * L;
 
@@ -29,14 +29,13 @@ TEST_CASE("time_evolution_distributed", "[time_evolution]") try {
       int site = y * L + x;
       int right = y * L + nx;
       int top = ny * L + x;
-      ops << Op("HOP", "T", {site, right});
-      ops << Op("TJISING", "JZ", {site, right});
-      ops << Op("EXCHANGE", "JEX", {site, right});
+      ops += Op("HOP", "T", {site, right});
+      ops += Op("TJISING", "JZ", {site, right});
+      ops += Op("EXCHANGE", "JEX", {site, right});
 
-      ops << Op("HOP", "T", {site, top});
-      ops << Op("TJISING", "JZ", {site, top});
-      ops << Op("EXCHANGE", "JEX", {site, top});
-
+      ops += Op("HOP", "T", {site, top});
+      ops += Op("TJISING", "JZ", {site, top});
+      ops += Op("EXCHANGE", "JEX", {site, top});
     }
   }
   ops["T"] = 1.0 + 0.2i;
@@ -63,15 +62,14 @@ TEST_CASE("time_evolution_distributed", "[time_evolution]") try {
   fill(psi_0, pstate);
   fill(psi_0d, pstate);
 
-
   auto H_psi_0 = State(block, false);
   apply(ops, psi_0, H_psi_0);
   auto H_psi_0d = State(blockd, false);
   apply(ops, psi_0d, H_psi_0d);
-  
+
   for (int s = 0; s < n_sites; ++s) {
-    auto n = innerC(Op("NUMBER", s), H_psi_0);
-    auto nd = innerC(Op("NUMBER", s), H_psi_0d);
+    auto n = innerC(Op("NUMBER", 1.0, s), H_psi_0);
+    auto nd = innerC(Op("NUMBER", 1.0, s), H_psi_0d);
     // Log("i {} {} {}", s, n, nd);
     REQUIRE(close(n, nd));
   }
@@ -83,14 +81,14 @@ TEST_CASE("time_evolution_distributed", "[time_evolution]") try {
     auto psi = time_evolve(ops, psi_0, time, tol);
     auto psid = time_evolve(ops, psi_0d, time, tol);
     for (int s = 0; s < n_sites; ++s) {
-      auto n = innerC(Op("NUMBER", s), psi);
-      auto nd = innerC(Op("NUMBER", s), psid);
+      auto n = innerC(Op("NUMBER", 1.0, s), psi);
+      auto nd = innerC(Op("NUMBER", 1.0, s), psid);
       Log("{} {} {} {:.6f}", s, n, nd, time);
       REQUIRE(std::abs(n - nd) < 1e-6);
     }
     Log("\n");
   }
 
- } catch (xdiag::Error e) {
+} catch (xdiag::Error e) {
   error_trace(e);
 }

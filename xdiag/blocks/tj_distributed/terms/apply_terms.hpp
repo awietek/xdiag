@@ -10,7 +10,7 @@
 namespace xdiag::tj_distributed {
 
 template <typename bit_t, typename coeff_t, class BasisIn, class BasisOut>
-void apply_terms(OpList const &ops, BasisIn const &basis_in,
+void apply_terms(OpSum const &ops, BasisIn const &basis_in,
                  arma::Col<coeff_t> const &vec_in, BasisOut const &basis_out,
                  arma::Col<coeff_t> &vec_out) try {
   (void)basis_out;

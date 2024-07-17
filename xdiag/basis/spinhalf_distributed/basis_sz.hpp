@@ -6,6 +6,7 @@
 #include <xdiag/bits/bitops.hpp>
 #include <xdiag/combinatorics/lin_table.hpp>
 #include <xdiag/common.hpp>
+#include <xdiag/parallel/mpi/comm_pattern.hpp>
 #include <xdiag/parallel/mpi/communicator.hpp>
 #include <xdiag/random/hash_functions.hpp>
 

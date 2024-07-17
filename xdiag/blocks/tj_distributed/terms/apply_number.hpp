@@ -16,8 +16,11 @@ void apply_number(Op const &op, Basis &&basis, const coeff_t *vec_in,
   std::string type = op.type();
   assert((type == "NUMBERUP") || (type == "NUMBERDN"));
 
-  coeff_t mu = op.coupling<coeff_t>();
-  int64_t s = op.site(0);
+  Coupling cpl = op.coupling();
+  assert(cpl.isexplicit() && !cpl.ismatrix());
+  coeff_t mu = cpl.as<coeff_t>();
+
+  int64_t s = op[0];
   bit_t mask = (bit_t)1 << s;
 
   if (type == "NUMBERUP") {

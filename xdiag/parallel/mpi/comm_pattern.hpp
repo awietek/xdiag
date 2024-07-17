@@ -8,7 +8,7 @@ namespace xdiag::mpi {
 
 class CommPattern {
 public:
-  CommPattern = default();
+  CommPattern() = default;
   bool contains(Op const &op);
   Communicator const &operator[](Op const &op) const;
   Communicator &operator[](Op const &op);
