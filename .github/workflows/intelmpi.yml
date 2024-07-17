@@ -29,7 +29,7 @@ jobs:
     # optional
     - name: Install Intel MPI and MKL
       timeout-minutes: 5
-      run: intel-oneapi-mpi intel-oneapi-mpi-devel intel-oneapi-mkl
+      run: sudo apt-get install intel-oneapi-mpi intel-oneapi-mpi-devel intel-oneapi-mkl
 
     - name: Setup Intel oneAPI environment
       run: |
@@ -38,7 +38,7 @@ jobs:
     - name: checkout project code
       uses: actions/checkout@v4
 
-    - name: CMake Configure
+    - name: compile tests
       run:  |
         cmake -S . -B build -D XDIAG_DISTRIBUTED=On -D CMAKE_CXX_COMPILER=icpx -D BUILD_TESTING=On
         cmake --build build
