@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 import sys
 import numpy as np
-import toml
 
 assert(len(sys.argv)==2)
 filename = sys.argv[1]
@@ -26,10 +25,17 @@ with open(filename, 'r') as fl:
 
         if is_coordinate_line:
             spt = line.split(" ")
+            # if cline == 0:
+            #     coordinate_str += "  " + str([float(spt[0]), float(spt[1])]) + ",\n"
+            # else:
+            #     coordinate_str += "  " + str([float(spt[0]), float(spt[1])]) + ",\n"                
+
             if cline == 0:
-                coordinate_str += "  " + str([float(spt[0]), float(spt[1])]) + ",\n"
+                coordinate_str += "  " + str(list(map(float, spt))) + ",\n"
             else:
-                coordinate_str += "  " + str([float(spt[0]), float(spt[1])]) + ",\n"                
+                coordinate_str += "  " + str(list(map(float, spt))) + ",\n"                
+
+
             cline += 1
             
             
