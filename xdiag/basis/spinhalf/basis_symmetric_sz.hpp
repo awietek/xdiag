@@ -12,12 +12,12 @@
 
 namespace xdiag::basis::spinhalf {
 
-template <typename bit_t> class BasisSymmetricSz {
+template <typename bit_tt> class BasisSymmetricSz {
   // Public interface
 public:
+  using bit_t = bit_tt;
   using iterator_t = typename std::vector<bit_t>::const_iterator;
   using span_size_t = gsl::span<int64_t const>::size_type;
-  using bit_type = bit_t;
 
   BasisSymmetricSz() = default;
   BasisSymmetricSz(int64_t n_sites, int64_t n_up,

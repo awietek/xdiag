@@ -5,10 +5,10 @@
 
 namespace xdiag::basis::spinhalf {
 
-template <typename bit_t> class BasisNoSz {
+template <typename bit_tt> class BasisNoSz {
 public:
+  using bit_t = bit_tt;
   using iterator_t = combinatorics::SubsetsIterator<bit_t>;
-  using bit_type = bit_t;
 
   BasisNoSz() = default;
   BasisNoSz(int64_t n_sites);

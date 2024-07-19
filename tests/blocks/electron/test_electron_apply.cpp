@@ -4,7 +4,7 @@
 
 #include "../tj/testcases_tj.hpp"
 #include "testcases_electron.hpp"
-#include <xdiag/blocks/electron/electron_matrix.hpp>
+#include <xdiag/blocks/electron/matrix.hpp>
 #include <xdiag/algebra/algebra.hpp>
 #include <xdiag/algebra/apply.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>

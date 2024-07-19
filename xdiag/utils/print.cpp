@@ -151,37 +151,22 @@ void print_pretty(const char *identifier, QN const &qn) {
   (void)qn;
 }
 
-void print_pretty(const char *identifier, block_variant_t const &block) {
-  printf("llllll\n");
-  std::visit(
-      overload{
-          [identifier](Spinhalf const &block) {
-            print_pretty(identifier, block);
-          },
-          [identifier](tJ const &block) { print_pretty(identifier, block); },
-          [identifier](Electron const &block) {
-            print_pretty(identifier, block);
-          },
-#ifdef XDIAG_USE_MPI
-          [identifier](tJDistributed const &block) {
-            print_pretty(identifier, block);
-          },
-#endif
-      },
-      block);
+void print_pretty(const char *identifier, Block const &block) {
+  std::visit([identifier](auto &&block) { print_pretty(identifier, block); },
+             block);
 }
 
 void print_pretty(const char *identifier, Spinhalf const &block) {
   printf("%s:\n", identifier);
 
   printf("  n_sites  : %" PRId64 "\n", block.n_sites());
-  if (block.sz_conserved()) {
+  if (block.n_up() != undefined) {
     printf("  n_up     : %" PRId64 "\n", block.n_up());
   } else {
     printf("  n_up     : not conserved\n");
   }
 
-  if (block.symmetric()) {
+  if (block.permutation_group()) {
     printf("  group    : defined with ID 0x%lx\n",
            (unsigned long)random::hash(block.permutation_group()));
     printf("  irrep    : defined with ID 0x%lx\n",
@@ -198,7 +183,7 @@ void print_pretty(const char *identifier, tJ const &block) {
   printf("%s:\n", identifier);
 
   printf("  n_sites  : %" PRId64 "\n", block.n_sites());
-  if (block.sz_conserved() && block.charge_conserved()) {
+  if ((block.n_up() != undefined) && (block.n_dn() != undefined)) {
     printf("  n_up     : %" PRId64 "\n", block.n_up());
     printf("  n_dn     : %" PRId64 "\n", block.n_dn());
 
@@ -207,7 +192,7 @@ void print_pretty(const char *identifier, tJ const &block) {
     printf("  n_dn     : not conserved\n");
   }
 
-  if (block.symmetric()) {
+  if (block.permutation_group()) {
     printf("  group    : defined with ID 0x%lx\n",
            (unsigned long)random::hash(block.permutation_group()));
     printf("  irrep    : defined with ID 0x%lx\n",
@@ -221,6 +206,46 @@ void print_pretty(const char *identifier, tJ const &block) {
 }
 
 #ifdef XDIAG_USE_MPI
+void print_pretty(const char *identifier, SpinhalfDistributed const &block) {
+
+  int rank, size;
+  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+  MPI_Comm_size(MPI_COMM_WORLD, &size);
+  if (rank == 0) {
+    printf("%s:\n", identifier);
+
+    printf("  n_sites  : %" PRId64 "\n", block.n_sites());
+    if (block.n_up() != undefined) {
+      printf("  n_up     : %" PRId64 "\n", block.n_up());
+    } else {
+      printf("  n_up     : not conserved\n");
+    }
+
+    std::stringstream ss;
+    ss.imbue(std::locale("en_US.UTF-8"));
+    ss << block.dim();
+    printf("  dimension: %s\n", ss.str().c_str());
+
+    std::stringstream ssmax;
+    ssmax.imbue(std::locale("en_US.UTF-8"));
+    ssmax << block.size_max();
+
+    std::stringstream ssmin;
+    ssmin.imbue(std::locale("en_US.UTF-8"));
+    ssmin << block.size_min();
+
+    std::stringstream ssavg;
+    ssavg.imbue(std::locale("en_US.UTF-8"));
+    ssavg << block.dim() / size;
+
+    printf("  dimension (max local): %s\n", ssmax.str().c_str());
+    printf("  dimension (min local): %s\n", ssmin.str().c_str());
+    printf("  dimension (avg local): %s\n", ssavg.str().c_str());
+
+    printf("  ID       : 0x%lx\n", (unsigned long)random::hash(block));
+  }
+}
+
 void print_pretty(const char *identifier, tJDistributed const &block) {
 
   int rank, size;
@@ -230,20 +255,13 @@ void print_pretty(const char *identifier, tJDistributed const &block) {
     printf("%s:\n", identifier);
 
     printf("  n_sites  : %" PRId64 "\n", block.n_sites());
-    if (block.sz_conserved() && block.charge_conserved()) {
+    if ((block.n_up() != undefined) && (block.n_dn() != undefined)) {
       printf("  n_up     : %" PRId64 "\n", block.n_up());
       printf("  n_dn     : %" PRId64 "\n", block.n_dn());
 
     } else {
       printf("  n_up     : not conserved\n");
       printf("  n_dn     : not conserved\n");
-    }
-
-    if (block.symmetric()) {
-      printf("  group    : defined with ID 0x%lx\n",
-             (unsigned long)random::hash(block.permutation_group()));
-      printf("  irrep    : defined with ID 0x%lx\n",
-             (unsigned long)random::hash(block.irrep()));
     }
 
     std::stringstream ss;
@@ -276,7 +294,7 @@ void print_pretty(const char *identifier, Electron const &block) {
   printf("%s:\n", identifier);
 
   printf("  n_sites  : %" PRId64 "\n", block.n_sites());
-  if (block.sz_conserved() && block.charge_conserved()) {
+  if ((block.n_up() != undefined) && (block.n_dn() != undefined)) {
     printf("  n_up     : %" PRId64 "\n", block.n_up());
     printf("  n_dn     : %" PRId64 "\n", block.n_dn());
 
@@ -285,7 +303,7 @@ void print_pretty(const char *identifier, Electron const &block) {
     printf("  n_dn     : not conserved\n");
   }
 
-  if (block.symmetric()) {
+  if (block.permutation_group()) {
     printf("  group    : defined with ID 0x%lx\n",
            (unsigned long)random::hash(block.permutation_group()));
     printf("  irrep    : defined with ID 0x%lx\n",

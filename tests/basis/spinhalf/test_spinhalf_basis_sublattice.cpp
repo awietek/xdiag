@@ -247,8 +247,6 @@ template <class bit_t> void test_spinhalf_basis_sublattice() {
 
 TEST_CASE("basis_spinhalf_sublattice", "[symmetries]") {
   Log("Test basis_spinhalf_sublattice");
-  Log("uint16_t");
-  test_spinhalf_basis_sublattice<uint16_t>();
   Log("uint32_t");
   test_spinhalf_basis_sublattice<uint32_t>();
   Log("uint64_t");

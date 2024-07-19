@@ -10,7 +10,7 @@ class State {
 public:
   State() = default;
 
-  State(block_variant_t const &block, bool real = true, int64_t n_cols = 1);
+  State(Block const &block, bool real = true, int64_t n_cols = 1);
 
   template <typename block_t>
   explicit State(block_t const &block, bool real = true, int64_t n_cols = 1);
@@ -47,7 +47,7 @@ public:
 
   template <typename block_t>
   State(block_t const &block, complex const *ptr, int64_t n_cols);
-  block_variant_t block() const;
+  Block block() const;
 
   double *memptr();
   complex *memptrC();
@@ -60,11 +60,11 @@ private:
   int64_t dim_;
   int64_t n_rows_;
   int64_t n_cols_;
-  block_variant_t block_;
+  Block block_;
   mutable std::vector<double> storage_;
 };
 
-State zero_state(block_variant_t const &block, bool real = true);
+State zero_state(Block const &block, bool real = true);
 template <typename block_t>
 State zero_state(block_t const &block, bool real = true);
 State zeros_like(State const &state);

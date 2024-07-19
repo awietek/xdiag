@@ -60,7 +60,6 @@ Representation const &BasisSymmetricNoNp<bit_t>::irrep() const {
   return irrep_;
 }
 
-template class BasisSymmetricNoNp<uint16_t>;
 template class BasisSymmetricNoNp<uint32_t>;
 template class BasisSymmetricNoNp<uint64_t>;
 

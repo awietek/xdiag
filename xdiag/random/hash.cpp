@@ -39,61 +39,74 @@ uint64_t hash(Representation const &irrep) {
   return h;
 }
 
-uint64_t hash(block_variant_t const &block) {
+uint64_t hash(Block const &block) {
   return std::visit([](auto &&block) { return hash(block); }, block);
 }
 
-uint64_t hash(Spinhalf const &spinhalf) {
-  uint64_t h =
-      spinhalf.n_sites() == 0 ? 0 : hash_fnv1((uint64_t)spinhalf.n_sites());
-  if (spinhalf.sz_conserved()) {
-    h = hash_combine(h, hash_fnv1((uint64_t)spinhalf.n_up()));
+uint64_t hash(Spinhalf const &block) {
+  uint64_t h = block.n_sites() == 0 ? 0 : hash_fnv1((uint64_t)block.n_sites());
+  if (block.n_up() != undefined) {
+    h = hash_combine(h, hash_fnv1((uint64_t)block.n_up()));
   }
-  if (spinhalf.symmetric()) {
-    h = hash_combine(h, hash(spinhalf.permutation_group()));
-    h = hash_combine(h, hash(spinhalf.irrep()));
-  }
-  return h;
-}
-
-uint64_t hash(tJ const &tj) {
-  uint64_t h = tj.n_sites() == 0 ? 0 : hash_fnv1((uint64_t)tj.n_sites());
-  if (tj.charge_conserved() && tj.sz_conserved()) {
-    h = hash_combine(h, hash_fnv1((uint64_t)tj.n_up()));
-    h = hash_combine(h, hash_fnv1((uint64_t)tj.n_dn()));
-  }
-  if (tj.symmetric()) {
-    h = hash_combine(h, hash(tj.permutation_group()));
-    h = hash_combine(h, hash(tj.irrep()));
+  if (block.permutation_group()) {
+    h = hash_combine(h, hash(block.permutation_group()));
+    h = hash_combine(h, hash(block.irrep()));
   }
   return h;
 }
 
-uint64_t hash(Electron const &electron) {
-  uint64_t h =
-      electron.n_sites() == 0 ? 0 : hash_fnv1((uint64_t)electron.n_sites());
-  if (electron.charge_conserved() && electron.sz_conserved()) {
-    h = hash_combine(h, hash_fnv1((uint64_t)electron.n_up()));
-    h = hash_combine(h, hash_fnv1((uint64_t)electron.n_dn()));
+uint64_t hash(tJ const &block) {
+  uint64_t h = block.n_sites() == 0 ? 0 : hash_fnv1((uint64_t)block.n_sites());
+  if (block.n_up() != undefined) {
+    h = hash_combine(h, hash_fnv1((uint64_t)block.n_up()));
   }
-  if (electron.symmetric()) {
-    h = hash_combine(h, hash(electron.permutation_group()));
-    h = hash_combine(h, hash(electron.irrep()));
+  if (block.n_dn() != undefined) {
+    h = hash_combine(h, hash_fnv1((uint64_t)block.n_dn()));
+  }
+  if (block.permutation_group()) {
+    h = hash_combine(h, hash(block.permutation_group()));
+    h = hash_combine(h, hash(block.irrep()));
+  }
+  return h;
+}
+
+uint64_t hash(Electron const &block) {
+  uint64_t h = block.n_sites() == 0 ? 0 : hash_fnv1((uint64_t)block.n_sites());
+  if (block.n_up() != undefined) {
+    h = hash_combine(h, hash_fnv1((uint64_t)block.n_up()));
+  }
+  if (block.n_dn() != undefined) {
+    h = hash_combine(h, hash_fnv1((uint64_t)block.n_dn()));
+  }
+  if (block.permutation_group()) {
+    h = hash_combine(h, hash(block.permutation_group()));
+    h = hash_combine(h, hash(block.irrep()));
   }
   return h;
 }
 
 #ifdef XDIAG_USE_MPI
-uint64_t hash(tJDistributed const &tj) {
-  uint64_t h = tj.n_sites() == 0 ? 0 : hash_fnv1((uint64_t)tj.n_sites());
-  if (tj.charge_conserved() && tj.sz_conserved()) {
-    h = hash_combine(h, hash_fnv1((uint64_t)tj.n_up()));
-    h = hash_combine(h, hash_fnv1((uint64_t)tj.n_dn()));
+
+uint64_t hash(SpinhalfDistributed const &block) {
+  uint64_t h = block.n_sites() == 0 ? 0 : hash_fnv1((uint64_t)block.n_sites());
+  if (block.n_up() != undefined) {
+    h = hash_combine(h, hash_fnv1((uint64_t)block.n_up()));
   }
-  if (tj.symmetric()) {
-    h = hash_combine(h, hash(tj.permutation_group()));
-    h = hash_combine(h, hash(tj.irrep()));
+  int mpi_rank;
+  MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
+  h = hash_combine(h, hash_fnv1((uint64_t)mpi_rank));
+  return h;
+}
+
+uint64_t hash(tJDistributed const &block) {
+  uint64_t h = block.n_sites() == 0 ? 0 : hash_fnv1((uint64_t)block.n_sites());
+  if (block.n_up() != undefined) {
+    h = hash_combine(h, hash_fnv1((uint64_t)block.n_up()));
   }
+  if (block.n_dn() != undefined) {
+    h = hash_combine(h, hash_fnv1((uint64_t)block.n_dn()));
+  }
+
   int mpi_rank;
   MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
   h = hash_combine(h, hash_fnv1((uint64_t)mpi_rank));

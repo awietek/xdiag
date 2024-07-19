@@ -1,115 +1,61 @@
-#include "tj.hpp"
-
-#include <xdiag/utils/logger.hpp>
+#include "spinhalf_distributed.hpp"
 
 namespace xdiag {
 
-using namespace basis;
-
-tJ::tJ(int64_t n_sites, int64_t nup, int64_t ndn)
-    : n_sites_(n_sites), charge_conserved_(true), charge_(nup + ndn),
-      sz_conserved_(true), sz_(nup - ndn), n_up_(nup), n_dn_(ndn),
-      symmetric_(false), permutation_group_(), irrep_() {
+SpinhalfDistributed::SpinhalfDistributed(int64_t n_sites, int64_t n_up) try
+    : n_sites_(n_sites), n_up_(n_up) {
+  using namespace basis::spinhalf_distributed;
+  using combinatorics::binomial;
 
   if (n_sites < 0) {
-    throw(std::invalid_argument("n_sites < 0"));
-  } else if ((nup < 0) || (ndn < 0)) {
-    throw(std::invalid_argument("nup < 0 or ndn < 0"));
-  } else if ((nup + ndn) > n_sites) {
-    throw(std::invalid_argument("nup + ndn > n_sites"));
+    XDIAG_THROW("n_sites < 0");
+  } else if (n_up < 0) {
+    XDIAG_THROW("n_up < 0");
+  } else if (n_up > n_sites) {
+    XDIAG_THROW("n_up > n_sites");
   }
 
-  try {
-    if (n_sites < 16) {
-      basis_ =
-          std::make_shared<basis_t>(tj::BasisNp<uint16_t>(n_sites, nup, ndn));
-    } else if (n_sites < 32) {
-      basis_ =
-          std::make_shared<basis_t>(tj::BasisNp<uint32_t>(n_sites, nup, ndn));
-    } else if (n_sites < 64) {
-      basis_ =
-          std::make_shared<basis_t>(tj::BasisNp<uint64_t>(n_sites, nup, ndn));
-    } else {
-      throw(std::runtime_error(
-          "blocks with more than 64 sites currently not implemented"));
-    }
-    size_ = xdiag::size(*basis_);
-  } catch (...) {
-    rethrow(__func__, "Cannot create Basis for tJ");
+  if (n_sites < 32) {
+    basis_ = std::make_shared<basis_t>(BasisSz<uint32_t>(n_sites, n_up));
+  } else if (n_sites < 64) {
+    basis_ = std::make_shared<basis_t>(BasisSz<uint64_t>(n_sites, n_up));
+  } else {
+    XDIAG_THROW("blocks with more than 64 sites currently not implemented");
   }
+  dim_ = basis::dim(*basis_);
+  assert(dim_ == binomial(n_sites, n_up));
+  size_ = basis::size(*basis_);
+
+  check_dimension_works_with_blas_int_size(size_);
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
-tJ::tJ(int64_t n_sites, int64_t nup, int64_t ndn, PermutationGroup group,
-       Representation irrep)
-    : n_sites_(n_sites), charge_conserved_(true), charge_(nup + ndn),
-      sz_conserved_(true), sz_(nup - ndn), n_up_(nup), n_dn_(ndn),
-      symmetric_(true), permutation_group_(allowed_subgroup(group, irrep)),
-      irrep_(irrep) {
-  if (n_sites < 0) {
-    throw(std::invalid_argument("n_sites < 0"));
-  } else if ((nup < 0) || (ndn < 0)) {
-    throw(std::invalid_argument("nup < 0 or ndn < 0"));
-  } else if ((nup + ndn) > n_sites) {
-    throw(std::invalid_argument("nup + ndn > n_sites"));
-  } else if (n_sites != group.n_sites()) {
-    throw(std::logic_error(
-        "n_sites does not match the n_sites in PermutationGroup"));
-  } else if (permutation_group_.size() != irrep.size()) {
-    throw(std::logic_error("PermutationGroup and Representation do not have "
-                           "same number of elements"));
-  }
+int64_t SpinhalfDistributed::n_sites() const { return n_sites_; }
+int64_t SpinhalfDistributed::n_up() const { return n_up_; }
 
-  try {
-    if (n_sites < 16) {
-      basis_ = std::make_shared<basis_t>(
-          tj::BasisSymmetricNp<uint16_t>(n_sites, nup, ndn, group, irrep));
-    } else if (n_sites < 32) {
-      basis_ = std::make_shared<basis_t>(
-          tj::BasisSymmetricNp<uint32_t>(n_sites, nup, ndn, group, irrep));
-    } else if (n_sites < 64) {
-      basis_ = std::make_shared<basis_t>(
-          tj::BasisSymmetricNp<uint64_t>(n_sites, nup, ndn, group, irrep));
-    } else {
-      throw(std::runtime_error(
-          "blocks with more than 64 sites currently not implemented"));
-    }
-    size_ = xdiag::size(*basis_);
-  } catch (...) {
-    rethrow(__func__, "Cannot create Basis for tJ");
-  }
+int64_t SpinhalfDistributed::dim() const { return dim_; }
+int64_t SpinhalfDistributed::size() const { return size_; }
+int64_t SpinhalfDistributed::size_max() const {
+  return basis::size_max(*basis_);
+}
+int64_t SpinhalfDistributed::size_min() const {
+  return basis::size_min(*basis_);
 }
 
-int64_t tJ::n_sites() const { return n_sites_; }
-int64_t tJ::n_up() const { return n_up_; }
-int64_t tJ::n_dn() const { return n_dn_; }
-
-bool tJ::charge_conserved() const { return charge_conserved_; }
-bool tJ::sz_conserved() const { return sz_conserved_; }
-
-bool tJ::symmetric() const { return symmetric_; }
-PermutationGroup const &tJ::permutation_group() const {
-  return permutation_group_;
+bool SpinhalfDistributed::isreal(double precision) const {
+  return true; // would only be nontrivial with space group irreps
 }
-Representation const &tJ::irrep() const { return irrep_; }
 
-int64_t tJ::dim() const { return size_; }
-int64_t tJ::size() const { return size_; }
-
-bool tJ::iscomplex(double precision) const {
-  return symmetric_ ? irrep_.iscomplex(precision) : false;
+bool SpinhalfDistributed::operator==(SpinhalfDistributed const &rhs) const {
+  return (n_sites_ == rhs.n_sites_) && (n_up_ == rhs.n_up_);
 }
-bool tJ::isreal(double precision) const { return !iscomplex(precision); }
-
-bool tJ::operator==(tJ const &rhs) const {
-  return (n_sites_ == rhs.n_sites_) &&
-         (charge_conserved_ == rhs.charge_conserved_) &&
-         (charge_ == rhs.charge_) && (sz_conserved_ == rhs.sz_conserved_) &&
-         (sz_ == rhs.sz_) && (n_up_ == rhs.n_up_) && (n_dn_ == rhs.n_dn_) &&
-         (permutation_group_ == rhs.permutation_group_) &&
-         (irrep_ == rhs.irrep_);
+bool SpinhalfDistributed::operator!=(SpinhalfDistributed const &rhs) const {
+  return !operator==(rhs);
 }
-bool tJ::operator!=(tJ const &rhs) const { return !operator==(rhs); }
 
-basis_tj_variant_t const &tJ::basis() const { return *basis_; }
+SpinhalfDistributed::basis_t const &SpinhalfDistributed::basis() const {
+  return *basis_;
+}
 
 } // namespace xdiag

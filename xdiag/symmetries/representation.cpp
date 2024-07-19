@@ -160,16 +160,13 @@ Representation read_representation(std::string filename, std::string repname) {
   return Representation();
 }
 
-bool Representation::iscomplex(double precision) const {
+bool Representation::isreal(double precision) const {
   for (auto c : characters_) {
     if (std::abs(imag(c)) > precision) {
-      return true;
+      return false;
     }
   }
-  return false;
-}
-bool Representation::isreal(double precision) const {
-  return !iscomplex(precision);
+  return true;
 }
 
 Representation trivial_representation(int64_t size) {

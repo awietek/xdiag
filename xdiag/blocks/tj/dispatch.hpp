@@ -1,16 +1,13 @@
 #pragma once
 
-#include <xdiag/basis/basis.hpp>
 #include <xdiag/blocks/tj/terms/apply_terms.hpp>
 #include <xdiag/common.hpp>
-#include <xdiag/utils/logger.hpp>
 
 namespace xdiag::tj {
 
 template <typename coeff_t, class fill_f>
-inline void dispatch(OpSum const &ops, tJ const &block_in,
-                     tJ const &block_out, fill_f &&fill,
-                     double zero_precision) try {
+inline void dispatch(OpSum const &ops, tJ const &block_in, tJ const &block_out,
+                     fill_f &&fill, double zero_precision) try {
   using namespace basis::tj;
   auto const &basis_in = block_in.basis();
   auto const &basis_out = block_out.basis();

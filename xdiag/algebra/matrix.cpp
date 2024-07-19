@@ -1,9 +1,5 @@
 #include "matrix.hpp"
 
-#include <xdiag/blocks/electron/electron_matrix.hpp>
-#include <xdiag/blocks/spinhalf/spinhalf_matrix.hpp>
-#include <xdiag/blocks/tj/tj_matrix.hpp>
-
 namespace xdiag {
 
 template <typename block_t>

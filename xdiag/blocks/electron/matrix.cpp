@@ -1,4 +1,4 @@
-#include "electron_matrix.hpp"
+#include "matrix.hpp"
 
 #include <xdiag/algebra/fill.hpp>
 #include <xdiag/blocks/electron/compile.hpp>

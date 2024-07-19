@@ -28,7 +28,7 @@ private:
   std::vector<std::string> local_states_;
 };
 
-State product_state(block_variant_t const &block,
+State product_state(Block const &block,
                     std::vector<std::string> const &local_state,
                     bool real = true);
 

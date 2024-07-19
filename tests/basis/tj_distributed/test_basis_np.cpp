@@ -223,22 +223,16 @@ template <typename bit_t> void test_tj_distributed_basis_np() {
 TEST_CASE("tj_distributed_basis_np", "[tj_distributed]") {
   using namespace xdiag;
 
-  Log("tj_distributed_basis_np transpose test (uint16_t, double)");
-  test_tj_distributed_basis_np_transpose<uint16_t, double>();
   Log("tj_distributed_basis_np transpose test (uint32_t, double)");
   test_tj_distributed_basis_np_transpose<uint32_t, double>();
   Log("tj_distributed_basis_np transpose test (uint64_t, double)");
   test_tj_distributed_basis_np_transpose<uint64_t, double>();
 
-  Log("tj_distributed_basis_np transpose test (uint16_t, complex)");
-  test_tj_distributed_basis_np_transpose<uint16_t, complex>();
   Log("tj_distributed_basis_np transpose test (uint32_t, complex)");
   test_tj_distributed_basis_np_transpose<uint32_t, complex>();
   Log("tj_distributed_basis_np transpose test (uint64_t, complex)");
   test_tj_distributed_basis_np_transpose<uint64_t, complex>();
 
-  Log("tj_distributed_basis_np test (uint16_t)");
-  test_tj_distributed_basis_np<uint16_t>();
   Log("tj_distributed_basis_np test (uint32_t)");
   test_tj_distributed_basis_np<uint32_t>();
   Log("tj_distributed_basis_np test (uint64_t)");

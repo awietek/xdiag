@@ -58,7 +58,6 @@ bool BasisSz<bit_t>::operator!=(BasisSz<bit_t> const &rhs) const {
   return !operator==(rhs);
 }
 
-template class BasisSz<uint16_t>;
 template class BasisSz<uint32_t>;
 template class BasisSz<uint64_t>;
 

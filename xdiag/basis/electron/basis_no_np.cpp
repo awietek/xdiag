@@ -68,7 +68,6 @@ SubsetsIndexThread<bit_t> BasisNoNp<bit_t>::states_indices_dns_thread() const {
 }
 #endif
 
-template class BasisNoNp<uint16_t>;
 template class BasisNoNp<uint32_t>;
 template class BasisNoNp<uint64_t>;
 

@@ -13,12 +13,11 @@ namespace xdiag::basis::spinhalf {
 
 constexpr int64_t maximum_prefix_bits = 24;
 
-template <typename bit_t, int n_sublat> class BasisSublattice {
-  // Public interface
+template <typename bit_tt, int n_sublat> class BasisSublattice {
 public:
+  using bit_t = bit_tt;
   using iterator_t = typename std::vector<bit_t>::const_iterator;
-  using bit_type = bit_t;
-  
+
   BasisSublattice() = default;
   BasisSublattice(int64_t n_sites, PermutationGroup permutation_group,
                   Representation irrep);

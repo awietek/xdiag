@@ -11,7 +11,7 @@ namespace xdiag {
 // Returns an estimate of the 1-norm of an operator (needed by some iterative
 // algorithms)
 
-double norm_estimate(OpSum const &ops, block_variant_t const &block,
+double norm_estimate(OpSum const &ops, Block const &block,
                      int64_t n_max_attempts = 5, uint64_t seed = 42);
 
 template <typename block_t>

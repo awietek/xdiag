@@ -89,8 +89,7 @@ template <> complex Coupling::as<complex>() const try {
 
 template <> arma::cx_mat Coupling::as<arma::cx_mat>() const try {
   if (const arma::mat *pval = std::get_if<arma::mat>(&value_)) {
-    return arma::cx_mat(
-        *pval, arma::mat(pval->n_rows, pval->n_cols, arma::fill::zeros));
+    return to_cx_mat(*pval);
   } else if (const arma::cx_mat *pval = std::get_if<arma::cx_mat>(&value_)) {
     return *pval;
   } else {
@@ -162,13 +161,11 @@ Coupling &Coupling::operator+=(Coupling const &rhs) try {
                [](complex &a, complex const &b) { a += b; },
                [](arma::mat &a, arma::mat const &b) { a += b; },
                [&](arma::mat &a, arma::cx_mat const &b) {
-                 auto acplx = arma::cx_mat(
-                     a, arma::mat(a.n_rows, a.n_cols, arma::fill::zeros));
+                 auto acplx = to_cx_mat(a);
                  value_ = arma::cx_mat(acplx + b);
                },
                [](arma::cx_mat &a, arma::mat const &b) {
-                 auto bcplx = arma::cx_mat(
-                     b, arma::mat(a.n_rows, a.n_cols, arma::fill::zeros));
+                 auto bcplx = to_cx_mat(b);
                  a += bcplx;
                },
                [](arma::cx_mat &a, arma::cx_mat const &b) { a += b; },
@@ -191,13 +188,11 @@ Coupling &Coupling::operator-=(Coupling const &rhs) try {
                [](complex &a, complex const &b) { a -= b; },
                [](arma::mat &a, arma::mat const &b) { a -= b; },
                [&](arma::mat &a, arma::cx_mat const &b) {
-                 auto acplx = arma::cx_mat(
-                     a, arma::mat(a.n_rows, a.n_cols, arma::fill::zeros));
+                 auto acplx = to_cx_mat(a);
                  value_ = arma::cx_mat(acplx - b);
                },
                [](arma::cx_mat &a, arma::mat const &b) {
-                 auto bcplx = arma::cx_mat(
-                     b, arma::mat(a.n_rows, a.n_cols, arma::fill::zeros));
+                 auto bcplx = to_cx_mat(b);
                  a -= bcplx;
                },
                [](arma::cx_mat &a, arma::cx_mat const &b) { a -= b; },
@@ -239,12 +234,7 @@ Coupling &Coupling::operator*=(complex rhs) try {
           },
           [&](double &a) { value_ = (complex)a * rhs; },
           [&](complex &a) { a *= rhs; },
-          [&](arma::mat &a) {
-            value_ =
-                arma::cx_mat(arma::cx_mat(a, arma::mat(a.n_rows, a.n_cols,
-                                                       arma::fill::zeros)) *
-                             rhs);
-          },
+          [&](arma::mat &a) { value_ = arma::cx_mat(to_cx_mat(a) * rhs); },
           [&](arma::cx_mat &a) { a *= rhs; },
       },
       value_);

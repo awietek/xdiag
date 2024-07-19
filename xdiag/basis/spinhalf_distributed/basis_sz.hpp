@@ -12,9 +12,9 @@
 
 namespace xdiag::basis::spinhalf_distributed {
 
-template <typename bit_t> class BasisSz {
+template <typename bit_tt> class BasisSz {
 public:
-  using bit_type = bit_t;
+  using bit_t = bit_tt;
 
   BasisSz() = default;
   BasisSz(int64_t n_sites, int64_t n_up);
@@ -25,9 +25,9 @@ public:
   int64_t n_prefix_bits() const;
   int64_t n_postfix_bits() const;
 
+  int64_t dim() const;
   int64_t size() const;
-  int64_t size_local() const;
-  int64_t size_local_transpose() const;
+  int64_t size_transpose() const;
   int64_t size_max() const;
   int64_t size_min() const;
 
@@ -58,9 +58,9 @@ private:
   int n_prefix_bits_;
   int n_postfix_bits_;
 
+  int64_t dim_;
   int64_t size_;
-  int64_t size_local_;
-  int64_t size_local_transpose_;
+  int64_t size_transpose_;
   int64_t size_max_;
   int64_t size_min_;
 

@@ -22,7 +22,9 @@ template <class T>
 struct is_complex_t<std::complex<T>> : public std::true_type {};
 
 // Complex real/imag/conj
-template <class coeff_t> struct real_type_struct { typedef coeff_t type; };
+template <class coeff_t> struct real_type_struct {
+  typedef coeff_t type;
+};
 
 template <class coeff_t> struct real_type_struct<std::complex<coeff_t>> {
   typedef coeff_t type;
@@ -58,11 +60,7 @@ template <class T> constexpr bool isreal() {
 }
 
 constexpr int64_t invalid_index = (int64_t)-1;
-constexpr int invalid_n = (int64_t)-1;
-
-constexpr int undefined_qn = std::numeric_limits<int>::min();
-constexpr std::pair<int, int> undefined_qns = {undefined_qn, undefined_qn};
-
+constexpr int64_t undefined = std::numeric_limits<int64_t>::min();
 constexpr double default_double = std::numeric_limits<double>::max();
 
 constexpr bool index_not_found(int64_t idx) { return idx < 0; }
@@ -112,11 +110,15 @@ void resize_vector(std::vector<coeff_t> &vec, int64_t size) {
 }
 
 // Helper type for visitor patterns
-template <class... Ts> struct overload : Ts... { using Ts::operator()...; };
+template <class... Ts> struct overload : Ts... {
+  using Ts::operator()...;
+};
 template <class... Ts> overload(Ts...) -> overload<Ts...>;
 
 } // namespace xdiag
 
+
+// Formatter for complex numbers
 namespace fmt {
 
 template <> struct formatter<std::complex<double>> {

@@ -381,7 +381,6 @@ template void BasisNp<uint32_t>::transpose_r(const complex *, complex *) const;
 template void BasisNp<uint64_t>::transpose_r(const double *, double *) const;
 template void BasisNp<uint64_t>::transpose_r(const complex *, complex *) const;
 
-template class BasisNp<uint16_t>;
 template class BasisNp<uint32_t>;
 template class BasisNp<uint64_t>;
 

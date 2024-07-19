@@ -116,7 +116,7 @@ compute_rep_search_range_omp(std::vector<bit_t> const &reps,
 template <typename bit_t, int n_sublat>
 BasisSublattice<bit_t, n_sublat>::BasisSublattice(
     int64_t n_sites, PermutationGroup permutation_group, Representation irrep)
-    : n_sites_(n_sites), sz_conserved_(false), n_up_(invalid_n),
+    : n_sites_(n_sites), sz_conserved_(false), n_up_(undefined),
       n_postfix_bits_(n_sites - std::min(maximum_prefix_bits, n_sites)),
       group_action_(allowed_subgroup(permutation_group, irrep)), irrep_(irrep) {
   using combinatorics::Subsets;
@@ -344,24 +344,16 @@ bool BasisSublattice<bit_t, n_sublat>::operator!=(
   return !operator==(rhs);
 }
 
-template class BasisSublattice<uint16_t, 1>;
 template class BasisSublattice<uint32_t, 1>;
-template class BasisSublattice<uint64_t, 1>;
-
-template class BasisSublattice<uint16_t, 2>;
 template class BasisSublattice<uint32_t, 2>;
-template class BasisSublattice<uint64_t, 2>;
-
-template class BasisSublattice<uint16_t, 3>;
 template class BasisSublattice<uint32_t, 3>;
-template class BasisSublattice<uint64_t, 3>;
-
-template class BasisSublattice<uint16_t, 4>;
 template class BasisSublattice<uint32_t, 4>;
-template class BasisSublattice<uint64_t, 4>;
-
-template class BasisSublattice<uint16_t, 5>;
 template class BasisSublattice<uint32_t, 5>;
+
+template class BasisSublattice<uint64_t, 1>;
+template class BasisSublattice<uint64_t, 2>;
+template class BasisSublattice<uint64_t, 3>;
+template class BasisSublattice<uint64_t, 4>;
 template class BasisSublattice<uint64_t, 5>;
 
 } // namespace xdiag::basis::spinhalf

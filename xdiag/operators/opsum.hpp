@@ -8,6 +8,8 @@ namespace xdiag {
 
 class OpSum {
 public:
+  using value_type = Op;
+  
   OpSum() = default;
   explicit OpSum(std::vector<Op> const &ops);
 
@@ -20,6 +22,7 @@ public:
   bool isreal() const;
   bool isexplicit() const;
 
+  void push_back(Op const &op);
   void operator+=(Op const &op);
   void operator+=(OpSum const &ops);
   OpSum operator+(Op const &op) const;
@@ -29,6 +32,7 @@ public:
   bool operator!=(OpSum const &other) const;
 
   // Iterators
+
   using iterator_t = typename std::vector<Op>::iterator;
   using const_iterator_t = typename std::vector<Op>::const_iterator;
   iterator_t begin();

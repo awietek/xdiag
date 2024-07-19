@@ -110,6 +110,5 @@ Permutation operator*(Permutation const &p1, Permutation const &p2) try {
 
 Permutation inverse(Permutation const &p) { return p.inverse(); }
 Permutation shuffle(Permutation const &p) { return p.shuffle(); }
-int64_t size(Permutation const &p) { return p.size(); }
 
 } // namespace xdiag

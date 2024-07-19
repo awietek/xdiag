@@ -20,9 +20,9 @@ public:
 
   bool operator==(PermutationGroup const &rhs) const;
   bool operator!=(PermutationGroup const &rhs) const;
-
+  operator bool() const;    
+  
   PermutationGroup subgroup(std::vector<int64_t> const &symmetry_numbers) const;
-
   using iterator_t = std::vector<Permutation>::const_iterator;
   iterator_t begin() const;
   iterator_t end() const;

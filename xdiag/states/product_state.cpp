@@ -19,7 +19,7 @@ ProductState::iterator_t ProductState::end() const {
   return local_states_.end();
 }
 
-State product_state(block_variant_t const &block,
+State product_state(Block const &block,
                     std::vector<std::string> const &local_state, bool real) {
   return std::visit(
       [&](auto &&block) { return product_state(block, local_state, real); },
@@ -114,7 +114,7 @@ static bit_t spinhalf_bits(ProductState const &pstate, int64_t nup = -1) try {
 template <typename basis_t>
 static int64_t spinhalf_index(basis_t const &basis,
                               ProductState const &pstate) try {
-  using bit_t = typename basis_t::bit_type;
+  using bit_t = typename basis_t::bit_t;
   bit_t spins = 0;
   if constexpr (basis_t::sz_conserved()) {
     spins = spinhalf_bits<bit_t>(pstate, basis.n_up());
@@ -192,7 +192,7 @@ std::pair<bit_t, bit_t> tj_bits(ProductState const &pstate, int64_t nup = -1,
 
 template <typename basis_t>
 static int64_t tj_index(basis_t const &b, ProductState const &pstate) try {
-  using bit_t = typename basis_t::bit_type;
+  using bit_t = typename basis_t::bit_t;
   if constexpr (basis_t::np_conserved()) {
     auto [ups, dns] = tj_bits<bit_t>(pstate, b.n_up(), b.n_dn());
     return b.index(ups, dns);
@@ -269,7 +269,7 @@ std::pair<bit_t, bit_t> electron_bits(ProductState const &pstate,
 template <typename basis_t>
 static int64_t electron_index(basis_t const &b,
                               ProductState const &pstate) try {
-  using bit_t = typename basis_t::bit_type;
+  using bit_t = typename basis_t::bit_t;
   if constexpr (basis_t::np_conserved()) {
     auto [ups, dns] = electron_bits<bit_t>(pstate, b.n_up(), b.n_dn());
     return b.index(ups, dns);
@@ -314,7 +314,7 @@ template void fill(Electron const &, arma::cx_vec &, ProductState const &);
 template <typename basis_t>
 static int64_t tj_distributed_index(basis_t const &b,
                                     ProductState const &pstate) try {
-  using bit_t = typename basis_t::bit_type;
+  using bit_t = typename basis_t::bit_t;
   if constexpr (basis_t::np_conserved()) {
     auto [ups, dns] = tj_bits<bit_t>(pstate, b.n_up(), b.n_dn());
     return b.index(ups, dns);

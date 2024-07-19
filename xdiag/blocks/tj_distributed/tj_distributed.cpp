@@ -17,18 +17,16 @@ tJDistributed::tJDistributed(int64_t n_sites, int64_t n_up, int64_t n_dn) try
     XDIAG_THROW("n_up + n_dn > n_sites");
   }
 
-  if (n_sites < 16) {
-    basis_ = std::make_shared<basis_t>(BasisNp<uint16_t>(n_sites, n_up, n_dn));
-  } else if (n_sites < 32) {
+  if (n_sites < 32) {
     basis_ = std::make_shared<basis_t>(BasisNp<uint32_t>(n_sites, n_up, n_dn));
   } else if (n_sites < 64) {
     basis_ = std::make_shared<basis_t>(BasisNp<uint64_t>(n_sites, n_up, n_dn));
   } else {
     XDIAG_THROW("blocks with more than 64 sites currently not implemented");
   }
-  dim_ = xdiag::dim(*basis_);
+  dim_ = basis::dim(*basis_);
   assert(dim_ == binomial(n_sites, n_up) * binomial(n_sites - n_up, n_dn));
-  size_ = xdiag::size(*basis_);
+  size_ = basis::size(*basis_);
   check_dimension_works_with_blas_int_size(size_);
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
@@ -40,24 +38,11 @@ int64_t tJDistributed::n_dn() const { return n_dn_; }
 
 int64_t tJDistributed::dim() const { return dim_; }
 int64_t tJDistributed::size() const { return size_; }
-int64_t tJDistributed::size_max() const { return xdiag::size_max(*basis_); }
-int64_t tJDistributed::size_min() const { return xdiag::size_min(*basis_); }
+int64_t tJDistributed::size_max() const { return basis::size_max(*basis_); }
+int64_t tJDistributed::size_min() const { return basis::size_min(*basis_); }
 
-bool tJDistributed::charge_conserved() const { return true; }
-bool tJDistributed::sz_conserved() const { return true; }
-
-bool tJDistributed::symmetric() const { return false; }
-PermutationGroup tJDistributed::permutation_group() const {
-  return PermutationGroup();
-}
-Representation tJDistributed::irrep() const { return Representation(); }
-
-bool tJDistributed::iscomplex(double precision) const {
-  (void)precision;
-  return false;
-}
 bool tJDistributed::isreal(double precision) const {
-  return !iscomplex(precision);
+  return true; // would only be nontrivial with space group irreps
 }
 
 bool tJDistributed::operator==(tJDistributed const &rhs) const {
@@ -68,7 +53,5 @@ bool tJDistributed::operator!=(tJDistributed const &rhs) const {
   return !operator==(rhs);
 }
 
-basis_tj_distributed_variant_t const &tJDistributed::basis() const {
-  return *basis_;
-}
+tJDistributed::basis_t const &tJDistributed::basis() const { return *basis_; }
 } // namespace xdiag

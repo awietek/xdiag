@@ -40,21 +40,9 @@
 
 // Includes for different block types
 #include <xdiag/blocks/blocks.hpp>
-
-#include <xdiag/blocks/spinhalf/compile.hpp>
 #include <xdiag/blocks/spinhalf/spinhalf.hpp>
-#include <xdiag/blocks/spinhalf/spinhalf_apply.hpp>
-#include <xdiag/blocks/spinhalf/spinhalf_matrix.hpp>
-
-#include <xdiag/blocks/electron/compile.hpp>
 #include <xdiag/blocks/electron/electron.hpp>
-#include <xdiag/blocks/electron/electron_apply.hpp>
-#include <xdiag/blocks/electron/electron_matrix.hpp>
-
-#include <xdiag/blocks/tj/compile.hpp>
 #include <xdiag/blocks/tj/tj.hpp>
-#include <xdiag/blocks/tj/tj_apply.hpp>
-#include <xdiag/blocks/tj/tj_matrix.hpp>
 
 #include <xdiag/states/fill.hpp>
 #include <xdiag/states/gpwf.hpp>
@@ -77,21 +65,9 @@
 #include <xdiag/combinatorics/subsets_index.hpp>
 #include <xdiag/combinatorics/subsets_indexing.hpp>
 
-#include <xdiag/basis/basis.hpp>
-
-#include <xdiag/basis/spinhalf/basis_no_sz.hpp>
-#include <xdiag/basis/spinhalf/basis_sublattice.hpp>
-#include <xdiag/basis/spinhalf/basis_symmetric_no_sz.hpp>
-#include <xdiag/basis/spinhalf/basis_symmetric_sz.hpp>
-#include <xdiag/basis/spinhalf/basis_sz.hpp>
-
-#include <xdiag/basis/tj/basis_np.hpp>
-#include <xdiag/basis/tj/basis_symmetric_np.hpp>
-
-#include <xdiag/basis/electron/basis_no_np.hpp>
-#include <xdiag/basis/electron/basis_np.hpp>
-#include <xdiag/basis/electron/basis_symmetric_no_np.hpp>
-#include <xdiag/basis/electron/basis_symmetric_np.hpp>
+#include <xdiag/basis/spinhalf/basis_spinhalf.hpp>
+#include <xdiag/basis/tj/basis_tj.hpp>
+#include <xdiag/basis/electron/basis_electron.hpp>
 
 #include <xdiag/symmetries/continuous_group.hpp>
 #include <xdiag/symmetries/generated_group.hpp>
@@ -138,26 +114,24 @@
 #include <xdiag/io/file_h5.hpp>
 #include <xdiag/io/file_toml.hpp>
 
-#ifdef XDIAG_ENABLE_MPI
-#include <xdiag/mpi/allreduce.hpp>
-#include <xdiag/mpi/alltoall.hpp>
-#include <xdiag/mpi/buffer.hpp>
-#include <xdiag/mpi/datatype.hpp>
-#include <xdiag/mpi/dot_mpi.hpp>
-#include <xdiag/mpi/logger_mpi.hpp>
-#include <xdiag/mpi/timing_mpi.hpp>
-#include <xdiag/utils/print_mpi.hpp>
+#ifdef XDIAG_USE_MPI
+#include <xdiag/parallel/mpi/allreduce.hpp>
+#include <xdiag/parallel/mpi/alltoall.hpp>
+#include <xdiag/parallel/mpi/communicator.hpp>
+#include <xdiag/parallel/mpi/datatype.hpp>
+#include <xdiag/parallel/mpi/cdot_distributed.hpp>
+#include <xdiag/parallel/mpi/timing_mpi.hpp>
+#include <xdiag/parallel/mpi/buffer.hpp>
 
-#include <xdiag/basis/spinhalf_mpi/spinhalf_mpi_basis_sz.hpp>
-#include <xdiag/blocks/utils/block_utils_mpi.hpp>
+#include <xdiag/basis/spinhalf_distributed/basis_spinhalf_distributed.hpp>
+#include <xdiag/basis/spinhalf_distributed/basis_sz.hpp>
 
-#include <xdiag/blocks/spinhalf_mpi/spinhalf_mpi.hpp>
-#include <xdiag/blocks/spinhalf_mpi/spinhalf_mpi_apply.hpp>
-#include <xdiag/blocks/spinhalf_mpi/spinhalf_mpi_fill.hpp>
-#include <xdiag/blocks/spinhalf_mpi/terms/get_prefix_postfix_mixed_bonds.hpp>
+#include <xdiag/basis/tj_distributed/basis_tj_distributed.hpp>
+#include <xdiag/basis/tj_distributed/basis_np.hpp>
 
-#include <xdiag/blocks/electron_mpi/electron_mpi.hpp>
-#include <xdiag/blocks/electron_mpi/electron_mpi_apply.hpp>
+#include <xdiag/blocks/spinhalf_distributed/spinhalf_distributed.hpp>
+
+#include <xdiag/blocks/tj_distributed/tj_distributed.hpp>
 #endif
 
 #undef XDIAG_THROW

@@ -1,4 +1,4 @@
-#include "tj_matrix.hpp"
+#include "matrix.hpp"
 
 #include <xdiag/algebra/fill.hpp>
 #include <xdiag/blocks/tj/compile.hpp>

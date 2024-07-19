@@ -1,8 +1,8 @@
 #pragma once
 
-#include <xdiag/extern/gsl/span>
 #include <utility>
 #include <vector>
+#include <xdiag/extern/gsl/span>
 
 #include <xdiag/combinatorics/subsets_indexing.hpp>
 #include <xdiag/common.hpp>
@@ -12,12 +12,12 @@
 
 namespace xdiag::basis::spinhalf {
 
-template <typename bit_t> class BasisSymmetricNoSz {
+template <typename bit_tt> class BasisSymmetricNoSz {
 public:
+  using bit_t = bit_tt;
   using iterator_t = typename std::vector<bit_t>::const_iterator;
   using span_size_t = gsl::span<int64_t const>::size_type;
-  using bit_type = bit_t;
-  
+
   BasisSymmetricNoSz() = default;
   BasisSymmetricNoSz(int64_t n_sites, PermutationGroup permutation_group,
                      Representation irrep);
@@ -56,7 +56,6 @@ private:
 
   // functions used in implementation of terms
 public:
-
   inline bit_t representative(bit_t raw_state) const {
     return reps_[index(raw_state)];
   }

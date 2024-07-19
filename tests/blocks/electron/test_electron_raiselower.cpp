@@ -3,8 +3,8 @@
 #include <xdiag/algebra/algebra.hpp>
 #include <xdiag/algebra/matrix.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
-#include <xdiag/blocks/electron/electron_apply.hpp>
-#include <xdiag/blocks/electron/electron_matrix.hpp>
+#include <xdiag/blocks/electron/apply.hpp>
+#include <xdiag/blocks/electron/matrix.hpp>
 #include <xdiag/utils/close.hpp>
 
 TEST_CASE("electron_raise_lower", "[electron]") {

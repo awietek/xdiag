@@ -1,4 +1,4 @@
-#include "tj_distributed_apply.hpp"
+#include "apply.hpp"
 
 #include <xdiag/algebra/fill.hpp>
 #include <xdiag/blocks/tj/compile.hpp>

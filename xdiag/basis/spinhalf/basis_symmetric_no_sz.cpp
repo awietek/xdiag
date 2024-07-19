@@ -72,7 +72,6 @@ bool BasisSymmetricNoSz<bit_t>::operator!=(
   return !operator==(rhs);
 }
 
-template class BasisSymmetricNoSz<uint16_t>;
 template class BasisSymmetricNoSz<uint32_t>;
 template class BasisSymmetricNoSz<uint64_t>;
 

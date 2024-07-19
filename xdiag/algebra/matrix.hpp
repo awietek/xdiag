@@ -4,9 +4,9 @@
 #include <xdiag/operators/op.hpp>
 #include <xdiag/operators/opsum.hpp>
 
-#include <xdiag/blocks/electron/electron_matrix.hpp>
-#include <xdiag/blocks/spinhalf/spinhalf_matrix.hpp>
-#include <xdiag/blocks/tj/tj_matrix.hpp>
+#include <xdiag/blocks/electron/matrix.hpp>
+#include <xdiag/blocks/spinhalf/matrix.hpp>
+#include <xdiag/blocks/tj/matrix.hpp>
 
 namespace xdiag {
 

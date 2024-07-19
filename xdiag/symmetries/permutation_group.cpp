@@ -93,6 +93,7 @@ bool PermutationGroup::operator!=(PermutationGroup const &rhs) const {
   return !operator==(rhs);
 }
 
+PermutationGroup::operator bool() const { return n_symmetries_ > 0; }
 PermutationGroup::iterator_t PermutationGroup::begin() const {
   return permutations_.begin();
 }

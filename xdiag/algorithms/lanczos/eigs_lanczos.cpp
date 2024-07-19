@@ -12,10 +12,10 @@
 
 namespace xdiag {
 
-eigs_lanczos_result_t eigs_lanczos(OpSum const &ops,
-                                   block_variant_t const &block, State &state0,
-                                   int64_t neigvals, double precision,
-                                   int64_t max_iterations, bool force_complex,
+eigs_lanczos_result_t eigs_lanczos(OpSum const &ops, Block const &block,
+                                   State &state0, int64_t neigvals,
+                                   double precision, int64_t max_iterations,
+                                   bool force_complex,
                                    double deflation_tol) try {
   if (neigvals < 1) {
     XDIAG_THROW("Argument \"neigvals\" needs to be >= 1");
@@ -108,10 +108,11 @@ eigs_lanczos_result_t eigs_lanczos(OpSum const &ops,
 }
 
 // starting from random vector
-eigs_lanczos_result_t
-eigs_lanczos(OpSum const &ops, block_variant_t const &block, int64_t neigvals,
-             double precision, int64_t max_iterations, bool force_complex,
-             double deflation_tol, int64_t random_seed) try {
+eigs_lanczos_result_t eigs_lanczos(OpSum const &ops, Block const &block,
+                                   int64_t neigvals, double precision,
+                                   int64_t max_iterations, bool force_complex,
+                                   double deflation_tol,
+                                   int64_t random_seed) try {
   if (neigvals < 1) {
     XDIAG_THROW("Argument \"neigvals\" needs to be >= 1");
   }

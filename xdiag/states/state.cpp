@@ -4,7 +4,7 @@
 
 namespace xdiag {
 
-State::State(block_variant_t const &block, bool real, int64_t n_cols)
+State::State(Block const &block, bool real, int64_t n_cols) try
     : real_(real), dim_(xdiag::dim(block)), n_rows_(xdiag::size(block)),
       n_cols_(n_cols), block_(block) {
   try {
@@ -16,10 +16,12 @@ State::State(block_variant_t const &block, bool real, int64_t n_cols)
   } catch (...) {
     XDIAG_THROW("Unable to allocate memory for State");
   }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 template <typename block_t>
-State::State(block_t const &block, bool real, int64_t n_cols)
+State::State(block_t const &block, bool real, int64_t n_cols) try
     : real_(real), dim_(block.dim()), n_rows_(block.size()), n_cols_(n_cols),
       block_(block) {
   try {
@@ -31,11 +33,13 @@ State::State(block_t const &block, bool real, int64_t n_cols)
   } catch (...) {
     XDIAG_THROW("Unable to allocate memory for State");
   }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 template <typename block_t>
 State::State(block_t const &block, double const *ptr, int64_t n_cols,
-             int64_t stride)
+             int64_t stride) try
     : real_(true), n_rows_(block.size()), n_cols_(n_cols), block_(block) {
 
   try {
@@ -55,10 +59,12 @@ State::State(block_t const &block, double const *ptr, int64_t n_cols,
   } catch (...) {
     XDIAG_THROW("Unable to allocate memory for State");
   }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 template <typename block_t>
-State::State(block_t const &block, complex const *ptr, int64_t n_cols)
+State::State(block_t const &block, complex const *ptr, int64_t n_cols) try
     : real_(false), n_rows_(block.size()), n_cols_(n_cols), block_(block) {
   try {
     resize_vector(storage_, 2 * size());
@@ -71,10 +77,12 @@ State::State(block_t const &block, complex const *ptr, int64_t n_cols)
   } catch (...) {
     XDIAG_THROW("Unable to allocate memory for State");
   }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 template <typename block_t, typename coeff_t>
-State::State(block_t const &block, arma::Col<coeff_t> const &vector)
+State::State(block_t const &block, arma::Col<coeff_t> const &vector) try
     : real_(xdiag::isreal<coeff_t>()), n_rows_(block.size()), n_cols_(1),
       block_(block) {
   if (block.size() != (int64_t)vector.n_rows) {
@@ -97,10 +105,12 @@ State::State(block_t const &block, arma::Col<coeff_t> const &vector)
   } catch (...) {
     XDIAG_THROW("Unable to copy memory for State");
   }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 template <typename block_t, typename coeff_t>
-State::State(block_t const &block, arma::Mat<coeff_t> const &matrix)
+State::State(block_t const &block, arma::Mat<coeff_t> const &matrix) try
     : real_(xdiag::isreal<coeff_t>()), n_rows_(matrix.n_rows),
       n_cols_(matrix.n_cols), block_(block) {
 
@@ -124,6 +134,8 @@ State::State(block_t const &block, arma::Mat<coeff_t> const &matrix)
   } catch (...) {
     XDIAG_THROW("Unable to copy memory for State");
   }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 int64_t State::n_sites() const { return xdiag::n_sites(block_); }
@@ -178,7 +190,7 @@ int64_t State::dim() const { return xdiag::dim(block_); }
 int64_t State::size() const { return n_rows_ * n_cols_; }
 int64_t State::n_rows() const { return n_rows_; }
 int64_t State::n_cols() const { return n_cols_; }
-block_variant_t State::block() const { return block_; }
+Block State::block() const { return block_; }
 
 State State::col(int64_t n, bool copy) const try {
   if (n >= n_cols_) {
@@ -299,6 +311,20 @@ template State::State(tJ const &block, arma::Mat<complex> const &vector);
 template State::State(Electron const &block, arma::Mat<complex> const &vector);
 
 #ifdef XDIAG_USE_MPI
+template State::State(SpinhalfDistributed const &, bool, int64_t);
+template State::State(SpinhalfDistributed const &, double const *, int64_t,
+                      int64_t);
+template State::State(SpinhalfDistributed const &block, complex const *ptr,
+                      int64_t size);
+template State::State(SpinhalfDistributed const &block,
+                      arma::Col<double> const &vector);
+template State::State(SpinhalfDistributed const &block,
+                      arma::Col<complex> const &vector);
+template State::State(SpinhalfDistributed const &block,
+                      arma::Mat<double> const &vector);
+template State::State(SpinhalfDistributed const &block,
+                      arma::Mat<complex> const &vector);
+
 template State::State(tJDistributed const &, bool, int64_t);
 template State::State(tJDistributed const &, double const *, int64_t, int64_t);
 template State::State(tJDistributed const &block, complex const *ptr,

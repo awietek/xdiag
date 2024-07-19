@@ -6,10 +6,10 @@
 #include <xdiag/combinatorics/lin_table.hpp>
 
 namespace xdiag::basis::spinhalf {
-template <typename bit_t> class BasisSz {
+template <typename bit_tt> class BasisSz {
 public:
+  using bit_t = bit_tt;
   using iterator_t = combinatorics::CombinationsIterator<bit_t>;
-  using bit_type = bit_t;
 
   BasisSz() = default;
   BasisSz(int64_t n_sites, int64_t nup);

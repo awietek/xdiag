@@ -39,12 +39,13 @@ void print_pretty(const char *identifier, U1 const &qn);
 void print_pretty(const char *identifier, QNum const &qn);
 void print_pretty(const char *identifier, QN const &qn);
 
-void print_pretty(const char *identifier, block_variant_t const &block);
+void print_pretty(const char *identifier, Block const &block);
 void print_pretty(const char *identifier, Spinhalf const &block);
 void print_pretty(const char *identifier, tJ const &block);
 void print_pretty(const char *identifier, Electron const &block);
 
 #ifdef XDIAG_USE_MPI
+void print_pretty(const char *identifier, SpinhalfDistributed const &block);
 void print_pretty(const char *identifier, tJDistributed const &block);
 #endif
 

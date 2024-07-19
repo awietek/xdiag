@@ -6,7 +6,7 @@
 #include "../tj/testcases_tj.hpp"
 #include <xdiag/algebra/matrix.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
-#include <xdiag/blocks/tj/tj_apply.hpp>
+#include <xdiag/blocks/tj/apply.hpp>
 #include <xdiag/utils/close.hpp>
 
 using namespace xdiag;

@@ -12,9 +12,9 @@
 
 namespace xdiag::basis::tj_distributed {
 
-template <typename bit_t> class BasisNp {
+template <typename bit_tt> class BasisNp {
 public:
-  using bit_type = bit_t;
+  using bit_t = bit_tt;
 
   BasisNp() = default;
   BasisNp(int64_t n_sites, int64_t n_up, int64_t n_dn);

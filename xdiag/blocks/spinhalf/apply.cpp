@@ -1,4 +1,4 @@
-#include "spinhalf_apply.hpp"
+#include "apply.hpp"
 
 #include <xdiag/algebra/fill.hpp>
 #include <xdiag/blocks/spinhalf/compile.hpp>

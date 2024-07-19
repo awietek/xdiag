@@ -24,7 +24,7 @@ fill_tables(int64_t n_sites, int64_t n_up, int64_t n_prefix_bits,
   int64_t n_postfix_bits = n_sites - n_prefix_bits;
 
   // Determine the valid prefixes that belong to my process
-  int64_t size_local = 0;
+  int64_t size = 0;
   for (bit_t prefix : combinatorics::Subsets<bit_t>(n_prefix_bits)) {
     int n_up_prefix = bits::popcnt(prefix);
     int n_up_postfix = n_up - n_up_prefix;
@@ -40,8 +40,8 @@ fill_tables(int64_t n_sites, int64_t n_up, int64_t n_prefix_bits,
     }
 
     // Register a prefix
-    prefix_begin[prefix] = size_local;
-    size_local += binomial(n_postfix_bits, n_up_postfix);
+    prefix_begin[prefix] = size;
+    size += binomial(n_postfix_bits, n_up_postfix);
     prefixes.push_back(prefix);
   }
 
@@ -59,7 +59,7 @@ fill_tables(int64_t n_sites, int64_t n_up, int64_t n_prefix_bits,
     }
     postfix_states[n_up_postfix] = postfixes_nup;
   }
-  return size_local;
+  return size;
 }
 
 template <typename bit_t>
@@ -79,13 +79,13 @@ BasisSz<bit_t>::BasisSz(int64_t n_sites, int64_t n_up)
   MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank_);
   MPI_Comm_size(MPI_COMM_WORLD, &mpi_size_);
 
-  size_ = binomial(n_sites, n_up);
-  size_local_ = fill_tables(
+  dim_ = binomial(n_sites, n_up);
+  size_ = fill_tables(
       n_sites, n_up, n_prefix_bits_,
       [this](bit_t spins) { return rank(spins); }, prefixes_, prefix_begin_,
       postfix_lintables_, postfix_states_);
 
-  size_local_transpose_ = fill_tables(
+  size_transpose_ = fill_tables(
       n_sites, n_up, n_postfix_bits_,
       [this](bit_t spins) { return rank(spins); }, postfixes_, postfix_begin_,
       prefix_lintables_, prefix_states_);
@@ -93,26 +93,25 @@ BasisSz<bit_t>::BasisSz(int64_t n_sites, int64_t n_up)
   // Compute max/min number of states stored locally
   int64_t size_max;
   int64_t size_max_transpose;
-  mpi::Allreduce(&size_local_, &size_max, 1, MPI_MAX, MPI_COMM_WORLD);
-  mpi::Allreduce(&size_local_transpose_, &size_max_transpose, 1, MPI_MAX,
+  mpi::Allreduce(&size_, &size_max, 1, MPI_MAX, MPI_COMM_WORLD);
+  mpi::Allreduce(&size_transpose_, &size_max_transpose, 1, MPI_MAX,
                  MPI_COMM_WORLD);
   size_max_ = std::max(size_max, size_max_transpose);
 
   int64_t size_min;
   int64_t size_min_transpose;
-  mpi::Allreduce(&size_local_, &size_min, 1, MPI_MIN, MPI_COMM_WORLD);
-  mpi::Allreduce(&size_local_transpose_, &size_min_transpose, 1, MPI_MIN,
+  mpi::Allreduce(&size_, &size_min, 1, MPI_MIN, MPI_COMM_WORLD);
+  mpi::Allreduce(&size_transpose_, &size_min_transpose, 1, MPI_MIN,
                  MPI_COMM_WORLD);
 
   // Check local sizes sum up to the actual dimension
-  int64_t size;
-  mpi::Allreduce(&size_local_, &size, 1, MPI_SUM, MPI_COMM_WORLD);
-  assert(size == size_);
+  int64_t dim;
+  mpi::Allreduce(&size_, &dim, 1, MPI_SUM, MPI_COMM_WORLD);
+  assert(dim == dim_);
 
-  int64_t size_transpose;
-  mpi::Allreduce(&size_local_transpose_, &size_transpose, 1, MPI_SUM,
-                 MPI_COMM_WORLD);
-  assert(size_transpose == size_);
+  int64_t dim_transpose;
+  mpi::Allreduce(&size_transpose_, &dim_transpose, 1, MPI_SUM, MPI_COMM_WORLD);
+  assert(dim_transpose == dim_);
 
   // Create the transpose communicator
   std::vector<int64_t> n_states_i_send(mpi_size_, 0);
@@ -146,12 +145,10 @@ template <typename bit_t> int64_t BasisSz<bit_t>::n_postfix_bits() const {
   return n_postfix_bits_;
 }
 
+template <typename bit_t> int64_t BasisSz<bit_t>::dim() const { return dim_; }
 template <typename bit_t> int64_t BasisSz<bit_t>::size() const { return size_; }
-template <typename bit_t> int64_t BasisSz<bit_t>::size_local() const {
-  return size_local_;
-}
-template <typename bit_t> int64_t BasisSz<bit_t>::size_local_transpose() const {
-  return size_local_transpose_;
+template <typename bit_t> int64_t BasisSz<bit_t>::size_transpose() const {
+  return size_transpose_;
 }
 template <typename bit_t> int64_t BasisSz<bit_t>::size_max() const {
   return size_max_;

@@ -23,7 +23,6 @@ lanczos_result_t lanczos(mult_f mult, dot_f dot, converged_f converged,
                          operation_f operation, arma::Col<coeff_t> &v0,
                          int max_iterations = 1000,
                          double deflation_tol = 1e-7) try {
-
   auto norm = [&dot](arma::Col<coeff_t> const &v) {
     return std::sqrt(xdiag::real(dot(v, v)));
   };

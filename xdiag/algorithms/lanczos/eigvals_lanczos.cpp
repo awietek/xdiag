@@ -15,10 +15,9 @@
 namespace xdiag {
 
 eigvals_lanczos_result_t
-eigvals_lanczos(OpSum const &ops, block_variant_t const &block, State &state0,
+eigvals_lanczos(OpSum const &ops, Block const &block, State &state0,
                 int64_t neigvals, double precision, int64_t max_iterations,
                 bool force_complex, double deflation_tol) try {
-
   if (neigvals < 1) {
     XDIAG_THROW("Argument \"neigvals\" needs to be >= 1");
   }
@@ -31,7 +30,6 @@ eigvals_lanczos(OpSum const &ops, block_variant_t const &block, State &state0,
     Log(1,
         "warning: starting REAL block diagonalization with COMPLEX startstate");
   }
-
   auto converged = [neigvals, precision](Tmatrix const &tmat) -> bool {
     return lanczos::converged_eigenvalues(tmat, neigvals, precision);
   };
@@ -53,7 +51,6 @@ eigvals_lanczos(OpSum const &ops, block_variant_t const &block, State &state0,
     auto dotf = [&block](arma::cx_vec const &v, arma::cx_vec const &w) {
       return dot(block, v, w);
     };
-
     r = lanczos::lanczos(mult, dotf, converged, operation, v0, max_iterations,
                          deflation_tol);
 
@@ -72,7 +69,6 @@ eigvals_lanczos(OpSum const &ops, block_variant_t const &block, State &state0,
     auto dotf = [&block](arma::vec const &v, arma::vec const &w) {
       return dot(block, v, w);
     };
-
     r = lanczos::lanczos(mult, dotf, converged, operation, v0, max_iterations,
                          deflation_tol);
   }
@@ -83,10 +79,9 @@ eigvals_lanczos(OpSum const &ops, block_variant_t const &block, State &state0,
 }
 
 eigvals_lanczos_result_t
-eigvals_lanczos(OpSum const &ops, block_variant_t const &block,
-                int64_t neigvals, double precision, int64_t max_iterations,
-                bool force_complex, double deflation_tol,
-                int64_t random_seed) try {
+eigvals_lanczos(OpSum const &ops, Block const &block, int64_t neigvals,
+                double precision, int64_t max_iterations, bool force_complex,
+                double deflation_tol, int64_t random_seed) try {
 
   if (neigvals < 1) {
     XDIAG_THROW("Argument \"neigvals\" needs to be >= 1");

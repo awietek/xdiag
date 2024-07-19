@@ -20,15 +20,14 @@ template <typename bit_t> void test_spinhalf_distributed_basis_sz() {
 
       // pre / post order
       bit_t spins_before = 0;
-      int64_t size_local = 0;
       int64_t idx = 0;
       // Log("N: {} nup: {}", n_sites, n_up);
       for (bit_t prefix : basis.prefixes()) {
         bit_t prefix_shifted = prefix << basis.n_postfix_bits();
         for (bit_t postfix : basis.postfix_states(prefix)) {
           bit_t spins = prefix_shifted | postfix;
-	  REQUIRE(bits::popcnt(spins) == n_up);
-	  // std::cout << BSTR(spins) << "\n";
+          REQUIRE(bits::popcnt(spins) == n_up);
+          // std::cout << BSTR(spins) << "\n";
           if (idx > 0) {
             REQUIRE(spins > spins_before);
           }
@@ -36,18 +35,16 @@ template <typename bit_t> void test_spinhalf_distributed_basis_sz() {
           ++idx;
         }
       }
-      REQUIRE(idx == basis.size_local());
-      Log("{} {} sl {}", n_sites, n_up, idx);
-      std::cout << idx << "\n";
+      REQUIRE(idx == basis.size());
+
       // post / pre order
       spins_before = 0;
-      size_local = 0;
       idx = 0;
       for (bit_t postfix : basis.postfixes()) {
         bit_t postfix_shifted = postfix << basis.n_prefix_bits();
         for (bit_t prefix : basis.prefix_states(postfix)) {
           bit_t spins = postfix_shifted | prefix;
-	  REQUIRE(bits::popcnt(spins) == n_up);
+          REQUIRE(bits::popcnt(spins) == n_up);
           if (idx > 0) {
             REQUIRE(spins > spins_before);
           }
@@ -55,7 +52,7 @@ template <typename bit_t> void test_spinhalf_distributed_basis_sz() {
           ++idx;
         }
       }
-      REQUIRE(idx == basis.size_local_transpose());
+      REQUIRE(idx == basis.size_transpose());
     }
   }
 }

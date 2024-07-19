@@ -18,7 +18,6 @@ inline void lanczos_step(arma::Col<coeff_t> &v0, arma::Col<coeff_t> &v1,
   auto norm = [&dot](arma::Col<coeff_t> const &v) {
     return std::sqrt(xdiag::real(dot(v, v)));
   };
-
   mult(v1, w); // MVM
   alpha = xdiag::real(dot(v1, w));
   w -= alpha * v1;

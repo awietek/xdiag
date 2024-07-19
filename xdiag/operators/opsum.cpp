@@ -44,7 +44,8 @@ bool OpSum::isexplicit() const try {
   XDIAG_RETHROW(e);
 }
 
-void OpSum::operator+=(Op const &op) { ops_.push_back(op); }
+void OpSum::push_back(Op const &op) { ops_.push_back(op); }
+void OpSum::operator+=(Op const &op) { push_back(op); }
 void OpSum::operator+=(OpSum const &ops) try {
   // Add ops
   for (auto const &op : ops.ops_) {
@@ -103,9 +104,7 @@ bool OpSum::operator==(OpSum const &other) const {
   }
   return true;
 }
-bool OpSum::operator!=(OpSum const &other) const {
-  return !operator==(other);
-}
+bool OpSum::operator!=(OpSum const &other) const { return !operator==(other); }
 
 OpSum::iterator_t OpSum::begin() { return ops_.begin(); }
 OpSum::iterator_t OpSum::end() { return ops_.end(); }

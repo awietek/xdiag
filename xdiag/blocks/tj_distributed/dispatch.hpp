@@ -1,7 +1,6 @@
 #pragma once
 #ifdef XDIAG_USE_MPI
 
-#include <xdiag/basis/basis.hpp>
 #include <xdiag/blocks/tj_distributed/terms/apply_terms.hpp>
 #include <xdiag/common.hpp>
 
@@ -17,13 +16,7 @@ inline void dispatch(OpSum const &ops, tJDistributed const &block_in,
   auto const &basis_in = block_in.basis();
   auto const &basis_out = block_out.basis();
 
-  std::visit(overload{// uint16_t
-                      [&](BasisNp<uint16_t> const &idx_in,
-                          BasisNp<uint16_t> const &idx_out) {
-                        apply_terms<uint16_t, coeff_t>(ops, idx_in, vec_in,
-                                                       idx_out, vec_out);
-                      },
-                      [&](BasisNp<uint32_t> const &idx_in,
+  std::visit(overload{[&](BasisNp<uint32_t> const &idx_in,
                           BasisNp<uint32_t> const &idx_out) {
                         apply_terms<uint32_t, coeff_t>(ops, idx_in, vec_in,
                                                        idx_out, vec_out);

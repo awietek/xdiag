@@ -32,7 +32,7 @@ void fill(State &state, RandomState const &rstate, int64_t col) try {
   XDIAG_RETHROW(e);
 }
 
-State random_state(block_variant_t const &block, bool real, int64_t seed,
+State random_state(Block const &block, bool real, int64_t seed,
                    bool normalized) {
   return std::visit(
       [&](auto &&block) { return random_state(block, real, seed, normalized); },

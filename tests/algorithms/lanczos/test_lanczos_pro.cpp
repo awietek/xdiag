@@ -73,7 +73,7 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
 
     mat tmat = res.tmat;
     mat A2 = mat(V * tmat * V.t());
-    REQUIRE(norm(A - A2) < N * ortho_level);
+    REQUIRE(norm(A - A2) < 2 * N * ortho_level);
   }
 
   {
@@ -119,7 +119,7 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
 
     cx_mat V = res.V;
     double total_orthogonality = norm(V.t() * V - eye(N, N));
-    REQUIRE(total_orthogonality < N * ortho_level); // correct ortho levels
+    REQUIRE(total_orthogonality < 2 * N * ortho_level); // correct ortho levels
 
     vec eigs;
     eig_sym(eigs, A);

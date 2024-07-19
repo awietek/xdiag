@@ -99,7 +99,7 @@ double norm_estimate(apply_A_f &&apply_A, apply_A_T_f &&apply_A_T,
   return gamma;
 }
 
-double norm_estimate(OpSum const &ops, block_variant_t const &block,
+double norm_estimate(OpSum const &ops, Block const &block,
                      int64_t n_max_attempts, uint64_t seed) try {
   return std::visit(
       [&](auto &&block) {

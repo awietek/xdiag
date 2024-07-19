@@ -33,6 +33,5 @@ Permutation multiply(Permutation const &p1, Permutation const &p2);
 Permutation operator*(Permutation const &p1, Permutation const &p2);
 Permutation inverse(Permutation const &p);
 Permutation shuffle(Permutation const &p);
-int64_t size(Permutation const &p);
 
 } // namespace xdiag

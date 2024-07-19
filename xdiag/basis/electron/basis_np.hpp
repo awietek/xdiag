@@ -9,9 +9,9 @@ namespace xdiag::basis::electron {
 
 using namespace combinatorics;
 
-template <typename bit_t> class BasisNp {
+template <typename bit_tt> class BasisNp {
 public:
-  using bit_type = bit_t;
+  using bit_t = bit_tt;
 
   BasisNp() = default;
   BasisNp(int n_sites, int n_up, int n_dn);

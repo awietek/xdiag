@@ -19,8 +19,8 @@ void apply_terms(OpSum const &ops, BasisIn const &basis_in,
   for (auto op : ops) {
     std::string type = op.type();
     if ((type == "ISING") || (type == "TJISING")) {
-      tj_distributed::apply_ising<bit_t, coeff_t>(
-          op, basis_in, vec_in.memptr(), vec_out.memptr());
+      tj_distributed::apply_ising<bit_t, coeff_t>(op, basis_in, vec_in.memptr(),
+                                                  vec_out.memptr());
     } else if ((type == "NUMBERUP") || (type == "NUMBERDN")) {
       tj_distributed::apply_number<bit_t, coeff_t>(
           op, basis_in, vec_in.memptr(), vec_out.memptr());
@@ -33,9 +33,8 @@ void apply_terms(OpSum const &ops, BasisIn const &basis_in,
     } else if (type == "HOPUP") {
       continue;
     } else {
-      XDIAG_THROW(
-          std::string("Unknown Op type for \"tJDistributed\" block: ") +
-          type);
+      XDIAG_THROW(std::string("Unknown Op type for \"tJDistributed\" block: ") +
+                  type);
     }
   }
 
@@ -55,16 +54,15 @@ void apply_terms(OpSum const &ops, BasisIn const &basis_in,
   for (auto op : ops) {
     std::string type = op.type();
     if (type == "HOPUP") {
-      tj_distributed::apply_hopping<bit_t, coeff_t>(
-          op, basis_in, vec_in_trans, vec_out_trans);
+      tj_distributed::apply_hopping<bit_t, coeff_t>(op, basis_in, vec_in_trans,
+                                                    vec_out_trans);
     } else if ((type == "ISING") || (type == "TJISING") ||
                (type == "EXCHANGE") || (type == "HOPDN") ||
                (type == "NUMBERUP") || (type == "NUMBERDN")) {
       continue;
     } else {
-      XDIAG_THROW(
-          std::string("Unknown Op type for \"tJDistributed\" block: ") +
-          type);
+      XDIAG_THROW(std::string("Unknown Op type for \"tJDistributed\" block: ") +
+                  type);
     }
   }
 

@@ -93,7 +93,6 @@ BasisNp<bit_t>::states_indices_dncs_thread(bit_t ups) const {
 }
 #endif
 
-template class BasisNp<uint16_t>;
 template class BasisNp<uint32_t>;
 template class BasisNp<uint64_t>;
 

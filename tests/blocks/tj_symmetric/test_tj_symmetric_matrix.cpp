@@ -6,7 +6,7 @@
 #include "../tj/testcases_tj.hpp"
 
 #include <xdiag/algebra/matrix.hpp>
-#include <xdiag/blocks/tj/tj_matrix.hpp>
+#include <xdiag/blocks/tj/matrix.hpp>
 #include <xdiag/utils/close.hpp>
 
 using namespace xdiag;

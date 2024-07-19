@@ -1,15 +1,14 @@
 #pragma once
 #ifdef XDIAG_USE_MPI
 
-#include <xdiag/basis/basis.hpp>
+#include <xdiag/basis/tj_distributed/basis_tj_distributed.hpp>
 #include <xdiag/common.hpp>
 
 namespace xdiag {
 
 class tJDistributed {
 public:
-  using basis_t = basis_tj_distributed_variant_t;
-
+  using basis_t = basis::BasistJDistributed;
   tJDistributed() = default;
   tJDistributed(int64_t n_sites, int64_t n_up, int64_t n_dn);
 
@@ -22,14 +21,6 @@ public:
   int64_t size_max() const;
   int64_t size_min() const;
 
-  bool charge_conserved() const;
-  bool sz_conserved() const;
-
-  bool symmetric() const;
-  PermutationGroup permutation_group() const;
-  Representation irrep() const;
-
-  bool iscomplex(double precision = 1e-12) const;
   bool isreal(double precision = 1e-12) const;
 
   bool operator==(tJDistributed const &rhs) const;

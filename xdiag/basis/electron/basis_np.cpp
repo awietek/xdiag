@@ -80,7 +80,6 @@ BasisNp<bit_t>::states_indices_dns_thread() const {
 }
 #endif
 
-template class BasisNp<uint16_t>;
 template class BasisNp<uint32_t>;
 template class BasisNp<uint64_t>;
 

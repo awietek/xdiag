@@ -17,10 +17,10 @@
 
 namespace xdiag::basis::electron {
 
-template <typename bit_t> class BasisSymmetricNp {
+template <typename bit_tt> class BasisSymmetricNp {
 public:
+  using bit_t = bit_tt;
   using span_size_t = gsl::span<int64_t const>::size_type;
-  using bit_type = bit_t;
 
   BasisSymmetricNp(int64_t n_sites, int64_t nup, int64_t ndn,
                    PermutationGroup permutation_group, Representation irrep);

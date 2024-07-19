@@ -78,9 +78,14 @@ set(XDIAG_TESTCASES_SOURCES
 
 set(XDIAG_TEST_DISTRIBUTED_SOURCES
   parallel/mpi/test_cdot_distributed.cpp
+
   basis/spinhalf_distributed/test_basis_sz.cpp
   basis/tj_distributed/test_basis_np.cpp
+
+  blocks/spinhalf_distributed/test_spinhalf_distributed.cpp
+  blocks/spinhalf_distributed/test_spinhalf_distributed_apply.cpp
   blocks/tj_distributed/test_tj_distributed_apply.cpp
+
   algorithms/time_evolution/test_time_evolution_distributed.cpp
 )
 

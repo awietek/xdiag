@@ -247,7 +247,6 @@ int64_t BasisSymmetricNp<bit_t>::dnsc_index(bit_t dns) const {
   return lintable_dnsc_.index(dns);
 }
 
-template class BasisSymmetricNp<uint16_t>;
 template class BasisSymmetricNp<uint32_t>;
 template class BasisSymmetricNp<uint64_t>;
 

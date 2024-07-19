@@ -4,9 +4,9 @@
 
 #include "testcases_tj.hpp"
 #include <xdiag/algorithms/sparse_diag.hpp>
-#include <xdiag/blocks/spinhalf/spinhalf_matrix.hpp>
-#include <xdiag/blocks/tj/tj_apply.hpp>
-#include <xdiag/blocks/tj/tj_matrix.hpp>
+#include <xdiag/blocks/spinhalf/matrix.hpp>
+#include <xdiag/blocks/tj/apply.hpp>
+#include <xdiag/blocks/tj/matrix.hpp>
 #include <xdiag/utils/close.hpp>
 
 using namespace xdiag;

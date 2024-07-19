@@ -26,7 +26,6 @@ public:
   Representation subgroup(std::vector<int64_t> const &symmetry_numbers) const;
   int64_t size() const;
 
-  bool iscomplex(double precision = 1e-12) const;
   bool isreal(double precision = 1e-12) const;
 
   bool operator==(Representation const &rhs) const;

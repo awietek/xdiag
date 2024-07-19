@@ -5,8 +5,8 @@
 #include "../spinhalf/testcases_spinhalf.hpp"
 #include "testcases_tj.hpp"
 #include <xdiag/blocks/spinhalf/spinhalf.hpp>
-#include <xdiag/blocks/spinhalf/spinhalf_matrix.hpp>
-#include <xdiag/blocks/tj/tj_matrix.hpp>
+#include <xdiag/blocks/spinhalf/matrix.hpp>
+#include <xdiag/blocks/tj/matrix.hpp>
 #include <xdiag/utils/close.hpp>
 #include <xdiag/utils/print_macro.hpp>
 

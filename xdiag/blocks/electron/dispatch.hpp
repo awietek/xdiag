@@ -1,9 +1,7 @@
 #pragma once
 
-#include <xdiag/basis/basis.hpp>
 #include <xdiag/blocks/electron/terms/apply_terms.hpp>
 #include <xdiag/common.hpp>
-#include <xdiag/utils/logger.hpp>
 
 namespace xdiag::electron {
 

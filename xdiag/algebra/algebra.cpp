@@ -362,7 +362,7 @@ State &operator/=(State &X, double alpha) try {
 //   return X;
 // }
 
-double dot(block_variant_t const &block, arma::vec const &v,
+double dot(Block const &block, arma::vec const &v,
            arma::vec const &w) try {
 #ifdef XDIAG_USE_MPI
   if (isdistributed(block)) {
@@ -379,7 +379,7 @@ double dot(block_variant_t const &block, arma::vec const &v,
   XDIAG_RETHROW(error);
 }
 
-complex dot(block_variant_t const &block, arma::cx_vec const &v,
+complex dot(Block const &block, arma::cx_vec const &v,
             arma::cx_vec const &w) try {
 #ifdef XDIAG_USE_MPI
   if (isdistributed(block)) {
@@ -397,17 +397,17 @@ complex dot(block_variant_t const &block, arma::cx_vec const &v,
 }
 
 template <typename coeff_t>
-double norm(block_variant_t const &block, arma::Col<coeff_t> const &v) try {
+double norm(Block const &block, arma::Col<coeff_t> const &v) try {
   return std::sqrt(xdiag::real(dot(block, v, v)));
 } catch (Error const &error) {
   XDIAG_RETHROW(error);
 }
 
-template double norm(block_variant_t const &, arma::Col<double> const &);
-template double norm(block_variant_t const &, arma::Col<complex> const &);
+template double norm(Block const &, arma::Col<double> const &);
+template double norm(Block const &, arma::Col<complex> const &);
 
 template <typename coeff_t>
-double norm1(block_variant_t const &block, arma::Col<coeff_t> const &v) try {
+double norm1(Block const &block, arma::Col<coeff_t> const &v) try {
   double nrm = arma::norm(v, 1);
 #ifdef XDIAG_USE_MPI
   if (isdistributed(block)) {
@@ -419,11 +419,11 @@ double norm1(block_variant_t const &block, arma::Col<coeff_t> const &v) try {
   XDIAG_RETHROW(error);
 }
 
-template double norm1(block_variant_t const &, arma::Col<double> const &);
-template double norm1(block_variant_t const &, arma::Col<complex> const &);
+template double norm1(Block const &, arma::Col<double> const &);
+template double norm1(Block const &, arma::Col<complex> const &);
 
 template <typename coeff_t>
-double norminf(block_variant_t const &block, arma::Col<coeff_t> const &v) try {
+double norminf(Block const &block, arma::Col<coeff_t> const &v) try {
   double nrm = arma::norm(v, "inf");
 #ifdef XDIAG_USE_MPI
   if (isdistributed(block)) {
@@ -435,7 +435,7 @@ double norminf(block_variant_t const &block, arma::Col<coeff_t> const &v) try {
   XDIAG_RETHROW(error);
 }
 
-template double norminf(block_variant_t const &, arma::Col<double> const &);
-template double norminf(block_variant_t const &, arma::Col<complex> const &);
+template double norminf(Block const &, arma::Col<double> const &);
+template double norminf(Block const &, arma::Col<complex> const &);
 
 } // namespace xdiag

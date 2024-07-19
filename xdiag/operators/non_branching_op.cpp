@@ -276,7 +276,7 @@ int64_t NonBranchingOp<bit_t, coeff_t>::number_difference() const {
         first_diff = false;
       } else {
         if (diff_state != diff) {
-          return undefined_qn;
+          return undefined;
         }
       }
     }
