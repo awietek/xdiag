@@ -11,10 +11,8 @@ namespace xdiag::tj {
 template <typename bit_t, typename coeff_t, bool symmetric, class Basis,
           class Fill>
 void apply_hopping(Op const &op, Basis &&basis, Fill &&fill) {
-  assert(op.coupling_defined());
-  assert(op.type_defined());
   assert(op.size() == 2);
-  assert(op.sites_disjoint());
+  assert(sites_disjoint(op));
 
   std::string type = op.type();
   assert((type == "HOPUP") || (type == "HOPDN"));

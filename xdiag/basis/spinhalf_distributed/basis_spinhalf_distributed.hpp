@@ -5,6 +5,7 @@
 #include <xdiag/basis/spinhalf_distributed/basis_sz.hpp>
 
 namespace xdiag::basis {
+
 // clang-format off
 using BasisSpinhalfDistributed =
   std::variant<basis::spinhalf_distributed::BasisSz<uint32_t>,

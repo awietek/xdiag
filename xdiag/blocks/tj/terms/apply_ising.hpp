@@ -1,18 +1,17 @@
 #pragma once
 
+#include <xdiag/blocks/tj/terms/generic_term_diag.hpp>
 #include <xdiag/common.hpp>
 #include <xdiag/operators/op.hpp>
-#include <xdiag/blocks/tj/terms/generic_term_diag.hpp>
 
 namespace xdiag::tj {
 
 template <typename bit_t, typename coeff_t, bool symmetric, class Basis,
           class Fill>
 void apply_ising(Op const &op, Basis &&basis, Fill &&fill) {
-  assert(op.coupling_defined());
-  assert(op.type_defined());
+
   assert(op.size() == 2);
-  assert(op.sites_disjoint());
+  assert(sites_disjoint(op));
 
   std::string type = op.type();
   assert((type == "ISING") || (type == "TJISING"));
@@ -20,7 +19,7 @@ void apply_ising(Op const &op, Basis &&basis, Fill &&fill) {
   Coupling cpl = op.coupling();
   assert(cpl.isexplicit() && !cpl.ismatrix());
   coeff_t J = cpl.as<coeff_t>();
-  
+
   int64_t s1 = op[0];
   int64_t s2 = op[1];
   bit_t s1_mask = (bit_t)1 << s1;

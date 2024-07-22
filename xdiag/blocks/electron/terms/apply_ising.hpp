@@ -8,10 +8,9 @@ namespace xdiag::electron {
 template <typename bit_t, typename coeff_t, bool symmetric, class Basis,
           class Fill>
 void apply_ising(Op const &op, Basis &&basis, Fill &&fill) {
-  assert(op.coupling_defined());
-  assert(op.type_defined() && (op.type() == "ISING"));
+  assert(op.type() == "ISING");
   assert(op.size() == 2);
-  assert(op.sites_disjoint());
+  assert(sites_disjoint(op));
 
   Coupling cpl = op.coupling();
   assert(cpl.isexplicit() && !cpl.ismatrix());

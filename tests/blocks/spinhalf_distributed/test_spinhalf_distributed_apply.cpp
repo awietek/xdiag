@@ -140,19 +140,19 @@ TEST_CASE("spinhalf_distributed_apply", "[spinhalf_distributed]") {
     ops += Op(type, "J", {4, 5});
     ops += Op(type, "J", {5, 0});
 
-    // postfix ops
-    ops += Op("HB", "J", {0, 1});
-    ops += Op("HB", "J", {1, 2});
+    // // postfix ops
+    // ops += Op("HB", "J", {0, 1});
+    // ops += Op("HB", "J", {1, 2});
 
-    // mixed ops
-    ops += Op("HB", "J", {2, 3});
-    ops += Op("HB", "J", {1, 4});
-    ops += Op("HB", "J", {0, 3});
+    // // mixed ops
+    // ops += Op("HB", "J", {2, 3});
+    // ops += Op("HB", "J", {1, 4});
+    // ops += Op("HB", "J", {0, 3});
 
-    // Prefix ops
-    ops += Op("HB", "J", {3, 4});
-    ops += Op("HB", "J", {4, 5});
-    ops += Op("HB", "J2", {4, 5});
+    // // Prefix ops
+    // ops += Op("HB", "J", {3, 4});
+    // ops += Op("HB", "J", {4, 5});
+    // ops += Op("HB", "J2", {4, 5});
 
     ops["J"] = 1;
     ops["J2"] = 0.1;

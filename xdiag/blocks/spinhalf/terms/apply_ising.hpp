@@ -12,10 +12,9 @@ template <typename bit_t, typename coeff_t, bool symmetric, class BasisIn,
           class BasisOut, class Fill>
 void apply_ising(Op const &op, BasisIn &&basis_in, BasisOut &&basis_out,
                  Fill &&fill) {
-  assert(op.coupling_defined());
-  assert(op.type_defined() && (op.type() == "ISING"));
+  assert(op.type() == "ISING");
   assert(op.size() == 2);
-  assert(op.sites_disjoint());
+  assert(sites_disjoint(op));
 
   Coupling cpl = op.coupling();
   assert(cpl.isexplicit() && !cpl.ismatrix());

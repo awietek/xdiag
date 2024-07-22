@@ -9,8 +9,6 @@ namespace xdiag::tj {
 template <typename bit_t, typename coeff_t, bool symmetric, class Basis,
           class Fill>
 void apply_number(Op const &op, Basis &&basis, Fill &&fill) {
-  assert(op.coupling_defined());
-  assert(op.type_defined());
   assert(op.size() == 1);
 
   std::string type = op.type();

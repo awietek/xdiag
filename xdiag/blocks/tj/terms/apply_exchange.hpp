@@ -10,10 +10,8 @@ namespace xdiag::tj {
 template <typename bit_t, typename coeff_t, bool symmetric, class Basis,
           class Filler>
 void apply_exchange(Op const &op, Basis &&basis, Filler &&fill) {
-  assert(op.coupling_defined());
-  assert(op.type_defined());
   assert(op.size() == 2);
-  assert(op.sites_disjoint());
+  assert(sites_disjoint(op));
   std::string type = op.type();
   assert(type == "EXCHANGE");
 

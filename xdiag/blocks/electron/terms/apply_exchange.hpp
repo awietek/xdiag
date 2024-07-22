@@ -34,10 +34,9 @@ void electron_do_down_flips(bit_t ups, int64_t idx_ups, bit_t flipmask,
 template <typename bit_t, typename coeff_t, bool symmetric, class Basis,
           class Filler>
 void apply_exchange(Op const &op, Basis &&basis, Filler &&fill) {
-  assert(op.coupling_defined());
-  assert(op.type_defined() && (op.type() == "EXCHANGE"));
+  assert(op.type() == "EXCHANGE");
   assert(op.size() == 2);
-  assert(op.sites_disjoint());
+  assert(sites_disjoint(op));
 
   Coupling cpl = op.coupling();
   assert(cpl.isexplicit() && !cpl.ismatrix());

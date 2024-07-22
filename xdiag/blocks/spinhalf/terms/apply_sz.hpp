@@ -12,8 +12,7 @@ template <typename bit_t, typename coeff_t, bool symmetric, class BasisIn,
           class BasisOut, class Fill>
 void apply_sz(Op const &op, BasisIn &&basis_in, BasisOut &&basis_out,
               Fill &&fill) {
-  assert(op.coupling_defined());
-  assert(op.type_defined() && (op.type() == "SZ"));
+  assert(op.type() == "SZ");
   assert(op.size() == 1);
 
   Coupling cpl = op.coupling();

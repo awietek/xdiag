@@ -15,10 +15,9 @@ void apply_scalar_chirality(Op const &op, BasisIn &&basis_in,
                             BasisOut &&basis_out, Fill &&fill) try {
   using bits::gbit;
 
-  assert(op.coupling_defined());
-  assert(op.type_defined() && (op.type() == "SCALARCHIRALITY"));
+  assert(op.type() == "SCALARCHIRALITY");
   assert(op.size() == 3);
-  assert(op.sites_disjoint());
+  assert(sites_disjoint(op));
   assert(iscomplex<coeff_t>());
 
   Coupling cpl = op.coupling();

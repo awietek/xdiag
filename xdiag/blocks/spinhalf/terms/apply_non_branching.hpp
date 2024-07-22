@@ -14,9 +14,8 @@ template <typename bit_t, typename coeff_t, bool symmetric, class BasisIn,
 void apply_non_branching(Op const &op, BasisIn &&basis_in,
                          BasisOut &&basis_out, Fill &&fill) {
 
-  assert(op.matrix_defined());
+  assert(op.ismatrix());
   assert(operators::is_non_branching_op(op));
-  assert(op.coupling_defined());
 
   auto op_nb = operators::NonBranchingOp<bit_t, coeff_t>(op);
 
