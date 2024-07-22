@@ -134,10 +134,8 @@ void fill(Spinhalf const &block, arma::Col<coeff_t> &vec,
   auto const &basis = block.basis();
   int64_t idx = std::visit(
       overload{
-          [&](BasisSz<uint16_t> const &b) { return spinhalf_index(b, p); },
           [&](BasisSz<uint32_t> const &b) { return spinhalf_index(b, p); },
           [&](BasisSz<uint64_t> const &b) { return spinhalf_index(b, p); },
-          [&](BasisNoSz<uint16_t> const &b) { return spinhalf_index(b, p); },
           [&](BasisNoSz<uint32_t> const &b) { return spinhalf_index(b, p); },
           [&](BasisNoSz<uint64_t> const &b) { return spinhalf_index(b, p); },
           [&](auto &&) {
@@ -211,7 +209,6 @@ void fill(tJ const &block, arma::Col<coeff_t> &vec, ProductState const &p) try {
   auto const &basis = block.basis();
   int64_t idx = std::visit(
       overload{
-          [&](BasisNp<uint16_t> const &b) { return tj_index(b, p); },
           [&](BasisNp<uint32_t> const &b) { return tj_index(b, p); },
           [&](BasisNp<uint64_t> const &b) { return tj_index(b, p); },
           [&](auto &&) {
@@ -289,10 +286,8 @@ void fill(Electron const &block, arma::Col<coeff_t> &vec,
   auto const &basis = block.basis();
   int64_t idx = std::visit(
       overload{
-          [&](BasisNp<uint16_t> const &b) { return electron_index(b, p); },
           [&](BasisNp<uint32_t> const &b) { return electron_index(b, p); },
           [&](BasisNp<uint64_t> const &b) { return electron_index(b, p); },
-          [&](BasisNoNp<uint16_t> const &b) { return electron_index(b, p); },
           [&](BasisNoNp<uint32_t> const &b) { return electron_index(b, p); },
           [&](BasisNoNp<uint64_t> const &b) { return electron_index(b, p); },
           [&](auto &&) {
@@ -336,7 +331,6 @@ void fill(tJDistributed const &block, arma::Col<coeff_t> &vec,
   // returns invalid_index if state is not on my process
   int64_t idx = std::visit(
       overload{
-          [&](BasisNp<uint16_t> const &b) { return tj_index(b, p); },
           [&](BasisNp<uint32_t> const &b) { return tj_index(b, p); },
           [&](BasisNp<uint64_t> const &b) { return tj_index(b, p); },
           [&](auto &&) {

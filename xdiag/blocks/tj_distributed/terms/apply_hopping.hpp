@@ -12,10 +12,8 @@ namespace xdiag::tj_distributed {
 template <typename bit_t, typename coeff_t, class Basis>
 void apply_hopping(Op const &op, Basis &&basis, const coeff_t *vec_in,
                    coeff_t *vec_out) {
-  assert(op.coupling_defined());
-  assert(op.type_defined());
   assert(op.size() == 2);
-  assert(op.sites_disjoint());
+  assert(sites_disjoint(op));
 
   std::string type = op.type();
   assert((type == "HOPUP") || (type == "HOPDN"));

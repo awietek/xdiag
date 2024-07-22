@@ -9,7 +9,6 @@ void apply(OpSum const &ops, SpinhalfDistributed const &block_in,
            arma::Col<coeff_t> const &vec_in,
            SpinhalfDistributed const &block_out, arma::Col<coeff_t> &vec_out,
            double zero_precision) try {
-  Log("Arrived block");
   vec_out.zeros();
   OpSum opsc = spinhalf::compile(ops, block_in.n_sites(), zero_precision);
 
@@ -18,7 +17,7 @@ void apply(OpSum const &ops, SpinhalfDistributed const &block_in,
         using basis_in_t = typename std::decay<decltype(basis_in)>::type;
         using basis_out_t = typename std::decay<decltype(basis_out)>::type;
         if constexpr (std::is_same<basis_in_t, basis_out_t>::value) {
-          basis::spinhalf_distributed::apply(ops, basis_in, vec_in, basis_out,
+          basis::spinhalf_distributed::apply(opsc, basis_in, vec_in, basis_out,
                                              vec_out);
         } else {
           XDIAG_THROW(

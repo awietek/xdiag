@@ -45,7 +45,7 @@ public:
     return (int)(random::hash_div3(spins) % mpi_size_);
   };
 
-  mpi::CommPattern &comm_pattern();
+  mpi::CommPattern &comm_pattern() const;
   mpi::Communicator transpose_communicator(bool reverse) const;
 
   bool operator==(BasisSz const &rhs) const;
@@ -77,7 +77,7 @@ private:
   std::vector<combinatorics::LinTable<bit_t>> prefix_lintables_;
   std::vector<std::vector<bit_t>> prefix_states_;
 
-  mpi::CommPattern comm_pattern_;
+  mutable mpi::CommPattern comm_pattern_;
   mpi::Communicator transpose_communicator_;
   mpi::Communicator transpose_communicator_reverse_;
 };

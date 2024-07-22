@@ -14,7 +14,7 @@ void test_e0_nompi(int N, OpSum ops) {
 
     auto H = matrix(ops, block);
     REQUIRE(H.is_hermitian(1e-7));
-    
+
     arma::vec evals_mat;
     arma::eig_sym(evals_mat, H);
     double e0_mat = evals_mat(0);
@@ -23,7 +23,7 @@ void test_e0_nompi(int N, OpSum ops) {
 
     Log("N: {}, n_up: {}, e0 mat: {:+.10f}, e0 mpi: {:+.10f}", N, nup, e0_mat,
         e0_app);
-    // REQUIRE(close(e0_mat, e0_app));
+    REQUIRE(close(e0_mat, e0_app));
   }
 }
 
@@ -31,29 +31,25 @@ void test_e0_nompi(int N, OpSum ops) {
 //   int N = ops.n_sites();
 //   for (int nup = 0; nup <= N; ++nup) {
 //     auto block = Spinhalf<uint32_t>(N, nup);
-//     auto block_mpi = SpinhalfMPI<uint32_t>(N, nup);
+//     auto block_mpi = SpinhalfDistributed<uint32_t>(N, nup);
 
-//     auto [e0_s, gs_s] = GroundstateReal(ops, couplings, block);
-//     auto [e0_p, gs_p] = GroundstateReal(ops, couplings, block_mpi);
+//     auto [e0_s, gs_s] = eig0(ops, block);
+//     auto [e0_p, gs_p] = eig0(ops, block_mpi);
 //     REQUIRE(std::abs(e0_s - e0_p) < 1e-8);
 
 //     for (int i = 0; i < N; ++i) {
 //       auto op = Op("SZ", i);
-//       double exp_s = Inner(op, gs_s);
-//       double exp_p = Inner(op, gs_p);
+//       double exp_s = inner(op, gs_s);
+//       double exp_p = inner(op, gs_p);
 
-//       // LogMPI.out("N: {}, n_up: {}, sz_s: {:+.10f}, sz_p: {:+.10f}", N,
-//       nup,
-//       //            exp_s, exp_p);
-
-//       REQUIRE(lila::close(exp_s, exp_p));
+//       REQUIRE(close(exp_s, exp_p));
 
 //       if (nup < N - 1) {
 //         op = Op("S+", i);
-//         auto sz_i_gs_s = Apply(op, gs_s);
-//         double dot_s = Dot(sz_i_gs_s, sz_i_gs_s);
-//         auto sz_i_gs_p = Apply(op, gs_p);
-//         double dot_p = Dot(sz_i_gs_p, sz_i_gs_p);
+//         auto sz_i_gs_s = apply(op, gs_s);
+//         double dot_s = dot(sz_i_gs_s, sz_i_gs_s);
+//         auto sz_i_gs_p = apply(op, gs_p);
+//         double dot_p = dot(sz_i_gs_p, sz_i_gs_p);
 
 //         LogMPI.out("N: {}, n_up: {}, i: {} dot_s+: {:+.10f}, dot_p+:
 //         {:+.10f}",
@@ -79,8 +75,8 @@ void test_e0_nompi(int N, OpSum ops) {
 
 // void test_sz_sp_sm_commutators(int n_sites) {
 //   for (int nup = 1; nup < n_sites; ++nup) {
-//     LogMPI.out("N: {}, n_up: {}", n_sites, nup);
-//     auto block = SpinhalfMPI(n_sites, nup);
+//     Log("N: {}, n_up: {}", n_sites, nup);
+//     auto block = SpinhalfDistributed(n_sites, nup);
 //     auto block_s = Spinhalf(n_sites, nup);
 
 //     for (int i = 0; i < n_sites; ++i)
@@ -125,7 +121,7 @@ void test_e0_nompi(int N, OpSum ops) {
 //   }
 // }
 
-TEST_CASE("spinhalf_distributed_apply", "[spinhalf_distributed]") {
+TEST_CASE("spinhalf_distributed_apply", "[spinhalf_distributed]") try {
 
   using namespace xdiag::testcases::spinhalf;
   {
@@ -140,36 +136,36 @@ TEST_CASE("spinhalf_distributed_apply", "[spinhalf_distributed]") {
     ops += Op(type, "J", {4, 5});
     ops += Op(type, "J", {5, 0});
 
-    // // postfix ops
-    // ops += Op("HB", "J", {0, 1});
-    // ops += Op("HB", "J", {1, 2});
+    // postfix ops
+    ops += Op("EXCHANGE", "J", {0, 1});
+    ops += Op("EXCHANGE", "J", {1, 2});
 
-    // // mixed ops
-    // ops += Op("HB", "J", {2, 3});
-    // ops += Op("HB", "J", {1, 4});
-    // ops += Op("HB", "J", {0, 3});
+    // mixed ops
+    ops += Op("HB", "J", {2, 3});
+    ops += Op("HB", "J", {1, 4});
+    ops += Op("HB", "J", {0, 3});
 
-    // // Prefix ops
-    // ops += Op("HB", "J", {3, 4});
-    // ops += Op("HB", "J", {4, 5});
-    // ops += Op("HB", "J2", {4, 5});
+    // Prefix ops
+    ops += Op("HB", "J", {3, 4});
+    ops += Op("HB", "J", {4, 5});
+    ops += Op("HB", "J2", {4, 5});
 
     ops["J"] = 1;
     ops["J2"] = 0.1;
     test_e0_nompi(6, ops);
   }
 
-  // Log("SpinhalfDistributed: Heisenberg chain apply test, J=1.0, N=2,..,8");
-  // for (int N = 2; N <= 8; ++N) {
-  //   auto ops = HBchain(N, 1.0);
-  //   test_e0_nompi(N, ops);
-  // }
+  Log("SpinhalfDistributed: Heisenberg chain apply test, J=1.0, N=2,..,8");
+  for (int N = 2; N <= 8; ++N) {
+    auto ops = HBchain(N, 1.0);
+    test_e0_nompi(N, ops);
+  }
 
-  // Log("SpinhalfDistributed: Heisenberg alltoall apply test, N=2,..,8");
-  // for (int N = 2; N <= 8; ++N) {
-  //   auto ops = HB_alltoall(N);
-  //   test_e0_nompi(N, ops);
-  // }
+  Log("SpinhalfDistributed: Heisenberg alltoall apply test, N=2,..,8");
+  for (int N = 2; N <= 8; ++N) {
+    auto ops = HB_alltoall(N);
+    test_e0_nompi(N, ops);
+  }
 
   // // Test S+, S-, Sz operators
   // LogMPI.out("SpinhalfMPI: Heisenberg chain Sz,S+,S- test, N=2,..,8");
@@ -183,4 +179,6 @@ TEST_CASE("spinhalf_distributed_apply", "[spinhalf_distributed]") {
   // for (int N = 2; N <= 8; ++N) {
   //   test_sz_sp_sm_commutators(N);
   // }
+} catch (Error const &e) {
+  error_trace(e);
 }

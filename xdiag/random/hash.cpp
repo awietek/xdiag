@@ -7,6 +7,7 @@
 
 namespace xdiag::random {
 
+
 uint64_t hash(Permutation const &perm) {
   uint64_t h = 0;
   for (int i = 0; i < perm.size(); ++i) {

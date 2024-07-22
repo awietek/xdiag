@@ -1,6 +1,5 @@
 #pragma once
 #ifdef XDIAG_USE_MPI
-#include <map>
 #include <xdiag/operators/op.hpp>
 #include <xdiag/parallel/mpi/communicator.hpp>
 
@@ -9,12 +8,12 @@ namespace xdiag::mpi {
 class CommPattern {
 public:
   CommPattern() = default;
-  bool contains(Op const &op);
+  bool contains(Op const &op) const;
   Communicator const &operator[](Op const &op) const;
-  Communicator &operator[](Op const &op);
-
+  void append(Op const& op, Communicator const& comm);
 private:
-  std::map<Op, Communicator> comm_for_op_;
+  std::vector<Op> ops_;
+  std::vector<Communicator> comms_;
 };
 
 } // namespace xdiag::mpi

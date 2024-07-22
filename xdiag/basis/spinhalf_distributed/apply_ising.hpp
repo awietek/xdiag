@@ -4,7 +4,7 @@
 #include <tuple>
 
 #include <xdiag/extern/armadillo/armadillo>
-#include <xdiag/operators/opsum.hpp>
+#include <xdiag/operators/op.hpp>
 
 namespace xdiag::basis::spinhalf_distributed {
 
@@ -26,7 +26,8 @@ void apply_ising(Op const &op, basis_t const &basis,
     XDIAG_THROW("ISING Op with both sites equal not implemented yet");
   }
 
-  assert(op.coupling_is<coeff_t>());
+  assert(op.coupling().is<coeff_t>());
+
   coeff_t J = op.coupling().as<coeff_t>();
   coeff_t val_same = J / 4.;
   coeff_t val_diff = -J / 4.;

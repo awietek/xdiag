@@ -201,7 +201,8 @@ std::vector<bit_t> const &BasisSz<bit_t>::prefix_states(bit_t postfix) const {
   return prefix_states_[n_up_prefix];
 }
 
-template <typename bit_t> mpi::CommPattern &BasisSz<bit_t>::comm_pattern() {
+template <typename bit_t>
+mpi::CommPattern &BasisSz<bit_t>::comm_pattern() const {
   return comm_pattern_;
 }
 
@@ -209,6 +210,7 @@ template <typename bit_t>
 mpi::Communicator BasisSz<bit_t>::transpose_communicator(bool reverse) const {
   return reverse ? transpose_communicator_reverse_ : transpose_communicator_;
 }
+
 
 template class BasisSz<uint32_t>;
 template class BasisSz<uint64_t>;

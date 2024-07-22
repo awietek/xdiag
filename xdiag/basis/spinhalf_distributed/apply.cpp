@@ -1,7 +1,12 @@
 #include "apply.hpp"
 
-#include <xdiag/basis/spinhalf_distributed/basis_sz.hpp>
+#include <xdiag/basis/spinhalf_distributed/apply_exchange.hpp>
 #include <xdiag/basis/spinhalf_distributed/apply_ising.hpp>
+#include <xdiag/basis/spinhalf_distributed/apply_sz.hpp>
+#include <xdiag/basis/spinhalf_distributed/apply_spsm.hpp>
+
+#include <xdiag/basis/spinhalf_distributed/basis_sz.hpp>
+#include <xdiag/basis/spinhalf_distributed/transpose.hpp>
 
 #include <xdiag/utils/print_macro.hpp>
 
@@ -43,26 +48,77 @@ void apply(OpSum const &ops, basis_t const &basis_in,
   std::copy_if(ops_offdiagonal.begin(), ops_offdiagonal.end(),
                std::back_inserter(ops_prefix), isprefix);
   std::copy_if(ops_offdiagonal.begin(), ops_offdiagonal.end(),
-               std::back_inserter(ops_postfix), isprefix);
+               std::back_inserter(ops_postfix), ispostfix);
   std::copy_if(ops_offdiagonal.begin(), ops_offdiagonal.end(),
                std::back_inserter(ops_mixed), ismixed);
 
-  XDIAG_SHOW(ops_diagonal);
-  XDIAG_SHOW(ops_offdiagonal);
-  XDIAG_SHOW(ops_prefix);
-  XDIAG_SHOW(ops_postfix);
-  XDIAG_SHOW(ops_mixed);
-
-  for (Op op : ops_diagonal){
+  // Diagonal operators
+  for (Op op : ops_diagonal) {
     std::string type = op.type();
-    if (type == "ISING"){
-      // apply_ising(op, basis_in, vec_in, vec_out);
+    if (type == "ISING") {
+      apply_ising(op, basis_in, vec_in, vec_out);
+    } else if (type == "SZ") {
+      apply_sz(op, basis_in, vec_in, vec_out);
     } else {
       XDIAG_THROW(fmt::format("Unknown bond of type \"{}\"", type));
     }
   }
-  
-}catch (Error const &e) {
+
+  //////////////////////////
+  // Apply postfix operators
+  for (Op op : ops_postfix) {
+    std::string type = op.type();
+    if (type == "EXCHANGE") {
+      apply_exchange_postfix(op, basis_in, vec_in, vec_out);
+    } else if ((type == "S+") || (type == "S-")) {
+      apply_spsm_postfix(op, basis_in, vec_in, basis_out, vec_out);
+    } else {
+      XDIAG_THROW(fmt::format("Unknown bond of type \"{}\"", type));
+    }
+  }
+
+  ////////////////////////////////////////////////////////////////////////////
+  // Apply prefix operators (result is computed frmo send_buffer and stored in
+  // recv_buffer)
+  int64_t buffer_size = basis_in.size_max();
+  mpi::buffer.reserve<coeff_t>(buffer_size);
+  coeff_t *send_buffer = mpi::buffer.send<coeff_t>();
+  coeff_t *recv_buffer = mpi::buffer.recv<coeff_t>();
+
+  // Transpose to postfix | prefix order
+  transpose(basis_in, vec_in.memptr(), false);
+
+  for (Op op : ops_prefix) {
+    std::string type = op.type();
+    if (type == "EXCHANGE") {
+      apply_exchange_prefix<basis_t, coeff_t>(op, basis_in);
+    } else if ((type == "S+") || (type == "S-")) {
+      apply_spsm_prefix<basis_t, coeff_t>(op, basis_in, basis_out);
+    } else {
+      XDIAG_THROW(fmt::format("Unknown bond of type \"{}\"", type));
+    }
+  }
+
+  // Transpose back to prefix | postfix order
+  transpose(basis_in, recv_buffer, true);
+
+  // Fill contents of send buffer into vec_out
+  for (int64_t idx = 0; idx < vec_out.size(); ++idx) {
+    vec_out(idx) += send_buffer[idx];
+  }
+
+  /////////////////////////////
+  // apply mixed operators
+  for (Op op : ops_mixed) {
+    std::string type = op.type();
+    if (type == "EXCHANGE") {
+      apply_exchange_mixed(op, basis_in, vec_in, vec_out);
+    } else {
+      XDIAG_THROW(fmt::format("Unknown bond of type \"{}\"", type));
+    }
+  }
+
+} catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 

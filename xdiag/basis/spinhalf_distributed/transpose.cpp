@@ -1,12 +1,12 @@
-#pragma once
-
 #include "transpose.hpp"
+
+#include <xdiag/combinatorics/subsets.hpp>
 
 namespace xdiag::basis::spinhalf_distributed {
 
 template <class bit_t, typename coeff_t>
-void transpose(BasisSz<bit_t> const &basis, const coeff_t const *vec_in,
-               bool reverse = true) {
+void transpose(BasisSz<bit_t> const &basis, coeff_t const *vec_in,
+               bool reverse) {
   mpi::Communicator com = basis.transpose_communicator(reverse);
 
   int mpi_size;
@@ -20,12 +20,12 @@ void transpose(BasisSz<bit_t> const &basis, const coeff_t const *vec_in,
   coeff_t *send_buffer = mpi::buffer.send<coeff_t>();
   coeff_t *recv_buffer = mpi::buffer.recv<coeff_t>();
 
-  auto prefixes = reverse ? basis.postfixes() : basis.prefixes();
+  auto const& prefixes = reverse ? basis.postfixes() : basis.prefixes();
 
   // Fill send buffer
   int64_t idx = 0;
   for (auto prefix : prefixes) {
-    auto postfixes = reverse ? basis.prefixes(prefix) : basis.postfixes(prefix);
+    auto const& postfixes = reverse ? basis.prefix_states(prefix) : basis.postfix_states(prefix);
     for (auto postfix : postfixes) {
       int target_rank = basis.rank(postfix);
       com.add_to_send_buffer(target_rank, vec_in[idx], send_buffer);
@@ -37,14 +37,13 @@ void transpose(BasisSz<bit_t> const &basis, const coeff_t const *vec_in,
   com.all_to_all(send_buffer, recv_buffer);
 
   // Sort reveived coefficients to postfix ordering (this is gnarly!!!)
-  auto recv_offsets = com.n_values_i_recv_offsets();
   std::vector<int64_t> offsets(mpi_size, 0);
 
   int n_prefix_bits = reverse ? basis.n_postfix_bits() : basis.n_prefix_bits();
   int n_postfix_bits = reverse ? basis.n_prefix_bits() : basis.n_postfix_bits();
 
   for (auto prefix : combinatorics::Subsets<bit_t>(n_prefix_bits)) {
-    int n_up_prefix = bitops::popcnt(prefix);
+    int n_up_prefix = bits::popcnt(prefix);
     int n_up_postfix = basis.n_up() - n_up_prefix;
     if ((n_up_postfix < 0) || (n_up_postfix > n_postfix_bits))
       continue;
@@ -62,7 +61,7 @@ void transpose(BasisSz<bit_t> const &basis, const coeff_t const *vec_in,
 
     auto postfixes = reverse ? basis.prefixes() : basis.postfixes();
     for (bit_t postfix : postfixes) {
-      if (bitops::popcnt(postfix) != n_up_postfix)
+      if (bits::popcnt(postfix) != n_up_postfix)
         continue;
 
       int64_t idx_received = origin_offset + offsets[origin_rank];
@@ -81,13 +80,9 @@ void transpose(BasisSz<bit_t> const &basis, const coeff_t const *vec_in,
   mpi::buffer.clean_recv();
 }
 
-template void transpose(BasisSz<uint32_t> const &basis,
-                        const double const *vec_in, bool reverse = true);
-template void transpose(BasisSz<uint64_t> const &basis,
-                        const double const *vec_in, bool reverse = true);
-template void transpose(BasisSz<uint32_t> const &basis,
-                        const complex const *vec_in, bool reverse = true);
-template void transpose(BasisSz<uint64_t> const &basis,
-                        const complex const *vec_in, bool reverse = true);
+template void transpose(BasisSz<uint32_t> const &, double const *, bool);
+template void transpose(BasisSz<uint64_t> const &, double const *, bool);
+template void transpose(BasisSz<uint32_t> const &, complex const *, bool);
+template void transpose(BasisSz<uint64_t> const &, complex const *, bool);
 
 } // namespace xdiag::basis::spinhalf_distributed
