@@ -1,5 +1,7 @@
 #include "error.hpp"
-
+#ifdef XDIAG_USE_MPI
+#include <mpi.h>
+#endif
 #include <iomanip> // std::setw
 #include <variant>
 
@@ -66,24 +68,34 @@ void rethrow_error(Error const &error, const char *file, const char *func,
 
 void error_trace(Error const &error) {
 
+#ifdef XDIAG_USE_MPI
+  int mpi_rank;
+  MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
+  if (mpi_rank == 0) {
+#endif
+
 #ifdef XDIAG_DISABLE_COLOR
-  std::string error_hear = "XDiag ERROR: ";
+    std::string error_hear = "XDiag ERROR: ";
 #else
   std::string error_head = fmt::format(
       fg(fmt::color::crimson) | fmt::emphasis::bold, "XDiag ERROR: ");
 #endif
 
-  std::cerr << error_head << error.what() << "\n";
-  std::cerr << "Stacktrace (C++):\n";
-  int64_t idx = 1;
-  for (auto message : error.messages()) {
-    if (idx < 10) {
-      std::cerr << " [" << idx << "] " << message << "\n";
-    } else {
-      std::cerr << "[" << idx << "] " << message << "\n";
+    std::cerr << error_head << error.what() << "\n";
+    std::cerr << "Stacktrace (C++):\n";
+    int64_t idx = 1;
+    for (auto message : error.messages()) {
+      if (idx < 10) {
+        std::cerr << " [" << idx << "] " << message << "\n";
+      } else {
+        std::cerr << "[" << idx << "] " << message << "\n";
+      }
+      ++idx;
     }
-    ++idx;
+
+#ifdef XDIAG_USE_MPI
   }
+#endif
 }
 
 void check_dimension_works_with_blas_int_size(int64_t dim) try {

@@ -64,9 +64,9 @@ private:
   mutable std::vector<double> storage_;
 };
 
-State zero_state(Block const &block, bool real = true);
+State zero(Block const &block, bool real = true, int64_t n_cols = 1);
 template <typename block_t>
-State zero_state(block_t const &block, bool real = true);
-State zeros_like(State const &state);
+State zero(block_t const &block, bool real = true, int64_t n_cols = 1);
+State zero(State const &state);
 
 } // namespace xdiag

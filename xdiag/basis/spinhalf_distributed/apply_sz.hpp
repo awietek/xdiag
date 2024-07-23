@@ -13,7 +13,6 @@ void apply_sz(Op const &op, basis_t const &basis,
               arma::Col<coeff_t> const &vec_in,
               arma::Col<coeff_t> &vec_out) try {
   using bit_t = typename basis_t::bit_t;
-
   assert(basis.size() == vec_in.size());
   assert(basis.size() == vec_out.size());
   assert(op.type() == "SZ");
@@ -26,7 +25,7 @@ void apply_sz(Op const &op, basis_t const &basis,
   coeff_t H = op.coupling().as<coeff_t>();
   coeff_t val_up = H / 2.;
   coeff_t val_dn = -H / 2.;
-
+  
   int n_postfix_bits = basis.n_postfix_bits();
 
   int64_t idx = 0;

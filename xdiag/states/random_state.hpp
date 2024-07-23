@@ -19,10 +19,10 @@ private:
 
 void fill(State &state, RandomState const &rstate, int64_t col = 0);
 
-State random_state(Block const &block, bool real = true,
-                   int64_t seed = 42, bool normalized = true);
+State rand(Block const &block, bool real = true, int64_t seed = 42,
+           bool normalized = true);
 template <typename block_t>
-State random_state(block_t const &block, bool real = true, int64_t seed = 42,
-                   bool normalized = true);
+State rand(block_t const &block, bool real = true, int64_t seed = 42,
+           bool normalized = true);
 
 } // namespace xdiag

@@ -33,9 +33,6 @@ Permutation::Permutation(std::vector<int64_t> const &array) : array_(array) {
 Permutation::Permutation(std::initializer_list<int64_t> list)
     : Permutation(std::vector<int64_t>(list)) {}
 
-Permutation::Permutation(io::FileTomlHandler &&hdl)
-    : Permutation(hdl.as<Permutation>()) {}
-
 template <typename bit_t> bit_t Permutation::apply(bit_t state) const {
   bit_t tstate = 0;
   for (int64_t site = 0; site < array_.size(); ++site) {

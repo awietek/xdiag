@@ -13,7 +13,6 @@ void apply_ising(Op const &op, basis_t const &basis,
                  arma::Col<coeff_t> const &vec_in,
                  arma::Col<coeff_t> &vec_out) try {
   using bit_t = typename basis_t::bit_t;
-
   assert(basis.size() == vec_in.size());
   assert(basis.size() == vec_out.size());
   assert(op.type() == "ISING");

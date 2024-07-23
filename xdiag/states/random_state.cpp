@@ -32,26 +32,24 @@ void fill(State &state, RandomState const &rstate, int64_t col) try {
   XDIAG_RETHROW(e);
 }
 
-State random_state(Block const &block, bool real, int64_t seed,
-                   bool normalized) {
+State rand(Block const &block, bool real, int64_t seed, bool normalized) {
   return std::visit(
-      [&](auto &&block) { return random_state(block, real, seed, normalized); },
-      block);
+      [&](auto &&block) { return rand(block, real, seed, normalized); }, block);
 }
 
 template <typename block_t>
-State random_state(block_t const &block, bool real, int64_t seed,
-                   bool normalized) {
+State rand(block_t const &block, bool real, int64_t seed, bool normalized) {
   auto state = State(block, real);
   auto rstate = RandomState(seed, normalized);
   fill(state, rstate);
   return state;
 }
-template State random_state(Spinhalf const &, bool, int64_t, bool);
-template State random_state(tJ const &, bool, int64_t, bool);
-template State random_state(Electron const &, bool, int64_t, bool);
+template State rand(Spinhalf const &, bool, int64_t, bool);
+template State rand(tJ const &, bool, int64_t, bool);
+template State rand(Electron const &, bool, int64_t, bool);
 #ifdef XDIAG_USE_MPI
-template State random_state(tJDistributed const &, bool, int64_t, bool);
+template State rand(SpinhalfDistributed const &, bool, int64_t, bool);
+template State rand(tJDistributed const &, bool, int64_t, bool);
 #endif
 
 } // namespace xdiag

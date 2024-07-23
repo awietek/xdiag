@@ -58,9 +58,6 @@ PermutationGroup::PermutationGroup(std::vector<Permutation> const &permutations)
   }
 }
 
-PermutationGroup::PermutationGroup(io::FileTomlHandler &&hdl)
-    : PermutationGroup(hdl.as<PermutationGroup>()) {}
-
 int64_t PermutationGroup::n_sites() const { return n_sites_; }
 int64_t PermutationGroup::n_symmetries() const { return n_symmetries_; }
 int64_t PermutationGroup::size() const { return n_symmetries_; }

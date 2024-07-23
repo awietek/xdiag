@@ -14,6 +14,21 @@
 namespace xdiag {
 
 template <typename coeff_t>
+void apply(Op const &op, Block const &block_in,
+           arma::Col<coeff_t> const &vec_in, Block const &block_out,
+           arma::Col<coeff_t> &vec_out, double zero_precision) try {
+  OpSum ops({op});
+  apply(ops, block_in, vec_in, block_out, vec_out, zero_precision);
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
+}
+
+template void apply(Op const &, Block const &, arma::vec const &, Block const &,
+                    arma::vec &, double);
+template void apply(Op const &, Block const &, arma::cx_vec const &,
+                    Block const &, arma::cx_vec &, double);
+
+template <typename coeff_t>
 void apply(OpSum const &ops, Block const &block_in,
            arma::Col<coeff_t> const &vec_in, Block const &block_out,
            arma::Col<coeff_t> &vec_out, double zero_precision) try {
@@ -30,6 +45,13 @@ template void apply(OpSum const &, Block const &, arma::vec const &,
                     Block const &, arma::vec &, double);
 template void apply(OpSum const &, Block const &, arma::cx_vec const &,
                     Block const &, arma::cx_vec &, double);
+
+void apply(Op const &op, State const &v, State &w, double zero_precision) try {
+  OpSum ops({op});
+  apply(ops, v, w, zero_precision);
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
+}
 
 void apply(OpSum const &ops, State const &v, State &w,
            double zero_precision) try {

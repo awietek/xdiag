@@ -11,7 +11,6 @@ public:
   explicit Permutation(std::vector<int32_t> const &array);
   explicit Permutation(std::vector<int64_t> const &array);
   Permutation(std::initializer_list<int64_t> list);
-  explicit Permutation(io::FileTomlHandler &&hdl);
 
   template <typename bit_t> bit_t apply(bit_t state) const;
   Permutation inverse() const;

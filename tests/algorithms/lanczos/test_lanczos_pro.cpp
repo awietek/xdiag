@@ -143,20 +143,20 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
     int n_sites = 16;
     ops["J"] = 0.63;
     ops["Jd"] = 1.00;
-    auto group = PermutationGroup(lfile["Symmetries"]);
+    auto group = lfile["Symmetries"].as<PermutationGroup>();
 
     std::vector<std::string> irrep_names = {"Gamma.C1.A", "M.C1.A", "X0.C1.A",
                                             "X1.C1.A"};
 
     for (int nup = 0; nup <= 6; ++nup) {
       for (std::string k : irrep_names) {
-        auto irrep = Representation(lfile[k]);
+        auto irrep = lfile[k].as<Representation>();
         auto block = Spinhalf(n_sites, nup, group, irrep);
 
         Log("   nup: {} k: {}", nup, k);
         // XDIAG_SHOW(block);
 
-        auto rstate = random_state(block, false);
+        auto rstate = rand(block, false);
         auto mult = [&ops, &block](cx_vec const &v, cx_vec &w) {
           apply(ops, block, v, block, w);
         };
@@ -199,19 +199,19 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
     int n_sites = 20;
     ops["J"] = 0.63;
     ops["Jd"] = 1.00;
-    auto group = PermutationGroup(lfile["Symmetries"]);
+    auto group = lfile["Symmetries"].as<PermutationGroup>();
 
     std::vector<std::string> irrep_names = {"Gamma.C1.A"};
 
     for (int nup = 0; nup <= 6; ++nup) {
       for (std::string k : irrep_names) {
-        auto irrep = Representation(lfile[k]);
+        auto irrep = lfile[k].as<Representation>();
         auto block = Spinhalf(n_sites, nup, group, irrep);
 
         Log("   nup: {} k: {}", nup, k);
         // XDIAG_SHOW(block);
 
-        auto rstate = random_state(block, false);
+        auto rstate = rand(block, false);
         auto mult = [&ops, &block](cx_vec const &v, cx_vec &w) {
           apply(ops, block, v, block, w);
         };

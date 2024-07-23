@@ -28,30 +28,32 @@ void apply_spsm_postfix(Op const &op, basis_t const &basis_in,
 
   int64_t idx = 0;
   for (auto prefix : basis_in.prefixes()) {
-
     auto const &postfixes = basis_in.postfix_states(prefix);
     auto const &lintable = basis_out.postfix_lintable(prefix);
-
     int64_t idx_prefix = basis_out.prefix_begin(prefix);
 
-    if (type == "S+") {
-      for (auto postfix_in : postfixes) {
-        if (!(postfix_in & mask)) {
-          bit_t postfix_out = postfix_in | mask;
-          int64_t idx_out = idx_prefix + lintable.index(postfix_out);
-          vec_out(idx_out) += H * vec_in(idx);
+    if (idx_prefix != invalid_index) { // can happen since total Sz changes
+      if (type == "S+") {
+        for (auto postfix_in : postfixes) {
+          if (!(postfix_in & mask)) {
+            bit_t postfix_out = postfix_in | mask;
+            int64_t idx_out = idx_prefix + lintable.index(postfix_out);
+            vec_out(idx_out) += H * vec_in(idx);
+          }
+          ++idx;
         }
-        ++idx;
-      }
-    } else if (type == "S-") {
-      for (auto postfix_in : postfixes) {
-        if (postfix_in & mask) {
-          bit_t postfix_out = postfix_in ^ mask;
-          int64_t idx_out = idx_prefix + lintable.index(postfix_out);
-          vec_out(idx_out) += H * vec_in(idx);
+      } else if (type == "S-") {
+        for (auto postfix_in : postfixes) {
+          if (postfix_in & mask) {
+            bit_t postfix_out = postfix_in ^ mask;
+            int64_t idx_out = idx_prefix + lintable.index(postfix_out);
+            vec_out(idx_out) += H * vec_in(idx);
+          }
+          ++idx;
         }
-        ++idx;
       }
+    } else {
+      idx += postfixes.size();
     }
   }
 } catch (Error const &e) {
@@ -62,8 +64,6 @@ template <class basis_t, typename coeff_t>
 void apply_spsm_prefix(Op const &op, basis_t const &basis_in,
                        basis_t const &basis_out) try {
   using bit_t = typename basis_t::bit_t;
-  assert(basis_in.size() == vec_in.size());
-  assert(basis_out.size() == vec_out.size());
   assert((op.type() == "S+") || (op.type() == "S-"));
   assert(op.size() == 1);
   std::string type = op.type();
@@ -80,7 +80,7 @@ void apply_spsm_prefix(Op const &op, basis_t const &basis_in,
   assert(op.coupling().is<coeff_t>());
   coeff_t H = op.coupling().as<coeff_t>();
 
-  int64_t buffer_size = basis_in.size_max();
+  int64_t buffer_size = std::max(basis_out.size_max(), basis_in.size_max());
   mpi::buffer.reserve<coeff_t>(buffer_size);
   coeff_t *send_buffer = mpi::buffer.send<coeff_t>();
   coeff_t *recv_buffer = mpi::buffer.recv<coeff_t>();
@@ -93,25 +93,29 @@ void apply_spsm_prefix(Op const &op, basis_t const &basis_in,
     auto const &lintable = basis_out.prefix_lintable(postfix);
     int64_t idx_postfix = basis_out.postfix_begin(postfix);
 
-    if (type == "S+") {
-      for (auto prefix_in : prefixes) {
-        if (!(prefix_in & mask)) {
-          bit_t prefix_out = prefix_in | mask;
-          int64_t idx_out = idx_postfix + lintable.index(prefix_out);
-          recv_buffer[idx_out] += H * send_buffer[idx];
+    if (idx_postfix != invalid_index) { // can happen since total Sz changes
+      if (type == "S+") {
+        for (auto prefix_in : prefixes) {
+          if (!(prefix_in & mask)) {
+            bit_t prefix_out = prefix_in | mask;
+            int64_t idx_out = idx_postfix + lintable.index(prefix_out);
+            recv_buffer[idx_out] += H * send_buffer[idx];
+          }
+          ++idx;
         }
-        ++idx;
-      }
 
-    } else if (type == "S-") {
-      for (auto prefix_in : prefixes) {
-        if (prefix_in & mask) {
-          bit_t prefix_out = prefix_in ^ mask;
-          int64_t idx_out = idx_postfix + lintable.index(prefix_out);
-          recv_buffer[idx_out] += H * send_buffer[idx];
+      } else if (type == "S-") {
+        for (auto prefix_in : prefixes) {
+          if (prefix_in & mask) {
+            bit_t prefix_out = prefix_in ^ mask;
+            int64_t idx_out = idx_postfix + lintable.index(prefix_out);
+            recv_buffer[idx_out] += H * send_buffer[idx];
+          }
+          ++idx;
         }
-        ++idx;
       }
+    } else {
+      idx += prefixes.size();
     }
   }
 } catch (Error const &e) {

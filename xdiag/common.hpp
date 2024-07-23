@@ -117,7 +117,6 @@ template <class... Ts> overload(Ts...) -> overload<Ts...>;
 
 } // namespace xdiag
 
-
 // Formatter for complex numbers
 namespace fmt {
 

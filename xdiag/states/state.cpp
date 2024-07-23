@@ -280,7 +280,23 @@ complex *State::colptrC(int64_t col) {
   return memptrC() + col * n_rows_;
 }
 
-State zeros_like(State const &state) {
+State zero(Block const &block, bool real, int64_t n_cols) {
+  return std::visit([&](auto &&blk) { return zero(blk, real, n_cols); }, block);
+}
+
+template <typename block_t>
+State zero(block_t const &block, bool real, int64_t n_cols) {
+  return State(block, real, n_cols);
+}
+template State zero(Spinhalf const &, bool, int64_t);
+template State zero(tJ const &, bool, int64_t);
+template State zero(Electron const &, bool, int64_t);
+#ifdef XDIAG_USE_MPI
+template State zero(tJDistributed const &, bool, int64_t);
+template State zero(SpinhalfDistributed const &, bool, int64_t);
+#endif
+
+State zero(State const &state) {
   return State(state.block(), state.isreal(), state.n_cols());
 }
 

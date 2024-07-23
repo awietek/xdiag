@@ -10,7 +10,6 @@ class PermutationGroup {
 public:
   PermutationGroup() = default;
   explicit PermutationGroup(std::vector<Permutation> const &permutations);
-  explicit PermutationGroup(io::FileTomlHandler &&hdl);
 
   int64_t n_sites() const;
   int64_t n_symmetries() const;

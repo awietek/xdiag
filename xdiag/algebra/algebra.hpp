@@ -22,12 +22,6 @@ double inner(Op const &op, State const &v);
 complex innerC(OpSum const &ops, State const &v);
 complex innerC(Op const &op, State const &v);
 
-// arithmetic operators
-State &operator*=(State &X, complex alpha);
-State &operator*=(State &X, double alpha);
-State &operator/=(State &X, complex alpha);
-State &operator/=(State &X, double alpha);
-
 double dot(Block const &block, arma::vec const &v, arma::vec const &w);
 complex dot(Block const &block, arma::cx_vec const &v, arma::cx_vec const &w);
 
@@ -39,5 +33,25 @@ double norm1(Block const &block, arma::Col<coeff_t> const &v);
 
 template <typename coeff_t>
 double norminf(Block const &block, arma::Col<coeff_t> const &v);
+
+// arithmetic operators
+State &operator*=(State &X, double alpha);
+State operator*(State const &X, double alpha);
+State operator*(double alpha, State const &X);
+
+State &operator*=(State &X, complex alpha);
+State operator*(State const &X, complex alpha);
+State operator*(complex alpha, State const &X);
+
+State &operator/=(State &X, double alpha);
+State operator/(State const &X, double alpha);
+  
+State &operator/=(State &X, complex alpha);
+State operator/(State const &X, complex alpha);
+
+State &operator+=(State &v, State const &w);
+State &operator-=(State &v, State const &w);
+State operator+(State const &v, State const &w);
+State operator-(State const &v, State const &w);
 
 } // namespace xdiag

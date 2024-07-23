@@ -21,105 +21,96 @@ void test_e0_nompi(int N, OpSum ops) {
 
     double e0_app = eigval0(ops, block_mpi);
 
-    Log("N: {}, n_up: {}, e0 mat: {:+.10f}, e0 mpi: {:+.10f}", N, nup, e0_mat,
-        e0_app);
+    // Log("N: {}, n_up: {}, e0 mat: {:+.10f}, e0 mpi: {:+.10f}", N, nup, e0_mat,
+    //     e0_app);
     REQUIRE(close(e0_mat, e0_app));
   }
 }
 
-// void test_sz_sp_sm_energy(OpSum ops, Couplings couplings) {
-//   int N = ops.n_sites();
-//   for (int nup = 0; nup <= N; ++nup) {
-//     auto block = Spinhalf<uint32_t>(N, nup);
-//     auto block_mpi = SpinhalfDistributed<uint32_t>(N, nup);
+void test_sz_sp_sm_energy(int N, OpSum const &ops) {
+  for (int nup = 0; nup <= N; ++nup) {
+    auto block = Spinhalf(N, nup);
+    auto block_mpi = SpinhalfDistributed(N, nup);
 
-//     auto [e0_s, gs_s] = eig0(ops, block);
-//     auto [e0_p, gs_p] = eig0(ops, block_mpi);
-//     REQUIRE(std::abs(e0_s - e0_p) < 1e-8);
+    auto [e0_s, gs_s] = eig0(ops, block);
+    auto [e0_p, gs_p] = eig0(ops, block_mpi);
+    REQUIRE(std::abs(e0_s - e0_p) < 1e-8);
 
-//     for (int i = 0; i < N; ++i) {
-//       auto op = Op("SZ", i);
-//       double exp_s = inner(op, gs_s);
-//       double exp_p = inner(op, gs_p);
+    for (int i = 0; i < N; ++i) {
+      // Log("N: {}, n_up: {}, i: {}", N, nup, i);
+      auto op = Op("SZ", 1.0, i);
+      double exp_s = inner(op, gs_s);
+      double exp_p = inner(op, gs_p);
+      REQUIRE(close(exp_s, exp_p));
 
-//       REQUIRE(close(exp_s, exp_p));
+      if (nup < N - 1) {
+        op = Op("S+", 1.0, i);
+        auto sz_i_gs_s = zero(Spinhalf(N, nup + 1));
+        apply(op, gs_s, sz_i_gs_s);
+        double dot_s = dot(sz_i_gs_s, sz_i_gs_s);
+        auto sz_i_gs_p = zero(SpinhalfDistributed(N, nup + 1));
+        apply(op, gs_p, sz_i_gs_p);
+        double dot_p = dot(sz_i_gs_p, sz_i_gs_p);
 
-//       if (nup < N - 1) {
-//         op = Op("S+", i);
-//         auto sz_i_gs_s = apply(op, gs_s);
-//         double dot_s = dot(sz_i_gs_s, sz_i_gs_s);
-//         auto sz_i_gs_p = apply(op, gs_p);
-//         double dot_p = dot(sz_i_gs_p, sz_i_gs_p);
+        // Log("dot_s+: {:+.10f}, dot_p: {:+.10f}", dot_s, dot_p);
+        REQUIRE(close(dot_s, dot_p));
+      }
 
-//         LogMPI.out("N: {}, n_up: {}, i: {} dot_s+: {:+.10f}, dot_p+:
-//         {:+.10f}",
-//                    N, nup, i, dot_s, dot_p);
-//         REQUIRE(lila::close(dot_s, dot_p));
-//       }
+      if (nup > 0) {
+        op = Op("S-", 1.0, i);
+        auto sz_i_gs_s = zero(Spinhalf(N, nup - 1));
+        apply(op, gs_s, sz_i_gs_s);
+        double dot_s = dot(sz_i_gs_s, sz_i_gs_s);
+        auto sz_i_gs_p = zero(SpinhalfDistributed(N, nup - 1));
+        apply(op, gs_p, sz_i_gs_p);
+        double dot_p = dot(sz_i_gs_p, sz_i_gs_p);
 
-//       if (nup > 0) {
-//         op = Op("S-", i);
-//         auto sz_i_gs_s = Apply(op, gs_s);
-//         double dot_s = Dot(sz_i_gs_s, sz_i_gs_s);
-//         auto sz_i_gs_p = Apply(op, gs_p);
-//         double dot_p = Dot(sz_i_gs_p, sz_i_gs_p);
+        // Log("dot_s-: {:+.10f}, dot_p: {:+.10f}", dot_s, dot_p);
+        REQUIRE(close(dot_s, dot_p));
+      }
+    }
+  }
+}
 
-//         LogMPI.out("N: {}, n_up: {}, i: {} dot_s-: {:+.10f}, dot_p-:
-//         {:+.10f}",
-//                    N, nup, i, dot_s, dot_p);
-//         REQUIRE(lila::close(dot_s, dot_p));
-//       }
-//     }
-//   }
-// }
+void test_sz_sp_sm_commutators(int n_sites) {
+  for (int nup = 1; nup < n_sites - 1; ++nup) {
+    // Log("N: {}, n_up: {}", n_sites, nup);
+    auto block = SpinhalfDistributed(n_sites, nup);
+    auto block_p = SpinhalfDistributed(n_sites, nup + 1);
+    auto block_m = SpinhalfDistributed(n_sites, nup - 1);
 
-// void test_sz_sp_sm_commutators(int n_sites) {
-//   for (int nup = 1; nup < n_sites; ++nup) {
-//     Log("N: {}, n_up: {}", n_sites, nup);
-//     auto block = SpinhalfDistributed(n_sites, nup);
-//     auto block_s = Spinhalf(n_sites, nup);
+    for (int i = 0; i < n_sites; ++i)
+      for (int j = 0; j < n_sites; ++j) {
 
-//     for (int i = 0; i < n_sites; ++i)
-//       for (int j = 0; j < n_sites; ++j) {
+        auto sp_i = Op("S+", 1.0, i);
+        auto sm_i = Op("S-", 1.0, i);
+        auto sp_j = Op("S+", 1.0, j);
+        auto sm_j = Op("S-", 1.0, j);
+        auto sz_i = Op("SZ", 1.0, i);
 
-//         auto sp_i = Op("S+", i);
-//         auto sm_i = Op("S-", i);
-//         auto sp_j = Op("S+", j);
-//         auto sm_j = Op("S-", j);
-//         auto sz_i = Op("SZ", i);
+        auto rvec = rand(block);
+        auto sm_rvec = zero(block_m);
+        auto sp_sm_rvec = zero(block);
+        apply(sm_j, rvec, sm_rvec);
+        apply(sp_i, sm_rvec, sp_sm_rvec);
 
-//         auto rvec = RandomState<double>(block);
-//         rvec.vector() /= lila::Norm(rvec.vector());
-//         auto vec1 = Apply(sp_i, Apply(sm_j, rvec));
-//         auto vec2 = Apply(sm_j, Apply(sp_i, rvec));
-//         auto comm = vec1.vector() - vec2.vector();
-//         // LogMPI.out("i: {} j: {} comm: {}", i, j, lila::Norm(comm));
+        auto sp_rvec = zero(block_p);
+        auto sm_sp_rvec = zero(block);
+        apply(sp_i, rvec, sp_rvec);
+        apply(sm_j, sp_rvec, sm_sp_rvec);
 
-//         auto rvec_s = RandomState<double>(block_s);
-//         rvec_s.vector() /= lila::Norm(rvec_s.vector());
+        double nrm = dot(rvec, sp_sm_rvec - sm_sp_rvec);
 
-//         auto vec1_s = Apply(sp_i, Apply(sm_j, rvec_s));
-//         auto vec2_s = Apply(sm_j, Apply(sp_i, rvec_s));
-//         auto comm_s = vec1_s.vector() - vec2_s.vector();
-
-//         // LilaPrint(rvec.vector());
-//         // LilaPrint(vec1.vector());
-//         // LilaPrint(vec2.vector());
-
-//         // LilaPrint(rvec_s.vector());
-//         // LilaPrint(vec1_s.vector());
-//         // LilaPrint(vec2_s.vector());
-
-//         // check [S^+_i, S^-_j] = 2 S^z_i \delta_{ij}
-//         if (i == j) {
-//           auto vec3 = Apply(sz_i, rvec);
-//           REQUIRE(lila::close(2.0 * vec3.vector(), comm));
-//         } else {
-//           REQUIRE(lila::close(lila::Norm(comm), 0.0));
-//         }
-//       }
-//   }
-// }
+        // Check [S+_i, S-_j] = 2 Sz_i  delta_ij
+        if (i == j) {
+          double exp = 2 * inner(sz_i, rvec);
+          REQUIRE(close(nrm, exp));
+        } else {
+          REQUIRE(close(nrm, 0.));
+        }
+      }
+  }
+}
 
 TEST_CASE("spinhalf_distributed_apply", "[spinhalf_distributed]") try {
 
@@ -167,18 +158,18 @@ TEST_CASE("spinhalf_distributed_apply", "[spinhalf_distributed]") try {
     test_e0_nompi(N, ops);
   }
 
-  // // Test S+, S-, Sz operators
-  // LogMPI.out("SpinhalfMPI: Heisenberg chain Sz,S+,S- test, N=2,..,8");
-  // for (int N = 6; N <= 6; ++N) {
-  //   auto [ops, couplings] = HBchain(N, 1.0);
-  //   test_sz_sp_sm_energy(ops, couplings);
-  // }
+  // Test S+, S-, Sz operators
+  Log("SpinhalfDistributed: Heisenberg chain Sz,S+,S- energy test, N=2,..,6");
+  for (int N = 2; N <= 6; N += 2) {
+    auto ops = HBchain(N, 1.0);
+    test_sz_sp_sm_energy(N, ops);
+  }
 
-  // // Test S+, S-, Sz operators
-  // LogMPI.out("SpinhalfMPI: Sz,S+,S- commutator test, N=2,..,8");
-  // for (int N = 2; N <= 8; ++N) {
-  //   test_sz_sp_sm_commutators(N);
-  // }
+  // Test S+, S-, Sz operators
+  Log("SpinhalfDistributed: Sz,S+,S- commutator test, N=2,..,8");
+  for (int N = 2; N <= 8; ++N) {
+    test_sz_sp_sm_commutators(N);
+  }
 } catch (Error const &e) {
   error_trace(e);
 }

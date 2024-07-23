@@ -45,7 +45,7 @@ inline arma::mat compute_omega(arma::vec const &alpha, arma::vec const &beta,
 
   assert(alpha.size() == beta.size());
   int N = alpha.size();
-  mat omega = zeros(N + 1, N + 1);
+  mat omega = arma::zeros(N + 1, N + 1);
   for (int k = 0; k < N + 1; ++k) {
     omega(k, k) = 1.0;
   }

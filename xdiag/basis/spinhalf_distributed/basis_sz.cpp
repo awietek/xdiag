@@ -163,7 +163,12 @@ std::vector<bit_t> const &BasisSz<bit_t>::prefixes() const {
 }
 template <typename bit_t>
 int64_t BasisSz<bit_t>::prefix_begin(bit_t prefix) const {
-  return prefix_begin_.at(prefix);
+  auto it = prefix_begin_.find(prefix);
+  if (it != prefix_begin_.end()) {
+    return it->second;
+  } else {
+    return invalid_index;
+  }
 }
 template <typename bit_t>
 combinatorics::LinTable<bit_t> const &
@@ -185,7 +190,12 @@ std::vector<bit_t> const &BasisSz<bit_t>::postfixes() const {
 }
 template <typename bit_t>
 int64_t BasisSz<bit_t>::postfix_begin(bit_t postfix) const {
-  return postfix_begin_.at(postfix);
+  auto it = postfix_begin_.find(postfix);
+  if (it != postfix_begin_.end()) {
+    return it->second;
+  } else {
+    return invalid_index;
+  }
 }
 template <typename bit_t>
 combinatorics::LinTable<bit_t> const &
@@ -210,7 +220,6 @@ template <typename bit_t>
 mpi::Communicator BasisSz<bit_t>::transpose_communicator(bool reverse) const {
   return reverse ? transpose_communicator_reverse_ : transpose_communicator_;
 }
-
 
 template class BasisSz<uint32_t>;
 template class BasisSz<uint64_t>;

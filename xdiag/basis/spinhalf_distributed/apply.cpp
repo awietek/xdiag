@@ -2,8 +2,8 @@
 
 #include <xdiag/basis/spinhalf_distributed/apply_exchange.hpp>
 #include <xdiag/basis/spinhalf_distributed/apply_ising.hpp>
-#include <xdiag/basis/spinhalf_distributed/apply_sz.hpp>
 #include <xdiag/basis/spinhalf_distributed/apply_spsm.hpp>
+#include <xdiag/basis/spinhalf_distributed/apply_sz.hpp>
 
 #include <xdiag/basis/spinhalf_distributed/basis_sz.hpp>
 #include <xdiag/basis/spinhalf_distributed/transpose.hpp>
@@ -80,7 +80,7 @@ void apply(OpSum const &ops, basis_t const &basis_in,
   ////////////////////////////////////////////////////////////////////////////
   // Apply prefix operators (result is computed frmo send_buffer and stored in
   // recv_buffer)
-  int64_t buffer_size = basis_in.size_max();
+  int64_t buffer_size = std::max(basis_out.size_max(), basis_in.size_max());
   mpi::buffer.reserve<coeff_t>(buffer_size);
   coeff_t *send_buffer = mpi::buffer.send<coeff_t>();
   coeff_t *recv_buffer = mpi::buffer.recv<coeff_t>();
@@ -100,7 +100,7 @@ void apply(OpSum const &ops, basis_t const &basis_in,
   }
 
   // Transpose back to prefix | postfix order
-  transpose(basis_in, recv_buffer, true);
+  transpose(basis_out, recv_buffer, true);
 
   // Fill contents of send buffer into vec_out
   for (int64_t idx = 0; idx < vec_out.size(); ++idx) {
