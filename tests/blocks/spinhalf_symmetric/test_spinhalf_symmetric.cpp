@@ -2,9 +2,9 @@
 
 #include <iostream>
 
-#include <xdiag/blocks/spinhalf/apply.hpp>
 #include <xdiag/algebra/algebra.hpp>
 #include <xdiag/algebra/matrix.hpp>
+#include <xdiag/algebra/apply.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
 #include <xdiag/utils/close.hpp>
 #include <xdiag/symmetries/group_action/group_action.hpp>

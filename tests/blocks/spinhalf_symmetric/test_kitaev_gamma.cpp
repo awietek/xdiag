@@ -2,8 +2,8 @@
 
 #include <xdiag/algebra/algebra.hpp>
 #include <xdiag/algebra/matrix.hpp>
+#include <xdiag/algebra/apply.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
-#include <xdiag/blocks/spinhalf/apply.hpp>
 #include <xdiag/utils/close.hpp>
 
 void run_kitaev_gamma_test(

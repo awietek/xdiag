@@ -4,9 +4,10 @@
 
 #include <xdiag/algorithms/lanczos/tmatrix.hpp>
 #include <xdiag/blocks/blocks.hpp>
-#include <xdiag/blocks/electron/electron.hpp>
-#include <xdiag/blocks/spinhalf/spinhalf.hpp>
-#include <xdiag/blocks/tj/tj.hpp>
+#include <xdiag/blocks/electron.hpp>
+#include <xdiag/blocks/spinhalf.hpp>
+#include <xdiag/blocks/tj.hpp>
+
 #include <xdiag/extern/armadillo/armadillo>
 #include <xdiag/operators/op.hpp>
 #include <xdiag/operators/opsum.hpp>

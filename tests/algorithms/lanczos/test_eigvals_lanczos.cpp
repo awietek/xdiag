@@ -5,7 +5,7 @@
 #include "../../blocks/electron/testcases_electron.hpp"
 
 #include <xdiag/algorithms/lanczos/eigvals_lanczos.hpp>
-#include <xdiag/blocks/electron/matrix.hpp>
+#include <xdiag/algebra/matrix.hpp>
 #include <xdiag/utils/close.hpp>
 
 using namespace xdiag;

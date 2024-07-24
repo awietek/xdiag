@@ -1,6 +1,5 @@
 #include "../../catch.hpp"
-#include <xdiag/blocks/tj/apply.hpp>
-#include <xdiag/blocks/tj/matrix.hpp>
+#include <xdiag/algebra/apply.hpp>
 #include <xdiag/algebra/matrix.hpp>
 #include <xdiag/utils/close.hpp>
 #include <xdiag/utils/print_macro.hpp>

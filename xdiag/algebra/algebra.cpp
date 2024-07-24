@@ -292,6 +292,9 @@ State &operator+=(State &v, State const &w) try {
   if (v.block() != w.block()) {
     XDIAG_THROW("Cannot add two states from different blocks");
   }
+  if (v.n_cols() != w.n_cols()) {
+    XDIAG_THROW("Cannot add two states with different number of columns");
+  }
 
   if (v.isreal() && w.isreal()) {
     v.matrix(false) += w.matrix(false);
@@ -314,6 +317,9 @@ State &operator+=(State &v, State const &w) try {
 State &operator-=(State &v, State const &w) try {
   if (v.block() != w.block()) {
     XDIAG_THROW("Cannot subtract two states from different blocks");
+  }
+  if (v.n_cols() != w.n_cols()) {
+    XDIAG_THROW("Cannot subtract two states with different number of columns");
   }
 
   if (v.isreal() && w.isreal()) {

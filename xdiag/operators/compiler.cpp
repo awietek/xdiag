@@ -1,5 +1,7 @@
 #include "compiler.hpp"
 
+#include <xdiag/operators/non_branching_op.hpp>
+
 namespace xdiag::operators {
 
 OpSum clean_zeros(OpSum const &ops, double precision) try {
@@ -115,5 +117,244 @@ void check_op_coupling_has_type(Op const &op, std::string type1,
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
+
+OpSum compile(OpSum const &ops, Spinhalf const &block, double precision) try {
+  int64_t n_sites = block.n_sites();
+  OpSum ops_explicit = make_explicit(ops);
+  OpSum ops_clean = clean_zeros(ops_explicit, precision);
+
+  OpSum ops_compiled;
+  for (auto op : ops_clean) {
+
+    if (op.ismatrix()) {
+      OpSum ops_nb = non_branching_ops(op, precision);
+      ops_compiled += ops_nb;
+    } else {
+      std::string type = op.type();
+
+      if (type == "HB") {
+        check_op(op, n_sites, 2, true, "number");
+        ops_compiled += Op("ISING", op.coupling(), op.sites());
+        ops_compiled += Op("EXCHANGE", op.coupling(), op.sites());
+      } else if (type == "ISING") {
+        check_op(op, n_sites, 2, true, "number");
+        ops_compiled += op;
+      } else if (type == "EXCHANGE") {
+        check_op(op, n_sites, 2, true, "number");
+        ops_compiled += op;
+      } else if (type == "SZ") {
+        check_op(op, n_sites, 1, false, "number");
+        ops_compiled += op;
+      } else if (type == "S+") {
+        check_op(op, n_sites, 1, false, "number");
+        ops_compiled += op;
+      } else if (type == "S-") {
+        check_op(op, n_sites, 1, false, "number");
+        ops_compiled += op;
+      } else if (type == "SCALARCHIRALITY") {
+        check_op(op, n_sites, 3, true, "number");
+        ops_compiled += op;
+      } else {
+        XDIAG_THROW(fmt::format("Invalid or undefined type: \"{}\"", type));
+      }
+    }
+  }
+  return ops_compiled;
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+
+OpSum compile(OpSum const &ops, tJ const &block, double precision) try {
+  int64_t n_sites = block.n_sites();
+  OpSum ops_explicit = make_explicit(ops);
+  OpSum ops_clean = clean_zeros(ops_explicit, precision);
+
+  OpSum ops_compiled;
+  for (auto op : ops_clean) {
+    std::string type = op.type();
+
+    // Exchange and Ising terms
+    if (type == "HB") {
+      check_op(op, n_sites, 2, true, "number");
+      ops_compiled += Op("ISING", op.coupling(), op.sites());
+      ops_compiled += Op("EXCHANGE", op.coupling(), op.sites());
+    } else if (type == "TJHB") {
+      check_op(op, n_sites, 2, true, "number");
+      ops_compiled += Op("TJISING", op.coupling(), op.sites());
+      ops_compiled += Op("EXCHANGE", op.coupling(), op.sites());
+    } else if (type == "ISING") {
+      check_op(op, n_sites, 2, true, "number");
+      ops_compiled += op;
+    } else if (type == "TJISING") {
+      check_op(op, n_sites, 2, true, "number");
+      ops_compiled += op;
+    } else if (type == "EXCHANGE") {
+      check_op(op, n_sites, 2, true, "number");
+      ops_compiled += op;
+    }
+
+    // Hopping terms
+    else if (type == "HOP") {
+      check_op(op, n_sites, 2, true, "number");
+      ops_compiled += Op("HOPUP", op.coupling(), op.sites());
+      ops_compiled += Op("HOPDN", op.coupling(), op.sites());
+    } else if (type == "HOPUP") {
+      check_op(op, n_sites, 2, true, "number");
+      ops_compiled += op;
+    } else if (type == "HOPDN") {
+      check_op(op, n_sites, 2, true, "number");
+      ops_compiled += op;
+    }
+
+    // Number operators
+    else if (type == "NUMBER") {
+      check_op(op, n_sites, 1, false, "number");
+      ops_compiled += Op("NUMBERUP", op.coupling(), op.sites());
+      ops_compiled += Op("NUMBERDN", op.coupling(), op.sites());
+    } else if (type == "NUMBERUP") {
+      check_op(op, n_sites, 1, false, "number");
+      ops_compiled += Op("NUMBERUP", op.coupling(), op.sites());
+    } else if (type == "NUMBERDN") {
+      check_op(op, n_sites, 1, false, "number");
+      ops_compiled += Op("NUMBERDN", op.coupling(), op.sites());
+    } else if (type == "SZ") {
+      check_op(op, n_sites, 1, false, "number");
+      if (op.coupling().is<double>()) {
+        ops_compiled +=
+            Op("NUMBERUP", 0.5 * op.coupling().as<double>(), op.sites());
+        ops_compiled +=
+            Op("NUMBERDN", -0.5 * op.coupling().as<double>(), op.sites());
+      } else if (op.coupling().is<complex>()) {
+        ops_compiled +=
+            Op("NUMBERUP", 0.5 * op.coupling().as<complex>(), op.sites());
+        ops_compiled +=
+            Op("NUMBERDN", -0.5 * op.coupling().as<complex>(), op.sites());
+      }
+    }
+
+    // Raising Lowering operators
+    else if (type == "CDAGUP") {
+      check_op(op, n_sites, 1, false, "number");
+      ops_compiled += op;
+    } else if (type == "CDAGDN") {
+      check_op(op, n_sites, 1, false, "number");
+      ops_compiled += op;
+    } else if (type == "CUP") {
+      check_op(op, n_sites, 1, false, "number");
+      ops_compiled += op;
+    } else if (type == "CDN") {
+      check_op(op, n_sites, 1, false, "number");
+      ops_compiled += op;
+    } else {
+      XDIAG_THROW(fmt::format("Invalid or undefined Op type: \"{}\"", type));
+    }
+  }
+  return ops_compiled;
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+
+OpSum compile(OpSum const &ops, Electron const &block, double precision) try {
+  int64_t n_sites = block.n_sites();
+  OpSum ops_explicit = make_explicit(ops);
+  OpSum ops_clean = clean_zeros(ops_explicit, precision);
+
+  OpSum ops_compiled;
+  for (auto op : ops_clean) {
+    std::string type = op.type();
+
+    // Exchange and Ising terms
+    if (type == "HB") {
+      check_op(op, n_sites, 2, true, "number");
+      ops_compiled += Op("ISING", op.coupling(), op.sites());
+      ops_compiled += Op("EXCHANGE", op.coupling(), op.sites());
+    } else if (type == "ISING") {
+      check_op(op, n_sites, 2, true, "number");
+      ops_compiled += Op("ISING", op.coupling(), op.sites());
+    } else if (type == "EXCHANGE") {
+      check_op(op, n_sites, 2, true, "number");
+      ops_compiled += Op("EXCHANGE", op.coupling(), op.sites());
+
+      // Hopping terms
+    } else if (type == "HOP") {
+      check_op(op, n_sites, 2, true, "number");
+      ops_compiled += Op("HOPUP", op.coupling(), op.sites());
+      ops_compiled += Op("HOPDN", op.coupling(), op.sites());
+    } else if (type == "HOPUP") {
+      check_op(op, n_sites, 2, true, "number");
+      ops_compiled += Op("HOPUP", op.coupling(), op.sites());
+    } else if (type == "HOPDN") {
+      check_op(op, n_sites, 2, true, "number");
+      ops_compiled += Op("HOPDN", op.coupling(), op.sites());
+    }
+
+    // Number operators
+    else if (type == "NUMBER") {
+      check_op(op, n_sites, 1, false, "number");
+      ops_compiled += Op("NUMBERUP", op.coupling(), op.sites());
+      ops_compiled += Op("NUMBERDN", op.coupling(), op.sites());
+    } else if (type == "NUMBERUP") {
+      check_op(op, n_sites, 1, false, "number");
+      ops_compiled += Op("NUMBERUP", op.coupling(), op.sites());
+    } else if (type == "NUMBERDN") {
+      check_op(op, n_sites, 1, false, "number");
+      ops_compiled += Op("NUMBERDN", op.coupling(), op.sites());
+    } else if (type == "SZ") {
+      check_op(op, n_sites, 1, false, "number");
+      if (op.coupling().is<double>()) {
+        ops_compiled +=
+            Op("NUMBERUP", 0.5 * op.coupling().as<double>(), op.sites());
+        ops_compiled +=
+            Op("NUMBERDN", -0.5 * op.coupling().as<double>(), op.sites());
+      } else if (op.coupling().is<complex>()) {
+        ops_compiled +=
+            Op("NUMBERUP", 0.5 * op.coupling().as<complex>(), op.sites());
+        ops_compiled +=
+            Op("NUMBERDN", -0.5 * op.coupling().as<complex>(), op.sites());
+      }
+    }
+
+    // Raising Lowering operators
+    else if (type == "CDAGUP") {
+      check_op(op, n_sites, 1, false, "number");
+      ops_compiled += Op("CDAGUP", op.coupling(), op.sites());
+    } else if (type == "CDAGDN") {
+      check_op(op, n_sites, 1, false, "number");
+      ops_compiled += Op("CDAGDN", op.coupling(), op.sites());
+    } else if (type == "CUP") {
+      check_op(op, n_sites, 1, false, "number");
+      ops_compiled += Op("CUP", op.coupling(), op.sites());
+    } else if (type == "CDN") {
+      check_op(op, n_sites, 1, false, "number");
+      ops_compiled += Op("CDN", op.coupling(), op.sites());
+    } else {
+      XDIAG_THROW(fmt::format("Invalid or undefined Op type: \"{}\"", type));
+    }
+  }
+  // Set Hubbbbard U term again
+  if (ops.defined("U")) {
+    ops_compiled["U"] = ops["U"];
+  }
+
+  return ops_compiled;
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
+  return OpSum();
+}
+
+#ifdef XDIAG_USE_MPI
+OpSum compile(OpSum const &ops, SpinhalfDistributed const &block,
+              double precision) {
+  int64_t n_sites = block.n_sites();
+  int64_t n_up = block.n_up();
+  return compile(ops, Spinhalf(n_sites, n_up), precision);
+}
+OpSum compile(OpSum const &ops, tJDistributed const &block, double precision) {
+  int64_t n_sites = block.n_sites();
+  int64_t n_up = block.n_up();
+  int64_t n_dn = block.n_dn();
+  return compile(ops, tJ(n_sites, n_up, n_dn), precision);
+}
+#endif
 
 } // namespace xdiag::operators

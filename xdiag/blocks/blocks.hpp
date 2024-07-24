@@ -1,13 +1,13 @@
 #pragma once
 #include <variant>
-#include <xdiag/blocks/electron/electron.hpp>
-#include <xdiag/blocks/spinhalf/spinhalf.hpp>
-#include <xdiag/blocks/tj/tj.hpp>
+#include <xdiag/blocks/electron.hpp>
+#include <xdiag/blocks/spinhalf.hpp>
+#include <xdiag/blocks/tj.hpp>
 #include <xdiag/common.hpp>
 
 #ifdef XDIAG_USE_MPI
-#include <xdiag/blocks/spinhalf_distributed/spinhalf_distributed.hpp>
-#include <xdiag/blocks/tj_distributed/tj_distributed.hpp>
+#include <xdiag/blocks/spinhalf_distributed.hpp>
+#include <xdiag/blocks/tj_distributed.hpp>
 #endif
 
 namespace xdiag {

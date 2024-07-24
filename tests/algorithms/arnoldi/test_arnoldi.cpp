@@ -10,7 +10,7 @@
 #include <xdiag/algorithms/arnoldi/arnoldi.hpp>
 #include <xdiag/algorithms/arnoldi/arnoldi_to_disk.hpp>
 #include <xdiag/algorithms/time_evolution/pade_matrix_exponential.hpp>
-#include <xdiag/blocks/spinhalf/spinhalf.hpp>
+#include <xdiag/blocks/spinhalf.hpp>
 #include <xdiag/states/random_state.hpp>
 
 // TODO: write tests for arnoldi_to_disk

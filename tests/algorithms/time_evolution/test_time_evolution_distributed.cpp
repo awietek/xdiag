@@ -4,8 +4,8 @@
 #include <xdiag/algebra/apply.hpp>
 #include <xdiag/algorithms/time_evolution/time_evolution.hpp>
 #include <xdiag/blocks/blocks.hpp>
-#include <xdiag/blocks/tj/tj.hpp>
-#include <xdiag/blocks/tj_distributed/tj_distributed.hpp>
+#include <xdiag/blocks/tj.hpp>
+#include <xdiag/blocks/tj_distributed.hpp>
 #include <xdiag/states/product_state.hpp>
 #include <xdiag/states/random_state.hpp>
 #include <xdiag/states/state.hpp>

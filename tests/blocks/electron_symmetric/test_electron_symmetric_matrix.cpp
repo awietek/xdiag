@@ -3,10 +3,9 @@
 #include <iostream>
 
 #include "../electron/testcases_electron.hpp"
-#include <xdiag/blocks/electron/matrix.hpp>
-#include <xdiag/blocks/electron/apply.hpp>
 #include <xdiag/algebra/algebra.hpp>
 #include <xdiag/algebra/matrix.hpp>
+#include <xdiag/algebra/apply.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
 #include <xdiag/utils/close.hpp>
 #include <xdiag/utils/print_macro.hpp>

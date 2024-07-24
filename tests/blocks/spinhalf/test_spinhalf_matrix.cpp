@@ -2,8 +2,6 @@
 
 #include "testcases_spinhalf.hpp"
 #include <iostream>
-#include <xdiag/blocks/spinhalf/matrix.hpp>
-#include <xdiag/blocks/tj/matrix.hpp>
 #include <xdiag/algebra/matrix.hpp>
 #include <xdiag/utils/close.hpp>
 #include <xdiag/utils/print_macro.hpp>

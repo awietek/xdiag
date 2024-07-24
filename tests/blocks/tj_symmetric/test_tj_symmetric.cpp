@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include <xdiag/blocks/tj/tj.hpp>
+#include <xdiag/blocks/tj.hpp>
 #include <xdiag/utils/print_macro.hpp>
 
 using namespace xdiag;

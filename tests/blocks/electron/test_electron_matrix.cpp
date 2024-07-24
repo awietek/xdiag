@@ -7,7 +7,6 @@
 #include "testcases_electron.hpp"
 
 #include <xdiag/algebra/matrix.hpp>
-#include <xdiag/blocks/electron/matrix.hpp>
 #include <xdiag/utils/close.hpp>
 
 using namespace xdiag;

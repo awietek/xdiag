@@ -40,9 +40,9 @@
 
 // Includes for different block types
 #include <xdiag/blocks/blocks.hpp>
-#include <xdiag/blocks/spinhalf/spinhalf.hpp>
-#include <xdiag/blocks/electron/electron.hpp>
-#include <xdiag/blocks/tj/tj.hpp>
+#include <xdiag/blocks/spinhalf.hpp>
+#include <xdiag/blocks/electron.hpp>
+#include <xdiag/blocks/tj.hpp>
 
 #include <xdiag/states/fill.hpp>
 #include <xdiag/states/gpwf.hpp>
@@ -129,9 +129,8 @@
 #include <xdiag/basis/tj_distributed/basis_tj_distributed.hpp>
 #include <xdiag/basis/tj_distributed/basis_np.hpp>
 
-#include <xdiag/blocks/spinhalf_distributed/spinhalf_distributed.hpp>
-
-#include <xdiag/blocks/tj_distributed/tj_distributed.hpp>
+#include <xdiag/blocks/spinhalf_distributed.hpp>
+#include <xdiag/blocks/tj_distributed.hpp>
 #endif
 
 #undef XDIAG_THROW

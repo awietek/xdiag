@@ -41,33 +41,27 @@ set(XDIAG_SOURCES
   basis/spinhalf/basis_symmetric_sz.cpp
   basis/spinhalf/basis_symmetric_no_sz.cpp
   basis/spinhalf/basis_sublattice.cpp
+  basis/spinhalf/apply/dispatch_matrix.cpp
+  basis/spinhalf/apply/dispatch_apply.cpp
 
   basis/tj/basis_tj.cpp
   basis/tj/basis_np.cpp
   basis/tj/basis_symmetric_np.cpp
-
+  basis/tj/apply/dispatch_matrix.cpp
+  basis/tj/apply/dispatch_apply.cpp
+  
   basis/electron/basis_electron.cpp
   basis/electron/basis_np.cpp
   basis/electron/basis_no_np.cpp
   basis/electron/basis_symmetric_np.cpp
   basis/electron/basis_symmetric_no_np.cpp
-
+  basis/electron/apply/dispatch_matrix.cpp
+  basis/electron/apply/dispatch_apply.cpp
+  
   blocks/blocks.cpp
-
-  blocks/spinhalf/spinhalf.cpp
-  blocks/spinhalf/matrix.cpp
-  blocks/spinhalf/apply.cpp
-  blocks/spinhalf/compile.cpp
-
-  blocks/electron/electron.cpp
-  blocks/electron/matrix.cpp
-  blocks/electron/apply.cpp
-  blocks/electron/compile.cpp
-
-  blocks/tj/tj.cpp
-  blocks/tj/matrix.cpp
-  blocks/tj/apply.cpp
-  blocks/tj/compile.cpp
+  blocks/spinhalf.cpp
+  blocks/electron.cpp
+  blocks/tj.cpp
 
   symmetries/qn.cpp
   symmetries/operations/symmetry_operations.cpp	
@@ -124,17 +118,16 @@ set(XDIAG_DISTRIBUTED_SOURCES
 
   basis/spinhalf_distributed/basis_spinhalf_distributed.cpp
   basis/spinhalf_distributed/basis_sz.cpp
-  basis/spinhalf_distributed/apply.cpp
   basis/spinhalf_distributed/transpose.cpp
-
+  basis/spinhalf_distributed/apply/dispatch_apply.cpp
+  basis/spinhalf_distributed/apply/apply_terms.cpp
+  
   basis/tj_distributed/basis_tj_distributed.cpp
   basis/tj_distributed/basis_np.cpp
+  basis/tj_distributed/apply/dispatch_apply.cpp
 
-  blocks/spinhalf_distributed/spinhalf_distributed.cpp
-  blocks/spinhalf_distributed/apply.cpp
-
-  blocks/tj_distributed/tj_distributed.cpp
-  blocks/tj_distributed/apply.cpp
+  blocks/spinhalf_distributed.cpp
+  blocks/tj_distributed.cpp
 )
 
 set(XDIAG_JULIA_SOURCES

@@ -5,10 +5,9 @@
 #include "../spinhalf/testcases_spinhalf.hpp"
 #include "../tj/testcases_tj.hpp"
 #include <xdiag/algorithms/sparse_diag.hpp>
-#include <xdiag/blocks/spinhalf/matrix.hpp>
-#include <xdiag/blocks/tj/apply.hpp>
-#include <xdiag/blocks/tj/matrix.hpp>
-#include <xdiag/blocks/tj_distributed/apply.hpp>
+#include <xdiag/algebra/matrix.hpp>
+#include <xdiag/algebra/apply.hpp>
+
 #include <xdiag/utils/close.hpp>
 #include <xdiag/utils/print_macro.hpp>
 

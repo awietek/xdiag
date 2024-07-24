@@ -1,12 +1,12 @@
 #include "../catch.hpp"
 
 #include <iostream>
-#include <xdiag/utils/close.hpp>
-#include <xdiag/operators/non_branching_op.hpp>
-#include <xdiag/blocks/spinhalf/spinhalf.hpp>
 #include <xdiag/algebra/algebra.hpp>
 #include <xdiag/algebra/matrix.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
+#include <xdiag/blocks/spinhalf.hpp>
+#include <xdiag/operators/non_branching_op.hpp>
+#include <xdiag/utils/close.hpp>
 
 TEST_CASE("non_branching_op", "[operators]") try {
   using namespace xdiag;
@@ -160,6 +160,6 @@ TEST_CASE("non_branching_op", "[operators]") try {
   // XDIAG_SHOW(norm(H2));
 
   REQUIRE(close(H1, H2));
- } catch (xdiag::Error e) {
+} catch (xdiag::Error e) {
   xdiag::error_trace(e);
- }
+}

@@ -4,10 +4,9 @@
 
 #include "testcases_spinhalf.hpp"
 #include <xdiag/algebra/algebra.hpp>
+#include <xdiag/algebra/apply.hpp>
 #include <xdiag/algebra/matrix.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
-#include <xdiag/blocks/spinhalf/apply.hpp>
-#include <xdiag/blocks/spinhalf/matrix.hpp>
 #include <xdiag/utils/close.hpp>
 #include <xdiag/utils/print_macro.hpp>
 

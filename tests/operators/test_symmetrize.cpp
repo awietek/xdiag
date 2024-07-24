@@ -7,7 +7,7 @@
 #include <xdiag/algebra/apply.hpp>
 #include <xdiag/algorithms/lanczos/eigs_lanczos.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
-#include <xdiag/blocks/electron/electron.hpp>
+#include <xdiag/blocks/electron.hpp>
 #include <xdiag/operators/symmetrize.hpp>
 #include <xdiag/utils/close.hpp>
 #include <xdiag/utils/print_macro.hpp>
@@ -36,7 +36,7 @@ TEST_CASE("symmetrize", "[operators]") try {
         if (block_nosym.size() == 0) {
           continue;
         }
-	// XDIAG_SHOW(ops);
+        // XDIAG_SHOW(ops);
         auto [e0_nosym, v0_nosym] = eig0(ops, block_nosym);
 
         auto res = eigs_lanczos(ops, block_nosym);
@@ -88,9 +88,9 @@ TEST_CASE("symmetrize", "[operators]") try {
           {
             auto &v = v0_sym;
             auto Hv = v;
-	    // Log("UUU");
+            // Log("UUU");
             apply(ops, v, Hv);
-	    // Log("VVV");
+            // Log("VVV");
             auto e = dot(v, Hv);
             // XDIAG_SHOW(e);
             // XDIAG_SHOW(e0_nosym);
@@ -104,12 +104,12 @@ TEST_CASE("symmetrize", "[operators]") try {
             corr_nosym["J"] = 1.0;
 
             auto corr_sym = symmetrize(corr_nosym, space_group);
-	    // Log("XXX");
+            // Log("XXX");
             auto val_nosym = inner(corr_nosym, v0_nosym);
-	    // Log("YYY {} {}", corr_sym.isreal(), v0_sym.isreal());
-	    // XDIAG_SHOW(corr_sym);
+            // Log("YYY {} {}", corr_sym.isreal(), v0_sym.isreal());
+            // XDIAG_SHOW(corr_sym);
             auto val_sym = innerC(corr_sym, v0_sym);
-	    // Log("ZZZ");
+            // Log("ZZZ");
             // Log.out("(0,{}) nosym: {}, sym: {}", i, real(val_nosym),
             //               real(val_sym));
             REQUIRE(close(val_nosym, val_sym, 1e-6, 1e-6));

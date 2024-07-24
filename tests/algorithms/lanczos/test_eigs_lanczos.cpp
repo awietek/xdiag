@@ -6,9 +6,9 @@
 
 #include <xdiag/algebra/algebra.hpp>
 #include <xdiag/algebra/apply.hpp>
+#include <xdiag/algebra/matrix.hpp>
 #include <xdiag/algorithms/lanczos/eigs_lanczos.hpp>
 
-#include <xdiag/blocks/electron/matrix.hpp>
 #include <xdiag/utils/close.hpp>
 #include <xdiag/utils/print_macro.hpp>
 
