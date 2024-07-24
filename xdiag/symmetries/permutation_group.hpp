@@ -19,8 +19,8 @@ public:
 
   bool operator==(PermutationGroup const &rhs) const;
   bool operator!=(PermutationGroup const &rhs) const;
-  operator bool() const;    
-  
+  operator bool() const;
+
   PermutationGroup subgroup(std::vector<int64_t> const &symmetry_numbers) const;
   using iterator_t = std::vector<Permutation>::const_iterator;
   iterator_t begin() const;
@@ -32,5 +32,8 @@ private:
   std::vector<Permutation> permutations_;
   std::vector<int64_t> inverse_;
 };
+
+std::ostream &operator<<(std::ostream &out, PermutationGroup const &group);
+std::string to_string(PermutationGroup const &group);
 
 } // namespace xdiag

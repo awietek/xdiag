@@ -355,5 +355,15 @@ template State::State(tJDistributed const &block,
                       arma::Mat<complex> const &vector);
 
 #endif
-
+std::ostream &operator<<(std::ostream &out, State const &state) {
+  if (state.isreal()) {
+    out << "REAL State\n";
+  } else {
+    out << "COMPLEX State\n";
+  }
+  out << "Block:\n";
+  out << state.block();
+  return out;
+}
+std::string to_string(State const &state) { return to_string_generic(state); }
 } // namespace xdiag

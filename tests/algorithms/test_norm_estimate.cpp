@@ -9,7 +9,6 @@
 #include <xdiag/common.hpp>
 #include <xdiag/extern/armadillo/armadillo>
 #include <xdiag/utils/logger.hpp>
-#include <xdiag/utils/print_macro.hpp>
 
 using namespace xdiag;
 

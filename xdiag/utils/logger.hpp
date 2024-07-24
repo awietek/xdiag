@@ -1,7 +1,7 @@
 #pragma once
 
 #ifdef XDIAG_USE_MPI
-#include <xdiag/parallel/mpi/logger_mpi.hpp>
+#include <xdiag/utils/logger_mpi.hpp>
 #else
 #include <xdiag/utils/logger_serial.hpp>
 #endif

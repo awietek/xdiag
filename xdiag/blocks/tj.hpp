@@ -39,4 +39,7 @@ private:
   int64_t size_;
 };
 
+std::ostream &operator<<(std::ostream &out, tJ const &block);
+std::string to_string(tJ const &block);
+
 } // namespace xdiag

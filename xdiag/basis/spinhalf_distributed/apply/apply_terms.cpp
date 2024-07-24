@@ -8,8 +8,6 @@
 #include <xdiag/basis/spinhalf_distributed/basis_sz.hpp>
 #include <xdiag/basis/spinhalf_distributed/transpose.hpp>
 
-#include <xdiag/utils/print_macro.hpp>
-
 namespace xdiag::basis::spinhalf_distributed {
 
 template <typename coeff_t, class basis_t>

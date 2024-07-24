@@ -47,4 +47,6 @@ PermutationGroup allowed_subgroup(PermutationGroup const &group,
 Representation multiply(Representation const &r1, Representation const &r2);
 Representation operator*(Representation const &r1, Representation const &r2);
 
+std::ostream &operator<<(std::ostream &out, Representation const &irrep);
+std::string to_string(Representation const &irrep);
 } // namespace xdiag

@@ -1,4 +1,5 @@
 #include "electron.hpp"
+#include <xdiag/random/hash.hpp>
 
 namespace xdiag {
 
@@ -18,7 +19,7 @@ Electron::Electron(int64_t n_sites) try
     XDIAG_THROW(
         "Spinhalf blocks with more than 64 sites currently not implemented");
   }
-  size_ = xdiag::size(*basis_);
+  size_ = basis::size(*basis_);
   check_dimension_works_with_blas_int_size(size_);
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
@@ -43,7 +44,7 @@ Electron::Electron(int64_t n_sites, int64_t nup, int64_t ndn) try
   } else {
     XDIAG_THROW("blocks with more than 64 sites currently not implemented");
   }
-  size_ = xdiag::size(*basis_);
+  size_ = basis::size(*basis_);
   check_dimension_works_with_blas_int_size(size_);
 
 } catch (Error const &e) {
@@ -71,7 +72,7 @@ Electron::Electron(int64_t n_sites, PermutationGroup group,
   } else {
     XDIAG_THROW("blocks with more than 64 sites currently not implemented");
   }
-  size_ = xdiag::size(*basis_);
+  size_ = basis::size(*basis_);
   check_dimension_works_with_blas_int_size(size_);
 
 } catch (Error const &e) {
@@ -103,7 +104,7 @@ Electron::Electron(int64_t n_sites, int64_t nup, int64_t ndn,
   } else {
     XDIAG_THROW("blocks with more than 64 sites currently not implemented");
   }
-  size_ = xdiag::size(*basis_);
+  size_ = basis::size(*basis_);
   check_dimension_works_with_blas_int_size(size_);
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
@@ -136,5 +137,32 @@ bool Electron::operator!=(Electron const &rhs) const {
 }
 
 Electron::basis_t const &Electron::basis() const { return *basis_; }
+
+std::ostream &operator<<(std::ostream &out, Electron const &block) {
+  out << "Electron:\n";
+  out << "  n_sites  : " << block.n_sites() << "\n";
+  if ((block.n_up() != undefined) && (block.n_dn() != undefined)) {
+    out << "  n_up     : " << block.n_up() << "\n";
+    out << "  n_dn     : " << block.n_dn() << "\n";
+  } else {
+    out << "  n_up     : not conserved\n";
+    out << "  n_dn     : not conserved\n";
+  }
+  if (block.permutation_group()) {
+    out << "  group    : defined with ID "
+        << random::hash(block.permutation_group()) << "\n";
+    out << "  irrep    : defined with ID " << random::hash(block.irrep())
+        << "\n";
+  }
+  std::stringstream ss;
+  ss.imbue(std::locale("en_US.UTF-8"));
+  ss << block.size();
+  out << "  dimension: " << ss.str() << "\n";
+  out << "  ID       : " << random::hash(block) << "\n";
+  return out;
+}
+std::string to_string(Electron const &block) {
+  return to_string_generic(block);
+}
 
 } // namespace xdiag

@@ -67,5 +67,6 @@ Coupling operator/(Coupling const &x, double scalar);
 Coupling operator/(Coupling const &x, complex scalar);
 
 std::ostream &operator<<(std::ostream &out, Coupling const &cpl);
-
+std::string to_string(Coupling const &cpl);
+  
 } // namespace xdiag

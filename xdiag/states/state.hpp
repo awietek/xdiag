@@ -69,4 +69,7 @@ template <typename block_t>
 State zero(block_t const &block, bool real = true, int64_t n_cols = 1);
 State zero(State const &state);
 
+std::ostream &operator<<(std::ostream &out, State const &state);
+std::string to_string(State const &state);
+  
 } // namespace xdiag

@@ -8,7 +8,6 @@
 #include <xdiag/algebra/matrix.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
 #include <xdiag/utils/close.hpp>
-#include <xdiag/utils/print_macro.hpp>
 
 using namespace xdiag;
 

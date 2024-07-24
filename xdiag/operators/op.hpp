@@ -50,6 +50,8 @@ private:
 
 bool sites_disjoint(Op const &op);
 std::vector<int64_t> common_sites(Op const &b1, Op const &b2);
+
 std::ostream &operator<<(std::ostream &out, Op const &op);
+std::string to_string(Op const &op);
 
 } // namespace xdiag

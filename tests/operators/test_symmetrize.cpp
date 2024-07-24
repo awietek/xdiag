@@ -10,7 +10,6 @@
 #include <xdiag/blocks/electron.hpp>
 #include <xdiag/operators/symmetrize.hpp>
 #include <xdiag/utils/close.hpp>
-#include <xdiag/utils/print_macro.hpp>
 
 using namespace xdiag;
 

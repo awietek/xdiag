@@ -108,4 +108,13 @@ Permutation operator*(Permutation const &p1, Permutation const &p2) try {
 Permutation inverse(Permutation const &p) { return p.inverse(); }
 Permutation shuffle(Permutation const &p) { return p.shuffle(); }
 
+std::ostream &operator<<(std::ostream &out, Permutation const &p) {
+  for (int64_t i = 0; i < p.size(); ++i) {
+    out << p[i] << " ";
+  }
+  out << "\n";
+  return out;
+}
+std::string to_string(Permutation const &perm) { return to_string_generic(perm); }
+
 } // namespace xdiag

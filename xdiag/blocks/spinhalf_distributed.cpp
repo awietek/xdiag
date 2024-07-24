@@ -1,4 +1,5 @@
 #include "spinhalf_distributed.hpp"
+#include <xdiag/random/hash.hpp>
 
 namespace xdiag {
 
@@ -56,6 +57,45 @@ bool SpinhalfDistributed::operator!=(SpinhalfDistributed const &rhs) const {
 
 SpinhalfDistributed::basis_t const &SpinhalfDistributed::basis() const {
   return *basis_;
+}
+
+std::ostream &operator<<(std::ostream &out, SpinhalfDistributed const &block) {
+  int mpi_size;
+  MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
+
+  out << "SpinhalfDistributed:\n";
+  out << "  n_sites  : " << block.n_sites() << "\n";
+  if (block.n_up() != undefined) {
+    out << "  n_up     : " << block.n_up() << "\n";
+  } else {
+    out << "  n_up     : not conserved\n";
+  }
+
+  std::stringstream ss;
+  ss.imbue(std::locale("en_US.UTF-8"));
+  ss << block.dim();
+
+  std::stringstream ssmax;
+  ssmax.imbue(std::locale("en_US.UTF-8"));
+  ssmax << block.size_max();
+
+  std::stringstream ssmin;
+  ssmin.imbue(std::locale("en_US.UTF-8"));
+  ssmin << block.size_min();
+
+  std::stringstream ssavg;
+  ssavg.imbue(std::locale("en_US.UTF-8"));
+  ssavg << block.dim() / mpi_size;
+
+  out << "  dimension       : " << ss.str() << "\n";
+  out << "  size (max local): " << ssmax.str() << "\n";
+  out << "  size (min local): " << ssmin.str() << "\n";
+  out << "  size (avg local): " << ssavg.str() << "\n";
+  out << "  ID              : " << random::hash(block) << "\n";
+  return out;
+}
+std::string to_string(SpinhalfDistributed const &block) {
+  return to_string_generic(block);
 }
 
 } // namespace xdiag

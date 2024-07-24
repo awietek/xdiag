@@ -26,4 +26,7 @@ int64_t n_sites(Block const &block);
 bool isreal(Block const &block);
 bool isdistributed(Block const &block);
 
+std::ostream &operator<<(std::ostream &out, Block const &block);
+std::string to_string(Block const &block);
+
 } // namespace xdiag

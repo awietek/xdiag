@@ -43,5 +43,8 @@ private:
   std::shared_ptr<basis_t> basis_;
   int64_t size_;
 };
+  
+std::ostream &operator<<(std::ostream &out, Electron const &block);
+std::string to_string(Electron const &block);
 
 } // namespace xdiag

@@ -3,7 +3,6 @@
 #include <iostream>
 
 #include <xdiag/algorithms/gram_schmidt/gram_schmidt.hpp>
-#include <xdiag/utils/print_macro.hpp>
 
 TEST_CASE("gram_schmidt", "[algorithms]") {
   using namespace xdiag;

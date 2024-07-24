@@ -1,22 +1,32 @@
 #pragma once
 
-#include <xdiag/utils/print.hpp>
+#include <iostream>
 
 #ifdef XDIAG_USE_MPI
-
 #include <mpi.h>
+#endif
+
 namespace xdiag::utils {
+
+template <typename T> inline void print_pretty(const char *id, T X) {
+  std::cout << id << ":\n";
+  std::cout << X;
+}
+
+#ifdef XDIAG_USE_MPI
 template <typename T> inline void print_pretty_mpi(const char *id, T X) {
   int rank = 0;
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   if (rank == 0) {
-    xdiag::utils::print_pretty(id, X);
+    print_pretty(id, X);
   }
 }
+#endif
 
 } // namespace xdiag::utils
-#define XDIAG_SHOW(X) xdiag::utils::print_pretty_mpi(#X, X)
 
+#ifdef XDIAG_USE_MPI
+#define XDIAG_SHOW(X) xdiag::utils::print_pretty_mpi(#X, X)
 #else
 #define XDIAG_SHOW(X) xdiag::utils::print_pretty(#X, X)
 #endif

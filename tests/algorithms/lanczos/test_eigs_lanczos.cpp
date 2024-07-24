@@ -10,7 +10,6 @@
 #include <xdiag/algorithms/lanczos/eigs_lanczos.hpp>
 
 #include <xdiag/utils/close.hpp>
-#include <xdiag/utils/print_macro.hpp>
 
 using namespace xdiag;
 

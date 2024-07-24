@@ -9,7 +9,6 @@
 #include <xdiag/symmetries/permutation_group.hpp>
 #include <xdiag/symmetries/representation.hpp>
 #include <xdiag/utils/close.hpp>
-#include <xdiag/utils/print_macro.hpp>
 
 template <typename T> void test_write_read(T val) try {
   using namespace xdiag;

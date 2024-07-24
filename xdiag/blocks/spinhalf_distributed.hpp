@@ -34,6 +34,8 @@ private:
   int64_t dim_;
   int64_t size_;
 };
+std::ostream &operator<<(std::ostream &out, SpinhalfDistributed const &block);
+std::string to_string(SpinhalfDistributed const &block);
 
 } // namespace xdiag
 #endif

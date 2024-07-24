@@ -9,7 +9,6 @@
 #include <xdiag/algebra/apply.hpp>
 
 #include <xdiag/utils/close.hpp>
-#include <xdiag/utils/print_macro.hpp>
 
 using namespace xdiag;
 

@@ -56,4 +56,7 @@ void fill(tJDistributed const &block, arma::Col<coeff_t> &vec,
           ProductState const &pstate);
 #endif
 
+std::ostream &operator<<(std::ostream &out, ProductState const &state);
+std::string to_string(ProductState const &state);
+  
 } // namespace xdiag

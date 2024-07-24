@@ -98,4 +98,16 @@ PermutationGroup::iterator_t PermutationGroup::end() const {
   return permutations_.end();
 }
 
+std::ostream &operator<<(std::ostream &out, PermutationGroup const &group) {
+  out << "n_sites      : " << group.n_sites() << "\n";
+  out << "n_symmetries : " << group.n_symmetries() << "\n";
+  for (auto const& p : group){
+    out << p;
+  }
+  return out;
+}
+std::string to_string(PermutationGroup const &group) {
+  return to_string_generic(group);
+}
+
 } // namespace xdiag

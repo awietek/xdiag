@@ -10,8 +10,8 @@
 #include <xdiag/operators/opsum.hpp>
 #include <xdiag/symmetries/permutation_group.hpp>
 #include <xdiag/symmetries/representation.hpp>
+#include <xdiag/states/random_state.hpp>
 #include <xdiag/utils/close.hpp>
-#include <xdiag/utils/print_macro.hpp>
 
 TEST_CASE("lanczos_pro", "[lanczos]") {
   using namespace xdiag;

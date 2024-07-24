@@ -49,8 +49,11 @@ private:
 
 OpSum ops_of_type(std::string type, OpSum const &ops);
 OpSum make_explicit(OpSum const &ops);
-
+  
 // legacy function, can be removed later
 OpSum read_opsum(std::string filename);
 
+std::ostream &operator<<(std::ostream &out, OpSum const &ops);
+std::string to_string(OpSum const &ops);
+  
 } // namespace xdiag

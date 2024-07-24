@@ -218,4 +218,16 @@ PermutationGroup allowed_subgroup(PermutationGroup const &group,
   }
 }
 
+std::ostream &operator<<(std::ostream &out, Representation const &irrep) {
+  out << "size      : " << irrep.size() << "\n";
+  out << "characters:\n";
+  for (auto c : irrep.characters()) {
+    out << std::setprecision(8) << c << "\n";
+  }
+  return out;
+}
+std::string to_string(Representation const &irrep) {
+  return to_string_generic(irrep);
+}
+
 } // namespace xdiag

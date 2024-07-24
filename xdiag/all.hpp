@@ -30,9 +30,8 @@
 #include <xdiag/utils/iochecks.hpp>
 #include <xdiag/utils/logger.hpp>
 #include <xdiag/utils/precision.hpp>
-#include <xdiag/utils/print.hpp>
-#include <xdiag/utils/print_macro.hpp>
 #include <xdiag/utils/say_hello.hpp>
+#include <xdiag/utils/xdiag_show.hpp>
 
 #include <xdiag/algebra/algebra.hpp>
 #include <xdiag/algebra/apply.hpp>
@@ -40,8 +39,8 @@
 
 // Includes for different block types
 #include <xdiag/blocks/blocks.hpp>
-#include <xdiag/blocks/spinhalf.hpp>
 #include <xdiag/blocks/electron.hpp>
+#include <xdiag/blocks/spinhalf.hpp>
 #include <xdiag/blocks/tj.hpp>
 
 #include <xdiag/states/fill.hpp>
@@ -65,9 +64,9 @@
 #include <xdiag/combinatorics/subsets_index.hpp>
 #include <xdiag/combinatorics/subsets_indexing.hpp>
 
+#include <xdiag/basis/electron/basis_electron.hpp>
 #include <xdiag/basis/spinhalf/basis_spinhalf.hpp>
 #include <xdiag/basis/tj/basis_tj.hpp>
-#include <xdiag/basis/electron/basis_electron.hpp>
 
 #include <xdiag/symmetries/continuous_group.hpp>
 #include <xdiag/symmetries/generated_group.hpp>
@@ -117,17 +116,17 @@
 #ifdef XDIAG_USE_MPI
 #include <xdiag/parallel/mpi/allreduce.hpp>
 #include <xdiag/parallel/mpi/alltoall.hpp>
+#include <xdiag/parallel/mpi/buffer.hpp>
+#include <xdiag/parallel/mpi/cdot_distributed.hpp>
 #include <xdiag/parallel/mpi/communicator.hpp>
 #include <xdiag/parallel/mpi/datatype.hpp>
-#include <xdiag/parallel/mpi/cdot_distributed.hpp>
 #include <xdiag/parallel/mpi/timing_mpi.hpp>
-#include <xdiag/parallel/mpi/buffer.hpp>
 
 #include <xdiag/basis/spinhalf_distributed/basis_spinhalf_distributed.hpp>
 #include <xdiag/basis/spinhalf_distributed/basis_sz.hpp>
 
-#include <xdiag/basis/tj_distributed/basis_tj_distributed.hpp>
 #include <xdiag/basis/tj_distributed/basis_np.hpp>
+#include <xdiag/basis/tj_distributed/basis_tj_distributed.hpp>
 
 #include <xdiag/blocks/spinhalf_distributed.hpp>
 #include <xdiag/blocks/tj_distributed.hpp>

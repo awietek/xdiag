@@ -149,16 +149,15 @@ std::vector<int64_t> common_sites(Op const &b1, Op const &b2) {
   return s12;
 }
 
-std::ostream &operator<<(std::ostream &out, Op const &op) try {
-
+std::ostream &operator<<(std::ostream &out, Op const &op) {
   out << op.type() << " " << op.coupling() << " ";
   for (int64_t site : op.sites()) {
     out << site << " ";
   }
-
+  out << "\n";
   return out;
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+
+std::string to_string(Op const &op) { return to_string_generic(op); }
 
 } // namespace xdiag

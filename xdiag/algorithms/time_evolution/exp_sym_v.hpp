@@ -3,6 +3,7 @@
 #include <xdiag/algorithms/lanczos/lanczos.hpp>
 #include <xdiag/common.hpp>
 #include <xdiag/operators/opsum.hpp>
+#include <xdiag/states/state.hpp>
 #include <xdiag/utils/timing.hpp>
 
 namespace xdiag {

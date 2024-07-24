@@ -6,8 +6,6 @@
 #include <iostream>
 #include <sstream>
 
-#include <xdiag/utils/print_macro.hpp>
-
 namespace xdiag {
 
 OpSum::OpSum(std::vector<Op> const &ops) : ops_(ops) {}
@@ -193,5 +191,26 @@ OpSum read_opsum(std::string filename) {
 
   return OpSum(ops);
 }
+
+std::ostream &operator<<(std::ostream &out, OpSum const &ops) {
+  out << "Interactions:\n";
+  out << "-------------\n";
+
+  for (auto op : ops) {
+    out << op;
+  }
+  if (ops.couplings().size() > 0) {
+    out << "Couplings:\n";
+    out << "----------\n";
+
+    for (auto name : ops.couplings()) {
+      Coupling cpl = ops[name];
+      out << name << ": " << cpl << "\n";
+    }
+  }
+  return out;
+}
+
+std::string to_string(OpSum const &ops) { return to_string_generic(ops); }
 
 } // namespace xdiag

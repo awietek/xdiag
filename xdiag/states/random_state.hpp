@@ -25,4 +25,7 @@ template <typename block_t>
 State rand(block_t const &block, bool real = true, int64_t seed = 42,
            bool normalized = true);
 
+std::ostream &operator<<(std::ostream &out, RandomState const &state);
+std::string to_string(RandomState const &state);
+
 } // namespace xdiag

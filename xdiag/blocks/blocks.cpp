@@ -35,4 +35,10 @@ bool isdistributed(Block const &block) {
       block);
 }
 
+std::ostream &operator<<(std::ostream &out, Block const &block) {
+  std::visit([&](auto &&block) { out << block; }, block);
+  return out;
+}
+std::string to_string(Block const &block) { return to_string_generic(block); }
+
 } // namespace xdiag

@@ -341,5 +341,5 @@ std::ostream &operator<<(std::ostream &out, Coupling const &cpl) {
   std::visit([&out](auto &&val) { out << val; }, cpl.value());
   return out;
 }
-
+std::string to_string(Coupling const &cpl) { return to_string_generic(cpl); }
 } // namespace xdiag

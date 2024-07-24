@@ -2,9 +2,6 @@
 
 #include <cassert>
 
-#include <xdiag/utils/logger.hpp>
-#include <xdiag/utils/print_macro.hpp>
-
 namespace xdiag {
 
 Tmatrix::Tmatrix(std::vector<double> const &alphas,

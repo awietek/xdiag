@@ -7,7 +7,6 @@
 #include <xdiag/basis/spinhalf/apply/apply_spsm.hpp>
 #include <xdiag/basis/spinhalf/apply/apply_sz.hpp>
 #include <xdiag/common.hpp>
-#include <xdiag/utils/print_macro.hpp>
 #include <xdiag/utils/timing.hpp>
 
 namespace xdiag::basis::spinhalf {

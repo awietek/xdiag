@@ -7,7 +7,6 @@
 #include <xdiag/combinatorics/binomial.hpp>
 #include <xdiag/parallel/mpi/allreduce.hpp>
 #include <xdiag/utils/close.hpp>
-#include <xdiag/utils/print_macro.hpp>
 
 template <typename bit_t, typename coeff_t>
 void test_tj_distributed_basis_np_transpose() {

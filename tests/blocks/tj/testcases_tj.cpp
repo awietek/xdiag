@@ -1,5 +1,4 @@
 #include "testcases_tj.hpp"
-#include <xdiag/utils/print_macro.hpp>
 
 namespace xdiag::testcases::tj {
 

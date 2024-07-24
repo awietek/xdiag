@@ -33,4 +33,7 @@ Permutation operator*(Permutation const &p1, Permutation const &p2);
 Permutation inverse(Permutation const &p);
 Permutation shuffle(Permutation const &p);
 
+std::ostream &operator<<(std::ostream &out, Permutation const &perm);
+std::string to_string(Permutation const &perm);
+
 } // namespace xdiag

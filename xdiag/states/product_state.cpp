@@ -352,4 +352,15 @@ template void fill(tJDistributed const &, arma::cx_vec &, ProductState const &);
 
 #endif
 
+std::ostream &operator<<(std::ostream &out, ProductState const &state) {
+  for (auto s : state) {
+    out << s;
+  }
+  out << "\n";
+  return out;
+}
+std::string to_string(ProductState const &state) {
+  return to_string_generic(state);
+}
+
 } // namespace xdiag

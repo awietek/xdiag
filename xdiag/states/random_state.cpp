@@ -52,4 +52,12 @@ template State rand(SpinhalfDistributed const &, bool, int64_t, bool);
 template State rand(tJDistributed const &, bool, int64_t, bool);
 #endif
 
+std::ostream &operator<<(std::ostream &out, RandomState const &state) {
+  out << "  RandomState, seed  : " << state.seed() << "\n";
+  return out;
+}
+std::string to_string(RandomState const &state) {
+  return to_string_generic(state);
+}
+
 } // namespace xdiag

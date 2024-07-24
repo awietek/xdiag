@@ -5,8 +5,6 @@
 #include <xdiag/algorithms/gram_schmidt/orthogonalize.hpp>
 #include <xdiag/algorithms/lanczos/tmatrix.hpp>
 #include <xdiag/common.hpp>
-#include <xdiag/utils/logger.hpp>
-#include <xdiag/utils/print_macro.hpp>
 
 namespace xdiag {
 

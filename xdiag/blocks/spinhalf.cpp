@@ -1,7 +1,7 @@
 #include "spinhalf.hpp"
 
 #include <xdiag/combinatorics/binomial.hpp>
-#include <xdiag/utils/logger.hpp>
+#include <xdiag/random/hash.hpp>
 
 namespace xdiag {
 
@@ -110,7 +110,7 @@ Spinhalf::Spinhalf(int64_t n_sites, PermutationGroup group,
   } else {
     XDIAG_THROW("blocks with more than 64 sites currently not implemented");
   }
-  size_ = xdiag::size(*basis_);
+  size_ = basis::size(*basis_);
   check_dimension_works_with_blas_int_size(size_);
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
@@ -180,7 +180,7 @@ Spinhalf::Spinhalf(int64_t n_sites, int64_t n_up, PermutationGroup group,
   } else {
     XDIAG_THROW("blocks with more than 64 sites currently not implemented");
   }
-  size_ = xdiag::size(*basis_);
+  size_ = basis::size(*basis_);
   check_dimension_works_with_blas_int_size(size_);
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
@@ -212,5 +212,30 @@ bool Spinhalf::operator!=(Spinhalf const &rhs) const {
 }
 
 Spinhalf::basis_t const &Spinhalf::basis() const { return *basis_; }
+
+std::ostream &operator<<(std::ostream &out, Spinhalf const &block) {
+  out << "Spinhalf:\n";
+  out << "  n_sites  : " << block.n_sites() << "\n";
+  if (block.n_up() != undefined) {
+    out << "  n_up     : " << block.n_up() << "\n";
+  } else {
+    out << "  n_up     : not conserved\n";
+  }
+  if (block.permutation_group()) {
+    out << "  group    : defined with ID "
+        << random::hash(block.permutation_group()) << "\n";
+    out << "  irrep    : defined with ID " << random::hash(block.irrep())
+        << "\n";
+  }
+  std::stringstream ss;
+  ss.imbue(std::locale("en_US.UTF-8"));
+  ss << block.size();
+  out << "  dimension: " << ss.str() << "\n";
+  out << "  ID       : " << random::hash(block) << "\n";
+  return out;
+}
+std::string to_string(Spinhalf const &block) {
+  return to_string_generic(block);
+}
 
 } // namespace xdiag

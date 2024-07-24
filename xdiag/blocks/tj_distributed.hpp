@@ -37,6 +37,9 @@ private:
   int64_t size_;
 };
 
+std::ostream &operator<<(std::ostream &out, tJDistributed const &block);
+std::string to_string(tJDistributed const &block);
+
 } // namespace xdiag
 
 #endif

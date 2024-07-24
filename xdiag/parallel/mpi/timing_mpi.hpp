@@ -3,7 +3,7 @@
 
 #include <mpi.h>
 
-#include <xdiag/parallel/mpi/logger_mpi.hpp>
+#include <xdiag/utils/logger_mpi.hpp>
 
 namespace xdiag {
 

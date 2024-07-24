@@ -4,8 +4,6 @@
 #include <xdiag/parallel/mpi/allreduce.hpp>
 #include <xdiag/parallel/mpi/cdot_distributed.hpp>
 
-#include <xdiag/utils/print_macro.hpp>
-
 using namespace xdiag;
 
 template <class coeff_t>
