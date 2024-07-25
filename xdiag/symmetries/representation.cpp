@@ -7,6 +7,7 @@
 #include <xdiag/utils/logger.hpp>
 
 #include <numeric>
+#include <iomanip>
 
 namespace xdiag {
 
