@@ -15,9 +15,12 @@
 
 namespace xdiag::basis::electron {
 
+template <typename bit_tt> class BasisSymmetricNoNpIterator;
+
 template <typename bit_tt> class BasisSymmetricNoNp {
 public:
   using bit_t = bit_tt;
+  using iterator_t = BasisSymmetricNoNpIterator<bit_t>;
   using span_size_t = gsl::span<int64_t const>::size_type;
 
   BasisSymmetricNoNp(int64_t n_sites, PermutationGroup permutation_group,
@@ -29,6 +32,8 @@ public:
 
   int64_t dim() const;
   int64_t size() const;
+  iterator_t begin() const;
+  iterator_t end() const;
 
   GroupActionLookup<bit_t> const &group_action() const;
   Representation const &irrep() const;
@@ -163,6 +168,23 @@ private:
   std::vector<std::pair<span_size_t, span_size_t>> dns_limits_;
 
   int64_t size_;
+};
+
+template <typename bit_tt> class BasisSymmetricNoNpIterator {
+public:
+  using bit_t = bit_tt;
+  BasisSymmetricNoNpIterator() = default;
+  BasisSymmetricNoNpIterator(BasisSymmetricNoNp<bit_t> const &basis,
+                             bool begin);
+  BasisSymmetricNoNpIterator &operator++();
+  std::pair<bit_t, bit_t> operator*() const;
+  bool operator!=(BasisSymmetricNoNpIterator<bit_t> const &rhs) const;
+
+private:
+  BasisSymmetricNoNp<bit_t> const &basis_;
+  int64_t up_idx_;
+  int64_t dn_idx_;
+  gsl::span<bit_t const> dns_for_ups_rep_;
 };
 
 } // namespace xdiag::basis::electron

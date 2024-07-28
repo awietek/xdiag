@@ -7,17 +7,22 @@
 
 namespace xdiag::basis::electron {
 
+template <typename bit_tt> class BasisNpIterator;
+
 using namespace combinatorics;
 
 template <typename bit_tt> class BasisNp {
 public:
   using bit_t = bit_tt;
+  using iterator_t = BasisNpIterator<bit_t>;
 
   BasisNp() = default;
   BasisNp(int n_sites, int n_up, int n_dn);
 
   int64_t size() const;
   int64_t dim() const;
+  iterator_t begin() const;
+  iterator_t end() const;
 
   inline int64_t index(bit_t ups, bit_t dns) const {
     return index_ups(ups) * size_dns_ + index_dns(dns);
@@ -59,4 +64,19 @@ public:
   inline int64_t index_dns(bit_t dns) const { return lintable_dns_.index(dns); }
 };
 
+template <typename bit_tt> class BasisNpIterator {
+public:
+  using bit_t = bit_tt;
+  BasisNpIterator() = default;
+  BasisNpIterator(int64_t n_sites, int64_t nup, int64_t ndn, bool begin);
+  BasisNpIterator &operator++();
+  std::pair<bit_t, bit_t> operator*() const;
+  bool operator!=(BasisNpIterator<bit_t> const &rhs) const;
+
+private:
+  bit_t begin_dns_;
+  bit_t end_dns_;
+  bit_t ups_;
+  bit_t dns_;
+};
 } // namespace xdiag::basis::electron

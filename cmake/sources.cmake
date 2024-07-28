@@ -86,6 +86,7 @@ set(XDIAG_SOURCES
   states/product_state.cpp
   states/random_state.cpp
   states/state.cpp
+  states/fill.cpp
   
   random/random_utils.cpp
   random/hash.cpp

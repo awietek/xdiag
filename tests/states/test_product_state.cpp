@@ -3,6 +3,7 @@
 #include <xdiag/algebra/algebra.hpp>
 #include <xdiag/states/product_state.hpp>
 #include <xdiag/utils/close.hpp>
+#include <xdiag/states/fill.hpp>
 
 using namespace xdiag;
 

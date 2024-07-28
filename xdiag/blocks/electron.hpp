@@ -2,14 +2,18 @@
 
 #include <xdiag/basis/electron/basis_electron.hpp>
 #include <xdiag/common.hpp>
+#include <xdiag/states/product_state.hpp>
 #include <xdiag/symmetries/permutation_group.hpp>
 #include <xdiag/symmetries/representation.hpp>
 
 namespace xdiag {
 
+class ElectronIterator;
+
 class Electron {
 public:
   using basis_t = basis::BasisElectron;
+  using iterator_t = ElectronIterator;
 
   Electron() = default;
   Electron(int64_t n_sites);
@@ -27,6 +31,8 @@ public:
 
   int64_t dim() const;
   int64_t size() const;
+  iterator_t begin() const;
+  iterator_t end() const;
   bool isreal(double precision = 1e-12) const;
 
   bool operator==(Electron const &rhs) const;
@@ -43,8 +49,20 @@ private:
   std::shared_ptr<basis_t> basis_;
   int64_t size_;
 };
-  
+
 std::ostream &operator<<(std::ostream &out, Electron const &block);
 std::string to_string(Electron const &block);
+
+class ElectronIterator {
+public:
+  ElectronIterator(Electron const &block, bool begin);
+  ElectronIterator &operator++();
+  ProductState operator*() const;
+  bool operator!=(ElectronIterator const &rhs) const;
+
+private:
+  int64_t n_sites_;
+  basis::BasisElectronIterator it_;
+};
 
 } // namespace xdiag

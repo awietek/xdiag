@@ -58,6 +58,16 @@ template <class bit_t> int64_t BasisSymmetricNp<bit_t>::dim() const {
 template <class bit_t> int64_t BasisSymmetricNp<bit_t>::size() const {
   return size_;
 }
+template <typename bit_t>
+typename BasisSymmetricNp<bit_t>::iterator_t
+BasisSymmetricNp<bit_t>::begin() const {
+  return iterator_t(*this, true);
+}
+template <typename bit_t>
+typename BasisSymmetricNp<bit_t>::iterator_t
+BasisSymmetricNp<bit_t>::end() const {
+  return iterator_t(*this, false);
+}
 
 template <class bit_t>
 GroupActionLookup<bit_t> const &BasisSymmetricNp<bit_t>::group_action() const {
@@ -70,5 +80,49 @@ Representation const &BasisSymmetricNp<bit_t>::irrep() const {
 
 template class BasisSymmetricNp<uint32_t>;
 template class BasisSymmetricNp<uint64_t>;
+
+template <typename bit_t>
+BasisSymmetricNpIterator<bit_t>::BasisSymmetricNpIterator(
+    BasisSymmetricNp<bit_t> const &basis, bool begin)
+    : basis_(basis), up_idx_(begin ? 0 : basis.n_rep_ups()), dn_idx_(0) {
+  if (basis.dim() == 0) {
+    up_idx_ = 0;
+  }
+
+  if ((basis.n_rep_ups() > 0) && begin) {
+    dns_for_ups_rep_ = basis.dns_for_ups_rep(basis.rep_ups(0));
+  }
+}
+
+template <typename bit_t>
+BasisSymmetricNpIterator<bit_t> &BasisSymmetricNpIterator<bit_t>::operator++() {
+  ++dn_idx_;
+  if (dn_idx_ == dns_for_ups_rep_.size()) {
+    dn_idx_ = 0;
+    do {
+      ++up_idx_;
+      if (up_idx_ == basis_.n_rep_ups()) {
+        return *this;
+      }
+      bit_t ups = basis_.rep_ups(up_idx_);
+      dns_for_ups_rep_ = basis_.dns_for_ups_rep(ups);
+    } while (dns_for_ups_rep_.size() == 0);
+  }
+  return *this;
+}
+
+template <typename bit_t>
+std::pair<bit_t, bit_t> BasisSymmetricNpIterator<bit_t>::operator*() const {
+  return {basis_.rep_ups(up_idx_), dns_for_ups_rep_[dn_idx_]};
+}
+
+template <typename bit_t>
+bool BasisSymmetricNpIterator<bit_t>::operator!=(
+    BasisSymmetricNpIterator<bit_t> const &rhs) const {
+  return (up_idx_ != rhs.up_idx_) || (dn_idx_ != rhs.dn_idx_);
+}
+
+template class BasisSymmetricNpIterator<uint32_t>;
+template class BasisSymmetricNpIterator<uint64_t>;
 
 } // namespace xdiag::basis::electron

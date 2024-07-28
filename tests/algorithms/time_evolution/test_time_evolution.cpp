@@ -8,6 +8,7 @@
 #include <xdiag/common.hpp>
 #include <xdiag/extern/armadillo/armadillo>
 #include <xdiag/states/product_state.hpp>
+#include <xdiag/states/fill.hpp>
 #include <xdiag/utils/logger.hpp>
 
 using namespace xdiag;

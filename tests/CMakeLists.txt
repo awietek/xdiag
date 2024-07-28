@@ -15,6 +15,7 @@ set(XDIAG_TEST_SOURCES
 
   basis/spinhalf/test_spinhalf_basis_sublattice.cpp
   basis/spinhalf/test_spinhalf_basis.cpp
+  basis/electron/test_basis_electron.cpp
 
   symmetries/group_action/test_group_action.cpp
   symmetries/group_action/test_group_action_lookup.cpp
