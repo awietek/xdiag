@@ -43,6 +43,12 @@ int64_t SpinhalfDistributed::size_max() const {
 int64_t SpinhalfDistributed::size_min() const {
   return basis::size_min(*basis_);
 }
+SpinhalfDistributed::iterator_t SpinhalfDistributed::begin() const {
+  return iterator_t(*this, true);
+}
+SpinhalfDistributed::iterator_t SpinhalfDistributed::end() const {
+  return iterator_t(*this, false);
+}
 
 bool SpinhalfDistributed::isreal(double precision) const {
   return true; // would only be nontrivial with space group irreps
@@ -96,6 +102,44 @@ std::ostream &operator<<(std::ostream &out, SpinhalfDistributed const &block) {
 }
 std::string to_string(SpinhalfDistributed const &block) {
   return to_string_generic(block);
+}
+
+SpinhalfDistributedIterator::SpinhalfDistributedIterator(
+    SpinhalfDistributed const &block, bool begin)
+    : n_sites_(block.n_sites()), pstate_(n_sites_),
+      it_(std::visit(
+          [&](auto const &basis) {
+            basis::BasisSpinhalfDistributedIterator it =
+                begin ? basis.begin() : basis.end();
+            return it;
+          },
+          block.basis())) {}
+
+SpinhalfDistributedIterator &SpinhalfDistributedIterator::operator++() {
+  std::visit([](auto &&it) { ++it; }, it_);
+  return *this;
+}
+
+ProductState const &SpinhalfDistributedIterator::operator*() const {
+  std::visit(
+      [&](auto &&it) {
+        auto spins = *it;
+        for (int64_t i = 0; i < n_sites_; ++i) {
+          if (spins & 1) {
+            pstate_[i] = "Up";
+          } else {
+            pstate_[i] = "Dn";
+          }
+          spins >>= 1;
+        }
+      },
+      it_);
+  return pstate_;
+}
+
+bool SpinhalfDistributedIterator::operator!=(
+    SpinhalfDistributedIterator const &rhs) const {
+  return it_ != rhs.it_;
 }
 
 } // namespace xdiag

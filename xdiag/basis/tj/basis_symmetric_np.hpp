@@ -15,9 +15,12 @@
 
 namespace xdiag::basis::tj {
 
+template <typename bit_tt> class BasisSymmetricNpIterator;
+
 template <typename bit_tt> class BasisSymmetricNp {
 public:
   using bit_t = bit_tt;
+  using iterator_t = BasisSymmetricNpIterator<bit_t>;
   using span_size_t = gsl::span<int64_t const>::size_type;
 
   BasisSymmetricNp(int64_t n_sites, int64_t nup, int64_t ndn,
@@ -29,7 +32,9 @@ public:
 
   int64_t dim() const;
   int64_t size() const;
-
+  iterator_t begin() const;
+  iterator_t end() const;
+  
   GroupActionLookup<bit_t> const &group_action() const;
   Representation const &irrep() const;
 
@@ -100,6 +105,24 @@ public:
   bool fermi_bool_ups(int64_t sym, bit_t ups) const;
   bool fermi_bool_dns(int64_t sym, bit_t dns) const;
   int64_t dnsc_index(bit_t dns) const;
+};
+
+  
+template <typename bit_tt> class BasisSymmetricNpIterator {
+public:
+  using bit_t = bit_tt;
+  BasisSymmetricNpIterator() = default;
+  BasisSymmetricNpIterator(BasisSymmetricNp<bit_t> const &basis, bool begin);
+  BasisSymmetricNpIterator &operator++();
+  std::pair<bit_t, bit_t> operator*() const;
+  bool operator!=(BasisSymmetricNpIterator<bit_t> const &rhs) const;
+
+private:
+  BasisSymmetricNp<bit_t> const &basis_;
+  bit_t sitesmask_;
+  int64_t up_idx_;
+  int64_t dn_idx_;
+  gsl::span<bit_t const> dns_for_ups_rep_;
 };
 
 } // namespace xdiag::basis::tj

@@ -3,13 +3,14 @@
 #include <iostream>
 
 #include <iostream>
-#include <xdiag/common.hpp>
+#include <xdiag/blocks/spinhalf.hpp>
+#include <xdiag/basis/spinhalf/basis_symmetric_no_sz.hpp>
+#include <xdiag/basis/spinhalf/basis_symmetric_sz.hpp>
 #include <xdiag/combinatorics/combinations.hpp>
 #include <xdiag/combinatorics/subsets.hpp>
-#include <xdiag/basis/spinhalf/basis_symmetric_sz.hpp>
-#include <xdiag/basis/spinhalf/basis_symmetric_no_sz.hpp>
-#include <xdiag/symmetries/operations/symmetry_operations.hpp>
+#include <xdiag/common.hpp>
 #include <xdiag/symmetries/operations/group_action_operations.hpp>
+#include <xdiag/symmetries/operations/symmetry_operations.hpp>
 
 using namespace xdiag;
 
@@ -108,9 +109,14 @@ template <class bit_t> void test_basis_symmetric() {
 
 TEST_CASE("spinhalf_basis", "[basis]") {
   Log("Test SpinhalfBasisSublattice");
-   Log("uint32_t");
+  Log("uint32_t");
   test_basis_symmetric<uint32_t>();
   Log("uint64_t");
   test_basis_symmetric<uint64_t>();
   Log("Done");
+
+  auto block = Spinhalf(6, 2);
+  for (auto const &pstate : block) {
+    Log("{}", to_string(pstate));
+  }
 }

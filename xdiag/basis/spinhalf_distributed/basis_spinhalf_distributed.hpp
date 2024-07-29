@@ -12,6 +12,12 @@ using BasisSpinhalfDistributed =
 	       basis::spinhalf_distributed::BasisSz<uint64_t>>;
 // clang-format on
 
+// clang-format off
+using BasisSpinhalfDistributedIterator =
+  std::variant<basis::spinhalf_distributed::BasisSzIterator<uint32_t>,
+	       basis::spinhalf_distributed::BasisSzIterator<uint64_t>>;
+// clang-format on
+  
 int64_t dim(BasisSpinhalfDistributed const &basis);
 int64_t size(BasisSpinhalfDistributed const &basis);
 int64_t size_max(BasisSpinhalfDistributed const &basis);

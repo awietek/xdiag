@@ -13,7 +13,6 @@
 namespace xdiag::basis::spinhalf {
 
 template <typename bit_tt> class BasisSymmetricSz {
-  // Public interface
 public:
   using bit_t = bit_tt;
   using iterator_t = typename std::vector<bit_t>::const_iterator;
@@ -23,10 +22,10 @@ public:
   BasisSymmetricSz(int64_t n_sites, int64_t n_up,
                    PermutationGroup permutation_group, Representation irrep);
 
-  iterator_t begin() const;
-  iterator_t end() const;
   int64_t dim() const;
   int64_t size() const;
+  iterator_t begin() const;
+  iterator_t end() const;
 
   inline int64_t index(bit_t state) const {
     return index_for_rep_[combinations_indexing_.index(state)];

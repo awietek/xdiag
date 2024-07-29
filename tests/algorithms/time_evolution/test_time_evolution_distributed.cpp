@@ -8,6 +8,7 @@
 #include <xdiag/blocks/tj_distributed.hpp>
 #include <xdiag/states/product_state.hpp>
 #include <xdiag/states/random_state.hpp>
+#include <xdiag/states/fill.hpp>
 #include <xdiag/states/state.hpp>
 #include <xdiag/utils/close.hpp>
 
@@ -15,7 +16,6 @@ TEST_CASE("time_evolution_distributed", "[time_evolution]") try {
   using namespace xdiag;
 
   Log("Test time_evolution_distributed");
-
   int L = 3;
   int n_sites = L * L;
 

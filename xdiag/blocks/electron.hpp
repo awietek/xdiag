@@ -57,11 +57,12 @@ class ElectronIterator {
 public:
   ElectronIterator(Electron const &block, bool begin);
   ElectronIterator &operator++();
-  ProductState operator*() const;
+  ProductState const& operator*() const;
   bool operator!=(ElectronIterator const &rhs) const;
 
 private:
   int64_t n_sites_;
+  mutable ProductState pstate_;
   basis::BasisElectronIterator it_;
 };
 

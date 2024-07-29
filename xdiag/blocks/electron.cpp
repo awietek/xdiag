@@ -168,44 +168,44 @@ std::string to_string(Electron const &block) {
 }
 
 ElectronIterator::ElectronIterator(Electron const &block, bool begin)
-    : n_sites_(block.n_sites()), it_(std::visit(
-                                     [&](auto const &basis) {
-                                       basis::BasisElectronIterator it =
-                                           begin ? basis.begin() : basis.end();
-                                       return it;
-                                     },
-                                     block.basis())) {}
+    : n_sites_(block.n_sites()), pstate_(n_sites_),
+      it_(std::visit(
+          [&](auto const &basis) {
+            basis::BasisElectronIterator it =
+                begin ? basis.begin() : basis.end();
+            return it;
+          },
+          block.basis())) {}
 
 ElectronIterator &ElectronIterator::operator++() {
   std::visit([](auto &&it) { ++it; }, it_);
   return *this;
 }
 
-ProductState ElectronIterator::operator*() const {
-  return std::visit(
+ProductState const &ElectronIterator::operator*() const {
+  std::visit(
       [&](auto &&it) {
         auto [ups, dns] = *it;
-        std::vector<std::string> strings(n_sites_);
         for (int64_t i = 0; i < n_sites_; ++i) {
           if (ups & 1) {
             if (dns & 1) {
-              strings[i] = "UpDn";
+              pstate_[i] = "UpDn";
             } else {
-              strings[i] = "Up";
+              pstate_[i] = "Up";
             }
           } else {
             if (dns & 1) {
-              strings[i] = "Dn";
+              pstate_[i] = "Dn";
             } else {
-              strings[i] = "Emp";
+              pstate_[i] = "Emp";
             }
           }
           ups >>= 1;
           dns >>= 1;
         }
-        return ProductState(strings);
       },
       it_);
+  return pstate_;
 }
 
 bool ElectronIterator::operator!=(ElectronIterator const &rhs) const {

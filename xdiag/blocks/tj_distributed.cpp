@@ -41,6 +41,12 @@ int64_t tJDistributed::dim() const { return dim_; }
 int64_t tJDistributed::size() const { return size_; }
 int64_t tJDistributed::size_max() const { return basis::size_max(*basis_); }
 int64_t tJDistributed::size_min() const { return basis::size_min(*basis_); }
+tJDistributed::iterator_t tJDistributed::begin() const {
+  return iterator_t(*this, true);
+}
+tJDistributed::iterator_t tJDistributed::end() const {
+  return iterator_t(*this, false);
+}
 
 bool tJDistributed::isreal(double precision) const {
   return true; // would only be nontrivial with space group irreps
@@ -95,6 +101,48 @@ std::ostream &operator<<(std::ostream &out, tJDistributed const &block) {
 }
 std::string to_string(tJDistributed const &block) {
   return to_string_generic(block);
+}
+
+tJDistributedIterator::tJDistributedIterator(tJDistributed const &block,
+                                             bool begin)
+    : n_sites_(block.n_sites()), pstate_(n_sites_),
+      it_(std::visit(
+          [&](auto const &basis) {
+            basis::BasistJDistributedIterator it =
+                begin ? basis.begin() : basis.end();
+            return it;
+          },
+          block.basis())) {}
+
+tJDistributedIterator &tJDistributedIterator::operator++() {
+  std::visit([](auto &&it) { ++it; }, it_);
+  return *this;
+}
+
+ProductState const &tJDistributedIterator::operator*() const {
+  std::visit(
+      [&](auto &&it) {
+        auto [ups, dns] = *it;
+        for (int64_t i = 0; i < n_sites_; ++i) {
+          if (ups & 1) {
+            pstate_[i] = "Up";
+          } else {
+            if (dns & 1) {
+              pstate_[i] = "Dn";
+            } else {
+              pstate_[i] = "Emp";
+            }
+          }
+          ups >>= 1;
+          dns >>= 1;
+        }
+      },
+      it_);
+  return pstate_;
+}
+
+bool tJDistributedIterator::operator!=(tJDistributedIterator const &rhs) const {
+  return it_ != rhs.it_;
 }
 
 } // namespace xdiag

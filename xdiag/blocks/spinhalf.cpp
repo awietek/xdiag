@@ -196,6 +196,8 @@ Representation Spinhalf::irrep() const { return irrep_; }
 
 int64_t Spinhalf::dim() const { return size_; }
 int64_t Spinhalf::size() const { return size_; }
+Spinhalf::iterator_t Spinhalf::begin() const { return iterator_t(*this, true); }
+Spinhalf::iterator_t Spinhalf::end() const { return iterator_t(*this, false); }
 
 bool Spinhalf::isreal(double precision) const {
   return irrep_.isreal(precision);
@@ -236,6 +238,42 @@ std::ostream &operator<<(std::ostream &out, Spinhalf const &block) {
 }
 std::string to_string(Spinhalf const &block) {
   return to_string_generic(block);
+}
+
+SpinhalfIterator::SpinhalfIterator(Spinhalf const &block, bool begin)
+    : n_sites_(block.n_sites()), pstate_(n_sites_),
+      it_(std::visit(
+          [&](auto const &basis) {
+            basis::BasisSpinhalfIterator it =
+                begin ? basis.begin() : basis.end();
+            return it;
+          },
+          block.basis())) {}
+
+SpinhalfIterator &SpinhalfIterator::operator++() {
+  std::visit([](auto &&it) { ++it; }, it_);
+  return *this;
+}
+
+ProductState const &SpinhalfIterator::operator*() const {
+  std::visit(
+      [&](auto &&it) {
+        auto spins = *it;
+        for (int64_t i = 0; i < n_sites_; ++i) {
+          if (spins & 1) {
+            pstate_[i] = "Up";
+          } else {
+            pstate_[i] = "Dn";
+          }
+          spins >>= 1;
+        }
+      },
+      it_);
+  return pstate_;
+}
+
+bool SpinhalfIterator::operator!=(SpinhalfIterator const &rhs) const {
+  return it_ != rhs.it_;
 }
 
 } // namespace xdiag

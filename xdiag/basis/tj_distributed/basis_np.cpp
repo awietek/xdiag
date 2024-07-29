@@ -253,6 +253,14 @@ template <typename bit_t> int64_t BasisNp<bit_t>::size_max() const {
 template <typename bit_t> int64_t BasisNp<bit_t>::size_min() const {
   return size_min_;
 }
+template <typename bit_t>
+typename BasisNp<bit_t>::iterator_t BasisNp<bit_t>::begin() const {
+  return iterator_t(*this, true);
+}
+template <typename bit_t>
+typename BasisNp<bit_t>::iterator_t BasisNp<bit_t>::end() const {
+  return iterator_t(*this, false);
+}
 
 template <typename bit_t>
 std::vector<bit_t> const &BasisNp<bit_t>::my_ups() const {
@@ -383,5 +391,44 @@ template void BasisNp<uint64_t>::transpose_r(const complex *, complex *) const;
 
 template class BasisNp<uint32_t>;
 template class BasisNp<uint64_t>;
+
+template <typename bit_t>
+BasisNpIterator<bit_t>::BasisNpIterator(BasisNp<bit_t> const &basis, bool begin)
+    : basis_(basis), sitesmask_(((bit_t)1 << basis.n_sites()) - 1),
+      up_idx_(begin ? 0 : basis_.my_ups().size()), dn_idx_(0) {
+  if ((basis_.my_ups().size() > 0) && begin) {
+    dns_for_ups_ = basis_.my_dns_for_ups(0);
+  }
+}
+
+template <typename bit_t>
+BasisNpIterator<bit_t> &BasisNpIterator<bit_t>::operator++() {
+  ++dn_idx_;
+  if (dn_idx_ == dns_for_ups_.size()) {
+    dn_idx_ = 0;
+    ++up_idx_;
+    if (up_idx_ == basis_.my_ups().size()) {
+      return *this;
+    }
+    dns_for_ups_ = basis_.my_dns_for_ups(up_idx_);
+  }
+  return *this;
+}
+
+template <typename bit_t>
+std::pair<bit_t, bit_t> BasisNpIterator<bit_t>::operator*() const {
+  bit_t ups = basis_.my_ups()[up_idx_];
+  bit_t dns = dns_for_ups_[dn_idx_];
+  return {ups, dns};
+}
+
+template <typename bit_t>
+bool BasisNpIterator<bit_t>::operator!=(
+    BasisNpIterator<bit_t> const &rhs) const {
+  return (up_idx_ != rhs.up_idx_) || (dn_idx_ != rhs.dn_idx_);
+}
+
+template class BasisNpIterator<uint32_t>;
+template class BasisNpIterator<uint64_t>;
 
 } // namespace xdiag::basis::tj_distributed

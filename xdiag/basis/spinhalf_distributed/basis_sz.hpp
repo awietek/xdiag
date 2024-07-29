@@ -12,9 +12,12 @@
 
 namespace xdiag::basis::spinhalf_distributed {
 
+template <typename bit_tt> class BasisSzIterator;
+
 template <typename bit_tt> class BasisSz {
 public:
   using bit_t = bit_tt;
+  using iterator_t = BasisSzIterator<bit_t>;
 
   BasisSz() = default;
   BasisSz(int64_t n_sites, int64_t n_up);
@@ -30,6 +33,8 @@ public:
   int64_t size_transpose() const;
   int64_t size_max() const;
   int64_t size_min() const;
+  iterator_t begin() const;
+  iterator_t end() const;
 
   std::vector<bit_t> const &prefixes() const;
   int64_t prefix_begin(bit_t prefix) const;
@@ -80,6 +85,22 @@ private:
   mutable mpi::CommPattern comm_pattern_;
   mpi::Communicator transpose_communicator_;
   mpi::Communicator transpose_communicator_reverse_;
+};
+
+template <typename bit_tt> class BasisSzIterator {
+public:
+  using bit_t = bit_tt;
+  BasisSzIterator() = default;
+  BasisSzIterator(BasisSz<bit_t> const& basis, bool begin);
+  BasisSzIterator<bit_t> &operator++();
+  bit_t operator*() const;
+  bool operator!=(BasisSzIterator<bit_t> const &rhs) const;
+
+private:
+  BasisSz<bit_t> const &basis_;
+  bit_t prefix_;
+  int64_t prefix_idx_;
+  int64_t postfix_idx_;
 };
 
 } // namespace xdiag::basis::spinhalf_distributed

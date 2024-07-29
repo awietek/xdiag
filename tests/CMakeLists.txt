@@ -15,7 +15,9 @@ set(XDIAG_TEST_SOURCES
 
   basis/spinhalf/test_spinhalf_basis_sublattice.cpp
   basis/spinhalf/test_spinhalf_basis.cpp
+  basis/spinhalf/test_spinhalf_basis_iterator.cpp
   basis/electron/test_basis_electron.cpp
+  basis/tj/test_basis_tj.cpp
 
   symmetries/group_action/test_group_action.cpp
   symmetries/group_action/test_group_action_lookup.cpp
@@ -81,7 +83,9 @@ set(XDIAG_TEST_DISTRIBUTED_SOURCES
   parallel/mpi/test_cdot_distributed.cpp
 
   basis/spinhalf_distributed/test_basis_sz.cpp
+  basis/spinhalf_distributed/test_spinhalf_distributed_basis_iterator.cpp
   basis/tj_distributed/test_basis_np.cpp
+  basis/tj_distributed/test_tj_distributed_basis_iterator.cpp
 
   blocks/spinhalf_distributed/test_spinhalf_distributed.cpp
   blocks/spinhalf_distributed/test_spinhalf_distributed_apply.cpp

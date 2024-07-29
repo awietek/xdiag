@@ -4,6 +4,8 @@
 
 namespace xdiag {
 
+ProductState::ProductState(int64_t n_sites) : local_states_(n_sites) {}
+
 ProductState::ProductState(std::vector<std::string> const &local_states)
     : local_states_(local_states) {}
 
@@ -19,6 +21,13 @@ ProductState::iterator_t ProductState::begin() const {
 }
 ProductState::iterator_t ProductState::end() const {
   return local_states_.end();
+}
+
+bool ProductState::operator==(ProductState const &rhs) const {
+  return local_states_ == rhs.local_states_;
+}
+bool ProductState::operator!=(ProductState const &rhs) const {
+  return !operator==(rhs);
 }
 
 std::ostream &operator<<(std::ostream &out, ProductState const &state) {

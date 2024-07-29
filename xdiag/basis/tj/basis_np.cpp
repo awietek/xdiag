@@ -7,19 +7,21 @@ namespace xdiag::basis::tj {
 using namespace combinatorics;
 
 template <typename bit_t>
-BasisNp<bit_t>::BasisNp(int64_t n_sites, int64_t n_up, int64_t n_dn)
+BasisNp<bit_t>::BasisNp(int64_t n_sites, int64_t n_up, int64_t n_dn) try
     : n_sites_(n_sites), n_up_(n_up), n_dn_(n_dn),
       size_ups_(binomial(n_sites, n_up)),
       size_dncs_(binomial(n_sites - n_up, n_dn)), size_(size_ups_ * size_dncs_),
       sitesmask_(((bit_t)1 << n_sites) - 1), lintable_ups_(n_sites, n_up),
       lintable_dncs_(n_sites - n_up, n_dn) {
   if (n_sites < 0) {
-    throw(std::invalid_argument("n_sites < 0"));
+    XDIAG_THROW("n_sites < 0");
   } else if ((n_up < 0) || (n_dn < 0)) {
-    throw(std::invalid_argument("nup < 0 or ndn < 0"));
+    XDIAG_THROW("nup < 0 or ndn < 0");
   } else if ((n_up + n_dn) > n_sites) {
-    throw(std::invalid_argument("nup + ndn > n_sites"));
+    XDIAG_THROW("nup + ndn > n_sites");
   }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 template <typename bit_t> int64_t BasisNp<bit_t>::n_sites() const {
@@ -39,6 +41,14 @@ template <typename bit_t> int64_t BasisNp<bit_t>::dim() const { return size_; }
 template <typename bit_t>
 int64_t BasisNp<bit_t>::ups_offset(int64_t idx_ups) const {
   return idx_ups * size_dncs_;
+}
+template <typename bit_t>
+typename BasisNp<bit_t>::iterator_t BasisNp<bit_t>::begin() const {
+  return iterator_t(n_sites_, n_up_, n_dn_, true);
+}
+template <typename bit_t>
+typename BasisNp<bit_t>::iterator_t BasisNp<bit_t>::end() const {
+  return iterator_t(n_sites_, n_up_, n_dn_, false);
 }
 
 template <typename bit_t>
@@ -95,5 +105,42 @@ BasisNp<bit_t>::states_indices_dncs_thread(bit_t ups) const {
 
 template class BasisNp<uint32_t>;
 template class BasisNp<uint64_t>;
+
+template <typename bit_t>
+BasisNpIterator<bit_t>::BasisNpIterator(int64_t n_sites, int64_t n_up,
+                                        int64_t n_dn, bool begin)
+    : sitesmask_(((bit_t)1 << n_sites) - 1) {
+  begin_dns_ = ((bit_t)1 << n_dn) - 1;
+  bit_t begin_ups = ((bit_t)1 << n_up) - 1;
+  bit_t end_ups = get_next_pattern(begin_ups << (n_sites - n_up));
+  end_dns_ = get_next_pattern(begin_dns_ << (n_sites - n_up - n_dn));
+  ups_ = begin ? begin_ups : end_ups;
+  dns_ = begin_dns_;
+}
+
+template <typename bit_t>
+BasisNpIterator<bit_t> &BasisNpIterator<bit_t>::operator++() {
+  dns_ = get_next_pattern(dns_);
+  if (dns_ == end_dns_) {
+    dns_ = begin_dns_;
+    ups_ = get_next_pattern(ups_);
+  }
+  return *this;
+}
+
+template <typename bit_t>
+std::pair<bit_t, bit_t> BasisNpIterator<bit_t>::operator*() const {
+  bit_t not_ups = (~ups_) & sitesmask_;
+  return {ups_, bits::deposit(dns_, not_ups)};
+}
+
+template <typename bit_t>
+bool BasisNpIterator<bit_t>::operator!=(
+    BasisNpIterator<bit_t> const &rhs) const {
+  return (ups_ != rhs.ups_) || (dns_ != rhs.dns_);
+}
+
+template class BasisNpIterator<uint32_t>;
+template class BasisNpIterator<uint64_t>;
 
 } // namespace xdiag::basis::tj

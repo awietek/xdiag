@@ -6,14 +6,20 @@
 
 namespace xdiag::basis::tj {
 
+template <typename bit_tt> class BasisNpIterator;
+
 template <typename bit_tt> class BasisNp {
 public:
   using bit_t = bit_tt;
+  using iterator_t = BasisNpIterator<bit_t>;
+
   BasisNp() = default;
   BasisNp(int64_t n_sites, int64_t n_up, int64_t n_dn);
 
   int64_t dim() const;
   int64_t size() const;
+  iterator_t begin() const;
+  iterator_t end() const;
 
   inline int64_t index(bit_t ups, bit_t dns) const {
     bit_t dncs = bits::extract<bit_t>(dns, (~ups) & sitesmask_);
@@ -61,6 +67,23 @@ public:
   inline int64_t index_dncs(bit_t dncs) const {
     return lintable_dncs_.index(dncs);
   }
+};
+
+template <typename bit_tt> class BasisNpIterator {
+public:
+  using bit_t = bit_tt;
+  BasisNpIterator() = default;
+  BasisNpIterator(int64_t n_sites, int64_t nup, int64_t ndn, bool begin);
+  BasisNpIterator &operator++();
+  std::pair<bit_t, bit_t> operator*() const;
+  bool operator!=(BasisNpIterator<bit_t> const &rhs) const;
+
+private:
+  bit_t sitesmask_;
+  bit_t begin_dns_;
+  bit_t end_dns_;
+  bit_t ups_;
+  bit_t dns_;
 };
 
 } // namespace xdiag::basis::tj

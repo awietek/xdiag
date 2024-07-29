@@ -156,6 +156,14 @@ template <typename bit_t> int64_t BasisSz<bit_t>::size_max() const {
 template <typename bit_t> int64_t BasisSz<bit_t>::size_min() const {
   return size_min_;
 }
+template <typename bit_t>
+typename BasisSz<bit_t>::iterator_t BasisSz<bit_t>::begin() const {
+  return iterator_t(*this, true);
+}
+template <typename bit_t>
+typename BasisSz<bit_t>::iterator_t BasisSz<bit_t>::end() const {
+  return iterator_t(*this, false);
+}
 
 template <typename bit_t>
 std::vector<bit_t> const &BasisSz<bit_t>::prefixes() const {
@@ -223,5 +231,39 @@ mpi::Communicator BasisSz<bit_t>::transpose_communicator(bool reverse) const {
 
 template class BasisSz<uint32_t>;
 template class BasisSz<uint64_t>;
+
+template <typename bit_t>
+BasisSzIterator<bit_t>::BasisSzIterator(BasisSz<bit_t> const &basis, bool begin)
+    : basis_(basis), prefix_idx_(begin ? 0 : basis.prefixes().size()),
+      postfix_idx_(0) {
+  if ((basis.prefixes().size() > 0) && begin) {
+    prefix_ = basis.prefixes()[0];
+  }
+}
+
+template <typename bit_t>
+BasisSzIterator<bit_t> &BasisSzIterator<bit_t>::operator++() {
+  ++postfix_idx_;
+  if (postfix_idx_ == basis_.postfix_states(prefix_).size()) {
+    postfix_idx_ = 0;
+    ++prefix_idx_;
+    prefix_ = basis_.prefixes()[prefix_idx_];
+  }
+  return *this;
+}
+
+template <typename bit_t> bit_t BasisSzIterator<bit_t>::operator*() const {
+  return (prefix_ << basis_.n_postfix_bits()) |
+         basis_.postfix_states(prefix_)[postfix_idx_];
+}
+
+template <typename bit_t>
+bool BasisSzIterator<bit_t>::operator!=(
+    BasisSzIterator<bit_t> const &rhs) const {
+  return (prefix_idx_ != rhs.prefix_idx_) || (postfix_idx_ != rhs.postfix_idx_);
+}
+
+template class BasisSzIterator<uint32_t>;
+template class BasisSzIterator<uint64_t>;
 
 } // namespace xdiag::basis::spinhalf_distributed

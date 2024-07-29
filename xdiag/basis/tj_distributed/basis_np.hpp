@@ -12,9 +12,12 @@
 
 namespace xdiag::basis::tj_distributed {
 
+template <typename bit_tt> class BasisNpIterator;
+
 template <typename bit_tt> class BasisNp {
 public:
   using bit_t = bit_tt;
+  using iterator_t = BasisNpIterator<bit_t>;
 
   BasisNp() = default;
   BasisNp(int64_t n_sites, int64_t n_up, int64_t n_dn);
@@ -31,7 +34,9 @@ public:
   int64_t size_transpose() const;
   int64_t size_max() const;
   int64_t size_min() const;
-
+  iterator_t begin() const;
+  iterator_t end() const;
+  
   bool operator==(BasisNp const &rhs) const;
   bool operator!=(BasisNp const &rhs) const;
 
@@ -106,6 +111,23 @@ public:
   // recv_buffer is filled with zeros
   template <typename coeff_t>
   void transpose_r(coeff_t const *in_vec, coeff_t *out_vec = nullptr) const;
+};
+
+template <typename bit_tt> class BasisNpIterator {
+public:
+  using bit_t = bit_tt;
+  BasisNpIterator() = default;
+  BasisNpIterator(BasisNp<bit_t> const &basis, bool begin);
+  BasisNpIterator<bit_t> &operator++();
+  std::pair<bit_t, bit_t> operator*() const;
+  bool operator!=(BasisNpIterator<bit_t> const &rhs) const;
+
+private:
+  BasisNp<bit_t> const &basis_;
+  bit_t sitesmask_;
+  int64_t up_idx_;
+  int64_t dn_idx_;
+  gsl::span<bit_t const> dns_for_ups_;
 };
 
 } // namespace xdiag::basis::tj_distributed

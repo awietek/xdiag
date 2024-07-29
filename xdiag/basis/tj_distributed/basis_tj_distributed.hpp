@@ -11,6 +11,13 @@ using BasistJDistributed =
 	       tj_distributed::BasisNp<uint64_t>>;
 // clang-format on
 
+
+// clang-format off
+using BasistJDistributedIterator =
+  std::variant<tj_distributed::BasisNpIterator<uint32_t>,
+	       tj_distributed::BasisNpIterator<uint64_t>>;
+// clang-format on
+  
 int64_t dim(BasistJDistributed const &basis);
 int64_t size(BasistJDistributed const &basis);
 int64_t size_max(BasistJDistributed const &basis);

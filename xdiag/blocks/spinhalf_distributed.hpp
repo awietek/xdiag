@@ -2,12 +2,17 @@
 #ifdef XDIAG_USE_MPI
 #include <xdiag/basis/spinhalf_distributed/basis_spinhalf_distributed.hpp>
 #include <xdiag/common.hpp>
+#include <xdiag/states/product_state.hpp>
 
 namespace xdiag {
+
+class SpinhalfDistributedIterator;
 
 class SpinhalfDistributed {
 public:
   using basis_t = basis::BasisSpinhalfDistributed;
+  using iterator_t = SpinhalfDistributedIterator;
+
   SpinhalfDistributed() = default;
   SpinhalfDistributed(int64_t n_sites, int64_t nup);
 
@@ -18,7 +23,8 @@ public:
   int64_t size() const;
   int64_t size_max() const;
   int64_t size_min() const;
-
+  iterator_t begin() const;
+  iterator_t end() const;
   bool isreal(double precision = 1e-12) const;
 
   bool operator==(SpinhalfDistributed const &rhs) const;
@@ -36,6 +42,19 @@ private:
 };
 std::ostream &operator<<(std::ostream &out, SpinhalfDistributed const &block);
 std::string to_string(SpinhalfDistributed const &block);
+
+class SpinhalfDistributedIterator {
+public:
+  SpinhalfDistributedIterator(SpinhalfDistributed const &block, bool begin);
+  SpinhalfDistributedIterator &operator++();
+  ProductState const &operator*() const;
+  bool operator!=(SpinhalfDistributedIterator const &rhs) const;
+
+private:
+  int64_t n_sites_;
+  mutable ProductState pstate_;
+  basis::BasisSpinhalfDistributedIterator it_;
+};
 
 } // namespace xdiag
 #endif

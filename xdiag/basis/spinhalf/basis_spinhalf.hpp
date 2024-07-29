@@ -32,6 +32,16 @@ using BasisSpinhalf = std::variant<
     spinhalf::BasisSublattice<uint64_t, 5>>;
 // clang-format on
 
+// clang-format off
+using BasisSpinhalfIterator = std::variant<
+  combinatorics::SubsetsIterator<uint32_t>,
+  combinatorics::CombinationsIterator<uint32_t>,
+  typename std::vector<uint32_t>::const_iterator,
+  combinatorics::SubsetsIterator<uint64_t>,
+  combinatorics::CombinationsIterator<uint64_t>,
+  typename std::vector<uint64_t>::const_iterator>;
+// clang-format on
+
 int64_t dim(BasisSpinhalf const &basis);
 int64_t size(BasisSpinhalf const &basis);
 template <typename bit_t> bool has_bit_t(BasisSpinhalf const &);

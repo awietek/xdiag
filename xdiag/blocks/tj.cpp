@@ -73,6 +73,8 @@ Representation const &tJ::irrep() const { return irrep_; }
 
 int64_t tJ::dim() const { return size_; }
 int64_t tJ::size() const { return size_; }
+tJ::iterator_t tJ::begin() const { return iterator_t(*this, true); }
+tJ::iterator_t tJ::end() const { return iterator_t(*this, false); }
 
 bool tJ::isreal(double precision) const { return irrep_.isreal(precision); }
 
@@ -110,5 +112,45 @@ std::ostream &operator<<(std::ostream &out, tJ const &block) {
   return out;
 }
 std::string to_string(tJ const &block) { return to_string_generic(block); }
+
+tJIterator::tJIterator(tJ const &block, bool begin)
+    : n_sites_(block.n_sites()), pstate_(n_sites_),
+      it_(std::visit(
+          [&](auto const &basis) {
+            basis::BasistJIterator it = begin ? basis.begin() : basis.end();
+            return it;
+          },
+          block.basis())) {}
+
+tJIterator &tJIterator::operator++() {
+  std::visit([](auto &&it) { ++it; }, it_);
+  return *this;
+}
+
+ProductState const &tJIterator::operator*() const {
+  std::visit(
+      [&](auto &&it) {
+        auto [ups, dns] = *it;
+        for (int64_t i = 0; i < n_sites_; ++i) {
+          if (ups & 1) {
+            pstate_[i] = "Up";
+          } else {
+            if (dns & 1) {
+              pstate_[i] = "Dn";
+            } else {
+              pstate_[i] = "Emp";
+            }
+          }
+          ups >>= 1;
+          dns >>= 1;
+        }
+      },
+      it_);
+  return pstate_;
+}
+
+bool tJIterator::operator!=(tJIterator const &rhs) const {
+  return it_ != rhs.it_;
+}
 
 } // namespace xdiag

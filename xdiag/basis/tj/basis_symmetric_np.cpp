@@ -8,7 +8,7 @@ namespace xdiag::basis::tj {
 template <typename bit_t>
 BasisSymmetricNp<bit_t>::BasisSymmetricNp(int64_t n_sites, int64_t nup,
                                           int64_t ndn, PermutationGroup group,
-                                          Representation irrep)
+                                          Representation irrep) try
     : n_sites_(n_sites), n_up_(nup), n_dn_(ndn),
       group_action_(allowed_subgroup(group, irrep)), irrep_(irrep),
       raw_ups_size_(combinatorics::binomial(n_sites, nup)),
@@ -21,14 +21,13 @@ BasisSymmetricNp<bit_t>::BasisSymmetricNp(int64_t n_sites, int64_t nup,
 
   using combinatorics::Combinations;
   if ((nup + ndn) > n_sites) {
-    throw(std::invalid_argument("nup + ndn > n_sites"));
+    XDIAG_THROW("nup + ndn > n_sites");
   } else if ((nup < 0) || (ndn < 0)) {
-    throw(std::invalid_argument("nup < 0 or ndn < 0"));
+    XDIAG_THROW("nup < 0 or ndn < 0");
   } else if (n_sites < 0) {
-    throw(std::invalid_argument("n_sites < 0"));
+    XDIAG_THROW("n_sites < 0");
   } else if (n_sites != group.n_sites()) {
-    throw(std::logic_error(
-        "n_sites does not match the n_sites in PermutationGroup"));
+    XDIAG_THROW("n_sites does not match the n_sites in PermutationGroup");
   }
 
   std::tie(reps_up_, idces_up_, syms_up_, sym_limits_up_) =
@@ -83,6 +82,8 @@ BasisSymmetricNp<bit_t>::BasisSymmetricNp(int64_t n_sites, int64_t nup,
     }
     ++idx_up;
   }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 template <typename bit_t>
@@ -108,6 +109,16 @@ template <typename bit_t> int64_t BasisSymmetricNp<bit_t>::size() const {
 }
 template <typename bit_t> int64_t BasisSymmetricNp<bit_t>::dim() const {
   return size_;
+}
+template <typename bit_t>
+typename BasisSymmetricNp<bit_t>::iterator_t
+BasisSymmetricNp<bit_t>::begin() const {
+  return iterator_t(*this, true);
+}
+template <typename bit_t>
+typename BasisSymmetricNp<bit_t>::iterator_t
+BasisSymmetricNp<bit_t>::end() const {
+  return iterator_t(*this, false);
 }
 
 template <typename bit_t> int64_t BasisSymmetricNp<bit_t>::n_rep_ups() const {
@@ -249,5 +260,53 @@ int64_t BasisSymmetricNp<bit_t>::dnsc_index(bit_t dns) const {
 
 template class BasisSymmetricNp<uint32_t>;
 template class BasisSymmetricNp<uint64_t>;
+
+template <typename bit_t>
+BasisSymmetricNpIterator<bit_t>::BasisSymmetricNpIterator(
+    BasisSymmetricNp<bit_t> const &basis, bool begin)
+    : basis_(basis), sitesmask_(((bit_t)1 << basis.n_sites()) - 1),
+      up_idx_(begin ? 0 : basis.n_rep_ups()), dn_idx_(0) {
+  if (basis.dim() == 0) {
+    up_idx_ = 0;
+  }
+
+  if ((basis.n_rep_ups() > 0) && begin) {
+    dns_for_ups_rep_ = basis.dns_for_ups_rep(basis.rep_ups(0));
+  }
+}
+
+template <typename bit_t>
+BasisSymmetricNpIterator<bit_t> &BasisSymmetricNpIterator<bit_t>::operator++() {
+  ++dn_idx_;
+  if (dn_idx_ == dns_for_ups_rep_.size()) {
+    dn_idx_ = 0;
+    do {
+      ++up_idx_;
+      if (up_idx_ == basis_.n_rep_ups()) {
+        return *this;
+      }
+      bit_t ups = basis_.rep_ups(up_idx_);
+      dns_for_ups_rep_ = basis_.dns_for_ups_rep(ups);
+    } while (dns_for_ups_rep_.size() == 0);
+  }
+  return *this;
+}
+
+template <typename bit_t>
+std::pair<bit_t, bit_t> BasisSymmetricNpIterator<bit_t>::operator*() const {
+  bit_t ups = basis_.rep_ups(up_idx_);
+  bit_t not_ups = (~ups) & sitesmask_;
+  bit_t dnsc = dns_for_ups_rep_[dn_idx_];
+  return {ups, bits::deposit(dnsc, not_ups)};
+}
+
+template <typename bit_t>
+bool BasisSymmetricNpIterator<bit_t>::operator!=(
+    BasisSymmetricNpIterator<bit_t> const &rhs) const {
+  return (up_idx_ != rhs.up_idx_) || (dn_idx_ != rhs.dn_idx_);
+}
+
+template class BasisSymmetricNpIterator<uint32_t>;
+template class BasisSymmetricNpIterator<uint64_t>;
 
 } // namespace xdiag::basis::tj

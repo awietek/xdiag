@@ -1,11 +1,12 @@
 #pragma once
 
-#include <xdiag/common.hpp>
 #include <xdiag/combinatorics/combinations.hpp>
 #include <xdiag/combinatorics/combinations_index.hpp>
 #include <xdiag/combinatorics/lin_table.hpp>
+#include <xdiag/common.hpp>
 
 namespace xdiag::basis::spinhalf {
+
 template <typename bit_tt> class BasisSz {
 public:
   using bit_t = bit_tt;
@@ -21,7 +22,7 @@ public:
 
   inline int64_t index(bit_t spins) const { return lintable_.index(spins); }
   inline bit_t state(int64_t index) const { return states_[index]; }
-  
+
   int64_t n_sites() const;
   int64_t n_up() const;
   static constexpr bool sz_conserved() { return true; }
