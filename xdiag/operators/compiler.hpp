@@ -27,16 +27,10 @@ void check_op_coupling_has_type(Op const &op, std::string type);
 void check_op_coupling_has_type(Op const &op, std::string type1,
                                 std::string type2);
 
-OpSum compile(OpSum const &ops, Spinhalf const &block,
-              double precision = 1e-12);
-OpSum compile(OpSum const &ops, tJ const &block, double precision = 1e-12);
-OpSum compile(OpSum const &ops, Electron const &block,
-              double precision = 1e-12);
-#ifdef XDIAG_USE_MPI
-OpSum compile(OpSum const &ops, SpinhalfDistributed const &block,
-              double precision = 1e-12);
-OpSum compile(OpSum const &ops, tJDistributed const &block,
-              double precision = 1e-12);
-#endif
+OpSum compile_spinhalf(OpSum const &ops, int64_t n_sites,
+                       double precision = 1e-12);
+OpSum compile_tj(OpSum const &ops, int64_t n_sites, double precision = 1e-12);
+OpSum compile_electron(OpSum const &ops, int64_t n_sites,
+                       double precision = 1e-12);
 
 } // namespace xdiag::operators

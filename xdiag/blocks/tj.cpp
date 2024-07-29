@@ -75,7 +75,18 @@ int64_t tJ::dim() const { return size_; }
 int64_t tJ::size() const { return size_; }
 tJ::iterator_t tJ::begin() const { return iterator_t(*this, true); }
 tJ::iterator_t tJ::end() const { return iterator_t(*this, false); }
-
+int64_t tJ::index(ProductState const &pstate) const try {
+  return std::visit(
+      [&](auto &&basis) {
+        using basis_t = typename std::decay<decltype(basis)>::type;
+        using bit_t = typename basis_t::bit_t;
+        auto [ups, dns] = to_bits_tj<bit_t>(pstate);
+        return basis.index(ups, dns);
+      },
+      *basis_);
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
 bool tJ::isreal(double precision) const { return irrep_.isreal(precision); }
 
 bool tJ::operator==(tJ const &rhs) const {
@@ -131,19 +142,7 @@ ProductState const &tJIterator::operator*() const {
   std::visit(
       [&](auto &&it) {
         auto [ups, dns] = *it;
-        for (int64_t i = 0; i < n_sites_; ++i) {
-          if (ups & 1) {
-            pstate_[i] = "Up";
-          } else {
-            if (dns & 1) {
-              pstate_[i] = "Dn";
-            } else {
-              pstate_[i] = "Emp";
-            }
-          }
-          ups >>= 1;
-          dns >>= 1;
-        }
+        to_product_state_tj(ups, dns, pstate_);
       },
       it_);
   return pstate_;

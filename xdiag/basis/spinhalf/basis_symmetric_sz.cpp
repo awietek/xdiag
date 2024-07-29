@@ -8,20 +8,19 @@ namespace xdiag::basis::spinhalf {
 template <class bit_t>
 BasisSymmetricSz<bit_t>::BasisSymmetricSz(int64_t n_sites, int64_t n_up,
                                           PermutationGroup group,
-                                          Representation irrep)
+                                          Representation irrep) try
     : n_sites_(n_sites), n_up_(n_up),
       group_action_(allowed_subgroup(group, irrep)), irrep_(irrep),
       combinations_indexing_(n_sites, n_up) {
   if ((n_up < 0) || (n_up > n_sites)) {
-    throw(std::invalid_argument("Invalid value of nup"));
+    XDIAG_THROW("Invalid value of nup");
   } else if (n_sites < 0) {
-    throw(std::invalid_argument("n_sites < 0"));
+    XDIAG_THROW("n_sites < 0");
   } else if (n_sites != group.n_sites()) {
-    throw(std::logic_error(
-        "n_sites does not match the n_sites in PermutationGroup"));
+    XDIAG_THROW("n_sites does not match the n_sites in PermutationGroup");
   } else if (group_action_.n_symmetries() != irrep.size()) {
-    throw(std::logic_error("PermutationGroup and Representation do not have "
-                           "same number of elements"));
+    XDIAG_THROW("PermutationGroup and Representation do not have "
+                "same number of elements");
   }
 
   std::tie(reps_, index_for_rep_, syms_, sym_limits_for_rep_, norms_) =
@@ -29,6 +28,8 @@ BasisSymmetricSz<bit_t>::BasisSymmetricSz(int64_t n_sites, int64_t n_up,
           combinations_indexing_, group_action_, irrep);
 
   size_ = (int64_t)reps_.size();
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 template <class bit_t>

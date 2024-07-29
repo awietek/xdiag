@@ -33,6 +33,7 @@ public:
   int64_t size() const;
   iterator_t begin() const;
   iterator_t end() const;
+  int64_t index(ProductState const &pstate) const;
   bool isreal(double precision = 1e-12) const;
 
   bool operator==(Electron const &rhs) const;
@@ -57,7 +58,7 @@ class ElectronIterator {
 public:
   ElectronIterator(Electron const &block, bool begin);
   ElectronIterator &operator++();
-  ProductState const& operator*() const;
+  ProductState const &operator*() const;
   bool operator!=(ElectronIterator const &rhs) const;
 
 private:

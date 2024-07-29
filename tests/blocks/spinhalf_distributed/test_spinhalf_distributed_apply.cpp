@@ -45,10 +45,10 @@ void test_sz_sp_sm_energy(int N, OpSum const &ops) {
 
       if (nup < N - 1) {
         op = Op("S+", 1.0, i);
-        auto sz_i_gs_s = zero(Spinhalf(N, nup + 1));
+        auto sz_i_gs_s = zeros(Spinhalf(N, nup + 1));
         apply(op, gs_s, sz_i_gs_s);
         double dot_s = dot(sz_i_gs_s, sz_i_gs_s);
-        auto sz_i_gs_p = zero(SpinhalfDistributed(N, nup + 1));
+        auto sz_i_gs_p = zeros(SpinhalfDistributed(N, nup + 1));
         apply(op, gs_p, sz_i_gs_p);
         double dot_p = dot(sz_i_gs_p, sz_i_gs_p);
 
@@ -58,10 +58,10 @@ void test_sz_sp_sm_energy(int N, OpSum const &ops) {
 
       if (nup > 0) {
         op = Op("S-", 1.0, i);
-        auto sz_i_gs_s = zero(Spinhalf(N, nup - 1));
+        auto sz_i_gs_s = zeros(Spinhalf(N, nup - 1));
         apply(op, gs_s, sz_i_gs_s);
         double dot_s = dot(sz_i_gs_s, sz_i_gs_s);
-        auto sz_i_gs_p = zero(SpinhalfDistributed(N, nup - 1));
+        auto sz_i_gs_p = zeros(SpinhalfDistributed(N, nup - 1));
         apply(op, gs_p, sz_i_gs_p);
         double dot_p = dot(sz_i_gs_p, sz_i_gs_p);
 
@@ -89,13 +89,13 @@ void test_sz_sp_sm_commutators(int n_sites) {
         auto sz_i = Op("SZ", 1.0, i);
 
         auto rvec = rand(block);
-        auto sm_rvec = zero(block_m);
-        auto sp_sm_rvec = zero(block);
+        auto sm_rvec = zeros(block_m);
+        auto sp_sm_rvec = zeros(block);
         apply(sm_j, rvec, sm_rvec);
         apply(sp_i, sm_rvec, sp_sm_rvec);
 
-        auto sp_rvec = zero(block_p);
-        auto sm_sp_rvec = zero(block);
+        auto sp_rvec = zeros(block_p);
+        auto sm_sp_rvec = zeros(block);
         apply(sp_i, rvec, sp_rvec);
         apply(sm_j, sp_rvec, sm_sp_rvec);
 

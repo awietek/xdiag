@@ -118,8 +118,8 @@ void check_op_coupling_has_type(Op const &op, std::string type1,
   XDIAG_RETHROW(e);
 }
 
-OpSum compile(OpSum const &ops, Spinhalf const &block, double precision) try {
-  int64_t n_sites = block.n_sites();
+OpSum compile_spinhalf(OpSum const &ops, int64_t n_sites,
+                       double precision) try {
   OpSum ops_explicit = make_explicit(ops);
   OpSum ops_clean = clean_zeros(ops_explicit, precision);
 
@@ -164,8 +164,7 @@ OpSum compile(OpSum const &ops, Spinhalf const &block, double precision) try {
   XDIAG_RETHROW(e);
 }
 
-OpSum compile(OpSum const &ops, tJ const &block, double precision) try {
-  int64_t n_sites = block.n_sites();
+OpSum compile_tj(OpSum const &ops, int64_t n_sites, double precision) try {
   OpSum ops_explicit = make_explicit(ops);
   OpSum ops_clean = clean_zeros(ops_explicit, precision);
 
@@ -254,8 +253,8 @@ OpSum compile(OpSum const &ops, tJ const &block, double precision) try {
   XDIAG_RETHROW(e);
 }
 
-OpSum compile(OpSum const &ops, Electron const &block, double precision) try {
-  int64_t n_sites = block.n_sites();
+OpSum compile_electron(OpSum const &ops, int64_t n_sites,
+                       double precision) try {
   OpSum ops_explicit = make_explicit(ops);
   OpSum ops_clean = clean_zeros(ops_explicit, precision);
 
@@ -339,22 +338,6 @@ OpSum compile(OpSum const &ops, Electron const &block, double precision) try {
   return ops_compiled;
 } catch (Error const &error) {
   XDIAG_RETHROW(error);
-  return OpSum();
 }
-
-#ifdef XDIAG_USE_MPI
-OpSum compile(OpSum const &ops, SpinhalfDistributed const &block,
-              double precision) {
-  int64_t n_sites = block.n_sites();
-  int64_t n_up = block.n_up();
-  return compile(ops, Spinhalf(n_sites, n_up), precision);
-}
-OpSum compile(OpSum const &ops, tJDistributed const &block, double precision) {
-  int64_t n_sites = block.n_sites();
-  int64_t n_up = block.n_up();
-  int64_t n_dn = block.n_dn();
-  return compile(ops, tJ(n_sites, n_up, n_dn), precision);
-}
-#endif
 
 } // namespace xdiag::operators

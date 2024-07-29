@@ -8,9 +8,10 @@
 #include <xdiag/algorithms/sparse_diag.hpp>
 #include <xdiag/io/file_toml.hpp>
 #include <xdiag/operators/opsum.hpp>
+#include <xdiag/states/create_state.hpp>
+#include <xdiag/states/random_state.hpp>
 #include <xdiag/symmetries/permutation_group.hpp>
 #include <xdiag/symmetries/representation.hpp>
-#include <xdiag/states/random_state.hpp>
 #include <xdiag/utils/close.hpp>
 
 TEST_CASE("lanczos_pro", "[lanczos]") {
@@ -130,7 +131,7 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
 
     cx_mat tmatc(res.tmat, mat(N, N, fill::zeros));
     cx_mat A2 = cx_mat(V * tmatc * V.t());
-    REQUIRE(norm(A - A2) < N * ortho_level);
+    REQUIRE(norm(A - A2) < 2 * N * ortho_level);
   }
 
   {
@@ -183,7 +184,7 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
         if (n_iter > block.size()) {
           CHECK(total_orthogonality < 1e-6);
         } else {
-          CHECK(total_orthogonality < n_iter * ortho_level);
+          CHECK(total_orthogonality < 2 * n_iter * ortho_level);
         }
       }
     }

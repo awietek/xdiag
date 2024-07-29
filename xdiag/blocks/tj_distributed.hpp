@@ -25,6 +25,7 @@ public:
   int64_t size_min() const;
   iterator_t begin() const;
   iterator_t end() const;
+  int64_t index(ProductState const &pstate) const;
   bool isreal(double precision = 1e-12) const;
 
   bool operator==(tJDistributed const &rhs) const;
@@ -56,7 +57,7 @@ private:
   mutable ProductState pstate_;
   basis::BasistJDistributedIterator it_;
 };
-  
+
 } // namespace xdiag
 
 #endif

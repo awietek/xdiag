@@ -25,9 +25,7 @@ public:
   int64_t n_sites() const;
   int64_t n_up() const;
   int64_t n_dn() const;
-  static constexpr bool np_conserved() { return true; }
-
-  int64_t index(bit_t up, bit_t dn) const;
+  // static constexpr bool np_conserved() { return true; }
 
   int64_t dim() const;
   int64_t size() const;
@@ -36,7 +34,8 @@ public:
   int64_t size_min() const;
   iterator_t begin() const;
   iterator_t end() const;
-  
+  int64_t index(bit_t up, bit_t dn) const;
+
   bool operator==(BasisNp const &rhs) const;
   bool operator!=(BasisNp const &rhs) const;
 

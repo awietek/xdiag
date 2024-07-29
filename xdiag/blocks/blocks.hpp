@@ -24,8 +24,22 @@ int64_t size(Block const &block);
 int64_t n_sites(Block const &block);
 
 bool isreal(Block const &block);
-bool isdistributed(Block const &block);
 
+constexpr bool isdistributed(Block const &block) {
+  return std::visit(
+      overload{
+          [&](Spinhalf const &) -> bool { return false; },
+          [&](tJ const &) -> bool { return false; },
+          [&](Electron const &) -> bool { return false; },
+#ifdef XDIAG_USE_MPI
+          [&](SpinhalfDistributed const &) -> bool { return true; },
+          [&](tJDistributed const &) -> bool { return true; },
+#endif
+          [&](auto &&) -> bool { return false; },
+      },
+      block);
+}
+  
 std::ostream &operator<<(std::ostream &out, Block const &block);
 std::string to_string(Block const &block);
 

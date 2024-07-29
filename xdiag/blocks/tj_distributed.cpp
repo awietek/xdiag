@@ -47,7 +47,18 @@ tJDistributed::iterator_t tJDistributed::begin() const {
 tJDistributed::iterator_t tJDistributed::end() const {
   return iterator_t(*this, false);
 }
-
+int64_t tJDistributed::index(ProductState const &pstate) const try {
+  return std::visit(
+      [&](auto &&basis) {
+        using basis_t = typename std::decay<decltype(basis)>::type;
+        using bit_t = typename basis_t::bit_t;
+        auto [ups, dns] = to_bits_electron<bit_t>(pstate);
+        return basis.index(ups, dns);
+      },
+      *basis_);
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
 bool tJDistributed::isreal(double precision) const {
   return true; // would only be nontrivial with space group irreps
 }
@@ -123,19 +134,7 @@ ProductState const &tJDistributedIterator::operator*() const {
   std::visit(
       [&](auto &&it) {
         auto [ups, dns] = *it;
-        for (int64_t i = 0; i < n_sites_; ++i) {
-          if (ups & 1) {
-            pstate_[i] = "Up";
-          } else {
-            if (dns & 1) {
-              pstate_[i] = "Dn";
-            } else {
-              pstate_[i] = "Emp";
-            }
-          }
-          ups >>= 1;
-          dns >>= 1;
-        }
+        to_product_state_tj(ups, dns, pstate_);
       },
       it_);
   return pstate_;

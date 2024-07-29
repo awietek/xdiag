@@ -7,6 +7,7 @@
 #include <xdiag/algorithms/lanczos/lanczos_convergence.hpp>
 
 #include <xdiag/states/random_state.hpp>
+#include <xdiag/states/fill.hpp>
 #include <xdiag/utils/timing.hpp>
 
 namespace xdiag {

@@ -3,9 +3,9 @@
 #include <iostream>
 
 #include <iostream>
-#include <xdiag/blocks/spinhalf.hpp>
 #include <xdiag/basis/spinhalf/basis_symmetric_no_sz.hpp>
 #include <xdiag/basis/spinhalf/basis_symmetric_sz.hpp>
+#include <xdiag/blocks/spinhalf.hpp>
 #include <xdiag/combinatorics/combinations.hpp>
 #include <xdiag/combinatorics/subsets.hpp>
 #include <xdiag/common.hpp>
@@ -114,9 +114,4 @@ TEST_CASE("spinhalf_basis", "[basis]") {
   Log("uint64_t");
   test_basis_symmetric<uint64_t>();
   Log("Done");
-
-  auto block = Spinhalf(6, 2);
-  for (auto const &pstate : block) {
-    Log("{}", to_string(pstate));
-  }
 }

@@ -10,6 +10,7 @@
 #include <xdiag/blocks/blocks.hpp>
 #include <xdiag/common.hpp>
 #include <xdiag/states/state.hpp>
+#include <xdiag/states/create_state.hpp>
 #include <xdiag/states/random_state.hpp>
 #include <xdiag/utils/logger.hpp>
 

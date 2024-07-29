@@ -60,6 +60,24 @@ BasisSymmetricNoNp<bit_t>::end() const {
   return iterator_t(*this, false);
 }
 
+template <typename bit_t>
+int64_t BasisSymmetricNoNp<bit_t>::index(bit_t ups, bit_t dns) const {
+  auto syms = syms_ups(ups);
+  int64_t idx_ups = index_ups(ups);
+  int64_t up_offset = ups_offset(idx_ups);
+  // trivial up-stabilizer (likely)
+  if (syms.size() == 1) {
+    int64_t idx_dns = index_dns(dns);
+    return up_offset + idx_dns;
+  }
+  // non-trivial up-stabilizer (unlikely)
+  else {
+    auto dnss = dns_for_ups_rep(ups);
+    auto [idx_dns, fermi_dn, sym] = index_dns_fermi_sym(dns, syms, dnss);
+    return up_offset + idx_dns;
+  }
+}
+
 template <class bit_t>
 GroupActionLookup<bit_t> const &
 BasisSymmetricNoNp<bit_t>::group_action() const {

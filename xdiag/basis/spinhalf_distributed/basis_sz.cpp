@@ -164,7 +164,19 @@ template <typename bit_t>
 typename BasisSz<bit_t>::iterator_t BasisSz<bit_t>::end() const {
   return iterator_t(*this, false);
 }
+template <typename bit_t>
+int64_t BasisSz<bit_t>::index(bit_t spins) const{
+  bit_t prefix = spins >> n_postfix_bits_;
+  if (rank(prefix)!= mpi_rank_){
+    return invalid_index;
+  }
+  int64_t offset = prefix_begin(prefix);
+  auto const& lintable = postfix_lintable(prefix);
+  bit_t postfix = spins & (((bit_t)1 << n_postfix_bits_)-1);
+  return offset + lintable.index(postfix);
+}
 
+  
 template <typename bit_t>
 std::vector<bit_t> const &BasisSz<bit_t>::prefixes() const {
   return prefixes_;

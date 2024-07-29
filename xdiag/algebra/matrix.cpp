@@ -119,7 +119,8 @@ template arma::cx_mat matrixC(Op const &, Electron const &, double);
 template <typename coeff_t>
 void matrix(coeff_t *mat, OpSum const &ops, Spinhalf const &block_in,
             Spinhalf const &block_out, double precision) try {
-  OpSum opsc = operators::compile(ops, block_in, precision);
+  int64_t n_sites = block_in.n_sites();
+  OpSum opsc = operators::compile_spinhalf(ops, n_sites, precision);
   int64_t m = block_out.size();
   int64_t n = block_in.size();
   std::fill(mat, mat + m * n, 0);
@@ -136,7 +137,8 @@ template void matrix(complex *mat, OpSum const &ops, Spinhalf const &block_in,
 template <typename coeff_t>
 void matrix(coeff_t *mat, OpSum const &ops, tJ const &block_in,
             tJ const &block_out, double precision) try {
-  OpSum opsc = operators::compile(ops, block_in, precision);
+  int64_t n_sites = block_in.n_sites();
+  OpSum opsc = operators::compile_tj(ops, n_sites, precision);
   int64_t m = block_out.size();
   int64_t n = block_in.size();
   std::fill(mat, mat + m * n, 0);
@@ -153,7 +155,8 @@ template void matrix(complex *mat, OpSum const &ops, tJ const &block_in,
 template <typename coeff_t>
 void matrix(coeff_t *mat, OpSum const &ops, Electron const &block_in,
             Electron const &block_out, double precision) try {
-  OpSum opsc = operators::compile(ops, block_in, precision);
+  int64_t n_sites = block_in.n_sites();
+  OpSum opsc = operators::compile_electron(ops, n_sites, precision);
   int64_t m = block_out.size();
   int64_t n = block_in.size();
   std::fill(mat, mat + m * n, 0);

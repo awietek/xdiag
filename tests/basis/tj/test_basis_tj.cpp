@@ -29,6 +29,18 @@ void test_iterator_tj_basis_np(int64_t n_sites, int64_t n_up, int64_t n_dn) {
     ++idx;
   }
   REQUIRE(idx == basis.dim());
+
+  {
+    auto block = tJ(n_sites, n_up, n_dn);
+    int64_t idx = 0;
+    for (auto pstate : block) {
+      int64_t idx2 = block.index(pstate);
+      // Log("{} {} {}", to_string(pstate), idx, idx2);
+      REQUIRE(idx == idx2);
+      ++idx;
+    }
+    REQUIRE(idx == block.dim());
+  }
 }
 
 template <typename bit_t>
@@ -58,6 +70,18 @@ void test_iterator_tj_basis_symmetric_np(int64_t n_sites, int64_t n_up,
       ++idx;
     }
     REQUIRE(idx == basis.dim());
+
+    {
+      auto block = tJ(n_sites, n_up, n_dn, group, irrep);
+      int64_t idx = 0;
+      for (auto pstate : block) {
+        int64_t idx2 = block.index(pstate);
+        // Log("{} {} {}", to_string(pstate), idx, idx2);
+        REQUIRE(idx == idx2);
+        ++idx;
+      }
+      REQUIRE(idx == block.dim());
+    }
   }
 }
 
@@ -65,7 +89,7 @@ TEST_CASE("tj_basis", "[basis]") try {
   using namespace xdiag;
 
   Log("Test tJ BasisNp");
-  for (int64_t n_sites = 0; n_sites < 6; ++n_sites) {
+  for (int64_t n_sites = 0; n_sites <= 6; ++n_sites) {
     for (int64_t n_up = 0; n_up <= n_sites; ++n_up) {
       for (int64_t n_dn = 0; n_dn <= n_sites - n_up; ++n_dn) {
         test_iterator_tj_basis_np<uint32_t>(n_sites, n_up, n_dn);
@@ -75,35 +99,13 @@ TEST_CASE("tj_basis", "[basis]") try {
   }
 
   Log("Test tJ BasisSymmetricNp");
-  for (int64_t n_sites = 0; n_sites < 6; ++n_sites) {
+  for (int64_t n_sites = 0; n_sites <= 6; ++n_sites) {
     for (int64_t n_up = 0; n_up <= n_sites; ++n_up) {
       for (int64_t n_dn = 0; n_dn <= n_sites - n_up; ++n_dn) {
         test_iterator_tj_basis_symmetric_np<uint32_t>(n_sites, n_up, n_dn);
         test_iterator_tj_basis_symmetric_np<uint64_t>(n_sites, n_up, n_dn);
       }
     }
-  }
-  
-  {
-    auto block = tJ(6, 2, 2);
-    int64_t idx = 0;
-    for (auto pstate : block) {
-      // Log("{}", to_string(pstate));
-      ++idx;
-    }
-    REQUIRE(idx == block.dim());
-  }
-  
-  {
-    auto [group, irreps] =
-        testcases::electron::get_cyclic_group_irreps(7);
-    auto block = tJ(7, 3, 2, group, irreps[0]);
-    int64_t idx = 0;
-    for (auto pstate : block) {
-      // Log("{}", to_string(pstate));
-      ++idx;
-    }
-    REQUIRE(idx == block.dim());
   }
 
 } catch (xdiag::Error e) {

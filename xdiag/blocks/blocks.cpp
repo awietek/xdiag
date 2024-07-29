@@ -20,21 +20,6 @@ bool isreal(Block const &block) {
   return std::visit([&](auto &&b) { return b.isreal(); }, block);
 }
 
-bool isdistributed(Block const &block) {
-  return std::visit(
-      overload{
-          [&](Spinhalf const &) -> bool { return false; },
-          [&](tJ const &) -> bool { return false; },
-          [&](Electron const &) -> bool { return false; },
-#ifdef XDIAG_USE_MPI
-          [&](SpinhalfDistributed const &) -> bool { return true; },
-          [&](tJDistributed const &) -> bool { return true; },
-#endif
-          [&](auto &&) -> bool { return false; },
-      },
-      block);
-}
-
 std::ostream &operator<<(std::ostream &out, Block const &block) {
   std::visit([&](auto &&block) { out << block; }, block);
   return out;

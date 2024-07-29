@@ -123,7 +123,18 @@ int64_t Electron::dim() const { return size_; }
 int64_t Electron::size() const { return size_; }
 Electron::iterator_t Electron::begin() const { return iterator_t(*this, true); }
 Electron::iterator_t Electron::end() const { return iterator_t(*this, false); }
-
+int64_t Electron::index(ProductState const &pstate) const try {
+  return std::visit(
+      [&](auto &&basis) {
+        using basis_t = typename std::decay<decltype(basis)>::type;
+        using bit_t = typename basis_t::bit_t;
+        auto [ups, dns] = to_bits_electron<bit_t>(pstate);
+        return basis.index(ups, dns);
+      },
+      *basis_);
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
 bool Electron::isreal(double precision) const {
   return irrep_.isreal(precision);
 }
@@ -186,23 +197,7 @@ ProductState const &ElectronIterator::operator*() const {
   std::visit(
       [&](auto &&it) {
         auto [ups, dns] = *it;
-        for (int64_t i = 0; i < n_sites_; ++i) {
-          if (ups & 1) {
-            if (dns & 1) {
-              pstate_[i] = "UpDn";
-            } else {
-              pstate_[i] = "Up";
-            }
-          } else {
-            if (dns & 1) {
-              pstate_[i] = "Dn";
-            } else {
-              pstate_[i] = "Emp";
-            }
-          }
-          ups >>= 1;
-          dns >>= 1;
-        }
+        to_product_state_electron(ups, dns, pstate_);
       },
       it_);
   return pstate_;

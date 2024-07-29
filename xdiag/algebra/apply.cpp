@@ -73,7 +73,8 @@ template <typename coeff_t>
 void apply(OpSum const &ops, Spinhalf const &block_in,
            arma::Col<coeff_t> const &vec_in, Spinhalf const &block_out,
            arma::Col<coeff_t> &vec_out, double precision) try {
-  OpSum opsc = operators::compile(ops, block_in, precision);
+  int64_t n_sites = block_in.n_sites();
+  OpSum opsc = operators::compile_spinhalf(ops, n_sites, precision);
   vec_out.zeros();
   basis::spinhalf::dispatch_apply(opsc, block_in, vec_in, block_out, vec_out);
 } catch (Error const &e) {
@@ -92,7 +93,8 @@ template <typename coeff_t>
 void apply(OpSum const &ops, tJ const &block_in,
            arma::Col<coeff_t> const &vec_in, tJ const &block_out,
            arma::Col<coeff_t> &vec_out, double precision) try {
-  OpSum opsc = operators::compile(ops, block_in, precision);
+  int64_t n_sites = block_in.n_sites();
+  OpSum opsc = operators::compile_tj(ops, n_sites, precision);
   vec_out.zeros();
   basis::tj::dispatch_apply(opsc, block_in, vec_in, block_out, vec_out);
 } catch (Error const &e) {
@@ -111,7 +113,8 @@ template <typename coeff_t>
 void apply(OpSum const &ops, Electron const &block_in,
            arma::Col<coeff_t> const &vec_in, Electron const &block_out,
            arma::Col<coeff_t> &vec_out, double precision) try {
-  OpSum opsc = operators::compile(ops, block_in, precision);
+  int64_t n_sites = block_in.n_sites();
+  OpSum opsc = operators::compile_electron(ops, n_sites, precision);
   vec_out.zeros();
   basis::electron::dispatch_apply(opsc, block_in, vec_in, block_out, vec_out);
 } catch (Error const &e) {
@@ -133,7 +136,8 @@ void apply(OpSum const &ops, SpinhalfDistributed const &block_in,
            arma::Col<coeff_t> const &vec_in,
            SpinhalfDistributed const &block_out, arma::Col<coeff_t> &vec_out,
            double precision) try {
-  OpSum opsc = operators::compile(ops, block_in, precision);
+  int64_t n_sites = block_in.n_sites();
+  OpSum opsc = operators::compile_spinhalf(ops, n_sites, precision);
   vec_out.zeros();
   basis::spinhalf_distributed::dispatch_apply(opsc, block_in, vec_in, block_out,
                                               vec_out);
@@ -155,7 +159,8 @@ template <typename coeff_t>
 void apply(OpSum const &ops, tJDistributed const &block_in,
            arma::Col<coeff_t> const &vec_in, tJDistributed const &block_out,
            arma::Col<coeff_t> &vec_out, double precision) try {
-  OpSum opsc = operators::compile(ops, block_in, precision);
+  int64_t n_sites = block_in.n_sites();
+  OpSum opsc = operators::compile_tj(ops, n_sites, precision);
   vec_out.zeros();
   basis::tj_distributed::dispatch_apply(opsc, block_in, vec_in, block_out,
                                         vec_out);

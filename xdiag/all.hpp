@@ -43,6 +43,7 @@
 #include <xdiag/blocks/spinhalf.hpp>
 #include <xdiag/blocks/tj.hpp>
 
+#include <xdiag/states/create_state.hpp>
 #include <xdiag/states/fill.hpp>
 #include <xdiag/states/gpwf.hpp>
 #include <xdiag/states/product_state.hpp>

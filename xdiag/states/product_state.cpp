@@ -74,4 +74,134 @@ std::string to_string(ProductState const &state, std::string format) try {
   XDIAG_RETHROW(e);
 }
 
+template <typename bit_t>
+void to_product_state_spinhalf(bit_t spins, ProductState &pstate) {
+  for (int64_t i = 0; i < pstate.n_sites(); ++i) {
+    if (spins & 1) {
+      pstate[i] = "Up";
+    } else {
+      pstate[i] = "Dn";
+    }
+    spins >>= 1;
+  }
+}
+template void to_product_state_spinhalf(uint32_t, ProductState &);
+template void to_product_state_spinhalf(uint64_t, ProductState &);
+
+template <typename bit_t>
+void to_product_state_tj(bit_t ups, bit_t dns, ProductState &pstate) {
+  for (int64_t i = 0; i < pstate.n_sites(); ++i) {
+    if (ups & 1) {
+      pstate[i] = "Up";
+    } else {
+      if (dns & 1) {
+        pstate[i] = "Dn";
+      } else {
+        pstate[i] = "Emp";
+      }
+    }
+    ups >>= 1;
+    dns >>= 1;
+  }
+}
+template void to_product_state_tj(uint32_t ups, uint32_t dns,
+                                  ProductState &pstate);
+template void to_product_state_tj(uint64_t ups, uint64_t dns,
+                                  ProductState &pstate);
+
+template <typename bit_t>
+void to_product_state_electron(bit_t ups, bit_t dns, ProductState &pstate) {
+  for (int64_t i = 0; i < pstate.n_sites(); ++i) {
+    if (ups & 1) {
+      if (dns & 1) {
+        pstate[i] = "UpDn";
+      } else {
+        pstate[i] = "Up";
+      }
+    } else {
+      if (dns & 1) {
+        pstate[i] = "Dn";
+      } else {
+        pstate[i] = "Emp";
+      }
+    }
+    ups >>= 1;
+    dns >>= 1;
+  }
+}
+template void to_product_state_electron(uint32_t ups, uint32_t dns,
+                                        ProductState &pstate);
+template void to_product_state_electron(uint64_t ups, uint64_t dns,
+                                        ProductState &pstate);
+
+template <typename bit_t>
+bit_t to_bits_spinhalf(ProductState const &pstate) try {
+  bit_t spins = 0;
+  for (int64_t s = 0; s < pstate.n_sites(); ++s) {
+    std::string val = pstate[s];
+    if (val == "Up") {
+      spins |= ((bit_t)1 << s);
+    } else {
+      if (val != "Dn") {
+        XDIAG_THROW(fmt::format("Invalid local state encountered: {}", val));
+      }
+    }
+  }
+  return spins;
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+
+template uint32_t to_bits_spinhalf(ProductState const &);
+template uint64_t to_bits_spinhalf(ProductState const &);
+
+template <typename bit_t>
+std::pair<bit_t, bit_t> to_bits_tj(ProductState const &pstate) try {
+  bit_t ups = 0;
+  bit_t dns = 0;
+  for (int64_t s = 0; s < pstate.n_sites(); ++s) {
+    std::string val = pstate[s];
+    if (val == "Up") {
+      ups |= ((bit_t)1 << s);
+    } else if (val == "Dn") {
+      dns |= ((bit_t)1 << s);
+    } else {
+      if (val != "Emp") {
+        XDIAG_THROW(fmt::format("Invalid local state encountered: {}", val));
+      }
+    }
+  }
+  return {ups, dns};
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+template std::pair<uint32_t, uint32_t> to_bits_tj(ProductState const &);
+template std::pair<uint64_t, uint64_t> to_bits_tj(ProductState const &);
+
+template <typename bit_t>
+std::pair<bit_t, bit_t> to_bits_electron(ProductState const &pstate) try {
+  bit_t ups = 0;
+  bit_t dns = 0;
+  for (int64_t s = 0; s < pstate.n_sites(); ++s) {
+    std::string val = pstate[s];
+    if (val == "Up") {
+      ups |= ((bit_t)1 << s);
+    } else if (val == "Dn") {
+      dns |= ((bit_t)1 << s);
+    } else if (val == "UpDn") {
+      ups |= ((bit_t)1 << s);
+      dns |= ((bit_t)1 << s);
+    } else {
+      if (val != "Emp") {
+        XDIAG_THROW(fmt::format("Invalid local state encountered: {}", val));
+      }
+    }
+  }
+  return {ups, dns};
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+template std::pair<uint32_t, uint32_t> to_bits_electron(ProductState const &);
+template std::pair<uint64_t, uint64_t> to_bits_electron(ProductState const &);
+
 } // namespace xdiag

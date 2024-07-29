@@ -120,6 +120,26 @@ typename BasisSymmetricNp<bit_t>::iterator_t
 BasisSymmetricNp<bit_t>::end() const {
   return iterator_t(*this, false);
 }
+template <typename bit_t>
+int64_t BasisSymmetricNp<bit_t>::index(bit_t ups, bit_t dns) const {
+  auto syms = syms_ups(ups);
+  int64_t idx_ups = index_ups(ups);
+  int64_t up_offset = ups_offset(idx_ups);
+  // trivial up-stabilizer (likely)
+  if (syms.size() == 1) {
+    bit_t sitesmask = ((bit_t)1 << n_sites_) - 1;
+    bit_t not_ups = (~ups) & sitesmask;
+    bit_t dnsc = bits::extract(dns, not_ups);
+    int64_t idx_dns = dnsc_index(dnsc);
+    return up_offset + idx_dns;
+  }
+  // non-trivial up-stabilizer (unlikely)
+  else {
+    auto dnss = dns_for_ups_rep(ups);
+    auto [idx_dns, fermi_dn, sym] = index_dns_fermi_sym(dns, syms, dnss);
+    return up_offset + idx_dns;
+  }
+}
 
 template <typename bit_t> int64_t BasisSymmetricNp<bit_t>::n_rep_ups() const {
   return reps_up_.size();
@@ -295,9 +315,16 @@ BasisSymmetricNpIterator<bit_t> &BasisSymmetricNpIterator<bit_t>::operator++() {
 template <typename bit_t>
 std::pair<bit_t, bit_t> BasisSymmetricNpIterator<bit_t>::operator*() const {
   bit_t ups = basis_.rep_ups(up_idx_);
-  bit_t not_ups = (~ups) & sitesmask_;
-  bit_t dnsc = dns_for_ups_rep_[dn_idx_];
-  return {ups, bits::deposit(dnsc, not_ups)};
+  auto syms = basis_.syms_ups(ups);
+  if (syms.size() == 1) {
+    bit_t not_ups = (~ups) & sitesmask_;
+    bit_t dnsc = dns_for_ups_rep_[dn_idx_];
+    bit_t dns = bits::deposit(dnsc, not_ups);
+    return {ups, dns};
+  } else {
+    bit_t dns = dns_for_ups_rep_[dn_idx_];
+    return {ups, dns};
+  }
 }
 
 template <typename bit_t>

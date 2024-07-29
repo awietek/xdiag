@@ -40,6 +40,7 @@ public:
   int64_t size() const;
   iterator_t begin() const;
   iterator_t end() const;
+  int64_t index(ProductState const& pstate) const;
   bool isreal(double precision = 1e-12) const;
 
   bool operator==(Spinhalf const &rhs) const;

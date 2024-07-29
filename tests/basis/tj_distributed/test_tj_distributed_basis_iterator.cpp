@@ -18,6 +18,10 @@ void test_tj_distributed_basis_iterator(tJDistributed const &block) {
   for (auto const &p : block) {
     // std::cout << mpi_rank << " " << to_string(p) << "\n";
     REQUIRE(p != pprev);
+    int64_t idx2 = block.index(p);
+    // std::cout << mpi_rank << " " << to_string(p) << " " << idx << " " << idx2
+    //           << "\n";
+    REQUIRE(idx == idx2);
     pprev = p;
     ++idx;
   }
@@ -27,10 +31,9 @@ void test_tj_distributed_basis_iterator(tJDistributed const &block) {
 TEST_CASE("tj_distributed_basis_iterator", "[basis]") {
 
   Log("tJDistributed Basis Iterator Np");
- 
   for (int n_sites = 1; n_sites < 9; ++n_sites) {
     for (int n_up = 0; n_up <= n_sites; ++n_up) {
-      for (int n_dn = 0; n_dn <= n_sites - n_up; ++n_up) {
+      for (int n_dn = 0; n_dn <= n_sites - n_up; ++n_dn) {
         auto block = tJDistributed(n_sites, n_up, n_dn);
         test_tj_distributed_basis_iterator(block);
       }

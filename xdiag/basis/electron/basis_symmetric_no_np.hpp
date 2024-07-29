@@ -34,6 +34,7 @@ public:
   int64_t size() const;
   iterator_t begin() const;
   iterator_t end() const;
+  int64_t index(bit_t ups, bit_t dns) const;
 
   GroupActionLookup<bit_t> const &group_action() const;
   Representation const &irrep() const;

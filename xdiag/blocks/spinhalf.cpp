@@ -198,7 +198,18 @@ int64_t Spinhalf::dim() const { return size_; }
 int64_t Spinhalf::size() const { return size_; }
 Spinhalf::iterator_t Spinhalf::begin() const { return iterator_t(*this, true); }
 Spinhalf::iterator_t Spinhalf::end() const { return iterator_t(*this, false); }
-
+int64_t Spinhalf::index(ProductState const &pstate) const try {
+  return std::visit(
+      [&](auto &&basis) {
+        using basis_t = typename std::decay<decltype(basis)>::type;
+        using bit_t = typename basis_t::bit_t;
+        bit_t spins = to_bits_spinhalf<bit_t>(pstate);
+        return basis.index(spins);
+      },
+      *basis_);
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
 bool Spinhalf::isreal(double precision) const {
   return irrep_.isreal(precision);
 }
@@ -259,14 +270,7 @@ ProductState const &SpinhalfIterator::operator*() const {
   std::visit(
       [&](auto &&it) {
         auto spins = *it;
-        for (int64_t i = 0; i < n_sites_; ++i) {
-          if (spins & 1) {
-            pstate_[i] = "Up";
-          } else {
-            pstate_[i] = "Dn";
-          }
-          spins >>= 1;
-        }
+        to_product_state_spinhalf(spins, pstate_);
       },
       it_);
   return pstate_;

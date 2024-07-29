@@ -8,6 +8,8 @@
 
 template <typename bit_t>
 void test_iterator_electron_basis_no_np(int64_t n_sites) {
+  using namespace xdiag;
+
   using basis_t = xdiag::basis::electron::BasisNoNp<bit_t>;
   basis_t basis(n_sites);
 
@@ -33,10 +35,23 @@ void test_iterator_electron_basis_no_np(int64_t n_sites) {
     ++idx;
   }
   REQUIRE(idx == basis.dim());
+  {
+    auto block = Electron(n_sites);
+    int64_t idx = 0;
+    for (auto pstate : block) {
+      int64_t idx2 = block.index(pstate);
+      // Log("{} {} {}", to_string(pstate), idx, idx2);
+      REQUIRE(idx == idx2);
+      ++idx;
+    }
+    REQUIRE(idx == block.dim());
+  }
 }
 
 template <typename bit_t>
 void test_iterator_electron_basis_symmetric_no_np(int64_t n_sites) {
+  using namespace xdiag;
+
   auto [group, irreps] =
       xdiag::testcases::electron::get_cyclic_group_irreps(n_sites);
 
@@ -61,6 +76,18 @@ void test_iterator_electron_basis_symmetric_no_np(int64_t n_sites) {
       ++idx;
     }
     REQUIRE(idx == basis.dim());
+
+    {
+      auto block = Electron(n_sites, group, irrep);
+      int64_t idx = 0;
+      for (auto pstate : block) {
+        int64_t idx2 = block.index(pstate);
+        // Log("{} {} {}", to_string(pstate), idx, idx2);
+        REQUIRE(idx == idx2);
+        ++idx;
+      }
+      REQUIRE(idx == block.dim());
+    }
   }
 }
 
@@ -88,6 +115,18 @@ void test_iterator_electron_basis_np(int64_t n_sites, int64_t n_up,
     ++idx;
   }
   REQUIRE(idx == basis.dim());
+
+  {
+    auto block = Electron(n_sites, n_up, n_dn);
+    int64_t idx = 0;
+    for (auto pstate : block) {
+      int64_t idx2 = block.index(pstate);
+      // Log("{} {} {}", to_string(pstate), idx, idx2);
+      REQUIRE(idx == idx2);
+      ++idx;
+    }
+    REQUIRE(idx == block.dim());
+  }
 }
 
 template <typename bit_t>
@@ -117,6 +156,17 @@ void test_iterator_electron_basis_symmetric_np(int64_t n_sites, int64_t n_up,
       ++idx;
     }
     REQUIRE(idx == basis.dim());
+    {
+      auto block = Electron(n_sites, n_up, n_dn, group, irrep);
+      int64_t idx = 0;
+      for (auto pstate : block) {
+        int64_t idx2 = block.index(pstate);
+        // Log("{} {} {}", to_string(pstate), idx, idx2);
+        REQUIRE(idx == idx2);
+        ++idx;
+      }
+      REQUIRE(idx == block.dim());
+    }
   }
 }
 
@@ -155,13 +205,4 @@ TEST_CASE("electron_basis", "[basis]") {
       }
     }
   }
-
-
-  auto block = Electron(6, 3, 3);
-  int64_t idx = 0;
-  for (auto pstate : block){
-    // Log("{}", to_string(pstate));
-    ++idx;
-  }
-  REQUIRE(idx == block.dim());
 }

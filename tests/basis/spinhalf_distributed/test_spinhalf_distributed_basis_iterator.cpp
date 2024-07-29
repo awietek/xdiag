@@ -8,7 +8,8 @@
 
 using namespace xdiag;
 
-void test_spinhalf_distributed_basis_iterator(SpinhalfDistributed const &block) {
+void test_spinhalf_distributed_basis_iterator(
+    SpinhalfDistributed const &block) {
   int mpi_rank;
   MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
 
@@ -16,8 +17,11 @@ void test_spinhalf_distributed_basis_iterator(SpinhalfDistributed const &block) 
   auto pprev = ProductState(n_sites);
   int64_t idx = 0;
   for (auto const &p : block) {
-    // std::cout << mpi_rank << " " << to_string(p) << "\n";
     REQUIRE(p != pprev);
+    int64_t idx2 = block.index(p);
+    // std::cout << mpi_rank << " " << to_string(p) << " " << idx << " " << idx2
+    //           << "\n";
+    REQUIRE(idx == idx2);
     pprev = p;
     ++idx;
   }
@@ -33,5 +37,4 @@ TEST_CASE("spinhalf_distributed_basis_iterator", "[basis]") {
       test_spinhalf_distributed_basis_iterator(block);
     }
   }
-
 }

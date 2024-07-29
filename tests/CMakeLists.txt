@@ -91,6 +91,8 @@ set(XDIAG_TEST_DISTRIBUTED_SOURCES
   blocks/spinhalf_distributed/test_spinhalf_distributed_apply.cpp
   blocks/tj_distributed/test_tj_distributed_apply.cpp
 
+  states/test_product_state_distributed.cpp
+
   algorithms/time_evolution/test_time_evolution_distributed.cpp
 )
 
