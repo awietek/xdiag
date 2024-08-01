@@ -70,7 +70,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#permutation" class="md-skip">
+        <a href="#constructors" class="md-skip">
           Skip to content
         </a>
       
@@ -309,8 +309,6 @@
   
   
   
-    
-  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -360,7 +358,10 @@
                   
 
 
-<h1 id="permutation">Permutation</h1>
+  <h1>Permutation</h1>
+
+<p>Permutations of indices or lattice sites</p>
+<p><strong>Source</strong> <a href="https://github.com/awietek/xdiag/blob/main/xdiag/symmetries/permutation.hpp">permutation.hpp</a></p>
 <h2 id="constructors">Constructors</h2>
 <p>Creates an Permutation out of an array of integers, e.g. <code>[0, 2, 1, 3]</code>. If the input array is of size <code>N</code> then every number between <code>0</code> and <code>N-1</code> must occur exactly once, otherwise the Permutation is invalid.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Julia</label><label for="__tabbed_1_2">C++</label></div>
@@ -376,8 +377,8 @@
 </div>
 </div>
 <h2 id="methods">Methods</h2>
-<details class="method">
-<summary>inverse</summary>
+<div class="admonition method">
+<p class="admonition-title">inverse</p>
 <p>Computes the inverse permutation.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Julia</label><label for="__tabbed_2_2">C++</label></div>
 <div class="tabbed-content">
@@ -395,9 +396,9 @@
 </div>
 </div>
 </div>
-</details>
-<details class="method">
-<summary>"*" operator</summary>
+</div>
+<div class="admonition method">
+<p class="admonition-title">"*" operator</p>
 <p>Concatenates two permutations by overloading the <code>*</code> operator.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">Julia</label><label for="__tabbed_3_2">C++</label></div>
 <div class="tabbed-content">
@@ -411,9 +412,9 @@
 </div>
 </div>
 </div>
-</details>
-<details class="method">
-<summary>size</summary>
+</div>
+<div class="admonition method">
+<p class="admonition-title">size</p>
 <p>Returns the size of the permutation, i.e. the number of indices being permuted.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="4:2"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">Julia</label><label for="__tabbed_4_2">C++</label></div>
 <div class="tabbed-content">
@@ -431,7 +432,7 @@
 </div>
 </div>
 </div>
-</details>
+</div>
 <h2 id="usage-example">Usage Example</h2>
 <div class="tabbed-set tabbed-alternate" data-tabs="5:2"><input checked="checked" id="__tabbed_5_1" name="__tabbed_5" type="radio" /><input id="__tabbed_5_2" name="__tabbed_5" type="radio" /><div class="tabbed-labels"><label for="__tabbed_5_1">Julia</label><label for="__tabbed_5_2">C++</label></div>
 <div class="tabbed-content">
@@ -453,7 +454,6 @@
 </div>
 </div>
 </div>
-<p><strong>Source</strong> <a href="https://github.com/awietek/xdiag/blob/master/xdiag/symmetries/permutation.hpp">permutation.hpp</a></p>
 
 
 
