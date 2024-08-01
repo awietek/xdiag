@@ -2,7 +2,9 @@
 title: Permutation
 ---
 
-# Permutation
+Permutations of indices or lattice sites
+
+**Source** [permutation.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/symmetries/permutation.hpp)
 
 ## Constructors
 
@@ -20,7 +22,7 @@ Creates an Permutation out of an array of integers, e.g. `[0, 2, 1, 3]`. If the 
 
 ## Methods
 
-??? method "inverse"
+!!! method "inverse"
 
 	Computes the inverse permutation.
 
@@ -38,7 +40,7 @@ Creates an Permutation out of an array of integers, e.g. `[0, 2, 1, 3]`. If the 
 		Permutation inverse(Permutation const &p);
 		```
 
-??? method ""*" operator"
+!!! method ""*" operator"
 
 	Concatenates two permutations by overloading the `*` operator.
 
@@ -52,7 +54,7 @@ Creates an Permutation out of an array of integers, e.g. `[0, 2, 1, 3]`. If the 
 		Permutation operator*(Permutation const &p1, Permutation const &p2);
 		```
 
-??? method "size"
+!!! method "size"
 	Returns the size of the permutation, i.e. the number of indices being permuted.
 
 	=== "Julia"
@@ -81,4 +83,3 @@ Creates an Permutation out of an array of integers, e.g. `[0, 2, 1, 3]`. If the 
 	--8<-- "examples/usage_examples/main.cpp:Permutation"
 	```
 
-**Source** [permutation.hpp](https://github.com/awietek/xdiag/blob/master/xdiag/symmetries/permutation.hpp)

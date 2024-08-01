@@ -9,6 +9,7 @@ namespace xdiag {
 class OpSum {
 public:
   using value_type = Op;
+  using iterator_t = typename std::vector<Op>::const_iterator;
   
   OpSum() = default;
   explicit OpSum(std::vector<Op> const &ops);
@@ -31,16 +32,8 @@ public:
   bool operator==(OpSum const &other) const;
   bool operator!=(OpSum const &other) const;
 
-  // Iterators
-
-  using iterator_t = typename std::vector<Op>::iterator;
-  using const_iterator_t = typename std::vector<Op>::const_iterator;
-  iterator_t begin();
-  iterator_t end();
-  const_iterator_t begin() const;
-  const_iterator_t end() const;
-  const_iterator_t cbegin() const;
-  const_iterator_t cend() const;
+  iterator_t begin() const;
+  iterator_t end() const;
 
 private:
   std::vector<Op> ops_;
@@ -49,11 +42,11 @@ private:
 
 OpSum ops_of_type(std::string type, OpSum const &ops);
 OpSum make_explicit(OpSum const &ops);
-  
+
 // legacy function, can be removed later
 OpSum read_opsum(std::string filename);
 
 std::ostream &operator<<(std::ostream &out, OpSum const &ops);
 std::string to_string(OpSum const &ops);
-  
+
 } // namespace xdiag

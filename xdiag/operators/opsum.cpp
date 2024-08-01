@@ -104,12 +104,8 @@ bool OpSum::operator==(OpSum const &other) const {
 }
 bool OpSum::operator!=(OpSum const &other) const { return !operator==(other); }
 
-OpSum::iterator_t OpSum::begin() { return ops_.begin(); }
-OpSum::iterator_t OpSum::end() { return ops_.end(); }
-OpSum::const_iterator_t OpSum::begin() const { return ops_.begin(); }
-OpSum::const_iterator_t OpSum::end() const { return ops_.end(); }
-OpSum::const_iterator_t OpSum::cbegin() const { return ops_.cbegin(); }
-OpSum::const_iterator_t OpSum::cend() const { return ops_.cend(); }
+OpSum::iterator_t OpSum::begin() const { return ops_.begin(); }
+OpSum::iterator_t OpSum::end() const { return ops_.end(); }
 
 OpSum make_explicit(OpSum const &ops) try {
   OpSum explicit_ops;

@@ -108,7 +108,8 @@ std::ostream &operator<<(std::ostream &out, SpinhalfDistributed const &block) {
   out << "  size (max local): " << ssmax.str() << "\n";
   out << "  size (min local): " << ssmin.str() << "\n";
   out << "  size (avg local): " << ssavg.str() << "\n";
-  out << "  ID              : " << random::hash(block) << "\n";
+  out << "  ID              : " << std::hex << random::hash(block) << std::dec
+      << "\n";
   return out;
 }
 std::string to_string(SpinhalfDistributed const &block) {

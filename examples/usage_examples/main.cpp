@@ -190,8 +190,77 @@ ops["J"] = 1.0;
 auto [e0, gs] = eig0(ops, block);
 // --8<-- [end:eig0]
 }
- 
-  // clang-format on
+
+
+
+{
+// --8<-- [start:op]
+auto op = Op("HOP", "T", {1, 2});
+XDIAG_SHOW(op);
+XDIAG_SHOW(op.type());
+XDIAG_SHOW(op.coupling().as<std::string>());
+XDIAG_SHOW(op.size());
+XDIAG_SHOW(op[0]);
+XDIAG_SHOW(op[1]);
+XDIAG_SHOW(op.isexplicit());
+
+ op = Op("HOP", 1.23, {1, 2});
+XDIAG_SHOW(op);
+XDIAG_SHOW(op.isreal());
+XDIAG_SHOW(op.ismatrix());
+XDIAG_SHOW(op.isexplicit());
+
+arma::cx_mat m(arma::mat("0 0; 0 0"), arma::mat("0 -1; 1 0"));
+op = Op("SY", m, 1);
+XDIAG_SHOW(op);
+XDIAG_SHOW(op.isreal());
+XDIAG_SHOW(op.ismatrix());
+XDIAG_SHOW(op.isexplicit());
+// --8<-- [end:op]
+
+
+// --8<-- [start:opsum]
+// Define the 1D transverse-field Ising chain
+int N = 12;
+double J = 1.0;
+double h = 0.5;
+auto Sx = arma::mat("0 1; 1 0");
+
+auto ops = OpSum();
+for (int i = 0; i<N; ++i) {
+  ops += Op("ISING", "J", {i, (i+1)%N});
+  ops += Op("SX", arma::mat(h*Sx), i);
+}
+ops["J"] = 1.0;
+XDIAG_SHOW(ops);
+XDIAG_SHOW(ops.defined("J"));
+XDIAG_SHOW(ops.isreal());
+XDIAG_SHOW(ops.isexplicit());
+// --8<-- [end:opsum]
+}
+
+
+
+{
+// --8<-- [start:coupling]
+auto cpl = Coupling("J");
+XDIAG_SHOW(cpl.type());
+XDIAG_SHOW(cpl.isexplicit());
+
+cpl = Coupling(1.23);
+XDIAG_SHOW(cpl.ismatrix());
+XDIAG_SHOW(cpl.as<double>());
+XDIAG_SHOW(cpl.as<complex>());
+
+cpl = Coupling(arma::mat("1 2; -2 1"));
+XDIAG_SHOW(cpl.ismatrix());
+XDIAG_SHOW(cpl.isreal());
+XDIAG_SHOW(cpl.as<arma::mat>());
+XDIAG_SHOW(cpl.as<arma::cx_mat>());
+// --8<-- [end:coupling]
+} 
+
+// clang-format on
 
 } catch (Error e) {
   error_trace(e);

@@ -2,7 +2,9 @@
 title: Permutation
 ---
 
-# PermutationGroup
+A group of permutations 
+
+**Source** [permutation_group.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/symmetries/permutation_group.hpp)
 
 ## Constructor
 
@@ -21,7 +23,7 @@ Creates an PermutationGroup out of a vector of [Permutation](permutation.md) obj
 ## Methods
 
 
-??? method "n_sites"
+!!! method "n_sites"
 
 	Returns the number of sites on which the permutations of the group acts.
 
@@ -35,7 +37,7 @@ Creates an PermutationGroup out of a vector of [Permutation](permutation.md) obj
 		int64_t n_sites() const
 		```
 
-??? method "size"
+!!! method "size"
 	Returns the size of the permutation group, i.e. the number permutations
 
 	=== "Julia"
@@ -48,7 +50,7 @@ Creates an PermutationGroup out of a vector of [Permutation](permutation.md) obj
 		int64_t size() const;
 		```
 
-??? method "inverse"
+!!! method "inverse"
 
 	Given an index of a permutation, it returns the index of the inverse permutation.
 
@@ -75,5 +77,3 @@ Creates an PermutationGroup out of a vector of [Permutation](permutation.md) obj
 	```c++
 	--8<-- "examples/usage_examples/main.cpp:PermutationGroup"
 	```
-
-**Source** [permutation_group.hpp](https://github.com/awietek/xdiag/blob/master/xdiag/symmetries/permutation_group.hpp)

@@ -10,8 +10,9 @@ namespace xdiag {
 class Op {
 public:
   Op() = default;
-  Op(std::string type, Coupling coupling, std::vector<int64_t> const &sites);
-  Op(std::string type, Coupling coupling, int64_t site);
+  Op(std::string type, Coupling const &coupling,
+     std::vector<int64_t> const &sites);
+  Op(std::string type, Coupling const &coupling, int64_t site);
 
   Op(std::string type, const char *coupling, std::vector<int64_t> const &sites);
   Op(std::string type, const char *coupling, int64_t site);

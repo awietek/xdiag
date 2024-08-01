@@ -10,7 +10,7 @@ namespace xdiag::utils {
 
 template <typename T> inline void print_pretty(const char *id, T X) {
   std::cout << id << ":\n";
-  std::cout << X;
+  std::cout << X << "\n";
 }
 
 #ifdef XDIAG_USE_MPI

@@ -24,8 +24,15 @@ title: Overview
 | [tJ](blocks/tJ.md)             | Block of a $t-J$ type Hilbert space        | :simple-cplusplus: :simple-julia: |
 | [Electron](blocks/electron.md) | Block of a Electron type Hilbert space     | :simple-cplusplus: :simple-julia: |
 
-## Symmetries
+## Operators
+|                                   |                                                  |                                   |
+|:----------------------------------|:-------------------------------------------------|----------------------------------:|
+| [Op](operators/op.md)             | A local operator acting on several lattice sites | :simple-cplusplus: :simple-julia: |
+| [OpSum](operators/opsum.md)       | Sum of local operators                           | :simple-cplusplus: :simple-julia: |
+| [Coupling](operators/coupling.md) | Describes the coupling of a local operator       | :simple-cplusplus: :simple-julia: |
 
+
+## Symmetries
 |                                                     |                                                     |                                   |
 |:----------------------------------------------------|:----------------------------------------------------|----------------------------------:|
 | [Permutation](symmetries/permutation.md)            | Permutations of indices or lattice sites            | :simple-cplusplus: :simple-julia: |

@@ -177,3 +177,66 @@ let
     e0, gs = eig0(ops, block);
 end
 # --8<-- [end:eig0]
+
+
+# --8<-- [start:op]
+op = Op("HOP", "T", [1, 2])
+@show op
+@show type(op)
+@show convert(String, coupling(op))
+@show size(op), op[1], op[2]
+@show sites(op) == [1, 2]
+@show isexplicit(op)
+
+op = Op("HOP", 1.23, [1, 2])
+@show op
+@show isreal(op)
+@show ismatrix(op)
+@show isexplicit(op)
+
+op = Op("SY", [0 -im; im 0], 1)
+@show op
+@show isreal(op)
+@show ismatrix(op)
+@show isexplicit(op)
+# --8<-- [end:op]
+
+
+# --8<-- [start:opsum]
+# Define the 1D transverse-field Ising chain
+let 
+    N = 12
+    J = 1.0
+    h = 0.5
+    Sx = [0 1; 1 0]
+
+    ops = OpSum()
+    for i in 1:N
+        ops += Op("ISING", "J", [i-1, i % N])
+        ops += Op("SX", h * Sx, i-1)
+    end
+
+    ops["J"] = 1.0;
+    @show ops
+    @show defined(ops, "J")
+    @show isreal(ops)
+    @show isexplicit(ops)
+end
+# --8<-- [end:opsum]
+
+# --8<-- [start:coupling]
+cpl = Coupling("J")
+@show type(cpl)
+@show isexplicit(cpl)
+
+cpl = Coupling(1.23)
+@show ismatrix(cpl)
+@show convert(Float64, cpl)
+@show convert(ComplexF64, cpl)
+
+cpl = Coupling([1 2; -2 1])
+@show ismatrix(cpl)
+@show isreal(cpl)
+@show convert(Matrix{Float64}, cpl)
+@show convert(Matrix{ComplexF64}, cpl)
+# --8<-- [end:coupling]

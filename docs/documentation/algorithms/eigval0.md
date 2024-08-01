@@ -8,7 +8,7 @@ eigval0(bondlist, block; precision, max_iterations, force_complex, random_seed)
 
 Computes the groud state energy of an operator on a block.
 
-**Source** [sparse_diag.hpp](https://github.com/awietek/xdiag/blob/master/xdiag/algorithms/sparse_diag.hpp)
+**Source** [sparse_diag.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/sparse_diag.hpp)
 
 ## Parameters
 

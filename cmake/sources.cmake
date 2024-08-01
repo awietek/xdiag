@@ -133,9 +133,22 @@ set(XDIAG_DISTRIBUTED_SOURCES
 
 set(XDIAG_JULIA_SOURCES
   xdiagjl.cpp
-  operators.cpp
-  utils.cpp
-  blocks.cpp
-  matrix.cpp
-  symmetries.cpp
+  utils/armadillo.cpp
+  algebra/matrix.cpp
+  algorithms/sparse_diag.cpp
+  blocks/spinhalf.cpp
+  blocks/tj.cpp
+  blocks/electron.cpp
+  operators/coupling.cpp
+  operators/op.cpp
+  operators/opsum.cpp
+  # states/create_state.cpp
+  # states/fill.cpp
+  # states/random_state.cpp
+  # states/product_state.cpp
+  states/state.cpp
+  utils/utils.cpp
+  symmetries/permutation.cpp
+  symmetries/permutation_group.cpp
+  symmetries/representation.cpp
 )

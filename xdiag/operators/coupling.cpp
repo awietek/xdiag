@@ -2,6 +2,7 @@
 
 namespace xdiag {
 
+Coupling::Coupling(const char* value) : value_(std::string(value)) {}
 Coupling::Coupling(std::string value) : value_(value) {}
 Coupling::Coupling(double value) : value_(value) {}
 Coupling::Coupling(complex value) : value_(value) {}
@@ -103,11 +104,11 @@ template <> arma::cx_mat Coupling::as<arma::cx_mat>() const try {
 
 std::string Coupling::type() const {
   return std::visit(overload{
-                        [](std::string const &) { return "std::string"; },
+                        [](std::string const &) { return "string"; },
                         [](double const &) { return "double"; },
                         [](complex const &) { return "complex"; },
-                        [](arma::mat const &) { return "arma::mat"; },
-                        [](arma::cx_mat const &) { return "arma::cx_mat"; },
+                        [](arma::mat const &) { return "mat"; },
+                        [](arma::cx_mat const &) { return "cx_mat"; },
                     },
                     value_);
 }
@@ -338,7 +339,17 @@ Coupling operator/(Coupling const &x, complex scalar) try {
 }
 
 std::ostream &operator<<(std::ostream &out, Coupling const &cpl) {
-  std::visit([&out](auto &&val) { out << val; }, cpl.value());
+  std::visit(
+      overload{[&out](std::string val) { out << val; },
+               [&out](double val) { out << fmt::format("{:.3e}", val); },
+               [&out](complex val) {
+                 double r = std::real(val);
+                 double i = std::imag(val);
+                 out << fmt::format("({:.3e},{:.3e})", r, i);
+               },
+               [&out](arma::mat const &mat) { mat.brief_print(out); },
+               [&out](arma::cx_mat const &mat) { mat.brief_print(out); }},
+      cpl.value());
   return out;
 }
 std::string to_string(Coupling const &cpl) { return to_string_generic(cpl); }

@@ -110,16 +110,16 @@ std::ostream &operator<<(std::ostream &out, tJ const &block) {
     out << "  n_dn     : not conserved\n";
   }
   if (block.permutation_group()) {
-    out << "  group    : defined with ID "
-        << random::hash(block.permutation_group()) << "\n";
-    out << "  irrep    : defined with ID " << random::hash(block.irrep())
-        << "\n";
+    out << "  group    : defined with ID " << std::hex
+        << random::hash(block.permutation_group()) << std::dec << "\n";
+    out << "  irrep    : defined with ID " << std::hex
+        << random::hash(block.irrep()) << std::dec << "\n";
   }
   std::stringstream ss;
   ss.imbue(std::locale("en_US.UTF-8"));
   ss << block.size();
   out << "  dimension: " << ss.str() << "\n";
-  out << "  ID       : " << random::hash(block) << "\n";
+  out << "  ID       : " << std::hex << random::hash(block) << std::dec << "\n";
   return out;
 }
 std::string to_string(tJ const &block) { return to_string_generic(block); }

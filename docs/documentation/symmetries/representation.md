@@ -2,6 +2,11 @@
 title: Representation
 ---
 
+A (1D) irreducible representation of a finite group.
+
+**Source** [representation.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/symmetries/representation.hpp)
+
+
 ## Constructors
 
 Creates a Representation from a vector of complex numbers
@@ -18,7 +23,7 @@ Creates a Representation from a vector of complex numbers
 
 ## Methods
 
-??? method "size"
+!!! method "size"
 	Returns the size of the Representation, i.e. the number of characters.
 
 	=== "Julia"
@@ -32,7 +37,7 @@ Creates a Representation from a vector of complex numbers
 		```
 
 
-??? method "isreal"
+!!! method "isreal"
 	Returns the whether or not the Representation is real, I.E. the characters are real numbers and do not have an imaginary part.
 
 	=== "Julia"
@@ -45,7 +50,7 @@ Creates a Representation from a vector of complex numbers
         bool isreal(double precision = 1e-12) const;
 		```
 
-??? method ""*" operator"
+!!! method ""*" operator"
 
 	Multiplies two Representations by overloading the `*` operator.
 
@@ -70,5 +75,3 @@ Creates a Representation from a vector of complex numbers
 	```c++
 	--8<-- "examples/usage_examples/main.cpp:Representation"
 	```
-
-**Source** [representation.hpp](https://github.com/awietek/xdiag/blob/master/xdiag/symmetries/representation.hpp)

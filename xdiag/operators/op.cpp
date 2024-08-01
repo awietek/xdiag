@@ -8,14 +8,14 @@
 
 namespace xdiag {
 
-Op::Op(std::string type, Coupling coupling,
+Op::Op(std::string type, Coupling const &coupling,
        std::vector<int64_t> const &sites) try
     : type_(type), coupling_(coupling), sites_(sites) {
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
-Op::Op(std::string type, Coupling coupling, int64_t site) try
+Op::Op(std::string type, Coupling const &coupling, int64_t site) try
     : type_(type), coupling_(coupling), sites_({site}) {
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
@@ -150,11 +150,20 @@ std::vector<int64_t> common_sites(Op const &b1, Op const &b2) {
 }
 
 std::ostream &operator<<(std::ostream &out, Op const &op) {
-  out << op.type() << " " << op.coupling() << " ";
-  for (int64_t site : op.sites()) {
-    out << site << " ";
+  if (op.ismatrix()) {
+    out << op.type() << " ";
+    for (int64_t site : op.sites()) {
+      out << site << " ";
+    }
+    out << "\n";
+    out << op.coupling();
+  } else {
+    out << op.type() << " " << op.coupling() << " ";
+    for (int64_t site : op.sites()) {
+      out << site << " ";
+    }
+    out << "\n";
   }
-  out << "\n";
   return out;
 }
 

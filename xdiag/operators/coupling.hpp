@@ -12,6 +12,7 @@ public:
   using variant_t =
       std::variant<std::string, double, complex, arma::mat, arma::cx_mat>;
   Coupling() = default;
+  explicit Coupling(const char* value);
   explicit Coupling(std::string value);
   explicit Coupling(double value);
   explicit Coupling(complex value);

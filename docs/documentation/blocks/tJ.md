@@ -4,7 +4,7 @@ title: tJ
 
 Representation of a block in a  $t-J$ type Hilbert space. 
 
-**Source** [tj.hpp](https://github.com/awietek/xdiag/blob/master/xdiag/blocks/tj/tj.hpp)
+**Source** [tj.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/blocks/tj.hpp)
 
 ## Constructors
 
@@ -35,7 +35,7 @@ Representation of a block in a  $t-J$ type Hilbert space.
 ## Methods
 
 
-??? method "n_sites"
+!!! method "n_sites"
 
 	Returns the number of sites of the block.
 
@@ -49,7 +49,7 @@ Representation of a block in a  $t-J$ type Hilbert space.
 		int64_t n_sites() const
 		```
 
-??? method "size"
+!!! method "size"
 	Returns the size of the block, i.e. its dimension.
 
 	=== "Julia"
@@ -62,7 +62,7 @@ Representation of a block in a  $t-J$ type Hilbert space.
 		int64_t size() const;
 		```
 		
-??? method "isreal"
+!!! method "isreal"
 	Returns whether the block can be used with real arithmetic. 
 	Complex arithmetic is needed when a
 	[Representation](../symmetries/representation.md) is genuinely complex.

@@ -11,7 +11,7 @@ Creates the full matrix representation of a given [BondList](../operators/bondli
 
 In Julia, depending on whether a real/complex matrix is generated also a  real/complex matrix is returned. The C++ version has to return a fixed type. If a real matrix is desired, use the function `matrix`. If a complex matrix is desired, use the function `matrixC`.
 
-**Source** [matrix.hpp](https://github.com/awietek/xdiag/blob/master/xdiag/algebra/matrix.hpp)
+**Source** [matrix.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/algebra/matrix.hpp)
 
 ## Parameters
 

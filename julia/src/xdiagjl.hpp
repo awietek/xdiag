@@ -21,7 +21,6 @@
   } catch (xdiag::Error const &e) {                                            \
     xdiag::error_trace(e);                                                     \
     throw(std::runtime_error("Error occurred in XDiag C++ core library"));     \
-    return decltype(CMD)();                                                    \
   }
 
 #define JULIA_XDIAG_CALL_ASSIGN(LVALUE, CMD)                                   \
@@ -30,5 +29,4 @@
   } catch (xdiag::Error const &e) {                                            \
     xdiag::error_trace(e);                                                     \
     throw(std::runtime_error("Error occurred in XDiag C++ core library"));     \
-    return decltype(CMD)();                                                    \
   }
