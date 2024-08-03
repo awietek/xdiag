@@ -17,8 +17,9 @@ public:
   std::string const &operator[](int64_t i) const;
   std::string &operator[](int64_t i);
 
-  int64_t n_sites() const;
-  void operator<<(std::string l);
+  int64_t size() const;
+  void push_back(std::string l);
+
   iterator_t begin() const;
   iterator_t end() const;
 

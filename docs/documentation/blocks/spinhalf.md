@@ -52,8 +52,22 @@ Representation of a block in a spin $S=1/2$  Hilbert space.
 		int64_t n_sites() const
 		```
 
+!!! method "dim"
+	Returns the dimension of the block.
+
+	=== "Julia"
+		```julia
+		dim(block::Spinhalf)
+		```
+
+	=== "C++"	
+		```c++
+		int64_t dim() const;
+		```
+
+
 !!! method "size"
-	Returns the size of the block, i.e. its dimension.
+	Returns the size of the block locally. Same as "dim" for non-distributed Blocks but different for distributed blocks.
 
 	=== "Julia"
 		```julia

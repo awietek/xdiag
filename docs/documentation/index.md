@@ -32,6 +32,12 @@ title: Overview
 | [Coupling](operators/coupling.md) | Describes the coupling of a local operator       | :simple-cplusplus: :simple-julia: |
 
 
+## States
+|                          |                                                    |                                   |
+|:-------------------------|:---------------------------------------------------|----------------------------------:|
+| [State](states/state.md) | A generic state describing a quantum wave function | :simple-cplusplus: :simple-julia: |
+
+
 ## Symmetries
 |                                                     |                                                     |                                   |
 |:----------------------------------------------------|:----------------------------------------------------|----------------------------------:|

@@ -34,7 +34,7 @@ void fill(State &state, RandomState const &rstate, int64_t col) try {
 }
 
 void fill(State &state, ProductState const &pstate, int64_t col) try {
-  if (state.n_sites() != pstate.n_sites()) {
+  if (state.size() != pstate.size()) {
     XDIAG_THROW("State and ProductState do not have the same number of sites");
   } else if (col >= state.n_cols()) {
     XDIAG_THROW("Column index larger than number of columns in State");

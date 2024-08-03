@@ -240,3 +240,21 @@ cpl = Coupling([1 2; -2 1])
 @show convert(Matrix{Float64}, cpl)
 @show convert(Matrix{ComplexF64}, cpl)
 # --8<-- [end:coupling]
+
+# --8<-- [start:state]
+block = Spinhalf(2)
+psi1 = State(block, [1.0, 2.0, 3.0, 4.0])
+@show psi1
+display(vector(psi1))
+make_complex!(psi1)
+display(vector(psi1))
+
+psi2 = State(block, real=false, n_cols=3)
+@show psi2
+display(matrix(psi2))
+
+psi3 = State(block, [1.0+4.0im, 2.0+3.0im, 3.0+2.0im, 4.0+1.0im])
+display(vector(psi3))
+display(vector(real(psi3)))
+display(vector(imag(psi3)))
+# --8<-- [end:state]

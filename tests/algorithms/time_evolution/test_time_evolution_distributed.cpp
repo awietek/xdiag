@@ -47,9 +47,9 @@ TEST_CASE("time_evolution_distributed", "[time_evolution]") try {
   for (int x = 0; x < L; ++x) {
     for (int y = 0; y < L; ++y) {
       if (((x + y) % 2) == 0) {
-        pstate << "Dn";
+        pstate.push_back("Dn");
       } else {
-        pstate << "Up";
+        pstate.push_back("Up");
       }
     }
   }

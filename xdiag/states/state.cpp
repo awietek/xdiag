@@ -145,7 +145,6 @@ State State::real() const try {
   if (isreal()) {
     return (*this);
   } else {
-    // Return a State with zero values
     double *ptr = storage_.data();
     return std::visit(
         [&](auto &&block) { return State(block, ptr, n_cols_, 2); }, block_);
@@ -157,9 +156,12 @@ State State::real() const try {
 
 State State::imag() const try { // TODO: DOES THIS DO WHAT IT"S SUPPOSED TO?
   if (isreal()) {
-    return (*this);
-  } else {
     return State(block_, true, n_cols_);
+  } else {
+    double *ptr = storage_.data();
+    return std::visit(
+        [&](auto &&block) { return State(block, ptr + 1, n_cols_, 2); },
+        block_);
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
@@ -279,7 +281,6 @@ complex *State::colptrC(int64_t col) {
   }
   return memptrC() + col * n_rows_;
 }
-
 
 template State::State(Spinhalf const &, bool, int64_t);
 template State::State(tJ const &, bool, int64_t);

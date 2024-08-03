@@ -14,8 +14,9 @@ std::string const &ProductState::operator[](int64_t i) const {
 }
 std::string &ProductState::operator[](int64_t i) { return local_states_[i]; }
 
-int64_t ProductState::n_sites() const { return local_states_.size(); }
-void ProductState::operator<<(std::string l) { local_states_.push_back(l); }
+void ProductState::push_back(std::string l) { local_states_.push_back(l); }
+int64_t ProductState::size() const { return local_states_.size(); }
+
 ProductState::iterator_t ProductState::begin() const {
   return local_states_.begin();
 }
@@ -31,7 +32,7 @@ bool ProductState::operator!=(ProductState const &rhs) const {
 }
 
 std::ostream &operator<<(std::ostream &out, ProductState const &state) {
-  for (int64_t i = state.n_sites() - 1; i >= 0; --i) {
+  for (int64_t i = state.size() - 1; i >= 0; --i) {
     out << state[i] << " ";
   }
   out << "\n";
@@ -42,7 +43,7 @@ std::string to_string(ProductState const &state, std::string format) try {
     return to_string_generic(state);
   } else if (format == "fancy") {
     std::stringstream ss;
-    for (int64_t i = state.n_sites() - 1; i >= 0; --i) {
+    for (int64_t i = state.size() - 1; i >= 0; --i) {
       std::string s = state[i];
       if (s == "Up") {
         // const char *s = u8"\u2B61";
@@ -76,7 +77,7 @@ std::string to_string(ProductState const &state, std::string format) try {
 
 template <typename bit_t>
 void to_product_state_spinhalf(bit_t spins, ProductState &pstate) {
-  for (int64_t i = 0; i < pstate.n_sites(); ++i) {
+  for (int64_t i = 0; i < pstate.size(); ++i) {
     if (spins & 1) {
       pstate[i] = "Up";
     } else {
@@ -90,7 +91,7 @@ template void to_product_state_spinhalf(uint64_t, ProductState &);
 
 template <typename bit_t>
 void to_product_state_tj(bit_t ups, bit_t dns, ProductState &pstate) {
-  for (int64_t i = 0; i < pstate.n_sites(); ++i) {
+  for (int64_t i = 0; i < pstate.size(); ++i) {
     if (ups & 1) {
       pstate[i] = "Up";
     } else {
@@ -111,7 +112,7 @@ template void to_product_state_tj(uint64_t ups, uint64_t dns,
 
 template <typename bit_t>
 void to_product_state_electron(bit_t ups, bit_t dns, ProductState &pstate) {
-  for (int64_t i = 0; i < pstate.n_sites(); ++i) {
+  for (int64_t i = 0; i < pstate.size(); ++i) {
     if (ups & 1) {
       if (dns & 1) {
         pstate[i] = "UpDn";
@@ -137,7 +138,7 @@ template void to_product_state_electron(uint64_t ups, uint64_t dns,
 template <typename bit_t>
 bit_t to_bits_spinhalf(ProductState const &pstate) try {
   bit_t spins = 0;
-  for (int64_t s = 0; s < pstate.n_sites(); ++s) {
+  for (int64_t s = 0; s < pstate.size(); ++s) {
     std::string val = pstate[s];
     if (val == "Up") {
       spins |= ((bit_t)1 << s);
@@ -159,7 +160,7 @@ template <typename bit_t>
 std::pair<bit_t, bit_t> to_bits_tj(ProductState const &pstate) try {
   bit_t ups = 0;
   bit_t dns = 0;
-  for (int64_t s = 0; s < pstate.n_sites(); ++s) {
+  for (int64_t s = 0; s < pstate.size(); ++s) {
     std::string val = pstate[s];
     if (val == "Up") {
       ups |= ((bit_t)1 << s);
@@ -182,7 +183,7 @@ template <typename bit_t>
 std::pair<bit_t, bit_t> to_bits_electron(ProductState const &pstate) try {
   bit_t ups = 0;
   bit_t dns = 0;
-  for (int64_t s = 0; s < pstate.n_sites(); ++s) {
+  for (int64_t s = 0; s < pstate.size(); ++s) {
     std::string val = pstate[s];
     if (val == "Up") {
       ups |= ((bit_t)1 << s);

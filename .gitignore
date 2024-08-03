@@ -1,3 +1,4 @@
+cmake_commands.sh
 build
 install
 julia/products

@@ -260,7 +260,30 @@ XDIAG_SHOW(cpl.as<arma::cx_mat>());
 // --8<-- [end:coupling]
 } 
 
-// clang-format on
+
+
+{
+// --8<-- [start:state]
+auto block = Spinhalf(2);
+auto psi1 = State(block, arma::vec("1.0 2.0 3.0 4.0"));
+XDIAG_SHOW(psi1);
+XDIAG_SHOW(psi1.vector());
+psi1.make_complex();
+XDIAG_SHOW(psi1.vectorC());
+
+auto psi2 = State(block, false, 3);
+XDIAG_SHOW(psi2);
+XDIAG_SHOW(psi2.matrixC());
+
+auto psi3 = State(block, arma::cx_vec(arma::vec("1.0 2.0 3.0 4.0"),
+				      arma::vec("4.0 3.0 2.0 1.0")));
+XDIAG_SHOW(psi3.vectorC());
+XDIAG_SHOW(psi3.real().vector());
+XDIAG_SHOW(psi3.imag().vector());
+// --8<-- [end:state]
+}
+
+  // clang-format on
 
 } catch (Error e) {
   error_trace(e);
