@@ -145,7 +145,7 @@ set(XDIAG_JULIA_SOURCES
   # states/create_state.cpp
   # states/fill.cpp
   # states/random_state.cpp
-  # states/product_state.cpp
+  states/product_state.cpp
   states/state.cpp
   utils/utils.cpp
   symmetries/permutation.cpp

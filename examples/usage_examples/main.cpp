@@ -281,9 +281,28 @@ XDIAG_SHOW(psi3.vectorC());
 XDIAG_SHOW(psi3.real().vector());
 XDIAG_SHOW(psi3.imag().vector());
 // --8<-- [end:state]
+
+
+// --8<-- [start:product_state]
+auto pstate = ProductState({"Up", "Dn", "Emp", "UpDn"});
+for (auto s : pstate) {
+  Log("{}", s);
+}
+XDIAG_SHOW(to_string(pstate));
+
+pstate = ProductState();
+pstate.push_back("Dn");
+pstate.push_back("Up");
+pstate.push_back("Dn");
+XDIAG_SHOW(pstate.n_sites());
+for (auto s : pstate) {
+  Log("{}", s);
+}
+XDIAG_SHOW(to_string(pstate));
+// --8<-- [end:product_state]
 }
 
-  // clang-format on
+// clang-format on
 
 } catch (Error e) {
   error_trace(e);

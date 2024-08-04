@@ -258,3 +258,22 @@ display(vector(psi3))
 display(vector(real(psi3)))
 display(vector(imag(psi3)))
 # --8<-- [end:state]
+
+
+# --8<-- [start:product_state]
+pstate = ProductState(["Up", "Dn", "Emp", "UpDn"])
+for s in pstate
+    @show s
+end
+@show pstate
+
+pstate = ProductState()
+push!(pstate, "Dn")
+push!(pstate, "Up")
+push!(pstate, "Dn")
+@show n_sites(pstate)
+for s in pstate
+    @show s
+end
+@show pstate
+# --8<-- [end:product_state]

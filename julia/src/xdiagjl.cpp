@@ -13,8 +13,9 @@
 #include <julia/src/utils/utils.hpp>
 
 #include <julia/src/states/state.hpp>
+#include <julia/src/states/product_state.hpp>
+
 // #include <julia/src/states/random_state.hpp>
-// #include <julia/src/states/product_state.hpp>
 // #include <julia/src/states/create_state.hpp>
 // #include <julia/src/states/fill.hpp>
 
@@ -43,6 +44,9 @@ JLCXX_MODULE define_julia_module(jlcxx::Module &mod) {
   julia::define_permutation_group(mod);
   julia::define_representation(mod);
 
+  // ProductState
+  julia::define_product_state(mod);
+  
   // Blocks
   julia::define_spinhalf(mod);
   julia::define_tj(mod);

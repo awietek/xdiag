@@ -18,6 +18,7 @@ public:
   std::string &operator[](int64_t i);
 
   int64_t size() const;
+  int64_t n_sites() const;
   void push_back(std::string l);
 
   iterator_t begin() const;

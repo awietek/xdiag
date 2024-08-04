@@ -33,9 +33,10 @@ title: Overview
 
 
 ## States
-|                          |                                                    |                                   |
-|:-------------------------|:---------------------------------------------------|----------------------------------:|
-| [State](states/state.md) | A generic state describing a quantum wave function | :simple-cplusplus: :simple-julia: |
+|                                         |                                                    |                                   |
+|:----------------------------------------|:---------------------------------------------------|----------------------------------:|
+| [State](states/state.md)                | A generic state describing a quantum wave function | :simple-cplusplus: :simple-julia: |
+| [ProductState](states/product_state.md) | A product state of local configurations            | :simple-cplusplus: :simple-julia: |
 
 
 ## Symmetries

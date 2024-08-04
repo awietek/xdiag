@@ -16,6 +16,7 @@ std::string &ProductState::operator[](int64_t i) { return local_states_[i]; }
 
 void ProductState::push_back(std::string l) { local_states_.push_back(l); }
 int64_t ProductState::size() const { return local_states_.size(); }
+int64_t ProductState::n_sites() const { return local_states_.size(); }
 
 ProductState::iterator_t ProductState::begin() const {
   return local_states_.begin();
