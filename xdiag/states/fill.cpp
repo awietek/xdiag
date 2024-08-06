@@ -13,6 +13,47 @@
 
 namespace xdiag {
 
+template <typename coeff_t, class block_t, class coeff_f>
+void fill(block_t const &block, arma::Col<coeff_t> &vec, coeff_f coeff) try {
+  int64_t idx = 0;
+  for (auto const &pstate : block) {
+    vec(idx++) = coeff(pstate);
+  }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+
+void fill(State &state, std::function<double(ProductState const &)> coeff_f,
+          int64_t col) try {
+  auto const &block = state.block();
+  if (state.isreal()) {
+    arma::vec v = state.vector(col, false);
+    std::visit([&](auto &&block) { fill(block, v, coeff_f); }, block);
+  } else {
+    arma::cx_vec v = state.vectorC(col, false);
+    auto coeff_f_c = [&](ProductState const &pstate) {
+      return (complex)coeff_f(pstate);
+    };
+    std::visit([&](auto &&block) { fill(block, v, coeff_f_c); }, block);
+  }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+
+void fill(State &state, std::function<complex(ProductState const &)> coeff_f,
+          int64_t col) try {
+  auto const &block = state.block();
+  if (state.isreal()) {
+    XDIAG_THROW("Cannot fill real state with complex coefficients. Maybe use "
+                "\"make_complex\" first?");
+  } else {
+    arma::cx_vec v = state.vectorC(col, false);
+    std::visit([&](auto &&block) { fill(block, v, coeff_f); }, block);
+  }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+
 void fill(State &state, RandomState const &rstate, int64_t col) try {
   int64_t seed = rstate.seed();
   int64_t seed_modified =
@@ -28,24 +69,6 @@ void fill(State &state, RandomState const &rstate, int64_t col) try {
   if (rstate.normalized()) {
     double nrm = norm(state);
     state /= nrm;
-  }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
-
-void fill(State &state, ProductState const &pstate, int64_t col) try {
-  if (state.n_sites() != pstate.size()) {
-    XDIAG_THROW("State and ProductState do not have the same number of sites");
-  } else if (col >= state.n_cols()) {
-    XDIAG_THROW("Column index larger than number of columns in State");
-  }
-  auto const &block = state.block();
-  if (state.isreal()) {
-    arma::vec v = state.vector(col, false);
-    std::visit([&](auto &&block) { fill(block, v, pstate); }, block);
-  } else {
-    arma::cx_vec v = state.vectorC(col, false);
-    std::visit([&](auto &&block) { fill(block, v, pstate); }, block);
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
@@ -80,20 +103,50 @@ void fill(block_t const &block, arma::Col<coeff_t> &vec,
   XDIAG_RETHROW(e);
 }
 
-template void fill(Spinhalf const &, arma::vec &, ProductState const &);
-template void fill(Spinhalf const &, arma::cx_vec &, ProductState const &);
-template void fill(tJ const &, arma::vec &, ProductState const &);
-template void fill(tJ const &, arma::cx_vec &, ProductState const &);
-template void fill(Electron const &, arma::vec &, ProductState const &);
-template void fill(Electron const &, arma::cx_vec &, ProductState const &);
-#ifdef XDIAG_USE_MPI
-template void fill(SpinhalfDistributed const &, arma::vec &,
-                   ProductState const &);
-template void fill(SpinhalfDistributed const &, arma::cx_vec &,
-                   ProductState const &);
-template void fill(tJDistributed const &, arma::vec &, ProductState const &);
-template void fill(tJDistributed const &, arma::cx_vec &, ProductState const &);
-#endif
+void fill(State &state, ProductState const &pstate, int64_t col) try {
+  if (state.n_sites() != pstate.size()) {
+    XDIAG_THROW("State and ProductState do not have the same number of sites");
+  } else if (col >= state.n_cols()) {
+    XDIAG_THROW("Column index larger than number of columns in State");
+  }
+  auto const &block = state.block();
+  if (state.isreal()) {
+    arma::vec v = state.vector(col, false);
+    std::visit([&](auto &&block) { fill(block, v, pstate); }, block);
+  } else {
+    arma::cx_vec v = state.vectorC(col, false);
+    std::visit([&](auto &&block) { fill(block, v, pstate); }, block);
+  }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
 
+void fill(State &state, GPWF const &gpwf, int64_t col) try {
+  if (state.n_sites() != gpwf.n_sites()) {
+    XDIAG_THROW("State and GPWF do not have the same number of sites");
+  }
+  auto const &block = state.block();
+#ifdef XDIAG_USE_MPI
+  if (!std::holds_alternative<Spinhalf>(block) ||
+      !std::holds_alternative<SpinhalfDistributed>(block)) {
+#else
+  if (!std::holds_alternative<Spinhalf>(block)) {
+#endif
+    XDIAG_THROW("GPWF is currently only defined for \"Spinhalf\" type blocks");
+  }
+
+  if (gpwf.isreal()) {
+    std::function<double(ProductState const &)> f =
+        [&](ProductState const &pstate) { return gpwf.coefficient(pstate); };
+    fill(state, f, col);
+  } else {
+    std::function<complex(ProductState const &)> f =
+        [&](ProductState const &pstate) { return gpwf.coefficientC(pstate); };
+    fill(state, f, col);
+  }
+
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
 
 } // namespace xdiag

@@ -2,30 +2,41 @@
 
 #include <xdiag/common.hpp>
 #include <xdiag/extern/armadillo/armadillo>
+#include <xdiag/states/product_state.hpp>
 
 namespace xdiag {
 
-template <class coeff_t> class GPWF {
+class GPWF {
 public:
-  GPWF(int64_t n_sites, arma::Mat<coeff_t> onebody_wfs, int64_t n_up = -1);
-  int64_t n_sites() const { return n_sites_; }
-  int64_t n_up() const { return n_up_; }
-  int64_t n_dn() const { return n_dn_; }
+  GPWF() = default;
+  GPWF(int64_t n_sites, arma::mat onebody_wfs, int64_t n_up = -1);
+  GPWF(int64_t n_sites, arma::cx_mat onebody_wfs, int64_t n_up = -1);
 
-  coeff_t coefficient(uint64_t state);
+  int64_t n_sites() const;
+  int64_t n_up() const;
+  bool isreal() const;
 
-  bool operator==(GPWF<coeff_t> const &other);
+  double coefficient(ProductState const &state) const;
+  complex coefficientC(ProductState const &state) const;
 
-  arma::Mat<coeff_t> onebody_wfs_up() const { return onebody_wfs_up_; }
-  arma::Mat<coeff_t> onebody_wfs_dn() const { return onebody_wfs_dn_; }
+  bool operator==(GPWF const &other) const;
+  bool operator!=(GPWF const &other) const;
 
 private:
   int64_t n_sites_;
   int64_t n_up_;
   int64_t n_dn_;
-  arma::Mat<coeff_t> work_matrix_;
-  arma::Mat<coeff_t> onebody_wfs_up_;
-  arma::Mat<coeff_t> onebody_wfs_dn_;
+  bool isreal_;
+
+  // Real version
+  mutable arma::mat work_matrix_;
+  arma::mat onebody_wfs_up_;
+  arma::mat onebody_wfs_dn_;
+
+  // Complex version
+  mutable arma::cx_mat work_matrix_c_;
+  arma::cx_mat onebody_wfs_up_c_;
+  arma::cx_mat onebody_wfs_dn_c_;
 };
 
 } // namespace xdiag
