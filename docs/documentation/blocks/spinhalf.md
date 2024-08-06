@@ -72,6 +72,10 @@ An Spinhalf block can be iterated over, where at each iteration a [ProductState]
 		```c++
 		int64_t index(ProductState const &pstate) const;
 		```
+		
+	!!! warning "1-indexing"
+		In the C++ version, the index count starts from "0" whereas in Julia the index count starts from "1".
+
 
 
 !!! method "n_sites"
