@@ -53,7 +53,7 @@ XDIAG_SHOW(block);
 // with Sz conservation
 auto block_sz = Spinhalf(N, nup);
 XDIAG_SHOW(block_sz);
-
+ 
 // with symmetries, without Sz
 Permutation p1 = {0, 1, 2, 3};
 Permutation p2 = {1, 2, 3, 0};
@@ -70,6 +70,13 @@ XDIAG_SHOW(block_sym_sz);
 
 XDIAG_SHOW(block_sym_sz.n_sites());
 XDIAG_SHOW(block_sym_sz.size());
+
+// Iteration
+for (auto pstate : block_sym_sz) {
+  Log("{} {}", to_string(pstate), block_sym_sz.index(pstate));
+}
+XDIAG_SHOW(block_sym_sz.permutation_group());
+XDIAG_SHOW(block_sym_sz.irrep());
 // --8<-- [end:Spinhalf]
 }
 
@@ -95,6 +102,13 @@ XDIAG_SHOW(block_sym);
 
 XDIAG_SHOW(block_sym.n_sites());
 XDIAG_SHOW(block_sym.size());
+
+// Iteration
+for (auto pstate : block_sym) {
+  Log("{} {}", to_string(pstate), block_sym.index(pstate));
+}
+XDIAG_SHOW(block_sym.permutation_group());
+XDIAG_SHOW(block_sym.irrep());
 // --8<-- [end:tJ]
 }
 
@@ -128,6 +142,13 @@ XDIAG_SHOW(block_sym_np);
 
 XDIAG_SHOW(block_sym_np.n_sites());
 XDIAG_SHOW(block_sym_np.size());
+
+// Iteration
+for (auto pstate : block_sym_np) {
+  Log("{} {}", to_string(pstate), block_sym_np.index(pstate));
+}
+XDIAG_SHOW(block_sym_np.permutation_group());
+XDIAG_SHOW(block_sym_np.irrep());
 // --8<-- [end:Electron]
 
 {

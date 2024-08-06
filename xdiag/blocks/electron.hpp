@@ -28,13 +28,13 @@ public:
   int64_t n_dn() const;
   PermutationGroup const &permutation_group() const;
   Representation const &irrep() const;
+  bool isreal(double precision = 1e-12) const;
 
   int64_t dim() const;
   int64_t size() const;
   iterator_t begin() const;
   iterator_t end() const;
   int64_t index(ProductState const &pstate) const;
-  bool isreal(double precision = 1e-12) const;
 
   bool operator==(Electron const &rhs) const;
   bool operator!=(Electron const &rhs) const;

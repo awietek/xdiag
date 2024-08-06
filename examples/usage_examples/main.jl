@@ -47,16 +47,23 @@ p2 = Permutation([1, 2, 3, 0])
 p3 = Permutation([2, 3, 0, 1])
 p4 = Permutation([3, 0, 1, 2])
 group = PermutationGroup([p1, p2, p3, p4])
-irrep = Representation([1, -1, 1, -1])
-block_sym = Spinhalf(N, group, irrep)
+rep = Representation([1, -1, 1, -1])
+block_sym = Spinhalf(N, group, rep)
 @show block_sym
 
 # with symmetries and Sz
-block_sym_sz = Spinhalf(N, nup, group, irrep)
+block_sym_sz = Spinhalf(N, nup, group, rep)
 @show block_sym_sz
 
 @show n_sites(block_sym_sz)
 @show size(block_sym_sz)
+
+# Iteration
+for pstate in block_sym_sz
+    @show pstate, index(block_sym_sz, pstate)
+end
+@show permutation_group(block_sym_sz)
+@show irrep(block_sym_sz)
 # --8<-- [end:Spinhalf]
 
 # --8<-- [start:tJ]
@@ -74,12 +81,19 @@ p2 = Permutation([1, 2, 3, 0])
 p3 = Permutation([2, 3, 0, 1])
 p4 = Permutation([3, 0, 1, 2])
 group = PermutationGroup([p1, p2, p3, p4])
-irrep = Representation([1, -1, 1, -1])
-block_sym = tJ(N, nup, ndn, group, irrep)
+rep = Representation([1, -1, 1, -1])
+block_sym = tJ(N, nup, ndn, group, rep)
 @show block_sym
 
 @show n_sites(block_sym)
 @show size(block_sym)
+
+# Iteration
+for pstate in block_sym
+    @show pstate, index(block_sym, pstate)
+end
+@show permutation_group(block_sym)
+@show irrep(block_sym)
 # --8<-- [end:tJ]
 
 
@@ -102,16 +116,23 @@ p2 = Permutation([1, 2, 3, 0])
 p3 = Permutation([2, 3, 0, 1])
 p4 = Permutation([3, 0, 1, 2])
 group = PermutationGroup([p1, p2, p3, p4])
-irrep = Representation([1, -1, 1, -1])
-block_sym = Electron(N, group, irrep)
+rep = Representation([1, -1, 1, -1])
+block_sym = Electron(N, group, rep)
 @show block_sym
 
 # with symmetries and number conservation
-block_sym_np = Electron(N, nup, ndn, group, irrep)
+block_sym_np = Electron(N, nup, ndn, group, rep)
 @show block_sym_np
 
 @show n_sites(block_sym_np)
 @show size(block_sym_np)
+
+# Iteration
+for pstate in block_sym_np
+    @show pstate, index(block_sym_np, pstate)
+end
+@show permutation_group(block_sym_np)
+@show irrep(block_sym_np)
 # --8<-- [end:Electron]
 
 

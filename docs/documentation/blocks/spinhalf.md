@@ -35,7 +35,43 @@ Representation of a block in a spin $S=1/2$  Hilbert space.
 | irrep   | Irreducible [Representation](../symmetries/representation.md)  of the symmetry group       |   |
 
 
+## Iteration
+
+An Spinhalf block can be iterated over, where at each iteration a [ProductState](../states/product_state.md) representing the corresponding basis state is returned.
+
+=== "Julia"
+	```julia
+	block = Spinhalf(4, 2)
+	for pstate in block
+		@show pstate, index(block, pstate) 
+	end
+	```
+
+=== "C++"	
+	```c++
+    auto block = Spinhalf(4, 2);
+	for (auto pstate : block) {
+		Log("{} {}", to_string(pstate), block.index(pstate));
+	}
+	```
+	
+	
+
 ## Methods
+
+!!! method "index"
+
+	Returns the index of a given [ProductState](../states/product_state.md) in the basis of the Spinhalf block.
+
+	=== "Julia"
+		```julia
+		index(block::Spinhalf, pstate::ProductState)
+		```
+
+	=== "C++"	
+		```c++
+		int64_t index(ProductState const &pstate) const;
+		```
 
 
 !!! method "n_sites"
@@ -49,25 +85,55 @@ Representation of a block in a spin $S=1/2$  Hilbert space.
 
 	=== "C++"	
 		```c++
-		int64_t n_sites() const
+		int64_t n_sites() const;
 		```
 
-!!! method "dim"
-	Returns the dimension of the block.
+!!! method "n_up"
+
+	Returns the number of "up" spins.
 
 	=== "Julia"
 		```julia
-		dim(block::Spinhalf)
+		n_up(block::Spinhalf)
 		```
 
 	=== "C++"	
 		```c++
-		int64_t dim() const;
+		int64_t n_up() const;
+		```
+
+!!! method "permutation_group"
+
+	Returns the [PermutationGroup]("../symmetries/permutation_group.md") of the block, if defined.
+
+	=== "Julia"
+		```julia
+		permutation_group(block::Spinhalf)
+		```
+
+	=== "C++"	
+		```c++
+	    PermutationGroup permutation_group() const;
+		```
+
+
+!!! method "irrep"
+
+	Returns the [Representation]("../symmetries/representation.md") of the block, if defined.
+
+	=== "Julia"
+		```julia
+	    irrep(block::Spinhalf)
+		```
+
+	=== "C++"	
+		```c++
+	    Representation irrep() const;
 		```
 
 
 !!! method "size"
-	Returns the size of the block locally. Same as "dim" for non-distributed Blocks but different for distributed blocks.
+	Returns the size of the block, i.e. its dimension.
 
 	=== "Julia"
 		```julia
@@ -79,6 +145,19 @@ Representation of a block in a spin $S=1/2$  Hilbert space.
 		int64_t size() const;
 		```
 
+!!! method "dim"
+	Returns the dimension of the block, same as "size" for non-distributed blocks.
+
+	=== "Julia"
+		```julia
+		dim(block::Spinhalf)
+		```
+
+	=== "C++"	
+		```c++
+		int64_tdim() const;
+		```
+		
 !!! method "isreal"
 	Returns whether the block can be used with real arithmetic. 
 	Complex arithmetic is needed when a
@@ -93,6 +172,7 @@ Representation of a block in a spin $S=1/2$  Hilbert space.
 		```c++
 		int64_t isreal(double precision = 1e-12) const;
 		```
+
 
 ## Usage Example
 
