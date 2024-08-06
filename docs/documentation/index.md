@@ -33,10 +33,16 @@ title: Overview
 
 
 ## States
-|                                         |                                                    |                                   |
-|:----------------------------------------|:---------------------------------------------------|----------------------------------:|
-| [State](states/state.md)                | A generic state describing a quantum wave function | :simple-cplusplus: :simple-julia: |
-| [ProductState](states/product_state.md) | A product state of local configurations            | :simple-cplusplus: :simple-julia: |
+|                                           |                                                                   |                                   |
+|:------------------------------------------|:------------------------------------------------------------------|----------------------------------:|
+| [State](states/state.md)                  | A generic state describing a quantum wave function                | :simple-cplusplus: :simple-julia: |
+| [ProductState](states/product_state.md)   | A product state of local configurations                           | :simple-cplusplus: :simple-julia: |
+| [RandomState](states/random_state.md)     | A random state with normal distributed coefficients               | :simple-cplusplus: :simple-julia: |
+| [fill](states/fill.md)                    | Fill a state with a given model state                             | :simple-cplusplus: :simple-julia: |
+| [product](states/create_state.md#product) | Creates a filled product state                                    | :simple-cplusplus: :simple-julia: |
+| [rand](states/create_state.md#rand)       | Create a filled random state with normal distributed coefficients | :simple-cplusplus: :simple-julia: |
+| [zeros](states/create_state.md#zeros)     | Create a filled state with all zero entries                       | :simple-cplusplus: :simple-julia: |
+| [zero](states/create_state.md#zero)       | Set all coefficients of a given state to zero                     | :simple-cplusplus: :simple-julia: |
 
 
 ## Symmetries

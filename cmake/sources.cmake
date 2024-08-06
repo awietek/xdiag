@@ -142,10 +142,11 @@ set(XDIAG_JULIA_SOURCES
   operators/coupling.cpp
   operators/op.cpp
   operators/opsum.cpp
-  # states/create_state.cpp
-  # states/fill.cpp
-  # states/random_state.cpp
+  states/create_state.cpp
+  states/fill.cpp
+  states/random_state.cpp
   states/product_state.cpp
+  states/gpwf.cpp
   states/state.cpp
   utils/utils.cpp
   symmetries/permutation.cpp

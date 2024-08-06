@@ -14,10 +14,10 @@
 
 #include <julia/src/states/state.hpp>
 #include <julia/src/states/product_state.hpp>
-
-// #include <julia/src/states/random_state.hpp>
-// #include <julia/src/states/create_state.hpp>
-// #include <julia/src/states/fill.hpp>
+#include <julia/src/states/random_state.hpp>
+#include <julia/src/states/fill.hpp>
+#include <julia/src/states/gpwf.hpp>
+#include <julia/src/states/create_state.hpp>
 
 #include <julia/src/symmetries/permutation.hpp>
 #include <julia/src/symmetries/permutation_group.hpp>
@@ -54,6 +54,10 @@ JLCXX_MODULE define_julia_module(jlcxx::Module &mod) {
 
   // States
   julia::define_state(mod);
+  julia::define_random_state(mod);
+  julia::define_gpwf(mod);
+  julia::define_fill(mod);
+  julia::define_create_state(mod);
   
   // algebra
   julia::define_matrix(mod);

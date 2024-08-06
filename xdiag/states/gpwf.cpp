@@ -4,30 +4,48 @@
 
 namespace xdiag {
 
-GPWF::GPWF(int64_t n_sites, arma::mat onebody_wfs, int64_t n_up)
-    : n_sites_(n_sites), n_up_(n_up >= 0 ? n_up : n_sites / 2),
-      n_dn_(n_sites - n_up_), isreal_(true) {
+GPWF::GPWF(arma::mat const &onebody_wfs, int64_t n_up) try : isreal_(true) {
   using namespace arma;
-  work_matrix_ = mat(n_sites, n_sites, fill::zeros);
-  onebody_wfs_up_ = onebody_wfs(span(0, n_sites), span(0, n_up_));
-  onebody_wfs_dn_ = onebody_wfs(span(0, n_sites), span(n_up_, n_sites));
+
+  if (onebody_wfs.n_rows != onebody_wfs.n_cols) {
+    XDIAG_THROW("Matrix for onebody wave functions must be square");
+  }
+
+  n_sites_ = onebody_wfs.n_rows;
+  n_up_ = n_up >= 0 ? n_up : n_sites_ / 2;
+  n_dn_ = n_sites_ - n_up_;
+
+  work_matrix_ = mat(n_sites_, n_sites_, fill::zeros);
+  onebody_wfs_up_ = onebody_wfs(span(0, n_sites_), span(0, n_up_));
+  onebody_wfs_dn_ = onebody_wfs(span(0, n_sites_), span(n_up_, n_sites_));
 
   work_matrix_c_ = cx_mat();
   onebody_wfs_up_c_ = cx_mat();
   onebody_wfs_dn_c_ = cx_mat();
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
-GPWF::GPWF(int64_t n_sites, arma::cx_mat onebody_wfs, int64_t n_up)
-    : n_sites_(n_sites), n_up_(n_up >= 0 ? n_up : n_sites / 2),
-      n_dn_(n_sites - n_up_), isreal_(false) {
+GPWF::GPWF(arma::cx_mat const &onebody_wfs, int64_t n_up) try : isreal_(false) {
   using namespace arma;
+
+  if (onebody_wfs.n_rows != onebody_wfs.n_cols) {
+    XDIAG_THROW("Matrix for onebody wave functions must be square");
+  }
+
+  n_sites_ = onebody_wfs.n_rows;
+  n_up_ = n_up >= 0 ? n_up : n_sites_ / 2;
+  n_dn_ = n_sites_ - n_up_;
+
   work_matrix_ = mat();
   onebody_wfs_up_ = mat();
   onebody_wfs_dn_ = mat();
 
-  work_matrix_c_ = cx_mat(n_sites, n_sites, fill::zeros);
-  onebody_wfs_up_c_ = onebody_wfs(span(0, n_sites), span(0, n_up_));
-  onebody_wfs_dn_c_ = onebody_wfs(span(0, n_sites), span(n_up_, n_sites));
+  work_matrix_c_ = cx_mat(n_sites_, n_sites_, fill::zeros);
+  onebody_wfs_up_c_ = onebody_wfs(span(0, n_sites_), span(0, n_up_));
+  onebody_wfs_dn_c_ = onebody_wfs(span(0, n_sites_), span(n_up_, n_sites_));
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 int64_t GPWF::n_sites() const { return n_sites_; }
@@ -105,5 +123,23 @@ bool GPWF::operator==(GPWF const &rhs) const {
 }
 
 bool GPWF::operator!=(GPWF const &rhs) const { return !operator==(rhs); }
+
+std::ostream &operator<<(std::ostream &out, GPWF const &state) {
+  if (state.isreal()) {
+    out << "Gutzwiller Projected WF: \n"
+        << " ups:\n";
+    state.onebody_wfs_up_.brief_print(out);
+    out << " dns:\n";
+    state.onebody_wfs_dn_.brief_print(out);
+  } else {
+    out << "Gutzwiller Projected WF: \n"
+        << " ups:\n";
+    state.onebody_wfs_up_c_.brief_print(out);
+    out << " dns:\n";
+    state.onebody_wfs_dn_c_.brief_print(out);
+  }
+  return out;
+}
+std::string to_string(GPWF const &state) { return to_string_generic(state); }
 
 } // namespace xdiag

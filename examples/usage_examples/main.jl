@@ -298,3 +298,47 @@ for s in pstate
 end
 @show pstate
 # --8<-- [end:product_state]
+
+
+# --8<-- [start:random_state]
+block = Spinhalf(2)
+state = State(block, real=false)  # complex State
+rstate1 = RandomState(1234)
+fill(state, rstate1)
+display(vector(state))
+
+rstate2 = RandomState(4321)
+fill(state, rstate2)
+display(vector(state))
+
+fill(state, rstate1)
+display(vector(state))
+# --8<-- [end:random_state]
+
+# --8<-- [start:fill]
+block = Spinhalf(2)
+state = State(block)
+pstate = ProductState(["Up", "Dn"])
+fill(state, pstate)
+display(vector(state))
+
+rstate = RandomState(1234)
+fill(state, rstate)
+display(vector(state))
+# --8<-- [end:fill]
+
+
+# --8<-- [start:create_state]
+block = Spinhalf(2)
+state = product(block, ["Up", "Dn"])
+display(vector(state))
+
+zero(state)
+display(vector(state))
+
+state = rand(block, false, 1234, true)
+display(vector(state))
+
+state = zeros(block, true, 2)
+display(matrix(state))
+# --8<-- [end:create_state]

@@ -323,7 +323,56 @@ XDIAG_SHOW(to_string(pstate));
 // --8<-- [end:product_state]
 }
 
-// clang-format on
+
+{
+// --8<-- [start:random_state]
+auto block = Spinhalf(2);
+auto state = State(block, false);  // complex State
+auto rstate1 = RandomState(1234);
+fill(state, rstate1);
+XDIAG_SHOW(state.vectorC());
+
+auto rstate2 = RandomState(4321);
+fill(state, rstate2);
+XDIAG_SHOW(state.vectorC());
+
+fill(state, rstate1);
+XDIAG_SHOW(state.vectorC());
+// --8<-- [end:random_state]
+}
+
+{
+// --8<-- [start:fill]
+auto block = Spinhalf(2);
+auto state = State(block);  
+auto pstate = ProductState({"Up", "Dn"});
+fill(state, pstate);
+XDIAG_SHOW(state.vector());
+
+auto rstate = RandomState(1234);
+fill(state, rstate);
+XDIAG_SHOW(state.vector());
+// --8<-- [end:fill]
+}
+
+
+{
+// --8<-- [start:create_state]
+auto block = Spinhalf(2);
+auto state = product(block, {"Up", "Dn"});
+XDIAG_SHOW(state.vector());
+
+zero(state);
+XDIAG_SHOW(state.vector());
+
+state = rand(block, false, 1234, true);
+XDIAG_SHOW(state.vectorC());
+
+state = zeros(block, true, 2);
+XDIAG_SHOW(state.vector());
+// --8<-- [end:create_state]
+}
+ // clang-format on
 
 } catch (Error e) {
   error_trace(e);
