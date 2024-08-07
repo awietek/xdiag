@@ -15,7 +15,7 @@ include("common.jl")
 
 # Collection of sources required to complete build
 sources = [
-    GitSource("https://github.com/awietek/xdiag.git", "1770d1d9efc1f189d62cd2b1888911a5cbb57eb9")
+    GitSource("https://github.com/awietek/xdiag.git", "57b0afa6e2e10e19591de7e548c02a846806524a")
 ]
 
 
@@ -103,13 +103,13 @@ platforms = vcat(libjulia_platforms.(julia_versions)...)
 #     p.tags["julia_version"] == "1.9.0"), platforms)
 
 filter!(p -> (
-    # (os(p) == "linux" && libc(p) != "musl" && arch(p) == "x86_64") ||
-    # (os(p) == "linux" && libc(p) != "musl" && arch(p) == "aarch64") ||
-    # (os(p) == "macos" && arch(p) == "x86_64") ||
-    # (os(p) == "macos" && arch(p) == "aarch64") ||
+    (os(p) == "linux" && libc(p) != "musl" && arch(p) == "x86_64") ||
+    (os(p) == "linux" && libc(p) != "musl" && arch(p) == "aarch64") ||
+    (os(p) == "macos" && arch(p) == "x86_64") ||
+    (os(p) == "macos" && arch(p) == "aarch64") ||
     (os(p) == "windows" && arch(p) == "x86_64")) &&
     p.tags["julia_version"] !="1.6.3" &&
-    p.tags["julia_version"] !="1.11.0" &&
+    # p.tags["julia_version"] !="1.11.0" &&
     p.tags["julia_version"] !="1.12.0", platforms)
 
 

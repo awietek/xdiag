@@ -17,49 +17,49 @@ public:
   inline int verbosity() { return verbosity_; }
 
   template <typename... Args>
-  inline void out(const std::string &format, const Args &...args) {
-    std::cout << fmt::format(format, args...) << "\n";
+  inline void out(const std::string &formatstr, const Args &...args) {
+    std::cout << fmt::format(formatstr, args...) << "\n";
   }
 
   template <typename... Args>
-  inline void warn(const std::string &format, const Args &...args) {
-    std::cout << fmt::format(format, args...) << "\n" << std::flush;
+  inline void warn(const std::string &formatstr, const Args &...args) {
+    std::cout << fmt::format(formatstr, args...) << "\n" << std::flush;
   }
 
   template <typename... Args>
-  inline void err(const std::string &format, const Args &...args) {
-    std::cerr << fmt::format(format, args...) << "\n" << std::flush;
+  inline void err(const std::string &formatstr, const Args &...args) {
+    std::cerr << fmt::format(formatstr, args...) << "\n" << std::flush;
     exit(EXIT_FAILURE);
   }
 
   template <typename... Args>
-  inline void out(int level, const std::string &format, const Args &...args) {
+  inline void out(int level, const std::string &formatstr, const Args &...args) {
     if (level <= verbosity_)
-      std::cout << fmt::format(format, args...) << "\n";
+      std::cout << fmt::format(formatstr, args...) << "\n";
   }
 
   template <typename... Args>
-  inline void warn(int level, const std::string &format, const Args &...args) {
+  inline void warn(int level, const std::string &formatstr, const Args &...args) {
     if (level <= verbosity_)
-      std::cout << fmt::format(format, args...) << "\n" << std::flush;
+      std::cout << fmt::format(formatstr, args...) << "\n" << std::flush;
   }
 
   template <typename... Args>
-  inline void err(int level, const std::string &format, const Args &...args) {
+  inline void err(int level, const std::string &formatstr, const Args &...args) {
     if (level <= verbosity_)
-      std::cerr << fmt::format(format, args...) << "\n" << std::flush;
+      std::cerr << fmt::format(formatstr, args...) << "\n" << std::flush;
     exit(EXIT_FAILURE);
   }
 
   template <typename... Args>
-  inline void operator()(const std::string &format, const Args &...args) {
-    out(format, args...);
+  inline void operator()(const std::string &formatstr, const Args &...args) {
+    out(formatstr, args...);
   }
 
   template <typename... Args>
-  inline void operator()(int level, const std::string &format,
+  inline void operator()(int level, const std::string &formatstr,
                          const Args &...args) {
-    out(level, format, args...);
+    out(level, formatstr, args...);
   }
 
 private:
