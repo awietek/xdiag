@@ -372,6 +372,34 @@ state = zeros(block, true, 2);
 XDIAG_SHOW(state.vector());
 // --8<-- [end:create_state]
 }
+
+
+{
+// --8<-- [start:algebra]
+int N = 8;
+auto block = Spinhalf(N,  N / 2);
+auto ops = OpSum();
+for (int i=0; i<N; ++i) {
+  ops += Op("HB", 1.0, {i, (i+1)%N});
+}
+auto [e0, psi] = eig0(ops, block);
+
+XDIAG_SHOW(norm(psi));
+XDIAG_SHOW(norm1(psi));
+XDIAG_SHOW(norminf(psi));
+
+XDIAG_SHOW(dot(psi, psi));
+XDIAG_SHOW(e0);
+XDIAG_SHOW(inner(ops, psi));
+
+auto phi = rand(block);
+XDIAG_SHOW(phi.vector());
+XDIAG_SHOW(psi.vector());
+XDIAG_SHOW((psi + 2.0*phi).vector());
+XDIAG_SHOW((psi*complex(0,3.0) + phi/2.0).vectorC());
+// --8<-- [end:algebra]
+}
+ 
  // clang-format on
 
 } catch (Error e) {

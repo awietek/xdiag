@@ -25,6 +25,38 @@ double norm(State const &v) try {
   return 0;
 }
 
+double norm1(State const &v) try {
+  if (v.n_cols() > 1) {
+    XDIAG_THROW("Cannot compute norm of state with more than one column");
+    return 0;
+  } else {
+    if (v.isreal()) {
+      return norm1(v.block(), v.vector(0, false));
+    } else {
+      return norm1(v.block(), v.vectorC(0, false));
+    }
+  }
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
+  return 0;
+}
+
+double norminf(State const &v) try {
+  if (v.n_cols() > 1) {
+    XDIAG_THROW("Cannot compute norm of state with more than one column");
+    return 0;
+  } else {
+    if (v.isreal()) {
+      return norminf(v.block(), v.vector(0, false));
+    } else {
+      return norminf(v.block(), v.vectorC(0, false));
+    }
+  }
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
+  return 0;
+}
+
 double dot(State const &v, State const &w) try {
   if (v.block() != w.block()) {
     XDIAG_THROW("Cannot form dot product for states on different blocks");

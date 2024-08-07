@@ -167,16 +167,16 @@ end
 
 # --8<-- [start:eigval0]
 let 
-    N = 8;
-    nup = N ÷ 2;
-    block = Spinhalf(N, nup);
+    N = 8
+    nup = N ÷ 2
+    block = Spinhalf(N, nup)
     
     # Define the nearest-neighbor Heisenberg model
     ops = OpSum()
     for i in 1:N
         ops += Op("HB", "J", [i-1, i % N])
     end
-    ops["J"] = 1.0;
+    ops["J"] = 1.0
 
     e0 = eigval0(ops, block);
 end
@@ -184,9 +184,9 @@ end
 
 # --8<-- [start:eig0]
 let 
-    N = 8;
-    nup = N ÷ 2;
-    block = Spinhalf(N, nup);
+    N = 8
+    nup = N ÷ 2
+    block = Spinhalf(N, nup)
     
     # Define the nearest-neighbor Heisenberg model
     ops = OpSum()
@@ -342,3 +342,29 @@ display(vector(state))
 state = zeros(block, true, 2)
 display(matrix(state))
 # --8<-- [end:create_state]
+
+
+# --8<-- [start:algebra]
+let 
+    N = 8
+    block = Spinhalf(N,  N ÷ 2)
+    ops = OpSum()
+    for i in 1:N
+        ops += Op("HB", 1.0, [i-1, i % N])
+    end
+    e0, psi = eig0(ops, block);
+
+    @show norm(psi)
+    @show norm1(psi)
+    @show norminf(psi)
+
+    @show dot(psi, psi)
+    @show e0, inner(ops, psi)
+
+    phi = rand(block)
+    display(vector(phi))
+    display(vector(psi))
+    display(vector(psi + 2.0*phi))
+    display(vector(psi*3.0im + phi/2.0))
+end
+# --8<-- [end:algebra]
