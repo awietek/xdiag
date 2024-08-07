@@ -369,10 +369,10 @@
 
   <h1>matrix</h1>
 
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">matrix</span><span class="p">(</span><span class="n">bondlist</span><span class="p">,</span><span class="w"> </span><span class="n">block</span><span class="p">;</span><span class="w"> </span><span class="n">force_complex</span><span class="o">=</span><span class="nb">false</span><span class="p">)</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">matrixC</span><span class="p">(</span><span class="n">bondlist</span><span class="p">,</span><span class="w"> </span><span class="n">block</span><span class="p">)</span><span class="w">  </span><span class="c"># c++ only</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">matrix</span><span class="p">(</span><span class="n">ops</span><span class="p">,</span><span class="w"> </span><span class="n">block</span><span class="p">;</span><span class="w"> </span><span class="n">force_complex</span><span class="o">=</span><span class="nb">false</span><span class="p">)</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">matrixC</span><span class="p">(</span><span class="n">ops</span><span class="p">,</span><span class="w"> </span><span class="n">block</span><span class="p">)</span><span class="w">  </span><span class="c"># c++ only</span>
 </code></pre></div>
-<p>Creates the full matrix representation of a given <a href="../operators/bondlist.md">BondList</a> on a block.</p>
+<p>Creates the full matrix representation of a given <a href="../../operators/opsum/">OpSum</a> on a block.</p>
 <p>In Julia, depending on whether a real/complex matrix is generated also a  real/complex matrix is returned. The C++ version has to return a fixed type. If a real matrix is desired, use the function <code>matrix</code>. If a complex matrix is desired, use the function <code>matrixC</code>.</p>
 <p><strong>Source</strong> <a href="https://github.com/awietek/xdiag/blob/main/xdiag/algebra/matrix.hpp">matrix.hpp</a></p>
 <h2 id="parameters">Parameters</h2>
@@ -386,8 +386,8 @@
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;">bondlist</td>
-<td style="text-align: left;"><a href="../operators/bondlist.md">BondList</a> defining the bonds of the operator</td>
+<td style="text-align: left;">ops</td>
+<td style="text-align: left;"><a href="../../operators/opsum/">OpSum</a> defining the operator</td>
 <td></td>
 </tr>
 <tr>
@@ -414,7 +414,7 @@
 <tbody>
 <tr>
 <td style="text-align: left;">matrix</td>
-<td style="text-align: left;">matrix representation of bondlist on block</td>
+<td style="text-align: left;">matrix representation of opsum on block</td>
 <td></td>
 </tr>
 </tbody>
@@ -423,15 +423,15 @@
 <div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Julia</label><label for="__tabbed_1_2">C++</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">matrix</span><span class="p">(</span><span class="n">bonds</span><span class="o">::</span><span class="kt">BondList</span><span class="p">,</span><span class="w"> </span><span class="n">block</span><span class="o">::</span><span class="kt">Block</span><span class="p">;</span><span class="w"> </span><span class="n">force_complex</span><span class="o">::</span><span class="kt">Bool</span><span class="o">=</span><span class="nb">false</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">matrix</span><span class="p">(</span><span class="n">ops</span><span class="o">::</span><span class="kt">Opsum</span><span class="p">,</span><span class="w"> </span><span class="n">block</span><span class="o">::</span><span class="kt">Block</span><span class="p">;</span><span class="w"> </span><span class="n">force_complex</span><span class="o">::</span><span class="kt">Bool</span><span class="o">=</span><span class="nb">false</span><span class="p">)</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">block_t</span><span class="o">&gt;</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">arma</span><span class="o">::</span><span class="n">mat</span><span class="w"> </span><span class="n">matrix</span><span class="p">(</span><span class="n">BondList</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">bond</span><span class="p">,</span><span class="w"> </span><span class="n">block_t</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">block</span><span class="p">);</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">arma</span><span class="o">::</span><span class="n">mat</span><span class="w"> </span><span class="n">matrix</span><span class="p">(</span><span class="n">OpSum</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ops</span><span class="p">,</span><span class="w"> </span><span class="n">block_t</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">block</span><span class="p">);</span>
 <a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
 <a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">block_t</span><span class="o">&gt;</span>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="n">arma</span><span class="o">::</span><span class="n">cx_mat</span><span class="w"> </span><span class="n">matrixC</span><span class="p">(</span><span class="n">BondList</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">bond</span><span class="p">,</span><span class="w"> </span><span class="n">block_t</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">block</span><span class="p">);</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="n">arma</span><span class="o">::</span><span class="n">cx_mat</span><span class="w"> </span><span class="n">matrixC</span><span class="p">(</span><span class="n">OpSum</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ops</span><span class="p">,</span><span class="w"> </span><span class="n">block_t</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">block</span><span class="p">);</span>
 </code></pre></div>
 </div>
 </div>
