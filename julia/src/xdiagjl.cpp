@@ -5,6 +5,7 @@
 #include <julia/src/operators/coupling.hpp>
 #include <julia/src/operators/op.hpp>
 #include <julia/src/operators/opsum.hpp>
+#include <julia/src/operators/symmetrize.hpp>
 
 #include <julia/src/blocks/electron.hpp>
 #include <julia/src/blocks/spinhalf.hpp>
@@ -46,6 +47,8 @@ JLCXX_MODULE define_julia_module(jlcxx::Module &mod) {
   julia::define_permutation_group(mod);
   julia::define_representation(mod);
 
+  julia::define_symmetrize(mod);
+  
   // ProductState
   julia::define_product_state(mod);
   

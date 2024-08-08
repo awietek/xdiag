@@ -386,3 +386,32 @@ let
     @show inner(ops, phi)
 end
 # --8<-- [end:apply]
+
+# --8<-- [start:symmetrize]
+let
+    N = 4
+    nup = 2
+    block = Spinhalf(N, nup)
+    p1 = Permutation([0, 1, 2, 3])
+    p2 = Permutation([1, 2, 3, 0])
+    p3 = Permutation([2, 3, 0, 1])
+    p4 = Permutation([3, 0, 1, 2])
+    group = PermutationGroup([p1, p2, p3, p4])
+    rep = Representation([1, 1, 1, 1])
+    block_sym = Spinhalf(N, group, rep)
+
+    ops = OpSum()
+    for i in 1:N
+        ops += Op("HB", 1.0, [i-1, i % N])
+    end
+
+    e0, psi = eig0(ops, block);
+    e0, psi_sym = eig0(ops, block_sym);
+
+    corr = Op("HB", 1.0, [0, 1])
+    nn_corr = inner(corr, psi)
+    corr_sym = symmetrize(corr, group)
+    nn_corr_sym = inner(corr_sym, psi_sym)
+    @show nn_corr, nn_corr_sym
+end
+# --8<-- [end:symmetrize]

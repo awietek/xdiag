@@ -144,6 +144,7 @@ set(XDIAG_JULIA_SOURCES
   operators/coupling.cpp
   operators/op.cpp
   operators/opsum.cpp
+  operators/symmetrize.cpp
   states/create_state.cpp
   states/fill.cpp
   states/random_state.cpp

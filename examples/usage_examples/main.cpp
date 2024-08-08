@@ -417,6 +417,36 @@ XDIAG_SHOW(inner(ops, phi));
 // --8<-- [end:apply]
 }
 
+{
+// --8<-- [start:symmetrize]
+int N = 4;
+int nup = 2;
+auto block = Spinhalf(N, nup);
+auto p1 = Permutation({0, 1, 2, 3});
+auto p2 = Permutation({1, 2, 3, 0});
+auto p3 = Permutation({2, 3, 0, 1});
+auto p4 = Permutation({3, 0, 1, 2});
+auto group = PermutationGroup({p1, p2, p3, p4});
+auto rep = Representation({1, 1, 1, 1});
+auto block_sym = Spinhalf(N, group, rep);
+
+auto ops = OpSum();
+for (int i=0; i<N; ++i) {
+  ops += Op("HB", 1.0, {i, (i+1)%N});
+}
+auto [e0, psi] = eig0(ops, block);
+auto [e0s, psi_sym] = eig0(ops, block_sym);
+
+auto corr = Op("HB", 1.0, {0, 1});
+auto nn_corr = inner(corr, psi);
+auto corr_sym = symmetrize(corr, group);
+auto nn_corr_sym = innerC(corr_sym, psi_sym);
+XDIAG_SHOW(nn_corr);
+XDIAG_SHOW(nn_corr_sym);
+// --8<-- [end:symmetrize]
+}
+
+ 
 }
   // clang-format on
 

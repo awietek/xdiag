@@ -1,9 +1,18 @@
 use Julia 1.7,
 juliaup default 1.7
 
+remove build directory to clean up first and create it again empty
+
 create a build_tarballs.jl from build_tarballs_sample.jl
 
 if fmt lib has some issue with consteval, the #define FMT_CONSTEVAL in core.hpp must be set empty
+
+if some error with a std::complex std::vector and a comparison come up, get back to wrapping with a pointer and number of elements
+
+if there are complaints about macos sdk, one needs to set an environment variable:
+export BINARYBUILDER_AUTOMATIC_APPLE=true
+
+if too many artifacts are downloaded and the harddisk gets cluttered, one can use PkgCleaner: https://github.com/giordano/PkgCleanup.jl to clean artifacts
 
 set the correct github hash to compile the requested version
 
@@ -11,10 +20,6 @@ julia --color=yes build_tarballs.jl --verbose --deploy=local
 julia --color=yes build_tarballs.jl --verbose --skip-build --deploy=awietek/XDiag_jll.jl
 
 
-if there are complaints about macos sdk, one needs to set an environment variable:
-export BINARYBUILDER_AUTOMATIC_APPLE=true
-
-if too many artifacts are downloaded and the harddisk gets cluttered, one can use PkgCleaner: https://github.com/giordano/PkgCleanup.jl to clean artifacts
 
 cd /Users/awietek/.julia/dev/XDiag_jll
 git init
