@@ -13,14 +13,15 @@ title: Overview
 | [eig0](algorithms/eig0.md)       | Computes the lowest lying eigenvalue and eigenvector of an operator | :simple-cplusplus: :simple-julia: |
 
 ## Algebra
-|                                       |                                                                   |                                   |
-|:--------------------------------------|:------------------------------------------------------------------|----------------------------------:|
-| [matrix](algebra/matrix.md)           | Creates the full matrix representation of an operator on a block  | :simple-cplusplus: :simple-julia: |
-| [norm](algebra/algebra.md#norm)       | Computes the 2-norm of a state                                    | :simple-cplusplus: :simple-julia: |
-| [norm1](algebra/algebra.md#norm1)     | Computes the 1-norm of a state                                    | :simple-cplusplus: :simple-julia: |
+|                                       |                                                                     |                                   |
+|:--------------------------------------|:--------------------------------------------------------------------|----------------------------------:|
+| [matrix](algebra/matrix.md)           | Creates the full matrix representation of an operator on a block    | :simple-cplusplus: :simple-julia: |
+| [apply](algebra/apply.md)             | Applies an operator to a state $\vert w \rangle = O \vert v\rangle$ | :simple-cplusplus: :simple-julia: |
+| [norm](algebra/algebra.md#norm)       | Computes the 2-norm of a state                                      | :simple-cplusplus: :simple-julia: |
+| [norm1](algebra/algebra.md#norm1)     | Computes the 1-norm of a state                                      | :simple-cplusplus: :simple-julia: |
 | [norminf](algebra/algebra.md#norminf) | Computes the $\infty$-norm of a state                               | :simple-cplusplus: :simple-julia: |
-| [dot](algebra/algebra.md#dot)         | Computes the dot product between two states                       | :simple-cplusplus: :simple-julia: |
-| [inner](algebra/algebra.md#inner)     | Computes an expectation value $\langle v \vert O \vert v \rangle$ | :simple-cplusplus: :simple-julia: |
+| [dot](algebra/algebra.md#dot)         | Computes the dot product between two states                         | :simple-cplusplus: :simple-julia: |
+| [inner](algebra/algebra.md#inner)     | Computes an expectation value $\langle v \vert O \vert v \rangle$   | :simple-cplusplus: :simple-julia: |
 
 ## Blocks
 |                                |                                            |                                   |

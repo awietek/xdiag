@@ -5,7 +5,7 @@ void define_representation(jlcxx::Module &mod) {
 
   mod.add_type<Representation>("cxx_Representation")
       .constructor<>()
-      .constructor<std::vector<complex> const &>()
+      .constructor<complex const *, int64_t>()
       .method("isreal", &Representation::isreal)
       .method("size", &Representation::size);
 

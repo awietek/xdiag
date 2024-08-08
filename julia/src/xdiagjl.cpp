@@ -24,6 +24,7 @@
 #include <julia/src/symmetries/representation.hpp>
 
 #include <julia/src/algebra/matrix.hpp>
+#include <julia/src/algebra/apply.hpp>
 #include <julia/src/algebra/algebra.hpp>
 
 #include <julia/src/algorithms/sparse_diag.hpp>
@@ -62,6 +63,7 @@ JLCXX_MODULE define_julia_module(jlcxx::Module &mod) {
   
   // algebra
   julia::define_matrix(mod);
+  julia::define_apply(mod);
   julia::define_algebra(mod);
 
   // algorithms

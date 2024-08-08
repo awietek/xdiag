@@ -17,6 +17,7 @@ public:
   Representation(std::vector<complex> const &characters,
                  std::vector<int64_t> const &allowed_symmetries);
   explicit Representation(io::FileTomlHandler &&hdl);
+  Representation(complex const *characters, int64_t n_characters); 
 
   complex character(int64_t idx) const;
   std::vector<int64_t> allowed_symmetries() const;

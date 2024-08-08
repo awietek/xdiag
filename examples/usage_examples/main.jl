@@ -368,3 +368,21 @@ let
     display(vector(psi*3.0im + phi/2.0))
 end
 # --8<-- [end:algebra]
+
+# --8<-- [start:apply]
+let 
+    N = 8
+    block = Spinhalf(N,  N ÷ 2)
+    ops = OpSum()
+    for i in 1:N
+        ops += Op("HB", 1.0, [i-1, i % N])
+    end
+    e0, psi = eig0(ops, block);
+
+    blockp = Spinhalf(N,  N ÷ 2 + 1)
+    phi = zeros(blockp)
+    apply(Op("S+", 1.0, 2), psi, phi)
+    @show inner(ops, psi)
+    @show inner(ops, phi)
+end
+# --8<-- [end:apply]

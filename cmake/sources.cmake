@@ -135,6 +135,7 @@ set(XDIAG_JULIA_SOURCES
   xdiagjl.cpp
   utils/armadillo.cpp
   algebra/matrix.cpp
+  algebra/apply.cpp
   algebra/algebra.cpp
   algorithms/sparse_diag.cpp
   blocks/spinhalf.cpp

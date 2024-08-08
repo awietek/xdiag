@@ -6,8 +6,8 @@
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/logger.hpp>
 
-#include <numeric>
 #include <iomanip>
+#include <numeric>
 
 namespace xdiag {
 
@@ -22,6 +22,10 @@ Representation::Representation(std::vector<complex> const &characters)
   }
   std::iota(allowed_symmetries_.begin(), allowed_symmetries_.end(), 0);
 }
+
+Representation::Representation(complex const *characters, int64_t n_characters)
+    : Representation(
+          std::vector<complex>(characters, characters + n_characters)) {}
 
 Representation::Representation(std::vector<complex> const &characters,
                                std::vector<int64_t> const &allowed_symmetries)

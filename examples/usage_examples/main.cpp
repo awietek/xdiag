@@ -398,9 +398,27 @@ XDIAG_SHOW(psi.vector());
 XDIAG_SHOW((psi + 2.0*phi).vector());
 XDIAG_SHOW((psi*complex(0,3.0) + phi/2.0).vectorC());
 // --8<-- [end:algebra]
+
+{
+// --8<-- [start:apply] 
+int N = 8;
+auto block = Spinhalf(N,  N / 2);
+auto ops = OpSum();
+for (int i=0; i<N; ++i){
+  ops += Op("HB", 1.0, {i, (i+1)%N});
 }
- 
- // clang-format on
+auto [e0, psi] = eig0(ops, block);
+
+auto blockp = Spinhalf(N,  N / 2 + 1);
+auto phi = zeros(blockp);
+apply(Op("S+", 1.0, 2), psi, phi);
+XDIAG_SHOW(inner(ops, psi));
+XDIAG_SHOW(inner(ops, phi));
+// --8<-- [end:apply]
+}
+
+}
+  // clang-format on
 
 } catch (Error e) {
   error_trace(e);
