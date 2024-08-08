@@ -3,6 +3,8 @@ juliaup default 1.7
 
 create a build_tarballs.jl from build_tarballs_sample.jl
 
+if fmt lib has some issue with consteval, the #define FMT_CONSTEVAL in core.hpp must be set empty
+
 set the correct github hash to compile the requested version
 
 julia --color=yes build_tarballs.jl --verbose --deploy=local

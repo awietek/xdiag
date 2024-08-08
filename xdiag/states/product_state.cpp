@@ -48,18 +48,18 @@ std::string to_string(ProductState const &state, std::string format) try {
       std::string s = state[i];
       if (s == "Up") {
         // const char *s = u8"\u2B61";
-        const char *s = u8"\u2191";
+        const char *s = "\u2191";
         ss << fmt::format(fg(fmt::color::light_blue), s);
       } else if (s == "Dn") {
         // const char *s = u8"\u2B63";
-        const char *s = u8"\u2193";
+        const char *s = "\u2193";
         ss << fmt::format(fg(fmt::color::orange), s);
       } else if (s == "UpDn") {
         // const char *s = u8"\u2B65";
-        const char *s = u8"\u2195";
+        const char *s = "\u2195";
         ss << fmt::format(fg(fmt::color::red), s);
       } else if (s == "Emp") {
-        const char *s = u8"\u25CC";
+        const char *s = "\u25CC";
         ss << fmt::format(fg(fmt::color::gray), s);
       } else {
         XDIAG_THROW(fmt::format("Unknown local state for fancy formatting "
