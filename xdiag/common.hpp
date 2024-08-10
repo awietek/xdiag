@@ -13,6 +13,12 @@
 #include <xdiag/utils/logger.hpp>
 #include <xdiag/utils/xdiag_show.hpp>
 
+#ifdef ARMA_64BIT_WORD
+#warning "ARMA64"
+#else
+#warning "ARMA32"
+#endif
+
 // TODO: IS THIS REALLY NECESASARY
 #define BSTR(x) bits::bits_to_string(x, n_sites)
 

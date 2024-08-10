@@ -16,9 +16,11 @@ if too many artifacts are downloaded and the harddisk gets cluttered, one can us
 
 set the correct github hash to compile the requested version
 
+to develop julia wrapper locally, the Overrides.toml file needs to be set correctly. This file is in the folder ~/.julia/artifacts. One needs to find the correct hash can be retrieved by "using XDiag_jll" and "XDiag_jll.get_xdiagjl_path()".
+
 julia --color=yes build_tarballs.jl --verbose --deploy=local
 julia --color=yes build_tarballs.jl --verbose --skip-build --deploy=awietek/XDiag_jll.jl
-
+julia --color=yes build_tarballs.jl --verbose --skip-build --deploy
 
 
 cd /Users/awietek/.julia/dev/XDiag_jll
