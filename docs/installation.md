@@ -4,11 +4,12 @@ title: Installation
 
 ## Julia Installation
 
-Enter the package mode using `]` in the Julia REPL and add the following two packages
+Enter the package mode using `]` in the Julia REPL and type:
 ```julia
-add https://github.com/awietek/XDiag_jll.jl.git
-add https://github.com/awietek/XDiag.jl.git
+add XDiag
 ```
+
+That's it!
 
 ## C++ Compilation
 
