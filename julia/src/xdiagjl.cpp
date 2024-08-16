@@ -75,13 +75,7 @@ JLCXX_MODULE define_julia_module(jlcxx::Module &mod) {
 
   // Utils
   julia::define_say_hello(mod);
+  julia::define_print_version(mod);
   julia::define_set_verbosity(mod);
-
-
-  // // methods to apply bonds
-  // mod.method("apply_cxx", [](BondList const &bonds, State const &v, State &w)
-  // {
-  //   JULIA_XDIAG_CALL_VOID(apply(bonds, v, w));
-  // });
 
 }
