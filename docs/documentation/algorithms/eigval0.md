@@ -2,19 +2,37 @@
 title: eigval0
 ---
 
-```julia
-eigval0(bondlist, block; precision, max_iterations, force_complex, random_seed)
-```
 
 Computes the groud state energy of an operator on a block.
 
 **Source** [sparse_diag.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/sparse_diag.hpp)
 
+
+=== "Julia"
+	```julia
+	function eigval0(
+		ops::OpSum,
+		block::Block;
+		precision::Real = 1e-12,
+		maxiter::Integer = 1000,
+		force_complex::Bool = false,
+		seed::Integer = 42,
+	)
+	```
+
+=== "C++"
+    ```c++
+    double eigval0(OpSum const &ops, Block const &block, double precision = 1e-12,
+               int64_t max_iterations = 1000, bool force_complex = false,
+               int64_t random_seed = 42);
+	```
+
+
 ## Parameters
 
 | Name           | Description                                                            | Default |
 |:---------------|:-----------------------------------------------------------------------|---------|
-| bondlist       | BondList defining the bonds of the operator                            |         |
+| ops            | [OpSum](../operators/opsum.md) defining the bonds of the operator      |         |
 | block          | block on which the operator is defined                                 |         |
 | precision      | accuracy of the computed ground state                                  | 1e-12   |
 | max_iterations | maximum number of iterations                                           | 1000    |
@@ -29,20 +47,6 @@ Computes the groud state energy of an operator on a block.
 
 
 ## Definition
-
-=== "Julia"
-	```julia
-	eig0(bonds::BondList, block::Union{Spinhalf,Electron,tJ};
-         precision::Real=1e-12, maxiter::Integer=1000,
-		 force_complex::Bool=false, seed::Integer=42)
-	```
-
-=== "C++"
-    ```c++
-    double eigval0(BondList const &bondlist, block_variant_t const &block,
-				   double precision = 1e-12, int64_t max_iterations = 1000,
-				   bool force_complex = false, int64_t random_seed = 42);
-	```
 
 ## Usage Example
 

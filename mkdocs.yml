@@ -3,6 +3,8 @@ theme:
   name: material
   palette:
     scheme: slate
+  features:
+    - content.code.copy
 
 markdown_extensions:
   - attr_list
@@ -35,5 +37,6 @@ nav:
   - Home: index.md
   - Installation: installation.md
   - Quick start: quickstart.md
-  - Examples: examples.md
+  - Tutorials: tutorials.md
   - Documentation: documentation
+  - Releases: releases

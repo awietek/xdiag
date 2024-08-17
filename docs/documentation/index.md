@@ -61,8 +61,11 @@ title: Overview
 
 ## Utilities
 
-|                                       |                                               |                                   |
-|:--------------------------------------|:----------------------------------------------|----------------------------------:|
+|                                                   |                                                          |                                   |
+|:--------------------------------------------------|:---------------------------------------------------------|----------------------------------:|
+| [set_verbosity](utilities/utils.md#set_verbosity) | Sets how much information is printed during computations | :simple-cplusplus: :simple-julia: |
+| [say_hello](utilities/utils.md#say_hello)         | Prints a nice welcome message with version number        | :simple-cplusplus: :simple-julia: |
+| [print_version](utilities/utils.md#print_version) | Prints the plain version number                          | :simple-cplusplus: :simple-julia: |
 | [Logging](utilities/logging.md)       | Controling what is written to standard output | :simple-cplusplus: :simple-julia: |
 | [Timing](utilities/timing.md)         | Measurng wall time straightforwardly          |                :simple-cplusplus: |
 | [XDIAG_SHOW](utilities/xdiag_show.md) | Macro for printing debugging information      |                :simple-cplusplus: |
