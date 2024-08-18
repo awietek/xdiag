@@ -19,6 +19,7 @@ A C++ library to perform efficient Exact Diagonalizations of quantum many body s
 - Full support of generic space group symmetries
 - parallelization both with OpenMP and MPI
 - modern C++17 impementation simplifying usage
+- wrapped in a convenient Julia library: [XDiag.jl](https://github.com/awietek/XDiag.jl)
 
 ### Installation:
 Clone this repository first. Afterwards, the **xdiag** library can be compiled using the standard CMake instructions
