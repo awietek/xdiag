@@ -7,10 +7,12 @@ title: Overview
 ## Algorithms
 
 
-| Name                             | Description                                                         |                          Language |
-|:---------------------------------|:--------------------------------------------------------------------|----------------------------------:|
-| [eigval0](algorithms/eigval0.md) | Computes the lowest lying eigenvalue of an operator                 | :simple-cplusplus: :simple-julia: |
-| [eig0](algorithms/eig0.md)       | Computes the lowest lying eigenvalue and eigenvector of an operator | :simple-cplusplus: :simple-julia: |
+| Name                                             | Description                                                                                    |                          Language |
+|:-------------------------------------------------|:-----------------------------------------------------------------------------------------------|----------------------------------:|
+| [eigval0](algorithms/eigval0.md)                 | Computes the lowest lying eigenvalue of an operator                                            | :simple-cplusplus: :simple-julia: |
+| [eig0](algorithms/eig0.md)                       | Computes the lowest lying eigenvalue and eigenvector of an operator                            | :simple-cplusplus: :simple-julia: |
+| [eigvals_lanczos](algorithms/eigvals_lanczos.md) | Performs an iterative eigenvalue calculation using the Lanczos algorithm                       | :simple-cplusplus: :simple-julia: |
+| [eigs_lanczos](algorithms/eigs_lanczos.md) | Performs an iterative eigenvalue calculation building eigenvectors using the Lanczos algorithm | :simple-cplusplus: :simple-julia: |
 
 ## Algebra
 |                                       |                                                                     |                                   |

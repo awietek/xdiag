@@ -35,6 +35,7 @@ void define_op(jlcxx::Module &mod) {
               [](Op const &op) { JULIA_XDIAG_CALL_RETURN(op.isexplicit()) });
 
   mod.method("to_string", [](Op const &op) { return to_string(op); });
+  
 }
 
 } // namespace xdiag::julia

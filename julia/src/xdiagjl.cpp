@@ -13,21 +13,23 @@
 
 #include <julia/src/utils/utils.hpp>
 
-#include <julia/src/states/state.hpp>
-#include <julia/src/states/product_state.hpp>
-#include <julia/src/states/random_state.hpp>
+#include <julia/src/states/create_state.hpp>
 #include <julia/src/states/fill.hpp>
 #include <julia/src/states/gpwf.hpp>
-#include <julia/src/states/create_state.hpp>
+#include <julia/src/states/product_state.hpp>
+#include <julia/src/states/random_state.hpp>
+#include <julia/src/states/state.hpp>
 
 #include <julia/src/symmetries/permutation.hpp>
 #include <julia/src/symmetries/permutation_group.hpp>
 #include <julia/src/symmetries/representation.hpp>
 
-#include <julia/src/algebra/matrix.hpp>
-#include <julia/src/algebra/apply.hpp>
 #include <julia/src/algebra/algebra.hpp>
+#include <julia/src/algebra/apply.hpp>
+#include <julia/src/algebra/matrix.hpp>
 
+#include <julia/src/algorithms/lanczos/eigs_lanczos.hpp>
+#include <julia/src/algorithms/lanczos/eigvals_lanczos.hpp>
 #include <julia/src/algorithms/sparse_diag.hpp>
 
 JLCXX_MODULE define_julia_module(jlcxx::Module &mod) {
@@ -48,10 +50,10 @@ JLCXX_MODULE define_julia_module(jlcxx::Module &mod) {
   julia::define_representation(mod);
 
   julia::define_symmetrize(mod);
-  
+
   // ProductState
   julia::define_product_state(mod);
-  
+
   // Blocks
   julia::define_spinhalf(mod);
   julia::define_tj(mod);
@@ -63,7 +65,7 @@ JLCXX_MODULE define_julia_module(jlcxx::Module &mod) {
   julia::define_gpwf(mod);
   julia::define_fill(mod);
   julia::define_create_state(mod);
-  
+
   // algebra
   julia::define_matrix(mod);
   julia::define_apply(mod);
@@ -72,10 +74,11 @@ JLCXX_MODULE define_julia_module(jlcxx::Module &mod) {
   // algorithms
   julia::define_eig0(mod);
   julia::define_eigval0(mod);
-
+  julia::define_eigs_lanczos(mod);
+  julia::define_eigvals_lanczos(mod);
+  
   // Utils
   julia::define_say_hello(mod);
   julia::define_print_version(mod);
   julia::define_set_verbosity(mod);
-
 }

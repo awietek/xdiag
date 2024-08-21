@@ -138,6 +138,8 @@ set(XDIAG_JULIA_SOURCES
   algebra/apply.cpp
   algebra/algebra.cpp
   algorithms/sparse_diag.cpp
+  algorithms/lanczos/eigs_lanczos.cpp
+  algorithms/lanczos/eigvals_lanczos.cpp
   blocks/spinhalf.cpp
   blocks/tj.cpp
   blocks/electron.cpp
