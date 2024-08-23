@@ -56,6 +56,11 @@ TEST_CASE("electron_apply", "[electron]") {
         arma::cx_vec w2(block.size(), arma::fill::zeros);
         apply(ops, block, v, block, w2);
         REQUIRE(close(w1, w2));
+        arma::mat m(block.size(), 5, arma::fill::randn);
+        arma::mat n1 = H * m;
+        arma::mat n2(block.size(), 5, arma::fill::zeros);
+        apply(ops, block, m, block, n2);
+        REQUIRE(close(n1, n2));
 
         // Compute eigenvalues and compare
         arma::vec evals_mat;

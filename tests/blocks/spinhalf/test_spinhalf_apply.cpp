@@ -21,9 +21,9 @@ void test_apply(int N, OpSum ops) {
     arma::vec v(block.size(), arma::fill::randn);
     arma::vec w1 = H * v;
     arma::vec w2(block.size(), arma::fill::zeros);
-    tic();
+    // tic();
     apply(ops, block, v, block, w2);
-    toc("1 M-V-M");
+    // toc("1 M-V-M");
 
     arma::vec w3 = H * H * v;
     arma::vec w4(block.size(), arma::fill::zeros);
@@ -50,9 +50,9 @@ void test_apply_mat(int N, OpSum ops) {
     arma::mat v(block.size(), 5, arma::fill::randn);
     arma::mat w1 = H * v;
     arma::mat w2(block.size(), 5, arma::fill::zeros);
-    tic();
+    // tic();
     apply(ops, block, v, block, w2);
-    toc("5 column M-M-M");
+    // toc("5 column M-M-M");
 
     arma::mat w3 = H * H * v;
     arma::mat w4(block.size(), 5, arma::fill::zeros);
@@ -74,7 +74,7 @@ TEST_CASE("spinhalf_apply", "[spinhalf]") {
   using namespace xdiag::testcases::spinhalf;
 
   Log.out("spinhalf_apply: Heisenberg chain apply test, J=1.0, N=2,..,6, matrix-matrix multiplication");
-  for (int N = 10; N <= 14; ++N) {
+  for (int N = 2; N <= 6; ++N) {
     auto ops = HBchain(N, 1.0);
     test_apply(N, ops);
     test_apply_mat(N, ops);
