@@ -2,7 +2,7 @@
 title: apply
 ---
 
-Applies an operator to a state $\vert w \rangle = O \vert v\rangle$.
+Applies an operator to a state $\vert w \rangle = O \vert v\rangle$ or block of states $\left( \vert w_1 \rangle \dots \vert w_M \rangle \right) = O \left( \vert v_1 \rangle \dots \vert v_M \rangle \right)$. 
 
 **Source** [apply.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/states/apply.hpp)
 

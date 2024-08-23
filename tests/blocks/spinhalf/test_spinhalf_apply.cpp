@@ -8,6 +8,7 @@
 #include <xdiag/algebra/matrix.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
 #include <xdiag/utils/close.hpp>
+#include <xdiag/utils/timing.hpp>
 
 using namespace xdiag;
 
@@ -20,7 +21,9 @@ void test_apply(int N, OpSum ops) {
     arma::vec v(block.size(), arma::fill::randn);
     arma::vec w1 = H * v;
     arma::vec w2(block.size(), arma::fill::zeros);
+    tic();
     apply(ops, block, v, block, w2);
+    toc("1 M-V-M");
 
     arma::vec w3 = H * H * v;
     arma::vec w4(block.size(), arma::fill::zeros);
@@ -38,22 +41,53 @@ void test_apply(int N, OpSum ops) {
   }
 }
 
+void test_apply_mat(int N, OpSum ops) {
+  for (int nup = 1; nup <= N; ++nup) {
+    auto block = Spinhalf(N, nup);
+    auto H = matrix(ops, block, block);
+    REQUIRE(H.is_hermitian(1e-8));
+
+    arma::mat v(block.size(), 5, arma::fill::randn);
+    arma::mat w1 = H * v;
+    arma::mat w2(block.size(), 5, arma::fill::zeros);
+    tic();
+    apply(ops, block, v, block, w2);
+    toc("5 column M-M-M");
+
+    arma::mat w3 = H * H * v;
+    arma::mat w4(block.size(), 5, arma::fill::zeros);
+    apply(ops, block, w2, block, w4);
+    REQUIRE(close(w3, w4));
+
+    arma::vec evals_mat;
+    arma::eig_sym(evals_mat, H);
+
+    double e0_mat = evals_mat(0);
+    // double e0_app = eigval0(ops, block);
+    auto [e0_app, ev] = eig0(ops, block);
+    // Log("H: {}, nup: {}, mat: {:.5f} app: {:.5f}", N, nup, e0_mat, e0_app);
+    REQUIRE(close(e0_mat, e0_app));
+  }
+}
+
 TEST_CASE("spinhalf_apply", "[spinhalf]") {
   using namespace xdiag::testcases::spinhalf;
 
-  Log.out("spinhalf_apply: Heisenberg chain apply test, J=1.0, N=2,..,6");
-  for (int N = 2; N <= 6; ++N) {
+  Log.out("spinhalf_apply: Heisenberg chain apply test, J=1.0, N=2,..,6, matrix-matrix multiplication");
+  for (int N = 10; N <= 14; ++N) {
     auto ops = HBchain(N, 1.0);
     test_apply(N, ops);
+    test_apply_mat(N, ops);
   }
 
-  Log.out("spinhalf_apply: Heisenberg alltoall apply test, N=2,..,6");
+  Log.out("spinhalf_apply: Heisenberg alltoall apply test, N=2,..,6, matrix-matrix multiplication");
   for (int N = 2; N <= 6; ++N) {
     auto ops = HB_alltoall(N);
     test_apply(N, ops);
+    test_apply_mat(N, ops); 
   }
 
-  Log.out("spinhalf_apply: Heisenberg all-to-all Sz <-> NoSz comparison");
+  Log.out("spinhalf_apply: Heisenberg all-to-all Sz <-> NoSz comparison, matrix-matrix multiplication");
   for (int n_sites = 2; n_sites <= 6; ++n_sites) {
     auto ops = HB_alltoall(n_sites);
     auto block_no_sz = Spinhalf(n_sites);
