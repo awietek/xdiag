@@ -31,6 +31,15 @@ Performs an iterative eigenvalue calculation building eigenvectors using the Lan
                 int64_t random_seed = 42);
 	```
 
+=== "C++ (explicit state initialization)"
+    ```c++
+    eigs_lanczos_result_t 
+	eigs_lanczos(OpSum const &ops, Block const &block,
+				State const &state, int64_t neigenvalues = 1,
+				double precision = 1e-12, int64_t max_iterations = 1000,
+				bool force_complex = false);
+	```
+
 ## Parameters
 
 | Name           | Description                                                                       | Default |
