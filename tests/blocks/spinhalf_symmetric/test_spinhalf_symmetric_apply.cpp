@@ -30,6 +30,11 @@ void test_spinhalf_symmetric_apply(OpSum ops, PermutationGroup space_group,
         arma::cx_vec w2(block.size(), arma::fill::zeros);
         apply(ops, block, v, block, w2);
         REQUIRE(close(w1, w2));
+        arma::cx_mat m(block.size(), 5, arma::fill::randn);
+        arma::cx_mat n1 = H * m;
+        arma::cx_mat n2(block.size(), 5, arma::fill::zeros);
+        apply(ops, block, m, block, n2);
+        REQUIRE(close(n1, n2));
 
         // Compute eigenvalues and compare
         arma::vec evals_mat;

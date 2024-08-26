@@ -141,6 +141,9 @@ void apply(OpSum const &ops, Spinhalf const &block_in,
 template void apply<double>(OpSum const &, Spinhalf const &,
                             arma::Mat<double> const &, Spinhalf const &,
                             arma::Mat<double> &, double);
+template void apply<complex>(OpSum const &, Spinhalf const &,
+                            arma::Mat<complex> const &, Spinhalf const &,
+                            arma::Mat<complex> &, double);
 
 template <typename coeff_t>
 void apply(OpSum const &ops, tJ const &block_in,
@@ -177,6 +180,9 @@ void apply(OpSum const &ops, tJ const &block_in,
 template void apply<double>(OpSum const &, tJ const &,
                             arma::Mat<double> const &, tJ const &,
                             arma::Mat<double> &, double);
+template void apply<complex>(OpSum const &, tJ const &,
+                            arma::Mat<complex> const &, tJ const &,
+                            arma::Mat<complex> &, double);
 
 template <typename coeff_t>
 void apply(OpSum const &ops, Electron const &block_in,
@@ -213,6 +219,9 @@ void apply(OpSum const &ops, Electron const &block_in,
 template void apply<double>(OpSum const &, Electron const &,
                             arma::Mat<double> const &, Electron const &,
                             arma::Mat<double> &, double);
+template void apply<complex>(OpSum const &, Electron const &,
+                            arma::Mat<complex> const &, Electron const &,
+                            arma::Mat<complex> &, double);
 
 #ifdef XDIAG_USE_MPI
 
