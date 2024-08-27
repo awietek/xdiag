@@ -2,6 +2,18 @@
 title: Releases
 ---
 
+## v0.2.2
+
+**Aug. 27, 2024**
+
+Lanczos routines and multicolumn States
+
+* wrapped eigs_lanczos, eigvals_lanczos
+* implemented apply for States with multiple columns
+* changed wrapping of std::vectors of Op and Permutation
+
+---
+
 ## v0.2.1
 
 **Aug. 16, 2024**

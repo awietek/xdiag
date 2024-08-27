@@ -1,13 +1,13 @@
 - update version numbers in
   * xdiag (C++) CMakeLists.txt
   * Xdiag.jl (Julia) Project.toml 
-- commit and push both xdiag (C++) and XDiag.jl (Julia)
+- commit and push xdiag (C++)
 - wait for all unit tests to succeed
 - tag new version for xdiag (not XDiag.jl yet)
 - update git hash and version number on Yggdrasil
 - open pull request to Yggdrasil (make sure using branch xdiag)
 - after pull request to Yggdrasil is merged update dependency XDiag_jll in Project.toml of XDiag.jl
-- git commit XDiag.jl again
+- git commit and push  XDiag.jl
 - tag XDiag.jl
 - open issue "@JuliaRegistrator register" on the XDiag.jl github page
 - optionally, update documentation with mkdocs gh-deploy
