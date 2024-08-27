@@ -36,4 +36,14 @@ Permutation shuffle(Permutation const &p);
 std::ostream &operator<<(std::ostream &out, Permutation const &perm);
 std::string to_string(Permutation const &perm);
 
+// helper for julia wrapper
+class VectorPermutation {
+public:
+  VectorPermutation() = default;
+  void push_back(Permutation const &p);
+  std::vector<Permutation> vector() const;
+
+private:
+  std::vector<Permutation> v_;
+};
 } // namespace xdiag

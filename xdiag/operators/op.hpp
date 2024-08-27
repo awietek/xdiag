@@ -55,4 +55,14 @@ std::vector<int64_t> common_sites(Op const &b1, Op const &b2);
 std::ostream &operator<<(std::ostream &out, Op const &op);
 std::string to_string(Op const &op);
 
+// helper for julia wrapper
+class VectorOp {
+public:
+  VectorOp() = default;
+  void push_back(Op const &op);
+  std::vector<Op> vector() const;
+private:
+  std::vector<Op> v_;
+};
+
 } // namespace xdiag

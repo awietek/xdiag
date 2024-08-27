@@ -13,6 +13,7 @@ public:
   
   OpSum() = default;
   explicit OpSum(std::vector<Op> const &ops);
+  explicit OpSum(VectorOp const &ops); // auxiliary for julia
 
   int64_t size() const;
   bool defined(std::string name) const;

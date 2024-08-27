@@ -4,12 +4,14 @@
 #include <fstream>
 #include <iostream>
 
+#include <xdiag/common.hpp>
 #include <xdiag/symmetries/operations/symmetry_operations.hpp>
 #include <xdiag/utils/logger.hpp>
 
 namespace xdiag {
 
-PermutationGroup::PermutationGroup(std::vector<Permutation> const &permutations)
+PermutationGroup::PermutationGroup(
+    std::vector<Permutation> const &permutations) try
     : n_sites_(permutations.size() > 0 ? permutations[0].size() : 0),
       n_symmetries_(permutations.size()), permutations_(permutations),
       inverse_(n_symmetries_) {
@@ -17,8 +19,9 @@ PermutationGroup::PermutationGroup(std::vector<Permutation> const &permutations)
   // Check whether all permutations have same number of sites
   for (auto p : permutations) {
     if (p.size() != n_sites_) {
-      Log.err("Error constructing PermutationGroup: not all Permutations have "
-              "the same number of sites");
+      XDIAG_THROW(
+          "Error constructing PermutationGroup: not all Permutations have "
+          "the same number of sites");
     }
   }
 
@@ -27,7 +30,8 @@ PermutationGroup::PermutationGroup(std::vector<Permutation> const &permutations)
     auto id = identity_permutation(n_sites_);
     if (std::find(permutations.begin(), permutations.end(), id) ==
         permutations.end()) {
-      Log.err("Error constructing PermutationGroup: no identity element found");
+      XDIAG_THROW(
+          "Error constructing PermutationGroup: no identity element found");
     }
   }
 
@@ -37,8 +41,9 @@ PermutationGroup::PermutationGroup(std::vector<Permutation> const &permutations)
       auto p = p1 * p2;
       if (std::find(permutations.begin(), permutations.end(), p) ==
           permutations.end()) {
-        Log.err("Error constructing PermutationGroup: group multiplication not "
-                "closed");
+        XDIAG_THROW(
+            "Error constructing PermutationGroup: group multiplication not "
+            "closed");
       }
     }
   }
@@ -49,13 +54,22 @@ PermutationGroup::PermutationGroup(std::vector<Permutation> const &permutations)
     auto pinv = xdiag::inverse(p);
     auto it = std::find(permutations.begin(), permutations.end(), pinv);
     if (it == permutations.end()) {
-      Log.err("Error constructing PermutationGroup: inverse element not found");
+      XDIAG_THROW(
+          "Error constructing PermutationGroup: inverse element not found");
     } else {
       int64_t idx_inv = std::distance(permutations.begin(), it);
       inverse_[idx] = idx_inv;
     }
     idx++;
   }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+
+PermutationGroup::PermutationGroup(VectorPermutation const &permutations) try
+    : PermutationGroup(permutations.vector()) {
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 int64_t PermutationGroup::n_sites() const { return n_sites_; }
@@ -67,19 +81,22 @@ Permutation const &PermutationGroup::operator[](int64_t sym) const {
 int64_t PermutationGroup::inverse(int64_t sym) const { return inverse_[sym]; }
 
 PermutationGroup
-PermutationGroup::subgroup(std::vector<int64_t> const &symmetry_numbers) const {
+PermutationGroup::subgroup(std::vector<int64_t> const &symmetry_numbers) const
+    try {
   std::vector<Permutation> subgroup_permutations;
 
   for (int64_t n_sym : symmetry_numbers) {
 
     if ((0 > n_sym) || (n_sym >= n_symmetries_)) {
-      Log.err("Error building subgroup of PermutationGroup: "
-              "invalid symmetry index");
+      XDIAG_THROW("Error building subgroup of PermutationGroup: "
+                  "invalid symmetry index");
     }
     subgroup_permutations.push_back(permutations_[n_sym]);
   }
 
   return PermutationGroup(subgroup_permutations);
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 bool PermutationGroup::operator==(PermutationGroup const &rhs) const {
@@ -101,7 +118,7 @@ PermutationGroup::iterator_t PermutationGroup::end() const {
 std::ostream &operator<<(std::ostream &out, PermutationGroup const &group) {
   out << "n_sites      : " << group.n_sites() << "\n";
   out << "n_symmetries : " << group.n_symmetries() << "\n";
-  for (auto const& p : group){
+  for (auto const &p : group) {
     out << p;
   }
   return out;

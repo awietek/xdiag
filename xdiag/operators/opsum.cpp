@@ -9,6 +9,8 @@
 namespace xdiag {
 
 OpSum::OpSum(std::vector<Op> const &ops) : ops_(ops) {}
+OpSum::OpSum(VectorOp const &ops) : OpSum(ops.vector()) {}
+
 int64_t OpSum::size() const { return ops_.size(); }
 Coupling &OpSum::operator[](std::string name) { return couplings_[name]; }
 Coupling const &OpSum::operator[](std::string name) const {

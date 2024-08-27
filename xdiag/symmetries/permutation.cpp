@@ -115,6 +115,11 @@ std::ostream &operator<<(std::ostream &out, Permutation const &p) {
   out << "\n";
   return out;
 }
-std::string to_string(Permutation const &perm) { return to_string_generic(perm); }
+std::string to_string(Permutation const &perm) {
+  return to_string_generic(perm);
+}
+
+void VectorPermutation::push_back(Permutation const &p) { v_.push_back(p); }
+std::vector<Permutation> VectorPermutation::vector() const { return v_; }
 
 } // namespace xdiag

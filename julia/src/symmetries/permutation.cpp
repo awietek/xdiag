@@ -14,6 +14,10 @@ void define_permutation(jlcxx::Module &mod) {
 
   mod.method("to_string", [](Permutation const &p) { return to_string(p); });
 
+  mod.add_type<VectorPermutation>("cxx_VectorPermutation")
+      .constructor<>()
+      .method("push_back", &VectorPermutation::push_back);
+  
 }
 
 } // namespace xdiag::julia

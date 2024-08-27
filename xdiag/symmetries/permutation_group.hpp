@@ -10,6 +10,8 @@ class PermutationGroup {
 public:
   PermutationGroup() = default;
   explicit PermutationGroup(std::vector<Permutation> const &permutations);
+  explicit PermutationGroup(
+      VectorPermutation const &permutations); // auxiliary for julia
 
   int64_t n_sites() const;
   int64_t n_symmetries() const;

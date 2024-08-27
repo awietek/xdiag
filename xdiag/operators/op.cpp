@@ -169,4 +169,7 @@ std::ostream &operator<<(std::ostream &out, Op const &op) {
 
 std::string to_string(Op const &op) { return to_string_generic(op); }
 
+void VectorOp::push_back(Op const &op) { v_.push_back(op); }
+std::vector<Op> VectorOp::vector() const { return v_; }
+
 } // namespace xdiag

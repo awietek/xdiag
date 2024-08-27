@@ -3,6 +3,7 @@
 namespace xdiag::julia {
 
 void define_op(jlcxx::Module &mod) {
+
   mod.add_type<Op>("cxx_Op")
       .constructor<>()
       .constructor<std::string, Coupling const &,
@@ -24,8 +25,10 @@ void define_op(jlcxx::Module &mod) {
       .method("coupling",
               [](Op const &op) { JULIA_XDIAG_CALL_RETURN(op.coupling()) })
       .method("size", [](Op const &op) { JULIA_XDIAG_CALL_RETURN(op.size()) })
-      .method("getindex", [](Op const &op,
-                             int64_t idx) { JULIA_XDIAG_CALL_RETURN(op[idx-1]) })
+      .method("getindex",
+              [](Op const &op, int64_t idx) {
+                JULIA_XDIAG_CALL_RETURN(op[idx - 1])
+              })
       .method("sites", [](Op const &op) { JULIA_XDIAG_CALL_RETURN(op.sites()) })
       .method("isreal",
               [](Op const &op) { JULIA_XDIAG_CALL_RETURN(op.isreal()) })
@@ -35,7 +38,10 @@ void define_op(jlcxx::Module &mod) {
               [](Op const &op) { JULIA_XDIAG_CALL_RETURN(op.isexplicit()) });
 
   mod.method("to_string", [](Op const &op) { return to_string(op); });
-  
+
+  mod.add_type<VectorOp>("cxx_VectorOp")
+      .constructor<>()
+      .method("push_back", &VectorOp::push_back);
 }
 
 } // namespace xdiag::julia

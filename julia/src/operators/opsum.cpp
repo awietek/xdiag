@@ -4,11 +4,9 @@ namespace xdiag::julia {
 
 void define_opsum(jlcxx::Module &mod) {
 
-  mod.add_type<std::vector<Op>>("StdVectorOpSum");
-  
   mod.add_type<OpSum>("cxx_OpSum")
       .constructor<>()
-      .constructor<std::vector<Op> const &>()
+      .constructor<VectorOp const &>()
       .method("size",
               [](OpSum const &ops) { JULIA_XDIAG_CALL_RETURN(ops.size()) })
       .method("defined",

@@ -8,4 +8,6 @@
 - open pull request to Yggdrasil (make sure using branch xdiag)
 - after pull request to Yggdrasil is merged update dependency XDiag_jll in Project.toml of XDiag.jl
 - git commit XDiag.jl again
+- tag XDiag.jl
 - open issue "@JuliaRegistrator register" on the XDiag.jl github page
+- optionally, update documentation with mkdocs gh-deploy
