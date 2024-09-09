@@ -50,6 +50,10 @@ A local operator acting on several lattice sites.
 | coupling  | sets the coefficients neded to specify the coupling. Further details below |   |
 | sites     | defines on which site(s) of the lattice the operator acts on.              |   |
 
+!!! warning "1-indexing in Julia / 0-indexing in C++"
+
+	To enumerate the sites of an Op, we start counting at 1 in Julia and 0 in C++.
+
 The coupling can take on several types and allow some flexibility in defining operators.
 
 | type                | Description                                                                         |   |

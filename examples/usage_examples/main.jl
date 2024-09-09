@@ -1,8 +1,8 @@
 using XDiag
 
 # --8<-- [start:Permutation]
-p1 = Permutation([0, 2, 1, 3])
-p2 = Permutation([2, 0, 1, 3])
+p1 = Permutation([1, 3, 2, 4])
+p2 = Permutation([3, 1, 2, 4])
 
 @show inverse(p1)
 @show p1 * p2
@@ -10,9 +10,9 @@ p2 = Permutation([2, 0, 1, 3])
 
 # --8<-- [start:PermutationGroup]
 # Define a cyclic group of order 3
-p1 = Permutation([0, 1, 2])
-p2 = Permutation([1, 2, 0])
-p3 = Permutation([2, 0, 1])
+p1 = Permutation([1, 2, 3])
+p2 = Permutation([2, 3, 1])
+p3 = Permutation([3, 1, 2])
 C3 = PermutationGroup([p1, p2, p3])
 
 @show size(C3)
@@ -42,10 +42,10 @@ block_sz = Spinhalf(N, nup)
 @show block_sz
 
 # with symmetries, without Sz
-p1 = Permutation([0, 1, 2, 3])
-p2 = Permutation([1, 2, 3, 0])
-p3 = Permutation([2, 3, 0, 1])
-p4 = Permutation([3, 0, 1, 2])
+p1 = Permutation([1, 2, 3, 4])
+p2 = Permutation([2, 3, 4, 1])
+p3 = Permutation([3, 4, 1, 2])
+p4 = Permutation([4, 1, 2, 3])
 group = PermutationGroup([p1, p2, p3, p4])
 rep = Representation([1, -1, 1, -1])
 block_sym = Spinhalf(N, group, rep)
@@ -76,10 +76,10 @@ block = tJ(N, nup, ndn)
 @show block
 
 # with permutation symmetries
-p1 = Permutation([0, 1, 2, 3])
-p2 = Permutation([1, 2, 3, 0])
-p3 = Permutation([2, 3, 0, 1])
-p4 = Permutation([3, 0, 1, 2])
+p1 = Permutation([1, 2, 3, 4])
+p2 = Permutation([2, 3, 4, 1])
+p3 = Permutation([3, 4, 1, 2])
+p4 = Permutation([4, 1, 2, 3])
 group = PermutationGroup([p1, p2, p3, p4])
 rep = Representation([1, -1, 1, -1])
 block_sym = tJ(N, nup, ndn, group, rep)
@@ -111,10 +111,10 @@ block_np = Electron(N, nup, ndn)
 @show block_np
 
 # with symmetries, without number conservation
-p1 = Permutation([0, 1, 2, 3])
-p2 = Permutation([1, 2, 3, 0])
-p3 = Permutation([2, 3, 0, 1])
-p4 = Permutation([3, 0, 1, 2])
+p1 = Permutation([1, 2, 3, 4])
+p2 = Permutation([2, 3, 4, 1])
+p3 = Permutation([3, 4, 1, 2])
+p4 = Permutation([4, 1, 2, 3])
 group = PermutationGroup([p1, p2, p3, p4])
 rep = Representation([1, -1, 1, -1])
 block_sym = Electron(N, group, rep)
@@ -146,16 +146,16 @@ let
     # Define a Hubbard chain model
     ops = OpSum()
     for i in 1:N
-        ops += Op("HOP", "T", [i-1, i % N])
+        ops += Op("HOP", "T", [i, mod1(i+1, N)])
     end
     ops["T"] = 1.0;
     ops["U"] = 5.0;
 
     # Create the a permutation group
-    p1 = Permutation([0, 1, 2, 3])
-    p2 = Permutation([1, 2, 3, 0])
-    p3 = Permutation([2, 3, 0, 1])
-    p4 = Permutation([3, 0, 1, 2])
+    p1 = Permutation([1, 2, 3, 4])
+    p2 = Permutation([2, 3, 4, 1])
+    p3 = Permutation([3, 4, 1, 2])
+    p4 = Permutation([4, 1, 2, 3])
     group = PermutationGroup([p1, p2, p3, p4])
     irrep = Representation([1, -1, 1, -1])
     block = Electron(N, nup, ndn, group, irrep)
@@ -174,7 +174,7 @@ let
     # Define the nearest-neighbor Heisenberg model
     ops = OpSum()
     for i in 1:N
-        ops += Op("HB", "J", [i-1, i % N])
+        ops += Op("HB", "J", [i, mod1(i+1, N)])
     end
     ops["J"] = 1.0
 
@@ -191,7 +191,7 @@ let
     # Define the nearest-neighbor Heisenberg model
     ops = OpSum()
     for i in 1:N
-        ops += Op("HB", "J", [i-1, i % N])
+        ops += Op("HB", "J", [i, mod1(i+1, N)])
     end
     ops["J"] = 1.0;
 
@@ -233,8 +233,8 @@ let
 
     ops = OpSum()
     for i in 1:N
-        ops += Op("ISING", "J", [i-1, i % N])
-        ops += Op("SX", h * Sx, i-1)
+        ops += Op("ISING", "J", [i, mod1(i+1, N)])
+        ops += Op("SX", h * Sx, i)
     end
 
     ops["J"] = 1.0;
@@ -350,7 +350,7 @@ let
     block = Spinhalf(N,  N ÷ 2)
     ops = OpSum()
     for i in 1:N
-        ops += Op("HB", 1.0, [i-1, i % N])
+        ops += Op("HB", 1.0, [i, mod1(i+1, N)])
     end
     e0, psi = eig0(ops, block);
 
@@ -375,7 +375,7 @@ let
     block = Spinhalf(N,  N ÷ 2)
     ops = OpSum()
     for i in 1:N
-        ops += Op("HB", 1.0, [i-1, i % N])
+        ops += Op("HB", 1.0, [i, mod1(i+1, N)])
     end
     e0, psi = eig0(ops, block);
 
@@ -392,23 +392,23 @@ let
     N = 4
     nup = 2
     block = Spinhalf(N, nup)
-    p1 = Permutation([0, 1, 2, 3])
-    p2 = Permutation([1, 2, 3, 0])
-    p3 = Permutation([2, 3, 0, 1])
-    p4 = Permutation([3, 0, 1, 2])
+    p1 = Permutation([1, 2, 3, 4])
+    p2 = Permutation([2, 3, 4, 1])
+    p3 = Permutation([3, 4, 1, 2])
+    p4 = Permutation([4, 1, 2, 3])
     group = PermutationGroup([p1, p2, p3, p4])
     rep = Representation([1, 1, 1, 1])
     block_sym = Spinhalf(N, group, rep)
 
     ops = OpSum()
     for i in 1:N
-        ops += Op("HB", 1.0, [i-1, i % N])
+        ops += Op("HB", 1.0, [i, mod1(i+1, N)])
     end
 
     e0, psi = eig0(ops, block);
     e0, psi_sym = eig0(ops, block_sym);
 
-    corr = Op("HB", 1.0, [0, 1])
+    corr = Op("HB", 1.0, [1, 2])
     nn_corr = inner(corr, psi)
     corr_sym = symmetrize(corr, group)
     nn_corr_sym = inner(corr_sym, psi_sym)

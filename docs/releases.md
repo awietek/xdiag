@@ -2,6 +2,17 @@
 title: Releases
 ---
 
+## v0.2.3
+
+**Sep. 9, 2024**
+
+Introduced 1-indexing everywhere in Julia version
+
+* only changes to XDiag.jl, C++ untouched
+* XDiag_jll.jl remains at v0.2.2
+
+---
+
 ## v0.2.2
 
 **Aug. 27, 2024**

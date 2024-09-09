@@ -216,7 +216,7 @@ auto [e0, gs] = eig0(ops, block);
 
 {
 // --8<-- [start:op]
-auto op = Op("HOP", "T", {1, 2});
+auto op = Op("HOP", "T", {0, 1});
 XDIAG_SHOW(op);
 XDIAG_SHOW(op.type());
 XDIAG_SHOW(op.coupling().as<std::string>());
@@ -225,14 +225,14 @@ XDIAG_SHOW(op[0]);
 XDIAG_SHOW(op[1]);
 XDIAG_SHOW(op.isexplicit());
 
- op = Op("HOP", 1.23, {1, 2});
+ op = Op("HOP", 1.23, {0, 1});
 XDIAG_SHOW(op);
 XDIAG_SHOW(op.isreal());
 XDIAG_SHOW(op.ismatrix());
 XDIAG_SHOW(op.isexplicit());
 
 arma::cx_mat m(arma::mat("0 0; 0 0"), arma::mat("0 -1; 1 0"));
-op = Op("SY", m, 1);
+op = Op("SY", m, 0);
 XDIAG_SHOW(op);
 XDIAG_SHOW(op.isreal());
 XDIAG_SHOW(op.ismatrix());

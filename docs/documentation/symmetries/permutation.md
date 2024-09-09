@@ -19,6 +19,10 @@ Creates an Permutation out of an array of integers, e.g. `[0, 2, 1, 3]`. If the 
 	```c++
 	Permutation(std::vector<int64_t> const &array);
 	```
+	
+!!! warning "1-indexing in Julia / 0-indexing in C++"
+
+	To enumerate the sites of a Permutation, we start counting at 1 in Julia and 0 in C++.
 
 ## Methods
 
