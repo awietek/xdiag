@@ -1,4 +1,4 @@
-using XDiag, LinearAlgebra, GLMakie, TOML
+using XDiag, LinearAlgebra, CairoMakie, TOML
 
 let
     # Tutorial displaying Hilbert space
@@ -226,10 +226,6 @@ let
         corr = inner(s1si, gs)
         println("$i $corr")
     end
-
-    # Exercise: plot correlations on the lattice
-    # ...
-
 
     # Tutorial: compute ground state correlations using symmetries
     permutation_vecs = latfile["Symmetries"]

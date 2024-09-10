@@ -2,6 +2,23 @@
 title: Tutorials
 ---
 
+## Introduction to Exact Diagonalization using XDiag
+
+Supporting material for lecture held at [Quant24](https://www.pks.mpg.de/de/quant24) master's school at MPI PKS. Consists of a **Jupyter notebook** and a sample lattice file describing the $N=12$ site triangular lattice Heisenberg model:
+
+- [ed_basic_tutorial.ipynb](examples/ed_basic_tutorial.ipynb){:download="ed_basic_tutorial.ipynb"}
+- [triangular.12.J1J2.toml](examples/triangular.12.J1J2.toml){:download="triangular.12.J1J2.toml"}
+
+This notebook uses the Julia verision of XDiag and covers the basic functionality:
+
+- How to define a Hilbert space
+- How to define an operator
+- How to perform a full diagonalization
+- How to use $S^z$ conservation
+- How to use translational symmetry
+- How to use iterative algorithms for sparse diagonalization
+- How to compute ground state observables
+
 ## Basic examples
 
 <div class="grid cards" markdown>

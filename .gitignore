@@ -34,6 +34,7 @@ benchmark.prof
 benchmark.prof_*
 lcov-report
 xdiag/config.hpp
+examples/tutorial/.ipynb*
 examples/hb_chain_dynamical_sf/main
 examples/hb_chain_dynamical_sf/outfiles/*
 examples/hb_chain_dynamical_sf_nosym/main
