@@ -126,14 +126,18 @@ void fill(State &state, GPWF const &gpwf, int64_t col) try {
     XDIAG_THROW("State and GPWF do not have the same number of sites");
   }
   auto const &block = state.block();
+
 #ifdef XDIAG_USE_MPI
-  if (!std::holds_alternative<Spinhalf>(block) ||
+  if (!std::holds_alternative<Spinhalf>(block) &&
       !std::holds_alternative<SpinhalfDistributed>(block)) {
+    XDIAG_THROW("GPWF is currently only defined for \"Spinhalf\" and "
+                "\"SpinhalfDistributed\" type blocks");
+  }
 #else
   if (!std::holds_alternative<Spinhalf>(block)) {
-#endif
     XDIAG_THROW("GPWF is currently only defined for \"Spinhalf\" type blocks");
   }
+#endif
 
   if (gpwf.isreal()) {
     std::function<double(ProductState const &)> f =
@@ -142,9 +146,9 @@ void fill(State &state, GPWF const &gpwf, int64_t col) try {
   } else {
     std::function<complex(ProductState const &)> f =
         [&](ProductState const &pstate) { return gpwf.coefficientC(pstate); };
+    state.make_complex();
     fill(state, f, col);
   }
-
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }

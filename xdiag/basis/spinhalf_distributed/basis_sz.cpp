@@ -103,7 +103,8 @@ BasisSz<bit_t>::BasisSz(int64_t n_sites, int64_t n_up)
   mpi::Allreduce(&size_, &size_min, 1, MPI_MIN, MPI_COMM_WORLD);
   mpi::Allreduce(&size_transpose_, &size_min_transpose, 1, MPI_MIN,
                  MPI_COMM_WORLD);
-
+  size_min_ = std::min(size_min, size_min_transpose);
+  
   // Check local sizes sum up to the actual dimension
   int64_t dim;
   mpi::Allreduce(&size_, &dim, 1, MPI_SUM, MPI_COMM_WORLD);

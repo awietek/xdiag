@@ -16,8 +16,8 @@ GPWF::GPWF(arma::mat const &onebody_wfs, int64_t n_up) try : isreal_(true) {
   n_dn_ = n_sites_ - n_up_;
 
   work_matrix_ = mat(n_sites_, n_sites_, fill::zeros);
-  onebody_wfs_up_ = onebody_wfs(span(0, n_sites_), span(0, n_up_));
-  onebody_wfs_dn_ = onebody_wfs(span(0, n_sites_), span(n_up_, n_sites_));
+  onebody_wfs_up_ = onebody_wfs(span::all, span(0, n_up_-1));
+  onebody_wfs_dn_ = onebody_wfs(span::all, span(n_up_, n_sites_-1));
 
   work_matrix_c_ = cx_mat();
   onebody_wfs_up_c_ = cx_mat();
@@ -42,8 +42,8 @@ GPWF::GPWF(arma::cx_mat const &onebody_wfs, int64_t n_up) try : isreal_(false) {
   onebody_wfs_dn_ = mat();
 
   work_matrix_c_ = cx_mat(n_sites_, n_sites_, fill::zeros);
-  onebody_wfs_up_c_ = onebody_wfs(span(0, n_sites_), span(0, n_up_));
-  onebody_wfs_dn_c_ = onebody_wfs(span(0, n_sites_), span(n_up_, n_sites_));
+  onebody_wfs_up_c_ = onebody_wfs(span::all, span(0, n_up_-1));
+  onebody_wfs_dn_c_ = onebody_wfs(span::all, span(n_up_, n_sites_-1));
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
@@ -62,11 +62,11 @@ static coeff_t gpwf_coefficient(ProductState const &pstate, int64_t n_sites,
   for (int64_t i = 0; i < n_sites; ++i) {
     std::string s = pstate[i];
     if (s == "Up") {
-      work_matrix(arma::span(0, n_up), i) =
-          onebody_wfs_up(i, arma::span(0, n_up));
+      work_matrix(i, arma::span(0, n_up-1)) =
+          onebody_wfs_up(i, arma::span(0, n_up-1));
     } else { // spin at site i is dn
-      work_matrix(arma::span(n_up, n_sites), i) =
-          onebody_wfs_dn(i, arma::span(0, n_dn));
+      work_matrix(i, arma::span(n_up, n_sites-1)) =
+          onebody_wfs_dn(i, arma::span(0, n_dn-1));
     }
   }
   return arma::det(work_matrix);
