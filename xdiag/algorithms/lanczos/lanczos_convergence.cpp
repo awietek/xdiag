@@ -4,6 +4,11 @@ namespace xdiag::lanczos {
 
 bool converged_eigenvalues(Tmatrix const &tmat, int n_eigenvalue,
                            double precision) try {
+  if (n_eigenvalue < 1) {
+    XDIAG_THROW("Number of eigenvalues to converge (parameter: n_eigenvalue) "
+                "must be larger or equal to 1");
+  }
+
   int size = tmat.size();
   if (size <= n_eigenvalue + 1)
     return false;
@@ -20,6 +25,10 @@ bool converged_eigenvalues(Tmatrix const &tmat, int n_eigenvalue,
         std::abs(eigs(n_eigenvalue - 1) - eigs_previous(n_eigenvalue - 1)) /
         std::abs(eigs(n_eigenvalue - 1));
 
+    Log(2,
+        "convergence -> n_eigenvalue: {}, residue: {:.2e}, precision: {:.2e}",
+        n_eigenvalue, residue, precision);
+    
     return (residue < precision);
   }
 } catch (Error const &e) {
