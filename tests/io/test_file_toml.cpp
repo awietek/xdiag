@@ -15,13 +15,13 @@ template <typename T> void test_write_read(T val) try {
 
   // Test writing
   std::string filename = XDIAG_DIRECTORY "/misc/data/toml/write.toml";
-  auto fl = FileToml(filename, 'w');
+  auto fl = FileToml();
   std::string key = "val";
 
   fl[key] = val;
-  fl.close();
+  fl.write(filename);
 
-  fl = FileToml(filename, 'r');
+  fl = FileToml(filename);
   T val_r = fl[key].as<T>();
 
   // XDIAG_SHOW(val);
@@ -37,7 +37,7 @@ TEST_CASE("file_toml", "[io]") try {
   
   // Just try to parse everything in the example toml file
   std::string filename = XDIAG_DIRECTORY "/misc/data/toml/read.toml";
-  auto fl = FileToml(filename, 'r');
+  auto fl = FileToml(filename);
 
   // Parse String
   std::string n = "title";
@@ -51,6 +51,9 @@ TEST_CASE("file_toml", "[io]") try {
   // Log("B");
   // Log("{}", fl[n].as<int32_t>());
   REQUIRE(fl.defined(n));
+  // for (auto k : fl.keys()){
+  //   XDIAG_SHOW(k);
+  // }
   REQUIRE(fl[n].as<int8_t>() == 42);
   REQUIRE(fl[n].as<int16_t>() == 42);
   REQUIRE(fl[n].as<int32_t>() == 42);
@@ -160,7 +163,7 @@ TEST_CASE("file_toml", "[io]") try {
   test_write_read(i);
 
   filename = XDIAG_DIRECTORY "/misc/data/toml/write.toml";
-  fl = FileToml(filename, 'w');
+  fl = FileToml();
   fl["a"] = a;
   fl["b"] = b;
   fl["c"] = c;
@@ -174,9 +177,9 @@ TEST_CASE("file_toml", "[io]") try {
   fl["k"] = k;
   fl["l"] = l;
   fl["m"] = m;
-  fl.close();
+  fl.write(filename);
 
-  fl = FileToml(filename, 'r');
+  fl = FileToml(filename);
   auto ar = fl["a"].as<int>();
   auto br = fl["b"].as<double>();
   auto cr = fl["c"].as<complex>();

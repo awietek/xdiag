@@ -139,7 +139,7 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
 
     std::string lfilename =
         XDIAG_DIRECTORY "/misc/data/shastry.16.HB.J.Jd.fsl.toml";
-    auto lfile = FileToml(lfilename, 'r');
+    auto lfile = FileToml(lfilename);
     auto ops = lfile["Interactions"].as<OpSum>();
     int n_sites = 16;
     ops["J"] = 0.63;
@@ -195,7 +195,7 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
 
     std::string lfilename =
         XDIAG_DIRECTORY "/misc/data/shastry.20.HB.J.Jd.fsl.toml";
-    auto lfile = FileToml(lfilename, 'r');
+    auto lfile = FileToml(lfilename);
     auto ops = lfile["Interactions"].as<OpSum>();
     int n_sites = 20;
     ops["J"] = 0.63;

@@ -46,3 +46,11 @@ void check_dimension_works_with_blas_int_size(int64_t dim);
 #define XDIAG_RETHROW(error)                                                   \
   xdiag::rethrow_error(error, __FILE__, __func__, __LINE__);                   \
   throw 0;
+
+#define XDIAG_TRY_CATCH(statement)                                             \
+  try {                                                                        \
+    statement;                                                                 \
+  } catch (Error const &e) {                                                   \
+    xdiag::rethrow_error(e, __FILE__, __func__, __LINE__);                     \
+    throw 0;                                                                   \
+  }

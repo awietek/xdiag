@@ -32,6 +32,7 @@
 #include <xdiag/utils/precision.hpp>
 #include <xdiag/utils/say_hello.hpp>
 #include <xdiag/utils/xdiag_show.hpp>
+#include <xdiag/utils/type_string.hpp>
 
 #include <xdiag/algebra/algebra.hpp>
 #include <xdiag/algebra/apply.hpp>

@@ -4,6 +4,7 @@ set(XDIAG_SOURCES
   utils/logger.cpp
   utils/say_hello.cpp
   utils/read_vectors.cpp
+  utils/type_string.cpp
   bits/bitops.cpp
   
   parallel/omp/omp_utils.cpp  
