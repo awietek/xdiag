@@ -1,7 +1,6 @@
 set(XDIAG_TEST_SOURCES
   bits/test_bitops.cpp
 
-  io/test_args.cpp
   io/test_file_toml.cpp
   io/test_file_h5.cpp
 

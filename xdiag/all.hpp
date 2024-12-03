@@ -111,7 +111,6 @@
 #include <xdiag/algorithms/time_evolution/time_evolution.hpp>
 #include <xdiag/algorithms/time_evolution/zahexpv.hpp>
 
-#include <xdiag/io/args.hpp>
 #include <xdiag/io/file_h5.hpp>
 #include <xdiag/io/file_toml.hpp>
 
