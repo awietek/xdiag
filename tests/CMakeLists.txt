@@ -29,6 +29,7 @@ set(XDIAG_TEST_SOURCES
   symmetries/test_generated_group.cpp
   symmetries/test_qn.cpp
 
+  operators/test_op.cpp
   operators/test_opsum.cpp
   operators/test_symmetrize.cpp
   operators/test_non_branching_op.cpp

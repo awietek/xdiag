@@ -10,10 +10,13 @@ namespace xdiag {
 class Op {
 public:
   Op() = default;
+
+  Op(std::string type, int64_t site);
+  Op(std::string type, std::vector<int64_t> const &sites);
+
   Op(std::string type, Coupling const &coupling,
      std::vector<int64_t> const &sites);
   Op(std::string type, Coupling const &coupling, int64_t site);
-
   Op(std::string type, const char *coupling, std::vector<int64_t> const &sites);
   Op(std::string type, const char *coupling, int64_t site);
   Op(std::string type, std::string coupling, std::vector<int64_t> const &sites);
@@ -22,12 +25,19 @@ public:
   Op(std::string type, double coupling, int64_t site);
   Op(std::string type, complex coupling, std::vector<int64_t> const &sites);
   Op(std::string type, complex coupling, int64_t site);
+
   Op(std::string type, arma::mat const &coupling,
      std::vector<int64_t> const &sites);
   Op(std::string type, arma::mat const &coupling, int64_t site);
   Op(std::string type, arma::cx_mat const &coupling,
      std::vector<int64_t> const &sites);
   Op(std::string type, arma::cx_mat const &coupling, int64_t site);
+
+  Op operator*(Coupling const &coupling) const;
+  Op operator*(std::string coupling) const;
+  Op operator*(const char *coupling) const;
+  Op operator*(double coupling) const;
+  Op operator*(complex coupling) const;
 
   std::string type() const;
   Coupling const &coupling() const;
@@ -49,6 +59,12 @@ private:
   std::vector<int64_t> sites_;
 };
 
+Op operator*(Coupling const &coupling, Op const &op);
+Op operator*(std::string coupling, Op const &op);
+Op operator*(const char *coupling, Op const &op);
+Op operator*(double coupling, Op const &op);
+Op operator*(complex coupling, Op const &op);
+
 bool sites_disjoint(Op const &op);
 std::vector<int64_t> common_sites(Op const &b1, Op const &b2);
 
@@ -61,6 +77,7 @@ public:
   VectorOp() = default;
   void push_back(Op const &op);
   std::vector<Op> vector() const;
+
 private:
   std::vector<Op> v_;
 };

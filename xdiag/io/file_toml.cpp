@@ -1,7 +1,7 @@
 #include "file_toml.hpp"
 
 #include <fstream>
-#include <xdiag/extern/fmt/format.hpp>
+#include <xdiag/common.hpp>
 #include <xdiag/utils/error.hpp>
 
 namespace xdiag {

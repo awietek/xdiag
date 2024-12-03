@@ -1,8 +1,10 @@
 #include "coupling.hpp"
 
+#include <xdiag/utils/type_string.hpp>
+
 namespace xdiag {
 
-Coupling::Coupling(const char* value) : value_(std::string(value)) {}
+Coupling::Coupling(const char *value) : value_(std::string(value)) {}
 Coupling::Coupling(std::string value) : value_(value) {}
 Coupling::Coupling(double value) : value_(value) {}
 Coupling::Coupling(complex value) : value_(value) {}
@@ -10,6 +12,9 @@ Coupling::Coupling(arma::mat const &value) : value_(value) {}
 Coupling::Coupling(arma::cx_mat const &value) : value_(value) {}
 Coupling::Coupling(variant_t const &value) : value_(value) {}
 
+bool Coupling::defined() const {
+  return !(is<std::string>() && as<std::string>() == std::string());
+}
 bool Coupling::isreal() const try {
   return std::visit(overload{
                         [](std::string const &) {
@@ -103,14 +108,11 @@ template <> arma::cx_mat Coupling::as<arma::cx_mat>() const try {
 }
 
 std::string Coupling::type() const {
-  return std::visit(overload{
-                        [](std::string const &) { return "string"; },
-                        [](double const &) { return "double"; },
-                        [](complex const &) { return "complex"; },
-                        [](arma::mat const &) { return "mat"; },
-                        [](arma::cx_mat const &) { return "cx_mat"; },
-                    },
-                    value_);
+  return std::visit(
+      [](auto &&v) {
+        return utils::type_string<typename std::decay<decltype(v)>::type>();
+      },
+      value_);
 }
 
 bool Coupling::operator==(Coupling const &rhs) const {

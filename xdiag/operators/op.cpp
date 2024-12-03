@@ -5,8 +5,13 @@
 
 #include <xdiag/common.hpp>
 #include <xdiag/utils/close.hpp>
+#include <xdiag/utils/type_string.hpp>
 
 namespace xdiag {
+
+Op::Op(std::string type, int64_t site) : Op(type, Coupling(), site) {}
+Op::Op(std::string type, std::vector<int64_t> const &sites)
+    : Op(type, Coupling(), sites) {}
 
 Op::Op(std::string type, Coupling const &coupling,
        std::vector<int64_t> const &sites) try
@@ -90,8 +95,56 @@ Op::Op(std::string type, arma::cx_mat const &coupling, int64_t site) try
   XDIAG_RETHROW(e);
 }
 
-std::string Op::type() const { return type_; }
+Op Op::operator*(Coupling const &c) const try {
+  auto const &d = coupling_;
+  if (d.defined()) {
+    if (c.is<std::string>() || d.is<std::string>()) {
+      XDIAG_THROW("Cannot multiply couplings where one coupling is defined my "
+                  "a string");
+    } else if (c.is<arma::mat>() || c.is<arma::cx_mat>()) {
+      XDIAG_THROW(
+          "Cannot multiply an operator with a matrix, needs to be a scalar");
+    } else {
+      auto dnew = d;
+      if (c.is<double>()) {
+        dnew *= c.as<double>();
+      } else {
+        dnew *= c.as<complex>();
+      }
+      return Op(type_, dnew, sites_);
+    }
+  } else {
+    return Op(type_, c, sites_);
+  }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
 
+Op Op::operator*(std::string c) const try {
+  return operator*(Coupling(c));
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+
+Op Op::operator*(const char *c) const try {
+  return operator*(Coupling(c));
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+
+Op Op::operator*(double c) const try {
+  return operator*(Coupling(c));
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+
+Op Op::operator*(complex c) const try {
+  return operator*(Coupling(c));
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+
+std::string Op::type() const { return type_; }
 Coupling const &Op::coupling() const { return coupling_; }
 
 int64_t Op::size() const { return sites_.size(); }
@@ -131,6 +184,12 @@ bool Op::operator==(Op const &rhs) const try {
 }
 
 bool Op::operator!=(Op const &rhs) const { return !operator==(rhs); }
+
+Op operator*(Coupling const &coupling, Op const &op) { return op * coupling; }
+Op operator*(std::string coupling, Op const &op) { return op * coupling; }
+Op operator*(const char *coupling, Op const &op) { return op * coupling; }
+Op operator*(double coupling, Op const &op) { return op * coupling; }
+Op operator*(complex coupling, Op const &op) { return op * coupling; }
 
 bool sites_disjoint(Op const &op) {
   auto const &sites = op.sites();

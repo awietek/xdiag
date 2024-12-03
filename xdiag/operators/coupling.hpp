@@ -20,6 +20,7 @@ public:
   explicit Coupling(arma::cx_mat const &value);
   explicit Coupling(variant_t const &value);
 
+  bool defined() const;
   bool isreal() const;
   bool ismatrix() const;
   bool isexplicit() const;
