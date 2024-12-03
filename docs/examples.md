@@ -1,5 +1,5 @@
 ---
-title: Tutorials
+title: Examples
 ---
 
 ## Introduction to Exact Diagonalization using XDiag

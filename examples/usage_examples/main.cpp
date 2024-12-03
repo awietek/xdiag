@@ -6,6 +6,27 @@ using namespace xdiag;
 int main() try {
   // clang-format off
 
+
+{
+// --8<-- [start:FileTOML]
+auto input = FileTOML("input.toml");
+int N = input["N"].as<int>();
+int nup = input["nup"].as<int>();
+double J1 = input["J1"].as<double>();
+double J2 = input["J2"].as<double>();
+
+auto block = Spinhalf(N, nup);
+auto H = OpSum();
+for (int i=0; i<N; ++i){
+  H += J1 * Op("HB", {i, (i+1)%N});
+  H += J2 * Op("HB", {i, (i+2)%N});
+}
+
+double e0 = eigval0(H, block);
+XDIAG_SHOW(e0);
+// --8<-- [end:FileTOML]
+}
+  
 {
 // --8<-- [start:Permutation]
 Permutation p1 = {0, 2, 1, 3};
