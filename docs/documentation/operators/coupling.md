@@ -2,115 +2,54 @@
 title: Coupling
 ---
 
-Describes the coupling of a local operator. A coupling can either be a string, a real/complex number or even a real/complex matrix. It allows for converting to real/complex numbers or matrices as well as strings, whenever this conversion is sensible. 
+Describes the coupling of an operator. A coupling can either be a **string** or a [Scalar](scalar.md), which is either a real or complex double precision floating point number. 
 
 **Source** [coupling.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/operators/coupling.hpp)
 
 ## Constructors
 
-=== "Julia"
-	```julia
-	Coupling(name::String)
-	Coupling(val::Float64)
-	Coupling(val::ComplexF64)
-	Coupling(mat::Matrix{Float64})
-   	Coupling(mat::Matrix{ComplexF64})
-	```
 === "C++"	
 	```c++
-	Coupling(std::string value);
-	Coupling(double value);
-	Coupling(complex value);
-	Coupling(arma::mat const &value);
-	Coupling(arma::cx_mat const &value);
+	Coupling() = default;
+	explicit Coupling(std::string value);
+	explicit Coupling(double value);
+	explicit Coupling(complex value);
+	explicit Coupling(Scalar value););
 	```
 
 ## Methods
 
-!!! method "type"
+!!! method "isscalar"
 
-	Returns the type of the Coupling, i.e. a string which either reads "string", "double", "complex", "mat", or "cx_mat"
-
-	=== "Julia"
-		```julia
-		type(cpl::Coupling)
-		```
+	Returns whether or not the coupling is a [Scalar](scalar.md), i.e. a real or complex number.
 
 	=== "C++"	
 		```c++
-		std::string type() const;
+	    bool isscalar(Coupling const& c)
 		```
 		
-!!! method "isreal"
+!!! method "isstring"
 
-	Returns whether or not the coupling is real. Throws an error if the coupling is given as a string, since then it cannot be determined whether the operator is real.
-
-	=== "Julia"
-		```julia
-		isreal(cpl::Coupling)
-		```
+	Returns whether or not the coupling is a string.
 
 	=== "C++"	
 		```c++
-		bool isreal() const;
-		```	
+	    bool isstring(Coupling const& c)
+		```
 		
-!!! method "ismatrix"
+!!! method "scalar"
 
-	Returns whether or not the coupling is defined as a matrix. Throws an error if the coupling is given as a string, since then it cannot be determined whether the operator is real.
-
-	=== "Julia"
-		```julia
-		ismatrix(cpl::Coupling)
-		```
+	Returns the [Scalar](scalar.md) if the Coupling holds a scalar. Otherwise throws an `xdiag::Error`
 
 	=== "C++"	
 		```c++
-		bool ismatrix() const;
-		```	
-		
-				
-!!! method "isexplicit"
-
-	Returns **false** if the coupling is defined as a string, otherwise **true**
-
-	=== "Julia"
-		```julia
-		isexplicit(cpl::Coupling)
+	    Scalar scalar(Coupling const& c)
 		```
+!!! method "string"
+
+	Returns the string if the Coupling holds a string. Otherwise throws an `xdiag::Error`
 
 	=== "C++"	
 		```c++
-		bool isexplicit() const;
-		```	
-
-## Conversions
-
-A Coupling can be converted to the values it represents, so a string, real/complex number or a real/complex matrix. Initially real values can be cast to complex.
-
-=== "Julia"
-	```julia
-	convert(::Type{String}, cpl::Coupling)
-	convert(::Type{Float64}, cpl::Coupling)
-	convert(::Type{ComplexF64}, cpl::Coupling)
-	convert(::Type{Matrix{Float64}}, cpl::Coupling)
-	convert(::Type{Matrix{ComplexF64}}, cpl::Coupling)
-	```
-=== "C++"	
-	```c++
-	template <typename coeff_t> coeff_t as() const;
-	```
-
-## Usage Example
-
-=== "Julia"
-	```c++
-	--8<-- "examples/usage_examples/main.jl:coupling"
-	```
-
-=== "C++"
-	```c++
-	--8<-- "examples/usage_examples/main.cpp:coupling"
-	```
-
-
+	    std::string string(Coupling const& c)
+		```

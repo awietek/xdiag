@@ -1,75 +1,49 @@
 #pragma once
 
+#include <optional>
+#include <string>
 #include <vector>
+
 #include <xdiag/common.hpp>
 #include <xdiag/extern/armadillo/armadillo>
-#include <xdiag/operators/coupling.hpp>
+#include <xdiag/operators/matrix.hpp>
 
 namespace xdiag {
 
 class Op {
 public:
-  Op() = default;
-
-  Op(std::string type, int64_t site);
-  Op(std::string type, std::vector<int64_t> const &sites);
-
-  Op(std::string type, Coupling const &coupling,
-     std::vector<int64_t> const &sites);
-  Op(std::string type, Coupling const &coupling, int64_t site);
-  Op(std::string type, const char *coupling, std::vector<int64_t> const &sites);
-  Op(std::string type, const char *coupling, int64_t site);
-  Op(std::string type, std::string coupling, std::vector<int64_t> const &sites);
-  Op(std::string type, std::string coupling, int64_t site);
-  Op(std::string type, double coupling, std::vector<int64_t> const &sites);
-  Op(std::string type, double coupling, int64_t site);
-  Op(std::string type, complex coupling, std::vector<int64_t> const &sites);
-  Op(std::string type, complex coupling, int64_t site);
-
-  Op(std::string type, arma::mat const &coupling,
-     std::vector<int64_t> const &sites);
-  Op(std::string type, arma::mat const &coupling, int64_t site);
-  Op(std::string type, arma::cx_mat const &coupling,
-     std::vector<int64_t> const &sites);
-  Op(std::string type, arma::cx_mat const &coupling, int64_t site);
-
-  Op operator*(Coupling const &coupling) const;
-  Op operator*(std::string coupling) const;
-  Op operator*(const char *coupling) const;
-  Op operator*(double coupling) const;
-  Op operator*(complex coupling) const;
+  XDIAG_API Op() = default;
+  explicit XDIAG_API Op(std::string type);
+  XDIAG_API Op(std::string type, int64_t site);
+  XDIAG_API Op(std::string type, std::vector<int64_t> const &sites);
+  XDIAG_API Op(std::string type, arma::mat const &matrix);
+  XDIAG_API Op(std::string type, int64_t site, arma::mat const &matrix);
+  XDIAG_API Op(std::string type, std::vector<int64_t> const &sites,
+               arma::mat const &matrix);
+  XDIAG_API Op(std::string type, arma::cx_mat const &matrix);
+  XDIAG_API Op(std::string type, int64_t site, arma::cx_mat const &matrix);
+  XDIAG_API Op(std::string type, std::vector<int64_t> const &sites,
+               arma::cx_mat const &matrix);
 
   std::string type() const;
-  Coupling const &coupling() const;
-
+  bool hassites() const;
+  bool hasmatrix() const;
+  Matrix const &matrix() const;
   int64_t size() const;
   int64_t operator[](int64_t idx) const;
   std::vector<int64_t> const &sites() const;
 
-  bool isreal() const;
-  bool ismatrix() const;
-  bool isexplicit() const;
-
-  bool operator==(const Op &rhs) const;
-  bool operator!=(const Op &rhs) const;
+  XDIAG_API bool operator==(const Op &rhs) const;
+  XDIAG_API bool operator!=(const Op &rhs) const;
 
 private:
   std::string type_;
-  Coupling coupling_;
-  std::vector<int64_t> sites_;
+  std::optional<std::vector<int64_t>> sites_;
+  std::optional<Matrix> matrix_;
 };
 
-Op operator*(Coupling const &coupling, Op const &op);
-Op operator*(std::string coupling, Op const &op);
-Op operator*(const char *coupling, Op const &op);
-Op operator*(double coupling, Op const &op);
-Op operator*(complex coupling, Op const &op);
-
-bool sites_disjoint(Op const &op);
-std::vector<int64_t> common_sites(Op const &b1, Op const &b2);
-
-std::ostream &operator<<(std::ostream &out, Op const &op);
-std::string to_string(Op const &op);
+XDIAG_API std::ostream &operator<<(std::ostream &out, Op const &op);
+XDIAG_API std::string to_string(Op const &op);
 
 // helper for julia wrapper
 class VectorOp {

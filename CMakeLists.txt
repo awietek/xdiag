@@ -42,26 +42,22 @@ if(DEFINED CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
     )
 endif()
 
-  
-###############################################################
-# On windows all symbols should be exported 
-if (MSVC)
-    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
-endif()
-
 # The follow lines would be necessary to deal with visibility
 # of a shared library,
 # https://alexreinking.com/blog/building-a-dual-shared-and-static-library-with-cmake.html
 
-# if (NOT DEFINED CMAKE_CXX_VISIBILITY_PRESET AND
-#     NOT DEFINED CMAKE_VISIBILITY_INLINES_HIDDEN)
-#   set(CMAKE_CXX_VISIBILITY_PRESET hidden)
-#   set(CMAKE_VISIBILITY_INLINES_HIDDEN YES)
-# endif ()
+if (NOT DEFINED CMAKE_CXX_VISIBILITY_PRESET AND
+    NOT DEFINED CMAKE_VISIBILITY_INLINES_HIDDEN)
+  set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+  set(CMAKE_VISIBILITY_INLINES_HIDDEN YES)
+endif ()
 
 ## Let SomeLib_SHARED_LIBS override BUILD_SHARED_LIBS
 if (DEFINED XDIAG_SHARED_LIBS)
-    set(BUILD_SHARED_LIBS "${XDIAG_SHARED_LIBS}")
+  message(STATUS "Building shared library")
+  set(BUILD_SHARED_LIBS "${XDIAG_SHARED_LIBS}")
+else()
+  message(STATUS "Building static library")
 endif ()
 
 # determine which library is being built
@@ -86,17 +82,13 @@ else()
   add_subdirectory(xdiag)
 endif()
 
-
-
-## would be needed for visibility contron in shared objects ->
-
-# # Generate the export header for SomeLib and attach it to the target
-# include(GenerateExportHeader)
-# generate_export_header(${XDIAG_LIBRARY} EXPORT_FILE_NAME include/xdiag/export.h)
-# target_compile_definitions(
-#     ${XDIAG_LIBRARY} PUBLIC "$<$<NOT:$<BOOL:${BUILD_SHARED_LIBS}>>:XDIAG_STATIC_DEFINE>")
-# target_include_directories(
-#   ${XDIAG_LIBRARY} PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>")
+# Generate the export header for SomeLib and attach it to the target
+include(GenerateExportHeader)
+generate_export_header(${XDIAG_LIBRARY} EXPORT_FILE_NAME include/xdiag/export.hpp)
+target_compile_definitions(
+    ${XDIAG_LIBRARY} PUBLIC "$<$<NOT:$<BOOL:${BUILD_SHARED_LIBS}>>:XDIAG_STATIC_DEFINE>")
+target_include_directories(
+  ${XDIAG_LIBRARY} PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>")
 
 # Add sanitizers to debug mode
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")

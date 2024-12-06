@@ -1,5 +1,7 @@
 #pragma once
 
+#include <xdiag/common.hpp>
+
 #include <xdiag/extern/armadillo/armadillo>
 #include <xdiag/operators/op.hpp>
 #include <xdiag/operators/opsum.hpp>
@@ -16,13 +18,10 @@
 #endif
 
 namespace xdiag {
-// Public routines
-void apply(Op const &op, State const &v, State &w, double precision = 1e-12);
 
-void apply(OpSum const &ops, State const &v, State &w,
-           double precision = 1e-12);
+XDIAG_API void apply(OpSum const &ops, State const &v, State &w,
+                     double precision = 1e-12);
 
-// Internal routines
 template <typename coeff_t>
 void apply(OpSum const &op, Spinhalf const &block_in,
            arma::Col<coeff_t> const &vec_in, Spinhalf const &block_out,
@@ -45,7 +44,7 @@ template <typename coeff_t>
 void apply(OpSum const &op, Electron const &block_in,
            arma::Col<coeff_t> const &vec_in, Electron const &block_out,
            arma::Col<coeff_t> &vec_out, double precision = 1e-12);
-           template <typename coeff_t>
+template <typename coeff_t>
 void apply(OpSum const &op, Electron const &block_in,
            arma::Mat<coeff_t> const &mat_in, Electron const &block_out,
            arma::Mat<coeff_t> &mat_out, double precision = 1e-12);

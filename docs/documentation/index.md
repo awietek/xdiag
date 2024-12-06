@@ -41,12 +41,15 @@ title: Overview
 | [Electron](blocks/electron.md) | Block of a Electron type Hilbert space     | :simple-cplusplus: :simple-julia: |
 
 ## Operators
-|                                       |                                                                      |                                   |
-|:--------------------------------------|:---------------------------------------------------------------------|----------------------------------:|
-| [Op](operators/op.md)                 | A local operator acting on several lattice sites                     | :simple-cplusplus: :simple-julia: |
-| [OpSum](operators/opsum.md)           | Sum of local operators                                               | :simple-cplusplus: :simple-julia: |
-| [Coupling](operators/coupling.md)     | Describes the coupling of a local operator                           | :simple-cplusplus: :simple-julia: |
-| [symmetrize](operators/symmetrize.md) | Symmetrizes an operator with respect to a permutation symmetry group | :simple-cplusplus: :simple-julia: |
+|                                       |                                                                           |                                   |
+|:--------------------------------------|:--------------------------------------------------------------------------|----------------------------------:|
+| [Op](operators/op.md)                 | A linear operator acting on the Hilbert space                             |                :simple-cplusplus: |
+| [OpSum](operators/opsum.md)           | Sum of couplings times operators                                          |                :simple-cplusplus: |
+| [isreal](operators/isreal.md)         | Returns whether an Op or OpSum is a real operator.                        |                :simple-cplusplus: |
+| [hc](operators/hc.md)                 | Returns the hermitian conjugate of an Op or OpSum.                        |                :simple-cplusplus: |
+| [symmetrize](operators/symmetrize.md) | Symmetrizes an operator with respect to a permutation symmetry group      | :simple-cplusplus: :simple-julia: |
+| [Scalar](operators/scalar.md)         | A scalar number which can be either real or complex                       |                :simple-cplusplus: |
+| [Coupling](operators/coupling.md)     | Describes a coupling associated with an operator, either string or scalar |                :simple-cplusplus: |
 
 
 ## States

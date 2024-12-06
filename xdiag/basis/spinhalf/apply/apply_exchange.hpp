@@ -2,9 +2,9 @@
 
 #include <functional>
 
-#include <xdiag/bits/bitops.hpp>
 #include <xdiag/basis/spinhalf/apply/apply_term_offdiag_no_sym.hpp>
 #include <xdiag/basis/spinhalf/apply/apply_term_offdiag_sym.hpp>
+#include <xdiag/bits/bitops.hpp>
 #include <xdiag/common.hpp>
 
 namespace xdiag::basis::spinhalf {
@@ -13,17 +13,9 @@ namespace xdiag::basis::spinhalf {
 
 template <typename bit_t, typename coeff_t, bool symmetric, class BasisIn,
           class BasisOut, class Fill>
-void apply_exchange(Op const &op, BasisIn &&basis_in, BasisOut &&basis_out,
-                    Fill &&fill) {
-
-  assert(op.type() == "EXCHANGE");
-  assert(op.size() == 2);
-  assert(sites_disjoint(op));
-
-  Coupling cpl = op.coupling();
-  assert(cpl.isexplicit() && !cpl.ismatrix());
-
-  coeff_t J = cpl.as<coeff_t>();
+void apply_exchange(Coupling const &cpl, Op const &op, BasisIn &&basis_in,
+                    BasisOut &&basis_out, Fill &&fill) try {
+  coeff_t J = cpl.scalar().as<coeff_t>();
   int64_t s1 = op[0];
   int64_t s2 = op[1];
   bit_t flipmask = ((bit_t)1 << s1) | ((bit_t)1 << s2);
@@ -60,6 +52,8 @@ void apply_exchange(Op const &op, BasisIn &&basis_in, BasisOut &&basis_out,
     spinhalf::apply_term_offdiag_no_sym<bit_t, coeff_t>(
         basis_in, basis_out, non_zero_term, term_action, fill);
   }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 } // namespace xdiag::basis::spinhalf

@@ -8,20 +8,18 @@
 namespace xdiag {
 
 // Various norms
-double norm(State const &v);
-double norm1(State const &v);
-double norminf(State const &v);
+XDIAG_API double norm(State const &v);
+XDIAG_API double norm1(State const &v);
+XDIAG_API double norminf(State const &v);
 
 // dot
-double dot(State const &v, State const &w);
-complex dotC(State const &v, State const &w);
+XDIAG_API double dot(State const &v, State const &w);
+XDIAG_API complex dotC(State const &v, State const &w);
 
-double inner(OpSum const &ops, State const &v);
-double inner(Op const &op, State const &v);
+XDIAG_API double inner(OpSum const &ops, State const &v);
+XDIAG_API complex innerC(OpSum const &ops, State const &v);
 
-complex innerC(OpSum const &ops, State const &v);
-complex innerC(Op const &op, State const &v);
-
+// Internal routines
 double dot(Block const &block, arma::vec const &v, arma::vec const &w);
 complex dot(Block const &block, arma::cx_vec const &v, arma::cx_vec const &w);
 
@@ -35,23 +33,23 @@ template <typename coeff_t>
 double norminf(Block const &block, arma::Col<coeff_t> const &v);
 
 // arithmetic operators
-State &operator*=(State &X, double alpha);
-State operator*(State const &X, double alpha);
-State operator*(double alpha, State const &X);
+XDIAG_API State &operator*=(State &X, double alpha);
+XDIAG_API State operator*(State const &X, double alpha);
+XDIAG_API State operator*(double alpha, State const &X);
 
-State &operator*=(State &X, complex alpha);
-State operator*(State const &X, complex alpha);
-State operator*(complex alpha, State const &X);
+XDIAG_API State &operator*=(State &X, complex alpha);
+XDIAG_API State operator*(State const &X, complex alpha);
+XDIAG_API State operator*(complex alpha, State const &X);
 
-State &operator/=(State &X, double alpha);
-State operator/(State const &X, double alpha);
-  
-State &operator/=(State &X, complex alpha);
-State operator/(State const &X, complex alpha);
+XDIAG_API State &operator/=(State &X, double alpha);
+XDIAG_API State operator/(State const &X, double alpha);
 
-State &operator+=(State &v, State const &w);
-State &operator-=(State &v, State const &w);
-State operator+(State const &v, State const &w);
-State operator-(State const &v, State const &w);
+XDIAG_API State &operator/=(State &X, complex alpha);
+XDIAG_API State operator/(State const &X, complex alpha);
+
+XDIAG_API State &operator+=(State &v, State const &w);
+XDIAG_API State &operator-=(State &v, State const &w);
+XDIAG_API State operator+(State const &v, State const &w);
+XDIAG_API State operator-(State const &v, State const &w);
 
 } // namespace xdiag

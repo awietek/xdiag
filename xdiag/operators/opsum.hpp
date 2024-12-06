@@ -1,53 +1,50 @@
 #pragma once
 
+#include <map>
 #include <string>
 #include <vector>
+#include <xdiag/operators/coupling.hpp>
 #include <xdiag/operators/op.hpp>
+#include <xdiag/operators/scalar.hpp>
 
 namespace xdiag {
 
 class OpSum {
 public:
-  using value_type = Op;
-  using iterator_t = typename std::vector<Op>::const_iterator;
-  
-  OpSum() = default;
-  explicit OpSum(std::vector<Op> const &ops);
-  explicit OpSum(VectorOp const &ops); // auxiliary for julia
+  using iterator_t = std::vector<std::pair<Coupling, Op>>::const_iterator;
 
+  XDIAG_API OpSum() = default;
+  XDIAG_API OpSum(Op const &op);
+  XDIAG_API OpSum(Coupling const &cpl, Op const &op);
+
+  XDIAG_API void operator+=(OpSum const &ops);
+  XDIAG_API OpSum operator+(OpSum const &ops) const;
+
+  XDIAG_API Scalar &operator[](std::string name);
+  XDIAG_API Scalar const &operator[](std::string name) const;
+
+  bool operator==(OpSum const &rhs) const;
+  bool operator!=(OpSum const &rhs) const;
+
+  std::vector<std::string> constants() const;
+  OpSum plain() const;
   int64_t size() const;
-  bool defined(std::string name) const;
-  Coupling &operator[](std::string name);
-  Coupling const &operator[](std::string name) const;
-  std::vector<std::string> couplings() const;
-
-  bool isreal() const;
-  bool isexplicit() const;
-
-  void push_back(Op const &op);
-  void operator+=(Op const &op);
-  void operator+=(OpSum const &ops);
-  OpSum operator+(Op const &op) const;
-  OpSum operator+(OpSum const &ops) const;
-
-  bool operator==(OpSum const &other) const;
-  bool operator!=(OpSum const &other) const;
-
   iterator_t begin() const;
   iterator_t end() const;
 
 private:
-  std::vector<Op> ops_;
-  std::map<std::string, Coupling> couplings_;
+  std::vector<std::pair<Coupling, Op>> terms_;
+  std::map<std::string, Scalar> constants_;
 };
 
-OpSum ops_of_type(std::string type, OpSum const &ops);
-OpSum make_explicit(OpSum const &ops);
+XDIAG_API std::vector<std::string> constants(OpSum const &ops);
 
-// legacy function, can be removed later
-OpSum read_opsum(std::string filename);
+XDIAG_API OpSum operator*(std::string cpl, Op const &op);
+XDIAG_API OpSum operator*(double cpl, Op const &op);
+XDIAG_API OpSum operator*(complex cpl, Op const &op);
+XDIAG_API OpSum operator*(Scalar cpl, Op const &op);
 
-std::ostream &operator<<(std::ostream &out, OpSum const &ops);
-std::string to_string(OpSum const &ops);
+XDIAG_API std::ostream &operator<<(std::ostream &out, OpSum const &ops);
+XDIAG_API std::string to_string(OpSum const &ops);
 
 } // namespace xdiag

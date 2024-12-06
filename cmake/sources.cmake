@@ -15,7 +15,7 @@ set(XDIAG_SOURCES
   io/file_toml.cpp
   io/file_h5.cpp
   io/toml/file_toml_handler.cpp
-  io/toml/toml_conversion.cpp
+  # io/toml/toml_conversion.cpp
   io/hdf5/file_h5_handler.cpp
   io/hdf5/file_h5_subview.cpp
   io/hdf5/utils.cpp
@@ -74,12 +74,19 @@ set(XDIAG_SOURCES
   symmetries/group_action/group_action_sublattice.cpp
   symmetries/group_action/sublattice_stability.cpp
 
-  operators/coupling.cpp
+  operators/scalar.cpp
   operators/op.cpp
   operators/opsum.cpp
   operators/compiler.cpp
-  operators/symmetrize.cpp
   operators/non_branching_op.cpp
+  operators/logic/valid.cpp
+  operators/logic/types.cpp
+  operators/logic/symmetrize.cpp
+  operators/logic/real.cpp
+  operators/logic/hc.cpp
+  operators/logic/isapprox.cpp
+  operators/logic/permute.cpp
+  operators/logic/qns.cpp
 
   states/gpwf.cpp
   states/product_state.cpp

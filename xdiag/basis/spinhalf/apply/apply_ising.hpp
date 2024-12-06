@@ -1,7 +1,7 @@
 #pragma once
 
-#include <xdiag/bits/bitops.hpp>
 #include <xdiag/basis/spinhalf/apply/apply_term_diag.hpp>
+#include <xdiag/bits/bitops.hpp>
 #include <xdiag/common.hpp>
 
 namespace xdiag::basis::spinhalf {
@@ -10,15 +10,9 @@ namespace xdiag::basis::spinhalf {
 
 template <typename bit_t, typename coeff_t, bool symmetric, class BasisIn,
           class BasisOut, class Fill>
-void apply_ising(Op const &op, BasisIn &&basis_in, BasisOut &&basis_out,
-                 Fill &&fill) {
-  assert(op.type() == "ISING");
-  assert(op.size() == 2);
-  assert(sites_disjoint(op));
-
-  Coupling cpl = op.coupling();
-  assert(cpl.isexplicit() && !cpl.ismatrix());
-  coeff_t J = cpl.as<coeff_t>();
+void apply_ising(Coupling const &cpl, Op const &op, BasisIn &&basis_in,
+                 BasisOut &&basis_out, Fill &&fill) try {
+  coeff_t J = cpl.scalar().as<coeff_t>();
   int64_t s1 = op[0];
   int64_t s2 = op[1];
   bit_t mask = ((bit_t)1 << s1) | ((bit_t)1 << s2);
@@ -58,6 +52,8 @@ void apply_ising(Op const &op, BasisIn &&basis_in, BasisOut &&basis_out,
           basis_in, basis_out, non_zero_term, term_action, fill);
     }
   }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 } // namespace xdiag::basis::spinhalf

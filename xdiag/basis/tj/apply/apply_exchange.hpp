@@ -9,15 +9,9 @@ namespace xdiag::basis::tj {
 
 template <typename bit_t, typename coeff_t, bool symmetric, class Basis,
           class Filler>
-void apply_exchange(Op const &op, Basis &&basis, Filler &&fill) {
-  assert(op.size() == 2);
-  assert(sites_disjoint(op));
-  std::string type = op.type();
-  assert(type == "EXCHANGE");
-
-  Coupling cpl = op.coupling();
-  assert(cpl.isexplicit() && !cpl.ismatrix());
-  coeff_t J = cpl.as<coeff_t>();
+void apply_exchange(Coupling const &cpl, Op const &op, Basis &&basis,
+                    Filler &&fill) try {
+  coeff_t J = cpl.scalar().as<coeff_t>();
   coeff_t Jhalf = J / 2.;
   coeff_t Jhalf_conj = conj(Jhalf);
 
@@ -58,6 +52,8 @@ void apply_exchange(Op const &op, Basis &&basis, Filler &&fill) {
   generic_term_mixed<bit_t, coeff_t, symmetric>(
       basis, basis, non_zero_term_ups, non_zero_term_dns, term_action_ups,
       term_action_dns, fill);
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 } // namespace xdiag::basis::tj

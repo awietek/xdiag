@@ -268,16 +268,21 @@ double J = 1.0;
 double h = 0.5;
 auto Sx = arma::mat("0 1; 1 0");
 
-auto ops = OpSum();
+// Option 1: coupling constants as numbers
+auto ops1 = OpSum();
 for (int i = 0; i<N; ++i) {
-  ops += Op("ISING", "J", {i, (i+1)%N});
-  ops += Op("SX", arma::mat(h*Sx), i);
+  ops1 += J * Op("ISING", {i, (i+1)%N});
+  ops1 += h * Op("MATRIX", i, Sx);
 }
-ops["J"] = 1.0;
-XDIAG_SHOW(ops);
-XDIAG_SHOW(ops.defined("J"));
-XDIAG_SHOW(ops.isreal());
-XDIAG_SHOW(ops.isexplicit());
+
+// Option 2: coupling constants as strings
+auto ops2 = OpSum();
+for (int i = 0; i<N; ++i) {
+  ops2 += "J" * Op("ISING", {i, (i+1)%N});
+  ops2 += "h" * Op("MATRIX", i, Sx);
+}
+ops2["J"] = J;
+ops2["h"] = h;
 // --8<-- [end:opsum]
 }
 

@@ -11,19 +11,10 @@ namespace xdiag::basis::spinhalf {
 
 template <typename bit_t, typename coeff_t, bool symmetric, class BasisIn,
           class BasisOut, class Fill>
-void apply_scalar_chirality(Op const &op, BasisIn &&basis_in,
+void apply_scalar_chirality(Coupling const &cpl, Op const &op, BasisIn &&basis_in,
                             BasisOut &&basis_out, Fill &&fill) try {
   using bits::gbit;
-
-  assert(op.type() == "SCALARCHIRALITY");
-  assert(op.size() == 3);
-  assert(sites_disjoint(op));
-  assert(iscomplex<coeff_t>());
-
-  Coupling cpl = op.coupling();
-  assert(cpl.isexplicit() && !cpl.ismatrix());
-
-  complex J = cpl.as<complex>();
+  complex J = cpl.scalar().as<complex>();
   coeff_t Jquarter = 0.;
   coeff_t Jquarter_conj = 0.;
   if constexpr (isreal<coeff_t>()) {

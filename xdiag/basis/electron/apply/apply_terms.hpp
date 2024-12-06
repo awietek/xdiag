@@ -33,7 +33,7 @@ void apply_terms(OpSum const &ops, BasisIn const &basis_in,
     } else if (type == "EXCHANGE") {
       ops_mixed += op;
     } else {
-      XDIAG_THROW(fmt::format("Error: Unknown Op of type \"{}\"", type));
+      XDIAG_THROW(fmt::format("Unknown Op of type \"{}\"", type));
     }
   }
 

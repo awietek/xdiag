@@ -2,7 +2,6 @@
 title: Advanced Compilation
 ---
 
-
 - **Parallel compilation**
     To speed up the compilation process, the build step can be performed in parallel using the `-j` flag
 
@@ -16,6 +15,19 @@ title: Advanced Compilation
     ``` bash
     cmake -L .
     ```
+
+- **Shared / Static libraries**
+
+    XDiag can be built either as a static or shared library. By default, a static library is
+    built. To build a shared library, use the option **XDIAG_SHARED_LIBS**, e.g.
+    ``` bash
+    cmake -S . -B build -D XDIAG_SHARED_LIBS=On
+    ```
+    Typically, shared libraries can reduce the size of the executable and are often prefered.
+    However, when building an application and linking to a static library, the resulting
+    binary can be used standalone, without the shared library needing to be loaded. This means
+    once an application code is compiled, it will run the same way indefinitely, even if the
+    XDiag library changes. Thus, it is mostly more convenient to link against the static library.
 
 - **Choosing a certain compiler**
 

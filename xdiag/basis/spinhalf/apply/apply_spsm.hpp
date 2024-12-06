@@ -3,9 +3,9 @@
 #include <functional>
 #include <string>
 
-#include <xdiag/bits/bitops.hpp>
 #include <xdiag/basis/spinhalf/apply/apply_term_offdiag_no_sym.hpp>
 #include <xdiag/basis/spinhalf/apply/apply_term_offdiag_sym.hpp>
+#include <xdiag/bits/bitops.hpp>
 #include <xdiag/common.hpp>
 
 namespace xdiag::basis::spinhalf {
@@ -14,15 +14,9 @@ namespace xdiag::basis::spinhalf {
 
 template <typename bit_t, typename coeff_t, bool symmetric, class BasisIn,
           class BasisOut, class Fill>
-void apply_spsm(Op const &op, BasisIn &&basis_in, BasisOut &&basis_out,
-                Fill &&fill) {
-  assert((op.type() == "S+") || (op.type() == "S-"));
-  assert(op.size() == 1);
-
-  Coupling cpl = op.coupling();
-  assert(cpl.isexplicit() && !cpl.ismatrix());
-
-  coeff_t J = cpl.as<coeff_t>();
+void apply_spsm(Coupling const &cpl, Op const &op, BasisIn &&basis_in,
+                BasisOut &&basis_out, Fill &&fill) try {
+  coeff_t J = cpl.scalar().as<coeff_t>();
   int64_t s = op[0];
   bit_t mask = ((bit_t)1 << s);
 
@@ -52,6 +46,8 @@ void apply_spsm(Op const &op, BasisIn &&basis_in, BasisOut &&basis_out,
     spinhalf::apply_term_offdiag_no_sym<bit_t, coeff_t>(
         basis_in, basis_out, non_zero_term, term_action, fill);
   }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 } // namespace xdiag::basis::spinhalf

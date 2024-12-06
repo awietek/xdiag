@@ -498,7 +498,7 @@ template <> void FileTomlHandler::operator= <Op>(Op const &op) try {
 }
 
 template <> void FileTomlHandler::operator= <OpSum>(OpSum const &ops) try {
-  if (ops.couplings().size() > 0) {
+  if (ops.constants().size() > 0) {
     table_.insert_or_assign(key_, op_list_to_toml_table(ops));
   } else {
     table_.insert_or_assign(key_, op_list_to_toml_array(ops));

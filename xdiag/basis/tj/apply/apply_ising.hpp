@@ -8,18 +8,9 @@ namespace xdiag::basis::tj {
 
 template <typename bit_t, typename coeff_t, bool symmetric, class Basis,
           class Fill>
-void apply_ising(Op const &op, Basis &&basis, Fill &&fill) {
-
-  assert(op.size() == 2);
-  assert(sites_disjoint(op));
-
-  std::string type = op.type();
-  assert((type == "ISING") || (type == "TJISING"));
-
-  Coupling cpl = op.coupling();
-  assert(cpl.isexplicit() && !cpl.ismatrix());
-  coeff_t J = cpl.as<coeff_t>();
-
+void apply_ising(Coupling const &cpl, Op const &op, Basis &&basis,
+                 Fill &&fill) try {
+  coeff_t J = cpl.scalar().as<coeff_t>();
   int64_t s1 = op[0];
   int64_t s2 = op[1];
   bit_t s1_mask = (bit_t)1 << s1;
@@ -27,7 +18,7 @@ void apply_ising(Op const &op, Basis &&basis, Fill &&fill) {
 
   // Set values for same/diff (tJ block definition)
   coeff_t val_same, val_diff;
-  if (type == "ISING") {
+  if (op.type() == "ISING") {
     val_same = J / 4.;
     val_diff = -J / 4.;
   } else { // (type == "TJISING")
@@ -51,6 +42,8 @@ void apply_ising(Op const &op, Basis &&basis, Fill &&fill) {
   };
 
   tj::generic_term_diag<bit_t, coeff_t, symmetric>(basis, term_action, fill);
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 } // namespace xdiag::basis::tj

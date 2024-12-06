@@ -15,30 +15,31 @@ template <typename bit_t, typename coeff_t, bool symmetric, class BasisIn,
           class BasisOut, class Fill>
 void apply_terms(OpSum const &ops, BasisIn const &basis_in,
                  BasisOut const &basis_out, Fill &fill) try {
-  for (auto op : ops) {
+  for (auto const &[cpl, op] : ops.plain()) {
 
     if (op.type() == "EXCHANGE") {
-      spinhalf::apply_exchange<bit_t, coeff_t, symmetric>(op, basis_in,
+      spinhalf::apply_exchange<bit_t, coeff_t, symmetric>(cpl, op, basis_in,
                                                           basis_out, fill);
     } else if (op.type() == "ISING") {
-      spinhalf::apply_ising<bit_t, coeff_t, symmetric>(op, basis_in, basis_out,
-                                                       fill);
+      spinhalf::apply_ising<bit_t, coeff_t, symmetric>(cpl, op, basis_in,
+                                                       basis_out, fill);
     } else if (op.type() == "SZ") {
-      spinhalf::apply_sz<bit_t, coeff_t, symmetric>(op, basis_in, basis_out,
-                                                    fill);
+      spinhalf::apply_sz<bit_t, coeff_t, symmetric>(cpl, op, basis_in,
+                                                    basis_out, fill);
     } else if (op.type() == "S+") {
-      spinhalf::apply_spsm<bit_t, coeff_t, symmetric>(op, basis_in, basis_out,
-                                                      fill);
+      spinhalf::apply_spsm<bit_t, coeff_t, symmetric>(cpl, op, basis_in,
+                                                      basis_out, fill);
     } else if (op.type() == "S-") {
-      spinhalf::apply_spsm<bit_t, coeff_t, symmetric>(op, basis_in, basis_out,
-                                                      fill);
+      spinhalf::apply_spsm<bit_t, coeff_t, symmetric>(cpl, op, basis_in,
+                                                      basis_out, fill);
     } else if (op.type() == "SCALARCHIRALITY") {
       spinhalf::apply_scalar_chirality<bit_t, coeff_t, symmetric>(
-          op, basis_in, basis_out, fill);
-    } else if (op.type() == "NONBRANCHINGOP") {
-      spinhalf::apply_non_branching<bit_t, coeff_t, symmetric>(op, basis_in,
-                                                               basis_out, fill);
-    } else {
+          cpl, op, basis_in, basis_out, fill);
+    } //  else if (op.type() == "NONBRANCHINGOP") {
+    //   spinhalf::apply_non_branching<bit_t, coeff_t, symmetric>(
+    //       cpl, op, basis_in, basis_out, fill);
+    // }
+    else {
       XDIAG_THROW(fmt::format(
           "Error in spinhalf::apply_terms: Unknown Op type \"{}\"", op.type()));
     }

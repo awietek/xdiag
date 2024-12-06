@@ -1,6 +1,7 @@
 #include "algebra.hpp"
 
 #include <xdiag/algebra/apply.hpp>
+#include <xdiag/operators/logic/real.hpp>
 
 #ifdef XDIAG_USE_MPI
 #include <xdiag/parallel/mpi/allreduce.hpp>
@@ -14,7 +15,7 @@ double norm(State const &v) try {
     XDIAG_THROW("Cannot compute norm of state with more than one column");
     return 0;
   } else {
-    if (v.isreal()) {
+    if (isreal(v)) {
       return norm(v.block(), v.vector(0, false));
     } else {
       return norm(v.block(), v.vectorC(0, false));
@@ -30,7 +31,7 @@ double norm1(State const &v) try {
     XDIAG_THROW("Cannot compute norm of state with more than one column");
     return 0;
   } else {
-    if (v.isreal()) {
+    if (isreal(v)) {
       return norm1(v.block(), v.vector(0, false));
     } else {
       return norm1(v.block(), v.vectorC(0, false));
@@ -46,7 +47,7 @@ double norminf(State const &v) try {
     XDIAG_THROW("Cannot compute norm of state with more than one column");
     return 0;
   } else {
-    if (v.isreal()) {
+    if (isreal(v)) {
       return norminf(v.block(), v.vector(0, false));
     } else {
       return norminf(v.block(), v.vectorC(0, false));
@@ -68,7 +69,7 @@ double dot(State const &v, State const &w) try {
         "Cannot compute dot product of state with more than one column");
   }
 
-  if ((v.isreal()) && (w.isreal())) {
+  if ((isreal(v)) && (isreal(w))) {
     return dot(v.block(), v.vector(0, false), w.vector(0, false));
   } else {
     XDIAG_THROW("Unable to compute real dot product of a complex "
@@ -87,9 +88,9 @@ complex dotC(State const &v, State const &w) try {
     XDIAG_THROW(
         "Cannot compute dotC product of state with more than one column");
   }
-  if ((v.isreal()) && (w.isreal())) {
+  if ((isreal(v)) && (isreal(w))) {
     return dot(v.block(), v.vector(0, false), w.vector(0, false));
-  } else if ((v.isreal()) && (!w.isreal())) {
+  } else if ((isreal(v)) && (!isreal(w))) {
     State v2;
     try {
       v2 = v;
@@ -98,7 +99,7 @@ complex dotC(State const &v, State const &w) try {
       XDIAG_THROW("Unable to create intermediate complex State");
     }
     return dot(v.block(), v2.vectorC(0, false), w.vectorC(0, false));
-  } else if ((w.isreal()) && (!v.isreal())) {
+  } else if ((isreal(w)) && (!isreal(v))) {
     State w2;
     try {
       w2 = w;
@@ -115,7 +116,7 @@ complex dotC(State const &v, State const &w) try {
 }
 
 double inner(OpSum const &ops, State const &v) try {
-  if (v.isreal() && ops.isreal()) {
+  if (isreal(v) && isreal(ops)) {
     auto w = v;
     apply(ops, v, w);
     return dot(w, v);
@@ -129,17 +130,17 @@ double inner(OpSum const &ops, State const &v) try {
 }
 
 double inner(Op const &op, State const &v) try {
-  return inner(OpSum({op}), v);
+  return inner(1.0 * op, v);
 } catch (Error const &error) {
   XDIAG_RETHROW(error);
 }
 
 complex innerC(OpSum const &ops, State const &v) try {
-  if (v.isreal() && ops.isreal()) {
+  if (isreal(v) && isreal(ops)) {
     auto w = v;
     apply(ops, v, w);
     return (complex)dot(w, v);
-  } else if (v.isreal() && !ops.isreal()) {
+  } else if (isreal(v) && !isreal(ops)) {
     auto v2 = v;
     auto w = v2;
     v2.make_complex();
@@ -236,7 +237,7 @@ template double norminf(Block const &, arma::Col<double> const &);
 template double norminf(Block const &, arma::Col<complex> const &);
 
 State &operator*=(State &X, double alpha) try {
-  if (X.isreal()) {
+  if (isreal(X)) {
     X.matrix(false) *= alpha;
   } else {
     X.matrixC(false) *= alpha;
@@ -259,7 +260,7 @@ State operator*(double alpha, State const &X) try {
 }
 
 State &operator*=(State &X, complex alpha) try {
-  if (X.isreal()) {
+  if (isreal(X)) {
     X.make_complex();
     X.matrixC(false) *= alpha;
   } else {
@@ -283,7 +284,7 @@ State operator*(complex alpha, State const &X) try {
 }
 
 State &operator/=(State &X, double alpha) try {
-  if (X.isreal()) {
+  if (isreal(X)) {
     X.matrix(false) /= alpha;
   } else {
     X.matrixC(false) /= alpha;
@@ -301,7 +302,7 @@ State operator/(State const &X, double alpha) try {
 }
 
 State &operator/=(State &X, complex alpha) try {
-  if (X.isreal()) {
+  if (isreal(X)) {
     X.make_complex();
     X.matrixC(false) /= alpha;
   } else {
@@ -328,16 +329,16 @@ State &operator+=(State &v, State const &w) try {
     XDIAG_THROW("Cannot add two states with different number of columns");
   }
 
-  if (v.isreal() && w.isreal()) {
+  if (isreal(v) && isreal(w)) {
     v.matrix(false) += w.matrix(false);
-  } else if (!v.isreal() && w.isreal()) {
+  } else if (!isreal(v) && isreal(w)) {
     auto wcplx = w;
     wcplx.make_complex();
     v.matrixC(false) += wcplx.matrixC(false);
-  } else if (v.isreal() && !w.isreal()) {
+  } else if (isreal(v) && !isreal(w)) {
     v.make_complex();
     v.matrixC(false) += w.matrixC(false);
-  } else { // (!v.isreal() && !w.isreal())
+  } else { // (!isreal(v) && !isreal(w))
     v.matrixC(false) += w.matrixC(false);
   }
 
@@ -354,16 +355,16 @@ State &operator-=(State &v, State const &w) try {
     XDIAG_THROW("Cannot subtract two states with different number of columns");
   }
 
-  if (v.isreal() && w.isreal()) {
+  if (isreal(v) && isreal(w)) {
     v.matrix(false) -= w.matrix(false);
-  } else if (!v.isreal() && w.isreal()) {
+  } else if (!isreal(v) && isreal(w)) {
     auto wcplx = w;
     wcplx.make_complex();
     v.matrixC(false) -= wcplx.matrixC(false);
-  } else if (v.isreal() && !w.isreal()) {
+  } else if (isreal(v) && !isreal(w)) {
     v.make_complex();
     v.matrixC(false) -= w.matrixC(false);
-  } else { // (!v.isreal() && !w.isreal())
+  } else { // (!isreal(v) && !isreal(w))
     v.matrixC(false) -= w.matrixC(false);
   }
 

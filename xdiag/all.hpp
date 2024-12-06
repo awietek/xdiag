@@ -31,8 +31,8 @@
 #include <xdiag/utils/logger.hpp>
 #include <xdiag/utils/precision.hpp>
 #include <xdiag/utils/say_hello.hpp>
-#include <xdiag/utils/xdiag_show.hpp>
 #include <xdiag/utils/type_string.hpp>
+#include <xdiag/utils/xdiag_show.hpp>
 
 #include <xdiag/algebra/algebra.hpp>
 #include <xdiag/algebra/apply.hpp>
@@ -89,7 +89,15 @@
 #include <xdiag/operators/non_branching_op.hpp>
 #include <xdiag/operators/op.hpp>
 #include <xdiag/operators/opsum.hpp>
-#include <xdiag/operators/symmetrize.hpp>
+#include <xdiag/operators/scalar.hpp>
+#include <xdiag/operators/logic/symmetrize.hpp>
+#include <xdiag/operators/logic/real.hpp>
+#include <xdiag/operators/logic/hc.hpp>
+#include <xdiag/operators/logic/isapprox.hpp>
+#include <xdiag/operators/logic/permute.hpp>
+#include <xdiag/operators/logic/qns.hpp>
+#include <xdiag/operators/logic/valid.hpp>
+#include <xdiag/operators/logic/types.hpp>
 
 #include <xdiag/algorithms/norm_estimate.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>

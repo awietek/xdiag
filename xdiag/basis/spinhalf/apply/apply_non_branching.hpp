@@ -11,8 +11,8 @@ namespace xdiag::basis::spinhalf {
 
 template <typename bit_t, typename coeff_t, bool symmetric, class BasisIn,
           class BasisOut, class Fill>
-void apply_non_branching(Op const &op, BasisIn &&basis_in,
-                         BasisOut &&basis_out, Fill &&fill) {
+void apply_non_branching(Op const &op, BasisIn &&basis_in, BasisOut &&basis_out,
+                         Fill &&fill) try {
 
   assert(op.ismatrix());
   assert(operators::is_non_branching_op(op));
@@ -53,6 +53,8 @@ void apply_non_branching(Op const &op, BasisIn &&basis_in,
           basis_in, basis_out, non_zero_term, term_action, fill);
     }
   }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 } // namespace xdiag::basis::spinhalf

@@ -13,6 +13,14 @@
 #include <xdiag/utils/logger.hpp>
 #include <xdiag/utils/xdiag_show.hpp>
 
+// Visibility control
+#ifdef XDIAG_STATIC_DEFINE
+#define XDIAG_API
+#else
+#include <xdiag/export.hpp>
+#define XDIAG_API XDIAG_EXPORT
+#endif
+
 // TODO: IS THIS REALLY NECESASARY
 #define BSTR(x) bits::bits_to_string(x, n_sites)
 
@@ -23,7 +31,9 @@ template <class T>
 struct is_complex_t<std::complex<T>> : public std::true_type {};
 
 // Complex real/imag/conj
-template <class coeff_t> struct real_type_struct { typedef coeff_t type; };
+template <class coeff_t> struct real_type_struct {
+  typedef coeff_t type;
+};
 
 template <class coeff_t> struct real_type_struct<std::complex<coeff_t>> {
   typedef coeff_t type;
@@ -109,7 +119,9 @@ void resize_vector(std::vector<coeff_t> &vec, int64_t size) {
 }
 
 // Helper type for visitor patterns
-template <class... Ts> struct overload : Ts... { using Ts::operator()...; };
+template <class... Ts> struct overload : Ts... {
+  using Ts::operator()...;
+};
 template <class... Ts> overload(Ts...) -> overload<Ts...>;
 
 template <typename T> inline std::string to_string_generic(T const &x) {

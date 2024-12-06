@@ -2,31 +2,23 @@
 
 #include <string>
 
-#include <xdiag/bits/bitops.hpp>
 #include <xdiag/basis/tj/apply/generic_term_dns.hpp>
 #include <xdiag/basis/tj/apply/generic_term_ups.hpp>
+#include <xdiag/bits/bitops.hpp>
 
 namespace xdiag::basis::tj {
 
 template <typename bit_t, typename coeff_t, bool symmetric, class BasisIn,
           class BasisOut, class Fill>
-void apply_raise_lower(Op const &op, BasisIn &&basis_in,
-                       BasisOut &&basis_out, Fill &&fill) {
-  assert(op.size() == 1);
-
-  std::string type = op.type();
-  assert((type == "CDAGUP") || (type == "CDAGDN") || (type == "CUP") ||
-         (type == "CDN"));
-
+void apply_raise_lower(Coupling const &cpl, Op const &op, BasisIn &&basis_in,
+                       BasisOut &&basis_out, Fill &&fill) try {
+  coeff_t c = cpl.scalar().as<coeff_t>();
   int64_t s = op[0];
   bit_t site_mask = (bit_t)1 << s;
   bit_t fermi_mask = site_mask - 1;
 
-  Coupling cpl = op.coupling();
-  assert(cpl.isexplicit() && !cpl.ismatrix());
-  coeff_t c = cpl.as<coeff_t>();
-
   // Raising operators
+  std::string type = op.type();
   if ((type == "CDAGUP") || (type == "CDAGDN")) {
 
     auto term_action = [&](bit_t spins) -> std::pair<bit_t, coeff_t> {
@@ -78,5 +70,7 @@ void apply_raise_lower(Op const &op, BasisIn &&basis_in,
           term_action, fill);
     }
   }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 } // namespace xdiag::basis::tj

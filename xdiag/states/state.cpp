@@ -337,6 +337,31 @@ template State::State(tJDistributed const &block,
                       arma::Mat<complex> const &vector);
 
 #endif
+
+int64_t n_sites(State const &s) { return s.n_sites(); }
+bool isreal(State const &s) { return s.isreal(); }
+State real(State const &s) { return s.real(); }
+State imag(State const &s) { return s.imag(); }
+void make_complex(State &s) { return s.make_complex(); }
+int64_t dim(State const &s) { return s.dim(); }
+int64_t size(State const &s) { return s.size(); }
+int64_t n_rows(State const &s) { return s.n_rows(); }
+int64_t n_cols(State const &s) { return s.n_cols(); }
+
+State col(State const &s, int64_t n, bool copy = true) {
+  return s.col(n, copy);
+}
+arma::vec vector(State const &s, int64_t n = 0, bool copy = true) {
+  return s.vector(n, copy);
+}
+arma::mat matrix(State const &s, bool copy = true) { return s.matrix(copy); }
+arma::cx_vec vectorC(State const &s, int64_t n = 0, bool copy = true) {
+  return s.vectorC(n, copy);
+}
+arma::cx_mat matrixC(State const &s, bool copy = true) {
+  return s.matrixC(copy);
+}
+
 std::ostream &operator<<(std::ostream &out, State const &state) {
   if (state.isreal()) {
     out << "REAL State\n";
