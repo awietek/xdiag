@@ -14,18 +14,18 @@ class Op {
 public:
   XDIAG_API Op() = default;
   explicit XDIAG_API Op(std::string type);
+  
   XDIAG_API Op(std::string type, int64_t site);
   XDIAG_API Op(std::string type, std::vector<int64_t> const &sites);
-  XDIAG_API Op(std::string type, arma::mat const &matrix);
+
   XDIAG_API Op(std::string type, int64_t site, arma::mat const &matrix);
   XDIAG_API Op(std::string type, std::vector<int64_t> const &sites,
                arma::mat const &matrix);
-  XDIAG_API Op(std::string type, arma::cx_mat const &matrix);
+
   XDIAG_API Op(std::string type, int64_t site, arma::cx_mat const &matrix);
   XDIAG_API Op(std::string type, std::vector<int64_t> const &sites,
                arma::cx_mat const &matrix);
 
-  Op(std::string type, Matrix const &matrix);
   Op(std::string type, int64_t site, Matrix const &matrix);
   Op(std::string type, std::vector<int64_t> const &sites, Matrix const &matrix);
 

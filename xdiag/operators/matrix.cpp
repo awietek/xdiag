@@ -51,8 +51,13 @@ arma::mat Matrix::imag() const {
       mat_);
 }
 Matrix Matrix::hc() const {
-  return Matrix(
-      std::visit([](auto &&m) { return arma::mat(arma::trans(m)); }, mat_));
+  return std::visit(overload{[](arma::mat const &m) {
+                               return Matrix(arma::mat(arma::trans(m)));
+                             },
+                             [](arma::cx_mat const &m) {
+                               return Matrix(arma::cx_mat(arma::trans(m)));
+                             }},
+                    mat_);
 }
 
 bool Matrix::isapprox(Matrix const &y, double rtol, double atol) const {
@@ -76,81 +81,106 @@ bool Matrix::isapprox(Matrix const &y, double rtol, double atol) const {
 }
 
 bool Matrix::operator==(Matrix const &rhs) const {
-  return isapprox(rhs.mat_, 1e-16, 1e-16);
+  return isapprox(rhs, 1e-16, 1e-16);
 }
 bool Matrix::operator!=(Matrix const &rhs) const { return !operator==(rhs); }
 
 Matrix &Matrix::operator+=(Matrix const &rhs) {
-  std::visit(
-      overload{[&](arma::mat &a, arma::cx_mat b) { mat_ = to_cx_mat(a) + b; },
-               [&](arma::cx_mat &a, arma::mat b) { mat_ = a + to_cx_mat(b); },
-               [](auto &&a, auto &&b) { a += b; }},
-      mat_, rhs.mat_);
+  std::visit(overload{[&](arma::mat &a, arma::cx_mat b) {
+                        mat_ = arma::cx_mat(to_cx_mat(a) + b);
+                      },
+                      [&](arma::cx_mat &a, arma::mat b) {
+                        mat_ = arma::cx_mat(a + to_cx_mat(b));
+                      },
+                      [](auto &&a, auto &&b) { a += b; }},
+             mat_, rhs.mat_);
   return *this;
 }
 Matrix &Matrix::operator-=(Matrix const &rhs) {
-  std::visit(
-      overload{[&](arma::mat &a, arma::cx_mat b) { mat_ = to_cx_mat(a) - b; },
-               [&](arma::cx_mat &a, arma::mat b) { mat_ = a - to_cx_mat(b); },
-               [](auto &&a, auto &&b) { a -= b; }},
-      mat_, rhs.mat_);
+  std::visit(overload{[&](arma::mat &a, arma::cx_mat b) {
+                        mat_ = arma::cx_mat(to_cx_mat(a) - b);
+                      },
+                      [&](arma::cx_mat &a, arma::mat b) {
+                        mat_ = arma::cx_mat(a - to_cx_mat(b));
+                      },
+                      [](auto &&a, auto &&b) { a -= b; }},
+             mat_, rhs.mat_);
   return *this;
 }
 
 Matrix &Matrix::operator*=(Scalar const &rhs) {
   if (rhs.isreal()) {
-    std::visit([&](auto &&m) { m *= rhs.as<double>(); });
-  } else {
     std::visit(
-        overload{[&](arma::mat &m) { mat_ = to_cx_mat(m) * rhs.as<complex>(); },
-                 [&](arma::cx_mat &m) { m *= rhs.as<complex>(); }},
+        overload{[&](arma::mat &m) { mat_ = arma::mat(m * rhs.as<double>()); },
+                 [&](arma::cx_mat &m) {
+                   mat_ = arma::cx_mat(m * rhs.as<complex>());
+                 }},
         mat_);
+  } else {
+    std::visit(overload{[&](arma::mat &m) {
+                          mat_ = arma::cx_mat(m * rhs.as<complex>());
+                        },
+                        [&](arma::cx_mat &m) {
+                          mat_ = arma::cx_mat(m * rhs.as<complex>());
+                        }},
+               mat_);
   }
   return *this;
 }
 Matrix &Matrix::operator/=(Scalar const &rhs) {
   if (rhs.isreal()) {
-    std::visit([&](auto &&m) { m /= rhs.as<double>(); });
-  } else {
     std::visit(
-        overload{[&](arma::mat &m) { mat_ = to_cx_mat(m) / rhs.as<complex>(); },
-                 [&](arma::cx_mat &m) { m /= rhs.as<complex>(); }},
+        overload{[&](arma::mat &m) { mat_ = arma::mat(m / rhs.as<double>()); },
+                 [&](arma::cx_mat &m) {
+                   mat_ = arma::cx_mat(m / rhs.as<complex>());
+                 }},
         mat_);
+  } else {
+    std::visit(overload{[&](arma::mat &m) {
+                          mat_ = arma::cx_mat(m / rhs.as<complex>());
+                        },
+                        [&](arma::cx_mat &m) {
+                          mat_ = arma::cx_mat(m / rhs.as<complex>());
+                        }},
+               mat_);
   }
   return *this;
 }
 
 Matrix Matrix::operator-() const {
-  return std::visit([](auto &&a) { return -a; }, mat_);
+  return std::visit(
+      overload{[](arma::mat const &a) { return Matrix(arma::mat(-a)); },
+               [](arma::cx_mat const &a) { return Matrix(arma::cx_mat(-a)); }},
+      mat_);
 }
 
-Matrix Matrix::operator+(const Matrix &b) const {
+Matrix Matrix::operator+(Matrix const &b) const {
   auto a = *this;
   a += b;
   return a;
 }
 
-Matrix Matrix::operator-(const Matrix &b) const {
+Matrix Matrix::operator-(Matrix const &b) const {
   auto a = *this;
   a -= b;
   return a;
 }
 
-Matrix Matrix::operator*(const Scalar &b) const {
+Matrix Matrix::operator*(Scalar const &b) const {
   auto a = *this;
   a *= b;
   return a;
 }
 
-Matrix Matrix::operator/(const Scalar &b) const {
+Matrix Matrix::operator/(Scalar const &b) const {
   auto a = *this;
   a /= b;
   return a;
 }
 
 bool isreal(Matrix const &s) { return s.isreal(); }
-bool real(Matrix const &s) { return s.real(); }
-bool imag(Matrix const &s) { return s.imag(); }
+arma::mat real(Matrix const &s) { return s.real(); }
+arma::mat imag(Matrix const &s) { return s.imag(); }
 Matrix hc(Matrix const &s) { return s.hc(); }
 
 bool isapprox(Matrix const &a, Matrix const &b, double rtol, double atol) {
@@ -159,9 +189,9 @@ bool isapprox(Matrix const &a, Matrix const &b, double rtol, double atol) {
 
 std::ostream &operator<<(std::ostream &out, Matrix const &mat) {
   if (mat.isreal()) {
-    mat.as<arma::mat>.brief_print(out);
+    mat.as<arma::mat>().brief_print(out);
   } else {
-    mat.as<arma::cx_mat>.brief_print(out);
+    mat.as<arma::cx_mat>().brief_print(out);
   }
 }
 std::string to_string(Matrix const &mat) { return to_string_generic(mat); }

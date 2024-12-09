@@ -443,25 +443,53 @@ toml::array op_to_toml_array(Op const &op) try {
 }
 
 Op toml_array_to_op(toml::array const &array) try {
-  if (array.size() < 3) {
-    XDIAG_THROW(
-        "Error parsing toml to xdiag::Op: toml array must have exactly three "
-        "entries.\n"
-        "1) A string defining the type of the op.\n"
-        "2) A coupling that can either be a string, a "
-        "real/complex number, or a real/complex matrix.\n"
-        "3)  thesites of the op must be either a single integer (single site "
-        "op) or a 1D array of integers.")
+  if ((array.size() > 3) || (array.size() == 0)) {
+    XDIAG_THROW(fmt::format(
+        "Error parsing TOML to Op: input TOML array must have either "
+        "one, two, or three entries (got {}):\n\n"
+        "1) A string defining the type of operator (required).\n"
+        "2) Either a single integer, or a list of integers as a second entry\n"
+        "   which denotes the sites the operator is defined on (optional)\n"
+        "3) A matrix of real/complex numbers, denoting internal \n"
+        "   structure of the xdiag::Op (optional)",
+        array.size()));
   }
 
-  // First get the type
   std::string type;
-  auto type_node = array[0].value<std::string>();
-  if (type_node) {
-    type = *type_node;
-  } else {
-    XDIAG_THROW(
-        "Error parsing toml to xdiag::Op: first entry must be a string ");
+  std::vector<int64_t> sites;
+  Matrix matrix;
+
+  if (array.size() >= 1) { // get the type
+    auto type_node = array[0].value<std::string>();
+    if (type_node) {
+      type = *type_node;
+    } else {
+      XDIAG_THROW("Error parsing TOML to Op: first entry must be a string "
+                  "denoting the type of the Op");
+    }
+  }
+
+  if (array.size >= 2) { // get the sites
+    auto site_node = array[1].value<int64_t>();
+    auto sites_node = array[1].as_array();
+    if (site_node) {
+      sites = {*site_node};
+    } else if (sites_node) {
+      sites = toml_array_to_std_vector<int64_t>(*sites_node);
+    } else {
+      XDIAG_THROW("Error parsing TOML to Op: second entry must be either a "
+                  "single integer or an array of integers")
+    }
+  }
+
+  if (array.size >= 3) { // get the matrix
+    auto matrix_node = array[2].as_array();
+    if (matrix_node) {
+      sites = toml_array_to_std_vector<int64_t>(*sites_node);
+    } else {
+      XDIAG_THROW("Error parsing TOML to Op: third entry must be an array "
+                  "describing a matrix")
+    }
   }
 
   // then get the sites
@@ -470,10 +498,7 @@ Op toml_array_to_op(toml::array const &array) try {
     auto site_node = array[i].value<int64_t>();
     if (site_node) {
       sites.push_back(*site_node);
-
     } else {
-      XDIAG_THROW("Error parsing toml to xdiag::Op: third and onward entries "
-                  "must be integers");
     }
   }
   // then get the coupling
@@ -512,10 +537,9 @@ Op toml_array_to_op(toml::array const &array) try {
       auto mat2_array = mat_array[0].as_array();
       if (mat2_array) {
         if (mat2_array->size() == 0) {
-          XDIAG_THROW(
-              "Error parsing toml to xdiag::Op: an array was handed to "
-              "the second entry defining the coupling. However, it is "
-              "found to be empty");
+          XDIAG_THROW("Error parsing toml to xdiag::Op: an array was handed to "
+                      "the second entry defining the coupling. However, it is "
+                      "found to be empty");
         }
         auto real_array = (*mat2_array)[0].value<double>();
         auto cplx_array = (*mat2_array)[0].as_array();
@@ -553,10 +577,10 @@ OpSum toml_array_to_op_list(toml::array const &array) try {
     if (op_array) {
       ops += toml_array_to_op(*op_array);
     } else {
-      XDIAG_THROW(fmt::format(
-          "Error parsing toml to xdiag::OpSum: entry {} is not a "
-          "toml::array",
-          i));
+      XDIAG_THROW(
+          fmt::format("Error parsing toml to xdiag::OpSum: entry {} is not a "
+                      "toml::array",
+                      i));
     }
   }
   return ops;

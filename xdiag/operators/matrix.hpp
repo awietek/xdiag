@@ -28,8 +28,8 @@ public:
   Matrix operator-() const;
   Matrix operator+(Matrix const &b) const;
   Matrix operator-(Matrix const &b) const;
-  Matrix &operator*(Scalar const &rhs);
-  Matrix &operator/(Scalar const &rhs);
+  Matrix operator*(Scalar const &rhs) const;
+  Matrix operator/(Scalar const &rhs) const;
 
   template <typename T> bool is() const;
   template <typename T> T as() const;
