@@ -2,16 +2,17 @@
 
 #include <xdiag/common.hpp>
 #include <xdiag/utils/type_string.hpp>
+#include <xdiag/io/toml/std_vector.hpp>
 
-namespace xdiag::io::toml {
+namespace xdiag::io {
 
 template <typename T> T value(toml::node const &node) try {
   auto val = node.value<T>();
   if (val) {
     return T(*val);
   } else {
-    XDIAG_THROW("TOML node cannot be converted to type \"{}\"",
-                type_string<T>());
+    XDIAG_THROW(fmt::format("TOML node cannot be converted to type \"{}\"",
+                            utils::type_string<T>()));
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
@@ -23,11 +24,11 @@ template <> complex value<complex>(toml::node const &node) try {
   if (val) {
     return complex(*val);
   } else if (arr) {
-    auto real_imag = toml_array_to_std_array<double, 2>(*arr);
+    auto real_imag = std_vector<double>(*arr);
     return complex{real_imag[0], real_imag[1]};
   } else {
-    XDIAG_THROW("TOML node cannot be converted to type \"{}\"",
-                type_string<complex>());
+    XDIAG_THROW(fmt::format("TOML node cannot be converted to type \"{}\"",
+                            utils::type_string<complex>()));
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
@@ -45,4 +46,4 @@ template uint64_t value<uint64_t>(toml::node const &);
 template double value<double>(toml::node const &);
 template std::string value<std::string>(toml::node const &);
 
-} // namespace xdiag::io::toml
+} // namespace xdiag::io

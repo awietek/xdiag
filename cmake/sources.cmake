@@ -15,7 +15,11 @@ set(XDIAG_SOURCES
   io/file_toml.cpp
   io/file_h5.cpp
   io/toml/file_toml_handler.cpp
-  io/toml/toml_conversion.cpp
+  # io/toml/toml_conversion.cpp
+  io/toml/value.cpp
+  io/toml/std_vector.cpp
+  io/toml/arma_vector.cpp
+  io/toml/arma_matrix.cpp
   io/hdf5/file_h5_handler.cpp
   io/hdf5/file_h5_subview.cpp
   io/hdf5/utils.cpp

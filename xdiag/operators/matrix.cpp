@@ -184,7 +184,7 @@ arma::mat imag(Matrix const &s) { return s.imag(); }
 Matrix hc(Matrix const &s) { return s.hc(); }
 
 bool isapprox(Matrix const &a, Matrix const &b, double rtol, double atol) {
-  a.isapprox(b, rtol, atol);
+  return a.isapprox(b, rtol, atol);
 }
 
 std::ostream &operator<<(std::ostream &out, Matrix const &mat) {
@@ -193,6 +193,7 @@ std::ostream &operator<<(std::ostream &out, Matrix const &mat) {
   } else {
     mat.as<arma::cx_mat>().brief_print(out);
   }
+  return out;
 }
 std::string to_string(Matrix const &mat) { return to_string_generic(mat); }
 

@@ -20,7 +20,7 @@ Op hc(Op const &op) try {
     return Op("CDN", op.sites());
   } else if (type == "CDN") {
     return Op("CDAGDN", op.sites());
-  } else { // default: the Op is hermitian
+  } else { // default: the type does not change
 
     if (op.hassites()) {
       if (op.hasmatrix()) {
@@ -29,11 +29,7 @@ Op hc(Op const &op) try {
         return Op(op.type(), op.sites());
       }
     } else { // no sites defined
-      if (op.hasmatrix()) {
-        return Op(op.type(), op.matrix().hc());
-      } else {
-        return Op(op.type());
-      }
+      return Op(op.type());
     }
   }
 } catch (Error const &e) {
