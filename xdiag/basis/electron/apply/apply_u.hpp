@@ -7,7 +7,9 @@ namespace xdiag::basis::electron {
 
 template <typename bit_t, typename coeff_t, bool symmetric, class Basis,
           class Filler>
-void apply_u(coeff_t U, Basis &&basis, Filler &&fill) {
+void apply_u(Coupling const &cpl, Basis &&basis, Filler &&fill) try {
+
+  coeff_t U = cpl.scalar().as<coeff_t>();
 
   if constexpr (symmetric) {
 #ifdef _OPENMP
@@ -34,9 +36,7 @@ void apply_u(coeff_t U, Basis &&basis, Filler &&fill) {
 #endif
 
       for (auto [up, idx_up] : ups_and_idces) {
-
         int64_t idx = idx_up * basis.size_dns();
-
         for (bit_t dn : basis.states_dns()) {
           coeff_t val = U * (double)bits::popcnt(up & dn);
           fill(idx, idx, val);
@@ -47,6 +47,8 @@ void apply_u(coeff_t U, Basis &&basis, Filler &&fill) {
     }
 #endif
   }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 } // namespace xdiag::basis::electron

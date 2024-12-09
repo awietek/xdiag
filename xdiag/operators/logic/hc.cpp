@@ -42,9 +42,10 @@ Op hc(Op const &op) try {
 
 OpSum hc(OpSum const &ops) try {
   OpSum ops_hc;
-  for (auto [cpl, op] : ops) {
-    ops_hc += conj(cpl) * hc(op);
+  for (auto [cpl, op] : ops.plain()) {
+    ops_hc += conj(cpl.scalar()) * hc(op);
   }
+  return ops_hc;
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }

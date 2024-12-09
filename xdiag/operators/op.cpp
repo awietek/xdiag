@@ -21,6 +21,12 @@ Op::Op(std::string type, std::vector<int64_t> const &sites,
        arma::cx_mat const &mat)
     : type_(type), sites_(sites), matrix_(mat) {}
 
+Op::Op(std::string type, Matrix const &mat) : type_(type), matrix_(mat) {}
+Op::Op(std::string type, int64_t site, Matrix const &mat)
+    : type_(type), sites_({site}), matrix_(mat) {}
+Op::Op(std::string type, std::vector<int64_t> const &sites, Matrix const &mat)
+    : type_(type), sites_(sites), matrix_(mat) {}
+
 std::string Op::type() const { return type_; }
 bool Op::hasmatrix() const { return matrix_.has_value(); }
 bool Op::hassites() const { return sites_.has_value(); }
@@ -35,13 +41,22 @@ Matrix const &Op::matrix() const try {
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
-int64_t Op::size() const { return sites_.size(); }
+int64_t Op::size() const { return sites_ ? sites_->size() : 0; }
 int64_t Op::operator[](int64_t idx) const try {
-  return sites_.at(idx);
-} catch (std::out_of_range const &exc) {
-  XDIAG_THROW(fmt::format(
-      "Site index \"{}\" out of range for Op of size \"{}\"", idx, size()));
+  if (sites_) {
+    try {
+      return sites_->at(idx);
+    } catch (std::out_of_range const &exc) {
+      XDIAG_THROW(fmt::format(
+          "Site index \"{}\" out of range for Op of size \"{}\"", idx, size()));
+    }
+  } else {
+    XDIAG_THROW("Cannot access site of Op, since Op has no sites defined.");
+  }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
+
 std::vector<int64_t> const &Op::sites() const try {
   if (hassites()) {
     return sites_.value();

@@ -5,8 +5,11 @@
 #include <xdiag/algorithms/lanczos/lanczos.hpp>
 #include <xdiag/algorithms/lanczos/lanczos_convergence.hpp>
 
-#include <xdiag/states/random_state.hpp>
 #include <xdiag/states/fill.hpp>
+#include <xdiag/states/random_state.hpp>
+
+#include <xdiag/operators/logic/real.hpp>
+
 #include <xdiag/utils/timing.hpp>
 
 #ifdef XDIAG_USE_MPI
@@ -26,7 +29,7 @@ eigvals_lanczos(OpSum const &ops, Block const &block, State &state0,
   //   XDIAG_THROW("Input OpSum is not hermitian");
   // }
   bool cplx =
-      !ops.isreal() || !isreal(block) || force_complex || !state0.isreal();
+      !isreal(ops) || !isreal(block) || force_complex || !state0.isreal();
   if (!state0.isreal() && !isreal(block)) {
     Log(1,
         "warning: starting REAL block diagonalization with COMPLEX startstate");
@@ -91,7 +94,7 @@ eigvals_lanczos(OpSum const &ops, Block const &block, int64_t neigvals,
   //   XDIAG_THROW("Input OpSum is not hermitian");
   // }
 
-  bool cplx = (!ops.isreal()) || !isreal(block) || force_complex;
+  bool cplx = (!isreal(ops)) || !isreal(block) || force_complex;
   State state0(block, !cplx);
   fill(state0, RandomState(random_seed));
 

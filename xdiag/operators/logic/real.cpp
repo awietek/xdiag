@@ -1,4 +1,4 @@
-#include "isreal.hpp"
+#include "real.hpp"
 
 #include <xdiag/operators/logic/types.hpp>
 #include <xdiag/operators/logic/valid.hpp>

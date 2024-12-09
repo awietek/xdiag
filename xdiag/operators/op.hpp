@@ -25,6 +25,10 @@ public:
   XDIAG_API Op(std::string type, std::vector<int64_t> const &sites,
                arma::cx_mat const &matrix);
 
+  Op(std::string type, Matrix const &matrix);
+  Op(std::string type, int64_t site, Matrix const &matrix);
+  Op(std::string type, std::vector<int64_t> const &sites, Matrix const &matrix);
+
   std::string type() const;
   bool hassites() const;
   bool hasmatrix() const;

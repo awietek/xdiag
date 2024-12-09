@@ -75,10 +75,12 @@ set(XDIAG_SOURCES
   symmetries/group_action/sublattice_stability.cpp
 
   operators/scalar.cpp
+  operators/coupling.cpp
+  operators/matrix.cpp
   operators/op.cpp
   operators/opsum.cpp
-  operators/compiler.cpp
-  operators/non_branching_op.cpp
+  # operators/non_branching_op.cpp
+  operators/logic/compilation.cpp
   operators/logic/valid.cpp
   operators/logic/types.cpp
   operators/logic/symmetrize.cpp

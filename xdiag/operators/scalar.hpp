@@ -35,7 +35,6 @@ public:
   bool isreal() const;
   double real() const;
   double imag() const;
-  complex cplx() const;
   double abs() const;
   Scalar conj() const;
   bool isapprox(Scalar const &y, double rtol, double atol) const;
@@ -43,11 +42,11 @@ public:
 private:
   value_t value_;
 };
+Scalar zero(Scalar s);
 
 XDIAG_API bool isreal(Scalar const &s);
 XDIAG_API double real(Scalar const &s);
 XDIAG_API double imag(Scalar const &s);
-XDIAG_API complex cplx(Scalar const &s);
 XDIAG_API double abs(Scalar const &s);
 XDIAG_API Scalar conj(Scalar const &s);
 XDIAG_API bool isapprox(Scalar const &a, Scalar const &b, double rtol = 1e-12,

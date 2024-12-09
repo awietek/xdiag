@@ -2,8 +2,8 @@
 
 namespace xdiag {
 
-OpSum(Op const &op) : terms_({{Coupling(1.0), op}}) {}
-OpSum(Coupling const &cpl, Op const &op) : terms_({{cpl, op}}) {}
+OpSum::OpSum(Op const &op) : terms_({{Coupling(1.0), op}}) {}
+OpSum::OpSum(Coupling const &cpl, Op const &op) : terms_({{cpl, op}}) {}
 
 void OpSum::operator+=(OpSum const &ops) {
   terms_.insert(terms_.end(), ops.terms_.begin(), ops.terms_.end());
@@ -68,21 +68,21 @@ OpSum operator*(std::string cpl, Op const &op) {
 OpSum operator*(double cpl, Op const &op) { return OpSum(Coupling(cpl), op); }
 OpSum operator*(complex cpl, Op const &op) { return OpSum(Coupling(cpl), op); }
 OpSum operator*(Scalar cpl, Op const &op) { return OpSum(Coupling(cpl), op); }
+OpSum operator*(Coupling const &cpl, Op const &op) { return OpSum(cpl, op); }
 
 std::ostream &operator<<(std::ostream &out, OpSum const &ops) {
   out << "Interactions:\n";
   out << "-------------\n";
 
-  for (auto op : ops) {
-    out << op;
+  for (auto [cpl, op] : ops) {
+    out << cpl << " " << op;
   }
-  if (ops.couplings().size() > 0) {
-    out << "Couplings:\n";
+  if (ops.constants().size() > 0) {
+    out << "Constants:\n";
     out << "----------\n";
 
-    for (auto name : ops.couplings()) {
-      Coupling cpl = ops[name];
-      out << name << ": " << cpl << "\n";
+    for (auto name : ops.constants()) {
+      out << name << ": " << ops[name] << "\n";
     }
   }
   return out;

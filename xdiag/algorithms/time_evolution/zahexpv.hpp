@@ -42,7 +42,7 @@ zahexpv(double time, apply_A_f &&apply_A, dot_f &&dot, arma::cx_vec &w,
   double gamma = 0.9;
   double delta = 1.2; // recommended but can be adjusted
   int mb = m;
-  double t_out = abs(time);
+  double t_out = std::abs(time);
   double nstep = 0;
   double t_new = 0;
   double t_now = 0;
@@ -54,7 +54,7 @@ zahexpv(double time, apply_A_f &&apply_A, dot_f &&dot, arma::cx_vec &w,
   while (eps == 0) {
     double p2 = p1 - 1.0;
     double p3 = p2 + p2 + p2;
-    eps = abs(p3 - 1.0);
+    eps = std::abs(p3 - 1.0);
   }
   if (tol < eps)
     tol = sqrt(eps);
@@ -143,8 +143,8 @@ zahexpv(double time, apply_A_f &&apply_A, dot_f &&dot, arma::cx_vec &w,
         break;
       }
 
-      double phi1 = abs(beta * F(m, 0));
-      double phi2 = abs(beta * F(m + 1, 0) * avnorm);
+      double phi1 = std::abs(beta * F(m, 0));
+      double phi2 = std::abs(beta * F(m + 1, 0) * avnorm);
 
       if (phi1 > 10 * phi2) {
         err_loc = phi2;

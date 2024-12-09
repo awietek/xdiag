@@ -4,18 +4,12 @@ namespace xdiag::basis::electron {
 
 template <typename bit_t, typename coeff_t, bool symmetric, class Basis,
           class Fill>
-void apply_number(Op const &op, Basis &&basis, Fill fill) {
-  assert(op.size() == 1);
-
-  std::string type = op.type();
-  assert((type == "NUMBERUP") || (type == "NUMBERDN"));
-
-  Coupling cpl = op.coupling();
-  assert(cpl.isexplicit() && !cpl.ismatrix());
-  coeff_t mu = cpl.as<coeff_t>();
+void apply_number(Coupling const &cpl, Op const &op, Basis &&basis,
+                  Fill fill) try {
+  coeff_t mu = cpl.scalar().as<coeff_t>();
   int64_t s = op[0];
-
   bit_t mask = (bit_t)1 << s;
+  std::string type = op.type();
 
   if (type == "NUMBERUP") {
 
@@ -102,6 +96,8 @@ void apply_number(Op const &op, Basis &&basis, Fill fill) {
 #endif
     }
   }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 } // namespace xdiag::basis::electron

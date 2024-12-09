@@ -2,6 +2,7 @@
 
 #include <xdiag/algebra/apply.hpp>
 #include <xdiag/algorithms/lanczos/lanczos_convergence.hpp>
+#include <xdiag/operators/logic/real.hpp>
 
 namespace xdiag {
 
@@ -79,7 +80,7 @@ State exp_sym_v(OpSum const &ops, State state, double tau, bool normalize,
   auto const &block = state.block();
 
   // Real time evolution is possible
-  if (state.isreal() && ops.isreal()) {
+  if (state.isreal() && isreal(ops)) {
     int iter = 1;
     auto mult = [&iter, &ops, &block](arma::vec const &v, arma::vec &w) {
       auto ta = rightnow();

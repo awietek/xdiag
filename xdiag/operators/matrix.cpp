@@ -12,29 +12,24 @@ template <typename T> bool Matrix::is() const {
 template bool Matrix::is<arma::mat>() const;
 template bool Matrix::is<arma::cx_mat>() const;
 
-template arma::mat Matrix::as<arma::mat>() const try {
+template <> arma::mat Matrix::as<arma::mat>() const try {
   if (const arma::mat *m = std::get_if<arma::mat>(&mat_)) {
     return *m;
   } else {
     XDIAG_THROW(fmt::format("Cannot convert Matrix holding a value of type "
                             "\"{}\" to value of type \"{}\"",
-                            type_string<arma::cx_mat>(),
-                            type_string<arma::mat>()));
+                            utils::type_string<arma::cx_mat>(),
+                            utils::type_string<arma::mat>()));
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
-static arma::cx_mat to_cx_mat(arma::mat const &mat) {
-  return arma::cx_mat(mat,
-                      arma::mat(mat.n_rows, mat.n_cols, arma::fill::zeros));
-}
-
-template arma::cx_mat Matrix::as<arma::cx_mat>() const {
+template <> arma::cx_mat Matrix::as<arma::cx_mat>() const {
   if (const arma::mat *m = std::get_if<arma::mat>(&mat_)) {
     return to_cx_mat(*m);
   } else {
-    return std::get<arma::cx_mat>(mat_)
+    return std::get<arma::cx_mat>(mat_);
   }
 }
 
@@ -43,7 +38,7 @@ bool Matrix::isreal() const { return std::holds_alternative<arma::mat>(mat_); }
 arma::mat Matrix::real() const {
   return std::visit(
       overload{[](arma::mat const &m) { return m; },
-               [](arma::cx_mat const &m) { return arma::real(m); }},
+               [](arma::cx_mat const &m) { return arma::mat(arma::real(m)); }},
       mat_);
 }
 
@@ -52,22 +47,36 @@ arma::mat Matrix::imag() const {
       overload{[](arma::mat const &m) {
                  return arma::mat(m.n_rows, m.n_cols, arma::fill::zeros);
                },
-               [](arma::cx_mat const &m) { return arma::imag(m); }},
+               [](arma::cx_mat const &m) { return arma::mat(arma::imag(m)); }},
       mat_);
 }
 Matrix Matrix::hc() const {
-  return Matrix(std::visit([](auto &&m) { return arma::trans(m); }, mat_));
+  return Matrix(
+      std::visit([](auto &&m) { return arma::mat(arma::trans(m)); }, mat_));
 }
 
-bool Matrix::isapprox(Matrix const &y, double rtol = 1e-12,
-                      double atol = 1e-12) const {
-  return std::visit([](auto &&a, auto &&b) {
-    return arma::approx_equal(a, b, "both", atol, rtol);
-  });
+bool Matrix::isapprox(Matrix const &y, double rtol, double atol) const {
+  return std::visit(
+      overload{
+          [&](arma::mat const &a, arma::mat const &b) {
+            return arma::approx_equal(a, b, "both", atol, rtol);
+          },
+          [&](arma::mat const &a, arma::cx_mat const &&b) {
+            return arma::approx_equal(to_cx_mat(a), b, "both", atol, rtol);
+          },
+          [&](arma::cx_mat const &a, arma::mat const &&b) {
+            return arma::approx_equal(a, to_cx_mat(b), "both", atol, rtol);
+          },
+          [&](arma::cx_mat const &a, arma::cx_mat const &b) {
+            return arma::approx_equal(a, b, "both", atol, rtol);
+          },
+          [&](auto &&a, auto &&b) { return false; },
+      },
+      mat_, y.mat_);
 }
 
 bool Matrix::operator==(Matrix const &rhs) const {
-  return isapprox(mat_, rhs.mat_, 1e-16, 1e-16);
+  return isapprox(rhs.mat_, 1e-16, 1e-16);
 }
 bool Matrix::operator!=(Matrix const &rhs) const { return !operator==(rhs); }
 

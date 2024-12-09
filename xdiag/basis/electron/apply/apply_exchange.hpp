@@ -33,14 +33,9 @@ void electron_do_down_flips(bit_t ups, int64_t idx_ups, bit_t flipmask,
 
 template <typename bit_t, typename coeff_t, bool symmetric, class Basis,
           class Filler>
-void apply_exchange(Op const &op, Basis &&basis, Filler &&fill) {
-  assert(op.type() == "EXCHANGE");
-  assert(op.size() == 2);
-  assert(sites_disjoint(op));
-
-  Coupling cpl = op.coupling();
-  assert(cpl.isexplicit() && !cpl.ismatrix());
-  coeff_t J = cpl.as<coeff_t>();
+void apply_exchange(Coupling const &cpl, Op const &op, Basis &&basis,
+                    Filler &&fill) try {
+  coeff_t J = cpl.scalar().as<coeff_t>();
   int64_t s1 = op[0];
   int64_t s2 = op[1];
 
@@ -172,7 +167,7 @@ void apply_exchange(Op const &op, Basis &&basis, Filler &&fill) {
           ++idx_dn;
         }
       } // trivial stabilizer or not
-    } // loop over ups
+    }   // loop over ups
 
   } else { // if not symmetric
 
@@ -213,6 +208,8 @@ void apply_exchange(Op const &op, Basis &&basis, Filler &&fill) {
     }
 #endif
   }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 } // namespace xdiag::basis::electron

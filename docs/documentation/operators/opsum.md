@@ -53,6 +53,7 @@ Creates an OpSum with a single pair of [Coupling](coupling.md) and [Op](op.md) o
 	OpSum operator*(double cpl, Op const &op);
 	OpSum operator*(complex cpl, Op const &op);
 	OpSum operator*(Scalar cpl, Op const &op);
+	OpSum operator*(Coupling const& cpl, Op const &op);
 	```
 ---
 

@@ -17,31 +17,31 @@ void apply_terms(OpSum const &ops, BasisIn const &basis_in,
                  BasisOut const &basis_out, Fill &fill) try {
   for (auto const &[cpl, op] : ops.plain()) {
 
-    if (op.type() == "EXCHANGE") {
+    std::string type = op.type();
+    if (type == "EXCHANGE") {
       spinhalf::apply_exchange<bit_t, coeff_t, symmetric>(cpl, op, basis_in,
                                                           basis_out, fill);
-    } else if (op.type() == "ISING") {
+    } else if (type == "ISING") {
       spinhalf::apply_ising<bit_t, coeff_t, symmetric>(cpl, op, basis_in,
                                                        basis_out, fill);
-    } else if (op.type() == "SZ") {
+    } else if (type == "SZ") {
       spinhalf::apply_sz<bit_t, coeff_t, symmetric>(cpl, op, basis_in,
                                                     basis_out, fill);
-    } else if (op.type() == "S+") {
+    } else if (type == "S+") {
       spinhalf::apply_spsm<bit_t, coeff_t, symmetric>(cpl, op, basis_in,
                                                       basis_out, fill);
-    } else if (op.type() == "S-") {
+    } else if (type == "S-") {
       spinhalf::apply_spsm<bit_t, coeff_t, symmetric>(cpl, op, basis_in,
                                                       basis_out, fill);
-    } else if (op.type() == "SCALARCHIRALITY") {
+    } else if (type == "SCALARCHIRALITY") {
       spinhalf::apply_scalar_chirality<bit_t, coeff_t, symmetric>(
           cpl, op, basis_in, basis_out, fill);
-    } //  else if (op.type() == "NONBRANCHINGOP") {
+    } //  else if (type == "NONBRANCHINGOP") {
     //   spinhalf::apply_non_branching<bit_t, coeff_t, symmetric>(
     //       cpl, op, basis_in, basis_out, fill);
     // }
     else {
-      XDIAG_THROW(fmt::format(
-          "Error in spinhalf::apply_terms: Unknown Op type \"{}\"", op.type()));
+      XDIAG_THROW(fmt::format("Unknown Op type \"{}\"", type));
     }
   }
 } catch (Error const &e) {

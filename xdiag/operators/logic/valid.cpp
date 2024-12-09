@@ -1,6 +1,9 @@
 #include "valid.hpp"
 
 #include <string>
+#include <set>
+
+#include <xdiag/operators/logic/types.hpp>
 
 namespace xdiag {
 
@@ -48,6 +51,21 @@ void check_valid(OpSum const &ops) try {
   XDIAG_RETHROW(e);
 }
 
+void check_valid(Op const &op, int64_t n_sites) try {
+  check_valid(op);
+  must_have_sites_in_range(op, 0, n_sites);
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+
+void check_valid(OpSum const &ops, int64_t n_sites) try {
+  for (auto [cpl, op] : ops) {
+    check_valid(op, n_sites);
+  }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+
 void must_have_sites(Op const &op) try {
   if (!op.hassites()) {
     XDIAG_THROW(
@@ -80,13 +98,30 @@ void must_have_n_sites(Op const &op, int64_t n) try {
   XDIAG_RETHROW(e);
 }
 
-void must_have_disjoint_sites(Op const &op, int64_t n) try {
+void must_have_disjoint_sites(Op const &op) try {
   if (op.hassites()) {
     auto const &sites = op.sites();
     auto set = std::set<int64_t>(sites.begin(), sites.end());
     if (set.size() != sites.size()) {
       XDIAG_THROW(fmt::format(
           "Op of type \"{}\"must have strictly disjoint sites.", op.type()));
+    }
+  } else {
+    XDIAG_THROW(
+        fmt::format("Op of type \"{}\" must have sites defined.", op.type()));
+  }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+void must_have_sites_in_range(Op const &op, int64_t l, int64_t u) try {
+  if (op.hassites()) {
+    for (auto s : op.sites()) {
+      if ((s < 0) || (s >= u)) {
+        XDIAG_THROW(
+            fmt::format("Op of type \"{}\" has site with index {}, but the "
+                        "indices must lie in the interval [{}, {}).",
+                        op.type(), s, l, u));
+      }
     }
   } else {
     XDIAG_THROW(

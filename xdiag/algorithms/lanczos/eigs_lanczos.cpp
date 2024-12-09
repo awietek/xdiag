@@ -8,6 +8,9 @@
 
 #include <xdiag/states/random_state.hpp>
 #include <xdiag/states/fill.hpp>
+
+#include <xdiag/operators/logic/real.hpp>
+
 #include <xdiag/utils/timing.hpp>
 
 namespace xdiag {
@@ -25,7 +28,7 @@ eigs_lanczos_result_t eigs_lanczos(OpSum const &ops, Block const &block,
   // }
 
   bool cplx =
-      !ops.isreal() || !isreal(block) || force_complex || !state0.isreal();
+      !isreal(ops) || !isreal(block) || force_complex || !state0.isreal();
   if (cplx) {
     state0.make_complex();
   }
@@ -120,7 +123,7 @@ eigs_lanczos_result_t eigs_lanczos(OpSum const &ops, Block const &block,
   //   XDIAG_THROW("Input OpSum is not hermitian");
   // }
 
-  bool cplx = (!ops.isreal()) || !isreal(block) || force_complex;
+  bool cplx = (!isreal(ops)) || !isreal(block) || force_complex;
   State state0(block, !cplx);
   fill(state0, RandomState(random_seed));
 

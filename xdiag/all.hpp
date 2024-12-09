@@ -85,7 +85,6 @@
 #include <xdiag/symmetries/qn.hpp>
 #include <xdiag/symmetries/representation.hpp>
 
-#include <xdiag/operators/compiler.hpp>
 #include <xdiag/operators/non_branching_op.hpp>
 #include <xdiag/operators/op.hpp>
 #include <xdiag/operators/opsum.hpp>
@@ -98,6 +97,7 @@
 #include <xdiag/operators/logic/qns.hpp>
 #include <xdiag/operators/logic/valid.hpp>
 #include <xdiag/operators/logic/types.hpp>
+#include <xdiag/operators/logic/compilation.hpp>
 
 #include <xdiag/algorithms/norm_estimate.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
@@ -143,3 +143,4 @@
 
 #undef XDIAG_THROW
 #undef XDIAG_RETHROW
+#undef XDIAG_API

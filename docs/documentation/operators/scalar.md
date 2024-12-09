@@ -48,13 +48,6 @@ A variable which can be either a real or complex double precision number. The al
 		Scalar conj(Scalar const &s)
 		```
 
-!!! method "cplx"
-
-    Returns the Scalar as a complex numberm, regardless whether it's real or complex.
-    === "C++" 
-    	```c++
-		complex cplx(Scalar const &s)
-		```
 !!! method "abs"
 
     Returns the absolute value of the Scalar.

@@ -35,8 +35,8 @@ public:
   template <typename T> T as() const;
 
   bool isreal() const;
-  double real() const;
-  double imag() const;
+  arma::mat real() const;
+  arma::mat imag() const;
   Matrix hc() const;
   bool isapprox(Matrix const &y, double rtol = 1e-12,
                 double atol = 1e-12) const;
