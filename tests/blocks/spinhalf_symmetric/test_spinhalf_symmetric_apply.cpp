@@ -9,6 +9,8 @@
 #include <xdiag/algebra/matrix.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
 #include <xdiag/utils/close.hpp>
+#include <xdiag/io/file_toml.hpp>
+#include <xdiag/operators/logic/real.hpp>
 
 using namespace xdiag;
 
@@ -46,7 +48,7 @@ void test_spinhalf_symmetric_apply(OpSum ops, PermutationGroup space_group,
         REQUIRE(std::abs(e0_mat - e0_app) < 1e-7);
 
         // Compute eigenvalues with real arithmitic
-        if (block.irrep().isreal() && ops.isreal()) {
+        if (block.irrep().isreal() && isreal(ops)) {
           auto H_real = matrix(ops, block, block);
           arma::vec evals_mat_real;
           arma::eig_sym(evals_mat_real, H_real);
@@ -95,7 +97,7 @@ void test_spinhalf_symmetric_apply_no_sz(OpSum ops,
       REQUIRE(std::abs(e0_mat - e0_app) < 1e-7);
 
       // Compute eigenvalues with real arithmitic
-      if (block.irrep().isreal() && ops.isreal()) {
+      if (block.irrep().isreal() && isreal(ops)) {
         auto H_real = matrix(ops, block, block);
         arma::vec evals_mat_real;
         arma::eig_sym(evals_mat_real, H_real);
@@ -130,9 +132,10 @@ TEST_CASE("spinhalf_symmetric_apply", "[spinhalf]") {
   // test a 3x3 triangular lattice
   Log.out("spinhalf_symmetric_apply: Triangular 3x3");
   std::string lfile = XDIAG_DIRECTORY
-      "/misc/data/triangular.9.Jz1Jz2Jx1Jx2D1.sublattices.tsl.lat";
+      "/misc/data/triangular.9.Jz1Jz2Jx1Jx2D1.sublattices.tsl.toml";
 
-  auto ops = read_opsum(lfile);
+  auto fl = FileToml(lfile);
+  auto ops = fl["Interactions"].as<OpSum>();
   ops["Jz1"] = 1.00;
   ops["Jz2"] = 0.23;
   ops["Jx1"] = 0.76;
@@ -160,9 +163,10 @@ TEST_CASE("spinhalf_symmetric_apply", "[spinhalf]") {
     Log("spinhalf_symmetric_matrix: Triangular J1J2Jchi N=12");
     std::string lfile =
         XDIAG_DIRECTORY "/misc/data/triangular.j1j2jch/"
-                        "triangular.12.j1j2jch.sublattices.fsl.lat";
+                        "triangular.12.j1j2jch.sublattices.fsl.toml";
 
-    auto ops = read_opsum(lfile);
+    auto fl = FileToml(lfile);
+    auto ops = fl["Interactions"].as<OpSum>();
     ops["J1"] = 1.00;
     ops["J2"] = 0.15;
     ops["Jchi"] = -0.09;

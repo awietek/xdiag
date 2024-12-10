@@ -20,6 +20,7 @@ set(XDIAG_SOURCES
   io/toml/std_vector.cpp
   io/toml/arma_vector.cpp
   io/toml/arma_matrix.cpp
+  io/toml/operators.cpp
   io/hdf5/file_h5_handler.cpp
   io/hdf5/file_h5_subview.cpp
   io/hdf5/utils.cpp

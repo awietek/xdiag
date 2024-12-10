@@ -65,10 +65,8 @@ std::vector<std::string> constants(OpSum const &ops) { return ops.constants(); }
 OpSum operator*(std::string cpl, Op const &op) {
   return OpSum(Coupling(cpl), op);
 }
-OpSum operator*(double cpl, Op const &op) { return OpSum(Coupling(cpl), op); }
-OpSum operator*(complex cpl, Op const &op) { return OpSum(Coupling(cpl), op); }
-OpSum operator*(Scalar cpl, Op const &op) { return OpSum(Coupling(cpl), op); }
 OpSum operator*(Coupling const &cpl, Op const &op) { return OpSum(cpl, op); }
+OpSum operator*(Op const &op, Coupling const &cpl) { return cpl * op; }
 
 std::ostream &operator<<(std::ostream &out, OpSum const &ops) {
   out << "Interactions:\n";

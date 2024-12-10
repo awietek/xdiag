@@ -6,15 +6,16 @@
 #include "../spinhalf/testcases_spinhalf.hpp"
 
 #include <xdiag/algebra/algebra.hpp>
-#include <xdiag/algebra/matrix.hpp>
 #include <xdiag/algebra/apply.hpp>
+#include <xdiag/algebra/matrix.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
+#include <xdiag/operators/logic/real.hpp>
 #include <xdiag/utils/close.hpp>
+#include <xdiag/io/file_toml.hpp>
 
 using namespace xdiag;
 
-void test_spinhalf_symmetric_spectra(OpSum ops,
-                                     PermutationGroup space_group,
+void test_spinhalf_symmetric_spectra(OpSum ops, PermutationGroup space_group,
                                      std::vector<Representation> irreps,
                                      std::vector<int64_t> multiplicities) {
   int64_t n_sites = space_group.n_sites();
@@ -51,7 +52,7 @@ void test_spinhalf_symmetric_spectra(OpSum ops,
           arma::eig_sym(eigs_sym_k, H_sym);
 
           // Check whether results are the same for real blocks
-          if (spinhalf.irrep().isreal() && ops.isreal()) {
+          if (spinhalf.irrep().isreal() && isreal(ops)) {
             auto H_sym_real = matrix(ops, spinhalf, spinhalf);
             arma::vec eigs_sym_k_real;
             arma::eig_sym(eigs_sym_k_real, H_sym_real);
@@ -72,8 +73,8 @@ void test_spinhalf_symmetric_spectra(OpSum ops,
 }
 
 void test_spinhalf_symmetric_spectra_no_sz(
-    OpSum ops, PermutationGroup space_group,
-    std::vector<Representation> irreps, std::vector<int64_t> multiplicities) {
+    OpSum ops, PermutationGroup space_group, std::vector<Representation> irreps,
+    std::vector<int64_t> multiplicities) {
   int64_t n_sites = space_group.n_sites();
   assert(irreps.size() == multiplicities.size());
 
@@ -116,7 +117,7 @@ void test_spinhalf_symmetric_spectra_no_sz(
         REQUIRE(close(eigs_sym_k, arma::vec(eigs_sym_k_sz)));
 
         // Check whether results are the same for real blocks
-        if (spinhalf.irrep().isreal() && ops.isreal()) {
+        if (spinhalf.irrep().isreal() && isreal(ops)) {
           auto H_sym_real = matrix(ops, spinhalf, spinhalf);
 
           arma::vec eigs_sym_k_real;
@@ -143,8 +144,7 @@ void test_spinhalf_symmetric_spectrum_chains(int64_t n_sites) {
   auto [space_group, irreps, multiplicities] =
       get_cyclic_group_irreps_mult(n_sites);
   auto ops = HBchain(n_sites, 1.0, 1.0);
-  test_spinhalf_symmetric_spectra(ops, space_group, irreps,
-                                  multiplicities);
+  test_spinhalf_symmetric_spectra(ops, space_group, irreps, multiplicities);
   test_spinhalf_symmetric_spectra_no_sz(ops, space_group, irreps,
                                         multiplicities);
 }
@@ -160,9 +160,10 @@ TEST_CASE("spinhalf_symmetric_matrix", "[spinhalf]") {
   {
     Log("spinhalf_symmetric_matrix: Triangular 3x3");
     std::string lfile = XDIAG_DIRECTORY
-        "/misc/data/triangular.9.Jz1Jz2Jx1Jx2D1.sublattices.tsl.lat";
+        "/misc/data/triangular.9.Jz1Jz2Jx1Jx2D1.sublattices.tsl.toml";
 
-    auto ops = read_opsum(lfile);
+    auto fl = FileToml(lfile);
+    auto ops = fl["Interactions"].as<OpSum>();
     ops["Jz1"] = 1.00;
     ops["Jz2"] = 0.23;
     ops["Jx1"] = 0.76;
@@ -183,8 +184,7 @@ TEST_CASE("spinhalf_symmetric_matrix", "[spinhalf]") {
       irreps.push_back(read_representation(lfile, name));
       multiplicities.push_back(mult);
     }
-    test_spinhalf_symmetric_spectra(ops, space_group, irreps,
-                                    multiplicities);
+    test_spinhalf_symmetric_spectra(ops, space_group, irreps, multiplicities);
     test_spinhalf_symmetric_spectra_no_sz(ops, space_group, irreps,
                                           multiplicities);
   }
@@ -194,9 +194,10 @@ TEST_CASE("spinhalf_symmetric_matrix", "[spinhalf]") {
     Log("spinhalf_symmetric_matrix: Triangular J1J2Jchi N=12");
     std::string lfile =
         XDIAG_DIRECTORY "/misc/data/triangular.j1j2jch/"
-                        "triangular.12.j1j2jch.sublattices.fsl.lat";
+                        "triangular.12.j1j2jch.sublattices.fsl.toml";
 
-    auto ops = read_opsum(lfile);
+    auto fl = FileToml(lfile);
+    auto ops = fl["Interactions"].as<OpSum>();
     ops["J1"] = 1.00;
     ops["J2"] = 0.15;
     ops["Jchi"] = -0.09;

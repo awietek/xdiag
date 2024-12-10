@@ -9,6 +9,7 @@
 #include <xdiag/algorithms/sparse_diag.hpp>
 #include <xdiag/utils/close.hpp>
 #include <xdiag/utils/timing.hpp>
+#include <xdiag/io/file_toml.hpp>
 
 using namespace xdiag;
 
@@ -73,21 +74,24 @@ void test_apply_mat(int N, OpSum ops) {
 TEST_CASE("spinhalf_apply", "[spinhalf]") {
   using namespace xdiag::testcases::spinhalf;
 
-  Log.out("spinhalf_apply: Heisenberg chain apply test, J=1.0, N=2,..,6, matrix-matrix multiplication");
+  Log.out("spinhalf_apply: Heisenberg chain apply test, J=1.0, N=2,..,6, "
+          "matrix-matrix multiplication");
   for (int N = 2; N <= 6; ++N) {
     auto ops = HBchain(N, 1.0);
     test_apply(N, ops);
     test_apply_mat(N, ops);
   }
 
-  Log.out("spinhalf_apply: Heisenberg alltoall apply test, N=2,..,6, matrix-matrix multiplication");
+  Log.out("spinhalf_apply: Heisenberg alltoall apply test, N=2,..,6, "
+          "matrix-matrix multiplication");
   for (int N = 2; N <= 6; ++N) {
     auto ops = HB_alltoall(N);
     test_apply(N, ops);
-    test_apply_mat(N, ops); 
+    test_apply_mat(N, ops);
   }
 
-  Log.out("spinhalf_apply: Heisenberg all-to-all Sz <-> NoSz comparison, matrix-matrix multiplication");
+  Log.out("spinhalf_apply: Heisenberg all-to-all Sz <-> NoSz comparison, "
+          "matrix-matrix multiplication");
   for (int n_sites = 2; n_sites <= 6; ++n_sites) {
     auto ops = HB_alltoall(n_sites);
     auto block_no_sz = Spinhalf(n_sites);
@@ -107,9 +111,10 @@ TEST_CASE("spinhalf_apply", "[spinhalf]") {
     Log("spinhalf_matrix: Triangular J1J2Jchi N=12");
     std::string lfile =
         XDIAG_DIRECTORY "/misc/data/triangular.j1j2jch/"
-                        "triangular.12.j1j2jch.sublattices.fsl.lat";
+                        "triangular.12.j1j2jch.sublattices.fsl.toml";
 
-    auto ops = read_opsum(lfile);
+    auto fl = FileToml(lfile);
+    auto ops = fl["Interactions"].as<OpSum>();
     ops["J1"] = 1.00;
     ops["J2"] = 0.15;
     ops["Jchi"] = 0.09;

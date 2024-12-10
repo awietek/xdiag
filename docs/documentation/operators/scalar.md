@@ -11,8 +11,8 @@ A variable which can be either a real or complex double precision number. The al
 === "C++"	
 	```c++
 	Scalar() = default;
-	explicit Scalar(double value);
-	explicit Scalar(complex value);
+	Scalar(double value);
+	Scalar(complex value);
 	```
 ## Methods
 

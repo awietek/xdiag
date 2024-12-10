@@ -3,6 +3,7 @@
 namespace xdiag {
 
 Coupling::Coupling(std::string value) : value_(value) {}
+Coupling::Coupling(const char *value) : value_(std::string(value)) {}
 Coupling::Coupling(double value) : value_(Scalar(value)) {}
 Coupling::Coupling(complex value) : value_(Scalar(value)) {}
 Coupling::Coupling(Scalar value) : value_(value) {}

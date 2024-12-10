@@ -1,10 +1,11 @@
 #include "../../catch.hpp"
 
 #include <xdiag/algebra/algebra.hpp>
-#include <xdiag/algebra/matrix.hpp>
 #include <xdiag/algebra/apply.hpp>
+#include <xdiag/algebra/matrix.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
 #include <xdiag/utils/close.hpp>
+#include <xdiag/io/file_toml.hpp>
 
 void run_kitaev_gamma_test(
     double K, double G,
@@ -14,8 +15,10 @@ void run_kitaev_gamma_test(
 
   std::string lfile =
       XDIAG_DIRECTORY "/misc/data/kitaev_gamma/lattice-files/"
-                      "honeycomb.8.HeisenbergKitaevGamma.fsl.lat";
-  auto ops = read_opsum(lfile);
+                      "honeycomb.8.HeisenbergKitaevGamma.fsl.toml";
+
+  auto fl = FileToml(lfile);
+  auto ops = fl["Interactions"].as<OpSum>();
   auto group = PermutationGroup(read_permutations(lfile));
 
   cx_mat sx(mat({{0., 0.5}, {0.5, 0.}}), mat({{0., 0.}, {0., 0.}}));

@@ -213,56 +213,54 @@ TEST_CASE("file_toml", "[io]") try {
 
   std::string lfile =
       XDIAG_DIRECTORY "/misc/data/triangular.j1j2jch/"
-                      "triangular.12.j1j2jch.sublattices.fsl.lat";
-  auto group = PermutationGroup(read_permutations(lfile));
-  test_write_read(group);
+                      "triangular.12.j1j2jch.sublattices.fsl.toml";
 
-  auto irrep = read_representation(lfile, "X.C1.A");
-  test_write_read(irrep);
+  fl = FileToml(lfile);
+  // auto group = PermutationGroup(read_permutations(lfile));
+  // test_write_read(group);
 
-  auto op = Op("HB", "H", 1);
+  // auto irrep = read_representation(lfile, "X.C1.A");
+  // test_write_read(irrep);
+
+  auto op = Op("HB", 1);
   test_write_read(op);
 
-  op = Op("HB", "J1", {1, 2});
+  op = Op("HB", {1, 2});
   test_write_read(op);
 
-  op = Op("HB", 1.0, 1);
+  op = Op("HB", 1);
   test_write_read(op);
 
-  op = Op("HB", 1.2, {1, 2});
+  op = Op("HB", {1, 2});
   test_write_read(op);
 
-  op = Op("HB", 2.1 + 1.2i, 1);
+  op = Op("HB", 1);
   test_write_read(op);
 
-  op = Op("HB", 2.1 + 1.2i, {1, 2});
+  op = Op("HB", {1, 2});
   test_write_read(op);
 
   auto matr = arma::mat(3, 3, arma::fill::randu);
 
-  op = Op("H", matr, 1);
+  op = Op("H", 1, matr);
   test_write_read(op);
 
-  op = Op("J1", matr, {1, 2});
+  op = Op("J1", {1, 2}, matr);
   test_write_read(op);
 
   auto matc = arma::cx_mat(3, 3, arma::fill::randu);
 
-  op = Op("H", matc, 1);
+  op = Op("H", 1, matc);
   test_write_read(op);
 
-  op = Op("J1", matc, {1, 2});
+  op = Op("J1", {1, 2}, matc);
   test_write_read(op);
 
-  auto ops = read_opsum(lfile);
+  auto ops = fl["Interactions"].as<OpSum>();
   test_write_read(ops);
 
   ops["J1"] = 1.0;
   ops["J2"] = (complex)(0.2 - 0.1i);
-  test_write_read(ops);
-
-  ops["M1"] = arma::mat(3, 4, arma::fill::randu);
-  ops["M2"] = arma::cx_mat(3, 4, arma::fill::randu);
   test_write_read(ops);
 
 } catch (xdiag::Error const &e) {

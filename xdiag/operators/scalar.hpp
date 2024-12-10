@@ -11,8 +11,8 @@ public:
   using value_t = std::variant<double, complex>;
 
   XDIAG_API Scalar() = default;
-  XDIAG_API explicit Scalar(double value);
-  XDIAG_API explicit Scalar(complex value);
+  XDIAG_API Scalar(double value);
+  XDIAG_API Scalar(complex value);
 
   XDIAG_API bool operator==(Scalar const &rhs) const;
   XDIAG_API bool operator!=(Scalar const &rhs) const;

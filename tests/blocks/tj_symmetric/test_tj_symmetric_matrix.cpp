@@ -6,6 +6,7 @@
 #include "../tj/testcases_tj.hpp"
 
 #include <xdiag/algebra/matrix.hpp>
+#include <xdiag/operators/logic/real.hpp>
 #include <xdiag/utils/close.hpp>
 
 using namespace xdiag;
@@ -54,7 +55,7 @@ void test_spectra_tj_symmetric(OpSum ops, PermutationGroup space_group,
             // XDIAG_SHOW(eigs_sym_k);
 
             // Check whether results are the same for real blocks
-            if (tj.irrep().isreal() && ops.isreal()) {
+            if (tj.irrep().isreal() && isreal(ops)) {
               auto H_sym_real = matrix(ops, tj, tj);
               arma::vec eigs_sym_k_real;
               arma::eig_sym(eigs_sym_k_real, H_sym_real);
@@ -99,7 +100,7 @@ TEST_CASE("tj_symmetric_matrix", "[tj]") {
         n_sites);
     OpSum ops;
     for (int64_t s = 0; s < n_sites; ++s) {
-      ops += Op("TJHB", 1.0, {s, (s + 1) % n_sites});
+      ops += Op("TJHB", {s, (s + 1) % n_sites});
     }
     auto [space_group, irreps, multiplicities] =
         get_cyclic_group_irreps_mult(n_sites);
@@ -112,12 +113,13 @@ TEST_CASE("tj_symmetric_matrix", "[tj]") {
   }
 
   {
-    // test a 8 site square lattice Heisenber model
+    // test a 8 site square lattice Heisenberg model
     Log("tj_symmetric_matrix: 8 site square lattice HB model");
     std::string lfile =
-        XDIAG_DIRECTORY "/misc/data/square.8.heisenberg.2sl.lat";
+        XDIAG_DIRECTORY "/misc/data/square.8.heisenberg.2sl.toml";
 
-    auto ops = read_opsum(lfile);
+    auto fl = FileToml(lfile);
+    auto ops = fl["Interactions"].as<OpSum>();
     auto permutations = xdiag::read_permutations(lfile);
     auto space_group = PermutationGroup(permutations);
 
@@ -144,9 +146,10 @@ TEST_CASE("tj_symmetric_matrix", "[tj]") {
     // test a 3x3 triangular lattice
     Log("tj_symmetric_matrix: tJ 3x3 triangular, symmetric spectra test");
     std::string lfile =
-        XDIAG_DIRECTORY "/misc/data/triangular.9.hop.sublattices.tsl.lat";
+        XDIAG_DIRECTORY "/misc/data/triangular.9.hop.sublattices.tsl.toml";
 
-    auto ops = read_opsum(lfile);
+    auto fl = FileToml(lfile);
+    auto ops = fl["Interactions"].as<OpSum>();
     ops["T"] = 1.0;
     ops["J"] = 0.4;
     auto permutations = xdiag::read_permutations(lfile);
@@ -172,9 +175,10 @@ TEST_CASE("tj_symmetric_matrix", "[tj]") {
     Log("tj_symmetric_matrix: tJ 3x3 triangular staggered flux, "
         "symmetric spectra test, complex");
     std::string lfile = XDIAG_DIRECTORY
-        "/misc/data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.lat";
+        "/misc/data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.toml";
 
-    auto ops = read_opsum(lfile);
+    auto fl = FileToml(lfile);
+    auto ops = fl["Interactions"].as<OpSum>();
     std::vector<double> etas{0.0, 0.1, 0.2, 0.3};
     auto permutations = xdiag::read_permutations(lfile);
     auto space_group = PermutationGroup(permutations);
@@ -195,8 +199,7 @@ TEST_CASE("tj_symmetric_matrix", "[tj]") {
     for (auto eta : etas) {
       Log("eta: {:.2f}", eta);
       ops["TPHI"] = 1.0; // complex(cos(eta * M_PI), sin(eta * M_PI));
-      ops["JPHI"] =
-          0.4; // complex(cos(2 * eta * M_PI), sin(2 * eta * M_PI));
+      ops["JPHI"] = 0.4; // complex(cos(2 * eta * M_PI), sin(2 * eta * M_PI));
       test_spectra_tj_symmetric(ops, space_group, irreps, multiplicities);
     }
   }

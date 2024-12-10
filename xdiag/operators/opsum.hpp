@@ -39,11 +39,8 @@ private:
 
 XDIAG_API std::vector<std::string> constants(OpSum const &ops);
 
-XDIAG_API OpSum operator*(std::string cpl, Op const &op);
-XDIAG_API OpSum operator*(double cpl, Op const &op);
-XDIAG_API OpSum operator*(complex cpl, Op const &op);
-XDIAG_API OpSum operator*(Scalar cpl, Op const &op);
-XDIAG_API OpSum operator*(Coupling const& cpl, Op const &op);
+XDIAG_API OpSum operator*(Coupling const &cpl, Op const &op);
+XDIAG_API OpSum operator*(Op const &op, Coupling const &cpl);
 
 XDIAG_API std::ostream &operator<<(std::ostream &out, OpSum const &ops);
 XDIAG_API std::string to_string(OpSum const &ops);

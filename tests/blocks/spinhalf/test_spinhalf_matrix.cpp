@@ -3,6 +3,7 @@
 #include "testcases_spinhalf.hpp"
 #include <iostream>
 #include <xdiag/algebra/matrix.hpp>
+#include <xdiag/io/file_toml.hpp>
 #include <xdiag/utils/close.hpp>
 
 using namespace xdiag;
@@ -99,9 +100,10 @@ TEST_CASE("spinhalf_matrix", "[spinhalf]") {
     Log("spinhalf_matrix: Triangular J1J2Jchi N=12");
     std::string lfile =
         XDIAG_DIRECTORY "/misc/data/triangular.j1j2jch/"
-                        "triangular.12.j1j2jch.sublattices.fsl.lat";
+                        "triangular.12.j1j2jch.sublattices.fsl.toml";
 
-    auto ops = read_opsum(lfile);
+    auto fl = FileToml(lfile);
+    auto ops = fl["Interactions"].as<OpSum>();
     ops["J1"] = 1.00;
     ops["J2"] = 0.15;
     ops["Jchi"] = 0.09;
@@ -138,21 +140,21 @@ TEST_CASE("spinhalf_matrix", "[spinhalf]") {
           for (int j = 0; j < n_sites; ++j) {
 
             OpSum sp_i_m;
-            sp_i_m += Op("S+", 1.0, i);
+            sp_i_m += Op("S+", i);
             auto sp_i_m_mat = matrix(sp_i_m, blockm, block);
             auto sp_i_mat = matrix(sp_i_m, block_raw, block_raw);
 
             OpSum sm_j_m;
-            sm_j_m += Op("S-", 1.0, j);
+            sm_j_m += Op("S-", j);
             auto sm_j_m_mat = matrix(sm_j_m, block, blockm);
             auto sm_j_mat = matrix(sm_j_m, block_raw, block_raw);
 
             OpSum sp_i_p;
-            sp_i_p += Op("S+", 1.0, i);
+            sp_i_p += Op("S+", i);
             auto sp_i_p_mat = matrix(sp_i_p, block, blockp);
 
             OpSum sm_j_p;
-            sm_j_p += Op("S-", 1.0, j);
+            sm_j_p += Op("S-", j);
             auto sm_j_p_mat = matrix(sm_j_p, blockp, block);
 
             auto C1 = sp_i_m_mat * sm_j_m_mat;
@@ -164,7 +166,7 @@ TEST_CASE("spinhalf_matrix", "[spinhalf]") {
 
             if (i == j) {
               OpSum sz;
-              sz += Op("SZ", 1.0, i);
+              sz += Op("SZ", i);
               auto sz_mat = matrix(sz, block, block);
               auto sz_matr = matrix(sz, block_raw, block_raw);
               REQUIRE(close(comm, arma::mat(2.0 * sz_mat)));

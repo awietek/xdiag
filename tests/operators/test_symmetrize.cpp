@@ -8,7 +8,7 @@
 #include <xdiag/algorithms/lanczos/eigs_lanczos.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
 #include <xdiag/blocks/electron.hpp>
-#include <xdiag/operators/symmetrize.hpp>
+#include <xdiag/operators/logic/symmetrize.hpp>
 #include <xdiag/utils/close.hpp>
 
 using namespace xdiag;
@@ -21,7 +21,7 @@ TEST_CASE("symmetrize", "[operators]") try {
     // int n_sites = 6;
     auto ops = testcases::electron::get_linear_chain(n_sites, 1.0, 5.0);
     for (int i = 0; i < n_sites; ++i) {
-      ops += Op("HB", "J2", {i, (i + 2) % n_sites});
+      ops += "J2" * Op("HB", {i, (i + 2) % n_sites});
     }
     ops["J2"] = 0.321;
     ops["T"] = 0;
@@ -99,7 +99,7 @@ TEST_CASE("symmetrize", "[operators]") try {
           // Measure correlators
           for (int i = 1; i < n_sites; ++i) {
             OpSum corr_nosym;
-            corr_nosym += Op("HB", "J", {0, i});
+            corr_nosym += "J" * Op("HB", {0, i});
             corr_nosym["J"] = 1.0;
 
             auto corr_sym = symmetrize(corr_nosym, space_group);

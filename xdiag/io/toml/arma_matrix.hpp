@@ -7,4 +7,4 @@ namespace xdiag::io {
 
 template <typename T> arma::Mat<T> arma_matrix(toml::node const &node);
 
-} // namespace xdiag::io::toml
+} // namespace xdiag::io

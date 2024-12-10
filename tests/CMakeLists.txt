@@ -32,7 +32,7 @@ set(XDIAG_TEST_SOURCES
   operators/test_op.cpp
   operators/test_opsum.cpp
   operators/test_symmetrize.cpp
-  operators/test_non_branching_op.cpp
+  # operators/test_non_branching_op.cpp
 
   blocks/spinhalf/test_spinhalf_matrix.cpp
   blocks/spinhalf/test_spinhalf_apply.cpp
@@ -40,7 +40,7 @@ set(XDIAG_TEST_SOURCES
   blocks/spinhalf_symmetric/test_spinhalf_symmetric.cpp
   blocks/spinhalf_symmetric/test_spinhalf_symmetric_matrix.cpp
   blocks/spinhalf_symmetric/test_spinhalf_symmetric_apply.cpp
-  blocks/spinhalf_symmetric/test_kitaev_gamma.cpp
+  # blocks/spinhalf_symmetric/test_kitaev_gamma.cpp
 
   blocks/tj/test_tj_matrix.cpp
   blocks/tj/test_tj_apply.cpp

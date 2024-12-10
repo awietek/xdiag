@@ -13,8 +13,8 @@ public:
   using value_t = std::variant<arma::mat, arma::cx_mat>;
 
   Matrix() = default;
-  explicit Matrix(arma::mat const &mat);
-  explicit Matrix(arma::cx_mat const &mat);
+  Matrix(arma::mat const &mat);
+  Matrix(arma::cx_mat const &mat);
 
   bool operator==(Matrix const &rhs) const;
   bool operator!=(Matrix const &rhs) const;

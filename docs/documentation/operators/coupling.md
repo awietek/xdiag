@@ -11,10 +11,10 @@ Describes the coupling of an operator. A coupling can either be a **string** or 
 === "C++"	
 	```c++
 	Coupling() = default;
-	explicit Coupling(std::string value);
-	explicit Coupling(double value);
-	explicit Coupling(complex value);
-	explicit Coupling(Scalar value););
+	Coupling(std::string value);
+	Coupling(double value);
+	Coupling(complex value);
+	Coupling(Scalar value););
 	```
 
 ## Methods

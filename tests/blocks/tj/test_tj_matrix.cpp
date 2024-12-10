@@ -134,10 +134,10 @@ TEST_CASE("tj_matrix", "[tj]") try {
 
     auto ops = tj_alltoall_complex(N);
     OpSum ops_hb;
-    for (auto op : ops) {
+    for (auto [cpl, op] : ops) {
       if (op.type() == "HB") {
-        ops_hb += op;
-        std::string name = op.coupling().as<std::string>();
+        ops_hb += cpl * op;
+        std::string name = cpl.string();
         ops_hb[name] = ops[name];
       }
     }

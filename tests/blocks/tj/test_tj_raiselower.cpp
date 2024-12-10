@@ -110,8 +110,8 @@ TEST_CASE("tj_raise_lower", "[tj]") {
                 auto block_j = tJ(n_sites, nup_j, ndn_j);
                 auto block_ij = tJ(n_sites, nup_ij, ndn_ij);
 
-                auto op_i = Op(op_i_str, 1.0, i);
-                auto op_j = Op(op_j_str, 1.0, j);
+                auto op_i = Op(op_i_str, i);
+                auto op_j = Op(op_j_str, j);
 
                 auto op_i_m = matrixC(op_i, block, block_i);
                 auto op_ij_m = matrixC(op_j, block_i, block_ij);
@@ -119,8 +119,8 @@ TEST_CASE("tj_raise_lower", "[tj]") {
                 auto op_j_m = matrixC(op_j, block, block_j);
                 auto op_ji_m = matrixC(op_i, block_j, block_ij);
 
-		cx_mat anti_comm = op_ji_m * op_j_m + op_ij_m * op_i_m;
-		
+                cx_mat anti_comm = op_ji_m * op_j_m + op_ij_m * op_i_m;
+
                 // check the non-fermionic commutation relations of the t-J
                 // model
                 // see arxiv.org/abs/0706,4236 (tJ model then and now ... Jozef
@@ -139,12 +139,12 @@ TEST_CASE("tj_raise_lower", "[tj]") {
                     REQUIRE(norm(anti_comm) < 1e-12);
                   } else if (((op_i_str == "CDAGUP") && (op_j_str == "CUP")) ||
                              ((op_i_str == "CUP") && (op_j_str == "CDAGUP"))) {
-                    auto ndn_op = Op("NUMBERDN", 1.0, i);
+                    auto ndn_op = Op("NUMBERDN", i);
                     auto ndn_op_m = matrix(ndn_op, block);
                     REQUIRE(norm(anti_comm + ndn_op_m - id) < 1e-12);
                   } else if (((op_i_str == "CDAGDN") && (op_j_str == "CDN")) ||
                              ((op_i_str == "CDN") && (op_j_str == "CDAGDN"))) {
-                    auto nup_op = Op("NUMBERUP", 1.0, i);
+                    auto nup_op = Op("NUMBERUP", i);
                     auto nup_op_m = matrix(nup_op, block);
                     REQUIRE(norm(anti_comm + nup_op_m - id) < 1e-12);
                   } else if ((op_i_str == "CDAGUP") && (op_j_str == "CDN")) {
@@ -161,13 +161,13 @@ TEST_CASE("tj_raise_lower", "[tj]") {
                 }
 
               } // loop op_i_str
-            }   // loop op_j_str
+            } // loop op_j_str
 
           } // loop i
-        }   // loop j
+        } // loop j
 
       } // loop nup
-    }   // loop ndn
+    } // loop ndn
 
   } // loop n_sites
 
