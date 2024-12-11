@@ -9,10 +9,11 @@ namespace xdiag::io {
 template <typename T> std::vector<T> std_vector(toml::node const &node) try {
   auto array = node.as_array();
   if (array) {
-    std::size_t size = array->size();
+    toml::array a = *array;
+    std::size_t size = a.size();
     std::vector<T> vector(size);
     for (int i = 0; i < size; ++i) {
-      vector[i] = value<T>(array[i]);
+      vector[i] = value<T>(a[i]);
     }
     return vector;
   } else {

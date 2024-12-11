@@ -1,7 +1,7 @@
 #ifdef XDIAG_USE_MPI
 #include "catch_mpi_main.hpp"
 #else
-#define CATCH_CONFIG_MAIN
+#include "catch_main.hpp"
 #endif
 
-#include "catch.hpp"
+// #include "catch.hpp"

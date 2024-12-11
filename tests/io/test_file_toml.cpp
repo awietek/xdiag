@@ -34,7 +34,7 @@ template <typename T> void test_write_read(T val) try {
 TEST_CASE("file_toml", "[io]") try {
   using namespace xdiag;
   using namespace arma;
-  
+
   // Just try to parse everything in the example toml file
   std::string filename = XDIAG_DIRECTORY "/misc/data/toml/read.toml";
   auto fl = FileToml(filename);
@@ -78,8 +78,11 @@ TEST_CASE("file_toml", "[io]") try {
   n = "floating.cplx";
   // Log("{}", fl[n].as<complex>());
   REQUIRE(fl.defined(n));
-  REQUIRE(fl[n].as<complex>() == std::complex<double>(2.3122, 0.1237));
-
+  try {
+    REQUIRE(fl[n].as<complex>() == std::complex<double>(2.3122, 0.1237));
+  } catch (Error const &e) {
+    error_trace(e);
+  }
   n = "vectors.ints";
   // for (auto i : fl[n].as<std::vector<int>>()) {
   //   Log("i: {}", i);
@@ -257,12 +260,14 @@ TEST_CASE("file_toml", "[io]") try {
   test_write_read(op);
 
   auto ops = fl["Interactions"].as<OpSum>();
+
   test_write_read(ops);
 
   ops["J1"] = 1.0;
   ops["J2"] = (complex)(0.2 - 0.1i);
+
   test_write_read(ops);
 
 } catch (xdiag::Error const &e) {
-  XDIAG_RETHROW(e);
+  error_trace(e);
 }

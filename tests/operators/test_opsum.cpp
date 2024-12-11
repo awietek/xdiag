@@ -21,7 +21,7 @@ TEST_CASE("opsum", "[operators]") {
   ops += "J2" * Op("HB", {5, 1});
 
   double a = 1.0;
-  complex b = 2.0 + 3.0I;
+  complex b(2.0, 3.0);
 
   ops["J1"] = a;
   ops["J2"] = b;

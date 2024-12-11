@@ -44,11 +44,11 @@ Matrix matrix(toml::node const &node) try {
   if (array1) {
     if (array1->size() > 0) {
 
-      auto array2 = array1[0].as_array();
+      auto array2 = (*array1)[0].as_array();
       if (array2) {
         if (array2->size() > 0) {
-          auto array3 = array2[0].as_array();
-          auto val = array2[0].value<double>();
+          auto array3 = (*array2)[0].as_array();
+          auto val = (*array2)[0].value<double>();
           if (array3) {
             if (array3->size() == 2) {
               return Matrix(arma_matrix<complex>(node));
@@ -143,20 +143,43 @@ Op op(toml::node const &node) try {
 
 OpSum opsum(toml::node const &node) try {
   auto array = node.as_array();
+  auto table = node.as_table();
   if (array) {
     auto ops = OpSum();
     int64_t size = array->size();
     for (int64_t i = 0; i < size; ++i) {
-      auto cpl_op_array = array[i].as_array();
+      auto cpl_op_array = (*array)[i].as_array();
       if (!cpl_op_array || (cpl_op_array->size() < 2)) {
         XDIAG_THROW("Cannot convert TOML to OpSum. Entries in OpSum array most "
                     "be arrays which describe both the coupling and the Op");
       }
-      Coupling cpl = coupling(cpl_op_array[0]);
+      Coupling cpl = coupling((*cpl_op_array)[0]);
       Op op = op_from_array(*cpl_op_array, 1);
       ops += cpl * op;
     }
     return ops;
+  } else if (table) {
+    auto interactions = (*table).at_path("Interactions").node();
+    if (interactions) {
+      auto ops = opsum(*interactions);
+      auto constants = (*table).at_path("Constants").as_table();
+      if (constants) {
+        for (auto [key, val] : *constants) {
+          Scalar s = scalar(val);
+          std::string k(key.str());
+          ops[k] = s;
+        }
+      } else {
+        XDIAG_THROW("Invalid OpSum format. Constants must be a table under the "
+                    "key \"Constants\"");
+      }
+      return ops;
+    } else {
+      XDIAG_THROW(
+          "Invalid OpSum format. Interactions must be in a table under the key "
+          "\"Interactions\" and constants under a key \"Constants\"");
+    }
+
   } else {
     XDIAG_THROW(
         "Cannot convert TOML to OpSum. Entries must me at least arrays of "
@@ -232,7 +255,7 @@ toml::table toml_table(OpSum const &ops) try {
       if (s.isreal()) {
         constants.insert_or_assign(name, s.as<double>());
       } else {
-	toml::array c;
+        toml::array c;
         c.push_back(s.real());
         c.push_back(s.imag());
         constants.insert_or_assign(name, c);

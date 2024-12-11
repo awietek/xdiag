@@ -73,10 +73,10 @@ std::ostream &operator<<(std::ostream &out, OpSum const &ops) {
   out << "-------------\n";
 
   for (auto [cpl, op] : ops) {
-    out << cpl << " " << op;
+    out << cpl << " " << op << "\n";
   }
   if (ops.constants().size() > 0) {
-    out << "Constants:\n";
+    out << "\nConstants:\n";
     out << "----------\n";
 
     for (auto name : ops.constants()) {
