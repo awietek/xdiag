@@ -29,10 +29,10 @@ TEST_CASE("product_state", "[states]") {
       int ndn = 0;
       for (int i = 0; i < n_sites; ++i) {
         std::string p = pstate[i];
-        auto sz = Op("SZ", 1.0, i);
+        auto sz = Op("SZ", i);
         auto szc = inner(sz, psi);
 
-        auto n = Op("NUMBER", 1.0, i);
+        auto n = Op("NUMBER", i);
         auto nc = inner(n, psi);
 
         if (p == "Emp") {
@@ -60,10 +60,10 @@ TEST_CASE("product_state", "[states]") {
 
       for (int i = 0; i < n_sites; ++i) {
         std::string p = pstate[i];
-        auto sz = Op("SZ", 1.0, i);
+        auto sz = Op("SZ", i);
         auto szc = inner(sz, psi2);
 
-        auto n = Op("NUMBER", 1.0, i);
+        auto n = Op("NUMBER", i);
         auto nc = inner(n, psi2);
 
         if (p == "Emp") {
@@ -113,10 +113,10 @@ TEST_CASE("product_state", "[states]") {
       fill(psi2, pstate);
       for (int i = 0; i < n_sites; ++i) {
         std::string p = pstate[i];
-        auto sz = Op("SZ", 1.0, i);
+        auto sz = Op("SZ", i);
         auto szc = inner(sz, psi2);
 
-        auto n = Op("NUMBER", 1.0, i);
+        auto n = Op("NUMBER", i);
         auto nc = inner(n, psi2);
 
         if (p == "Emp") {
@@ -152,7 +152,7 @@ TEST_CASE("product_state", "[states]") {
       for (int i = 0; i < n_sites; ++i) {
         std::string p = pstate[i];
 
-        auto sz = Op("SZ", 1.0, i);
+        auto sz = Op("SZ", i);
         auto szc = inner(sz, psi);
 
         if (p == "Up") {
@@ -168,7 +168,7 @@ TEST_CASE("product_state", "[states]") {
       fill(psi2, pstate);
       for (int i = 0; i < n_sites; ++i) {
         std::string p = pstate[i];
-        auto sz = Op("SZ", 1.0, i);
+        auto sz = Op("SZ", i);
         auto szc = inner(sz, psi2);
 
         if (p == "Up") {

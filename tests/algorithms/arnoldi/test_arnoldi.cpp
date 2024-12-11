@@ -56,8 +56,8 @@ TEST_CASE("ritz_vecs_arnoldi", "[arnoldi]") {
   OpSum ops;
 
   for (int i = 0; i < n_sites; ++i) {
-    ops += Op("HB", "J1", {i, (i + 1) % n_sites});
-    ops += Op("HB", "J2", {i, (i + 2) % n_sites});
+    ops += "J1" * Op("HB", {i, (i + 1) % n_sites});
+    ops += "J2" * Op("HB", {i, (i + 2) % n_sites});
   }
   ops["J1"] = 1;
   ops["J2"] = .5;

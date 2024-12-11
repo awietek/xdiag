@@ -7,9 +7,9 @@
 #include <xdiag/algorithms/time_evolution/time_evolution.hpp>
 #include <xdiag/common.hpp>
 #include <xdiag/extern/armadillo/armadillo>
-#include <xdiag/states/product_state.hpp>
 #include <xdiag/states/create_state.hpp>
 #include <xdiag/states/fill.hpp>
+#include <xdiag/states/product_state.hpp>
 #include <xdiag/utils/logger.hpp>
 
 using namespace xdiag;
@@ -50,7 +50,7 @@ TEST_CASE("analytic_case_free_particle_1D", "[time_evolution]") try {
   auto block = Electron(n_sites, nup, ndn);
   OpSum ops;
   for (int i = 0; i < n_sites; i++) {
-    ops += Op("HOP", "t", {i, (i + 1) % n_sites});
+    ops += "t" * Op("HOP", {i, (i + 1) % n_sites});
   }
   ops["t"] = t;
   ops["U"] = 1;
@@ -142,16 +142,17 @@ TEST_CASE("analytic_case_free_particle_2D", "[time_evolution]") try {
       // nearest neighbour hops
       int s_up_hop = L * ((i + 1) % L) + j;
       int s_dn_hop = L * i + (j + 1) % L;
-      ops += Op("HOP", "t", {s, s_up_hop});
-      ops += Op("HOP", "t", {s, s_dn_hop});
+      ops += "t" * Op("HOP", {s, s_up_hop});
+      ops += "t" * Op("HOP", {s, s_dn_hop});
 
       // next nearest neighbour hops
       int s_across_up = L * ((i + 1) % L) + (j + 1) % L;
       int s_across_dn = L * ((L + (i - 1) % L) % L) + (j + 1) % L;
-      ops += Op("HOP", "t1", {s, s_across_up});
-      ops += Op("HOP", "t1", {s, s_across_dn});
+      ops += "t1" * Op("HOP", {s, s_across_up});
+      ops += "t1" * Op("HOP", {s, s_across_dn});
     }
   }
+  ops += "U" * Op("HUBBARDU");
   ops["t"] = t;
   ops["t1"] = t1;
   ops["U"] = 1;
@@ -207,10 +208,10 @@ TEST_CASE("tj_complex_timeevo", "[time_evolution]") try {
       int site = y * L + x;
       int right = y * L + nx;
       int top = ny * L + x;
-      ops += Op("HOP", "T", {site, right});
-      ops += Op("TJISING", "J", {site, right});
-      ops += Op("HOP", "T", {site, top});
-      ops += Op("TJISING", "J", {site, top});
+      ops += "T" * Op("HOP", {site, right});
+      ops += "J" * Op("TJISING", {site, right});
+      ops += "T" * Op("HOP", {site, top});
+      ops += "J" * Op("TJISING", {site, top});
     }
   }
   ops["T"] = (std::complex<double>)(1.0 + 0.2i);

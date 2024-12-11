@@ -7,12 +7,13 @@
 #include <xdiag/algebra/apply.hpp>
 #include <xdiag/algebra/matrix.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
+#include <xdiag/io/file_toml.hpp>
+#include <xdiag/operators/logic/real.hpp>
 #include <xdiag/utils/close.hpp>
 
 using namespace xdiag;
 
-void test_electron_symmetric_apply(OpSum ops,
-                                   PermutationGroup space_group,
+void test_electron_symmetric_apply(OpSum ops, PermutationGroup space_group,
                                    std::vector<Representation> irreps) {
   int64_t n_sites = space_group.n_sites();
 
@@ -67,7 +68,7 @@ void test_electron_symmetric_apply(OpSum ops,
 
           // Compute eigenvalues with real arithmitic
           // tic();
-          if (block.irrep().isreal() && ops.isreal()) {
+          if (block.irrep().isreal() && isreal(ops)) {
             auto H_real = matrix(ops, block, block);
             arma::vec evals_mat_real;
             arma::eig_sym(evals_mat_real, H_real);
@@ -112,9 +113,10 @@ TEST_CASE("electron_symmetric_apply", "[electron]") {
   // test a 3x3 triangular lattice
   Log.out("electron_symmetric_apply: Hubbard 3x3 triangular");
   std::string lfile =
-      XDIAG_DIRECTORY "/misc/data/triangular.9.hop.sublattices.tsl.lat";
+      XDIAG_DIRECTORY "/misc/data/triangular.9.hop.sublattices.tsl.toml";
 
-  auto ops = read_opsum(lfile);
+  auto fl = FileToml(lfile);
+  auto ops = fl["Interactions"].as<OpSum>();
   ops["T"] = 1.0;
   ops["U"] = 5.0;
   auto permutations = xdiag::read_permutations(lfile);
@@ -136,8 +138,8 @@ TEST_CASE("electron_symmetric_apply", "[electron]") {
   Log.out(
       "electron_symmetric_apply: Hubbard 3x3 triangular (+ Heisenberg terms)");
   auto ops_hb = ops;
-  for (auto op : ops) {
-    ops_hb += Op("HB", "J", {op[0], op[1]});
+  for (auto [cpl, op] : ops) {
+    ops_hb += "J" * Op("HB", {op[0], op[1]});
   }
   ops_hb["J"] = 0.4;
   test_electron_symmetric_apply(ops_hb, space_group, irreps);
@@ -147,7 +149,9 @@ TEST_CASE("electron_symmetric_apply", "[electron]") {
     Log.out("electron_symmetric_apply: Hubbard 3x3 triangular (complex)");
     std::string lfile = XDIAG_DIRECTORY
         "/misc/data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.lat";
-    OpSum ops = read_opsum(lfile);
+    auto fl = FileToml(lfile);
+    auto ops = fl["Interactions"].as<OpSum>();
+    ops += "U" * Op("HUBBARDU");
     ops["TPHI"] = complex(0.5, 0.5);
     ops["JPHI"] = 0.;
     ops["U"] = 5.0;

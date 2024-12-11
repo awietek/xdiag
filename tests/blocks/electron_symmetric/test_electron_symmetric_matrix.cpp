@@ -4,18 +4,19 @@
 
 #include "../electron/testcases_electron.hpp"
 #include <xdiag/algebra/algebra.hpp>
-#include <xdiag/algebra/matrix.hpp>
 #include <xdiag/algebra/apply.hpp>
+#include <xdiag/algebra/matrix.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
 #include <xdiag/utils/close.hpp>
+#include <xdiag/io/file_toml.hpp>
+#include <xdiag/operators/logic/real.hpp>
 
 using namespace xdiag;
 
-void test_electron_symmetric_spectra_no_np(OpSum opsum,
-                                           PermutationGroup space_group,
-                                           std::vector<Representation> irreps,
-                                           std::vector<int64_t> multiplicities) {
-  (void) multiplicities;
+void test_electron_symmetric_spectra_no_np(
+    OpSum opsum, PermutationGroup space_group,
+    std::vector<Representation> irreps, std::vector<int64_t> multiplicities) {
+  (void)multiplicities;
 
   int64_t n_sites = space_group.n_sites();
 
@@ -65,8 +66,7 @@ void test_electron_symmetric_spectra_no_np(OpSum opsum,
   }
 }
 
-void test_electron_symmetric_spectra(OpSum opsum,
-                                     PermutationGroup space_group,
+void test_electron_symmetric_spectra(OpSum opsum, PermutationGroup space_group,
                                      std::vector<Representation> irreps,
                                      std::vector<int64_t> multiplicities) {
 
@@ -108,7 +108,7 @@ void test_electron_symmetric_spectra(OpSum opsum,
             arma::eig_sym(eigs_sym_k, H_sym);
 
             // Check whether results are the same for real blocks
-            if (electron.irrep().isreal() && opsum.isreal()) {
+            if (electron.irrep().isreal() && isreal(opsum)) {
               auto H_sym_real = matrix(opsum, electron, electron);
               arma::vec eigs_sym_k_real;
               arma::eig_sym(eigs_sym_k_real, H_sym_real);
@@ -126,11 +126,11 @@ void test_electron_symmetric_spectra(OpSum opsum,
         // Check if all eigenvalues agree
         // Log.out("{} {} {} {}", nup, ndn, eigs_sym(0), eigs_nosym(0));
 
-	// if (!close(arma::vec(eigs_sym), eigs_nosym)){
-	//   XDIAG_SHOW(arma::norm(arma::vec(eigs_sym) - eigs_nosym));
-	//   XDIAG_SHOW(eigs_sym);
-	//   XDIAG_SHOW(eigs_nosym);
-	// }
+        // if (!close(arma::vec(eigs_sym), eigs_nosym)){
+        //   XDIAG_SHOW(arma::norm(arma::vec(eigs_sym) - eigs_nosym));
+        //   XDIAG_SHOW(eigs_sym);
+        //   XDIAG_SHOW(eigs_nosym);
+        // }
         REQUIRE(close(arma::vec(eigs_sym), eigs_nosym));
       }
     }
@@ -146,8 +146,7 @@ void test_hubbard_symmetric_spectrum_chains(int64_t n_sites) {
   // Without Heisenberg term
   Log.out("electron_symmetric_matrix: Hubbard chain, n_sites: {}", n_sites);
   auto opsum = get_linear_chain(n_sites, 1.0, 5.0);
-  test_electron_symmetric_spectra(opsum, space_group, irreps,
-                                  multiplicities);
+  test_electron_symmetric_spectra(opsum, space_group, irreps, multiplicities);
   test_electron_symmetric_spectra_no_np(opsum, space_group, irreps,
                                         multiplicities);
 
@@ -174,6 +173,7 @@ TEST_CASE("electron_symmetric_matrix", "[electron]") {
   double t = 1.0;
   double U = 5.0;
   auto opsum = get_linear_chain(n_sites, t, U);
+  opsum += "U" * Op("HUBBARDU");
   opsum["U"] = U;
   auto [space_group, irreps, multiplicities] =
       get_cyclic_group_irreps_mult(n_sites);
@@ -227,10 +227,12 @@ TEST_CASE("electron_symmetric_matrix", "[electron]") {
   // test a 3x3 triangular lattice
   Log("electron_symmetric_matrix: Hubbard 3x3 triangular");
   std::string lfile =
-      XDIAG_DIRECTORY "/misc/data/triangular.9.hop.sublattices.tsl.lat";
+      XDIAG_DIRECTORY "/misc/data/triangular.9.hop.sublattices.tsl.toml";
 
-  opsum = read_opsum(lfile);
+  auto fl = FileToml(lfile);
+  opsum = fl["Interactions"].as<OpSum>();
   opsum["T"] = 1.0;
+  opsum += "U" * Op("HUBBARDU");
   opsum["U"] = 5.0;
   auto permutations = xdiag::read_permutations(lfile);
   space_group = PermutationGroup(permutations);
@@ -246,14 +248,13 @@ TEST_CASE("electron_symmetric_matrix", "[electron]") {
     irreps.push_back(read_representation(lfile, name));
     multiplicities.push_back(mult);
   }
-  test_electron_symmetric_spectra(opsum, space_group, irreps,
-                                  multiplicities);
+  test_electron_symmetric_spectra(opsum, space_group, irreps, multiplicities);
 
   // test a 3x3 triangular lattice with Heisenberg terms
   Log("electron_symmetric_matrix: Hubbard 3x3 triangular(+ Heisenberg terms)");
   auto opsum_hb = opsum;
-  for (auto op : opsum) {
-    opsum_hb += Op("HB", "J", {op[0], op[1]});
+  for (auto [cpl, op] : opsum) {
+    opsum_hb += "J" * Op("HB", {op[0], op[1]});
   }
   opsum_hb["J"] = 0.4;
   test_electron_symmetric_spectra(opsum_hb, space_group, irreps,
@@ -263,8 +264,11 @@ TEST_CASE("electron_symmetric_matrix", "[electron]") {
   {
     Log.out("electron_symmetric_matrix: Hubbard 3x3 triangular (complex)");
     std::string lfile = XDIAG_DIRECTORY
-        "/misc/data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.lat";
-    OpSum opsum = read_opsum(lfile);
+        "/misc/data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.toml";
+
+    auto fl = FileToml(lfile);
+    auto opsum = fl["Interactions"].as<OpSum>();
+    opsum += "U" * Op("HUBBARDU");
     opsum["TPHI"] = complex(0.5, 0.5);
     opsum["JPHI"] = 0.;
     opsum["U"] = 5.0;
@@ -282,7 +286,6 @@ TEST_CASE("electron_symmetric_matrix", "[electron]") {
       irreps.push_back(read_representation(lfile, name));
       multiplicities.push_back(mult);
     }
-    test_electron_symmetric_spectra(opsum, space_group, irreps,
-                                    multiplicities);
+    test_electron_symmetric_spectra(opsum, space_group, irreps, multiplicities);
   }
 }

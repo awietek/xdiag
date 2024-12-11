@@ -1,11 +1,11 @@
 #pragma once
 
 #include <xdiag/extern/toml++/toml.hpp>
-#include <xdiag/operators/scalar.hpp>
-#include <xdiag/operators/matrix.hpp>
 #include <xdiag/operators/coupling.hpp>
+#include <xdiag/operators/matrix.hpp>
 #include <xdiag/operators/op.hpp>
 #include <xdiag/operators/opsum.hpp>
+#include <xdiag/operators/scalar.hpp>
 
 namespace xdiag::io {
 
@@ -15,5 +15,9 @@ Matrix matrix(toml::node const &node);
 
 Op op(toml::node const &node);
 OpSum opsum(toml::node const &node);
+
+toml::array toml_array(Op const &op);
+toml::array toml_array(OpSum const &ops);
+toml::table toml_table(OpSum const &ops);
 
 } // namespace xdiag::io

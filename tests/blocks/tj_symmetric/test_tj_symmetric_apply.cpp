@@ -4,10 +4,12 @@
 
 #include "../electron/testcases_electron.hpp"
 #include "../tj/testcases_tj.hpp"
-#include <xdiag/algebra/matrix.hpp>
 #include <xdiag/algebra/apply.hpp>
+#include <xdiag/algebra/matrix.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
+#include <xdiag/io/file_toml.hpp>
 #include <xdiag/utils/close.hpp>
+#include <xdiag/operators/logic/real.hpp>
 
 using namespace xdiag;
 
@@ -51,7 +53,7 @@ void test_apply_tj_symmetric(OpSum ops, PermutationGroup space_group,
           REQUIRE(std::abs(e0_mat - e0_app) < 1e-7);
 
           // Compute eigenvalues with real arithmitic
-          if (block.irrep().isreal() && ops.isreal()) {
+          if (block.irrep().isreal() && isreal(ops)) {
             auto H_real = matrix(ops, block, block);
             REQUIRE(arma::norm(H_real - H_real.t()) < 1e-12);
 
@@ -94,9 +96,10 @@ TEST_CASE("tj_symmetric_apply", "[tj]") {
     // test a 3x3 triangular lattice
     Log("tj_symmetric_apply: tJ 3x3 triangular, symmetric apply test");
     std::string lfile =
-        XDIAG_DIRECTORY "/misc/data/triangular.9.hop.sublattices.tsl.lat";
+        XDIAG_DIRECTORY "/misc/data/triangular.9.hop.sublattices.tsl.toml";
 
-    auto ops = read_opsum(lfile);
+    auto fl = FileToml(lfile);
+    auto ops = fl["Interactions"].as<OpSum>();
     ops["T"] = 1.0;
     ops["U"] = 5.0;
     auto permutations = xdiag::read_permutations(lfile);
@@ -121,9 +124,10 @@ TEST_CASE("tj_symmetric_apply", "[tj]") {
     Log("tj_symmetric_apply: tJ 3x3 triangular staggered, symmetric apply "
         "test, complex");
     std::string lfile = XDIAG_DIRECTORY
-        "/misc/data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.lat";
+        "/misc/data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.toml";
 
-    auto ops = read_opsum(lfile);
+    auto fl = FileToml(lfile);
+    auto ops = fl["Interactions"].as<OpSum>();
     std::vector<double> etas{0.0, 0.1, 0.2, 0.3};
     auto permutations = xdiag::read_permutations(lfile);
     auto space_group = PermutationGroup(permutations);

@@ -11,16 +11,16 @@ OpSum HBchain(int64_t n_sites, double J1, double J2) {
   ops["J2"] = J2;
 
   for (int64_t s = 0; s < n_sites; ++s) {
-    ops += Op("HB", "J1", {s, (s + 1) % n_sites});
+    ops += "J1" * Op("HB", {s, (s + 1) % n_sites});
   }
   for (int64_t s = 0; s < n_sites; ++s) {
-    ops += Op("HB", "J2", {s, (s + 2) % n_sites});
+    ops += "J2" * Op("HB", {s, (s + 2) % n_sites});
   }
   return ops;
 }
 
 std::tuple<OpSum, arma::Col<double>> HBchain_fullspectrum_nup(int64_t L,
-                                                                 int64_t nup) {
+                                                              int64_t nup) {
 
   auto ops = HBchain(L, 1.0);
 
@@ -107,7 +107,7 @@ OpSum HB_alltoall(int64_t n_sites) {
       ss << "J" << s1 << "_" << s2;
       std::string name = ss.str();
       double value = distribution(generator);
-      ops += Op("HB", name, {s1, s2});
+      ops += name * Op("HB", {s1, s2});
       ops[name] = value;
     }
   return ops;
@@ -116,78 +116,78 @@ OpSum HB_alltoall(int64_t n_sites) {
 std::tuple<OpSum, double> triangular_12_complex(int64_t nup, double eta) {
 
   OpSum ops;
-  ops += Op("ISING", "Jz", {0, 5});
-  ops += Op("ISING", "Jz", {8, 2});
-  ops += Op("ISING", "Jz", {2, 7});
-  ops += Op("ISING", "Jz", {1, 4});
-  ops += Op("ISING", "Jz", {4, 8});
-  ops += Op("ISING", "Jz", {6, 10});
-  ops += Op("ISING", "Jz", {10, 0});
-  ops += Op("ISING", "Jz", {5, 9});
-  ops += Op("ISING", "Jz", {9, 3});
-  ops += Op("ISING", "Jz", {3, 6});
-  ops += Op("ISING", "Jz", {7, 11});
-  ops += Op("ISING", "Jz", {11, 1});
-  ops += Op("ISING", "Jz", {0, 8});
-  ops += Op("ISING", "Jz", {8, 6});
-  ops += Op("ISING", "Jz", {2, 10});
-  ops += Op("ISING", "Jz", {1, 9});
-  ops += Op("ISING", "Jz", {4, 3});
-  ops += Op("ISING", "Jz", {6, 1});
-  ops += Op("ISING", "Jz", {10, 4});
-  ops += Op("ISING", "Jz", {5, 2});
-  ops += Op("ISING", "Jz", {9, 7});
-  ops += Op("ISING", "Jz", {3, 11});
-  ops += Op("ISING", "Jz", {7, 0});
-  ops += Op("ISING", "Jz", {11, 5});
-  ops += Op("ISING", "Jz", {0, 4});
-  ops += Op("ISING", "Jz", {8, 3});
-  ops += Op("ISING", "Jz", {2, 6});
-  ops += Op("ISING", "Jz", {1, 5});
-  ops += Op("ISING", "Jz", {4, 9});
-  ops += Op("ISING", "Jz", {6, 11});
-  ops += Op("ISING", "Jz", {10, 1});
-  ops += Op("ISING", "Jz", {5, 8});
-  ops += Op("ISING", "Jz", {9, 2});
-  ops += Op("ISING", "Jz", {3, 7});
-  ops += Op("ISING", "Jz", {7, 10});
-  ops += Op("ISING", "Jz", {11, 0});
-  ops += Op("EXCHANGE", "Jx", {0, 8});
-  ops += Op("EXCHANGE", "Jx", {8, 6});
-  ops += Op("EXCHANGE", "Jx", {2, 10});
-  ops += Op("EXCHANGE", "Jx", {1, 9});
-  ops += Op("EXCHANGE", "Jx", {4, 3});
-  ops += Op("EXCHANGE", "Jx", {6, 1});
-  ops += Op("EXCHANGE", "Jx", {10, 4});
-  ops += Op("EXCHANGE", "Jx", {5, 2});
-  ops += Op("EXCHANGE", "Jx", {9, 7});
-  ops += Op("EXCHANGE", "Jx", {3, 11});
-  ops += Op("EXCHANGE", "Jx", {7, 0});
-  ops += Op("EXCHANGE", "Jx", {11, 5});
-  ops += Op("EXCHANGE", "Jx", {0, 10});
-  ops += Op("EXCHANGE", "Jx", {8, 4});
-  ops += Op("EXCHANGE", "Jx", {2, 8});
-  ops += Op("EXCHANGE", "Jx", {1, 11});
-  ops += Op("EXCHANGE", "Jx", {4, 1});
-  ops += Op("EXCHANGE", "Jx", {6, 3});
-  ops += Op("EXCHANGE", "Jx", {10, 6});
-  ops += Op("EXCHANGE", "Jx", {5, 0});
-  ops += Op("EXCHANGE", "Jx", {9, 5});
-  ops += Op("EXCHANGE", "Jx", {3, 9});
-  ops += Op("EXCHANGE", "Jx", {7, 2});
-  ops += Op("EXCHANGE", "Jx", {11, 7});
-  ops += Op("EXCHANGE", "Jx", {0, 11});
-  ops += Op("EXCHANGE", "Jx", {8, 5});
-  ops += Op("EXCHANGE", "Jx", {2, 9});
-  ops += Op("EXCHANGE", "Jx", {1, 10});
-  ops += Op("EXCHANGE", "Jx", {4, 0});
-  ops += Op("EXCHANGE", "Jx", {6, 2});
-  ops += Op("EXCHANGE", "Jx", {10, 7});
-  ops += Op("EXCHANGE", "Jx", {5, 1});
-  ops += Op("EXCHANGE", "Jx", {9, 4});
-  ops += Op("EXCHANGE", "Jx", {3, 8});
-  ops += Op("EXCHANGE", "Jx", {7, 3});
-  ops += Op("EXCHANGE", "Jx", {11, 6});
+  ops += "Jz" * Op("ISING", {0, 5});
+  ops += "Jz" * Op("ISING", {8, 2});
+  ops += "Jz" * Op("ISING", {2, 7});
+  ops += "Jz" * Op("ISING", {1, 4});
+  ops += "Jz" * Op("ISING", {4, 8});
+  ops += "Jz" * Op("ISING", {6, 10});
+  ops += "Jz" * Op("ISING", {10, 0});
+  ops += "Jz" * Op("ISING", {5, 9});
+  ops += "Jz" * Op("ISING", {9, 3});
+  ops += "Jz" * Op("ISING", {3, 6});
+  ops += "Jz" * Op("ISING", {7, 11});
+  ops += "Jz" * Op("ISING", {11, 1});
+  ops += "Jz" * Op("ISING", {0, 8});
+  ops += "Jz" * Op("ISING", {8, 6});
+  ops += "Jz" * Op("ISING", {2, 10});
+  ops += "Jz" * Op("ISING", {1, 9});
+  ops += "Jz" * Op("ISING", {4, 3});
+  ops += "Jz" * Op("ISING", {6, 1});
+  ops += "Jz" * Op("ISING", {10, 4});
+  ops += "Jz" * Op("ISING", {5, 2});
+  ops += "Jz" * Op("ISING", {9, 7});
+  ops += "Jz" * Op("ISING", {3, 11});
+  ops += "Jz" * Op("ISING", {7, 0});
+  ops += "Jz" * Op("ISING", {11, 5});
+  ops += "Jz" * Op("ISING", {0, 4});
+  ops += "Jz" * Op("ISING", {8, 3});
+  ops += "Jz" * Op("ISING", {2, 6});
+  ops += "Jz" * Op("ISING", {1, 5});
+  ops += "Jz" * Op("ISING", {4, 9});
+  ops += "Jz" * Op("ISING", {6, 11});
+  ops += "Jz" * Op("ISING", {10, 1});
+  ops += "Jz" * Op("ISING", {5, 8});
+  ops += "Jz" * Op("ISING", {9, 2});
+  ops += "Jz" * Op("ISING", {3, 7});
+  ops += "Jz" * Op("ISING", {7, 10});
+  ops += "Jz" * Op("ISING", {11, 0});
+  ops += "Jx" * Op("EXCHANGE", {0, 8});
+  ops += "Jx" * Op("EXCHANGE", {8, 6});
+  ops += "Jx" * Op("EXCHANGE", {2, 10});
+  ops += "Jx" * Op("EXCHANGE", {1, 9});
+  ops += "Jx" * Op("EXCHANGE", {4, 3});
+  ops += "Jx" * Op("EXCHANGE", {6, 1});
+  ops += "Jx" * Op("EXCHANGE", {10, 4});
+  ops += "Jx" * Op("EXCHANGE", {5, 2});
+  ops += "Jx" * Op("EXCHANGE", {9, 7});
+  ops += "Jx" * Op("EXCHANGE", {3, 11});
+  ops += "Jx" * Op("EXCHANGE", {7, 0});
+  ops += "Jx" * Op("EXCHANGE", {11, 5});
+  ops += "Jx" * Op("EXCHANGE", {0, 10});
+  ops += "Jx" * Op("EXCHANGE", {8, 4});
+  ops += "Jx" * Op("EXCHANGE", {2, 8});
+  ops += "Jx" * Op("EXCHANGE", {1, 11});
+  ops += "Jx" * Op("EXCHANGE", {4, 1});
+  ops += "Jx" * Op("EXCHANGE", {6, 3});
+  ops += "Jx" * Op("EXCHANGE", {10, 6});
+  ops += "Jx" * Op("EXCHANGE", {5, 0});
+  ops += "Jx" * Op("EXCHANGE", {9, 5});
+  ops += "Jx" * Op("EXCHANGE", {3, 9});
+  ops += "Jx" * Op("EXCHANGE", {7, 2});
+  ops += "Jx" * Op("EXCHANGE", {11, 7});
+  ops += "Jx" * Op("EXCHANGE", {0, 11});
+  ops += "Jx" * Op("EXCHANGE", {8, 5});
+  ops += "Jx" * Op("EXCHANGE", {2, 9});
+  ops += "Jx" * Op("EXCHANGE", {1, 10});
+  ops += "Jx" * Op("EXCHANGE", {4, 0});
+  ops += "Jx" * Op("EXCHANGE", {6, 2});
+  ops += "Jx" * Op("EXCHANGE", {10, 7});
+  ops += "Jx" * Op("EXCHANGE", {5, 1});
+  ops += "Jx" * Op("EXCHANGE", {9, 4});
+  ops += "Jx" * Op("EXCHANGE", {3, 8});
+  ops += "Jx" * Op("EXCHANGE", {7, 3});
+  ops += "Jx" * Op("EXCHANGE", {11, 6});
 
   ops["Jz"] = 1.0;
   ops["Jx"] = complex(cos(2 * M_PI * eta), sin(2 * M_PI * eta));

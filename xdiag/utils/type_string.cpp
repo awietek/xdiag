@@ -15,12 +15,16 @@ template <> std::string type_string<std::string>() { return "std::string"; }
 template <> std::string type_string<int8_t>() { return "int8_t"; }
 template <> std::string type_string<int16_t>() { return "int16_t"; }
 template <> std::string type_string<int32_t>() { return "int32_t"; }
-template <> std::string type_string<int64_t>() { return "int64_t"; }
+// template <> std::string type_string<int64_t>() { return "int64_t"; }
+template <> std::string type_string<long>() { return "int64_t"; }
+template <> std::string type_string<long long>() { return "int64_t"; }
 
 template <> std::string type_string<uint8_t>() { return "uint8_t"; }
 template <> std::string type_string<uint16_t>() { return "uint16_t"; }
 template <> std::string type_string<uint32_t>() { return "uint32_t"; }
-template <> std::string type_string<uint64_t>() { return "uint64_t"; }
+// template <> std::string type_string<uint64_t>() { return "uint64_t"; }
+template <> std::string type_string<unsigned long>() { return "uint64_t"; }
+template <> std::string type_string<unsigned long long>() { return "uint64_t"; }
 
 template <> std::string type_string<double>() { return "double"; }
 template <> std::string type_string<complex>() { return "complex"; }
@@ -41,7 +45,13 @@ template <> std::string type_string<std::vector<int16_t>>() {
 template <> std::string type_string<std::vector<int32_t>>() {
   return "std::vector<int32_t>";
 }
-template <> std::string type_string<std::vector<int64_t>>() {
+// template <> std::string type_string<std::vector<int64_t>>() {
+//   return "std::vector<int64_t>";
+// }
+template <> std::string type_string<std::vector<long>>() {
+  return "std::vector<int64_t>";
+}
+template <> std::string type_string<std::vector<long long>>() {
   return "std::vector<int64_t>";
 }
 
@@ -54,7 +64,13 @@ template <> std::string type_string<std::vector<uint16_t>>() {
 template <> std::string type_string<std::vector<uint32_t>>() {
   return "std::vector<uint32_t>";
 }
-template <> std::string type_string<std::vector<uint64_t>>() {
+// template <> std::string type_string<std::vector<uint64_t>>() {
+//   return "std::vector<uint64_t>";
+// }
+template <> std::string type_string<std::vector<unsigned long>>() {
+  return "std::vector<uint64_t>";
+}
+template <> std::string type_string<std::vector<unsigned long long>>() {
   return "std::vector<uint64_t>";
 }
 

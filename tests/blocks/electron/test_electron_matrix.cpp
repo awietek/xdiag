@@ -51,8 +51,10 @@ TEST_CASE("electron_matrix", "[electron]") {
   double U = 5.0;
   auto block = Electron(n_sites, n_up, n_dn);
 
-  for (int i = 0; i < n_sites; ++i)
-    ops += Op("HOP", "T", {i, (i + 1) % n_sites});
+  for (int i = 0; i < n_sites; ++i) {
+    ops += "T" * Op("HOP", {i, (i + 1) % n_sites});
+  }
+  ops += "U" * Op("HUBBARDU");
   ops["T"] = 1.0;
   ops["U"] = 5.0;
   auto H1 = matrix(ops, block, block);
@@ -122,7 +124,8 @@ TEST_CASE("electron_matrix", "[electron]") {
   // Test two site exact solution
   {
     OpSum ops;
-    ops += Op("HOP", "T", {0, 1});
+    ops += "T" * Op("HOP", {0, 1});
+    ops += "U" * Op("HUBBARDU");
     auto block2 = Electron(2, 1, 1);
     for (int i = 0; i < 20; ++i) {
       double U = 1.234 * i;
@@ -150,11 +153,11 @@ TEST_CASE("electron_matrix", "[electron]") {
 
     // Create single particle matrix
     arma::Mat<double> Hs(n_sites, n_sites, arma::fill::zeros);
-    for (auto op : ops) {
-      REQUIRE(op.size() == 2);
+    for (auto [cpl, op] : ops) {
+      REQUIRE(op.sites().size() == 2);
       int s1 = op[0];
       int s2 = op[1];
-      auto name = op.coupling().as<std::string>();
+      auto name = cpl.string();
       Hs(s1, s2) = -ops[name].as<double>();
       Hs(s2, s1) = -ops[name].as<double>();
     }
@@ -197,26 +200,30 @@ TEST_CASE("electron_matrix", "[electron]") {
 
     // Create single particle matrix for upspins
     arma::cx_mat Hs_up(n_sites, n_sites, arma::fill::zeros);
-    for (auto op : ops_of_type("HOPUP", ops)) {
-      assert(op.size() == 2);
-      int s1 = op[0];
-      int s2 = op[1];
-      auto name = op.coupling().as<std::string>();
-      Hs_up(s1, s2) = -ops[name].as<complex>();
-      Hs_up(s2, s1) = -conj(ops[name].as<complex>());
+    for (auto [cpl, op] : ops) {
+      if (op.type() == "HOPUP") {
+        assert(op.size() == 2);
+        int s1 = op[0];
+        int s2 = op[1];
+        auto name = cpl.string();
+        Hs_up(s1, s2) = -ops[name].as<complex>();
+        Hs_up(s2, s1) = -conj(ops[name].as<complex>());
+      }
     }
     arma::vec seigs_up;
     arma::eig_sym(seigs_up, Hs_up);
 
     // Create single particle matrix for dnspins
     arma::cx_mat Hs_dn(n_sites, n_sites, arma::fill::zeros);
-    for (auto op : ops_of_type("HOPDN", ops)) {
-      assert(op.size() == 2);
-      int s1 = op[0];
-      int s2 = op[1];
-      auto name = op.coupling().as<std::string>();
-      Hs_dn(s1, s2) = -ops[name].as<complex>();
-      Hs_dn(s2, s1) = -conj(ops[name].as<complex>());
+    for (auto [cpl, op] : ops) {
+      if (op.type() == "HOPDN") {
+	assert(op.size() == 2);
+	int s1 = op[0];
+	int s2 = op[1];
+	auto name = cpl.string();
+	Hs_dn(s1, s2) = -ops[name].as<complex>();
+	Hs_dn(s2, s1) = -conj(ops[name].as<complex>());
+      }
     }
     arma::vec seigs_dn;
     arma::eig_sym(seigs_dn, Hs_dn);

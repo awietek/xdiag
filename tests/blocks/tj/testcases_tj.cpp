@@ -8,8 +8,8 @@ OpSum tJchain(int n_sites, double t, double J) {
   ops["T"] = t;
   ops["J"] = J;
   for (int s = 0; s < n_sites; ++s) {
-    ops += Op("HOP", "T", {s, (s + 1) % n_sites});
-    ops += Op("HB", "J", {s, (s + 1) % n_sites});
+    ops += "T" * Op("HOP", {s, (s + 1) % n_sites});
+    ops += "J" * Op("HB", {s, (s + 1) % n_sites});
   }
   return ops;
 }
@@ -20,8 +20,8 @@ std::tuple<OpSum, arma::Col<double>> tJchain_fullspectrum_alps(int L) {
   ops["T"] = 1.0;
   ops["J"] = 1.0;
   for (int s = 0; s < L; ++s) {
-    ops += Op("HOP", "T", {s, (s + 1) % L});
-    ops += Op("TJHB", "J", {s, (s + 1) % L});
+    ops += "T" * Op("HOP", {s, (s + 1) % L});
+    ops += "J" * Op("TJHB", {s, (s + 1) % L});
   }
   arma::Col<double> eigs;
   if (L == 3) {
@@ -580,22 +580,22 @@ std::tuple<OpSum, arma::Col<double>> tj_square2x2_fullspectrum_alps() {
   OpSum ops;
   ops["T"] = 1.0;
   ops["J"] = 1.0;
-  ops += Op("HOP", "T", {0, 1});
-  ops += Op("HOP", "T", {1, 0});
-  ops += Op("HOP", "T", {2, 3});
-  ops += Op("HOP", "T", {3, 2});
-  ops += Op("HOP", "T", {0, 2});
-  ops += Op("HOP", "T", {2, 0});
-  ops += Op("HOP", "T", {1, 3});
-  ops += Op("HOP", "T", {3, 1});
-  ops += Op("TJHB", "J", {0, 1});
-  ops += Op("TJHB", "J", {1, 0});
-  ops += Op("TJHB", "J", {2, 3});
-  ops += Op("TJHB", "J", {3, 2});
-  ops += Op("TJHB", "J", {0, 2});
-  ops += Op("TJHB", "J", {2, 0});
-  ops += Op("TJHB", "J", {1, 3});
-  ops += Op("TJHB", "J", {3, 1});
+  ops += "T" * Op("HOP", {0, 1});
+  ops += "T" * Op("HOP", {1, 0});
+  ops += "T" * Op("HOP", {2, 3});
+  ops += "T" * Op("HOP", {3, 2});
+  ops += "T" * Op("HOP", {0, 2});
+  ops += "T" * Op("HOP", {2, 0});
+  ops += "T" * Op("HOP", {1, 3});
+  ops += "T" * Op("HOP", {3, 1});
+  ops += "J" * Op("TJHB", {0, 1});
+  ops += "J" * Op("TJHB", {1, 0});
+  ops += "J" * Op("TJHB", {2, 3});
+  ops += "J" * Op("TJHB", {3, 2});
+  ops += "J" * Op("TJHB", {0, 2});
+  ops += "J" * Op("TJHB", {2, 0});
+  ops += "J" * Op("TJHB", {1, 3});
+  ops += "J" * Op("TJHB", {3, 1});
   auto eigs =
       arma::Col<double>({-6.744562646538028616e+00, -6.000000000000000000e+00,
                          -5.605551275463989569e+00, -5.605551275463988681e+00,
@@ -652,7 +652,7 @@ OpSum tj_alltoall(int n_sites) {
       ss << "T" << s1 << "_" << s2;
       std::string name = ss.str();
       double value = distribution(generator);
-      ops += Op("HOP", name, {s1, s2});
+      ops += name * Op("HOP", {s1, s2});
       ops[name] = value;
     }
   for (int s1 = 0; s1 < n_sites; ++s1)
@@ -661,7 +661,7 @@ OpSum tj_alltoall(int n_sites) {
       ss << "J" << s1 << "_" << s2;
       std::string name = ss.str();
       double value = distribution(generator);
-      ops += Op("HB", name, {s1, s2});
+      ops += name * Op("HB", {s1, s2});
       ops[name] = value;
     }
   return ops;
@@ -678,7 +678,7 @@ OpSum tj_alltoall_complex(int n_sites) {
       ss << "T" << s1 << "_" << s2;
       std::string name = ss.str();
       complex value = complex(distribution(generator), distribution(generator));
-      ops += Op("HOP", name, {s1, s2});
+      ops += name * Op("HOP", {s1, s2});
       ops[name] = value;
     }
   for (int s1 = 0; s1 < n_sites; ++s1)
@@ -687,7 +687,7 @@ OpSum tj_alltoall_complex(int n_sites) {
       ss << "J" << s1 << "_" << s2;
       std::string name = ss.str();
       double value = distribution(generator);
-      ops += Op("HB", name, {s1, s2});
+      ops += name * Op("HB", {s1, s2});
       ops[name] = value;
     }
   return ops;
@@ -707,18 +707,18 @@ std::tuple<OpSum, arma::Col<double>> randomAlltoAll4() {
   ops["J13"] = 1;
   ops["T23"] = -4;
   ops["J23"] = 4;
-  ops += Op("HOP", "T01", {0, 1});
-  ops += Op("HOP", "T02", {0, 2});
-  ops += Op("HOP", "T03", {0, 3});
-  ops += Op("HOP", "T12", {1, 2});
-  ops += Op("HOP", "T13", {1, 3});
-  ops += Op("HOP", "T23", {2, 3});
-  ops += Op("HB", "J01", {0, 1});
-  ops += Op("HB", "J02", {0, 2});
-  ops += Op("HB", "J03", {0, 3});
-  ops += Op("HB", "J12", {1, 2});
-  ops += Op("HB", "J13", {1, 3});
-  ops += Op("HB", "J23", {2, 3});
+  ops += "T01" * Op("HOP", {0, 1});
+  ops += "T02" * Op("HOP", {0, 2});
+  ops += "T03" * Op("HOP", {0, 3});
+  ops += "T12" * Op("HOP", {1, 2});
+  ops += "T13" * Op("HOP", {1, 3});
+  ops += "T23" * Op("HOP", {2, 3});
+  ops += "J01" * Op("HB", {0, 1});
+  ops += "J02" * Op("HB", {0, 2});
+  ops += "J03" * Op("HB", {0, 3});
+  ops += "J12" * Op("HB", {1, 2});
+  ops += "J13" * Op("HB", {1, 3});
+  ops += "J23" * Op("HB", {2, 3});
 
   arma::Col<double> eigs = {
       11.248037068163532,  11.248037068163532,  11.248037068163525,
@@ -761,12 +761,12 @@ std::tuple<OpSum, arma::Col<double>> randomAlltoAll3() {
   ops["J02"] = -1;
   ops["T12"] = -5;
   ops["J12"] = -3;
-  ops += Op("HOP", "T01", {0, 1});
-  ops += Op("HOP", "T02", {0, 2});
-  ops += Op("HOP", "T12", {1, 2});
-  ops += Op("HB", "J01", {0, 1});
-  ops += Op("HB", "J02", {0, 2});
-  ops += Op("HB", "J12", {1, 2});
+  ops += "T01" * Op("HOP", {0, 1});
+  ops += "T02" * Op("HOP", {0, 2});
+  ops += "T12" * Op("HOP", {1, 2});
+  ops += "J01" * Op("HB", {0, 1});
+  ops += "J02" * Op("HB", {0, 2});
+  ops += "J12" * Op("HB", {1, 2});
 
   arma::Col<double> eigs = {
       6.256066270684332,  5.099019513592784,  5.099019513592784,

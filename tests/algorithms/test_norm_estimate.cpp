@@ -9,6 +9,7 @@
 #include <xdiag/common.hpp>
 #include <xdiag/extern/armadillo/armadillo>
 #include <xdiag/utils/logger.hpp>
+#include <xdiag/io/file_toml.hpp>
 
 using namespace xdiag;
 
@@ -128,9 +129,10 @@ TEST_CASE("norm_estimate", "[algorithms]") {
   {
     Log("norm_estimate for tj_symmetric_matrix: tJ 3x3 triangular s");
     std::string lfile =
-        XDIAG_DIRECTORY "/misc/data/triangular.9.hop.sublattices.tsl.lat";
+        XDIAG_DIRECTORY "/misc/data/triangular.9.hop.sublattices.tsl.toml";
     int n_sites = 9;
-    auto ops = read_opsum(lfile);
+    auto fl = FileToml(lfile);
+    auto ops = fl["Interactions"].as<OpSum>();
     ops["T"] = 1.0;
     ops["J"] = 0.4;
     auto permutations = xdiag::read_permutations(lfile);
@@ -176,7 +178,8 @@ TEST_CASE("norm_estimate", "[algorithms]") {
     std::string lfile = XDIAG_DIRECTORY
         "/misc/data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.lat";
 
-    auto ops = read_opsum(lfile);
+    auto fl = FileToml(lfile);
+    auto ops = fl["Interactions"].as<OpSum>();
     std::vector<double> etas{0.0, 0.1, 0.2, 0.3};
     auto permutations = xdiag::read_permutations(lfile);
     auto group = PermutationGroup(permutations);

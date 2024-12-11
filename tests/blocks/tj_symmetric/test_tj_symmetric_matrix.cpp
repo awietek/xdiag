@@ -8,6 +8,7 @@
 #include <xdiag/algebra/matrix.hpp>
 #include <xdiag/operators/logic/real.hpp>
 #include <xdiag/utils/close.hpp>
+#include <xdiag/io/file_toml.hpp>
 
 using namespace xdiag;
 

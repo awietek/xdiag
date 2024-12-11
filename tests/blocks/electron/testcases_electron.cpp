@@ -5,8 +5,10 @@ namespace xdiag::testcases::electron {
 OpSum get_linear_chain(int64_t n_sites, double t, double U) {
   // Create model
   OpSum ops;
-  for (int64_t s = 0; s < n_sites; ++s)
-    ops += Op("HOP", "T", {s, (s + 1) % n_sites});
+  for (int64_t s = 0; s < n_sites; ++s) {
+    ops += "T" * Op("HOP", {s, (s + 1) % n_sites});
+  }
+  ops += "U" * Op("HUBBARDU");
   ops["T"] = t;
   ops["U"] = U;
   return ops;
@@ -18,7 +20,7 @@ OpSum get_linear_chain_hb(int64_t n_sites, double J) {
   // for (int64_t s = 0; s < n_sites; ++s)
   //   ops += Op("HOP", "T", {s, (s + 1) % n_sites});
   for (int64_t s = 0; s < n_sites; ++s)
-    ops += Op("EXCHANGE", "J", {s, (s + 1) % n_sites});
+    ops += "J" * Op("EXCHANGE", {s, (s + 1) % n_sites});
   ops["J"] = J;
   return ops;
 }
@@ -83,9 +85,9 @@ get_cyclic_group_irreps_mult(int64_t n_sites) {
 
 OpSum heisenberg_triangle() {
   OpSum ops;
-  ops += Op("HB", "J", {0, 1});
-  ops += Op("HB", "J", {1, 2});
-  ops += Op("HB", "J", {2, 0});
+  ops += "J" * Op("HB", {0, 1});
+  ops += "J" * Op("HB", {1, 2});
+  ops += "J" * Op("HB", {2, 0});
   ops["J"] = 1.0;
   return ops;
 }
@@ -101,7 +103,7 @@ OpSum heisenberg_alltoall(int64_t n_sites) {
       ss << "J" << s1 << "_" << s2;
       std::string name = ss.str();
       double value = distribution(generator);
-      ops += Op("HB", name, {s1, s2});
+      ops += name * Op("HB", {s1, s2});
       ops[name] = value;
     }
   return ops;
@@ -110,99 +112,99 @@ OpSum heisenberg_alltoall(int64_t n_sites) {
 OpSum heisenberg_kagome15() {
 
   OpSum ops;
-  ops += Op("HB", "J", {0, 1});
-  ops += Op("HB", "J", {0, 5});
-  ops += Op("HB", "J", {1, 2});
-  ops += Op("HB", "J", {1, 6});
-  ops += Op("HB", "J", {2, 3});
-  ops += Op("HB", "J", {2, 6});
-  ops += Op("HB", "J", {2, 10});
-  ops += Op("HB", "J", {3, 4});
-  ops += Op("HB", "J", {3, 10});
-  ops += Op("HB", "J", {3, 14});
-  ops += Op("HB", "J", {4, 5});
-  ops += Op("HB", "J", {4, 14});
-  ops += Op("HB", "J", {6, 7});
-  ops += Op("HB", "J", {7, 8});
-  ops += Op("HB", "J", {8, 9});
-  ops += Op("HB", "J", {9, 10});
-  ops += Op("HB", "J", {9, 11});
-  ops += Op("HB", "J", {10, 11});
-  ops += Op("HB", "J", {11, 12});
-  ops += Op("HB", "J", {12, 13});
-  ops += Op("HB", "J", {13, 14});
+  ops += "J" * Op("HB", {0, 1});
+  ops += "J" * Op("HB", {0, 5});
+  ops += "J" * Op("HB", {1, 2});
+  ops += "J" * Op("HB", {1, 6});
+  ops += "J" * Op("HB", {2, 3});
+  ops += "J" * Op("HB", {2, 6});
+  ops += "J" * Op("HB", {2, 10});
+  ops += "J" * Op("HB", {3, 4});
+  ops += "J" * Op("HB", {3, 10});
+  ops += "J" * Op("HB", {3, 14});
+  ops += "J" * Op("HB", {4, 5});
+  ops += "J" * Op("HB", {4, 14});
+  ops += "J" * Op("HB", {6, 7});
+  ops += "J" * Op("HB", {7, 8});
+  ops += "J" * Op("HB", {8, 9});
+  ops += "J" * Op("HB", {9, 10});
+  ops += "J" * Op("HB", {9, 11});
+  ops += "J" * Op("HB", {10, 11});
+  ops += "J" * Op("HB", {11, 12});
+  ops += "J" * Op("HB", {12, 13});
+  ops += "J" * Op("HB", {13, 14});
   ops["J"] = 1.0;
   return ops;
 }
 
 OpSum heisenberg_kagome39() {
   OpSum ops;
-  ops += Op("HB", "J", {0, 1});
-  ops += Op("HB", "J", {0, 5});
-  ops += Op("HB", "J", {0, 27});
-  ops += Op("HB", "J", {0, 28});
-  ops += Op("HB", "J", {1, 2});
-  ops += Op("HB", "J", {1, 6});
-  ops += Op("HB", "J", {1, 28});
-  ops += Op("HB", "J", {2, 3});
-  ops += Op("HB", "J", {2, 6});
-  ops += Op("HB", "J", {2, 10});
-  ops += Op("HB", "J", {3, 4});
-  ops += Op("HB", "J", {3, 10});
-  ops += Op("HB", "J", {3, 14});
-  ops += Op("HB", "J", {4, 5});
-  ops += Op("HB", "J", {4, 14});
-  ops += Op("HB", "J", {4, 38});
-  ops += Op("HB", "J", {5, 27});
-  ops += Op("HB", "J", {5, 38});
-  ops += Op("HB", "J", {6, 7});
-  ops += Op("HB", "J", {6, 29});
-  ops += Op("HB", "J", {7, 8});
-  ops += Op("HB", "J", {7, 19});
-  ops += Op("HB", "J", {7, 29});
-  ops += Op("HB", "J", {8, 9});
-  ops += Op("HB", "J", {8, 15});
-  ops += Op("HB", "J", {8, 19});
-  ops += Op("HB", "J", {9, 10});
-  ops += Op("HB", "J", {9, 11});
-  ops += Op("HB", "J", {9, 15});
-  ops += Op("HB", "J", {10, 11});
-  ops += Op("HB", "J", {11, 12});
-  ops += Op("HB", "J", {11, 18});
-  ops += Op("HB", "J", {12, 13});
-  ops += Op("HB", "J", {12, 18});
-  ops += Op("HB", "J", {12, 26});
-  ops += Op("HB", "J", {13, 14});
-  ops += Op("HB", "J", {13, 26});
-  ops += Op("HB", "J", {13, 37});
-  ops += Op("HB", "J", {14, 37});
-  ops += Op("HB", "J", {15, 16});
-  ops += Op("HB", "J", {15, 22});
-  ops += Op("HB", "J", {16, 17});
-  ops += Op("HB", "J", {16, 22});
-  ops += Op("HB", "J", {16, 33});
-  ops += Op("HB", "J", {17, 18});
-  ops += Op("HB", "J", {17, 23});
-  ops += Op("HB", "J", {17, 33});
-  ops += Op("HB", "J", {18, 23});
-  ops += Op("HB", "J", {19, 20});
-  ops += Op("HB", "J", {19, 30});
-  ops += Op("HB", "J", {20, 21});
-  ops += Op("HB", "J", {20, 30});
-  ops += Op("HB", "J", {20, 31});
-  ops += Op("HB", "J", {21, 22});
-  ops += Op("HB", "J", {21, 31});
-  ops += Op("HB", "J", {21, 32});
-  ops += Op("HB", "J", {22, 32});
-  ops += Op("HB", "J", {23, 24});
-  ops += Op("HB", "J", {23, 34});
-  ops += Op("HB", "J", {24, 25});
-  ops += Op("HB", "J", {24, 34});
-  ops += Op("HB", "J", {24, 35});
-  ops += Op("HB", "J", {25, 26});
-  ops += Op("HB", "J", {25, 35});
-  ops += Op("HB", "J", {25, 36});
-  ops += Op("HB", "J", {26, 36});
+  ops += "J" * Op("HB", {0, 1});
+  ops += "J" * Op("HB", {0, 5});
+  ops += "J" * Op("HB", {0, 27});
+  ops += "J" * Op("HB", {0, 28});
+  ops += "J" * Op("HB", {1, 2});
+  ops += "J" * Op("HB", {1, 6});
+  ops += "J" * Op("HB", {1, 28});
+  ops += "J" * Op("HB", {2, 3});
+  ops += "J" * Op("HB", {2, 6});
+  ops += "J" * Op("HB", {2, 10});
+  ops += "J" * Op("HB", {3, 4});
+  ops += "J" * Op("HB", {3, 10});
+  ops += "J" * Op("HB", {3, 14});
+  ops += "J" * Op("HB", {4, 5});
+  ops += "J" * Op("HB", {4, 14});
+  ops += "J" * Op("HB", {4, 38});
+  ops += "J" * Op("HB", {5, 27});
+  ops += "J" * Op("HB", {5, 38});
+  ops += "J" * Op("HB", {6, 7});
+  ops += "J" * Op("HB", {6, 29});
+  ops += "J" * Op("HB", {7, 8});
+  ops += "J" * Op("HB", {7, 19});
+  ops += "J" * Op("HB", {7, 29});
+  ops += "J" * Op("HB", {8, 9});
+  ops += "J" * Op("HB", {8, 15});
+  ops += "J" * Op("HB", {8, 19});
+  ops += "J" * Op("HB", {9, 10});
+  ops += "J" * Op("HB", {9, 11});
+  ops += "J" * Op("HB", {9, 15});
+  ops += "J" * Op("HB", {10, 11});
+  ops += "J" * Op("HB", {11, 12});
+  ops += "J" * Op("HB", {11, 18});
+  ops += "J" * Op("HB", {12, 13});
+  ops += "J" * Op("HB", {12, 18});
+  ops += "J" * Op("HB", {12, 26});
+  ops += "J" * Op("HB", {13, 14});
+  ops += "J" * Op("HB", {13, 26});
+  ops += "J" * Op("HB", {13, 37});
+  ops += "J" * Op("HB", {14, 37});
+  ops += "J" * Op("HB", {15, 16});
+  ops += "J" * Op("HB", {15, 22});
+  ops += "J" * Op("HB", {16, 17});
+  ops += "J" * Op("HB", {16, 22});
+  ops += "J" * Op("HB", {16, 33});
+  ops += "J" * Op("HB", {17, 18});
+  ops += "J" * Op("HB", {17, 23});
+  ops += "J" * Op("HB", {17, 33});
+  ops += "J" * Op("HB", {18, 23});
+  ops += "J" * Op("HB", {19, 20});
+  ops += "J" * Op("HB", {19, 30});
+  ops += "J" * Op("HB", {20, 21});
+  ops += "J" * Op("HB", {20, 30});
+  ops += "J" * Op("HB", {20, 31});
+  ops += "J" * Op("HB", {21, 22});
+  ops += "J" * Op("HB", {21, 31});
+  ops += "J" * Op("HB", {21, 32});
+  ops += "J" * Op("HB", {22, 32});
+  ops += "J" * Op("HB", {23, 24});
+  ops += "J" * Op("HB", {23, 34});
+  ops += "J" * Op("HB", {24, 25});
+  ops += "J" * Op("HB", {24, 34});
+  ops += "J" * Op("HB", {24, 35});
+  ops += "J" * Op("HB", {25, 26});
+  ops += "J" * Op("HB", {25, 35});
+  ops += "J" * Op("HB", {25, 36});
+  ops += "J" * Op("HB", {26, 36});
   ops["J"] = 1.0;
   return ops;
 }
@@ -218,7 +220,7 @@ OpSum freefermion_alltoall(int64_t n_sites) {
       ss << "T" << s1 << "_" << s2;
       std::string name = ss.str();
       double value = distribution(generator);
-      ops += Op("HOP", name, {s1, s2});
+      ops += name * Op("HOP", {s1, s2});
       ops[name] = value;
     }
   return ops;
@@ -238,7 +240,7 @@ OpSum freefermion_alltoall_complex_updn(int64_t n_sites) {
       std::string name_up = ss_up.str();
       complex value_up =
           complex(distribution(generator), distribution(generator));
-      ops += Op("HOPUP", name_up, {s1, s2});
+      ops += name_up * Op("HOPUP", {s1, s2});
       ops[name_up] = value_up;
 
       // Hopping on dnspins
@@ -247,7 +249,7 @@ OpSum freefermion_alltoall_complex_updn(int64_t n_sites) {
       std::string name_dn = ss_dn.str();
       complex value_dn =
           complex(distribution(generator), distribution(generator));
-      ops += Op("HOPDN", name_dn, {s1, s2});
+      ops += name_dn * Op("HOPDN", {s1, s2});
       ops[name_dn] = value_dn;
     }
   return ops;
@@ -268,18 +270,18 @@ std::tuple<OpSum, arma::Col<double>> randomAlltoAll4NoU() {
   ops["T23"] = -2;
   ops["J23"] = 1;
 
-  ops += Op("HOP", "T01", {0, 1});
-  ops += Op("HOP", "T02", {0, 2});
-  ops += Op("HOP", "T03", {0, 3});
-  ops += Op("HOP", "T12", {1, 2});
-  ops += Op("HOP", "T13", {1, 3});
-  ops += Op("HOP", "T23", {2, 3});
-  ops += Op("HB", "J01", {0, 1});
-  ops += Op("HB", "J02", {0, 2});
-  ops += Op("HB", "J03", {0, 3});
-  ops += Op("HB", "J12", {1, 2});
-  ops += Op("HB", "J13", {1, 3});
-  ops += Op("HB", "J23", {2, 3});
+  ops += "T01" * Op("HOP", {0, 1});
+  ops += "T02" * Op("HOP", {0, 2});
+  ops += "T03" * Op("HOP", {0, 3});
+  ops += "T12" * Op("HOP", {1, 2});
+  ops += "T13" * Op("HOP", {1, 3});
+  ops += "T23" * Op("HOP", {2, 3});
+  ops += "J01" * Op("HB", {0, 1});
+  ops += "J02" * Op("HB", {0, 2});
+  ops += "J03" * Op("HB", {0, 3});
+  ops += "J12" * Op("HB", {1, 2});
+  ops += "J13" * Op("HB", {1, 3});
+  ops += "J23" * Op("HB", {2, 3});
 
   arma::Col<double> eigs = {-17.035603173216636,
                             -16.054529653295518,
@@ -558,18 +560,18 @@ std::tuple<OpSum, arma::Col<double>> randomAlltoAll4() {
   ops["T23"] = 0;
   ops["J23"] = -4;
 
-  ops += Op("HOP", "T01", {0, 1});
-  ops += Op("HOP", "T02", {0, 2});
-  ops += Op("HOP", "T03", {0, 3});
-  ops += Op("HOP", "T12", {1, 2});
-  ops += Op("HOP", "T13", {1, 3});
-  ops += Op("HOP", "T23", {2, 3});
-  ops += Op("HB", "J01", {0, 1});
-  ops += Op("HB", "J02", {0, 2});
-  ops += Op("HB", "J03", {0, 3});
-  ops += Op("HB", "J12", {1, 2});
-  ops += Op("HB", "J13", {1, 3});
-  ops += Op("HB", "J23", {2, 3});
+  ops += "T01" * Op("HOP", {0, 1});
+  ops += "T02" * Op("HOP", {0, 2});
+  ops += "T03" * Op("HOP", {0, 3});
+  ops += "T12" * Op("HOP", {1, 2});
+  ops += "T13" * Op("HOP", {1, 3});
+  ops += "T23" * Op("HOP", {2, 3});
+  ops += "J01" * Op("HB", {0, 1});
+  ops += "J02" * Op("HB", {0, 2});
+  ops += "J03" * Op("HB", {0, 3});
+  ops += "J12" * Op("HB", {1, 2});
+  ops += "J13" * Op("HB", {1, 3});
+  ops += "J23" * Op("HB", {2, 3});
 
   arma::Col<double> eigs = {
       -12.270231830055396, -12.270231830055389, -10.733666336755952,
@@ -670,12 +672,12 @@ OpSum randomAlltoAll3() {
   ops["J02"] = -1;
   ops["T12"] = -5;
   ops["J12"] = -3;
-  ops += Op("HOP", "T01", {0, 1});
-  ops += Op("HOP", "T02", {0, 2});
-  ops += Op("HOP", "T12", {1, 2});
-  ops += Op("HB", "J01", {0, 1});
-  ops += Op("HB", "J02", {0, 2});
-  ops += Op("HB", "J12", {1, 2});
+  ops += "T01" * Op("HOP", {0, 1});
+  ops += "T02" * Op("HOP", {0, 2});
+  ops += "T12" * Op("HOP", {1, 2});
+  ops += "J01" * Op("HB", {0, 1});
+  ops += "J02" * Op("HB", {0, 2});
+  ops += "J12" * Op("HB", {1, 2});
   return ops;
 }
 
@@ -683,22 +685,22 @@ OpSum square2x2(double t, double J) {
   OpSum ops;
   ops["T"] = t;
   ops["J"] = J;
-  ops += Op("HOP", "T", {0, 1});
-  ops += Op("HOP", "T", {1, 0});
-  ops += Op("HOP", "T", {2, 3});
-  ops += Op("HOP", "T", {3, 2});
-  ops += Op("HOP", "T", {0, 2});
-  ops += Op("HOP", "T", {2, 0});
-  ops += Op("HOP", "T", {1, 3});
-  ops += Op("HOP", "T", {3, 1});
-  ops += Op("HB", "J", {0, 1});
-  ops += Op("HB", "J", {1, 0});
-  ops += Op("HB", "J", {2, 3});
-  ops += Op("HB", "J", {3, 2});
-  ops += Op("HB", "J", {0, 2});
-  ops += Op("HB", "J", {2, 0});
-  ops += Op("HB", "J", {1, 3});
-  ops += Op("HB", "J", {3, 1});
+  ops += "T" * Op("HOP", {0, 1});
+  ops += "T" * Op("HOP", {1, 0});
+  ops += "T" * Op("HOP", {2, 3});
+  ops += "T" * Op("HOP", {3, 2});
+  ops += "T" * Op("HOP", {0, 2});
+  ops += "T" * Op("HOP", {2, 0});
+  ops += "T" * Op("HOP", {1, 3});
+  ops += "T" * Op("HOP", {3, 1});
+  ops += "J" * Op("HB", {0, 1});
+  ops += "J" * Op("HB", {1, 0});
+  ops += "J" * Op("HB", {2, 3});
+  ops += "J" * Op("HB", {3, 2});
+  ops += "J" * Op("HB", {0, 2});
+  ops += "J" * Op("HB", {2, 0});
+  ops += "J" * Op("HB", {1, 3});
+  ops += "J" * Op("HB", {3, 1});
   return ops;
 }
 
@@ -706,42 +708,42 @@ OpSum square3x3(double t, double J) {
   OpSum ops;
   ops["T"] = t;
   ops["J"] = J;
-  ops += Op("HOP", "T", {0, 1});
-  ops += Op("HOP", "T", {1, 2});
-  ops += Op("HOP", "T", {2, 0});
-  ops += Op("HOP", "T", {3, 4});
-  ops += Op("HOP", "T", {4, 5});
-  ops += Op("HOP", "T", {5, 3});
-  ops += Op("HOP", "T", {6, 7});
-  ops += Op("HOP", "T", {7, 8});
-  ops += Op("HOP", "T", {8, 6});
-  ops += Op("HOP", "T", {0, 3});
-  ops += Op("HOP", "T", {3, 6});
-  ops += Op("HOP", "T", {6, 0});
-  ops += Op("HOP", "T", {1, 4});
-  ops += Op("HOP", "T", {4, 7});
-  ops += Op("HOP", "T", {7, 1});
-  ops += Op("HOP", "T", {2, 5});
-  ops += Op("HOP", "T", {5, 8});
-  ops += Op("HOP", "T", {8, 2});
-  ops += Op("HB", "J", {0, 1});
-  ops += Op("HB", "J", {1, 2});
-  ops += Op("HB", "J", {2, 0});
-  ops += Op("HB", "J", {3, 4});
-  ops += Op("HB", "J", {4, 5});
-  ops += Op("HB", "J", {5, 3});
-  ops += Op("HB", "J", {6, 7});
-  ops += Op("HB", "J", {7, 8});
-  ops += Op("HB", "J", {8, 6});
-  ops += Op("HB", "J", {0, 3});
-  ops += Op("HB", "J", {3, 6});
-  ops += Op("HB", "J", {6, 0});
-  ops += Op("HB", "J", {1, 4});
-  ops += Op("HB", "J", {4, 7});
-  ops += Op("HB", "J", {7, 1});
-  ops += Op("HB", "J", {2, 5});
-  ops += Op("HB", "J", {5, 8});
-  ops += Op("HB", "J", {8, 2});
+  ops += "T" * Op("HOP", {0, 1});
+  ops += "T" * Op("HOP", {1, 2});
+  ops += "T" * Op("HOP", {2, 0});
+  ops += "T" * Op("HOP", {3, 4});
+  ops += "T" * Op("HOP", {4, 5});
+  ops += "T" * Op("HOP", {5, 3});
+  ops += "T" * Op("HOP", {6, 7});
+  ops += "T" * Op("HOP", {7, 8});
+  ops += "T" * Op("HOP", {8, 6});
+  ops += "T" * Op("HOP", {0, 3});
+  ops += "T" * Op("HOP", {3, 6});
+  ops += "T" * Op("HOP", {6, 0});
+  ops += "T" * Op("HOP", {1, 4});
+  ops += "T" * Op("HOP", {4, 7});
+  ops += "T" * Op("HOP", {7, 1});
+  ops += "T" * Op("HOP", {2, 5});
+  ops += "T" * Op("HOP", {5, 8});
+  ops += "T" * Op("HOP", {8, 2});
+  ops += "J" * Op("HB", {0, 1});
+  ops += "J" * Op("HB", {1, 2});
+  ops += "J" * Op("HB", {2, 0});
+  ops += "J" * Op("HB", {3, 4});
+  ops += "J" * Op("HB", {4, 5});
+  ops += "J" * Op("HB", {5, 3});
+  ops += "J" * Op("HB", {6, 7});
+  ops += "J" * Op("HB", {7, 8});
+  ops += "J" * Op("HB", {8, 6});
+  ops += "J" * Op("HB", {0, 3});
+  ops += "J" * Op("HB", {3, 6});
+  ops += "J" * Op("HB", {6, 0});
+  ops += "J" * Op("HB", {1, 4});
+  ops += "J" * Op("HB", {4, 7});
+  ops += "J" * Op("HB", {7, 1});
+  ops += "J" * Op("HB", {2, 5});
+  ops += "J" * Op("HB", {5, 8});
+  ops += "J" * Op("HB", {8, 2});
   return ops;
 }
 

@@ -8,7 +8,14 @@
 #include <xdiag/common.hpp>
 #include <xdiag/extern/armadillo/armadillo>
 #include <xdiag/extern/toml++/toml.hpp>
+
+#include <xdiag/io/toml/arma_matrix.hpp>
+#include <xdiag/io/toml/arma_vector.hpp>
+#include <xdiag/io/toml/operators.hpp>
+#include <xdiag/io/toml/std_vector.hpp>
 #include <xdiag/io/toml/toml_conversion.hpp>
+#include <xdiag/io/toml/value.hpp>
+
 #include <xdiag/operators/op.hpp>
 #include <xdiag/operators/opsum.hpp>
 #include <xdiag/symmetries/permutation.hpp>
@@ -24,15 +31,9 @@ FileTomlHandler::FileTomlHandler(std::string key, toml::table &table)
 
 template <typename T>
 static T as_plain(std::string key, toml::table const &table) try {
-  auto node = table.at_path(key);
+  auto node = table.at_path(key).node();
   if (node) {
-    try {
-      return get_toml_value<T>(node);
-    } catch (Error const &e) {
-      XDIAG_THROW(fmt::format("Key \"{}\" exists in TOML table but cannot be "
-                              "converted to type \"{}\"",
-                              key, utils::type_string<T>()));
-    }
+    return value<T>(*node);
   } else {
     XDIAG_THROW(fmt::format("Key \"{}\" is not contained in TOML table", key));
   }
@@ -93,15 +94,9 @@ std::string FileTomlHandler::as<std::string>() const
 template <typename T>
 static std::vector<T> as_std_vector(std::string key,
                                     toml::table const &table) try {
-  auto node = table.at_path(key);
+  auto node = table.at_path(key).node();
   if (node) {
-    try {
-      return toml_array_to_std_vector<T>(get_toml_array(node));
-    } catch (Error const &e) {
-      XDIAG_THROW(fmt::format("Key \"{}\" exists in TOML table but cannot be "
-                              "converted to type \"{}\"",
-                              key, utils::type_string<std::vector<T>>()));
-    }
+    return std_vector<T>(*node);
   } else {
     XDIAG_THROW(fmt::format("Key \"{}\" is not contained in TOML table", key));
   }
@@ -157,15 +152,9 @@ std::vector<std::string> FileTomlHandler::as<std::vector<std::string>>() const
 template <typename T>
 static arma::Col<T> as_arma_vector(std::string key,
                                    toml::table const &table) try {
-  auto node = table.at_path(key);
+  auto node = table.at_path(key).node();
   if (node) {
-    try {
-      return toml_array_to_arma_vector<T>(get_toml_array(node));
-    } catch (Error const &e) {
-      XDIAG_THROW(fmt::format("Key \"{}\" exists in TOML table but cannot be "
-                              "converted to type \"{}\"",
-                              key, utils::type_string<arma::Col<T>>()));
-    }
+    return arma_vector<T>(*node);
   } else {
     XDIAG_THROW(fmt::format("Key \"{}\" is not contained in TOML table", key));
   }
@@ -193,15 +182,9 @@ arma::uvec FileTomlHandler::as<arma::uvec>() const
 template <typename T>
 static arma::Mat<T> as_arma_matrix(std::string key,
                                    toml::table const &table) try {
-  auto node = table.at_path(key);
+  auto node = table.at_path(key).node();
   if (node) {
-    try {
-      return toml_array_to_arma_matrix<T>(get_toml_array(node));
-    } catch (Error const &e) {
-      XDIAG_THROW(fmt::format("Key \"{}\" exists in TOML table but cannot be "
-                              "converted to type \"{}\"",
-                              key, utils::type_string<arma::Mat<T>>()));
-    }
+    return arma_matrix<T>(*node);
   } else {
     XDIAG_THROW(fmt::format("Key \"{}\" is not contained in TOML table", key));
   }
@@ -226,36 +209,38 @@ arma::umat FileTomlHandler::as<arma::umat>() const
     XDIAG_TRY_CATCH(return as_arma_matrix<arma::uword>(key_, table_));
 
 template <> Permutation FileTomlHandler::as<Permutation>() const try {
-  auto array =
-      toml_array_to_std_vector<int64_t>(get_toml_array(table_.at_path(key_)));
+  auto array = as_std_vector<int64_t>(key_, table_);
   return Permutation(array);
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
 template <> PermutationGroup FileTomlHandler::as<PermutationGroup>() const try {
-  auto mat = toml_array_to_arma_matrix<arma::sword>(
-      get_toml_array(table_.at_path(key_)));
-  std::vector<Permutation> perms(mat.n_rows);
-  for (std::size_t i = 0; i < mat.n_rows; ++i) {
-    perms[i] =
-        Permutation(std::vector<int64_t>(mat.begin_row(i), mat.end_row(i)));
+  auto node = table_.at_path(key_).node();
+  if (node) {
+    auto mat = arma_matrix<arma::sword>(*node);
+    std::vector<Permutation> perms(mat.n_rows);
+    for (std::size_t i = 0; i < mat.n_rows; ++i) {
+      perms[i] =
+          Permutation(std::vector<int64_t>(mat.begin_row(i), mat.end_row(i)));
+    }
+    return PermutationGroup(perms);
+  } else {
+    XDIAG_THROW(fmt::format("Key \"{}\" is not contained in TOML table", key_));
   }
-  return PermutationGroup(perms);
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
 template <> Representation FileTomlHandler::as<Representation>() const try {
   auto character_entry =
-      table_.at_path(key_ + std::string(".characters")).as_array();
+      table_.at_path(key_ + std::string(".characters")).node();
   if (character_entry) {
-    auto characters = toml_array_to_std_vector<complex>(*character_entry);
+    auto characters = std_vector<complex>(*character_entry);
     auto allowed_symmetries_entry =
-        table_.at_path(key_ + std::string(".allowed_symmetries")).as_array();
+        table_.at_path(key_ + std::string(".allowed_symmetries")).node();
     if (allowed_symmetries_entry) {
-      auto allowed_symmetries =
-          toml_array_to_std_vector<int64_t>(*allowed_symmetries_entry);
+      auto allowed_symmetries = std_vector<int64_t>(*allowed_symmetries_entry);
       return Representation(characters, allowed_symmetries);
     } else {
       return Representation(characters);
@@ -270,23 +255,22 @@ template <> Representation FileTomlHandler::as<Representation>() const try {
 }
 
 template <> Op FileTomlHandler::as<Op>() const try {
-  return Op(toml_array_to_op(get_toml_array(table_.at_path(key_))));
+  auto node = table_.at_path(key_).node();
+  if (node) {
+    return op(*node);
+  } else {
+    XDIAG_THROW(fmt::format("Key \"{}\" is not contained in TOML table", key_));
+  }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
 template <> OpSum FileTomlHandler::as<OpSum>() const try {
-  auto node = table_.at_path(key_);
-  auto array_opt = node.as_array();
-  auto table_opt = node.as_table();
-  if (array_opt) {
-    return toml_array_to_op_list(*array_opt);
-  } else if (table_opt) {
-    return toml_table_to_op_list(*table_opt);
+  auto node = table_.at_path(key_).node();
+  if (node) {
+    return opsum(*node);
   } else {
-    Log.err("Error parsing toml file to OpSum: entry needs to be either an "
-            "array or a table");
-    return OpSum();
+    XDIAG_THROW(fmt::format("Key \"{}\" is not contained in TOML table", key_));
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
@@ -327,70 +311,70 @@ template <> void FileTomlHandler::operator=(complex const &value) try {
 template <>
 void FileTomlHandler::operator=
     <std::vector<int8_t>>(std::vector<int8_t> const &value) try {
-  table_.insert_or_assign(key_, std_vector_to_toml_array(value));
+  table_.insert_or_assign(key_, toml_array(value));
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 template <>
 void FileTomlHandler::operator=
     <std::vector<int16_t>>(std::vector<int16_t> const &value) try {
-  table_.insert_or_assign(key_, std_vector_to_toml_array(value));
+  table_.insert_or_assign(key_, toml_array(value));
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 template <>
 void FileTomlHandler::operator=
     <std::vector<int32_t>>(std::vector<int32_t> const &value) try {
-  table_.insert_or_assign(key_, std_vector_to_toml_array(value));
+  table_.insert_or_assign(key_, toml_array(value));
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 template <>
 void FileTomlHandler::operator=
     <std::vector<int64_t>>(std::vector<int64_t> const &value) try {
-  table_.insert_or_assign(key_, std_vector_to_toml_array(value));
+  table_.insert_or_assign(key_, toml_array(value));
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 template <>
 void FileTomlHandler::operator=
     <std::vector<uint8_t>>(std::vector<uint8_t> const &value) try {
-  table_.insert_or_assign(key_, std_vector_to_toml_array(value));
+  table_.insert_or_assign(key_, toml_array(value));
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 template <>
 void FileTomlHandler::operator=
     <std::vector<uint16_t>>(std::vector<uint16_t> const &value) try {
-  table_.insert_or_assign(key_, std_vector_to_toml_array(value));
+  table_.insert_or_assign(key_, toml_array(value));
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 template <>
 void FileTomlHandler::operator=
     <std::vector<uint32_t>>(std::vector<uint32_t> const &value) try {
-  table_.insert_or_assign(key_, std_vector_to_toml_array(value));
+  table_.insert_or_assign(key_, toml_array(value));
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 template <>
 void FileTomlHandler::operator=
     <std::vector<uint64_t>>(std::vector<uint64_t> const &value) try {
-  table_.insert_or_assign(key_, std_vector_to_toml_array(value));
+  table_.insert_or_assign(key_, toml_array(value));
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 template <>
 void FileTomlHandler::operator=
     <std::vector<double>>(std::vector<double> const &value) try {
-  table_.insert_or_assign(key_, std_vector_to_toml_array(value));
+  table_.insert_or_assign(key_, toml_array(value));
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 template <>
 void FileTomlHandler::operator=
     <std::vector<complex>>(std::vector<complex> const &value) try {
-  table_.insert_or_assign(key_, std_vector_to_toml_array(value));
+  table_.insert_or_assign(key_, toml_array(value));
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
@@ -398,68 +382,68 @@ void FileTomlHandler::operator=
 template <>
 void FileTomlHandler::operator=
     <std::vector<std::string>>(std::vector<std::string> const &value) try {
-  table_.insert_or_assign(key_, std_vector_to_toml_array(value));
+  table_.insert_or_assign(key_, toml_array(value));
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
 template <>
 void FileTomlHandler::operator= <arma::vec>(arma::vec const &value) try {
-  table_.insert_or_assign(key_, arma_vector_to_toml_array(value));
+  table_.insert_or_assign(key_, toml_array(value));
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
 template <>
 void FileTomlHandler::operator= <arma::cx_vec>(arma::cx_vec const &value) try {
-  table_.insert_or_assign(key_, arma_vector_to_toml_array(value));
+  table_.insert_or_assign(key_, toml_array(value));
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
 template <>
 void FileTomlHandler::operator= <arma::ivec>(arma::ivec const &value) try {
-  table_.insert_or_assign(key_, arma_vector_to_toml_array(value));
+  table_.insert_or_assign(key_, toml_array(value));
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
 template <>
 void FileTomlHandler::operator= <arma::uvec>(arma::uvec const &value) try {
-  table_.insert_or_assign(key_, arma_vector_to_toml_array(value));
+  table_.insert_or_assign(key_, toml_array(value));
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
 template <>
 void FileTomlHandler::operator= <arma::mat>(arma::mat const &value) try {
-  table_.insert_or_assign(key_, arma_matrix_to_toml_array(value));
+  table_.insert_or_assign(key_, toml_array(value));
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 template <>
 void FileTomlHandler::operator= <arma::cx_mat>(arma::cx_mat const &value) try {
-  table_.insert_or_assign(key_, arma_matrix_to_toml_array(value));
+  table_.insert_or_assign(key_, toml_array(value));
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 template <>
 void FileTomlHandler::operator= <arma::imat>(arma::imat const &value) try {
-  table_.insert_or_assign(key_, arma_matrix_to_toml_array(value));
+  table_.insert_or_assign(key_, toml_array(value));
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
 template <>
 void FileTomlHandler::operator= <arma::umat>(arma::umat const &value) try {
-  table_.insert_or_assign(key_, arma_matrix_to_toml_array(value));
+  table_.insert_or_assign(key_, toml_array(value));
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
 template <>
 void FileTomlHandler::operator= <Permutation>(Permutation const &value) try {
-  table_.insert_or_assign(key_, std_vector_to_toml_array(value.array()));
+  table_.insert_or_assign(key_, toml_array(value.array()));
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
@@ -473,7 +457,7 @@ void FileTomlHandler::operator=
     std::vector<arma::sword> vec(int_vec.begin(), int_vec.end());
     mat.row(i) = arma::irowvec(vec);
   }
-  table_.insert_or_assign(key_, arma_matrix_to_toml_array(mat));
+  table_.insert_or_assign(key_, toml_array(mat));
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
@@ -482,26 +466,25 @@ template <>
 void
     FileTomlHandler::operator= <Representation>(Representation const &rep) try {
   toml::table rep_table;
-  rep_table.insert_or_assign("characters",
-                             std_vector_to_toml_array(rep.characters()));
-  rep_table.insert_or_assign(
-      "allowed_symmetries", std_vector_to_toml_array(rep.allowed_symmetries()));
+  rep_table.insert_or_assign("characters", toml_array(rep.characters()));
+  rep_table.insert_or_assign("allowed_symmetries",
+                             toml_array(rep.allowed_symmetries()));
   table_.insert_or_assign(key_, rep_table);
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
 template <> void FileTomlHandler::operator= <Op>(Op const &op) try {
-  table_.insert_or_assign(key_, op_to_toml_array(op));
+  table_.insert_or_assign(key_, toml_array(op));
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
 template <> void FileTomlHandler::operator= <OpSum>(OpSum const &ops) try {
   if (ops.constants().size() > 0) {
-    table_.insert_or_assign(key_, op_list_to_toml_table(ops));
+    table_.insert_or_assign(key_, toml_table(ops));
   } else {
-    table_.insert_or_assign(key_, op_list_to_toml_array(ops));
+    table_.insert_or_assign(key_, toml_array(ops));
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);

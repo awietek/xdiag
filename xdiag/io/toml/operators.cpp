@@ -166,4 +166,83 @@ OpSum opsum(toml::node const &node) try {
   XDIAG_RETHROW(e);
 }
 
+toml::array toml_array(Op const &op) try {
+  toml::array array;
+
+  // Type
+  array.push_back(op.type());
+
+  // Sites
+  if (op.hassites()) {
+    for (int i = 0; i < op.size(); ++i) {
+      array.push_back(op[i]);
+    }
+  }
+
+  // Matrix
+  if (op.hasmatrix()) {
+    Matrix mat = op.matrix();
+    if (mat.isreal()) {
+      array.push_back(toml_array(mat.as<arma::mat>()));
+    } else {
+      array.push_back(toml_array(mat.as<arma::cx_mat>()));
+    }
+  }
+
+  return array;
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+
+toml::array toml_array(OpSum const &ops) try {
+  toml::array array;
+  for (auto [cpl, op] : ops) {
+    toml::array arr;
+    if (cpl.isstring()) {
+      arr.push_back(cpl.string());
+    } else {
+      Scalar s = cpl.scalar();
+      if (s.isreal()) {
+        arr.push_back(s.real());
+      } else {
+        toml::array c;
+        c.push_back(s.real());
+        c.push_back(s.imag());
+        arr.push_back(c);
+      }
+    }
+    for (auto &&e : toml_array(op)) {
+      arr.push_back(e);
+    }
+    array.push_back(arr);
+  }
+  return array;
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+
+toml::table toml_table(OpSum const &ops) try {
+  toml::table table;
+  table.insert_or_assign("Interactions", toml_array(ops));
+
+  if (ops.constants().size() > 0) {
+    toml::table constants;
+    for (auto name : ops.constants()) {
+      Scalar s = ops[name];
+      if (s.isreal()) {
+        constants.insert_or_assign(name, s.as<double>());
+      } else {
+	toml::array c;
+        c.push_back(s.real());
+        c.push_back(s.imag());
+        constants.insert_or_assign(name, c);
+      }
+    }
+    table.insert_or_assign("Constants", constants);
+  }
+  return table;
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+
 } // namespace xdiag::io

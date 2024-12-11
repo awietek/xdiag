@@ -58,4 +58,50 @@ template arma::Mat<complex> arma_matrix<complex>(toml::node const &);
 template arma::Mat<arma::sword> arma_matrix<arma::sword>(toml::node const &);
 template arma::Mat<arma::uword> arma_matrix<arma::uword>(toml::node const &);
 
+template <typename T> toml::array toml_array(arma::Mat<T> const &mat) try {
+  toml::array arr;
+  for (arma::uword i = 0; i < mat.n_rows; ++i) {
+    toml::array row;
+    for (arma::uword j = 0; j < mat.n_cols; ++j) {
+      row.push_back(mat(i, j));
+    }
+    arr.push_back(row);
+  }
+  return arr;
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+
+template <> toml::array toml_array(arma::Mat<arma::uword> const &mat) try {
+  toml::array arr;
+  for (arma::uword i = 0; i < mat.n_rows; ++i) {
+    toml::array row;
+    for (arma::uword j = 0; j < mat.n_cols; ++j) {
+      row.push_back((int64_t)mat(i, j));
+    }
+    arr.push_back(row);
+  }
+  return arr;
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+
+template <> toml::array toml_array(arma::Mat<complex> const &mat) try {
+  toml::array arr;
+  for (arma::uword i = 0; i < mat.n_rows; ++i) {
+    toml::array row;
+    for (arma::uword j = 0; j < mat.n_cols; ++j) {
+      row.push_back(toml::array{std::real(mat(i, j)), std::imag(mat(i, j))});
+    }
+    arr.push_back(row);
+  }
+  return arr;
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+  return toml::array();
+}
+
+template toml::array toml_array(arma::Mat<double> const &);
+template toml::array toml_array(arma::Mat<arma::sword> const &);
+
 } // namespace xdiag::io
