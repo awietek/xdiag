@@ -38,7 +38,6 @@ private:
   std::vector<int64_t> allowed_symmetries_;
 };
 
-Representation read_representation(std::string filename, std::string repname);
 Representation trivial_representation(int64_t size);
 Representation trivial_representation(PermutationGroup const &group);
 

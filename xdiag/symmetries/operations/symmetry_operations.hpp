@@ -9,10 +9,6 @@
 #include <xdiag/symmetries/permutation.hpp>
 #include <xdiag/symmetries/representation.hpp>
 
-namespace xdiag {
-std::vector<Permutation> read_permutations(std::string filename);
-}
-
 namespace xdiag::symmetries {
 
 using span_size_t = gsl::span<int const>::size_type;

@@ -11,7 +11,7 @@ void apply_number(Coupling const &cpl, Op const &op, Basis &&basis,
   bit_t mask = (bit_t)1 << s;
   std::string type = op.type();
 
-  if (type == "NUMBERUP") {
+  if (type == "NUP") {
 
     if constexpr (symmetric) {
       int64_t idx = 0;
@@ -55,7 +55,7 @@ void apply_number(Coupling const &cpl, Op const &op, Basis &&basis,
       }
 #endif
     }
-  } else if (type == "NUMBERDN") {
+  } else if (type == "NDN") {
 
     if constexpr (symmetric) {
       int64_t idx = 0;

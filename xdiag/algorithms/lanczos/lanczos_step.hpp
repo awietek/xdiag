@@ -23,8 +23,8 @@ inline void lanczos_step(arma::Col<coeff_t> &v0, arma::Col<coeff_t> &v1,
   v0 = v1;
   v1 = w;
   beta = norm(v1);
-} catch (...) {
-  XDIAG_THROW("Error performing Lanczos step");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 template <typename coeff_t, class multiply_f, class dot_f>
@@ -44,8 +44,8 @@ inline void lanczos_step_ortho(arma::Col<coeff_t> &v0, arma::Col<coeff_t> &v1,
   v0 = v1;
   v1 = w;
   beta = norm(v1);
-} catch (...) {
-  XDIAG_THROW("Error performing Lanczos step with orthogonalization");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 } // namespace xdiag

@@ -21,7 +21,7 @@ TEST_CASE("symmetrize", "[operators]") try {
     // int n_sites = 6;
     auto ops = testcases::electron::get_linear_chain(n_sites, 1.0, 5.0);
     for (int i = 0; i < n_sites; ++i) {
-      ops += "J2" * Op("HB", {i, (i + 2) % n_sites});
+      ops += "J2" * Op("SDOTS", {i, (i + 2) % n_sites});
     }
     ops["J2"] = 0.321;
     ops["T"] = 0;
@@ -82,6 +82,8 @@ TEST_CASE("symmetrize", "[operators]") try {
         // -> g.s. from non-symmetric calculation is unique and symmetric
         if (deg == 1) {
           auto block_sym = Electron(n_sites, nup, ndn, space_group, e0_irrep);
+          // XDIAG_SHOW(ops);
+
           auto [e0_sym2, v0_sym] = eig0(ops, block_sym);
           REQUIRE(close(e0_sym, e0_nosym));
           {
@@ -99,7 +101,7 @@ TEST_CASE("symmetrize", "[operators]") try {
           // Measure correlators
           for (int i = 1; i < n_sites; ++i) {
             OpSum corr_nosym;
-            corr_nosym += "J" * Op("HB", {0, i});
+            corr_nosym += "J" * Op("SDOTS", {0, i});
             corr_nosym["J"] = 1.0;
 
             auto corr_sym = symmetrize(corr_nosym, space_group);

@@ -4,6 +4,7 @@
 
 #include <xdiag/combinatorics/combinations.hpp>
 #include <xdiag/combinatorics/subsets.hpp>
+#include <xdiag/io/file_toml.hpp>
 #include <xdiag/symmetries/group_action/group_action.hpp>
 #include <xdiag/symmetries/group_action/group_action_sublattice.hpp>
 #include <xdiag/symmetries/operations/symmetry_operations.hpp>
@@ -62,11 +63,11 @@ template <class bit_t> void test_group_action_sublattice() {
   {
     Log("GroupActionSublattice: 1 sublattice");
     std::string lfile =
-        XDIAG_DIRECTORY "/misc/data/square.8.heisenberg.2sl.lat";
-    auto permutations = xdiag::read_permutations(lfile);
-    auto perm_group = PermutationGroup(permutations);
-    auto action = GroupAction(perm_group);
-    auto action_sl = GroupActionSublattice<bit_t, 1>(perm_group);
+        XDIAG_DIRECTORY "/misc/data/square.8.heisenberg.2sl.toml";
+    auto fl = FileToml(lfile);
+    auto group = fl["Symmetries"].as<PermutationGroup>();
+    auto action = GroupAction(group);
+    auto action_sl = GroupActionSublattice<bit_t, 1>(group);
     compare_actions(action, action_sl);
   }
 
@@ -74,11 +75,11 @@ template <class bit_t> void test_group_action_sublattice() {
   {
     Log("GroupActionSublattice: 2 sublattice");
     std::string lfile =
-        XDIAG_DIRECTORY "/misc/data/square.8.heisenberg.2sl.lat";
-    auto permutations = xdiag::read_permutations(lfile);
-    auto perm_group = PermutationGroup(permutations);
-    auto action = GroupAction(perm_group);
-    auto action_sl = GroupActionSublattice<bit_t, 2>(perm_group);
+        XDIAG_DIRECTORY "/misc/data/square.8.heisenberg.2sl.toml";
+    auto fl = FileToml(lfile);
+    auto group = fl["Symmetries"].as<PermutationGroup>();
+    auto action = GroupAction(group);
+    auto action_sl = GroupActionSublattice<bit_t, 2>(group);
     compare_actions(action, action_sl);
   }
 
@@ -86,11 +87,11 @@ template <class bit_t> void test_group_action_sublattice() {
   {
     Log("GroupActionSublattice: 3 sublattice");
     std::string lfile =
-        XDIAG_DIRECTORY "/misc/data/square.9.heisenberg.3sl.lat";
-    auto permutations = xdiag::read_permutations(lfile);
-    auto perm_group = PermutationGroup(permutations);
-    auto action = GroupAction(perm_group);
-    auto action_sl = GroupActionSublattice<bit_t, 3>(perm_group);
+        XDIAG_DIRECTORY "/misc/data/square.9.heisenberg.3sl.toml";
+    auto fl = FileToml(lfile);
+    auto group = fl["Symmetries"].as<PermutationGroup>();
+    auto action = GroupAction(group);
+    auto action_sl = GroupActionSublattice<bit_t, 3>(group);
     compare_actions(action, action_sl);
   }
 
@@ -98,11 +99,11 @@ template <class bit_t> void test_group_action_sublattice() {
   {
     Log("GroupActionSublattice: 3 sublattice (triangular)");
     std::string lfile = XDIAG_DIRECTORY
-        "/misc/data/triangular.9.Jz1Jz2Jx1Jx2D1.sublattices.tsl.lat";
-    auto permutations = xdiag::read_permutations(lfile);
-    auto perm_group = PermutationGroup(permutations);
-    auto action = GroupAction(perm_group);
-    auto action_sl = GroupActionSublattice<bit_t, 3>(perm_group);
+        "/misc/data/triangular.9.Jz1Jz2Jx1Jx2D1.sublattices.tsl.toml";
+    auto fl = FileToml(lfile);
+    auto group = fl["Symmetries"].as<PermutationGroup>();
+    auto action = GroupAction(group);
+    auto action_sl = GroupActionSublattice<bit_t, 3>(group);
     compare_actions(action, action_sl);
   }
 
@@ -110,22 +111,22 @@ template <class bit_t> void test_group_action_sublattice() {
   {
     Log("GroupActionSublattice: 4 sublattice");
     std::string lfile =
-        XDIAG_DIRECTORY "/misc/data/square.8.heisenberg.4sl.lat";
-    auto permutations = xdiag::read_permutations(lfile);
-    auto perm_group = PermutationGroup(permutations);
-    auto action = GroupAction(perm_group);
-    auto action_sl = GroupActionSublattice<bit_t, 4>(perm_group);
+        XDIAG_DIRECTORY "/misc/data/square.8.heisenberg.4sl.toml";
+    auto fl = FileToml(lfile);
+    auto group = fl["Symmetries"].as<PermutationGroup>();
+    auto action = GroupAction(group);
+    auto action_sl = GroupActionSublattice<bit_t, 4>(group);
   }
 
   // Five sublattice
   {
     Log("GroupActionSublattice: 5 sublattice");
     std::string lfile =
-        XDIAG_DIRECTORY "/misc/data/square.10.heisenberg.5sl.lat";
-    auto permutations = xdiag::read_permutations(lfile);
-    auto perm_group = PermutationGroup(permutations);
-    auto action = GroupAction(perm_group);
-    auto action_sl = GroupActionSublattice<bit_t, 5>(perm_group);
+        XDIAG_DIRECTORY "/misc/data/square.10.heisenberg.5sl.toml";
+    auto fl = FileToml(lfile);
+    auto group = fl["Symmetries"].as<PermutationGroup>();
+    auto action = GroupAction(group);
+    auto action_sl = GroupActionSublattice<bit_t, 5>(group);
   }
 }
 

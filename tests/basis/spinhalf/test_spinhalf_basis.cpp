@@ -9,6 +9,7 @@
 #include <xdiag/combinatorics/combinations.hpp>
 #include <xdiag/combinatorics/subsets.hpp>
 #include <xdiag/common.hpp>
+#include <xdiag/io/file_toml.hpp>
 #include <xdiag/symmetries/operations/group_action_operations.hpp>
 #include <xdiag/symmetries/operations/symmetry_operations.hpp>
 
@@ -84,9 +85,9 @@ template <class bit_t> void test_basis_symmetric() {
   Log("BasisSymmetric: triangular 3x3");
   int n_sites = 9;
   std::string lfile = XDIAG_DIRECTORY
-      "/misc/data/triangular.9.Jz1Jz2Jx1Jx2D1.sublattices.tsl.lat";
-  auto permutations = xdiag::read_permutations(lfile);
-  auto perm_group = PermutationGroup(permutations);
+      "/misc/data/triangular.9.Jz1Jz2Jx1Jx2D1.sublattices.tsl.toml";
+  auto fl = FileToml(lfile);
+  auto perm_group = fl["Symmetries"].as<PermutationGroup>();
   // std::vector<std::string> irrep_names = {
   //     "Gamma.D6.A1", "Gamma.D6.A2", "Gamma.D6.B1", "Gamma.D6.B2",
   //     "Gamma.D6.E1", "Gamma.D6.E2", "K.D3.A1",     "K.D3.A2",
@@ -96,7 +97,7 @@ template <class bit_t> void test_basis_symmetric() {
 
   for (auto irrep_name : irrep_names) {
     Log("irrep: {}", irrep_name);
-    auto irrep = read_representation(lfile, irrep_name);
+    auto irrep = fl[irrep_name].as<Representation>();
     auto idxng = BasisSymmetricNoSz<bit_t>(n_sites, perm_group, irrep);
     // check_basis_symmetric_no_sz<bit_t>(idxng);
 

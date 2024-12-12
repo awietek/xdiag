@@ -11,7 +11,7 @@
 
 using namespace xdiag;
 
-void test_electron_np_no_np_matrix(int n_sites, OpSum ops) {
+void test_electron_np_no_np_matrix(int n_sites, OpSum ops) try {
 
   auto block_full = Electron(n_sites);
   auto H_full = matrixC(ops, block_full, block_full);
@@ -35,9 +35,11 @@ void test_electron_np_no_np_matrix(int n_sites, OpSum ops) {
     }
   std::sort(all_eigs.begin(), all_eigs.end());
   REQUIRE(close(arma::Col(all_eigs), eigs_full));
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
-TEST_CASE("electron_matrix", "[electron]") {
+TEST_CASE("electron_matrix", "[electron]") try {
   using namespace xdiag::testcases::electron;
 
   OpSum ops;
@@ -217,12 +219,12 @@ TEST_CASE("electron_matrix", "[electron]") {
     arma::cx_mat Hs_dn(n_sites, n_sites, arma::fill::zeros);
     for (auto [cpl, op] : ops) {
       if (op.type() == "HOPDN") {
-	assert(op.size() == 2);
-	int s1 = op[0];
-	int s2 = op[1];
-	auto name = cpl.string();
-	Hs_dn(s1, s2) = -ops[name].as<complex>();
-	Hs_dn(s2, s1) = -conj(ops[name].as<complex>());
+        assert(op.size() == 2);
+        int s1 = op[0];
+        int s2 = op[1];
+        auto name = cpl.string();
+        Hs_dn(s1, s2) = -ops[name].as<complex>();
+        Hs_dn(s2, s1) = -conj(ops[name].as<complex>());
       }
     }
     arma::vec seigs_dn;
@@ -260,9 +262,11 @@ TEST_CASE("electron_matrix", "[electron]") {
     auto block_electron = Electron(n_sites, nup, ndn);
 
     auto ops = testcases::spinhalf::HB_alltoall(n_sites);
-    ops["U"] = 999999; // gap out doubly occupied sites
+    auto ops_U = ops;
+    ops_U += "U" * Op("HUBBARDU");
+    ops_U["U"] = 999999; // gap out doubly occupied sites
     auto H_spinhalf = matrix(ops, block_spinhalf, block_spinhalf);
-    auto H_electron = matrix(ops, block_electron, block_electron);
+    auto H_electron = matrix(ops_U, block_electron, block_electron);
     REQUIRE(H_spinhalf.is_hermitian(1e-8));
     REQUIRE(H_electron.is_hermitian(1e-8));
 
@@ -338,14 +342,16 @@ TEST_CASE("electron_matrix", "[electron]") {
         std::string name = ss.str();
         ops[name] = 0.;
       }
-    ops["U"] = 1000;
+    auto ops_U = ops;
+    ops_U += "U" * Op("HUBBARDU");
+    ops_U["U"] = 1000;
 
     // Check whether eigenvalues agree with HB model
     for (int nup = 0; nup <= N; ++nup) {
       int ndn = N - nup;
       auto block1 = Electron(N, nup, ndn);
       auto block2 = Spinhalf(N, nup);
-      auto H1 = matrixC(ops, block1, block1);
+      auto H1 = matrixC(ops_U, block1, block1);
       auto H2 = matrixC(ops, block2, block2);
       arma::vec eigs1;
       arma::eig_sym(eigs1, H1);
@@ -368,4 +374,6 @@ TEST_CASE("electron_matrix", "[electron]") {
     auto ops = xdiag::testcases::tj::tj_alltoall_complex(N);
     test_electron_np_no_np_matrix(N, ops);
   }
+} catch (xdiag::Error const &e) {
+  error_trace(e);
 }

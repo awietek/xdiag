@@ -2,7 +2,7 @@
 
 #include <xdiag/basis/tj/apply/apply_exchange.hpp>
 #include <xdiag/basis/tj/apply/apply_hopping.hpp>
-#include <xdiag/basis/tj/apply/apply_ising.hpp>
+#include <xdiag/basis/tj/apply/apply_szsz.hpp>
 #include <xdiag/basis/tj/apply/apply_number.hpp>
 #include <xdiag/basis/tj/apply/apply_raise_lower.hpp>
 #include <xdiag/common.hpp>
@@ -16,9 +16,9 @@ void apply_terms(OpSum const &ops, BasisIn const &basis_in,
 
   for (auto const &[cpl, op] : ops) {
     std::string type = op.type();
-    if ((type == "ISING") || (type == "TJISING")) {
-      apply_ising<bit_t, coeff_t, symmetric>(cpl, op, basis_in, fill);
-    } else if ((type == "NUMBERUP") || (type == "NUMBERDN")) {
+    if ((type == "SZSZ") || (type == "TJSZSZ")) {
+      apply_szsz<bit_t, coeff_t, symmetric>(cpl, op, basis_in, fill);
+    } else if ((type == "NUP") || (type == "NDN")) {
       apply_number<bit_t, coeff_t, symmetric>(cpl, op, basis_in, fill);
     } else if (type == "EXCHANGE") {
       apply_exchange<bit_t, coeff_t, symmetric>(cpl, op, basis_in, fill);

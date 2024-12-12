@@ -1,6 +1,7 @@
 #include "types.hpp"
 
 #include <algorithm>
+#include <xdiag/common.hpp>
 
 namespace xdiag {
 bool is_known_type(std::string type) {
@@ -15,6 +16,14 @@ bool is_real_type(std::string type) {
 bool is_cplx_type(std::string type) {
   return std::find(cplx_types.begin(), cplx_types.end(), type) !=
          cplx_types.end();
+}
+
+std::string known_types_string() {
+  std::string str;
+  for (auto type : known_types) {
+    str += fmt::format("\"{}\", ", type);
+  }
+  return str.substr(0, str.size() - 2);
 }
 
 } // namespace xdiag

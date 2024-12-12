@@ -2,9 +2,9 @@
 
 #include <xdiag/basis/electron/apply/apply_exchange.hpp>
 #include <xdiag/basis/electron/apply/apply_hopping.hpp>
-#include <xdiag/basis/electron/apply/apply_ising.hpp>
 #include <xdiag/basis/electron/apply/apply_number.hpp>
 #include <xdiag/basis/electron/apply/apply_raise_lower.hpp>
+#include <xdiag/basis/electron/apply/apply_szsz.hpp>
 #include <xdiag/basis/electron/apply/apply_u.hpp>
 
 #include <xdiag/common.hpp>
@@ -27,9 +27,12 @@ void apply_terms(OpSum const &ops, BasisIn const &basis_in,
                (type == "CDN")) {
       electron::apply_raise_lower<bit_t, coeff_t, symmetric>(cpl, op, basis_in,
                                                              basis_out, fill);
-    } else if (type == "ISING") {
-      electron::apply_ising<bit_t, coeff_t, symmetric>(cpl, op, basis_in, fill);
-    } else if ((type == "NUMBERUP") || (type == "NUMBERDN")) {
+    } else if (type == "SZSZ") {
+      electron::apply_szsz<bit_t, coeff_t, symmetric>(cpl, op, basis_in, fill);
+    } else if (type == "EXCHANGE") {
+      electron::apply_exchange<bit_t, coeff_t, symmetric>(cpl, op, basis_in,
+                                                          fill);
+    } else if ((type == "NUP") || (type == "NDN")) {
       electron::apply_number<bit_t, coeff_t, symmetric>(cpl, op, basis_in,
                                                         fill);
     } else if (type == "HUBBARDU") {

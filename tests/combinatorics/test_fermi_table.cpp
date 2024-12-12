@@ -4,6 +4,7 @@
 
 #include <tests/blocks/electron/testcases_electron.hpp>
 #include <xdiag/combinatorics/fermi_table.hpp>
+#include <xdiag/io/file_toml.hpp>
 #include <xdiag/symmetries/operations/fermi_sign.hpp>
 #include <xdiag/symmetries/operations/symmetry_operations.hpp>
 
@@ -54,9 +55,9 @@ TEST_CASE("fermi_table", "[symmetries]") {
 
   Log("triangular 3x3");
   std::string lfile =
-      XDIAG_DIRECTORY "/misc/data/triangular.9.hop.sublattices.tsl.lat";
-  auto permutations = xdiag::read_permutations(lfile);
-  auto group = PermutationGroup(permutations);
+      XDIAG_DIRECTORY "/misc/data/triangular.9.hop.sublattices.tsl.toml";
+  auto fl = FileToml(lfile);
+  auto group = fl["Symmetries"].as<PermutationGroup>();
   test_fermi_bool_table<uint16_t>(group);
   test_fermi_bool_table<uint32_t>(group);
   test_fermi_bool_table<uint64_t>(group);

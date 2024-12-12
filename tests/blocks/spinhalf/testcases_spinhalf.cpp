@@ -11,10 +11,12 @@ OpSum HBchain(int64_t n_sites, double J1, double J2) {
   ops["J2"] = J2;
 
   for (int64_t s = 0; s < n_sites; ++s) {
-    ops += "J1" * Op("HB", {s, (s + 1) % n_sites});
+    ops += "J1" * Op("SDOTS", {s, (s + 1) % n_sites});
   }
-  for (int64_t s = 0; s < n_sites; ++s) {
-    ops += "J2" * Op("HB", {s, (s + 2) % n_sites});
+  if (n_sites > 2) {
+    for (int64_t s = 0; s < n_sites; ++s) {
+      ops += "J2" * Op("SDOTS", {s, (s + 2) % n_sites});
+    }
   }
   return ops;
 }
@@ -107,7 +109,7 @@ OpSum HB_alltoall(int64_t n_sites) {
       ss << "J" << s1 << "_" << s2;
       std::string name = ss.str();
       double value = distribution(generator);
-      ops += name * Op("HB", {s1, s2});
+      ops += name * Op("SDOTS", {s1, s2});
       ops[name] = value;
     }
   return ops;
@@ -116,42 +118,42 @@ OpSum HB_alltoall(int64_t n_sites) {
 std::tuple<OpSum, double> triangular_12_complex(int64_t nup, double eta) {
 
   OpSum ops;
-  ops += "Jz" * Op("ISING", {0, 5});
-  ops += "Jz" * Op("ISING", {8, 2});
-  ops += "Jz" * Op("ISING", {2, 7});
-  ops += "Jz" * Op("ISING", {1, 4});
-  ops += "Jz" * Op("ISING", {4, 8});
-  ops += "Jz" * Op("ISING", {6, 10});
-  ops += "Jz" * Op("ISING", {10, 0});
-  ops += "Jz" * Op("ISING", {5, 9});
-  ops += "Jz" * Op("ISING", {9, 3});
-  ops += "Jz" * Op("ISING", {3, 6});
-  ops += "Jz" * Op("ISING", {7, 11});
-  ops += "Jz" * Op("ISING", {11, 1});
-  ops += "Jz" * Op("ISING", {0, 8});
-  ops += "Jz" * Op("ISING", {8, 6});
-  ops += "Jz" * Op("ISING", {2, 10});
-  ops += "Jz" * Op("ISING", {1, 9});
-  ops += "Jz" * Op("ISING", {4, 3});
-  ops += "Jz" * Op("ISING", {6, 1});
-  ops += "Jz" * Op("ISING", {10, 4});
-  ops += "Jz" * Op("ISING", {5, 2});
-  ops += "Jz" * Op("ISING", {9, 7});
-  ops += "Jz" * Op("ISING", {3, 11});
-  ops += "Jz" * Op("ISING", {7, 0});
-  ops += "Jz" * Op("ISING", {11, 5});
-  ops += "Jz" * Op("ISING", {0, 4});
-  ops += "Jz" * Op("ISING", {8, 3});
-  ops += "Jz" * Op("ISING", {2, 6});
-  ops += "Jz" * Op("ISING", {1, 5});
-  ops += "Jz" * Op("ISING", {4, 9});
-  ops += "Jz" * Op("ISING", {6, 11});
-  ops += "Jz" * Op("ISING", {10, 1});
-  ops += "Jz" * Op("ISING", {5, 8});
-  ops += "Jz" * Op("ISING", {9, 2});
-  ops += "Jz" * Op("ISING", {3, 7});
-  ops += "Jz" * Op("ISING", {7, 10});
-  ops += "Jz" * Op("ISING", {11, 0});
+  ops += "Jz" * Op("SZSZ", {0, 5});
+  ops += "Jz" * Op("SZSZ", {8, 2});
+  ops += "Jz" * Op("SZSZ", {2, 7});
+  ops += "Jz" * Op("SZSZ", {1, 4});
+  ops += "Jz" * Op("SZSZ", {4, 8});
+  ops += "Jz" * Op("SZSZ", {6, 10});
+  ops += "Jz" * Op("SZSZ", {10, 0});
+  ops += "Jz" * Op("SZSZ", {5, 9});
+  ops += "Jz" * Op("SZSZ", {9, 3});
+  ops += "Jz" * Op("SZSZ", {3, 6});
+  ops += "Jz" * Op("SZSZ", {7, 11});
+  ops += "Jz" * Op("SZSZ", {11, 1});
+  ops += "Jz" * Op("SZSZ", {0, 8});
+  ops += "Jz" * Op("SZSZ", {8, 6});
+  ops += "Jz" * Op("SZSZ", {2, 10});
+  ops += "Jz" * Op("SZSZ", {1, 9});
+  ops += "Jz" * Op("SZSZ", {4, 3});
+  ops += "Jz" * Op("SZSZ", {6, 1});
+  ops += "Jz" * Op("SZSZ", {10, 4});
+  ops += "Jz" * Op("SZSZ", {5, 2});
+  ops += "Jz" * Op("SZSZ", {9, 7});
+  ops += "Jz" * Op("SZSZ", {3, 11});
+  ops += "Jz" * Op("SZSZ", {7, 0});
+  ops += "Jz" * Op("SZSZ", {11, 5});
+  ops += "Jz" * Op("SZSZ", {0, 4});
+  ops += "Jz" * Op("SZSZ", {8, 3});
+  ops += "Jz" * Op("SZSZ", {2, 6});
+  ops += "Jz" * Op("SZSZ", {1, 5});
+  ops += "Jz" * Op("SZSZ", {4, 9});
+  ops += "Jz" * Op("SZSZ", {6, 11});
+  ops += "Jz" * Op("SZSZ", {10, 1});
+  ops += "Jz" * Op("SZSZ", {5, 8});
+  ops += "Jz" * Op("SZSZ", {9, 2});
+  ops += "Jz" * Op("SZSZ", {3, 7});
+  ops += "Jz" * Op("SZSZ", {7, 10});
+  ops += "Jz" * Op("SZSZ", {11, 0});
   ops += "Jx" * Op("EXCHANGE", {0, 8});
   ops += "Jx" * Op("EXCHANGE", {8, 6});
   ops += "Jx" * Op("EXCHANGE", {2, 10});

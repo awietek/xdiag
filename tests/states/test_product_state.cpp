@@ -1,13 +1,13 @@
 #include "../catch.hpp"
 
 #include <xdiag/algebra/algebra.hpp>
+#include <xdiag/states/fill.hpp>
 #include <xdiag/states/product_state.hpp>
 #include <xdiag/utils/close.hpp>
-#include <xdiag/states/fill.hpp>
 
 using namespace xdiag;
 
-TEST_CASE("product_state", "[states]") {
+TEST_CASE("product_state", "[states]") try {
 
   // Test product state for Electron block
   for (int i = 0; i < 10; ++i) {
@@ -32,7 +32,7 @@ TEST_CASE("product_state", "[states]") {
         auto sz = Op("SZ", i);
         auto szc = inner(sz, psi);
 
-        auto n = Op("NUMBER", i);
+        auto n = Op("NTOT", i);
         auto nc = inner(n, psi);
 
         if (p == "Emp") {
@@ -63,7 +63,7 @@ TEST_CASE("product_state", "[states]") {
         auto sz = Op("SZ", i);
         auto szc = inner(sz, psi2);
 
-        auto n = Op("NUMBER", i);
+        auto n = Op("NTOT", i);
         auto nc = inner(n, psi2);
 
         if (p == "Emp") {
@@ -116,7 +116,7 @@ TEST_CASE("product_state", "[states]") {
         auto sz = Op("SZ", i);
         auto szc = inner(sz, psi2);
 
-        auto n = Op("NUMBER", i);
+        auto n = Op("NTOT", i);
         auto nc = inner(n, psi2);
 
         if (p == "Emp") {
@@ -278,4 +278,6 @@ TEST_CASE("product_state", "[states]") {
   //   complex sz3c = inner(sz3, psi);
   //   REQUIRE(close(sz3c, -0.5));
   // }
+} catch (xdiag::Error const &e) {
+  error_trace(e);
 }

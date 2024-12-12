@@ -6,7 +6,7 @@
 #include <xdiag/algorithms/sparse_diag.hpp>
 #include <xdiag/utils/close.hpp>
 
-TEST_CASE("electron_raise_lower", "[electron]") {
+TEST_CASE("electron_raise_lower", "[electron]") try {
   using namespace xdiag;
   using namespace arma;
   std::vector<std::string> op_strs = {"CDAGUP", "CDAGDN", "CUP", "CDN"};
@@ -58,9 +58,9 @@ TEST_CASE("electron_raise_lower", "[electron]") {
 
     for (int i = 0; i < n_sites; ++i) {
 
-      // Check whether NUMBERUP agrees
+      // Check whether NUP agrees
       {
-        auto op = Op("NUMBERUP", i);
+        auto op = Op("NUP", i);
         auto m = matrix(op, block);
         auto mi1 = matrix(Op("CDAGUP", i), block);
         auto mi2 = matrix(Op("CUP", i), block);
@@ -68,9 +68,9 @@ TEST_CASE("electron_raise_lower", "[electron]") {
         REQUIRE(norm(mm - m) < 1e-12);
       }
 
-      // Check whether NUMBERDN agrees
+      // Check whether NDN agrees
       {
-        auto op = Op("NUMBERDN", i);
+        auto op = Op("NDN", i);
         auto m = matrix(op, block);
         auto mi1 = matrix(Op("CDAGDN", i), block);
         auto mi2 = matrix(Op("CDN", i), block);
@@ -105,9 +105,9 @@ TEST_CASE("electron_raise_lower", "[electron]") {
             REQUIRE(norm(mm - m) < 1e-12);
           }
 
-          // Check whether ISING agrees
+          // Check whether SZSZ agrees
           {
-            auto op = Op("ISING", {i, j});
+            auto op = Op("SZSZ", {i, j});
             auto m = matrix(op, block);
 
             auto mi1 = matrix(Op("CDAGUP", i), block);
@@ -152,4 +152,6 @@ TEST_CASE("electron_raise_lower", "[electron]") {
       }
     }
   }
+} catch (xdiag::Error const &e) {
+  error_trace(e);
 }

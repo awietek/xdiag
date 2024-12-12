@@ -1,7 +1,7 @@
 #include "valid.hpp"
 
-#include <string>
 #include <set>
+#include <string>
 
 #include <xdiag/operators/logic/types.hpp>
 
@@ -12,13 +12,14 @@ void check_valid(Op const &op) try {
   if (is_known_type(type)) {
     if ((type == "SZ") || (type == "S+") || (type == "S-") ||
         (type == "CDAGUP") || (type == "CUP") || (type == "CDAGDN") ||
-        (type == "CDN") || (type == "NUMBER") || (type == "NUMBERUP") ||
-        (type == "NUMBERDN")) {
+        (type == "CDN") || (type == "NTOT") || (type == "NUP") ||
+        (type == "NDN")) {
       must_not_have_matrix(op);
       must_have_sites(op);
       must_have_n_sites(op, 1);
-    } else if ((type == "EXCHANGE") || (type == "ISING") || (type == "HOP") ||
-               (type == "HOPUP") || (type == "HOPDN") || (type == "TJISING")) {
+    } else if ((type == "SDOTS") || (type == "EXCHANGE") || (type == "SZSZ") ||
+               (type == "HOP") || (type == "HOPUP") || (type == "HOPDN") ||
+               (type == "TJSZSZ") || (type == "TJSDOTS")) {
       must_not_have_matrix(op);
       must_have_sites(op);
       must_have_n_sites(op, 2);
@@ -34,10 +35,13 @@ void check_valid(Op const &op) try {
     } else if (type == "MATRIX") {
       must_have_matrix(op);
     } else {
-      XDIAG_THROW("Logic error checking validity of Op (this is a bug)");
+      XDIAG_THROW(
+          "Logic error checking validity of Op (this is a bug, please report)");
     }
   } else {
-    XDIAG_THROW(fmt::format("Unknown Op type: \"{}\"", type));
+    XDIAG_THROW(fmt::format("Unknown Op type: \"{}\", got Op:\n{}\nXDiag "
+                            "recognizes the following Op types:\n{}",
+                            type, to_string(op), known_types_string()));
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
@@ -53,7 +57,9 @@ void check_valid(OpSum const &ops) try {
 
 void check_valid(Op const &op, int64_t n_sites) try {
   check_valid(op);
-  must_have_sites_in_range(op, 0, n_sites);
+  if (op.hassites()) {
+    must_have_sites_in_range(op, 0, n_sites);
+  }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
@@ -69,7 +75,8 @@ void check_valid(OpSum const &ops, int64_t n_sites) try {
 void must_have_sites(Op const &op) try {
   if (!op.hassites()) {
     XDIAG_THROW(
-        fmt::format("Op of type \"{}\" must have sites defined.", op.type()));
+        fmt::format("Op of type \"{}\" must have sites defined, got Op:\n{}",
+                    op.type(), to_string(op)));
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
@@ -78,7 +85,8 @@ void must_have_sites(Op const &op) try {
 void must_not_have_sites(Op const &op) try {
   if (op.hassites()) {
     XDIAG_THROW(
-        fmt::format("Op of type \"{}\" cannot have sites defined.", op.type()));
+        fmt::format("Op of type \"{}\" cannot have sites defined, got Op:\n{}",
+                    op.type(), to_string(op)));
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
@@ -88,11 +96,13 @@ void must_have_n_sites(Op const &op, int64_t n) try {
   if (op.hassites()) {
     if (op.sites().size() != n) {
       XDIAG_THROW(fmt::format(
-          "Op of type \"{}\" must have exactly {} sites defined.", n));
+          "Op of type \"{}\" must have exactly {} sites defined, got Op:\n{}",
+          n, to_string(op)));
     }
   } else {
     XDIAG_THROW(
-        fmt::format("Op of type \"{}\" must have sites defined.", op.type()));
+        fmt::format("Op of type \"{}\" must have sites defined, got Op:\n{}",
+                    op.type(), to_string(op)));
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
@@ -104,11 +114,13 @@ void must_have_disjoint_sites(Op const &op) try {
     auto set = std::set<int64_t>(sites.begin(), sites.end());
     if (set.size() != sites.size()) {
       XDIAG_THROW(fmt::format(
-          "Op of type \"{}\"must have strictly disjoint sites.", op.type()));
+          "Op of type \"{}\" must have strictly disjoint sites, got Op:\n{}",
+          op.type(), to_string(op)));
     }
   } else {
     XDIAG_THROW(
-        fmt::format("Op of type \"{}\" must have sites defined.", op.type()));
+        fmt::format("Op of type \"{}\" must have sites defined, got Op:\n{}",
+                    op.type(), to_string(op)));
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
@@ -117,15 +129,16 @@ void must_have_sites_in_range(Op const &op, int64_t l, int64_t u) try {
   if (op.hassites()) {
     for (auto s : op.sites()) {
       if ((s < 0) || (s >= u)) {
-        XDIAG_THROW(
-            fmt::format("Op of type \"{}\" has site with index {}, but the "
-                        "indices must lie in the interval [{}, {}).",
-                        op.type(), s, l, u));
+        XDIAG_THROW(fmt::format(
+            "Op of type \"{}\" has site with index {}, but the "
+            "indices must lie in the interval [{}, {}). Got Op:\n{}",
+            op.type(), s, l, u, to_string(op)));
       }
     }
   } else {
     XDIAG_THROW(
-        fmt::format("Op of type \"{}\" must have sites defined.", op.type()));
+        fmt::format("Op of type \"{}\" must have sites defined, got Op:\n{}",
+                    op.type(), to_string(op)));
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
@@ -133,8 +146,9 @@ void must_have_sites_in_range(Op const &op, int64_t l, int64_t u) try {
 
 void must_have_matrix(Op const &op) try {
   if (!op.hasmatrix()) {
-    XDIAG_THROW(fmt::format("Op of type \"{}\" must have a matrix defined.",
-                            op.type()));
+    XDIAG_THROW(
+        fmt::format("Op of type \"{}\" must have a matrix defined, got Op:\n{}",
+                    op.type(), to_string(op)));
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
@@ -142,8 +156,9 @@ void must_have_matrix(Op const &op) try {
 
 void must_not_have_matrix(Op const &op) try {
   if (op.hasmatrix()) {
-    XDIAG_THROW(fmt::format("Op of type \"{}\" cannot have a matrix defined.",
-                            op.type()));
+    XDIAG_THROW(fmt::format(
+        "Op of type \"{}\" cannot have a matrix defined, got Op:\n{}",
+        op.type(), to_string(op)));
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);

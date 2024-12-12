@@ -209,9 +209,9 @@ TEST_CASE("tj_complex_timeevo", "[time_evolution]") try {
       int right = y * L + nx;
       int top = ny * L + x;
       ops += "T" * Op("HOP", {site, right});
-      ops += "J" * Op("TJISING", {site, right});
+      ops += "J" * Op("TJSZSZ", {site, right});
       ops += "T" * Op("HOP", {site, top});
-      ops += "J" * Op("TJISING", {site, top});
+      ops += "J" * Op("TJSZSZ", {site, top});
     }
   }
   ops["T"] = (std::complex<double>)(1.0 + 0.2i);

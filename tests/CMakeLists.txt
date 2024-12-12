@@ -36,27 +36,24 @@ set(XDIAG_TEST_SOURCES
 
   blocks/spinhalf/test_spinhalf_matrix.cpp
   blocks/spinhalf/test_spinhalf_apply.cpp
-
-  blocks/spinhalf_symmetric/test_spinhalf_symmetric.cpp
-  blocks/spinhalf_symmetric/test_spinhalf_symmetric_matrix.cpp
-  blocks/spinhalf_symmetric/test_spinhalf_symmetric_apply.cpp
+  blocks/spinhalf/test_spinhalf_symmetric.cpp
+  blocks/spinhalf/test_spinhalf_symmetric_matrix.cpp
+  blocks/spinhalf/test_spinhalf_symmetric_apply.cpp
   # blocks/spinhalf_symmetric/test_kitaev_gamma.cpp
 
   blocks/tj/test_tj_matrix.cpp
   blocks/tj/test_tj_apply.cpp
   blocks/tj/test_tj_raiselower.cpp
-
-  blocks/tj_symmetric/test_tj_symmetric.cpp
-  blocks/tj_symmetric/test_tj_symmetric_matrix.cpp
-  blocks/tj_symmetric/test_tj_symmetric_apply.cpp
+  blocks/tj/test_tj_symmetric.cpp
+  blocks/tj/test_tj_symmetric_matrix.cpp
+  blocks/tj/test_tj_symmetric_apply.cpp
 
   blocks/electron/test_electron_matrix.cpp
   blocks/electron/test_electron_apply.cpp
   blocks/electron/test_electron_raiselower.cpp
-
-  blocks/electron_symmetric/test_electron_symmetric.cpp
-  blocks/electron_symmetric/test_electron_symmetric_matrix.cpp
-  blocks/electron_symmetric/test_electron_symmetric_apply.cpp
+  blocks/electron/test_electron_symmetric.cpp
+  blocks/electron/test_electron_symmetric_matrix.cpp
+  blocks/electron/test_electron_symmetric_apply.cpp
 
   algorithms/lanczos/test_eigvals_lanczos.cpp
   algorithms/lanczos/test_eigs_lanczos.cpp

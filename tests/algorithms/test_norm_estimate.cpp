@@ -8,8 +8,8 @@
 #include <xdiag/algorithms/norm_estimate.hpp>
 #include <xdiag/common.hpp>
 #include <xdiag/extern/armadillo/armadillo>
-#include <xdiag/utils/logger.hpp>
 #include <xdiag/io/file_toml.hpp>
+#include <xdiag/utils/logger.hpp>
 
 using namespace xdiag;
 
@@ -135,8 +135,7 @@ TEST_CASE("norm_estimate", "[algorithms]") {
     auto ops = fl["Interactions"].as<OpSum>();
     ops["T"] = 1.0;
     ops["J"] = 0.4;
-    auto permutations = xdiag::read_permutations(lfile);
-    auto group = PermutationGroup(permutations);
+    auto group = fl["Symmetries"].as<PermutationGroup>();
 
     std::vector<std::pair<std::string, int>> rep_name_mult = {
         {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
@@ -157,7 +156,7 @@ TEST_CASE("norm_estimate", "[algorithms]") {
 
         for (auto [name, mult] : rep_name_mult) {
           (void)mult;
-          auto irrep = read_representation(lfile, name);
+          auto irrep = fl[name].as<Representation>();
           auto block = tJ(n_sites, nup, ndn, group, irrep);
           if (irrep.isreal()) {
             test_operator_norm_real(block, ops);
@@ -176,14 +175,13 @@ TEST_CASE("norm_estimate", "[algorithms]") {
     Log("norm_estimate for tj_symmetric_matrix: tJ 3x3 triangular staggered "
         "flux, complex");
     std::string lfile = XDIAG_DIRECTORY
-        "/misc/data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.lat";
+        "/misc/data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.toml";
 
     auto fl = FileToml(lfile);
     auto ops = fl["Interactions"].as<OpSum>();
     std::vector<double> etas{0.0, 0.1, 0.2, 0.3};
-    auto permutations = xdiag::read_permutations(lfile);
-    auto group = PermutationGroup(permutations);
-
+    auto group = fl["Symmetries"].as<PermutationGroup>();
+	
     std::vector<std::pair<std::string, int>> rep_name_mult = {
         {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
         {"K0.D3.A1", 1},    {"K0.D3.A2", 1},    {"K0.D3.E", 2},
@@ -207,7 +205,7 @@ TEST_CASE("norm_estimate", "[algorithms]") {
 
           for (auto [name, mult] : rep_name_mult) {
             (void)mult;
-            auto irrep = read_representation(lfile, name);
+            auto irrep = fl[name].as<Representation>();
             auto block = tJ(n_sites, nup, ndn, group, irrep);
             test_operator_norm_cplx(block, ops);
           }

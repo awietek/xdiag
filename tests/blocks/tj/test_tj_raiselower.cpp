@@ -65,7 +65,7 @@ bool valid_nup_ndn(std::string op_str1, std::string op_str2, int nup, int ndn,
   return valid_nup_ndn(nupt, ndnt, n_sites);
 }
 
-TEST_CASE("tj_raise_lower", "[tj]") {
+TEST_CASE("tj_raise_lower", "[tj]") try {
 
   std::vector<std::string> op_strs = {"CDAGUP", "CDAGDN", "CUP", "CDN"};
 
@@ -139,12 +139,12 @@ TEST_CASE("tj_raise_lower", "[tj]") {
                     REQUIRE(norm(anti_comm) < 1e-12);
                   } else if (((op_i_str == "CDAGUP") && (op_j_str == "CUP")) ||
                              ((op_i_str == "CUP") && (op_j_str == "CDAGUP"))) {
-                    auto ndn_op = Op("NUMBERDN", i);
+                    auto ndn_op = Op("NDN", i);
                     auto ndn_op_m = matrix(ndn_op, block);
                     REQUIRE(norm(anti_comm + ndn_op_m - id) < 1e-12);
                   } else if (((op_i_str == "CDAGDN") && (op_j_str == "CDN")) ||
                              ((op_i_str == "CDN") && (op_j_str == "CDAGDN"))) {
-                    auto nup_op = Op("NUMBERUP", i);
+                    auto nup_op = Op("NUP", i);
                     auto nup_op_m = matrix(nup_op, block);
                     REQUIRE(norm(anti_comm + nup_op_m - id) < 1e-12);
                   } else if ((op_i_str == "CDAGUP") && (op_j_str == "CDN")) {
@@ -178,9 +178,9 @@ TEST_CASE("tj_raise_lower", "[tj]") {
 
   //   for (int i = 0; i < n_sites; ++i) {
 
-  //     // Check whether NUMBERUP agrees
+  //     // Check whether NUP agrees
   //     {
-  //       auto op = Op("NUMBERUP", i);
+  //       auto op = Op("NUP", i);
   //       auto m = matrix(op, block);
   //       auto mi1 = matrix(Op("CDAGUP", i), block);
   //       auto mi2 = matrix(Op("CUP", i), block);
@@ -188,9 +188,9 @@ TEST_CASE("tj_raise_lower", "[tj]") {
   //       REQUIRE(norm(mm - m) < 1e-12);
   //     }
 
-  //     // Check whether NUMBERDN agrees
+  //     // Check whether NDN agrees
   //     {
-  //       auto op = Op("NUMBERDN", i);
+  //       auto op = Op("NDN", i);
   //       auto m = matrix(op, block);
   //       auto mi1 = matrix(Op("CDAGDN", i), block);
   //       auto mi2 = matrix(Op("CDN", i), block);
@@ -272,4 +272,6 @@ TEST_CASE("tj_raise_lower", "[tj]") {
   //     }
   //   }
   // }
+} catch (xdiag::Error const &e) {
+  error_trace(e);
 }

@@ -1,11 +1,11 @@
 #pragma once
 
 #include <xdiag/basis/spinhalf/apply/apply_exchange.hpp>
-#include <xdiag/basis/spinhalf/apply/apply_ising.hpp>
-#include <xdiag/basis/spinhalf/apply/apply_non_branching.hpp>
+// #include <xdiag/basis/spinhalf/apply/apply_non_branching.hpp>
 #include <xdiag/basis/spinhalf/apply/apply_scalar_chirality.hpp>
 #include <xdiag/basis/spinhalf/apply/apply_spsm.hpp>
 #include <xdiag/basis/spinhalf/apply/apply_sz.hpp>
+#include <xdiag/basis/spinhalf/apply/apply_szsz.hpp>
 #include <xdiag/common.hpp>
 #include <xdiag/utils/timing.hpp>
 
@@ -21,9 +21,9 @@ void apply_terms(OpSum const &ops, BasisIn const &basis_in,
     if (type == "EXCHANGE") {
       spinhalf::apply_exchange<bit_t, coeff_t, symmetric>(cpl, op, basis_in,
                                                           basis_out, fill);
-    } else if (type == "ISING") {
-      spinhalf::apply_ising<bit_t, coeff_t, symmetric>(cpl, op, basis_in,
-                                                       basis_out, fill);
+    } else if (type == "SZSZ") {
+      spinhalf::apply_szsz<bit_t, coeff_t, symmetric>(cpl, op, basis_in,
+                                                      basis_out, fill);
     } else if (type == "SZ") {
       spinhalf::apply_sz<bit_t, coeff_t, symmetric>(cpl, op, basis_in,
                                                     basis_out, fill);

@@ -14,13 +14,13 @@ void apply_number(Coupling const &cpl, Op const &op, Basis &&basis,
   int64_t s = op[0];
   bit_t mask = (bit_t)1 << s;
 
-  if (op.type() == "NUMBERUP") {
+  if (op.type() == "NUP") {
     auto term_action = [&](bit_t up, bit_t dn) {
       (void)dn;
       return (up & mask) ? mu : 0.;
     };
     tj::generic_term_diag<bit_t, coeff_t, symmetric>(basis, term_action, fill);
-  } else { // type == "NUMBERDN"
+  } else { // type == "NDN"
     auto term_action = [&](bit_t up, bit_t dn) {
       (void)up;
       return (dn & mask) ? mu : 0.;
