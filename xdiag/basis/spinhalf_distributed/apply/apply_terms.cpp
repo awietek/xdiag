@@ -1,9 +1,9 @@
 #include "apply_terms.hpp"
 
 #include <xdiag/basis/spinhalf_distributed/apply/apply_exchange.hpp>
-#include <xdiag/basis/spinhalf_distributed/apply/apply_ising.hpp>
 #include <xdiag/basis/spinhalf_distributed/apply/apply_spsm.hpp>
 #include <xdiag/basis/spinhalf_distributed/apply/apply_sz.hpp>
+#include <xdiag/basis/spinhalf_distributed/apply/apply_szsz.hpp>
 
 #include <xdiag/basis/spinhalf_distributed/basis_sz.hpp>
 #include <xdiag/basis/spinhalf_distributed/transpose.hpp>
@@ -16,21 +16,20 @@ void apply_terms(OpSum const &ops, basis_t const &basis_in,
                  arma::Col<coeff_t> &vec_out) try {
 
   // Determine diagonal and offdiagonal bonds
-  auto isdiagonal = [](Op const &op) {
-    return (op.type() == "ISING") || (op.type() == "SZ");
-  };
-  auto isoffdiagonal = [&](Op const &op) { return !isdiagonal(op); };
-
   OpSum ops_diagonal;
-  std::copy_if(ops.begin(), ops.end(), std::back_inserter(ops_diagonal),
-               isdiagonal);
-
   OpSum ops_offdiagonal;
-  std::copy_if(ops.begin(), ops.end(), std::back_inserter(ops_offdiagonal),
-               isoffdiagonal);
+  for (auto [cpl, op] : ops.plain()) {
+    if ((op.type() == "SZSZ") || (op.type() == "SZ")) {
+      ops_diagonal += cpl * op;
+    } else {
+      ops_offdiagonal += cpl * op;
+    }
+  }
 
   // Among the offdiagonal bonds, determine which are acting on prefix, postfix
   // or are mixed
+  OpSum ops_prefix, ops_postfix, ops_mixed;
+
   int64_t n_postfix_bits = basis_in.n_postfix_bits();
   auto isprefix = [&](Op const &op) {
     return std::all_of(op.sites().begin(), op.sites().end(),
@@ -40,42 +39,41 @@ void apply_terms(OpSum const &ops, basis_t const &basis_in,
     return std::all_of(op.sites().begin(), op.sites().end(),
                        [&](int64_t s) { return s < n_postfix_bits; });
   };
-  auto ismixed = [&](Op const &op) { return !isprefix(op) && !ispostfix(op); };
 
-  OpSum ops_prefix, ops_postfix, ops_mixed;
-  std::copy_if(ops_offdiagonal.begin(), ops_offdiagonal.end(),
-               std::back_inserter(ops_prefix), isprefix);
-  std::copy_if(ops_offdiagonal.begin(), ops_offdiagonal.end(),
-               std::back_inserter(ops_postfix), ispostfix);
-  std::copy_if(ops_offdiagonal.begin(), ops_offdiagonal.end(),
-               std::back_inserter(ops_mixed), ismixed);
+  for (auto [cpl, op] : ops_offdiagonal) {
+    if (isprefix(op)) {
+      ops_prefix += cpl * op;
+    } else if (ispostfix(op)) {
+      ops_postfix += cpl * op;
+    } else {
+      ops_mixed += cpl * op;
+    }
+  }
 
   // Diagonal operators
-  for (Op op : ops_diagonal) {
+  for (auto [cpl, op] : ops_diagonal) {
     std::string type = op.type();
-    if (type == "ISING") {
-      apply_ising(op, basis_in, vec_in, vec_out);
+    if (type == "SZSZ") {
+      apply_szsz(cpl, op, basis_in, vec_in, vec_out);
     } else if (type == "SZ") {
-      apply_sz(op, basis_in, vec_in, vec_out);
+      apply_sz(cpl, op, basis_in, vec_in, vec_out);
     } else {
       XDIAG_THROW(fmt::format("Unknown bond of type \"{}\"", type));
     }
   }
 
-  //////////////////////////
   // Apply postfix operators
-  for (Op op : ops_postfix) {
+  for (auto [cpl, op] : ops_postfix) {
     std::string type = op.type();
     if (type == "EXCHANGE") {
-      apply_exchange_postfix(op, basis_in, vec_in, vec_out);
+      apply_exchange_postfix(cpl, op, basis_in, vec_in, vec_out);
     } else if ((type == "S+") || (type == "S-")) {
-      apply_spsm_postfix(op, basis_in, vec_in, basis_out, vec_out);
+      apply_spsm_postfix(cpl, op, basis_in, vec_in, basis_out, vec_out);
     } else {
       XDIAG_THROW(fmt::format("Unknown bond of type \"{}\"", type));
     }
   }
 
-  ////////////////////////////////////////////////////////////////////////////
   // Apply prefix operators (result is computed frmo send_buffer and stored in
   // recv_buffer)
   int64_t buffer_size = std::max(basis_out.size_max(), basis_in.size_max());
@@ -86,12 +84,12 @@ void apply_terms(OpSum const &ops, basis_t const &basis_in,
   // Transpose to postfix | prefix order
   transpose(basis_in, vec_in.memptr(), false);
 
-  for (Op op : ops_prefix) {
+  for (auto [cpl, op] : ops_prefix) {
     std::string type = op.type();
     if (type == "EXCHANGE") {
-      apply_exchange_prefix<basis_t, coeff_t>(op, basis_in);
+      apply_exchange_prefix<basis_t, coeff_t>(cpl, op, basis_in);
     } else if ((type == "S+") || (type == "S-")) {
-      apply_spsm_prefix<basis_t, coeff_t>(op, basis_in, basis_out);
+      apply_spsm_prefix<basis_t, coeff_t>(cpl, op, basis_in, basis_out);
     } else {
       XDIAG_THROW(fmt::format("Unknown bond of type \"{}\"", type));
     }
@@ -107,10 +105,10 @@ void apply_terms(OpSum const &ops, basis_t const &basis_in,
 
   /////////////////////////////
   // apply mixed operators
-  for (Op op : ops_mixed) {
+  for (auto [cpl, op] : ops_mixed) {
     std::string type = op.type();
     if (type == "EXCHANGE") {
-      apply_exchange_mixed(op, basis_in, vec_in, vec_out);
+      apply_exchange_mixed(cpl, op, basis_in, vec_in, vec_out);
     } else {
       XDIAG_THROW(fmt::format("Unknown bond of type \"{}\"", type));
     }

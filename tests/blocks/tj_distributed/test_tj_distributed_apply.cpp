@@ -4,15 +4,16 @@
 
 #include "../spinhalf/testcases_spinhalf.hpp"
 #include "../tj/testcases_tj.hpp"
-#include <xdiag/algorithms/sparse_diag.hpp>
-#include <xdiag/algebra/matrix.hpp>
 #include <xdiag/algebra/apply.hpp>
+#include <xdiag/algebra/matrix.hpp>
+#include <xdiag/algorithms/sparse_diag.hpp>
 
 #include <xdiag/utils/close.hpp>
 
 using namespace xdiag;
 
-void test_tjdistributed_e0_real(OpSum ops, int n_sites, int nup, int ndn, double e0) {
+void test_tjdistributed_e0_real(OpSum ops, int n_sites, int nup, int ndn,
+                                double e0) {
   auto block = tJDistributed(n_sites, nup, ndn);
   double e0c = eigval0(ops, block);
   REQUIRE(std::abs(e0 - e0c) < 1e-6);
@@ -30,10 +31,10 @@ TEST_CASE("tj_distributed_apply", "[tj_distributed]") try {
       auto block = tJDistributed(N, nup, ndn);
       OpSum ops;
       for (int i = 0; i < N; ++i) {
-        ops += Op("ISING", "Jz", {i, (i + 1) % N});
-        ops += Op("EXCHANGE", "Jx", {i, (i + 1) % N});
-        ops += Op("HOPDN", "TDN", {i, (i + 1) % N});
-        ops += Op("HOPUP", "TUP", {i, (i + 1) % N});
+        ops += "Jz" * Op("SZSZ", {i, (i + 1) % N});
+        ops += "Jx" * Op("EXCHANGE", {i, (i + 1) % N});
+        ops += "TDN" * Op("HOPDN", {i, (i + 1) % N});
+        ops += "TUP" * Op("HOPUP", {i, (i + 1) % N});
       }
       ops["Jz"] = 1.32;
       ops["Jx"] = complex(.432, .576);

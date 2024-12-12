@@ -21,7 +21,8 @@ void test_e0_nompi(int N, OpSum ops) {
 
     double e0_app = eigval0(ops, block_mpi);
 
-    // Log("N: {}, n_up: {}, e0 mat: {:+.10f}, e0 mpi: {:+.10f}", N, nup, e0_mat,
+    // Log("N: {}, n_up: {}, e0 mat: {:+.10f}, e0 mpi: {:+.10f}", N, nup,
+    // e0_mat,
     //     e0_app);
     REQUIRE(close(e0_mat, e0_app));
   }
@@ -38,13 +39,13 @@ void test_sz_sp_sm_energy(int N, OpSum const &ops) {
 
     for (int i = 0; i < N; ++i) {
       // Log("N: {}, n_up: {}, i: {}", N, nup, i);
-      auto op = Op("SZ", 1.0, i);
+      auto op = Op("SZ", i);
       double exp_s = inner(op, gs_s);
       double exp_p = inner(op, gs_p);
       REQUIRE(close(exp_s, exp_p));
 
       if (nup < N - 1) {
-        op = Op("S+", 1.0, i);
+        op = Op("S+", i);
         auto sz_i_gs_s = zeros(Spinhalf(N, nup + 1));
         apply(op, gs_s, sz_i_gs_s);
         double dot_s = dot(sz_i_gs_s, sz_i_gs_s);
@@ -57,7 +58,7 @@ void test_sz_sp_sm_energy(int N, OpSum const &ops) {
       }
 
       if (nup > 0) {
-        op = Op("S-", 1.0, i);
+        op = Op("S-", i);
         auto sz_i_gs_s = zeros(Spinhalf(N, nup - 1));
         apply(op, gs_s, sz_i_gs_s);
         double dot_s = dot(sz_i_gs_s, sz_i_gs_s);
@@ -82,11 +83,11 @@ void test_sz_sp_sm_commutators(int n_sites) {
     for (int i = 0; i < n_sites; ++i)
       for (int j = 0; j < n_sites; ++j) {
 
-        auto sp_i = Op("S+", 1.0, i);
-        auto sm_i = Op("S-", 1.0, i);
-        auto sp_j = Op("S+", 1.0, j);
-        auto sm_j = Op("S-", 1.0, j);
-        auto sz_i = Op("SZ", 1.0, i);
+        auto sp_i = Op("S+", i);
+        auto sm_i = Op("S-", i);
+        auto sp_j = Op("S+", j);
+        auto sm_j = Op("S-", j);
+        auto sz_i = Op("SZ", i);
 
         auto rvec = rand(block);
         auto sm_rvec = zeros(block_m);
@@ -119,27 +120,27 @@ TEST_CASE("spinhalf_distributed_apply", "[spinhalf_distributed]") try {
     Log("SpinhalfDistributed: manual N=6 spin chain test");
 
     OpSum ops;
-    std::string type = "ISING";
-    ops += Op(type, "J", {0, 1});
-    ops += Op(type, "J", {1, 2});
-    ops += Op(type, "J", {2, 3});
-    ops += Op(type, "J", {3, 4});
-    ops += Op(type, "J", {4, 5});
-    ops += Op(type, "J", {5, 0});
+    std::string type = "SZSZ";
+    ops += "J" * Op(type, {0, 1});
+    ops += "J" * Op(type, {1, 2});
+    ops += "J" * Op(type, {2, 3});
+    ops += "J" * Op(type, {3, 4});
+    ops += "J" * Op(type, {4, 5});
+    ops += "J" * Op(type, {5, 0});
 
     // postfix ops
-    ops += Op("EXCHANGE", "J", {0, 1});
-    ops += Op("EXCHANGE", "J", {1, 2});
+    ops += "J" * Op("EXCHANGE", {0, 1});
+    ops += "J" * Op("EXCHANGE", {1, 2});
 
     // mixed ops
-    ops += Op("HB", "J", {2, 3});
-    ops += Op("HB", "J", {1, 4});
-    ops += Op("HB", "J", {0, 3});
+    ops += "J" * Op("SDOTS", {2, 3});
+    ops += "J" * Op("SDOTS", {1, 4});
+    ops += "J" * Op("SDOTS", {0, 3});
 
     // Prefix ops
-    ops += Op("HB", "J", {3, 4});
-    ops += Op("HB", "J", {4, 5});
-    ops += Op("HB", "J2", {4, 5});
+    ops += "J" * Op("SDOTS", {3, 4});
+    ops += "J" * Op("SDOTS", {4, 5});
+    ops += "J2" * Op("SDOTS", {4, 5});
 
     ops["J"] = 1;
     ops["J2"] = 0.1;

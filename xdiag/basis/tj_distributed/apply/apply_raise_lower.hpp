@@ -2,29 +2,22 @@
 
 #include <string>
 
-#include <xdiag/bits/bitops.hpp>
 #include <xdiag/basis/tj_distributed/apply/generic_term_dns.hpp>
 #include <xdiag/basis/tj_distributed/apply/generic_term_ups.hpp>
+#include <xdiag/bits/bitops.hpp>
 
 namespace xdiag::basis::tj_distributed {
 
 template <typename bit_t, typename coeff_t, class BasisIn, class BasisOut,
           class Fill>
-void apply_raise_lower(Op const &op, BasisIn &&basis_in, BasisOut &&basis_out,
-                       Fill &&fill) {
-  assert(op.size() == 1);
-
+void apply_raise_lower(Coupling const &cpl, Op const &op, BasisIn &&basis_in,
+                       BasisOut &&basis_out, Fill &&fill) {
+  coeff_t c = cpl.scalar().as<coeff_t>();
   std::string type = op.type();
-  assert((type == "CDAGUP") || (type == "CDAGDN") || (type == "CUP") ||
-         (type == "CDN"));
-
   int64_t s = op[0];
+
   bit_t site_mask = (bit_t)1 << s;
   bit_t fermi_mask = site_mask - 1;
-
-  Coupling cpl = op.coupling();
-  assert(cpl.isexplicit() && !cpl.ismatrix());
-  coeff_t c = cpl.as<coeff_t>();
 
   // Raising operators
   if ((type == "CDAGUP") || (type == "CDAGDN")) {

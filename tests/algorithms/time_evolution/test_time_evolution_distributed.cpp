@@ -6,9 +6,9 @@
 #include <xdiag/blocks/blocks.hpp>
 #include <xdiag/blocks/tj.hpp>
 #include <xdiag/blocks/tj_distributed.hpp>
+#include <xdiag/states/fill.hpp>
 #include <xdiag/states/product_state.hpp>
 #include <xdiag/states/random_state.hpp>
-#include <xdiag/states/fill.hpp>
 #include <xdiag/states/state.hpp>
 #include <xdiag/utils/close.hpp>
 
@@ -29,13 +29,13 @@ TEST_CASE("time_evolution_distributed", "[time_evolution]") try {
       int site = y * L + x;
       int right = y * L + nx;
       int top = ny * L + x;
-      ops += Op("HOP", "T", {site, right});
-      ops += Op("TJISING", "JZ", {site, right});
-      ops += Op("EXCHANGE", "JEX", {site, right});
+      ops += "T" * Op("HOP", {site, right});
+      ops += "JZ" * Op("TJSZSZ", {site, right});
+      ops += "JEX" * Op("EXCHANGE", {site, right});
 
-      ops += Op("HOP", "T", {site, top});
-      ops += Op("TJISING", "JZ", {site, top});
-      ops += Op("EXCHANGE", "JEX", {site, top});
+      ops += "T" * Op("HOP", {site, top});
+      ops += "JZ" * Op("TJSZSZ", {site, top});
+      ops += "JEX" * Op("EXCHANGE", {site, top});
     }
   }
   ops["T"] = 1.0 + 0.2i;
@@ -68,8 +68,8 @@ TEST_CASE("time_evolution_distributed", "[time_evolution]") try {
   apply(ops, psi_0d, H_psi_0d);
 
   for (int s = 0; s < n_sites; ++s) {
-    auto n = innerC(Op("NUMBER", 1.0, s), H_psi_0);
-    auto nd = innerC(Op("NUMBER", 1.0, s), H_psi_0d);
+    auto n = innerC(Op("NTOT", s), H_psi_0);
+    auto nd = innerC(Op("NTOT", s), H_psi_0d);
     // Log("i {} {} {}", s, n, nd);
     REQUIRE(close(n, nd));
   }
@@ -81,8 +81,8 @@ TEST_CASE("time_evolution_distributed", "[time_evolution]") try {
     auto psi = time_evolve(ops, psi_0, time, tol);
     auto psid = time_evolve(ops, psi_0d, time, tol);
     for (int s = 0; s < n_sites; ++s) {
-      auto n = innerC(Op("NUMBER", 1.0, s), psi);
-      auto nd = innerC(Op("NUMBER", 1.0, s), psid);
+      auto n = innerC(Op("NTOT", s), psi);
+      auto nd = innerC(Op("NTOT", s), psid);
       Log("{} {} {} {:.6f}", s, n, nd, time);
       REQUIRE(std::abs(n - nd) < 1e-6);
     }

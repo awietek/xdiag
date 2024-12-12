@@ -10,20 +10,14 @@
 namespace xdiag::basis::tj_distributed {
 
 template <typename bit_t, typename coeff_t, class Basis>
-void apply_hopping(Op const &op, Basis &&basis, const coeff_t *vec_in,
-                   coeff_t *vec_out) {
-  assert(op.size() == 2);
-  assert(sites_disjoint(op));
+void apply_hopping(Coupling const &cpl, Op const &op, Basis &&basis,
+                   const coeff_t *vec_in, coeff_t *vec_out) {
 
+  coeff_t t = cpl.scalar().as<coeff_t>();
   std::string type = op.type();
-  assert((type == "HOPUP") || (type == "HOPDN"));
-
-  Coupling cpl = op.coupling();
-  assert(cpl.isexplicit() && !cpl.ismatrix());
-  coeff_t t = cpl.as<coeff_t>();
-
   int64_t s1 = op[0];
   int64_t s2 = op[1];
+
   bit_t flipmask = ((bit_t)1 << s1) | ((bit_t)1 << s2);
   int64_t l = std::min(s1, s2);
   int64_t u = std::max(s1, s2);

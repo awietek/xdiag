@@ -9,23 +9,17 @@
 namespace xdiag::basis::spinhalf_distributed {
 
 template <class basis_t, typename coeff_t>
-void apply_sz(Op const &op, basis_t const &basis,
+void apply_sz(Coupling const &cpl, Op const &op, basis_t const &basis,
               arma::Col<coeff_t> const &vec_in,
               arma::Col<coeff_t> &vec_out) try {
   using bit_t = typename basis_t::bit_t;
-  assert(basis.size() == vec_in.size());
-  assert(basis.size() == vec_out.size());
-  assert(op.type() == "SZ");
-  assert(op.size() == 1);
 
+  coeff_t H = cpl.scalar().as<coeff_t>();
   int64_t s = op[0];
-  bit_t mask = ((bit_t)1 << s);
 
-  assert(op.coupling().is<coeff_t>());
-  coeff_t H = op.coupling().as<coeff_t>();
+  bit_t mask = ((bit_t)1 << s);
   coeff_t val_up = H / 2.;
   coeff_t val_dn = -H / 2.;
-  
   int n_postfix_bits = basis.n_postfix_bits();
 
   int64_t idx = 0;

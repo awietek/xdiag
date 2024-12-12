@@ -9,25 +9,14 @@
 namespace xdiag::basis::spinhalf_distributed {
 
 template <class basis_t, typename coeff_t>
-void apply_ising(Op const &op, basis_t const &basis,
-                 arma::Col<coeff_t> const &vec_in,
-                 arma::Col<coeff_t> &vec_out) try {
+void apply_szsz(Coupling const &cpl, Op const &op, basis_t const &basis,
+                arma::Col<coeff_t> const &vec_in,
+                arma::Col<coeff_t> &vec_out) try {
   using bit_t = typename basis_t::bit_t;
-  assert(basis.size() == vec_in.size());
-  assert(basis.size() == vec_out.size());
-  assert(op.type() == "ISING");
-  assert(op.size() == 2);
+
+  coeff_t J = cpl.scalar().as<coeff_t>();
   int64_t ss1 = op[0];
   int64_t ss2 = op[1];
-  assert((ss1 >= 0) && (ss2 >= 0));
-
-  if (ss1 == ss2) {
-    XDIAG_THROW("ISING Op with both sites equal not implemented yet");
-  }
-
-  assert(op.coupling().is<coeff_t>());
-
-  coeff_t J = op.coupling().as<coeff_t>();
   coeff_t val_same = J / 4.;
   coeff_t val_diff = -J / 4.;
 

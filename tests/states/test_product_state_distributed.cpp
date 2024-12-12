@@ -1,15 +1,15 @@
 #include "../catch.hpp"
 
 #include <xdiag/algebra/algebra.hpp>
+#include <xdiag/states/fill.hpp>
 #include <xdiag/states/product_state.hpp>
 #include <xdiag/utils/close.hpp>
-#include <xdiag/states/fill.hpp>
 
 using namespace xdiag;
 
 TEST_CASE("product_state_distributed", "[states]") {
 
-  // Test product state for 
+  // Test product state for
   // Test product state for tJ block
   for (int i = 0; i < 10; ++i) {
     for (int n_sites = 1; n_sites < 9; ++n_sites) {
@@ -40,10 +40,10 @@ TEST_CASE("product_state_distributed", "[states]") {
       fill(psi2, pstate);
       for (int i = 0; i < n_sites; ++i) {
         std::string p = pstate[i];
-        auto sz = Op("SZ", 1.0, i);
+        auto sz = Op("SZ", i);
         auto szc = inner(sz, psi2);
 
-        auto n = Op("NUMBER", 1.0, i);
+        auto n = Op("NTOT", i);
         auto nc = inner(n, psi2);
 
         if (p == "Emp") {
@@ -79,7 +79,7 @@ TEST_CASE("product_state_distributed", "[states]") {
       for (int i = 0; i < n_sites; ++i) {
         std::string p = pstate[i];
 
-        auto sz = Op("SZ", 1.0, i);
+        auto sz = Op("SZ", i);
         auto szc = inner(sz, psi);
 
         if (p == "Up") {
@@ -95,7 +95,7 @@ TEST_CASE("product_state_distributed", "[states]") {
       fill(psi2, pstate);
       for (int i = 0; i < n_sites; ++i) {
         std::string p = pstate[i];
-        auto sz = Op("SZ", 1.0, i);
+        auto sz = Op("SZ", i);
         auto szc = inner(sz, psi2);
 
         if (p == "Up") {

@@ -7,29 +7,21 @@
 namespace xdiag::basis::tj_distributed {
 
 template <typename bit_t, typename coeff_t, class Basis>
-void apply_ising(Op const &op, Basis &&basis, const coeff_t *vec_in,
+void apply_szsz(Coupling const &cpl, Op const &op, Basis &&basis, const coeff_t *vec_in,
                  coeff_t *vec_out) {
-  assert(op.size() == 2);
-  assert(sites_disjoint(op));
-
-  std::string type = op.type();
-  assert((type == "ISING") || (type == "TJISING"));
-
-  Coupling cpl = op.coupling();
-  assert(cpl.isexplicit() && !cpl.ismatrix());
-  coeff_t J = cpl.as<coeff_t>();
-
+  coeff_t J = cpl.scalar().as<coeff_t>();
   int64_t s1 = op[0];
   int64_t s2 = op[1];
+  std::string type = op.type();
   bit_t s1_mask = (bit_t)1 << s1;
   bit_t s2_mask = (bit_t)1 << s2;
 
   // Set values for same/diff (tJ block definition)
   coeff_t val_same, val_diff;
-  if (type == "ISING") {
+  if (type == "SZSZ") {
     val_same = J / 4.;
     val_diff = -J / 4.;
-  } else { // (type == "TJISING")
+  } else { // (type == "TJSZSZ")
     val_same = 0.;
     val_diff = -J / 2.;
   }

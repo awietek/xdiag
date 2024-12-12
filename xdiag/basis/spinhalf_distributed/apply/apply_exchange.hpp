@@ -13,25 +13,16 @@
 namespace xdiag::basis::spinhalf_distributed {
 
 template <class basis_t, typename coeff_t>
-void apply_exchange_postfix(Op const &op, basis_t const &basis,
+void apply_exchange_postfix(Coupling const &cpl, Op const &op,
+                            basis_t const &basis,
                             arma::Col<coeff_t> const &vec_in,
                             arma::Col<coeff_t> &vec_out) try {
   using bit_t = typename basis_t::bit_t;
-  assert(basis.size() == vec_in.size());
-  assert(basis.size() == vec_out.size());
-  assert(op.type() == "EXCHANGE");
-  assert(op.size() == 2);
+
+  coeff_t J = cpl.scalar().as<coeff_t>();
+  coeff_t Jhalf = J / 2.0;
   int64_t s1 = op[0];
   int64_t s2 = op[1];
-  assert((s1 >= 0) && (s2 >= 0));
-
-  if (s1 == s2) {
-    XDIAG_THROW("EXCHANGE Op with both sites equal not implemented yet");
-  }
-
-  assert(op.coupling().is<coeff_t>());
-  coeff_t J = op.coupling().as<coeff_t>();
-  coeff_t Jhalf = J / 2.0;
 
   int64_t n_prefix_bits = basis.n_prefix_bits();
   int64_t n_postfix_bits = basis.n_postfix_bits();
@@ -60,7 +51,8 @@ void apply_exchange_postfix(Op const &op, basis_t const &basis,
 
 // apply_exchange_prefix works with the send/recv buffer as input/output vectors
 template <class basis_t, typename coeff_t>
-void apply_exchange_prefix(Op const &op, basis_t const &basis) try {
+void apply_exchange_prefix(Coupling const &cpl, Op const &op,
+                           basis_t const &basis) try {
   using bit_t = typename basis_t::bit_t;
 
   int64_t buffer_size = basis.size_max();
@@ -68,19 +60,10 @@ void apply_exchange_prefix(Op const &op, basis_t const &basis) try {
   coeff_t *send_buffer = mpi::buffer.send<coeff_t>();
   coeff_t *recv_buffer = mpi::buffer.recv<coeff_t>();
 
-  assert(op.type() == "EXCHANGE");
-  assert(op.size() == 2);
+  coeff_t J = cpl.scalar().as<coeff_t>();
+  coeff_t Jhalf = J / 2.0;
   int64_t s1 = op[0];
   int64_t s2 = op[1];
-  assert((s1 >= 0) && (s2 >= 0));
-
-  if (s1 == s2) {
-    XDIAG_THROW("EXCHANGE Op with both sites equal not implemented yet");
-  }
-
-  assert(op.coupling().is<coeff_t>());
-  coeff_t J = op.coupling().as<coeff_t>();
-  coeff_t Jhalf = J / 2.0;
 
   int64_t n_prefix_bits = basis.n_prefix_bits();
   int64_t n_postfix_bits = basis.n_postfix_bits();
@@ -108,7 +91,8 @@ void apply_exchange_prefix(Op const &op, basis_t const &basis) try {
 }
 
 template <class basis_t, typename coeff_t>
-void apply_exchange_mixed(Op const &op, basis_t const &basis,
+void apply_exchange_mixed(Coupling const &cpl, Op const &op,
+                          basis_t const &basis,
                           arma::Col<coeff_t> const &vec_in,
                           arma::Col<coeff_t> &vec_out) try {
   using bit_t = typename basis_t::bit_t;
@@ -116,17 +100,12 @@ void apply_exchange_mixed(Op const &op, basis_t const &basis,
   MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
   MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
 
-  assert(basis.size() == vec_in.size());
-  assert(basis.size() == vec_out.size());
-  assert(op.type() == "EXCHANGE");
-  assert(op.size() == 2);
+  coeff_t J = cpl.scalar().as<coeff_t>();
+  coeff_t Jhalf = J / 2.0;
   int64_t s1 = op[0];
   int64_t s2 = op[1];
   assert((s1 >= 0) && (s2 >= 0));
 
-  if (s1 == s2) {
-    XDIAG_THROW("EXCHANGE Op with both sites equal not implemented yet");
-  }
   int64_t n_up = basis.n_up();
   int64_t n_prefix_bits = basis.n_prefix_bits();
   int64_t n_postfix_bits = basis.n_postfix_bits();
@@ -135,9 +114,6 @@ void apply_exchange_mixed(Op const &op, basis_t const &basis,
   bit_t prefix_mask = ((bit_t)1 << (ss2 - n_postfix_bits));
   bit_t postfix_mask = ((bit_t)1 << ss1);
 
-  assert(op.coupling().is<coeff_t>());
-  coeff_t J = op.coupling().as<coeff_t>();
-  coeff_t Jhalf = J / 2.0;
   mpi::Communicator comm;
 
   // Check whether communication pattern has already been determined

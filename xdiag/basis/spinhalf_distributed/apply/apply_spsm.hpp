@@ -5,27 +5,20 @@
 namespace xdiag::basis::spinhalf_distributed {
 
 template <class basis_t, typename coeff_t>
-void apply_spsm_postfix(Op const &op, basis_t const &basis_in,
+void apply_spsm_postfix(Coupling const &cpl, Op const &op,
+                        basis_t const &basis_in,
                         arma::Col<coeff_t> const &vec_in,
                         basis_t const &basis_out,
                         arma::Col<coeff_t> &vec_out) try {
   using bit_t = typename basis_t::bit_t;
-  assert(basis_in.size() == vec_in.size());
-  assert(basis_out.size() == vec_out.size());
-  assert((op.type() == "S+") || (op.type() == "S-"));
-  assert(op.size() == 1);
+
+  coeff_t H = cpl.scalar().as<coeff_t>();
+  int64_t s = op[0];
   std::string type = op.type();
 
-  int64_t s = op[0];
   bit_t mask = ((bit_t)1 << s);
-  assert(s >= 0);
-
-  assert(op.coupling().is<coeff_t>());
-  coeff_t H = op.coupling().as<coeff_t>();
 
   int64_t n_postfix_bits = basis_in.n_postfix_bits();
-  assert(s < n_postfix_bits);
-
   int64_t idx = 0;
   for (auto prefix : basis_in.prefixes()) {
     auto const &postfixes = basis_in.postfix_states(prefix);
@@ -61,24 +54,17 @@ void apply_spsm_postfix(Op const &op, basis_t const &basis_in,
 }
 
 template <class basis_t, typename coeff_t>
-void apply_spsm_prefix(Op const &op, basis_t const &basis_in,
-                       basis_t const &basis_out) try {
+void apply_spsm_prefix(Coupling const &cpl, Op const &op,
+                       basis_t const &basis_in, basis_t const &basis_out) try {
   using bit_t = typename basis_t::bit_t;
-  assert((op.type() == "S+") || (op.type() == "S-"));
-  assert(op.size() == 1);
-  std::string type = op.type();
 
+  coeff_t H = cpl.scalar().as<coeff_t>();
+  std::string type = op.type();
   int64_t s = op[0];
-  assert(s >= 0);
 
   int64_t n_prefix_bits = basis_in.n_prefix_bits();
   int64_t n_postfix_bits = basis_in.n_postfix_bits();
-  assert(s >= n_postfix_bits);
-
   bit_t mask = ((bit_t)1 << (s - n_postfix_bits));
-
-  assert(op.coupling().is<coeff_t>());
-  coeff_t H = op.coupling().as<coeff_t>();
 
   int64_t buffer_size = std::max(basis_out.size_max(), basis_in.size_max());
   mpi::buffer.reserve<coeff_t>(buffer_size);

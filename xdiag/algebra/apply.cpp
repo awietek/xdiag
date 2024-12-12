@@ -243,13 +243,11 @@ void apply(OpSum const &ops, SpinhalfDistributed const &block_in,
 
 template void apply<double>(OpSum const &, SpinhalfDistributed const &,
                             arma::Col<double> const &,
-                            SpinhalfDistributed const &, arma::Col<double> &,
-                            double);
+                            SpinhalfDistributed const &, arma::Col<double> &);
 
 template void apply<complex>(OpSum const &, SpinhalfDistributed const &,
                              arma::Col<complex> const &,
-                             SpinhalfDistributed const &, arma::Col<complex> &,
-                             double);
+                             SpinhalfDistributed const &, arma::Col<complex> &);
 
 template <typename coeff_t>
 void apply(OpSum const &ops, tJDistributed const &block_in,
