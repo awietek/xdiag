@@ -54,9 +54,9 @@ TEST_CASE("electron_matrix", "[electron]") try {
   auto block = Electron(n_sites, n_up, n_dn);
 
   for (int i = 0; i < n_sites; ++i) {
-    ops += "T" * Op("HOP", {i, (i + 1) % n_sites});
+    ops += "T" * Op("Hop", {i, (i + 1) % n_sites});
   }
-  ops += "U" * Op("HUBBARDU");
+  ops += "U" * Op("HubbardU");
   ops["T"] = 1.0;
   ops["U"] = 5.0;
   auto H1 = matrix(ops, block, block);
@@ -126,8 +126,8 @@ TEST_CASE("electron_matrix", "[electron]") try {
   // Test two site exact solution
   {
     OpSum ops;
-    ops += "T" * Op("HOP", {0, 1});
-    ops += "U" * Op("HUBBARDU");
+    ops += "T" * Op("Hop", {0, 1});
+    ops += "U" * Op("HubbardU");
     auto block2 = Electron(2, 1, 1);
     for (int i = 0; i < 20; ++i) {
       double U = 1.234 * i;
@@ -203,7 +203,7 @@ TEST_CASE("electron_matrix", "[electron]") try {
     // Create single particle matrix for upspins
     arma::cx_mat Hs_up(n_sites, n_sites, arma::fill::zeros);
     for (auto [cpl, op] : ops) {
-      if (op.type() == "HOPUP") {
+      if (op.type() == "Hopup") {
         assert(op.size() == 2);
         int s1 = op[0];
         int s2 = op[1];
@@ -218,7 +218,7 @@ TEST_CASE("electron_matrix", "[electron]") try {
     // Create single particle matrix for dnspins
     arma::cx_mat Hs_dn(n_sites, n_sites, arma::fill::zeros);
     for (auto [cpl, op] : ops) {
-      if (op.type() == "HOPDN") {
+      if (op.type() == "Hopdn") {
         assert(op.size() == 2);
         int s1 = op[0];
         int s2 = op[1];
@@ -263,7 +263,7 @@ TEST_CASE("electron_matrix", "[electron]") try {
 
     auto ops = testcases::spinhalf::HB_alltoall(n_sites);
     auto ops_U = ops;
-    ops_U += "U" * Op("HUBBARDU");
+    ops_U += "U" * Op("HubbardU");
     ops_U["U"] = 999999; // gap out doubly occupied sites
     auto H_spinhalf = matrix(ops, block_spinhalf, block_spinhalf);
     auto H_electron = matrix(ops_U, block_electron, block_electron);
@@ -343,7 +343,7 @@ TEST_CASE("electron_matrix", "[electron]") try {
         ops[name] = 0.;
       }
     auto ops_U = ops;
-    ops_U += "U" * Op("HUBBARDU");
+    ops_U += "U" * Op("HubbardU");
     ops_U["U"] = 1000;
 
     // Check whether eigenvalues agree with HB model

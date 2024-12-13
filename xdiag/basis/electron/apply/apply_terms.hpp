@@ -20,22 +20,22 @@ void apply_terms(OpSum const &ops, BasisIn const &basis_in,
   for (auto const &[cpl, op] : ops.plain()) {
 
     std::string type = op.type();
-    if ((type == "HOPUP") || (type == "HOPDN")) {
+    if ((type == "Hopup") || (type == "Hopdn")) {
       electron::apply_hopping<bit_t, coeff_t, symmetric>(cpl, op, basis_in,
                                                          fill);
-    } else if ((type == "CDAGUP") || (type == "CUP") || (type == "CDAGDN") ||
-               (type == "CDN")) {
+    } else if ((type == "Cdagup") || (type == "Cup") || (type == "Cdagdn") ||
+               (type == "Cdn")) {
       electron::apply_raise_lower<bit_t, coeff_t, symmetric>(cpl, op, basis_in,
                                                              basis_out, fill);
-    } else if (type == "SZSZ") {
+    } else if (type == "SzSz") {
       electron::apply_szsz<bit_t, coeff_t, symmetric>(cpl, op, basis_in, fill);
-    } else if (type == "EXCHANGE") {
+    } else if (type == "Exchange") {
       electron::apply_exchange<bit_t, coeff_t, symmetric>(cpl, op, basis_in,
                                                           fill);
-    } else if ((type == "NUP") || (type == "NDN")) {
+    } else if ((type == "Nup") || (type == "Ndn")) {
       electron::apply_number<bit_t, coeff_t, symmetric>(cpl, op, basis_in,
                                                         fill);
-    } else if (type == "HUBBARDU") {
+    } else if (type == "HubbardU") {
       electron::apply_u<bit_t, coeff_t, symmetric>(cpl, basis_in, fill);
     } else {
       XDIAG_THROW(fmt::format("Unknown Op type \"{}\"", type));

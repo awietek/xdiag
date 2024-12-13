@@ -21,7 +21,7 @@ TEST_CASE("symmetrize", "[operators]") try {
     // int n_sites = 6;
     auto ops = testcases::electron::get_linear_chain(n_sites, 1.0, 5.0);
     for (int i = 0; i < n_sites; ++i) {
-      ops += "J2" * Op("SDOTS", {i, (i + 2) % n_sites});
+      ops += "J2" * Op("SdotS", {i, (i + 2) % n_sites});
     }
     ops["J2"] = 0.321;
     ops["T"] = 0;
@@ -101,7 +101,7 @@ TEST_CASE("symmetrize", "[operators]") try {
           // Measure correlators
           for (int i = 1; i < n_sites; ++i) {
             OpSum corr_nosym;
-            corr_nosym += "J" * Op("SDOTS", {0, i});
+            corr_nosym += "J" * Op("SdotS", {0, i});
             corr_nosym["J"] = 1.0;
 
             auto corr_sym = symmetrize(corr_nosym, space_group);
@@ -117,7 +117,7 @@ TEST_CASE("symmetrize", "[operators]") try {
           }
           // for (int j=0; j<n_sites; ++j) {
           //   Ops corr_nosym;
-          //   corr_nosym += Op("EXCHANGE", "J", {j, (i+j)%n_sites});
+          //   corr_nosym += Op("Exchange", "J", {j, (i+j)%n_sites});
           //   Couplings cpls;
           //   cpls["J"] = 1.0;
           //   auto val_nosym2 = Inner(corr_nosym, cpls, block_nosym,

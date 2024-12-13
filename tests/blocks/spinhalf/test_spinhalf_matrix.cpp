@@ -166,7 +166,7 @@ TEST_CASE("spinhalf_matrix", "[spinhalf]") try {
 
             if (i == j) {
               OpSum sz;
-              sz += Op("SZ", i);
+              sz += Op("Sz", i);
               auto sz_mat = matrix(sz, block, block);
               auto sz_matr = matrix(sz, block_raw, block_raw);
               REQUIRE(close(comm, arma::mat(2.0 * sz_mat)));

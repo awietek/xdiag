@@ -7,8 +7,8 @@
 namespace xdiag::basis::tj_distributed {
 
 template <typename bit_t, typename coeff_t, class Basis>
-void apply_szsz(Coupling const &cpl, Op const &op, Basis &&basis, const coeff_t *vec_in,
-                 coeff_t *vec_out) {
+void apply_szsz(Coupling const &cpl, Op const &op, Basis &&basis,
+                const coeff_t *vec_in, coeff_t *vec_out) {
   coeff_t J = cpl.scalar().as<coeff_t>();
   int64_t s1 = op[0];
   int64_t s2 = op[1];
@@ -18,10 +18,10 @@ void apply_szsz(Coupling const &cpl, Op const &op, Basis &&basis, const coeff_t 
 
   // Set values for same/diff (tJ block definition)
   coeff_t val_same, val_diff;
-  if (type == "SZSZ") {
+  if (type == "SzSz") {
     val_same = J / 4.;
     val_diff = -J / 4.;
-  } else { // (type == "TJSZSZ")
+  } else { // (type == "tJSzSz")
     val_same = 0.;
     val_diff = -J / 2.;
   }

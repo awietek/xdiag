@@ -232,7 +232,7 @@ TEST_CASE("electron_symmetric_matrix", "[electron]") try {
   auto fl = FileToml(lfile);
   opsum = fl["Interactions"].as<OpSum>();
   opsum["T"] = 1.0;
-  opsum += "U" * Op("HUBBARDU");
+  opsum += "U" * Op("HubbardU");
   opsum["U"] = 5.0;
   group = fl["Symmetries"].as<PermutationGroup>();
 
@@ -253,8 +253,8 @@ TEST_CASE("electron_symmetric_matrix", "[electron]") try {
   Log("electron_symmetric_matrix: Hubbard 3x3 triangular(+ Heisenberg terms)");
   auto opsum_hb = opsum;
   for (auto [cpl, op] : opsum) {
-    if (op.type() == "HOP") {
-      opsum_hb += "J" * Op("SDOTS", {op[0], op[1]});
+    if (op.type() == "Hop") {
+      opsum_hb += "J" * Op("SdotS", {op[0], op[1]});
     }
   }
   opsum_hb["J"] = 0.4;
@@ -268,7 +268,7 @@ TEST_CASE("electron_symmetric_matrix", "[electron]") try {
 
     auto fl = FileToml(lfile);
     auto opsum = fl["Interactions"].as<OpSum>();
-    opsum += "U" * Op("HUBBARDU");
+    opsum += "U" * Op("HubbardU");
     opsum["TPHI"] = complex(0.5, 0.5);
     opsum["JPHI"] = 0.;
     opsum["U"] = 5.0;

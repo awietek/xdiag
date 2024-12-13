@@ -20,19 +20,19 @@ void apply_terms(OpSum const &ops, BasisIn const &basis_in,
   // Ops applied in up/dn order
   for (auto [cpl, op] : ops) {
     std::string type = op.type();
-    if ((type == "SZSZ") || (type == "TJSZSZ")) {
+    if ((type == "SzSz") || (type == "tJSzSz")) {
       tj_distributed::apply_szsz<bit_t, coeff_t>(
           cpl, op, basis_in, vec_in.memptr(), vec_out.memptr());
-    } else if ((type == "NUP") || (type == "NDN")) {
+    } else if ((type == "Nup") || (type == "Ndn")) {
       tj_distributed::apply_number<bit_t, coeff_t>(
           cpl, op, basis_in, vec_in.memptr(), vec_out.memptr());
-    } else if (type == "EXCHANGE") {
+    } else if (type == "Exchange") {
       tj_distributed::apply_exchange<bit_t, coeff_t>(
           cpl, op, basis_in, vec_in.memptr(), vec_out.memptr());
-    } else if (type == "HOPDN") {
+    } else if (type == "Hopdn") {
       tj_distributed::apply_hopping<bit_t, coeff_t>(
           cpl, op, basis_in, vec_in.memptr(), vec_out.memptr());
-    } else if (type == "HOPUP") {
+    } else if (type == "Hopup") {
       continue;
     } else {
       XDIAG_THROW(std::string("Unknown Op type for \"tJDistributed\" block: ") +
@@ -55,11 +55,11 @@ void apply_terms(OpSum const &ops, BasisIn const &basis_in,
 
   for (auto [cpl, op] : ops) {
     std::string type = op.type();
-    if (type == "HOPUP") {
+    if (type == "Hopup") {
       tj_distributed::apply_hopping<bit_t, coeff_t>(
           cpl, op, basis_in, vec_in_trans, vec_out_trans);
-    } else if ((type == "SZSZ") || (type == "TJSZSZ") || (type == "EXCHANGE") ||
-               (type == "HOPDN") || (type == "NUP") || (type == "NDN")) {
+    } else if ((type == "SzSz") || (type == "tJSzSz") || (type == "Exchange") ||
+               (type == "Hopdn") || (type == "Nup") || (type == "Ndn")) {
       continue;
     } else {
       XDIAG_THROW(std::string("Unknown Op type for \"tJDistributed\" block: ") +

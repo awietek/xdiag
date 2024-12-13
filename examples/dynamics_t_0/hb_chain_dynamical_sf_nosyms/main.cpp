@@ -32,7 +32,7 @@ int main() {
     complex phase = exp(2i * pi * q / n_sites);
     OpSum S_of_q;
     for (int s = 0; s < n_sites; ++s) {
-      S_of_q << Op("SZ", pow(phase, s) / n_sites, s);
+      S_of_q << Op("Sz", pow(phase, s) / n_sites, s);
     }
 
     // Compute S(q) |g.s.>

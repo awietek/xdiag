@@ -18,8 +18,8 @@ double J2 = input["J2"].as<double>();
 auto block = Spinhalf(N, nup);
 auto H = OpSum();
 for (int i=0; i<N; ++i){
-  H += J1 * Op("HB", {i, (i+1)%N});
-  H += J2 * Op("HB", {i, (i+2)%N});
+  H += J1 * Op("SdotS", {i, (i+1)%N});
+  H += J2 * Op("SdotS", {i, (i+2)%N});
 }
 
 double e0 = eigval0(H, block);
@@ -182,7 +182,7 @@ int ndn = 2;
 // Define a Hubbard chain model
 auto ops = OpSum();
 for (int i=0; i< N; ++i){
-  ops += Op("HOP", "T", {i, (i+1) % N});
+  ops += Op("Hop", "T", {i, (i+1) % N});
 }
 ops["T"] = 1.0;
 ops["U"] = 5.0;
@@ -210,7 +210,7 @@ auto block = Spinhalf(N, nup);
 // Define the nearest-neighbor Heisenberg model
 auto ops = OpSum();
 for (int i=0; i<N; ++i) {
-  ops += Op("HB", "J", {i, (i+1) % N});
+  ops += Op("SdotS", "J", {i, (i+1) % N});
 }
 ops["J"] = 1.0;
 double e0 = eigval0(ops, block);
@@ -226,7 +226,7 @@ auto block = Spinhalf(N, nup);
 // Define the nearest-neighbor Heisenberg model
 auto ops = OpSum();
 for (int i=0; i<N; ++i) {
-  ops += Op("HB", "J", {i, (i+1) % N});
+  ops += Op("SdotS", "J", {i, (i+1) % N});
 }
 ops["J"] = 1.0;
 auto [e0, gs] = eig0(ops, block);
@@ -237,7 +237,7 @@ auto [e0, gs] = eig0(ops, block);
 
 {
 // --8<-- [start:op]
-auto op = Op("HOP", "T", {0, 1});
+auto op = Op("Hop", "T", {0, 1});
 XDIAG_SHOW(op);
 XDIAG_SHOW(op.type());
 XDIAG_SHOW(op.coupling().as<std::string>());
@@ -246,7 +246,7 @@ XDIAG_SHOW(op[0]);
 XDIAG_SHOW(op[1]);
 XDIAG_SHOW(op.isexplicit());
 
- op = Op("HOP", 1.23, {0, 1});
+ op = Op("Hop", 1.23, {0, 1});
 XDIAG_SHOW(op);
 XDIAG_SHOW(op.isreal());
 XDIAG_SHOW(op.ismatrix());
@@ -271,15 +271,15 @@ auto Sx = arma::mat("0 1; 1 0");
 // Option 1: coupling constants as numbers
 auto ops1 = OpSum();
 for (int i = 0; i<N; ++i) {
-  ops1 += J * Op("ISING", {i, (i+1)%N});
-  ops1 += h * Op("MATRIX", i, Sx);
+  ops1 += J * Op("SzSz", {i, (i+1)%N});
+  ops1 += h * Op("Map", i, Sx);
 }
 
 // Option 2: coupling constants as strings
 auto ops2 = OpSum();
 for (int i = 0; i<N; ++i) {
-  ops2 += "J" * Op("ISING", {i, (i+1)%N});
-  ops2 += "h" * Op("MATRIX", i, Sx);
+  ops2 += "J" * Op("SzSz", {i, (i+1)%N});
+  ops2 += "h" * Op("Map", i, Sx);
 }
 ops2["J"] = J;
 ops2["h"] = h;
@@ -406,7 +406,7 @@ int N = 8;
 auto block = Spinhalf(N,  N / 2);
 auto ops = OpSum();
 for (int i=0; i<N; ++i) {
-  ops += Op("HB", 1.0, {i, (i+1)%N});
+  ops += Op("SdotS", 1.0, {i, (i+1)%N});
 }
 auto [e0, psi] = eig0(ops, block);
 
@@ -431,7 +431,7 @@ int N = 8;
 auto block = Spinhalf(N,  N / 2);
 auto ops = OpSum();
 for (int i=0; i<N; ++i){
-  ops += Op("HB", 1.0, {i, (i+1)%N});
+  ops += Op("SdotS", 1.0, {i, (i+1)%N});
 }
 auto [e0, psi] = eig0(ops, block);
 
@@ -458,12 +458,12 @@ auto block_sym = Spinhalf(N, group, rep);
 
 auto ops = OpSum();
 for (int i=0; i<N; ++i) {
-  ops += Op("HB", 1.0, {i, (i+1)%N});
+  ops += Op("SdotS", 1.0, {i, (i+1)%N});
 }
 auto [e0, psi] = eig0(ops, block);
 auto [e0s, psi_sym] = eig0(ops, block_sym);
 
-auto corr = Op("HB", 1.0, {0, 1});
+auto corr = Op("SdotS", 1.0, {0, 1});
 auto nn_corr = inner(corr, psi);
 auto corr_sym = symmetrize(corr, group);
 auto nn_corr_sym = innerC(corr_sym, psi_sym);

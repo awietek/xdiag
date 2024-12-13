@@ -19,7 +19,7 @@ void apply_terms(OpSum const &ops, basis_t const &basis_in,
   OpSum ops_diagonal;
   OpSum ops_offdiagonal;
   for (auto [cpl, op] : ops.plain()) {
-    if ((op.type() == "SZSZ") || (op.type() == "SZ")) {
+    if ((op.type() == "SzSz") || (op.type() == "Sz")) {
       ops_diagonal += cpl * op;
     } else {
       ops_offdiagonal += cpl * op;
@@ -53,9 +53,9 @@ void apply_terms(OpSum const &ops, basis_t const &basis_in,
   // Diagonal operators
   for (auto [cpl, op] : ops_diagonal) {
     std::string type = op.type();
-    if (type == "SZSZ") {
+    if (type == "SzSz") {
       apply_szsz(cpl, op, basis_in, vec_in, vec_out);
-    } else if (type == "SZ") {
+    } else if (type == "Sz") {
       apply_sz(cpl, op, basis_in, vec_in, vec_out);
     } else {
       XDIAG_THROW(fmt::format("Unknown bond of type \"{}\"", type));
@@ -65,7 +65,7 @@ void apply_terms(OpSum const &ops, basis_t const &basis_in,
   // Apply postfix operators
   for (auto [cpl, op] : ops_postfix) {
     std::string type = op.type();
-    if (type == "EXCHANGE") {
+    if (type == "Exchange") {
       apply_exchange_postfix(cpl, op, basis_in, vec_in, vec_out);
     } else if ((type == "S+") || (type == "S-")) {
       apply_spsm_postfix(cpl, op, basis_in, vec_in, basis_out, vec_out);
@@ -86,7 +86,7 @@ void apply_terms(OpSum const &ops, basis_t const &basis_in,
 
   for (auto [cpl, op] : ops_prefix) {
     std::string type = op.type();
-    if (type == "EXCHANGE") {
+    if (type == "Exchange") {
       apply_exchange_prefix<basis_t, coeff_t>(cpl, op, basis_in);
     } else if ((type == "S+") || (type == "S-")) {
       apply_spsm_prefix<basis_t, coeff_t>(cpl, op, basis_in, basis_out);
@@ -107,7 +107,7 @@ void apply_terms(OpSum const &ops, basis_t const &basis_in,
   // apply mixed operators
   for (auto [cpl, op] : ops_mixed) {
     std::string type = op.type();
-    if (type == "EXCHANGE") {
+    if (type == "Exchange") {
       apply_exchange_mixed(cpl, op, basis_in, vec_in, vec_out);
     } else {
       XDIAG_THROW(fmt::format("Unknown bond of type \"{}\"", type));

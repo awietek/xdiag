@@ -18,10 +18,10 @@ void apply_szsz(Coupling const &cpl, Op const &op, Basis &&basis,
 
   // Set values for same/diff (tJ block definition)
   coeff_t val_same, val_diff;
-  if (op.type() == "SZSZ") {
+  if (op.type() == "SzSz") {
     val_same = J / 4.;
     val_diff = -J / 4.;
-  } else { // (type == "TJISING")
+  } else { // (type == "tJSzSz")
     val_same = 0.;
     val_diff = -J / 2.;
   }

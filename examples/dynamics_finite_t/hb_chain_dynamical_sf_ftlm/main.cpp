@@ -77,7 +77,7 @@ int main(int argc, char **argv) {
   for (int q = 0; q < n_sites; ++q) {
 
     Log("Creating S(q)|g.s.> (q={}) ...", q);
-    auto S_of_q = symmetrized_operator(Op("SZ", 0), group, irreps[q]);
+    auto S_of_q = symmetrized_operator(Op("Sz", 0), group, irreps[q]);
     auto block_q = Spinhalf(n_sites, n_up, group, irreps[k] * irreps[q]);
     ivec dim_q(1);
     dim_q(0) = block_q.size();

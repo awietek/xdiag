@@ -10,29 +10,29 @@ namespace xdiag {
 void check_valid(Op const &op) try {
   std::string type = op.type();
   if (is_known_type(type)) {
-    if ((type == "SZ") || (type == "S+") || (type == "S-") ||
-        (type == "CDAGUP") || (type == "CUP") || (type == "CDAGDN") ||
-        (type == "CDN") || (type == "NTOT") || (type == "NUP") ||
-        (type == "NDN")) {
+    if ((type == "Sz") || (type == "S+") || (type == "S-") ||
+        (type == "Cdagup") || (type == "Cup") || (type == "Cdagdn") ||
+        (type == "Cdn") || (type == "Ntot") || (type == "Nup") ||
+        (type == "Ndn")) {
       must_not_have_matrix(op);
       must_have_sites(op);
       must_have_n_sites(op, 1);
-    } else if ((type == "SDOTS") || (type == "EXCHANGE") || (type == "SZSZ") ||
-               (type == "HOP") || (type == "HOPUP") || (type == "HOPDN") ||
-               (type == "TJSZSZ") || (type == "TJSDOTS")) {
+    } else if ((type == "SdotS") || (type == "Exchange") || (type == "SzSz") ||
+               (type == "Hop") || (type == "Hopup") || (type == "Hopdn") ||
+               (type == "tJSzSz") || (type == "tJSdotS")) {
       must_not_have_matrix(op);
       must_have_sites(op);
       must_have_n_sites(op, 2);
       must_have_disjoint_sites(op);
-    } else if (type == "SCALARCHIRALITY") {
+    } else if (type == "ScalarChirality") {
       must_not_have_matrix(op);
       must_have_sites(op);
       must_have_n_sites(op, 3);
       must_have_disjoint_sites(op);
-    } else if (type == "HUBBARDU") {
+    } else if (type == "HubbardU") {
       must_not_have_matrix(op);
       must_not_have_sites(op);
-    } else if (type == "MATRIX") {
+    } else if (type == "Map") {
       must_have_matrix(op);
     } else {
       XDIAG_THROW(

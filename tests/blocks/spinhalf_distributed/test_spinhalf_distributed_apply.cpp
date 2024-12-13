@@ -39,7 +39,7 @@ void test_sz_sp_sm_energy(int N, OpSum const &ops) {
 
     for (int i = 0; i < N; ++i) {
       // Log("N: {}, n_up: {}, i: {}", N, nup, i);
-      auto op = Op("SZ", i);
+      auto op = Op("Sz", i);
       double exp_s = inner(op, gs_s);
       double exp_p = inner(op, gs_p);
       REQUIRE(close(exp_s, exp_p));
@@ -87,7 +87,7 @@ void test_sz_sp_sm_commutators(int n_sites) {
         auto sm_i = Op("S-", i);
         auto sp_j = Op("S+", j);
         auto sm_j = Op("S-", j);
-        auto sz_i = Op("SZ", i);
+        auto sz_i = Op("Sz", i);
 
         auto rvec = rand(block);
         auto sm_rvec = zeros(block_m);
@@ -120,7 +120,7 @@ TEST_CASE("spinhalf_distributed_apply", "[spinhalf_distributed]") try {
     Log("SpinhalfDistributed: manual N=6 spin chain test");
 
     OpSum ops;
-    std::string type = "SZSZ";
+    std::string type = "SzSz";
     ops += "J" * Op(type, {0, 1});
     ops += "J" * Op(type, {1, 2});
     ops += "J" * Op(type, {2, 3});
@@ -129,18 +129,18 @@ TEST_CASE("spinhalf_distributed_apply", "[spinhalf_distributed]") try {
     ops += "J" * Op(type, {5, 0});
 
     // postfix ops
-    ops += "J" * Op("EXCHANGE", {0, 1});
-    ops += "J" * Op("EXCHANGE", {1, 2});
+    ops += "J" * Op("Exchange", {0, 1});
+    ops += "J" * Op("Exchange", {1, 2});
 
     // mixed ops
-    ops += "J" * Op("SDOTS", {2, 3});
-    ops += "J" * Op("SDOTS", {1, 4});
-    ops += "J" * Op("SDOTS", {0, 3});
+    ops += "J" * Op("SdotS", {2, 3});
+    ops += "J" * Op("SdotS", {1, 4});
+    ops += "J" * Op("SdotS", {0, 3});
 
     // Prefix ops
-    ops += "J" * Op("SDOTS", {3, 4});
-    ops += "J" * Op("SDOTS", {4, 5});
-    ops += "J2" * Op("SDOTS", {4, 5});
+    ops += "J" * Op("SdotS", {3, 4});
+    ops += "J" * Op("SdotS", {4, 5});
+    ops += "J2" * Op("SdotS", {4, 5});
 
     ops["J"] = 1;
     ops["J2"] = 0.1;

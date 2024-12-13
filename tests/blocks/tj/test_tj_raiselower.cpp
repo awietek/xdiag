@@ -7,13 +7,13 @@ using namespace xdiag;
 using namespace arma;
 
 std::pair<int, int> target_nup_ndn(std::string op_str, int nup, int ndn) {
-  if (op_str == "CDAGUP") {
+  if (op_str == "Cdagup") {
     return {nup + 1, ndn};
-  } else if (op_str == "CDAGDN") {
+  } else if (op_str == "Cdagdn") {
     return {nup, ndn + 1};
-  } else if (op_str == "CUP") {
+  } else if (op_str == "Cup") {
     return {nup - 1, ndn};
-  } else if (op_str == "CDN") {
+  } else if (op_str == "Cdn") {
     return {nup, ndn - 1};
   } else {
     Log.err("Invalid op_str");
@@ -25,25 +25,25 @@ std::pair<int, int> target_nup_ndn(std::string op_str1, std::string op_str2,
                                    int nup, int ndn) {
   int nupd = 0;
   int ndnd = 0;
-  if (op_str1 == "CDAGUP") {
+  if (op_str1 == "Cdagup") {
     ++nupd;
-  } else if (op_str1 == "CDAGDN") {
+  } else if (op_str1 == "Cdagdn") {
     ++ndnd;
-  } else if (op_str1 == "CUP") {
+  } else if (op_str1 == "Cup") {
     --nupd;
-  } else if (op_str1 == "CDN") {
+  } else if (op_str1 == "Cdn") {
     --ndnd;
   } else {
     Log.err("Invalid op_str1");
   }
 
-  if (op_str2 == "CDAGUP") {
+  if (op_str2 == "Cdagup") {
     ++nupd;
-  } else if (op_str2 == "CDAGDN") {
+  } else if (op_str2 == "Cdagdn") {
     ++ndnd;
-  } else if (op_str2 == "CUP") {
+  } else if (op_str2 == "Cup") {
     --nupd;
-  } else if (op_str2 == "CDN") {
+  } else if (op_str2 == "Cdn") {
     --ndnd;
   } else {
     Log.err("Invalid op_str2");
@@ -67,7 +67,7 @@ bool valid_nup_ndn(std::string op_str1, std::string op_str2, int nup, int ndn,
 
 TEST_CASE("tj_raise_lower", "[tj]") try {
 
-  std::vector<std::string> op_strs = {"CDAGUP", "CDAGDN", "CUP", "CDN"};
+  std::vector<std::string> op_strs = {"Cdagup", "Cdagdn", "Cup", "Cdn"};
 
   for (int n_sites = 1; n_sites < 7; ++n_sites) {
     Log("testing tj anticommutation relations: N={}", n_sites);
@@ -128,32 +128,32 @@ TEST_CASE("tj_raise_lower", "[tj]") try {
                 if (i != j) {
                   REQUIRE(norm(anti_comm) < 1e-12);
                 } else {
-                  if (((op_i_str == "CDAGUP") && (op_j_str == "CDAGUP")) ||
-                      ((op_i_str == "CDAGUP") && (op_j_str == "CDAGDN")) ||
-                      ((op_i_str == "CDAGDN") && (op_j_str == "CDAGUP")) ||
-                      ((op_i_str == "CDAGDN") && (op_j_str == "CDAGDN")) ||
-                      ((op_i_str == "CUP") && (op_j_str == "CUP")) ||
-                      ((op_i_str == "CUP") && (op_j_str == "CDN")) ||
-                      ((op_i_str == "CDN") && (op_j_str == "CUP")) ||
-                      ((op_i_str == "CDN") && (op_j_str == "CDN"))) {
+                  if (((op_i_str == "Cdagup") && (op_j_str == "Cdagup")) ||
+                      ((op_i_str == "Cdagup") && (op_j_str == "Cdagdn")) ||
+                      ((op_i_str == "Cdagdn") && (op_j_str == "Cdagup")) ||
+                      ((op_i_str == "Cdagdn") && (op_j_str == "Cdagdn")) ||
+                      ((op_i_str == "Cup") && (op_j_str == "Cup")) ||
+                      ((op_i_str == "Cup") && (op_j_str == "Cdn")) ||
+                      ((op_i_str == "Cdn") && (op_j_str == "Cup")) ||
+                      ((op_i_str == "Cdn") && (op_j_str == "Cdn"))) {
                     REQUIRE(norm(anti_comm) < 1e-12);
-                  } else if (((op_i_str == "CDAGUP") && (op_j_str == "CUP")) ||
-                             ((op_i_str == "CUP") && (op_j_str == "CDAGUP"))) {
-                    auto ndn_op = Op("NDN", i);
+                  } else if (((op_i_str == "Cdagup") && (op_j_str == "Cup")) ||
+                             ((op_i_str == "Cup") && (op_j_str == "Cdagup"))) {
+                    auto ndn_op = Op("Ndn", i);
                     auto ndn_op_m = matrix(ndn_op, block);
                     REQUIRE(norm(anti_comm + ndn_op_m - id) < 1e-12);
-                  } else if (((op_i_str == "CDAGDN") && (op_j_str == "CDN")) ||
-                             ((op_i_str == "CDN") && (op_j_str == "CDAGDN"))) {
-                    auto nup_op = Op("NUP", i);
+                  } else if (((op_i_str == "Cdagdn") && (op_j_str == "Cdn")) ||
+                             ((op_i_str == "Cdn") && (op_j_str == "Cdagdn"))) {
+                    auto nup_op = Op("Nup", i);
                     auto nup_op_m = matrix(nup_op, block);
                     REQUIRE(norm(anti_comm + nup_op_m - id) < 1e-12);
-                  } else if ((op_i_str == "CDAGUP") && (op_j_str == "CDN")) {
+                  } else if ((op_i_str == "Cdagup") && (op_j_str == "Cdn")) {
                     REQUIRE(norm(anti_comm - op_ji_m * op_j_m) < 1e-12);
-                  } else if ((op_i_str == "CDN") && (op_j_str == "CDAGUP")) {
+                  } else if ((op_i_str == "Cdn") && (op_j_str == "Cdagup")) {
                     REQUIRE(norm(anti_comm - op_ij_m * op_i_m) < 1e-12);
-                  } else if ((op_i_str == "CDAGDN") && (op_j_str == "CUP")) {
+                  } else if ((op_i_str == "Cdagdn") && (op_j_str == "Cup")) {
                     REQUIRE(norm(anti_comm - op_ji_m * op_j_m) < 1e-12);
-                  } else if ((op_i_str == "CUP") && (op_j_str == "CDAGDN")) {
+                  } else if ((op_i_str == "Cup") && (op_j_str == "Cdagdn")) {
                     REQUIRE(norm(anti_comm - op_ij_m * op_i_m) < 1e-12);
                   } else {
                     Log("unchecked"); // shouldn't happen
@@ -178,22 +178,22 @@ TEST_CASE("tj_raise_lower", "[tj]") try {
 
   //   for (int i = 0; i < n_sites; ++i) {
 
-  //     // Check whether NUP agrees
+  //     // Check whether Nup agrees
   //     {
-  //       auto op = Op("NUP", i);
+  //       auto op = Op("Nup", i);
   //       auto m = matrix(op, block);
-  //       auto mi1 = matrix(Op("CDAGUP", i), block);
-  //       auto mi2 = matrix(Op("CUP", i), block);
+  //       auto mi1 = matrix(Op("Cdagup", i), block);
+  //       auto mi2 = matrix(Op("Cup", i), block);
   //       auto mm = mi1 * mi2;
   //       REQUIRE(norm(mm - m) < 1e-12);
   //     }
 
-  //     // Check whether NDN agrees
+  //     // Check whether Ndn agrees
   //     {
-  //       auto op = Op("NDN", i);
+  //       auto op = Op("Ndn", i);
   //       auto m = matrix(op, block);
-  //       auto mi1 = matrix(Op("CDAGDN", i), block);
-  //       auto mi2 = matrix(Op("CDN", i), block);
+  //       auto mi1 = matrix(Op("Cdagdn", i), block);
+  //       auto mi2 = matrix(Op("Cdn", i), block);
   //       auto mm = mi1 * mi2;
   //       REQUIRE(norm(mm - m) < 1e-12);
   //     }
@@ -201,67 +201,67 @@ TEST_CASE("tj_raise_lower", "[tj]") try {
   //     for (int j = 0; j < n_sites; ++j) {
   //       if (i != j) {
 
-  //         // Check whether HOPUP agrees
+  //         // Check whether Hopup agrees
   //         {
-  //           auto op = Op("HOPUP", {i, j});
+  //           auto op = Op("Hopup", {i, j});
   //           auto m = matrix(op, block);
-  //           auto m1 = matrix(Op("CDAGUP", i), block);
-  //           auto m2 = matrix(Op("CUP", j), block);
-  //           auto m3 = matrix(Op("CDAGUP", j), block);
-  //           auto m4 = matrix(Op("CUP", i), block);
+  //           auto m1 = matrix(Op("Cdagup", i), block);
+  //           auto m2 = matrix(Op("Cup", j), block);
+  //           auto m3 = matrix(Op("Cdagup", j), block);
+  //           auto m4 = matrix(Op("Cup", i), block);
   //           auto mm = -m1 * m2 - m3 * m4;
   //           REQUIRE(norm(mm - m) < 1e-12);
   //         }
 
-  //         // Check whether HOPDN agrees
+  //         // Check whether Hopdn agrees
   //         {
-  //           auto op = Op("HOPDN", {i, j});
+  //           auto op = Op("Hopdn", {i, j});
   //           auto m = matrix(op, block);
-  //           auto m1 = matrix(Op("CDAGDN", i), block);
-  //           auto m2 = matrix(Op("CDN", j), block);
-  //           auto m3 = matrix(Op("CDAGDN", j), block);
-  //           auto m4 = matrix(Op("CDN", i), block);
+  //           auto m1 = matrix(Op("Cdagdn", i), block);
+  //           auto m2 = matrix(Op("Cdn", j), block);
+  //           auto m3 = matrix(Op("Cdagdn", j), block);
+  //           auto m4 = matrix(Op("Cdn", i), block);
   //           auto mm = -m1 * m2 - m3 * m4;
   //           REQUIRE(norm(mm - m) < 1e-12);
   //         }
 
-  //         // Check whether ISING agrees
+  //         // Check whether SzSz agrees
   //         {
-  //           auto op = Op("ISING", {i, j});
+  //           auto op = Op("SzSz", {i, j});
   //           auto m = matrix(op, block);
 
-  //           auto mi1 = matrix(Op("CDAGUP", i), block);
-  //           auto mi2 = matrix(Op("CUP", i), block);
-  //           auto mi3 = matrix(Op("CDAGDN", i), block);
-  //           auto mi4 = matrix(Op("CDN", i), block);
+  //           auto mi1 = matrix(Op("Cdagup", i), block);
+  //           auto mi2 = matrix(Op("Cup", i), block);
+  //           auto mi3 = matrix(Op("Cdagdn", i), block);
+  //           auto mi4 = matrix(Op("Cdn", i), block);
   //           auto szi = 0.5 * mi1 * mi2 - 0.5 * mi3 * mi4;
 
-  //           auto mj1 = matrix(Op("CDAGUP", j), block);
-  //           auto mj2 = matrix(Op("CUP", j), block);
-  //           auto mj3 = matrix(Op("CDAGDN", j), block);
-  //           auto mj4 = matrix(Op("CDN", j), block);
+  //           auto mj1 = matrix(Op("Cdagup", j), block);
+  //           auto mj2 = matrix(Op("Cup", j), block);
+  //           auto mj3 = matrix(Op("Cdagdn", j), block);
+  //           auto mj4 = matrix(Op("Cdn", j), block);
   //           auto szj = 0.5 * mj1 * mj2 - 0.5 * mj3 * mj4;
 
   //           auto mm = szi * szj;
   //           REQUIRE(norm(mm - m) < 1e-12);
   //         }
 
-  //         // Check whether EXCHANGE agrees
+  //         // Check whether Exchange agrees
   //         {
-  //           auto op = Op("EXCHANGE", {i, j});
+  //           auto op = Op("Exchange", {i, j});
   //           auto m = matrix(op, block);
 
-  //           auto mi1 = matrix(Op("CDAGUP", i), block);
-  //           auto mi2 = matrix(Op("CUP", i), block);
-  //           auto mi3 = matrix(Op("CDAGDN", i), block);
-  //           auto mi4 = matrix(Op("CDN", i), block);
+  //           auto mi1 = matrix(Op("Cdagup", i), block);
+  //           auto mi2 = matrix(Op("Cup", i), block);
+  //           auto mi3 = matrix(Op("Cdagdn", i), block);
+  //           auto mi4 = matrix(Op("Cdn", i), block);
   //           auto spi = mi1 * mi4;
   //           auto smi = mi3 * mi2;
 
-  //           auto mj1 = matrix(Op("CDAGUP", j), block);
-  //           auto mj2 = matrix(Op("CUP", j), block);
-  //           auto mj3 = matrix(Op("CDAGDN", j), block);
-  //           auto mj4 = matrix(Op("CDN", j), block);
+  //           auto mj1 = matrix(Op("Cdagup", j), block);
+  //           auto mj2 = matrix(Op("Cup", j), block);
+  //           auto mj3 = matrix(Op("Cdagdn", j), block);
+  //           auto mj4 = matrix(Op("Cdn", j), block);
   //           auto spj = mj1 * mj4;
   //           auto smj = mj3 * mj2;
 

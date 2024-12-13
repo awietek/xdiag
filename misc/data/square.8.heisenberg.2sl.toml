@@ -30,22 +30,22 @@ Coordinates = [
 ]
 
 Interactions = [
-  ['J', 'SDOTS', 0, 5],
-  ['J', 'SDOTS', 4, 2],
-  ['J', 'SDOTS', 2, 7],
-  ['J', 'SDOTS', 1, 4],
-  ['J', 'SDOTS', 3, 6],
-  ['J', 'SDOTS', 6, 0],
-  ['J', 'SDOTS', 5, 3],
-  ['J', 'SDOTS', 7, 1],
-  ['J', 'SDOTS', 0, 4],
-  ['J', 'SDOTS', 4, 3],
-  ['J', 'SDOTS', 2, 6],
-  ['J', 'SDOTS', 1, 5],
-  ['J', 'SDOTS', 3, 7],
-  ['J', 'SDOTS', 6, 1],
-  ['J', 'SDOTS', 5, 2],
-  ['J', 'SDOTS', 7, 0]
+  ['J', 'SdotS', 0, 5],
+  ['J', 'SdotS', 4, 2],
+  ['J', 'SdotS', 2, 7],
+  ['J', 'SdotS', 1, 4],
+  ['J', 'SdotS', 3, 6],
+  ['J', 'SdotS', 6, 0],
+  ['J', 'SdotS', 5, 3],
+  ['J', 'SdotS', 7, 1],
+  ['J', 'SdotS', 0, 4],
+  ['J', 'SdotS', 4, 3],
+  ['J', 'SdotS', 2, 6],
+  ['J', 'SdotS', 1, 5],
+  ['J', 'SdotS', 3, 7],
+  ['J', 'SdotS', 6, 1],
+  ['J', 'SdotS', 5, 2],
+  ['J', 'SdotS', 7, 0]
 ]
 
 Symmetries = [

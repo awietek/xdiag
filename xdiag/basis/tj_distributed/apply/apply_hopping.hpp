@@ -34,7 +34,7 @@ void apply_hopping(Coupling const &cpl, Op const &op, Basis &&basis,
     }
   };
 
-  if (type == "HOPUP") {
+  if (type == "Hopup") {
 
     // Define annihilation conditions
     auto non_zero_term_dns = [&flipmask](bit_t const &dns) -> bool {
@@ -48,7 +48,7 @@ void apply_hopping(Coupling const &cpl, Op const &op, Basis &&basis,
     tj_distributed::generic_term_ups<bit_t, coeff_t>(
         basis, basis, non_zero_term_ups, non_zero_term_dns, term_action, vec_in,
         vec_out);
-  } else if (type == "HOPDN") {
+  } else if (type == "Hopdn") {
 
     // Define annihilation conditions
     auto non_zero_term_ups = [&flipmask](bit_t const &ups) -> bool {

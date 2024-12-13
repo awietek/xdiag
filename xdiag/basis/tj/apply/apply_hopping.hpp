@@ -32,13 +32,13 @@ void apply_hopping(Coupling const &cpl, Op const &op, Basis &&basis,
   };
 
   std::string type = op.type();
-  if (type == "HOPUP") {
+  if (type == "Hopup") {
     auto non_zero_term = [&flipmask](bit_t const &ups) -> bool {
       return bits::popcnt(ups & flipmask) & 1;
     };
     tj::generic_term_ups<bit_t, coeff_t, symmetric>(basis, basis, non_zero_term,
                                                     term_action, fill);
-  } else if (type == "HOPDN") {
+  } else if (type == "Hopdn") {
     auto non_zero_term_ups = [&flipmask](bit_t const &ups) -> bool {
       return (ups & flipmask) == 0;
     };

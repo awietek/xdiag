@@ -21,9 +21,9 @@ OpSum compile_spinhalf(OpSum const &ops) try {
   OpSum ops_compiled;
   for (auto [cpl, op] : ops_clean) {
     std::string type = op.type();
-    if (type == "SDOTS") {
-      ops_compiled += cpl * Op("SZSZ", op.sites());
-      ops_compiled += cpl * Op("EXCHANGE", op.sites());
+    if (type == "SdotS") {
+      ops_compiled += cpl * Op("SzSz", op.sites());
+      ops_compiled += cpl * Op("Exchange", op.sites());
     } else {
       ops_compiled += cpl * op;
     }
@@ -40,22 +40,22 @@ OpSum compile_tj(OpSum const &ops) try {
   for (auto [cpl, op] : ops_clean) {
     std::string type = op.type();
 
-    if (type == "SDOTS") {
-      ops_compiled += cpl * Op("SZSZ", op.sites());
-      ops_compiled += cpl * Op("EXCHANGE", op.sites());
-    } else if (type == "TJSDOTS") {
-      ops_compiled += cpl * Op("TJSZSZ", op.sites());
-      ops_compiled += cpl * Op("EXCHANGE", op.sites());
-    } else if (type == "HOP") {
-      ops_compiled += cpl * Op("HOPUP", op.sites());
-      ops_compiled += cpl * Op("HOPDN", op.sites());
-    } else if (type == "NTOT") {
-      ops_compiled += cpl * Op("NUP", op.sites());
-      ops_compiled += cpl * Op("NDN", op.sites());
-    } else if (type == "SZ") {
-      ops_compiled += (Scalar(0.5) * cpl.scalar()) * Op("NUP", op.sites());
+    if (type == "SdotS") {
+      ops_compiled += cpl * Op("SzSz", op.sites());
+      ops_compiled += cpl * Op("Exchange", op.sites());
+    } else if (type == "tJSdotS") {
+      ops_compiled += cpl * Op("tJSzSz", op.sites());
+      ops_compiled += cpl * Op("Exchange", op.sites());
+    } else if (type == "Hop") {
+      ops_compiled += cpl * Op("Hopup", op.sites());
+      ops_compiled += cpl * Op("Hopdn", op.sites());
+    } else if (type == "Ntot") {
+      ops_compiled += cpl * Op("Nup", op.sites());
+      ops_compiled += cpl * Op("Ndn", op.sites());
+    } else if (type == "Sz") {
+      ops_compiled += (Scalar(0.5) * cpl.scalar()) * Op("Nup", op.sites());
       ops_compiled +=
-          (Scalar(-0.5) * cpl.scalar()) * Op("NDN", op.sites());
+          (Scalar(-0.5) * cpl.scalar()) * Op("Ndn", op.sites());
     } else {
       ops_compiled += cpl * op;
     }
@@ -72,22 +72,22 @@ OpSum compile_electron(OpSum const &ops) try {
   for (auto [cpl, op] : ops_clean) {
     std::string type = op.type();
 
-    if (type == "SDOTS") {
-      ops_compiled += cpl * Op("SZSZ", op.sites());
-      ops_compiled += cpl * Op("EXCHANGE", op.sites());
-    } else if (type == "TJSDOTS") {
-      ops_compiled += cpl * Op("TJSZSZ", op.sites());
-      ops_compiled += cpl * Op("EXCHANGE", op.sites());
-    } else if (type == "HOP") {
-      ops_compiled += cpl * Op("HOPUP", op.sites());
-      ops_compiled += cpl * Op("HOPDN", op.sites());
-    } else if (type == "NTOT") {
-      ops_compiled += cpl * Op("NUP", op.sites());
-      ops_compiled += cpl * Op("NDN", op.sites());
-    } else if (type == "SZ") {
-      ops_compiled += (Scalar(0.5) * cpl.scalar()) * Op("NUP", op.sites());
+    if (type == "SdotS") {
+      ops_compiled += cpl * Op("SzSz", op.sites());
+      ops_compiled += cpl * Op("Exchange", op.sites());
+    } else if (type == "tJSdotS") {
+      ops_compiled += cpl * Op("tJSzSz", op.sites());
+      ops_compiled += cpl * Op("Exchange", op.sites());
+    } else if (type == "Hop") {
+      ops_compiled += cpl * Op("Hopup", op.sites());
+      ops_compiled += cpl * Op("Hopdn", op.sites());
+    } else if (type == "Ntot") {
+      ops_compiled += cpl * Op("Nup", op.sites());
+      ops_compiled += cpl * Op("Ndn", op.sites());
+    } else if (type == "Sz") {
+      ops_compiled += (Scalar(0.5) * cpl.scalar()) * Op("Nup", op.sites());
       ops_compiled +=
-          (Scalar(-0.5) * cpl.scalar()) * Op("NDN", op.sites());
+          (Scalar(-0.5) * cpl.scalar()) * Op("Ndn", op.sites());
     } else {
       ops_compiled += cpl * op;
     }

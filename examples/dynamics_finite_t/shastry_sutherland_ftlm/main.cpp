@@ -116,7 +116,7 @@ int main(int argc, char **argv) {
     complex phase =
         std::exp(std::complex<double>(0, 1.0) *
                  (qq(0) * coords(site, 0) + qq(1) * coords(site, 1)));
-    S_of_q << Op("SZ", phase / n_sites, site);
+    S_of_q << Op("Sz", phase / n_sites, site);
   }
   auto s_of_q_gs = StateCplx(block_k_q);
   apply(S_of_q, gs, s_of_q_gs);

@@ -101,7 +101,7 @@ TEST_CASE("tj_symmetric_matrix", "[tj]") try {
         n_sites);
     OpSum ops;
     for (int64_t s = 0; s < n_sites; ++s) {
-      ops += Op("TJSDOTS", {s, (s + 1) % n_sites});
+      ops += Op("tJSdotS", {s, (s + 1) % n_sites});
     }
     auto [space_group, irreps, multiplicities] =
         get_cyclic_group_irreps_mult(n_sites);

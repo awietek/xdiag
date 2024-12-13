@@ -22,7 +22,7 @@ TEST_CASE("non_branching_op", "[operators]") try {
   cx_mat ones(mat({{1.0, 1.0}, {1.0, 1.0}}), mat({{1.0, 1.0}, {1.0, 1.0}}));
 
   for (auto ss : {ones}) {
-    auto op = Op("MAT", ss, 0);
+    auto op = Op("Map", ss, 0);
     auto block = Spinhalf(1);
     auto h = matrixC(op, block);
     REQUIRE(close(h, ss));
@@ -35,7 +35,7 @@ TEST_CASE("non_branching_op", "[operators]") try {
   OpSum ops;
 
   for (int64_t i = 0; i < N - 1; ++i) {
-    ops += Op("ISING", J, {i, (i + 1) % N});
+    ops += Op("SzSz", J, {i, (i + 1) % N});
   }
   for (int64_t i = 0; i < N; ++i) {
     ops += Op("SX", sx, i);
@@ -73,10 +73,10 @@ TEST_CASE("non_branching_op", "[operators]") try {
     auto block6 = Spinhalf(6);
 
     OpSum ops1;
-    ops1 += Op("SCALARCHIRALITY", "Jchi", {0, 1, 2});
-    ops1 += Op("SCALARCHIRALITY", "Jchi", {1, 2, 3});
-    ops1 += Op("SCALARCHIRALITY", "Jchi", {2, 3, 4});
-    ops1 += Op("SCALARCHIRALITY", "Jchi", {3, 4, 5});
+    ops1 += Op("ScalarChirality", "Jchi", {0, 1, 2});
+    ops1 += Op("ScalarChirality", "Jchi", {1, 2, 3});
+    ops1 += Op("ScalarChirality", "Jchi", {2, 3, 4});
+    ops1 += Op("ScalarChirality", "Jchi", {3, 4, 5});
     ops1["Jchi"] = 1.0;
     auto H1 = matrixC(ops1, block6);
 
@@ -98,30 +98,30 @@ TEST_CASE("non_branching_op", "[operators]") try {
   auto block12 = Spinhalf(12);
 
   OpSum ops1;
-  ops1 += Op("SCALARCHIRALITY", "Jchi", {0, 4, 6});
-  ops1 += Op("SCALARCHIRALITY", "Jchi", {3, 1, 9});
-  ops1 += Op("SCALARCHIRALITY", "Jchi", {9, 7, 4});
-  ops1 += Op("SCALARCHIRALITY", "Jchi", {4, 2, 10});
-  ops1 += Op("SCALARCHIRALITY", "Jchi", {10, 8, 5});
-  ops1 += Op("SCALARCHIRALITY", "Jchi", {6, 10, 1});
-  ops1 += Op("SCALARCHIRALITY", "Jchi", {1, 5, 7});
-  ops1 += Op("SCALARCHIRALITY", "Jchi", {7, 11, 2});
-  ops1 += Op("SCALARCHIRALITY", "Jchi", {2, 3, 8});
-  ops1 += Op("SCALARCHIRALITY", "Jchi", {8, 9, 0});
-  ops1 += Op("SCALARCHIRALITY", "Jchi", {5, 0, 11});
-  ops1 += Op("SCALARCHIRALITY", "Jchi", {11, 6, 3});
-  ops1 += Op("SCALARCHIRALITY", "Jchi", {4, 10, 6});
-  ops1 += Op("SCALARCHIRALITY", "Jchi", {1, 7, 9});
-  ops1 += Op("SCALARCHIRALITY", "Jchi", {7, 2, 4});
-  ops1 += Op("SCALARCHIRALITY", "Jchi", {2, 8, 10});
-  ops1 += Op("SCALARCHIRALITY", "Jchi", {8, 0, 5});
-  ops1 += Op("SCALARCHIRALITY", "Jchi", {10, 5, 1});
-  ops1 += Op("SCALARCHIRALITY", "Jchi", {5, 11, 7});
-  ops1 += Op("SCALARCHIRALITY", "Jchi", {11, 3, 2});
-  ops1 += Op("SCALARCHIRALITY", "Jchi", {3, 9, 8});
-  ops1 += Op("SCALARCHIRALITY", "Jchi", {9, 4, 0});
-  ops1 += Op("SCALARCHIRALITY", "Jchi", {0, 6, 11});
-  ops1 += Op("SCALARCHIRALITY", "Jchi", {6, 1, 3});
+  ops1 += Op("ScalarChirality", "Jchi", {0, 4, 6});
+  ops1 += Op("ScalarChirality", "Jchi", {3, 1, 9});
+  ops1 += Op("ScalarChirality", "Jchi", {9, 7, 4});
+  ops1 += Op("ScalarChirality", "Jchi", {4, 2, 10});
+  ops1 += Op("ScalarChirality", "Jchi", {10, 8, 5});
+  ops1 += Op("ScalarChirality", "Jchi", {6, 10, 1});
+  ops1 += Op("ScalarChirality", "Jchi", {1, 5, 7});
+  ops1 += Op("ScalarChirality", "Jchi", {7, 11, 2});
+  ops1 += Op("ScalarChirality", "Jchi", {2, 3, 8});
+  ops1 += Op("ScalarChirality", "Jchi", {8, 9, 0});
+  ops1 += Op("ScalarChirality", "Jchi", {5, 0, 11});
+  ops1 += Op("ScalarChirality", "Jchi", {11, 6, 3});
+  ops1 += Op("ScalarChirality", "Jchi", {4, 10, 6});
+  ops1 += Op("ScalarChirality", "Jchi", {1, 7, 9});
+  ops1 += Op("ScalarChirality", "Jchi", {7, 2, 4});
+  ops1 += Op("ScalarChirality", "Jchi", {2, 8, 10});
+  ops1 += Op("ScalarChirality", "Jchi", {8, 0, 5});
+  ops1 += Op("ScalarChirality", "Jchi", {10, 5, 1});
+  ops1 += Op("ScalarChirality", "Jchi", {5, 11, 7});
+  ops1 += Op("ScalarChirality", "Jchi", {11, 3, 2});
+  ops1 += Op("ScalarChirality", "Jchi", {3, 9, 8});
+  ops1 += Op("ScalarChirality", "Jchi", {9, 4, 0});
+  ops1 += Op("ScalarChirality", "Jchi", {0, 6, 11});
+  ops1 += Op("ScalarChirality", "Jchi", {6, 1, 3});
   ops1["Jchi"] = 1.0;
   auto H1 = matrixC(ops1, block12);
 

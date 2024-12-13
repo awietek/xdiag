@@ -4,7 +4,7 @@ void measure_density(int n_sites, xdiag::State const &v) {
   using namespace xdiag;
 
   for (int i = 0; i < n_sites; ++i) {
-    auto sz = inner(Bond("NUMBER", i), v);
+    auto sz = inner(Bond("Ntot", i), v);
     printf("%f ", real(sz));
   }
   printf("\n");
@@ -20,7 +20,7 @@ int main() {
 
   OpSum ops;
   for (int i = 0; i < n_sites; ++i) {
-    ops << Op("HOP", "T", {i, (i + 1) % n_sites});
+    ops << Op("Hop", "T", {i, (i + 1) % n_sites});
   }
   ops["T"] = t;
   ops["U"] = U;

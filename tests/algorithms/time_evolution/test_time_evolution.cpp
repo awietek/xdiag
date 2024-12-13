@@ -50,7 +50,7 @@ TEST_CASE("analytic_case_free_particle_1D", "[time_evolution]") try {
   auto block = Electron(n_sites, nup, ndn);
   OpSum ops;
   for (int i = 0; i < n_sites; i++) {
-    ops += "t" * Op("HOP", {i, (i + 1) % n_sites});
+    ops += "t" * Op("Hop", {i, (i + 1) % n_sites});
   }
   ops["t"] = t;
   ops["U"] = 1;
@@ -142,17 +142,17 @@ TEST_CASE("analytic_case_free_particle_2D", "[time_evolution]") try {
       // nearest neighbour hops
       int s_up_hop = L * ((i + 1) % L) + j;
       int s_dn_hop = L * i + (j + 1) % L;
-      ops += "t" * Op("HOP", {s, s_up_hop});
-      ops += "t" * Op("HOP", {s, s_dn_hop});
+      ops += "t" * Op("Hop", {s, s_up_hop});
+      ops += "t" * Op("Hop", {s, s_dn_hop});
 
       // next nearest neighbour hops
       int s_across_up = L * ((i + 1) % L) + (j + 1) % L;
       int s_across_dn = L * ((L + (i - 1) % L) % L) + (j + 1) % L;
-      ops += "t1" * Op("HOP", {s, s_across_up});
-      ops += "t1" * Op("HOP", {s, s_across_dn});
+      ops += "t1" * Op("Hop", {s, s_across_up});
+      ops += "t1" * Op("Hop", {s, s_across_dn});
     }
   }
-  ops += "U" * Op("HUBBARDU");
+  ops += "U" * Op("HubbardU");
   ops["t"] = t;
   ops["t1"] = t1;
   ops["U"] = 1;
@@ -208,10 +208,10 @@ TEST_CASE("tj_complex_timeevo", "[time_evolution]") try {
       int site = y * L + x;
       int right = y * L + nx;
       int top = ny * L + x;
-      ops += "T" * Op("HOP", {site, right});
-      ops += "J" * Op("TJSZSZ", {site, right});
-      ops += "T" * Op("HOP", {site, top});
-      ops += "J" * Op("TJSZSZ", {site, top});
+      ops += "T" * Op("Hop", {site, right});
+      ops += "J" * Op("tJSzSz", {site, right});
+      ops += "T" * Op("Hop", {site, top});
+      ops += "J" * Op("tJSzSz", {site, top});
     }
   }
   ops["T"] = (std::complex<double>)(1.0 + 0.2i);

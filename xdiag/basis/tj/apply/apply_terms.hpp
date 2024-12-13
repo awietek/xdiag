@@ -2,9 +2,9 @@
 
 #include <xdiag/basis/tj/apply/apply_exchange.hpp>
 #include <xdiag/basis/tj/apply/apply_hopping.hpp>
-#include <xdiag/basis/tj/apply/apply_szsz.hpp>
 #include <xdiag/basis/tj/apply/apply_number.hpp>
 #include <xdiag/basis/tj/apply/apply_raise_lower.hpp>
+#include <xdiag/basis/tj/apply/apply_szsz.hpp>
 #include <xdiag/common.hpp>
 
 namespace xdiag::basis::tj {
@@ -16,16 +16,16 @@ void apply_terms(OpSum const &ops, BasisIn const &basis_in,
 
   for (auto const &[cpl, op] : ops) {
     std::string type = op.type();
-    if ((type == "SZSZ") || (type == "TJSZSZ")) {
+    if ((type == "SzSz") || (type == "tJSzSz")) {
       apply_szsz<bit_t, coeff_t, symmetric>(cpl, op, basis_in, fill);
-    } else if ((type == "NUP") || (type == "NDN")) {
+    } else if ((type == "Nup") || (type == "Ndn")) {
       apply_number<bit_t, coeff_t, symmetric>(cpl, op, basis_in, fill);
-    } else if (type == "EXCHANGE") {
+    } else if (type == "Exchange") {
       apply_exchange<bit_t, coeff_t, symmetric>(cpl, op, basis_in, fill);
-    } else if ((type == "HOPUP") || (type == "HOPDN")) {
+    } else if ((type == "Hopup") || (type == "Hopdn")) {
       apply_hopping<bit_t, coeff_t, symmetric>(cpl, op, basis_in, fill);
-    } else if ((type == "CDAGUP") || (type == "CUP") || (type == "CDAGDN") ||
-               (type == "CDN")) {
+    } else if ((type == "Cdagup") || (type == "Cup") || (type == "Cdagdn") ||
+               (type == "Cdn")) {
       apply_raise_lower<bit_t, coeff_t, symmetric>(cpl, op, basis_in, basis_out,
                                                    fill);
     }

@@ -54,7 +54,7 @@ int main(int argc, char **argv) {
   OpSum S_of_q_ops;
   for (int site = 0; site < n_sites; ++site) {
     complex phase = exp(1i * (q(0) * coords(site, 0) + q(1) * coords(site, 1)));
-    S_of_q_ops << Op("SZ", phase / n_sites, site);
+    S_of_q_ops << Op("Sz", phase / n_sites, site);
   }
   auto S_of_q = matrix(S_of_q_ops, block_k, block_k_q);
   cx_mat S_of_q_eig = eigvec_k_q.t() * S_of_q * eigvec;

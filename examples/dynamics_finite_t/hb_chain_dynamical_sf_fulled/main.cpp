@@ -63,7 +63,7 @@ int main(int argc, char** argv) {
     OpSum S_of_q_ops;
     for (int s = 0; s < n_sites; ++s) {
       complex phase = exp(2i * pi * q * s / (double)n_sites);
-      S_of_q_ops << Op("SZ", phase / n_sites, s);
+      S_of_q_ops << Op("Sz", phase / n_sites, s);
     }
 
     // Create block at momentum k + q

@@ -91,21 +91,20 @@ sublattice_structure = np.array([sl1, sl2, sl3])
 model = gm.GenericModel(lattice)
 
 # model.set_nb_interaction(1)
-# model.set_interaction(np.array([[1,1,0],[0,1,1],[1,0,2]]), int_type='SCALARCHIRALITY', coupling='Jchi', directed=True, allowed_perms=np.array([[0,1,2],[1,2,0],[2,0,1]]) )
-# model.set_interaction(np.array([[0,0,0],[0,0,1],[0,0,2]]), int_type='SCALARCHIRALITY', coupling='Jchi', directed=True, allowed_perms=np.array([[0,1,2],[1,2,0],[2,0,1]]) )
+# model.set_interaction(np.array([[1,1,0],[0,1,1],[1,0,2]]), int_type='ScalarChirality', coupling='Jchi', directed=True, allowed_perms=np.array([[0,1,2],[1,2,0],[2,0,1]]) )
+# model.set_interaction(np.array([[0,0,0],[0,0,1],[0,0,2]]), int_type='ScalarChirality', coupling='Jchi', directed=True, allowed_perms=np.array([[0,1,2],[1,2,0],[2,0,1]]) )
 
 
-# #TFI
-# model.set_nb_interaction(1, int_type='ISING', coupling='J')
+# #TFI # model.set_nb_interaction(1, int_type='SzSz', coupling='J')
 # model.set_nb_interaction(0, int_type='HX', coupling='H')
 
 #J1J2
-model.set_nb_interaction(1, int_type='HB', coupling='J1')
-model.set_nb_interaction(2, int_type='HB', coupling='J2')
+model.set_nb_interaction(1, int_type='SdotS', coupling='J1')
+model.set_nb_interaction(2, int_type='SdotS', coupling='J2')
 
 # # ScalarChirality
-# model.set_interaction(np.array([[0,0,0],[1,0,0],[0,1,0]]), int_type='SCALARCHIRALITY', coupling='Jchi', directed=True, allowed_perms=np.array([[0,1,2],[1,2,0],[2,0,1]]) )
-# model.set_interaction(np.array([[0,0,0],[0,1,0],[-1,1,0]]), int_type='SCALARCHIRALITY', coupling='Jchi', directed=True, allowed_perms=np.array([[0,1,2],[1,2,0],[2,0,1]]) )
+# model.set_interaction(np.array([[0,0,0],[1,0,0],[0,1,0]]), int_type='ScalarChirality', coupling='Jchi', directed=True, allowed_perms=np.array([[0,1,2],[1,2,0],[2,0,1]]) )
+# model.set_interaction(np.array([[0,0,0],[0,1,0],[-1,1,0]]), int_type='ScalarChirality', coupling='Jchi', directed=True, allowed_perms=np.array([[0,1,2],[1,2,0],[2,0,1]]) )
 
 # model.plot_interactions()
 # plt.show()

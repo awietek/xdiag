@@ -4,7 +4,7 @@ using namespace xdiag;
 
 void measure_density(int n_sites, State const &v) {
   for (int i = 0; i < n_sites; ++i) {
-    auto sz = innerC(Bond("NUMBER", i), v);
+    auto sz = innerC(Bond("Ntot", i), v);
     printf("%f ", std::real(sz));
   }
   printf("\n");
@@ -29,10 +29,10 @@ int main() {
       int site = y * L + x;
       int right = y * L + nx;
       int top = ny * L + x;
-      ops += Op("HOP", "T", {site, right});
-      ops += Op("TJISING", "J", {site, right});
-      ops += Op("HOP", "T", {site, top});
-      ops += Op("TJISING", "J", {site, top});
+      ops += Op("Hop", "T", {site, right});
+      ops += Op("tJSzSz", "J", {site, right});
+      ops += Op("Hop", "T", {site, top});
+      ops += Op("tJSzSz", "J", {site, top});
     }
   }
   ops["T"] = t;

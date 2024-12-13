@@ -7,18 +7,18 @@
 TEST_CASE("Op", "[operators]") try {
   using namespace xdiag;
 
-  auto o1 = Op("SDOTS", {0, 1}) * 1.0;
-  auto o2 = 1.0 * Op("SDOTS", {0, 1});
+  auto o1 = Op("SdotS", {0, 1}) * 1.0;
+  auto o2 = 1.0 * Op("SdotS", {0, 1});
 
   REQUIRE(o1 == o2);
 
-  o1 = Op("SDOTS", {0, 1}) * complex(1.0, 2.0);
-  o2 = complex(1.0, 2.0) * Op("SDOTS", {0, 1});
+  o1 = Op("SdotS", {0, 1}) * complex(1.0, 2.0);
+  o2 = complex(1.0, 2.0) * Op("SdotS", {0, 1});
 
   REQUIRE(o1 == o2);
 
-  o1 = Op("SDOTS", {0, 1}) * "J";
-  o2 = "J" * Op("SDOTS", {0, 1});
+  o1 = Op("SdotS", {0, 1}) * "J";
+  o2 = "J" * Op("SdotS", {0, 1});
 
   REQUIRE(o1 == o2);
 

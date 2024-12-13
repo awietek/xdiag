@@ -40,10 +40,10 @@ TEST_CASE("product_state_distributed", "[states]") {
       fill(psi2, pstate);
       for (int i = 0; i < n_sites; ++i) {
         std::string p = pstate[i];
-        auto sz = Op("SZ", i);
+        auto sz = Op("Sz", i);
         auto szc = inner(sz, psi2);
 
-        auto n = Op("NTOT", i);
+        auto n = Op("Ntot", i);
         auto nc = inner(n, psi2);
 
         if (p == "Emp") {
@@ -79,7 +79,7 @@ TEST_CASE("product_state_distributed", "[states]") {
       for (int i = 0; i < n_sites; ++i) {
         std::string p = pstate[i];
 
-        auto sz = Op("SZ", i);
+        auto sz = Op("Sz", i);
         auto szc = inner(sz, psi);
 
         if (p == "Up") {
@@ -95,7 +95,7 @@ TEST_CASE("product_state_distributed", "[states]") {
       fill(psi2, pstate);
       for (int i = 0; i < n_sites; ++i) {
         std::string p = pstate[i];
-        auto sz = Op("SZ", i);
+        auto sz = Op("Sz", i);
         auto szc = inner(sz, psi2);
 
         if (p == "Up") {

@@ -38,10 +38,10 @@ void apply_hopping(Coupling const &cpl, Op const &op, Basis &&basis,
   };
 
   std::string type = op.type();
-  if (type == "HOPUP") {
+  if (type == "Hopup") {
     electron::generic_term_ups<bit_t, coeff_t, symmetric>(
         basis, basis, non_zero_term, term_action, fill);
-  } else if (type == "HOPDN") {
+  } else if (type == "Hopdn") {
     electron::generic_term_dns<bit_t, coeff_t, symmetric, false>(
         basis, basis, non_zero_term, term_action, fill);
   }

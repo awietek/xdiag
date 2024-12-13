@@ -45,7 +45,7 @@ int main() {
     OpSum S_of_q_ops;
     for (int s = 0; s < n_sites; ++s) {
       complex phase = exp(2i * pi * q * s / n_sites);
-      S_of_q_ops << Op("SZ", phase / n_sites, s);
+      S_of_q_ops << Op("Sz", phase / n_sites, s);
     }
 
     // Compute matrix elements of S(q)

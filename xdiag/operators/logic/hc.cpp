@@ -12,14 +12,14 @@ Op hc(Op const &op) try {
     return Op("S-", op.sites());
   } else if (type == "S-") {
     return Op("S+", op.sites());
-  } else if (type == "CDAGUP") {
-    return Op("CUP", op.sites());
-  } else if (type == "CUP") {
-    return Op("CDAGUP", op.sites());
-  } else if (type == "CDAGDN") {
-    return Op("CDN", op.sites());
-  } else if (type == "CDN") {
-    return Op("CDAGDN", op.sites());
+  } else if (type == "Cdagup") {
+    return Op("Cup", op.sites());
+  } else if (type == "Cup") {
+    return Op("Cdagup", op.sites());
+  } else if (type == "Cdagdn") {
+    return Op("Cdn", op.sites());
+  } else if (type == "Cdn") {
+    return Op("Cdagdn", op.sites());
   } else { // default: the type does not change
 
     if (op.hassites()) {

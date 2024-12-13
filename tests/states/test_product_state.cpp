@@ -29,10 +29,10 @@ TEST_CASE("product_state", "[states]") try {
       int ndn = 0;
       for (int i = 0; i < n_sites; ++i) {
         std::string p = pstate[i];
-        auto sz = Op("SZ", i);
+        auto sz = Op("Sz", i);
         auto szc = inner(sz, psi);
 
-        auto n = Op("NTOT", i);
+        auto n = Op("Ntot", i);
         auto nc = inner(n, psi);
 
         if (p == "Emp") {
@@ -60,10 +60,10 @@ TEST_CASE("product_state", "[states]") try {
 
       for (int i = 0; i < n_sites; ++i) {
         std::string p = pstate[i];
-        auto sz = Op("SZ", i);
+        auto sz = Op("Sz", i);
         auto szc = inner(sz, psi2);
 
-        auto n = Op("NTOT", i);
+        auto n = Op("Ntot", i);
         auto nc = inner(n, psi2);
 
         if (p == "Emp") {
@@ -113,10 +113,10 @@ TEST_CASE("product_state", "[states]") try {
       fill(psi2, pstate);
       for (int i = 0; i < n_sites; ++i) {
         std::string p = pstate[i];
-        auto sz = Op("SZ", i);
+        auto sz = Op("Sz", i);
         auto szc = inner(sz, psi2);
 
-        auto n = Op("NTOT", i);
+        auto n = Op("Ntot", i);
         auto nc = inner(n, psi2);
 
         if (p == "Emp") {
@@ -152,7 +152,7 @@ TEST_CASE("product_state", "[states]") try {
       for (int i = 0; i < n_sites; ++i) {
         std::string p = pstate[i];
 
-        auto sz = Op("SZ", i);
+        auto sz = Op("Sz", i);
         auto szc = inner(sz, psi);
 
         if (p == "Up") {
@@ -168,7 +168,7 @@ TEST_CASE("product_state", "[states]") try {
       fill(psi2, pstate);
       for (int i = 0; i < n_sites; ++i) {
         std::string p = pstate[i];
-        auto sz = Op("SZ", i);
+        auto sz = Op("Sz", i);
         auto szc = inner(sz, psi2);
 
         if (p == "Up") {
@@ -187,35 +187,35 @@ TEST_CASE("product_state", "[states]") try {
   //   auto block = Electron(4, 2, 2);
   //   auto psi = StateReal(block, pstate);
 
-  //   auto sz0 = Op("SZ", 0);
+  //   auto sz0 = Op("Sz", 0);
   //   complex sz0c = inner(sz0, psi);
   //   REQUIRE(close(sz0c, 0.5));
 
-  //   auto sz1 = Op("SZ", 1);
+  //   auto sz1 = Op("Sz", 1);
   //   complex sz1c = inner(sz1, psi);
   //   REQUIRE(close(sz1c, -0.5));
 
-  //   auto sz2 = Op("SZ", 2);
+  //   auto sz2 = Op("Sz", 2);
   //   complex sz2c = inner(sz2, psi);
   //   REQUIRE(close(sz2c, 0.));
 
-  //   auto sz3 = Op("SZ", 3);
+  //   auto sz3 = Op("Sz", 3);
   //   complex sz3c = inner(sz3, psi);
   //   REQUIRE(close(sz3c, 0.));
 
-  //   auto n0 = Op("NUMBER", 0);
+  //   auto n0 = Op("Ntot", 0);
   //   complex n0c = inner(n0, psi);
   //   REQUIRE(close(n0c, 1.0));
 
-  //   auto n1 = Op("NUMBER", 1);
+  //   auto n1 = Op("Ntot", 1);
   //   complex n1c = inner(n1, psi);
   //   REQUIRE(close(n1c, 1.0));
 
-  //   auto n2 = Op("NUMBER", 2);
+  //   auto n2 = Op("Ntot", 2);
   //   complex n2c = inner(n2, psi);
   //   REQUIRE(close(n2c, 2.));
 
-  //   auto n3 = Op("NUMBER", 3);
+  //   auto n3 = Op("Ntot", 3);
   //   complex n3c = inner(n3, psi);
   //   REQUIRE(close(n3c, 0.));
   // }
@@ -224,35 +224,35 @@ TEST_CASE("product_state", "[states]") try {
   //   auto block = tJ(4, 2, 1);
   //   auto psi = StateReal(block, pstate);
 
-  //   auto sz0 = Op("SZ", 0);
+  //   auto sz0 = Op("Sz", 0);
   //   complex sz0c = inner(sz0, psi);
   //   REQUIRE(close(sz0c, 0.5));
 
-  //   auto sz1 = Op("SZ", 1);
+  //   auto sz1 = Op("Sz", 1);
   //   complex sz1c = inner(sz1, psi);
   //   REQUIRE(close(sz1c, -0.5));
 
-  //   auto sz2 = Op("SZ", 2);
+  //   auto sz2 = Op("Sz", 2);
   //   complex sz2c = inner(sz2, psi);
   //   REQUIRE(close(sz2c, 0.5));
 
-  //   auto sz3 = Op("SZ", 3);
+  //   auto sz3 = Op("Sz", 3);
   //   complex sz3c = inner(sz3, psi);
   //   REQUIRE(close(sz3c, 0.));
 
-  //   auto n0 = Op("NUMBER", 0);
+  //   auto n0 = Op("Ntot", 0);
   //   complex n0c = inner(n0, psi);
   //   REQUIRE(close(n0c, 1.0));
 
-  //   auto n1 = Op("NUMBER", 1);
+  //   auto n1 = Op("Ntot", 1);
   //   complex n1c = inner(n1, psi);
   //   REQUIRE(close(n1c, 1.0));
 
-  //   auto n2 = Op("NUMBER", 2);
+  //   auto n2 = Op("Ntot", 2);
   //   complex n2c = inner(n2, psi);
   //   REQUIRE(close(n2c, 1.));
 
-  //   auto n3 = Op("NUMBER", 3);
+  //   auto n3 = Op("Ntot", 3);
   //   complex n3c = inner(n3, psi);
   //   REQUIRE(close(n3c, 0.));
   // }
@@ -262,19 +262,19 @@ TEST_CASE("product_state", "[states]") try {
   //   auto block = Spinhalf(4, 2);
   //   auto psi = StateReal(block, pstate);
 
-  //   auto sz0 = Op("SZ", 0);
+  //   auto sz0 = Op("Sz", 0);
   //   complex sz0c = inner(sz0, psi);
   //   REQUIRE(close(sz0c, 0.5));
 
-  //   auto sz1 = Op("SZ", 1);
+  //   auto sz1 = Op("Sz", 1);
   //   complex sz1c = inner(sz1, psi);
   //   REQUIRE(close(sz1c, -0.5));
 
-  //   auto sz2 = Op("SZ", 2);
+  //   auto sz2 = Op("Sz", 2);
   //   complex sz2c = inner(sz2, psi);
   //   REQUIRE(close(sz2c, 0.5));
 
-  //   auto sz3 = Op("SZ", 3);
+  //   auto sz3 = Op("Sz", 3);
   //   complex sz3c = inner(sz3, psi);
   //   REQUIRE(close(sz3c, -0.5));
   // }

@@ -18,13 +18,13 @@ void apply_terms(OpSum const &ops, BasisIn const &basis_in,
   for (auto const &[cpl, op] : ops.plain()) {
 
     std::string type = op.type();
-    if (type == "EXCHANGE") {
+    if (type == "Exchange") {
       spinhalf::apply_exchange<bit_t, coeff_t, symmetric>(cpl, op, basis_in,
                                                           basis_out, fill);
-    } else if (type == "SZSZ") {
+    } else if (type == "SzSz") {
       spinhalf::apply_szsz<bit_t, coeff_t, symmetric>(cpl, op, basis_in,
                                                       basis_out, fill);
-    } else if (type == "SZ") {
+    } else if (type == "Sz") {
       spinhalf::apply_sz<bit_t, coeff_t, symmetric>(cpl, op, basis_in,
                                                     basis_out, fill);
     } else if (type == "S+") {
@@ -33,7 +33,7 @@ void apply_terms(OpSum const &ops, BasisIn const &basis_in,
     } else if (type == "S-") {
       spinhalf::apply_spsm<bit_t, coeff_t, symmetric>(cpl, op, basis_in,
                                                       basis_out, fill);
-    } else if (type == "SCALARCHIRALITY") {
+    } else if (type == "ScalarChirality") {
       spinhalf::apply_scalar_chirality<bit_t, coeff_t, symmetric>(
           cpl, op, basis_in, basis_out, fill);
     } //  else if (type == "NONBRANCHINGOP") {

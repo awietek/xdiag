@@ -117,7 +117,7 @@ TEST_CASE("electron_symmetric_apply", "[electron]") {
 
   auto fl = FileToml(lfile);
   auto ops = fl["Interactions"].as<OpSum>();
-  ops += "U" * Op("HUBBARDU");
+  ops += "U" * Op("HubbardU");
   ops["T"] = 1.0;
   ops["U"] = 5.0;
   auto group = fl["Symmetries"].as<PermutationGroup>();
@@ -139,8 +139,8 @@ TEST_CASE("electron_symmetric_apply", "[electron]") {
       "electron_symmetric_apply: Hubbard 3x3 triangular (+ Heisenberg terms)");
   auto ops_hb = ops;
   for (auto [cpl, op] : ops) {
-    if (op.type() == "HOP"){
-      ops_hb += "J" * Op("SDOTS", {op[0], op[1]});
+    if (op.type() == "Hop"){
+      ops_hb += "J" * Op("SdotS", {op[0], op[1]});
     }
   }
   ops_hb["J"] = 0.4;
@@ -153,7 +153,7 @@ TEST_CASE("electron_symmetric_apply", "[electron]") {
         "/misc/data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.toml";
     auto fl = FileToml(lfile);
     auto ops = fl["Interactions"].as<OpSum>();
-    ops += "U" * Op("HUBBARDU");
+    ops += "U" * Op("HubbardU");
     ops["TPHI"] = complex(0.5, 0.5);
     ops["JPHI"] = 0.;
     ops["U"] = 5.0;

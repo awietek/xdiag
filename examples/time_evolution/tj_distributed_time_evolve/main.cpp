@@ -6,7 +6,7 @@ void measure_density(int n_sites, State const &v) {
   int rank;
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   for (int i = 0; i < n_sites; ++i) {
-    complex sz = innerC(Bond("NUMBER", i), v);
+    complex sz = innerC(Bond("Ntot", i), v);
     if (rank == 0) {
       printf("%.6f ", std::real(sz));
     }
@@ -38,19 +38,19 @@ int main(int argc, char **argv) try {
       int site = x * W + y;
       int right = nx * W + y;
       int top = x * W + ny;
-      ops += Op("HOP", "T", {site, right});
-      ops += Op("EXCHANGE", "J", {site, right});
-      ops += Op("HOP", "T", {site, top});
-      ops += Op("EXCHANGE", "J", {site, top});
+      ops += Op("Hop", "T", {site, right});
+      ops += Op("Exchange", "J", {site, right});
+      ops += Op("Hop", "T", {site, top});
+      ops += Op("Exchange", "J", {site, top});
 
 
       
       if (x < L / 2) {
 	Log("x {} y {} site {} t {} r {} +", x, y, site, top, right);
-        ops += Op("NUMBER", "MUPLUS", site);
+        ops += Op("Ntot", "MUPLUS", site);
       } else {
 	Log("x {} y {} site {} t {} r {} -", x, y, site, top, right);
-        ops += Op("NUMBER", "MUNEG", site);
+        ops += Op("Ntot", "MUNEG", site);
       }
     }
   }

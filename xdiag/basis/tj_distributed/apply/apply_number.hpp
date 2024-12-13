@@ -14,14 +14,14 @@ void apply_number(Coupling const &cpl, Op const &op, Basis &&basis,
   std::string type = op.type();
 
   bit_t mask = (bit_t)1 << s;
-  if (type == "NUP") {
+  if (type == "Nup") {
     auto term_action = [&](bit_t up, bit_t dn) {
       (void)dn;
       return (up & mask) ? mu : 0.;
     };
     tj_distributed::generic_term_diag<bit_t, coeff_t>(basis, term_action,
                                                       vec_in, vec_out);
-  } else if (type == "NDN") {
+  } else if (type == "Ndn") {
     auto term_action = [&](bit_t up, bit_t dn) {
       (void)up;
       return (dn & mask) ? mu : 0.;

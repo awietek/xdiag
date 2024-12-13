@@ -29,13 +29,13 @@ TEST_CASE("time_evolution_distributed", "[time_evolution]") try {
       int site = y * L + x;
       int right = y * L + nx;
       int top = ny * L + x;
-      ops += "T" * Op("HOP", {site, right});
-      ops += "JZ" * Op("TJSZSZ", {site, right});
-      ops += "JEX" * Op("EXCHANGE", {site, right});
+      ops += "T" * Op("Hop", {site, right});
+      ops += "JZ" * Op("tJSzSz", {site, right});
+      ops += "JEX" * Op("Exchange", {site, right});
 
-      ops += "T" * Op("HOP", {site, top});
-      ops += "JZ" * Op("TJSZSZ", {site, top});
-      ops += "JEX" * Op("EXCHANGE", {site, top});
+      ops += "T" * Op("Hop", {site, top});
+      ops += "JZ" * Op("tJSzSz", {site, top});
+      ops += "JEX" * Op("Exchange", {site, top});
     }
   }
   ops["T"] = 1.0 + 0.2i;
@@ -68,8 +68,8 @@ TEST_CASE("time_evolution_distributed", "[time_evolution]") try {
   apply(ops, psi_0d, H_psi_0d);
 
   for (int s = 0; s < n_sites; ++s) {
-    auto n = innerC(Op("NTOT", s), H_psi_0);
-    auto nd = innerC(Op("NTOT", s), H_psi_0d);
+    auto n = innerC(Op("Ntot", s), H_psi_0);
+    auto nd = innerC(Op("Ntot", s), H_psi_0d);
     // Log("i {} {} {}", s, n, nd);
     REQUIRE(close(n, nd));
   }
@@ -81,8 +81,8 @@ TEST_CASE("time_evolution_distributed", "[time_evolution]") try {
     auto psi = time_evolve(ops, psi_0, time, tol);
     auto psid = time_evolve(ops, psi_0d, time, tol);
     for (int s = 0; s < n_sites; ++s) {
-      auto n = innerC(Op("NTOT", s), psi);
-      auto nd = innerC(Op("NTOT", s), psid);
+      auto n = innerC(Op("Ntot", s), psi);
+      auto nd = innerC(Op("Ntot", s), psid);
       Log("{} {} {} {:.6f}", s, n, nd, time);
       REQUIRE(std::abs(n - nd) < 1e-6);
     }

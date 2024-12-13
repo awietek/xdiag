@@ -146,7 +146,7 @@ let
     # Define a Hubbard chain model
     ops = OpSum()
     for i in 1:N
-        ops += Op("HOP", "T", [i, mod1(i+1, N)])
+        ops += Op("Hop", "T", [i, mod1(i+1, N)])
     end
     ops["T"] = 1.0;
     ops["U"] = 5.0;
@@ -201,7 +201,7 @@ end
 
 
 # --8<-- [start:op]
-op = Op("HOP", "T", [1, 2])
+op = Op("Hop", "T", [1, 2])
 @show op
 @show type(op)
 @show convert(String, coupling(op))
@@ -209,7 +209,7 @@ op = Op("HOP", "T", [1, 2])
 @show sites(op) == [1, 2]
 @show isexplicit(op)
 
-op = Op("HOP", 1.23, [1, 2])
+op = Op("Hop", 1.23, [1, 2])
 @show op
 @show isreal(op)
 @show ismatrix(op)
@@ -233,7 +233,7 @@ let
 
     ops = OpSum()
     for i in 1:N
-        ops += Op("ISING", "J", [i, mod1(i+1, N)])
+        ops += Op("SzSz", "J", [i, mod1(i+1, N)])
         ops += Op("SX", h * Sx, i)
     end
 

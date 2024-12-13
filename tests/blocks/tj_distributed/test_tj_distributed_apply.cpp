@@ -31,10 +31,10 @@ TEST_CASE("tj_distributed_apply", "[tj_distributed]") try {
       auto block = tJDistributed(N, nup, ndn);
       OpSum ops;
       for (int i = 0; i < N; ++i) {
-        ops += "Jz" * Op("SZSZ", {i, (i + 1) % N});
-        ops += "Jx" * Op("EXCHANGE", {i, (i + 1) % N});
-        ops += "TDN" * Op("HOPDN", {i, (i + 1) % N});
-        ops += "TUP" * Op("HOPUP", {i, (i + 1) % N});
+        ops += "Jz" * Op("SzSz", {i, (i + 1) % N});
+        ops += "Jx" * Op("Exchange", {i, (i + 1) % N});
+        ops += "TDN" * Op("Hopdn", {i, (i + 1) % N});
+        ops += "TUP" * Op("Hopup", {i, (i + 1) % N});
       }
       ops["Jz"] = 1.32;
       ops["Jx"] = complex(.432, .576);

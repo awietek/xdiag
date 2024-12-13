@@ -16,12 +16,12 @@ int main() {
 
         // Define hoppings
         std::string T = fmt::format("T{}{}", i, j);
-        ops += Op("HOP", T, {i, j});
+        ops += Op("Hop", T, {i, j});
         ops[T] = T_mat(i, j);
 
         // Define Heisenberg interactions
         std::string J = fmt::format("J{}{}", i, j);
-        ops += Op("HB", J, {i, j});
+        ops += Op("SdotS", J, {i, j});
         ops[J] = J_mat(i, j);
       }
     }

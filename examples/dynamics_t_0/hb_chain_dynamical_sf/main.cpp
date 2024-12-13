@@ -45,7 +45,7 @@ int main() {
     Log("Dynamical Lanczos iterations for q={}", q);
 
     // Compute S(q) |g.s.>
-    auto S_of_q = symmetrized_operator(Op("SZ", 0), group, irreps[q]);
+    auto S_of_q = symmetrized_operator(Op("Sz", 0), group, irreps[q]);
     auto block_q = Spinhalf(n_sites, n_up, group, irreps[q]);
     auto v0 = State(block_q);
     v0.make_complex();

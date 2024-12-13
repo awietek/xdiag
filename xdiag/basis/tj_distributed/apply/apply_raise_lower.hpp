@@ -20,20 +20,20 @@ void apply_raise_lower(Coupling const &cpl, Op const &op, BasisIn &&basis_in,
   bit_t fermi_mask = site_mask - 1;
 
   // Raising operators
-  if ((type == "CDAGUP") || (type == "CDAGDN")) {
+  if ((type == "Cdagup") || (type == "Cdagdn")) {
 
     auto term_action = [&](bit_t spins) -> std::pair<bit_t, coeff_t> {
       bool fermi = bits::popcnt(spins & fermi_mask) & 1;
       return {spins ^ site_mask, fermi ? -c : c};
     };
 
-    if (type == "CDAGUP") {
+    if (type == "Cdagup") {
       auto non_zero_term = [&](bit_t const &ups) -> bool {
         return (ups & site_mask) == 0;
       };
       tj_distributed::generic_term_ups<bit_t, coeff_t>(
           basis_in, basis_out, non_zero_term, term_action, fill);
-    } else if (type == "CDAGDN") {
+    } else if (type == "Cdagdn") {
       auto non_zero_term_ups = [&](bit_t const &ups) -> bool {
         return (ups & site_mask) == 0;
       };
@@ -46,20 +46,20 @@ void apply_raise_lower(Coupling const &cpl, Op const &op, BasisIn &&basis_in,
     }
 
     // Lowering operators
-  } else if ((type == "CUP") || (type == "CDN")) {
+  } else if ((type == "Cup") || (type == "Cdn")) {
 
     auto term_action = [&](bit_t spins) -> std::pair<bit_t, coeff_t> {
       bool fermi = bits::popcnt(spins & fermi_mask) & 1;
       return {spins ^ site_mask, fermi ? -c : c};
     };
 
-    if (type == "CUP") {
+    if (type == "Cup") {
       auto non_zero_term = [&](bit_t const &spins) -> bool {
         return (spins & site_mask);
       };
       tj_distributed::generic_term_ups<bit_t, coeff_t>(
           basis_in, basis_out, non_zero_term, term_action, fill);
-    } else if (type == "CDN") {
+    } else if (type == "Cdn") {
       auto non_zero_term_ups = [&](bit_t const &ups) -> bool {
         return (ups & site_mask) == 0;
       };

@@ -20,7 +20,7 @@ void apply_raise_lower(Coupling const &cpl, Op const &op, BasisIn &&basis_in,
   std::string type = op.type();
 
   // Raising operators
-  if ((type == "CDAGUP") || (type == "CDAGDN")) {
+  if ((type == "Cdagup") || (type == "Cdagdn")) {
     auto non_zero_term = [&](bit_t const &spins) -> bool {
       return (spins & site_mask) == 0;
     };
@@ -29,17 +29,17 @@ void apply_raise_lower(Coupling const &cpl, Op const &op, BasisIn &&basis_in,
       return {spins ^ site_mask, fermi ? -c : c};
     };
 
-    if (type == "CDAGUP") {
+    if (type == "Cdagup") {
       electron::generic_term_ups<bit_t, coeff_t, symmetric>(
           basis_in, basis_out, non_zero_term, term_action, fill);
-    } else if (type == "CDAGDN") {
+    } else if (type == "Cdagdn") {
 
       electron::generic_term_dns<bit_t, coeff_t, symmetric, true>(
           basis_in, basis_out, non_zero_term, term_action, fill);
     }
 
     // Lowering operators
-  } else if ((type == "CUP") || (type == "CDN")) {
+  } else if ((type == "Cup") || (type == "Cdn")) {
     auto non_zero_term = [&](bit_t const &spins) -> bool {
       return (spins & site_mask);
     };
@@ -48,10 +48,10 @@ void apply_raise_lower(Coupling const &cpl, Op const &op, BasisIn &&basis_in,
       return {spins ^ site_mask, fermi ? -c : c};
     };
 
-    if (type == "CUP") {
+    if (type == "Cup") {
       electron::generic_term_ups<bit_t, coeff_t, symmetric>(
           basis_in, basis_out, non_zero_term, term_action, fill);
-    } else if (type == "CDN") {
+    } else if (type == "Cdn") {
       electron::generic_term_dns<bit_t, coeff_t, symmetric, true>(
           basis_in, basis_out, non_zero_term, term_action, fill);
     }
