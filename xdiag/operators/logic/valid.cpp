@@ -32,7 +32,7 @@ void check_valid(Op const &op) try {
     } else if (type == "HubbardU") {
       must_not_have_matrix(op);
       must_not_have_sites(op);
-    } else if (type == "Map") {
+    } else if (type == "Matrix") {
       must_have_matrix(op);
     } else {
       XDIAG_THROW(

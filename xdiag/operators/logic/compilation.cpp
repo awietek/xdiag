@@ -1,7 +1,5 @@
 #include "compilation.hpp"
 
-#include <xdiag/operators/non_branching_op.hpp>
-
 namespace xdiag::operators {
 
 OpSum clean_zeros(OpSum const &ops) try {

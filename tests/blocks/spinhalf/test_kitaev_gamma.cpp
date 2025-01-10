@@ -4,8 +4,8 @@
 #include <xdiag/algebra/apply.hpp>
 #include <xdiag/algebra/matrix.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
-#include <xdiag/utils/close.hpp>
 #include <xdiag/io/file_toml.hpp>
+#include <xdiag/utils/close.hpp>
 
 void run_kitaev_gamma_test(
     double K, double G,
@@ -18,30 +18,41 @@ void run_kitaev_gamma_test(
                       "honeycomb.8.HeisenbergKitaevGamma.fsl.toml";
 
   auto fl = FileToml(lfile);
-  auto ops = fl["Interactions"].as<OpSum>();
-  auto group = PermutationGroup(read_permutations(lfile));
+  auto ops_read = fl["Interactions"].as<OpSum>();
+  auto group = fl["Symmetries"].as<PermutationGroup>();
 
   cx_mat sx(mat({{0., 0.5}, {0.5, 0.}}), mat({{0., 0.}, {0., 0.}}));
   cx_mat sy(mat({{0., 0.}, {0., 0.}}), mat({{0., -0.5}, {0.5, 0.}}));
   cx_mat sz(mat({{0.5, 0.0}, {0.0, -0.5}}), mat({{0., 0.}, {0., 0.0}}));
 
-  cx_mat kx = K * kron(sx, sx);
-  cx_mat ky = K * kron(sy, sy);
-  cx_mat kz = K * kron(sz, sz);
-  cx_mat gx = G * (kron(sy, sz) + kron(sz, sy));
-  cx_mat gy = G * (kron(sx, sz) + kron(sz, sx));
-  cx_mat gz = G * (kron(sx, sy) + kron(sy, sx));
+  cx_mat sxsx = kron(sx, sx);
+  cx_mat sysy = kron(sy, sy);
+  cx_mat szsz = kron(sz, sz);
+  cx_mat gsx = kron(sy, sz) + kron(sz, sy);
+  cx_mat gsy = kron(sx, sz) + kron(sz, sx);
+  cx_mat gsz = kron(sx, sy) + kron(sy, sx);
 
-  ops["J"] = 0.;
-  ops["KX"] = kx;
-  ops["KY"] = ky;
-  ops["KZ"] = kz;
-  ops["GX"] = gx;
-  ops["GY"] = gy;
-  ops["GZ"] = gz;
+  auto ops = OpSum();
+  for (auto [cpl, op] : ops_read) {
+    std::string type = op.type();
+    auto sites = op.sites();
+    if (type == "KITAEVX") {
+      ops += K * Op("Matrix", sites, sxsx);
+    } else if (type == "KITAEVY") {
+      ops += K * Op("Matrix", sites, sysy);
+    } else if (type == "KITAEVZ") {
+      ops += K * Op("Matrix", sites, szsz);
+    } else if (type == "GAMMAX") {
+      ops += G * Op("Matrix", sites, gsx);
+    } else if (type == "GAMMAY") {
+      ops += G * Op("Matrix", sites, gsy);
+    } else if (type == "GAMMAZ") {
+      ops += G * Op("Matrix", sites, gsz);
+    }
+  }
 
   for (auto [name, e0_reference] : irrep_names_e0) {
-    auto irrep = read_representation(lfile, name);
+    auto irrep = fl[name].as<Representation>();
     auto block = Spinhalf(8, group, irrep);
     // double e0_computed = e0(ops, block);
     cx_mat H = matrixC(ops, block);

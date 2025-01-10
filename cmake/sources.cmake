@@ -84,7 +84,6 @@ set(XDIAG_SOURCES
   operators/matrix.cpp
   operators/op.cpp
   operators/opsum.cpp
-  # operators/non_branching_op.cpp
   operators/logic/compilation.cpp
   operators/logic/valid.cpp
   operators/logic/types.cpp
@@ -94,7 +93,8 @@ set(XDIAG_SOURCES
   operators/logic/isapprox.cpp
   operators/logic/permute.cpp
   operators/logic/qns.cpp
-
+  operators/logic/non_branching_op.cpp
+  
   states/gpwf.cpp
   states/product_state.cpp
   states/random_state.cpp

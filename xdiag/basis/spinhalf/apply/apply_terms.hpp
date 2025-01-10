@@ -1,11 +1,12 @@
 #pragma once
 
 #include <xdiag/basis/spinhalf/apply/apply_exchange.hpp>
-// #include <xdiag/basis/spinhalf/apply/apply_non_branching.hpp>
+#include <xdiag/basis/spinhalf/apply/apply_matrix.hpp>
 #include <xdiag/basis/spinhalf/apply/apply_scalar_chirality.hpp>
 #include <xdiag/basis/spinhalf/apply/apply_spsm.hpp>
 #include <xdiag/basis/spinhalf/apply/apply_sz.hpp>
 #include <xdiag/basis/spinhalf/apply/apply_szsz.hpp>
+
 #include <xdiag/common.hpp>
 #include <xdiag/utils/timing.hpp>
 
@@ -36,11 +37,10 @@ void apply_terms(OpSum const &ops, BasisIn const &basis_in,
     } else if (type == "ScalarChirality") {
       spinhalf::apply_scalar_chirality<bit_t, coeff_t, symmetric>(
           cpl, op, basis_in, basis_out, fill);
-    } //  else if (type == "NONBRANCHINGOP") {
-    //   spinhalf::apply_non_branching<bit_t, coeff_t, symmetric>(
-    //       cpl, op, basis_in, basis_out, fill);
-    // }
-    else {
+    } else if (type == "Matrix") {
+      spinhalf::apply_matrix<bit_t, coeff_t, symmetric>(cpl, op, basis_in,
+                                                        basis_out, fill);
+    } else {
       XDIAG_THROW(fmt::format("Unknown Op type \"{}\"", type));
     }
   }
