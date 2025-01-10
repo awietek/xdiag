@@ -7,6 +7,7 @@ project(
 )
 
 option(BUILD_TESTING "Build the tests" Off)
+option(BUILD_EXAMPLES "Build the examples" Off)
 option(XDIAG_DISTRIBUTED "Build the distibuted parallelization libraries" Off)
 option(XDIAG_JULIA_WRAPPER "Build the Julia wrapper" Off)
 option(XDIAG_DISABLE_OPENMP "Disables the library being compiled with OpenMP" Off)
@@ -221,6 +222,11 @@ if (BUILD_TESTING)
     message(STATUS "-----------    Building test programs      --------------")
     add_subdirectory(tests)
   endif()
+endif()
+
+if (BUILD_EXAMPLES)
+    message(STATUS "-----------       Building examples        --------------")
+    add_subdirectory(examples)
 endif()
 
 if(XDIAG_OPTIMIZE_FOR_NATIVE)

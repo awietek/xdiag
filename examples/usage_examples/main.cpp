@@ -4,29 +4,8 @@
 using namespace xdiag;
 
 int main() try {
-  // clang-format off
+// clang-format off
 
-
-{
-// --8<-- [start:FileTOML]
-auto input = FileTOML("input.toml");
-int N = input["N"].as<int>();
-int nup = input["nup"].as<int>();
-double J1 = input["J1"].as<double>();
-double J2 = input["J2"].as<double>();
-
-auto block = Spinhalf(N, nup);
-auto H = OpSum();
-for (int i=0; i<N; ++i){
-  H += J1 * Op("SdotS", {i, (i+1)%N});
-  H += J2 * Op("SdotS", {i, (i+2)%N});
-}
-
-double e0 = eigval0(H, block);
-XDIAG_SHOW(e0);
-// --8<-- [end:FileTOML]
-}
-  
 {
 // --8<-- [start:Permutation]
 Permutation p1 = {0, 2, 1, 3};
@@ -182,8 +161,9 @@ int ndn = 2;
 // Define a Hubbard chain model
 auto ops = OpSum();
 for (int i=0; i< N; ++i){
-  ops += Op("Hop", "T", {i, (i+1) % N});
+  ops += "T" * Op("Hop", {i, (i+1) % N});
 }
+ops+= "U" * Op("HubbardU");
 ops["T"] = 1.0;
 ops["U"] = 5.0;
 
@@ -210,7 +190,7 @@ auto block = Spinhalf(N, nup);
 // Define the nearest-neighbor Heisenberg model
 auto ops = OpSum();
 for (int i=0; i<N; ++i) {
-  ops += Op("SdotS", "J", {i, (i+1) % N});
+  ops += "J" * Op("SdotS", {i, (i+1) % N});
 }
 ops["J"] = 1.0;
 double e0 = eigval0(ops, block);
@@ -226,7 +206,7 @@ auto block = Spinhalf(N, nup);
 // Define the nearest-neighbor Heisenberg model
 auto ops = OpSum();
 for (int i=0; i<N; ++i) {
-  ops += Op("SdotS", "J", {i, (i+1) % N});
+  ops += "J" * Op("SdotS", {i, (i+1) % N});
 }
 ops["J"] = 1.0;
 auto [e0, gs] = eig0(ops, block);
@@ -237,27 +217,18 @@ auto [e0, gs] = eig0(ops, block);
 
 {
 // --8<-- [start:op]
-auto op = Op("Hop", "T", {0, 1});
+auto op = "T" * Op("Hop", {0, 1});
 XDIAG_SHOW(op);
-XDIAG_SHOW(op.type());
-XDIAG_SHOW(op.coupling().as<std::string>());
-XDIAG_SHOW(op.size());
-XDIAG_SHOW(op[0]);
-XDIAG_SHOW(op[1]);
-XDIAG_SHOW(op.isexplicit());
 
- op = Op("Hop", 1.23, {0, 1});
+op = 1.23 * Op("Hop", {0, 1});
 XDIAG_SHOW(op);
-XDIAG_SHOW(op.isreal());
-XDIAG_SHOW(op.ismatrix());
-XDIAG_SHOW(op.isexplicit());
 
-arma::cx_mat m(arma::mat("0 0; 0 0"), arma::mat("0 -1; 1 0"));
-op = Op("SY", m, 0);
-XDIAG_SHOW(op);
-XDIAG_SHOW(op.isreal());
-XDIAG_SHOW(op.ismatrix());
-XDIAG_SHOW(op.isexplicit());
+// arma::cx_mat m(arma::mat("0 0; 0 0"), arma::mat("0 -1; 1 0"));
+// op = Op("SY", m, 0);
+// XDIAG_SHOW(op);
+// XDIAG_SHOW(op.isreal());
+// XDIAG_SHOW(op.ismatrix());
+// XDIAG_SHOW(op.isexplicit());
 // --8<-- [end:op]
 
 
@@ -285,27 +256,6 @@ ops2["J"] = J;
 ops2["h"] = h;
 // --8<-- [end:opsum]
 }
-
-
-
-{
-// --8<-- [start:coupling]
-auto cpl = Coupling("J");
-XDIAG_SHOW(cpl.type());
-XDIAG_SHOW(cpl.isexplicit());
-
-cpl = Coupling(1.23);
-XDIAG_SHOW(cpl.ismatrix());
-XDIAG_SHOW(cpl.as<double>());
-XDIAG_SHOW(cpl.as<complex>());
-
-cpl = Coupling(arma::mat("1 2; -2 1"));
-XDIAG_SHOW(cpl.ismatrix());
-XDIAG_SHOW(cpl.isreal());
-XDIAG_SHOW(cpl.as<arma::mat>());
-XDIAG_SHOW(cpl.as<arma::cx_mat>());
-// --8<-- [end:coupling]
-} 
 
 
 
@@ -406,7 +356,7 @@ int N = 8;
 auto block = Spinhalf(N,  N / 2);
 auto ops = OpSum();
 for (int i=0; i<N; ++i) {
-  ops += Op("SdotS", 1.0, {i, (i+1)%N});
+  ops += Op("SdotS", {i, (i+1)%N});
 }
 auto [e0, psi] = eig0(ops, block);
 
@@ -431,13 +381,13 @@ int N = 8;
 auto block = Spinhalf(N,  N / 2);
 auto ops = OpSum();
 for (int i=0; i<N; ++i){
-  ops += Op("SdotS", 1.0, {i, (i+1)%N});
+  ops += Op("SdotS", {i, (i+1)%N});
 }
 auto [e0, psi] = eig0(ops, block);
 
 auto blockp = Spinhalf(N,  N / 2 + 1);
 auto phi = zeros(blockp);
-apply(Op("S+", 1.0, 2), psi, phi);
+apply(Op("S+", 2), psi, phi);
 XDIAG_SHOW(inner(ops, psi));
 XDIAG_SHOW(inner(ops, phi));
 // --8<-- [end:apply]
@@ -458,12 +408,12 @@ auto block_sym = Spinhalf(N, group, rep);
 
 auto ops = OpSum();
 for (int i=0; i<N; ++i) {
-  ops += Op("SdotS", 1.0, {i, (i+1)%N});
+  ops += Op("SdotS", {i, (i+1)%N});
 }
 auto [e0, psi] = eig0(ops, block);
 auto [e0s, psi_sym] = eig0(ops, block_sym);
 
-auto corr = Op("SdotS", 1.0, {0, 1});
+auto corr = Op("SdotS", {0, 1});
 auto nn_corr = inner(corr, psi);
 auto corr_sym = symmetrize(corr, group);
 auto nn_corr_sym = innerC(corr_sym, psi_sym);
@@ -473,6 +423,25 @@ XDIAG_SHOW(nn_corr_sym);
 }
 
  
+{
+// --8<-- [start:FileToml]
+auto input = FileToml("input.toml");
+int N = input["N"].as<int>();
+int nup = input["nup"].as<int>();
+double J1 = input["J1"].as<double>();
+double J2 = input["J2"].as<double>();
+
+auto block = Spinhalf(N, nup);
+auto H = OpSum();
+for (int i=0; i<N; ++i){
+  H += J1 * Op("SdotS", {i, (i+1)%N});
+  H += J2 * Op("SdotS", {i, (i+2)%N});
+}
+double e0 = eigval0(H, block);
+XDIAG_SHOW(e0);
+// --8<-- [end:FileToml]
+}
+  
 }
   // clang-format on
 

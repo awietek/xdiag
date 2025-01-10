@@ -66,4 +66,4 @@ in a second step. The library can be compiled in two different versions:
         ```
 		
 		
-Of course the compilation process can be modified to allow for further optimizations. We collect several common scenarios in the [Advanced Compilation](documentation/compilation/advanced_compilation.md) guide.
+The compilation process can be modified and also allows for further optimizations. We collect several common scenarios in the [Advanced Compilation](../documentation/compilation/advanced_compilation.md) guide.

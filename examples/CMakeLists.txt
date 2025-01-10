@@ -1,0 +1,19 @@
+set(XDIAG_EXAMPLES
+  hello_world
+  usage_examples
+  user_guide
+)
+
+foreach(name ${XDIAG_EXAMPLES})
+  set(src "${name}/main.cpp")
+  message(STATUS "Add example: ${name} ${src}")
+  add_executable(${name} ${src})
+  target_link_libraries(${name} PUBLIC ${XDIAG_LIBRARY})
+endforeach()
+
+
+# if(XDIAG_DISTRIBUTED)
+#   add_executable(tests_distributed tests_distributed.cpp ${XDIAG_TEST_DISTRIBUTED_SOURCES} ${XDIAG_TESTCASES_SOURCES})
+#   target_link_libraries(tests_distributed PUBLIC ${XDIAG_LIBRARY})
+#   add_test(NAME XdiagTestDistributed COMMAND tests_distributed)
+# endif()
