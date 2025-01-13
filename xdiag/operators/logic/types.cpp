@@ -18,6 +18,19 @@ bool is_cplx_type(std::string type) {
          cplx_types.end();
 }
 
+int64_t n_sites_of_type(std::string type) try {
+  auto it = _n_sites_of_type.find(type);
+  if (it != _n_sites_of_type.end()) {
+    return it->second;
+  } else {
+    XDIAG_THROW(fmt::format("Cannot determine number of sites of Op of type "
+                            "\"{}\". This type is unknown.",
+                            type));
+  }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+
 std::string known_types_string() {
   std::string str;
   for (auto type : known_types) {
