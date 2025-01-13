@@ -1,20 +1,28 @@
 #include "symmetrize.hpp"
 
+#include <xdiag/operators/logic/permute.hpp>
+
 namespace xdiag {
 
-OpSum symmetrize(Op const &op, PermutationGroup const &group) {
+OpSum symmetrize(Op const &op, PermutationGroup const &group) try {
   auto ops = OpSum({op});
   return symmetrize(ops, group);
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 OpSum symmetrize(Op const &op, PermutationGroup const &group,
-                 Representation const &irrep) {
+                 Representation const &irrep) try {
   auto ops = OpSum({op});
   return symmetrize(ops, group, irrep);
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
-OpSum symmetrize(OpSum const &ops, PermutationGroup const &group) {
+OpSum symmetrize(OpSum const &ops, PermutationGroup const &group) try {
   return symmetrize(ops, group, trivial_representation(group.size()));
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 // TODO: needs to be adapted for MATRIX type
@@ -30,13 +38,9 @@ OpSum symmetrize(OpSum const &ops, PermutationGroup const &group,
     for (int64_t i = 0; i < N_group; ++i) {
       Permutation perm = group[i];
       complex bloch = irrep.character(i);
-
-      std::vector<int64_t> sites_sym(op.size(), 0);
-      for (int64_t site_idx = 0; site_idx < op.size(); ++site_idx) {
-        sites_sym[site_idx] = perm[op[site_idx]];
-      }
+      Op op_perm = permute(op, perm);
       Scalar cpl_sym(bloch * cpl.scalar().as<complex>() / (complex)N_group);
-      ops_sym += cpl_sym * Op(type, sites_sym);
+      ops_sym += cpl_sym * op_perm;
     }
   }
   return ops_sym;

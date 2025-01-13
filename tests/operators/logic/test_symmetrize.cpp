@@ -1,8 +1,8 @@
-#include "../catch.hpp"
+#include "../../catch.hpp"
 
 #include <iostream>
 
-#include "../blocks/electron/testcases_electron.hpp"
+#include "../../blocks/electron/testcases_electron.hpp"
 #include <xdiag/algebra/algebra.hpp>
 #include <xdiag/algebra/apply.hpp>
 #include <xdiag/algorithms/lanczos/eigs_lanczos.hpp>

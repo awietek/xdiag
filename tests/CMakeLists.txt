@@ -31,9 +31,10 @@ set(XDIAG_TEST_SOURCES
 
   operators/test_op.cpp
   operators/test_opsum.cpp
-  operators/test_symmetrize.cpp
   operators/test_non_branching_op.cpp
-
+  operators/logic/test_symmetrize.cpp
+  operators/logic/test_permute.cpp
+  
   blocks/spinhalf/test_spinhalf_matrix.cpp
   blocks/spinhalf/test_spinhalf_apply.cpp
   blocks/spinhalf/test_spinhalf_symmetric.cpp
