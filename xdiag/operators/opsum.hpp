@@ -26,6 +26,7 @@ public:
   bool operator==(OpSum const &rhs) const;
   bool operator!=(OpSum const &rhs) const;
 
+  std::vector<std::pair<Coupling, Op>> const &terms() const;
   std::vector<std::string> constants() const;
   OpSum plain() const;
   int64_t size() const;

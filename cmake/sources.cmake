@@ -94,6 +94,7 @@ set(XDIAG_SOURCES
   operators/logic/permute.cpp
   operators/logic/qns.cpp
   operators/logic/non_branching_op.cpp
+  operators/logic/order.cpp
   
   states/gpwf.cpp
   states/product_state.cpp

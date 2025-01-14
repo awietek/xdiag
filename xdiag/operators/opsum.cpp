@@ -17,6 +17,9 @@ OpSum OpSum::operator+(OpSum const &op) const {
 }
 int64_t OpSum::size() const { return terms_.size(); }
 
+std::vector<std::pair<Coupling, Op>> const &OpSum::terms() const {
+  return terms_;
+}
 std::vector<std::string> OpSum::constants() const {
   std::vector<std::string> names;
   for (auto const &c : constants_) {
@@ -59,8 +62,6 @@ bool OpSum::operator!=(OpSum const &rhs) const { return !operator==(rhs); }
 
 OpSum::iterator_t OpSum::begin() const { return terms_.begin(); }
 OpSum::iterator_t OpSum::end() const { return terms_.end(); }
-
-std::vector<std::string> constants(OpSum const &ops) { return ops.constants(); }
 
 OpSum operator*(std::string cpl, Op const &op) {
   return OpSum(Coupling(cpl), op);
