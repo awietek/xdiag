@@ -73,6 +73,7 @@ bool tJDistributed::operator!=(tJDistributed const &rhs) const {
 
 tJDistributed::basis_t const &tJDistributed::basis() const { return *basis_; }
 
+bool isreal(tJDistributed const &block) { return block.isreal(); }
 std::ostream &operator<<(std::ostream &out, tJDistributed const &block) {
   int mpi_size;
   MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);

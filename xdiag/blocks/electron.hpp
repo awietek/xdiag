@@ -51,6 +51,7 @@ private:
   int64_t size_;
 };
 
+bool isreal(Electron const &block);
 std::ostream &operator<<(std::ostream &out, Electron const &block);
 std::string to_string(Electron const &block);
 

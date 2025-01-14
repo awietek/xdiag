@@ -76,6 +76,7 @@ SpinhalfDistributed::basis_t const &SpinhalfDistributed::basis() const {
   return *basis_;
 }
 
+bool isreal(SpinhalfDistributed const &block) { return block.isreal(); }
 std::ostream &operator<<(std::ostream &out, SpinhalfDistributed const &block) {
   int mpi_size;
   MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);

@@ -29,7 +29,7 @@ public:
   int64_t size() const;
   iterator_t begin() const;
   iterator_t end() const;
-  int64_t index(ProductState const& pstate) const;
+  int64_t index(ProductState const &pstate) const;
   bool isreal(double precision = 1e-12) const;
 
   bool operator==(tJ const &rhs) const;
@@ -47,6 +47,7 @@ private:
   int64_t size_;
 };
 
+bool isreal(tJ const &block);
 std::ostream &operator<<(std::ostream &out, tJ const &block);
 std::string to_string(tJ const &block);
 

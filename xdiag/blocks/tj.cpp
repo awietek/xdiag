@@ -99,6 +99,8 @@ bool tJ::operator!=(tJ const &rhs) const { return !operator==(rhs); }
 
 tJ::basis_t const &tJ::basis() const { return *basis_; }
 
+bool isreal(tJ const &block) { return block.isreal(); }
+
 std::ostream &operator<<(std::ostream &out, tJ const &block) {
   out << "tJ:\n";
   out << "  n_sites  : " << block.n_sites() << "\n";

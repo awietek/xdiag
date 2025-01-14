@@ -58,6 +58,7 @@ private:
   int64_t size_;
 };
 
+bool isreal(Spinhalf const &block);
 std::ostream &operator<<(std::ostream &out, Spinhalf const &block);
 std::string to_string(Spinhalf const &block);
 

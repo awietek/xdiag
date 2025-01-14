@@ -6,6 +6,7 @@
 #include <xdiag/basis/tj/apply/dispatch_matrix.hpp>
 #include <xdiag/operators/logic/compilation.hpp>
 #include <xdiag/operators/logic/valid.hpp>
+#include <xdiag/operators/logic/real.hpp>
 
 namespace xdiag {
 
@@ -24,6 +25,15 @@ arma::Mat<coeff_t> matrix_gen(OpSum const &ops, block_t const &block_in,
 template <class block_t>
 arma::mat matrix(OpSum const &ops, block_t const &block_in,
                  block_t const &block_out, double precision) try {
+  if (!isreal(ops)) {
+    XDIAG_THROW("Cannot create a real matrix from an OpSum which is complex. "
+                "Please use the function \"matrixC\" instead.");
+  }
+  if (!isreal(block_in) || !isreal(block_out)) {
+    XDIAG_THROW("Cannot create a real matrix when a block is complex. "
+                "Please use the function \"matrixC\" instead.")
+  }
+
   return matrix_gen<double>(ops, block_in, block_out, precision);
 } catch (Error const &e) {
   XDIAG_RETHROW(e);

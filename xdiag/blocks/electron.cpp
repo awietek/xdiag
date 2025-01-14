@@ -151,6 +151,7 @@ bool Electron::operator!=(Electron const &rhs) const {
 
 Electron::basis_t const &Electron::basis() const { return *basis_; }
 
+bool isreal(Electron const &block) { return block.isreal(); }
 std::ostream &operator<<(std::ostream &out, Electron const &block) {
   out << "Electron:\n";
   out << "  n_sites  : " << block.n_sites() << "\n";

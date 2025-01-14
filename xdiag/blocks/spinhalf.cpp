@@ -226,6 +226,7 @@ bool Spinhalf::operator!=(Spinhalf const &rhs) const {
 
 Spinhalf::basis_t const &Spinhalf::basis() const { return *basis_; }
 
+bool isreal(Spinhalf const &block) { return block.isreal(); }
 std::ostream &operator<<(std::ostream &out, Spinhalf const &block) {
   out << "Spinhalf:\n";
   out << "  n_sites  : " << block.n_sites() << "\n";

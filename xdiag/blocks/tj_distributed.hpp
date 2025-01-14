@@ -42,6 +42,7 @@ private:
   int64_t size_;
 };
 
+bool isreal(tJDistributed const &block);
 std::ostream &operator<<(std::ostream &out, tJDistributed const &block);
 std::string to_string(tJDistributed const &block);
 
