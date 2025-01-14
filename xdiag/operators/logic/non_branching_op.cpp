@@ -28,7 +28,7 @@ template <typename bit_t, typename coeff_t>
 NonBranchingOp<bit_t, coeff_t>::NonBranchingOp(
     std::vector<int64_t> const &sites, arma::Mat<coeff_t> const &matrix,
     double precision) try
-    : mask_(0), diagonal_(true) {
+    : sites_(sites), mask_(0), diagonal_(true) {
 
   if (!is_non_branching_matrix(matrix, precision)) {
     XDIAG_THROW("Trying to create a NonBranchingOp from a matrix which is "
@@ -39,6 +39,7 @@ NonBranchingOp<bit_t, coeff_t>::NonBranchingOp(
   for (int64_t s : sites) {
     mask_ |= ((bit_t)1 << s);
   }
+  mask_ = ~mask_;
 
   // Matrix dimension is 2**(no. sites of op)
   int64_t dim = (int64_t)1 << sites.size();
@@ -98,14 +99,22 @@ NonBranchingOp<bit_t, coeff_t>::state_coeff(bit_t local_state) const {
 
 template <typename bit_t, typename coeff_t>
 bit_t NonBranchingOp<bit_t, coeff_t>::extract(bit_t state) const {
-  return bits::extract(state, mask_);
+  bit_t local_state = 0;
+  for (int64_t i = 0; i < (int64_t)sites_.size(); ++i) {
+    local_state |= bits::gbit(state, sites_[i]) << i;
+  }
+  return local_state;
 }
 
 template <typename bit_t, typename coeff_t>
 bit_t NonBranchingOp<bit_t, coeff_t>::deposit(bit_t local_state,
                                               bit_t state) const {
-  state &= ~mask_; // clear bits on site
-  return state | bits::deposit(local_state, mask_);
+  state &= mask_; // clear bits on site
+  for (int64_t i = 0; i < (int64_t)sites_.size(); ++i) {
+    state |= bits::gbit(local_state, i) << sites_[i];
+    // Log("c: {}", BSTR(state));
+  }
+  return state;
 }
 
 template class NonBranchingOp<uint16_t, double>;

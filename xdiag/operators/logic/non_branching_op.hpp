@@ -19,6 +19,7 @@ public:
   bit_t deposit(bit_t local_state, bit_t state) const;
 
 private:
+  std::vector<int64_t> sites_;
   bit_t mask_;
   bool diagonal_;
   std::vector<bool> non_zero_term_;

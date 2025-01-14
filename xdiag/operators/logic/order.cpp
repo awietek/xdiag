@@ -8,13 +8,19 @@ namespace xdiag {
 
 static int64_t permuted_index(int64_t idx, int64_t d,
                               std::vector<int64_t> const &perm) {
+  std::vector<int64_t> perm_inv(perm.size());
+  for (int64_t i=0; i< (int64_t)perm.size(); ++i){
+    perm_inv[perm[i]] = i;
+  }  
+
   int64_t exp = 0;
   int64_t idx_permuted = 0;
   while (idx) {
     int64_t local = idx % d;
-    idx_permuted += local * pow(d, perm[exp++]);
+    idx_permuted += local * pow(d, perm_inv[exp++]);
     idx /= d;
   }
+
   return idx_permuted;
 }
 
@@ -112,7 +118,7 @@ std::pair<Scalar, Op> order(Scalar const &alpha, Op const &op) try {
       return {-alpha, Op(type, {s1, s3, s2})};
     } else if ((s3 < s2) || (s2 < s1)) {
       return {-alpha, Op(type, {s3, s2, s1})};
-    } else if ((s2 < s1) || (s1 < s3)) {
+    } else { //  ((s2 < s1) || (s1 < s3))
       return {-alpha, Op(type, {s2, s3, s1})};
     }
   } else {
@@ -236,7 +242,7 @@ OpSum order(OpSum const &ops) try {
     return less(o1, o2) || ((o1 == o2) && less(c1, c2));
   });
   OpSum ops_ordered;
-  for (auto const& [s, o]: terms){
+  for (auto const &[s, o] : terms) {
     ops_ordered += s * o;
   }
   return ops_ordered;
