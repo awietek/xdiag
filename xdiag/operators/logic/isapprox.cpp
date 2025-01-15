@@ -5,7 +5,7 @@
 
 namespace xdiag {
 
-bool isapprox(Op const &op1, Op const &op2, double rtol, double atol) {
+bool isapprox(Op const &op1, Op const &op2, double rtol, double atol) try {
   auto [a1, o1] = order(op1);
   auto [a2, o2] = order(op2);
 
@@ -32,9 +32,12 @@ bool isapprox(Op const &op1, Op const &op2, double rtol, double atol) {
   } else { // type different
     return false;
   }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
-bool isapprox(OpSum const &ops1, OpSum const &ops2, double rtol, double atol) {
+bool isapprox(OpSum const &ops1, OpSum const &ops2, double rtol,
+              double atol) try {
   auto t1 = order(ops1).terms();
   auto t2 = order(ops2).terms();
   if (t1.size() != t2.size()) {
@@ -51,10 +54,12 @@ bool isapprox(OpSum const &ops1, OpSum const &ops2, double rtol, double atol) {
     }
     return true;
   }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 std::optional<Scalar> isapprox_multiple(OpSum const &ops1, OpSum const &ops2,
-                                        double rtol, double atol) {
+                                        double rtol, double atol) try {
   auto t1 = order(ops1).terms();
   auto t2 = order(ops2).terms();
   if ((t1.size() != t2.size()) || (t1.size() == 0)) {
@@ -76,6 +81,8 @@ std::optional<Scalar> isapprox_multiple(OpSum const &ops1, OpSum const &ops2,
     }
     return ratio;
   }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 } // namespace xdiag
