@@ -14,7 +14,7 @@ class Op {
 public:
   XDIAG_API Op() = default;
   explicit XDIAG_API Op(std::string type);
-  
+
   XDIAG_API Op(std::string type, int64_t site);
   XDIAG_API Op(std::string type, std::vector<int64_t> const &sites);
 

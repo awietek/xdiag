@@ -4,6 +4,7 @@
 
 namespace xdiag {
 
+std::pair<Scalar, Op> order(Op const &op);
 std::pair<Scalar, Op> order(Scalar const &alpha, Op const &op);
 OpSum order(OpSum const &ops);
 

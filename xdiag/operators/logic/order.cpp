@@ -9,9 +9,9 @@ namespace xdiag {
 static int64_t permuted_index(int64_t idx, int64_t d,
                               std::vector<int64_t> const &perm) {
   std::vector<int64_t> perm_inv(perm.size());
-  for (int64_t i=0; i< (int64_t)perm.size(); ++i){
+  for (int64_t i = 0; i < (int64_t)perm.size(); ++i) {
     perm_inv[perm[i]] = i;
-  }  
+  }
 
   int64_t exp = 0;
   int64_t idx_permuted = 0;
@@ -56,6 +56,12 @@ static arma::Mat<T> permute_matrix(arma::Mat<T> const &mat,
     }
   }
   return mat_permuted;
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+
+std::pair<Scalar, Op> order(Op const &op) try {
+  return order(1.0, op);
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
