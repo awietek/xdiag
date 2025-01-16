@@ -8,7 +8,7 @@ namespace xdiag {
 bool isapprox(Op const &op1, Op const &op2, double rtol, double atol) try {
   auto [a1, o1] = order(op1);
   auto [a2, o2] = order(op2);
-
+  
   if (o1.type() == o2.type()) {
     if (o1.hassites() && o2.hassites()) {
       auto s1 = o1.sites();
