@@ -10,7 +10,7 @@ namespace xdiag::basis::spinhalf {
 template <typename bit_t, typename coeff_t, class BasisIn, class BasisOut,
           class NonZeroTerm, class TermAction, class Fill>
 void apply_term_offdiag_sym_to_spins(bit_t spins_in, int64_t idx_in,
-                                     std::vector<coeff_t> const &characters,
+                                     arma::Col<coeff_t> const &characters,
                                      BasisIn &&basis_in, BasisOut &&basis_out,
                                      NonZeroTerm &&non_zero_term,
                                      TermAction &&term_action, Fill &&fill) {
@@ -22,7 +22,7 @@ void apply_term_offdiag_sym_to_spins(bit_t spins_in, int64_t idx_in,
     if (idx_out != invalid_index) {
       double norm_out = basis_out.norm(idx_out);
       double norm_in = basis_in.norm(idx_in);
-      coeff_t bloch = characters[sym];
+      coeff_t bloch = characters(sym);
       coeff_t val = coeff * bloch * norm_out / norm_in;
       fill(idx_in, idx_out, val);
     }
@@ -35,12 +35,7 @@ void apply_term_offdiag_sym(BasisIn &&basis_in, BasisOut &&basis_out,
                             NonZeroTerm &&non_zero_term,
                             TermAction &&term_action, Fill &&fill) {
   Representation irrep_out = basis_out.irrep();
-  std::vector<coeff_t> characters;
-  if constexpr (iscomplex<coeff_t>()) {
-    characters = irrep_out.characters();
-  } else {
-    characters = irrep_out.characters_real();
-  }
+  auto characters = irrep_out.characters().as<arma::Col<coeff_t>>();
 
 #ifdef _OPENMP
   int64_t size = basis_in.size();

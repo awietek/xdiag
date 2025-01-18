@@ -6,18 +6,18 @@
 namespace xdiag::basis::tj {
 
 template <typename bit_t>
-BasisSymmetricNp<bit_t>::BasisSymmetricNp(int64_t n_sites, int64_t nup,
-                                          int64_t ndn, PermutationGroup group,
-                                          Representation irrep) try
-    : n_sites_(n_sites), n_up_(nup), n_dn_(ndn),
-      group_action_(allowed_subgroup(group, irrep)), irrep_(irrep),
+template <typename coeff_t>
+BasisSymmetricNp<bit_t>::BasisSymmetricNp(
+    int64_t n_sites, int64_t nup, int64_t ndn, PermutationGroup const &group,
+    arma::Col<coeff_t> const &characters) try
+    : n_sites_(n_sites), n_up_(nup), n_dn_(ndn), group_action_(group),
+      irrep_(group, characters),
       raw_ups_size_(combinatorics::binomial(n_sites, nup)),
       raw_dns_size_(combinatorics::binomial(n_sites, ndn)),
       raw_dnsc_size_(combinatorics::binomial(n_sites - nup, ndn)),
       lintable_ups_(n_sites, nup), lintable_dns_(n_sites, ndn),
-      lintable_dnsc_(n_sites - nup, ndn),
-      fermi_table_ups_(n_sites, nup, allowed_subgroup(group, irrep)),
-      fermi_table_dns_(n_sites, ndn, allowed_subgroup(group, irrep)) {
+      lintable_dnsc_(n_sites - nup, ndn), fermi_table_ups_(n_sites, nup, group),
+      fermi_table_dns_(n_sites, ndn, group) {
 
   using combinatorics::Combinations;
   if ((nup + ndn) > n_sites) {
@@ -68,7 +68,7 @@ BasisSymmetricNp<bit_t>::BasisSymmetricNp(int64_t n_sites, int64_t nup,
             symmetries::representative_subset(dns, group_action_, syms);
         if (dns == dns_rep) {
           double norm = symmetries::norm_electron_subset(
-              ups, dns, group_action_, irrep, syms);
+              ups, dns, group_action_, irrep_, syms);
           if (norm > 1e-6) { // only keep dns with non-zero norm
             dns_storage_.push_back(dns_rep);
             norms_storage_.push_back(norm);

@@ -58,22 +58,22 @@ make_spinhalf_basis_no_sz(int64_t n_sites, PermutationGroup const &group,
   using basis_t = Spinhalf::basis_t;
   if (n_sublat == 0) {
     return std::make_shared<basis_t>(
-        spinhalf::BasisSymmetricNoSz<bit_t>(n_sites, group, irrep));
+        spinhalf::BasisSymmetricNoSz<bit_t>(irrep));
   } else if (n_sublat == 1) {
     return std::make_shared<basis_t>(
-        spinhalf::BasisSublattice<bit_t, 1>(n_sites, group, irrep));
+        spinhalf::BasisSublattice<bit_t, 1>(irrep));
   } else if (n_sublat == 2) {
     return std::make_shared<basis_t>(
-        spinhalf::BasisSublattice<bit_t, 2>(n_sites, group, irrep));
+        spinhalf::BasisSublattice<bit_t, 2>(irrep));
   } else if (n_sublat == 3) {
     return std::make_shared<basis_t>(
-        spinhalf::BasisSublattice<bit_t, 3>(n_sites, group, irrep));
+        spinhalf::BasisSublattice<bit_t, 3>(irrep));
   } else if (n_sublat == 4) {
     return std::make_shared<basis_t>(
-        spinhalf::BasisSublattice<bit_t, 4>(n_sites, group, irrep));
+        spinhalf::BasisSublattice<bit_t, 4>(irrep));
   } else if (n_sublat == 5) {
     return std::make_shared<basis_t>(
-        spinhalf::BasisSublattice<bit_t, 5>(n_sites, group, irrep));
+        spinhalf::BasisSublattice<bit_t, 5>(irrep));
   } else {
     XDIAG_THROW("Invalid n_sublat specified. Must be "
                 "eiter 0 (so sublattice coding) or between 1 and 5. ");
@@ -91,8 +91,8 @@ Spinhalf::Spinhalf(int64_t n_sites, PermutationGroup group,
 
 Spinhalf::Spinhalf(int64_t n_sites, PermutationGroup group,
                    Representation irrep, int64_t n_sublat) try
-    : n_sites_(n_sites), n_up_(undefined),
-      permutation_group_(allowed_subgroup(group, irrep)), irrep_(irrep) {
+    : n_sites_(n_sites), n_up_(undefined), permutation_group_(group),
+      irrep_(irrep) {
 
   if (n_sites < 0) {
     XDIAG_THROW("Invalid argument: n_sites < 0");
@@ -125,22 +125,22 @@ make_spinhalf_basis_sz(int64_t n_sites, int64_t n_up,
 
   if (n_sublat == 0) {
     return std::make_shared<basis_t>(
-        spinhalf::BasisSymmetricSz<bit_t>(n_sites, n_up, group, irrep));
+        spinhalf::BasisSymmetricSz<bit_t>(n_up, irrep));
   } else if (n_sublat == 1) {
     return std::make_shared<basis_t>(
-        spinhalf::BasisSublattice<bit_t, 1>(n_sites, n_up, group, irrep));
+        spinhalf::BasisSublattice<bit_t, 1>(n_up, irrep));
   } else if (n_sublat == 2) {
     return std::make_shared<basis_t>(
-        spinhalf::BasisSublattice<bit_t, 2>(n_sites, n_up, group, irrep));
+        spinhalf::BasisSublattice<bit_t, 2>(n_up, irrep));
   } else if (n_sublat == 3) {
     return std::make_shared<basis_t>(
-        spinhalf::BasisSublattice<bit_t, 3>(n_sites, n_up, group, irrep));
+        spinhalf::BasisSublattice<bit_t, 3>(n_up, irrep));
   } else if (n_sublat == 4) {
     return std::make_shared<basis_t>(
-        spinhalf::BasisSublattice<bit_t, 4>(n_sites, n_up, group, irrep));
+        spinhalf::BasisSublattice<bit_t, 4>(n_up, irrep));
   } else if (n_sublat == 5) {
     return std::make_shared<basis_t>(
-        spinhalf::BasisSublattice<bit_t, 5>(n_sites, n_up, group, irrep));
+        spinhalf::BasisSublattice<bit_t, 5>(n_up, irrep));
   } else {
     XDIAG_THROW("Invalid n_sublat specified. Must be "
                 "eiter 0 (so sublattice coding) or between 1 and 5.");
@@ -158,8 +158,7 @@ Spinhalf::Spinhalf(int64_t n_sites, int64_t n_up, PermutationGroup group,
 
 Spinhalf::Spinhalf(int64_t n_sites, int64_t n_up, PermutationGroup group,
                    Representation irrep, int64_t n_sublat) try
-    : n_sites_(n_sites), n_up_(n_up),
-      permutation_group_(allowed_subgroup(group, irrep)), irrep_(irrep) {
+    : n_sites_(n_sites), n_up_(n_up), permutation_group_(group), irrep_(irrep) {
   if (n_sites < 0) {
     XDIAG_THROW("Invalid argument: n_sites < 0");
   } else if (n_up < 0) {
@@ -210,9 +209,7 @@ int64_t Spinhalf::index(ProductState const &pstate) const try {
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
-bool Spinhalf::isreal(double precision) const {
-  return irrep_.isreal(precision);
-}
+bool Spinhalf::isreal() const { return irrep_.isreal(); }
 
 bool Spinhalf::operator==(Spinhalf const &rhs) const {
   return (n_sites_ == rhs.n_sites_) && (n_up_ == rhs.n_up_) &&

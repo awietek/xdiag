@@ -33,6 +33,9 @@ template <> arma::cx_vec Vector::as<arma::cx_vec>() const {
   }
 }
 
+int64_t Vector::size() const {
+  return std::visit([](auto &&v) { return v.size(); }, vec_);
+}
 bool Vector::isreal() const { return std::holds_alternative<arma::vec>(vec_); }
 
 arma::vec Vector::real() const {

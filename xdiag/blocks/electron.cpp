@@ -54,7 +54,7 @@ Electron::Electron(int64_t n_sites, int64_t nup, int64_t ndn) try
 Electron::Electron(int64_t n_sites, PermutationGroup group,
                    Representation irrep) try
     : n_sites_(n_sites), n_up_(undefined), n_dn_(undefined),
-      permutation_group_(allowed_subgroup(group, irrep)), irrep_(irrep) {
+      permutation_group_(group), irrep_(irrep) {
 
   if (n_sites < 0) {
     XDIAG_THROW("Invalid argument: n_sites < 0");
@@ -65,10 +65,10 @@ Electron::Electron(int64_t n_sites, PermutationGroup group,
                 "same number of elements");
   } else if (n_sites < 32) {
     basis_ = std::make_shared<basis_t>(
-        electron::BasisSymmetricNoNp<uint32_t>(n_sites, group, irrep));
+        electron::BasisSymmetricNoNp<uint32_t>(n_sites, irrep));
   } else if (n_sites < 64) {
     basis_ = std::make_shared<basis_t>(
-        electron::BasisSymmetricNoNp<uint64_t>(n_sites, group, irrep));
+        electron::BasisSymmetricNoNp<uint64_t>(n_sites, irrep));
   } else {
     XDIAG_THROW("blocks with more than 64 sites currently not implemented");
   }
@@ -82,7 +82,7 @@ Electron::Electron(int64_t n_sites, PermutationGroup group,
 Electron::Electron(int64_t n_sites, int64_t nup, int64_t ndn,
                    PermutationGroup group, Representation irrep) try
     : n_sites_(n_sites), n_up_(nup), n_dn_(ndn),
-      permutation_group_(allowed_subgroup(group, irrep)), irrep_(irrep) {
+      permutation_group_(group), irrep_(irrep) {
 
   if (n_sites < 0) {
     XDIAG_THROW("Invalid argument: n_sites < 0");
@@ -97,10 +97,10 @@ Electron::Electron(int64_t n_sites, int64_t nup, int64_t ndn,
                 "same number of elements");
   } else if (n_sites < 32) {
     basis_ = std::make_shared<basis_t>(
-        electron::BasisSymmetricNp<uint32_t>(n_sites, nup, ndn, group, irrep));
+        electron::BasisSymmetricNp<uint32_t>(n_sites, nup, ndn, irrep));
   } else if (n_sites < 64) {
     basis_ = std::make_shared<basis_t>(
-        electron::BasisSymmetricNp<uint64_t>(n_sites, nup, ndn, group, irrep));
+        electron::BasisSymmetricNp<uint64_t>(n_sites, nup, ndn, irrep));
   } else {
     XDIAG_THROW("blocks with more than 64 sites currently not implemented");
   }
@@ -135,9 +135,7 @@ int64_t Electron::index(ProductState const &pstate) const try {
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
-bool Electron::isreal(double precision) const {
-  return irrep_.isreal(precision);
-}
+bool Electron::isreal() const { return irrep_.isreal(); }
 
 bool Electron::operator==(Electron const &rhs) const {
   return (n_sites_ == rhs.n_sites_) && (n_up_ == rhs.n_up_) &&

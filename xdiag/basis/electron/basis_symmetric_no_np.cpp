@@ -9,17 +9,15 @@ namespace xdiag::basis::electron {
 
 template <class bit_t>
 BasisSymmetricNoNp<bit_t>::BasisSymmetricNoNp(int64_t n_sites,
-                                              PermutationGroup group,
-                                              Representation irrep)
-    : n_sites_(n_sites), group_action_(allowed_subgroup(group, irrep)),
-      irrep_(irrep), raw_ups_size_((int64_t)1 << n_sites),
+                                              Representation const &irrep) try
+    : n_sites_(n_sites), group_action_(irrep.group()), irrep_(irrep),
+      raw_ups_size_((int64_t)1 << n_sites),
       raw_dns_size_((int64_t)1 << n_sites), lintable_ups_(n_sites),
-      lintable_dns_(n_sites), fermi_table_(n_sites_, group) {
+      lintable_dns_(n_sites), fermi_table_(n_sites_, irrep.group()) {
   if (n_sites < 0) {
     throw(std::invalid_argument("n_sites < 0"));
-  } else if (n_sites != group.n_sites()) {
-    throw(std::logic_error(
-        "n_sites does not match the n_sites in PermutationGroup"));
+  } else if (n_sites != irrep.group().n_sites()) {
+    XDIAG_THROW("n_sites does not match the n_sites in PermutationGroup");
   }
 
   using combinatorics::Subsets;
@@ -28,9 +26,19 @@ BasisSymmetricNoNp<bit_t>::BasisSymmetricNoNp(int64_t n_sites,
       symmetries::representatives_indices_symmetries_limits<bit_t>(
           combinatorics::SubsetsIndexing<bit_t>(n_sites), group_action_);
 
-  std::tie(dns_storage_, norms_storage_, dns_limits_, ups_offset_, size_) =
-      symmetries::electron_dns_norms_limits_offset_size(
-          reps_up_, Subsets<bit_t>(n_sites), group_action_, irrep_);
+  if (isreal(irrep)) {
+    auto characters = irrep.characters().as<arma::vec>();
+    std::tie(dns_storage_, norms_storage_, dns_limits_, ups_offset_, size_) =
+        symmetries::electron_dns_norms_limits_offset_size(
+            reps_up_, Subsets<bit_t>(n_sites), group_action_, characters);
+  } else {
+    auto characters = irrep.characters().as<arma::cx_vec>();
+    std::tie(dns_storage_, norms_storage_, dns_limits_, ups_offset_, size_) =
+        symmetries::electron_dns_norms_limits_offset_size(
+            reps_up_, Subsets<bit_t>(n_sites), group_action_, characters);
+  }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 template <class bit_t> int64_t BasisSymmetricNoNp<bit_t>::n_sites() const {

@@ -49,7 +49,8 @@ void apply_exchange(Coupling const &cpl, Op const &op, Basis &&basis,
 
   if constexpr (symmetric) {
 
-    auto const &irrep = basis.irrep();
+    Representation const &irrep = basis.irrep();
+    auto characters = irrep.characters().as<arma::Col<coeff_t>>();
 
     // Loop over all up configurations
 #ifdef _OPENMP
@@ -99,12 +100,7 @@ void apply_exchange(Coupling const &cpl, Op const &op, Basis &&basis,
         fermi_up ^= basis.fermi_bool_ups(sym, ups_flip);
 
         // Fix the bloch factor
-        coeff_t prefac;
-        if constexpr (iscomplex<coeff_t>()) {
-          prefac = -Jhalf * irrep.character(sym);
-        } else {
-          prefac = -Jhalf * real(irrep.character(sym));
-        }
+        coeff_t prefac = -Jhalf * characters(sym);
 
         // Fermi-sign of up spins
         bool fermi_up = (bits::popcnt(ups & fermimask) & 1);
@@ -133,15 +129,10 @@ void apply_exchange(Coupling const &cpl, Op const &op, Basis &&basis,
 
         // Fix the bloch/prefactors
         std::vector<coeff_t> prefacs(irrep.size());
-        if constexpr (iscomplex<coeff_t>()) {
-          for (int64_t i = 0; i < (int64_t)irrep.size(); ++i) {
-            prefacs[i] = -irrep.character(i) * Jhalf;
-          }
-        } else {
-          for (int64_t i = 0; i < (int64_t)irrep.size(); ++i) {
-            prefacs[i] = -real(irrep.character(i)) * Jhalf;
-          }
+        for (int64_t i = 0; i < (int64_t)irrep.size(); ++i) {
+          prefacs[i] = -characters(i) * Jhalf;
         }
+
         bool fermi_up_hop = (bits::popcnt(ups & fermimask) & 1);
 
         int64_t idx_dn = 0;

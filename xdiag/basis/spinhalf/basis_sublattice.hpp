@@ -19,14 +19,8 @@ public:
   using iterator_t = typename std::vector<bit_t>::const_iterator;
 
   BasisSublattice() = default;
-
-  template <typename T>
-  BasisSublattice(int64_t n_sites, PermutationGroup permutation_group,
-                  arma::Col<T> characters);
-
-  template <typename T>
-  BasisSublattice(int64_t n_sites, int64_t n_up,
-                  PermutationGroup permutation_group, arma::Col<T> characters);
+  BasisSublattice(Representation const &irrep);
+  BasisSublattice(int64_t n_up, Representation const &irrep);
 
   iterator_t begin() const;
   iterator_t end() const;
@@ -38,8 +32,9 @@ public:
   inline double norm(int64_t idx) const { return norms_[idx]; }
 
   int64_t n_sites() const;
-  bool sz_conserved() const;
   int64_t n_up() const;
+
+  Representation const &irrep() const;
   GroupActionSublattice<bit_t, n_sublat> const &group_action() const;
 
   bool operator==(BasisSublattice<bit_t, n_sublat> const &rhs) const;
@@ -47,10 +42,10 @@ public:
 
 private:
   int64_t n_sites_;
-  bool sz_conserved_;
   int64_t n_up_;
   int64_t n_postfix_bits_;
 
+  Representation irrep_;
   GroupActionSublattice<bit_t, n_sublat> group_action_;
   std::vector<bit_t> reps_;
   std::vector<double> norms_;

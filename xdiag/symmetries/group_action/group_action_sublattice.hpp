@@ -36,7 +36,7 @@ public:
   bool operator==(GroupActionSublattice const &rhs) const;
   bool operator!=(GroupActionSublattice const &rhs) const;
 
-private:
+// private:
   int64_t n_sites_;
   int64_t n_symmetries_;
   PermutationGroup permutation_group_;
@@ -60,7 +60,7 @@ private:
   std::array<std::vector<int64_t>, n_sublat> rep_syms_array_;
   std::array<std::vector<bit_t>, n_sublat> sym_action_;
 
-  friend class basis::spinhalf::BasisSublattice<bit_t, n_sublat>;
+  // friend class basis::spinhalf::BasisSublattice<bit_t, n_sublat>;
 };
 
 } // namespace xdiag

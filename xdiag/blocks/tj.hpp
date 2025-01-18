@@ -30,7 +30,7 @@ public:
   iterator_t begin() const;
   iterator_t end() const;
   int64_t index(ProductState const &pstate) const;
-  bool isreal(double precision = 1e-12) const;
+  bool isreal() const;
 
   bool operator==(tJ const &rhs) const;
   bool operator!=(tJ const &rhs) const;

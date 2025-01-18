@@ -11,63 +11,51 @@
 
 namespace xdiag {
 
-Representation::Representation(std::initializer_list<complex> list)
-    : Representation(std::vector<complex>(list)) {}
+Representation::Representation(PermutationGroup const &group)
+    : group_(group), characters_(arma::vec(group.size(), arma::fill::ones)) {}
 
-Representation::Representation(std::vector<complex> const &characters)
-    : characters_(characters), characters_real_(characters.size()),
-      allowed_symmetries_(characters.size(), 0) {
-  for (int64_t idx = 0; idx < (int64_t)characters.size(); ++idx) {
-    characters_real_[idx] = std::real(characters[idx]);
-  }
-  std::iota(allowed_symmetries_.begin(), allowed_symmetries_.end(), 0);
+template <typename T>
+Representation::Representation(PermutationGroup const &group,
+                               std::vector<T> const &characters)
+    : group_(group), characters_(arma::Col<T>(characters)) {}
+
+template Representation::Representation(PermutationGroup const &,
+                                        std::vector<double> const &);
+template Representation::Representation(PermutationGroup const &,
+                                        std::vector<complex> const &);
+
+template <typename T>
+Representation::Representation(PermutationGroup const &group,
+                               arma::Col<T> const &characters)
+    : group_(group), characters_(characters) {}
+template Representation::Representation(PermutationGroup const &,
+                                        arma::vec const &);
+template Representation::Representation(PermutationGroup const &,
+                                        arma::cx_vec const &);
+
+template <typename T>
+Representation::Representation(PermutationGroup const &group, T *characters,
+                               int64_t n_characters)
+    : group_(group), characters_(arma::Col<T>(characters, n_characters, true)) {
 }
+template Representation::Representation(PermutationGroup const &group,
+                                        double *characters,
+                                        int64_t n_characters);
+template Representation::Representation(PermutationGroup const &group,
+                                        complex *characters,
+                                        int64_t n_characters);
 
-Representation::Representation(complex const *characters, int64_t n_characters)
-    : Representation(
-          std::vector<complex>(characters, characters + n_characters)) {}
+Representation::Representation(PermutationGroup const &group,
+                               Vector const &characters)
+    : group_(group), characters_(characters){};
 
-Representation::Representation(std::vector<complex> const &characters,
-                               std::vector<int64_t> const &allowed_symmetries)
-    : characters_(characters), characters_real_(characters.size()),
-      allowed_symmetries_(allowed_symmetries) {
+Vector const &Representation::characters() const { return characters_; }
 
-  assert(characters.size() == allowed_symmetries.size());
-
-  for (int64_t idx = 0; idx < (int64_t)characters.size(); ++idx) {
-    characters_real_[idx] = std::real(characters[idx]);
-  }
-}
-
-Representation::Representation(io::FileTomlHandler &&hdl)
-    : Representation(hdl.as<Representation>()) {}
-
-complex Representation::character(int64_t idx) const {
-  return characters_.at(idx);
-}
-std::vector<int64_t> Representation::allowed_symmetries() const {
-  return allowed_symmetries_;
-}
-
-std::vector<complex> const &Representation::characters() const {
-  return characters_;
-}
-std::vector<double> const &Representation::characters_real() const {
-  return characters_real_;
-}
-
-Representation
-Representation::subgroup(std::vector<int64_t> const &symmetry_numbers) const {
-  std::vector<complex> sub_characters;
-  for (auto sym : symmetry_numbers)
-    sub_characters.push_back(characters_[sym]);
-  return Representation(sub_characters);
-}
 int64_t Representation::size() const { return characters_.size(); }
 bool Representation::isreal() const { return characters_.is<arma::vec>(); }
 
 bool Representation::operator==(Representation const &rhs) const {
-  return close(arma::cx_vec(characters_), arma::cx_vec(rhs.characters_));
+  return (group_ == rhs.group_) && (characters_ == rhs.characters_);
 }
 
 bool Representation::operator!=(Representation const &rhs) const {
@@ -76,30 +64,28 @@ bool Representation::operator!=(Representation const &rhs) const {
 
 bool isreal(Representation const &irrep) { return irrep.isreal(); }
 
-Representation trivial_representation(int64_t size) {
-  return Representation(std::vector<complex>(size, {1.0, 0.0}));
-}
-
 Representation trivial_representation(PermutationGroup const &group) {
-  return Representation(std::vector<complex>(group.size(), {1.0, 0.0}));
+  return Representation(group, arma::vec(group.size(), arma::fill::ones));
 }
 
 Representation multiply(Representation const &r1,
                         Representation const &r2) try {
-  if (r1.size() != r2.size()) {
-    XDIAG_THROW("Cannot construct product Representation, sizes of two inputs "
-                "are not equal.");
+  if (r1.group() != r2.group()) {
+    XDIAG_THROW(
+        "The two given representations are not defined for the same group.");
   }
 
-  auto c1 = r1.characters();
-  auto c2 = r2.characters();
-  auto c3 = std::vector<complex>(r1.size());
-
-  for (int64_t i = 0; i < (int64_t)r1.size(); ++i) {
-    c3[i] = c1[i] * c2[i];
+  if (isreal(r1) && isreal(r2)) {
+    auto c1 = r1.characters().as<arma::vec>();
+    auto c2 = r2.characters().as<arma::vec>();
+    return Representation(
+        r1.group(),
+        arma::vec(c1 % c2)); // % means element wise multiplication in armadillo
+  } else {
+    auto c1 = r1.characters().as<arma::cx_vec>();
+    auto c2 = r2.characters().as<arma::cx_vec>();
+    return Representation(r1.group(), arma::cx_vec(c1 % c2));
   }
-
-  return Representation(c3);
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
   return Representation();
@@ -113,23 +99,18 @@ Representation operator*(Representation const &r1,
   return Representation();
 }
 
-PermutationGroup allowed_subgroup(PermutationGroup const &group,
-                                  Representation const &irrep) {
-
-  auto const &allowed_symmetries = irrep.allowed_symmetries();
-
-  if (allowed_symmetries.size() > 0) {
-    return group.subgroup(allowed_symmetries);
-  } else {
-    return group;
-  }
-}
-
 std::ostream &operator<<(std::ostream &out, Representation const &irrep) {
   out << "size      : " << irrep.size() << "\n";
   out << "characters:\n";
-  for (auto c : irrep.characters()) {
-    out << std::setprecision(8) << c << "\n";
+
+  if (isreal(irrep)) {
+    for (auto c : irrep.characters().as<arma::vec>()) {
+      out << std::setprecision(8) << c << "\n";
+    }
+  } else {
+    for (auto c : irrep.characters().as<arma::cx_vec>()) {
+      out << std::setprecision(8) << c << "\n";
+    }
   }
   return out;
 }

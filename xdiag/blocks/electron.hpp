@@ -28,7 +28,7 @@ public:
   int64_t n_dn() const;
   PermutationGroup const &permutation_group() const;
   Representation const &irrep() const;
-  bool isreal(double precision = 1e-12) const;
+  bool isreal() const;
 
   int64_t dim() const;
   int64_t size() const;

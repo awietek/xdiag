@@ -26,7 +26,7 @@ public:
   using span_size_t = gsl::span<int64_t const>::size_type;
 
   BasisSymmetricNp(int64_t n_sites, int64_t nup, int64_t ndn,
-                   PermutationGroup permutation_group, Representation irrep);
+                   Representation const &irrep);
 
   int64_t n_sites() const;
   int64_t n_up() const;
@@ -37,7 +37,7 @@ public:
   iterator_t begin() const;
   iterator_t end() const;
   int64_t index(bit_t ups, bit_t dns) const;
-  
+
   GroupActionLookup<bit_t> const &group_action() const;
   Representation const &irrep() const;
 

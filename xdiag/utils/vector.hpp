@@ -34,6 +34,7 @@ public:
   template <typename T> bool is() const;
   template <typename T> T as() const;
 
+  int64_t size() const;
   bool isreal() const;
   arma::vec real() const;
   arma::vec imag() const;

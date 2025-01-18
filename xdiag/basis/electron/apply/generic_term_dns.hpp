@@ -13,13 +13,8 @@ void generic_term_dns(BasisIn &&basis_in, BasisOut &&basis_out,
 
   if constexpr (symmetric) {
 
-    auto const &irrep = basis_out.irrep();
-    std::vector<coeff_t> bloch_factors;
-    if constexpr (iscomplex<coeff_t>()) {
-      bloch_factors = irrep.characters();
-    } else {
-      bloch_factors = irrep.characters_real();
-    }
+    Representation const &irrep = basis_out.irrep();
+    auto bloch_factors = irrep.characters().as<arma::Col<coeff_t>>();
 
 #ifdef _OPENMP
 #pragma omp parallel for schedule(guided)
@@ -79,7 +74,7 @@ void generic_term_dns(BasisIn &&basis_in, BasisOut &&basis_out,
             auto [idx_dns_flip, fermi_dn, sym] =
                 basis_out.index_dns_fermi_sym(dns_flip, syms_out, dnss_out);
 
-            coeff *= bloch_factors[sym];
+            coeff *= bloch_factors(sym);
 
             if (idx_dns_flip != invalid_index) {
               int64_t idx_out = ups_offset_out + idx_dns_flip;

@@ -15,6 +15,131 @@
 
 namespace xdiag::basis::spinhalf {
 
+template <typename bit_t, typename coeff_t, int n_sublat>
+static std::pair<std::vector<bit_t>, std::vector<double>>
+reps_norms_no_sz(GroupActionSublattice<bit_t, n_sublat> const &group_action,
+                 arma::Col<coeff_t> const &characters) {
+  using combinatorics::Subsets;
+
+  std::vector<bit_t> reps;
+  std::vector<double> norms;
+
+  int64_t n_sites = group_action.n_sites();
+  int64_t n_sites_sublat = n_sites / n_sublat;
+  int64_t n_leading = n_sites_sublat;
+  int64_t n_trailing = (n_sublat - 1) * n_sites_sublat;
+
+  for (auto prefix : Subsets<bit_t>(n_leading)) {
+
+    // if prefix is not rep, the full state also cannot be rep
+    bit_t prefix_rep = group_action.reps_[n_sublat - 1][prefix];
+    if (prefix_rep < prefix) {
+      continue;
+    }
+
+    for (auto postfix : Subsets<bit_t>(n_trailing)) {
+      bit_t state = (prefix << n_trailing) | postfix;
+      bit_t rep = group_action.representative(state);
+      if (state == rep) {
+        double norm = symmetries::norm(rep, group_action, characters);
+        if (std::abs(norm) > 1e-6) {
+          reps.push_back(rep);
+          norms.push_back(norm);
+        }
+      }
+    }
+  }
+  reps.shrink_to_fit();
+  norms.shrink_to_fit();
+  return {reps, norms};
+}
+
+template <typename bit_t, typename coeff_t, int n_sublat>
+static std::pair<std::vector<bit_t>, std::vector<double>>
+reps_norms_sz(int64_t n_up,
+              GroupActionSublattice<bit_t, n_sublat> const &group_action,
+              arma::Col<coeff_t> const &characters) {
+
+  using bits::popcnt;
+  std::vector<bit_t> reps;
+  std::vector<double> norms;
+
+  int64_t n_sites = group_action.n_sites();
+  int64_t n_sites_sublat = n_sites / n_sublat;
+  int64_t n_leading = n_sites_sublat;
+  int64_t n_trailing = (n_sublat - 1) * n_sites_sublat;
+
+  for (auto prefix : combinatorics::Subsets<bit_t>(n_leading)) {
+
+    // if prefix is incompatible with n_up, continue
+    int64_t n_up_prefix = popcnt(prefix);
+    int64_t n_up_postfix = n_up - n_up_prefix;
+    if ((n_up_postfix < 0) || (n_up_postfix > n_trailing)) {
+      continue;
+    }
+
+    // if prefix is not rep, the full state also cannot be rep
+    bit_t prefix_rep = group_action.reps_[n_sublat - 1][prefix];
+    if (prefix_rep < prefix) {
+      continue;
+    }
+
+#ifndef _OPENMP
+    for (auto postfix :
+         combinatorics::Combinations<bit_t>(n_trailing, n_up_postfix)) {
+      bit_t state = (prefix << n_trailing) | postfix;
+      bit_t rep = group_action.representative(state);
+      if (state == rep) {
+        double norm = symmetries::norm(rep, group_action, characters);
+        if (std::abs(norm) > 1e-6) {
+          reps.push_back(rep);
+          norms.push_back(norm);
+        }
+      }
+    }
+
+#else
+
+    std::vector<std::vector<bit_t>> reps_thread;
+    std::vector<std::vector<double>> norms_thread;
+#pragma omp parallel
+    {
+      int myid = omp_get_thread_num();
+      int rank = omp_get_num_threads();
+#pragma omp single
+      {
+        reps_thread.resize(rank);
+        norms_thread.resize(rank);
+      }
+
+      // Compute representatives for each thread
+      for (auto postfix :
+           combinatorics::CombinationsThread<bit_t>(n_trailing, n_up_postfix)) {
+        bit_t state = (prefix << n_trailing) | postfix;
+        bit_t rep = group_action.representative(state);
+        if (state == rep) {
+          double norm = symmetries::norm(rep, group_action, characters);
+          if (std::abs(norm) > 1e-6) {
+            reps_thread[myid].push_back(rep);
+            norms_thread[myid].push_back(norm);
+          }
+        }
+      }
+    } // pragma omp parallel
+
+    auto reps_prefix = omp::combine_vectors(reps_thread);
+    auto norms_prefix = omp::combine_vectors(norms_thread);
+    reps.insert(reps.end(), reps_prefix.begin(), reps_prefix.end());
+    norms.insert(norms.end(), norms_prefix.begin(), norms_prefix.end());
+#endif
+
+  } // for (auto prefix : ...)
+
+  reps.shrink_to_fit();
+  norms.shrink_to_fit();
+  return {reps, norms};
+}
+
 template <typename bit_t>
 ska::flat_hash_map<bit_t, gsl::span<bit_t const>>
 compute_rep_search_range_serial(std::vector<bit_t> const &reps,
@@ -114,125 +239,36 @@ compute_rep_search_range_omp(std::vector<bit_t> const &reps,
 #endif
 
 template <typename bit_t, int n_sublat>
-BasisSublattice<bit_t, n_sublat>::BasisSublattice(
-    int64_t n_sites, PermutationGroup permutation_group, Representation irrep)
-    : n_sites_(n_sites), sz_conserved_(false), n_up_(undefined),
-      n_postfix_bits_(n_sites - std::min(maximum_prefix_bits, n_sites)),
-      group_action_(allowed_subgroup(permutation_group, irrep)), irrep_(irrep) {
-  using combinatorics::Subsets;
-
-  int64_t n_sites_sublat = n_sites_ / n_sublat;
-  int64_t n_leading = n_sites_sublat;
-  int64_t n_trailing = (n_sublat - 1) * n_sites_sublat;
-
-  for (auto prefix : Subsets<bit_t>(n_leading)) {
-
-    // if prefix is not rep, the full state also cannot be rep
-    bit_t prefix_rep = group_action_.reps_[n_sublat - 1][prefix];
-    if (prefix_rep < prefix) {
-      continue;
-    }
-
-    for (auto postfix : Subsets<bit_t>(n_trailing)) {
-      bit_t state = (prefix << n_trailing) | postfix;
-      bit_t rep = representative(state);
-      if (state == rep) {
-        double norm = symmetries::norm(rep, group_action_, irrep);
-        if (std::abs(norm) > 1e-6) {
-          reps_.push_back(rep);
-          norms_.push_back(norm);
-        }
-      }
-    }
+BasisSublattice<bit_t, n_sublat>::BasisSublattice(Representation const &irrep)
+    : n_sites_(irrep.group().n_sites()), n_up_(undefined),
+      n_postfix_bits_(n_sites_ - std::min(maximum_prefix_bits, n_sites_)),
+      group_action_(irrep.group()), irrep_(irrep) {
+  if (isreal(irrep)) {
+    arma::vec characters = irrep.characters().as<arma::vec>();
+    std::tie(reps_, norms_) = reps_norms_no_sz(group_action_, characters);
+  } else {
+    arma::cx_vec characters = irrep.characters().as<arma::cx_vec>();
+    std::tie(reps_, norms_) = reps_norms_no_sz(group_action_, characters);
   }
 
-  reps_.shrink_to_fit();
-  norms_.shrink_to_fit();
   rep_search_range_ = compute_rep_search_range_serial(reps_, n_postfix_bits_);
 }
 
 template <typename bit_t, int n_sublat>
-template <typename T>
-BasisSublattice<bit_t, n_sublat>::BasisSublattice(
-    int64_t n_sites, int64_t n_up, PermutationGroup permutation_group,
-    arma::Col<T> characters)
-    : n_sites_(n_sites), sz_conserved_(true), n_up_(n_up),
-      n_postfix_bits_(n_sites - std::min(maximum_prefix_bits, n_sites)),
-      group_action_(allowed_subgroup(permutation_group, irrep)) {
-  using bits::popcnt;
+BasisSublattice<bit_t, n_sublat>::BasisSublattice(int64_t n_up,
+                                                  Representation const &irrep)
+    : n_sites_(irrep.group().n_sites()), n_up_(n_up),
+      n_postfix_bits_(n_sites_ - std::min(maximum_prefix_bits, n_sites_)),
+      group_action_(irrep.group()), irrep_(irrep) {
 
-  int64_t n_sites_sublat = n_sites_ / n_sublat;
-  int64_t n_leading = n_sites_sublat;
-  int64_t n_trailing = (n_sublat - 1) * n_sites_sublat;
+  if (isreal(irrep)) {
+    arma::vec characters = irrep.characters().as<arma::vec>();
+    std::tie(reps_, norms_) = reps_norms_sz(n_up, group_action_, characters);
+  } else {
+    arma::cx_vec characters = irrep.characters().as<arma::cx_vec>();
+    std::tie(reps_, norms_) = reps_norms_sz(n_up, group_action_, characters);
+  }
 
-  for (auto prefix : combinatorics::Subsets<bit_t>(n_leading)) {
-
-    // if prefix is incompatible with n_up, continue
-    int64_t n_up_prefix = popcnt(prefix);
-    int64_t n_up_postfix = n_up - n_up_prefix;
-    if ((n_up_postfix < 0) || (n_up_postfix > n_trailing)) {
-      continue;
-    }
-
-    // if prefix is not rep, the full state also cannot be rep
-    bit_t prefix_rep = group_action_.reps_[n_sublat - 1][prefix];
-    if (prefix_rep < prefix) {
-      continue;
-    }
-
-#ifndef _OPENMP
-    for (auto postfix :
-         combinatorics::Combinations<bit_t>(n_trailing, n_up_postfix)) {
-      bit_t state = (prefix << n_trailing) | postfix;
-      bit_t rep = representative(state);
-      if (state == rep) {
-        double norm = symmetries::norm(rep, group_action_, irrep);
-        if (std::abs(norm) > 1e-6) {
-          reps_.push_back(rep);
-          norms_.push_back(norm);
-        }
-      }
-    }
-
-#else
-
-    std::vector<std::vector<bit_t>> reps_thread;
-    std::vector<std::vector<double>> norms_thread;
-#pragma omp parallel
-    {
-      int myid = omp_get_thread_num();
-      int rank = omp_get_num_threads();
-#pragma omp single
-      {
-        reps_thread.resize(rank);
-        norms_thread.resize(rank);
-      }
-
-      // Compute representatives for each thread
-      for (auto postfix :
-           combinatorics::CombinationsThread<bit_t>(n_trailing, n_up_postfix)) {
-        bit_t state = (prefix << n_trailing) | postfix;
-        bit_t rep = representative(state);
-        if (state == rep) {
-          double norm = symmetries::norm(rep, group_action_, irrep);
-          if (std::abs(norm) > 1e-6) {
-            reps_thread[myid].push_back(rep);
-            norms_thread[myid].push_back(norm);
-          }
-        }
-      }
-    } // pragma omp parallel
-
-    auto reps_prefix = omp::combine_vectors(reps_thread);
-    auto norms_prefix = omp::combine_vectors(norms_thread);
-    reps_.insert(reps_.end(), reps_prefix.begin(), reps_prefix.end());
-    norms_.insert(norms_.end(), norms_prefix.begin(), norms_prefix.end());
-#endif
-
-  } // for (auto prefix : ...)
-
-  reps_.shrink_to_fit();
-  norms_.shrink_to_fit();
 #ifdef _OPENMP
   // omp version still has a bug, use serial (not so bad performance actually)
   // rep_search_range_ = compute_rep_search_range_omp(reps_, n_postfix_bits_);
@@ -270,13 +306,14 @@ int64_t BasisSublattice<bit_t, n_sublat>::n_sites() const {
 }
 
 template <typename bit_t, int n_sublat>
-bool BasisSublattice<bit_t, n_sublat>::sz_conserved() const {
-  return sz_conserved_;
+int64_t BasisSublattice<bit_t, n_sublat>::n_up() const {
+  return n_up_;
 }
 
 template <typename bit_t, int n_sublat>
-int64_t BasisSublattice<bit_t, n_sublat>::n_up() const {
-  return n_up_;
+
+Representation const &BasisSublattice<bit_t, n_sublat>::irrep() const {
+  return irrep_;
 }
 
 template <typename bit_t, int n_sublat>
@@ -329,7 +366,7 @@ BasisSublattice<bit_t, n_sublat>::index_syms(bit_t state) const {
 template <typename bit_t, int n_sublat>
 bool BasisSublattice<bit_t, n_sublat>::operator==(
     BasisSublattice<bit_t, n_sublat> const &rhs) const {
-  return (n_sites_ == rhs.n_sites_) && (sz_conserved_ == rhs.sz_conserved_) &&
+  return (n_sites_ == rhs.n_sites_) && (n_up_ == rhs.n_up_) &&
          (n_postfix_bits_ == rhs.n_postfix_bits_) &&
          (group_action_ == rhs.group_action_);
 }

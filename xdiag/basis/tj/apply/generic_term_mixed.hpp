@@ -21,13 +21,8 @@ void generic_term_mixed(BasisIn &&basis_in, BasisOut &&basis_out,
   if constexpr (symmetric) {
 
     // auto const &group_action = basis_out.group_action();
-    auto const &irrep = basis_out.irrep();
-    std::vector<coeff_t> bloch_factors;
-    if constexpr (iscomplex<coeff_t>()) {
-      bloch_factors = irrep.characters();
-    } else {
-      bloch_factors = irrep.characters_real();
-    }
+    Representation const &irrep = basis_out.irrep();
+    auto bloch_factors = irrep.characters().as<arma::Col<coeff_t>>();
 
 #ifdef _OPENMP
 #pragma omp parallel for schedule(guided)
@@ -59,7 +54,7 @@ void generic_term_mixed(BasisIn &&basis_in, BasisOut &&basis_out,
         // Trivial stabilizer of target ups
         if (up_out_syms.size() == 1) {
           int64_t sym = up_out_syms.front();
-          coeff_t prefac = coeff_up * bloch_factors[sym];
+          coeff_t prefac = coeff_up * bloch_factors(sym);
           bool fermi_up = basis_out.fermi_bool_ups(sym, up_flip);
 
           // Origin ups trivial stabilizer -> dns need to be deposited
@@ -109,7 +104,7 @@ void generic_term_mixed(BasisIn &&basis_in, BasisOut &&basis_out,
         else {
           std::vector<coeff_t> prefacs(bloch_factors.size());
           for (int64_t i = 0; i < (int64_t)bloch_factors.size(); ++i) {
-            prefacs[i] = coeff_up * bloch_factors[i];
+            prefacs[i] = coeff_up * bloch_factors(i);
           }
 
           // Origin ups trivial stabilizer -> dns need to be deposited

@@ -129,9 +129,6 @@ representatives_indices_symmetries_limits_norms(
   return {reps, idces, syms, sym_limits, norms};
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
-  return std::tuple<
-      std::vector<bit_t>, std::vector<int64_t>, std::vector<int64_t>,
-      std::vector<std::pair<span_size_t, span_size_t>>, std::vector<double>>();
 }
 
 template <typename bit_t, class StatesIndexing, class GroupAction>
@@ -148,9 +145,6 @@ representatives_indices_symmetries_limits(StatesIndexing &&states_indexing,
   return {reps, idces, syms, sym_limits};
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
-  return std::tuple<std::vector<bit_t>, std::vector<int64_t>,
-                    std::vector<int64_t>,
-                    std::vector<std::pair<span_size_t, span_size_t>>>();
 }
 
 template <typename bit_t, typename T, class States, class GroupAction>
@@ -210,8 +204,5 @@ electron_dns_norms_limits_offset_size(std::vector<bit_t> const &reps_up,
   return {dns_storage, norms_storage, dns_limits, ups_offset, size};
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
-  return std::tuple<std::vector<bit_t>, std::vector<double>,
-                    std::vector<std::pair<span_size_t, span_size_t>>,
-                    std::vector<int64_t>, int64_t>();
 }
 } // namespace xdiag::symmetries

@@ -9,10 +9,8 @@
 namespace xdiag {
 
 XDIAG_API OpSum symmetrize(Op const &op, PermutationGroup const &group);
-XDIAG_API OpSum symmetrize(Op const &op, PermutationGroup const &group,
-                           Representation const &irrep);
+XDIAG_API OpSum symmetrize(Op const &op, Representation const &irrep);
 XDIAG_API OpSum symmetrize(OpSum const &ops, PermutationGroup const &group);
-XDIAG_API OpSum symmetrize(OpSum const &ops, PermutationGroup const &group,
-                           Representation const &irrep);
+XDIAG_API OpSum symmetrize(OpSum const &ops, Representation const &irrep);
 
 } // namespace xdiag

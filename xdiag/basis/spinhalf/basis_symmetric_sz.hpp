@@ -19,8 +19,7 @@ public:
   using span_size_t = gsl::span<int64_t const>::size_type;
 
   BasisSymmetricSz() = default;
-  BasisSymmetricSz(int64_t n_sites, int64_t n_up,
-                   PermutationGroup permutation_group, Representation irrep);
+  BasisSymmetricSz(int64_t n_up, Representation const &irrep);
 
   int64_t dim() const;
   int64_t size() const;

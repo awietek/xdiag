@@ -19,13 +19,8 @@ void generic_term_dns(BasisIn &&basis_in, BasisOut &&basis_out,
 
   if constexpr (symmetric) {
 
-    auto const &irrep = basis_out.irrep();
-    std::vector<coeff_t> bloch_factors;
-    if constexpr (iscomplex<coeff_t>()) {
-      bloch_factors = irrep.characters();
-    } else {
-      bloch_factors = irrep.characters_real();
-    }
+    Representation const &irrep = basis_out.irrep();
+    auto bloch_factors = irrep.characters().as<arma::Col<coeff_t>>();
 
 #ifdef _OPENMP
 #pragma omp parallel for schedule(guided)
@@ -87,7 +82,7 @@ void generic_term_dns(BasisIn &&basis_in, BasisOut &&basis_out,
                 if constexpr (fermi_ups) {
                   fermi_up ^= (bool)(bits::popcnt(up_in) & 1);
                 }
-                coeff_t val = coeff * bloch_factors[sym] *
+                coeff_t val = coeff * bloch_factors(sym) *
                               norms_out[idx_dn_flip] / norms_in[idx_dn_in];
                 fill(idx_in, idx_out, (fermi_up ^ fermi_dn) ? -val : val);
               }

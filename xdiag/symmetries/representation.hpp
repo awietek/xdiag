@@ -13,6 +13,7 @@ namespace xdiag {
 class Representation {
 public:
   XDIAG_API Representation() = default;
+  XDIAG_API explicit Representation(PermutationGroup const &group);
 
   template <typename T>
   XDIAG_API Representation(PermutationGroup const &group,
@@ -29,27 +30,23 @@ public:
   PermutationGroup const &group() const;
   Vector const &characters() const;
 
-  int64_t size() const;
+  XDIAG_API int64_t size() const;
   bool isreal() const;
-  bool operator==(Representation const &rhs) const;
-  bool operator!=(Representation const &rhs) const;
+  XDIAG_API bool operator==(Representation const &rhs) const;
+  XDIAG_API bool operator!=(Representation const &rhs) const;
 
 private:
   PermutationGroup group_;
   Vector characters_;
 };
 
-bool isreal(Representation const &irrep);
+XDIAG_API bool isreal(Representation const &irrep);
+XDIAG_API Representation multiply(Representation const &r1,
+                                  Representation const &r2);
+XDIAG_API Representation operator*(Representation const &r1,
+                                   Representation const &r2);
 
-Representation trivial_representation(int64_t size);
-Representation trivial_representation(PermutationGroup const &group);
-
-PermutationGroup allowed_subgroup(PermutationGroup const &group,
-                                  Representation const &irrep);
-
-Representation multiply(Representation const &r1, Representation const &r2);
-Representation operator*(Representation const &r1, Representation const &r2);
-
-std::ostream &operator<<(std::ostream &out, Representation const &irrep);
-std::string to_string(Representation const &irrep);
+XDIAG_API std::ostream &operator<<(std::ostream &out,
+                                   Representation const &irrep);
+XDIAG_API std::string to_string(Representation const &irrep);
 } // namespace xdiag

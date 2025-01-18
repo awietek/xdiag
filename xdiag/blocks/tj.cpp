@@ -34,7 +34,7 @@ tJ::tJ(int64_t n_sites, int64_t nup, int64_t ndn) try
 tJ::tJ(int64_t n_sites, int64_t nup, int64_t ndn, PermutationGroup group,
        Representation irrep) try
     : n_sites_(n_sites), n_up_(nup), n_dn_(ndn),
-      permutation_group_(allowed_subgroup(group, irrep)), irrep_(irrep) {
+      permutation_group_(group), irrep_(irrep) {
 
   if (n_sites < 0) {
     XDIAG_THROW("Invalid argument: n_sites < 0");
@@ -48,11 +48,26 @@ tJ::tJ(int64_t n_sites, int64_t nup, int64_t ndn, PermutationGroup group,
     XDIAG_THROW("PermutationGroup and Representation do not have "
                 "same number of elements");
   } else if (n_sites < 32) {
-    basis_ = std::make_shared<basis_t>(
-        tj::BasisSymmetricNp<uint32_t>(n_sites, nup, ndn, group, irrep));
+    if (irrep.isreal()) {
+      auto characters = irrep.characters().as<arma::vec>();
+      basis_ = std::make_shared<basis_t>(
+          tj::BasisSymmetricNp<uint32_t>(n_sites, nup, ndn, group, characters));
+    } else {
+      auto characters = irrep.characters().as<arma::cx_vec>();
+      basis_ = std::make_shared<basis_t>(
+          tj::BasisSymmetricNp<uint32_t>(n_sites, nup, ndn, group, characters));
+    }
+
   } else if (n_sites < 64) {
-    basis_ = std::make_shared<basis_t>(
-        tj::BasisSymmetricNp<uint64_t>(n_sites, nup, ndn, group, irrep));
+    if (irrep.isreal()) {
+      auto characters = irrep.characters().as<arma::vec>();
+      basis_ = std::make_shared<basis_t>(
+          tj::BasisSymmetricNp<uint64_t>(n_sites, nup, ndn, group, characters));
+    } else {
+      auto characters = irrep.characters().as<arma::cx_vec>();
+      basis_ = std::make_shared<basis_t>(
+          tj::BasisSymmetricNp<uint64_t>(n_sites, nup, ndn, group, characters));
+    }
   } else {
     XDIAG_THROW("blocks with more than 64 sites currently not implemented");
   }
@@ -87,7 +102,7 @@ int64_t tJ::index(ProductState const &pstate) const try {
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
-bool tJ::isreal(double precision) const { return irrep_.isreal(precision); }
+bool tJ::isreal() const { return irrep_.isreal(); }
 
 bool tJ::operator==(tJ const &rhs) const {
   return (n_sites_ == rhs.n_sites_) && (n_up_ == rhs.n_up_) &&

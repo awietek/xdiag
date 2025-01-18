@@ -23,8 +23,7 @@ public:
   using iterator_t = BasisSymmetricNoNpIterator<bit_t>;
   using span_size_t = gsl::span<int64_t const>::size_type;
 
-  BasisSymmetricNoNp(int64_t n_sites, PermutationGroup permutation_group,
-                     Representation irrep);
+  BasisSymmetricNoNp(int64_t n_sites, Representation const &irrep);
 
   int64_t n_sites() const;
   int64_t n_up() const;

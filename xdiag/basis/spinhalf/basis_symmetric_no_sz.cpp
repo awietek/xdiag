@@ -5,20 +5,9 @@
 namespace xdiag::basis::spinhalf {
 
 template <class bit_t>
-BasisSymmetricNoSz<bit_t>::BasisSymmetricNoSz(int64_t n_sites,
-                                              PermutationGroup group,
-                                              Representation irrep) try
-    : n_sites_(n_sites), group_action_(allowed_subgroup(group, irrep)),
-      irrep_(irrep), subsets_basis_(n_sites) {
-
-  if (n_sites < 0) {
-    XDIAG_THROW("n_sites < 0");
-  } else if (n_sites != group.n_sites()) {
-    XDIAG_THROW("n_sites does not match the n_sites in PermutationGroup");
-  } else if (group_action_.n_symmetries() != irrep.size()) {
-    XDIAG_THROW("PermutationGroup and Representation do not have "
-                "same number of elements");
-  }
+BasisSymmetricNoSz<bit_t>::BasisSymmetricNoSz(Representation const &irrep) try
+    : n_sites_(irrep.group().n_sites()), group_action_(irrep.group()),
+      irrep_(irrep), subsets_basis_(n_sites_) {
 
   if (isreal(irrep)) {
     arma::vec characters = irrep.characters().as<arma::vec>();
