@@ -4,7 +4,7 @@
 #include <variant>
 #include <xdiag/common.hpp>
 #include <xdiag/extern/armadillo/armadillo>
-#include <xdiag/operators/scalar.hpp>
+#include <xdiag/utils/scalar.hpp>
 
 namespace xdiag {
 

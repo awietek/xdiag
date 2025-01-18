@@ -5,6 +5,11 @@ set(XDIAG_SOURCES
   utils/say_hello.cpp
   utils/read_vectors.cpp
   utils/type_string.cpp
+
+  utils/scalar.cpp
+  utils/vector.cpp
+  utils/matrix.cpp
+
   bits/bitops.cpp
   
   parallel/omp/omp_utils.cpp  
@@ -66,22 +71,17 @@ set(XDIAG_SOURCES
   blocks/electron.cpp
   blocks/tj.cpp
 
-  symmetries/qn.cpp
-  symmetries/operations/symmetry_operations.cpp	
   symmetries/permutation.cpp
   symmetries/permutation_group.cpp
-  symmetries/generated_group.cpp
   symmetries/representation.cpp
+  symmetries/operations/symmetry_operations.cpp	
   symmetries/operations/fermi_sign.cpp
-
   symmetries/group_action/group_action.cpp
   symmetries/group_action/group_action_lookup.cpp
   symmetries/group_action/group_action_sublattice.cpp
   symmetries/group_action/sublattice_stability.cpp
 
-  operators/scalar.cpp
   operators/coupling.cpp
-  operators/matrix.cpp
   operators/op.cpp
   operators/opsum.cpp
   operators/logic/compilation.cpp

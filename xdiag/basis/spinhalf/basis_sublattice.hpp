@@ -19,10 +19,14 @@ public:
   using iterator_t = typename std::vector<bit_t>::const_iterator;
 
   BasisSublattice() = default;
+
+  template <typename T>
   BasisSublattice(int64_t n_sites, PermutationGroup permutation_group,
-                  Representation irrep);
+                  arma::Col<T> characters);
+
+  template <typename T>
   BasisSublattice(int64_t n_sites, int64_t n_up,
-                  PermutationGroup permutation_group, Representation irrep);
+                  PermutationGroup permutation_group, arma::Col<T> characters);
 
   iterator_t begin() const;
   iterator_t end() const;
@@ -37,7 +41,6 @@ public:
   bool sz_conserved() const;
   int64_t n_up() const;
   GroupActionSublattice<bit_t, n_sublat> const &group_action() const;
-  Representation const &irrep() const;
 
   bool operator==(BasisSublattice<bit_t, n_sublat> const &rhs) const;
   bool operator!=(BasisSublattice<bit_t, n_sublat> const &rhs) const;
@@ -49,8 +52,6 @@ private:
   int64_t n_postfix_bits_;
 
   GroupActionSublattice<bit_t, n_sublat> group_action_;
-  Representation irrep_;
-
   std::vector<bit_t> reps_;
   std::vector<double> norms_;
   // std::unordered_map<bit_t, gsl::span<bit_t const>> rep_search_range_;

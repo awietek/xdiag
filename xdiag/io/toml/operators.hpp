@@ -2,10 +2,10 @@
 
 #include <xdiag/extern/toml++/toml.hpp>
 #include <xdiag/operators/coupling.hpp>
-#include <xdiag/operators/matrix.hpp>
 #include <xdiag/operators/op.hpp>
 #include <xdiag/operators/opsum.hpp>
-#include <xdiag/operators/scalar.hpp>
+#include <xdiag/utils/matrix.hpp>
+#include <xdiag/utils/scalar.hpp>
 
 namespace xdiag::io {
 

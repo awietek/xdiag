@@ -152,12 +152,13 @@ BasisSublattice<bit_t, n_sublat>::BasisSublattice(
 }
 
 template <typename bit_t, int n_sublat>
+template <typename T>
 BasisSublattice<bit_t, n_sublat>::BasisSublattice(
     int64_t n_sites, int64_t n_up, PermutationGroup permutation_group,
-    Representation irrep)
+    arma::Col<T> characters)
     : n_sites_(n_sites), sz_conserved_(true), n_up_(n_up),
       n_postfix_bits_(n_sites - std::min(maximum_prefix_bits, n_sites)),
-      group_action_(allowed_subgroup(permutation_group, irrep)), irrep_(irrep) {
+      group_action_(allowed_subgroup(permutation_group, irrep)) {
   using bits::popcnt;
 
   int64_t n_sites_sublat = n_sites_ / n_sublat;
@@ -285,11 +286,6 @@ BasisSublattice<bit_t, n_sublat>::group_action() const {
 }
 
 template <typename bit_t, int n_sublat>
-Representation const &BasisSublattice<bit_t, n_sublat>::irrep() const {
-  return irrep_;
-}
-
-template <typename bit_t, int n_sublat>
 int64_t
 BasisSublattice<bit_t, n_sublat>::index_of_representative(bit_t rep) const {
 
@@ -335,7 +331,7 @@ bool BasisSublattice<bit_t, n_sublat>::operator==(
     BasisSublattice<bit_t, n_sublat> const &rhs) const {
   return (n_sites_ == rhs.n_sites_) && (sz_conserved_ == rhs.sz_conserved_) &&
          (n_postfix_bits_ == rhs.n_postfix_bits_) &&
-         (group_action_ == rhs.group_action_) && (irrep_ == rhs.irrep_);
+         (group_action_ == rhs.group_action_);
 }
 
 template <typename bit_t, int n_sublat>

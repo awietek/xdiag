@@ -1,42 +1,45 @@
 #pragma once
 
-#include <string>
 #include <vector>
 
 #include <xdiag/common.hpp>
-#include <xdiag/io/toml/file_toml_handler.hpp>
+
+#include <xdiag/extern/armadillo/armadillo>
 #include <xdiag/symmetries/permutation_group.hpp>
+#include <xdiag/utils/vector.hpp>
 
 namespace xdiag {
 
 class Representation {
 public:
-  Representation() = default;
-  Representation(std::initializer_list<complex> list);
-  explicit Representation(std::vector<complex> const &characters);
-  Representation(std::vector<complex> const &characters,
-                 std::vector<int64_t> const &allowed_symmetries);
-  explicit Representation(io::FileTomlHandler &&hdl);
-  Representation(complex const *characters, int64_t n_characters); 
+  XDIAG_API Representation() = default;
 
-  complex character(int64_t idx) const;
-  std::vector<int64_t> allowed_symmetries() const;
-  std::vector<complex> const &characters() const;
-  std::vector<double> const &characters_real() const;
+  template <typename T>
+  XDIAG_API Representation(PermutationGroup const &group,
+                           std::vector<T> const &characters);
+  template <typename T>
+  XDIAG_API Representation(PermutationGroup const &group,
+                           arma::Col<T> const &characters);
+  template <typename T>
+  XDIAG_API Representation(PermutationGroup const &group, T *characters,
+                           int64_t n_characters);
 
-  Representation subgroup(std::vector<int64_t> const &symmetry_numbers) const;
+  Representation(PermutationGroup const &group, Vector const &characters);
+
+  PermutationGroup const &group() const;
+  Vector const &characters() const;
+
   int64_t size() const;
-
-  bool isreal(double precision = 1e-12) const;
-
+  bool isreal() const;
   bool operator==(Representation const &rhs) const;
   bool operator!=(Representation const &rhs) const;
 
 private:
-  std::vector<complex> characters_;
-  std::vector<double> characters_real_;
-  std::vector<int64_t> allowed_symmetries_;
+  PermutationGroup group_;
+  Vector characters_;
 };
+
+bool isreal(Representation const &irrep);
 
 Representation trivial_representation(int64_t size);
 Representation trivial_representation(PermutationGroup const &group);

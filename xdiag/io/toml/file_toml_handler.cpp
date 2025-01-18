@@ -232,27 +232,28 @@ template <> PermutationGroup FileTomlHandler::as<PermutationGroup>() const try {
   XDIAG_RETHROW(e);
 }
 
-template <> Representation FileTomlHandler::as<Representation>() const try {
-  auto character_entry =
-      table_.at_path(key_ + std::string(".characters")).node();
-  if (character_entry) {
-    auto characters = std_vector<complex>(*character_entry);
-    auto allowed_symmetries_entry =
-        table_.at_path(key_ + std::string(".allowed_symmetries")).node();
-    if (allowed_symmetries_entry) {
-      auto allowed_symmetries = std_vector<int64_t>(*allowed_symmetries_entry);
-      return Representation(characters, allowed_symmetries);
-    } else {
-      return Representation(characters);
-    }
-  } else {
-    XDIAG_THROW("Error reading Representation from toml file: no field "
-                "\"characters\"!");
-    return Representation();
-  }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
+// template <> Representation FileTomlHandler::as<Representation>() const try {
+//   auto character_entry =
+//       table_.at_path(key_ + std::string(".characters")).node();
+//   if (character_entry) {
+//     auto characters = std_vector<complex>(*character_entry);
+//     auto allowed_symmetries_entry =
+//         table_.at_path(key_ + std::string(".allowed_symmetries")).node();
+//     if (allowed_symmetries_entry) {
+//       auto allowed_symmetries =
+//       std_vector<int64_t>(*allowed_symmetries_entry); return
+//       Representation(characters, allowed_symmetries);
+//     } else {
+//       return Representation(characters);
+//     }
+//   } else {
+//     XDIAG_THROW("Error reading Representation from toml file: no field "
+//                 "\"characters\"!");
+//     return Representation();
+//   }
+// } catch (Error const &e) {
+//   XDIAG_RETHROW(e);
+// }
 
 template <> Op FileTomlHandler::as<Op>() const try {
   auto node = table_.at_path(key_).node();
@@ -462,17 +463,18 @@ void FileTomlHandler::operator=
   XDIAG_RETHROW(e);
 }
 
-template <>
-void
-    FileTomlHandler::operator= <Representation>(Representation const &rep) try {
-  toml::table rep_table;
-  rep_table.insert_or_assign("characters", toml_array(rep.characters()));
-  rep_table.insert_or_assign("allowed_symmetries",
-                             toml_array(rep.allowed_symmetries()));
-  table_.insert_or_assign(key_, rep_table);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
+// template <>
+// void
+//     FileTomlHandler::operator= <Representation>(Representation const &rep)
+//     try {
+//   toml::table rep_table;
+//   rep_table.insert_or_assign("characters", toml_array(rep.characters()));
+//   rep_table.insert_or_assign("allowed_symmetries",
+//                              toml_array(rep.allowed_symmetries()));
+//   table_.insert_or_assign(key_, rep_table);
+// } catch (Error const &e) {
+//   XDIAG_RETHROW(e);
+// }
 
 template <> void FileTomlHandler::operator= <Op>(Op const &op) try {
   table_.insert_or_assign(key_, toml_array(op));

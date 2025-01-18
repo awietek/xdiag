@@ -6,7 +6,7 @@
 
 #include <xdiag/common.hpp>
 #include <xdiag/extern/armadillo/armadillo>
-#include <xdiag/operators/matrix.hpp>
+#include <xdiag/utils/matrix.hpp>
 
 namespace xdiag {
 

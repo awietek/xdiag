@@ -3,7 +3,7 @@
 #include <string>
 #include <variant>
 #include <xdiag/common.hpp>
-#include <xdiag/operators/scalar.hpp>
+#include <xdiag/utils/scalar.hpp>
 
 namespace xdiag {
 
@@ -13,7 +13,7 @@ public:
 
   XDIAG_API Coupling() = default;
   XDIAG_API Coupling(std::string value);
-  XDIAG_API Coupling(const char* value);
+  XDIAG_API Coupling(const char *value);
   XDIAG_API Coupling(double value);
   XDIAG_API Coupling(complex value);
   XDIAG_API Coupling(Scalar value);

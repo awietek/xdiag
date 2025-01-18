@@ -5,7 +5,7 @@
 #include <vector>
 #include <xdiag/operators/coupling.hpp>
 #include <xdiag/operators/op.hpp>
-#include <xdiag/operators/scalar.hpp>
+#include <xdiag/utils/scalar.hpp>
 
 namespace xdiag {
 

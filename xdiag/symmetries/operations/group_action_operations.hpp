@@ -1,8 +1,8 @@
 #pragma once
 #include <vector>
 
-#include <xdiag/extern/gsl/span>
 #include <xdiag/combinatorics/combinations.hpp>
+#include <xdiag/extern/gsl/span>
 #include <xdiag/symmetries/operations/fermi_sign.hpp>
 #include <xdiag/symmetries/representation.hpp>
 
@@ -13,9 +13,11 @@ template <typename bit_t, class GroupAction>
 inline std::vector<int64_t> stabilizer_symmetries(bit_t bits,
                                                   GroupAction const &group) {
   std::vector<int64_t> stable_syms;
-  for (int64_t sym = 0; sym < group.n_symmetries(); ++sym)
-    if (group.apply(sym, bits) == bits)
+  for (int64_t sym = 0; sym < group.n_symmetries(); ++sym) {
+    if (group.apply(sym, bits) == bits) {
       stable_syms.push_back(sym);
+    }
+  }
   return stable_syms;
 }
 
@@ -23,8 +25,9 @@ inline std::vector<int64_t> stabilizer_symmetries(bit_t bits,
 // in orbit given by group_action
 template <typename bit_t, class GroupAction>
 inline bit_t representative(bit_t state, GroupAction const &group_action) {
-  if (group_action.n_symmetries() == 0)
+  if (group_action.n_symmetries() == 0) {
     return state;
+  }
 
   bit_t rep = std::numeric_limits<bit_t>::max();
   for (int64_t sym = 0; sym < group_action.n_symmetries(); ++sym) {
@@ -138,24 +141,24 @@ inline std::vector<int64_t> mapping_syms(bit_t origin, bit_t target,
 }
 
 // Computes the norm of a symmetrized state
-template <typename bit_t, class GroupAction>
+template <typename bit_t, typename T, class GroupAction>
 double norm(bit_t state, GroupAction const &group_action,
-            Representation const &irrep) {
-  complex amplitude = 0.0;
+            arma::Col<T> const &characters) {
+  T amplitude = 0.0;
   for (int64_t sym = 0; sym < group_action.n_symmetries(); ++sym) {
     bit_t tstate = group_action.apply(sym, state);
     if (tstate == state) {
-      amplitude += irrep.character(sym);
+      amplitude += characters(sym);
     }
   }
   return std::sqrt(std::abs(amplitude));
 }
 
 // Computes the norm of a symmetrized state with fermions
-template <typename bit_t, class GroupAction>
+template <typename bit_t, typename T, class GroupAction>
 inline double norm_fermionic(bit_t state, GroupAction const &group_action,
-                             Representation const &irrep) {
-  complex amplitude = 0.0;
+                             arma::Col<T> const &characters) {
+  T amplitude = 0.0;
   int64_t n_sites = group_action.n_sites();
   auto work = fermi_work(n_sites);
   auto const &group = group_action.permutation_group();
@@ -167,9 +170,9 @@ inline double norm_fermionic(bit_t state, GroupAction const &group_action,
     bit_t tstate = group_action.apply(sym, state);
     if (tstate == state) {
       if (fermi_bool_of_permutation(state, perm, work)) {
-        amplitude -= irrep.character(sym);
+        amplitude -= characters(sym);
       } else {
-        amplitude += irrep.character(sym);
+        amplitude += characters(sym);
       }
     }
   }
@@ -177,12 +180,12 @@ inline double norm_fermionic(bit_t state, GroupAction const &group_action,
 }
 
 // Computes the norm of a symmetrized state with up/dn electrons
-template <typename bit_t, class GroupAction>
+template <typename bit_t, typename T, class GroupAction>
 inline double norm_electron(bit_t ups, bit_t dns,
                             GroupAction const &group_action,
-                            Representation const &irrep) {
+                            arma::Col<T> const &characters) {
   assert(group_action.n_symmetries() == irrep.size());
-  complex amplitude = 0.0;
+  T amplitude = 0.0;
   int64_t n_sites = group_action.n_sites();
   auto work = fermi_work(n_sites);
   auto const &group = group_action.permutation_group();
@@ -201,9 +204,9 @@ inline double norm_electron(bit_t ups, bit_t dns,
         bool fermi_bool_dns = fermi_bool_of_permutation(dns, perm, work);
 
         if (fermi_bool_ups == fermi_bool_dns) {
-          amplitude += irrep.character(sym);
+          amplitude += characters(sym);
         } else {
-          amplitude -= irrep.character(sym);
+          amplitude -= characters(sym);
         }
       }
     }
@@ -213,13 +216,13 @@ inline double norm_electron(bit_t ups, bit_t dns,
 
 // Computes the norm of a symmetrized state with up/dn electrons (subset of
 // syms)
-template <typename bit_t, class GroupAction>
+template <typename bit_t, typename T, class GroupAction>
 inline double norm_electron_subset(bit_t ups, bit_t dns,
                                    GroupAction const &group_action,
-                                   Representation const &irrep,
+                                   arma::Col<T> const &characters,
                                    gsl::span<int64_t const> syms) {
   assert(group_action.n_symmetries() == irrep.size());
-  complex amplitude = 0.0;
+  T amplitude = 0.0;
   int64_t n_sites = group_action.n_sites();
   auto work = fermi_work(n_sites);
   auto const &group = group_action.permutation_group();
@@ -239,9 +242,9 @@ inline double norm_electron_subset(bit_t ups, bit_t dns,
       if (tdns == dns) {
         bool fermi_bool_dns = fermi_bool_of_permutation(dns, perm, work);
         if (fermi_bool_ups == fermi_bool_dns) {
-          amplitude += irrep.character(sym);
+          amplitude += characters(sym);
         } else {
-          amplitude -= irrep.character(sym);
+          amplitude -= characters(sym);
         }
       }
     }

@@ -14,13 +14,13 @@ namespace xdiag::symmetries {
 
 using span_size_t = gsl::span<int64_t const>::size_type;
 
-template <typename bit_t, class StatesIndexing, class GroupAction>
+template <typename bit_t, typename T, class StatesIndexing, class GroupAction>
 inline std::tuple<
     std::vector<bit_t>, std::vector<int64_t>, std::vector<int64_t>,
     std::vector<std::pair<span_size_t, span_size_t>>, std::vector<double>>
 representatives_indices_symmetries_limits_norms(
     StatesIndexing &&states_indexing, GroupAction &&group_action,
-    Representation const &irrep) try {
+    arma::Col<T> const &characters) try {
   int64_t size = states_indexing.size();
 
   std::vector<int64_t> idces;
@@ -37,7 +37,7 @@ representatives_indices_symmetries_limits_norms(
   try {
     for (auto [state, idx] : states_indexing.states_indices()) {
       if (is_representative(state, group_action)) {
-        double nrm = symmetries::norm(state, group_action, irrep);
+        double nrm = symmetries::norm(state, group_action, characters);
         if (std::abs(nrm) > 1e-6) {
           idces[idx] = reps.size();
           reps.push_back(state);
@@ -140,10 +140,10 @@ inline std::tuple<std::vector<bit_t>, std::vector<int64_t>,
                   std::vector<std::pair<span_size_t, span_size_t>>>
 representatives_indices_symmetries_limits(StatesIndexing &&states_indexing,
                                           GroupAction &&group_action) try {
-  auto irrep = trivial_representation(group_action.n_symmetries());
+  auto characters = arma::vec(group_action.n_symmetries(), arma::fill::ones);
   auto [reps, idces, syms, sym_limits, norms] =
       representatives_indices_symmetries_limits_norms<bit_t>(
-          states_indexing, group_action, irrep);
+          states_indexing, group_action, characters);
   (void)norms;
   return {reps, idces, syms, sym_limits};
 } catch (Error const &e) {
@@ -153,14 +153,14 @@ representatives_indices_symmetries_limits(StatesIndexing &&states_indexing,
                     std::vector<std::pair<span_size_t, span_size_t>>>();
 }
 
-template <typename bit_t, class States, class GroupAction>
+template <typename bit_t, typename T, class States, class GroupAction>
 inline std::tuple<std::vector<bit_t>, std::vector<double>,
                   std::vector<std::pair<span_size_t, span_size_t>>,
                   std::vector<int64_t>, int64_t>
 electron_dns_norms_limits_offset_size(std::vector<bit_t> const &reps_up,
                                       States &&states_dns,
                                       GroupAction &&group_action,
-                                      Representation const &irrep) try {
+                                      arma::Col<T> const &characters) try {
 
   std::vector<bit_t> dns_storage;
   std::vector<double> norms_storage;
@@ -192,7 +192,7 @@ electron_dns_norms_limits_offset_size(std::vector<bit_t> const &reps_up,
         bit_t dns_rep = representative_subset(dns, group_action, syms);
         if (dns == dns_rep) {
           double norm =
-              norm_electron_subset(ups, dns, group_action, irrep, syms);
+              norm_electron_subset(ups, dns, group_action, characters, syms);
           if (norm > 1e-6) {
             dns_storage.push_back(dns_rep);
             norms_storage.push_back(norm);

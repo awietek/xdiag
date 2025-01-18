@@ -3,7 +3,7 @@
 #include <optional>
 #include <xdiag/operators/op.hpp>
 #include <xdiag/operators/opsum.hpp>
-#include <xdiag/operators/scalar.hpp>
+#include <xdiag/utils/scalar.hpp>
 
 namespace xdiag {
 bool isapprox(Op const &op1, Op const &op2, double rtol = 1e-12,

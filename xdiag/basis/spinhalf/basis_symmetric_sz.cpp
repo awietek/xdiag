@@ -23,10 +23,18 @@ BasisSymmetricSz<bit_t>::BasisSymmetricSz(int64_t n_sites, int64_t n_up,
                 "same number of elements");
   }
 
-  std::tie(reps_, index_for_rep_, syms_, sym_limits_for_rep_, norms_) =
-      symmetries::representatives_indices_symmetries_limits_norms<bit_t>(
-          combinations_indexing_, group_action_, irrep);
-
+  if (isreal(irrep)) {
+    arma::vec characters = irrep.characters().as<arma::vec>();
+    std::tie(reps_, index_for_rep_, syms_, sym_limits_for_rep_, norms_) =
+        symmetries::representatives_indices_symmetries_limits_norms<bit_t>(
+            combinations_indexing_, group_action_, characters);
+  } else {
+    arma::cx_vec characters = irrep.characters().as<arma::cx_vec>();
+    std::tie(reps_, index_for_rep_, syms_, sym_limits_for_rep_, norms_) =
+        symmetries::representatives_indices_symmetries_limits_norms<bit_t>(
+            combinations_indexing_, group_action_, characters);
+  }
+  
   size_ = (int64_t)reps_.size();
 } catch (Error const &e) {
   XDIAG_RETHROW(e);

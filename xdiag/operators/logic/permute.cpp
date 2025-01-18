@@ -1,5 +1,7 @@
 #include "permute.hpp"
 
+#include <xdiag/operators/logic/isapprox.hpp>
+
 namespace xdiag {
 
 Op permute(Op const &op, Permutation const &perm) try {

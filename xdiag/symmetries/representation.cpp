@@ -64,6 +64,7 @@ Representation::subgroup(std::vector<int64_t> const &symmetry_numbers) const {
   return Representation(sub_characters);
 }
 int64_t Representation::size() const { return characters_.size(); }
+bool Representation::isreal() const { return characters_.is<arma::vec>(); }
 
 bool Representation::operator==(Representation const &rhs) const {
   return close(arma::cx_vec(characters_), arma::cx_vec(rhs.characters_));
@@ -73,14 +74,7 @@ bool Representation::operator!=(Representation const &rhs) const {
   return !operator==(rhs);
 }
 
-bool Representation::isreal(double precision) const {
-  for (auto c : characters_) {
-    if (std::abs(imag(c)) > precision) {
-      return false;
-    }
-  }
-  return true;
-}
+bool isreal(Representation const &irrep) { return irrep.isreal(); }
 
 Representation trivial_representation(int64_t size) {
   return Representation(std::vector<complex>(size, {1.0, 0.0}));

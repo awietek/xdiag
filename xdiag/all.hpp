@@ -34,6 +34,10 @@
 #include <xdiag/utils/type_string.hpp>
 #include <xdiag/utils/xdiag_show.hpp>
 
+#include <xdiag/utils/scalar.hpp>
+#include <xdiag/utils/vector.hpp>
+#include <xdiag/utils/matrix.hpp>
+
 #include <xdiag/algebra/algebra.hpp>
 #include <xdiag/algebra/apply.hpp>
 #include <xdiag/algebra/matrix.hpp>
@@ -70,8 +74,6 @@
 #include <xdiag/basis/spinhalf/basis_spinhalf.hpp>
 #include <xdiag/basis/tj/basis_tj.hpp>
 
-#include <xdiag/symmetries/continuous_group.hpp>
-#include <xdiag/symmetries/generated_group.hpp>
 #include <xdiag/symmetries/group_action/group_action.hpp>
 #include <xdiag/symmetries/group_action/group_action_lookup.hpp>
 #include <xdiag/symmetries/group_action/group_action_sublattice.hpp>
@@ -82,12 +84,10 @@
 #include <xdiag/symmetries/operations/symmetry_operations.hpp>
 #include <xdiag/symmetries/permutation.hpp>
 #include <xdiag/symmetries/permutation_group.hpp>
-#include <xdiag/symmetries/qn.hpp>
 #include <xdiag/symmetries/representation.hpp>
 
 #include <xdiag/operators/op.hpp>
 #include <xdiag/operators/opsum.hpp>
-#include <xdiag/operators/scalar.hpp>
 #include <xdiag/operators/logic/symmetrize.hpp>
 #include <xdiag/operators/logic/real.hpp>
 #include <xdiag/operators/logic/hc.hpp>

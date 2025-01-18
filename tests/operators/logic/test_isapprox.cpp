@@ -48,6 +48,8 @@ TEST_CASE("isapprox", "[operators]") try {
     REQUIRE(isapprox(os1, os2));
   }
 
+  
+
   Log("done");
 } catch (xdiag::Error e) {
   xdiag::error_trace(e);

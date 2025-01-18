@@ -7,23 +7,34 @@ namespace xdiag::basis::spinhalf {
 template <class bit_t>
 BasisSymmetricNoSz<bit_t>::BasisSymmetricNoSz(int64_t n_sites,
                                               PermutationGroup group,
-                                              Representation irrep)
+                                              Representation irrep) try
     : n_sites_(n_sites), group_action_(allowed_subgroup(group, irrep)),
       irrep_(irrep), subsets_basis_(n_sites) {
 
   if (n_sites < 0) {
-    throw(std::invalid_argument("n_sites < 0"));
+    XDIAG_THROW("n_sites < 0");
   } else if (n_sites != group.n_sites()) {
-    throw(std::logic_error(
-        "n_sites does not match the n_sites in PermutationGroup"));
+    XDIAG_THROW("n_sites does not match the n_sites in PermutationGroup");
   } else if (group_action_.n_symmetries() != irrep.size()) {
-    throw(std::logic_error("PermutationGroup and Representation do not have "
-                           "same number of elements"));
+    XDIAG_THROW("PermutationGroup and Representation do not have "
+                "same number of elements");
   }
-  std::tie(reps_, index_for_rep_, syms_, sym_limits_for_rep_, norms_) =
-      symmetries::representatives_indices_symmetries_limits_norms<bit_t>(
-          subsets_basis_, group_action_, irrep);
+
+  if (isreal(irrep)) {
+    arma::vec characters = irrep.characters().as<arma::vec>();
+    std::tie(reps_, index_for_rep_, syms_, sym_limits_for_rep_, norms_) =
+        symmetries::representatives_indices_symmetries_limits_norms<bit_t>(
+            subsets_basis_, group_action_, characters);
+  } else {
+    arma::cx_vec characters = irrep.characters().as<arma::cx_vec>();
+    std::tie(reps_, index_for_rep_, syms_, sym_limits_for_rep_, norms_) =
+        symmetries::representatives_indices_symmetries_limits_norms<bit_t>(
+            subsets_basis_, group_action_, characters);
+  }
+
   size_ = (int64_t)reps_.size();
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 template <class bit_t>
@@ -31,17 +42,17 @@ typename std::vector<bit_t>::const_iterator
 BasisSymmetricNoSz<bit_t>::begin() const {
   return reps_.begin();
 }
-  
+
 template <class bit_t>
 typename std::vector<bit_t>::const_iterator
 BasisSymmetricNoSz<bit_t>::end() const {
   return reps_.end();
 }
-  
+
 template <class bit_t> int64_t BasisSymmetricNoSz<bit_t>::dim() const {
   return size_;
 }
-  
+
 template <class bit_t> int64_t BasisSymmetricNoSz<bit_t>::size() const {
   return size_;
 }
