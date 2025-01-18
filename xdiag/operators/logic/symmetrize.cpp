@@ -1,6 +1,7 @@
 #include "symmetrize.hpp"
 
 #include <xdiag/operators/logic/permute.hpp>
+#include <xdiag/operators/logic/real.hpp>
 
 namespace xdiag {
 
@@ -37,9 +38,9 @@ static OpSum symmetrize(OpSum const &ops, PermutationGroup const &group,
     // Create all symmetrized ops
     for (int64_t i = 0; i < N_group; ++i) {
       Permutation perm = group[i];
-      complex bloch = characters(i);
+      T bloch = characters(i);
       Op op_perm = permute(op, perm);
-      Scalar cpl_sym(bloch * cpl.scalar().as<complex>() / (complex)N_group);
+      Scalar cpl_sym(bloch * cpl.scalar().as<T>() / (T)N_group);
       ops_sym += cpl_sym * op_perm;
     }
   }
@@ -49,7 +50,7 @@ static OpSum symmetrize(OpSum const &ops, PermutationGroup const &group,
 }
 
 OpSum symmetrize(OpSum const &ops, Representation const &irrep) try {
-  if (isreal(irrep)) {
+  if (isreal(irrep) && isreal(ops)) {
     auto characters = irrep.characters().as<arma::vec>();
     return symmetrize(ops, irrep.group(), characters);
   } else {
