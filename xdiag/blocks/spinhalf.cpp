@@ -8,7 +8,7 @@ namespace xdiag {
 using namespace basis;
 
 Spinhalf::Spinhalf(int64_t n_sites) try
-    : n_sites_(n_sites), n_up_(undefined), permutation_group_(), irrep_(),
+    : n_sites_(n_sites), n_up_(std::nullopt), irrep_(std::nullopt),
       size_((int64_t)1 << n_sites) {
   check_dimension_works_with_blas_int_size(size_);
 
@@ -27,7 +27,7 @@ Spinhalf::Spinhalf(int64_t n_sites) try
 }
 
 Spinhalf::Spinhalf(int64_t n_sites, int64_t n_up) try
-    : n_sites_(n_sites), n_up_(n_up), permutation_group_(), irrep_(),
+    : n_sites_(n_sites), n_up_(n_up), irrep_(std::nullopt),
       size_(combinatorics::binomial(n_sites, n_up)) {
   check_dimension_works_with_blas_int_size(size_);
 
@@ -52,9 +52,9 @@ Spinhalf::Spinhalf(int64_t n_sites, int64_t n_up) try
 }
 
 template <typename bit_t>
-std::shared_ptr<Spinhalf::basis_t>
-make_spinhalf_basis_no_sz(int64_t n_sites, PermutationGroup const &group,
-                          Representation const &irrep, int64_t n_sublat) try {
+static std::shared_ptr<Spinhalf::basis_t>
+make_spinhalf_basis_no_sz(int64_t n_sites, Representation const &irrep,
+                          int64_t n_sublat) try {
   using basis_t = Spinhalf::basis_t;
   if (n_sublat == 0) {
     return std::make_shared<basis_t>(
@@ -82,31 +82,25 @@ make_spinhalf_basis_no_sz(int64_t n_sites, PermutationGroup const &group,
   XDIAG_RETHROW(e);
 }
 
-Spinhalf::Spinhalf(int64_t n_sites, PermutationGroup group,
-                   Representation irrep) try
-    : Spinhalf(n_sites, group, irrep, 0) {
+Spinhalf::Spinhalf(int64_t n_sites, Representation const &irrep) try
+    : Spinhalf(n_sites, irrep, 0) {
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
-Spinhalf::Spinhalf(int64_t n_sites, PermutationGroup group,
-                   Representation irrep, int64_t n_sublat) try
-    : n_sites_(n_sites), n_up_(undefined), permutation_group_(group),
-      irrep_(irrep) {
+Spinhalf::Spinhalf(int64_t n_sites, Representation const &irrep,
+                   int64_t n_sublat) try
+    : n_sites_(n_sites), n_up_(std::nullopt), irrep_(irrep) {
 
   if (n_sites < 0) {
     XDIAG_THROW("Invalid argument: n_sites < 0");
-  } else if (n_sites != group.n_sites()) {
+  } else if (n_sites != irrep.group().n_sites()) {
     XDIAG_THROW("n_sites does not match the n_sites in PermutationGroup");
-  } else if (permutation_group_.size() != irrep.size()) {
-    XDIAG_THROW("PermutationGroup and Representation do not have "
-                "same number of elements");
   } else if ((n_sublat < 0) || (n_sublat > 5)) {
     XDIAG_THROW("number of sublattices must either be 0 (no "
                 "sublattice) or between 1 and 5");
   } else if (n_sites < 64) {
-    basis_ =
-        make_spinhalf_basis_no_sz<uint64_t>(n_sites, group, irrep, n_sublat);
+    basis_ = make_spinhalf_basis_no_sz<uint64_t>(n_sites, irrep, n_sublat);
   } else {
     XDIAG_THROW("blocks with more than 64 sites currently not implemented");
   }
@@ -117,9 +111,8 @@ Spinhalf::Spinhalf(int64_t n_sites, PermutationGroup group,
 }
 
 template <typename bit_t>
-std::shared_ptr<Spinhalf::basis_t>
+static std::shared_ptr<Spinhalf::basis_t>
 make_spinhalf_basis_sz(int64_t n_sites, int64_t n_up,
-                       PermutationGroup const &group,
                        Representation const &irrep, int64_t n_sublat) try {
   using basis_t = Spinhalf::basis_t;
 
@@ -149,33 +142,29 @@ make_spinhalf_basis_sz(int64_t n_sites, int64_t n_up,
   XDIAG_RETHROW(e);
 }
 
-Spinhalf::Spinhalf(int64_t n_sites, int64_t n_up, PermutationGroup group,
-                   Representation irrep) try
-    : Spinhalf(n_sites, n_up, group, irrep, 0) {
+Spinhalf::Spinhalf(int64_t n_sites, int64_t n_up,
+                   Representation const &irrep) try
+    : Spinhalf(n_sites, n_up, irrep, 0) {
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
-Spinhalf::Spinhalf(int64_t n_sites, int64_t n_up, PermutationGroup group,
-                   Representation irrep, int64_t n_sublat) try
-    : n_sites_(n_sites), n_up_(n_up), permutation_group_(group), irrep_(irrep) {
+Spinhalf::Spinhalf(int64_t n_sites, int64_t n_up, Representation const &irrep,
+                   int64_t n_sublat) try
+    : n_sites_(n_sites), n_up_(n_up), irrep_(irrep) {
   if (n_sites < 0) {
     XDIAG_THROW("Invalid argument: n_sites < 0");
   } else if (n_up < 0) {
     XDIAG_THROW("Invalid argument: n_up < 0");
   } else if (n_up > n_sites) {
     XDIAG_THROW("Invalid argument: n_up > n_sites");
-  } else if (n_sites != group.n_sites()) {
+  } else if (n_sites != irrep.group().n_sites()) {
     XDIAG_THROW("n_sites does not match the n_sites in PermutationGroup");
-  } else if (permutation_group_.size() != irrep.size()) {
-    XDIAG_THROW("PermutationGroup and Representation do not have "
-                "same number of elements");
   } else if ((n_sublat < 0) || (n_sublat > 5)) {
     XDIAG_THROW("Invalid n_sublat specified. Must be "
                 "eiter 0 (so sublattice coding) or between 1 and 5.");
   } else if (n_sites < 64) {
-    basis_ =
-        make_spinhalf_basis_sz<uint64_t>(n_sites, n_up, group, irrep, n_sublat);
+    basis_ = make_spinhalf_basis_sz<uint64_t>(n_sites, n_up, irrep, n_sublat);
   } else {
     XDIAG_THROW("blocks with more than 64 sites currently not implemented");
   }
@@ -185,16 +174,6 @@ Spinhalf::Spinhalf(int64_t n_sites, int64_t n_up, PermutationGroup group,
   XDIAG_RETHROW(e);
 }
 
-int64_t Spinhalf::n_sites() const { return n_sites_; }
-int64_t Spinhalf::n_up() const { return n_up_; }
-
-PermutationGroup Spinhalf::permutation_group() const {
-  return permutation_group_;
-}
-Representation Spinhalf::irrep() const { return irrep_; }
-
-int64_t Spinhalf::dim() const { return size_; }
-int64_t Spinhalf::size() const { return size_; }
 Spinhalf::iterator_t Spinhalf::begin() const { return iterator_t(*this, true); }
 Spinhalf::iterator_t Spinhalf::end() const { return iterator_t(*this, false); }
 int64_t Spinhalf::index(ProductState const &pstate) const try {
@@ -209,11 +188,11 @@ int64_t Spinhalf::index(ProductState const &pstate) const try {
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
-bool Spinhalf::isreal() const { return irrep_.isreal(); }
+int64_t Spinhalf::dim() const { return size_; }
+int64_t Spinhalf::size() const { return size_; }
 
 bool Spinhalf::operator==(Spinhalf const &rhs) const {
   return (n_sites_ == rhs.n_sites_) && (n_up_ == rhs.n_up_) &&
-         (permutation_group_ == rhs.permutation_group_) &&
          (irrep_ == rhs.irrep_) && (*basis_ == *rhs.basis_);
 }
 
@@ -221,22 +200,25 @@ bool Spinhalf::operator!=(Spinhalf const &rhs) const {
   return !operator==(rhs);
 }
 
+int64_t Spinhalf::n_sites() const { return n_sites_; }
+std::optional<int64_t> Spinhalf::n_up() const { return n_up_; }
+std::optional<Representation> const &Spinhalf::irrep() const { return irrep_; }
+
+bool Spinhalf::isreal() const { return irrep_ ? irrep_->isreal() : true; }
 Spinhalf::basis_t const &Spinhalf::basis() const { return *basis_; }
 
 bool isreal(Spinhalf const &block) { return block.isreal(); }
 std::ostream &operator<<(std::ostream &out, Spinhalf const &block) {
   out << "Spinhalf:\n";
   out << "  n_sites  : " << block.n_sites() << "\n";
-  if (block.n_up() != undefined) {
-    out << "  n_up     : " << block.n_up() << "\n";
+  if (block.n_up()) {
+    out << "  n_up     : " << *block.n_up() << "\n";
   } else {
     out << "  n_up     : not conserved\n";
   }
-  if (block.permutation_group().size() > 0) {
-    out << "  group    : defined with ID " << std::hex
-        << random::hash(block.permutation_group()) << std::dec << "\n";
+  if (block.irrep()) {
     out << "  irrep    : defined with ID " << std::hex
-        << random::hash(block.irrep()) << std::dec << "\n";
+        << random::hash(*block.irrep()) << std::dec << "\n";
   }
   std::stringstream ss;
   ss.imbue(std::locale("en_US.UTF-8"));

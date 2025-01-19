@@ -6,8 +6,8 @@ namespace xdiag {
 using namespace basis;
 
 Electron::Electron(int64_t n_sites) try
-    : n_sites_(n_sites), n_up_(undefined), n_dn_(undefined),
-      permutation_group_(), irrep_() {
+    : n_sites_(n_sites), n_up_(std::nullopt), n_dn_(std::nullopt),
+      irrep_(std::nullopt) {
 
   if (n_sites < 0) {
     XDIAG_THROW("Invalid argument: n_sites < 0");
@@ -26,8 +26,7 @@ Electron::Electron(int64_t n_sites) try
 }
 
 Electron::Electron(int64_t n_sites, int64_t nup, int64_t ndn) try
-    : n_sites_(n_sites), n_up_(nup), n_dn_(ndn), permutation_group_(),
-      irrep_() {
+    : n_sites_(n_sites), n_up_(nup), n_dn_(ndn), irrep_(std::nullopt) {
 
   if (n_sites < 0) {
     XDIAG_THROW("Invalid argument: n_sites < 0");
@@ -42,7 +41,7 @@ Electron::Electron(int64_t n_sites, int64_t nup, int64_t ndn) try
     basis_ = std::make_shared<basis_t>(
         electron::BasisNp<uint64_t>(n_sites, nup, ndn));
   } else {
-    XDIAG_THROW("blocks with more than 64 sites currently not implemented");
+    XDIAG_THROW("Blocks with more than 64 sites currently not implemented");
   }
   size_ = basis::size(*basis_);
   check_dimension_works_with_blas_int_size(size_);
@@ -51,18 +50,14 @@ Electron::Electron(int64_t n_sites, int64_t nup, int64_t ndn) try
   XDIAG_RETHROW(e);
 }
 
-Electron::Electron(int64_t n_sites, PermutationGroup group,
-                   Representation irrep) try
-    : n_sites_(n_sites), n_up_(undefined), n_dn_(undefined),
-      permutation_group_(group), irrep_(irrep) {
+Electron::Electron(int64_t n_sites, Representation const &irrep) try
+    : n_sites_(n_sites), n_up_(std::nullopt), n_dn_(std::nullopt),
+      irrep_(irrep) {
 
   if (n_sites < 0) {
     XDIAG_THROW("Invalid argument: n_sites < 0");
-  } else if (n_sites != group.n_sites()) {
+  } else if (n_sites != irrep.group().n_sites()) {
     XDIAG_THROW("n_sites does not match the n_sites in PermutationGroup");
-  } else if (permutation_group_.size() != irrep.size()) {
-    XDIAG_THROW("PermutationGroup and Representation do not have "
-                "same number of elements");
   } else if (n_sites < 32) {
     basis_ = std::make_shared<basis_t>(
         electron::BasisSymmetricNoNp<uint32_t>(n_sites, irrep));
@@ -70,7 +65,7 @@ Electron::Electron(int64_t n_sites, PermutationGroup group,
     basis_ = std::make_shared<basis_t>(
         electron::BasisSymmetricNoNp<uint64_t>(n_sites, irrep));
   } else {
-    XDIAG_THROW("blocks with more than 64 sites currently not implemented");
+    XDIAG_THROW("Blocks with more than 64 sites currently not implemented");
   }
   size_ = basis::size(*basis_);
   check_dimension_works_with_blas_int_size(size_);
@@ -80,9 +75,8 @@ Electron::Electron(int64_t n_sites, PermutationGroup group,
 }
 
 Electron::Electron(int64_t n_sites, int64_t nup, int64_t ndn,
-                   PermutationGroup group, Representation irrep) try
-    : n_sites_(n_sites), n_up_(nup), n_dn_(ndn), permutation_group_(group),
-      irrep_(irrep) {
+                   Representation const &irrep) try
+    : n_sites_(n_sites), n_up_(nup), n_dn_(ndn), irrep_(irrep) {
 
   if (n_sites < 0) {
     XDIAG_THROW("Invalid argument: n_sites < 0");
@@ -90,11 +84,8 @@ Electron::Electron(int64_t n_sites, int64_t nup, int64_t ndn,
     XDIAG_THROW("Invalid argument: (nup < 0) or (nup > n_sites)");
   } else if ((ndn < 0) || (ndn > n_sites)) {
     XDIAG_THROW("Invalid argument: (ndn < 0) or (ndn > n_sites)");
-  } else if (n_sites != group.n_sites()) {
+  } else if (n_sites != irrep.group().n_sites()) {
     XDIAG_THROW("n_sites does not match the n_sites in PermutationGroup");
-  } else if (permutation_group_.size() != irrep.size()) {
-    XDIAG_THROW("PermutationGroup and Representation do not have "
-                "same number of elements");
   } else if (n_sites < 32) {
     basis_ = std::make_shared<basis_t>(
         electron::BasisSymmetricNp<uint32_t>(n_sites, nup, ndn, irrep));
@@ -102,7 +93,7 @@ Electron::Electron(int64_t n_sites, int64_t nup, int64_t ndn,
     basis_ = std::make_shared<basis_t>(
         electron::BasisSymmetricNp<uint64_t>(n_sites, nup, ndn, irrep));
   } else {
-    XDIAG_THROW("blocks with more than 64 sites currently not implemented");
+    XDIAG_THROW("Blocks with more than 64 sites currently not implemented");
   }
   size_ = basis::size(*basis_);
   check_dimension_works_with_blas_int_size(size_);
@@ -110,17 +101,6 @@ Electron::Electron(int64_t n_sites, int64_t nup, int64_t ndn,
   XDIAG_RETHROW(e);
 }
 
-int64_t Electron::n_sites() const { return n_sites_; }
-int64_t Electron::n_up() const { return n_up_; }
-int64_t Electron::n_dn() const { return n_dn_; }
-
-PermutationGroup const &Electron::permutation_group() const {
-  return permutation_group_;
-}
-Representation const &Electron::irrep() const { return irrep_; }
-
-int64_t Electron::dim() const { return size_; }
-int64_t Electron::size() const { return size_; }
 Electron::iterator_t Electron::begin() const { return iterator_t(*this, true); }
 Electron::iterator_t Electron::end() const { return iterator_t(*this, false); }
 int64_t Electron::index(ProductState const &pstate) const try {
@@ -135,36 +115,44 @@ int64_t Electron::index(ProductState const &pstate) const try {
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
-bool Electron::isreal() const { return irrep_.isreal(); }
 
 bool Electron::operator==(Electron const &rhs) const {
   return (n_sites_ == rhs.n_sites_) && (n_up_ == rhs.n_up_) &&
-         (n_dn_ == rhs.n_dn_) &&
-         (permutation_group_ == rhs.permutation_group_) &&
-         (irrep_ == rhs.irrep_);
+         (n_dn_ == rhs.n_dn_) && (irrep_ == rhs.irrep_);
 }
 bool Electron::operator!=(Electron const &rhs) const {
   return !operator==(rhs);
 }
+int64_t Electron::dim() const { return size_; }
+int64_t Electron::size() const { return size_; }
 
+int64_t Electron::n_sites() const { return n_sites_; }
+std::optional<int64_t> Electron::n_up() const { return n_up_; }
+std::optional<int64_t> Electron::n_dn() const { return n_dn_; }
+std::optional<Representation> const &Electron::irrep() const { return irrep_; }
+bool Electron::isreal() const { return irrep_ ? irrep_->isreal() : true; }
 Electron::basis_t const &Electron::basis() const { return *basis_; }
 
 bool isreal(Electron const &block) { return block.isreal(); }
 std::ostream &operator<<(std::ostream &out, Electron const &block) {
   out << "Electron:\n";
   out << "  n_sites  : " << block.n_sites() << "\n";
-  if ((block.n_up() != undefined) && (block.n_dn() != undefined)) {
-    out << "  n_up     : " << block.n_up() << "\n";
-    out << "  n_dn     : " << block.n_dn() << "\n";
+
+  if (block.n_up()) {
+    out << "  n_up     : " << *block.n_up() << "\n";
   } else {
     out << "  n_up     : not conserved\n";
+  }
+
+  if (block.n_dn()) {
+    out << "  n_dn     : " << *block.n_dn() << "\n";
+  } else {
     out << "  n_dn     : not conserved\n";
   }
-  if (block.permutation_group().size() > 0) {
-    out << "  group    : defined with ID " << std::hex
-        << random::hash(block.permutation_group()) << std::dec << "\n";
+
+  if (block.irrep()) {
     out << "  irrep    : defined with ID " << std::hex
-        << random::hash(block.irrep()) << std::dec << "\n";
+        << random::hash(*block.irrep()) << std::dec << "\n";
   }
   std::stringstream ss;
   ss.imbue(std::locale("en_US.UTF-8"));

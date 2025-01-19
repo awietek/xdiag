@@ -33,7 +33,7 @@ uint64_t hash(Representation const &irrep) {
     uint64_t angle = uint64_t(std::abs(phase_scattered * 1234567.0));
     h = hash_combine(h, hash_fnv1(angle));
   }
-  return h;
+  return hash_combine(h, hash(irrep.group()));
 }
 
 uint64_t hash(Block const &block) {
@@ -42,42 +42,39 @@ uint64_t hash(Block const &block) {
 
 uint64_t hash(Spinhalf const &block) {
   uint64_t h = block.n_sites() == 0 ? 0 : hash_fnv1((uint64_t)block.n_sites());
-  if (block.n_up() != undefined) {
-    h = hash_combine(h, hash_fnv1((uint64_t)block.n_up()));
+  if (block.n_up()) {
+    h = hash_combine(h, hash_fnv1((uint64_t)*block.n_up()));
   }
-  if (block.permutation_group().size() > 0) {
-    h = hash_combine(h, hash(block.permutation_group()));
-    h = hash_combine(h, hash(block.irrep()));
+  if (block.irrep()) {
+    h = hash_combine(h, hash(*block.irrep()));
   }
   return h;
 }
 
 uint64_t hash(tJ const &block) {
   uint64_t h = block.n_sites() == 0 ? 0 : hash_fnv1((uint64_t)block.n_sites());
-  if (block.n_up() != undefined) {
-    h = hash_combine(h, hash_fnv1((uint64_t)block.n_up()));
+  if (block.n_up()) {
+    h = hash_combine(h, hash_fnv1((uint64_t)*block.n_up()));
   }
-  if (block.n_dn() != undefined) {
-    h = hash_combine(h, hash_fnv1((uint64_t)block.n_dn()));
+  if (block.n_dn()) {
+    h = hash_combine(h, hash_fnv1((uint64_t)*block.n_dn()));
   }
-  if (block.permutation_group().size() > 0) {
-    h = hash_combine(h, hash(block.permutation_group()));
-    h = hash_combine(h, hash(block.irrep()));
+  if (block.irrep()) {
+    h = hash_combine(h, hash(*block.irrep()));
   }
   return h;
 }
 
 uint64_t hash(Electron const &block) {
   uint64_t h = block.n_sites() == 0 ? 0 : hash_fnv1((uint64_t)block.n_sites());
-  if (block.n_up() != undefined) {
-    h = hash_combine(h, hash_fnv1((uint64_t)block.n_up()));
+  if (block.n_up()) {
+    h = hash_combine(h, hash_fnv1((uint64_t)*block.n_up()));
   }
-  if (block.n_dn() != undefined) {
-    h = hash_combine(h, hash_fnv1((uint64_t)block.n_dn()));
+  if (block.n_dn()) {
+    h = hash_combine(h, hash_fnv1((uint64_t)*block.n_dn()));
   }
-  if (block.permutation_group().size() > 0) {
-    h = hash_combine(h, hash(block.permutation_group()));
-    h = hash_combine(h, hash(block.irrep()));
+  if (block.irrep()) {
+    h = hash_combine(h, hash(*block.irrep()));
   }
   return h;
 }

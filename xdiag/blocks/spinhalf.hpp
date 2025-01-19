@@ -1,11 +1,11 @@
 #pragma once
 
-#include <memory>
+#include <optional>
+
+#include <xdiag/common.hpp>
 
 #include <xdiag/basis/spinhalf/basis_spinhalf.hpp>
-#include <xdiag/common.hpp>
 #include <xdiag/states/product_state.hpp>
-#include <xdiag/symmetries/permutation_group.hpp>
 #include <xdiag/symmetries/representation.hpp>
 
 namespace xdiag {
@@ -17,50 +17,45 @@ public:
   using basis_t = basis::BasisSpinhalf;
   using iterator_t = SpinhalfIterator;
 
-  Spinhalf() = default;
-  Spinhalf(int64_t n_sites);
-  Spinhalf(int64_t n_sites, int64_t n_up);
-  Spinhalf(int64_t n_sites, PermutationGroup permutation_group,
-           Representation irrep);
-  Spinhalf(int64_t n_sites, int64_t n_up, PermutationGroup permutation_group,
-           Representation irrep);
+  XDIAG_API Spinhalf() = default;
+  XDIAG_API Spinhalf(int64_t n_sites);
+  XDIAG_API Spinhalf(int64_t n_sites, int64_t n_up);
+  XDIAG_API Spinhalf(int64_t n_sites, Representation const &irrep);
+  XDIAG_API Spinhalf(int64_t n_sites, int64_t n_up,
+                     Representation const &irrep);
 
   // Constructors with sublattice coding
-  Spinhalf(int64_t n_sites, PermutationGroup permutation_group,
-           Representation irrep, int64_t n_sublat);
-  Spinhalf(int64_t n_sites, int64_t n_up, PermutationGroup permutation_group,
-           Representation irrep, int64_t n_sublat);
+  XDIAG_API Spinhalf(int64_t n_sites, Representation const &irrep,
+                     int64_t n_sublat);
+  XDIAG_API Spinhalf(int64_t n_sites, int64_t n_up, Representation const &irrep,
+                     int64_t n_sublat);
+
+  XDIAG_API iterator_t begin() const;
+  XDIAG_API iterator_t end() const;
+  XDIAG_API int64_t index(ProductState const &pstate) const;
+  XDIAG_API int64_t dim() const;
+  XDIAG_API int64_t size() const;
+
+  XDIAG_API bool operator==(Spinhalf const &rhs) const;
+  XDIAG_API bool operator!=(Spinhalf const &rhs) const;
 
   int64_t n_sites() const;
-  int64_t n_up() const;
-  PermutationGroup permutation_group() const;
-  Representation irrep() const;
-
-  int64_t dim() const;
-  int64_t size() const;
-  iterator_t begin() const;
-  iterator_t end() const;
-  int64_t index(ProductState const &pstate) const;
+  std::optional<int64_t> n_up() const;
+  std::optional<Representation> const &irrep() const;
   bool isreal() const;
-
-  bool operator==(Spinhalf const &rhs) const;
-  bool operator!=(Spinhalf const &rhs) const;
-
   basis_t const &basis() const;
 
 private:
   int64_t n_sites_;
-  int64_t n_up_;
-  PermutationGroup permutation_group_;
-  Representation irrep_;
-
+  std::optional<int64_t> n_up_;
+  std::optional<Representation> irrep_;
   std::shared_ptr<basis_t> basis_;
   int64_t size_;
 };
 
-bool isreal(Spinhalf const &block);
-std::ostream &operator<<(std::ostream &out, Spinhalf const &block);
-std::string to_string(Spinhalf const &block);
+XDIAG_API bool isreal(Spinhalf const &block);
+XDIAG_API std::ostream &operator<<(std::ostream &out, Spinhalf const &block);
+XDIAG_API std::string to_string(Spinhalf const &block);
 
 class SpinhalfIterator {
 public:

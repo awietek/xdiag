@@ -11,13 +11,52 @@
 
 namespace xdiag {
 
-Representation::Representation(PermutationGroup const &group)
-    : group_(group), characters_(arma::vec(group.size(), arma::fill::ones)) {}
+template <typename T>
+static void check_characters(PermutationGroup const &group,
+                             arma::Col<T> const &characters,
+                             double precision = 1e-12) try {
+  int64_t n = group.size();
+  for (int64_t i = 0; i < n; ++i) {
+    for (int64_t j = 0; j < n; ++j) {
+      T cij = characters[group.multiply(i, j)];
+      T cicj = characters[i] * characters[j];
+      if (std::abs(cij - cicj) > precision) {
+        XDIAG_THROW(
+            "Characters of Representation are not fulfilling multiplicative "
+            "law with respect to the PermutationGroup, i.e. there exists group "
+            "elements \"g\" and \"h\" such that c(g)*c(h) != c(gh)")
+      }
+    }
+  }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+
+Representation::Representation(PermutationGroup const &group,
+                               Vector const &characters) try
+    : group_(group), characters_(characters) {
+  if (characters.isreal()) {
+    check_characters(group, characters.as<arma::vec>());
+  } else {
+    check_characters(group, characters.as<arma::cx_vec>());
+  }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+
+Representation::Representation(PermutationGroup const &group) try
+    : Representation(group, Vector(arma::vec(group.size(), arma::fill::ones))) {
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
 
 template <typename T>
 Representation::Representation(PermutationGroup const &group,
-                               std::vector<T> const &characters)
-    : group_(group), characters_(arma::Col<T>(characters)) {}
+                               std::vector<T> const &characters) try
+    : Representation(group, Vector(arma::Col<T>(characters))) {
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
 
 template Representation::Representation(PermutationGroup const &,
                                         std::vector<double> const &);
@@ -26,8 +65,11 @@ template Representation::Representation(PermutationGroup const &,
 
 template <typename T>
 Representation::Representation(PermutationGroup const &group,
-                               arma::Col<T> const &characters)
-    : group_(group), characters_(characters) {}
+                               arma::Col<T> const &characters) try
+    : Representation(group, Vector(characters)) {
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
 template Representation::Representation(PermutationGroup const &,
                                         arma::vec const &);
 template Representation::Representation(PermutationGroup const &,
@@ -35,8 +77,11 @@ template Representation::Representation(PermutationGroup const &,
 
 template <typename T>
 Representation::Representation(PermutationGroup const &group, T *characters,
-                               int64_t n_characters)
-    : group_(group), characters_(arma::Col<T>(characters, n_characters, true)) {
+                               int64_t n_characters) try
+    : Representation(group,
+                     Vector(arma::Col<T>(characters, n_characters, true))) {
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 template Representation::Representation(PermutationGroup const &group,
                                         double *characters,
@@ -45,12 +90,7 @@ template Representation::Representation(PermutationGroup const &group,
                                         complex *characters,
                                         int64_t n_characters);
 
-Representation::Representation(PermutationGroup const &group,
-                               Vector const &characters)
-    : group_(group), characters_(characters){};
-
 Vector const &Representation::characters() const { return characters_; }
-
 int64_t Representation::size() const { return characters_.size(); }
 bool Representation::isreal() const { return characters_.is<arma::vec>(); }
 
@@ -88,7 +128,6 @@ Representation multiply(Representation const &r1,
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
-  return Representation();
 }
 
 Representation operator*(Representation const &r1,
@@ -96,7 +135,6 @@ Representation operator*(Representation const &r1,
   return multiply(r1, r2);
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
-  return Representation();
 }
 
 std::ostream &operator<<(std::ostream &out, Representation const &irrep) {
