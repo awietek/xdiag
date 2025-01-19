@@ -45,7 +45,7 @@ uint64_t hash(Spinhalf const &block) {
   if (block.n_up() != undefined) {
     h = hash_combine(h, hash_fnv1((uint64_t)block.n_up()));
   }
-  if (block.permutation_group()) {
+  if (block.permutation_group().size() > 0) {
     h = hash_combine(h, hash(block.permutation_group()));
     h = hash_combine(h, hash(block.irrep()));
   }
@@ -60,7 +60,7 @@ uint64_t hash(tJ const &block) {
   if (block.n_dn() != undefined) {
     h = hash_combine(h, hash_fnv1((uint64_t)block.n_dn()));
   }
-  if (block.permutation_group()) {
+  if (block.permutation_group().size() > 0) {
     h = hash_combine(h, hash(block.permutation_group()));
     h = hash_combine(h, hash(block.irrep()));
   }
@@ -75,7 +75,7 @@ uint64_t hash(Electron const &block) {
   if (block.n_dn() != undefined) {
     h = hash_combine(h, hash_fnv1((uint64_t)block.n_dn()));
   }
-  if (block.permutation_group()) {
+  if (block.permutation_group().size() > 0) {
     h = hash_combine(h, hash(block.permutation_group()));
     h = hash_combine(h, hash(block.irrep()));
   }

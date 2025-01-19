@@ -8,7 +8,7 @@ namespace xdiag {
 
 GroupAction::GroupAction(PermutationGroup const &permutation_group)
     : n_sites_(permutation_group.n_sites()),
-      n_symmetries_(permutation_group.n_symmetries()),
+      n_symmetries_(permutation_group.size()),
       permutation_group_(permutation_group), indices_(n_symmetries_, 0),
       fermi_work_(2 * permutation_group.n_sites(), 0) {}
 

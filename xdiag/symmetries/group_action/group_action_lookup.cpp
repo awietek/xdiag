@@ -10,12 +10,12 @@ template <typename bit_t>
 GroupActionLookup<bit_t>::GroupActionLookup(
     PermutationGroup const &permutation_group)
     : n_sites_(permutation_group.n_sites()),
-      n_symmetries_(permutation_group.n_symmetries()),
+      n_symmetries_(permutation_group.size()),
       permutation_group_(permutation_group), n_prefix_bits_(n_sites_ / 2),
       n_postfix_bits_(n_sites_ - n_prefix_bits_),
       postfix_mask_(((bit_t)1 << n_postfix_bits_) - 1),
-      prefix_size_(pow(2, n_prefix_bits_)),
-      postfix_size_(pow(2, n_postfix_bits_)),
+      prefix_size_((int64_t)1 << n_prefix_bits_),
+      postfix_size_((int64_t)1 << n_postfix_bits_),
       table_prefix_(n_symmetries_ * prefix_size_, 0),
       table_postfix_(n_symmetries_ * postfix_size_, 0) {
 

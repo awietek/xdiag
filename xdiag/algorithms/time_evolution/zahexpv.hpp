@@ -3,6 +3,7 @@
 // Created by Luke Staszewski on 27.01.23.
 //
 
+#include <cmath>
 #include <tuple>
 #include <xdiag/extern/armadillo/armadillo>
 
@@ -65,12 +66,12 @@ zahexpv(double time, apply_A_f &&apply_A, dot_f &&dot, arma::cx_vec &w,
   double xm = 1 / (double)m;
   double normv = norm(w);
   double beta = normv;
-  double fact = pow((m + 1) / exp(1),
-                    (m + 1)) *
+  double fact = std::pow((m + 1) / exp(1),
+                         (m + 1)) *
                 sqrt(2 * pi * (m + 1)); // sterling's approx.
-  t_new = (1 / anorm) * pow((fact * tol) / (4 * beta * anorm), xm);
+  t_new = (1 / anorm) * std::pow((fact * tol) / (4 * beta * anorm), xm);
 
-  double s = pow(10, floor(log10(t_new)) - 1);
+  double s = std::pow(10, floor(log10(t_new)) - 1);
   t_new = ceil(t_new / s) * s;
   int sgn = arma::sign(time);
   nstep = 0;
@@ -161,8 +162,8 @@ zahexpv(double time, apply_A_f &&apply_A, dot_f &&dot, arma::cx_vec &w,
         break;
       }
 
-      t_step = gamma * t_step * pow(t_step * tol / err_loc, xm);
-      s = pow(10, (floor(log10(t_step)) - 1));
+      t_step = gamma * t_step * std::pow(t_step * tol / err_loc, xm);
+      s = std::pow(10, (floor(log10(t_step)) - 1));
       t_step = ceil(t_step / s) * s;
       if (ireject == mxrej) {
         XDIAG_THROW(
@@ -185,8 +186,8 @@ zahexpv(double time, apply_A_f &&apply_A, dot_f &&dot, arma::cx_vec &w,
 
     t_now += t_step;
 
-    t_new = gamma * t_step * pow(t_step * tol / err_loc, xm);
-    s = pow(10, floor(log10(t_new)) - 1);
+    t_new = gamma * t_step * std::pow(t_step * tol / err_loc, xm);
+    s = std::pow(10, floor(log10(t_new)) - 1);
     t_new = ceil(t_new / s) * s;
 
     err_loc = std::max(err_loc, rndoff);
@@ -198,7 +199,7 @@ zahexpv(double time, apply_A_f &&apply_A, dot_f &&dot, arma::cx_vec &w,
   Log(1, "zaexph finished: # steps = {}, # MVM = {}, est. error: {}, hump: {}",
       nstep, nstep * m, err, hump);
   return {err, hump};
-} catch (Error const& e) {
+} catch (Error const &e) {
   XDIAG_RETHROW(e);
   return {0., 0.};
 }

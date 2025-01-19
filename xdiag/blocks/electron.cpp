@@ -81,8 +81,8 @@ Electron::Electron(int64_t n_sites, PermutationGroup group,
 
 Electron::Electron(int64_t n_sites, int64_t nup, int64_t ndn,
                    PermutationGroup group, Representation irrep) try
-    : n_sites_(n_sites), n_up_(nup), n_dn_(ndn),
-      permutation_group_(group), irrep_(irrep) {
+    : n_sites_(n_sites), n_up_(nup), n_dn_(ndn), permutation_group_(group),
+      irrep_(irrep) {
 
   if (n_sites < 0) {
     XDIAG_THROW("Invalid argument: n_sites < 0");
@@ -160,7 +160,7 @@ std::ostream &operator<<(std::ostream &out, Electron const &block) {
     out << "  n_up     : not conserved\n";
     out << "  n_dn     : not conserved\n";
   }
-  if (block.permutation_group()) {
+  if (block.permutation_group().size() > 0) {
     out << "  group    : defined with ID " << std::hex
         << random::hash(block.permutation_group()) << std::dec << "\n";
     out << "  irrep    : defined with ID " << std::hex

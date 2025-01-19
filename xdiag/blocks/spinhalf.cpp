@@ -232,7 +232,7 @@ std::ostream &operator<<(std::ostream &out, Spinhalf const &block) {
   } else {
     out << "  n_up     : not conserved\n";
   }
-  if (block.permutation_group()) {
+  if (block.permutation_group().size() > 0) {
     out << "  group    : defined with ID " << std::hex
         << random::hash(block.permutation_group()) << std::dec << "\n";
     out << "  irrep    : defined with ID " << std::hex

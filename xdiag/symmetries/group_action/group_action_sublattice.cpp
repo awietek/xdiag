@@ -10,17 +10,15 @@ namespace xdiag {
 
 template <typename bit_t, int n_sublat>
 GroupActionSublattice<bit_t, n_sublat>::GroupActionSublattice(
-    PermutationGroup const &permutation_group)
-    : n_sites_(permutation_group.n_sites()),
-      n_symmetries_(permutation_group.n_symmetries()),
-      permutation_group_(permutation_group),
-      n_sites_sublat_(n_sites_ / n_sublat),
-      size_tables_(pow(2, n_sites_sublat_)),
+    PermutationGroup const &group)
+    : n_sites_(group.n_sites()), n_symmetries_(group.size()),
+      permutation_group_(group), n_sites_sublat_(n_sites_ / n_sublat),
+      size_tables_((int64_t)1 << n_sites_sublat_),
       sublat_mask_(((half_bit_t)1 << n_sites_sublat_) - 1),
       representative_syms_(n_symmetries_) {
 
   // Check if permutation group is sublattice stable
-  if (!symmetries::is_sublattice_stable(n_sublat, permutation_group)) {
+  if (!symmetries::is_sublattice_stable(n_sublat, group)) {
     Log.err("Error creating GroupActionSublattice with {} sublattices: "
             "permutation group is not {}-sublattice stable!",
             n_sublat, n_sublat);

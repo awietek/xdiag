@@ -16,7 +16,7 @@ template <class States>
 std::vector<bool> init_fermi_table_serial(States const &states,
                                           PermutationGroup const &group) {
   int64_t n_sites = group.n_sites();
-  int64_t n_symmetries = group.n_symmetries();
+  int64_t n_symmetries = group.size();
   int64_t raw_size = states.size();
   std::vector<bool> fermi_table(raw_size * n_symmetries);
   auto fermi_work = symmetries::fermi_work(n_sites);
@@ -38,7 +38,7 @@ template <class States>
 std::vector<bool> init_fermi_table_omp(States const &states,
                                        PermutationGroup const &group) {
   int64_t n_sites = group.n_sites();
-  int64_t n_symmetries = group.n_symmetries();
+  int64_t n_symmetries = group.size();
   int64_t raw_size = states.size();
   std::vector<bool> fermi_bool_table;
   fermi_bool_table.reserve(raw_size * n_symmetries);
@@ -50,7 +50,7 @@ std::vector<bool> init_fermi_table_omp(States const &states,
     // Comment: even though every entry in fermi_bool_table would be
     // written by only one thread, std::vector<bool> is special and requires
     // seperate vectors to be built
-    
+
 #pragma omp parallel
     {
       int myid = omp_get_thread_num();

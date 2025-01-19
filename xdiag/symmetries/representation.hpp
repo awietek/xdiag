@@ -1,5 +1,7 @@
 #pragma once
 
+#include <ostream>
+#include <string>
 #include <vector>
 
 #include <xdiag/common.hpp>
@@ -14,7 +16,6 @@ class Representation {
 public:
   XDIAG_API Representation() = default;
   XDIAG_API explicit Representation(PermutationGroup const &group);
-
   template <typename T>
   XDIAG_API Representation(PermutationGroup const &group,
                            std::vector<T> const &characters);
@@ -24,16 +25,15 @@ public:
   template <typename T>
   XDIAG_API Representation(PermutationGroup const &group, T *characters,
                            int64_t n_characters);
-
   Representation(PermutationGroup const &group, Vector const &characters);
+
+  XDIAG_API int64_t size() const;
+  XDIAG_API bool operator==(Representation const &rhs) const;
+  XDIAG_API bool operator!=(Representation const &rhs) const;
 
   PermutationGroup const &group() const;
   Vector const &characters() const;
-
-  XDIAG_API int64_t size() const;
   bool isreal() const;
-  XDIAG_API bool operator==(Representation const &rhs) const;
-  XDIAG_API bool operator!=(Representation const &rhs) const;
 
 private:
   PermutationGroup group_;

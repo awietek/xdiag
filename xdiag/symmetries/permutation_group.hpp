@@ -1,41 +1,48 @@
 #pragma once
+
+#include <ostream>
+#include <string>
 #include <vector>
 
-#include <xdiag/io/toml/file_toml_handler.hpp>
+#include <xdiag/extern/armadillo/armadillo>
 #include <xdiag/symmetries/permutation.hpp>
 
 namespace xdiag {
 
 class PermutationGroup {
 public:
-  PermutationGroup() = default;
-  explicit PermutationGroup(std::vector<Permutation> const &permutations);
-  explicit PermutationGroup(
-      VectorPermutation const &permutations); // auxiliary for julia
+  using iterator_t = std::vector<Permutation>::const_iterator;
 
-  int64_t n_sites() const;
-  int64_t n_symmetries() const;
+  XDIAG_API PermutationGroup() = default;
+  XDIAG_API explicit PermutationGroup(
+      std::vector<Permutation> const &permutations);
+  XDIAG_API explicit PermutationGroup(arma::imat const &matrix);
+  XDIAG_API PermutationGroup(int64_t *ptr, int64_t n_permutations,
+                             int64_t n_sites);
+
+  XDIAG_API bool operator==(PermutationGroup const &rhs) const;
+  XDIAG_API bool operator!=(PermutationGroup const &rhs) const;
+
   int64_t size() const;
+  int64_t n_sites() const;
+
   Permutation const &operator[](int64_t sym) const;
   int64_t inverse(int64_t sym) const;
+  int64_t multiply(int64_t s1, int64_t s2) const;
 
-  bool operator==(PermutationGroup const &rhs) const;
-  bool operator!=(PermutationGroup const &rhs) const;
-  operator bool() const;
-
-  PermutationGroup subgroup(std::vector<int64_t> const &symmetry_numbers) const;
-  using iterator_t = std::vector<Permutation>::const_iterator;
   iterator_t begin() const;
   iterator_t end() const;
 
 private:
-  int64_t n_sites_;
-  int64_t n_symmetries_;
   std::vector<Permutation> permutations_;
   std::vector<int64_t> inverse_;
+  arma::Mat<int64_t> multiply_;
 };
 
-std::ostream &operator<<(std::ostream &out, PermutationGroup const &group);
-std::string to_string(PermutationGroup const &group);
+XDIAG_API PermutationGroup subgroup(PermutationGroup const &group,
+                                    std::vector<int64_t> const &symmetries);
+XDIAG_API std::ostream &operator<<(std::ostream &out,
+                                   PermutationGroup const &group);
+XDIAG_API std::string to_string(PermutationGroup const &group);
 
 } // namespace xdiag
