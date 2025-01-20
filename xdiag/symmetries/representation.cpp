@@ -89,11 +89,7 @@ template Representation::Representation(PermutationGroup const &group,
 template Representation::Representation(PermutationGroup const &group,
                                         complex *characters,
                                         int64_t n_characters);
-
-Vector const &Representation::characters() const { return characters_; }
 int64_t Representation::size() const { return characters_.size(); }
-bool Representation::isreal() const { return characters_.is<arma::vec>(); }
-
 bool Representation::operator==(Representation const &rhs) const {
   return (group_ == rhs.group_) && (characters_ == rhs.characters_);
 }
@@ -102,12 +98,11 @@ bool Representation::operator!=(Representation const &rhs) const {
   return !operator==(rhs);
 }
 
+PermutationGroup const &Representation::group() const { return group_; }
+Vector const &Representation::characters() const { return characters_; }
+bool Representation::isreal() const { return characters_.is<arma::vec>(); }
+
 bool isreal(Representation const &irrep) { return irrep.isreal(); }
-
-Representation trivial_representation(PermutationGroup const &group) {
-  return Representation(group, arma::vec(group.size(), arma::fill::ones));
-}
-
 Representation multiply(Representation const &r1,
                         Representation const &r2) try {
   if (r1.group() != r2.group()) {

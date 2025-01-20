@@ -52,12 +52,11 @@ template <typename bit_t>
 void test_iterator_electron_basis_symmetric_no_np(int64_t n_sites) {
   using namespace xdiag;
 
-  auto [group, irreps] =
-      xdiag::testcases::electron::get_cyclic_group_irreps(n_sites);
+  auto irreps = xdiag::testcases::electron::get_cyclic_group_irreps(n_sites);
 
   for (auto irrep : irreps) {
-    auto basis = xdiag::basis::electron::BasisSymmetricNoNp<bit_t>(
-        n_sites, group, irrep);
+    auto basis =
+        xdiag::basis::electron::BasisSymmetricNoNp<bit_t>(n_sites, irrep);
 
     bit_t ups_prev = 0;
     bit_t dns_prev = 0;
@@ -78,7 +77,7 @@ void test_iterator_electron_basis_symmetric_no_np(int64_t n_sites) {
     REQUIRE(idx == basis.dim());
 
     {
-      auto block = Electron(n_sites, group, irrep);
+      auto block = Electron(n_sites, irrep);
       int64_t idx = 0;
       for (auto pstate : block) {
         int64_t idx2 = block.index(pstate);
@@ -134,11 +133,11 @@ void test_iterator_electron_basis_symmetric_np(int64_t n_sites, int64_t n_up,
                                                int64_t n_dn) {
   using namespace xdiag;
 
-  auto [group, irreps] = testcases::electron::get_cyclic_group_irreps(n_sites);
+  auto irreps = testcases::electron::get_cyclic_group_irreps(n_sites);
 
   for (auto irrep : irreps) {
-    auto basis = basis::electron::BasisSymmetricNp<bit_t>(n_sites, n_up, n_dn,
-                                                          group, irrep);
+    auto basis =
+        basis::electron::BasisSymmetricNp<bit_t>(n_sites, n_up, n_dn, irrep);
     bit_t ups_prev = 0;
     bit_t dns_prev = 0;
     int64_t idx = 0;
@@ -157,7 +156,7 @@ void test_iterator_electron_basis_symmetric_np(int64_t n_sites, int64_t n_up,
     }
     REQUIRE(idx == basis.dim());
     {
-      auto block = Electron(n_sites, n_up, n_dn, group, irrep);
+      auto block = Electron(n_sites, n_up, n_dn, irrep);
       int64_t idx = 0;
       for (auto pstate : block) {
         int64_t idx2 = block.index(pstate);

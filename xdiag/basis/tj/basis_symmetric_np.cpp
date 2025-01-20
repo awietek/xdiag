@@ -68,7 +68,7 @@ BasisSymmetricNp<bit_t>::BasisSymmetricNp(
             symmetries::representative_subset(dns, group_action_, syms);
         if (dns == dns_rep) {
           double norm = symmetries::norm_electron_subset(
-              ups, dns, group_action_, irrep_, syms);
+              ups, dns, group_action_, characters, syms);
           if (norm > 1e-6) { // only keep dns with non-zero norm
             dns_storage_.push_back(dns_rep);
             norms_storage_.push_back(norm);
@@ -280,6 +280,18 @@ int64_t BasisSymmetricNp<bit_t>::dnsc_index(bit_t dns) const {
 
 template class BasisSymmetricNp<uint32_t>;
 template class BasisSymmetricNp<uint64_t>;
+template BasisSymmetricNp<uint32_t>::BasisSymmetricNp<double>(
+    int64_t, int64_t, int64_t, PermutationGroup const &,
+    arma::Col<double> const &);
+template BasisSymmetricNp<uint32_t>::BasisSymmetricNp<complex>(
+    int64_t, int64_t, int64_t, PermutationGroup const &,
+    arma::Col<complex> const &);
+template BasisSymmetricNp<uint64_t>::BasisSymmetricNp<double>(
+    int64_t, int64_t, int64_t, PermutationGroup const &,
+    arma::Col<double> const &);
+template BasisSymmetricNp<uint64_t>::BasisSymmetricNp<complex>(
+    int64_t, int64_t, int64_t, PermutationGroup const &,
+    arma::Col<complex> const &);
 
 template <typename bit_t>
 BasisSymmetricNpIterator<bit_t>::BasisSymmetricNpIterator(

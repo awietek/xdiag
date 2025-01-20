@@ -121,6 +121,7 @@
 
 #include <xdiag/io/file_h5.hpp>
 #include <xdiag/io/file_toml.hpp>
+#include <xdiag/io/read.hpp>
 
 #ifdef XDIAG_USE_MPI
 #include <xdiag/parallel/mpi/allreduce.hpp>

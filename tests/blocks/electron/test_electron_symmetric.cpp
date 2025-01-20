@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <xdiag/blocks/electron.hpp>
-#include <xdiag/io/file_toml.hpp>
+#include <xdiag/io/read.hpp>
 
 using namespace xdiag;
 using namespace xdiag::combinatorics;
@@ -40,7 +40,7 @@ void test_electron_chain(int n_sites) {
     }
     permutation_array.push_back(Permutation(pv));
   }
-  auto space_group = PermutationGroup(permutation_array);
+  auto group = PermutationGroup(permutation_array);
 
   // Create irrep with K momentum
   int64_t sum_of_dims = 0;
@@ -59,9 +59,8 @@ void test_electron_chain(int n_sites) {
         for (int64_t l = 0; l < n_sites; ++l)
           chis.push_back({std::cos(2 * M_PI * l * k / n_sites),
                           std::sin(2 * M_PI * l * k / n_sites)});
-        auto irrep = Representation(chis);
-
-        auto electron2 = Electron(n_sites, nup, ndn, space_group, irrep);
+        auto irrep = Representation(group, chis);
+        auto electron2 = Electron(n_sites, nup, ndn, irrep);
 
         sum_of_dims += electron2.size();
         sum_of_dims_updn += electron2.size();
@@ -93,7 +92,6 @@ TEST_CASE("electron_symmetric", "[electron]") {
   std::string lfile =
       XDIAG_DIRECTORY "/misc/data/triangular.9.hop.sublattices.tsl.toml";
   auto fl = FileToml(lfile);
-  auto space_group = fl["Symmetries"].as<PermutationGroup>();
 
   int64_t sum_dim = 0;
   for (int64_t nup = 0; nup <= n_sites; ++nup) {
@@ -101,8 +99,8 @@ TEST_CASE("electron_symmetric", "[electron]") {
       int64_t sum_dim_updn = 0;
 
       for (auto [name, mult] : rep_name_mult) {
-        auto irrep = fl[name].as<Representation>();
-        auto electron = Electron(n_sites, nup, ndn, space_group, irrep);
+        auto irrep = read_representation(fl, name);
+        auto electron = Electron(n_sites, nup, ndn, irrep);
         int64_t dim = electron.size() * mult;
         // Log.out(
         //     "Hubbard Triangular 3x3: n_sites: {}, nup: {}, ndn: {}, k: "

@@ -25,8 +25,7 @@ OpSum get_linear_chain_hb(int64_t n_sites, double J) {
   return ops;
 }
 
-std::tuple<PermutationGroup, std::vector<Representation>>
-get_cyclic_group_irreps(int64_t n_sites) {
+std::vector<Representation> get_cyclic_group_irreps(int64_t n_sites) {
   // test cyclic group
   std::vector<Permutation> permutation_array;
   for (int64_t sym = 0; sym < n_sites; ++sym) {
@@ -38,7 +37,7 @@ get_cyclic_group_irreps(int64_t n_sites) {
     }
     permutation_array.push_back(Permutation(pv));
   }
-  auto space_group = PermutationGroup(permutation_array);
+  auto group = PermutationGroup(permutation_array);
 
   // Create irreducible representations
   std::vector<Representation> irreps;
@@ -47,13 +46,13 @@ get_cyclic_group_irreps(int64_t n_sites) {
     for (int64_t l = 0; l < n_sites; ++l)
       chis.push_back({std::cos(2 * M_PI * l * k / n_sites),
                       std::sin(2 * M_PI * l * k / n_sites)});
-    auto irrep = Representation(chis);
+    auto irrep = Representation(group, chis);
     irreps.push_back(irrep);
   }
-  return {space_group, irreps};
+  return irreps;
 }
 
-std::tuple<PermutationGroup, std::vector<Representation>, std::vector<int64_t>>
+std::tuple<std::vector<Representation>, std::vector<int64_t>>
 get_cyclic_group_irreps_mult(int64_t n_sites) {
   // test cyclic group
   std::vector<Permutation> permutation_array;
@@ -66,7 +65,7 @@ get_cyclic_group_irreps_mult(int64_t n_sites) {
     }
     permutation_array.push_back(Permutation(pv));
   }
-  auto space_group = PermutationGroup(permutation_array);
+  auto group = PermutationGroup(permutation_array);
 
   // Create irreducible representations
   std::vector<Representation> irreps;
@@ -76,11 +75,11 @@ get_cyclic_group_irreps_mult(int64_t n_sites) {
     for (int64_t l = 0; l < n_sites; ++l)
       chis.push_back({std::cos(2 * M_PI * l * k / n_sites),
                       std::sin(2 * M_PI * l * k / n_sites)});
-    auto irrep = Representation(chis);
+    auto irrep = Representation(group, chis);
     irreps.push_back(irrep);
     multiplicities.push_back(1);
   }
-  return {space_group, irreps, multiplicities};
+  return {irreps, multiplicities};
 }
 
 OpSum heisenberg_triangle() {

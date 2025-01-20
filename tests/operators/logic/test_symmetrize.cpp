@@ -26,8 +26,7 @@ TEST_CASE("symmetrize", "[operators]") try {
     ops["J2"] = 0.321;
     ops["T"] = 0;
 
-    auto [space_group, irreps] =
-        testcases::electron::get_cyclic_group_irreps(n_sites);
+    auto irreps = testcases::electron::get_cyclic_group_irreps(n_sites);
 
     for (int nup = 0; nup <= n_sites; ++nup) {
       for (int ndn = 0; ndn <= n_sites; ++ndn) {
@@ -56,9 +55,10 @@ TEST_CASE("symmetrize", "[operators]") try {
         Representation e0_irrep;
         std::vector<double> e0s;
         for (auto irrep : irreps) {
-          auto block_sym = Electron(n_sites, nup, ndn, space_group, irrep);
-          if (block_sym.size() == 0)
+          auto block_sym = Electron(n_sites, nup, ndn, irrep);
+          if (block_sym.size() == 0) {
             continue;
+          }
           double e0_sector = eigval0(ops, block_sym);
 
           e0s.push_back(e0_sector);
@@ -81,7 +81,7 @@ TEST_CASE("symmetrize", "[operators]") try {
         // Compare correlators only if degeneracy is 1
         // -> g.s. from non-symmetric calculation is unique and symmetric
         if (deg == 1) {
-          auto block_sym = Electron(n_sites, nup, ndn, space_group, e0_irrep);
+          auto block_sym = Electron(n_sites, nup, ndn, e0_irrep);
           // XDIAG_SHOW(ops);
 
           auto [e0_sym2, v0_sym] = eig0(ops, block_sym);
@@ -104,7 +104,7 @@ TEST_CASE("symmetrize", "[operators]") try {
             corr_nosym += "J" * Op("SdotS", {0, i});
             corr_nosym["J"] = 1.0;
 
-            auto corr_sym = symmetrize(corr_nosym, space_group);
+            auto corr_sym = symmetrize(corr_nosym, e0_irrep.group());
             // Log("XXX");
             auto val_nosym = inner(corr_nosym, v0_nosym);
             // Log("YYY {} {}", corr_sym.isreal(), v0_sym.isreal());

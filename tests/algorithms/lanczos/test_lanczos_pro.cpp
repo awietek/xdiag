@@ -6,7 +6,7 @@
 #include <xdiag/algebra/apply.hpp>
 #include <xdiag/algorithms/lanczos/lanczos_pro.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
-#include <xdiag/io/file_toml.hpp>
+#include <xdiag/io/read.hpp>
 #include <xdiag/operators/opsum.hpp>
 #include <xdiag/states/create_state.hpp>
 #include <xdiag/states/random_state.hpp>
@@ -144,15 +144,14 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
     int n_sites = 16;
     ops["J"] = 0.63;
     ops["Jd"] = 1.00;
-    auto group = lfile["Symmetries"].as<PermutationGroup>();
 
     std::vector<std::string> irrep_names = {"Gamma.C1.A", "M.C1.A", "X0.C1.A",
                                             "X1.C1.A"};
 
     for (int nup = 0; nup <= 6; ++nup) {
       for (std::string k : irrep_names) {
-        auto irrep = lfile[k].as<Representation>();
-        auto block = Spinhalf(n_sites, nup, group, irrep);
+        auto irrep = read_representation(lfile, k);
+        auto block = Spinhalf(n_sites, nup, irrep);
 
         Log("   nup: {} k: {}", nup, k);
         // XDIAG_SHOW(block);
@@ -200,14 +199,13 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
     int n_sites = 20;
     ops["J"] = 0.63;
     ops["Jd"] = 1.00;
-    auto group = lfile["Symmetries"].as<PermutationGroup>();
 
     std::vector<std::string> irrep_names = {"Gamma.C1.A"};
 
     for (int nup = 0; nup <= 6; ++nup) {
       for (std::string k : irrep_names) {
-        auto irrep = lfile[k].as<Representation>();
-        auto block = Spinhalf(n_sites, nup, group, irrep);
+        auto irrep = read_representation(lfile, k);
+        auto block = Spinhalf(n_sites, nup, irrep);
 
         Log("   nup: {} k: {}", nup, k);
         // XDIAG_SHOW(block);

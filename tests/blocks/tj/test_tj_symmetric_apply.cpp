@@ -7,16 +7,14 @@
 #include <xdiag/algebra/apply.hpp>
 #include <xdiag/algebra/matrix.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
-#include <xdiag/io/file_toml.hpp>
+#include <xdiag/io/read.hpp>
 #include <xdiag/operators/logic/real.hpp>
 #include <xdiag/utils/close.hpp>
 
 using namespace xdiag;
 
-void test_apply_tj_symmetric(OpSum ops, PermutationGroup space_group,
+void test_apply_tj_symmetric(OpSum ops, int64_t n_sites,
                              std::vector<Representation> irreps) {
-  int64_t n_sites = space_group.n_sites();
-
   for (int64_t nup = 0; nup <= n_sites; ++nup) {
     for (int64_t ndn = 0; ndn <= n_sites; ++ndn) {
 
@@ -25,7 +23,7 @@ void test_apply_tj_symmetric(OpSum ops, PermutationGroup space_group,
 
       for (int64_t k = 0; k < (int64_t)irreps.size(); ++k) {
         auto irrep = irreps[k];
-        auto block = tJ(n_sites, nup, ndn, space_group, irrep);
+        auto block = tJ(n_sites, nup, ndn, irrep);
 
         if (block.size() > 0) {
           auto H_sym = matrixC(ops, block, block);
@@ -53,7 +51,7 @@ void test_apply_tj_symmetric(OpSum ops, PermutationGroup space_group,
           REQUIRE(std::abs(e0_mat - e0_app) < 1e-7);
 
           // Compute eigenvalues with real arithmitic
-          if (block.irrep().isreal() && isreal(ops)) {
+          if (isreal(block) && isreal(ops)) {
             auto H_real = matrix(ops, block, block);
             REQUIRE(arma::norm(H_real - H_real.t()) < 1e-12);
 
@@ -78,10 +76,9 @@ void test_tj_symmetric_apply_chains(int64_t n_sites) {
   Log("tj_symmetric_apply: tJ chain, symmetric apply test, n_sites: {}",
       n_sites);
   auto ops = tJchain(n_sites, 1.0, 5.0);
-  auto [group, irreps, multiplicities] =
-      get_cyclic_group_irreps_mult(n_sites);
+  auto [irreps, multiplicities] = get_cyclic_group_irreps_mult(n_sites);
   (void)multiplicities;
-  test_apply_tj_symmetric(ops, group, irreps);
+  test_apply_tj_symmetric(ops, n_sites, irreps);
 }
 
 TEST_CASE("tj_symmetric_apply", "[tj]") {
@@ -102,7 +99,6 @@ TEST_CASE("tj_symmetric_apply", "[tj]") {
     auto ops = fl["Interactions"].as<OpSum>();
     ops["T"] = 1.0;
     ops["U"] = 5.0;
-    auto group = fl["Symmetries"].as<PermutationGroup>();
 
     std::vector<std::pair<std::string, int64_t>> rep_name_mult = {
         {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
@@ -112,10 +108,10 @@ TEST_CASE("tj_symmetric_apply", "[tj]") {
 
     std::vector<Representation> irreps;
     for (auto [name, mult] : rep_name_mult) {
-      irreps.push_back(fl[name].as<Representation>());
+      irreps.push_back(read_representation(fl, name));
       (void)mult;
     }
-    test_apply_tj_symmetric(ops, group, irreps);
+    test_apply_tj_symmetric(ops, 9, irreps);
   }
 
   {
@@ -128,7 +124,6 @@ TEST_CASE("tj_symmetric_apply", "[tj]") {
     auto fl = FileToml(lfile);
     auto ops = fl["Interactions"].as<OpSum>();
     std::vector<double> etas{0.0, 0.1, 0.2, 0.3};
-    auto group = fl["Symmetries"].as<PermutationGroup>();
 
     std::vector<std::pair<std::string, int64_t>> rep_name_mult = {
         {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
@@ -139,7 +134,7 @@ TEST_CASE("tj_symmetric_apply", "[tj]") {
     std::vector<Representation> irreps;
     std::vector<int64_t> multiplicities;
     for (auto [name, mult] : rep_name_mult) {
-      irreps.push_back(fl[name].as<Representation>());
+      irreps.push_back(read_representation(fl, name));
       multiplicities.push_back(mult);
     }
 
@@ -147,7 +142,7 @@ TEST_CASE("tj_symmetric_apply", "[tj]") {
       ops["TPHI"] = complex(cos(eta * M_PI), sin(eta * M_PI));
       ops["JPHI"] = complex(cos(2 * eta * M_PI), sin(2 * eta * M_PI));
 
-      test_apply_tj_symmetric(ops, group, irreps);
+      test_apply_tj_symmetric(ops, 9, irreps);
     }
   }
 }

@@ -123,10 +123,10 @@ template <typename bit_t> void test_representative_sym_subset(int64_t n_sites) {
 
 template <typename bit_t> void test_norm(int64_t n_sites) {
   auto group_action = GroupActionLookup<bit_t>(cyclic_group(n_sites));
-  std::vector<complex> chis(n_sites, 1.0);
-  Representation irrep(chis);
+  arma::cx_vec chis(n_sites, arma::fill::ones);
+  Representation irrep(group_action.permutation_group(), chis);
   for (bit_t bits : Subsets(n_sites)) {
-    double nrm = norm(bits, group_action, irrep);
+    double nrm = norm(bits, group_action, chis);
     auto stabilizer = stabilizer_symmetries(bits, group_action);
     REQUIRE(close(nrm * nrm, (double)stabilizer.size()));
   }

@@ -7,6 +7,7 @@
 #include <xdiag/algorithms/lanczos/eigs_lanczos.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
 #include <xdiag/io/file_toml.hpp>
+#include <xdiag/io/read.hpp>
 #include <xdiag/operators/logic/order.hpp>
 #include <xdiag/operators/logic/real.hpp>
 #include <xdiag/utils/close.hpp>
@@ -118,12 +119,11 @@ TEST_CASE("order", "[operators]") try {
         {"M.C2.B", -5.7723510325561688816},
         {"X.C1.A", -5.9030627660522529965}};
 
-    auto space_group = fl["Symmetries"].as<PermutationGroup>();
     int64_t n_sites = 12;
     int64_t n_up = 6;
     for (auto [name, energy] : rep_name_mult) {
-      auto irrep = fl[name].as<Representation>();
-      auto block = Spinhalf(n_sites, n_up, space_group, irrep);
+      auto irrep = read_representation(fl, name);
+      auto block = Spinhalf(n_sites, n_up, irrep);
       cx_mat H = matrixC(ops, block);
       cx_mat Ho = matrixC(opso, block);
       REQUIRE(arma::norm(H - Ho) < 1e-12);
@@ -140,7 +140,6 @@ TEST_CASE("order", "[operators]") try {
     double G = 3.21;
     auto fl = FileToml(lfile);
     auto ops_read = fl["Interactions"].as<OpSum>();
-    auto group = fl["Symmetries"].as<PermutationGroup>();
 
     cx_mat sx(mat({{0., 0.5}, {0.5, 0.}}), mat({{0., 0.}, {0., 0.}}));
     cx_mat sy(mat({{0., 0.}, {0., 0.}}), mat({{0., -0.5}, {0.5, 0.}}));
@@ -176,8 +175,8 @@ TEST_CASE("order", "[operators]") try {
                                        "M0.C2.B",    "M1.C2.A",    "M1.C2.B",
                                        "M2.C2.A",    "M2.C2.B"};
     for (auto name : irreps) {
-      auto irrep = fl[name].as<Representation>();
-      auto block = Spinhalf(8, group, irrep);
+      auto irrep = read_representation(fl, name);
+      auto block = Spinhalf(8, irrep);
       cx_mat H = matrixC(ops, block);
       cx_mat Ho = matrixC(opso, block);
       REQUIRE(norm(H - Ho) < 1e-12);
@@ -196,7 +195,6 @@ TEST_CASE("order", "[operators]") try {
     ops["T"] = 1.0;
     ops["J"] = 0.4;
     auto opso = order(ops);
-    auto group = fl["Symmetries"].as<PermutationGroup>();
 
     // XDIAG_SHOW(ops);
     // XDIAG_SHOW(opso);
@@ -206,7 +204,7 @@ TEST_CASE("order", "[operators]") try {
         "K0.D3.E",     "K1.D3.A1",    "K1.D3.A2",   "K1.D3.E",  "Y.C1.A"};
 
     for (auto name : rep_name) {
-      auto irrep = fl[name].as<Representation>();
+      auto irrep = read_representation(fl, name);
 
       for (int64_t nup = 1; nup <= n_sites; ++nup) {
         for (int64_t ndn = 1; ndn <= n_sites; ++ndn) {
@@ -214,7 +212,7 @@ TEST_CASE("order", "[operators]") try {
           if (nup + ndn > n_sites) {
             continue;
           }
-          auto block = tJ(n_sites, nup, ndn, group, irrep);
+          auto block = tJ(n_sites, nup, ndn, irrep);
           cx_mat H = matrixC(ops, block);
           cx_mat Ho = matrixC(opso, block);
           REQUIRE(norm(H - Ho) < 1e-12);

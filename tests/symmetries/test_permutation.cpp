@@ -10,8 +10,10 @@ template <typename bit_t> void test_permutation_apply(int64_t n_sites) {
   using namespace xdiag;
 
   for (int64_t i = 0; i < 20; ++i) {
-    auto id = identity_permutation(n_sites);
-    auto p = shuffle(id);
+    auto id = Permutation(n_sites);
+    auto a = id.array();
+    std::random_shuffle(a.begin(), a.end());
+    auto p = Permutation(a);
 
     for (auto state : combinatorics::Subsets<bit_t>(n_sites)) {
       bit_t tstate = 0;
@@ -34,7 +36,7 @@ TEST_CASE("permutation", "[symmetries]") {
       pv[i] = i;
     }
     auto p1 = Permutation(pv);
-    auto p2 = identity_permutation(n_sites);
+    auto p2 = Permutation(n_sites);
     REQUIRE(p1 == p2);
   }
 
@@ -42,16 +44,21 @@ TEST_CASE("permutation", "[symmetries]") {
 
     // Test identity multiplies
     for (int64_t i = 0; i < 5; ++i) {
-      auto p1 = identity_permutation(n_sites).shuffle();
-      auto pi = identity_permutation(n_sites);
+      auto id = Permutation(n_sites);
+      auto a = id.array();
+      std::random_shuffle(a.begin(), a.end());
+      auto p1 = Permutation(a);
+      auto pi = Permutation(n_sites);
       REQUIRE(p1 * pi == p1);
       REQUIRE(pi * p1 == p1);
     }
 
     // Test inverse
     for (int64_t i = 0; i < 20; ++i) {
-      auto id = identity_permutation(n_sites);
-      auto p = shuffle(id);
+      auto id = Permutation(n_sites);
+      auto a = id.array();
+      std::random_shuffle(a.begin(), a.end());
+      auto p = Permutation(a);
       auto pinv = inverse(p);
       REQUIRE(p * pinv == id);
     }

@@ -9,9 +9,13 @@
 #include <xdiag/combinatorics/combinations.hpp>
 #include <xdiag/combinatorics/subsets.hpp>
 #include <xdiag/common.hpp>
+#include <xdiag/extern/armadillo/armadillo>
 #include <xdiag/io/file_toml.hpp>
+#include <xdiag/io/read.hpp>
 #include <xdiag/symmetries/operations/group_action_operations.hpp>
 #include <xdiag/symmetries/operations/symmetry_operations.hpp>
+#include <xdiag/symmetries/representation.hpp>
+#include <xdiag/utils/vector.hpp>
 
 using namespace xdiag;
 
@@ -23,8 +27,16 @@ void test_spinhalf_basis_state(Basis const &basis, bit_t state) {
 
   int64_t idx_rep = basis.index(state);
   if (idx_rep == invalid_index) {
-    double norm = symmetries::norm(state, group_action, irrep);
-    REQUIRE(std::abs(norm) < 1e-6);
+    if (isreal(irrep)) {
+      Vector chs = irrep.characters();
+      double norm = symmetries::norm(state, group_action, chs.as<arma::vec>());
+      REQUIRE(std::abs(norm) < 1e-6);
+    } else {
+      Vector chs = irrep.characters();
+      double norm =
+          symmetries::norm(state, group_action, chs.as<arma::cx_vec>());
+      REQUIRE(std::abs(norm) < 1e-6);
+    }
   } else {
 
     bit_t rep = symmetries::representative(state, group_action);
@@ -36,8 +48,19 @@ void test_spinhalf_basis_state(Basis const &basis, bit_t state) {
     // int n_sites = basis.n_sites();
     // std::cout << BSTR(state) << "\n";
 
-    double norm = symmetries::norm(state, group_action, irrep);
-    REQUIRE(norm == basis.norm(idx_rep));
+    // double norm = symmetries::norm(state, group_action, irrep);
+    // REQUIRE(norm == basis.norm(idx_rep));
+
+    if (isreal(irrep)) {
+      Vector chs = irrep.characters();
+      double norm = symmetries::norm(state, group_action, chs.as<arma::vec>());
+      REQUIRE(norm == basis.norm(idx_rep));
+    } else {
+      Vector chs = irrep.characters();
+      double norm =
+          symmetries::norm(state, group_action, chs.as<arma::cx_vec>());
+      REQUIRE(norm == basis.norm(idx_rep));
+    }
 
     auto [idxr1, sym] = basis.index_sym(state);
     (void)idxr1;
@@ -87,7 +110,6 @@ template <class bit_t> void test_basis_symmetric() {
   std::string lfile = XDIAG_DIRECTORY
       "/misc/data/triangular.9.Jz1Jz2Jx1Jx2D1.sublattices.tsl.toml";
   auto fl = FileToml(lfile);
-  auto perm_group = fl["Symmetries"].as<PermutationGroup>();
   // std::vector<std::string> irrep_names = {
   //     "Gamma.D6.A1", "Gamma.D6.A2", "Gamma.D6.B1", "Gamma.D6.B2",
   //     "Gamma.D6.E1", "Gamma.D6.E2", "K.D3.A1",     "K.D3.A2",
@@ -97,12 +119,12 @@ template <class bit_t> void test_basis_symmetric() {
 
   for (auto irrep_name : irrep_names) {
     Log("irrep: {}", irrep_name);
-    auto irrep = fl[irrep_name].as<Representation>();
-    auto idxng = BasisSymmetricNoSz<bit_t>(n_sites, perm_group, irrep);
+    auto irrep = read_representation(fl, irrep_name);
+    auto idxng = BasisSymmetricNoSz<bit_t>(irrep);
     // check_basis_symmetric_no_sz<bit_t>(idxng);
 
     for (int nup = 3; nup <= 3; ++nup) {
-      auto idxng = BasisSymmetricSz<bit_t>(n_sites, nup, perm_group, irrep);
+      auto idxng = BasisSymmetricSz<bit_t>(nup, irrep);
       check_basis_symmetric_sz<bit_t>(idxng);
     }
   }

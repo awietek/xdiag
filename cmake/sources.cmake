@@ -17,6 +17,7 @@ set(XDIAG_SOURCES
   algebra/matrix.cpp
   algebra/apply.cpp
 
+  io/read.cpp
   io/file_toml.cpp
   io/file_h5.cpp
   io/toml/file_toml_handler.cpp

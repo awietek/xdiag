@@ -4,11 +4,11 @@
 
 #include <xdiag/blocks/tj.hpp>
 #include <xdiag/io/file_toml.hpp>
+#include <xdiag/io/read.hpp>
 
 using namespace xdiag;
 
 void check_dimensions_sum_up_tj_symmetric(int64_t n_sites,
-                                          PermutationGroup group,
                                           std::vector<Representation> irreps) {
   using combinatorics::binomial;
 
@@ -21,7 +21,7 @@ void check_dimensions_sum_up_tj_symmetric(int64_t n_sites,
       int64_t sum_of_dims_updn = 0;
       for (auto irrep : irreps) {
 
-        auto block = tJ(n_sites, nup, ndn, group, irrep);
+        auto block = tJ(n_sites, nup, ndn, irrep);
         sum_of_dims += block.size();
         sum_of_dims_updn += block.size();
       }
@@ -62,10 +62,10 @@ TEST_CASE("tj_symmetric", "[tj]") {
       for (int64_t l = 0; l < n_sites; ++l)
         chis.push_back({std::cos(2 * M_PI * l * k / n_sites),
                         std::sin(2 * M_PI * l * k / n_sites)});
-      irreps.push_back(Representation(chis));
+      irreps.push_back(Representation(group, chis));
     }
 
-    check_dimensions_sum_up_tj_symmetric(n_sites, group, irreps);
+    check_dimensions_sum_up_tj_symmetric(n_sites, irreps);
   }
 
   // test a 3x3 triangular lattice
@@ -75,8 +75,6 @@ TEST_CASE("tj_symmetric", "[tj]") {
   std::string lfile =
       XDIAG_DIRECTORY "/misc/data/triangular.9.hop.sublattices.tsl.toml";
   auto fl = FileToml(lfile);
-  auto group = fl["Symmetries"].as<PermutationGroup>();
-
   std::vector<std::pair<std::string, int64_t>> rep_name_mult = {
       {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
       {"K0.D3.A1", 1},    {"K0.D3.A2", 1},    {"K0.D3.E", 2},
@@ -86,9 +84,9 @@ TEST_CASE("tj_symmetric", "[tj]") {
   std::vector<Representation> irreps;
   for (auto [name, mult] : rep_name_mult) {
     for (int64_t i = 0; i < mult; ++i) {
-      irreps.push_back(fl[name].as<Representation>());
+      irreps.push_back(read_representation(fl, name));
     }
   }
 
-  check_dimensions_sum_up_tj_symmetric(n_sites, group, irreps);
+  check_dimensions_sum_up_tj_symmetric(n_sites, irreps);
 }

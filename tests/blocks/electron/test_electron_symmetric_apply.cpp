@@ -7,15 +7,14 @@
 #include <xdiag/algebra/apply.hpp>
 #include <xdiag/algebra/matrix.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
-#include <xdiag/io/file_toml.hpp>
+#include <xdiag/io/read.hpp>
 #include <xdiag/operators/logic/real.hpp>
 #include <xdiag/utils/close.hpp>
 
 using namespace xdiag;
 
-void test_electron_symmetric_apply(OpSum ops, PermutationGroup group,
+void test_electron_symmetric_apply(OpSum ops, int64_t n_sites,
                                    std::vector<Representation> irreps) {
-  int64_t n_sites = group.n_sites();
 
   for (int64_t nup = 0; nup <= n_sites; ++nup) {
     for (int64_t ndn = 0; ndn <= n_sites; ++ndn) {
@@ -26,7 +25,7 @@ void test_electron_symmetric_apply(OpSum ops, PermutationGroup group,
 
         // Create block and matrix for comparison
         // tic();
-        auto block = Electron(n_sites, nup, ndn, group, irrep);
+        auto block = Electron(n_sites, nup, ndn, irrep);
         // Log("block.isreal {}", isreal(block));
         // toc("create block");
 
@@ -68,7 +67,7 @@ void test_electron_symmetric_apply(OpSum ops, PermutationGroup group,
 
           // Compute eigenvalues with real arithmitic
           // tic();
-          if (block.irrep().isreal() && isreal(ops)) {
+          if (isreal(block) && isreal(ops)) {
             auto H_real = matrix(ops, block, block);
             arma::vec evals_mat_real;
             arma::eig_sym(evals_mat_real, H_real);
@@ -92,15 +91,15 @@ void test_hubbard_symmetric_apply_chains(int64_t n_sites) {
   // Without Heisenberg term
   Log.out("electron_symmetric_apply: Hubbard chain, n_sites: {}", n_sites);
   auto ops = get_linear_chain(n_sites, 1.0, 5.0);
-  auto [group, irreps] = get_cyclic_group_irreps(n_sites);
-  test_electron_symmetric_apply(ops, group, irreps);
+  auto irreps = get_cyclic_group_irreps(n_sites);
+  test_electron_symmetric_apply(ops, n_sites, irreps);
 
   // With Heisenberg term
   Log.out("electron_symmetric_apply: Hubbard chain, n_sites: {} (+ "
           "Heisenberg terms)",
           n_sites);
   auto ops_hb = get_linear_chain_hb(n_sites, 0.4);
-  test_electron_symmetric_apply(ops_hb, group, irreps);
+  test_electron_symmetric_apply(ops_hb, n_sites, irreps);
 }
 
 TEST_CASE("electron_symmetric_apply", "[electron]") {
@@ -120,7 +119,6 @@ TEST_CASE("electron_symmetric_apply", "[electron]") {
   ops += "U" * Op("HubbardU");
   ops["T"] = 1.0;
   ops["U"] = 5.0;
-  auto group = fl["Symmetries"].as<PermutationGroup>();
 
   std::vector<std::pair<std::string, int64_t>> rep_name_mult = {
       {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
@@ -129,22 +127,22 @@ TEST_CASE("electron_symmetric_apply", "[electron]") {
       {"Y.C1.A", 6}};
   std::vector<Representation> irreps;
   for (auto [name, mult] : rep_name_mult) {
-    irreps.push_back(fl[name].as<Representation>());
+    irreps.push_back(read_representation(fl, name));
     (void)mult;
   }
-  test_electron_symmetric_apply(ops, group, irreps);
+  test_electron_symmetric_apply(ops, 9, irreps);
 
   // test a 3x3 triangular lattice with Heisenberg terms
   Log.out(
       "electron_symmetric_apply: Hubbard 3x3 triangular (+ Heisenberg terms)");
   auto ops_hb = ops;
   for (auto [cpl, op] : ops) {
-    if (op.type() == "Hop"){
+    if (op.type() == "Hop") {
       ops_hb += "J" * Op("SdotS", {op[0], op[1]});
     }
   }
   ops_hb["J"] = 0.4;
-  test_electron_symmetric_apply(ops_hb, group, irreps);
+  test_electron_symmetric_apply(ops_hb, 9, irreps);
 
   // test a 3x3 triangular lattice with complex hoppings
   {
@@ -157,7 +155,6 @@ TEST_CASE("electron_symmetric_apply", "[electron]") {
     ops["TPHI"] = complex(0.5, 0.5);
     ops["JPHI"] = 0.;
     ops["U"] = 5.0;
-    group = fl["Symmetries"].as<PermutationGroup>();
 
     std::vector<std::pair<std::string, int64_t>> rep_name_mult = {
         {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
@@ -166,9 +163,9 @@ TEST_CASE("electron_symmetric_apply", "[electron]") {
         {"Y.C1.A", 6}};
     irreps.clear();
     for (auto [name, mult] : rep_name_mult) {
-      irreps.push_back(fl[name].as<Representation>());
+      irreps.push_back(read_representation(fl, name));
       (void)mult;
     }
-    test_electron_symmetric_apply(ops, group, irreps);
+    test_electron_symmetric_apply(ops, 9, irreps);
   }
 }

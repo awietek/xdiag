@@ -9,6 +9,7 @@
 #include <xdiag/combinatorics/subsets.hpp>
 #include <xdiag/common.hpp>
 #include <xdiag/io/file_toml.hpp>
+#include <xdiag/io/read.hpp>
 #include <xdiag/symmetries/operations/symmetry_operations.hpp>
 
 using namespace xdiag;
@@ -91,7 +92,6 @@ template <class bit_t> void test_spinhalf_basis_sublattice() {
     std::string lfile =
         XDIAG_DIRECTORY "/misc/data/square.8.heisenberg.2sl.toml";
     auto fl = FileToml(lfile);
-    auto group = fl["Symmetries"].as<PermutationGroup>();
     std::vector<std::string> irrep_names = {
         "Gamma.D4.A1", "Gamma.D4.A2", "Gamma.D4.B1", "Gamma.D4.B2",
         "Gamma.D4.E",  "M.D4.A1",     "M.D4.A2",     "M.D4.B1",
@@ -99,15 +99,15 @@ template <class bit_t> void test_spinhalf_basis_sublattice() {
         "X.D2.A1",     "X.D2.A2",     "X.D2.B1",     "X.D2.B2"};
 
     for (auto irrep_name : irrep_names) {
-      auto irrep = fl[irrep_name].as<Representation>();
-      auto idxng = basis_no_sz_t(n_sites, group, irrep);
-      auto idxng_sl = basis_sl1_t(n_sites, group, irrep);
+      auto irrep = read_representation(fl, irrep_name);
+      auto idxng = basis_no_sz_t(irrep);
+      auto idxng_sl = basis_sl1_t(irrep);
 
       compare_indices_no_sz<bit_t, basis_no_sz_t, basis_sl1_t>(idxng, idxng_sl);
 
       for (int nup = 0; nup <= n_sites; ++nup) {
-        auto idxng = basis_sz_t(n_sites, nup, group, irrep);
-        auto idxng_sl = basis_sl1_t(n_sites, nup, group, irrep);
+        auto idxng = basis_sz_t(nup, irrep);
+        auto idxng_sl = basis_sl1_t(nup, irrep);
         compare_indices_sz<bit_t, basis_sz_t, basis_sl1_t>(idxng, idxng_sl,
                                                            nup);
       }
@@ -120,7 +120,6 @@ template <class bit_t> void test_spinhalf_basis_sublattice() {
     std::string lfile =
         XDIAG_DIRECTORY "/misc/data/square.8.heisenberg.2sl.toml";
     auto fl = FileToml(lfile);
-    auto group = fl["Symmetries"].as<PermutationGroup>();
     std::vector<std::string> irrep_names = {
         "Gamma.D4.A1", "Gamma.D4.A2", "Gamma.D4.B1", "Gamma.D4.B2",
         "Gamma.D4.E",  "M.D4.A1",     "M.D4.A2",     "M.D4.B1",
@@ -128,13 +127,13 @@ template <class bit_t> void test_spinhalf_basis_sublattice() {
         "X.D2.A1",     "X.D2.A2",     "X.D2.B1",     "X.D2.B2"};
 
     for (auto irrep_name : irrep_names) {
-      auto irrep = fl[irrep_name].as<Representation>();
-      auto idxng = basis_no_sz_t(n_sites, group, irrep);
-      auto idxng_sl = basis_sl2_t(n_sites, group, irrep);
+      auto irrep = read_representation(fl, irrep_name);
+      auto idxng = basis_no_sz_t(irrep);
+      auto idxng_sl = basis_sl2_t(irrep);
       compare_indices_no_sz<bit_t, basis_no_sz_t, basis_sl2_t>(idxng, idxng_sl);
       for (int nup = 0; nup <= n_sites; ++nup) {
-        auto idxng = basis_sz_t(n_sites, nup, group, irrep);
-        auto idxng_sl = basis_sl2_t(n_sites, nup, group, irrep);
+        auto idxng = basis_sz_t(nup, irrep);
+        auto idxng_sl = basis_sl2_t(nup, irrep);
         compare_indices_sz<bit_t, basis_sz_t, basis_sl2_t>(idxng, idxng_sl,
                                                            nup);
       }
@@ -147,20 +146,19 @@ template <class bit_t> void test_spinhalf_basis_sublattice() {
     std::string lfile =
         XDIAG_DIRECTORY "/misc/data/square.9.heisenberg.3sl.toml";
     auto fl = FileToml(lfile);
-    auto group = fl["Symmetries"].as<PermutationGroup>();
     std::vector<std::string> irrep_names = {
         "Gamma.D2.A1", "Gamma.D2.A2", "Gamma.D2.B1",
         "Gamma.D2.B2", "Delta.C1.A",  "Sigma0.D1.A",
         "Sigma0.D1.B", "Sigma1.D1.A", "Sigma1.D1.B"};
 
     for (auto irrep_name : irrep_names) {
-      auto irrep = fl[irrep_name].as<Representation>();
-      auto idxng = basis_no_sz_t(n_sites, group, irrep);
-      auto idxng_sl = basis_sl3_t(n_sites, group, irrep);
+      auto irrep = read_representation(fl, irrep_name);
+      auto idxng = basis_no_sz_t(irrep);
+      auto idxng_sl = basis_sl3_t(irrep);
       compare_indices_no_sz<bit_t, basis_no_sz_t, basis_sl3_t>(idxng, idxng_sl);
       for (int nup = 0; nup <= n_sites; ++nup) {
-        auto idxng = basis_sz_t(n_sites, nup, group, irrep);
-        auto idxng_sl = basis_sl3_t(n_sites, nup, group, irrep);
+        auto idxng = basis_sz_t(nup, irrep);
+        auto idxng_sl = basis_sl3_t(nup, irrep);
         compare_indices_sz<bit_t, basis_sz_t, basis_sl3_t>(idxng, idxng_sl,
                                                            nup);
       }
@@ -173,20 +171,19 @@ template <class bit_t> void test_spinhalf_basis_sublattice() {
     std::string lfile = XDIAG_DIRECTORY
         "/misc/data/triangular.9.Jz1Jz2Jx1Jx2D1.sublattices.tsl.toml";
     auto fl = FileToml(lfile);
-    auto group = fl["Symmetries"].as<PermutationGroup>();
     std::vector<std::string> irrep_names = {
         "Gamma.D6.A1", "Gamma.D6.A2", "Gamma.D6.B1", "Gamma.D6.B2",
         "Gamma.D6.E1", "Gamma.D6.E2", "K.D3.A1",     "K.D3.A2",
         "K.D3.E",      "Y.D1.A",      "Y.D1.B"};
 
     for (auto irrep_name : irrep_names) {
-      auto irrep = fl[irrep_name].as<Representation>();
-      auto idxng = basis_no_sz_t(n_sites, group, irrep);
-      auto idxng_sl = basis_sl3_t(n_sites, group, irrep);
+      auto irrep = read_representation(fl, irrep_name);
+      auto idxng = basis_no_sz_t(irrep);
+      auto idxng_sl = basis_sl3_t(irrep);
       compare_indices_no_sz<bit_t, basis_no_sz_t, basis_sl3_t>(idxng, idxng_sl);
       for (int nup = 0; nup <= n_sites; ++nup) {
-        auto idxng = basis_sz_t(n_sites, nup, group, irrep);
-        auto idxng_sl = basis_sl3_t(n_sites, nup, group, irrep);
+        auto idxng = basis_sz_t(nup, irrep);
+        auto idxng_sl = basis_sl3_t(nup, irrep);
         compare_indices_sz<bit_t, basis_sz_t, basis_sl3_t>(idxng, idxng_sl,
                                                            nup);
       }
@@ -199,7 +196,6 @@ template <class bit_t> void test_spinhalf_basis_sublattice() {
     std::string lfile =
         XDIAG_DIRECTORY "/misc/data/square.8.heisenberg.4sl.toml";
     auto fl = FileToml(lfile);
-    auto group = fl["Symmetries"].as<PermutationGroup>();
     std::vector<std::string> irrep_names = {
         "Gamma.D4.A1", "Gamma.D4.A2", "Gamma.D4.B1", "Gamma.D4.B2",
         "Gamma.D4.E",  "M.D4.A1",     "M.D4.A2",     "M.D4.B1",
@@ -207,13 +203,13 @@ template <class bit_t> void test_spinhalf_basis_sublattice() {
         "X.D2.A1",     "X.D2.A2",     "X.D2.B1",     "X.D2.B2"};
 
     for (auto irrep_name : irrep_names) {
-      auto irrep = fl[irrep_name].as<Representation>();
-      auto idxng = basis_no_sz_t(n_sites, group, irrep);
-      auto idxng_sl = basis_sl4_t(n_sites, group, irrep);
+      auto irrep = read_representation(fl, irrep_name);
+      auto idxng = basis_no_sz_t(irrep);
+      auto idxng_sl = basis_sl4_t(irrep);
       compare_indices_no_sz<bit_t, basis_no_sz_t, basis_sl4_t>(idxng, idxng_sl);
       for (int nup = 0; nup <= n_sites; ++nup) {
-        auto idxng = basis_sz_t(n_sites, nup, group, irrep);
-        auto idxng_sl = basis_sl4_t(n_sites, nup, group, irrep);
+        auto idxng = basis_sz_t(nup, irrep);
+        auto idxng_sl = basis_sl4_t(nup, irrep);
         compare_indices_sz<bit_t, basis_sz_t, basis_sl4_t>(idxng, idxng_sl,
                                                            nup);
       }
@@ -226,19 +222,18 @@ template <class bit_t> void test_spinhalf_basis_sublattice() {
     std::string lfile =
         XDIAG_DIRECTORY "/misc/data/square.10.heisenberg.5sl.toml";
     auto fl = FileToml(lfile);
-    auto group = fl["Symmetries"].as<PermutationGroup>();
     std::vector<std::string> irrep_names = {
         "Gamma.C2.A", "Gamma.C2.B", "Delta0.C1.A", "Delta1.C1.A", "X.C2.A",
         "X.C2.B",     "Z0.C1.A",    "Z1.C1.A",     "Z2.C1.A",     "Z3.C1.A"};
 
     for (auto irrep_name : irrep_names) {
-      auto irrep = fl[irrep_name].as<Representation>();
-      auto idxng = basis_no_sz_t(n_sites, group, irrep);
-      auto idxng_sl = basis_sl5_t(n_sites, group, irrep);
+      auto irrep = read_representation(fl, irrep_name);
+      auto idxng = basis_no_sz_t(irrep);
+      auto idxng_sl = basis_sl5_t(irrep);
       compare_indices_no_sz<bit_t, basis_no_sz_t, basis_sl5_t>(idxng, idxng_sl);
       for (int nup = 0; nup <= n_sites; ++nup) {
-        auto idxng = basis_sz_t(n_sites, nup, group, irrep);
-        auto idxng_sl = basis_sl5_t(n_sites, nup, group, irrep);
+        auto idxng = basis_sz_t(nup, irrep);
+        auto idxng_sl = basis_sl5_t(nup, irrep);
         compare_indices_sz<bit_t, basis_sz_t, basis_sl5_t>(idxng, idxng_sl,
                                                            nup);
       }

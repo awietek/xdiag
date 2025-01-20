@@ -232,29 +232,6 @@ template <> PermutationGroup FileTomlHandler::as<PermutationGroup>() const try {
   XDIAG_RETHROW(e);
 }
 
-// template <> Representation FileTomlHandler::as<Representation>() const try {
-//   auto character_entry =
-//       table_.at_path(key_ + std::string(".characters")).node();
-//   if (character_entry) {
-//     auto characters = std_vector<complex>(*character_entry);
-//     auto allowed_symmetries_entry =
-//         table_.at_path(key_ + std::string(".allowed_symmetries")).node();
-//     if (allowed_symmetries_entry) {
-//       auto allowed_symmetries =
-//       std_vector<int64_t>(*allowed_symmetries_entry); return
-//       Representation(characters, allowed_symmetries);
-//     } else {
-//       return Representation(characters);
-//     }
-//   } else {
-//     XDIAG_THROW("Error reading Representation from toml file: no field "
-//                 "\"characters\"!");
-//     return Representation();
-//   }
-// } catch (Error const &e) {
-//   XDIAG_RETHROW(e);
-// }
-
 template <> Op FileTomlHandler::as<Op>() const try {
   auto node = table_.at_path(key_).node();
   if (node) {
@@ -285,18 +262,19 @@ template <typename T> void FileTomlHandler::operator=(T const &value) try {
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
-template void FileTomlHandler::operator=<std::string>(std::string const &value);
-template void FileTomlHandler::operator=<int8_t>(int8_t const &value);
-template void FileTomlHandler::operator=<int16_t>(int16_t const &value);
-template void FileTomlHandler::operator=<int32_t>(int32_t const &value);
-template void FileTomlHandler::operator=<int64_t>(int64_t const &value);
-template void FileTomlHandler::operator=<uint8_t>(uint8_t const &value);
-template void FileTomlHandler::operator=<uint16_t>(uint16_t const &value);
-template void FileTomlHandler::operator=<uint32_t>(uint32_t const &value);
-template void FileTomlHandler::operator=<double>(double const &value);
+template void
+    FileTomlHandler::operator= <std::string>(std::string const &value);
+template void FileTomlHandler::operator= <int8_t>(int8_t const &value);
+template void FileTomlHandler::operator= <int16_t>(int16_t const &value);
+template void FileTomlHandler::operator= <int32_t>(int32_t const &value);
+template void FileTomlHandler::operator= <int64_t>(int64_t const &value);
+template void FileTomlHandler::operator= <uint8_t>(uint8_t const &value);
+template void FileTomlHandler::operator= <uint16_t>(uint16_t const &value);
+template void FileTomlHandler::operator= <uint32_t>(uint32_t const &value);
+template void FileTomlHandler::operator= <double>(double const &value);
 
 template <>
-void FileTomlHandler::operator=<uint64_t>(uint64_t const &value) try {
+void FileTomlHandler::operator= <uint64_t>(uint64_t const &value) try {
   table_.insert_or_assign(key_, (int64_t)value);
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
@@ -388,61 +366,61 @@ void FileTomlHandler::operator=
 }
 
 template <>
-void FileTomlHandler::operator=<arma::vec>(arma::vec const &value) try {
+void FileTomlHandler::operator= <arma::vec>(arma::vec const &value) try {
   table_.insert_or_assign(key_, toml_array(value));
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
 template <>
-void FileTomlHandler::operator=<arma::cx_vec>(arma::cx_vec const &value) try {
+void FileTomlHandler::operator= <arma::cx_vec>(arma::cx_vec const &value) try {
   table_.insert_or_assign(key_, toml_array(value));
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
 template <>
-void FileTomlHandler::operator=<arma::ivec>(arma::ivec const &value) try {
+void FileTomlHandler::operator= <arma::ivec>(arma::ivec const &value) try {
   table_.insert_or_assign(key_, toml_array(value));
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
 template <>
-void FileTomlHandler::operator=<arma::uvec>(arma::uvec const &value) try {
+void FileTomlHandler::operator= <arma::uvec>(arma::uvec const &value) try {
   table_.insert_or_assign(key_, toml_array(value));
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
 template <>
-void FileTomlHandler::operator=<arma::mat>(arma::mat const &value) try {
+void FileTomlHandler::operator= <arma::mat>(arma::mat const &value) try {
   table_.insert_or_assign(key_, toml_array(value));
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 template <>
-void FileTomlHandler::operator=<arma::cx_mat>(arma::cx_mat const &value) try {
+void FileTomlHandler::operator= <arma::cx_mat>(arma::cx_mat const &value) try {
   table_.insert_or_assign(key_, toml_array(value));
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 template <>
-void FileTomlHandler::operator=<arma::imat>(arma::imat const &value) try {
-  table_.insert_or_assign(key_, toml_array(value));
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
-
-template <>
-void FileTomlHandler::operator=<arma::umat>(arma::umat const &value) try {
+void FileTomlHandler::operator= <arma::imat>(arma::imat const &value) try {
   table_.insert_or_assign(key_, toml_array(value));
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
 template <>
-void FileTomlHandler::operator=<Permutation>(Permutation const &value) try {
+void FileTomlHandler::operator= <arma::umat>(arma::umat const &value) try {
+  table_.insert_or_assign(key_, toml_array(value));
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+
+template <>
+void FileTomlHandler::operator= <Permutation>(Permutation const &value) try {
   table_.insert_or_assign(key_, toml_array(value.array()));
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
@@ -462,26 +440,13 @@ void FileTomlHandler::operator=
   XDIAG_RETHROW(e);
 }
 
-// template <>
-// void
-//     FileTomlHandler::operator= <Representation>(Representation const &rep)
-//     try {
-//   toml::table rep_table;
-//   rep_table.insert_or_assign("characters", toml_array(rep.characters()));
-//   rep_table.insert_or_assign("allowed_symmetries",
-//                              toml_array(rep.allowed_symmetries()));
-//   table_.insert_or_assign(key_, rep_table);
-// } catch (Error const &e) {
-//   XDIAG_RETHROW(e);
-// }
-
-template <> void FileTomlHandler::operator=<Op>(Op const &op) try {
+template <> void FileTomlHandler::operator= <Op>(Op const &op) try {
   table_.insert_or_assign(key_, toml_array(op));
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
-template <> void FileTomlHandler::operator=<OpSum>(OpSum const &ops) try {
+template <> void FileTomlHandler::operator= <OpSum>(OpSum const &ops) try {
   if (ops.constants().size() > 0) {
     table_.insert_or_assign(key_, toml_table(ops));
   } else {

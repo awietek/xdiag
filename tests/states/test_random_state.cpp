@@ -2,8 +2,8 @@
 
 #include "../blocks/electron/testcases_electron.hpp"
 #include <xdiag/algebra/algebra.hpp>
-#include <xdiag/states/random_state.hpp>
 #include <xdiag/states/fill.hpp>
+#include <xdiag/states/random_state.hpp>
 #include <xdiag/utils/close.hpp>
 
 #include <iostream>
@@ -21,11 +21,11 @@ TEST_CASE("random_state", "[states]") try {
   // Test whether random states from different blocks are different
   for (int n_sites = 6; n_sites <= 8; ++n_sites) {
     Log("N={}", n_sites);
-    auto [group, irreps] = get_cyclic_group_irreps(n_sites);
+    auto irreps = get_cyclic_group_irreps(n_sites);
 
     for (int nup = 0; nup <= n_sites; ++nup) {
       for (auto irrep : irreps) {
-        auto block = Spinhalf(n_sites, nup, group, irrep);
+        auto block = Spinhalf(n_sites, nup, irrep);
 
         if (block.size() > 3) {
           // XDIAG_SHOW(irrep);

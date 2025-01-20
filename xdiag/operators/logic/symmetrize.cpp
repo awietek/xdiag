@@ -2,6 +2,7 @@
 
 #include <xdiag/operators/logic/permute.hpp>
 #include <xdiag/operators/logic/real.hpp>
+#include <xdiag/utils/scalar.hpp>
 
 namespace xdiag {
 
@@ -28,19 +29,15 @@ OpSum symmetrize(OpSum const &ops, PermutationGroup const &group) try {
 template <typename T>
 static OpSum symmetrize(OpSum const &ops, PermutationGroup const &group,
                         arma::Col<T> const &characters) try {
-  // TODO: needs to be adapted for MATRIX type (really? why?)
   OpSum ops_sym;
   int64_t N_group = group.size();
   for (auto [cpl, op] : ops.plain()) {
-
-    std::string type = op.type();
-
     // Create all symmetrized ops
     for (int64_t i = 0; i < N_group; ++i) {
-      Permutation perm = group[i];
+      Scalar cpls = cpl.scalar();
       T bloch = characters(i);
-      Op op_perm = permute(op, perm);
-      Scalar cpl_sym(bloch * cpl.scalar().as<T>() / (T)N_group);
+      Op op_perm = permute(op, group[i]);
+      Scalar cpl_sym = cpls * bloch / (T)N_group;
       ops_sym += cpl_sym * op_perm;
     }
   }

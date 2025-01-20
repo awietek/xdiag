@@ -107,10 +107,10 @@ PermutationGroup::PermutationGroup(
 }
 
 static std::vector<Permutation>
-permutations_from_matrix(arma::imat const &matrix) try {
+permutations_from_matrix(arma::Mat<int64_t> const &matrix) try {
   std::vector<Permutation> permutations;
   for (int64_t i = 0; i < matrix.n_rows; ++i) {
-    auto perm = Permutation(arma::ivec(matrix.row(i)));
+    auto perm = Permutation(arma::Col<int64_t>(matrix.row(i)));
     permutations.push_back(perm);
   }
   return permutations;
@@ -118,7 +118,7 @@ permutations_from_matrix(arma::imat const &matrix) try {
   XDIAG_RETHROW(e);
 }
 
-PermutationGroup::PermutationGroup(arma::imat const &matrix) try
+PermutationGroup::PermutationGroup(arma::Mat<int64_t> const &matrix) try
     : PermutationGroup(permutations_from_matrix(matrix)) {
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
@@ -127,7 +127,7 @@ PermutationGroup::PermutationGroup(arma::imat const &matrix) try
 PermutationGroup::PermutationGroup(int64_t *ptr, int64_t n_permutations,
                                    int64_t n_sites) try
     : PermutationGroup(permutations_from_matrix(
-          arma::imat(ptr, n_permutations, n_sites, true))) {
+          arma::Mat<int64_t>(ptr, n_permutations, n_sites, true))) {
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }

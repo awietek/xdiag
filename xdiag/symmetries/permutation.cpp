@@ -23,6 +23,12 @@ Permutation::Permutation(int64_t size) : array_(size, 0) {
   std::iota(array_.begin(), array_.end(), 0);
 }
 
+Permutation::Permutation(std::initializer_list<int64_t> list) try
+    : Permutation(std::vector<int64_t>(list)) {
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+
 Permutation::Permutation(std::vector<int32_t> const &array) try
     : array_(array.size()) {
   int64_t idx = 0;
@@ -42,7 +48,7 @@ Permutation::Permutation(std::vector<int64_t> const &array) try
   XDIAG_RETHROW(e);
 }
 
-Permutation::Permutation(arma::ivec const &array) try
+Permutation::Permutation(arma::Col<int64_t> const &array) try
     : array_(array.memptr(), array.memptr() + array.size()) {
   check_valid_permutation(array_);
 } catch (Error const &e) {

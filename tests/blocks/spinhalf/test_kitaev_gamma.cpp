@@ -5,6 +5,7 @@
 #include <xdiag/algebra/matrix.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
 #include <xdiag/io/file_toml.hpp>
+#include <xdiag/io/read.hpp>
 #include <xdiag/utils/close.hpp>
 
 void run_kitaev_gamma_test(
@@ -18,8 +19,7 @@ void run_kitaev_gamma_test(
                       "honeycomb.8.HeisenbergKitaevGamma.fsl.toml";
 
   auto fl = FileToml(lfile);
-  auto ops_read = fl["Interactions"].as<OpSum>();
-  auto group = fl["Symmetries"].as<PermutationGroup>();
+  auto ops_read = read_opsum(fl, "Interactions");
 
   cx_mat sx(mat({{0., 0.5}, {0.5, 0.}}), mat({{0., 0.}, {0., 0.}}));
   cx_mat sy(mat({{0., 0.}, {0., 0.}}), mat({{0., -0.5}, {0.5, 0.}}));
@@ -52,8 +52,8 @@ void run_kitaev_gamma_test(
   }
 
   for (auto [name, e0_reference] : irrep_names_e0) {
-    auto irrep = fl[name].as<Representation>();
-    auto block = Spinhalf(8, group, irrep);
+    auto irrep = read_representation(fl, name);
+    auto block = Spinhalf(8, irrep);
     // double e0_computed = e0(ops, block);
     cx_mat H = matrixC(ops, block);
 

@@ -17,7 +17,7 @@ void test_fermi_bool_table(PermutationGroup const &group) {
   using namespace symmetries;
 
   int n_sites = group.n_sites();
-  int n_symmetries = group.n_symmetries();
+  int n_symmetries = group.size();
 
   for (int npar = 0; npar <= n_sites; ++npar) {
 
@@ -45,12 +45,10 @@ TEST_CASE("fermi_table", "[symmetries]") {
 
   for (int n_sites = 0; n_sites <= max_N; ++n_sites) {
     Log("chain N={}", n_sites);
-    auto [group, irreps] =
-        xdiag::testcases::electron::get_cyclic_group_irreps(n_sites);
-    (void)irreps;
-    test_fermi_bool_table<uint16_t>(group);
-    test_fermi_bool_table<uint32_t>(group);
-    test_fermi_bool_table<uint64_t>(group);
+    auto irreps = xdiag::testcases::electron::get_cyclic_group_irreps(n_sites);
+    test_fermi_bool_table<uint16_t>(irreps[0].group());
+    test_fermi_bool_table<uint32_t>(irreps[0].group());
+    test_fermi_bool_table<uint64_t>(irreps[0].group());
   }
 
   Log("triangular 3x3");

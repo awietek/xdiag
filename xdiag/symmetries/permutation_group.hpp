@@ -16,7 +16,7 @@ public:
   XDIAG_API PermutationGroup() = default;
   XDIAG_API explicit PermutationGroup(
       std::vector<Permutation> const &permutations);
-  XDIAG_API explicit PermutationGroup(arma::imat const &matrix);
+  XDIAG_API explicit PermutationGroup(arma::Mat<int64_t> const &matrix);
   XDIAG_API PermutationGroup(int64_t *ptr, int64_t n_permutations,
                              int64_t n_sites);
 

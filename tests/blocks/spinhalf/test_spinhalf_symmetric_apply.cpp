@@ -9,18 +9,18 @@
 #include <xdiag/algebra/matrix.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
 #include <xdiag/io/file_toml.hpp>
+#include <xdiag/io/read.hpp>
 #include <xdiag/operators/logic/real.hpp>
 #include <xdiag/utils/close.hpp>
 
 using namespace xdiag;
 
-void test_spinhalf_symmetric_apply(OpSum ops, PermutationGroup space_group,
+void test_spinhalf_symmetric_apply(OpSum ops, int64_t n_sites,
                                    std::vector<Representation> irreps) {
-  int n_sites = space_group.n_sites();
 
   for (int nup = 0; nup <= n_sites; ++nup) {
     for (auto irrep : irreps) {
-      auto block = Spinhalf(n_sites, nup, space_group, irrep);
+      auto block = Spinhalf(n_sites, nup, irrep);
 
       if (block.size() > 0) {
         auto H = matrixC(ops, block, block);
@@ -48,7 +48,7 @@ void test_spinhalf_symmetric_apply(OpSum ops, PermutationGroup space_group,
         REQUIRE(std::abs(e0_mat - e0_app) < 1e-7);
 
         // Compute eigenvalues with real arithmitic
-        if (block.irrep().isreal() && isreal(ops)) {
+        if (isreal(block) && isreal(ops)) {
           auto H_real = matrix(ops, block, block);
           arma::vec evals_mat_real;
           arma::eig_sym(evals_mat_real, H_real);
@@ -64,13 +64,10 @@ void test_spinhalf_symmetric_apply(OpSum ops, PermutationGroup space_group,
   }
 }
 
-void test_spinhalf_symmetric_apply_no_sz(OpSum ops,
-                                         PermutationGroup space_group,
+void test_spinhalf_symmetric_apply_no_sz(OpSum ops, int64_t n_sites,
                                          std::vector<Representation> irreps) {
-  int n_sites = space_group.n_sites();
-
   for (auto irrep : irreps) {
-    auto block = Spinhalf(n_sites, space_group, irrep);
+    auto block = Spinhalf(n_sites, irrep);
 
     if (block.size() > 0) {
       auto H = matrixC(ops, block, block);
@@ -97,7 +94,7 @@ void test_spinhalf_symmetric_apply_no_sz(OpSum ops,
       REQUIRE(std::abs(e0_mat - e0_app) < 1e-7);
 
       // Compute eigenvalues with real arithmitic
-      if (block.irrep().isreal() && isreal(ops)) {
+      if (isreal(block) && isreal(ops)) {
         auto H_real = matrix(ops, block, block);
         arma::vec evals_mat_real;
         arma::eig_sym(evals_mat_real, H_real);
@@ -116,10 +113,10 @@ void test_spinhalf_symmetric_apply_chains(int n_sites) {
   using namespace xdiag::testcases::spinhalf;
   using xdiag::testcases::electron::get_cyclic_group_irreps;
   Log.out("spinhalf_symmetric_apply: HB chain, N: {}", n_sites);
-  auto [space_group, irreps] = get_cyclic_group_irreps(n_sites);
+  auto irreps = get_cyclic_group_irreps(n_sites);
   auto ops = HBchain(n_sites, 1.0, 1.0);
-  test_spinhalf_symmetric_apply(ops, space_group, irreps);
-  test_spinhalf_symmetric_apply_no_sz(ops, space_group, irreps);
+  test_spinhalf_symmetric_apply(ops, n_sites, irreps);
+  test_spinhalf_symmetric_apply_no_sz(ops, n_sites, irreps);
 }
 
 TEST_CASE("spinhalf_symmetric_apply", "[spinhalf]") {
@@ -152,10 +149,10 @@ TEST_CASE("spinhalf_symmetric_apply", "[spinhalf]") {
   std::vector<Representation> irreps;
   for (auto [name, mult] : rep_name_mult) {
     (void)mult;
-    irreps.push_back(fl[name].as<Representation>());
+    irreps.push_back(read_representation(fl, name));
   }
-  test_spinhalf_symmetric_apply(ops, group, irreps);
-  test_spinhalf_symmetric_apply_no_sz(ops, group, irreps);
+  test_spinhalf_symmetric_apply(ops, 9, irreps);
+  test_spinhalf_symmetric_apply_no_sz(ops, 9, irreps);
 
   // test J1-J2-Jchi triangular lattice
   {
@@ -182,13 +179,11 @@ TEST_CASE("spinhalf_symmetric_apply", "[spinhalf]") {
         {"M.C2.B", -5.7723510325561688816},
         {"X.C1.A", -5.9030627660522529965}};
 
-    auto group = fl["Symmetries"].as<PermutationGroup>();
-
     int n_sites = 12;
     int n_up = 6;
     for (auto [name, energy] : rep_name_mult) {
-      auto irrep = fl[name].as<Representation>();
-      auto spinhalf = Spinhalf(n_sites, n_up, group, irrep);
+      auto irrep = read_representation(fl, name);
+      auto spinhalf = Spinhalf(n_sites, n_up, irrep);
       auto e0 = eigval0(ops, spinhalf);
       Log("{} {:.12f} {:.12f}", name, e0, energy);
 

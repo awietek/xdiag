@@ -6,17 +6,16 @@
 #include "../tj/testcases_tj.hpp"
 
 #include <xdiag/algebra/matrix.hpp>
-#include <xdiag/io/file_toml.hpp>
+#include <xdiag/io/read.hpp>
 #include <xdiag/operators/logic/real.hpp>
 #include <xdiag/utils/close.hpp>
 
 using namespace xdiag;
 
-void test_spectra_tj_symmetric(OpSum ops, PermutationGroup space_group,
+void test_spectra_tj_symmetric(OpSum ops, int64_t n_sites,
                                std::vector<Representation> irreps,
                                std::vector<int64_t> multiplicities) {
   // XDIAG_SHOW(ops);
-  int64_t n_sites = space_group.n_sites();
   assert(irreps.size() == multiplicities.size());
 
   for (int64_t nup = 1; nup <= n_sites; ++nup) {
@@ -39,7 +38,7 @@ void test_spectra_tj_symmetric(OpSum ops, PermutationGroup space_group,
           auto irrep = irreps[k];
           int64_t multiplicity = multiplicities[k];
 
-          auto tj = tJ(n_sites, nup, ndn, space_group, irrep);
+          auto tj = tJ(n_sites, nup, ndn, irrep);
 
           if (tj.size() > 0) {
 
@@ -56,7 +55,7 @@ void test_spectra_tj_symmetric(OpSum ops, PermutationGroup space_group,
             // XDIAG_SHOW(eigs_sym_k);
 
             // Check whether results are the same for real blocks
-            if (tj.irrep().isreal() && isreal(ops)) {
+            if (isreal(tj) && isreal(ops)) {
               auto H_sym_real = matrix(ops, tj, tj);
               arma::vec eigs_sym_k_real;
               arma::eig_sym(eigs_sym_k_real, H_sym_real);
@@ -86,9 +85,8 @@ void test_tj_symmetric_spectrum_chains(int64_t n_sites) {
   Log.out("tj_symmetric_matrix: tJ chain, symmetric spectra test, n_sites: {}",
           n_sites);
   auto ops = tJchain(n_sites, 0.0, 1.0);
-  auto [space_group, irreps, multiplicities] =
-      get_cyclic_group_irreps_mult(n_sites);
-  test_spectra_tj_symmetric(ops, space_group, irreps, multiplicities);
+  auto [irreps, multiplicities] = get_cyclic_group_irreps_mult(n_sites);
+  test_spectra_tj_symmetric(ops, n_sites, irreps, multiplicities);
 }
 
 TEST_CASE("tj_symmetric_matrix", "[tj]") try {
@@ -103,9 +101,8 @@ TEST_CASE("tj_symmetric_matrix", "[tj]") try {
     for (int64_t s = 0; s < n_sites; ++s) {
       ops += Op("tJSdotS", {s, (s + 1) % n_sites});
     }
-    auto [space_group, irreps, multiplicities] =
-        get_cyclic_group_irreps_mult(n_sites);
-    test_spectra_tj_symmetric(ops, space_group, irreps, multiplicities);
+    auto [irreps, multiplicities] = get_cyclic_group_irreps_mult(n_sites);
+    test_spectra_tj_symmetric(ops, n_sites, irreps, multiplicities);
   }
 
   // Test linear chains
@@ -121,8 +118,6 @@ TEST_CASE("tj_symmetric_matrix", "[tj]") try {
 
     auto fl = FileToml(lfile);
     auto ops = fl["Interactions"].as<OpSum>();
-    auto group = fl["Symmetries"].as<PermutationGroup>();
-
     std::vector<std::pair<std::string, int64_t>> rep_name_mult = {
         {"Gamma.D4.A1", 1}, {"Gamma.D4.A2", 1}, {"Gamma.D4.B1", 1},
         {"Gamma.D4.B2", 1}, {"Gamma.D4.E", 2},  {"M.D4.A1", 1},
@@ -134,12 +129,12 @@ TEST_CASE("tj_symmetric_matrix", "[tj]") try {
     std::vector<Representation> irreps;
     std::vector<int64_t> multiplicities;
     for (auto [name, mult] : rep_name_mult) {
-      irreps.push_back(fl[name].as<Representation>());
+      irreps.push_back(read_representation(fl, name));
       multiplicities.push_back(mult);
     }
 
     ops["J"] = 1.0;
-    test_spectra_tj_symmetric(ops, group, irreps, multiplicities);
+    test_spectra_tj_symmetric(ops, 8, irreps, multiplicities);
   }
 
   {
@@ -163,10 +158,10 @@ TEST_CASE("tj_symmetric_matrix", "[tj]") try {
     std::vector<Representation> irreps;
     std::vector<int64_t> multiplicities;
     for (auto [name, mult] : rep_name_mult) {
-      irreps.push_back(fl[name].as<Representation>());
+      irreps.push_back(read_representation(fl, name));
       multiplicities.push_back(mult);
     }
-    test_spectra_tj_symmetric(ops, group, irreps, multiplicities);
+    test_spectra_tj_symmetric(ops, 9, irreps, multiplicities);
   }
 
   {
@@ -190,7 +185,7 @@ TEST_CASE("tj_symmetric_matrix", "[tj]") try {
     std::vector<Representation> irreps;
     std::vector<int64_t> multiplicities;
     for (auto [name, mult] : rep_name_mult) {
-      irreps.push_back(fl[name].as<Representation>());
+      irreps.push_back(read_representation(fl, name));
       multiplicities.push_back(mult);
     }
 
@@ -198,7 +193,7 @@ TEST_CASE("tj_symmetric_matrix", "[tj]") try {
       Log("eta: {:.2f}", eta);
       ops["TPHI"] = 1.0; // complex(cos(eta * M_PI), sin(eta * M_PI));
       ops["JPHI"] = 0.4; // complex(cos(2 * eta * M_PI), sin(2 * eta * M_PI));
-      test_spectra_tj_symmetric(ops, group, irreps, multiplicities);
+      test_spectra_tj_symmetric(ops, 9, irreps, multiplicities);
     }
   }
 } catch (xdiag::Error const &e) {

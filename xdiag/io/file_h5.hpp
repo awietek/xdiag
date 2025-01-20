@@ -21,10 +21,8 @@ public:
   void close();
 
   hdf5::FileH5Handler operator[](std::string key);
-
   bool operator==(FileH5 const &other) const;
   bool operator!=(FileH5 const &other) const;
-
 
 private:
   std::string filename_;

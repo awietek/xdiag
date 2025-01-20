@@ -14,10 +14,9 @@ OpSum get_linear_chain(int64_t n_sites, double t, double U);
 
 OpSum get_linear_chain_hb(int64_t n_sites, double J);
 
-std::tuple<PermutationGroup, std::vector<Representation>>
-get_cyclic_group_irreps(int64_t n_sites);
+std::vector<Representation> get_cyclic_group_irreps(int64_t n_sites);
 
-std::tuple<PermutationGroup, std::vector<Representation>, std::vector<int64_t>>
+std::tuple<std::vector<Representation>, std::vector<int64_t>>
 get_cyclic_group_irreps_mult(int64_t n_sites);
 
 OpSum heisenberg_triangle();

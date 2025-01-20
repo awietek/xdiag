@@ -7,25 +7,12 @@
 #include <xdiag/algebra/matrix.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
 #include <xdiag/io/file_toml.hpp>
+#include <xdiag/io/read.hpp>
 #include <xdiag/symmetries/group_action/group_action.hpp>
 #include <xdiag/utils/close.hpp>
 
 using namespace xdiag;
 using namespace xdiag::combinatorics;
-
-void test_indices_spinhalf_symmetric(Spinhalf const &block) {
-
-  GroupAction group_action(block.permutation_group());
-  // auto indexing = block.indexing_sym_sz_conserved();
-  // for (int64_t idx = 0; idx < block.size(); ++idx) {
-  //   bit_t state = indexing.state(idx);
-  //   bit_t rep = symmetries::representative(state, group_action);
-  //   REQUIRE(rep == state);
-  //   int64_t idx2 = indexing.index(state);
-  //   // auto norm = block.indexing_.norm(state);
-  //   REQUIRE(idx == idx2);
-  // }
-}
 
 void test_spinchain_blocks(int64_t n_sites) {
 
@@ -40,7 +27,7 @@ void test_spinchain_blocks(int64_t n_sites) {
     }
     permutation_array.push_back(Permutation(pv));
   }
-  auto space_group = PermutationGroup(permutation_array);
+  auto group = PermutationGroup(permutation_array);
 
   // Create irrep with K momentum
   int64_t sum_of_dims = 0;
@@ -54,16 +41,12 @@ void test_spinchain_blocks(int64_t n_sites) {
       for (int64_t l = 0; l < n_sites; ++l)
         chis.push_back({std::cos(2 * M_PI * l * k / n_sites),
                         std::sin(2 * M_PI * l * k / n_sites)});
-      auto irrep = Representation(chis);
+      auto irrep = Representation(group, chis);
 
-      auto block = Spinhalf(n_sites, nup, space_group, irrep);
+      auto block = Spinhalf(n_sites, nup, irrep);
 
       sum_of_dims += block.size();
       sum_of_dims_up += block.size();
-
-      if (block.size() > 0) {
-        test_indices_spinhalf_symmetric(block);
-      }
     }
     REQUIRE(sum_of_dims_up == binomial(n_sites, nup));
   }
@@ -91,17 +74,13 @@ TEST_CASE("spinhalf_symmetric", "[spinhalf]") {
   std::string lfile = XDIAG_DIRECTORY
       "/misc/data/triangular.9.Jz1Jz2Jx1Jx2D1.sublattices.tsl.toml";
   auto fl = FileToml(lfile);
-  auto group = fl["Symmetries"].as<PermutationGroup>();
-
   int64_t sum_dim = 0;
   for (int64_t nup = 0; nup <= n_sites; ++nup) {
     int64_t sum_dim_up = 0;
-
     for (auto [name, mult] : rep_name_mult) {
-      auto irrep = fl[name].as<Representation>();
-      auto block = Spinhalf(n_sites, nup, group, irrep);
+      auto irrep = read_representation(fl, name);
+      auto block = Spinhalf(n_sites, nup, irrep);
       int64_t dim = block.size() * mult;
-      test_indices_spinhalf_symmetric(block);
       sum_dim_up += dim;
       sum_dim += dim;
     }

@@ -48,31 +48,56 @@ void test_iterator_tj_basis_symmetric_np(int64_t n_sites, int64_t n_up,
                                          int64_t n_dn) {
   using namespace xdiag;
 
-  auto [group, irreps] = testcases::electron::get_cyclic_group_irreps(n_sites);
+  auto irreps = testcases::electron::get_cyclic_group_irreps(n_sites);
 
   for (auto irrep : irreps) {
-    auto basis =
-        basis::tj::BasisSymmetricNp<bit_t>(n_sites, n_up, n_dn, group, irrep);
-    bit_t ups_prev = 0;
-    bit_t dns_prev = 0;
-    int64_t idx = 0;
-    for (auto [ups, dns] : basis) {
-      if (idx != 0) {
-        if (ups == ups_prev) {
-          REQUIRE(dns > dns_prev);
-          dns_prev = dns;
-        } else {
-          REQUIRE(ups > ups_prev);
-          ups_prev = ups;
-          dns_prev = dns;
+
+    if (isreal(irrep)) {
+      Vector characters = irrep.characters();
+      auto basis = basis::tj::BasisSymmetricNp<bit_t>(
+          n_sites, n_up, n_dn, irrep.group(), characters.as<arma::vec>());
+      bit_t ups_prev = 0;
+      bit_t dns_prev = 0;
+      int64_t idx = 0;
+      for (auto [ups, dns] : basis) {
+        if (idx != 0) {
+          if (ups == ups_prev) {
+            REQUIRE(dns > dns_prev);
+            dns_prev = dns;
+          } else {
+            REQUIRE(ups > ups_prev);
+            ups_prev = ups;
+            dns_prev = dns;
+          }
         }
+        ++idx;
       }
-      ++idx;
+      REQUIRE(idx == basis.dim());
+    } else {
+      Vector characters = irrep.characters();
+      auto basis = basis::tj::BasisSymmetricNp<bit_t>(
+          n_sites, n_up, n_dn, irrep.group(), characters.as<arma::cx_vec>());
+      bit_t ups_prev = 0;
+      bit_t dns_prev = 0;
+      int64_t idx = 0;
+      for (auto [ups, dns] : basis) {
+        if (idx != 0) {
+          if (ups == ups_prev) {
+            REQUIRE(dns > dns_prev);
+            dns_prev = dns;
+          } else {
+            REQUIRE(ups > ups_prev);
+            ups_prev = ups;
+            dns_prev = dns;
+          }
+        }
+        ++idx;
+      }
+      REQUIRE(idx == basis.dim());
     }
-    REQUIRE(idx == basis.dim());
 
     {
-      auto block = tJ(n_sites, n_up, n_dn, group, irrep);
+      auto block = tJ(n_sites, n_up, n_dn, irrep);
       int64_t idx = 0;
       for (auto pstate : block) {
         int64_t idx2 = block.index(pstate);

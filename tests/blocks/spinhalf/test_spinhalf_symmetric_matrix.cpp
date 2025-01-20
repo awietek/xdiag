@@ -10,15 +10,15 @@
 #include <xdiag/algebra/matrix.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
 #include <xdiag/io/file_toml.hpp>
+#include <xdiag/io/read.hpp>
 #include <xdiag/operators/logic/real.hpp>
 #include <xdiag/utils/close.hpp>
 
 using namespace xdiag;
 
-void test_spinhalf_symmetric_spectra(OpSum ops, PermutationGroup space_group,
+void test_spinhalf_symmetric_spectra(OpSum ops, int64_t n_sites,
                                      std::vector<Representation> irreps,
                                      std::vector<int64_t> multiplicities) {
-  int64_t n_sites = space_group.n_sites();
   assert(irreps.size() == multiplicities.size());
 
   for (int64_t nup = 3; nup <= n_sites; ++nup) {
@@ -38,7 +38,7 @@ void test_spinhalf_symmetric_spectra(OpSum ops, PermutationGroup space_group,
       for (int64_t k = 0; k < (int64_t)irreps.size(); ++k) {
         auto irrep = irreps[k];
         int64_t multiplicity = multiplicities[k];
-        auto spinhalf = Spinhalf(n_sites, nup, space_group, irrep);
+        auto spinhalf = Spinhalf(n_sites, nup, irrep);
         // Log.out("nup: {}, k: {}, mult: {}, dim_nosym: {}, dim_sym: "
         //         "{} ",
         //         nup, k, multiplicity, spinhalf_nosym.size(),
@@ -52,7 +52,7 @@ void test_spinhalf_symmetric_spectra(OpSum ops, PermutationGroup space_group,
           arma::eig_sym(eigs_sym_k, H_sym);
 
           // Check whether results are the same for real blocks
-          if (spinhalf.irrep().isreal() && isreal(ops)) {
+          if (isreal(spinhalf) && isreal(ops)) {
             auto H_sym_real = matrix(ops, spinhalf, spinhalf);
             arma::vec eigs_sym_k_real;
             arma::eig_sym(eigs_sym_k_real, H_sym_real);
@@ -73,9 +73,8 @@ void test_spinhalf_symmetric_spectra(OpSum ops, PermutationGroup space_group,
 }
 
 void test_spinhalf_symmetric_spectra_no_sz(
-    OpSum ops, PermutationGroup space_group, std::vector<Representation> irreps,
+    OpSum ops, int64_t n_sites, std::vector<Representation> irreps,
     std::vector<int64_t> multiplicities) {
-  int64_t n_sites = space_group.n_sites();
   assert(irreps.size() == multiplicities.size());
 
   // Log("Spinhalf Symmetric N: {}, nup: {}", n_sites, nup);
@@ -93,7 +92,7 @@ void test_spinhalf_symmetric_spectra_no_sz(
     for (int64_t k = 0; k < (int64_t)irreps.size(); ++k) {
       auto irrep = irreps[k];
       int64_t multiplicity = multiplicities[k];
-      auto spinhalf = Spinhalf(n_sites, space_group, irrep);
+      auto spinhalf = Spinhalf(n_sites, irrep);
       if (spinhalf.size() > 0) {
 
         // Compute partial spectrum from symmetrized block
@@ -105,7 +104,7 @@ void test_spinhalf_symmetric_spectra_no_sz(
 
         auto eigs_sym_k_sz = std::vector<double>();
         for (int64_t nup = 0; nup <= n_sites; ++nup) {
-          auto spinhalf_sz = Spinhalf(n_sites, nup, space_group, irrep);
+          auto spinhalf_sz = Spinhalf(n_sites, nup, irrep);
           auto H_sym_sz = matrixC(ops, spinhalf_sz, spinhalf_sz);
           arma::vec es;
           arma::eig_sym(es, H_sym_sz);
@@ -117,7 +116,7 @@ void test_spinhalf_symmetric_spectra_no_sz(
         REQUIRE(close(eigs_sym_k, arma::vec(eigs_sym_k_sz)));
 
         // Check whether results are the same for real blocks
-        if (spinhalf.irrep().isreal() && isreal(ops)) {
+        if (isreal(spinhalf) && isreal(ops)) {
           auto H_sym_real = matrix(ops, spinhalf, spinhalf);
 
           arma::vec eigs_sym_k_real;
@@ -141,12 +140,10 @@ void test_spinhalf_symmetric_spectrum_chains(int64_t n_sites) {
 
   // Without Heisenberg term
   Log.out("spinhalf_symmetric_matrix: HB chain, N: {}", n_sites);
-  auto [space_group, irreps, multiplicities] =
-      get_cyclic_group_irreps_mult(n_sites);
+  auto [irreps, multiplicities] = get_cyclic_group_irreps_mult(n_sites);
   auto ops = HBchain(n_sites, 1.0, 1.0);
-  test_spinhalf_symmetric_spectra(ops, space_group, irreps, multiplicities);
-  test_spinhalf_symmetric_spectra_no_sz(ops, space_group, irreps,
-                                        multiplicities);
+  test_spinhalf_symmetric_spectra(ops, n_sites, irreps, multiplicities);
+  test_spinhalf_symmetric_spectra_no_sz(ops, n_sites, irreps, multiplicities);
 }
 
 TEST_CASE("spinhalf_symmetric_matrix", "[spinhalf]") try {
@@ -172,16 +169,14 @@ TEST_CASE("spinhalf_symmetric_matrix", "[spinhalf]") try {
         {"Gamma.D6.B2", 1}, {"Gamma.D6.E1", 2}, {"Gamma.D6.E2", 2},
         {"K.D3.A1", 2},     {"K.D3.A2", 2},     {"K.D3.E", 4},
         {"Y.D1.A", 6},      {"Y.D1.B", 6}};
-    auto space_group = fl["Symmetries"].as<PermutationGroup>();
     std::vector<Representation> irreps;
     std::vector<int64_t> multiplicities;
     for (auto [name, mult] : rep_name_mult) {
-      irreps.push_back(fl[name].as<Representation>());
+      irreps.push_back(read_representation(fl, name));
       multiplicities.push_back(mult);
     }
-    test_spinhalf_symmetric_spectra(ops, space_group, irreps, multiplicities);
-    test_spinhalf_symmetric_spectra_no_sz(ops, space_group, irreps,
-                                          multiplicities);
+    test_spinhalf_symmetric_spectra(ops, 9, irreps, multiplicities);
+    test_spinhalf_symmetric_spectra_no_sz(ops, 9, irreps, multiplicities);
   }
 
   // test J1-J2-Jchi triangular lattice
@@ -213,8 +208,8 @@ TEST_CASE("spinhalf_symmetric_matrix", "[spinhalf]") try {
     int64_t n_sites = 12;
     int64_t n_up = 6;
     for (auto [name, energy] : rep_name_mult) {
-      auto irrep = fl[name].as<Representation>();
-      auto spinhalf = Spinhalf(n_sites, n_up, space_group, irrep);
+      auto irrep = read_representation(fl, name);
+      auto spinhalf = Spinhalf(n_sites, n_up, irrep);
       auto H = matrixC(ops, spinhalf, spinhalf);
       REQUIRE(arma::norm(H - H.t()) < 1e-12);
 
