@@ -56,7 +56,7 @@ Permutation::Permutation(arma::Col<int64_t> const &array) try
 }
 
 Permutation::Permutation(int64_t *ptr, int64_t size) try
-    : array_(array, array + size) {
+    : array_(ptr, ptr + size) {
   check_valid_permutation(array_);
 } catch (Error const &e) {
   XDIAG_RETHROW(e);

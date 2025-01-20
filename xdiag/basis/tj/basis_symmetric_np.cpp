@@ -6,10 +6,10 @@
 namespace xdiag::basis::tj {
 
 template <typename bit_t>
-template <typename coeff_t>
-BasisSymmetricNp<bit_t>::BasisSymmetricNp(
-    int64_t n_sites, int64_t nup, int64_t ndn, PermutationGroup const &group,
-    arma::Col<coeff_t> const &characters) try
+BasisSymmetricNp<bit_t>::BasisSymmetricNp(int64_t n_sites, int64_t nup,
+                                          int64_t ndn,
+                                          PermutationGroup const &group,
+                                          Vector const &characters) try
     : n_sites_(n_sites), n_up_(nup), n_dn_(ndn), group_action_(group),
       irrep_(group, characters),
       raw_ups_size_(combinatorics::binomial(n_sites, nup)),
@@ -60,20 +60,45 @@ BasisSymmetricNp<bit_t>::BasisSymmetricNp(
       // ups have non-trivial stabilizer, we store the dns configurations
     } else {
       bit_t not_ups = (~ups) & sitesmask;
-
       span_size_t start = dns_storage_.size();
-      for (bit_t dnsc : Combinations<bit_t>(n_sites - nup, ndn)) {
-        bit_t dns = bits::deposit(dnsc, not_ups);
-        bit_t dns_rep =
-            symmetries::representative_subset(dns, group_action_, syms);
-        if (dns == dns_rep) {
-          double norm = symmetries::norm_electron_subset(
-              ups, dns, group_action_, characters, syms);
-          if (norm > 1e-6) { // only keep dns with non-zero norm
-            dns_storage_.push_back(dns_rep);
-            norms_storage_.push_back(norm);
+
+      if (isreal(characters)) {
+
+        arma::vec chars = characters.as<arma::vec>();
+
+        // START DUPLICATE
+        for (bit_t dnsc : Combinations<bit_t>(n_sites - nup, ndn)) {
+          bit_t dns = bits::deposit(dnsc, not_ups);
+          bit_t dns_rep =
+              symmetries::representative_subset(dns, group_action_, syms);
+          if (dns == dns_rep) {
+            double norm = symmetries::norm_electron_subset(
+                ups, dns, group_action_, chars, syms);
+            if (norm > 1e-6) { // only keep dns with non-zero norm
+              dns_storage_.push_back(dns_rep);
+              norms_storage_.push_back(norm);
+            }
           }
         }
+        // END DUPLICATE
+      } else {
+        arma::cx_vec chars = characters.as<arma::cx_vec>();
+
+        // START DUPLICATE
+        for (bit_t dnsc : Combinations<bit_t>(n_sites - nup, ndn)) {
+          bit_t dns = bits::deposit(dnsc, not_ups);
+          bit_t dns_rep =
+              symmetries::representative_subset(dns, group_action_, syms);
+          if (dns == dns_rep) {
+            double norm = symmetries::norm_electron_subset(
+                ups, dns, group_action_, chars, syms);
+            if (norm > 1e-6) { // only keep dns with non-zero norm
+              dns_storage_.push_back(dns_rep);
+              norms_storage_.push_back(norm);
+            }
+          }
+        }
+        // END DUPLICATE
       }
       span_size_t end = dns_storage_.size();
       span_size_t length = end - start;
@@ -280,18 +305,6 @@ int64_t BasisSymmetricNp<bit_t>::dnsc_index(bit_t dns) const {
 
 template class BasisSymmetricNp<uint32_t>;
 template class BasisSymmetricNp<uint64_t>;
-template BasisSymmetricNp<uint32_t>::BasisSymmetricNp<double>(
-    int64_t, int64_t, int64_t, PermutationGroup const &,
-    arma::Col<double> const &);
-template BasisSymmetricNp<uint32_t>::BasisSymmetricNp<complex>(
-    int64_t, int64_t, int64_t, PermutationGroup const &,
-    arma::Col<complex> const &);
-template BasisSymmetricNp<uint64_t>::BasisSymmetricNp<double>(
-    int64_t, int64_t, int64_t, PermutationGroup const &,
-    arma::Col<double> const &);
-template BasisSymmetricNp<uint64_t>::BasisSymmetricNp<complex>(
-    int64_t, int64_t, int64_t, PermutationGroup const &,
-    arma::Col<complex> const &);
 
 template <typename bit_t>
 BasisSymmetricNpIterator<bit_t>::BasisSymmetricNpIterator(

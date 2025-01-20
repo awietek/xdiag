@@ -9,6 +9,8 @@
 #include <xdiag/states/random_state.hpp>
 
 #include <xdiag/operators/logic/real.hpp>
+#include <xdiag/operators/logic/isapprox.hpp>
+#include <xdiag/operators/logic/hc.hpp>
 
 #include <xdiag/utils/timing.hpp>
 
@@ -25,9 +27,9 @@ eigvals_lanczos(OpSum const &ops, Block const &block, State &state0,
   if (neigvals < 1) {
     XDIAG_THROW("Argument \"neigvals\" needs to be >= 1");
   }
-  // if (!ops.ishermitian()) {
-  //   XDIAG_THROW("Input OpSum is not hermitian");
-  // }
+  if (!isapprox(ops, hc(ops))) {
+    XDIAG_THROW("Input OpSum is not hermitian");
+  }
   bool cplx =
       !isreal(ops) || !isreal(block) || force_complex || !state0.isreal();
   if (!state0.isreal() && !isreal(block)) {

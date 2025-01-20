@@ -1,6 +1,7 @@
 #include "../catch.hpp"
 
 #include <iostream>
+#include <random>
 
 #include <xdiag/combinatorics/subsets.hpp>
 #include <xdiag/symmetries/permutation.hpp>
@@ -8,11 +9,12 @@
 template <typename bit_t> void test_permutation_apply(int64_t n_sites) {
 
   using namespace xdiag;
-
+  std::random_device rd;
+  std::mt19937 g(rd());
   for (int64_t i = 0; i < 20; ++i) {
     auto id = Permutation(n_sites);
     auto a = id.array();
-    std::random_shuffle(a.begin(), a.end());
+    std::shuffle(a.begin(), a.end(), g);
     auto p = Permutation(a);
 
     for (auto state : combinatorics::Subsets<bit_t>(n_sites)) {
@@ -29,6 +31,9 @@ TEST_CASE("permutation", "[symmetries]") {
   using namespace xdiag;
   Log("Test Permutation");
 
+  std::random_device rd;
+  std::mt19937 g(rd());
+ 
   // Test if identity is correct
   for (int64_t n_sites = 1; n_sites < 8; ++n_sites) {
     std::vector<int64_t> pv(n_sites);
@@ -46,7 +51,7 @@ TEST_CASE("permutation", "[symmetries]") {
     for (int64_t i = 0; i < 5; ++i) {
       auto id = Permutation(n_sites);
       auto a = id.array();
-      std::random_shuffle(a.begin(), a.end());
+      std::shuffle(a.begin(), a.end(), g);
       auto p1 = Permutation(a);
       auto pi = Permutation(n_sites);
       REQUIRE(p1 * pi == p1);
@@ -57,7 +62,7 @@ TEST_CASE("permutation", "[symmetries]") {
     for (int64_t i = 0; i < 20; ++i) {
       auto id = Permutation(n_sites);
       auto a = id.array();
-      std::random_shuffle(a.begin(), a.end());
+      std::shuffle(a.begin(), a.end(), g);
       auto p = Permutation(a);
       auto pinv = inverse(p);
       REQUIRE(p * pinv == id);

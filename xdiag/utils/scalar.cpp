@@ -135,6 +135,8 @@ bool isreal(Scalar const &s) { return s.isreal(); }
 double real(Scalar const &s) { return s.real(); }
 double imag(Scalar const &s) { return s.imag(); }
 double abs(Scalar const &s) { return s.abs(); }
+Scalar conj(Scalar const &s) { return s.conj(); }
+
 bool isapprox(Scalar const &a, Scalar const &b, double rtol, double atol) {
   return a.isapprox(b, rtol, atol);
 }

@@ -6,9 +6,11 @@
 #include <xdiag/algorithms/lanczos/lanczos.hpp>
 #include <xdiag/algorithms/lanczos/lanczos_convergence.hpp>
 
-#include <xdiag/states/random_state.hpp>
 #include <xdiag/states/fill.hpp>
+#include <xdiag/states/random_state.hpp>
 
+#include <xdiag/operators/logic/hc.hpp>
+#include <xdiag/operators/logic/isapprox.hpp>
 #include <xdiag/operators/logic/real.hpp>
 
 #include <xdiag/utils/timing.hpp>
@@ -23,9 +25,9 @@ eigs_lanczos_result_t eigs_lanczos(OpSum const &ops, Block const &block,
   if (neigvals < 1) {
     XDIAG_THROW("Argument \"neigvals\" needs to be >= 1");
   }
-  // if (!ops.ishermitian()) {
-  //   XDIAG_THROW("Input OpSum is not hermitian");
-  // }
+  if (!isapprox(ops, hc(ops))) {
+    XDIAG_THROW("Input OpSum is not hermitian");
+  }
 
   bool cplx =
       !isreal(ops) || !isreal(block) || force_complex || !state0.isreal();

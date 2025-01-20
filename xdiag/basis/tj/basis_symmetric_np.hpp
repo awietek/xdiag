@@ -23,10 +23,8 @@ public:
   using iterator_t = BasisSymmetricNpIterator<bit_t>;
   using span_size_t = gsl::span<int64_t const>::size_type;
 
-  template <typename coeff_t>
   BasisSymmetricNp(int64_t n_sites, int64_t nup, int64_t ndn,
-                   PermutationGroup const &group,
-                   arma::Col<coeff_t> const &characters);
+                   PermutationGroup const &group, Vector const &characters);
 
   int64_t n_sites() const;
   int64_t n_up() const;
