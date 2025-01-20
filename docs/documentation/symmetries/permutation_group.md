@@ -1,12 +1,14 @@
 ---
-title: Permutation
+title: PermutationGroup
 ---
 
-A group of permutations 
+A group of permutations. Group axioms are verified during construction.
 
 **Source** [permutation_group.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/symmetries/permutation_group.hpp)
 
 ## Constructor
+
+### Constructor from Permutations
 
 Creates an PermutationGroup out of a vector of [Permutation](permutation.md) objects.
 
@@ -20,51 +22,48 @@ Creates an PermutationGroup out of a vector of [Permutation](permutation.md) obj
 	PermutationGroup(std::vector<Permutation> const &permutations);
 	```
 
+### Constructor from Matrix
+
+Creates a PermutationGroup out of a matrix whose rows specify the individual permutations.
+
+=== "C++"	
+	```c++
+    PermutationGroup(arma::Mat<int64_t> const &matrix);
+	PermutationGroup(int64_t *ptr, int64_t n_permutations, int64_t n_sites);
+	```
+---
+
 ## Methods
 
 
-!!! method "n_sites"
+#### n_sites
 
-	Returns the number of sites on which the permutations of the group acts.
+Returns the number of sites on which the permutations of the group acts.
 
-	=== "Julia"
-		```julia
-		n_sites(group::PermutationGroup)
-		```
+=== "Julia"
+	```julia
+	n_sites(group::PermutationGroup)
+	```
 
-	=== "C++"	
-		```c++
-		int64_t n_sites() const
-		```
+=== "C++"	
+	```c++
+	int64_t n_sites(PermutationGroup const &group);
+	```
+---
 
-!!! method "size"
-	Returns the size of the permutation group, i.e. the number permutations
+#### size
+Returns the size of the permutation group, i.e. the number permutations.
+	
+=== "Julia"
+	```julia
+	size(group::PermutationGroup)
+	```
 
-	=== "Julia"
-		```julia
-		size(group::PermutationGroup)
-		```
-
-	=== "C++"	
-		```c++
-		int64_t size() const;
-		```
-
-!!! method "inverse"
-
-	Given an index of a permutation, it returns the index of the inverse permutation.
-
-	=== "Julia"
-		```julia
-		inverse(group::PermutationGroup, idx::Integer)
-		```
-
-	=== "C++"	
-		```c++
-		// As a member function
-        int64_t inverse(int64_t sym) const;
-		```
-
+=== "C++"	
+	```c++
+	int64_t size(PermutationGroup const &group);
+	```
+---
 
 ## Usage Example
 

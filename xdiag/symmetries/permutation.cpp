@@ -55,7 +55,7 @@ Permutation::Permutation(arma::Col<int64_t> const &array) try
   XDIAG_RETHROW(e);
 }
 
-Permutation::Permutation(int64_t *array, int64_t size) try
+Permutation::Permutation(int64_t *ptr, int64_t size) try
     : array_(array, array + size) {
   check_valid_permutation(array_);
 } catch (Error const &e) {
@@ -115,6 +115,7 @@ bool Permutation::operator!=(Permutation const &rhs) const {
 
 std::vector<int64_t> const &Permutation::array() const { return array_; }
 
+int64_t size(Permutation const &p) { return p.size(); }
 Permutation multiply(Permutation const &p1, Permutation const &p2) try {
   Permutation p = p1;
   p *= p2;
@@ -132,8 +133,15 @@ Permutation operator*(Permutation const &p1, Permutation const &p2) try {
 Permutation inverse(Permutation const &p) { return p.inverse(); }
 XDIAG_API Permutation pow(Permutation const &p, int64_t power) try {
   Permutation pp(p.size());
-  for (int i = 0; i < power; ++i) {
-    pp *= p;
+  if (power >= 0) {
+    for (int i = 0; i < power; ++i) {
+      pp *= p;
+    }
+  } else {
+    Permutation pi = inverse(p);
+    for (int i = 0; i < -power; ++i) {
+      pp *= pi;
+    }
   }
   return pp;
 } catch (Error const &e) {

@@ -164,6 +164,8 @@ int64_t PermutationGroup::multiply(int64_t s1, int64_t s2) const try {
   XDIAG_RETHROW(e);
 }
 
+int64_t n_sites(PermutationGroup const &group) { return group.n_sites(); }
+int64_t size(PermutationGroup const &group) { return group.size(); }
 PermutationGroup subgroup(PermutationGroup const &group,
                           std::vector<int64_t> const &symmetries) try {
   std::vector<Permutation> subgroup_permutations;

@@ -7,14 +7,12 @@ title: Overview
 ## Building
 | Name                                                   | Description                                                      |                          Language |
 |:-------------------------------------------------------|:-----------------------------------------------------------------|----------------------------------:|
-| [Compilation](compilation/advanced_compilation.md)     | advanced settings for compilation of the C++ library using CMake |                :simple-cplusplus: |
-| [Documentation](compilation/building_documentation.md) | how to build and work on the documentation locally               |                 :simple-markdown: |
-| [Julia Wrapper](compilation/julia_wrapper.md)          | how to build and develop the Julia wrapper locally               | :simple-cplusplus: :simple-julia: |
+| [Compilation](compilation/advanced_compilation.md)     | Advanced settings for compilation of the C++ library using CMake |                :simple-cplusplus: |
+| [Documentation](compilation/building_documentation.md) | How to build and work on the documentation locally               |                 :simple-markdown: |
+| [Julia Wrapper](compilation/julia_wrapper.md)          | How to build and develop the Julia wrapper locally               | :simple-cplusplus: :simple-julia: |
 |                                                        |                                                                  |                                   |
 
 ## Algorithms
-
-
 | Name                                             | Description                                                                                    |                          Language |
 |:-------------------------------------------------|:-----------------------------------------------------------------------------------------------|----------------------------------:|
 | [eigval0](algorithms/eigval0.md)                 | Computes the lowest lying eigenvalue of an operator                                            | :simple-cplusplus: :simple-julia: |

@@ -40,6 +40,7 @@ private:
   Vector characters_;
 };
 
+XDIAG_API int64_t size(Representation const &irrep);
 XDIAG_API bool isreal(Representation const &irrep);
 XDIAG_API Representation multiply(Representation const &r1,
                                   Representation const &r2);

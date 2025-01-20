@@ -44,7 +44,7 @@ int main() try {
   // Define the nearest-neighbor Heisenberg model
   OpSum ops;
   for (int i = 0; i < n_sites; ++i) {
-    ops += Op("HB", "J", {i, (i + 1) % n_sites});
+    ops += "J" * Op("SdotS", {i, (i + 1) % n_sites});
   }
   ops["J"] = 1.0;
 

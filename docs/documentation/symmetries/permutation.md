@@ -2,78 +2,126 @@
 title: Permutation
 ---
 
-Permutations of indices or lattice sites
+Permutations of indices or lattice sites. Basic building block of a [PermutationGroup](permutation_group.md). Permutations can be multiplied, inverted and raised to a power.
 
 **Source** [permutation.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/symmetries/permutation.hpp)
 
 ## Constructors
 
-Creates an Permutation out of an array of integers, e.g. `[0, 2, 1, 3]`. If the input array is of size `N` then every number between `0` and `N-1` must occur exactly once, otherwise the Permutation is invalid.
+	
+### Constructors from an array
+
+Creates an Permutation out of an array of integers, e.g. `{0, 2, 1, 3}`. If the input array is of size `N` then every number between `0` and `N-1` must occur exactly once, otherwise the Permutation is invalid.
+
+!!! warning "1-indexing in Julia / 0-indexing in C++"
+
+	To enumerate the sites of a Permutation, we start counting at 1 in Julia and 0 in C++.
+	
+=== "Julia"
+	```julia
+ 	Permutation(array::Vector{Int64})
+ 	```
+
+=== "C++"	
+	```c++
+	Permutation(std::initializer_list<int64_t> list);
+	Permutation(std::vector<int32_t> const &array);
+	Permutation(std::vector<int64_t> const &array);
+	Permutation(arma::Col<int64_t> const &array);
+	Permutation(int64_t *array, int64_t size);
+	```
+	
+| Name  | Description                         |
+|:------|:------------------------------------|
+| array | array of integers, e.g. {0,2,1,3}   |
+| list  | initializer list of the permutation |
+| ptr   | pointer to memory as an array       |
+| size  | size of the array                   |
+
+
+
+### Constructor for Identity
+
+Constructs an identity permutation of a given size, e.g. `{0, 1, 2, 3}`.
 
 === "Julia"
 	```julia
-	Permutation(array::Vector{Int64})
+ 	Permutation(size::Integer)
+ 	```
+
+=== "C++"	
+	```c++
+	Permutation(int64_t size);
+	```
+	
+| Name | Description                      |
+|:-----|:---------------------------------|
+| size | size of the identity permutation |
+
+---
+
+## Methods
+
+
+#### inverse
+
+Computes the inverse permutation.
+	
+=== "Julia"
+	```julia
+	inverse(perm::Permutation)
 	```
 
 === "C++"	
 	```c++
-	Permutation(std::vector<int64_t> const &array);
+	Permutation inverse(Permutation const &p);
 	```
-	
-!!! warning "1-indexing in Julia / 0-indexing in C++"
+---
 
-	To enumerate the sites of a Permutation, we start counting at 1 in Julia and 0 in C++.
+#### * operator
 
-## Methods
+Concatenates two permutations by overloading the `*` operator.
 
-!!! method "inverse"
+=== "Julia"
+	```julia
+	Base.:*(p1::Permutation, p2::Permutation)
+	```
 
-	Computes the inverse permutation.
+=== "C++"	
+	```c++
+	Permutation operator*(Permutation const &p1, Permutation const &p2);
+	```
+---
+#### ^ operator, pow
 
-	=== "Julia"
-		```julia
-		inverse(perm::Permutation)
-		```
+Raises a permutation to an integer power.
 
-	=== "C++"	
-		```c++
-		// As a member function
-		Permutation inverse() const;
+=== "Julia"
+	```julia
+	Base.:^(p::Permutation, power::Integer)
+	```
 
-		// As a non-member function
-		Permutation inverse(Permutation const &p);
-		```
+=== "C++"	
+	```c++
+	Permutation pow(Permutation const &p, int64_t power);
+	```
 
-!!! method ""*" operator"
+---
+#### size
 
-	Concatenates two permutations by overloading the `*` operator.
+Returns the size of a Permutation.
 
-	=== "Julia"
-		```julia
-		Base.:*(p1::Permutation, p2::Permutation)
-		```
+=== "Julia"
+	```julia
+	size(p::Permutation)
+	```
 
-	=== "C++"	
-		```c++
-		Permutation operator*(Permutation const &p1, Permutation const &p2);
-		```
+=== "C++"	
+	```c++
+	int64_t size(Permutation const &p);
+	```
 
-!!! method "size"
-	Returns the size of the permutation, i.e. the number of indices being permuted.
 
-	=== "Julia"
-		```julia
-		size(perm::Permutation)
-		```
-
-	=== "C++"	
-		```c++
-		// As a member function
-		int64_t size() const;
-
-		// As a non-member function
-		int64_t size(Permutation const &p);
-		```
 
 ## Usage Example
 
@@ -86,4 +134,3 @@ Creates an Permutation out of an array of integers, e.g. `[0, 2, 1, 3]`. If the 
 	```c++
 	--8<-- "examples/usage_examples/main.cpp:Permutation"
 	```
-

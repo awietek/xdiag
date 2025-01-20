@@ -2,67 +2,93 @@
 title: Representation
 ---
 
-A (1D) irreducible representation of a finite group.
+A (1D) irreducible representation of a finite group. Upon creation, the group homomorphism properties are verified.
 
 **Source** [representation.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/symmetries/representation.hpp)
 
 
 ## Constructors
 
-Creates a Representation from a vector of complex numbers
+### Trivial representation
+
+Creates the trivial representation (all characters equal to 1) of a [PermutationGroup](permutation_group.md)
 
 === "Julia"
 	```julia
-	Representation(characters::Vector{<:Number})
+	Representation(group::PermutationGroup)
 	```
 
 === "C++"	
 	```c++
-	Representation(std::vector<complex> const &characters);
+	Representation(PermutationGroup const &group);
 	```
+	
+### With characters
+
+Creates a 1D representation of a [PermutationGroup](permutation_group.md) with given real or complex characters.
+
+=== "C++"	
+	```c++
+	template <typename T>
+	Representation(PermutationGroup const &group, std::vector<T> const &characters);
+	template <typename T>
+	Representation(PermutationGroup const &group, arma::Col<T> const &characters);
+	template <typename T>
+	Representation(PermutationGroup const &group, T *characters, int64_t n_characters);
+	```
+	
+| Name  | Description                         |
+|:-------------|:---------------------------------------------------------------|
+| group        | [PermutationGroup](permutation_group.md) of the Representation |
+| characters   | characters of the representation                               |
+| n_characters | length of the array of characters                              |
+
+The template parameter `T` in C++ can either be `double` or `complex`.
+
+---
 
 ## Methods
 
-!!! method "size"
-	Returns the size of the Representation, i.e. the number of characters.
+#### size
+Returns the size of the Representation, i.e. the number of characters.
 
-	=== "Julia"
-		```julia
-		size(irrep::Representation)
-		```
+=== "Julia"
+	```julia
+	size(irrep::Representation)
+	```
 
-	=== "C++"	
-		```c++
-        int64_t size() const;
-		```
+=== "C++"	
+	```c++
+	int64_t size(Representation const &irrep) const;
+	```
+---
+#### isreal 
+Returns the whether or not the Representation is real, I.E. the characters are real numbers and do not have an imaginary part.
 
+=== "Julia"
+	```julia
+	isreal(irrep::Representation)
+	```
 
-!!! method "isreal"
-	Returns the whether or not the Representation is real, I.E. the characters are real numbers and do not have an imaginary part.
+=== "C++"	
+	```c++
+	bool isreal(Representation const &irrep) const;
+	```
+---
+#### * operator
 
-	=== "Julia"
-		```julia
-		isreal(irrep::Representation; precision::Real=1e-12)
-		```
+Multiplies two Representations by overloading the `*` operator.
 
-	=== "C++"	
-		```c++
-        bool isreal(double precision = 1e-12) const;
-		```
+=== "Julia"
+	```julia
+	Base.:*(r1::Representation, r2::Representation)
+	```
 
-!!! method ""*" operator"
-
-	Multiplies two Representations by overloading the `*` operator.
-
-	=== "Julia"
-		```julia
-		Base.:*(p1::Representation, p2::Representation)
-		```
-
-	=== "C++"	
-		```c++
-		Representation operator*(Representation const &p1, Representation const &p2);
-		```
+=== "C++"	
+	```c++
+	Representation operator*(Representation const &r1, Representation const &r2);
+	```
+---
 
 ## Usage Example
 

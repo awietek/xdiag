@@ -39,6 +39,8 @@ private:
   arma::Mat<int64_t> multiply_;
 };
 
+XDIAG_API int64_t n_sites(PermutationGroup const &group);
+XDIAG_API int64_t size(PermutationGroup const &group);
 XDIAG_API PermutationGroup subgroup(PermutationGroup const &group,
                                     std::vector<int64_t> const &symmetries);
 XDIAG_API std::ostream &operator<<(std::ostream &out,

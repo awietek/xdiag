@@ -17,10 +17,10 @@ public:
   XDIAG_API explicit Permutation(std::vector<int32_t> const &array);
   XDIAG_API explicit Permutation(std::vector<int64_t> const &array);
   XDIAG_API explicit Permutation(arma::Col<int64_t> const &array);
-  XDIAG_API Permutation(int64_t *array, int64_t size);
+  XDIAG_API Permutation(int64_t *ptr, int64_t size);
 
-  XDIAG_API int64_t size() const;
-  XDIAG_API int64_t operator[](int64_t i) const;
+  int64_t size() const;
+  int64_t operator[](int64_t i) const;
 
   XDIAG_API Permutation &operator*=(Permutation const &rhs);
   XDIAG_API bool operator==(Permutation const &rhs) const;
@@ -34,6 +34,7 @@ private:
   std::vector<int64_t> array_;
 };
 
+XDIAG_API int64_t size(Permutation const &p);
 XDIAG_API Permutation multiply(Permutation const &p1, Permutation const &p2);
 XDIAG_API Permutation operator*(Permutation const &p1, Permutation const &p2);
 XDIAG_API Permutation inverse(Permutation const &p);

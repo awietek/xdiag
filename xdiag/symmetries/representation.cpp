@@ -102,6 +102,7 @@ PermutationGroup const &Representation::group() const { return group_; }
 Vector const &Representation::characters() const { return characters_; }
 bool Representation::isreal() const { return characters_.is<arma::vec>(); }
 
+int64_t size(Representation const &irrep) { return irrep.size(); }
 bool isreal(Representation const &irrep) { return irrep.isreal(); }
 Representation multiply(Representation const &r1,
                         Representation const &r2) try {

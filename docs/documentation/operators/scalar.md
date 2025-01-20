@@ -14,75 +14,83 @@ A variable which can be either a real or complex double precision number. The al
 	Scalar(double value);
 	Scalar(complex value);
 	```
+---
+
 ## Methods
 
-!!! method "isreal"
+#### isreal
 
-    Returns `true` if Scalar is a real number, `false` otherwise. 
-    === "C++" 
-    	```c++
-		bool isreal(Scalar const &s)
-		```
+Returns `true` if Scalar is a real number, `false` otherwise. 
+=== "C++" 
+	```c++
+	bool isreal(Scalar const &s)
+	```
+---
 
-!!! method "real"
+#### real
 
-    Returns the real part of the Scalar.
-    === "C++" 
-    	```c++
-		double real(Scalar const &s)
-		```
+Returns the real part of the Scalar.
+=== "C++" 
+	```c++
+	double real(Scalar const &s)
+	```
+---
 
-!!! method "imag"
+#### imag
 
-    Returns the imaginary part of the Scalar.
-    === "C++" 
-    	```c++
-		double imag(Scalar const &s)
-		```
-		
-!!! method "conj"
+Returns the imaginary part of the Scalar.
+=== "C++" 
+	```c++
+	double imag(Scalar const &s)
+	```
+---
 
-    Returns the complex conjugate of the Scalar.
-    === "C++" 
-    	```c++
-		Scalar conj(Scalar const &s)
-		```
+#### conj
 
-!!! method "abs"
+Returns the complex conjugate of the Scalar.
+=== "C++" 
+	```c++
+	Scalar conj(Scalar const &s)
+	```
+---
 
-    Returns the absolute value of the Scalar.
-    === "C++" 
-    	```c++
-		double abs(Scalar const &s)
-		```
+#### abs
 
-!!! method "isapprox"
+Returns the absolute value of the Scalar.
+=== "C++" 
+	```c++
+	double abs(Scalar const &s)
+	```
+---
 
-    Compares two Scalars to whether they are approximately equal. 
-	Return true if the following condition holds.
+#### isapprox
 
-	$$ | a - b | < atol + rtol*|b| $$
+Compares two Scalars to whether they are approximately equal. 
+Return true if the following condition holds.
 
-
-    === "C++" 
-    	```c++
-		bool isapprox(Scalar const &a, Scalar const &b, double rtol = 1e-12, double atol = 1e-12)
-		```
-
-	**Parameters**
-    
-	| Name | Description        | Default |
-    |------|--------------------|---------|
-    | a    | first Scalar       |         |
-    | b    | second Scalar      |         |
-    | rtol | relative tolerance | 1e-12   |
-	| atol | absolute tolerance | 0       |
+$$ | a - b | < atol + rtol*|b| $$
 
 
-!!! method "to_string"
+=== "C++" 
+	```c++
+	bool isapprox(Scalar const &a, Scalar const &b, double rtol = 1e-12, double atol = 1e-12)
+	```
 
-	Converts the scalar into a string.
-    === "C++" 
-    	```c++
-		std::string to_string(Scalar const &v);
-		```
+**Parameters**
+
+| Name | Description        | Default |
+|------|--------------------|---------|
+| a    | first Scalar       |         |
+| b    | second Scalar      |         |
+| rtol | relative tolerance | 1e-12   |
+| atol | absolute tolerance | 0       |
+
+---
+
+#### to_string
+
+Converts the scalar into a string.
+=== "C++" 
+	```c++
+	std::string to_string(Scalar const &v);
+	```
