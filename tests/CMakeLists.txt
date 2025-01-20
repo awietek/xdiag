@@ -34,6 +34,7 @@ set(XDIAG_TEST_SOURCES
   operators/logic/test_permute.cpp
   operators/logic/test_order.cpp 
   operators/logic/test_isapprox.cpp
+  operators/logic/test_qns.cpp
  
   blocks/spinhalf/test_spinhalf_matrix.cpp
   blocks/spinhalf/test_spinhalf_apply.cpp

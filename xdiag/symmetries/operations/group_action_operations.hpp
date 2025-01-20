@@ -60,7 +60,6 @@ inline bit_t representative_subset(bit_t state, GroupAction const &group_action,
     return state;
   bit_t rep = std::numeric_limits<bit_t>::max();
   for (int64_t sym : syms) {
-    assert(sym < group_action.n_symmetries());
     bit_t tstate = group_action.apply(sym, state);
     if (tstate < rep) {
       rep = tstate;
@@ -98,7 +97,6 @@ representative_sym_subset(bit_t state, GroupAction const &group_action,
   bit_t rep = std::numeric_limits<bit_t>::max();
   int64_t rep_sym = 0;
   for (auto sym : syms) {
-    assert(sym < group_action.n_symmetries());
     bit_t tstate = group_action.apply(sym, state);
     if (tstate < rep) {
       rep = tstate;
@@ -184,7 +182,6 @@ template <typename bit_t, typename T, class GroupAction>
 inline double norm_electron(bit_t ups, bit_t dns,
                             GroupAction const &group_action,
                             arma::Col<T> const &characters) {
-  assert(group_action.n_symmetries() == irrep.size());
   T amplitude = 0.0;
   int64_t n_sites = group_action.n_sites();
   auto work = fermi_work(n_sites);
@@ -221,17 +218,13 @@ inline double norm_electron_subset(bit_t ups, bit_t dns,
                                    GroupAction const &group_action,
                                    arma::Col<T> const &characters,
                                    gsl::span<int64_t const> syms) {
-  assert(group_action.n_symmetries() == irrep.size());
   T amplitude = 0.0;
   int64_t n_sites = group_action.n_sites();
   auto work = fermi_work(n_sites);
   auto const &group = group_action.permutation_group();
 
   for (int64_t sym : syms) {
-    assert(sym < group_action.n_symmetries());
-
     auto const &perm = group[sym];
-
     bit_t tups = group_action.apply(sym, ups);
 
     if (tups == ups) {

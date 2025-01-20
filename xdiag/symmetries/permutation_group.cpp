@@ -1,7 +1,6 @@
 #include "permutation_group.hpp"
 
 #include <algorithm>
-
 #include <xdiag/common.hpp>
 
 namespace xdiag {
@@ -51,7 +50,7 @@ check_valid_group(std::vector<Permutation> const &permutations) try {
 
 static std::vector<int64_t>
 compute_inverse(std::vector<Permutation> const &permutations) try {
-  std::vector<int64_t> inverse;
+  std::vector<int64_t> inverse(permutations.size());
   int64_t idx = 0;
   for (auto p : permutations) {
     auto pinv = p.inverse();

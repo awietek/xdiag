@@ -96,8 +96,9 @@ Permutation &Permutation::operator*=(Permutation const &rhs) try {
   int64_t size = array_.size();
   std::vector<int64_t> array(size, 0);
   for (int64_t i = 0; i < size; ++i) {
-    array_[i] = array_[rhs[i]];
+    array[i] = array_[rhs[i]];
   }
+  std::swap(array_, array);
   return *this;
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
@@ -143,7 +144,6 @@ std::ostream &operator<<(std::ostream &out, Permutation const &p) {
   for (int64_t i = 0; i < p.size(); ++i) {
     out << p[i] << " ";
   }
-  out << "\n";
   return out;
 }
 std::string to_string(Permutation const &perm) {

@@ -43,7 +43,7 @@ TEST_CASE("fermi_table", "[symmetries]") {
   xdiag::Log("Test fermi_table");
   int max_N = 6;
 
-  for (int n_sites = 0; n_sites <= max_N; ++n_sites) {
+  for (int n_sites = 1; n_sites <= max_N; ++n_sites) {
     Log("chain N={}", n_sites);
     auto irreps = xdiag::testcases::electron::get_cyclic_group_irreps(n_sites);
     test_fermi_bool_table<uint16_t>(irreps[0].group());

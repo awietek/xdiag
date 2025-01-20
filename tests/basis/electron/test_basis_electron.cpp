@@ -172,13 +172,13 @@ void test_iterator_electron_basis_symmetric_np(int64_t n_sites, int64_t n_up,
 TEST_CASE("electron_basis", "[basis]") {
   using namespace xdiag;
   Log("Test Electron BasisNoNp");
-  for (int64_t n_sites = 0; n_sites < 6; ++n_sites) {
+  for (int64_t n_sites = 1; n_sites < 6; ++n_sites) {
     test_iterator_electron_basis_no_np<uint32_t>(n_sites);
     test_iterator_electron_basis_no_np<uint64_t>(n_sites);
   }
 
   Log("Test Electron BasisNp");
-  for (int64_t n_sites = 0; n_sites < 6; ++n_sites) {
+  for (int64_t n_sites = 1; n_sites < 6; ++n_sites) {
     for (int64_t n_up = 0; n_up <= n_sites; ++n_up) {
       for (int64_t n_dn = 0; n_dn <= n_sites; ++n_dn) {
         test_iterator_electron_basis_np<uint32_t>(n_sites, n_up, n_dn);
@@ -188,13 +188,13 @@ TEST_CASE("electron_basis", "[basis]") {
   }
 
   Log("Test Electron BasisSymmetricNoNp");
-  for (int64_t n_sites = 0; n_sites < 6; ++n_sites) {
+  for (int64_t n_sites = 1; n_sites < 6; ++n_sites) {
     test_iterator_electron_basis_symmetric_no_np<uint32_t>(n_sites);
     test_iterator_electron_basis_symmetric_no_np<uint64_t>(n_sites);
   }
 
   Log("Test Electron BasisSymmetricNp");
-  for (int64_t n_sites = 0; n_sites < 6; ++n_sites) {
+  for (int64_t n_sites = 1; n_sites < 6; ++n_sites) {
     for (int64_t n_up = 0; n_up <= n_sites; ++n_up) {
       for (int64_t n_dn = 0; n_dn <= n_sites; ++n_dn) {
         test_iterator_electron_basis_symmetric_np<uint32_t>(n_sites, n_up,

@@ -92,7 +92,7 @@ TEST_CASE("symmetrize", "[operators]") try {
             // Log("UUU");
             apply(ops, v, Hv);
             // Log("VVV");
-            auto e = dot(v, Hv);
+            auto e = dotC(v, Hv);
             // XDIAG_SHOW(e);
             // XDIAG_SHOW(e0_nosym);
             REQUIRE(close(real(e), e0_nosym));

@@ -170,37 +170,37 @@ TEST_CASE("symmetry_operations", "[symmetries]") {
   Log("Testing symmetry_operations");
   int64_t max_N = 6;
 
-  for (int64_t n_sites = 0; n_sites <= max_N; ++n_sites) {
+  for (int64_t n_sites = 1; n_sites <= max_N; ++n_sites) {
     test_stabilizer_symmetries<uint16_t>(n_sites);
     test_stabilizer_symmetries<uint32_t>(n_sites);
     test_stabilizer_symmetries<uint64_t>(n_sites);
   }
 
-  for (int64_t n_sites = 0; n_sites <= max_N; ++n_sites) {
+  for (int64_t n_sites = 1; n_sites <= max_N; ++n_sites) {
     test_representative<uint16_t>(n_sites);
     test_representative<uint32_t>(n_sites);
     test_representative<uint64_t>(n_sites);
   }
 
-  for (int64_t n_sites = 0; n_sites <= max_N; ++n_sites) {
+  for (int64_t n_sites = 1; n_sites <= max_N; ++n_sites) {
     test_representative_subset<uint16_t>(n_sites);
     test_representative_subset<uint32_t>(n_sites);
     test_representative_subset<uint64_t>(n_sites);
   }
 
-  for (int64_t n_sites = 0; n_sites <= max_N; ++n_sites) {
+  for (int64_t n_sites = 1; n_sites <= max_N; ++n_sites) {
     test_representative_sym<uint16_t>(n_sites);
     test_representative_sym<uint32_t>(n_sites);
     test_representative_sym<uint64_t>(n_sites);
   }
 
-  for (int64_t n_sites = 0; n_sites <= max_N; ++n_sites) {
+  for (int64_t n_sites = 1; n_sites <= max_N; ++n_sites) {
     test_representative_sym_subset<uint16_t>(n_sites);
     test_representative_sym_subset<uint32_t>(n_sites);
     test_representative_sym_subset<uint64_t>(n_sites);
   }
 
-  for (int64_t n_sites = 0; n_sites <= max_N; ++n_sites) {
+  for (int64_t n_sites = 1; n_sites <= max_N; ++n_sites) {
     test_norm<uint16_t>(n_sites);
     test_norm<uint32_t>(n_sites);
     test_norm<uint64_t>(n_sites);

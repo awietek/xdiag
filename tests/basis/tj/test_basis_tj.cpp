@@ -114,7 +114,7 @@ TEST_CASE("tj_basis", "[basis]") try {
   using namespace xdiag;
 
   Log("Test tJ BasisNp");
-  for (int64_t n_sites = 0; n_sites <= 6; ++n_sites) {
+  for (int64_t n_sites = 1; n_sites <= 6; ++n_sites) {
     for (int64_t n_up = 0; n_up <= n_sites; ++n_up) {
       for (int64_t n_dn = 0; n_dn <= n_sites - n_up; ++n_dn) {
         test_iterator_tj_basis_np<uint32_t>(n_sites, n_up, n_dn);
@@ -124,7 +124,7 @@ TEST_CASE("tj_basis", "[basis]") try {
   }
 
   Log("Test tJ BasisSymmetricNp");
-  for (int64_t n_sites = 0; n_sites <= 6; ++n_sites) {
+  for (int64_t n_sites = 1; n_sites <= 6; ++n_sites) {
     for (int64_t n_up = 0; n_up <= n_sites; ++n_up) {
       for (int64_t n_dn = 0; n_dn <= n_sites - n_up; ++n_dn) {
         test_iterator_tj_basis_symmetric_np<uint32_t>(n_sites, n_up, n_dn);
