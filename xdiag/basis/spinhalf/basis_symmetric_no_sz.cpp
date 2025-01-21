@@ -8,6 +8,7 @@ template <class bit_t>
 BasisSymmetricNoSz<bit_t>::BasisSymmetricNoSz(Representation const &irrep) try
     : n_sites_(irrep.group().n_sites()), group_action_(irrep.group()),
       irrep_(irrep), subsets_basis_(n_sites_) {
+  check_n_sites_work_with_bits<bit_t>(n_sites_);
 
   if (isreal(irrep)) {
     arma::vec characters = irrep.characters().as<arma::vec>();

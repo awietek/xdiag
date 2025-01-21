@@ -1,7 +1,10 @@
 #include "../../catch.hpp"
 
+#include "../../blocks/electron/testcases_electron.hpp"
 #include <xdiag/algebra/matrix.hpp>
+#include <xdiag/io/read.hpp>
 #include <xdiag/operators/logic/qns.hpp>
+#include <xdiag/operators/logic/symmetrize.hpp>
 
 using namespace xdiag;
 using namespace arma;
@@ -75,6 +78,41 @@ TEST_CASE("qns", "[operators]") try {
   REQUIRE(*nup(Op("Matrix", {0, 1}, mat(kron(sm, sp)))) == 0);
   REQUIRE(*nup(Op("Matrix", {0, 1}, mat(kron(sm, sz)))) == -1);
   REQUIRE(*nup(Op("Matrix", {0, 1}, mat(kron(sm, sm)))) == -2);
+
+  for (int n_sites = 3; n_sites < 8; ++n_sites) {
+    auto irreps = testcases::electron::get_cyclic_group_irreps(n_sites);
+    for (auto const &irrep : irreps) {
+      {
+        auto ops = symmetrize(Op("Sz", 0), irrep);
+        auto irrep2 = representation(ops, irrep.group());
+        REQUIRE(irrep2);
+        REQUIRE(isapprox(irrep, *irrep2));
+      }
+
+      {
+        auto opss = OpSum();
+        opss += Op("SdotS", {0, 1});
+        opss += Op("SdotS", {1, 2});
+        auto ops = symmetrize(Op("Sz", 0), irrep);
+        auto irrep2 = representation(ops, irrep.group());
+        REQUIRE(irrep2);
+        REQUIRE(isapprox(irrep, *irrep2));
+      }
+    }
+  }
+
+  std::string lfile = XDIAG_DIRECTORY
+      "/misc/data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.toml";
+
+  auto fl = FileToml(lfile);
+  auto ops = read_opsum(fl, "Interactions");
+  double eta = 0.1;
+  ops["TPHI"] = complex(cos(eta * M_PI), sin(eta * M_PI));
+  ops["JPHI"] = complex(cos(2 * eta * M_PI), sin(2 * eta * M_PI));
+  auto irrep = read_representation(fl, "Gamma.D3.A1");
+  auto irrep2 = representation(ops, irrep.group());
+  REQUIRE(irrep2);
+  REQUIRE(isapprox(*irrep2, irrep));
 
 } catch (xdiag::Error e) {
   xdiag::error_trace(e);

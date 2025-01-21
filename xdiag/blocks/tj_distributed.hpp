@@ -13,9 +13,11 @@ public:
   using basis_t = basis::BasistJDistributed;
   using iterator_t = tJDistributedIterator;
   tJDistributed() = default;
-  tJDistributed(int64_t n_sites, int64_t n_up, int64_t n_dn);
+  tJDistributed(int64_t n_sites, int64_t n_up, int64_t n_dn,
+                std::string backend = "auto");
 
   int64_t n_sites() const;
+  std::string backend() const;
   int64_t n_up() const;
   int64_t n_dn() const;
 
@@ -34,6 +36,7 @@ public:
 
 private:
   int64_t n_sites_;
+  std::string backend_;
   int64_t n_up_;
   int64_t n_dn_;
 

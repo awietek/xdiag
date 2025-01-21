@@ -34,9 +34,9 @@
 #include <xdiag/utils/type_string.hpp>
 #include <xdiag/utils/xdiag_show.hpp>
 
+#include <xdiag/utils/matrix.hpp>
 #include <xdiag/utils/scalar.hpp>
 #include <xdiag/utils/vector.hpp>
-#include <xdiag/utils/matrix.hpp>
 
 #include <xdiag/algebra/algebra.hpp>
 #include <xdiag/algebra/apply.hpp>
@@ -86,18 +86,20 @@
 #include <xdiag/symmetries/permutation_group.hpp>
 #include <xdiag/symmetries/representation.hpp>
 
-#include <xdiag/operators/op.hpp>
-#include <xdiag/operators/opsum.hpp>
-#include <xdiag/operators/logic/symmetrize.hpp>
-#include <xdiag/operators/logic/real.hpp>
+#include <xdiag/operators/logic/block.hpp>
+#include <xdiag/operators/logic/compilation.hpp>
 #include <xdiag/operators/logic/hc.hpp>
 #include <xdiag/operators/logic/isapprox.hpp>
+#include <xdiag/operators/logic/non_branching_op.hpp>
+#include <xdiag/operators/logic/order.hpp>
 #include <xdiag/operators/logic/permute.hpp>
 #include <xdiag/operators/logic/qns.hpp>
-#include <xdiag/operators/logic/valid.hpp>
+#include <xdiag/operators/logic/real.hpp>
+#include <xdiag/operators/logic/symmetrize.hpp>
 #include <xdiag/operators/logic/types.hpp>
-#include <xdiag/operators/logic/compilation.hpp>
-#include <xdiag/operators/logic/non_branching_op.hpp>
+#include <xdiag/operators/logic/valid.hpp>
+#include <xdiag/operators/op.hpp>
+#include <xdiag/operators/opsum.hpp>
 
 #include <xdiag/algorithms/norm_estimate.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>

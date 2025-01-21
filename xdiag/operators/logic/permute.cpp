@@ -41,7 +41,7 @@ Op permute(Op const &op, Permutation const &perm) try {
 
 OpSum permute(OpSum const &ops, Permutation const &perm) try {
   OpSum ops_permuted;
-  for (auto const &[cpl, op] : ops) {
+  for (auto const &[cpl, op] : ops.plain()) {
     ops_permuted += cpl * permute(op, perm);
   }
   return ops_permuted;

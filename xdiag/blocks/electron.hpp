@@ -18,11 +18,13 @@ public:
   using iterator_t = ElectronIterator;
 
   XDIAG_API Electron() = default;
-  XDIAG_API Electron(int64_t n_sites);
-  XDIAG_API Electron(int64_t n_sites, int64_t nup, int64_t ndn);
-  XDIAG_API Electron(int64_t n_sites, Representation const &irrep);
+  XDIAG_API Electron(int64_t n_sites, std::string backend = "auto");
   XDIAG_API Electron(int64_t n_sites, int64_t nup, int64_t ndn,
-                     Representation const &irrep);
+                     std::string backend = "auto");
+  XDIAG_API Electron(int64_t n_sites, Representation const &irrep,
+                     std::string backend = "auto");
+  XDIAG_API Electron(int64_t n_sites, int64_t nup, int64_t ndn,
+                     Representation const &irrep, std::string backend = "auto");
 
   XDIAG_API iterator_t begin() const;
   XDIAG_API iterator_t end() const;
@@ -34,6 +36,7 @@ public:
   XDIAG_API bool operator!=(Electron const &rhs) const;
 
   int64_t n_sites() const;
+  std::string backend() const;
   std::optional<int64_t> n_up() const;
   std::optional<int64_t> n_dn() const;
   std::optional<Representation> const &irrep() const;
@@ -42,6 +45,7 @@ public:
 
 private:
   int64_t n_sites_;
+  std::string backend_;
   std::optional<int64_t> n_up_;
   std::optional<int64_t> n_dn_;
   std::optional<Representation> irrep_;

@@ -104,6 +104,11 @@ bool Representation::isreal() const { return characters_.is<arma::vec>(); }
 
 int64_t size(Representation const &irrep) { return irrep.size(); }
 bool isreal(Representation const &irrep) { return irrep.isreal(); }
+bool isapprox(Representation const &r1, Representation const &r2, double rtol,
+              double atol) {
+  return (r1.group() == r2.group()) &&
+    isapprox(r1.characters(), r2.characters(), rtol, atol);
+}
 Representation multiply(Representation const &r1,
                         Representation const &r2) try {
   if (r1.group() != r2.group()) {

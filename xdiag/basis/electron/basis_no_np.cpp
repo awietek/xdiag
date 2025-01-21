@@ -5,12 +5,15 @@ namespace xdiag::basis::electron {
 using namespace combinatorics;
 
 template <typename bit_t>
-BasisNoNp<bit_t>::BasisNoNp(int n_sites)
+BasisNoNp<bit_t>::BasisNoNp(int n_sites) try
     : n_sites_(n_sites), size_ups_((int64_t)1 << n_sites),
       size_dns_((int64_t)1 << n_sites), size_(size_ups_ * size_dns_) {
+  check_n_sites_work_with_bits<bit_t>(n_sites_);
   if (n_sites < 0) {
-    throw(std::invalid_argument("n_sites < 0"));
+    XDIAG_THROW("n_sites < 0");
   }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 template <typename bit_t> int BasisNoNp<bit_t>::n_sites() const {
@@ -99,10 +102,11 @@ std::pair<bit_t, bit_t> BasisNoNpIterator<bit_t>::operator*() const {
 }
 
 template <typename bit_t>
-bool BasisNoNpIterator<bit_t>::operator!=(BasisNoNpIterator<bit_t> const& rhs) const {
+bool BasisNoNpIterator<bit_t>::operator!=(
+    BasisNoNpIterator<bit_t> const &rhs) const {
   return (ups_ != rhs.ups_) || (dns_ != rhs.dns_);
 }
-  
+
 template class BasisNoNpIterator<uint32_t>;
 template class BasisNoNpIterator<uint64_t>;
 

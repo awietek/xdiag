@@ -18,17 +18,13 @@ public:
   using iterator_t = SpinhalfIterator;
 
   XDIAG_API Spinhalf() = default;
-  XDIAG_API Spinhalf(int64_t n_sites);
-  XDIAG_API Spinhalf(int64_t n_sites, int64_t n_up);
-  XDIAG_API Spinhalf(int64_t n_sites, Representation const &irrep);
+  XDIAG_API Spinhalf(int64_t n_sites, std::string backend = "auto");
   XDIAG_API Spinhalf(int64_t n_sites, int64_t n_up,
-                     Representation const &irrep);
-
-  // Constructors with sublattice coding
+                     std::string backend = "auto");
   XDIAG_API Spinhalf(int64_t n_sites, Representation const &irrep,
-                     int64_t n_sublat);
+                     std::string backend = "auto");
   XDIAG_API Spinhalf(int64_t n_sites, int64_t n_up, Representation const &irrep,
-                     int64_t n_sublat);
+                     std::string backend = "auto");
 
   XDIAG_API iterator_t begin() const;
   XDIAG_API iterator_t end() const;
@@ -40,6 +36,7 @@ public:
   XDIAG_API bool operator!=(Spinhalf const &rhs) const;
 
   int64_t n_sites() const;
+  std::string backend() const;
   std::optional<int64_t> n_up() const;
   std::optional<Representation> const &irrep() const;
   bool isreal() const;
@@ -47,6 +44,7 @@ public:
 
 private:
   int64_t n_sites_;
+  std::string backend_;
   std::optional<int64_t> n_up_;
   std::optional<Representation> irrep_;
   std::shared_ptr<basis_t> basis_;

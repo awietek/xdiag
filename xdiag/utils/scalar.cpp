@@ -33,7 +33,7 @@ double Scalar::abs() const {
 bool Scalar::isapprox(Scalar const &y, double rtol = 1e-12,
                       double atol = 1e-12) const {
   Scalar const &x = *this;
-  return (x - y).abs() < (atol + rtol * y.abs());
+  return (x - y).abs() <= (atol + rtol * y.abs());
 }
 
 bool Scalar::operator==(Scalar const &rhs) const {

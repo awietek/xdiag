@@ -9,6 +9,9 @@
 #include <xdiag/algorithms/sparse_diag.hpp>
 #include <xdiag/blocks/electron.hpp>
 #include <xdiag/operators/logic/symmetrize.hpp>
+#include <xdiag/operators/logic/order.hpp>
+#include <xdiag/operators/logic/isapprox.hpp>
+#include <xdiag/operators/logic/hc.hpp>
 #include <xdiag/utils/close.hpp>
 
 using namespace xdiag;
@@ -34,7 +37,13 @@ TEST_CASE("symmetrize", "[operators]") try {
         if (block_nosym.size() == 0) {
           continue;
         }
-        // XDIAG_SHOW(ops);
+	auto o1 = order(ops.plain());
+	auto o2 = order(hc(ops).plain());
+	
+        // XDIAG_SHOW(o1);
+        // XDIAG_SHOW(o2);
+        // XDIAG_SHOW(isapprox(o1, o2));
+
         auto [e0_nosym, v0_nosym] = eig0(ops, block_nosym);
 
         auto res = eigs_lanczos(ops, block_nosym);

@@ -5,19 +5,32 @@ namespace xdiag {
 
 using namespace basis;
 
-Electron::Electron(int64_t n_sites) try
-    : n_sites_(n_sites), n_up_(std::nullopt), n_dn_(std::nullopt),
-      irrep_(std::nullopt) {
-
+Electron::Electron(int64_t n_sites, std::string backend) try
+    : n_sites_(n_sites), backend_(backend), n_up_(std::nullopt),
+      n_dn_(std::nullopt), irrep_(std::nullopt) {
+  // Safety checks
   if (n_sites < 0) {
     XDIAG_THROW("Invalid argument: n_sites < 0");
-  } else if (n_sites < 32) {
+  }
+
+  // Choose basis implementation
+  if (backend == "auto") {
+    if (n_sites < 32) {
+      basis_ =
+          std::make_shared<basis_t>(electron::BasisNoNp<uint32_t>(n_sites));
+    } else if (n_sites < 64) {
+      basis_ =
+          std::make_shared<basis_t>(electron::BasisNoNp<uint64_t>(n_sites));
+    } else {
+      XDIAG_THROW(
+          "Spinhalf blocks with more than 64 sites currently not implemented");
+    }
+  } else if (backend == "32bit") {
     basis_ = std::make_shared<basis_t>(electron::BasisNoNp<uint32_t>(n_sites));
-  } else if (n_sites < 64) {
+  } else if (backend == "64bit") {
     basis_ = std::make_shared<basis_t>(electron::BasisNoNp<uint64_t>(n_sites));
   } else {
-    XDIAG_THROW(
-        "Spinhalf blocks with more than 64 sites currently not implemented");
+    XDIAG_THROW(fmt::format("Unknown backend: \"{}\"", backend));
   }
   size_ = basis::size(*basis_);
   check_dimension_works_with_blas_int_size(size_);
@@ -26,46 +39,73 @@ Electron::Electron(int64_t n_sites) try
 }
 
 Electron::Electron(int64_t n_sites, int64_t nup, int64_t ndn) try
-    : n_sites_(n_sites), n_up_(nup), n_dn_(ndn), irrep_(std::nullopt) {
+    : n_sites_(n_sites), backend_(backend), n_up_(nup), n_dn_(ndn),
+      irrep_(std::nullopt) {
 
+  // Safety checks
   if (n_sites < 0) {
     XDIAG_THROW("Invalid argument: n_sites < 0");
   } else if ((nup < 0) || (nup > n_sites)) {
     XDIAG_THROW("Invalid argument: (nup < 0) or (nup > n_sites)");
   } else if ((ndn < 0) || (ndn > n_sites)) {
     XDIAG_THROW("Invalid argument: (ndn < 0) or (ndn > n_sites)");
-  } else if (n_sites < 32) {
+  }
+
+  // Choose basis implementation
+  if (backend == "auto") {
+    if (n_sites < 32) {
+      basis_ = std::make_shared<basis_t>(
+          electron::BasisNp<uint32_t>(n_sites, nup, ndn));
+    } else if (n_sites < 64) {
+      basis_ = std::make_shared<basis_t>(
+          electron::BasisNp<uint64_t>(n_sites, nup, ndn));
+    } else {
+      XDIAG_THROW("Blocks with more than 64 sites currently not implemented");
+    }
+  } else if (backend == "32bit") {
     basis_ = std::make_shared<basis_t>(
         electron::BasisNp<uint32_t>(n_sites, nup, ndn));
-  } else if (n_sites < 64) {
+  } else if (backend == "64bit") {
     basis_ = std::make_shared<basis_t>(
         electron::BasisNp<uint64_t>(n_sites, nup, ndn));
   } else {
-    XDIAG_THROW("Blocks with more than 64 sites currently not implemented");
+    XDIAG_THROW(fmt::format("Unknown backend: \"{}\"", backend));
   }
   size_ = basis::size(*basis_);
   check_dimension_works_with_blas_int_size(size_);
-
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
 Electron::Electron(int64_t n_sites, Representation const &irrep) try
-    : n_sites_(n_sites), n_up_(std::nullopt), n_dn_(std::nullopt),
-      irrep_(irrep) {
-
+    : n_sites_(n_sites), backend_(backend), n_up_(std::nullopt),
+      n_dn_(std::nullopt), irrep_(irrep) {
+  // Safety checks
   if (n_sites < 0) {
     XDIAG_THROW("Invalid argument: n_sites < 0");
   } else if (n_sites != irrep.group().n_sites()) {
     XDIAG_THROW("n_sites does not match the n_sites in PermutationGroup");
-  } else if (n_sites < 32) {
+  }
+
+  // Choose basis implementation
+  if (backend == "auto") {
+    if (n_sites < 32) {
+      basis_ = std::make_shared<basis_t>(
+          electron::BasisSymmetricNoNp<uint32_t>(n_sites, irrep));
+    } else if (n_sites < 64) {
+      basis_ = std::make_shared<basis_t>(
+          electron::BasisSymmetricNoNp<uint64_t>(n_sites, irrep));
+    } else {
+      XDIAG_THROW("Blocks with more than 64 sites currently not implemented");
+    }
+  } else if (backend == "32bit") {
     basis_ = std::make_shared<basis_t>(
         electron::BasisSymmetricNoNp<uint32_t>(n_sites, irrep));
-  } else if (n_sites < 64) {
+  } else if (backend == "64bit") {
     basis_ = std::make_shared<basis_t>(
         electron::BasisSymmetricNoNp<uint64_t>(n_sites, irrep));
   } else {
-    XDIAG_THROW("Blocks with more than 64 sites currently not implemented");
+    XDIAG_THROW(fmt::format("Unknown backend: \"{}\"", backend));
   }
   size_ = basis::size(*basis_);
   check_dimension_works_with_blas_int_size(size_);
@@ -76,8 +116,9 @@ Electron::Electron(int64_t n_sites, Representation const &irrep) try
 
 Electron::Electron(int64_t n_sites, int64_t nup, int64_t ndn,
                    Representation const &irrep) try
-    : n_sites_(n_sites), n_up_(nup), n_dn_(ndn), irrep_(irrep) {
-
+    : n_sites_(n_sites), backend_(backend), n_up_(nup), n_dn_(ndn),
+      irrep_(irrep) {
+  // Safety checks
   if (n_sites < 0) {
     XDIAG_THROW("Invalid argument: n_sites < 0");
   } else if ((nup < 0) || (nup > n_sites)) {
@@ -86,14 +127,27 @@ Electron::Electron(int64_t n_sites, int64_t nup, int64_t ndn,
     XDIAG_THROW("Invalid argument: (ndn < 0) or (ndn > n_sites)");
   } else if (n_sites != irrep.group().n_sites()) {
     XDIAG_THROW("n_sites does not match the n_sites in PermutationGroup");
-  } else if (n_sites < 32) {
+  }
+
+  // Choose basis implementation
+  if (backend == "auto") {
+    if (n_sites < 32) {
+      basis_ = std::make_shared<basis_t>(
+          electron::BasisSymmetricNp<uint32_t>(n_sites, nup, ndn, irrep));
+    } else if (n_sites < 64) {
+      basis_ = std::make_shared<basis_t>(
+          electron::BasisSymmetricNp<uint64_t>(n_sites, nup, ndn, irrep));
+    } else {
+      XDIAG_THROW("Blocks with more than 64 sites currently not implemented");
+    }
+  } else if (backend == "32bit") {
     basis_ = std::make_shared<basis_t>(
         electron::BasisSymmetricNp<uint32_t>(n_sites, nup, ndn, irrep));
-  } else if (n_sites < 64) {
+  } else if (backend == "64bit") {
     basis_ = std::make_shared<basis_t>(
         electron::BasisSymmetricNp<uint64_t>(n_sites, nup, ndn, irrep));
   } else {
-    XDIAG_THROW("Blocks with more than 64 sites currently not implemented");
+    XDIAG_THROW(fmt::format("Unknown backend: \"{}\"", backend));
   }
   size_ = basis::size(*basis_);
   check_dimension_works_with_blas_int_size(size_);
@@ -127,6 +181,7 @@ int64_t Electron::dim() const { return size_; }
 int64_t Electron::size() const { return size_; }
 
 int64_t Electron::n_sites() const { return n_sites_; }
+std::string Electron::backend() const { return backend_; }
 std::optional<int64_t> Electron::n_up() const { return n_up_; }
 std::optional<int64_t> Electron::n_dn() const { return n_dn_; }
 std::optional<Representation> const &Electron::irrep() const { return irrep_; }

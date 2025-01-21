@@ -3,6 +3,7 @@
 #include <variant>
 
 #include <xdiag/algebra/fill.hpp>
+#include <xdiag/operators/logic/block.hpp>
 #include <xdiag/operators/logic/compilation.hpp>
 #include <xdiag/operators/logic/real.hpp>
 #include <xdiag/operators/logic/valid.hpp>
@@ -17,7 +18,22 @@
 
 namespace xdiag {
 
+State apply(OpSum const &ops, State const &v) try {
+  auto blockr = block(ops, v.block());
+  auto w = State(block);
+  apply(ops, v, w);
+  return w;
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
+}
+
 void apply(OpSum const &ops, State const &v, State &w) try {
+  if (!blocks_match(ops, v.block(), w.block())) {
+    XDIAG_THROW("Cannot apply OpSum to State. The resulting state is not in "
+                "the correct symmetry sector. Please check the quantum numbers "
+                "of the output state w.");
+  }
+
   if ((v.n_cols() == 1) && (w.n_cols() == 1)) {
     if (isreal(ops)) {
       if (isreal(v) && isreal(w)) {

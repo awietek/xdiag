@@ -6,23 +6,37 @@ namespace xdiag {
 
 using namespace basis;
 
-tJ::tJ(int64_t n_sites, int64_t nup, int64_t ndn) try
-    : n_sites_(n_sites), n_up_(nup), n_dn_(ndn), irrep_(std::nullopt) {
-
+tJ::tJ(int64_t n_sites, int64_t nup, int64_t ndn, std::string backend) try
+    : n_sites_(n_sites), backend_(backend), n_up_(nup), n_dn_(ndn),
+      irrep_(std::nullopt) {
+  // Safety checks
   if (n_sites < 0) {
     XDIAG_THROW("Invalid argument: n_sites < 0");
   } else if ((nup < 0) || (ndn < 0)) {
     XDIAG_THROW("Invalid argument: (nup < 0) or (ndn < 0)");
   } else if ((nup + ndn) > n_sites) {
     XDIAG_THROW("Invalid argument: nup + ndn > n_sites");
-  } else if (n_sites < 32) {
+  }
+
+  // Choose basis implementation
+  if (backend == "auto") {
+    if (n_sites < 32) {
+      basis_ =
+          std::make_shared<basis_t>(tj::BasisNp<uint32_t>(n_sites, nup, ndn));
+    } else if (n_sites < 64) {
+      basis_ =
+          std::make_shared<basis_t>(tj::BasisNp<uint64_t>(n_sites, nup, ndn));
+    } else {
+      XDIAG_THROW("blocks with more than 64 sites currently not implemented");
+    }
+  } else if (backend == "32bit") {
     basis_ =
         std::make_shared<basis_t>(tj::BasisNp<uint32_t>(n_sites, nup, ndn));
-  } else if (n_sites < 64) {
+  } else if (backend == "64bit") {
     basis_ =
         std::make_shared<basis_t>(tj::BasisNp<uint64_t>(n_sites, nup, ndn));
   } else {
-    XDIAG_THROW("blocks with more than 64 sites currently not implemented");
+    XDIAG_THROW(fmt::format("Unknown backend: \"{}\"", backend));
   }
   size_ = basis::size(*basis_);
   check_dimension_works_with_blas_int_size(size_);
@@ -30,10 +44,11 @@ tJ::tJ(int64_t n_sites, int64_t nup, int64_t ndn) try
   XDIAG_RETHROW(e);
 }
 
-tJ::tJ(int64_t n_sites, int64_t nup, int64_t ndn,
-       Representation const &irrep) try
-    : n_sites_(n_sites), n_up_(nup), n_dn_(ndn), irrep_(irrep) {
-
+tJ::tJ(int64_t n_sites, int64_t nup, int64_t ndn, Representation const &irrep,
+       std::string backend) try
+    : n_sites_(n_sites), backend_(backend), n_up_(nup), n_dn_(ndn),
+      irrep_(irrep) {
+  // Safety checks
   if (n_sites < 0) {
     XDIAG_THROW("Invalid argument: n_sites < 0");
   } else if ((nup < 0) || (ndn < 0)) {
@@ -42,7 +57,35 @@ tJ::tJ(int64_t n_sites, int64_t nup, int64_t ndn,
     XDIAG_THROW("Invalid argument: nup + ndn > n_sites");
   } else if (n_sites != irrep.group().n_sites()) {
     XDIAG_THROW("n_sites does not match the n_sites in PermutationGroup");
-  } else if (n_sites < 32) {
+  }
+
+  // Choose basis implementation
+  if (backend == "auto") {
+    if (n_sites < 32) {
+      if (irrep.isreal()) {
+        auto characters = irrep.characters().as<arma::vec>();
+        basis_ = std::make_shared<basis_t>(tj::BasisSymmetricNp<uint32_t>(
+            n_sites, nup, ndn, irrep.group(), characters));
+      } else {
+        auto characters = irrep.characters().as<arma::cx_vec>();
+        basis_ = std::make_shared<basis_t>(tj::BasisSymmetricNp<uint32_t>(
+            n_sites, nup, ndn, irrep.group(), characters));
+      }
+
+    } else if (n_sites < 64) {
+      if (irrep.isreal()) {
+        auto characters = irrep.characters().as<arma::vec>();
+        basis_ = std::make_shared<basis_t>(tj::BasisSymmetricNp<uint64_t>(
+            n_sites, nup, ndn, irrep.group(), characters));
+      } else {
+        auto characters = irrep.characters().as<arma::cx_vec>();
+        basis_ = std::make_shared<basis_t>(tj::BasisSymmetricNp<uint64_t>(
+            n_sites, nup, ndn, irrep.group(), characters));
+      }
+    } else {
+      XDIAG_THROW("blocks with more than 64 sites currently not implemented");
+    }
+  } else if (backend == "32bit") {
     if (irrep.isreal()) {
       auto characters = irrep.characters().as<arma::vec>();
       basis_ = std::make_shared<basis_t>(tj::BasisSymmetricNp<uint32_t>(
@@ -52,8 +95,7 @@ tJ::tJ(int64_t n_sites, int64_t nup, int64_t ndn,
       basis_ = std::make_shared<basis_t>(tj::BasisSymmetricNp<uint32_t>(
           n_sites, nup, ndn, irrep.group(), characters));
     }
-
-  } else if (n_sites < 64) {
+  } else if (backend == "64bit") {
     if (irrep.isreal()) {
       auto characters = irrep.characters().as<arma::vec>();
       basis_ = std::make_shared<basis_t>(tj::BasisSymmetricNp<uint64_t>(
@@ -64,7 +106,7 @@ tJ::tJ(int64_t n_sites, int64_t nup, int64_t ndn,
           n_sites, nup, ndn, irrep.group(), characters));
     }
   } else {
-    XDIAG_THROW("blocks with more than 64 sites currently not implemented");
+    XDIAG_THROW(fmt::format("Unknown backend: \"{}\"", backend));
   }
   size_ = basis::size(*basis_);
   check_dimension_works_with_blas_int_size(size_);

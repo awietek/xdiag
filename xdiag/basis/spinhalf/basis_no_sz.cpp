@@ -1,15 +1,20 @@
 #include "basis_no_sz.hpp"
 
+#include <limits>
+
 #include <xdiag/combinatorics/binomial.hpp>
 
 namespace xdiag::basis::spinhalf {
 
 template <typename bit_t>
-BasisNoSz<bit_t>::BasisNoSz(int64_t n_sites)
+BasisNoSz<bit_t>::BasisNoSz(int64_t n_sites) try
     : n_sites_(n_sites), size_(pow(2, n_sites)), begin_(0), end_(size_) {
+  check_n_sites_work_with_bits<bit_t>(n_sites_);
   if (n_sites < 0) {
-    throw(std::invalid_argument("Found n_sites < 0"));
+    XDIAG_THROW("Found n_sites < 0");
   }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 template <typename bit_t>

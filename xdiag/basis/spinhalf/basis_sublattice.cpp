@@ -239,10 +239,13 @@ compute_rep_search_range_omp(std::vector<bit_t> const &reps,
 #endif
 
 template <typename bit_t, int n_sublat>
-BasisSublattice<bit_t, n_sublat>::BasisSublattice(Representation const &irrep)
+BasisSublattice<bit_t, n_sublat>::BasisSublattice(
+    Representation const &irrep) try
     : n_sites_(irrep.group().n_sites()), n_up_(undefined),
       n_postfix_bits_(n_sites_ - std::min(maximum_prefix_bits, n_sites_)),
       group_action_(irrep.group()), irrep_(irrep) {
+  check_n_sites_work_with_bits<bit_t>(n_sites_);
+
   if (isreal(irrep)) {
     arma::vec characters = irrep.characters().as<arma::vec>();
     std::tie(reps_, norms_) = reps_norms_no_sz(group_action_, characters);
@@ -252,14 +255,17 @@ BasisSublattice<bit_t, n_sublat>::BasisSublattice(Representation const &irrep)
   }
 
   rep_search_range_ = compute_rep_search_range_serial(reps_, n_postfix_bits_);
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 template <typename bit_t, int n_sublat>
-BasisSublattice<bit_t, n_sublat>::BasisSublattice(int64_t n_up,
-                                                  Representation const &irrep)
+BasisSublattice<bit_t, n_sublat>::BasisSublattice(
+    int64_t n_up, Representation const &irrep) try
     : n_sites_(irrep.group().n_sites()), n_up_(n_up),
       n_postfix_bits_(n_sites_ - std::min(maximum_prefix_bits, n_sites_)),
       group_action_(irrep.group()), irrep_(irrep) {
+  check_n_sites_work_with_bits<bit_t>(n_sites_);
 
   if (isreal(irrep)) {
     arma::vec characters = irrep.characters().as<arma::vec>();
@@ -276,6 +282,8 @@ BasisSublattice<bit_t, n_sublat>::BasisSublattice(int64_t n_up,
 #else
   rep_search_range_ = compute_rep_search_range_serial(reps_, n_postfix_bits_);
 #endif
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 template <typename bit_t, int n_sublat>

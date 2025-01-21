@@ -5,11 +5,13 @@
 
 namespace xdiag {
 
-tJDistributed::tJDistributed(int64_t n_sites, int64_t n_up, int64_t n_dn) try
-    : n_sites_(n_sites), n_up_(n_up), n_dn_(n_dn) {
+tJDistributed::tJDistributed(int64_t n_sites, int64_t n_up, int64_t n_dn,
+                             std::string backend) try
+    : n_sites_(n_sites), backend_(backend), n_up_(n_up), n_dn_(n_dn) {
   using namespace basis::tj_distributed;
   using combinatorics::binomial;
 
+  // Safety checks
   if (n_sites < 0) {
     XDIAG_THROW("n_sites < 0");
   } else if ((n_up < 0) || (n_dn < 0)) {
@@ -17,13 +19,23 @@ tJDistributed::tJDistributed(int64_t n_sites, int64_t n_up, int64_t n_dn) try
   } else if ((n_up + n_dn) > n_sites) {
     XDIAG_THROW("n_up + n_dn > n_sites");
   }
-
-  if (n_sites < 32) {
+  // Choose basis implementation
+  if (backend == "auto") {
+    if (n_sites < 32) {
+      basis_ =
+          std::make_shared<basis_t>(BasisNp<uint32_t>(n_sites, n_up, n_dn));
+    } else if (n_sites < 64) {
+      basis_ =
+          std::make_shared<basis_t>(BasisNp<uint64_t>(n_sites, n_up, n_dn));
+    } else {
+      XDIAG_THROW("Blocks with more than 64 sites currently not implemented");
+    }
+  } else if (backend == "32bit") {
     basis_ = std::make_shared<basis_t>(BasisNp<uint32_t>(n_sites, n_up, n_dn));
-  } else if (n_sites < 64) {
+  } else if (backend == "64bit") {
     basis_ = std::make_shared<basis_t>(BasisNp<uint64_t>(n_sites, n_up, n_dn));
   } else {
-    XDIAG_THROW("blocks with more than 64 sites currently not implemented");
+    XDIAG_THROW(fmt::format("Unknown backend: \"{}\"", backend));
   }
   dim_ = basis::dim(*basis_);
   assert(dim_ == binomial(n_sites, n_up) * binomial(n_sites - n_up, n_dn));

@@ -19,6 +19,7 @@
 
 namespace xdiag {
 
+XDIAG_API State apply(OpSum const &ops, State const &v);
 XDIAG_API void apply(OpSum const &ops, State const &v, State &w);
 
 template <typename coeff_t>

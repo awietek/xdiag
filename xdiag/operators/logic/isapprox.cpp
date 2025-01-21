@@ -62,6 +62,7 @@ std::optional<Scalar> isapprox_multiple(OpSum const &ops1, OpSum const &ops2,
                                         double rtol, double atol) try {
   auto t1 = order(ops1).terms();
   auto t2 = order(ops2).terms();
+
   if ((t1.size() != t2.size()) || (t1.size() == 0)) {
     return std::nullopt;
   } else {

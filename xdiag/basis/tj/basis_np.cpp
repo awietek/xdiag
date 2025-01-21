@@ -13,6 +13,8 @@ BasisNp<bit_t>::BasisNp(int64_t n_sites, int64_t n_up, int64_t n_dn) try
       size_dncs_(binomial(n_sites - n_up, n_dn)), size_(size_ups_ * size_dncs_),
       sitesmask_(((bit_t)1 << n_sites) - 1), lintable_ups_(n_sites, n_up),
       lintable_dncs_(n_sites - n_up, n_dn) {
+  check_n_sites_work_with_bits<bit_t>(n_sites_);
+
   if (n_sites < 0) {
     XDIAG_THROW("n_sites < 0");
   } else if ((n_up < 0) || (n_dn < 0)) {

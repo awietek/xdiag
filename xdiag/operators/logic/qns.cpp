@@ -9,6 +9,264 @@
 
 namespace xdiag {
 
+Spinhalf block(OpSum const &ops, Spinhalf const &block) try {
+  int64_t n_sites = block.n_sites();
+  std::string backend = block.backend();
+  auto nup = block.nup();
+  auto irrep = block.irrep();
+  if (!nup && !irrep) {
+    return block;
+  } else if (nup && !irrep) {
+    auto nupr = nup(ops, block);
+    return (nup == nupr) ? block : Spinhalf(n_sites, *nupr, backend);
+  } else if (!nup && irrep) {
+    auto irrepr = representation(ops, block);
+    return isapprox(irrep, irrepr) ? block : Spinhalf(n_sites, *irrep, backend);
+  } else { //(nup && irrep)
+    auto nupr = nup(ops, block);
+    auto irrepr = representation(ops, block);
+    return ((nup == nupr) && isapprox(irrep, irrepr))
+               ? block
+               : Spinhalf(n_sites, *nupr, *irrepr, backend);
+  }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+
+tJ block(OpSum const &ops, tJ const &block) try {
+  int64_t n_sites = block.n_sites();
+  std::string backend = block.backend();
+  auto nup = block.nup();
+  auto ndn = block.ndn();
+  auto irrep = block.irrep();
+  if (!nup && !irrep) {
+    return block;
+  } else if (nup && !irrep) {
+    auto nupr = nup(ops, block);
+    auto ndnr = ndn(ops, block);
+    return ((nup == nupr) && (ndn == ndnr))
+               ? block
+               : tJ(n_sites, *nupr, *ndnr, backend);
+  }
+  // // Not yet implemented
+  // else if (!nup && irrep) {
+  //   auto irrepr = representation(ops, block);
+  //   return isapprox(irrep, irrepr) ? block : tJ(n_sites, *irrep, backend);
+  // }
+  else { //(nup && irrep)
+    auto nupr = nup(ops, block);
+    auto ndnr = ndn(ops, block);
+    auto irrepr = representation(ops, block);
+    return ((nup == nupr) && (ndn == ndnr) && isapprox(irrep, irrepr))
+               ? block
+               : tJ(n_sites, *nupr, *ndnr, *irrepr, backend);
+  }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+
+Electron block(OpSum const &ops, Electron const &block) try {
+  int64_t n_sites = block.n_sites();
+  std::string backend = block.backend();
+  auto nup = block.nup();
+  auto ndn = block.ndn();
+  auto irrep = block.irrep();
+  if (!nup && !irrep) {
+    return block;
+  } else if (nup && !irrep) {
+    auto nupr = nup(ops, block);
+    auto ndnr = ndn(ops, block);
+    return ((nup == nupr) && (ndn == ndnr))
+               ? block
+               : Electron(n_sites, *nupr, *ndnr, backend);
+  } else if (!nup && irrep) {
+    auto irrepr = representation(ops, block);
+    return isapprox(irrep, irrepr) ? block : Electron(n_sites, *irrep, backend);
+  } else { //(nup && irrep)
+    auto nupr = nup(ops, block);
+    auto ndnr = ndn(ops, block);
+    auto irrepr = representation(ops, block);
+    return ((nup == nupr) && (ndn == ndnr) && isapprox(irrep, irrepr))
+               ? block
+               : Electron(n_sites, *nupr, *ndnr, *irrepr, backend);
+  }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+
+#ifdef XDIAG_USE_MPI
+SpinhalfDistributed block(OpSum const &ops,
+                          SpinhalfDistributed const &block) try {
+  int64_t n_sites = block.n_sites();
+  std::string backend = block.backend();
+  auto nup = block.nup();
+  if (!nup) {
+    return block;
+  } else {
+    auto nupr = nup(ops, block);
+    return (nup == nupr) ? block : SpinhalfDistributed(n_sites, *nupr, backend);
+  }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+tJDistributed block(OpSum const &ops, tJDistributed const &block) try {
+  int64_t n_sites = block.n_sites();
+  std::string backend = block.backend();
+  auto nup = block.nup();
+  auto ndn = block.ndn();
+  if (!nup) {
+    return block;
+  } else {
+    auto nupr = nup(ops, block);
+    auto ndnr = ndn(ops, block);
+    return ((nup == nupr) && (ndn == ndnr))
+               ? block
+               : tJDistributed(n_sites, *nupr, *ndnr, backend);
+  }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+#endif
+
+template <typename block_t>
+Representation representation(OpSum const &ops, block_t const &block) try {
+  auto irrep_block = block.irrep();
+  if (!irrep_block) {
+    XDIAG_THROW("Block has no irreducible representation defined. Hence, the "
+                "irreducible representation of an OpSum times the block cannot "
+                "be determined");
+  }
+
+  auto irrep_ops = representation(ops, irrep_block.group());
+  if (irrep_ops) {
+    return (*irrep_ops) * (*irrep_block);
+  } else {
+    XDIAG_THROW("OpSum does not transform according to an irredicuble "
+                "representation of the symmetry group of the block")
+  }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+
+#ifdef XDIAG_USE_MPI
+template <>
+Representation representation(OpSum const &ops,
+                              SpinhalfDistributed const &block) try {
+  XDIAG_THROW("Block of type SpinhalfDistributed does not have irreducible "
+              "representation defined");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+template <>
+Representation representation(OpSum const &ops,
+                              tJDistributed const &block) try {
+  XDIAG_THROW("Block of type tJDistributed does not have irreducible "
+              "representation defined");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+#endif
+
+template Representation representation(OpSum const &, Spinhalf const &);
+template Representation representation(OpSum const &, tJ const &);
+template Representation representation(OpSum const &, Electron const &);
+
+Representation representation(OpSum const &ops, Block const &block) try {
+  return std::visit([&](auto const &b) { return representation(ops, b) },
+                    block);
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+
+Representation representation(OpSum const &ops, State const &v) try {
+  return representation(ops, state.block());
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+
+template <typename block_t>
+int64_t nup(OpSum const &ops, block_t const &block) try {
+  auto nup_block = block.nup();
+  if (!nup_block) {
+    XDIAG_THROW("Block does not have a fixed number of nup particles");
+  }
+
+  auto nup_ops = nup(ops, irrep_block.group());
+  if (nup_ops) {
+    return (*nup_ops) + (*nup_block);
+  } else {
+    XDIAG_THROW("OpSum does not conserve the number of nup particles");
+  }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+
+template int64_t nup(OpSum const &ops, Spinhalf const &block);
+template int64_t nup(OpSum const &ops, tJ const &block);
+template int64_t nup(OpSum const &ops, Electron const &block);
+#ifdef XDIAG_USE_MPI
+template int64_t nup(OpSum const &ops, SpinhalfDistributed const &block);
+template int64_t nup(OpSum const &ops, tJDistributed const &block);
+#endif
+
+int64_t nup(OpSum const &ops, Block const &block) try {
+  return std::visit([&](auto const &b) { return nup(ops, b) }, block);
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+
+int64_t nup(OpSum const &ops, State const &v) try {
+  return nup(ops, state.block());
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+
+template <typename block_t>
+int64_t ndn(OpSum const &ops, block_t const &block) try {
+  auto ndn_block = block.ndn();
+  if (!ndn_block) {
+    XDIAG_THROW("Block does not have a fixed number of ndn particles");
+  }
+
+  auto ndn_ops = ndn(ops, irrep_block.group());
+  if (ndn_ops) {
+    return (*ndn_ops) + (*ndn_block);
+  } else {
+    XDIAG_THROW("OpSum does not conserve the number of ndn particles");
+  }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+
+template <> int64_t ndn(OpSum const &ops, Spinhalf const &block) try {
+  XDIAG_THROW("Block of type Spinhalf does not have ndn defined");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+template int64_t ndn(OpSum const &ops, tJ const &block);
+template int64_t ndn(OpSum const &ops, Electron const &block);
+#ifdef XDIAG_USE_MPI
+template <>
+int64_t ndn(OpSum const &ops, SpinhalfDistributed const &block) try {
+  XDIAG_THROW("Block of type SpinhalfDistributed does not have ndn defined");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+template int64_t ndn(OpSum const &ops, tJDistributed const &block);
+#endif
+
+int64_t ndn(OpSum const &ops, Block const &block) try {
+  return std::visit([&](auto const &b) { return ndn(ops, b) }, block);
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+
+int64_t ndn(OpSum const &ops, State const &v) try {
+  return ndn(ops, state.block());
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+
 template <typename T>
 static std::optional<int64_t> nup_matrix(arma::Mat<T> const &mat,
                                          double precision = 1e-12) {

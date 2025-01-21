@@ -3,10 +3,12 @@
 #include <iostream>
 
 #include "testcases_tj.hpp"
-#include <xdiag/algorithms/sparse_diag.hpp>
 #include <xdiag/algebra/apply.hpp>
 #include <xdiag/algebra/matrix.hpp>
+#include <xdiag/algorithms/sparse_diag.hpp>
 #include <xdiag/utils/close.hpp>
+
+#include <xdiag/all.hpp>
 
 using namespace xdiag;
 
@@ -47,8 +49,8 @@ TEST_CASE("tj_apply", "[tj]") {
 
   for (int N = 3; N <= 6; ++N) {
     Log("tj_apply: random all-to-all complex apply=matrix, N={}", N);
-
     auto ops = tj_alltoall_complex(N);
+ 
     for (int nup = 0; nup <= N; ++nup)
       for (int ndn = 0; ndn <= N - nup; ++ndn) {
         auto block = tJ(N, nup, ndn);

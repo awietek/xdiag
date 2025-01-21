@@ -19,6 +19,7 @@ BasisSymmetricNp<bit_t>::BasisSymmetricNp(int64_t n_sites, int64_t nup,
       lintable_ups_(n_sites, nup), lintable_dns_(n_sites, ndn),
       fermi_table_ups_(n_sites, nup, irrep.group()),
       fermi_table_dns_(n_sites, ndn, irrep.group()) {
+  check_n_sites_work_with_bits<bit_t>(n_sites_);
 
   using combinatorics::Combinations;
   if (n_sites < 0) {

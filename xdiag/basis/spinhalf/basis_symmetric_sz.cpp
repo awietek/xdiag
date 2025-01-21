@@ -11,6 +11,8 @@ BasisSymmetricSz<bit_t>::BasisSymmetricSz(int64_t n_up,
     : n_sites_(irrep.group().n_sites()), n_up_(n_up),
       group_action_(irrep.group()), irrep_(irrep),
       combinations_indexing_(n_sites_, n_up) {
+  check_n_sites_work_with_bits<bit_t>(n_sites_);
+
   if (n_up < 0) {
     XDIAG_THROW("Invalid value of nup: n_up < 0");
   } else if (n_up > n_sites_) {

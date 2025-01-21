@@ -119,4 +119,17 @@ void check_dimension_works_with_blas_int_size(int64_t dim) try {
   XDIAG_RETHROW(e);
 }
 
+template <typename bit_t>
+void check_n_sites_work_with_bits(int64_t n_sites) try {
+  int64_t n_bits = std::numeric_limits<bit_t>::digits;
+  if (n_sites >= n_bits) {
+    XDIAG_THROW(
+        fmt::format("Cannot encode basis with n_sites={} using only {} bits. "
+                    "Consider using a different backend if possible.",
+                    n_sites, n_bits));
+  }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+
 } // namespace xdiag

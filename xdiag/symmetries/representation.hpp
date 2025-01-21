@@ -42,6 +42,8 @@ private:
 
 XDIAG_API int64_t size(Representation const &irrep);
 XDIAG_API bool isreal(Representation const &irrep);
+XDIAG_API bool isapprox(Representation const &r1, Representation const &r2,
+                        double rtol = 1e-12, double atol = 1e-12);
 XDIAG_API Representation multiply(Representation const &r1,
                                   Representation const &r2);
 XDIAG_API Representation operator*(Representation const &r1,

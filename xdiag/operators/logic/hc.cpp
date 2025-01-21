@@ -39,7 +39,13 @@ Op hc(Op const &op) try {
 OpSum hc(OpSum const &ops) try {
   OpSum ops_hc;
   for (auto [cpl, op] : ops.plain()) {
-    ops_hc += conj(cpl.scalar()) * hc(op);
+    std::string type = op.type();
+    if ((type == "Exchange") || (type == "Hop") || (type == "Hopup") ||
+        (type == "Hopdn")) {
+      ops_hc += cpl.scalar() * hc(op);
+    } else {
+      ops_hc += conj(cpl.scalar()) * hc(op);
+    }
   }
   return ops_hc;
 } catch (Error const &e) {

@@ -14,9 +14,11 @@ public:
   using iterator_t = SpinhalfDistributedIterator;
 
   SpinhalfDistributed() = default;
-  SpinhalfDistributed(int64_t n_sites, int64_t nup);
+  SpinhalfDistributed(int64_t n_sites, int64_t nup,
+                      std::string backend = "auto");
 
   int64_t n_sites() const;
+  std::string backend() const;
   int64_t n_up() const;
 
   int64_t dim() const;
@@ -35,8 +37,8 @@ public:
 
 private:
   int64_t n_sites_;
+  std::string backend_;
   int64_t n_up_;
-
   std::shared_ptr<basis_t> basis_;
   int64_t dim_;
   int64_t size_;

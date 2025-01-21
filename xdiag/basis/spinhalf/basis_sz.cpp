@@ -9,14 +9,16 @@
 namespace xdiag::basis::spinhalf {
 
 template <typename bit_t>
-BasisSz<bit_t>::BasisSz(int64_t n_sites, int64_t nup)
+BasisSz<bit_t>::BasisSz(int64_t n_sites, int64_t nup) try
     : n_sites_(n_sites), n_up_(nup), lintable_(n_sites, nup),
       states_(combinatorics::binomial(n_sites, nup)), size_(states_.size()),
       begin_(n_sites, nup, 0), end_(n_sites, nup, size_) {
+  check_n_sites_work_with_bits<bit_t>(n_sites);
+
   if ((nup < 0) || (nup > n_sites)) {
-    throw(std::invalid_argument("Invalid value of nup"));
+    XDIAG_THROW("Invalid value of nup");
   } else if (n_sites < 0) {
-    throw(std::invalid_argument("n_sites < 0"));
+    XDIAG_THROW("n_sites < 0");
   }
 
 #ifdef _OPENMP
@@ -30,6 +32,8 @@ BasisSz<bit_t>::BasisSz(int64_t n_sites, int64_t nup)
     states_[idx] = state;
   }
 #endif
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 template <typename bit_t>

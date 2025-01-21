@@ -12,41 +12,24 @@
 namespace xdiag {
 
 template <class block_t>
-arma::mat matrix(OpSum const &ops, block_t const &block_in,
-                 block_t const &block_out, double precision = 1e-12);
-template <class block_t>
-arma::mat matrix(Op const &op, block_t const &block_in,
-                 block_t const &block_out, double precision = 1e-12);
-template <class block_t>
-arma::mat matrix(OpSum const &ops, block_t const &block,
-                 double precision = 1e-12);
-template <class block_t>
-arma::mat matrix(Op const &op, block_t const &block, double precision = 1e-12);
+XDIAG_API arma::mat matrix(OpSum const &ops, block_t const &block);
 
 template <class block_t>
-arma::cx_mat matrixC(OpSum const &ops, block_t const &block_in,
-                     block_t const &block_out, double precision = 1e-12);
+XDIAG_API arma::mat matrix(OpSum const &ops, block_t const &block_in,
+                           block_t const &block_out);
+
 template <class block_t>
-arma::cx_mat matrixC(Op const &ops, block_t const &block_in,
-                     block_t const &block_out, double precision = 1e-12);
+XDIAG_API arma::cx_mat matrixC(OpSum const &ops, block_t const &block_in,
+                               block_t const &block_out);
+
 template <class block_t>
-arma::cx_mat matrixC(OpSum const &ops, block_t const &block,
-                     double precision = 1e-12);
-template <class block_t>
-arma::cx_mat matrixC(Op const &op, block_t const &block,
-                     double precision = 1e-12);
+XDIAG_API arma::cx_mat matrixC(OpSum const &ops, block_t const &block);
 
 // developer methods
-template <typename coeff_t>
-void matrix(coeff_t *mat, OpSum const &ops, Spinhalf const &block_in,
-            Spinhalf const &block_out, double precision = 1e-12);
-
-template <typename coeff_t>
-void matrix(coeff_t *mat, OpSum const &ops, tJ const &block_in,
-            tJ const &block_out, double precision = 1e-12);
-
-template <typename coeff_t>
-void matrix(coeff_t *mat, OpSum const &ops, Electron const &block_in,
-            Electron const &block_out, double precision = 1e-12);
+template <typename coeff_t, class block_t>
+XDIAG_API void matrix(coeff_t *mat, OpSum const &ops, block_t const &block_in,
+                      block_t const &block_out);
+template <typename coeff_t, class block_t>
+XDIAG_API void matrix(coeff_t *mat, OpSum const &ops, block_t const &block);
 
 } // namespace xdiag

@@ -7,151 +7,137 @@ namespace xdiag {
 
 using namespace basis;
 
-Spinhalf::Spinhalf(int64_t n_sites) try
-    : n_sites_(n_sites), n_up_(std::nullopt), irrep_(std::nullopt),
-      size_((int64_t)1 << n_sites) {
+Spinhalf::Spinhalf(int64_t n_sites, std::string backend) try
+    : n_sites_(n_sites), backend_(backend), n_up_(std::nullopt),
+      irrep_(std::nullopt), size_((int64_t)1 << n_sites) {
   check_dimension_works_with_blas_int_size(size_);
 
+  // Safety checks
   if (n_sites < 0) {
     XDIAG_THROW("Invalid argument: n_sites < 0");
-  } else if (n_sites < 32) {
+  }
+
+  // Choose basis implementation
+  if (backend == "auto") {
+    if (n_sites < 32) {
+      basis_ =
+          std::make_shared<basis_t>(spinhalf::BasisNoSz<uint32_t>(n_sites));
+    } else if (n_sites < 64) {
+      basis_ =
+          std::make_shared<basis_t>(spinhalf::BasisNoSz<uint64_t>(n_sites));
+    } else {
+      XDIAG_THROW(
+          "Spinhalf blocks with more than 64 sites currently not implemented");
+    }
+  } else if (backend == "32bit") {
     basis_ = std::make_shared<basis_t>(spinhalf::BasisNoSz<uint32_t>(n_sites));
-  } else if (n_sites < 64) {
+  } else if (backend == "64bit") {
     basis_ = std::make_shared<basis_t>(spinhalf::BasisNoSz<uint64_t>(n_sites));
   } else {
-    XDIAG_THROW(
-        "Spinhalf blocks with more than 64 sites currently not implemented");
+    XDIAG_THROW(fmt::format("Unknown backend: \"{}\"", backend));
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
-Spinhalf::Spinhalf(int64_t n_sites, int64_t n_up) try
-    : n_sites_(n_sites), n_up_(n_up), irrep_(std::nullopt),
+Spinhalf::Spinhalf(int64_t n_sites, int64_t n_up, std::string backend) try
+    : n_sites_(n_sites), backend_(backend), n_up_(n_up), irrep_(std::nullopt),
       size_(combinatorics::binomial(n_sites, n_up)) {
   check_dimension_works_with_blas_int_size(size_);
 
+  // Safety checks
   if (n_sites < 0) {
     XDIAG_THROW("Invalid argument: n_sites < 0");
   } else if (n_up < 0) {
     XDIAG_THROW("Invalid argument: n_up < 0");
   } else if (n_up > n_sites) {
     XDIAG_THROW("Invalid argument: n_up > n_sites");
-  } else if (n_sites < 32) {
+  }
+
+  // Choose basis implementation
+  if (backend == "auto") {
+    if (n_sites < 32) {
+      basis_ =
+          std::make_shared<basis_t>(spinhalf::BasisSz<uint32_t>(n_sites, n_up));
+    } else if (n_sites < 64) {
+      basis_ =
+          std::make_shared<basis_t>(spinhalf::BasisSz<uint64_t>(n_sites, n_up));
+    } else {
+      XDIAG_THROW(
+          "Spinhalf blocks with more than 64 sites currently not implemented");
+    }
+  } else if (backend == "32bit") {
     basis_ =
         std::make_shared<basis_t>(spinhalf::BasisSz<uint32_t>(n_sites, n_up));
-  } else if (n_sites < 64) {
+  } else if (backend == "64bit") {
     basis_ =
         std::make_shared<basis_t>(spinhalf::BasisSz<uint64_t>(n_sites, n_up));
   } else {
-    XDIAG_THROW(
-        "Spinhalf blocks with more than 64 sites currently not implemented");
+    XDIAG_THROW(fmt::format("Unknown backend: \"{}\"", backend));
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
-
-template <typename bit_t>
-static std::shared_ptr<Spinhalf::basis_t>
-make_spinhalf_basis_no_sz(int64_t n_sites, Representation const &irrep,
-                          int64_t n_sublat) try {
-  using basis_t = Spinhalf::basis_t;
-  if (n_sublat == 0) {
-    return std::make_shared<basis_t>(
-        spinhalf::BasisSymmetricNoSz<bit_t>(irrep));
-  } else if (n_sublat == 1) {
-    return std::make_shared<basis_t>(
-        spinhalf::BasisSublattice<bit_t, 1>(irrep));
-  } else if (n_sublat == 2) {
-    return std::make_shared<basis_t>(
-        spinhalf::BasisSublattice<bit_t, 2>(irrep));
-  } else if (n_sublat == 3) {
-    return std::make_shared<basis_t>(
-        spinhalf::BasisSublattice<bit_t, 3>(irrep));
-  } else if (n_sublat == 4) {
-    return std::make_shared<basis_t>(
-        spinhalf::BasisSublattice<bit_t, 4>(irrep));
-  } else if (n_sublat == 5) {
-    return std::make_shared<basis_t>(
-        spinhalf::BasisSublattice<bit_t, 5>(irrep));
-  } else {
-    XDIAG_THROW("Invalid n_sublat specified. Must be "
-                "eiter 0 (so sublattice coding) or between 1 and 5. ");
-  }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
-
-Spinhalf::Spinhalf(int64_t n_sites, Representation const &irrep) try
-    : Spinhalf(n_sites, irrep, 0) {
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
 Spinhalf::Spinhalf(int64_t n_sites, Representation const &irrep,
-                   int64_t n_sublat) try
-    : n_sites_(n_sites), n_up_(std::nullopt), irrep_(irrep) {
+                   std::string backend) try
+    : n_sites_(n_sites), backend_(backend), n_up_(std::nullopt), irrep_(irrep) {
 
+  // Safety checks
   if (n_sites < 0) {
     XDIAG_THROW("Invalid argument: n_sites < 0");
   } else if (n_sites != irrep.group().n_sites()) {
     XDIAG_THROW("n_sites does not match the n_sites in PermutationGroup");
-  } else if ((n_sublat < 0) || (n_sublat > 5)) {
-    XDIAG_THROW("number of sublattices must either be 0 (no "
-                "sublattice) or between 1 and 5");
-  } else if (n_sites < 64) {
-    basis_ = make_spinhalf_basis_no_sz<uint64_t>(n_sites, irrep, n_sublat);
-  } else {
-    XDIAG_THROW("blocks with more than 64 sites currently not implemented");
   }
+
+  // Choose basis implementation
+  if (backend == "auto") {
+    if (n_sites < 32) {
+      basis_ = std::make_shared<basis_t>(
+          spinhalf::BasisSymmetricNoSz<uint32_t>(irrep));
+    } else if (n_sites < 64) {
+      basis_ = std::make_shared<basis_t>(
+          spinhalf::BasisSymmetricNoSz<uint64_t>(irrep));
+    } else {
+      XDIAG_THROW(
+          "Spinhalf blocks with more than 64 sites currently not implemented");
+    }
+  } else if (backend == "32bit") {
+    basis_ = std::make_shared<basis_t>(
+        spinhalf::BasisSymmetricNoSz<uint32_t>(irrep));
+  } else if (backend == "64bit") {
+    basis_ = std::make_shared<basis_t>(
+        spinhalf::BasisSymmetricNoSz<uint64_t>(irrep));
+  } else if (backend == "1sublattice") {
+    basis_ = std::make_shared<basis_t>(
+        spinhalf::BasisSublattice<uint64_t, 1>(irrep));
+  } else if (backend == "2sublattice") {
+    basis_ = std::make_shared<basis_t>(
+        spinhalf::BasisSublattice<uint64_t, 2>(irrep));
+  } else if (backend == "3sublattice") {
+    basis_ = std::make_shared<basis_t>(
+        spinhalf::BasisSublattice<uint64_t, 3>(irrep));
+  } else if (backend == "4sublattice") {
+    basis_ = std::make_shared<basis_t>(
+        spinhalf::BasisSublattice<uint64_t, 4>(irrep));
+  } else if (backend == "5sublattice") {
+    basis_ = std::make_shared<basis_t>(
+        spinhalf::BasisSublattice<uint64_t, 5>(irrep));
+  } else {
+    XDIAG_THROW(fmt::format("Unknown backend: \"{}\"", backend));
+  }
+
   size_ = basis::size(*basis_);
   check_dimension_works_with_blas_int_size(size_);
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
-template <typename bit_t>
-static std::shared_ptr<Spinhalf::basis_t>
-make_spinhalf_basis_sz(int64_t n_sites, int64_t n_up,
-                       Representation const &irrep, int64_t n_sublat) try {
-  using basis_t = Spinhalf::basis_t;
-
-  if (n_sublat == 0) {
-    return std::make_shared<basis_t>(
-        spinhalf::BasisSymmetricSz<bit_t>(n_up, irrep));
-  } else if (n_sublat == 1) {
-    return std::make_shared<basis_t>(
-        spinhalf::BasisSublattice<bit_t, 1>(n_up, irrep));
-  } else if (n_sublat == 2) {
-    return std::make_shared<basis_t>(
-        spinhalf::BasisSublattice<bit_t, 2>(n_up, irrep));
-  } else if (n_sublat == 3) {
-    return std::make_shared<basis_t>(
-        spinhalf::BasisSublattice<bit_t, 3>(n_up, irrep));
-  } else if (n_sublat == 4) {
-    return std::make_shared<basis_t>(
-        spinhalf::BasisSublattice<bit_t, 4>(n_up, irrep));
-  } else if (n_sublat == 5) {
-    return std::make_shared<basis_t>(
-        spinhalf::BasisSublattice<bit_t, 5>(n_up, irrep));
-  } else {
-    XDIAG_THROW("Invalid n_sublat specified. Must be "
-                "eiter 0 (so sublattice coding) or between 1 and 5.");
-  }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
-
-Spinhalf::Spinhalf(int64_t n_sites, int64_t n_up,
-                   Representation const &irrep) try
-    : Spinhalf(n_sites, n_up, irrep, 0) {
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
-
 Spinhalf::Spinhalf(int64_t n_sites, int64_t n_up, Representation const &irrep,
-                   int64_t n_sublat) try
-    : n_sites_(n_sites), n_up_(n_up), irrep_(irrep) {
+                   std::string backend) try
+    : n_sites_(n_sites), backend_(backend), n_up_(n_up), irrep_(irrep) {
+
+  // Safety checks
   if (n_sites < 0) {
     XDIAG_THROW("Invalid argument: n_sites < 0");
   } else if (n_up < 0) {
@@ -160,14 +146,45 @@ Spinhalf::Spinhalf(int64_t n_sites, int64_t n_up, Representation const &irrep,
     XDIAG_THROW("Invalid argument: n_up > n_sites");
   } else if (n_sites != irrep.group().n_sites()) {
     XDIAG_THROW("n_sites does not match the n_sites in PermutationGroup");
-  } else if ((n_sublat < 0) || (n_sublat > 5)) {
-    XDIAG_THROW("Invalid n_sublat specified. Must be "
-                "eiter 0 (so sublattice coding) or between 1 and 5.");
-  } else if (n_sites < 64) {
-    basis_ = make_spinhalf_basis_sz<uint64_t>(n_sites, n_up, irrep, n_sublat);
-  } else {
-    XDIAG_THROW("blocks with more than 64 sites currently not implemented");
   }
+
+  // Choose basis implementation
+  if (backend == "auto") {
+    if (n_sites < 32) {
+      basis_ = std::make_shared<basis_t>(
+          spinhalf::BasisSymmetricSz<uint32_t>(n_up, irrep));
+    } else if (n_sites < 64) {
+      basis_ = std::make_shared<basis_t>(
+          spinhalf::BasisSymmetricSz<uint64_t>(n_up, irrep));
+    } else {
+      XDIAG_THROW(
+          "Spinhalf blocks with more than 64 sites currently not implemented");
+    }
+  } else if (backend == "32bit") {
+    basis_ = std::make_shared<basis_t>(
+        spinhalf::BasisSymmetricSz<uint32_t>(n_up, irrep));
+  } else if (backend == "64bit") {
+    basis_ = std::make_shared<basis_t>(
+        spinhalf::BasisSymmetricSz<uint64_t>(n_up, irrep));
+  } else if (backend == "1sublattice") {
+    basis_ = std::make_shared<basis_t>(
+        spinhalf::BasisSublattice<uint64_t, 1>(n_up, irrep));
+  } else if (backend == "2sublattice") {
+    basis_ = std::make_shared<basis_t>(
+        spinhalf::BasisSublattice<uint64_t, 2>(n_up, irrep));
+  } else if (backend == "3sublattice") {
+    basis_ = std::make_shared<basis_t>(
+        spinhalf::BasisSublattice<uint64_t, 3>(n_up, irrep));
+  } else if (backend == "4sublattice") {
+    basis_ = std::make_shared<basis_t>(
+        spinhalf::BasisSublattice<uint64_t, 4>(n_up, irrep));
+  } else if (backend == "5sublattice") {
+    basis_ = std::make_shared<basis_t>(
+        spinhalf::BasisSublattice<uint64_t, 5>(n_up, irrep));
+  } else {
+    XDIAG_THROW(fmt::format("Unknown backend: \"{}\"", backend));
+  }
+
   size_ = basis::size(*basis_);
   check_dimension_works_with_blas_int_size(size_);
 } catch (Error const &e) {
@@ -201,6 +218,7 @@ bool Spinhalf::operator!=(Spinhalf const &rhs) const {
 }
 
 int64_t Spinhalf::n_sites() const { return n_sites_; }
+std::string Spinhalf::backend() const { return backend_; }
 std::optional<int64_t> Spinhalf::n_up() const { return n_up_; }
 std::optional<Representation> const &Spinhalf::irrep() const { return irrep_; }
 

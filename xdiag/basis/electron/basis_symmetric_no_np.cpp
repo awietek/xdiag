@@ -14,8 +14,10 @@ BasisSymmetricNoNp<bit_t>::BasisSymmetricNoNp(int64_t n_sites,
       raw_ups_size_((int64_t)1 << n_sites),
       raw_dns_size_((int64_t)1 << n_sites), lintable_ups_(n_sites),
       lintable_dns_(n_sites), fermi_table_(n_sites_, irrep.group()) {
+  check_n_sites_work_with_bits<bit_t>(n_sites_);
+
   if (n_sites < 0) {
-    throw(std::invalid_argument("n_sites < 0"));
+    XDIAG_THROW("n_sites < 0");
   } else if (n_sites != irrep.group().n_sites()) {
     XDIAG_THROW("n_sites does not match the n_sites in PermutationGroup");
   }

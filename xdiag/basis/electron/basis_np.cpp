@@ -7,18 +7,21 @@ namespace xdiag::basis::electron {
 using namespace combinatorics;
 
 template <typename bit_t>
-BasisNp<bit_t>::BasisNp(int n_sites, int n_up, int n_dn)
+BasisNp<bit_t>::BasisNp(int n_sites, int n_up, int n_dn) try
     : n_sites_(n_sites), n_up_(n_up), n_dn_(n_dn),
       size_ups_(binomial(n_sites, n_up)), size_dns_(binomial(n_sites, n_dn)),
       size_(size_ups_ * size_dns_), lintable_ups_(n_sites, n_up),
       lintable_dns_(n_sites, n_dn) {
+  check_n_sites_work_with_bits<bit_t>(n_sites_);
   if (n_sites < 0) {
-    throw(std::invalid_argument("n_sites < 0"));
+    XDIAG_THROW("n_sites < 0");
   } else if ((n_up < 0) || (n_up > n_sites)) {
-    throw(std::invalid_argument("Invalid value of nup"));
+    XDIAG_THROW("Invalid value of nup");
   } else if ((n_dn < 0) || (n_dn > n_sites)) {
-    throw(std::invalid_argument("Invalid value of ndn"));
+    XDIAG_THROW("Invalid value of ndn");
   }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 template <typename bit_t> int BasisNp<bit_t>::n_sites() const {

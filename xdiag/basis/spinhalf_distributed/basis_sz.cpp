@@ -67,6 +67,7 @@ BasisSz<bit_t>::BasisSz(int64_t n_sites, int64_t n_up)
     : n_sites_(n_sites), n_up_(n_up), n_prefix_bits_(n_sites / 2),
       n_postfix_bits_(n_sites - n_prefix_bits_) {
   using namespace combinatorics;
+  check_n_sites_work_with_bits<bit_t>(n_sites_);
 
   if (n_sites < 0) {
     XDIAG_THROW("n_sites < 0");
@@ -104,7 +105,7 @@ BasisSz<bit_t>::BasisSz(int64_t n_sites, int64_t n_up)
   mpi::Allreduce(&size_transpose_, &size_min_transpose, 1, MPI_MIN,
                  MPI_COMM_WORLD);
   size_min_ = std::min(size_min, size_min_transpose);
-  
+
   // Check local sizes sum up to the actual dimension
   int64_t dim;
   mpi::Allreduce(&size_, &dim, 1, MPI_SUM, MPI_COMM_WORLD);
@@ -165,19 +166,17 @@ template <typename bit_t>
 typename BasisSz<bit_t>::iterator_t BasisSz<bit_t>::end() const {
   return iterator_t(*this, false);
 }
-template <typename bit_t>
-int64_t BasisSz<bit_t>::index(bit_t spins) const{
+template <typename bit_t> int64_t BasisSz<bit_t>::index(bit_t spins) const {
   bit_t prefix = spins >> n_postfix_bits_;
-  if (rank(prefix)!= mpi_rank_){
+  if (rank(prefix) != mpi_rank_) {
     return invalid_index;
   }
   int64_t offset = prefix_begin(prefix);
-  auto const& lintable = postfix_lintable(prefix);
-  bit_t postfix = spins & (((bit_t)1 << n_postfix_bits_)-1);
+  auto const &lintable = postfix_lintable(prefix);
+  bit_t postfix = spins & (((bit_t)1 << n_postfix_bits_) - 1);
   return offset + lintable.index(postfix);
 }
 
-  
 template <typename bit_t>
 std::vector<bit_t> const &BasisSz<bit_t>::prefixes() const {
   return prefixes_;
