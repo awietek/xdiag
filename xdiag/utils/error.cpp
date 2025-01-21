@@ -131,5 +131,7 @@ void check_n_sites_work_with_bits(int64_t n_sites) try {
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
-
+template void check_n_sites_work_with_bits<uint16_t>(int64_t n_sites);
+template void check_n_sites_work_with_bits<uint32_t>(int64_t n_sites);
+template void check_n_sites_work_with_bits<uint64_t>(int64_t n_sites);
 } // namespace xdiag

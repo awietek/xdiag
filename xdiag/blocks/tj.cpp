@@ -136,6 +136,7 @@ int64_t tJ::dim() const { return size_; }
 int64_t tJ::size() const { return size_; }
 
 int64_t tJ::n_sites() const { return n_sites_; }
+std::string tJ::backend() const { return backend_; }
 std::optional<int64_t> tJ::n_up() const { return n_up_; }
 std::optional<int64_t> tJ::n_dn() const { return n_dn_; }
 std::optional<Representation> const &tJ::irrep() const { return irrep_; }

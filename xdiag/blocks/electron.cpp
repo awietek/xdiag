@@ -38,7 +38,8 @@ Electron::Electron(int64_t n_sites, std::string backend) try
   XDIAG_RETHROW(e);
 }
 
-Electron::Electron(int64_t n_sites, int64_t nup, int64_t ndn) try
+Electron::Electron(int64_t n_sites, int64_t nup, int64_t ndn,
+                   std::string backend) try
     : n_sites_(n_sites), backend_(backend), n_up_(nup), n_dn_(ndn),
       irrep_(std::nullopt) {
 
@@ -77,7 +78,8 @@ Electron::Electron(int64_t n_sites, int64_t nup, int64_t ndn) try
   XDIAG_RETHROW(e);
 }
 
-Electron::Electron(int64_t n_sites, Representation const &irrep) try
+Electron::Electron(int64_t n_sites, Representation const &irrep,
+                   std::string backend) try
     : n_sites_(n_sites), backend_(backend), n_up_(std::nullopt),
       n_dn_(std::nullopt), irrep_(irrep) {
   // Safety checks
@@ -115,7 +117,7 @@ Electron::Electron(int64_t n_sites, Representation const &irrep) try
 }
 
 Electron::Electron(int64_t n_sites, int64_t nup, int64_t ndn,
-                   Representation const &irrep) try
+                   Representation const &irrep, std::string backend) try
     : n_sites_(n_sites), backend_(backend), n_up_(nup), n_dn_(ndn),
       irrep_(irrep) {
   // Safety checks

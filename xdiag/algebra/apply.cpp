@@ -20,7 +20,8 @@ namespace xdiag {
 
 State apply(OpSum const &ops, State const &v) try {
   auto blockr = block(ops, v.block());
-  auto w = State(block);
+  bool real = isreal(ops) && isreal(v);
+  auto w = State(blockr, real, v.n_cols());
   apply(ops, v, w);
   return w;
 } catch (Error const &error) {
