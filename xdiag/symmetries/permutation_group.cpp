@@ -200,7 +200,7 @@ std::ostream &operator<<(std::ostream &out, PermutationGroup const &group) {
   out << "n_sites  : " << group.n_sites() << "\n";
   out << "size     : " << group.size() << "\n";
   for (auto const &p : group) {
-    out << p;
+    out << p << "\n";
   }
   return out;
 }

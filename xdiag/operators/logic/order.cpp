@@ -115,19 +115,19 @@ std::pair<Scalar, Op> order(Scalar const &alpha, Op const &op) try {
 
     // Even permutations -> return as is
     if ((s1 < s2) && (s2 < s3)) {
-      return {alpha, op};
+      return {alpha, Op(type, {s1, s2, s3})};
     } else if ((s2 < s3) && (s3 < s1)) {
       return {alpha, Op(type, {s2, s3, s1})};
     } else if ((s3 < s1) && (s1 < s2)) {
       return {alpha, Op(type, {s3, s1, s2})};
     }
     // otherwise, we get a negative sign
-    else if ((s1 < s3) || (s3 < s2)) {
+    else if ((s1 < s3) && (s3 < s2)) {
       return {-alpha, Op(type, {s1, s3, s2})};
-    } else if ((s3 < s2) || (s2 < s1)) {
+    } else if ((s3 < s2) && (s2 < s1)) {
       return {-alpha, Op(type, {s3, s2, s1})};
     } else { //  ((s2 < s1) || (s1 < s3))
-      return {-alpha, Op(type, {s2, s3, s1})};
+      return {-alpha, Op(type, {s2, s1, s3})};
     }
   } else {
     return {alpha, op};

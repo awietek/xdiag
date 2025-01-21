@@ -66,10 +66,23 @@ std::optional<Scalar> isapprox_multiple(OpSum const &ops1, OpSum const &ops2,
   if ((t1.size() != t2.size()) || (t1.size() == 0)) {
     return std::nullopt;
   } else {
-    Scalar a01 = t1[0].first.scalar();
-    Scalar a02 = t2[0].first.scalar();
-    Scalar ratio = a02 / a01;
 
+    // Determine first non-zero coefficient of ops1 and ratio of the terms
+    Scalar ratio = 0.;
+    int64_t idx0 = 0;
+    for (; idx0 < t1.size(); ++idx0) {
+      Scalar a01 = t1[idx0].first.scalar();
+      if (abs(a01) > 1e-12) {
+        Scalar a02 = t2[idx0].first.scalar();
+        ratio = a02 / a01;
+        break;
+      };
+    }
+    if (idx0 == t1.size()) {
+      XDIAG_THROW("All coefficients in first operator are zero.");
+    }
+
+    // See whether all other coefficients have the same ratio
     for (int64_t i = 0; i < (int64_t)t1.size(); ++i) {
       Scalar a1 = t1[i].first.scalar();
       Scalar a2 = t2[i].first.scalar();

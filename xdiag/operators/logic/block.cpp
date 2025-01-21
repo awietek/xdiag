@@ -138,7 +138,8 @@ bool blocks_match(OpSum const &ops, Block const &block1,
           [&](Spinhalf const &b1, Spinhalf const &b2) {
             return blocks_match(ops, b1, b2);
           },
-          [&](tJ const &b1, tJ const &b2) { return blocks_match(ops, b1, b2); },
+          [&](tJ const &b1, tJ const &b2) {
+	    return blocks_match(ops, b1, b2); },
           [&](Electron const &b1, Electron const &b2) {
             return blocks_match(ops, b1, b2);
           },
@@ -159,36 +160,31 @@ bool blocks_match(OpSum const &ops, Block const &block1,
 
 bool blocks_match(OpSum const &ops, Spinhalf const &b1,
                   Spinhalf const &b2) try {
-  auto nup1 = nup(ops, b1);
-  auto nup2 = b2.n_up();
-  auto irrep1 = representation(ops, b1);
-  auto irrep2 = b2.irrep();
-  return (nup1 == *nup2) && (irrep1 == *irrep2);
+  bool match_nup = b1.n_up() ? nup(ops, b1) == *b2.n_up() : !b2.n_up();
+  bool match_irrep =
+      b1.irrep() ? representation(ops, b1) == *b2.irrep() : !b2.irrep();
+  return match_nup && match_irrep;
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
 bool blocks_match(OpSum const &ops, tJ const &b1, tJ const &b2) try {
-  auto nup1 = nup(ops, b1);
-  auto nup2 = b2.n_up();
-  auto ndn1 = nup(ops, b1);
-  auto ndn2 = b2.n_dn();
-  auto irrep1 = representation(ops, b1);
-  auto irrep2 = b2.irrep();
-  return (nup1 == *nup2) && (ndn1 == *ndn2) && (irrep1 == *irrep2);
+  bool match_nup = b1.n_up() ? nup(ops, b1) == *b2.n_up() : !b2.n_up();
+  bool match_ndn = b1.n_dn() ? ndn(ops, b1) == *b2.n_dn() : !b2.n_dn();
+  bool match_irrep =
+      b1.irrep() ? representation(ops, b1) == *b2.irrep() : !b2.irrep();
+  return match_nup && match_ndn && match_irrep;
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
 bool blocks_match(OpSum const &ops, Electron const &b1,
                   Electron const &b2) try {
-  auto nup1 = nup(ops, b1);
-  auto nup2 = b2.n_up();
-  auto ndn1 = nup(ops, b1);
-  auto ndn2 = b2.n_dn();
-  auto irrep1 = representation(ops, b1);
-  auto irrep2 = b2.irrep();
-  return (nup1 == *nup2) && (ndn1 == *ndn2) && (irrep1 == *irrep2);
+  bool match_nup = b1.n_up() ? nup(ops, b1) == *b2.n_up() : !b2.n_up();
+  bool match_ndn = b1.n_dn() ? ndn(ops, b1) == *b2.n_dn() : !b2.n_dn();
+  bool match_irrep =
+      b1.irrep() ? representation(ops, b1) == *b2.irrep() : !b2.irrep();
+  return match_nup && match_ndn && match_irrep;
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
@@ -196,20 +192,17 @@ bool blocks_match(OpSum const &ops, Electron const &b1,
 #ifdef XDIAG_USE_MPI
 bool blocks_match(OpSum const &ops, SpinhalfDistributed const &b1,
                   SpinhalfDistributed const &b2) try {
-  auto nup1 = nup(ops, b1);
-  auto nup2 = b2.n_up();
-  return (nup1 == *nup2);
+  bool match_nup = b1.n_up() ? nup(ops, b1) == *b2.n_up() : !b2.n_up();
+  return match_nup;
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
 bool blocks_match(OpSum const &ops, tJDistributed const &b1,
                   tJDistributed const &b2) try {
-  auto nup1 = nup(ops, b1);
-  auto nup2 = b2.n_up();
-  auto ndn1 = nup(ops, b1);
-  auto ndn2 = b2.n_up();
-  return (nup1 == nup2) && (ndn1 == ndn2);
+  bool match_nup = b1.n_up() ? nup(ops, b1) == *b2.n_up() : !b2.n_up();
+  bool match_ndn = b1.n_dn() ? ndn(ops, b1) == *b2.n_dn() : !b2.n_dn();
+  return match_nup && match_ndn;
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }

@@ -23,12 +23,12 @@ void test_spectra_tj_symmetric(OpSum ops, int64_t n_sites,
 
       if (nup + ndn > n_sites)
         continue;
-
       // Compute the full spectrum from non-symmetrized block
+
       auto tj_nosym = tJ(n_sites, nup, ndn);
       if (tj_nosym.size() < 1000) {
-
         auto H_nosym = matrixC(ops, tj_nosym, tj_nosym);
+
         REQUIRE(arma::norm(H_nosym - H_nosym.t()) < 1e-12);
         arma::vec eigs_nosym;
         arma::eig_sym(eigs_nosym, H_nosym);
@@ -37,13 +37,12 @@ void test_spectra_tj_symmetric(OpSum ops, int64_t n_sites,
         for (int64_t k = 0; k < (int64_t)irreps.size(); ++k) {
           auto irrep = irreps[k];
           int64_t multiplicity = multiplicities[k];
-
           auto tj = tJ(n_sites, nup, ndn, irrep);
-
           if (tj.size() > 0) {
 
             // Compute partial spectrum from symmetrized block
             auto H_sym = matrixC(ops, tj, tj);
+
             // Log("n_sites: {}, nup: {}, ndn: {}, k: {}", n_sites, nup, ndn,
             // k); XDIAG_SHOW(irrep); XDIAG_SHOW(H_sym);
 

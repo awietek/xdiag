@@ -17,7 +17,7 @@ XDIAG_API tJDistributed block(OpSum const &ops, tJDistributed const &block);
 
 bool blocks_match(OpSum const &ops, Block const &b1, Block const &b2);
 bool blocks_match(OpSum const &ops, Spinhalf const &b1, Spinhalf const &b2);
-bool block(OpSum const &ops, tJ const &b1, tJ const &b2);
+bool blocks_match(OpSum const &ops, tJ const &b1, tJ const &b2);
 bool blocks_match(OpSum const &ops, Electron const &b1, Electron const &b2);
 #ifdef XDIAG_USE_MPI
 bool blocks_match(OpSum const &ops, SpinhalfDistributed const &b1,
