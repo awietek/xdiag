@@ -5,49 +5,49 @@
 
 namespace xdiag {
 
-tJDistributed::tJDistributed(int64_t n_sites, int64_t n_up, int64_t n_dn,
+tJDistributed::tJDistributed(int64_t nsites, int64_t nup, int64_t ndn,
                              std::string backend) try
-    : n_sites_(n_sites), backend_(backend), n_up_(n_up), n_dn_(n_dn) {
+    : nsites_(nsites), backend_(backend), nup_(nup), ndn_(ndn) {
   using namespace basis::tj_distributed;
   using combinatorics::binomial;
 
   // Safety checks
-  if (n_sites < 0) {
-    XDIAG_THROW("n_sites < 0");
-  } else if ((n_up < 0) || (n_dn < 0)) {
-    XDIAG_THROW("n_up < 0 or n_dn < 0");
-  } else if ((n_up + n_dn) > n_sites) {
-    XDIAG_THROW("n_up + n_dn > n_sites");
+  if (nsites < 0) {
+    XDIAG_THROW("nsites < 0");
+  } else if ((nup < 0) || (ndn < 0)) {
+    XDIAG_THROW("nup < 0 or ndn < 0");
+  } else if ((nup + ndn) > nsites) {
+    XDIAG_THROW("nup + ndn > nsites");
   }
   // Choose basis implementation
   if (backend == "auto") {
-    if (n_sites < 32) {
+    if (nsites < 32) {
       basis_ =
-          std::make_shared<basis_t>(BasisNp<uint32_t>(n_sites, n_up, n_dn));
-    } else if (n_sites < 64) {
+          std::make_shared<basis_t>(BasisNp<uint32_t>(nsites, nup, ndn));
+    } else if (nsites < 64) {
       basis_ =
-          std::make_shared<basis_t>(BasisNp<uint64_t>(n_sites, n_up, n_dn));
+          std::make_shared<basis_t>(BasisNp<uint64_t>(nsites, nup, ndn));
     } else {
       XDIAG_THROW("Blocks with more than 64 sites currently not implemented");
     }
   } else if (backend == "32bit") {
-    basis_ = std::make_shared<basis_t>(BasisNp<uint32_t>(n_sites, n_up, n_dn));
+    basis_ = std::make_shared<basis_t>(BasisNp<uint32_t>(nsites, nup, ndn));
   } else if (backend == "64bit") {
-    basis_ = std::make_shared<basis_t>(BasisNp<uint64_t>(n_sites, n_up, n_dn));
+    basis_ = std::make_shared<basis_t>(BasisNp<uint64_t>(nsites, nup, ndn));
   } else {
     XDIAG_THROW(fmt::format("Unknown backend: \"{}\"", backend));
   }
   dim_ = basis::dim(*basis_);
-  assert(dim_ == binomial(n_sites, n_up) * binomial(n_sites - n_up, n_dn));
+  assert(dim_ == binomial(nsites, nup) * binomial(nsites - nup, ndn));
   size_ = basis::size(*basis_);
   check_dimension_works_with_blas_int_size(size_);
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
-int64_t tJDistributed::n_sites() const { return n_sites_; }
-int64_t tJDistributed::n_up() const { return n_up_; }
-int64_t tJDistributed::n_dn() const { return n_dn_; }
+int64_t tJDistributed::nsites() const { return nsites_; }
+int64_t tJDistributed::nup() const { return nup_; }
+int64_t tJDistributed::ndn() const { return ndn_; }
 
 int64_t tJDistributed::dim() const { return dim_; }
 int64_t tJDistributed::size() const { return size_; }
@@ -76,8 +76,8 @@ bool tJDistributed::isreal(double precision) const {
 }
 
 bool tJDistributed::operator==(tJDistributed const &rhs) const {
-  return (n_sites_ == rhs.n_sites_) && (n_up_ == rhs.n_up_) &&
-         (n_dn_ == rhs.n_dn_);
+  return (nsites_ == rhs.nsites_) && (nup_ == rhs.nup_) &&
+         (ndn_ == rhs.ndn_);
 }
 bool tJDistributed::operator!=(tJDistributed const &rhs) const {
   return !operator==(rhs);
@@ -91,13 +91,13 @@ std::ostream &operator<<(std::ostream &out, tJDistributed const &block) {
   MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
 
   out << "tJDistributed:\n";
-  out << "  n_sites  : " << block.n_sites() << "\n";
-  if ((block.n_up() != undefined) && (block.n_dn() != undefined)) {
-    out << "  n_up     : " << block.n_up() << "\n";
-    out << "  n_dn     : " << block.n_dn() << "\n";
+  out << "  nsites  : " << block.nsites() << "\n";
+  if ((block.nup() != undefined) && (block.ndn() != undefined)) {
+    out << "  nup     : " << block.nup() << "\n";
+    out << "  ndn     : " << block.ndn() << "\n";
   } else {
-    out << "  n_up     : not conserved\n";
-    out << "  n_dn     : not conserved\n";
+    out << "  nup     : not conserved\n";
+    out << "  ndn     : not conserved\n";
   }
 
   std::stringstream ss;
@@ -130,7 +130,7 @@ std::string to_string(tJDistributed const &block) {
 
 tJDistributedIterator::tJDistributedIterator(tJDistributed const &block,
                                              bool begin)
-    : n_sites_(block.n_sites()), pstate_(n_sites_),
+    : nsites_(block.nsites()), pstate_(nsites_),
       it_(std::visit(
           [&](auto const &basis) {
             basis::BasistJDistributedIterator it =

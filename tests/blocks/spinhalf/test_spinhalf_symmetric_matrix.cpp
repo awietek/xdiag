@@ -16,15 +16,15 @@
 
 using namespace xdiag;
 
-void test_spinhalf_symmetric_spectra(OpSum ops, int64_t n_sites,
+void test_spinhalf_symmetric_spectra(OpSum ops, int64_t nsites,
                                      std::vector<Representation> irreps,
                                      std::vector<int64_t> multiplicities) {
   assert(irreps.size() == multiplicities.size());
 
-  for (int64_t nup = 3; nup <= n_sites; ++nup) {
-    // Log("Spinhalf Symmetric N: {}, nup: {}", n_sites, nup);
+  for (int64_t nup = 3; nup <= nsites; ++nup) {
+    // Log("Spinhalf Symmetric N: {}, nup: {}", nsites, nup);
     // Compute the full spectrum from non-symmetrized block
-    auto spinhalf_nosym = Spinhalf(n_sites, nup);
+    auto spinhalf_nosym = Spinhalf(nsites, nup);
 
     if (spinhalf_nosym.size() < 1000) {
       std::vector<double> eigs_sym;
@@ -38,7 +38,7 @@ void test_spinhalf_symmetric_spectra(OpSum ops, int64_t n_sites,
       for (int64_t k = 0; k < (int64_t)irreps.size(); ++k) {
         auto irrep = irreps[k];
         int64_t multiplicity = multiplicities[k];
-        auto spinhalf = Spinhalf(n_sites, nup, irrep);
+        auto spinhalf = Spinhalf(nsites, nup, irrep);
         // Log.out("nup: {}, k: {}, mult: {}, dim_nosym: {}, dim_sym: "
         //         "{} ",
         //         nup, k, multiplicity, spinhalf_nosym.size(),
@@ -73,13 +73,13 @@ void test_spinhalf_symmetric_spectra(OpSum ops, int64_t n_sites,
 }
 
 void test_spinhalf_symmetric_spectra_no_sz(
-    OpSum ops, int64_t n_sites, std::vector<Representation> irreps,
+    OpSum ops, int64_t nsites, std::vector<Representation> irreps,
     std::vector<int64_t> multiplicities) {
   assert(irreps.size() == multiplicities.size());
 
-  // Log("Spinhalf Symmetric N: {}, nup: {}", n_sites, nup);
+  // Log("Spinhalf Symmetric N: {}, nup: {}", nsites, nup);
   // Compute the full spectrum from non-symmetrized block
-  auto spinhalf_nosym = Spinhalf(n_sites);
+  auto spinhalf_nosym = Spinhalf(nsites);
 
   if (spinhalf_nosym.size() < 1000) {
     std::vector<double> eigs_sym;
@@ -92,7 +92,7 @@ void test_spinhalf_symmetric_spectra_no_sz(
     for (int64_t k = 0; k < (int64_t)irreps.size(); ++k) {
       auto irrep = irreps[k];
       int64_t multiplicity = multiplicities[k];
-      auto spinhalf = Spinhalf(n_sites, irrep);
+      auto spinhalf = Spinhalf(nsites, irrep);
       if (spinhalf.size() > 0) {
 
         // Compute partial spectrum from symmetrized block
@@ -103,8 +103,8 @@ void test_spinhalf_symmetric_spectra_no_sz(
         arma::eig_sym(eigs_sym_k, H_sym);
 
         auto eigs_sym_k_sz = std::vector<double>();
-        for (int64_t nup = 0; nup <= n_sites; ++nup) {
-          auto spinhalf_sz = Spinhalf(n_sites, nup, irrep);
+        for (int64_t nup = 0; nup <= nsites; ++nup) {
+          auto spinhalf_sz = Spinhalf(nsites, nup, irrep);
           auto H_sym_sz = matrixC(ops, spinhalf_sz, spinhalf_sz);
           arma::vec es;
           arma::eig_sym(es, H_sym_sz);
@@ -134,23 +134,23 @@ void test_spinhalf_symmetric_spectra_no_sz(
   }
 }
 
-void test_spinhalf_symmetric_spectrum_chains(int64_t n_sites) {
+void test_spinhalf_symmetric_spectrum_chains(int64_t nsites) {
   using namespace xdiag::testcases::spinhalf;
   using xdiag::testcases::electron::get_cyclic_group_irreps_mult;
 
   // Without Heisenberg term
-  Log.out("spinhalf_symmetric_matrix: HB chain, N: {}", n_sites);
-  auto [irreps, multiplicities] = get_cyclic_group_irreps_mult(n_sites);
-  auto ops = HBchain(n_sites, 1.0, 1.0);
-  test_spinhalf_symmetric_spectra(ops, n_sites, irreps, multiplicities);
-  test_spinhalf_symmetric_spectra_no_sz(ops, n_sites, irreps, multiplicities);
+  Log.out("spinhalf_symmetric_matrix: HB chain, N: {}", nsites);
+  auto [irreps, multiplicities] = get_cyclic_group_irreps_mult(nsites);
+  auto ops = HBchain(nsites, 1.0, 1.0);
+  test_spinhalf_symmetric_spectra(ops, nsites, irreps, multiplicities);
+  test_spinhalf_symmetric_spectra_no_sz(ops, nsites, irreps, multiplicities);
 }
 
 TEST_CASE("spinhalf_symmetric_matrix", "[spinhalf]") try {
 
   // Test linear Heisenberg chains
-  for (int64_t n_sites = 3; n_sites < 7; ++n_sites) {
-    test_spinhalf_symmetric_spectrum_chains(n_sites);
+  for (int64_t nsites = 3; nsites < 7; ++nsites) {
+    test_spinhalf_symmetric_spectrum_chains(nsites);
   }
 
   // test a 3x3 triangular lattice
@@ -205,11 +205,11 @@ TEST_CASE("spinhalf_symmetric_matrix", "[spinhalf]") try {
         {"X.C1.A", -5.9030627660522529965}};
 
     auto space_group = fl["Symmetries"].as<PermutationGroup>();
-    int64_t n_sites = 12;
-    int64_t n_up = 6;
+    int64_t nsites = 12;
+    int64_t nup = 6;
     for (auto [name, energy] : rep_name_mult) {
       auto irrep = read_representation(fl, name);
-      auto spinhalf = Spinhalf(n_sites, n_up, irrep);
+      auto spinhalf = Spinhalf(nsites, nup, irrep);
       auto H = matrixC(ops, spinhalf, spinhalf);
       REQUIRE(arma::norm(H - H.t()) < 1e-12);
 

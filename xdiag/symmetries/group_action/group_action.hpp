@@ -12,7 +12,7 @@ public:
   GroupAction() = default;
   GroupAction(PermutationGroup const &permutation_group);
 
-  inline int64_t n_sites() const { return n_sites_; }
+  inline int64_t nsites() const { return nsites_; }
   inline int64_t n_symmetries() const { return n_symmetries_; }
   inline PermutationGroup const &permutation_group() const {
     return permutation_group_;
@@ -34,7 +34,7 @@ public:
   bool operator!=(GroupAction const &rhs) const;
 
 private:
-  int64_t n_sites_;
+  int64_t nsites_;
   int64_t n_symmetries_;
   PermutationGroup permutation_group_;
 

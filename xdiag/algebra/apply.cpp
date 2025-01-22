@@ -122,8 +122,8 @@ template <typename coeff_t>
 void apply(OpSum const &ops, Spinhalf const &block_in,
            arma::Col<coeff_t> const &vec_in, Spinhalf const &block_out,
            arma::Col<coeff_t> &vec_out) try {
-  int64_t n_sites = block_in.n_sites();
-  check_valid(ops, n_sites);
+  int64_t nsites = block_in.nsites();
+  check_valid(ops, nsites);
   OpSum opsc = operators::compile_spinhalf(ops);
   vec_out.zeros();
   basis::spinhalf::dispatch_apply(opsc, block_in, vec_in, block_out, vec_out);
@@ -143,8 +143,8 @@ template <typename coeff_t>
 void apply(OpSum const &ops, Spinhalf const &block_in,
            arma::Mat<coeff_t> const &mat_in, Spinhalf const &block_out,
            arma::Mat<coeff_t> &mat_out) try {
-  int64_t n_sites = block_in.n_sites();
-  check_valid(ops, n_sites);
+  int64_t nsites = block_in.nsites();
+  check_valid(ops, nsites);
   OpSum opsc = operators::compile_spinhalf(ops);
   mat_out.zeros();
   basis::spinhalf::dispatch_apply(opsc, block_in, mat_in, block_out, mat_out);
@@ -163,8 +163,8 @@ template <typename coeff_t>
 void apply(OpSum const &ops, tJ const &block_in,
            arma::Col<coeff_t> const &vec_in, tJ const &block_out,
            arma::Col<coeff_t> &vec_out) try {
-  int64_t n_sites = block_in.n_sites();
-  check_valid(ops, n_sites);
+  int64_t nsites = block_in.nsites();
+  check_valid(ops, nsites);
   OpSum opsc = operators::compile_tj(ops);
   vec_out.zeros();
   basis::tj::dispatch_apply(opsc, block_in, vec_in, block_out, vec_out);
@@ -184,8 +184,8 @@ template <typename coeff_t>
 void apply(OpSum const &ops, tJ const &block_in,
            arma::Mat<coeff_t> const &mat_in, tJ const &block_out,
            arma::Mat<coeff_t> &mat_out) try {
-  int64_t n_sites = block_in.n_sites();
-  check_valid(ops, n_sites);
+  int64_t nsites = block_in.nsites();
+  check_valid(ops, nsites);
   OpSum opsc = operators::compile_tj(ops);
   mat_out.zeros();
   basis::tj::dispatch_apply(opsc, block_in, mat_in, block_out, mat_out);
@@ -204,8 +204,8 @@ template <typename coeff_t>
 void apply(OpSum const &ops, Electron const &block_in,
            arma::Col<coeff_t> const &vec_in, Electron const &block_out,
            arma::Col<coeff_t> &vec_out) try {
-  int64_t n_sites = block_in.n_sites();
-  check_valid(ops, n_sites);
+  int64_t nsites = block_in.nsites();
+  check_valid(ops, nsites);
   OpSum opsc = operators::compile_electron(ops);
   vec_out.zeros();
   basis::electron::dispatch_apply(opsc, block_in, vec_in, block_out, vec_out);
@@ -225,8 +225,8 @@ template <typename coeff_t>
 void apply(OpSum const &ops, Electron const &block_in,
            arma::Mat<coeff_t> const &mat_in, Electron const &block_out,
            arma::Mat<coeff_t> &mat_out) try {
-  int64_t n_sites = block_in.n_sites();
-  check_valid(ops, n_sites);
+  int64_t nsites = block_in.nsites();
+  check_valid(ops, nsites);
   OpSum opsc = operators::compile_electron(ops);
   mat_out.zeros();
   basis::electron::dispatch_apply(opsc, block_in, mat_in, block_out, mat_out);
@@ -248,8 +248,8 @@ void apply(OpSum const &ops, SpinhalfDistributed const &block_in,
            arma::Col<coeff_t> const &vec_in,
            SpinhalfDistributed const &block_out,
            arma::Col<coeff_t> &vec_out) try {
-  int64_t n_sites = block_in.n_sites();
-  check_valid(ops, n_sites);
+  int64_t nsites = block_in.nsites();
+  check_valid(ops, nsites);
   OpSum opsc = operators::compile_spinhalf(ops);
   vec_out.zeros();
   basis::spinhalf_distributed::dispatch_apply(opsc, block_in, vec_in, block_out,
@@ -271,7 +271,7 @@ void apply(OpSum const &ops, tJDistributed const &block_in,
            arma::Col<coeff_t> const &vec_in, tJDistributed const &block_out,
            arma::Col<coeff_t> &vec_out) try {
   check_valid(ops);
-  int64_t n_sites = block_in.n_sites();
+  int64_t nsites = block_in.nsites();
   OpSum opsc = operators::compile_tj(ops);
   vec_out.zeros();
   basis::tj_distributed::dispatch_apply(opsc, block_in, vec_in, block_out,

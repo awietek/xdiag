@@ -9,10 +9,10 @@ namespace xdiag {
 template <typename bit_t>
 GroupActionLookup<bit_t>::GroupActionLookup(
     PermutationGroup const &permutation_group)
-    : n_sites_(permutation_group.n_sites()),
+    : nsites_(permutation_group.nsites()),
       n_symmetries_(permutation_group.size()),
-      permutation_group_(permutation_group), n_prefix_bits_(n_sites_ / 2),
-      n_postfix_bits_(n_sites_ - n_prefix_bits_),
+      permutation_group_(permutation_group), n_prefix_bits_(nsites_ / 2),
+      n_postfix_bits_(nsites_ - n_prefix_bits_),
       postfix_mask_(((bit_t)1 << n_postfix_bits_) - 1),
       prefix_size_((int64_t)1 << n_prefix_bits_),
       postfix_size_((int64_t)1 << n_postfix_bits_),
@@ -44,7 +44,7 @@ GroupActionLookup<bit_t>::GroupActionLookup(
 
 template <typename bit_t>
 bool GroupActionLookup<bit_t>::operator==(GroupActionLookup const &rhs) const {
-  return (n_sites_ == rhs.n_sites_) && (n_symmetries_ == rhs.n_symmetries_) &&
+  return (nsites_ == rhs.nsites_) && (n_symmetries_ == rhs.n_symmetries_) &&
          (permutation_group_ == rhs.permutation_group_);
 }
 template <typename bit_t>

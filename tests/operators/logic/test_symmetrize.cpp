@@ -19,21 +19,21 @@ using namespace xdiag;
 TEST_CASE("symmetrize", "[operators]") try {
   Log("Testing symmetrize of operator");
 
-  for (int n_sites = 3; n_sites < 5; ++n_sites) {
+  for (int nsites = 3; nsites < 5; ++nsites) {
 
-    // int n_sites = 6;
-    auto ops = testcases::electron::get_linear_chain(n_sites, 1.0, 5.0);
-    for (int i = 0; i < n_sites; ++i) {
-      ops += "J2" * Op("SdotS", {i, (i + 2) % n_sites});
+    // int nsites = 6;
+    auto ops = testcases::electron::get_linear_chain(nsites, 1.0, 5.0);
+    for (int i = 0; i < nsites; ++i) {
+      ops += "J2" * Op("SdotS", {i, (i + 2) % nsites});
     }
     ops["J2"] = 0.321;
     ops["T"] = 0;
 
-    auto irreps = testcases::electron::get_cyclic_group_irreps(n_sites);
+    auto irreps = testcases::electron::get_cyclic_group_irreps(nsites);
 
-    for (int nup = 0; nup <= n_sites; ++nup) {
-      for (int ndn = 0; ndn <= n_sites; ++ndn) {
-        auto block_nosym = Electron(n_sites, nup, ndn);
+    for (int nup = 0; nup <= nsites; ++nup) {
+      for (int ndn = 0; ndn <= nsites; ++ndn) {
+        auto block_nosym = Electron(nsites, nup, ndn);
         if (block_nosym.size() == 0) {
           continue;
         }
@@ -64,7 +64,7 @@ TEST_CASE("symmetrize", "[operators]") try {
         Representation e0_irrep;
         std::vector<double> e0s;
         for (auto irrep : irreps) {
-          auto block_sym = Electron(n_sites, nup, ndn, irrep);
+          auto block_sym = Electron(nsites, nup, ndn, irrep);
           if (block_sym.size() == 0) {
             continue;
           }
@@ -84,13 +84,13 @@ TEST_CASE("symmetrize", "[operators]") try {
             ++deg;
         }
         // Log.out("N: {}, nup:{} ndn: {}, deg: {}, e0_nosym: {}, e0_sym: {}",
-        //         n_sites, nup, ndn, deg, e0_nosym, e0_sym);
+        //         nsites, nup, ndn, deg, e0_nosym, e0_sym);
         REQUIRE(close(e0_sym, e0_nosym));
 
         // Compare correlators only if degeneracy is 1
         // -> g.s. from non-symmetric calculation is unique and symmetric
         if (deg == 1) {
-          auto block_sym = Electron(n_sites, nup, ndn, e0_irrep);
+          auto block_sym = Electron(nsites, nup, ndn, e0_irrep);
           // XDIAG_SHOW(ops);
 
           auto [e0_sym2, v0_sym] = eig0(ops, block_sym);
@@ -108,7 +108,7 @@ TEST_CASE("symmetrize", "[operators]") try {
           }
 
           // Measure correlators
-          for (int i = 1; i < n_sites; ++i) {
+          for (int i = 1; i < nsites; ++i) {
             OpSum corr_nosym;
             corr_nosym += "J" * Op("SdotS", {0, i});
             corr_nosym["J"] = 1.0;
@@ -124,14 +124,14 @@ TEST_CASE("symmetrize", "[operators]") try {
             //               real(val_sym));
             REQUIRE(close(val_nosym, val_sym, 1e-6, 1e-6));
           }
-          // for (int j=0; j<n_sites; ++j) {
+          // for (int j=0; j<nsites; ++j) {
           //   Ops corr_nosym;
-          //   corr_nosym += Op("Exchange", "J", {j, (i+j)%n_sites});
+          //   corr_nosym += Op("Exchange", "J", {j, (i+j)%nsites});
           //   Couplings cpls;
           //   cpls["J"] = 1.0;
           //   auto val_nosym2 = Inner(corr_nosym, cpls, block_nosym,
           // v0_nosym);
-          //   Log.out("({}, {}) {} {}", j, (i+j)%n_sites,
+          //   Log.out("({}, {}) {} {}", j, (i+j)%nsites,
           //   real(val_nosym2),
           //               real(val_nosym));
           // }

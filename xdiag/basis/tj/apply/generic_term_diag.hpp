@@ -9,8 +9,8 @@ namespace xdiag::basis::tj {
 template <typename bit_t, typename coeff_t, bool symmetric, class Basis,
           class TermAction, class Fill>
 void generic_term_diag(Basis &&basis, TermAction &&term_action, Fill &&fill) {
-  int64_t n_sites = basis.n_sites();
-  bit_t sitesmask = ((bit_t)1 << n_sites) - 1;
+  int64_t nsites = basis.nsites();
+  bit_t sitesmask = ((bit_t)1 << nsites) - 1;
 
   if constexpr (symmetric) {
 

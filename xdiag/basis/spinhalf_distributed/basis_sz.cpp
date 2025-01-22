@@ -9,7 +9,7 @@ namespace xdiag::basis::spinhalf_distributed {
 
 template <typename bit_t, class process_f>
 static int64_t
-fill_tables(int64_t n_sites, int64_t n_up, int64_t n_prefix_bits,
+fill_tables(int64_t nsites, int64_t nup, int64_t n_prefix_bits,
             process_f rank, std::vector<bit_t> &prefixes,
             std::unordered_map<bit_t, int64_t> &prefix_begin,
             std::vector<combinatorics::LinTable<bit_t>> &postfix_lintables,
@@ -21,16 +21,16 @@ fill_tables(int64_t n_sites, int64_t n_up, int64_t n_prefix_bits,
   int mpi_rank;
   MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
 
-  int64_t n_postfix_bits = n_sites - n_prefix_bits;
+  int64_t n_postfix_bits = nsites - n_prefix_bits;
 
   // Determine the valid prefixes that belong to my process
   int64_t size = 0;
   for (bit_t prefix : combinatorics::Subsets<bit_t>(n_prefix_bits)) {
-    int n_up_prefix = bits::popcnt(prefix);
-    int n_up_postfix = n_up - n_up_prefix;
+    int nup_prefix = bits::popcnt(prefix);
+    int nup_postfix = nup - nup_prefix;
 
     // Ignore impossible prefix configurations
-    if ((n_up_postfix < 0) || (n_up_postfix > n_postfix_bits)) {
+    if ((nup_postfix < 0) || (nup_postfix > n_postfix_bits)) {
       continue;
     }
 
@@ -41,53 +41,53 @@ fill_tables(int64_t n_sites, int64_t n_up, int64_t n_prefix_bits,
 
     // Register a prefix
     prefix_begin[prefix] = size;
-    size += binomial(n_postfix_bits, n_up_postfix);
+    size += binomial(n_postfix_bits, nup_postfix);
     prefixes.push_back(prefix);
   }
 
   // Create the lintables for postfix lookup
   postfix_states.resize(n_postfix_bits + 1);
-  for (int n_up_postfix = 0; n_up_postfix <= n_postfix_bits; ++n_up_postfix) {
-    postfix_lintables.push_back(LinTable<bit_t>(n_postfix_bits, n_up_postfix));
+  for (int nup_postfix = 0; nup_postfix <= n_postfix_bits; ++nup_postfix) {
+    postfix_lintables.push_back(LinTable<bit_t>(n_postfix_bits, nup_postfix));
 
-    // Precompute posfix configurations for given n_up_postfix
-    std::vector<bit_t> postfixes_nup(binomial(n_postfix_bits, n_up_postfix), 0);
+    // Precompute posfix configurations for given nup_postfix
+    std::vector<bit_t> postfixes_nup(binomial(n_postfix_bits, nup_postfix), 0);
     int64_t pf_idx = 0;
     for (bit_t pf :
-         combinatorics::Combinations<bit_t>(n_postfix_bits, n_up_postfix)) {
+         combinatorics::Combinations<bit_t>(n_postfix_bits, nup_postfix)) {
       postfixes_nup[pf_idx++] = pf;
     }
-    postfix_states[n_up_postfix] = postfixes_nup;
+    postfix_states[nup_postfix] = postfixes_nup;
   }
   return size;
 }
 
 template <typename bit_t>
-BasisSz<bit_t>::BasisSz(int64_t n_sites, int64_t n_up)
-    : n_sites_(n_sites), n_up_(n_up), n_prefix_bits_(n_sites / 2),
-      n_postfix_bits_(n_sites - n_prefix_bits_) {
+BasisSz<bit_t>::BasisSz(int64_t nsites, int64_t nup)
+    : nsites_(nsites), nup_(nup), n_prefix_bits_(nsites / 2),
+      n_postfix_bits_(nsites - n_prefix_bits_) {
   using namespace combinatorics;
-  check_n_sites_work_with_bits<bit_t>(n_sites_);
+  check_nsites_work_with_bits<bit_t>(nsites_);
 
-  if (n_sites < 0) {
-    XDIAG_THROW("n_sites < 0");
-  } else if (n_up < 0) {
+  if (nsites < 0) {
+    XDIAG_THROW("nsites < 0");
+  } else if (nup < 0) {
     XDIAG_THROW("nup < 0");
-  } else if (n_up > n_sites) {
-    XDIAG_THROW("n_up > n_sites");
+  } else if (nup > nsites) {
+    XDIAG_THROW("nup > nsites");
   }
 
   MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank_);
   MPI_Comm_size(MPI_COMM_WORLD, &mpi_size_);
 
-  dim_ = binomial(n_sites, n_up);
+  dim_ = binomial(nsites, nup);
   size_ = fill_tables(
-      n_sites, n_up, n_prefix_bits_,
+      nsites, nup, n_prefix_bits_,
       [this](bit_t spins) { return rank(spins); }, prefixes_, prefix_begin_,
       postfix_lintables_, postfix_states_);
 
   size_transpose_ = fill_tables(
-      n_sites, n_up, n_postfix_bits_,
+      nsites, nup, n_postfix_bits_,
       [this](bit_t spins) { return rank(spins); }, postfixes_, postfix_begin_,
       prefix_lintables_, prefix_states_);
 
@@ -136,10 +136,10 @@ BasisSz<bit_t>::BasisSz(int64_t n_sites, int64_t n_up)
   transpose_communicator_reverse_ = mpi::Communicator(n_states_i_send_reverse);
 }
 
-template <typename bit_t> int64_t BasisSz<bit_t>::n_sites() const {
-  return n_sites_;
+template <typename bit_t> int64_t BasisSz<bit_t>::nsites() const {
+  return nsites_;
 }
-template <typename bit_t> int64_t BasisSz<bit_t>::n_up() const { return n_up_; }
+template <typename bit_t> int64_t BasisSz<bit_t>::nup() const { return nup_; }
 template <typename bit_t> int64_t BasisSz<bit_t>::n_prefix_bits() const {
   return n_prefix_bits_;
 };
@@ -193,15 +193,15 @@ int64_t BasisSz<bit_t>::prefix_begin(bit_t prefix) const {
 template <typename bit_t>
 combinatorics::LinTable<bit_t> const &
 BasisSz<bit_t>::postfix_lintable(bit_t prefix) const {
-  int n_up_prefix = bits::popcnt(prefix);
-  int n_up_postfix = n_up_ - n_up_prefix;
-  return postfix_lintables_[n_up_postfix];
+  int nup_prefix = bits::popcnt(prefix);
+  int nup_postfix = nup_ - nup_prefix;
+  return postfix_lintables_[nup_postfix];
 }
 template <typename bit_t>
 std::vector<bit_t> const &BasisSz<bit_t>::postfix_states(bit_t prefix) const {
-  int n_up_prefix = bits::popcnt(prefix);
-  int n_up_postfix = n_up_ - n_up_prefix;
-  return postfix_states_[n_up_postfix];
+  int nup_prefix = bits::popcnt(prefix);
+  int nup_postfix = nup_ - nup_prefix;
+  return postfix_states_[nup_postfix];
 }
 
 template <typename bit_t>
@@ -220,15 +220,15 @@ int64_t BasisSz<bit_t>::postfix_begin(bit_t postfix) const {
 template <typename bit_t>
 combinatorics::LinTable<bit_t> const &
 BasisSz<bit_t>::prefix_lintable(bit_t postfix) const {
-  int n_up_postfix = bits::popcnt(postfix);
-  int n_up_prefix = n_up_ - n_up_postfix;
-  return prefix_lintables_[n_up_prefix];
+  int nup_postfix = bits::popcnt(postfix);
+  int nup_prefix = nup_ - nup_postfix;
+  return prefix_lintables_[nup_prefix];
 }
 template <typename bit_t>
 std::vector<bit_t> const &BasisSz<bit_t>::prefix_states(bit_t postfix) const {
-  int n_up_postfix = bits::popcnt(postfix);
-  int n_up_prefix = n_up_ - n_up_postfix;
-  return prefix_states_[n_up_prefix];
+  int nup_postfix = bits::popcnt(postfix);
+  int nup_prefix = nup_ - nup_postfix;
+  return prefix_states_[nup_prefix];
 }
 
 template <typename bit_t>

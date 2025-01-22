@@ -7,16 +7,16 @@ namespace xdiag::symmetries {
 
 bool is_sublattice_permutation(int n_sublat, int sublat,
                                Permutation const &permutation) {
-  int n_sites = permutation.size();
-  int n_sites_sublat = n_sites / n_sublat;
+  int nsites = permutation.size();
+  int nsites_sublat = nsites / n_sublat;
 
   // permutation is sublattice stable, if the sublattice
   // (i.e. indices between begin and end) are mapped to
-  // most significant indices (n_sites-n_sites_sublat) to n_sites
-  int begin = sublat * n_sites_sublat;
-  int end = (sublat + 1) * n_sites_sublat;
+  // most significant indices (nsites-nsites_sublat) to nsites
+  int begin = sublat * nsites_sublat;
+  int end = (sublat + 1) * nsites_sublat;
   for (int j = begin; j < end; ++j) {
-    if (permutation[j] < n_sites - n_sites_sublat) {
+    if (permutation[j] < nsites - nsites_sublat) {
       return false;
     }
   }

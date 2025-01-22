@@ -11,7 +11,7 @@ public:
   using iterator_t = combinatorics::SubsetsIterator<bit_t>;
 
   BasisNoSz() = default;
-  BasisNoSz(int64_t n_sites);
+  BasisNoSz(int64_t nsites);
 
   iterator_t begin() const;
   iterator_t end() const;
@@ -21,14 +21,14 @@ public:
   inline int64_t index(bit_t spins) const { return (int64_t)spins; }
   inline bit_t state(int64_t index) const { return (bit_t)index; }
 
-  int64_t n_sites() const;
+  int64_t nsites() const;
   static constexpr bool sz_conserved() { return false; }
 
   bool operator==(BasisNoSz const &rhs) const;
   bool operator!=(BasisNoSz const &rhs) const;
 
 private:
-  int64_t n_sites_;
+  int64_t nsites_;
   int64_t size_;
   iterator_t begin_, end_;
 };

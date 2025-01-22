@@ -138,7 +138,7 @@ State::State(block_t const &block, arma::Mat<coeff_t> const &matrix) try
   XDIAG_RETHROW(e);
 }
 
-int64_t State::n_sites() const { return xdiag::n_sites(block_); }
+int64_t State::nsites() const { return xdiag::nsites(block_); }
 bool State::isreal() const { return real_; }
 
 State State::real() const try {
@@ -338,7 +338,7 @@ template State::State(tJDistributed const &block,
 
 #endif
 
-int64_t n_sites(State const &s) { return s.n_sites(); }
+int64_t nsites(State const &s) { return s.nsites(); }
 bool isreal(State const &s) { return s.isreal(); }
 State real(State const &s) { return s.real(); }
 State imag(State const &s) { return s.imag(); }

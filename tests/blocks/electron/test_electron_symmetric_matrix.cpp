@@ -14,10 +14,10 @@
 using namespace xdiag;
 
 void test_electron_symmetric_spectra_no_np(
-    OpSum opsum, int64_t n_sites, std::vector<Representation> irreps,
+    OpSum opsum, int64_t nsites, std::vector<Representation> irreps,
     std::vector<int64_t> multiplicities) try {
   (void)multiplicities;
-  auto block_total = Electron(n_sites);
+  auto block_total = Electron(nsites);
   if (block_total.size() < 1000) {
 
     auto H_total = matrixC(opsum, block_total, block_total);
@@ -28,7 +28,7 @@ void test_electron_symmetric_spectra_no_np(
 
     std::vector<double> eigs_all;
     for (auto irrep : irreps) {
-      auto block_no_np = Electron(n_sites, irrep);
+      auto block_no_np = Electron(nsites, irrep);
       auto H_no_np = matrixC(opsum, block_no_np, block_no_np);
 
       REQUIRE(H_no_np.is_hermitian(1e-8));
@@ -37,9 +37,9 @@ void test_electron_symmetric_spectra_no_np(
       arma::eig_sym(eigs_no_np, H_no_np);
 
       std::vector<double> eigs_np_all;
-      for (int64_t nup = 0; nup <= n_sites; ++nup) {
-        for (int64_t ndn = 0; ndn <= n_sites; ++ndn) {
-          auto block_np = Electron(n_sites, nup, ndn, irrep);
+      for (int64_t nup = 0; nup <= nsites; ++nup) {
+        for (int64_t ndn = 0; ndn <= nsites; ++ndn) {
+          auto block_np = Electron(nsites, nup, ndn, irrep);
           auto H_np = matrixC(opsum, block_np, block_np);
           REQUIRE(H_np.is_hermitian(1e-8));
 
@@ -65,16 +65,16 @@ void test_electron_symmetric_spectra_no_np(
   XDIAG_RETHROW(e);
 }
 
-void test_electron_symmetric_spectra(OpSum opsum, int64_t n_sites,
+void test_electron_symmetric_spectra(OpSum opsum, int64_t nsites,
                                      std::vector<Representation> irreps,
                                      std::vector<int64_t> multiplicities) try {
   assert(irreps.size() == multiplicities.size());
 
-  for (int64_t nup = 0; nup <= n_sites; ++nup) {
-    for (int64_t ndn = 0; ndn <= n_sites; ++ndn) {
+  for (int64_t nup = 0; nup <= nsites; ++nup) {
+    for (int64_t ndn = 0; ndn <= nsites; ++ndn) {
 
       // Compute the full spectrum from non-symmetrized block
-      auto electron_nosym = Electron(n_sites, nup, ndn);
+      auto electron_nosym = Electron(nsites, nup, ndn);
       if (electron_nosym.size() < 1000) {
 
         auto H_nosym = matrixC(opsum, electron_nosym, electron_nosym);
@@ -87,7 +87,7 @@ void test_electron_symmetric_spectra(OpSum opsum, int64_t n_sites,
           auto irrep = irreps[k];
           int64_t multiplicity = multiplicities[k];
 
-          auto electron = Electron(n_sites, nup, ndn, irrep);
+          auto electron = Electron(nsites, nup, ndn, irrep);
           // Log.out(
           //     "nup: {}, ndn: {}, k: {}, mult: {}, dim_nosym: {}, dim_sym:"
           //     "{} ",
@@ -136,24 +136,24 @@ void test_electron_symmetric_spectra(OpSum opsum, int64_t n_sites,
   XDIAG_RETHROW(e);
 }
 
-void test_hubbard_symmetric_spectrum_chains(int64_t n_sites) try {
+void test_hubbard_symmetric_spectrum_chains(int64_t nsites) try {
   using namespace xdiag::testcases::electron;
 
-  auto [irreps, multiplicities] = get_cyclic_group_irreps_mult(n_sites);
+  auto [irreps, multiplicities] = get_cyclic_group_irreps_mult(nsites);
 
   // Without Heisenberg term
-  Log.out("electron_symmetric_matrix: Hubbard chain, n_sites: {}", n_sites);
-  auto opsum = get_linear_chain(n_sites, 1.0, 5.0);
-  test_electron_symmetric_spectra(opsum, n_sites, irreps, multiplicities);
-  test_electron_symmetric_spectra_no_np(opsum, n_sites, irreps, multiplicities);
+  Log.out("electron_symmetric_matrix: Hubbard chain, nsites: {}", nsites);
+  auto opsum = get_linear_chain(nsites, 1.0, 5.0);
+  test_electron_symmetric_spectra(opsum, nsites, irreps, multiplicities);
+  test_electron_symmetric_spectra_no_np(opsum, nsites, irreps, multiplicities);
 
   // With Heisenberg term
-  Log("electron_symmetric_matrix: Hubbard chain, n_sites: {} (+ "
+  Log("electron_symmetric_matrix: Hubbard chain, nsites: {} (+ "
       "Heisenberg terms)",
-      n_sites);
-  auto opsum_hb = get_linear_chain_hb(n_sites, 0.4);
-  test_electron_symmetric_spectra(opsum_hb, n_sites, irreps, multiplicities);
-  test_electron_symmetric_spectra_no_np(opsum_hb, n_sites, irreps,
+      nsites);
+  auto opsum_hb = get_linear_chain_hb(nsites, 0.4);
+  test_electron_symmetric_spectra(opsum_hb, nsites, irreps, multiplicities);
+  test_electron_symmetric_spectra_no_np(opsum_hb, nsites, irreps,
                                         multiplicities);
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
@@ -165,17 +165,17 @@ TEST_CASE("electron_symmetric_matrix", "[electron]") try {
 
   // Check matrices agains Weisse & Fehske
   Log("electron_symmetric_matrix: Weisse & Fehske matrix");
-  int64_t n_sites = 4;
+  int64_t nsites = 4;
   int64_t nup = 3;
   int64_t ndn = 2;
   double t = 1.0;
   double U = 5.0;
-  auto opsum = get_linear_chain(n_sites, t, U);
-  auto [irreps, multiplicities] = get_cyclic_group_irreps_mult(n_sites);
+  auto opsum = get_linear_chain(nsites, t, U);
+  auto [irreps, multiplicities] = get_cyclic_group_irreps_mult(nsites);
 
   for (int64_t k = 0; k < (int64_t)irreps.size(); ++k) {
     auto irrep = irreps[k];
-    auto electron = Electron(n_sites, nup, ndn, irrep);
+    auto electron = Electron(nsites, nup, ndn, irrep);
     auto H_sym = matrixC(opsum, electron, electron);
     complex U2 = 2 * U;
     complex UU = U;
@@ -213,10 +213,10 @@ TEST_CASE("electron_symmetric_matrix", "[electron]") try {
   }
 
   // Test linear chains
-  for (int64_t n_sites = 2; n_sites < 7; ++n_sites) {
-    test_hubbard_symmetric_spectrum_chains(n_sites);
-    test_hubbard_symmetric_spectrum_chains(n_sites);
-    test_hubbard_symmetric_spectrum_chains(n_sites);
+  for (int64_t nsites = 2; nsites < 7; ++nsites) {
+    test_hubbard_symmetric_spectrum_chains(nsites);
+    test_hubbard_symmetric_spectrum_chains(nsites);
+    test_hubbard_symmetric_spectrum_chains(nsites);
   }
 
   // test a 3x3 triangular lattice

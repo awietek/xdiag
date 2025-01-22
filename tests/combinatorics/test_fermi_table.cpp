@@ -16,24 +16,24 @@ void test_fermi_bool_table(PermutationGroup const &group) {
   using combinatorics::Subsets;
   using namespace symmetries;
 
-  int n_sites = group.n_sites();
+  int nsites = group.nsites();
   int n_symmetries = group.size();
 
-  for (int npar = 0; npar <= n_sites; ++npar) {
+  for (int npar = 0; npar <= nsites; ++npar) {
 
     auto fermi_tbl =
-        combinatorics::FermiTableCombinations<bit_t>(n_sites, npar, group);
+        combinatorics::FermiTableCombinations<bit_t>(nsites, npar, group);
     for (int sym = 0; sym < n_symmetries; ++sym) {
-      for (bit_t state : Combinations<bit_t>(n_sites, npar)) {
+      for (bit_t state : Combinations<bit_t>(nsites, npar)) {
         REQUIRE(fermi_tbl.sign(sym, state) ==
                 fermi_bool_of_permutation(state, group[sym]));
       }
     }
   }
 
-  auto fermi_tbl = combinatorics::FermiTableSubsets<bit_t>(n_sites, group);
+  auto fermi_tbl = combinatorics::FermiTableSubsets<bit_t>(nsites, group);
   for (int sym = 0; sym < n_symmetries; ++sym) {
-    for (bit_t state : Subsets<bit_t>(n_sites)) {
+    for (bit_t state : Subsets<bit_t>(nsites)) {
       REQUIRE(fermi_tbl.sign(sym, state) ==
               fermi_bool_of_permutation(state, group[sym]));
     }
@@ -43,9 +43,9 @@ TEST_CASE("fermi_table", "[symmetries]") {
   xdiag::Log("Test fermi_table");
   int max_N = 6;
 
-  for (int n_sites = 1; n_sites <= max_N; ++n_sites) {
-    Log("chain N={}", n_sites);
-    auto irreps = xdiag::testcases::electron::get_cyclic_group_irreps(n_sites);
+  for (int nsites = 1; nsites <= max_N; ++nsites) {
+    Log("chain N={}", nsites);
+    auto irreps = xdiag::testcases::electron::get_cyclic_group_irreps(nsites);
     test_fermi_bool_table<uint16_t>(irreps[0].group());
     test_fermi_bool_table<uint32_t>(irreps[0].group());
     test_fermi_bool_table<uint64_t>(irreps[0].group());

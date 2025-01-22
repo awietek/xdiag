@@ -4,7 +4,7 @@
 
 namespace xdiag {
 
-ProductState::ProductState(int64_t n_sites) : local_states_(n_sites) {}
+ProductState::ProductState(int64_t nsites) : local_states_(nsites) {}
 
 ProductState::ProductState(std::vector<std::string> const &local_states)
     : local_states_(local_states) {}
@@ -16,7 +16,7 @@ std::string &ProductState::operator[](int64_t i) { return local_states_[i]; }
 
 void ProductState::push_back(std::string l) { local_states_.push_back(l); }
 int64_t ProductState::size() const { return local_states_.size(); }
-int64_t ProductState::n_sites() const { return local_states_.size(); }
+int64_t ProductState::nsites() const { return local_states_.size(); }
 
 ProductState::iterator_t ProductState::begin() const {
   return local_states_.begin();
@@ -36,7 +36,6 @@ std::ostream &operator<<(std::ostream &out, ProductState const &state) {
   for (int64_t i = state.size() - 1; i >= 0; --i) {
     out << state[i] << " ";
   }
-  out << "\n";
   return out;
 }
 std::string to_string(ProductState const &state, std::string format) try {

@@ -429,7 +429,7 @@ void FileTomlHandler::operator= <Permutation>(Permutation const &value) try {
 template <>
 void FileTomlHandler::operator=
     <PermutationGroup>(PermutationGroup const &group) try {
-  arma::imat mat(group.size(), group.n_sites());
+  arma::imat mat(group.size(), group.nsites());
   for (int64_t i = 0; i < group.size(); ++i) {
     auto int_vec = group[i].array();
     std::vector<arma::sword> vec(int_vec.begin(), int_vec.end());

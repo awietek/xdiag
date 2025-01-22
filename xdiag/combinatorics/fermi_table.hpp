@@ -13,22 +13,22 @@ namespace xdiag::combinatorics {
 template <typename bit_t = std_bit_t> class FermiTableSubsets {
 public:
   FermiTableSubsets() = default;
-  FermiTableSubsets(int64_t n_sites, PermutationGroup const &group);
+  FermiTableSubsets(int64_t nsites, PermutationGroup const &group);
   inline bool sign(int64_t sym, bit_t state) const {
-    return table_[(sym << n_sites_) | (int64_t)state];
+    return table_[(sym << nsites_) | (int64_t)state];
   }
   bool operator==(FermiTableSubsets const &rhs) const;
   bool operator!=(FermiTableSubsets const &rhs) const;
 
 private:
-  int64_t n_sites_;
+  int64_t nsites_;
   std::vector<bool> table_;
 };
 
 template <typename bit_t = std_bit_t> class FermiTableCombinations {
 public:
   FermiTableCombinations() = default;
-  FermiTableCombinations(int64_t n_sites, int64_t n_par,
+  FermiTableCombinations(int64_t nsites, int64_t n_par,
                          PermutationGroup const &group);
   inline bool sign(int64_t sym, bit_t state) const {
     return table_[sym * raw_size_ + lin_table_.index(state)];

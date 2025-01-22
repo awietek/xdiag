@@ -18,9 +18,9 @@ bool is_cplx_type(std::string type) {
          cplx_types.end();
 }
 
-int64_t n_sites_of_type(std::string type) try {
-  auto it = _n_sites_of_type.find(type);
-  if (it != _n_sites_of_type.end()) {
+int64_t nsites_of_type(std::string type) try {
+  auto it = _nsites_of_type.find(type);
+  if (it != _nsites_of_type.end()) {
     return it->second;
   } else {
     XDIAG_THROW(fmt::format("Cannot determine number of sites of Op of type "

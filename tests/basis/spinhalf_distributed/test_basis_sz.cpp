@@ -11,21 +11,21 @@
 template <typename bit_t> void test_spinhalf_distributed_basis_sz() {
   using namespace xdiag;
 
-  for (int n_sites = 2; n_sites <= 6; ++n_sites) {
-    for (int n_up = 0; n_up <= n_sites; ++n_up) {
-      // int n_sites=16;
-      // int n_up = 7;
-      auto basis = basis::spinhalf_distributed::BasisSz<bit_t>(n_sites, n_up);
+  for (int nsites = 2; nsites <= 6; ++nsites) {
+    for (int nup = 0; nup <= nsites; ++nup) {
+      // int nsites=16;
+      // int nup = 7;
+      auto basis = basis::spinhalf_distributed::BasisSz<bit_t>(nsites, nup);
 
       // pre / post order
       bit_t spins_before = 0;
       int64_t idx = 0;
-      // Log("N: {} nup: {}", n_sites, n_up);
+      // Log("N: {} nup: {}", nsites, nup);
       for (bit_t prefix : basis.prefixes()) {
         bit_t prefix_shifted = prefix << basis.n_postfix_bits();
         for (bit_t postfix : basis.postfix_states(prefix)) {
           bit_t spins = prefix_shifted | postfix;
-          REQUIRE(bits::popcnt(spins) == n_up);
+          REQUIRE(bits::popcnt(spins) == nup);
           // std::cout << BSTR(spins) << "\n";
           if (idx > 0) {
             REQUIRE(spins > spins_before);
@@ -43,7 +43,7 @@ template <typename bit_t> void test_spinhalf_distributed_basis_sz() {
         bit_t postfix_shifted = postfix << basis.n_prefix_bits();
         for (bit_t prefix : basis.prefix_states(postfix)) {
           bit_t spins = postfix_shifted | prefix;
-          REQUIRE(bits::popcnt(spins) == n_up);
+          REQUIRE(bits::popcnt(spins) == nup);
           if (idx > 0) {
             REQUIRE(spins > spins_before);
           }

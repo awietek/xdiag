@@ -148,8 +148,8 @@ void compile_and_dispatch(complex *mat, int64_t m, OpSum const &ops,
 template <typename coeff_t, class block_t>
 void matrix(coeff_t *mat, OpSum const &ops, block_t const &block_in,
             block_t const &block_out) try {
-  int64_t n_sites = block_in.n_sites();
-  check_valid(ops, n_sites);
+  int64_t nsites = block_in.nsites();
+  check_valid(ops, nsites);
   int64_t m = block_out.size();
   int64_t n = block_in.size();
   std::fill(mat, mat + m * n, 0);

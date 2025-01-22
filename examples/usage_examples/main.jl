@@ -16,7 +16,7 @@ p3 = Permutation([3, 1, 2])
 C3 = PermutationGroup([p1, p2, p3])
 
 @show size(C3)
-@show n_sites(C3)
+@show nsites(C3)
 @show inverse(C3, 1) # = 2
 # --8<-- [end:PermutationGroup]
 
@@ -55,7 +55,7 @@ block_sym = Spinhalf(N, group, rep)
 block_sym_sz = Spinhalf(N, nup, group, rep)
 @show block_sym_sz
 
-@show n_sites(block_sym_sz)
+@show nsites(block_sym_sz)
 @show size(block_sym_sz)
 
 # Iteration
@@ -85,7 +85,7 @@ rep = Representation([1, -1, 1, -1])
 block_sym = tJ(N, nup, ndn, group, rep)
 @show block_sym
 
-@show n_sites(block_sym)
+@show nsites(block_sym)
 @show size(block_sym)
 
 # Iteration
@@ -124,7 +124,7 @@ block_sym = Electron(N, group, rep)
 block_sym_np = Electron(N, nup, ndn, group, rep)
 @show block_sym_np
 
-@show n_sites(block_sym_np)
+@show nsites(block_sym_np)
 @show size(block_sym_np)
 
 # Iteration
@@ -292,7 +292,7 @@ pstate = ProductState()
 push!(pstate, "Dn")
 push!(pstate, "Up")
 push!(pstate, "Dn")
-@show n_sites(pstate)
+@show nsites(pstate)
 for s in pstate
     @show s
 end

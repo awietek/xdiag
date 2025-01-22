@@ -10,38 +10,38 @@ int main(int argc, char** argv) {
 
   // Parse input arguments
   assert(argc == 4);
-  int n_sites = atoi(argv[1]); // number of sites
-  int n_up = atoi(argv[2]);    // number of upspins
+  int nsites = atoi(argv[1]); // number of sites
+  int nup = atoi(argv[2]);    // number of upspins
   int k = atoi(argv[3]);       // momentum k
 
   say_hello();
   
   // Define directory / file to store output data
-  std::string outdir = format("outfiles/N.{}", n_sites);
+  std::string outdir = format("outfiles/N.{}", nsites);
   std::string outfile = format("{}/outfile.N.{}.nup.{}.k.{}.h5",
-			       outdir, n_sites, n_up, k);
+			       outdir, nsites, nup, k);
   std::filesystem::create_directories(outdir);
 
   // Create nearest-neighbor Heisenberg model
   OpSum ops;
-  for (int s = 0; s < n_sites; ++s) {
-    ops << Op("HB", "J", {s, (s + 1) % n_sites});
+  for (int s = 0; s < nsites; ++s) {
+    ops << Op("HB", "J", {s, (s + 1) % nsites});
   }
   ops["J"] = 1.0;
 
   // Create the permutation group
   std::vector<int> translation;
-  for (int s = 0; s < n_sites; ++s) {
-    translation.push_back((s + 1) % n_sites);
+  for (int s = 0; s < nsites; ++s) {
+    translation.push_back((s + 1) % nsites);
   }
   Permutation perm(translation);
   auto group = generated_group(perm);
 
   // Create the irrep at momentum k
-  complex phase = exp(2i * pi * k / (double)n_sites);
+  complex phase = exp(2i * pi * k / (double)nsites);
   auto irrep = generated_irrep(perm, phase);
   
-  auto block = Spinhalf(n_sites, n_up, group, irrep);
+  auto block = Spinhalf(nsites, nup, group, irrep);
   XDIAG_SHOW(block);
   
   // Compute eigendecomposition of Hamiltonian
@@ -55,21 +55,21 @@ int main(int argc, char** argv) {
   eigval.save(hdf5_name(outfile, "eigenvalues", append));
 
   // Loop over different momenta q
-  for (int q = 0; q <= n_sites; ++q) {
+  for (int q = 0; q <= nsites; ++q) {
 
     Log("Computing <n|S(q)|m> (q={})", q);
     
     // Create S(q) operator
     OpSum S_of_q_ops;
-    for (int s = 0; s < n_sites; ++s) {
-      complex phase = exp(2i * pi * q * s / (double)n_sites);
-      S_of_q_ops << Op("Sz", phase / n_sites, s);
+    for (int s = 0; s < nsites; ++s) {
+      complex phase = exp(2i * pi * q * s / (double)nsites);
+      S_of_q_ops << Op("Sz", phase / nsites, s);
     }
 
     // Create block at momentum k + q
-    complex phase_q = exp(2i * pi * (k+q) / (double)n_sites);
+    complex phase_q = exp(2i * pi * (k+q) / (double)nsites);
     auto irrep_q = generated_irrep(perm, phase_q);
-    auto block_q = Spinhalf(n_sites, n_up, group, irrep_q);
+    auto block_q = Spinhalf(nsites, nup, group, irrep_q);
     cx_mat H_q = matrixC(ops, block_q);
 
     vec eigval_q;

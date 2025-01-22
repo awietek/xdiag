@@ -21,7 +21,7 @@ using Block = std::variant<Spinhalf, tJ, Electron>;
 
 int64_t dim(Block const &block);
 int64_t size(Block const &block);
-int64_t n_sites(Block const &block);
+int64_t nsites(Block const &block);
 
 bool isreal(Block const &block);
 

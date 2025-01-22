@@ -2,10 +2,10 @@
 
 using namespace xdiag;
 
-void measure_density(int n_sites, State const &v) {
+void measure_density(int nsites, State const &v) {
   int rank;
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-  for (int i = 0; i < n_sites; ++i) {
+  for (int i = 0; i < nsites; ++i) {
     complex sz = innerC(Bond("Ntot", i), v);
     if (rank == 0) {
       printf("%.6f ", std::real(sz));
@@ -25,7 +25,7 @@ int main(int argc, char **argv) try {
   double J = 0.1;
   double mu_0 = 10;
 
-  int n_sites = L * W;
+  int nsites = L * W;
   double precision = 1e-12;
 
   // Create square lattice t-J model
@@ -59,7 +59,7 @@ int main(int argc, char **argv) try {
   ops["MUPLUS"] = mu_0;
   ops["MUNEG"] = mu_0;
 
-  auto block = tJDistributed(n_sites, n_sites / 2 - 1, n_sites / 2 - 1);
+  auto block = tJDistributed(nsites, nsites / 2 - 1, nsites / 2 - 1);
 
   XDIAG_SHOW(block);
 
@@ -71,7 +71,7 @@ int main(int argc, char **argv) try {
   ops["MUPLUS"] = 0;
   ops["MUNEG"] = 0;
 
-  measure_density(n_sites, v);
+  measure_density(nsites, v);
 
   // Do the time evolution with a step size tau
   double tau = 0.1;
@@ -80,7 +80,7 @@ int main(int argc, char **argv) try {
     v = time_evolve(ops, v, tau, precision);
     toc("time evolve");
     tic();
-    measure_density(n_sites, v);
+    measure_density(nsites, v);
     toc("measure");
   }
 

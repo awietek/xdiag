@@ -7,32 +7,32 @@ namespace xdiag {
 
 using namespace basis;
 
-Spinhalf::Spinhalf(int64_t n_sites, std::string backend) try
-    : n_sites_(n_sites), backend_(backend), n_up_(std::nullopt),
-      irrep_(std::nullopt), size_((int64_t)1 << n_sites) {
+Spinhalf::Spinhalf(int64_t nsites, std::string backend) try
+    : nsites_(nsites), backend_(backend), nup_(std::nullopt),
+      irrep_(std::nullopt), size_((int64_t)1 << nsites) {
   check_dimension_works_with_blas_int_size(size_);
 
   // Safety checks
-  if (n_sites < 0) {
-    XDIAG_THROW("Invalid argument: n_sites < 0");
+  if (nsites < 0) {
+    XDIAG_THROW("Invalid argument: nsites < 0");
   }
 
   // Choose basis implementation
   if (backend == "auto") {
-    if (n_sites < 32) {
+    if (nsites < 32) {
       basis_ =
-          std::make_shared<basis_t>(spinhalf::BasisNoSz<uint32_t>(n_sites));
-    } else if (n_sites < 64) {
+          std::make_shared<basis_t>(spinhalf::BasisNoSz<uint32_t>(nsites));
+    } else if (nsites < 64) {
       basis_ =
-          std::make_shared<basis_t>(spinhalf::BasisNoSz<uint64_t>(n_sites));
+          std::make_shared<basis_t>(spinhalf::BasisNoSz<uint64_t>(nsites));
     } else {
       XDIAG_THROW(
           "Spinhalf blocks with more than 64 sites currently not implemented");
     }
   } else if (backend == "32bit") {
-    basis_ = std::make_shared<basis_t>(spinhalf::BasisNoSz<uint32_t>(n_sites));
+    basis_ = std::make_shared<basis_t>(spinhalf::BasisNoSz<uint32_t>(nsites));
   } else if (backend == "64bit") {
-    basis_ = std::make_shared<basis_t>(spinhalf::BasisNoSz<uint64_t>(n_sites));
+    basis_ = std::make_shared<basis_t>(spinhalf::BasisNoSz<uint64_t>(nsites));
   } else {
     XDIAG_THROW(fmt::format("Unknown backend: \"{}\"", backend));
   }
@@ -40,38 +40,38 @@ Spinhalf::Spinhalf(int64_t n_sites, std::string backend) try
   XDIAG_RETHROW(e);
 }
 
-Spinhalf::Spinhalf(int64_t n_sites, int64_t n_up, std::string backend) try
-    : n_sites_(n_sites), backend_(backend), n_up_(n_up), irrep_(std::nullopt),
-      size_(combinatorics::binomial(n_sites, n_up)) {
+Spinhalf::Spinhalf(int64_t nsites, int64_t nup, std::string backend) try
+    : nsites_(nsites), backend_(backend), nup_(nup), irrep_(std::nullopt),
+      size_(combinatorics::binomial(nsites, nup)) {
   check_dimension_works_with_blas_int_size(size_);
 
   // Safety checks
-  if (n_sites < 0) {
-    XDIAG_THROW("Invalid argument: n_sites < 0");
-  } else if (n_up < 0) {
-    XDIAG_THROW("Invalid argument: n_up < 0");
-  } else if (n_up > n_sites) {
-    XDIAG_THROW("Invalid argument: n_up > n_sites");
+  if (nsites < 0) {
+    XDIAG_THROW("Invalid argument: nsites < 0");
+  } else if (nup < 0) {
+    XDIAG_THROW("Invalid argument: nup < 0");
+  } else if (nup > nsites) {
+    XDIAG_THROW("Invalid argument: nup > nsites");
   }
 
   // Choose basis implementation
   if (backend == "auto") {
-    if (n_sites < 32) {
+    if (nsites < 32) {
       basis_ =
-          std::make_shared<basis_t>(spinhalf::BasisSz<uint32_t>(n_sites, n_up));
-    } else if (n_sites < 64) {
+          std::make_shared<basis_t>(spinhalf::BasisSz<uint32_t>(nsites, nup));
+    } else if (nsites < 64) {
       basis_ =
-          std::make_shared<basis_t>(spinhalf::BasisSz<uint64_t>(n_sites, n_up));
+          std::make_shared<basis_t>(spinhalf::BasisSz<uint64_t>(nsites, nup));
     } else {
       XDIAG_THROW(
           "Spinhalf blocks with more than 64 sites currently not implemented");
     }
   } else if (backend == "32bit") {
     basis_ =
-        std::make_shared<basis_t>(spinhalf::BasisSz<uint32_t>(n_sites, n_up));
+        std::make_shared<basis_t>(spinhalf::BasisSz<uint32_t>(nsites, nup));
   } else if (backend == "64bit") {
     basis_ =
-        std::make_shared<basis_t>(spinhalf::BasisSz<uint64_t>(n_sites, n_up));
+        std::make_shared<basis_t>(spinhalf::BasisSz<uint64_t>(nsites, nup));
   } else {
     XDIAG_THROW(fmt::format("Unknown backend: \"{}\"", backend));
   }
@@ -79,23 +79,23 @@ Spinhalf::Spinhalf(int64_t n_sites, int64_t n_up, std::string backend) try
   XDIAG_RETHROW(e);
 }
 
-Spinhalf::Spinhalf(int64_t n_sites, Representation const &irrep,
+Spinhalf::Spinhalf(int64_t nsites, Representation const &irrep,
                    std::string backend) try
-    : n_sites_(n_sites), backend_(backend), n_up_(std::nullopt), irrep_(irrep) {
+    : nsites_(nsites), backend_(backend), nup_(std::nullopt), irrep_(irrep) {
 
   // Safety checks
-  if (n_sites < 0) {
-    XDIAG_THROW("Invalid argument: n_sites < 0");
-  } else if (n_sites != irrep.group().n_sites()) {
-    XDIAG_THROW("n_sites does not match the n_sites in PermutationGroup");
+  if (nsites < 0) {
+    XDIAG_THROW("Invalid argument: nsites < 0");
+  } else if (nsites != irrep.group().nsites()) {
+    XDIAG_THROW("nsites does not match the nsites in PermutationGroup");
   }
 
   // Choose basis implementation
   if (backend == "auto") {
-    if (n_sites < 32) {
+    if (nsites < 32) {
       basis_ = std::make_shared<basis_t>(
           spinhalf::BasisSymmetricNoSz<uint32_t>(irrep));
-    } else if (n_sites < 64) {
+    } else if (nsites < 64) {
       basis_ = std::make_shared<basis_t>(
           spinhalf::BasisSymmetricNoSz<uint64_t>(irrep));
     } else {
@@ -133,54 +133,54 @@ Spinhalf::Spinhalf(int64_t n_sites, Representation const &irrep,
   XDIAG_RETHROW(e);
 }
 
-Spinhalf::Spinhalf(int64_t n_sites, int64_t n_up, Representation const &irrep,
+Spinhalf::Spinhalf(int64_t nsites, int64_t nup, Representation const &irrep,
                    std::string backend) try
-    : n_sites_(n_sites), backend_(backend), n_up_(n_up), irrep_(irrep) {
+    : nsites_(nsites), backend_(backend), nup_(nup), irrep_(irrep) {
 
   // Safety checks
-  if (n_sites < 0) {
-    XDIAG_THROW("Invalid argument: n_sites < 0");
-  } else if (n_up < 0) {
-    XDIAG_THROW("Invalid argument: n_up < 0");
-  } else if (n_up > n_sites) {
-    XDIAG_THROW("Invalid argument: n_up > n_sites");
-  } else if (n_sites != irrep.group().n_sites()) {
-    XDIAG_THROW("n_sites does not match the n_sites in PermutationGroup");
+  if (nsites < 0) {
+    XDIAG_THROW("Invalid argument: nsites < 0");
+  } else if (nup < 0) {
+    XDIAG_THROW("Invalid argument: nup < 0");
+  } else if (nup > nsites) {
+    XDIAG_THROW("Invalid argument: nup > nsites");
+  } else if (nsites != irrep.group().nsites()) {
+    XDIAG_THROW("nsites does not match the nsites in PermutationGroup");
   }
 
   // Choose basis implementation
   if (backend == "auto") {
-    if (n_sites < 32) {
+    if (nsites < 32) {
       basis_ = std::make_shared<basis_t>(
-          spinhalf::BasisSymmetricSz<uint32_t>(n_up, irrep));
-    } else if (n_sites < 64) {
+          spinhalf::BasisSymmetricSz<uint32_t>(nup, irrep));
+    } else if (nsites < 64) {
       basis_ = std::make_shared<basis_t>(
-          spinhalf::BasisSymmetricSz<uint64_t>(n_up, irrep));
+          spinhalf::BasisSymmetricSz<uint64_t>(nup, irrep));
     } else {
       XDIAG_THROW(
           "Spinhalf blocks with more than 64 sites currently not implemented");
     }
   } else if (backend == "32bit") {
     basis_ = std::make_shared<basis_t>(
-        spinhalf::BasisSymmetricSz<uint32_t>(n_up, irrep));
+        spinhalf::BasisSymmetricSz<uint32_t>(nup, irrep));
   } else if (backend == "64bit") {
     basis_ = std::make_shared<basis_t>(
-        spinhalf::BasisSymmetricSz<uint64_t>(n_up, irrep));
+        spinhalf::BasisSymmetricSz<uint64_t>(nup, irrep));
   } else if (backend == "1sublattice") {
     basis_ = std::make_shared<basis_t>(
-        spinhalf::BasisSublattice<uint64_t, 1>(n_up, irrep));
+        spinhalf::BasisSublattice<uint64_t, 1>(nup, irrep));
   } else if (backend == "2sublattice") {
     basis_ = std::make_shared<basis_t>(
-        spinhalf::BasisSublattice<uint64_t, 2>(n_up, irrep));
+        spinhalf::BasisSublattice<uint64_t, 2>(nup, irrep));
   } else if (backend == "3sublattice") {
     basis_ = std::make_shared<basis_t>(
-        spinhalf::BasisSublattice<uint64_t, 3>(n_up, irrep));
+        spinhalf::BasisSublattice<uint64_t, 3>(nup, irrep));
   } else if (backend == "4sublattice") {
     basis_ = std::make_shared<basis_t>(
-        spinhalf::BasisSublattice<uint64_t, 4>(n_up, irrep));
+        spinhalf::BasisSublattice<uint64_t, 4>(nup, irrep));
   } else if (backend == "5sublattice") {
     basis_ = std::make_shared<basis_t>(
-        spinhalf::BasisSublattice<uint64_t, 5>(n_up, irrep));
+        spinhalf::BasisSublattice<uint64_t, 5>(nup, irrep));
   } else {
     XDIAG_THROW(fmt::format("Unknown backend: \"{}\"", backend));
   }
@@ -209,7 +209,7 @@ int64_t Spinhalf::dim() const { return size_; }
 int64_t Spinhalf::size() const { return size_; }
 
 bool Spinhalf::operator==(Spinhalf const &rhs) const {
-  return (n_sites_ == rhs.n_sites_) && (n_up_ == rhs.n_up_) &&
+  return (nsites_ == rhs.nsites_) && (nup_ == rhs.nup_) &&
          (irrep_ == rhs.irrep_) && (*basis_ == *rhs.basis_);
 }
 
@@ -217,9 +217,9 @@ bool Spinhalf::operator!=(Spinhalf const &rhs) const {
   return !operator==(rhs);
 }
 
-int64_t Spinhalf::n_sites() const { return n_sites_; }
+int64_t Spinhalf::nsites() const { return nsites_; }
 std::string Spinhalf::backend() const { return backend_; }
-std::optional<int64_t> Spinhalf::n_up() const { return n_up_; }
+std::optional<int64_t> Spinhalf::nup() const { return nup_; }
 std::optional<Representation> const &Spinhalf::irrep() const { return irrep_; }
 
 bool Spinhalf::isreal() const { return irrep_ ? irrep_->isreal() : true; }
@@ -228,11 +228,11 @@ Spinhalf::basis_t const &Spinhalf::basis() const { return *basis_; }
 bool isreal(Spinhalf const &block) { return block.isreal(); }
 std::ostream &operator<<(std::ostream &out, Spinhalf const &block) {
   out << "Spinhalf:\n";
-  out << "  n_sites  : " << block.n_sites() << "\n";
-  if (block.n_up()) {
-    out << "  n_up     : " << *block.n_up() << "\n";
+  out << "  nsites  : " << block.nsites() << "\n";
+  if (block.nup()) {
+    out << "  nup     : " << *block.nup() << "\n";
   } else {
-    out << "  n_up     : not conserved\n";
+    out << "  nup     : not conserved\n";
   }
   if (block.irrep()) {
     out << "  irrep    : defined with ID " << std::hex
@@ -250,7 +250,7 @@ std::string to_string(Spinhalf const &block) {
 }
 
 SpinhalfIterator::SpinhalfIterator(Spinhalf const &block, bool begin)
-    : n_sites_(block.n_sites()), pstate_(n_sites_),
+    : nsites_(block.nsites()), pstate_(nsites_),
       it_(std::visit(
           [&](auto const &basis) {
             basis::BasisSpinhalfIterator it =

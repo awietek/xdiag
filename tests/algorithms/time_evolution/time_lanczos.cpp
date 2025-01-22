@@ -13,8 +13,8 @@ int main() {
   cout << "timing the lanczos algorithm ... ";
 
   // defining a model with xdiag
-  int n_sites, nup, ndn;
-  n_sites = 10;
+  int nsites, nup, ndn;
+  nsites = 10;
   nup = 3;
   ndn = 3;
   double t, t1, U;
@@ -22,11 +22,11 @@ int main() {
   t1 = .5;
   U = 4;
 
-  auto block = Electron(n_sites, nup, ndn);
+  auto block = Electron(nsites, nup, ndn);
   OpSum ops;
-  for (int i = 0; i < n_sites; i++) {
-    ops += "t" * Op("Hop", {i, (i + 1) % n_sites});
-    ops += "t1" * Op("Hop", {i, (i + 2) % n_sites});
+  for (int i = 0; i < nsites; i++) {
+    ops += "t" * Op("Hop", {i, (i + 1) % nsites});
+    ops += "t1" * Op("Hop", {i, (i + 2) % nsites});
   }
   ops += "U" * Op("HubbardU");
   ops["t"] = t;

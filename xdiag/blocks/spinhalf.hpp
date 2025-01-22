@@ -18,12 +18,12 @@ public:
   using iterator_t = SpinhalfIterator;
 
   XDIAG_API Spinhalf() = default;
-  XDIAG_API Spinhalf(int64_t n_sites, std::string backend = "auto");
-  XDIAG_API Spinhalf(int64_t n_sites, int64_t n_up,
+  XDIAG_API Spinhalf(int64_t nsites, std::string backend = "auto");
+  XDIAG_API Spinhalf(int64_t nsites, int64_t nup,
                      std::string backend = "auto");
-  XDIAG_API Spinhalf(int64_t n_sites, Representation const &irrep,
+  XDIAG_API Spinhalf(int64_t nsites, Representation const &irrep,
                      std::string backend = "auto");
-  XDIAG_API Spinhalf(int64_t n_sites, int64_t n_up, Representation const &irrep,
+  XDIAG_API Spinhalf(int64_t nsites, int64_t nup, Representation const &irrep,
                      std::string backend = "auto");
 
   XDIAG_API iterator_t begin() const;
@@ -35,17 +35,17 @@ public:
   XDIAG_API bool operator==(Spinhalf const &rhs) const;
   XDIAG_API bool operator!=(Spinhalf const &rhs) const;
 
-  int64_t n_sites() const;
+  int64_t nsites() const;
   std::string backend() const;
-  std::optional<int64_t> n_up() const;
+  std::optional<int64_t> nup() const;
   std::optional<Representation> const &irrep() const;
   bool isreal() const;
   basis_t const &basis() const;
 
 private:
-  int64_t n_sites_;
+  int64_t nsites_;
   std::string backend_;
-  std::optional<int64_t> n_up_;
+  std::optional<int64_t> nup_;
   std::optional<Representation> irrep_;
   std::shared_ptr<basis_t> basis_;
   int64_t size_;
@@ -63,7 +63,7 @@ public:
   bool operator!=(SpinhalfIterator const &rhs) const;
 
 private:
-  int64_t n_sites_;
+  int64_t nsites_;
   mutable ProductState pstate_;
   basis::BasisSpinhalfIterator it_;
 };

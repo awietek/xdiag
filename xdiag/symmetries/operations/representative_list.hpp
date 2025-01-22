@@ -151,7 +151,7 @@ template <typename bit_t, typename T, class States, class GroupAction>
 inline std::tuple<std::vector<bit_t>, std::vector<double>,
                   std::vector<std::pair<span_size_t, span_size_t>>,
                   std::vector<int64_t>, int64_t>
-electron_dns_norms_limits_offset_size(std::vector<bit_t> const &reps_up,
+electrondns_norms_limits_offset_size(std::vector<bit_t> const &reps_up,
                                       States &&states_dns,
                                       GroupAction &&group_action,
                                       arma::Col<T> const &characters) try {

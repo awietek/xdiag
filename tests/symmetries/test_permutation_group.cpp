@@ -20,7 +20,7 @@ TEST_CASE("permutation_group", "[symmetries]") try {
     auto p = group[sym];
     auto pinv = group[group.inverse(sym)];
     // XDIAG_SHOW(p * pinv);
-    auto id = Permutation(group.n_sites());
+    auto id = Permutation(group.nsites());
     REQUIRE(p * pinv == id);
   }
   Log("done");

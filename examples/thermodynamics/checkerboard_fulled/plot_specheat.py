@@ -5,7 +5,7 @@ import pydiag as yd
 import pydiag.ensemble as yde
 from collections import OrderedDict
 
-n_sitess = [16, 20]
+nsitess = [16, 20]
 J=1.00
 Jd=1.00
 
@@ -13,26 +13,26 @@ temperatures = np.linspace(0.0001, 10.0, 100)
 
 # define ensemble of quantum numbers with degeneracies (qn, deg)
 
-for n_sites in n_sitess:
+for nsites in nsitess:
 
     # define ensemble of quantum numbers with degeneracies (qn, deg)
-    nups = [(nup, 1) if nup == n_sites // 2 else (nup, 2) for nup in range(n_sites//2+1)]
-    if n_sites == 16:
+    nups = [(nup, 1) if nup == nsites // 2 else (nup, 2) for nup in range(nsites//2+1)]
+    if nsites == 16:
         ks = [("Gamma.D4.A1", 1), ("Gamma.D4.A2", 1), ("Gamma.D4.B1", 1),
               ("Gamma.D4.B2", 1), ("Gamma.D4.E", 2), ("M.D4.A1", 1),
               ("M.D4.A2", 1), ("M.D4.B1", 1), ("M.D4.B2", 1), ("M.D4.E", 2),
               ("Sigma.D1.A", 4), ("Sigma.D1.B", 4), ("X.D2.A1", 2),
               ("X.D2.A2", 2), ("X.D2.B1", 2), ("X.D2.B2", 2)]
 
-    if n_sites == 20:
+    if nsites == 20:
         ks = [("Gamma.C4.A", 1), ("Gamma.C4.B", 1), ("Gamma.C4.Ea", 1),
               ("Gamma.C4.Eb", 1), ("M.C4.A", 1), ("M.C4.B", 1), ("M.C4.Ea", 1),
               ("M.C4.Eb", 1), ("None0.C1.A", 4), ("None1.C1.A", 4)]
         
     ensemble = yde.Ensemble(nups, ks)
 
-    directory = "outfiles/".format(n_sites)
-    regex = "outfile.checkerboard.{}.J.{:.2f}.Jd.{:.2f}.nup.(.*).k.(.*).h5".format(n_sites, J, Jd)
+    directory = "outfiles/".format(nsites)
+    regex = "outfile.checkerboard.{}.J.{:.2f}.Jd.{:.2f}.nup.(.*).k.(.*).h5".format(nsites, J, Jd)
 
     data = yd.read_h5_data(directory, regex, tags=["Eigenvalues"])
     eigs = yde.Array(ensemble, data, tag="Eigenvalues").flatten()
@@ -50,7 +50,7 @@ for n_sites in n_sitess:
         specheat = (energy2/partition - (energy/partition)**2) / T
         specheats.append(specheat)
 
-    plt.plot(temperatures, specheats, label=r"$N={}$".format(n_sites))
+    plt.plot(temperatures, specheats, label=r"$N={}$".format(nsites))
 
 plt.legend()
 plt.xlabel(r"$T$")

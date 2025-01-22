@@ -35,15 +35,15 @@ static arma::Mat<T> permute_matrix(arma::Mat<T> const &mat,
 
   // Determine local dimension of matrix
   int64_t d = 0;
-  int64_t n_sites = perm.size();
-  while (pow(d, n_sites) < m) {
+  int64_t nsites = perm.size();
+  while (pow(d, nsites) < m) {
     ++d;
   }
 
-  if (pow(d, n_sites) != m) {
+  if (pow(d, nsites) != m) {
     XDIAG_THROW(fmt::format("Matrix dimensions are not of the form d^N, where "
                             "N denotes the number of sites (here {})",
-                            n_sites));
+                            nsites));
   }
 
   // Compute the permuted matrix
@@ -89,7 +89,7 @@ std::pair<Scalar, Op> order(Scalar const &alpha, Op const &op) try {
       return {alpha, Op(type, sites_sorted, matp)};
     }
 
-  } else if (n_sites_of_type(type) == 2) {
+  } else if (nsites_of_type(type) == 2) {
     int64_t s1 = op[0];
     int64_t s2 = op[1];
 

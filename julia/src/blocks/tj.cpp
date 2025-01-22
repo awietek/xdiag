@@ -15,10 +15,10 @@ void define_tj(jlcxx::Module &mod) {
       .constructor<int64_t, int64_t, int64_t>()
       .constructor<int64_t, int64_t, int64_t, PermutationGroup,
                    Representation>()
-      .method("n_sites",
-              [](tJ const &s) { JULIA_XDIAG_CALL_RETURN(s.n_sites()) })
-      .method("n_up", [](tJ const &s) { JULIA_XDIAG_CALL_RETURN(s.n_up()) })
-      .method("n_dn", [](tJ const &s) { JULIA_XDIAG_CALL_RETURN(s.n_dn()) })
+      .method("nsites",
+              [](tJ const &s) { JULIA_XDIAG_CALL_RETURN(s.nsites()) })
+      .method("nup", [](tJ const &s) { JULIA_XDIAG_CALL_RETURN(s.nup()) })
+      .method("ndn", [](tJ const &s) { JULIA_XDIAG_CALL_RETURN(s.ndn()) })
       .method(
           "permutation_group",
           [](tJ const &s) { JULIA_XDIAG_CALL_RETURN(s.permutation_group()) })

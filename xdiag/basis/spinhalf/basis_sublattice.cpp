@@ -24,10 +24,10 @@ reps_norms_no_sz(GroupActionSublattice<bit_t, n_sublat> const &group_action,
   std::vector<bit_t> reps;
   std::vector<double> norms;
 
-  int64_t n_sites = group_action.n_sites();
-  int64_t n_sites_sublat = n_sites / n_sublat;
-  int64_t n_leading = n_sites_sublat;
-  int64_t n_trailing = (n_sublat - 1) * n_sites_sublat;
+  int64_t nsites = group_action.nsites();
+  int64_t nsites_sublat = nsites / n_sublat;
+  int64_t n_leading = nsites_sublat;
+  int64_t n_trailing = (n_sublat - 1) * nsites_sublat;
 
   for (auto prefix : Subsets<bit_t>(n_leading)) {
 
@@ -56,7 +56,7 @@ reps_norms_no_sz(GroupActionSublattice<bit_t, n_sublat> const &group_action,
 
 template <typename bit_t, typename coeff_t, int n_sublat>
 static std::pair<std::vector<bit_t>, std::vector<double>>
-reps_norms_sz(int64_t n_up,
+reps_norms_sz(int64_t nup,
               GroupActionSublattice<bit_t, n_sublat> const &group_action,
               arma::Col<coeff_t> const &characters) {
 
@@ -64,17 +64,17 @@ reps_norms_sz(int64_t n_up,
   std::vector<bit_t> reps;
   std::vector<double> norms;
 
-  int64_t n_sites = group_action.n_sites();
-  int64_t n_sites_sublat = n_sites / n_sublat;
-  int64_t n_leading = n_sites_sublat;
-  int64_t n_trailing = (n_sublat - 1) * n_sites_sublat;
+  int64_t nsites = group_action.nsites();
+  int64_t nsites_sublat = nsites / n_sublat;
+  int64_t n_leading = nsites_sublat;
+  int64_t n_trailing = (n_sublat - 1) * nsites_sublat;
 
   for (auto prefix : combinatorics::Subsets<bit_t>(n_leading)) {
 
-    // if prefix is incompatible with n_up, continue
-    int64_t n_up_prefix = popcnt(prefix);
-    int64_t n_up_postfix = n_up - n_up_prefix;
-    if ((n_up_postfix < 0) || (n_up_postfix > n_trailing)) {
+    // if prefix is incompatible with nup, continue
+    int64_t nup_prefix = popcnt(prefix);
+    int64_t nup_postfix = nup - nup_prefix;
+    if ((nup_postfix < 0) || (nup_postfix > n_trailing)) {
       continue;
     }
 
@@ -86,7 +86,7 @@ reps_norms_sz(int64_t n_up,
 
 #ifndef _OPENMP
     for (auto postfix :
-         combinatorics::Combinations<bit_t>(n_trailing, n_up_postfix)) {
+         combinatorics::Combinations<bit_t>(n_trailing, nup_postfix)) {
       bit_t state = (prefix << n_trailing) | postfix;
       bit_t rep = group_action.representative(state);
       if (state == rep) {
@@ -114,7 +114,7 @@ reps_norms_sz(int64_t n_up,
 
       // Compute representatives for each thread
       for (auto postfix :
-           combinatorics::CombinationsThread<bit_t>(n_trailing, n_up_postfix)) {
+           combinatorics::CombinationsThread<bit_t>(n_trailing, nup_postfix)) {
         bit_t state = (prefix << n_trailing) | postfix;
         bit_t rep = group_action.representative(state);
         if (state == rep) {
@@ -241,10 +241,10 @@ compute_rep_search_range_omp(std::vector<bit_t> const &reps,
 template <typename bit_t, int n_sublat>
 BasisSublattice<bit_t, n_sublat>::BasisSublattice(
     Representation const &irrep) try
-    : n_sites_(irrep.group().n_sites()), n_up_(undefined),
-      n_postfix_bits_(n_sites_ - std::min(maximum_prefix_bits, n_sites_)),
+    : nsites_(irrep.group().nsites()), nup_(undefined),
+      n_postfix_bits_(nsites_ - std::min(maximum_prefix_bits, nsites_)),
       group_action_(irrep.group()), irrep_(irrep) {
-  check_n_sites_work_with_bits<bit_t>(n_sites_);
+  check_nsites_work_with_bits<bit_t>(nsites_);
 
   if (isreal(irrep)) {
     arma::vec characters = irrep.characters().as<arma::vec>();
@@ -261,18 +261,18 @@ BasisSublattice<bit_t, n_sublat>::BasisSublattice(
 
 template <typename bit_t, int n_sublat>
 BasisSublattice<bit_t, n_sublat>::BasisSublattice(
-    int64_t n_up, Representation const &irrep) try
-    : n_sites_(irrep.group().n_sites()), n_up_(n_up),
-      n_postfix_bits_(n_sites_ - std::min(maximum_prefix_bits, n_sites_)),
+    int64_t nup, Representation const &irrep) try
+    : nsites_(irrep.group().nsites()), nup_(nup),
+      n_postfix_bits_(nsites_ - std::min(maximum_prefix_bits, nsites_)),
       group_action_(irrep.group()), irrep_(irrep) {
-  check_n_sites_work_with_bits<bit_t>(n_sites_);
+  check_nsites_work_with_bits<bit_t>(nsites_);
 
   if (isreal(irrep)) {
     arma::vec characters = irrep.characters().as<arma::vec>();
-    std::tie(reps_, norms_) = reps_norms_sz(n_up, group_action_, characters);
+    std::tie(reps_, norms_) = reps_norms_sz(nup, group_action_, characters);
   } else {
     arma::cx_vec characters = irrep.characters().as<arma::cx_vec>();
-    std::tie(reps_, norms_) = reps_norms_sz(n_up, group_action_, characters);
+    std::tie(reps_, norms_) = reps_norms_sz(nup, group_action_, characters);
   }
 
 #ifdef _OPENMP
@@ -309,13 +309,13 @@ int64_t BasisSublattice<bit_t, n_sublat>::size() const {
 }
 
 template <typename bit_t, int n_sublat>
-int64_t BasisSublattice<bit_t, n_sublat>::n_sites() const {
-  return n_sites_;
+int64_t BasisSublattice<bit_t, n_sublat>::nsites() const {
+  return nsites_;
 }
 
 template <typename bit_t, int n_sublat>
-int64_t BasisSublattice<bit_t, n_sublat>::n_up() const {
-  return n_up_;
+int64_t BasisSublattice<bit_t, n_sublat>::nup() const {
+  return nup_;
 }
 
 template <typename bit_t, int n_sublat>
@@ -374,7 +374,7 @@ BasisSublattice<bit_t, n_sublat>::index_syms(bit_t state) const {
 template <typename bit_t, int n_sublat>
 bool BasisSublattice<bit_t, n_sublat>::operator==(
     BasisSublattice<bit_t, n_sublat> const &rhs) const {
-  return (n_sites_ == rhs.n_sites_) && (n_up_ == rhs.n_up_) &&
+  return (nsites_ == rhs.nsites_) && (nup_ == rhs.nup_) &&
          (n_postfix_bits_ == rhs.n_postfix_bits_) &&
          (group_action_ == rhs.group_action_);
 }

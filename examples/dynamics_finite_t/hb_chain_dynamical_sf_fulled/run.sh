@@ -1,18 +1,18 @@
 #!/bin/bash
 
-n_sites=12
+nsites=12
 
-n_ups=`seq 0 1 $(( n_sites / 2 ))`
-ks=`seq 0 1 $(( n_sites / 2))` 
+nups=`seq 0 1 $(( nsites / 2 ))`
+ks=`seq 0 1 $(( nsites / 2))` 
 
-# n_ups=(2) #`seq 0 1 $(( n_sites / 2 ))`
-# ks=(0)    #`seq 0 1 $(( n_sites / 2))` 
+# nups=(2) #`seq 0 1 $(( nsites / 2 ))`
+# ks=(0)    #`seq 0 1 $(( nsites / 2))` 
 
 
-for n_up in ${n_ups[@]}; do
+for nup in ${nups[@]}; do
 for k in ${ks[@]}; do
 
-    ./build/main $n_sites $n_up $k
+    ./build/main $nsites $nup $k
 
 done
 done

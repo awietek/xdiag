@@ -9,12 +9,12 @@
 namespace xdiag {
 
 template <class bit_t>
-ElectronMPI<bit_t>::ElectronMPI(int n_sites, int nup, int ndn)
-    : n_sites_(n_sites), charge_conserved_(true), charge_(nup + ndn),
-      sz_conserved_(true), sz_(nup - ndn), n_up_(nup), n_dn_(ndn),
-      lintable_up_(n_sites, n_up_), lintable_dn_(n_sites, n_dn_),
-      size_up_(combinatorics::binomial(n_sites, n_up_)),
-      size_dn_(combinatorics::binomial(n_sites, n_dn_)),
+ElectronMPI<bit_t>::ElectronMPI(int nsites, int nup, int ndn)
+    : nsites_(nsites), charge_conserved_(true), charge_(nup + ndn),
+      sz_conserved_(true), sz_(nup - ndn), nup_(nup), ndn_(ndn),
+      lintable_up_(nsites, nup_), lintable_dn_(nsites, ndn_),
+      size_up_(combinatorics::binomial(nsites, nup_)),
+      size_dn_(combinatorics::binomial(nsites, ndn_)),
       size_(size_up_ * size_dn_)
 
 {
@@ -26,7 +26,7 @@ ElectronMPI<bit_t>::ElectronMPI(int n_sites, int nup, int ndn)
 
   // Determine the upspin configurations of this process
   int64_t offset = 0;
-  for (auto ups : Combinations<bit_t>(n_sites, nup))
+  for (auto ups : Combinations<bit_t>(nsites, nup))
     if (process(ups) == mpi_rank_) {
       my_ups_.push_back(ups);
       my_ups_offset_[ups] = offset;
@@ -35,7 +35,7 @@ ElectronMPI<bit_t>::ElectronMPI(int n_sites, int nup, int ndn)
 
   // Determine the dnspin configurations of this process
   offset = 0;
-  for (auto dns : Combinations<bit_t>(n_sites, ndn))
+  for (auto dns : Combinations<bit_t>(nsites, ndn))
     if (process(dns) == mpi_rank_) {
       my_dns_.push_back(dns);
       my_dns_offset_[dns] = offset;
@@ -45,8 +45,8 @@ ElectronMPI<bit_t>::ElectronMPI(int n_sites, int nup, int ndn)
 
 template <class bit_t>
 bool ElectronMPI<bit_t>::operator==(ElectronMPI<bit_t> const &rhs) const {
-  return (n_sites_ == rhs.n_sites_) && (sz_conserved_ == rhs.sz_conserved_) &&
-         (sz_ == rhs.sz_) && (n_up_ == rhs.n_up_) && (n_dn_ == rhs.n_dn_);
+  return (nsites_ == rhs.nsites_) && (sz_conserved_ == rhs.sz_conserved_) &&
+         (sz_ == rhs.sz_) && (nup_ == rhs.nup_) && (ndn_ == rhs.ndn_);
 }
 
 template <class bit_t>

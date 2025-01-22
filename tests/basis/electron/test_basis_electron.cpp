@@ -7,11 +7,11 @@
 #include "../../blocks/electron/testcases_electron.hpp"
 
 template <typename bit_t>
-void test_iterator_electron_basis_no_np(int64_t n_sites) {
+void test_iterator_electron_basis_no_np(int64_t nsites) {
   using namespace xdiag;
 
   using basis_t = xdiag::basis::electron::BasisNoNp<bit_t>;
-  basis_t basis(n_sites);
+  basis_t basis(nsites);
 
   bit_t ups_prev = 0;
   bit_t dns_prev = 0;
@@ -36,7 +36,7 @@ void test_iterator_electron_basis_no_np(int64_t n_sites) {
   }
   REQUIRE(idx == basis.dim());
   {
-    auto block = Electron(n_sites);
+    auto block = Electron(nsites);
     int64_t idx = 0;
     for (auto pstate : block) {
       int64_t idx2 = block.index(pstate);
@@ -49,14 +49,14 @@ void test_iterator_electron_basis_no_np(int64_t n_sites) {
 }
 
 template <typename bit_t>
-void test_iterator_electron_basis_symmetric_no_np(int64_t n_sites) {
+void test_iterator_electron_basis_symmetric_no_np(int64_t nsites) {
   using namespace xdiag;
 
-  auto irreps = xdiag::testcases::electron::get_cyclic_group_irreps(n_sites);
+  auto irreps = xdiag::testcases::electron::get_cyclic_group_irreps(nsites);
 
   for (auto irrep : irreps) {
     auto basis =
-        xdiag::basis::electron::BasisSymmetricNoNp<bit_t>(n_sites, irrep);
+        xdiag::basis::electron::BasisSymmetricNoNp<bit_t>(nsites, irrep);
 
     bit_t ups_prev = 0;
     bit_t dns_prev = 0;
@@ -77,7 +77,7 @@ void test_iterator_electron_basis_symmetric_no_np(int64_t n_sites) {
     REQUIRE(idx == basis.dim());
 
     {
-      auto block = Electron(n_sites, irrep);
+      auto block = Electron(nsites, irrep);
       int64_t idx = 0;
       for (auto pstate : block) {
         int64_t idx2 = block.index(pstate);
@@ -91,11 +91,11 @@ void test_iterator_electron_basis_symmetric_no_np(int64_t n_sites) {
 }
 
 template <typename bit_t>
-void test_iterator_electron_basis_np(int64_t n_sites, int64_t n_up,
-                                     int64_t n_dn) {
+void test_iterator_electron_basis_np(int64_t nsites, int64_t nup,
+                                     int64_t ndn) {
   using namespace xdiag;
   using basis_t = xdiag::basis::electron::BasisNp<bit_t>;
-  basis_t basis(n_sites, n_up, n_dn);
+  basis_t basis(nsites, nup, ndn);
 
   bit_t ups_prev = 0;
   bit_t dns_prev = 0;
@@ -116,7 +116,7 @@ void test_iterator_electron_basis_np(int64_t n_sites, int64_t n_up,
   REQUIRE(idx == basis.dim());
 
   {
-    auto block = Electron(n_sites, n_up, n_dn);
+    auto block = Electron(nsites, nup, ndn);
     int64_t idx = 0;
     for (auto pstate : block) {
       int64_t idx2 = block.index(pstate);
@@ -129,15 +129,15 @@ void test_iterator_electron_basis_np(int64_t n_sites, int64_t n_up,
 }
 
 template <typename bit_t>
-void test_iterator_electron_basis_symmetric_np(int64_t n_sites, int64_t n_up,
-                                               int64_t n_dn) {
+void test_iterator_electron_basis_symmetric_np(int64_t nsites, int64_t nup,
+                                               int64_t ndn) {
   using namespace xdiag;
 
-  auto irreps = testcases::electron::get_cyclic_group_irreps(n_sites);
+  auto irreps = testcases::electron::get_cyclic_group_irreps(nsites);
 
   for (auto irrep : irreps) {
     auto basis =
-        basis::electron::BasisSymmetricNp<bit_t>(n_sites, n_up, n_dn, irrep);
+        basis::electron::BasisSymmetricNp<bit_t>(nsites, nup, ndn, irrep);
     bit_t ups_prev = 0;
     bit_t dns_prev = 0;
     int64_t idx = 0;
@@ -156,7 +156,7 @@ void test_iterator_electron_basis_symmetric_np(int64_t n_sites, int64_t n_up,
     }
     REQUIRE(idx == basis.dim());
     {
-      auto block = Electron(n_sites, n_up, n_dn, irrep);
+      auto block = Electron(nsites, nup, ndn, irrep);
       int64_t idx = 0;
       for (auto pstate : block) {
         int64_t idx2 = block.index(pstate);
@@ -172,35 +172,35 @@ void test_iterator_electron_basis_symmetric_np(int64_t n_sites, int64_t n_up,
 TEST_CASE("electron_basis", "[basis]") {
   using namespace xdiag;
   Log("Test Electron BasisNoNp");
-  for (int64_t n_sites = 1; n_sites < 6; ++n_sites) {
-    test_iterator_electron_basis_no_np<uint32_t>(n_sites);
-    test_iterator_electron_basis_no_np<uint64_t>(n_sites);
+  for (int64_t nsites = 1; nsites < 6; ++nsites) {
+    test_iterator_electron_basis_no_np<uint32_t>(nsites);
+    test_iterator_electron_basis_no_np<uint64_t>(nsites);
   }
 
   Log("Test Electron BasisNp");
-  for (int64_t n_sites = 1; n_sites < 6; ++n_sites) {
-    for (int64_t n_up = 0; n_up <= n_sites; ++n_up) {
-      for (int64_t n_dn = 0; n_dn <= n_sites; ++n_dn) {
-        test_iterator_electron_basis_np<uint32_t>(n_sites, n_up, n_dn);
-        test_iterator_electron_basis_np<uint64_t>(n_sites, n_up, n_dn);
+  for (int64_t nsites = 1; nsites < 6; ++nsites) {
+    for (int64_t nup = 0; nup <= nsites; ++nup) {
+      for (int64_t ndn = 0; ndn <= nsites; ++ndn) {
+        test_iterator_electron_basis_np<uint32_t>(nsites, nup, ndn);
+        test_iterator_electron_basis_np<uint64_t>(nsites, nup, ndn);
       }
     }
   }
 
   Log("Test Electron BasisSymmetricNoNp");
-  for (int64_t n_sites = 1; n_sites < 6; ++n_sites) {
-    test_iterator_electron_basis_symmetric_no_np<uint32_t>(n_sites);
-    test_iterator_electron_basis_symmetric_no_np<uint64_t>(n_sites);
+  for (int64_t nsites = 1; nsites < 6; ++nsites) {
+    test_iterator_electron_basis_symmetric_no_np<uint32_t>(nsites);
+    test_iterator_electron_basis_symmetric_no_np<uint64_t>(nsites);
   }
 
   Log("Test Electron BasisSymmetricNp");
-  for (int64_t n_sites = 1; n_sites < 6; ++n_sites) {
-    for (int64_t n_up = 0; n_up <= n_sites; ++n_up) {
-      for (int64_t n_dn = 0; n_dn <= n_sites; ++n_dn) {
-        test_iterator_electron_basis_symmetric_np<uint32_t>(n_sites, n_up,
-                                                            n_dn);
-        test_iterator_electron_basis_symmetric_np<uint64_t>(n_sites, n_up,
-                                                            n_dn);
+  for (int64_t nsites = 1; nsites < 6; ++nsites) {
+    for (int64_t nup = 0; nup <= nsites; ++nup) {
+      for (int64_t ndn = 0; ndn <= nsites; ++ndn) {
+        test_iterator_electron_basis_symmetric_np<uint32_t>(nsites, nup,
+                                                            ndn);
+        test_iterator_electron_basis_symmetric_np<uint64_t>(nsites, nup,
+                                                            ndn);
       }
     }
   }

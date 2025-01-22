@@ -3,7 +3,7 @@ import numpy as np
 from scipy.stats import sem
 import matplotlib.pyplot as plt
 
-n_sites = 20
+nsites = 20
 J=1
 Jd=1
 seeds = range(1, 21, 1)
@@ -12,7 +12,7 @@ seeds = range(1, 21, 1)
 Ess = []
 Qss = []
 for seed in seeds:
-    filename = "moments/moments.checkerboard.{}.J.{:.2f}.Jd.{:.2f}.seed.{}.txt".format(n_sites, J, Jd, seed)
+    filename = "moments/moments.checkerboard.{}.J.{:.2f}.Jd.{:.2f}.seed.{}.txt".format(nsites, J, Jd, seed)
     data = np.loadtxt(filename)
     Ts = data[:,0]
     Es = data[:,2]
@@ -39,7 +39,7 @@ Cs_error = (Css.shape[0]-1) * sem(Css, axis=0)
 plt.errorbar(Ts, Cs_mean, Cs_error, lw=3, c="tab:red", capsize=5, label="TPQ")
     
 # Full ED
-filename = "../checkerboard_fulled/moments/moments.checkerboard.{}.J.{:.2f}.Jd.{:.2f}.txt".format(n_sites, J, Jd)
+filename = "../checkerboard_fulled/moments/moments.checkerboard.{}.J.{:.2f}.Jd.{:.2f}.txt".format(nsites, J, Jd)
 data = np.loadtxt(filename)
 Ts = data[:,0]
 Cs = data[:,4]

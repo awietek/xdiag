@@ -30,7 +30,7 @@ inline uint64_t hash_div3(uint64_t bits) noexcept {
   uint64_t B = 0;
   uint64_t C = 0;
   int cnt = 0;
-  // int n_sites = 3;
+  // int nsites = 3;
   // std::cout << "bits " << BSTR(bits) << "\n";
 
   while (bits) {

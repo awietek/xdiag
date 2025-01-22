@@ -5,19 +5,19 @@ namespace xdiag::basis::electron {
 using namespace combinatorics;
 
 template <typename bit_t>
-BasisNoNp<bit_t>::BasisNoNp(int n_sites) try
-    : n_sites_(n_sites), size_ups_((int64_t)1 << n_sites),
-      size_dns_((int64_t)1 << n_sites), size_(size_ups_ * size_dns_) {
-  check_n_sites_work_with_bits<bit_t>(n_sites_);
-  if (n_sites < 0) {
-    XDIAG_THROW("n_sites < 0");
+BasisNoNp<bit_t>::BasisNoNp(int nsites) try
+    : nsites_(nsites), size_ups_((int64_t)1 << nsites),
+      size_dns_((int64_t)1 << nsites), size_(size_ups_ * size_dns_) {
+  check_nsites_work_with_bits<bit_t>(nsites_);
+  if (nsites < 0) {
+    XDIAG_THROW("nsites < 0");
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
-template <typename bit_t> int BasisNoNp<bit_t>::n_sites() const {
-  return n_sites_;
+template <typename bit_t> int BasisNoNp<bit_t>::nsites() const {
+  return nsites_;
 }
 template <typename bit_t> int64_t BasisNoNp<bit_t>::size_ups() const {
   return size_ups_;
@@ -33,49 +33,49 @@ template <typename bit_t> int64_t BasisNoNp<bit_t>::dim() const {
 }
 template <typename bit_t>
 typename BasisNoNp<bit_t>::iterator_t BasisNoNp<bit_t>::begin() const {
-  return iterator_t(n_sites_, true);
+  return iterator_t(nsites_, true);
 }
 template <typename bit_t>
 typename BasisNoNp<bit_t>::iterator_t BasisNoNp<bit_t>::end() const {
-  return iterator_t(n_sites_, false);
+  return iterator_t(nsites_, false);
 }
 
 template <typename bit_t> Subsets<bit_t> BasisNoNp<bit_t>::states_ups() const {
-  return Subsets<bit_t>(n_sites_);
+  return Subsets<bit_t>(nsites_);
 }
 template <typename bit_t> Subsets<bit_t> BasisNoNp<bit_t>::states_dns() const {
-  return Subsets<bit_t>(n_sites_);
+  return Subsets<bit_t>(nsites_);
 }
 
 template <typename bit_t>
 SubsetsIndex<bit_t> BasisNoNp<bit_t>::states_indices_ups() const {
-  return SubsetsIndex<bit_t>(n_sites_);
+  return SubsetsIndex<bit_t>(nsites_);
 }
 
 template <typename bit_t>
 SubsetsIndex<bit_t> BasisNoNp<bit_t>::states_indices_dns() const {
-  return SubsetsIndex<bit_t>(n_sites_);
+  return SubsetsIndex<bit_t>(nsites_);
 }
 
 #ifdef _OPENMP
 template <typename bit_t>
 SubsetsThread<bit_t> BasisNoNp<bit_t>::states_ups_thread() const {
-  return SubsetsThread<bit_t>(n_sites_);
+  return SubsetsThread<bit_t>(nsites_);
 }
 
 template <typename bit_t>
 SubsetsThread<bit_t> BasisNoNp<bit_t>::states_dns_thread() const {
-  return SubsetsThread<bit_t>(n_sites_);
+  return SubsetsThread<bit_t>(nsites_);
 }
 
 template <typename bit_t>
 SubsetsIndexThread<bit_t> BasisNoNp<bit_t>::states_indices_ups_thread() const {
-  return SubsetsIndexThread<bit_t>(n_sites_);
+  return SubsetsIndexThread<bit_t>(nsites_);
 }
 
 template <typename bit_t>
 SubsetsIndexThread<bit_t> BasisNoNp<bit_t>::states_indices_dns_thread() const {
-  return SubsetsIndexThread<bit_t>(n_sites_);
+  return SubsetsIndexThread<bit_t>(nsites_);
 }
 #endif
 
@@ -83,8 +83,8 @@ template class BasisNoNp<uint32_t>;
 template class BasisNoNp<uint64_t>;
 
 template <typename bit_t>
-BasisNoNpIterator<bit_t>::BasisNoNpIterator(int64_t n_sites, bool begin)
-    : max_((bit_t)1 << n_sites), ups_(begin ? 0 : max_), dns_(0) {}
+BasisNoNpIterator<bit_t>::BasisNoNpIterator(int64_t nsites, bool begin)
+    : max_((bit_t)1 << nsites), ups_(begin ? 0 : max_), dns_(0) {}
 
 template <typename bit_t>
 BasisNoNpIterator<bit_t> &BasisNoNpIterator<bit_t>::operator++() {

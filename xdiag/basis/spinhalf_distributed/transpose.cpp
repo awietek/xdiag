@@ -43,25 +43,25 @@ void transpose(BasisSz<bit_t> const &basis, coeff_t const *vec_in,
   int n_postfix_bits = reverse ? basis.n_prefix_bits() : basis.n_postfix_bits();
 
   for (auto prefix : combinatorics::Subsets<bit_t>(n_prefix_bits)) {
-    int n_up_prefix = bits::popcnt(prefix);
-    int n_up_postfix = basis.n_up() - n_up_prefix;
-    if ((n_up_postfix < 0) || (n_up_postfix > n_postfix_bits))
+    int nup_prefix = bits::popcnt(prefix);
+    int nup_postfix = basis.nup() - nup_prefix;
+    if ((nup_postfix < 0) || (nup_postfix > n_postfix_bits))
       continue;
 
     int origin_rank = basis.rank(prefix);
     int64_t origin_offset = com.n_values_i_recv_offset(origin_rank);
     int64_t prefix_idx = 0;
     if (reverse) {
-      bit_t postfix = ((bit_t)1 << n_up_postfix) - 1;
+      bit_t postfix = ((bit_t)1 << nup_postfix) - 1;
       prefix_idx = basis.postfix_lintable(postfix).index(prefix);
     } else {
-      bit_t postfix = ((bit_t)1 << n_up_postfix) - 1;
+      bit_t postfix = ((bit_t)1 << nup_postfix) - 1;
       prefix_idx = basis.prefix_lintable(postfix).index(prefix);
     }
 
     auto postfixes = reverse ? basis.prefixes() : basis.postfixes();
     for (bit_t postfix : postfixes) {
-      if (bits::popcnt(postfix) != n_up_postfix)
+      if (bits::popcnt(postfix) != nup_postfix)
         continue;
 
       int64_t idx_received = origin_offset + offsets[origin_rank];

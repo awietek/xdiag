@@ -22,7 +22,7 @@ public:
   template <typename block_t, typename coeff_t>
   XDIAG_API State(block_t const &block, arma::Mat<coeff_t> const &matrix);
 
-  int64_t n_sites() const;
+  int64_t nsites() const;
   bool isreal() const;
   State real() const;
   State imag() const;
@@ -61,7 +61,7 @@ private:
   mutable std::vector<double> storage_;
 };
 
-XDIAG_API int64_t n_sites(State const &s);
+XDIAG_API int64_t nsites(State const &s);
 XDIAG_API bool isreal(State const &s);
 XDIAG_API State real(State const &s);
 XDIAG_API State imag(State const &s);

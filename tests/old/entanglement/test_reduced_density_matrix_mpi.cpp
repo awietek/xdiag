@@ -83,9 +83,9 @@ TEST_CASE("ReducedDensityMatrixMPI", "[Entanglement]") {
     if (mpi_rank == 0)
       std::cout << "@ ReducedDensityMatrixMPI tJ chain N=" << N << "\n";
 
-    for (int n_up = 0; n_up <= N; ++n_up)
-      for (int n_dn = 0; n_dn <= N; ++n_dn) {
-        qn_tj qn = {n_up, n_dn};
+    for (int nup = 0; nup <= N; ++nup)
+      for (int ndn = 0; ndn <= N; ++ndn) {
+        qn_tj qn = {nup, ndn};
 
         if (valid(qn, N)) {
           std::tie(bondlist, couplings) = tJchain_model(N);
@@ -105,9 +105,9 @@ TEST_CASE("ReducedDensityMatrixMPI", "[Entanglement]") {
     for (auto it : couplings)
       couplings_real[it.first] = lila::real(it.second);
 
-    for (int n_up = 0; n_up <= N; ++n_up)
-      for (int n_dn = 0; n_dn <= N; ++n_dn) {
-        qn_tj qn = {n_up, n_dn};
+    for (int nup = 0; nup <= N; ++nup)
+      for (int ndn = 0; ndn <= N; ++ndn) {
+        qn_tj qn = {nup, ndn};
 
         if (valid(qn, N)) {
           test_tJ_reduced_density_matrix_mpi<double>(N, bondlist,
@@ -122,9 +122,9 @@ TEST_CASE("ReducedDensityMatrixMPI", "[Entanglement]") {
     if (mpi_rank == 0)
       std::cout << "@ ReducedDensityMatrixMPI tJ random (cplx) N=" << N << "\n";
 
-    for (int n_up = 0; n_up <= N; ++n_up)
-      for (int n_dn = 0; n_dn <= N; ++n_dn) {
-        qn_tj qn = {n_up, n_dn};
+    for (int nup = 0; nup <= N; ++nup)
+      for (int ndn = 0; ndn <= N; ++ndn) {
+        qn_tj qn = {nup, ndn};
 
         if (valid(qn, N)) {
           double itensor_e0;

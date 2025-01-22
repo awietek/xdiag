@@ -10,27 +10,27 @@ Representation of a block in a spin $S=1/2$  Hilbert space.
 ## Constructors
 === "Julia"
 	```julia
-	Spinhalf(n_sites::Integer)
-	Spinhalf(n_sites::Integer, n_up::Integer)
-	Spinhalf(n_sites::Integer, group::PermutationGroup, irrep::Representation)
-	Spinhalf(n_sites::Integer, n_up::Integer, group::PermutationGroup, 
+	Spinhalf(nsites::Integer)
+	Spinhalf(nsites::Integer, nup::Integer)
+	Spinhalf(nsites::Integer, group::PermutationGroup, irrep::Representation)
+	Spinhalf(nsites::Integer, nup::Integer, group::PermutationGroup, 
 	         irrep::Representation)
 	```
 
 === "C++"	
 	```c++
-    Spinhalf(int64_t n_sites);
-    Spinhalf(int64_t n_sites, int64_t n_up);
-    Spinhalf(int64_t n_sites, PermutationGroup permutation_group,
+    Spinhalf(int64_t nsites);
+    Spinhalf(int64_t nsites, int64_t nup);
+    Spinhalf(int64_t nsites, PermutationGroup permutation_group,
              Representation irrep);
-    Spinhalf(int64_t n_sites, int64_t n_up, PermutationGroup group,
+    Spinhalf(int64_t nsites, int64_t nup, PermutationGroup group,
              Representation irrep);
 	```
 	
 | Name    | Description                                                                                |   |
 |:--------|:-------------------------------------------------------------------------------------------|---|
-| n_sites | number of sites (integer)                                                                  |   |
-| n_up    | number of "up" spin setting spin (integer)                                                 |   |
+| nsites | number of sites (integer)                                                                  |   |
+| nup    | number of "up" spin setting spin (integer)                                                 |   |
 | group   | [PermutationGroup](../symmetries/permutation_group.md) defining the permutation symmetries |   |
 | irrep   | Irreducible [Representation](../symmetries/representation.md)  of the symmetry group       |   |
 
@@ -78,32 +78,32 @@ An Spinhalf block can be iterated over, where at each iteration a [ProductState]
 
 
 
-!!! method "n_sites"
+!!! method "nsites"
 
 	Returns the number of sites of the block.
 
 	=== "Julia"
 		```julia
-		n_sites(block::Spinhalf)
+		nsites(block::Spinhalf)
 		```
 
 	=== "C++"	
 		```c++
-		int64_t n_sites() const;
+		int64_t nsites() const;
 		```
 
-!!! method "n_up"
+!!! method "nup"
 
 	Returns the number of "up" spins.
 
 	=== "Julia"
 		```julia
-		n_up(block::Spinhalf)
+		nup(block::Spinhalf)
 		```
 
 	=== "C++"	
 		```c++
-		int64_t n_up() const;
+		int64_t nup() const;
 		```
 
 !!! method "permutation_group"

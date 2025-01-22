@@ -12,9 +12,9 @@
 
 using namespace xdiag;
 
-void test_tjdistributed_e0_real(OpSum ops, int n_sites, int nup, int ndn,
+void test_tjdistributed_e0_real(OpSum ops, int nsites, int nup, int ndn,
                                 double e0) {
-  auto block = tJDistributed(n_sites, nup, ndn);
+  auto block = tJDistributed(nsites, nup, ndn);
   double e0c = eigval0(ops, block);
   REQUIRE(std::abs(e0 - e0c) < 1e-6);
 }
@@ -51,13 +51,13 @@ TEST_CASE("tj_distributed_apply", "[tj_distributed]") try {
   }
 
   Log("tj_distributed: HB all-to-all comparison");
-  for (int n_sites = 2; n_sites < 8; ++n_sites) {
-    // Log("N: {}", n_sites);
-    auto ops = testcases::spinhalf::HB_alltoall(n_sites);
+  for (int nsites = 2; nsites < 8; ++nsites) {
+    // Log("N: {}", nsites);
+    auto ops = testcases::spinhalf::HB_alltoall(nsites);
     // XDIAG_SHOW(ops);
-    for (int nup = 0; nup <= n_sites; ++nup) {
-      auto block = Spinhalf(n_sites, nup);
-      auto block_tJ = tJDistributed(n_sites, nup, n_sites - nup);
+    for (int nup = 0; nup <= nsites; ++nup) {
+      auto block = Spinhalf(nsites, nup);
+      auto block_tJ = tJDistributed(nsites, nup, nsites - nup);
       double e0_spinhalf = eigval0(ops, block);
       double e0 = eigval0(ops, block_tJ);
       // Log("{} {}", e0_spinhalf, e0);
@@ -104,13 +104,13 @@ TEST_CASE("tj_distributed_apply", "[tj_distributed]") try {
   }
 
   {
-    for (int n_sites = 1; n_sites < 8; ++n_sites) {
-      Log("tj_distributed: tj_alltoall random (real) N={}", n_sites);
-      auto ops = tj_alltoall(n_sites);
-      for (int nup = 0; nup <= n_sites; ++nup) {
-        for (int ndn = 0; ndn <= n_sites - nup; ++ndn) {
-          auto block = tJ(n_sites, nup, ndn);
-          auto block2 = tJDistributed(n_sites, nup, ndn);
+    for (int nsites = 1; nsites < 8; ++nsites) {
+      Log("tj_distributed: tj_alltoall random (real) N={}", nsites);
+      auto ops = tj_alltoall(nsites);
+      for (int nup = 0; nup <= nsites; ++nup) {
+        for (int ndn = 0; ndn <= nsites - nup; ++ndn) {
+          auto block = tJ(nsites, nup, ndn);
+          auto block2 = tJDistributed(nsites, nup, ndn);
 
           double e0 = eigval0(ops, block);
           double e02 = eigval0(ops, block2);
@@ -120,14 +120,14 @@ TEST_CASE("tj_distributed_apply", "[tj_distributed]") try {
     }
   }
   {
-    for (int n_sites = 1; n_sites < 8; ++n_sites) {
-      Log("tj_distributed: tj_alltoall random (complex) N={}", n_sites);
-      auto ops = tj_alltoall_complex(n_sites);
-      for (int nup = 0; nup <= n_sites; ++nup) {
-        for (int ndn = 0; ndn <= n_sites - nup; ++ndn) {
+    for (int nsites = 1; nsites < 8; ++nsites) {
+      Log("tj_distributed: tj_alltoall random (complex) N={}", nsites);
+      auto ops = tj_alltoall_complex(nsites);
+      for (int nup = 0; nup <= nsites; ++nup) {
+        for (int ndn = 0; ndn <= nsites - nup; ++ndn) {
 
-          auto block = tJ(n_sites, nup, ndn);
-          auto block2 = tJDistributed(n_sites, nup, ndn);
+          auto block = tJ(nsites, nup, ndn);
+          auto block2 = tJDistributed(nsites, nup, ndn);
 
           double e0 = eigval0(ops, block);
           double e02 = eigval0(ops, block2);
@@ -138,16 +138,16 @@ TEST_CASE("tj_distributed_apply", "[tj_distributed]") try {
   }
 
   Log.out("tj_distributed: HB triangular N=12 complex exchange");
-  int n_sites = 12;
+  int nsites = 12;
   std::vector<double> etas = {0.00, 0.01, 0.02,
                               0.03, 0.04, 0.05}; // dont change etas :-)
   for (auto eta : etas) {
     Log("eta: {}", eta);
-    for (int nup = 0; nup <= n_sites; ++nup) {
+    for (int nup = 0; nup <= nsites; ++nup) {
       auto [ops, e00] = testcases::spinhalf::triangular_12_complex(nup, eta);
 
-      auto block = Spinhalf(n_sites, nup);
-      auto block_tJ = tJDistributed(n_sites, nup, n_sites - nup);
+      auto block = Spinhalf(nsites, nup);
+      auto block_tJ = tJDistributed(nsites, nup, nsites - nup);
       double e0_spinhalf = eigval0(ops, block);
       double e0 = eigval0(ops, block_tJ);
       // Log("{} {} {} {}", nup, e0_spinhalf, e0, e00);

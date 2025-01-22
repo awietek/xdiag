@@ -2031,7 +2031,7 @@ enum class presentation_type : unsigned char {
   hex_lower,       // 'x'
   hex_upper,       // 'X'
   bin_lower,       // 'b'
-  bin_upper,       // 'B'
+  binupper,       // 'B'
   hexfloat_lower,  // 'a'
   hexfloat_upper,  // 'A'
   exp_lower,       // 'e'
@@ -2401,7 +2401,7 @@ FMT_CONSTEXPR FMT_INLINE auto parse_format_specs(
     case 'b':
       return parse_presentation_type(pres::bin_lower, integral_set);
     case 'B':
-      return parse_presentation_type(pres::bin_upper, integral_set);
+      return parse_presentation_type(pres::binupper, integral_set);
     case 'a':
       return parse_presentation_type(pres::hexfloat_lower, float_set);
     case 'A':

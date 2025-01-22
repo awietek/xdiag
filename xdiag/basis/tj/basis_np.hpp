@@ -14,7 +14,7 @@ public:
   using iterator_t = BasisNpIterator<bit_t>;
 
   BasisNp() = default;
-  BasisNp(int64_t n_sites, int64_t n_up, int64_t n_dn);
+  BasisNp(int64_t nsites, int64_t nup, int64_t ndn);
 
   int64_t dim() const;
   int64_t size() const;
@@ -26,15 +26,15 @@ public:
     return index_ups(ups) * size_dncs_ + index_dncs(dncs);
   }
 
-  int64_t n_sites() const;
-  int64_t n_up() const;
-  int64_t n_dn() const;
+  int64_t nsites() const;
+  int64_t nup() const;
+  int64_t ndn() const;
   static constexpr bool np_conserved() { return true; }
 
 private:
-  int64_t n_sites_;
-  int64_t n_up_;
-  int64_t n_dn_;
+  int64_t nsites_;
+  int64_t nup_;
+  int64_t ndn_;
 
   int64_t size_ups_;
   int64_t size_dncs_;
@@ -73,14 +73,14 @@ template <typename bit_tt> class BasisNpIterator {
 public:
   using bit_t = bit_tt;
   BasisNpIterator() = default;
-  BasisNpIterator(int64_t n_sites, int64_t nup, int64_t ndn, bool begin);
+  BasisNpIterator(int64_t nsites, int64_t nup, int64_t ndn, bool begin);
   BasisNpIterator &operator++();
   std::pair<bit_t, bit_t> operator*() const;
   bool operator!=(BasisNpIterator<bit_t> const &rhs) const;
 
 private:
   bit_t sitesmask_;
-  bit_t begin_dns_;
+  bit_t begindns_;
   bit_t end_dns_;
   bit_t ups_;
   bit_t dns_;

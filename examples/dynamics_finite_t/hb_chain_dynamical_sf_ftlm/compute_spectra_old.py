@@ -5,8 +5,8 @@ from scipy.stats import gaussian_kde
 import matplotlib.pyplot as plt
 import h5py
 
-n_sites = 20
-n_up = n_sites // 2
+nsites = 20
+nup = nsites // 2
 
 n_omegas = 100
 max_omega = 4.0
@@ -14,7 +14,7 @@ omegas = np.linspace(0, max_omega, n_omegas)
 T = 0.1
 
 seeds=range(1, 6, 1)
-qs = range(n_sites)
+qs = range(nsites)
 beta = 1 / T
 
 prec = 1e-12
@@ -32,8 +32,8 @@ for seed in seeds:
     S_of_q = dict()
 
     # Read data
-    for nup in range(n_sites):
-        outfile = "outfiles/N.{}.nup.{}/seed.{}/outfile.h5".format(n_sites, nup, seed)
+    for nup in range(nsites):
+        outfile = "outfiles/N.{}.nup.{}/seed.{}/outfile.h5".format(nsites, nup, seed)
         # print("reading", outfile)
         with h5py.File(outfile, 'r') as fl:
             alphas[nup] = fl["alphas"][0]
@@ -51,7 +51,7 @@ for seed in seeds:
         print("computing poles and weigts, q = ", q)
         poles = []
         weights = []
-        for nup in range(n_sites):
+        for nup in range(nsites):
             iters = len(alphas[nup])
             tmat = tmats[nup] - e0 * np.eye(iters)
             Q = evecs[nup]
@@ -81,11 +81,11 @@ for seed in seeds:
             print("broadening with eta = ", eta)
             gaussians = np.exp(-(diffs / (2*eta))**2) / (eta * np.sqrt(2*np.pi))
             spectrum = gaussians @ weights
-            filename = "data/spectrum.N.{}.q.{}.T.{:.3f}.seed.{}.eta.{}.prec.{}".format(n_sites, q, T, seed, eta, prec)
+            filename = "data/spectrum.N.{}.q.{}.T.{:.3f}.seed.{}.eta.{}.prec.{}".format(nsites, q, T, seed, eta, prec)
             np.save(filename, spectrum)
 
 
-# p = plt.imshow(spectra.T, origin='lower', extent=[0, n_sites, 0, max_omega],
+# p = plt.imshow(spectra.T, origin='lower', extent=[0, nsites, 0, max_omega],
 #            interpolation=None, aspect='auto')
 # plt.xlabel(r"$q$")
 # plt.ylabel(r"$\omega$")

@@ -89,33 +89,33 @@ TEST_CASE("norm_estimate", "[algorithms]") {
       REQUIRE(((ratio <= 1.00001) && (ratio > 0.3)));
     }
   }
-  for (int n_sites = 3; n_sites < 12; ++n_sites) {
-    // XDIAG_SHOW(n_sites);
+  for (int nsites = 3; nsites < 12; ++nsites) {
+    // XDIAG_SHOW(nsites);
     {
-      Log("norm_estimate for Heisenberg all-to-all random, N={}", n_sites);
+      Log("norm_estimate for Heisenberg all-to-all random, N={}", nsites);
 
       // Random HB alltoall
-      auto ops = xdiag::testcases::spinhalf::HB_alltoall(n_sites);
-      auto block = Spinhalf(n_sites);
+      auto ops = xdiag::testcases::spinhalf::HB_alltoall(nsites);
+      auto block = Spinhalf(nsites);
       test_operator_norm_real(block, ops);
-      for (int nup = 0; nup <= n_sites; ++nup) {
-        auto block = Spinhalf(n_sites, nup);
+      for (int nup = 0; nup <= nsites; ++nup) {
+        auto block = Spinhalf(nsites, nup);
         test_operator_norm_real(block, ops);
       }
     }
 
-    Log("norm_estimate for Heisenberg chain symmetric, N={}", n_sites);
+    Log("norm_estimate for Heisenberg chain symmetric, N={}", nsites);
 
     // HB chain with lattice symmetries
-    auto [irreps, multiplicities] = get_cyclic_group_irreps_mult(n_sites);
+    auto [irreps, multiplicities] = get_cyclic_group_irreps_mult(nsites);
     (void)multiplicities;
-    auto ops = HBchain(n_sites, 3.21, 0.123);
-    for (int nup = 0; nup <= n_sites; ++nup) {
-      auto block = Spinhalf(n_sites, nup);
+    auto ops = HBchain(nsites, 3.21, 0.123);
+    for (int nup = 0; nup <= nsites; ++nup) {
+      auto block = Spinhalf(nsites, nup);
       test_operator_norm_real(block, ops);
       for (auto irrep : irreps) {
         // XDIAG_SHOW(irrep);
-        auto block = Spinhalf(n_sites, nup, irrep);
+        auto block = Spinhalf(nsites, nup, irrep);
         if (irrep.isreal()) {
           test_operator_norm_real(block, ops);
         } else {
@@ -129,7 +129,7 @@ TEST_CASE("norm_estimate", "[algorithms]") {
     Log("norm_estimate for tj_symmetric_matrix: tJ 3x3 triangular s");
     std::string lfile =
         XDIAG_DIRECTORY "/misc/data/triangular.9.hop.sublattices.tsl.toml";
-    int n_sites = 9;
+    int nsites = 9;
     auto fl = FileToml(lfile);
     auto ops = fl["Interactions"].as<OpSum>();
     ops["T"] = 1.0;
@@ -143,19 +143,19 @@ TEST_CASE("norm_estimate", "[algorithms]") {
 
     std::vector<Representation> irreps;
     std::vector<int> multiplicities;
-    for (int nup = 0; nup <= n_sites; ++nup) {
-      for (int ndn = 0; ndn <= n_sites; ++ndn) {
+    for (int nup = 0; nup <= nsites; ++nup) {
+      for (int ndn = 0; ndn <= nsites; ++ndn) {
 
-        if (nup + ndn > n_sites)
+        if (nup + ndn > nsites)
           continue;
 
-        auto block = tJ(n_sites, nup, ndn);
+        auto block = tJ(nsites, nup, ndn);
         test_operator_norm_real(block, ops);
 
         for (auto [name, mult] : rep_name_mult) {
           (void)mult;
           auto irrep = read_representation(fl, name);
-          auto block = tJ(n_sites, nup, ndn, irrep);
+          auto block = tJ(nsites, nup, ndn, irrep);
           if (irrep.isreal()) {
             test_operator_norm_real(block, ops);
           } else {
@@ -167,7 +167,7 @@ TEST_CASE("norm_estimate", "[algorithms]") {
   } // 9 site tJ model triangular
 
   {
-    int n_sites = 9;
+    int nsites = 9;
 
     // test a 3x3 triangular lattice with complex flux
     Log("norm_estimate for tj_symmetric_matrix: tJ 3x3 triangular staggered "
@@ -191,19 +191,19 @@ TEST_CASE("norm_estimate", "[algorithms]") {
     for (auto eta : etas) {
       ops["TPHI"] = complex(cos(eta * M_PI), sin(eta * M_PI));
       ops["JPHI"] = complex(cos(2 * eta * M_PI), sin(2 * eta * M_PI));
-      for (int nup = 0; nup <= n_sites; ++nup) {
-        for (int ndn = 0; ndn <= n_sites; ++ndn) {
+      for (int nup = 0; nup <= nsites; ++nup) {
+        for (int ndn = 0; ndn <= nsites; ++ndn) {
 
-          if (nup + ndn > n_sites)
+          if (nup + ndn > nsites)
             continue;
 
-          auto block = tJ(n_sites, nup, ndn);
+          auto block = tJ(nsites, nup, ndn);
           test_operator_norm_cplx(block, ops);
 
           for (auto [name, mult] : rep_name_mult) {
             (void)mult;
             auto irrep = read_representation(fl, name);
-            auto block = tJ(n_sites, nup, ndn, irrep);
+            auto block = tJ(nsites, nup, ndn, irrep);
             test_operator_norm_cplx(block, ops);
           }
         }

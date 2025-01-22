@@ -20,11 +20,11 @@ public:
   using iterator_t = BasisNpIterator<bit_t>;
 
   BasisNp() = default;
-  BasisNp(int64_t n_sites, int64_t n_up, int64_t n_dn);
+  BasisNp(int64_t nsites, int64_t nup, int64_t ndn);
 
-  int64_t n_sites() const;
-  int64_t n_up() const;
-  int64_t n_dn() const;
+  int64_t nsites() const;
+  int64_t nup() const;
+  int64_t ndn() const;
   // static constexpr bool np_conserved() { return true; }
 
   int64_t dim() const;
@@ -40,9 +40,9 @@ public:
   bool operator!=(BasisNp const &rhs) const;
 
 private:
-  int64_t n_sites_;
-  int64_t n_up_;
-  int64_t n_dn_;
+  int64_t nsites_;
+  int64_t nup_;
+  int64_t ndn_;
 
   combinatorics::LinTable<bit_t> lintable_dncs_;
   combinatorics::LinTable<bit_t> lintable_upcs_;

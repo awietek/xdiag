@@ -29,25 +29,25 @@ Creates a PermutationGroup out of a matrix whose rows specify the individual per
 === "C++"	
 	```c++
     PermutationGroup(arma::Mat<int64_t> const &matrix);
-	PermutationGroup(int64_t *ptr, int64_t n_permutations, int64_t n_sites);
+	PermutationGroup(int64_t *ptr, int64_t n_permutations, int64_t nsites);
 	```
 ---
 
 ## Methods
 
 
-#### n_sites
+#### nsites
 
 Returns the number of sites on which the permutations of the group acts.
 
 === "Julia"
 	```julia
-	n_sites(group::PermutationGroup)
+	nsites(group::PermutationGroup)
 	```
 
 === "C++"	
 	```c++
-	int64_t n_sites(PermutationGroup const &group);
+	int64_t nsites(PermutationGroup const &group);
 	```
 ---
 

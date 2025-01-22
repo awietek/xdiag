@@ -10,8 +10,8 @@ using namespace xdiag;
 
 void test_spinhalf_basis_iterator(Spinhalf const &block) {
 
-  int64_t n_sites = block.n_sites();
-  auto pprev = ProductState(n_sites);
+  int64_t nsites = block.nsites();
+  auto pprev = ProductState(nsites);
   int64_t idx = 0;
   for (auto const &p : block) {
     REQUIRE(p != pprev);
@@ -27,34 +27,34 @@ void test_spinhalf_basis_iterator(Spinhalf const &block) {
 TEST_CASE("spinhalf_basis_iterator", "[basis]") {
 
   Log("Spinhalf Basis Iterator No Sz");
-  for (int n_sites = 1; n_sites <= 6; ++n_sites) {
-    auto block = Spinhalf(n_sites);
+  for (int nsites = 1; nsites <= 6; ++nsites) {
+    auto block = Spinhalf(nsites);
     test_spinhalf_basis_iterator(block);
   }
 
   Log("Spinhalf Basis Iterator Sz");
-  for (int n_sites = 1; n_sites <= 6; ++n_sites) {
-    for (int n_up = 0; n_up <= n_sites; ++n_up) {
-      auto block = Spinhalf(n_sites, n_up);
+  for (int nsites = 1; nsites <= 6; ++nsites) {
+    for (int nup = 0; nup <= nsites; ++nup) {
+      auto block = Spinhalf(nsites, nup);
       test_spinhalf_basis_iterator(block);
     }
   }
 
   Log("Spinhalf Basis Iterator No Sz Symmetric");
-  for (int n_sites = 1; n_sites <= 6; ++n_sites) {
-    auto irreps = testcases::electron::get_cyclic_group_irreps(n_sites);
+  for (int nsites = 1; nsites <= 6; ++nsites) {
+    auto irreps = testcases::electron::get_cyclic_group_irreps(nsites);
     for (auto irrep : irreps) {
-      auto block = Spinhalf(n_sites, irrep);
+      auto block = Spinhalf(nsites, irrep);
       test_spinhalf_basis_iterator(block);
     }
   }
 
   Log("Spinhalf Basis Iterator Sz Symmetric");
-  for (int n_sites = 1; n_sites <= 6; ++n_sites) {
-    auto irreps = testcases::electron::get_cyclic_group_irreps(n_sites);
-    for (int n_up = 0; n_up <= n_sites; ++n_up) {
+  for (int nsites = 1; nsites <= 6; ++nsites) {
+    auto irreps = testcases::electron::get_cyclic_group_irreps(nsites);
+    for (int nup = 0; nup <= nsites; ++nup) {
       for (auto irrep : irreps) {
-        auto block = Spinhalf(n_sites, irrep);
+        auto block = Spinhalf(nsites, irrep);
         test_spinhalf_basis_iterator(block);
       }
     }

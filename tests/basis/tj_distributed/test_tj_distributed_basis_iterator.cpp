@@ -12,8 +12,8 @@ void test_tj_distributed_basis_iterator(tJDistributed const &block) {
   int mpi_rank;
   MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
 
-  int64_t n_sites = block.n_sites();
-  auto pprev = ProductState(n_sites);
+  int64_t nsites = block.nsites();
+  auto pprev = ProductState(nsites);
   int64_t idx = 0;
   for (auto const &p : block) {
     // std::cout << mpi_rank << " " << to_string(p) << "\n";
@@ -31,10 +31,10 @@ void test_tj_distributed_basis_iterator(tJDistributed const &block) {
 TEST_CASE("tj_distributed_basis_iterator", "[basis]") {
 
   Log("tJDistributed Basis Iterator Np");
-  for (int n_sites = 1; n_sites < 9; ++n_sites) {
-    for (int n_up = 0; n_up <= n_sites; ++n_up) {
-      for (int n_dn = 0; n_dn <= n_sites - n_up; ++n_dn) {
-        auto block = tJDistributed(n_sites, n_up, n_dn);
+  for (int nsites = 1; nsites < 9; ++nsites) {
+    for (int nup = 0; nup <= nsites; ++nup) {
+      for (int ndn = 0; ndn <= nsites - nup; ++ndn) {
+        auto block = tJDistributed(nsites, nup, ndn);
         test_tj_distributed_basis_iterator(block);
       }
     }

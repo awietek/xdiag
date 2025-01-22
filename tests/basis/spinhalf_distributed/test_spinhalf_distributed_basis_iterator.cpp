@@ -13,8 +13,8 @@ void test_spinhalf_distributed_basis_iterator(
   int mpi_rank;
   MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
 
-  int64_t n_sites = block.n_sites();
-  auto pprev = ProductState(n_sites);
+  int64_t nsites = block.nsites();
+  auto pprev = ProductState(nsites);
   int64_t idx = 0;
   for (auto const &p : block) {
     REQUIRE(p != pprev);
@@ -31,9 +31,9 @@ void test_spinhalf_distributed_basis_iterator(
 TEST_CASE("spinhalf_distributed_basis_iterator", "[basis]") {
 
   Log("SpinhalfDistributed Basis Iterator Sz");
-  for (int n_sites = 1; n_sites < 9; ++n_sites) {
-    for (int n_up = 0; n_up <= n_sites; ++n_up) {
-      auto block = SpinhalfDistributed(n_sites, n_up);
+  for (int nsites = 1; nsites < 9; ++nsites) {
+    for (int nup = 0; nup <= nsites; ++nup) {
+      auto block = SpinhalfDistributed(nsites, nup);
       test_spinhalf_distributed_basis_iterator(block);
     }
   }

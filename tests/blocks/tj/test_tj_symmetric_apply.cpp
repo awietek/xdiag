@@ -13,17 +13,17 @@
 
 using namespace xdiag;
 
-void test_apply_tj_symmetric(OpSum ops, int64_t n_sites,
+void test_apply_tj_symmetric(OpSum ops, int64_t nsites,
                              std::vector<Representation> irreps) {
-  for (int64_t nup = 0; nup <= n_sites; ++nup) {
-    for (int64_t ndn = 0; ndn <= n_sites; ++ndn) {
+  for (int64_t nup = 0; nup <= nsites; ++nup) {
+    for (int64_t ndn = 0; ndn <= nsites; ++ndn) {
 
-      if (nup + ndn > n_sites)
+      if (nup + ndn > nsites)
         continue;
 
       for (int64_t k = 0; k < (int64_t)irreps.size(); ++k) {
         auto irrep = irreps[k];
-        auto block = tJ(n_sites, nup, ndn, irrep);
+        auto block = tJ(nsites, nup, ndn, irrep);
 
         if (block.size() > 0) {
           auto H_sym = matrixC(ops, block, block);
@@ -69,16 +69,16 @@ void test_apply_tj_symmetric(OpSum ops, int64_t n_sites,
   }
 }
 
-void test_tj_symmetric_apply_chains(int64_t n_sites) {
+void test_tj_symmetric_apply_chains(int64_t nsites) {
   using namespace xdiag::testcases::tj;
   using namespace xdiag::testcases::electron;
 
-  Log("tj_symmetric_apply: tJ chain, symmetric apply test, n_sites: {}",
-      n_sites);
-  auto ops = tJchain(n_sites, 1.0, 5.0);
-  auto [irreps, multiplicities] = get_cyclic_group_irreps_mult(n_sites);
+  Log("tj_symmetric_apply: tJ chain, symmetric apply test, nsites: {}",
+      nsites);
+  auto ops = tJchain(nsites, 1.0, 5.0);
+  auto [irreps, multiplicities] = get_cyclic_group_irreps_mult(nsites);
   (void)multiplicities;
-  test_apply_tj_symmetric(ops, n_sites, irreps);
+  test_apply_tj_symmetric(ops, nsites, irreps);
 }
 
 TEST_CASE("tj_symmetric_apply", "[tj]") {
@@ -86,8 +86,8 @@ TEST_CASE("tj_symmetric_apply", "[tj]") {
   using namespace xdiag::testcases::electron;
 
   // Test linear chains
-  for (int64_t n_sites = 2; n_sites < 8; ++n_sites) {
-    test_tj_symmetric_apply_chains(n_sites);
+  for (int64_t nsites = 2; nsites < 8; ++nsites) {
+    test_tj_symmetric_apply_chains(nsites);
   }
   {
     // test a 3x3 triangular lattice

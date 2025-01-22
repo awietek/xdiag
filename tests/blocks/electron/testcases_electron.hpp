@@ -10,27 +10,27 @@
 
 namespace xdiag::testcases::electron {
 
-OpSum get_linear_chain(int64_t n_sites, double t, double U);
+OpSum get_linear_chain(int64_t nsites, double t, double U);
 
-OpSum get_linear_chain_hb(int64_t n_sites, double J);
+OpSum get_linear_chain_hb(int64_t nsites, double J);
 
-std::vector<Representation> get_cyclic_group_irreps(int64_t n_sites);
+std::vector<Representation> get_cyclic_group_irreps(int64_t nsites);
 
 std::tuple<std::vector<Representation>, std::vector<int64_t>>
-get_cyclic_group_irreps_mult(int64_t n_sites);
+get_cyclic_group_irreps_mult(int64_t nsites);
 
 OpSum heisenberg_triangle();
 
-OpSum heisenberg_alltoall(int64_t n_sites);
+OpSum heisenberg_alltoall(int64_t nsites);
 
 OpSum heisenberg_kagome15();
 OpSum heisenberg_kagome39();
 
-OpSum freefermion_alltoall(int64_t n_sites);
+OpSum freefermion_alltoall(int64_t nsites);
 
-OpSum freefermion_alltoall_complex_updn(int64_t n_sites);
+OpSum freefermion_alltoall_complex_updn(int64_t nsites);
 
-// OpSum tJchain(int64_t n_sites, double t, double J);
+// OpSum tJchain(int64_t nsites, double t, double J);
 
 std::tuple<OpSum, arma::Col<double>> randomAlltoAll4NoU();
 std::tuple<OpSum, arma::Col<double>> randomAlltoAll4();

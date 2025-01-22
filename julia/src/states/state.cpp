@@ -14,8 +14,8 @@ void define_state(jlcxx::Module &mod) {
       .constructor<Electron const &, bool, int64_t>()
       .constructor<Electron const &, double *, int64_t, int64_t>()
       .constructor<Electron const &, complex *, int64_t>()
-      .method("n_sites",
-              [](State const &s) { JULIA_XDIAG_CALL_RETURN(s.n_sites()) })
+      .method("nsites",
+              [](State const &s) { JULIA_XDIAG_CALL_RETURN(s.nsites()) })
       .method("isreal",
               [](State const &s) { JULIA_XDIAG_CALL_RETURN(s.isreal()) })
       .method("real", [](State const &s) { JULIA_XDIAG_CALL_RETURN(s.real()) })

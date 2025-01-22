@@ -3,8 +3,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import h5py
 
-n_sites = 12
-qs = [3] #range(n_sites//2+1)    # momenta q
+nsites = 12
+qs = [3] #range(nsites//2+1)    # momenta q
 
 temperatures = [0.001, 0.2, 0.5, 1.0]
 
@@ -15,7 +15,7 @@ eta = 0.05               # broadening factor
 omegas = np.linspace(-max_omega, max_omega, n_omegas)
 min_weight = 1e-8
 
-outfile = "outfiles/N.{}/outfile.N.{}.h5".format(n_sites, n_sites)
+outfile = "outfiles/N.{}/outfile.N.{}.h5".format(nsites, nsites)
 
 with h5py.File(outfile, 'r') as fl:
     eigs = fl["eigenvalues"][0]
@@ -54,6 +54,6 @@ for q in qs:
         
 plt.xlabel(r"$\omega$")
 plt.ylabel(r"$S(q,\omega)$")
-plt.title(r"$N={}$".format(n_sites))
+plt.title(r"$N={}$".format(nsites))
 plt.legend()
 plt.show()

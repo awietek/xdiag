@@ -4,35 +4,35 @@
 namespace xdiag {
 
 Spinhalf block(OpSum const &ops, Spinhalf const &block) try {
-  int64_t n_sites = block.n_sites();
+  int64_t nsites = block.nsites();
   std::string backend = block.backend();
-  auto nupi = block.n_up();
+  auto nupi = block.nup();
   auto irrepi = block.irrep();
   if (!nupi && !irrepi) {
     return block;
   } else if (nupi && !irrepi) {
     auto nupr = nup(ops, block);
-    return (nupi == nupr) ? block : Spinhalf(n_sites, nupr, backend);
+    return (nupi == nupr) ? block : Spinhalf(nsites, nupr, backend);
   } else if (!nupi && irrepi) {
     auto irrepr = representation(ops, block);
     return isapprox(*irrepi, irrepr) ? block
-                                     : Spinhalf(n_sites, irrepr, backend);
+                                     : Spinhalf(nsites, irrepr, backend);
   } else { //(nup && irrep)
     auto nupr = nup(ops, block);
     auto irrepr = representation(ops, block);
     return ((*nupi == nupr) && isapprox(*irrepi, irrepr))
                ? block
-               : Spinhalf(n_sites, nupr, irrepr, backend);
+               : Spinhalf(nsites, nupr, irrepr, backend);
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
 tJ block(OpSum const &ops, tJ const &block) try {
-  int64_t n_sites = block.n_sites();
+  int64_t nsites = block.nsites();
   std::string backend = block.backend();
-  auto nupi = block.n_up();
-  auto ndni = block.n_dn();
+  auto nupi = block.nup();
+  auto ndni = block.ndn();
   auto irrepi = block.irrep();
   if (!nupi && !irrepi) {
     return block;
@@ -41,12 +41,12 @@ tJ block(OpSum const &ops, tJ const &block) try {
     auto ndnr = ndn(ops, block);
     return ((*nupi == nupr) && (*ndni == ndnr))
                ? block
-               : tJ(n_sites, nupr, ndnr, backend);
+               : tJ(nsites, nupr, ndnr, backend);
   }
   // // Not yet implemented
   // else if (!nup && irrep) {
   //   auto irrepr = representation(ops, block);
-  //   return isapprox(irrep, irrepr) ? block : tJ(n_sites, *irrep, backend);
+  //   return isapprox(irrep, irrepr) ? block : tJ(nsites, *irrep, backend);
   // }
   else { //(nup && irrep)
     auto nupr = nup(ops, block);
@@ -54,17 +54,17 @@ tJ block(OpSum const &ops, tJ const &block) try {
     auto irrepr = representation(ops, block);
     return ((*nupi == nupr) && (*ndni == ndnr) && isapprox(*irrepi, irrepr))
                ? block
-               : tJ(n_sites, nupr, ndnr, irrepr, backend);
+               : tJ(nsites, nupr, ndnr, irrepr, backend);
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
 Electron block(OpSum const &ops, Electron const &block) try {
-  int64_t n_sites = block.n_sites();
+  int64_t nsites = block.nsites();
   std::string backend = block.backend();
-  auto nupi = block.n_up();
-  auto ndni = block.n_dn();
+  auto nupi = block.nup();
+  auto ndni = block.ndn();
   auto irrepi = block.irrep();
   if (!nupi && !irrepi) {
     return block;
@@ -73,18 +73,18 @@ Electron block(OpSum const &ops, Electron const &block) try {
     auto ndnr = ndn(ops, block);
     return ((*nupi == nupr) && (*ndni == ndnr))
                ? block
-               : Electron(n_sites, nupr, ndnr, backend);
+               : Electron(nsites, nupr, ndnr, backend);
   } else if (!nupi && irrepi) {
     auto irrepr = representation(ops, block);
     return isapprox(*irrepi, irrepr) ? block
-                                     : Electron(n_sites, irrepr, backend);
+                                     : Electron(nsites, irrepr, backend);
   } else { //(nup && irrep)
     auto nupr = nup(ops, block);
     auto ndnr = ndn(ops, block);
     auto irrepr = representation(ops, block);
     return ((*nupi == nupr) && (*ndni == ndnr) && isapprox(*irrepi, irrepr))
                ? block
-               : Electron(n_sites, nupr, ndnr, irrepr, backend);
+               : Electron(nsites, nupr, ndnr, irrepr, backend);
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
@@ -93,24 +93,24 @@ Electron block(OpSum const &ops, Electron const &block) try {
 #ifdef XDIAG_USE_MPI
 SpinhalfDistributed block(OpSum const &ops,
                           SpinhalfDistributed const &block) try {
-  int64_t n_sites = block.n_sites();
+  int64_t nsites = block.nsites();
   std::string backend = block.backend();
-  auto nupi = block.n_up();
+  auto nupi = block.nup();
   if (!nupi) {
     return block;
   } else {
     auto nupr = nup(ops, block);
     return (*nupi == nupr) ? block
-                           : SpinhalfDistributed(n_sites, nupr, backend);
+                           : SpinhalfDistributed(nsites, nupr, backend);
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 tJDistributed block(OpSum const &ops, tJDistributed const &block) try {
-  int64_t n_sites = block.n_sites();
+  int64_t nsites = block.nsites();
   std::string backend = block.backend();
-  auto nupi = block.n_up();
-  auto ndni = block.n_dn();
+  auto nupi = block.nup();
+  auto ndni = block.ndn();
   if (!nupi) {
     return block;
   } else {
@@ -118,7 +118,7 @@ tJDistributed block(OpSum const &ops, tJDistributed const &block) try {
     auto ndnr = ndn(ops, block);
     return ((*nupi == nupr) && (*ndni == ndnr))
                ? block
-               : tJDistributed(n_sites, nupr, ndnr, backend);
+               : tJDistributed(nsites, nupr, ndnr, backend);
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
@@ -160,7 +160,7 @@ bool blocks_match(OpSum const &ops, Block const &block1,
 
 bool blocks_match(OpSum const &ops, Spinhalf const &b1,
                   Spinhalf const &b2) try {
-  bool match_nup = b1.n_up() ? nup(ops, b1) == *b2.n_up() : !b2.n_up();
+  bool match_nup = b1.nup() ? nup(ops, b1) == *b2.nup() : !b2.nup();
   bool match_irrep =
       b1.irrep() ? representation(ops, b1) == *b2.irrep() : !b2.irrep();
   return match_nup && match_irrep;
@@ -169,8 +169,8 @@ bool blocks_match(OpSum const &ops, Spinhalf const &b1,
 }
 
 bool blocks_match(OpSum const &ops, tJ const &b1, tJ const &b2) try {
-  bool match_nup = b1.n_up() ? nup(ops, b1) == *b2.n_up() : !b2.n_up();
-  bool match_ndn = b1.n_dn() ? ndn(ops, b1) == *b2.n_dn() : !b2.n_dn();
+  bool match_nup = b1.nup() ? nup(ops, b1) == *b2.nup() : !b2.nup();
+  bool match_ndn = b1.ndn() ? ndn(ops, b1) == *b2.ndn() : !b2.ndn();
   bool match_irrep =
       b1.irrep() ? representation(ops, b1) == *b2.irrep() : !b2.irrep();
   return match_nup && match_ndn && match_irrep;
@@ -180,8 +180,8 @@ bool blocks_match(OpSum const &ops, tJ const &b1, tJ const &b2) try {
 
 bool blocks_match(OpSum const &ops, Electron const &b1,
                   Electron const &b2) try {
-  bool match_nup = b1.n_up() ? nup(ops, b1) == *b2.n_up() : !b2.n_up();
-  bool match_ndn = b1.n_dn() ? ndn(ops, b1) == *b2.n_dn() : !b2.n_dn();
+  bool match_nup = b1.nup() ? nup(ops, b1) == *b2.nup() : !b2.nup();
+  bool match_ndn = b1.ndn() ? ndn(ops, b1) == *b2.ndn() : !b2.ndn();
   bool match_irrep =
       b1.irrep() ? representation(ops, b1) == *b2.irrep() : !b2.irrep();
   return match_nup && match_ndn && match_irrep;
@@ -192,7 +192,7 @@ bool blocks_match(OpSum const &ops, Electron const &b1,
 #ifdef XDIAG_USE_MPI
 bool blocks_match(OpSum const &ops, SpinhalfDistributed const &b1,
                   SpinhalfDistributed const &b2) try {
-  bool match_nup = b1.n_up() ? nup(ops, b1) == *b2.n_up() : !b2.n_up();
+  bool match_nup = b1.nup() ? nup(ops, b1) == *b2.nup() : !b2.nup();
   return match_nup;
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
@@ -200,8 +200,8 @@ bool blocks_match(OpSum const &ops, SpinhalfDistributed const &b1,
 
 bool blocks_match(OpSum const &ops, tJDistributed const &b1,
                   tJDistributed const &b2) try {
-  bool match_nup = b1.n_up() ? nup(ops, b1) == *b2.n_up() : !b2.n_up();
-  bool match_ndn = b1.n_dn() ? ndn(ops, b1) == *b2.n_dn() : !b2.n_dn();
+  bool match_nup = b1.nup() ? nup(ops, b1) == *b2.nup() : !b2.nup();
+  bool match_ndn = b1.ndn() ? ndn(ops, b1) == *b2.ndn() : !b2.ndn();
   return match_nup && match_ndn;
 } catch (Error const &e) {
   XDIAG_RETHROW(e);

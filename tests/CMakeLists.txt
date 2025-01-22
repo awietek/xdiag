@@ -4,6 +4,9 @@ set(XDIAG_TEST_SOURCES
   io/test_file_toml.cpp
   io/test_file_h5.cpp
 
+  algebra/test_matrix.cpp
+  algebra/test_apply.cpp
+  
   combinatorics/test_binomial.cpp
   combinatorics/test_subsets.cpp
   combinatorics/test_bit_patterns.cpp

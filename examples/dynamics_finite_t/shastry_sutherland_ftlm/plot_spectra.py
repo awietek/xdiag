@@ -5,7 +5,7 @@ import pydiag as yd
 import pydiag.ensemble as yde
 from collections import OrderedDict
 
-n_sites = 16
+nsites = 16
 q = "M.C1.A"
 
 J=0.63
@@ -21,12 +21,12 @@ omegas = np.linspace(0, max_omega, n_omegas)
 min_weight = 1e-8
 
 # define ensemble of quantum numbers with degeneracies (qn, deg)
-nups = [(nup, 1) if nup == n_sites // 2 else (nup, 2) for nup in range(n_sites//2+1)]
+nups = [(nup, 1) if nup == nsites // 2 else (nup, 2) for nup in range(nsites//2+1)]
 ks = ["Gamma.C1.A", "M.C1.A", "X0.C1.A", "X1.C1.A"]
 ensemble = yde.Ensemble(nups, ks)
 
-directory = "outfiles/".format(n_sites)
-regex = "outfile.shastry.{}.J.{:.2f}.Jd.{:.2f}.nup.(.*).k.(.*).q.{}.h5".format(n_sites, J, Jd, q)
+directory = "outfiles/".format(nsites)
+regex = "outfile.shastry.{}.J.{:.2f}.Jd.{:.2f}.nup.(.*).k.(.*).q.{}.h5".format(nsites, J, Jd, q)
 
 print("q =", q)
 data = yd.read_h5_data(directory, regex, tags=["EigenvaluesK", "EigenvaluesKQ", "SofQ"])
@@ -68,12 +68,12 @@ for T in temperatures:
     # broaden and plot
     diffs = np.subtract.outer(omegas, poles)
     gaussians = np.exp(-(diffs / (2*eta))**2) / (eta * np.sqrt(2*np.pi))
-    spectrum = gaussians @ weights * n_sites**2
+    spectrum = gaussians @ weights * nsites**2
     plt.plot(omegas, spectrum, label=r"$q={}, T={:.3f}$".format(q, T))
     print(spectrum)
         
 plt.xlabel(r"$\omega$")
 plt.ylabel(r"$S(q,\omega)$")
-plt.title(r"$N={}$".format(n_sites))
+plt.title(r"$N={}$".format(nsites))
 plt.legend()
 plt.show()

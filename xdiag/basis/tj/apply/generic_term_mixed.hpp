@@ -12,11 +12,11 @@ template <typename bit_t, typename coeff_t, bool symmetric, class BasisIn,
 void generic_term_mixed(BasisIn &&basis_in, BasisOut &&basis_out,
                         NonZeroTermUps &&non_zero_term_ups,
                         NonZeroTermDns &&non_zero_term_dns,
-                        TermActionUps &&term_action_ups,
-                        TermActionDns &&term_action_dns, Fill &&fill) {
-  int64_t n_sites = basis_in.n_sites();
-  assert(n_sites == basis_out.n_sites());
-  bit_t sitesmask = ((bit_t)1 << n_sites) - 1;
+                        TermActionUps &&term_actionups,
+                        TermActionDns &&term_actiondns, Fill &&fill) {
+  int64_t nsites = basis_in.nsites();
+  assert(nsites == basis_out.nsites());
+  bit_t sitesmask = ((bit_t)1 << nsites) - 1;
 
   if constexpr (symmetric) {
 
@@ -33,7 +33,7 @@ void generic_term_mixed(BasisIn &&basis_in, BasisOut &&basis_out,
 
       if (non_zero_term_ups(up_in)) {
 
-        auto [up_flip, coeff_up] = term_action_ups(up_in);
+        auto [up_flip, coeff_up] = term_actionups(up_in);
         int64_t idx_up_flip = basis_out.index_ups(up_flip);
         bit_t up_flip_rep = basis_out.rep_ups(idx_up_flip);
         bit_t not_up_flip_rep = (~up_flip_rep) & sitesmask;
@@ -63,7 +63,7 @@ void generic_term_mixed(BasisIn &&basis_in, BasisOut &&basis_out,
             for (bit_t dnc_in : dnss_in) {
               bit_t dn_in = bits::deposit(dnc_in, not_up_in);
               if (non_zero_term_dns(dn_in)) {
-                auto [dn_flip, coeff_dn] = term_action_dns(dn_in);
+                auto [dn_flip, coeff_dn] = term_actiondns(dn_in);
 
                 if ((dn_flip & up_flip) == 0) { // t-J constraint
                   auto [idx_dn_out, fermi_dn] =
@@ -84,7 +84,7 @@ void generic_term_mixed(BasisIn &&basis_in, BasisOut &&basis_out,
             int64_t idx_dn = 0;
             for (bit_t dn : dnss_in) {
               if (non_zero_term_dns(dn)) {
-                auto [dn_flip, coeff_dn] = term_action_dns(dn);
+                auto [dn_flip, coeff_dn] = term_actiondns(dn);
                 if ((dn_flip & up_flip) == 0) { // t-J constraint
                   auto [idx_dn_out, fermi_dn] =
                       basis_out.index_dns_fermi(dn_flip, sym, not_up_flip_rep);
@@ -113,7 +113,7 @@ void generic_term_mixed(BasisIn &&basis_in, BasisOut &&basis_out,
             for (bit_t dnc : dnss_in) {
               bit_t dn = bits::deposit(dnc, not_up_in);
               if (non_zero_term_dns(dn)) {
-                auto [dn_flip, coeff_dn] = term_action_dns(dn);
+                auto [dn_flip, coeff_dn] = term_actiondns(dn);
 
                 if ((dn_flip & up_flip) == 0) { // t-J constraint
                   auto [idx_dn_out, fermi_dn, sym] =
@@ -140,7 +140,7 @@ void generic_term_mixed(BasisIn &&basis_in, BasisOut &&basis_out,
             int64_t idx_dn = 0;
             for (bit_t dn : dnss_in) {
               if (non_zero_term_dns(dn)) {
-                auto [dn_flip, coeff_dn] = term_action_dns(dn);
+                auto [dn_flip, coeff_dn] = term_actiondns(dn);
 
                 if ((dn_flip & up_flip) == 0) { // t-J constraint
                   auto [idx_dn_out, fermi_dn, sym] =
@@ -176,7 +176,7 @@ void generic_term_mixed(BasisIn &&basis_in, BasisOut &&basis_out,
       for (auto [up_in, idx_up_in] : ups_and_idces) {
         if (non_zero_term_ups(up_in)) {
 
-          auto [up_flip, coeff_up] = term_action_ups(up_in);
+          auto [up_flip, coeff_up] = term_actionups(up_in);
           bit_t not_up_in = (~up_in) & sitesmask;
           bit_t not_up_flip = (~up_flip) & sitesmask;
           int64_t idx_up_flip = basis_out.index_ups(up_flip);
@@ -188,7 +188,7 @@ void generic_term_mixed(BasisIn &&basis_in, BasisOut &&basis_out,
           for (bit_t dnc_in : dncs_in) {
             bit_t dn_in = bits::deposit(dnc_in, not_up_in);
             if (non_zero_term_dns(dn_in)) {
-              auto [dn_flip, coeff_dn] = term_action_dns(dn_in);
+              auto [dn_flip, coeff_dn] = term_actiondns(dn_in);
               if ((dn_flip & up_flip) == 0) { // t-J constraint
                 bit_t dnc_out = bits::extract(dn_flip, not_up_flip);
                 int64_t idx_dnc_out = basis_out.index_dncs(dnc_out);

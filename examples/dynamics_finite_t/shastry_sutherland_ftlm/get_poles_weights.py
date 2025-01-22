@@ -6,7 +6,7 @@ import pydiag as yd
 import pydiag.ensemble as yde
 from collections import OrderedDict
 
-n_sites = 16
+nsites = 16
 q = "M.C1.A"
 
 J=0.63
@@ -32,7 +32,7 @@ niter_evals = [100, 150, 200]
 
 
 # define ensemble of quantum numbers with degeneracies (qn, deg)
-nups = [(nup, 1) if nup == n_sites // 2 else (nup, 2) for nup in range(n_sites//2+1)]
+nups = [(nup, 1) if nup == nsites // 2 else (nup, 2) for nup in range(nsites//2+1)]
 ks = ["Gamma.C1.A", "M.C1.A", "X0.C1.A", "X1.C1.A"]
 
 # nups = [(1, 1)]
@@ -48,8 +48,8 @@ for seed in seeds:
     for cutoff in cutoffs:
         for niter_eval in niter_evals:
             print("@ seed: {}, cutoff: {}, niter: {}".format(seed, cutoff, niter_eval))
-            directory = "/data/condmat/awietek/Research/Software/xdiag/examples/dynamics_finite_t/shastry_sutherland_ftlm/outfiles/shastry.{}.HB.J.Jd.fsl/J.{:.2f}.Jd.{:.2f}/q.{}/seed.{}/".format(n_sites, J, Jd, q, seed)
-            regex = "outfile.shastry.{}.HB.J.Jd.fsl.J.{:.2f}.Jd.{:.2f}.q.{}.seed.{}.nup.(.*).k.(.*).niter.{}.h5".format(n_sites, J, Jd, q, seed, niter)
+            directory = "/data/condmat/awietek/Research/Software/xdiag/examples/dynamics_finite_t/shastry_sutherland_ftlm/outfiles/shastry.{}.HB.J.Jd.fsl/J.{:.2f}.Jd.{:.2f}/q.{}/seed.{}/".format(nsites, J, Jd, q, seed)
+            regex = "outfile.shastry.{}.HB.J.Jd.fsl.J.{:.2f}.Jd.{:.2f}.q.{}.seed.{}.nup.(.*).k.(.*).niter.{}.h5".format(nsites, J, Jd, q, seed, niter)
 
             print("Reading data")
             data = yd.read_h5_data(directory, regex, tags=["AlphasT", "BetasT", "DimK", "AlphasS", "BetasS", 'A'])
@@ -166,8 +166,8 @@ for seed in seeds:
             #             print("f1: {:.3e} f2: {:.3e} f3: {:.3e} f4: {:.3e}".format(f1, f2, f3, f4))
             #             print()
                         
-            directory = "/data/condmat/awietek/Research/Software/xdiag/examples/dynamics_finite_t/shastry_sutherland_ftlm/poles_weights/shastry.{}.HB.J.Jd.fsl/J.{:.2f}.Jd.{:.2f}/q.{}/T.{:.4f}/niter.{}.cutoff.{}".format(n_sites, J, Jd, q, temperature, niter_eval, cutoff)
-            filename = "poles.weights.shastry.{}.HB.J.Jd.fsl.J.{:.2f}.Jd.{:.2f}.q.{}.T.{:.4f}.niter.{}.cutoff.{}.seed.{}.h5".format(n_sites, J, Jd, q, temperature, niter_eval, cutoff, seed)
+            directory = "/data/condmat/awietek/Research/Software/xdiag/examples/dynamics_finite_t/shastry_sutherland_ftlm/poles_weights/shastry.{}.HB.J.Jd.fsl/J.{:.2f}.Jd.{:.2f}/q.{}/T.{:.4f}/niter.{}.cutoff.{}".format(nsites, J, Jd, q, temperature, niter_eval, cutoff)
+            filename = "poles.weights.shastry.{}.HB.J.Jd.fsl.J.{:.2f}.Jd.{:.2f}.q.{}.T.{:.4f}.niter.{}.cutoff.{}.seed.{}.h5".format(nsites, J, Jd, q, temperature, niter_eval, cutoff, seed)
             if not os.path.exists(directory):
                 os.makedirs(directory)
     

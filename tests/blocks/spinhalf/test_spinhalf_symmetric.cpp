@@ -14,15 +14,15 @@
 using namespace xdiag;
 using namespace xdiag::combinatorics;
 
-void test_spinchain_blocks(int64_t n_sites) {
+void test_spinchain_blocks(int64_t nsites) {
 
   // test cyclic group
   std::vector<Permutation> permutation_array;
-  for (int64_t sym = 0; sym < n_sites; ++sym) {
+  for (int64_t sym = 0; sym < nsites; ++sym) {
 
     std::vector<int64_t> pv;
-    for (int64_t site = 0; site < n_sites; ++site) {
-      int64_t newsite = (site + sym) % n_sites;
+    for (int64_t site = 0; site < nsites; ++site) {
+      int64_t newsite = (site + sym) % nsites;
       pv.push_back(newsite);
     }
     permutation_array.push_back(Permutation(pv));
@@ -31,39 +31,39 @@ void test_spinchain_blocks(int64_t n_sites) {
 
   // Create irrep with K momentum
   int64_t sum_of_dims = 0;
-  for (int64_t nup = 0; nup <= n_sites; ++nup) {
+  for (int64_t nup = 0; nup <= nsites; ++nup) {
     int64_t sum_of_dims_up = 0;
 
-    for (int64_t k = 0; k < n_sites; ++k) {
+    for (int64_t k = 0; k < nsites; ++k) {
 
       // Create characters
       std::vector<complex> chis;
-      for (int64_t l = 0; l < n_sites; ++l)
-        chis.push_back({std::cos(2 * M_PI * l * k / n_sites),
-                        std::sin(2 * M_PI * l * k / n_sites)});
+      for (int64_t l = 0; l < nsites; ++l)
+        chis.push_back({std::cos(2 * M_PI * l * k / nsites),
+                        std::sin(2 * M_PI * l * k / nsites)});
       auto irrep = Representation(group, chis);
 
-      auto block = Spinhalf(n_sites, nup, irrep);
+      auto block = Spinhalf(nsites, nup, irrep);
 
       sum_of_dims += block.size();
       sum_of_dims_up += block.size();
     }
-    REQUIRE(sum_of_dims_up == binomial(n_sites, nup));
+    REQUIRE(sum_of_dims_up == binomial(nsites, nup));
   }
-  REQUIRE(sum_of_dims == pow(2, n_sites));
+  REQUIRE(sum_of_dims == pow(2, nsites));
 }
 
 TEST_CASE("spinhalf_symmetric", "[spinhalf]") {
 
   // Test the tJ chain
-  for (int64_t n_sites = 1; n_sites < 8; ++n_sites) {
-    Log.out("spinhalf_symmetric: block test: Spinhalf Chain {}", n_sites);
-    test_spinchain_blocks(n_sites);
+  for (int64_t nsites = 1; nsites < 8; ++nsites) {
+    Log.out("spinhalf_symmetric: block test: Spinhalf Chain {}", nsites);
+    test_spinchain_blocks(nsites);
   }
 
   // test a 3x3 triangular lattice
   Log.out("spinhalf_symmetric: block test: Triangular 3x3");
-  int64_t n_sites = 9;
+  int64_t nsites = 9;
 
   std::vector<std::pair<std::string, int64_t>> rep_name_mult = {
       {"Gamma.D6.A1", 1}, {"Gamma.D6.A2", 1}, {"Gamma.D6.B1", 1},
@@ -75,16 +75,16 @@ TEST_CASE("spinhalf_symmetric", "[spinhalf]") {
       "/misc/data/triangular.9.Jz1Jz2Jx1Jx2D1.sublattices.tsl.toml";
   auto fl = FileToml(lfile);
   int64_t sum_dim = 0;
-  for (int64_t nup = 0; nup <= n_sites; ++nup) {
+  for (int64_t nup = 0; nup <= nsites; ++nup) {
     int64_t sum_dim_up = 0;
     for (auto [name, mult] : rep_name_mult) {
       auto irrep = read_representation(fl, name);
-      auto block = Spinhalf(n_sites, nup, irrep);
+      auto block = Spinhalf(nsites, nup, irrep);
       int64_t dim = block.size() * mult;
       sum_dim_up += dim;
       sum_dim += dim;
     }
-    REQUIRE(sum_dim_up == binomial(n_sites, nup));
+    REQUIRE(sum_dim_up == binomial(nsites, nup));
   }
-  REQUIRE(sum_dim == (int64_t)pow(2, n_sites));
+  REQUIRE(sum_dim == (int64_t)pow(2, nsites));
 }

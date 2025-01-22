@@ -41,9 +41,9 @@ uint64_t hash(Block const &block) {
 }
 
 uint64_t hash(Spinhalf const &block) {
-  uint64_t h = block.n_sites() == 0 ? 0 : hash_fnv1((uint64_t)block.n_sites());
-  if (block.n_up()) {
-    h = hash_combine(h, hash_fnv1((uint64_t)*block.n_up()));
+  uint64_t h = block.nsites() == 0 ? 0 : hash_fnv1((uint64_t)block.nsites());
+  if (block.nup()) {
+    h = hash_combine(h, hash_fnv1((uint64_t)*block.nup()));
   }
   if (block.irrep()) {
     h = hash_combine(h, hash(*block.irrep()));
@@ -52,12 +52,12 @@ uint64_t hash(Spinhalf const &block) {
 }
 
 uint64_t hash(tJ const &block) {
-  uint64_t h = block.n_sites() == 0 ? 0 : hash_fnv1((uint64_t)block.n_sites());
-  if (block.n_up()) {
-    h = hash_combine(h, hash_fnv1((uint64_t)*block.n_up()));
+  uint64_t h = block.nsites() == 0 ? 0 : hash_fnv1((uint64_t)block.nsites());
+  if (block.nup()) {
+    h = hash_combine(h, hash_fnv1((uint64_t)*block.nup()));
   }
-  if (block.n_dn()) {
-    h = hash_combine(h, hash_fnv1((uint64_t)*block.n_dn()));
+  if (block.ndn()) {
+    h = hash_combine(h, hash_fnv1((uint64_t)*block.ndn()));
   }
   if (block.irrep()) {
     h = hash_combine(h, hash(*block.irrep()));
@@ -66,12 +66,12 @@ uint64_t hash(tJ const &block) {
 }
 
 uint64_t hash(Electron const &block) {
-  uint64_t h = block.n_sites() == 0 ? 0 : hash_fnv1((uint64_t)block.n_sites());
-  if (block.n_up()) {
-    h = hash_combine(h, hash_fnv1((uint64_t)*block.n_up()));
+  uint64_t h = block.nsites() == 0 ? 0 : hash_fnv1((uint64_t)block.nsites());
+  if (block.nup()) {
+    h = hash_combine(h, hash_fnv1((uint64_t)*block.nup()));
   }
-  if (block.n_dn()) {
-    h = hash_combine(h, hash_fnv1((uint64_t)*block.n_dn()));
+  if (block.ndn()) {
+    h = hash_combine(h, hash_fnv1((uint64_t)*block.ndn()));
   }
   if (block.irrep()) {
     h = hash_combine(h, hash(*block.irrep()));
@@ -82,9 +82,9 @@ uint64_t hash(Electron const &block) {
 #ifdef XDIAG_USE_MPI
 
 uint64_t hash(SpinhalfDistributed const &block) {
-  uint64_t h = block.n_sites() == 0 ? 0 : hash_fnv1((uint64_t)block.n_sites());
-  if (block.n_up() != undefined) {
-    h = hash_combine(h, hash_fnv1((uint64_t)block.n_up()));
+  uint64_t h = block.nsites() == 0 ? 0 : hash_fnv1((uint64_t)block.nsites());
+  if (block.nup() != undefined) {
+    h = hash_combine(h, hash_fnv1((uint64_t)block.nup()));
   }
   int mpi_rank;
   MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
@@ -93,12 +93,12 @@ uint64_t hash(SpinhalfDistributed const &block) {
 }
 
 uint64_t hash(tJDistributed const &block) {
-  uint64_t h = block.n_sites() == 0 ? 0 : hash_fnv1((uint64_t)block.n_sites());
-  if (block.n_up() != undefined) {
-    h = hash_combine(h, hash_fnv1((uint64_t)block.n_up()));
+  uint64_t h = block.nsites() == 0 ? 0 : hash_fnv1((uint64_t)block.nsites());
+  if (block.nup() != undefined) {
+    h = hash_combine(h, hash_fnv1((uint64_t)block.nup()));
   }
-  if (block.n_dn() != undefined) {
-    h = hash_combine(h, hash_fnv1((uint64_t)block.n_dn()));
+  if (block.ndn() != undefined) {
+    h = hash_combine(h, hash_fnv1((uint64_t)block.ndn()));
   }
 
   int mpi_rank;

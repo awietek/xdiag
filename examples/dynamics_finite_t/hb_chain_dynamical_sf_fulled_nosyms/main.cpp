@@ -10,21 +10,21 @@ int main() {
   say_hello();
   
   // Parse input arguments
-  int n_sites = 12;
+  int nsites = 12;
 
   // Define directory / file to store output data
-  std::string outdir = format("outfiles/N.{}", n_sites);
-  std::string outfile = format("{}/outfile.N.{}.h5", outdir, n_sites);
+  std::string outdir = format("outfiles/N.{}", nsites);
+  std::string outfile = format("{}/outfile.N.{}.h5", outdir, nsites);
   std::filesystem::create_directories(outdir);
 
   // Create nearest-neighbor Heisenberg model
   OpSum ops;
-  for (int s = 0; s < n_sites; ++s) {
-    ops << Op("HB", "J", {s, (s + 1) % n_sites});
+  for (int s = 0; s < nsites; ++s) {
+    ops << Op("HB", "J", {s, (s + 1) % nsites});
   }
   ops["J"] = 1.0;
 
-  auto block = Spinhalf(n_sites);
+  auto block = Spinhalf(nsites);
 
   // Compute eigendecomposition of Hamiltonian
   Log("Creating H");
@@ -37,15 +37,15 @@ int main() {
   eigval.save(hdf5_name(outfile, "eigenvalues", append));
 
   // Loop over different momenta q
-  for (int q = 0; q <= n_sites; ++q) {
+  for (int q = 0; q <= nsites; ++q) {
 
     Log("Computing <n|S(q)|m> (q={})", q);
     
     // Create S(q) operator
     OpSum S_of_q_ops;
-    for (int s = 0; s < n_sites; ++s) {
-      complex phase = exp(2i * pi * q * s / n_sites);
-      S_of_q_ops << Op("Sz", phase / n_sites, s);
+    for (int s = 0; s < nsites; ++s) {
+      complex phase = exp(2i * pi * q * s / nsites);
+      S_of_q_ops << Op("Sz", phase / nsites, s);
     }
 
     // Compute matrix elements of S(q)

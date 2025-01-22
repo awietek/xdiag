@@ -5,16 +5,16 @@ int main() {
   using namespace arma;
 
   // Define the number of lattice sites, number of upspins
-  int n_sites = 8;
-  int n_up = 4;
+  int nsites = 8;
+  int nup = 4;
 
   // Create the corresponding block of the Spinhalf Hilbertspace
-  auto block = Spinhalf(n_sites, n_up);
+  auto block = Spinhalf(nsites, nup);
 
   // Define Heisenberg chain with interaction-type HB and coupling J
   OpSum ops;
-  for (int s = 0; s < n_sites; ++s) {
-    ops << Op("HB", "J", {s, (s + 1) % n_sites});
+  for (int s = 0; s < nsites; ++s) {
+    ops << Op("HB", "J", {s, (s + 1) % nsites});
   }
 
   // Set the coupling J to 1.0

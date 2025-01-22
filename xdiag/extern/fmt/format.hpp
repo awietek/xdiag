@@ -2213,8 +2213,8 @@ FMT_CONSTEXPR FMT_INLINE auto write_int(OutputIt out, write_int_arg<T> arg,
         });
   }
   case presentation_type::bin_lower:
-  case presentation_type::bin_upper: {
-    bool upper = specs.type == presentation_type::bin_upper;
+  case presentation_type::binupper: {
+    bool upper = specs.type == presentation_type::binupper;
     if (specs.alt)
       prefix_append(prefix, unsigned(upper ? 'B' : 'b') << 8 | '0');
     int num_digits = count_digits<1>(abs_value);

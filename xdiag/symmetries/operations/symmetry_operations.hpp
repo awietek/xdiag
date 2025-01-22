@@ -13,10 +13,10 @@ namespace xdiag::symmetries {
 
 using span_size_t = gsl::span<int const>::size_type;
 
-bool is_valid_permutation(int n_sites, const int *permutation);
+bool is_valid_permutation(int nsites, const int *permutation);
 
 template <typename bit_t>
-bit_t apply_permutation(bit_t state, int n_sites, const int *permutation);
+bit_t apply_permutation(bit_t state, int nsites, const int *permutation);
 
 template <typename bit_t>
 bit_t apply_permutation(bit_t state, gsl::span<int const> permutation);

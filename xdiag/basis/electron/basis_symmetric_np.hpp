@@ -25,12 +25,12 @@ public:
   using iterator_t = BasisSymmetricNpIterator<bit_t>;
   using span_size_t = gsl::span<int64_t const>::size_type;
 
-  BasisSymmetricNp(int64_t n_sites, int64_t nup, int64_t ndn,
+  BasisSymmetricNp(int64_t nsites, int64_t nup, int64_t ndn,
                    Representation const &irrep);
 
-  int64_t n_sites() const;
-  int64_t n_up() const;
-  int64_t n_dn() const;
+  int64_t nsites() const;
+  int64_t nup() const;
+  int64_t ndn() const;
 
   int64_t dim() const;
   int64_t size() const;
@@ -147,9 +147,9 @@ public:
   }
 
 private:
-  int64_t n_sites_;
-  int64_t n_up_;
-  int64_t n_dn_;
+  int64_t nsites_;
+  int64_t nup_;
+  int64_t ndn_;
   GroupActionLookup<bit_t> group_action_;
   Representation irrep_;
 

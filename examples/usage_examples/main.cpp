@@ -25,7 +25,7 @@ Permutation p3 = {2, 0, 1};
 auto C3 = PermutationGroup({p1, p2, p3});
 
 XDIAG_SHOW(C3.size());
-XDIAG_SHOW(C3.n_sites());
+XDIAG_SHOW(C3.nsites());
 XDIAG_SHOW(C3.inverse(1)); // = 2
 // --8<-- [end:PermutationGroup]
 }
@@ -68,7 +68,7 @@ XDIAG_SHOW(block_sym);
 auto block_sym_sz = Spinhalf(N, nup, group, irrep);
 XDIAG_SHOW(block_sym_sz);
 
-XDIAG_SHOW(block_sym_sz.n_sites());
+XDIAG_SHOW(block_sym_sz.nsites());
 XDIAG_SHOW(block_sym_sz.size());
 
 // Iteration
@@ -100,7 +100,7 @@ auto irrep = Representation({1, -1, 1, -1});
 auto block_sym = tJ(N, nup, ndn, group, irrep);
 XDIAG_SHOW(block_sym);
 
-XDIAG_SHOW(block_sym.n_sites());
+XDIAG_SHOW(block_sym.nsites());
 XDIAG_SHOW(block_sym.size());
 
 // Iteration
@@ -140,7 +140,7 @@ XDIAG_SHOW(block_sym);
 auto block_sym_np = Electron(N, nup, ndn, group, irrep);
 XDIAG_SHOW(block_sym_np);
 
-XDIAG_SHOW(block_sym_np.n_sites());
+XDIAG_SHOW(block_sym_np.nsites());
 XDIAG_SHOW(block_sym_np.size());
 
 // Iteration
@@ -291,7 +291,7 @@ pstate = ProductState();
 pstate.push_back("Dn");
 pstate.push_back("Up");
 pstate.push_back("Dn");
-XDIAG_SHOW(pstate.n_sites());
+XDIAG_SHOW(pstate.nsites());
 for (auto s : pstate) {
   Log("{}", s);
 }

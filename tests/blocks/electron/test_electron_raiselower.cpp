@@ -11,17 +11,17 @@ TEST_CASE("electron_raise_lower", "[electron]") try {
   using namespace arma;
   std::vector<std::string> op_strs = {"Cdagup", "Cdagdn", "Cup", "Cdn"};
 
-  for (int n_sites = 1; n_sites < 4; ++n_sites) {
+  for (int nsites = 1; nsites < 4; ++nsites) {
     Log("testing electron anticommutation relations (full matrix): N={}",
-        n_sites);
+        nsites);
 
-    auto block = Electron(n_sites);
+    auto block = Electron(nsites);
     int64_t D = block.size();
 
     cx_mat id(D, D, fill::eye);
 
-    for (int i = 0; i < n_sites; ++i) {
-      for (int j = 0; j < n_sites; ++j) {
+    for (int i = 0; i < nsites; ++i) {
+      for (int j = 0; j < nsites; ++j) {
 
         for (auto op_i_str : op_strs) {
           for (auto op_j_str : op_strs) {
@@ -51,12 +51,12 @@ TEST_CASE("electron_raise_lower", "[electron]") try {
     }
   }
 
-  for (int n_sites = 2; n_sites < 4; ++n_sites) {
+  for (int nsites = 2; nsites < 4; ++nsites) {
 
-    auto block = Electron(n_sites);
+    auto block = Electron(nsites);
     int64_t D = block.size();
 
-    for (int i = 0; i < n_sites; ++i) {
+    for (int i = 0; i < nsites; ++i) {
 
       // Check whether Nup agrees
       {
@@ -78,7 +78,7 @@ TEST_CASE("electron_raise_lower", "[electron]") try {
         REQUIRE(norm(mm - m) < 1e-12);
       }
 
-      for (int j = 0; j < n_sites; ++j) {
+      for (int j = 0; j < nsites; ++j) {
         if (i != j) {
 
           // Check whether Hopup agrees

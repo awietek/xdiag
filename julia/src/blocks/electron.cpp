@@ -18,12 +18,12 @@ void define_electron(jlcxx::Module &mod) {
       .constructor<int64_t, PermutationGroup, Representation>()
       .constructor<int64_t, int64_t, int64_t, PermutationGroup,
                    Representation>()
-      .method("n_sites",
-              [](Electron const &s) { JULIA_XDIAG_CALL_RETURN(s.n_sites()) })
-      .method("n_up",
-              [](Electron const &s) { JULIA_XDIAG_CALL_RETURN(s.n_up()) })
-      .method("n_dn",
-              [](Electron const &s) { JULIA_XDIAG_CALL_RETURN(s.n_dn()) })
+      .method("nsites",
+              [](Electron const &s) { JULIA_XDIAG_CALL_RETURN(s.nsites()) })
+      .method("nup",
+              [](Electron const &s) { JULIA_XDIAG_CALL_RETURN(s.nup()) })
+      .method("ndn",
+              [](Electron const &s) { JULIA_XDIAG_CALL_RETURN(s.ndn()) })
       .method("permutation_group",
               [](Electron const &s) {
                 JULIA_XDIAG_CALL_RETURN(s.permutation_group())

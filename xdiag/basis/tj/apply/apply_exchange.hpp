@@ -30,7 +30,7 @@ void apply_exchange(Coupling const &cpl, Op const &op, Basis &&basis,
   auto non_zero_term_dns = [&](bit_t dn) {
     return bits::popcnt(dn & flipmask) == 1;
   };
-  auto term_action_ups = [&](bit_t up) -> std::pair<bit_t, coeff_t> {
+  auto term_actionups = [&](bit_t up) -> std::pair<bit_t, coeff_t> {
     bool fermi_up = bits::popcnt(up & fermimask) & 1;
     bit_t up_flip = up ^ flipmask;
     if constexpr (iscomplex<coeff_t>()) {
@@ -45,13 +45,13 @@ void apply_exchange(Coupling const &cpl, Op const &op, Basis &&basis,
       return {up_flip, fermi_up ? Jhalf : -Jhalf};
     }
   };
-  auto term_action_dns = [&](bit_t dn) -> std::pair<bit_t, coeff_t> {
+  auto term_actiondns = [&](bit_t dn) -> std::pair<bit_t, coeff_t> {
     bool fermi_dn = bits::popcnt(dn & fermimask) & 1;
     return {dn ^ flipmask, fermi_dn ? -1.0 : 1.0};
   };
   generic_term_mixed<bit_t, coeff_t, symmetric>(
-      basis, basis, non_zero_term_ups, non_zero_term_dns, term_action_ups,
-      term_action_dns, fill);
+      basis, basis, non_zero_term_ups, non_zero_term_dns, term_actionups,
+      term_actiondns, fill);
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }

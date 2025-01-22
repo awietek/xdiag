@@ -10,58 +10,58 @@
 namespace xdiag::basis::electron {
 
 template <class bit_t>
-BasisSymmetricNp<bit_t>::BasisSymmetricNp(int64_t n_sites, int64_t nup,
+BasisSymmetricNp<bit_t>::BasisSymmetricNp(int64_t nsites, int64_t nup,
                                           int64_t ndn,
                                           Representation const &irrep) try
-    : n_sites_(n_sites), n_up_(nup), n_dn_(ndn), group_action_(irrep.group()),
-      irrep_(irrep), raw_ups_size_(combinatorics::binomial(n_sites, nup)),
-      raw_dns_size_(combinatorics::binomial(n_sites, ndn)),
-      lintable_ups_(n_sites, nup), lintable_dns_(n_sites, ndn),
-      fermi_table_ups_(n_sites, nup, irrep.group()),
-      fermi_table_dns_(n_sites, ndn, irrep.group()) {
-  check_n_sites_work_with_bits<bit_t>(n_sites_);
+    : nsites_(nsites), nup_(nup), ndn_(ndn), group_action_(irrep.group()),
+      irrep_(irrep), raw_ups_size_(combinatorics::binomial(nsites, nup)),
+      raw_dns_size_(combinatorics::binomial(nsites, ndn)),
+      lintable_ups_(nsites, nup), lintable_dns_(nsites, ndn),
+      fermi_table_ups_(nsites, nup, irrep.group()),
+      fermi_table_dns_(nsites, ndn, irrep.group()) {
+  check_nsites_work_with_bits<bit_t>(nsites_);
 
   using combinatorics::Combinations;
-  if (n_sites < 0) {
-    XDIAG_THROW("n_sites < 0");
+  if (nsites < 0) {
+    XDIAG_THROW("nsites < 0");
   } else if ((nup < 0) || (ndn < 0)) {
     XDIAG_THROW("nup < 0 or ndn < 0");
-  } else if (n_sites < 0) {
-    XDIAG_THROW("n_sites < 0");
-  } else if (n_sites != irrep.group().n_sites()) {
-    XDIAG_THROW("n_sites does not match the n_sites in PermutationGroup");
+  } else if (nsites < 0) {
+    XDIAG_THROW("nsites < 0");
+  } else if (nsites != irrep.group().nsites()) {
+    XDIAG_THROW("nsites does not match the nsites in PermutationGroup");
   }
 
   std::tie(reps_up_, idces_up_, syms_up_, sym_limits_up_) =
       symmetries::representatives_indices_symmetries_limits<bit_t>(
-          combinatorics::CombinationsIndexing<bit_t>(n_sites, nup),
+          combinatorics::CombinationsIndexing<bit_t>(nsites, nup),
           group_action_);
 
   if (isreal(irrep)) {
     auto characters = irrep.characters().as<arma::vec>();
     std::tie(dns_storage_, norms_storage_, dns_limits_, ups_offset_, size_) =
-        symmetries::electron_dns_norms_limits_offset_size(
-            reps_up_, Combinations<bit_t>(n_sites, ndn), group_action_,
+        symmetries::electrondns_norms_limits_offset_size(
+            reps_up_, Combinations<bit_t>(nsites, ndn), group_action_,
             characters);
   } else {
     auto characters = irrep.characters().as<arma::cx_vec>();
     std::tie(dns_storage_, norms_storage_, dns_limits_, ups_offset_, size_) =
-        symmetries::electron_dns_norms_limits_offset_size(
-            reps_up_, Combinations<bit_t>(n_sites, ndn), group_action_,
+        symmetries::electrondns_norms_limits_offset_size(
+            reps_up_, Combinations<bit_t>(nsites, ndn), group_action_,
             characters);
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
-template <class bit_t> int64_t BasisSymmetricNp<bit_t>::n_sites() const {
-  return n_sites_;
+template <class bit_t> int64_t BasisSymmetricNp<bit_t>::nsites() const {
+  return nsites_;
 }
-template <class bit_t> int64_t BasisSymmetricNp<bit_t>::n_up() const {
-  return n_up_;
+template <class bit_t> int64_t BasisSymmetricNp<bit_t>::nup() const {
+  return nup_;
 }
-template <class bit_t> int64_t BasisSymmetricNp<bit_t>::n_dn() const {
-  return n_dn_;
+template <class bit_t> int64_t BasisSymmetricNp<bit_t>::ndn() const {
+  return ndn_;
 }
 
 template <class bit_t> int64_t BasisSymmetricNp<bit_t>::dim() const {

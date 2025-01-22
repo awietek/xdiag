@@ -17,8 +17,8 @@ void define_product_state(jlcxx::Module &mod) {
       .constructor<int64_t>()
       .constructor<std::vector<std::string> const &>()
       .method(
-          "n_sites",
-          [](ProductState const &s) { JULIA_XDIAG_CALL_RETURN(s.n_sites()) })
+          "nsites",
+          [](ProductState const &s) { JULIA_XDIAG_CALL_RETURN(s.nsites()) })
       .method("size",
               [](ProductState const &s) { JULIA_XDIAG_CALL_RETURN(s.size()) })
       .method("getindex", [](ProductState const &s,

@@ -15,9 +15,9 @@ public:
   using iterator_t = tJIterator;
 
   XDIAG_API tJ() = default;
-  XDIAG_API tJ(int64_t n_sites, int64_t nup, int64_t ndn,
+  XDIAG_API tJ(int64_t nsites, int64_t nup, int64_t ndn,
                std::string backend = "auto");
-  XDIAG_API tJ(int64_t n_sites, int64_t nup, int64_t ndn,
+  XDIAG_API tJ(int64_t nsites, int64_t nup, int64_t ndn,
                Representation const &irrep, std::string backend = "auto");
 
   XDIAG_API iterator_t begin() const;
@@ -29,19 +29,19 @@ public:
   XDIAG_API bool operator==(tJ const &rhs) const;
   XDIAG_API bool operator!=(tJ const &rhs) const;
 
-  int64_t n_sites() const;
+  int64_t nsites() const;
   std::string backend() const;
-  std::optional<int64_t> n_up() const;
-  std::optional<int64_t> n_dn() const;
+  std::optional<int64_t> nup() const;
+  std::optional<int64_t> ndn() const;
   std::optional<Representation> const &irrep() const;
   bool isreal() const;
   basis_t const &basis() const;
 
 private:
-  int64_t n_sites_;
+  int64_t nsites_;
   std::string backend_;
-  std::optional<int64_t> n_up_;
-  std::optional<int64_t> n_dn_;
+  std::optional<int64_t> nup_;
+  std::optional<int64_t> ndn_;
   std::optional<Representation> irrep_;
   std::shared_ptr<basis_t> basis_;
   int64_t size_;
@@ -59,7 +59,7 @@ public:
   bool operator!=(tJIterator const &rhs) const;
 
 private:
-  int64_t n_sites_;
+  int64_t nsites_;
   mutable ProductState pstate_;
   basis::BasistJIterator it_;
 };

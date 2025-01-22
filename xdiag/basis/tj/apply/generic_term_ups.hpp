@@ -11,9 +11,9 @@ template <typename bit_t, typename coeff_t, bool symmetric, class BasisIn,
 void generic_term_ups(BasisIn &&basis_in, BasisOut &&basis_out,
                       NonZeroTerm &&non_zero_term, TermAction &&term_action,
                       Fill &&fill) {
-  int64_t n_sites = basis_in.n_sites();
-  assert(n_sites == basis_out.n_sites());
-  bit_t sitesmask = ((bit_t)1 << n_sites) - 1;
+  int64_t nsites = basis_in.nsites();
+  assert(nsites == basis_out.nsites());
+  bit_t sitesmask = ((bit_t)1 << nsites) - 1;
 
   if constexpr (symmetric) {
 

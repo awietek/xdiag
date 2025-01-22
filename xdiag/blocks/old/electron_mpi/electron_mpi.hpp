@@ -15,11 +15,11 @@ namespace xdiag {
 template <class bit_t> class ElectronMPI {
 
   ElectronMPI() = default;
-  ElectronMPI(int n_sites, int nup, int ndn);
+  ElectronMPI(int nsites, int nup, int ndn);
 
-  inline int n_sites() const { return n_sites_; }
-  inline int n_up() const { return n_up_; }
-  inline int n_dn() const { return n_dn_; }
+  inline int nsites() const { return nsites_; }
+  inline int nup() const { return nup_; }
+  inline int ndn() const { return ndn_; }
 
   inline bool charge_conserved() const { return charge_conserved_; }
   inline bool sz_conserved() const { return sz_conserved_; }
@@ -35,14 +35,14 @@ template <class bit_t> class ElectronMPI {
   bool operator!=(ElectronMPI const &rhs) const;
 
 private:
-  int n_sites_;
+  int nsites_;
 
   bool charge_conserved_;
   int charge_;
   bool sz_conserved_;
   int sz_;
-  int n_up_;
-  int n_dn_;
+  int nup_;
+  int ndn_;
 
   indexing::LinTable<bit_t> lintable_up_;
   indexing::LinTable<bit_t> lintable_dn_;

@@ -12,8 +12,8 @@ int64_t size(Block const &block) {
   return std::visit([&](auto &&b) { return b.size(); }, block);
 }
 
-int64_t n_sites(Block const &block) {
-  return std::visit([&](auto &&b) { return b.n_sites(); }, block);
+int64_t nsites(Block const &block) {
+  return std::visit([&](auto &&b) { return b.nsites(); }, block);
 }
 
 bool isreal(Block const &block) {

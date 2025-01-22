@@ -7,10 +7,10 @@
 namespace xdiag {
 
 GroupAction::GroupAction(PermutationGroup const &permutation_group)
-    : n_sites_(permutation_group.n_sites()),
+    : nsites_(permutation_group.nsites()),
       n_symmetries_(permutation_group.size()),
       permutation_group_(permutation_group), indices_(n_symmetries_, 0),
-      fermi_work_(2 * permutation_group.n_sites(), 0) {}
+      fermi_work_(2 * permutation_group.nsites(), 0) {}
 
 template <class bit_t> bit_t GroupAction::apply(int64_t sym, bit_t state) const {
   return permutation_group_[sym].apply(state);
@@ -106,7 +106,7 @@ template std::vector<int64_t>
     GroupAction::stabilizer_symmetries<uint64_t>(uint64_t) const;
 
 bool GroupAction::operator==(GroupAction const &rhs) const {
-  return (n_sites_ == rhs.n_sites_) && (n_symmetries_ == rhs.n_symmetries_) &&
+  return (nsites_ == rhs.nsites_) && (n_symmetries_ == rhs.n_symmetries_) &&
          (permutation_group_ == rhs.permutation_group_);
 }
 

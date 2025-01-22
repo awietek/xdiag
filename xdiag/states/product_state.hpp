@@ -11,14 +11,14 @@ public:
   using iterator_t = std::vector<std::string>::const_iterator;
 
   ProductState() = default;
-  explicit ProductState(int64_t n_sites);
+  explicit ProductState(int64_t nsites);
   explicit ProductState(std::vector<std::string> const &local_states);
 
   std::string const &operator[](int64_t i) const;
   std::string &operator[](int64_t i);
 
   int64_t size() const;
-  int64_t n_sites() const;
+  int64_t nsites() const;
   void push_back(std::string l);
 
   iterator_t begin() const;

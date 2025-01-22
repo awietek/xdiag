@@ -13,10 +13,10 @@ TEST_CASE("spinhalf_matrix", "[spinhalf]") try {
 
   {
     Log("spinhalf_matrix: Heisenberg chain test, J=1.0, N=2,..,6");
-    for (int n_sites = 2; n_sites <= 6; ++n_sites) {
-      for (int nup = 0; nup <= n_sites; ++nup) {
-        auto [ops, exact_eigs] = HBchain_fullspectrum_nup(n_sites, nup);
-        auto block = Spinhalf(n_sites, nup);
+    for (int nsites = 2; nsites <= 6; ++nsites) {
+      for (int nup = 0; nup <= nsites; ++nup) {
+        auto [ops, exact_eigs] = HBchain_fullspectrum_nup(nsites, nup);
+        auto block = Spinhalf(nsites, nup);
         auto H = matrix(ops, block, block);
         REQUIRE(H.is_hermitian(1e-7));
         arma::vec eigs;
@@ -28,11 +28,11 @@ TEST_CASE("spinhalf_matrix", "[spinhalf]") try {
 
   {
     Log("spinhalf_matrix: Heisenberg all-to-all tJ comparison");
-    for (int n_sites = 2; n_sites <= 6; ++n_sites)
-      for (int nup = 0; nup <= n_sites; ++nup) {
-        auto ops = HB_alltoall(n_sites);
-        auto block = Spinhalf(n_sites, nup);
-        auto block_tJ = tJ(n_sites, nup, n_sites - nup);
+    for (int nsites = 2; nsites <= 6; ++nsites)
+      for (int nup = 0; nup <= nsites; ++nup) {
+        auto ops = HB_alltoall(nsites);
+        auto block = Spinhalf(nsites, nup);
+        auto block_tJ = tJ(nsites, nup, nsites - nup);
         auto H = matrix(ops, block, block);
         auto H_tJ = matrix(ops, block_tJ, block_tJ);
         REQUIRE(H.is_hermitian());
@@ -49,9 +49,9 @@ TEST_CASE("spinhalf_matrix", "[spinhalf]") try {
 
   {
     Log("spinhalf_matrix: Heisenberg all-to-all Sz <-> NoSz comparison");
-    for (int n_sites = 2; n_sites <= 6; ++n_sites) {
-      auto ops = HB_alltoall(n_sites);
-      auto block_no_sz = Spinhalf(n_sites);
+    for (int nsites = 2; nsites <= 6; ++nsites) {
+      auto ops = HB_alltoall(nsites);
+      auto block_no_sz = Spinhalf(nsites);
       auto H_no_sz = matrix(ops, block_no_sz, block_no_sz);
       REQUIRE(H_no_sz.is_hermitian(1e-8));
       arma::vec eigs_no_sz;
@@ -59,8 +59,8 @@ TEST_CASE("spinhalf_matrix", "[spinhalf]") try {
 
       std::vector<double> eigs_sz_all;
 
-      for (int nup = 0; nup <= n_sites; ++nup) {
-        auto block_sz = Spinhalf(n_sites, nup);
+      for (int nup = 0; nup <= nsites; ++nup) {
+        auto block_sz = Spinhalf(nsites, nup);
         auto H_sz = matrix(ops, block_sz, block_sz);
         REQUIRE(H_sz.is_hermitian(1e-7));
         arma::vec eigs_sz;
@@ -77,13 +77,13 @@ TEST_CASE("spinhalf_matrix", "[spinhalf]") try {
 
   {
     Log("spinhalf_matrix: triangular N=12 complex exchange");
-    int n_sites = 12;
+    int nsites = 12;
     int nup = 6;
     std::vector<double> etas = {0.00, 0.01, 0.02,
                                 0.03, 0.04, 0.05}; // dont change etas :-)
     for (auto eta : etas) {
       auto [ops, e0] = triangular_12_complex(nup, eta);
-      auto block = Spinhalf(n_sites, nup);
+      auto block = Spinhalf(nsites, nup);
       auto H = matrixC(ops, block, block);
       REQUIRE(H.is_hermitian(1e-8));
 
@@ -108,9 +108,9 @@ TEST_CASE("spinhalf_matrix", "[spinhalf]") try {
     ops["J2"] = 0.15;
     ops["Jchi"] = 0.09;
 
-    int n_sites = 12;
-    int n_up = 6;
-    auto block = Spinhalf(n_sites, n_up);
+    int nsites = 12;
+    int nup = 6;
+    auto block = Spinhalf(nsites, nup);
     auto H = matrixC(ops, block, block);
     REQUIRE(H.is_hermitian(1e-8));
 
@@ -127,17 +127,17 @@ TEST_CASE("spinhalf_matrix", "[spinhalf]") try {
   {
     Log.out("spinhalf_matrix: sp sm commutator test");
 
-    for (int n_sites = 2; n_sites < 5; ++n_sites) {
+    for (int nsites = 2; nsites < 5; ++nsites) {
 
-      auto block_raw = Spinhalf(n_sites);
-      for (int nup = 1; nup < n_sites; ++nup) {
+      auto block_raw = Spinhalf(nsites);
+      for (int nup = 1; nup < nsites; ++nup) {
 
-        auto block = Spinhalf(n_sites, nup);
-        auto blockp = Spinhalf(n_sites, nup + 1);
-        auto blockm = Spinhalf(n_sites, nup - 1);
+        auto block = Spinhalf(nsites, nup);
+        auto blockp = Spinhalf(nsites, nup + 1);
+        auto blockm = Spinhalf(nsites, nup - 1);
 
-        for (int i = 0; i < n_sites; ++i)
-          for (int j = 0; j < n_sites; ++j) {
+        for (int i = 0; i < nsites; ++i)
+          for (int j = 0; j < nsites; ++j) {
 
             OpSum sp_i_m;
             sp_i_m += Op("S+", i);

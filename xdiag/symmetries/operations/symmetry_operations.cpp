@@ -17,10 +17,10 @@
 
 namespace xdiag::symmetries {
 
-bool is_valid_permutation(int64_t n_sites, const int64_t *permutation) {
-  for (int64_t i = 0; i < n_sites; ++i) {
-    if (std::find(permutation, permutation + n_sites, i) ==
-        permutation + n_sites)
+bool is_valid_permutation(int64_t nsites, const int64_t *permutation) {
+  for (int64_t i = 0; i < nsites; ++i) {
+    if (std::find(permutation, permutation + nsites, i) ==
+        permutation + nsites)
       return false;
   }
   return true;
@@ -28,10 +28,10 @@ bool is_valid_permutation(int64_t n_sites, const int64_t *permutation) {
 
 //////////////////////////////////////////////////////////
 template <typename bit_t>
-bit_t apply_permutation(bit_t state, int64_t n_sites,
+bit_t apply_permutation(bit_t state, int64_t nsites,
                         const int64_t *permutation) {
   bit_t tstate = 0;
-  for (int64_t site = 0; site < n_sites; ++site) {
+  for (int64_t site = 0; site < nsites; ++site) {
     tstate |= ((state >> site) & 1) << permutation[site];
   }
   return tstate;

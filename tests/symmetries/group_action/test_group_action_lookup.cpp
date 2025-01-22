@@ -9,16 +9,16 @@
 
 using namespace xdiag;
 
-template <class bit_t> void test_permutation_group_lookup(int64_t n_sites) {
+template <class bit_t> void test_permutation_group_lookup(int64_t nsites) {
   using combinatorics::Subsets;
 
   // test cyclic group
   std::vector<Permutation> permutation_array;
-  for (int64_t sym = 0; sym < n_sites; ++sym) {
+  for (int64_t sym = 0; sym < nsites; ++sym) {
 
     std::vector<int64_t> pv;
-    for (int64_t site = 0; site < n_sites; ++site) {
-      int64_t newsite = (site + sym) % n_sites;
+    for (int64_t site = 0; site < nsites; ++site) {
+      int64_t newsite = (site + sym) % nsites;
       pv.push_back(newsite);
     }
     permutation_array.push_back(Permutation(pv));
@@ -29,7 +29,7 @@ template <class bit_t> void test_permutation_group_lookup(int64_t n_sites) {
 
   // Check whether representative is smallest in orbit
   for (int64_t sym = 0; sym < perm_group.size(); ++sym)
-    for (bit_t state : Subsets<bit_t>(n_sites)) {
+    for (bit_t state : Subsets<bit_t>(nsites)) {
 
       auto s1 = action.apply(sym, state);
       auto s2 = lookup.apply(sym, state);
@@ -39,10 +39,10 @@ template <class bit_t> void test_permutation_group_lookup(int64_t n_sites) {
 
 TEST_CASE("GroupActionLookup", "[symmetries]") {
   xdiag::Log.out("PermutationGroupLookup <-> GroupAction comparison");
-  for (int64_t n_sites = 1; n_sites < 6; ++n_sites) {
-    test_permutation_group_lookup<uint16_t>(n_sites);
-    test_permutation_group_lookup<uint32_t>(n_sites);
-    test_permutation_group_lookup<uint64_t>(n_sites);
+  for (int64_t nsites = 1; nsites < 6; ++nsites) {
+    test_permutation_group_lookup<uint16_t>(nsites);
+    test_permutation_group_lookup<uint32_t>(nsites);
+    test_permutation_group_lookup<uint64_t>(nsites);
   }
   xdiag::Log("done");
 }

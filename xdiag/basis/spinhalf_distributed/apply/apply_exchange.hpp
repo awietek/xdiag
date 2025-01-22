@@ -106,7 +106,7 @@ void apply_exchange_mixed(Coupling const &cpl, Op const &op,
   int64_t s2 = op[1];
   assert((s1 >= 0) && (s2 >= 0));
 
-  int64_t n_up = basis.n_up();
+  int64_t nup = basis.nup();
   int64_t n_prefix_bits = basis.n_prefix_bits();
   int64_t n_postfix_bits = basis.n_postfix_bits();
   int64_t ss1 = std::min(s1, s2);
@@ -194,16 +194,16 @@ void apply_exchange_mixed(Coupling const &cpl, Op const &op,
   for (bit_t prefix : combinatorics::Subsets<bit_t>(n_prefix_bits)) {
 
     // Only consider prefix if both itself and flipped version are valid
-    int64_t n_up_prefix = bits::popcnt(prefix);
-    int64_t n_up_postfix = n_up - n_up_prefix;
-    if ((n_up_postfix < 0) || (n_up_postfix > n_postfix_bits)) {
+    int64_t nup_prefix = bits::popcnt(prefix);
+    int64_t nup_postfix = nup - nup_prefix;
+    if ((nup_postfix < 0) || (nup_postfix > n_postfix_bits)) {
       continue;
     }
 
     bit_t prefix_flipped = prefix ^ prefix_mask;
-    int64_t n_up_prefix_flipped = bits::popcnt(prefix_flipped);
-    int64_t n_up_postfix_flipped = n_up - n_up_prefix_flipped;
-    if ((n_up_postfix_flipped < 0) || (n_up_postfix_flipped > n_postfix_bits))
+    int64_t nup_prefix_flipped = bits::popcnt(prefix_flipped);
+    int64_t nup_postfix_flipped = nup - nup_prefix_flipped;
+    if ((nup_postfix_flipped < 0) || (nup_postfix_flipped > n_postfix_bits))
       continue;
 
     // Only consider prefix if it got sent to this mpi_rank

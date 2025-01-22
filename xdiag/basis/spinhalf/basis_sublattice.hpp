@@ -20,7 +20,7 @@ public:
 
   BasisSublattice() = default;
   BasisSublattice(Representation const &irrep);
-  BasisSublattice(int64_t n_up, Representation const &irrep);
+  BasisSublattice(int64_t nup, Representation const &irrep);
 
   iterator_t begin() const;
   iterator_t end() const;
@@ -31,8 +31,8 @@ public:
   inline bit_t state(int64_t idx) const { return reps_[idx]; }
   inline double norm(int64_t idx) const { return norms_[idx]; }
 
-  int64_t n_sites() const;
-  int64_t n_up() const;
+  int64_t nsites() const;
+  int64_t nup() const;
 
   Representation const &irrep() const;
   GroupActionSublattice<bit_t, n_sublat> const &group_action() const;
@@ -41,8 +41,8 @@ public:
   bool operator!=(BasisSublattice<bit_t, n_sublat> const &rhs) const;
 
 private:
-  int64_t n_sites_;
-  int64_t n_up_;
+  int64_t nsites_;
+  int64_t nup_;
   int64_t n_postfix_bits_;
 
   Representation irrep_;

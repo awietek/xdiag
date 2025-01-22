@@ -39,18 +39,18 @@ A generic state describing a quantum wave function
 
 ## Methods
 
-!!! method "n_sites"
+!!! method "nsites"
 
 	Returns the number of sites of the block the state is defined on.
 
 	=== "Julia"
 		```julia
-		n_sites(state::State)
+		nsites(state::State)
 		```
 
 	=== "C++"	
 		```c++
-		int64_t n_sites() const
+		int64_t nsites() const
 		```
 
 !!! method "isreal"

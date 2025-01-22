@@ -33,10 +33,10 @@ void apply_exchange(Coupling const &cpl, Op const &op, Basis &&basis,
   int64_t u = std::max(s1, s2);
   bit_t fermimask = (((bit_t)1 << (u - l - 1)) - 1) << (l + 1);
 
-  int64_t n_sites = basis.n_sites();
-  int64_t n_up = basis.n_up();
-  int64_t n_dn = basis.n_dn();
-  int64_t n_dn_configurations = combinatorics::binomial(n_sites - n_up, n_dn);
+  int64_t nsites = basis.nsites();
+  int64_t nup = basis.nup();
+  int64_t ndn = basis.ndn();
+  int64_t ndn_configurations = combinatorics::binomial(nsites - nup, ndn);
   // Find out how many states is sent to each process
   std::vector<int64_t> n_states_i_send(mpi_size, 0);
 
@@ -76,7 +76,7 @@ void apply_exchange(Coupling const &cpl, Op const &op, Basis &&basis,
         ++idx;
       }
     } else {
-      idx += n_dn_configurations;
+      idx += ndn_configurations;
     }
     ++idx_up;
   }
@@ -113,7 +113,7 @@ void apply_exchange(Coupling const &cpl, Op const &op, Basis &&basis,
         int64_t up_offset = basis.my_ups_offset(up);
 
         for (int64_t target_idx = up_offset;
-             target_idx < up_offset + n_dn_configurations; ++target_idx) {
+             target_idx < up_offset + ndn_configurations; ++target_idx) {
           bit_t dn = basis.my_dns_for_ups_storage(target_idx);
 
           if (bits::popcnt(dn & flipmask) == 1) {

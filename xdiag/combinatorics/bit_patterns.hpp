@@ -25,9 +25,9 @@ template <typename bit_t> constexpr bit_t get_next_pattern(bit_t v) noexcept {
 }
 
 template <typename bit_t>
-bit_t get_nth_pattern(int64_t n, int64_t n_sites, int64_t n_upspins);
+bit_t get_nth_pattern(int64_t n, int64_t nsites, int64_t nupspins);
 
 template <typename bit_t>
-int64_t get_n_for_pattern(bit_t pattern, int64_t n_sites, int64_t n_upspins);
+int64_t get_n_for_pattern(bit_t pattern, int64_t nsites, int64_t nupspins);
 
 } // namespace xdiag::combinatorics

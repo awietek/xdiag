@@ -8,7 +8,7 @@ void define_permutation_group(jlcxx::Module &mod) {
       .constructor<>()
       .constructor<VectorPermutation const &>()
       .method("inverse", &PermutationGroup::inverse)
-      .method("n_sites", &PermutationGroup::n_sites)
+      .method("nsites", &PermutationGroup::nsites)
       .method("size", &PermutationGroup::size);
 
   mod.method("to_string",

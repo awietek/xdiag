@@ -10,28 +10,28 @@ Representation of a block in a Electron (spinful fermion) Hilbert space.
 
 === "Julia"
 	```julia
-	Electron(n_sites::Integer)
-	Electron(n_sites::Integer, n_up::Integer, n_dn::Integer)
-	Electron(n_sites::Integer, group::PermutationGroup, irrep::Representation)
-	Electron(n_sites::Integer, n_up::Integer, n_dn::Integer, 
+	Electron(nsites::Integer)
+	Electron(nsites::Integer, nup::Integer, ndn::Integer)
+	Electron(nsites::Integer, group::PermutationGroup, irrep::Representation)
+	Electron(nsites::Integer, nup::Integer, ndn::Integer, 
 	         group::PermutationGroup, irrep::Representation)
 	```
 
 === "C++"	
 	```c++
-    Electron(int64_t n_sites);
-    Electron(int64_t n_sites, int64_t n_up, int64_t n_dn);
-    Electron(int64_t n_sites, PermutationGroup permutation_group,
+    Electron(int64_t nsites);
+    Electron(int64_t nsites, int64_t nup, int64_t ndn);
+    Electron(int64_t nsites, PermutationGroup permutation_group,
              Representation irrep);
-    Electron(int64_t n_sites, int64_t n_up, int64_t n_dn, 
+    Electron(int64_t nsites, int64_t nup, int64_t ndn, 
 	         PermutationGroup group, Representation irrep);
 	```
 
 | Name    | Description                                                                                |   |
 |:--------|:-------------------------------------------------------------------------------------------|---|
-| n_sites | number of sites (integer)                                                                  |   |
-| n_up    | number of "up" electrons (integer)                                                         |   |
-| n_dn    | number of "dn" electrons (integer)                                                         |   |
+| nsites | number of sites (integer)                                                                  |   |
+| nup    | number of "up" electrons (integer)                                                         |   |
+| ndn    | number of "dn" electrons (integer)                                                         |   |
 | group   | [PermutationGroup](../symmetries/permutation_group.md) defining the permutation symmetries |   |
 | irrep   | Irreducible [Representation](../symmetries/representation.md)  of the symmetry group       |   |
 
@@ -75,47 +75,47 @@ An Electron block can be iterated over, where at each iteration a [ProductState]
 		In the C++ version, the index count starts from "0" whereas in Julia the index count starts from "1".
 
 
-!!! method "n_sites"
+!!! method "nsites"
 
 	Returns the number of sites of the block.
 
 	=== "Julia"
 		```julia
-		n_sites(block::Electron)
+		nsites(block::Electron)
 		```
 
 	=== "C++"	
 		```c++
-		int64_t n_sites() const;
+		int64_t nsites() const;
 		```
 
-!!! method "n_up"
+!!! method "nup"
 
 	Returns the number of "up" electrons.
 
 	=== "Julia"
 		```julia
-		n_up(block::Electron)
+		nup(block::Electron)
 		```
 
 	=== "C++"	
 		```c++
-		int64_t n_up() const;
+		int64_t nup() const;
 		```
 
 
-!!! method "n_dn"
+!!! method "ndn"
 
 	Returns the number of "down" electrons.
 
 	=== "Julia"
 		```julia
-		n_dn(block::Electron)
+		ndn(block::Electron)
 		```
 
 	=== "C++"	
 		```c++
-		int64_t n_dn() const;
+		int64_t ndn() const;
 		```
 
 !!! method "permutation_group"

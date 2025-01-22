@@ -10,19 +10,19 @@ A product state of local configurations
 
 === "Julia"
 	```julia
-	ProductState(n_sites::Int64)
+	ProductState(nsites::Int64)
 	ProductState(local_states::Vector{String})
 	```
 
 === "C++"	
 	```c++
-    ProductState(int64_t n_sites);
+    ProductState(int64_t nsites);
 	ProductState(std::vector<std::string> const &local_states);
 	```
 
 | Parameter    | Description                                   |   |
 |:-------------|:----------------------------------------------|---|
-| n_sites      | construct a product state on n_sites          |   |
+| nsites      | construct a product state on nsites          |   |
 | local_states | the local configurations of the product state |   |
 
 ## Iteration
@@ -47,23 +47,23 @@ A Product state can be iterated over, where at each iteration the string of the 
 	
 ## Methods
 
-!!! method "n_sites"
+!!! method "nsites"
 
 	Returns the number of sites of the product state
 
 	=== "Julia"
 		```julia
-		n_sites(state::ProductState)
+		nsites(state::ProductState)
 		```
 
 	=== "C++"	
 		```c++
-		int64_t n_sites() const
+		int64_t nsites() const
 		```
 
 !!! method "size"
 
-	Returns the number of sites of the product state. Same as "n_sites".
+	Returns the number of sites of the product state. Same as "nsites".
 
 	=== "Julia"
 		```julia

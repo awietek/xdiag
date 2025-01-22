@@ -60,27 +60,27 @@ int main(int argc, char *argv[]) {
 
   seedRNG(1);
   
-  for (int n_up = 0; n_up <= N; ++n_up)
-    for (int n_dn = 0; n_dn <= N; ++n_dn) {
+  for (int nup = 0; nup <= N; ++nup)
+    for (int ndn = 0; ndn <= N; ++ndn) {
 
-      // if (n_up + n_dn <= N) {
-      if ((n_up ==1 && n_dn == 1)) {
+      // if (nup + ndn <= N) {
+      if ((nup ==1 && ndn == 1)) {
 
         // Create a random starting state
         auto state = InitState(sites);
 	for (auto i : range1(N))
           state.set(i, "Emp");
-        for (auto i : range1(n_up))
+        for (auto i : range1(nup))
           state.set(i, "Up");
-        for (auto i : range1(n_dn))
-          state.set(i+n_up, "Dn");
+        for (auto i : range1(ndn))
+          state.set(i+nup, "Dn");
         auto psi0 = randomMPS(state);
 
         auto [energy, psi] = dmrg(H, psi0, sweeps, {"Silent", true});
 
         // Compute the entanglement entropies
 
-        std::cout << "else if (qn == qn_tj({" << n_up << "," << n_dn << "}))\n{\n";
+        std::cout << "else if (qn == qn_tj({" << nup << "," << ndn << "}))\n{\n";
         std::cout << "svns = {";
 
         for (int b = 1; b < N; ++b) {

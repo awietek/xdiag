@@ -6,8 +6,8 @@
 
 namespace xdiag::symmetries {
 
-std::vector<int64_t> fermi_work(int64_t n_sites) {
-  return std::vector<int64_t>(n_sites + 4);
+std::vector<int64_t> fermi_work(int64_t nsites) {
+  return std::vector<int64_t>(nsites + 4);
 }
 
 template <class bit_t>
@@ -64,14 +64,14 @@ double fermi_sign_of_permutation(bit_t state, Permutation const &permutation,
   return fermi_bool_of_permutation(state, permutation, work) ? -1.0 : 1.0;
 }
 
-std::vector<int64_t> fermi_work_sort(int64_t n_sites) {
-  return std::vector<int64_t>(2 * n_sites, 0);
+std::vector<int64_t> fermi_work_sort(int64_t nsites) {
+  return std::vector<int64_t>(2 * nsites, 0);
 }
 
 template <class bit_t>
 bool fermi_bool_of_permutation_sort(bit_t state, Permutation const &permutation,
                                     std::vector<int64_t> &work) {
-  // "work" needs to be allocated of size 2*n_sites
+  // "work" needs to be allocated of size 2*nsites
 
   // int64_t n_fermion = 0;
   // int64_t site = 0;
@@ -136,7 +136,7 @@ template <class bit_t>
 double fermi_sign_of_permutation_sort(bit_t state,
                                       Permutation const &permutation,
                                       std::vector<int64_t> &work) {
-  // "work" needs to be allocated of size 2*n_sites
+  // "work" needs to be allocated of size 2*nsites
   return (fermi_bool_of_permutation_sort(state, permutation, work)) ? -1.0
                                                                     : 1.0;
 }

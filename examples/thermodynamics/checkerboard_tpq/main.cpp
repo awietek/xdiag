@@ -10,20 +10,20 @@ int main(int argc, char **argv) {
 
   // Parse input arguments
   assert(argc == 7);
-  int n_sites = atoi(argv[1]);              // number of sites
-  int n_up = atoi(argv[2]);                 // number of upspins
+  int nsites = atoi(argv[1]);              // number of sites
+  int nup = atoi(argv[2]);                 // number of upspins
   std::string kname = std::string(argv[3]); // momentum k
   double J = atof(argv[4]);
   double Jd = atof(argv[5]);
   int seed = atoi(argv[6]);
 
-  Log("Diagonalizing H in block nup: {}, k: {}", n_up, kname);
+  Log("Diagonalizing H in block nup: {}, k: {}", nup, kname);
 
-  auto lfile = FileToml(format("checkerboard.{}.JJD.toml", n_sites), 'r');
+  auto lfile = FileToml(format("checkerboard.{}.JJD.toml", nsites), 'r');
   std::string odir = format("outfiles/seed.{}", seed);
   std::string ofilename = format(
       "outfile.checkerboard.{}.J.{:.2f}.Jd.{:.2f}.nup.{}.k.{}.seed.{}.h5",
-      n_sites, J, Jd, n_up, kname, seed);
+      nsites, J, Jd, nup, kname, seed);
   std::filesystem::create_directories(odir);
   auto ofile = FileH5(format("{}/{}", odir, ofilename), "w!");
 
@@ -35,7 +35,7 @@ int main(int argc, char **argv) {
 
   Log("Creating block ...");
   tic();
-  auto block = Spinhalf(n_sites, n_up, group, irrep);
+  auto block = Spinhalf(nsites, nup, group, irrep);
   toc();
   Log("Dimension: {}", block.size());
 

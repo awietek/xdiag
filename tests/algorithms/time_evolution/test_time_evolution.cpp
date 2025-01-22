@@ -21,42 +21,42 @@ TEST_CASE("analytic_case_free_particle_1D", "[time_evolution]") try {
   Log.set_verbosity(0);
 
   // some constants
-  int n_sites = 17;
+  int nsites = 17;
   int nup = 1;
   int ndn = 0;
   double t = 1.5;
   const double pi = 3.14159265358979323846;
   const cx_double i = {0, 1};
 
-  auto psi_analytic = [&n_sites, &t, &pi, &i](double time) {
+  auto psi_analytic = [&nsites, &t, &pi, &i](double time) {
     // returns time evolved 1D free particle with nearest neighbour hops
 
-    cx_vec psi(n_sites);
-    for (int m = 0; m < n_sites; m++) {
+    cx_vec psi(nsites);
+    for (int m = 0; m < nsites; m++) {
       cx_double c_m = 0;
-      for (int k = 0; k < n_sites; k++) {
+      for (int k = 0; k < nsites; k++) {
         // 1/N^2 * sum( e^(a_k))
-        cx_double a_k = 2 * pi * i * k * m / n_sites;
-        a_k += 2 * i * t * cos(2 * pi * k / n_sites) * time;
+        cx_double a_k = 2 * pi * i * k * m / nsites;
+        a_k += 2 * i * t * cos(2 * pi * k / nsites) * time;
         c_m += exp(a_k);
       }
-      c_m /= n_sites;
+      c_m /= nsites;
       psi(m) = c_m;
     }
     return psi;
   };
 
   // time evolve using xdiag (numerically)
-  auto block = Electron(n_sites, nup, ndn);
+  auto block = Electron(nsites, nup, ndn);
   OpSum ops;
-  for (int i = 0; i < n_sites; i++) {
-    ops += "t" * Op("Hop", {i, (i + 1) % n_sites});
+  for (int i = 0; i < nsites; i++) {
+    ops += "t" * Op("Hop", {i, (i + 1) % nsites});
   }
   ops["t"] = t;
   ops["U"] = 1;
 
   std::vector<std::string> psi_0_list;
-  for (int i = 0; i < n_sites; i++) {
+  for (int i = 0; i < nsites; i++) {
     psi_0_list.push_back(std::string("Emp"));
   }
   psi_0_list[0] = "Up";
@@ -92,7 +92,7 @@ TEST_CASE("analytic_case_free_particle_2D", "[time_evolution]") try {
 
   // some constants
   int L = 3; // width of square lattice
-  int n_sites = L * L;
+  int nsites = L * L;
   int nup = 1;
   int ndn = 0;
   double t = 1.5;
@@ -100,10 +100,10 @@ TEST_CASE("analytic_case_free_particle_2D", "[time_evolution]") try {
   const double pi = 3.14159265358979323846;
   const cx_double i = {0, 1};
 
-  auto psi_analytic = [&L, &n_sites, &t, &t1, &pi, &i](double time) {
+  auto psi_analytic = [&L, &nsites, &t, &t1, &pi, &i](double time) {
     // returns time evolved 1D free particle with nearest neighbour hops
 
-    cx_vec psi(n_sites);
+    cx_vec psi(nsites);
     for (int m = 0; m < L; m++) {
       for (int n = 0; n < L; n++) {
         cx_double c_mn = 0; // wave-function in position basis
@@ -134,7 +134,7 @@ TEST_CASE("analytic_case_free_particle_2D", "[time_evolution]") try {
   };
 
   // time evolve using xdiag (numerically)
-  auto block = Electron(n_sites, nup, ndn);
+  auto block = Electron(nsites, nup, ndn);
   OpSum ops;
   for (int i = 0; i < L; i++) {
     for (int j = 0; j < L; j++) {
@@ -158,7 +158,7 @@ TEST_CASE("analytic_case_free_particle_2D", "[time_evolution]") try {
   ops["U"] = 1;
 
   std::vector<std::string> psi_0_list;
-  for (int i = 0; i < n_sites; i++) {
+  for (int i = 0; i < nsites; i++) {
     psi_0_list.push_back(std::string("Emp"));
   }
   psi_0_list[0] = "Up";
@@ -196,7 +196,7 @@ TEST_CASE("tj_complex_timeevo", "[time_evolution]") try {
   Log("testing time evolution: tj_complex_timeevo");
   Log.set_verbosity(0);
   int L = 3;
-  int n_sites = L * L;
+  int nsites = L * L;
 
   // Create square lattice t-J model
   OpSum ops;
@@ -228,8 +228,8 @@ TEST_CASE("tj_complex_timeevo", "[time_evolution]") try {
       }
     }
   }
-  pstate[n_sites / 2] = "Emp";
-  auto block = tJ(n_sites, n_sites / 2, n_sites / 2);
+  pstate[nsites / 2] = "Emp";
+  auto block = tJ(nsites, nsites / 2, nsites / 2);
 
   auto H = matrixC(ops, block);
   XDIAG_SHOW(block);

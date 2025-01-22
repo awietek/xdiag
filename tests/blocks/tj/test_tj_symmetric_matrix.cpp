@@ -12,20 +12,20 @@
 
 using namespace xdiag;
 
-void test_spectra_tj_symmetric(OpSum ops, int64_t n_sites,
+void test_spectra_tj_symmetric(OpSum ops, int64_t nsites,
                                std::vector<Representation> irreps,
                                std::vector<int64_t> multiplicities) {
   // XDIAG_SHOW(ops);
   assert(irreps.size() == multiplicities.size());
 
-  for (int64_t nup = 1; nup <= n_sites; ++nup) {
-    for (int64_t ndn = 1; ndn <= n_sites; ++ndn) {
+  for (int64_t nup = 1; nup <= nsites; ++nup) {
+    for (int64_t ndn = 1; ndn <= nsites; ++ndn) {
 
-      if (nup + ndn > n_sites)
+      if (nup + ndn > nsites)
         continue;
       // Compute the full spectrum from non-symmetrized block
 
-      auto tj_nosym = tJ(n_sites, nup, ndn);
+      auto tj_nosym = tJ(nsites, nup, ndn);
       if (tj_nosym.size() < 1000) {
         auto H_nosym = matrixC(ops, tj_nosym, tj_nosym);
 
@@ -37,13 +37,13 @@ void test_spectra_tj_symmetric(OpSum ops, int64_t n_sites,
         for (int64_t k = 0; k < (int64_t)irreps.size(); ++k) {
           auto irrep = irreps[k];
           int64_t multiplicity = multiplicities[k];
-          auto tj = tJ(n_sites, nup, ndn, irrep);
+          auto tj = tJ(nsites, nup, ndn, irrep);
           if (tj.size() > 0) {
 
             // Compute partial spectrum from symmetrized block
             auto H_sym = matrixC(ops, tj, tj);
 
-            // Log("n_sites: {}, nup: {}, ndn: {}, k: {}", n_sites, nup, ndn,
+            // Log("nsites: {}, nup: {}, ndn: {}, k: {}", nsites, nup, ndn,
             // k); XDIAG_SHOW(irrep); XDIAG_SHOW(H_sym);
 
             REQUIRE(arma::norm(H_sym - H_sym.t()) < 1e-12);
@@ -77,36 +77,36 @@ void test_spectra_tj_symmetric(OpSum ops, int64_t n_sites,
   }
 }
 
-void test_tj_symmetric_spectrum_chains(int64_t n_sites) {
+void test_tj_symmetric_spectrum_chains(int64_t nsites) {
   using namespace xdiag::testcases::tj;
   using namespace xdiag::testcases::electron;
 
-  Log.out("tj_symmetric_matrix: tJ chain, symmetric spectra test, n_sites: {}",
-          n_sites);
-  auto ops = tJchain(n_sites, 0.0, 1.0);
-  auto [irreps, multiplicities] = get_cyclic_group_irreps_mult(n_sites);
-  test_spectra_tj_symmetric(ops, n_sites, irreps, multiplicities);
+  Log.out("tj_symmetric_matrix: tJ chain, symmetric spectra test, nsites: {}",
+          nsites);
+  auto ops = tJchain(nsites, 0.0, 1.0);
+  auto [irreps, multiplicities] = get_cyclic_group_irreps_mult(nsites);
+  test_spectra_tj_symmetric(ops, nsites, irreps, multiplicities);
 }
 
 TEST_CASE("tj_symmetric_matrix", "[tj]") try {
   using namespace xdiag::testcases::tj;
   using namespace xdiag::testcases::electron;
 
-  for (int64_t n_sites = 2; n_sites < 7; ++n_sites) {
+  for (int64_t nsites = 2; nsites < 7; ++nsites) {
     Log.out(
-        "tj_symmetric_matrix: HB chain, symmetric spectra test, n_sites: {}",
-        n_sites);
+        "tj_symmetric_matrix: HB chain, symmetric spectra test, nsites: {}",
+        nsites);
     OpSum ops;
-    for (int64_t s = 0; s < n_sites; ++s) {
-      ops += Op("tJSdotS", {s, (s + 1) % n_sites});
+    for (int64_t s = 0; s < nsites; ++s) {
+      ops += Op("tJSdotS", {s, (s + 1) % nsites});
     }
-    auto [irreps, multiplicities] = get_cyclic_group_irreps_mult(n_sites);
-    test_spectra_tj_symmetric(ops, n_sites, irreps, multiplicities);
+    auto [irreps, multiplicities] = get_cyclic_group_irreps_mult(nsites);
+    test_spectra_tj_symmetric(ops, nsites, irreps, multiplicities);
   }
 
   // Test linear chains
-  for (int64_t n_sites = 2; n_sites < 7; ++n_sites) {
-    test_tj_symmetric_spectrum_chains(n_sites);
+  for (int64_t nsites = 2; nsites < 7; ++nsites) {
+    test_tj_symmetric_spectrum_chains(nsites);
   }
 
   {

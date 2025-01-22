@@ -54,7 +54,7 @@ print(sl1)
 print(sl2)
 print(sl3)
 print(sl4)
-if lattice.n_sites == 42:
+if lattice.nsites == 42:
     sublattice_structure = np.array([sl1 + sl3, sl2 + sl4])
 print(sublattice_structure)
 model.set_nb_interaction(0, int_type='GENERICSZ', coupling='HZ')
@@ -87,7 +87,7 @@ model.plot(coord_idx=True)
 model.plot_brillouinzone()
 plt.show()
 
-model.write(filename='honeycomb.'+str(lattice.n_sites) + "." + filename + ".fsl.lat", 
+model.write(filename='honeycomb.'+str(lattice.nsites) + "." + filename + ".fsl.lat", 
             sublattice_structure= sublattice_structure)
 # for phi in [0, 0.25, 0.3, 0.35 ,0.4, 0.45 ,0.5 ]:
 #     print phi, -np.cos(phi*np.pi), np.sin(phi*np.pi)

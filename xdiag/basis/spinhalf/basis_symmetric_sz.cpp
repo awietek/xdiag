@@ -6,17 +6,17 @@
 namespace xdiag::basis::spinhalf {
 
 template <class bit_t>
-BasisSymmetricSz<bit_t>::BasisSymmetricSz(int64_t n_up,
+BasisSymmetricSz<bit_t>::BasisSymmetricSz(int64_t nup,
                                           Representation const &irrep) try
-    : n_sites_(irrep.group().n_sites()), n_up_(n_up),
+    : nsites_(irrep.group().nsites()), nup_(nup),
       group_action_(irrep.group()), irrep_(irrep),
-      combinations_indexing_(n_sites_, n_up) {
-  check_n_sites_work_with_bits<bit_t>(n_sites_);
+      combinations_indexing_(nsites_, nup) {
+  check_nsites_work_with_bits<bit_t>(nsites_);
 
-  if (n_up < 0) {
-    XDIAG_THROW("Invalid value of nup: n_up < 0");
-  } else if (n_up > n_sites_) {
-    XDIAG_THROW("Invalid value of nup: n_up > n_sites");
+  if (nup < 0) {
+    XDIAG_THROW("Invalid value of nup: nup < 0");
+  } else if (nup > nsites_) {
+    XDIAG_THROW("Invalid value of nup: nup > nsites");
   }
 
   if (isreal(irrep)) {
@@ -54,11 +54,11 @@ template <class bit_t> int64_t BasisSymmetricSz<bit_t>::size() const {
   return size_;
 }
 
-template <class bit_t> int64_t BasisSymmetricSz<bit_t>::n_sites() const {
-  return n_sites_;
+template <class bit_t> int64_t BasisSymmetricSz<bit_t>::nsites() const {
+  return nsites_;
 }
-template <class bit_t> int64_t BasisSymmetricSz<bit_t>::n_up() const {
-  return n_up_;
+template <class bit_t> int64_t BasisSymmetricSz<bit_t>::nup() const {
+  return nup_;
 }
 template <class bit_t>
 GroupActionLookup<bit_t> const &BasisSymmetricSz<bit_t>::group_action() const {
@@ -72,7 +72,7 @@ Representation const &BasisSymmetricSz<bit_t>::irrep() const {
 template <typename bit_t>
 bool BasisSymmetricSz<bit_t>::operator==(
     BasisSymmetricSz<bit_t> const &rhs) const {
-  return (n_sites_ == rhs.n_sites_) && (n_up_ == rhs.n_up_) &&
+  return (nsites_ == rhs.nsites_) && (nup_ == rhs.nup_) &&
          (group_action_ == rhs.group_action_) && (irrep_ == rhs.irrep_);
 }
 

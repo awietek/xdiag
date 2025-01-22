@@ -7,9 +7,9 @@ void define_gpwf(jlcxx::Module &mod) {
       .constructor<>()
       .constructor<arma::mat const &, int64_t>()
       .constructor<arma::cx_mat const &, int64_t>()
-      .method("n_sites",
-              [](GPWF const &s) { JULIA_XDIAG_CALL_RETURN(s.n_sites()) })
-      .method("n_up", [](GPWF const &s) { JULIA_XDIAG_CALL_RETURN(s.n_up()) })
+      .method("nsites",
+              [](GPWF const &s) { JULIA_XDIAG_CALL_RETURN(s.nsites()) })
+      .method("nup", [](GPWF const &s) { JULIA_XDIAG_CALL_RETURN(s.nup()) })
       .method("isreal",
               [](GPWF const &s) { JULIA_XDIAG_CALL_RETURN(s.isreal()) });
 

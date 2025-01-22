@@ -11,10 +11,10 @@ namespace xdiag {
 template <typename bit_t, int n_sublat>
 GroupActionSublattice<bit_t, n_sublat>::GroupActionSublattice(
     PermutationGroup const &group)
-    : n_sites_(group.n_sites()), n_symmetries_(group.size()),
-      permutation_group_(group), n_sites_sublat_(n_sites_ / n_sublat),
-      size_tables_((int64_t)1 << n_sites_sublat_),
-      sublat_mask_(((half_bit_t)1 << n_sites_sublat_) - 1),
+    : nsites_(group.nsites()), n_symmetries_(group.size()),
+      permutation_group_(group), nsites_sublat_(nsites_ / n_sublat),
+      size_tables_((int64_t)1 << nsites_sublat_),
+      sublat_mask_(((half_bit_t)1 << nsites_sublat_) - 1),
       representative_syms_(n_symmetries_) {
 
   // Check if permutation group is sublattice stable
@@ -24,11 +24,11 @@ GroupActionSublattice<bit_t, n_sublat>::GroupActionSublattice(
             n_sublat, n_sublat);
   }
 
-  int64_t n_trailing = (n_sublat - 1) * n_sites_sublat_;
+  int64_t n_trailing = (n_sublat - 1) * nsites_sublat_;
   auto group_action = GroupAction(permutation_group_);
 
   for (int sublat = 0; sublat < n_sublat; ++sublat) {
-    sublat_shift_[sublat] = sublat * n_sites_sublat_;
+    sublat_shift_[sublat] = sublat * nsites_sublat_;
 
     auto sublat_permutations = symmetries::sublattice_permutations(
         n_sublat, sublat, permutation_group_);
@@ -47,7 +47,7 @@ GroupActionSublattice<bit_t, n_sublat>::GroupActionSublattice(
 
       int64_t idx = (int64_t)bits;
 
-      bit_t bits_shifted = (bit_t)bits << sublat * n_sites_sublat_;
+      bit_t bits_shifted = (bit_t)bits << sublat * nsites_sublat_;
 
       // determine the sublattice representatives ...
       bit_t bits_rep = std::numeric_limits<bit_t>::max();
@@ -246,7 +246,7 @@ GroupActionSublattice<bit_t, n_sublat>::representative_syms(bit_t state) const {
 template <typename bit_t, int n_sublat>
 bool GroupActionSublattice<bit_t, n_sublat>::operator==(
     GroupActionSublattice const &rhs) const {
-  return (n_sites_ == rhs.n_sites_) && (n_symmetries_ == rhs.n_symmetries_) &&
+  return (nsites_ == rhs.nsites_) && (n_symmetries_ == rhs.n_symmetries_) &&
          (permutation_group_ == rhs.permutation_group_);
 }
 template <typename bit_t, int n_sublat>

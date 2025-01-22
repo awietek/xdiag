@@ -14,7 +14,7 @@ rc('text.latex', preamble=r'\usepackage{amsmath}')
 ##################################################
 # Script to create model files for Kagome lattices
 # for the EDFSL engine.
-# prefix of filename is "kagome.$n_sites"
+# prefix of filename is "kagome.$nsites"
 # postfix is ".fsl.lat"
 ##################################################
 
@@ -52,9 +52,9 @@ filename = "J1J2"
 
 lattice.plot(coord_idx=True)
 plt.show()
-# plt.savefig('triangular.'+str(lattice.n_sites) + "." + filename + ".tsl.pdf")
+# plt.savefig('triangular.'+str(lattice.nsites) + "." + filename + ".tsl.pdf")
 # lattice.plot_brillouinzone()
-# plt.savefig('triangular.'+str(lattice.n_sites) + "." + filename + ".tsl.bz.pdf")
+# plt.savefig('triangular.'+str(lattice.nsites) + "." + filename + ".tsl.bz.pdf")
 
 
 
@@ -112,9 +112,9 @@ model.set_nb_interaction(2, int_type='SdotS', coupling='J2')
 # Create modelfile
 ##################
 
-# model.write(filename='triangular.'+str(lattice.n_sites) + "." + filename + ".tsl.lat", 
+# model.write(filename='triangular.'+str(lattice.nsites) + "." + filename + ".tsl.lat", 
 #                        sublattice_structure= sublattice_structure)
 
 # print "('" + "' '".join(model._do_symmetries().keys()) +"')"
-model.write(filename='triangular.'+str(lattice.n_sites) + "." + filename + ".lat")
+model.write(filename='triangular.'+str(lattice.nsites) + "." + filename + ".lat")
 

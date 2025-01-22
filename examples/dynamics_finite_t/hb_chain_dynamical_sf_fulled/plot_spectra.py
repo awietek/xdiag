@@ -5,8 +5,8 @@ import pydiag as yd
 import pydiag.ensemble as yde
 from collections import OrderedDict
 
-n_sites = 12
-qs = [3] #range(n_sites//2+1)    # momenta q
+nsites = 12
+qs = [3] #range(nsites//2+1)    # momenta q
 
 temperatures = [0.001, 0.2, 0.5, 1.0]
 
@@ -18,12 +18,12 @@ omegas = np.linspace(-max_omega, max_omega, n_omegas)
 min_weight = 1e-8
 
 # define ensemble of quantum numbers with degeneracies (qn, deg)
-nups = [(nup, 1) if nup == n_sites // 2 else (nup, 2) for nup in range(n_sites//2+1)]
-ks = [(k, 1) if k == 0 or k == n_sites // 2 else (k, 2) for k in range(n_sites//2+1)]
+nups = [(nup, 1) if nup == nsites // 2 else (nup, 2) for nup in range(nsites//2+1)]
+ks = [(k, 1) if k == 0 or k == nsites // 2 else (k, 2) for k in range(nsites//2+1)]
 ensemble = yde.Ensemble(nups, ks)
 
-directory = "outfiles/N.{}".format(n_sites)
-regex = "outfile.N.{}.nup.(.*).k.(.*).h5".format(n_sites)
+directory = "outfiles/N.{}".format(nsites)
+regex = "outfile.N.{}.nup.(.*).k.(.*).h5".format(nsites)
 
 for q in qs:
     print("q =", q)
@@ -37,8 +37,8 @@ for q in qs:
     data_q = OrderedDict()
     for (nup, p), deg in ensemble:
         pq = int(p) + int(q)
-        if (pq > n_sites // 2):
-            pq = n_sites - (int(p) + int(q))
+        if (pq > nsites // 2):
+            pq = nsites - (int(p) + int(q))
         pq = str(pq)
         # print(p, q, pq)
         # print(eigs.array.keys())
@@ -72,12 +72,12 @@ for q in qs:
         # broaden and plot
         diffs = np.subtract.outer(omegas, poles)
         gaussians = np.exp(-(diffs / (2*eta))**2) / (eta * np.sqrt(2*np.pi))
-        spectrum = gaussians @ weights * n_sites**2
+        spectrum = gaussians @ weights * nsites**2
         plt.plot(omegas, spectrum, label=r"$q={}, T={:.3f}$".format(q, T))
         print(spectrum)
         
 plt.xlabel(r"$\omega$")
 plt.ylabel(r"$S(q,\omega)$")
-plt.title(r"$N={}$".format(n_sites))
+plt.title(r"$N={}$".format(nsites))
 plt.legend()
 plt.show()

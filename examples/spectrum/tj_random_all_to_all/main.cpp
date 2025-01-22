@@ -4,14 +4,14 @@ int main() {
   using namespace xdiag;
   using namespace arma;
 
-  int n_sites = 8;
+  int nsites = 8;
 
   // Create the Hamiltonian
   OpSum ops;
-  auto T_mat = mat(n_sites, n_sites, fill::randn);
-  auto J_mat = mat(n_sites, n_sites, fill::randn);
-  for (int i = 0; i < n_sites; ++i) {
-    for (int j = 0; j < n_sites; ++j) {
+  auto T_mat = mat(nsites, nsites, fill::randn);
+  auto J_mat = mat(nsites, nsites, fill::randn);
+  for (int i = 0; i < nsites; ++i) {
+    for (int j = 0; j < nsites; ++j) {
       if (i != j) {
 
         // Define hoppings
@@ -28,9 +28,9 @@ int main() {
   }
 
   // Define block with two holes
-  int n_up = n_sites / 2 - 1;
-  int n_dn = n_sites / 2 - 1;
-  auto block = tJ(n_sites, n_up, n_dn);
+  int nup = nsites / 2 - 1;
+  int ndn = nsites / 2 - 1;
+  auto block = tJ(nsites, nup, ndn);
 
   // Compute the full Hamiltonian matrix
   auto H = matrixC(ops, block);

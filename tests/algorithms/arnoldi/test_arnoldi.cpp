@@ -51,13 +51,13 @@ TEST_CASE("ritz_vecs_arnoldi", "[arnoldi]") {
   Log("testing ritz_vecs_arnoldi");
 
   // test getting eigenvalues/ eigenvectors for (U + U_dagg) and H
-  int n_sites = 6;
-  auto block = Spinhalf(n_sites);
+  int nsites = 6;
+  auto block = Spinhalf(nsites);
   OpSum ops;
 
-  for (int i = 0; i < n_sites; ++i) {
-    ops += "J1" * Op("SdotS", {i, (i + 1) % n_sites});
-    ops += "J2" * Op("SdotS", {i, (i + 2) % n_sites});
+  for (int i = 0; i < nsites; ++i) {
+    ops += "J1" * Op("SdotS", {i, (i + 1) % nsites});
+    ops += "J2" * Op("SdotS", {i, (i + 2) % nsites});
   }
   ops["J1"] = 1;
   ops["J2"] = .5;

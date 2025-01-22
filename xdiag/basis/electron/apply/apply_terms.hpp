@@ -3,6 +3,7 @@
 #include <xdiag/basis/electron/apply/apply_exchange.hpp>
 #include <xdiag/basis/electron/apply/apply_hopping.hpp>
 #include <xdiag/basis/electron/apply/apply_number.hpp>
+#include <xdiag/basis/electron/apply/apply_number_number.hpp>
 #include <xdiag/basis/electron/apply/apply_raise_lower.hpp>
 #include <xdiag/basis/electron/apply/apply_szsz.hpp>
 #include <xdiag/basis/electron/apply/apply_u.hpp>
@@ -35,6 +36,9 @@ void apply_terms(OpSum const &ops, BasisIn const &basis_in,
     } else if ((type == "Nup") || (type == "Ndn")) {
       electron::apply_number<bit_t, coeff_t, symmetric>(cpl, op, basis_in,
                                                         fill);
+    } else if (type == "NtotNtot") {
+      electron::apply_number_number<bit_t, coeff_t, symmetric>(cpl, op,
+                                                               basis_in, fill);
     } else if (type == "HubbardU") {
       electron::apply_u<bit_t, coeff_t, symmetric>(cpl, basis_in, fill);
     } else {

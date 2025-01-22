@@ -8,26 +8,26 @@
 namespace xdiag {
 namespace entanglementtestcases {
 
-inline std::tuple<BondList, Couplings> tJchain_model(int n_sites) {
+inline std::tuple<BondList, Couplings> tJchain_model(int nsites) {
   BondList bondlist;
   Couplings couplings;
   couplings["T"] = 1.0;
   couplings["J"] = 1.0;
-  for (int s = 0; s < n_sites - 1; ++s) {
+  for (int s = 0; s < nsites - 1; ++s) {
     bondlist << Bond("HUBBARDHOP", "T", {s, s + 1});
     bondlist << Bond("HEISENBERG", "J", {s, s + 1});
   }
   return std::make_tuple(bondlist, couplings);
 }
 
-inline std::tuple<BondList, Couplings> tJrandom_model(int n_sites) {
+inline std::tuple<BondList, Couplings> tJrandom_model(int nsites) {
 
   BondList bondlist;
   Couplings couplings;
 
   // Create fully connected bondlist
-  for (int s1 = 0; s1 < n_sites; ++s1)
-    for (int s2 = 0; s2 < n_sites; ++s2) {
+  for (int s1 = 0; s1 < nsites; ++s1)
+    for (int s2 = 0; s2 < nsites; ++s2) {
       if (s1 != s2) {
         std::string hop = std::string("T") + std::to_string(s1) +
                           std::string("_") + std::to_string(s2);
@@ -38,7 +38,7 @@ inline std::tuple<BondList, Couplings> tJrandom_model(int n_sites) {
       }
     }
 
-  if (n_sites == 3) {
+  if (nsites == 3) {
     couplings["T0_1"] =
         std::complex<double>(-0.6686979902949423, -0.6117686667784596);
     couplings["J0_1"] = 0.2337515869041268;
@@ -60,7 +60,7 @@ inline std::tuple<BondList, Couplings> tJrandom_model(int n_sites) {
     couplings["J2_1"] = -0.2633349801324671;
   }
 
-  else if (n_sites == 4) {
+  else if (nsites == 4) {
     couplings["T0_1"] =
         std::complex<double>(-0.6686979902949423, -0.6117686667784596);
     couplings["J0_1"] = 0.2337515869041268;
@@ -99,7 +99,7 @@ inline std::tuple<BondList, Couplings> tJrandom_model(int n_sites) {
     couplings["J3_2"] = -0.6472234553291326;
   }
 
-  else if (n_sites == 5) {
+  else if (nsites == 5) {
     couplings["T0_1"] =
         std::complex<double>(-1.4393725600837464, -1.9777391323380873);
     couplings["J0_1"] = -0.2732283388529344;
@@ -162,7 +162,7 @@ inline std::tuple<BondList, Couplings> tJrandom_model(int n_sites) {
     couplings["J4_3"] = 1.0671594408086338;
   }
 
-  else if (n_sites == 6) {
+  else if (nsites == 6) {
     couplings["T0_1"] =
         std::complex<double>(-1.046034590559321, 0.40451241418831974);
     couplings["J0_1"] = 0.5667228734967477;
@@ -258,12 +258,12 @@ inline std::tuple<BondList, Couplings> tJrandom_model(int n_sites) {
   return std::make_tuple(bondlist, couplings);
 }
 
-inline std::tuple<double, std::vector<double>> tJchain_e0_entropies(int n_sites,
+inline std::tuple<double, std::vector<double>> tJchain_e0_entropies(int nsites,
                                                                     qn_tj qn) {
   // Reference data computed using ITensor library
   std::vector<double> svns;
   double e0;
-  if (n_sites == 3) {
+  if (nsites == 3) {
     if (qn == qn_tj({0, 0})) {
       svns = {0, 0};
       e0 = 0;
@@ -295,9 +295,9 @@ inline std::tuple<double, std::vector<double>> tJchain_e0_entropies(int n_sites,
       svns = {0, 0};
       e0 = 0.5;
     }
-  } // if(n_sites==3)
+  } // if(nsites==3)
 
-  else if (n_sites == 4) {
+  else if (nsites == 4) {
     if (qn == qn_tj({0, 0})) {
       svns = {0, 0, 0};
       e0 = 0;
@@ -344,9 +344,9 @@ inline std::tuple<double, std::vector<double>> tJchain_e0_entropies(int n_sites,
       svns = {0, 0, 0};
       e0 = 0.75;
     }
-  } // n_sites == 4
+  } // nsites == 4
 
-  else if (n_sites == 5) {
+  else if (nsites == 5) {
     if (qn == qn_tj({0, 0})) {
       svns = {0, 0, 0, 0};
       e0 = 0;
@@ -430,9 +430,9 @@ inline std::tuple<double, std::vector<double>> tJchain_e0_entropies(int n_sites,
       e0 = 1;
     }
 
-  } // n_sites == 5
+  } // nsites == 5
 
-  else if (n_sites == 6) {
+  else if (nsites == 6) {
     if (qn == qn_tj({0, 0})) {
       svns = {0, 0, 0, 0, 0};
       e0 = 0;
@@ -548,12 +548,12 @@ inline std::tuple<double, std::vector<double>> tJchain_e0_entropies(int n_sites,
 }
 
 inline std::tuple<double, std::vector<double>>
-tJrandom_e0_entropies(int n_sites, qn_tj qn, bool real = false) {
+tJrandom_e0_entropies(int nsites, qn_tj qn, bool real = false) {
   // Reference data computed using ITensor library
   std::vector<double> svns;
   double e0;
   if (real) {
-    if (n_sites == 3) {
+    if (nsites == 3) {
       if (qn == qn_tj({0, 0})) {
         svns = {0, 0};
         e0 = 0;
@@ -585,8 +585,8 @@ tJrandom_e0_entropies(int n_sites, qn_tj qn, bool real = false) {
         svns = {0, 0};
         e0 = 0.1425591526062522;
       }
-    } // (n_sites == 3)
-    else if (n_sites == 4) {
+    } // (nsites == 3)
+    else if (nsites == 4) {
       if (qn == qn_tj({0, 0})) {
         svns = {0, 0, 0};
         e0 = 0;
@@ -647,8 +647,8 @@ tJrandom_e0_entropies(int n_sites, qn_tj qn, bool real = false) {
         svns = {0, 0, 0};
         e0 = 0.7627740647126864;
       }
-    } // (n_sites == 4)
-    else if (n_sites == 5) {
+    } // (nsites == 4)
+    else if (nsites == 5) {
       if (qn == qn_tj({0, 0})) {
         svns = {0, 0, 0, 0};
         e0 = 0;
@@ -751,8 +751,8 @@ tJrandom_e0_entropies(int n_sites, qn_tj qn, bool real = false) {
         svns = {0, 0, 0, 0};
         e0 = 0.1151899184772837;
       }
-    } // (n_sites == 5)
-    else if (n_sites == 6) {
+    } // (nsites == 5)
+    else if (nsites == 6) {
       if (qn == qn_tj({0, 0})) {
         svns = {0, 0, 0, 0, 0};
         e0 = 0;
@@ -890,11 +890,11 @@ tJrandom_e0_entropies(int n_sites, qn_tj qn, bool real = false) {
         svns = {0, 0, 0, 0, 0};
         e0 = 0.8448902763712145;
       }
-    } // (n_sites == 6)
+    } // (nsites == 6)
 
     // Complex
   } else {
-    if (n_sites == 3) {
+    if (nsites == 3) {
       if (qn == qn_tj({0, 0})) {
         svns = {0, 0};
         e0 = 0;
@@ -926,7 +926,7 @@ tJrandom_e0_entropies(int n_sites, qn_tj qn, bool real = false) {
         svns = {0, 0};
         e0 = 0.1425591526062522;
       }
-    } else if (n_sites == 4) {
+    } else if (nsites == 4) {
       if (qn == qn_tj({0, 0})) {
         svns = {0, 0, 0};
         e0 = 0;
@@ -974,8 +974,8 @@ tJrandom_e0_entropies(int n_sites, qn_tj qn, bool real = false) {
         e0 = 0.7627740647126864;
       }
 
-    } // if (n_sites == 4)
-    else if (n_sites == 5) {
+    } // if (nsites == 4)
+    else if (nsites == 5) {
 
       if (qn == qn_tj({0, 0})) {
         svns = {0, 0, 0, 0};
@@ -1060,9 +1060,9 @@ tJrandom_e0_entropies(int n_sites, qn_tj qn, bool real = false) {
         e0 = 0.1151899184772837;
       }
 
-    } // n_sites == 5
+    } // nsites == 5
 
-    else if (n_sites == 6) {
+    else if (nsites == 6) {
       if (qn == qn_tj({0, 0})) {
         svns = {0, 0, 0, 0, 0};
         e0 = 0;

@@ -14,11 +14,10 @@ public:
   coeff_t coeff(bit_t local_state) const;
   std::pair<bit_t, coeff_t> state_coeff(bit_t local_state) const;
   bool non_zero_term(bit_t local_state) const;
-  
+
   bit_t extract(bit_t state) const;
   bit_t deposit(bit_t local_state, bit_t state) const;
-  
-  
+
 private:
   std::vector<int64_t> sites_;
   bit_t mask_;

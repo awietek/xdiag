@@ -11,8 +11,8 @@ will write an output similar to
 
 ```text
 block:
-  n_sites  : 16
-  n_up     : 8
+  nsites  : 16
+  nup     : 8
   dimension: 12,870
   ID       : 0xa9127434d66b9878
 ```

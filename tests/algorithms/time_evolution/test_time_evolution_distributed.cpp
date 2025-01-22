@@ -17,7 +17,7 @@ TEST_CASE("time_evolution_distributed", "[time_evolution]") try {
 
   Log("Test time_evolution_distributed");
   int L = 3;
-  int n_sites = L * L;
+  int nsites = L * L;
 
   // Create square lattice t-J model
   OpSum ops;
@@ -53,9 +53,9 @@ TEST_CASE("time_evolution_distributed", "[time_evolution]") try {
       }
     }
   }
-  pstate[n_sites / 2] = "Emp";
-  auto block = tJ(n_sites, n_sites / 2, n_sites / 2);
-  auto blockd = tJDistributed(n_sites, n_sites / 2, n_sites / 2);
+  pstate[nsites / 2] = "Emp";
+  auto block = tJ(nsites, nsites / 2, nsites / 2);
+  auto blockd = tJDistributed(nsites, nsites / 2, nsites / 2);
 
   auto psi_0 = State(block, false);
   auto psi_0d = State(blockd, false);
@@ -67,7 +67,7 @@ TEST_CASE("time_evolution_distributed", "[time_evolution]") try {
   auto H_psi_0d = State(blockd, false);
   apply(ops, psi_0d, H_psi_0d);
 
-  for (int s = 0; s < n_sites; ++s) {
+  for (int s = 0; s < nsites; ++s) {
     auto n = innerC(Op("Ntot", s), H_psi_0);
     auto nd = innerC(Op("Ntot", s), H_psi_0d);
     // Log("i {} {} {}", s, n, nd);
@@ -80,7 +80,7 @@ TEST_CASE("time_evolution_distributed", "[time_evolution]") try {
   for (auto time : times) {
     auto psi = time_evolve(ops, psi_0, time, tol);
     auto psid = time_evolve(ops, psi_0d, time, tol);
-    for (int s = 0; s < n_sites; ++s) {
+    for (int s = 0; s < nsites; ++s) {
       auto n = innerC(Op("Ntot", s), psi);
       auto nd = innerC(Op("Ntot", s), psid);
       Log("{} {} {} {:.6f}", s, n, nd, time);

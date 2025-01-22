@@ -6,29 +6,29 @@
 namespace xdiag::basis::tj {
 
 template <typename bit_t>
-BasisSymmetricNp<bit_t>::BasisSymmetricNp(int64_t n_sites, int64_t nup,
+BasisSymmetricNp<bit_t>::BasisSymmetricNp(int64_t nsites, int64_t nup,
                                           int64_t ndn,
                                           PermutationGroup const &group,
                                           Vector const &characters) try
-    : n_sites_(n_sites), n_up_(nup), n_dn_(ndn), group_action_(group),
+    : nsites_(nsites), nup_(nup), ndn_(ndn), group_action_(group),
       irrep_(group, characters),
-      raw_ups_size_(combinatorics::binomial(n_sites, nup)),
-      raw_dns_size_(combinatorics::binomial(n_sites, ndn)),
-      raw_dnsc_size_(combinatorics::binomial(n_sites - nup, ndn)),
-      lintable_ups_(n_sites, nup), lintable_dns_(n_sites, ndn),
-      lintable_dnsc_(n_sites - nup, ndn), fermi_table_ups_(n_sites, nup, group),
-      fermi_table_dns_(n_sites, ndn, group) {
-  check_n_sites_work_with_bits<bit_t>(n_sites_);
+      raw_ups_size_(combinatorics::binomial(nsites, nup)),
+      raw_dns_size_(combinatorics::binomial(nsites, ndn)),
+      raw_dnsc_size_(combinatorics::binomial(nsites - nup, ndn)),
+      lintable_ups_(nsites, nup), lintable_dns_(nsites, ndn),
+      lintable_dnsc_(nsites - nup, ndn), fermi_table_ups_(nsites, nup, group),
+      fermi_table_dns_(nsites, ndn, group) {
+  check_nsites_work_with_bits<bit_t>(nsites_);
 
   using combinatorics::Combinations;
-  if ((nup + ndn) > n_sites) {
-    XDIAG_THROW("nup + ndn > n_sites");
+  if ((nup + ndn) > nsites) {
+    XDIAG_THROW("nup + ndn > nsites");
   } else if ((nup < 0) || (ndn < 0)) {
     XDIAG_THROW("nup < 0 or ndn < 0");
-  } else if (n_sites < 0) {
-    XDIAG_THROW("n_sites < 0");
-  } else if (n_sites != group.n_sites()) {
-    XDIAG_THROW("n_sites does not match the n_sites in PermutationGroup");
+  } else if (nsites < 0) {
+    XDIAG_THROW("nsites < 0");
+  } else if (nsites != group.nsites()) {
+    XDIAG_THROW("nsites does not match the nsites in PermutationGroup");
   }
 
   std::tie(reps_up_, idces_up_, syms_up_, sym_limits_up_) =
@@ -36,14 +36,14 @@ BasisSymmetricNp<bit_t>::BasisSymmetricNp(int64_t n_sites, int64_t nup,
           lintable_ups_, group_action_);
 
   // if ups have trivial stabilizer, dns (compressed) are stored in front
-  for (bit_t dns : Combinations<bit_t>(n_sites - nup, ndn)) {
+  for (bit_t dns : Combinations<bit_t>(nsites - nup, ndn)) {
     dns_storage_.push_back(dns);
     norms_storage_.push_back(1.0);
   }
 
   ups_offset_.resize(reps_up_.size());
   dns_limits_.resize(reps_up_.size());
-  bit_t sitesmask = ((bit_t)1 << n_sites) - 1;
+  bit_t sitesmask = ((bit_t)1 << nsites) - 1;
 
   size_ = 0;
   int64_t idx_up = 0;
@@ -68,7 +68,7 @@ BasisSymmetricNp<bit_t>::BasisSymmetricNp(int64_t n_sites, int64_t nup,
         arma::vec chars = characters.as<arma::vec>();
 
         // START DUPLICATE
-        for (bit_t dnsc : Combinations<bit_t>(n_sites - nup, ndn)) {
+        for (bit_t dnsc : Combinations<bit_t>(nsites - nup, ndn)) {
           bit_t dns = bits::deposit(dnsc, not_ups);
           bit_t dns_rep =
               symmetries::representative_subset(dns, group_action_, syms);
@@ -86,7 +86,7 @@ BasisSymmetricNp<bit_t>::BasisSymmetricNp(int64_t n_sites, int64_t nup,
         arma::cx_vec chars = characters.as<arma::cx_vec>();
 
         // START DUPLICATE
-        for (bit_t dnsc : Combinations<bit_t>(n_sites - nup, ndn)) {
+        for (bit_t dnsc : Combinations<bit_t>(nsites - nup, ndn)) {
           bit_t dns = bits::deposit(dnsc, not_ups);
           bit_t dns_rep =
               symmetries::representative_subset(dns, group_action_, syms);
@@ -113,14 +113,14 @@ BasisSymmetricNp<bit_t>::BasisSymmetricNp(int64_t n_sites, int64_t nup,
 }
 
 template <typename bit_t>
-inline int64_t BasisSymmetricNp<bit_t>::n_sites() const {
-  return n_sites_;
+inline int64_t BasisSymmetricNp<bit_t>::nsites() const {
+  return nsites_;
 }
-template <typename bit_t> inline int64_t BasisSymmetricNp<bit_t>::n_up() const {
-  return n_up_;
+template <typename bit_t> inline int64_t BasisSymmetricNp<bit_t>::nup() const {
+  return nup_;
 }
-template <typename bit_t> inline int64_t BasisSymmetricNp<bit_t>::n_dn() const {
-  return n_dn_;
+template <typename bit_t> inline int64_t BasisSymmetricNp<bit_t>::ndn() const {
+  return ndn_;
 }
 template <typename bit_t>
 GroupActionLookup<bit_t> const &BasisSymmetricNp<bit_t>::group_action() const {
@@ -153,7 +153,7 @@ int64_t BasisSymmetricNp<bit_t>::index(bit_t ups, bit_t dns) const {
   int64_t up_offset = ups_offset(idx_ups);
   // trivial up-stabilizer (likely)
   if (syms.size() == 1) {
-    bit_t sitesmask = ((bit_t)1 << n_sites_) - 1;
+    bit_t sitesmask = ((bit_t)1 << nsites_) - 1;
     bit_t not_ups = (~ups) & sitesmask;
     bit_t dnsc = bits::extract(dns, not_ups);
     int64_t idx_dns = dnsc_index(dnsc);
@@ -310,7 +310,7 @@ template class BasisSymmetricNp<uint64_t>;
 template <typename bit_t>
 BasisSymmetricNpIterator<bit_t>::BasisSymmetricNpIterator(
     BasisSymmetricNp<bit_t> const &basis, bool begin)
-    : basis_(basis), sitesmask_(((bit_t)1 << basis.n_sites()) - 1),
+    : basis_(basis), sitesmask_(((bit_t)1 << basis.nsites()) - 1),
       up_idx_(begin ? 0 : basis.n_rep_ups()), dn_idx_(0) {
   if (basis.dim() == 0) {
     up_idx_ = 0;

@@ -11,9 +11,9 @@
 
 using namespace xdiag;
 
-void test_tjmodel_e0_real(OpSum ops, int n_sites, int nup, int ndn,
+void test_tjmodel_e0_real(OpSum ops, int nsites, int nup, int ndn,
                           double e0) {
-  auto block = tJ(n_sites, nup, ndn);
+  auto block = tJ(nsites, nup, ndn);
   auto H = matrix(ops, block, block);
   arma::vec eigs;
   arma::eig_sym(eigs, H);
@@ -22,14 +22,14 @@ void test_tjmodel_e0_real(OpSum ops, int n_sites, int nup, int ndn,
   REQUIRE(std::abs(e0 - eigs(0)) < 1e-6);
 }
 
-void test_tjmodel_fulleigs(OpSum ops, int n_sites,
+void test_tjmodel_fulleigs(OpSum ops, int nsites,
                            arma::Col<double> exact_eigs) {
 
   std::vector<double> all_eigs;
-  for (int ndn = 0; ndn <= n_sites; ++ndn) {
-    for (int nup = 0; nup <= n_sites - ndn; ++nup) {
+  for (int ndn = 0; ndn <= nsites; ++ndn) {
+    for (int nup = 0; nup <= nsites - ndn; ++nup) {
 
-      auto block = tJ(n_sites, nup, ndn);
+      auto block = tJ(nsites, nup, ndn);
       auto H = matrix(ops, block, block);
       // H.print();
       REQUIRE(arma::norm(H - H.t()) < 1e-12);
@@ -53,12 +53,12 @@ TEST_CASE("tj_matrix", "[tj]") try {
 
   {
     Log("tj_matrix: HB all-to-all comparison");
-    for (int n_sites = 2; n_sites < 7; ++n_sites) {
-      Log("N: {}", n_sites);
-      int nup = n_sites / 2;
-      auto ops = testcases::spinhalf::HB_alltoall(n_sites);
-      auto block = Spinhalf(n_sites, nup);
-      auto block_tJ = tJ(n_sites, nup, n_sites - nup);
+    for (int nsites = 2; nsites < 7; ++nsites) {
+      Log("N: {}", nsites);
+      int nup = nsites / 2;
+      auto ops = testcases::spinhalf::HB_alltoall(nsites);
+      auto block = Spinhalf(nsites, nup);
+      auto block_tJ = tJ(nsites, nup, nsites - nup);
       auto H = matrix(ops, block, block);
       auto H_tJ = matrix(ops, block_tJ, block_tJ);
 

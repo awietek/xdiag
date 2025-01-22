@@ -16,18 +16,19 @@ void check_valid(Op const &op) try {
         (type == "Ndn")) {
       must_not_have_matrix(op);
       must_have_sites(op);
-      must_have_n_sites(op, 1);
+      must_have_nsites(op, 1);
     } else if ((type == "SdotS") || (type == "Exchange") || (type == "SzSz") ||
                (type == "Hop") || (type == "Hopup") || (type == "Hopdn") ||
-               (type == "tJSzSz") || (type == "tJSdotS")) {
+               (type == "tJSzSz") || (type == "tJSdotS") ||
+               (type == "NtotNtot")) {
       must_not_have_matrix(op);
       must_have_sites(op);
-      must_have_n_sites(op, 2);
+      must_have_nsites(op, 2);
       must_have_disjoint_sites(op);
     } else if (type == "ScalarChirality") {
       must_not_have_matrix(op);
       must_have_sites(op);
-      must_have_n_sites(op, 3);
+      must_have_nsites(op, 3);
       must_have_disjoint_sites(op);
     } else if (type == "HubbardU") {
       must_not_have_matrix(op);
@@ -55,18 +56,18 @@ void check_valid(OpSum const &ops) try {
   XDIAG_RETHROW(e);
 }
 
-void check_valid(Op const &op, int64_t n_sites) try {
+void check_valid(Op const &op, int64_t nsites) try {
   check_valid(op);
   if (op.hassites()) {
-    must_have_sites_in_range(op, 0, n_sites);
+    must_have_sites_in_range(op, 0, nsites);
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
-void check_valid(OpSum const &ops, int64_t n_sites) try {
+void check_valid(OpSum const &ops, int64_t nsites) try {
   for (auto [cpl, op] : ops) {
-    check_valid(op, n_sites);
+    check_valid(op, nsites);
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
@@ -92,7 +93,7 @@ void must_not_have_sites(Op const &op) try {
   XDIAG_RETHROW(e);
 }
 
-void must_have_n_sites(Op const &op, int64_t n) try {
+void must_have_nsites(Op const &op, int64_t n) try {
   if (op.hassites()) {
     if (op.sites().size() != n) {
       XDIAG_THROW(fmt::format(

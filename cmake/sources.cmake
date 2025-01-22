@@ -5,6 +5,7 @@ set(XDIAG_SOURCES
   utils/say_hello.cpp
   utils/read_vectors.cpp
   utils/type_string.cpp
+  utils/split.cpp
 
   utils/scalar.cpp
   utils/vector.cpp

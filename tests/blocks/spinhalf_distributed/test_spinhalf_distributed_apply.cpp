@@ -21,7 +21,7 @@ void test_e0_nompi(int N, OpSum ops) {
 
     double e0_app = eigval0(ops, block_mpi);
 
-    // Log("N: {}, n_up: {}, e0 mat: {:+.10f}, e0 mpi: {:+.10f}", N, nup,
+    // Log("N: {}, nup: {}, e0 mat: {:+.10f}, e0 mpi: {:+.10f}", N, nup,
     // e0_mat,
     //     e0_app);
     REQUIRE(close(e0_mat, e0_app));
@@ -38,7 +38,7 @@ void test_sz_sp_sm_energy(int N, OpSum const &ops) {
     REQUIRE(std::abs(e0_s - e0_p) < 1e-8);
 
     for (int i = 0; i < N; ++i) {
-      // Log("N: {}, n_up: {}, i: {}", N, nup, i);
+      // Log("N: {}, nup: {}, i: {}", N, nup, i);
       auto op = Op("Sz", i);
       double exp_s = inner(op, gs_s);
       double exp_p = inner(op, gs_p);
@@ -73,15 +73,15 @@ void test_sz_sp_sm_energy(int N, OpSum const &ops) {
   }
 }
 
-void test_sz_sp_sm_commutators(int n_sites) {
-  for (int nup = 1; nup < n_sites - 1; ++nup) {
-    // Log("N: {}, n_up: {}", n_sites, nup);
-    auto block = SpinhalfDistributed(n_sites, nup);
-    auto block_p = SpinhalfDistributed(n_sites, nup + 1);
-    auto block_m = SpinhalfDistributed(n_sites, nup - 1);
+void test_sz_sp_sm_commutators(int nsites) {
+  for (int nup = 1; nup < nsites - 1; ++nup) {
+    // Log("N: {}, nup: {}", nsites, nup);
+    auto block = SpinhalfDistributed(nsites, nup);
+    auto block_p = SpinhalfDistributed(nsites, nup + 1);
+    auto block_m = SpinhalfDistributed(nsites, nup - 1);
 
-    for (int i = 0; i < n_sites; ++i)
-      for (int j = 0; j < n_sites; ++j) {
+    for (int i = 0; i < nsites; ++i)
+      for (int j = 0; j < nsites; ++j) {
 
         auto sp_i = Op("S+", i);
         auto sm_i = Op("S-", i);

@@ -16,11 +16,11 @@ void test_tj_distributed_basis_np_transpose() {
   MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
   MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
 
-  for (int n_sites = 1; n_sites <= 10; ++n_sites) {
-    for (int n_up = 0; n_up <= n_sites; ++n_up) {
-      for (int n_dn = 0; n_dn < n_sites - n_up; ++n_dn) {
+  for (int nsites = 1; nsites <= 10; ++nsites) {
+    for (int nup = 0; nup <= nsites; ++nup) {
+      for (int ndn = 0; ndn < nsites - nup; ++ndn) {
 
-        auto basis = basis::tj_distributed::BasisNp<bit_t>(n_sites, n_up, n_dn);
+        auto basis = basis::tj_distributed::BasisNp<bit_t>(nsites, nup, ndn);
         arma::Col<coeff_t> v(basis.size(), arma::fill::randu);
         arma::Col<coeff_t> w(basis.size_transpose(), arma::fill::randu);
         arma::Col<coeff_t> w2(basis.size_transpose(), arma::fill::randu);
@@ -143,13 +143,13 @@ template <typename bit_t> void test_tj_distributed_basis_np() {
 
   arma::arma_rng::set_seed(mpi_rank);
 
-  for (int n_sites = 0; n_sites <= 6; ++n_sites) {
-    for (int n_up = 0; n_up <= n_sites; ++n_up) {
-      for (int n_dn = 0; n_dn <= n_sites - n_up; ++n_dn) {
-        // int n_sites=16;
-        // int n_up = 7;
-        // int n_dn = 6;
-        auto basis = basis::tj_distributed::BasisNp<bit_t>(n_sites, n_up, n_dn);
+  for (int nsites = 0; nsites <= 6; ++nsites) {
+    for (int nup = 0; nup <= nsites; ++nup) {
+      for (int ndn = 0; ndn <= nsites - nup; ++ndn) {
+        // int nsites=16;
+        // int nup = 7;
+        // int ndn = 6;
+        auto basis = basis::tj_distributed::BasisNp<bit_t>(nsites, nup, ndn);
 
         // ups/ dns order
         bit_t ups_before = 0;
@@ -157,7 +157,7 @@ template <typename bit_t> void test_tj_distributed_basis_np() {
         for (int64_t idx_ups = 0; idx_ups < (int64_t)basis.my_ups().size();
              ++idx_ups) {
           bit_t ups = basis.my_ups()[idx_ups];
-          REQUIRE(xdiag::bits::popcnt(ups) == n_up);
+          REQUIRE(xdiag::bits::popcnt(ups) == nup);
           if (idx_ups != 0) {
             REQUIRE(ups > ups_before);
           }
@@ -166,14 +166,14 @@ template <typename bit_t> void test_tj_distributed_basis_np() {
           int64_t idx_dns = 0;
           bit_t dns_before = 0;
           for (auto dns : dnss) {
-            REQUIRE(xdiag::bits::popcnt(dns) == n_dn);
+            REQUIRE(xdiag::bits::popcnt(dns) == ndn);
             if (idx_dns != 0) {
               REQUIRE(dns > dns_before);
             }
             ++idx_dns;
             ++size_local;
           }
-          REQUIRE(idx_dns == combinatorics::binomial(n_sites - n_up, n_dn));
+          REQUIRE(idx_dns == combinatorics::binomial(nsites - nup, ndn));
           ups_before = ups;
         }
         REQUIRE(size_local == basis.size());
@@ -187,7 +187,7 @@ template <typename bit_t> void test_tj_distributed_basis_np() {
         for (int64_t idx_dns = 0; idx_dns < (int64_t)basis.my_dns().size();
              ++idx_dns) {
           bit_t dns = basis.my_dns()[idx_dns];
-          REQUIRE(xdiag::bits::popcnt(dns) == n_dn);
+          REQUIRE(xdiag::bits::popcnt(dns) == ndn);
           if (idx_dns != 0) {
             REQUIRE(dns > dns_before);
           }
@@ -196,14 +196,14 @@ template <typename bit_t> void test_tj_distributed_basis_np() {
           int64_t idx_ups = 0;
           bit_t ups_before = 0;
           for (auto ups : upss) {
-            REQUIRE(xdiag::bits::popcnt(ups) == n_up);
+            REQUIRE(xdiag::bits::popcnt(ups) == nup);
             if (idx_ups != 0) {
               REQUIRE(ups > ups_before);
             }
             ++idx_ups;
             ++size_local_transpose;
           }
-          REQUIRE(idx_ups == combinatorics::binomial(n_sites - n_dn, n_up));
+          REQUIRE(idx_ups == combinatorics::binomial(nsites - ndn, nup));
           dns_before = dns;
         }
         REQUIRE(size_local_transpose == basis.size_transpose());
@@ -212,7 +212,7 @@ template <typename bit_t> void test_tj_distributed_basis_np() {
                        MPI_COMM_WORLD);
         REQUIRE(total_size == basis.dim());
 
-        // Log("{} {} {} {} {}", n_sites, n_up, n_dn, basis.size_max(),
+        // Log("{} {} {} {} {}", nsites, nup, ndn, basis.size_max(),
         //     basis.size_min());
       }
     }

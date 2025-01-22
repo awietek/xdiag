@@ -22,7 +22,7 @@
 #endif
 
 // TODO: IS THIS REALLY NECESASARY
-#define BSTR(x) bits::bits_to_string(x, n_sites)
+#define BSTR(x) bits::bits_to_string(x, nsites)
 
 namespace xdiag::detail {
 

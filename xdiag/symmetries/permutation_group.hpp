@@ -18,13 +18,13 @@ public:
       std::vector<Permutation> const &permutations);
   XDIAG_API explicit PermutationGroup(arma::Mat<int64_t> const &matrix);
   XDIAG_API PermutationGroup(int64_t *ptr, int64_t n_permutations,
-                             int64_t n_sites);
+                             int64_t nsites);
 
   XDIAG_API bool operator==(PermutationGroup const &rhs) const;
   XDIAG_API bool operator!=(PermutationGroup const &rhs) const;
 
   int64_t size() const;
-  int64_t n_sites() const;
+  int64_t nsites() const;
 
   Permutation const &operator[](int64_t sym) const;
   int64_t inverse(int64_t sym) const;
@@ -39,7 +39,7 @@ private:
   arma::Mat<int64_t> multiply_;
 };
 
-XDIAG_API int64_t n_sites(PermutationGroup const &group);
+XDIAG_API int64_t nsites(PermutationGroup const &group);
 XDIAG_API int64_t size(PermutationGroup const &group);
 XDIAG_API PermutationGroup subgroup(PermutationGroup const &group,
                                     std::vector<int64_t> const &symmetries);

@@ -15,11 +15,11 @@ namespace xdiag::combinatorics {
 template <class States>
 std::vector<bool> init_fermi_table_serial(States const &states,
                                           PermutationGroup const &group) {
-  int64_t n_sites = group.n_sites();
+  int64_t nsites = group.nsites();
   int64_t n_symmetries = group.size();
   int64_t raw_size = states.size();
   std::vector<bool> fermi_table(raw_size * n_symmetries);
-  auto fermi_work = symmetries::fermi_work(n_sites);
+  auto fermi_work = symmetries::fermi_work(nsites);
   for (int64_t sym = 0; sym < n_symmetries; ++sym) {
     auto const &perm = group[sym];
 
@@ -37,7 +37,7 @@ std::vector<bool> init_fermi_table_serial(States const &states,
 template <class States>
 std::vector<bool> init_fermi_table_omp(States const &states,
                                        PermutationGroup const &group) {
-  int64_t n_sites = group.n_sites();
+  int64_t nsites = group.nsites();
   int64_t n_symmetries = group.size();
   int64_t raw_size = states.size();
   std::vector<bool> fermi_bool_table;
@@ -62,7 +62,7 @@ std::vector<bool> init_fermi_table_omp(States const &states,
 
       auto states_thread = ThreadStates(states);
       // fermi_bool_table_local[myid].resize(states_thread.size());
-      auto fermi_work = symmetries::fermi_work(n_sites);
+      auto fermi_work = symmetries::fermi_work(nsites);
       for (auto state : states_thread) {
         bool fermi_bool =
             symmetries::fermi_bool_of_permutation(state, perm, fermi_work);
@@ -89,7 +89,7 @@ std::vector<bool> init_fermi_table_omp(States const &states,
 template <class States>
 std::vector<bool> init_fermi_table(States const &states,
                                    PermutationGroup const &group) {
-  assert(states.n() == group.n_sites());
+  assert(states.n() == group.nsites());
 #ifdef _OPENMP
   return init_fermi_table_omp(states, group);
 #else
@@ -98,15 +98,15 @@ std::vector<bool> init_fermi_table(States const &states,
 }
 
 template <typename bit_t>
-FermiTableSubsets<bit_t>::FermiTableSubsets(int64_t n_sites,
+FermiTableSubsets<bit_t>::FermiTableSubsets(int64_t nsites,
                                             PermutationGroup const &group)
-    : n_sites_(n_sites),
-      table_(init_fermi_table(combinatorics::Subsets<bit_t>(n_sites), group)) {}
+    : nsites_(nsites),
+      table_(init_fermi_table(combinatorics::Subsets<bit_t>(nsites), group)) {}
 
 template <typename bit_t>
 bool FermiTableSubsets<bit_t>::operator==(
     FermiTableSubsets<bit_t> const &rhs) const {
-  return (n_sites_ == rhs.n_sites_) && (table_ == rhs.table_);
+  return (nsites_ == rhs.nsites_) && (table_ == rhs.table_);
 }
 
 template <typename bit_t>
@@ -121,11 +121,11 @@ template class FermiTableSubsets<uint64_t>;
 
 template <typename bit_t>
 FermiTableCombinations<bit_t>::FermiTableCombinations(
-    int64_t n_sites, int64_t n_par, PermutationGroup const &group)
-    : raw_size_(combinatorics::binomial(n_sites, n_par)),
-      lin_table_(n_sites, n_par),
+    int64_t nsites, int64_t n_par, PermutationGroup const &group)
+    : raw_size_(combinatorics::binomial(nsites, n_par)),
+      lin_table_(nsites, n_par),
       table_(init_fermi_table(
-          combinatorics::Combinations<bit_t>(n_sites, n_par), group)) {}
+          combinatorics::Combinations<bit_t>(nsites, n_par), group)) {}
 
 template <typename bit_t>
 bool FermiTableCombinations<bit_t>::operator==(

@@ -55,9 +55,9 @@ TEST_CASE("EntanglementEntropy", "[Entanglement]") {
   for (int N = 3; N <= 6; ++N) {
     std::cout << "@ EntanglementEntropy tJ chain N=" << N << "\n";
 
-    for (int n_up = 0; n_up <= N; ++n_up)
-      for (int n_dn = 0; n_dn <= N; ++n_dn) {
-        qn_tj qn = {n_up, n_dn};
+    for (int nup = 0; nup <= N; ++nup)
+      for (int ndn = 0; ndn <= N; ++ndn) {
+        qn_tj qn = {nup, ndn};
 
         if (valid(qn, N)) {
           double itensor_e0;
@@ -79,9 +79,9 @@ TEST_CASE("EntanglementEntropy", "[Entanglement]") {
     for (auto it : couplings)
       couplings_real[it.first] = lila::real(it.second);
 
-    for (int n_up = 0; n_up <= N; ++n_up)
-      for (int n_dn = 0; n_dn <= N; ++n_dn) {
-        qn_tj qn = {n_up, n_dn};
+    for (int nup = 0; nup <= N; ++nup)
+      for (int ndn = 0; ndn <= N; ++ndn) {
+        qn_tj qn = {nup, ndn};
 
         if (valid(qn, N)) {
           double itensor_e0;
@@ -99,9 +99,9 @@ TEST_CASE("EntanglementEntropy", "[Entanglement]") {
     std::tie(bondlist, couplings) = tJrandom_model(N);
     std::cout << "@ EntanglementEntropy tJ random (cplx) N=" << N << "\n";
 
-    for (int n_up = 0; n_up <= N; ++n_up)
-      for (int n_dn = 0; n_dn <= N; ++n_dn) {
-        qn_tj qn = {n_up, n_dn};
+    for (int nup = 0; nup <= N; ++nup)
+      for (int ndn = 0; ndn <= N; ++ndn) {
+        qn_tj qn = {nup, ndn};
 
         if (valid(qn, N)) {
           double itensor_e0;

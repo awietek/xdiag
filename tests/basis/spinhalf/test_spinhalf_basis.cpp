@@ -45,7 +45,7 @@ void test_spinhalf_basis_state(Basis const &basis, bit_t state) {
 
     REQUIRE(rep == basis.state(idx_rep));
 
-    // int n_sites = basis.n_sites();
+    // int nsites = basis.nsites();
     // std::cout << BSTR(state) << "\n";
 
     // double norm = symmetries::norm(state, group_action, irrep);
@@ -78,11 +78,11 @@ template <typename bit_t>
 void check_basis_symmetric_sz(
     basis::spinhalf::BasisSymmetricSz<bit_t> const &basis) {
 
-  int n_sites = basis.n_sites();
-  int n_up = basis.n_up();
+  int nsites = basis.nsites();
+  int nup = basis.nup();
 
   if (basis.size() > 0) {
-    for (auto state : combinatorics::Combinations(n_sites, n_up)) {
+    for (auto state : combinatorics::Combinations(nsites, nup)) {
       test_spinhalf_basis_state(basis, state);
     }
   }
@@ -92,10 +92,10 @@ template <typename bit_t>
 void check_basis_symmetric_no_sz(
     basis::spinhalf::BasisSymmetricNoSz<bit_t> const &basis) {
 
-  int n_sites = basis.n_sites();
+  int nsites = basis.nsites();
   if (basis.size() > 0) {
 
-    for (auto state : combinatorics::Subsets(n_sites)) {
+    for (auto state : combinatorics::Subsets(nsites)) {
       test_spinhalf_basis_state(basis, state);
     }
   }
@@ -106,7 +106,7 @@ template <class bit_t> void test_basis_symmetric() {
   using namespace xdiag::basis::spinhalf;
 
   Log("BasisSymmetric: triangular 3x3");
-  int n_sites = 9;
+  int nsites = 9;
   std::string lfile = XDIAG_DIRECTORY
       "/misc/data/triangular.9.Jz1Jz2Jx1Jx2D1.sublattices.tsl.toml";
   auto fl = FileToml(lfile);

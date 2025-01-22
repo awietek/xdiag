@@ -8,7 +8,7 @@ from collections import OrderedDict
 import matplotlib.pyplot as plt
 from scipy.stats import sem
 
-n_sites = 16
+nsites = 16
 q = "M.C1.A"
 
 J=0.63
@@ -31,7 +31,7 @@ cutoffs = [1e-8]
 niters = [200]  
 
 # define ensemble of quantum numbers with degeneracies (qn, deg)
-nups = [(nup, 1) if nup == n_sites // 2 else (nup, 2) for nup in range(n_sites//2+1)]
+nups = [(nup, 1) if nup == nsites // 2 else (nup, 2) for nup in range(nsites//2+1)]
 ks = ["Gamma.C1.A", "M.C1.A", "X0.C1.A", "X1.C1.A"]
 
 
@@ -54,8 +54,8 @@ for cutoff in cutoffs:
 
         for seed_idx, seed in enumerate(seeds):
 
-            directory = "/data/condmat/awietek/Research/Software/xdiag/examples/dynamics_finite_t/shastry_sutherland_ftlm/poles_weights/shastry.{}.HB.J.Jd.fsl/J.{:.2f}.Jd.{:.2f}/q.{}/T.{:.4f}/niter.{}.cutoff.{}".format(n_sites, J, Jd, q, temperature, niter, cutoff)
-            filename = "poles.weights.shastry.{}.HB.J.Jd.fsl.J.{:.2f}.Jd.{:.2f}.q.{}.T.{:.4f}.niter.{}.cutoff.{}.seed.{}.h5".format(n_sites, J, Jd, q, temperature, niter, cutoff, seed)
+            directory = "/data/condmat/awietek/Research/Software/xdiag/examples/dynamics_finite_t/shastry_sutherland_ftlm/poles_weights/shastry.{}.HB.J.Jd.fsl/J.{:.2f}.Jd.{:.2f}/q.{}/T.{:.4f}/niter.{}.cutoff.{}".format(nsites, J, Jd, q, temperature, niter, cutoff)
+            filename = "poles.weights.shastry.{}.HB.J.Jd.fsl.J.{:.2f}.Jd.{:.2f}.q.{}.T.{:.4f}.niter.{}.cutoff.{}.seed.{}.h5".format(nsites, J, Jd, q, temperature, niter, cutoff, seed)
             if not os.path.exists(directory):
                 os.makedirs(directory)
     
@@ -67,7 +67,7 @@ for cutoff in cutoffs:
 
             diffs = np.subtract.outer(omegas, poles)
             gaussians = np.exp(-(diffs / (2*eta))**2) / (eta * np.sqrt(2*np.pi))
-            spectrum = gaussians @ weights * n_sites**2
+            spectrum = gaussians @ weights * nsites**2
             spectra[seed_idx, :] = spectrum
             plt.plot(omegas, spectrum, label=r"$seed={}, cutoff={}, niter={}$".format(seed, cutoff, niter))
 

@@ -7,32 +7,32 @@
 namespace xdiag::basis::tj_distributed {
 
 template <typename bit_t>
-BasisNp<bit_t>::BasisNp(int64_t n_sites, int64_t n_up, int64_t n_dn) try
-    : n_sites_(n_sites), n_up_(n_up), n_dn_(n_dn),
-      lintable_dncs_(n_sites - n_up, n_dn),
-      lintable_upcs_(n_sites - n_dn, n_up) {
-  check_n_sites_work_with_bits<bit_t>(n_sites_);
+BasisNp<bit_t>::BasisNp(int64_t nsites, int64_t nup, int64_t ndn) try
+    : nsites_(nsites), nup_(nup), ndn_(ndn),
+      lintable_dncs_(nsites - nup, ndn),
+      lintable_upcs_(nsites - ndn, nup) {
+  check_nsites_work_with_bits<bit_t>(nsites_);
 
   using namespace combinatorics;
 
-  if (n_sites < 0) {
-    XDIAG_THROW("n_sites < 0");
-  } else if ((n_up < 0) || (n_dn < 0)) {
+  if (nsites < 0) {
+    XDIAG_THROW("nsites < 0");
+  } else if ((nup < 0) || (ndn < 0)) {
     XDIAG_THROW("nup < 0 or ndn < 0");
-  } else if ((n_up + n_dn) > n_sites) {
-    XDIAG_THROW("nup + ndn > n_sites");
+  } else if ((nup + ndn) > nsites) {
+    XDIAG_THROW("nup + ndn > nsites");
   }
 
-  dim_ = binomial(n_sites, n_up) * binomial(n_sites - n_up, n_dn);
+  dim_ = binomial(nsites, nup) * binomial(nsites - nup, ndn);
   MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank_);
   MPI_Comm_size(MPI_COMM_WORLD, &mpi_size_);
-  sitesmask_ = ((bit_t)1 << n_sites) - 1;
+  sitesmask_ = ((bit_t)1 << nsites) - 1;
 
   // ////////////////////////////////////////////////////////////////
   // Ordering  ups / dns
 
   // Determine local ups
-  for (auto ups : Combinations<bit_t>(n_sites, n_up)) {
+  for (auto ups : Combinations<bit_t>(nsites, nup)) {
     if (rank(ups) == mpi_rank_) {
       my_ups_.push_back(ups);
     }
@@ -40,7 +40,7 @@ BasisNp<bit_t>::BasisNp(int64_t n_sites, int64_t n_up, int64_t n_dn) try
 
   // Determine corresponding dns
   my_dns_for_ups_.reserve(my_ups_.size());
-  int64_t my_dns_size = my_ups_.size() * binomial(n_sites - n_up, n_dn);
+  int64_t my_dns_size = my_ups_.size() * binomial(nsites - nup, ndn);
   my_dns_for_ups_storage_.reserve(my_dns_size);
   for (auto ups : my_ups_) {
     bit_t not_ups = (~ups) & sitesmask_;
@@ -49,7 +49,7 @@ BasisNp<bit_t>::BasisNp(int64_t n_sites, int64_t n_up, int64_t n_dn) try
 
     // Create all dns for my ups configurations
     int64_t dns_start = my_dns_for_ups_storage_.size();
-    for (auto dnsc : Combinations<bit_t>(n_sites - n_up, n_dn)) {
+    for (auto dnsc : Combinations<bit_t>(nsites - nup, ndn)) {
       bit_t dns = bits::deposit(dnsc, not_ups);
       my_dns_for_ups_storage_.push_back(dns);
     }
@@ -59,14 +59,14 @@ BasisNp<bit_t>::BasisNp(int64_t n_sites, int64_t n_up, int64_t n_dn) try
         my_dns_for_ups_storage_.data() + dns_start, dns_end - dns_start));
   }
   assert(my_dns_for_ups_storage_.size() ==
-         my_ups_.size() * binomial(n_sites - n_up, n_dn));
+         my_ups_.size() * binomial(nsites - nup, ndn));
   size_ = my_dns_for_ups_storage_.size();
 
   // ////////////////////////////////////////////////////////////////
   // Ordering  dns / ups
 
   // Determine local dns
-  for (auto dns : Combinations<bit_t>(n_sites, n_dn)) {
+  for (auto dns : Combinations<bit_t>(nsites, ndn)) {
     if (rank(dns) == mpi_rank_) {
       my_dns_.push_back(dns);
     }
@@ -74,7 +74,7 @@ BasisNp<bit_t>::BasisNp(int64_t n_sites, int64_t n_up, int64_t n_dn) try
 
   // Determine corresponding ups
   my_ups_for_dns_.reserve(my_dns_.size());
-  int64_t my_ups_size = my_dns_.size() * binomial(n_sites - n_dn, n_up);
+  int64_t my_ups_size = my_dns_.size() * binomial(nsites - ndn, nup);
   my_ups_for_dns_storage_.reserve(my_ups_size);
   for (auto dns : my_dns_) {
     bit_t not_dns = (~dns) & sitesmask_;
@@ -83,7 +83,7 @@ BasisNp<bit_t>::BasisNp(int64_t n_sites, int64_t n_up, int64_t n_dn) try
 
     // Create all ups for my dns configurations
     int64_t ups_start = my_ups_for_dns_storage_.size();
-    for (auto upsc : Combinations<bit_t>(n_sites - n_dn, n_up)) {
+    for (auto upsc : Combinations<bit_t>(nsites - ndn, nup)) {
       bit_t ups = bits::deposit(upsc, not_dns);
       my_ups_for_dns_storage_.push_back(ups);
     }
@@ -93,7 +93,7 @@ BasisNp<bit_t>::BasisNp(int64_t n_sites, int64_t n_up, int64_t n_dn) try
         my_ups_for_dns_storage_.data() + ups_start, ups_end - ups_start));
   }
   assert(my_ups_for_dns_storage_.size() ==
-         my_dns_.size() * binomial(n_sites - n_dn, n_up));
+         my_dns_.size() * binomial(nsites - ndn, nup));
   size_transpose_ = my_ups_for_dns_storage_.size();
 
   ////
@@ -226,12 +226,12 @@ BasisNp<bit_t>::BasisNp(int64_t n_sites, int64_t n_up, int64_t n_dn) try
   XDIAG_RETHROW(e);
 }
 
-template <typename bit_t> int64_t BasisNp<bit_t>::n_sites() const {
-  return n_sites_;
+template <typename bit_t> int64_t BasisNp<bit_t>::nsites() const {
+  return nsites_;
 }
-template <typename bit_t> int64_t BasisNp<bit_t>::n_up() const { return n_up_; }
+template <typename bit_t> int64_t BasisNp<bit_t>::nup() const { return nup_; }
 
-template <typename bit_t> int64_t BasisNp<bit_t>::n_dn() const { return n_dn_; }
+template <typename bit_t> int64_t BasisNp<bit_t>::ndn() const { return ndn_; }
 
 template <typename bit_t>
 int64_t BasisNp<bit_t>::index(bit_t up, bit_t dn) const {
@@ -396,7 +396,7 @@ template class BasisNp<uint64_t>;
 
 template <typename bit_t>
 BasisNpIterator<bit_t>::BasisNpIterator(BasisNp<bit_t> const &basis, bool begin)
-    : basis_(basis), sitesmask_(((bit_t)1 << basis.n_sites()) - 1),
+    : basis_(basis), sitesmask_(((bit_t)1 << basis.nsites()) - 1),
       up_idx_(begin ? 0 : basis_.my_ups().size()), dn_idx_(0) {
   if ((basis_.my_ups().size() > 0) && begin) {
     dns_for_ups_ = basis_.my_dns_for_ups(0);

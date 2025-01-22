@@ -37,14 +37,14 @@ using namespace xdiag;
 
 int main() try {
   
-  int n_sites = 16;
-  int nup = n_sites / 2;
-  Spinhalf block(n_sites, nup);
+  int nsites = 16;
+  int nup = nsites / 2;
+  Spinhalf block(nsites, nup);
 
   // Define the nearest-neighbor Heisenberg model
   OpSum ops;
-  for (int i = 0; i < n_sites; ++i) {
-    ops += "J" * Op("SdotS", {i, (i + 1) % n_sites});
+  for (int i = 0; i < nsites; ++i) {
+    ops += "J" * Op("SdotS", {i, (i + 1) % nsites});
   }
   ops["J"] = 1.0;
 

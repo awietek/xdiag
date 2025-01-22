@@ -12,15 +12,15 @@
 
 using namespace xdiag;
 
-void test_electron_np_no_np_apply(int n_sites, OpSum ops) {
+void test_electron_np_no_np_apply(int nsites, OpSum ops) {
 
-  auto block_full = Electron(n_sites);
+  auto block_full = Electron(nsites);
   auto e0_full = eigval0(ops, block_full);
 
   std::vector<double> e0s;
-  for (int nup = 0; nup <= n_sites; ++nup)
-    for (int ndn = 0; ndn <= n_sites; ++ndn) {
-      auto block = Electron(n_sites, nup, ndn);
+  for (int nup = 0; nup <= nsites; ++nup)
+    for (int ndn = 0; ndn <= nsites; ++ndn) {
+      auto block = Electron(nsites, nup, ndn);
       auto e0 = eigval0(ops, block);
       e0s.push_back(e0);
     }
@@ -35,18 +35,18 @@ TEST_CASE("electron_apply", "[electron]") {
 
   ///////////////////////////////////////////////////
   // Test Fermion all to all, free fermions (real)
-  for (int n_sites = 3; n_sites < 7; ++n_sites) {
+  for (int nsites = 3; nsites < 7; ++nsites) {
 
     Log("electron_apply: Hubbard random all-to-all test (real), N: {}",
-        n_sites);
-    ops = freefermion_alltoall(n_sites);
+        nsites);
+    ops = freefermion_alltoall(nsites);
     ops["U"] = 5.0;
 
-    for (int nup = 0; nup <= n_sites; ++nup)
-      for (int ndn = 0; ndn <= n_sites; ++ndn) {
+    for (int nup = 0; nup <= nsites; ++nup)
+      for (int ndn = 0; ndn <= nsites; ++ndn) {
 
         // Create block and matrix for comparison
-        auto block = Electron(n_sites, nup, ndn);
+        auto block = Electron(nsites, nup, ndn);
         auto H = matrix(ops, block, block);
         REQUIRE(H.is_hermitian(1e-8));
 
@@ -76,17 +76,17 @@ TEST_CASE("electron_apply", "[electron]") {
 
   // /////////////////
   // Test Fermion all to all, free fermions (cplx, up/dn different)
-  for (int n_sites = 3; n_sites < 7; ++n_sites) {
+  for (int nsites = 3; nsites < 7; ++nsites) {
     Log("electron_apply: Hubbard random all-to-all test (cplx), N: {}",
-        n_sites);
-    ops = freefermion_alltoall_complex_updn(n_sites);
+        nsites);
+    ops = freefermion_alltoall_complex_updn(nsites);
     ops["U"] = 5.0;
 
-    for (int nup = 0; nup <= n_sites; ++nup)
-      for (int ndn = 0; ndn <= n_sites; ++ndn) {
+    for (int nup = 0; nup <= nsites; ++nup)
+      for (int ndn = 0; ndn <= nsites; ++ndn) {
 
         // Create block and matrix for comparison
-        auto block = Electron(n_sites, nup, ndn);
+        auto block = Electron(nsites, nup, ndn);
         auto H = matrixC(ops, block, block);
         REQUIRE(H.is_hermitian(1e-8));
 
@@ -113,10 +113,10 @@ TEST_CASE("electron_apply", "[electron]") {
   {
     auto [ops, eigs_correct] = randomAlltoAll4NoU();
 
-    int n_sites = 4;
-    for (int nup = 0; nup <= n_sites; ++nup)
-      for (int ndn = 0; ndn <= n_sites; ++ndn) {
-        auto block = Electron(n_sites, nup, ndn);
+    int nsites = 4;
+    for (int nup = 0; nup <= nsites; ++nup)
+      for (int ndn = 0; ndn <= nsites; ++ndn) {
+        auto block = Electron(nsites, nup, ndn);
         auto H = matrix(ops, block, block);
         REQUIRE(H.is_hermitian(1e-8));
 
@@ -137,9 +137,9 @@ TEST_CASE("electron_apply", "[electron]") {
       }
 
     std::tie(ops, eigs_correct) = randomAlltoAll4();
-    for (int nup = 0; nup <= n_sites; ++nup)
-      for (int ndn = 0; ndn <= n_sites; ++ndn) {
-        auto block = Electron(n_sites, nup, ndn);
+    for (int nup = 0; nup <= nsites; ++nup)
+      for (int ndn = 0; ndn <= nsites; ++ndn) {
+        auto block = Electron(nsites, nup, ndn);
         auto H = matrix(ops, block, block);
         REQUIRE(H.is_hermitian(1e-8));
 

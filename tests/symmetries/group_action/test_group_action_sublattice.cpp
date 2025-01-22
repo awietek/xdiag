@@ -13,13 +13,13 @@ using namespace xdiag;
 
 template <class Action1, class Action2>
 void compare_actions(Action1 &&action1, Action2 &&action2) {
-  int n_sites = action1.n_sites();
+  int nsites = action1.nsites();
   int n_symmetries = action1.n_symmetries();
 
-  REQUIRE(action2.n_sites() == n_sites);
+  REQUIRE(action2.nsites() == nsites);
   REQUIRE(action2.n_symmetries() == n_symmetries);
 
-  for (auto bits : combinatorics::Subsets(n_sites)) {
+  for (auto bits : combinatorics::Subsets(nsites)) {
 
     // Check translations
     for (int sym = 0; sym < n_symmetries; ++sym) {

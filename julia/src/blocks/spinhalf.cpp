@@ -16,10 +16,10 @@ void define_spinhalf(jlcxx::Module &mod) {
       .constructor<int64_t, int64_t>()
       .constructor<int64_t, PermutationGroup, Representation>()
       .constructor<int64_t, int64_t, PermutationGroup, Representation>()
-      .method("n_sites",
-              [](Spinhalf const &s) { JULIA_XDIAG_CALL_RETURN(s.n_sites()) })
-      .method("n_up",
-              [](Spinhalf const &s) { JULIA_XDIAG_CALL_RETURN(s.n_up()) })
+      .method("nsites",
+              [](Spinhalf const &s) { JULIA_XDIAG_CALL_RETURN(s.nsites()) })
+      .method("nup",
+              [](Spinhalf const &s) { JULIA_XDIAG_CALL_RETURN(s.nup()) })
       .method("permutation_group",
               [](Spinhalf const &s) {
                 JULIA_XDIAG_CALL_RETURN(s.permutation_group())

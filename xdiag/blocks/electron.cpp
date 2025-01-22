@@ -5,30 +5,30 @@ namespace xdiag {
 
 using namespace basis;
 
-Electron::Electron(int64_t n_sites, std::string backend) try
-    : n_sites_(n_sites), backend_(backend), n_up_(std::nullopt),
-      n_dn_(std::nullopt), irrep_(std::nullopt) {
+Electron::Electron(int64_t nsites, std::string backend) try
+    : nsites_(nsites), backend_(backend), nup_(std::nullopt),
+      ndn_(std::nullopt), irrep_(std::nullopt) {
   // Safety checks
-  if (n_sites < 0) {
-    XDIAG_THROW("Invalid argument: n_sites < 0");
+  if (nsites < 0) {
+    XDIAG_THROW("Invalid argument: nsites < 0");
   }
 
   // Choose basis implementation
   if (backend == "auto") {
-    if (n_sites < 32) {
+    if (nsites < 32) {
       basis_ =
-          std::make_shared<basis_t>(electron::BasisNoNp<uint32_t>(n_sites));
-    } else if (n_sites < 64) {
+          std::make_shared<basis_t>(electron::BasisNoNp<uint32_t>(nsites));
+    } else if (nsites < 64) {
       basis_ =
-          std::make_shared<basis_t>(electron::BasisNoNp<uint64_t>(n_sites));
+          std::make_shared<basis_t>(electron::BasisNoNp<uint64_t>(nsites));
     } else {
       XDIAG_THROW(
           "Spinhalf blocks with more than 64 sites currently not implemented");
     }
   } else if (backend == "32bit") {
-    basis_ = std::make_shared<basis_t>(electron::BasisNoNp<uint32_t>(n_sites));
+    basis_ = std::make_shared<basis_t>(electron::BasisNoNp<uint32_t>(nsites));
   } else if (backend == "64bit") {
-    basis_ = std::make_shared<basis_t>(electron::BasisNoNp<uint64_t>(n_sites));
+    basis_ = std::make_shared<basis_t>(electron::BasisNoNp<uint64_t>(nsites));
   } else {
     XDIAG_THROW(fmt::format("Unknown backend: \"{}\"", backend));
   }
@@ -38,37 +38,37 @@ Electron::Electron(int64_t n_sites, std::string backend) try
   XDIAG_RETHROW(e);
 }
 
-Electron::Electron(int64_t n_sites, int64_t nup, int64_t ndn,
+Electron::Electron(int64_t nsites, int64_t nup, int64_t ndn,
                    std::string backend) try
-    : n_sites_(n_sites), backend_(backend), n_up_(nup), n_dn_(ndn),
+    : nsites_(nsites), backend_(backend), nup_(nup), ndn_(ndn),
       irrep_(std::nullopt) {
 
   // Safety checks
-  if (n_sites < 0) {
-    XDIAG_THROW("Invalid argument: n_sites < 0");
-  } else if ((nup < 0) || (nup > n_sites)) {
-    XDIAG_THROW("Invalid argument: (nup < 0) or (nup > n_sites)");
-  } else if ((ndn < 0) || (ndn > n_sites)) {
-    XDIAG_THROW("Invalid argument: (ndn < 0) or (ndn > n_sites)");
+  if (nsites < 0) {
+    XDIAG_THROW("Invalid argument: nsites < 0");
+  } else if ((nup < 0) || (nup > nsites)) {
+    XDIAG_THROW("Invalid argument: (nup < 0) or (nup > nsites)");
+  } else if ((ndn < 0) || (ndn > nsites)) {
+    XDIAG_THROW("Invalid argument: (ndn < 0) or (ndn > nsites)");
   }
 
   // Choose basis implementation
   if (backend == "auto") {
-    if (n_sites < 32) {
+    if (nsites < 32) {
       basis_ = std::make_shared<basis_t>(
-          electron::BasisNp<uint32_t>(n_sites, nup, ndn));
-    } else if (n_sites < 64) {
+          electron::BasisNp<uint32_t>(nsites, nup, ndn));
+    } else if (nsites < 64) {
       basis_ = std::make_shared<basis_t>(
-          electron::BasisNp<uint64_t>(n_sites, nup, ndn));
+          electron::BasisNp<uint64_t>(nsites, nup, ndn));
     } else {
       XDIAG_THROW("Blocks with more than 64 sites currently not implemented");
     }
   } else if (backend == "32bit") {
     basis_ = std::make_shared<basis_t>(
-        electron::BasisNp<uint32_t>(n_sites, nup, ndn));
+        electron::BasisNp<uint32_t>(nsites, nup, ndn));
   } else if (backend == "64bit") {
     basis_ = std::make_shared<basis_t>(
-        electron::BasisNp<uint64_t>(n_sites, nup, ndn));
+        electron::BasisNp<uint64_t>(nsites, nup, ndn));
   } else {
     XDIAG_THROW(fmt::format("Unknown backend: \"{}\"", backend));
   }
@@ -78,34 +78,34 @@ Electron::Electron(int64_t n_sites, int64_t nup, int64_t ndn,
   XDIAG_RETHROW(e);
 }
 
-Electron::Electron(int64_t n_sites, Representation const &irrep,
+Electron::Electron(int64_t nsites, Representation const &irrep,
                    std::string backend) try
-    : n_sites_(n_sites), backend_(backend), n_up_(std::nullopt),
-      n_dn_(std::nullopt), irrep_(irrep) {
+    : nsites_(nsites), backend_(backend), nup_(std::nullopt),
+      ndn_(std::nullopt), irrep_(irrep) {
   // Safety checks
-  if (n_sites < 0) {
-    XDIAG_THROW("Invalid argument: n_sites < 0");
-  } else if (n_sites != irrep.group().n_sites()) {
-    XDIAG_THROW("n_sites does not match the n_sites in PermutationGroup");
+  if (nsites < 0) {
+    XDIAG_THROW("Invalid argument: nsites < 0");
+  } else if (nsites != irrep.group().nsites()) {
+    XDIAG_THROW("nsites does not match the nsites in PermutationGroup");
   }
 
   // Choose basis implementation
   if (backend == "auto") {
-    if (n_sites < 32) {
+    if (nsites < 32) {
       basis_ = std::make_shared<basis_t>(
-          electron::BasisSymmetricNoNp<uint32_t>(n_sites, irrep));
-    } else if (n_sites < 64) {
+          electron::BasisSymmetricNoNp<uint32_t>(nsites, irrep));
+    } else if (nsites < 64) {
       basis_ = std::make_shared<basis_t>(
-          electron::BasisSymmetricNoNp<uint64_t>(n_sites, irrep));
+          electron::BasisSymmetricNoNp<uint64_t>(nsites, irrep));
     } else {
       XDIAG_THROW("Blocks with more than 64 sites currently not implemented");
     }
   } else if (backend == "32bit") {
     basis_ = std::make_shared<basis_t>(
-        electron::BasisSymmetricNoNp<uint32_t>(n_sites, irrep));
+        electron::BasisSymmetricNoNp<uint32_t>(nsites, irrep));
   } else if (backend == "64bit") {
     basis_ = std::make_shared<basis_t>(
-        electron::BasisSymmetricNoNp<uint64_t>(n_sites, irrep));
+        electron::BasisSymmetricNoNp<uint64_t>(nsites, irrep));
   } else {
     XDIAG_THROW(fmt::format("Unknown backend: \"{}\"", backend));
   }
@@ -116,38 +116,38 @@ Electron::Electron(int64_t n_sites, Representation const &irrep,
   XDIAG_RETHROW(e);
 }
 
-Electron::Electron(int64_t n_sites, int64_t nup, int64_t ndn,
+Electron::Electron(int64_t nsites, int64_t nup, int64_t ndn,
                    Representation const &irrep, std::string backend) try
-    : n_sites_(n_sites), backend_(backend), n_up_(nup), n_dn_(ndn),
+    : nsites_(nsites), backend_(backend), nup_(nup), ndn_(ndn),
       irrep_(irrep) {
   // Safety checks
-  if (n_sites < 0) {
-    XDIAG_THROW("Invalid argument: n_sites < 0");
-  } else if ((nup < 0) || (nup > n_sites)) {
-    XDIAG_THROW("Invalid argument: (nup < 0) or (nup > n_sites)");
-  } else if ((ndn < 0) || (ndn > n_sites)) {
-    XDIAG_THROW("Invalid argument: (ndn < 0) or (ndn > n_sites)");
-  } else if (n_sites != irrep.group().n_sites()) {
-    XDIAG_THROW("n_sites does not match the n_sites in PermutationGroup");
+  if (nsites < 0) {
+    XDIAG_THROW("Invalid argument: nsites < 0");
+  } else if ((nup < 0) || (nup > nsites)) {
+    XDIAG_THROW("Invalid argument: (nup < 0) or (nup > nsites)");
+  } else if ((ndn < 0) || (ndn > nsites)) {
+    XDIAG_THROW("Invalid argument: (ndn < 0) or (ndn > nsites)");
+  } else if (nsites != irrep.group().nsites()) {
+    XDIAG_THROW("nsites does not match the nsites in PermutationGroup");
   }
 
   // Choose basis implementation
   if (backend == "auto") {
-    if (n_sites < 32) {
+    if (nsites < 32) {
       basis_ = std::make_shared<basis_t>(
-          electron::BasisSymmetricNp<uint32_t>(n_sites, nup, ndn, irrep));
-    } else if (n_sites < 64) {
+          electron::BasisSymmetricNp<uint32_t>(nsites, nup, ndn, irrep));
+    } else if (nsites < 64) {
       basis_ = std::make_shared<basis_t>(
-          electron::BasisSymmetricNp<uint64_t>(n_sites, nup, ndn, irrep));
+          electron::BasisSymmetricNp<uint64_t>(nsites, nup, ndn, irrep));
     } else {
       XDIAG_THROW("Blocks with more than 64 sites currently not implemented");
     }
   } else if (backend == "32bit") {
     basis_ = std::make_shared<basis_t>(
-        electron::BasisSymmetricNp<uint32_t>(n_sites, nup, ndn, irrep));
+        electron::BasisSymmetricNp<uint32_t>(nsites, nup, ndn, irrep));
   } else if (backend == "64bit") {
     basis_ = std::make_shared<basis_t>(
-        electron::BasisSymmetricNp<uint64_t>(n_sites, nup, ndn, irrep));
+        electron::BasisSymmetricNp<uint64_t>(nsites, nup, ndn, irrep));
   } else {
     XDIAG_THROW(fmt::format("Unknown backend: \"{}\"", backend));
   }
@@ -173,8 +173,8 @@ int64_t Electron::index(ProductState const &pstate) const try {
 }
 
 bool Electron::operator==(Electron const &rhs) const {
-  return (n_sites_ == rhs.n_sites_) && (n_up_ == rhs.n_up_) &&
-         (n_dn_ == rhs.n_dn_) && (irrep_ == rhs.irrep_);
+  return (nsites_ == rhs.nsites_) && (nup_ == rhs.nup_) &&
+         (ndn_ == rhs.ndn_) && (irrep_ == rhs.irrep_);
 }
 bool Electron::operator!=(Electron const &rhs) const {
   return !operator==(rhs);
@@ -182,10 +182,10 @@ bool Electron::operator!=(Electron const &rhs) const {
 int64_t Electron::dim() const { return size_; }
 int64_t Electron::size() const { return size_; }
 
-int64_t Electron::n_sites() const { return n_sites_; }
+int64_t Electron::nsites() const { return nsites_; }
 std::string Electron::backend() const { return backend_; }
-std::optional<int64_t> Electron::n_up() const { return n_up_; }
-std::optional<int64_t> Electron::n_dn() const { return n_dn_; }
+std::optional<int64_t> Electron::nup() const { return nup_; }
+std::optional<int64_t> Electron::ndn() const { return ndn_; }
 std::optional<Representation> const &Electron::irrep() const { return irrep_; }
 bool Electron::isreal() const { return irrep_ ? irrep_->isreal() : true; }
 Electron::basis_t const &Electron::basis() const { return *basis_; }
@@ -193,18 +193,18 @@ Electron::basis_t const &Electron::basis() const { return *basis_; }
 bool isreal(Electron const &block) { return block.isreal(); }
 std::ostream &operator<<(std::ostream &out, Electron const &block) {
   out << "Electron:\n";
-  out << "  n_sites  : " << block.n_sites() << "\n";
+  out << "  nsites  : " << block.nsites() << "\n";
 
-  if (block.n_up()) {
-    out << "  n_up     : " << *block.n_up() << "\n";
+  if (block.nup()) {
+    out << "  nup     : " << *block.nup() << "\n";
   } else {
-    out << "  n_up     : not conserved\n";
+    out << "  nup     : not conserved\n";
   }
 
-  if (block.n_dn()) {
-    out << "  n_dn     : " << *block.n_dn() << "\n";
+  if (block.ndn()) {
+    out << "  ndn     : " << *block.ndn() << "\n";
   } else {
-    out << "  n_dn     : not conserved\n";
+    out << "  ndn     : not conserved\n";
   }
 
   if (block.irrep()) {
@@ -223,7 +223,7 @@ std::string to_string(Electron const &block) {
 }
 
 ElectronIterator::ElectronIterator(Electron const &block, bool begin)
-    : n_sites_(block.n_sites()), pstate_(n_sites_),
+    : nsites_(block.nsites()), pstate_(nsites_),
       it_(std::visit(
           [&](auto const &basis) {
             basis::BasisElectronIterator it =

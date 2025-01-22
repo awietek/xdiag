@@ -15,19 +15,19 @@ void generic_term_dns(BasisIn &&basis_in, BasisOut &&basis_out,
                       TermAction &&term_action, const coeff_t *vec_in,
                       coeff_t *vec_out) {
 
-  int64_t n_sites = basis_in.n_sites();
-  assert(n_sites == basis_out.n_sites());
-  bit_t sitesmask = ((bit_t)1 << n_sites) - 1;
+  int64_t nsites = basis_in.nsites();
+  assert(nsites == basis_out.nsites());
+  bit_t sitesmask = ((bit_t)1 << nsites) - 1;
 
-  int64_t n_up_in = basis_in.n_up();
-  int64_t n_dn_in = basis_in.n_dn();
-  int64_t n_dn_configurations_in =
-      combinatorics::binomial(n_sites - n_up_in, n_dn_in);
+  int64_t nup_in = basis_in.nup();
+  int64_t ndn_in = basis_in.ndn();
+  int64_t ndn_configurations_in =
+      combinatorics::binomial(nsites - nup_in, ndn_in);
 
-  int64_t n_up_out = basis_out.n_up();
-  int64_t n_dn_out = basis_out.n_dn();
-  int64_t n_dn_configurations_out =
-      combinatorics::binomial(n_sites - n_up_out, n_dn_out);
+  int64_t nup_out = basis_out.nup();
+  int64_t ndn_out = basis_out.ndn();
+  int64_t ndn_configurations_out =
+      combinatorics::binomial(nsites - nup_out, ndn_out);
 
   // Loop over all configurations
   int64_t idx_up = 0;
@@ -35,11 +35,11 @@ void generic_term_dns(BasisIn &&basis_in, BasisOut &&basis_out,
 
     if (non_zero_term_ups(up)) {
       bit_t not_up = (~up) & sitesmask;
-      int64_t up_offset_in = idx_up * n_dn_configurations_in;
-      int64_t up_offset_out = idx_up * n_dn_configurations_out;
+      int64_t up_offset_in = idx_up * ndn_configurations_in;
+      int64_t up_offset_out = idx_up * ndn_configurations_out;
 
       for (int64_t idx_in = up_offset_in;
-           idx_in < up_offset_in + n_dn_configurations_in; ++idx_in) {
+           idx_in < up_offset_in + ndn_configurations_in; ++idx_in) {
 
         bit_t dn = basis_in.my_dns_for_ups_storage(idx_in);
 

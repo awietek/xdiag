@@ -4,20 +4,20 @@ import h5py
 import pydiag as yd
 import pydiag.ensemble as yde
 
-n_sites = 16
+nsites = 16
 iters = 200
 
 seed = 1
 
 beta = 1.0
 
-directory = "outfiles/N.{}".format(n_sites)
-regex = "outfile.N.{}.nup.(.*).k.(.*).seed.{}.iters.{}.h5".format(n_sites, seed, iters)
+directory = "outfiles/N.{}".format(nsites)
+regex = "outfile.N.{}.nup.(.*).k.(.*).seed.{}.iters.{}.h5".format(nsites, seed, iters)
 
-# nups = [(nup, 2) if nup != n_sites // 2 else (nup, 1) for nup in range(3)]
-# qs = [(q, 1) if q == 0 or q == n_sites // 2 else (q, 2) for q in range(n_sites//2+1)]
-nups = [(nup, 2) if nup != n_sites // 2 else (nup, 1) for nup in range(n_sites//2+1)]
-qs = [(q, 1) if q == 0 or q == n_sites // 2 else (q, 2) for q in range(n_sites//2+1)]
+# nups = [(nup, 2) if nup != nsites // 2 else (nup, 1) for nup in range(3)]
+# qs = [(q, 1) if q == 0 or q == nsites // 2 else (q, 2) for q in range(nsites//2+1)]
+nups = [(nup, 2) if nup != nsites // 2 else (nup, 1) for nup in range(nsites//2+1)]
+qs = [(q, 1) if q == 0 or q == nsites // 2 else (q, 2) for q in range(nsites//2+1)]
 ensemble = yde.Ensemble(nups, qs)
 
 print("Reading T")

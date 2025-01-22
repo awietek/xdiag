@@ -157,8 +157,8 @@ template <typename bit_t, typename T, class GroupAction>
 inline double norm_fermionic(bit_t state, GroupAction const &group_action,
                              arma::Col<T> const &characters) {
   T amplitude = 0.0;
-  int64_t n_sites = group_action.n_sites();
-  auto work = fermi_work(n_sites);
+  int64_t nsites = group_action.nsites();
+  auto work = fermi_work(nsites);
   auto const &group = group_action.permutation_group();
 
   for (int64_t sym = 0; sym < group_action.n_symmetries(); ++sym) {
@@ -183,8 +183,8 @@ inline double norm_electron(bit_t ups, bit_t dns,
                             GroupAction const &group_action,
                             arma::Col<T> const &characters) {
   T amplitude = 0.0;
-  int64_t n_sites = group_action.n_sites();
-  auto work = fermi_work(n_sites);
+  int64_t nsites = group_action.nsites();
+  auto work = fermi_work(nsites);
   auto const &group = group_action.permutation_group();
 
   for (int64_t sym = 0; sym < group_action.n_symmetries(); ++sym) {
@@ -219,8 +219,8 @@ inline double norm_electron_subset(bit_t ups, bit_t dns,
                                    arma::Col<T> const &characters,
                                    gsl::span<int64_t const> syms) {
   T amplitude = 0.0;
-  int64_t n_sites = group_action.n_sites();
-  auto work = fermi_work(n_sites);
+  int64_t nsites = group_action.nsites();
+  auto work = fermi_work(nsites);
   auto const &group = group_action.permutation_group();
 
   for (int64_t sym : syms) {

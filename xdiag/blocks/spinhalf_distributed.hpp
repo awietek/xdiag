@@ -14,12 +14,12 @@ public:
   using iterator_t = SpinhalfDistributedIterator;
 
   SpinhalfDistributed() = default;
-  SpinhalfDistributed(int64_t n_sites, int64_t nup,
+  SpinhalfDistributed(int64_t nsites, int64_t nup,
                       std::string backend = "auto");
 
-  int64_t n_sites() const;
+  int64_t nsites() const;
   std::string backend() const;
-  int64_t n_up() const;
+  int64_t nup() const;
 
   int64_t dim() const;
   int64_t size() const;
@@ -36,9 +36,9 @@ public:
   basis_t const &basis() const;
 
 private:
-  int64_t n_sites_;
+  int64_t nsites_;
   std::string backend_;
-  int64_t n_up_;
+  int64_t nup_;
   std::shared_ptr<basis_t> basis_;
   int64_t dim_;
   int64_t size_;
@@ -56,7 +56,7 @@ public:
   bool operator!=(SpinhalfDistributedIterator const &rhs) const;
 
 private:
-  int64_t n_sites_;
+  int64_t nsites_;
   mutable ProductState pstate_;
   basis::BasisSpinhalfDistributedIterator it_;
 };

@@ -141,7 +141,7 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
         XDIAG_DIRECTORY "/misc/data/shastry.16.HB.J.Jd.fsl.toml";
     auto lfile = FileToml(lfilename);
     auto ops = lfile["Interactions"].as<OpSum>();
-    int n_sites = 16;
+    int nsites = 16;
     ops["J"] = 0.63;
     ops["Jd"] = 1.00;
 
@@ -151,7 +151,7 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
     for (int nup = 0; nup <= 6; ++nup) {
       for (std::string k : irrep_names) {
         auto irrep = read_representation(lfile, k);
-        auto block = Spinhalf(n_sites, nup, irrep);
+        auto block = Spinhalf(nsites, nup, irrep);
 
         Log("   nup: {} k: {}", nup, k);
         // XDIAG_SHOW(block);
@@ -196,7 +196,7 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
         XDIAG_DIRECTORY "/misc/data/shastry.20.HB.J.Jd.fsl.toml";
     auto lfile = FileToml(lfilename);
     auto ops = lfile["Interactions"].as<OpSum>();
-    int n_sites = 20;
+    int nsites = 20;
     ops["J"] = 0.63;
     ops["Jd"] = 1.00;
 
@@ -205,7 +205,7 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
     for (int nup = 0; nup <= 6; ++nup) {
       for (std::string k : irrep_names) {
         auto irrep = read_representation(lfile, k);
-        auto block = Spinhalf(n_sites, nup, irrep);
+        auto block = Spinhalf(nsites, nup, irrep);
 
         Log("   nup: {} k: {}", nup, k);
         // XDIAG_SHOW(block);

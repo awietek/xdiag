@@ -13,11 +13,11 @@
 
 using namespace xdiag;
 
-void test_electron_symmetric_apply(OpSum ops, int64_t n_sites,
+void test_electron_symmetric_apply(OpSum ops, int64_t nsites,
                                    std::vector<Representation> irreps) {
 
-  for (int64_t nup = 0; nup <= n_sites; ++nup) {
-    for (int64_t ndn = 0; ndn <= n_sites; ++ndn) {
+  for (int64_t nup = 0; nup <= nsites; ++nup) {
+    for (int64_t ndn = 0; ndn <= nsites; ++ndn) {
 
       for (auto irrep : irreps) {
         // Log("nup: {}, ndn: {}", nup, ndn);
@@ -25,7 +25,7 @@ void test_electron_symmetric_apply(OpSum ops, int64_t n_sites,
 
         // Create block and matrix for comparison
         // tic();
-        auto block = Electron(n_sites, nup, ndn, irrep);
+        auto block = Electron(nsites, nup, ndn, irrep);
         // Log("block.isreal {}", isreal(block));
         // toc("create block");
 
@@ -85,28 +85,28 @@ void test_electron_symmetric_apply(OpSum ops, int64_t n_sites,
   }
 }
 
-void test_hubbard_symmetric_apply_chains(int64_t n_sites) {
+void test_hubbard_symmetric_apply_chains(int64_t nsites) {
   using namespace xdiag::testcases::electron;
 
   // Without Heisenberg term
-  Log.out("electron_symmetric_apply: Hubbard chain, n_sites: {}", n_sites);
-  auto ops = get_linear_chain(n_sites, 1.0, 5.0);
-  auto irreps = get_cyclic_group_irreps(n_sites);
-  test_electron_symmetric_apply(ops, n_sites, irreps);
+  Log.out("electron_symmetric_apply: Hubbard chain, nsites: {}", nsites);
+  auto ops = get_linear_chain(nsites, 1.0, 5.0);
+  auto irreps = get_cyclic_group_irreps(nsites);
+  test_electron_symmetric_apply(ops, nsites, irreps);
 
   // With Heisenberg term
-  Log.out("electron_symmetric_apply: Hubbard chain, n_sites: {} (+ "
+  Log.out("electron_symmetric_apply: Hubbard chain, nsites: {} (+ "
           "Heisenberg terms)",
-          n_sites);
-  auto ops_hb = get_linear_chain_hb(n_sites, 0.4);
-  test_electron_symmetric_apply(ops_hb, n_sites, irreps);
+          nsites);
+  auto ops_hb = get_linear_chain_hb(nsites, 0.4);
+  test_electron_symmetric_apply(ops_hb, nsites, irreps);
 }
 
 TEST_CASE("electron_symmetric_apply", "[electron]") {
 
   // Test linear chains
-  for (int64_t n_sites = 2; n_sites < 7; ++n_sites) {
-    test_hubbard_symmetric_apply_chains(n_sites);
+  for (int64_t nsites = 2; nsites < 7; ++nsites) {
+    test_hubbard_symmetric_apply_chains(nsites);
   }
 
   // test a 3x3 triangular lattice

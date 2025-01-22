@@ -15,12 +15,12 @@
 
 using namespace xdiag;
 
-void test_spinhalf_symmetric_apply(OpSum ops, int64_t n_sites,
+void test_spinhalf_symmetric_apply(OpSum ops, int64_t nsites,
                                    std::vector<Representation> irreps) {
 
-  for (int nup = 0; nup <= n_sites; ++nup) {
+  for (int nup = 0; nup <= nsites; ++nup) {
     for (auto irrep : irreps) {
-      auto block = Spinhalf(n_sites, nup, irrep);
+      auto block = Spinhalf(nsites, nup, irrep);
 
       if (block.size() > 0) {
         auto H = matrixC(ops, block, block);
@@ -64,10 +64,10 @@ void test_spinhalf_symmetric_apply(OpSum ops, int64_t n_sites,
   }
 }
 
-void test_spinhalf_symmetric_apply_no_sz(OpSum ops, int64_t n_sites,
+void test_spinhalf_symmetric_apply_no_sz(OpSum ops, int64_t nsites,
                                          std::vector<Representation> irreps) {
   for (auto irrep : irreps) {
-    auto block = Spinhalf(n_sites, irrep);
+    auto block = Spinhalf(nsites, irrep);
 
     if (block.size() > 0) {
       auto H = matrixC(ops, block, block);
@@ -109,21 +109,21 @@ void test_spinhalf_symmetric_apply_no_sz(OpSum ops, int64_t n_sites,
   }
 }
 
-void test_spinhalf_symmetric_apply_chains(int n_sites) {
+void test_spinhalf_symmetric_apply_chains(int nsites) {
   using namespace xdiag::testcases::spinhalf;
   using xdiag::testcases::electron::get_cyclic_group_irreps;
-  Log.out("spinhalf_symmetric_apply: HB chain, N: {}", n_sites);
-  auto irreps = get_cyclic_group_irreps(n_sites);
-  auto ops = HBchain(n_sites, 1.0, 1.0);
-  test_spinhalf_symmetric_apply(ops, n_sites, irreps);
-  test_spinhalf_symmetric_apply_no_sz(ops, n_sites, irreps);
+  Log.out("spinhalf_symmetric_apply: HB chain, N: {}", nsites);
+  auto irreps = get_cyclic_group_irreps(nsites);
+  auto ops = HBchain(nsites, 1.0, 1.0);
+  test_spinhalf_symmetric_apply(ops, nsites, irreps);
+  test_spinhalf_symmetric_apply_no_sz(ops, nsites, irreps);
 }
 
 TEST_CASE("spinhalf_symmetric_apply", "[spinhalf]") {
 
   // Test linear Heisenberg chains
-  for (int n_sites = 3; n_sites < 7; ++n_sites) {
-    test_spinhalf_symmetric_apply_chains(n_sites);
+  for (int nsites = 3; nsites < 7; ++nsites) {
+    test_spinhalf_symmetric_apply_chains(nsites);
   }
 
   // test a 3x3 triangular lattice
@@ -179,11 +179,11 @@ TEST_CASE("spinhalf_symmetric_apply", "[spinhalf]") {
         {"M.C2.B", -5.7723510325561688816},
         {"X.C1.A", -5.9030627660522529965}};
 
-    int n_sites = 12;
-    int n_up = 6;
+    int nsites = 12;
+    int nup = 6;
     for (auto [name, energy] : rep_name_mult) {
       auto irrep = read_representation(fl, name);
-      auto spinhalf = Spinhalf(n_sites, n_up, irrep);
+      auto spinhalf = Spinhalf(nsites, nup, irrep);
       auto e0 = eigval0(ops, spinhalf);
       Log("{} {:.12f} {:.12f}", name, e0, energy);
 

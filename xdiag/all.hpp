@@ -33,6 +33,7 @@
 #include <xdiag/utils/say_hello.hpp>
 #include <xdiag/utils/type_string.hpp>
 #include <xdiag/utils/xdiag_show.hpp>
+#include <xdiag/utils/split.hpp>
 
 #include <xdiag/utils/matrix.hpp>
 #include <xdiag/utils/scalar.hpp>

@@ -32,7 +32,7 @@ public:
   inline bit_t state(int64_t idx) const { return reps_[idx]; }
   inline double norm(int64_t idx) const { return norms_[idx]; }
 
-  int64_t n_sites() const;
+  int64_t nsites() const;
   GroupActionLookup<bit_t> const &group_action() const;
   Representation const &irrep() const;
 
@@ -40,7 +40,7 @@ public:
   bool operator!=(BasisSymmetricNoSz const &rhs) const;
 
 private:
-  int64_t n_sites_;
+  int64_t nsites_;
   GroupActionLookup<bit_t> group_action_;
   Representation irrep_;
   combinatorics::SubsetsIndexing<bit_t> subsets_basis_;

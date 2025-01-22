@@ -9,11 +9,11 @@ namespace xdiag {
 class GPWF {
 public:
   GPWF() = default;
-  GPWF(arma::mat const &onebody_wfs, int64_t n_up = -1);
-  GPWF(arma::cx_mat const &onebody_wfs, int64_t n_up = -1);
+  GPWF(arma::mat const &onebody_wfs, int64_t nup = -1);
+  GPWF(arma::cx_mat const &onebody_wfs, int64_t nup = -1);
 
-  int64_t n_sites() const;
-  int64_t n_up() const;
+  int64_t nsites() const;
+  int64_t nup() const;
   bool isreal() const;
 
   double coefficient(ProductState const &state) const;
@@ -24,9 +24,9 @@ public:
 
 private:
   bool isreal_;
-  int64_t n_sites_;
-  int64_t n_up_;
-  int64_t n_dn_;
+  int64_t nsites_;
+  int64_t nup_;
+  int64_t ndn_;
 
   // Real version
   mutable arma::mat work_matrix_;

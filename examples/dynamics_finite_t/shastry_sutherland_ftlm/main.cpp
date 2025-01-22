@@ -74,10 +74,10 @@ int main(int argc, char **argv) {
   ops["Jd"] = Jd;
   auto group = PermutationGroup(lfile["Symmetries"]);
   auto irrep_k = Representation(lfile[k]);
-  int n_sites = ops.n_sites();
+  int nsites = ops.nsites();
 
   Log("Creating block nup: {}, k: {} ...", nup, k);
-  auto block_k = Spinhalf(n_sites, nup, group, irrep_k);
+  auto block_k = Spinhalf(nsites, nup, group, irrep_k);
   ofile["DimK"] = block_k.size();
   if (block_k.size() == 0){
     ofile["AlphasT"] = vec(zeros(0));
@@ -104,7 +104,7 @@ int main(int argc, char **argv) {
   Log("Creating block nup: {}, k+q: {}+{}", nup, k, q);
   auto irrep_q = Representation(lfile[q]);
   auto irrep_k_q = irrep_k * irrep_q;
-  auto block_k_q = Spinhalf(n_sites, nup, group, irrep_k_q);
+  auto block_k_q = Spinhalf(nsites, nup, group, irrep_k_q);
   ofile["DimKQ"] = block_k_q.size();
 
   Log("Computing ground state |gs> and S(q)|gs>...");
@@ -112,11 +112,11 @@ int main(int argc, char **argv) {
   mat coords = lfile["Coordinates"].as<mat>();
   auto qq = lfile[q + std::string(".momentum")].as<vec>();
   OpSum S_of_q;
-  for (int site = 0; site < n_sites; ++site) {
+  for (int site = 0; site < nsites; ++site) {
     complex phase =
         std::exp(std::complex<double>(0, 1.0) *
                  (qq(0) * coords(site, 0) + qq(1) * coords(site, 1)));
-    S_of_q << Op("Sz", phase / n_sites, site);
+    S_of_q << Op("Sz", phase / nsites, site);
   }
   auto s_of_q_gs = StateCplx(block_k_q);
   apply(S_of_q, gs, s_of_q_gs);

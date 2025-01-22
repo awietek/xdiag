@@ -4,35 +4,35 @@
 #include <set>
 namespace xdiag::utils {
 
-void check_nup_spinhalf(int n_sites, int nup, std::string block_name) {
-  if (n_sites < 0)
-    Log.err("Error creating {}: n_sites < 0", block_name);
-  if ((nup < 0) || (nup > n_sites))
+void check_nup_spinhalf(int nsites, int nup, std::string block_name) {
+  if (nsites < 0)
+    Log.err("Error creating {}: nsites < 0", block_name);
+  if ((nup < 0) || (nup > nsites))
     Log.err("Error creating {}: invalid value of nup", block_name);
 }
 
-void check_nup_ndn_electron(int n_sites, int nup, int ndn,
+void check_nup_ndn_electron(int nsites, int nup, int ndn,
                             std::string block_name) {
-  if (n_sites < 0)
-    Log.err("Error creating {}: n_sites < 0", block_name);
-  if ((nup < 0) || (nup > n_sites))
+  if (nsites < 0)
+    Log.err("Error creating {}: nsites < 0", block_name);
+  if ((nup < 0) || (nup > nsites))
     Log.err("Error creating {}: invalid value of nup", block_name);
-  if ((ndn < 0) || (ndn > n_sites))
+  if ((ndn < 0) || (ndn > nsites))
     Log.err("Error creating {}: invalid value of ndn", block_name);
 }
 
-void check_nup_ndn_tj(int n_sites, int nup, int ndn, std::string block_name) {
-  if ((nup < 0) || (nup > n_sites))
+void check_nup_ndn_tj(int nsites, int nup, int ndn, std::string block_name) {
+  if ((nup < 0) || (nup > nsites))
     Log.err("Error creating {}: invalid value of nup", block_name);
-  if ((ndn < 0) || (ndn > n_sites))
+  if ((ndn < 0) || (ndn > nsites))
     Log.err("Error creating {}: invalid value of ndn", block_name);
-  if (nup + ndn > n_sites)
+  if (nup + ndn > nsites)
     Log.err("Error creating {}: invalid value of nup+ndn", block_name);
 }
 
-void check_n_sites(int n_sites, PermutationGroup const &permutation_group) {
-  if (n_sites != permutation_group.n_sites()) {
-    Log.err("Error: number of sites in permutation group is not n_sites!");
+void check_nsites(int nsites, PermutationGroup const &permutation_group) {
+  if (nsites != permutation_group.nsites()) {
+    Log.err("Error: number of sites in permutation group is not nsites!");
   }
 }
 

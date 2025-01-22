@@ -20,10 +20,10 @@ public:
   using iterator_t = BasisSzIterator<bit_t>;
 
   BasisSz() = default;
-  BasisSz(int64_t n_sites, int64_t n_up);
+  BasisSz(int64_t nsites, int64_t nup);
 
-  int64_t n_sites() const;
-  int64_t n_up() const;
+  int64_t nsites() const;
+  int64_t nup() const;
 
   int64_t n_prefix_bits() const;
   int64_t n_postfix_bits() const;
@@ -58,8 +58,8 @@ public:
   bool operator!=(BasisSz const &rhs) const;
 
 private:
-  int64_t n_sites_;
-  int64_t n_up_;
+  int64_t nsites_;
+  int64_t nup_;
 
   int n_prefix_bits_;
   int n_postfix_bits_;

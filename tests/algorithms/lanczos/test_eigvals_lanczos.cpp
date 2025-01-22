@@ -16,17 +16,17 @@ TEST_CASE("eigvals_lanczos", "[lanczos]") {
   OpSum ops;
   ops["U"] = 5.0;
 
-  int n_sites = 6;
+  int nsites = 6;
   int num_eigenvalue = 1;
 
   printf("eigvals_lanczos real test ...\n");
-  ops = freefermion_alltoall(n_sites);
+  ops = freefermion_alltoall(nsites);
 
-  for (int nup = 0; nup <= n_sites; ++nup)
-    for (int ndn = 0; ndn <= n_sites; ++ndn) {
+  for (int nup = 0; nup <= nsites; ++nup)
+    for (int ndn = 0; ndn <= nsites; ++ndn) {
 
       // Compute exact evals
-      auto block = Electron(n_sites, nup, ndn);
+      auto block = Electron(nsites, nup, ndn);
       auto H = matrix(ops, block, block);
       arma::vec evals_mat;
       arma::eig_sym(evals_mat, H);
@@ -46,13 +46,13 @@ TEST_CASE("eigvals_lanczos", "[lanczos]") {
   printf("Done.\n");
 
   printf("eigvals_lanczos cplx test ...\n");
-  ops = freefermion_alltoall_complex_updn(n_sites);
+  ops = freefermion_alltoall_complex_updn(nsites);
 
-  for (int nup = 0; nup <= n_sites; ++nup)
-    for (int ndn = 0; ndn <= n_sites; ++ndn) {
+  for (int nup = 0; nup <= nsites; ++nup)
+    for (int ndn = 0; ndn <= nsites; ++ndn) {
 
       // Create block and matrix for comparison
-      auto block = Electron(n_sites, nup, ndn);
+      auto block = Electron(nsites, nup, ndn);
       auto H = matrixC(ops, block, block);
       arma::vec evals_mat;
       arma::eig_sym(evals_mat, H);

@@ -79,8 +79,8 @@ TEST_CASE("qns", "[operators]") try {
   REQUIRE(*nup(Op("Matrix", {0, 1}, mat(kron(sm, sz)))) == -1);
   REQUIRE(*nup(Op("Matrix", {0, 1}, mat(kron(sm, sm)))) == -2);
 
-  for (int n_sites = 3; n_sites < 8; ++n_sites) {
-    auto irreps = testcases::electron::get_cyclic_group_irreps(n_sites);
+  for (int nsites = 3; nsites < 8; ++nsites) {
+    auto irreps = testcases::electron::get_cyclic_group_irreps(nsites);
     for (auto const &irrep : irreps) {
       {
         auto ops = symmetrize(Op("Sz", 0), irrep);

@@ -68,7 +68,7 @@ Representation representation(OpSum const &ops, State const &v) try {
 
 template <typename block_t>
 int64_t nup(OpSum const &ops, block_t const &block) try {
-  auto nup_block = block.n_up();
+  auto nup_block = block.nup();
   if (!nup_block) {
     XDIAG_THROW("Block does not have a fixed number of nup particles");
   } else {
@@ -105,7 +105,7 @@ int64_t nup(OpSum const &ops, State const &v) try {
 
 template <typename block_t>
 int64_t ndn(OpSum const &ops, block_t const &block) try {
-  auto ndn_block = block.n_dn();
+  auto ndn_block = block.ndn();
   if (!ndn_block) {
     XDIAG_THROW("Block does not have a fixed number of ndn particles");
   }

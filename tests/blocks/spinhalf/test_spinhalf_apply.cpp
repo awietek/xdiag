@@ -92,14 +92,14 @@ TEST_CASE("spinhalf_apply", "[spinhalf]") {
 
   Log.out("spinhalf_apply: Heisenberg all-to-all Sz <-> NoSz comparison, "
           "matrix-matrix multiplication");
-  for (int n_sites = 2; n_sites <= 6; ++n_sites) {
-    auto ops = HB_alltoall(n_sites);
-    auto block_no_sz = Spinhalf(n_sites);
+  for (int nsites = 2; nsites <= 6; ++nsites) {
+    auto ops = HB_alltoall(nsites);
+    auto block_no_sz = Spinhalf(nsites);
     auto e0_no_sz = eigval0(ops, block_no_sz);
     auto e0s_sz = std::vector<double>();
 
-    for (int nup = 0; nup <= n_sites; ++nup) {
-      auto block_sz = Spinhalf(n_sites, nup);
+    for (int nup = 0; nup <= nsites; ++nup) {
+      auto block_sz = Spinhalf(nsites, nup);
       auto e0_sz = eigval0(ops, block_sz);
       e0s_sz.push_back(e0_sz);
     }
@@ -119,9 +119,9 @@ TEST_CASE("spinhalf_apply", "[spinhalf]") {
     ops["J2"] = 0.15;
     ops["Jchi"] = 0.09;
 
-    int n_sites = 12;
-    int n_up = 6;
-    auto spinhalf = Spinhalf(n_sites, n_up);
+    int nsites = 12;
+    int nup = 6;
+    auto spinhalf = Spinhalf(nsites, nup);
     auto e0 = eigval0(ops, spinhalf);
     double energy = -6.9456000700824329641;
 

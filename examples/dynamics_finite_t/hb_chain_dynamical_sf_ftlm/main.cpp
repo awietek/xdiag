@@ -10,8 +10,8 @@ int main(int argc, char **argv) {
 
   // Parse input arguments
   assert(argc == 6);
-  int n_sites = atoi(argv[1]); // number of sites
-  int n_up = atoi(argv[2]);    // number of upspins
+  int nsites = atoi(argv[1]); // number of sites
+  int nup = atoi(argv[2]);    // number of upspins
   int k = atoi(argv[3]);       // momentum k
   int seed = atoi(argv[4]);    // random seed
   int n_iters = atoi(argv[5]); // number of iterations
@@ -19,42 +19,42 @@ int main(int argc, char **argv) {
   Log.set_verbosity(1);
 
   // Define directories for output / scratch data
-  std::string outdir = format("outfiles/N.{}/seed.{}", n_sites, seed);
+  std::string outdir = format("outfiles/N.{}/seed.{}", nsites, seed);
   std::string outfile =
-      format("{}/outfile.N.{}.nup.{}.k.{}.seed.{}.iters.{}.h5", outdir, n_sites,
-             n_up, k, seed, n_iters);
+      format("{}/outfile.N.{}.nup.{}.k.{}.seed.{}.iters.{}.h5", outdir, nsites,
+             nup, k, seed, n_iters);
   std::string scratchdir =
       format("/scratch/martin/tmp/ftlm.N.{}.nup.{}.k.{}.seed.{}.iters.{}/",
-             n_sites, n_up, k, seed, n_iters);
+             nsites, nup, k, seed, n_iters);
   std::filesystem::create_directories(outdir);
   std::filesystem::create_directories(scratchdir);
 
   // Create nearest-neighbor Heisenberg model
   OpSum ops;
-  for (int s = 0; s < n_sites; ++s) {
-    ops += Op("HB", "J", {s, (s + 1) % n_sites});
+  for (int s = 0; s < nsites; ++s) {
+    ops += Op("HB", "J", {s, (s + 1) % nsites});
   }
   ops["J"] = 1.0;
 
   // Create the permutation group
   std::vector<int> translation;
-  for (int s = 0; s < n_sites; ++s) {
-    translation.push_back((s + 1) % n_sites);
+  for (int s = 0; s < nsites; ++s) {
+    translation.push_back((s + 1) % nsites);
   }
   Permutation perm(translation);
   auto group = generated_group(perm);
 
   // Create the irreps at momenta k
   std::vector<Representation> irreps;
-  for (int q = 0; q < n_sites; ++q) {
-    complex phase = exp(2i * pi * q / n_sites);
+  for (int q = 0; q < nsites; ++q) {
+    complex phase = exp(2i * pi * q / nsites);
     auto irrep = generated_irrep(perm, phase);
     irreps.push_back(irrep);
   }
 
   ////////////////////////////////////////////////////////
   Log("Creating Lanczos vector matrix V from |r> ...");
-  auto block = Spinhalf(n_sites, n_up, group, irreps[k]);
+  auto block = Spinhalf(nsites, nup, group, irreps[k]);
   ivec dim_k(1);
   dim_k(0) = block.size();
   dim_k.save(hdf5_name(outfile, "dim", append));
@@ -74,11 +74,11 @@ int main(int argc, char **argv) {
   XDIAG_SHOW(block);
   auto gs = groundstate(ops, block);
 
-  for (int q = 0; q < n_sites; ++q) {
+  for (int q = 0; q < nsites; ++q) {
 
     Log("Creating S(q)|g.s.> (q={}) ...", q);
     auto S_of_q = symmetrized_operator(Op("Sz", 0), group, irreps[q]);
-    auto block_q = Spinhalf(n_sites, n_up, group, irreps[k] * irreps[q]);
+    auto block_q = Spinhalf(nsites, nup, group, irreps[k] * irreps[q]);
     ivec dim_q(1);
     dim_q(0) = block_q.size();
     dim_q.save(hdf5_name(outfile, format("q_{}/dim", q), append));

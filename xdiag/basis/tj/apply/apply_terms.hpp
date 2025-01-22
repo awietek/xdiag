@@ -3,6 +3,7 @@
 #include <xdiag/basis/tj/apply/apply_exchange.hpp>
 #include <xdiag/basis/tj/apply/apply_hopping.hpp>
 #include <xdiag/basis/tj/apply/apply_number.hpp>
+#include <xdiag/basis/tj/apply/apply_number_number.hpp>
 #include <xdiag/basis/tj/apply/apply_raise_lower.hpp>
 #include <xdiag/basis/tj/apply/apply_szsz.hpp>
 #include <xdiag/common.hpp>
@@ -17,17 +18,22 @@ void apply_terms(OpSum const &ops, BasisIn const &basis_in,
   for (auto const &[cpl, op] : ops) {
     std::string type = op.type();
     if ((type == "SzSz") || (type == "tJSzSz")) {
-      apply_szsz<bit_t, coeff_t, symmetric>(cpl, op, basis_in, fill);
+      tj::apply_szsz<bit_t, coeff_t, symmetric>(cpl, op, basis_in, fill);
     } else if ((type == "Nup") || (type == "Ndn")) {
-      apply_number<bit_t, coeff_t, symmetric>(cpl, op, basis_in, fill);
+      tj::apply_number<bit_t, coeff_t, symmetric>(cpl, op, basis_in, fill);
+    } else if (type == "NtotNtot") {
+      tj::apply_number_number<bit_t, coeff_t, symmetric>(cpl, op, basis_in,
+                                                         fill);
     } else if (type == "Exchange") {
-      apply_exchange<bit_t, coeff_t, symmetric>(cpl, op, basis_in, fill);
+      tj::apply_exchange<bit_t, coeff_t, symmetric>(cpl, op, basis_in, fill);
     } else if ((type == "Hopup") || (type == "Hopdn")) {
-      apply_hopping<bit_t, coeff_t, symmetric>(cpl, op, basis_in, fill);
+      tj::apply_hopping<bit_t, coeff_t, symmetric>(cpl, op, basis_in, fill);
     } else if ((type == "Cdagup") || (type == "Cup") || (type == "Cdagdn") ||
                (type == "Cdn")) {
-      apply_raise_lower<bit_t, coeff_t, symmetric>(cpl, op, basis_in, basis_out,
-                                                   fill);
+      tj::apply_raise_lower<bit_t, coeff_t, symmetric>(cpl, op, basis_in,
+                                                       basis_out, fill);
+    } else {
+      XDIAG_THROW(fmt::format("Unknown Op type \"{}\"", type));
     }
   }
 } catch (Error const &e) {

@@ -4,18 +4,18 @@
 
 namespace xdiag::testcases::spinhalf {
 
-OpSum HBchain(int64_t n_sites, double J1, double J2) {
+OpSum HBchain(int64_t nsites, double J1, double J2) {
 
   OpSum ops;
   ops["J1"] = J1;
   ops["J2"] = J2;
 
-  for (int64_t s = 0; s < n_sites; ++s) {
-    ops += "J1" * Op("SdotS", {s, (s + 1) % n_sites});
+  for (int64_t s = 0; s < nsites; ++s) {
+    ops += "J1" * Op("SdotS", {s, (s + 1) % nsites});
   }
-  if (n_sites > 2) {
-    for (int64_t s = 0; s < n_sites; ++s) {
-      ops += "J2" * Op("SdotS", {s, (s + 2) % n_sites});
+  if (nsites > 2) {
+    for (int64_t s = 0; s < nsites; ++s) {
+      ops += "J2" * Op("SdotS", {s, (s + 2) % nsites});
     }
   }
   return ops;
@@ -98,13 +98,13 @@ std::tuple<OpSum, arma::Col<double>> HBchain_fullspectrum_nup(int64_t L,
   return {ops, eigs};
 }
 
-OpSum HB_alltoall(int64_t n_sites) {
+OpSum HB_alltoall(int64_t nsites) {
   std::default_random_engine generator;
   std::normal_distribution<double> distribution(0., 1.);
 
   OpSum ops;
-  for (int64_t s1 = 0; s1 < n_sites; ++s1)
-    for (int64_t s2 = s1 + 1; s2 < n_sites; ++s2) {
+  for (int64_t s1 = 0; s1 < nsites; ++s1)
+    for (int64_t s2 = s1 + 1; s2 < nsites; ++s2) {
       std::stringstream ss;
       ss << "J" << s1 << "_" << s2;
       std::string name = ss.str();

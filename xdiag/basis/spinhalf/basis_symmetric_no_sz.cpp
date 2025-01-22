@@ -6,9 +6,9 @@ namespace xdiag::basis::spinhalf {
 
 template <class bit_t>
 BasisSymmetricNoSz<bit_t>::BasisSymmetricNoSz(Representation const &irrep) try
-    : n_sites_(irrep.group().n_sites()), group_action_(irrep.group()),
-      irrep_(irrep), subsets_basis_(n_sites_) {
-  check_n_sites_work_with_bits<bit_t>(n_sites_);
+    : nsites_(irrep.group().nsites()), group_action_(irrep.group()),
+      irrep_(irrep), subsets_basis_(nsites_) {
+  check_nsites_work_with_bits<bit_t>(nsites_);
 
   if (isreal(irrep)) {
     arma::vec characters = irrep.characters().as<arma::vec>();
@@ -47,8 +47,8 @@ template <class bit_t> int64_t BasisSymmetricNoSz<bit_t>::size() const {
   return size_;
 }
 
-template <class bit_t> int64_t BasisSymmetricNoSz<bit_t>::n_sites() const {
-  return n_sites_;
+template <class bit_t> int64_t BasisSymmetricNoSz<bit_t>::nsites() const {
+  return nsites_;
 }
 template <class bit_t>
 GroupActionLookup<bit_t> const &
@@ -63,7 +63,7 @@ Representation const &BasisSymmetricNoSz<bit_t>::irrep() const {
 template <typename bit_t>
 bool BasisSymmetricNoSz<bit_t>::operator==(
     BasisSymmetricNoSz<bit_t> const &rhs) const {
-  return (n_sites_ == rhs.n_sites_) && (group_action_ == rhs.group_action_) &&
+  return (nsites_ == rhs.nsites_) && (group_action_ == rhs.group_action_) &&
          (irrep_ == rhs.irrep_);
 }
 

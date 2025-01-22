@@ -11,19 +11,19 @@
 
 using namespace xdiag;
 
-void test_electron_np_no_np_matrix(int n_sites, OpSum ops) try {
+void test_electron_np_no_np_matrix(int nsites, OpSum ops) try {
 
-  auto block_full = Electron(n_sites);
+  auto block_full = Electron(nsites);
   auto H_full = matrixC(ops, block_full, block_full);
   REQUIRE(H_full.is_hermitian(1e-12));
   arma::Col<double> eigs_full;
   arma::eig_sym(eigs_full, H_full);
 
   std::vector<double> all_eigs;
-  for (int nup = 0; nup <= n_sites; ++nup)
-    for (int ndn = 0; ndn <= n_sites; ++ndn) {
+  for (int nup = 0; nup <= nsites; ++nup)
+    for (int ndn = 0; ndn <= nsites; ++ndn) {
 
-      auto block = Electron(n_sites, nup, ndn);
+      auto block = Electron(nsites, nup, ndn);
       auto H = matrixC(ops, block, block);
       REQUIRE(H.is_hermitian(1e-12));
 
@@ -46,15 +46,15 @@ TEST_CASE("electron_matrix", "[electron]") try {
 
   // Compare with matrix from Weisse and Fehske
   Log("electron_matrix: Hubbard Weisse & Fehske");
-  int n_sites = 4;
-  int n_up = 3;
-  int n_dn = 2;
+  int nsites = 4;
+  int nup = 3;
+  int ndn = 2;
   double t = 1.0;
   double U = 5.0;
-  auto block = Electron(n_sites, n_up, n_dn);
+  auto block = Electron(nsites, nup, ndn);
 
-  for (int i = 0; i < n_sites; ++i) {
-    ops += "T" * Op("Hop", {i, (i + 1) % n_sites});
+  for (int i = 0; i < nsites; ++i) {
+    ops += "T" * Op("Hop", {i, (i + 1) % nsites});
   }
   ops += "U" * Op("HubbardU");
   ops["T"] = 1.0;
@@ -147,14 +147,14 @@ TEST_CASE("electron_matrix", "[electron]") try {
 
   ///////////////////////////////////////////////////
   // Test Fermion all to all, free fermions (real)
-  for (int n_sites = 3; n_sites < 7; ++n_sites) {
+  for (int nsites = 3; nsites < 7; ++nsites) {
     Log("electron_matrix: free fermion random all-to-all test, (real), N={}",
-        n_sites);
+        nsites);
 
-    ops = freefermion_alltoall(n_sites);
+    ops = freefermion_alltoall(nsites);
 
     // Create single particle matrix
-    arma::Mat<double> Hs(n_sites, n_sites, arma::fill::zeros);
+    arma::Mat<double> Hs(nsites, nsites, arma::fill::zeros);
     for (auto [cpl, op] : ops) {
       REQUIRE(op.sites().size() == 2);
       int s1 = op[0];
@@ -166,8 +166,8 @@ TEST_CASE("electron_matrix", "[electron]") try {
 
     arma::vec seigs;
     arma::eig_sym(seigs, Hs);
-    for (int nup = 0; nup <= n_sites; ++nup)
-      for (int ndn = 0; ndn <= n_sites; ++ndn) {
+    for (int nup = 0; nup <= nsites; ++nup)
+      for (int ndn = 0; ndn <= nsites; ++ndn) {
 
         // Compute exact gs energy
         double e0_exact = 0;
@@ -176,7 +176,7 @@ TEST_CASE("electron_matrix", "[electron]") try {
         for (int i = 0; i < ndn; ++i)
           e0_exact += seigs(i);
 
-        auto block3 = Electron(n_sites, nup, ndn);
+        auto block3 = Electron(nsites, nup, ndn);
         auto Hr = matrix(ops, block3, block3);
         REQUIRE(Hr.is_hermitian(1e-8));
         arma::vec eigsr;
@@ -195,13 +195,13 @@ TEST_CASE("electron_matrix", "[electron]") try {
 
   //////////////////////////////////////////////////////////////////
   // Test Fermion all to all, free fermions (cplx, up/dn different)
-  for (int n_sites = 3; n_sites < 7; ++n_sites) {
+  for (int nsites = 3; nsites < 7; ++nsites) {
     Log("electron_matrix: free fermion random all-to-all test, (cplx), N={}",
-        n_sites);
-    ops = freefermion_alltoall_complex_updn(n_sites);
+        nsites);
+    ops = freefermion_alltoall_complex_updn(nsites);
 
     // Create single particle matrix for upspins
-    arma::cx_mat Hs_up(n_sites, n_sites, arma::fill::zeros);
+    arma::cx_mat Hs_up(nsites, nsites, arma::fill::zeros);
     for (auto [cpl, op] : ops) {
       if (op.type() == "Hopup") {
         assert(op.size() == 2);
@@ -216,7 +216,7 @@ TEST_CASE("electron_matrix", "[electron]") try {
     arma::eig_sym(seigs_up, Hs_up);
 
     // Create single particle matrix for dnspins
-    arma::cx_mat Hs_dn(n_sites, n_sites, arma::fill::zeros);
+    arma::cx_mat Hs_dn(nsites, nsites, arma::fill::zeros);
     for (auto [cpl, op] : ops) {
       if (op.type() == "Hopdn") {
         assert(op.size() == 2);
@@ -230,8 +230,8 @@ TEST_CASE("electron_matrix", "[electron]") try {
     arma::vec seigs_dn;
     arma::eig_sym(seigs_dn, Hs_dn);
 
-    for (int nup = 0; nup <= n_sites; ++nup)
-      for (int ndn = 0; ndn <= n_sites; ++ndn) {
+    for (int nup = 0; nup <= nsites; ++nup)
+      for (int ndn = 0; ndn <= nsites; ++ndn) {
 
         // Compute exact gs energy
         double e0_exact = 0;
@@ -240,7 +240,7 @@ TEST_CASE("electron_matrix", "[electron]") try {
         for (int i = 0; i < ndn; ++i)
           e0_exact += seigs_dn(i);
 
-        auto block3 = Electron(n_sites, nup, ndn);
+        auto block3 = Electron(nsites, nup, ndn);
         auto H = matrixC(ops, block3, block3);
         REQUIRE(H.is_hermitian(1e-8));
         arma::vec evecs;
@@ -253,15 +253,15 @@ TEST_CASE("electron_matrix", "[electron]") try {
   }
 
   // Test Heisenberg terms at half-filling
-  for (int n_sites = 2; n_sites <= 6; ++n_sites) {
+  for (int nsites = 2; nsites <= 6; ++nsites) {
     Log("electron_matrix: Heisenberg all-to-all comparison test, N={}",
-        n_sites);
-    int nup = n_sites / 2;
-    int ndn = n_sites - nup;
-    auto block_spinhalf = Spinhalf(n_sites, nup);
-    auto block_electron = Electron(n_sites, nup, ndn);
+        nsites);
+    int nup = nsites / 2;
+    int ndn = nsites - nup;
+    auto block_spinhalf = Spinhalf(nsites, nup);
+    auto block_electron = Electron(nsites, nup, ndn);
 
-    auto ops = testcases::spinhalf::HB_alltoall(n_sites);
+    auto ops = testcases::spinhalf::HB_alltoall(nsites);
     auto ops_U = ops;
     ops_U += "U" * Op("HubbardU");
     ops_U["U"] = 999999; // gap out doubly occupied sites
@@ -288,11 +288,11 @@ TEST_CASE("electron_matrix", "[electron]") try {
     auto [ops, eigs_correct] = randomAlltoAll4NoU();
 
     // Compute full spectrum in xdiag
-    n_sites = 4;
+    nsites = 4;
     std::vector<double> all_eigs;
-    for (int nup = 0; nup <= n_sites; ++nup)
-      for (int ndn = 0; ndn <= n_sites; ++ndn) {
-        auto block = Electron(n_sites, nup, ndn);
+    for (int nup = 0; nup <= nsites; ++nup)
+      for (int ndn = 0; ndn <= nsites; ++ndn) {
+        auto block = Electron(nsites, nup, ndn);
         auto H = matrix(ops, block, block);
         REQUIRE(H.is_hermitian(1e-8));
         arma::vec eigs;
@@ -305,10 +305,10 @@ TEST_CASE("electron_matrix", "[electron]") try {
 
     std::tie(ops, eigs_correct) = randomAlltoAll4();
     all_eigs.clear();
-    for (int nup = 0; nup <= n_sites; ++nup)
-      for (int ndn = 0; ndn <= n_sites; ++ndn) {
+    for (int nup = 0; nup <= nsites; ++nup)
+      for (int ndn = 0; ndn <= nsites; ++ndn) {
 
-        auto block = Electron(n_sites, nup, ndn);
+        auto block = Electron(nsites, nup, ndn);
         auto H = matrix(ops, block, block);
         REQUIRE(H.is_hermitian(1e-8));
         arma::vec eigs;

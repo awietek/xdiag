@@ -5,10 +5,10 @@
 
 using namespace xdiag;
 
-void test_spinhalf_distributed(int n_sites) {
-  for (int nup = 0; nup <= n_sites; ++nup) {
-    auto block = Spinhalf(n_sites, nup);
-    auto block_mpi = SpinhalfDistributed(n_sites, nup);
+void test_spinhalf_distributed(int nsites) {
+  for (int nup = 0; nup <= nsites; ++nup) {
+    auto block = Spinhalf(nsites, nup);
+    auto block_mpi = SpinhalfDistributed(nsites, nup);
 
     auto mysiz = block_mpi.size();
     int64_t mysize = 0;
@@ -17,7 +17,7 @@ void test_spinhalf_distributed(int n_sites) {
 
     REQUIRE(block_mpi.dim() == block.size());
     REQUIRE(block_mpi.dim() == mysize);
-    REQUIRE(block_mpi.dim() == combinatorics::binomial(n_sites, nup));
+    REQUIRE(block_mpi.dim() == combinatorics::binomial(nsites, nup));
   }
 }
 

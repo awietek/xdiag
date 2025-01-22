@@ -19,13 +19,13 @@ TEST_CASE("random_state", "[states]") try {
   complex first_c = 0.;
 
   // Test whether random states from different blocks are different
-  for (int n_sites = 6; n_sites <= 8; ++n_sites) {
-    Log("N={}", n_sites);
-    auto irreps = get_cyclic_group_irreps(n_sites);
+  for (int nsites = 6; nsites <= 8; ++nsites) {
+    Log("N={}", nsites);
+    auto irreps = get_cyclic_group_irreps(nsites);
 
-    for (int nup = 0; nup <= n_sites; ++nup) {
+    for (int nup = 0; nup <= nsites; ++nup) {
       for (auto irrep : irreps) {
-        auto block = Spinhalf(n_sites, nup, irrep);
+        auto block = Spinhalf(nsites, nup, irrep);
 
         if (block.size() > 3) {
           // XDIAG_SHOW(irrep);

@@ -11,23 +11,23 @@ TEST_CASE("product_state", "[states]") try {
 
   // Test product state for Electron block
   for (int i = 0; i < 10; ++i) {
-    for (int n_sites = 1; n_sites < 9; ++n_sites) {
+    for (int nsites = 1; nsites < 9; ++nsites) {
 
       std::vector<std::string> ps = {"Emp", "Up", "Dn", "UpDn",
                                      "Emp", "Up", "Dn", "UpDn"};
       std::vector<std::string> pss;
-      std::sample(ps.begin(), ps.end(), std::back_inserter(pss), n_sites,
+      std::sample(ps.begin(), ps.end(), std::back_inserter(pss), nsites,
                   std::mt19937(i));
       auto pstate = ProductState(pss);
       // XDIAG_SHOW(pstate);
 
-      auto block = Electron(n_sites);
+      auto block = Electron(nsites);
       auto psi = State(block, true);
       fill(psi, pstate);
 
       int nup = 0;
       int ndn = 0;
-      for (int i = 0; i < n_sites; ++i) {
+      for (int i = 0; i < nsites; ++i) {
         std::string p = pstate[i];
         auto sz = Op("Sz", i);
         auto szc = inner(sz, psi);
@@ -54,11 +54,11 @@ TEST_CASE("product_state", "[states]") try {
         }
       }
 
-      auto block2 = Electron(n_sites, nup, ndn);
+      auto block2 = Electron(nsites, nup, ndn);
       auto psi2 = State(block2);
       fill(psi2, pstate);
 
-      for (int i = 0; i < n_sites; ++i) {
+      for (int i = 0; i < nsites; ++i) {
         std::string p = pstate[i];
         auto sz = Op("Sz", i);
         auto szc = inner(sz, psi2);
@@ -85,20 +85,20 @@ TEST_CASE("product_state", "[states]") try {
 
   // Test product state for tJ block
   for (int i = 0; i < 10; ++i) {
-    for (int n_sites = 1; n_sites < 9; ++n_sites) {
+    for (int nsites = 1; nsites < 9; ++nsites) {
 
       std::vector<std::string> ps = {
           "Emp", "Up", "Dn", "Emp", "Up", "Dn", "Emp", "Up", "Dn",
       };
       std::vector<std::string> pss;
-      std::sample(ps.begin(), ps.end(), std::back_inserter(pss), n_sites,
+      std::sample(ps.begin(), ps.end(), std::back_inserter(pss), nsites,
                   std::mt19937(i));
       auto pstate = ProductState(pss);
       // XDIAG_SHOW(pstate);
 
       int nup = 0;
       int ndn = 0;
-      for (int i = 0; i < n_sites; ++i) {
+      for (int i = 0; i < nsites; ++i) {
         std::string p = pstate[i];
 
         if (p == "Up") {
@@ -108,10 +108,10 @@ TEST_CASE("product_state", "[states]") try {
         }
       }
 
-      auto block2 = tJ(n_sites, nup, ndn);
+      auto block2 = tJ(nsites, nup, ndn);
       auto psi2 = State(block2);
       fill(psi2, pstate);
-      for (int i = 0; i < n_sites; ++i) {
+      for (int i = 0; i < nsites; ++i) {
         std::string p = pstate[i];
         auto sz = Op("Sz", i);
         auto szc = inner(sz, psi2);
@@ -135,21 +135,21 @@ TEST_CASE("product_state", "[states]") try {
 
   // Test product state for Spinhalf block
   for (int i = 0; i < 10; ++i) {
-    for (int n_sites = 1; n_sites < 9; ++n_sites) {
+    for (int nsites = 1; nsites < 9; ++nsites) {
 
       std::vector<std::string> ps = {"Up", "Dn", "Up", "Dn",
                                      "Up", "Dn", "Up", "Dn"};
       std::vector<std::string> pss;
-      std::sample(ps.begin(), ps.end(), std::back_inserter(pss), n_sites,
+      std::sample(ps.begin(), ps.end(), std::back_inserter(pss), nsites,
                   std::mt19937(i));
       auto pstate = ProductState(pss);
       // XDIAG_SHOW(pstate);
 
       int nup = 0;
-      auto block = Spinhalf(n_sites);
+      auto block = Spinhalf(nsites);
       auto psi = State(block);
       fill(psi, pstate);
-      for (int i = 0; i < n_sites; ++i) {
+      for (int i = 0; i < nsites; ++i) {
         std::string p = pstate[i];
 
         auto sz = Op("Sz", i);
@@ -163,10 +163,10 @@ TEST_CASE("product_state", "[states]") try {
         }
       }
 
-      auto block2 = Spinhalf(n_sites, nup);
+      auto block2 = Spinhalf(nsites, nup);
       auto psi2 = State(block2);
       fill(psi2, pstate);
-      for (int i = 0; i < n_sites; ++i) {
+      for (int i = 0; i < nsites; ++i) {
         std::string p = pstate[i];
         auto sz = Op("Sz", i);
         auto szc = inner(sz, psi2);

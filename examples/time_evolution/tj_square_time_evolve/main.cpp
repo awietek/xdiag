@@ -2,8 +2,8 @@
 
 using namespace xdiag;
 
-void measure_density(int n_sites, State const &v) {
-  for (int i = 0; i < n_sites; ++i) {
+void measure_density(int nsites, State const &v) {
+  for (int i = 0; i < nsites; ++i) {
     auto sz = innerC(Bond("Ntot", i), v);
     printf("%f ", std::real(sz));
   }
@@ -16,7 +16,7 @@ int main() {
   double t = 1.0;
   double J = 10.0;
 
-  int n_sites = L * L;
+  int nsites = L * L;
   double precision = 1e-12;
 
   // Create square lattice t-J model
@@ -38,11 +38,11 @@ int main() {
   ops["T"] = t;
   ops["J"] = J;
 
-  auto block = tJ(n_sites, n_sites / 2, n_sites / 2 - 1);
+  auto block = tJ(nsites, nsites / 2, nsites / 2 - 1);
   ops["J"] = J / 2;
   auto [e0, v] = eig0(ops, block);
 
-  measure_density(n_sites, v);
+  measure_density(nsites, v);
 
   ops["J"] = J;
 
@@ -51,7 +51,7 @@ int main() {
   double tau = 0.1;
   for (int i = 0; i < 40; ++i) {
     v = time_evolve(ops, v, tau, precision);
-    measure_density(n_sites, v);
+    measure_density(nsites, v);
   }
 
   return EXIT_SUCCESS;

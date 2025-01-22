@@ -8,49 +8,49 @@
 namespace xdiag::basis::electron {
 
 template <class bit_t>
-BasisSymmetricNoNp<bit_t>::BasisSymmetricNoNp(int64_t n_sites,
+BasisSymmetricNoNp<bit_t>::BasisSymmetricNoNp(int64_t nsites,
                                               Representation const &irrep) try
-    : n_sites_(n_sites), group_action_(irrep.group()), irrep_(irrep),
-      raw_ups_size_((int64_t)1 << n_sites),
-      raw_dns_size_((int64_t)1 << n_sites), lintable_ups_(n_sites),
-      lintable_dns_(n_sites), fermi_table_(n_sites_, irrep.group()) {
-  check_n_sites_work_with_bits<bit_t>(n_sites_);
+    : nsites_(nsites), group_action_(irrep.group()), irrep_(irrep),
+      raw_ups_size_((int64_t)1 << nsites),
+      raw_dns_size_((int64_t)1 << nsites), lintable_ups_(nsites),
+      lintable_dns_(nsites), fermi_table_(nsites_, irrep.group()) {
+  check_nsites_work_with_bits<bit_t>(nsites_);
 
-  if (n_sites < 0) {
-    XDIAG_THROW("n_sites < 0");
-  } else if (n_sites != irrep.group().n_sites()) {
-    XDIAG_THROW("n_sites does not match the n_sites in PermutationGroup");
+  if (nsites < 0) {
+    XDIAG_THROW("nsites < 0");
+  } else if (nsites != irrep.group().nsites()) {
+    XDIAG_THROW("nsites does not match the nsites in PermutationGroup");
   }
 
   using combinatorics::Subsets;
 
   std::tie(reps_up_, idces_up_, syms_up_, sym_limits_up_) =
       symmetries::representatives_indices_symmetries_limits<bit_t>(
-          combinatorics::SubsetsIndexing<bit_t>(n_sites), group_action_);
+          combinatorics::SubsetsIndexing<bit_t>(nsites), group_action_);
 
   if (isreal(irrep)) {
     auto characters = irrep.characters().as<arma::vec>();
     std::tie(dns_storage_, norms_storage_, dns_limits_, ups_offset_, size_) =
-        symmetries::electron_dns_norms_limits_offset_size(
-            reps_up_, Subsets<bit_t>(n_sites), group_action_, characters);
+        symmetries::electrondns_norms_limits_offset_size(
+            reps_up_, Subsets<bit_t>(nsites), group_action_, characters);
   } else {
     auto characters = irrep.characters().as<arma::cx_vec>();
     std::tie(dns_storage_, norms_storage_, dns_limits_, ups_offset_, size_) =
-        symmetries::electron_dns_norms_limits_offset_size(
-            reps_up_, Subsets<bit_t>(n_sites), group_action_, characters);
+        symmetries::electrondns_norms_limits_offset_size(
+            reps_up_, Subsets<bit_t>(nsites), group_action_, characters);
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
-template <class bit_t> int64_t BasisSymmetricNoNp<bit_t>::n_sites() const {
-  return n_sites_;
+template <class bit_t> int64_t BasisSymmetricNoNp<bit_t>::nsites() const {
+  return nsites_;
 }
-template <class bit_t> int64_t BasisSymmetricNoNp<bit_t>::n_up() const {
-  return n_up_;
+template <class bit_t> int64_t BasisSymmetricNoNp<bit_t>::nup() const {
+  return nup_;
 }
-template <class bit_t> int64_t BasisSymmetricNoNp<bit_t>::n_dn() const {
-  return n_dn_;
+template <class bit_t> int64_t BasisSymmetricNoNp<bit_t>::ndn() const {
+  return ndn_;
 }
 
 template <class bit_t> int64_t BasisSymmetricNoNp<bit_t>::dim() const {

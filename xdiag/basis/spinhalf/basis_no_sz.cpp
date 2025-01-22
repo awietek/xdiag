@@ -7,11 +7,11 @@
 namespace xdiag::basis::spinhalf {
 
 template <typename bit_t>
-BasisNoSz<bit_t>::BasisNoSz(int64_t n_sites) try
-    : n_sites_(n_sites), size_(pow(2, n_sites)), begin_(0), end_(size_) {
-  check_n_sites_work_with_bits<bit_t>(n_sites_);
-  if (n_sites < 0) {
-    XDIAG_THROW("Found n_sites < 0");
+BasisNoSz<bit_t>::BasisNoSz(int64_t nsites) try
+    : nsites_(nsites), size_(pow(2, nsites)), begin_(0), end_(size_) {
+  check_nsites_work_with_bits<bit_t>(nsites_);
+  if (nsites < 0) {
+    XDIAG_THROW("Found nsites < 0");
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
@@ -35,13 +35,13 @@ template <typename bit_t> int64_t BasisNoSz<bit_t>::size() const {
   return size_;
 }
 
-template <typename bit_t> int64_t BasisNoSz<bit_t>::n_sites() const {
-  return n_sites_;
+template <typename bit_t> int64_t BasisNoSz<bit_t>::nsites() const {
+  return nsites_;
 }
 
 template <typename bit_t>
 bool BasisNoSz<bit_t>::operator==(BasisNoSz<bit_t> const &rhs) const {
-  return (n_sites_ == rhs.n_sites_);
+  return (nsites_ == rhs.nsites_);
 }
 
 template <typename bit_t>

@@ -10,24 +10,24 @@ Representation of a block in a  $t-J$ type Hilbert space.
 
 === "Julia"
 	```julia
-	tJ(n_sites::Integer, n_up::Integer, n_dn::Integer)
-	tJ(n_sites::Integer, n_up::Integer, n_dn::Integer, 
+	tJ(nsites::Integer, nup::Integer, ndn::Integer)
+	tJ(nsites::Integer, nup::Integer, ndn::Integer, 
 	   group::PermutationGroup, irrep::Representation)
 	```
 
 === "C++"	
 	```c++
-    tJ(int64_t n_sites, int64_t n_up, int64_t n_dn);
-    tJ(int64_t n_sites, int64_t n_up, int64_t n_dn, 
+    tJ(int64_t nsites, int64_t nup, int64_t ndn);
+    tJ(int64_t nsites, int64_t nup, int64_t ndn, 
 	   PermutationGroup group, Representation irrep);
 	```
 
 
 | Name    | Description                                                                                |   |
 |:--------|:-------------------------------------------------------------------------------------------|---|
-| n_sites | number of sites (integer)                                                                  |   |
-| n_up    | number of "up" electrons (integer)                                                         |   |
-| n_dn    | number of "dn" electrons (integer)                                                         |   |
+| nsites | number of sites (integer)                                                                  |   |
+| nup    | number of "up" electrons (integer)                                                         |   |
+| ndn    | number of "dn" electrons (integer)                                                         |   |
 | group   | [PermutationGroup](../symmetries/permutation_group.md) defining the permutation symmetries |   |
 | irrep   | Irreducible [Representation](../symmetries/representation.md)  of the symmetry group       |   |
 
@@ -71,47 +71,47 @@ An tJ block can be iterated over, where at each iteration a [ProductState](../st
 
 
 
-!!! method "n_sites"
+!!! method "nsites"
 
 	Returns the number of sites of the block.
 
 	=== "Julia"
 		```julia
-		n_sites(block::tJ)
+		nsites(block::tJ)
 		```
 
 	=== "C++"	
 		```c++
-		int64_t n_sites() const;
+		int64_t nsites() const;
 		```
 
-!!! method "n_up"
+!!! method "nup"
 
 	Returns the number of "up" electrons.
 
 	=== "Julia"
 		```julia
-		n_up(block::tJ)
+		nup(block::tJ)
 		```
 
 	=== "C++"	
 		```c++
-		int64_t n_up() const;
+		int64_t nup() const;
 		```
 
 
-!!! method "n_dn"
+!!! method "ndn"
 
 	Returns the number of "down" electrons.
 
 	=== "Julia"
 		```julia
-		n_dn(block::tJ)
+		ndn(block::tJ)
 		```
 
 	=== "C++"	
 		```c++
-		int64_t n_dn() const;
+		int64_t ndn() const;
 		```
 
 !!! method "permutation_group"

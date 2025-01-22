@@ -56,9 +56,9 @@ void compare_indices_sz(Basis1 const &basis1, Basis2 const &basis2, int nup) {
     REQUIRE(basis1.state(idx) == basis2.state(idx));
   }
 
-  int n_sites = basis1.n_sites();
-  REQUIRE(n_sites == basis2.n_sites());
-  for (auto state : combinatorics::Combinations<bit_t>(n_sites, nup)) {
+  int nsites = basis1.nsites();
+  REQUIRE(nsites == basis2.nsites());
+  for (auto state : combinatorics::Combinations<bit_t>(nsites, nup)) {
     compare_state(state, basis1, basis2);
   }
 }
@@ -70,9 +70,9 @@ void compare_indices_no_sz(Basis1 const &basis1, Basis2 const &basis2) {
     REQUIRE(basis1.state(idx) == basis2.state(idx));
   }
 
-  int n_sites = basis1.n_sites();
-  REQUIRE(n_sites == basis2.n_sites());
-  for (auto state : combinatorics::Subsets<bit_t>(n_sites)) {
+  int nsites = basis1.nsites();
+  REQUIRE(nsites == basis2.nsites());
+  for (auto state : combinatorics::Subsets<bit_t>(nsites)) {
     compare_state(state, basis1, basis2);
   }
 }
@@ -88,7 +88,7 @@ template <class bit_t> void test_spinhalf_basis_sublattice() {
 
   {
     Log("basis_spinhalf_sublattice: 1 sublattice");
-    int n_sites = 8;
+    int nsites = 8;
     std::string lfile =
         XDIAG_DIRECTORY "/misc/data/square.8.heisenberg.2sl.toml";
     auto fl = FileToml(lfile);
@@ -105,7 +105,7 @@ template <class bit_t> void test_spinhalf_basis_sublattice() {
 
       compare_indices_no_sz<bit_t, basis_no_sz_t, basis_sl1_t>(idxng, idxng_sl);
 
-      for (int nup = 0; nup <= n_sites; ++nup) {
+      for (int nup = 0; nup <= nsites; ++nup) {
         auto idxng = basis_sz_t(nup, irrep);
         auto idxng_sl = basis_sl1_t(nup, irrep);
         compare_indices_sz<bit_t, basis_sz_t, basis_sl1_t>(idxng, idxng_sl,
@@ -116,7 +116,7 @@ template <class bit_t> void test_spinhalf_basis_sublattice() {
 
   {
     Log("basis_spinhalf_sublattice: 2 sublattice");
-    int n_sites = 8;
+    int nsites = 8;
     std::string lfile =
         XDIAG_DIRECTORY "/misc/data/square.8.heisenberg.2sl.toml";
     auto fl = FileToml(lfile);
@@ -131,7 +131,7 @@ template <class bit_t> void test_spinhalf_basis_sublattice() {
       auto idxng = basis_no_sz_t(irrep);
       auto idxng_sl = basis_sl2_t(irrep);
       compare_indices_no_sz<bit_t, basis_no_sz_t, basis_sl2_t>(idxng, idxng_sl);
-      for (int nup = 0; nup <= n_sites; ++nup) {
+      for (int nup = 0; nup <= nsites; ++nup) {
         auto idxng = basis_sz_t(nup, irrep);
         auto idxng_sl = basis_sl2_t(nup, irrep);
         compare_indices_sz<bit_t, basis_sz_t, basis_sl2_t>(idxng, idxng_sl,
@@ -142,7 +142,7 @@ template <class bit_t> void test_spinhalf_basis_sublattice() {
 
   {
     Log("basis_spinhalf_sublattice: 3 sublattice");
-    int n_sites = 9;
+    int nsites = 9;
     std::string lfile =
         XDIAG_DIRECTORY "/misc/data/square.9.heisenberg.3sl.toml";
     auto fl = FileToml(lfile);
@@ -156,7 +156,7 @@ template <class bit_t> void test_spinhalf_basis_sublattice() {
       auto idxng = basis_no_sz_t(irrep);
       auto idxng_sl = basis_sl3_t(irrep);
       compare_indices_no_sz<bit_t, basis_no_sz_t, basis_sl3_t>(idxng, idxng_sl);
-      for (int nup = 0; nup <= n_sites; ++nup) {
+      for (int nup = 0; nup <= nsites; ++nup) {
         auto idxng = basis_sz_t(nup, irrep);
         auto idxng_sl = basis_sl3_t(nup, irrep);
         compare_indices_sz<bit_t, basis_sz_t, basis_sl3_t>(idxng, idxng_sl,
@@ -167,7 +167,7 @@ template <class bit_t> void test_spinhalf_basis_sublattice() {
 
   {
     Log("basis_spinhalf_sublattice: 3 sublattice (triangular)");
-    int n_sites = 9;
+    int nsites = 9;
     std::string lfile = XDIAG_DIRECTORY
         "/misc/data/triangular.9.Jz1Jz2Jx1Jx2D1.sublattices.tsl.toml";
     auto fl = FileToml(lfile);
@@ -181,7 +181,7 @@ template <class bit_t> void test_spinhalf_basis_sublattice() {
       auto idxng = basis_no_sz_t(irrep);
       auto idxng_sl = basis_sl3_t(irrep);
       compare_indices_no_sz<bit_t, basis_no_sz_t, basis_sl3_t>(idxng, idxng_sl);
-      for (int nup = 0; nup <= n_sites; ++nup) {
+      for (int nup = 0; nup <= nsites; ++nup) {
         auto idxng = basis_sz_t(nup, irrep);
         auto idxng_sl = basis_sl3_t(nup, irrep);
         compare_indices_sz<bit_t, basis_sz_t, basis_sl3_t>(idxng, idxng_sl,
@@ -192,7 +192,7 @@ template <class bit_t> void test_spinhalf_basis_sublattice() {
 
   {
     Log("basis_spinhalf_sublattice: 4 sublattice");
-    int n_sites = 8;
+    int nsites = 8;
     std::string lfile =
         XDIAG_DIRECTORY "/misc/data/square.8.heisenberg.4sl.toml";
     auto fl = FileToml(lfile);
@@ -207,7 +207,7 @@ template <class bit_t> void test_spinhalf_basis_sublattice() {
       auto idxng = basis_no_sz_t(irrep);
       auto idxng_sl = basis_sl4_t(irrep);
       compare_indices_no_sz<bit_t, basis_no_sz_t, basis_sl4_t>(idxng, idxng_sl);
-      for (int nup = 0; nup <= n_sites; ++nup) {
+      for (int nup = 0; nup <= nsites; ++nup) {
         auto idxng = basis_sz_t(nup, irrep);
         auto idxng_sl = basis_sl4_t(nup, irrep);
         compare_indices_sz<bit_t, basis_sz_t, basis_sl4_t>(idxng, idxng_sl,
@@ -218,7 +218,7 @@ template <class bit_t> void test_spinhalf_basis_sublattice() {
 
   {
     Log("basis_spinhalf_sublattice: 5 sublattice");
-    int n_sites = 10;
+    int nsites = 10;
     std::string lfile =
         XDIAG_DIRECTORY "/misc/data/square.10.heisenberg.5sl.toml";
     auto fl = FileToml(lfile);
@@ -231,7 +231,7 @@ template <class bit_t> void test_spinhalf_basis_sublattice() {
       auto idxng = basis_no_sz_t(irrep);
       auto idxng_sl = basis_sl5_t(irrep);
       compare_indices_no_sz<bit_t, basis_no_sz_t, basis_sl5_t>(idxng, idxng_sl);
-      for (int nup = 0; nup <= n_sites; ++nup) {
+      for (int nup = 0; nup <= nsites; ++nup) {
         auto idxng = basis_sz_t(nup, irrep);
         auto idxng_sl = basis_sl5_t(nup, irrep);
         compare_indices_sz<bit_t, basis_sz_t, basis_sl5_t>(idxng, idxng_sl,

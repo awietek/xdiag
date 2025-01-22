@@ -16,14 +16,14 @@ using namespace xdiag;
 using namespace xdiag::combinatorics;
 using namespace xdiag::symmetries;
 
-static PermutationGroup cyclic_group(int64_t n_sites) {
+static PermutationGroup cyclic_group(int64_t nsites) {
   // test cyclic group
   std::vector<Permutation> permutation_array;
-  for (int64_t sym = 0; sym < n_sites; ++sym) {
+  for (int64_t sym = 0; sym < nsites; ++sym) {
 
     std::vector<int64_t> pv;
-    for (int64_t site = 0; site < n_sites; ++site) {
-      int64_t newsite = (site + sym) % n_sites;
+    for (int64_t site = 0; site < nsites; ++site) {
+      int64_t newsite = (site + sym) % nsites;
       pv.push_back(newsite);
     }
     permutation_array.push_back(Permutation(pv));
@@ -31,10 +31,10 @@ static PermutationGroup cyclic_group(int64_t n_sites) {
   return PermutationGroup(permutation_array);
 }
 
-template <typename bit_t> void test_stabilizer_symmetries(int64_t n_sites) {
-  auto group_action = GroupActionLookup<bit_t>(cyclic_group(n_sites));
+template <typename bit_t> void test_stabilizer_symmetries(int64_t nsites) {
+  auto group_action = GroupActionLookup<bit_t>(cyclic_group(nsites));
 
-  for (bit_t bits : Subsets(n_sites)) {
+  for (bit_t bits : Subsets(nsites)) {
     auto stab_syms = stabilizer_symmetries(bits, group_action);
     for (int64_t sym : stab_syms) {
       REQUIRE(group_action.apply(sym, bits) == bits);
@@ -42,10 +42,10 @@ template <typename bit_t> void test_stabilizer_symmetries(int64_t n_sites) {
   }
 }
 
-template <typename bit_t> void test_representative(int64_t n_sites) {
-  auto group_action = GroupActionLookup<bit_t>(cyclic_group(n_sites));
+template <typename bit_t> void test_representative(int64_t nsites) {
+  auto group_action = GroupActionLookup<bit_t>(cyclic_group(nsites));
 
-  for (bit_t bits : Subsets(n_sites)) {
+  for (bit_t bits : Subsets(nsites)) {
     bit_t rep = representative(bits, group_action);
     int64_t hit_ctr = 0;
     int64_t n_sym = group_action.n_symmetries();
@@ -59,13 +59,13 @@ template <typename bit_t> void test_representative(int64_t n_sites) {
   }
 }
 
-template <typename bit_t> void test_representative_subset(int64_t n_sites) {
-  auto group_action = GroupActionLookup<bit_t>(cyclic_group(n_sites));
+template <typename bit_t> void test_representative_subset(int64_t nsites) {
+  auto group_action = GroupActionLookup<bit_t>(cyclic_group(nsites));
   std::vector<int64_t> subset;
-  for (int64_t i = 0; i < n_sites; i += 2)
+  for (int64_t i = 0; i < nsites; i += 2)
     subset.push_back(i);
 
-  for (bit_t bits : Subsets(n_sites)) {
+  for (bit_t bits : Subsets(nsites)) {
     bit_t rep = representative_subset(bits, group_action, subset);
     int64_t hit_ctr = 0;
     int64_t n_sym = subset.size();
@@ -79,10 +79,10 @@ template <typename bit_t> void test_representative_subset(int64_t n_sites) {
   }
 }
 
-template <typename bit_t> void test_representative_sym(int64_t n_sites) {
-  auto group_action = GroupActionLookup<bit_t>(cyclic_group(n_sites));
+template <typename bit_t> void test_representative_sym(int64_t nsites) {
+  auto group_action = GroupActionLookup<bit_t>(cyclic_group(nsites));
 
-  for (bit_t bits : Subsets(n_sites)) {
+  for (bit_t bits : Subsets(nsites)) {
     auto [rep, rsym] = representative_sym(bits, group_action);
     int64_t hit_ctr = 0;
     int64_t n_sym = group_action.n_symmetries();
@@ -99,13 +99,13 @@ template <typename bit_t> void test_representative_sym(int64_t n_sites) {
   }
 }
 
-template <typename bit_t> void test_representative_sym_subset(int64_t n_sites) {
-  auto group_action = GroupActionLookup<bit_t>(cyclic_group(n_sites));
+template <typename bit_t> void test_representative_sym_subset(int64_t nsites) {
+  auto group_action = GroupActionLookup<bit_t>(cyclic_group(nsites));
   std::vector<int64_t> subset;
-  for (int64_t i = 0; i < n_sites; i += 2)
+  for (int64_t i = 0; i < nsites; i += 2)
     subset.push_back(i);
 
-  for (bit_t bits : Subsets(n_sites)) {
+  for (bit_t bits : Subsets(nsites)) {
     auto [rep, rsym] = representative_sym_subset(bits, group_action, subset);
     int64_t hit_ctr = 0;
     int64_t n_sym = group_action.n_symmetries();
@@ -121,11 +121,11 @@ template <typename bit_t> void test_representative_sym_subset(int64_t n_sites) {
   }
 }
 
-template <typename bit_t> void test_norm(int64_t n_sites) {
-  auto group_action = GroupActionLookup<bit_t>(cyclic_group(n_sites));
-  arma::cx_vec chis(n_sites, arma::fill::ones);
+template <typename bit_t> void test_norm(int64_t nsites) {
+  auto group_action = GroupActionLookup<bit_t>(cyclic_group(nsites));
+  arma::cx_vec chis(nsites, arma::fill::ones);
   Representation irrep(group_action.permutation_group(), chis);
-  for (bit_t bits : Subsets(n_sites)) {
+  for (bit_t bits : Subsets(nsites)) {
     double nrm = norm(bits, group_action, chis);
     auto stabilizer = stabilizer_symmetries(bits, group_action);
     REQUIRE(close(nrm * nrm, (double)stabilizer.size()));
@@ -133,15 +133,15 @@ template <typename bit_t> void test_norm(int64_t n_sites) {
 }
 
 template <typename bit_t>
-void test_representatives_indices_symmetries_limits(int64_t n_sites) {
+void test_representatives_indices_symmetries_limits(int64_t nsites) {
 
-  auto group_action = GroupActionLookup<bit_t>(cyclic_group(n_sites));
+  auto group_action = GroupActionLookup<bit_t>(cyclic_group(nsites));
 
-  for (int64_t npar = 0; npar <= n_sites; ++npar) {
-    auto lintable = combinatorics::LinTable<bit_t>(n_sites, npar);
+  for (int64_t npar = 0; npar <= nsites; ++npar) {
+    auto lintable = combinatorics::LinTable<bit_t>(nsites, npar);
     auto [reps, idces, syms, limits] =
         representatives_indices_symmetries_limits<bit_t>(
-            combinatorics::CombinationsIndexing<bit_t>(n_sites, npar),
+            combinatorics::CombinationsIndexing<bit_t>(nsites, npar),
             group_action);
     int64_t n_reps = reps.size();
     for (int64_t i = 0; i < n_reps; ++i) {
@@ -149,7 +149,7 @@ void test_representatives_indices_symmetries_limits(int64_t n_sites) {
     }
 
     int64_t idx = 0;
-    for (bit_t state : Combinations<bit_t>(n_sites, npar)) {
+    for (bit_t state : Combinations<bit_t>(nsites, npar)) {
       int64_t k = idces[idx];
       bit_t rep = reps[k];
       REQUIRE(rep == representative(state, group_action));
@@ -170,45 +170,45 @@ TEST_CASE("symmetry_operations", "[symmetries]") {
   Log("Testing symmetry_operations");
   int64_t max_N = 6;
 
-  for (int64_t n_sites = 1; n_sites <= max_N; ++n_sites) {
-    test_stabilizer_symmetries<uint16_t>(n_sites);
-    test_stabilizer_symmetries<uint32_t>(n_sites);
-    test_stabilizer_symmetries<uint64_t>(n_sites);
+  for (int64_t nsites = 1; nsites <= max_N; ++nsites) {
+    test_stabilizer_symmetries<uint16_t>(nsites);
+    test_stabilizer_symmetries<uint32_t>(nsites);
+    test_stabilizer_symmetries<uint64_t>(nsites);
   }
 
-  for (int64_t n_sites = 1; n_sites <= max_N; ++n_sites) {
-    test_representative<uint16_t>(n_sites);
-    test_representative<uint32_t>(n_sites);
-    test_representative<uint64_t>(n_sites);
+  for (int64_t nsites = 1; nsites <= max_N; ++nsites) {
+    test_representative<uint16_t>(nsites);
+    test_representative<uint32_t>(nsites);
+    test_representative<uint64_t>(nsites);
   }
 
-  for (int64_t n_sites = 1; n_sites <= max_N; ++n_sites) {
-    test_representative_subset<uint16_t>(n_sites);
-    test_representative_subset<uint32_t>(n_sites);
-    test_representative_subset<uint64_t>(n_sites);
+  for (int64_t nsites = 1; nsites <= max_N; ++nsites) {
+    test_representative_subset<uint16_t>(nsites);
+    test_representative_subset<uint32_t>(nsites);
+    test_representative_subset<uint64_t>(nsites);
   }
 
-  for (int64_t n_sites = 1; n_sites <= max_N; ++n_sites) {
-    test_representative_sym<uint16_t>(n_sites);
-    test_representative_sym<uint32_t>(n_sites);
-    test_representative_sym<uint64_t>(n_sites);
+  for (int64_t nsites = 1; nsites <= max_N; ++nsites) {
+    test_representative_sym<uint16_t>(nsites);
+    test_representative_sym<uint32_t>(nsites);
+    test_representative_sym<uint64_t>(nsites);
   }
 
-  for (int64_t n_sites = 1; n_sites <= max_N; ++n_sites) {
-    test_representative_sym_subset<uint16_t>(n_sites);
-    test_representative_sym_subset<uint32_t>(n_sites);
-    test_representative_sym_subset<uint64_t>(n_sites);
+  for (int64_t nsites = 1; nsites <= max_N; ++nsites) {
+    test_representative_sym_subset<uint16_t>(nsites);
+    test_representative_sym_subset<uint32_t>(nsites);
+    test_representative_sym_subset<uint64_t>(nsites);
   }
 
-  for (int64_t n_sites = 1; n_sites <= max_N; ++n_sites) {
-    test_norm<uint16_t>(n_sites);
-    test_norm<uint32_t>(n_sites);
-    test_norm<uint64_t>(n_sites);
+  for (int64_t nsites = 1; nsites <= max_N; ++nsites) {
+    test_norm<uint16_t>(nsites);
+    test_norm<uint32_t>(nsites);
+    test_norm<uint64_t>(nsites);
   }
 
-  for (int64_t n_sites = 1; n_sites <= max_N; ++n_sites) {
-    test_representatives_indices_symmetries_limits<uint16_t>(n_sites);
-    test_representatives_indices_symmetries_limits<uint32_t>(n_sites);
-    test_representatives_indices_symmetries_limits<uint64_t>(n_sites);
+  for (int64_t nsites = 1; nsites <= max_N; ++nsites) {
+    test_representatives_indices_symmetries_limits<uint16_t>(nsites);
+    test_representatives_indices_symmetries_limits<uint32_t>(nsites);
+    test_representatives_indices_symmetries_limits<uint64_t>(nsites);
   }
 }

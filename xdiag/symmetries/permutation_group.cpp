@@ -12,11 +12,11 @@ check_valid_group(std::vector<Permutation> const &permutations) try {
         "A Permutation group must consist of at least one Permutation.");
   }
 
-  int64_t n_sites = permutations[0].size();
+  int64_t nsites = permutations[0].size();
 
   // Check whether all permutations have same number of sites
   for (auto p : permutations) {
-    if (p.size() != n_sites) {
+    if (p.size() != nsites) {
       XDIAG_THROW("Not all Permutations have the same number of sites");
     }
   }
@@ -38,7 +38,7 @@ check_valid_group(std::vector<Permutation> const &permutations) try {
   }
 
   // Check whether identity is contained
-  auto id = Permutation(n_sites);
+  auto id = Permutation(nsites);
   if (std::find(permutations.begin(), permutations.end(), id) ==
       permutations.end()) {
     XDIAG_THROW("Identity element not found");
@@ -124,14 +124,14 @@ PermutationGroup::PermutationGroup(arma::Mat<int64_t> const &matrix) try
 }
 
 PermutationGroup::PermutationGroup(int64_t *ptr, int64_t n_permutations,
-                                   int64_t n_sites) try
+                                   int64_t nsites) try
     : PermutationGroup(permutations_from_matrix(
-          arma::Mat<int64_t>(ptr, n_permutations, n_sites, true))) {
+          arma::Mat<int64_t>(ptr, n_permutations, nsites, true))) {
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
-int64_t PermutationGroup::n_sites() const {
+int64_t PermutationGroup::nsites() const {
   return (permutations_.size() == 0) ? 0 : permutations_[0].size();
 }
 int64_t PermutationGroup::size() const { return permutations_.size(); }
@@ -164,7 +164,7 @@ int64_t PermutationGroup::multiply(int64_t s1, int64_t s2) const try {
   XDIAG_RETHROW(e);
 }
 
-int64_t n_sites(PermutationGroup const &group) { return group.n_sites(); }
+int64_t nsites(PermutationGroup const &group) { return group.nsites(); }
 int64_t size(PermutationGroup const &group) { return group.size(); }
 PermutationGroup subgroup(PermutationGroup const &group,
                           std::vector<int64_t> const &symmetries) try {
@@ -197,7 +197,7 @@ PermutationGroup::iterator_t PermutationGroup::end() const {
 }
 
 std::ostream &operator<<(std::ostream &out, PermutationGroup const &group) {
-  out << "n_sites  : " << group.n_sites() << "\n";
+  out << "nsites  : " << group.nsites() << "\n";
   out << "size     : " << group.size() << "\n";
   for (auto const &p : group) {
     out << p << "\n";

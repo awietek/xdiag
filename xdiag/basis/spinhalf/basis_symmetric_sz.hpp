@@ -19,7 +19,7 @@ public:
   using span_size_t = gsl::span<int64_t const>::size_type;
 
   BasisSymmetricSz() = default;
-  BasisSymmetricSz(int64_t n_up, Representation const &irrep);
+  BasisSymmetricSz(int64_t nup, Representation const &irrep);
 
   int64_t dim() const;
   int64_t size() const;
@@ -32,8 +32,8 @@ public:
   inline bit_t state(int64_t idx) const { return reps_[idx]; }
   inline double norm(int64_t idx) const { return norms_[idx]; }
 
-  int64_t n_sites() const;
-  int64_t n_up() const;
+  int64_t nsites() const;
+  int64_t nup() const;
   GroupActionLookup<bit_t> const &group_action() const;
   Representation const &irrep() const;
 
@@ -41,8 +41,8 @@ public:
   bool operator!=(BasisSymmetricSz const &rhs) const;
 
 private:
-  int64_t n_sites_;
-  int64_t n_up_;
+  int64_t nsites_;
+  int64_t nup_;
   GroupActionLookup<bit_t> group_action_;
   Representation irrep_;
   combinatorics::CombinationsIndexing<bit_t> combinations_indexing_;

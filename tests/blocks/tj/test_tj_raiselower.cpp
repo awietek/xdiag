@@ -51,51 +51,51 @@ std::pair<int, int> target_nup_ndn(std::string op_str1, std::string op_str2,
   return {nup + nupd, ndn + ndnd};
 }
 
-bool valid_nup_ndn(int nup, int ndn, int n_sites) {
-  return ((nup >= 0) && (ndn >= 0) && (nup + ndn <= n_sites));
+bool valid_nup_ndn(int nup, int ndn, int nsites) {
+  return ((nup >= 0) && (ndn >= 0) && (nup + ndn <= nsites));
 }
 
-bool valid_nup_ndn(std::string op_str, int nup, int ndn, int n_sites) {
+bool valid_nup_ndn(std::string op_str, int nup, int ndn, int nsites) {
   auto [nupt, ndnt] = target_nup_ndn(op_str, nup, ndn);
-  return valid_nup_ndn(nupt, ndnt, n_sites);
+  return valid_nup_ndn(nupt, ndnt, nsites);
 }
 bool valid_nup_ndn(std::string op_str1, std::string op_str2, int nup, int ndn,
-                   int n_sites) {
+                   int nsites) {
   auto [nupt, ndnt] = target_nup_ndn(op_str1, op_str2, nup, ndn);
-  return valid_nup_ndn(nupt, ndnt, n_sites);
+  return valid_nup_ndn(nupt, ndnt, nsites);
 }
 
 TEST_CASE("tj_raise_lower", "[tj]") try {
 
   std::vector<std::string> op_strs = {"Cdagup", "Cdagdn", "Cup", "Cdn"};
 
-  for (int n_sites = 1; n_sites < 7; ++n_sites) {
-    Log("testing tj anticommutation relations: N={}", n_sites);
+  for (int nsites = 1; nsites < 7; ++nsites) {
+    Log("testing tj anticommutation relations: N={}", nsites);
 
-    for (int nup = 0; nup <= n_sites; ++nup) {
-      for (int ndn = 0; ndn <= n_sites; ++ndn) {
-        if (!valid_nup_ndn(nup, ndn, n_sites)) {
+    for (int nup = 0; nup <= nsites; ++nup) {
+      for (int ndn = 0; ndn <= nsites; ++ndn) {
+        if (!valid_nup_ndn(nup, ndn, nsites)) {
           continue;
         }
 
-        auto block = tJ(n_sites, nup, ndn);
+        auto block = tJ(nsites, nup, ndn);
         int64_t D = block.size();
         cx_mat id(D, D, fill::eye);
-        // Log("n_sites: {}, nup: {}, ndn: {}", n_sites, nup, ndn);
+        // Log("nsites: {}, nup: {}, ndn: {}", nsites, nup, ndn);
 
-        for (int i = 0; i < n_sites; ++i) {
-          for (int j = 0; j < n_sites; ++j) {
+        for (int i = 0; i < nsites; ++i) {
+          for (int j = 0; j < nsites; ++j) {
 
             for (auto op_i_str : op_strs) {
               for (auto op_j_str : op_strs) {
 
-                if (!valid_nup_ndn(op_i_str, op_j_str, nup, ndn, n_sites)) {
+                if (!valid_nup_ndn(op_i_str, op_j_str, nup, ndn, nsites)) {
                   continue;
                 }
-                if (!valid_nup_ndn(op_i_str, nup, ndn, n_sites)) {
+                if (!valid_nup_ndn(op_i_str, nup, ndn, nsites)) {
                   continue;
                 }
-                if (!valid_nup_ndn(op_j_str, nup, ndn, n_sites)) {
+                if (!valid_nup_ndn(op_j_str, nup, ndn, nsites)) {
                   continue;
                 }
 
@@ -106,9 +106,9 @@ TEST_CASE("tj_raise_lower", "[tj]") try {
                 auto [nup_ij, ndn_ij] =
                     target_nup_ndn(op_i_str, op_j_str, nup, ndn);
 
-                auto block_i = tJ(n_sites, nup_i, ndn_i);
-                auto block_j = tJ(n_sites, nup_j, ndn_j);
-                auto block_ij = tJ(n_sites, nup_ij, ndn_ij);
+                auto block_i = tJ(nsites, nup_i, ndn_i);
+                auto block_j = tJ(nsites, nup_j, ndn_j);
+                auto block_ij = tJ(nsites, nup_ij, ndn_ij);
 
                 auto op_i = Op(op_i_str, i);
                 auto op_j = Op(op_j_str, j);
@@ -169,14 +169,14 @@ TEST_CASE("tj_raise_lower", "[tj]") try {
       } // loop nup
     } // loop ndn
 
-  } // loop n_sites
+  } // loop nsites
 
-  // for (int n_sites = 2; n_sites < 3; ++n_sites) {
+  // for (int nsites = 2; nsites < 3; ++nsites) {
 
-  //   auto block = tJ(n_sites);
+  //   auto block = tJ(nsites);
   //   int64_t D = block.size();
 
-  //   for (int i = 0; i < n_sites; ++i) {
+  //   for (int i = 0; i < nsites; ++i) {
 
   //     // Check whether Nup agrees
   //     {
@@ -198,7 +198,7 @@ TEST_CASE("tj_raise_lower", "[tj]") try {
   //       REQUIRE(norm(mm - m) < 1e-12);
   //     }
 
-  //     for (int j = 0; j < n_sites; ++j) {
+  //     for (int j = 0; j < nsites; ++j) {
   //       if (i != j) {
 
   //         // Check whether Hopup agrees

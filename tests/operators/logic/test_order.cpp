@@ -75,18 +75,18 @@ TEST_CASE("order", "[operators]") try {
   test_matrix_order(4, {3, 2, 0, 1});
   test_matrix_order(4, {3, 2, 1, 0});
 
-  for (int n_sites = 3; n_sites < 5; ++n_sites) {
+  for (int nsites = 3; nsites < 5; ++nsites) {
 
-    // int n_sites = 6;
-    auto ops = testcases::electron::get_linear_chain(n_sites, 1.0, 5.0);
-    for (int i = 0; i < n_sites; ++i) {
-      ops += "J2" * Op("SdotS", {i, (i + 2) % n_sites});
+    // int nsites = 6;
+    auto ops = testcases::electron::get_linear_chain(nsites, 1.0, 5.0);
+    for (int i = 0; i < nsites; ++i) {
+      ops += "J2" * Op("SdotS", {i, (i + 2) % nsites});
     }
     ops["J2"] = 0.321;
     ops["T"] = complex(1, 1);
 
     auto opso = order(ops);
-    auto block = Electron(n_sites);
+    auto block = Electron(nsites);
     auto H = matrixC(ops, block);
     auto Ho = matrixC(opso, block);
 
@@ -119,11 +119,11 @@ TEST_CASE("order", "[operators]") try {
         {"M.C2.B", -5.7723510325561688816},
         {"X.C1.A", -5.9030627660522529965}};
 
-    int64_t n_sites = 12;
-    int64_t n_up = 6;
+    int64_t nsites = 12;
+    int64_t nup = 6;
     for (auto [name, energy] : rep_name_mult) {
       auto irrep = read_representation(fl, name);
-      auto block = Spinhalf(n_sites, n_up, irrep);
+      auto block = Spinhalf(nsites, nup, irrep);
       cx_mat H = matrixC(ops, block);
       cx_mat Ho = matrixC(opso, block);
       REQUIRE(arma::norm(H - Ho) < 1e-12);
@@ -186,7 +186,7 @@ TEST_CASE("order", "[operators]") try {
   {
     // test a 3x3 triangular lattice
     Log("tj_symmetric_matrix: tJ 3x3 triangular, order test");
-    int64_t n_sites = 9;
+    int64_t nsites = 9;
     std::string lfile =
         XDIAG_DIRECTORY "/misc/data/triangular.9.hop.sublattices.tsl.toml";
 
@@ -206,13 +206,13 @@ TEST_CASE("order", "[operators]") try {
     for (auto name : rep_name) {
       auto irrep = read_representation(fl, name);
 
-      for (int64_t nup = 1; nup <= n_sites; ++nup) {
-        for (int64_t ndn = 1; ndn <= n_sites; ++ndn) {
+      for (int64_t nup = 1; nup <= nsites; ++nup) {
+        for (int64_t ndn = 1; ndn <= nsites; ++ndn) {
 
-          if (nup + ndn > n_sites) {
+          if (nup + ndn > nsites) {
             continue;
           }
-          auto block = tJ(n_sites, nup, ndn, irrep);
+          auto block = tJ(nsites, nup, ndn, irrep);
           cx_mat H = matrixC(ops, block);
           cx_mat Ho = matrixC(opso, block);
           REQUIRE(norm(H - Ho) < 1e-12);
