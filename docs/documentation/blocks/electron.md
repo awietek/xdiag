@@ -2,43 +2,50 @@
 title: Electron
 ---
 
-Representation of a block in a Electron (spinful fermion) Hilbert space. 
+Representation of a block in a Electron (fermions with $\uparrow, \downarrow$ spin) Hilbert space. 
 
 **Source** [electron.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/blocks/electron.hpp)
 
 ## Constructors
 
-=== "Julia"
-	```julia
-	Electron(nsites::Integer)
-	Electron(nsites::Integer, nup::Integer, ndn::Integer)
-	Electron(nsites::Integer, group::PermutationGroup, irrep::Representation)
-	Electron(nsites::Integer, nup::Integer, ndn::Integer, 
-	         group::PermutationGroup, irrep::Representation)
-	```
-
 === "C++"	
 	```c++
-    Electron(int64_t nsites);
-    Electron(int64_t nsites, int64_t nup, int64_t ndn);
-    Electron(int64_t nsites, PermutationGroup permutation_group,
-             Representation irrep);
-    Electron(int64_t nsites, int64_t nup, int64_t ndn, 
-	         PermutationGroup group, Representation irrep);
+    Electron(int64_t nsites, std::string backend = "auto");
+    Electron(int64_t nsites, int64_t nup, int64_t ndn, std::string backend = "auto");
+    Electron(int64_t nsites, Representation irrep, std::string backend = "auto");
+    Electron(int64_t nsites, int64_t nup, int64_t ndn, Representation irrep, std::string backend = "auto");
+	```
+	
+=== "Julia"
+	```julia
+	Electron(nsites::Integer, backend::AbstractString)
+	Electron(nsites::Integer, nup::Integer, ndn::Integer, backend::AbstractString)
+	Electron(nsites::Integer, irrep::Representation, backend::AbstractString)
+	Electron(nsites::Integer, nup::Integer, ndn::Integer, irrep::Representation, backend::AbstractString)
 	```
 
-| Name    | Description                                                                                |   |
-|:--------|:-------------------------------------------------------------------------------------------|---|
-| nsites | number of sites (integer)                                                                  |   |
-| nup    | number of "up" electrons (integer)                                                         |   |
-| ndn    | number of "dn" electrons (integer)                                                         |   |
-| group   | [PermutationGroup](../symmetries/permutation_group.md) defining the permutation symmetries |   |
-| irrep   | Irreducible [Representation](../symmetries/representation.md)  of the symmetry group       |   |
+| Name    | Description                                                                          |        |
+|:--------|:-------------------------------------------------------------------------------------|--------|
+| nsites  | number of sites (integer)                                                            |        |
+| nup     | number of "up" electrons (integer)                                                   |        |
+| ndn     | number of "dn" electrons (integer)                                                   |        |
+| irrep   | Irreducible [Representation](../symmetries/representation.md)  of the symmetry group |        |
+| backend | backend used for coding the basis states                                             | `auto` |
+
+The parameter `backend` chooses how the block is coded internally. By using the default parameter `auto` the backend is chosen automatically. Alternatives are `32bit`, `64bit`
 
 ## Iteration
 
 An Electron block can be iterated over, where at each iteration a [ProductState](../states/product_state.md) representing the corresponding basis state is returned.
 
+=== "C++"	
+	```c++
+    auto block = Electron(4, 2, 2);
+	for (auto pstate : block) {
+      Log("{} {}", to_string(pstate), index(block, pstate));
+	}
+	```
+	
 === "Julia"
 	```julia
 	block = Electron(4, 2, 2)
@@ -47,158 +54,97 @@ An Electron block can be iterated over, where at each iteration a [ProductState]
 	end
 	```
 
-=== "C++"	
-	```c++
-    auto block = Electron(4, 2, 2);
-	for (auto pstate : block) {
-		Log("{} {}", to_string(pstate), block.index(pstate));
-	}
-	```
 
 ## Methods
 
-!!! method "index"
+#### index
 
-	Returns the index of a given [ProductState](../states/product_state.md) in the basis of the Electron block.
+Returns the index of a given [ProductState](../states/product_state.md) in the basis of the tJ block.
 
-	=== "Julia"
-		```julia
-		index(block::Electron, pstate::ProductState)
-		```
+=== "C++"	
+	```c++
+	int64_t index(tJ const &block, ProductState const &pstate);
+	```
+	
+=== "Julia"
+	```julia
+	index(block::tJ, pstate::ProductState)
+	```
+	
+!!! warning "1-indexing"
+	In the C++ version, the index count starts from "0" whereas in Julia the index count starts from "1".
 
-	=== "C++"	
-		```c++
-		int64_t index(ProductState const &pstate) const;
-		```
+---
 
-	!!! warning "1-indexing"
-		In the C++ version, the index count starts from "0" whereas in Julia the index count starts from "1".
+#### nsites
 
+Returns the number of sites of the block.
 
-!!! method "nsites"
+=== "C++"	
+	```c++
+	int64_t nsites(tJ const &block);
+	```
+	
+=== "Julia"
+	```julia
+	nsites(block::tJ)
+	```
+---
 
-	Returns the number of sites of the block.
+#### size
+Returns the size of the block, i.e. its dimension.
 
-	=== "Julia"
-		```julia
-		nsites(block::Electron)
-		```
+=== "C++"	
+	```c++
+	int64_t size(tJ const &block) const;
+	```
+	
+=== "Julia"
+	```julia
+	size(block::tJ)
+	```
 
-	=== "C++"	
-		```c++
-		int64_t nsites() const;
-		```
+---
 
-!!! method "nup"
+#### dim
+Returns the dimension of the block, same as "size" for non-distributed blocks.
 
-	Returns the number of "up" electrons.
+=== "C++"	
+	```c++
+	int64_t dim(tJ const &block) const;
+	```
+	
+=== "Julia"
+	```julia
+	dim(block::tJ)
+	```
 
-	=== "Julia"
-		```julia
-		nup(block::Electron)
-		```
-
-	=== "C++"	
-		```c++
-		int64_t nup() const;
-		```
-
-
-!!! method "ndn"
-
-	Returns the number of "down" electrons.
-
-	=== "Julia"
-		```julia
-		ndn(block::Electron)
-		```
-
-	=== "C++"	
-		```c++
-		int64_t ndn() const;
-		```
-
-!!! method "permutation_group"
-
-	Returns the [PermutationGroup]("../symmetries/permutation_group.md") of the block, if defined.
-
-	=== "Julia"
-		```julia
-		permutation_group(block::Electron)
-		```
-
-	=== "C++"	
-		```c++
-	    PermutationGroup permutation_group() const;
-		```
-
-
-!!! method "irrep"
-
-	Returns the [Representation]("../symmetries/representation.md") of the block, if defined.
-
-	=== "Julia"
-		```julia
-	    irrep(block::Electron)
-		```
-
-	=== "C++"	
-		```c++
-	    Representation irrep() const;
-		```
-
-
-!!! method "size"
-	Returns the size of the block, i.e. its dimension.
-
-	=== "Julia"
-		```julia
-		size(block::Electron)
-		```
-
-	=== "C++"	
-		```c++
-		int64_t size() const;
-		```
-
-!!! method "dim"
-	Returns the dimension of the block, same as "size" for non-distributed blocks.
-
-	=== "Julia"
-		```julia
-		dim(block::Electron)
-		```
-
-	=== "C++"	
-		```c++
-		int64_tdim() const;
-		```
+---
 		
-!!! method "isreal"
-	Returns whether the block can be used with real arithmetic. 
-	Complex arithmetic is needed when a
-	[Representation](../symmetries/representation.md) is genuinely complex.
+#### isreal
+Returns whether the block can be used with real arithmetic. 
+Complex arithmetic is needed when a
+[Representation](../symmetries/representation.md) is genuinely complex.
 
-	=== "Julia"
-		```julia
-	    isreal(block::Electron; precision::Real=1e-12)
-		```
-
-	=== "C++"	
-		```c++
-		int64_t isreal(double precision = 1e-12) const;
-		```
-
-
-## Usage Example
+=== "C++"	
+	```c++
+    bool isreal(tJ const &block);
+	```
 
 === "Julia"
-	```c++
-	--8<-- "examples/usage_examples/main.jl:Electron"
+	```julia
+    isreal(block::tJ)
 	```
+---
+
+## Usage Example
 
 === "C++"
 	```c++
 	--8<-- "examples/usage_examples/main.cpp:Electron"
 	```
 
+=== "Julia"
+	```c++
+	--8<-- "examples/usage_examples/main.jl:Electron"
+	```

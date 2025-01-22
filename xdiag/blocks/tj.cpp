@@ -30,11 +30,9 @@ tJ::tJ(int64_t nsites, int64_t nup, int64_t ndn, std::string backend) try
       XDIAG_THROW("blocks with more than 64 sites currently not implemented");
     }
   } else if (backend == "32bit") {
-    basis_ =
-        std::make_shared<basis_t>(tj::BasisNp<uint32_t>(nsites, nup, ndn));
+    basis_ = std::make_shared<basis_t>(tj::BasisNp<uint32_t>(nsites, nup, ndn));
   } else if (backend == "64bit") {
-    basis_ =
-        std::make_shared<basis_t>(tj::BasisNp<uint64_t>(nsites, nup, ndn));
+    basis_ = std::make_shared<basis_t>(tj::BasisNp<uint64_t>(nsites, nup, ndn));
   } else {
     XDIAG_THROW(fmt::format("Unknown backend: \"{}\"", backend));
   }
@@ -46,8 +44,7 @@ tJ::tJ(int64_t nsites, int64_t nup, int64_t ndn, std::string backend) try
 
 tJ::tJ(int64_t nsites, int64_t nup, int64_t ndn, Representation const &irrep,
        std::string backend) try
-    : nsites_(nsites), backend_(backend), nup_(nup), ndn_(ndn),
-      irrep_(irrep) {
+    : nsites_(nsites), backend_(backend), nup_(nup), ndn_(ndn), irrep_(irrep) {
   // Safety checks
   if (nsites < 0) {
     XDIAG_THROW("Invalid argument: nsites < 0");
@@ -128,8 +125,8 @@ int64_t tJ::index(ProductState const &pstate) const try {
   XDIAG_RETHROW(e);
 }
 bool tJ::operator==(tJ const &rhs) const {
-  return (nsites_ == rhs.nsites_) && (nup_ == rhs.nup_) &&
-         (ndn_ == rhs.ndn_) && (irrep_ == rhs.irrep_);
+  return (nsites_ == rhs.nsites_) && (nup_ == rhs.nup_) && (ndn_ == rhs.ndn_) &&
+         (irrep_ == rhs.irrep_);
 }
 bool tJ::operator!=(tJ const &rhs) const { return !operator==(rhs); }
 int64_t tJ::dim() const { return size_; }
@@ -141,6 +138,12 @@ std::optional<int64_t> tJ::nup() const { return nup_; }
 std::optional<int64_t> tJ::ndn() const { return ndn_; }
 std::optional<Representation> const &tJ::irrep() const { return irrep_; }
 
+int64_t index(tJ const &block, ProductState const &pstate) {
+  return block.index(pstate);
+}
+int64_t nsites(tJ const &block) { return block.nsites(); }
+int64_t dim(tJ const &block) { return block.dim(); }
+int64_t size(tJ const &block) { return block.size(); }
 bool tJ::isreal() const { return irrep_ ? irrep_->isreal() : true; }
 tJ::basis_t const &tJ::basis() const { return *basis_; }
 

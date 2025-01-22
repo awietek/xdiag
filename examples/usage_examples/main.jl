@@ -22,8 +22,10 @@ C3 = PermutationGroup([p1, p2, p3])
 
 
 # --8<-- [start:Representation]
-r1 = Representation([1, -1, 1, -1])
-r2 = Representation([1, 1im, -1, -1im])
+p = Permutation([2, 3, 4, 1])
+C4 = PermutationGroup(pow(p, 0), pow(p, 1), pow(p, 2), pow(p, 3))
+r1 = Representation(C4, [1, -1, 1, -1])
+r2 = Representation(C4, [1, 1im, -1, -1im])
 
 @show r1 * r2
 # --8<-- [end:Representation]

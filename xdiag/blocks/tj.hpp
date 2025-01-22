@@ -22,9 +22,9 @@ public:
 
   XDIAG_API iterator_t begin() const;
   XDIAG_API iterator_t end() const;
-  XDIAG_API int64_t index(ProductState const &pstate) const;
-  XDIAG_API int64_t dim() const;
-  XDIAG_API int64_t size() const;
+  int64_t index(ProductState const &pstate) const;
+  int64_t dim() const;
+  int64_t size() const;
 
   XDIAG_API bool operator==(tJ const &rhs) const;
   XDIAG_API bool operator!=(tJ const &rhs) const;
@@ -47,6 +47,10 @@ private:
   int64_t size_;
 };
 
+XDIAG_API int64_t index(tJ const &block, ProductState const &pstate);
+XDIAG_API int64_t nsites(tJ const &block);
+XDIAG_API int64_t dim(tJ const &block);
+XDIAG_API int64_t size(tJ const &block);
 XDIAG_API bool isreal(tJ const &block);
 XDIAG_API std::ostream &operator<<(std::ostream &out, tJ const &block);
 XDIAG_API std::string to_string(tJ const &block);

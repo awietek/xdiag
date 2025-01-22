@@ -2,43 +2,50 @@
 title: Spinhalf
 ---
 
-Representation of a block in a spin $S=1/2$  Hilbert space. 
+A block in a spin $S=1/2$  Hilbert space. 
 
 **Source** [spinhalf.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/blocks/spinhalf.hpp)
 
 
 ## Constructors
-=== "Julia"
-	```julia
-	Spinhalf(nsites::Integer)
-	Spinhalf(nsites::Integer, nup::Integer)
-	Spinhalf(nsites::Integer, group::PermutationGroup, irrep::Representation)
-	Spinhalf(nsites::Integer, nup::Integer, group::PermutationGroup, 
-	         irrep::Representation)
-	```
 
 === "C++"	
 	```c++
-    Spinhalf(int64_t nsites);
-    Spinhalf(int64_t nsites, int64_t nup);
-    Spinhalf(int64_t nsites, PermutationGroup permutation_group,
-             Representation irrep);
-    Spinhalf(int64_t nsites, int64_t nup, PermutationGroup group,
-             Representation irrep);
+	Spinhalf(int64_t nsites, std::string backend = "auto");
+	Spinhalf(int64_t nsites, int64_t nup, std::string backend = "auto");
+	Spinhalf(int64_t nsites, Representation const &irrep, std::string backend = "auto");
+	Spinhalf(int64_t nsites, int64_t nup, Representation const &irrep, std::string backend = "auto");
+
+	```
+=== "Julia"
+	```julia
+	Spinhalf(nsites::Integer, backend::AbstractString)
+	Spinhalf(nsites::Integer, nup::Integer, backend::AbstractString)
+	Spinhalf(nsites::Integer, irrep::Representation, backend::AbstractString)
+	Spinhalf(nsites::Integer, nup::Integer, irrep::Representation, backend::AbstractString)
 	```
 	
-| Name    | Description                                                                                |   |
-|:--------|:-------------------------------------------------------------------------------------------|---|
-| nsites | number of sites (integer)                                                                  |   |
-| nup    | number of "up" spin setting spin (integer)                                                 |   |
-| group   | [PermutationGroup](../symmetries/permutation_group.md) defining the permutation symmetries |   |
-| irrep   | Irreducible [Representation](../symmetries/representation.md)  of the symmetry group       |   |
-
+| Name    | Description                                                                          | Default |
+|:--------|:-------------------------------------------------------------------------------------|---------|
+| nsites  | number of sites (integer)                                                            |         |
+| nup     | number of "up" spin setting spin (integer)                                           |         |
+| irrep   | Irreducible [Representation](../symmetries/representation.md)  of the symmetry group |         |
+| backend | backend used for coding the basis states                                             | `auto`  |
+	
+	
+The parameter `backend` chooses how the block is coded internally. By using the default parameter `auto` the backend is chosen automatically. Alternatives are `32bit`, `64bit`, `1sublattice`, `2sublattice`, `3sublattice`, `4sublattice`, and `5sublattice`. The backends `xsublattice` implement the sublattice coding algorithm described in [Wietek, Läuchli, Phys. Rev. E 98, 033309 (2018)](https://journals.aps.org/pre/abstract/10.1103/PhysRevE.98.033309). The sublattice coding algorithms impose certain constraints on the symmetries used, as described in the reference. 
 
 ## Iteration
 
 An Spinhalf block can be iterated over, where at each iteration a [ProductState](../states/product_state.md) representing the corresponding basis state is returned.
 
+=== "C++"	
+	```c++
+    auto block = Spinhalf(4, 2);
+	for (auto pstate : block) {
+	  Log("{} {}", to_string(pstate), block.index(pstate));
+	}
+	```
 === "Julia"
 	```julia
 	block = Spinhalf(4, 2)
@@ -47,146 +54,101 @@ An Spinhalf block can be iterated over, where at each iteration a [ProductState]
 	end
 	```
 
-=== "C++"	
-	```c++
-    auto block = Spinhalf(4, 2);
-	for (auto pstate : block) {
-		Log("{} {}", to_string(pstate), block.index(pstate));
-	}
-	```
+
 	
 	
+---
 
 ## Methods
 
-!!! method "index"
+#### index
 
-	Returns the index of a given [ProductState](../states/product_state.md) in the basis of the Spinhalf block.
+Returns the index of a given [ProductState](../states/product_state.md) in the basis of the Spinhalf block.
 
-	=== "Julia"
-		```julia
-		index(block::Spinhalf, pstate::ProductState)
-		```
+=== "C++"	
+	```c++
+	int64_t index(Spinhalf const &block, ProductState const &pstate);
+	```
+	
+=== "Julia"
+	```julia
+	index(block::Spinhalf, pstate::ProductState)
+	```
+	
+!!! warning "1-indexing"
+	In the C++ version, the index count starts from "0" whereas in Julia the index count starts from "1".
 
-	=== "C++"	
-		```c++
-		int64_t index(ProductState const &pstate) const;
-		```
+---
+
+#### nsites
+
+Returns the number of sites of the block.
+
+=== "C++"	
+	```c++
+	int64_t nsites(Spinhalf const &block);
+	```
+	
+=== "Julia"
+	```julia
+	nsites(block::Spinhalf)
+	```
+---
+
+#### size
+Returns the size of the block, i.e. its dimension.
+
+=== "C++"	
+	```c++
+	int64_t size(Spinhalf const &block) const;
+	```
+	
+=== "Julia"
+	```julia
+	size(block::Spinhalf)
+	```
+
+---
+
+#### dim
+Returns the dimension of the block, same as "size" for non-distributed blocks.
+
+=== "C++"	
+	```c++
+	int64_t dim(Spinhalf const &block) const;
+	```
+	
+=== "Julia"
+	```julia
+	dim(block::Spinhalf)
+	```
+
+---
 		
-	!!! warning "1-indexing"
-		In the C++ version, the index count starts from "0" whereas in Julia the index count starts from "1".
+#### isreal
+Returns whether the block can be used with real arithmetic. 
+Complex arithmetic is needed when a
+[Representation](../symmetries/representation.md) is genuinely complex.
 
-
-
-!!! method "nsites"
-
-	Returns the number of sites of the block.
-
-	=== "Julia"
-		```julia
-		nsites(block::Spinhalf)
-		```
-
-	=== "C++"	
-		```c++
-		int64_t nsites() const;
-		```
-
-!!! method "nup"
-
-	Returns the number of "up" spins.
-
-	=== "Julia"
-		```julia
-		nup(block::Spinhalf)
-		```
-
-	=== "C++"	
-		```c++
-		int64_t nup() const;
-		```
-
-!!! method "permutation_group"
-
-	Returns the [PermutationGroup]("../symmetries/permutation_group.md") of the block, if defined.
-
-	=== "Julia"
-		```julia
-		permutation_group(block::Spinhalf)
-		```
-
-	=== "C++"	
-		```c++
-	    PermutationGroup permutation_group() const;
-		```
-
-
-!!! method "irrep"
-
-	Returns the [Representation]("../symmetries/representation.md") of the block, if defined.
-
-	=== "Julia"
-		```julia
-	    irrep(block::Spinhalf)
-		```
-
-	=== "C++"	
-		```c++
-	    Representation irrep() const;
-		```
-
-
-!!! method "size"
-	Returns the size of the block, i.e. its dimension.
-
-	=== "Julia"
-		```julia
-		size(block::Spinhalf)
-		```
-
-	=== "C++"	
-		```c++
-		int64_t size() const;
-		```
-
-!!! method "dim"
-	Returns the dimension of the block, same as "size" for non-distributed blocks.
-
-	=== "Julia"
-		```julia
-		dim(block::Spinhalf)
-		```
-
-	=== "C++"	
-		```c++
-		int64_tdim() const;
-		```
-		
-!!! method "isreal"
-	Returns whether the block can be used with real arithmetic. 
-	Complex arithmetic is needed when a
-	[Representation](../symmetries/representation.md) is genuinely complex.
-
-	=== "Julia"
-		```julia
-	    isreal(block::Spinhalf; precision::Real=1e-12)
-		```
-
-	=== "C++"	
-		```c++
-		int64_t isreal(double precision = 1e-12) const;
-		```
-
-
-## Usage Example
+=== "C++"	
+	```c++
+    bool isreal(Spinhalf const &block);
+	```
 
 === "Julia"
-	```c++
-	--8<-- "examples/usage_examples/main.jl:Spinhalf"
+	```julia
+    isreal(block::Spinhalf)
 	```
+---
+
+## Usage Example
 
 === "C++"
 	```c++
 	--8<-- "examples/usage_examples/main.cpp:Spinhalf"
 	```
 
+=== "Julia"
+	```c++
+	--8<-- "examples/usage_examples/main.jl:Spinhalf"
+	```

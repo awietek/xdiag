@@ -16,11 +16,9 @@ Electron::Electron(int64_t nsites, std::string backend) try
   // Choose basis implementation
   if (backend == "auto") {
     if (nsites < 32) {
-      basis_ =
-          std::make_shared<basis_t>(electron::BasisNoNp<uint32_t>(nsites));
+      basis_ = std::make_shared<basis_t>(electron::BasisNoNp<uint32_t>(nsites));
     } else if (nsites < 64) {
-      basis_ =
-          std::make_shared<basis_t>(electron::BasisNoNp<uint64_t>(nsites));
+      basis_ = std::make_shared<basis_t>(electron::BasisNoNp<uint64_t>(nsites));
     } else {
       XDIAG_THROW(
           "Spinhalf blocks with more than 64 sites currently not implemented");
@@ -118,8 +116,7 @@ Electron::Electron(int64_t nsites, Representation const &irrep,
 
 Electron::Electron(int64_t nsites, int64_t nup, int64_t ndn,
                    Representation const &irrep, std::string backend) try
-    : nsites_(nsites), backend_(backend), nup_(nup), ndn_(ndn),
-      irrep_(irrep) {
+    : nsites_(nsites), backend_(backend), nup_(nup), ndn_(ndn), irrep_(irrep) {
   // Safety checks
   if (nsites < 0) {
     XDIAG_THROW("Invalid argument: nsites < 0");
@@ -173,8 +170,8 @@ int64_t Electron::index(ProductState const &pstate) const try {
 }
 
 bool Electron::operator==(Electron const &rhs) const {
-  return (nsites_ == rhs.nsites_) && (nup_ == rhs.nup_) &&
-         (ndn_ == rhs.ndn_) && (irrep_ == rhs.irrep_);
+  return (nsites_ == rhs.nsites_) && (nup_ == rhs.nup_) && (ndn_ == rhs.ndn_) &&
+         (irrep_ == rhs.irrep_);
 }
 bool Electron::operator!=(Electron const &rhs) const {
   return !operator==(rhs);
@@ -190,6 +187,12 @@ std::optional<Representation> const &Electron::irrep() const { return irrep_; }
 bool Electron::isreal() const { return irrep_ ? irrep_->isreal() : true; }
 Electron::basis_t const &Electron::basis() const { return *basis_; }
 
+int64_t index(Electron const &block, ProductState const &pstate) {
+  return block.index(pstate);
+}
+int64_t nsites(Electron const &block) { return block.nsites(); }
+int64_t dim(Electron const &block) { return block.dim(); }
+int64_t size(Electron const &block) { return block.size(); }
 bool isreal(Electron const &block) { return block.isreal(); }
 std::ostream &operator<<(std::ostream &out, Electron const &block) {
   out << "Electron:\n";

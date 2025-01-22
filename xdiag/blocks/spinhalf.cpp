@@ -20,11 +20,9 @@ Spinhalf::Spinhalf(int64_t nsites, std::string backend) try
   // Choose basis implementation
   if (backend == "auto") {
     if (nsites < 32) {
-      basis_ =
-          std::make_shared<basis_t>(spinhalf::BasisNoSz<uint32_t>(nsites));
+      basis_ = std::make_shared<basis_t>(spinhalf::BasisNoSz<uint32_t>(nsites));
     } else if (nsites < 64) {
-      basis_ =
-          std::make_shared<basis_t>(spinhalf::BasisNoSz<uint64_t>(nsites));
+      basis_ = std::make_shared<basis_t>(spinhalf::BasisNoSz<uint64_t>(nsites));
     } else {
       XDIAG_THROW(
           "Spinhalf blocks with more than 64 sites currently not implemented");
@@ -222,6 +220,13 @@ std::string Spinhalf::backend() const { return backend_; }
 std::optional<int64_t> Spinhalf::nup() const { return nup_; }
 std::optional<Representation> const &Spinhalf::irrep() const { return irrep_; }
 
+int64_t index(Spinhalf const &block, ProductState const &pstate) {
+  return block.index(pstate);
+}
+int64_t nsites(Spinhalf const &block) { return block.nsites(); }
+
+int64_t dim(Spinhalf const &block) { return block.dim(); }
+int64_t size(Spinhalf const &block) { return block.size(); }
 bool Spinhalf::isreal() const { return irrep_ ? irrep_->isreal() : true; }
 Spinhalf::basis_t const &Spinhalf::basis() const { return *basis_; }
 

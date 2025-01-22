@@ -13,15 +13,17 @@ A (1D) irreducible representation of a finite group. Upon creation, the group ho
 
 Creates the trivial representation (all characters equal to 1) of a [PermutationGroup](permutation_group.md)
 
+=== "C++"	
+	```c++
+	Representation(PermutationGroup const &group);
+	```
+	
 === "Julia"
 	```julia
 	Representation(group::PermutationGroup)
 	```
 
-=== "C++"	
-	```c++
-	Representation(PermutationGroup const &group);
-	```
+
 	
 ### With characters
 
@@ -50,54 +52,57 @@ The template parameter `T` in C++ can either be `double` or `complex`.
 ## Methods
 
 #### size
-Returns the size of the Representation, i.e. the number of characters.
+Returns the size of the Representation, i.e. the number of group elements represented.
 
+=== "C++"	
+	```c++
+	int64_t size(Representation const &irrep);
+	```
+	
 === "Julia"
 	```julia
 	size(irrep::Representation)
 	```
 
-=== "C++"	
-	```c++
-	int64_t size(Representation const &irrep) const;
-	```
 ---
 #### isreal 
 Returns the whether or not the Representation is real, I.E. the characters are real numbers and do not have an imaginary part.
 
-=== "Julia"
-	```julia
-	isreal(irrep::Representation)
-	```
-
 === "C++"	
 	```c++
 	bool isreal(Representation const &irrep) const;
+	```
+	
+=== "Julia"
+	```julia
+	isreal(irrep::Representation)
 	```
 ---
 #### * operator
 
 Multiplies two Representations by overloading the `*` operator.
 
+=== "C++"	
+	```c++
+	Representation operator*(Representation const &r1, Representation const &r2);
+	```
+
 === "Julia"
 	```julia
 	Base.:*(r1::Representation, r2::Representation)
 	```
 
-=== "C++"	
-	```c++
-	Representation operator*(Representation const &r1, Representation const &r2);
-	```
+	
 ---
 
 ## Usage Example
 
-=== "Julia"
-	```c++
-	--8<-- "examples/usage_examples/main.jl:Representation"
-	```
-
 === "C++"
 	```c++
 	--8<-- "examples/usage_examples/main.cpp:Representation"
+	```
+
+=== "Julia"
+	```c++
+	--8<-- "examples/usage_examples/main.jl:Representation"
 	```

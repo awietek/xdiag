@@ -19,8 +19,7 @@ public:
 
   XDIAG_API Spinhalf() = default;
   XDIAG_API Spinhalf(int64_t nsites, std::string backend = "auto");
-  XDIAG_API Spinhalf(int64_t nsites, int64_t nup,
-                     std::string backend = "auto");
+  XDIAG_API Spinhalf(int64_t nsites, int64_t nup, std::string backend = "auto");
   XDIAG_API Spinhalf(int64_t nsites, Representation const &irrep,
                      std::string backend = "auto");
   XDIAG_API Spinhalf(int64_t nsites, int64_t nup, Representation const &irrep,
@@ -28,9 +27,9 @@ public:
 
   XDIAG_API iterator_t begin() const;
   XDIAG_API iterator_t end() const;
-  XDIAG_API int64_t index(ProductState const &pstate) const;
-  XDIAG_API int64_t dim() const;
-  XDIAG_API int64_t size() const;
+  int64_t index(ProductState const &pstate) const;
+  int64_t dim() const;
+  int64_t size() const;
 
   XDIAG_API bool operator==(Spinhalf const &rhs) const;
   XDIAG_API bool operator!=(Spinhalf const &rhs) const;
@@ -51,6 +50,10 @@ private:
   int64_t size_;
 };
 
+XDIAG_API int64_t index(Spinhalf const &block, ProductState const &pstate);
+XDIAG_API int64_t nsites(Spinhalf const &block);
+XDIAG_API int64_t dim(Spinhalf const &block);
+XDIAG_API int64_t size(Spinhalf const &block);
 XDIAG_API bool isreal(Spinhalf const &block);
 XDIAG_API std::ostream &operator<<(std::ostream &out, Spinhalf const &block);
 XDIAG_API std::string to_string(Spinhalf const &block);

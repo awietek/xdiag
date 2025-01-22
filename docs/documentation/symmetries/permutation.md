@@ -17,10 +17,6 @@ Creates an Permutation out of an array of integers, e.g. `{0, 2, 1, 3}`. If the 
 
 	To enumerate the sites of a Permutation, we start counting at 1 in Julia and 0 in C++.
 	
-=== "Julia"
-	```julia
- 	Permutation(array::Vector{Int64})
- 	```
 
 === "C++"	
 	```c++
@@ -30,6 +26,10 @@ Creates an Permutation out of an array of integers, e.g. `{0, 2, 1, 3}`. If the 
 	Permutation(arma::Col<int64_t> const &array);
 	Permutation(int64_t *array, int64_t size);
 	```
+=== "Julia"
+	```julia
+ 	Permutation(array::Vector{Int64})
+ 	```
 	
 | Name  | Description                         |
 |:------|:------------------------------------|
@@ -44,15 +44,14 @@ Creates an Permutation out of an array of integers, e.g. `{0, 2, 1, 3}`. If the 
 
 Constructs an identity permutation of a given size, e.g. `{0, 1, 2, 3}`.
 
-=== "Julia"
-	```julia
- 	Permutation(size::Integer)
- 	```
-
 === "C++"	
 	```c++
 	Permutation(int64_t size);
 	```
+=== "Julia"
+	```julia
+ 	Permutation(size::Integer)
+ 	```
 	
 | Name | Description                      |
 |:-----|:---------------------------------|
@@ -67,14 +66,14 @@ Constructs an identity permutation of a given size, e.g. `{0, 1, 2, 3}`.
 
 Computes the inverse permutation.
 	
-=== "Julia"
-	```julia
-	inverse(perm::Permutation)
-	```
-
 === "C++"	
 	```c++
 	Permutation inverse(Permutation const &p);
+	```
+	
+=== "Julia"
+	```julia
+	inverse(perm::Permutation)
 	```
 ---
 
@@ -82,55 +81,52 @@ Computes the inverse permutation.
 
 Concatenates two permutations by overloading the `*` operator.
 
-=== "Julia"
-	```julia
-	Base.:*(p1::Permutation, p2::Permutation)
-	```
-
 === "C++"	
 	```c++
 	Permutation operator*(Permutation const &p1, Permutation const &p2);
 	```
+	
+=== "Julia"
+	```julia
+	Base.:*(p1::Permutation, p2::Permutation)
+	```
+	
 ---
 #### ^ operator, pow
 
 Raises a permutation to an integer power.
 
-=== "Julia"
-	```julia
-	Base.:^(p::Permutation, power::Integer)
-	```
 
 === "C++"	
 	```c++
 	Permutation pow(Permutation const &p, int64_t power);
 	```
-
+=== "Julia"
+	```julia
+	Base.:^(p::Permutation, power::Integer)
+	```
 ---
 #### size
 
 Returns the size of a Permutation.
 
+=== "C++"	
+	```c++
+	int64_t size(Permutation const &p);
+	```
 === "Julia"
 	```julia
 	size(p::Permutation)
 	```
 
-=== "C++"	
-	```c++
-	int64_t size(Permutation const &p);
-	```
-
-
-
 ## Usage Example
-
-=== "Julia"
-	```c++
-	--8<-- "examples/usage_examples/main.jl:Permutation"
-	```
 
 === "C++"
 	```c++
 	--8<-- "examples/usage_examples/main.cpp:Permutation"
+	```
+
+=== "Julia"
+	```c++
+	--8<-- "examples/usage_examples/main.jl:Permutation"
 	```

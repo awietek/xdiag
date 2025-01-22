@@ -12,15 +12,17 @@ A group of permutations. Group axioms are verified during construction.
 
 Creates an PermutationGroup out of a vector of [Permutation](permutation.md) objects.
 
-=== "Julia"
-	```julia
-	PermutationGroup(permutations::Vector{Permutation})
-	```
 
 === "C++"	
 	```c++
 	PermutationGroup(std::vector<Permutation> const &permutations);
 	```
+	
+=== "Julia"
+	```julia
+	PermutationGroup(permutations::Vector{Permutation})
+	```
+
 
 ### Constructor from Matrix
 
@@ -40,39 +42,37 @@ Creates a PermutationGroup out of a matrix whose rows specify the individual per
 
 Returns the number of sites on which the permutations of the group acts.
 
+=== "C++"	
+	```c++
+	int64_t nsites(PermutationGroup const &group);
+	```
 === "Julia"
 	```julia
 	nsites(group::PermutationGroup)
 	```
 
-=== "C++"	
-	```c++
-	int64_t nsites(PermutationGroup const &group);
-	```
 ---
 
 #### size
 Returns the size of the permutation group, i.e. the number permutations.
-	
-=== "Julia"
-	```julia
-	size(group::PermutationGroup)
-	```
 
 === "C++"	
 	```c++
 	int64_t size(PermutationGroup const &group);
 	```
+=== "Julia"
+	```julia
+	size(group::PermutationGroup)
+	```
 ---
 
 ## Usage Example
 
-=== "Julia"
-	```c++
-	--8<-- "examples/usage_examples/main.jl:PermutationGroup"
-	```
-
 === "C++"
 	```c++
 	--8<-- "examples/usage_examples/main.cpp:PermutationGroup"
+	```
+=== "Julia"
+	```c++
+	--8<-- "examples/usage_examples/main.jl:PermutationGroup"
 	```
