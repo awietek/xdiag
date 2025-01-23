@@ -16,8 +16,8 @@ A block in a  $t-J$ type Hilbert space, i.e. fermions with $\uparrow, \downarrow
 
 === "Julia"
 	```julia
-	tJ(nsites::Integer, nup::Integer, ndn::Integer, backend::AbstractString)
-	tJ(nsites::Integer, nup::Integer, ndn::Integer, irrep::Representation, backend::AbstractString)
+	tJ(nsites::Integer, nup::Integer, ndn::Integer, backend::String)
+	tJ(nsites::Integer, nup::Integer, ndn::Integer, irrep::Representation, backend::String)
 	```
 
 

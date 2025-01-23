@@ -249,11 +249,20 @@ OpSum order(OpSum const &ops) try {
     Op const &o2 = p2.second;
     return less(o1, o2) || ((o1 == o2) && less(c1, c2));
   });
-  OpSum ops_ordered;
-  for (auto const &[s, o] : terms) {
-    ops_ordered += s * o;
+
+  // Build new OpSum and combine same operators
+  OpSum opsnew;
+  for (int64_t i = 0; i < terms.size(); ++i) {
+    auto [cpl, op] = terms[i];
+    if (i < terms.size()) {
+      while (op == terms[i + 1].second) {
+        cpl += terms[i + 1].first;
+	++i;
+      }
+    }
+    opsnew += cpl * op;
   }
-  return ops_ordered;
+  return opsnew;
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }

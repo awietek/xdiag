@@ -210,47 +210,49 @@ for (auto pstate : block_sym_np) {
 
 
 
-// {
-// // --8<-- [start:op]
-// auto op = "T" * Op("Hop", {0, 1});
-// XDIAG_SHOW(op);
+{
+// --8<-- [start:Op]
+auto op = "T" * Op("Hop", {0, 1});
+XDIAG_SHOW(op);
 
-// op = 1.23 * Op("Hop", {0, 1});
-// XDIAG_SHOW(op);
+op = 1.23 * Op("Hop", {0, 1});
+XDIAG_SHOW(op);
 
-// // arma::cx_mat m(arma::mat("0 0; 0 0"), arma::mat("0 -1; 1 0"));
-// // op = Op("SY", m, 0);
-// // XDIAG_SHOW(op);
-// // XDIAG_SHOW(op.isreal());
-// // XDIAG_SHOW(op.ismatrix());
-// // XDIAG_SHOW(op.isexplicit());
-// // --8<-- [end:op]
+arma::cx_mat m(arma::mat("0 0; 0 0"), arma::mat("0 -1; 1 0"));
+ op = Op("Matrix", 0, m);
+XDIAG_SHOW(op);
+XDIAG_SHOW(isreal(op));
+// --8<-- [end:Op]
+}
 
+{
+// --8<-- [start:OpSum]
+// Define the 1D transverse-field Ising chain
+int N = 12;
+double J = 1.0;
+double h = 0.5;
+auto Sx = arma::mat("0 1; 1 0");
 
-// // --8<-- [start:opsum]
-// // Define the 1D transverse-field Ising chain
-// int N = 12;
-// double J = 1.0;
-// double h = 0.5;
-// auto Sx = arma::mat("0 1; 1 0");
+// Option 1: coupling constants as numbers
+auto ops1 = OpSum();
+for (int i = 0; i<N; ++i) {
+  ops1 += J * Op("SzSz", {i, (i+1)%N});
+  ops1 += h * Op("Matrix", i, Sx);
+}
 
-// // Option 1: coupling constants as numbers
-// auto ops1 = OpSum();
-// for (int i = 0; i<N; ++i) {
-//   ops1 += J * Op("SzSz", {i, (i+1)%N});
-//   ops1 += h * Op("Map", i, Sx);
-// }
+// Option 2: coupling constants as strings
+auto ops2 = OpSum();
+for (int i = 0; i<N; ++i) {
+  ops2 += "J" * Op("SzSz", {i, (i+1)%N});
+  ops2 += "h" * Op("Matrix", i, Sx);
+}
+ops2["J"] = J;
+ops2["h"] = h;
 
-// // Option 2: coupling constants as strings
-// auto ops2 = OpSum();
-// for (int i = 0; i<N; ++i) {
-//   ops2 += "J" * Op("SzSz", {i, (i+1)%N});
-//   ops2 += "h" * Op("Map", i, Sx);
-// }
-// ops2["J"] = J;
-// ops2["h"] = h;
-// // --8<-- [end:opsum]
-// }
+XDIAG_SHOW(isapprox(ops1, ops2));
+XDIAG_SHOW(isapprox(ops1 + ops2, 2.0 * ops1));
+// --8<-- [end:OpSum]
+}
 
 
 
@@ -438,7 +440,8 @@ for (auto pstate : block_sym_np) {
 // }
   
 // }
-  // clang-format on
-} catch (Error e) {
+// clang-format on
+}
+catch (Error e) {
   error_trace(e);
 }

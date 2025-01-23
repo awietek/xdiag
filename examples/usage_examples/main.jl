@@ -202,27 +202,17 @@ end
 # --8<-- [end:eig0]
 
 
-# --8<-- [start:op]
-op = Op("Hop", "T", [1, 2])
+# --8<-- [start:Op]
+op = "T" * Op("Hop", [1, 2])
 @show op
-@show type(op)
-@show convert(String, coupling(op))
-@show size(op), op[1], op[2]
-@show sites(op) == [1, 2]
-@show isexplicit(op)
 
-op = Op("Hop", 1.23, [1, 2])
+op = 1.23 * Op("Hop",  [1, 2])
+@show op
+
+op = Op("Matrix", 1, [0 -im; im 0])
 @show op
 @show isreal(op)
-@show ismatrix(op)
-@show isexplicit(op)
-
-op = Op("SY", [0 -im; im 0], 1)
-@show op
-@show isreal(op)
-@show ismatrix(op)
-@show isexplicit(op)
-# --8<-- [end:op]
+# --8<-- [end:Op]
 
 
 # --8<-- [start:opsum]

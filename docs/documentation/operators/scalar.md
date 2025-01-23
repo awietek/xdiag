@@ -4,13 +4,12 @@ title: Scalar
 
 A variable which can be either a real or complex double precision number. The algebraic operators `+,-,*,\` and comparison operators `==, !=` are defined.
 
-**Source** [coupling.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/operators/scalar.hpp)
+**Source** [scalar.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/operators/scalar.hpp)
 
 ## Constructors
 
 === "C++"	
 	```c++
-	Scalar() = default;
 	Scalar(double value);
 	Scalar(complex value);
 	```

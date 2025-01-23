@@ -27,6 +27,11 @@ State apply(OpSum const &ops, State const &v) try {
 } catch (Error const &error) {
   XDIAG_RETHROW(error);
 }
+State apply(Op const &op, State const &v) try {
+  return apply(OpSum(op), v);
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
+}
 
 void apply(OpSum const &ops, State const &v, State &w) try {
   if (!blocks_match(ops, v.block(), w.block())) {
@@ -114,6 +119,12 @@ void apply(OpSum const &ops, State const &v, State &w) try {
                 "columns generically not yet implemented "
                 "(are the States of the same size?)");
   }
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
+}
+
+void apply(Op const &op, State const &v, State &w) try {
+  apply(OpSum(op), v, w);
 } catch (Error const &error) {
   XDIAG_RETHROW(error);
 }

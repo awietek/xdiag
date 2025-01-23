@@ -10,7 +10,6 @@ Describes the coupling of an operator. A coupling can either be a **string** or 
 
 === "C++"	
 	```c++
-	Coupling() = default;
 	Coupling(std::string value);
 	Coupling(double value);
 	Coupling(complex value);

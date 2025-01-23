@@ -130,7 +130,7 @@ double inner(OpSum const &ops, State const &v) try {
 }
 
 double inner(Op const &op, State const &v) try {
-  return inner(1.0 * op, v);
+  return inner(OpSum(op), v);
 } catch (Error const &error) {
   XDIAG_RETHROW(error);
 }
@@ -156,7 +156,7 @@ complex innerC(OpSum const &ops, State const &v) try {
 }
 
 complex innerC(Op const &op, State const &v) try {
-  return innerC(OpSum({op}), v);
+  return innerC(OpSum(op), v);
 } catch (Error const &error) {
   XDIAG_RETHROW(error);
 }

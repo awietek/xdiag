@@ -18,10 +18,10 @@ Representation of a block in a Electron (fermions with $\uparrow, \downarrow$ sp
 	
 === "Julia"
 	```julia
-	Electron(nsites::Integer, backend::AbstractString)
-	Electron(nsites::Integer, nup::Integer, ndn::Integer, backend::AbstractString)
-	Electron(nsites::Integer, irrep::Representation, backend::AbstractString)
-	Electron(nsites::Integer, nup::Integer, ndn::Integer, irrep::Representation, backend::AbstractString)
+	Electron(nsites::Integer, backend::String)
+	Electron(nsites::Integer, nup::Integer, ndn::Integer, backend::String)
+	Electron(nsites::Integer, irrep::Representation, backend::String)
+	Electron(nsites::Integer, nup::Integer, ndn::Integer, irrep::Representation, backend::String)
 	```
 
 | Name    | Description                                                                          |        |

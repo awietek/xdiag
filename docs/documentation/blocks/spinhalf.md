@@ -19,10 +19,10 @@ A block in a spin $S=1/2$  Hilbert space.
 	```
 === "Julia"
 	```julia
-	Spinhalf(nsites::Integer, backend::AbstractString)
-	Spinhalf(nsites::Integer, nup::Integer, backend::AbstractString)
-	Spinhalf(nsites::Integer, irrep::Representation, backend::AbstractString)
-	Spinhalf(nsites::Integer, nup::Integer, irrep::Representation, backend::AbstractString)
+	Spinhalf(nsites::Integer, backend::String)
+	Spinhalf(nsites::Integer, nup::Integer, backend::String)
+	Spinhalf(nsites::Integer, irrep::Representation, backend::String)
+	Spinhalf(nsites::Integer, nup::Integer, irrep::Representation, backend::String)
 	```
 	
 | Name    | Description                                                                          | Default |
