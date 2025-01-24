@@ -1,0 +1,592 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.50">
+    
+    
+      
+        <title>Operator types - XDiag Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.a40c8224.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/katex.min.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#list-of-operator-types" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="XDiag Documentation" class="md-header__button md-logo" aria-label="XDiag Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            XDiag Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Operator types
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="XDiag Documentation" class="md-nav__button md-logo" aria-label="XDiag Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    XDiag Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user_guide/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    User Guide
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../examples/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Examples
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Documentation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../releases/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Releases
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#list-of-operator-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      List of operator types
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#matrix-type" class="md-nav__link">
+    <span class="md-ellipsis">
+      Matrix type
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  <h1>Operator types</h1>
+
+<h2 id="list-of-operator-types">List of operator types</h2>
+<p>Generic operators in XDiag are represented as <a href="../opsum/">OpSum</a> objects made up of <a href="../coupling/">Coupling</a> and <a href="../op/">Op</a> objects. 
+Every <a href="../op/">Op</a> is defined by a <code>type</code>. Here we list all the available types implemented in XDiag, 
+their required number of sites, and the blocks for which they are available.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+<th>No. of sites</th>
+<th>Blocks</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>Hop</code></td>
+<td style="text-align: left;">A hopping term for <span class="arithmatex">\(\uparrow\)</span> and <span class="arithmatex">\(\downarrow\)</span> spins of the form $$ \sum_{\sigma=\uparrow\downarrow} (c^\dagger_{i\sigma}c_{j\sigma} + \textrm{h.c.})$$</td>
+<td>2</td>
+<td>tJ, Electron, tJDistributed</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Hopup</code></td>
+<td style="text-align: left;">A hopping term for <span class="arithmatex">\(\uparrow\)</span> spins of the form $$ (c^\dagger_{i\uparrow}c_{j\uparrow} + \textrm{h.c.})$$</td>
+<td>2</td>
+<td>tJ, Electron, tJDistributed</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Hopdn</code></td>
+<td style="text-align: left;">A hopping term for <span class="arithmatex">\(\downarrow\)</span> spins of the form $$ (c^\dagger_{i\downarrow}c_{j\downarrow} + \textrm{h.c.})$$</td>
+<td>2</td>
+<td>tJ, Electron, tJDistributed</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>HubbardU</code></td>
+<td style="text-align: left;">A uniform Hubbard interaction across the full lattice of the form $$ \sum_i n_{i\uparrow}n_{i\downarrow}$$</td>
+<td>0</td>
+<td>Electron</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Cdagup</code></td>
+<td style="text-align: left;">A fermionic creation operator for an <span class="arithmatex">\(\uparrow\)</span> spin <span class="arithmatex">\(c^\dagger_{i\uparrow}\)</span></td>
+<td>1</td>
+<td>tJ, Electron, tJDistributed</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Cdagdn</code></td>
+<td style="text-align: left;">A fermionic creation operator for an <span class="arithmatex">\(\downarrow\)</span> spin <span class="arithmatex">\(c^\dagger_{i\downarrow}\)</span></td>
+<td>1</td>
+<td>tJ, Electron, tJDistributed</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Cup</code></td>
+<td style="text-align: left;">A fermionic annihilation operator for an <span class="arithmatex">\(\uparrow\)</span> spin <span class="arithmatex">\(c_{i\uparrow}\)</span></td>
+<td>1</td>
+<td>tJ, Electron, tJDistributed</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Cdn</code></td>
+<td style="text-align: left;">A fermionic annihilation operator for an <span class="arithmatex">\(\downarrow\)</span> spin <span class="arithmatex">\(c_{i\downarrow}\)</span></td>
+<td>1</td>
+<td>tJ, Electron, tJDistributed</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Nup</code></td>
+<td style="text-align: left;">A number operator for an <span class="arithmatex">\(\uparrow\)</span> spin <span class="arithmatex">\(n_{i\uparrow}\)</span></td>
+<td>1</td>
+<td>tJ, Electron, tJDistributed</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Ndn</code></td>
+<td style="text-align: left;">A number operator for an <span class="arithmatex">\(\downarrow\)</span> spin <span class="arithmatex">\(n_{i\downarrow}\)</span></td>
+<td>1</td>
+<td>tJ, Electron, tJDistributed</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Ntot</code></td>
+<td style="text-align: left;">A number operator <span class="arithmatex">\(n_i = n_{i\uparrow} + n_{i\downarrow}\)</span></td>
+<td>1</td>
+<td>tJ, Electron, tJDistributed</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>NtotNtot</code></td>
+<td style="text-align: left;">A density-density interaction <span class="arithmatex">\(n_i n_j\)</span></td>
+<td>2</td>
+<td>tJ, Electron, tJDistributed</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>SdotS</code></td>
+<td style="text-align: left;">A Heisenberg interaction of the form $$ \mathbf{S}_i \cdot \mathbf{S}_j = S^x_iS^x_j + S^y_iS^y_j + S^z_iS^z_j$$</td>
+<td>2</td>
+<td>Spinhalf, tJ, Electron, SpinhalfDistributed, tJDistributed</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>SzSz</code></td>
+<td style="text-align: left;">An Ising interaction of the form $ S^z_i S^z_j $</td>
+<td>2</td>
+<td>Spinhalf, tJ, Electron, SpinhalfDistributed, tJDistributed</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Exchange</code></td>
+<td style="text-align: left;">A spin exchange interaction of the form $$ \frac{1}{2}(S^+_i S^-_j + S^-_iS^+_j) = S^x_iS^x_j + S^y_iS^y_j j$$</td>
+<td>2</td>
+<td>Spinhalf, tJ, Electron, SpinhalfDistributed, tJDistributed</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Sz</code></td>
+<td style="text-align: left;">A local magnetic moment in the <span class="arithmatex">\(z\)</span>-direction $ S^z_i$</td>
+<td>1</td>
+<td>Spinhalf, tJ, Electron, SpinhalfDistributed, tJDistributed</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>S+</code></td>
+<td style="text-align: left;">A local spin raising operator <span class="arithmatex">\(S^+_i\)</span></td>
+<td>1</td>
+<td>Spinhalf, SpinhalfDistributed</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>S-</code></td>
+<td style="text-align: left;">A local spin lowering operator <span class="arithmatex">\(S^-_i\)</span></td>
+<td>1</td>
+<td>Spinhalf, SpinhalfDistributed</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ScalarChirality</code></td>
+<td style="text-align: left;">A scalar chirality interaction of the form $$ \mathbf{S}_i \cdot ( \mathbf{S}_j \times  \mathbf{S}_k)$$</td>
+<td>3</td>
+<td>Spinhalf</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>tJSzSz</code></td>
+<td style="text-align: left;">An Ising interaction as encountered in the <span class="arithmatex">\(t-J\)</span> model of the form $$  S^z_i S^z_j - \frac{n_i n_j}{4}$$</td>
+<td>2</td>
+<td>tJ, tJDistributed</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>tJSdotS</code></td>
+<td style="text-align: left;">An Heisenberg  interaction as encountered in the <span class="arithmatex">\(t-J\)</span> model of the form $$  \mathbf{S}_i \cdot \mathbf{S}_j - \frac{n_i n_j}{4}$$</td>
+<td>2</td>
+<td>tJ, tJDistributed</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Matrix</code></td>
+<td style="text-align: left;">A generic spin interaction no an arbitrary number of sites defined via a coupling matrix</td>
+<td>arbitrary</td>
+<td>Spinhalf</td>
+</tr>
+</tbody>
+</table>
+<h2 id="matrix-type">Matrix type</h2>
+<p>The <code>Matrix</code> interaction type is a special type with whom one can define generic interactions for the <a href="../../blocks/spinhalf/">Spinhalf</a> block. In addition to the <code>type</code> and <code>sites</code> argument, also a numerical matrix is provided when constructing the <a href="../op/">Op</a> object. The matrix describes the operator acting on the <span class="arithmatex">\(2^n\)</span> dimensional space spanned by the <span class="arithmatex">\(n\)</span> sites of the operator. For example, we can represent a <span class="arithmatex">\(S^x\)</span> spin operator as,</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:1"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">C++</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">sx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">arma</span><span class="o">::</span><span class="n">mat</span><span class="p">({{</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">},{</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">}});</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">auto</span><span class="w"> </span><span class="n">op</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Op</span><span class="p">(</span><span class="s">&quot;Matrix&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">sx</span><span class="p">);</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<p>More generically, we can use this mechanism to construct arbitary spin interactions, e.g.   </p>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:1"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">C++</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">sx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">arma</span><span class="o">::</span><span class="n">mat</span><span class="p">({{</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">},{</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">}});</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">auto</span><span class="w"> </span><span class="n">sz</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">arma</span><span class="o">::</span><span class="n">mat</span><span class="p">({{</span><span class="mf">0.5</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">},{</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mf">-0.5</span><span class="p">}});</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">arma</span><span class="o">::</span><span class="n">mat</span><span class="w"> </span><span class="n">sxsz</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">arma</span><span class="o">::</span><span class="n">kron</span><span class="p">(</span><span class="n">sx</span><span class="p">,</span><span class="w"> </span><span class="n">sz</span><span class="p">);</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">arma</span><span class="o">::</span><span class="n">mat</span><span class="w"> </span><span class="n">sxszsxsz</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">arma</span><span class="o">::</span><span class="n">kron</span><span class="p">(</span><span class="n">sxsz</span><span class="p">,</span><span class="w"> </span><span class="n">sxsz</span><span class="p">);</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="k">auto</span><span class="w"> </span><span class="n">op_sxsz</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Op</span><span class="p">(</span><span class="s">&quot;Matrix&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">},</span><span class="w"> </span><span class="n">sxsz</span><span class="p">);</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="k">auto</span><span class="w"> </span><span class="n">op_sxszsxsz</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Op</span><span class="p">(</span><span class="s">&quot;Matrix&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">},</span><span class="w"> </span><span class="n">sxsz</span><span class="p">);</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<p>Here we have been using the Kronecker product function <code>kron</code>.</p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["content.code.copy"], "search": "../../../assets/javascripts/workers/search.f8cc74c7.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.60a45f97.min.js"></script>
+      
+        <script src="../../../javascripts/katex.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/katex.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/contrib/auto-render.min.js"></script>
+      
+    
+  </body>
+</html>
