@@ -1,5 +1,6 @@
 cmake_commands.sh
 build
+benchmarks
 install
 julia/products
 julia/build_tarballs.jl

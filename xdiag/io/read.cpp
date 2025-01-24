@@ -32,6 +32,10 @@ Representation read_representation(FileToml file, std::string irrep_tag,
     XDIAG_THROW(fmt::format("TOML file does not contain the tag \"{}\"",
                             character_tag));
   }
+  if (!file.defined(character_tag)) {
+    XDIAG_THROW(fmt::format("TOML file does not contain the tag \"{}\"",
+                            character_tag));
+  }  
 
   Vector characters;
   try {
