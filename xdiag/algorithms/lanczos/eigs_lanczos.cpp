@@ -17,10 +17,9 @@
 
 namespace xdiag {
 
-eigs_lanczos_result_t eigs_lanczos(OpSum const &ops, Block const &block,
-                                   State &state0, int64_t neigvals,
-                                   double precision, int64_t max_iterations,
-                                   bool force_complex,
+eigs_lanczos_result_t eigs_lanczos(OpSum const &ops, State &state0,
+                                   int64_t neigvals, double precision,
+                                   int64_t max_iterations, bool force_complex,
                                    double deflation_tol) try {
   if (neigvals < 1) {
     XDIAG_THROW("Argument \"neigvals\" needs to be >= 1");
@@ -28,6 +27,7 @@ eigs_lanczos_result_t eigs_lanczos(OpSum const &ops, Block const &block,
   if (!isapprox(ops, hc(ops))) {
     XDIAG_THROW("Input OpSum is not hermitian");
   }
+  auto const &block = state0.block();
 
   bool cplx =
       !isreal(ops) || !isreal(block) || force_complex || !state0.isreal();
@@ -37,8 +37,9 @@ eigs_lanczos_result_t eigs_lanczos(OpSum const &ops, Block const &block,
   State state1 = state0;
 
   // Perform first run to compute eigenvalues
-  auto r = eigvals_lanczos(ops, block, state1, neigvals, precision,
-                           max_iterations, force_complex, deflation_tol);
+  auto r =
+      eigvals_lanczos_inplace(ops, state1, neigvals, precision, max_iterations,
+                              force_complex, deflation_tol);
 
   // Perform second run to compute the eigenvectors
   arma::mat tmat = arma::diagmat(r.alphas);
@@ -129,7 +130,7 @@ eigs_lanczos_result_t eigs_lanczos(OpSum const &ops, Block const &block,
   State state0(block, !cplx);
   fill(state0, RandomState(random_seed));
 
-  auto r = eigs_lanczos(ops, block, state0, neigvals, precision, max_iterations,
+  auto r = eigs_lanczos(ops, state0, neigvals, precision, max_iterations,
                         force_complex, deflation_tol);
 
   return {r.alphas,       r.betas,       r.eigenvalues,

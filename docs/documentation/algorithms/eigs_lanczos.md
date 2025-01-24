@@ -39,14 +39,12 @@ The Lanczos algorithm can be run in two distinct ways:
 
 2. The initial state $|\psi_0\rangle$ is explicitly specified
 
-
 	=== "C++"
 		```c++
 		eigs_lanczos_result_t 
-		eigs_lanczos(OpSum const &ops, Block const &block,
-				     State const &state, int64_t neigenvalues = 1,
-				     double precision = 1e-12, int64_t max_iterations = 1000,
-				     bool force_complex = false, double deflation_tol = 1e-7);
+		eigs_lanczos(OpSum const &ops, State &state0, int64_t neigvals = 1,
+                     double precision = 1e-12, int64_t max_iterations = 1000,
+                     bool force_complex = false, double deflation_tol = 1e-7);
 		```
 
 ## Parameters

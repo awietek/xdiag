@@ -229,7 +229,7 @@ XDIAG_SHOW(res.eigenvalues);
 
 // With specific initial state
 auto psi0 = product_state(block, {"Up", "Dn", "Up", "Dn", "Up", "Dn", "Up", "Dn"});
-auto res2 = eigvals_lanczos(ops, block, psi0);
+auto res2 = eigvals_lanczos(ops, psi0);
 XDIAG_SHOW(res.alphas);
 XDIAG_SHOW(res.betas);
 XDIAG_SHOW(res.eigenvalues);

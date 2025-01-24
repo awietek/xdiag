@@ -23,9 +23,11 @@ eigs_lanczos(OpSum const &ops, Block const &block, int64_t neigvals = 1,
              bool force_complex = false, double deflation_tol = 1e-7,
              int64_t random_seed = 42);
 
-XDIAG_API eigs_lanczos_result_t eigs_lanczos(
-    OpSum const &ops, Block const &block, State &state0, int64_t neigvals = 1,
-    double precision = 1e-12, int64_t max_iterations = 1000,
-    bool force_complex = false, double deflation_tol = 1e-7);
+XDIAG_API eigs_lanczos_result_t eigs_lanczos(OpSum const &ops, State &state0,
+                                             int64_t neigvals = 1,
+                                             double precision = 1e-12,
+                                             int64_t max_iterations = 1000,
+                                             bool force_complex = false,
+                                             double deflation_tol = 1e-7);
 
 } // namespace xdiag

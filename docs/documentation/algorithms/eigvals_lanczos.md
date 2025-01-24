@@ -8,7 +8,7 @@ Performs an iterative eigenvalue calculation using the Lanczos algorithm. Return
 
 ## Definition
 
-The Lanczos algorithm can be run in two distinct ways:
+The Lanczos algorithm can be run in thre distinct ways:
 
 1. A random intial state $|\psi_0\rangle = |r\rangle$ with normal distributed entries is used.
 
@@ -37,16 +37,27 @@ The Lanczos algorithm can be run in two distinct ways:
 		)
 		```
 
-2. The initial state $|\psi_0\rangle$ is explicitly specified
+2. The initial state $|\psi_0\rangle$ is explicitly specified. 
 
 	=== "C++"
 		```c++
-		eigvals_lanczos_result_t
-		eigvals_lanczos(OpSum const &ops, Block const &block, 
-			            State const &psi0, int64_t neigvals = 1,
+		eigvals_lanczos_result_t 
+		eigvals_lanczos(OpSum const &ops, State psi0, int64_t neigvals = 1,
 	                    double precision = 1e-12, int64_t max_iterations = 1000,
-			            bool force_complex = false, double deflation_tol = 1e-7);
+                        bool force_complex = false, double deflation_tol = 1e-7);
      	```
+	Notice this version copies the initial state, which requires memory but keeps the orginal state intact.
+
+3. The initial state $|\psi_0\rangle$ is explicitly specified and **overwritten** in the process. This version can save memory, but the initial state  $|\psi_0\rangle$ cannot be used later.
+
+	=== "C++"
+		```c++
+		eigvals_lanczos_result_t 
+		eigvals_lanczos_inplace(OpSum const &ops, State &psi0, int64_t neigvals = 1,
+	                        	double precision = 1e-12, int64_t max_iterations = 1000,
+                                bool force_complex = false, double deflation_tol = 1e-7);
+     	```
+
 
 ## Parameters
 
