@@ -66,11 +66,11 @@ std::vector<int64_t> const &Op::sites() const try {
   XDIAG_RETHROW(e);
 }
 
-bool Op::operator==(const Op &rhs) const {
+bool Op::operator==(Op const &rhs) const {
   return (type_ == rhs.type_) && (sites_ == rhs.sites_) &&
          (matrix_ == rhs.matrix_);
 }
-bool Op::operator!=(const Op &rhs) const { return !operator==(rhs); }
+bool Op::operator!=(Op const &rhs) const { return !operator==(rhs); }
 
 std::ostream &operator<<(std::ostream &out, Op const &op) {
   out << op.type();

@@ -39,6 +39,10 @@ title: Overview
 | [Electron](blocks/electron.md) | Block of a Electron type Hilbert space     | :simple-cplusplus: :simple-julia: |
 
 ## Operators
+|                                               |                                                      |   |
+|:----------------------------------------------|:-----------------------------------------------------|--:|
+| [Operator types](operators/operator_types.md) | A summary of all the operator types defined in XDiag |   |
+
 |                                       |                                                                                                                                                 |                                   |
 |:--------------------------------------|:------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------:|
 | [Op](operators/op.md)                 | A linear operator acting on the Hilbert space                                                                                                   |                :simple-cplusplus: |

@@ -253,14 +253,12 @@ OpSum order(OpSum const &ops) try {
   // Build new OpSum and combine same operators
   OpSum opsnew;
   for (int64_t i = 0; i < terms.size(); ++i) {
-    auto [cpl, op] = terms[i];
-    if (i < terms.size()) {
-      while (op == terms[i + 1].second) {
-        cpl += terms[i + 1].first;
-	++i;
-      }
+    auto op = terms[i].second;
+    Scalar cplsum = 0.;
+    while((i < terms.size()) && (terms[i].second == op)){
+      cplsum += terms[i++].first;
     }
-    opsnew += cpl * op;
+    opsnew += cplsum * op;
   }
   return opsnew;
 } catch (Error const &e) {
