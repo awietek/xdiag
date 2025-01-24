@@ -21,7 +21,7 @@ namespace xdiag {
 State apply(OpSum const &ops, State const &v) try {
   auto blockr = block(ops, v.block());
   bool real = isreal(ops) && isreal(v);
-  auto w = State(blockr, real, v.n_cols());
+  auto w = State(blockr, real, v.ncols());
   apply(ops, v, w);
   return w;
 } catch (Error const &error) {
@@ -40,7 +40,7 @@ void apply(OpSum const &ops, State const &v, State &w) try {
                 "of the output state w.");
   }
 
-  if ((v.n_cols() == 1) && (w.n_cols() == 1)) {
+  if ((v.ncols() == 1) && (w.ncols() == 1)) {
     if (isreal(ops)) {
       if (isreal(v) && isreal(w)) {
         arma::vec vvec = v.vector(0, false);
@@ -77,7 +77,7 @@ void apply(OpSum const &ops, State const &v, State &w) try {
         apply(ops, v.block(), vvec, w.block(), wvec);
       }
     }
-  } else if (v.n_cols() == w.n_cols()) {
+  } else if (v.ncols() == w.ncols()) {
     if (isreal(ops)) {
       if (isreal(v) && isreal(w)) {
         arma::mat vmat = v.matrix(false);

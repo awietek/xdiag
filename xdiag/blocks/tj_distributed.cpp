@@ -91,13 +91,13 @@ std::ostream &operator<<(std::ostream &out, tJDistributed const &block) {
   MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
 
   out << "tJDistributed:\n";
-  out << "  nsites  : " << block.nsites() << "\n";
+  out << "  nsites   : " << block.nsites() << "\n";
   if ((block.nup() != undefined) && (block.ndn() != undefined)) {
-    out << "  nup     : " << block.nup() << "\n";
-    out << "  ndn     : " << block.ndn() << "\n";
+    out << "  nup      : " << block.nup() << "\n";
+    out << "  ndn      : " << block.ndn() << "\n";
   } else {
-    out << "  nup     : not conserved\n";
-    out << "  ndn     : not conserved\n";
+    out << "  nup      : not conserved\n";
+    out << "  ndn      : not conserved\n";
   }
 
   std::stringstream ss;

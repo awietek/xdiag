@@ -89,7 +89,6 @@ TEST_CASE("order", "[operators]") try {
     auto block = Electron(nsites);
     auto H = matrixC(ops, block);
     auto Ho = matrixC(opso, block);
-
     REQUIRE(norm(H - Ho) < 1e-12);
   }
 

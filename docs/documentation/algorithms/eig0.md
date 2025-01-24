@@ -2,9 +2,21 @@
 title: eig0
 ---
 
-Computes the groud state energy and the ground state of an operator on a block.
+Computes the groud state energy and the ground state of a Hermitian operator on a block by using an iterative Lanczos algorithm.
 
-**Source** [sparse_diag.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/sparse_diag.hpp)
+**Sources** [sparse_diag.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/sparse_diag.hpp) [sparse_diag.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/sparse_diag.cpp)
+
+## Definition
+
+=== "C++"
+
+    ```c++
+	std::tuple<double, State> eig0(OpSum const &ops, Block const &block,
+		double precision = 1e-12,
+		int64_t max_iterations = 1000,
+		bool force_complex = false,
+		int64_t random_seed = 42);
+	```
 
 === "Julia"
 	
@@ -17,16 +29,6 @@ Computes the groud state energy and the ground state of an operator on a block.
 		force_complex::Bool = false,
 		seed::Int64 = 42,
 	)
-	```
-
-=== "C++"
-
-    ```c++
-	std::tuple<double, State> eig0(OpSum const &ops, Block const &block,
-		double precision = 1e-12,
-		int64_t max_iterations = 1000,
-		bool force_complex = false,
-		int64_t random_seed = 42);
 	```
 
 
@@ -51,13 +53,13 @@ Computes the groud state energy and the ground state of an operator on a block.
 
 ## Usage Example
 
-=== "Julia"
-	```c++
-	--8<-- "examples/usage_examples/main.jl:eig0"
-	```
-
 === "C++"
 	```c++
 	--8<-- "examples/usage_examples/main.cpp:eig0"
 	```
 	
+=== "Julia"
+	```c++
+	--8<-- "examples/usage_examples/main.jl:eig0"
+	```
+

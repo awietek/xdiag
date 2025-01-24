@@ -106,7 +106,7 @@ void fill(block_t const &block, arma::Col<coeff_t> &vec,
 void fill(State &state, ProductState const &pstate, int64_t col) try {
   if (state.nsites() != pstate.size()) {
     XDIAG_THROW("State and ProductState do not have the same number of sites");
-  } else if (col >= state.n_cols()) {
+  } else if (col >= state.ncols()) {
     XDIAG_THROW("Column index larger than number of columns in State");
   }
   auto const &block = state.block();

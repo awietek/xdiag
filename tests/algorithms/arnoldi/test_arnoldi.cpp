@@ -62,7 +62,7 @@ TEST_CASE("ritz_vecs_arnoldi", "[arnoldi]") {
   ops["J1"] = 1;
   ops["J2"] = .5;
 
-  auto state_0 = rand(block, false);
+  auto state_0 = random_state(block, false);
   cx_mat A = complex(0, -1) * matrixC(ops, block);
   cx_mat U = expm(A);
   cx_mat T = trans(U) + U;

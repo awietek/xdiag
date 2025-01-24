@@ -93,11 +93,11 @@ std::ostream &operator<<(std::ostream &out, SpinhalfDistributed const &block) {
   MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
 
   out << "SpinhalfDistributed:\n";
-  out << "  nsites  : " << block.nsites() << "\n";
+  out << "  nsites   : " << block.nsites() << "\n";
   if (block.nup() != undefined) {
-    out << "  nup     : " << block.nup() << "\n";
+    out << "  nup      : " << block.nup() << "\n";
   } else {
-    out << "  nup     : not conserved\n";
+    out << "  nup      : not conserved\n";
   }
 
   std::stringstream ss;

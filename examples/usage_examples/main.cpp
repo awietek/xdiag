@@ -176,39 +176,88 @@ for (auto pstate : block_sym_np) {
 // // --8<-- [end:matrix]
 // }
 
-// {
-// // --8<-- [start:eigval0]
-// int N = 8;
-// int nup = N / 2;
-// auto block = Spinhalf(N, nup);
+{
+// --8<-- [start:eigval0]
+int N = 8;
+int nup = N / 2;
+auto block = Spinhalf(N, nup);
     
-// // Define the nearest-neighbor Heisenberg model
-// auto ops = OpSum();
-// for (int i=0; i<N; ++i) {
-//   ops += "J" * Op("SdotS", {i, (i+1) % N});
-// }
-// ops["J"] = 1.0;
-// double e0 = eigval0(ops, block);
-// // --8<-- [end:eigval0]
-// }
+// Define the nearest-neighbor Heisenberg model
+auto ops = OpSum();
+for (int i=0; i<N; ++i) {
+  ops += "J" * Op("SdotS", {i, (i+1) % N});
+}
+ops["J"] = 1.0;
+double e0 = eigval0(ops, block);
+// --8<-- [end:eigval0]
+}
 
-// {
-// // --8<-- [start:eig0]
-// int N = 8;
-// int nup = N / 2;
-// auto block = Spinhalf(N, nup);
+{
+// --8<-- [start:eig0]
+int N = 8;
+int nup = N / 2;
+auto block = Spinhalf(N, nup);
     
-// // Define the nearest-neighbor Heisenberg model
-// auto ops = OpSum();
-// for (int i=0; i<N; ++i) {
-//   ops += "J" * Op("SdotS", {i, (i+1) % N});
-// }
-// ops["J"] = 1.0;
-// auto [e0, gs] = eig0(ops, block);
-// // --8<-- [end:eig0]
-// }
+// Define the nearest-neighbor Heisenberg model
+auto ops = OpSum();
+for (int i=0; i<N; ++i) {
+  ops += "J" * Op("SdotS", {i, (i+1) % N});
+}
+ops["J"] = 1.0;
+auto [e0, gs] = eig0(ops, block);
+// --8<-- [end:eig0]
+}
 
+{
+// --8<-- [start:eigvals_lanczos]
+int N = 8;
+int nup = N / 2;
+auto block = Spinhalf(N, nup);
+    
+// Define the nearest-neighbor Heisenberg model
+auto ops = OpSum();
+for (int i=0; i<N; ++i) {
+  ops += "J" * Op("SdotS", {i, (i+1) % N});
+}
+ops["J"] = 1.0;
 
+// With random intial state
+auto res = eigvals_lanczos(ops, block);
+XDIAG_SHOW(res.alphas);
+XDIAG_SHOW(res.betas);
+XDIAG_SHOW(res.eigenvalues);
+
+// With specific initial state
+auto psi0 = product_state(block, {"Up", "Dn", "Up", "Dn", "Up", "Dn", "Up", "Dn"});
+auto res2 = eigvals_lanczos(ops, block, psi0);
+XDIAG_SHOW(res.alphas);
+XDIAG_SHOW(res.betas);
+XDIAG_SHOW(res.eigenvalues);
+// --8<-- [end:eigvals_lanczos]
+}
+ 
+{
+// --8<-- [start:eigs_lanczos]
+int N = 8;
+int nup = N / 2;
+auto block = Spinhalf(N, nup);
+    
+// Define the nearest-neighbor Heisenberg model
+auto ops = OpSum();
+for (int i=0; i<N; ++i) {
+  ops += "J" * Op("SdotS", {i, (i+1) % N});
+}
+ops["J"] = 1.0;
+
+// With random intial state
+auto res = eigs_lanczos(ops, block);
+XDIAG_SHOW(res.alphas);
+XDIAG_SHOW(res.betas);
+XDIAG_SHOW(res.eigenvalues);
+XDIAG_SHOW(res.eigenvectors);
+// --8<-- [end:eigs_lanczos]
+}
+ 
 
 {
 // --8<-- [start:Op]
@@ -254,97 +303,127 @@ XDIAG_SHOW(isapprox(ops1 + ops2, 2.0 * ops1));
 // --8<-- [end:OpSum]
 }
 
+{
+// --8<-- [start:hc]
+auto cdagup = Op("Cdagup", 0);
+auto sdots = Op("SdotS", {0, 1});
+auto hop = (1.0 + 1.0i) * Op("Hop", {0, 1});
+XDIAG_SHOW(cdagup == hc(cdagup));
+XDIAG_SHOW(sdots == hc(sdots));
+XDIAG_SHOW(hop == hc(hop));
+// --8<-- [end:hc]
+}
+
+{
+// --8<-- [start:matrixtype1]
+auto sx = arma::mat({{0, 1},{1, 0}});
+auto op = Op("Matrix", 0, sx);
+// --8<-- [end:matrixtype1]
+}
+
+{
+// --8<-- [start:matrixtype2]
+auto sx = arma::mat({{0, 1},{1, 0}});
+auto sz = arma::mat({{0.5, 1},{0, -0.5}});
+
+arma::mat sxsz = arma::kron(sx, sz);
+arma::mat sxszsxsz = arma::kron(sxsz, sxsz);
+ 
+auto op_sxsz = Op("Matrix", {0, 1}, sxsz);
+auto op_sxszsxsz = Op("Matrix", {0, 1, 2, 3}, sxsz);
+// --8<-- [end:matrixtype2]
+}
+
+{
+// --8<-- [start:state]
+auto block = Spinhalf(2);
+auto psi1 = State(block, arma::vec("1.0 2.0 3.0 4.0"));
+XDIAG_SHOW(psi1);
+XDIAG_SHOW(vector(psi1));
+make_complex(psi1);
+XDIAG_SHOW(vectorC(psi1));
+
+auto psi2 = State(block, false, 3);
+XDIAG_SHOW(psi2);
+XDIAG_SHOW(matrixC(psi2));
+
+auto psi3 = State(block, arma::cx_vec(arma::vec("1.0 2.0 3.0 4.0"),
+				      arma::vec("4.0 3.0 2.0 1.0")));
+XDIAG_SHOW(vectorC(psi3));
+XDIAG_SHOW(vector(real(psi3)));
+XDIAG_SHOW(vector(imag(psi3)));
+// --8<-- [end:state]
+}
+
+{
+// --8<-- [start:product_state]
+auto pstate = ProductState({"Up", "Dn", "Emp", "UpDn"});
+for (auto s : pstate) {
+  Log("{}", s);
+}
+XDIAG_SHOW(to_string(pstate));
+
+pstate = ProductState();
+pstate.push_back("Dn");
+pstate.push_back("Up");
+pstate.push_back("Dn");
+XDIAG_SHOW(pstate.nsites());
+for (auto s : pstate) {
+  Log("{}", s);
+}
+XDIAG_SHOW(to_string(pstate));
+// --8<-- [end:product_state]
+}
 
 
-// {
-// // --8<-- [start:state]
-// auto block = Spinhalf(2);
-// auto psi1 = State(block, arma::vec("1.0 2.0 3.0 4.0"));
-// XDIAG_SHOW(psi1);
-// XDIAG_SHOW(psi1.vector());
-// psi1.make_complex();
-// XDIAG_SHOW(psi1.vectorC());
+{
+// --8<-- [start:random_state]
+auto block = Spinhalf(2);
+auto state = State(block, false);  // complex State
+auto rstate1 = RandomState(1234);
+fill(state, rstate1);
+XDIAG_SHOW(state.vectorC());
 
-// auto psi2 = State(block, false, 3);
-// XDIAG_SHOW(psi2);
-// XDIAG_SHOW(psi2.matrixC());
+auto rstate2 = RandomState(4321);
+fill(state, rstate2);
+XDIAG_SHOW(state.vectorC());
 
-// auto psi3 = State(block, arma::cx_vec(arma::vec("1.0 2.0 3.0 4.0"),
-// 				      arma::vec("4.0 3.0 2.0 1.0")));
-// XDIAG_SHOW(psi3.vectorC());
-// XDIAG_SHOW(psi3.real().vector());
-// XDIAG_SHOW(psi3.imag().vector());
-// // --8<-- [end:state]
+fill(state, rstate1);
+XDIAG_SHOW(state.vectorC());
+// --8<-- [end:random_state]
+}
 
+{
+// --8<-- [start:fill]
+auto block = Spinhalf(2);
+auto state = State(block);  
+auto pstate = ProductState({"Up", "Dn"});
+fill(state, pstate);
+XDIAG_SHOW(state.vector());
 
-// // --8<-- [start:product_state]
-// auto pstate = ProductState({"Up", "Dn", "Emp", "UpDn"});
-// for (auto s : pstate) {
-//   Log("{}", s);
-// }
-// XDIAG_SHOW(to_string(pstate));
-
-// pstate = ProductState();
-// pstate.push_back("Dn");
-// pstate.push_back("Up");
-// pstate.push_back("Dn");
-// XDIAG_SHOW(pstate.nsites());
-// for (auto s : pstate) {
-//   Log("{}", s);
-// }
-// XDIAG_SHOW(to_string(pstate));
-// // --8<-- [end:product_state]
-// }
+auto rstate = RandomState(1234);
+fill(state, rstate);
+XDIAG_SHOW(state.vector());
+// --8<-- [end:fill]
+}
 
 
-// {
-// // --8<-- [start:random_state]
-// auto block = Spinhalf(2);
-// auto state = State(block, false);  // complex State
-// auto rstate1 = RandomState(1234);
-// fill(state, rstate1);
-// XDIAG_SHOW(state.vectorC());
+{
+// --8<-- [start:create_state]
+auto block = Spinhalf(2);
+auto state = product_state(block, {"Up", "Dn"});
+XDIAG_SHOW(state.vector());
 
-// auto rstate2 = RandomState(4321);
-// fill(state, rstate2);
-// XDIAG_SHOW(state.vectorC());
+zero(state);
+XDIAG_SHOW(state.vector());
 
-// fill(state, rstate1);
-// XDIAG_SHOW(state.vectorC());
-// // --8<-- [end:random_state]
-// }
+state = random_state(block, false, 1234, true);
+XDIAG_SHOW(state.vectorC());
 
-// {
-// // --8<-- [start:fill]
-// auto block = Spinhalf(2);
-// auto state = State(block);  
-// auto pstate = ProductState({"Up", "Dn"});
-// fill(state, pstate);
-// XDIAG_SHOW(state.vector());
-
-// auto rstate = RandomState(1234);
-// fill(state, rstate);
-// XDIAG_SHOW(state.vector());
-// // --8<-- [end:fill]
-// }
-
-
-// {
-// // --8<-- [start:create_state]
-// auto block = Spinhalf(2);
-// auto state = product(block, {"Up", "Dn"});
-// XDIAG_SHOW(state.vector());
-
-// zero(state);
-// XDIAG_SHOW(state.vector());
-
-// state = rand(block, false, 1234, true);
-// XDIAG_SHOW(state.vectorC());
-
-// state = zeros(block, true, 2);
-// XDIAG_SHOW(state.vector());
-// // --8<-- [end:create_state]
-// }
+state = zero_state(block, true, 2);
+XDIAG_SHOW(state.vector());
+// --8<-- [end:create_state]
+}
 
 
 // {

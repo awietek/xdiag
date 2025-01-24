@@ -254,9 +254,9 @@ OpSum order(OpSum const &ops) try {
   OpSum opsnew;
   for (int64_t i = 0; i < terms.size(); ++i) {
     auto op = terms[i].second;
-    Scalar cplsum = 0.;
-    while((i < terms.size()) && (terms[i].second == op)){
-      cplsum += terms[i++].first;
+    Scalar cplsum = terms[i].first;
+    while((i < terms.size()-1) && (terms[i+1].second == op)){
+      cplsum += terms[++i].first;
     }
     opsnew += cplsum * op;
   }

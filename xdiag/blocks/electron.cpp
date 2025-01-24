@@ -196,18 +196,18 @@ int64_t size(Electron const &block) { return block.size(); }
 bool isreal(Electron const &block) { return block.isreal(); }
 std::ostream &operator<<(std::ostream &out, Electron const &block) {
   out << "Electron:\n";
-  out << "  nsites  : " << block.nsites() << "\n";
+  out << "  nsites   : " << block.nsites() << "\n";
 
   if (block.nup()) {
-    out << "  nup     : " << *block.nup() << "\n";
+    out << "  nup      : " << *block.nup() << "\n";
   } else {
-    out << "  nup     : not conserved\n";
+    out << "  nup      : not conserved\n";
   }
 
   if (block.ndn()) {
-    out << "  ndn     : " << *block.ndn() << "\n";
+    out << "  ndn      : " << *block.ndn() << "\n";
   } else {
-    out << "  ndn     : not conserved\n";
+    out << "  ndn      : not conserved\n";
   }
 
   if (block.irrep()) {

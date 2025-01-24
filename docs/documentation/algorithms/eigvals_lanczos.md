@@ -2,43 +2,51 @@
 title: eigvals_lanczos
 ---
 
-Performs an iterative eigenvalue calculation using the Lanczos algorithm.
+Performs an iterative eigenvalue calculation using the Lanczos algorithm. Returns the tridiagonal matrix, eigenvalues, number of iterations and the stopping criterion.
 
-**Source** [eigvals_lanczos.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/lanczos/eigvals_lanczos.hpp)
+**Sources** [eigvals_lanczos.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/lanczos/eigvals_lanczos.hpp), [eigvals_lanczos.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/lanczos/eigvals_lanczos.cpp)
 
-=== "Julia"
+## Definition
 
-	``` julia
-	function eigvals_lanczos(
-		ops::OpSum,
-		block::Block;
-		neigvals::Int64 = 1,
-		precision::Float64 = 1e-12,
-		max_iterations::Int64 = 1000,
-		force_complex::Bool = false,
-		deflation_tol::Float64 = 1e-7,
-		random_seed::Int64 = 42,
-	)
-	```
+The Lanczos algorithm can be run in two distinct ways:
 
-=== "C++"
+1. A random intial state $|\psi_0\rangle = |r\rangle$ with normal distributed entries is used.
 
-    ```c++
-    eigvals_lanczos_result_t
-	eigvals_lanczos(OpSum const &ops, Block const &block, int64_t neigvals = 1,
-	            double precision = 1e-12, int64_t max_iterations = 1000,
-                bool force_complex = false, double deflation_tol = 1e-7,
-                int64_t random_seed = 42);
-	```
+	=== "C++"
 
-=== "C++ (explicit state initialization)"
-    ```c++
-    eigvals_lanczos_result_t
-	eigvals_lanczos(OpSum const &ops, Block const &block, 
-				State const &state, int64_t neigvals = 1,
-	            double precision = 1e-12, int64_t max_iterations = 1000,
-			    bool force_complex = false);
-	```
+		```c++
+		eigvals_lanczos_result_t
+		eigvals_lanczos(OpSum const &ops, Block const &block, int64_t neigvals = 1,
+                    	double precision = 1e-12, int64_t max_iterations = 1000,
+                        bool force_complex = false, double deflation_tol = 1e-7,
+                        int64_t random_seed = 42);
+		```
+	
+	=== "Julia"
+
+		``` julia
+		function eigvals_lanczos(
+			ops::OpSum,
+			block::Block;
+			neigvals::Int64 = 1,
+			precision::Float64 = 1e-12,
+			max_iterations::Int64 = 1000,
+			force_complex::Bool = false,
+			deflation_tol::Float64 = 1e-7,
+			random_seed::Int64 = 42,
+		)
+		```
+
+2. The initial state $|\psi_0\rangle$ is explicitly specified
+
+	=== "C++"
+		```c++
+		eigvals_lanczos_result_t
+		eigvals_lanczos(OpSum const &ops, Block const &block, 
+			            State const &psi0, int64_t neigvals = 1,
+	                    double precision = 1e-12, int64_t max_iterations = 1000,
+			            bool force_complex = false, double deflation_tol = 1e-7);
+     	```
 
 ## Parameters
 
@@ -55,7 +63,7 @@ Performs an iterative eigenvalue calculation using the Lanczos algorithm.
 
 ## Returns
 
-A struct with the following entries
+A struct of type `eigvals_lanczos_result_t` with the following entries.
 
 | Entry       | Description                                             |
 |:------------|:--------------------------------------------------------|
@@ -65,3 +73,11 @@ A struct with the following entries
 | niterations | number of iterations performed                          |
 | criterion   | string denoting the reason why the algorithm stopped    |
 	
+## Usage Example
+
+=== "C++"
+	```c++
+	--8<-- "examples/usage_examples/main.cpp:eigvals_lanczos"
+	```
+
+

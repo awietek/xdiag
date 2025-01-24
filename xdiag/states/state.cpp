@@ -4,9 +4,9 @@
 
 namespace xdiag {
 
-State::State(Block const &block, bool real, int64_t n_cols) try
-    : real_(real), dim_(xdiag::dim(block)), n_rows_(xdiag::size(block)),
-      n_cols_(n_cols), block_(block) {
+State::State(Block const &block, bool real, int64_t ncols) try
+    : real_(real), dim_(xdiag::dim(block)), nrows_(xdiag::size(block)),
+      ncols_(ncols), block_(block) {
   try {
     if (real) {
       resize_vector(storage_, size());
@@ -21,8 +21,8 @@ State::State(Block const &block, bool real, int64_t n_cols) try
 }
 
 template <typename block_t>
-State::State(block_t const &block, bool real, int64_t n_cols) try
-    : real_(real), dim_(block.dim()), n_rows_(block.size()), n_cols_(n_cols),
+State::State(block_t const &block, bool real, int64_t ncols) try
+    : real_(real), dim_(block.dim()), nrows_(block.size()), ncols_(ncols),
       block_(block) {
   try {
     if (real) {
@@ -38,9 +38,9 @@ State::State(block_t const &block, bool real, int64_t n_cols) try
 }
 
 template <typename block_t>
-State::State(block_t const &block, double const *ptr, int64_t n_cols,
+State::State(block_t const &block, double const *ptr, int64_t ncols,
              int64_t stride) try
-    : real_(true), n_rows_(block.size()), n_cols_(n_cols), block_(block) {
+    : real_(true), nrows_(block.size()), ncols_(ncols), block_(block) {
 
   try {
     resize_vector(storage_, size());
@@ -64,8 +64,8 @@ State::State(block_t const &block, double const *ptr, int64_t n_cols,
 }
 
 template <typename block_t>
-State::State(block_t const &block, complex const *ptr, int64_t n_cols) try
-    : real_(false), n_rows_(block.size()), n_cols_(n_cols), block_(block) {
+State::State(block_t const &block, complex const *ptr, int64_t ncols) try
+    : real_(false), nrows_(block.size()), ncols_(ncols), block_(block) {
   try {
     resize_vector(storage_, 2 * size());
   } catch (...) {
@@ -83,7 +83,7 @@ State::State(block_t const &block, complex const *ptr, int64_t n_cols) try
 
 template <typename block_t, typename coeff_t>
 State::State(block_t const &block, arma::Col<coeff_t> const &vector) try
-    : real_(xdiag::isreal<coeff_t>()), n_rows_(block.size()), n_cols_(1),
+    : real_(xdiag::isreal<coeff_t>()), nrows_(block.size()), ncols_(1),
       block_(block) {
   if (block.size() != (int64_t)vector.n_rows) {
     XDIAG_THROW("Block dimension not equal to vector dimension");
@@ -111,8 +111,8 @@ State::State(block_t const &block, arma::Col<coeff_t> const &vector) try
 
 template <typename block_t, typename coeff_t>
 State::State(block_t const &block, arma::Mat<coeff_t> const &matrix) try
-    : real_(xdiag::isreal<coeff_t>()), n_rows_(matrix.n_rows),
-      n_cols_(matrix.n_cols), block_(block) {
+    : real_(xdiag::isreal<coeff_t>()), nrows_(matrix.n_rows),
+      ncols_(matrix.n_cols), block_(block) {
 
   if (block.size() != (int64_t)matrix.n_rows) {
     XDIAG_THROW("Block dimension not equal to number of rows in matrix");
@@ -147,7 +147,7 @@ State State::real() const try {
   } else {
     double *ptr = storage_.data();
     return std::visit(
-        [&](auto &&block) { return State(block, ptr, n_cols_, 2); }, block_);
+        [&](auto &&block) { return State(block, ptr, ncols_, 2); }, block_);
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
@@ -156,12 +156,11 @@ State State::real() const try {
 
 State State::imag() const try { // TODO: DOES THIS DO WHAT IT"S SUPPOSED TO?
   if (isreal()) {
-    return State(block_, true, n_cols_);
+    return State(block_, true, ncols_);
   } else {
     double *ptr = storage_.data();
     return std::visit(
-        [&](auto &&block) { return State(block, ptr + 1, n_cols_, 2); },
-        block_);
+        [&](auto &&block) { return State(block, ptr + 1, ncols_, 2); }, block_);
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
@@ -189,13 +188,13 @@ void State::make_complex() try {
 
 int64_t State::dim() const { return xdiag::dim(block_); }
 
-int64_t State::size() const { return n_rows_ * n_cols_; }
-int64_t State::n_rows() const { return n_rows_; }
-int64_t State::n_cols() const { return n_cols_; }
+int64_t State::size() const { return nrows_ * ncols_; }
+int64_t State::nrows() const { return nrows_; }
+int64_t State::ncols() const { return ncols_; }
 Block State::block() const { return block_; }
 
 State State::col(int64_t n, bool copy) const try {
-  if (n >= n_cols_) {
+  if (n >= ncols_) {
     XDIAG_THROW("Column index larger than the number of columns");
   }
   if (real_) {
@@ -214,12 +213,12 @@ arma::vec State::vector(int64_t n, bool copy) const try {
   if (!real_) {
     XDIAG_THROW("Cannot return a real armadillo vector from a "
                 "complex State (maybe use vectorC(...) instead)");
-  } else if (n >= n_cols_) {
+  } else if (n >= ncols_) {
     XDIAG_THROW("Column index larger than the number of columns");
   } else if (n < 0) {
     XDIAG_THROW("Negative column index");
   }
-  return arma::vec(storage_.data() + n * n_rows_, n_rows_, copy, !copy);
+  return arma::vec(storage_.data() + n * nrows_, nrows_, copy, !copy);
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
   return arma::vec();
@@ -230,7 +229,7 @@ arma::mat State::matrix(bool copy) const try {
     XDIAG_THROW("Cannot return a real armadillo matrix from a "
                 "complex state (maybe use matrixC(...) instead)");
   }
-  return arma::mat(storage_.data(), n_rows_, n_cols_, copy, !copy);
+  return arma::mat(storage_.data(), nrows_, ncols_, copy, !copy);
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
   return arma::mat();
@@ -240,14 +239,13 @@ arma::cx_vec State::vectorC(int64_t n, bool copy) const try {
   if (real_) {
     XDIAG_THROW("Cannot return a complex armadillo vector from a "
                 "real State (maybe use vector(...) instead)");
-  } else if (n >= n_cols_) {
+  } else if (n >= ncols_) {
     XDIAG_THROW("Column index larger than the number of columns");
   } else if (n < 0) {
     XDIAG_THROW("Negative column index");
   }
-  return arma::cx_vec(reinterpret_cast<complex *>(storage_.data()) +
-                          n * n_rows_,
-                      n_rows_, copy, !copy);
+  return arma::cx_vec(reinterpret_cast<complex *>(storage_.data()) + n * nrows_,
+                      nrows_, copy, !copy);
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
   return arma::cx_vec();
@@ -258,8 +256,8 @@ arma::cx_mat State::matrixC(bool copy) const try {
     XDIAG_THROW("Cannot return a complex armadillo matrix from a "
                 "real state (maybe use matrix(...) instead)");
   }
-  return arma::cx_mat(reinterpret_cast<complex *>(storage_.data()), n_rows_,
-                      n_cols_, copy, !copy);
+  return arma::cx_mat(reinterpret_cast<complex *>(storage_.data()), nrows_,
+                      ncols_, copy, !copy);
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
   return arma::cx_mat();
@@ -270,16 +268,16 @@ complex *State::memptrC() {
   return reinterpret_cast<complex *>(storage_.data());
 }
 double *State::colptr(int64_t col) {
-  if ((col < 0) || (col >= n_cols_)) {
+  if ((col < 0) || (col >= ncols_)) {
     XDIAG_THROW("Invalid column index requested");
   }
-  return memptr() + col * n_rows_;
+  return memptr() + col * nrows_;
 }
 complex *State::colptrC(int64_t col) {
-  if ((col < 0) || (col >= n_cols_)) {
+  if ((col < 0) || (col >= ncols_)) {
     XDIAG_THROW("Invalid column index requested");
   }
-  return memptrC() + col * n_rows_;
+  return memptrC() + col * nrows_;
 }
 
 template State::State(Spinhalf const &, bool, int64_t);
@@ -345,8 +343,8 @@ State imag(State const &s) { return s.imag(); }
 void make_complex(State &s) { return s.make_complex(); }
 int64_t dim(State const &s) { return s.dim(); }
 int64_t size(State const &s) { return s.size(); }
-int64_t n_rows(State const &s) { return s.n_rows(); }
-int64_t n_cols(State const &s) { return s.n_cols(); }
+int64_t nrows(State const &s) { return s.nrows(); }
+int64_t ncols(State const &s) { return s.ncols(); }
 
 State col(State const &s, int64_t n, bool copy) { return s.col(n, copy); }
 arma::vec vector(State const &s, int64_t n, bool copy) {

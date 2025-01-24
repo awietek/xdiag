@@ -2,11 +2,18 @@
 title: eigval0
 ---
 
+Computes the groud state energy of a Hermitian operator on a block by using an iterative Lanczos algorithm.
 
-Computes the groud state energy of an operator on a block.
+**Sources** [sparse_diag.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/sparse_diag.hpp) [sparse_diag.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/sparse_diag.cpp)
 
-**Source** [sparse_diag.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/sparse_diag.hpp)
+## Definition
 
+=== "C++"
+    ```c++
+    double eigval0(OpSum const &ops, Block const &block, double precision = 1e-12,
+               int64_t max_iterations = 1000, bool force_complex = false,
+               int64_t random_seed = 42);
+	```
 
 === "Julia"
 	```julia
@@ -18,13 +25,6 @@ Computes the groud state energy of an operator on a block.
 		force_complex::Bool = false,
 		seed::Integer = 42,
 	)
-	```
-
-=== "C++"
-    ```c++
-    double eigval0(OpSum const &ops, Block const &block, double precision = 1e-12,
-               int64_t max_iterations = 1000, bool force_complex = false,
-               int64_t random_seed = 42);
 	```
 
 
@@ -45,18 +45,16 @@ Computes the groud state energy of an operator on a block.
 |:------------|:------------------------|
 | real number | lowest lying eigenvalue |
 
-
-## Definition
-
 ## Usage Example
-
-=== "Julia"
-	```c++
-	--8<-- "examples/usage_examples/main.jl:eigval0"
-	```
 
 === "C++"
 	```c++
 	--8<-- "examples/usage_examples/main.cpp:eigval0"
 	```
 	
+=== "Julia"
+	```c++
+	--8<-- "examples/usage_examples/main.jl:eigval0"
+	```
+
+

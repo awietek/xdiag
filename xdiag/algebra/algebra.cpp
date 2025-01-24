@@ -11,7 +11,7 @@
 namespace xdiag {
 
 double norm(State const &v) try {
-  if (v.n_cols() > 1) {
+  if (v.ncols() > 1) {
     XDIAG_THROW("Cannot compute norm of state with more than one column");
     return 0;
   } else {
@@ -27,7 +27,7 @@ double norm(State const &v) try {
 }
 
 double norm1(State const &v) try {
-  if (v.n_cols() > 1) {
+  if (v.ncols() > 1) {
     XDIAG_THROW("Cannot compute norm of state with more than one column");
     return 0;
   } else {
@@ -43,7 +43,7 @@ double norm1(State const &v) try {
 }
 
 double norminf(State const &v) try {
-  if (v.n_cols() > 1) {
+  if (v.ncols() > 1) {
     XDIAG_THROW("Cannot compute norm of state with more than one column");
     return 0;
   } else {
@@ -64,7 +64,7 @@ double dot(State const &v, State const &w) try {
     return 0;
   }
 
-  if ((v.n_cols() > 1) || (w.n_cols() > 1)) {
+  if ((v.ncols() > 1) || (w.ncols() > 1)) {
     XDIAG_THROW(
         "Cannot compute dot product of state with more than one column");
   }
@@ -84,7 +84,7 @@ complex dotC(State const &v, State const &w) try {
     XDIAG_THROW("Cannot form dot product for states on different blocks");
   }
 
-  if ((v.n_cols() > 1) || (w.n_cols() > 1)) {
+  if ((v.ncols() > 1) || (w.ncols() > 1)) {
     XDIAG_THROW(
         "Cannot compute dotC product of state with more than one column");
   }
@@ -325,7 +325,7 @@ State &operator+=(State &v, State const &w) try {
   if (v.block() != w.block()) {
     XDIAG_THROW("Cannot add two states from different blocks");
   }
-  if (v.n_cols() != w.n_cols()) {
+  if (v.ncols() != w.ncols()) {
     XDIAG_THROW("Cannot add two states with different number of columns");
   }
 
@@ -351,7 +351,7 @@ State &operator-=(State &v, State const &w) try {
   if (v.block() != w.block()) {
     XDIAG_THROW("Cannot subtract two states from different blocks");
   }
-  if (v.n_cols() != w.n_cols()) {
+  if (v.ncols() != w.ncols()) {
     XDIAG_THROW("Cannot subtract two states with different number of columns");
   }
 

@@ -60,7 +60,7 @@ TEST_CASE("analytic_case_free_particle_1D", "[time_evolution]") try {
     psi_0_list.push_back(std::string("Emp"));
   }
   psi_0_list[0] = "Up";
-  auto psi_0 = product(block, psi_0_list);
+  auto psi_0 = product_state(block, psi_0_list);
 
   // seems to be accurate for times up towards 10^5
   arma::vec times = arma::logspace(-3, 1, 10);
@@ -162,7 +162,7 @@ TEST_CASE("analytic_case_free_particle_2D", "[time_evolution]") try {
     psi_0_list.push_back(std::string("Emp"));
   }
   psi_0_list[0] = "Up";
-  auto psi_0 = product(block, psi_0_list);
+  auto psi_0 = product_state(block, psi_0_list);
 
   // seems to be accurate for times up towards 10^5
   arma::vec times = arma::logspace(-3, 1, 10);

@@ -1,5 +1,5 @@
 ---
-title: Miscellaneous utility functions
+title: Utility functions
 ---
 
 ## set_verbosity

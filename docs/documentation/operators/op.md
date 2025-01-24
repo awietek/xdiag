@@ -6,7 +6,7 @@ Object describing a single linear operator acting on a Hilbert space.
 
 Every operator is defined by up to three paramaters:
 
-1. The **type** of the operator. This is a string argument which determines what kind of operator is represented. A detailed overview of the available types can be found at [List of operator types](op_types.md)
+1. The **type** of the operator. This is a string argument which determines what kind of operator is represented. A detailed overview of the available types can be found at [Operator types](operator_types.md)
 
 2. The **sites** of the operator. This defines which physical sites (or orbitals) the operator acts upon. While most operator types require sites, there are also operator types (e.g. `HubbardU`) which do not need to define sites.
 

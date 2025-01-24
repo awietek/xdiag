@@ -156,7 +156,7 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
         Log("   nup: {} k: {}", nup, k);
         // XDIAG_SHOW(block);
 
-        auto rstate = rand(block, false);
+        auto rstate = random_state(block, false);
         auto mult = [&ops, &block](cx_vec const &v, cx_vec &w) {
           apply(ops, block, v, block, w);
         };
@@ -210,7 +210,7 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
         Log("   nup: {} k: {}", nup, k);
         // XDIAG_SHOW(block);
 
-        auto rstate = rand(block, false);
+        auto rstate = random_state(block, false);
         auto mult = [&ops, &block](cx_vec const &v, cx_vec &w) {
           apply(ops, block, v, block, w);
         };

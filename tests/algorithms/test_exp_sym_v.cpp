@@ -20,7 +20,7 @@ TEST_CASE("exp_sym_v", "[algorithms]") try {
     Log("Testing exp_sym_v on all-to-all HB model, N={}", N);
 
     auto block = Spinhalf(N);
-    auto psi0 = rand(block);
+    auto psi0 = random_state(block);
     auto ops = xdiag::testcases::spinhalf::HB_alltoall(N);
 
     {

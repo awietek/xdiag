@@ -233,11 +233,11 @@ Spinhalf::basis_t const &Spinhalf::basis() const { return *basis_; }
 bool isreal(Spinhalf const &block) { return block.isreal(); }
 std::ostream &operator<<(std::ostream &out, Spinhalf const &block) {
   out << "Spinhalf:\n";
-  out << "  nsites  : " << block.nsites() << "\n";
+  out << "  nsites   : " << block.nsites() << "\n";
   if (block.nup()) {
-    out << "  nup     : " << *block.nup() << "\n";
+    out << "  nup      : " << *block.nup() << "\n";
   } else {
-    out << "  nup     : not conserved\n";
+    out << "  nup      : not conserved\n";
   }
   if (block.irrep()) {
     out << "  irrep    : defined with ID " << std::hex

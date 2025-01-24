@@ -37,5 +37,5 @@ nav:
   - Home: index.md
   - User Guide: user_guide.md
   - Examples: examples.md
-  - Documentation: documentation
-  - Releases: releases
+  - Documentation: documentation/index.md
+  - Releases: releases.md

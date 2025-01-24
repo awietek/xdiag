@@ -6,6 +6,9 @@ project(
   LANGUAGES CXX
 )
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 option(BUILD_TESTING "Build the tests" Off)
 option(BUILD_EXAMPLES "Build the examples" Off)
 option(XDIAG_DISTRIBUTED "Build the distibuted parallelization libraries" Off)
@@ -72,9 +75,7 @@ elseif (XDIAG_JULIA_WRAPPER)
     message(STATUS "Forcing build of a shared library for the julia wrapper")
   endif()
   set(BUILD_SHARED_LIBS On)
-
   add_subdirectory(julia)
-
 elseif (XDIAG_DISTRIBUTED)
   set(XDIAG_LIBRARY "xdiag_distributed")
   add_subdirectory(xdiag)

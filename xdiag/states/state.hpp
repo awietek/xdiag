@@ -10,11 +10,11 @@ class State {
 public:
   XDIAG_API State() = default;
   XDIAG_API explicit State(Block const &block, bool real = true,
-                           int64_t n_cols = 1);
+                           int64_t ncols = 1);
 
   template <typename block_t>
   XDIAG_API explicit State(block_t const &block, bool real = true,
-                           int64_t n_cols = 1);
+                           int64_t ncols = 1);
 
   template <typename block_t, typename coeff_t>
   XDIAG_API State(block_t const &block, arma::Col<coeff_t> const &vector);
@@ -29,8 +29,8 @@ public:
   void make_complex();
   int64_t dim() const;
   int64_t size() const;
-  int64_t n_rows() const;
-  int64_t n_cols() const;
+  int64_t nrows() const;
+  int64_t ncols() const;
 
   State col(int64_t n, bool copy = true) const;
   arma::vec vector(int64_t n = 0, bool copy = true) const;
@@ -40,11 +40,11 @@ public:
 
   // Developer section
   template <typename block_t>
-  State(block_t const &block, double const *ptr, int64_t n_cols,
+  State(block_t const &block, double const *ptr, int64_t ncols,
         int64_t stride = 1);
 
   template <typename block_t>
-  State(block_t const &block, complex const *ptr, int64_t n_cols);
+  State(block_t const &block, complex const *ptr, int64_t ncols);
   Block block() const;
 
   double *memptr();
@@ -55,8 +55,8 @@ public:
 private:
   bool real_;
   int64_t dim_;
-  int64_t n_rows_;
-  int64_t n_cols_;
+  int64_t nrows_;
+  int64_t ncols_;
   Block block_;
   mutable std::vector<double> storage_;
 };
@@ -68,8 +68,8 @@ XDIAG_API State imag(State const &s);
 XDIAG_API void make_complex(State &s);
 XDIAG_API int64_t dim(State const &s);
 XDIAG_API int64_t size(State const &s);
-XDIAG_API int64_t n_rows(State const &s);
-XDIAG_API int64_t n_cols(State const &s);
+XDIAG_API int64_t nrows(State const &s);
+XDIAG_API int64_t ncols(State const &s);
 
 XDIAG_API State col(State const &s, int64_t n, bool copy = true);
 XDIAG_API arma::vec vector(State const &s, int64_t n = 0, bool copy = true);
