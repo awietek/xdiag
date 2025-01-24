@@ -1,6 +1,10 @@
 #pragma once
-#include <xdiag/basis/tj/basis_tj.hpp>
+
+#include <optional>
+
 #include <xdiag/common.hpp>
+
+#include <xdiag/basis/tj/basis_tj.hpp>
 #include <xdiag/states/product_state.hpp>
 #include <xdiag/symmetries/permutation_group.hpp>
 #include <xdiag/symmetries/representation.hpp>
