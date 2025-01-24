@@ -13,6 +13,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: install lapack
+      run: |
+        sudo apt-get install -y libblas-dev liblapack-dev
     - name: make test
       run: |
         cmake -S . -B build -D BUILD_TESTING=On
