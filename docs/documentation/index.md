@@ -2,13 +2,18 @@
 title: Documentation
 ---
 
-## Building
-| Name                                                   | Description                                                      |                          Language |
-|:-------------------------------------------------------|:-----------------------------------------------------------------|----------------------------------:|
-| [Compilation](compilation/advanced_compilation.md)     | Advanced settings for compilation of the C++ library using CMake |                :simple-cplusplus: |
-| [Documentation](compilation/building_documentation.md) | How to build and work on the documentation locally               |                 :simple-markdown: |
-| [Julia Wrapper](compilation/julia_wrapper.md)          | How to build and develop the Julia wrapper locally               | :simple-cplusplus: :simple-julia: |
-|                                                        |                                                                  |                                   |
+XDiag used the C++ library [Armadillo](https://arma.sourceforge.net) as a linear algebra backend. Documentation for linear algebra operations can, therefore, be found in the [Armadillo Documentation](https://arma.sourceforge.net/docs.html).
+
+## Algebra
+|                                       |                                                                           |                                   |
+|:--------------------------------------|:--------------------------------------------------------------------------|----------------------------------:|
+| [matrix](algebra/matrix.md)           | Creates the full matrix representation of an operator on a block          | :simple-cplusplus: :simple-julia: |
+| [apply](algebra/apply.md)             | Applies an operator to a state $\vert \phi \rangle = O \vert \psi\rangle$ | :simple-cplusplus: :simple-julia: |
+| [dot](algebra/algebra.md#dot)         | Computes the dot product between two states                               | :simple-cplusplus: :simple-julia: |
+| [inner](algebra/algebra.md#inner)     | Computes an expectation value $\langle \psi \vert O \vert \psi \rangle$   | :simple-cplusplus: :simple-julia: |
+| [norm](algebra/algebra.md#norm)       | Computes the 2-norm of a state                                            | :simple-cplusplus: :simple-julia: |
+| [norm1](algebra/algebra.md#norm1)     | Computes the 1-norm of a state                                            | :simple-cplusplus: :simple-julia: |
+| [norminf](algebra/algebra.md#norminf) | Computes the $\infty$-norm of a state                                     | :simple-cplusplus: :simple-julia: |
 
 ---
 
@@ -25,18 +30,13 @@ title: Documentation
 
 ### Time evolution
 
----
+| Name                                                         | Description                                                                                                                                     |                          Language |
+|:-------------------------------------------------------------|:------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------:|
+| [time_evolve](algorithms/time_evolve.md)                     | Performs a real-time evolution $e^{ -i\tau H} \vert \psi \rangle$ of a State with a given Hermitian operator $H$                                | :simple-cplusplus: :simple-julia: |
+| [imaginary_time_evolve](algorithms/imaginary_time_evolve.md) | Performs a imaginary-time evolution $e^{ -\tau H}\vert\psi\rangle$ of a State with a given Hermitian operator $H$                               | :simple-cplusplus: :simple-julia: |
+| [evolve_lanczos](algorithms/evolve_lanczos.md)               | Computes the exponential $e^{z H}\vert\psi\rangle $ of a Hermitian operator times a State for a real or complex $z$ using the Lanczos algorithm | :simple-cplusplus: :simple-julia: |
+| [time_evolve_expokit](algorithms/time_evolve_expokit.md)     | Performs a real-time evolution $e^{ -i\tau H} \vert \psi \rangle$ using a highly accurate Lanczos algorithm                                     | :simple-cplusplus: :simple-julia: |
 
-## Algebra
-|                                       |                                                                     |                                   |
-|:--------------------------------------|:--------------------------------------------------------------------|----------------------------------:|
-| [matrix](algebra/matrix.md)           | Creates the full matrix representation of an operator on a block    | :simple-cplusplus: :simple-julia: |
-| [apply](algebra/apply.md)             | Applies an operator to a state $\vert w \rangle = O \vert v\rangle$ | :simple-cplusplus: :simple-julia: |
-| [dot](algebra/algebra.md#dot)         | Computes the dot product between two states                         | :simple-cplusplus: :simple-julia: |
-| [inner](algebra/algebra.md#inner)     | Computes an expectation value $\langle v \vert O \vert v \rangle$   | :simple-cplusplus: :simple-julia: |
-| [norm](algebra/algebra.md#norm)       | Computes the 2-norm of a state                                      | :simple-cplusplus: :simple-julia: |
-| [norm1](algebra/algebra.md#norm1)     | Computes the 1-norm of a state                                      | :simple-cplusplus: :simple-julia: |
-| [norminf](algebra/algebra.md#norminf) | Computes the $\infty$-norm of a state                               | :simple-cplusplus: :simple-julia: |
 
 ---
 
@@ -46,6 +46,20 @@ title: Documentation
 | [Spinhalf](blocks/spinhalf.md) | Block of a spin $S=1/2$ type Hilbert space | :simple-cplusplus: :simple-julia: |
 | [tJ](blocks/tJ.md)             | Block of a $t-J$ type Hilbert space        | :simple-cplusplus: :simple-julia: |
 | [Electron](blocks/electron.md) | Block of a Electron type Hilbert space     | :simple-cplusplus: :simple-julia: |
+
+---
+
+## Building
+| Name                                                   | Description                                                      |                          Language |
+|:-------------------------------------------------------|:-----------------------------------------------------------------|----------------------------------:|
+| [Compilation](compilation/advanced_compilation.md)     | Advanced settings for compilation of the C++ library using CMake |                :simple-cplusplus: |
+| [Documentation](compilation/building_documentation.md) | How to build and work on the documentation locally               |                 :simple-markdown: |
+| [Julia Wrapper](compilation/julia_wrapper.md)          | How to build and develop the Julia wrapper locally               | :simple-cplusplus: :simple-julia: |
+|                                                        |                                                                  |                                   |
+
+---
+
+## Input / Output
 
 ---
 

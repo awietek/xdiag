@@ -118,9 +118,12 @@
 #include <xdiag/algorithms/gram_schmidt/orthogonalize.hpp>
 
 #include <xdiag/algorithms/time_evolution/exp_sym_v.hpp>
-#include <xdiag/algorithms/time_evolution/pade_matrix_exponential.hpp>
-#include <xdiag/algorithms/time_evolution/time_evolution.hpp>
+#include <xdiag/algorithms/time_evolution/expm.hpp>
+#include <xdiag/algorithms/time_evolution/time_evolve.hpp>
+#include <xdiag/algorithms/time_evolution/imaginary_time_evolve.hpp>
+#include <xdiag/algorithms/time_evolution/time_evolve_expokit.hpp>
 #include <xdiag/algorithms/time_evolution/zahexpv.hpp>
+#include <xdiag/algorithms/time_evolution/evolve_lanczos.hpp>
 
 #include <xdiag/io/file_h5.hpp>
 #include <xdiag/io/file_toml.hpp>

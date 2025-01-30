@@ -8,7 +8,7 @@
 #include <xdiag/extern/armadillo/armadillo>
 
 #include <xdiag/algorithms/norm_estimate.hpp>
-#include <xdiag/algorithms/time_evolution/pade_matrix_exponential.hpp>
+#include <xdiag/algorithms/time_evolution/expm.hpp>
 #include <xdiag/common.hpp>
 #include <xdiag/utils/logger.hpp>
 

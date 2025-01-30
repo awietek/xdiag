@@ -10,6 +10,24 @@
 
 namespace xdiag {
 
+bool isapprox(State const &v, State const &w, double rtol, double atol) try {
+  if (v.block() == w.block()) {
+    if (isreal(v) && isreal(w)) {
+      return arma::approx_equal(v.matrix(false), w.matrix(false), "both", atol,
+                                rtol);
+    } else if (!isreal(v) && !isreal(w)) {
+      return arma::approx_equal(v.matrixC(false), w.matrixC(false), "both",
+                                atol, rtol);
+    } else {
+      return false;
+    }
+  } else {
+    return false;
+  }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+
 double norm(State const &v) try {
   if (v.ncols() > 1) {
     XDIAG_THROW("Cannot compute norm of state with more than one column");
@@ -23,7 +41,6 @@ double norm(State const &v) try {
   }
 } catch (Error const &error) {
   XDIAG_RETHROW(error);
-  return 0;
 }
 
 double norm1(State const &v) try {

@@ -6,12 +6,13 @@
 
 #include <xdiag/algebra/algebra.hpp>
 #include <xdiag/algebra/matrix.hpp>
+#include <xdiag/algebra/apply.hpp>
 #include <xdiag/algorithms/time_evolution/exp_sym_v.hpp>
 #include <xdiag/blocks/blocks.hpp>
 #include <xdiag/common.hpp>
-#include <xdiag/states/state.hpp>
 #include <xdiag/states/create_state.hpp>
 #include <xdiag/states/random_state.hpp>
+#include <xdiag/states/state.hpp>
 #include <xdiag/utils/logger.hpp>
 
 TEST_CASE("exp_sym_v", "[algorithms]") try {
@@ -21,15 +22,27 @@ TEST_CASE("exp_sym_v", "[algorithms]") try {
 
     auto block = Spinhalf(N);
     auto psi0 = random_state(block);
+    auto psi0c = psi0;
+    make_complex(psi0c);
     auto ops = xdiag::testcases::spinhalf::HB_alltoall(N);
 
+    auto mult = [&](arma::vec const &v, arma::vec &w) {
+      apply(ops, block, v, block, w);
+    };
+
+    auto multC = [&](arma::cx_vec const &v, arma::cx_vec &w) {
+      apply(ops, block, v, block, w);
+    };
+    
     {
       Log("real time");
       // Real time evolution
       double t = 1.2345;
       auto H = matrixC(ops, block);
       arma::cx_vec psi_ex = expmat(complex(0.0, -1.0 * t) * H) * psi0.vector();
-      arma::cx_vec psi = exp_sym_v(ops, psi0, complex(0, -t)).vectorC();
+      arma::cx_vec psi = psi0c.vectorC();
+      exp_sym_v(multC, psi, complex(0, -t));
+
       // XDIAG_SHOW(norm(psi - psi_ex));
       REQUIRE(norm(psi - psi_ex) < 1e-6);
     }
@@ -40,7 +53,8 @@ TEST_CASE("exp_sym_v", "[algorithms]") try {
       double t = 1.2345;
       auto H = matrix(ops, block);
       arma::vec psi_ex = expmat(-t * H) * psi0.vector();
-      arma::vec psi = exp_sym_v(ops, psi0, -t).vector();
+      arma::vec psi = psi0.vector();
+      exp_sym_v(mult, psi, -t);
       // XDIAG_SHOW(norm(psi - psi_ex));
       REQUIRE(norm(psi - psi_ex) < 1e-6);
     }
@@ -50,7 +64,8 @@ TEST_CASE("exp_sym_v", "[algorithms]") try {
       complex t(-1.2345, 3.2145);
       auto H = matrixC(ops, block);
       arma::cx_vec psi_ex = expmat(t * H) * psi0.vector();
-      arma::cx_vec psi = exp_sym_v(ops, psi0, t).vectorC();
+      arma::cx_vec psi = psi0c.vectorC();
+      exp_sym_v(multC, psi, t);
       // XDIAG_SHOW(norm(psi - psi_ex));
       REQUIRE(norm(psi - psi_ex) < 1e-6);
     }

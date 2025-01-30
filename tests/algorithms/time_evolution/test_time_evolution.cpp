@@ -3,14 +3,17 @@
 //
 #include "../../catch.hpp"
 #include <xdiag/algebra/matrix.hpp>
-#include <xdiag/algorithms/time_evolution/pade_matrix_exponential.hpp>
-#include <xdiag/algorithms/time_evolution/time_evolution.hpp>
+#include <xdiag/algorithms/time_evolution/expm.hpp>
+#include <xdiag/algorithms/time_evolution/time_evolve.hpp>
+#include <xdiag/algorithms/time_evolution/imaginary_time_evolve.hpp>
+#include <xdiag/algorithms/sparse_diag.hpp>
 #include <xdiag/common.hpp>
 #include <xdiag/extern/armadillo/armadillo>
 #include <xdiag/states/create_state.hpp>
 #include <xdiag/states/fill.hpp>
 #include <xdiag/states/product_state.hpp>
 #include <xdiag/utils/logger.hpp>
+#include <xdiag/utils/timing.hpp>
 
 using namespace xdiag;
 using namespace std;
@@ -68,7 +71,7 @@ TEST_CASE("analytic_case_free_particle_1D", "[time_evolution]") try {
   for (auto time : times) {
     std::vector<double> tols = {1e-2, 1e-4, 1e-6, 1e-8, 1e-10, 1e-12};
     for (auto tol : tols) {
-      auto w_expokit = time_evolve(ops, psi_0, time, tol);
+      auto w_expokit = time_evolve(ops, psi_0, time, tol, "expokit");
       arma::cx_vec w_analytic = psi_analytic(time);
 
       // norm is one so no division here by norm of true
@@ -170,7 +173,7 @@ TEST_CASE("analytic_case_free_particle_2D", "[time_evolution]") try {
   for (auto time : times) {
     std::vector<double> tols = {1e-2, 1e-4, 1e-6, 1e-8, 1e-10, 1e-12};
     for (auto tol : tols) {
-      auto w_expokit = time_evolve(ops, psi_0, time, tol);
+      auto w_expokit = time_evolve(ops, psi_0, time, tol, "expokit");
       arma::cx_vec w_analytic = psi_analytic(time);
 
       // norm is one so no division here by norm of true
@@ -232,6 +235,10 @@ TEST_CASE("tj_complex_timeevo", "[time_evolution]") try {
   auto block = tJ(nsites, nsites / 2, nsites / 2);
 
   auto H = matrixC(ops, block);
+  double e0 = eigval0(ops, block);
+  arma::cx_mat Hshift =
+      H - e0 * arma::cx_mat(H.n_rows, H.n_cols, arma::fill::eye);
+
   XDIAG_SHOW(block);
   XDIAG_SHOW(pstate);
   auto psi_0 = State(block, false);
@@ -239,10 +246,15 @@ TEST_CASE("tj_complex_timeevo", "[time_evolution]") try {
 
   arma::vec times = arma::logspace(-1, 1, 3);
 
+  // Expokit tests
+  Log("testing time evolution: tj_complex_timeevo (EXPOKIT)");
   for (auto time : times) {
     std::vector<double> tols = {1e-2, 1e-6, 1e-10, 1e-12};
     for (auto tol : tols) {
-      auto psi = time_evolve(ops, psi_0, time, tol);
+      Log("time: {}, tol: {}", time, tol);
+      tic();
+      auto psi = time_evolve(ops, psi_0, time, tol, "expokit");
+      toc();
       cx_vec psi2 = expm(cx_mat(-1.0i * time * H)) * psi_0.vectorC();
 
       double eps = norm(psi2 - psi.vectorC());
@@ -258,6 +270,45 @@ TEST_CASE("tj_complex_timeevo", "[time_evolution]") try {
       REQUIRE(eps < 4 * tol);
     }
   }
+
+  times = arma::logspace(-1, 0, 2);
+
+
+  // lanczos tests
+  Log("testing time evolution: tj_complex_timeevo (Lanczos)");
+  for (auto time : times) {
+    std::vector<double> tols = {1e-2, 1e-6, 1e-10, 1e-12};
+    for (auto tol : tols) {
+      Log("time: {}, tol: {}", time, tol);
+      tic();
+      auto psi = time_evolve(ops, psi_0, time, tol, "lanczos");
+      toc();
+      cx_vec psi2 = expm(cx_mat(-1.0i * time * H)) * psi_0.vectorC();
+
+      auto ipsi = imaginary_time_evolve(ops, psi_0, time, tol, e0);
+      cx_vec ipsi2 = expm(cx_mat(-time * Hshift)) * psi_0.vectorC();
+
+      double eps = norm(psi2 - psi.vectorC());
+      double ieps = norm(ipsi2 - ipsi.vectorC());
+
+      // Log("eps: {}, ieps: {}", eps, ieps);
+      // Log("nmat: {}, nlcz: {}", arma::norm(ipsi.vectorC()), arma::norm(ipsi2));
+
+      // cout << "tol: " << tol << endl;
+      // cout << "err: " << eps << endl;
+      // cout << "time = " << time << endl;
+      // w_analytic.print("ana");
+      // w_expokit.vector().print("lanc");
+
+      // cout << "norm xdiag " << norm(w_expokit) << endl;
+      // cout << "norm analytic " << norm(w_analytic) << endl;
+
+      REQUIRE(eps < 40 * tol);
+      REQUIRE(ieps < 40 * tol);
+
+    }
+  }
+
 } catch (xdiag::Error e) {
   xdiag::error_trace(e);
 }

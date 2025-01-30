@@ -65,7 +65,7 @@ The Lanczos algorithm can be run in thre distinct ways:
 |:---------------|:----------------------------------------------------------------------------------|---------|
 | ops            | [OpSum](../operators/opsum.md) defining the bonds of the operator                 |         |
 | block          | block on which the operator is defined                                            |         |
-| neigvals       | number of eigenvalues to converge                                                 | 1       |
+| neigvals       | number $k$ of eigenvalue to converge                                              | 1       |
 | precision      | accuracy of the computed ground state                                             | 1e-12   |
 | max_iterations | maximum number of iterations                                                      | 1000    |
 | force_complex  | whether or not computation should be forced to have complex arithmetic            | false   |
@@ -83,7 +83,15 @@ A struct of type `eigvals_lanczos_result_t` with the following entries.
 | eigenvalues | the computed Ritz eigenvalues of the tridiagonal matrix |
 | niterations | number of iterations performed                          |
 | criterion   | string denoting the reason why the algorithm stopped    |
-	
+
+## Convergence criterion
+
+The algorithm terminates if the $k$-th ($k$ is the argument `neigvals`) approximate eigenvalue changes only by a fraction smaller than $\epsilon$ ($k$ is the argument `precision`), i.e.
+
+$$ (\tilde{e}_k^{(n)} - \tilde{e}_k^{(n-1)}) / \tilde{e}_k^{(n)} < \epsilon.$$
+
+Here, $\tilde{e}_k^{(n)}$ denotes the Lanczos approximation to the $k$-th eigenvalue after $n$ iterations.
+
 ## Usage Example
 
 === "C++"

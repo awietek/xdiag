@@ -1,4 +1,3 @@
-
 #include <xdiag/all.hpp>
 
 using namespace xdiag;
@@ -257,7 +256,8 @@ XDIAG_SHOW(res.eigenvalues);
 XDIAG_SHOW(res.eigenvectors);
 // --8<-- [end:eigs_lanczos]
 }
- 
+
+
 
 {
 // --8<-- [start:Op]
@@ -425,7 +425,99 @@ XDIAG_SHOW(state.vector());
 // --8<-- [end:create_state]
 }
 
+{
+// --8<-- [start:time_evolve]
+int N = 8;
+int nup = N / 2;
+auto block = Spinhalf(N, nup);
+    
+// Define the nearest-neighbor Heisenberg model
+auto ops = OpSum();
+for (int i=0; i<N; ++i) {
+  ops += Op("SdotS", {i, (i+1) % N});
+}
 
+auto psi0 = product_state(block, {"Up", "Dn", "Up", "Dn", "Up", "Dn", "Up", "Dn"});
+double time = 1.0;
+auto psi = time_evolve(ops, psi0, time);
+time_evolve_inplace(ops, psi0, time);
+XDIAG_SHOW(isapprox(psi0, psi));
+// --8<-- [end:time_evolve]
+}
+
+{
+// --8<-- [start:imaginary_time_evolve]
+int N = 8;
+int nup = N / 2;
+auto block = Spinhalf(N, nup);
+    
+// Define the nearest-neighbor Heisenberg model
+auto ops = OpSum();
+for (int i=0; i<N; ++i) {
+  ops += Op("SdotS", {i, (i+1) % N});
+}
+
+// Compute ground state energy
+double e0 = eigval0(ops, block);
+ 
+auto psi0 = product_state(block, {"Up", "Dn", "Up", "Dn", "Up", "Dn", "Up", "Dn"});
+double time = 1.0;
+double precision = 1e-12;
+auto psi = imaginary_time_evolve(ops, psi0, time, precision, e0);
+imaginary_time_evolve_inplace(ops, psi0, time, precision, e0);
+XDIAG_SHOW(isapprox(psi0, psi));
+// --8<-- [end:imaginary_time_evolve]
+}
+ 
+ 
+{
+// --8<-- [start:evolve_lanczos]
+int N = 8;
+int nup = N / 2;
+auto block = Spinhalf(N, nup);
+    
+// Define the nearest-neighbor Heisenberg model
+auto ops = OpSum();
+for (int i=0; i<N; ++i) {
+  ops += Op("SdotS", {i, (i+1) % N});
+}
+
+// Compute ground state energy
+double e0 = eigval0(ops, block);
+ 
+auto psi0 = product_state(block, {"Up", "Dn", "Up", "Dn", "Up", "Dn", "Up", "Dn"});
+double time = 1.0;
+double precision = 1e-12;
+auto res = evolve_lanczos(ops, psi0, time, precision, e0, true, 500);
+XDIAG_SHOW(res.alphas);
+XDIAG_SHOW(res.betas);
+// --8<-- [end:evolve_lanczos]
+}
+ 
+{
+// --8<-- [start:time_evolve_expokit]
+int N = 8;
+int nup = N / 2;
+auto block = Spinhalf(N, nup);
+    
+// Define the nearest-neighbor Heisenberg model
+auto ops = OpSum();
+for (int i=0; i<N; ++i) {
+  ops += Op("SdotS", {i, (i+1) % N});
+}
+
+auto psi0 = product_state(block, {"Up", "Dn", "Up", "Dn", "Up", "Dn", "Up", "Dn"});
+double time = 1.0;
+auto res1 = time_evolve_expokit(ops, psi0, time, 20);
+auto res2 = time_evolve_expokit_inplace(ops, psi0, time, 20);
+XDIAG_SHOW(isapprox(psi0, res1.state));
+XDIAG_SHOW(res1.error);
+XDIAG_SHOW(res1.hump);
+// --8<-- [end:time_evolve_expokit]
+}
+ 
+
+ 
 // {
 // // --8<-- [start:algebra]
 // int N = 8;
@@ -519,8 +611,7 @@ XDIAG_SHOW(state.vector());
 // }
   
 // }
-// clang-format on
-}
-catch (Error e) {
+  // clang-format on
+} catch (Error e) {
   error_trace(e);
 }

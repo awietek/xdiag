@@ -2,9 +2,9 @@
 title: eig0
 ---
 
-Computes the groud state energy and the ground state of a Hermitian operator on a block by using an iterative Lanczos algorithm.
+Computes the groud state energy and the ground state of a Hermitian operator on a block by using an iterative Lanczos algorithm. This function is a shortcut for the [eigs_lanczos](eigs_lanczos.md) function. We refer to [eigs_lanczos](eigs_lanczos.md) for further details on the algorithm and the convergence criterion.
 
-**Sources** [sparse_diag.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/sparse_diag.hpp) [sparse_diag.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/sparse_diag.cpp)
+**Sources** [sparse_diag.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/sparse_diag.hpp), [sparse_diag.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/sparse_diag.cpp)
 
 ## Definition
 
@@ -12,10 +12,8 @@ Computes the groud state energy and the ground state of a Hermitian operator on 
 
     ```c++
 	std::tuple<double, State> eig0(OpSum const &ops, Block const &block,
-		double precision = 1e-12,
-		int64_t max_iterations = 1000,
-		bool force_complex = false,
-		int64_t random_seed = 42);
+		double precision = 1e-12, int64_t max_iterations = 1000,
+		bool force_complex = false, int64_t random_seed = 42);
 	```
 
 === "Julia"
@@ -31,13 +29,11 @@ Computes the groud state energy and the ground state of a Hermitian operator on 
 	)
 	```
 
-
-
 ## Parameters
 
 | Name           | Description                                                            | Default |
 |:---------------|:-----------------------------------------------------------------------|---------|
-| ops            | [OpSum](../operators/opsum.md) defining the bonds of the operator      |         |
+| ops            | [OpSum](../operators/opsum.md) defining a Hermitian operator           |         |
 | block          | block on which the operator is defined                                 |         |
 | precision      | accuracy of the computed ground state                                  | 1e-12   |
 | max_iterations | maximum number of iterations                                           | 1000    |
@@ -46,10 +42,10 @@ Computes the groud state energy and the ground state of a Hermitian operator on 
 
 ## Returns
 
-| Type        | Description             |
-|:------------|:------------------------|
-| real number | lowest lying eigenvalue |
-| State       | groundstate             |
+| Type        | Description                      |
+|:------------|:---------------------------------|
+| real number | lowest lying eigenvalue of `ops` |
+| State       | groundstate                      |
 
 ## Usage Example
 

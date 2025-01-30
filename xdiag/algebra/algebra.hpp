@@ -7,6 +7,10 @@
 
 namespace xdiag {
 
+// comparison
+XDIAG_API bool isapprox(State const &v, State const &w, double rtol = 1e-12,
+                        double atol = 1e-12);
+
 // Various norms
 XDIAG_API double norm(State const &v);
 XDIAG_API double norm1(State const &v);

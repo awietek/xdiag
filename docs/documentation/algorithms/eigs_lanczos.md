@@ -72,7 +72,13 @@ A struct with the following entries
 | eigenvectors | [State](../states/state.md) of shape $D \times $`neigvals` holding all low-lying eigenvalues up to `neigvals` |
 | niterations  | number of iterations performed                                                                                        |
 | criterion    | string denoting the reason why the algorithm stopped                                                                  |
-	
+## Convergence criterion
+
+The algorithm terminates if the $k$-th ($k$ is the argument `neigvals`) approximate eigenvalue changes only by a fraction smaller than $\epsilon$ ($k$ is the argument `precision`), i.e.
+
+$$ (\tilde{e}_k^{(n)} - \tilde{e}_k^{(n-1)}) / \tilde{e}_k^{(n)} < \epsilon.$$
+
+Here, $\tilde{e}_k^{(n)}$ denotes the Lanczos approximation to the $k$-th eigenvalue after $n$ iterations.
 
 ## Usage Example
 

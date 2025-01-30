@@ -119,9 +119,11 @@ set(XDIAG_SOURCES
   algorithms/gram_schmidt/orthogonalize.cpp
 
   algorithms/norm_estimate.cpp
-  algorithms/time_evolution/exp_sym_v.cpp
-  algorithms/time_evolution/time_evolution.cpp
-  algorithms/time_evolution/pade_matrix_exponential.cpp
+  algorithms/time_evolution/time_evolve.cpp
+  algorithms/time_evolution/imaginary_time_evolve.cpp
+  algorithms/time_evolution/time_evolve_expokit.cpp
+  algorithms/time_evolution/evolve_lanczos.cpp
+  algorithms/time_evolution/expm.cpp
 )
 
 set(XDIAG_DISTRIBUTED_SOURCES
