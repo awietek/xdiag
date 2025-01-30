@@ -2,7 +2,7 @@
 title: Documentation
 ---
 
-XDiag used the C++ library [Armadillo](https://arma.sourceforge.net) as a linear algebra backend. Documentation for linear algebra operations can, therefore, be found in the [Armadillo Documentation](https://arma.sourceforge.net/docs.html).
+XDiag uses the C++ library [Armadillo](https://arma.sourceforge.net) as a linear algebra backend. Documentation for linear algebra operations can, therefore, be found in the [Armadillo Documentation](https://arma.sourceforge.net/docs.html).
 
 ## Algebra
 |                                       |                                                                           |                                   |
@@ -32,10 +32,10 @@ XDiag used the C++ library [Armadillo](https://arma.sourceforge.net) as a linear
 
 | Name                                                         | Description                                                                                                                                     |                          Language |
 |:-------------------------------------------------------------|:------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------:|
-| [time_evolve](algorithms/time_evolve.md)                     | Performs a real-time evolution $e^{ -i\tau H} \vert \psi \rangle$ of a State with a given Hermitian operator $H$                                | :simple-cplusplus: :simple-julia: |
+| [time_evolve](algorithms/time_evolve.md)                     | Performs a real-time evolution $e^{ -iHt} \vert \psi \rangle$ of a State with a given Hermitian operator $H$                                | :simple-cplusplus: :simple-julia: |
 | [imaginary_time_evolve](algorithms/imaginary_time_evolve.md) | Performs a imaginary-time evolution $e^{ -\tau H}\vert\psi\rangle$ of a State with a given Hermitian operator $H$                               | :simple-cplusplus: :simple-julia: |
 | [evolve_lanczos](algorithms/evolve_lanczos.md)               | Computes the exponential $e^{z H}\vert\psi\rangle $ of a Hermitian operator times a State for a real or complex $z$ using the Lanczos algorithm | :simple-cplusplus: :simple-julia: |
-| [time_evolve_expokit](algorithms/time_evolve_expokit.md)     | Performs a real-time evolution $e^{ -i\tau H} \vert \psi \rangle$ using a highly accurate Lanczos algorithm                                     | :simple-cplusplus: :simple-julia: |
+| [time_evolve_expokit](algorithms/time_evolve_expokit.md)     | Performs a real-time evolution $e^{ -iHt} \vert \psi \rangle$ using a highly accurate Lanczos algorithm                                     | :simple-cplusplus: :simple-julia: |
 
 
 ---
@@ -68,14 +68,14 @@ XDiag used the C++ library [Armadillo](https://arma.sourceforge.net) as a linear
 |:----------------------------------------------|:-----------------------------------------------------|--:|
 | [Operator types](operators/operator_types.md) | A summary of all the operator types defined in XDiag |   |
 
-|                                       |                                                                                                                                                 |                                   |
-|:--------------------------------------|:------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------:|
-| [Op](operators/op.md)                 | A linear operator acting on the Hilbert space                                                                                                   |                :simple-cplusplus: |
-| [OpSum](operators/opsum.md)           | Sum of couplings times operators                                                                                                                |                :simple-cplusplus: |
-| [hc](operators/hc.md)                 | Returns the hermitian conjugate of an Op or OpSum.                                                                                              |                :simple-cplusplus: |
-| [symmetrize](operators/symmetrize.md) | Symmetrizes an operator with a [PermutationGroup](symmetries/permutation_group.md) or [Representation](symmetries/representation.md) | :simple-cplusplus: :simple-julia: |
-| [Scalar](operators/scalar.md)         | A scalar number which can be either real or complex                                                                                             |                :simple-cplusplus: |
-| [Coupling](operators/coupling.md)     | Describes a coupling associated with an operator, either string or scalar                                                                       |                :simple-cplusplus: |
+|                                       |                                                                                                                                      |                                    |
+|:--------------------------------------|:-------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------:|
+| [Op](operators/op.md)                 | A linear operator acting on the Hilbert space                                                                                        | :simple-cplusplus:  :simple-julia: |
+| [OpSum](operators/opsum.md)           | Sum of couplings times operators                                                                                                     | :simple-cplusplus:  :simple-julia: |
+| [hc](operators/hc.md)                 | Returns the hermitian conjugate of an Op or OpSum.                                                                                   | :simple-cplusplus:  :simple-julia: |
+| [symmetrize](operators/symmetrize.md) | Symmetrizes an operator with a [PermutationGroup](symmetries/permutation_group.md) or [Representation](symmetries/representation.md) |  :simple-cplusplus: :simple-julia: |
+| [Scalar](operators/scalar.md)         | A scalar number which can be either real or complex                                                                                  | :simple-cplusplus:  :simple-julia: |
+| [Coupling](operators/coupling.md)     | Describes a coupling associated with an operator, either string or scalar                                                            | :simple-cplusplus:  :simple-julia: |
 
 ---
 

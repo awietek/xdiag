@@ -1,6 +1,43 @@
 ---
-title: Advanced Compilation
+title: Compilation
 ---
+
+## Basic Compilation
+
+- **Download** the source code using [git](https://git-scm.com/)
+  ```bash
+  cd /path/to/where/xdiag/should/be
+  git clone https://github.com/awietek/xdiag.git
+  ```
+
+- **Compile the default library**
+  ``` bash
+  cd xdiag
+  cmake -S . -B build
+  cmake --build build
+  cmake --install build
+  ```
+  By default, the library is now installed in the subdirectory `install`.
+
+- **Compile the distributed library**
+
+    To use the distributed computing features of `xdiag`, the distributed
+    library has to be built which requires [MPI](https://en.wikipedia.org/wiki/Message_Passing_Interface).
+    ``` bash
+    cd xdiag
+    cmake -S . -B build -D XDIAG_DISTRIBUTED=On
+    cmake --build build
+    cmake --install build
+    ```
+
+    !!! info
+
+        It might be necessary to explicitly define MPI compiler, e.g. `mpicxx` like this
+        ```bash
+        cmake -S . -B build -D XDIAG_DISTRIBUTED=On -D CMAKE_CXX_COMPILER=mpicxx
+        ```
+		
+## Advanced Compilation
 
 - **Parallel compilation**
     To speed up the compilation process, the build step can be performed in parallel using the `-j` flag
@@ -64,3 +101,7 @@ title: Advanced Compilation
     cmake --build build
     build/tests/tests
     ```
+
+## Optimization
+
+**missing documentation**

@@ -4,8 +4,9 @@ title: Spinhalf
 
 A block in a spin $S=1/2$  Hilbert space. 
 
-**Source** [spinhalf.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/blocks/spinhalf.hpp)
+**Sources** [spinhalf.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/blocks/spinhalf.hpp), [spinhalf.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/blocks/spinhalf.cpp)
 
+---
 
 ## Constructors
 
@@ -35,6 +36,8 @@ A block in a spin $S=1/2$  Hilbert space.
 	
 The parameter `backend` chooses how the block is coded internally. By using the default parameter `auto` the backend is chosen automatically. Alternatives are `32bit`, `64bit`, `1sublattice`, `2sublattice`, `3sublattice`, `4sublattice`, and `5sublattice`. The backends `xsublattice` implement the sublattice coding algorithm described in [Wietek, Läuchli, Phys. Rev. E 98, 033309 (2018)](https://journals.aps.org/pre/abstract/10.1103/PhysRevE.98.033309). The sublattice coding algorithms impose certain constraints on the symmetries used, as described in the reference. 
 
+---
+
 ## Iteration
 
 An Spinhalf block can be iterated over, where at each iteration a [ProductState](../states/product_state.md) representing the corresponding basis state is returned.
@@ -53,9 +56,6 @@ An Spinhalf block can be iterated over, where at each iteration a [ProductState]
 		@show pstate, index(block, pstate) 
 	end
 	```
-
-
-	
 	
 ---
 

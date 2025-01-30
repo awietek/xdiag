@@ -6,38 +6,40 @@ A generic state describing a quantum wave function $|\psi \rangle$.
 
 **Sources** [state.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/states/state.hpp) [state.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/states/state.cpp)
 
+---
+
 ## Constructors
 
 A state can be constructed in two ways:
 
-**1.** By only specifying the block. In this case the state is initialized with all coefficients zero.
+1. By only specifying the block. In this case the state is initialized with all coefficients zero.
 
-=== "C++"	
-	```c++
-	State(Block const &block, bool real = true, int64_t n_cols = 1);
-	```	
-=== "Julia"
-	```julia
-	State(block::Block; real::Bool = true, n_cols::Int64 = 1)
-	```
----
-**2.** By handing a vector or matrix of coefficients.
+	=== "C++"	
+		```c++
+		State(Block const &block, bool real = true, int64_t n_cols = 1);
+		```	
+	=== "Julia"
+		```julia
+		State(block::Block; real::Bool = true, n_cols::Int64 = 1)
+		```
 
-=== "C++"	
-	```c++ 
-	template <typename block_t, typename coeff_t>
-	State(block_t const &block, arma::Col<coeff_t> const &vector);
+2. By handing a vector or matrix of coefficients.
 
-	template <typename block_t, typename coeff_t>
-	State(block_t const &block, arma::Mat<coeff_t> const &matrix);
-	```
-=== "Julia"
-	```julia
-	State(block::Block, vec::Vector{Float64})
-	State(block::Block, vec::Vector{ComplexF64})
-	State(block::Block, mat::Matrix{Float64})
-	State(block::Block, mat::Matrix{ComplexF64})
-	```	
+	=== "C++"	
+		```c++ 
+		template <typename block_t, typename coeff_t>
+		State(block_t const &block, arma::Col<coeff_t> const &vector);
+
+		template <typename block_t, typename coeff_t>
+		State(block_t const &block, arma::Mat<coeff_t> const &matrix);
+		```
+	=== "Julia"
+		```julia
+		State(block::Block, vec::Vector{Float64})
+		State(block::Block, vec::Vector{ComplexF64})
+		State(block::Block, mat::Matrix{Float64})
+		State(block::Block, mat::Matrix{ComplexF64})
+		```	
 
 | Parameter | Description                                                                                    |   |
 |:----------|:-----------------------------------------------------------------------------------------------|---|
@@ -63,6 +65,23 @@ Returns the number of sites of the block the state is defined on.
 	```julia
 	nsites(state::State)
 	```
+---
+
+#### isapprox
+
+Returns whether two states are approximately equal.
+	
+=== "C++"	
+	```c++
+	bool isapprox(State const &v, State const &w, double rtol = 1e-12,
+	              double atol = 1e-12);
+	```
+
+=== "Julia"
+	```julia
+	isapprox(v::State, w::State, rtol::Float64, atol::Float64)
+	```
+	
 ---
 
 #### isreal

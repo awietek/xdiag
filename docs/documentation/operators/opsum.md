@@ -6,7 +6,11 @@ Object representing a generic many-body operator by a sum of operators of the fo
 
 $$ \mathcal{O} = \sum_i c_i \mathcal{O}_i. $$
 
-Hence, an OpSum is consists of a sum of pairs given by
+**Sources** [opsum.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/operators/opsum.hpp), [opsum.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/operators/opsum.cpp)
+
+--- 
+
+An OpSum is consists of a sum of pairs given by
 
 1. A coupling constant $c_i$ which is defined by a [Coupling](coupling.md) object. The coupling can either be a string name or a real/complex number.
 
@@ -18,7 +22,7 @@ Thus, OpSums can be defined independently of the numerical values of the couplin
 
 OpSums can be added and subtracted, as well as multiplied with and divided by a [Scalar](scalar.md). Hence, OpSums carry the mathematical structure of a vector space.
 
-**Sources** [opsum.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/operators/opsum.hpp), [opsum.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/operators/opsum.cpp)
+---
 
 ## Constructors
 

@@ -62,6 +62,8 @@ private:
 };
 
 XDIAG_API int64_t nsites(State const &s);
+XDIAG_API bool isapprox(State const &v, State const &w, double rtol = 1e-12,
+                        double atol = 1e-12);
 XDIAG_API bool isreal(State const &s);
 XDIAG_API State real(State const &s);
 XDIAG_API State imag(State const &s);

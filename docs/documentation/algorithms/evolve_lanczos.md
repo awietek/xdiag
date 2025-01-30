@@ -15,6 +15,8 @@ Here, $\delta$ denotes a real number shifting the spectrum of $H$. The algorithm
 
 **Sources** [evolve_lanczos.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/evolve_lanczos.hpp), [evolve_lanczos.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/evolve_lanczos.cpp)
 
+---
+
 ## Definition
 
 The method is provided in two variants:
@@ -53,6 +55,8 @@ The method is provided in two variants:
 							   double deflation_tol = 1e-7);
 		```
 
+---
+
 ## Parameters
 
 | Name           | Description                                                                                             | Default |
@@ -68,6 +72,8 @@ The method is provided in two variants:
 
 The parameter `shift` can be used to turn all eigenvalues of the matrix $H - \delta \;\textrm{Id}$ positive whenever $\delta < E_0$, where $E_0$ denotes the ground state energy of $H$.
 
+---
+
 ## Returns
 
 A struct with the following entries
@@ -80,7 +86,9 @@ A struct with the following entries
 | niterations | number of iterations performed                                                                    |
 | criterion   | string denoting the reason why the Lanczosalgorithm stopped                                       |
 | state       | time-evolved [State](../states/state.md) $\vert \psi(t)\rangle$ (not defined for inplace variant) |
-	
+
+---
+
 ## Convergence criterion
 
 The algorithm is estimating the following error,
@@ -93,6 +101,8 @@ where $\vert \tilde{\psi}(t) \rangle$ denotes the approximation computed during 
 > Roger B. Sidje<br>
 > ACM Trans. Math. Softw., 24(1):130-156, 1998. (1998)<br>
 > DOI: [10.1145/285861.285868](https://doi.org/10.1145/285861.285868)
+
+---
 
 ## Usage Example
 === "C++"

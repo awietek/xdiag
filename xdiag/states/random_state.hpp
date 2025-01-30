@@ -8,7 +8,7 @@ namespace xdiag {
 
 class RandomState {
 public:
-  RandomState(int64_t seed = 42, bool normalized = true);
+  XDIAG_API RandomState(int64_t seed = 42, bool normalized = true);
   int64_t seed() const;
   bool normalized() const;
 
@@ -17,7 +17,7 @@ private:
   bool normalized_;
 };
 
-std::ostream &operator<<(std::ostream &out, RandomState const &state);
-std::string to_string(RandomState const &state);
+XDIAG_API std::ostream &operator<<(std::ostream &out, RandomState const &state);
+XDIAP_API std::string to_string(RandomState const &state);
 
 } // namespace xdiag

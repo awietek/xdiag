@@ -337,6 +337,24 @@ template State::State(tJDistributed const &block,
 #endif
 
 int64_t nsites(State const &s) { return s.nsites(); }
+bool isapprox(State const &v, State const &w, double rtol, double atol) try {
+  if (v.block() == w.block()) {
+    if (isreal(v) && isreal(w)) {
+      return arma::approx_equal(v.matrix(false), w.matrix(false), "both", atol,
+                                rtol);
+    } else if (!isreal(v) && !isreal(w)) {
+      return arma::approx_equal(v.matrixC(false), w.matrixC(false), "both",
+                                atol, rtol);
+    } else {
+      return false;
+    }
+  } else {
+    return false;
+  }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+
 bool isreal(State const &s) { return s.isreal(); }
 State real(State const &s) { return s.real(); }
 State imag(State const &s) { return s.imag(); }

@@ -32,6 +32,8 @@ bool ProductState::operator!=(ProductState const &rhs) const {
   return !operator==(rhs);
 }
 
+int64_t size(ProductState const &p) { return p.size(); }
+int64_t nsites(ProductState const &p) { return p.nsites(); }
 std::ostream &operator<<(std::ostream &out, ProductState const &state) {
   for (int64_t i = state.size() - 1; i >= 0; --i) {
     out << state[i] << " ";

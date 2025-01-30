@@ -4,7 +4,9 @@ title: Coupling
 
 Describes the coupling of an operator. A coupling can either be a **string** or a [Scalar](scalar.md), which is either a real or complex double precision floating point number. 
 
-**Source** [coupling.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/operators/coupling.hpp)
+**Sources** [coupling.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/operators/coupling.hpp), [coupling.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/operators/coupling.cpp)
+
+---
 
 ## Constructors
 

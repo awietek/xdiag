@@ -31,7 +31,7 @@ Creates a filled product state.
 
 ## random_state
 
-Create a filled random state with normal distributed coefficients.
+Create a filled random state with normal $\mathcal{N}(0, 1)$ distributed coefficients.
 
 === "C++"
 	```c++

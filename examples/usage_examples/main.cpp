@@ -145,35 +145,34 @@ for (auto pstate : block_sym_np) {
 }
 
 
-// {
-// // --8<-- [start:matrix]
-// // Creates matrix H_{k=2} in Eq (18.23) of https://link.springer.com/content/pdf/10.1007/978-3-540-74686-7_18.pdf
-// int N = 4;
-// int nup = 3;
-// int ndn = 2;
+{
+// --8<-- [start:matrix]
+// Creates matrix H_{k=2} in Eq (18.23) of https://link.springer.com/content/pdf/10.1007/978-3-540-74686-7_18.pdf
+int N = 4;
+int nup = 3;
+int ndn = 2;
 
-// // Define a Hubbard chain model
-// auto ops = OpSum();
-// for (int i=0; i< N; ++i){
-//   ops += "T" * Op("Hop", {i, (i+1) % N});
-// }
-// ops+= "U" * Op("HubbardU");
-// ops["T"] = 1.0;
-// ops["U"] = 5.0;
+// Define a Hubbard chain model
+auto ops = OpSum();
+for (int i=0; i< N; ++i){
+  ops += "T" * Op("Hop", {i, (i+1) % N});
+}
+ops+= "U" * Op("HubbardU");
+ops["T"] = 1.0;
+ops["U"] = 5.0;
 
-// // Create the a permutation group
-// auto p1 = Permutation({0, 1, 2, 3});
-// auto p2 = Permutation({1, 2, 3, 0});
-// auto p3 = Permutation({2, 3, 0, 1});
-// auto p4 = Permutation({3, 0, 1, 2});
-// auto group = PermutationGroup({p1, p2, p3, p4});
-// auto irrep = Representation({1, -1, 1, -1});
-// auto block = Electron(N, nup, ndn, group, irrep);
-
-// auto H = matrix(ops, block);
-// H.print();
-// // --8<-- [end:matrix]
-// }
+// Create the a permutation group
+auto p1 = Permutation({0, 1, 2, 3});
+auto p2 = Permutation({1, 2, 3, 0});
+auto p3 = Permutation({2, 3, 0, 1});
+auto p4 = Permutation({3, 0, 1, 2});
+auto group = PermutationGroup({p1, p2, p3, p4});
+auto irrep = Representation(group, arma::vec{1.0, -1.0, 1.0, -1.0});
+auto block = Electron(N, nup, ndn, irrep);
+auto H = matrix(ops, block);
+H.print();
+// --8<-- [end:matrix]
+}
 
 {
 // --8<-- [start:eigval0]
@@ -518,77 +517,75 @@ XDIAG_SHOW(res1.hump);
  
 
  
-// {
-// // --8<-- [start:algebra]
-// int N = 8;
-// auto block = Spinhalf(N,  N / 2);
-// auto ops = OpSum();
-// for (int i=0; i<N; ++i) {
-//   ops += Op("SdotS", {i, (i+1)%N});
-// }
-// auto [e0, psi] = eig0(ops, block);
+{
+// --8<-- [start:algebra]
+int N = 8;
+auto block = Spinhalf(N,  N / 2);
+auto ops = OpSum();
+for (int i=0; i<N; ++i) {
+  ops += Op("SdotS", {i, (i+1)%N});
+}
+auto [e0, psi] = eig0(ops, block);
 
-// XDIAG_SHOW(norm(psi));
-// XDIAG_SHOW(norm1(psi));
-// XDIAG_SHOW(norminf(psi));
+XDIAG_SHOW(norm(psi));
+XDIAG_SHOW(norm1(psi));
+XDIAG_SHOW(norminf(psi));
 
-// XDIAG_SHOW(dot(psi, psi));
-// XDIAG_SHOW(e0);
-// XDIAG_SHOW(inner(ops, psi));
+XDIAG_SHOW(dot(psi, psi));
+XDIAG_SHOW(e0);
+XDIAG_SHOW(inner(ops, psi));
 
-// auto phi = rand(block);
-// XDIAG_SHOW(phi.vector());
-// XDIAG_SHOW(psi.vector());
-// XDIAG_SHOW((psi + 2.0*phi).vector());
-// XDIAG_SHOW((psi*complex(0,3.0) + phi/2.0).vectorC());
-// // --8<-- [end:algebra]
+auto phi = random_state(block);
+XDIAG_SHOW(phi.vector());
+XDIAG_SHOW(psi.vector());
+XDIAG_SHOW((psi + 2.0*phi).vector());
+XDIAG_SHOW((psi*complex(0,3.0) + phi/2.0).vectorC());
+// --8<-- [end:algebra]
+}
 
-// {
-// // --8<-- [start:apply] 
-// int N = 8;
-// auto block = Spinhalf(N,  N / 2);
-// auto ops = OpSum();
-// for (int i=0; i<N; ++i){
-//   ops += Op("SdotS", {i, (i+1)%N});
-// }
-// auto [e0, psi] = eig0(ops, block);
+{
+// --8<-- [start:apply] 
+int N = 8;
+auto block = Spinhalf(N,  N / 2);
+auto ops = OpSum();
+for (int i=0; i<N; ++i){
+  ops += Op("SdotS", {i, (i+1)%N});
+}
+auto [e0, psi] = eig0(ops, block);
+auto phi = apply(Op("S+", 2), psi);
+XDIAG_SHOW(inner(ops, psi));
+XDIAG_SHOW(inner(ops, phi));
+// --8<-- [end:apply]
+}
 
-// auto blockp = Spinhalf(N,  N / 2 + 1);
-// auto phi = zeros(blockp);
-// apply(Op("S+", 2), psi, phi);
-// XDIAG_SHOW(inner(ops, psi));
-// XDIAG_SHOW(inner(ops, phi));
-// // --8<-- [end:apply]
-// }
+{
+// --8<-- [start:symmetrize]
+int N = 4;
+int nup = 2;
+auto block = Spinhalf(N, nup);
+auto p1 = Permutation({0, 1, 2, 3});
+auto p2 = Permutation({1, 2, 3, 0});
+auto p3 = Permutation({2, 3, 0, 1});
+auto p4 = Permutation({3, 0, 1, 2});
+auto group = PermutationGroup({p1, p2, p3, p4});
+auto rep = Representation(group);
+auto block_sym = Spinhalf(N, rep);
 
-// {
-// // --8<-- [start:symmetrize]
-// int N = 4;
-// int nup = 2;
-// auto block = Spinhalf(N, nup);
-// auto p1 = Permutation({0, 1, 2, 3});
-// auto p2 = Permutation({1, 2, 3, 0});
-// auto p3 = Permutation({2, 3, 0, 1});
-// auto p4 = Permutation({3, 0, 1, 2});
-// auto group = PermutationGroup({p1, p2, p3, p4});
-// auto rep = Representation({1, 1, 1, 1});
-// auto block_sym = Spinhalf(N, group, rep);
+auto ops = OpSum();
+for (int i=0; i<N; ++i) {
+  ops += Op("SdotS", {i, (i+1)%N});
+}
+auto [e0, psi] = eig0(ops, block);
+auto [e0s, psi_sym] = eig0(ops, block_sym);
 
-// auto ops = OpSum();
-// for (int i=0; i<N; ++i) {
-//   ops += Op("SdotS", {i, (i+1)%N});
-// }
-// auto [e0, psi] = eig0(ops, block);
-// auto [e0s, psi_sym] = eig0(ops, block_sym);
-
-// auto corr = Op("SdotS", {0, 1});
-// auto nn_corr = inner(corr, psi);
-// auto corr_sym = symmetrize(corr, group);
-// auto nn_corr_sym = innerC(corr_sym, psi_sym);
-// XDIAG_SHOW(nn_corr);
-// XDIAG_SHOW(nn_corr_sym);
-// // --8<-- [end:symmetrize]
-// }
+auto corr = Op("SdotS", {0, 1});
+auto nn_corr = inner(corr, psi);
+auto corr_sym = symmetrize(corr, group);
+auto nn_corr_sym = innerC(corr_sym, psi_sym);
+XDIAG_SHOW(nn_corr);
+XDIAG_SHOW(nn_corr_sym);
+// --8<-- [end:symmetrize]
+}
 
  
 // {

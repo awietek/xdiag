@@ -4,11 +4,13 @@ title: PermutationGroup
 
 A group of permutations. Group axioms are verified during construction.
 
-**Source** [permutation_group.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/symmetries/permutation_group.hpp)
+**Sources** [permutation_group.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/symmetries/permutation_group.hpp), [permutation_group.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/symmetries/permutation_group.cpp)
+
+---
 
 ## Constructor
 
-### Constructor from Permutations
+### From Permutations
 
 Creates an PermutationGroup out of a vector of [Permutation](permutation.md) objects.
 
@@ -24,9 +26,9 @@ Creates an PermutationGroup out of a vector of [Permutation](permutation.md) obj
 	```
 
 
-### Constructor from Matrix
+### From matrix
 
-Creates a PermutationGroup out of a matrix whose rows specify the individual permutations.
+Creates a PermutationGroup out of a matrix whose rows specify the individual permutations. If a raw pointer is handed, the matrix is assumed to be in column-major form.
 
 === "C++"	
 	```c++

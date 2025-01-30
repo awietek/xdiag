@@ -6,6 +6,8 @@ Performs an iterative eigenvalue calculation using the Lanczos algorithm. Return
 
 **Sources** [eigvals_lanczos.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/lanczos/eigvals_lanczos.hpp), [eigvals_lanczos.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/lanczos/eigvals_lanczos.cpp)
 
+---
+
 ## Definition
 
 The Lanczos algorithm can be run in thre distinct ways:
@@ -58,6 +60,7 @@ The Lanczos algorithm can be run in thre distinct ways:
                                 bool force_complex = false, double deflation_tol = 1e-7);
      	```
 
+---
 
 ## Parameters
 
@@ -72,6 +75,8 @@ The Lanczos algorithm can be run in thre distinct ways:
 | deflation_tol  | tolerance for deflation, i.e. breakdown of Lanczos due to Krylow space exhaustion | 1e-7    |
 | random_seed    | random seed for setting up the initial vector                                     | 42      |
 
+---
+
 ## Returns
 
 A struct of type `eigvals_lanczos_result_t` with the following entries.
@@ -84,6 +89,8 @@ A struct of type `eigvals_lanczos_result_t` with the following entries.
 | niterations | number of iterations performed                          |
 | criterion   | string denoting the reason why the algorithm stopped    |
 
+---
+
 ## Convergence criterion
 
 The algorithm terminates if the $k$-th ($k$ is the argument `neigvals`) approximate eigenvalue changes only by a fraction smaller than $\epsilon$ ($k$ is the argument `precision`), i.e.
@@ -91,6 +98,8 @@ The algorithm terminates if the $k$-th ($k$ is the argument `neigvals`) approxim
 $$ (\tilde{e}_k^{(n)} - \tilde{e}_k^{(n-1)}) / \tilde{e}_k^{(n)} < \epsilon.$$
 
 Here, $\tilde{e}_k^{(n)}$ denotes the Lanczos approximation to the $k$-th eigenvalue after $n$ iterations.
+
+---
 
 ## Usage Example
 

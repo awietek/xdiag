@@ -4,7 +4,9 @@ title: tJ
 
 A block in a  $t-J$ type Hilbert space, i.e. fermions with $\uparrow, \downarrow$ spin excluding doubly occupied sites. 
 
-**Source** [tj.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/blocks/tj.hpp)
+**Sources** [tj.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/blocks/tj.hpp), [tj.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/blocks/tj.cpp)
+
+---
 
 ## Constructors
 
@@ -30,6 +32,8 @@ A block in a  $t-J$ type Hilbert space, i.e. fermions with $\uparrow, \downarrow
 | backend | backend used for coding the basis states                                             | `auto`  |
 
 The parameter `backend` chooses how the block is coded internally. By using the default parameter `auto` the backend is chosen automatically. Alternatives are `32bit`, `64bit`.
+
+---
 
 ## Iteration
 

@@ -2,20 +2,22 @@
 title: RandomState
 ---
 
-A random state with normal distributed coefficients
+A random state with $\mathcal{N}(0, 1)$ normal distributed coefficients.
 
-**Source** [random_state.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/states/random_state.hpp)
+**Sources** [random_state.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/states/random_state.hpp), [random_state.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/states/random_state.cpp)
+
+---
 
 ## Constructors
-
-=== "Julia"
-	```julia
-	RandomState(seed::Int64 = 42, normalized::Bool = true)
-	```
 
 === "C++"	
 	```c++
     RandomState(int64_t seed = 42, bool normalized = true);
+	```
+	
+=== "Julia"
+	```julia
+	RandomState(seed::Int64 = 42, normalized::Bool = true)
 	```
 
 | Parameter  | Description                                          |   |
@@ -23,38 +25,7 @@ A random state with normal distributed coefficients
 | seed       | random seed determining which random numbers are put |   |
 | normalized | flag whether the State is normalized                 |   |
 
-
-	
-## Methods
-
-!!! method "seed"
-
-	Returns the seed of the random state
-
-	=== "Julia"
-		```julia
-		seed(state::RandomState)
-		```
-
-	=== "C++"	
-		```c++
-		int64_t seed() const;
-		```
-
-!!! method "size"
-
-	Returns whether the state is normalized.
-
-	=== "Julia"
-		```julia
-	    normalized(state::RandomState)
-		```
-
-	=== "C++"	
-		```c++
-		bool normalized() const;
-		```
-
+---
 
 ## Usage Example
 

@@ -17,6 +17,8 @@ The algorithm features automatic stepsize control and computes approximate solut
 
 **Sources** [time_evolve_expokit.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/time_evolve_expokit.hpp), [time_evolve_expokit.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/time_evolve_expokit.cpp)
 
+---
+
 ## Definition
 
 The method is provided in two variants:
@@ -41,6 +43,8 @@ The method is provided in two variants:
 			int64_t m = 30, double anorm = 0., int64_t nnorm = 2);
 		```
 
+---
+
 ## Parameters
 
 | Name      | Description                                                                           | Default |
@@ -53,6 +57,8 @@ The method is provided in two variants:
 | anorm     | 1-norm estimate of the operator $H$, if unknown default 0. computes it fresh          | 0.      |
 | nnorm     | number of random samples to estimate 1-norm, usually not more than 2 required         | 2       |
 
+---
+
 ## Returns
 
 A struct with the following entries
@@ -62,6 +68,8 @@ A struct with the following entries
 | error | the computed error estimate during evolution                                                      |
 | hump  | the "hump" as defined in Expokit [10.1145/285861.285868](https://doi.org/10.1145/285861.285868)   |
 | state | time-evolved [State](../states/state.md) $\vert \psi(t)\rangle$ (not defined for inplace variant) |
+
+---
 
 ## Convergence criterion
 
@@ -75,6 +83,8 @@ where $\vert \tilde{\psi}(t) \rangle$ denotes the approximation computed during 
 > Roger B. Sidje<br>
 > ACM Trans. Math. Softw., 24(1):130-156, 1998. (1998)<br>
 > DOI: [10.1145/285861.285868](https://doi.org/10.1145/285861.285868)
+
+---
 
 ## Usage Example
 

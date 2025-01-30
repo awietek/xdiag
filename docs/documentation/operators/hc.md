@@ -6,6 +6,8 @@ Returns the hermitian conjugate $\mathcal{O}^\dagger$ of an operator $\mathcal{O
 
 **Sources** [hc.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/operators/logic/hc.hpp), [hc.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/operators/logic/hc.cpp)
 
+---
+
 ## Definition
 
 === "C++"
@@ -13,6 +15,7 @@ Returns the hermitian conjugate $\mathcal{O}^\dagger$ of an operator $\mathcal{O
 	Op hc(Op const &op)
 	OpSum hc(OpSum const &ops)
 	```
+---
 
 ## Usage Example
 

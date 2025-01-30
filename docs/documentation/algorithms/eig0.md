@@ -6,6 +6,8 @@ Computes the groud state energy and the ground state of a Hermitian operator on 
 
 **Sources** [sparse_diag.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/sparse_diag.hpp), [sparse_diag.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/sparse_diag.cpp)
 
+---
+
 ## Definition
 
 === "C++"
@@ -29,6 +31,8 @@ Computes the groud state energy and the ground state of a Hermitian operator on 
 	)
 	```
 
+---
+
 ## Parameters
 
 | Name           | Description                                                            | Default |
@@ -40,12 +44,16 @@ Computes the groud state energy and the ground state of a Hermitian operator on 
 | force_complex  | whether or not computation should be forced to have complex arithmetic | false   |
 | random_seed    | random seed for setting up the initial vector                          | 42      |
 
+---
+
 ## Returns
 
 | Type        | Description                      |
 |:------------|:---------------------------------|
 | real number | lowest lying eigenvalue of `ops` |
 | State       | groundstate                      |
+
+---
 
 ## Usage Example
 

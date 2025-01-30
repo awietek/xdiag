@@ -4,12 +4,13 @@ title: Permutation
 
 Permutations of indices or lattice sites. Basic building block of a [PermutationGroup](permutation_group.md). Permutations can be multiplied, inverted and raised to a power.
 
-**Source** [permutation.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/symmetries/permutation.hpp)
+**Sources** [permutation.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/symmetries/permutation.hpp), [permutation.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/symmetries/permutation.cpp)
+
+---
 
 ## Constructors
-
 	
-### Constructors from an array
+### From an array
 
 Creates an Permutation out of an array of integers, e.g. `{0, 2, 1, 3}`. If the input array is of size `N` then every number between `0` and `N-1` must occur exactly once, otherwise the Permutation is invalid.
 
@@ -40,7 +41,7 @@ Creates an Permutation out of an array of integers, e.g. `{0, 2, 1, 3}`. If the 
 
 
 
-### Constructor for Identity
+### For identity
 
 Constructs an identity permutation of a given size, e.g. `{0, 1, 2, 3}`.
 

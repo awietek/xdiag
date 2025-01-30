@@ -4,7 +4,9 @@ title: Scalar
 
 A variable which can be either a real or complex double precision number. The algebraic operators `+,-,*,\` and comparison operators `==, !=` are defined.
 
-**Source** [scalar.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/operators/scalar.hpp)
+**Sources** [scalar.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/operators/scalar.hpp), [scalar.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/operators/scalar.cpp)
+
+---
 
 ## Constructors
 

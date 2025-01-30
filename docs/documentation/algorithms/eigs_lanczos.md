@@ -6,6 +6,8 @@ Performs an iterative eigenvalue calculation building eigenvectors using the Lan
 
 **Sources** [eigs_lanczos.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/lanczos/eigs_lanczos.hpp), [eigs_lanczos.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/lanczos/eigs_lanczos.cpp)
 
+---
+
 ## Definition
 
 The Lanczos algorithm can be run in two distinct ways:
@@ -47,6 +49,8 @@ The Lanczos algorithm can be run in two distinct ways:
                      bool force_complex = false, double deflation_tol = 1e-7);
 		```
 
+---
+
 ## Parameters
 
 | Name           | Description                                                                       | Default |
@@ -60,6 +64,8 @@ The Lanczos algorithm can be run in two distinct ways:
 | deflation_tol  | tolerance for deflation, i.e. breakdown of Lanczos due to Krylow space exhaustion | 1e-7    |
 | random_seed    | random seed for setting up the initial vector                                     | 42      |
 
+---
+
 ## Returns
 
 A struct with the following entries
@@ -72,6 +78,9 @@ A struct with the following entries
 | eigenvectors | [State](../states/state.md) of shape $D \times $`neigvals` holding all low-lying eigenvalues up to `neigvals` |
 | niterations  | number of iterations performed                                                                                        |
 | criterion    | string denoting the reason why the algorithm stopped                                                                  |
+
+---
+
 ## Convergence criterion
 
 The algorithm terminates if the $k$-th ($k$ is the argument `neigvals`) approximate eigenvalue changes only by a fraction smaller than $\epsilon$ ($k$ is the argument `precision`), i.e.
@@ -79,6 +88,8 @@ The algorithm terminates if the $k$-th ($k$ is the argument `neigvals`) approxim
 $$ (\tilde{e}_k^{(n)} - \tilde{e}_k^{(n-1)}) / \tilde{e}_k^{(n)} < \epsilon.$$
 
 Here, $\tilde{e}_k^{(n)}$ denotes the Lanczos approximation to the $k$-th eigenvalue after $n$ iterations.
+
+---
 
 ## Usage Example
 

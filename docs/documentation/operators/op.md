@@ -4,6 +4,10 @@ title: Op
 
 Object describing a single linear operator acting on a Hilbert space.
 
+**Sources** [op.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/operators/op.hpp), [op.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/operators/op.cpp)
+
+---
+
 Every operator is defined by up to three paramaters:
 
 1. The **type** of the operator. This is a string argument which determines what kind of operator is represented. A detailed overview of the available types can be found at [Operator types](operator_types.md)
@@ -12,7 +16,7 @@ Every operator is defined by up to three paramaters:
 
 3. For special interactions, it can be necessary to additionally specify a numerical **matrix**, which can either be real or complex. An example is the operator type `Matrix` defining generic spin interactions.
 
-**Sources** [op.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/operators/op.hpp), [op.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/operators/op.cpp)
+---
 
 ## Constructors
 

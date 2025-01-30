@@ -10,6 +10,8 @@ of a [State](../states/state.md) $\vert \psi_0 \rangle$ and a Hermitian operator
 
 **Sources** [time_evolve.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/time_evolve.hpp), [time_evolve.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/time_evolve.cpp)
 
+---
+
 ## Definition
 
 The method is provided in two variants:
@@ -34,6 +36,8 @@ The method is provided in two variants:
                                  std::string algorithm = "lanczos");
 		```
 
+---
+
 ## Parameters
 
 | Name      | Description                                                                           | Default   |
@@ -45,6 +49,8 @@ The method is provided in two variants:
 | algorithm | iterative algorithm which is used, one of `lanczos` or `expokit`                      | `lanczos` |
 
 The `algorithm` parameter decised which backend is run. If `lanczos` is chosen, the [evolve_lanczos](evolve_lanczos.md) routine is called with the standard arguments. Alternatively, `expokit` chooses the [time_evolve_expokit](time_evolve_expokit.md) routine. For a detailed documentation of the algorithms we refer to the [evolve_lanczos](evolve_lanczos.md) and [time_evolve_expokit](time_evolve_expokit.md) pages. Broadly speaking, the `expokit` can yield higher precision states at arbitrarily long times at the cost of increased memory and computing time. In practice, we recommend analysing the effect of the `precision` parameters on the time evolution series obtained in both cases. 
+
+---
 
 ## Usage Example
 

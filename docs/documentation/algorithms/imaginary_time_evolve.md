@@ -10,6 +10,8 @@ of a [State](../states/state.md) $\vert \psi_0 \rangle$ and a Hermitian operator
 
 **Sources** [imaginary_time_evolve.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/imaginary_time_evolve.hpp), [imaginary_time_evolve.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/imaginary_time_evolve.cpp)
 
+---
+
 ## Definition
 
 The method is provided in two variants:
@@ -32,6 +34,8 @@ The method is provided in two variants:
                                            double precision = 1e-12, shift = 0.);
 		```
 
+---
+
 ## Parameters
 
 | Name      | Description                                                                                             | Default |
@@ -43,6 +47,8 @@ The method is provided in two variants:
 | shift     | the offset $\delta$ when computing $\vert \psi(t) \rangle = e^{-(H - \delta) \tau} \vert \psi_0\rangle$ | 0.0     |
 
 The routine calls the subroutine [evolve_lanczos](evolve_lanczos.md) implementing a Lanczos algorithm to perform the evolution. This routine can also be called explicitly if more control is desired. Please also confer to the page [evolve_lanczos](evolve_lanczos.md) for further details on the specifics of the algorithm. The parameter `shift` can be used to turn all eigenvalues of the matrix $H - \delta \;\textrm{Id}$ positive whenever $\delta < E_0$, where $E_0$ denotes the ground state energy of $H$.
+
+---
 
 ## Usage Example
 

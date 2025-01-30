@@ -2,9 +2,11 @@
 title: Electron
 ---
 
-Representation of a block in a Electron (fermions with $\uparrow, \downarrow$ spin) Hilbert space. 
+A block in an Electron (fermions with $\uparrow, \downarrow$ spin) Hilbert space. 
 
-**Source** [electron.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/blocks/electron.hpp)
+**Sources** [electron.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/blocks/electron.hpp), [electron.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/blocks/electron.cpp)
+
+---
 
 ## Constructors
 
@@ -34,6 +36,8 @@ Representation of a block in a Electron (fermions with $\uparrow, \downarrow$ sp
 
 The parameter `backend` chooses how the block is coded internally. By using the default parameter `auto` the backend is chosen automatically. Alternatives are `32bit`, `64bit`
 
+---
+
 ## Iteration
 
 An Electron block can be iterated over, where at each iteration a [ProductState](../states/product_state.md) representing the corresponding basis state is returned.
@@ -53,7 +57,7 @@ An Electron block can be iterated over, where at each iteration a [ProductState]
 		@show pstate, index(block, pstate) 
 	end
 	```
-
+---
 
 ## Methods
 
