@@ -16,7 +16,7 @@
     
     
       
-        <title>eigval0 - XDiag Documentation</title>
+        <title>time_evolve - XDiag Documentation</title>
       
     
     
@@ -106,7 +106,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              eigval0
+              time_evolve
             
           </span>
         </div>
@@ -335,15 +335,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#returns" class="md-nav__link">
-    <span class="md-ellipsis">
-      Returns
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#usage-example" class="md-nav__link">
     <span class="md-ellipsis">
       Usage Example
@@ -367,32 +358,42 @@
                   
 
 
-  <h1>eigval0</h1>
+  <h1>time_evolve</h1>
 
-<p>Computes the groud state energy of a Hermitian operator on a block by using an iterative Lanczos algorithm. This function is a shortcut for the <a href="../eigvals_lanczos/">eigvals_lanczos</a> function. We refer to <a href="../eigvals_lanczos/">eigvals_lanczos</a> for further details on the algorithm and the convergence criterion.</p>
-<p><strong>Sources</strong> <a href="https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/sparse_diag.hpp">sparse_diag.hpp</a>, <a href="https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/sparse_diag.cpp">sparse_diag.cpp</a></p>
+<p>Computes the real-time evolution, </p>
+<div class="arithmatex">\[\vert \psi(t) \rangle = e^{-iHt} \vert \psi_0\rangle,\]</div>
+<p>of a <a href="../../states/state/">State</a> <span class="arithmatex">\(\vert \psi_0 \rangle\)</span> and a Hermitian operator <span class="arithmatex">\(H\)</span> using an iterative algorithm. </p>
+<p><strong>Sources</strong> <a href="https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/time_evolve.hpp">time_evolve.hpp</a>, <a href="https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/time_evolve.cpp">time_evolve.cpp</a></p>
 <h2 id="definition">Definition</h2>
-<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">C++</label><label for="__tabbed_1_2">Julia</label></div>
+<p>The method is provided in two variants:</p>
+<ol>
+<li>
+<p>Returning a new state while the input state remains untouched. This variant is safe to use and simple to code.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:1"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">C++</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kt">double</span><span class="w"> </span><span class="nf">eigval0</span><span class="p">(</span><span class="n">OpSum</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ops</span><span class="p">,</span><span class="w"> </span><span class="n">Block</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">block</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">precision</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1e-12</span><span class="p">,</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">           </span><span class="kt">int64_t</span><span class="w"> </span><span class="n">max_iterations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1000</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">force_complex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">,</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">           </span><span class="kt">int64_t</span><span class="w"> </span><span class="n">random_seed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">42</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">State</span><span class="w"> </span><span class="n">time_evolve</span><span class="p">(</span><span class="n">OpSum</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">H</span><span class="p">,</span><span class="w"> </span><span class="n">State</span><span class="w"> </span><span class="n">psi0</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">time</span><span class="p">,</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">                  </span><span class="kt">double</span><span class="w"> </span><span class="n">precision</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1e-12</span><span class="p">,</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">                  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">algorithm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;lanczos&quot;</span><span class="p">);</span>
 </code></pre></div>
 </div>
+</div>
+</div>
+</li>
+<li>
+<p>An <em>inplace</em> variant <code>time_evolve_inplace</code>, where the input state is overwritten and contains the time evolved state upon exit. This version is more memory efficient than <code>time_evolve</code>.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:1"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">C++</label></div>
+<div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">function</span><span class="w"> </span><span class="n">eigval0</span><span class="p">(</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="n">ops</span><span class="o">::</span><span class="kt">OpSum</span><span class="p">,</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="n">block</span><span class="o">::</span><span class="kt">Block</span><span class="p">;</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="n">precision</span><span class="o">::</span><span class="kt">Real</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1e-12</span><span class="p">,</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">    </span><span class="n">maxiter</span><span class="o">::</span><span class="kt">Integer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1000</span><span class="p">,</span>
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">    </span><span class="n">force_complex</span><span class="o">::</span><span class="kt">Bool</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">,</span>
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="n">seed</span><span class="o">::</span><span class="kt">Integer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">42</span><span class="p">,</span>
-<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kt">void</span><span class="w"> </span><span class="n">time_evolve_inplace</span><span class="p">(</span><span class="n">OpSum</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">H</span><span class="p">,</span><span class="w"> </span><span class="n">State</span><span class="w"> </span><span class="o">&amp;</span><span class="n">psi0</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">time</span><span class="p">,</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">                         </span><span class="kt">double</span><span class="w"> </span><span class="n">precision</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1e-12</span><span class="p">,</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">                         </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">algorithm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;lanczos&quot;</span><span class="p">);</span>
 </code></pre></div>
 </div>
 </div>
 </div>
+</li>
+</ol>
 <h2 id="parameters">Parameters</h2>
 <table>
 <thead>
@@ -404,54 +405,35 @@
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;">ops</td>
-<td style="text-align: left;"><a href="../../operators/opsum/">OpSum</a> defining a Hermitian operator</td>
+<td style="text-align: left;">H</td>
+<td style="text-align: left;"><a href="../../operators/opsum/">OpSum</a> defining the hermitian operator <span class="arithmatex">\(H\)</span> for time evolution</td>
 <td></td>
 </tr>
 <tr>
-<td style="text-align: left;">block</td>
-<td style="text-align: left;">block on which the operator is defined</td>
+<td style="text-align: left;">psi0</td>
+<td style="text-align: left;">initial <a href="../../states/state/">State</a> <span class="arithmatex">\(\vert \psi_0 \rangle\)</span> of the time evolution</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align: left;">time</td>
+<td style="text-align: left;">time <span class="arithmatex">\(t\)</span> until which the state is evolved</td>
 <td></td>
 </tr>
 <tr>
 <td style="text-align: left;">precision</td>
-<td style="text-align: left;">accuracy of the computed ground state</td>
+<td style="text-align: left;">accuracy of the computed time evolved state <span class="arithmatex">\(\vert \psi(t) \rangle\)</span></td>
 <td>1e-12</td>
 </tr>
 <tr>
-<td style="text-align: left;">max_iterations</td>
-<td style="text-align: left;">maximum number of iterations</td>
-<td>1000</td>
-</tr>
-<tr>
-<td style="text-align: left;">force_complex</td>
-<td style="text-align: left;">whether or not computation should be forced to have complex arithmetic</td>
-<td>false</td>
-</tr>
-<tr>
-<td style="text-align: left;">random_seed</td>
-<td style="text-align: left;">random seed for setting up the initial vector</td>
-<td>42</td>
+<td style="text-align: left;">algorithm</td>
+<td style="text-align: left;">iterative algorithm which is used, one of <code>lanczos</code> or <code>expokit</code></td>
+<td><code>lanczos</code></td>
 </tr>
 </tbody>
 </table>
-<h2 id="returns">Returns</h2>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;">real number</td>
-<td style="text-align: left;">lowest lying eigenvalue of <code>ops</code></td>
-</tr>
-</tbody>
-</table>
+<p>The <code>algorithm</code> parameter decised which backend is run. If <code>lanczos</code> is chosen, the <a href="../evolve_lanczos/">evolve_lanczos</a> routine is called with the standard arguments. Alternatively, <code>expokit</code> chooses the <a href="../time_evolve_expokit/">time_evolve_expokit</a> routine. For a detailed documentation of the algorithms we refer to the <a href="../evolve_lanczos/">evolve_lanczos</a> and <a href="../time_evolve_expokit/">time_evolve_expokit</a> pages. Broadly speaking, the <code>expokit</code> can yield higher precision states at arbitrarily long times at the cost of increased memory and computing time. In practice, we recommend analysing the effect of the <code>precision</code> parameters on the time evolution series obtained in both cases. </p>
 <h2 id="usage-example">Usage Example</h2>
-<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">C++</label><label for="__tabbed_2_2">Julia</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:1"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">C++</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kt">int</span><span class="w"> </span><span class="n">N</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">8</span><span class="p">;</span>
@@ -461,27 +443,14 @@
 <a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1">// Define the nearest-neighbor Heisenberg model</span>
 <a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="k">auto</span><span class="w"> </span><span class="n">ops</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OpSum</span><span class="p">();</span>
 <a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">&lt;</span><span class="n">N</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">  </span><span class="n">ops</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="s">&quot;J&quot;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Op</span><span class="p">(</span><span class="s">&quot;SdotS&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="n">N</span><span class="p">});</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">  </span><span class="n">ops</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">Op</span><span class="p">(</span><span class="s">&quot;SdotS&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="n">N</span><span class="p">});</span>
 <a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="p">}</span>
-<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="n">ops</span><span class="p">[</span><span class="s">&quot;J&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span><span class="p">;</span>
-<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="kt">double</span><span class="w"> </span><span class="n">e0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eigval0</span><span class="p">(</span><span class="n">ops</span><span class="p">,</span><span class="w"> </span><span class="n">block</span><span class="p">);</span>
-</code></pre></div>
-</div>
-<div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">let</span><span class="w"> </span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">    </span><span class="n">N</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">8</span>
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="n">nup</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">N</span><span class="w"> </span><span class="err">÷</span><span class="w"> </span><span class="mi">2</span>
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span><span class="n">block</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Spinhalf</span><span class="p">(</span><span class="n">N</span><span class="p">,</span><span class="w"> </span><span class="n">nup</span><span class="p">)</span>
-<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>
-<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">    </span><span class="cp"># Define the nearest-neighbor Heisenberg model</span>
-<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">    </span><span class="n">ops</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OpSum</span><span class="p">()</span>
-<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="n">in</span><span class="w"> </span><span class="mi">1</span><span class="o">:</span><span class="n">N</span>
-<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">        </span><span class="n">ops</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">Op</span><span class="p">(</span><span class="s">&quot;HB&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;J&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">mod1</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">N</span><span class="p">)])</span>
-<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">    </span><span class="n">end</span>
-<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="w">    </span><span class="n">ops</span><span class="p">[</span><span class="s">&quot;J&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span>
-<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>
-<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="w">    </span><span class="n">e0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eigval0</span><span class="p">(</span><span class="n">ops</span><span class="p">,</span><span class="w"> </span><span class="n">block</span><span class="p">);</span>
-<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="n">end</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="k">auto</span><span class="w"> </span><span class="n">psi0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">product_state</span><span class="p">(</span><span class="n">block</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="s">&quot;Up&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Dn&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Up&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Dn&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Up&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Dn&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Up&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Dn&quot;</span><span class="p">});</span>
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="kt">double</span><span class="w"> </span><span class="n">time</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span><span class="p">;</span>
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="k">auto</span><span class="w"> </span><span class="n">psi</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">time_evolve</span><span class="p">(</span><span class="n">ops</span><span class="p">,</span><span class="w"> </span><span class="n">psi0</span><span class="p">,</span><span class="w"> </span><span class="n">time</span><span class="p">);</span>
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="n">time_evolve_inplace</span><span class="p">(</span><span class="n">ops</span><span class="p">,</span><span class="w"> </span><span class="n">psi0</span><span class="p">,</span><span class="w"> </span><span class="n">time</span><span class="p">);</span>
+<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="n">XDIAG_SHOW</span><span class="p">(</span><span class="n">isapprox</span><span class="p">(</span><span class="n">psi0</span><span class="p">,</span><span class="w"> </span><span class="n">psi</span><span class="p">));</span>
 </code></pre></div>
 </div>
 </div>

@@ -344,6 +344,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#convergence-criterion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Convergence criterion
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#usage-example" class="md-nav__link">
     <span class="md-ellipsis">
       Usage Example
@@ -454,7 +463,7 @@
 </tr>
 <tr>
 <td style="text-align: left;">neigvals</td>
-<td style="text-align: left;">number of eigenvalues to converge</td>
+<td style="text-align: left;">number <span class="arithmatex">\(k\)</span> of eigenvalue to converge</td>
 <td>1</td>
 </tr>
 <tr>
@@ -516,6 +525,10 @@
 </tr>
 </tbody>
 </table>
+<h2 id="convergence-criterion">Convergence criterion</h2>
+<p>The algorithm terminates if the <span class="arithmatex">\(k\)</span>-th (<span class="arithmatex">\(k\)</span> is the argument <code>neigvals</code>) approximate eigenvalue changes only by a fraction smaller than <span class="arithmatex">\(\epsilon\)</span> (<span class="arithmatex">\(k\)</span> is the argument <code>precision</code>), i.e.</p>
+<div class="arithmatex">\[ (\tilde{e}_k^{(n)} - \tilde{e}_k^{(n-1)}) / \tilde{e}_k^{(n)} &lt; \epsilon.\]</div>
+<p>Here, <span class="arithmatex">\(\tilde{e}_k^{(n)}\)</span> denotes the Lanczos approximation to the <span class="arithmatex">\(k\)</span>-th eigenvalue after <span class="arithmatex">\(n\)</span> iterations.</p>
 <h2 id="usage-example">Usage Example</h2>
 <div class="tabbed-set tabbed-alternate" data-tabs="4:1"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">C++</label></div>
 <div class="tabbed-content">
