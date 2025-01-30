@@ -5,7 +5,7 @@ title: Documentation
 XDiag uses the C++ library [Armadillo](https://arma.sourceforge.net) as a linear algebra backend. Documentation for linear algebra operations can, therefore, be found in the [Armadillo Documentation](https://arma.sourceforge.net/docs.html).
 
 ## Algebra
-|                                       |                                                                           |                                   |
+| Name                                  | Description                                                               |                          Language |
 |:--------------------------------------|:--------------------------------------------------------------------------|----------------------------------:|
 | [matrix](algebra/matrix.md)           | Creates the full matrix representation of an operator on a block          | :simple-cplusplus: :simple-julia: |
 | [apply](algebra/apply.md)             | Applies an operator to a state $\vert \phi \rangle = O \vert \psi\rangle$ | :simple-cplusplus: :simple-julia: |
@@ -41,7 +41,7 @@ XDiag uses the C++ library [Armadillo](https://arma.sourceforge.net) as a linear
 ---
 
 ## Blocks
-|                                |                                            |                                   |
+| Name                           | Description                                |                          Language |
 |:-------------------------------|:-------------------------------------------|----------------------------------:|
 | [Spinhalf](blocks/spinhalf.md) | Block of a spin $S=1/2$ type Hilbert space | :simple-cplusplus: :simple-julia: |
 | [tJ](blocks/tJ.md)             | Block of a $t-J$ type Hilbert space        | :simple-cplusplus: :simple-julia: |
@@ -68,7 +68,7 @@ XDiag uses the C++ library [Armadillo](https://arma.sourceforge.net) as a linear
 |:----------------------------------------------|:-----------------------------------------------------|--:|
 | [Operator types](operators/operator_types.md) | A summary of all the operator types defined in XDiag |   |
 
-|                                       |                                                                                                                                      |                                    |
+| Name                                  | Description                                                                                                                          |                           Language |
 |:--------------------------------------|:-------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------:|
 | [Op](operators/op.md)                 | A linear operator acting on the Hilbert space                                                                                        | :simple-cplusplus:  :simple-julia: |
 | [OpSum](operators/opsum.md)           | Sum of couplings times operators                                                                                                     | :simple-cplusplus:  :simple-julia: |
@@ -80,7 +80,7 @@ XDiag uses the C++ library [Armadillo](https://arma.sourceforge.net) as a linear
 ---
 
 ## States
-|                                                       |                                                                   |                                   |
+| Name                                                  | Description                                                       |                          Language |
 |:------------------------------------------------------|:------------------------------------------------------------------|----------------------------------:|
 | [State](states/state.md)                              | A generic state describing a quantum wave function                | :simple-cplusplus: :simple-julia: |
 | [ProductState](states/product_state.md)               | A product state of local configurations                           | :simple-cplusplus: :simple-julia: |
@@ -94,7 +94,7 @@ XDiag uses the C++ library [Armadillo](https://arma.sourceforge.net) as a linear
 ---
 
 ## Symmetries
-|                                                     |                                                     |                                   |
+| Name                                                | Description                                         |                          Language |
 |:----------------------------------------------------|:----------------------------------------------------|----------------------------------:|
 | [Permutation](symmetries/permutation.md)            | Permutations of indices or lattice sites            | :simple-cplusplus: :simple-julia: |
 | [PermutationGroup](symmetries/permutation_group.md) | A group of permutations                             | :simple-cplusplus: :simple-julia: |
@@ -104,11 +104,11 @@ XDiag uses the C++ library [Armadillo](https://arma.sourceforge.net) as a linear
 
 ## Utilities
 
-|                                                   |                                                          |                                   |
+| Name                                              | Description                                              |                          Language |
 |:--------------------------------------------------|:---------------------------------------------------------|----------------------------------:|
 | [set_verbosity](utilities/utils.md#set_verbosity) | Sets how much information is printed during computations | :simple-cplusplus: :simple-julia: |
 | [say_hello](utilities/utils.md#say_hello)         | Prints a nice welcome message with version number        | :simple-cplusplus: :simple-julia: |
 | [print_version](utilities/utils.md#print_version) | Prints the plain version number                          | :simple-cplusplus: :simple-julia: |
-| [Logging](utilities/logging.md)       | Controling what is written to standard output | :simple-cplusplus: :simple-julia: |
-| [Timing](utilities/timing.md)         | Measurng wall time straightforwardly          |                :simple-cplusplus: |
-| [XDIAG_SHOW](utilities/xdiag_show.md) | Macro for printing debugging information      |                :simple-cplusplus: |
+| [Logging](utilities/logging.md)                   | Controling what is written to standard output            | :simple-cplusplus: :simple-julia: |
+| [Timing](utilities/timing.md)                     | Measurng wall time straightforwardly                     |                :simple-cplusplus: |
+| [XDIAG_SHOW](utilities/xdiag_show.md)             | Macro for printing debugging information                 |                :simple-cplusplus: |
