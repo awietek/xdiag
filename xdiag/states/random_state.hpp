@@ -18,6 +18,6 @@ private:
 };
 
 XDIAG_API std::ostream &operator<<(std::ostream &out, RandomState const &state);
-XDIAP_API std::string to_string(RandomState const &state);
+XDIAG_API std::string to_string(RandomState const &state);
 
 } // namespace xdiag
