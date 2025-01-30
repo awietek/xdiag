@@ -388,6 +388,7 @@ SIAM Journal on Numerical Analysis, Vol. 34, Iss. 5 (1997)<br>
 DOI: <a href="https://doi.org/10.1137/S0036142995280572">10.1137/S0036142995280572</a></p>
 </blockquote>
 <p><strong>Sources</strong> <a href="https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/evolve_lanczos.hpp">evolve_lanczos.hpp</a>, <a href="https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/evolve_lanczos.cpp">evolve_lanczos.cpp</a></p>
+<hr />
 <h2 id="definition">Definition</h2>
 <p>The method is provided in two variants:</p>
 <ol>
@@ -432,6 +433,7 @@ DOI: <a href="https://doi.org/10.1137/S0036142995280572">10.1137/S00361429952805
 </div>
 </li>
 </ol>
+<hr />
 <h2 id="parameters">Parameters</h2>
 <table>
 <thead>
@@ -485,6 +487,7 @@ DOI: <a href="https://doi.org/10.1137/S0036142995280572">10.1137/S00361429952805
 </tbody>
 </table>
 <p>The parameter <code>shift</code> can be used to turn all eigenvalues of the matrix <span class="arithmatex">\(H - \delta \;\textrm{Id}\)</span> positive whenever <span class="arithmatex">\(\delta &lt; E_0\)</span>, where <span class="arithmatex">\(E_0\)</span> denotes the ground state energy of <span class="arithmatex">\(H\)</span>.</p>
+<hr />
 <h2 id="returns">Returns</h2>
 <p>A struct with the following entries</p>
 <table>
@@ -521,6 +524,7 @@ DOI: <a href="https://doi.org/10.1137/S0036142995280572">10.1137/S00361429952805
 </tr>
 </tbody>
 </table>
+<hr />
 <h2 id="convergence-criterion">Convergence criterion</h2>
 <p>The algorithm is estimating the following error,</p>
 <div class="arithmatex">\[ \varepsilon = \parallel \vert \tilde{\psi}(t)\rangle - e^{z(H - \delta)} \vert \psi_0\rangle \parallel_2, \]</div>
@@ -531,6 +535,7 @@ Roger B. Sidje<br>
 ACM Trans. Math. Softw., 24(1):130-156, 1998. (1998)<br>
 DOI: <a href="https://doi.org/10.1145/285861.285868">10.1145/285861.285868</a></p>
 </blockquote>
+<hr />
 <h2 id="usage-example">Usage Example</h2>
 <div class="tabbed-set tabbed-alternate" data-tabs="3:1"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">C++</label></div>
 <div class="tabbed-content">

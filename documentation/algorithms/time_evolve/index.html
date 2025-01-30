@@ -364,6 +364,7 @@
 <div class="arithmatex">\[\vert \psi(t) \rangle = e^{-iHt} \vert \psi_0\rangle,\]</div>
 <p>of a <a href="../../states/state/">State</a> <span class="arithmatex">\(\vert \psi_0 \rangle\)</span> and a Hermitian operator <span class="arithmatex">\(H\)</span> using an iterative algorithm. </p>
 <p><strong>Sources</strong> <a href="https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/time_evolve.hpp">time_evolve.hpp</a>, <a href="https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/time_evolve.cpp">time_evolve.cpp</a></p>
+<hr />
 <h2 id="definition">Definition</h2>
 <p>The method is provided in two variants:</p>
 <ol>
@@ -394,6 +395,7 @@
 </div>
 </li>
 </ol>
+<hr />
 <h2 id="parameters">Parameters</h2>
 <table>
 <thead>
@@ -432,6 +434,7 @@
 </tbody>
 </table>
 <p>The <code>algorithm</code> parameter decised which backend is run. If <code>lanczos</code> is chosen, the <a href="../evolve_lanczos/">evolve_lanczos</a> routine is called with the standard arguments. Alternatively, <code>expokit</code> chooses the <a href="../time_evolve_expokit/">time_evolve_expokit</a> routine. For a detailed documentation of the algorithms we refer to the <a href="../evolve_lanczos/">evolve_lanczos</a> and <a href="../time_evolve_expokit/">time_evolve_expokit</a> pages. Broadly speaking, the <code>expokit</code> can yield higher precision states at arbitrarily long times at the cost of increased memory and computing time. In practice, we recommend analysing the effect of the <code>precision</code> parameters on the time evolution series obtained in both cases. </p>
+<hr />
 <h2 id="usage-example">Usage Example</h2>
 <div class="tabbed-set tabbed-alternate" data-tabs="3:1"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">C++</label></div>
 <div class="tabbed-content">

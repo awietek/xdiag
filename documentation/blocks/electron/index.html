@@ -420,8 +420,9 @@
 
   <h1>Electron</h1>
 
-<p>Representation of a block in a Electron (fermions with <span class="arithmatex">\(\uparrow, \downarrow\)</span> spin) Hilbert space. </p>
-<p><strong>Source</strong> <a href="https://github.com/awietek/xdiag/blob/main/xdiag/blocks/electron.hpp">electron.hpp</a></p>
+<p>A block in an Electron (fermions with <span class="arithmatex">\(\uparrow, \downarrow\)</span> spin) Hilbert space. </p>
+<p><strong>Sources</strong> <a href="https://github.com/awietek/xdiag/blob/main/xdiag/blocks/electron.hpp">electron.hpp</a>, <a href="https://github.com/awietek/xdiag/blob/main/xdiag/blocks/electron.cpp">electron.cpp</a></p>
+<hr />
 <h2 id="constructors">Constructors</h2>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">C++</label><label for="__tabbed_1_2">Julia</label></div>
 <div class="tabbed-content">
@@ -478,6 +479,7 @@
 </tbody>
 </table>
 <p>The parameter <code>backend</code> chooses how the block is coded internally. By using the default parameter <code>auto</code> the backend is chosen automatically. Alternatives are <code>32bit</code>, <code>64bit</code></p>
+<hr />
 <h2 id="iteration">Iteration</h2>
 <p>An Electron block can be iterated over, where at each iteration a <a href="../../states/product_state/">ProductState</a> representing the corresponding basis state is returned.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">C++</label><label for="__tabbed_2_2">Julia</label></div>
@@ -498,6 +500,7 @@
 </div>
 </div>
 </div>
+<hr />
 <h2 id="methods">Methods</h2>
 <h4 id="index">index</h4>
 <p>Returns the index of a given <a href="../../states/product_state/">ProductState</a> in the basis of the tJ block.</p>

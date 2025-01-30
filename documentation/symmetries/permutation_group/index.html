@@ -327,18 +327,18 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#constructor-from-permutations" class="md-nav__link">
+  <a href="#from-permutations" class="md-nav__link">
     <span class="md-ellipsis">
-      Constructor from Permutations
+      From Permutations
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#constructor-from-matrix" class="md-nav__link">
+  <a href="#from-matrix" class="md-nav__link">
     <span class="md-ellipsis">
-      Constructor from Matrix
+      From matrix
     </span>
   </a>
   
@@ -409,9 +409,10 @@
   <h1>PermutationGroup</h1>
 
 <p>A group of permutations. Group axioms are verified during construction.</p>
-<p><strong>Source</strong> <a href="https://github.com/awietek/xdiag/blob/main/xdiag/symmetries/permutation_group.hpp">permutation_group.hpp</a></p>
+<p><strong>Sources</strong> <a href="https://github.com/awietek/xdiag/blob/main/xdiag/symmetries/permutation_group.hpp">permutation_group.hpp</a>, <a href="https://github.com/awietek/xdiag/blob/main/xdiag/symmetries/permutation_group.cpp">permutation_group.cpp</a></p>
+<hr />
 <h2 id="constructor">Constructor</h2>
-<h3 id="constructor-from-permutations">Constructor from Permutations</h3>
+<h3 id="from-permutations">From Permutations</h3>
 <p>Creates an PermutationGroup out of a vector of <a href="../permutation/">Permutation</a> objects.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">C++</label><label for="__tabbed_1_2">Julia</label></div>
 <div class="tabbed-content">
@@ -425,8 +426,8 @@
 </div>
 </div>
 </div>
-<h3 id="constructor-from-matrix">Constructor from Matrix</h3>
-<p>Creates a PermutationGroup out of a matrix whose rows specify the individual permutations.</p>
+<h3 id="from-matrix">From matrix</h3>
+<p>Creates a PermutationGroup out of a matrix whose rows specify the individual permutations. If a raw pointer is handed, the matrix is assumed to be in column-major form.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="2:1"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">C++</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">

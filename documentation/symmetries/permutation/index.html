@@ -327,18 +327,18 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#constructors-from-an-array" class="md-nav__link">
+  <a href="#from-an-array" class="md-nav__link">
     <span class="md-ellipsis">
-      Constructors from an array
+      From an array
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#constructor-for-identity" class="md-nav__link">
+  <a href="#for-identity" class="md-nav__link">
     <span class="md-ellipsis">
-      Constructor for Identity
+      For identity
     </span>
   </a>
   
@@ -427,9 +427,10 @@
   <h1>Permutation</h1>
 
 <p>Permutations of indices or lattice sites. Basic building block of a <a href="../permutation_group/">PermutationGroup</a>. Permutations can be multiplied, inverted and raised to a power.</p>
-<p><strong>Source</strong> <a href="https://github.com/awietek/xdiag/blob/main/xdiag/symmetries/permutation.hpp">permutation.hpp</a></p>
+<p><strong>Sources</strong> <a href="https://github.com/awietek/xdiag/blob/main/xdiag/symmetries/permutation.hpp">permutation.hpp</a>, <a href="https://github.com/awietek/xdiag/blob/main/xdiag/symmetries/permutation.cpp">permutation.cpp</a></p>
+<hr />
 <h2 id="constructors">Constructors</h2>
-<h3 id="constructors-from-an-array">Constructors from an array</h3>
+<h3 id="from-an-array">From an array</h3>
 <p>Creates an Permutation out of an array of integers, e.g. <code>{0, 2, 1, 3}</code>. If the input array is of size <code>N</code> then every number between <code>0</code> and <code>N-1</code> must occur exactly once, otherwise the Permutation is invalid.</p>
 <div class="admonition warning">
 <p class="admonition-title">1-indexing in Julia / 0-indexing in C++</p>
@@ -477,7 +478,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="constructor-for-identity">Constructor for Identity</h3>
+<h3 id="for-identity">For identity</h3>
 <p>Constructs an identity permutation of a given size, e.g. <code>{0, 1, 2, 3}</code>.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">C++</label><label for="__tabbed_2_2">Julia</label></div>
 <div class="tabbed-content">

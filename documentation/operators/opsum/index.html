@@ -440,7 +440,9 @@
 
 <p>Object representing a generic many-body operator by a sum of operators of the form </p>
 <div class="arithmatex">\[ \mathcal{O} = \sum_i c_i \mathcal{O}_i. \]</div>
-<p>Hence, an OpSum is consists of a sum of pairs given by</p>
+<p><strong>Sources</strong> <a href="https://github.com/awietek/xdiag/blob/main/xdiag/operators/opsum.hpp">opsum.hpp</a>, <a href="https://github.com/awietek/xdiag/blob/main/xdiag/operators/opsum.cpp">opsum.cpp</a></p>
+<hr />
+<p>An OpSum is consists of a sum of pairs given by</p>
 <ol>
 <li>
 <p>A coupling constant <span class="arithmatex">\(c_i\)</span> which is defined by a <a href="../coupling/">Coupling</a> object. The coupling can either be a string name or a real/complex number.</p>
@@ -452,7 +454,7 @@
 <p>Generically, an OpSum can thus have coupling constants defined by either strings or numerical real/complex numbers. We call an OpSum <strong>plain</strong> if its couplings are only numerical numbers, and not strings. String couplings can be defined by using the access <code>operator[]</code>. If all string coupling constants are defined, the OpSum can be converted to a plain OpSum using the <code>plain</code> method shown below.</p>
 <p>Thus, OpSums can be defined independently of the numerical values of the coupling constants, e.g. in an input file. Upon execution of the code, these constants can then be set. Most operations in XDiag require the OpSum to be convertible to a plain OpSum.</p>
 <p>OpSums can be added and subtracted, as well as multiplied with and divided by a <a href="../scalar/">Scalar</a>. Hence, OpSums carry the mathematical structure of a vector space.</p>
-<p><strong>Sources</strong> <a href="https://github.com/awietek/xdiag/blob/main/xdiag/operators/opsum.hpp">opsum.hpp</a>, <a href="https://github.com/awietek/xdiag/blob/main/xdiag/operators/opsum.cpp">opsum.cpp</a></p>
+<hr />
 <h2 id="constructors">Constructors</h2>
 <p>The following constructors create an OpSum with a single pair of coupling and operator. Additional terms can be added using the <code>+</code> and <code>+=</code> operators explained further below. If no <a href="../coupling/">Coupling</a> is given, a numerical coefficient of <code>1.0</code> is assumed.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">C++</label><label for="__tabbed_1_2">Julia</label></div>

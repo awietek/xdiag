@@ -344,6 +344,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#convergence-criterion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Convergence criterion
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#usage-example" class="md-nav__link">
     <span class="md-ellipsis">
       Usage Example
@@ -371,6 +380,7 @@
 
 <p>Performs an iterative eigenvalue calculation building eigenvectors using the Lanczos algorithm. Returns the tridiagonal matrix, eigenvalues, number of iterations and the stopping criterion. The Lanczos interations are performed twice, where at the second run the eigenvectors are built.</p>
 <p><strong>Sources</strong> <a href="https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/lanczos/eigs_lanczos.hpp">eigs_lanczos.hpp</a>, <a href="https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/lanczos/eigs_lanczos.cpp">eigs_lanczos.cpp</a></p>
+<hr />
 <h2 id="definition">Definition</h2>
 <p>The Lanczos algorithm can be run in two distinct ways:</p>
 <ol>
@@ -417,6 +427,7 @@
 </div>
 </li>
 </ol>
+<hr />
 <h2 id="parameters">Parameters</h2>
 <table>
 <thead>
@@ -469,6 +480,7 @@
 </tr>
 </tbody>
 </table>
+<hr />
 <h2 id="returns">Returns</h2>
 <p>A struct with the following entries</p>
 <table>
@@ -503,15 +515,14 @@
 <td style="text-align: left;">criterion</td>
 <td style="text-align: left;">string denoting the reason why the algorithm stopped</td>
 </tr>
-<tr>
-<td style="text-align: left;">## Convergence criterion</td>
-<td style="text-align: left;"></td>
-</tr>
 </tbody>
 </table>
+<hr />
+<h2 id="convergence-criterion">Convergence criterion</h2>
 <p>The algorithm terminates if the <span class="arithmatex">\(k\)</span>-th (<span class="arithmatex">\(k\)</span> is the argument <code>neigvals</code>) approximate eigenvalue changes only by a fraction smaller than <span class="arithmatex">\(\epsilon\)</span> (<span class="arithmatex">\(k\)</span> is the argument <code>precision</code>), i.e.</p>
 <div class="arithmatex">\[ (\tilde{e}_k^{(n)} - \tilde{e}_k^{(n-1)}) / \tilde{e}_k^{(n)} &lt; \epsilon.\]</div>
 <p>Here, <span class="arithmatex">\(\tilde{e}_k^{(n)}\)</span> denotes the Lanczos approximation to the <span class="arithmatex">\(k\)</span>-th eigenvalue after <span class="arithmatex">\(n\)</span> iterations.</p>
+<hr />
 <h2 id="usage-example">Usage Example</h2>
 <div class="tabbed-set tabbed-alternate" data-tabs="3:1"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">C++</label></div>
 <div class="tabbed-content">

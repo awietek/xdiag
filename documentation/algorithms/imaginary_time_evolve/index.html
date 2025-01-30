@@ -364,6 +364,7 @@
 <div class="arithmatex">\[\vert \psi(\tau) \rangle = e^{-(H - \delta) \tau} \vert \psi_0\rangle,\]</div>
 <p>of a <a href="../../states/state/">State</a> <span class="arithmatex">\(\vert \psi_0 \rangle\)</span> and a Hermitian operator <span class="arithmatex">\(H\)</span> using an iterative algorithm. <span class="arithmatex">\(\delta\)</span> here denotes a real number which can be chosen as the ground state energy <span class="arithmatex">\(\delta=E_0\)</span> of <span class="arithmatex">\(H\)</span>.</p>
 <p><strong>Sources</strong> <a href="https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/imaginary_time_evolve.hpp">imaginary_time_evolve.hpp</a>, <a href="https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/imaginary_time_evolve.cpp">imaginary_time_evolve.cpp</a></p>
+<hr />
 <h2 id="definition">Definition</h2>
 <p>The method is provided in two variants:</p>
 <ol>
@@ -392,6 +393,7 @@
 </div>
 </li>
 </ol>
+<hr />
 <h2 id="parameters">Parameters</h2>
 <table>
 <thead>
@@ -430,6 +432,7 @@
 </tbody>
 </table>
 <p>The routine calls the subroutine <a href="../evolve_lanczos/">evolve_lanczos</a> implementing a Lanczos algorithm to perform the evolution. This routine can also be called explicitly if more control is desired. Please also confer to the page <a href="../evolve_lanczos/">evolve_lanczos</a> for further details on the specifics of the algorithm. The parameter <code>shift</code> can be used to turn all eigenvalues of the matrix <span class="arithmatex">\(H - \delta \;\textrm{Id}\)</span> positive whenever <span class="arithmatex">\(\delta &lt; E_0\)</span>, where <span class="arithmatex">\(E_0\)</span> denotes the ground state energy of <span class="arithmatex">\(H\)</span>.</p>
+<hr />
 <h2 id="usage-example">Usage Example</h2>
 <div class="tabbed-set tabbed-alternate" data-tabs="3:1"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">C++</label></div>
 <div class="tabbed-content">

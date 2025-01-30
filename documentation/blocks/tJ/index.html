@@ -421,7 +421,8 @@
   <h1>tJ</h1>
 
 <p>A block in a  <span class="arithmatex">\(t-J\)</span> type Hilbert space, i.e. fermions with <span class="arithmatex">\(\uparrow, \downarrow\)</span> spin excluding doubly occupied sites. </p>
-<p><strong>Source</strong> <a href="https://github.com/awietek/xdiag/blob/main/xdiag/blocks/tj.hpp">tj.hpp</a></p>
+<p><strong>Sources</strong> <a href="https://github.com/awietek/xdiag/blob/main/xdiag/blocks/tj.hpp">tj.hpp</a>, <a href="https://github.com/awietek/xdiag/blob/main/xdiag/blocks/tj.cpp">tj.cpp</a></p>
+<hr />
 <h2 id="constructors">Constructors</h2>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">C++</label><label for="__tabbed_1_2">Julia</label></div>
 <div class="tabbed-content">
@@ -474,6 +475,7 @@
 </tbody>
 </table>
 <p>The parameter <code>backend</code> chooses how the block is coded internally. By using the default parameter <code>auto</code> the backend is chosen automatically. Alternatives are <code>32bit</code>, <code>64bit</code>.</p>
+<hr />
 <h2 id="iteration">Iteration</h2>
 <p>An tJ block can be iterated over, where at each iteration a <a href="../../states/product_state/">ProductState</a> representing the corresponding basis state is returned.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">C++</label><label for="__tabbed_2_2">Julia</label></div>

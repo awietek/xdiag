@@ -336,15 +336,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#source" class="md-nav__link">
-    <span class="md-ellipsis">
-      Source
-    </span>
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -361,16 +352,18 @@
 
 
 <h1 id="logging">Logging</h1>
+<p><strong>Sources</strong> <a href="https://github.com/awietek/xdiag/blob/master/xdiag/utils/logger.hpp">logger.hpp</a>, <a href="https://github.com/awietek/xdiag/blob/master/xdiag/utils/logger.cpp">logger.cpp</a></p>
+<hr />
 <h2 id="setting-the-verbosity">Setting the verbosity</h2>
 <p>Algorithms implemented in XDiag do not output anything during their execution by default. However, it is typically useful to get some information on how the code is performing and even intermediary results at runtime. For this, the verbosity of the internal XDiag logging can be set using the function <code>set_verbosity</code>, which is defined as </p>
-<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Julia</label><label for="__tabbed_1_2">C++</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">C++</label><label for="__tabbed_1_2">Julia</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">set_verbosity</span><span class="p">(</span><span class="n">level</span><span class="o">::</span><span class="kt">Integer</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kt">void</span><span class="w"> </span><span class="nf">set_verbosity</span><span class="p">(</span><span class="kt">int64_t</span><span class="w"> </span><span class="n">level</span><span class="p">);</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kt">void</span><span class="w"> </span><span class="nf">set_verbosity</span><span class="p">(</span><span class="kt">int64_t</span><span class="w"> </span><span class="n">level</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">set_verbosity</span><span class="p">(</span><span class="n">level</span><span class="o">::</span><span class="kt">Integer</span><span class="p">);</span>
 </code></pre></div>
 </div>
 </div>
@@ -399,16 +392,16 @@
 </tbody>
 </table>
 <p>For example, when computing a ground state energy using the <a href="../../algorithms/eigval0/">eigval0</a> function, we can set a higher verbosity level using</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Julia</label><label for="__tabbed_2_2">C++</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">C++</label><label for="__tabbed_2_2">Julia</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">set_verbosity</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">e0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eigval0</span><span class="p">(</span><span class="n">bonds</span><span class="p">,</span><span class="w"> </span><span class="n">block</span><span class="p">);</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kt">double</span><span class="w"> </span><span class="n">e0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eigval0</span><span class="p">(</span><span class="n">bonds</span><span class="p">,</span><span class="w"> </span><span class="n">block</span><span class="p">);</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">set_verbosity</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="kt">double</span><span class="w"> </span><span class="n">e0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eigval0</span><span class="p">(</span><span class="n">bonds</span><span class="p">,</span><span class="w"> </span><span class="n">block</span><span class="p">);</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">e0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eigval0</span><span class="p">(</span><span class="n">bonds</span><span class="p">,</span><span class="w"> </span><span class="n">block</span><span class="p">);</span>
 </code></pre></div>
 </div>
 </div>
@@ -430,6 +423,7 @@
 <a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a>beta: 2.6627870395174456
 <a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a>eigs: -3.7522788386927637 -0.6474957945455240 2.1352094709026579
 </code></pre></div>
+<hr />
 <h2 id="log-mechanism-c-only">Log mechanism (C++ only)</h2>
 <p>Producing nicely formatted output is unfortunately a bit cumbersome in standard C++. For this, the <code>Log</code> mechanism in XDiag can help. To simply write out a line of information you can call,</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">Log</span><span class="p">(</span><span class="s">&quot;hello from the logger&quot;</span><span class="p">);</span>
@@ -437,11 +431,9 @@
 <p>By default, a new line is added. It is also possible to set verbosity by handing the level as the first argument,</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">Log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;hello from the logger only if global verbosity is set to &gt;= 2&quot;</span><span class="p">);</span>
 </code></pre></div>
-<p>This message will only appear if the global verbosity level is set to a value <span class="arithmatex">\(\geq 2\)</span>. Finally, XDiag also supports formatted output by using the <a href="library">fmtlib</a>. For example, numbers can be formated this way</p>
+<p>This message will only appear if the global verbosity level is set to a value <span class="arithmatex">\(\geq 2\)</span>. Finally, XDiag also supports formatted output by using the <a href="https://github.com/fmtlib/fmt">fmtlib</a> library. For example, numbers can be formated this way</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">Log</span><span class="p">(</span><span class="s">&quot;pi is around {:.4f} and the answer is {}&quot;</span><span class="p">,</span><span class="w"> </span><span class="mf">3.141592</span><span class="p">,</span><span class="w"> </span><span class="mi">42</span><span class="p">);</span>
 </code></pre></div>
-<h2 id="source">Source</h2>
-<p><a href="https://github.com/awietek/xdiag/blob/master/xdiag/utils/logger.hpp">logger.hpp</a></p>
 
 
 

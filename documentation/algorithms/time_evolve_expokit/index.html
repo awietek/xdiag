@@ -389,6 +389,7 @@ DOI: <a href="https://doi.org/10.1145/285861.285868">10.1145/285861.285868</a></
 </blockquote>
 <p>The algorithm features automatic stepsize control and computes approximate solutions with high precision according to our tests. Yet, the <a href="../evolve_lanczos/">evolve_lanczos</a> implementation is currently faster and more memory efficient. </p>
 <p><strong>Sources</strong> <a href="https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/time_evolve_expokit.hpp">time_evolve_expokit.hpp</a>, <a href="https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/time_evolve_expokit.cpp">time_evolve_expokit.cpp</a></p>
+<hr />
 <h2 id="definition">Definition</h2>
 <p>The method is provided in two variants:</p>
 <ol>
@@ -419,6 +420,7 @@ DOI: <a href="https://doi.org/10.1145/285861.285868">10.1145/285861.285868</a></
 </div>
 </li>
 </ol>
+<hr />
 <h2 id="parameters">Parameters</h2>
 <table>
 <thead>
@@ -466,6 +468,7 @@ DOI: <a href="https://doi.org/10.1145/285861.285868">10.1145/285861.285868</a></
 </tr>
 </tbody>
 </table>
+<hr />
 <h2 id="returns">Returns</h2>
 <p>A struct with the following entries</p>
 <table>
@@ -490,6 +493,7 @@ DOI: <a href="https://doi.org/10.1145/285861.285868">10.1145/285861.285868</a></
 </tr>
 </tbody>
 </table>
+<hr />
 <h2 id="convergence-criterion">Convergence criterion</h2>
 <p>The algorithm is estimating the following error,</p>
 <div class="arithmatex">\[ \varepsilon = \parallel \vert \tilde{\psi}(t)\rangle - e^{z(H - \delta)} \vert \psi_0\rangle \parallel_2, \]</div>
@@ -500,6 +504,7 @@ Roger B. Sidje<br>
 ACM Trans. Math. Softw., 24(1):130-156, 1998. (1998)<br>
 DOI: <a href="https://doi.org/10.1145/285861.285868">10.1145/285861.285868</a></p>
 </blockquote>
+<hr />
 <h2 id="usage-example">Usage Example</h2>
 <div class="tabbed-set tabbed-alternate" data-tabs="3:1"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">C++</label></div>
 <div class="tabbed-content">
