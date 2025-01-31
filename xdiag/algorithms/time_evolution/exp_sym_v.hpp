@@ -15,26 +15,28 @@ struct exp_sym_v_result_t {
   std::string criterion;
 };
 
-template <typename coeff_t, class multiply_f>
+  template <typename coeff_t, class multiply_f, class dot_f>
 exp_sym_v_result_t
-exp_sym_v(multiply_f mult, arma::Col<coeff_t> &X, coeff_t tau,
+  exp_sym_v(multiply_f mult, dot_f dot, arma::Col<coeff_t> &X, coeff_t tau,
           double precision = 1e-12, double shift = 0, bool normalize = false,
           int64_t max_iterations = 1000, double deflation_tol = 1e-7) try {
 
-  double norm = arma::norm(X);
+  auto norm_f = [&dot](arma::Col<coeff_t> const &v) {
+    return std::sqrt(xdiag::real(dot(v, v)));
+  };
+    
+  double norm = norm_f(X);
   auto v0 = X;
 
-  auto dot = [](arma::Col<coeff_t> const &v, arma::Col<coeff_t> const &w) {
-    return arma::cdot(v, w);
-  };
   auto converged = [precision, tau, norm](Tmatrix const &tmat) {
     return lanczos::converged_time_evolution(tmat, tau, precision, norm);
   };
 
   auto operation_void = [](arma::Col<coeff_t> const &) {};
+  
   auto r = lanczos::lanczos(mult, dot, converged, operation_void, v0,
                             max_iterations, deflation_tol);
-
+  
   double e0 = r.eigenvalues(0);
 
   // Compute the tridiagonal matrix
@@ -72,7 +74,7 @@ exp_sym_v(multiply_f mult, arma::Col<coeff_t> &X, coeff_t tau,
   if (!normalize) {
     X *= norm;
   } else {
-    double nrm = arma::norm(X);
+    double nrm = norm_f(X);
     X /= nrm;
   }
 

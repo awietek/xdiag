@@ -2,7 +2,8 @@
 
 #include <xdiag/algebra/algebra.hpp>
 #include <xdiag/algebra/apply.hpp>
-#include <xdiag/algorithms/time_evolution/time_evolution.hpp>
+#include <xdiag/algorithms/time_evolution/time_evolve.hpp>
+#include <xdiag/algorithms/time_evolution/time_evolve_expokit.hpp>
 #include <xdiag/blocks/blocks.hpp>
 #include <xdiag/blocks/tj.hpp>
 #include <xdiag/blocks/tj_distributed.hpp>
@@ -54,6 +55,7 @@ TEST_CASE("time_evolution_distributed", "[time_evolution]") try {
     }
   }
   pstate[nsites / 2] = "Emp";
+
   auto block = tJ(nsites, nsites / 2, nsites / 2);
   auto blockd = tJDistributed(nsites, nsites / 2, nsites / 2);
 
@@ -66,7 +68,6 @@ TEST_CASE("time_evolution_distributed", "[time_evolution]") try {
   apply(ops, psi_0, H_psi_0);
   auto H_psi_0d = State(blockd, false);
   apply(ops, psi_0d, H_psi_0d);
-
   for (int s = 0; s < nsites; ++s) {
     auto n = innerC(Op("Ntot", s), H_psi_0);
     auto nd = innerC(Op("Ntot", s), H_psi_0d);
@@ -78,6 +79,7 @@ TEST_CASE("time_evolution_distributed", "[time_evolution]") try {
   arma::vec times = arma::logspace(-1, 1, 3);
   double tol = 1e-12;
   for (auto time : times) {
+    Log("time: {}", time);
     auto psi = time_evolve(ops, psi_0, time, tol);
     auto psid = time_evolve(ops, psi_0d, time, tol);
     for (int s = 0; s < nsites; ++s) {

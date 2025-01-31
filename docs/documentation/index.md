@@ -41,11 +41,21 @@ XDiag uses the C++ library [Armadillo](https://arma.sourceforge.net) as a linear
 ---
 
 ## Blocks
-| Name                           | Description                                |                          Language |
-|:-------------------------------|:-------------------------------------------|----------------------------------:|
-| [Spinhalf](blocks/spinhalf.md) | Block of a spin $S=1/2$ type Hilbert space | :simple-cplusplus: :simple-julia: |
-| [tJ](blocks/tJ.md)             | Block of a $t-J$ type Hilbert space        | :simple-cplusplus: :simple-julia: |
-| [Electron](blocks/electron.md) | Block of a Electron type Hilbert space     | :simple-cplusplus: :simple-julia: |
+
+**Shared memory**
+
+| Name                                                  | Description                                                        |                          Language |
+|:------------------------------------------------------|:-------------------------------------------------------------------|----------------------------------:|
+| [Spinhalf](blocks/spinhalf.md)                        | Block of a spin $S=1/2$ type Hilbert space                         | :simple-cplusplus: :simple-julia: |
+| [tJ](blocks/tJ.md)                                    | Block of a $t-J$ type Hilbert space                                | :simple-cplusplus: :simple-julia: |
+| [Electron](blocks/electron.md)                        | Block of a Electron type Hilbert space                             | :simple-cplusplus: :simple-julia: |
+
+**Distributed memory**
+
+|                                                       |                                                                    |                    |
+|:------------------------------------------------------|:-------------------------------------------------------------------|-------------------:|
+| [SpinhalfDistributed](blocks/spinhalf_distributed.md) | Block of a spin $S=1/2$ type Hilbert space (distributed computing) | :simple-cplusplus: |
+| [tJDistributed](blocks/tJ_distributed.md)             | Block of a $t-J$ type Hilbert space  (distributed computing)       | :simple-cplusplus: |
 
 ---
 

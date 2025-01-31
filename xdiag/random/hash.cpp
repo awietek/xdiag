@@ -84,7 +84,7 @@ uint64_t hash(Electron const &block) {
 uint64_t hash(SpinhalfDistributed const &block) {
   uint64_t h = block.nsites() == 0 ? 0 : hash_fnv1((uint64_t)block.nsites());
   if (block.nup() != undefined) {
-    h = hash_combine(h, hash_fnv1((uint64_t)block.nup()));
+    h = hash_combine(h, hash_fnv1((uint64_t)*block.nup()));
   }
   int mpi_rank;
   MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
@@ -95,10 +95,10 @@ uint64_t hash(SpinhalfDistributed const &block) {
 uint64_t hash(tJDistributed const &block) {
   uint64_t h = block.nsites() == 0 ? 0 : hash_fnv1((uint64_t)block.nsites());
   if (block.nup() != undefined) {
-    h = hash_combine(h, hash_fnv1((uint64_t)block.nup()));
+    h = hash_combine(h, hash_fnv1((uint64_t)*block.nup()));
   }
   if (block.ndn() != undefined) {
-    h = hash_combine(h, hash_fnv1((uint64_t)block.ndn()));
+    h = hash_combine(h, hash_fnv1((uint64_t)*block.ndn()));
   }
 
   int mpi_rank;

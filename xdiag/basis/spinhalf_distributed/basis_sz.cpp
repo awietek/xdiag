@@ -9,8 +9,8 @@ namespace xdiag::basis::spinhalf_distributed {
 
 template <typename bit_t, class process_f>
 static int64_t
-fill_tables(int64_t nsites, int64_t nup, int64_t n_prefix_bits,
-            process_f rank, std::vector<bit_t> &prefixes,
+fill_tables(int64_t nsites, int64_t nup, int64_t n_prefix_bits, process_f rank,
+            std::vector<bit_t> &prefixes,
             std::unordered_map<bit_t, int64_t> &prefix_begin,
             std::vector<combinatorics::LinTable<bit_t>> &postfix_lintables,
             std::vector<std::vector<bit_t>> &postfix_states) {
@@ -82,14 +82,12 @@ BasisSz<bit_t>::BasisSz(int64_t nsites, int64_t nup)
 
   dim_ = binomial(nsites, nup);
   size_ = fill_tables(
-      nsites, nup, n_prefix_bits_,
-      [this](bit_t spins) { return rank(spins); }, prefixes_, prefix_begin_,
-      postfix_lintables_, postfix_states_);
+      nsites, nup, n_prefix_bits_, [this](bit_t spins) { return rank(spins); },
+      prefixes_, prefix_begin_, postfix_lintables_, postfix_states_);
 
   size_transpose_ = fill_tables(
-      nsites, nup, n_postfix_bits_,
-      [this](bit_t spins) { return rank(spins); }, postfixes_, postfix_begin_,
-      prefix_lintables_, prefix_states_);
+      nsites, nup, n_postfix_bits_, [this](bit_t spins) { return rank(spins); },
+      postfixes_, postfix_begin_, prefix_lintables_, prefix_states_);
 
   // Compute max/min number of states stored locally
   int64_t size_max;
@@ -259,7 +257,9 @@ BasisSzIterator<bit_t> &BasisSzIterator<bit_t>::operator++() {
   if (postfix_idx_ == basis_.postfix_states(prefix_).size()) {
     postfix_idx_ = 0;
     ++prefix_idx_;
-    prefix_ = basis_.prefixes()[prefix_idx_];
+    if (prefix_idx_ != basis_.prefixes().size()) {
+      prefix_ = basis_.prefixes()[prefix_idx_];
+    }
   }
   return *this;
 }

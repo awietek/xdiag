@@ -28,7 +28,7 @@ bool converged_eigenvalues(Tmatrix const &tmat, int n_eigenvalue,
     Log(2,
         "convergence -> n_eigenvalue: {}, residue: {:.2e}, precision: {:.2e}",
         n_eigenvalue, residue, precision);
-    
+
     return (residue < precision);
   }
 } catch (Error const &e) {
@@ -39,9 +39,9 @@ bool converged_eigenvalues(Tmatrix const &tmat, int n_eigenvalue,
 bool converged_time_evolution(Tmatrix const &tmat, complex tau,
                               double precision, double nrm) try {
   int size = tmat.size();
-  if (size < 2)
+  if (size < 2) {
     return false;
-  else {
+  } else {
     // Lanczos sequence exhausted
     double beta = tmat.betas()(size - 1);
     if (std::abs(beta) < 1e-8) {

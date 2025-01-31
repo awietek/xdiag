@@ -26,7 +26,6 @@ lanczos_result_t lanczos(mult_f mult, dot_f dot, converged_f converged,
   auto norm = [&dot](arma::Col<coeff_t> const &v) {
     return std::sqrt(xdiag::real(dot(v, v)));
   };
-
   auto tmatrix = Tmatrix();
 
   // Initialize Lanczos vectors and tmatrix
@@ -59,7 +58,6 @@ lanczos_result_t lanczos(mult_f mult, dot_f dot, converged_f converged,
     lanczos_step(v0, v1, w, alpha, beta, mult, dot);
     tmatrix.append(alpha, beta);
     tmatrix.print_log();
-
     ++iteration;
 
     // Finish if Lanczos sequence is exhausted

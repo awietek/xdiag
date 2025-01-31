@@ -22,11 +22,9 @@ tJDistributed::tJDistributed(int64_t nsites, int64_t nup, int64_t ndn,
   // Choose basis implementation
   if (backend == "auto") {
     if (nsites < 32) {
-      basis_ =
-          std::make_shared<basis_t>(BasisNp<uint32_t>(nsites, nup, ndn));
+      basis_ = std::make_shared<basis_t>(BasisNp<uint32_t>(nsites, nup, ndn));
     } else if (nsites < 64) {
-      basis_ =
-          std::make_shared<basis_t>(BasisNp<uint64_t>(nsites, nup, ndn));
+      basis_ = std::make_shared<basis_t>(BasisNp<uint64_t>(nsites, nup, ndn));
     } else {
       XDIAG_THROW("Blocks with more than 64 sites currently not implemented");
     }
@@ -46,8 +44,9 @@ tJDistributed::tJDistributed(int64_t nsites, int64_t nup, int64_t ndn,
 }
 
 int64_t tJDistributed::nsites() const { return nsites_; }
-int64_t tJDistributed::nup() const { return nup_; }
-int64_t tJDistributed::ndn() const { return ndn_; }
+std::string tJDistributed::backend() const { return backend_; }
+std::optional<int64_t> tJDistributed::nup() const { return nup_; }
+std::optional<int64_t> tJDistributed::ndn() const { return ndn_; }
 
 int64_t tJDistributed::dim() const { return dim_; }
 int64_t tJDistributed::size() const { return size_; }
@@ -71,20 +70,24 @@ int64_t tJDistributed::index(ProductState const &pstate) const try {
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
-bool tJDistributed::isreal(double precision) const {
+bool tJDistributed::isreal() const {
   return true; // would only be nontrivial with space group irreps
 }
 
 bool tJDistributed::operator==(tJDistributed const &rhs) const {
-  return (nsites_ == rhs.nsites_) && (nup_ == rhs.nup_) &&
-         (ndn_ == rhs.ndn_);
+  return (nsites_ == rhs.nsites_) && (nup_ == rhs.nup_) && (ndn_ == rhs.ndn_);
 }
 bool tJDistributed::operator!=(tJDistributed const &rhs) const {
   return !operator==(rhs);
 }
 
 tJDistributed::basis_t const &tJDistributed::basis() const { return *basis_; }
-
+int64_t index(tJDistributed const &block, ProductState const &pstate) {
+  return block.index(pstate);
+}
+int64_t nsites(tJDistributed const &block) { return block.nsites(); }
+int64_t dim(tJDistributed const &block) { return block.dim(); }
+int64_t size(tJDistributed const &block) { return block.size(); }
 bool isreal(tJDistributed const &block) { return block.isreal(); }
 std::ostream &operator<<(std::ostream &out, tJDistributed const &block) {
   int mpi_size;
@@ -92,11 +95,15 @@ std::ostream &operator<<(std::ostream &out, tJDistributed const &block) {
 
   out << "tJDistributed:\n";
   out << "  nsites   : " << block.nsites() << "\n";
-  if ((block.nup() != undefined) && (block.ndn() != undefined)) {
-    out << "  nup      : " << block.nup() << "\n";
-    out << "  ndn      : " << block.ndn() << "\n";
+  if (block.nup()) {
+    out << "  nup      : " << *block.nup() << "\n";
   } else {
     out << "  nup      : not conserved\n";
+  }
+
+  if (block.ndn()) {
+    out << "  ndn      : " << *block.ndn() << "\n";
+  } else {
     out << "  ndn      : not conserved\n";
   }
 

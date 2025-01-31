@@ -44,7 +44,7 @@ SpinhalfDistributed::SpinhalfDistributed(int64_t nsites, int64_t nup,
 
 int64_t SpinhalfDistributed::nsites() const { return nsites_; }
 std::string SpinhalfDistributed::backend() const { return backend_; }
-int64_t SpinhalfDistributed::nup() const { return nup_; }
+std::optional<int64_t> SpinhalfDistributed::nup() const { return nup_; }
 
 int64_t SpinhalfDistributed::dim() const { return dim_; }
 int64_t SpinhalfDistributed::size() const { return size_; }
@@ -87,6 +87,12 @@ SpinhalfDistributed::basis_t const &SpinhalfDistributed::basis() const {
   return *basis_;
 }
 
+int64_t index(SpinhalfDistributed const &block, ProductState const &pstate) {
+  return block.index(pstate);
+}
+int64_t nsites(SpinhalfDistributed const &block) { return block.nsites(); }
+int64_t dim(SpinhalfDistributed const &block) { return block.dim(); }
+int64_t size(SpinhalfDistributed const &block) { return block.size(); }
 bool isreal(SpinhalfDistributed const &block) { return block.isreal(); }
 std::ostream &operator<<(std::ostream &out, SpinhalfDistributed const &block) {
   int mpi_size;
@@ -94,8 +100,8 @@ std::ostream &operator<<(std::ostream &out, SpinhalfDistributed const &block) {
 
   out << "SpinhalfDistributed:\n";
   out << "  nsites   : " << block.nsites() << "\n";
-  if (block.nup() != undefined) {
-    out << "  nup      : " << block.nup() << "\n";
+  if (block.nup()) {
+    out << "  nup      : " << *block.nup() << "\n";
   } else {
     out << "  nup      : not conserved\n";
   }

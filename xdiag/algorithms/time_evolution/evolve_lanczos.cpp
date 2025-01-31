@@ -1,6 +1,7 @@
 #include "evolve_lanczos.hpp"
 
 #include <xdiag/algebra/apply.hpp>
+#include <xdiag/algebra/algebra.hpp>
 #include <xdiag/algorithms/lanczos/lanczos_convergence.hpp>
 #include <xdiag/algorithms/time_evolution/exp_sym_v.hpp>
 #include <xdiag/operators/logic/hc.hpp>
@@ -52,8 +53,12 @@ evolve_lanczos_inplace(OpSum const &H, State &psi, double tau, double precision,
       timing(ta, rightnow(), "MVM", 1);
       ++iter;
     };
+    auto dot_f = [&block](arma::vec const &v, arma::vec const &w) {
+      return dot(block, v, w);
+    };
+
     arma::vec v = psi.vector(0, false);
-    auto r = exp_sym_v(mult, v, tau, precision, shift, normalize,
+    auto r = exp_sym_v(mult, dot_f, v, tau, precision, shift, normalize,
                        max_iterations, deflation_tol);
     return {r.alphas, r.betas, r.eigenvalues, r.niterations, r.criterion};
     // Refer to complex time evolution
@@ -87,9 +92,12 @@ evolve_lanczos_inplace(OpSum const &H, State &psi, complex tau,
     timing(ta, rightnow(), "MVM", 1);
     ++iter;
   };
+  auto dot_f = [&block](arma::cx_vec const &v, arma::cx_vec const &w) {
+    return dot(block, v, w);
+  };
   arma::cx_vec v = psi.vectorC(0, false);
-  auto r = exp_sym_v(mult, v, tau, precision, shift, normalize, max_iterations,
-                     deflation_tol);
+  auto r = exp_sym_v(mult, dot_f, v, tau, precision, shift, normalize,
+                     max_iterations, deflation_tol);
   return {r.alphas, r.betas, r.eigenvalues, r.niterations, r.criterion};
 } catch (Error const &e) {
   XDIAG_RETHROW(e);

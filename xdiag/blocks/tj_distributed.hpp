@@ -12,42 +12,47 @@ class tJDistributed {
 public:
   using basis_t = basis::BasistJDistributed;
   using iterator_t = tJDistributedIterator;
-  tJDistributed() = default;
-  tJDistributed(int64_t nsites, int64_t nup, int64_t ndn,
-                std::string backend = "auto");
 
-  int64_t nsites() const;
-  std::string backend() const;
-  int64_t nup() const;
-  int64_t ndn() const;
+  XDIAG_API tJDistributed() = default;
+  XDIAG_API tJDistributed(int64_t nsites, int64_t nup, int64_t ndn,
+                          std::string backend = "auto");
 
+  XDIAG_API iterator_t begin() const;
+  XDIAG_API iterator_t end() const;
+  int64_t index(ProductState const &pstate) const;
   int64_t dim() const;
   int64_t size() const;
   int64_t size_max() const;
   int64_t size_min() const;
-  iterator_t begin() const;
-  iterator_t end() const;
-  int64_t index(ProductState const &pstate) const;
-  bool isreal(double precision = 1e-12) const;
 
-  bool operator==(tJDistributed const &rhs) const;
-  bool operator!=(tJDistributed const &rhs) const;
+  XDIAG_API bool operator==(tJDistributed const &rhs) const;
+  XDIAG_API bool operator!=(tJDistributed const &rhs) const;
+
+  int64_t nsites() const;
+  std::string backend() const;
+  std::optional<int64_t> nup() const;
+  std::optional<int64_t> ndn() const;
+  bool isreal() const;
   basis_t const &basis() const;
 
 private:
   int64_t nsites_;
   std::string backend_;
-  int64_t nup_;
-  int64_t ndn_;
-
+  std::optional<int64_t> nup_;
+  std::optional<int64_t> ndn_;
   std::shared_ptr<basis_t> basis_;
   int64_t dim_;
   int64_t size_;
 };
 
-bool isreal(tJDistributed const &block);
-std::ostream &operator<<(std::ostream &out, tJDistributed const &block);
-std::string to_string(tJDistributed const &block);
+XDIAG_API int64_t index(tJDistributed const &block, ProductState const &pstate);
+XDIAG_API int64_t nsites(tJDistributed const &block);
+XDIAG_API int64_t dim(tJDistributed const &block);
+XDIAG_API int64_t size(tJDistributed const &block);
+XDIAG_API bool isreal(tJDistributed const &block);
+XDIAG_API std::ostream &operator<<(std::ostream &out,
+                                   tJDistributed const &block);
+XDIAG_API std::string to_string(tJDistributed const &block);
 
 class tJDistributedIterator {
 public:

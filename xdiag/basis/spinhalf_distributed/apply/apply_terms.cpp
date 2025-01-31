@@ -14,7 +14,6 @@ template <typename coeff_t, class basis_t>
 void apply_terms(OpSum const &ops, basis_t const &basis_in,
                  arma::Col<coeff_t> const &vec_in, basis_t const &basis_out,
                  arma::Col<coeff_t> &vec_out) try {
-
   // Determine diagonal and offdiagonal bonds
   OpSum ops_diagonal;
   OpSum ops_offdiagonal;

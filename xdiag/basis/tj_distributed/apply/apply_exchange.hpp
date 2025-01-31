@@ -15,7 +15,6 @@ template <typename bit_t, typename coeff_t, class Basis>
 void apply_exchange(Coupling const &cpl, Op const &op, Basis &&basis,
                     const coeff_t *vec_in, coeff_t *vec_out) {
   using namespace bits;
-
   int mpi_size;
   MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
 
@@ -37,6 +36,7 @@ void apply_exchange(Coupling const &cpl, Op const &op, Basis &&basis,
   int64_t nup = basis.nup();
   int64_t ndn = basis.ndn();
   int64_t ndn_configurations = combinatorics::binomial(nsites - nup, ndn);
+
   // Find out how many states is sent to each process
   std::vector<int64_t> n_states_i_send(mpi_size, 0);
 

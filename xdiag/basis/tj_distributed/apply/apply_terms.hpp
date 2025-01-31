@@ -14,7 +14,7 @@ void apply_terms(OpSum const &ops, BasisIn const &basis_in,
                  arma::Col<coeff_t> const &vec_in, BasisOut const &basis_out,
                  arma::Col<coeff_t> &vec_out) try {
   (void)basis_out;
-
+  
   using bit_t = typename BasisIn::bit_t;
 
   // Ops applied in up/dn order
