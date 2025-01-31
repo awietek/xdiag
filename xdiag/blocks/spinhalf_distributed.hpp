@@ -1,5 +1,7 @@
 #pragma once
 #ifdef XDIAG_USE_MPI
+#include <optional>
+
 #include <xdiag/basis/spinhalf_distributed/basis_spinhalf_distributed.hpp>
 #include <xdiag/common.hpp>
 #include <xdiag/states/product_state.hpp>

@@ -19,7 +19,7 @@ XDiag uses the C++ library [Armadillo](https://arma.sourceforge.net) as a linear
 
 ## Algorithms
 
-### Diagonalization
+**Diagonalization**
 
 | Name                                             | Description                                                                                    |                          Language |
 |:-------------------------------------------------|:-----------------------------------------------------------------------------------------------|----------------------------------:|
@@ -28,7 +28,7 @@ XDiag uses the C++ library [Armadillo](https://arma.sourceforge.net) as a linear
 | [eigvals_lanczos](algorithms/eigvals_lanczos.md) | Performs an iterative eigenvalue calculation using the Lanczos algorithm                       | :simple-cplusplus: :simple-julia: |
 | [eigs_lanczos](algorithms/eigs_lanczos.md)       | Performs an iterative eigenvalue calculation building eigenvectors using the Lanczos algorithm | :simple-cplusplus: :simple-julia: |
 
-### Time evolution
+**Time evolution**
 
 | Name                                                         | Description                                                                                                                                     |                          Language |
 |:-------------------------------------------------------------|:------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------:|
@@ -52,7 +52,7 @@ XDiag uses the C++ library [Armadillo](https://arma.sourceforge.net) as a linear
 
 **Distributed memory**
 
-|                                                       |                                                                    |                    |
+| Name                                                  | Description                                                        |           Language |
 |:------------------------------------------------------|:-------------------------------------------------------------------|-------------------:|
 | [SpinhalfDistributed](blocks/spinhalf_distributed.md) | Block of a spin $S=1/2$ type Hilbert space (distributed computing) | :simple-cplusplus: |
 | [tJDistributed](blocks/tJ_distributed.md)             | Block of a $t-J$ type Hilbert space  (distributed computing)       | :simple-cplusplus: |

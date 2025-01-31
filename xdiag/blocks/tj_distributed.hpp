@@ -1,5 +1,7 @@
 #pragma once
 #ifdef XDIAG_USE_MPI
+#include <optional>
+
 #include <xdiag/basis/tj_distributed/basis_tj_distributed.hpp>
 #include <xdiag/common.hpp>
 #include <xdiag/states/product_state.hpp>
