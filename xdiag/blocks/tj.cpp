@@ -138,15 +138,15 @@ std::optional<int64_t> tJ::nup() const { return nup_; }
 std::optional<int64_t> tJ::ndn() const { return ndn_; }
 std::optional<Representation> const &tJ::irrep() const { return irrep_; }
 
+bool tJ::isreal() const { return irrep_ ? irrep_->isreal() : true; }
+tJ::basis_t const &tJ::basis() const { return *basis_; }
+
 int64_t index(tJ const &block, ProductState const &pstate) {
   return block.index(pstate);
 }
 int64_t nsites(tJ const &block) { return block.nsites(); }
 int64_t dim(tJ const &block) { return block.dim(); }
 int64_t size(tJ const &block) { return block.size(); }
-bool tJ::isreal() const { return irrep_ ? irrep_->isreal() : true; }
-tJ::basis_t const &tJ::basis() const { return *basis_; }
-
 bool isreal(tJ const &block) { return block.isreal(); }
 
 std::ostream &operator<<(std::ostream &out, tJ const &block) {
