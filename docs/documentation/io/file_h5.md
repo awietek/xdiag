@@ -19,7 +19,7 @@ A file handler for [hdf5](https://www.hdfgroup.org/solutions/hdf5/) files. The p
 | Name     | Description                      | Default |
 |:---------|:---------------------------------|---------|
 | filename | filename of the hdf5 file        |         |
-| iomode   | whether to read or write to file | `w`     |
+| iomode   | whether to read or write to file | `r`     |
 
 There are four possible values of `iomode`
 
