@@ -13,7 +13,7 @@ FileH5::FileH5(std::string filename, std::string iomode) try
     : filename_(filename), iomode_(iomode), closed_(false) {
   // Open file in read-only mode
   if (iomode == "r") {
-    Log(2, "creating h5file in w! mode.");
+    Log(2, "opening h5file in r mode.");
     file_id_ = H5Fopen(filename.c_str(), H5F_ACC_RDONLY, H5P_DEFAULT);
     XDIAG_THROW("Error in xdiag hdf5: read mode (r) currently not implemented");
   }

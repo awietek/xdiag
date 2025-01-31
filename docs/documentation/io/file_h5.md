@@ -12,14 +12,14 @@ A file handler for [hdf5](https://www.hdfgroup.org/solutions/hdf5/) files. The p
 
 === "C++"	
 	```c++
-	FileH5(std::string filename, std::string iomode = "r");
+	FileH5(std::string filename, std::string iomode = "w");
 	```
 
 	
 | Name     | Description                      | Default |
 |:---------|:---------------------------------|---------|
 | filename | filename of the hdf5 file        |         |
-| iomode   | whether to read or write to file | `r`     |
+| iomode   | whether to read or write to file | `w`     |
 
 There are four possible values of `iomode`
 
