@@ -65,13 +65,28 @@ XDiag uses the C++ library [Armadillo](https://arma.sourceforge.net) as a linear
 | [Compilation](compilation/advanced_compilation.md)     | Advanced settings for compilation of the C++ library using CMake |                :simple-cplusplus: |
 | [Documentation](compilation/building_documentation.md) | How to build and work on the documentation locally               |                 :simple-markdown: |
 | [Julia Wrapper](compilation/julia_wrapper.md)          | How to build and develop the Julia wrapper locally               | :simple-cplusplus: :simple-julia: |
-|                                                        |                                                                  |                                   |
 
 ---
 
 ## Input / Output
 
+**TOML**
+
+| Name                                                   | Description                                                                  |                          Language |
+|:-------------------------------------------------------|:-----------------------------------------------------------------------------|----------------------------------:|
+| [FileToml](io/file_toml.md)                            | A file handler for TOML files                                                | :simple-cplusplus: :simple-julia: |
+| [read_opsum](io/read_opsum.md)                         | reads an [OpSum](operators/opsum.md) from a TOML file                        | :simple-cplusplus: :simple-julia: |
+| [read_permutation_group](io/read_permutation_group.md) | reads a [PermutationGroup](symmetries/permutation_group.md) from a TOML file | :simple-cplusplus: :simple-julia: |
+| [read_representation](io/read_representation.md) | reads a [Representation](symmetries/representation.md) from a TOML file | :simple-cplusplus: :simple-julia: |
+
+**HDF5**
+
+| Name                    | Description                                                               |           Language |
+|:------------------------|:--------------------------------------------------------------------------|-------------------:|
+| [FileH5](io/file_h5.md) | A file handler for [hdf5](https://www.hdfgroup.org/solutions/hdf5/) files | :simple-cplusplus: |
+
 ---
+
 
 ## Operators
 |                                               |                                                      |   |

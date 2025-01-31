@@ -588,25 +588,85 @@ XDIAG_SHOW(nn_corr_sym);
 }
 
  
-// {
-// // --8<-- [start:FileToml]
-// auto input = FileToml("input.toml");
-// int N = input["N"].as<int>();
-// int nup = input["nup"].as<int>();
-// double J1 = input["J1"].as<double>();
-// double J2 = input["J2"].as<double>();
+{
+// --8<-- [start:FileToml]
+auto fl = FileToml(XDIAG_DIRECTORY "/misc/data/toml/input.toml");
+XDIAG_SHOW(defined(fl, "N"));
 
-// auto block = Spinhalf(N, nup);
-// auto H = OpSum();
-// for (int i=0; i<N; ++i){
-//   H += J1 * Op("SdotS", {i, (i+1)%N});
-//   H += J2 * Op("SdotS", {i, (i+2)%N});
-// }
-// double e0 = eigval0(H, block);
-// XDIAG_SHOW(e0);
-// // --8<-- [end:FileToml]
-// }
-  
+int N = fl["N"].as<int>();
+int nup = fl["nup"].as<int>();
+double J1 = fl["J1"].as<double>();
+double J2 = fl["J2"].as<double>();
+ 
+auto block = Spinhalf(N, nup);
+auto H = OpSum();
+for (int i=0; i<N; ++i){
+  H += J1 * Op("SdotS", {i, (i+1)%N});
+  H += J2 * Op("SdotS", {i, (i+2)%N});
+}
+double e0 = eigval0(H, block);
+XDIAG_SHOW(e0);
+// --8<-- [end:FileToml]
+}
+
+{
+// --8<-- [start:read_opsum]
+std::string file = XDIAG_DIRECTORY "/misc/data/triangular.9.hop.sublattices.tsl.toml";
+auto fl = FileToml(file);
+auto ops = read_opsum(fl, "Interactions");
+XDIAG_SHOW(ops);
+// --8<-- [end:read_opsum]
+}
+
+{
+// --8<-- [start:read_permutation_group]
+std::string file = XDIAG_DIRECTORY "/misc/data/triangular.9.hop.sublattices.tsl.toml";
+auto fl = FileToml(file);
+auto group = read_permutation_group(fl, "Symmetries");
+XDIAG_SHOW(group);
+// --8<-- [end:read_permutation_group]
+}
+
+ {
+// --8<-- [start:read_representation]
+std::string file = XDIAG_DIRECTORY "/misc/data/irreps.toml";
+auto fl = FileToml(file);
+
+auto k_0 = read_representation(fl, "k_0");
+XDIAG_SHOW(k_0);
+XDIAG_SHOW(isreal(k_0));
+
+auto k_pi2 = read_representation(fl, "k_pi2");
+XDIAG_SHOW(k_pi2);
+XDIAG_SHOW(isreal(k_pi2));
+
+auto k_pi = read_representation(fl, "k_pi");
+XDIAG_SHOW(k_pi);
+XDIAG_SHOW(isreal(k_pi));
+
+auto k_pi2_half = read_representation(fl, "k_pi2_half");
+XDIAG_SHOW(k_pi2_half);
+XDIAG_SHOW(isreal(k_pi2_half));
+// --8<-- [end:read_representation]
+}
+ 
+{
+// --8<-- [start:FileH5]
+std::string filename = XDIAG_DIRECTORY "/misc/data/hdf5/write.h5";
+auto fl = FileH5(filename, "w!");
+
+// Write output to the hdf5 file
+fl["val"] = 12;
+fl["test/to"] = 22;
+fl["test/to2/group"] = 32;
+fl["test/to3/group2/asdf"] = 42;
+
+auto mat = arma::cx_mat(3, 5, arma::fill::randn);
+fl["a/b/c/mat"] = mat;
+// --8<-- [end:FileH5]
+}
+ 
+ 
 // }
   // clang-format on
 } catch (Error e) {

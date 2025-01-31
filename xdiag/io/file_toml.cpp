@@ -93,4 +93,6 @@ std::vector<std::string> FileToml::keys() const {
 }
 toml::table FileToml::table() const { return table_; }
 
+bool defined(FileToml const &fl, std::string key) { return fl.defined(key); }
+
 } // namespace xdiag

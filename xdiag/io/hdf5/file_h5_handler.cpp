@@ -14,16 +14,22 @@ using complex = std::complex<double>;
 FileH5Handler::FileH5Handler(hid_t file_id, std::string field)
     : file_id_(file_id), field_(field) {}
 
-template <class data_t> void FileH5Handler::operator=(data_t const &data) {
+template <class data_t> void FileH5Handler::operator=(data_t const &data) try {
   write(file_id_, field_, data);
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
-hdf5::FileH5Submat FileH5Handler::col(int col_number){
+hdf5::FileH5Submat FileH5Handler::col(int col_number) try {
   return hdf5::FileH5Submat(file_id_, field_, -1, col_number);
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
-hdf5::FileH5Subcube FileH5Handler::slice(int slice_number){
+hdf5::FileH5Subcube FileH5Handler::slice(int slice_number) try {
   return hdf5::FileH5Subcube(file_id_, field_, -1, -1, slice_number);
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 template void FileH5Handler::operator=(int8_t const &);
@@ -46,7 +52,8 @@ template void FileH5Handler::operator=(std::vector<uint16_t> const &);
 template void FileH5Handler::operator=(std::vector<uint32_t> const &);
 template void FileH5Handler::operator=(std::vector<uint64_t> const &);
 template void FileH5Handler::operator=(std::vector<double> const &);
-template void FileH5Handler::operator=(std::vector<std::complex<double>> const &);
+template void
+FileH5Handler::operator=(std::vector<std::complex<double>> const &);
 
 template void FileH5Handler::operator=(arma::ivec const &);
 template void FileH5Handler::operator=(arma::uvec const &);

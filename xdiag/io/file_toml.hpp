@@ -13,13 +13,13 @@ namespace xdiag {
 class FileToml {
 public:
   XDIAG_API FileToml() = default;
-  XDIAG_API FileToml(const char *filename);
-  XDIAG_API FileToml(std::string filename);
-  XDIAG_API FileToml(std::istream &is);
+  XDIAG_API explicit FileToml(const char *filename);
+  XDIAG_API explicit FileToml(std::string filename);
+  XDIAG_API explicit FileToml(std::istream &is);
 
-  XDIAG_API bool defined(std::string key) const;
+  bool defined(std::string key) const;
   XDIAG_API io::FileTomlHandler operator[](std::string key);
-  XDIAG_API void write(std::string filename, std::string mode = "w") const;
+  void write(std::string filename, std::string mode = "w") const;
 
   XDIAG_API bool operator==(FileToml const &other) const;
   XDIAG_API bool operator!=(FileToml const &other) const;
@@ -30,5 +30,7 @@ public:
 private:
   toml::table table_;
 };
+
+XDIAG_API bool defined(FileToml const &fl, std::string key);
 
 } // namespace xdiag
