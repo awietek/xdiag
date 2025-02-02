@@ -88,10 +88,7 @@ void generic_term_ups(BasisIn &&basis_in, BasisOut &&basis_out,
   } else { // not symmetric
     int64_t size_dns_in = basis_in.size_dns();
     int64_t size_dns_out = basis_out.size_dns();
-    if (size_dns_in != size_dns_out) {
-      Log.err("Error in apply_term_ups: size of dnspins space different "
-              "for input and output basis");
-    }
+    assert(size_dns_in == size_dns_out);
 
 #ifdef _OPENMP
 #pragma omp parallel

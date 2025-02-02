@@ -6,7 +6,7 @@
 #include <xdiag/algebra/apply.hpp>
 #include <xdiag/algebra/matrix.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
-#include <xdiag/utils/close.hpp>
+#include <xdiag/algebra/isapprox.hpp>
 
 #include <xdiag/all.hpp>
 
@@ -30,12 +30,12 @@ TEST_CASE("tj_apply", "[tj]") {
         arma::vec w1 = H * v;
         arma::vec w2(block.size(), arma::fill::zeros);
         apply(ops, block, v, block, w2);
-        REQUIRE(close(w1, w2));
+        REQUIRE(isapprox(w1, w2));
         arma::mat m(block.size(), 5, arma::fill::randn);
         arma::mat n1 = H * m;
         arma::mat n2(block.size(), 5, arma::fill::zeros);
         apply(ops, block, m, block, n2);
-        REQUIRE(close(n1, n2));
+        REQUIRE(isapprox(n1, n2));
 
         arma::vec evals_mat;
         arma::eig_sym(evals_mat, H);
@@ -60,7 +60,7 @@ TEST_CASE("tj_apply", "[tj]") {
         arma::cx_vec w1 = H * v;
         arma::cx_vec w2(block.size(), arma::fill::zeros);
         apply(ops, block, v, block, w2);
-        REQUIRE(close(w1, w2));
+        REQUIRE(isapprox(w1, w2));
 
         arma::vec evals_mat;
         arma::eig_sym(evals_mat, H);
@@ -70,7 +70,7 @@ TEST_CASE("tj_apply", "[tj]") {
 
         // Log.out("nup: {}, ndn: {}, e0_mat: {}, e0_app: {}", nup, ndn,
         //              e0_mat, e0_app);
-        REQUIRE(close(e0_mat, e0_app));
+        REQUIRE(isapprox(e0_mat, e0_app));
       }
   }
 }

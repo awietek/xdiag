@@ -1,8 +1,4 @@
 #include "../catch.hpp"
-
-#include <chrono>
-#include <iostream>
-
 #include <xdiag/combinatorics/binomial.hpp>
 
 TEST_CASE( "binomial", "[combinatorics]" ) {

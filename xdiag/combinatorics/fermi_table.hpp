@@ -10,7 +10,7 @@
 
 namespace xdiag::combinatorics {
 
-template <typename bit_t = std_bit_t> class FermiTableSubsets {
+template <typename bit_t> class FermiTableSubsets {
 public:
   FermiTableSubsets() = default;
   FermiTableSubsets(int64_t nsites, PermutationGroup const &group);
@@ -25,7 +25,7 @@ private:
   std::vector<bool> table_;
 };
 
-template <typename bit_t = std_bit_t> class FermiTableCombinations {
+template <typename bit_t> class FermiTableCombinations {
 public:
   FermiTableCombinations() = default;
   FermiTableCombinations(int64_t nsites, int64_t n_par,

@@ -50,7 +50,7 @@ XDIAG_API double imag(Scalar const &s);
 XDIAG_API double abs(Scalar const &s);
 XDIAG_API Scalar conj(Scalar const &s);
 XDIAG_API bool isapprox(Scalar const &a, Scalar const &b, double rtol = 1e-12,
-                        double atol = 0);
+                        double atol = 1e-12);
 
 XDIAG_API std::ostream &operator<<(std::ostream &out, Scalar const &v);
 XDIAG_API std::string to_string(Scalar const &v);

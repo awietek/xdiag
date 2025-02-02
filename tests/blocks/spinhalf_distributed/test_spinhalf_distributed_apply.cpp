@@ -1,7 +1,15 @@
 #include "../../catch.hpp"
 #include <mpi.h>
 
-#include <xdiag/all.hpp>
+#include <xdiag/blocks/spinhalf.hpp>
+#include <xdiag/blocks/spinhalf_distributed.hpp>
+#include <xdiag/algebra/isapprox.hpp>
+#include <xdiag/algebra/matrix.hpp>
+#include <xdiag/algebra/apply.hpp>
+#include <xdiag/algebra/algebra.hpp>
+#include <xdiag/algorithms/sparse_diag.hpp>
+#include <xdiag/utils/logger.hpp>
+#include <xdiag/states/create_state.hpp>
 
 #include "../spinhalf/testcases_spinhalf.hpp"
 
@@ -24,7 +32,7 @@ void test_e0_nompi(int N, OpSum ops) {
     // Log("N: {}, nup: {}, e0 mat: {:+.10f}, e0 mpi: {:+.10f}", N, nup,
     // e0_mat,
     //     e0_app);
-    REQUIRE(close(e0_mat, e0_app));
+    REQUIRE(isapprox(e0_mat, e0_app));
   }
 }
 
@@ -42,7 +50,7 @@ void test_sz_sp_sm_energy(int N, OpSum const &ops) {
       auto op = Op("Sz", i);
       double exp_s = inner(op, gs_s);
       double exp_p = inner(op, gs_p);
-      REQUIRE(close(exp_s, exp_p));
+      REQUIRE(isapprox(exp_s, exp_p));
 
       if (nup < N - 1) {
         op = Op("S+", i);
@@ -54,7 +62,7 @@ void test_sz_sp_sm_energy(int N, OpSum const &ops) {
         double dot_p = dot(sz_i_gs_p, sz_i_gs_p);
 
         // Log("dot_s+: {:+.10f}, dot_p: {:+.10f}", dot_s, dot_p);
-        REQUIRE(close(dot_s, dot_p));
+        REQUIRE(isapprox(dot_s, dot_p));
       }
 
       if (nup > 0) {
@@ -67,7 +75,7 @@ void test_sz_sp_sm_energy(int N, OpSum const &ops) {
         double dot_p = dot(sz_i_gs_p, sz_i_gs_p);
 
         // Log("dot_s-: {:+.10f}, dot_p: {:+.10f}", dot_s, dot_p);
-        REQUIRE(close(dot_s, dot_p));
+        REQUIRE(isapprox(dot_s, dot_p));
       }
     }
   }
@@ -105,9 +113,9 @@ void test_sz_sp_sm_commutators(int nsites) {
         // Check [S+_i, S-_j] = 2 Sz_i  delta_ij
         if (i == j) {
           double exp = 2 * inner(sz_i, rvec);
-          REQUIRE(close(nrm, exp));
+          REQUIRE(isapprox(nrm, exp));
         } else {
-          REQUIRE(close(nrm, 0.));
+          REQUIRE(isapprox(nrm, 0.));
         }
       }
   }

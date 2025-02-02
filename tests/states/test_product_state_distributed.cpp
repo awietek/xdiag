@@ -3,7 +3,7 @@
 #include <xdiag/algebra/algebra.hpp>
 #include <xdiag/states/fill.hpp>
 #include <xdiag/states/product_state.hpp>
-#include <xdiag/utils/close.hpp>
+#include <xdiag/algebra/isapprox.hpp>
 
 using namespace xdiag;
 
@@ -47,14 +47,14 @@ TEST_CASE("product_state_distributed", "[states]") {
         auto nc = inner(n, psi2);
 
         if (p == "Emp") {
-          REQUIRE(close(szc, 0.));
-          REQUIRE(close(nc, 0.));
+          REQUIRE(isapprox(szc, 0.));
+          REQUIRE(isapprox(nc, 0.));
         } else if (p == "Up") {
-          REQUIRE(close(szc, 0.5));
-          REQUIRE(close(nc, 1.0));
+          REQUIRE(isapprox(szc, 0.5));
+          REQUIRE(isapprox(nc, 1.0));
         } else if (p == "Dn") {
-          REQUIRE(close(szc, -0.5));
-          REQUIRE(close(nc, 1.0));
+          REQUIRE(isapprox(szc, -0.5));
+          REQUIRE(isapprox(nc, 1.0));
         }
       }
     }
@@ -83,10 +83,10 @@ TEST_CASE("product_state_distributed", "[states]") {
         auto szc = inner(sz, psi);
 
         if (p == "Up") {
-          REQUIRE(close(szc, 0.5));
+          REQUIRE(isapprox(szc, 0.5));
           ++nup;
         } else if (p == "Dn") {
-          REQUIRE(close(szc, -0.5));
+          REQUIRE(isapprox(szc, -0.5));
         }
       }
 
@@ -99,9 +99,9 @@ TEST_CASE("product_state_distributed", "[states]") {
         auto szc = inner(sz, psi2);
 
         if (p == "Up") {
-          REQUIRE(close(szc, 0.5));
+          REQUIRE(isapprox(szc, 0.5));
         } else if (p == "Dn") {
-          REQUIRE(close(szc, -0.5));
+          REQUIRE(isapprox(szc, -0.5));
         }
       }
     }

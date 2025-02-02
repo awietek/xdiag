@@ -6,7 +6,7 @@
 #include <xdiag/combinatorics/subsets.hpp>
 #include <xdiag/symmetries/group_action/group_action.hpp>
 #include <xdiag/symmetries/group_action/group_action_lookup.hpp>
-
+#include <xdiag/utils/logger.hpp>
 using namespace xdiag;
 
 template <class bit_t> void test_permutation_group_lookup(int64_t nsites) {
@@ -38,7 +38,7 @@ template <class bit_t> void test_permutation_group_lookup(int64_t nsites) {
 }
 
 TEST_CASE("GroupActionLookup", "[symmetries]") {
-  xdiag::Log.out("PermutationGroupLookup <-> GroupAction comparison");
+  xdiag::Log("PermutationGroupLookup <-> GroupAction comparison");
   for (int64_t nsites = 1; nsites < 6; ++nsites) {
     test_permutation_group_lookup<uint16_t>(nsites);
     test_permutation_group_lookup<uint32_t>(nsites);

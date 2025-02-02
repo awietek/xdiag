@@ -3,10 +3,10 @@
 //
 #include "../../catch.hpp"
 #include <xdiag/algebra/matrix.hpp>
-#include <xdiag/algorithms/time_evolution/expm.hpp>
-#include <xdiag/algorithms/time_evolution/time_evolve.hpp>
-#include <xdiag/algorithms/time_evolution/imaginary_time_evolve.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
+#include <xdiag/algorithms/time_evolution/expm.hpp>
+#include <xdiag/algorithms/time_evolution/imaginary_time_evolve.hpp>
+#include <xdiag/algorithms/time_evolution/time_evolve.hpp>
 #include <xdiag/common.hpp>
 #include <xdiag/extern/armadillo/armadillo>
 #include <xdiag/states/create_state.hpp>
@@ -39,8 +39,8 @@ TEST_CASE("analytic_case_free_particle_1D", "[time_evolution]") try {
       cx_double c_m = 0;
       for (int k = 0; k < nsites; k++) {
         // 1/N^2 * sum( e^(a_k))
-        cx_double a_k = 2 * pi * i * k * m / nsites;
-        a_k += 2 * i * t * cos(2 * pi * k / nsites) * time;
+        cx_double a_k = (2 * k * m * pi * i) / (double)nsites;
+        a_k += 2.0 * i * t * cos(2 * pi * k / nsites) * time;
         c_m += exp(a_k);
       }
       c_m /= nsites;
@@ -123,7 +123,7 @@ TEST_CASE("analytic_case_free_particle_2D", "[time_evolution]") try {
 
             // exponent
             cx_double a_k1k2 =
-                -i * time * energy + 2 * pi * i * (k1 * m + k2 * n) / L;
+	      -i * time * energy + 2 * pi * i * double(k1 * m + k2 * n) / (double)L;
             c_mn += exp(a_k1k2);
           }
         }
@@ -239,8 +239,7 @@ TEST_CASE("tj_complex_timeevo", "[time_evolution]") try {
   arma::cx_mat Hshift =
       H - e0 * arma::cx_mat(H.n_rows, H.n_cols, arma::fill::eye);
 
-  XDIAG_SHOW(block);
-  XDIAG_SHOW(pstate);
+
   auto psi_0 = State(block, false);
   xdiag::fill(psi_0, pstate);
 
@@ -273,7 +272,6 @@ TEST_CASE("tj_complex_timeevo", "[time_evolution]") try {
 
   times = arma::logspace(-1, 0, 2);
 
-
   // lanczos tests
   Log("testing time evolution: tj_complex_timeevo (Lanczos)");
   for (auto time : times) {
@@ -292,7 +290,8 @@ TEST_CASE("tj_complex_timeevo", "[time_evolution]") try {
       double ieps = norm(ipsi2 - ipsi.vectorC());
 
       // Log("eps: {}, ieps: {}", eps, ieps);
-      // Log("nmat: {}, nlcz: {}", arma::norm(ipsi.vectorC()), arma::norm(ipsi2));
+      // Log("nmat: {}, nlcz: {}", arma::norm(ipsi.vectorC()),
+      // arma::norm(ipsi2));
 
       // cout << "tol: " << tol << endl;
       // cout << "err: " << eps << endl;
@@ -305,7 +304,6 @@ TEST_CASE("tj_complex_timeevo", "[time_evolution]") try {
 
       REQUIRE(eps < 40 * tol);
       REQUIRE(ieps < 40 * tol);
-
     }
   }
 

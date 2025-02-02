@@ -22,7 +22,7 @@ void apply_number_number(Coupling const &cpl, Op const &op, Basis &&basis,
       for (bit_t dns : dnss) {
         int n1 = gbit(ups, s1) + gbit(dns, s1);
         int n2 = gbit(ups, s2) + gbit(dns, s2);
-        fill(idx, idx, mu * n1 * n2);
+        fill(idx, idx, mu * (coeff_t)(n1 * n2));
         ++idx;
       }
     }
@@ -41,7 +41,7 @@ void apply_number_number(Coupling const &cpl, Op const &op, Basis &&basis,
         for (bit_t dn : basis.states_dns()) {
           int n1 = gbit(up, s1) + gbit(dn, s1);
           int n2 = gbit(up, s2) + gbit(dn, s2);
-          fill(idx, idx, mu * n1 * n2);
+          fill(idx, idx, mu * (coeff_t)(n1 * n2));
           ++idx;
         }
       }

@@ -8,7 +8,7 @@
 #include <xdiag/algebra/matrix.hpp>
 #include <xdiag/io/read.hpp>
 #include <xdiag/operators/logic/real.hpp>
-#include <xdiag/utils/close.hpp>
+#include <xdiag/algebra/isapprox.hpp>
 
 using namespace xdiag;
 
@@ -58,7 +58,7 @@ void test_spectra_tj_symmetric(OpSum ops, int64_t nsites,
               auto H_sym_real = matrix(ops, tj, tj);
               arma::vec eigs_sym_k_real;
               arma::eig_sym(eigs_sym_k_real, H_sym_real);
-              REQUIRE(close(eigs_sym_k, eigs_sym_k_real));
+              REQUIRE(isapprox(eigs_sym_k, eigs_sym_k_real));
             }
             // append all the eigenvalues with multiplicity
             for (auto eig : eigs_sym_k)
@@ -71,7 +71,7 @@ void test_spectra_tj_symmetric(OpSum ops, int64_t nsites,
         // Check if all eigenvalues agree
         // XDIAG_SHOW(eigs_sym);
         // XDIAG_SHOW(eigs_nosym);
-        REQUIRE(close(arma::vec(eigs_sym), eigs_nosym));
+        REQUIRE(isapprox(arma::vec(eigs_sym), eigs_nosym));
       }
     }
   }

@@ -11,6 +11,7 @@
 #include <xdiag/io/file_toml.hpp>
 #include <xdiag/io/read.hpp>
 #include <xdiag/symmetries/operations/symmetry_operations.hpp>
+#include <xdiag/utils/logger.hpp>
 
 using namespace xdiag;
 

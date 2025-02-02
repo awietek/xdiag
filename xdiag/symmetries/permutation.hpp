@@ -19,16 +19,16 @@ public:
   XDIAG_API explicit Permutation(arma::Col<int64_t> const &array);
   XDIAG_API Permutation(int64_t *ptr, int64_t size);
 
-  int64_t size() const;
-  int64_t operator[](int64_t i) const;
+  XDIAG_API int64_t size() const;
+  XDIAG_API int64_t operator[](int64_t i) const;
+  XDIAG_API Permutation inverse() const;
+  XDIAG_API std::vector<int64_t> const &array() const;
 
   XDIAG_API Permutation &operator*=(Permutation const &rhs);
   XDIAG_API bool operator==(Permutation const &rhs) const;
   XDIAG_API bool operator!=(Permutation const &rhs) const;
 
   template <typename bit_t> bit_t apply(bit_t state) const;
-  Permutation inverse() const;
-  std::vector<int64_t> const &array() const;
 
 private:
   std::vector<int64_t> array_;

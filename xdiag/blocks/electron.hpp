@@ -28,19 +28,20 @@ public:
 
   XDIAG_API iterator_t begin() const;
   XDIAG_API iterator_t end() const;
-  int64_t index(ProductState const &pstate) const;
-  int64_t dim() const;
-  int64_t size() const;
+  XDIAG_API int64_t index(ProductState const &pstate) const;
+  XDIAG_API int64_t dim() const;
+  XDIAG_API int64_t size() const;
 
   XDIAG_API bool operator==(Electron const &rhs) const;
   XDIAG_API bool operator!=(Electron const &rhs) const;
 
-  int64_t nsites() const;
+  XDIAG_API int64_t nsites() const;
+  XDIAG_API bool isreal() const;
+
   std::string backend() const;
   std::optional<int64_t> nup() const;
   std::optional<int64_t> ndn() const;
   std::optional<Representation> const &irrep() const;
-  bool isreal() const;
   basis_t const &basis() const;
 
 private:
@@ -64,9 +65,9 @@ XDIAG_API std::string to_string(Electron const &block);
 class ElectronIterator {
 public:
   ElectronIterator(Electron const &block, bool begin);
-  ElectronIterator &operator++();
-  ProductState const &operator*() const;
-  bool operator!=(ElectronIterator const &rhs) const;
+  XDIAG_API ElectronIterator &operator++();
+  XDIAG_API ProductState const &operator*() const;
+  XDIAG_API bool operator!=(ElectronIterator const &rhs) const;
 
 private:
   int64_t nsites_;

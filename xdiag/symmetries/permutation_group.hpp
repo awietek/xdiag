@@ -23,15 +23,15 @@ public:
   XDIAG_API bool operator==(PermutationGroup const &rhs) const;
   XDIAG_API bool operator!=(PermutationGroup const &rhs) const;
 
-  int64_t size() const;
-  int64_t nsites() const;
+  XDIAG_API int64_t size() const;
+  XDIAG_API int64_t nsites() const;
 
-  Permutation const &operator[](int64_t sym) const;
-  int64_t inverse(int64_t sym) const;
-  int64_t multiply(int64_t s1, int64_t s2) const;
+  XDIAG_API Permutation const &operator[](int64_t sym) const;
+  XDIAG_API int64_t inverse(int64_t sym) const;
+  XDIAG_API int64_t multiply(int64_t s1, int64_t s2) const;
 
-  iterator_t begin() const;
-  iterator_t end() const;
+  XDIAG_API iterator_t begin() const;
+  XDIAG_API iterator_t end() const;
 
 private:
   std::vector<Permutation> permutations_;

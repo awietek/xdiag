@@ -89,7 +89,7 @@ void generic_term_dns(BasisIn &&basis_in, BasisOut &&basis_out,
           ++dns_in_idx;
         }
       } // if non trivial stabilizer
-    } // loop over ups
+    }   // loop over ups
   }
 
   else { // if not symmetric
@@ -99,10 +99,7 @@ void generic_term_dns(BasisIn &&basis_in, BasisOut &&basis_out,
 
     int64_t size_dns_in = basis_in.size_dns();
     int64_t size_dns_out = basis_out.size_dns();
-    if (size_ups_in != size_ups_out) {
-      Log.err("Error in apply_term_dns_no_sym: size of upspins space different "
-              "for input and output basis");
-    }
+    assert(size_ups_in == size_ups_out);
 
 #ifdef _OPENMP
 #pragma omp parallel

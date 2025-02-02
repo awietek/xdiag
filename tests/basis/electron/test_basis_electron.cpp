@@ -3,6 +3,7 @@
 #include <xdiag/blocks/electron.hpp>
 
 #include <xdiag/common.hpp>
+#include <xdiag/utils/logger.hpp>
 
 #include "../../blocks/electron/testcases_electron.hpp"
 

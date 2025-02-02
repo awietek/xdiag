@@ -8,7 +8,7 @@
 #include <xdiag/algebra/apply.hpp>
 #include <xdiag/algebra/matrix.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
-#include <xdiag/utils/close.hpp>
+#include <xdiag/algebra/isapprox.hpp>
 
 using namespace xdiag;
 
@@ -25,7 +25,7 @@ void test_electron_np_no_np_apply(int nsites, OpSum ops) {
       e0s.push_back(e0);
     }
   auto e0_np = *std::min_element(e0s.begin(), e0s.end());
-  REQUIRE(close(e0_full, e0_np));
+  REQUIRE(isapprox(e0_full, e0_np));
 }
 
 TEST_CASE("electron_apply", "[electron]") {
@@ -55,12 +55,12 @@ TEST_CASE("electron_apply", "[electron]") {
         arma::cx_vec w1 = H * v;
         arma::cx_vec w2(block.size(), arma::fill::zeros);
         apply(ops, block, v, block, w2);
-        REQUIRE(close(w1, w2));
+        REQUIRE(isapprox(w1, w2));
         arma::mat m(block.size(), 5, arma::fill::randn);
         arma::mat n1 = H * m;
         arma::mat n2(block.size(), 5, arma::fill::zeros);
         apply(ops, block, m, block, n2);
-        REQUIRE(close(n1, n2));
+        REQUIRE(isapprox(n1, n2));
 
         // Compute eigenvalues and compare
         arma::vec evals_mat;
@@ -69,7 +69,7 @@ TEST_CASE("electron_apply", "[electron]") {
         double e0_app = eigval0(ops, block);
         // Log.out("nup: {}, ndn: {}, e0_mat: {}, e0_app: {}", nup, ndn, e0_mat,
         //         e0_app);
-        // REQUIRE(close(e0_mat, e0_app));
+        // REQUIRE(isapprox(e0_mat, e0_app));
 	REQUIRE(std::abs(e0_mat - e0_app)<1e-8);
       }
   }
@@ -95,7 +95,7 @@ TEST_CASE("electron_apply", "[electron]") {
         arma::cx_vec w1 = H * v;
         arma::cx_vec w2(block.size(), arma::fill::zeros);
         apply(ops, block, v, block, w2);
-        REQUIRE(close(w1, w2));
+        REQUIRE(isapprox(w1, w2));
 
         // Compute eigenvalues and compare
         arma::vec evals_mat;
@@ -103,7 +103,7 @@ TEST_CASE("electron_apply", "[electron]") {
         double e0_mat = evals_mat(0);
         double e0_app = eigval0(ops, block);
         // Log.out("e0_mat: {}, e0_app: {}", e0_mat, e0_app);
-        CHECK(close(e0_mat, e0_app));
+        CHECK(isapprox(e0_mat, e0_app));
       }
   }
 
@@ -125,7 +125,7 @@ TEST_CASE("electron_apply", "[electron]") {
         arma::vec w1 = H * v;
         arma::vec w2(block.size(), arma::fill::zeros);
         apply(ops, block, v, block, w2);
-        REQUIRE(close(w1, w2));
+        REQUIRE(isapprox(w1, w2));
 
         // Compute eigenvalues and compare
         arma::vec evals_mat;
@@ -133,7 +133,7 @@ TEST_CASE("electron_apply", "[electron]") {
         double e0_mat = evals_mat(0);
         double e0_app = eigval0(ops, block);
         // Log.out("e0_mat: {}, e0_app: {}", e0_mat, e0_app);
-        CHECK(close(e0_mat, e0_app));
+        CHECK(isapprox(e0_mat, e0_app));
       }
 
     std::tie(ops, eigs_correct) = randomAlltoAll4();
@@ -148,7 +148,7 @@ TEST_CASE("electron_apply", "[electron]") {
         arma::vec w1 = H * v;
         arma::vec w2(block.size(), arma::fill::zeros);
         apply(ops, block, v, block, w2);
-        REQUIRE(close(w1, w2));
+        REQUIRE(isapprox(w1, w2));
 
         // Compute eigenvalues and compare
         arma::vec evals_mat;
@@ -156,7 +156,7 @@ TEST_CASE("electron_apply", "[electron]") {
         double e0_mat = evals_mat(0);
         double e0_app = eigval0(ops, block);
         // Log.out("e0_mat: {}, e0_app: {}", e0_mat, e0_app);
-        CHECK(close(e0_mat, e0_app, 1e-6, 1e-6));
+        CHECK(isapprox(e0_mat, e0_app, 1e-6, 1e-6));
       }
   }
 

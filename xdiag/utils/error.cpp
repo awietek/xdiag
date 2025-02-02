@@ -5,9 +5,13 @@
 #include <iomanip> // std::setw
 #include <variant>
 
+#define FMT_HEADER_ONLY
+#include <xdiag/extern/fmt/format.hpp>
+
 #ifndef XDIAG_DISABLE_COLOR
 #include <xdiag/extern/fmt/color.hpp>
 #endif
+
 #include <xdiag/extern/armadillo/armadillo>
 
 #ifdef __APPLE__
@@ -31,6 +35,7 @@ Error::Error(Error const &error, std::string message)
     : original_message_(error.original_message()), messages_(error.messages()) {
   messages_.push_back(message);
 }
+// Error::~Error(){};
 
 std::vector<std::string> const &Error::messages() const { return messages_; }
 std::string Error::original_message() const { return original_message_; }
@@ -75,7 +80,7 @@ void error_trace(Error const &error) {
 #endif
 
 #ifdef XDIAG_DISABLE_COLOR
-    std::string error_hear = "XDiag ERROR: ";
+    std::string error_head = "XDiag ERROR: ";
 #else
   std::string error_head = fmt::format(
       fg(fmt::color::crimson) | fmt::emphasis::bold, "XDiag ERROR: ");
@@ -119,8 +124,7 @@ void check_dimension_works_with_blas_int_size(int64_t dim) try {
   XDIAG_RETHROW(e);
 }
 
-template <typename bit_t>
-void check_nsites_work_with_bits(int64_t nsites) try {
+template <typename bit_t> void check_nsites_work_with_bits(int64_t nsites) try {
   int64_t n_bits = std::numeric_limits<bit_t>::digits;
   if (nsites >= n_bits) {
     XDIAG_THROW(

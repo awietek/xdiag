@@ -7,7 +7,7 @@
 #include "testcases_electron.hpp"
 
 #include <xdiag/algebra/matrix.hpp>
-#include <xdiag/utils/close.hpp>
+#include <xdiag/algebra/isapprox.hpp>
 
 using namespace xdiag;
 
@@ -34,7 +34,7 @@ void test_electron_np_no_np_matrix(int nsites, OpSum ops) try {
         all_eigs.push_back(eig);
     }
   std::sort(all_eigs.begin(), all_eigs.end());
-  REQUIRE(close(arma::Col(all_eigs), eigs_full));
+  REQUIRE(isapprox(arma::Col(all_eigs), eigs_full));
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
@@ -116,10 +116,10 @@ TEST_CASE("electron_matrix", "[electron]") try {
        0., 0., 0., 0., 0., tm, 0., tp, 0., 0., tm, U2} // 24
   };
 
-  REQUIRE(close(H1, H1_correct));
+  REQUIRE(isapprox(H1, H1_correct));
   for (int i = 0; i < 24; ++i)
     for (int j = 0; j < 24; ++j) {
-      REQUIRE(close(std::real(H1(i, j)), H1_correct(i, j)));
+      REQUIRE(isapprox(std::real(H1(i, j)), H1_correct(i, j)));
     }
 
   //////////////////////////////////
@@ -141,7 +141,7 @@ TEST_CASE("electron_matrix", "[electron]") try {
       arma::eig_sym(eigs, H);
       double e0 = eigs(0);
       // printf("e0: %f, e0_exact: %f\n", e0, e0_exact);
-      REQUIRE(close(e0_exact, e0));
+      REQUIRE(isapprox(e0_exact, e0));
     }
   }
 
@@ -185,11 +185,11 @@ TEST_CASE("electron_matrix", "[electron]") try {
         REQUIRE(Hc.is_hermitian(1e-8));
         arma::vec eigsc;
         arma::eig_sym(eigsc, Hc);
-        REQUIRE(close(eigsr, eigsc));
+        REQUIRE(isapprox(eigsr, eigsc));
         double e0 = eigsr(0);
         // printf("nup: %d, ndn: %d, dim: %d, e0: %f, e0_exact: %f\n", nup, ndn,
         //        (int)evecs.size(), e0, e0_exact);
-        REQUIRE(close(e0_exact, e0));
+        REQUIRE(isapprox(e0_exact, e0));
       }
   }
 
@@ -248,7 +248,7 @@ TEST_CASE("electron_matrix", "[electron]") try {
         double e0 = evecs(0);
         // printf("nup: %d, ndn: %d, dim: %d, e0: %f, e0_exact: %f\n", nup, ndn,
         //        (int)evecs.size(), e0, e0_exact);
-        REQUIRE(close(e0_exact, e0));
+        REQUIRE(isapprox(e0_exact, e0));
       }
   }
 
@@ -301,7 +301,7 @@ TEST_CASE("electron_matrix", "[electron]") try {
           all_eigs.push_back(eig);
       }
     std::sort(all_eigs.begin(), all_eigs.end());
-    REQUIRE(close(arma::vec(all_eigs), eigs_correct));
+    REQUIRE(isapprox(arma::vec(all_eigs), eigs_correct));
 
     std::tie(ops, eigs_correct) = randomAlltoAll4();
     all_eigs.clear();
@@ -318,7 +318,7 @@ TEST_CASE("electron_matrix", "[electron]") try {
           all_eigs.push_back(eig);
       }
     std::sort(all_eigs.begin(), all_eigs.end());
-    REQUIRE(close(arma::vec(all_eigs), eigs_correct));
+    REQUIRE(isapprox(arma::vec(all_eigs), eigs_correct));
   }
 
   for (int N = 3; N <= 6; ++N) {
@@ -363,7 +363,7 @@ TEST_CASE("electron_matrix", "[electron]") try {
       // Log("eigs1.size(): {}, eigs2.size(): {}", eigs1.size(), eigs2.size());
 
       arma::vec eigs1_sub = eigs1.subvec(0, eigs2.size() - 1);
-      REQUIRE(close(eigs1_sub, eigs2, 1e-6, 1e-6));
+      REQUIRE(isapprox(eigs1_sub, eigs2, 1e-6, 1e-6));
     }
   }
 

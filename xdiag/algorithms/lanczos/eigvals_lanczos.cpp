@@ -44,9 +44,11 @@ eigvals_lanczos(OpSum const &ops, Block const &block, int64_t neigvals,
   return eigvals_lanczos_result_t();
 }
 
-XDIAG_API eigvals_lanczos_result_t eigvals_lanczos(
-    OpSum const &ops, State psi0, int64_t neigvals, double precision,
-    int64_t max_iterations, bool force_complex, double deflation_tol) try {
+eigvals_lanczos_result_t eigvals_lanczos(OpSum const &ops, State psi0,
+                                         int64_t neigvals, double precision,
+                                         int64_t max_iterations,
+                                         bool force_complex,
+                                         double deflation_tol) try {
   return eigvals_lanczos_inplace(ops, psi0, neigvals, precision, max_iterations,
                                  force_complex, deflation_tol);
 } catch (Error const &e) {

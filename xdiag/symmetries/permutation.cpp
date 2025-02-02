@@ -131,7 +131,7 @@ Permutation operator*(Permutation const &p1, Permutation const &p2) try {
 }
 
 Permutation inverse(Permutation const &p) { return p.inverse(); }
-XDIAG_API Permutation pow(Permutation const &p, int64_t power) try {
+Permutation pow(Permutation const &p, int64_t power) try {
   Permutation pp(p.size());
   if (power >= 0) {
     for (int i = 0; i < power; ++i) {

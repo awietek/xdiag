@@ -1,7 +1,7 @@
 #include "../catch.hpp"
 
-#include <iostream>
 #include <xdiag/combinatorics/combinations.hpp>
+#include <xdiag/utils/logger.hpp>
 
 template <typename bit_t> void test_combinations() {
   using namespace xdiag;
@@ -30,7 +30,7 @@ template <typename bit_t> void test_combinations() {
 }
 
 TEST_CASE("Combinations", "[combinatorics]") {
-  xdiag::Log.out("Testing Combinations");
+  xdiag::Log("Testing Combinations");
   test_combinations<uint16_t>();
   test_combinations<uint32_t>();
   test_combinations<uint64_t>();

@@ -10,7 +10,7 @@
 #include <xdiag/io/read.hpp>
 #include <xdiag/operators/logic/order.hpp>
 #include <xdiag/operators/logic/real.hpp>
-#include <xdiag/utils/close.hpp>
+#include <xdiag/utils/logger.hpp>
 
 using namespace xdiag;
 

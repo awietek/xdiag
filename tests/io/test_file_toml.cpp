@@ -1,16 +1,9 @@
 #include "../catch.hpp"
+#include <xdiag/all.hpp>
 
-#include <xdiag/common.hpp>
-#include <xdiag/io/file_toml.hpp>
-#include <xdiag/operators/op.hpp>
-#include <xdiag/operators/opsum.hpp>
-#include <xdiag/symmetries/operations/symmetry_operations.hpp>
-#include <xdiag/symmetries/permutation.hpp>
-#include <xdiag/symmetries/permutation_group.hpp>
-#include <xdiag/symmetries/representation.hpp>
-#include <xdiag/utils/close.hpp>
+using namespace std::complex_literals;
 
-template <typename T> void test_write_read(T val) try {
+template <typename T> void test_write_read(T val) {
   using namespace xdiag;
 
   // Test writing
@@ -27,8 +20,6 @@ template <typename T> void test_write_read(T val) try {
   // XDIAG_SHOW(val);
   // XDIAG_SHOW(val_r);
   REQUIRE(val == val_r);
-} catch (xdiag::Error const &e) {
-  XDIAG_RETHROW(e);
 }
 
 TEST_CASE("file_toml", "[io]") try {
@@ -121,7 +112,7 @@ TEST_CASE("file_toml", "[io]") try {
   REQUIRE(all(fl["datenbank.ports"].as<uvec>() == uv));
 
   auto sx = fl["pauli.sx"].as<mat>();
-  REQUIRE(close(sx, mat{{0.0, 0.5}, {0.5, 0.0}}));
+  REQUIRE(isapprox(sx, mat{{0.0, 0.5}, {0.5, 0.0}}));
   // XDIAG_SHOW(sx);
 
   auto sy = fl["pauli.sy"].as<cx_mat>();
@@ -129,18 +120,18 @@ TEST_CASE("file_toml", "[io]") try {
   // XDIAG_SHOW(sy);
   // XDIAG_SHOW(syy);
 
-  REQUIRE(close(sy, syy));
+  REQUIRE(isapprox(sy, syy));
 
   auto sz = fl["pauli.sz"].as<mat>();
-  REQUIRE(close(sz, mat{{0.5, 0.}, {0., -0.5}}));
+  REQUIRE(isapprox(sz, mat{{0.5, 0.}, {0., -0.5}}));
   // XDIAG_SHOW(sz);
 
   auto szc = fl["pauli.sz"].as<cx_mat>();
-  REQUIRE(close(szc, cx_mat{{0.5 + 0i, 0. + 0i}, {0. + 0i, -0.5 + 0i}}));
+  REQUIRE(isapprox(szc, cx_mat{{0.5 + 0i, 0. + 0i}, {0. + 0i, -0.5 + 0i}}));
   // XDIAG_SHOW(szc);
 
   auto other = fl["pauli.other"].as<mat>();
-  REQUIRE(close(other, mat{{1.0, 2.0, 3.0}, {5.0, 6.0, 7.0}}));
+  REQUIRE(isapprox(other, mat{{1.0, 2.0, 3.0}, {5.0, 6.0, 7.0}}));
   // XDIAG_SHOW(other);
 
   int a = 42;
@@ -204,11 +195,11 @@ TEST_CASE("file_toml", "[io]") try {
   REQUIRE(d == dr);
   REQUIRE(e == er);
   REQUIRE(f == fr);
-  REQUIRE(close(g, gr));
-  REQUIRE(close(h, hr));
+  REQUIRE(isapprox(g, gr));
+  REQUIRE(isapprox(h, hr));
   REQUIRE(i == ir);
-  REQUIRE(close(j, jr));
-  REQUIRE(close(k, kr));
+  REQUIRE(isapprox(j, jr));
+  REQUIRE(isapprox(k, kr));
 
   auto p = Permutation({5, 3, 4, 2, 1, 0, 7, 6});
   fl["perm"] = p;

@@ -21,19 +21,20 @@ public:
 
   XDIAG_API iterator_t begin() const;
   XDIAG_API iterator_t end() const;
-  int64_t index(ProductState const &pstate) const;
-  int64_t dim() const;
-  int64_t size() const;
-  int64_t size_max() const;
-  int64_t size_min() const;
+  XDIAG_API int64_t index(ProductState const &pstate) const;
+  XDIAG_API int64_t dim() const;
+  XDIAG_API int64_t size() const;
+  XDIAG_API int64_t size_max() const;
+  XDIAG_API int64_t size_min() const;
 
   XDIAG_API bool operator==(SpinhalfDistributed const &rhs) const;
   XDIAG_API bool operator!=(SpinhalfDistributed const &rhs) const;
 
-  int64_t nsites() const;
+  XDIAG_API int64_t nsites() const;
+  XDIAG_API bool isreal(double precision = 1e-12) const;
+
   std::string backend() const;
   std::optional<int64_t> nup() const;
-  bool isreal(double precision = 1e-12) const;
   basis_t const &basis() const;
 
 private:
@@ -58,9 +59,9 @@ XDIAG_API std::string to_string(SpinhalfDistributed const &block);
 class SpinhalfDistributedIterator {
 public:
   SpinhalfDistributedIterator(SpinhalfDistributed const &block, bool begin);
-  SpinhalfDistributedIterator &operator++();
-  ProductState const &operator*() const;
-  bool operator!=(SpinhalfDistributedIterator const &rhs) const;
+  XDIAG_API SpinhalfDistributedIterator &operator++();
+  XDIAG_API ProductState const &operator*() const;
+  XDIAG_API bool operator!=(SpinhalfDistributedIterator const &rhs) const;
 
 private:
   int64_t nsites_;

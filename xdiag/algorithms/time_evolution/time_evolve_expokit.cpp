@@ -49,7 +49,7 @@ time_evolve_expokit_inplace(OpSum const &ops, State &state, double time,
     auto ta = rightnow();
     auto w = arma::cx_vec(v.n_rows, arma::fill::zeros);
     apply(ops, block, v, block, w);
-    w *= -1.0i;
+    w *= complex(0.0, -1.0);
     Log(2, "Lanczos iteration {}", iter);
     timing(ta, rightnow(), "MVM", 2);
     ++iter;

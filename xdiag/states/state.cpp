@@ -4,17 +4,19 @@
 
 namespace xdiag {
 
+static void safe_resize(std::vector<double> &vec, int64_t size) try {
+  vec.resize(size);
+} catch (...) {
+  XDIAG_THROW("Unable to resize vector");
+}
+
 State::State(Block const &block, bool real, int64_t ncols) try
     : real_(real), dim_(xdiag::dim(block)), nrows_(xdiag::size(block)),
       ncols_(ncols), block_(block) {
-  try {
-    if (real) {
-      resize_vector(storage_, size());
-    } else {
-      resize_vector(storage_, 2 * size());
-    }
-  } catch (...) {
-    XDIAG_THROW("Unable to allocate memory for State");
+  if (real) {
+    safe_resize(storage_, size());
+  } else {
+    safe_resize(storage_, 2 * size());
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
@@ -24,14 +26,10 @@ template <typename block_t>
 State::State(block_t const &block, bool real, int64_t ncols) try
     : real_(real), dim_(block.dim()), nrows_(block.size()), ncols_(ncols),
       block_(block) {
-  try {
-    if (real) {
-      resize_vector(storage_, size());
-    } else {
-      resize_vector(storage_, 2 * size());
-    }
-  } catch (...) {
-    XDIAG_THROW("Unable to allocate memory for State");
+  if (real) {
+    safe_resize(storage_, size());
+  } else {
+    safe_resize(storage_, 2 * size());
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
@@ -42,22 +40,14 @@ State::State(block_t const &block, double const *ptr, int64_t ncols,
              int64_t stride) try
     : real_(true), nrows_(block.size()), ncols_(ncols), block_(block) {
 
-  try {
-    resize_vector(storage_, size());
-  } catch (...) {
-    XDIAG_THROW("Unable to allocate memory for State");
-  }
+  safe_resize(storage_, size());
 
-  try {
-    if (stride == 1) {
-      std::copy(ptr, ptr + size(), storage_.data());
-    } else {
-      for (int64_t i = 0, is = 0; i < size(); ++i, is += stride) {
-        storage_[i] = ptr[is];
-      }
+  if (stride == 1) {
+    std::copy(ptr, ptr + size(), storage_.data());
+  } else {
+    for (int64_t i = 0, is = 0; i < size(); ++i, is += stride) {
+      storage_[i] = ptr[is];
     }
-  } catch (...) {
-    XDIAG_THROW("Unable to allocate memory for State");
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
@@ -66,17 +56,10 @@ State::State(block_t const &block, double const *ptr, int64_t ncols,
 template <typename block_t>
 State::State(block_t const &block, complex const *ptr, int64_t ncols) try
     : real_(false), nrows_(block.size()), ncols_(ncols), block_(block) {
-  try {
-    resize_vector(storage_, 2 * size());
-  } catch (...) {
-    XDIAG_THROW("Unable to allocate memory for State");
-  }
 
-  try {
-    std::copy(ptr, ptr + size(), reinterpret_cast<complex *>(storage_.data()));
-  } catch (...) {
-    XDIAG_THROW("Unable to allocate memory for State");
-  }
+  safe_resize(storage_, 2 * size());
+  std::copy(ptr, ptr + size(), reinterpret_cast<complex *>(storage_.data()));
+
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
@@ -89,22 +72,15 @@ State::State(block_t const &block, arma::Col<coeff_t> const &vector) try
     XDIAG_THROW("Block dimension not equal to vector dimension");
   }
 
-  try {
-    if (real_) {
-      resize_vector(storage_, size());
-    } else {
-      resize_vector(storage_, 2 * size());
-    }
-  } catch (...) {
-    XDIAG_THROW("Unable to allocate memory for State");
+  if (real_) {
+    safe_resize(storage_, size());
+  } else {
+    safe_resize(storage_, 2 * size());
   }
 
-  try {
-    std::copy(vector.memptr(), vector.memptr() + size(),
-              reinterpret_cast<coeff_t *>(storage_.data()));
-  } catch (...) {
-    XDIAG_THROW("Unable to copy memory for State");
-  }
+  std::copy(vector.memptr(), vector.memptr() + size(),
+            reinterpret_cast<coeff_t *>(storage_.data()));
+
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
@@ -118,22 +94,15 @@ State::State(block_t const &block, arma::Mat<coeff_t> const &matrix) try
     XDIAG_THROW("Block dimension not equal to number of rows in matrix");
   }
 
-  try {
-    if (real_) {
-      resize_vector(storage_, size());
-    } else {
-      resize_vector(storage_, 2 * size());
-    }
-  } catch (...) {
-    XDIAG_THROW("Unable to allocate memory for State");
+  if (real_) {
+    safe_resize(storage_, size());
+  } else {
+    safe_resize(storage_, 2 * size());
   }
 
-  try {
-    std::copy(matrix.memptr(), matrix.memptr() + size(),
-              reinterpret_cast<coeff_t *>(storage_.data()));
-  } catch (...) {
-    XDIAG_THROW("Unable to copy memory for State");
-  }
+  std::copy(matrix.memptr(), matrix.memptr() + size(),
+            reinterpret_cast<coeff_t *>(storage_.data()));
+
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
@@ -171,11 +140,7 @@ void State::make_complex() try {
   if (isreal()) {
     real_ = false;
 
-    try {
-      resize_vector(storage_, 2 * size());
-    } catch (...) {
-      XDIAG_THROW("Unable to allocate memory for State");
-    }
+    safe_resize(storage_, 2 * size());
 
     double *ptr = storage_.data();
     for (int64_t i = size() - 1; i >= 0; --i) {
@@ -280,59 +245,62 @@ complex *State::colptrC(int64_t col) {
   return memptrC() + col * nrows_;
 }
 
-template State::State(Spinhalf const &, bool, int64_t);
-template State::State(tJ const &, bool, int64_t);
-template State::State(Electron const &, bool, int64_t);
+template XDIAG_API State::State(Spinhalf const &, bool, int64_t);
+template XDIAG_API State::State(tJ const &, bool, int64_t);
+template XDIAG_API State::State(Electron const &, bool, int64_t);
 
-template State::State(Spinhalf const &, double const *, int64_t, int64_t);
-template State::State(tJ const &, double const *, int64_t, int64_t);
-template State::State(Electron const &, double const *, int64_t, int64_t);
+template XDIAG_API State::State(Spinhalf const &, double const *, int64_t,
+                                int64_t);
+template XDIAG_API State::State(tJ const &, double const *, int64_t, int64_t);
+template XDIAG_API State::State(Electron const &, double const *, int64_t,
+                                int64_t);
 
-template State::State(Spinhalf const &block, complex const *, int64_t size);
-template State::State(tJ const &block, complex const *, int64_t size);
-template State::State(Electron const &block, complex const *, int64_t size);
+template XDIAG_API State::State(Spinhalf const &, complex const *, int64_t);
+template XDIAG_API State::State(tJ const &, complex const *, int64_t);
+template XDIAG_API State::State(Electron const &, complex const *, int64_t);
 
-template State::State(Spinhalf const &block, arma::Col<double> const &vector);
-template State::State(tJ const &block, arma::Col<double> const &vector);
-template State::State(Electron const &block, arma::Col<double> const &vector);
-template State::State(Spinhalf const &block, arma::Col<complex> const &vector);
-template State::State(tJ const &block, arma::Col<complex> const &vector);
-template State::State(Electron const &block, arma::Col<complex> const &vector);
+template XDIAG_API State::State(Spinhalf const &, arma::Col<double> const &);
+template XDIAG_API State::State(tJ const &, arma::Col<double> const &);
+template XDIAG_API State::State(Electron const &, arma::Col<double> const &);
+template XDIAG_API State::State(Spinhalf const &, arma::Col<complex> const &);
+template XDIAG_API State::State(tJ const &, arma::Col<complex> const &);
+template XDIAG_API State::State(Electron const &, arma::Col<complex> const &);
 
-template State::State(Spinhalf const &block, arma::Mat<double> const &vector);
-template State::State(tJ const &block, arma::Mat<double> const &vector);
-template State::State(Electron const &block, arma::Mat<double> const &vector);
-template State::State(Spinhalf const &block, arma::Mat<complex> const &vector);
-template State::State(tJ const &block, arma::Mat<complex> const &vector);
-template State::State(Electron const &block, arma::Mat<complex> const &vector);
+template XDIAG_API State::State(Spinhalf const &, arma::Mat<double> const &);
+template XDIAG_API State::State(tJ const &, arma::Mat<double> const &);
+template XDIAG_API State::State(Electron const &, arma::Mat<double> const &);
+template XDIAG_API State::State(Spinhalf const &, arma::Mat<complex> const &);
+template XDIAG_API State::State(tJ const &, arma::Mat<complex> const &);
+template XDIAG_API State::State(Electron const &, arma::Mat<complex> const &);
 
 #ifdef XDIAG_USE_MPI
-template State::State(SpinhalfDistributed const &, bool, int64_t);
-template State::State(SpinhalfDistributed const &, double const *, int64_t,
-                      int64_t);
-template State::State(SpinhalfDistributed const &block, complex const *ptr,
-                      int64_t size);
-template State::State(SpinhalfDistributed const &block,
-                      arma::Col<double> const &vector);
-template State::State(SpinhalfDistributed const &block,
-                      arma::Col<complex> const &vector);
-template State::State(SpinhalfDistributed const &block,
-                      arma::Mat<double> const &vector);
-template State::State(SpinhalfDistributed const &block,
-                      arma::Mat<complex> const &vector);
+template XDIAG_API State::State(SpinhalfDistributed const &, bool, int64_t);
+template XDIAG_API State::State(SpinhalfDistributed const &, double const *,
+                                int64_t, int64_t);
+template XDIAG_API State::State(SpinhalfDistributed const &, complex const *,
+                                int64_t);
+template XDIAG_API State::State(SpinhalfDistributed const &,
+                                arma::Col<double> const &);
+template XDIAG_API State::State(SpinhalfDistributed const &,
+                                arma::Col<complex> const &);
+template XDIAG_API State::State(SpinhalfDistributed const &,
+                                arma::Mat<double> const &);
+templateXDIAG_API State::State(SpinhalfDistributed const &,
+                               arma::Mat<complex> const &);
 
-template State::State(tJDistributed const &, bool, int64_t);
-template State::State(tJDistributed const &, double const *, int64_t, int64_t);
-template State::State(tJDistributed const &block, complex const *ptr,
-                      int64_t size);
-template State::State(tJDistributed const &block,
-                      arma::Col<double> const &vector);
-template State::State(tJDistributed const &block,
-                      arma::Col<complex> const &vector);
-template State::State(tJDistributed const &block,
-                      arma::Mat<double> const &vector);
-template State::State(tJDistributed const &block,
-                      arma::Mat<complex> const &vector);
+template XDIAG_API State::State(tJDistributed const &, bool, int64_t);
+template XDIAG_API State::State(tJDistributed const &, double const *, int64_t,
+                                int64_t);
+template XDIAG_API State::State(tJDistributed const &, complex const *,
+                                int64_t);
+template XDIAG_API State::State(tJDistributed const &,
+                                arma::Col<double> const &);
+template XDIAG_API State::State(tJDistributed const &,
+                                arma::Col<complex> const &);
+template XDIAG_API State::State(tJDistributed const &,
+                                arma::Mat<double> const &);
+template XDIAG_API State::State(tJDistributed const &,
+                                arma::Mat<complex> const &);
 
 #endif
 

@@ -33,16 +33,14 @@ void apply_exchange(Coupling const &cpl, Op const &op, Basis &&basis,
   auto term_actionups = [&](bit_t up) -> std::pair<bit_t, coeff_t> {
     bool fermi_up = bits::popcnt(up & fermimask) & 1;
     bit_t up_flip = up ^ flipmask;
-    if constexpr (iscomplex<coeff_t>()) {
+    if constexpr (isreal<coeff_t>()) {
+      return {up_flip, fermi_up ? Jhalf : -Jhalf};
+    } else {
       if (bits::gbit(up, s1)) {
-        // Log("a {}", Jhalf);
         return {up_flip, fermi_up ? Jhalf : -Jhalf};
       } else {
-        // Log("b {}", Jhalf_conj);
         return {up_flip, fermi_up ? Jhalf_conj : -Jhalf_conj};
       }
-    } else {
-      return {up_flip, fermi_up ? Jhalf : -Jhalf};
     }
   };
   auto term_actiondns = [&](bit_t dn) -> std::pair<bit_t, coeff_t> {

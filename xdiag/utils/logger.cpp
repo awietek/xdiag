@@ -2,6 +2,6 @@
 
 namespace xdiag {
 
-void set_verbosity(int64_t level) { Log.set_verbosity(level); }
+void set_verbosity(int64_t level) { xdiag::Log.set_verbosity(level); }
 
 } // namespace xdiag

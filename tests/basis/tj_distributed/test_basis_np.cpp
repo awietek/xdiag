@@ -6,7 +6,8 @@
 #include <xdiag/bits/bitops.hpp>
 #include <xdiag/combinatorics/binomial.hpp>
 #include <xdiag/parallel/mpi/allreduce.hpp>
-#include <xdiag/utils/close.hpp>
+#include <xdiag/algebra/isapprox.hpp>
+#include <xdiag/utils/logger.hpp>
 
 template <typename bit_t, typename coeff_t>
 void test_tj_distributed_basis_np_transpose() {
@@ -31,7 +32,7 @@ void test_tj_distributed_basis_np_transpose() {
                   w.memptr());
 
         basis.transpose(v.memptr(), w2.memptr());
-        REQUIRE(close(w, w2));
+        REQUIRE(isapprox(w, w2));
 
         ////// DEBUG PRINT
         // for (int rank = 0; rank < mpi_size; ++rank) {
@@ -86,7 +87,7 @@ void test_tj_distributed_basis_np_transpose() {
                   mpi::buffer.send<coeff_t>() + basis.size(), v2.memptr());
 
         basis.transpose_r(w.memptr(), v3.memptr());
-        REQUIRE(close(v2, v3));
+        REQUIRE(isapprox(v2, v3));
 
         ////////// DEBUG PRINT
         // for (int rank = 0; rank < mpi_size; ++rank) {
@@ -128,7 +129,7 @@ void test_tj_distributed_basis_np_transpose() {
         //   MPI_Barrier(MPI_COMM_WORLD);
         // }
 
-        REQUIRE(close(v2, v));
+        REQUIRE(isapprox(v2, v));
       }
     }
   }

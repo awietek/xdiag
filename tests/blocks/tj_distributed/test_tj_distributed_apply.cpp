@@ -5,10 +5,9 @@
 #include "../spinhalf/testcases_spinhalf.hpp"
 #include "../tj/testcases_tj.hpp"
 #include <xdiag/algebra/apply.hpp>
+#include <xdiag/algebra/isapprox.hpp>
 #include <xdiag/algebra/matrix.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
-
-#include <xdiag/utils/close.hpp>
 
 using namespace xdiag;
 
@@ -46,7 +45,7 @@ TEST_CASE("tj_distributed_apply", "[tj_distributed]") try {
       double e02 = eigval0(ops, block2);
       // Log("{} {} {:.12f} {:.12f}", nup, ndn, e0, e02);
 
-      REQUIRE(close(e0, e02));
+      REQUIRE(isapprox(e0, e02));
     }
   }
 
@@ -61,7 +60,7 @@ TEST_CASE("tj_distributed_apply", "[tj_distributed]") try {
       double e0_spinhalf = eigval0(ops, block);
       double e0 = eigval0(ops, block_tJ);
       // Log("{} {}", e0_spinhalf, e0);
-      REQUIRE(close(e0_spinhalf, e0));
+      REQUIRE(isapprox(e0_spinhalf, e0));
     }
   }
 
@@ -114,7 +113,7 @@ TEST_CASE("tj_distributed_apply", "[tj_distributed]") try {
 
           double e0 = eigval0(ops, block);
           double e02 = eigval0(ops, block2);
-          REQUIRE(close(e0, e02));
+          REQUIRE(isapprox(e0, e02));
         }
       }
     }
@@ -131,7 +130,7 @@ TEST_CASE("tj_distributed_apply", "[tj_distributed]") try {
 
           double e0 = eigval0(ops, block);
           double e02 = eigval0(ops, block2);
-          REQUIRE(close(e0, e02));
+          REQUIRE(isapprox(e0, e02));
         }
       }
     }
@@ -151,7 +150,7 @@ TEST_CASE("tj_distributed_apply", "[tj_distributed]") try {
       double e0_spinhalf = eigval0(ops, block);
       double e0 = eigval0(ops, block_tJ);
       // Log("{} {} {} {}", nup, e0_spinhalf, e0, e00);
-      REQUIRE(close(e0_spinhalf, e0));
+      REQUIRE(isapprox(e0_spinhalf, e0));
       if (nup == 6) {
         REQUIRE(std::abs(e0 - e00) < 1e-8);
       }

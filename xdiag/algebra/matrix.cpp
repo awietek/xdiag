@@ -45,20 +45,24 @@ arma::mat matrix(OpSum const &ops, block_t const &block_in,
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
-template arma::mat matrix(OpSum const &, Spinhalf const &, Spinhalf const &);
-template arma::mat matrix(OpSum const &, tJ const &, tJ const &);
-template arma::mat matrix(OpSum const &, Electron const &, Electron const &);
+template XDIAG_API arma::mat matrix(OpSum const &, Spinhalf const &,
+                                    Spinhalf const &);
+template XDIAG_API arma::mat matrix(OpSum const &, tJ const &, tJ const &);
+template XDIAG_API arma::mat matrix(OpSum const &, Electron const &,
+                                    Electron const &);
 
 template <class block_t>
-XDIAG_API arma::mat matrix(Op const &op, block_t const &block_in,
-                           block_t const &block_out) try {
+arma::mat matrix(Op const &op, block_t const &block_in,
+                 block_t const &block_out) try {
   return matrix(OpSum(op), block_in, block_out);
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
-template arma::mat matrix(Op const &, Spinhalf const &, Spinhalf const &);
-template arma::mat matrix(Op const &, tJ const &, tJ const &);
-template arma::mat matrix(Op const &, Electron const &, Electron const &);
+template XDIAG_API arma::mat matrix(Op const &, Spinhalf const &,
+                                    Spinhalf const &);
+template XDIAG_API arma::mat matrix(Op const &, tJ const &, tJ const &);
+template XDIAG_API arma::mat matrix(Op const &, Electron const &,
+                                    Electron const &);
 
 template <class block_t>
 arma::mat matrix(OpSum const &ops, block_t const &blocki) try {
@@ -67,9 +71,9 @@ arma::mat matrix(OpSum const &ops, block_t const &blocki) try {
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
-template arma::mat matrix(OpSum const &, Spinhalf const &);
-template arma::mat matrix(OpSum const &, tJ const &);
-template arma::mat matrix(OpSum const &, Electron const &);
+template XDIAG_API arma::mat matrix(OpSum const &, Spinhalf const &);
+template XDIAG_API arma::mat matrix(OpSum const &, tJ const &);
+template XDIAG_API arma::mat matrix(OpSum const &, Electron const &);
 
 template <class block_t>
 arma::mat matrix(Op const &op, block_t const &blocki) try {
@@ -77,9 +81,9 @@ arma::mat matrix(Op const &op, block_t const &blocki) try {
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
-template arma::mat matrix(Op const &, Spinhalf const &);
-template arma::mat matrix(Op const &, tJ const &);
-template arma::mat matrix(Op const &, Electron const &);
+template XDIAG_API arma::mat matrix(Op const &, Spinhalf const &);
+template XDIAG_API arma::mat matrix(Op const &, tJ const &);
+template XDIAG_API arma::mat matrix(Op const &, Electron const &);
 
 template <class block_t>
 arma::cx_mat matrixC(OpSum const &ops, block_t const &block_in,
@@ -88,11 +92,11 @@ arma::cx_mat matrixC(OpSum const &ops, block_t const &block_in,
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
-template arma::cx_mat matrixC(OpSum const &, Spinhalf const &,
-                              Spinhalf const &);
-template arma::cx_mat matrixC(OpSum const &, tJ const &, tJ const &);
-template arma::cx_mat matrixC(OpSum const &, Electron const &,
-                              Electron const &);
+template XDIAG_API arma::cx_mat matrixC(OpSum const &, Spinhalf const &,
+                                        Spinhalf const &);
+template XDIAG_API arma::cx_mat matrixC(OpSum const &, tJ const &, tJ const &);
+template XDIAG_API arma::cx_mat matrixC(OpSum const &, Electron const &,
+                                        Electron const &);
 
 template <class block_t>
 arma::cx_mat matrixC(Op const &op, block_t const &block_in,
@@ -101,9 +105,11 @@ arma::cx_mat matrixC(Op const &op, block_t const &block_in,
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
-template arma::cx_mat matrixC(Op const &, Spinhalf const &, Spinhalf const &);
-template arma::cx_mat matrixC(Op const &, tJ const &, tJ const &);
-template arma::cx_mat matrixC(Op const &, Electron const &, Electron const &);
+template XDIAG_API arma::cx_mat matrixC(Op const &, Spinhalf const &,
+                                        Spinhalf const &);
+template XDIAG_API arma::cx_mat matrixC(Op const &, tJ const &, tJ const &);
+template XDIAG_API arma::cx_mat matrixC(Op const &, Electron const &,
+                                        Electron const &);
 
 template <class block_t>
 arma::cx_mat matrixC(OpSum const &ops, block_t const &blocki) try {
@@ -112,9 +118,9 @@ arma::cx_mat matrixC(OpSum const &ops, block_t const &blocki) try {
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
-template arma::cx_mat matrixC(OpSum const &, Spinhalf const &);
-template arma::cx_mat matrixC(OpSum const &, tJ const &);
-template arma::cx_mat matrixC(OpSum const &, Electron const &);
+template XDIAG_API arma::cx_mat matrixC(OpSum const &, Spinhalf const &);
+template XDIAG_API arma::cx_mat matrixC(OpSum const &, tJ const &);
+template XDIAG_API arma::cx_mat matrixC(OpSum const &, Electron const &);
 
 template <class block_t>
 arma::cx_mat matrixC(Op const &op, block_t const &blocki) try {
@@ -122,9 +128,9 @@ arma::cx_mat matrixC(Op const &op, block_t const &blocki) try {
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
-template arma::cx_mat matrixC(Op const &, Spinhalf const &);
-template arma::cx_mat matrixC(Op const &, tJ const &);
-template arma::cx_mat matrixC(Op const &, Electron const &);
+template XDIAG_API arma::cx_mat matrixC(Op const &, Spinhalf const &);
+template XDIAG_API arma::cx_mat matrixC(Op const &, tJ const &);
+template XDIAG_API arma::cx_mat matrixC(Op const &, Electron const &);
 
 template <typename coeff_t, class block_t>
 static void compile_and_dispatch(coeff_t *mat, int64_t m, OpSum const &ops,
@@ -200,16 +206,17 @@ void matrix(coeff_t *mat, OpSum const &ops, block_t const &block_in,
   XDIAG_RETHROW(e);
 }
 
-template void matrix(double *, OpSum const &, Spinhalf const &,
-                     Spinhalf const &);
-template void matrix(complex *, OpSum const &, Spinhalf const &,
-                     Spinhalf const &);
-template void matrix(double *, OpSum const &, tJ const &, tJ const &);
-template void matrix(complex *, OpSum const &, tJ const &, tJ const &);
-template void matrix(double *, OpSum const &, Electron const &,
-                     Electron const &);
-template void matrix(complex *, OpSum const &, Electron const &,
-                     Electron const &);
+template XDIAG_API void matrix(double *, OpSum const &, Spinhalf const &,
+                               Spinhalf const &);
+template XDIAG_API void matrix(complex *, OpSum const &, Spinhalf const &,
+                               Spinhalf const &);
+template XDIAG_API void matrix(double *, OpSum const &, tJ const &, tJ const &);
+template XDIAG_API void matrix(complex *, OpSum const &, tJ const &,
+                               tJ const &);
+template XDIAG_API void matrix(double *, OpSum const &, Electron const &,
+                               Electron const &);
+template XDIAG_API void matrix(complex *, OpSum const &, Electron const &,
+                               Electron const &);
 
 template <typename coeff_t, class block_t>
 void matrix(coeff_t *mat, Op const &op, block_t const &block_in,
@@ -219,12 +226,16 @@ void matrix(coeff_t *mat, Op const &op, block_t const &block_in,
   XDIAG_RETHROW(e);
 }
 
-template void matrix(double *, Op const &, Spinhalf const &, Spinhalf const &);
-template void matrix(complex *, Op const &, Spinhalf const &, Spinhalf const &);
-template void matrix(double *, Op const &, tJ const &, tJ const &);
-template void matrix(complex *, Op const &, tJ const &, tJ const &);
-template void matrix(double *, Op const &, Electron const &, Electron const &);
-template void matrix(complex *, Op const &, Electron const &, Electron const &);
+template XDIAG_API void matrix(double *, Op const &, Spinhalf const &,
+                               Spinhalf const &);
+template XDIAG_API void matrix(complex *, Op const &, Spinhalf const &,
+                               Spinhalf const &);
+template XDIAG_API void matrix(double *, Op const &, tJ const &, tJ const &);
+template XDIAG_API void matrix(complex *, Op const &, tJ const &, tJ const &);
+template XDIAG_API void matrix(double *, Op const &, Electron const &,
+                               Electron const &);
+template XDIAG_API void matrix(complex *, Op const &, Electron const &,
+                               Electron const &);
 
 template <typename coeff_t, class block_t>
 void matrix(coeff_t *mat, OpSum const &ops, block_t const &blocki) try {
@@ -234,12 +245,12 @@ void matrix(coeff_t *mat, OpSum const &ops, block_t const &blocki) try {
   XDIAG_RETHROW(e);
 }
 
-template void matrix(double *, OpSum const &, Spinhalf const &);
-template void matrix(complex *, OpSum const &, Spinhalf const &);
-template void matrix(double *, OpSum const &, tJ const &);
-template void matrix(complex *, OpSum const &, tJ const &);
-template void matrix(double *, OpSum const &, Electron const &);
-template void matrix(complex *, OpSum const &, Electron const &);
+template XDIAG_API void matrix(double *, OpSum const &, Spinhalf const &);
+template XDIAG_API void matrix(complex *, OpSum const &, Spinhalf const &);
+template XDIAG_API void matrix(double *, OpSum const &, tJ const &);
+template XDIAG_API void matrix(complex *, OpSum const &, tJ const &);
+template XDIAG_API void matrix(double *, OpSum const &, Electron const &);
+template XDIAG_API void matrix(complex *, OpSum const &, Electron const &);
 
 template <typename coeff_t, class block_t>
 void matrix(coeff_t *mat, Op const &op, block_t const &blocki) try {
@@ -248,11 +259,11 @@ void matrix(coeff_t *mat, Op const &op, block_t const &blocki) try {
   XDIAG_RETHROW(e);
 }
 
-template void matrix(double *, Op const &, Spinhalf const &);
-template void matrix(complex *, Op const &, Spinhalf const &);
-template void matrix(double *, Op const &, tJ const &);
-template void matrix(complex *, Op const &, tJ const &);
-template void matrix(double *, Op const &, Electron const &);
-template void matrix(complex *, Op const &, Electron const &);
+template XDIAG_API void matrix(double *, Op const &, Spinhalf const &);
+template XDIAG_API void matrix(complex *, Op const &, Spinhalf const &);
+template XDIAG_API void matrix(double *, Op const &, tJ const &);
+template XDIAG_API void matrix(complex *, Op const &, tJ const &);
+template XDIAG_API void matrix(double *, Op const &, Electron const &);
+template XDIAG_API void matrix(complex *, Op const &, Electron const &);
 
 } // namespace xdiag

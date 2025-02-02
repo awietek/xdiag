@@ -5,6 +5,7 @@
 
 #include <xdiag/combinatorics/subsets.hpp>
 #include <xdiag/symmetries/permutation.hpp>
+#include <xdiag/utils/logger.hpp>
 
 template <typename bit_t> void test_permutation_apply(int64_t nsites) {
 

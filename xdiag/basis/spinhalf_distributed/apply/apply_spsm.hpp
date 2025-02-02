@@ -1,4 +1,6 @@
 #pragma once
+
+#include <xdiag/bits/bitops.hpp>
 #include <xdiag/extern/armadillo/armadillo>
 #include <xdiag/operators/op.hpp>
 #include <xdiag/parallel/mpi/buffer.hpp>

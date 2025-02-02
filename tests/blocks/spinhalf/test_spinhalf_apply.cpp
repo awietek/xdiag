@@ -7,7 +7,7 @@
 #include <xdiag/algebra/apply.hpp>
 #include <xdiag/algebra/matrix.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
-#include <xdiag/utils/close.hpp>
+#include <xdiag/algebra/isapprox.hpp>
 #include <xdiag/utils/timing.hpp>
 #include <xdiag/io/file_toml.hpp>
 
@@ -29,7 +29,7 @@ void test_apply(int N, OpSum ops) {
     arma::vec w3 = H * H * v;
     arma::vec w4(block.size(), arma::fill::zeros);
     apply(ops, block, w2, block, w4);
-    REQUIRE(close(w3, w4));
+    REQUIRE(isapprox(w3, w4));
 
     arma::vec evals_mat;
     arma::eig_sym(evals_mat, H);
@@ -38,7 +38,7 @@ void test_apply(int N, OpSum ops) {
     // double e0_app = eigval0(ops, block);
     auto [e0_app, ev] = eig0(ops, block);
     // Log("H: {}, nup: {}, mat: {:.5f} app: {:.5f}", N, nup, e0_mat, e0_app);
-    REQUIRE(close(e0_mat, e0_app));
+    REQUIRE(isapprox(e0_mat, e0_app));
   }
 }
 
@@ -58,7 +58,7 @@ void test_apply_mat(int N, OpSum ops) {
     arma::mat w3 = H * H * v;
     arma::mat w4(block.size(), 5, arma::fill::zeros);
     apply(ops, block, w2, block, w4);
-    REQUIRE(close(w3, w4));
+    REQUIRE(isapprox(w3, w4));
 
     arma::vec evals_mat;
     arma::eig_sym(evals_mat, H);
@@ -67,7 +67,7 @@ void test_apply_mat(int N, OpSum ops) {
     // double e0_app = eigval0(ops, block);
     auto [e0_app, ev] = eig0(ops, block);
     // Log("H: {}, nup: {}, mat: {:.5f} app: {:.5f}", N, nup, e0_mat, e0_app);
-    REQUIRE(close(e0_mat, e0_app));
+    REQUIRE(isapprox(e0_mat, e0_app));
   }
 }
 
@@ -104,7 +104,7 @@ TEST_CASE("spinhalf_apply", "[spinhalf]") {
       e0s_sz.push_back(e0_sz);
     }
     auto e0_sz = *std::min_element(e0s_sz.begin(), e0s_sz.end());
-    REQUIRE(close(e0_sz, e0_no_sz));
+    REQUIRE(isapprox(e0_sz, e0_no_sz));
   }
 
   {
@@ -127,6 +127,6 @@ TEST_CASE("spinhalf_apply", "[spinhalf]") {
 
     // Log("{:.18f} {:.18f}", e0, energy);
 
-    REQUIRE(close(e0, energy));
+    REQUIRE(isapprox(e0, energy));
   }
 }

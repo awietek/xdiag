@@ -9,7 +9,7 @@
 #include <xdiag/algorithms/sparse_diag.hpp>
 #include <xdiag/io/read.hpp>
 #include <xdiag/operators/logic/real.hpp>
-#include <xdiag/utils/close.hpp>
+#include <xdiag/algebra/isapprox.hpp>
 
 using namespace xdiag;
 
@@ -56,10 +56,10 @@ void test_electron_symmetric_spectra_no_np(
       // XDIAG_SHOW(eigs_no_np);
       // XDIAG_SHOW(arma::vec(eigs_np_all));
 
-      REQUIRE(close(eigs_no_np, arma::vec(eigs_np_all)));
+      REQUIRE(isapprox(eigs_no_np, arma::vec(eigs_np_all)));
     }
     std::sort(eigs_all.begin(), eigs_all.end());
-    REQUIRE(close(eigs_total, arma::vec(eigs_all)));
+    REQUIRE(isapprox(eigs_total, arma::vec(eigs_all)));
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
@@ -109,7 +109,7 @@ void test_electron_symmetric_spectra(OpSum opsum, int64_t nsites,
               auto H_sym_real = matrix(opsum, electron, electron);
               arma::vec eigs_sym_k_real;
               arma::eig_sym(eigs_sym_k_real, H_sym_real);
-              REQUIRE(close(eigs_sym_k, eigs_sym_k_real));
+              REQUIRE(isapprox(eigs_sym_k, eigs_sym_k_real));
             }
 
             // append all the eigenvalues with multiplicity
@@ -123,12 +123,12 @@ void test_electron_symmetric_spectra(OpSum opsum, int64_t nsites,
         // Check if all eigenvalues agree
         // Log.out("{} {} {} {}", nup, ndn, eigs_sym(0), eigs_nosym(0));
 
-        // if (!close(arma::vec(eigs_sym), eigs_nosym)){
+        // if (!isapprox(arma::vec(eigs_sym), eigs_nosym)){
         //   XDIAG_SHOW(arma::norm(arma::vec(eigs_sym) - eigs_nosym));
         //   XDIAG_SHOW(eigs_sym);
         //   XDIAG_SHOW(eigs_nosym);
         // }
-        REQUIRE(close(arma::vec(eigs_sym), eigs_nosym));
+        REQUIRE(isapprox(arma::vec(eigs_sym), eigs_nosym));
       }
     }
   }
@@ -187,28 +187,28 @@ TEST_CASE("electron_symmetric_matrix", "[electron]") try {
           {U2, tm, tm, tp, tp, 0.}, {tm, U2, tm, tm, 0., tp},
           {tm, tm, U2, 0., tm, tm}, {tp, tm, 0., UU, tm, tp},
           {tp, 0., tm, tm, UU, tm}, {0., tp, tm, tp, tm, UU}};
-      REQUIRE(close(H_correct, H_sym));
+      REQUIRE(isapprox(H_correct, H_sym));
     }
     if (k == 1) {
       arma::Mat<complex> H_correct = {
           {U2, tm, it, it, tp, 0.},       {tm, U2, tm, tm, 2. * it, tp},
           {-it, tm, U2, 0., tm, it},      {-it, tm, 0., UU, tm, it},
           {tp, -2. * it, tm, tm, UU, tm}, {0., tp, -it, -it, tm, UU}};
-      REQUIRE(close(H_correct, H_sym));
+      REQUIRE(isapprox(H_correct, H_sym));
     }
     if (k == 2) {
       arma::Mat<complex> H_correct = {
           {U2, tm, tp, tm, tp, 0.}, {tm, U2, tm, tm, 0., tp},
           {tp, tm, U2, 0., tm, tp}, {tm, tm, 0., UU, tm, tm},
           {tp, 0., tm, tm, UU, tm}, {0., tp, tp, tm, tm, UU}};
-      REQUIRE(close(H_correct, H_sym));
+      REQUIRE(isapprox(H_correct, H_sym));
     }
     if (k == 3) {
       arma::Mat<complex> H_correct = {
           {U2, tm, -it, -it, tp, 0.},    {tm, U2, tm, tm, -2. * it, tp},
           {it, tm, U2, 0., tm, -it},     {it, tm, 0., UU, tm, -it},
           {tp, 2. * it, tm, tm, UU, tm}, {0., tp, it, it, tm, UU}};
-      REQUIRE(close(H_correct, H_sym));
+      REQUIRE(isapprox(H_correct, H_sym));
     }
   }
 

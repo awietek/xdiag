@@ -8,6 +8,7 @@
 #include <xdiag/symmetries/group_action/group_action.hpp>
 #include <xdiag/symmetries/group_action/group_action_sublattice.hpp>
 #include <xdiag/symmetries/operations/symmetry_operations.hpp>
+#include <xdiag/utils/logger.hpp>
 
 using namespace xdiag;
 
@@ -19,7 +20,7 @@ void compare_actions(Action1 &&action1, Action2 &&action2) {
   REQUIRE(action2.nsites() == nsites);
   REQUIRE(action2.n_symmetries() == n_symmetries);
 
-  for (auto bits : combinatorics::Subsets(nsites)) {
+  for (auto bits : combinatorics::Subsets<uint64_t>(nsites)) {
 
     // Check translations
     for (int sym = 0; sym < n_symmetries; ++sym) {

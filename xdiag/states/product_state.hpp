@@ -10,15 +10,15 @@ class ProductState {
 public:
   using iterator_t = std::vector<std::string>::const_iterator;
 
-  ProductState() = default;
+  XDIAG_API ProductState() = default;
   XDIAG_API explicit ProductState(int64_t nsites);
   XDIAG_API explicit ProductState(std::vector<std::string> const &local_states);
 
   XDIAG_API std::string const &operator[](int64_t i) const;
   XDIAG_API std::string &operator[](int64_t i);
 
-  int64_t size() const;
-  int64_t nsites() const;
+  XDIAG_API int64_t size() const;
+  XDIAG_API int64_t nsites() const;
   XDIAG_API void push_back(std::string l);
 
   XDIAG_API iterator_t begin() const;

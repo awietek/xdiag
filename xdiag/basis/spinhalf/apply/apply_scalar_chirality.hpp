@@ -1,8 +1,8 @@
 #pragma once
 
-#include <xdiag/bits/bitops.hpp>
 #include <xdiag/basis/spinhalf/apply/apply_term_offdiag_no_sym.hpp>
 #include <xdiag/basis/spinhalf/apply/apply_term_offdiag_sym.hpp>
+#include <xdiag/bits/bitops.hpp>
 #include <xdiag/common.hpp>
 
 namespace xdiag::basis::spinhalf {
@@ -11,16 +11,17 @@ namespace xdiag::basis::spinhalf {
 
 template <typename bit_t, typename coeff_t, bool symmetric, class BasisIn,
           class BasisOut, class Fill>
-void apply_scalar_chirality(Coupling const &cpl, Op const &op, BasisIn &&basis_in,
-                            BasisOut &&basis_out, Fill &&fill) try {
+void apply_scalar_chirality(Coupling const &cpl, Op const &op,
+                            BasisIn &&basis_in, BasisOut &&basis_out,
+                            Fill &&fill) try {
   using bits::gbit;
   complex J = cpl.scalar().as<complex>();
   coeff_t Jquarter = 0.;
   coeff_t Jquarter_conj = 0.;
   if constexpr (isreal<coeff_t>()) {
-    Log.err("Error in spinhalf::apply_scalar_chirality: scalar chirality term "
-            "cannot be used with real coefficients");
-    (void)J;
+    XDIAG_THROW(
+        "Error in spinhalf::apply_scalar_chirality: scalar chirality term "
+        "cannot be used with real coefficients");
   } else {
     Jquarter = complex(0, -0.25) * J;
     Jquarter_conj = xdiag::conj(Jquarter);

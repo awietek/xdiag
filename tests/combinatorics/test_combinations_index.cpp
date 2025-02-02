@@ -1,7 +1,6 @@
 #include "../catch.hpp"
-
 #include <xdiag/combinatorics/combinations_index.hpp>
-#include <iostream>
+#include <xdiag/utils/logger.hpp>
 
 template <typename bit_t> void test_combinations_index() {
   using namespace xdiag;
@@ -59,7 +58,7 @@ template <typename bit_t> void test_combinations_index() {
 }
 
 TEST_CASE("CombinationsIndex", "[combinatorics]") {
-  xdiag::Log.out("Testing CombinationsIndex");
+  xdiag::Log("Testing CombinationsIndex");
   test_combinations_index<uint16_t>();
   test_combinations_index<uint32_t>();
   test_combinations_index<uint64_t>();

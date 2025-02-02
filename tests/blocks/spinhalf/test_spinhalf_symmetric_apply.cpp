@@ -11,7 +11,7 @@
 #include <xdiag/io/file_toml.hpp>
 #include <xdiag/io/read.hpp>
 #include <xdiag/operators/logic/real.hpp>
-#include <xdiag/utils/close.hpp>
+#include <xdiag/algebra/isapprox.hpp>
 
 using namespace xdiag;
 
@@ -31,12 +31,12 @@ void test_spinhalf_symmetric_apply(OpSum ops, int64_t nsites,
         arma::cx_vec w1 = H * v;
         arma::cx_vec w2(block.size(), arma::fill::zeros);
         apply(ops, block, v, block, w2);
-        REQUIRE(close(w1, w2));
+        REQUIRE(isapprox(w1, w2));
         arma::cx_mat m(block.size(), 5, arma::fill::randn);
         arma::cx_mat n1 = H * m;
         arma::cx_mat n2(block.size(), 5, arma::fill::zeros);
         apply(ops, block, m, block, n2);
-        REQUIRE(close(n1, n2));
+        REQUIRE(isapprox(n1, n2));
 
         // Compute eigenvalues and compare
         arma::vec evals_mat;
@@ -53,7 +53,7 @@ void test_spinhalf_symmetric_apply(OpSum ops, int64_t nsites,
           arma::vec evals_mat_real;
           arma::eig_sym(evals_mat_real, H_real);
 
-          REQUIRE(close(evals_mat_real, evals_mat));
+          REQUIRE(isapprox(evals_mat_real, evals_mat));
 
           double e0_mat_real = evals_mat_real(0);
           double e0_app_real = eigval0(ops, block);
@@ -77,12 +77,12 @@ void test_spinhalf_symmetric_apply_no_sz(OpSum ops, int64_t nsites,
       arma::cx_vec w1 = H * v;
       arma::cx_vec w2(block.size(), arma::fill::zeros);
       apply(ops, block, v, block, w2);
-      REQUIRE(close(w1, w2));
+      REQUIRE(isapprox(w1, w2));
       arma::cx_mat m(block.size(), 5, arma::fill::randn);
       arma::cx_mat n1 = H * m;
       arma::cx_mat n2(block.size(), 5, arma::fill::zeros);
       apply(ops, block, m, block, n2);
-      REQUIRE(close(n1, n2));
+      REQUIRE(isapprox(n1, n2));
       // Compute eigenvalues and compare
       arma::vec evals_mat;
       arma::eig_sym(evals_mat, H);
@@ -99,7 +99,7 @@ void test_spinhalf_symmetric_apply_no_sz(OpSum ops, int64_t nsites,
         arma::vec evals_mat_real;
         arma::eig_sym(evals_mat_real, H_real);
 
-        REQUIRE(close(evals_mat_real, evals_mat));
+        REQUIRE(isapprox(evals_mat_real, evals_mat));
 
         double e0_mat_real = evals_mat_real(0);
         double e0_app_real = eigval0(ops, block);

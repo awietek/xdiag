@@ -15,6 +15,7 @@
 #include <xdiag/symmetries/operations/group_action_operations.hpp>
 #include <xdiag/symmetries/operations/symmetry_operations.hpp>
 #include <xdiag/symmetries/representation.hpp>
+#include <xdiag/utils/logger.hpp>
 #include <xdiag/utils/vector.hpp>
 
 using namespace xdiag;
@@ -82,7 +83,7 @@ void check_basis_symmetric_sz(
   int nup = basis.nup();
 
   if (basis.size() > 0) {
-    for (auto state : combinatorics::Combinations(nsites, nup)) {
+    for (auto state : combinatorics::Combinations<uint64_t>(nsites, nup)) {
       test_spinhalf_basis_state(basis, state);
     }
   }
@@ -95,7 +96,7 @@ void check_basis_symmetric_no_sz(
   int nsites = basis.nsites();
   if (basis.size() > 0) {
 
-    for (auto state : combinatorics::Subsets(nsites)) {
+    for (auto state : combinatorics::Subsets<uint64_t>(nsites)) {
       test_spinhalf_basis_state(basis, state);
     }
   }

@@ -1,26 +1,25 @@
 #include "gram_schmidt.hpp"
 
 #include <xdiag/algorithms/gram_schmidt/orthogonalize.hpp>
-#include <xdiag/utils/close.hpp>
 #include <xdiag/utils/logger.hpp>
 
 namespace xdiag {
 template <typename coeff_t>
 void gram_schmidt_inplace(arma::Mat<coeff_t> &M, int64_t max_col,
-                          int iterations) {
+                          int iterations) try {
   using namespace arma;
 
   if (max_col < 0) {
     max_col = M.n_cols;
   } else if (max_col > (int64_t)M.n_cols) {
-    Log.err("Error in gram_schmidt_inplace: max_col larger than number of "
-            "matrix columns");
+    XDIAG_THROW("Error in gram_schmidt_inplace: max_col larger than number of "
+                "matrix columns");
   }
 
   if (max_col > 0) {
     double nrm = norm(M.col(0));
-    if (close(nrm, 0.)) {
-      Log.err(
+    if (std::abs(nrm) < 1e-12) {
+      XDIAG_THROW(
           "Error in gram_schmidt_inplace: norm of columns found to be zero");
     } else {
       M.col(0) /= nrm;
@@ -30,14 +29,16 @@ void gram_schmidt_inplace(arma::Mat<coeff_t> &M, int64_t max_col,
 
       orthogonalize_inplace(M.col(col), M, col, iterations);
       nrm = norm(M.col(col));
-      if (close(nrm, 0.)) {
-        Log.err(
+      if (std::abs(nrm) < 1e-12) {
+        XDIAG_THROW(
             "Error in gram_schmidt_inplace: norm of columns found to be zero");
       } else {
         M.col(col) /= nrm;
       }
     }
   }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 template void gram_schmidt_inplace(arma::Mat<double> &, int64_t, int);

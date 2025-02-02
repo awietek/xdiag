@@ -7,7 +7,7 @@ namespace xdiag::combinatorics {
 template <class bit_t> class SubsetsIterator;
 
 // Subsets
-template <class bit_t = std_bit_t> class Subsets {
+template <class bit_t> class Subsets {
 public:
   using iterator_t = SubsetsIterator<bit_t>;
 
@@ -49,7 +49,7 @@ private:
 
 #ifdef _OPENMP
 // SubsetsThread
-template <class bit_t = std_bit_t> class SubsetsThread {
+template <class bit_t> class SubsetsThread {
 public:
   using iterator_t = SubsetsIterator<bit_t>;
 

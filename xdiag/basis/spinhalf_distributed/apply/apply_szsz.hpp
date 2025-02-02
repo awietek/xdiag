@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <tuple>
 
+#include <xdiag/bits/bitops.hpp>
 #include <xdiag/extern/armadillo/armadillo>
 #include <xdiag/operators/op.hpp>
 

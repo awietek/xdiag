@@ -17,7 +17,7 @@ public:
   FileH5() = default;
   XDIAG_API FileH5(std::string filename, char iomode);
   XDIAG_API FileH5(std::string filename, std::string iomode = "w");
-  ~FileH5();
+  XDIAG_API ~FileH5();
 
   void close();
 

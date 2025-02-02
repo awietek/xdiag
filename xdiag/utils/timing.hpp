@@ -15,9 +15,9 @@ auto inline rightnow() -> decltype(high_resolution_clock::now()) {
 }
 
 template <class Clock, class Duration = typename Clock::duration>
-void timing(time_point<Clock, Duration> const &t0,
-            time_point<Clock, Duration> const &t1, std::string msg = "",
-            int verbosity = 0) {
+inline void timing(time_point<Clock, Duration> const &t0,
+                   time_point<Clock, Duration> const &t1, std::string msg = "",
+                   int verbosity = 0) {
   auto td = duration_cast<microseconds>(t1 - t0).count();
   double tds = (double)td / 1000000;
   if (msg != "") {

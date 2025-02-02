@@ -1,6 +1,7 @@
 #include <xdiag/all.hpp>
 
 using namespace xdiag;
+using namespace std::complex_literals;
 
 int main() try {
   // clang-format off

@@ -5,6 +5,7 @@
 #include "../../blocks/electron/testcases_electron.hpp"
 #include <iostream>
 #include <xdiag/blocks/tj_distributed.hpp>
+#include <xdiag/utils/logger.hpp>
 
 using namespace xdiag;
 

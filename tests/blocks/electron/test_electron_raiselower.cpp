@@ -4,7 +4,6 @@
 #include <xdiag/algebra/apply.hpp>
 #include <xdiag/algebra/matrix.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
-#include <xdiag/utils/close.hpp>
 
 TEST_CASE("electron_raise_lower", "[electron]") try {
   using namespace xdiag;

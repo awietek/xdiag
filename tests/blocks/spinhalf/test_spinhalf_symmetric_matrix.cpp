@@ -12,7 +12,7 @@
 #include <xdiag/io/file_toml.hpp>
 #include <xdiag/io/read.hpp>
 #include <xdiag/operators/logic/real.hpp>
-#include <xdiag/utils/close.hpp>
+#include <xdiag/algebra/isapprox.hpp>
 
 using namespace xdiag;
 
@@ -57,7 +57,7 @@ void test_spinhalf_symmetric_spectra(OpSum ops, int64_t nsites,
             arma::vec eigs_sym_k_real;
             arma::eig_sym(eigs_sym_k_real, H_sym_real);
 
-            REQUIRE(close(eigs_sym_k, eigs_sym_k_real));
+            REQUIRE(isapprox(eigs_sym_k, eigs_sym_k_real));
           }
           // append all the eigenvalues with multiplicity
           for (auto eig : eigs_sym_k)
@@ -67,7 +67,7 @@ void test_spinhalf_symmetric_spectra(OpSum ops, int64_t nsites,
       }
       std::sort(eigs_sym.begin(), eigs_sym.end());
 
-      REQUIRE(close(arma::vec(eigs_sym), eigs_nosym));
+      REQUIRE(isapprox(arma::vec(eigs_sym), eigs_nosym));
     }
   }
 }
@@ -113,7 +113,7 @@ void test_spinhalf_symmetric_spectra_no_sz(
         }
         std::sort(eigs_sym_k_sz.begin(), eigs_sym_k_sz.end());
 
-        REQUIRE(close(eigs_sym_k, arma::vec(eigs_sym_k_sz)));
+        REQUIRE(isapprox(eigs_sym_k, arma::vec(eigs_sym_k_sz)));
 
         // Check whether results are the same for real blocks
         if (isreal(spinhalf) && isreal(ops)) {
@@ -121,7 +121,7 @@ void test_spinhalf_symmetric_spectra_no_sz(
 
           arma::vec eigs_sym_k_real;
           arma::eig_sym(eigs_sym_k_real, H_sym);
-          REQUIRE(close(eigs_sym_k, eigs_sym_k_real));
+          REQUIRE(isapprox(eigs_sym_k, eigs_sym_k_real));
         }
         // append all the eigenvalues with multiplicity
         for (auto eig : eigs_sym_k)
@@ -130,7 +130,7 @@ void test_spinhalf_symmetric_spectra_no_sz(
       }
     }
     std::sort(eigs_sym.begin(), eigs_sym.end());
-    REQUIRE(close(arma::vec(eigs_sym), eigs_nosym));
+    REQUIRE(isapprox(arma::vec(eigs_sym), eigs_nosym));
   }
 }
 

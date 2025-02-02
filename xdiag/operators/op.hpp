@@ -29,13 +29,14 @@ public:
   Op(std::string type, int64_t site, Matrix const &matrix);
   Op(std::string type, std::vector<int64_t> const &sites, Matrix const &matrix);
 
-  std::string type() const;
+  XDIAG_API std::string type() const;
+  XDIAG_API int64_t size() const;
+  XDIAG_API int64_t operator[](int64_t idx) const;
+  XDIAG_API std::vector<int64_t> const &sites() const;
+
   bool hassites() const;
   bool hasmatrix() const;
   Matrix const &matrix() const;
-  int64_t size() const;
-  int64_t operator[](int64_t idx) const;
-  std::vector<int64_t> const &sites() const;
 
   XDIAG_API bool operator==(const Op &rhs) const;
   XDIAG_API bool operator!=(const Op &rhs) const;

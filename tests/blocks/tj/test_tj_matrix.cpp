@@ -7,7 +7,7 @@
 #include <xdiag/algebra/apply.hpp>
 #include <xdiag/algebra/matrix.hpp>
 #include <xdiag/blocks/spinhalf.hpp>
-#include <xdiag/utils/close.hpp>
+#include <xdiag/algebra/isapprox.hpp>
 
 using namespace xdiag;
 
@@ -45,7 +45,7 @@ void test_tjmodel_fulleigs(OpSum ops, int nsites,
   REQUIRE(all_eigs.size() == exact_eigs.size());
   // XDIAG_SHOW(all_eigs);
   // XDIAG_SHOW(exact_eigs);
-  REQUIRE(close(arma::vec(all_eigs), exact_eigs));
+  REQUIRE(isapprox(arma::vec(all_eigs), exact_eigs));
 }
 
 TEST_CASE("tj_matrix", "[tj]") try {
@@ -77,7 +77,7 @@ TEST_CASE("tj_matrix", "[tj]") try {
       // eigs.print();
       // eigs_tJ.print();
 
-      REQUIRE(close(eigs, eigs_tJ));
+      REQUIRE(isapprox(eigs, eigs_tJ));
     }
   }
 
@@ -162,7 +162,7 @@ TEST_CASE("tj_matrix", "[tj]") try {
       arma::vec eigs2;
       arma::eig_sym(eigs2, H2);
       // Log("eigs1(0): {}, eigs2(0): {}", eigs1(0), eigs2(0));
-      REQUIRE(close(eigs1, eigs2));
+      REQUIRE(isapprox(eigs1, eigs2));
     }
   }
 

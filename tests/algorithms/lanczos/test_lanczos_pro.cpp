@@ -12,7 +12,7 @@
 #include <xdiag/states/random_state.hpp>
 #include <xdiag/symmetries/permutation_group.hpp>
 #include <xdiag/symmetries/representation.hpp>
-#include <xdiag/utils/close.hpp>
+#include <xdiag/algebra/isapprox.hpp>
 
 TEST_CASE("lanczos_pro", "[lanczos]") {
   using namespace xdiag;
@@ -70,7 +70,7 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
     vec eigs_lcs = res.eigenvalues;
     // XDIAG_SHOW(eigs);
     // XDIAG_SHOW(eigs_lcs);
-    REQUIRE(close(eigs, eigs_lcs)); // exact eigenvalue solution
+    REQUIRE(isapprox(eigs, eigs_lcs)); // exact eigenvalue solution
 
     mat tmat = res.tmat;
     mat A2 = mat(V * tmat * V.t());
@@ -127,7 +127,7 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
     vec eigs_lcs = res.eigenvalues;
     // XDIAG_SHOW(eigs);
     // XDIAG_SHOW(eigs_lcs);
-    REQUIRE(close(eigs, eigs_lcs)); // exact eigenvalue solution
+    REQUIRE(isapprox(eigs, eigs_lcs)); // exact eigenvalue solution
 
     cx_mat tmatc(res.tmat, mat(N, N, fill::zeros));
     cx_mat A2 = cx_mat(V * tmatc * V.t());

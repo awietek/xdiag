@@ -29,11 +29,11 @@ void apply_hopping(Coupling const &cpl, Op const &op, Basis &&basis,
   auto term_action = [&](bit_t spins) -> std::pair<bit_t, coeff_t> {
     bool fermi = bits::popcnt(spins & fermimask) & 1;
     spins ^= flipmask;
-    if constexpr (iscomplex<coeff_t>()) {
+    if constexpr (isreal<coeff_t>()) {
+      return {spins, fermi ? t : -t};
+    } else {
       coeff_t tt = (bits::gbit(spins, s1)) ? t : xdiag::conj(t);
       return {spins, fermi ? tt : -tt};
-    } else {
-      return {spins, fermi ? t : -t};
     }
   };
 

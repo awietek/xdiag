@@ -9,7 +9,7 @@
 #include <xdiag/algebra/matrix.hpp>
 #include <xdiag/algorithms/lanczos/eigs_lanczos.hpp>
 
-#include <xdiag/utils/close.hpp>
+#include <xdiag/algebra/isapprox.hpp>
 
 using namespace xdiag;
 
@@ -42,7 +42,7 @@ TEST_CASE("eigs_lanczos", "[lanczos]") {
            ++num_eigenvalue) {
         auto v = res.eigenvectors.col(num_eigenvalue);
         // XDIAG_SHOW(norm(v));
-        REQUIRE(close(norm(v), 1.0));
+        REQUIRE(isapprox(norm(v), 1.0));
 
         auto Hv = v;
         apply(ops, v, Hv);
@@ -51,8 +51,8 @@ TEST_CASE("eigs_lanczos", "[lanczos]") {
         // XDIAG_SHOW(num_eigenvalue);
         // XDIAG_SHOW(e);
         // XDIAG_SHOW(evals_mat(num_eigenvalue));
-        REQUIRE(close(real(e), evals_mat(num_eigenvalue)));
-        REQUIRE(close(imag(e), 0.0));
+        REQUIRE(isapprox(real(e), evals_mat(num_eigenvalue)));
+        REQUIRE(isapprox(imag(e), 0.0));
       }
     }
   printf("Done.\n");
@@ -78,12 +78,12 @@ TEST_CASE("eigs_lanczos", "[lanczos]") {
         for (int num_eigenvalue = 0; num_eigenvalue < max_num_eigenvalue;
              ++num_eigenvalue) {
           auto v = res.eigenvectors.col(num_eigenvalue);
-          REQUIRE(close(norm(v), 1.0));
+          REQUIRE(isapprox(norm(v), 1.0));
           auto Hv = v;
           apply(ops, v, Hv);
           auto e = dotC(v, Hv);
-          REQUIRE(close(real(e), evals_mat(num_eigenvalue)));
-          REQUIRE(close(imag(e), 0.0));
+          REQUIRE(isapprox(real(e), evals_mat(num_eigenvalue)));
+          REQUIRE(isapprox(imag(e), 0.0));
         }
       } catch (Error e) {
         error_trace(e);

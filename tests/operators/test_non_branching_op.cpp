@@ -6,7 +6,7 @@
 #include <xdiag/algorithms/sparse_diag.hpp>
 #include <xdiag/blocks/spinhalf.hpp>
 #include <xdiag/operators/logic/non_branching_op.hpp>
-#include <xdiag/utils/close.hpp>
+#include <xdiag/algebra/isapprox.hpp>
 
 TEST_CASE("non_branching_op", "[operators]") try {
   using namespace xdiag;
@@ -25,7 +25,7 @@ TEST_CASE("non_branching_op", "[operators]") try {
     auto op = Op("Matrix", 0, ss);
     auto block = Spinhalf(1);
     auto h = matrixC(op, block);
-    REQUIRE(close(h, ss));
+    REQUIRE(isapprox(h, ss));
   }
 
   // Check ground state energy of TFI model
@@ -59,12 +59,12 @@ TEST_CASE("non_branching_op", "[operators]") try {
 
       auto opr = Op("Matrix", sites, mr);
       auto hr = matrix(opr, block);
-      REQUIRE(close(hr, mr));
+      REQUIRE(isapprox(hr, mr));
 
       auto mc = cx_mat(p2, p2, fill::randn);
       auto opc = Op("Matrix", sites, mc);
       auto hc = matrixC(opc, block);
-      REQUIRE(close(hc, mc));
+      REQUIRE(isapprox(hc, mc));
     }
   }
 
@@ -91,7 +91,7 @@ TEST_CASE("non_branching_op", "[operators]") try {
     ops2 += Op("Matrix", {3, 4, 5}, jchimat);
     auto H2 = matrixC(ops2, block6);
 
-    REQUIRE(close(H1, H2));
+    REQUIRE(isapprox(H1, H2));
   }
 
   // compare scalar chirality (12 site kagome)
@@ -159,7 +159,7 @@ TEST_CASE("non_branching_op", "[operators]") try {
   // XDIAG_SHOW(norm(H1));
   // XDIAG_SHOW(norm(H2));
 
-  // REQUIRE(close(H1, H2));
+  // REQUIRE(isapprox(H1, H2));
 } catch (xdiag::Error e) {
   xdiag::error_trace(e);
 }

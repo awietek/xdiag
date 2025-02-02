@@ -3,7 +3,7 @@
 #include <xdiag/algebra/algebra.hpp>
 #include <xdiag/states/fill.hpp>
 #include <xdiag/states/product_state.hpp>
-#include <xdiag/utils/close.hpp>
+#include <xdiag/algebra/isapprox.hpp>
 
 using namespace xdiag;
 
@@ -36,19 +36,19 @@ TEST_CASE("product_state", "[states]") try {
         auto nc = inner(n, psi);
 
         if (p == "Emp") {
-          REQUIRE(close(szc, 0.));
-          REQUIRE(close(nc, 0.));
+          REQUIRE(isapprox(szc, 0.));
+          REQUIRE(isapprox(nc, 0.));
         } else if (p == "Up") {
-          REQUIRE(close(szc, 0.5));
-          REQUIRE(close(nc, 1.0));
+          REQUIRE(isapprox(szc, 0.5));
+          REQUIRE(isapprox(nc, 1.0));
           ++nup;
         } else if (p == "Dn") {
-          REQUIRE(close(szc, -0.5));
-          REQUIRE(close(nc, 1.0));
+          REQUIRE(isapprox(szc, -0.5));
+          REQUIRE(isapprox(nc, 1.0));
           ++ndn;
         } else if (p == "UpDn") {
-          REQUIRE(close(szc, 0.0));
-          REQUIRE(close(nc, 2.0));
+          REQUIRE(isapprox(szc, 0.0));
+          REQUIRE(isapprox(nc, 2.0));
           ++nup;
           ++ndn;
         }
@@ -67,17 +67,17 @@ TEST_CASE("product_state", "[states]") try {
         auto nc = inner(n, psi2);
 
         if (p == "Emp") {
-          REQUIRE(close(szc, 0.));
-          REQUIRE(close(nc, 0.));
+          REQUIRE(isapprox(szc, 0.));
+          REQUIRE(isapprox(nc, 0.));
         } else if (p == "Up") {
-          REQUIRE(close(szc, 0.5));
-          REQUIRE(close(nc, 1.0));
+          REQUIRE(isapprox(szc, 0.5));
+          REQUIRE(isapprox(nc, 1.0));
         } else if (p == "Dn") {
-          REQUIRE(close(szc, -0.5));
-          REQUIRE(close(nc, 1.0));
+          REQUIRE(isapprox(szc, -0.5));
+          REQUIRE(isapprox(nc, 1.0));
         } else if (p == "UpDn") {
-          REQUIRE(close(szc, 0.0));
-          REQUIRE(close(nc, 2.0));
+          REQUIRE(isapprox(szc, 0.0));
+          REQUIRE(isapprox(nc, 2.0));
         }
       }
     }
@@ -120,14 +120,14 @@ TEST_CASE("product_state", "[states]") try {
         auto nc = inner(n, psi2);
 
         if (p == "Emp") {
-          REQUIRE(close(szc, 0.));
-          REQUIRE(close(nc, 0.));
+          REQUIRE(isapprox(szc, 0.));
+          REQUIRE(isapprox(nc, 0.));
         } else if (p == "Up") {
-          REQUIRE(close(szc, 0.5));
-          REQUIRE(close(nc, 1.0));
+          REQUIRE(isapprox(szc, 0.5));
+          REQUIRE(isapprox(nc, 1.0));
         } else if (p == "Dn") {
-          REQUIRE(close(szc, -0.5));
-          REQUIRE(close(nc, 1.0));
+          REQUIRE(isapprox(szc, -0.5));
+          REQUIRE(isapprox(nc, 1.0));
         }
       }
     }
@@ -156,10 +156,10 @@ TEST_CASE("product_state", "[states]") try {
         auto szc = inner(sz, psi);
 
         if (p == "Up") {
-          REQUIRE(close(szc, 0.5));
+          REQUIRE(isapprox(szc, 0.5));
           ++nup;
         } else if (p == "Dn") {
-          REQUIRE(close(szc, -0.5));
+          REQUIRE(isapprox(szc, -0.5));
         }
       }
 
@@ -172,9 +172,9 @@ TEST_CASE("product_state", "[states]") try {
         auto szc = inner(sz, psi2);
 
         if (p == "Up") {
-          REQUIRE(close(szc, 0.5));
+          REQUIRE(isapprox(szc, 0.5));
         } else if (p == "Dn") {
-          REQUIRE(close(szc, -0.5));
+          REQUIRE(isapprox(szc, -0.5));
         }
       }
     }
@@ -189,35 +189,35 @@ TEST_CASE("product_state", "[states]") try {
 
   //   auto sz0 = Op("Sz", 0);
   //   complex sz0c = inner(sz0, psi);
-  //   REQUIRE(close(sz0c, 0.5));
+  //   REQUIRE(isapprox(sz0c, 0.5));
 
   //   auto sz1 = Op("Sz", 1);
   //   complex sz1c = inner(sz1, psi);
-  //   REQUIRE(close(sz1c, -0.5));
+  //   REQUIRE(isapprox(sz1c, -0.5));
 
   //   auto sz2 = Op("Sz", 2);
   //   complex sz2c = inner(sz2, psi);
-  //   REQUIRE(close(sz2c, 0.));
+  //   REQUIRE(isapprox(sz2c, 0.));
 
   //   auto sz3 = Op("Sz", 3);
   //   complex sz3c = inner(sz3, psi);
-  //   REQUIRE(close(sz3c, 0.));
+  //   REQUIRE(isapprox(sz3c, 0.));
 
   //   auto n0 = Op("Ntot", 0);
   //   complex n0c = inner(n0, psi);
-  //   REQUIRE(close(n0c, 1.0));
+  //   REQUIRE(isapprox(n0c, 1.0));
 
   //   auto n1 = Op("Ntot", 1);
   //   complex n1c = inner(n1, psi);
-  //   REQUIRE(close(n1c, 1.0));
+  //   REQUIRE(isapprox(n1c, 1.0));
 
   //   auto n2 = Op("Ntot", 2);
   //   complex n2c = inner(n2, psi);
-  //   REQUIRE(close(n2c, 2.));
+  //   REQUIRE(isapprox(n2c, 2.));
 
   //   auto n3 = Op("Ntot", 3);
   //   complex n3c = inner(n3, psi);
-  //   REQUIRE(close(n3c, 0.));
+  //   REQUIRE(isapprox(n3c, 0.));
   // }
   // {
   //   auto pstate = ProductState({"Up", "Dn", "Up", "Emp"});
@@ -226,35 +226,35 @@ TEST_CASE("product_state", "[states]") try {
 
   //   auto sz0 = Op("Sz", 0);
   //   complex sz0c = inner(sz0, psi);
-  //   REQUIRE(close(sz0c, 0.5));
+  //   REQUIRE(isapprox(sz0c, 0.5));
 
   //   auto sz1 = Op("Sz", 1);
   //   complex sz1c = inner(sz1, psi);
-  //   REQUIRE(close(sz1c, -0.5));
+  //   REQUIRE(isapprox(sz1c, -0.5));
 
   //   auto sz2 = Op("Sz", 2);
   //   complex sz2c = inner(sz2, psi);
-  //   REQUIRE(close(sz2c, 0.5));
+  //   REQUIRE(isapprox(sz2c, 0.5));
 
   //   auto sz3 = Op("Sz", 3);
   //   complex sz3c = inner(sz3, psi);
-  //   REQUIRE(close(sz3c, 0.));
+  //   REQUIRE(isapprox(sz3c, 0.));
 
   //   auto n0 = Op("Ntot", 0);
   //   complex n0c = inner(n0, psi);
-  //   REQUIRE(close(n0c, 1.0));
+  //   REQUIRE(isapprox(n0c, 1.0));
 
   //   auto n1 = Op("Ntot", 1);
   //   complex n1c = inner(n1, psi);
-  //   REQUIRE(close(n1c, 1.0));
+  //   REQUIRE(isapprox(n1c, 1.0));
 
   //   auto n2 = Op("Ntot", 2);
   //   complex n2c = inner(n2, psi);
-  //   REQUIRE(close(n2c, 1.));
+  //   REQUIRE(isapprox(n2c, 1.));
 
   //   auto n3 = Op("Ntot", 3);
   //   complex n3c = inner(n3, psi);
-  //   REQUIRE(close(n3c, 0.));
+  //   REQUIRE(isapprox(n3c, 0.));
   // }
 
   // {
@@ -264,19 +264,19 @@ TEST_CASE("product_state", "[states]") try {
 
   //   auto sz0 = Op("Sz", 0);
   //   complex sz0c = inner(sz0, psi);
-  //   REQUIRE(close(sz0c, 0.5));
+  //   REQUIRE(isapprox(sz0c, 0.5));
 
   //   auto sz1 = Op("Sz", 1);
   //   complex sz1c = inner(sz1, psi);
-  //   REQUIRE(close(sz1c, -0.5));
+  //   REQUIRE(isapprox(sz1c, -0.5));
 
   //   auto sz2 = Op("Sz", 2);
   //   complex sz2c = inner(sz2, psi);
-  //   REQUIRE(close(sz2c, 0.5));
+  //   REQUIRE(isapprox(sz2c, 0.5));
 
   //   auto sz3 = Op("Sz", 3);
   //   complex sz3c = inner(sz3, psi);
-  //   REQUIRE(close(sz3c, -0.5));
+  //   REQUIRE(isapprox(sz3c, -0.5));
   // }
 } catch (xdiag::Error const &e) {
   error_trace(e);

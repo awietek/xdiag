@@ -1,6 +1,8 @@
 #include "../../catch.hpp"
 
 #include <xdiag/operators/logic/isapprox.hpp>
+#include <xdiag/utils/logger.hpp>
+
 using namespace xdiag;
 
 TEST_CASE("isapprox", "[operators]") try {

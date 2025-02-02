@@ -1,14 +1,14 @@
 #pragma once
 
-#include <xdiag/common.hpp>
 #include <xdiag/combinatorics/subsets.hpp>
+#include <xdiag/common.hpp>
 
 namespace xdiag::combinatorics {
 
 template <class bit_t> class SubsetsIndexIterator;
 
 // SubsetsIndex
-template <class bit_t = std_bit_t> class SubsetsIndex {
+template <class bit_t> class SubsetsIndex {
 public:
   using iterator_t = SubsetsIndexIterator<bit_t>;
 
@@ -53,7 +53,7 @@ private:
 
 #ifdef _OPENMP
 // SubsetsIndexThread
-template <typename bit_t = std_bit_t> class SubsetsIndexThread {
+template <typename bit_t> class SubsetsIndexThread {
 public:
   using iterator_t = SubsetsIndexIterator<bit_t>;
 

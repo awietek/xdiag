@@ -1,5 +1,6 @@
 #include "../../catch.hpp"
 
+#include <xdiag/algebra/isapprox.hpp>
 #include <xdiag/combinatorics/combinations.hpp>
 #include <xdiag/combinatorics/combinations_indexing.hpp>
 #include <xdiag/combinatorics/lin_table.hpp>
@@ -10,7 +11,6 @@
 #include <xdiag/symmetries/operations/representative_list.hpp>
 #include <xdiag/symmetries/operations/symmetry_operations.hpp>
 #include <xdiag/symmetries/permutation_group.hpp>
-#include <xdiag/utils/close.hpp>
 
 using namespace xdiag;
 using namespace xdiag::combinatorics;
@@ -34,7 +34,7 @@ static PermutationGroup cyclic_group(int64_t nsites) {
 template <typename bit_t> void test_stabilizer_symmetries(int64_t nsites) {
   auto group_action = GroupActionLookup<bit_t>(cyclic_group(nsites));
 
-  for (bit_t bits : Subsets(nsites)) {
+  for (bit_t bits : Subsets<bit_t>(nsites)) {
     auto stab_syms = stabilizer_symmetries(bits, group_action);
     for (int64_t sym : stab_syms) {
       REQUIRE(group_action.apply(sym, bits) == bits);
@@ -45,7 +45,7 @@ template <typename bit_t> void test_stabilizer_symmetries(int64_t nsites) {
 template <typename bit_t> void test_representative(int64_t nsites) {
   auto group_action = GroupActionLookup<bit_t>(cyclic_group(nsites));
 
-  for (bit_t bits : Subsets(nsites)) {
+  for (bit_t bits : Subsets<bit_t>(nsites)) {
     bit_t rep = representative(bits, group_action);
     int64_t hit_ctr = 0;
     int64_t n_sym = group_action.n_symmetries();
@@ -65,7 +65,7 @@ template <typename bit_t> void test_representative_subset(int64_t nsites) {
   for (int64_t i = 0; i < nsites; i += 2)
     subset.push_back(i);
 
-  for (bit_t bits : Subsets(nsites)) {
+  for (bit_t bits : Subsets<bit_t>(nsites)) {
     bit_t rep = representative_subset(bits, group_action, subset);
     int64_t hit_ctr = 0;
     int64_t n_sym = subset.size();
@@ -82,7 +82,7 @@ template <typename bit_t> void test_representative_subset(int64_t nsites) {
 template <typename bit_t> void test_representative_sym(int64_t nsites) {
   auto group_action = GroupActionLookup<bit_t>(cyclic_group(nsites));
 
-  for (bit_t bits : Subsets(nsites)) {
+  for (bit_t bits : Subsets<bit_t>(nsites)) {
     auto [rep, rsym] = representative_sym(bits, group_action);
     int64_t hit_ctr = 0;
     int64_t n_sym = group_action.n_symmetries();
@@ -105,7 +105,7 @@ template <typename bit_t> void test_representative_sym_subset(int64_t nsites) {
   for (int64_t i = 0; i < nsites; i += 2)
     subset.push_back(i);
 
-  for (bit_t bits : Subsets(nsites)) {
+  for (bit_t bits : Subsets<bit_t>(nsites)) {
     auto [rep, rsym] = representative_sym_subset(bits, group_action, subset);
     int64_t hit_ctr = 0;
     int64_t n_sym = group_action.n_symmetries();
@@ -125,10 +125,10 @@ template <typename bit_t> void test_norm(int64_t nsites) {
   auto group_action = GroupActionLookup<bit_t>(cyclic_group(nsites));
   arma::cx_vec chis(nsites, arma::fill::ones);
   Representation irrep(group_action.permutation_group(), chis);
-  for (bit_t bits : Subsets(nsites)) {
+  for (bit_t bits : Subsets<bit_t>(nsites)) {
     double nrm = norm(bits, group_action, chis);
     auto stabilizer = stabilizer_symmetries(bits, group_action);
-    REQUIRE(close(nrm * nrm, (double)stabilizer.size()));
+    REQUIRE(isapprox(nrm * nrm, (double)stabilizer.size()));
   }
 }
 

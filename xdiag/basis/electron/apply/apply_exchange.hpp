@@ -67,10 +67,10 @@ void apply_exchange(Coupling const &cpl, Op const &op, Basis &&basis,
 
       // Set the correct prefactor
       coeff_t Jhalf;
-      if constexpr (iscomplex<coeff_t>()) {
-        Jhalf = (bits::gbit(ups, s1)) ? J / 2. : xdiag::conj(J) / 2.;
-      } else {
+      if constexpr (isreal<coeff_t>()) {
         Jhalf = J / 2.;
+      } else {
+        Jhalf = (bits::gbit(ups, s1)) ? J / 2. : xdiag::conj(J) / 2.;
       }
 
       // Get the flip masks for up and down spins
@@ -176,10 +176,10 @@ void apply_exchange(Coupling const &cpl, Op const &op, Basis &&basis,
 
           // Set the correct prefactor
           coeff_t Jhalf;
-          if constexpr (iscomplex<coeff_t>()) {
-            Jhalf = (bits::gbit(ups, s1)) ? J / 2.0 : xdiag::conj(J) / 2.0;
-          } else {
+          if constexpr (isreal<coeff_t>()) {
             Jhalf = J / 2.;
+          } else {
+            Jhalf = (bits::gbit(ups, s1)) ? J / 2.0 : xdiag::conj(J) / 2.0;
           }
 
           // decide Fermi sign of upspins

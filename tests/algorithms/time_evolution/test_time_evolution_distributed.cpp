@@ -11,7 +11,7 @@
 #include <xdiag/states/product_state.hpp>
 #include <xdiag/states/random_state.hpp>
 #include <xdiag/states/state.hpp>
-#include <xdiag/utils/close.hpp>
+#include <xdiag/algebra/isapprox.hpp>
 
 TEST_CASE("time_evolution_distributed", "[time_evolution]") try {
   using namespace xdiag;
@@ -39,9 +39,9 @@ TEST_CASE("time_evolution_distributed", "[time_evolution]") try {
       ops += "JEX" * Op("Exchange", {site, top});
     }
   }
-  ops["T"] = 1.0 + 0.2i;
+  ops["T"] = complex(1.0, 0.2);
   ops["JZ"] = 0.4;
-  ops["JEX"] = 0.3 + 1.23i;
+  ops["JEX"] = complex(0.3, 1.23);
 
   // Create initial state
   auto pstate = ProductState();
@@ -72,7 +72,7 @@ TEST_CASE("time_evolution_distributed", "[time_evolution]") try {
     auto n = innerC(Op("Ntot", s), H_psi_0);
     auto nd = innerC(Op("Ntot", s), H_psi_0d);
     // Log("i {} {} {}", s, n, nd);
-    REQUIRE(close(n, nd));
+    REQUIRE(isapprox(n, nd));
   }
   // Log("\n");
 

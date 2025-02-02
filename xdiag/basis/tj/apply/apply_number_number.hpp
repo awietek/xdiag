@@ -19,7 +19,7 @@ void apply_number_number(Coupling const &cpl, Op const &op, Basis &&basis,
   auto term_action = [&](bit_t up, bit_t dn) {
     int n1 = gbit(up, s1) + gbit(dn, s1);
     int n2 = gbit(up, s2) + gbit(dn, s2);
-    return mu * n1 * n2;
+    return mu * (coeff_t)(n1 * n2);
   };
   tj::generic_term_diag<bit_t, coeff_t, symmetric>(basis, term_action, fill);
 

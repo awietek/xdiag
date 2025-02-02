@@ -21,20 +21,21 @@ public:
 
   XDIAG_API iterator_t begin() const;
   XDIAG_API iterator_t end() const;
-  int64_t index(ProductState const &pstate) const;
-  int64_t dim() const;
-  int64_t size() const;
-  int64_t size_max() const;
-  int64_t size_min() const;
+  XDIAG_API int64_t index(ProductState const &pstate) const;
+  XDIAG_API int64_t dim() const;
+  XDIAG_API int64_t size() const;
+  XDIAG_API int64_t size_max() const;
+  XDIAG_API int64_t size_min() const;
 
   XDIAG_API bool operator==(tJDistributed const &rhs) const;
   XDIAG_API bool operator!=(tJDistributed const &rhs) const;
 
-  int64_t nsites() const;
+  XDIAG_API int64_t nsites() const;
+  XDIAG_API bool isreal() const;
+
   std::string backend() const;
   std::optional<int64_t> nup() const;
   std::optional<int64_t> ndn() const;
-  bool isreal() const;
   basis_t const &basis() const;
 
 private:
@@ -59,9 +60,9 @@ XDIAG_API std::string to_string(tJDistributed const &block);
 class tJDistributedIterator {
 public:
   tJDistributedIterator(tJDistributed const &block, bool begin);
-  tJDistributedIterator &operator++();
-  ProductState const &operator*() const;
-  bool operator!=(tJDistributedIterator const &rhs) const;
+  XDIAG_API tJDistributedIterator &operator++();
+  XDIAG_API ProductState const &operator*() const;
+  XDIAG_API bool operator!=(tJDistributedIterator const &rhs) const;
 
 private:
   int64_t nsites_;

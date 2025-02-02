@@ -6,7 +6,7 @@ set(XDIAG_SOURCES
   utils/read_vectors.cpp
   utils/type_string.cpp
   utils/split.cpp
-
+  utils/arma_to_cx.cpp
   utils/scalar.cpp
   utils/vector.cpp
   utils/matrix.cpp
@@ -17,6 +17,7 @@ set(XDIAG_SOURCES
   algebra/algebra.cpp
   algebra/matrix.cpp
   algebra/apply.cpp
+  algebra/isapprox.cpp
 
   io/read.cpp
   io/file_toml.cpp

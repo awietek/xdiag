@@ -1,5 +1,7 @@
 #pragma once
 
+#include <xdiag/common.hpp>
+
 #ifdef XDIAG_USE_MPI
 #include <xdiag/utils/logger_mpi.hpp>
 #else
@@ -9,11 +11,12 @@
 namespace xdiag {
 
 #ifdef XDIAG_USE_MPI
-inline auto & Log = LogMPI;
+XDIAG_API inline auto &Log = LogMPI;
 #else
-inline auto & Log = LogSerial;
+XDIAG_API inline auto &Log = LogSerial;
 #endif
 
-void set_verbosity(int64_t level);
-  
-}
+XDIAG_API void set_verbosity(int64_t level);
+
+} // namespace xdiag
+

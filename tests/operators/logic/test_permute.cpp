@@ -2,6 +2,7 @@
 
 #include <xdiag/common.hpp>
 #include <xdiag/operators/logic/permute.hpp>
+#include <xdiag/utils/logger.hpp>
 
 using namespace xdiag;
 

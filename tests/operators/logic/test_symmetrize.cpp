@@ -12,7 +12,7 @@
 #include <xdiag/operators/logic/order.hpp>
 #include <xdiag/operators/logic/isapprox.hpp>
 #include <xdiag/operators/logic/hc.hpp>
-#include <xdiag/utils/close.hpp>
+#include <xdiag/algebra/isapprox.hpp>
 
 using namespace xdiag;
 
@@ -58,7 +58,7 @@ TEST_CASE("symmetrize", "[operators]") try {
           // XDIAG_SHOW(block_nosym);
           // XDIAG_SHOW(e);
           // XDIAG_SHOW(e0_nosym);
-          REQUIRE(close(real(e), e0_nosym));
+          REQUIRE(isapprox(real(e), e0_nosym));
         }
         double e0_sym = 9999.0;
         Representation e0_irrep;
@@ -85,7 +85,7 @@ TEST_CASE("symmetrize", "[operators]") try {
         }
         // Log.out("N: {}, nup:{} ndn: {}, deg: {}, e0_nosym: {}, e0_sym: {}",
         //         nsites, nup, ndn, deg, e0_nosym, e0_sym);
-        REQUIRE(close(e0_sym, e0_nosym));
+        REQUIRE(isapprox(e0_sym, e0_nosym));
 
         // Compare correlators only if degeneracy is 1
         // -> g.s. from non-symmetric calculation is unique and symmetric
@@ -94,7 +94,7 @@ TEST_CASE("symmetrize", "[operators]") try {
           // XDIAG_SHOW(ops);
 
           auto [e0_sym2, v0_sym] = eig0(ops, block_sym);
-          REQUIRE(close(e0_sym, e0_nosym));
+          REQUIRE(isapprox(e0_sym, e0_nosym));
           {
             auto &v = v0_sym;
             auto Hv = v;
@@ -104,7 +104,7 @@ TEST_CASE("symmetrize", "[operators]") try {
             auto e = dotC(v, Hv);
             // XDIAG_SHOW(e);
             // XDIAG_SHOW(e0_nosym);
-            REQUIRE(close(real(e), e0_nosym));
+            REQUIRE(isapprox(real(e), e0_nosym));
           }
 
           // Measure correlators
@@ -122,7 +122,7 @@ TEST_CASE("symmetrize", "[operators]") try {
             // Log("ZZZ");
             // Log.out("(0,{}) nosym: {}, sym: {}", i, real(val_nosym),
             //               real(val_sym));
-            REQUIRE(close(val_nosym, val_sym, 1e-6, 1e-6));
+            REQUIRE(isapprox(val_nosym, val_sym, 1e-6, 1e-6));
           }
           // for (int j=0; j<nsites; ++j) {
           //   Ops corr_nosym;

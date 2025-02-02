@@ -6,7 +6,7 @@
 
 #include <xdiag/algorithms/lanczos/eigvals_lanczos.hpp>
 #include <xdiag/algebra/matrix.hpp>
-#include <xdiag/utils/close.hpp>
+#include <xdiag/algebra/isapprox.hpp>
 
 using namespace xdiag;
 
@@ -62,7 +62,7 @@ TEST_CASE("eigvals_lanczos", "[lanczos]") {
       auto evals = res.eigenvalues;
 
       for (int i = 0; i < num_eigenvalue; ++i)
-        REQUIRE(close(evals_mat(i), evals(i)));
+        REQUIRE(isapprox(evals_mat(i), evals(i)));
     }
   printf("Done.\n");
 }

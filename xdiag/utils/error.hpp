@@ -8,16 +8,19 @@
 #include <vector>
 
 #include <xdiag/config.hpp>
+#include <xdiag/utils/xdiag_api.hpp>
 
 namespace xdiag {
 
-class Error : public std::exception {
+class Error // : public std::exception
+{
 public:
   explicit Error(std::string message, std::string original_message = "");
   Error(Error const &error, std::string message);
+  // virtual XDIAG_API ~Error();
   std::vector<std::string> const &messages() const;
   std::string original_message() const;
-  const char *what() const noexcept;
+  XDIAG_API const char *what() const noexcept;
 
 private:
   std::string original_message_;
@@ -28,7 +31,7 @@ void throw_error(std::string message, const char *file, const char *func,
                  int line);
 void rethrow_error(Error const &error, const char *file, const char *func,
                    int line);
-void error_trace(Error const &error);
+XDIAG_API void error_trace(Error const &error);
 
 std::string cut_file(const char *file);
 

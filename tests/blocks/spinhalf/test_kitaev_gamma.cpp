@@ -6,7 +6,7 @@
 #include <xdiag/algorithms/sparse_diag.hpp>
 #include <xdiag/io/file_toml.hpp>
 #include <xdiag/io/read.hpp>
-#include <xdiag/utils/close.hpp>
+#include <xdiag/algebra/isapprox.hpp>
 
 void run_kitaev_gamma_test(
     double K, double G,
@@ -66,7 +66,7 @@ void run_kitaev_gamma_test(
     // XDIAG_SHOW(name);
     // XDIAG_SHOW(e0_reference);
     // XDIAG_SHOW(e0_computed);
-    REQUIRE(close(e0_reference, e0_computed));
+    REQUIRE(isapprox(e0_reference, e0_computed));
   }
 }
 

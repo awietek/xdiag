@@ -31,26 +31,23 @@ double random_normal(std::mt19937 &gen, double mean, double variance) {
   return mean + variance * z;
 }
 
-template <class distro_f> int random_discard(distro_f distro) {
+template <class distro_f> int random_discard(distro_f distro) try {
   std::mt19937 gen(42);
   double r1 = distro(gen);
   double r2 = distro(gen);
   (void)r1;
-  // Log("r1: {} r2: {}", r1, r2);
 
   for (int i = 0; i < 10; ++i) {
     std::mt19937 gen2(42);
     gen2.discard(i);
     double r = distro(gen2);
-    // Log("r: {}", r);
-
     if (std::abs(r - r2) < 1e-12) {
       return i;
     }
   }
-  Log.err("Error initializing RNG: could not determine "
-          "random_discard");
-  return 0;
+  XDIAG_THROW("Error initializing RNG: could not determine random_discard");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 int random_uniform_real_discard() {

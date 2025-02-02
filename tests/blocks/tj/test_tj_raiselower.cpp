@@ -1,7 +1,8 @@
 #include "../../catch.hpp"
 #include <xdiag/algebra/apply.hpp>
+#include <xdiag/algebra/isapprox.hpp>
 #include <xdiag/algebra/matrix.hpp>
-#include <xdiag/utils/close.hpp>
+#include <xdiag/utils/logger.hpp>
 
 using namespace xdiag;
 using namespace arma;
@@ -161,13 +162,13 @@ TEST_CASE("tj_raise_lower", "[tj]") try {
                 }
 
               } // loop op_i_str
-            } // loop op_j_str
+            }   // loop op_j_str
 
           } // loop i
-        } // loop j
+        }   // loop j
 
       } // loop nup
-    } // loop ndn
+    }   // loop ndn
 
   } // loop nsites
 

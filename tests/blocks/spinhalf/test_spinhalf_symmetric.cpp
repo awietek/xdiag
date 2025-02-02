@@ -9,7 +9,6 @@
 #include <xdiag/io/file_toml.hpp>
 #include <xdiag/io/read.hpp>
 #include <xdiag/symmetries/group_action/group_action.hpp>
-#include <xdiag/utils/close.hpp>
 
 using namespace xdiag;
 using namespace xdiag::combinatorics;

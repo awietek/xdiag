@@ -1,5 +1,7 @@
 #include "lanczos_convergence.hpp"
 
+#include <xdiag/utils/logger.hpp>
+
 namespace xdiag::lanczos {
 
 bool converged_eigenvalues(Tmatrix const &tmat, int n_eigenvalue,

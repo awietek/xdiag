@@ -6,16 +6,21 @@
 
 namespace xdiag {
 
+static bool file_exists(std::string filename) {
+  std::ifstream infile(filename.c_str());
+  return infile.good();
+}
+
 template <typename coeff_t>
 arma::Mat<coeff_t> read_vectors(std::string type, std::string path_to_vecs,
-                                int n) {
+                                int n) try {
   using namespace arma;
   using namespace fmt;
 
   std::stringstream ss;
   ss << type << "/" << path_to_vecs << "_" << n << ".arm";
   std::string filename = ss.str();
-  
+
   // get number of vecs if n=-1
   if (n == 0) {
     n = 0;
@@ -23,14 +28,16 @@ arma::Mat<coeff_t> read_vectors(std::string type, std::string path_to_vecs,
       ++n;
     }
   } else if (n < 0) {
-    Log.err("Invalid argument for number n of \"{}\" vectors", type);
+    XDIAG_THROW(
+        format("Invalid argument for number n of \"{}\" vectors", type));
   }
 
   if (n == 0) {
     return Mat<coeff_t>();
   } else {
     if (!file_exists(filename)) {
-      Log.err("Unable to read \"{}\" vector from file {}", type, filename);
+      XDIAG_THROW(
+          format("Unable to read \"{}\" vector from file {}", type, filename));
     }
     Col<coeff_t> v;
     v.load(filename);
@@ -41,7 +48,8 @@ arma::Mat<coeff_t> read_vectors(std::string type, std::string path_to_vecs,
 
     for (int i = 1; i < n; ++i) {
       if (!file_exists(filename)) {
-        Log.err("Unable to read \"{}\" vector from file {}", type, filename);
+        XDIAG_THROW(format("Unable to read \"{}\" vector from file {}", type,
+                           filename));
       }
       v.load(filename);
       Avecs.col(n) = v;
@@ -49,6 +57,8 @@ arma::Mat<coeff_t> read_vectors(std::string type, std::string path_to_vecs,
 
     return Avecs;
   }
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 template arma::Mat<double>

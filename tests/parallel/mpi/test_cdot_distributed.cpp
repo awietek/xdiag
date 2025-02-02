@@ -3,6 +3,7 @@
 #include <tests/catch.hpp>
 #include <xdiag/parallel/mpi/allreduce.hpp>
 #include <xdiag/parallel/mpi/cdot_distributed.hpp>
+#include <xdiag/utils/logger.hpp>
 
 using namespace xdiag;
 

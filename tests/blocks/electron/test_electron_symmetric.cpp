@@ -3,6 +3,7 @@
 #include <iostream>
 #include <xdiag/blocks/electron.hpp>
 #include <xdiag/io/read.hpp>
+#include <xdiag/utils/logger.hpp>
 
 using namespace xdiag;
 using namespace xdiag::combinatorics;

@@ -4,7 +4,6 @@
 #include <xdiag/algebra/algebra.hpp>
 #include <xdiag/states/fill.hpp>
 #include <xdiag/states/random_state.hpp>
-#include <xdiag/utils/close.hpp>
 
 #include <iostream>
 #include <set>

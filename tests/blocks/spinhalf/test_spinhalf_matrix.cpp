@@ -2,9 +2,9 @@
 
 #include "testcases_spinhalf.hpp"
 #include <iostream>
+#include <xdiag/algebra/isapprox.hpp>
 #include <xdiag/algebra/matrix.hpp>
 #include <xdiag/io/file_toml.hpp>
-#include <xdiag/utils/close.hpp>
 
 using namespace xdiag;
 
@@ -21,7 +21,7 @@ TEST_CASE("spinhalf_matrix", "[spinhalf]") try {
         REQUIRE(H.is_hermitian(1e-7));
         arma::vec eigs;
         arma::eig_sym(eigs, H);
-        REQUIRE(close(eigs, exact_eigs));
+        REQUIRE(isapprox(eigs, exact_eigs));
       }
     }
   }
@@ -43,7 +43,7 @@ TEST_CASE("spinhalf_matrix", "[spinhalf]") try {
 
         arma::vec eigs_tJ;
         arma::eig_sym(eigs_tJ, H_tJ);
-        REQUIRE(close(eigs, eigs_tJ));
+        REQUIRE(isapprox(eigs, eigs_tJ));
       }
   }
 
@@ -71,7 +71,7 @@ TEST_CASE("spinhalf_matrix", "[spinhalf]") try {
       }
       std::sort(eigs_sz_all.begin(), eigs_sz_all.end());
 
-      REQUIRE(close(eigs_no_sz, arma::vec(eigs_sz_all)));
+      REQUIRE(isapprox(eigs_no_sz, arma::vec(eigs_sz_all)));
     }
   }
 
@@ -120,7 +120,7 @@ TEST_CASE("spinhalf_matrix", "[spinhalf]") try {
 
     // Log("{:.18f} {:.18f}", eigs(0), energy);
 
-    REQUIRE(close(eigs(0), energy));
+    REQUIRE(isapprox(eigs(0), energy));
   }
 
   // Test S+/S-/Sz
@@ -169,13 +169,13 @@ TEST_CASE("spinhalf_matrix", "[spinhalf]") try {
               sz += Op("Sz", i);
               auto sz_mat = matrix(sz, block, block);
               auto sz_matr = matrix(sz, block_raw, block_raw);
-              REQUIRE(close(comm, arma::mat(2.0 * sz_mat)));
-              REQUIRE(close(commr, arma::mat(2.0 * sz_matr)));
+              REQUIRE(isapprox(comm, arma::mat(2.0 * sz_mat)));
+              REQUIRE(isapprox(commr, arma::mat(2.0 * sz_matr)));
             } else {
-              REQUIRE(close(comm, arma::mat(comm.n_rows, comm.n_cols,
-                                            arma::fill::zeros)));
-              REQUIRE(close(commr, arma::mat(commr.n_rows, commr.n_cols,
-                                             arma::fill::zeros)));
+              REQUIRE(isapprox(comm, arma::mat(comm.n_rows, comm.n_cols,
+                                               arma::fill::zeros)));
+              REQUIRE(isapprox(commr, arma::mat(commr.n_rows, commr.n_cols,
+                                                arma::fill::zeros)));
             }
           }
       }

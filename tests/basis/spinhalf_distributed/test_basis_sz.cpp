@@ -6,7 +6,7 @@
 #include <xdiag/bits/bitops.hpp>
 #include <xdiag/combinatorics/binomial.hpp>
 #include <xdiag/parallel/mpi/allreduce.hpp>
-#include <xdiag/utils/close.hpp>
+#include <xdiag/utils/logger.hpp>
 
 template <typename bit_t> void test_spinhalf_distributed_basis_sz() {
   using namespace xdiag;

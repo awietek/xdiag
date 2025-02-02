@@ -9,7 +9,7 @@ namespace xdiag::combinatorics {
 template <typename bit_t> class CombinationsIterator;
 
 // Combinations
-template <typename bit_t = std_bit_t> class Combinations {
+template <typename bit_t> class Combinations {
 public:
   using iterator_t = CombinationsIterator<bit_t>;
 
@@ -54,7 +54,7 @@ private:
 
 #ifdef _OPENMP
 // CombinationsThread
-template <typename bit_t = std_bit_t> class CombinationsThread {
+template <typename bit_t> class CombinationsThread {
 public:
   using iterator_t = CombinationsIterator<bit_t>;
 

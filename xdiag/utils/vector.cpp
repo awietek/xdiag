@@ -1,5 +1,6 @@
 #include "vector.hpp"
 #include <xdiag/utils/type_string.hpp>
+#include <xdiag/utils/arma_to_cx.hpp>
 
 namespace xdiag {
 

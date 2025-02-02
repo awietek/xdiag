@@ -1,7 +1,10 @@
 #include "../../catch.hpp"
 #include <mpi.h>
 
-#include <xdiag/all.hpp>
+#include <xdiag/blocks/spinhalf.hpp>
+#include <xdiag/blocks/spinhalf_distributed.hpp>
+#include <xdiag/utils/logger.hpp>
+#include <xdiag/parallel/mpi/allreduce.hpp>
 
 using namespace xdiag;
 

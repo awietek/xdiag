@@ -1,11 +1,6 @@
 #include "representation.hpp"
 
 #include <fstream>
-
-#include <xdiag/utils/close.hpp>
-#include <xdiag/utils/error.hpp>
-#include <xdiag/utils/logger.hpp>
-
 #include <iomanip>
 #include <numeric>
 

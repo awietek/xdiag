@@ -6,6 +6,7 @@
 #include <xdiag/symmetries/permutation.hpp>
 #include <xdiag/combinatorics/subsets.hpp>
 #include <xdiag/symmetries/operations/fermi_sign.hpp>
+#include <xdiag/utils/logger.hpp>
 
 using namespace xdiag;
 

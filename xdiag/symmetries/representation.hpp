@@ -33,7 +33,7 @@ public:
 
   PermutationGroup const &group() const;
   Vector const &characters() const;
-  bool isreal() const;
+  XDIAG_API bool isreal() const;
 
 private:
   PermutationGroup group_;

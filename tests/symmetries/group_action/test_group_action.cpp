@@ -5,6 +5,7 @@
 #include <xdiag/combinatorics/combinations.hpp>
 #include <xdiag/combinatorics/subsets.hpp>
 #include <xdiag/symmetries/group_action/group_action.hpp>
+#include <xdiag/utils/logger.hpp>
 
 using namespace xdiag;
 

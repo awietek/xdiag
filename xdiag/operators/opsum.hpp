@@ -36,8 +36,8 @@ public:
   XDIAG_API Scalar &operator[](std::string name);
   XDIAG_API Scalar const &operator[](std::string name) const;
 
-  bool operator==(OpSum const &rhs) const;
-  bool operator!=(OpSum const &rhs) const;
+  XDIAG_API bool operator==(OpSum const &rhs) const;
+  XDIAG_API bool operator!=(OpSum const &rhs) const;
 
   std::vector<std::pair<Coupling, Op>> const &terms() const;
   std::vector<std::string> constants() const;
