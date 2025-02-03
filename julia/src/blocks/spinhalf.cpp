@@ -12,20 +12,12 @@ void define_spinhalf(jlcxx::Module &mod) {
       });
 
   mod.add_type<Spinhalf>("cxx_Spinhalf")
-      .constructor<int64_t>()
-      .constructor<int64_t, int64_t>()
-      .constructor<int64_t, PermutationGroup, Representation>()
-      .constructor<int64_t, int64_t, PermutationGroup, Representation>()
+      .constructor<int64_t, std::string>()
+      .constructor<int64_t, int64_t, std::string>()
+      .constructor<int64_t, Representation, std::string>()
+      .constructor<int64_t, int64_t, Representation, std::string>()
       .method("nsites",
               [](Spinhalf const &s) { JULIA_XDIAG_CALL_RETURN(s.nsites()) })
-      .method("nup",
-              [](Spinhalf const &s) { JULIA_XDIAG_CALL_RETURN(s.nup()) })
-      .method("permutation_group",
-              [](Spinhalf const &s) {
-                JULIA_XDIAG_CALL_RETURN(s.permutation_group())
-              })
-      .method("irrep",
-              [](Spinhalf const &s) { JULIA_XDIAG_CALL_RETURN(s.irrep()) })
       .method("isreal",
               [](Spinhalf const &s) { JULIA_XDIAG_CALL_RETURN(s.isreal()) })
       .method("dim", [](Spinhalf const &s) { JULIA_XDIAG_CALL_RETURN(s.dim()) })

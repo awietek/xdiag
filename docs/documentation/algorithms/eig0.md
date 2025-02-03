@@ -14,8 +14,8 @@ Computes the groud state energy and the ground state of a Hermitian operator on 
 
     ```c++
 	std::tuple<double, State> eig0(OpSum const &ops, Block const &block,
-		double precision = 1e-12, int64_t max_iterations = 1000,
-		bool force_complex = false, int64_t random_seed = 42);
+		double precision = 1e-12, int64_t max_iterations = 1000, 
+		int64_t random_seed = 42);
 	```
 
 === "Julia"
@@ -26,7 +26,6 @@ Computes the groud state energy and the ground state of a Hermitian operator on 
 		block::Block;
 		precision::Real = 1e-12,
 		maxiter::Int64 = 1000,
-		force_complex::Bool = false,
 		seed::Int64 = 42,
 	)
 	```
@@ -41,7 +40,6 @@ Computes the groud state energy and the ground state of a Hermitian operator on 
 | block          | block on which the operator is defined                                 |         |
 | precision      | accuracy of the computed ground state                                  | 1e-12   |
 | max_iterations | maximum number of iterations                                           | 1000    |
-| force_complex  | whether or not computation should be forced to have complex arithmetic | false   |
 | random_seed    | random seed for setting up the initial vector                          | 42      |
 
 ---

@@ -21,10 +21,10 @@ public:
   XDIAG_API bool operator==(Coupling const &rhs) const;
   XDIAG_API bool operator!=(Coupling const &rhs) const;
 
-  bool isscalar() const;
-  bool isstring() const;
-  Scalar scalar() const;
-  std::string string() const;
+  XDIAG_API bool isscalar() const;
+  XDIAG_API bool isstring() const;
+  XDIAG_API Scalar scalar() const;
+  XDIAG_API std::string string() const;
 
 private:
   value_t value_;

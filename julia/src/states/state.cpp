@@ -24,10 +24,10 @@ void define_state(jlcxx::Module &mod) {
               [](State &s) { JULIA_XDIAG_CALL_VOID(s.make_complex()) })
       .method("dim", [](State const &s) { JULIA_XDIAG_CALL_RETURN(s.dim()) })
       .method("size", [](State const &s) { JULIA_XDIAG_CALL_RETURN(s.size()) })
-      .method("n_rows",
-              [](State const &s) { JULIA_XDIAG_CALL_RETURN(s.n_rows()) })
-      .method("n_cols",
-              [](State const &s) { JULIA_XDIAG_CALL_RETURN(s.n_cols()) })
+      .method("nrows",
+              [](State const &s) { JULIA_XDIAG_CALL_RETURN(s.nrows()) })
+      .method("ncols",
+              [](State const &s) { JULIA_XDIAG_CALL_RETURN(s.ncols()) })
       .method("col", [](State const &s, int64_t n,
                         bool copy) { JULIA_XDIAG_CALL_RETURN(s.col(n, copy)) })
       .method("vector",

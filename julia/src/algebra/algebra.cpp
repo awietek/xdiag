@@ -1,4 +1,5 @@
 #include "algebra.hpp"
+#include <xdiag/all.hpp>
 
 namespace xdiag::julia {
 

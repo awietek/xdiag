@@ -12,17 +12,9 @@ void define_tj(jlcxx::Module &mod) {
       });
 
   mod.add_type<tJ>("cxx_tJ")
-      .constructor<int64_t, int64_t, int64_t>()
-      .constructor<int64_t, int64_t, int64_t, PermutationGroup,
-                   Representation>()
-      .method("nsites",
-              [](tJ const &s) { JULIA_XDIAG_CALL_RETURN(s.nsites()) })
-      .method("nup", [](tJ const &s) { JULIA_XDIAG_CALL_RETURN(s.nup()) })
-      .method("ndn", [](tJ const &s) { JULIA_XDIAG_CALL_RETURN(s.ndn()) })
-      .method(
-          "permutation_group",
-          [](tJ const &s) { JULIA_XDIAG_CALL_RETURN(s.permutation_group()) })
-      .method("irrep", [](tJ const &s) { JULIA_XDIAG_CALL_RETURN(s.irrep()) })
+      .constructor<int64_t, int64_t, int64_t, std::string>()
+      .constructor<int64_t, int64_t, int64_t, Representation, std::string>()
+      .method("nsites", [](tJ const &s) { JULIA_XDIAG_CALL_RETURN(s.nsites()) })
       .method("isreal", [](tJ const &s) { JULIA_XDIAG_CALL_RETURN(s.isreal()) })
       .method("dim", [](tJ const &s) { JULIA_XDIAG_CALL_RETURN(s.dim()) })
       .method("size", [](tJ const &s) { JULIA_XDIAG_CALL_RETURN(s.size()) })

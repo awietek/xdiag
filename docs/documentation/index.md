@@ -99,8 +99,9 @@ XDiag uses the C++ library [Armadillo](https://arma.sourceforge.net) as a linear
 | [OpSum](operators/opsum.md)           | Sum of couplings times operators                                                                                                     | :simple-cplusplus:  :simple-julia: |
 | [hc](operators/hc.md)                 | Returns the hermitian conjugate of an Op or OpSum.                                                                                   | :simple-cplusplus:  :simple-julia: |
 | [symmetrize](operators/symmetrize.md) | Symmetrizes an operator with a [PermutationGroup](symmetries/permutation_group.md) or [Representation](symmetries/representation.md) |  :simple-cplusplus: :simple-julia: |
-| [Scalar](operators/scalar.md)         | A scalar number which can be either real or complex                                                                                  | :simple-cplusplus:  :simple-julia: |
-| [Coupling](operators/coupling.md)     | Describes a coupling associated with an operator, either string or scalar                                                            | :simple-cplusplus:  :simple-julia: |
+| [Scalar](operators/scalar.md)         | A scalar number which can be either real or complex                                                                                  |                 :simple-cplusplus: |
+| [Coupling](operators/coupling.md)     | Describes a coupling associated with an operator, either string or scalar                                                            |                 :simple-cplusplus: |
+
 
 ---
 

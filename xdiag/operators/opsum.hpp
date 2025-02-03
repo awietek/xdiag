@@ -41,8 +41,8 @@ public:
 
   std::vector<std::pair<Coupling, Op>> const &terms() const;
   std::vector<std::string> constants() const;
-  OpSum plain() const;
-  int64_t size() const;
+  XDIAG_API OpSum plain() const;
+  XDIAG_API int64_t size() const;
   iterator_t begin() const;
   iterator_t end() const;
 

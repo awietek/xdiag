@@ -2,5 +2,7 @@
 #include <julia/src/xdiagjl.hpp>
 
 namespace xdiag::julia {
-void define_coupling(jlcxx::Module &mod);
+
+void define_file_toml(jlcxx::Module &mod);
+
 } // namespace xdiag::julia

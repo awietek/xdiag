@@ -285,8 +285,8 @@ template XDIAG_API State::State(SpinhalfDistributed const &,
                                 arma::Col<complex> const &);
 template XDIAG_API State::State(SpinhalfDistributed const &,
                                 arma::Mat<double> const &);
-templateXDIAG_API State::State(SpinhalfDistributed const &,
-                               arma::Mat<complex> const &);
+template XDIAG_API State::State(SpinhalfDistributed const &,
+                                arma::Mat<complex> const &);
 
 template XDIAG_API State::State(tJDistributed const &, bool, int64_t);
 template XDIAG_API State::State(tJDistributed const &, double const *, int64_t,

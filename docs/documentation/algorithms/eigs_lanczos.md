@@ -20,8 +20,7 @@ The Lanczos algorithm can be run in two distinct ways:
 		eigs_lanczos_result_t
 		eigs_lanczos(OpSum const &ops, Block const &block, int64_t neigvals = 1,
 		             double precision = 1e-12, int64_t max_iterations = 1000,
-                     bool force_complex = false, double deflation_tol = 1e-7,
-                     int64_t random_seed = 42);
+                     double deflation_tol = 1e-7, int64_t random_seed = 42);
 		```
 
 	=== "Julia"
@@ -33,7 +32,6 @@ The Lanczos algorithm can be run in two distinct ways:
 			neigvals::Int64 = 1,
 			precision::Float64 = 1e-12,
 			max_iterations::Int64 = 1000,
-			force_complex::Bool = false,
 			deflation_tol::Float64 = 1e-7,
 			random_seed::Int64 = 42,
 		)
@@ -44,9 +42,9 @@ The Lanczos algorithm can be run in two distinct ways:
 	=== "C++"
 		```c++
 		eigs_lanczos_result_t 
-		eigs_lanczos(OpSum const &ops, State &state0, int64_t neigvals = 1,
+		eigs_lanczos(OpSum const &ops, State const &state0, int64_t neigvals = 1,
                      double precision = 1e-12, int64_t max_iterations = 1000,
-                     bool force_complex = false, double deflation_tol = 1e-7);
+                     double deflation_tol = 1e-7);
 		```
 
 ---
@@ -60,7 +58,6 @@ The Lanczos algorithm can be run in two distinct ways:
 | neigvals       | number of eigenvalues to converge                                                 | 1       |
 | precision      | accuracy of the computed ground state                                             | 1e-12   |
 | max_iterations | maximum number of iterations                                                      | 1000    |
-| force_complex  | whether or not computation should be forced to have complex arithmetic            | false   |
 | deflation_tol  | tolerance for deflation, i.e. breakdown of Lanczos due to Krylow space exhaustion | 1e-7    |
 | random_seed    | random seed for setting up the initial vector                                     | 42      |
 

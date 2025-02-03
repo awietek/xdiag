@@ -13,8 +13,7 @@ Computes the groud state energy of a Hermitian operator on a block by using an i
 === "C++"
     ```c++
     double eigval0(OpSum const &ops, Block const &block, double precision = 1e-12,
-               int64_t max_iterations = 1000, bool force_complex = false,
-               int64_t random_seed = 42);
+                   int64_t max_iterations = 1000, int64_t random_seed = 42);
 	```
 
 === "Julia"
@@ -24,7 +23,6 @@ Computes the groud state energy of a Hermitian operator on a block by using an i
 		block::Block;
 		precision::Real = 1e-12,
 		maxiter::Integer = 1000,
-		force_complex::Bool = false,
 		seed::Integer = 42,
 	)
 	```

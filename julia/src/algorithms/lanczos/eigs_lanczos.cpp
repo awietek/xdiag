@@ -2,6 +2,18 @@
 
 namespace xdiag::julia {
 
+template <class block_t>
+static void define_eigs_lanczos_block(jlcxx::Module &mod) {
+  mod.method("cxx_eigs_lanczos",
+             [](OpSum const &ops, block_t const &block, int64_t neigvals,
+                double precision, int64_t max_iterations, double deflation_tol,
+                int64_t random_seed) {
+               JULIA_XDIAG_CALL_RETURN(eigs_lanczos(ops, block, neigvals,
+                                                    precision, max_iterations,
+                                                    deflation_tol, random_seed))
+             });
+}
+
 void define_eigs_lanczos(jlcxx::Module &mod) {
 
   using res_t = eigs_lanczos_result_t;
@@ -19,32 +31,16 @@ void define_eigs_lanczos(jlcxx::Module &mod) {
       .method("criterion",
               [](res_t const &r) { JULIA_XDIAG_CALL_RETURN(r.criterion) });
 
-  // random starting vector
-  mod.method("cxx_eigs_lanczos", [](OpSum const &ops, Spinhalf const &block,
-                                    int64_t neigvals, double precision,
-                                    int64_t max_iterations, bool force_complex,
-                                    double deflation_tol, int64_t random_seed) {
-    JULIA_XDIAG_CALL_RETURN(eigs_lanczos(ops, block, neigvals, precision,
-                                         max_iterations, force_complex,
-                                         deflation_tol, random_seed))
-  });
+  define_eigs_lanczos_block<Spinhalf>(mod);
+  define_eigs_lanczos_block<tJ>(mod);
+  define_eigs_lanczos_block<Electron>(mod);
 
-  mod.method("cxx_eigs_lanczos", [](OpSum const &ops, tJ const &block,
+  mod.method("cxx_eigs_lanczos", [](OpSum const &ops, State const &state0,
                                     int64_t neigvals, double precision,
-                                    int64_t max_iterations, bool force_complex,
-                                    double deflation_tol, int64_t random_seed) {
-    JULIA_XDIAG_CALL_RETURN(eigs_lanczos(ops, block, neigvals, precision,
-                                         max_iterations, force_complex,
-                                         deflation_tol, random_seed))
-  });
-
-  mod.method("cxx_eigs_lanczos", [](OpSum const &ops, Electron const &block,
-                                    int64_t neigvals, double precision,
-                                    int64_t max_iterations, bool force_complex,
-                                    double deflation_tol, int64_t random_seed) {
-    JULIA_XDIAG_CALL_RETURN(eigs_lanczos(ops, block, neigvals, precision,
-                                         max_iterations, force_complex,
-                                         deflation_tol, random_seed))
+                                    int64_t max_iterations,
+                                    double deflation_tol) {
+    JULIA_XDIAG_CALL_RETURN(eigs_lanczos(ops, state0, neigvals, precision,
+                                         max_iterations, deflation_tol));
   });
 }
 

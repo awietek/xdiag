@@ -13,23 +13,12 @@ void define_electron(jlcxx::Module &mod) {
       });
 
   mod.add_type<Electron>("cxx_Electron")
-      .constructor<int64_t>()
-      .constructor<int64_t, int64_t, int64_t>()
-      .constructor<int64_t, PermutationGroup, Representation>()
-      .constructor<int64_t, int64_t, int64_t, PermutationGroup,
-                   Representation>()
+      .constructor<int64_t, std::string>()
+      .constructor<int64_t, int64_t, int64_t, std::string>()
+      .constructor<int64_t, Representation, std::string>()
+      .constructor<int64_t, int64_t, int64_t, Representation, std::string>()
       .method("nsites",
               [](Electron const &s) { JULIA_XDIAG_CALL_RETURN(s.nsites()) })
-      .method("nup",
-              [](Electron const &s) { JULIA_XDIAG_CALL_RETURN(s.nup()) })
-      .method("ndn",
-              [](Electron const &s) { JULIA_XDIAG_CALL_RETURN(s.ndn()) })
-      .method("permutation_group",
-              [](Electron const &s) {
-                JULIA_XDIAG_CALL_RETURN(s.permutation_group())
-              })
-      .method("irrep",
-              [](Electron const &s) { JULIA_XDIAG_CALL_RETURN(s.irrep()) })
       .method("isreal",
               [](Electron const &s) { JULIA_XDIAG_CALL_RETURN(s.isreal()) })
       .method("dim", [](Electron const &s) { JULIA_XDIAG_CALL_RETURN(s.dim()) })

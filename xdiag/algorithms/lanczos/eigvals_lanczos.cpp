@@ -20,22 +20,22 @@
 
 namespace xdiag {
 
-eigvals_lanczos_result_t
-eigvals_lanczos(OpSum const &ops, Block const &block, int64_t neigvals,
-                double precision, int64_t max_iterations, bool force_complex,
-                double deflation_tol, int64_t random_seed) try {
+eigvals_lanczos_result_t eigvals_lanczos(OpSum const &ops, Block const &block,
+                                         int64_t neigvals, double precision,
+                                         int64_t max_iterations,
+                                         double deflation_tol,
+                                         int64_t random_seed) try {
 
   if (neigvals < 1) {
     XDIAG_THROW("Argument \"neigvals\" needs to be >= 1");
   }
 
-  bool cplx = (!isreal(ops)) || !isreal(block) || force_complex;
-  State state0(block, !cplx);
+  bool real = isreal(ops) && isreal(block);
+  State state0(block, real);
   fill(state0, RandomState(random_seed));
 
-  auto r =
-      eigvals_lanczos_inplace(ops, state0, neigvals, precision, max_iterations,
-                              force_complex, deflation_tol);
+  auto r = eigvals_lanczos_inplace(ops, state0, neigvals, precision,
+                                   max_iterations, deflation_tol);
 
   return {r.alphas, r.betas, r.eigenvalues, r.niterations, r.criterion};
 
@@ -47,18 +47,18 @@ eigvals_lanczos(OpSum const &ops, Block const &block, int64_t neigvals,
 eigvals_lanczos_result_t eigvals_lanczos(OpSum const &ops, State psi0,
                                          int64_t neigvals, double precision,
                                          int64_t max_iterations,
-                                         bool force_complex,
                                          double deflation_tol) try {
   return eigvals_lanczos_inplace(ops, psi0, neigvals, precision, max_iterations,
-                                 force_complex, deflation_tol);
+                                 deflation_tol);
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
   return eigvals_lanczos_result_t();
 }
-eigvals_lanczos_result_t
-eigvals_lanczos_inplace(OpSum const &ops, State &psi0, int64_t neigvals,
-                        double precision, int64_t max_iterations,
-                        bool force_complex, double deflation_tol) try {
+eigvals_lanczos_result_t eigvals_lanczos_inplace(OpSum const &ops, State &psi0,
+                                                 int64_t neigvals,
+                                                 double precision,
+                                                 int64_t max_iterations,
+                                                 double deflation_tol) try {
   if (neigvals < 1) {
     XDIAG_THROW("Argument \"neigvals\" needs to be >= 1");
   }
@@ -68,18 +68,14 @@ eigvals_lanczos_inplace(OpSum const &ops, State &psi0, int64_t neigvals,
 
   auto const &block = psi0.block();
 
-  bool cplx = !isreal(ops) || !isreal(block) || force_complex || !psi0.isreal();
-  if (!psi0.isreal() && !isreal(block)) {
-    Log(1,
-        "warning: starting REAL block diagonalization with COMPLEX startstate");
-  }
+  bool real = isreal(ops) && isreal(block) && isreal(psi0);
   auto converged = [neigvals, precision](Tmatrix const &tmat) -> bool {
     return lanczos::converged_eigenvalues(tmat, neigvals, precision);
   };
   lanczos::lanczos_result_t r;
   int64_t iter = 1;
   // Setup complex Lanczos run
-  if (cplx) {
+  if (!real) {
     psi0.make_complex();
     arma::cx_vec v0 = psi0.vectorC(0, false);
     auto mult = [&iter, &ops, &block](arma::cx_vec const &v, arma::cx_vec &w) {

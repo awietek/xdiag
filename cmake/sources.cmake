@@ -153,27 +153,41 @@ set(XDIAG_DISTRIBUTED_SOURCES
 
 set(XDIAG_JULIA_SOURCES
   xdiagjl.cpp
-  utils/armadillo.cpp
+
   algebra/matrix.cpp
   algebra/apply.cpp
   algebra/algebra.cpp
+
   algorithms/sparse_diag.cpp
   algorithms/lanczos/eigs_lanczos.cpp
   algorithms/lanczos/eigvals_lanczos.cpp
+  algorithms/time_evolution/time_evolve.cpp
+  algorithms/time_evolution/imaginary_time_evolve.cpp
+  algorithms/time_evolution/time_evolve_expokit.cpp  
+  algorithms/time_evolution/evolve_lanczos.cpp
+
   blocks/spinhalf.cpp
   blocks/tj.cpp
   blocks/electron.cpp
-  operators/coupling.cpp
+
+  io/file_toml.cpp
+  io/read.cpp
+  
   operators/op.cpp
   operators/opsum.cpp
   operators/symmetrize.cpp
+  operators/hc.cpp
+  
   states/create_state.cpp
   states/fill.cpp
   states/random_state.cpp
   states/product_state.cpp
   states/gpwf.cpp
   states/state.cpp
+
   utils/utils.cpp
+  utils/armadillo.cpp
+
   symmetries/permutation.cpp
   symmetries/permutation_group.cpp
   symmetries/representation.cpp

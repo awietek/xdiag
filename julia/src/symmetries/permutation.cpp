@@ -5,19 +5,25 @@ void define_permutation(jlcxx::Module &mod) {
   mod.add_type<Permutation>("cxx_Permutation")
       .constructor<>()
       .constructor<std::vector<int64_t> const &>()
-      .method("inverse", &Permutation::inverse)
-      .method("array", &Permutation::array);
+      .method("inverse",
+              [](Permutation const &p) { JULIA_XDIAG_CALL_RETURN(inverse(p)); })
+      .method("size",
+              [](Permutation const &p) { JULIA_XDIAG_CALL_RETURN(p.size()); })
 
-  mod.method("multiply", [](Permutation const &p1, Permutation const &p2) {
+      .method("array",
+              [](Permutation const &p) { JULIA_XDIAG_CALL_RETURN(p.array()); });
+
+  mod.method("cxx_multiply", [](Permutation const &p1, Permutation const &p2) {
     JULIA_XDIAG_CALL_RETURN(multiply(p1, p2));
   });
 
-  mod.method("to_string", [](Permutation const &p) { return to_string(p); });
+  mod.method("cxx_pow", [](Permutation const &p, int64_t power) {
+    JULIA_XDIAG_CALL_RETURN(pow(p, power));
+  });
 
-  mod.add_type<VectorPermutation>("cxx_VectorPermutation")
-      .constructor<>()
-      .method("push_back", &VectorPermutation::push_back);
-  
+  mod.method("to_string", [](Permutation const &p) {
+    JULIA_XDIAG_CALL_RETURN(to_string(p));
+  });
 }
 
 } // namespace xdiag::julia

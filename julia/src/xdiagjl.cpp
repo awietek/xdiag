@@ -2,14 +2,17 @@
 
 #include <julia/src/utils/armadillo.hpp>
 
-#include <julia/src/operators/coupling.hpp>
 #include <julia/src/operators/op.hpp>
 #include <julia/src/operators/opsum.hpp>
 #include <julia/src/operators/symmetrize.hpp>
+#include <julia/src/operators/hc.hpp>
 
 #include <julia/src/blocks/electron.hpp>
 #include <julia/src/blocks/spinhalf.hpp>
 #include <julia/src/blocks/tj.hpp>
+
+#include <julia/src/io/file_toml.hpp>
+#include <julia/src/io/read.hpp>
 
 #include <julia/src/utils/utils.hpp>
 
@@ -31,6 +34,10 @@
 #include <julia/src/algorithms/lanczos/eigs_lanczos.hpp>
 #include <julia/src/algorithms/lanczos/eigvals_lanczos.hpp>
 #include <julia/src/algorithms/sparse_diag.hpp>
+#include <julia/src/algorithms/time_evolution/evolve_lanczos.hpp>
+#include <julia/src/algorithms/time_evolution/imaginary_time_evolve.hpp>
+#include <julia/src/algorithms/time_evolution/time_evolve.hpp>
+#include <julia/src/algorithms/time_evolution/time_evolve_expokit.hpp>
 
 JLCXX_MODULE define_julia_module(jlcxx::Module &mod) {
   using namespace xdiag;
@@ -39,17 +46,34 @@ JLCXX_MODULE define_julia_module(jlcxx::Module &mod) {
   julia::define_vectors(mod);
   julia::define_matrices(mod);
 
+  // Algebra
+  julia::define_matrix(mod);
+  julia::define_apply(mod);
+  julia::define_algebra(mod);
+
+  // Algorithms
+  julia::define_eig0(mod);
+  julia::define_eigs_lanczos(mod);
+  julia::define_eigvals_lanczos(mod);
+  julia::define_time_evolve(mod);
+  julia::define_imaginary_time_evolve(mod);
+  julia::define_time_evolve_expokit(mod);
+  julia::define_evolve_lanczos(mod);
+
+  // IO
+  julia::define_file_toml(mod);
+  julia::define_read(mod);
+  
   // Operators
-  julia::define_coupling(mod);
   julia::define_op(mod);
   julia::define_opsum(mod);
+  julia::define_symmetrize(mod);
+  julia::define_hc(mod);
 
   // Symmetries
   julia::define_permutation(mod);
   julia::define_permutation_group(mod);
   julia::define_representation(mod);
-
-  julia::define_symmetrize(mod);
 
   // ProductState
   julia::define_product_state(mod);
@@ -66,17 +90,6 @@ JLCXX_MODULE define_julia_module(jlcxx::Module &mod) {
   julia::define_fill(mod);
   julia::define_create_state(mod);
 
-  // algebra
-  julia::define_matrix(mod);
-  julia::define_apply(mod);
-  julia::define_algebra(mod);
-
-  // algorithms
-  julia::define_eig0(mod);
-  julia::define_eigval0(mod);
-  julia::define_eigs_lanczos(mod);
-  julia::define_eigvals_lanczos(mod);
-  
   // Utils
   julia::define_say_hello(mod);
   julia::define_print_version(mod);
