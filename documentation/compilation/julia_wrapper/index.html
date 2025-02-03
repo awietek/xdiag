@@ -333,6 +333,16 @@ This should print the <code>/path/to/libcxxwrap-julia-prefix</code>. This is the
 <a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>cmake<span class="w"> </span>--install<span class="w"> </span>build
 </code></pre></div>
 The julia wrapper library can then be found in the install dir as <code>libxdiagjl.so</code>, (or the corresponding library format on non-Linux systems).</p>
+<p>In order to test the new shared library <code>xdiagjl</code> together with the <code>XDiag.jl</code> library, we need to override the artifact associated with the <code>XDiag_jll.jl</code> package. For this, first we need to find out which artifact is associated with <code>XDiag_jll.jl</code>. For this enter julia and type the following commands:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>julia
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>using<span class="w"> </span>XDiag_jll
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>XDiag_jll.find_artifact_dir<span class="o">()</span>
+</code></pre></div>
+<p>This gives the directory in which the artifact is defined. Now we have to add a line in the <code>Overrides.toml</code> file, typically located at <code>.julia/artifacts/Overrides.toml</code>.</p>
+<p>Here, we then add a line like this:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">55ec928f6054024a4e9bf02e74e4da8b69175655</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;/path/to/xdiag/install&quot;</span>
+</code></pre></div>
+<p>The hash is to be replaced by the directory of the <code>XDiag_jll.jl</code> artifact.</p>
 
 
 
