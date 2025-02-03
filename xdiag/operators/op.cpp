@@ -77,7 +77,7 @@ std::ostream &operator<<(std::ostream &out, Op const &op) {
   if (op.hassites()) {
     out << " ";
     for (int64_t site : op.sites()) {
-      out << site << " ";
+      out << site + XDIAG_OFFSET << " ";
     }
   }
   if (op.hasmatrix()) {

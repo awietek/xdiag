@@ -34,3 +34,4 @@ echo
 echo "#undef XDIAG_THROW"
 echo "#undef XDIAG_RETHROW"
 echo "#undef XDIAG_API"
+echo "#undef XDIAG_OFFSET"

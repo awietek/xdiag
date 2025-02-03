@@ -11,6 +11,12 @@
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/xdiag_api.hpp>
 
+#ifdef XDIAG_JULIA_WRAPPER
+#define XDIAG_OFFSET 1
+#else
+#define XDIAG_OFFSET 0
+#endif
+
 namespace xdiag {
 
 // helper functions for complex numbers

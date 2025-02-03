@@ -150,7 +150,7 @@ Permutation pow(Permutation const &p, int64_t power) try {
 
 std::ostream &operator<<(std::ostream &out, Permutation const &p) {
   for (int64_t i = 0; i < p.size(); ++i) {
-    out << p[i] << " ";
+    out << p[i] + XDIAG_OFFSET << " ";
   }
   return out;
 }

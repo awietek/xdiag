@@ -12,7 +12,7 @@ namespace xdiag {
 class Permutation {
 public:
   XDIAG_API Permutation() = default;
-  XDIAG_API Permutation(int64_t size); // creates identity permutation
+  XDIAG_API explicit Permutation(int64_t size); // creates identity permutation
   XDIAG_API Permutation(std::initializer_list<int64_t> list);
   XDIAG_API explicit Permutation(std::vector<int32_t> const &array);
   XDIAG_API explicit Permutation(std::vector<int64_t> const &array);
