@@ -18,3 +18,22 @@ cmake --build build
 cmake --install build
 ```
 The julia wrapper library can then be found in the install dir as `libxdiagjl.so`, (or the corresponding library format on non-Linux systems).
+
+
+In order to test the new shared library `xdiagjl` together with the `XDiag.jl` library, we need to override the artifact associated with the `XDiag_jll.jl` package. For this, first we need to find out which artifact is associated with `XDiag_jll.jl`. For this enter julia and type the following commands:
+
+``` bash
+julia
+using XDiag_jll
+XDiag_jll.find_artifact_dir()
+```
+
+This gives the directory in which the artifact is defined. Now we have to add a line in the `Overrides.toml` file, typically located at `.julia/artifacts/Overrides.toml`.
+
+Here, we then add a line like this:
+
+```toml
+55ec928f6054024a4e9bf02e74e4da8b69175655 = "/path/to/xdiag/install"
+```
+
+The hash is to be replaced by the directory of the `XDiag_jll.jl` artifact.

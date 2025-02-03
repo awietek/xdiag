@@ -16,6 +16,9 @@ public:
   XDIAG_API OpSum() = default;
   XDIAG_API explicit OpSum(Op const &op);
   XDIAG_API OpSum(Coupling const &cpl, Op const &op);
+  XDIAG_API OpSum(std::string cpl, Op const &op);
+  XDIAG_API OpSum(double cpl, Op const &op);
+  XDIAG_API OpSum(complex cpl, Op const &op);
 
   XDIAG_API OpSum &operator=(Op const &op);
 

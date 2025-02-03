@@ -27,10 +27,10 @@ private:
   std::vector<std::string> messages_;
 };
 
-void throw_error(std::string message, const char *file, const char *func,
-                 int line);
-void rethrow_error(Error const &error, const char *file, const char *func,
-                   int line);
+XDIAG_API void throw_error(std::string message, const char *file,
+                           const char *func, int line);
+XDIAG_API void rethrow_error(Error const &error, const char *file,
+                             const char *func, int line);
 XDIAG_API void error_trace(Error const &error);
 
 std::string cut_file(const char *file);

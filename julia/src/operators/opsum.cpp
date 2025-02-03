@@ -7,7 +7,9 @@ void define_opsum(jlcxx::Module &mod) {
   mod.add_type<OpSum>("cxx_OpSum")
       .constructor<>()
       .constructor<Op const &>()
-      .constructor<Coupling const &, Op const &>()
+      .constructor<std::string, Op const &>()
+      .constructor<double, Op const &>()
+      .constructor<complex, Op const &>()
       .method("plain",
               [](OpSum const &ops) { JULIA_XDIAG_CALL_RETURN(ops.plain()); })
       .method("isreal",
@@ -24,18 +26,14 @@ void define_opsum(jlcxx::Module &mod) {
               [](OpSum const &ops, OpSum const &ops2) {
                 JULIA_XDIAG_CALL_RETURN(ops - ops2);
               })
-      .method("*",
-              [](OpSum const &ops, Scalar const &cpl) {
-                JULIA_XDIAG_CALL_RETURN(cpl * ops);
-              })
-      .method("/",
-              [](OpSum const &ops, Scalar const &cpl) {
-                JULIA_XDIAG_CALL_RETURN(ops / cpl);
-              })
-      .method("getindex",
-              [](OpSum const &ops, std::string name) {
-                JULIA_XDIAG_CALL_RETURN(ops[name]);
-              })
+      .method("*", [](OpSum const &ops,
+                      double cpl) { JULIA_XDIAG_CALL_RETURN(cpl * ops); })
+      .method("*", [](OpSum const &ops,
+                      complex cpl) { JULIA_XDIAG_CALL_RETURN(cpl * ops); })
+      .method("/", [](OpSum const &ops,
+                      double cpl) { JULIA_XDIAG_CALL_RETURN(ops / cpl); })
+      .method("/", [](OpSum const &ops,
+                      complex cpl) { JULIA_XDIAG_CALL_RETURN(ops / cpl); })
       .method("setindex!",
               [](OpSum &ops, std::string name, double value) {
                 JULIA_XDIAG_CALL_VOID(ops[name] = value);

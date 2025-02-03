@@ -14,8 +14,8 @@ void define_time_evolve_expokit(jlcxx::Module &mod) {
                    H, psi, time, precision, m, anorm, nnorm));
              });
 
-  // mod.add_type<time_evolve_expokit_inplace_return_t>(
-  //     "cxx_time_evolve_expokit_inplace_return_t");
+  mod.add_type<time_evolve_expokit_inplace_return_t>(
+      "cxx_time_evolve_expokit_inplace_return_t");
 
   mod.method("cxx_time_evolve_expokit_inplace",
              [](OpSum const &H, State &psi, double time, double precision,

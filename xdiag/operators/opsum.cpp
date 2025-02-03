@@ -6,6 +6,9 @@ namespace xdiag {
 
 OpSum::OpSum(Op const &op) : terms_({{Coupling(1.0), op}}) {}
 OpSum::OpSum(Coupling const &cpl, Op const &op) : terms_({{cpl, op}}) {}
+OpSum::OpSum(std::string cpl, Op const &op) : OpSum(Coupling(cpl), op) {}
+OpSum::OpSum(double cpl, Op const &op) : OpSum(Coupling(cpl), op) {}
+OpSum::OpSum(complex cpl, Op const &op) : OpSum(Coupling(cpl), op) {}
 
 OpSum &OpSum::operator=(Op const &op) {
   terms_ = std::vector<std::pair<Coupling, Op>>{{Coupling(1.0), op}};

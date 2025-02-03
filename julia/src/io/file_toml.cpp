@@ -2,7 +2,7 @@
 
 namespace xdiag::julia {
 void define_file_toml(jlcxx::Module &mod) {
-  mod.add_type<Permutation>("cxx_FileOml")
+  mod.add_type<FileToml>("cxx_FileToml")
       .constructor<>()
       .constructor<std::string>()
       .method("defined", [](FileToml const &fl, std::string key) {

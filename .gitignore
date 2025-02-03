@@ -1,5 +1,6 @@
 cmake_commands.sh
 build
+build_julia_wrapper.sh
 benchmarks
 install
 julia/products

@@ -50,8 +50,11 @@ endif()
 # of a shared library,
 # https://alexreinking.com/blog/building-a-dual-shared-and-static-library-with-cmake.html
 
+# Julia wrapper should not be compiled with visibility control (weird errors)
 if (NOT DEFINED CMAKE_CXX_VISIBILITY_PRESET AND
-    NOT DEFINED CMAKE_VISIBILITY_INLINES_HIDDEN)
+    NOT DEFINED CMAKE_VISIBILITY_INLINES_HIDDEN AND
+    NOT DEFINED XDIAG_JULIA_WRAPPER
+  )
   set(CMAKE_CXX_VISIBILITY_PRESET hidden)
   set(CMAKE_VISIBILITY_INLINES_HIDDEN YES)
 endif ()

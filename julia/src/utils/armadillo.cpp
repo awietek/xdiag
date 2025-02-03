@@ -28,5 +28,8 @@ void define_matrices(jlcxx::Module &mod) {
       .method("n_rows", [](arma::cx_mat const &m) { return m.n_rows; })
       .method("n_cols", [](arma::cx_mat const &m) { return m.n_cols; })
       .method("n_elem", [](arma::cx_mat const &m) { return m.n_elem; });
+
+  mod.add_type<arma::Mat<int64_t>>("cxx_arma_mat_int64_t")
+      .constructor<int64_t *, arma::uword, arma::uword, bool, bool>();
 }
 } // namespace xdiag::julia

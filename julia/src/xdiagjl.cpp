@@ -2,10 +2,10 @@
 
 #include <julia/src/utils/armadillo.hpp>
 
+#include <julia/src/operators/hc.hpp>
 #include <julia/src/operators/op.hpp>
 #include <julia/src/operators/opsum.hpp>
 #include <julia/src/operators/symmetrize.hpp>
-#include <julia/src/operators/hc.hpp>
 
 #include <julia/src/blocks/electron.hpp>
 #include <julia/src/blocks/spinhalf.hpp>
@@ -42,9 +42,40 @@
 JLCXX_MODULE define_julia_module(jlcxx::Module &mod) {
   using namespace xdiag;
 
+  //
+  // Comment: order of "defines" matters, otherwise errors like:
+  // No appropriate factory for type ...
+  //
+
   // Armadillo
   julia::define_vectors(mod);
   julia::define_matrices(mod);
+
+  // Operators
+  julia::define_op(mod);
+  julia::define_opsum(mod);
+  julia::define_hc(mod);
+
+  // Symmetries
+  julia::define_permutation(mod);
+  julia::define_permutation_group(mod);
+  julia::define_representation(mod);
+  julia::define_symmetrize(mod);
+
+  // ProductState
+  julia::define_product_state(mod);
+
+  // Blocks
+  julia::define_spinhalf(mod);
+  julia::define_tj(mod);
+  julia::define_electron(mod);
+
+  // States
+  julia::define_state(mod);
+  julia::define_random_state(mod);
+  julia::define_gpwf(mod);
+  julia::define_fill(mod);
+  julia::define_create_state(mod);
 
   // Algebra
   julia::define_matrix(mod);
@@ -63,32 +94,6 @@ JLCXX_MODULE define_julia_module(jlcxx::Module &mod) {
   // IO
   julia::define_file_toml(mod);
   julia::define_read(mod);
-  
-  // Operators
-  julia::define_op(mod);
-  julia::define_opsum(mod);
-  julia::define_symmetrize(mod);
-  julia::define_hc(mod);
-
-  // Symmetries
-  julia::define_permutation(mod);
-  julia::define_permutation_group(mod);
-  julia::define_representation(mod);
-
-  // ProductState
-  julia::define_product_state(mod);
-
-  // Blocks
-  julia::define_spinhalf(mod);
-  julia::define_tj(mod);
-  julia::define_electron(mod);
-
-  // States
-  julia::define_state(mod);
-  julia::define_random_state(mod);
-  julia::define_gpwf(mod);
-  julia::define_fill(mod);
-  julia::define_create_state(mod);
 
   // Utils
   julia::define_say_hello(mod);

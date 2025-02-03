@@ -51,7 +51,7 @@ TEST_CASE("non_branching_op", "[operators]") try {
 
     for (int64_t k = 1; k <= 6; ++k) {
       auto block = Spinhalf(k);
-      int64_t p2 = pow(2, k);
+      int64_t p2 = (int64_t)1 << k;
 
       auto mr = mat(p2, p2, fill::randn);
       std::vector<int64_t> sites(k);
