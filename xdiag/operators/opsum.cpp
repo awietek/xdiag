@@ -16,14 +16,26 @@ OpSum &OpSum::operator=(Op const &op) {
   return *this;
 }
 
+OpSum &OpSum::operator*=(double scalar) try {
+  return operator*=(Scalar(scalar));
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+
+OpSum &OpSum::operator*=(complex scalar) try {
+  return operator*=(Scalar(scalar));
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+
 OpSum &OpSum::operator*=(Scalar const &cpl) try {
   for (auto &[c, op] : terms_) {
     if (c.isscalar()) {
-      c = c.scalar() * cpl;
+      c = Coupling(c.scalar() * cpl);
     } else {
       auto it = constants_.find(c.string());
       if (it != constants_.end()) {
-        c = it->second * cpl;
+        c = Coupling(it->second * cpl);
       } else {
         XDIAG_THROW(fmt::format("Cannot multiply OpSum with a Scalar. Coupling "
                                 "given by string \"{}\" has not been defined",
@@ -32,6 +44,18 @@ OpSum &OpSum::operator*=(Scalar const &cpl) try {
     }
   }
   return *this;
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+
+OpSum &OpSum::operator/=(double scalar) try {
+  return operator/=(Scalar(scalar));
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+
+OpSum &OpSum::operator/=(complex scalar) try {
+  return operator/=(Scalar(scalar));
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
@@ -177,18 +201,36 @@ bool OpSum::operator!=(OpSum const &rhs) const { return !operator==(rhs); }
 OpSum::iterator_t OpSum::begin() const { return terms_.begin(); }
 OpSum::iterator_t OpSum::end() const { return terms_.end(); }
 
+OpSum operator*(double cpl, Op const &op) { return OpSum(Coupling(cpl), op); }
+OpSum operator*(complex cpl, Op const &op) { return OpSum(Coupling(cpl), op); }
 OpSum operator*(std::string cpl, Op const &op) {
   return OpSum(Coupling(cpl), op);
 }
+OpSum operator*(Scalar const &cpl, Op const &op) {
+  return OpSum(Coupling(cpl), op);
+}
+
 OpSum operator*(Coupling const &cpl, Op const &op) { return OpSum(cpl, op); }
+
+OpSum operator*(Op const &op, double cpl) { return cpl * op; }
+OpSum operator*(Op const &op, complex cpl) { return cpl * op; }
+OpSum operator*(Op const &op, std::string cpl) { return cpl * op; }
+OpSum operator*(Op const &op, Scalar const &cpl) { return cpl * op; }
 OpSum operator*(Op const &op, Coupling const &cpl) { return cpl * op; }
 
+OpSum operator*(double cpl, OpSum const &op) { return Scalar(cpl) * op; }
+OpSum operator*(complex cpl, OpSum const &op) { return Scalar(cpl) * op; }
 OpSum operator*(Scalar const &cpl, OpSum const &op) {
   auto newop = op;
   newop *= cpl;
   return newop;
 }
+OpSum operator*(OpSum const &op, double cpl) { return cpl * op; }
+OpSum operator*(OpSum const &op, complex cpl) { return cpl * op; }
 OpSum operator*(OpSum const &op, Scalar const &cpl) { return cpl * op; }
+
+OpSum operator/(OpSum const &op, double cpl) { return op / Scalar(cpl); }
+OpSum operator/(OpSum const &op, complex cpl) { return op / Scalar(cpl); }
 OpSum operator/(OpSum const &op, Scalar const &cpl) {
   return op * (Scalar(1.0) / cpl);
 }

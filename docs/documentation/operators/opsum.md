@@ -12,7 +12,7 @@ $$ \mathcal{O} = \sum_i c_i \mathcal{O}_i. $$
 
 An OpSum is consists of a sum of pairs given by
 
-1. A coupling constant $c_i$ which is defined by a [Coupling](coupling.md) object. The coupling can either be a string name or a real/complex number.
+1. A coupling constant $c_i$ which is given by a either a string name or a real/complex number.
 
 2. An operator $\mathcal{O}_i$ defined by an [Op](op.md) object.
 
@@ -20,31 +20,35 @@ Generically, an OpSum can thus have coupling constants defined by either strings
 
 Thus, OpSums can be defined independently of the numerical values of the coupling constants, e.g. in an input file. Upon execution of the code, these constants can then be set. Most operations in XDiag require the OpSum to be convertible to a plain OpSum.
 
-OpSums can be added and subtracted, as well as multiplied with and divided by a [Scalar](scalar.md). Hence, OpSums carry the mathematical structure of a vector space.
+OpSums can be added and subtracted, as well as multiplied with and divided by a scalar value, i.e. a real or complex number. Hence, OpSums carry the mathematical structure of a vector space.
 
 ---
 
 ## Constructors
 
-The following constructors create an OpSum with a single pair of coupling and operator. Additional terms can be added using the `+` and `+=` operators explained further below. If no [Coupling](coupling.md) is given, a numerical coefficient of `1.0` is assumed.
+The following constructors create an OpSum with a single pair of coupling and operator. Additional terms can be added using the `+` and `+=` operators explained further below. If no coupling is given, a numerical coefficient of `1.0` is assumed.
 
 
 === "C++"	
 	```c++
 	OpSum(Op const &op);
-	OpSum(Coupling const &cpl, Op const &op);
+	OpSum(double coupling, Op const &op);
+	OpSum(complex coupling, Op const &op);
+	OpSum(std::string coupling, Op const &op);
 	```
 
 === "Julia"
 	```julia
 	OpSum(op::Op)
-	OpSum(cpl::Coupling, op::Op)
+	OpSum(coupling::Float64, op::Op)
+	OpSum(coupling::ComplexF64, op::Op)
+	OpSum(coupling::String, op::Op)
 	```
 	
-| Parameter | Description                                                                 | Default |
-|:----------|:----------------------------------------------------------------------------|---------|
-| cpl       | A [Coupling](coupling.md) which is either a string or a real/complex number | 1.0     |
-| op        | An [Op](coupling.md) which describes the type of operator                   |         |
+| Parameter | Description                                                  | Default |
+|:----------|:-------------------------------------------------------------|---------|
+| coupling  | A coupling which is either a string or a real/complex number | 1.0     |
+| op        | An [Op](op.md) which describes the type of operator          |         |
 
 Alternatively, an OpSum can also be constructed via the `* operator`, for example:
 
@@ -52,7 +56,7 @@ Alternatively, an OpSum can also be constructed via the `* operator`, for exampl
 	```c++
 	auto ops = OpSum();
 	for (int i = 0; i<N; ++i) {
-      ops += J * Op("SzSz", {i, (i + 1) % N});
+  ops += "J" * Op("SzSz", {i, (i + 1) % N});
     }
 	```
 ---
@@ -99,15 +103,13 @@ Converts an OpSum with possible string couplings to an OpSum with purely numeric
 
 #### operator* (Creation)
 
-Creates an OpSum with a single pair of [Coupling](coupling.md) and [Op](op.md) objects.
+Creates an OpSum with a single pair of coupling constant and an [Op](op.md) object.
 
 === "C++"
 	```c++
 	OpSum operator*(std::string cpl, Op const &op);
 	OpSum operator*(double cpl, Op const &op);
 	OpSum operator*(complex cpl, Op const &op);
-	OpSum operator*(Scalar cpl, Op const &op);
-	OpSum operator*(Coupling const& cpl, Op const &op);
 	```
 ---
 
@@ -152,11 +154,17 @@ $$\mathcal{B} = b \sum_i a_i \mathcal{A}_i$$
 
 === "C++"
 	```c++
-	OpSum &operator*=(Scalar const &cpl);
-	OpSum &operator/=(Scalar const &cpl);
-	OpSum operator*(Scalar const &cpl, OpSum const &op);
-	OpSum operator*(OpSum const &op, Scalar const &cpl);
-	OpSum operator/(OpSum const &op, Scalar const &cpl);
+	OpSum &operator*=(double scalar);
+    OpSum &operator*=(complex scalar);
+	OpSum &operator/=(double scalar);
+	OpSum &operator/=(complex scalar);
+  
+	OpSum operator*(double scalar, OpSum const &op);
+	OpSum operator*(complex scalar, OpSum const &op);
+	OpSum operator*(OpSum const &op, double scalar);
+	OpSum operator*(OpSum const &op, complex scalar);
+	OpSum operator/(OpSum const &op, double scalar);
+	OpSum operator/(OpSum const &op, complex scalar);
 	```
 ---
 
@@ -173,7 +181,7 @@ Sets a coupling constant defined as a string to a numerical value.
 
 #### constants
 
-Returns a vector of strings with the coupling constants defined, i.e. the strings that define some of the [Coupling](coupling.md) objects.
+Returns a vector of strings with the coupling constants defined, i.e. the strings that define some of the coupling constants.
 
 === "C++"
 	```c++

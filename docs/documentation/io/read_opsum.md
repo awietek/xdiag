@@ -36,7 +36,7 @@ Reads an [OpSum](../operators/opsum.md) object from a TOML file.
 
 An [OpSum](../operators/opsum.md) can be defined in a TOML file as a simple list. The entries of the list are themselves also lists, which contain two or more entries:
 
-1. The first entry must be either a string or a real / complex number denoting the [Coupling](../operators/coupling.md) of the term.
+1. The first entry must be either a string or a real / complex number denoting the coupling constant of the term.
 2. The second entry must be a string and denotes the [operator type](../operators/operator_types.md)
 3. The (optional) following entries are integer numbers which denote the sites of the [Op](../operators/op.md)
 

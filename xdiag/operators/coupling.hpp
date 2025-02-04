@@ -12,11 +12,11 @@ public:
   using value_t = std::variant<std::string, Scalar>;
 
   XDIAG_API Coupling() = default;
-  XDIAG_API Coupling(std::string value);
-  XDIAG_API Coupling(const char *value);
-  XDIAG_API Coupling(double value);
-  XDIAG_API Coupling(complex value);
-  XDIAG_API Coupling(Scalar value);
+  XDIAG_API explicit Coupling(std::string value);
+  XDIAG_API explicit Coupling(const char *value);
+  XDIAG_API explicit Coupling(double value);
+  XDIAG_API explicit Coupling(complex value);
+  XDIAG_API explicit Coupling(Scalar value);
 
   XDIAG_API bool operator==(Coupling const &rhs) const;
   XDIAG_API bool operator!=(Coupling const &rhs) const;

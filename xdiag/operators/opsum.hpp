@@ -15,15 +15,21 @@ public:
 
   XDIAG_API OpSum() = default;
   XDIAG_API explicit OpSum(Op const &op);
-  XDIAG_API OpSum(Coupling const &cpl, Op const &op);
-  XDIAG_API OpSum(std::string cpl, Op const &op);
-  XDIAG_API OpSum(double cpl, Op const &op);
-  XDIAG_API OpSum(complex cpl, Op const &op);
+  XDIAG_API OpSum(std::string coupling, Op const &op);
+  XDIAG_API OpSum(double coupling, Op const &op);
+  XDIAG_API OpSum(complex coupling, Op const &op);
+  OpSum(Coupling const &coupling, Op const &op);
 
   XDIAG_API OpSum &operator=(Op const &op);
 
-  XDIAG_API OpSum &operator*=(Scalar const &cpl);
-  XDIAG_API OpSum &operator/=(Scalar const &cpl);
+  XDIAG_API OpSum &operator*=(double scalar);
+  XDIAG_API OpSum &operator*=(complex scalar);
+  OpSum &operator*=(Scalar const &scalar);
+
+  XDIAG_API OpSum &operator/=(double scalar);
+  XDIAG_API OpSum &operator/=(complex scalar);
+  OpSum &operator/=(Scalar const &scalar);
+
   XDIAG_API OpSum &operator+=(OpSum const &ops);
   XDIAG_API OpSum &operator+=(Op const &op);
 
@@ -55,11 +61,33 @@ private:
 };
 
 XDIAG_API std::vector<std::string> constants(OpSum const &ops);
-XDIAG_API OpSum operator*(Coupling const &cpl, Op const &op);
-XDIAG_API OpSum operator*(Op const &op, Coupling const &cpl);
-XDIAG_API OpSum operator*(Scalar const &cpl, OpSum const &op);
-XDIAG_API OpSum operator*(OpSum const &op, Scalar const &cpl);
-XDIAG_API OpSum operator/(OpSum const &op, Scalar const &cpl);
+
+// Creation
+XDIAG_API OpSum operator*(double coupling, Op const &op);
+XDIAG_API OpSum operator*(complex coupling, Op const &op);
+XDIAG_API OpSum operator*(std::string coupling, Op const &op);
+
+XDIAG_API OpSum operator*(Op const &op, double coupling);
+XDIAG_API OpSum operator*(Op const &op, complex coupling);
+XDIAG_API OpSum operator*(Op const &op, std::string coupling);
+
+OpSum operator*(Scalar const &coupling, Op const &op);
+OpSum operator*(Coupling const &coupling, Op const &op);
+OpSum operator*(Op const &op, Scalar const &coupling);
+OpSum operator*(Op const &op, Coupling const &coupling);
+
+// scalar Multiplication
+XDIAG_API OpSum operator*(double scalar, OpSum const &op);
+XDIAG_API OpSum operator*(complex scalar, OpSum const &op);
+OpSum operator*(Scalar const &coupling, OpSum const &op);
+
+XDIAG_API OpSum operator*(OpSum const &op, double scalar);
+XDIAG_API OpSum operator*(OpSum const &op, complex scalar);
+OpSum operator*(OpSum const &op, Scalar const &coupling);
+
+XDIAG_API OpSum operator/(OpSum const &op, double scalar);
+XDIAG_API OpSum operator/(OpSum const &op, complex scalar);
+OpSum operator/(OpSum const &op, Scalar const &coupling);
 
 XDIAG_API std::ostream &operator<<(std::ostream &out, OpSum const &ops);
 XDIAG_API std::string to_string(OpSum const &ops);

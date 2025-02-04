@@ -4,9 +4,7 @@ title: Operator types
 
 ## List of operator types
 
-Generic operators in XDiag are represented as [OpSum](opsum.md) objects made up of [Coupling](coupling.md) and [Op](op.md) objects. 
-Every [Op](op.md) is defined by a `type`. Here we list all the available types implemented in XDiag, 
-their required number of sites, and the blocks for which they are available.
+Generic operators in XDiag are represented as [OpSum](opsum.md) objects made up of a coupling, which can be a real/complex number or a string, and [Op](op.md) objects. Every [Op](op.md) is defined by a `type`. Here we list all the available types implemented in XDiag, their required number of sites, and the blocks for which they are available.
 
 | Type              | Description                                                                                                                                             | No. of sites | Blocks                                                     |
 |:------------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------|--------------|------------------------------------------------------------|
