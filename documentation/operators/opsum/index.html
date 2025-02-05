@@ -383,7 +383,7 @@
           <li class="md-nav__item">
   <a href="#operator-operator-scalar-muliplicationdivision" class="md-nav__link">
     <span class="md-ellipsis">
-      operator* , operator/ (Scalar muliplication/division)
+      operator* , operator/ (scalar muliplication/division)
     </span>
   </a>
   
@@ -402,6 +402,33 @@
   <a href="#constants" class="md-nav__link">
     <span class="md-ellipsis">
       constants
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#isreal" class="md-nav__link">
+    <span class="md-ellipsis">
+      isreal
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#isapprox" class="md-nav__link">
+    <span class="md-ellipsis">
+      isapprox
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#to_string-operator" class="md-nav__link">
+    <span class="md-ellipsis">
+      to_string (operator&lt;&lt;)
     </span>
   </a>
   
@@ -440,7 +467,10 @@
 
 <p>Object representing a generic many-body operator by a sum of operators of the form </p>
 <div class="arithmatex">\[ \mathcal{O} = \sum_i c_i \mathcal{O}_i. \]</div>
-<p><strong>Sources</strong> <a href="https://github.com/awietek/xdiag/blob/main/xdiag/operators/opsum.hpp">opsum.hpp</a>, <a href="https://github.com/awietek/xdiag/blob/main/xdiag/operators/opsum.cpp">opsum.cpp</a></p>
+<p><strong>Sources</strong><br>
+<a href="https://github.com/awietek/xdiag/blob/main/xdiag/operators/opsum.hpp">opsum.hpp</a><br>
+<a href="https://github.com/awietek/xdiag/blob/main/xdiag/operators/opsum.cpp">opsum.cpp</a><br>
+<a href="https://github.com/awietek/XDiag.jl/blob/main/src/operators/opsum.jl">opsum.jl</a></p>
 <hr />
 <p>An OpSum is consists of a sum of pairs given by</p>
 <ol>
@@ -497,18 +527,23 @@
 </tbody>
 </table>
 <p>Alternatively, an OpSum can also be constructed via the <code>* operator</code>, for example:</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="2:1"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">C++</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">C++</label><label for="__tabbed_2_2">Julia</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<p>```c++
-auto ops = OpSum();
-for (int i = 0; i&lt;N; ++i) {</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">ops</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OpSum</span><span class="p">();</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">&lt;</span><span class="n">N</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="n">ops</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="s">&quot;J&quot;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Op</span><span class="p">(</span><span class="s">&quot;SzSz&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="n">N</span><span class="p">});</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="p">}</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">ops</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OpSum</span><span class="p">();</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">for</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="mi">1</span><span class="o">:</span><span class="n">n</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="n">ops</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="s">&quot;J&quot;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Op</span><span class="p">(</span><span class="s">&quot;SzSz&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">mod1</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">N</span><span class="p">)]);</span>
+</code></pre></div>
 </div>
 </div>
 </div>
-<p>ops += "J" * Op("SzSz", {i, (i + 1) % N});
-    }
-    ```</p>
 <hr />
 <h2 id="complex-couplings">Complex couplings</h2>
 <p>XDiag allows all couplings to be complex. Depending on the <a href="../operator_types/">operator type</a> 
@@ -540,11 +575,11 @@ a complex coupling can have two meanings:</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">C++</label><label for="__tabbed_3_2">Julia</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">OpSum</span><span class="w"> </span><span class="nf">plain</span><span class="p">(</span><span class="n">OpSum</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ops</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">OpSum</span><span class="w"> </span><span class="nf">plain</span><span class="p">(</span><span class="n">OpSum</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ops</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">plain</span><span class="p">(</span><span class="n">ops</span><span class="o">::</span><span class="kt">OpSum</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">plain</span><span class="p">(</span><span class="n">ops</span><span class="o">::</span><span class="kt">OpSum</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
@@ -552,12 +587,18 @@ a complex coupling can have two meanings:</p>
 <hr />
 <h4 id="operator-creation">operator* (Creation)</h4>
 <p>Creates an OpSum with a single pair of coupling constant and an <a href="../op/">Op</a> object.</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="4:1"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">C++</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="4:2"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">C++</label><label for="__tabbed_4_2">Julia</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">OpSum</span><span class="w"> </span><span class="k">operator</span><span class="o">*</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">cpl</span><span class="p">,</span><span class="w"> </span><span class="n">Op</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">op</span><span class="p">);</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="n">OpSum</span><span class="w"> </span><span class="k">operator</span><span class="o">*</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">cpl</span><span class="p">,</span><span class="w"> </span><span class="n">Op</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">op</span><span class="p">);</span>
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="n">OpSum</span><span class="w"> </span><span class="k">operator</span><span class="o">*</span><span class="p">(</span><span class="n">complex</span><span class="w"> </span><span class="n">cpl</span><span class="p">,</span><span class="w"> </span><span class="n">Op</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">op</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">OpSum</span><span class="w"> </span><span class="k">operator</span><span class="o">*</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">coupling</span><span class="p">,</span><span class="w"> </span><span class="n">Op</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">op</span><span class="p">);</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="n">OpSum</span><span class="w"> </span><span class="k">operator</span><span class="o">*</span><span class="p">(</span><span class="n">complex</span><span class="w"> </span><span class="n">coupling</span><span class="p">,</span><span class="w"> </span><span class="n">Op</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">op</span><span class="p">);</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="n">OpSum</span><span class="w"> </span><span class="k">operator</span><span class="o">*</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">coupling</span><span class="p">,</span><span class="w"> </span><span class="n">Op</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">op</span><span class="p">);</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">Base</span><span class="o">.:*</span><span class="p">(</span><span class="n">coupling</span><span class="o">::</span><span class="kt">Float64</span><span class="p">,</span><span class="w"> </span><span class="n">op</span><span class="o">::</span><span class="kt">Op</span><span class="p">)</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="n">Base</span><span class="o">.:*</span><span class="p">(</span><span class="n">coupling</span><span class="o">::</span><span class="kt">ComplexF64</span><span class="p">,</span><span class="w"> </span><span class="n">op</span><span class="o">::</span><span class="kt">Op</span><span class="p">)</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="n">Base</span><span class="o">.:*</span><span class="p">(</span><span class="n">coupling</span><span class="o">::</span><span class="kt">String</span><span class="p">,</span><span class="w"> </span><span class="n">op</span><span class="o">::</span><span class="kt">Op</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
@@ -569,12 +610,12 @@ a complex coupling can have two meanings:</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="5:2"><input checked="checked" id="__tabbed_5_1" name="__tabbed_5" type="radio" /><input id="__tabbed_5_2" name="__tabbed_5" type="radio" /><div class="tabbed-labels"><label for="__tabbed_5_1">C++</label><label for="__tabbed_5_2">Julia</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">OpSum</span><span class="w"> </span><span class="o">&amp;</span><span class="k">operator</span><span class="o">+=</span><span class="p">(</span><span class="n">OpSum</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ops</span><span class="p">);</span>
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="n">OpSum</span><span class="w"> </span><span class="k">operator</span><span class="o">+</span><span class="p">(</span><span class="n">OpSum</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ops</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">OpSum</span><span class="w"> </span><span class="o">&amp;</span><span class="k">operator</span><span class="o">+=</span><span class="p">(</span><span class="n">OpSum</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ops</span><span class="p">);</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="n">OpSum</span><span class="w"> </span><span class="k">operator</span><span class="o">+</span><span class="p">(</span><span class="n">OpSum</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ops</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">Base</span><span class="o">.:+</span><span class="p">(</span><span class="n">ops</span><span class="o">::</span><span class="kt">OpSum</span><span class="p">,</span><span class="w"> </span><span class="n">ops2</span><span class="o">::</span><span class="kt">OpSum</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="n">Base</span><span class="o">.:+</span><span class="p">(</span><span class="n">ops1</span><span class="o">::</span><span class="kt">OpSum</span><span class="p">,</span><span class="w"> </span><span class="n">ops2</span><span class="o">::</span><span class="kt">OpSum</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
@@ -585,34 +626,43 @@ a complex coupling can have two meanings:</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="6:2"><input checked="checked" id="__tabbed_6_1" name="__tabbed_6" type="radio" /><input id="__tabbed_6_2" name="__tabbed_6" type="radio" /><div class="tabbed-labels"><label for="__tabbed_6_1">C++</label><label for="__tabbed_6_2">Julia</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">OpSum</span><span class="w"> </span><span class="o">&amp;</span><span class="k">operator</span><span class="o">-=</span><span class="p">(</span><span class="n">OpSum</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ops</span><span class="p">);</span>
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="n">OpSum</span><span class="w"> </span><span class="k">operator</span><span class="o">-</span><span class="p">(</span><span class="n">OpSum</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ops</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="n">OpSum</span><span class="w"> </span><span class="o">&amp;</span><span class="k">operator</span><span class="o">-=</span><span class="p">(</span><span class="n">OpSum</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ops</span><span class="p">);</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="n">OpSum</span><span class="w"> </span><span class="k">operator</span><span class="o">-</span><span class="p">(</span><span class="n">OpSum</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ops</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">Base</span><span class="o">.:-</span><span class="p">(</span><span class="n">ops</span><span class="o">::</span><span class="kt">OpSum</span><span class="p">,</span><span class="w"> </span><span class="n">ops2</span><span class="o">::</span><span class="kt">OpSum</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="n">Base</span><span class="o">.:-</span><span class="p">(</span><span class="n">ops</span><span class="o">::</span><span class="kt">OpSum</span><span class="p">,</span><span class="w"> </span><span class="n">ops2</span><span class="o">::</span><span class="kt">OpSum</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
 </div>
 <hr />
-<h4 id="operator-operator-scalar-muliplicationdivision">operator* , operator/ (Scalar muliplication/division)</h4>
+<h4 id="operator-operator-scalar-muliplicationdivision">operator* , operator/ (scalar muliplication/division)</h4>
 <p>Multiplies an OpSum <span class="arithmatex">\(\mathcal{A} = \sum_i a_i \mathcal{A}_i\)</span> with a scalar <span class="arithmatex">\(b\)</span> to form</p>
 <div class="arithmatex">\[\mathcal{B} = b \sum_i a_i \mathcal{A}_i\]</div>
-<div class="tabbed-set tabbed-alternate" data-tabs="7:1"><input checked="checked" id="__tabbed_7_1" name="__tabbed_7" type="radio" /><div class="tabbed-labels"><label for="__tabbed_7_1">C++</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="7:2"><input checked="checked" id="__tabbed_7_1" name="__tabbed_7" type="radio" /><input id="__tabbed_7_2" name="__tabbed_7" type="radio" /><div class="tabbed-labels"><label for="__tabbed_7_1">C++</label><label for="__tabbed_7_2">Julia</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="n">OpSum</span><span class="w"> </span><span class="o">&amp;</span><span class="k">operator</span><span class="o">*=</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">scalar</span><span class="p">);</span>
-<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="n">OpSum</span><span class="w"> </span><span class="o">&amp;</span><span class="k">operator</span><span class="o">*=</span><span class="p">(</span><span class="n">complex</span><span class="w"> </span><span class="n">scalar</span><span class="p">);</span>
-<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="n">OpSum</span><span class="w"> </span><span class="o">&amp;</span><span class="k">operator</span><span class="o">/=</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">scalar</span><span class="p">);</span>
-<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="n">OpSum</span><span class="w"> </span><span class="o">&amp;</span><span class="k">operator</span><span class="o">/=</span><span class="p">(</span><span class="n">complex</span><span class="w"> </span><span class="n">scalar</span><span class="p">);</span>
-<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>
-<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="n">OpSum</span><span class="w"> </span><span class="k">operator</span><span class="o">*</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">scalar</span><span class="p">,</span><span class="w"> </span><span class="n">OpSum</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">op</span><span class="p">);</span>
-<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="n">OpSum</span><span class="w"> </span><span class="k">operator</span><span class="o">*</span><span class="p">(</span><span class="n">complex</span><span class="w"> </span><span class="n">scalar</span><span class="p">,</span><span class="w"> </span><span class="n">OpSum</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">op</span><span class="p">);</span>
-<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="n">OpSum</span><span class="w"> </span><span class="k">operator</span><span class="o">*</span><span class="p">(</span><span class="n">OpSum</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">scalar</span><span class="p">);</span>
-<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="n">OpSum</span><span class="w"> </span><span class="k">operator</span><span class="o">*</span><span class="p">(</span><span class="n">OpSum</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="n">complex</span><span class="w"> </span><span class="n">scalar</span><span class="p">);</span>
-<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="n">OpSum</span><span class="w"> </span><span class="k">operator</span><span class="o">/</span><span class="p">(</span><span class="n">OpSum</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">scalar</span><span class="p">);</span>
-<a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="n">OpSum</span><span class="w"> </span><span class="k">operator</span><span class="o">/</span><span class="p">(</span><span class="n">OpSum</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="n">complex</span><span class="w"> </span><span class="n">scalar</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="n">OpSum</span><span class="w"> </span><span class="o">&amp;</span><span class="k">operator</span><span class="o">*=</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">scalar</span><span class="p">);</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="n">OpSum</span><span class="w"> </span><span class="o">&amp;</span><span class="k">operator</span><span class="o">*=</span><span class="p">(</span><span class="n">complex</span><span class="w"> </span><span class="n">scalar</span><span class="p">);</span>
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="n">OpSum</span><span class="w"> </span><span class="o">&amp;</span><span class="k">operator</span><span class="o">/=</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">scalar</span><span class="p">);</span>
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="n">OpSum</span><span class="w"> </span><span class="o">&amp;</span><span class="k">operator</span><span class="o">/=</span><span class="p">(</span><span class="n">complex</span><span class="w"> </span><span class="n">scalar</span><span class="p">);</span>
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="n">OpSum</span><span class="w"> </span><span class="k">operator</span><span class="o">*</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">scalar</span><span class="p">,</span><span class="w"> </span><span class="n">OpSum</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">op</span><span class="p">);</span>
+<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="n">OpSum</span><span class="w"> </span><span class="k">operator</span><span class="o">*</span><span class="p">(</span><span class="n">complex</span><span class="w"> </span><span class="n">scalar</span><span class="p">,</span><span class="w"> </span><span class="n">OpSum</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">op</span><span class="p">);</span>
+<a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="n">OpSum</span><span class="w"> </span><span class="k">operator</span><span class="o">*</span><span class="p">(</span><span class="n">OpSum</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">scalar</span><span class="p">);</span>
+<a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a><span class="n">OpSum</span><span class="w"> </span><span class="k">operator</span><span class="o">*</span><span class="p">(</span><span class="n">OpSum</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="n">complex</span><span class="w"> </span><span class="n">scalar</span><span class="p">);</span>
+<a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a><span class="n">OpSum</span><span class="w"> </span><span class="k">operator</span><span class="o">/</span><span class="p">(</span><span class="n">OpSum</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">scalar</span><span class="p">);</span>
+<a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a><span class="n">OpSum</span><span class="w"> </span><span class="k">operator</span><span class="o">/</span><span class="p">(</span><span class="n">OpSum</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="n">complex</span><span class="w"> </span><span class="n">scalar</span><span class="p">);</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="n">Base</span><span class="o">.:*</span><span class="p">(</span><span class="n">coupling</span><span class="o">::</span><span class="kt">Float64</span><span class="p">,</span><span class="w"> </span><span class="n">ops</span><span class="o">::</span><span class="kt">OpSum</span><span class="p">)</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="n">Base</span><span class="o">.:*</span><span class="p">(</span><span class="n">coupling</span><span class="o">::</span><span class="kt">ComplexF64</span><span class="p">,</span><span class="w"> </span><span class="n">ops</span><span class="o">::</span><span class="kt">OpSum</span><span class="p">)</span>
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="n">Base</span><span class="o">.:*</span><span class="p">(</span><span class="n">ops</span><span class="o">::</span><span class="kt">OpSum</span><span class="p">,</span><span class="w"> </span><span class="n">coupling</span><span class="o">::</span><span class="kt">Float64</span><span class="p">)</span>
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="n">Base</span><span class="o">.:*</span><span class="p">(</span><span class="n">ops</span><span class="o">::</span><span class="kt">OpSum</span><span class="p">,</span><span class="w"> </span><span class="n">coupling</span><span class="o">::</span><span class="kt">ComplexF64</span><span class="p">)</span>
+<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="n">Base</span><span class="o">.:/</span><span class="p">(</span><span class="n">ops</span><span class="o">::</span><span class="kt">OpSum</span><span class="p">,</span><span class="w"> </span><span class="n">coupling</span><span class="o">::</span><span class="kt">Float64</span><span class="p">)</span>
+<a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="n">Base</span><span class="o">.:/</span><span class="p">(</span><span class="n">ops</span><span class="o">::</span><span class="kt">OpSum</span><span class="p">,</span><span class="w"> </span><span class="n">coupling</span><span class="o">::</span><span class="kt">ComplexF64</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
@@ -620,11 +670,15 @@ a complex coupling can have two meanings:</p>
 <hr />
 <h4 id="operator">operator[]</h4>
 <p>Sets a coupling constant defined as a string to a numerical value.</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="8:1"><input checked="checked" id="__tabbed_8_1" name="__tabbed_8" type="radio" /><div class="tabbed-labels"><label for="__tabbed_8_1">C++</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="8:2"><input checked="checked" id="__tabbed_8_1" name="__tabbed_8" type="radio" /><input id="__tabbed_8_2" name="__tabbed_8" type="radio" /><div class="tabbed-labels"><label for="__tabbed_8_1">C++</label><label for="__tabbed_8_2">Julia</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="n">Scalar</span><span class="w"> </span><span class="o">&amp;</span><span class="k">operator</span><span class="p">[](</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">);</span>
-<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="n">Scalar</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="k">operator</span><span class="p">[](</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="n">Scalar</span><span class="w"> </span><span class="o">&amp;</span><span class="k">operator</span><span class="p">[](</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">);</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="n">Base</span><span class="o">.</span><span class="n">setindex!</span><span class="p">(</span><span class="n">ops</span><span class="o">::</span><span class="kt">OpSum</span><span class="p">,</span><span class="w"> </span><span class="n">cpl</span><span class="o">::</span><span class="kt">Float64</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="o">::</span><span class="kt">String</span><span class="p">)</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="n">Base</span><span class="o">.</span><span class="n">setindex!</span><span class="p">(</span><span class="n">ops</span><span class="o">::</span><span class="kt">OpSum</span><span class="p">,</span><span class="w"> </span><span class="n">cpl</span><span class="o">::</span><span class="kt">ComplexF64</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="o">::</span><span class="kt">String</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
@@ -632,43 +686,94 @@ a complex coupling can have two meanings:</p>
 <hr />
 <h4 id="constants">constants</h4>
 <p>Returns a vector of strings with the coupling constants defined, i.e. the strings that define some of the coupling constants.</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="9:1"><input checked="checked" id="__tabbed_9_1" name="__tabbed_9" type="radio" /><div class="tabbed-labels"><label for="__tabbed_9_1">C++</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="9:2"><input checked="checked" id="__tabbed_9_1" name="__tabbed_9" type="radio" /><input id="__tabbed_9_2" name="__tabbed_9" type="radio" /><div class="tabbed-labels"><label for="__tabbed_9_1">C++</label><label for="__tabbed_9_2">Julia</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">constants</span><span class="p">(</span><span class="n">OpSum</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ops</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">constants</span><span class="p">(</span><span class="n">OpSum</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ops</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="n">constants</span><span class="p">(</span><span class="n">ops</span><span class="o">::</span><span class="n">OpSum</span><span class="p">)</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<hr />
+<h4 id="isreal">isreal</h4>
+<p>Returns whether an <a href="./">OpSum</a> is a real operator.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="10:2"><input checked="checked" id="__tabbed_10_1" name="__tabbed_10" type="radio" /><input id="__tabbed_10_2" name="__tabbed_10" type="radio" /><div class="tabbed-labels"><label for="__tabbed_10_1">C++</label><label for="__tabbed_10_2">Julia</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="kt">bool</span><span class="w"> </span><span class="nf">isreal</span><span class="p">(</span><span class="n">OpSum</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ops</span><span class="p">);</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="n">isreal</span><span class="p">(</span><span class="n">ops</span><span class="o">::</span><span class="kt">OpSum</span><span class="p">)</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<hr />
+<h4 id="isapprox">isapprox</h4>
+<p>Returns whether two OpSums are approximately equal.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="11:2"><input checked="checked" id="__tabbed_11_1" name="__tabbed_11" type="radio" /><input id="__tabbed_11_2" name="__tabbed_11" type="radio" /><div class="tabbed-labels"><label for="__tabbed_11_1">C++</label><label for="__tabbed_11_2">Julia</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="kt">bool</span><span class="w"> </span><span class="nf">isapprox</span><span class="p">(</span><span class="n">OpSum</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ops1</span><span class="p">,</span><span class="w"> </span><span class="n">OpSum</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ops2</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">rtol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1e-12</span><span class="p">,</span>
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="w">              </span><span class="kt">double</span><span class="w"> </span><span class="n">atol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1e-12</span><span class="p">);</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="n">isapprox</span><span class="p">(</span><span class="n">ops1</span><span class="o">::</span><span class="kt">OpSum</span><span class="p">,</span><span class="w"> </span><span class="n">ops2</span><span class="o">::</span><span class="kt">OpSum</span><span class="p">,</span><span class="w"> </span><span class="n">rtol</span><span class="o">::</span><span class="kt">Float64</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">,</span><span class="w"> </span><span class="n">atol</span><span class="o">::</span><span class="kt">Float64</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<hr />
+<h4 id="to_string-operator">to_string (operator&lt;&lt;)</h4>
+<p>Converts the OpSum to a readable string representation.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="12:2"><input checked="checked" id="__tabbed_12_1" name="__tabbed_12" type="radio" /><input id="__tabbed_12_2" name="__tabbed_12" type="radio" /><div class="tabbed-labels"><label for="__tabbed_12_1">C++</label><label for="__tabbed_12_2">Julia</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">to_string</span><span class="p">(</span><span class="n">OpSum</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ops</span><span class="p">);</span>
+<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="w"> </span><span class="o">&amp;</span><span class="k">operator</span><span class="o">&lt;&lt;</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="w"> </span><span class="o">&amp;</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="n">OpSum</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ops</span><span class="p">);</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="n">to_string</span><span class="p">(</span><span class="n">ops</span><span class="o">::</span><span class="kt">OpSum</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
 </div>
 <hr />
 <h2 id="usage-example">Usage Example</h2>
-<div class="tabbed-set tabbed-alternate" data-tabs="10:1"><input checked="checked" id="__tabbed_10_1" name="__tabbed_10" type="radio" /><div class="tabbed-labels"><label for="__tabbed_10_1">C++</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="13:1"><input checked="checked" id="__tabbed_13_1" name="__tabbed_13" type="radio" /><div class="tabbed-labels"><label for="__tabbed_13_1">C++</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1">// Define the 1D transverse-field Ising chain</span>
-<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="kt">int</span><span class="w"> </span><span class="n">N</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">12</span><span class="p">;</span>
-<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="kt">double</span><span class="w"> </span><span class="n">J</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span><span class="p">;</span>
-<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="kt">double</span><span class="w"> </span><span class="n">h</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.5</span><span class="p">;</span>
-<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="k">auto</span><span class="w"> </span><span class="n">Sx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">arma</span><span class="o">::</span><span class="n">mat</span><span class="p">(</span><span class="s">&quot;0 1; 1 0&quot;</span><span class="p">);</span>
-<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>
-<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="c1">// Option 1: coupling constants as numbers</span>
-<a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="k">auto</span><span class="w"> </span><span class="n">ops1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OpSum</span><span class="p">();</span>
-<a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">&lt;</span><span class="n">N</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a><span class="w">  </span><span class="n">ops1</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">J</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Op</span><span class="p">(</span><span class="s">&quot;SzSz&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">%</span><span class="n">N</span><span class="p">});</span>
-<a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a><span class="w">  </span><span class="n">ops1</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">h</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Op</span><span class="p">(</span><span class="s">&quot;Matrix&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">Sx</span><span class="p">);</span>
-<a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a><span class="p">}</span>
-<a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a>
-<a id="__codelineno-12-14" name="__codelineno-12-14" href="#__codelineno-12-14"></a><span class="c1">// Option 2: coupling constants as strings</span>
-<a id="__codelineno-12-15" name="__codelineno-12-15" href="#__codelineno-12-15"></a><span class="k">auto</span><span class="w"> </span><span class="n">ops2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OpSum</span><span class="p">();</span>
-<a id="__codelineno-12-16" name="__codelineno-12-16" href="#__codelineno-12-16"></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">&lt;</span><span class="n">N</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-12-17" name="__codelineno-12-17" href="#__codelineno-12-17"></a><span class="w">  </span><span class="n">ops2</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="s">&quot;J&quot;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Op</span><span class="p">(</span><span class="s">&quot;SzSz&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">%</span><span class="n">N</span><span class="p">});</span>
-<a id="__codelineno-12-18" name="__codelineno-12-18" href="#__codelineno-12-18"></a><span class="w">  </span><span class="n">ops2</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="s">&quot;h&quot;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Op</span><span class="p">(</span><span class="s">&quot;Matrix&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">Sx</span><span class="p">);</span>
-<a id="__codelineno-12-19" name="__codelineno-12-19" href="#__codelineno-12-19"></a><span class="p">}</span>
-<a id="__codelineno-12-20" name="__codelineno-12-20" href="#__codelineno-12-20"></a><span class="n">ops2</span><span class="p">[</span><span class="s">&quot;J&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">J</span><span class="p">;</span>
-<a id="__codelineno-12-21" name="__codelineno-12-21" href="#__codelineno-12-21"></a><span class="n">ops2</span><span class="p">[</span><span class="s">&quot;h&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">h</span><span class="p">;</span>
-<a id="__codelineno-12-22" name="__codelineno-12-22" href="#__codelineno-12-22"></a>
-<a id="__codelineno-12-23" name="__codelineno-12-23" href="#__codelineno-12-23"></a><span class="n">XDIAG_SHOW</span><span class="p">(</span><span class="n">isapprox</span><span class="p">(</span><span class="n">ops1</span><span class="p">,</span><span class="w"> </span><span class="n">ops2</span><span class="p">));</span>
-<a id="__codelineno-12-24" name="__codelineno-12-24" href="#__codelineno-12-24"></a><span class="n">XDIAG_SHOW</span><span class="p">(</span><span class="n">isapprox</span><span class="p">(</span><span class="n">ops1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">ops2</span><span class="p">,</span><span class="w"> </span><span class="mf">2.0</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">ops1</span><span class="p">));</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="c1">// Define the 1D transverse-field Ising chain</span>
+<a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a><span class="kt">int</span><span class="w"> </span><span class="n">N</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">12</span><span class="p">;</span>
+<a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a><span class="kt">double</span><span class="w"> </span><span class="n">J</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span><span class="p">;</span>
+<a id="__codelineno-24-4" name="__codelineno-24-4" href="#__codelineno-24-4"></a><span class="kt">double</span><span class="w"> </span><span class="n">h</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.5</span><span class="p">;</span>
+<a id="__codelineno-24-5" name="__codelineno-24-5" href="#__codelineno-24-5"></a><span class="k">auto</span><span class="w"> </span><span class="n">Sx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">arma</span><span class="o">::</span><span class="n">mat</span><span class="p">(</span><span class="s">&quot;0 1; 1 0&quot;</span><span class="p">);</span>
+<a id="__codelineno-24-6" name="__codelineno-24-6" href="#__codelineno-24-6"></a>
+<a id="__codelineno-24-7" name="__codelineno-24-7" href="#__codelineno-24-7"></a><span class="c1">// Option 1: coupling constants as numbers</span>
+<a id="__codelineno-24-8" name="__codelineno-24-8" href="#__codelineno-24-8"></a><span class="k">auto</span><span class="w"> </span><span class="n">ops1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OpSum</span><span class="p">();</span>
+<a id="__codelineno-24-9" name="__codelineno-24-9" href="#__codelineno-24-9"></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">&lt;</span><span class="n">N</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-24-10" name="__codelineno-24-10" href="#__codelineno-24-10"></a><span class="w">  </span><span class="n">ops1</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">J</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Op</span><span class="p">(</span><span class="s">&quot;SzSz&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">%</span><span class="n">N</span><span class="p">});</span>
+<a id="__codelineno-24-11" name="__codelineno-24-11" href="#__codelineno-24-11"></a><span class="w">  </span><span class="n">ops1</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">h</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Op</span><span class="p">(</span><span class="s">&quot;Matrix&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">Sx</span><span class="p">);</span>
+<a id="__codelineno-24-12" name="__codelineno-24-12" href="#__codelineno-24-12"></a><span class="p">}</span>
+<a id="__codelineno-24-13" name="__codelineno-24-13" href="#__codelineno-24-13"></a>
+<a id="__codelineno-24-14" name="__codelineno-24-14" href="#__codelineno-24-14"></a><span class="c1">// Option 2: coupling constants as strings</span>
+<a id="__codelineno-24-15" name="__codelineno-24-15" href="#__codelineno-24-15"></a><span class="k">auto</span><span class="w"> </span><span class="n">ops2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OpSum</span><span class="p">();</span>
+<a id="__codelineno-24-16" name="__codelineno-24-16" href="#__codelineno-24-16"></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">&lt;</span><span class="n">N</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-24-17" name="__codelineno-24-17" href="#__codelineno-24-17"></a><span class="w">  </span><span class="n">ops2</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="s">&quot;J&quot;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Op</span><span class="p">(</span><span class="s">&quot;SzSz&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">%</span><span class="n">N</span><span class="p">});</span>
+<a id="__codelineno-24-18" name="__codelineno-24-18" href="#__codelineno-24-18"></a><span class="w">  </span><span class="n">ops2</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="s">&quot;h&quot;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Op</span><span class="p">(</span><span class="s">&quot;Matrix&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">Sx</span><span class="p">);</span>
+<a id="__codelineno-24-19" name="__codelineno-24-19" href="#__codelineno-24-19"></a><span class="p">}</span>
+<a id="__codelineno-24-20" name="__codelineno-24-20" href="#__codelineno-24-20"></a><span class="n">ops2</span><span class="p">[</span><span class="s">&quot;J&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">J</span><span class="p">;</span>
+<a id="__codelineno-24-21" name="__codelineno-24-21" href="#__codelineno-24-21"></a><span class="n">ops2</span><span class="p">[</span><span class="s">&quot;h&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">h</span><span class="p">;</span>
+<a id="__codelineno-24-22" name="__codelineno-24-22" href="#__codelineno-24-22"></a>
+<a id="__codelineno-24-23" name="__codelineno-24-23" href="#__codelineno-24-23"></a><span class="n">XDIAG_SHOW</span><span class="p">(</span><span class="n">isapprox</span><span class="p">(</span><span class="n">ops1</span><span class="p">,</span><span class="w"> </span><span class="n">ops2</span><span class="p">));</span>
+<a id="__codelineno-24-24" name="__codelineno-24-24" href="#__codelineno-24-24"></a><span class="n">XDIAG_SHOW</span><span class="p">(</span><span class="n">isapprox</span><span class="p">(</span><span class="n">ops1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">ops2</span><span class="p">,</span><span class="w"> </span><span class="mf">2.0</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">ops1</span><span class="p">));</span>
 </code></pre></div>
 </div>
 </div>

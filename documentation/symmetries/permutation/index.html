@@ -395,6 +395,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#to_string-operator" class="md-nav__link">
+    <span class="md-ellipsis">
+      to_string (operator&lt;&lt;)
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -427,7 +436,10 @@
   <h1>Permutation</h1>
 
 <p>Permutations of indices or lattice sites. Basic building block of a <a href="../permutation_group/">PermutationGroup</a>. Permutations can be multiplied, inverted and raised to a power.</p>
-<p><strong>Sources</strong> <a href="https://github.com/awietek/xdiag/blob/main/xdiag/symmetries/permutation.hpp">permutation.hpp</a>, <a href="https://github.com/awietek/xdiag/blob/main/xdiag/symmetries/permutation.cpp">permutation.cpp</a></p>
+<p><strong>Sources</strong><br>
+<a href="https://github.com/awietek/xdiag/blob/main/xdiag/symmetries/permutation.hpp">permutation.hpp</a><br>
+<a href="https://github.com/awietek/xdiag/blob/main/xdiag/symmetries/permutation.cpp">permutation.cpp</a><br>
+<a href="https://github.com/awietek/XDiag.jl/blob/main/src/symmetries/permutation.jl">permutation.jl</a></p>
 <hr />
 <h2 id="constructors">Constructors</h2>
 <h3 id="from-an-array">From an array</h3>
@@ -442,8 +454,6 @@
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">Permutation</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">initializer_list</span><span class="o">&lt;</span><span class="kt">int64_t</span><span class="o">&gt;</span><span class="w"> </span><span class="n">list</span><span class="p">);</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">Permutation</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int32_t</span><span class="o">&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">array</span><span class="p">);</span>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">Permutation</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int64_t</span><span class="o">&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">array</span><span class="p">);</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">Permutation</span><span class="p">(</span><span class="n">arma</span><span class="o">::</span><span class="n">Col</span><span class="o">&lt;</span><span class="kt">int64_t</span><span class="o">&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">array</span><span class="p">);</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="n">Permutation</span><span class="p">(</span><span class="kt">int64_t</span><span class="w"> </span><span class="o">*</span><span class="n">array</span><span class="p">,</span><span class="w"> </span><span class="kt">int64_t</span><span class="w"> </span><span class="n">size</span><span class="p">);</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
@@ -487,7 +497,7 @@
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">Permutation</span><span class="p">(</span><span class="n">size</span><span class="o">::</span><span class="kt">Integer</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">Permutation</span><span class="p">(</span><span class="n">size</span><span class="o">::</span><span class="kt">Int64</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
@@ -547,7 +557,7 @@
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="n">Base</span><span class="o">.:^</span><span class="p">(</span><span class="n">p</span><span class="o">::</span><span class="kt">Permutation</span><span class="p">,</span><span class="w"> </span><span class="n">power</span><span class="o">::</span><span class="kt">Integer</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="n">Base</span><span class="o">.:^</span><span class="p">(</span><span class="n">p</span><span class="o">::</span><span class="kt">Permutation</span><span class="p">,</span><span class="w"> </span><span class="n">power</span><span class="o">::</span><span class="kt">Int64</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
@@ -567,23 +577,41 @@
 </div>
 </div>
 </div>
-<h2 id="usage-example">Usage Example</h2>
+<hr />
+<h4 id="to_string-operator">to_string (operator&lt;&lt;)</h4>
+<p>Converts the Permutation to a readable string representation.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="7:2"><input checked="checked" id="__tabbed_7_1" name="__tabbed_7" type="radio" /><input id="__tabbed_7_2" name="__tabbed_7" type="radio" /><div class="tabbed-labels"><label for="__tabbed_7_1">C++</label><label for="__tabbed_7_2">Julia</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="n">Permutation</span><span class="w"> </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">};</span>
-<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="n">Permutation</span><span class="w"> </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">};</span>
-<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>
-<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="n">XDIAG_SHOW</span><span class="p">(</span><span class="n">inverse</span><span class="p">(</span><span class="n">p1</span><span class="p">));</span>
-<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="n">XDIAG_SHOW</span><span class="p">(</span><span class="n">p1</span><span class="o">*</span><span class="n">p2</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">to_string</span><span class="p">(</span><span class="n">Permutation</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">perm</span><span class="p">);</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="w"> </span><span class="o">&amp;</span><span class="k">operator</span><span class="o">&lt;&lt;</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="w"> </span><span class="o">&amp;</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="n">Permutation</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">perm</span><span class="p">);</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Permutation</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">])</span>
-<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Permutation</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">])</span>
-<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>
-<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="err">@</span><span class="n">show</span><span class="w"> </span><span class="n">inverse</span><span class="p">(</span><span class="n">p1</span><span class="p">)</span>
-<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="err">@</span><span class="n">show</span><span class="w"> </span><span class="n">p1</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">p2</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="n">to_string</span><span class="p">(</span><span class="n">perm</span><span class="o">::</span><span class="kt">Permutation</span><span class="p">)</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<hr />
+<h2 id="usage-example">Usage Example</h2>
+<div class="tabbed-set tabbed-alternate" data-tabs="8:2"><input checked="checked" id="__tabbed_8_1" name="__tabbed_8" type="radio" /><input id="__tabbed_8_2" name="__tabbed_8" type="radio" /><div class="tabbed-labels"><label for="__tabbed_8_1">C++</label><label for="__tabbed_8_2">Julia</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="n">Permutation</span><span class="w"> </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">};</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="n">Permutation</span><span class="w"> </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">};</span>
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="n">XDIAG_SHOW</span><span class="p">(</span><span class="n">inverse</span><span class="p">(</span><span class="n">p1</span><span class="p">));</span>
+<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="n">XDIAG_SHOW</span><span class="p">(</span><span class="n">p1</span><span class="o">*</span><span class="n">p2</span><span class="p">);</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Permutation</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">])</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Permutation</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">])</span>
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="err">@</span><span class="n">show</span><span class="w"> </span><span class="n">inverse</span><span class="p">(</span><span class="n">p1</span><span class="p">)</span>
+<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="err">@</span><span class="n">show</span><span class="w"> </span><span class="n">p1</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">p2</span>
+<a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="err">@</span><span class="n">show</span><span class="w"> </span><span class="n">p1</span><span class="w"> </span><span class="o">^</span><span class="w"> </span><span class="mi">2</span>
 </code></pre></div>
 </div>
 </div>

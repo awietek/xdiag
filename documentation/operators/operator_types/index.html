@@ -365,19 +365,19 @@
 <tbody>
 <tr>
 <td style="text-align: left;"><code>Hop</code></td>
-<td style="text-align: left;">A hopping term for <span class="arithmatex">\(\uparrow\)</span> and <span class="arithmatex">\(\downarrow\)</span> spins of the form $$ \textcolor{red}{-}\sum_{\sigma=\uparrow\downarrow} (c^\dagger_{i\sigma}c_{j\sigma} + \textrm{h.c.})$$</td>
+<td style="text-align: left;">A hopping term for <span class="arithmatex">\(\uparrow\)</span> and <span class="arithmatex">\(\downarrow\)</span> spins of the form $$ \textcolor{red}{-}\sum_{\sigma=\uparrow\downarrow} (tc^\dagger_{i\sigma}c_{j\sigma} + \textrm{h.c.})$$</td>
 <td>2</td>
 <td>tJ, Electron, tJDistributed</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>Hopup</code></td>
-<td style="text-align: left;">A hopping term for <span class="arithmatex">\(\uparrow\)</span> spins of the form $$ \textcolor{red}{-}(c^\dagger_{i\uparrow}c_{j\uparrow} + \textrm{h.c.})$$</td>
+<td style="text-align: left;">A hopping term for <span class="arithmatex">\(\uparrow\)</span> spins of the form $$ \textcolor{red}{-}(tc^\dagger_{i\uparrow}c_{j\uparrow} + \textrm{h.c.})$$</td>
 <td>2</td>
 <td>tJ, Electron, tJDistributed</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>Hopdn</code></td>
-<td style="text-align: left;">A hopping term for <span class="arithmatex">\(\downarrow\)</span> spins of the form $$ \textcolor{red}{-}(c^\dagger_{i\downarrow}c_{j\downarrow} + \textrm{h.c.})$$</td>
+<td style="text-align: left;">A hopping term for <span class="arithmatex">\(\downarrow\)</span> spins of the form $$ \textcolor{red}{-}(tc^\dagger_{i\downarrow}c_{j\downarrow} + \textrm{h.c.})$$</td>
 <td>2</td>
 <td>tJ, Electron, tJDistributed</td>
 </tr>
@@ -449,7 +449,7 @@
 </tr>
 <tr>
 <td style="text-align: left;"><code>Exchange</code></td>
-<td style="text-align: left;">A spin exchange interaction of the form $$ \frac{1}{2}(S^+_i S^-_j + S^-_iS^+_j) = S^x_iS^x_j + S^y_iS^y_j j$$</td>
+<td style="text-align: left;">A spin exchange interaction of the form $$ \frac{1}{2}(JS^+_i S^-_j + J^*S^-_iS^+_j)$$</td>
 <td>2</td>
 <td>Spinhalf, tJ, Electron, SpinhalfDistributed, tJDistributed</td>
 </tr>

@@ -377,6 +377,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#to_string-operator" class="md-nav__link">
+    <span class="md-ellipsis">
+      to_string (operator&lt;&lt;)
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -409,7 +418,10 @@
   <h1>PermutationGroup</h1>
 
 <p>A group of permutations. Group axioms are verified during construction.</p>
-<p><strong>Sources</strong> <a href="https://github.com/awietek/xdiag/blob/main/xdiag/symmetries/permutation_group.hpp">permutation_group.hpp</a>, <a href="https://github.com/awietek/xdiag/blob/main/xdiag/symmetries/permutation_group.cpp">permutation_group.cpp</a></p>
+<p><strong>Sources</strong><br>
+<a href="https://github.com/awietek/xdiag/blob/main/xdiag/symmetries/permutation_group.hpp">permutation_group.hpp</a><br>
+<a href="https://github.com/awietek/xdiag/blob/main/xdiag/symmetries/permutation_group.cpp">permutation_group.cpp</a><br>
+<a href="https://github.com/awietek/XDiag.jl/blob/main/src/symmetries/permutation_group.jl">permutation_group.jl</a></p>
 <hr />
 <h2 id="constructor">Constructor</h2>
 <h3 id="from-permutations">From Permutations</h3>
@@ -428,11 +440,15 @@
 </div>
 <h3 id="from-matrix">From matrix</h3>
 <p>Creates a PermutationGroup out of a matrix whose rows specify the individual permutations. If a raw pointer is handed, the matrix is assumed to be in column-major form.</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="2:1"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">C++</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">C++</label><label for="__tabbed_2_2">Julia</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">PermutationGroup</span><span class="p">(</span><span class="n">arma</span><span class="o">::</span><span class="n">Mat</span><span class="o">&lt;</span><span class="kt">int64_t</span><span class="o">&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">matrix</span><span class="p">);</span>
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">PermutationGroup</span><span class="p">(</span><span class="kt">int64_t</span><span class="w"> </span><span class="o">*</span><span class="n">ptr</span><span class="p">,</span><span class="w"> </span><span class="kt">int64_t</span><span class="w"> </span><span class="n">n_permutations</span><span class="p">,</span><span class="w"> </span><span class="kt">int64_t</span><span class="w"> </span><span class="n">nsites</span><span class="p">);</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">PermutationGroup</span><span class="p">(</span><span class="n">matrix</span><span class="o">::</span><span class="kt">Matrix</span><span class="p">{</span><span class="kt">Int64</span><span class="p">})</span>
 </code></pre></div>
 </div>
 </div>
@@ -444,11 +460,11 @@
 <div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">C++</label><label for="__tabbed_3_2">Julia</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kt">int64_t</span><span class="w"> </span><span class="nf">nsites</span><span class="p">(</span><span class="n">PermutationGroup</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">group</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kt">int64_t</span><span class="w"> </span><span class="nf">nsites</span><span class="p">(</span><span class="n">PermutationGroup</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">group</span><span class="p">);</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">nsites</span><span class="p">(</span><span class="n">group</span><span class="o">::</span><span class="kt">PermutationGroup</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">nsites</span><span class="p">(</span><span class="n">group</span><span class="o">::</span><span class="kt">PermutationGroup</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
@@ -459,41 +475,55 @@
 <div class="tabbed-set tabbed-alternate" data-tabs="4:2"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">C++</label><label for="__tabbed_4_2">Julia</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kt">int64_t</span><span class="w"> </span><span class="nf">size</span><span class="p">(</span><span class="n">PermutationGroup</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">group</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kt">int64_t</span><span class="w"> </span><span class="nf">size</span><span class="p">(</span><span class="n">PermutationGroup</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">group</span><span class="p">);</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">size</span><span class="p">(</span><span class="n">group</span><span class="o">::</span><span class="kt">PermutationGroup</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">size</span><span class="p">(</span><span class="n">group</span><span class="o">::</span><span class="kt">PermutationGroup</span><span class="p">)</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<hr />
+<h4 id="to_string-operator">to_string (operator&lt;&lt;)</h4>
+<p>Converts the PermutationGroup to a readable string representation.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="5:2"><input checked="checked" id="__tabbed_5_1" name="__tabbed_5" type="radio" /><input id="__tabbed_5_2" name="__tabbed_5" type="radio" /><div class="tabbed-labels"><label for="__tabbed_5_1">C++</label><label for="__tabbed_5_2">Julia</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">to_string</span><span class="p">(</span><span class="n">PermutationGroup</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">group</span><span class="p">);</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="w"> </span><span class="o">&amp;</span><span class="k">operator</span><span class="o">&lt;&lt;</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="w"> </span><span class="o">&amp;</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="n">PermutationGroup</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">group</span><span class="p">);</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="n">to_string</span><span class="p">(</span><span class="n">group</span><span class="o">::</span><span class="kt">PermutationGroup</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
 </div>
 <hr />
 <h2 id="usage-example">Usage Example</h2>
-<div class="tabbed-set tabbed-alternate" data-tabs="5:2"><input checked="checked" id="__tabbed_5_1" name="__tabbed_5" type="radio" /><input id="__tabbed_5_2" name="__tabbed_5" type="radio" /><div class="tabbed-labels"><label for="__tabbed_5_1">C++</label><label for="__tabbed_5_2">Julia</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="6:2"><input checked="checked" id="__tabbed_6_1" name="__tabbed_6" type="radio" /><input id="__tabbed_6_2" name="__tabbed_6" type="radio" /><div class="tabbed-labels"><label for="__tabbed_6_1">C++</label><label for="__tabbed_6_2">Julia</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1">// Define a cyclic group of order 3</span>
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="n">Permutation</span><span class="w"> </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">};</span>
-<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="n">Permutation</span><span class="w"> </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">};</span>
-<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="n">Permutation</span><span class="w"> </span><span class="n">p3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">};</span>
-<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="k">auto</span><span class="w"> </span><span class="n">C3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PermutationGroup</span><span class="p">({</span><span class="n">p1</span><span class="p">,</span><span class="w"> </span><span class="n">p2</span><span class="p">,</span><span class="w"> </span><span class="n">p3</span><span class="p">});</span>
-<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>
-<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="n">XDIAG_SHOW</span><span class="p">(</span><span class="n">C3</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
-<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="n">XDIAG_SHOW</span><span class="p">(</span><span class="n">C3</span><span class="p">.</span><span class="n">nsites</span><span class="p">());</span>
-<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="n">XDIAG_SHOW</span><span class="p">(</span><span class="n">C3</span><span class="p">.</span><span class="n">inverse</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span><span class="w"> </span><span class="c1">// = 2</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1">// Define a cyclic group of order 3</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="n">Permutation</span><span class="w"> </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">};</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="n">Permutation</span><span class="w"> </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">};</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="n">Permutation</span><span class="w"> </span><span class="n">p3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">};</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="k">auto</span><span class="w"> </span><span class="n">C3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PermutationGroup</span><span class="p">({</span><span class="n">p1</span><span class="p">,</span><span class="w"> </span><span class="n">p2</span><span class="p">,</span><span class="w"> </span><span class="n">p3</span><span class="p">});</span>
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>
+<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="n">XDIAG_SHOW</span><span class="p">(</span><span class="n">C3</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
+<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="n">XDIAG_SHOW</span><span class="p">(</span><span class="n">C3</span><span class="p">.</span><span class="n">nsites</span><span class="p">());</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="cp"># Define a cyclic group of order 3</span>
-<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Permutation</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">])</span>
-<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Permutation</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">])</span>
-<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="n">p3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Permutation</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">])</span>
-<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="n">C3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PermutationGroup</span><span class="p">([</span><span class="n">p1</span><span class="p">,</span><span class="w"> </span><span class="n">p2</span><span class="p">,</span><span class="w"> </span><span class="n">p3</span><span class="p">])</span>
-<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>
-<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="err">@</span><span class="n">show</span><span class="w"> </span><span class="n">size</span><span class="p">(</span><span class="n">C3</span><span class="p">)</span>
-<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="err">@</span><span class="n">show</span><span class="w"> </span><span class="n">nsites</span><span class="p">(</span><span class="n">C3</span><span class="p">)</span>
-<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="err">@</span><span class="n">show</span><span class="w"> </span><span class="n">inverse</span><span class="p">(</span><span class="n">C3</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="err">#</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="cp"># Define a cyclic group of order 3</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Permutation</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">])</span>
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Permutation</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">])</span>
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="n">p3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Permutation</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">])</span>
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="n">C3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PermutationGroup</span><span class="p">([</span><span class="n">p1</span><span class="p">,</span><span class="w"> </span><span class="n">p2</span><span class="p">,</span><span class="w"> </span><span class="n">p3</span><span class="p">])</span>
+<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>
+<a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="err">@</span><span class="n">show</span><span class="w"> </span><span class="n">size</span><span class="p">(</span><span class="n">C3</span><span class="p">)</span>
+<a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a><span class="err">@</span><span class="n">show</span><span class="w"> </span><span class="n">nsites</span><span class="p">(</span><span class="n">C3</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>

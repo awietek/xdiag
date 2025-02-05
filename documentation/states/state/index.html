@@ -788,21 +788,21 @@
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a><span class="n">block</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Spinhalf</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-<a id="__codelineno-31-2" name="__codelineno-31-2" href="#__codelineno-31-2"></a><span class="n">psi1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">State</span><span class="p">(</span><span class="n">block</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="mf">1.0</span><span class="p">,</span><span class="w"> </span><span class="mf">2.0</span><span class="p">,</span><span class="w"> </span><span class="mf">3.0</span><span class="p">,</span><span class="w"> </span><span class="mf">4.0</span><span class="p">])</span>
-<a id="__codelineno-31-3" name="__codelineno-31-3" href="#__codelineno-31-3"></a><span class="err">@</span><span class="n">show</span><span class="w"> </span><span class="n">psi1</span>
-<a id="__codelineno-31-4" name="__codelineno-31-4" href="#__codelineno-31-4"></a><span class="n">display</span><span class="p">(</span><span class="n">vector</span><span class="p">(</span><span class="n">psi1</span><span class="p">))</span>
-<a id="__codelineno-31-5" name="__codelineno-31-5" href="#__codelineno-31-5"></a><span class="n">make_complex</span><span class="o">!</span><span class="p">(</span><span class="n">psi1</span><span class="p">)</span>
-<a id="__codelineno-31-6" name="__codelineno-31-6" href="#__codelineno-31-6"></a><span class="n">display</span><span class="p">(</span><span class="n">vector</span><span class="p">(</span><span class="n">psi1</span><span class="p">))</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a><span class="cp"># block = Spinhalf(2)</span>
+<a id="__codelineno-31-2" name="__codelineno-31-2" href="#__codelineno-31-2"></a><span class="cp"># psi1 = State(block, [1.0, 2.0, 3.0, 4.0])</span>
+<a id="__codelineno-31-3" name="__codelineno-31-3" href="#__codelineno-31-3"></a><span class="cp"># @show psi1</span>
+<a id="__codelineno-31-4" name="__codelineno-31-4" href="#__codelineno-31-4"></a><span class="cp"># display(vector(psi1))</span>
+<a id="__codelineno-31-5" name="__codelineno-31-5" href="#__codelineno-31-5"></a><span class="cp"># make_complex!(psi1)</span>
+<a id="__codelineno-31-6" name="__codelineno-31-6" href="#__codelineno-31-6"></a><span class="cp"># display(vector(psi1))</span>
 <a id="__codelineno-31-7" name="__codelineno-31-7" href="#__codelineno-31-7"></a>
-<a id="__codelineno-31-8" name="__codelineno-31-8" href="#__codelineno-31-8"></a><span class="n">psi2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">State</span><span class="p">(</span><span class="n">block</span><span class="p">,</span><span class="w"> </span><span class="n">real</span><span class="o">=</span><span class="nb">false</span><span class="p">,</span><span class="w"> </span><span class="n">n_cols</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-<a id="__codelineno-31-9" name="__codelineno-31-9" href="#__codelineno-31-9"></a><span class="err">@</span><span class="n">show</span><span class="w"> </span><span class="n">psi2</span>
-<a id="__codelineno-31-10" name="__codelineno-31-10" href="#__codelineno-31-10"></a><span class="n">display</span><span class="p">(</span><span class="n">matrix</span><span class="p">(</span><span class="n">psi2</span><span class="p">))</span>
+<a id="__codelineno-31-8" name="__codelineno-31-8" href="#__codelineno-31-8"></a><span class="cp"># psi2 = State(block, real=false, n_cols=3)</span>
+<a id="__codelineno-31-9" name="__codelineno-31-9" href="#__codelineno-31-9"></a><span class="cp"># @show psi2</span>
+<a id="__codelineno-31-10" name="__codelineno-31-10" href="#__codelineno-31-10"></a><span class="cp"># display(matrix(psi2))</span>
 <a id="__codelineno-31-11" name="__codelineno-31-11" href="#__codelineno-31-11"></a>
-<a id="__codelineno-31-12" name="__codelineno-31-12" href="#__codelineno-31-12"></a><span class="n">psi3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">State</span><span class="p">(</span><span class="n">block</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="mf">1.0</span><span class="o">+</span><span class="mf">4.0</span><span class="n">im</span><span class="p">,</span><span class="w"> </span><span class="mf">2.0</span><span class="o">+</span><span class="mf">3.0</span><span class="n">im</span><span class="p">,</span><span class="w"> </span><span class="mf">3.0</span><span class="o">+</span><span class="mf">2.0</span><span class="n">im</span><span class="p">,</span><span class="w"> </span><span class="mf">4.0</span><span class="o">+</span><span class="mf">1.0</span><span class="n">im</span><span class="p">])</span>
-<a id="__codelineno-31-13" name="__codelineno-31-13" href="#__codelineno-31-13"></a><span class="n">display</span><span class="p">(</span><span class="n">vector</span><span class="p">(</span><span class="n">psi3</span><span class="p">))</span>
-<a id="__codelineno-31-14" name="__codelineno-31-14" href="#__codelineno-31-14"></a><span class="n">display</span><span class="p">(</span><span class="n">vector</span><span class="p">(</span><span class="n">real</span><span class="p">(</span><span class="n">psi3</span><span class="p">)))</span>
-<a id="__codelineno-31-15" name="__codelineno-31-15" href="#__codelineno-31-15"></a><span class="n">display</span><span class="p">(</span><span class="n">vector</span><span class="p">(</span><span class="n">imag</span><span class="p">(</span><span class="n">psi3</span><span class="p">)))</span>
+<a id="__codelineno-31-12" name="__codelineno-31-12" href="#__codelineno-31-12"></a><span class="cp"># psi3 = State(block, [1.0+4.0im, 2.0+3.0im, 3.0+2.0im, 4.0+1.0im])</span>
+<a id="__codelineno-31-13" name="__codelineno-31-13" href="#__codelineno-31-13"></a><span class="cp"># display(vector(psi3))</span>
+<a id="__codelineno-31-14" name="__codelineno-31-14" href="#__codelineno-31-14"></a><span class="cp"># display(vector(real(psi3)))</span>
+<a id="__codelineno-31-15" name="__codelineno-31-15" href="#__codelineno-31-15"></a><span class="cp"># display(vector(imag(psi3)))</span>
 </code></pre></div>
 </div>
 </div>
