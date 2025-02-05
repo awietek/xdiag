@@ -4,7 +4,11 @@ title: PermutationGroup
 
 A group of permutations. Group axioms are verified during construction.
 
-**Sources** [permutation_group.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/symmetries/permutation_group.hpp), [permutation_group.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/symmetries/permutation_group.cpp)
+**Sources**<br>
+[permutation_group.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/symmetries/permutation_group.hpp)<br>
+[permutation_group.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/symmetries/permutation_group.cpp)<br>
+[permutation_group.jl](https://github.com/awietek/XDiag.jl/blob/main/src/symmetries/permutation_group.jl)
+
 
 ---
 
@@ -35,6 +39,11 @@ Creates a PermutationGroup out of a matrix whose rows specify the individual per
     PermutationGroup(arma::Mat<int64_t> const &matrix);
 	PermutationGroup(int64_t *ptr, int64_t n_permutations, int64_t nsites);
 	```
+=== "Julia"
+	```julia
+	PermutationGroup(matrix::Matrix{Int64})
+	```
+	
 ---
 
 ## Methods
@@ -65,6 +74,22 @@ Returns the size of the permutation group, i.e. the number permutations.
 === "Julia"
 	```julia
 	size(group::PermutationGroup)
+	```
+---
+
+#### to_string (operator<<)
+
+Converts the PermutationGroup to a readable string representation.
+	
+=== "C++"	
+	```c++
+	std::string to_string(PermutationGroup const &group);
+	std::ostream &operator<<(std::ostream &out, PermutationGroup const &group);
+	```
+
+=== "Julia"
+	```julia
+    to_string(group::PermutationGroup)
 	```
 ---
 

@@ -4,7 +4,10 @@ title: Representation
 
 A (1D) irreducible representation of a finite group. Upon creation, the group homomorphism properties are verified.
 
-**Source** [representation.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/symmetries/representation.hpp)
+**Sources**<br>
+[representation.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/symmetries/representation.hpp)<br>
+[representation.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/symmetries/representation.cpp)<br>
+[representation.jl](https://github.com/awietek/XDiag.jl/blob/main/src/symmetries/representation.jl)
 
 
 ## Constructors
@@ -22,8 +25,6 @@ Creates the trivial representation (all characters equal to 1) of a [Permutation
 	```julia
 	Representation(group::PermutationGroup)
 	```
-
-
 	
 ### With characters
 
@@ -37,6 +38,12 @@ Creates a 1D representation of a [PermutationGroup](permutation_group.md) with g
 	Representation(PermutationGroup const &group, arma::Col<T> const &characters);
 	template <typename T>
 	Representation(PermutationGroup const &group, T *characters, int64_t n_characters);
+	```
+	
+=== "Julia"
+	```julia
+	Representation(group::PermutationGroup, characters::Vector{Float64})
+	Representation(group::PermutationGroup, characters::Vector{ComplexF64})
 	```
 	
 | Name  | Description                         |
@@ -65,6 +72,7 @@ Returns the size of the Representation, i.e. the number of group elements repres
 	```
 
 ---
+
 #### isreal 
 Returns the whether or not the Representation is real, I.E. the characters are real numbers and do not have an imaginary part.
 
@@ -78,6 +86,7 @@ Returns the whether or not the Representation is real, I.E. the characters are r
 	isreal(irrep::Representation)
 	```
 ---
+
 #### * operator
 
 Multiplies two Representations by overloading the `*` operator.
@@ -91,8 +100,22 @@ Multiplies two Representations by overloading the `*` operator.
 	```julia
 	Base.:*(r1::Representation, r2::Representation)
 	```
+---
 
+#### to_string (operator<<)
+
+Converts the Representation to a readable string representation.
 	
+=== "C++"	
+	```c++
+	std::string to_string(Representation const &irrep);
+	std::ostream &operator<<(std::ostream &out, Representation const &irrep);
+	```
+
+=== "Julia"
+	```julia
+	to_string(irrep::Representation)
+	```
 ---
 
 ## Usage Example

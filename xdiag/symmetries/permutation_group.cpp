@@ -109,7 +109,7 @@ static std::vector<Permutation>
 permutations_from_matrix(arma::Mat<int64_t> const &matrix) try {
   std::vector<Permutation> permutations;
   for (int64_t i = 0; i < matrix.n_rows; ++i) {
-    auto perm = Permutation(arma::Col<int64_t>(matrix.row(i)));
+    auto perm = Permutation(arma::Col<int64_t>(matrix.row(i).t()));
     permutations.push_back(perm);
   }
   return permutations;

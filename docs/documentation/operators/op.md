@@ -4,7 +4,10 @@ title: Op
 
 Object describing a single linear operator acting on a Hilbert space.
 
-**Sources** [op.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/operators/op.hpp), [op.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/operators/op.cpp)
+**Sources**<br>
+[op.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/operators/op.hpp)<br>
+[op.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/operators/op.cpp)<br>
+[op.jl](https://github.com/awietek/XDiag.jl/blob/main/src/operators/op.jl)
 
 ---
 
@@ -70,6 +73,37 @@ Returns whether an [Op](op.md) is a real operator.
 	```
 ---
 
+#### isapprox
+
+Returns whether two Ops are approximately equal.
+	
+=== "C++"	
+	```c++
+	bool isapprox(Op const &op1, OpSum const &op2, double rtol = 1e-12,
+	              double atol = 1e-12);
+	```
+
+=== "Julia"
+	```julia
+	isapprox(op1::Op, op2::Op, rtol::Float64=1e-12, atol::Float64=1e-12)
+	```
+---
+
+#### to_string (operator<<)
+
+Converts the Op to a readable string representation.
+	
+=== "C++"	
+	```c++
+	std::string to_string(Op const &op);
+	std::ostream &operator<<(std::ostream &out, Op const &op);
+	```
+
+=== "Julia"
+	```julia
+	to_string(op::Op)
+	```
+---
 ## Usage Example
 
 === "C++"

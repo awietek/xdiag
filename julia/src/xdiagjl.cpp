@@ -50,7 +50,7 @@ JLCXX_MODULE define_julia_module(jlcxx::Module &mod) {
   // Armadillo
   julia::define_vectors(mod);
   julia::define_matrices(mod);
-
+  
   // Operators
   julia::define_op(mod);
   julia::define_opsum(mod);

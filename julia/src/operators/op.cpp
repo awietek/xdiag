@@ -29,7 +29,12 @@ void define_op(jlcxx::Module &mod) {
       .method("isreal",
               [](Op const &op) { JULIA_XDIAG_CALL_RETURN(isreal(op)) });
 
+  mod.method("==", [](Op const &a, Op const &b) { return a == b; });
   mod.method("to_string", [](Op const &op) { return to_string(op); });
+  mod.method("isapprox",
+             [](Op const &op1, Op const &op2, double rtol, double atol) {
+               return isapprox(op1, op2, rtol, atol);
+             });
 }
 
 } // namespace xdiag::julia

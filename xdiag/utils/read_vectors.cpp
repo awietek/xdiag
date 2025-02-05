@@ -15,7 +15,6 @@ template <typename coeff_t>
 arma::Mat<coeff_t> read_vectors(std::string type, std::string path_to_vecs,
                                 int n) try {
   using namespace arma;
-  using namespace fmt;
 
   std::stringstream ss;
   ss << type << "/" << path_to_vecs << "_" << n << ".arm";
@@ -29,15 +28,15 @@ arma::Mat<coeff_t> read_vectors(std::string type, std::string path_to_vecs,
     }
   } else if (n < 0) {
     XDIAG_THROW(
-        format("Invalid argument for number n of \"{}\" vectors", type));
+        fmt::format("Invalid argument for number n of \"{}\" vectors", type));
   }
 
   if (n == 0) {
     return Mat<coeff_t>();
   } else {
     if (!file_exists(filename)) {
-      XDIAG_THROW(
-          format("Unable to read \"{}\" vector from file {}", type, filename));
+      XDIAG_THROW(fmt::format("Unable to read \"{}\" vector from file {}", type,
+                              filename));
     }
     Col<coeff_t> v;
     v.load(filename);
@@ -48,8 +47,8 @@ arma::Mat<coeff_t> read_vectors(std::string type, std::string path_to_vecs,
 
     for (int i = 1; i < n; ++i) {
       if (!file_exists(filename)) {
-        XDIAG_THROW(format("Unable to read \"{}\" vector from file {}", type,
-                           filename));
+        XDIAG_THROW(fmt::format("Unable to read \"{}\" vector from file {}",
+                                type, filename));
       }
       v.load(filename);
       Avecs.col(n) = v;

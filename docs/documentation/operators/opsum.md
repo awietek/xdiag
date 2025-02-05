@@ -6,7 +6,10 @@ Object representing a generic many-body operator by a sum of operators of the fo
 
 $$ \mathcal{O} = \sum_i c_i \mathcal{O}_i. $$
 
-**Sources** [opsum.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/operators/opsum.hpp), [opsum.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/operators/opsum.cpp)
+**Sources**<br>
+[opsum.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/operators/opsum.hpp)<br>
+[opsum.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/operators/opsum.cpp)<br>
+[opsum.jl](https://github.com/awietek/XDiag.jl/blob/main/src/operators/opsum.jl)
 
 --- 
 
@@ -56,9 +59,16 @@ Alternatively, an OpSum can also be constructed via the `* operator`, for exampl
 	```c++
 	auto ops = OpSum();
 	for (int i = 0; i<N; ++i) {
-  ops += "J" * Op("SzSz", {i, (i + 1) % N});
+		ops += "J" * Op("SzSz", {i, (i + 1) % N});
     }
 	```
+=== "Julia"
+	```julia
+	ops = OpSum();
+	for i in 1:n
+		ops += "J" * Op("SzSz", [i, mod1(i+1, N)]);
+	```
+	
 ---
 
 ## Complex couplings
@@ -107,9 +117,15 @@ Creates an OpSum with a single pair of coupling constant and an [Op](op.md) obje
 
 === "C++"
 	```c++
-	OpSum operator*(std::string cpl, Op const &op);
-	OpSum operator*(double cpl, Op const &op);
-	OpSum operator*(complex cpl, Op const &op);
+	OpSum operator*(double coupling, Op const &op);
+	OpSum operator*(complex coupling, Op const &op);
+	OpSum operator*(std::string coupling, Op const &op);
+	```
+=== "Julia"
+	```julia
+	Base.:*(coupling::Float64, op::Op)
+	Base.:*(coupling::ComplexF64, op::Op)
+	Base.:*(coupling::String, op::Op)
 	```
 ---
 
@@ -126,7 +142,7 @@ Adds two OpSum objects $\mathcal{A} = \sum_i a_i \mathcal{A}_i$ and $\mathcal{B}
 	
 === "Julia"
 	```julia
-	Base.:+(ops::OpSum, ops2::OpSum)
+	Base.:+(ops1::OpSum, ops2::OpSum)
 	```
 
 ---
@@ -146,7 +162,7 @@ Subtracts to OpSum objects.
 	```
 ---
 
-#### operator* , operator/ (Scalar muliplication/division)
+#### operator* , operator/ (scalar muliplication/division)
 
 Multiplies an OpSum $\mathcal{A} = \sum_i a_i \mathcal{A}_i$ with a scalar $b$ to form
 
@@ -166,6 +182,17 @@ $$\mathcal{B} = b \sum_i a_i \mathcal{A}_i$$
 	OpSum operator/(OpSum const &op, double scalar);
 	OpSum operator/(OpSum const &op, complex scalar);
 	```
+
+=== "Julia"
+	```julia
+	Base.:*(coupling::Float64, ops::OpSum)
+	Base.:*(coupling::ComplexF64, ops::OpSum)
+	Base.:*(ops::OpSum, coupling::Float64)
+	Base.:*(ops::OpSum, coupling::ComplexF64)
+	Base.:/(ops::OpSum, coupling::Float64)
+	Base.:/(ops::OpSum, coupling::ComplexF64)
+	```
+
 ---
 
 #### operator[]
@@ -175,8 +202,12 @@ Sets a coupling constant defined as a string to a numerical value.
 === "C++"
 	```c++
 	Scalar &operator[](std::string name);
-	Scalar const &operator[](std::string name) const;
 	```
+=== "Julia"
+	```julia
+	Base.setindex!(ops::OpSum, cpl::Float64, name::String)
+	Base.setindex!(ops::OpSum, cpl::ComplexF64, name::String)
+	```	
 ---
 
 #### constants
@@ -187,8 +218,60 @@ Returns a vector of strings with the coupling constants defined, i.e. the string
 	```c++
 	std::vector<std::string> constants(OpSum const &ops) const;
 	```
+=== "Julia"
+	```c++
+	constants(ops::OpSum)
+	```
+	
 ---
 
+#### isreal
+
+Returns whether an [OpSum](opsum.md) is a real operator.
+
+=== "C++"
+	```c++
+    bool isreal(OpSum const &ops);
+	```
+
+=== "Julia"
+	```julia
+    isreal(ops::OpSum)
+	```
+---
+
+#### isapprox
+
+Returns whether two OpSums are approximately equal.
+	
+=== "C++"	
+	```c++
+	bool isapprox(OpSum const &ops1, OpSum const &ops2, double rtol = 1e-12,
+	              double atol = 1e-12);
+	```
+
+=== "Julia"
+	```julia
+	isapprox(ops1::OpSum, ops2::OpSum, rtol::Float64=1e-12, atol::Float64=1e-12)
+	```
+---
+
+#### to_string (operator<<)
+
+Converts the OpSum to a readable string representation.
+	
+=== "C++"	
+	```c++
+	std::string to_string(OpSum const &ops);
+	std::ostream &operator<<(std::ostream &out, OpSum const &ops);
+	```
+
+=== "Julia"
+	```julia
+	to_string(ops::OpSum)
+	```
+---
+	
 ## Usage Example
 
 === "C++"

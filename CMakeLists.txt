@@ -6,7 +6,6 @@ project(
   LANGUAGES CXX
 )
 
-set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 option(BUILD_TESTING "Build the tests" Off)
@@ -87,6 +86,8 @@ else()
   set(XDIAG_LIBRARY "xdiag")
   add_subdirectory(xdiag)
 endif()
+
+target_compile_features(${XDIAG_LIBRARY} PRIVATE cxx_std_17)
 
 # Generate the export header for SomeLib and attach it to the target
 include(GenerateExportHeader)

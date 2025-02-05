@@ -26,6 +26,10 @@ void define_opsum(jlcxx::Module &mod) {
               [](OpSum const &ops, OpSum const &ops2) {
                 JULIA_XDIAG_CALL_RETURN(ops - ops2);
               })
+      .method("*", [](double cpl,
+                      OpSum const &ops) { JULIA_XDIAG_CALL_RETURN(cpl * ops); })
+      .method("*", [](complex cpl,
+                      OpSum const &ops) { JULIA_XDIAG_CALL_RETURN(cpl * ops); })
       .method("*", [](OpSum const &ops,
                       double cpl) { JULIA_XDIAG_CALL_RETURN(cpl * ops); })
       .method("*", [](OpSum const &ops,
@@ -46,6 +50,14 @@ void define_opsum(jlcxx::Module &mod) {
         JULIA_XDIAG_CALL_RETURN(ops.constants());
       });
 
-  mod.method("to_string", [](OpSum const &ops) { return to_string(ops); });
+  mod.method("==", [](OpSum const &a, OpSum const &b) {
+    JULIA_XDIAG_CALL_RETURN(a == b);
+  });
+  mod.method("to_string",
+             [](OpSum const &ops) { JULIA_XDIAG_CALL_RETURN(to_string(ops)); });
+  mod.method("isapprox", [](OpSum const &ops1, OpSum const &ops2, double rtol,
+                            double atol) {
+    JULIA_XDIAG_CALL_RETURN(isapprox(ops1, ops2, rtol, atol));
+  });
 }
 } // namespace xdiag::julia

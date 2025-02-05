@@ -26,7 +26,6 @@ auto C3 = PermutationGroup({p1, p2, p3});
 
 XDIAG_SHOW(C3.size());
 XDIAG_SHOW(C3.nsites());
-XDIAG_SHOW(C3.inverse(1)); // = 2
 // --8<-- [end:PermutationGroup]
 }
 
@@ -268,7 +267,7 @@ op = 1.23 * Op("Hop", {0, 1});
 XDIAG_SHOW(op);
 
 arma::cx_mat m(arma::mat("0 0; 0 0"), arma::mat("0 -1; 1 0"));
- op = Op("Matrix", 0, m);
+op = Op("Matrix", 0, m);
 XDIAG_SHOW(op);
 XDIAG_SHOW(isreal(op));
 // --8<-- [end:Op]

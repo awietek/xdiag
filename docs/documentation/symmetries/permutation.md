@@ -4,7 +4,10 @@ title: Permutation
 
 Permutations of indices or lattice sites. Basic building block of a [PermutationGroup](permutation_group.md). Permutations can be multiplied, inverted and raised to a power.
 
-**Sources** [permutation.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/symmetries/permutation.hpp), [permutation.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/symmetries/permutation.cpp)
+**Sources**<br>
+[permutation.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/symmetries/permutation.hpp)<br>
+[permutation.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/symmetries/permutation.cpp)<br>
+[permutation.jl](https://github.com/awietek/XDiag.jl/blob/main/src/symmetries/permutation.jl)
 
 ---
 
@@ -24,8 +27,6 @@ Creates an Permutation out of an array of integers, e.g. `{0, 2, 1, 3}`. If the 
 	Permutation(std::initializer_list<int64_t> list);
 	Permutation(std::vector<int32_t> const &array);
 	Permutation(std::vector<int64_t> const &array);
-	Permutation(arma::Col<int64_t> const &array);
-	Permutation(int64_t *array, int64_t size);
 	```
 === "Julia"
 	```julia
@@ -51,7 +52,7 @@ Constructs an identity permutation of a given size, e.g. `{0, 1, 2, 3}`.
 	```
 === "Julia"
 	```julia
- 	Permutation(size::Integer)
+ 	Permutation(size::Int64)
  	```
 	
 | Name | Description                      |
@@ -93,6 +94,7 @@ Concatenates two permutations by overloading the `*` operator.
 	```
 	
 ---
+
 #### ^ operator, pow
 
 Raises a permutation to an integer power.
@@ -104,9 +106,10 @@ Raises a permutation to an integer power.
 	```
 === "Julia"
 	```julia
-	Base.:^(p::Permutation, power::Integer)
+	Base.:^(p::Permutation, power::Int64)
 	```
 ---
+
 #### size
 
 Returns the size of a Permutation.
@@ -119,6 +122,23 @@ Returns the size of a Permutation.
 	```julia
 	size(p::Permutation)
 	```
+---
+
+#### to_string (operator<<)
+
+Converts the Permutation to a readable string representation.
+	
+=== "C++"	
+	```c++
+	std::string to_string(Permutation const &perm);
+	std::ostream &operator<<(std::ostream &out, Permutation const &perm);
+	```
+
+=== "Julia"
+	```julia
+	to_string(perm::Permutation)
+	```
+---
 
 ## Usage Example
 
