@@ -2,7 +2,7 @@
 
 #include <xdiag/basis/tj_distributed/apply/apply_terms.hpp>
 
-namespace xdiag::basis::tj_distributed {
+namespace xdiag::basis {
 
 template <typename coeff_t>
 void dispatch_apply(OpSum const &ops, tJDistributed const &block_in,
@@ -36,4 +36,21 @@ template void dispatch_apply(OpSum const &, tJDistributed const &,
                              arma::cx_vec const &, tJDistributed const &block,
                              arma::cx_vec &);
 
-} // namespace xdiag::basis::tj_distributed
+template <typename coeff_t>
+void dispatch_apply(OpSum const &ops, tJDistributed const &block_in,
+                    arma::Mat<coeff_t> const &vec_in,
+                    tJDistributed const &block_out,
+                    arma::Mat<coeff_t> &vec_out) try {
+  XDIAG_THROW("Apply for an OpSum on a State with a matrix not implemented yet "
+              "for tJDistributed blocks");
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
+}
+template void dispatch_apply(OpSum const &, tJDistributed const &,
+                             arma::mat const &, tJDistributed const &block,
+                             arma::mat &);
+template void dispatch_apply(OpSum const &, tJDistributed const &,
+                             arma::cx_mat const &, tJDistributed const &block,
+                             arma::cx_mat &);
+
+} // namespace xdiag::basis

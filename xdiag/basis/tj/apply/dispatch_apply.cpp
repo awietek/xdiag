@@ -3,7 +3,7 @@
 #include <xdiag/algebra/fill.hpp>
 #include <xdiag/basis/tj/apply/dispatch.hpp>
 
-namespace xdiag::basis::tj {
+namespace xdiag::basis {
 
 template <typename coeff_t>
 void dispatch_apply(OpSum const &ops, tJ const &block_in,
@@ -12,7 +12,7 @@ void dispatch_apply(OpSum const &ops, tJ const &block_in,
   auto fill = [&](int64_t idx_in, int64_t idx_out, coeff_t val) {
     return fill_apply(vec_in, vec_out, idx_in, idx_out, val);
   };
-  dispatch<coeff_t>(ops, block_in, block_out, fill);
+  tj::dispatch<coeff_t>(ops, block_in, block_out, fill);
 } catch (Error const &error) {
   XDIAG_RETHROW(error);
 }
@@ -29,7 +29,7 @@ void dispatch_apply(OpSum const &ops, tJ const &block_in,
   auto fill = [&](int64_t idx_in, int64_t idx_out, coeff_t val) {
     return fill_apply(mat_in, mat_out, idx_in, idx_out, val);
   };
-  dispatch<coeff_t>(ops, block_in, block_out, fill);
+  tj::dispatch<coeff_t>(ops, block_in, block_out, fill);
 } catch (Error const &error) {
   XDIAG_RETHROW(error);
 }
@@ -38,4 +38,4 @@ template void dispatch_apply(OpSum const &, tJ const &, arma::mat const &,
                              tJ const &block, arma::mat &);
 template void dispatch_apply(OpSum const &, tJ const &, arma::cx_mat const &,
                              tJ const &block, arma::cx_mat &);
-} // namespace xdiag::basis::tj
+} // namespace xdiag::basis

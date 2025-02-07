@@ -259,7 +259,7 @@ Returns matrix representing the storage. In C++ use "matrix"/"matrixC" to either
 	```
 
 === "Julia"
-	```c++
+	```julia
 	--8<-- "examples/usage_examples/main.jl:state"
 	```
 

@@ -6,6 +6,7 @@
 #include <julia/src/operators/op.hpp>
 #include <julia/src/operators/opsum.hpp>
 #include <julia/src/operators/symmetrize.hpp>
+#include <julia/src/operators/block.hpp>
 
 #include <julia/src/blocks/electron.hpp>
 #include <julia/src/blocks/spinhalf.hpp>
@@ -69,7 +70,8 @@ JLCXX_MODULE define_julia_module(jlcxx::Module &mod) {
   julia::define_spinhalf(mod);
   julia::define_tj(mod);
   julia::define_electron(mod);
-
+  julia::define_block(mod);
+  
   // States
   julia::define_state(mod);
   julia::define_random_state(mod);

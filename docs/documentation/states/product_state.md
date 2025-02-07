@@ -2,9 +2,12 @@
 title: ProductState
 ---
 
-A product state of local configurations
+A product state of local configurations.
 
-**Sources** [product_state.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/states/product_state.hpp), [product_state.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/states/product_state.cpp)
+**Sources**<br>
+[product_state.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/states/product_state.hpp)<br>
+[product_state.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/states/product_state.cpp)<br>
+[product_state.jl](https://github.com/awietek/XDiag.jl/blob/main/src/states/product_state.jl)
 
 --- 
 
@@ -143,7 +146,7 @@ Adds a local configuration add the end of the product state.
 	```
 
 === "Julia"
-	```c++
+	```julia
 	--8<-- "examples/usage_examples/main.jl:product_state"
 	```
 

@@ -103,7 +103,7 @@ Set all coefficients of a given state to zero.
 	```
 
 === "Julia"
-	```c++
+	```julia
 	--8<-- "examples/usage_examples/main.jl:create_state"
 	```
 

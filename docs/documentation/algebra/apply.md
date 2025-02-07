@@ -4,7 +4,10 @@ title: apply
 
 Applies an operator given as an [Op](../operators/op.md) or [OpSum](../operators/opsum.md) to a [State](../states/state.md) $\vert w \rangle = \mathcal{O} \vert v\rangle$.
 
-**Sources** [apply.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/states/apply.hpp), [apply.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/states/apply.hpp)
+**Sources**<br>
+[apply.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/algebra/apply.hpp)<br> 
+[apply.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/algebra/apply.hpp)<br>
+[apply.jl](https://github.com/awietek/XDiag.jl/blob/main/src/algebra/apply.jl)
 
 ---
 

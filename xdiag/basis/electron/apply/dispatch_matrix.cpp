@@ -3,7 +3,7 @@
 #include <xdiag/algebra/fill.hpp>
 #include <xdiag/basis/electron/apply/dispatch.hpp>
 
-namespace xdiag::basis::electron {
+namespace xdiag::basis {
 
 template <typename coeff_t>
 void dispatch_matrix(OpSum const &ops, Electron const &block_in,
@@ -11,8 +11,7 @@ void dispatch_matrix(OpSum const &ops, Electron const &block_in,
   auto fill = [&](int64_t idx_in, int64_t idx_out, coeff_t val) {
     return fill_matrix(mat, idx_in, idx_out, m, val);
   };
-  dispatch<coeff_t>(ops, block_in, block_out, fill);
-
+  electron::dispatch<coeff_t>(ops, block_in, block_out, fill);
 } catch (Error const &error) {
   XDIAG_RETHROW(error);
 }
@@ -22,4 +21,4 @@ template void dispatch_matrix(OpSum const &ops, Electron const &block_in,
 template void dispatch_matrix(OpSum const &ops, Electron const &block_in,
                               Electron const &block_out, complex *mat,
                               int64_t m);
-} // namespace xdiag::basis::electron
+} // namespace xdiag::basis

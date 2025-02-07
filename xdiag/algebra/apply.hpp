@@ -24,53 +24,12 @@ XDIAG_API State apply(OpSum const &ops, State const &v);
 XDIAG_API void apply(Op const &op, State const &v, State &w);
 XDIAG_API void apply(OpSum const &ops, State const &v, State &w);
 
-template <typename coeff_t>
-void apply(OpSum const &op, Spinhalf const &block_in,
-           arma::Col<coeff_t> const &vec_in, Spinhalf const &block_out,
-           arma::Col<coeff_t> &vec_out);
-template <typename coeff_t>
-void apply(OpSum const &op, Spinhalf const &block_in,
-           arma::Mat<coeff_t> const &mat_in, Spinhalf const &block_out,
-           arma::Mat<coeff_t> &mat_out);
+template <typename mat_t>
+void apply(OpSum const &ops, Block const &block_in, mat_t const &mat_in,
+           Block const &block_out, mat_t &mat_out);
 
-template <typename coeff_t>
-void apply(OpSum const &op, tJ const &block_in,
-           arma::Col<coeff_t> const &vec_in, tJ const &block_out,
-           arma::Col<coeff_t> &vec_out);
-template <typename coeff_t>
-void apply(OpSum const &op, tJ const &block_in,
-           arma::Mat<coeff_t> const &mat_in, tJ const &block_out,
-           arma::Mat<coeff_t> &mat_out);
-
-template <typename coeff_t>
-void apply(OpSum const &op, Electron const &block_in,
-           arma::Col<coeff_t> const &vec_in, Electron const &block_out,
-           arma::Col<coeff_t> &vec_out);
-template <typename coeff_t>
-void apply(OpSum const &op, Electron const &block_in,
-           arma::Mat<coeff_t> const &mat_in, Electron const &block_out,
-           arma::Mat<coeff_t> &mat_out);
-
-#ifdef XDIAG_USE_MPI
-template <typename coeff_t>
-void apply(OpSum const &ops, SpinhalfDistributed const &block_in,
-           arma::Col<coeff_t> const &vec_in,
-           SpinhalfDistributed const &block_out, arma::Col<coeff_t> &vec_out);
-
-template <typename coeff_t>
-void apply(OpSum const &ops, tJDistributed const &block_in,
-           arma::Col<coeff_t> const &vec_in, tJDistributed const &block_out,
-           arma::Col<coeff_t> &vec_out);
-#endif
-
-template <typename coeff_t>
-void apply(OpSum const &ops, Block const &block_in,
-           arma::Col<coeff_t> const &vec_in, Block const &block_out,
-           arma::Col<coeff_t> &vec_out);
-
-template <typename coeff_t>
-void apply(OpSum const &ops, Block const &block_in,
-           arma::Mat<coeff_t> const &mat_in, Block const &block_out,
-           arma::Mat<coeff_t> &mat_out);
+template <typename mat_t, typename block_t>
+void apply(OpSum const &ops, block_t const &block_in, mat_t const &mat_in,
+           block_t const &block_out, mat_t &mat_out);
 
 } // namespace xdiag

@@ -2,7 +2,7 @@
 
 #include <xdiag/basis/spinhalf_distributed/apply/apply_terms.hpp>
 
-namespace xdiag::basis::spinhalf_distributed {
+namespace xdiag::basis {
 
 template <typename coeff_t>
 void dispatch_apply(OpSum const &ops, SpinhalfDistributed const &block_in,
@@ -36,4 +36,23 @@ template void dispatch_apply(OpSum const &, SpinhalfDistributed const &,
                              arma::cx_vec const &,
                              SpinhalfDistributed const &block, arma::cx_vec &);
 
-} // namespace xdiag::basis::spinhalf_distributed
+template <typename coeff_t>
+void dispatch_apply(OpSum const &ops, SpinhalfDistributed const &block_in,
+                    arma::Mat<coeff_t> const &vec_in,
+                    SpinhalfDistributed const &block_out,
+                    arma::Mat<coeff_t> &vec_out) try {
+  XDIAG_THROW("Apply for an OpSum on a State with a matrix not implemented yet "
+              "for SpinhalfDistributed blocks");
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
+}
+template void dispatch_apply(OpSum const &, SpinhalfDistributed const &,
+                             arma::mat const &,
+                             SpinhalfDistributed const &block, arma::mat &);
+template void dispatch_apply(OpSum const &, SpinhalfDistributed const &,
+                             arma::cx_mat const &,
+                             SpinhalfDistributed const &block, arma::cx_mat &);
+
+  
+
+} // namespace xdiag::basis

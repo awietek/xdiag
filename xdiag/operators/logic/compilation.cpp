@@ -52,8 +52,7 @@ OpSum compile_tj(OpSum const &ops) try {
       ops_compiled += cpl * Op("Ndn", op.sites());
     } else if (type == "Sz") {
       ops_compiled += (Scalar(0.5) * cpl.scalar()) * Op("Nup", op.sites());
-      ops_compiled +=
-          (Scalar(-0.5) * cpl.scalar()) * Op("Ndn", op.sites());
+      ops_compiled += (Scalar(-0.5) * cpl.scalar()) * Op("Ndn", op.sites());
     } else {
       ops_compiled += cpl * op;
     }
@@ -84,8 +83,7 @@ OpSum compile_electron(OpSum const &ops) try {
       ops_compiled += cpl * Op("Ndn", op.sites());
     } else if (type == "Sz") {
       ops_compiled += (Scalar(0.5) * cpl.scalar()) * Op("Nup", op.sites());
-      ops_compiled +=
-          (Scalar(-0.5) * cpl.scalar()) * Op("Ndn", op.sites());
+      ops_compiled += (Scalar(-0.5) * cpl.scalar()) * Op("Ndn", op.sites());
     } else {
       ops_compiled += cpl * op;
     }
@@ -94,5 +92,33 @@ OpSum compile_electron(OpSum const &ops) try {
 } catch (Error const &error) {
   XDIAG_RETHROW(error);
 }
+
+template <> OpSum compile<Spinhalf>(OpSum const &ops) try {
+  return compile_spinhalf(ops);
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
+}
+template <> OpSum compile<tJ>(OpSum const &ops) try {
+  return compile_tj(ops);
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
+}
+template <> OpSum compile<Electron>(OpSum const &ops) try {
+  return compile_electron(ops);
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
+}
+#ifdef XDIAG_USE_MPI
+template <> OpSum compile<SpinhalfDistributed>(OpSum const &ops) try {
+  return compile_spinhalf(ops);
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
+}
+template <> OpSum compile<tJDistributed>(OpSum const &ops) try {
+  return compile_tj(ops);
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
+}
+#endif
 
 } // namespace xdiag::operators

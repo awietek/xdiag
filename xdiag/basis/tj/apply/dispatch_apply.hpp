@@ -3,7 +3,7 @@
 #include <xdiag/blocks/tj.hpp>
 #include <xdiag/operators/opsum.hpp>
 
-namespace xdiag::basis::tj {
+namespace xdiag::basis {
 
 template <typename coeff_t>
 void dispatch_apply(OpSum const &ops, tJ const &block_in,
@@ -15,4 +15,4 @@ void dispatch_apply(OpSum const &ops, tJ const &block_in,
                     arma::Mat<coeff_t> const &mat_in, tJ const &block_out,
                     arma::Mat<coeff_t> &mat_out);
 
-} // namespace xdiag::basis::tj
+} // namespace xdiag::basis

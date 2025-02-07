@@ -119,34 +119,32 @@ end
 # --8<-- [end:Electron]
 
 
-# # --8<-- [start:matrix]
-# let
-#     # Creates matrix H_{k=2} in Eq (18.23) of https://link.springer.com/content/pdf/10.1007/978-3-540-74686-7_18.pdf
-#     N = 4
-#     nup = 3
-#     ndn = 2
+# --8<-- [start:matrix]
+let
+    # Creates matrix H_{k=2} in Eq (18.23) of https://link.springer.com/content/pdf/10.1007/978-3-540-74686-7_18.pdf
+    N = 4
+    nup = 3
+    ndn = 2
 
-#     # Define a Hubbard chain model
-#     ops = OpSum()
-#     for i in 1:N
-#         ops += Op("Hop", "T", [i, mod1(i+1, N)])
-#     end
-#     ops["T"] = 1.0;
-#     ops["U"] = 5.0;
+    # Define a Hubbard chain model
+    ops = OpSum()
+    for i in 1:N
+        ops += "T" * Op("Hop", [i, mod1(i+1, N)])
+    end
+    ops += "U" * Op("HubbardU")
+    ops["T"] = 1.0;
+    ops["U"] = 5.0;
 
-#     # Create the a permutation group
-#     p1 = Permutation([1, 2, 3, 4])
-#     p2 = Permutation([2, 3, 4, 1])
-#     p3 = Permutation([3, 4, 1, 2])
-#     p4 = Permutation([4, 1, 2, 3])
-#     group = PermutationGroup([p1, p2, p3, p4])
-#     irrep = Representation([1, -1, 1, -1])
-#     block = Electron(N, nup, ndn, group, irrep)
+    # Create the a permutation group
+    p = Permutation([2, 3, 4, 1])
+    group = PermutationGroup([p^0, p^1, p^2, p^3])
+    irrep = Representation(group, [1.0, -1.0, 1.0, -1.0])
+    block = Electron(N, nup, ndn, irrep)
 
-#     H = matrix(ops, block)
-#     display(H)
-# end
-# # --8<-- [end:matrix]
+    H = matrix(ops, block)
+    display(H)
+end
+# --8<-- [end:matrix]
 
 # # --8<-- [start:eigval0]
 # let 
@@ -225,142 +223,136 @@ end
 # --8<-- [end:opsum]
 
 
-# // --8<-- [start:hc]
+# --8<-- [start:hc]
 cdagup = Op("Cdagup", 1)
 sdots = Op("SdotS", [1, 2])
 hop = (1.0 + 1.0im) * Op("Hop", [1, 2])
 @show cdagup == hc(cdagup)
 @show sdots == hc(sdots)
 @show hop == hc(hop)
-# // --8<-- [end:hc]
+# --8<-- [end:hc]
 
 
+# --8<-- [start:state]
+block = Spinhalf(2)
+psi1 = State(block, [1.0, 2.0, 3.0, 4.0])
+@show psi1
+display(vector(psi1))
+make_complex!(psi1)
+display(vector(psi1))
+
+psi2 = State(block, real=false, n_cols=3)
+@show psi2
+display(matrix(psi2))
+
+psi3 = State(block, [1.0+4.0im, 2.0+3.0im, 3.0+2.0im, 4.0+1.0im])
+display(vector(psi3))
+display(vector(real(psi3)))
+display(vector(imag(psi3)))
+# --8<-- [end:state]
 
 
-# # --8<-- [start:state]
-# block = Spinhalf(2)
-# psi1 = State(block, [1.0, 2.0, 3.0, 4.0])
-# @show psi1
-# display(vector(psi1))
-# make_complex!(psi1)
-# display(vector(psi1))
+# --8<-- [start:product_state]
+pstate = ProductState(["Up", "Dn", "Emp", "UpDn"])
+for s in pstate
+    @show s
+end
+@show pstate
 
-# psi2 = State(block, real=false, n_cols=3)
-# @show psi2
-# display(matrix(psi2))
-
-# psi3 = State(block, [1.0+4.0im, 2.0+3.0im, 3.0+2.0im, 4.0+1.0im])
-# display(vector(psi3))
-# display(vector(real(psi3)))
-# display(vector(imag(psi3)))
-# # --8<-- [end:state]
-
-
-# # --8<-- [start:product_state]
-# pstate = ProductState(["Up", "Dn", "Emp", "UpDn"])
-# for s in pstate
-#     @show s
-# end
-# @show pstate
-
-# pstate = ProductState()
-# push!(pstate, "Dn")
-# push!(pstate, "Up")
-# push!(pstate, "Dn")
-# @show nsites(pstate)
-# for s in pstate
-#     @show s
-# end
-# @show pstate
-# # --8<-- [end:product_state]
+pstate = ProductState()
+push!(pstate, "Dn")
+push!(pstate, "Up")
+push!(pstate, "Dn")
+@show nsites(pstate)
+for s in pstate
+    @show s
+end
+@show pstate
+# --8<-- [end:product_state]
 
 
-# # --8<-- [start:random_state]
-# block = Spinhalf(2)
-# state = State(block, real=false)  # complex State
-# rstate1 = RandomState(1234)
-# fill(state, rstate1)
-# display(vector(state))
+# --8<-- [start:random_state]
+block = Spinhalf(2)
+state = State(block, real=false)  # complex State
+rstate1 = RandomState(1234)
+fill(state, rstate1)
+display(vector(state))
 
-# rstate2 = RandomState(4321)
-# fill(state, rstate2)
-# display(vector(state))
+rstate2 = RandomState(4321)
+fill(state, rstate2)
+display(vector(state))
 
-# fill(state, rstate1)
-# display(vector(state))
-# # --8<-- [end:random_state]
+fill(state, rstate1)
+display(vector(state))
+# --8<-- [end:random_state]
 
-# # --8<-- [start:fill]
-# block = Spinhalf(2)
-# state = State(block)
-# pstate = ProductState(["Up", "Dn"])
-# fill(state, pstate)
-# display(vector(state))
+# --8<-- [start:fill]
+block = Spinhalf(2)
+state = State(block)
+pstate = ProductState(["Up", "Dn"])
+fill(state, pstate)
+display(vector(state))
 
-# rstate = RandomState(1234)
-# fill(state, rstate)
-# display(vector(state))
-# # --8<-- [end:fill]
-
-
-# # --8<-- [start:create_state]
-# block = Spinhalf(2)
-# state = product(block, ["Up", "Dn"])
-# display(vector(state))
-
-# zero(state)
-# display(vector(state))
-
-# state = rand(block, false, 1234, true)
-# display(vector(state))
-
-# state = zeros(block, true, 2)
-# display(matrix(state))
-# # --8<-- [end:create_state]
+rstate = RandomState(1234)
+fill(state, rstate)
+display(vector(state))
+# --8<-- [end:fill]
 
 
-# # --8<-- [start:algebra]
-# let 
-#     N = 8
-#     block = Spinhalf(N,  N ÷ 2)
-#     ops = OpSum()
-#     for i in 1:N
-#         ops += Op("HB", 1.0, [i, mod1(i+1, N)])
-#     end
-#     e0, psi = eig0(ops, block);
+# --8<-- [start:create_state]
+block = Spinhalf(2)
+state = product_state(block, ["Up", "Dn"])
+display(vector(state))
 
-#     @show norm(psi)
-#     @show norm1(psi)
-#     @show norminf(psi)
+zero(state)
+display(vector(state))
 
-#     @show dot(psi, psi)
-#     @show e0, inner(ops, psi)
+state = random_state(block, false, 1234, true)
+display(vector(state))
 
-#     phi = rand(block)
-#     display(vector(phi))
-#     display(vector(psi))
-#     display(vector(psi + 2.0*phi))
-#     display(vector(psi*3.0im + phi/2.0))
-# end
-# # --8<-- [end:algebra]
+state = zero_state(block, true, 2)
+display(matrix(state))
+# --8<-- [end:create_state]
 
-# # --8<-- [start:apply]
-# let 
-#     N = 8
-#     block = Spinhalf(N,  N ÷ 2)
-#     ops = OpSum()
-#     for i in 1:N
-#         ops += Op("HB", 1.0, [i, mod1(i+1, N)])
-#     end
-#     e0, psi = eig0(ops, block);
 
-#     blockp = Spinhalf(N,  N ÷ 2 + 1)
-#     phi = zeros(blockp)
-#     apply(Op("S+", 1.0, 2), psi, phi)
-#     @show inner(ops, psi)
-#     @show inner(ops, phi)
-# end
-# # --8<-- [end:apply]
+# --8<-- [start:algebra]
+let 
+    N = 8
+    block = Spinhalf(N,  N ÷ 2)
+    ops = OpSum()
+    for i in 1:N
+        ops += Op("SdotS", [i, mod1(i+1, N)])
+    end
+    e0, psi = eig0(ops, block);
+
+    @show norm(psi)
+    @show norm1(psi)
+    @show norminf(psi)
+    @show dot(psi, psi)
+    @show e0, inner(ops, psi)
+
+    phi = rand(block)
+    display(vector(phi))
+    display(vector(psi))
+    display(vector(psi + 2.0*phi))
+    display(vector(psi*3.0im + phi/2.0))
+end
+# --8<-- [end:algebra]
+
+# --8<-- [start:apply]
+let 
+    N = 8
+    block = Spinhalf(N,  N ÷ 2)
+    ops = OpSum()
+    for i in 1:N
+        ops += Op("SdotS", [i, mod1(i+1, N)])
+    end
+    e0, psi = eig0(ops, block);
+    phi = apply(Op("S+", 2), psi)
+    @show inner(ops, psi)
+    @show inner(ops, phi)
+end
+# --8<-- [end:apply]
 
 # --8<-- [start:symmetrize]
 let

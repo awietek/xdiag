@@ -4,7 +4,10 @@ title: fill
 
 Fills a [State](state.md) with a given model state, e.g. a [ProductState](product_state.md) or a [RandomState](random_state.md).
 
-**Sources** [fill.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/states/fill.hpp), [fill.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/states/fill.cpp)
+**Sources**<br>
+[fill.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/states/fill.hpp)<br>
+[fill.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/states/fill.cpp)<br>
+[fill.jl](https://github.com/awietek/XDiag.jl/blob/main/src/states/fill.jl)
 
 ---
 
@@ -21,8 +24,6 @@ Fills a [State](state.md) with a given model state, e.g. a [ProductState](produc
 	fill(state::State, pstate::ProductState, ncol::Int64 = 1)
 	fill(state::State, rstate::RandomState, ncol::Int64 = 1)
 	```
-
-
 
 | Name   | Description                                                                     |   |
 |:-------|:--------------------------------------------------------------------------------|---|
@@ -41,7 +42,7 @@ Fills a [State](state.md) with a given model state, e.g. a [ProductState](produc
 	```
 	
 === "Julia"
-	```c++
+	```julia
 	--8<-- "examples/usage_examples/main.jl:fill"
 	```
 

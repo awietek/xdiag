@@ -22,17 +22,9 @@ XDIAG_API arma::cx_mat matrixC(Op const &op, Block const &block_in,
 XDIAG_API arma::cx_mat matrixC(OpSum const &ops, Block const &block_in,
                                Block const &block_out);
 
-// developer methods
+// developer method
 template <typename coeff_t, class block_t>
 XDIAG_API void matrix(coeff_t *mat, OpSum const &ops, block_t const &block_in,
                       block_t const &block_out);
-template <typename coeff_t, class block_t>
-XDIAG_API void matrix(coeff_t *mat, Op const &ops, block_t const &block_in,
-                      block_t const &block_out);
-
-template <typename coeff_t, class block_t>
-XDIAG_API void matrix(coeff_t *mat, OpSum const &ops, block_t const &block);
-template <typename coeff_t, class block_t>
-XDIAG_API void matrix(coeff_t *mat, Op const &ops, block_t const &block);
 
 } // namespace xdiag

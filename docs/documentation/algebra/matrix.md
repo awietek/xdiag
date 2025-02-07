@@ -4,7 +4,10 @@ title: matrix
 
 Creates a numerical matrix with real (`matrix`) or complex (`matrixC`) coefficients given an [Op](../operators/op.md) or [OpSum](../operators/opsum.md) on a certain block. 
 
-**Sources** [matrix.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/algebra/matrix.hpp), [matrix.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/algebra/matrix.cpp)
+**Sources**<br>
+[matrix.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/algebra/matrix.hpp)<br>
+[matrix.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/algebra/matrix.cpp)<br>
+[matrix.jl](https://github.com/awietek/XDiag.jl/blob/main/src/algebra/matrix.jl)
 
 ---
 
@@ -16,17 +19,10 @@ A matrix can be created in two ways:
 
 	=== "C++"
 		```c++
-		template <class block_t>
-		arma::mat matrix(Op const &op, block_t const &block);
-
-		template <class block_t>
-		arma::mat matrix(OpSum const &ops, block_t const &block);
-
-		template <class block_t>
-		arma::cx_mat matrixC(Op const &op, block_t const &block);
-
-		template <typename block_t>
-		arma::cx_mat matrixC(OpSum const &ops, block_t const &block);
+		arma::mat matrix(Op const &op, Block const &block);
+		arma::mat matrix(OpSum const &ops, Block const &block);
+		arma::cx_mat matrixC(Op const &op, Block const &block);
+		arma::cx_mat matrixC(OpSum const &ops, Block const &block);
 		```
 	=== "Julia"
 		```julia
@@ -38,21 +34,10 @@ A matrix can be created in two ways:
 
 	=== "C++"
 		```c++
-		template <class block_t>
-		arma::mat matrix(Op const &op, block_t const &block_in, 
-		                 block_t const &block_out);
-
-		template <class block_t>
-		arma::mat matrix(OpSum const &ops, block_t const &block_in, 
-		                 block_t const &block_out);
-
-		template <class block_t>
-		arma::cx_mat matrixC(Op const &op, block_t const &block_in, 
-		                     block_t const &block_out);
-
-		template <typename block_t>
-		arma::cx_mat matrixC(OpSum const &ops, block_t const &block_in, 
-		                     block_t const &block_out);
+		arma::mat matrix(Op const &op, Block const &block_in, Block const &block_out);
+		arma::mat matrix(OpSum const &ops, Block const &block_in, Block const &block_out);
+		arma::cx_mat matrixC(Op const &op, Block const &block_in, Block const &block_out);
+		arma::cx_mat matrixC(OpSum const &ops, Block const &block_in, Block const &block_out);
 		```
 	=== "Julia"
 		```julia

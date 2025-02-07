@@ -129,206 +129,105 @@ void apply(Op const &op, State const &v, State &w) try {
   XDIAG_RETHROW(error);
 }
 
-template <typename coeff_t>
-void apply(OpSum const &ops, Spinhalf const &block_in,
-           arma::Col<coeff_t> const &vec_in, Spinhalf const &block_out,
-           arma::Col<coeff_t> &vec_out) try {
-  int64_t nsites = block_in.nsites();
-  check_valid(ops, nsites);
-  OpSum opsc = operators::compile_spinhalf(ops);
-  vec_out.zeros();
-  basis::spinhalf::dispatch_apply(opsc, block_in, vec_in, block_out, vec_out);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
-
-template void apply<double>(OpSum const &, Spinhalf const &,
-                            arma::Col<double> const &, Spinhalf const &,
-                            arma::Col<double> &);
-
-template void apply<complex>(OpSum const &, Spinhalf const &,
-                             arma::Col<complex> const &, Spinhalf const &,
-                             arma::Col<complex> &);
-
-template <typename coeff_t>
-void apply(OpSum const &ops, Spinhalf const &block_in,
-           arma::Mat<coeff_t> const &mat_in, Spinhalf const &block_out,
-           arma::Mat<coeff_t> &mat_out) try {
-  int64_t nsites = block_in.nsites();
-  check_valid(ops, nsites);
-  OpSum opsc = operators::compile_spinhalf(ops);
-  mat_out.zeros();
-  basis::spinhalf::dispatch_apply(opsc, block_in, mat_in, block_out, mat_out);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
-
-template void apply<double>(OpSum const &, Spinhalf const &,
-                            arma::Mat<double> const &, Spinhalf const &,
-                            arma::Mat<double> &);
-template void apply<complex>(OpSum const &, Spinhalf const &,
-                             arma::Mat<complex> const &, Spinhalf const &,
-                             arma::Mat<complex> &);
-
-template <typename coeff_t>
-void apply(OpSum const &ops, tJ const &block_in,
-           arma::Col<coeff_t> const &vec_in, tJ const &block_out,
-           arma::Col<coeff_t> &vec_out) try {
-  int64_t nsites = block_in.nsites();
-  check_valid(ops, nsites);
-  OpSum opsc = operators::compile_tj(ops);
-  vec_out.zeros();
-  basis::tj::dispatch_apply(opsc, block_in, vec_in, block_out, vec_out);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
-
-template void apply<double>(OpSum const &, tJ const &,
-                            arma::Col<double> const &, tJ const &,
-                            arma::Col<double> &);
-
-template void apply<complex>(OpSum const &, tJ const &,
-                             arma::Col<complex> const &, tJ const &,
-                             arma::Col<complex> &);
-
-template <typename coeff_t>
-void apply(OpSum const &ops, tJ const &block_in,
-           arma::Mat<coeff_t> const &mat_in, tJ const &block_out,
-           arma::Mat<coeff_t> &mat_out) try {
-  int64_t nsites = block_in.nsites();
-  check_valid(ops, nsites);
-  OpSum opsc = operators::compile_tj(ops);
-  mat_out.zeros();
-  basis::tj::dispatch_apply(opsc, block_in, mat_in, block_out, mat_out);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
-
-template void apply<double>(OpSum const &, tJ const &,
-                            arma::Mat<double> const &, tJ const &,
-                            arma::Mat<double> &);
-template void apply<complex>(OpSum const &, tJ const &,
-                             arma::Mat<complex> const &, tJ const &,
-                             arma::Mat<complex> &);
-
-template <typename coeff_t>
-void apply(OpSum const &ops, Electron const &block_in,
-           arma::Col<coeff_t> const &vec_in, Electron const &block_out,
-           arma::Col<coeff_t> &vec_out) try {
-  int64_t nsites = block_in.nsites();
-  check_valid(ops, nsites);
-  OpSum opsc = operators::compile_electron(ops);
-  vec_out.zeros();
-  basis::electron::dispatch_apply(opsc, block_in, vec_in, block_out, vec_out);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
-
-template void apply<double>(OpSum const &, Electron const &,
-                            arma::Col<double> const &, Electron const &,
-                            arma::Col<double> &);
-
-template void apply<complex>(OpSum const &, Electron const &,
-                             arma::Col<complex> const &, Electron const &,
-                             arma::Col<complex> &);
-
-template <typename coeff_t>
-void apply(OpSum const &ops, Electron const &block_in,
-           arma::Mat<coeff_t> const &mat_in, Electron const &block_out,
-           arma::Mat<coeff_t> &mat_out) try {
-  int64_t nsites = block_in.nsites();
-  check_valid(ops, nsites);
-  OpSum opsc = operators::compile_electron(ops);
-  mat_out.zeros();
-  basis::electron::dispatch_apply(opsc, block_in, mat_in, block_out, mat_out);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
-
-template void apply<double>(OpSum const &, Electron const &,
-                            arma::Mat<double> const &, Electron const &,
-                            arma::Mat<double> &);
-template void apply<complex>(OpSum const &, Electron const &,
-                             arma::Mat<complex> const &, Electron const &,
-                             arma::Mat<complex> &);
-
+template <typename mat_t>
+void apply(OpSum const &ops, Block const &block_in, mat_t const &mat_in,
+           Block const &block_out, mat_t &mat_out) try {
+  std::visit(
+      overload{
+          [&](Spinhalf const &b1, Spinhalf const &b2) {
+            apply(ops, b1, mat_in, b2, mat_out);
+          },
+          [&](tJ const &b1, tJ const &b2) {
+            apply(ops, b1, mat_in, b2, mat_out);
+          },
+          [&](Electron const &b1, Electron const &b2) {
+            apply(ops, b1, mat_in, b2, mat_out);
+          },
 #ifdef XDIAG_USE_MPI
-
-template <typename coeff_t>
-void apply(OpSum const &ops, SpinhalfDistributed const &block_in,
-           arma::Col<coeff_t> const &vec_in,
-           SpinhalfDistributed const &block_out,
-           arma::Col<coeff_t> &vec_out) try {
-  int64_t nsites = block_in.nsites();
-  check_valid(ops, nsites);
-  OpSum opsc = operators::compile_spinhalf(ops);
-  vec_out.zeros();
-  basis::spinhalf_distributed::dispatch_apply(opsc, block_in, vec_in, block_out,
-                                              vec_out);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
-
-template void apply<double>(OpSum const &, SpinhalfDistributed const &,
-                            arma::Col<double> const &,
-                            SpinhalfDistributed const &, arma::Col<double> &);
-
-template void apply<complex>(OpSum const &, SpinhalfDistributed const &,
-                             arma::Col<complex> const &,
-                             SpinhalfDistributed const &, arma::Col<complex> &);
-
-template <typename coeff_t>
-void apply(OpSum const &ops, tJDistributed const &block_in,
-           arma::Col<coeff_t> const &vec_in, tJDistributed const &block_out,
-           arma::Col<coeff_t> &vec_out) try {
-  check_valid(ops);
-  int64_t nsites = block_in.nsites();
-  OpSum opsc = operators::compile_tj(ops);
-  vec_out.zeros();
-  basis::tj_distributed::dispatch_apply(opsc, block_in, vec_in, block_out,
-                                        vec_out);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
-
-template void apply<double>(OpSum const &, tJDistributed const &,
-                            arma::Col<double> const &, tJDistributed const &,
-                            arma::Col<double> &);
-
-template void apply<complex>(OpSum const &, tJDistributed const &,
-                             arma::Col<complex> const &, tJDistributed const &,
-                             arma::Col<complex> &);
-
+          [&](SpinhalfDistributed const &b1, SpinhalfDistributed const &b2) {
+            apply(ops, b1, mat_in, b2, mat_out);
+          },
+          [&](tJDistributed const &b1, tJDistributed const &b2) {
+            apply(ops, b1, mat_in, b2, mat_out);
+          },
 #endif
-
-template <typename coeff_t>
-void apply(OpSum const &ops, Block const &block_in,
-           arma::Col<coeff_t> const &vec_in, Block const &block_out,
-           arma::Col<coeff_t> &vec_out) try {
-  std::visit(
-      [&](auto &&block_in, auto &&block_out) {
-        apply(ops, block_in, vec_in, block_out, vec_out);
-      },
+          [](auto const &, auto const &) {
+            XDIAG_THROW(fmt::format("Invalid combination of Block types"));
+          }},
       block_in, block_out);
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
-}
-template <typename coeff_t>
-void apply(OpSum const &ops, Block const &block_in,
-           arma::Mat<coeff_t> const &mat_in, Block const &block_out,
-           arma::Mat<coeff_t> &mat_out) try {
-  std::visit(
-      [&](auto &&block_in, auto &&block_out) {
-        apply(ops, block_in, mat_in, block_out, mat_out);
-      },
-      block_in, block_out);
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 template void apply(OpSum const &, Block const &, arma::vec const &,
                     Block const &, arma::vec &);
 template void apply(OpSum const &, Block const &, arma::cx_vec const &,
                     Block const &, arma::cx_vec &);
+template void apply(OpSum const &, Block const &, arma::mat const &,
+                    Block const &, arma::mat &);
+template void apply(OpSum const &, Block const &, arma::cx_mat const &,
+                    Block const &, arma::cx_mat &);
+
+template <typename mat_t, typename block_t>
+void apply(OpSum const &ops, block_t const &block_in, mat_t const &mat_in,
+           block_t const &block_out, mat_t &mat_out) try {
+  check_valid(ops, block_in.nsites());
+  mat_out.zeros();
+  OpSum opsc = operators::compile<block_t>(ops);
+  basis::dispatch_apply(opsc, block_in, mat_in, block_out, mat_out);
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
+}
+
+template void apply(OpSum const &, Spinhalf const &, arma::vec const &,
+                    Spinhalf const &, arma::vec &);
+template void apply(OpSum const &, Spinhalf const &, arma::cx_vec const &,
+                    Spinhalf const &, arma::cx_vec &);
+template void apply(OpSum const &, Spinhalf const &, arma::mat const &,
+                    Spinhalf const &, arma::mat &);
+template void apply(OpSum const &, Spinhalf const &, arma::cx_mat const &,
+                    Spinhalf const &, arma::cx_mat &);
+
+template void apply(OpSum const &, tJ const &, arma::vec const &, tJ const &,
+                    arma::vec &);
+template void apply(OpSum const &, tJ const &, arma::cx_vec const &, tJ const &,
+                    arma::cx_vec &);
+template void apply(OpSum const &, tJ const &, arma::mat const &, tJ const &,
+                    arma::mat &);
+template void apply(OpSum const &, tJ const &, arma::cx_mat const &, tJ const &,
+                    arma::cx_mat &);
+
+template void apply(OpSum const &, Electron const &, arma::vec const &,
+                    Electron const &, arma::vec &);
+template void apply(OpSum const &, Electron const &, arma::cx_vec const &,
+                    Electron const &, arma::cx_vec &);
+template void apply(OpSum const &, Electron const &, arma::mat const &,
+                    Electron const &, arma::mat &);
+template void apply(OpSum const &, Electron const &, arma::cx_mat const &,
+                    Electron const &, arma::cx_mat &);
+
+#ifdef XDIAG_USE_MPI
+template void apply(OpSum const &, SpinhalfDistributed const &,
+                    arma::vec const &, SpinhalfDistributed const &,
+                    arma::vec &);
+template void apply(OpSum const &, SpinhalfDistributed const &,
+                    arma::cx_vec const &, SpinhalfDistributed const &,
+                    arma::cx_vec &);
+template void apply(OpSum const &, SpinhalfDistributed const &,
+                    arma::mat const &, SpinhalfDistributed const &,
+                    arma::mat &);
+template void apply(OpSum const &, SpinhalfDistributed const &,
+                    arma::cx_mat const &, SpinhalfDistributed const &,
+                    arma::cx_mat &);
+
+template void apply(OpSum const &, tJDistributed const &, arma::vec const &,
+                    tJDistributed const &, arma::vec &);
+template void apply(OpSum const &, tJDistributed const &, arma::cx_vec const &,
+                    tJDistributed const &, arma::cx_vec &);
+template void apply(OpSum const &, tJDistributed const &, arma::mat const &,
+                    tJDistributed const &, arma::mat &);
+template void apply(OpSum const &, tJDistributed const &, arma::cx_mat const &,
+                    tJDistributed const &, arma::cx_mat &);
+#endif
 
 } // namespace xdiag
