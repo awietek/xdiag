@@ -4,7 +4,10 @@ title: eig0
 
 Computes the groud state energy and the ground state of a Hermitian operator on a block by using an iterative Lanczos algorithm. This function is a shortcut for the [eigs_lanczos](eigs_lanczos.md) function. We refer to [eigs_lanczos](eigs_lanczos.md) for further details on the algorithm and the convergence criterion.
 
-**Sources** [sparse_diag.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/sparse_diag.hpp), [sparse_diag.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/sparse_diag.cpp)
+**Sources**<br>
+[sparse_diag.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/sparse_diag.hpp)<br>
+[sparse_diag.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/sparse_diag.cpp)<br>
+[sparse_diag.jl](https://github.com/awietek/XDiag.jl/blob/main/src/algorithms/sparse_diag.jl)
 
 ---
 
@@ -21,13 +24,8 @@ Computes the groud state energy and the ground state of a Hermitian operator on 
 === "Julia"
 	
 	``` julia
-    function eig0(
-		ops::OpSum,
-		block::Block;
-		precision::Real = 1e-12,
-		maxiter::Int64 = 1000,
-		seed::Int64 = 42,
-	)
+    eig0(ops::OpSum, block::Block;	precision::Float64 = 1e-12, 
+	     max_iterations::Int64 = 1000, random_seed::Int64 = 42)
 	```
 
 ---

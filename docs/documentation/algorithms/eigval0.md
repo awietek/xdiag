@@ -4,7 +4,10 @@ title: eigval0
 
 Computes the groud state energy of a Hermitian operator on a block by using an iterative Lanczos algorithm. This function is a shortcut for the [eigvals_lanczos](eigvals_lanczos.md) function. We refer to [eigvals_lanczos](eigvals_lanczos.md) for further details on the algorithm and the convergence criterion.
 
-**Sources** [sparse_diag.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/sparse_diag.hpp), [sparse_diag.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/sparse_diag.cpp)
+**Sources**<br>
+[sparse_diag.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/sparse_diag.hpp)<br>
+[sparse_diag.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/sparse_diag.cpp)<br>
+[sparse_diag.jl](https://github.com/awietek/XDiag.jl/blob/main/src/algorithms/sparse_diag.jl)
 
 ---
 
@@ -18,13 +21,8 @@ Computes the groud state energy of a Hermitian operator on a block by using an i
 
 === "Julia"
 	```julia
-	function eigval0(
-		ops::OpSum,
-		block::Block;
-		precision::Real = 1e-12,
-		maxiter::Integer = 1000,
-		seed::Integer = 42,
-	)
+    eigval0(ops::OpSum, block::Block;	precision::Float64 = 1e-12, 
+	        max_iterations::Int64 = 1000, random_seed::Int64 = 42)::Float64
 	```
 
 ---
@@ -37,7 +35,6 @@ Computes the groud state energy of a Hermitian operator on a block by using an i
 | block          | block on which the operator is defined                                 |         |
 | precision      | accuracy of the computed ground state                                  | 1e-12   |
 | max_iterations | maximum number of iterations                                           | 1000    |
-| force_complex  | whether or not computation should be forced to have complex arithmetic | false   |
 | random_seed    | random seed for setting up the initial vector                          | 42      |
 
 ---

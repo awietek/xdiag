@@ -4,7 +4,10 @@ title: eigs_lanczos
 
 Performs an iterative eigenvalue calculation building eigenvectors using the Lanczos algorithm. Returns the tridiagonal matrix, eigenvalues, number of iterations and the stopping criterion. The Lanczos interations are performed twice, where at the second run the eigenvectors are built.
 
-**Sources** [eigs_lanczos.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/lanczos/eigs_lanczos.hpp), [eigs_lanczos.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/lanczos/eigs_lanczos.cpp)
+**Sources**<br>
+[eigs_lanczos.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/lanczos/eigs_lanczos.hpp)<br>
+[eigs_lanczos.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/lanczos/eigs_lanczos.cpp)<br>
+[eigs_lanczos.jl](https://github.com/awietek/XDiag.jl/blob/main/src/algorithms/lanczos/eigs_lanczos.jl)
 
 ---
 
@@ -15,7 +18,6 @@ The Lanczos algorithm can be run in two distinct ways:
 1. A random intial state $|\psi_0\rangle = |r\rangle$ with normal distributed entries is used.
 
 	=== "C++"
-
 		```c++
 		eigs_lanczos_result_t
 		eigs_lanczos(OpSum const &ops, Block const &block, int64_t neigvals = 1,
@@ -24,17 +26,10 @@ The Lanczos algorithm can be run in two distinct ways:
 		```
 
 	=== "Julia"
-	
 		``` julia
-		function eigs_lanczos(
-			ops::OpSum,
-			block::Block;
-			neigvals::Int64 = 1,
-			precision::Float64 = 1e-12,
-			max_iterations::Int64 = 1000,
-			deflation_tol::Float64 = 1e-7,
-			random_seed::Int64 = 42,
-		)
+		eigs_lanczos(ops::OpSum, block::Block; neigvals::Int64 = 1,
+                     precision::Float64 = 1e-12, max_iterations::Int64 = 1000,
+					 deflation_tol::Float64 = 1e-7, random_seed::Int64 = 42)
 		```
 
 2. The initial state $|\psi_0\rangle$ is explicitly specified
@@ -42,11 +37,15 @@ The Lanczos algorithm can be run in two distinct ways:
 	=== "C++"
 		```c++
 		eigs_lanczos_result_t 
-		eigs_lanczos(OpSum const &ops, State const &state0, int64_t neigvals = 1,
+		eigs_lanczos(OpSum const &ops, State const &psi0, int64_t neigvals = 1,
                      double precision = 1e-12, int64_t max_iterations = 1000,
                      double deflation_tol = 1e-7);
 		```
-
+		``` julia
+		eigs_lanczos(ops::OpSum, psi0::State; neigvals::Int64 = 1,
+                     precision::Float64 = 1e-12, max_iterations::Int64 = 1000,
+					 deflation_tol::Float64 = 1e-7, random_seed::Int64 = 42)
+		```
 ---
 
 ## Parameters
@@ -55,6 +54,7 @@ The Lanczos algorithm can be run in two distinct ways:
 |:---------------|:----------------------------------------------------------------------------------|---------|
 | ops            | [OpSum](../operators/opsum.md) defining the bonds of the operator                 |         |
 | block          | block on which the operator is defined                                            |         |
+| psi0           | Initial [State](../states/state.md) from which the Lanczos algorithm is started   |         |
 | neigvals       | number of eigenvalues to converge                                                 | 1       |
 | precision      | accuracy of the computed ground state                                             | 1e-12   |
 | max_iterations | maximum number of iterations                                                      | 1000    |
@@ -94,4 +94,7 @@ Here, $\tilde{e}_k^{(n)}$ denotes the Lanczos approximation to the $k$-th eigenv
 	```c++
 	--8<-- "examples/usage_examples/main.cpp:eigs_lanczos"
 	```
-
+=== "Julia"
+	```julia
+	--8<-- "examples/usage_examples/main.jl:eigs_lanczos"
+	```

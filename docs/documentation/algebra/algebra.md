@@ -4,7 +4,10 @@ title: Algebra routines
 
 Several basic algebraic operations for states and operators.
 
-**Sources** [algebra.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/states/algebra.hpp), [algebra.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/states/algebra.cpp)
+**Sources**<br>
+[algebra.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/algebra/algebra.hpp)<br>
+[algebra.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/algebra/algebra.cpp)<br>
+[algebra.jl](https://github.com/awietek/XDiag.jl/blob/main/src/algebra/algebra.jl)
 
 ---
 
@@ -60,7 +63,7 @@ where $\{ |n\rangle \}$ denotes an orthonormal basis of the block.
 
 === "Julia"
 	```julia
-	norm(state::State)
+	norm(state::State)::Float64
 	```
 	
 ---
@@ -81,7 +84,7 @@ where $\{ |n\rangle \}$ denotes an orthonormal basis of the block.
 	
 === "Julia"
 	```julia
-	norm1(state::State)
+	norm1(state::State)::Float64
 	```
 	
 ---
@@ -102,7 +105,7 @@ where $\{ |n\rangle \}$ denotes an orthonormal basis of the block.
 	
 === "Julia"
 	```julia
-	norminf(state::State)
+	norminf(state::State)::Float64
 	```
 	
 ---

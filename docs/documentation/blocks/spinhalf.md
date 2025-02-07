@@ -23,10 +23,10 @@ A block in a spin $S=1/2$  Hilbert space.
 	```
 === "Julia"
 	```julia
-	Spinhalf(nsites::Integer, backend::String="auto")
-	Spinhalf(nsites::Integer, nup::Integer, backend::String="auto")
-	Spinhalf(nsites::Integer, irrep::Representation, backend::String="auto")
-	Spinhalf(nsites::Integer, nup::Integer, irrep::Representation, backend::String="auto")
+	Spinhalf(nsites::Int64, backend::String="auto")
+	Spinhalf(nsites::Int64, nup::Int64, backend::String="auto")
+	Spinhalf(nsites::Int64, irrep::Representation, backend::String="auto")
+	Spinhalf(nsites::Int64, nup::Int64, irrep::Representation, backend::String="auto")
 	```
 	
 | Name    | Description                                                                          | Default |

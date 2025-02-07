@@ -20,8 +20,8 @@ A block in a  $t-J$ type Hilbert space, i.e. fermions with $\uparrow, \downarrow
 
 === "Julia"
 	```julia
-	tJ(nsites::Integer, nup::Integer, ndn::Integer, backend::String="auto")
-	tJ(nsites::Integer, nup::Integer, ndn::Integer, irrep::Representation, backend::String="auto")
+	tJ(nsites::Int64, nup::Int64, ndn::Int64, backend::String="auto")
+	tJ(nsites::Int64, nup::Int64, ndn::Int64, irrep::Representation, backend::String="auto")
 	```
 
 

@@ -8,8 +8,10 @@ $$\vert \psi(\tau) \rangle = e^{-(H - \delta) \tau} \vert \psi_0\rangle,$$
 
 of a [State](../states/state.md) $\vert \psi_0 \rangle$ and a Hermitian operator $H$ using an iterative algorithm. $\delta$ here denotes a real number which can be chosen as the ground state energy $\delta=E_0$ of $H$.
 
-**Sources** [imaginary_time_evolve.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/imaginary_time_evolve.hpp), [imaginary_time_evolve.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/imaginary_time_evolve.cpp)
-
+**Sources** <br>
+[imaginary_time_evolve.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/imaginary_time_evolve.hpp)<br>
+[imaginary_time_evolve.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/imaginary_time_evolve.cpp)<br>
+[imaginary_time_evolve.jl](https://github.com/awietek/XDiag.jl/blob/main/src/algorithms/imaginary_time_evolve.jl)
 ---
 
 ## Definition
@@ -24,7 +26,12 @@ The method is provided in two variants:
 		State imaginary_time_evolve(OpSum const &H, State psi0, double time,
                                     double precision = 1e-12, double shift = 0.);
 		```
-
+	=== "Julia"
+		``` julia
+		imaginary_time_evolve(ops::OpSum, psi0::State, time::Float64; precision::Float64 = 1e-12, 
+		                      shift::Float64=0.0)::State
+		```
+		
 2. An *inplace* variant `imaginary_time_evolve_inplace`, where the input state is overwritten and contains the time evolved state upon exit. This version is more memory efficient than `imaginary_time_evolve`.
 
 	=== "C++"
@@ -32,6 +39,11 @@ The method is provided in two variants:
 		```c++
 		void imaginary_time_evolve_inplace(OpSum const &H, State &psi0, double time,
                                            double precision = 1e-12, shift = 0.);
+		```
+	=== "Julia"
+		``` julia
+		imaginary_time_evolve_inplace(ops::OpSum, psi0::State, time::Float64; 
+		                              precision::Float64 = 1e-12, shift::Float64=0.0)
 		```
 
 ---
@@ -56,4 +68,7 @@ The routine calls the subroutine [evolve_lanczos](evolve_lanczos.md) implementin
 	```c++
 	--8<-- "examples/usage_examples/main.cpp:imaginary_time_evolve"
 	```
-	
+=== "Julia"
+	```julia
+	--8<-- "examples/usage_examples/main.jl:imaginary_time_evolve"
+	```	

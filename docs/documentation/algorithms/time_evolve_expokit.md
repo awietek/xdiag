@@ -15,7 +15,10 @@ of a [State](../states/state.md) $\vert \psi_0 \rangle$ and a Hermitian operator
 
 The algorithm features automatic stepsize control and computes approximate solutions with high precision according to our tests. Yet, the [evolve_lanczos](evolve_lanczos.md) implementation is currently faster and more memory efficient. 
 
-**Sources** [time_evolve_expokit.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/time_evolve_expokit.hpp), [time_evolve_expokit.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/time_evolve_expokit.cpp)
+**Sources**<br> 
+[time_evolve_expokit.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/time_evolution/time_evolve_expokit.hpp)<br>
+[time_evolve_expokit.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/time_evolution/time_evolve_expokit.cpp)<br>
+[time_evolve_expokit.jl](https://github.com/awietek/XDiag.jl/blob/main/src/algorithms/time_evolution/time_evolve_expokit.jl)
 
 ---
 
@@ -26,23 +29,32 @@ The method is provided in two variants:
 1. Returning a new state while the input state remains untouched. This variant is safe to use and simple to code.
 
 	=== "C++"
-
 		```c++
 		time_evolve_expokit_return_t time_evolve_expokit(
 			OpSum const &ops, State state, double time, double precision = 1e-12,
 			int64_t m = 30, double anorm = 0., int64_t nnorm = 2);
 		```
+	=== "Julia"
+		```julia
+		time_evolve_expokit(ops::OpSum, state::State, time::Float64;
+		                    precision::Float=1e-12, m::Int64 = 30, 
+							anorm::Float64 = 0.0, nnorm::Int64 = 2)
+		```
 
 2. An *inplace* variant `time_evolve_expokit_inplace`, where the input state is overwritten and contains the time evolved state upon exit. This version is more memory efficient than `time_evolve_expokit`.
 
 	=== "C++"
-
 		```c++
 		time_evolve_expokit_inplace_return_t time_evolve_expokit_inplace(
 			OpSum const &ops, State &state, double time, double precision = 1e-12,
 			int64_t m = 30, double anorm = 0., int64_t nnorm = 2);
 		```
-
+	=== "Julia"
+		```julia
+		time_evolve_expokit_inplace(ops::OpSum, state::State, time::Float64;
+		                            precision::Float=1e-12, m::Int64 = 30, 
+							        anorm::Float64 = 0.0, nnorm::Int64 = 2)
+		```
 ---
 
 ## Parameters
@@ -91,5 +103,10 @@ where $\vert \tilde{\psi}(t) \rangle$ denotes the approximation computed during 
 === "C++"
 	```c++
 	--8<-- "examples/usage_examples/main.cpp:time_evolve_expokit"
+	```
+	
+=== "Julia"
+	```julia
+	--8<-- "examples/usage_examples/main.jl:time_evolve_expokit"
 	```
 	

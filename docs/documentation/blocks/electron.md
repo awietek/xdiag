@@ -20,10 +20,10 @@ A block in an Electron (fermions with $\uparrow, \downarrow$ spin) Hilbert space
 	
 === "Julia"
 	```julia
-	Electron(nsites::Integer, backend::String="auto")
-	Electron(nsites::Integer, nup::Integer, ndn::Integer, backend::String="auto")
-	Electron(nsites::Integer, irrep::Representation, backend::String="auto")
-	Electron(nsites::Integer, nup::Integer, ndn::Integer, irrep::Representation, backend::String="auto")
+	Electron(nsites::Int64, backend::String="auto")
+	Electron(nsites::Int64, nup::Int64, ndn::Int64, backend::String="auto")
+	Electron(nsites::Int64, irrep::Representation, backend::String="auto")
+	Electron(nsites::Int64, nup::Int64, ndn::Int64, irrep::Representation, backend::String="auto")
 	```
 
 | Name    | Description                                                                          |        |

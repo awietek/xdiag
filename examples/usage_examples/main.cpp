@@ -507,8 +507,9 @@ for (int i=0; i<N; ++i) {
 
 auto psi0 = product_state(block, {"Up", "Dn", "Up", "Dn", "Up", "Dn", "Up", "Dn"});
 double time = 1.0;
-auto res1 = time_evolve_expokit(ops, psi0, time, 20);
-auto res2 = time_evolve_expokit_inplace(ops, psi0, time, 20);
+double precision = 1e-8;
+auto res1 = time_evolve_expokit(ops, psi0, time, precision);
+auto res2 = time_evolve_expokit_inplace(ops, psi0, time, precision);
 XDIAG_SHOW(isapprox(psi0, res1.state));
 XDIAG_SHOW(res1.error);
 XDIAG_SHOW(res1.hump);

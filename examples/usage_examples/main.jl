@@ -146,39 +146,182 @@ let
 end
 # --8<-- [end:matrix]
 
-# # --8<-- [start:eigval0]
-# let 
-#     N = 8
-#     nup = N ÷ 2
-#     block = Spinhalf(N, nup)
+# --8<-- [start:eigval0]
+let 
+    N = 8
+    nup = N ÷ 2
+    block = Spinhalf(N, nup)
     
-#     # Define the nearest-neighbor Heisenberg model
-#     ops = OpSum()
-#     for i in 1:N
-#         ops += Op("HB", "J", [i, mod1(i+1, N)])
-#     end
-#     ops["J"] = 1.0
+    # Define the nearest-neighbor Heisenberg model
+    ops = OpSum()
+    for i in 1:N
+        ops += "J" * Op("SdotS", [i, mod1(i+1, N)])
+    end
+    ops["J"] = 1.0
+    e0 = eigval0(ops, block);
+end
+# --8<-- [end:eigval0]
 
-#     e0 = eigval0(ops, block);
-# end
-# # --8<-- [end:eigval0]
-
-# # --8<-- [start:eig0]
-# let 
-#     N = 8
-#     nup = N ÷ 2
-#     block = Spinhalf(N, nup)
+# --8<-- [start:eig0]
+let 
+    N = 8
+    nup = N ÷ 2
+    block = Spinhalf(N, nup)
     
-#     # Define the nearest-neighbor Heisenberg model
-#     ops = OpSum()
-#     for i in 1:N
-#         ops += Op("HB", "J", [i, mod1(i+1, N)])
-#     end
-#     ops["J"] = 1.0;
+    # Define the nearest-neighbor Heisenberg model
+    ops = OpSum()
+    for i in 1:N
+        ops += "J" * Op("SdotS", [i, mod1(i+1, N)])
+    end
+    ops["J"] = 1.0
+    e0, gs = eig0(ops, block);
+end
+# --8<-- [end:eig0]
 
-#     e0, gs = eig0(ops, block);
-# end
-# # --8<-- [end:eig0]
+# --8<-- [start:eigvals_lanczos]
+let
+    N = 8
+    nup = N ÷ 2
+    block = Spinhalf(N, nup)
+    
+    # Define the nearest-neighbor Heisenberg model
+    ops = OpSum()
+    for i in 1:N
+        ops += "J" * Op("SdotS", [i, mod1(i+1, N)])
+    end
+    ops["J"] = 1.0
+
+    # With random intial state
+    auto res = eigvals_lanczos(ops, block)
+    @show res.alphas
+    @show res.betas
+    @show res.eigenvalues
+
+    # With specific initial state
+    psi0 = product_state(block, ["Up", "Dn", "Up", "Dn", "Up", "Dn", "Up", "Dn"])
+    res2 = eigvals_lanczos(ops, psi0)
+    @show res.alphas
+    @show res.betas
+    @show res.eigenvalues
+end
+# --8<-- [end:eigvals_lanczos]
+
+
+# --8<-- [start:eigs_lanczos]
+let
+    N = 8
+    nup = N ÷ 2
+    block = Spinhalf(N, nup)
+    
+    # Define the nearest-neighbor Heisenberg model
+    ops = OpSum()
+    for i in 1:N
+        ops += "J" * Op("SdotS", [i, mod1(i+1, N)])
+    end
+    ops["J"] = 1.0
+
+    # With random intial state
+    auto res = eigs_lanczos(ops, block)
+    @show res.alphas
+    @show res.betas
+    @show res.eigenvalues
+    @show res.eigenvectors
+end
+# --8<-- [end:eigs_lanczos]
+
+
+# --8<-- [start:time_evolve]
+let
+    N = 8
+    nup = N ÷ 2
+    block = Spinhalf(N, nup)
+    
+    # Define the nearest-neighbor Heisenberg model
+    ops = OpSum()
+    for i in 1:N
+        ops += "J" * Op("SdotS", [i, mod1(i+1, N)])
+    end
+    ops["J"] = 1.0
+
+    psi0 = product_state(block, ["Up", "Dn", "Up", "Dn", "Up", "Dn", "Up", "Dn"])
+    time = 1.0
+    psi = time_evolve(ops, psi0, time)
+    time_evolve_inplace(ops, psi0, time)
+    @show isapprox(psi0, psi)
+end
+# --8<-- [end:time_evolve]
+
+# --8<-- [start:imaginary_time_evolve]
+let
+    N = 8
+    nup = N ÷ 2
+    block = Spinhalf(N, nup)
+   
+    # Define the nearest-neighbor Heisenberg model
+    ops = OpSum()
+    for i in 1:N
+        ops += Op("SdotS", [i, mod1(i+1, N)])
+    end
+
+    # Compute ground state energy
+    e0 = eigval0(ops, block)
+ 
+    psi0 = product_state(block, ["Up", "Dn", "Up", "Dn", "Up", "Dn", "Up", "Dn"])
+    time = 1.0
+    precision = 1e-12
+    psi = imaginary_time_evolve(ops, psi0, time, precision, e0)
+    imaginary_time_evolve_inplace(ops, psi0, time, precision, e0)
+    @show isapprox(psi0, psi)
+end
+# --8<-- [end:imaginary_time_evolve]
+
+# --8<-- [start:evolve_lanczos]
+let
+    N = 8
+    nup = N / 2
+    block = Spinhalf(N, nup)
+    
+    # Define the nearest-neighbor Heisenberg model
+    ops = OpSum()
+    for i in 1:N
+        ops += Op("SdotS", [i, mod1(i+1, N)])
+    end
+
+    # Compute ground state energy
+    e0 = eigval0(ops, block)
+ 
+    psi0 = product_state(block, ["Up", "Dn", "Up", "Dn", "Up", "Dn", "Up", "Dn"])
+    time = 1.0
+    precision = 1e-12
+    res = evolve_lanczos(ops, psi0, time, precision, e0, true, 500)
+    @show res.alphas
+    @show res.betas
+end
+# --8<-- [end:evolve_lanczos]
+
+    
+# --8<-- [start:time_evolve_expokit]
+let
+    N = 8
+    nup = N / 2
+    block = Spinhalf(N, nup)
+    
+    # Define the nearest-neighbor Heisenberg model
+    ops = OpSum()
+    for i in 1:N
+        ops += Op("SdotS", [i, mod1(i+1, N)])
+    end
+
+    psi0 = product_state(block, ["Up", "Dn", "Up", "Dn", "Up", "Dn", "Up", "Dn"])
+    time = 1.0
+    precision = 1e-8
+    res1 = time_evolve_expokit(ops, psi0, time, precision)
+    res2 = time_evolve_expokit_inplace(ops, psi0, time, precision)
+    @show isapprox(psi0, res1.state)
+    @show res1.error
+    @show res1.hump
+end
+# --8<-- [end:time_evolve_expokit]
 
 
 # --8<-- [start:Op]
