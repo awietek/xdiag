@@ -19,7 +19,7 @@ TEST_CASE("permutation_group", "[symmetries]") try {
   auto group = fl["Symmetries"].as<PermutationGroup>();
   for (int sym = 0; sym < group.size(); ++sym) {
     auto p = group[sym];
-    auto pinv = group[group.inverse(sym)];
+    auto pinv = group[group.inv(sym)];
     // XDIAG_SHOW(p * pinv);
     auto id = Permutation(group.nsites());
     REQUIRE(p * pinv == id);

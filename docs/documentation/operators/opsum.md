@@ -107,7 +107,7 @@ Converts an OpSum with possible string couplings to an OpSum with purely numeric
 	
 === "Julia"
 	```julia
-	plain(ops::OpSum)
+	plain(ops::OpSum)::OpSum
 	```
 ---
 
@@ -123,9 +123,9 @@ Creates an OpSum with a single pair of coupling constant and an [Op](op.md) obje
 	```
 === "Julia"
 	```julia
-	Base.:*(coupling::Float64, op::Op)
-	Base.:*(coupling::ComplexF64, op::Op)
-	Base.:*(coupling::String, op::Op)
+	Base.:*(coupling::Float64, op::Op)::OpSum
+	Base.:*(coupling::ComplexF64, op::Op)::OpSum
+	Base.:*(coupling::String, op::Op)::OpSum
 	```
 ---
 
@@ -142,7 +142,7 @@ Adds two OpSum objects $\mathcal{A} = \sum_i a_i \mathcal{A}_i$ and $\mathcal{B}
 	
 === "Julia"
 	```julia
-	Base.:+(ops1::OpSum, ops2::OpSum)
+	Base.:+(ops1::OpSum, ops2::OpSum)::OpSum
 	```
 
 ---
@@ -158,7 +158,7 @@ Subtracts to OpSum objects.
 	
 === "Julia"
 	```julia
-	Base.:-(ops::OpSum, ops2::OpSum)
+	Base.:-(ops::OpSum, ops2::OpSum)::OpSum
 	```
 ---
 
@@ -185,12 +185,12 @@ $$\mathcal{B} = b \sum_i a_i \mathcal{A}_i$$
 
 === "Julia"
 	```julia
-	Base.:*(coupling::Float64, ops::OpSum)
-	Base.:*(coupling::ComplexF64, ops::OpSum)
-	Base.:*(ops::OpSum, coupling::Float64)
-	Base.:*(ops::OpSum, coupling::ComplexF64)
-	Base.:/(ops::OpSum, coupling::Float64)
-	Base.:/(ops::OpSum, coupling::ComplexF64)
+	Base.:*(coupling::Float64, ops::OpSum)::OpSum
+	Base.:*(coupling::ComplexF64, ops::OpSum)::OpSum
+	Base.:*(ops::OpSum, coupling::Float64)::OpSum
+	Base.:*(ops::OpSum, coupling::ComplexF64)::OpSum
+	Base.:/(ops::OpSum, coupling::Float64)::OpSum
+	Base.:/(ops::OpSum, coupling::ComplexF64)::OpSum
 	```
 
 ---
@@ -220,7 +220,7 @@ Returns a vector of strings with the coupling constants defined, i.e. the string
 	```
 === "Julia"
 	```c++
-	constants(ops::OpSum)
+	constants(ops::OpSum)::Vector{String}
 	```
 	
 ---
@@ -236,7 +236,7 @@ Returns whether an [OpSum](opsum.md) is a real operator.
 
 === "Julia"
 	```julia
-    isreal(ops::OpSum)
+    isreal(ops::OpSum)::Bool
 	```
 ---
 
@@ -252,7 +252,7 @@ Returns whether two OpSums are approximately equal.
 
 === "Julia"
 	```julia
-	isapprox(ops1::OpSum, ops2::OpSum, rtol::Float64=1e-12, atol::Float64=1e-12)
+	isapprox(ops1::OpSum, ops2::OpSum, rtol::Float64=1e-12, atol::Float64=1e-12)::Bool
 	```
 ---
 
@@ -268,7 +268,7 @@ Converts the OpSum to a readable string representation.
 
 === "Julia"
 	```julia
-	to_string(ops::OpSum)
+	to_string(ops::OpSum)::String
 	```
 ---
 	

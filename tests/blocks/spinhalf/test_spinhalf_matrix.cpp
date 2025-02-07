@@ -5,6 +5,7 @@
 #include <xdiag/algebra/isapprox.hpp>
 #include <xdiag/algebra/matrix.hpp>
 #include <xdiag/io/file_toml.hpp>
+#include <xdiag/utils/xdiag_show.hpp>
 
 using namespace xdiag;
 
@@ -21,6 +22,9 @@ TEST_CASE("spinhalf_matrix", "[spinhalf]") try {
         REQUIRE(H.is_hermitian(1e-7));
         arma::vec eigs;
         arma::eig_sym(eigs, H);
+	// XDIAG_SHOW(ops);
+	// H.print();
+	// exact_eigs.print();
         REQUIRE(isapprox(eigs, exact_eigs));
       }
     }

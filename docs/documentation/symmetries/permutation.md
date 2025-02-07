@@ -64,18 +64,18 @@ Constructs an identity permutation of a given size, e.g. `{0, 1, 2, 3}`.
 ## Methods
 
 
-#### inverse
+#### inv
 
 Computes the inverse permutation.
 	
 === "C++"	
 	```c++
-	Permutation inverse(Permutation const &p);
+	Permutation inv(Permutation const &p);
 	```
 	
 === "Julia"
 	```julia
-	inverse(perm::Permutation)
+	inv(perm::Permutation)::Permutation
 	```
 ---
 
@@ -90,7 +90,7 @@ Concatenates two permutations by overloading the `*` operator.
 	
 === "Julia"
 	```julia
-	Base.:*(p1::Permutation, p2::Permutation)
+	Base.:*(p1::Permutation, p2::Permutation)::Permutation
 	```
 	
 ---
@@ -106,7 +106,7 @@ Raises a permutation to an integer power.
 	```
 === "Julia"
 	```julia
-	Base.:^(p::Permutation, power::Int64)
+	Base.:^(p::Permutation, power::Int64)::Permutation
 	```
 ---
 
@@ -120,7 +120,7 @@ Returns the size of a Permutation.
 	```
 === "Julia"
 	```julia
-	size(p::Permutation)
+	size(p::Permutation)::Int64
 	```
 ---
 
@@ -136,7 +136,7 @@ Converts the Permutation to a readable string representation.
 
 === "Julia"
 	```julia
-	to_string(perm::Permutation)
+	to_string(perm::Permutation)::String
 	```
 ---
 

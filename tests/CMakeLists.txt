@@ -73,6 +73,8 @@ set(XDIAG_TEST_SOURCES
 
   states/test_random_state.cpp
   states/test_product_state.cpp
+  states/test_state.cpp
+
 )
 
 set(XDIAG_TESTCASES_SOURCES

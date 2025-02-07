@@ -21,7 +21,7 @@ public:
 
   XDIAG_API int64_t size() const;
   XDIAG_API int64_t operator[](int64_t i) const;
-  XDIAG_API Permutation inverse() const;
+  XDIAG_API Permutation inv() const;
   XDIAG_API std::vector<int64_t> const &array() const;
 
   XDIAG_API Permutation &operator*=(Permutation const &rhs);
@@ -37,7 +37,7 @@ private:
 XDIAG_API int64_t size(Permutation const &p);
 XDIAG_API Permutation multiply(Permutation const &p1, Permutation const &p2);
 XDIAG_API Permutation operator*(Permutation const &p1, Permutation const &p2);
-XDIAG_API Permutation inverse(Permutation const &p);
+XDIAG_API Permutation inv(Permutation const &p);
 XDIAG_API Permutation pow(Permutation const &p, int64_t power);
 
 XDIAG_API std::ostream &operator<<(std::ostream &out, Permutation const &perm);

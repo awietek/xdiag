@@ -120,7 +120,7 @@ representatives_indices_symmetries_limits_norms(
       bit_t state = group_action.apply(sym, rep);
       int64_t idx = states_indexing.index(state);
 
-      int64_t sym_inv = group.inverse(sym);
+      int64_t sym_inv = group.inv(sym);
       int64_t idx_sym = n_syms_for_state_offset[idx] + n_syms_for_state[idx]++;
       syms[idx_sym] = sym_inv;
     }

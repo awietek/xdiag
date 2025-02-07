@@ -20,8 +20,8 @@ Returns the hermitian conjugate $\mathcal{O}^\dagger$ of an operator $\mathcal{O
 	```
 === "Julia"
 	```julia
-	hc(op::OpSum)
-	hc(ops::OpSum)
+	hc(op::OpSum)::Op
+	hc(ops::OpSum)::OpSum
 	```
 	
 ---

@@ -69,7 +69,7 @@ Returns whether an [Op](op.md) is a real operator.
 
 === "Julia"
 	```julia
-    isreal(op::Op)
+    isreal(op::Op)::Bool
 	```
 ---
 
@@ -85,7 +85,7 @@ Returns whether two Ops are approximately equal.
 
 === "Julia"
 	```julia
-	isapprox(op1::Op, op2::Op, rtol::Float64=1e-12, atol::Float64=1e-12)
+	isapprox(op1::Op, op2::Op, rtol::Float64=1e-12, atol::Float64=1e-12)::Bool
 	```
 ---
 
@@ -101,7 +101,7 @@ Converts the Op to a readable string representation.
 
 === "Julia"
 	```julia
-	to_string(op::Op)
+	to_string(op::Op)::String
 	```
 ---
 ## Usage Example

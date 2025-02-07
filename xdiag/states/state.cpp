@@ -5,104 +5,109 @@
 namespace xdiag {
 
 static void safe_resize(std::vector<double> &vec, int64_t size) try {
-  vec.resize(size);
+  vec.resize(size, 0);
 } catch (...) {
   XDIAG_THROW("Unable to resize vector");
 }
 
-State::State(Block const &block, bool real, int64_t ncols) try
-    : real_(real), dim_(xdiag::dim(block)), nrows_(xdiag::size(block)),
-      ncols_(ncols), block_(block) {
+// This initialization just allocates the memory
+void State::init0(bool real, int64_t nrows, int64_t ncols) try {
+  real_ = real;
+  nrows_ = nrows;
+  ncols_ = ncols;
+
   if (real) {
     safe_resize(storage_, size());
   } else {
     safe_resize(storage_, 2 * size());
   }
+
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
-template <typename block_t>
-State::State(block_t const &block, bool real, int64_t ncols) try
-    : real_(real), dim_(block.dim()), nrows_(block.size()), ncols_(ncols),
-      block_(block) {
-  if (real) {
-    safe_resize(storage_, size());
-  } else {
-    safe_resize(storage_, 2 * size());
-  }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
-
-template <typename block_t>
-State::State(block_t const &block, double const *ptr, int64_t ncols,
-             int64_t stride) try
-    : real_(true), nrows_(block.size()), ncols_(ncols), block_(block) {
-
-  safe_resize(storage_, size());
-
+// This initialization copies the memory (double)
+void State::initcopy(const double *ptr, int64_t nrows, int64_t ncols,
+                     int64_t stride) try {
+  init0(true, nrows, ncols);
   if (stride == 1) {
     std::copy(ptr, ptr + size(), storage_.data());
-  } else {
-    for (int64_t i = 0, is = 0; i < size(); ++i, is += stride) {
+  } else if (stride == 2) {
+    for (int64_t i = 0, is = 0; i < size(); ++i, is += 2) {
       storage_[i] = ptr[is];
     }
+  } else {
+    XDIAG_THROW("Invalid stride given. This is a bug, please report.");
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
-template <typename block_t>
-State::State(block_t const &block, complex const *ptr, int64_t ncols) try
-    : real_(false), nrows_(block.size()), ncols_(ncols), block_(block) {
-
-  safe_resize(storage_, 2 * size());
+// This initialization copies the memory (complex)
+void State::initcopy(const complex *ptr, int64_t nrows, int64_t ncols) try {
+  init0(false, nrows, ncols);
   std::copy(ptr, ptr + size(), reinterpret_cast<complex *>(storage_.data()));
-
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
-template <typename block_t, typename coeff_t>
-State::State(block_t const &block, arma::Col<coeff_t> const &vector) try
-    : real_(xdiag::isreal<coeff_t>()), nrows_(block.size()), ncols_(1),
-      block_(block) {
-  if (block.size() != (int64_t)vector.n_rows) {
-    XDIAG_THROW("Block dimension not equal to vector dimension");
-  }
-
-  if (real_) {
-    safe_resize(storage_, size());
-  } else {
-    safe_resize(storage_, 2 * size());
-  }
-
-  std::copy(vector.memptr(), vector.memptr() + size(),
-            reinterpret_cast<coeff_t *>(storage_.data()));
-
+State::State(Block const &block, bool real, int64_t ncols) try : block_(block) {
+  init0(real, xdiag::size(block), ncols);
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
-template <typename block_t, typename coeff_t>
-State::State(block_t const &block, arma::Mat<coeff_t> const &matrix) try
-    : real_(xdiag::isreal<coeff_t>()), nrows_(matrix.n_rows),
-      ncols_(matrix.n_cols), block_(block) {
-
-  if (block.size() != (int64_t)matrix.n_rows) {
-    XDIAG_THROW("Block dimension not equal to number of rows in matrix");
+State::State(Block const &block, arma::vec const &vector) try : block_(block) {
+  if (vector.size() != xdiag::size(block)) {
+    XDIAG_THROW(
+        "Size of block does not agree with size of given armadillo vector");
   }
+  initcopy(vector.memptr(), vector.size(), 1);
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
 
-  if (real_) {
-    safe_resize(storage_, size());
-  } else {
-    safe_resize(storage_, 2 * size());
+State::State(Block const &block, arma::cx_vec const &vector) try
+    : block_(block) {
+  if (vector.size() != xdiag::size(block)) {
+    XDIAG_THROW(
+        "Size of block does not agree with size of given armadillo vector");
   }
+  initcopy(vector.memptr(), vector.size(), 1);
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+State::State(Block const &block, arma::mat const &matrix) try : block_(block) {
+  if (matrix.n_rows != xdiag::size(block)) {
+    XDIAG_THROW("Size of block does not agree with number of rows of given "
+                "armadillo matrix");
+  }
+  initcopy(matrix.memptr(), matrix.n_rows, matrix.n_cols);
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+State::State(Block const &block, arma::cx_mat const &matrix) try
+    : block_(block) {
+  if (matrix.n_rows != xdiag::size(block)) {
+    XDIAG_THROW("Size of block does not agree with number of rows of given "
+                "armadillo matrix");
+  }
+  initcopy(matrix.memptr(), matrix.n_rows, matrix.n_cols);
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
 
-  std::copy(matrix.memptr(), matrix.memptr() + size(),
-            reinterpret_cast<coeff_t *>(storage_.data()));
+State::State(Block const &block, double const *ptr, int64_t ncols,
+             int64_t stride) try
+    : block_(block) {
+  initcopy(ptr, xdiag::size(block), ncols, stride);
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
 
+State::State(Block const &block, complex const *ptr, int64_t ncols) try
+    : block_(block) {
+  initcopy(ptr, xdiag::size(block), ncols);
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
@@ -244,65 +249,6 @@ complex *State::colptrC(int64_t col) {
   }
   return memptrC() + col * nrows_;
 }
-
-template XDIAG_API State::State(Spinhalf const &, bool, int64_t);
-template XDIAG_API State::State(tJ const &, bool, int64_t);
-template XDIAG_API State::State(Electron const &, bool, int64_t);
-
-template XDIAG_API State::State(Spinhalf const &, double const *, int64_t,
-                                int64_t);
-template XDIAG_API State::State(tJ const &, double const *, int64_t, int64_t);
-template XDIAG_API State::State(Electron const &, double const *, int64_t,
-                                int64_t);
-
-template XDIAG_API State::State(Spinhalf const &, complex const *, int64_t);
-template XDIAG_API State::State(tJ const &, complex const *, int64_t);
-template XDIAG_API State::State(Electron const &, complex const *, int64_t);
-
-template XDIAG_API State::State(Spinhalf const &, arma::Col<double> const &);
-template XDIAG_API State::State(tJ const &, arma::Col<double> const &);
-template XDIAG_API State::State(Electron const &, arma::Col<double> const &);
-template XDIAG_API State::State(Spinhalf const &, arma::Col<complex> const &);
-template XDIAG_API State::State(tJ const &, arma::Col<complex> const &);
-template XDIAG_API State::State(Electron const &, arma::Col<complex> const &);
-
-template XDIAG_API State::State(Spinhalf const &, arma::Mat<double> const &);
-template XDIAG_API State::State(tJ const &, arma::Mat<double> const &);
-template XDIAG_API State::State(Electron const &, arma::Mat<double> const &);
-template XDIAG_API State::State(Spinhalf const &, arma::Mat<complex> const &);
-template XDIAG_API State::State(tJ const &, arma::Mat<complex> const &);
-template XDIAG_API State::State(Electron const &, arma::Mat<complex> const &);
-
-#ifdef XDIAG_USE_MPI
-template XDIAG_API State::State(SpinhalfDistributed const &, bool, int64_t);
-template XDIAG_API State::State(SpinhalfDistributed const &, double const *,
-                                int64_t, int64_t);
-template XDIAG_API State::State(SpinhalfDistributed const &, complex const *,
-                                int64_t);
-template XDIAG_API State::State(SpinhalfDistributed const &,
-                                arma::Col<double> const &);
-template XDIAG_API State::State(SpinhalfDistributed const &,
-                                arma::Col<complex> const &);
-template XDIAG_API State::State(SpinhalfDistributed const &,
-                                arma::Mat<double> const &);
-template XDIAG_API State::State(SpinhalfDistributed const &,
-                                arma::Mat<complex> const &);
-
-template XDIAG_API State::State(tJDistributed const &, bool, int64_t);
-template XDIAG_API State::State(tJDistributed const &, double const *, int64_t,
-                                int64_t);
-template XDIAG_API State::State(tJDistributed const &, complex const *,
-                                int64_t);
-template XDIAG_API State::State(tJDistributed const &,
-                                arma::Col<double> const &);
-template XDIAG_API State::State(tJDistributed const &,
-                                arma::Col<complex> const &);
-template XDIAG_API State::State(tJDistributed const &,
-                                arma::Mat<double> const &);
-template XDIAG_API State::State(tJDistributed const &,
-                                arma::Mat<complex> const &);
-
-#endif
 
 int64_t nsites(State const &s) { return s.nsites(); }
 bool isapprox(State const &v, State const &w, double rtol, double atol) try {

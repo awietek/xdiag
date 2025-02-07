@@ -20,10 +20,10 @@ A block in an Electron (fermions with $\uparrow, \downarrow$ spin) Hilbert space
 	
 === "Julia"
 	```julia
-	Electron(nsites::Integer, backend::String)
-	Electron(nsites::Integer, nup::Integer, ndn::Integer, backend::String)
-	Electron(nsites::Integer, irrep::Representation, backend::String)
-	Electron(nsites::Integer, nup::Integer, ndn::Integer, irrep::Representation, backend::String)
+	Electron(nsites::Integer, backend::String="auto")
+	Electron(nsites::Integer, nup::Integer, ndn::Integer, backend::String="auto")
+	Electron(nsites::Integer, irrep::Representation, backend::String="auto")
+	Electron(nsites::Integer, nup::Integer, ndn::Integer, irrep::Representation, backend::String="auto")
 	```
 
 | Name    | Description                                                                          |        |
@@ -72,7 +72,7 @@ Returns the index of a given [ProductState](../states/product_state.md) in the b
 	
 === "Julia"
 	```julia
-	index(block::tJ, pstate::ProductState)
+	index(block::tJ, pstate::ProductState)::Int64
 	```
 	
 !!! warning "1-indexing"
@@ -91,7 +91,7 @@ Returns the number of sites of the block.
 	
 === "Julia"
 	```julia
-	nsites(block::tJ)
+	nsites(block::tJ)::Int64
 	```
 ---
 
@@ -105,7 +105,7 @@ Returns the size of the block, i.e. its dimension.
 	
 === "Julia"
 	```julia
-	size(block::tJ)
+	size(block::tJ)::Int64
 	```
 
 ---
@@ -120,7 +120,7 @@ Returns the dimension of the block, same as "size" for non-distributed blocks.
 	
 === "Julia"
 	```julia
-	dim(block::tJ)
+	dim(block::tJ)::Int64
 	```
 
 ---
@@ -137,7 +137,7 @@ Complex arithmetic is needed when a
 
 === "Julia"
 	```julia
-    isreal(block::tJ)
+    isreal(block::tJ)::Bool
 	```
 ---
 

@@ -59,7 +59,7 @@ Returns the number of sites on which the permutations of the group acts.
 	```
 === "Julia"
 	```julia
-	nsites(group::PermutationGroup)
+	nsites(group::PermutationGroup)::Int64
 	```
 
 ---
@@ -73,7 +73,7 @@ Returns the size of the permutation group, i.e. the number permutations.
 	```
 === "Julia"
 	```julia
-	size(group::PermutationGroup)
+	size(group::PermutationGroup)::Int64
 	```
 ---
 
@@ -89,7 +89,7 @@ Converts the PermutationGroup to a readable string representation.
 
 === "Julia"
 	```julia
-    to_string(group::PermutationGroup)
+    to_string(group::PermutationGroup)::String
 	```
 ---
 

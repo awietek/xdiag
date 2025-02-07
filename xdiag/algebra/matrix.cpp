@@ -11,10 +11,10 @@
 
 namespace xdiag {
 
-template <typename coeff_t, class block_t>
-static arma::Mat<coeff_t> matrix_gen(OpSum const &ops, block_t const &block_in,
+template <typename coeff_t, typename op_t, class block_t>
+static arma::Mat<coeff_t> matrix_gen(op_t const &op, block_t const &block_in,
                                      block_t const &block_out) try {
-  if (!blocks_match(ops, block_in, block_out)) {
+  if (!blocks_match(OpSum(op), block_in, block_out)) {
     XDIAG_THROW("Cannot matrix on Blocks. The resulting Block is not in "
                 "the correct symmetry sector. Please check the quantum numbers "
                 "of the output block.");
@@ -22,115 +22,120 @@ static arma::Mat<coeff_t> matrix_gen(OpSum const &ops, block_t const &block_in,
   int64_t m = block_out.size();
   int64_t n = block_in.dim();
   arma::Mat<coeff_t> mat(m, n, arma::fill::zeros);
-  matrix(mat.memptr(), ops, block_in, block_out);
+  matrix(mat.memptr(), op, block_in, block_out);
   return mat;
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
-template <class block_t>
-arma::mat matrix(OpSum const &ops, block_t const &block_in,
-                 block_t const &block_out) try {
+template <typename coeff_t, typename op_t, typename block_t>
+static arma::Mat<coeff_t> matrix_gen(op_t const &op,
+                                     block_t const &blocki) try {
+  auto blockr = block(OpSum(op), blocki);
+  return matrix_gen<coeff_t>(op, blocki, blockr);
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
 
-  if (!isreal(ops)) {
-    XDIAG_THROW("Cannot create a real matrix from an OpSum which is complex. "
-                "Please use the function \"matrixC\" instead.");
+template <typename coeff_t, typename op_t>
+static arma::Mat<coeff_t> matrix_gen_variant(op_t const &op,
+                                             Block const &block_in,
+                                             Block const &block_out) try {
+
+  // Check if real matrix can be created
+  if constexpr (isreal<coeff_t>()) {
+    if (!isreal(op)) {
+      XDIAG_THROW(
+          "Cannot create a real matrix from an Op or OpSum which is complex. "
+          "Please use the function \"matrixC\" instead.");
+    }
+    if (!isreal(block_in) || !isreal(block_out)) {
+      XDIAG_THROW("Cannot create a real matrix when a block is complex. "
+                  "Please use the function \"matrixC\" instead.")
+    }
   }
-  if (!isreal(block_in) || !isreal(block_out)) {
-    XDIAG_THROW("Cannot create a real matrix when a block is complex. "
-                "Please use the function \"matrixC\" instead.")
-  }
 
-  return matrix_gen<double>(ops, block_in, block_out);
+  return std::visit(
+      overload{
+          [&](Spinhalf const &b1, Spinhalf const &b2) {
+            return matrix_gen<coeff_t>(op, b1, b2);
+          },
+          [&](tJ const &b1, tJ const &b2) {
+            return matrix_gen<coeff_t>(op, b1, b2);
+          },
+          [&](Electron const &b1, Electron const &b2) {
+            return matrix_gen<coeff_t>(op, b1, b2);
+          },
+#ifdef XDIAG_USE_MPI
+          [](SpinhalfDistributed const &, SpinhalfDistributed const &) {
+            XDIAG_THROW("Matrix creation not implemented for "
+                        "SpinhalfDistributed blocks");
+            return arma::Mat<coeff_t>();
+          },
+          [](tJ const &, tJ const &) {
+            XDIAG_THROW(
+                "Matrix creation not implemented for tJDistributed blocks");
+            return arma::Mat<coeff_t>();
+          },
+#endif
+          [](auto const &, auto const &) {
+            XDIAG_THROW(fmt::format("Invalid combination of Block types"));
+            return arma::Mat<coeff_t>();
+          }},
+      block_in, block_out);
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
-template XDIAG_API arma::mat matrix(OpSum const &, Spinhalf const &,
-                                    Spinhalf const &);
-template XDIAG_API arma::mat matrix(OpSum const &, tJ const &, tJ const &);
-template XDIAG_API arma::mat matrix(OpSum const &, Electron const &,
-                                    Electron const &);
 
-template <class block_t>
-arma::mat matrix(Op const &op, block_t const &block_in,
-                 block_t const &block_out) try {
-  return matrix(OpSum(op), block_in, block_out);
+arma::mat matrix(Op const &op, Block const &block) try {
+  return std::visit([&](auto const &b) { return matrix_gen<double>(op, b); },
+                    block);
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
-template XDIAG_API arma::mat matrix(Op const &, Spinhalf const &,
-                                    Spinhalf const &);
-template XDIAG_API arma::mat matrix(Op const &, tJ const &, tJ const &);
-template XDIAG_API arma::mat matrix(Op const &, Electron const &,
-                                    Electron const &);
-
-template <class block_t>
-arma::mat matrix(OpSum const &ops, block_t const &blocki) try {
-  auto blockr = block(ops, blocki);
-  return matrix(ops, blocki, blockr);
+arma::mat matrix(OpSum const &ops, Block const &block) try {
+  return std::visit([&](auto const &b) { return matrix_gen<double>(ops, b); },
+                    block);
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
-template XDIAG_API arma::mat matrix(OpSum const &, Spinhalf const &);
-template XDIAG_API arma::mat matrix(OpSum const &, tJ const &);
-template XDIAG_API arma::mat matrix(OpSum const &, Electron const &);
-
-template <class block_t>
-arma::mat matrix(Op const &op, block_t const &blocki) try {
-  return matrix(OpSum(op), blocki);
+arma::cx_mat matrixC(Op const &op, Block const &block) try {
+  return std::visit([&](auto const &b) { return matrix_gen<complex>(op, b); },
+                    block);
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
-template XDIAG_API arma::mat matrix(Op const &, Spinhalf const &);
-template XDIAG_API arma::mat matrix(Op const &, tJ const &);
-template XDIAG_API arma::mat matrix(Op const &, Electron const &);
-
-template <class block_t>
-arma::cx_mat matrixC(OpSum const &ops, block_t const &block_in,
-                     block_t const &block_out) try {
-  return matrix_gen<complex>(ops, block_in, block_out);
+arma::cx_mat matrixC(OpSum const &ops, Block const &block) try {
+  return std::visit([&](auto const &b) { return matrix_gen<complex>(ops, b); },
+                    block);
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
-template XDIAG_API arma::cx_mat matrixC(OpSum const &, Spinhalf const &,
-                                        Spinhalf const &);
-template XDIAG_API arma::cx_mat matrixC(OpSum const &, tJ const &, tJ const &);
-template XDIAG_API arma::cx_mat matrixC(OpSum const &, Electron const &,
-                                        Electron const &);
 
-template <class block_t>
-arma::cx_mat matrixC(Op const &op, block_t const &block_in,
-                     block_t const &block_out) try {
-  return matrixC(OpSum(op), block_in, block_out);
+arma::mat matrix(Op const &op, Block const &block_in,
+                 Block const &block_out) try {
+  return matrix_gen_variant<double>(op, block_in, block_out);
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
-template XDIAG_API arma::cx_mat matrixC(Op const &, Spinhalf const &,
-                                        Spinhalf const &);
-template XDIAG_API arma::cx_mat matrixC(Op const &, tJ const &, tJ const &);
-template XDIAG_API arma::cx_mat matrixC(Op const &, Electron const &,
-                                        Electron const &);
-
-template <class block_t>
-arma::cx_mat matrixC(OpSum const &ops, block_t const &blocki) try {
-  auto blockr = block(ops, blocki);
-  return matrixC(ops, blocki, blockr);
+arma::mat matrix(OpSum const &ops, Block const &block_in,
+                 Block const &block_out) try {
+  return matrix_gen_variant<double>(ops, block_in, block_out);
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
-template XDIAG_API arma::cx_mat matrixC(OpSum const &, Spinhalf const &);
-template XDIAG_API arma::cx_mat matrixC(OpSum const &, tJ const &);
-template XDIAG_API arma::cx_mat matrixC(OpSum const &, Electron const &);
-
-template <class block_t>
-arma::cx_mat matrixC(Op const &op, block_t const &blocki) try {
-  return matrixC(OpSum(op), blocki);
+arma::cx_mat matrixC(Op const &op, Block const &block_in,
+                     Block const &block_out) try {
+  return matrix_gen_variant<complex>(op, block_in, block_out);
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
-template XDIAG_API arma::cx_mat matrixC(Op const &, Spinhalf const &);
-template XDIAG_API arma::cx_mat matrixC(Op const &, tJ const &);
-template XDIAG_API arma::cx_mat matrixC(Op const &, Electron const &);
+arma::cx_mat matrixC(OpSum const &ops, Block const &block_in,
+                     Block const &block_out) try {
+  return matrix_gen_variant<complex>(ops, block_in, block_out);
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
 
 template <typename coeff_t, class block_t>
 static void compile_and_dispatch(coeff_t *mat, int64_t m, OpSum const &ops,

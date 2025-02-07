@@ -4,8 +4,10 @@ title: tJ
 
 A block in a  $t-J$ type Hilbert space, i.e. fermions with $\uparrow, \downarrow$ spin excluding doubly occupied sites. 
 
-**Sources** [tj.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/blocks/tj.hpp), [tj.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/blocks/tj.cpp)
-
+**Sources**<br>
+[tj.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/blocks/tj.hpp)<br>
+[tj.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/blocks/tj.cpp)<br>
+[tj.jl](https://github.com/awietek/XDiag.jl/blob/main/src/blocks/tj.jl)
 ---
 
 ## Constructors
@@ -18,8 +20,8 @@ A block in a  $t-J$ type Hilbert space, i.e. fermions with $\uparrow, \downarrow
 
 === "Julia"
 	```julia
-	tJ(nsites::Integer, nup::Integer, ndn::Integer, backend::String)
-	tJ(nsites::Integer, nup::Integer, ndn::Integer, irrep::Representation, backend::String)
+	tJ(nsites::Integer, nup::Integer, ndn::Integer, backend::String="auto")
+	tJ(nsites::Integer, nup::Integer, ndn::Integer, irrep::Representation, backend::String="auto")
 	```
 
 
@@ -68,7 +70,7 @@ Returns the index of a given [ProductState](../states/product_state.md) in the b
 	
 === "Julia"
 	```julia
-	index(block::tJ, pstate::ProductState)
+	index(block::tJ, pstate::ProductState)::Int64
 	```
 	
 !!! warning "1-indexing"
@@ -87,7 +89,7 @@ Returns the number of sites of the block.
 	
 === "Julia"
 	```julia
-	nsites(block::tJ)
+	nsites(block::tJ)::Int64
 	```
 ---
 
@@ -101,7 +103,7 @@ Returns the size of the block, i.e. its dimension.
 	
 === "Julia"
 	```julia
-	size(block::tJ)
+	size(block::tJ)::Int64
 	```
 
 ---
@@ -116,7 +118,7 @@ Returns the dimension of the block, same as "size" for non-distributed blocks.
 	
 === "Julia"
 	```julia
-	dim(block::tJ)
+	dim(block::tJ)::Int64
 	```
 
 ---
@@ -133,7 +135,7 @@ Complex arithmetic is needed when a
 
 === "Julia"
 	```julia
-    isreal(block::tJ)
+    isreal(block::tJ)::Int64
 	```
 ---
 

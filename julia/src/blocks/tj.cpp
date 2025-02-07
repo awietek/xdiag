@@ -12,6 +12,7 @@ void define_tj(jlcxx::Module &mod) {
       });
 
   mod.add_type<tJ>("cxx_tJ")
+      .constructor<>()
       .constructor<int64_t, int64_t, int64_t, std::string>()
       .constructor<int64_t, int64_t, int64_t, Representation, std::string>()
       .method("nsites", [](tJ const &s) { JULIA_XDIAG_CALL_RETURN(s.nsites()) })

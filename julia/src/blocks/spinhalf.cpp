@@ -12,6 +12,7 @@ void define_spinhalf(jlcxx::Module &mod) {
       });
 
   mod.add_type<Spinhalf>("cxx_Spinhalf")
+      .constructor<>()
       .constructor<int64_t, std::string>()
       .constructor<int64_t, int64_t, std::string>()
       .constructor<int64_t, Representation, std::string>()

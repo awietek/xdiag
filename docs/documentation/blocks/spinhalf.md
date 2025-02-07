@@ -4,7 +4,10 @@ title: Spinhalf
 
 A block in a spin $S=1/2$  Hilbert space. 
 
-**Sources** [spinhalf.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/blocks/spinhalf.hpp), [spinhalf.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/blocks/spinhalf.cpp)
+**Sources**<br>
+[spinhalf.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/blocks/spinhalf.hpp)<br>
+[spinhalf.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/blocks/spinhalf.cpp)<br>
+[spinhalf.jl](https://github.com/awietek/XDiag.jl/blob/main/src/blocks/spinhalf.jl)
 
 ---
 
@@ -20,10 +23,10 @@ A block in a spin $S=1/2$  Hilbert space.
 	```
 === "Julia"
 	```julia
-	Spinhalf(nsites::Integer, backend::String)
-	Spinhalf(nsites::Integer, nup::Integer, backend::String)
-	Spinhalf(nsites::Integer, irrep::Representation, backend::String)
-	Spinhalf(nsites::Integer, nup::Integer, irrep::Representation, backend::String)
+	Spinhalf(nsites::Integer, backend::String="auto")
+	Spinhalf(nsites::Integer, nup::Integer, backend::String="auto")
+	Spinhalf(nsites::Integer, irrep::Representation, backend::String="auto")
+	Spinhalf(nsites::Integer, nup::Integer, irrep::Representation, backend::String="auto")
 	```
 	
 | Name    | Description                                                                          | Default |
@@ -72,7 +75,7 @@ Returns the index of a given [ProductState](../states/product_state.md) in the b
 	
 === "Julia"
 	```julia
-	index(block::Spinhalf, pstate::ProductState)
+	index(block::Spinhalf, pstate::ProductState)::Int64
 	```
 	
 !!! warning "1-indexing"
@@ -91,7 +94,7 @@ Returns the number of sites of the block.
 	
 === "Julia"
 	```julia
-	nsites(block::Spinhalf)
+	nsites(block::Spinhalf)::Int64
 	```
 ---
 
@@ -105,7 +108,7 @@ Returns the size of the block, i.e. its dimension.
 	
 === "Julia"
 	```julia
-	size(block::Spinhalf)
+	size(block::Spinhalf)::Int64
 	```
 
 ---
@@ -120,7 +123,7 @@ Returns the dimension of the block, same as "size" for non-distributed blocks.
 	
 === "Julia"
 	```julia
-	dim(block::Spinhalf)
+	dim(block::Spinhalf)::Int64
 	```
 
 ---
@@ -137,7 +140,7 @@ Complex arithmetic is needed when a
 
 === "Julia"
 	```julia
-    isreal(block::Spinhalf)
+    isreal(block::Spinhalf)::Bool
 	```
 ---
 

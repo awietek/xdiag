@@ -4,7 +4,7 @@ using XDiag
 p1 = Permutation([1, 3, 2, 4])
 p2 = Permutation([3, 1, 2, 4])
 
-@show inverse(p1)
+@show inv(p1)
 @show p1 * p2
 @show p1 ^ 2
 # --8<-- [end:Permutation]
@@ -29,112 +29,94 @@ r2 = Representation(C4, [1.0, 1.0im, -1.0, -1.0im])
 @show r1 * r2
 # --8<-- [end:Representation]
 
-# # --8<-- [start:Spinhalf]
-# N = 4
-# nup = 2
+# --8<-- [start:Spinhalf]
+N = 4
+nup = 2
 
-# # without Sz conservation
-# block = Spinhalf(N)
-# @show block
+# without Sz conservation
+block = Spinhalf(N)
+@show block
 
+# with Sz conservation
+block_sz = Spinhalf(N, nup)
+@show block_sz
 
-# # with Sz conservation
-# block_sz = Spinhalf(N, nup)
-# @show block_sz
+# with symmetries, without Sz
+p = Permutation([2, 3, 4, 1])
+group = PermutationGroup([p^0, p^1, p^2, p^3])
+rep = Representation(group, [1.0, -1.0, 1.0, -1.0])
+block_sym = Spinhalf(N, rep)
+@show block_sym
 
-# # with symmetries, without Sz
-# p1 = Permutation([1, 2, 3, 4])
-# p2 = Permutation([2, 3, 4, 1])
-# p3 = Permutation([3, 4, 1, 2])
-# p4 = Permutation([4, 1, 2, 3])
-# group = PermutationGroup([p1, p2, p3, p4])
-# rep = Representation([1, -1, 1, -1])
-# block_sym = Spinhalf(N, group, rep)
-# @show block_sym
+# with symmetries and Sz
+block_sym_sz = Spinhalf(N, nup, rep)
+@show block_sym_sz
+@show nsites(block_sym_sz)
+@show size(block_sym_sz)
 
-# # with symmetries and Sz
-# block_sym_sz = Spinhalf(N, nup, group, rep)
-# @show block_sym_sz
+# Iteration
+for pstate in block_sym_sz
+    @show pstate, index(block_sym_sz, pstate)
+end
+# --8<-- [end:Spinhalf]
 
-# @show nsites(block_sym_sz)
-# @show size(block_sym_sz)
+# --8<-- [start:tJ]
+N = 4
+nup = 2
+ndn = 1
 
-# # Iteration
-# for pstate in block_sym_sz
-#     @show pstate, index(block_sym_sz, pstate)
-# end
-# @show permutation_group(block_sym_sz)
-# @show irrep(block_sym_sz)
-# # --8<-- [end:Spinhalf]
+# without permutation symmetries
+block = tJ(N, nup, ndn)
+@show block
 
-# # --8<-- [start:tJ]
-# N = 4
-# nup = 2
-# ndn = 1
+# with permutation symmetries
+p = Permutation([2, 3, 4, 1])
+group = PermutationGroup([p^0, p^1, p^2, p^3])
+rep = Representation(group, [1.0, -1.0, 1.0, -1.0])
+block_sym = tJ(N, nup, ndn, rep)
+@show block_sym
 
-# # without permutation symmetries
-# block = tJ(N, nup, ndn)
-# @show block
+@show nsites(block_sym)
+@show size(block_sym)
 
-# # with permutation symmetries
-# p1 = Permutation([1, 2, 3, 4])
-# p2 = Permutation([2, 3, 4, 1])
-# p3 = Permutation([3, 4, 1, 2])
-# p4 = Permutation([4, 1, 2, 3])
-# group = PermutationGroup([p1, p2, p3, p4])
-# rep = Representation([1, -1, 1, -1])
-# block_sym = tJ(N, nup, ndn, group, rep)
-# @show block_sym
-
-# @show nsites(block_sym)
-# @show size(block_sym)
-
-# # Iteration
-# for pstate in block_sym
-#     @show pstate, index(block_sym, pstate)
-# end
-# @show permutation_group(block_sym)
-# @show irrep(block_sym)
-# # --8<-- [end:tJ]
+# Iteration
+for pstate in block_sym
+    @show pstate, index(block_sym, pstate)
+end
+# --8<-- [end:tJ]
 
 
-# # --8<-- [start:Electron]
-# N = 4
-# nup = 2
-# ndn = 1
+# --8<-- [start:Electron]
+N = 4
+nup = 2
+ndn = 1
 
-# # without number conservation
-# block = Electron(N)
-# @show block
+# without number conservation
+block = Electron(N)
+@show block
 
-# # with number conservation
-# block_np = Electron(N, nup, ndn)
-# @show block_np
+# with number conservation
+block_np = Electron(N, nup, ndn)
+@show block_np
 
-# # with symmetries, without number conservation
-# p1 = Permutation([1, 2, 3, 4])
-# p2 = Permutation([2, 3, 4, 1])
-# p3 = Permutation([3, 4, 1, 2])
-# p4 = Permutation([4, 1, 2, 3])
-# group = PermutationGroup([p1, p2, p3, p4])
-# rep = Representation([1, -1, 1, -1])
-# block_sym = Electron(N, group, rep)
-# @show block_sym
+# with symmetries, without number conservation
+p = Permutation([2, 3, 4, 1])
+group = PermutationGroup([p^0, p^1, p^2, p^3])
+rep = Representation(group, [1.0, -1.0, 1.0, -1.0])
+block_sym = Electron(N, rep)
+@show block_sym
 
-# # with symmetries and number conservation
-# block_sym_np = Electron(N, nup, ndn, group, rep)
-# @show block_sym_np
+# with symmetries and number conservation
+block_sym_np = Electron(N, nup, ndn, rep)
+@show block_sym_np
+@show nsites(block_sym_np)
+@show size(block_sym_np)
 
-# @show nsites(block_sym_np)
-# @show size(block_sym_np)
-
-# # Iteration
-# for pstate in block_sym_np
-#     @show pstate, index(block_sym_np, pstate)
-# end
-# @show permutation_group(block_sym_np)
-# @show irrep(block_sym_np)
-# # --8<-- [end:Electron]
+# Iteration
+for pstate in block_sym_np
+    @show pstate, index(block_sym_np, pstate)
+end
+# --8<-- [end:Electron]
 
 
 # # --8<-- [start:matrix]
@@ -380,31 +362,31 @@ hop = (1.0 + 1.0im) * Op("Hop", [1, 2])
 # end
 # # --8<-- [end:apply]
 
-# # --8<-- [start:symmetrize]
-# let
-#     N = 4
-#     nup = 2
-#     block = Spinhalf(N, nup)
-#     p1 = Permutation([1, 2, 3, 4])
-#     p2 = Permutation([2, 3, 4, 1])
-#     p3 = Permutation([3, 4, 1, 2])
-#     p4 = Permutation([4, 1, 2, 3])
-#     group = PermutationGroup([p1, p2, p3, p4])
-#     rep = Representation([1.0, 1.0, 1.0, 1.0])
-#     block_sym = Spinhalf(N, group, rep)
+# --8<-- [start:symmetrize]
+let
+    N = 4
+    nup = 2
+    block = Spinhalf(N, nup)
+    p1 = Permutation([1, 2, 3, 4])
+    p2 = Permutation([2, 3, 4, 1])
+    p3 = Permutation([3, 4, 1, 2])
+    p4 = Permutation([4, 1, 2, 3])
+    group = PermutationGroup([p1, p2, p3, p4])
+    rep = Representation(group)
+    block_sym = Spinhalf(N, rep)
 
-#     ops = OpSum()
-#     for i in 1:N
-#         ops += Op("HB", 1.0, [i, mod1(i+1, N)])
-#     end
+    ops = OpSum()
+    for i in 1:N
+        ops += Op("SdotS", [i, mod1(i+1, N)])
+    end
 
-#     e0, psi = eig0(ops, block);
-#     e0, psi_sym = eig0(ops, block_sym);
+    e0, psi = eig0(ops, block);
+    e0, psi_sym = eig0(ops, block_sym);
 
-#     corr = Op("HB", 1.0, [1, 2])
-#     nn_corr = inner(corr, psi)
-#     corr_sym = symmetrize(corr, group)
-#     nn_corr_sym = inner(corr_sym, psi_sym)
-#     @show nn_corr, nn_corr_sym
-# end
-# # --8<-- [end:symmetrize]
+    corr = Op("SdotS", [1, 2])
+    nn_corr = inner(corr, psi)
+    corr_sym = symmetrize(corr, group)
+    nn_corr_sym = inner(corr_sym, psi_sym)
+    @show nn_corr, nn_corr_sym
+end
+# --8<-- [end:symmetrize]

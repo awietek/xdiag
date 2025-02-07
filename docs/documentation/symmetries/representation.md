@@ -68,7 +68,7 @@ Returns the size of the Representation, i.e. the number of group elements repres
 	
 === "Julia"
 	```julia
-	size(irrep::Representation)
+	size(irrep::Representation)::Int64
 	```
 
 ---
@@ -83,7 +83,7 @@ Returns the whether or not the Representation is real, I.E. the characters are r
 	
 === "Julia"
 	```julia
-	isreal(irrep::Representation)
+	isreal(irrep::Representation)::Bool
 	```
 ---
 
@@ -98,7 +98,7 @@ Multiplies two Representations by overloading the `*` operator.
 
 === "Julia"
 	```julia
-	Base.:*(r1::Representation, r2::Representation)
+	Base.:*(r1::Representation, r2::Representation)::Representation
 	```
 ---
 
@@ -114,7 +114,7 @@ Converts the Representation to a readable string representation.
 
 === "Julia"
 	```julia
-	to_string(irrep::Representation)
+	to_string(irrep::Representation)::String
 	```
 ---
 

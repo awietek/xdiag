@@ -11,16 +11,10 @@ public:
   XDIAG_API State() = default;
   XDIAG_API explicit State(Block const &block, bool real = true,
                            int64_t ncols = 1);
-
-  template <typename block_t>
-  XDIAG_API explicit State(block_t const &block, bool real = true,
-                           int64_t ncols = 1);
-
-  template <typename block_t, typename coeff_t>
-  XDIAG_API State(block_t const &block, arma::Col<coeff_t> const &vector);
-
-  template <typename block_t, typename coeff_t>
-  XDIAG_API State(block_t const &block, arma::Mat<coeff_t> const &matrix);
+  XDIAG_API State(Block const &block, arma::vec const &vector);
+  XDIAG_API State(Block const &block, arma::cx_vec const &vector);
+  XDIAG_API State(Block const &block, arma::mat const &matrix);
+  XDIAG_API State(Block const &block, arma::cx_mat const &matrix);
 
   XDIAG_API int64_t nsites() const;
   XDIAG_API bool isreal() const;
@@ -39,27 +33,26 @@ public:
   XDIAG_API arma::cx_mat matrixC(bool copy = true) const;
 
   // Developer section
-  template <typename block_t>
-  XDIAG_API State(block_t const &block, double const *ptr, int64_t ncols,
+  XDIAG_API State(Block const &block, double const *ptr, int64_t ncols,
                   int64_t stride = 1);
-
-  template <typename block_t>
-  XDIAG_API State(block_t const &block, complex const *ptr, int64_t ncols);
-
-  Block block() const;
-
+  XDIAG_API State(Block const &block, complex const *ptr, int64_t ncols);
   XDIAG_API double *memptr();
   XDIAG_API complex *memptrC();
   XDIAG_API double *colptr(int64_t col);
   XDIAG_API complex *colptrC(int64_t col);
+  Block block() const;
 
 private:
+  Block block_;
   bool real_;
-  int64_t dim_;
   int64_t nrows_;
   int64_t ncols_;
-  Block block_;
   mutable std::vector<double> storage_;
+
+  void init0(bool real, int64_t nrows, int64_t ncols);
+  void initcopy(const double *ptr, int64_t nrows, int64_t ncols,
+                int64_t stride = 1);
+  void initcopy(const complex *ptr, int64_t nrows, int64_t ncols);
 };
 
 XDIAG_API int64_t nsites(State const &s);

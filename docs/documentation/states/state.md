@@ -4,13 +4,16 @@ title: State
 
 A generic state describing a quantum wave function $|\psi \rangle$.
 
-**Sources** [state.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/states/state.hpp) [state.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/states/state.cpp)
+**Sources**<br>
+[state.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/states/state.hpp)<br> 
+[state.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/states/state.cpp)<br>
+[state.jl](https://github.com/awietek/XDiag.jl/blob/main/src/states/state.jl)
 
 ---
 
 ## Constructors
 
-A state can be constructed in two ways:
+A state can be constructed in three ways:
 
 1. By only specifying the block. In this case the state is initialized with all coefficients zero.
 
@@ -23,20 +26,28 @@ A state can be constructed in two ways:
 		State(block::Block; real::Bool = true, n_cols::Int64 = 1)
 		```
 
-2. By handing a vector or matrix of coefficients.
+2. By handing a vector of coefficients.
 
 	=== "C++"	
 		```c++ 
-		template <typename block_t, typename coeff_t>
-		State(block_t const &block, arma::Col<coeff_t> const &vector);
-
-		template <typename block_t, typename coeff_t>
-		State(block_t const &block, arma::Mat<coeff_t> const &matrix);
+		State(Block const &block, arma::vec const &vector);
+		State(Block const &block, arma::cx_vec const &vector);
 		```
 	=== "Julia"
 		```julia
 		State(block::Block, vec::Vector{Float64})
 		State(block::Block, vec::Vector{ComplexF64})
+		```	
+
+3. By handing a matrix whose columns describe several states at once.
+
+	=== "C++"	
+		```c++ 
+		State(Block const &block, arma::mat const &matrix);
+		State(Block const &block, arma::cx_mat const &matrix);
+		```
+	=== "Julia"
+		```julia
 		State(block::Block, mat::Matrix{Float64})
 		State(block::Block, mat::Matrix{ComplexF64})
 		```	
@@ -99,7 +110,7 @@ Returns whether the state is real.
 ---
 
 #### real
-Returns whether the real part of the State.
+Returns the real part of the State.
 
 === "C++"	
 	```c++
@@ -112,7 +123,7 @@ Returns whether the real part of the State.
 ---
 
 #### imag
-Returns whether the imaginary part of the State.
+Returns the imaginary part of the State.
 
 === "C++"	
 	```c++
@@ -153,7 +164,7 @@ Returns the dimension of the block the state is defined on.
 ---
 
 #### size
-Returns the size of the block the state is defined on. locally. Same as "dim" for non-distributed Blocks but different for distributed blocks.
+Returns the `size` of the block (also equal to `nrows`) times the number of columns `ncols`. For distributed blocks the local size of a Block is not the same as the dimension `dim`, which is the overall dimension of the block across all processes.
 
 === "C++"	
 	```c++
@@ -167,7 +178,7 @@ Returns the size of the block the state is defined on. locally. Same as "dim" fo
 ---
 
 #### nrows
-Returns number of rows of the local storage. Same as "size"
+Returns number of rows of the local storage.
 
 === "C++"	
 	```c++
@@ -182,7 +193,7 @@ Returns number of rows of the local storage. Same as "size"
 ---
 
 #### n_cols
-Returns number of columns of the local storage.
+Returns number of columns.
 
 === "C++"	
 	```c++

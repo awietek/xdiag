@@ -50,21 +50,21 @@ check_valid_group(std::vector<Permutation> const &permutations) try {
 
 static std::vector<int64_t>
 compute_inverse(std::vector<Permutation> const &permutations) try {
-  std::vector<int64_t> inverse(permutations.size());
+  std::vector<int64_t> inv(permutations.size());
   int64_t idx = 0;
   for (auto p : permutations) {
-    auto pinv = p.inverse();
+    auto pinv = p.inv();
     auto it = std::find(permutations.begin(), permutations.end(), pinv);
     if (it == permutations.end()) {
       XDIAG_THROW(fmt::format("Inverse element not found. The inverse of the "
                               "following Permutation has not been found\n{}",
                               to_string(p)));
     } else {
-      inverse[idx] = std::distance(permutations.begin(), it);
+      inv[idx] = std::distance(permutations.begin(), it);
     }
     idx++;
   }
-  return inverse;
+  return inv;
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
@@ -98,7 +98,7 @@ compute_multiply(std::vector<Permutation> const &permutations) try {
 
 PermutationGroup::PermutationGroup(
     std::vector<Permutation> const &permutations) try
-    : permutations_(permutations), inverse_(compute_inverse(permutations)),
+    : permutations_(permutations), inv_(compute_inverse(permutations)),
       multiply_(compute_multiply(permutations)) {
   check_valid_group(permutations);
 } catch (Error const &e) {
@@ -144,11 +144,11 @@ Permutation const &PermutationGroup::operator[](int64_t sym) const try {
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
-int64_t PermutationGroup::inverse(int64_t sym) const try {
+int64_t PermutationGroup::inv(int64_t sym) const try {
   if ((sym < 0) || (sym >= size())) {
     XDIAG_THROW("Invalid symmetry index");
   } else {
-    return inverse_[sym];
+    return inv_[sym];
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);

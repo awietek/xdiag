@@ -11,7 +11,7 @@ int main() try {
 Permutation p1 = {0, 2, 1, 3};
 Permutation p2 = {2, 0, 1, 3};
 
-XDIAG_SHOW(inverse(p1));
+XDIAG_SHOW(inv(p1));
 XDIAG_SHOW(p1*p2);
 // --8<-- [end:Permutation]
 }

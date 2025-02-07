@@ -27,7 +27,7 @@ public:
   XDIAG_API int64_t nsites() const;
 
   XDIAG_API Permutation const &operator[](int64_t sym) const;
-  XDIAG_API int64_t inverse(int64_t sym) const;
+  XDIAG_API int64_t inv(int64_t sym) const;
   XDIAG_API int64_t multiply(int64_t s1, int64_t s2) const;
 
   XDIAG_API iterator_t begin() const;
@@ -35,7 +35,7 @@ public:
 
 private:
   std::vector<Permutation> permutations_;
-  std::vector<int64_t> inverse_;
+  std::vector<int64_t> inv_;
   arma::Mat<int64_t> multiply_;
 };
 

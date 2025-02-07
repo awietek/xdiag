@@ -6,8 +6,8 @@ void define_permutation(jlcxx::Module &mod) {
       .constructor<>()
       .constructor<int64_t>()
       .constructor<std::vector<int64_t> const &>()
-      .method("inverse",
-              [](Permutation const &p) { JULIA_XDIAG_CALL_RETURN(inverse(p)); })
+      .method("inv",
+              [](Permutation const &p) { JULIA_XDIAG_CALL_RETURN(inv(p)); })
       .method("size",
               [](Permutation const &p) { JULIA_XDIAG_CALL_RETURN(p.size()); })
       .method("array",

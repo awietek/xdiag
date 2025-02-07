@@ -3,7 +3,10 @@ title: symmetrize
 ---
 Symmetrizes an operator with respect to a [PermutationGroup](../symmetries/permutation_group.md) or a [Representation](../symmetries/representation.md).
 
-**Sources** [symmetrize.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/operators/symmetrize.hpp), [symmetrize.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/operators/symmetrize.cpp)
+**Sources**<br>
+[symmetrize.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/operators/symmetrize.hpp)<br>
+[symmetrize.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/operators/symmetrize.cpp)<br>
+[symmetrize.jl](https://github.com/awietek/XDiag.jl/blob/main/src/operators/symmetrize.jl)
 
 ---
 
@@ -37,10 +40,10 @@ where $\chi_\rho(\pi)$ denotes the characters of the representation $\rho$. This
 	
 === "Julia"
 	```julia
-	symmetrize(op::Op, group::PermutationGroup)
-	symmetrize(op::Op, irrep::Representation)
-	symmetrize(ops::OpSum, group::PermutationGroup)
-	symmetrize(ops::OpSum, irrep::Representation)
+	symmetrize(op::Op, group::PermutationGroup)::OpSum
+	symmetrize(op::Op, irrep::Representation)::OpSum
+	symmetrize(ops::OpSum, group::PermutationGroup)::OpSum
+	symmetrize(ops::OpSum, irrep::Representation)::OpSum
 	```
 	
 ---

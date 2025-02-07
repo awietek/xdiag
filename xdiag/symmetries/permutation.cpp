@@ -74,7 +74,7 @@ template uint16_t Permutation::apply<uint16_t>(uint16_t state) const;
 template uint32_t Permutation::apply<uint32_t>(uint32_t state) const;
 template uint64_t Permutation::apply<uint64_t>(uint64_t state) const;
 
-Permutation Permutation::inverse() const try {
+Permutation Permutation::inv() const try {
   std::vector<int64_t> perm_inv(array_.size(), 0);
   int64_t idx = 0;
   for (auto p : array_) {
@@ -130,7 +130,7 @@ Permutation operator*(Permutation const &p1, Permutation const &p2) try {
   XDIAG_RETHROW(e);
 }
 
-Permutation inverse(Permutation const &p) { return p.inverse(); }
+Permutation inv(Permutation const &p) { return p.inv(); }
 Permutation pow(Permutation const &p, int64_t power) try {
   Permutation pp(p.size());
   if (power >= 0) {
@@ -138,7 +138,7 @@ Permutation pow(Permutation const &p, int64_t power) try {
       pp *= p;
     }
   } else {
-    Permutation pi = inverse(p);
+    Permutation pi = inv(p);
     for (int i = 0; i < -power; ++i) {
       pp *= pi;
     }

@@ -65,7 +65,7 @@ TEST_CASE("permutation", "[symmetries]") {
       auto a = id.array();
       std::shuffle(a.begin(), a.end(), g);
       auto p = Permutation(a);
-      auto pinv = inverse(p);
+      auto pinv = inv(p);
       REQUIRE(p * pinv == id);
     }
 
