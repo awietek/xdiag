@@ -579,7 +579,7 @@ a complex coupling can have two meanings:</p>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">plain</span><span class="p">(</span><span class="n">ops</span><span class="o">::</span><span class="kt">OpSum</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">plain</span><span class="p">(</span><span class="n">ops</span><span class="o">::</span><span class="kt">OpSum</span><span class="p">)</span><span class="o">::</span><span class="kt">OpSum</span>
 </code></pre></div>
 </div>
 </div>
@@ -596,9 +596,9 @@ a complex coupling can have two meanings:</p>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">Base</span><span class="o">.:*</span><span class="p">(</span><span class="n">coupling</span><span class="o">::</span><span class="kt">Float64</span><span class="p">,</span><span class="w"> </span><span class="n">op</span><span class="o">::</span><span class="kt">Op</span><span class="p">)</span>
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="n">Base</span><span class="o">.:*</span><span class="p">(</span><span class="n">coupling</span><span class="o">::</span><span class="kt">ComplexF64</span><span class="p">,</span><span class="w"> </span><span class="n">op</span><span class="o">::</span><span class="kt">Op</span><span class="p">)</span>
-<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="n">Base</span><span class="o">.:*</span><span class="p">(</span><span class="n">coupling</span><span class="o">::</span><span class="kt">String</span><span class="p">,</span><span class="w"> </span><span class="n">op</span><span class="o">::</span><span class="kt">Op</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">Base</span><span class="o">.:*</span><span class="p">(</span><span class="n">coupling</span><span class="o">::</span><span class="kt">Float64</span><span class="p">,</span><span class="w"> </span><span class="n">op</span><span class="o">::</span><span class="kt">Op</span><span class="p">)</span><span class="o">::</span><span class="kt">OpSum</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="n">Base</span><span class="o">.:*</span><span class="p">(</span><span class="n">coupling</span><span class="o">::</span><span class="kt">ComplexF64</span><span class="p">,</span><span class="w"> </span><span class="n">op</span><span class="o">::</span><span class="kt">Op</span><span class="p">)</span><span class="o">::</span><span class="kt">OpSum</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="n">Base</span><span class="o">.:*</span><span class="p">(</span><span class="n">coupling</span><span class="o">::</span><span class="kt">String</span><span class="p">,</span><span class="w"> </span><span class="n">op</span><span class="o">::</span><span class="kt">Op</span><span class="p">)</span><span class="o">::</span><span class="kt">OpSum</span>
 </code></pre></div>
 </div>
 </div>
@@ -615,7 +615,7 @@ a complex coupling can have two meanings:</p>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="n">Base</span><span class="o">.:+</span><span class="p">(</span><span class="n">ops1</span><span class="o">::</span><span class="kt">OpSum</span><span class="p">,</span><span class="w"> </span><span class="n">ops2</span><span class="o">::</span><span class="kt">OpSum</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="n">Base</span><span class="o">.:+</span><span class="p">(</span><span class="n">ops1</span><span class="o">::</span><span class="kt">OpSum</span><span class="p">,</span><span class="w"> </span><span class="n">ops2</span><span class="o">::</span><span class="kt">OpSum</span><span class="p">)</span><span class="o">::</span><span class="kt">OpSum</span>
 </code></pre></div>
 </div>
 </div>
@@ -631,7 +631,7 @@ a complex coupling can have two meanings:</p>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="n">Base</span><span class="o">.:-</span><span class="p">(</span><span class="n">ops</span><span class="o">::</span><span class="kt">OpSum</span><span class="p">,</span><span class="w"> </span><span class="n">ops2</span><span class="o">::</span><span class="kt">OpSum</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="n">Base</span><span class="o">.:-</span><span class="p">(</span><span class="n">ops</span><span class="o">::</span><span class="kt">OpSum</span><span class="p">,</span><span class="w"> </span><span class="n">ops2</span><span class="o">::</span><span class="kt">OpSum</span><span class="p">)</span><span class="o">::</span><span class="kt">OpSum</span>
 </code></pre></div>
 </div>
 </div>
@@ -657,12 +657,12 @@ a complex coupling can have two meanings:</p>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="n">Base</span><span class="o">.:*</span><span class="p">(</span><span class="n">coupling</span><span class="o">::</span><span class="kt">Float64</span><span class="p">,</span><span class="w"> </span><span class="n">ops</span><span class="o">::</span><span class="kt">OpSum</span><span class="p">)</span>
-<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="n">Base</span><span class="o">.:*</span><span class="p">(</span><span class="n">coupling</span><span class="o">::</span><span class="kt">ComplexF64</span><span class="p">,</span><span class="w"> </span><span class="n">ops</span><span class="o">::</span><span class="kt">OpSum</span><span class="p">)</span>
-<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="n">Base</span><span class="o">.:*</span><span class="p">(</span><span class="n">ops</span><span class="o">::</span><span class="kt">OpSum</span><span class="p">,</span><span class="w"> </span><span class="n">coupling</span><span class="o">::</span><span class="kt">Float64</span><span class="p">)</span>
-<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="n">Base</span><span class="o">.:*</span><span class="p">(</span><span class="n">ops</span><span class="o">::</span><span class="kt">OpSum</span><span class="p">,</span><span class="w"> </span><span class="n">coupling</span><span class="o">::</span><span class="kt">ComplexF64</span><span class="p">)</span>
-<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="n">Base</span><span class="o">.:/</span><span class="p">(</span><span class="n">ops</span><span class="o">::</span><span class="kt">OpSum</span><span class="p">,</span><span class="w"> </span><span class="n">coupling</span><span class="o">::</span><span class="kt">Float64</span><span class="p">)</span>
-<a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="n">Base</span><span class="o">.:/</span><span class="p">(</span><span class="n">ops</span><span class="o">::</span><span class="kt">OpSum</span><span class="p">,</span><span class="w"> </span><span class="n">coupling</span><span class="o">::</span><span class="kt">ComplexF64</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="n">Base</span><span class="o">.:*</span><span class="p">(</span><span class="n">coupling</span><span class="o">::</span><span class="kt">Float64</span><span class="p">,</span><span class="w"> </span><span class="n">ops</span><span class="o">::</span><span class="kt">OpSum</span><span class="p">)</span><span class="o">::</span><span class="kt">OpSum</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="n">Base</span><span class="o">.:*</span><span class="p">(</span><span class="n">coupling</span><span class="o">::</span><span class="kt">ComplexF64</span><span class="p">,</span><span class="w"> </span><span class="n">ops</span><span class="o">::</span><span class="kt">OpSum</span><span class="p">)</span><span class="o">::</span><span class="kt">OpSum</span>
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="n">Base</span><span class="o">.:*</span><span class="p">(</span><span class="n">ops</span><span class="o">::</span><span class="kt">OpSum</span><span class="p">,</span><span class="w"> </span><span class="n">coupling</span><span class="o">::</span><span class="kt">Float64</span><span class="p">)</span><span class="o">::</span><span class="kt">OpSum</span>
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="n">Base</span><span class="o">.:*</span><span class="p">(</span><span class="n">ops</span><span class="o">::</span><span class="kt">OpSum</span><span class="p">,</span><span class="w"> </span><span class="n">coupling</span><span class="o">::</span><span class="kt">ComplexF64</span><span class="p">)</span><span class="o">::</span><span class="kt">OpSum</span>
+<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="n">Base</span><span class="o">.:/</span><span class="p">(</span><span class="n">ops</span><span class="o">::</span><span class="kt">OpSum</span><span class="p">,</span><span class="w"> </span><span class="n">coupling</span><span class="o">::</span><span class="kt">Float64</span><span class="p">)</span><span class="o">::</span><span class="kt">OpSum</span>
+<a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="n">Base</span><span class="o">.:/</span><span class="p">(</span><span class="n">ops</span><span class="o">::</span><span class="kt">OpSum</span><span class="p">,</span><span class="w"> </span><span class="n">coupling</span><span class="o">::</span><span class="kt">ComplexF64</span><span class="p">)</span><span class="o">::</span><span class="kt">OpSum</span>
 </code></pre></div>
 </div>
 </div>
@@ -693,7 +693,7 @@ a complex coupling can have two meanings:</p>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="n">constants</span><span class="p">(</span><span class="n">ops</span><span class="o">::</span><span class="n">OpSum</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="n">constants</span><span class="p">(</span><span class="n">ops</span><span class="o">::</span><span class="n">OpSum</span><span class="p">)</span><span class="o">::</span><span class="n">Vector</span><span class="p">{</span><span class="n">String</span><span class="p">}</span>
 </code></pre></div>
 </div>
 </div>
@@ -708,7 +708,7 @@ a complex coupling can have two meanings:</p>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="n">isreal</span><span class="p">(</span><span class="n">ops</span><span class="o">::</span><span class="kt">OpSum</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="n">isreal</span><span class="p">(</span><span class="n">ops</span><span class="o">::</span><span class="kt">OpSum</span><span class="p">)</span><span class="o">::</span><span class="kt">Bool</span>
 </code></pre></div>
 </div>
 </div>
@@ -724,7 +724,7 @@ a complex coupling can have two meanings:</p>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="n">isapprox</span><span class="p">(</span><span class="n">ops1</span><span class="o">::</span><span class="kt">OpSum</span><span class="p">,</span><span class="w"> </span><span class="n">ops2</span><span class="o">::</span><span class="kt">OpSum</span><span class="p">,</span><span class="w"> </span><span class="n">rtol</span><span class="o">::</span><span class="kt">Float64</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">,</span><span class="w"> </span><span class="n">atol</span><span class="o">::</span><span class="kt">Float64</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="n">isapprox</span><span class="p">(</span><span class="n">ops1</span><span class="o">::</span><span class="kt">OpSum</span><span class="p">,</span><span class="w"> </span><span class="n">ops2</span><span class="o">::</span><span class="kt">OpSum</span><span class="p">,</span><span class="w"> </span><span class="n">rtol</span><span class="o">::</span><span class="kt">Float64</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">,</span><span class="w"> </span><span class="n">atol</span><span class="o">::</span><span class="kt">Float64</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)</span><span class="o">::</span><span class="kt">Bool</span>
 </code></pre></div>
 </div>
 </div>
@@ -740,7 +740,7 @@ a complex coupling can have two meanings:</p>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="n">to_string</span><span class="p">(</span><span class="n">ops</span><span class="o">::</span><span class="kt">OpSum</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="n">to_string</span><span class="p">(</span><span class="n">ops</span><span class="o">::</span><span class="kt">OpSum</span><span class="p">)</span><span class="o">::</span><span class="kt">String</span>
 </code></pre></div>
 </div>
 </div>

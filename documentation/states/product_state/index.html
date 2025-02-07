@@ -420,8 +420,11 @@
 
   <h1>ProductState</h1>
 
-<p>A product state of local configurations</p>
-<p><strong>Sources</strong> <a href="https://github.com/awietek/xdiag/blob/main/xdiag/states/product_state.hpp">product_state.hpp</a>, <a href="https://github.com/awietek/xdiag/blob/main/xdiag/states/product_state.cpp">product_state.cpp</a></p>
+<p>A product state of local configurations.</p>
+<p><strong>Sources</strong><br>
+<a href="https://github.com/awietek/xdiag/blob/main/xdiag/states/product_state.hpp">product_state.hpp</a><br>
+<a href="https://github.com/awietek/xdiag/blob/main/xdiag/states/product_state.cpp">product_state.cpp</a><br>
+<a href="https://github.com/awietek/XDiag.jl/blob/main/src/states/product_state.jl">product_state.jl</a></p>
 <hr />
 <h2 id="constructors">Constructors</h2>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">C++</label><label for="__tabbed_1_2">Julia</label></div>
@@ -576,21 +579,21 @@
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="cp"># pstate = ProductState([&quot;Up&quot;, &quot;Dn&quot;, &quot;Emp&quot;, &quot;UpDn&quot;])</span>
-<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="cp"># for s in pstate</span>
-<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="cp">#     @show s</span>
-<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="cp"># end</span>
-<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="cp"># @show pstate</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="n">pstate</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ProductState</span><span class="p">([</span><span class="s">&quot;Up&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Dn&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Emp&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;UpDn&quot;</span><span class="p">])</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="k">for</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">pstate</span>
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="w">    </span><span class="nd">@show</span><span class="w"> </span><span class="n">s</span>
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="k">end</span>
+<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="nd">@show</span><span class="w"> </span><span class="n">pstate</span>
 <a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a>
-<a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a><span class="cp"># pstate = ProductState()</span>
-<a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a><span class="cp"># push!(pstate, &quot;Dn&quot;)</span>
-<a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a><span class="cp"># push!(pstate, &quot;Up&quot;)</span>
-<a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a><span class="cp"># push!(pstate, &quot;Dn&quot;)</span>
-<a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a><span class="cp"># @show nsites(pstate)</span>
-<a id="__codelineno-15-12" name="__codelineno-15-12" href="#__codelineno-15-12"></a><span class="cp"># for s in pstate</span>
-<a id="__codelineno-15-13" name="__codelineno-15-13" href="#__codelineno-15-13"></a><span class="cp">#     @show s</span>
-<a id="__codelineno-15-14" name="__codelineno-15-14" href="#__codelineno-15-14"></a><span class="cp"># end</span>
-<a id="__codelineno-15-15" name="__codelineno-15-15" href="#__codelineno-15-15"></a><span class="cp"># @show pstate</span>
+<a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a><span class="n">pstate</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ProductState</span><span class="p">()</span>
+<a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a><span class="n">push!</span><span class="p">(</span><span class="n">pstate</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Dn&quot;</span><span class="p">)</span>
+<a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a><span class="n">push!</span><span class="p">(</span><span class="n">pstate</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Up&quot;</span><span class="p">)</span>
+<a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a><span class="n">push!</span><span class="p">(</span><span class="n">pstate</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Dn&quot;</span><span class="p">)</span>
+<a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a><span class="nd">@show</span><span class="w"> </span><span class="n">nsites</span><span class="p">(</span><span class="n">pstate</span><span class="p">)</span>
+<a id="__codelineno-15-12" name="__codelineno-15-12" href="#__codelineno-15-12"></a><span class="k">for</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">pstate</span>
+<a id="__codelineno-15-13" name="__codelineno-15-13" href="#__codelineno-15-13"></a><span class="w">    </span><span class="nd">@show</span><span class="w"> </span><span class="n">s</span>
+<a id="__codelineno-15-14" name="__codelineno-15-14" href="#__codelineno-15-14"></a><span class="k">end</span>
+<a id="__codelineno-15-15" name="__codelineno-15-15" href="#__codelineno-15-15"></a><span class="nd">@show</span><span class="w"> </span><span class="n">pstate</span>
 </code></pre></div>
 </div>
 </div>

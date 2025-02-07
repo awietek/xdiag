@@ -589,18 +589,18 @@
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="cp"># block = Spinhalf(2)</span>
-<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="cp"># state = product(block, [&quot;Up&quot;, &quot;Dn&quot;])</span>
-<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="cp"># display(vector(state))</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="n">block</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Spinhalf</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="n">state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">product_state</span><span class="p">(</span><span class="n">block</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="s">&quot;Up&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Dn&quot;</span><span class="p">])</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="n">display</span><span class="p">(</span><span class="n">vector</span><span class="p">(</span><span class="n">state</span><span class="p">))</span>
 <a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>
-<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="cp"># zero(state)</span>
-<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="cp"># display(vector(state))</span>
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="n">zero</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="n">display</span><span class="p">(</span><span class="n">vector</span><span class="p">(</span><span class="n">state</span><span class="p">))</span>
 <a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>
-<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="cp"># state = rand(block, false, 1234, true)</span>
-<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="cp"># display(vector(state))</span>
+<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="n">state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">random_state</span><span class="p">(</span><span class="n">block</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">,</span><span class="w"> </span><span class="mi">1234</span><span class="p">,</span><span class="w"> </span><span class="nb">true</span><span class="p">)</span>
+<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="n">display</span><span class="p">(</span><span class="n">vector</span><span class="p">(</span><span class="n">state</span><span class="p">))</span>
 <a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>
-<a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="cp"># state = zeros(block, true, 2)</span>
-<a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a><span class="cp"># display(matrix(state))</span>
+<a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="n">state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zero_state</span><span class="p">(</span><span class="n">block</span><span class="p">,</span><span class="w"> </span><span class="nb">true</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span>
+<a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a><span class="n">display</span><span class="p">(</span><span class="n">matrix</span><span class="p">(</span><span class="n">state</span><span class="p">))</span>
 </code></pre></div>
 </div>
 </div>

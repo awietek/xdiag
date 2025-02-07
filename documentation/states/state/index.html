@@ -484,10 +484,13 @@
   <h1>State</h1>
 
 <p>A generic state describing a quantum wave function <span class="arithmatex">\(|\psi \rangle\)</span>.</p>
-<p><strong>Sources</strong> <a href="https://github.com/awietek/xdiag/blob/main/xdiag/states/state.hpp">state.hpp</a> <a href="https://github.com/awietek/xdiag/blob/main/xdiag/states/state.cpp">state.cpp</a></p>
+<p><strong>Sources</strong><br>
+<a href="https://github.com/awietek/xdiag/blob/main/xdiag/states/state.hpp">state.hpp</a><br> 
+<a href="https://github.com/awietek/xdiag/blob/main/xdiag/states/state.cpp">state.cpp</a><br>
+<a href="https://github.com/awietek/XDiag.jl/blob/main/src/states/state.jl">state.jl</a></p>
 <hr />
 <h2 id="constructors">Constructors</h2>
-<p>A state can be constructed in two ways:</p>
+<p>A state can be constructed in three ways:</p>
 <ol>
 <li>
 <p>By only specifying the block. In this case the state is initialized with all coefficients zero.</p>
@@ -505,22 +508,34 @@
 </div>
 </li>
 <li>
-<p>By handing a vector or matrix of coefficients.</p>
+<p>By handing a vector of coefficients.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">C++</label><label for="__tabbed_2_2">Julia</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">block_t</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">coeff_t</span><span class="o">&gt;</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">State</span><span class="p">(</span><span class="n">block_t</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">block</span><span class="p">,</span><span class="w"> </span><span class="n">arma</span><span class="o">::</span><span class="n">Col</span><span class="o">&lt;</span><span class="n">coeff_t</span><span class="o">&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">vector</span><span class="p">);</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">block_t</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">coeff_t</span><span class="o">&gt;</span>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="n">State</span><span class="p">(</span><span class="n">block_t</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">block</span><span class="p">,</span><span class="w"> </span><span class="n">arma</span><span class="o">::</span><span class="n">Mat</span><span class="o">&lt;</span><span class="n">coeff_t</span><span class="o">&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">matrix</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">State</span><span class="p">(</span><span class="n">Block</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">block</span><span class="p">,</span><span class="w"> </span><span class="n">arma</span><span class="o">::</span><span class="n">vec</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">vector</span><span class="p">);</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">State</span><span class="p">(</span><span class="n">Block</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">block</span><span class="p">,</span><span class="w"> </span><span class="n">arma</span><span class="o">::</span><span class="n">cx_vec</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">vector</span><span class="p">);</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">State</span><span class="p">(</span><span class="n">block</span><span class="o">::</span><span class="kt">Block</span><span class="p">,</span><span class="w"> </span><span class="n">vec</span><span class="o">::</span><span class="kt">Vector</span><span class="p">{</span><span class="kt">Float64</span><span class="p">})</span>
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">State</span><span class="p">(</span><span class="n">block</span><span class="o">::</span><span class="kt">Block</span><span class="p">,</span><span class="w"> </span><span class="n">vec</span><span class="o">::</span><span class="kt">Vector</span><span class="p">{</span><span class="kt">ComplexF64</span><span class="p">})</span>
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">State</span><span class="p">(</span><span class="n">block</span><span class="o">::</span><span class="kt">Block</span><span class="p">,</span><span class="w"> </span><span class="n">mat</span><span class="o">::</span><span class="kt">Matrix</span><span class="p">{</span><span class="kt">Float64</span><span class="p">})</span>
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="n">State</span><span class="p">(</span><span class="n">block</span><span class="o">::</span><span class="kt">Block</span><span class="p">,</span><span class="w"> </span><span class="n">mat</span><span class="o">::</span><span class="kt">Matrix</span><span class="p">{</span><span class="kt">ComplexF64</span><span class="p">})</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>By handing a matrix whose columns describe several states at once.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">C++</label><label for="__tabbed_3_2">Julia</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">State</span><span class="p">(</span><span class="n">Block</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">block</span><span class="p">,</span><span class="w"> </span><span class="n">arma</span><span class="o">::</span><span class="n">mat</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">matrix</span><span class="p">);</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="n">State</span><span class="p">(</span><span class="n">Block</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">block</span><span class="p">,</span><span class="w"> </span><span class="n">arma</span><span class="o">::</span><span class="n">cx_mat</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">matrix</span><span class="p">);</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">State</span><span class="p">(</span><span class="n">block</span><span class="o">::</span><span class="kt">Block</span><span class="p">,</span><span class="w"> </span><span class="n">mat</span><span class="o">::</span><span class="kt">Matrix</span><span class="p">{</span><span class="kt">Float64</span><span class="p">})</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="n">State</span><span class="p">(</span><span class="n">block</span><span class="o">::</span><span class="kt">Block</span><span class="p">,</span><span class="w"> </span><span class="n">mat</span><span class="o">::</span><span class="kt">Matrix</span><span class="p">{</span><span class="kt">ComplexF64</span><span class="p">})</span>
 </code></pre></div>
 </div>
 </div>
@@ -567,14 +582,14 @@
 <h2 id="methods">Methods</h2>
 <h4 id="nsites">nsites</h4>
 <p>Returns the number of sites of the block the state is defined on.</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">C++</label><label for="__tabbed_3_2">Julia</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="4:2"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">C++</label><label for="__tabbed_4_2">Julia</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kt">int64_t</span><span class="w"> </span><span class="n">nsites</span><span class="p">(</span><span class="n">State</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="k">const</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kt">int64_t</span><span class="w"> </span><span class="n">nsites</span><span class="p">(</span><span class="n">State</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">nsites</span><span class="p">(</span><span class="n">state</span><span class="o">::</span><span class="kt">State</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">nsites</span><span class="p">(</span><span class="n">state</span><span class="o">::</span><span class="kt">State</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
@@ -582,15 +597,15 @@
 <hr />
 <h4 id="isapprox">isapprox</h4>
 <p>Returns whether two states are approximately equal.</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="4:2"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">C++</label><label for="__tabbed_4_2">Julia</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="5:2"><input checked="checked" id="__tabbed_5_1" name="__tabbed_5" type="radio" /><input id="__tabbed_5_2" name="__tabbed_5" type="radio" /><div class="tabbed-labels"><label for="__tabbed_5_1">C++</label><label for="__tabbed_5_2">Julia</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kt">bool</span><span class="w"> </span><span class="nf">isapprox</span><span class="p">(</span><span class="n">State</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">v</span><span class="p">,</span><span class="w"> </span><span class="n">State</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">w</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">rtol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1e-12</span><span class="p">,</span>
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">              </span><span class="kt">double</span><span class="w"> </span><span class="n">atol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1e-12</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kt">bool</span><span class="w"> </span><span class="nf">isapprox</span><span class="p">(</span><span class="n">State</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">v</span><span class="p">,</span><span class="w"> </span><span class="n">State</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">w</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">rtol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1e-12</span><span class="p">,</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">              </span><span class="kt">double</span><span class="w"> </span><span class="n">atol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1e-12</span><span class="p">);</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">isapprox</span><span class="p">(</span><span class="n">v</span><span class="o">::</span><span class="kt">State</span><span class="p">,</span><span class="w"> </span><span class="n">w</span><span class="o">::</span><span class="kt">State</span><span class="p">,</span><span class="w"> </span><span class="n">rtol</span><span class="o">::</span><span class="kt">Float64</span><span class="p">,</span><span class="w"> </span><span class="n">atol</span><span class="o">::</span><span class="kt">Float64</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="n">isapprox</span><span class="p">(</span><span class="n">v</span><span class="o">::</span><span class="kt">State</span><span class="p">,</span><span class="w"> </span><span class="n">w</span><span class="o">::</span><span class="kt">State</span><span class="p">,</span><span class="w"> </span><span class="n">rtol</span><span class="o">::</span><span class="kt">Float64</span><span class="p">,</span><span class="w"> </span><span class="n">atol</span><span class="o">::</span><span class="kt">Float64</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
@@ -598,44 +613,44 @@
 <hr />
 <h4 id="isreal">isreal</h4>
 <p>Returns whether the state is real.</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="5:2"><input checked="checked" id="__tabbed_5_1" name="__tabbed_5" type="radio" /><input id="__tabbed_5_2" name="__tabbed_5" type="radio" /><div class="tabbed-labels"><label for="__tabbed_5_1">C++</label><label for="__tabbed_5_2">Julia</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="6:2"><input checked="checked" id="__tabbed_6_1" name="__tabbed_6" type="radio" /><input id="__tabbed_6_2" name="__tabbed_6" type="radio" /><div class="tabbed-labels"><label for="__tabbed_6_1">C++</label><label for="__tabbed_6_2">Julia</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kt">int64_t</span><span class="w"> </span><span class="nf">isreal</span><span class="p">(</span><span class="n">State</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="kt">int64_t</span><span class="w"> </span><span class="nf">isreal</span><span class="p">(</span><span class="n">State</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="n">isreal</span><span class="p">(</span><span class="n">state</span><span class="o">::</span><span class="kt">State</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="n">isreal</span><span class="p">(</span><span class="n">state</span><span class="o">::</span><span class="kt">State</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
 </div>
 <hr />
 <h4 id="real">real</h4>
-<p>Returns whether the real part of the State.</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="6:2"><input checked="checked" id="__tabbed_6_1" name="__tabbed_6" type="radio" /><input id="__tabbed_6_2" name="__tabbed_6" type="radio" /><div class="tabbed-labels"><label for="__tabbed_6_1">C++</label><label for="__tabbed_6_2">Julia</label></div>
+<p>Returns the real part of the State.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="7:2"><input checked="checked" id="__tabbed_7_1" name="__tabbed_7" type="radio" /><input id="__tabbed_7_2" name="__tabbed_7" type="radio" /><div class="tabbed-labels"><label for="__tabbed_7_1">C++</label><label for="__tabbed_7_2">Julia</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="n">State</span><span class="w"> </span><span class="nf">real</span><span class="p">(</span><span class="n">State</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="n">State</span><span class="w"> </span><span class="nf">real</span><span class="p">(</span><span class="n">State</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="n">real</span><span class="p">(</span><span class="n">state</span><span class="o">::</span><span class="kt">State</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="n">real</span><span class="p">(</span><span class="n">state</span><span class="o">::</span><span class="kt">State</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
 </div>
 <hr />
 <h4 id="imag">imag</h4>
-<p>Returns whether the imaginary part of the State.</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="7:2"><input checked="checked" id="__tabbed_7_1" name="__tabbed_7" type="radio" /><input id="__tabbed_7_2" name="__tabbed_7" type="radio" /><div class="tabbed-labels"><label for="__tabbed_7_1">C++</label><label for="__tabbed_7_2">Julia</label></div>
+<p>Returns the imaginary part of the State.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="8:2"><input checked="checked" id="__tabbed_8_1" name="__tabbed_8" type="radio" /><input id="__tabbed_8_2" name="__tabbed_8" type="radio" /><div class="tabbed-labels"><label for="__tabbed_8_1">C++</label><label for="__tabbed_8_2">Julia</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="n">State</span><span class="w"> </span><span class="nf">imag</span><span class="p">(</span><span class="n">State</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="n">State</span><span class="w"> </span><span class="nf">imag</span><span class="p">(</span><span class="n">State</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="n">imag</span><span class="p">(</span><span class="n">state</span><span class="o">::</span><span class="kt">State</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="n">imag</span><span class="p">(</span><span class="n">state</span><span class="o">::</span><span class="kt">State</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
@@ -643,14 +658,14 @@
 <hr />
 <h4 id="make_complex-make_complex">make_complex! / make_complex</h4>
 <p>Turns a real State into a complex State. Does nothing if the state is already complex</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="8:2"><input checked="checked" id="__tabbed_8_1" name="__tabbed_8" type="radio" /><input id="__tabbed_8_2" name="__tabbed_8" type="radio" /><div class="tabbed-labels"><label for="__tabbed_8_1">C++</label><label for="__tabbed_8_2">Julia</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="9:2"><input checked="checked" id="__tabbed_9_1" name="__tabbed_9" type="radio" /><input id="__tabbed_9_2" name="__tabbed_9" type="radio" /><div class="tabbed-labels"><label for="__tabbed_9_1">C++</label><label for="__tabbed_9_2">Julia</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="kt">void</span><span class="w"> </span><span class="nf">make_complex</span><span class="p">(</span><span class="n">State</span><span class="w"> </span><span class="o">&amp;</span><span class="n">s</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="kt">void</span><span class="w"> </span><span class="nf">make_complex</span><span class="p">(</span><span class="n">State</span><span class="w"> </span><span class="o">&amp;</span><span class="n">s</span><span class="p">);</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="n">make_complex!</span><span class="p">(</span><span class="n">state</span><span class="o">::</span><span class="kt">State</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="n">make_complex!</span><span class="p">(</span><span class="n">state</span><span class="o">::</span><span class="kt">State</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
@@ -658,59 +673,59 @@
 <hr />
 <h4 id="dim">dim</h4>
 <p>Returns the dimension of the block the state is defined on.</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="9:2"><input checked="checked" id="__tabbed_9_1" name="__tabbed_9" type="radio" /><input id="__tabbed_9_2" name="__tabbed_9" type="radio" /><div class="tabbed-labels"><label for="__tabbed_9_1">C++</label><label for="__tabbed_9_2">Julia</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="10:2"><input checked="checked" id="__tabbed_10_1" name="__tabbed_10" type="radio" /><input id="__tabbed_10_2" name="__tabbed_10" type="radio" /><div class="tabbed-labels"><label for="__tabbed_10_1">C++</label><label for="__tabbed_10_2">Julia</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="kt">int64_t</span><span class="w"> </span><span class="nf">dim</span><span class="p">(</span><span class="n">State</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="kt">int64_t</span><span class="w"> </span><span class="nf">dim</span><span class="p">(</span><span class="n">State</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="n">dim</span><span class="p">(</span><span class="n">block</span><span class="o">::</span><span class="kt">Spinhalf</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="n">dim</span><span class="p">(</span><span class="n">block</span><span class="o">::</span><span class="kt">Spinhalf</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
 </div>
 <hr />
 <h4 id="size">size</h4>
-<p>Returns the size of the block the state is defined on. locally. Same as "dim" for non-distributed Blocks but different for distributed blocks.</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="10:2"><input checked="checked" id="__tabbed_10_1" name="__tabbed_10" type="radio" /><input id="__tabbed_10_2" name="__tabbed_10" type="radio" /><div class="tabbed-labels"><label for="__tabbed_10_1">C++</label><label for="__tabbed_10_2">Julia</label></div>
+<p>Returns the <code>size</code> of the block (also equal to <code>nrows</code>) times the number of columns <code>ncols</code>. For distributed blocks the local size of a Block is not the same as the dimension <code>dim</code>, which is the overall dimension of the block across all processes.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="11:2"><input checked="checked" id="__tabbed_11_1" name="__tabbed_11" type="radio" /><input id="__tabbed_11_2" name="__tabbed_11" type="radio" /><div class="tabbed-labels"><label for="__tabbed_11_1">C++</label><label for="__tabbed_11_2">Julia</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="kt">int64_t</span><span class="w"> </span><span class="nf">size</span><span class="p">(</span><span class="n">State</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">s</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="kt">int64_t</span><span class="w"> </span><span class="nf">size</span><span class="p">(</span><span class="n">State</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">s</span><span class="p">);</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="n">size</span><span class="p">(</span><span class="n">s</span><span class="o">::</span><span class="kt">State</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="n">size</span><span class="p">(</span><span class="n">s</span><span class="o">::</span><span class="kt">State</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
 </div>
 <hr />
 <h4 id="nrows">nrows</h4>
-<p>Returns number of rows of the local storage. Same as "size"</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="11:2"><input checked="checked" id="__tabbed_11_1" name="__tabbed_11" type="radio" /><input id="__tabbed_11_2" name="__tabbed_11" type="radio" /><div class="tabbed-labels"><label for="__tabbed_11_1">C++</label><label for="__tabbed_11_2">Julia</label></div>
+<p>Returns number of rows of the local storage.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="12:2"><input checked="checked" id="__tabbed_12_1" name="__tabbed_12" type="radio" /><input id="__tabbed_12_2" name="__tabbed_12" type="radio" /><div class="tabbed-labels"><label for="__tabbed_12_1">C++</label><label for="__tabbed_12_2">Julia</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="kt">int64_t</span><span class="w"> </span><span class="nf">nrows</span><span class="p">(</span><span class="n">State</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">s</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="kt">int64_t</span><span class="w"> </span><span class="nf">nrows</span><span class="p">(</span><span class="n">State</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">s</span><span class="p">);</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="n">nrows</span><span class="p">(</span><span class="n">s</span><span class="o">::</span><span class="kt">State</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="n">nrows</span><span class="p">(</span><span class="n">s</span><span class="o">::</span><span class="kt">State</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
 </div>
 <hr />
 <h4 id="n_cols">n_cols</h4>
-<p>Returns number of columns of the local storage.</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="12:2"><input checked="checked" id="__tabbed_12_1" name="__tabbed_12" type="radio" /><input id="__tabbed_12_2" name="__tabbed_12" type="radio" /><div class="tabbed-labels"><label for="__tabbed_12_1">C++</label><label for="__tabbed_12_2">Julia</label></div>
+<p>Returns number of columns.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="13:2"><input checked="checked" id="__tabbed_13_1" name="__tabbed_13" type="radio" /><input id="__tabbed_13_2" name="__tabbed_13" type="radio" /><div class="tabbed-labels"><label for="__tabbed_13_1">C++</label><label for="__tabbed_13_2">Julia</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="kt">int64_t</span><span class="w"> </span><span class="nf">ncols</span><span class="p">(</span><span class="n">State</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">s</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="kt">int64_t</span><span class="w"> </span><span class="nf">ncols</span><span class="p">(</span><span class="n">State</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">s</span><span class="p">);</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="n">ncols</span><span class="p">(</span><span class="n">s</span><span class="o">::</span><span class="kt">State</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="n">ncols</span><span class="p">(</span><span class="n">s</span><span class="o">::</span><span class="kt">State</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
@@ -718,14 +733,14 @@
 <hr />
 <h4 id="col">col</h4>
 <p>Returns a state created from the n-th column of the storage. Whether or not the storage is copied can be specified by setting the flag "copy".</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="13:2"><input checked="checked" id="__tabbed_13_1" name="__tabbed_13" type="radio" /><input id="__tabbed_13_2" name="__tabbed_13" type="radio" /><div class="tabbed-labels"><label for="__tabbed_13_1">C++</label><label for="__tabbed_13_2">Julia</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="14:2"><input checked="checked" id="__tabbed_14_1" name="__tabbed_14" type="radio" /><input id="__tabbed_14_2" name="__tabbed_14" type="radio" /><div class="tabbed-labels"><label for="__tabbed_14_1">C++</label><label for="__tabbed_14_2">Julia</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="n">State</span><span class="w"> </span><span class="nf">col</span><span class="p">(</span><span class="n">State</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="kt">int64_t</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">copy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="n">State</span><span class="w"> </span><span class="nf">col</span><span class="p">(</span><span class="n">State</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="kt">int64_t</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">copy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">);</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="n">col</span><span class="p">(</span><span class="n">s</span><span class="o">::</span><span class="kt">State</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="o">::</span><span class="kt">Int64</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">copy</span><span class="o">::</span><span class="kt">Bool</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a><span class="n">col</span><span class="p">(</span><span class="n">s</span><span class="o">::</span><span class="kt">State</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="o">::</span><span class="kt">Int64</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">copy</span><span class="o">::</span><span class="kt">Bool</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
@@ -733,16 +748,16 @@
 <hr />
 <h4 id="vectorvectorc">vector/vectorC</h4>
 <p>Returns a vector from the n-th column of the storage. In C++ use "vector"/"vectorC" to either get a real or complex vector.</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="14:2"><input checked="checked" id="__tabbed_14_1" name="__tabbed_14" type="radio" /><input id="__tabbed_14_2" name="__tabbed_14" type="radio" /><div class="tabbed-labels"><label for="__tabbed_14_1">C++</label><label for="__tabbed_14_2">Julia</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="15:2"><input checked="checked" id="__tabbed_15_1" name="__tabbed_15" type="radio" /><input id="__tabbed_15_2" name="__tabbed_15" type="radio" /><div class="tabbed-labels"><label for="__tabbed_15_1">C++</label><label for="__tabbed_15_2">Julia</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="n">arma</span><span class="o">::</span><span class="n">vec</span><span class="w"> </span><span class="nf">vector</span><span class="p">(</span><span class="n">State</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="kt">int64_t</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">copy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">);</span>
-<a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a><span class="n">arma</span><span class="o">::</span><span class="n">cx_vec</span><span class="w"> </span><span class="nf">vectorC</span><span class="p">(</span><span class="n">State</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="kt">int64_t</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">copy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a><span class="n">arma</span><span class="o">::</span><span class="n">vec</span><span class="w"> </span><span class="nf">vector</span><span class="p">(</span><span class="n">State</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="kt">int64_t</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">copy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">);</span>
+<a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a><span class="n">arma</span><span class="o">::</span><span class="n">cx_vec</span><span class="w"> </span><span class="nf">vectorC</span><span class="p">(</span><span class="n">State</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="kt">int64_t</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">copy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">);</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a><span class="n">vector</span><span class="p">(</span><span class="n">state</span><span class="o">::</span><span class="kt">State</span><span class="p">;</span><span class="w"> </span><span class="n">n</span><span class="o">::</span><span class="kt">Int64</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">copy</span><span class="o">::</span><span class="kt">Bool</span><span class="o">=</span><span class="nb">true</span><span class="p">)</span>
-<a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a><span class="c"># no vectorC method in julia</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a><span class="n">vector</span><span class="p">(</span><span class="n">state</span><span class="o">::</span><span class="kt">State</span><span class="p">;</span><span class="w"> </span><span class="n">n</span><span class="o">::</span><span class="kt">Int64</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">copy</span><span class="o">::</span><span class="kt">Bool</span><span class="o">=</span><span class="nb">true</span><span class="p">)</span>
+<a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a><span class="c"># no vectorC method in julia</span>
 </code></pre></div>
 </div>
 </div>
@@ -750,59 +765,59 @@
 <hr />
 <h4 id="matrixmatrixc">matrix/matrixC</h4>
 <p>Returns matrix representing the storage. In C++ use "matrix"/"matrixC" to either get a real or complex matrix.</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="15:2"><input checked="checked" id="__tabbed_15_1" name="__tabbed_15" type="radio" /><input id="__tabbed_15_2" name="__tabbed_15" type="radio" /><div class="tabbed-labels"><label for="__tabbed_15_1">C++</label><label for="__tabbed_15_2">Julia</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="16:2"><input checked="checked" id="__tabbed_16_1" name="__tabbed_16" type="radio" /><input id="__tabbed_16_2" name="__tabbed_16" type="radio" /><div class="tabbed-labels"><label for="__tabbed_16_1">C++</label><label for="__tabbed_16_2">Julia</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a><span class="n">arma</span><span class="o">::</span><span class="n">vec</span><span class="w"> </span><span class="nf">matrix</span><span class="p">(</span><span class="n">State</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">copy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">);</span>
-<a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a><span class="n">arma</span><span class="o">::</span><span class="n">cx_vec</span><span class="w"> </span><span class="nf">matrixC</span><span class="p">(</span><span class="n">State</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">copy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a><span class="n">arma</span><span class="o">::</span><span class="n">vec</span><span class="w"> </span><span class="nf">matrix</span><span class="p">(</span><span class="n">State</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">copy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">);</span>
+<a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a><span class="n">arma</span><span class="o">::</span><span class="n">cx_vec</span><span class="w"> </span><span class="nf">matrixC</span><span class="p">(</span><span class="n">State</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">copy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">);</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a><span class="n">matrix</span><span class="p">(</span><span class="n">state</span><span class="o">::</span><span class="kt">State</span><span class="p">,</span><span class="w"> </span><span class="n">copy</span><span class="o">::</span><span class="kt">Bool</span><span class="o">=</span><span class="nb">true</span><span class="p">)</span>
-<a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a><span class="c"># no matrixC method in julia</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a><span class="n">matrix</span><span class="p">(</span><span class="n">state</span><span class="o">::</span><span class="kt">State</span><span class="p">,</span><span class="w"> </span><span class="n">copy</span><span class="o">::</span><span class="kt">Bool</span><span class="o">=</span><span class="nb">true</span><span class="p">)</span>
+<a id="__codelineno-31-2" name="__codelineno-31-2" href="#__codelineno-31-2"></a><span class="c"># no matrixC method in julia</span>
 </code></pre></div>
 </div>
 </div>
 </div>
 <hr />
 <h2 id="usage-example">Usage Example</h2>
-<div class="tabbed-set tabbed-alternate" data-tabs="16:2"><input checked="checked" id="__tabbed_16_1" name="__tabbed_16" type="radio" /><input id="__tabbed_16_2" name="__tabbed_16" type="radio" /><div class="tabbed-labels"><label for="__tabbed_16_1">C++</label><label for="__tabbed_16_2">Julia</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="17:2"><input checked="checked" id="__tabbed_17_1" name="__tabbed_17" type="radio" /><input id="__tabbed_17_2" name="__tabbed_17" type="radio" /><div class="tabbed-labels"><label for="__tabbed_17_1">C++</label><label for="__tabbed_17_2">Julia</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">block</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Spinhalf</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
-<a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a><span class="k">auto</span><span class="w"> </span><span class="n">psi1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">State</span><span class="p">(</span><span class="n">block</span><span class="p">,</span><span class="w"> </span><span class="n">arma</span><span class="o">::</span><span class="n">vec</span><span class="p">(</span><span class="s">&quot;1.0 2.0 3.0 4.0&quot;</span><span class="p">));</span>
-<a id="__codelineno-30-3" name="__codelineno-30-3" href="#__codelineno-30-3"></a><span class="n">XDIAG_SHOW</span><span class="p">(</span><span class="n">psi1</span><span class="p">);</span>
-<a id="__codelineno-30-4" name="__codelineno-30-4" href="#__codelineno-30-4"></a><span class="n">XDIAG_SHOW</span><span class="p">(</span><span class="n">vector</span><span class="p">(</span><span class="n">psi1</span><span class="p">));</span>
-<a id="__codelineno-30-5" name="__codelineno-30-5" href="#__codelineno-30-5"></a><span class="n">make_complex</span><span class="p">(</span><span class="n">psi1</span><span class="p">);</span>
-<a id="__codelineno-30-6" name="__codelineno-30-6" href="#__codelineno-30-6"></a><span class="n">XDIAG_SHOW</span><span class="p">(</span><span class="n">vectorC</span><span class="p">(</span><span class="n">psi1</span><span class="p">));</span>
-<a id="__codelineno-30-7" name="__codelineno-30-7" href="#__codelineno-30-7"></a>
-<a id="__codelineno-30-8" name="__codelineno-30-8" href="#__codelineno-30-8"></a><span class="k">auto</span><span class="w"> </span><span class="n">psi2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">State</span><span class="p">(</span><span class="n">block</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">);</span>
-<a id="__codelineno-30-9" name="__codelineno-30-9" href="#__codelineno-30-9"></a><span class="n">XDIAG_SHOW</span><span class="p">(</span><span class="n">psi2</span><span class="p">);</span>
-<a id="__codelineno-30-10" name="__codelineno-30-10" href="#__codelineno-30-10"></a><span class="n">XDIAG_SHOW</span><span class="p">(</span><span class="n">matrixC</span><span class="p">(</span><span class="n">psi2</span><span class="p">));</span>
-<a id="__codelineno-30-11" name="__codelineno-30-11" href="#__codelineno-30-11"></a>
-<a id="__codelineno-30-12" name="__codelineno-30-12" href="#__codelineno-30-12"></a><span class="k">auto</span><span class="w"> </span><span class="n">psi3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">State</span><span class="p">(</span><span class="n">block</span><span class="p">,</span><span class="w"> </span><span class="n">arma</span><span class="o">::</span><span class="n">cx_vec</span><span class="p">(</span><span class="n">arma</span><span class="o">::</span><span class="n">vec</span><span class="p">(</span><span class="s">&quot;1.0 2.0 3.0 4.0&quot;</span><span class="p">),</span>
-<a id="__codelineno-30-13" name="__codelineno-30-13" href="#__codelineno-30-13"></a><span class="w">                      </span><span class="n">arma</span><span class="o">::</span><span class="n">vec</span><span class="p">(</span><span class="s">&quot;4.0 3.0 2.0 1.0&quot;</span><span class="p">)));</span>
-<a id="__codelineno-30-14" name="__codelineno-30-14" href="#__codelineno-30-14"></a><span class="n">XDIAG_SHOW</span><span class="p">(</span><span class="n">vectorC</span><span class="p">(</span><span class="n">psi3</span><span class="p">));</span>
-<a id="__codelineno-30-15" name="__codelineno-30-15" href="#__codelineno-30-15"></a><span class="n">XDIAG_SHOW</span><span class="p">(</span><span class="n">vector</span><span class="p">(</span><span class="n">real</span><span class="p">(</span><span class="n">psi3</span><span class="p">)));</span>
-<a id="__codelineno-30-16" name="__codelineno-30-16" href="#__codelineno-30-16"></a><span class="n">XDIAG_SHOW</span><span class="p">(</span><span class="n">vector</span><span class="p">(</span><span class="n">imag</span><span class="p">(</span><span class="n">psi3</span><span class="p">)));</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">block</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Spinhalf</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+<a id="__codelineno-32-2" name="__codelineno-32-2" href="#__codelineno-32-2"></a><span class="k">auto</span><span class="w"> </span><span class="n">psi1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">State</span><span class="p">(</span><span class="n">block</span><span class="p">,</span><span class="w"> </span><span class="n">arma</span><span class="o">::</span><span class="n">vec</span><span class="p">(</span><span class="s">&quot;1.0 2.0 3.0 4.0&quot;</span><span class="p">));</span>
+<a id="__codelineno-32-3" name="__codelineno-32-3" href="#__codelineno-32-3"></a><span class="n">XDIAG_SHOW</span><span class="p">(</span><span class="n">psi1</span><span class="p">);</span>
+<a id="__codelineno-32-4" name="__codelineno-32-4" href="#__codelineno-32-4"></a><span class="n">XDIAG_SHOW</span><span class="p">(</span><span class="n">vector</span><span class="p">(</span><span class="n">psi1</span><span class="p">));</span>
+<a id="__codelineno-32-5" name="__codelineno-32-5" href="#__codelineno-32-5"></a><span class="n">make_complex</span><span class="p">(</span><span class="n">psi1</span><span class="p">);</span>
+<a id="__codelineno-32-6" name="__codelineno-32-6" href="#__codelineno-32-6"></a><span class="n">XDIAG_SHOW</span><span class="p">(</span><span class="n">vectorC</span><span class="p">(</span><span class="n">psi1</span><span class="p">));</span>
+<a id="__codelineno-32-7" name="__codelineno-32-7" href="#__codelineno-32-7"></a>
+<a id="__codelineno-32-8" name="__codelineno-32-8" href="#__codelineno-32-8"></a><span class="k">auto</span><span class="w"> </span><span class="n">psi2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">State</span><span class="p">(</span><span class="n">block</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">);</span>
+<a id="__codelineno-32-9" name="__codelineno-32-9" href="#__codelineno-32-9"></a><span class="n">XDIAG_SHOW</span><span class="p">(</span><span class="n">psi2</span><span class="p">);</span>
+<a id="__codelineno-32-10" name="__codelineno-32-10" href="#__codelineno-32-10"></a><span class="n">XDIAG_SHOW</span><span class="p">(</span><span class="n">matrixC</span><span class="p">(</span><span class="n">psi2</span><span class="p">));</span>
+<a id="__codelineno-32-11" name="__codelineno-32-11" href="#__codelineno-32-11"></a>
+<a id="__codelineno-32-12" name="__codelineno-32-12" href="#__codelineno-32-12"></a><span class="k">auto</span><span class="w"> </span><span class="n">psi3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">State</span><span class="p">(</span><span class="n">block</span><span class="p">,</span><span class="w"> </span><span class="n">arma</span><span class="o">::</span><span class="n">cx_vec</span><span class="p">(</span><span class="n">arma</span><span class="o">::</span><span class="n">vec</span><span class="p">(</span><span class="s">&quot;1.0 2.0 3.0 4.0&quot;</span><span class="p">),</span>
+<a id="__codelineno-32-13" name="__codelineno-32-13" href="#__codelineno-32-13"></a><span class="w">                      </span><span class="n">arma</span><span class="o">::</span><span class="n">vec</span><span class="p">(</span><span class="s">&quot;4.0 3.0 2.0 1.0&quot;</span><span class="p">)));</span>
+<a id="__codelineno-32-14" name="__codelineno-32-14" href="#__codelineno-32-14"></a><span class="n">XDIAG_SHOW</span><span class="p">(</span><span class="n">vectorC</span><span class="p">(</span><span class="n">psi3</span><span class="p">));</span>
+<a id="__codelineno-32-15" name="__codelineno-32-15" href="#__codelineno-32-15"></a><span class="n">XDIAG_SHOW</span><span class="p">(</span><span class="n">vector</span><span class="p">(</span><span class="n">real</span><span class="p">(</span><span class="n">psi3</span><span class="p">)));</span>
+<a id="__codelineno-32-16" name="__codelineno-32-16" href="#__codelineno-32-16"></a><span class="n">XDIAG_SHOW</span><span class="p">(</span><span class="n">vector</span><span class="p">(</span><span class="n">imag</span><span class="p">(</span><span class="n">psi3</span><span class="p">)));</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a><span class="cp"># block = Spinhalf(2)</span>
-<a id="__codelineno-31-2" name="__codelineno-31-2" href="#__codelineno-31-2"></a><span class="cp"># psi1 = State(block, [1.0, 2.0, 3.0, 4.0])</span>
-<a id="__codelineno-31-3" name="__codelineno-31-3" href="#__codelineno-31-3"></a><span class="cp"># @show psi1</span>
-<a id="__codelineno-31-4" name="__codelineno-31-4" href="#__codelineno-31-4"></a><span class="cp"># display(vector(psi1))</span>
-<a id="__codelineno-31-5" name="__codelineno-31-5" href="#__codelineno-31-5"></a><span class="cp"># make_complex!(psi1)</span>
-<a id="__codelineno-31-6" name="__codelineno-31-6" href="#__codelineno-31-6"></a><span class="cp"># display(vector(psi1))</span>
-<a id="__codelineno-31-7" name="__codelineno-31-7" href="#__codelineno-31-7"></a>
-<a id="__codelineno-31-8" name="__codelineno-31-8" href="#__codelineno-31-8"></a><span class="cp"># psi2 = State(block, real=false, n_cols=3)</span>
-<a id="__codelineno-31-9" name="__codelineno-31-9" href="#__codelineno-31-9"></a><span class="cp"># @show psi2</span>
-<a id="__codelineno-31-10" name="__codelineno-31-10" href="#__codelineno-31-10"></a><span class="cp"># display(matrix(psi2))</span>
-<a id="__codelineno-31-11" name="__codelineno-31-11" href="#__codelineno-31-11"></a>
-<a id="__codelineno-31-12" name="__codelineno-31-12" href="#__codelineno-31-12"></a><span class="cp"># psi3 = State(block, [1.0+4.0im, 2.0+3.0im, 3.0+2.0im, 4.0+1.0im])</span>
-<a id="__codelineno-31-13" name="__codelineno-31-13" href="#__codelineno-31-13"></a><span class="cp"># display(vector(psi3))</span>
-<a id="__codelineno-31-14" name="__codelineno-31-14" href="#__codelineno-31-14"></a><span class="cp"># display(vector(real(psi3)))</span>
-<a id="__codelineno-31-15" name="__codelineno-31-15" href="#__codelineno-31-15"></a><span class="cp"># display(vector(imag(psi3)))</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a><span class="n">block</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Spinhalf</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<a id="__codelineno-33-2" name="__codelineno-33-2" href="#__codelineno-33-2"></a><span class="n">psi1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">State</span><span class="p">(</span><span class="n">block</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="mf">1.0</span><span class="p">,</span><span class="w"> </span><span class="mf">2.0</span><span class="p">,</span><span class="w"> </span><span class="mf">3.0</span><span class="p">,</span><span class="w"> </span><span class="mf">4.0</span><span class="p">])</span>
+<a id="__codelineno-33-3" name="__codelineno-33-3" href="#__codelineno-33-3"></a><span class="nd">@show</span><span class="w"> </span><span class="n">psi1</span>
+<a id="__codelineno-33-4" name="__codelineno-33-4" href="#__codelineno-33-4"></a><span class="n">display</span><span class="p">(</span><span class="n">vector</span><span class="p">(</span><span class="n">psi1</span><span class="p">))</span>
+<a id="__codelineno-33-5" name="__codelineno-33-5" href="#__codelineno-33-5"></a><span class="n">make_complex!</span><span class="p">(</span><span class="n">psi1</span><span class="p">)</span>
+<a id="__codelineno-33-6" name="__codelineno-33-6" href="#__codelineno-33-6"></a><span class="n">display</span><span class="p">(</span><span class="n">vector</span><span class="p">(</span><span class="n">psi1</span><span class="p">))</span>
+<a id="__codelineno-33-7" name="__codelineno-33-7" href="#__codelineno-33-7"></a>
+<a id="__codelineno-33-8" name="__codelineno-33-8" href="#__codelineno-33-8"></a><span class="n">psi2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">State</span><span class="p">(</span><span class="n">block</span><span class="p">,</span><span class="w"> </span><span class="n">real</span><span class="o">=</span><span class="nb">false</span><span class="p">,</span><span class="w"> </span><span class="n">n_cols</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<a id="__codelineno-33-9" name="__codelineno-33-9" href="#__codelineno-33-9"></a><span class="nd">@show</span><span class="w"> </span><span class="n">psi2</span>
+<a id="__codelineno-33-10" name="__codelineno-33-10" href="#__codelineno-33-10"></a><span class="n">display</span><span class="p">(</span><span class="n">matrix</span><span class="p">(</span><span class="n">psi2</span><span class="p">))</span>
+<a id="__codelineno-33-11" name="__codelineno-33-11" href="#__codelineno-33-11"></a>
+<a id="__codelineno-33-12" name="__codelineno-33-12" href="#__codelineno-33-12"></a><span class="n">psi3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">State</span><span class="p">(</span><span class="n">block</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="mf">1.0</span><span class="o">+</span><span class="mf">4.0</span><span class="nb">im</span><span class="p">,</span><span class="w"> </span><span class="mf">2.0</span><span class="o">+</span><span class="mf">3.0</span><span class="nb">im</span><span class="p">,</span><span class="w"> </span><span class="mf">3.0</span><span class="o">+</span><span class="mf">2.0</span><span class="nb">im</span><span class="p">,</span><span class="w"> </span><span class="mf">4.0</span><span class="o">+</span><span class="mf">1.0</span><span class="nb">im</span><span class="p">])</span>
+<a id="__codelineno-33-13" name="__codelineno-33-13" href="#__codelineno-33-13"></a><span class="n">display</span><span class="p">(</span><span class="n">vector</span><span class="p">(</span><span class="n">psi3</span><span class="p">))</span>
+<a id="__codelineno-33-14" name="__codelineno-33-14" href="#__codelineno-33-14"></a><span class="n">display</span><span class="p">(</span><span class="n">vector</span><span class="p">(</span><span class="n">real</span><span class="p">(</span><span class="n">psi3</span><span class="p">)))</span>
+<a id="__codelineno-33-15" name="__codelineno-33-15" href="#__codelineno-33-15"></a><span class="n">display</span><span class="p">(</span><span class="n">vector</span><span class="p">(</span><span class="n">imag</span><span class="p">(</span><span class="n">psi3</span><span class="p">)))</span>
 </code></pre></div>
 </div>
 </div>

@@ -352,7 +352,10 @@
   <h1>fill</h1>
 
 <p>Fills a <a href="../state/">State</a> with a given model state, e.g. a <a href="../product_state/">ProductState</a> or a <a href="../random_state/">RandomState</a>.</p>
-<p><strong>Sources</strong> <a href="https://github.com/awietek/xdiag/blob/main/xdiag/states/fill.hpp">fill.hpp</a>, <a href="https://github.com/awietek/xdiag/blob/main/xdiag/states/fill.cpp">fill.cpp</a></p>
+<p><strong>Sources</strong><br>
+<a href="https://github.com/awietek/xdiag/blob/main/xdiag/states/fill.hpp">fill.hpp</a><br>
+<a href="https://github.com/awietek/xdiag/blob/main/xdiag/states/fill.cpp">fill.cpp</a><br>
+<a href="https://github.com/awietek/XDiag.jl/blob/main/src/states/fill.jl">fill.jl</a></p>
 <hr />
 <h2 id="definition">Definition</h2>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">C++</label><label for="__tabbed_1_2">Julia</label></div>
@@ -417,15 +420,15 @@
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="cp"># block = Spinhalf(2)</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="cp"># state = State(block)</span>
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="cp"># pstate = ProductState([&quot;Up&quot;, &quot;Dn&quot;])</span>
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="cp"># fill(state, pstate)</span>
-<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="cp"># display(vector(state))</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">block</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Spinhalf</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">State</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">pstate</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ProductState</span><span class="p">([</span><span class="s">&quot;Up&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Dn&quot;</span><span class="p">])</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="n">fill</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="w"> </span><span class="n">pstate</span><span class="p">)</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="n">display</span><span class="p">(</span><span class="n">vector</span><span class="p">(</span><span class="n">state</span><span class="p">))</span>
 <a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
-<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="cp"># rstate = RandomState(1234)</span>
-<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="cp"># fill(state, rstate)</span>
-<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="cp"># display(vector(state))</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="n">rstate</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">RandomState</span><span class="p">(</span><span class="mi">1234</span><span class="p">)</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="n">fill</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="w"> </span><span class="n">rstate</span><span class="p">)</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="n">display</span><span class="p">(</span><span class="n">vector</span><span class="p">(</span><span class="n">state</span><span class="p">))</span>
 </code></pre></div>
 </div>
 </div>
