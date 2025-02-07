@@ -388,7 +388,10 @@
   <h1>Algebra routines</h1>
 
 <p>Several basic algebraic operations for states and operators.</p>
-<p><strong>Sources</strong> <a href="https://github.com/awietek/xdiag/blob/main/xdiag/states/algebra.hpp">algebra.hpp</a>, <a href="https://github.com/awietek/xdiag/blob/main/xdiag/states/algebra.cpp">algebra.cpp</a></p>
+<p><strong>Sources</strong><br>
+<a href="https://github.com/awietek/xdiag/blob/main/xdiag/algebra/algebra.hpp">algebra.hpp</a><br>
+<a href="https://github.com/awietek/xdiag/blob/main/xdiag/algebra/algebra.cpp">algebra.cpp</a><br>
+<a href="https://github.com/awietek/XDiag.jl/blob/main/src/algebra/algebra.jl">algebra.jl</a></p>
 <hr />
 <h2 id="dot">dot</h2>
 <p>Computes the dot product <span class="arithmatex">\(\langle v \vert w \rangle\)</span> between two states <span class="arithmatex">\(\vert v \rangle\)</span> and <span class="arithmatex">\(\vert w \rangle\)</span>. In C++, please use the dotC function if one of the two states is expected to be complex.</p>
@@ -436,7 +439,7 @@
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">norm</span><span class="p">(</span><span class="n">state</span><span class="o">::</span><span class="kt">State</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">norm</span><span class="p">(</span><span class="n">state</span><span class="o">::</span><span class="kt">State</span><span class="p">)</span><span class="o">::</span><span class="kt">Float64</span>
 </code></pre></div>
 </div>
 </div>
@@ -453,7 +456,7 @@
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">norm1</span><span class="p">(</span><span class="n">state</span><span class="o">::</span><span class="kt">State</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">norm1</span><span class="p">(</span><span class="n">state</span><span class="o">::</span><span class="kt">State</span><span class="p">)</span><span class="o">::</span><span class="kt">Float64</span>
 </code></pre></div>
 </div>
 </div>
@@ -470,7 +473,7 @@
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="n">norminf</span><span class="p">(</span><span class="n">state</span><span class="o">::</span><span class="kt">State</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="n">norminf</span><span class="p">(</span><span class="n">state</span><span class="o">::</span><span class="kt">State</span><span class="p">)</span><span class="o">::</span><span class="kt">Float64</span>
 </code></pre></div>
 </div>
 </div>
