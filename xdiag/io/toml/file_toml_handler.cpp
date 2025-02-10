@@ -13,7 +13,6 @@
 #include <xdiag/io/toml/arma_vector.hpp>
 #include <xdiag/io/toml/operators.hpp>
 #include <xdiag/io/toml/std_vector.hpp>
-#include <xdiag/io/toml/toml_conversion.hpp>
 #include <xdiag/io/toml/value.hpp>
 
 #include <xdiag/operators/op.hpp>

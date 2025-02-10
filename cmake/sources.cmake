@@ -23,7 +23,6 @@ set(XDIAG_SOURCES
   io/file_toml.cpp
   io/file_h5.cpp
   io/toml/file_toml_handler.cpp
-  # io/toml/toml_conversion.cpp
   io/toml/value.cpp
   io/toml/std_vector.cpp
   io/toml/arma_vector.cpp
@@ -177,6 +176,7 @@ set(XDIAG_JULIA_SOURCES
   operators/opsum.cpp
   operators/symmetrize.cpp
   operators/hc.cpp
+  operators/block.cpp
   
   states/create_state.cpp
   states/fill.cpp
