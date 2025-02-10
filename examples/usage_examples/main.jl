@@ -523,3 +523,42 @@ let
     @show nn_corr, nn_corr_sym
 end
 # --8<-- [end:symmetrize]
+
+
+# --8<-- [start:read_opsum]
+file = "triangular.9.hop.sublattices.tsl.toml"
+fl = FileToml(file)
+ops = read_opsum(fl, "Interactions")
+@show ops
+# --8<-- [end:read_opsum]
+
+
+
+# --8<-- [start:read_permutation_group]
+file = "triangular.9.hop.sublattices.tsl.toml"
+fl = FileToml(file)
+group = read_permutation_group(fl, "Symmetries")
+@show group
+# --8<-- [end:read_permutation_group]
+
+# --8<-- [start:read_representation]
+file = "irreps.toml"
+fl = FileToml(file)
+
+k_0 = read_representation(fl, "k_0")
+@show k_0
+@show isreal(k_0)
+
+k_pi2 = read_representation(fl, "k_pi2")
+@show k_pi2
+@show isreal(k_pi2)
+
+k_pi = read_representation(fl, "k_pi")
+@show k_pi
+@show isreal(k_pi)
+
+k_pi2_half = read_representation(fl, "k_pi2_half")
+@show k_pi2_half
+@show isreal(k_pi2_half)
+# --8<-- [end:read_representation]
+

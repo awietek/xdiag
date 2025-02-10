@@ -65,7 +65,7 @@ The example reads the representation defined in the `irreps.toml` file, whose co
 	```
 
 === "Julia"
-	```c++
+	```julia
 	--8<-- "examples/usage_examples/main.jl:read_representation"
 	```
 

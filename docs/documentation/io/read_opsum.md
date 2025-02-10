@@ -61,7 +61,7 @@ Interactions = [
 	```
 
 === "Julia"
-	```c++
+	```julia
 	--8<-- "examples/usage_examples/main.jl:read_opsum"
 	```
 

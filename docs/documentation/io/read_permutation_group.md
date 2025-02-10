@@ -62,7 +62,7 @@ Symmetries = [
 	```
 
 === "Julia"
-	```c++
+	```julia
 	--8<-- "examples/usage_examples/main.jl:read_permutation_group"
 	```
 
