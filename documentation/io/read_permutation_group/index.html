@@ -380,7 +380,7 @@
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">read_permutation_group</span><span class="p">(</span><span class="n">file</span><span class="o">::</span><span class="kt">FileToml</span><span class="p">,</span><span class="w"> </span><span class="n">tag</span><span class="o">::</span><span class="kt">String</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">read_permutation_group</span><span class="p">(</span><span class="n">file</span><span class="o">::</span><span class="kt">FileToml</span><span class="p">,</span><span class="w"> </span><span class="n">tag</span><span class="o">::</span><span class="kt">String</span><span class="p">)</span><span class="o">::</span><span class="kt">PermutationGroup</span>
 </code></pre></div>
 </div>
 </div>
@@ -435,7 +435,10 @@
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;triangular.9.hop.sublattices.tsl.toml&quot;</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="n">fl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FileToml</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="n">group</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">read_permutation_group</span><span class="p">(</span><span class="n">fl</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Symmetries&quot;</span><span class="p">)</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="nd">@show</span><span class="w"> </span><span class="n">group</span>
 </code></pre></div>
 </div>
 </div>
