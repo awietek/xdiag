@@ -8,7 +8,7 @@
 
 namespace xdiag {
 
-struct evolve_lanczos_result_t {
+struct EvolveLanczosResult {
   arma::vec alphas;
   arma::vec betas;
   arma::vec eigenvalues;
@@ -17,17 +17,17 @@ struct evolve_lanczos_result_t {
   State state;
 };
 
-XDIAG_API evolve_lanczos_result_t
+XDIAG_API EvolveLanczosResult
 evolve_lanczos(OpSum const &H, State psi, double tau, double precision = 1e-12,
                double shift = 0., bool normalize = false,
                int64_t max_iterations = 1000, double deflation_tol = 1e-7);
 
-XDIAG_API evolve_lanczos_result_t
+XDIAG_API EvolveLanczosResult
 evolve_lanczos(OpSum const &H, State psi, complex tau, double precision = 1e-12,
                double shift = 0., bool normalize = false,
                int64_t max_iterations = 1000, double deflation_tol = 1e-7);
 
-struct evolve_lanczos_inplace_result_t {
+struct EvolveLanczosInplaceResult {
   arma::vec alphas;
   arma::vec betas;
   arma::vec eigenvalues;
@@ -35,12 +35,12 @@ struct evolve_lanczos_inplace_result_t {
   std::string criterion;
 };
 
-XDIAG_API evolve_lanczos_inplace_result_t evolve_lanczos_inplace(
+XDIAG_API EvolveLanczosInplaceResult evolve_lanczos_inplace(
     OpSum const &H, State &psi, double tau, double precision = 1e-12,
     double shift = 0., bool normalize = false, int64_t max_iterations = 1000,
     double deflation_tol = 1e-7);
 
-XDIAG_API evolve_lanczos_inplace_result_t evolve_lanczos_inplace(
+XDIAG_API EvolveLanczosInplaceResult evolve_lanczos_inplace(
     OpSum const &H, State &psi, complex tau, double precision = 1e-12,
     double shift = 0., bool normalize = false, int64_t max_iterations = 1000,
     double deflation_tol = 1e-7);

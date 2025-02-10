@@ -1,7 +1,7 @@
 #include "time_evolve_expokit.hpp"
 
-#include <xdiag/algebra/apply.hpp>
 #include <xdiag/algebra/algebra.hpp>
+#include <xdiag/algebra/apply.hpp>
 #include <xdiag/algorithms/time_evolution/zahexpv.hpp>
 #include <xdiag/operators/logic/hc.hpp>
 #include <xdiag/operators/logic/isapprox.hpp>
@@ -9,10 +9,10 @@
 
 namespace xdiag {
 
-time_evolve_expokit_return_t time_evolve_expokit(OpSum const &ops, State state,
-                                                 double time, double precision,
-                                                 int64_t m, double anorm,
-                                                 int64_t nnorm) try {
+TimeEvolveExpokitResult time_evolve_expokit(OpSum const &ops, State state,
+                                            double time, double precision,
+                                            int64_t m, double anorm,
+                                            int64_t nnorm) try {
   auto res =
       time_evolve_expokit_inplace(ops, state, time, precision, m, anorm, nnorm);
   return {res.error, res.hump, state};
@@ -20,7 +20,7 @@ time_evolve_expokit_return_t time_evolve_expokit(OpSum const &ops, State state,
   XDIAG_RETHROW(e);
 }
 
-time_evolve_expokit_inplace_return_t
+TimeEvolveExpokitInplaceResult
 time_evolve_expokit_inplace(OpSum const &ops, State &state, double time,
                             double precision, int64_t m, double anorm,
                             int64_t nnorm) try {

@@ -30,14 +30,14 @@ The method is provided in two variants:
 
 	=== "C++"
 		```c++
-		time_evolve_expokit_return_t time_evolve_expokit(
+	    TimeEvolveExpokitResult time_evolve_expokit(
 			OpSum const &ops, State state, double time, double precision = 1e-12,
 			int64_t m = 30, double anorm = 0., int64_t nnorm = 2);
 		```
 	=== "Julia"
 		```julia
 		time_evolve_expokit(ops::OpSum, state::State, time::Float64;
-		                    precision::Float=1e-12, m::Int64 = 30, 
+		                    precision::Float64=1e-12, m::Int64 = 30, 
 							anorm::Float64 = 0.0, nnorm::Int64 = 2)
 		```
 
@@ -45,14 +45,14 @@ The method is provided in two variants:
 
 	=== "C++"
 		```c++
-		time_evolve_expokit_inplace_return_t time_evolve_expokit_inplace(
+		TimeEvolveExpokitInplaceResult time_evolve_expokit_inplace(
 			OpSum const &ops, State &state, double time, double precision = 1e-12,
 			int64_t m = 30, double anorm = 0., int64_t nnorm = 2);
 		```
 	=== "Julia"
 		```julia
 		time_evolve_expokit_inplace(ops::OpSum, state::State, time::Float64;
-		                            precision::Float=1e-12, m::Int64 = 30, 
+		                            precision::Float64=1e-12, m::Int64 = 30, 
 							        anorm::Float64 = 0.0, nnorm::Int64 = 2)
 		```
 ---

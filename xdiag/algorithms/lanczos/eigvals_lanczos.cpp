@@ -20,11 +20,11 @@
 
 namespace xdiag {
 
-eigvals_lanczos_result_t eigvals_lanczos(OpSum const &ops, Block const &block,
-                                         int64_t neigvals, double precision,
-                                         int64_t max_iterations,
-                                         double deflation_tol,
-                                         int64_t random_seed) try {
+EigvalsLanczosResult eigvals_lanczos(OpSum const &ops, Block const &block,
+                                     int64_t neigvals, double precision,
+                                     int64_t max_iterations,
+                                     double deflation_tol,
+                                     int64_t random_seed) try {
 
   if (neigvals < 1) {
     XDIAG_THROW("Argument \"neigvals\" needs to be >= 1");
@@ -41,24 +41,22 @@ eigvals_lanczos_result_t eigvals_lanczos(OpSum const &ops, Block const &block,
 
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
-  return eigvals_lanczos_result_t();
 }
 
-eigvals_lanczos_result_t eigvals_lanczos(OpSum const &ops, State psi0,
-                                         int64_t neigvals, double precision,
-                                         int64_t max_iterations,
-                                         double deflation_tol) try {
+EigvalsLanczosResult eigvals_lanczos(OpSum const &ops, State psi0,
+                                     int64_t neigvals, double precision,
+                                     int64_t max_iterations,
+                                     double deflation_tol) try {
   return eigvals_lanczos_inplace(ops, psi0, neigvals, precision, max_iterations,
                                  deflation_tol);
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
-  return eigvals_lanczos_result_t();
 }
-eigvals_lanczos_result_t eigvals_lanczos_inplace(OpSum const &ops, State &psi0,
-                                                 int64_t neigvals,
-                                                 double precision,
-                                                 int64_t max_iterations,
-                                                 double deflation_tol) try {
+
+EigvalsLanczosResult eigvals_lanczos_inplace(OpSum const &ops, State &psi0,
+                                             int64_t neigvals, double precision,
+                                             int64_t max_iterations,
+                                             double deflation_tol) try {
   if (neigvals < 1) {
     XDIAG_THROW("Argument \"neigvals\" needs to be >= 1");
   }
@@ -114,7 +112,6 @@ eigvals_lanczos_result_t eigvals_lanczos_inplace(OpSum const &ops, State &psi0,
   return {r.alphas, r.betas, r.eigenvalues, r.niterations, r.criterion};
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
-  return eigvals_lanczos_result_t();
 }
 
 } // namespace xdiag

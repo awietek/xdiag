@@ -20,7 +20,7 @@ The Lanczos algorithm can be run in thre distinct ways:
 	=== "C++"
 
 		```c++
-		eigvals_lanczos_result_t
+		EigvalsLanczosResult
 		eigvals_lanczos(OpSum const &ops, Block const &block, int64_t neigvals = 1,
                     	double precision = 1e-12, int64_t max_iterations = 1000,
                         double deflation_tol = 1e-7, int64_t random_seed = 42);
@@ -38,7 +38,7 @@ The Lanczos algorithm can be run in thre distinct ways:
 
 	=== "C++"
 		```c++
-		eigvals_lanczos_result_t 
+		EigvalsLanczosResult 
 		eigvals_lanczos(OpSum const &ops, State psi0, int64_t neigvals = 1,
 	                    double precision = 1e-12, int64_t max_iterations = 1000,
 						double deflation_tol = 1e-7);
@@ -57,7 +57,7 @@ The Lanczos algorithm can be run in thre distinct ways:
 
 	=== "C++"
 		```c++
-		eigvals_lanczos_result_t 
+		EigvalsLanczosResult 
 		eigvals_lanczos_inplace(OpSum const &ops, State &psi0, int64_t neigvals = 1,
 	                        	double precision = 1e-12, int64_t max_iterations = 1000,
                                 double deflation_tol = 1e-7);
@@ -88,7 +88,7 @@ The Lanczos algorithm can be run in thre distinct ways:
 
 ## Returns
 
-A struct of type `eigvals_lanczos_result_t` with the following entries.
+A struct of type `EigvalsLanczosResult` with the following entries.
 
 | Entry       | Description                                             |
 |:------------|:--------------------------------------------------------|

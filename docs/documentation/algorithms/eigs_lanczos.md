@@ -19,7 +19,7 @@ The Lanczos algorithm can be run in two distinct ways:
 
 	=== "C++"
 		```c++
-		eigs_lanczos_result_t
+		EigsLanczosResult
 		eigs_lanczos(OpSum const &ops, Block const &block, int64_t neigvals = 1,
 		             double precision = 1e-12, int64_t max_iterations = 1000,
                      double deflation_tol = 1e-7, int64_t random_seed = 42);
@@ -36,7 +36,7 @@ The Lanczos algorithm can be run in two distinct ways:
 
 	=== "C++"
 		```c++
-		eigs_lanczos_result_t 
+		EigsLanczosResult 
 		eigs_lanczos(OpSum const &ops, State const &psi0, int64_t neigvals = 1,
                      double precision = 1e-12, int64_t max_iterations = 1000,
                      double deflation_tol = 1e-7);

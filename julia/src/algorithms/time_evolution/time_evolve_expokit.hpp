@@ -3,7 +3,7 @@
 
 namespace jlcxx {
 template <>
-struct IsMirroredType<xdiag::time_evolve_expokit_inplace_return_t> : std::false_type {
+struct IsMirroredType<xdiag::TimeEvolveExpokitInplaceResult> : std::false_type {
 };
 } // namespace jlcxx
 

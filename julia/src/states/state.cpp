@@ -47,6 +47,10 @@ void define_state(jlcxx::Module &mod) {
       });
 
   mod.method("to_string", [](State const &s) { return to_string(s); });
+  mod.method("isapprox",
+             [](State const &v, State const &w, double rtol, double atol) {
+               JULIA_XDIAG_CALL_RETURN(isapprox(v, w, rtol, atol));
+             });
 }
 
 } // namespace xdiag::julia

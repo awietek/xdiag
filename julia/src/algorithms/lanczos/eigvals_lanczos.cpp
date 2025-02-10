@@ -16,18 +16,21 @@ static void define_eigvals_lanczos_block(jlcxx::Module &mod) {
 
 void define_eigvals_lanczos(jlcxx::Module &mod) {
 
-  using res_t = eigvals_lanczos_result_t;
+  using res_t = EigvalsLanczosResult;
 
-  mod.add_type<res_t>("cxx_eigvals_lanczos_result_t")
+  mod.add_type<res_t>("cxx_EigvalsLanczosResult")
       .method("alphas",
-              [](res_t const &r) { JULIA_XDIAG_CALL_RETURN(r.alphas) })
-      .method("betas", [](res_t const &r) { JULIA_XDIAG_CALL_RETURN(r.betas) })
-      .method("eigenvalues",
-              [](res_t const &r) { JULIA_XDIAG_CALL_RETURN(r.eigenvalues) })
-      .method("niterations",
-              [](res_t const &r) { JULIA_XDIAG_CALL_RETURN(r.niterations) })
+              [](res_t const &r) { JULIA_XDIAG_CALL_RETURN_MOVE(r.alphas) })
+      .method("betas",
+              [](res_t const &r) { JULIA_XDIAG_CALL_RETURN_MOVE(r.betas) })
+      .method(
+          "eigenvalues",
+          [](res_t const &r) { JULIA_XDIAG_CALL_RETURN_MOVE(r.eigenvalues) })
+      .method(
+          "niterations",
+          [](res_t const &r) { JULIA_XDIAG_CALL_RETURN_MOVE(r.niterations) })
       .method("criterion",
-              [](res_t const &r) { JULIA_XDIAG_CALL_RETURN(r.criterion) });
+              [](res_t const &r) { JULIA_XDIAG_CALL_RETURN_MOVE(r.criterion) });
 
   define_eigvals_lanczos_block<Spinhalf>(mod);
   define_eigvals_lanczos_block<tJ>(mod);

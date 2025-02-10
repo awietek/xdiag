@@ -58,14 +58,14 @@ template XDIAG_API State random_state(tJDistributed const &, bool, int64_t,
                                       bool);
 #endif
 
-State zero_state(Block const &block, bool real, int64_t n_cols) {
-  return std::visit([&](auto &&blk) { return zero_state(blk, real, n_cols); },
+State zero_state(Block const &block, bool real, int64_t ncols) {
+  return std::visit([&](auto &&blk) { return zero_state(blk, real, ncols); },
                     block);
 }
 
 template <typename block_t>
-State zero_state(block_t const &block, bool real, int64_t n_cols) {
-  return State(block, real, n_cols);
+State zero_state(block_t const &block, bool real, int64_t ncols) {
+  return State(block, real, ncols);
 }
 template XDIAG_API State zero_state(Spinhalf const &, bool, int64_t);
 template XDIAG_API State zero_state(tJ const &, bool, int64_t);

@@ -28,12 +28,12 @@ The method is provided in two variants:
 
 	=== "C++"
 		```c++
-		evolve_lanczos_result_t
+		EvolveLanczosResult
 		evolve_lanczos(OpSum const &H, State psi, double t, double precision = 1e-12,
       		           double shift = 0., bool normalize = false,
                        int64_t max_iterations = 1000, double deflation_tol = 1e-7);
 
-		evolve_lanczos_result_t
+		EvolveLanczosResult
 		evolve_lanczos(OpSum const &H, State psi, complex z, double precision = 1e-12,
       		           double shift = 0., bool normalize = false,
                        int64_t max_iterations = 1000, double deflation_tol = 1e-7);
@@ -55,13 +55,13 @@ The method is provided in two variants:
 
 	=== "C++"
 		```c++
-		evolve_lanczos_inplace_result_t
+		EvolveLanczosInplaceResult
 		evolve_lanczos_inplace(OpSum const &H, State &psi, double t, 
 		                       double precision = 1e-12, double shift = 0.,
 							   bool normalize = false, int64_t max_iterations = 1000, 
 							   double deflation_tol = 1e-7);
 
-		evolve_lanczos_inplace_result_t
+		EvolveLanczosInplaceResult
 		evolve_lanczos_inplace(OpSum const &H, State &psi, complex z, 
 		                       double precision = 1e-12, double shift = 0.,
 							   bool normalize = false, int64_t max_iterations = 1000, 

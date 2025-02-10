@@ -192,7 +192,7 @@ let
     ops["J"] = 1.0
 
     # With random intial state
-    auto res = eigvals_lanczos(ops, block)
+    res = eigvals_lanczos(ops, block)
     @show res.alphas
     @show res.betas
     @show res.eigenvalues
@@ -221,7 +221,7 @@ let
     ops["J"] = 1.0
 
     # With random intial state
-    auto res = eigs_lanczos(ops, block)
+    res = eigs_lanczos(ops, block)
     @show res.alphas
     @show res.betas
     @show res.eigenvalues
@@ -268,9 +268,9 @@ let
  
     psi0 = product_state(block, ["Up", "Dn", "Up", "Dn", "Up", "Dn", "Up", "Dn"])
     time = 1.0
-    precision = 1e-12
-    psi = imaginary_time_evolve(ops, psi0, time, precision, e0)
-    imaginary_time_evolve_inplace(ops, psi0, time, precision, e0)
+    psi = imaginary_time_evolve(ops, psi0, time,
+                                precision=1e-12, shift=e0)
+    imaginary_time_evolve_inplace(ops, psi0, time, precision=1e-12, shift=e0)
     @show isapprox(psi0, psi)
 end
 # --8<-- [end:imaginary_time_evolve]
@@ -278,7 +278,7 @@ end
 # --8<-- [start:evolve_lanczos]
 let
     N = 8
-    nup = N / 2
+    nup = N ÷ 2
     block = Spinhalf(N, nup)
     
     # Define the nearest-neighbor Heisenberg model
@@ -292,8 +292,7 @@ let
  
     psi0 = product_state(block, ["Up", "Dn", "Up", "Dn", "Up", "Dn", "Up", "Dn"])
     time = 1.0
-    precision = 1e-12
-    res = evolve_lanczos(ops, psi0, time, precision, e0, true, 500)
+    res = evolve_lanczos(ops, psi0, time, precision=1e-12, shift=e0, normalize=true)
     @show res.alphas
     @show res.betas
 end
@@ -303,7 +302,7 @@ end
 # --8<-- [start:time_evolve_expokit]
 let
     N = 8
-    nup = N / 2
+    nup = N ÷ 2
     block = Spinhalf(N, nup)
     
     # Define the nearest-neighbor Heisenberg model
@@ -314,9 +313,8 @@ let
 
     psi0 = product_state(block, ["Up", "Dn", "Up", "Dn", "Up", "Dn", "Up", "Dn"])
     time = 1.0
-    precision = 1e-8
-    res1 = time_evolve_expokit(ops, psi0, time, precision)
-    res2 = time_evolve_expokit_inplace(ops, psi0, time, precision)
+    res1 = time_evolve_expokit(ops, psi0, time, precision=1e-8)
+    res2 = time_evolve_expokit_inplace(ops, psi0, time, precision=1e-8)
     @show isapprox(psi0, res1.state)
     @show res1.error
     @show res1.hump
@@ -450,10 +448,10 @@ display(vector(state))
 zero(state)
 display(vector(state))
 
-state = random_state(block, false, 1234, true)
+state = random_state(block, real=false, seed=1234, normalized=true)
 display(vector(state))
 
-state = zero_state(block, true, 2)
+state = zero_state(block, real=true, ncols=2)
 display(matrix(state))
 # --8<-- [end:create_state]
 
@@ -474,7 +472,7 @@ let
     @show dot(psi, psi)
     @show e0, inner(ops, psi)
 
-    phi = rand(block)
+    phi = random_state(block)
     display(vector(phi))
     display(vector(psi))
     display(vector(psi + 2.0*phi))

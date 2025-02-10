@@ -15,7 +15,7 @@ Creates a filled product state.
 	
 === "Julia"
 	```julia
-	product_state(block::Block, local_states::Vector{String}, real::Bool=true)
+	product_state(block::Block, local_states::Vector{String}; real::Bool=true)
 	```
 
 
@@ -40,7 +40,7 @@ Create a filled random state with normal $\mathcal{N}(0, 1)$ distributed coeffic
 	
 === "Julia"
 	```julia
-	random_state(block::Block, real::Bool=true, seed::Int64=42, normalized::Bool=true
+	random_state(block::Block; real::Bool=true, seed::Int64=42, normalized::Bool=true
 	```
 
 
@@ -61,12 +61,12 @@ Create a filled state with all zero entries.
 
 === "C++"
 	```c++
-	State zero_state(Block const &block, bool real = true, int64_t n_cols = 1);
+	State zero_state(Block const &block, bool real = true, int64_t ncols = 1);
 	```
 	
 === "Julia"
 	```julia
-	zero_state(block::Block, real::Bool=true, n_col::Int64=1)
+	zero_state(block::Block; real::Bool=true, ncols::Int64=1)
 	```
 
 

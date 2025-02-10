@@ -1,7 +1,7 @@
 #include "evolve_lanczos.hpp"
 
-#include <xdiag/algebra/apply.hpp>
 #include <xdiag/algebra/algebra.hpp>
+#include <xdiag/algebra/apply.hpp>
 #include <xdiag/algorithms/lanczos/lanczos_convergence.hpp>
 #include <xdiag/algorithms/time_evolution/exp_sym_v.hpp>
 #include <xdiag/operators/logic/hc.hpp>
@@ -10,10 +10,10 @@
 
 namespace xdiag {
 
-evolve_lanczos_result_t evolve_lanczos(OpSum const &H, State psi, double tau,
-                                       double precision, double shift,
-                                       bool normalize, int64_t max_iterations,
-                                       double deflation_tol) try {
+EvolveLanczosResult evolve_lanczos(OpSum const &H, State psi, double tau,
+                                   double precision, double shift,
+                                   bool normalize, int64_t max_iterations,
+                                   double deflation_tol) try {
   auto r = evolve_lanczos_inplace(H, psi, tau, precision, shift, normalize,
                                   max_iterations, deflation_tol);
   return {r.alphas, r.betas, r.eigenvalues, r.niterations, r.criterion, psi};
@@ -21,10 +21,10 @@ evolve_lanczos_result_t evolve_lanczos(OpSum const &H, State psi, double tau,
   XDIAG_RETHROW(e);
 }
 
-evolve_lanczos_result_t evolve_lanczos(OpSum const &H, State psi, complex tau,
-                                       double precision, double shift,
-                                       bool normalize, int64_t max_iterations,
-                                       double deflation_tol) try {
+EvolveLanczosResult evolve_lanczos(OpSum const &H, State psi, complex tau,
+                                   double precision, double shift,
+                                   bool normalize, int64_t max_iterations,
+                                   double deflation_tol) try {
   auto r = evolve_lanczos_inplace(H, psi, tau, precision, shift, normalize,
                                   max_iterations, deflation_tol);
   return {r.alphas, r.betas, r.eigenvalues, r.niterations, r.criterion, psi};
@@ -32,10 +32,11 @@ evolve_lanczos_result_t evolve_lanczos(OpSum const &H, State psi, complex tau,
   XDIAG_RETHROW(e);
 }
 
-evolve_lanczos_inplace_result_t
-evolve_lanczos_inplace(OpSum const &H, State &psi, double tau, double precision,
-                       double shift, bool normalize, int64_t max_iterations,
-                       double deflation_tol) try {
+EvolveLanczosInplaceResult evolve_lanczos_inplace(OpSum const &H, State &psi,
+                                                  double tau, double precision,
+                                                  double shift, bool normalize,
+                                                  int64_t max_iterations,
+                                                  double deflation_tol) try {
   if (!isapprox(H, hc(H))) {
     XDIAG_THROW("Input OpSum is not hermitian. Evolution using the Lanczos "
                 "algorithm requires the operator to be hermitian.");
@@ -70,10 +71,11 @@ evolve_lanczos_inplace(OpSum const &H, State &psi, double tau, double precision,
   XDIAG_RETHROW(e);
 }
 
-evolve_lanczos_inplace_result_t
-evolve_lanczos_inplace(OpSum const &H, State &psi, complex tau,
-                       double precision, double shift, bool normalize,
-                       int64_t max_iterations, double deflation_tol) try {
+EvolveLanczosInplaceResult evolve_lanczos_inplace(OpSum const &H, State &psi,
+                                                  complex tau, double precision,
+                                                  double shift, bool normalize,
+                                                  int64_t max_iterations,
+                                                  double deflation_tol) try {
 
   if (!isapprox(H, hc(H))) {
     XDIAG_THROW("Input OpSum is not hermitian. Evolution using the Lanczos "
