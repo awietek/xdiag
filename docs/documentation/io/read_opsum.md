@@ -18,7 +18,7 @@ Reads an [OpSum](../operators/opsum.md) object from a TOML file.
 	
 === "Julia"
 	```julia
-	read_opsum(file::FileToml, tag::String);
+	read_opsum(file::FileToml, tag::String)::OpSum
 	```
 
 ---

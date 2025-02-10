@@ -18,7 +18,7 @@ Reads an [PermutationGroup](../symmetries/permutation_group.md) object from a TO
 	
 === "Julia"
 	```julia
-	read_permutation_group(file::FileToml, tag::String);
+	read_permutation_group(file::FileToml, tag::String)::PermutationGroup
 	```
 
 ---

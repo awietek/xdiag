@@ -76,7 +76,7 @@ Create a filled state with all zero entries.
 |:------|:------------------------------------|---|
 | block | block on which the state is defined |   |
 | real  | flag whether real state is created  |   |
-| n_col | number of columns in the state      |   |
+| ncols | number of columns in the state      |   |
 
 ---
 

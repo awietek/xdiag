@@ -34,6 +34,12 @@ Representation::Representation(PermutationGroup const &group,
     check_characters(group, characters.as<arma::vec>());
   } else {
     check_characters(group, characters.as<arma::cx_vec>());
+
+    // If imaginary part is small, make it real
+    auto ni = arma::norm(arma::imag(characters.as<arma::cx_vec>()));
+    if (ni < 1e-14) {
+      characters_ = Vector(arma::real(characters.as<arma::cx_vec>()));
+    }
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
@@ -102,7 +108,7 @@ bool isreal(Representation const &irrep) { return irrep.isreal(); }
 bool isapprox(Representation const &r1, Representation const &r2, double rtol,
               double atol) {
   return (r1.group() == r2.group()) &&
-    isapprox(r1.characters(), r2.characters(), rtol, atol);
+         isapprox(r1.characters(), r2.characters(), rtol, atol);
 }
 Representation multiply(Representation const &r1,
                         Representation const &r2) try {

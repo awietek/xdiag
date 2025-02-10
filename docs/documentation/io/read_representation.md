@@ -19,7 +19,7 @@ Reads an [Representation](../symmetries/representation.md) object from a TOML fi
 === "Julia"
 	```julia
 	read_representation(file::FileToml, irrep_tag::String, 
-	                    group_tag::String = "Symmetries");
+	                    group_tag::String = "Symmetries")::Representation
 	```
 
 ---
