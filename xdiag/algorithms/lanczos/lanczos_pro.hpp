@@ -18,7 +18,7 @@ template <typename coeff_t> struct lanczos_pro_result {
   arma::mat tmat;
   arma::vec eigenvalues;
   arma::Mat<coeff_t> V;
-  int num_iterations;
+  int64_t niterations;
   std::string criterion;
   int num_reorthogonalizations;
   arma::vec orthogonality_levels;
@@ -115,7 +115,7 @@ lanczos_pro(multiply_f mult, arma::Col<coeff_t> &v0, convergence_f converged,
 
   // Zero dimensional problem -> return defaults
   if (v0.size() == 0) {
-    res.num_iterations = 0;
+    res.niterations = 0;
     res.criterion = "zerodimensional";
     res.num_reorthogonalizations = 0;
     return res;
@@ -247,7 +247,7 @@ lanczos_pro(multiply_f mult, arma::Col<coeff_t> &v0, convergence_f converged,
     res.V = V.head_cols(iteration);
   }
   res.eigenvalues = tmatrix.eigenvalues();
-  res.num_iterations = iteration;
+  res.niterations = iteration;
   res.orthogonality_levels = arma::vec(orthogonality_levels);
 
   return res;
