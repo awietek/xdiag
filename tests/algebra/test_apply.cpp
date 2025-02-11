@@ -2,10 +2,14 @@
 
 #include <xdiag/algebra/algebra.hpp>
 #include <xdiag/algebra/apply.hpp>
+#include <xdiag/algebra/matrix.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
 #include <xdiag/io/read.hpp>
 #include <xdiag/operators/logic/order.hpp>
 #include <xdiag/operators/logic/symmetrize.hpp>
+#include <xdiag/states/state.hpp>
+#include <xdiag/states/random_state.hpp>
+#include <xdiag/states/fill.hpp>
 
 using namespace xdiag;
 using namespace arma;
@@ -55,6 +59,35 @@ TEST_CASE("algebra_apply", "[algebra]") try {
         REQUIRE(isapprox(m0, m3, 1e-6, 1e-6));
       }
     }
+  }
+
+  int64_t ncols = 10;
+  auto v = State(block, false, ncols);
+  auto vs = State(blocksym, false, ncols);
+  for (int64_t m = 0; m < ncols; m++) {
+    auto rstate = RandomState(m, false);
+    xdiag::fill(v, rstate, m);
+    xdiag::fill(vs, rstate, m);
+  }
+  
+  auto Hv = apply(ops, v);
+  auto Hvs = apply(ops, vs);
+
+  auto hmat = xdiag::matrix(ops, block);
+  auto hmats = xdiag::matrixC(ops, blocksym);
+
+  for (int64_t m = 0; m < ncols; ++m) {
+        auto evec = v.vector(m, false);
+
+        auto n0 = as_scalar(evec.t() * hmat * evec);
+        auto n1 = dotC(v.col(m), Hv.col(m));
+        REQUIRE(isapprox(n0, n1, 1e-6, 1e-6));
+
+        auto evecsym = vs.vectorC(m, false);
+
+        auto n0s = as_scalar(evecsym.t() * hmats * evecsym);
+        auto n1s = dotC(vs.col(m), Hvs.col(m));
+        REQUIRE(isapprox(n0s,n1s, 1e-6, 1e-6));
   }
 } catch (Error const &e) {
   error_trace(e);
