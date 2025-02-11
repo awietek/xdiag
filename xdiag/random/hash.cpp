@@ -2,6 +2,7 @@
 
 #include <complex>
 #include <variant>
+#include <cmath>
 
 #include <xdiag/random/hash_functions.hpp>
 
