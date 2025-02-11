@@ -52,3 +52,4 @@
 #undef XDIAG_RETHROW
 #undef XDIAG_API
 #undef XDIAG_OFFSET
+#undef XDIAG_PI

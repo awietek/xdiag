@@ -68,7 +68,7 @@ zahexpv(double time, apply_A_f &&apply_A, dot_f &&dot, arma::cx_vec &w,
   double beta = normv;
   double fact = std::pow((m + 1) / exp(1),
                          (m + 1)) *
-                sqrt(2 * M_PI * (m + 1)); // sterling's approx.
+                sqrt(2 * XDIAG_PI * (m + 1)); // sterling's approx.
   t_new = (1 / anorm) * std::pow((fact * tol) / (4 * beta * anorm), xm);
 
   double s = std::pow(10, floor(log10(t_new)) - 1);

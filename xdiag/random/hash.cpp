@@ -2,7 +2,6 @@
 
 #include <complex>
 #include <variant>
-#include <cmath>
 
 #include <xdiag/random/hash_functions.hpp>
 
@@ -27,7 +26,7 @@ uint64_t hash(PermutationGroup const &group) {
 uint64_t hash(Representation const &irrep) {
   uint64_t h = 0;
   for (auto ch : irrep.characters().as<arma::cx_vec>()) {
-    double phase = std::arg(ch) + M_PI;
+    double phase = std::arg(ch) + XDIAG_PI;
     double phase_scattered = std::log(
         std::abs(std::sin(1.7365529164217 * phase + 2.56381234623457)) +
         0.1234567);

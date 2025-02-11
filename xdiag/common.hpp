@@ -17,6 +17,8 @@
 #define XDIAG_OFFSET 0
 #endif
 
+#define XDIAG_PI 3.14159265358979323846
+
 namespace xdiag {
 
 // helper functions for complex numbers
