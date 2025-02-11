@@ -19,13 +19,15 @@ int main(int argc, char *argv[]) try {
     ops["J1"] = 1.0;
     ops["J2"] = 0.0;
     tic();
-    auto block = Spinhalf(nsites, nup, irrep);
-    // auto block = Spinhalf(nsites, nup, irrep, "4sublattice");
+    // auto block = Spinhalf(nsites, nup, irrep);
+    auto block = Spinhalf(nsites, nup, irrep, "4sublattice");
     toc("Block creation");
 
-    // tic();
-    // double e0 = eigval0(ops, block, 1e-12, 1);
-    // toc("MVM");
+    XDIAG_SHOW(block);
+
+    tic();
+    double e0 = eigval0(ops, block, 1e-12, 50);
+    toc("MVM");
 
   } else {
     auto fl =
@@ -36,12 +38,14 @@ int main(int argc, char *argv[]) try {
     ops["J2"] = 0.0;
 
     tic();
-    auto block = Spinhalf(nsites, nup, irrep);
-    // auto block = Spinhalf(nsites, nup, irrep, "2sublattice");
+    // auto block = Spinhalf(nsites, nup, irrep);
+    auto block = Spinhalf(nsites, nup, irrep, "2sublattice");
     toc("Block creation");
 
+    XDIAG_SHOW(block);
+
     tic();
-    double e0 = eigval0(ops, block, 1e-12, 1);
+    double e0 = eigval0(ops, block, 1e-12, 50);
     toc("MVM");
   }
 } catch (Error e) {

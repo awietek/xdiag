@@ -2,6 +2,19 @@
 title: Releases
 ---
 
+## v0.3.1
+
+**Feb. 11, 2025**
+
+New API and operator logic
+
+* Updated to a new streamlined API
+* Implemented operator logic including symmetries
+* Completed wrapper for Julia
+* w = apply(ops, v) works now
+
+---
+
 ## v0.2.3
 
 **Sep. 9, 2024**
