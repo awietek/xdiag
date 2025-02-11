@@ -1,7 +1,9 @@
 cmake_commands.sh
 build
 build_julia_wrapper.sh
-benchmarks
+*.prof
+*.prof.pdf
+*/build/*
 install
 julia/products
 julia/build_tarballs.jl

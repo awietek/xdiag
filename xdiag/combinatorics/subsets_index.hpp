@@ -73,13 +73,13 @@ private:
 
 template <typename bit_t>
 inline SubsetsIndexThread<bit_t> ThreadStatesIndex(Subsets<bit_t> const &si) {
-  return SubsetsIndexThread(si.n());
+  return SubsetsIndexThread<bit_t>(si.n());
 }
 
 template <typename bit_t>
 inline SubsetsIndexThread<bit_t>
 ThreadStatesIndex(SubsetsIndex<bit_t> const &si) {
-  return SubsetsIndexThread(si.n());
+  return SubsetsIndexThread<bit_t>(si.n());
 }
 #endif
 

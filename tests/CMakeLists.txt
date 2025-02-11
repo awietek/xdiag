@@ -25,7 +25,7 @@ set(XDIAG_TEST_SOURCES
   symmetries/group_action/test_group_action_lookup.cpp
   symmetries/group_action/test_group_action_sublattice.cpp
   symmetries/operations/test_symmetry_operations.cpp
-  # symmetries/operations/test_representative_list_omp.cpp
+  symmetries/operations/test_representative_list_omp.cpp
   symmetries/test_fermi_sign.cpp
   symmetries/test_permutation.cpp
   symmetries/test_permutation_group.cpp

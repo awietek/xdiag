@@ -1,6 +1,10 @@
 #include "basis_symmetric_no_sz.hpp"
 
+#ifdef _OPENMP
+#include <xdiag/symmetries/operations/representative_list_omp.hpp>
+#else
 #include <xdiag/symmetries/operations/representative_list.hpp>
+#endif
 
 namespace xdiag::basis::spinhalf {
 
@@ -13,13 +17,23 @@ BasisSymmetricNoSz<bit_t>::BasisSymmetricNoSz(Representation const &irrep) try
   if (isreal(irrep)) {
     arma::vec characters = irrep.characters().as<arma::vec>();
     std::tie(reps_, index_for_rep_, syms_, sym_limits_for_rep_, norms_) =
+#ifdef _OPENMP
+        symmetries::representatives_indices_symmetries_limits_norms_omp<bit_t>(
+            subsets_basis_, group_action_, characters);
+#else
         symmetries::representatives_indices_symmetries_limits_norms<bit_t>(
             subsets_basis_, group_action_, characters);
+#endif
   } else {
     arma::cx_vec characters = irrep.characters().as<arma::cx_vec>();
     std::tie(reps_, index_for_rep_, syms_, sym_limits_for_rep_, norms_) =
+#ifdef _OPENMP
+        symmetries::representatives_indices_symmetries_limits_norms_omp<bit_t>(
+            subsets_basis_, group_action_, characters);
+#else
         symmetries::representatives_indices_symmetries_limits_norms<bit_t>(
             subsets_basis_, group_action_, characters);
+#endif
   }
 
   size_ = (int64_t)reps_.size();

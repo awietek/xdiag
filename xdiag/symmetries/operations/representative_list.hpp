@@ -64,7 +64,7 @@ representatives_indices_symmetries_limits_norms(
   for (int64_t rep_idx = 0; rep_idx < n_reps; ++rep_idx) {
     bit_t rep = reps[rep_idx];
 
-    for (int64_t sym = 0; sym < group_action.n_symmetries(); ++sym) {
+    for (int sym = 0; sym < group_action.n_symmetries(); ++sym) {
       bit_t state = group_action.apply(sym, rep);
       int64_t idx = states_indexing.index(state);
       idces[idx] = rep_idx;
