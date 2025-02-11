@@ -73,11 +73,11 @@ TEST_CASE("algebra_apply", "[algebra]") try {
   auto Hv = apply(ops, v);
   auto Hvs = apply(ops, vs);
 
-  auto hmat = xdiag::matrix(ops, block);
+  auto hmat = xdiag::matrixC(ops, block);
   auto hmats = xdiag::matrixC(ops, blocksym);
 
   for (int64_t m = 0; m < ncols; ++m) {
-        auto evec = v.vector(m, false);
+        auto evec = v.vectorC(m, false);
 
         auto n0 = as_scalar(evec.t() * hmat * evec);
         auto n1 = dotC(v.col(m), Hv.col(m));
