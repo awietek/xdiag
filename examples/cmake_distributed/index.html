@@ -219,6 +219,26 @@
   
   
     <li class="md-nav__item">
+      <a href="../../quick_start/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Quick Start
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../user_guide/" class="md-nav__link">
         
   
@@ -326,15 +346,7 @@
 
 
 <h1 id="cmakeliststxt-for-the-distributed-xdiag-library">CMakeLists.txt for the distributed XDiag library</h1>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nb">cmake_minimum_required</span><span class="p">(</span><span class="s">VERSION</span><span class="w"> </span><span class="s">3.19</span><span class="p">)</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="nb">project</span><span class="p">(</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span><span class="s">tj_distributed_time_evolve</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="p">)</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="nb">find_package</span><span class="p">(</span><span class="s">xdiag_distributed</span><span class="w"> </span><span class="s">REQUIRED</span><span class="w"> </span><span class="s">HINTS</span><span class="w"> </span><span class="s">../../../install</span><span class="p">)</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="nb">add_executable</span><span class="p">(</span><span class="s">main</span><span class="w"> </span><span class="s">main.cpp</span><span class="p">)</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="nb">target_link_libraries</span><span class="p">(</span><span class="s">main</span><span class="w"> </span><span class="s">PUBLIC</span><span class="w"> </span><span class="s">xdiag::xdiag_distributed</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>
 </code></pre></div>
 
 
