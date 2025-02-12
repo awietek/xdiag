@@ -11,7 +11,7 @@ title: Home
 
 ![license](https://img.shields.io/badge/license-Apache%202.0-blue)
 
-[Quick Start](quickstart.md){ .md-button .md-button--primary }
+[Quick Start](quick_start.md){ .md-button .md-button--primary }
 [Code on GitHub](https://github.com/awietek/xdiag){ .md-button .md-button--secondary }
 
 ## Overview

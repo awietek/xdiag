@@ -1,7 +1,8 @@
 set(XDIAG_EXAMPLES
-  hello_world
   usage_examples
   user_guide
+  hello_world
+  spinhalf_chain_e0
 )
 
 foreach(name ${XDIAG_EXAMPLES})

@@ -35,6 +35,7 @@ extra_css:
 
 nav:
   - Home: index.md
+  - Quick Start: quick_start.md
   - User Guide: user_guide.md
   - Examples: examples.md
   - Documentation: documentation/index.md

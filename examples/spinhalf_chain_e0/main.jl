@@ -1,6 +1,7 @@
 using XDiag
 
-let 
+let
+    say_hello()
     N = 16
     nup = N ÷ 2
     block = Spinhalf(N, nup)
@@ -8,7 +9,7 @@ let
     # Define the nearest-neighbor Heisenberg model
     ops = OpSum()
     for i in 1:N
-        ops += Op("HB", "J", [i-1, i % N])
+        ops += "J" * Op("SdotS", [i, mod1(i+1, N)])
     end
     ops["J"] = 1.0
 
