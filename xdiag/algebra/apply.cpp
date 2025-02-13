@@ -83,22 +83,22 @@ void apply(OpSum const &ops, State const &v, State &w) try {
         arma::mat vmat = v.matrix(false);
         arma::mat wmat = w.matrix(false);
         apply(ops, v.block(), vmat, w.block(), wmat);
-      }
-    } else if (isreal(v) && !isreal(w)) {
-      auto w2 = State(w.block(), true);
+      } else if (isreal(v) && !isreal(w)) {
+      auto w2 = State(w.block(), true, w.ncols());
       arma::mat vmat = v.matrix(false);
       arma::mat wmat = w2.matrix(false);
       apply(ops, v.block(), vmat, w.block(), wmat);
       w = w2;
-    } else if (!isreal(v) && isreal(w)) {
+      } else if (!isreal(v) && isreal(w)) {
       w.make_complex();
       arma::cx_mat vmat = v.matrixC(false);
       arma::cx_mat wmat = w.matrixC(false);
       apply(ops, v.block(), vmat, w.block(), wmat);
-    } else if (!isreal(v) && !isreal(w)) {
+      } else if (!isreal(v) && !isreal(w)) {
       arma::cx_mat vmat = v.matrixC(false);
       arma::cx_mat wmat = w.matrixC(false);
       apply(ops, v.block(), vmat, w.block(), wmat);
+      }
     } else {
       if (isreal(v)) {
         auto v2 = v;
@@ -109,9 +109,9 @@ void apply(OpSum const &ops, State const &v, State &w) try {
         apply(ops, v.block(), vmat, w.block(), wmat);
       } else {
         w.make_complex();
-        arma::cx_vec vvec = v.matrixC(false);
-        arma::cx_vec wvec = w.matrixC(false);
-        apply(ops, v.block(), vvec, w.block(), wvec);
+        arma::cx_mat vmat = v.matrixC(false);
+        arma::cx_mat wmat = w.matrixC(false);
+        apply(ops, v.block(), vmat, w.block(), wmat);
       }
     }
   } else {

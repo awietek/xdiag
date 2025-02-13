@@ -59,7 +59,7 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
     auto res = lanczos_pro(mult, v0, conv, niter, ortho_level, 1e-7, true);
     // XDIAG_SHOW(res.num_reorthogonalizations);
 
-    REQUIRE(res.num_iterations == N); // exact deflation
+    REQUIRE(res.niterations == N); // exact deflation
 
     mat V = res.V;
     double total_orthogonality = norm(V.t() * V - eye(N, N));
@@ -116,7 +116,7 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
     auto res = lanczos_pro(mult, v0, conv, niter, ortho_level, 1e-7, true);
     // XDIAG_SHOW(res.num_reorthogonalizations);
 
-    REQUIRE(res.num_iterations == N); // exact deflation
+    REQUIRE(res.niterations == N); // exact deflation
 
     cx_mat V = res.V;
     double total_orthogonality = norm(V.t() * V - eye(N, N));
@@ -174,10 +174,10 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
             lanczos_pro(mult, v0, conv, n_iter, ortho_level, 1e-7, false);
 
         // XDIAG_SHOW(res.num_reorthogonalizations);
-        int n_iter2 = res.num_iterations;
+        int n_iter2 = res.niterations;
 
         cx_mat V = res.V;
-        // XDIAG_SHOW(res.num_iterations);
+        // XDIAG_SHOW(res.niterations);
         // XDIAG_SHOW(cx_mat(V.t() * V ));
         double total_orthogonality = norm(V.t() * V - eye(n_iter2, n_iter2));
         if (n_iter > block.size()) {
@@ -228,7 +228,7 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
             lanczos_pro(mult, v0, conv, n_iter, ortho_level, 1e-7, false);
 
         // XDIAG_SHOW(res.num_reorthogonalizations);
-        int n_iter2 = res.num_iterations;
+        int n_iter2 = res.niterations;
         cx_mat V = res.V;
         double total_orthogonality = norm(V.t() * V - eye(n_iter2, n_iter2));
         if (n_iter > block.size()) {
