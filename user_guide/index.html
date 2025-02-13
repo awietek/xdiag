@@ -397,9 +397,18 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#toml" class="md-nav__link">
+  <a href="#reading-from-toml" class="md-nav__link">
     <span class="md-ellipsis">
-      TOML
+      Reading from TOML
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writing-results-to-hdf5" class="md-nav__link">
+    <span class="md-ellipsis">
+      Writing results to hdf5
     </span>
   </a>
   
@@ -407,6 +416,48 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#symmetries" class="md-nav__link">
+    <span class="md-ellipsis">
+      Symmetries
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Symmetries">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#permutations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Permutations
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#representations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Representations
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#further-features" class="md-nav__link">
+    <span class="md-ellipsis">
+      Further features
+    </span>
+  </a>
   
 </li>
       
@@ -615,9 +666,18 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#toml" class="md-nav__link">
+  <a href="#reading-from-toml" class="md-nav__link">
     <span class="md-ellipsis">
-      TOML
+      Reading from TOML
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writing-results-to-hdf5" class="md-nav__link">
+    <span class="md-ellipsis">
+      Writing results to hdf5
     </span>
   </a>
   
@@ -625,6 +685,48 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#symmetries" class="md-nav__link">
+    <span class="md-ellipsis">
+      Symmetries
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Symmetries">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#permutations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Permutations
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#representations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Representations
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#further-features" class="md-nav__link">
+    <span class="md-ellipsis">
+      Further features
+    </span>
+  </a>
   
 </li>
       
@@ -669,29 +771,29 @@
 <h2 id="first-steps">First steps</h2>
 <h3 id="writing-code">Writing code</h3>
 <p>Let us set up our first program using the <code>xdiag</code> library. </p>
-<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Julia</label><label for="__tabbed_1_2">C++</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">C++</label><label for="__tabbed_1_2">Julia</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">using</span><span class="w"> </span><span class="n">XDiag</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">say_hello</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;xdiag/all.hpp&gt;</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">xdiag</span><span class="p">;</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">  </span><span class="n">say_hello</span><span class="p">();</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">Error</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">  </span><span class="n">error_trace</span><span class="p">(</span><span class="n">e</span><span class="p">);</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="p">}</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;xdiag/all.hpp&gt;</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">xdiag</span><span class="p">;</span>
-<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>
-<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">  </span><span class="n">say_hello</span><span class="p">();</span>
-<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">Error</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">  </span><span class="n">error_trace</span><span class="p">(</span><span class="n">e</span><span class="p">);</span>
-<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">using</span><span class="w"> </span><span class="n">XDiag</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="n">say_hello</span><span class="p">()</span>
 </code></pre></div>
 </div>
 </div>
 </div>
 <p>The function <code>say_hello()</code> prints out a welcome message, which also contains information which exact XDiag version is used. In Julia this is all there is to it.</p>
-<p>For the C++ code, first <a href="../documentation/compilation/compilation/">compile</a> the XDiag library. Then we need to create two files to compile the application program. The first is the actual <code>C++</code> code. What is maybe a bit unfamiliar is the <code>try / catch</code> block. XDiag implements a traceback mechanism for runtime errors, which is activated by this idiom. While not stricly necessary here, it is a good practice to make use of this.</p>
+<p>What is maybe a bit unfamiliar is the <code>try / catch</code> block in C++. XDiag implements a traceback mechanism for runtime errors, which is activated by the <code>error_trace</code> function. While not stricly necessary here, it is a good practice to make use of this.</p>
 <hr />
 <h3 id="compilation">Compilation</h3>
 <p>In C++, now that the application program is written, we next need to set up the compilation instructions using <a href="https://cmake.org/">CMake</a>. To do so we create a second file called <code>CMakeLists.txt</code> in the same directory.</p>
@@ -840,7 +942,7 @@ and finally run our first XDiag application.</p>
 <p>We first create an empty <a href="../documentation/operators/opsum/">OpSum</a> and then add additional terms to it. The first part of the product denotes the coupling constant, here given as a string. Alternatively, one could have directly used real / complex numbers here. The second part of the product is a single <a href="../documentation/operators/op/">Op</a> object. It is created with two inputs:</p>
 <ol>
 <li>The type, here <code>SdotS</code> denoting an operator of the form <span class="arithmatex">\(\mathbf{S}_i\cdot\mathbf{S}_j\)</span>. XDiag features a wide variety of operator types, see <a href="../documentation/operators/operator_types/">Operator types</a>.</li>
-<li>An array defining which site the operator lives on.</li>
+<li>An array defining which site the operator lives on. Notice, that in julia we start counting the sites from 1, while in C++ we start counting the sites from 0.</li>
 </ol>
 <hr />
 <h3 id="ground-states">Ground states</h3>
@@ -906,9 +1008,159 @@ and finally run our first XDiag application.</p>
 <p>Here, we are using the <a href="../documentation/algebra/algebra/#inner">inner</a> function to compute an expectation value of the form <span class="arithmatex">\(\langle \psi_0 |\mathcal{O}| \psi_0 \rangle\)</span> with <span class="arithmatex">\(\mathcal{O} = S^z_0 S^z_j\)</span>.</p>
 <hr />
 <h2 id="input-output">Input / Output</h2>
-<p>Julia features a variety of packages facilitating input and output of data. For C++, XDiag provides convenient functionality for <a href="https://toml.io/en/">TOML</a> and <a href="https://www.hdfgroup.org/solutions/hdf5/">HDF5</a> files.</p>
-<h3 id="toml">TOML</h3>
-<p>For simulations is can often be useful to read input paramters from a file. The </p>
+<p>Julia features a variety of packages facilitating input and output of data. For C++, XDiag provides convenient functionality for <a href="https://toml.io/en/">TOML</a> and <a href="https://www.hdfgroup.org/solutions/hdf5/">HDF5</a> files. </p>
+<h3 id="reading-from-toml">Reading from TOML</h3>
+<p>While defining a Hamiltonian or other operators in code as above can be done, it is often preferable to define operators in a file and read it in. In XDiag, we use the TOML language to define input. The Hamiltonian of the <span class="arithmatex">\(N=8\)</span> site Heisenberg chain we created above can be written in a TOML file as a list like this:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a><span class="n">Interactions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a><span class="w">  </span><span class="p">[</span><span class="s1">&#39;J&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;SdotS&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">],</span>
+<a id="__codelineno-27-3" name="__codelineno-27-3" href="#__codelineno-27-3"></a><span class="w">  </span><span class="p">[</span><span class="s1">&#39;J&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;SdotS&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">],</span>
+<a id="__codelineno-27-4" name="__codelineno-27-4" href="#__codelineno-27-4"></a><span class="w">  </span><span class="p">[</span><span class="s1">&#39;J&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;SdotS&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">],</span>
+<a id="__codelineno-27-5" name="__codelineno-27-5" href="#__codelineno-27-5"></a><span class="w">  </span><span class="p">[</span><span class="s1">&#39;J&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;SdotS&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">],</span>
+<a id="__codelineno-27-6" name="__codelineno-27-6" href="#__codelineno-27-6"></a><span class="w">  </span><span class="p">[</span><span class="s1">&#39;J&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;SdotS&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">],</span>
+<a id="__codelineno-27-7" name="__codelineno-27-7" href="#__codelineno-27-7"></a><span class="w">  </span><span class="p">[</span><span class="s1">&#39;J&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;SdotS&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">],</span>
+<a id="__codelineno-27-8" name="__codelineno-27-8" href="#__codelineno-27-8"></a><span class="w">  </span><span class="p">[</span><span class="s1">&#39;J&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;SdotS&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">,</span><span class="w"> </span><span class="mi">7</span><span class="p">],</span>
+<a id="__codelineno-27-9" name="__codelineno-27-9" href="#__codelineno-27-9"></a><span class="w">  </span><span class="p">[</span><span class="s1">&#39;J&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;SdotS&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">7</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">]</span>
+<a id="__codelineno-27-10" name="__codelineno-27-10" href="#__codelineno-27-10"></a><span class="p">]</span>
+</code></pre></div>
+<p>The first entry in every list element is the coupling constant <code>J</code>, the second enty is the type <code>SdotS</code>, and the following two entries are the sites of the operator. To read in such a Hamiltonian from a toml file we can use the <a href="../documentation/io/file_toml/">FileToml</a> object together with the <a href="../documentation/io/read_opsum/">read_opsum</a> Function,</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="10:2"><input checked="checked" id="__tabbed_10_1" name="__tabbed_10" type="radio" /><input id="__tabbed_10_2" name="__tabbed_10" type="radio" /><div class="tabbed-labels"><label for="__tabbed_10_1">C++</label><label for="__tabbed_10_2">Julia</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">fl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FileToml</span><span class="p">(</span><span class="n">XDIAG_DIRECTORY</span><span class="w"> </span><span class="s">&quot;/examples/user_guide/spinhalf_chain.toml&quot;</span><span class="p">);</span>
+<a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a><span class="k">auto</span><span class="w"> </span><span class="n">ops</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">read_opsum</span><span class="p">(</span><span class="n">fl</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Interactions&quot;</span><span class="p">);</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a><span class="n">fl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FileToml</span><span class="p">(</span><span class="s">&quot;spinhalf_chain.toml&quot;</span><span class="p">)</span>
+<a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a><span class="n">ops</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">read_opsum</span><span class="p">(</span><span class="n">fl</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Interactions&quot;</span><span class="p">)</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<p>XDiag also features the functions <a href="../documentation/io/read_permutation_group/">read_permutation_group</a> and <a href="../documentation/io/read_representation/">read_representation</a> to conventiently read <a href="../documentation/symmetries/permutation_group/">PermutationGroup</a> and <a href="../documentation/symmetries/representation/">Representation</a> objects used to describe symmetries from file, see further below.</p>
+<hr />
+<h3 id="writing-results-to-hdf5">Writing results to hdf5</h3>
+<p>After a simulation, we want to store results to file. A standard scientific data format is the <a href="https://www.hdfgroup.org/solutions/hdf5/">hdf5</a> format. Julia supports input and output to hdf5 with the <a href="https://juliaio.github.io/HDF5.jl/stable/">HDF5.jl</a> package. </p>
+<p>For C++ we provide a convenient way of writing results to hdf5 files. In general all numerical data, including scalar real/complex numbers as well as armadillo vectors and matrices can be easily written to file using the <a href="../documentation/io/file_h5/">FileH5</a> object.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="11:1"><input checked="checked" id="__tabbed_11_1" name="__tabbed_11" type="radio" /><div class="tabbed-labels"><label for="__tabbed_11_1">C++</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">fl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FileH5</span><span class="p">(</span><span class="n">XDIAG_DIRECTORY</span><span class="w"> </span><span class="s">&quot;/examples/user_guide/output.h5&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;w!&quot;</span><span class="p">);</span>
+<a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a><span class="n">fl</span><span class="p">[</span><span class="s">&quot;e0&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">e0</span><span class="p">;</span>
+<a id="__codelineno-30-3" name="__codelineno-30-3" href="#__codelineno-30-3"></a><span class="n">fl</span><span class="p">[</span><span class="s">&quot;evals&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">evals</span><span class="p">;</span>
+<a id="__codelineno-30-4" name="__codelineno-30-4" href="#__codelineno-30-4"></a><span class="n">fl</span><span class="p">[</span><span class="s">&quot;evecs&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">evecs</span><span class="p">;</span><span class="w"> </span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<p>The second argument <code>"w!"</code> specifies the access mode to the file. <code>"w!"</code> is the forced write mode, where preexisting files are overwritten. </p>
+<hr />
+<h2 id="symmetries">Symmetries</h2>
+<h3 id="permutations">Permutations</h3>
+<p>Key functionality of XDiag comprises symmetry-adapted calculations, in particular with permutation symmtries which can be translation symmetries on a lattice. The Heisenberg chain with periodic boundary conditions is invariant under the translation operator</p>
+<div class="arithmatex">\[ T: i \rightarrow i+1 \]</div>
+<p>To represent such symmetries, we use the <a href="../documentation/symmetries/permutation/">Permutation</a> object. For example, on the <span class="arithmatex">\(8\)</span>-site chain lattice, the symmetry which maps the sites, </p>
+<div class="arithmatex">\[ \{0,1,2,3,4,5,6,7\} \rightarrow \{1,2,3,4,5,6,7,0\} \]</div>
+<p>can be represented via: </p>
+<div class="tabbed-set tabbed-alternate" data-tabs="12:2"><input checked="checked" id="__tabbed_12_1" name="__tabbed_12" type="radio" /><input id="__tabbed_12_2" name="__tabbed_12" type="radio" /><div class="tabbed-labels"><label for="__tabbed_12_1">C++</label><label for="__tabbed_12_2">Julia</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Permutation</span><span class="p">({</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">,</span><span class="w"> </span><span class="mi">7</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">});</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a><span class="n">T</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Permutation</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">,</span><span class="w"> </span><span class="mi">7</span><span class="p">,</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">])</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<p>Notice, that also here we start counting from 1 in Julia, and from 0 in C++. <a href="../documentation/symmetries/permutation/">Permutation</a> objects can be multiplied, inverted, and raised to a power. We can use them to define a <a href="../documentation/symmetries/permutation_group/">PermutationGroup</a> object in the following way:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="13:2"><input checked="checked" id="__tabbed_13_1" name="__tabbed_13" type="radio" /><input id="__tabbed_13_2" name="__tabbed_13" type="radio" /><div class="tabbed-labels"><label for="__tabbed_13_1">C++</label><label for="__tabbed_13_2">Julia</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">group</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PermutationGroup</span><span class="p">({</span><span class="n">pow</span><span class="p">(</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">),</span><span class="w"> </span><span class="n">pow</span><span class="p">(</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">),</span><span class="w"> </span><span class="n">pow</span><span class="p">(</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">),</span><span class="w"> </span><span class="n">pow</span><span class="p">(</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">),</span>
+<a id="__codelineno-33-2" name="__codelineno-33-2" href="#__codelineno-33-2"></a><span class="w">                               </span><span class="n">pow</span><span class="p">(</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">),</span><span class="w"> </span><span class="n">pow</span><span class="p">(</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">),</span><span class="w"> </span><span class="n">pow</span><span class="p">(</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">),</span><span class="w"> </span><span class="n">pow</span><span class="p">(</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="mi">7</span><span class="p">)});</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a><span class="n">group</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PermutationGroup</span><span class="p">([</span><span class="n">T</span><span class="o">^</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">T</span><span class="o">^</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">T</span><span class="o">^</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">T</span><span class="o">^</span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="n">T</span><span class="o">^</span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="n">T</span><span class="o">^</span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="n">T</span><span class="o">^</span><span class="mi">6</span><span class="p">,</span><span class="w"> </span><span class="n">T</span><span class="o">^</span><span class="mi">7</span><span class="p">])</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<h3 id="representations">Representations</h3>
+<p>One-dimensional representations of a <a href="../documentation/symmetries/permutation_group/">PermutationGroup</a> are described by the <a href="../documentation/symmetries/representation/">Representation</a> object. As one-dimensional irreducible representations (irreps) are given by their characters <span class="arithmatex">\(\chi(g)\)</span> which is simply a list of (complex) numbers for every symmetry element <span class="arithmatex">\(g\)</span>. A representation can be created by handing the group and the list of characters: </p>
+<div class="tabbed-set tabbed-alternate" data-tabs="14:2"><input checked="checked" id="__tabbed_14_1" name="__tabbed_14" type="radio" /><input id="__tabbed_14_2" name="__tabbed_14" type="radio" /><div class="tabbed-labels"><label for="__tabbed_14_1">C++</label><label for="__tabbed_14_2">Julia</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">irrep_k_0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Representation</span><span class="p">(</span><span class="n">group</span><span class="p">,</span><span class="w"> </span><span class="n">arma</span><span class="o">::</span><span class="n">vec</span><span class="p">{</span><span class="mf">1.0</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span>
+<a id="__codelineno-35-2" name="__codelineno-35-2" href="#__codelineno-35-2"></a><span class="w">                         </span><span class="mf">1.0</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0</span><span class="p">});</span>
+<a id="__codelineno-35-3" name="__codelineno-35-3" href="#__codelineno-35-3"></a><span class="k">auto</span><span class="w"> </span><span class="n">irrep_k_pi</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Representation</span><span class="p">(</span><span class="n">group</span><span class="p">,</span><span class="w"> </span><span class="n">arma</span><span class="o">::</span><span class="n">vec</span><span class="p">{</span><span class="mf">1.0</span><span class="p">,</span><span class="w"> </span><span class="mf">-1.0</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span><span class="w"> </span><span class="mf">-1.0</span><span class="p">,</span>
+<a id="__codelineno-35-4" name="__codelineno-35-4" href="#__codelineno-35-4"></a><span class="w">                          </span><span class="mf">1.0</span><span class="p">,</span><span class="w"> </span><span class="mf">-1.0</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span><span class="w"> </span><span class="mf">-1.0</span><span class="p">});</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-36-1" name="__codelineno-36-1" href="#__codelineno-36-1"></a><span class="n">irrep_k_0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Representation</span><span class="p">(</span><span class="n">group</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="mf">1.0</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0</span><span class="p">])</span>
+<a id="__codelineno-36-2" name="__codelineno-36-2" href="#__codelineno-36-2"></a><span class="n">irrep_k_pi</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Representation</span><span class="p">(</span><span class="n">group</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="mf">1.0</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="mf">1.0</span><span class="p">])</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<p>Upon creation of a representation, XDiag checks whether the group axioms as well as the homomorphism property of the characters is fulfilled, i.e.,</p>
+<div class="arithmatex">\[ f * g = h  \Rightarrow \chi(f) \cdot \chi(g) = \chi(h).\]</div>
+<p>Representations can then be used to create symmetry adapted blocks, which can then be diagonalized independently:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="15:2"><input checked="checked" id="__tabbed_15_1" name="__tabbed_15" type="radio" /><input id="__tabbed_15_2" name="__tabbed_15" type="radio" /><div class="tabbed-labels"><label for="__tabbed_15_1">C++</label><label for="__tabbed_15_2">Julia</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-37-1" name="__codelineno-37-1" href="#__codelineno-37-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">block_k_0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Spinhalf</span><span class="p">(</span><span class="n">N</span><span class="p">,</span><span class="w"> </span><span class="n">nup</span><span class="p">,</span><span class="w"> </span><span class="n">irrep_k_0</span><span class="p">);</span>
+<a id="__codelineno-37-2" name="__codelineno-37-2" href="#__codelineno-37-2"></a><span class="k">auto</span><span class="w"> </span><span class="n">block_k_pi</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Spinhalf</span><span class="p">(</span><span class="n">N</span><span class="p">,</span><span class="w"> </span><span class="n">nup</span><span class="p">,</span><span class="w"> </span><span class="n">irrep_k_pi</span><span class="p">);</span>
+<a id="__codelineno-37-3" name="__codelineno-37-3" href="#__codelineno-37-3"></a><span class="kt">double</span><span class="w"> </span><span class="n">e0_k_0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eigval0</span><span class="p">(</span><span class="n">ops</span><span class="p">,</span><span class="w"> </span><span class="n">block_k_0</span><span class="p">);</span>
+<a id="__codelineno-37-4" name="__codelineno-37-4" href="#__codelineno-37-4"></a><span class="kt">double</span><span class="w"> </span><span class="n">e0_k_pi</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eigval0</span><span class="p">(</span><span class="n">ops</span><span class="p">,</span><span class="w"> </span><span class="n">block_k_pi</span><span class="p">);</span>
+<a id="__codelineno-37-5" name="__codelineno-37-5" href="#__codelineno-37-5"></a><span class="n">Log</span><span class="p">(</span><span class="s">&quot;e0: k=0: {:.12f}, k=pi: {:.12f}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">e0_k_0</span><span class="p">,</span><span class="w"> </span><span class="n">e0_k_pi</span><span class="p">);</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-38-1" name="__codelineno-38-1" href="#__codelineno-38-1"></a><span class="n">block_k_0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Spinhalf</span><span class="p">(</span><span class="n">N</span><span class="p">,</span><span class="w"> </span><span class="n">nup</span><span class="p">,</span><span class="w"> </span><span class="n">irrep_k_0</span><span class="p">)</span>
+<a id="__codelineno-38-2" name="__codelineno-38-2" href="#__codelineno-38-2"></a><span class="n">block_k_pi</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Spinhalf</span><span class="p">(</span><span class="n">N</span><span class="p">,</span><span class="w"> </span><span class="n">nup</span><span class="p">,</span><span class="w"> </span><span class="n">irrep_k_pi</span><span class="p">)</span>
+<a id="__codelineno-38-3" name="__codelineno-38-3" href="#__codelineno-38-3"></a><span class="n">e0_k_0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eigval0</span><span class="p">(</span><span class="n">ops</span><span class="p">,</span><span class="w"> </span><span class="n">block_k_0</span><span class="p">)</span>
+<a id="__codelineno-38-4" name="__codelineno-38-4" href="#__codelineno-38-4"></a><span class="n">e0_k_pi</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eigval0</span><span class="p">(</span><span class="n">ops</span><span class="p">,</span><span class="w"> </span><span class="n">block_k_pi</span><span class="p">)</span>
+<a id="__codelineno-38-5" name="__codelineno-38-5" href="#__codelineno-38-5"></a><span class="n">println</span><span class="p">(</span><span class="s">&quot;e0: k=0: </span><span class="si">$e0_k_0</span><span class="s">, k=pi: </span><span class="si">$e0_k_pi</span><span class="s">&quot;</span><span class="p">)</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<p>Also, permutation groups and representations can be defined in a TOML file and read in. Please refer to the <a href="../documentation/io/read_permutation_group/">read_permutation_group</a> and <a href="../documentation/io/read_representation/">read_representation</a> documentation on the specific format required. </p>
+<p>Using symmetries, thus, can give enhanced physical insights to the system, but also reduces the computational costs significantly. A common analysis tool for understanding quantum many-body systems is the <strong>Tower of states</strong> analysis. For an introduction, see e.g. </p>
+<blockquote>
+<p>Studying Continuous Symmetry Breaking using Energy Level Spectroscopy
+<br>
+Alexander Wietek, Michael Schuler, Andreas M. Läuchli
+<br>
+arXiv:1704.08622 [cond-mat.str-el]<br>
+DOI: <a href="https://doi.org/10.48550/arXiv.1704.08622">10.48550/arXiv.1704.08622</a></p>
+</blockquote>
+<h2 id="further-features">Further features</h2>
+<p>Some further features of XDiag include:</p>
+<ul>
+<li>
+<p>Besides the <a href="../documentation/blocks/spinhalf/">Spinhalf</a>, further blocks include the <a href="../documentation/blocks/tJ/">tJ</a> and <a href="../documentation/blocks/electron/">Electron</a></p>
+</li>
+<li>
+<p>Distributed blocks like <a href="../documentation/blocks/spinhalf_distributed/">SpinhalfDistributed</a> and <a href="../documentation/blocks/tJ_distributed/">tJDistributed</a> allow for distributed memory parallelization in C++.</p>
+</li>
+<li>
+<p>Real and imaginary time evolutions can be performed using the functions <a href="../documentation/algorithms/time_evolve/">time_evolve</a>, <a href="../documentation/algorithms/imaginary_time_evolve/">imaginary_time_evolve</a>.</p>
+</li>
+<li>
+<p>Operators can be symmetrized using the <a href="../documentation/operators/symmetrize/">symmetrize</a> function. </p>
+</li>
+<li>
+<p>Product states and random states can be created using the functions <a href="../documentation/states/create_state/#product_state">product_state</a> and <a href="../documentation/states/create_state/#random_state">random_state</a>.</p>
+</li>
+<li>
+<p>Timing of certain parts of the code in C++ can be conventiently performed using the <a href="../documentation/utilities/timing/">Timing</a> utilities.</p>
+</li>
+</ul>
 
 
 
