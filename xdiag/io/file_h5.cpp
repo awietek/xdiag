@@ -16,6 +16,11 @@ FileH5::FileH5(std::string filename, std::string iomode) try
     Log(2, "opening h5file in r mode.");
     file_id_ = H5Fopen(filename.c_str(), H5F_ACC_RDONLY, H5P_DEFAULT);
     XDIAG_THROW("Error in xdiag hdf5: read mode (r) currently not implemented");
+    if (file_id_ == H5I_INVALID_HID) {
+      XDIAG_THROW(fmt::format(
+          "Cannot open file in read mode \"r\": {}\n Maybe it does not exist?",
+          filename));
+    }
   }
 
   // Open file in forced write mode
@@ -23,6 +28,10 @@ FileH5::FileH5(std::string filename, std::string iomode) try
     Log(2, "creating h5file in w! mode.");
     file_id_ =
         H5Fcreate(filename.c_str(), H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
+    if (file_id_ == H5I_INVALID_HID) {
+      XDIAG_THROW(fmt::format(
+          "Cannot open file in forced write mode \"w!\": {}", filename));
+    }
   }
 
   // Open file in secure write mode
@@ -30,23 +39,25 @@ FileH5::FileH5(std::string filename, std::string iomode) try
     Log(2, "creating h5file in w mode.");
     file_id_ =
         H5Fcreate(filename.c_str(), H5F_ACC_EXCL, H5P_DEFAULT, H5P_DEFAULT);
+    if (file_id_ == H5I_INVALID_HID) {
+      XDIAG_THROW(fmt::format("Cannot open file in secure write mode \"w\": "
+                              "{}\n Maybe it already exists?",
+                              filename));
+    }
   }
 
   // Open file in append mode
   else if (iomode == "a") {
     Log(2, "opening h5file in append mode.");
     file_id_ = H5Fopen(filename.c_str(), H5F_ACC_RDWR, H5P_DEFAULT);
-
+    if (file_id_ == H5I_INVALID_HID) {
+      XDIAG_THROW(
+          fmt::format("Cannot open file in append mode \"w!\": {}", filename));
+    }
   } else {
     XDIAG_THROW(
         "Error in xdiag hdf5: invalid iomode, must be one of \"r\", \"w\", "
         "\"w!\", \"a\"");
-  }
-
-  if (file_id_ == H5I_INVALID_HID) {
-    XDIAG_THROW(fmt::format(
-        "Error in xdiag hdf5: can't open file in (forced) write mode: {}",
-        filename));
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);

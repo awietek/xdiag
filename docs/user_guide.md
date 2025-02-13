@@ -46,21 +46,20 @@ The resulting library is now installed at `/path/to/where/xdiag/should/be/instal
 ### Writing code
 
 Let us set up our first program using the `xdiag` library. 
-
+	
+=== "C++"
+	```c++ 
+	--8<-- "examples/hello_world/main.cpp"
+	```
 === "Julia"
 
 	```julia 
 	--8<-- "examples/hello_world/main.jl"
 	```
 	
-=== "C++"
-	```c++ 
-	--8<-- "examples/hello_world/main.cpp"
-	```
-
 The function `say_hello()` prints out a welcome message, which also contains information which exact XDiag version is used. In Julia this is all there is to it.
 
-For the C++ code, first [compile](documentation/compilation/compilation.md) the XDiag library. Then we need to create two files to compile the application program. The first is the actual `C++` code. What is maybe a bit unfamiliar is the `try / catch` block. XDiag implements a traceback mechanism for runtime errors, which is activated by this idiom. While not stricly necessary here, it is a good practice to make use of this.
+What is maybe a bit unfamiliar is the `try / catch` block in C++. XDiag implements a traceback mechanism for runtime errors, which is activated by the `error_trace` function. While not stricly necessary here, it is a good practice to make use of this.
 
 ---
 
@@ -200,7 +199,7 @@ Here, $\mathcal{O}_i$ denote single operators described as [Op](documentation/op
 We first create an empty [OpSum](documentation/operators/opsum.md) and then add additional terms to it. The first part of the product denotes the coupling constant, here given as a string. Alternatively, one could have directly used real / complex numbers here. The second part of the product is a single [Op](documentation/operators/op.md) object. It is created with two inputs:
 
 1. The type, here `SdotS` denoting an operator of the form $\mathbf{S}_i\cdot\mathbf{S}_j$. XDiag features a wide variety of operator types, see [Operator types](documentation/operators/operator_types.md).
-2. An array defining which site the operator lives on.
+2. An array defining which site the operator lives on. Notice, that in julia we start counting the sites from 1, while in C++ we start counting the sites from 0.
 
 ---
 
@@ -253,7 +252,133 @@ Here, we are using the [inner](documentation/algebra/algebra.md#inner) function 
 
 ## Input / Output
 
-Julia features a variety of packages facilitating input and output of data. For C++, XDiag provides convenient functionality for [TOML](https://toml.io/en/) and [HDF5](https://www.hdfgroup.org/solutions/hdf5/) files.
+Julia features a variety of packages facilitating input and output of data. For C++, XDiag provides convenient functionality for [TOML](https://toml.io/en/) and [HDF5](https://www.hdfgroup.org/solutions/hdf5/) files. 
 
-### TOML
-For simulations is can often be useful to read input paramters from a file. The 
+
+### Reading from TOML
+
+While defining a Hamiltonian or other operators in code as above can be done, it is often preferable to define operators in a file and read it in. In XDiag, we use the TOML language to define input. The Hamiltonian of the $N=8$ site Heisenberg chain we created above can be written in a TOML file as a list like this:
+
+```toml
+--8<-- "examples/user_guide/spinhalf_chain.toml:ops"
+```
+
+The first entry in every list element is the coupling constant `J`, the second enty is the type `SdotS`, and the following two entries are the sites of the operator. To read in such a Hamiltonian from a toml file we can use the [FileToml](documentation/io/file_toml.md) object together with the [read_opsum](documentation/io/read_opsum.md) Function,
+
+=== "C++"
+	```c++ 
+	--8<-- "examples/user_guide/main.cpp:io_1"
+	```
+=== "Julia"
+	```julia 
+	fl = FileToml("spinhalf_chain.toml")
+	ops = read_opsum(fl, "Interactions")
+	```
+	
+XDiag also features the functions [read_permutation_group](documentation/io/read_permutation_group.md) and [read_representation](documentation/io/read_representation.md) to conventiently read [PermutationGroup](documentation/symmetries/permutation_group.md) and [Representation](documentation/symmetries/representation.md) objects used to describe symmetries from file, see further below.
+	
+---
+
+### Writing results to hdf5
+
+After a simulation, we want to store results to file. A standard scientific data format is the [hdf5](https://www.hdfgroup.org/solutions/hdf5/) format. Julia supports input and output to hdf5 with the [HDF5.jl](https://juliaio.github.io/HDF5.jl/stable/) package. 
+
+For C++ we provide a convenient way of writing results to hdf5 files. In general all numerical data, including scalar real/complex numbers as well as armadillo vectors and matrices can be easily written to file using the [FileH5](documentation/io/file_h5.md) object.
+
+=== "C++"
+	```c++ 
+	--8<-- "examples/user_guide/main.cpp:io_2"
+	```
+
+The second argument `"w!"` specifies the access mode to the file. `"w!"` is the forced write mode, where preexisting files are overwritten. 
+
+---
+
+## Symmetries
+
+### Permutations
+
+Key functionality of XDiag comprises symmetry-adapted calculations, in particular with permutation symmtries which can be translation symmetries on a lattice. The Heisenberg chain with periodic boundary conditions is invariant under the translation operator
+
+$$ T: i \rightarrow i+1 $$
+
+To represent such symmetries, we use the [Permutation](documentation/symmetries/permutation.md) object. For example, on the $8$-site chain lattice, the symmetry which maps the sites, 
+
+$$ \{0,1,2,3,4,5,6,7\} \rightarrow \{1,2,3,4,5,6,7,0\} $$
+
+can be represented via: 
+
+=== "C++"
+	```c++ 
+	--8<-- "examples/user_guide/main.cpp:symmetries_1"
+	```
+=== "Julia"
+	```julia 
+	--8<-- "examples/user_guide/main.jl:symmetries_1"
+	```
+
+Notice, that also here we start counting from 1 in Julia, and from 0 in C++. [Permutation](documentation/symmetries/permutation.md) objects can be multiplied, inverted, and raised to a power. We can use them to define a [PermutationGroup](documentation/symmetries/permutation_group.md) object in the following way:
+
+=== "C++"
+	```c++ 
+	--8<-- "examples/user_guide/main.cpp:symmetries_2"
+	```
+=== "Julia"
+	```julia 
+	--8<-- "examples/user_guide/main.jl:symmetries_2"
+	```
+
+### Representations
+
+One-dimensional representations of a [PermutationGroup](documentation/symmetries/permutation_group.md) are described by the [Representation](documentation/symmetries/representation.md) object. As one-dimensional irreducible representations (irreps) are given by their characters $\chi(g)$ which is simply a list of (complex) numbers for every symmetry element $g$. A representation can be created by handing the group and the list of characters: 
+
+=== "C++"
+	```c++ 
+	--8<-- "examples/user_guide/main.cpp:symmetries_3"
+	```
+=== "Julia"
+	```julia 
+	--8<-- "examples/user_guide/main.jl:symmetries_3"
+	```
+
+Upon creation of a representation, XDiag checks whether the group axioms as well as the homomorphism property of the characters is fulfilled, i.e.,
+
+$$ f * g = h  \Rightarrow \chi(f) \cdot \chi(g) = \chi(h).$$
+
+Representations can then be used to create symmetry adapted blocks, which can then be diagonalized independently:
+
+=== "C++"
+	```c++ 
+	--8<-- "examples/user_guide/main.cpp:symmetries_4"
+	```
+=== "Julia"
+	```julia 
+	--8<-- "examples/user_guide/main.jl:symmetries_4"
+	```
+	
+Also, permutation groups and representations can be defined in a TOML file and read in. Please refer to the [read_permutation_group](documentation/io/read_permutation_group.md) and [read_representation](documentation/io/read_representation.md) documentation on the specific format required. 
+
+Using symmetries, thus, can give enhanced physical insights to the system, but also reduces the computational costs significantly. A common analysis tool for understanding quantum many-body systems is the **Tower of states** analysis. For an introduction, see e.g. 
+
+> Studying Continuous Symmetry Breaking using Energy Level Spectroscopy
+<br>
+> Alexander Wietek, Michael Schuler, Andreas M. Läuchli
+<br>
+> arXiv:1704.08622 [cond-mat.str-el]<br>
+> DOI: [10.48550/arXiv.1704.08622](https://doi.org/10.48550/arXiv.1704.08622)
+
+## Further features
+
+Some further features of XDiag include:
+
+* Besides the [Spinhalf](documentation/blocks/spinhalf.md), further blocks include the [tJ](documentation/blocks/tJ.md) and [Electron](documentation/blocks/electron.md)
+
+* Distributed blocks like [SpinhalfDistributed](documentation/blocks/spinhalf_distributed.md) and [tJDistributed](documentation/blocks/tJ_distributed.md) allow for distributed memory parallelization in C++.
+
+* Real and imaginary time evolutions can be performed using the functions [time_evolve](documentation/algorithms/time_evolve.md), [imaginary_time_evolve](documentation/algorithms/imaginary_time_evolve.md).
+
+* Operators can be symmetrized using the [symmetrize](documentation/operators/symmetrize.md) function. 
+
+* Product states and random states can be created using the functions [product_state](documentation/states/create_state.md#product_state) and [random_state](documentation/states/create_state.md#random_state).
+
+* Timing of certain parts of the code in C++ can be conventiently performed using the [Timing](documentation/utilities/timing.md) utilities.

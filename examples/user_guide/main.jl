@@ -53,5 +53,33 @@ for i in 2:N
 end
 # --8<-- [end:first_steps_8]
 
+# --8<-- [start:io_1]
+# fl = FileToml("/Users/awietek/Research/Software/xdiag/examples/user_guide/spinhalf_chain.toml")
+# ops = read_opsum(fl, "Interactions")
+# --8<-- [end:io_1]
+
+
+# --8<-- [start:symmetries_1]
+T = Permutation([2, 3, 4, 5, 6, 7, 8, 1])
+# --8<-- [end:symmetries_1]
+ 
+
+# --8<-- [start:symmetries_2]
+group = PermutationGroup([T^0, T^1, T^2, T^3, T^4, T^5, T^6, T^7])
+# --8<-- [end:symmetries_2]
+
+# --8<-- [start:symmetries_3]
+irrep_k_0 = Representation(group, [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0])
+irrep_k_pi = Representation(group, [1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0])
+# --8<-- [end:symmetries_3]
+
+# --8<-- [start:symmetries_4]
+block_k_0 = Spinhalf(N, nup, irrep_k_0)
+block_k_pi = Spinhalf(N, nup, irrep_k_pi)
+e0_k_0 = eigval0(ops, block_k_0)
+e0_k_pi = eigval0(ops, block_k_pi)
+println("e0: k=0: $e0_k_0, k=pi: $e0_k_pi")
+# --8<-- [end:symmetries_4]
+
     
 end

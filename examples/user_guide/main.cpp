@@ -60,7 +60,46 @@ for (int i=1; i<N; ++i) {
 }
 // --8<-- [end:first_steps_8]
 
+{
+// --8<-- [start:io_1]
+auto fl = FileToml(XDIAG_DIRECTORY "/examples/user_guide/spinhalf_chain.toml");
+auto ops = read_opsum(fl, "Interactions");
+// --8<-- [end:io_1]
+}
+
+// --8<-- [start:io_2]
+auto fl = FileH5(XDIAG_DIRECTORY "/examples/user_guide/output.h5", "w!");
+fl["e0"] = e0;
+fl["evals"] = evals;
+fl["evecs"] = evecs; 
+// --8<-- [end:io_2]
+
+
+// --8<-- [start:symmetries_1]
+auto T = Permutation({1, 2, 3, 4, 5, 6, 7, 0});
+// --8<-- [end:symmetries_1]
+
+
+// --8<-- [start:symmetries_2]
+auto group = PermutationGroup({pow(T, 0), pow(T, 1), pow(T, 2), pow(T, 3),
+                               pow(T, 4), pow(T, 5), pow(T, 6), pow(T, 7)});
+// --8<-- [end:symmetries_2]
+
+// --8<-- [start:symmetries_3]
+auto irrep_k_0 = Representation(group, arma::vec{1.0, 1.0, 1.0, 1.0,
+						 1.0, 1.0, 1.0, 1.0});
+auto irrep_k_pi = Representation(group, arma::vec{1.0, -1.0, 1.0, -1.0,
+						  1.0, -1.0, 1.0, -1.0});
+// --8<-- [end:symmetries_3]
  
+// --8<-- [start:symmetries_4]
+auto block_k_0 = Spinhalf(N, nup, irrep_k_0);
+auto block_k_pi = Spinhalf(N, nup, irrep_k_pi);
+double e0_k_0 = eigval0(ops, block_k_0);
+double e0_k_pi = eigval0(ops, block_k_pi);
+Log("e0: k=0: {:.12f}, k=pi: {:.12f}", e0_k_0, e0_k_pi);
+// --8<-- [end:symmetries_4]
+
 }
 
 // clang-format on

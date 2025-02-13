@@ -1,0 +1,12 @@
+# --8<-- [start:ops]
+Interactions = [
+  ['J', 'SdotS', 0, 1],
+  ['J', 'SdotS', 1, 2],
+  ['J', 'SdotS', 2, 3],
+  ['J', 'SdotS', 3, 4],
+  ['J', 'SdotS', 4, 5],
+  ['J', 'SdotS', 5, 6],
+  ['J', 'SdotS', 6, 7],
+  ['J', 'SdotS', 7, 0]
+]
+# --8<-- [end:ops]

@@ -30,6 +30,11 @@ static void check_characters(PermutationGroup const &group,
 Representation::Representation(PermutationGroup const &group,
                                Vector const &characters) try
     : group_(group), characters_(characters) {
+  if (group.size() != characters.size()) {
+    XDIAG_THROW(
+        "Size of PermutationGroup is not equal to number of characters given.");
+  }
+
   if (characters.isreal()) {
     check_characters(group, characters.as<arma::vec>());
   } else {
