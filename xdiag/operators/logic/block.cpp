@@ -162,7 +162,7 @@ bool blocks_match(OpSum const &ops, Spinhalf const &b1,
                   Spinhalf const &b2) try {
   bool match_nup = b1.nup() ? nup(ops, b1) == *b2.nup() : !b2.nup();
   bool match_irrep =
-      b1.irrep() ? representation(ops, b1) == *b2.irrep() : !b2.irrep();
+      b1.irrep() ? isapprox(representation(ops, b1), *b2.irrep()) : !b2.irrep();
   return match_nup && match_irrep;
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
@@ -172,7 +172,7 @@ bool blocks_match(OpSum const &ops, tJ const &b1, tJ const &b2) try {
   bool match_nup = b1.nup() ? nup(ops, b1) == *b2.nup() : !b2.nup();
   bool match_ndn = b1.ndn() ? ndn(ops, b1) == *b2.ndn() : !b2.ndn();
   bool match_irrep =
-      b1.irrep() ? representation(ops, b1) == *b2.irrep() : !b2.irrep();
+      b1.irrep() ? isapprox(representation(ops, b1), *b2.irrep()) : !b2.irrep();
   return match_nup && match_ndn && match_irrep;
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
@@ -183,7 +183,7 @@ bool blocks_match(OpSum const &ops, Electron const &b1,
   bool match_nup = b1.nup() ? nup(ops, b1) == *b2.nup() : !b2.nup();
   bool match_ndn = b1.ndn() ? ndn(ops, b1) == *b2.ndn() : !b2.ndn();
   bool match_irrep =
-      b1.irrep() ? representation(ops, b1) == *b2.irrep() : !b2.irrep();
+      b1.irrep() ? isapprox(representation(ops, b1), *b2.irrep()) : !b2.irrep();
   return match_nup && match_ndn && match_irrep;
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
