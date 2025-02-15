@@ -17,7 +17,7 @@ void define_algebra(jlcxx::Module &mod) {
   });
 
   mod.method("cxx_dotC", [](State const &v, State const &w) {
-    JULIA_XDIAG_CALL_RETURN(dot(v, w));
+    JULIA_XDIAG_CALL_RETURN(dotC(v, w));
   });
 
   mod.method("cxx_inner", [](OpSum const &ops, State const &v) {
