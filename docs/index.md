@@ -1,6 +1,6 @@
----
-title: Home
----
+<img src="img/xdiag_logo_small.png" alt="drawing" width="200"/>
+
+
 ![C++ Badge](https://img.shields.io/badge/C%2B%2B-00599C?logo=cplusplus&logoColor=fff&style=for-the-badge)
 ![Julia](https://img.shields.io/badge/-Julia-9558B2?style=for-the-badge&logo=julia&logoColor=white)
 
@@ -10,6 +10,8 @@ title: Home
 [![Julia CI](https://github.com/awietek/XDiag.jl/actions/workflows/CI.yml/badge.svg?style=for-the-badge)](https://github.com/awietek/XDiag.jl/actions/workflows/CI.yml)
 
 ![license](https://img.shields.io/badge/license-Apache%202.0-blue)
+
+# Home
 
 [Quick Start](quick_start.md){ .md-button .md-button--primary }
 [Code on GitHub](https://github.com/awietek/xdiag){ .md-button .md-button--secondary }
