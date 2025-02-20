@@ -39,4 +39,5 @@ nav:
   - User Guide: user_guide.md
   - Examples: examples.md
   - Documentation: documentation/index.md
+  - Contributing: contributing.md
   - Releases: releases.md
