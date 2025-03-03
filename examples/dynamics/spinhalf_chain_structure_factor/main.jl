@@ -2,7 +2,7 @@ using Pkg; Pkg.instantiate()
 using XDiag
 using HDF5
 
-let 
+function main()
   say_hello();
   filename = "../../../misc/data/examples_output/spinhalf_chain_structure_factor.h5"
   outfile = h5open(filename, "w")
@@ -55,3 +55,5 @@ let
     outfile["$k/eigs"] = res.eigenvalues
   end
 end
+
+main()
