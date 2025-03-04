@@ -6,11 +6,11 @@ function main()
 
   # IO
   latticeInput =
-       "../../../misc/data/square.8.hubbard.ttprime.toml"
+       "../../misc/data/square.8.hubbard.ttprime.toml"
   lfile = FileToml(latticeInput)
 
   filename =
-      "../../../misc/data/examples_output/hubbard_greens_f.h5"
+      "../../misc/data/examples_output/hubbard_greens_f.h5"
   outfile = h5open(filename, "w")
 
   # Define the Hubbard model

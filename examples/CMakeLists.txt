@@ -3,6 +3,8 @@ set(XDIAG_EXAMPLES
   user_guide
   hello_world
   spinhalf_chain_e0
+  spinhalf_chain_structure_factor
+  hubbard_greens_f
 )
 
 foreach(name ${XDIAG_EXAMPLES})

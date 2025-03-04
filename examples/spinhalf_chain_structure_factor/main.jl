@@ -4,7 +4,7 @@ using HDF5
 
 function main()
   say_hello();
-  filename = "../../../misc/data/examples_output/spinhalf_chain_structure_factor.h5"
+  filename = "../../misc/data/examples_output/spinhalf_chain_structure_factor.h5"
   outfile = h5open(filename, "w")
 
   # define model

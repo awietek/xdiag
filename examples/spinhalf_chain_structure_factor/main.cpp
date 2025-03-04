@@ -58,10 +58,12 @@ int main() try {
 
   // loop through momenta
   for (int k = 0; k < N; ++k) {
-    auto S_q = symmetrize(Op("Sz", {0}), irreps[k]);
+    Log("S^zz(k,w) at momentum {}", k);
+    auto S_q = symmetrize(Op("Sz", 0), irreps[k]);
     auto Av = apply(S_q, gs);
     auto nrm = norm(Av);
     Av /= nrm;
+    XDIAG_SHOW(nrm);
 
     auto res = eigvals_lanczos_inplace(ops, Av);
     outfile[format("{}/norm", k)] = nrm;
