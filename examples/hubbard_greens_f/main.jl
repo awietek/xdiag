@@ -5,25 +5,23 @@ function main()
   say_hello()
 
   # IO
-  latticeInput =
-       "../../misc/data/square.8.hubbard.ttprime.toml"
+  latticeInput = "../../misc/data/square.8.hubbard.ttprime.toml"
   lfile = FileToml(latticeInput)
 
-  filename =
-      "../../misc/data/examples_output/hubbard_greens_f.h5"
+  filename = "../../misc/data/examples_output/hubbard_greens_f.h5"
   outfile = h5open(filename, "w")
 
   # Define the Hubbard model
   N = 8
-  nup = div(N,2)
-  ndn = div(N,2)
+  nup = div(N, 2)
+  ndn = div(N, 2)
   ops = read_opsum(lfile, "Interactions")
-  ops["Ty"] = 1.
-  ops["Tx"] = 1.
+  ops["Ty"] = 1.0
+  ops["Tx"] = 1.0
   ops["Tprime+"] = 0.3
   ops["Tprime-"] = 0.3
   ops += "U" * Op("HubbardU")
-  ops["U"] = -6.
+  ops["U"] = -6.0
   @show(ops)
   opsTBC = ops
 
@@ -40,15 +38,15 @@ function main()
 
   # loop through momenta
   irreps = Dict{String,Vector{Float64}}(
-      "Gamma.C1.A"=> [0., 0.],
-      "M.C1.A"=> [3.1415926535897931, 3.1415926535897931],
-      "Sigma0.C1.A"=> [1.5707963267948966, 1.5707963267948966],
-      "Sigma1.C1.A"=> [1.5707963267948966, -1.5707963267948966],
-      "Sigma2.C1.A"=> [-1.5707963267948966, 1.5707963267948966],
-      "Sigma3.C1.A"=> [-1.5707963267948966, -1.5707963267948966],
-      "X0.C1.A"=> [3.1415926535897931, 0.0000000000000000],
-      "X1.C1.A"=> [0.0000000000000000, 3.1415926535897931])
-  for (name, momentum) in irreps 
+    "Gamma.C1.A" => [0.0, 0.0],
+    "M.C1.A" => [3.1415926535897931, 3.1415926535897931],
+    "Sigma0.C1.A" => [1.5707963267948966, 1.5707963267948966],
+    "Sigma1.C1.A" => [1.5707963267948966, -1.5707963267948966],
+    "Sigma2.C1.A" => [-1.5707963267948966, 1.5707963267948966],
+    "Sigma3.C1.A" => [-1.5707963267948966, -1.5707963267948966],
+    "X0.C1.A" => [3.1415926535897931, 0.0000000000000000],
+    "X1.C1.A" => [0.0000000000000000, 3.1415926535897931])
+  for (name, momentum) in irreps
     println("considering irrep $name, momentum $momentum")
     aq_irrep = read_representation(lfile, name)
     c_q = symmetrize(Op("Cup", 1), aq_irrep)
@@ -69,9 +67,9 @@ function main()
     opsTBC["Tx"] = exp(1im * momentum[1])
     opsTBC["Ty"] = exp(1im * momentum[2])
     opsTBC["Tprime+"] =
-        0.3 * exp(1im * (momentum[1] + momentum[2])) # r_ij = (1,1)
+      0.3 * exp(1im * (momentum[1] + momentum[2])) # r_ij = (1,1)
     opsTBC["Tprime-"] =
-        0.3 * exp(1im * (momentum[1] - momentum[2])) # r_ij = (1,-1)
+      0.3 * exp(1im * (momentum[1] - momentum[2])) # r_ij = (1,-1)
     c_q_tbc = symmetrize(Op("Cup", 1), irrep)
     Av = apply(c_q_tbc, gs)
     @show nrm = norm(Av)
