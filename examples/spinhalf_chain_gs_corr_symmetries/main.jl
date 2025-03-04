@@ -10,7 +10,7 @@ function main()
     end
     H["J"] = 1.0 
 
-    # compute ground state correlator of this operator
+    # define spin correlator at "half-chain" distance
     corr_op = OpSum()
     corr_op += Op("SdotS", [1, N ÷ 2])
 

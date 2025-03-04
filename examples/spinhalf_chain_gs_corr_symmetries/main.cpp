@@ -108,7 +108,7 @@ int main() try {
     };
     H["J"] = 1.0;
 
-    // compute ground state correlator of this operator
+    // define spin correlator at "half-chain" distance
     auto corr_op = OpSum();
     corr_op = Op("SdotS", {0, N/2 - 1});
 
