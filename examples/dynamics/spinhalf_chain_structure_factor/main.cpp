@@ -10,9 +10,9 @@ int main() try {
   say_hello();
 
   // IO
-  std::string filename = XDIAG_DIRECTORY "/misc/data/examples_output/spinhalf_chain_structure_factor.h5";
+  std::string filename = XDIAG_DIRECTORY
+      "/misc/data/examples_output/spinhalf_chain_structure_factor.h5";
   auto outfile = FileH5(filename, "w!");
-
 
   // Define the nearest-neighbor Heisenberg model
   int N = 16;
@@ -30,7 +30,7 @@ int main() try {
   }
   Permutation perm(translation);
   std::vector<Permutation> perms;
-  for (int s=0; s < N; ++s) {
+  for (int s = 0; s < N; ++s) {
     perms.push_back(pow(perm, s));
   }
   auto group = PermutationGroup(perms);
@@ -40,7 +40,7 @@ int main() try {
   for (int k = 0; k < N; ++k) {
     complex phase = exp(2i * XDIAG_PI * (double)k / (double)N);
     std::vector<complex> characters;
-    for (int s=0; s < N; ++s) {
+    for (int s = 0; s < N; ++s) {
       characters.push_back(pow(phase, s));
     }
     auto irrep = Representation(group, characters);
