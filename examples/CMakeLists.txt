@@ -3,6 +3,7 @@ set(XDIAG_EXAMPLES
   user_guide
   hello_world
   spinhalf_chain_e0
+  spinhalf_chain_gs_corr_symmetries
 )
 
 foreach(name ${XDIAG_EXAMPLES})
