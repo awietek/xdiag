@@ -3,7 +3,7 @@ using LinearAlgebra
 using HDF5
 using Plots
 
-function plot_sf(outfile::String, omegas::Vector{Float64}, eta)
+function plot_sf(outfile::String, omegas::Vector{Float64}, eta::Float64 = 0.15)
     alls = Matrix{Float64}(undef, 16, length(omegas))
     for k in 0:15
         p, w = poles_weights(outfile, k)
