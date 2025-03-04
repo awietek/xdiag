@@ -27,5 +27,24 @@ title: Examples
 
 </div>
 
+## Dynamical spectral functions
+
+<div class="grid cards" markdown>
+
+-   :material-file-document:{ .lg .middle } __Spin structure factor__
+
+    ---
+
+    Computes the dynamical structure factor of a spin $S=1/2$ chain
+
+    [source](examples/spinhalf_chain_structure_factor.md) :simple-cplusplus: :simple-julia:
+
+-   :material-file-document:{ .lg .middle } __Green's function__
+
+    ---
+
+    Computes the Green's function in a 2D Hubbard model
+
+    [source](examples/hubbard_greens_f.md) :simple-cplusplus: :simple-julia:
 
 </div>
