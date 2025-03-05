@@ -1,6 +1,10 @@
 # Green's function
 
-Uses the [Lanczos algorithm](../documentation/algorithms/eigvals_lanczos.md)[[1]](#1) to calculate the Green's function of the Hubbard model. See also the documentation page for the [spin structure factor](spinhalf_chain_structure_factor.md).
+Uses the [Lanczos algorithm](../documentation/algorithms/eigvals_lanczos.md)[[1]](#1) to calculate the Green's function of the Hubbard model. See also the documentation page for the [spin structure factor](spinhalf_chain_structure_factor.md). The Green's function is given by
+
+$$
+    G({\bf k}, \omega)=-i\int dt e^{-i\omega t}\langle \lbrace c_{\bf k}(t),c^{\dagger}_{\bf k}\rbrace\rangle.
+$$
 
 To achieve a mesh of momentum space, we can use either use the generated momenta inside the Wigner-Seitz cell allowed by the finite cluster or twisted boundary conditions[[2]](#2), where the lattice ${\bf k}$-point is shifted to ${\bf k + \boldsymbol{\theta}}$ by introducing a flux via Peierls substitution in the Hamiltonian, $t_{ij} \rightarrow t_{ij}\exp(i{\bf \boldsymbol{\theta}\cdot r}_{ij})$.
 
