@@ -6,7 +6,7 @@ $$
     G({\bf k}, \omega)=-i\int dt e^{-i\omega t}\langle \lbrace c_{\bf k}(t),c^{\dagger}_{\bf k}\rbrace\rangle.
 $$
 
-To achieve a mesh of momentum space, we can use either use the generated momenta inside the Wigner-Seitz cell allowed by the finite cluster or twisted boundary conditions[[2]](#2), where the lattice ${\bf k}$-point is shifted to ${\bf k + \boldsymbol{\theta}}$ by introducing a flux via Peierls substitution in the Hamiltonian, $t_{ij} \rightarrow t_{ij}\exp(i{\bf \boldsymbol{\theta}\cdot r}_{ij})$.
+To achieve a mesh of momentum space, we can use either use the generated momenta inside the Wigner-Seitz cell allowed by the finite cluster or twisted boundary conditions[[2]](#2), where the lattice ${\bf k}$-point is shifted to ${\bf k + \boldsymbol{\theta}}$ by introducing a flux via Peierls substitution in the Hamiltonian, $t_{ij} \rightarrow t_{ij}\exp(i{\bf \boldsymbol{\theta}\cdot r}_{ij})$. For this example, we're calculating the spectral function along the cut $\Gamma$-$M$, i.e., the diagonal of the reciprocal lattice unit cell.
 
 ## example code
 
