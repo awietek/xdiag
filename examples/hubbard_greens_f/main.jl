@@ -13,13 +13,15 @@ function main()
 
   # Define the Hubbard model
   N = 8
-  nup = div(N, 2)
-  ndn = div(N, 2)
+  nup = 3
+  ndn = 3
   ops = read_opsum(lfile, "Interactions")
-  ops["Ty"] = 1.0
-  ops["Tx"] = 1.0
-  ops["Tprime+"] = 0.3
-  ops["Tprime-"] = 0.3
+  t = 1.
+  tp = 0.3
+  ops["Ty"] = t
+  ops["Tx"] = t
+  ops["Tprime+"] = tp
+  ops["Tprime-"] = tp
   ops += "U" * Op("HubbardU")
   ops["U"] = -6.0
   @show(ops)
@@ -36,6 +38,29 @@ function main()
   println("Ground state energy: $e0")
   outfile["e0"] = e0
 
+  function tbc_mesh(kx,ky)
+    # compare to twisted boundary condition calculation,
+      # cf. Zemljic & Prelovsek, PRB 75, 104514 (2007)
+      # Tohyama, PRB 70, 174517 (2004).
+      println("\n considering TBC momentum [$kx,$ky]")
+      opsTBC["Tx"] = t * exp(1im * kx)
+      opsTBC["Ty"] = t * exp(1im * ky)
+      opsTBC["Tprime+"] =
+        tp * exp(1im * (kx + ky)) # r_ij = (1,1)
+      opsTBC["Tprime-"] =
+        tp * exp(1im * (kx - ky)) # r_ij = (1,-1)
+  
+      e0, gs_tbc = eig0(opsTBC, block)
+      c_q_tbc = symmetrize(sqrt(N) * Op("Cup", 1), irrep)
+      Av = apply(c_q_tbc, gs_tbc)
+      @show nrm = norm(Av)
+      Av /= nrm
+  
+      res_tbc = eigvals_lanczos_inplace(opsTBC, Av)
+      @show res_tbc.eigenvalues[1]
+      return norm, res_tbc
+  end
+
   # loop through momenta
   irreps = Dict{String,Vector{Float64}}(
     "Gamma.C1.A" => [0.0, 0.0],
@@ -47,9 +72,9 @@ function main()
     "X0.C1.A" => [3.1415926535897931, 0.0000000000000000],
     "X1.C1.A" => [0.0000000000000000, 3.1415926535897931])
   for (name, momentum) in irreps
-    println("considering irrep $name, momentum $momentum")
+    println("\n considering irrep $name, momentum $momentum")
     aq_irrep = read_representation(lfile, name)
-    c_q = symmetrize(Op("Cup", 1), aq_irrep)
+    c_q = symmetrize(sqrt(N) * Op("Cup", 1), aq_irrep)
     Av = apply(c_q, gs)
     @show nrm = norm(Av)
     Av /= nrm
@@ -61,22 +86,17 @@ function main()
     outfile["$name/betas"] = res.betas
     outfile["$name/eigs"] = res.eigenvalues
 
-    # compare to twisted boundary condition calculation,
-    # cf. Zemljic & Prelovsek, PRB 75, 104514 (2007)
-    # Tohyama, PRB 70, 174517 (2004).
-    opsTBC["Tx"] = exp(1im * momentum[1])
-    opsTBC["Ty"] = exp(1im * momentum[2])
-    opsTBC["Tprime+"] =
-      0.3 * exp(1im * (momentum[1] + momentum[2])) # r_ij = (1,1)
-    opsTBC["Tprime-"] =
-      0.3 * exp(1im * (momentum[1] - momentum[2])) # r_ij = (1,-1)
-    c_q_tbc = symmetrize(Op("Cup", 1), irrep)
-    Av = apply(c_q_tbc, gs)
-    @show nrm = norm(Av)
-    Av /= nrm
+    tbc_mesh(momentum[1], momentum[2])
+  end
 
-    res_tbc = eigvals_lanczos_inplace(opsTBC, Av)
-    @show res_tbc.eigenvalues[1]
+  for (k,kx) in enumerate(0:pi/101:pi)
+    nrm, res_tbc = tbc_mesh(kx,kx)
+
+    @show ik = "$(k-1)"
+    outfile["$ik/$ik/norm"] = nrm
+    outfile["$ik/$ik/alphas"] = res_tbc.alphas
+    outfile["$ik/$ik/betas"] = res_tbc.betas
+    outfile["$ik/$ik/eigs"] = res_tbc.eigenvalues
   end
 end
 

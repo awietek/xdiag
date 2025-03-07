@@ -18,7 +18,7 @@ end
 function poles_weights(outfile::String, k::Int64)
     e0 = h5read(outfile, "/e0")
     nrm, alphas, betas, eigs = h5read.((outfile,), ["/$k/norm", "/$k/alphas", "/$k/betas", "/$k/eigs"])
-    tmat = SymTridiagonal(alphas, betas[1:end-1])
+    tmat = SymTridiagonal(alphas, betas)
     es, evecs = eigen(tmat)
     # es == eigs
 
