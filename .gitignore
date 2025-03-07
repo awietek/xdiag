@@ -29,6 +29,7 @@ benchmark/*/build/*
 *~
 *.prof
 *.pdf
+*.log
 options.mk
 test/tests
 misc/data/toml/write.toml
