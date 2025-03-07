@@ -4,6 +4,8 @@ set(XDIAG_EXAMPLES
   hello_world
   spinhalf_chain_e0
   spinhalf_chain_gs_corr_symmetries
+  spinhalf_chain_structure_factor
+  hubbard_greens_f
 )
 
 foreach(name ${XDIAG_EXAMPLES})

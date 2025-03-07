@@ -30,10 +30,12 @@ benchmark/*/build/*
 *~
 *.prof
 *.pdf
+*.log
 options.mk
 test/tests
 misc/data/toml/write.toml
 misc/data/hdf5/write.h5
+misc/data/examples_output/*
 testmpi/tests
 benchmark.prof
 benchmark.prof_*
