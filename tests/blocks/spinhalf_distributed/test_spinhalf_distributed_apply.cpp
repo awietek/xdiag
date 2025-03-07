@@ -1,21 +1,37 @@
 #include "../../catch.hpp"
 #include <mpi.h>
 
-#include <xdiag/blocks/spinhalf.hpp>
-#include <xdiag/blocks/spinhalf_distributed.hpp>
+#include <xdiag/algebra/algebra.hpp>
+#include <xdiag/algebra/apply.hpp>
 #include <xdiag/algebra/isapprox.hpp>
 #include <xdiag/algebra/matrix.hpp>
-#include <xdiag/algebra/apply.hpp>
-#include <xdiag/algebra/algebra.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
-#include <xdiag/utils/logger.hpp>
+#include <xdiag/blocks/spinhalf.hpp>
+#include <xdiag/blocks/spinhalf_distributed.hpp>
 #include <xdiag/states/create_state.hpp>
+#include <xdiag/utils/logger.hpp>
 
 #include "../spinhalf/testcases_spinhalf.hpp"
 
 using namespace xdiag;
 
-void test_e0_nompi(int N, OpSum ops) {
+static void test_onsite(std::string op1, std::string op12) {
+  for (int nsites = 2; nsites < 5; ++nsites) {
+    for (int nup = 0; nup <= nsites; ++nup) {
+      auto b = SpinhalfDistributed(nsites, nup);
+      for (int s = 0; s < nsites; ++s) {
+        auto o1 = Op(op1, s);
+        auto o12 = Op(op12, {s, s});
+        auto r = random_state(b);
+        auto v1 = apply(o1, apply(o1, r));
+        auto v12 = apply(o12, r);
+        REQUIRE(isapprox(v1, v12));
+      }
+    }
+  }
+}
+
+static void test_e0_nompi(int N, OpSum ops) {
   for (int nup = 0; nup <= N; ++nup) {
     auto block = Spinhalf(N, nup);
     auto block_mpi = SpinhalfDistributed(N, nup);
@@ -36,7 +52,7 @@ void test_e0_nompi(int N, OpSum ops) {
   }
 }
 
-void test_sz_sp_sm_energy(int N, OpSum const &ops) {
+static void test_sz_sp_sm_energy(int N, OpSum const &ops) {
   for (int nup = 0; nup <= N; ++nup) {
     auto block = Spinhalf(N, nup);
     auto block_mpi = SpinhalfDistributed(N, nup);
@@ -81,7 +97,7 @@ void test_sz_sp_sm_energy(int N, OpSum const &ops) {
   }
 }
 
-void test_sz_sp_sm_commutators(int nsites) {
+static void test_sz_sp_sm_commutators(int nsites) {
   for (int nup = 1; nup < nsites - 1; ++nup) {
     // Log("N: {}, nup: {}", nsites, nup);
     auto block = SpinhalfDistributed(nsites, nup);
@@ -179,6 +195,35 @@ TEST_CASE("spinhalf_distributed_apply", "[spinhalf_distributed]") try {
   for (int N = 2; N <= 8; ++N) {
     test_sz_sp_sm_commutators(N);
   }
+
+  test_onsite("Sz", "SzSz");
+
+  for (int nsites = 2; nsites < 6; ++nsites) {
+    for (int nup = 1; nup < nsites; ++nup) {
+      auto b = SpinhalfDistributed(nsites, nup);
+      for (int s = 0; s < nsites; ++s) {
+
+        auto r = random_state(b);
+
+        // Exchange
+        auto sp = Op("S+", s);
+        auto sm = Op("S-", s);
+
+        auto spsmr = apply(sp, apply(sm, r));
+        auto smspr = apply(sm, apply(sp, r));
+        auto r1 = 0.5 * (spsmr + smspr);
+        auto r2 = apply(Op("Exchange", {s, s}), r);
+        REQUIRE(isapprox(r1, r2));
+
+        // SdotS
+        auto szszr = apply(Op("SzSz", {s, s}), r);
+        r1 = 0.5 * (spsmr + smspr) + szszr;
+        r2 = apply(Op("SdotS", {s, s}), r);
+        REQUIRE(isapprox(r1, r2));
+      }
+    }
+  }
+
 } catch (Error const &e) {
   error_trace(e);
 }

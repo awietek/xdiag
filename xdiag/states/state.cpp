@@ -299,4 +299,164 @@ std::ostream &operator<<(std::ostream &out, State const &state) {
   return out;
 }
 std::string to_string(State const &state) { return to_string_generic(state); }
+
+State &operator*=(State &X, double alpha) try {
+  if (isreal(X)) {
+    X.matrix(false) *= alpha;
+  } else {
+    X.matrixC(false) *= alpha;
+  }
+  return X;
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
+}
+State operator*(State const &X, double alpha) try {
+  auto res = X;
+  res *= alpha;
+  return res;
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
+}
+State operator*(double alpha, State const &X) try {
+  return X * alpha;
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
+}
+
+State &operator*=(State &X, complex alpha) try {
+  if (isreal(X)) {
+    X.make_complex();
+    X.matrixC(false) *= alpha;
+  } else {
+    X.matrixC(false) *= alpha;
+  }
+  return X;
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
+}
+State operator*(State const &X, complex alpha) try {
+  auto res = X;
+  res *= alpha;
+  return res;
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
+}
+State operator*(complex alpha, State const &X) try {
+  return X * alpha;
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
+}
+
+State &operator/=(State &X, double alpha) try {
+  if (isreal(X)) {
+    X.matrix(false) /= alpha;
+  } else {
+    X.matrixC(false) /= alpha;
+  }
+  return X;
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
+}
+State operator/(State const &X, double alpha) try {
+  auto res = X;
+  res /= alpha;
+  return res;
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
+}
+
+State &operator/=(State &X, complex alpha) try {
+  if (isreal(X)) {
+    X.make_complex();
+    X.matrixC(false) /= alpha;
+  } else {
+    X.matrixC(false) /= alpha;
+  }
+  return X;
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
+}
+
+State operator/(State const &X, complex alpha) try {
+  auto res = X;
+  res /= alpha;
+  return res;
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
+}
+
+State &operator+=(State &v, State const &w) try {
+  if (v.block() != w.block()) {
+    XDIAG_THROW("Cannot add two states from different blocks");
+  }
+  if (v.ncols() != w.ncols()) {
+    XDIAG_THROW("Cannot add two states with different number of columns");
+  }
+
+  if (isreal(v) && isreal(w)) {
+    v.matrix(false) += w.matrix(false);
+  } else if (!isreal(v) && isreal(w)) {
+    auto wcplx = w;
+    wcplx.make_complex();
+    v.matrixC(false) += wcplx.matrixC(false);
+  } else if (isreal(v) && !isreal(w)) {
+    v.make_complex();
+    v.matrixC(false) += w.matrixC(false);
+  } else { // (!isreal(v) && !isreal(w))
+    v.matrixC(false) += w.matrixC(false);
+  }
+
+  return v;
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
+}
+
+State &operator-=(State &v, State const &w) try {
+  if (v.block() != w.block()) {
+    XDIAG_THROW("Cannot subtract two states from different blocks");
+  }
+  if (v.ncols() != w.ncols()) {
+    XDIAG_THROW("Cannot subtract two states with different number of columns");
+  }
+
+  if (isreal(v) && isreal(w)) {
+    v.matrix(false) -= w.matrix(false);
+  } else if (!isreal(v) && isreal(w)) {
+    auto wcplx = w;
+    wcplx.make_complex();
+    v.matrixC(false) -= wcplx.matrixC(false);
+  } else if (isreal(v) && !isreal(w)) {
+    v.make_complex();
+    v.matrixC(false) -= w.matrixC(false);
+  } else { // (!isreal(v) && !isreal(w))
+    v.matrixC(false) -= w.matrixC(false);
+  }
+
+  return v;
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
+}
+
+State operator+(State const &v, State const &w) try {
+  auto res = v;
+  res += w;
+  return res;
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
+}
+
+State operator-(State const &v, State const &w) try {
+  auto res = v;
+  res -= w;
+  return res;
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
+}
+
+State operator-(State const &v) try {
+  return (-1.0) * v;
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
+}
+
 } // namespace xdiag

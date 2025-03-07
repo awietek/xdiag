@@ -9,6 +9,19 @@
 
 using namespace xdiag;
 
+static void test_onsite(std::string op1, std::string op12) {
+  for (int nsites = 2; nsites < 5; ++nsites) {
+    for (int nup = 0; nup <= nsites; ++nup) {
+      auto b = Spinhalf(nsites, nup);
+      for (int s = 0; s < nsites; ++s) {
+        arma::mat m1 = matrix(Op(op1, s), b);
+        arma::mat m12 = matrix(Op(op12, {s, s}), b);
+        REQUIRE(isapprox(m12, m1 * m1));
+      }
+    }
+  }
+}
+
 TEST_CASE("spinhalf_matrix", "[spinhalf]") try {
   using namespace xdiag::testcases::spinhalf;
 
@@ -22,9 +35,9 @@ TEST_CASE("spinhalf_matrix", "[spinhalf]") try {
         REQUIRE(H.is_hermitian(1e-7));
         arma::vec eigs;
         arma::eig_sym(eigs, H);
-	// XDIAG_SHOW(ops);
-	// H.print();
-	// exact_eigs.print();
+        // XDIAG_SHOW(ops);
+        // H.print();
+        // exact_eigs.print();
         REQUIRE(isapprox(eigs, exact_eigs));
       }
     }
@@ -185,6 +198,28 @@ TEST_CASE("spinhalf_matrix", "[spinhalf]") try {
       }
     }
   }
+
+  test_onsite("Sz", "SzSz");
+
+  for (int nsites = 2; nsites < 5; ++nsites) {
+    auto b = Spinhalf(nsites);
+    for (int s = 0; s < nsites; ++s) {
+
+      // Exchange
+      arma::mat m1 = 0.5 * (matrix(Op("S+", s), b) * matrix(Op("S-", s), b) +
+                            matrix(Op("S-", s), b) * matrix(Op("S+", s), b));
+      arma::mat m2 = matrix(Op("Exchange", {s, s}), b);
+      REQUIRE(isapprox(m1, m2));
+
+      // SdotS
+      m1 = 0.5 * (matrix(Op("S+", s), b) * matrix(Op("S-", s), b) +
+                  matrix(Op("S-", s), b) * matrix(Op("S+", s), b)) +
+           matrix(Op("Sz", s), b) * matrix(Op("Sz", s), b);
+      m2 = matrix(Op("SdotS", {s, s}), b);
+      REQUIRE(isapprox(m1, m2));
+    }
+  }
+
 } catch (xdiag::Error const &e) {
   xdiag::error_trace(e);
 }

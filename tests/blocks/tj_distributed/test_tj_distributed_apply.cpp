@@ -8,11 +8,30 @@
 #include <xdiag/algebra/isapprox.hpp>
 #include <xdiag/algebra/matrix.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
+#include <xdiag/states/create_state.hpp>
 
 using namespace xdiag;
 
-void test_tjdistributed_e0_real(OpSum ops, int nsites, int nup, int ndn,
-                                double e0) {
+static void test_onsite(std::string op1, std::string op12) {
+  for (int nsites = 2; nsites < 5; ++nsites) {
+    for (int nup = 0; nup <= nsites; ++nup) {
+      for (int ndn = 0; ndn <= nsites - nup; ++ndn) {
+        auto b = tJ(nsites, nup, ndn);
+        for (int s = 0; s < nsites; ++s) {
+          auto o1 = Op(op1, s);
+          auto o12 = Op(op12, {s, s});
+          auto r = random_state(b);
+          auto v1 = apply(o1, apply(o1, r));
+          auto v12 = apply(o12, r);
+          REQUIRE(isapprox(v1, v12));
+        }
+      }
+    }
+  }
+}
+
+static void test_tjdistributed_e0_real(OpSum ops, int nsites, int nup, int ndn,
+                                       double e0) {
   auto block = tJDistributed(nsites, nup, ndn);
   double e0c = eigval0(ops, block);
   REQUIRE(std::abs(e0 - e0c) < 1e-6);
@@ -156,6 +175,67 @@ TEST_CASE("tj_distributed_apply", "[tj_distributed]") try {
       }
     }
   }
+
+  test_onsite("Sz", "SzSz");
+  test_onsite("Ntot", "NtotNtot");
+
+  for (int nsites = 2; nsites < 6; ++nsites) {
+    for (int nup = 1; nup < nsites; ++nup) {
+      for (int ndn = 1; ndn < nsites - nup; ++ndn) {
+        auto b = tJ(nsites, nup, ndn);
+        for (int s = 0; s < nsites; ++s) {
+
+          auto r = random_state(b);
+
+          // Exchange
+          auto cdagup = Op("Cdagup", s);
+          auto cup = Op("Cup", s);
+          auto cdagdn = Op("Cdagdn", s);
+          auto cdn = Op("Cdn", s);
+
+          auto spsmr = apply(cdagup, apply(cdn, apply(cdagdn, apply(cup, r))));
+          auto smspr = apply(cdagdn, apply(cup, apply(cdagup, apply(cdn, r))));
+          auto r1 = 0.5 * (spsmr + smspr);
+          auto r2 = apply(Op("Exchange", {s, s}), r);
+          REQUIRE(isapprox(r1, r2));
+
+          // SdotS
+          auto szszr = apply(Op("SzSz", {s, s}), r);
+          r1 = 0.5 * (spsmr + smspr) + szszr;
+          r2 = apply(Op("SdotS", {s, s}), r);
+          REQUIRE(isapprox(r1, r2));
+
+          // tJSzSz
+          r1 = szszr - 0.25 * apply(Op("NtotNtot", {s, s}), r);
+          r2 = apply(Op("tJSzSz", {s, s}), r);
+          REQUIRE(isapprox(r1, r2));
+
+          // tJSdotS
+          r1 = 0.5 * (spsmr + smspr) + szszr -
+               0.25 * apply(Op("NtotNtot", {s, s}), r);
+          r2 = apply(Op("tJSdotS", {s, s}), r);
+          REQUIRE(isapprox(r1, r2));
+
+          // Hopup
+          r1 = -(apply(cdagup, apply(cup, r)) + apply(cdagup, apply(cup, r)));
+          r2 = apply(Op("Hopup", {s, s}), r);
+          REQUIRE(isapprox(r1, r2));
+
+          // Hopdn
+          r1 = -(apply(cdagdn, apply(cdn, r)) + apply(cdagdn, apply(cdn, r)));
+          r2 = apply(Op("Hopdn", {s, s}), r);
+          REQUIRE(isapprox(r1, r2));
+
+          // Hop
+          r1 = -(apply(cdagup, apply(cup, r)) + apply(cdagup, apply(cup, r)) +
+                 apply(cdagdn, apply(cdn, r)) + apply(cdagdn, apply(cdn, r)));
+          r2 = apply(Op("Hop", {s, s}), r);
+          REQUIRE(isapprox(r1, r2));
+        }
+      }
+    }
+  }
+
 } catch (Error e) {
   error_trace(e);
 }

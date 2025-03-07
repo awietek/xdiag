@@ -13,28 +13,28 @@ void check_valid(Op const &op) try {
     if ((type == "Sz") || (type == "S+") || (type == "S-") ||
         (type == "Cdagup") || (type == "Cup") || (type == "Cdagdn") ||
         (type == "Cdn") || (type == "Ntot") || (type == "Nup") ||
-        (type == "Ndn")) {
+        (type == "Ndn") || (type == "Nupdn")) {
       must_not_have_matrix(op);
       must_have_sites(op);
       must_have_nsites(op, 1);
-    } else if ((type == "SdotS") || (type == "Exchange") || (type == "SzSz") ||
-               (type == "Hop") || (type == "Hopup") || (type == "Hopdn") ||
-               (type == "tJSzSz") || (type == "tJSdotS") ||
-               (type == "NtotNtot")) {
+    } else if ((type == "Hop") || (type == "Hopup") || (type == "Hopdn") ||
+               (type == "SzSz") || (type == "SdotS") || (type == "Exchange") ||
+               (type == "NtotNtot") || (type == "NupdnNupdn") ||
+               (type == "tJSzSz") || (type == "tJSdotS")) {
       must_not_have_matrix(op);
       must_have_sites(op);
       must_have_nsites(op, 2);
-      must_have_disjoint_sites(op);
     } else if (type == "ScalarChirality") {
       must_not_have_matrix(op);
       must_have_sites(op);
       must_have_nsites(op, 3);
       must_have_disjoint_sites(op);
-    } else if (type == "HubbardU") {
+    } else if ((type == "HubbardU") || (type == "Id")) {
       must_not_have_matrix(op);
       must_not_have_sites(op);
     } else if (type == "Matrix") {
       must_have_matrix(op);
+      must_have_disjoint_sites(op);
     } else {
       XDIAG_THROW(
           "Logic error checking validity of Op (this is a bug, please report)");

@@ -1,4 +1,5 @@
 cmake_commands.sh
+run.sh
 build
 build_julia_wrapper.sh
 *.prof
