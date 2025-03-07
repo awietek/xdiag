@@ -33,7 +33,7 @@ void apply_terms(OpSum const &ops, BasisIn const &basis_in,
       tj::apply_raise_lower<bit_t, coeff_t, symmetric>(cpl, op, basis_in,
                                                        basis_out, fill);
     } else {
-      XDIAG_THROW(fmt::format("Unknown Op type \"{}\"", type));
+      XDIAG_THROW(fmt::format("Unknown Op type for tJ block: \"{}\"", type));
     }
   }
 } catch (Error const &e) {

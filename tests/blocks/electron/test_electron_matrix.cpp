@@ -6,12 +6,27 @@
 #include "../tj/testcases_tj.hpp"
 #include "testcases_electron.hpp"
 
-#include <xdiag/algebra/matrix.hpp>
 #include <xdiag/algebra/isapprox.hpp>
+#include <xdiag/algebra/matrix.hpp>
 
 using namespace xdiag;
 
-void test_electron_np_no_np_matrix(int nsites, OpSum ops) try {
+static void test_onsite(std::string op1, std::string op12) {
+  for (int nsites = 2; nsites < 5; ++nsites) {
+    for (int nup = 0; nup <= nsites; ++nup) {
+      for (int ndn = 0; ndn <= nsites; ++ndn) {
+        auto b = Electron(nsites, nup, ndn);
+        for (int s = 0; s < nsites; ++s) {
+          arma::mat m1 = matrix(Op(op1, s), b);
+          arma::mat m12 = matrix(Op(op12, {s, s}), b);
+          REQUIRE(isapprox(m12, m1 * m1));
+        }
+      }
+    }
+  }
+}
+
+static void test_electron_np_no_np_matrix(int nsites, OpSum ops) try {
 
   auto block_full = Electron(nsites);
   auto H_full = matrixC(ops, block_full, block_full);
@@ -254,8 +269,7 @@ TEST_CASE("electron_matrix", "[electron]") try {
 
   // Test Heisenberg terms at half-filling
   for (int nsites = 2; nsites <= 6; ++nsites) {
-    Log("electron_matrix: Heisenberg all-to-all comparison test, N={}",
-        nsites);
+    Log("electron_matrix: Heisenberg all-to-all comparison test, N={}", nsites);
     int nup = nsites / 2;
     int ndn = nsites - nup;
     auto block_spinhalf = Spinhalf(nsites, nup);
@@ -374,6 +388,64 @@ TEST_CASE("electron_matrix", "[electron]") try {
     auto ops = xdiag::testcases::tj::tj_alltoall_complex(N);
     test_electron_np_no_np_matrix(N, ops);
   }
+
+  test_onsite("Sz", "SzSz");
+  test_onsite("Ntot", "NtotNtot");
+  test_onsite("Nupdn", "NupdnNupdn");
+
+  for (int nsites = 2; nsites < 5; ++nsites) {
+    auto b = Electron(nsites);
+
+    for (int s = 0; s < nsites; ++s) {
+      // Nupdn
+      arma::mat m1 = matrix(Op("Nup", s), b) * matrix(Op("Ndn", s), b);
+      arma::mat m2 = matrix(Op("Nupdn", s), b);
+      REQUIRE(isapprox(m1, m2));
+
+      auto cdagup = Op("Cdagup", s);
+      auto cup = Op("Cup", s);
+      auto cdagdn = Op("Cdagdn", s);
+      auto cdn = Op("Cdn", s);
+
+      // Exchange
+      m1 = 0.5 * (matrix(cdagup, b) * matrix(cdn, b) * matrix(cdagdn, b) *
+                      matrix(cup, b) +
+                  matrix(cdagdn, b) * matrix(cup, b) * matrix(cdagup, b) *
+                      matrix(cdn, b));
+      m2 = matrix(Op("Exchange", {s, s}), b);
+      REQUIRE(isapprox(m1, m2));
+
+      // SdotS
+      m1 = 0.5 * (matrix(cdagup, b) * matrix(cdn, b) * matrix(cdagdn, b) *
+                      matrix(cup, b) +
+                  matrix(cdagdn, b) * matrix(cup, b) * matrix(cdagup, b) *
+                      matrix(cdn, b)) +
+           matrix(Op("Sz", s), b) * matrix(Op("Sz", s), b);
+      m2 = matrix(Op("SdotS", {s, s}), b);
+      REQUIRE(isapprox(m1, m2));
+
+      // Hopup
+      m1 = -(matrix(cdagup, b) * matrix(cup, b) +
+             matrix(cdagup, b) * matrix(cup, b));
+      m2 = matrix(Op("Hopup", {s, s}), b);
+      REQUIRE(isapprox(m1, m2));
+
+      // Hopdn
+      m1 = -(matrix(cdagdn, b) * matrix(cdn, b) +
+             matrix(cdagdn, b) * matrix(cdn, b));
+      m2 = matrix(Op("Hopdn", {s, s}), b);
+      REQUIRE(isapprox(m1, m2));
+
+      // Hop
+      m1 = -(matrix(cdagup, b) * matrix(cup, b) +
+             matrix(cdagup, b) * matrix(cup, b) +
+             matrix(cdagdn, b) * matrix(cdn, b) +
+             matrix(cdagdn, b) * matrix(cdn, b));
+      m2 = matrix(Op("Hop", {s, s}), b);
+      REQUIRE(isapprox(m1, m2));
+    }
+  }
+
 } catch (xdiag::Error const &e) {
   error_trace(e);
 }

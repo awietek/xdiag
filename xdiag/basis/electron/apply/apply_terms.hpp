@@ -36,13 +36,18 @@ void apply_terms(OpSum const &ops, BasisIn const &basis_in,
     } else if ((type == "Nup") || (type == "Ndn")) {
       electron::apply_number<bit_t, coeff_t, symmetric>(cpl, op, basis_in,
                                                         fill);
+    } else if (type == "Nupdn") {
+      electron::apply_nupdn<bit_t, coeff_t, symmetric>(cpl, op, basis_in, fill);
+    } else if (type == "NupdnNupdn") {
+      electron::apply_nupdn_nupdn<bit_t, coeff_t, symmetric>(cpl, op, basis_in,
+                                                             fill);
     } else if (type == "NtotNtot") {
-      electron::apply_number_number<bit_t, coeff_t, symmetric>(cpl, op,
-                                                               basis_in, fill);
+      electron::apply_ntot_ntot<bit_t, coeff_t, symmetric>(cpl, op, basis_in,
+                                                           fill);
     } else if (type == "HubbardU") {
       electron::apply_u<bit_t, coeff_t, symmetric>(cpl, basis_in, fill);
     } else {
-      XDIAG_THROW(fmt::format("Unknown Op type \"{}\"", type));
+      XDIAG_THROW(fmt::format("Unknown Op type for Electron block: \"{}\"", type));
     }
   }
 } catch (Error const &e) {

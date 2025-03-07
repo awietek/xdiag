@@ -34,24 +34,4 @@ double norm1(Block const &block, arma::Col<coeff_t> const &v);
 template <typename coeff_t>
 double norminf(Block const &block, arma::Col<coeff_t> const &v);
 
-// arithmetic operators
-XDIAG_API State &operator*=(State &X, double alpha);
-XDIAG_API State operator*(State const &X, double alpha);
-XDIAG_API State operator*(double alpha, State const &X);
-
-XDIAG_API State &operator*=(State &X, complex alpha);
-XDIAG_API State operator*(State const &X, complex alpha);
-XDIAG_API State operator*(complex alpha, State const &X);
-
-XDIAG_API State &operator/=(State &X, double alpha);
-XDIAG_API State operator/(State const &X, double alpha);
-
-XDIAG_API State &operator/=(State &X, complex alpha);
-XDIAG_API State operator/(State const &X, complex alpha);
-
-XDIAG_API State &operator+=(State &v, State const &w);
-XDIAG_API State &operator-=(State &v, State const &w);
-XDIAG_API State operator+(State const &v, State const &w);
-XDIAG_API State operator-(State const &v, State const &w);
-
 } // namespace xdiag

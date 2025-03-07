@@ -1,5 +1,6 @@
 #include "apply_terms.hpp"
 
+#include <xdiag/basis/apply_identity.hpp>
 #include <xdiag/basis/spinhalf_distributed/apply/apply_exchange.hpp>
 #include <xdiag/basis/spinhalf_distributed/apply/apply_spsm.hpp>
 #include <xdiag/basis/spinhalf_distributed/apply/apply_sz.hpp>
@@ -18,7 +19,7 @@ void apply_terms(OpSum const &ops, basis_t const &basis_in,
   OpSum ops_diagonal;
   OpSum ops_offdiagonal;
   for (auto [cpl, op] : ops.plain()) {
-    if ((op.type() == "SzSz") || (op.type() == "Sz")) {
+    if ((op.type() == "SzSz") || (op.type() == "Sz") || (op.type() == "Id")) {
       ops_diagonal += cpl * op;
     } else {
       ops_offdiagonal += cpl * op;
@@ -56,8 +57,14 @@ void apply_terms(OpSum const &ops, basis_t const &basis_in,
       apply_szsz(cpl, op, basis_in, vec_in, vec_out);
     } else if (type == "Sz") {
       apply_sz(cpl, op, basis_in, vec_in, vec_out);
+    } else if (type == "Id") {
+      apply_identity<coeff_t>(cpl, basis_in,
+                              [&](int64_t idxin, int64_t idxout, coeff_t c) {
+                                vec_out[idxout] += c * vec_in[idxin];
+                              });
     } else {
-      XDIAG_THROW(fmt::format("Unknown bond of type \"{}\"", type));
+      XDIAG_THROW(fmt::format(
+          "Unknown Op for SpinhalfDistributed block: \"{}\"", type));
     }
   }
 
@@ -69,7 +76,8 @@ void apply_terms(OpSum const &ops, basis_t const &basis_in,
     } else if ((type == "S+") || (type == "S-")) {
       apply_spsm_postfix(cpl, op, basis_in, vec_in, basis_out, vec_out);
     } else {
-      XDIAG_THROW(fmt::format("Unknown bond of type \"{}\"", type));
+      XDIAG_THROW(fmt::format(
+          "Unknown Op for SpinhalfDistributed block: \"{}\"", type));
     }
   }
 
@@ -90,7 +98,8 @@ void apply_terms(OpSum const &ops, basis_t const &basis_in,
     } else if ((type == "S+") || (type == "S-")) {
       apply_spsm_prefix<basis_t, coeff_t>(cpl, op, basis_in, basis_out);
     } else {
-      XDIAG_THROW(fmt::format("Unknown bond of type \"{}\"", type));
+      XDIAG_THROW(fmt::format(
+          "Unknown Op for SpinhalfDistributed block: \"{}\"", type));
     }
   }
 
@@ -109,7 +118,8 @@ void apply_terms(OpSum const &ops, basis_t const &basis_in,
     if (type == "Exchange") {
       apply_exchange_mixed(cpl, op, basis_in, vec_in, vec_out);
     } else {
-      XDIAG_THROW(fmt::format("Unknown bond of type \"{}\"", type));
+      XDIAG_THROW(fmt::format(
+          "Unknown Op for SpinhalfDistributed block: \"{}\"", type));
     }
   }
 

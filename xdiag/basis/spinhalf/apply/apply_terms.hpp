@@ -1,5 +1,6 @@
 #pragma once
 
+#include <xdiag/basis/apply_identity.hpp>
 #include <xdiag/basis/spinhalf/apply/apply_exchange.hpp>
 #include <xdiag/basis/spinhalf/apply/apply_matrix.hpp>
 #include <xdiag/basis/spinhalf/apply/apply_scalar_chirality.hpp>
@@ -19,7 +20,9 @@ void apply_terms(OpSum const &ops, BasisIn const &basis_in,
   for (auto const &[cpl, op] : ops.plain()) {
 
     std::string type = op.type();
-    if (type == "Exchange") {
+    if (type == "Id") {
+      apply_identity<coeff_t>(cpl, basis_in, fill);
+    } else if (type == "Exchange") {
       spinhalf::apply_exchange<bit_t, coeff_t, symmetric>(cpl, op, basis_in,
                                                           basis_out, fill);
     } else if (type == "SzSz") {
@@ -41,7 +44,7 @@ void apply_terms(OpSum const &ops, BasisIn const &basis_in,
       spinhalf::apply_matrix<bit_t, coeff_t, symmetric>(cpl, op, basis_in,
                                                         basis_out, fill);
     } else {
-      XDIAG_THROW(fmt::format("Unknown Op type \"{}\"", type));
+      XDIAG_THROW(fmt::format("Unknown Op type for Spinhalf block: \"{}\"", type));
     }
   }
 } catch (Error const &e) {

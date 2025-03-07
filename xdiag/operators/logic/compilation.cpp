@@ -1,4 +1,6 @@
 #include "compilation.hpp"
+#include <xdiag/operators/logic/valid.hpp>
+#include <xdiag/utils/scalar.hpp>
 
 namespace xdiag::operators {
 
@@ -26,7 +28,27 @@ OpSum compile_spinhalf(OpSum const &ops) try {
       ops_compiled += cpl * op;
     }
   }
-  return ops_compiled;
+
+  // Additional changes for Spinhalf
+  OpSum ops_final;
+  for (auto const &[cpl, op] : ops_compiled) {
+    std::string type = op.type();
+
+    // Replacement if of is on same site
+    if ((type == "SzSz") && (op[0] == op[1])) {
+      auto cpl2 = Scalar(0.25) * cpl.scalar();
+      ops_final += cpl2 * Op("Id");
+    } else if ((type == "Exchange") && (op[0] == op[1])) {
+      auto cpl2 = Scalar(0.5) * cpl.scalar();
+      ops_final += cpl2 * Op("Id");
+    } else if ((type == "SdotS") && (op[0] == op[1])) {
+      auto cpl2 = Scalar(0.75) * cpl.scalar();
+      ops_final += cpl2 * Op("Id");
+    } else {
+      ops_final += cpl * op;
+    }
+  }
+  return ops_final;
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
@@ -57,7 +79,45 @@ OpSum compile_tj(OpSum const &ops) try {
       ops_compiled += cpl * op;
     }
   }
-  return ops_compiled;
+
+  // Additional changes for tJ
+  OpSum ops_final;
+  for (auto const &[cpl, op] : ops_compiled) {
+    std::string type = op.type();
+
+    // Replacement if of is on same site
+    if ((type == "SzSz") && (op[0] == op[1])) {
+      auto cpl2 = Scalar(0.25) * cpl.scalar();
+      ops_final += cpl2 * Op("Nup", op[0]);
+      ops_final += cpl2 * Op("Ndn", op[0]);
+    } else if ((type == "tJSzSz") && (op[0] == op[1])) {
+      // do nothing, this operator is identical 0
+    } else if ((type == "Exchange") && (op[0] == op[1])) {
+      auto cpl2 = Scalar(0.5) * cpl.scalar();
+      ops_final += cpl2 * Op("Nup", op[0]);
+      ops_final += cpl2 * Op("Ndn", op[0]);
+    } else if ((type == "SdotS") && (op[0] == op[1])) {
+      auto cpl2 = Scalar(0.75) * cpl.scalar();
+      ops_final += cpl2 * Op("Nup", op[0]);
+      ops_final += cpl2 * Op("Ndn", op[0]);
+    } else if ((type == "tJSdotS") && (op[0] == op[1])) {
+      auto cpl2 = Scalar(0.5) * cpl.scalar();
+      ops_final += cpl2 * Op("Nup", op[0]);
+      ops_final += cpl2 * Op("Ndn", op[0]);
+    } else if ((type == "NtotNtot") && (op[0] == op[1])) {
+      ops_final += cpl * Op("Nup", op[0]);
+      ops_final += cpl * Op("Ndn", op[0]);
+    } else if ((type == "Hopup") && (op[0] == op[1])) {
+      auto cpl2 = Scalar(-2.0) * cpl.scalar();
+      ops_final += cpl2 * Op("Nup", op[0]);
+    } else if ((type == "Hopdn") && (op[0] == op[1])) {
+      auto cpl2 = Scalar(-2.0) * cpl.scalar();
+      ops_final += cpl2 * Op("Ndn", op[0]);
+    } else {
+      ops_final += cpl * op;
+    }
+  }
+  return ops_final;
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
@@ -65,7 +125,6 @@ OpSum compile_tj(OpSum const &ops) try {
 OpSum compile_electron(OpSum const &ops) try {
   OpSum ops_clean = clean_zeros(ops);
   OpSum ops_compiled;
-
   for (auto [cpl, op] : ops_clean) {
     std::string type = op.type();
 
@@ -88,7 +147,42 @@ OpSum compile_electron(OpSum const &ops) try {
       ops_compiled += cpl * op;
     }
   }
-  return ops_compiled;
+
+  // Additional changes for Electron
+  OpSum ops_final;
+  for (auto const &[cpl, op] : ops_compiled) {
+    std::string type = op.type();
+    auto s = cpl.scalar();
+    // Replacement if of is on same site
+    if ((type == "SzSz") && (op[0] == op[1])) {
+      ops_final += (Scalar(0.25) * s) * Op("Nup", op[0]);
+      ops_final += (Scalar(0.25) * s) * Op("Ndn", op[0]);
+      ops_final += (Scalar(-0.5) * s) * Op("Nupdn", op[0]);
+    } else if ((type == "Exchange") && (op[0] == op[1])) {
+      ops_final += (Scalar(0.5) * s) * Op("Nup", op[0]);
+      ops_final += (Scalar(0.5) * s) * Op("Ndn", op[0]);
+      ops_final += (Scalar(-1.0) * s) * Op("Nupdn", op[0]);
+    } else if ((type == "SdotS") && (op[0] == op[1])) {
+      ops_final += (Scalar(0.5) * s) * Op("Nup", op[0]);
+      ops_final += (Scalar(0.5) * s) * Op("Ndn", op[0]);
+      ops_final += (Scalar(-1.0) * s) * Op("Nupdn", op[0]);
+    } else if ((type == "NtotNtot") && (op[0] == op[1])) {
+      ops_final += cpl * Op("Nup", op[0]);
+      ops_final += cpl * Op("Ndn", op[0]);
+      ops_final += (Scalar(2.0) * cpl.scalar()) * Op("Nupdn", op[0]);
+    } else if ((type == "NupdnNupdn") && (op[0] == op[1])) {
+      ops_final += cpl * Op("Nupdn", op[0]);
+    } else if ((type == "Hopup") && (op[0] == op[1])) {
+      auto cpl2 = Scalar(-2.0) * cpl.scalar();
+      ops_final += cpl2 * Op("Nup", op[0]);
+    } else if ((type == "Hopdn") && (op[0] == op[1])) {
+      auto cpl2 = Scalar(-2.0) * cpl.scalar();
+      ops_final += cpl2 * Op("Ndn", op[0]);
+    } else {
+      ops_final += cpl * op;
+    }
+  }
+  return ops_final;
 } catch (Error const &error) {
   XDIAG_RETHROW(error);
 }

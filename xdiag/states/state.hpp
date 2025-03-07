@@ -76,4 +76,25 @@ XDIAG_API arma::cx_mat matrixC(State const &s, bool copy = true);
 XDIAG_API std::ostream &operator<<(std::ostream &out, State const &state);
 XDIAG_API std::string to_string(State const &state);
 
+// arithmetic operators
+XDIAG_API State &operator*=(State &X, double alpha);
+XDIAG_API State operator*(State const &X, double alpha);
+XDIAG_API State operator*(double alpha, State const &X);
+
+XDIAG_API State &operator*=(State &X, complex alpha);
+XDIAG_API State operator*(State const &X, complex alpha);
+XDIAG_API State operator*(complex alpha, State const &X);
+
+XDIAG_API State &operator/=(State &X, double alpha);
+XDIAG_API State operator/(State const &X, double alpha);
+
+XDIAG_API State &operator/=(State &X, complex alpha);
+XDIAG_API State operator/(State const &X, complex alpha);
+
+XDIAG_API State &operator+=(State &v, State const &w);
+XDIAG_API State &operator-=(State &v, State const &w);
+XDIAG_API State operator+(State const &v, State const &w);
+XDIAG_API State operator-(State const &v, State const &w);
+
+XDIAG_API State operator-(State const &v);
 } // namespace xdiag
