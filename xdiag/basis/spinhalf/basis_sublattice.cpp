@@ -20,7 +20,6 @@ static std::pair<std::vector<bit_t>, std::vector<double>>
 reps_norms_no_sz(GroupActionSublattice<bit_t, n_sublat> const &group_action,
                  arma::Col<coeff_t> const &characters) {
   using combinatorics::Subsets;
-  using combinatorics::SubsetsThread;
 
   std::vector<bit_t> reps;
   std::vector<double> norms;
@@ -63,7 +62,7 @@ reps_norms_no_sz(GroupActionSublattice<bit_t, n_sublat> const &group_action,
         norms_thread.resize(rank);
       }
       // Compute representatives for each thread
-      for (auto postfix : SubsetsThread<bit_t>(n_trailing)) {
+      for (auto postfix : combinatorics::SubsetsThread<bit_t>(n_trailing)) {
         bit_t state = (prefix << n_trailing) | postfix;
         bit_t rep = group_action.representative(state);
         if (state == rep) {
