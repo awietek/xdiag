@@ -33,7 +33,7 @@ EigvalsLanczosResult eigvals_lanczos(OpSum const &ops, Block const &block,
   bool real = isreal(ops) && isreal(block);
   State state0(block, real);
   fill(state0, RandomState(random_seed));
-
+ 
   auto r = eigvals_lanczos_inplace(ops, state0, neigvals, precision,
                                    max_iterations, deflation_tol);
 

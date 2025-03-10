@@ -11,7 +11,7 @@
 
 namespace xdiag::basis::spinhalf {
 
-constexpr int64_t maximum_prefix_bits = 24;
+constexpr int64_t maximum_prefix_bits = 32;
 
 template <typename bit_tt, int n_sublat> class BasisSublattice {
 public:

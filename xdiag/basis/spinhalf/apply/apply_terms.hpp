@@ -18,7 +18,6 @@ template <typename bit_t, typename coeff_t, bool symmetric, class BasisIn,
 void apply_terms(OpSum const &ops, BasisIn const &basis_in,
                  BasisOut const &basis_out, Fill &fill) try {
   for (auto const &[cpl, op] : ops.plain()) {
-
     std::string type = op.type();
     if (type == "Id") {
       apply_identity<coeff_t>(cpl, basis_in, fill);
@@ -44,7 +43,8 @@ void apply_terms(OpSum const &ops, BasisIn const &basis_in,
       spinhalf::apply_matrix<bit_t, coeff_t, symmetric>(cpl, op, basis_in,
                                                         basis_out, fill);
     } else {
-      XDIAG_THROW(fmt::format("Unknown Op type for Spinhalf block: \"{}\"", type));
+      XDIAG_THROW(
+          fmt::format("Unknown Op type for Spinhalf block: \"{}\"", type));
     }
   }
 } catch (Error const &e) {

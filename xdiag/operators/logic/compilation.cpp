@@ -30,25 +30,47 @@ OpSum compile_spinhalf(OpSum const &ops) try {
   }
 
   // Additional changes for Spinhalf
-  OpSum ops_final;
+  OpSum ops_double;
   for (auto const &[cpl, op] : ops_compiled) {
     std::string type = op.type();
 
     // Replacement if of is on same site
     if ((type == "SzSz") && (op[0] == op[1])) {
       auto cpl2 = Scalar(0.25) * cpl.scalar();
-      ops_final += cpl2 * Op("Id");
+      ops_double += cpl2 * Op("Id");
     } else if ((type == "Exchange") && (op[0] == op[1])) {
       auto cpl2 = Scalar(0.5) * cpl.scalar();
-      ops_final += cpl2 * Op("Id");
+      ops_double += cpl2 * Op("Id");
     } else if ((type == "SdotS") && (op[0] == op[1])) {
       auto cpl2 = Scalar(0.75) * cpl.scalar();
-      ops_final += cpl2 * Op("Id");
+      ops_double += cpl2 * Op("Id");
     } else {
-      ops_final += cpl * op;
+      ops_double += cpl * op;
     }
   }
-  return ops_final;
+
+  // Compbine Matrix operators on same sites
+  OpSum ops_matrix;
+  std::map<std::vector<int64_t>, Matrix> matrix_on_sites;
+  for (auto const &[cpl, op] : ops_double) {
+    if (op.type() == "Matrix") {
+      auto sites = op.sites();
+      auto coeff = cpl.scalar();
+      if (matrix_on_sites.count(sites)) { // sites already exist
+        matrix_on_sites[sites] += op.matrix() * coeff;
+      } else {
+        matrix_on_sites[sites] = op.matrix() * coeff;
+      }
+    } else {
+      ops_matrix += cpl * op;
+    }
+  }
+
+  for (auto const &[sites, matrix] : matrix_on_sites) {
+    ops_matrix += Op("Matrix", sites, matrix);
+  }
+
+  return ops_matrix;
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
