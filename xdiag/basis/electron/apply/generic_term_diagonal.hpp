@@ -7,14 +7,13 @@ template <typename bit_t, typename coeff_t, bool symmetric, class basis_t,
 void generic_term_diagonal(Coupling cpl, basis_t &&basis, apply_f &&apply,
                            fill_f &&fill) try {
   if constexpr (symmetric) {
-    int64_t idx = 0;
-
 #ifdef _OPENMP
-#pragma omp parallel for
+#pragma omp parallel for schedule(guided)
 #endif
     for (int64_t idx_ups = 0; idx_ups < basis.n_rep_ups(); ++idx_ups) {
       bit_t ups = basis.rep_ups(idx_ups);
       auto dnss = basis.dns_for_ups_rep(ups);
+      int64_t idx = basis.ups_offset(idx_ups);
       for (bit_t dns : dnss) {
         coeff_t c = apply(ups, dns);
         fill(idx, idx, c);

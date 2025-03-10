@@ -7,9 +7,9 @@
 #include <xdiag/io/read.hpp>
 #include <xdiag/operators/logic/order.hpp>
 #include <xdiag/operators/logic/symmetrize.hpp>
-#include <xdiag/states/state.hpp>
-#include <xdiag/states/random_state.hpp>
 #include <xdiag/states/fill.hpp>
+#include <xdiag/states/random_state.hpp>
+#include <xdiag/states/state.hpp>
 
 using namespace xdiag;
 using namespace arma;
@@ -54,7 +54,7 @@ TEST_CASE("algebra_apply", "[algebra]") try {
         complex m2 = innerC(nijs, gssym);
         auto nijsgs = apply(nijs, gssym);
         complex m3 = dotC(gssym, nijsgs);
-        // Log("{} {} {} {} {}", i, j, real(m1), real(m2), real(m3));
+        // Log("{} {} {} {} {} {}", i, j, real(m0), real(m1), real(m2), real(m3));
         REQUIRE(isapprox(m0, m2, 1e-6, 1e-6));
         REQUIRE(isapprox(m0, m3, 1e-6, 1e-6));
       }
@@ -69,7 +69,7 @@ TEST_CASE("algebra_apply", "[algebra]") try {
     xdiag::fill(v, rstate, m);
     xdiag::fill(vs, rstate, m);
   }
-  
+
   auto Hv = apply(ops, v);
   auto Hvs = apply(ops, vs);
 
@@ -77,17 +77,17 @@ TEST_CASE("algebra_apply", "[algebra]") try {
   auto hmats = xdiag::matrixC(ops, blocksym);
 
   for (int64_t m = 0; m < ncols; ++m) {
-        auto evec = v.vectorC(m, false);
+    auto evec = v.vectorC(m, false);
 
-        auto n0 = as_scalar(evec.t() * hmat * evec);
-        auto n1 = dotC(v.col(m), Hv.col(m));
-        REQUIRE(isapprox(n0, n1, 1e-6, 1e-6));
+    auto n0 = as_scalar(evec.t() * hmat * evec);
+    auto n1 = dotC(v.col(m), Hv.col(m));
+    REQUIRE(isapprox(n0, n1, 1e-6, 1e-6));
 
-        auto evecsym = vs.vectorC(m, false);
+    auto evecsym = vs.vectorC(m, false);
 
-        auto n0s = as_scalar(evecsym.t() * hmats * evecsym);
-        auto n1s = dotC(vs.col(m), Hvs.col(m));
-        REQUIRE(isapprox(n0s,n1s, 1e-6, 1e-6));
+    auto n0s = as_scalar(evecsym.t() * hmats * evecsym);
+    auto n1s = dotC(vs.col(m), Hvs.col(m));
+    REQUIRE(isapprox(n0s, n1s, 1e-6, 1e-6));
   }
 } catch (Error const &e) {
   error_trace(e);

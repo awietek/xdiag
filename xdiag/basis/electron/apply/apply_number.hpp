@@ -14,10 +14,14 @@ void apply_number(Coupling const &cpl, Op const &op, Basis &&basis,
   if (type == "Nup") {
 
     if constexpr (symmetric) {
-      int64_t idx = 0;
+
+#ifdef _OPENMP
+#pragma omp parallel for schedule(guided)
+#endif
       for (int64_t idx_ups = 0; idx_ups < basis.n_rep_ups(); ++idx_ups) {
         bit_t ups = basis.rep_ups(idx_ups);
         auto dnss = basis.dns_for_ups_rep(ups);
+        int64_t idx = basis.ups_offset(idx_ups);
         int64_t size_dns = dnss.size();
         if (ups & mask) { // check whether bit at s is set
           int64_t end = idx + size_dns;
