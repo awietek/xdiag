@@ -6,6 +6,7 @@ set(XDIAG_EXAMPLES
   spinhalf_chain_gs_corr_symmetries
   spinhalf_chain_structure_factor
   hubbard_greens_f
+  entanglement_ground_state
 )
 
 foreach(name ${XDIAG_EXAMPLES})
