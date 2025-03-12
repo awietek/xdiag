@@ -34,6 +34,16 @@ title: Examples
     [source](examples/spinhalf_chain_gs_corr_symmetries.md) :simple-cplusplus: :simple-julia: 
 
 
+
+-  :material-file-document:{ .lg .middle } __Entanglement Entropy Groundstate__
+
+    ---
+
+    Computes ground state entanglement entropy of an XXZ spin $S=1/2$ chain.
+
+    [source](examples/entanglement_ground_state.md) :simple-cplusplus: :simple-julia: 
+
+
 </div>
 
 ## Dynamical spectral functions
