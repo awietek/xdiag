@@ -67,3 +67,17 @@ title: Examples
     [source](examples/hubbard_greens_f.md) :simple-cplusplus: :simple-julia:
 
 </div>
+
+## Thermodynamcis with Thermal Pure Quantum States
+
+<div class="grid cards" markdown>
+
+-   :material-file-document:{ .lg .middle } __Specific Heat with TPQ__
+
+    ---
+
+    Computes the specific heat using the TQP states for the Shastry Sutherland model.
+
+    [source](examples/tpq_shastry_sutherland.md) :simple-cplusplus: :simple-julia:
+
+</div>
