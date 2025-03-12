@@ -8,6 +8,7 @@ set(XDIAG_EXAMPLES
   hubbard_greens_f
   entanglement_ground_state
   tpq_shastry_sutherland
+  specific_heat_randomtj
 )
 
 foreach(name ${XDIAG_EXAMPLES})
