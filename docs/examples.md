@@ -50,6 +50,14 @@ title: Examples
 
     [source](examples/specific_heat_randomtj.md) :simple-cplusplus: :simple-julia:
 
+-   :material-file-document:{ .lg .middle } __Spin chain level statistics__
+
+    ---
+
+    Demonstrates Poissonian and Wigner-Dyson level statistics of integrable and non-integrable spin chains, respectively.
+
+    [source](examples/spinhalf_chain_level_statistics.md) :simple-cplusplus: :simple-julia:
+
 </div>
 
 ## Dynamical spectral functions
