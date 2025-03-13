@@ -38,6 +38,20 @@ title: Examples
 
 </div>
 
+## Full ED
+
+<div class="grid cards" markdown>
+
+-   :material-file-document:{ .lg .middle } __Specific Heat random t-J model__
+
+    ---
+
+    Computes the specific heat of the random t-J model via full ED over multiple disorder realizations.
+
+    [source](examples/specific_heat_randomtj.md) :simple-cplusplus: :simple-julia:
+
+</div>
+
 ## Dynamical spectral functions
 
 <div class="grid cards" markdown>
@@ -57,5 +71,20 @@ title: Examples
     Computes the Green's function in a 2D Hubbard model
 
     [source](examples/hubbard_greens_f.md) :simple-cplusplus: :simple-julia:
+
+</div>
+
+
+## Thermodynamcis with Thermal Pure Quantum States
+
+<div class="grid cards" markdown>
+
+-   :material-file-document:{ .lg .middle } __Specific Heat with TPQ__
+
+    ---
+
+    Computes the specific heat using the TQP states for the Shastry Sutherland model.
+
+    [source](examples/tpq_shastry_sutherland.md) :simple-cplusplus: :simple-julia:
 
 </div>
