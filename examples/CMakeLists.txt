@@ -7,6 +7,8 @@ set(XDIAG_EXAMPLES
   spinhalf_chain_structure_factor
   hubbard_greens_f
   entanglement_ground_state
+  tpq_shastry_sutherland
+  specific_heat_randomtj
 )
 
 foreach(name ${XDIAG_EXAMPLES})
