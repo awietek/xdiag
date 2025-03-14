@@ -590,7 +590,14 @@ or <a href="https://www.openmp.org/">OpenMP</a> support, use
 </li>
 </ul>
 <h2 id="optimization">Optimization</h2>
-<p><strong>missing documentation</strong></p>
+<ul>
+<li>
+<p><strong>Native optimization</strong></p>
+<p>Adds the flag <code>-march=native</code> to perform optimizations for the native architecture. This can have tremendous performance impact, especially on t-J models, since then the BMI2 instructions are activated whenever they are available (e.g. newer Intel and AMD processors)
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>cmake<span class="w"> </span>-S<span class="w"> </span>.<span class="w"> </span>-B<span class="w"> </span>build<span class="w"> </span>-D<span class="w"> </span><span class="nv">XDIAG_OPTIMIZE_FOR_NATIVE</span><span class="o">=</span>On
+</code></pre></div></p>
+</li>
+</ul>
 
 
 
