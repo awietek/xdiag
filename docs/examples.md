@@ -64,11 +64,11 @@ title: Examples
 
 <div class="grid cards" markdown>
 
--   :material-file-document:{ .lg .middle } __TOS $\alpha-\text{XX}$ chain__
+-   :material-file-document:{ .lg .middle } __TOS $\alpha \text{XX}$ chain__
 
     ---
 
-    Performs a tower of states analyzis for the $\alpha-\text{XX}$ chain.
+    Performs a tower of states analyzis for the $\alpha \text{XX}$ chain.
 
     [source](examples/tos_alpha_xx.md) :simple-cplusplus: :simple-julia:
 
