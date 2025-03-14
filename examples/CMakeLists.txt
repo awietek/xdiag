@@ -9,6 +9,7 @@ set(XDIAG_EXAMPLES
   entanglement_ground_state
   tpq_shastry_sutherland
   specific_heat_randomtj
+  tos_alpha_xx
 )
 
 foreach(name ${XDIAG_EXAMPLES})
