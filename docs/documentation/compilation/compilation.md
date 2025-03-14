@@ -169,4 +169,10 @@ and finally run our XDiag application.
 
 ## Optimization
 
-**missing documentation**
+
+- **Native optimization**
+
+	Adds the flag `-march=native` to perform optimizations for the native architecture. This can have tremendous performance impact, especially on t-J models, since then the BMI2 instructions are activated whenever they are available (e.g. newer Intel and AMD processors)
+    ``` bash
+    cmake -S . -B build -D XDIAG_OPTIMIZE_FOR_NATIVE=On
+    ```

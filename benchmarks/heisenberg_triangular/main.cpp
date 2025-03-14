@@ -1,0 +1,32 @@
+#include <xdiag/all.hpp>
+
+using namespace xdiag;
+
+int main(int argc, char *argv[]) try {
+  assert(argc == 2);
+  int64_t nsites = atoi(argv[1]);
+  int64_t nup = nsites / 2;
+  say_hello();
+  set_verbosity(2);
+  
+  auto fl =
+      FileToml(fmt::format("triangular.{}.J1J2.sublattices.tsl.toml", nsites));
+  auto ops = read_opsum(fl, "Interactions");
+  
+  auto irrep = read_representation(fl, nsites == 42 ? "Gamma.C2.A" : "Gamma.D6.A1");
+  ops["J1"] = 1.0;
+  ops["J2"] = 0.0;
+  tic();
+  // auto block = Spinhalf(nsites, nup, irrep);
+  auto block = Spinhalf(nsites, nup, irrep, "3sublattice");
+  toc("Block creation");
+
+  XDIAG_SHOW(block);
+
+  tic();
+  double e0 = eigval0(ops, block, 1e-12, 5);
+  toc("MVM");
+  return 0;
+} catch (xdiag::Error e) {
+  xdiag::error_trace(e);
+}

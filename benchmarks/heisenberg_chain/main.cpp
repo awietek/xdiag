@@ -26,7 +26,7 @@ int main(int argc, char *argv[]) try {
     XDIAG_SHOW(block);
 
     tic();
-    double e0 = eigval0(ops, block, 1e-12, 50);
+    double e0 = eigval0(ops, block, 1e-12, 5);
     toc("MVM");
 
   } else {
@@ -45,7 +45,7 @@ int main(int argc, char *argv[]) try {
     XDIAG_SHOW(block);
 
     tic();
-    double e0 = eigval0(ops, block, 1e-12, 50);
+    double e0 = eigval0(ops, block, 1e-12, 5);
     toc("MVM");
   }
 } catch (Error e) {
