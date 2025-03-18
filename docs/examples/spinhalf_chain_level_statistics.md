@@ -18,7 +18,7 @@ Intuitively speaking, this is because having a system with symmetries and associ
 To showcase this, we inspect two spin-$1/2$ Hamiltonians on a chain, one being the integrable XXZ model
 
 $$
-    H_{\mathrm{i}} = \sum_{\langle i, j \rangle} \Big(J \bm{S}^z_i \cdot \bm{S}^z_j + \frac{\Delta}{2}\big( \bm{S}^+_i \cdot \bm{S}^-_j + \bm{S}^z_- \cdot \bm{S}^+_j \big) \Big)
+    H_{\mathrm{i}} = \sum_{\langle i, j \rangle} \Big(J \bm{S}^z_i \cdot \bm{S}^z_j + \frac{\Delta}{2}\big( \bm{S}^+_i \cdot \bm{S}^-_j + \bm{S}^-_i \cdot \bm{S}^+_j \big) \Big)
 $$
 
 while the second merely adds a next-nearest-neighbor interaction

@@ -97,6 +97,20 @@ title: Examples
 
 </div>
 
+## Time Evolution
+
+<div class="grid cards" markdown>
+
+-   :material-file-document:{ .lg .middle } __Domain Wall Dynamics__
+
+    ---
+
+    Demonstrates the time evolution of a domain wall in the $S=1/2$ XXZ chain.
+
+    [source](examples/spinhalf_chain_domain_wall_dynamics.md) :simple-cplusplus: :simple-julia:
+
+</div>
+
 
 ## Thermodynamcis with Thermal Pure Quantum States
 
