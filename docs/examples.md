@@ -56,7 +56,11 @@ title: Examples
 
     [source](examples/hubbard_greens_f.md) :simple-cplusplus: :simple-julia:
 
-        ---
+    ---
+
+-   :material-file-document:{ .lg .middle } __Dynamical conductivity__
+
+    ---
 
     Computes the conductivity of one hole in a tJ model
 

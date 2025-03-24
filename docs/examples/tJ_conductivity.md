@@ -24,7 +24,7 @@ The plotting script includes a simple benchmark exploring the role of the number
 
 ## plotting script
 
-== "Julia"
+=== "Julia"
 
     ```julia
         --8<-- "examples/tJ_conductivity/plot.jl"
