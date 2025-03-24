@@ -7,11 +7,10 @@ using namespace std::complex_literals;
 
 int main() try {
   say_hello();
-  set_verbosity(1)
-;
+  set_verbosity(0);
   // IO
   std::string latticeInput =
-      XDIAG_DIRECTORY "/misc/data/square.20.tJ.toml";
+      XDIAG_DIRECTORY "/misc/data/square.16.tJ.toml";
   auto lfile = FileToml(latticeInput);
 
   std::string filename =
@@ -23,9 +22,9 @@ int main() try {
   auto maxiters = 200;
 
   // Define the model
-  int N = 20;
-  int nup = 5;
-  int ndn = 4; // one hole
+  int N = 16;
+  int nup = 8;
+  int ndn = 7; // one hole
   auto ops = read_opsum(lfile, "Interactions");
   auto t = 1.;
   auto J = 0.3;

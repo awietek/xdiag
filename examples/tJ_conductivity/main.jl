@@ -5,10 +5,10 @@ function main()
   say_hello()
 
   # IO
-  latticeInput = "../../misc/data/square.20.tJ.toml"
+  latticeInput = "../../misc/data/square.16.tJ.toml"
   lfile = FileToml(latticeInput)
 
-  filename = "../../misc/data/examples_output/tJ_conductivity.h5"
+  filename = "../../misc/data/examples_output/tJ_conductivity_jll.h5"
   outfile = h5open(filename, "w")
 
   # Lanczos parameters
@@ -16,9 +16,9 @@ function main()
   maxiters = 200
 
   # Define the model
-  N = 20
-  nup = 5
-  ndn = 4 # one hole
+  N = 16
+  nup = 8
+  ndn = 7 # one hole
   ops = read_opsum(lfile, "Interactions")
   t = 1.0
   J = 0.3

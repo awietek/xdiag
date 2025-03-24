@@ -51,7 +51,7 @@ function sortdisp(p,w;max=10)
 end
 
 let
-    source = "../../misc/data/examples_output/tJ_conductivity.h5"
+    source = "../../misc/data/examples_output/tJ_conductivity_jll.h5"
     omegas = collect(range(0., 10.0, length=40000))
     # eta = omegas[2]-omegas[1]
     eta = 0.1
@@ -61,5 +61,5 @@ let
         s = spectrum(p, w, omegas, eta)
         plot!(omegas, s, label="M=$M")
     end
-    savefig(fig, "cond.pdf")
+    savefig(fig, "cond_jll.pdf")
 end
