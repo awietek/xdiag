@@ -56,4 +56,10 @@ title: Examples
 
     [source](examples/hubbard_greens_f.md) :simple-cplusplus: :simple-julia:
 
+        ---
+
+    Computes the conductivity of one hole in a tJ model
+
+    [source](examples/tJ_conductivity.md) :simple-cplusplus: :simple-julia:
+
 </div>
