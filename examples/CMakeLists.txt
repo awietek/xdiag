@@ -10,6 +10,8 @@ set(XDIAG_EXAMPLES
   tpq_shastry_sutherland
   specific_heat_randomtj
   tos_alpha_xx
+  tos_ahm
+  ahm_correlations
 )
 
 foreach(name ${XDIAG_EXAMPLES})
