@@ -72,6 +72,15 @@ title: Examples
 
     [source](examples/tos_alpha_xx.md) :simple-cplusplus: :simple-julia:
 
+
+-   :material-file-document:{ .lg .middle } __TOS $J_1 - J_2$ Model in the Triangular Lattice__
+
+    ---
+
+    Performs a tower of states analyzis for the $J_1 - J_2$ model in the triangular lattice.
+
+    [source](examples/tos_triangular.md) :simple-cplusplus: :simple-julia:
+
 </div>
 
 
