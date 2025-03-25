@@ -79,7 +79,16 @@ title: Examples
     Performs a (momentum) tower of states analysis for the antiferromagnetic chain.
 
     [source](examples/spinhalf_chain_TOS.md) :simple-cplusplus: :simple-julia:
+  
 
+-   :material-file-document:{ .lg .middle } __TOS $J_1 - J_2$ Model in the Triangular Lattice__
+
+    ---
+
+    Performs a tower of states analyzis for the $J_1 - J_2$ model in the triangular lattice.
+
+    [source](examples/tos_triangular.md) :simple-cplusplus: :simple-julia:
+  
 </div>
 
 
