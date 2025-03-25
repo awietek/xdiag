@@ -39,7 +39,6 @@ int main() try {
   auto block = Electron(N, nup, ndn, irrep);
   auto [e0, gs] = eig0(ops, block);
   gs.make_complex();
-  Log("gag.");
   Log("Ground state energy: {:.12f}", e0);
   outfile["e0"] = e0;
 
