@@ -68,9 +68,17 @@ title: Examples
 
     ---
 
-    Performs a tower of states analyzis for the $\alpha \text{XX}$ chain.
+    Performs a tower of states analysis for the $\alpha \text{XX}$ chain.
 
     [source](examples/tos_alpha_xx.md) :simple-cplusplus: :simple-julia:
+
+-   :material-file-document:{ .lg .middle } __Momentum TOS for Heisenberg chain__
+
+    ---
+
+    Performs a (momentum) tower of states analysis for the antiferromagnetic chain.
+
+    [source](examples/spinhalf_chain_TOS.md) :simple-cplusplus: :simple-julia:
 
 </div>
 
