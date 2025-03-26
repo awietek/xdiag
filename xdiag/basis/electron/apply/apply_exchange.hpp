@@ -10,6 +10,7 @@ template <typename bit_t, typename coeff_t, class basis_t, class fill_f>
 void electron_do_down_flips(bit_t ups, int64_t idx_ups, bit_t flipmask,
                             bit_t fermimask, int64_t sdn, coeff_t val,
                             basis_t const &basis, fill_f fill) {
+
   int64_t size_dns = basis.size_dns();
 
   // Get limits of flipped up
@@ -31,10 +32,11 @@ void electron_do_down_flips(bit_t ups, int64_t idx_ups, bit_t flipmask,
   }
 }
 
-template <typename bit_t, typename coeff_t, bool symmetric, class basis_t,
-          class fill_f>
+template <typename coeff_t, bool symmetric, class basis_t, class fill_f>
 void apply_exchange(Coupling const &cpl, Op const &op, basis_t const &basis,
                     fill_f fill) try {
+  using bit_t = typename basis_t::bit_t;
+
   coeff_t J = cpl.scalar().as<coeff_t>();
   int64_t s1 = op[0];
   int64_t s2 = op[1];

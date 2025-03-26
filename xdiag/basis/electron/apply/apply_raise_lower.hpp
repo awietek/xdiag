@@ -8,11 +8,11 @@
 
 namespace xdiag::basis::electron {
 
-template <typename bit_t, typename coeff_t, bool symmetric, class basis_t,
-          class fill_f>
+template <typename coeff_t, bool symmetric, class basis_t, class fill_f>
 void apply_raise_lower(Coupling const &cpl, Op const &op,
                        basis_t const &basis_in, basis_t const &basis_out,
                        fill_f fill) {
+  using bit_t = typename basis_t::bit_t;
 
   coeff_t c = cpl.scalar().as<coeff_t>();
   int64_t s = op[0];

@@ -30,11 +30,13 @@ void apply_term_offdiag_sym_to_spins(bit_t spins_in, int64_t idx_in,
   }
 }
 
-template <typename bit_t, typename coeff_t, class basis_t,
-          class non_zero_term_f, class term_action_f, class fill_f>
+template <typename coeff_t, class basis_t, class non_zero_term_f,
+          class term_action_f, class fill_f>
 void apply_term_offdiag_sym(basis_t const &basis_in, basis_t const &basis_out,
                             non_zero_term_f non_zero_term,
                             term_action_f term_action, fill_f fill) {
+  using bit_t = typename basis_t::bit_t;
+
   Representation irrep_out = basis_out.irrep();
   auto characters = irrep_out.characters().as<arma::Col<coeff_t>>();
 

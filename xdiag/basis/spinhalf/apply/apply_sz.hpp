@@ -6,12 +6,12 @@
 
 namespace xdiag::basis::spinhalf {
 
-// Ising term: H S^z_i
-
-template <typename bit_t, typename coeff_t, bool symmetric, class basis_t,
-          class fill_f>
+// Sz term: H S^z_i
+template <typename coeff_t, bool symmetric, class basis_t, class fill_f>
 void apply_sz(Coupling const &cpl, Op const &op, basis_t const &basis_in,
               basis_t const &basis_out, fill_f fill) try {
+  using bit_t = typename basis_t::bit_t;
+
   coeff_t H = cpl.scalar().as<coeff_t>();
   int64_t s = op[0];
   bit_t mask = ((bit_t)1 << s);
@@ -29,14 +29,13 @@ void apply_sz(Coupling const &cpl, Op const &op, basis_t const &basis_in,
       }
     };
 
-    spinhalf::apply_term_diag<bit_t, coeff_t>(basis_in, term_coeff, fill);
+    spinhalf::apply_term_diag<coeff_t>(basis_in, term_coeff, fill);
   } else {
     auto non_zero_term = [](bit_t spins) -> bool {
       return true;
       (void)spins;
     };
-    auto term_action = [&mask, &val_up,
-                        &val_dn](bit_t spins) -> std::pair<bit_t, coeff_t> {
+    auto term_action = [&](bit_t spins) -> std::pair<bit_t, coeff_t> {
       if (spins & mask) {
         return {spins, val_up};
       } else {
@@ -45,10 +44,10 @@ void apply_sz(Coupling const &cpl, Op const &op, basis_t const &basis_in,
     };
 
     if constexpr (symmetric) {
-      spinhalf::apply_term_offdiag_sym<bit_t, coeff_t>(
+      spinhalf::apply_term_offdiag_sym<coeff_t>(
           basis_in, basis_out, non_zero_term, term_action, fill);
     } else {
-      spinhalf::apply_term_offdiag_no_sym<bit_t, coeff_t>(
+      spinhalf::apply_term_offdiag_no_sym<coeff_t>(
           basis_in, basis_out, non_zero_term, term_action, fill);
     }
   }

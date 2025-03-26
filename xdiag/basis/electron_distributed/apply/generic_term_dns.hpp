@@ -6,7 +6,7 @@
 
 namespace xdiag::basis::electron_distributed {
 
-template <typename bit_t, typename coeff_t, bool fermi_ups, class basis_t,
+template <typename coeff_t, bool fermi_ups, class basis_t,
           class non_zero_term_ups_f, class non_zero_term_dns_f,
           class term_action_f>
 void generic_term_dns(basis_t const &basis_in, basis_t const &basis_out,
@@ -14,6 +14,7 @@ void generic_term_dns(basis_t const &basis_in, basis_t const &basis_out,
                       non_zero_term_dns_f non_zero_term_dns,
                       term_action_f term_action, const coeff_t *vec_in,
                       coeff_t *vec_out) {
+  using bit_t = typename basis_t::bit_t;
 
   int64_t nsites = basis_in.nsites();
   assert(nsites == basis_out.nsites());

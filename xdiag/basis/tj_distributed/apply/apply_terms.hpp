@@ -26,22 +26,22 @@ void apply_terms(OpSum const &ops, basis_t const &basis_in,
   for (auto [cpl, op] : ops) {
     std::string type = op.type();
     if ((type == "SzSz") || (type == "tJSzSz")) {
-      tj_distributed::apply_szsz<bit_t, coeff_t>(
-          cpl, op, basis_in, vec_in.memptr(), vec_out.memptr());
+      tj_distributed::apply_szsz<coeff_t>(cpl, op, basis_in, vec_in.memptr(),
+                                          vec_out.memptr());
     } else if ((type == "Nup") || (type == "Ndn")) {
-      tj_distributed::apply_number<bit_t, coeff_t>(
-          cpl, op, basis_in, vec_in.memptr(), vec_out.memptr());
+      tj_distributed::apply_number<coeff_t>(cpl, op, basis_in, vec_in.memptr(),
+                                            vec_out.memptr());
     } else if (type == "NtotNtot") {
-      tj_distributed::apply_ntot_ntot<bit_t, coeff_t>(
+      tj_distributed::apply_ntot_ntot<coeff_t>(
           cpl, op, basis_in, vec_in.memptr(), vec_out.memptr());
     } else if (type == "Exchange") {
-      tj_distributed::apply_exchange<bit_t, coeff_t>(
+      tj_distributed::apply_exchange<coeff_t>(
           cpl, op, basis_in, vec_in.memptr(), vec_out.memptr());
     } else if (type == "Hopdn") {
-      tj_distributed::apply_hopping<bit_t, coeff_t>(
-          cpl, op, basis_in, vec_in.memptr(), vec_out.memptr());
+      tj_distributed::apply_hopping<coeff_t>(cpl, op, basis_in, vec_in.memptr(),
+                                             vec_out.memptr());
     } else if ((type == "Cdagdn") || (type == "Cdn")) {
-      tj_distributed::apply_raise_lower<bit_t, coeff_t>(
+      tj_distributed::apply_raise_lower<coeff_t>(
           cpl, op, basis_in, vec_in.memptr(), basis_out, vec_out.memptr());
     } else if ((type == "Hopup") || (type == "Cdagup") || (type == "Cup")) {
       continue;
@@ -67,10 +67,10 @@ void apply_terms(OpSum const &ops, basis_t const &basis_in,
   for (auto [cpl, op] : ops) {
     std::string type = op.type();
     if (type == "Hopup") {
-      tj_distributed::apply_hopping<bit_t, coeff_t>(
-          cpl, op, basis_in, vec_in_trans, vec_out_trans);
+      tj_distributed::apply_hopping<coeff_t>(cpl, op, basis_in, vec_in_trans,
+                                             vec_out_trans);
     } else if ((type == "Cdagup") || (type == "Cup")) {
-      tj_distributed::apply_raise_lower<bit_t, coeff_t>(
+      tj_distributed::apply_raise_lower<coeff_t>(
           cpl, op, basis_in, vec_in_trans, basis_out, vec_out_trans);
     } else if ((type == "SzSz") || (type == "tJSzSz") || (type == "Exchange") ||
                (type == "Hopdn") || (type == "Nup") || (type == "Ndn") ||

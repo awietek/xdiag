@@ -7,11 +7,12 @@
 
 namespace xdiag::basis::tj {
 
-template <typename bit_t, typename coeff_t, bool symmetric, class basis_t,
-          class fill_f>
+template <typename coeff_t, bool symmetric, class basis_t, class fill_f>
 void apply_number_number(Coupling const &cpl, Op const &op,
                          basis_t const &basis, fill_f fill) try {
+  using bit_t = typename basis_t::bit_t;
   using bits::gbit;
+
   coeff_t mu = cpl.scalar().as<coeff_t>();
   int64_t s1 = op[0];
   int64_t s2 = op[1];
@@ -21,7 +22,7 @@ void apply_number_number(Coupling const &cpl, Op const &op,
     int n2 = gbit(up, s2) + gbit(dn, s2);
     return mu * (coeff_t)(n1 * n2);
   };
-  tj::generic_term_diag<bit_t, coeff_t, symmetric>(basis, term_action, fill);
+  tj::generic_term_diag<coeff_t, symmetric>(basis, term_action, fill);
 
 } catch (Error const &e) {
   XDIAG_RETHROW(e);

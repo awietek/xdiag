@@ -9,9 +9,10 @@
 
 namespace xdiag::basis::electron_distributed {
 
-template <typename bit_t, typename coeff_t, class basis_t>
+template <typename coeff_t, class basis_t>
 void apply_hopping(Coupling const &cpl, Op const &op, basis_t const &basis,
                    const coeff_t *vec_in, coeff_t *vec_out) {
+  using bit_t = typename basis_t::bit_t;
 
   coeff_t t = cpl.scalar().as<coeff_t>();
   std::string type = op.type();
@@ -43,7 +44,7 @@ void apply_hopping(Coupling const &cpl, Op const &op, basis_t const &basis,
     };
 
     // Call generic term function
-    electron_distributed::generic_term_ups<bit_t, coeff_t>(
+    electron_distributed::generic_term_ups<coeff_t>(
         basis, basis, non_zero_term_ups, non_zero_term_dns, term_action, vec_in,
         vec_out);
   } else if (type == "Hopdn") {
@@ -55,7 +56,7 @@ void apply_hopping(Coupling const &cpl, Op const &op, basis_t const &basis,
     };
 
     // Call generic term function
-    electron_distributed::generic_term_dns<bit_t, coeff_t, false>(
+    electron_distributed::generic_term_dns<coeff_t, false>(
         basis, basis, non_zero_term_ups, non_zero_term_dns, term_action, vec_in,
         vec_out);
   }

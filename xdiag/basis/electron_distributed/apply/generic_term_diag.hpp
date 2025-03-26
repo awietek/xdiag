@@ -4,9 +4,11 @@
 
 namespace xdiag::basis::electron_distributed {
 
-template <typename bit_t, typename coeff_t, class basis_t, class term_action_f>
+template <typename coeff_t, class basis_t, class term_action_f>
 void generic_term_diag(basis_t const &basis, term_action_f term_action,
                        const coeff_t *vec_in, coeff_t *vec_out) {
+  using bit_t = typename basis_t::bit_t;
+
   int64_t idx = 0;
   for (bit_t up : basis.my_ups()) {
     for (bit_t dn : basis.all_dns()) {

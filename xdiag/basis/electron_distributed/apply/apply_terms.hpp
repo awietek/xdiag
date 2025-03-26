@@ -15,7 +15,6 @@ template <typename coeff_t, class basis_t>
 void apply_terms(OpSum const &ops, basis_t const &basis_in,
                  arma::Col<coeff_t> const &vec_in, basis_t const &basis_out,
                  arma::Col<coeff_t> &vec_out) try {
-  using bit_t = typename basis_t::bit_t;
 
   // Adjust MPI buffer size if necessary
   int64_t buffer_size_in = std::max(basis_in.size(), basis_in.size_transpose());
@@ -27,33 +26,33 @@ void apply_terms(OpSum const &ops, basis_t const &basis_in,
   for (auto [cpl, op] : ops) {
     std::string type = op.type();
     if (type == "SzSz") {
-      electron_distributed::apply_szsz<bit_t, coeff_t>(
+      electron_distributed::apply_szsz<coeff_t>(
           cpl, op, basis_in, vec_in.memptr(), vec_out.memptr());
     } else if ((type == "Nup") || (type == "Ndn")) {
-      electron_distributed::apply_number<bit_t, coeff_t>(
+      electron_distributed::apply_number<coeff_t>(
           cpl, op, basis_in, vec_in.memptr(), vec_out.memptr());
     } else if (type == "Nupdn") {
-      electron_distributed::apply_nupdn<bit_t, coeff_t>(
+      electron_distributed::apply_nupdn<coeff_t>(
           cpl, op, basis_in, vec_in.memptr(), vec_out.memptr());
     } else if (type == "NupdnNupdn") {
-      electron_distributed::apply_nupdn_nupdn<bit_t, coeff_t>(
+      electron_distributed::apply_nupdn_nupdn<coeff_t>(
           cpl, op, basis_in, vec_in.memptr(), vec_out.memptr());
     } else if (type == "NtotNtot") {
-      electron_distributed::apply_ntot_ntot<bit_t, coeff_t>(
+      electron_distributed::apply_ntot_ntot<coeff_t>(
           cpl, op, basis_in, vec_in.memptr(), vec_out.memptr());
     } else if (type == "Exchange") {
-      electron_distributed::apply_exchange<bit_t, coeff_t>(
+      electron_distributed::apply_exchange<coeff_t>(
           cpl, op, basis_in, vec_in.memptr(), vec_out.memptr());
     } else if (type == "Hopdn") {
-      electron_distributed::apply_hopping<bit_t, coeff_t>(
+      electron_distributed::apply_hopping<coeff_t>(
           cpl, op, basis_in, vec_in.memptr(), vec_out.memptr());
     } else if ((type == "Cdagdn") || (type == "Cdn")) {
-      electron_distributed::apply_raise_lower<bit_t, coeff_t>(
+      electron_distributed::apply_raise_lower<coeff_t>(
           cpl, op, basis_in, vec_in.memptr(), basis_out, vec_out.memptr());
     } else if ((type == "Hopup") || (type == "Cdagup") || (type == "Cup")) {
       continue;
     } else if (type == "HubbardU") {
-      electron_distributed::apply_u<bit_t, coeff_t>(
+      electron_distributed::apply_u<coeff_t>(
           cpl, basis_in, vec_in.memptr(), vec_out.memptr());
     } else {
       XDIAG_THROW(
@@ -78,10 +77,10 @@ void apply_terms(OpSum const &ops, basis_t const &basis_in,
   for (auto [cpl, op] : ops) {
     std::string type = op.type();
     if (type == "Hopup") {
-      electron_distributed::apply_hopping<bit_t, coeff_t>(
+      electron_distributed::apply_hopping<coeff_t>(
           cpl, op, basis_in, vec_in_trans, vec_out_trans);
     } else if ((type == "Cdagup") || (type == "Cup")) {
-      electron_distributed::apply_raise_lower<bit_t, coeff_t>(
+      electron_distributed::apply_raise_lower<coeff_t>(
           cpl, op, basis_in, vec_in_trans, basis_out, vec_out_trans);
     } else if ((type == "SzSz") || (type == "Exchange") || (type == "Hopdn") ||
                (type == "Nup") || (type == "Ndn") || (type == "HubbardU") ||

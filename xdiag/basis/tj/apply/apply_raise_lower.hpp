@@ -8,11 +8,12 @@
 
 namespace xdiag::basis::tj {
 
-template <typename bit_t, typename coeff_t, bool symmetric, class basis_t,
-          class fill_f>
+template <typename coeff_t, bool symmetric, class basis_t, class fill_f>
 void apply_raise_lower(Coupling const &cpl, Op const &op,
                        basis_t const &basis_in, basis_t const &basis_out,
                        fill_f fill) try {
+  using bit_t = typename basis_t::bit_t;
+
   coeff_t c = cpl.scalar().as<coeff_t>();
   int64_t s = op[0];
   bit_t site_mask = (bit_t)1 << s;
@@ -31,7 +32,7 @@ void apply_raise_lower(Coupling const &cpl, Op const &op,
       auto non_zero_term = [&](bit_t ups) -> bool {
         return (ups & site_mask) == 0;
       };
-      tj::generic_term_ups<bit_t, coeff_t, symmetric>(
+      tj::generic_term_ups<coeff_t, symmetric>(
           basis_in, basis_out, non_zero_term, term_action, fill);
     } else if (type == "Cdagdn") {
       auto non_zero_term_ups = [&](bit_t ups) -> bool {
@@ -40,7 +41,7 @@ void apply_raise_lower(Coupling const &cpl, Op const &op,
       auto non_zero_term_dns = [&](bit_t dns) -> bool {
         return (dns & site_mask) == 0;
       };
-      tj::generic_term_dns<bit_t, coeff_t, symmetric, true>(
+      tj::generic_term_dns<coeff_t, symmetric, true>(
           basis_in, basis_out, non_zero_term_ups, non_zero_term_dns,
           term_action, fill);
     }
@@ -57,7 +58,7 @@ void apply_raise_lower(Coupling const &cpl, Op const &op,
       auto non_zero_term = [&](bit_t spins) -> bool {
         return (spins & site_mask);
       };
-      tj::generic_term_ups<bit_t, coeff_t, symmetric>(
+      tj::generic_term_ups<coeff_t, symmetric>(
           basis_in, basis_out, non_zero_term, term_action, fill);
     } else if (type == "Cdn") {
       auto non_zero_term_ups = [&](bit_t ups) -> bool {
@@ -66,7 +67,7 @@ void apply_raise_lower(Coupling const &cpl, Op const &op,
       auto non_zero_term_dns = [&](bit_t dns) -> bool {
         return (dns & site_mask);
       };
-      tj::generic_term_dns<bit_t, coeff_t, symmetric, true>(
+      tj::generic_term_dns<coeff_t, symmetric, true>(
           basis_in, basis_out, non_zero_term_ups, non_zero_term_dns,
           term_action, fill);
     }

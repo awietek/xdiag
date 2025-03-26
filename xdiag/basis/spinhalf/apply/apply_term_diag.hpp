@@ -15,10 +15,10 @@ void apply_term_diag_to_spins(bit_t spins, int64_t idx, term_coeff_f term_coeff,
   fill(idx, idx, coeff);
 }
 
-template <typename bit_t, typename coeff_t, class basis_t, class term_coeff_f,
-          class fill_f>
+template <typename coeff_t, class basis_t, class term_coeff_f, class fill_f>
 void apply_term_diag(basis_t const &basis, term_coeff_f term_coeff,
                      fill_f fill) {
+  using bit_t = typename basis_t::bit_t;
 
 #ifdef _OPENMP
   int64_t size = basis.size();

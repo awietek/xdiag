@@ -5,10 +5,11 @@
 
 namespace xdiag::basis::electron {
 
-template <typename bit_t, typename coeff_t, bool symmetric, class basis_t,
-          class fill_f>
+template <typename coeff_t, bool symmetric, class basis_t, class fill_f>
 void apply_szsz(Coupling const &cpl, Op const &op, basis_t const &basis,
                 fill_f fill) try {
+  using bit_t = typename basis_t::bit_t;
+
   coeff_t J = cpl.scalar().as<coeff_t>();
   int64_t s1 = op[0];
   int64_t s2 = op[1];

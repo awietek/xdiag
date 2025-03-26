@@ -13,8 +13,7 @@
 
 namespace xdiag::basis::electron {
 
-template <typename bit_t, typename coeff_t, bool symmetric, class basis_t,
-          class fill_f>
+template <typename coeff_t, bool symmetric, class basis_t, class fill_f>
 void apply_terms(OpSum const &ops, basis_t const &basis_in,
                  basis_t const &basis_out, fill_f fill) try {
 
@@ -22,35 +21,30 @@ void apply_terms(OpSum const &ops, basis_t const &basis_in,
 
     std::string type = op.type();
     if ((type == "Hopup") || (type == "Hopdn")) {
-      electron::apply_hopping<bit_t, coeff_t, symmetric>(cpl, op, basis_in,
-                                                         fill);
+      electron::apply_hopping<coeff_t, symmetric>(cpl, op, basis_in, fill);
     } else if ((type == "Cdagup") || (type == "Cup") || (type == "Cdagdn") ||
                (type == "Cdn")) {
-      electron::apply_raise_lower<bit_t, coeff_t, symmetric>(cpl, op, basis_in,
-                                                             basis_out, fill);
+      electron::apply_raise_lower<coeff_t, symmetric>(cpl, op, basis_in,
+                                                      basis_out, fill);
     } else if (type == "SzSz") {
-      electron::apply_szsz<bit_t, coeff_t, symmetric>(cpl, op, basis_in, fill);
+      electron::apply_szsz<coeff_t, symmetric>(cpl, op, basis_in, fill);
     } else if (type == "Exchange") {
-      electron::apply_exchange<bit_t, coeff_t, symmetric>(cpl, op, basis_in,
-                                                          fill);
+      electron::apply_exchange<coeff_t, symmetric>(cpl, op, basis_in, fill);
     } else if ((type == "Nup") || (type == "Ndn")) {
-      electron::apply_number<bit_t, coeff_t, symmetric>(cpl, op, basis_in,
-                                                        fill);
+      electron::apply_number<coeff_t, symmetric>(cpl, op, basis_in, fill);
     } else if (type == "Nupdn") {
-      electron::apply_nupdn<bit_t, coeff_t, symmetric>(cpl, op, basis_in, fill);
+      electron::apply_nupdn<coeff_t, symmetric>(cpl, op, basis_in, fill);
     } else if (type == "NupdnNupdn") {
-      electron::apply_nupdn_nupdn<bit_t, coeff_t, symmetric>(cpl, op, basis_in,
-                                                             fill);
+      electron::apply_nupdn_nupdn<coeff_t, symmetric>(cpl, op, basis_in, fill);
     } else if (type == "NtotNtot") {
-      electron::apply_ntot_ntot<bit_t, coeff_t, symmetric>(cpl, op, basis_in,
-                                                           fill);
+      electron::apply_ntot_ntot<coeff_t, symmetric>(cpl, op, basis_in, fill);
     } else if (type == "HubbardU") {
-      electron::apply_u<bit_t, coeff_t, symmetric>(cpl, basis_in, fill);
+      electron::apply_u<coeff_t, symmetric>(cpl, basis_in, fill);
     } else {
       XDIAG_THROW(
           fmt::format("Unknown Op type for Electron block: \"{}\"", type));
     }
-  }\
+  }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }

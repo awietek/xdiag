@@ -11,10 +11,11 @@ namespace xdiag::basis::spinhalf {
 
 // Exchange term: J/2 (S^+_i S^-_j + S^-_i S^+_j)
 
-template <typename bit_t, typename coeff_t, bool symmetric, class basis_t,
-          class fill_f>
+template <typename coeff_t, bool symmetric, class basis_t, class fill_f>
 void apply_exchange(Coupling const &cpl, Op const &op, basis_t const &basis_in,
                     basis_t const &basis_out, fill_f fill) try {
+  using bit_t = typename basis_t::bit_t;
+
   coeff_t J = cpl.scalar().as<coeff_t>();
   int64_t s1 = op[0];
   int64_t s2 = op[1];
@@ -46,10 +47,10 @@ void apply_exchange(Coupling const &cpl, Op const &op, basis_t const &basis_in,
 
   // Dispatch either symmetric of unsymmetric term application
   if constexpr (symmetric) {
-    spinhalf::apply_term_offdiag_sym<bit_t, coeff_t>(
-        basis_in, basis_out, non_zero_term, term_action, fill);
+    spinhalf::apply_term_offdiag_sym<coeff_t>(basis_in, basis_out,
+                                              non_zero_term, term_action, fill);
   } else {
-    spinhalf::apply_term_offdiag_no_sym<bit_t, coeff_t>(
+    spinhalf::apply_term_offdiag_no_sym<coeff_t>(
         basis_in, basis_out, non_zero_term, term_action, fill);
   }
 } catch (Error const &e) {

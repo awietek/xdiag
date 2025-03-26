@@ -8,10 +8,12 @@
 
 namespace xdiag::basis::electron_distributed {
 
-template <typename bit_t, typename coeff_t, class basis_t>
+template <typename coeff_t, class basis_t>
 void apply_raise_lower(Coupling const &cpl, Op const &op,
                        basis_t const &basis_in, const coeff_t *vec_in,
                        basis_t const &basis_out, coeff_t *vec_out) {
+  using bit_t = typename basis_t::bit_t;
+
   coeff_t c = cpl.scalar().as<coeff_t>();
   std::string type = op.type();
   int64_t s = op[0];
@@ -31,7 +33,7 @@ void apply_raise_lower(Coupling const &cpl, Op const &op,
     };
     auto non_zero_term_dns = [&](bit_t dns) -> bool { return true; };
 
-    electron_distributed::generic_term_ups<bit_t, coeff_t>(
+    electron_distributed::generic_term_ups<coeff_t>(
         basis_in, basis_out, non_zero_term_ups, non_zero_term_dns, term_action,
         vec_in, vec_out);
   } else if (type == "Cup") {
@@ -39,7 +41,7 @@ void apply_raise_lower(Coupling const &cpl, Op const &op,
       return (ups & site_mask) == site_mask;
     };
     auto non_zero_term_dns = [&](bit_t dns) -> bool { return true; };
-    electron_distributed::generic_term_ups<bit_t, coeff_t>(
+    electron_distributed::generic_term_ups<coeff_t>(
         basis_in, basis_out, non_zero_term_ups, non_zero_term_dns, term_action,
         vec_in, vec_out);
   } else if (type == "Cdagdn") {
@@ -47,7 +49,7 @@ void apply_raise_lower(Coupling const &cpl, Op const &op,
     auto non_zero_term_dns = [&](bit_t dns) -> bool {
       return (dns & site_mask) == 0;
     };
-    electron_distributed::generic_term_dns<bit_t, coeff_t, true>(
+    electron_distributed::generic_term_dns<coeff_t, true>(
         basis_in, basis_out, non_zero_term_ups, non_zero_term_dns, term_action,
         vec_in, vec_out);
   } else if (type == "Cdn") {
@@ -55,7 +57,7 @@ void apply_raise_lower(Coupling const &cpl, Op const &op,
     auto non_zero_term_dns = [&](bit_t dns) -> bool {
       return (dns & site_mask) == site_mask;
     };
-    electron_distributed::generic_term_dns<bit_t, coeff_t, true>(
+    electron_distributed::generic_term_dns<coeff_t, true>(
         basis_in, basis_out, non_zero_term_ups, non_zero_term_dns, term_action,
         vec_in, vec_out);
   }

@@ -9,9 +9,10 @@
 
 namespace xdiag::basis::tj_distributed {
 
-template <typename bit_t, typename coeff_t, class basis_t>
+template <typename coeff_t, class basis_t>
 void apply_exchange(Coupling const &cpl, Op const &op, basis_t const &basis,
                     const coeff_t *vec_in, coeff_t *vec_out) {
+  using bit_t = typename basis_t::bit_t;
   using namespace bits;
   int mpi_size;
   MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
