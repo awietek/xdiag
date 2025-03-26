@@ -7,12 +7,13 @@
 
 namespace xdiag::basis::tj_distributed {
 
-template <typename bit_t, typename coeff_t, class BasisIn, class BasisOut,
-          class NonZeroTermUps, class NonZeroTermDns, class TermAction>
-void generic_term_ups(BasisIn &&basis_in, BasisOut &&basis_out,
-                      NonZeroTermUps &&non_zero_term_ups,
-                      NonZeroTermDns &&non_zero_term_dns,
-                      TermAction &&term_action, const coeff_t *vec_in,
+template <typename bit_t, typename coeff_t, class basis_t,
+          class non_zero_term_ups_f, class non_zero_term_dns_f,
+          class term_action_f>
+void generic_term_ups(basis_t const &basis_in, basis_t const &basis_out,
+                      non_zero_term_ups_f non_zero_term_ups,
+                      non_zero_term_dns_f non_zero_term_dns,
+                      term_action_f term_action, const coeff_t *vec_in,
                       coeff_t *vec_out) {
   int64_t nsites = basis_in.nsites();
   assert(nsites == basis_out.nsites());

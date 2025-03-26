@@ -8,9 +8,9 @@
 
 namespace xdiag::basis::tj_distributed {
 
-template <typename bit_t, typename coeff_t, class BasisIn, class BasisOut>
-void apply_raise_lower(Coupling const &cpl, Op const &op, BasisIn &&basis_in,
-                       const coeff_t *vec_in, BasisOut &&basis_out,
+template <typename bit_t, typename coeff_t, class basis_t>
+void apply_raise_lower(Coupling const &cpl, Op const &op, basis_t &&basis_in,
+                       const coeff_t *vec_in, basis_t &&basis_out,
                        coeff_t *vec_out) {
   coeff_t c = cpl.scalar().as<coeff_t>();
   std::string type = op.type();

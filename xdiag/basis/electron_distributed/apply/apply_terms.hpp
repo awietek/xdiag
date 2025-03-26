@@ -10,13 +10,17 @@
 
 namespace xdiag::basis::electron_distributed {
 
-template <typename coeff_t, class BasisIn, class BasisOut>
-void apply_terms(OpSum const &ops, BasisIn const &basis_in,
-                 arma::Col<coeff_t> const &vec_in, BasisOut const &basis_out,
+template <typename coeff_t, class basis_t>
+void apply_terms(OpSum const &ops, basis_t const &basis_in,
+                 arma::Col<coeff_t> const &vec_in, basis_t const &basis_out,
                  arma::Col<coeff_t> &vec_out) try {
-  (void)basis_out;
+  using bit_t = typename basis_t::bit_t;
 
-  using bit_t = typename BasisIn::bit_t;
+  // Adjust MPI buffer size if necessary
+  int64_t buffer_size_in = std::max(basis_in.size(), basis_in.size_transpose());
+  int64_t buffer_size_out =
+      std::max(basis_out.size(), basis_out.size_transpose());
+  mpi::buffer.reserve<coeff_t>(std::max(buffer_size_in, buffer_size_out));
 
   // Ops applied in up/dn order
   for (auto [cpl, op] : ops) {
@@ -33,7 +37,10 @@ void apply_terms(OpSum const &ops, BasisIn const &basis_in,
     } else if (type == "Hopdn") {
       electron_distributed::apply_hopping<bit_t, coeff_t>(
           cpl, op, basis_in, vec_in.memptr(), vec_out.memptr());
-    } else if (type == "Hopup") {
+    } else if ((type == "Cdagdn") || (type == "Cdn")) {
+      electron_distributed::apply_raise_lower<bit_t, coeff_t>(
+          cpl, op, basis_in, vec_in.memptr(), basis_out, vec_out.memptr());
+    } else if ((type == "Hopup") || (type == "Cdagup") || (type == "Cup")) {
       continue;
     } else if (type == "HubbardU") {
       electron_distributed::apply_u<bit_t, coeff_t>(
@@ -63,8 +70,12 @@ void apply_terms(OpSum const &ops, BasisIn const &basis_in,
     if (type == "Hopup") {
       electron_distributed::apply_hopping<bit_t, coeff_t>(
           cpl, op, basis_in, vec_in_trans, vec_out_trans);
+    } else if ((type == "Cdagup") || (type == "Cup")) {
+      electron_distributed::apply_raise_lower<bit_t, coeff_t>(
+          cpl, op, basis_in, vec_in_trans, basis_out, vec_out_trans);
     } else if ((type == "SzSz") || (type == "Exchange") || (type == "Hopdn") ||
-               (type == "Nup") || (type == "Ndn") || (type == "HubbardU")) {
+               (type == "Nup") || (type == "Ndn") || (type == "HubbardU") ||
+               (type == "Cdagdn") || (type == "Cdn")) {
       continue;
     } else {
       XDIAG_THROW(
@@ -74,7 +85,7 @@ void apply_terms(OpSum const &ops, BasisIn const &basis_in,
   }
 
   // Finally we transpose back to send_buffer ...
-  basis_in.transpose_r(vec_out_trans);
+  basis_out.transpose_r(vec_out_trans);
 
   //  ... and fill the results to vec_out
   coeff_t *send = mpi::buffer.send<coeff_t>();

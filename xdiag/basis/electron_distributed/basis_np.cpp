@@ -259,8 +259,6 @@ void BasisNp<bit_t>::transpose(const coeff_t *in_vec, coeff_t *out_vec) const
   // result of transpose is stored in send_buffer
 
   auto comm = transpose_communicator_;
-  mpi::buffer.reserve<coeff_t>(std::max(size_, size_transpose_));
-
   coeff_t *send_buffer = mpi::buffer.send<coeff_t>();
   coeff_t *recv_buffer = mpi::buffer.recv<coeff_t>();
 
@@ -308,7 +306,6 @@ void BasisNp<bit_t>::transpose_r(coeff_t const *in_vec, coeff_t *out_vec) const
   // transforms a vector in up/dn order to dn/up order
   // result of transpose is stored in send_buffer
   auto comm = transpose_communicator_r_;
-  mpi::buffer.reserve<coeff_t>(std::max(size_, size_transpose_));
   coeff_t *send_buffer = mpi::buffer.send<coeff_t>();
   coeff_t *recv_buffer = mpi::buffer.recv<coeff_t>();
 

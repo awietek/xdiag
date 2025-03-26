@@ -1,5 +1,7 @@
 #include "testcases_electron.hpp"
 
+#include "../tj/testcases_tj.hpp"
+
 namespace xdiag::testcases::electron {
 
 OpSum get_linear_chain(int64_t nsites, double t, double U) {
@@ -745,6 +747,20 @@ OpSum square3x3(double t, double J) {
   ops += "J" * Op("SdotS", {5, 8});
   ops += "J" * Op("SdotS", {8, 2});
   return ops;
+}
+
+bool valid_nup_ndn(int nup, int ndn, int nsites) {
+  return ((nup >= 0) && (ndn >= 0) && (nup <= nsites) && (ndn <= nsites));
+}
+
+bool valid_nup_ndn(std::string op_str, int nup, int ndn, int nsites) {
+  auto [nupt, ndnt] = tj::target_nup_ndn(op_str, nup, ndn);
+  return valid_nup_ndn(nupt, ndnt, nsites);
+}
+bool valid_nup_ndn(std::string op_str1, std::string op_str2, int nup, int ndn,
+                   int nsites) {
+  auto [nupt, ndnt] = tj::target_nup_ndn(op_str1, op_str2, nup, ndn);
+  return valid_nup_ndn(nupt, ndnt, nsites);
 }
 
 } // namespace xdiag::testcases::electron

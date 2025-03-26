@@ -98,6 +98,7 @@ set(XDIAG_TEST_DISTRIBUTED_SOURCES
   blocks/tj_distributed/test_tj_distributed_raiselower.cpp
 
   blocks/electron_distributed/test_electron_distributed_apply.cpp
+  blocks/electron_distributed/test_electron_distributed_raiselower.cpp
 
   states/test_product_state_distributed.cpp
 
