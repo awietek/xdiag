@@ -16,7 +16,7 @@
     
     
       
-        <title>tJDistributed - XDiag Documentation</title>
+        <title>ElectronDistributed - XDiag Documentation</title>
       
     
     
@@ -106,7 +106,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              tJDistributed
+              ElectronDistributed
             
           </span>
         </div>
@@ -449,18 +449,18 @@
                   
 
 
-  <h1>tJDistributed</h1>
+  <h1>ElectronDistributed</h1>
 
-<p>A block in a  <span class="arithmatex">\(t-J\)</span> type Hilbert space, i.e. fermions with <span class="arithmatex">\(\uparrow, \downarrow\)</span> spin excluding doubly occupied sites with distributed computing capabilities. </p>
+<p>A block in an electron type Hilbert space, i.e. fermions with <span class="arithmatex">\(\uparrow, \downarrow\)</span> spin with distributed computing capabilities. </p>
 <p><strong>Sources</strong><br>
-<a href="https://github.com/awietek/xdiag/blob/main/xdiag/blocks/tj_distributed.hpp">tj_distributed.hpp</a><br>
-<a href="https://github.com/awietek/xdiag/blob/main/xdiag/blocks/tj_distributed.cpp">tj_distributed.cpp</a></p>
+<a href="https://github.com/awietek/xdiag/blob/main/xdiag/blocks/electron_distributed.hpp">electron_distributed.hpp</a><br>
+<a href="https://github.com/awietek/xdiag/blob/main/xdiag/blocks/electron_distributed.cpp">electron_distributed.cpp</a></p>
 <hr />
 <h2 id="constructors">Constructors</h2>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:1"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">C++</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">tJDistributed</span><span class="p">(</span><span class="kt">int64_t</span><span class="w"> </span><span class="n">nsites</span><span class="p">,</span><span class="w"> </span><span class="kt">int64_t</span><span class="w"> </span><span class="n">nup</span><span class="p">,</span><span class="w"> </span><span class="kt">int64_t</span><span class="w"> </span><span class="n">ndn</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">backend</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;auto&quot;</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">ElectronDistributed</span><span class="p">(</span><span class="kt">int64_t</span><span class="w"> </span><span class="n">nsites</span><span class="p">,</span><span class="w"> </span><span class="kt">int64_t</span><span class="w"> </span><span class="n">nup</span><span class="p">,</span><span class="w"> </span><span class="kt">int64_t</span><span class="w"> </span><span class="n">ndn</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">backend</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;auto&quot;</span><span class="p">);</span>
 </code></pre></div>
 </div>
 </div>
@@ -499,11 +499,11 @@
 <p>The parameter <code>backend</code> chooses how the block is coded internally. By using the default parameter <code>auto</code> the backend is chosen automatically. Alternatives are <code>32bit</code>, <code>64bit</code>.</p>
 <hr />
 <h2 id="iteration">Iteration</h2>
-<p>An tJDistributed block can be iterated over, where at each iteration a <a href="../../states/product_state/">ProductState</a> representing the corresponding basis state is returned.</p>
+<p>An ElectronDistributed block can be iterated over, where at each iteration a <a href="../../states/product_state/">ProductState</a> representing the corresponding basis state is returned.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="2:1"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">C++</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">block</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tJDistributed</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">block</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ElectronDistributed</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="n">pstate</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">block</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="n">Log</span><span class="p">(</span><span class="s">&quot;{} {}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">pstate</span><span class="p">),</span><span class="w"> </span><span class="n">index</span><span class="p">(</span><span class="n">block</span><span class="p">,</span><span class="w"> </span><span class="n">pstate</span><span class="p">));</span>
 <a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="p">}</span>
@@ -514,11 +514,11 @@
 <hr />
 <h2 id="methods">Methods</h2>
 <h4 id="index">index</h4>
-<p>Returns the index of a given <a href="../../states/product_state/">ProductState</a> in the basis of the tJDistributed block.</p>
+<p>Returns the index of a given <a href="../../states/product_state/">ProductState</a> in the basis of the ElectronDistributed block.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="3:1"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">C++</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kt">int64_t</span><span class="w"> </span><span class="nf">index</span><span class="p">(</span><span class="n">tJDistributed</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">block</span><span class="p">,</span><span class="w"> </span><span class="n">ProductState</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pstate</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kt">int64_t</span><span class="w"> </span><span class="nf">index</span><span class="p">(</span><span class="n">ElectronDistributed</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">block</span><span class="p">,</span><span class="w"> </span><span class="n">ProductState</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pstate</span><span class="p">);</span>
 </code></pre></div>
 </div>
 </div>
@@ -529,7 +529,7 @@
 <div class="tabbed-set tabbed-alternate" data-tabs="4:1"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">C++</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kt">int64_t</span><span class="w"> </span><span class="nf">nsites</span><span class="p">(</span><span class="n">tJDistributed</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">block</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kt">int64_t</span><span class="w"> </span><span class="nf">nsites</span><span class="p">(</span><span class="n">ElectronDistributed</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">block</span><span class="p">);</span>
 </code></pre></div>
 </div>
 </div>
@@ -540,7 +540,7 @@
 <div class="tabbed-set tabbed-alternate" data-tabs="5:1"><input checked="checked" id="__tabbed_5_1" name="__tabbed_5" type="radio" /><div class="tabbed-labels"><label for="__tabbed_5_1">C++</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kt">int64_t</span><span class="w"> </span><span class="nf">size</span><span class="p">(</span><span class="n">tJDistributed</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">block</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kt">int64_t</span><span class="w"> </span><span class="nf">size</span><span class="p">(</span><span class="n">ElectronDistributed</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">block</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
 </code></pre></div>
 </div>
 </div>
@@ -551,7 +551,7 @@
 <div class="tabbed-set tabbed-alternate" data-tabs="6:1"><input checked="checked" id="__tabbed_6_1" name="__tabbed_6" type="radio" /><div class="tabbed-labels"><label for="__tabbed_6_1">C++</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kt">int64_t</span><span class="w"> </span><span class="nf">dim</span><span class="p">(</span><span class="n">tJDistributed</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">block</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kt">int64_t</span><span class="w"> </span><span class="nf">dim</span><span class="p">(</span><span class="n">ElectronDistributed</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">block</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
 </code></pre></div>
 </div>
 </div>
@@ -564,7 +564,7 @@ Complex arithmetic is needed when a
 <div class="tabbed-set tabbed-alternate" data-tabs="7:1"><input checked="checked" id="__tabbed_7_1" name="__tabbed_7" type="radio" /><div class="tabbed-labels"><label for="__tabbed_7_1">C++</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kt">bool</span><span class="w"> </span><span class="nf">isreal</span><span class="p">(</span><span class="n">tJDistributed</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">block</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kt">bool</span><span class="w"> </span><span class="nf">isreal</span><span class="p">(</span><span class="n">ElectronDistributed</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">block</span><span class="p">);</span>
 </code></pre></div>
 </div>
 </div>
