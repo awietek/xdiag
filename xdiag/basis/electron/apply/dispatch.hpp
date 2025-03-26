@@ -5,9 +5,9 @@
 
 namespace xdiag::basis::electron {
 
-template <typename coeff_t, class Fill>
+template <typename coeff_t, class fill_f>
 inline void dispatch(OpSum const &ops, Electron const &block_in,
-                     Electron const &block_out, Fill &&fill) try {
+                     Electron const &block_out, fill_f fill) try {
   auto const &basis_in = block_in.basis();
   auto const &basis_out = block_out.basis();
 

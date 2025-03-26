@@ -4,11 +4,11 @@
 
 namespace xdiag::basis::electron {
 
-template <typename bit_t, typename coeff_t, bool symmetric, class BasisIn,
-          class BasisOut, class NonZeroTerm, class TermAction, class Fill>
-void generic_term_ups(BasisIn &&basis_in, BasisOut &&basis_out,
-                      NonZeroTerm &&non_zero_term, TermAction &&term_action,
-                      Fill &&fill) {
+template <typename bit_t, typename coeff_t, bool symmetric, class basis_t,
+          class non_zero_term_f, class term_action_f, class fill_f>
+void generic_term_ups(basis_t const &basis_in, basis_t const &basis_out,
+                      non_zero_term_f non_zero_term, term_action_f term_action,
+                      fill_f fill) {
 
   if constexpr (symmetric) {
 
@@ -82,8 +82,8 @@ void generic_term_ups(BasisIn &&basis_in, BasisOut &&basis_out,
             ++idx_dn;
           }
         } // if trivial stabilizer or not
-      }   // if non_zero_term
-    }     // loop over ups
+      } // if non_zero_term
+    } // loop over ups
 
   } else { // not symmetric
     int64_t size_dns_in = basis_in.size_dns();

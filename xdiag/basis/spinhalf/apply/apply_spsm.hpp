@@ -12,10 +12,10 @@ namespace xdiag::basis::spinhalf {
 
 // S+ or S- term: J S^+_i   OR   J S^-_i
 
-template <typename bit_t, typename coeff_t, bool symmetric, class BasisIn,
-          class BasisOut, class Fill>
-void apply_spsm(Coupling const &cpl, Op const &op, BasisIn &&basis_in,
-                BasisOut &&basis_out, Fill &&fill) try {
+template <typename bit_t, typename coeff_t, bool symmetric, class basis_t,
+          class fill_f>
+void apply_spsm(Coupling const &cpl, Op const &op, basis_t const &basis_in,
+                basis_t const &basis_out, fill_f fill) try {
   coeff_t J = cpl.scalar().as<coeff_t>();
   int64_t s = op[0];
   bit_t mask = ((bit_t)1 << s);

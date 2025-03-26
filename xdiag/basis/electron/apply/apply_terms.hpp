@@ -50,7 +50,7 @@ void apply_terms(OpSum const &ops, basis_t const &basis_in,
       XDIAG_THROW(
           fmt::format("Unknown Op type for Electron block: \"{}\"", type));
     }
-  }
+  }\
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }

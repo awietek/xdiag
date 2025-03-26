@@ -9,10 +9,10 @@
 
 namespace xdiag::basis::electron {
 
-template <typename bit_t, typename coeff_t, bool symmetric, class Basis,
-          class Fill>
-void apply_hopping(Coupling const &cpl, Op const &op, Basis &&basis,
-                   Fill &&fill) try {
+template <typename bit_t, typename coeff_t, bool symmetric, class basis_t,
+          class fill_f>
+void apply_hopping(Coupling const &cpl, Op const &op, basis_t const &basis,
+                   fill_f fill) try {
 
   coeff_t t = cpl.scalar().as<coeff_t>();
   int64_t s1 = op[0];

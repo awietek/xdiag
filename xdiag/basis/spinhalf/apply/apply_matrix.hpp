@@ -11,10 +11,10 @@
 
 namespace xdiag::basis::spinhalf {
 
-template <typename bit_t, typename coeff_t, bool symmetric, class BasisIn,
-          class BasisOut, class Fill>
-void apply_matrix(Coupling const &cpl, Op const &op, BasisIn &&basis_in,
-                  BasisOut &&basis_out, Fill &&fill) try {
+template <typename bit_t, typename coeff_t, bool symmetric, class basis_t,
+          class fill_f>
+void apply_matrix(Coupling const &cpl, Op const &op, basis_t const &basis_in,
+                  basis_t const &basis_out, fill_f fill) try {
 
   // Decompose into sum of non-branching operators
   auto ops_nb = operators::non_branching_ops<bit_t, coeff_t>(cpl, op);

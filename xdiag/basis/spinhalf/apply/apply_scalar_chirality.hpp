@@ -9,11 +9,11 @@ namespace xdiag::basis::spinhalf {
 
 // Scalar chirality term: J S*(S x S)
 
-template <typename bit_t, typename coeff_t, bool symmetric, class BasisIn,
-          class BasisOut, class Fill>
+template <typename bit_t, typename coeff_t, bool symmetric, class basis_t,
+          class fill_f>
 void apply_scalar_chirality(Coupling const &cpl, Op const &op,
-                            BasisIn &&basis_in, BasisOut &&basis_out,
-                            Fill &&fill) try {
+                            basis_t const &basis_in, basis_t const &basis_out,
+                            fill_f fill) try {
   using bits::gbit;
   complex J = cpl.scalar().as<complex>();
   coeff_t Jquarter = 0.;

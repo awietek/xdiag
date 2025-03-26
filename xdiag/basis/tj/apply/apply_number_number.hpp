@@ -1,16 +1,16 @@
 #pragma once
 
 #include <xdiag/basis/tj/apply/generic_term_diag.hpp>
+#include <xdiag/bits/gbit.hpp>
 #include <xdiag/common.hpp>
 #include <xdiag/operators/op.hpp>
-#include <xdiag/bits/gbit.hpp>
 
 namespace xdiag::basis::tj {
 
-template <typename bit_t, typename coeff_t, bool symmetric, class Basis,
-          class Fill>
-void apply_number_number(Coupling const &cpl, Op const &op, Basis &&basis,
-                         Fill &&fill) try {
+template <typename bit_t, typename coeff_t, bool symmetric, class basis_t,
+          class fill_f>
+void apply_number_number(Coupling const &cpl, Op const &op,
+                         basis_t const &basis, fill_f fill) try {
   using bits::gbit;
   coeff_t mu = cpl.scalar().as<coeff_t>();
   int64_t s1 = op[0];

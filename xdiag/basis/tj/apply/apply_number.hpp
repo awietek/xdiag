@@ -6,10 +6,10 @@
 
 namespace xdiag::basis::tj {
 
-template <typename bit_t, typename coeff_t, bool symmetric, class Basis,
-          class Fill>
-void apply_number(Coupling const &cpl, Op const &op, Basis &&basis,
-                  Fill &&fill) try {
+template <typename bit_t, typename coeff_t, bool symmetric, class basis_t,
+          class fill_f>
+void apply_number(Coupling const &cpl, Op const &op, basis_t const &basis,
+                  fill_f fill) try {
   coeff_t mu = cpl.scalar().as<coeff_t>();
   int64_t s = op[0];
   bit_t mask = (bit_t)1 << s;

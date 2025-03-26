@@ -7,10 +7,10 @@
 
 namespace xdiag::basis::tj {
 
-template <typename bit_t, typename coeff_t, bool symmetric, class Basis,
-          class Filler>
-void apply_exchange(Coupling const &cpl, Op const &op, Basis &&basis,
-                    Filler &&fill) try {
+template <typename bit_t, typename coeff_t, bool symmetric, class basis_t,
+          class fill_f>
+void apply_exchange(Coupling const &cpl, Op const &op, basis_t const &basis,
+                    fill_f fill) try {
   coeff_t J = cpl.scalar().as<coeff_t>();
   coeff_t Jhalf = J / 2.;
   coeff_t Jhalf_conj = conj(Jhalf);

@@ -7,12 +7,13 @@
 
 namespace xdiag::basis::spinhalf {
 
-template <typename bit_t, typename coeff_t, class BasisOut, class NonZeroTerm,
-          class TermAction, class Fill>
+template <typename bit_t, typename coeff_t, class basis_t,
+          class non_zero_term_f, class term_action_f, class fill_f>
 void apply_term_offdiag_no_sym_to_spins(bit_t spins_in, int64_t idx_in,
-                                        BasisOut &&basis_out,
-                                        NonZeroTerm &&non_zero_term,
-                                        TermAction &&term_action, Fill &&fill) {
+                                        basis_t const &basis_out,
+                                        non_zero_term_f non_zero_term,
+                                        term_action_f term_action,
+                                        fill_f fill) {
   if (non_zero_term(spins_in)) {
     auto [spins_out, coeff] = term_action(spins_in);
     auto idx_out = basis_out.index(spins_out);
@@ -22,11 +23,12 @@ void apply_term_offdiag_no_sym_to_spins(bit_t spins_in, int64_t idx_in,
   }
 }
 
-template <typename bit_t, typename coeff_t, class BasisIn, class BasisOut,
-          class NonZeroTerm, class TermAction, class Fill>
-void apply_term_offdiag_no_sym(BasisIn &&basis_in, BasisOut &&basis_out,
-                               NonZeroTerm &&non_zero_term,
-                               TermAction &&term_action, Fill &&fill) {
+template <typename bit_t, typename coeff_t, class basis_t,
+          class non_zero_term_f, class term_action_f, class fill_f>
+void apply_term_offdiag_no_sym(basis_t const &basis_in,
+                               basis_t const &basis_out,
+                               non_zero_term_f non_zero_term,
+                               term_action_f term_action, fill_f fill) {
 #ifdef _OPENMP
   int64_t size = basis_in.size();
 

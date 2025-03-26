@@ -5,9 +5,9 @@
 
 namespace xdiag::basis::electron {
 
-template <typename bit_t, typename coeff_t, bool symmetric, class Basis,
-          class Filler>
-void apply_u(Coupling const &cpl, Basis &&basis, Filler &&fill) try {
+template <typename bit_t, typename coeff_t, bool symmetric, class basis_t,
+          class fill_f>
+void apply_u(Coupling const &cpl, basis_t const &basis, fill_f fill) try {
 
   coeff_t U = cpl.scalar().as<coeff_t>();
 

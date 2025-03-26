@@ -10,11 +10,11 @@
 
 namespace xdiag::basis::tj_distributed {
 
-template <typename coeff_t, class BasisIn, class BasisOut>
-void apply_terms(OpSum const &ops, BasisIn const &basis_in,
-                 arma::Col<coeff_t> const &vec_in, BasisOut const &basis_out,
+template <typename coeff_t, class basis_t>
+void apply_terms(OpSum const &ops, basis_t const &basis_in,
+                 arma::Col<coeff_t> const &vec_in, basis_t const &basis_out,
                  arma::Col<coeff_t> &vec_out) try {
-  using bit_t = typename BasisIn::bit_t;
+  using bit_t = typename basis_t::bit_t;
 
   // Adjust MPI buffer size if necessary
   int64_t buffer_size_in = std::max(basis_in.size(), basis_in.size_transpose());

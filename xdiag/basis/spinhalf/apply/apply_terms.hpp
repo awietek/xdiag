@@ -13,10 +13,10 @@
 
 namespace xdiag::basis::spinhalf {
 
-template <typename bit_t, typename coeff_t, bool symmetric, class BasisIn,
-          class BasisOut, class Fill>
-void apply_terms(OpSum const &ops, BasisIn const &basis_in,
-                 BasisOut const &basis_out, Fill &fill) try {
+template <typename bit_t, typename coeff_t, bool symmetric, class basis_t,
+          class fill_f>
+void apply_terms(OpSum const &ops, basis_t const &basis_in,
+                 basis_t const &basis_out, fill_f fill) try {
   for (auto const &[cpl, op] : ops.plain()) {
     std::string type = op.type();
     if (type == "Id") {

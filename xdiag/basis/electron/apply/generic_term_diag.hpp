@@ -4,8 +4,8 @@ namespace xdiag::basis::electron {
 
 template <typename bit_t, typename coeff_t, bool symmetric, class basis_t,
           class apply_f, class fill_f>
-void generic_term_diagonal(Coupling cpl, basis_t &&basis, apply_f &&apply,
-                           fill_f &&fill) try {
+void generic_term_diag(Coupling cpl, basis_t const &basis, apply_f apply,
+                       fill_f fill) try {
   if constexpr (symmetric) {
 #ifdef _OPENMP
 #pragma omp parallel for schedule(guided)

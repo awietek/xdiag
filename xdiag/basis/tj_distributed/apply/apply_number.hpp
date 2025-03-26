@@ -6,8 +6,8 @@
 
 namespace xdiag::basis::tj_distributed {
 
-template <typename bit_t, typename coeff_t, class Basis>
-void apply_number(Coupling const &cpl, Op const &op, Basis &&basis,
+template <typename bit_t, typename coeff_t, class basis_t>
+void apply_number(Coupling const &cpl, Op const &op, basis_t const &basis,
                   const coeff_t *vec_in, coeff_t *vec_out) {
   coeff_t mu = cpl.scalar().as<coeff_t>();
   int64_t s = op[0];

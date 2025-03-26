@@ -9,8 +9,8 @@
 
 namespace xdiag::basis::electron_distributed {
 
-template <typename bit_t, typename coeff_t, class Basis>
-void apply_hopping(Coupling const &cpl, Op const &op, Basis &&basis,
+template <typename bit_t, typename coeff_t, class basis_t>
+void apply_hopping(Coupling const &cpl, Op const &op, basis_t const &basis,
                    const coeff_t *vec_in, coeff_t *vec_out) {
 
   coeff_t t = cpl.scalar().as<coeff_t>();

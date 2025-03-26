@@ -6,8 +6,8 @@
 
 namespace xdiag::basis::electron_distributed {
 
-template <typename bit_t, typename coeff_t, class Basis>
-void apply_u(Coupling const &cpl, Basis &&basis, const coeff_t *vec_in,
+template <typename bit_t, typename coeff_t, class basis_t>
+void apply_u(Coupling const &cpl, basis_t const &basis, const coeff_t *vec_in,
              coeff_t *vec_out) {
   coeff_t U = cpl.scalar().as<coeff_t>();
   auto term_action = [&](bit_t up, bit_t dn) {
