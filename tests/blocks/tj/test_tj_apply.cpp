@@ -81,7 +81,7 @@ TEST_CASE("tj_apply", "[tj]") {
 
     for (int nup = 0; nup <= nsites; ++nup) {
       for (int ndn = 0; ndn <= nsites - nup; ++ndn) {
-        auto b = tJDistributed(nsites, nup, ndn);
+        auto b = tJ(nsites, nup, ndn);
         auto r = random_state(b);
 
         for (int i = 0; i < nsites; ++i) {
