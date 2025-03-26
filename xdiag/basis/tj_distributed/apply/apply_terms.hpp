@@ -3,6 +3,7 @@
 #include <xdiag/basis/tj_distributed/apply/apply_exchange.hpp>
 #include <xdiag/basis/tj_distributed/apply/apply_hopping.hpp>
 #include <xdiag/basis/tj_distributed/apply/apply_number.hpp>
+#include <xdiag/basis/tj_distributed/apply/apply_number_number.hpp>
 #include <xdiag/basis/tj_distributed/apply/apply_raise_lower.hpp>
 #include <xdiag/basis/tj_distributed/apply/apply_szsz.hpp>
 #include <xdiag/common.hpp>
@@ -29,6 +30,9 @@ void apply_terms(OpSum const &ops, BasisIn const &basis_in,
           cpl, op, basis_in, vec_in.memptr(), vec_out.memptr());
     } else if ((type == "Nup") || (type == "Ndn")) {
       tj_distributed::apply_number<bit_t, coeff_t>(
+          cpl, op, basis_in, vec_in.memptr(), vec_out.memptr());
+    } else if (type == "NtotNtot") {
+      tj_distributed::apply_ntot_ntot<bit_t, coeff_t>(
           cpl, op, basis_in, vec_in.memptr(), vec_out.memptr());
     } else if (type == "Exchange") {
       tj_distributed::apply_exchange<bit_t, coeff_t>(
@@ -70,7 +74,7 @@ void apply_terms(OpSum const &ops, BasisIn const &basis_in,
           cpl, op, basis_in, vec_in_trans, basis_out, vec_out_trans);
     } else if ((type == "SzSz") || (type == "tJSzSz") || (type == "Exchange") ||
                (type == "Hopdn") || (type == "Nup") || (type == "Ndn") ||
-               (type == "Cdagdn") || (type == "Cdn")) {
+               (type == "NtotNtot") || (type == "Cdagdn") || (type == "Cdn")) {
       continue;
     } else {
       XDIAG_THROW(std::string("Unknown Op type for \"tJDistributed\" block: ") +

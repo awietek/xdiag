@@ -13,6 +13,22 @@
 
 using namespace xdiag;
 
+static void test_onsite(std::string op1, std::string op12) {
+  for (int nsites = 2; nsites < 5; ++nsites) {
+    for (int nup = 0; nup <= nsites; ++nup) {
+      for (int ndn = 0; ndn <= nsites; ++ndn) {
+        auto b = ElectronDistributed(nsites, nup, ndn);
+        for (int s = 0; s < nsites; ++s) {
+          auto r = random_state(b);
+          auto x = apply(Op(op1, s), apply(Op(op1, s), r));
+          auto y = apply(Op(op12, {s, s}), r);
+          REQUIRE(isapprox(x, y));
+        }
+      }
+    }
+  }
+}
+
 static void test_regular_block_e0(OpSum ops, int nsites, int nup, int ndn) {
   auto block = Electron(nsites, nup, ndn);
   auto blockd = ElectronDistributed(nsites, nup, ndn);
@@ -111,6 +127,48 @@ TEST_CASE("electron_distributed_apply", "[electron_distributed]") try {
     }
   }
 
+  test_onsite("Sz", "SzSz");
+  test_onsite("Ntot", "NtotNtot");
+  test_onsite("Nupdn", "NupdnNupdn");
+
+  // Test corrs
+  for (int nsites = 2; nsites < 5; ++nsites) {
+    for (int nup = 0; nup <= nsites; ++nup) {
+      for (int ndn = 0; ndn <= nsites; ++ndn) {
+        auto b = ElectronDistributed(nsites, nup, ndn);
+        auto r = random_state(b);
+
+        for (int i = 0; i < nsites; ++i) {
+          auto a = apply(Op("Nup", i), apply(Op("Ndn", i), r));
+          auto b = apply(Op("Nupdn", i), r);
+          REQUIRE(isapprox(a, b));
+
+          a = apply(Op("Nup", i), r) + apply(Op("Ndn", i), r);
+          b = apply(Op("Ntot", i), r);
+          REQUIRE(isapprox(a, b));
+
+          a = 0.5 * (apply(Op("Nup", i), r) - apply(Op("Ndn", i), r));
+          b = apply(Op("Sz", i), r);
+          REQUIRE(isapprox(a, b));
+
+          for (int j = 0; j < nsites; ++j) {
+
+            a = apply(Op("SzSz", {i, j}), r);
+            b = apply(Op("Sz", i), apply(Op("Sz", j), r));
+            REQUIRE(isapprox(a, b));
+
+            a = apply(Op("NtotNtot", {i, j}), r);
+            b = apply(Op("Ntot", i), apply(Op("Ntot", j), r));
+            REQUIRE(isapprox(a, b));
+
+            a = apply(Op("NupdnNupdn", {i, j}), r);
+            b = apply(Op("Nupdn", i), apply(Op("Nupdn", j), r));
+            REQUIRE(isapprox(a, b));
+          }
+        }
+      }
+    }
+  }
 } catch (Error e) {
   error_trace(e);
 }

@@ -3,6 +3,7 @@
 #include <xdiag/basis/electron_distributed/apply/apply_exchange.hpp>
 #include <xdiag/basis/electron_distributed/apply/apply_hopping.hpp>
 #include <xdiag/basis/electron_distributed/apply/apply_number.hpp>
+#include <xdiag/basis/electron_distributed/apply/apply_number_number.hpp>
 #include <xdiag/basis/electron_distributed/apply/apply_raise_lower.hpp>
 #include <xdiag/basis/electron_distributed/apply/apply_szsz.hpp>
 #include <xdiag/basis/electron_distributed/apply/apply_u.hpp>
@@ -30,6 +31,15 @@ void apply_terms(OpSum const &ops, basis_t const &basis_in,
           cpl, op, basis_in, vec_in.memptr(), vec_out.memptr());
     } else if ((type == "Nup") || (type == "Ndn")) {
       electron_distributed::apply_number<bit_t, coeff_t>(
+          cpl, op, basis_in, vec_in.memptr(), vec_out.memptr());
+    } else if (type == "Nupdn") {
+      electron_distributed::apply_nupdn<bit_t, coeff_t>(
+          cpl, op, basis_in, vec_in.memptr(), vec_out.memptr());
+    } else if (type == "NupdnNupdn") {
+      electron_distributed::apply_nupdn_nupdn<bit_t, coeff_t>(
+          cpl, op, basis_in, vec_in.memptr(), vec_out.memptr());
+    } else if (type == "NtotNtot") {
+      electron_distributed::apply_ntot_ntot<bit_t, coeff_t>(
           cpl, op, basis_in, vec_in.memptr(), vec_out.memptr());
     } else if (type == "Exchange") {
       electron_distributed::apply_exchange<bit_t, coeff_t>(
@@ -75,7 +85,8 @@ void apply_terms(OpSum const &ops, basis_t const &basis_in,
           cpl, op, basis_in, vec_in_trans, basis_out, vec_out_trans);
     } else if ((type == "SzSz") || (type == "Exchange") || (type == "Hopdn") ||
                (type == "Nup") || (type == "Ndn") || (type == "HubbardU") ||
-               (type == "Cdagdn") || (type == "Cdn")) {
+               (type == "Cdagdn") || (type == "Cdn") || (type == "Nupdn") ||
+               (type == "NupdnNupdn") || (type == "NtotNtot")) {
       continue;
     } else {
       XDIAG_THROW(
