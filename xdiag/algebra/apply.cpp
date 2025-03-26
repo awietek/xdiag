@@ -11,7 +11,9 @@
 #include <xdiag/basis/electron/apply/dispatch_apply.hpp>
 #include <xdiag/basis/spinhalf/apply/dispatch_apply.hpp>
 #include <xdiag/basis/tj/apply/dispatch_apply.hpp>
+
 #ifdef XDIAG_USE_MPI
+#include <xdiag/basis/electron_distributed/apply/dispatch_apply.hpp>
 #include <xdiag/basis/spinhalf_distributed/apply/dispatch_apply.hpp>
 #include <xdiag/basis/tj_distributed/apply/dispatch_apply.hpp>
 #endif
@@ -84,20 +86,20 @@ void apply(OpSum const &ops, State const &v, State &w) try {
         arma::mat wmat = w.matrix(false);
         apply(ops, v.block(), vmat, w.block(), wmat);
       } else if (isreal(v) && !isreal(w)) {
-      auto w2 = State(w.block(), true, w.ncols());
-      arma::mat vmat = v.matrix(false);
-      arma::mat wmat = w2.matrix(false);
-      apply(ops, v.block(), vmat, w.block(), wmat);
-      w = w2;
+        auto w2 = State(w.block(), true, w.ncols());
+        arma::mat vmat = v.matrix(false);
+        arma::mat wmat = w2.matrix(false);
+        apply(ops, v.block(), vmat, w.block(), wmat);
+        w = w2;
       } else if (!isreal(v) && isreal(w)) {
-      w.make_complex();
-      arma::cx_mat vmat = v.matrixC(false);
-      arma::cx_mat wmat = w.matrixC(false);
-      apply(ops, v.block(), vmat, w.block(), wmat);
+        w.make_complex();
+        arma::cx_mat vmat = v.matrixC(false);
+        arma::cx_mat wmat = w.matrixC(false);
+        apply(ops, v.block(), vmat, w.block(), wmat);
       } else if (!isreal(v) && !isreal(w)) {
-      arma::cx_mat vmat = v.matrixC(false);
-      arma::cx_mat wmat = w.matrixC(false);
-      apply(ops, v.block(), vmat, w.block(), wmat);
+        arma::cx_mat vmat = v.matrixC(false);
+        arma::cx_mat wmat = w.matrixC(false);
+        apply(ops, v.block(), vmat, w.block(), wmat);
       }
     } else {
       if (isreal(v)) {
@@ -148,6 +150,9 @@ void apply(OpSum const &ops, Block const &block_in, mat_t const &mat_in,
             apply(ops, b1, mat_in, b2, mat_out);
           },
           [&](tJDistributed const &b1, tJDistributed const &b2) {
+            apply(ops, b1, mat_in, b2, mat_out);
+          },
+          [&](ElectronDistributed const &b1, ElectronDistributed const &b2) {
             apply(ops, b1, mat_in, b2, mat_out);
           },
 #endif
@@ -228,6 +233,19 @@ template void apply(OpSum const &, tJDistributed const &, arma::mat const &,
                     tJDistributed const &, arma::mat &);
 template void apply(OpSum const &, tJDistributed const &, arma::cx_mat const &,
                     tJDistributed const &, arma::cx_mat &);
+
+template void apply(OpSum const &, ElectronDistributed const &,
+                    arma::vec const &, ElectronDistributed const &,
+                    arma::vec &);
+template void apply(OpSum const &, ElectronDistributed const &,
+                    arma::cx_vec const &, ElectronDistributed const &,
+                    arma::cx_vec &);
+template void apply(OpSum const &, ElectronDistributed const &,
+                    arma::mat const &, ElectronDistributed const &,
+                    arma::mat &);
+template void apply(OpSum const &, ElectronDistributed const &,
+                    arma::cx_mat const &, ElectronDistributed const &,
+                    arma::cx_mat &);
 #endif
 
 } // namespace xdiag

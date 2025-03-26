@@ -106,6 +106,21 @@ uint64_t hash(tJDistributed const &block) {
   h = hash_combine(h, hash_fnv1((uint64_t)mpi_rank));
   return h;
 }
+
+uint64_t hash(ElectronDistributed const &block) {
+  uint64_t h = block.nsites() == 0 ? 0 : hash_fnv1((uint64_t)block.nsites());
+  if (block.nup() != undefined) {
+    h = hash_combine(h, hash_fnv1((uint64_t)*block.nup()));
+  }
+  if (block.ndn() != undefined) {
+    h = hash_combine(h, hash_fnv1((uint64_t)*block.ndn()));
+  }
+
+  int mpi_rank;
+  MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
+  h = hash_combine(h, hash_fnv1((uint64_t)mpi_rank));
+  return hash_combine(h, 1234);
+}
 #endif
 
 } // namespace xdiag::random

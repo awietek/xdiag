@@ -10,7 +10,7 @@
 #include <xdiag/parallel/mpi/communicator.hpp>
 #include <xdiag/random/hash_functions.hpp>
 
-namespace xdiag::basis::tj_distributed {
+namespace xdiag::basis::electron_distributed {
 
 template <typename bit_tt> class BasisNpIterator;
 
@@ -35,7 +35,6 @@ public:
   iterator_t begin() const;
   iterator_t end() const;
   int64_t index(bit_t up, bit_t dn) const;
-  int64_t index_r(bit_t up, bit_t dn) const;
 
   bool operator==(BasisNp const &rhs) const;
   bool operator!=(BasisNp const &rhs) const;
@@ -45,8 +44,8 @@ private:
   int64_t nup_;
   int64_t ndn_;
 
-  combinatorics::LinTable<bit_t> lintable_dncs_;
-  combinatorics::LinTable<bit_t> lintable_upcs_;
+  combinatorics::LinTable<bit_t> lintable_dns_;
+  combinatorics::LinTable<bit_t> lintable_ups_;
 
   int64_t dim_;
   int64_t size_;
@@ -65,38 +64,26 @@ private:
 
   std::vector<bit_t> my_ups_;
   std::unordered_map<bit_t, int64_t> my_ups_offset_;
-  std::vector<gsl::span<bit_t>> my_dns_for_ups_;
-  std::vector<bit_t> my_dns_for_ups_storage_;
-
   std::vector<bit_t> my_dns_;
   std::unordered_map<bit_t, int64_t> my_dns_offset_;
-  std::vector<gsl::span<bit_t>> my_ups_for_dns_;
-  std::vector<bit_t> my_ups_for_dns_storage_;
+
+  std::vector<bit_t> all_ups_;
+  std::vector<bit_t> all_dns_;
 
 public:
   std::vector<bit_t> const &my_ups() const;
   int64_t my_ups_offset(bit_t ups) const;
-  gsl::span<bit_t> my_dns_for_ups(int64_t idx_ups) const;
-  inline bit_t my_dns_for_ups_storage(int64_t idx) const {
-    return my_dns_for_ups_storage_[idx];
-  }
+  std::vector<bit_t> const &all_dns() const;
 
   std::vector<bit_t> const &my_dns() const;
   int64_t my_dns_offset(bit_t dns) const;
-  gsl::span<bit_t> my_ups_for_dns(int64_t idx_dns) const;
-  inline bit_t my_ups_for_dns_storage(int64_t idx) const {
-    return my_ups_for_dns_storage_[idx];
-  }
+  std::vector<bit_t> const &all_ups() const;
 
   inline int rank(bit_t spins) const { // mpi ranks are ints
     return (int)(random::hash_div3(spins) % mpi_size_);
   };
-  inline int64_t index_dncs(bit_t dncs) const {
-    return lintable_dncs_.index(dncs);
-  }
-  inline int64_t index_upcs(bit_t upcs) const {
-    return lintable_upcs_.index(upcs);
-  }
+  inline int64_t index_dns(bit_t dns) const { return lintable_dns_.index(dns); }
+  inline int64_t index_ups(bit_t ups) const { return lintable_ups_.index(ups); }
 
   // transforms a vector in up/dn order to dn/up order
   // if no "out_vec" is given result of transpose is stored
@@ -124,11 +111,9 @@ public:
 
 private:
   BasisNp<bit_t> const &basis_;
-  bit_t sitesmask_;
   int64_t up_idx_;
   int64_t dn_idx_;
-  gsl::span<bit_t const> dns_for_ups_;
 };
 
-} // namespace xdiag::basis::tj_distributed
+} // namespace xdiag::basis::electron_distributed
 #endif

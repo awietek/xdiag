@@ -46,6 +46,7 @@
 #ifdef XDIAG_USE_MPI
 #include <xdiag/blocks/spinhalf_distributed.hpp>
 #include <xdiag/blocks/tj_distributed.hpp>
+#include <xdiag/blocks/electron_distributed.hpp>
 #endif
 
 #undef XDIAG_THROW

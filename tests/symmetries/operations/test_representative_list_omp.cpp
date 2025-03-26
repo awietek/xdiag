@@ -1,3 +1,4 @@
+#ifdef _OPENMP
 #include "../../catch.hpp"
 
 #include <xdiag/combinatorics/combinations.hpp>
@@ -57,9 +58,8 @@ void test_representatives_indices_symmetries_limits_omp() {
 TEST_CASE("representative_list_omp", "[symmetries]") {
   using namespace xdiag;
 
-#ifdef _OPENMP
   Log("testing representative_list_omp");
   test_representatives_indices_symmetries_limits_omp<uint32_t>();
   test_representatives_indices_symmetries_limits_omp<uint64_t>();
-#endif
 }
+#endif

@@ -2,6 +2,16 @@
 #include <xdiag/operators/logic/valid.hpp>
 #include <xdiag/utils/scalar.hpp>
 
+#include <xdiag/blocks/electron.hpp>
+#include <xdiag/blocks/spinhalf.hpp>
+#include <xdiag/blocks/tj.hpp>
+
+#ifdef XDIAG_USE_MPI
+#include <xdiag/blocks/electron_distributed.hpp>
+#include <xdiag/blocks/spinhalf_distributed.hpp>
+#include <xdiag/blocks/tj_distributed.hpp>
+#endif
+
 namespace xdiag::operators {
 
 OpSum clean_zeros(OpSum const &ops) try {
@@ -224,6 +234,7 @@ template <> OpSum compile<Electron>(OpSum const &ops) try {
 } catch (Error const &error) {
   XDIAG_RETHROW(error);
 }
+  
 #ifdef XDIAG_USE_MPI
 template <> OpSum compile<SpinhalfDistributed>(OpSum const &ops) try {
   return compile_spinhalf(ops);
@@ -232,6 +243,11 @@ template <> OpSum compile<SpinhalfDistributed>(OpSum const &ops) try {
 }
 template <> OpSum compile<tJDistributed>(OpSum const &ops) try {
   return compile_tj(ops);
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
+}
+template <> OpSum compile<ElectronDistributed>(OpSum const &ops) try {
+  return compile_electron(ops);
 } catch (Error const &error) {
   XDIAG_RETHROW(error);
 }

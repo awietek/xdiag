@@ -1,12 +1,12 @@
 ---
-title: tJDistributed
+title: ElectronDistributed
 ---
 
-A block in a  $t-J$ type Hilbert space, i.e. fermions with $\uparrow, \downarrow$ spin excluding doubly occupied sites with distributed computing capabilities. 
+A block in an electron type Hilbert space, i.e. fermions with $\uparrow, \downarrow$ spin with distributed computing capabilities. 
 
 **Sources**<br>
-[tj_distributed.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/blocks/tj_distributed.hpp)<br>
-[tj_distributed.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/blocks/tj_distributed.cpp)
+[electron_distributed.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/blocks/electron_distributed.hpp)<br>
+[electron_distributed.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/blocks/electron_distributed.cpp)
 
 ---
 
@@ -14,9 +14,8 @@ A block in a  $t-J$ type Hilbert space, i.e. fermions with $\uparrow, \downarrow
 
 === "C++"	
 	```c++
-	tJDistributed(int64_t nsites, int64_t nup, int64_t ndn, std::string backend = "auto");
+	ElectronDistributed(int64_t nsites, int64_t nup, int64_t ndn, std::string backend = "auto");
 	```
-
 
 | Name    | Description                                                                          | Default |
 |:--------|:-------------------------------------------------------------------------------------|---------|
@@ -31,11 +30,11 @@ The parameter `backend` chooses how the block is coded internally. By using the 
 
 ## Iteration
 
-An tJDistributed block can be iterated over, where at each iteration a [ProductState](../states/product_state.md) representing the corresponding basis state is returned.
+An ElectronDistributed block can be iterated over, where at each iteration a [ProductState](../states/product_state.md) representing the corresponding basis state is returned.
 
 === "C++"	
 	```c++
-    auto block = tJDistributed(4, 2, 1);
+    auto block = ElectronDistributed(4, 2, 1);
 	for (auto pstate : block) {
 		Log("{} {}", to_string(pstate), index(block, pstate));
 	}
@@ -47,11 +46,11 @@ An tJDistributed block can be iterated over, where at each iteration a [ProductS
 
 #### index
 
-Returns the index of a given [ProductState](../states/product_state.md) in the basis of the tJDistributed block.
+Returns the index of a given [ProductState](../states/product_state.md) in the basis of the ElectronDistributed block.
 
 === "C++"	
 	```c++
-	int64_t index(tJDistributed const &block, ProductState const &pstate);
+	int64_t index(ElectronDistributed const &block, ProductState const &pstate);
 	```
 
 ---
@@ -62,9 +61,8 @@ Returns the number of sites of the block.
 
 === "C++"	
 	```c++
-	int64_t nsites(tJDistributed const &block);
+	int64_t nsites(ElectronDistributed const &block);
 	```
-
 ---
 
 #### size
@@ -72,9 +70,8 @@ Returns the size of the block on a local process.
 
 === "C++"	
 	```c++
-	int64_t size(tJDistributed const &block) const;
+	int64_t size(ElectronDistributed const &block) const;
 	```
-
 
 ---
 
@@ -83,10 +80,8 @@ Returns the dimension of the block, i.e. the sum of all sizes across all process
 
 === "C++"	
 	```c++
-	int64_t dim(tJDistributed const &block) const;
+	int64_t dim(ElectronDistributed const &block) const;
 	```
-
-
 ---
 		
 #### isreal
@@ -96,5 +91,5 @@ Complex arithmetic is needed when a
 
 === "C++"	
 	```c++
-    bool isreal(tJDistributed const &block);
+    bool isreal(ElectronDistributed const &block);
 	```

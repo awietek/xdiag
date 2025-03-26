@@ -39,10 +39,20 @@ Representation representation(OpSum const &ops,
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
+
 template <>
 Representation representation(OpSum const &ops,
                               tJDistributed const &block) try {
   XDIAG_THROW("Block of type tJDistributed does not have irreducible "
+              "representation defined");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+
+template <>
+Representation representation(OpSum const &ops,
+                              ElectronDistributed const &block) try {
+  XDIAG_THROW("Block of type ElectronDistributed does not have irreducible "
               "representation defined");
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
@@ -89,6 +99,7 @@ template int64_t nup(OpSum const &ops, Electron const &block);
 #ifdef XDIAG_USE_MPI
 template int64_t nup(OpSum const &ops, SpinhalfDistributed const &block);
 template int64_t nup(OpSum const &ops, tJDistributed const &block);
+template int64_t nup(OpSum const &ops, ElectronDistributed const &block);
 #endif
 
 int64_t nup(OpSum const &ops, Block const &block) try {
@@ -135,6 +146,7 @@ int64_t ndn(OpSum const &ops, SpinhalfDistributed const &block) try {
   XDIAG_RETHROW(e);
 }
 template int64_t ndn(OpSum const &ops, tJDistributed const &block);
+template int64_t ndn(OpSum const &ops, ElectronDistributed const &block);
 #endif
 
 int64_t ndn(OpSum const &ops, Block const &block) try {

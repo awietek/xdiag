@@ -11,6 +11,7 @@
 #include <xdiag/blocks/tj.hpp>
 
 #ifdef XDIAG_USE_MPI
+#include <xdiag/blocks/electron_distributed.hpp>
 #include <xdiag/blocks/spinhalf_distributed.hpp>
 #include <xdiag/blocks/tj_distributed.hpp>
 #endif
@@ -30,6 +31,7 @@ uint64_t hash(Electron const &block);
 #ifdef XDIAG_USE_MPI
 uint64_t hash(SpinhalfDistributed const &block);
 uint64_t hash(tJDistributed const &block);
+uint64_t hash(ElectronDistributed const &block);
 #endif
 
 } // namespace xdiag::random

@@ -4,7 +4,9 @@ title: SpinhalfDistributed
 
 A block in a spin $S=1/2$ Hilbert space with distributed computing capabilities.
 
-**Sources** [spinhalf_distributed.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/blocks/spinhalf_distributed.hpp), [spinhalf_distributed.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/blocks/spinhalf_distributed.cpp)
+**Sources**<br>
+[spinhalf_distributed.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/blocks/spinhalf_distributed.hpp)<br>
+[spinhalf_distributed.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/blocks/spinhalf_distributed.cpp)
 
 ---
 

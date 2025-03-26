@@ -146,8 +146,13 @@ set(XDIAG_DISTRIBUTED_SOURCES
   basis/tj_distributed/basis_np.cpp
   basis/tj_distributed/apply/dispatch_apply.cpp
 
+  basis/electron_distributed/basis_electron_distributed.cpp
+  basis/electron_distributed/basis_np.cpp
+  basis/electron_distributed/apply/dispatch_apply.cpp
+  
   blocks/spinhalf_distributed.cpp
   blocks/tj_distributed.cpp
+  blocks/electron_distributed.cpp
 )
 
 set(XDIAG_JULIA_SOURCES

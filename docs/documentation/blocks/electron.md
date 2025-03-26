@@ -4,7 +4,10 @@ title: Electron
 
 A block in an Electron (fermions with $\uparrow, \downarrow$ spin) Hilbert space. 
 
-**Sources** [electron.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/blocks/electron.hpp), [electron.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/blocks/electron.cpp)
+**Sources**<br>
+[electron.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/blocks/electron.hpp)<br>
+[electron.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/blocks/electron.cpp)<br>
+[electron.jl](https://github.com/awietek/XDiag.jl/blob/main/src/blocks/electron.jl)
 
 ---
 
