@@ -5,6 +5,7 @@
 #include <xdiag/algebra/fill.hpp>
 #include <xdiag/operators/logic/block.hpp>
 #include <xdiag/operators/logic/compilation.hpp>
+#include <xdiag/operators/logic/isapprox.hpp>
 #include <xdiag/operators/logic/real.hpp>
 #include <xdiag/operators/logic/valid.hpp>
 
@@ -21,6 +22,16 @@
 namespace xdiag {
 
 State apply(OpSum const &ops, State const &v) try {
+  // invalid v
+  if (!isvalid(v)) {
+    return State();
+  }
+
+  // ops is zero
+  if (isapprox(ops, OpSum())) {
+    return State();
+  }
+
   auto blockr = block(ops, v.block());
   bool real = isreal(ops) && isreal(v);
   auto w = State(blockr, real, v.ncols());
@@ -36,6 +47,16 @@ State apply(Op const &op, State const &v) try {
 }
 
 void apply(OpSum const &ops, State const &v, State &w) try {
+  // invalid v
+  if (!isvalid(v)) {
+    w = State();
+  }
+
+  // ops is zero
+  if (isapprox(ops, OpSum())) {
+    w = State();
+  }
+
   if (!blocks_match(ops, v.block(), w.block())) {
     XDIAG_THROW("Cannot apply OpSum to State. The resulting state is not in "
                 "the correct symmetry sector. Please check the quantum numbers "

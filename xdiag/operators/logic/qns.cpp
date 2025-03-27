@@ -5,6 +5,7 @@
 
 #include <xdiag/operators/logic/isapprox.hpp>
 #include <xdiag/operators/logic/permute.hpp>
+#include <xdiag/operators/logic/order.hpp>
 #include <xdiag/operators/logic/valid.hpp>
 #include <xdiag/utils/scalar.hpp>
 
@@ -206,13 +207,14 @@ std::optional<int64_t> nup(Op const &op) try {
 }
 
 std::optional<int64_t> nup(OpSum const &ops) try {
-  check_valid(ops);
-  if (ops.size() == 0) {
+  OpSum opso = order(ops);
+  check_valid(opso);
+  if (opso.size() == 0) {
     return 0;
   } else {
     // Compute nup for every Op
     std::vector<std::optional<int64_t>> nups;
-    for (auto [cpl, op] : ops) {
+    for (auto [cpl, op] : opso) {
       nups.push_back(nup(op));
     }
 
@@ -243,13 +245,14 @@ std::optional<int64_t> ndn(Op const &op) try {
 }
 
 std::optional<int64_t> ndn(OpSum const &ops) try {
-  check_valid(ops);
-  if (ops.size() == 0) {
+  OpSum opso = order(ops);
+  check_valid(opso);
+  if (opso.size() == 0) {
     return 0;
   } else {
     // Compute nup for every Op
     std::vector<std::optional<int64_t>> ndns;
-    for (auto [cpl, op] : ops) {
+    for (auto [cpl, op] : opso) {
       ndns.push_back(ndn(op));
     }
 
@@ -267,12 +270,14 @@ std::optional<int64_t> ndn(OpSum const &ops) try {
 
 std::optional<Representation>
 representation(OpSum const &ops, PermutationGroup const &group) try {
+  OpSum opso = order(ops);
+  check_valid(opso);
   std::vector<complex> characters;
   std::vector<double> characters_real;
   bool real = true;
   for (auto const &perm : group) {
-    OpSum opsp = permute(ops, perm);
-    std::optional<Scalar> factor = isapprox_multiple(opsp, ops);
+    OpSum opsp = permute(opso, perm);
+    std::optional<Scalar> factor = isapprox_multiple(opsp, opso);
     if (factor) {
       characters.push_back((*factor).as<complex>());
       characters_real.push_back((*factor).real());

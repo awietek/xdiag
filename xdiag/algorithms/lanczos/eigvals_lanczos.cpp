@@ -64,7 +64,12 @@ EigvalsLanczosResult eigvals_lanczos_inplace(OpSum const &ops, State &psi0,
   } else if (neigvals > dim(psi0.block())) {
     neigvals = dim(psi0.block());
   }
-  
+
+  if (!isvalid(psi0)) {
+    XDIAG_THROW("Initial state must be a valid state (i.e. not default "
+                "constructed by e.g. an annihilation operator)");
+  }
+
   if (!isapprox(ops, hc(ops))) {
     XDIAG_THROW("Input OpSum is not hermitian");
   }

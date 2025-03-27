@@ -31,6 +31,9 @@ TEST_CASE("tj_distributed_raise_lower", "[tj_distributed]") try {
 
             for (auto op_i_str : op_strs) {
               for (auto op_j_str : op_strs) {
+                // Log("nsites: {}, nup: {}, ndn: {}, i: {}, j: {}, op_i: {}, "
+                //     "op_j: {} ",
+                //     nsites, nup, ndn, i, j, op_i_str, op_j_str);
 
                 if (!valid_nup_ndn(op_i_str, op_j_str, nup, ndn, nsites)) {
                   continue;
@@ -41,9 +44,6 @@ TEST_CASE("tj_distributed_raise_lower", "[tj_distributed]") try {
                 if (!valid_nup_ndn(op_j_str, nup, ndn, nsites)) {
                   continue;
                 }
-                // Log("nsites: {}, nup: {}, ndn: {}, i: {}, j: {}, op_i: {}, "
-                //     "op_j: {} ",
-                //     nsites, nup, ndn, i, j, op_i_str, op_j_str);
 
                 auto op_i = Op(op_i_str, i);
                 auto op_j = Op(op_j_str, j);

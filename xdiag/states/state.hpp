@@ -16,6 +16,7 @@ public:
   XDIAG_API State(Block const &block, arma::mat const &matrix);
   XDIAG_API State(Block const &block, arma::cx_mat const &matrix);
 
+  XDIAG_API bool isvalid() const;
   XDIAG_API int64_t nsites() const;
   XDIAG_API bool isreal() const;
   XDIAG_API State real() const;
@@ -43,6 +44,7 @@ public:
   Block block() const;
 
 private:
+  bool valid_;
   Block block_;
   bool real_;
   int64_t nrows_;
@@ -55,6 +57,7 @@ private:
   void initcopy(const complex *ptr, int64_t nrows, int64_t ncols);
 };
 
+XDIAG_API bool isvalid(State const &s);
 XDIAG_API int64_t nsites(State const &s);
 XDIAG_API bool isapprox(State const &v, State const &w, double rtol = 1e-12,
                         double atol = 1e-12);

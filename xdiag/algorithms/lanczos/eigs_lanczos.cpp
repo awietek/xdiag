@@ -26,6 +26,10 @@ EigsLanczosResult eigs_lanczos(OpSum const &ops, State const &state0,
   } else if (neigvals > dim(state0.block())) {
     neigvals = dim(state0.block());
   }
+  if (!isvalid(state0)) {
+    XDIAG_THROW("Initial state must be a valid state (i.e. not default "
+                "constructed by e.g. an annihilation operator)");
+  }
   if (!isapprox(ops, hc(ops))) {
     XDIAG_THROW("Input OpSum is not hermitian");
   }

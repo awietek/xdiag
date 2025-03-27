@@ -11,6 +11,10 @@
 namespace xdiag {
 
 double norm(State const &v) try {
+  if (!isvalid(v)) {
+    return 0.;
+  }
+
   if (v.ncols() > 1) {
     XDIAG_THROW("Cannot compute norm of state with more than one column");
     return 0;
@@ -26,6 +30,10 @@ double norm(State const &v) try {
 }
 
 double norm1(State const &v) try {
+  if (!isvalid(v)) {
+    return 0.;
+  }
+
   if (v.ncols() > 1) {
     XDIAG_THROW("Cannot compute norm of state with more than one column");
     return 0;
@@ -42,6 +50,10 @@ double norm1(State const &v) try {
 }
 
 double norminf(State const &v) try {
+  if (!isvalid(v)) {
+    return 0.;
+  }
+
   if (v.ncols() > 1) {
     XDIAG_THROW("Cannot compute norm of state with more than one column");
     return 0;
@@ -58,6 +70,10 @@ double norminf(State const &v) try {
 }
 
 double dot(State const &v, State const &w) try {
+  if ((!isvalid(v)) || (!isvalid(w))) {
+    return 0.;
+  }
+
   if (v.block() != w.block()) {
     XDIAG_THROW("Cannot form dot product for states on different blocks");
     return 0;
@@ -79,6 +95,10 @@ double dot(State const &v, State const &w) try {
 }
 
 complex dotC(State const &v, State const &w) try {
+  if ((!isvalid(v)) || (!isvalid(w))) {
+    return complex(0.);
+  }
+
   if (v.block() != w.block()) {
     XDIAG_THROW("Cannot form dot product for states on different blocks");
   }
@@ -115,6 +135,10 @@ complex dotC(State const &v, State const &w) try {
 }
 
 double inner(OpSum const &ops, State const &v) try {
+  if (!isvalid(v)) {
+    return 0.;
+  }
+
   if (isreal(v) && isreal(ops)) {
     auto w = v;
     apply(ops, v, w);
@@ -129,12 +153,20 @@ double inner(OpSum const &ops, State const &v) try {
 }
 
 double inner(Op const &op, State const &v) try {
+  if (!isvalid(v)) {
+    return 0.;
+  }
+
   return inner(OpSum(op), v);
 } catch (Error const &error) {
   XDIAG_RETHROW(error);
 }
 
 complex innerC(OpSum const &ops, State const &v) try {
+  if (!isvalid(v)) {
+    return complex(0.);
+  }
+
   if (isreal(v) && isreal(ops)) {
     auto w = v;
     apply(ops, v, w);
@@ -155,6 +187,10 @@ complex innerC(OpSum const &ops, State const &v) try {
 }
 
 complex innerC(Op const &op, State const &v) try {
+  if (!isvalid(v)) {
+    return complex(0.);
+  }
+
   return innerC(OpSum(op), v);
 } catch (Error const &error) {
   XDIAG_RETHROW(error);

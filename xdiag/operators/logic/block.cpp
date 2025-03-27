@@ -1,6 +1,8 @@
 #include "block.hpp"
 
+#include <xdiag/operators/logic/order.hpp>
 #include <xdiag/operators/logic/qns.hpp>
+
 namespace xdiag {
 
 Spinhalf block(OpSum const &ops, Spinhalf const &block) try {

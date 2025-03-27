@@ -38,8 +38,25 @@ bool isapprox(Op const &op1, Op const &op2, double rtol, double atol) try {
 
 bool isapprox(OpSum const &ops1, OpSum const &ops2, double rtol,
               double atol) try {
-  auto t1 = order(ops1).terms();
-  auto t2 = order(ops2).terms();
+  auto t1z = order(ops1).terms();
+  auto t2z = order(ops2).terms();
+
+  // Remove zero entries
+  OpSum t1o;
+  for (auto [cpl, op] : t1z) {
+    if (!isapprox(cpl.scalar(), Scalar(0.), rtol, atol)) {
+      t1o += cpl * op;
+    }
+  }
+  OpSum t2o;
+  for (auto [cpl, op] : t2z) {
+    if (!isapprox(cpl.scalar(), Scalar(0.), rtol, atol)) {
+      t2o += cpl * op;
+    }
+  }
+  auto t1 = t1o.terms();
+  auto t2 = t2o.terms();
+
   if (t1.size() != t2.size()) {
     return false;
   } else {

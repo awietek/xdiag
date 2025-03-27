@@ -42,6 +42,11 @@ EvolveLanczosInplaceResult evolve_lanczos_inplace(OpSum const &H, State &psi,
                 "algorithm requires the operator to be hermitian.");
   }
 
+  if (!isvalid(psi)) {
+    XDIAG_THROW("Initial state must be a valid state (i.e. not default "
+                "constructed by e.g. an annihilation operator)");
+  }
+
   auto const &block = psi.block();
 
   // Real time evolution is possible
@@ -80,6 +85,10 @@ EvolveLanczosInplaceResult evolve_lanczos_inplace(OpSum const &H, State &psi,
   if (!isapprox(H, hc(H))) {
     XDIAG_THROW("Input OpSum is not hermitian. Evolution using the Lanczos "
                 "algorithm requires the operator to be hermitian.");
+  }
+  if (!isvalid(psi)) {
+    XDIAG_THROW("Initial state must be a valid state (i.e. not default "
+                "constructed by e.g. an annihilation operator)");
   }
   if (psi.isreal()) {
     psi.make_complex();

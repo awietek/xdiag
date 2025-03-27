@@ -51,13 +51,15 @@ void State::initcopy(const complex *ptr, int64_t nrows, int64_t ncols) try {
   XDIAG_RETHROW(e);
 }
 
-State::State(Block const &block, bool real, int64_t ncols) try : block_(block) {
+State::State(Block const &block, bool real, int64_t ncols) try
+    : valid_(true), block_(block) {
   init0(real, xdiag::size(block), ncols);
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
-State::State(Block const &block, arma::vec const &vector) try : block_(block) {
+State::State(Block const &block, arma::vec const &vector) try
+    : valid_(true), block_(block) {
   if (vector.size() != xdiag::size(block)) {
     XDIAG_THROW(
         "Size of block does not agree with size of given armadillo vector");
@@ -68,7 +70,7 @@ State::State(Block const &block, arma::vec const &vector) try : block_(block) {
 }
 
 State::State(Block const &block, arma::cx_vec const &vector) try
-    : block_(block) {
+    : valid_(true), block_(block) {
   if (vector.size() != xdiag::size(block)) {
     XDIAG_THROW(
         "Size of block does not agree with size of given armadillo vector");
@@ -77,7 +79,8 @@ State::State(Block const &block, arma::cx_vec const &vector) try
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
-State::State(Block const &block, arma::mat const &matrix) try : block_(block) {
+State::State(Block const &block, arma::mat const &matrix) try
+    : valid_(true), block_(block) {
   if (matrix.n_rows != xdiag::size(block)) {
     XDIAG_THROW("Size of block does not agree with number of rows of given "
                 "armadillo matrix");
@@ -87,7 +90,7 @@ State::State(Block const &block, arma::mat const &matrix) try : block_(block) {
   XDIAG_RETHROW(e);
 }
 State::State(Block const &block, arma::cx_mat const &matrix) try
-    : block_(block) {
+    : valid_(true), block_(block) {
   if (matrix.n_rows != xdiag::size(block)) {
     XDIAG_THROW("Size of block does not agree with number of rows of given "
                 "armadillo matrix");
@@ -99,19 +102,20 @@ State::State(Block const &block, arma::cx_mat const &matrix) try
 
 State::State(Block const &block, double const *ptr, int64_t ncols,
              int64_t stride) try
-    : block_(block) {
+    : valid_(true), block_(block) {
   initcopy(ptr, xdiag::size(block), ncols, stride);
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
 State::State(Block const &block, complex const *ptr, int64_t ncols) try
-    : block_(block) {
+    : valid_(true), block_(block) {
   initcopy(ptr, xdiag::size(block), ncols);
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
+bool State::isvalid() const { return valid_; }
 int64_t State::nsites() const { return xdiag::nsites(block_); }
 bool State::isreal() const { return real_; }
 
@@ -250,6 +254,7 @@ complex *State::colptrC(int64_t col) {
   return memptrC() + col * nrows_;
 }
 
+bool isvalid(State const &s) { return s.isvalid(); }
 int64_t nsites(State const &s) { return s.nsites(); }
 bool isapprox(State const &v, State const &w, double rtol, double atol) try {
   if (v.block() == w.block()) {
@@ -289,13 +294,17 @@ arma::cx_vec vectorC(State const &s, int64_t n, bool copy) {
 arma::cx_mat matrixC(State const &s, bool copy) { return s.matrixC(copy); }
 
 std::ostream &operator<<(std::ostream &out, State const &state) {
-  if (state.isreal()) {
-    out << "REAL State\n";
+  if (state.isvalid()) {
+    if (state.isreal()) {
+      out << "REAL State\n";
+    } else {
+      out << "COMPLEX State\n";
+    }
+    out << "Block:\n";
+    out << state.block();
   } else {
-    out << "COMPLEX State\n";
+    out << "INVALID State\n";
   }
-  out << "Block:\n";
-  out << state.block();
   return out;
 }
 std::string to_string(State const &state) { return to_string_generic(state); }
