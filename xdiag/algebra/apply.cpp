@@ -47,100 +47,99 @@ State apply(Op const &op, State const &v) try {
 }
 
 void apply(OpSum const &ops, State const &v, State &w) try {
-  // invalid v
+
   if (!isvalid(v)) {
     w = State();
-  }
-
-  // ops is zero
-  if (isapprox(ops, OpSum())) {
+  } else if (isapprox(ops, OpSum())) { // ops is zero
     w = State();
-  }
-
-  if (!blocks_match(ops, v.block(), w.block())) {
-    XDIAG_THROW("Cannot apply OpSum to State. The resulting state is not in "
-                "the correct symmetry sector. Please check the quantum numbers "
-                "of the output state w.");
-  }
-
-  if ((v.ncols() == 1) && (w.ncols() == 1)) {
-    if (isreal(ops)) {
-      if (isreal(v) && isreal(w)) {
-        arma::vec vvec = v.vector(0, false);
-        arma::vec wvec = w.vector(0, false);
-        apply(ops, v.block(), vvec, w.block(), wvec);
-      } else if (isreal(v) && !isreal(w)) {
-        auto w2 = State(w.block(), true);
-        arma::vec vvec = v.vector(0, false);
-        arma::vec wvec = w2.vector(0, false);
-        apply(ops, v.block(), vvec, w.block(), wvec);
-        w = w2;
-      } else if (!isreal(v) && isreal(w)) {
-        w.make_complex();
-        arma::cx_vec vvec = v.vectorC(0, false);
-        arma::cx_vec wvec = w.vectorC(0, false);
-        apply(ops, v.block(), vvec, w.block(), wvec);
-      } else if (!isreal(v) && !isreal(w)) {
-        arma::cx_vec vvec = v.vectorC(0, false);
-        arma::cx_vec wvec = w.vectorC(0, false);
-        apply(ops, v.block(), vvec, w.block(), wvec);
-      }
-    } else {
-      if (isreal(v)) {
-        auto v2 = v;
-        v2.make_complex();
-        w.make_complex();
-        arma::cx_vec vvec = v2.vectorC(0, false);
-        arma::cx_vec wvec = w.vectorC(0, false);
-        apply(ops, v.block(), vvec, w.block(), wvec);
-      } else {
-        w.make_complex();
-        arma::cx_vec vvec = v.vectorC(0, false);
-        arma::cx_vec wvec = w.vectorC(0, false);
-        apply(ops, v.block(), vvec, w.block(), wvec);
-      }
-    }
-  } else if (v.ncols() == w.ncols()) {
-    if (isreal(ops)) {
-      if (isreal(v) && isreal(w)) {
-        arma::mat vmat = v.matrix(false);
-        arma::mat wmat = w.matrix(false);
-        apply(ops, v.block(), vmat, w.block(), wmat);
-      } else if (isreal(v) && !isreal(w)) {
-        auto w2 = State(w.block(), true, w.ncols());
-        arma::mat vmat = v.matrix(false);
-        arma::mat wmat = w2.matrix(false);
-        apply(ops, v.block(), vmat, w.block(), wmat);
-        w = w2;
-      } else if (!isreal(v) && isreal(w)) {
-        w.make_complex();
-        arma::cx_mat vmat = v.matrixC(false);
-        arma::cx_mat wmat = w.matrixC(false);
-        apply(ops, v.block(), vmat, w.block(), wmat);
-      } else if (!isreal(v) && !isreal(w)) {
-        arma::cx_mat vmat = v.matrixC(false);
-        arma::cx_mat wmat = w.matrixC(false);
-        apply(ops, v.block(), vmat, w.block(), wmat);
-      }
-    } else {
-      if (isreal(v)) {
-        auto v2 = v;
-        v2.make_complex();
-        w.make_complex();
-        arma::cx_mat vmat = v2.matrixC(false);
-        arma::cx_mat wmat = w.matrixC(false);
-        apply(ops, v.block(), vmat, w.block(), wmat);
-      } else {
-        w.make_complex();
-        arma::cx_mat vmat = v.matrixC(false);
-        arma::cx_mat wmat = w.matrixC(false);
-        apply(ops, v.block(), vmat, w.block(), wmat);
-      }
-    }
   } else {
-    XDIAG_THROW("Applying a OpSum to a state with multiple "
-                "columns generically not yet implemented "
-                "(are the States of the same size?)");
+
+    if (!blocks_match(ops, v.block(), w.block())) {
+      XDIAG_THROW(
+          "Cannot apply OpSum to State. The resulting state is not in "
+          "the correct symmetry sector. Please check the quantum numbers "
+          "of the output state w.");
+    }
+
+    if ((v.ncols() == 1) && (w.ncols() == 1)) {
+      if (isreal(ops)) {
+        if (isreal(v) && isreal(w)) {
+          arma::vec vvec = v.vector(0, false);
+          arma::vec wvec = w.vector(0, false);
+          apply(ops, v.block(), vvec, w.block(), wvec);
+        } else if (isreal(v) && !isreal(w)) {
+          auto w2 = State(w.block(), true);
+          arma::vec vvec = v.vector(0, false);
+          arma::vec wvec = w2.vector(0, false);
+          apply(ops, v.block(), vvec, w.block(), wvec);
+          w = w2;
+        } else if (!isreal(v) && isreal(w)) {
+          w.make_complex();
+          arma::cx_vec vvec = v.vectorC(0, false);
+          arma::cx_vec wvec = w.vectorC(0, false);
+          apply(ops, v.block(), vvec, w.block(), wvec);
+        } else if (!isreal(v) && !isreal(w)) {
+          arma::cx_vec vvec = v.vectorC(0, false);
+          arma::cx_vec wvec = w.vectorC(0, false);
+          apply(ops, v.block(), vvec, w.block(), wvec);
+        }
+      } else {
+        if (isreal(v)) {
+          auto v2 = v;
+          v2.make_complex();
+          w.make_complex();
+          arma::cx_vec vvec = v2.vectorC(0, false);
+          arma::cx_vec wvec = w.vectorC(0, false);
+          apply(ops, v.block(), vvec, w.block(), wvec);
+        } else {
+          w.make_complex();
+          arma::cx_vec vvec = v.vectorC(0, false);
+          arma::cx_vec wvec = w.vectorC(0, false);
+          apply(ops, v.block(), vvec, w.block(), wvec);
+        }
+      }
+    } else if (v.ncols() == w.ncols()) {
+      if (isreal(ops)) {
+        if (isreal(v) && isreal(w)) {
+          arma::mat vmat = v.matrix(false);
+          arma::mat wmat = w.matrix(false);
+          apply(ops, v.block(), vmat, w.block(), wmat);
+        } else if (isreal(v) && !isreal(w)) {
+          auto w2 = State(w.block(), true, w.ncols());
+          arma::mat vmat = v.matrix(false);
+          arma::mat wmat = w2.matrix(false);
+          apply(ops, v.block(), vmat, w.block(), wmat);
+          w = w2;
+        } else if (!isreal(v) && isreal(w)) {
+          w.make_complex();
+          arma::cx_mat vmat = v.matrixC(false);
+          arma::cx_mat wmat = w.matrixC(false);
+          apply(ops, v.block(), vmat, w.block(), wmat);
+        } else if (!isreal(v) && !isreal(w)) {
+          arma::cx_mat vmat = v.matrixC(false);
+          arma::cx_mat wmat = w.matrixC(false);
+          apply(ops, v.block(), vmat, w.block(), wmat);
+        }
+      } else {
+        if (isreal(v)) {
+          auto v2 = v;
+          v2.make_complex();
+          w.make_complex();
+          arma::cx_mat vmat = v2.matrixC(false);
+          arma::cx_mat wmat = w.matrixC(false);
+          apply(ops, v.block(), vmat, w.block(), wmat);
+        } else {
+          w.make_complex();
+          arma::cx_mat vmat = v.matrixC(false);
+          arma::cx_mat wmat = w.matrixC(false);
+          apply(ops, v.block(), vmat, w.block(), wmat);
+        }
+      }
+    } else {
+      XDIAG_THROW("Applying a OpSum to a state with multiple "
+                  "columns generically not yet implemented "
+                  "(are the States of the same size?)");
+    }
   }
 } catch (Error const &error) {
   XDIAG_RETHROW(error);
