@@ -23,6 +23,7 @@ void apply_terms(OpSum const &ops, basis_t const &basis_in,
   mpi::buffer.reserve<coeff_t>(std::max(buffer_size_in, buffer_size_out));
 
   // Ops applied in up/dn order
+  double time_start = MPI_Wtime();
   for (auto [cpl, op] : ops) {
     std::string type = op.type();
     if (type == "SzSz") {
@@ -52,19 +53,24 @@ void apply_terms(OpSum const &ops, basis_t const &basis_in,
     } else if ((type == "Hopup") || (type == "Cdagup") || (type == "Cup")) {
       continue;
     } else if (type == "HubbardU") {
-      electron_distributed::apply_u<coeff_t>(
-          cpl, basis_in, vec_in.memptr(), vec_out.memptr());
+      electron_distributed::apply_u<coeff_t>(cpl, basis_in, vec_in.memptr(),
+                                             vec_out.memptr());
     } else {
       XDIAG_THROW(
           std::string("Unknown Op type for \"ElectronDistributed\" block: ") +
           type);
     }
   }
+  double time_end = MPI_Wtime();
+  Log(3, "  up/dn order : {:.6f} secs", time_end - time_start);
 
   // Ops applied in dn/up order
 
   // Perform a transpose to dn/up order
+  time_start = MPI_Wtime();
   basis_in.transpose(vec_in.memptr());
+  time_end = MPI_Wtime();
+  Log(3, "  transpose   : {:.6f} secs", time_end - time_start);
 
   // after transpose transposed vector is stored in send_buffer of
   // mpi::buffer, hence we use this as new input vector
@@ -74,11 +80,12 @@ void apply_terms(OpSum const &ops, basis_t const &basis_in,
   // mpi recv buffer
   coeff_t *vec_out_trans = mpi::buffer.recv<coeff_t>();
 
+  time_start = MPI_Wtime();
   for (auto [cpl, op] : ops) {
     std::string type = op.type();
     if (type == "Hopup") {
-      electron_distributed::apply_hopping<coeff_t>(
-          cpl, op, basis_in, vec_in_trans, vec_out_trans);
+      electron_distributed::apply_hopping<coeff_t>(cpl, op, basis_in,
+                                                   vec_in_trans, vec_out_trans);
     } else if ((type == "Cdagup") || (type == "Cup")) {
       electron_distributed::apply_raise_lower<coeff_t>(
           cpl, op, basis_in, vec_in_trans, basis_out, vec_out_trans);
@@ -93,15 +100,24 @@ void apply_terms(OpSum const &ops, basis_t const &basis_in,
           type);
     }
   }
+  time_end = MPI_Wtime();
+  Log(3, "  dn/up order : {:.6f} secs", time_end - time_start);
 
   // Finally we transpose back to send_buffer ...
+  time_start = MPI_Wtime();
   basis_out.transpose_r(vec_out_trans);
+  time_end = MPI_Wtime();
+  Log(3, "  transpose r : {:.6f} secs", time_end - time_start);
 
   //  ... and fill the results to vec_out
   coeff_t *send = mpi::buffer.send<coeff_t>();
+
+  time_start = MPI_Wtime();
   for (int64_t i = 0; i < basis_out.size(); ++i) {
     vec_out[i] += send[i];
   }
+  time_end = MPI_Wtime();
+  Log(3, "  fill        : {:.6f} secs", time_end - time_start);
 
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
