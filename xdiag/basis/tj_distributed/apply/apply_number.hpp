@@ -6,9 +6,11 @@
 
 namespace xdiag::basis::tj_distributed {
 
-template <typename bit_t, typename coeff_t, class Basis>
-void apply_number(Coupling const &cpl, Op const &op, Basis &&basis,
+template <typename coeff_t, class basis_t>
+void apply_number(Coupling const &cpl, Op const &op, basis_t const &basis,
                   const coeff_t *vec_in, coeff_t *vec_out) {
+  using bit_t = typename basis_t::bit_t;
+
   coeff_t mu = cpl.scalar().as<coeff_t>();
   int64_t s = op[0];
   std::string type = op.type();
@@ -19,15 +21,15 @@ void apply_number(Coupling const &cpl, Op const &op, Basis &&basis,
       (void)dn;
       return (up & mask) ? mu : 0.;
     };
-    tj_distributed::generic_term_diag<bit_t, coeff_t>(basis, term_action,
-                                                      vec_in, vec_out);
+    tj_distributed::generic_term_diag<coeff_t>(basis, term_action, vec_in,
+                                               vec_out);
   } else if (type == "Ndn") {
     auto term_action = [&](bit_t up, bit_t dn) {
       (void)up;
       return (dn & mask) ? mu : 0.;
     };
-    tj_distributed::generic_term_diag<bit_t, coeff_t>(basis, term_action,
-                                                      vec_in, vec_out);
+    tj_distributed::generic_term_diag<coeff_t>(basis, term_action, vec_in,
+                                               vec_out);
   }
 }
 

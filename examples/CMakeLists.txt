@@ -14,6 +14,7 @@ set(XDIAG_EXAMPLES
   ahm_correlations
   mbl
   ahm_quench
+  tos_triangular
 )
 
 foreach(name ${XDIAG_EXAMPLES})

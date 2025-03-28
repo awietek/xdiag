@@ -3,71 +3,13 @@
 #include <xdiag/algebra/isapprox.hpp>
 #include <xdiag/algebra/matrix.hpp>
 #include <xdiag/utils/logger.hpp>
+#include "testcases_tj.hpp"
 
 using namespace xdiag;
 using namespace arma;
 
-std::pair<int, int> target_nup_ndn(std::string op_str, int nup, int ndn) {
-  if (op_str == "Cdagup") {
-    return {nup + 1, ndn};
-  } else if (op_str == "Cdagdn") {
-    return {nup, ndn + 1};
-  } else if (op_str == "Cup") {
-    return {nup - 1, ndn};
-  } else if (op_str == "Cdn") {
-    return {nup, ndn - 1};
-  } else {
-    Log.err("Invalid op_str");
-    return {0, 0};
-  }
-}
-
-std::pair<int, int> target_nup_ndn(std::string op_str1, std::string op_str2,
-                                   int nup, int ndn) {
-  int nupd = 0;
-  int ndnd = 0;
-  if (op_str1 == "Cdagup") {
-    ++nupd;
-  } else if (op_str1 == "Cdagdn") {
-    ++ndnd;
-  } else if (op_str1 == "Cup") {
-    --nupd;
-  } else if (op_str1 == "Cdn") {
-    --ndnd;
-  } else {
-    Log.err("Invalid op_str1");
-  }
-
-  if (op_str2 == "Cdagup") {
-    ++nupd;
-  } else if (op_str2 == "Cdagdn") {
-    ++ndnd;
-  } else if (op_str2 == "Cup") {
-    --nupd;
-  } else if (op_str2 == "Cdn") {
-    --ndnd;
-  } else {
-    Log.err("Invalid op_str2");
-  }
-  return {nup + nupd, ndn + ndnd};
-}
-
-bool valid_nup_ndn(int nup, int ndn, int nsites) {
-  return ((nup >= 0) && (ndn >= 0) && (nup + ndn <= nsites));
-}
-
-bool valid_nup_ndn(std::string op_str, int nup, int ndn, int nsites) {
-  auto [nupt, ndnt] = target_nup_ndn(op_str, nup, ndn);
-  return valid_nup_ndn(nupt, ndnt, nsites);
-}
-bool valid_nup_ndn(std::string op_str1, std::string op_str2, int nup, int ndn,
-                   int nsites) {
-  auto [nupt, ndnt] = target_nup_ndn(op_str1, op_str2, nup, ndn);
-  return valid_nup_ndn(nupt, ndnt, nsites);
-}
-
 TEST_CASE("tj_raise_lower", "[tj]") try {
-
+  using namespace testcases::tj;
   std::vector<std::string> op_strs = {"Cdagup", "Cdagdn", "Cup", "Cdn"};
 
   for (int nsites = 1; nsites < 7; ++nsites) {

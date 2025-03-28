@@ -4,7 +4,9 @@ title: tJDistributed
 
 A block in a  $t-J$ type Hilbert space, i.e. fermions with $\uparrow, \downarrow$ spin excluding doubly occupied sites with distributed computing capabilities. 
 
-**Sources** [tj_distributed.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/blocks/tj_distributed.hpp), [tj_distributed.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/blocks/tj_distributed.cpp)
+**Sources**<br>
+[tj_distributed.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/blocks/tj_distributed.hpp)<br>
+[tj_distributed.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/blocks/tj_distributed.cpp)
 
 ---
 

@@ -8,7 +8,6 @@ using namespace xdiag;
 
 std::complex<double> C_N_character(int N, int k, int p){
     return std::exp( ( (2 * k * p) * M_PI / (double)N ) * std::complex<double>(0,1.) );
-
 };
 
 std::vector<double> compute_level_statistics(int N, OpSum H){

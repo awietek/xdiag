@@ -35,6 +35,7 @@ public:
   iterator_t begin() const;
   iterator_t end() const;
   int64_t index(bit_t up, bit_t dn) const;
+  int64_t index_r(bit_t up, bit_t dn) const;
 
   bool operator==(BasisNp const &rhs) const;
   bool operator!=(BasisNp const &rhs) const;

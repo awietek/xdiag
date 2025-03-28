@@ -13,6 +13,7 @@
 #include <xdiag/operators/logic/isapprox.hpp>
 #include <xdiag/operators/logic/hc.hpp>
 #include <xdiag/algebra/isapprox.hpp>
+#include <xdiag/states/create_state.hpp>
 
 using namespace xdiag;
 
@@ -140,6 +141,23 @@ TEST_CASE("symmetrize", "[operators]") try {
       }
     }
   }
+
+
+
+  OpSum twist;
+  twist += complex(0., 1.) * Op("Exchange", {0, 1});
+  auto p0 = Permutation({0, 1});
+  auto p1 = Permutation({1, 0});
+  auto group = PermutationGroup({p0, p1});
+
+  auto twist_sym = symmetrize(twist, group);
+  REQUIRE(isapprox(twist_sym, OpSum()));
+
+  auto b = Spinhalf(2);
+  auto r = random_state(b);
+  auto s = apply(twist_sym, r);
+  REQUIRE(isapprox(dot(r, s), 0.));
+  
   Log("done");
 } catch (xdiag::Error e) {
   xdiag::error_trace(e);

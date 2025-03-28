@@ -3,16 +3,18 @@
 #include <vector>
 
 #include <xdiag/bits/bitops.hpp>
+#include <xdiag/utils/logger.hpp>
 
 namespace xdiag::basis::tj_distributed {
 
-template <typename bit_t, typename coeff_t, class BasisIn, class BasisOut,
-          class NonZeroTermUps, class NonZeroTermDns, class TermAction>
-void generic_term_ups(BasisIn &&basis_in, BasisOut &&basis_out,
-                      NonZeroTermUps &&non_zero_term_ups,
-                      NonZeroTermDns &&non_zero_term_dns,
-                      TermAction &&term_action, const coeff_t *vec_in,
+template <typename coeff_t, class basis_t, class non_zero_term_ups_f,
+          class non_zero_term_dns_f, class term_action_f>
+void generic_term_ups(basis_t const &basis_in, basis_t const &basis_out,
+                      non_zero_term_ups_f non_zero_term_ups,
+                      non_zero_term_dns_f non_zero_term_dns,
+                      term_action_f term_action, const coeff_t *vec_in,
                       coeff_t *vec_out) {
+  using bit_t = typename basis_t::bit_t;
 
   int64_t nsites = basis_in.nsites();
   assert(nsites == basis_out.nsites());
@@ -35,7 +37,6 @@ void generic_term_ups(BasisIn &&basis_in, BasisOut &&basis_out,
     if (non_zero_term_dns(dn)) {
       bit_t not_dn = (~dn) & sitesmask;
       int64_t dn_offset_in = idx_dn * nup_configurations_in;
-      int64_t dn_offset_out = idx_dn * nup_configurations_out;
 
       for (int64_t idx_in = dn_offset_in;
            idx_in < dn_offset_in + nup_configurations_in; ++idx_in) {
@@ -46,15 +47,12 @@ void generic_term_ups(BasisIn &&basis_in, BasisOut &&basis_out,
         if (non_zero_term_ups(up)) {
           auto [up_flip, coeff] = term_action(up);
           if ((up_flip & dn) == 0) { // tJ constraint
-            bit_t upc_flip = bits::extract(up_flip, not_dn);
-            int64_t idx_upc_flip = basis_out.index_upcs(upc_flip);
-            int64_t idx_out = dn_offset_out + idx_upc_flip;
-
+            int64_t idx_out = basis_out.index_r(up_flip, dn);
             vec_out[idx_out] += coeff * vec_in[idx_in];
           } // tJ constraint
-        }   // non-zero term dns
-      }     // if ((upspins & flipmask) == 0)
-    }       // non-zero-term ups
+        } // non-zero term dns
+      } // if ((upspins & flipmask) == 0)
+    } // non-zero-term ups
 
     ++idx_dn;
   } // for(const bit_t& upspins : my_upspins_)

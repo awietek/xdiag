@@ -10,28 +10,26 @@
 
 namespace xdiag::basis::tj {
 
-template <typename bit_t, typename coeff_t, bool symmetric, class BasisIn,
-          class BasisOut, class Fill>
-void apply_terms(OpSum const &ops, BasisIn const &basis_in,
-                 BasisOut const &basis_out, Fill &fill) try {
+template <typename coeff_t, bool symmetric, class basis_t, class fill_f>
+void apply_terms(OpSum const &ops, basis_t const &basis_in,
+                 basis_t const &basis_out, fill_f fill) try {
 
   for (auto const &[cpl, op] : ops) {
     std::string type = op.type();
     if ((type == "SzSz") || (type == "tJSzSz")) {
-      tj::apply_szsz<bit_t, coeff_t, symmetric>(cpl, op, basis_in, fill);
+      tj::apply_szsz<coeff_t, symmetric>(cpl, op, basis_in, fill);
     } else if ((type == "Nup") || (type == "Ndn")) {
-      tj::apply_number<bit_t, coeff_t, symmetric>(cpl, op, basis_in, fill);
+      tj::apply_number<coeff_t, symmetric>(cpl, op, basis_in, fill);
     } else if (type == "NtotNtot") {
-      tj::apply_number_number<bit_t, coeff_t, symmetric>(cpl, op, basis_in,
-                                                         fill);
+      tj::apply_number_number<coeff_t, symmetric>(cpl, op, basis_in, fill);
     } else if (type == "Exchange") {
-      tj::apply_exchange<bit_t, coeff_t, symmetric>(cpl, op, basis_in, fill);
+      tj::apply_exchange<coeff_t, symmetric>(cpl, op, basis_in, fill);
     } else if ((type == "Hopup") || (type == "Hopdn")) {
-      tj::apply_hopping<bit_t, coeff_t, symmetric>(cpl, op, basis_in, fill);
+      tj::apply_hopping<coeff_t, symmetric>(cpl, op, basis_in, fill);
     } else if ((type == "Cdagup") || (type == "Cup") || (type == "Cdagdn") ||
                (type == "Cdn")) {
-      tj::apply_raise_lower<bit_t, coeff_t, symmetric>(cpl, op, basis_in,
-                                                       basis_out, fill);
+      tj::apply_raise_lower<coeff_t, symmetric>(cpl, op, basis_in, basis_out,
+                                                fill);
     } else {
       XDIAG_THROW(fmt::format("Unknown Op type for tJ block: \"{}\"", type));
     }

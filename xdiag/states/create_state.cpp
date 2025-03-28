@@ -31,6 +31,8 @@ template XDIAG_API State product_state(SpinhalfDistributed const &,
                                        std::vector<std::string> const &, bool);
 template XDIAG_API State product_state(tJDistributed const &,
                                        std::vector<std::string> const &, bool);
+template XDIAG_API State product_state(ElectronDistributed const &,
+                                       std::vector<std::string> const &, bool);
 #endif
 
 State random_state(Block const &block, bool real, int64_t seed,
@@ -56,6 +58,8 @@ template XDIAG_API State random_state(SpinhalfDistributed const &, bool,
                                       int64_t, bool);
 template XDIAG_API State random_state(tJDistributed const &, bool, int64_t,
                                       bool);
+template XDIAG_API State random_state(ElectronDistributed const &, bool,
+                                      int64_t, bool);
 #endif
 
 State zero_state(Block const &block, bool real, int64_t ncols) {
@@ -71,6 +75,7 @@ template XDIAG_API State zero_state(Spinhalf const &, bool, int64_t);
 template XDIAG_API State zero_state(tJ const &, bool, int64_t);
 template XDIAG_API State zero_state(Electron const &, bool, int64_t);
 #ifdef XDIAG_USE_MPI
+template XDIAG_API State zero_state(ElectronDistributed const &, bool, int64_t);
 template XDIAG_API State zero_state(tJDistributed const &, bool, int64_t);
 template XDIAG_API State zero_state(SpinhalfDistributed const &, bool, int64_t);
 #endif

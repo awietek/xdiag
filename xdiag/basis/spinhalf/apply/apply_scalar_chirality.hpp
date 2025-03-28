@@ -9,12 +9,13 @@ namespace xdiag::basis::spinhalf {
 
 // Scalar chirality term: J S*(S x S)
 
-template <typename bit_t, typename coeff_t, bool symmetric, class BasisIn,
-          class BasisOut, class Fill>
+template <typename coeff_t, bool symmetric, class basis_t, class fill_f>
 void apply_scalar_chirality(Coupling const &cpl, Op const &op,
-                            BasisIn &&basis_in, BasisOut &&basis_out,
-                            Fill &&fill) try {
+                            basis_t const &basis_in, basis_t const &basis_out,
+                            fill_f fill) try {
+  using bit_t = typename basis_t::bit_t;
   using bits::gbit;
+
   complex J = cpl.scalar().as<complex>();
   coeff_t Jquarter = 0.;
   coeff_t Jquarter_conj = 0.;
@@ -64,15 +65,15 @@ void apply_scalar_chirality(Coupling const &cpl, Op const &op,
 
   // Dispatch either symmetric of unsymmetric term application
   if constexpr (symmetric) {
-    spinhalf::apply_term_offdiag_sym<bit_t, coeff_t>(
+    spinhalf::apply_term_offdiag_sym<coeff_t>(
         basis_in, basis_out, non_zero_term, term_action_cyclic, fill);
-    spinhalf::apply_term_offdiag_sym<bit_t, coeff_t>(
+    spinhalf::apply_term_offdiag_sym<coeff_t>(
         basis_in, basis_out, non_zero_term, term_action_acyclic, fill);
 
   } else {
-    spinhalf::apply_term_offdiag_no_sym<bit_t, coeff_t>(
+    spinhalf::apply_term_offdiag_no_sym<coeff_t>(
         basis_in, basis_out, non_zero_term, term_action_cyclic, fill);
-    spinhalf::apply_term_offdiag_no_sym<bit_t, coeff_t>(
+    spinhalf::apply_term_offdiag_no_sym<coeff_t>(
         basis_in, basis_out, non_zero_term, term_action_acyclic, fill);
   }
 } catch (Error const &e) {

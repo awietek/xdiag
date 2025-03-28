@@ -6,9 +6,12 @@
 
 namespace xdiag::basis::tj {
 
-template <typename bit_t, typename coeff_t, bool symmetric, class Basis,
-          class TermAction, class Fill>
-void generic_term_diag(Basis &&basis, TermAction &&term_action, Fill &&fill) {
+template <typename coeff_t, bool symmetric, class basis_t, class term_action_f,
+          class fill_f>
+void generic_term_diag(basis_t const &basis, term_action_f term_action,
+                       fill_f fill) {
+  using bit_t = typename basis_t::bit_t;
+
   int64_t nsites = basis.nsites();
   bit_t sitesmask = ((bit_t)1 << nsites) - 1;
 

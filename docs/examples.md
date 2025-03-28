@@ -68,10 +68,27 @@ title: Examples
 
     ---
 
-    Performs a tower of states analyzis for the $\alpha \text{XX}$ chain.
+    Performs a tower of states analysis for the $\alpha \text{XX}$ chain.
 
     [source](examples/tos_alpha_xx.md) :simple-cplusplus: :simple-julia:
 
+-   :material-file-document:{ .lg .middle } __Momentum TOS for Heisenberg chain__
+
+    ---
+
+    Performs a (momentum) tower of states analysis for the antiferromagnetic chain.
+
+    [source](examples/spinhalf_chain_TOS.md) :simple-cplusplus: :simple-julia:
+  
+
+-   :material-file-document:{ .lg .middle } __TOS $J_1 - J_2$ Model in the Triangular Lattice__
+
+    ---
+
+    Performs a tower of states analyzis for the $J_1 - J_2$ model in the triangular lattice.
+
+    [source](examples/tos_triangular.md) :simple-cplusplus: :simple-julia:
+  
 </div>
 
 
@@ -94,6 +111,16 @@ title: Examples
     Computes the Green's function in a 2D Hubbard model
 
     [source](examples/hubbard_greens_f.md) :simple-cplusplus: :simple-julia:
+
+    ---
+
+-   :material-file-document:{ .lg .middle } __Dynamical conductivity__
+
+    ---
+
+    Computes the conductivity of one hole in a tJ model
+
+    [source](examples/tJ_conductivity.md) :simple-cplusplus: :simple-julia:
 
 </div>
 

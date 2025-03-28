@@ -1,6 +1,17 @@
 #include "compilation.hpp"
 #include <xdiag/operators/logic/valid.hpp>
+#include <xdiag/operators/logic/order.hpp>
 #include <xdiag/utils/scalar.hpp>
+
+#include <xdiag/blocks/electron.hpp>
+#include <xdiag/blocks/spinhalf.hpp>
+#include <xdiag/blocks/tj.hpp>
+
+#ifdef XDIAG_USE_MPI
+#include <xdiag/blocks/electron_distributed.hpp>
+#include <xdiag/blocks/spinhalf_distributed.hpp>
+#include <xdiag/blocks/tj_distributed.hpp>
+#endif
 
 namespace xdiag::operators {
 
@@ -17,7 +28,7 @@ OpSum clean_zeros(OpSum const &ops) try {
 }
 
 OpSum compile_spinhalf(OpSum const &ops) try {
-  OpSum ops_clean = clean_zeros(ops.plain());
+  OpSum ops_clean = clean_zeros(order(ops));
   OpSum ops_compiled;
   for (auto [cpl, op] : ops_clean) {
     std::string type = op.type();
@@ -49,34 +60,13 @@ OpSum compile_spinhalf(OpSum const &ops) try {
     }
   }
 
-  // Compbine Matrix operators on same sites
-  OpSum ops_matrix;
-  std::map<std::vector<int64_t>, Matrix> matrix_on_sites;
-  for (auto const &[cpl, op] : ops_double) {
-    if (op.type() == "Matrix") {
-      auto sites = op.sites();
-      auto coeff = cpl.scalar();
-      if (matrix_on_sites.count(sites)) { // sites already exist
-        matrix_on_sites[sites] += op.matrix() * coeff;
-      } else {
-        matrix_on_sites[sites] = op.matrix() * coeff;
-      }
-    } else {
-      ops_matrix += cpl * op;
-    }
-  }
-
-  for (auto const &[sites, matrix] : matrix_on_sites) {
-    ops_matrix += Op("Matrix", sites, matrix);
-  }
-
-  return ops_matrix;
+  return ops_double;
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
 OpSum compile_tj(OpSum const &ops) try {
-  OpSum ops_clean = clean_zeros(ops);
+  OpSum ops_clean = clean_zeros(order(ops));
   OpSum ops_compiled;
 
   for (auto [cpl, op] : ops_clean) {
@@ -145,7 +135,7 @@ OpSum compile_tj(OpSum const &ops) try {
 }
 
 OpSum compile_electron(OpSum const &ops) try {
-  OpSum ops_clean = clean_zeros(ops);
+  OpSum ops_clean = clean_zeros(order(ops));
   OpSum ops_compiled;
   for (auto [cpl, op] : ops_clean) {
     std::string type = op.type();
@@ -224,6 +214,7 @@ template <> OpSum compile<Electron>(OpSum const &ops) try {
 } catch (Error const &error) {
   XDIAG_RETHROW(error);
 }
+
 #ifdef XDIAG_USE_MPI
 template <> OpSum compile<SpinhalfDistributed>(OpSum const &ops) try {
   return compile_spinhalf(ops);
@@ -232,6 +223,11 @@ template <> OpSum compile<SpinhalfDistributed>(OpSum const &ops) try {
 }
 template <> OpSum compile<tJDistributed>(OpSum const &ops) try {
   return compile_tj(ops);
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
+}
+template <> OpSum compile<ElectronDistributed>(OpSum const &ops) try {
+  return compile_electron(ops);
 } catch (Error const &error) {
   XDIAG_RETHROW(error);
 }

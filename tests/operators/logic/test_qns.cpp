@@ -3,8 +3,10 @@
 #include "../../blocks/electron/testcases_electron.hpp"
 #include <xdiag/algebra/matrix.hpp>
 #include <xdiag/io/read.hpp>
+#include <xdiag/operators/logic/order.hpp>
 #include <xdiag/operators/logic/qns.hpp>
 #include <xdiag/operators/logic/symmetrize.hpp>
+#include <xdiag/utils/xdiag_show.hpp>
 
 using namespace xdiag;
 using namespace arma;
@@ -113,6 +115,25 @@ TEST_CASE("qns", "[operators]") try {
   auto irrep2 = representation(ops, irrep.group());
   REQUIRE(irrep2);
   REQUIRE(isapprox(*irrep2, irrep));
+
+  // Testing combined qns of matrices (issue #17)
+  {
+    std::complex<double> imaginary_unit{0, 1};
+    auto sx = arma::mat({{0, 1}, {1, 0}});
+    auto sy = arma::cx_mat({{0, -imaginary_unit}, {imaginary_unit, 0}});
+    auto sz = arma::mat({{1.0, 0.0}, {0.0, -1.0}});
+
+    arma::mat sxsx = arma::kron(sx, sx);
+    arma::cx_mat sysy = arma::kron(sy, sy);
+    arma::mat szsz = arma::kron(sz, sz);
+
+    auto SdotS = OpSum();
+    SdotS += Op("Matrix", {0, 1}, sxsx);
+    SdotS += Op("Matrix", {0, 1}, sysy);
+    SdotS += Op("Matrix", {0, 1}, szsz);
+
+    REQUIRE(matrixC(SdotS, Spinhalf(2, 1)).n_cols == 2);
+  }
 
 } catch (xdiag::Error e) {
   xdiag::error_trace(e);

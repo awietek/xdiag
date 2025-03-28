@@ -16,7 +16,7 @@ static void test_onsite(std::string op1, std::string op12) {
   for (int nsites = 2; nsites < 5; ++nsites) {
     for (int nup = 0; nup <= nsites; ++nup) {
       for (int ndn = 0; ndn <= nsites - nup; ++ndn) {
-        auto b = tJ(nsites, nup, ndn);
+        auto b = tJDistributed(nsites, nup, ndn);
         for (int s = 0; s < nsites; ++s) {
           auto o1 = Op(op1, s);
           auto o12 = Op(op12, {s, s});
@@ -182,7 +182,7 @@ TEST_CASE("tj_distributed_apply", "[tj_distributed]") try {
   for (int nsites = 2; nsites < 6; ++nsites) {
     for (int nup = 1; nup < nsites; ++nup) {
       for (int ndn = 1; ndn < nsites - nup; ++ndn) {
-        auto b = tJ(nsites, nup, ndn);
+        auto b = tJDistributed(nsites, nup, ndn);
         for (int s = 0; s < nsites; ++s) {
 
           auto r = random_state(b);
@@ -193,11 +193,10 @@ TEST_CASE("tj_distributed_apply", "[tj_distributed]") try {
           auto cdagdn = Op("Cdagdn", s);
           auto cdn = Op("Cdn", s);
 
-          auto spsmr = apply(cdagup, apply(cdn, apply(cdagdn, apply(cup, r))));
-          auto smspr = apply(cdagdn, apply(cup, apply(cdagup, apply(cdn, r))));
-          auto r1 = 0.5 * (spsmr + smspr);
-          auto r2 = apply(Op("Exchange", {s, s}), r);
-          REQUIRE(isapprox(r1, r2));
+          auto spsmr = apply(cdagup, apply(cdn, apply(cdagdn, apply(cup,
+          r)))); auto smspr = apply(cdagdn, apply(cup, apply(cdagup,
+          apply(cdn, r)))); auto r1 = 0.5 * (spsmr + smspr); auto r2 =
+          apply(Op("Exchange", {s, s}), r); REQUIRE(isapprox(r1, r2));
 
           // SdotS
           auto szszr = apply(Op("SzSz", {s, s}), r);
@@ -217,20 +216,53 @@ TEST_CASE("tj_distributed_apply", "[tj_distributed]") try {
           REQUIRE(isapprox(r1, r2));
 
           // Hopup
-          r1 = -(apply(cdagup, apply(cup, r)) + apply(cdagup, apply(cup, r)));
-          r2 = apply(Op("Hopup", {s, s}), r);
-          REQUIRE(isapprox(r1, r2));
+          r1 = -(apply(cdagup, apply(cup, r)) + apply(cdagup, apply(cup,
+          r))); r2 = apply(Op("Hopup", {s, s}), r); REQUIRE(isapprox(r1,
+          r2));
 
           // Hopdn
-          r1 = -(apply(cdagdn, apply(cdn, r)) + apply(cdagdn, apply(cdn, r)));
-          r2 = apply(Op("Hopdn", {s, s}), r);
-          REQUIRE(isapprox(r1, r2));
+          r1 = -(apply(cdagdn, apply(cdn, r)) + apply(cdagdn, apply(cdn,
+          r))); r2 = apply(Op("Hopdn", {s, s}), r); REQUIRE(isapprox(r1,
+          r2));
 
           // Hop
-          r1 = -(apply(cdagup, apply(cup, r)) + apply(cdagup, apply(cup, r)) +
-                 apply(cdagdn, apply(cdn, r)) + apply(cdagdn, apply(cdn, r)));
+          r1 = -(apply(cdagup, apply(cup, r)) + apply(cdagup, apply(cup, r))
+          +
+                 apply(cdagdn, apply(cdn, r)) + apply(cdagdn, apply(cdn,
+                 r)));
           r2 = apply(Op("Hop", {s, s}), r);
           REQUIRE(isapprox(r1, r2));
+        }
+      }
+    }
+  }
+
+  // Test corrs
+  for (int nsites = 2; nsites < 5; ++nsites) {
+    for (int nup = 0; nup <= nsites; ++nup) {
+      for (int ndn = 0; ndn <= nsites - nup; ++ndn) {
+        auto b = tJDistributed(nsites, nup, ndn);
+        auto r = random_state(b);
+
+        for (int i = 0; i < nsites; ++i) {
+          auto a = apply(Op("Nup", i), r) + apply(Op("Ndn", i), r);
+          auto b = apply(Op("Ntot", i), r);
+          REQUIRE(isapprox(a, b));
+
+          a = 0.5 * (apply(Op("Nup", i), r) - apply(Op("Ndn", i), r));
+          b = apply(Op("Sz", i), r);
+          REQUIRE(isapprox(a, b));
+
+          for (int j = 0; j < nsites; ++j) {
+
+            a = apply(Op("SzSz", {i, j}), r);
+            b = apply(Op("Sz", i), apply(Op("Sz", j), r));
+            REQUIRE(isapprox(a, b));
+
+            a = apply(Op("NtotNtot", {i, j}), r);
+            b = apply(Op("Ntot", i), apply(Op("Ntot", j), r));
+            REQUIRE(isapprox(a, b));
+          }
         }
       }
     }
