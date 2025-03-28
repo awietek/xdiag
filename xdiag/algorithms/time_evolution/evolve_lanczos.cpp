@@ -47,6 +47,10 @@ EvolveLanczosInplaceResult evolve_lanczos_inplace(OpSum const &H, State &psi,
                 "constructed by e.g. an annihilation operator)");
   }
 
+  if (norm(psi) == 0.) {
+    XDIAG_THROW("Initial state has zero norm");
+  }
+
   auto const &block = psi.block();
 
   // Real time evolution is possible
@@ -90,6 +94,11 @@ EvolveLanczosInplaceResult evolve_lanczos_inplace(OpSum const &H, State &psi,
     XDIAG_THROW("Initial state must be a valid state (i.e. not default "
                 "constructed by e.g. an annihilation operator)");
   }
+
+  if (norm(psi) == 0.) {
+    XDIAG_THROW("Initial state has zero norm");
+  }
+
   if (psi.isreal()) {
     psi.make_complex();
   }

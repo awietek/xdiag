@@ -4,9 +4,11 @@
 #include "../../catch.hpp"
 #include <xdiag/algebra/matrix.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
+#include <xdiag/algorithms/time_evolution/evolve_lanczos.hpp>
 #include <xdiag/algorithms/time_evolution/expm.hpp>
 #include <xdiag/algorithms/time_evolution/imaginary_time_evolve.hpp>
 #include <xdiag/algorithms/time_evolution/time_evolve.hpp>
+#include <xdiag/algorithms/time_evolution/time_evolve_expokit.hpp>
 #include <xdiag/common.hpp>
 #include <xdiag/extern/armadillo/armadillo>
 #include <xdiag/states/create_state.hpp>
@@ -122,8 +124,8 @@ TEST_CASE("analytic_case_free_particle_2D", "[time_evolution]") try {
                 (cos(2 * pi * (k1 + k2) / L) + cos(2 * pi * (k1 - k2) / L));
 
             // exponent
-            cx_double a_k1k2 =
-	      -i * time * energy + 2 * pi * i * double(k1 * m + k2 * n) / (double)L;
+            cx_double a_k1k2 = -i * time * energy +
+                               2 * pi * i * double(k1 * m + k2 * n) / (double)L;
             c_mn += exp(a_k1k2);
           }
         }
@@ -239,7 +241,6 @@ TEST_CASE("tj_complex_timeevo", "[time_evolution]") try {
   arma::cx_mat Hshift =
       H - e0 * arma::cx_mat(H.n_rows, H.n_cols, arma::fill::eye);
 
-
   auto psi_0 = State(block, false);
   xdiag::fill(psi_0, pstate);
 
@@ -310,3 +311,20 @@ TEST_CASE("tj_complex_timeevo", "[time_evolution]") try {
 } catch (xdiag::Error e) {
   xdiag::error_trace(e);
 }
+
+// TEST_CASE("zero_state_timeevo", "[time_evolution]") try {
+//   int N = 4;
+//   auto b = Spinhalf(N);
+//   OpSum ops;
+//   for (int i = 0; i < N; ++i) {
+//     ops += Op("SdotS", {i, (i + 1) % N});
+//   }
+//   auto z = zero_state(b);
+//   // auto zz1 = time_evolve(ops, z, 1.0);
+//   // auto zz2 = time_evolve_expokit(ops, z, 1.0);
+//   // auto zz3 = evolve_lanczos(ops, z, 1.0);
+//   // auto zz4 = evolve_lanczos(ops, z, xdiag::complex(0.0, 1.0));
+
+// } catch (xdiag::Error e) {
+//   xdiag::error_trace(e);
+// }

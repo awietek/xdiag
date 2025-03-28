@@ -32,6 +32,11 @@ time_evolve_expokit_inplace(OpSum const &ops, State &state, double time,
     XDIAG_THROW("Initial state must be a valid state (i.e. not default "
                 "constructed by e.g. an annihilation operator)");
   }
+  
+  if (norm(state) == 0.) {
+    XDIAG_THROW("Initial state has zero norm");
+  }
+
   if (state.isreal()) {
     state.make_complex();
   }
