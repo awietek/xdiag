@@ -10,6 +10,10 @@ set(XDIAG_EXAMPLES
   tpq_shastry_sutherland
   specific_heat_randomtj
   tos_alpha_xx
+  tos_ahm
+  ahm_correlations
+  mbl
+  ahm_quench
   tos_triangular
 )
 
