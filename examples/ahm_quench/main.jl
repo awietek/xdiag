@@ -1,6 +1,5 @@
-
 using XDiag
-using HDF5
+using CairoMakie
 
 """Struct for lattice sites"""
 struct LatticeBond
@@ -42,47 +41,52 @@ function ham(U::Float64,Lx::Int64,Ly::Int64)
 
     ops += "U" * Op("HubbardU")     # applies Hubbard interaction over the entire lattice
     for i in 1:Lx*Ly
-        ops += "mu" * Op("Ntot",i)     # chemical potential
+        ops += "mu" * Op("Ntot",i)     # chemical potental
     end
     
     ops["t"] = 1.0
     ops["U"] = U
-    ops["mu"] = -U/2
+    #ops["mu"] = -U/2
+    ops["mu"] = 0.0
     
     return ops
 
 end
 
-function main(U::Float64,Lx::Int64,Ly::Int64,Ns::StepRange{Int64, Int64})
-    
-    for N in Ns
+let
+    U = 0.0
+    Lx,Ly = (4,3)
+    N = Lx*Ly
+        # ground state for U
+    ops = ham(U,Lx,Ly)
+    hspace = Electron(N, N ÷ 2, N ÷ 2)
 
-        ops = ham(U,Lx,Ly) # create the Hamiltonian
-        nup = N%2 == 0 ? N ÷ 2 : (N+1) ÷ 2
-        ndn = N%2 == 0 ? N ÷ 2 : (N-1) ÷ 2
+    e,psi = eig0(ops,hspace)
 
-        block = Electron(Lx*Ly, nup, ndn)   # create Hilbert space
-        res = eigs_lanczos(ops,block,neigvals=10)
-        eigs = res.eigenvalues
+    U = -10.0
+    ops = ham(U,Lx,Ly)
+    dt = 0.1
+    time = 10
 
-        filename = "data/tos_ahm/U($U)_N($N)_Lx($Lx)_Ly($Ly).h5"
+    times = range(dt,time,length=Int(time/dt))
+    obs_vec = Array{Float64}(undef,length(times))
 
-        h5open(filename,"w") do f
-            write(f,"spectrum",eigs)
-        end
+    obs = OpSum()
+    obs += Op("HubbardU")
 
+    for i in 1:length(times)
+        time_evolve_inplace(ops,psi,float(dt))
+        # do measurements
+        obs_vec[i] = real(inner(obs,psi))
     end
 
-end
+    f = Figure()
+    ax = Axis(f[1,1],
+        xlabel=L"time, $t$",
+        ylabel=L"$\sum_i \langle n_{i\uparrow} n_{i\downarrow} \rangle $"
+        )
 
-Us = [0.0,-2.0,-10.0]
-Lx, Ly = (4,4)
-Nmin = 4
-Nmax = 2*Lx*Ly - 4
-Ns = Nmin:2:Nmax
 
-say_hello()
-for U in Us
-    println("Now doing U=$U")
-    main(U,Lx,Ly,Ns)
+    lines!(ax,times,obs_vec)
+    save("../plots/quench/Lx($Lx)_Ly($Ly).png",f)
 end

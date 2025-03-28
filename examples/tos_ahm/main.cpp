@@ -13,8 +13,8 @@ int main() try
     say_hello();
     unsigned Lx = 4;
     unsigned Ly = 4;
-    unsigned Nmin = 0;
-    unsigned Nmax = 2*Lx*Ly;
+    unsigned Nmin = 4;
+    unsigned Nmax = 2*Lx*Ly - 4;
     std::vector<double> Us = {0.0,-2.0,-10.0};
     
     for (unsigned i=0; i<Us.size(); i++)
@@ -49,7 +49,7 @@ int main() try
             unsigned ndn = N/2;
             auto block = Electron(Lx*Ly, nup, ndn); // create Hilbert space
 
-            auto res = eigs_lanczos(ops,block);
+            auto res = eigs_lanczos(ops,block,neigvals=10);
 
             //std::string filename = std::format("data/tos_ahm/U({})_N({})_Lx({})_Ly({}).h5", U, N, Lx, Ly);
             char buffer[50];
