@@ -50,6 +50,14 @@ title: Examples
 
     [source](examples/specific_heat_randomtj.md) :simple-cplusplus: :simple-julia:
 
+-   :material-file-document:{ .lg .middle } __Specific Heat triangular t-J model__
+
+    ---
+
+    Computes the specific heat of the triangular t-J model via full ED.
+
+    [source](examples/specific_heat_tJ_triangular.md) :simple-julia:
+
 -   :material-file-document:{ .lg .middle } __Spin chain level statistics__
 
     ---
@@ -135,6 +143,18 @@ title: Examples
     Demonstrates the time evolution of a domain wall in the $S=1/2$ XXZ chain.
 
     [source](examples/spinhalf_chain_domain_wall_dynamics.md) :simple-cplusplus: :simple-julia:
+
+</div>
+
+<div class="grid cards" markdown>
+
+-   :material-file-document:{ .lg .middle } __Slow Quench__
+
+    ---
+
+    Demonstrates the implementation of slow quench in the $S=1/2$ Ising chain.
+
+    [source](examples/slow_quench_Ising.md) :simple-julia:
 
 </div>
 
