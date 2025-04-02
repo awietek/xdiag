@@ -3,7 +3,7 @@
 We perform a tower of states (TOS) analysis [[1]](#1) of the Heisenberg model on a square lattice under periodic boundary condition. This model consists of spin $\frac{1}{2}$ sites at the vertices of square lattice with nearest-neighbor antiferromagnetic Heisenberg couplings such that the Hamiltonian has the form
 
 $$
-\mathcal{H} = J\sum_{\langle i,j\rangle} \boldsymbol{S}_i \cdot \boldsymbol{S}_j
+\mathcal{H} = J\sum_{\langle i,j\rangle} \boldsymbol{S}_i \cdot \boldsymbol{S}_j.
 $$
 
 The TOS analysis provides strong evidence for spontaneous symmetry breaking (SSB) in the thermodynamic limit, as the ground state of a finite system is completely symmetric. The spectrum of this model can be labeled by total magnetization since $[\mathcal{H},S_z]=0$ (in fact the Hamiltonian is $SU(2)$, and hence the spectrum can be labeled by $S^2$ and $S_z$; but for obtaining the eigen-spectrum, we only use $S_z$).
