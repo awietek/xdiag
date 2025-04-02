@@ -12,7 +12,7 @@ To perform the TOS analysis, we converged the lowest-lying eigenvalues using the
 
 ![Image title](../img/outfile.square.32.J1.1.00.seed.1-n.png){ align=center }
 
-In the figure above, we show the energy spectra as a function of $\(S_{\text{tot}}\left(S_{\text{tot}} + 1\right)\)$ for $C_{4}$ symmetric a system of $N=32$ sites. In this case, the ground state exhibits a Néel order.
+In the figure above, we show the energy spectra as a function of $\(S_{\text{tot}}\left(S_{\text{tot}} + 1\right)\)$ for a $C_{4}$ symmetric a system of $N=32$ sites. In this case, the ground state exhibits a Néel order.
 
 === "C++"
 	```c++
