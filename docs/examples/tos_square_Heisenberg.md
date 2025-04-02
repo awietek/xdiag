@@ -12,7 +12,7 @@ To perform the TOS analysis, we converged the lowest-lying eigenvalues using the
 
 ![Image title](../img/outfile.square.32.J1.1.00.seed.1.pdf){ align=center }
 
-In the figure above, we show the energy spectra as a function of \(S_{\text{tot}}\left(S_{\text{tot}} + 1\right)\) for \(J_2=0\) for a system of $N=32$ sites. In this case, the ground state exhibits a Néel order.
+In the figure above, we show the energy spectra as a function of $\(S_{\text{tot}}\left(S_{\text{tot}} + 1\right)\)$ for a system of $N=32$ sites. In this case, the ground state exhibits a Néel order.
 
 === "C++"
 	```c++
