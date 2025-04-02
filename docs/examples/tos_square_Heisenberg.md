@@ -26,7 +26,7 @@ The interactions terms and the symmetry representation inputs are given in the f
 	```
 
 
-To run the above C++ code with the toml file below, one needs to execute the following command 
+To run the above C++ code with the toml file, one needs to execute the following command 
 
 ``` bash
 ./build/main n_sites n_up kname J1 seed
