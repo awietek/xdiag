@@ -10,7 +10,7 @@ The TOS analysis provides strong evidence for spontaneous symmetry breaking (SSB
 
 To perform the TOS analysis, we converged the lowest-lying eigenvalues using the Lanczos algorithm in each symmetry sector. We then determined the total spin quantum number, $S_{\text{tot}}$, by inspecting, for each energy level, the number of degenerate eigenstates; thus, $S_{\text{tot}}$ is given by the maximum $S_z$. Finally, we plotted the energy spectra as a function of $S_{\text{tot}}\left(S_{\text{tot}} + 1\right)$. 
 
-![Image title](../img/outfile.square.32.J1.1.00.seed.1.png){ align=center }
+![Image title](../img/outfile.square.32.J1.1.00.seed.1-n.pdf){ align=center }
 
 In the figure above, we show the energy spectra as a function of $\(S_{\text{tot}}\left(S_{\text{tot}} + 1\right)\)$ for a system of $N=32$ sites. In this case, the ground state exhibits a Néel order.
 
