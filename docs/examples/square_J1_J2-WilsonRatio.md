@@ -2,7 +2,7 @@
 
 In this example, we compute varios thermodynamic quantities of the Square lattice $J_1-J2$ model including susceptibility, entropy, and Wilson ratio.
 
-The $J_1-J2$ model on a square lattice consists of Heisenberg couplings between nearest neighbors and next nearest neighbors with coupling constants $J_1$ and $J_2$, respectively. The Hamiltonian has the form
+The $J_1-J_2$ model on a square lattice consists of Heisenberg couplings between nearest neighbors and next nearest neighbors with coupling constants $J_1$ and $J_2$, respectively. The Hamiltonian has the form
 
 $$
 \mathcal{H} = J_1 \sum_{\langle i,j \rangle} \boldsymbol{S}_i \cdot \boldsymbol{S}_j + J_2 \sum_{\langle\langle i,j \rangle\rangle} \boldsymbol{S}_i \cdot \boldsymbol{S}_j.
