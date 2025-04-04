@@ -94,9 +94,11 @@ where $N$ is the number of sites and $E_0$ is the ground state energy. A typical
 The two subfigures are plotted to show typical behaviors at low and high temperatures. The subplot on the right shows that high temperture entropy satuarates to $s_{T\rightarrow \infty} =\ln(2)$. The subplot on the left shows that for very low temperature, entropy value obtained using the method mentioned above can be negative [[4]](#4).
 
 Once we obtain magnetic susceptibility and entropy, we can also plot the Wilson ratio [[5]](#5)
+
 $$
 R(T) = \frac{4\pi^2 T \chi(T)}{3s(T)}.
 $$
+
 For antiferromagnets the effective magnon excitations lead to $s\propto T^2$ for low $T$, and $\chi(T\rightarrow)>0$ due to contribution of the spin fluctuations transverse to the the magnetic order; hence $R(T\rightarrow 0) \rightarrow \infty$. Below we show the plot of Wilson ration vs. temperature for several values of $J_2/J_1$
 ![Image title](../img/WR.square.32.J1.1.00.Jchi.0.00.png)
 Note that each curve is cut off on the left at some $T$. This is because one can expect that results reach the $N\rightarrow \infty$ validity only for $Z>Z^*\gg 1$. In reality we set of cut-off of $Z^* = 10$, and only plot data for temperatures at which $Z>10$ [[5]](#5). However, even with this cutoff, we can see that for small (Néel antiferromagnet) and large (stripe antiferromagnet) $J_2/J_1$, the Wilson ratio curve goes upward as temperature is lowered for small $T$.
