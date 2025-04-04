@@ -7,6 +7,7 @@ The $J_1-J2$ model on a square lattice consists of Heisenberg couplings between 
 $$
 \mathcal{H} = J_1 \sum_{\langle i,j \rangle} \boldsymbol{S}_i \cdot \boldsymbol{S}_j + J_2 \sum_{\langle\langle i,j \rangle\rangle} \boldsymbol{S}_i \cdot \boldsymbol{S}_j.
 $$
+
 The spectrum of this model for a $C_4$ symmetric $N=32$ site system is shown below
 
 ![Image title](../img/square-J1-J2-spectrum.png){ align=center }
@@ -45,10 +46,13 @@ where $\beta$ is the inverse temperature and $\mathcal{Z} = \text{Tr}\left(e^{-\
 $$
 \langle \mathcal{O} \rangle \approx \frac{N_{st}}{ZR}\sum_{r=1}^R\sum_{j=0}^M e^{-\beta\epsilon_j^r}\langle r|\psi_j^r\rangle \langle \psi_j^r|\mathcal{O}|r\rangle,
 $$
+
 and 
+
 $$
 Z \approx \frac{N_{st}}{ZR}\sum_{r=1}^R\sum_{j=0}^M e^{-\beta\epsilon_j^r}|\langle r|\psi_j^r\rangle|^2
 $$
+
 where $|r\rangle$ seves as intial vectors for the Lanczos iteration, resulting in $M$ eigenvalues $\epsilon_j^r$ with corresponding $|\psi_j^r\rangle$ [[3]](#3), and $N_{st}$ is the total number of many-body states in the Hilbert space. Once the Lanczos basis $V$ and the $M\times M$ tridiagonal matrix  $T = V^\dagger \mathcal{H} V$ is constructed from $|r\rangle$, $\langle r|\psi_j^r \rangle$ is just the first component of the $j$-th eigenvector of $T$.
 
 Thus, for each random state, the algorithm performs the following steps:
@@ -80,9 +84,11 @@ $$
 Note that above we used $\langle \psi_j^r|S_z|r\rangle = \langle \psi_j^r|r\rangle S_z$ because our Hamiltonian is $S_z$ symmetric, and we use Lanczos algorithm per $S_z$ sector.
 
 Finally, from the partition function and $\langle\mathcal{H}\rangle$, one can directly compute entropy using the formula
+
 $$
 s = \frac{1}{N}(\log(Z)+\beta\langle(\mathcal{H}-E_0)\rangle),
 $$
+
 where $N$ is the number of sites and $E_0$ is the ground state energy. A typical plot of entropy as a funtion of temperature is shown in the figure below
 ![Image title](../img/entropy.J1.1.00.J2.0.00.png)
 The two subfigures are plotted to show typical behaviors at low and high temperatures. The subplot on the right shows that high temperture entropy satuarates to $s_{T\rightarrow \infty} =\ln(2)$. The subplot on the left shows that for very low temperature, entropy value obtained using the method mentioned above can be negative [[4]](#4).
