@@ -76,6 +76,7 @@ $$
    \langle S_z \rangle \approx \frac{N_{st}}{ZR}\sum_{r=1}^R\sum_{j=0}^M e^{-\beta\epsilon_j^r}|\langle r|\psi_j^r\rangle|^2 S_z, \\[2exm]
     \langle S_z^2 \rangle \approx \frac{N_{st}}{ZR}\sum_{r=1}^R\sum_{j=0}^M e^{-\beta\epsilon_j^r}|\langle r|\psi_j^r\rangle|^2 (S_z)^2.
 $$
+
 Note that above we used $\langle \psi_j^r|S_z|r\rangle = \langle \psi_j^r|r\rangle S_z$ because our Hamiltonian is $S_z$ symmetric, and we use Lanczos algorithm per $S_z$ sector.
 
 Finally, from the partition function and $\langle\mathcal{H}\rangle$, one can directly compute entropy using the formula
