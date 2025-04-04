@@ -71,6 +71,7 @@ $$
    \chi = \frac{1}{N}\beta\left[\langle (S_z)^2 \rangle - \langle S_z \rangle^2\right],
 $$
 where $N$ is the number of sites, by computing
+
 $$
    \langle S_z \rangle \approx \frac{N_{st}}{ZR}\sum_{r=1}^R\sum_{j=0}^M e^{-\beta\epsilon_j^r}|\langle r|\psi_j^r\rangle|^2 S_z, \\[2exm]
     \langle S_z^2 \rangle \approx \frac{N_{st}}{ZR}\sum_{r=1}^R\sum_{j=0}^M e^{-\beta\epsilon_j^r}|\langle r|\psi_j^r\rangle|^2 (S_z)^2.
