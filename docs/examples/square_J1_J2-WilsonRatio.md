@@ -101,7 +101,7 @@ $$
 
 For antiferromagnets the effective magnon excitations lead to $s\propto T^2$ for low $T$, and $\chi(T\rightarrow)>0$ due to contribution of the spin fluctuations transverse to the the magnetic order; hence $R(T\rightarrow 0) \rightarrow \infty$. Below we show the plot of Wilson ration vs. temperature for several values of $J_2/J_1$
 ![Image title](../img/WR.square.32.J1.1.00.Jchi.0.00.png)
-Note that each curve is cut off on the left at some $T$. This is because one can expect that results reach the $N\rightarrow \infty$ validity only for $Z>Z^*\gg 1$. In reality we set of cut-off of $Z^* = 10$, and only plot data for temperatures at which $Z>10$ [[5]](#5). However, even with this cutoff, we can see that for small (Néel antiferromagnet) and large (stripe antiferromagnet) $J_2/J_1$, the Wilson ratio curve goes upward as temperature is lowered for small $T$.
+Note that each curve is cut off on the left at some $T$. This is because one can expect that results reach the $N\rightarrow \infty$ validity only for $Z>Z^*\gg 1$. In reality, we set cut-off of $Z^* = 10$, and only plot data for temperatures at which $Z>10$ [[5]](#5). However, even with this cutoff, we can see that for small (Néel antiferromagnet) and large (stripe antiferromagnet) $J_2/J_1$, the Wilson ratio curve goes upward as temperature is lowered for small $T$.
 
 All the thermodynamic quantities mentioned above can be plotted using the Julia script below
 
