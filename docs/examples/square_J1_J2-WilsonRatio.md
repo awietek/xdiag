@@ -12,7 +12,7 @@ The spectrum of this model for a $C_4$ symmetric $N=32$ site system is shown bel
 
 ![Image title](../img/square-J1-J2-spectrum.png){ align=center }
 
-For small values of $J_2/J_1$, the ground state of this model has Néel order, whereas for large values of $J_2/J_1$, the ground state has stripe order [[2]](#2).
+For small values of $J_2/J_1 \lessapprox 0.5$, the ground state of this model has Néel order, whereas for large values of $J_2/J_1 \gtrapprox 0.8$, the ground state has stripe order [[2]](#2).
 
 The following code was used to obtain the spectrum
 
@@ -72,13 +72,13 @@ $$
 
 This part could be done in the post-processing. Similarly, one can obtain magnetic susceptibility 
 $$
-   \chi = \frac{1}{N}\beta\left[\langle (S_z)^2 \rangle - \langle S_z \rangle^2\right],
+   \chi = \frac{1}{N}\beta\left[\langle S_z^2 \rangle - \langle S_z \rangle^2\right],
 $$
 where $N$ is the number of sites, by computing
 
 $$
    \langle S_z \rangle \approx \frac{N_{st}}{ZR}\sum_{r=1}^R\sum_{j=0}^M e^{-\beta\epsilon_j^r}|\langle r|\psi_j^r\rangle|^2 S_z, \\[2exm]
-    \langle S_z^2 \rangle \approx \frac{N_{st}}{ZR}\sum_{r=1}^R\sum_{j=0}^M e^{-\beta\epsilon_j^r}|\langle r|\psi_j^r\rangle|^2 (S_z)^2.
+    \langle S_z^2 \rangle \approx \frac{N_{st}}{ZR}\sum_{r=1}^R\sum_{j=0}^M e^{-\beta\epsilon_j^r}|\langle r|\psi_j^r\rangle|^2 S_z^2.
 $$
 
 Note that above we used $\langle \psi_j^r|S_z|r\rangle = \langle \psi_j^r|r\rangle S_z$ because our Hamiltonian is $S_z$ symmetric, and we use Lanczos algorithm per $S_z$ sector.
@@ -101,7 +101,7 @@ $$
 
 For antiferromagnets the effective magnon excitations lead to $s\propto T^2$ for low $T$, and $\chi(T\rightarrow)>0$ due to contribution of the spin fluctuations transverse to the the magnetic order; hence $R(T\rightarrow 0) \rightarrow \infty$. Below we show the plot of Wilson ration vs. temperature for several values of $J_2/J_1$
 ![Image title](../img/WR.square.32.J1.1.00.Jchi.0.00.png)
-Note that each curve is cut off on the left at some $T$. This is because one can expect that results reach the $N\rightarrow \infty$ validity only for $Z>Z^*\gg 1$. In reality, we set cut-off of $Z^* = 10$, and only plot data for temperatures at which $Z>10$ [[5]](#5). However, even with this cutoff, we can see that for small (Néel antiferromagnet) and large (stripe antiferromagnet) $J_2/J_1$, the Wilson ratio curve goes upward as temperature is lowered for small $T$.
+Note that each curve is cut off on the left at some $T$. This is because one can expect that results reach the $N\rightarrow \infty$ validity only for $Z>Z^*\gg 1$. In reality, we set cut-off of $Z^* = 10$, and only plot data for temperatures at which $Z>10$ [[5]](#5). However, even with this cutoff, we can see that for small $J_2/J_1 = 0.1, 0.3$ (Néel antiferromagnet) and large $J_2/J_1 =0.9,1.0$ (stripe antiferromagnet) , the Wilson ratio curve goes upward as temperature is lowered for small $T$. For $J_2/J_1 = 0.5, 0.7$, where the transition occurs, the Wilson ratio keeps decreasing as temperature is decreased.
 
 All the thermodynamic quantities mentioned above can be plotted using the Julia script below
 
