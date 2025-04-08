@@ -1,5 +1,7 @@
 # Bubble Nucleation in the 1D Quantum Ising Chain
 
+**Author** Aritra Sinha
+
 We study a one-dimensional quantum Ising chain in the presence of both **transverse** ($h_x$) and **longitudinal** ($h_z$) fields. This system exhibits a first-order quantum phase transition (FOQPT) between two symmetry-broken ferromagnetic phases with opposite longitudinal magnetization.
 
 When the longitudinal field is slowly ramped from negative to positive values across the FOQPT, the system undergoes **quantized bubble nucleation** events [[1]](#1): sharp nonadiabatic transitions in the dynamics where local domains (or “bubbles”) of the new vacuum appear within the metastable phase. Each such nucleation corresponds to an $n$-spin bubble becoming degenerate with the initial state, and the tunneling between them is mediated via an $n$-th order process in $h_x$. These events can be accurately described using Landau-Zener theory near each resonance point.

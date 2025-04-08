@@ -2,7 +2,7 @@ site_name: XDiag Documentation
 theme:
   name: material
   palette:
-    scheme: slate
+    scheme: default
   features:
     - content.code.copy
 

@@ -6,8 +6,10 @@ set(XDIAG_EXAMPLES
   spinhalf_chain_gs_corr_symmetries
   spinhalf_chain_structure_factor
   spinhalf_chain_level_statistics
+  spinhalf_chain_domain_wall_dynamics
   spinhalf_chain_TOS
   hubbard_greens_f
+  square_J1_J2
   entanglement_ground_state
   tpq_shastry_sutherland
   specific_heat_randomtj

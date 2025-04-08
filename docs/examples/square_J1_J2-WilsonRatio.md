@@ -1,5 +1,7 @@
 # Square lattice $J_1-J_2$ model Wilson ratio
 
+**Author** Siddhartha Sarkar
+
 In this example, we compute varios thermodynamic quantities of the Square lattice $J_1-J2$ model including susceptibility, entropy, and Wilson ratio.
 
 The $J_1-J_2$ model on a square lattice consists of Heisenberg couplings between nearest neighbors and next nearest neighbors with coupling constants $J_1$ and $J_2$, respectively. The Hamiltonian has the form

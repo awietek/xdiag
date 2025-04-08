@@ -216,22 +216,37 @@ The executables are then available in the directory `build/examples`. Most examp
 
 <div class="grid cards" markdown>
 
--   :material-file-document:{ .lg .middle } __Domain Wall Dynamics__
+-   :material-file-document:{ .lg .middle } __Domain wall dynamics__
 
     ---
 
     Demonstrates the time evolution of a domain wall in the $S=1/2$ XXZ chain.
+	![Dynamics of a domain wall](../img/spinhalf_chain_domain_wall_dynamics.png){ align=center }
 
     [source](examples/spinhalf_chain_domain_wall_dynamics.md) :simple-cplusplus: :simple-julia:
 
 
--   :material-file-document:{ .lg .middle } __Slow Quench__
+-   :material-file-document:{ .lg .middle } __Slow quench__
 
     ---
 
     Demonstrates the implementation of slow quench in the $S=1/2$ Ising chain.
 
+	![Magnetization vs hz](../img/magnetization_slow_quench.png)
+
     [source](examples/slow_quench_Ising.md) :simple-julia:
+	
+	
+-   :material-file-document:{ .lg .middle } __Hubbard interaction quench__
+
+    ---
+
+    Demonstrates the implementation of an interaction quench in the 2D Hubbard model.
+
+	![Magnetization vs hz](../img/Lx(4)_Ly(3).png)
+
+    [source](examples/ahm_quench.md) :simple-cplusplus: :simple-julia:
+
 
 </div>
 
@@ -240,12 +255,25 @@ The executables are then available in the directory `build/examples`. Most examp
 
 <div class="grid cards" markdown>
 
--   :material-file-document:{ .lg .middle } __Specific Heat with TPQ__
+-   :material-file-document:{ .lg .middle } __Specific heat Shastry-Sutherland__
 
     ---
 
     Computes the specific heat using the TQP states for the Shastry Sutherland model.
 
+	![Image title](../img/tpq_shastry_sutherland.png){ align=center }
+
     [source](examples/tpq_shastry_sutherland.md) :simple-cplusplus: :simple-julia:
+	
+-   :material-file-document:{ .lg .middle } __Wilson ratio $J_1$-$J_2$ square lattice__
+
+    ---
+
+    Computes the Wilson ratio using the TQP states for the $J_1$-$J_2$ model on the square lattice
+
+	![Image title](../img/WR.square.32.J1.1.00.Jchi.0.00.png)
+
+
+    [source](examples/square_J1_J2.md) :simple-cplusplus: :simple-julia:
 
 </div>
