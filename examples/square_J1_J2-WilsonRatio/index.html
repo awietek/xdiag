@@ -1,0 +1,549 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.50">
+    
+    
+      
+        <title>Square lattice \(J_1-J_2\) model Wilson ratio - XDiag Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.a40c8224.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/katex.min.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#square-lattice-j_1-j_2-model-wilson-ratio" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="XDiag Documentation" class="md-header__button md-logo" aria-label="XDiag Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            XDiag Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Square lattice \(J_1-J_2\) model Wilson ratio
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="XDiag Documentation" class="md-nav__button md-logo" aria-label="XDiag Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    XDiag Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../quick_start/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Quick Start
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user_guide/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    User Guide
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Examples
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../documentation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Documentation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Contributing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../releases/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Releases
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    <span class="md-ellipsis">
+      References
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="square-lattice-j_1-j_2-model-wilson-ratio">Square lattice <span class="arithmatex">\(J_1-J_2\)</span> model Wilson ratio</h1>
+<p>In this example, we compute varios thermodynamic quantities of the Square lattice <span class="arithmatex">\(J_1-J2\)</span> model including susceptibility, entropy, and Wilson ratio.</p>
+<p>The <span class="arithmatex">\(J_1-J_2\)</span> model on a square lattice consists of Heisenberg couplings between nearest neighbors and next nearest neighbors with coupling constants <span class="arithmatex">\(J_1\)</span> and <span class="arithmatex">\(J_2\)</span>, respectively. The Hamiltonian has the form</p>
+<div class="arithmatex">\[
+\mathcal{H} = J_1 \sum_{\langle i,j \rangle} \boldsymbol{S}_i \cdot \boldsymbol{S}_j + J_2 \sum_{\langle\langle i,j \rangle\rangle} \boldsymbol{S}_i \cdot \boldsymbol{S}_j.
+\]</div>
+<p>The spectrum of this model for a <span class="arithmatex">\(C_4\)</span> symmetric <span class="arithmatex">\(N=32\)</span> site system is shown below</p>
+<p><img align="center" alt="Image title" src="../../img/square-J1-J2-spectrum.png" /></p>
+<p>For small values of <span class="arithmatex">\(J_2/J_1 \lessapprox 0.5\)</span>, the ground state of this model has Néel order, whereas for large values of <span class="arithmatex">\(J_2/J_1 \gtrapprox 0.8\)</span>, the ground state has stripe order <a href="#2">[2]</a>.</p>
+<p>The following code was used to obtain the spectrum</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:1"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">C++</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>
+</code></pre></div>
+</div>
+</div>
+</div>
+<p>The interactions terms and the symmetry representation inputs are given in the following TOML file:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:1"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">toml</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>
+</code></pre></div>
+</div>
+</div>
+</div>
+<p>To run the above C++ code with the toml file, one needs to execute the following command </p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>./build/main<span class="w"> </span>n_sites<span class="w"> </span>n_up<span class="w"> </span>kname<span class="w"> </span>J1<span class="w"> </span>J2<span class="w"> </span>seed
+</code></pre></div>
+where the n_sites, n_up, kname, J1, and seed are to be replaced by their values such as 32, 16, Gamma.C4.A, 1.00, 0.1, 1, respectively. Once the code has been run for various values of <span class="arithmatex">\(J_2/J_1\)</span>, the spectrum can be immediately plotted from the eigenvalues saved in the .h5 files.</p>
+<p>The expectation value of an observable <span class="arithmatex">\(\mathcal{O}\)</span> in the canonical ensemble is</p>
+<div class="arithmatex">\[
+\langle \mathcal{O} \rangle = \frac{\text{Tr}\left(e^{-\beta \mathcal{H}} \mathcal{O}\right)}{\mathcal{Z}},
+\]</div>
+<p>where <span class="arithmatex">\(\beta\)</span> is the inverse temperature and <span class="arithmatex">\(\mathcal{Z} = \text{Tr}\left(e^{-\beta \mathcal{H}}\right)\)</span>. We approximate the trace stochastically using a set of <span class="arithmatex">\(R\)</span> random vectors <span class="arithmatex">\(|r\rangle\)</span>, leading to</p>
+<div class="arithmatex">\[
+\langle \mathcal{O} \rangle \approx \frac{N_{st}}{ZR}\sum_{r=1}^R\sum_{j=0}^M e^{-\beta\epsilon_j^r}\langle r|\psi_j^r\rangle \langle \psi_j^r|\mathcal{O}|r\rangle,
+\]</div>
+<p>and </p>
+<div class="arithmatex">\[
+Z \approx \frac{N_{st}}{ZR}\sum_{r=1}^R\sum_{j=0}^M e^{-\beta\epsilon_j^r}|\langle r|\psi_j^r\rangle|^2
+\]</div>
+<p>where <span class="arithmatex">\(|r\rangle\)</span> seves as intial vectors for the Lanczos iteration, resulting in <span class="arithmatex">\(M\)</span> eigenvalues <span class="arithmatex">\(\epsilon_j^r\)</span> with corresponding <span class="arithmatex">\(|\psi_j^r\rangle\)</span> <a href="#3">[3]</a>, and <span class="arithmatex">\(N_{st}\)</span> is the total number of many-body states in the Hilbert space. Once the Lanczos basis <span class="arithmatex">\(V\)</span> and the <span class="arithmatex">\(M\times M\)</span> tridiagonal matrix  <span class="arithmatex">\(T = V^\dagger \mathcal{H} V\)</span> is constructed from <span class="arithmatex">\(|r\rangle\)</span>, <span class="arithmatex">\(\langle r|\psi_j^r \rangle\)</span> is just the first component of the <span class="arithmatex">\(j\)</span>-th eigenvector of <span class="arithmatex">\(T\)</span>.</p>
+<p>Thus, for each random state, the algorithm performs the following steps:</p>
+<ol>
+<li>
+<p><strong>Generate the Lanczos Basis:</strong> Obtain the elements of the tridiagonal matrix <span class="arithmatex">\(T\)</span> from the state <span class="arithmatex">\(|r\rangle\)</span>.</p>
+</li>
+<li>
+<p><strong>Compute thermodynamic quantities:</strong> To obtain the specific heat, 
+$$
+   C = \beta^2\left[\langle \mathcal{H}^2 \rangle - \langle \mathcal{H} \rangle^2\right],
+$$
+we need to evaluate</p>
+</li>
+</ol>
+<div class="arithmatex">\[
+   \langle \mathcal{H} \rangle \approx \frac{N_{st}}{ZR}\sum_{r=1}^R\sum_{j=0}^M e^{-\beta\epsilon_j^r}|\langle r|\psi_j^r\rangle|^2 \epsilon_j^r, \\[2exm]
+    \langle \mathcal{H}^2 \rangle \approx \frac{N_{st}}{ZR}\sum_{r=1}^R\sum_{j=0}^M e^{-\beta\epsilon_j^r}|\langle r|\psi_j^r\rangle|^2 (\epsilon_j^r)^2.
+\]</div>
+<p>This part could be done in the post-processing. Similarly, one can obtain magnetic susceptibility 
+$$
+   \chi = \frac{1}{N}\beta\left[\langle S_z^2 \rangle - \langle S_z \rangle^2\right],
+$$
+where <span class="arithmatex">\(N\)</span> is the number of sites, by computing</p>
+<div class="arithmatex">\[
+   \langle S_z \rangle \approx \frac{N_{st}}{ZR}\sum_{r=1}^R\sum_{j=0}^M e^{-\beta\epsilon_j^r}|\langle r|\psi_j^r\rangle|^2 S_z, \\[2exm]
+    \langle S_z^2 \rangle \approx \frac{N_{st}}{ZR}\sum_{r=1}^R\sum_{j=0}^M e^{-\beta\epsilon_j^r}|\langle r|\psi_j^r\rangle|^2 S_z^2.
+\]</div>
+<p>Note that above we used <span class="arithmatex">\(\langle \psi_j^r|S_z|r\rangle = \langle \psi_j^r|r\rangle S_z\)</span> because our Hamiltonian is <span class="arithmatex">\(S_z\)</span> symmetric, and we use Lanczos algorithm per <span class="arithmatex">\(S_z\)</span> sector.</p>
+<p>Finally, from the partition function and <span class="arithmatex">\(\langle\mathcal{H}\rangle\)</span>, one can directly compute entropy using the formula</p>
+<div class="arithmatex">\[
+s = \frac{1}{N}(\log(Z)+\beta\langle(\mathcal{H}-E_0)\rangle),
+\]</div>
+<p>where <span class="arithmatex">\(N\)</span> is the number of sites and <span class="arithmatex">\(E_0\)</span> is the ground state energy. A typical plot of entropy as a funtion of temperature is shown in the figure below
+<img alt="Image title" src="../../img/entropy.J1.1.00.J2.0.00.png" />
+The two subfigures are plotted to show typical behaviors at low and high temperatures. The subplot on the right shows that high temperture entropy satuarates to <span class="arithmatex">\(s_{T\rightarrow \infty} =\ln(2)\)</span>. The subplot on the left shows that for very low temperature, entropy value obtained using the method mentioned above can be negative <a href="#4">[4]</a>.</p>
+<p>Once we obtain magnetic susceptibility and entropy, we can also plot the Wilson ratio <a href="#5">[5]</a></p>
+<div class="arithmatex">\[
+R(T) = \frac{4\pi^2 T \chi(T)}{3s(T)}.
+\]</div>
+<p>For antiferromagnets the effective magnon excitations lead to <span class="arithmatex">\(s\propto T^2\)</span> for low <span class="arithmatex">\(T\)</span>, and <span class="arithmatex">\(\chi(T\rightarrow)&gt;0\)</span> due to contribution of the spin fluctuations transverse to the the magnetic order; hence <span class="arithmatex">\(R(T\rightarrow 0) \rightarrow \infty\)</span>. Below we show the plot of Wilson ration vs. temperature for several values of <span class="arithmatex">\(J_2/J_1\)</span>
+<img alt="Image title" src="../../img/WR.square.32.J1.1.00.Jchi.0.00.png" />
+Note that each curve is cut off on the left at some <span class="arithmatex">\(T\)</span>. This is because one can expect that results reach the <span class="arithmatex">\(N\rightarrow \infty\)</span> validity only for <span class="arithmatex">\(Z&gt;Z^*\gg 1\)</span>. In reality, we set cut-off of <span class="arithmatex">\(Z^* = 10\)</span>, and only plot data for temperatures at which <span class="arithmatex">\(Z&gt;10\)</span> <a href="#5">[5]</a>. However, even with this cutoff, we can see that for small <span class="arithmatex">\(J_2/J_1 = 0.1, 0.3\)</span> (Néel antiferromagnet) and large <span class="arithmatex">\(J_2/J_1 =0.9,1.0\)</span> (stripe antiferromagnet) , the Wilson ratio curve goes upward as temperature is lowered for small <span class="arithmatex">\(T\)</span>. For <span class="arithmatex">\(J_2/J_1 = 0.5, 0.7\)</span>, where the transition occurs, the Wilson ratio keeps decreasing as temperature is decreased.</p>
+<p>All the thermodynamic quantities mentioned above can be plotted using the Julia script below</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:1"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">Julia</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>
+</code></pre></div>
+</div>
+</div>
+</div>
+<h2 id="references">References</h2>
+<p><a id="1" href="https://doi.org/10.1103/PhysRevLett.108.240401">[1]</a>
+S. Sugiura and A. Shimizu, Thermal Pure Quantum States at Finite Temperature, Phys. Rev. Lett. 108, 240401 (2012).</p>
+<p><a id="2" href="https://journals.aps.org/prresearch/abstract/10.1103/PhysRevResearch.1.033038">[2]</a>
+Zhang, X. T., Huang, Y., Wu, H. Q., Sheng, D. N., and Gong, S. S. Physical Review B, 109(12), 125146 (2024).</p>
+<p><a id="3" href="https://link.springer.com/chapter/10.1007/978-3-642-35106-8_1">[3]</a>
+Prelovšek, P., and J. Bonča. "Ground state and finite temperature Lanczos methods." Strongly Correlated Systems: Numerical Methods (2013): 1-30.</p>
+<p><a id="4" href="https://journals.aps.org/prresearch/pdf/10.1103/PhysRevResearch.2.013205">[4]</a>
+Morita, Katsuhiro, and Takami Tohyama. "Finite-temperature properties of the Kitaev-Heisenberg models on kagome and triangular lattices studied by improved finite-temperature Lanczos methods." Phys. Rev. Res. 2, 013205 (2020).</p>
+<p><a id="5" href="https://journals.aps.org/prresearch/abstract/10.1103/PhysRevResearch.2.023024">[5]</a>
+Prelovšek, P., K. Morita, T. Tohyama, and J. Herbrych. "Vanishing Wilson ratio as the hallmark of quantum spin-liquid models." Phys. Rev. Res. 2, no. 2 (2020): 023024.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.copy"], "search": "../../assets/javascripts/workers/search.f8cc74c7.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.60a45f97.min.js"></script>
+      
+        <script src="../../javascripts/katex.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/katex.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/contrib/auto-render.min.js"></script>
+      
+    
+  </body>
+</html>

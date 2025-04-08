@@ -16,7 +16,7 @@
     
     
       
-        <title>Green's function - XDiag Documentation</title>
+        <title>Optical conductivity \(t\)-\(J\) model - XDiag Documentation</title>
       
     
     
@@ -70,7 +70,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#greens-function" class="md-skip">
+        <a href="#optical-conductivity-t-j-model" class="md-skip">
           Skip to content
         </a>
       
@@ -106,7 +106,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Green's function
+              Optical conductivity \(t\)-\(J\) model
             
           </span>
         </div>
@@ -361,7 +361,7 @@
         <li class="md-nav__item">
   <a href="#example-code" class="md-nav__link">
     <span class="md-ellipsis">
-      example code
+      Example code
     </span>
   </a>
   
@@ -370,7 +370,7 @@
         <li class="md-nav__item">
   <a href="#plotting-script" class="md-nav__link">
     <span class="md-ellipsis">
-      plotting script
+      Plotting script
     </span>
   </a>
   
@@ -379,7 +379,7 @@
         <li class="md-nav__item">
   <a href="#references" class="md-nav__link">
     <span class="md-ellipsis">
-      references
+      References
     </span>
   </a>
   
@@ -400,13 +400,15 @@
                   
 
 
-<h1 id="greens-function">Green's function</h1>
+<h1 id="optical-conductivity-t-j-model">Optical conductivity <span class="arithmatex">\(t\)</span>-<span class="arithmatex">\(J\)</span> model</h1>
+<p><strong>Author</strong> Martin Ulaga</p>
 <p>Uses the <a href="../../documentation/algorithms/eigvals_lanczos/">Lanczos algorithm</a><a href="#1">[1]</a> to calculate the conductivity of the planar <span class="arithmatex">\(t\)</span>-<span class="arithmatex">\(J\)</span> model with one hole. See also the documentation page for the <a href="../spinhalf_chain_structure_factor/">spin structure factor</a>. The ground state conductivity is geven by the current autocorrelator</p>
 <div class="arithmatex">\[
     T\sigma(\omega)=-i\int dt e^{-i\omega t}\langle  J(t)J\rangle.
 \]</div>
 <p>The plotting script includes a simple benchmark exploring the role of the number of Lanczos iterations on the result.</p>
-<h2 id="example-code">example code</h2>
+<p><img align="center" alt="Image title" src="../../img/tJ_conductivity.png" /></p>
+<h2 id="example-code">Example code</h2>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Julia</label><label for="__tabbed_1_2">C++</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
@@ -535,7 +537,7 @@
 </div>
 </div>
 </div>
-<h2 id="plotting-script">plotting script</h2>
+<h2 id="plotting-script">Plotting script</h2>
 <div class="tabbed-set tabbed-alternate" data-tabs="2:1"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Julia</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
@@ -608,7 +610,7 @@
 </div>
 </div>
 </div>
-<h2 id="references">references</h2>
+<h2 id="references">References</h2>
 <p><a id="1">[1]</a> 
 Prelovšek, P., &amp; Bonča, J. (2013). Ground state and finite temperature Lanczos methods. Strongly Correlated Systems: Numerical Methods, 1-30.</p>
 

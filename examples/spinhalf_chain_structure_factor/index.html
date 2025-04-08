@@ -16,7 +16,7 @@
     
     
       
-        <title>Dynamical structure factor - XDiag Documentation</title>
+        <title>Dynamical spin structure factor - XDiag Documentation</title>
       
     
     
@@ -70,7 +70,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#dynamical-structure-factor" class="md-skip">
+        <a href="#dynamical-spin-structure-factor" class="md-skip">
           Skip to content
         </a>
       
@@ -106,7 +106,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Dynamical structure factor
+              Dynamical spin structure factor
             
           </span>
         </div>
@@ -361,7 +361,7 @@
         <li class="md-nav__item">
   <a href="#main-example-code" class="md-nav__link">
     <span class="md-ellipsis">
-      main example code
+      Main example code
     </span>
   </a>
   
@@ -370,7 +370,7 @@
         <li class="md-nav__item">
   <a href="#visualization-script" class="md-nav__link">
     <span class="md-ellipsis">
-      visualization script
+      Visualization script
     </span>
   </a>
   
@@ -400,8 +400,9 @@
                   
 
 
-<h1 id="dynamical-structure-factor">Dynamical structure factor</h1>
-<p>Uses the <a href="../../documentation/algorithms/eigvals_lanczos/">Lanczos algorithm</a><a href="#1">[1]</a> to calculate the dynamical spin spectral function of the spin-1/2 Heisenberg chain. The structure factor is defined as</p>
+<h1 id="dynamical-spin-structure-factor">Dynamical spin structure factor</h1>
+<p><strong>Author</strong> Martin Ulaga</p>
+<p>Uses the <a href="../../documentation/algorithms/eigvals_lanczos/">Lanczos algorithm</a> <a href="#1">[1]</a> to calculate the dynamical spin spectral function of the spin-1/2 Heisenberg chain. The structure factor is defined as</p>
 <p>$$
     S^{zz}({\bf k},\omega) = \int dt e^{-i\omega t}\langle S^z_{\bf k}(t)S^z_{\bf -k}\rangle,
 $$
@@ -421,7 +422,8 @@ where <span class="arithmatex">\(|\Psi_0\rangle\)</span> is the ground state whi
 <p>Rerun the Lanczos algorigthm using the <strong><em>normalized</em></strong> state <span class="arithmatex">\(|\Psi_1\rangle=|\tilde{\Psi}_0\rangle/\sqrt{\langle\tilde{\Psi}_0|\tilde{\Psi}_0\rangle}\)</span>.</p>
 </li>
 </ol>
-<h2 id="main-example-code">main example code</h2>
+<p><img align="center" alt="Image title" src="../../img/spinhalf_chain_structure_factor.png" /></p>
+<h2 id="main-example-code">Main example code</h2>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Julia</label><label for="__tabbed_1_2">C++</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
@@ -569,7 +571,7 @@ where <span class="arithmatex">\(|\Psi_0\rangle\)</span> is the ground state whi
 </div>
 </div>
 </div>
-<h2 id="visualization-script">visualization script</h2>
+<h2 id="visualization-script">Visualization script</h2>
 <p>Postprocessing is here split into two parts:</p>
 <ol>
 <li>

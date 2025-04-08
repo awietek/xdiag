@@ -16,7 +16,7 @@
     
     
       
-        <title>Green's function - XDiag Documentation</title>
+        <title>Hubbard model Green's function - XDiag Documentation</title>
       
     
     
@@ -70,7 +70,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#greens-function" class="md-skip">
+        <a href="#hubbard-model-greens-function" class="md-skip">
           Skip to content
         </a>
       
@@ -106,7 +106,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Green's function
+              Hubbard model Green's function
             
           </span>
         </div>
@@ -361,7 +361,7 @@
         <li class="md-nav__item">
   <a href="#example-code" class="md-nav__link">
     <span class="md-ellipsis">
-      example code
+      Example code
     </span>
   </a>
   
@@ -370,7 +370,7 @@
         <li class="md-nav__item">
   <a href="#references" class="md-nav__link">
     <span class="md-ellipsis">
-      references
+      References
     </span>
   </a>
   
@@ -391,13 +391,15 @@
                   
 
 
-<h1 id="greens-function">Green's function</h1>
+<h1 id="hubbard-model-greens-function">Hubbard model Green's function</h1>
+<p><strong>Author</strong> Martin Ulaga</p>
 <p>Uses the <a href="../../documentation/algorithms/eigvals_lanczos/">Lanczos algorithm</a><a href="#1">[1]</a> to calculate the Green's function of the Hubbard model. See also the documentation page for the <a href="../spinhalf_chain_structure_factor/">spin structure factor</a>. The Green's function is given by</p>
 <div class="arithmatex">\[
     G({\bf k}, \omega)=-i\int dt e^{-i\omega t}\langle \lbrace c_{\bf k}(t),c^{\dagger}_{\bf k}\rbrace\rangle.
 \]</div>
 <p>To achieve a mesh of momentum space, we can use either use the generated momenta inside the Wigner-Seitz cell allowed by the finite cluster or twisted boundary conditions<a href="#2">[2]</a>, where the lattice <span class="arithmatex">\({\bf k}\)</span>-point is shifted to <span class="arithmatex">\({\bf k + \boldsymbol{\theta}}\)</span> by introducing a flux via Peierls substitution in the Hamiltonian, <span class="arithmatex">\(t_{ij} \rightarrow t_{ij}\exp(i{\bf \boldsymbol{\theta}\cdot r}_{ij})\)</span>. For this example, we're calculating the spectral function along the cut <span class="arithmatex">\(\Gamma\)</span>-<span class="arithmatex">\(M\)</span>, i.e., the diagonal of the reciprocal lattice unit cell.</p>
-<h2 id="example-code">example code</h2>
+<p><img align="center" alt="Image title" src="../../img/hubbard_greens_f.png" /></p>
+<h2 id="example-code">Example code</h2>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Julia</label><label for="__tabbed_1_2">C++</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
@@ -648,7 +650,7 @@
 </div>
 </div>
 </div>
-<h2 id="references">references</h2>
+<h2 id="references">References</h2>
 <p><a id="1">[1]</a> 
 Prelovšek, P., &amp; Bonča, J. (2013). Ground state and finite temperature Lanczos methods. Strongly Correlated Systems: Numerical Methods, 1-30.</p>
 <p><a id="2">[2]</a>
