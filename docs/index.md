@@ -1,4 +1,4 @@
-<img src="img/xdiag_logo_small.png" alt="drawing" width="200"/>
+<img src="img/logo_cropped.png" alt="XDiag logo" width="500"/>
 
 
 ![C++ Badge](https://img.shields.io/badge/C%2B%2B-00599C?logo=cplusplus&logoColor=fff&style=for-the-badge)

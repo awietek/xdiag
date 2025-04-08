@@ -2,7 +2,7 @@
 title: Examples
 ---
 
-While we present core functionality in the [User Guide](usage_guide.md), we here provide several examples along with XDiag to demonstrate how we can build more advanced applications from these basic building blocks. The examples are provided in the directory `examples` in the C++ source code directory, and can be compiled using CMake.
+While we present core functionality in the [User Guide](user_guide.md), we here provide several examples along with XDiag to demonstrate how we can build more advanced applications from these basic building blocks. The examples are provided in the directory `examples` in the C++ source code directory, and can be compiled using CMake.
 
 ```bash
 cmake -S . -B build -D BUILD_EXAMPLES=On
@@ -41,7 +41,7 @@ The executables are then available in the directory `build/examples`. Most examp
 
     Computes ground state entanglement entropy of an XXZ spin $S=1/2$ chain.
 
-	![Image title](../img/entanglement_entropy_ground_state.png){ align=center }
+	![Image title](img/entanglement_entropy_ground_state.png){ align=center }
 
     [source](examples/entanglement_ground_state.md) :simple-cplusplus: :simple-julia: 
 
@@ -51,7 +51,7 @@ The executables are then available in the directory `build/examples`. Most examp
 
     Computes charge correlations in the ground state of the attractive 2D Hubbard model.
 
-	![Image title](../img/ahm_correlations.png){ align=center }
+	![Image title](img/ahm_correlations.png){ align=center }
 
     [source](examples/ahm_correlations.md) :simple-cplusplus: :simple-julia: 
 
@@ -69,7 +69,7 @@ The executables are then available in the directory `build/examples`. Most examp
 
     Computes the specific heat of the random t-J model via full ED over multiple disorder realizations.
 	
-	![Image title](../img/specific_heat_random_tj.png){ align=center }
+	![Image title](img/specific_heat_random_tj.png){ align=center }
 
     [source](examples/specific_heat_randomtj.md) :simple-cplusplus: :simple-julia:
 
@@ -87,7 +87,7 @@ The executables are then available in the directory `build/examples`. Most examp
 
     Demonstrates Poissonian and Wigner-Dyson level statistics of integrable and non-integrable spin chains, respectively.
 	
-	![Level statistics](../img/spinhalf_chain_level_statistics.png){ align=center }
+	![Level statistics](img/spinhalf_chain_level_statistics.png){ align=center }
 
     [source](examples/spinhalf_chain_level_statistics.md) :simple-cplusplus: :simple-julia:
 
@@ -97,7 +97,7 @@ The executables are then available in the directory `build/examples`. Most examp
 
     Studies hallmark diagonstics of a many-body localized system.
 	
-	![Level statistics](../img/mbl.png){ align=center }
+	![Level statistics](img/mbl.png){ align=center }
 
     [source](examples/mbl.md) :simple-cplusplus: :simple-julia:
 
@@ -114,7 +114,7 @@ The executables are then available in the directory `build/examples`. Most examp
 
     Performs a tower of states analysis for the $\alpha \text{XX}$ chain.
 	
-	![Image title](../img/tos_alpha_xx_crop.png){ align=center }
+	![Image title](img/tos_alpha_xx_crop.png){ align=center }
 
     [source](examples/tos_alpha_xx.md) :simple-cplusplus: :simple-julia:
 
@@ -124,7 +124,7 @@ The executables are then available in the directory `build/examples`. Most examp
 
     Performs a (momentum) tower of states analysis for the antiferromagnetic chain.
 
-	![Tower of States](../img/spinhalf_chain_TOS.png){ align=center }
+	![Tower of States](img/spinhalf_chain_TOS.png){ align=center }
 
     [source](examples/spinhalf_chain_TOS.md) :simple-cplusplus: :simple-julia:
   
@@ -135,7 +135,7 @@ The executables are then available in the directory `build/examples`. Most examp
 
     Performs a tower of states analysis for the Heisenberg model in the square lattice.
 
-	![Image title](../img/outfile.square.32.J1.1.00.seed.1-n.png){ align=center }
+	![Image title](img/outfile.square.32.J1.1.00.seed.1-n.png){ align=center }
 
 	[source](examples/tos_square_Heisenberg.md) :simple-cplusplus:
 
@@ -145,7 +145,7 @@ The executables are then available in the directory `build/examples`. Most examp
 
     Performs a tower of states analysis for the $J_1 - J_2$ model in the triangular lattice.
 
-	![Image title](../img/tow_triangular_lattice.png){ align=center }
+	![Image title](img/tow_triangular_lattice.png){ align=center }
 
     [source](examples/tos_triangular.md) :simple-cplusplus: :simple-julia:
 	
@@ -156,7 +156,7 @@ The executables are then available in the directory `build/examples`. Most examp
 
     Performs a tower of states analysis for an extended kagome lattice Heisenberg antiferromagnet.
 
-	![Image title](../img/outfile.kagome.36.J1.1.00.J2.-1.00.J3.-2.00.seed.1-n.png)
+	![Image title](img/outfile.kagome.36.J1.1.00.J2.-1.00.J3.-2.00.seed.1-n.png)
 
     [source](examples/tos_quad_kagome.md) :simple-cplusplus: :simple-julia:
 	
@@ -165,7 +165,7 @@ The executables are then available in the directory `build/examples`. Most examp
     ---
 
     Performs a tower of states analysis for the superconducting state in the attractive Hubbard model.
-	![Image title](../img/tos_ahm_Lx(4)_Ly(4).png){ align=center }
+	![Image title](img/tos_ahm_Lx(4)_Ly(4).png){ align=center }
 
     [source](examples/tos_ahm.md) :simple-cplusplus: :simple-julia:
 	
@@ -184,7 +184,7 @@ The executables are then available in the directory `build/examples`. Most examp
 
     Computes the dynamical spin structure factor of a spin $S=1/2$ chain
 
-	![Image title](../img/spinhalf_chain_structure_factor.png){ align=center }
+	![Image title](img/spinhalf_chain_structure_factor.png){ align=center }
 
     [source](examples/spinhalf_chain_structure_factor.md) :simple-cplusplus: :simple-julia:
 
@@ -194,7 +194,7 @@ The executables are then available in the directory `build/examples`. Most examp
 
     Computes the Green's function in a 2D Hubbard model
 
-	![Image title](../img/hubbard_greens_f.png){ align=center }
+	![Image title](img/hubbard_greens_f.png){ align=center }
 
     [source](examples/hubbard_greens_f.md) :simple-cplusplus: :simple-julia:
 
@@ -206,7 +206,7 @@ The executables are then available in the directory `build/examples`. Most examp
 
     Computes the optical conductivity of one hole in a t-J model.
 
-	![Image title](../img/tJ_conductivity.png){ align=center }
+	![Image title](img/tJ_conductivity.png){ align=center }
 
     [source](examples/tJ_conductivity.md) :simple-cplusplus: :simple-julia:
 
@@ -221,7 +221,7 @@ The executables are then available in the directory `build/examples`. Most examp
     ---
 
     Demonstrates the time evolution of a domain wall in the $S=1/2$ XXZ chain.
-	![Dynamics of a domain wall](../img/spinhalf_chain_domain_wall_dynamics.png){ align=center }
+	![Dynamics of a domain wall](img/spinhalf_chain_domain_wall_dynamics.png){ align=center }
 
     [source](examples/spinhalf_chain_domain_wall_dynamics.md) :simple-cplusplus: :simple-julia:
 
@@ -232,7 +232,7 @@ The executables are then available in the directory `build/examples`. Most examp
 
     Demonstrates the implementation of slow quench in the $S=1/2$ Ising chain.
 
-	![Magnetization vs hz](../img/magnetization_slow_quench.png)
+	![Magnetization vs hz](img/magnetization_slow_quench.png)
 
     [source](examples/slow_quench_Ising.md) :simple-julia:
 	
@@ -243,7 +243,7 @@ The executables are then available in the directory `build/examples`. Most examp
 
     Demonstrates the implementation of an interaction quench in the 2D Hubbard model.
 
-	![Magnetization vs hz](../img/Lx(4)_Ly(3).png)
+	![Magnetization vs hz](img/Lx(4)_Ly(3).png)
 
     [source](examples/ahm_quench.md) :simple-cplusplus: :simple-julia:
 
@@ -261,7 +261,7 @@ The executables are then available in the directory `build/examples`. Most examp
 
     Computes the specific heat using the TQP states for the Shastry Sutherland model.
 
-	![Image title](../img/tpq_shastry_sutherland.png){ align=center }
+	![Image title](img/tpq_shastry_sutherland.png){ align=center }
 
     [source](examples/tpq_shastry_sutherland.md) :simple-cplusplus: :simple-julia:
 	
@@ -271,9 +271,9 @@ The executables are then available in the directory `build/examples`. Most examp
 
     Computes the Wilson ratio using the TQP states for the $J_1$-$J_2$ model on the square lattice
 
-	![Image title](../img/WR.square.32.J1.1.00.Jchi.0.00.png)
+	![Image title](img/WR.square.32.J1.1.00.Jchi.0.00.png)
 
 
-    [source](examples/square_J1_J2.md) :simple-cplusplus: :simple-julia:
+    [source](examples/square_J1_J2-WilsonRatio.md) :simple-cplusplus: :simple-julia:
 
 </div>
