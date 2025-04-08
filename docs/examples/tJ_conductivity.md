@@ -1,4 +1,6 @@
-# Green's function
+# Optical conductivity $t$-$J$ model
+
+**Author** Martin Ulaga
 
 Uses the [Lanczos algorithm](../documentation/algorithms/eigvals_lanczos.md)[[1]](#1) to calculate the conductivity of the planar $t$-$J$ model with one hole. See also the documentation page for the [spin structure factor](spinhalf_chain_structure_factor.md). The ground state conductivity is geven by the current autocorrelator
 
@@ -8,7 +10,9 @@ $$
 
 The plotting script includes a simple benchmark exploring the role of the number of Lanczos iterations on the result.
 
-## example code
+![Image title](../img/tJ_conductivity.png){ align=center }
+
+## Example code
 
 === "Julia"
 
@@ -22,7 +26,7 @@ The plotting script includes a simple benchmark exploring the role of the number
         --8<-- "examples/tJ_conductivity/main.cpp"
     ```
 
-## plotting script
+## Plotting script
 
 === "Julia"
 
@@ -30,6 +34,6 @@ The plotting script includes a simple benchmark exploring the role of the number
         --8<-- "examples/tJ_conductivity/plot.jl"
     ```
 
-## references
+## References
 <a id="1">[1]</a> 
 Prelovšek, P., & Bonča, J. (2013). Ground state and finite temperature Lanczos methods. Strongly Correlated Systems: Numerical Methods, 1-30.

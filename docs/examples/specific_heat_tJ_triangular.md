@@ -1,5 +1,7 @@
 # Specific Heat of the Triangular Lattice t-J Model
 
+**Author** Aritra Sinha
+
 We perform exact diagonalization (ED) to calculate the specific heat \(C\) of the triangular lattice t-J model, defined by the Hamiltonian:
 
 $$

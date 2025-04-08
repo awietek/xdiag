@@ -49,13 +49,13 @@ for seed in seeds
     mineig = 0
     eigvs = []
     Sz = []
-    f = h5open(@sprintf("outfiles/seed.%d/outfile.kagome.%d.J1.%.2f.J2.%.2f.J3.%.2f.nup.%d.k.%s.seed.%d.h5",seed,n_sites,J1,J2,J3,div(n_sites,2),"Gamma.C6.A",seed), "r")
+    f = h5open(@sprintf("outfile.kagome.%d.J1.%.2f.J2.%.2f.J3.%.2f.nup.%d.k.%s.seed.%d.h5",n_sites,J1,J2,J3,div(n_sites,2),"Gamma.C6.A",seed), "r")
     mineig = read(f["Eigenvalues"])[1]
     for n_up=n_ups
         c=0
         for k in ks
             c=c+1
-            f = h5open(@sprintf("outfiles/seed.%d/outfile.kagome.%d.J1.%.2f.J2.%.2f.J3.%.2f.nup.%d.k.%s.seed.%d.h5",seed,n_sites,J1,J2,J3,n_up,k,seed), "r")
+            f = h5open(@sprintf("outfile.kagome.%d.J1.%.2f.J2.%.2f.J3.%.2f.nup.%d.k.%s.seed.%d.h5",n_sites,J1,J2,J3,n_up,k,seed), "r")
             eig = read(f["Eigenvalues"])[1:n_eigs].-mineig
             sz=abs(n_up- n_sites / 2)*[1 for i=1:n_eigs]
             if n_up==nup_start

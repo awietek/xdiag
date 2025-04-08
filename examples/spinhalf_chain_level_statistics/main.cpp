@@ -1,6 +1,3 @@
-#include <vector>
-#include <complex>
-#include <math.h>
 #include <xdiag/all.hpp>
 
 using namespace xdiag;

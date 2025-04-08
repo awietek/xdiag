@@ -1,4 +1,3 @@
-
 using XDiag
 using HDF5
 
@@ -62,7 +61,7 @@ function main(U::Float64,Lx::Int64,Ly::Int64,Ns::StepRange{Int64, Int64})
         ndn = N%2 == 0 ? N ÷ 2 : (N-1) ÷ 2
 
         block = Electron(Lx*Ly, nup, ndn)   # create Hilbert space
-        res = eigs_lanczos(ops,block,neigvals=10)
+        res = eigs_lanczos(ops, block, neigvals = 3)
         eigs = res.eigenvalues
 
         filename = "data/tos_ahm/U($U)_N($N)_Lx($Lx)_Ly($Ly).h5"

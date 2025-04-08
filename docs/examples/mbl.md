@@ -1,5 +1,7 @@
 # Level statistics in many-body localized systems
 
+**Author** Hannes Karlsson
+
 The Hamiltonian for the Ising model with an applied magnetic field in $z$-direction
 $$
     H = -J\sum_i \sigma^z_i \sigma^z_{i+1} - h\sum_i \sigma_i^z

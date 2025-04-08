@@ -1,5 +1,7 @@
 # Level Statistics in Spin-$1/2$ Chains
 
+**Author** Paul Ebert
+
 This example demonstrates the differing level statistics of integrable and non-integrable models using the example of spin-$1/2$ chains.
 
 The term *level statistic* refers to the probability distribution $P(s)$ where the variable $s$ is the difference between adjacent energy levels $0 \leq E_{i+1}-E_i$. That is, for a given quantum system $P(s)$ describes the likelihood that the next excited state above a randomly chosen energy level $E$ has energy $E + s$. To ensure comparability across different systems, one typically normalizes the level spacings by its mean value $\tilde{s} = s/ \bar{s}$ and considers $P(\tilde{s})$.

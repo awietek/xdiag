@@ -45,7 +45,7 @@ for seed in seeds
     eigvs = []
     for n_up=n_ups
         for k in ks
-            f = h5open(@sprintf("./outfiles/seed.%d/outfile.square.%d.J1.%.2f.nup.%d.k.%s.seed.%d.h5",seed,n_sites,J1,n_up,k,seed), "r")
+            f = h5open(@sprintf("outfile.square.%d.J1.%.2f.nup.%d.k.%s.seed.%d.h5",n_sites,J1,n_up,k,seed), "r")
             eig = read(f["Eigenvalues"])[1:n_eigs]
             eigvs = append!(eigvs,eig)
             close(f)

@@ -5,16 +5,21 @@ set(XDIAG_EXAMPLES
   spinhalf_chain_e0
   spinhalf_chain_gs_corr_symmetries
   spinhalf_chain_structure_factor
+  spinhalf_chain_level_statistics
+  spinhalf_chain_TOS
   hubbard_greens_f
   entanglement_ground_state
   tpq_shastry_sutherland
   specific_heat_randomtj
   tos_alpha_xx
   tos_ahm
+  tos_quad_kagome
+  tos_triangular
+  tos_square_Heisenberg
+  tJ_conductivity
   ahm_correlations
   mbl
   ahm_quench
-  tos_triangular
 )
 
 foreach(name ${XDIAG_EXAMPLES})

@@ -1,5 +1,7 @@
 # TOS Heisenberg model on a square lattice
 
+**Author** Siddhartha Sarkar
+
 We perform a tower of states (TOS) analysis [[1]](#1) of the Heisenberg model on a square lattice under periodic boundary condition. This model consists of spin $\frac{1}{2}$ sites at the vertices of square lattice with nearest-neighbor antiferromagnetic Heisenberg couplings such that the Hamiltonian has the form
 
 $$
@@ -12,7 +14,7 @@ To perform the TOS analysis, we converged the lowest-lying eigenvalues using the
 
 ![Image title](../img/outfile.square.32.J1.1.00.seed.1-n.png){ align=center }
 
-In the figure above, we show the energy spectra as a function of $\(S_{\text{tot}}\left(S_{\text{tot}} + 1\right)\)$ for a $C_{4}$ symmetric a system of $N=32$ sites. In this case, the ground state exhibits a Néel order.
+In the figure above, we show the energy spectra as a function of $S_{\text{tot}}\left(S_{\text{tot}} + 1\right)$ for a $C_{4}$ symmetric a system of $N=32$ sites. In this case, the ground state exhibits a Néel order.
 
 === "C++"
 	```c++

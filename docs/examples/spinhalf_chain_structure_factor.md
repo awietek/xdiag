@@ -1,6 +1,8 @@
-# Dynamical structure factor
+# Dynamical spin structure factor
 
-Uses the [Lanczos algorithm](../documentation/algorithms/eigvals_lanczos.md)[[1]](#1) to calculate the dynamical spin spectral function of the spin-1/2 Heisenberg chain. The structure factor is defined as
+**Author** Martin Ulaga
+
+Uses the [Lanczos algorithm](../documentation/algorithms/eigvals_lanczos.md) [[1]](#1) to calculate the dynamical spin spectral function of the spin-1/2 Heisenberg chain. The structure factor is defined as
 
 $$
     S^{zz}({\bf k},\omega) = \int dt e^{-i\omega t}\langle S^z_{\bf k}(t)S^z_{\bf -k}\rangle,
@@ -18,7 +20,9 @@ where $|\Psi_0\rangle$ is the ground state which needs to be computed. The algor
 
 3. Rerun the Lanczos algorigthm using the ***normalized*** state $|\Psi_1\rangle=|\tilde{\Psi}_0\rangle/\sqrt{\langle\tilde{\Psi}_0|\tilde{\Psi}_0\rangle}$.
 
-## main example code
+![Image title](../img/spinhalf_chain_structure_factor.png){ align=center }
+
+## Main example code
 
 === "Julia"
 
@@ -32,7 +36,7 @@ where $|\Psi_0\rangle$ is the ground state which needs to be computed. The algor
         --8<-- "examples/spinhalf_chain_structure_factor/main.cpp"
     ```
 
-## visualization script
+## Visualization script
 
 Postprocessing is here split into two parts:
 
