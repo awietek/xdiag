@@ -44,7 +44,7 @@ Plotting Script
 
 
 
-## references
+## References
 <a id="1" href="https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.105.027204">[1]</a>
 Chaloupka, J., Jackeli, G., & Khaliullin, G. (2010). Kitaev-Heisenberg Model on a Honeycomb Lattice: Possible Exotic Phases in Iridium Oxides $\text{A}_2\text{IrO}_3$. Phys. Rev. Lett., 105(2), 027204.
 

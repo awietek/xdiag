@@ -56,6 +56,18 @@ The executables are then available in the directory `build/examples`. Most examp
     [source](examples/ahm_correlations.md) :simple-cplusplus: :simple-julia: 
 
 
+-  :material-file-document:{ .lg .middle } __Kitaev-Heisenberg honeycomb model__
+
+    ---
+
+    Computes the ground state of the Heisenberg-Kitaev model throughout its phase diagram
+
+	![Image title](img/outfile.kitaev.24.seed.1-n.png){ align=center }
+
+    [source](examples/gs_kitaev.md) :simple-cplusplus: :simple-julia: 
+
+
+
 
 </div>
 

@@ -1,4 +1,3 @@
-#include <filesystem>
 #include <xdiag/all.hpp>
 
 int main(int argc, char **argv) {
@@ -20,20 +19,12 @@ int main(int argc, char **argv) {
 
   Log("Diagonalizing H in block k: {}", kname);
 
-  // auto lfile = FileToml(format("honeycomb.{}.HeisenbergKitaevGamma.fsl.toml", n_sites));
   auto lfile = FileToml(format("kitaev.{}.toml", n_sites));
-  std::string odir = format("outfiles/seed.{}", seed);
   std::string ofilename = format(
       "outfile.honeycomb.{}.J.{:.2f}.KX.{:.2f}.KY.{:.2f}.KZ.{:.2f}.k.{}.seed.{}.h5",
       n_sites, J, KX, KY, KZ, kname, seed);
-  std::filesystem::create_directories(odir);
-  auto ofile = FileH5(format("{}/{}", odir, ofilename), "w!");
+  auto ofile = FileH5(ofilename, "w!");
 
-  // xdiag::OpSum ops = read_opsum(lfile, "Interactions");
-  // ops["J"] = J;
-  // ops["KX"] = KX;
-  // ops["KY"] = KY;
-  // ops["KZ"] = KZ;
   auto ops_read = read_opsum(lfile, "Interactions");
   cx_mat sx(mat({{0., 0.5}, {0.5, 0.}}), mat({{0., 0.}, {0., 0.}}));
   cx_mat sy(mat({{0., 0.}, {0., 0.}}), mat({{0., -0.5}, {0.5, 0.}}));
