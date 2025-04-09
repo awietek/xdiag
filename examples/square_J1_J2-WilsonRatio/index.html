@@ -404,7 +404,6 @@
 
 <h1 id="square-lattice-j_1-j_2-model-wilson-ratio">Square lattice <span class="arithmatex">\(J_1-J_2\)</span> model Wilson ratio</h1>
 <p><strong>Author</strong> Siddhartha Sarkar</p>
-<p>In this example, we compute varios thermodynamic quantities of the Square lattice <span class="arithmatex">\(J_1-J2\)</span> model including susceptibility, entropy, and Wilson ratio.</p>
 <p>The <span class="arithmatex">\(J_1-J_2\)</span> model on a square lattice consists of Heisenberg couplings between nearest neighbors and next nearest neighbors with coupling constants <span class="arithmatex">\(J_1\)</span> and <span class="arithmatex">\(J_2\)</span>, respectively. The Hamiltonian has the form</p>
 <div class="arithmatex">\[
 \mathcal{H} = J_1 \sum_{\langle i,j \rangle} \boldsymbol{S}_i \cdot \boldsymbol{S}_j + J_2 \sum_{\langle\langle i,j \rangle\rangle} \boldsymbol{S}_i \cdot \boldsymbol{S}_j.
@@ -2349,17 +2348,17 @@ where the n_sites, n_up, kname, J1, and seed are to be replaced by their values 
 \]</div>
 <p>where <span class="arithmatex">\(\beta\)</span> is the inverse temperature and <span class="arithmatex">\(\mathcal{Z} = \text{Tr}\left(e^{-\beta \mathcal{H}}\right)\)</span>. We approximate the trace stochastically using a set of <span class="arithmatex">\(R\)</span> random vectors <span class="arithmatex">\(|r\rangle\)</span>, leading to</p>
 <div class="arithmatex">\[
-\langle \mathcal{O} \rangle \approx \frac{N_{st}}{ZR}\sum_{r=1}^R\sum_{j=0}^M e^{-\beta\epsilon_j^r}\langle r|\psi_j^r\rangle \langle \psi_j^r|\mathcal{O}|r\rangle,
+\langle \mathcal{O} \rangle \approx \frac{N_{st}}{\mathcal{Z}R}\sum_{r=1}^R\sum_{j=0}^M e^{-\beta\epsilon_j^r}\langle r|\psi_j^r\rangle \langle \psi_j^r|\mathcal{O}|r\rangle,
 \]</div>
 <p>and </p>
 <div class="arithmatex">\[
-Z \approx \frac{N_{st}}{ZR}\sum_{r=1}^R\sum_{j=0}^M e^{-\beta\epsilon_j^r}|\langle r|\psi_j^r\rangle|^2
+\mathcal{Z} \approx \frac{N_{st}}{R}\sum_{r=1}^R\sum_{j=0}^M e^{-\beta\epsilon_j^r}|\langle r|\psi_j^r\rangle|^2
 \]</div>
 <p>where <span class="arithmatex">\(|r\rangle\)</span> seves as intial vectors for the Lanczos iteration, resulting in <span class="arithmatex">\(M\)</span> eigenvalues <span class="arithmatex">\(\epsilon_j^r\)</span> with corresponding <span class="arithmatex">\(|\psi_j^r\rangle\)</span> <a href="#3">[3]</a>, and <span class="arithmatex">\(N_{st}\)</span> is the total number of many-body states in the Hilbert space. Once the Lanczos basis <span class="arithmatex">\(V\)</span> and the <span class="arithmatex">\(M\times M\)</span> tridiagonal matrix  <span class="arithmatex">\(T = V^\dagger \mathcal{H} V\)</span> is constructed from <span class="arithmatex">\(|r\rangle\)</span>, <span class="arithmatex">\(\langle r|\psi_j^r \rangle\)</span> is just the first component of the <span class="arithmatex">\(j\)</span>-th eigenvector of <span class="arithmatex">\(T\)</span>.</p>
-<p>Thus, for each random state, the algorithm performs the following steps:</p>
+<p>Thus, the algorithm performs the following steps:</p>
 <ol>
 <li>
-<p><strong>Generate the Lanczos Basis:</strong> Obtain the elements of the tridiagonal matrix <span class="arithmatex">\(T\)</span> from the state <span class="arithmatex">\(|r\rangle\)</span>.</p>
+<p><strong>Generate the Lanczos Basis:</strong> Obtain the elements of the tridiagonal matrix <span class="arithmatex">\(T\)</span> from each random state <span class="arithmatex">\(|r\rangle\)</span>.</p>
 </li>
 <li>
 <p><strong>Compute thermodynamic quantities:</strong> To obtain the specific heat, 
@@ -2370,8 +2369,8 @@ we need to evaluate</p>
 </li>
 </ol>
 <div class="arithmatex">\[
-   \langle \mathcal{H} \rangle \approx \frac{N_{st}}{ZR}\sum_{r=1}^R\sum_{j=0}^M e^{-\beta\epsilon_j^r}|\langle r|\psi_j^r\rangle|^2 \epsilon_j^r, \\[2exm]
-    \langle \mathcal{H}^2 \rangle \approx \frac{N_{st}}{ZR}\sum_{r=1}^R\sum_{j=0}^M e^{-\beta\epsilon_j^r}|\langle r|\psi_j^r\rangle|^2 (\epsilon_j^r)^2.
+   \langle \mathcal{H} \rangle \approx \frac{N_{st}}{\mathcal{Z}R}\sum_{r=1}^R\sum_{j=0}^M e^{-\beta\epsilon_j^r}|\langle r|\psi_j^r\rangle|^2 \epsilon_j^r, \\[2exm]
+    \langle \mathcal{H}^2 \rangle \approx \frac{N_{st}}{\mathcal{Z}R}\sum_{r=1}^R\sum_{j=0}^M e^{-\beta\epsilon_j^r}|\langle r|\psi_j^r\rangle|^2 (\epsilon_j^r)^2.
 \]</div>
 <p>This part could be done in the post-processing. Similarly, one can obtain magnetic susceptibility 
 $$
@@ -2379,13 +2378,13 @@ $$
 $$
 where <span class="arithmatex">\(N\)</span> is the number of sites, by computing</p>
 <div class="arithmatex">\[
-   \langle S_z \rangle \approx \frac{N_{st}}{ZR}\sum_{r=1}^R\sum_{j=0}^M e^{-\beta\epsilon_j^r}|\langle r|\psi_j^r\rangle|^2 S_z, \\[2exm]
-    \langle S_z^2 \rangle \approx \frac{N_{st}}{ZR}\sum_{r=1}^R\sum_{j=0}^M e^{-\beta\epsilon_j^r}|\langle r|\psi_j^r\rangle|^2 S_z^2.
+   \langle S_z \rangle \approx \frac{N_{st}}{\mathcal{Z}R}\sum_{r=1}^R\sum_{j=0}^M e^{-\beta\epsilon_j^r}|\langle r|\psi_j^r\rangle|^2 S_z, \\[2exm]
+    \langle S_z^2 \rangle \approx \frac{N_{st}}{\mathcal{Z}R}\sum_{r=1}^R\sum_{j=0}^M e^{-\beta\epsilon_j^r}|\langle r|\psi_j^r\rangle|^2 S_z^2.
 \]</div>
 <p>Note that above we used <span class="arithmatex">\(\langle \psi_j^r|S_z|r\rangle = \langle \psi_j^r|r\rangle S_z\)</span> because our Hamiltonian is <span class="arithmatex">\(S_z\)</span> symmetric, and we use Lanczos algorithm per <span class="arithmatex">\(S_z\)</span> sector.</p>
-<p>Finally, from the partition function and <span class="arithmatex">\(\langle\mathcal{H}\rangle\)</span>, one can directly compute entropy using the formula</p>
+<p>Finally, from the partition function <span class="arithmatex">\(\mathcal{Z}\)</span> and <span class="arithmatex">\(\langle\mathcal{H}\rangle\)</span>, one can directly compute entropy using the formula</p>
 <div class="arithmatex">\[
-s = \frac{1}{N}(\log(Z)+\beta\langle(\mathcal{H}-E_0)\rangle),
+s = \frac{1}{N}(\log(\mathcal{Z})+\beta\langle(\mathcal{H}-E_0)\rangle),
 \]</div>
 <p>where <span class="arithmatex">\(N\)</span> is the number of sites and <span class="arithmatex">\(E_0\)</span> is the ground state energy. A typical plot of entropy as a funtion of temperature is shown in the figure below
 <img alt="Image title" src="../../img/entropy.J1.1.00.J2.0.00.png" />
@@ -2394,9 +2393,9 @@ The two subfigures are plotted to show typical behaviors at low and high tempera
 <div class="arithmatex">\[
 R(T) = \frac{4\pi^2 T \chi(T)}{3s(T)}.
 \]</div>
-<p>For antiferromagnets the effective magnon excitations lead to <span class="arithmatex">\(s\propto T^2\)</span> for low <span class="arithmatex">\(T\)</span>, and <span class="arithmatex">\(\chi(T\rightarrow)&gt;0\)</span> due to contribution of the spin fluctuations transverse to the the magnetic order; hence <span class="arithmatex">\(R(T\rightarrow 0) \rightarrow \infty\)</span>. Below we show the plot of Wilson ration vs. temperature for several values of <span class="arithmatex">\(J_2/J_1\)</span>
+<p>For antiferromagnets the effective magnon excitations lead to <span class="arithmatex">\(s\propto T^2\)</span> for low <span class="arithmatex">\(T\)</span>, and <span class="arithmatex">\(\chi(T\rightarrow 0)&gt;0\)</span> due to contribution of the spin fluctuations transverse to the the magnetic order; hence <span class="arithmatex">\(R(T\rightarrow 0) \rightarrow \infty\)</span>. Below we show the plot of Wilson ration vs. temperature for several values of <span class="arithmatex">\(J_2/J_1\)</span>
 <img alt="Image title" src="../../img/WR.square.32.J1.1.00.Jchi.0.00.png" />
-Note that each curve is cut off on the left at some <span class="arithmatex">\(T\)</span>. This is because one can expect that results reach the <span class="arithmatex">\(N\rightarrow \infty\)</span> validity only for <span class="arithmatex">\(Z&gt;Z^*\gg 1\)</span>. In reality, we set cut-off of <span class="arithmatex">\(Z^* = 10\)</span>, and only plot data for temperatures at which <span class="arithmatex">\(Z&gt;10\)</span> <a href="#5">[5]</a>. However, even with this cutoff, we can see that for small <span class="arithmatex">\(J_2/J_1 = 0.1, 0.3\)</span> (Néel antiferromagnet) and large <span class="arithmatex">\(J_2/J_1 =0.9,1.0\)</span> (stripe antiferromagnet) , the Wilson ratio curve goes upward as temperature is lowered for small <span class="arithmatex">\(T\)</span>. For <span class="arithmatex">\(J_2/J_1 = 0.5, 0.7\)</span>, where the transition occurs, the Wilson ratio keeps decreasing as temperature is decreased.</p>
+Note that each curve is cut off on the left at some <span class="arithmatex">\(T\)</span>. This is because one can expect that results reach the <span class="arithmatex">\(N\rightarrow \infty\)</span> validity only for <span class="arithmatex">\(\mathcal{Z}&gt;\mathcal{Z}^*\gg 1\)</span>. In reality, we set cut-off of <span class="arithmatex">\(\mathcal{Z}^* = 10\)</span>, and only plot data for temperatures at which <span class="arithmatex">\(\mathcal{Z}&gt;10\)</span> <a href="#5">[5]</a>. However, even with this cutoff, we can see that for small <span class="arithmatex">\(J_2/J_1 = 0.1, 0.3\)</span> (Néel antiferromagnet) and large <span class="arithmatex">\(J_2/J_1 =0.9,1.0\)</span> (stripe antiferromagnet) , the Wilson ratio curve goes upward as temperature is lowered for small <span class="arithmatex">\(T\)</span>. For <span class="arithmatex">\(J_2/J_1 = 0.5, 0.7\)</span>, where the transition occurs, the Wilson ratio keeps decreasing as temperature is decreased.</p>
 <p>All the thermodynamic quantities mentioned above can be plotted using the Julia script below</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="3:1"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">Julia</label></div>
 <div class="tabbed-content">
