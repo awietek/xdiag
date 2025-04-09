@@ -508,7 +508,7 @@ $$
 
 ### Symmetry-adapted blocks
 
-Representations $\rho$ of a permutation symmetry group $G$ can then be used to create symmetry-adapted blocks. Given a computational basis state $|\mathbf{\sigma}\rangle = |\sigma_1\sigma_2\cdots\sigma_n\rangle$, the corresponding symmetry-adapted state is given as,
+Representations $\rho$ of a permutation symmetry group $G$ can then be used to create symmetry-adapted blocks. Given a computational basis state $|\mathbf{\sigma}\rangle = |\sigma_1\sigma_2\cdots\sigma_N\rangle$, the corresponding symmetry-adapted state is given as,
 
 $$
 	|\mathbf{\sigma}_{\rho}\rangle \equiv \frac{1}{N_{\rho,\psi}} \sum_{g \in G} \chi_{\rho}(g)^{*} g |\mathbf{\sigma}\rangle.
@@ -516,8 +516,8 @@ $$
 
 Here, the action of a permutation $g$ on a product state $|\sigma\rangle$ is defined as,
 $$
-    g|\mathbf{\sigma}\rangle = g|\sigma_1\sigma_2\cdots\sigma_n\rangle = 
-    |\sigma_{g(1)}\sigma_{g(2)}\cdots\sigma_{g(n)}\rangle,
+    g|\mathbf{\sigma}\rangle = g|\sigma_1\sigma_2\cdots\sigma_N\rangle = 
+    |\sigma_{g(1)}\sigma_{g(2)}\cdots\sigma_{g(N)}\rangle,
 $$
 and the $N_{\rho,\psi}$ denotes the normalization constant.
 For example, consider a spin $S=1/2$ system on a four-site chain with a fourfold translation symmetry group $C_4$, the computational basis state $|\mathbf{\sigma}\rangle = |\downarrow\downarrow\uparrow\uparrow\rangle$ and the irreducible representation with $k=\pi$. Then the symmetry-adapted basis state of $|\mathbf{\sigma}\rangle$ is given as,
