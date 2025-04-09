@@ -6,99 +6,170 @@ int main() try {
   // clang-format off
  
 {
-// --8<-- [start:first_steps_1]
-using namespace xdiag;
+// --8<-- [start:usage_guide_hs1]
 int N = 8;
-auto hspace = Spinhalf(N);
-// --8<-- [end:first_steps_1]
+auto hs = Spinhalf(N);
+// --8<-- [end:usage_guide_hs1]
 
-// --8<-- [start:first_steps_2]
-for (auto spins : hspace) {
+// --8<-- [start:usage_guide_hs2]
+for (auto spins : hs) {
   Log("{}", to_string(spins));
+  Log("{}", index(hs, spins));
 }
-// --8<-- [end:first_steps_2]
+Log("dim: {}", size(hs));
+// --8<-- [end:usage_guide_hs2]
 
-// --8<-- [start:first_steps_3]
-int nup = 4;
-auto block = Spinhalf(N, nup);
-for (auto spins : block) {
-  Log("{}", to_string(spins));
-}
-// --8<-- [end:first_steps_3]
+// --8<-- [start:usage_guide_hs3]
+int nup = 2;
+auto b1 = Spinhalf(N, nup);
 
-// --8<-- [start:first_steps_4]
-XDIAG_SHOW(size(hspace));
-XDIAG_SHOW(size(block));
-// --8<-- [end:first_steps_4]
+int ndn = 1;
+auto b2 = tJ(N, nup, ndn);
+auto b3 = Electron(N, nup, ndn);
+// --8<-- [end:usage_guide_hs3]
 
-// --8<-- [start:first_steps_5]
+// --8<-- [start:usage_guide_op1]
 auto ops = OpSum();
 for (int i=0; i<N; ++i) {
-  ops += "J" * Op("SdotS", {i, (i+1) % N});
+    int s1 = i;
+    int s2 = (i+1) % N
+    ops += "J" * Op("SdotS", {s1, s2});
 }
 ops["J"] = 1.0;
-// --8<-- [end:first_steps_5]
+// --8<-- [end:usage_guide_op1]
 
-// --8<-- [start:first_steps_6]
-auto [e0, psi0] = eig0(ops, block);
-Log("e0: {:.12f}", e0);
-// --8<-- [end:first_steps_6]
+// --8<-- [start:usage_guide_mat1]
+arma::mat H = matrix(ops, block);
+H.print();
+// --8<-- [end:usage_guide_mat1]
 
-// --8<-- [start:first_steps_7]
-arma::mat H = matrix(ops, block); 
+// --8<-- [start:usage_guide_mat2]
 arma::vec evals;
 arma::mat evecs;
 arma::eig_sym(evals, evecs, H);
-Log("e0: {:.12f}, e1: {:.12f}", evals[0], evals[1]);
-// --8<-- [end:first_steps_7]
+// --8<-- [end:usage_guide_mat2]
 
-// --8<-- [start:first_steps_8]
-for (int i=1; i<N; ++i) {
+// --8<-- [start:usage_guide_stat1]
+bool real = true;
+auto psi1 = State(b, real);
+auto psi2 = zero_state(b, real);
+// --8<-- [end:usage_guide_stat1]
+
+// --8<-- [start:usage_guide_stat2]
+int d = size(block)
+arma::vec v(d, arma::fill::randu);
+auto psi = State(b, v);
+// --8<-- [end:usage_guide_stat2]
+
+// --8<-- [start:usage_guide_stat3]
+auto psi1 = product_state(block, {"Up", "Dn"});
+auto psi2 = random_state(block);
+// --8<-- [end:usage_guide_stat3]
+
+// --8<-- [start:usage_guide_stat4]
+double nrm = norm(psi);
+double d = dot(psi1, psi2);
+complex dc = dotC(psi1, psi2);
+// --8<-- [end:usage_guide_stat4]
+
+// --8<-- [start:usage_guide_stat5]
+arma::vec v = vector(psi);
+arma::cx_vec vc = vectorC(psi);
+// --8<-- [end:usage_guide_stat5]
+
+// --8<-- [start:usage_guide_stat6]
+auto phi = apply(H, psi);
+// --8<-- [end:usage_guide_stat6]
+
+// --8<-- [start:usage_guide_iter1]
+double e0 = eigval0(H, block);
+// --8<-- [end:usage_guide_iter1]
+
+// --8<-- [start:usage_guide_iter2]
+auto [e0 , psi0] = eig0(H, block);
+// --8<-- [end:usage_guide_iter2]
+
+// --8<-- [start:usage_guide_iter3]
+double t = 1.0;
+auto phi = time_evolve(H, psi0, t);
+// --8<-- [end:usage_guide_iter3]
+
+// --8<-- [start:usage_guide_measu1]
+for (int i=0; i<N; ++i) {
   auto op = Op("SzSz", {0, i});
   double corr = inner(op, psi0);
-  Log("<Sz_0 Sz_{}> = {:.12f}", i, corr);
 }
-// --8<-- [end:first_steps_8]
+// --8<-- [end:usage_guide_measu1]
 
-{
-// --8<-- [start:io_1]
-auto fl = FileToml(XDIAG_DIRECTORY "/examples/user_guide/spinhalf_chain.toml");
+// --8<-- [start:usage_guide_io1]
+auto fl = FileToml("spinhalf_chain.toml");
 auto ops = read_opsum(fl, "Interactions");
-// --8<-- [end:io_1]
-}
+ops["J"] = 1.0
+// --8<-- [end:usage_guide_io1]
 
-// --8<-- [start:io_2]
-auto fl = FileH5(XDIAG_DIRECTORY "/examples/user_guide/output.h5", "w!");
-fl["e0"] = e0;
-fl["evals"] = evals;
-fl["evecs"] = evecs; 
-// --8<-- [end:io_2]
+// --8<-- [start:usage_guide_io2]
+auto f1 = FileH5("output.h5", "w!");
+f1["e0"] = e0;
+f1["evals"] = evals;
+f1["evecs"] = evecs;
+// --8<-- [end:usage_guide_io2]
 
-
-// --8<-- [start:symmetries_1]
+// --8<-- [start:usage_guide_sym1]
 auto T = Permutation({1, 2, 3, 4, 5, 6, 7, 0});
-// --8<-- [end:symmetries_1]
+// --8<-- [end:usage_guide_sym1]
 
+// --8<-- [start:usage_guide_sym2]
+auto group = PermutationGroup({
+  pow(T, 0), pow(T, 1), pow(T, 2), pow(T, 3),
+  pow(T, 4), pow(T, 5), pow(T, 6), pow(T, 7)});
+// --8<-- [end:usage_guide_sym2]
 
-// --8<-- [start:symmetries_2]
-auto group = PermutationGroup({pow(T, 0), pow(T, 1), pow(T, 2), pow(T, 3),
-                               pow(T, 4), pow(T, 5), pow(T, 6), pow(T, 7)});
-// --8<-- [end:symmetries_2]
+// --8<-- [start:usage_guide_sym3]
+auto chi = arma::vec({1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0});
+auto k = Representation(group, chi);
+// --8<-- [end:usage_guide_sym3]
 
-// --8<-- [start:symmetries_3]
-auto irrep_k_0 = Representation(group, arma::vec{1.0, 1.0, 1.0, 1.0,
-						 1.0, 1.0, 1.0, 1.0});
-auto irrep_k_pi = Representation(group, arma::vec{1.0, -1.0, 1.0, -1.0,
-						  1.0, -1.0, 1.0, -1.0});
-// --8<-- [end:symmetries_3]
- 
-// --8<-- [start:symmetries_4]
-auto block_k_0 = Spinhalf(N, nup, irrep_k_0);
-auto block_k_pi = Spinhalf(N, nup, irrep_k_pi);
-double e0_k_0 = eigval0(ops, block_k_0);
-double e0_k_pi = eigval0(ops, block_k_pi);
-Log("e0: k=0: {:.12f}, k=pi: {:.12f}", e0_k_0, e0_k_pi);
-// --8<-- [end:symmetries_4]
+// --8<-- [start:usage_guide_sym4]
+auto blk = Spinhalf(N, nup, irrep);
+// --8<-- [end:usage_guide_sym4]
+
+// --8<-- [start:usage_guide_sym5]
+for (auto spins: blk) {
+  Log("{}", to_string(spins));
+}
+// --8<-- [end:usage_guide_sym5]
+
+// --8<-- [start:usage_guide_sym6]
+auto fl = FileToml("symmetries.toml");
+auto group = read_permutation_group(fl, "Symmetries");
+auto irrep = read_representation(fl, "k.zero", "Symmetries");
+// --8<-- [end:usage_guide_sym6]
+
+// --8<-- [start:usage_guide_sym7]
+auto og = symmetrize(ops, group);
+auto oi = symmetrize(ops, irrep);
+// --8<-- [end:usage_guide_sym7]
+
+// --8<-- [start:usage_guide_dist1]
+#include <xdiag/all.hpp>
+using namespace xdiag;
+int main(int argc, char* argv[]) try {
+    MPI_Init(argc, argv);
+    // genuine XDiag code here
+    MPI_Finalize();
+} catch (Error e) {
+    error_trace(e);
+}
+// --8<-- [end:usage_guide_dist1]
+
+// --8<-- [start:usage_guide_dist2]
+auto block = SpinhalfDistributed(N, nup);
+OpSum ops;    
+for (int i = 0; i < N; ++i) {
+    ops += Op("SdotS", {i, (i + 1) % N});
+}
+double e0 = eigval0(ops, block);
+// --8<-- [end:usage_guide_dist2]
 
 }
 
