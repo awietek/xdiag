@@ -650,7 +650,7 @@ XDIAG_SHOW(k_pi2_half);
 XDIAG_SHOW(isreal(k_pi2_half));
 // --8<-- [end:read_representation]
 }
- 
+
 {
 // --8<-- [start:FileH5]
 std::string filename = XDIAG_DIRECTORY "/misc/data/hdf5/write.h5";
@@ -666,7 +666,6 @@ auto mat = arma::cx_mat(3, 5, arma::fill::randn);
 fl["a/b/c/mat"] = mat;
 // --8<-- [end:FileH5]
 }
- 
  
 // }
   // clang-format on

@@ -1,5 +1,7 @@
 # Tower Of States attractive Hubbard model
 
+**Author** Hannes Karlsson
+
 We perform a tower of states (TOS) analysis [[1]](#1),[[2]](#2) on the attractive Hubbard model on a square lattice. The (particle-hole symmetric) model can be written as
 $$
     \mathcal{H} = -t\sum_{\langle i j \rangle} c_i^{\dagger} c_j - U\sum_{i} (n_{i\uparrow}-\frac{1}{2})(n_{i\downarrow}-\frac{1}{2}).
@@ -11,7 +13,7 @@ $$
 $$
 i.e, the ground state is degenerate in the number of particle pairs. We thus expect that in the superfluid state, in the neighbourhood of the most favourable particle number (determined by the chemical potential), there will be a tower of almost degenerate energy states, containing different number of superconducting pairs, but otherwise the same.
 
-To perform the TOS analysis, we gather the eigenvalues using either full exact diagonalization (ED) or the Lanczos algorithm in each symmetry sector, defined by the particle number. Here we use the Lanczos algorithm with $10$ eigenvalues well converged.
+To perform the TOS analysis, we gather the eigenvalues using either full exact diagonalization (ED) or the Lanczos algorithm in each symmetry sector, defined by the particle number. Here we use the Lanczos algorithm with $3$ eigenvalues well converged.
 
 ![Image title](../img/tos_ahm_Lx(4)_Ly(4).png){ align=center }
 

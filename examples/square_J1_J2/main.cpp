@@ -1,4 +1,3 @@
-#include <filesystem>
 #include <xdiag/all.hpp>
 
 int main(int argc, char **argv) {
@@ -22,12 +21,10 @@ int main(int argc, char **argv) {
 
 
   auto lfile = FileToml(format("square.{}.J1J2.fsl.pbc.toml", n_sites));
-  std::string odir = format("outfiles/seed.{}", seed);
   std::string ofilename = format(
       "outfile.square.{}.J1J2.{:.2f}.nup.{}.k.{}.seed.{}.h5",
       n_sites, J1, n_up, kname, seed);
-  std::filesystem::create_directories(odir);
-  auto ofile = FileH5(format("{}/{}", odir, ofilename), "w!");
+  auto ofile = FileH5(ofilename, "w!");
 
   xdiag::OpSum ops = read_opsum(lfile, "Interactions");
   ops["J1"] = J1;

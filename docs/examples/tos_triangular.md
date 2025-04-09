@@ -1,12 +1,14 @@
 # Tower of State $J_1 - J_2$ Model in the Triangular Lattice
 
+**Author** Rafael Soares
+
 We perform a tower of states (TOS) analysis [[1]](#1) of the $J_1-J_2$ spin-$\frac{1}{2}$ Heisenberg model on the triangular lattice [[2]](#2). This model consists of spin-$\frac{1}{2}$ sites with nearest and next-nearest neighbor Heisenberg interactions,
 
 $$
 \mathcal{H} = J_1 \sum_{\langle i, j \rangle} \boldsymbol{S}_i \cdot \boldsymbol{S}_j + J_2 \sum_{\langle\langle i, j \rangle\rangle} \boldsymbol{S}_i \cdot \boldsymbol{S}_j.
 $$
 
-The TOS analysis provides strong evidence for spontaneous symmetry breaking (SSB) in the thermodynamic limit, since the ground state of a finite system is completely symmetric. The $J_1-J_2$ Heisenberg model on the triangular lattice can stabilize different types of order depending on the ratio $J_2/J_1$, which break the continuous SO(3) spin rotation symmetry.
+The TOS analysis provides strong evidence for spontaneous symmetry breaking (SSB) in the thermodynamic limit, since the ground state of a finite system is completely symmetric. The $J_1-J_2$ Heisenberg model on the triangular lattice can stabilize different types of order depending on the ratio $J_2/J_1$, which break the continuous SU(2) spin rotation symmetry.
 
 To perform the TOS analysis, we converged the lowest-lying eigenvalues using the Lanczos algorithm in each symmetry sector. We then determined the total spin quantum number, $S_{\text{tot}}$, by inspecting, for each energy level, the number of degenerate eigenstates; thus, $S_{\text{tot}}$ is given by the maximum $S^z$. Finally, we plotted the energy spectra as a function of $S_{\text{tot}}\left(S_{\text{tot}} + 1\right)$. 
 

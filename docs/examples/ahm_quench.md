@@ -1,5 +1,7 @@
 # Time evolution of quench
 
+**Author** Hannes Karlsson
+
 In this example, we will first find the ground state for the free electron on a 2D lattice
 $$
 H = -t \sum_{\langle ij,\sigma \rangle} c_{i\sigma}^\dagger c_{j\sigma}
@@ -13,7 +15,7 @@ $$
     \hat{O} = \sum_i \langle n_{i\uparrow}n_{i\downarrow} \rangle
 $$
 
-![Image title](../img/quench.png){ align=center }
+![Image title](../img/Lx(4)_Ly(3).png){ align=center }
 
 We see that the double occupancy initially increases sharply, before going down again and entering an oscillatory behaviour.
 

@@ -2,6 +2,17 @@
 title: Releases
 ---
 
+## v0.3.2
+
+**Apr. 3, 2025**
+
+ElectronDistributed and further enhancements
+
+* Adds new block type: ElectronDistributed
+* Added benchmarks
+* linking to threaded Intel MKL enabled
+* several enhancements and bugfixes
+
 ## v0.3.1
 
 **Feb. 11, 2025**

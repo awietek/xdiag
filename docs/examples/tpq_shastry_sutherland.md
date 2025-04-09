@@ -1,5 +1,7 @@
 # Shastry Sutherland Specific Heat with TPQ
 
+**Author** Rafael Soares
+
 We use an ensemble of Thermal Pure Quantum (TPQ) states [[1]](#1) to compute the total energy and specific heat as functions of temperature for the Shastry–Sutherland model.
 
 The Shastry–Sutherland model is a paradigmatic example of a frustrated two-dimensional antiferromagnetic spin system. It is widely used as a faithful representation of materials such as the frustrated quantum magnet $\text{SrCu}_2(\text{BO}_3)_2$. On a square lattice, the model describes spin $-\frac{1}{2}$ magnetic moments interacting via Heisenberg antiferromagnetic couplings, as shown in following figure. 
@@ -67,7 +69,7 @@ The interactions terms for the Shastry Sutherland model with $L=5$ and $W=4$ sit
 	--8<-- "examples/tpq_shastry_sutherland/shastry_sutherland_L_5_W_4.toml"
 	```
 
-## references
+## References
 <a id="1" href="https://doi.org/10.1103/PhysRevLett.108.240401">[1]</a>
 S. Sugiura and A. Shimizu, Thermal Pure Quantum States at Finite Temperature, Phys. Rev. Lett. 108, 240401 (2012).
 

@@ -2,7 +2,7 @@ site_name: XDiag Documentation
 theme:
   name: material
   palette:
-    scheme: slate
+    scheme: default
   features:
     - content.code.copy
 
@@ -41,3 +41,4 @@ nav:
   - Documentation: documentation/index.md
   - Contributing: contributing.md
   - Releases: releases.md
+  - About: about.md

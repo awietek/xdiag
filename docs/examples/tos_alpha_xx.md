@@ -1,8 +1,10 @@
 # Tower Of States $\alpha \text{XX}$ model
 
+**Author** Rafael Soares
+
 We perform a tower of states (TOS) analizes [[1]](#1) of the $\alpha \text{XX}$ model [[2]](#2). This model consists of an array of $N$ spin-$\frac{1}{2}$ sites with long-range $\text{XY}$  couplings that decay as a power law with exponent $\alpha$,
 $$
-    \mathcal{H} = -\dfrac{J}{2} \sum_{i,<j} \dfrac{S^+_iS^-_j+S^-_iS^+_j}{|i - j|^\alpha}.
+    \mathcal{H} = -\dfrac{J}{2} \sum_{i<j} \dfrac{S^+_iS^-_j+S^-_iS^+_j}{|i - j|^\alpha}.
 $$
 
 The TOS analysis provides strong evidence for spontaneous symmetry breaking (SSB) in the thermodynamic limit, as the ground state of a finite system is completely symmetric. The spectrum of the $\alpha \text{XX}$ model can be labeled by total magnetization since $\left[\mathcal{H}, S^z \right]=0$. 

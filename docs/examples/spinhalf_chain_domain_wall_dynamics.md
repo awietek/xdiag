@@ -1,5 +1,7 @@
 # Domain Wall Dynamics in a Spin-$1/2$ Chain
 
+**Author** Paul Ebert
+
 This example demonstrates the time-evolution of quantum states in `XDiag` for the dynamics of a domain wall in the ferromagnetic spin-$1/2$ XXZ chain
 
 $$

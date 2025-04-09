@@ -1,12 +1,14 @@
 # Lattice Momentum Tower of States for the Heisenberg Chain  
 
+**Author** Paul Ebert
+
 This example demonstrates how to set up a tower of states analysis with respect to translation symmetries using the example of a spin-$1/2$ chain
 
 $$
     H = J \sum_{\langle i, j \rangle} \bm{S}_i \cdot \bm{S}_j,
 $$
 
-with periodic boundary conditions and $0 < J$ for ferromagnetic interactions.
+with periodic boundary conditions and $J>0$ for aniferromagnetic interactions.
 
 The code below demonstrates how the lowest energy levels for each value of the lattice momentum can be computed using the Lanczos algorithm.
 The Julia version also contains a simple plotting method, leading to the following tower of states with respect to the lattice momentum.

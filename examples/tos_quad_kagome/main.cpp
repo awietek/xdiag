@@ -1,4 +1,3 @@
-#include <filesystem>
 #include <xdiag/all.hpp>
 
 int main(int argc, char **argv) {
@@ -21,12 +20,10 @@ int main(int argc, char **argv) {
   Log("Diagonalizing H in block nup: {}, k: {}", n_up, kname);
 
   auto lfile = FileToml(format("kagome.{}.J1J2J3.pbc.toml", n_sites));
-  std::string odir = format("outfiles/seed.{}", seed);
   std::string ofilename = format(
       "outfile.kagome.{}.J1.{:.2f}.J2.{:.2f}.J3.{:.2f}.nup.{}.k.{}.seed.{}.h5",
       n_sites, J1, J2, J3, n_up, kname, seed);
-  std::filesystem::create_directories(odir);
-  auto ofile = FileH5(format("{}/{}", odir, ofilename), "w!");
+  auto ofile = FileH5(ofilename, "w!");
 
   xdiag::OpSum ops = read_opsum(lfile, "Interactions");
   ops["J1"] = J1;

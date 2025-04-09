@@ -1,5 +1,7 @@
 # Entanglement Entropy Ground-State XXZ
 
+**Author:** Rafael Soares
+
 In this example, we compute the entanglement entropy[[1]](#1) of the ground state of the spin $-\frac{1}{2}$ XXZ chain, described by the Hamiltonian:
 $$
 \mathcal{H} = J \sum_{n=0}^{N-1} \left(S^x_n\cdot S^x_{n+1} + S^y_n\cdot S^y_{n+1} + \Delta S^z_n\cdot S^z_{n+1}\right). 
@@ -7,16 +9,14 @@ $$
 
 The algorithm follows these steps:
 
-1. Obtain the ground state using the Lanczos algorithm.
+1. Obtain the ground state $|\psi_0\rangle$ using the Lanczos algorithm.
 
-2. Construct the reduced density matrix for the region with the firs $\ell$ spins by tracing out the complementary degrees of freedom:
-
+2. Construct the reduced density matrix for the region with the first $\ell$ spins by tracing out the complementary degrees of freedom:
 $$
-\rho_{\ell} = \text{Tr}_{\bar{\ell}} \left(|\text{GS}\rangle \langle\text{GS}| \right).
+\rho_{\ell} = \text{Tr}_{\bar{\ell}} \left(|\psi_0\rangle\langle\psi_0| \right).
 $$ 
 
 3. Compute the entanglement entropy from the reduced density matrix:
-
 $$
 S_\ell = -\text{Tr}\left( \rho_\ell \ln \rho_\ell  \right),
 $$

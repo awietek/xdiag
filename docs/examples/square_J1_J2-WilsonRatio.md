@@ -1,6 +1,6 @@
 # Square lattice $J_1-J_2$ model Wilson ratio
 
-In this example, we compute varios thermodynamic quantities of the Square lattice $J_1-J_2$ model including susceptibility, entropy, and Wilson ratio.
+**Author** Siddhartha Sarkar
 
 The $J_1-J_2$ model on a square lattice consists of Heisenberg couplings between nearest neighbors and next nearest neighbors with coupling constants $J_1$ and $J_2$, respectively. The Hamiltonian has the form
 
@@ -18,13 +18,13 @@ The following code was used to obtain the spectrum
 
 === "C++"
 	```c++
-	--8<-- "examples/square-J1-J2/main.cpp"
+	--8<-- "examples/square_J1_J2/main.cpp"
 	```
 The interactions terms and the symmetry representation inputs are given in the following TOML file:
 
 === "toml"
 	```toml
-	--8<-- "examples/square-J1-J2/square.32.J1.fsl.pbc.toml"
+	--8<-- "examples/square_J1_J2/square.32.J1J2.fsl.pbc.toml"
 	```
 To run the above C++ code with the toml file, one needs to execute the following command 
 
@@ -107,7 +107,7 @@ All the thermodynamic quantities mentioned above can be plotted using the Julia 
 
 === "Julia"
 	```julia
-	--8<-- "examples/square-J1-J2/plot-therm.jl"
+	--8<-- "examples/square_J1_J2/plot-therm.jl"
 	```
 ## References
 <a id="1" href="https://doi.org/10.1103/PhysRevLett.108.240401">[1]</a>
