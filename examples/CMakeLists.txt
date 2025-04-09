@@ -1,6 +1,5 @@
 set(XDIAG_EXAMPLES
   usage_examples
-  user_guide
   hello_world
   spinhalf_chain_e0
   spinhalf_chain_gs_corr_symmetries
