@@ -25,17 +25,16 @@ try {
     std::vector<std::string> psi0_vec (N);
     for (int i=0; i<N/2; i++) {psi0_vec[i] = "Up";}
     for (int i=N/2; i<N; i++) {psi0_vec[i] = "Dn";}
-    auto psi0 = product_state(block, psi0_vec);
+    auto psi = product_state(block, psi0_vec);
 
     // time evolve psi0 and measure Sz expectation value
     double dt = 0.5;
     int Nt = 30;
     std::vector<std::vector<double> > Sz_expectation(Nt, std::vector<double>(N));
-    State psi_t;
     for (int t_step=0; t_step<Nt; t_step++){
-        psi_t = time_evolve(H, psi0, dt*t_step);
+        time_evolve_inplace(H, psi, dt);
         for (int i=0; i<N; i++){
-            Sz_expectation[t_step][i] = innerC(Op("Sz", {i}), psi_t).real(); // result must be real
+            Sz_expectation[t_step][i] = innerC(Op("Sz", {i}), psi).real(); // result must be real
         }
     }
 
