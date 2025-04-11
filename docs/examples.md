@@ -16,7 +16,7 @@ The executables are then available in the directory `build/examples`. Most examp
 <div class="grid cards" markdown>
 
 
--   :material-file-document:{ .lg .middle } __Groundstate energy__
+-   :material-file-document:{ .lg .middle } __Ground state energy__
 
     ---
 
@@ -25,7 +25,7 @@ The executables are then available in the directory `build/examples`. Most examp
     [source](examples/spinhalf_chain_e0.md) :simple-cplusplus: :simple-julia:
 
 
--  :material-file-document:{ .lg .middle } __Groundstate correlators__
+-  :material-file-document:{ .lg .middle } __Ground state correlators__
 
     ---
 
@@ -35,7 +35,7 @@ The executables are then available in the directory `build/examples`. Most examp
 
 
 
--  :material-file-document:{ .lg .middle } __Entanglement Entropy Groundstate__
+-  :material-file-document:{ .lg .middle } __Entanglement entropy ground state__
 
     ---
 
@@ -75,7 +75,7 @@ The executables are then available in the directory `build/examples`. Most examp
 
 <div class="grid cards" markdown>
 
--   :material-file-document:{ .lg .middle } __Specific Heat random t-J model__
+-   :material-file-document:{ .lg .middle } __Specific heat random t-J model__
 
     ---
 
@@ -85,7 +85,7 @@ The executables are then available in the directory `build/examples`. Most examp
 
     [source](examples/specific_heat_randomtj.md) :simple-cplusplus: :simple-julia:
 
--   :material-file-document:{ .lg .middle } __Specific Heat triangular t-J model__
+-   :material-file-document:{ .lg .middle } __Specific heat triangular t-J model__
 
     ---
 
