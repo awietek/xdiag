@@ -390,20 +390,24 @@
 <p>This example demonstrates the differing level statistics of integrable and non-integrable models using the example of spin-<span class="arithmatex">\(1/2\)</span> chains.</p>
 <p>The term <em>level statistic</em> refers to the probability distribution <span class="arithmatex">\(P(s)\)</span> where the variable <span class="arithmatex">\(s\)</span> is the difference between adjacent energy levels <span class="arithmatex">\(0 \leq E_{i+1}-E_i\)</span>. That is, for a given quantum system <span class="arithmatex">\(P(s)\)</span> describes the likelihood that the next excited state above a randomly chosen energy level <span class="arithmatex">\(E\)</span> has energy <span class="arithmatex">\(E + s\)</span>. To ensure comparability across different systems, one typically normalizes the level spacings by its mean value <span class="arithmatex">\(\tilde{s} = s/ \bar{s}\)</span> and considers <span class="arithmatex">\(P(\tilde{s})\)</span>.
 Since this is the standard procedure, we will assume that <span class="arithmatex">\(P(s)\)</span> is the distribution of the normalized energy differences below instead of writing <span class="arithmatex">\(P(\tilde{s})\)</span>.</p>
-<p>It is well established that for integrable systems (i.e. those with conserved quantities) the level statistic is a Poissonian</p>
-<div class="arithmatex">\[P_{\mathrm{Poiss}}(s) = \exp(-s)\]</div>
-<p>whereas the so-called Wigner-Dyson distribution emerges for non-integrable systems</p>
-<div class="arithmatex">\[P_{\mathrm{WD}}(s) = \frac{\pi s}{2} \exp(- \pi s^2/4).\]</div>
-<p>Intuitively speaking, this is because having a system with symmetries and associated conserved quantities leads to degeneracies that contribute to seeing <span class="arithmatex">\(s=0\)</span> very often such that <span class="arithmatex">\(P_{\mathrm{Pois}}(0) &gt; 0\)</span>. On the contrary, the energy levels of non-integrable systems are approximately randomly distributed (especially in the bulk of the spectrum), giving a distribution satisfying <span class="arithmatex">\(P_{\mathrm{WD}}(0) = 0\)</span>.</p>
+<p>It is well established that for integrable systems (i.e. those with conserved quantities) the level statistic is a Poissonian
+$$
+    P_{\mathrm{Poiss}}(s) = \exp(-s)
+$$
+whereas the so-called Wigner-Dyson distribution emerges for non-integrable systems
+$$
+    P_{\mathrm{WD}}(s) = \frac{\pi s}{2} \exp(- \pi s^2/4).
+$$
+Intuitively speaking, this is because having a system with symmetries and associated conserved quantities leads to degeneracies that contribute to seeing <span class="arithmatex">\(s=0\)</span> very often such that <span class="arithmatex">\(P_{\mathrm{Pois}}(0) &gt; 0\)</span>. On the contrary, the energy levels of non-integrable systems are approximately randomly distributed (especially in the bulk of the spectrum), giving a distribution satisfying <span class="arithmatex">\(P_{\mathrm{WD}}(0) = 0\)</span>.</p>
 <p>To showcase this, we inspect two spin-<span class="arithmatex">\(1/2\)</span> Hamiltonians on a chain, one being the integrable XXZ model</p>
 <div class="arithmatex">\[
-    H_{\mathrm{i}} = \sum_{\langle i, j \rangle} \Big(J \bm{S}^z_i \cdot \bm{S}^z_j + \frac{\Delta}{2}\big( \bm{S}^+_i \cdot \bm{S}^-_j + \bm{S}^-_i \cdot \bm{S}^+_j \big) \Big)
+\mathcal{H}_{\mathrm{i}} = \sum_{\langle i, j \rangle} \Big(J \bm{S}^z_i \cdot \bm{S}^z_j + \frac{\Delta}{2}\big( \bm{S}^+_i \cdot \bm{S}^-_j + \bm{S}^-_i \cdot \bm{S}^+_j \big) \Big),
 \]</div>
 <p>while the second merely adds a next-nearest-neighbor interaction</p>
 <div class="arithmatex">\[
-    H_{\mathrm{ni}} = H_{\mathrm{i}} + \sum_{&lt;&lt; i, j &gt;&gt;} J_2 \bm{S}^z_i \cdot \bm{S}^z_j
+    \mathcal{H}_{\mathrm{ni}} = H_{\mathrm{i}} + \sum_{&lt;&lt; i, j &gt;&gt;} J_2 \bm{S}^z_i \cdot \bm{S}^z_j
 \]</div>
-<p>and becomes "non-integrable". We must put "non-integrable" in quotes here, since strictly speaking both models are integrable. However, the <span class="arithmatex">\(H_{\mathrm{ni}}\)</span> system becomes non-integrable once the trivial spin-flip, mirror, and translation symmetries (we employ periodic boundary conditions) are removed. This is done by considering specific sectors of the total Hilbert space which is easily done in <code>XDiag</code>.</p>
+<p>and becomes "non-integrable". We must put "non-integrable" in quotes here, since strictly speaking both models are integrable. However, the <span class="arithmatex">\(\mathcal{H}_{\mathrm{ni}}\)</span> system becomes non-integrable once the trivial spin-flip, mirror, and translation symmetries (we employ periodic boundary conditions) are removed. This is done by considering specific sectors of the total Hilbert space which is easily done in <code>XDiag</code>.</p>
 <p>The code below demonstrates how the level statistics of these systems can be computed inside the sectors where all trivial symmetries are removed.
 The Julia version also contains a simple plotting method, leading to the following distribution of level statistics:</p>
 <p><img align="center" alt="Level statistics" src="../../img/spinhalf_chain_level_statistics.png" /></p>
