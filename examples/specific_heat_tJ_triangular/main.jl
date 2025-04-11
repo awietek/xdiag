@@ -25,7 +25,7 @@ function main()
     J = 0.4   # Interaction parameter
     H = OpSum()
     for (i, j) in bonds
-        H += J * Op("SdotS", [i, j]) + t * Op("Hop", [i, j])
+        H += J * Op("tJSdotS", [i, j]) + t * Op("Hop", [i, j])
     end
 
     # Define the block structure for the Hamiltonian with+out any symmetry
