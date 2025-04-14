@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Alexander Wietek <awietek@pks.mpg.de>
+//
+// SPDX-License-Identifier: Apache-2.0
+
 #include "arnoldi_to_disk.hpp"
 
 #include <xdiag/extern/fmt/format.hpp>

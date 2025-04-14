@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Alexander Wietek <awietek@pks.mpg.de>
+//
+// SPDX-License-Identifier: Apache-2.0
+
 #include "time_evolve.hpp"
 
 #include <xdiag/algorithms/time_evolution/evolve_lanczos.hpp>

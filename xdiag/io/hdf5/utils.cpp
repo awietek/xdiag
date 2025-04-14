@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Alexander Wietek <awietek@pks.mpg.de>
+//
+// SPDX-License-Identifier: Apache-2.0
+
 #include "utils.hpp"
 #ifdef XDIAG_USE_HDF5
 #include <xdiag/utils/logger.hpp>

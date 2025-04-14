@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Alexander Wietek <awietek@pks.mpg.de>
+//
+// SPDX-License-Identifier: Apache-2.0
+
 #include "combinations_index.hpp"
 
 #include <xdiag/combinatorics/bit_patterns.hpp>

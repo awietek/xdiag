@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Alexander Wietek <awietek@pks.mpg.de>
+//
+// SPDX-License-Identifier: Apache-2.0
+
 #include "sublattice_stability.hpp"
 
 #include <xdiag/symmetries/operations/symmetry_operations.hpp>

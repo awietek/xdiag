@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Alexander Wietek <awietek@pks.mpg.de>
+//
+// SPDX-License-Identifier: Apache-2.0
+
 #include "dispatch_apply.hpp"
 
 #include <xdiag/basis/spinhalf_distributed/apply/apply_terms.hpp>
