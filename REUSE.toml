@@ -1,0 +1,28 @@
+version = 1
+
+# A simple glob of all files in misc/
+[[annotations]]
+path = "misc/**"
+SPDX-FileCopyrightText = "2025 Alexander Wietek <awietek@pks.mpg.de>"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = "examples/**"
+SPDX-FileCopyrightText = "2025 Alexander Wietek <awietek@pks.mpg.de>"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = "docs/**"
+SPDX-FileCopyrightText = "2025 Alexander Wietek <awietek@pks.mpg.de>"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = "benchmarks/**"
+SPDX-FileCopyrightText = "2025 Alexander Wietek <awietek@pks.mpg.de>"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ".github/**"
+SPDX-FileCopyrightText = "2025 Alexander Wietek <awietek@pks.mpg.de>"
+SPDX-License-Identifier = "Apache-2.0"
+

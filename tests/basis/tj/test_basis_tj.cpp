@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Alexander Wietek <awietek@pks.mpg.de>
+//
+// SPDX-License-Identifier: Apache-2.0
+
 #include "../../catch.hpp"
 #include <xdiag/basis/tj/basis_tj.hpp>
 #include <xdiag/blocks/tj.hpp>

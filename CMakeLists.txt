@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2025 Alexander Wietek <awietek@pks.mpg.de>
+#
+# SPDX-License-Identifier: Apache-2.0
+
 cmake_minimum_required(VERSION 3.19)
 
 project(

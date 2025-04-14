@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2025 Alexander Wietek <awietek@pks.mpg.de>
+#
+# SPDX-License-Identifier: Apache-2.0
+
 add_library(${XDIAG_LIBRARY})
 add_library(xdiag::${XDIAG_LIBRARY} ALIAS ${XDIAG_LIBRARY})
 set_target_properties(${XDIAG_LIBRARY} PROPERTIES

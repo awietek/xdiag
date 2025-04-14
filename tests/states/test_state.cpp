@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Alexander Wietek <awietek@pks.mpg.de>
+//
+// SPDX-License-Identifier: Apache-2.0
+
 #include "../catch.hpp"
 #include <xdiag/states/state.hpp>
 #include <xdiag/utils/xdiag_show.hpp>
