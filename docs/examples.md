@@ -91,6 +91,8 @@ The executables are then available in the directory `build/examples`. Most examp
 
     Computes the specific heat of the triangular t-J model via full ED.
 
+	![Specific Heat Triangular t-J](../img/specific_heat_tJ_triangular.png){ align=center }
+	
     [source](examples/specific_heat_tJ_triangular.md) :simple-julia:
 
 -   :material-file-document:{ .lg .middle } __Spin chain level statistics__
@@ -263,7 +265,7 @@ The executables are then available in the directory `build/examples`. Most examp
 </div>
 
 
-## Thermal Pure Quantum States
+## Thermodynamics
 
 <div class="grid cards" markdown>
 
@@ -271,7 +273,7 @@ The executables are then available in the directory `build/examples`. Most examp
 
     ---
 
-    Computes the specific heat using the TQP states for the Shastry Sutherland model.
+    Computes the specific heat using the TPQ states (finite temperature Lanczos method) for the Shastry Sutherland model.
 
 	![Image title](img/tpq_shastry_sutherland.png){ align=center }
 
@@ -281,7 +283,7 @@ The executables are then available in the directory `build/examples`. Most examp
 
     ---
 
-    Computes the Wilson ratio using the TQP states for the $J_1$-$J_2$ model on the square lattice
+    Computes the Wilson ratio using the TPQ states (finite temperature Lanczos method) for the $J_1$-$J_2$ model on the square lattice
 
 	![Image title](img/WR.square.32.J1.1.00.Jchi.0.00.png)
 
