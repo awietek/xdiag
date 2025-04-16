@@ -1,0 +1,831 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../documentation/">
+      
+      
+        <link rel="next" href="../contributing/">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.50">
+    
+    
+      
+        <title>Benchmarks - XDiag Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.a40c8224.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/katex.min.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#shared-memory-parallelization" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="XDiag Documentation" class="md-header__button md-logo" aria-label="XDiag Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            XDiag Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Benchmarks
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="XDiag Documentation" class="md-nav__button md-logo" aria-label="XDiag Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    XDiag Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quick_start/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Quick Start
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user_guide/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    User Guide
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Examples
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../documentation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Documentation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Benchmarks
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Benchmarks
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#shared-memory-parallelization" class="md-nav__link">
+    <span class="md-ellipsis">
+      Shared memory parallelization
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Shared memory parallelization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#table-computation-times-with-openmp-64-threads" class="md-nav__link">
+    <span class="md-ellipsis">
+      Table: Computation times with OpenMP (64 threads)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#distributed-memory-parallelization" class="md-nav__link">
+    <span class="md-ellipsis">
+      Distributed memory parallelization
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Distributed memory parallelization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#table-computation-times-with-mpi" class="md-nav__link">
+    <span class="md-ellipsis">
+      Table: Computation times with MPI
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Contributing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../releases/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Releases
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../about/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    About
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#shared-memory-parallelization" class="md-nav__link">
+    <span class="md-ellipsis">
+      Shared memory parallelization
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Shared memory parallelization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#table-computation-times-with-openmp-64-threads" class="md-nav__link">
+    <span class="md-ellipsis">
+      Table: Computation times with OpenMP (64 threads)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#distributed-memory-parallelization" class="md-nav__link">
+    <span class="md-ellipsis">
+      Distributed memory parallelization
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Distributed memory parallelization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#table-computation-times-with-mpi" class="md-nav__link">
+    <span class="md-ellipsis">
+      Table: Computation times with MPI
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  <h1>Benchmarks</h1>
+
+<p>To properly highlight XDiag's paralellization performance, we benchmark the computation time of the key operation behind all main features implemented in XDiag: the execution of a single Lanczos iteration, consisting of a matrix-vector multiplication and a few vector operations. </p>
+<p>To evaluate performance across all Hilbert space types supported by XDiag—namely the <a href="../documentation/blocks/spinhalf/">Spinhalf</a>, <a href="../documentation/blocks/electron/">Electron</a> and <a href="../documentation/blocks/tJ/">tJ</a> blocks - we consider three distinct models:</p>
+<ol>
+<li>The <span class="arithmatex">\(S= 1/2\)</span> one-dimensional Heisenberg chain with nearest-neighbor interactions,</li>
+</ol>
+<p>$$
+   H = J \sum_{\langle i,j\rangle} \mathbf{S}_i \cdot \mathbf{S}_j.
+   $$</p>
+<ol>
+<li>The one-dimensional Hubbard model,</li>
+</ol>
+<p>$$
+   H = -t \sum_{\langle i,j\rangle, \; \sigma} \left(c^\dagger_{i,\sigma}c_{j,\sigma} + \text{h.c.} \right) + U \sum_{i=0}^{N} n_{i,\uparrow} n_{i,\downarrow}.
+   $$</p>
+<ol>
+<li>The <em>t</em>-<em>J</em> model of spin-<span class="arithmatex">\(\frac{1}{2}\)</span> electrons,</li>
+</ol>
+<p>$$
+   H = -t \sum_{\langle i,j \rangle, \sigma} P \left( c^\dagger_{i,\sigma} c_{j,\sigma} + \text{h.c.} \right) P + J \sum_{\langle i , j \rangle } \mathbf{S}_i \cdot \mathbf{S}_j - n_i n_j/4. 
+   $$</p>
+<p>XDiag supports both multithreading with OpenMP and multiprocessing with MPI. We provide benchmarks for all three computational models using both parallelisation strategies. Please note that in the current version, MPI-based parallelisation does not support lattice symmetries. </p>
+<p>Throughout the following, all reported computation times refer to wall time, not CPU time.</p>
+<h2 id="shared-memory-parallelization">Shared memory parallelization</h2>
+<p>We demonstrate how the computation time for a single Lanczos step varies with the number of OpenMP threads used for shared-memory parallelisation. </p>
+<p>In addition to the U(1) symmetry—associated with the conservation of total magnetization in the Heisenberg model, or the conservation of total particle number in the Hubbard and <em>t</em>-<em>J</em> models— we also exploit lattice translation symmetries to perform the calculations (see <a href="../documentation/symmetries/representation/">Symmetries</a>). </p>
+<p>Concrealy we consider:</p>
+<ul>
+<li>Heisenberg model: <span class="arithmatex">\(N=28\)</span>, <span class="arithmatex">\(N=32\)</span>, <span class="arithmatex">\(N=36\)</span> and <span class="arithmatex">\(N=40\)</span> at zero magnetization.</li>
+<li>Hubbard model: <span class="arithmatex">\(N = 16\)</span>, <span class="arithmatex">\(N = 18\)</span>, and <span class="arithmatex">\(N = 20\)</span> at half-filling.</li>
+<li><em>t</em>-<em>J</em> model: <span class="arithmatex">\(N=28\)</span>, <span class="arithmatex">\(N=30\)</span> and <span class="arithmatex">\(N=32\)</span> with two holes and at zero magnetization.</li>
+</ul>
+<p>The benchmarks presented were performed on a single node equipped with an Intel Xeon® Platinum 8360Y (Ice Lake) 2.4 GHz processor.</p>
+<p><img alt="Scaling of the computation time for a single Lanczos iteration using OpenMP" src="../img/fig_benchmark_lanczos.png" />
+<strong>Figure</strong>: Scaling of the computation time for a single Lanczos iteration as a function of the total number of threads used. The calculations were done for the Heisenberg (a), Hubbard (b), and <em>t</em>-<em>J</em> (c) models. The solid black line in each panel represents ideal linear scaling. U(1) and lattice symmetries were used in all cases.</p>
+<p>In the figure above, we present the scaling of the computational time of a single Lanczos step with the total number of threads used. The time follows near-linear scaling with the number of OpenMP threads, decreasing with the inverse of the thread count.</p>
+<h3 id="table-computation-times-with-openmp-64-threads">Table: Computation times with OpenMP (64 threads)</h3>
+<table>
+<thead>
+<tr>
+<th>Block</th>
+<th>N</th>
+<th>Symmetries</th>
+<th>Block Size</th>
+<th>Time (s)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../documentation/blocks/spinhalf/">Spinhalf</a></td>
+<td>40</td>
+<td>U(1) and Lattice</td>
+<td><span class="arithmatex">\(1.7 \cdot 10^{9}\)</span></td>
+<td><span class="arithmatex">\(131 \pm 1\)</span></td>
+</tr>
+<tr>
+<td><a href="../documentation/blocks/spinhalf/">Spinhalf</a></td>
+<td>36</td>
+<td>U(1) and Lattice</td>
+<td><span class="arithmatex">\(1.3 \cdot 10^{8}\)</span></td>
+<td><span class="arithmatex">\(7.60 \pm 0.2\)</span></td>
+</tr>
+<tr>
+<td><a href="../documentation/blocks/spinhalf/">Spinhalf</a></td>
+<td>32</td>
+<td>U(1) and Lattice</td>
+<td><span class="arithmatex">\(9.3 \cdot 10^{6}\)</span></td>
+<td><span class="arithmatex">\((5.1 \pm 0.1)\cdot 10^{-1}\)</span></td>
+</tr>
+<tr>
+<td><a href="../documentation/blocks/spinhalf/">Spinhalf</a></td>
+<td>28</td>
+<td>U(1) and Lattice</td>
+<td><span class="arithmatex">\(7.2 \cdot 10^{5}\)</span></td>
+<td><span class="arithmatex">\((9 \pm 2)\cdot 10^{-2}\)</span></td>
+</tr>
+<tr>
+<td><a href="../documentation/blocks/electron/">Electron</a></td>
+<td>22</td>
+<td>U(1) and Lattice</td>
+<td><span class="arithmatex">\(2.2 \cdot 10^{10}\)</span></td>
+<td><span class="arithmatex">\(138 \pm 5\)</span></td>
+</tr>
+<tr>
+<td><a href="../documentation/blocks/electron/">Electron</a></td>
+<td>20</td>
+<td>U(1) and Lattice</td>
+<td><span class="arithmatex">\(1.0 \cdot 10^{9}\)</span></td>
+<td><span class="arithmatex">\(10.9 \pm 0.1\)</span></td>
+</tr>
+<tr>
+<td><a href="../documentation/blocks/electron/">Electron</a></td>
+<td>18</td>
+<td>U(1) and Lattice</td>
+<td><span class="arithmatex">\(1.3 \cdot 10^{8}\)</span></td>
+<td><span class="arithmatex">\(7.64 \pm 0.01\)</span></td>
+</tr>
+<tr>
+<td><a href="../documentation/blocks/electron/">Electron</a></td>
+<td>16</td>
+<td>U(1) and Lattice</td>
+<td><span class="arithmatex">\(1.0 \cdot 10^{7}\)</span></td>
+<td><span class="arithmatex">\(5.37 \pm 0.01\)</span></td>
+</tr>
+<tr>
+<td><a href="../documentation/blocks/tJ/">tJ</a></td>
+<td>32</td>
+<td>U(1) and Lattice</td>
+<td><span class="arithmatex">\(2.0 \cdot 10^{9}\)</span></td>
+<td><span class="arithmatex">\(75.9 \pm 0.1\)</span></td>
+</tr>
+<tr>
+<td><a href="../documentation/blocks/tJ/">tJ</a></td>
+<td>30</td>
+<td>U(1) and Lattice</td>
+<td><span class="arithmatex">\(5.8 \cdot 10^{8}\)</span></td>
+<td><span class="arithmatex">\(17.95 \pm 0.05\)</span></td>
+</tr>
+<tr>
+<td><a href="../documentation/blocks/tJ/">tJ</a></td>
+<td>28</td>
+<td>U(1) and Lattice</td>
+<td><span class="arithmatex">\(1.4 \cdot 10^{8}\)</span></td>
+<td><span class="arithmatex">\(3.84 \pm 0.02\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>We can observe that the multithreading parallelization of XDiag exhibits close-to-linear scaling up to 64 threads.</p>
+<h2 id="distributed-memory-parallelization">Distributed memory parallelization</h2>
+<p><img alt="Scaling of the computation time for a single Lanczos iteration using MPI" src="../img/fig_benchmark_lanczos_mpi.png" /></p>
+<p><strong>Figure</strong>: Scaling of the computation time for a single Lanczos iteration as a function of the total number of MPI processes used. Calculations were done for Heisenberg (a), Hubbard (b), and <em>t</em>-<em>J</em> (c) models. Ideal linear scaling is shown as a reference.</p>
+<p>XDiag also supports distributed-memory parallelization via MPI for the <a href="../documentation/blocks/spinhalf_distributed/">SpinhalfDistributed</a>, <a href="../documentation/blocks/electron_distributed/">ElectronDistributed</a>, and  <a href="../documentation/blocks/tJ_distributed/">tJDistributed</a> blocks. Benchmarks were performed on the Max Planck Society's Raven supercomputer (Intel Xeon® Platinum 8360Y, HDR100 interconnect, 72 cores per node).</p>
+<p>Only U(1) symmetries were used in these benchmarks, with the following parameters:</p>
+<ul>
+<li>Heisenberg model: <span class="arithmatex">\(N=36\)</span>, <span class="arithmatex">\(N=40\)</span> and <span class="arithmatex">\(N=42\)</span> at zero magnetization.</li>
+<li>Hubbard model: <span class="arithmatex">\(N=20\)</span> (half-filling), <span class="arithmatex">\(N=22\)</span> and <span class="arithmatex">\(N=24\)</span> with <span class="arithmatex">\(n_\uparrow = n_\downarrow = 8\)</span>.</li>
+<li><em>t</em>-<em>J</em> model: <span class="arithmatex">\(N=28\)</span>, <span class="arithmatex">\(N=32\)</span> with two holes and at zero magnetization.</li>
+</ul>
+<h3 id="table-computation-times-with-mpi">Table: Computation times with MPI</h3>
+<table>
+<thead>
+<tr>
+<th>Block</th>
+<th>N</th>
+<th>Symmetries</th>
+<th>Block Size</th>
+<th>MPI Processes</th>
+<th>Time (s)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../documentation/blocks/spinhalf_distributed/">Spinhalf</a></td>
+<td>42</td>
+<td>U(1)</td>
+<td><span class="arithmatex">\(5.4 \cdot 10^{11}\)</span></td>
+<td>18432</td>
+<td><span class="arithmatex">\(31.4 \pm 0.5\)</span></td>
+</tr>
+<tr>
+<td><a href="../documentation/blocks/spinhalf_distributed/">Spinhalf</a></td>
+<td>40</td>
+<td>U(1)</td>
+<td><span class="arithmatex">\(1.4 \cdot 10^{11}\)</span></td>
+<td>18432</td>
+<td><span class="arithmatex">\(7.9 \pm 0.1\)</span></td>
+</tr>
+<tr>
+<td><a href="../documentation/blocks/spinhalf_distributed/">Spinhalf</a></td>
+<td>36</td>
+<td>U(1)</td>
+<td><span class="arithmatex">\(9.0 \cdot 10^{9}\)</span></td>
+<td>2304</td>
+<td><span class="arithmatex">\(3.1 \pm 0.2\)</span></td>
+</tr>
+<tr>
+<td><a href="../documentation/blocks/electron_distributed/">Electron</a></td>
+<td>24</td>
+<td>U(1)</td>
+<td><span class="arithmatex">\(5.4 \cdot 10^{11}\)</span></td>
+<td>18432</td>
+<td><span class="arithmatex">\(21.0 \pm 0.2\)</span></td>
+</tr>
+<tr>
+<td><a href="../documentation/blocks/electron_distributed/">Electron</a></td>
+<td>22</td>
+<td>U(1)</td>
+<td><span class="arithmatex">\(1.0 \cdot 10^{11}\)</span></td>
+<td>18432</td>
+<td><span class="arithmatex">\(4.3 \pm 0.1\)</span></td>
+</tr>
+<tr>
+<td><a href="../documentation/blocks/electron_distributed/">Electron</a></td>
+<td>20</td>
+<td>U(1)</td>
+<td><span class="arithmatex">\(3.4 \cdot 10^{10}\)</span></td>
+<td>2304</td>
+<td><span class="arithmatex">\(7.7 \pm 0.5\)</span></td>
+</tr>
+<tr>
+<td><a href="../documentation/blocks/tJ_distributed/">tJ</a></td>
+<td>32</td>
+<td>U(1)</td>
+<td><span class="arithmatex">\(7.6 \cdot 10^{10}\)</span></td>
+<td>4608</td>
+<td><span class="arithmatex">\(42.2 \pm 0.5\)</span></td>
+</tr>
+<tr>
+<td><a href="../documentation/blocks/tJ_distributed/">tJ</a></td>
+<td>28</td>
+<td>U(1)</td>
+<td><span class="arithmatex">\(3.9 \cdot 10^{9}\)</span></td>
+<td>4608</td>
+<td><span class="arithmatex">\(2.3 \pm 0.4\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>We observe that computation time scales nearly inversely with the number of MPI processes, demonstrating strong scaling up to several thousand processes.</p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["content.code.copy"], "search": "../assets/javascripts/workers/search.f8cc74c7.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.60a45f97.min.js"></script>
+      
+        <script src="../javascripts/katex.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/katex.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/contrib/auto-render.min.js"></script>
+      
+    
+  </body>
+</html>
