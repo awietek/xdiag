@@ -91,7 +91,7 @@ The executables are then available in the directory `build/examples`. Most examp
 
     Computes the specific heat of the triangular t-J model via full ED.
 
-	![Specific Heat Triangular t-J](../img/specific_heat_tJ_triangular.png){ align=center }
+	![Specific Heat Triangular t-J](./img/specific_heat_tJ_triangular.png){ align=center }
 	
     [source](examples/specific_heat_tJ_triangular.md) :simple-julia:
 

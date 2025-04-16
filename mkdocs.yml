@@ -43,6 +43,7 @@ nav:
   - User Guide: user_guide.md
   - Examples: examples.md
   - Documentation: documentation/index.md
+  - Benchmarks: benchmarks.md
   - Contributing: contributing.md
   - Releases: releases.md
   - About: about.md
