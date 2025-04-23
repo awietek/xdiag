@@ -26,7 +26,7 @@ inline
 typename T1::pod_type
 op_cond::apply(const Base<typename T1::elem_type, T1>& X)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   typedef typename T1::elem_type eT;
   typedef typename T1::pod_type   T;
@@ -37,21 +37,14 @@ op_cond::apply(const Base<typename T1::elem_type, T1>& X)
   
   if(is_op_diagmat<T1>::value || A.is_diagmat())
     {
-    arma_extra_debug_print("op_cond::apply(): detected diagonal matrix");
+    arma_debug_print("op_cond::apply(): diag optimisation");
     
     return op_cond::apply_diag(A);
     }
   
-  bool is_approx_sym   = false;
-  bool is_approx_sympd = false;
-  
-  sympd_helper::analyse_matrix(is_approx_sym, is_approx_sympd, A);
-  
-  const bool do_sym = (is_cx<eT>::no) ? (is_approx_sym) : (is_approx_sym && is_approx_sympd);
-  
-  if(do_sym)
+  if(sym_helper::is_approx_sym(A))
     {
-    arma_extra_debug_print("op_cond: symmetric/hermitian optimisation");
+    arma_debug_print("op_cond: symmetric/hermitian optimisation");
     
     return op_cond::apply_sym(A);
     }
@@ -66,7 +59,7 @@ inline
 typename get_pod_type<eT>::result
 op_cond::apply_diag(const Mat<eT>& A)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   typedef typename get_pod_type<eT>::result T;
   
@@ -81,7 +74,7 @@ op_cond::apply_diag(const Mat<eT>& A)
     
     if(arma_isnan(abs_val))
       {
-      arma_debug_warn_level(3, "cond(): failed");
+      arma_warn(3, "cond(): failed");
       
       return Datum<T>::nan;
       }
@@ -102,7 +95,7 @@ inline
 typename get_pod_type<eT>::result
 op_cond::apply_sym(Mat<eT>& A)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   typedef typename get_pod_type<eT>::result T;
   
@@ -112,7 +105,7 @@ op_cond::apply_sym(Mat<eT>& A)
   
   if(status == false)
     {
-    arma_debug_warn_level(3, "cond(): failed");
+    arma_warn(3, "cond(): failed");
     
     return Datum<T>::nan;
     }
@@ -144,7 +137,7 @@ inline
 typename get_pod_type<eT>::result
 op_cond::apply_gen(Mat<eT>& A)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   typedef typename get_pod_type<eT>::result T;
   
@@ -154,7 +147,7 @@ op_cond::apply_gen(Mat<eT>& A)
   
   if(status == false)
     {
-    arma_debug_warn_level(3, "cond(): failed");
+    arma_warn(3, "cond(): failed");
     
     return Datum<T>::nan;
     }

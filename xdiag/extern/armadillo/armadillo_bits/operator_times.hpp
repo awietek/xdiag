@@ -28,7 +28,7 @@ typename enable_if2< is_arma_type<T1>::value, const eOp<T1, eop_scalar_times> >:
 operator*
 (const T1& X, const typename T1::elem_type k)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   return eOp<T1, eop_scalar_times>(X,k);
   }
@@ -42,7 +42,7 @@ typename enable_if2< is_arma_type<T1>::value, const eOp<T1, eop_scalar_times> >:
 operator*
 (const typename T1::elem_type k, const T1& X)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   return eOp<T1, eop_scalar_times>(X,k);  // NOTE: order is swapped
   }
@@ -64,7 +64,7 @@ operator*
   const std::complex<typename T1::pod_type>& k
   )
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   return mtOp<typename std::complex<typename T1::pod_type>, T1, op_cx_scalar_times>('j', X, k);
   }
@@ -86,7 +86,7 @@ operator*
   const T1&                                  X
   )
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   return mtOp<typename std::complex<typename T1::pod_type>, T1, op_cx_scalar_times>('j', X, k);
   }
@@ -100,7 +100,7 @@ const Op<T1, op_htrans2>
 operator*
 (const typename T1::elem_type k, const Op<T1, op_htrans>& X)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   return Op<T1, op_htrans2>(X.m, k);
   }
@@ -114,7 +114,7 @@ const Op<T1, op_htrans2>
 operator*
 (const Op<T1, op_htrans>& X, const typename T1::elem_type k)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   return Op<T1, op_htrans2>(X.m, k);
   }
@@ -133,7 +133,7 @@ enable_if2
 operator*
 (const T1& X, const Op<T2, op_diagmat>& Y)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   return Glue<T1, Op<T2, op_diagmat>, glue_times_diag>(X, Y);
   }
@@ -152,7 +152,7 @@ enable_if2
 operator*
 (const Op<T1, op_diagmat>& X, const T2& Y)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   return Glue<Op<T1, op_diagmat>, T2, glue_times_diag>(X, Y);
   }
@@ -166,7 +166,7 @@ Mat< typename promote_type<typename T1::elem_type, typename T2::elem_type>::resu
 operator*
 (const Op<T1, op_diagmat>& X, const Op<T2, op_diagmat>& Y)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   typedef typename T1::elem_type eT1;
   typedef typename T2::elem_type eT2;
@@ -178,7 +178,7 @@ operator*
   const diagmat_proxy<T1> A(X.m);
   const diagmat_proxy<T2> B(Y.m);
   
-  arma_debug_assert_mul_size(A.n_rows, A.n_cols, B.n_rows, B.n_cols, "matrix multiplication");
+  arma_conform_assert_mul_size(A.n_rows, A.n_cols, B.n_rows, B.n_cols, "matrix multiplication");
   
   Mat<out_eT> out(A.n_rows, B.n_cols, arma_zeros_indicator());
   
@@ -209,7 +209,7 @@ enable_if2
 operator*
 (const T1& X, const T2& Y)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   return Glue<T1, T2, glue_times>(X, Y);
   }
@@ -231,7 +231,7 @@ operator*
   const T2& Y
   )
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   typedef typename T1::elem_type eT1;
   typedef typename T2::elem_type eT2;
@@ -260,7 +260,7 @@ operator*
   const typename T1::elem_type k
   )
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   return SpOp<T1,spop_scalar_times>(X, k);
   }
@@ -281,7 +281,7 @@ operator*
   const T1& X
   )
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   return SpOp<T1,spop_scalar_times>(X, k);
   }
@@ -303,7 +303,7 @@ operator*
   const std::complex<typename T1::pod_type>& k
   )
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   return mtSpOp<typename std::complex<typename T1::pod_type>, T1, spop_cx_scalar_times>('j', X, k);
   }
@@ -325,7 +325,7 @@ operator*
   const T1&                                  X
   )
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   return mtSpOp<typename std::complex<typename T1::pod_type>, T1, spop_cx_scalar_times>('j', X, k);
   }
@@ -347,7 +347,7 @@ operator*
   const T2& y
   )
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
 
   return SpGlue<T1,T2,spglue_times>(x, y);
   }
@@ -361,7 +361,7 @@ typename
 enable_if2
   <
   (is_arma_sparse_type<T1>::value && is_arma_type<T2>::value && is_same_type<typename T1::elem_type, typename T2::elem_type>::value),
-  Mat<typename T1::elem_type>
+  const SpToDGlue<T1, T2, glue_times_sparse_dense>
   >::result
 operator*
   (
@@ -369,15 +369,9 @@ operator*
   const T2& y
   )
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
-  typedef typename T1::elem_type eT;
-  
-  Mat<eT> result;
-  
-  spglue_times_misc::sparse_times_dense(result, x, y);
-  
-  return result;
+  return SpToDGlue<T1, T2, glue_times_sparse_dense>(x, y);
   }
 
 
@@ -389,7 +383,7 @@ typename
 enable_if2
   <
   (is_arma_type<T1>::value && is_arma_sparse_type<T2>::value && is_same_type<typename T1::elem_type, typename T2::elem_type>::value),
-  Mat<typename T1::elem_type>
+  const SpToDGlue<T1, T2, glue_times_dense_sparse>
   >::result
 operator*
   (
@@ -397,15 +391,9 @@ operator*
   const T2& y
   )
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
-  typedef typename T1::elem_type eT;
-  
-  Mat<eT> result;
-  
-  spglue_times_misc::dense_times_sparse(result, x, y);
-  
-  return result;
+  return SpToDGlue<T1, T2, glue_times_dense_sparse>(x, y);
   }
 
 
@@ -425,7 +413,7 @@ operator*
   const T2& Y
   )
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   typedef typename T1::elem_type eT1;
   typedef typename T2::elem_type eT2;
@@ -454,11 +442,11 @@ operator*
   const T2& Y
   )
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   Mat< typename promote_type<typename T1::elem_type, typename T2::elem_type>::result > out;
   
-  spglue_times_mixed::sparse_times_dense(out, X, Y);
+  glue_times_sparse_dense::apply_mixed(out, X, Y);
   
   return out;
   }
@@ -480,11 +468,11 @@ operator*
   const T2& Y
   )
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   Mat< typename promote_type<typename T1::elem_type, typename T2::elem_type>::result > out;
   
-  spglue_times_mixed::dense_times_sparse(out, X, Y);
+  glue_times_dense_sparse::apply_mixed(out, X, Y);
   
   return out;
   }

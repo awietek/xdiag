@@ -30,7 +30,7 @@ inline
 bool
 is_band(uword& out_KL, uword& out_KU, const Mat<eT>& A, const uword N_min)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   // NOTE: assuming that A has a square size
   // NOTE: assuming that N_min is >= 4
@@ -108,7 +108,7 @@ inline
 bool
 is_band_lower(uword& out_KD, const Mat<eT>& A, const uword N_min)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   // NOTE: assuming that A has a square size
   // NOTE: assuming that N_min is >= 4
@@ -171,7 +171,7 @@ inline
 bool
 is_band_upper(uword& out_KD, const Mat<eT>& A, const uword N_min)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   // NOTE: assuming that A has a square size
   // NOTE: assuming that N_min is >= 4
@@ -234,7 +234,7 @@ inline
 void
 compress(Mat<eT>& AB, const Mat<eT>& A, const uword KL, const uword KU, const bool use_offset)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   // NOTE: assuming that A has a square size
   
@@ -242,7 +242,7 @@ compress(Mat<eT>& AB, const Mat<eT>& A, const uword KL, const uword KU, const bo
   // http://www.netlib.org/lapack/lug/node124.html  
   
   // for ?gbsv,  matrix AB size: 2*KL+KU+1 x N; band representation of A stored in rows KL+1 to 2*KL+KU+1  (note: fortran counts from 1)
-  // for ?gbsvx, matrix AB size:   KL+KU+1 x N; band representaiton of A stored in rows    1 to   KL+KU+1  (note: fortran counts from 1)
+  // for ?gbsvx, matrix AB size:   KL+KU+1 x N; band representation of A stored in rows    1 to   KL+KU+1  (note: fortran counts from 1)
   //
   // the +1 in the above formulas is to take into account the main diagonal
   
@@ -287,12 +287,12 @@ inline
 void
 uncompress(Mat<eT>& A, const Mat<eT>& AB, const uword KL, const uword KU, const bool use_offset)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   const uword AB_n_rows = AB.n_rows;
   const uword N         = AB.n_cols;
   
-  arma_debug_check( (AB_n_rows != ((use_offset) ? uword(2*KL + KU + 1) : uword(KL + KU + 1))), "band_helper::uncompress(): detected inconsistency" );
+  arma_conform_check( (AB_n_rows != ((use_offset) ? uword(2*KL + KU + 1) : uword(KL + KU + 1))), "band_helper::uncompress(): detected inconsistency" );
   
   A.zeros(N,N);  // assuming there is no aliasing between A and AB
   
@@ -328,7 +328,7 @@ inline
 void
 extract_tridiag(Mat<eT>& out, const Mat<eT>& A)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   // NOTE: assuming that A has a square size and is at least 2x2
   

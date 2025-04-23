@@ -35,9 +35,8 @@
   #endif
 #endif
 
-// NOTE:
-// "char" is not guaranteed to be the same as "signed char" 
-// https://en.wikipedia.org/wiki/C_data_types
+// NOTE: "char" can be either "signed char" or "unsigned char"
+// NOTE: https://en.wikipedia.org/wiki/C_data_types
 
 
 #if   USHRT_MAX >= 0xffff
@@ -108,12 +107,9 @@ typedef void* void_ptr;
 //
 
 
-#if   defined(ARMA_BLAS_LONG_LONG)
+#if defined(ARMA_BLAS_64BIT_INT)
   typedef long long blas_int;
   #define ARMA_MAX_BLAS_INT 0x7fffffffffffffffULL
-#elif defined(ARMA_BLAS_LONG)
-  typedef long      blas_int;
-  #define ARMA_MAX_BLAS_INT 0x7fffffffffffffffUL
 #else
   typedef int       blas_int;
   #define ARMA_MAX_BLAS_INT 0x7fffffffU

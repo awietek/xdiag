@@ -26,12 +26,12 @@ inline
 void
 op_mean::apply(Mat<typename T1::elem_type>& out, const Op<T1,op_mean>& in)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   typedef typename T1::elem_type eT;
   
   const uword dim = in.aux_uword_a;
-  arma_debug_check( (dim > 1), "mean(): parameter 'dim' must be 0 or 1" );
+  arma_conform_check( (dim > 1), "mean(): parameter 'dim' must be 0 or 1" );
   
   const Proxy<T1> P(in.m);
   
@@ -56,9 +56,9 @@ inline
 void
 op_mean::apply_noalias(Mat<typename T1::elem_type>& out, const Proxy<T1>& P, const uword dim)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
-  if(is_Mat<typename Proxy<T1>::stored_type>::value)
+  if((is_Mat<typename Proxy<T1>::stored_type>::value) || (arma_config::openmp && Proxy<T1>::use_mp))
     {
     op_mean::apply_noalias_unwrap(out, P, dim);
     }
@@ -75,7 +75,7 @@ inline
 void
 op_mean::apply_noalias_unwrap(Mat<typename T1::elem_type>& out, const Proxy<T1>& P, const uword dim)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   typedef typename T1::elem_type            eT;
   typedef typename get_pod_type<eT>::result  T;
@@ -136,12 +136,11 @@ op_mean::apply_noalias_unwrap(Mat<typename T1::elem_type>& out, const Proxy<T1>&
 
 
 template<typename T1>
-arma_hot
 inline
 void
 op_mean::apply_noalias_proxy(Mat<typename T1::elem_type>& out, const Proxy<T1>& P, const uword dim)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   typedef typename T1::elem_type            eT;
   typedef typename get_pod_type<eT>::result  T;
@@ -195,7 +194,7 @@ op_mean::apply_noalias_proxy(Mat<typename T1::elem_type>& out, const Proxy<T1>& 
     out /= T(P_n_cols);
     }
   
-  if(out.is_finite() == false)
+  if(out.internal_has_nonfinite())
     {
     // TODO: replace with dedicated handling to avoid unwrapping
     op_mean::apply_noalias_unwrap(out, P, dim);
@@ -214,12 +213,12 @@ inline
 void
 op_mean::apply(Cube<typename T1::elem_type>& out, const OpCube<T1,op_mean>& in)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   typedef typename T1::elem_type eT;
   
   const uword dim = in.aux_uword_a;
-  arma_debug_check( (dim > 2), "mean(): parameter 'dim' must be 0 or 1 or 2" );
+  arma_conform_check( (dim > 2), "mean(): parameter 'dim' must be 0 or 1 or 2" );
   
   const ProxyCube<T1> P(in.m);
   
@@ -244,9 +243,9 @@ inline
 void
 op_mean::apply_noalias(Cube<typename T1::elem_type>& out, const ProxyCube<T1>& P, const uword dim)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
-  if(is_Cube<typename ProxyCube<T1>::stored_type>::value)
+  if((is_Cube<typename ProxyCube<T1>::stored_type>::value) || (arma_config::openmp && ProxyCube<T1>::use_mp))
     {
     op_mean::apply_noalias_unwrap(out, P, dim);
     }
@@ -263,7 +262,7 @@ inline
 void
 op_mean::apply_noalias_unwrap(Cube<typename T1::elem_type>& out, const ProxyCube<T1>& P, const uword dim)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   typedef typename T1::elem_type            eT;
   typedef typename get_pod_type<eT>::result  T;
@@ -365,12 +364,11 @@ op_mean::apply_noalias_unwrap(Cube<typename T1::elem_type>& out, const ProxyCube
 
 
 template<typename T1>
-arma_hot
 inline
 void
 op_mean::apply_noalias_proxy(Cube<typename T1::elem_type>& out, const ProxyCube<T1>& P, const uword dim)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   op_mean::apply_noalias_unwrap(out, P, dim);
   
@@ -389,7 +387,7 @@ inline
 eT
 op_mean::direct_mean(const eT* const X, const uword n_elem)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   typedef typename get_pod_type<eT>::result T;
   
@@ -405,7 +403,7 @@ inline
 eT
 op_mean::direct_mean_robust(const eT* const X, const uword n_elem)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   // use an adapted form of the mean finding algorithm from the running_stat class
   
@@ -442,7 +440,7 @@ inline
 eT
 op_mean::direct_mean(const Mat<eT>& X, const uword row)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   typedef typename get_pod_type<eT>::result T;
   
@@ -474,7 +472,7 @@ inline
 eT
 op_mean::direct_mean_robust(const Mat<eT>& X, const uword row)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   typedef typename get_pod_type<eT>::result T;
   
@@ -497,7 +495,7 @@ inline
 eT
 op_mean::mean_all(const subview<eT>& X)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   typedef typename get_pod_type<eT>::result T;
   
@@ -507,7 +505,7 @@ op_mean::mean_all(const subview<eT>& X)
   
   if(X_n_elem == 0)
     {
-    arma_debug_check(true, "mean(): object has no elements");
+    arma_conform_check(true, "mean(): object has no elements");
     
     return Datum<eT>::nan;
     }
@@ -555,7 +553,7 @@ inline
 eT
 op_mean::mean_all_robust(const subview<eT>& X)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   typedef typename get_pod_type<eT>::result T;
   
@@ -603,7 +601,7 @@ inline
 eT
 op_mean::mean_all(const diagview<eT>& X)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   typedef typename get_pod_type<eT>::result T;
   
@@ -611,7 +609,7 @@ op_mean::mean_all(const diagview<eT>& X)
   
   if(X_n_elem == 0)
     {
-    arma_debug_check(true, "mean(): object has no elements");
+    arma_conform_check(true, "mean(): object has no elements");
     
     return Datum<eT>::nan;
     }
@@ -635,7 +633,7 @@ inline
 eT
 op_mean::mean_all_robust(const diagview<eT>& X)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   typedef typename get_pod_type<eT>::result T;
   
@@ -658,7 +656,7 @@ inline
 typename T1::elem_type 
 op_mean::mean_all(const Op<T1,op_vectorise_col>& X)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   return op_mean::mean_all(X.m);
   }
@@ -670,7 +668,7 @@ inline
 typename T1::elem_type 
 op_mean::mean_all(const Base<typename T1::elem_type, T1>& X)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   typedef typename T1::elem_type eT;
   
@@ -681,7 +679,7 @@ op_mean::mean_all(const Base<typename T1::elem_type, T1>& X)
   
   if(A_n_elem == 0)
     {
-    arma_debug_check(true, "mean(): object has no elements");
+    arma_conform_check(true, "mean(): object has no elements");
     
     return Datum<eT>::nan;
     }

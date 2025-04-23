@@ -27,7 +27,7 @@ inline
 void
 glue_conv::apply(Mat<eT>& out, const Mat<eT>& A, const Mat<eT>& B, const bool A_is_col)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   const Mat<eT>& h = (A.n_elem <= B.n_elem) ? A : B;
   const Mat<eT>& x = (A.n_elem <= B.n_elem) ? B : A;
@@ -63,11 +63,28 @@ glue_conv::apply(Mat<eT>& out, const Mat<eT>& A, const Mat<eT>& B, const bool A_
   
   eT* out_mem = out.memptr();
   
-  for(uword i=0; i < out_n_elem; ++i)
+  if( (arma_config::openmp) && (x_n_elem >= 128) && (h_n_elem >= 64) && (mp_thread_limit::in_parallel() == false) )
     {
-    // out_mem[i] = dot( hh, xx.subvec(i, (i + h_n_elem_m1)) );
-    
-    out_mem[i] = op_dot::direct_dot( h_n_elem, hh_mem, &(xx_mem[i]) );
+    #if defined(ARMA_USE_OPENMP)
+      {
+      const int n_threads = mp_thread_limit::get();
+      
+      #pragma omp parallel for schedule(static) num_threads(n_threads)
+      for(uword i=0; i < out_n_elem; ++i)
+        {
+        out_mem[i] = op_dot::direct_dot( h_n_elem, hh_mem, &(xx_mem[i]) );
+        }
+      }
+    #endif
+    }
+  else
+    {
+    for(uword i=0; i < out_n_elem; ++i)
+      {
+      // out_mem[i] = dot( hh, xx.subvec(i, (i + h_n_elem_m1)) );
+      
+      out_mem[i] = op_dot::direct_dot( h_n_elem, hh_mem, &(xx_mem[i]) );
+      }
     }
   }
 
@@ -79,7 +96,7 @@ glue_conv::apply(Mat<eT>& out, const Mat<eT>& A, const Mat<eT>& B, const bool A_
 // void
 // glue_conv::apply(Mat<eT>& out, const Mat<eT>& A, const Mat<eT>& B, const bool A_is_col)
 //   {
-//   arma_extra_debug_sigprint();
+//   arma_debug_sigprint();
 //   
 //   const Mat<eT>& h = (A.n_elem <= B.n_elem) ? A : B;
 //   const Mat<eT>& x = (A.n_elem <= B.n_elem) ? B : A;
@@ -170,7 +187,7 @@ inline
 void
 glue_conv::apply(Mat<typename T1::elem_type>& out, const Glue<T1,T2,glue_conv>& expr)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   typedef typename T1::elem_type eT;
   
@@ -180,7 +197,7 @@ glue_conv::apply(Mat<typename T1::elem_type>& out, const Glue<T1,T2,glue_conv>& 
   const Mat<eT>& A = UA.M;
   const Mat<eT>& B = UB.M;
   
-  arma_debug_check
+  arma_conform_check
     (
     ( ((A.is_vec() == false) && (A.is_empty() == false)) || ((B.is_vec() == false) && (B.is_empty() == false)) ),
     "conv(): given object must be a vector"
@@ -226,7 +243,7 @@ inline
 void
 glue_conv2::apply(Mat<eT>& out, const Mat<eT>& A, const Mat<eT>& B)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   const Mat<eT>& G = (A.n_elem <= B.n_elem) ? A : B;   // unflipped filter coefficients
   const Mat<eT>& W = (A.n_elem <= B.n_elem) ? B : A;   // original 2D image
@@ -264,24 +281,57 @@ glue_conv2::apply(Mat<eT>& out, const Mat<eT>& A, const Mat<eT>& B)
   
   out.set_size( out_n_rows, out_n_cols );
   
-  for(uword col=0; col < out_n_cols; ++col)
+  if( (arma_config::openmp) && (out_n_cols >= 2) && (mp_thread_limit::in_parallel() == false) )
     {
-    eT* out_colptr = out.colptr(col);
-    
-    for(uword row=0; row < out_n_rows; ++row)
+    #if defined(ARMA_USE_OPENMP)
       {
-      // out.at(row, col) = accu( H % X(row, col, size(H)) );
+      const int n_threads = mp_thread_limit::get();
       
-      eT acc = eT(0);
-      
-      for(uword H_col = 0; H_col < H_n_cols; ++H_col)
+      #pragma omp parallel for schedule(static) num_threads(n_threads)
+      for(uword col=0; col < out_n_cols; ++col)
         {
-        const eT* X_colptr = X.colptr(col + H_col);
+        eT* out_colptr = out.colptr(col);
         
-        acc += op_dot::direct_dot( H_n_rows, H.colptr(H_col), &(X_colptr[row]) );
+        for(uword row=0; row < out_n_rows; ++row)
+          {
+          // out.at(row, col) = accu( H % X(row, col, size(H)) );
+          
+          eT acc = eT(0);
+          
+          for(uword H_col = 0; H_col < H_n_cols; ++H_col)
+            {
+            const eT* X_colptr = X.colptr(col + H_col);
+            
+            acc += op_dot::direct_dot( H_n_rows, H.colptr(H_col), &(X_colptr[row]) );
+            }
+          
+          out_colptr[row] = acc;
+          }
         }
+      }
+    #endif
+    }
+  else
+    {
+    for(uword col=0; col < out_n_cols; ++col)
+      {
+      eT* out_colptr = out.colptr(col);
       
-      out_colptr[row] = acc;
+      for(uword row=0; row < out_n_rows; ++row)
+        {
+        // out.at(row, col) = accu( H % X(row, col, size(H)) );
+        
+        eT acc = eT(0);
+        
+        for(uword H_col = 0; H_col < H_n_cols; ++H_col)
+          {
+          const eT* X_colptr = X.colptr(col + H_col);
+          
+          acc += op_dot::direct_dot( H_n_rows, H.colptr(H_col), &(X_colptr[row]) );
+          }
+        
+        out_colptr[row] = acc;
+        }
       }
     }
   }
@@ -293,7 +343,7 @@ inline
 void
 glue_conv2::apply(Mat<typename T1::elem_type>& out, const Glue<T1,T2,glue_conv2>& expr)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   typedef typename T1::elem_type eT;
   

@@ -37,8 +37,8 @@ class Gen
   static constexpr bool is_col  = T1::is_col;
   static constexpr bool is_xvec = T1::is_xvec;
   
-  arma_aligned const uword n_rows;
-  arma_aligned const uword n_cols;
+  const uword n_rows;
+  const uword n_cols;
   
   arma_inline  Gen(const uword in_n_rows, const uword in_n_cols);
   arma_inline ~Gen();
@@ -54,6 +54,9 @@ class Gen
   inline void apply_inplace_div  (Mat<elem_type>& out) const;
   
   inline void apply(subview<elem_type>& out) const;
+  
+  template<typename eT2>
+  constexpr bool is_alias(const Mat<eT2>&) const { return false; }
   };
 
 

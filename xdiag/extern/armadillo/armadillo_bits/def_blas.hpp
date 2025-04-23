@@ -20,8 +20,8 @@
 #if defined(ARMA_USE_BLAS)
 
 #if defined(dgemm) || defined(DGEMM)
-  // #pragma message ("WARNING: detected possible interference with definitions of BLAS functions;")
-  // #pragma message ("WARNING: include the armadillo header before any other header as a workaround")
+  #pragma message ("WARNING: detected possible interference with definitions of BLAS functions;")
+  #pragma message ("WARNING: include the armadillo header before any other header as a workaround")
 #endif
 
 

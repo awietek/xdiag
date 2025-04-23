@@ -130,7 +130,7 @@ namespace blas
     
     if(is_float<eT>::value)
       {
-      #if defined(ARMA_BLAS_SDOT_BUG)
+      #if defined(ARMA_BLAS_FLOAT_BUG)
         {
         if(n_elem == 0)  { return eT(0); }
         
@@ -144,6 +144,9 @@ namespace blas
         const eT beta      = eT(0);
         
         eT result[2];  // paranoia: using two elements instead of one
+        
+        result[0] = eT(0);
+        result[1] = eT(0);
         
         blas::gemv(&trans, &m, &n, &alpha, x, &m, y, &inc, &beta, &result[0], &inc);
         
@@ -186,11 +189,14 @@ namespace blas
       
       eT result[2];  // paranoia: using two elements instead of one
       
+      result[0] = eT(0);
+      result[1] = eT(0);
+      
       blas::gemv(&trans, &m, &n, &alpha, x, &m, y, &inc, &beta, &result[0], &inc);
       
       return result[0];
       }
-
+    
     return eT(0);
     }
   
@@ -205,6 +211,8 @@ namespace blas
     
     if(is_float<eT>::value)
       {
+      // WARNING: sasum() from Accelerate framework (macOS) may return 'double' instead of 'float'
+      
       blas_int n   = blas_int(n_elem);
       blas_int inc = 1;
       
@@ -235,6 +243,8 @@ namespace blas
     
     if(is_float<eT>::value)
       {
+      // WARNING: snrm2() from Accelerate framework (macOS) may return 'double' instead of 'float'
+      
       blas_int n   = blas_int(n_elem);
       blas_int inc = 1;
       

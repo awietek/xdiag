@@ -1,0 +1,644 @@
+[
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/utils/iochecks.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/utils/iochecks.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/utils/iochecks.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/utils/iochecks.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/utils/error.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/utils/error.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/utils/error.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/utils/error.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/utils/logger.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/utils/logger.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/utils/logger.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/utils/logger.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/utils/say_hello.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/utils/say_hello.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/utils/say_hello.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/utils/say_hello.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/utils/read_vectors.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/utils/read_vectors.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/utils/read_vectors.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/utils/read_vectors.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/utils/type_string.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/utils/type_string.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/utils/type_string.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/utils/type_string.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/utils/split.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/utils/split.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/utils/split.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/utils/split.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/utils/scalar.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/utils/scalar.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/utils/scalar.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/utils/scalar.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/utils/vector.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/utils/vector.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/utils/vector.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/utils/vector.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/utils/matrix.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/utils/matrix.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/utils/matrix.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/utils/matrix.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/bits/bitops.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/bits/bitops.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/bits/bitops.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/bits/bitops.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/parallel/omp/omp_utils.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/parallel/omp/omp_utils.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/parallel/omp/omp_utils.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/parallel/omp/omp_utils.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/algebra/algebra.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/algebra/algebra.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/algebra/algebra.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/algebra/algebra.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/algebra/matrix.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/algebra/matrix.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/algebra/matrix.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/algebra/matrix.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/algebra/apply.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/algebra/apply.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/algebra/apply.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/algebra/apply.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/io/read.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/io/read.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/io/read.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/io/read.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/io/file_toml.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/io/file_toml.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/io/file_toml.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/io/file_toml.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/io/file_h5.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/io/file_h5.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/io/file_h5.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/io/file_h5.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/io/toml/file_toml_handler.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/io/toml/file_toml_handler.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/io/toml/file_toml_handler.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/io/toml/file_toml_handler.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/io/toml/value.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/io/toml/value.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/io/toml/value.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/io/toml/value.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/io/toml/std_vector.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/io/toml/std_vector.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/io/toml/std_vector.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/io/toml/std_vector.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/io/toml/arma_vector.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/io/toml/arma_vector.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/io/toml/arma_vector.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/io/toml/arma_vector.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/io/toml/arma_matrix.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/io/toml/arma_matrix.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/io/toml/arma_matrix.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/io/toml/arma_matrix.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/io/toml/operators.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/io/toml/operators.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/io/toml/operators.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/io/toml/operators.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/io/hdf5/file_h5_handler.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/io/hdf5/file_h5_handler.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/io/hdf5/file_h5_handler.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/io/hdf5/file_h5_handler.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/io/hdf5/file_h5_subview.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/io/hdf5/file_h5_subview.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/io/hdf5/file_h5_subview.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/io/hdf5/file_h5_subview.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/io/hdf5/utils.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/io/hdf5/utils.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/io/hdf5/utils.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/io/hdf5/utils.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/io/hdf5/write.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/io/hdf5/write.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/io/hdf5/write.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/io/hdf5/write.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/io/hdf5/types.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/io/hdf5/types.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/io/hdf5/types.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/io/hdf5/types.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/combinatorics/binomial.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/combinatorics/binomial.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/combinatorics/binomial.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/combinatorics/binomial.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/combinatorics/subsets.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/combinatorics/subsets.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/combinatorics/subsets.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/combinatorics/subsets.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/combinatorics/subsets_index.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/combinatorics/subsets_index.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/combinatorics/subsets_index.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/combinatorics/subsets_index.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/combinatorics/bit_patterns.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/combinatorics/bit_patterns.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/combinatorics/bit_patterns.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/combinatorics/bit_patterns.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/combinatorics/combinations.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/combinatorics/combinations.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/combinatorics/combinations.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/combinatorics/combinations.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/combinatorics/combinations_index.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/combinatorics/combinations_index.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/combinatorics/combinations_index.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/combinatorics/combinations_index.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/combinatorics/combinations_indexing.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/combinatorics/combinations_indexing.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/combinatorics/combinations_indexing.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/combinatorics/combinations_indexing.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/combinatorics/subsets_indexing.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/combinatorics/subsets_indexing.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/combinatorics/subsets_indexing.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/combinatorics/subsets_indexing.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/combinatorics/lin_table.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/combinatorics/lin_table.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/combinatorics/lin_table.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/combinatorics/lin_table.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/combinatorics/fermi_table.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/combinatorics/fermi_table.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/combinatorics/fermi_table.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/combinatorics/fermi_table.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/basis/spinhalf/basis_spinhalf.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/basis/spinhalf/basis_spinhalf.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/basis/spinhalf/basis_spinhalf.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/basis/spinhalf/basis_spinhalf.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/basis/spinhalf/basis_sz.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/basis/spinhalf/basis_sz.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/basis/spinhalf/basis_sz.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/basis/spinhalf/basis_sz.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/basis/spinhalf/basis_no_sz.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/basis/spinhalf/basis_no_sz.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/basis/spinhalf/basis_no_sz.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/basis/spinhalf/basis_no_sz.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/basis/spinhalf/basis_symmetric_sz.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/basis/spinhalf/basis_symmetric_sz.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/basis/spinhalf/basis_symmetric_sz.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/basis/spinhalf/basis_symmetric_sz.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/basis/spinhalf/basis_symmetric_no_sz.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/basis/spinhalf/basis_symmetric_no_sz.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/basis/spinhalf/basis_symmetric_no_sz.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/basis/spinhalf/basis_symmetric_no_sz.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/basis/spinhalf/basis_sublattice.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/basis/spinhalf/basis_sublattice.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/basis/spinhalf/basis_sublattice.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/basis/spinhalf/basis_sublattice.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/basis/spinhalf/apply/dispatch_matrix.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/basis/spinhalf/apply/dispatch_matrix.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/basis/spinhalf/apply/dispatch_matrix.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/basis/spinhalf/apply/dispatch_matrix.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/basis/spinhalf/apply/dispatch_apply.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/basis/spinhalf/apply/dispatch_apply.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/basis/spinhalf/apply/dispatch_apply.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/basis/spinhalf/apply/dispatch_apply.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/basis/tj/basis_tj.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/basis/tj/basis_tj.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/basis/tj/basis_tj.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/basis/tj/basis_tj.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/basis/tj/basis_np.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/basis/tj/basis_np.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/basis/tj/basis_np.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/basis/tj/basis_np.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/basis/tj/basis_symmetric_np.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/basis/tj/basis_symmetric_np.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/basis/tj/basis_symmetric_np.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/basis/tj/basis_symmetric_np.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/basis/tj/apply/dispatch_matrix.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/basis/tj/apply/dispatch_matrix.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/basis/tj/apply/dispatch_matrix.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/basis/tj/apply/dispatch_matrix.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/basis/tj/apply/dispatch_apply.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/basis/tj/apply/dispatch_apply.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/basis/tj/apply/dispatch_apply.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/basis/tj/apply/dispatch_apply.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/basis/electron/basis_electron.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/basis/electron/basis_electron.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/basis/electron/basis_electron.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/basis/electron/basis_electron.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/basis/electron/basis_np.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/basis/electron/basis_np.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/basis/electron/basis_np.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/basis/electron/basis_np.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/basis/electron/basis_no_np.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/basis/electron/basis_no_np.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/basis/electron/basis_no_np.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/basis/electron/basis_no_np.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/basis/electron/basis_symmetric_np.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/basis/electron/basis_symmetric_np.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/basis/electron/basis_symmetric_np.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/basis/electron/basis_symmetric_np.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/basis/electron/basis_symmetric_no_np.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/basis/electron/basis_symmetric_no_np.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/basis/electron/basis_symmetric_no_np.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/basis/electron/basis_symmetric_no_np.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/basis/electron/apply/dispatch_matrix.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/basis/electron/apply/dispatch_matrix.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/basis/electron/apply/dispatch_matrix.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/basis/electron/apply/dispatch_matrix.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/basis/electron/apply/dispatch_apply.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/basis/electron/apply/dispatch_apply.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/basis/electron/apply/dispatch_apply.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/basis/electron/apply/dispatch_apply.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/blocks/blocks.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/blocks/blocks.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/blocks/blocks.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/blocks/blocks.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/blocks/spinhalf.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/blocks/spinhalf.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/blocks/spinhalf.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/blocks/spinhalf.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/blocks/electron.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/blocks/electron.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/blocks/electron.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/blocks/electron.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/blocks/tj.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/blocks/tj.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/blocks/tj.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/blocks/tj.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/symmetries/permutation.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/symmetries/permutation.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/symmetries/permutation.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/symmetries/permutation.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/symmetries/permutation_group.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/symmetries/permutation_group.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/symmetries/permutation_group.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/symmetries/permutation_group.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/symmetries/representation.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/symmetries/representation.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/symmetries/representation.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/symmetries/representation.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/symmetries/operations/symmetry_operations.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/symmetries/operations/symmetry_operations.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/symmetries/operations/symmetry_operations.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/symmetries/operations/symmetry_operations.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/symmetries/operations/fermi_sign.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/symmetries/operations/fermi_sign.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/symmetries/operations/fermi_sign.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/symmetries/operations/fermi_sign.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/symmetries/group_action/group_action.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/symmetries/group_action/group_action.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/symmetries/group_action/group_action.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/symmetries/group_action/group_action.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/symmetries/group_action/group_action_lookup.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/symmetries/group_action/group_action_lookup.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/symmetries/group_action/group_action_lookup.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/symmetries/group_action/group_action_lookup.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/symmetries/group_action/group_action_sublattice.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/symmetries/group_action/group_action_sublattice.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/symmetries/group_action/group_action_sublattice.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/symmetries/group_action/group_action_sublattice.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/symmetries/group_action/sublattice_stability.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/symmetries/group_action/sublattice_stability.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/symmetries/group_action/sublattice_stability.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/symmetries/group_action/sublattice_stability.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/operators/coupling.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/operators/coupling.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/operators/coupling.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/operators/coupling.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/operators/op.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/operators/op.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/operators/op.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/operators/op.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/operators/opsum.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/operators/opsum.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/operators/opsum.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/operators/opsum.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/operators/logic/compilation.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/operators/logic/compilation.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/operators/logic/compilation.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/operators/logic/compilation.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/operators/logic/valid.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/operators/logic/valid.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/operators/logic/valid.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/operators/logic/valid.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/operators/logic/types.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/operators/logic/types.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/operators/logic/types.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/operators/logic/types.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/operators/logic/symmetrize.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/operators/logic/symmetrize.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/operators/logic/symmetrize.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/operators/logic/symmetrize.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/operators/logic/real.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/operators/logic/real.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/operators/logic/real.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/operators/logic/real.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/operators/logic/hc.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/operators/logic/hc.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/operators/logic/hc.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/operators/logic/hc.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/operators/logic/isapprox.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/operators/logic/isapprox.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/operators/logic/isapprox.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/operators/logic/isapprox.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/operators/logic/permute.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/operators/logic/permute.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/operators/logic/permute.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/operators/logic/permute.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/operators/logic/qns.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/operators/logic/qns.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/operators/logic/qns.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/operators/logic/qns.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/operators/logic/non_branching_op.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/operators/logic/non_branching_op.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/operators/logic/non_branching_op.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/operators/logic/non_branching_op.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/operators/logic/order.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/operators/logic/order.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/operators/logic/order.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/operators/logic/order.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/operators/logic/block.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/operators/logic/block.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/operators/logic/block.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/operators/logic/block.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/states/gpwf.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/states/gpwf.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/states/gpwf.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/states/gpwf.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/states/product_state.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/states/product_state.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/states/product_state.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/states/product_state.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/states/random_state.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/states/random_state.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/states/random_state.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/states/random_state.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/states/state.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/states/state.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/states/state.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/states/state.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/states/fill.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/states/fill.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/states/fill.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/states/fill.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/states/create_state.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/states/create_state.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/states/create_state.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/states/create_state.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/random/random_utils.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/random/random_utils.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/random/random_utils.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/random/random_utils.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/random/hash.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/random/hash.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/random/hash.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/random/hash.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/algorithms/lanczos/lanczos_convergence.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/algorithms/lanczos/lanczos_convergence.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/algorithms/lanczos/lanczos_convergence.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/algorithms/lanczos/lanczos_convergence.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/algorithms/lanczos/tmatrix.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/algorithms/lanczos/tmatrix.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/algorithms/lanczos/tmatrix.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/algorithms/lanczos/tmatrix.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/algorithms/lanczos/eigvals_lanczos.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/algorithms/lanczos/eigvals_lanczos.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/algorithms/lanczos/eigvals_lanczos.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/algorithms/lanczos/eigvals_lanczos.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/algorithms/lanczos/eigs_lanczos.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/algorithms/lanczos/eigs_lanczos.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/algorithms/lanczos/eigs_lanczos.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/algorithms/lanczos/eigs_lanczos.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/algorithms/sparse_diag.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/algorithms/sparse_diag.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/algorithms/sparse_diag.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/algorithms/sparse_diag.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/algorithms/arnoldi/arnoldi_to_disk.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/algorithms/arnoldi/arnoldi_to_disk.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/algorithms/arnoldi/arnoldi_to_disk.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/algorithms/arnoldi/arnoldi_to_disk.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/algorithms/gram_schmidt/gram_schmidt.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/algorithms/gram_schmidt/gram_schmidt.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/algorithms/gram_schmidt/gram_schmidt.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/algorithms/gram_schmidt/gram_schmidt.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/algorithms/gram_schmidt/orthogonalize.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/algorithms/gram_schmidt/orthogonalize.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/algorithms/gram_schmidt/orthogonalize.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/algorithms/gram_schmidt/orthogonalize.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/algorithms/norm_estimate.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/algorithms/norm_estimate.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/algorithms/norm_estimate.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/algorithms/norm_estimate.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/algorithms/time_evolution/exp_sym_v.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/algorithms/time_evolution/exp_sym_v.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/algorithms/time_evolution/exp_sym_v.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/algorithms/time_evolution/exp_sym_v.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/algorithms/time_evolution/time_evolution.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/algorithms/time_evolution/time_evolution.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/algorithms/time_evolution/time_evolution.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/algorithms/time_evolution/time_evolution.cpp.o"
+},
+{
+  "directory": "/Users/lstaszewski/Research/Software/xdiag_ls/build2/xdiag",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DH5_BUILT_AS_DYNAMIC_LIB -DXDIAG_STATIC_DEFINE -DXDIAG_USE_HDF5 -I/Users/lstaszewski/Research/Software/xdiag_ls -I/Users/lstaszewski/Research/Software/xdiag_ls/build2/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk/System/Library/Frameworks -isystem /opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/xdiag.dir/algorithms/time_evolution/pade_matrix_exponential.cpp.o -c /Users/lstaszewski/Research/Software/xdiag_ls/xdiag/algorithms/time_evolution/pade_matrix_exponential.cpp",
+  "file": "/Users/lstaszewski/Research/Software/xdiag_ls/xdiag/algorithms/time_evolution/pade_matrix_exponential.cpp",
+  "output": "xdiag/CMakeFiles/xdiag.dir/algorithms/time_evolution/pade_matrix_exponential.cpp.o"
+}
+]

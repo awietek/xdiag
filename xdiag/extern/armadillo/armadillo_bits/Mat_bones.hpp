@@ -72,11 +72,11 @@ class Mat : public Base< eT, Mat<eT> >
   inline Mat(const uword in_n_rows, const uword in_n_cols, const fill::scalar_holder<eT> f);
   inline Mat(const SizeMat& s,                             const fill::scalar_holder<eT> f);
   
-  inline arma_cold            Mat(const char*        text);
-  inline arma_cold Mat& operator=(const char*        text);
+  arma_cold inline            Mat(const char*        text);
+  arma_cold inline Mat& operator=(const char*        text);
   
-  inline arma_cold            Mat(const std::string& text);
-  inline arma_cold Mat& operator=(const std::string& text);
+  arma_cold inline            Mat(const std::string& text);
+  arma_cold inline Mat& operator=(const std::string& text);
   
   inline            Mat(const std::vector<eT>& x);
   inline Mat& operator=(const std::vector<eT>& x);
@@ -118,7 +118,7 @@ class Mat : public Base< eT, Mat<eT> >
   template<typename T1, typename T2>
   inline explicit Mat(const Base<pod_type,T1>& A, const Base<pod_type,T2>& B);
   
-  inline explicit          Mat(const subview<eT>& X, const bool use_colmem);  // only to be used by the quasi_unwrap class
+  inline explicit    Mat(const subview<eT>& X, const bool use_colmem);  // only to be used by the quasi_unwrap class
   
   inline             Mat(const subview<eT>& X);
   inline Mat& operator= (const subview<eT>& X);
@@ -178,6 +178,8 @@ class Mat : public Base< eT, Mat<eT> >
   
   inline explicit    Mat(const SpSubview<eT>& X);
   inline Mat& operator= (const SpSubview<eT>& X);
+  inline Mat& operator+=(const SpSubview<eT>& X);
+  inline Mat& operator-=(const SpSubview<eT>& X);
   
   inline explicit    Mat(const spdiagview<eT>& X);
   inline Mat& operator= (const spdiagview<eT>& X);
@@ -188,8 +190,8 @@ class Mat : public Base< eT, Mat<eT> >
   inline Mat& operator/=(const spdiagview<eT>& X);
   
   
-  arma_deprecated inline mat_injector<Mat> operator<<(const eT val);
-  arma_deprecated inline mat_injector<Mat> operator<<(const injector_end_of_row<>& x);
+  arma_frown("use braced initialiser list instead") inline mat_injector<Mat> operator<<(const eT val);
+  arma_frown("use braced initialiser list instead") inline mat_injector<Mat> operator<<(const injector_end_of_row<>& x);
   
   
   arma_inline       subview_row<eT> row(const uword row_num);
@@ -285,10 +287,10 @@ class Mat : public Base< eT, Mat<eT> >
   template<typename T1> inline const subview_each2< Mat<eT>, 0, T1 > each_col(const Base<uword, T1>& indices) const;
   template<typename T1> inline const subview_each2< Mat<eT>, 1, T1 > each_row(const Base<uword, T1>& indices) const;
   
-  inline const Mat& each_col(const std::function< void(      Col<eT>&) >& F);
+  inline       Mat& each_col(const std::function< void(      Col<eT>&) >& F);
   inline const Mat& each_col(const std::function< void(const Col<eT>&) >& F) const;
   
-  inline const Mat& each_row(const std::function< void(      Row<eT>&) >& F);
+  inline       Mat& each_row(const std::function< void(      Row<eT>&) >& F);
   inline const Mat& each_row(const std::function< void(const Row<eT>&) >& F) const;
   
   
@@ -308,8 +310,11 @@ class Mat : public Base< eT, Mat<eT> >
   template<typename T1> inline void shed_rows(const Base<uword, T1>& indices);
   template<typename T1> inline void shed_cols(const Base<uword, T1>& indices);
   
-  inline void insert_rows(const uword row_num, const uword N, const bool set_to_zero = true);
-  inline void insert_cols(const uword col_num, const uword N, const bool set_to_zero = true);
+  arma_frown("use insert_rows(row_num, N) instead") inline void insert_rows(const uword row_num, const uword N, const bool set_to_zero);
+  arma_frown("use insert_cols(col_num, N) instead") inline void insert_cols(const uword col_num, const uword N, const bool set_to_zero);
+  
+  inline void insert_rows(const uword row_num, const uword N);
+  inline void insert_cols(const uword col_num, const uword N);
   
   template<typename T1> inline void insert_rows(const uword row_num, const Base<eT,T1>& X);
   template<typename T1> inline void insert_cols(const uword col_num, const Base<eT,T1>& X);
@@ -363,6 +368,14 @@ class Mat : public Base< eT, Mat<eT> >
   template<typename T1, typename op_type> inline Mat& operator%=(const SpToDOp<T1, op_type>& X);
   template<typename T1, typename op_type> inline Mat& operator/=(const SpToDOp<T1, op_type>& X);
   
+  template<typename T1, typename op_type> inline explicit    Mat(const mtSpReduceOp<eT, T1, op_type>& X);
+  template<typename T1, typename op_type> inline Mat& operator= (const mtSpReduceOp<eT, T1, op_type>& X);
+  template<typename T1, typename op_type> inline Mat& operator+=(const mtSpReduceOp<eT, T1, op_type>& X);
+  template<typename T1, typename op_type> inline Mat& operator-=(const mtSpReduceOp<eT, T1, op_type>& X);
+  template<typename T1, typename op_type> inline Mat& operator*=(const mtSpReduceOp<eT, T1, op_type>& X);
+  template<typename T1, typename op_type> inline Mat& operator%=(const mtSpReduceOp<eT, T1, op_type>& X);
+  template<typename T1, typename op_type> inline Mat& operator/=(const mtSpReduceOp<eT, T1, op_type>& X);
+  
   template<typename T1, typename T2, typename glue_type> inline             Mat(const Glue<T1, T2, glue_type>& X);
   template<typename T1, typename T2, typename glue_type> inline Mat& operator= (const Glue<T1, T2, glue_type>& X);
   template<typename T1, typename T2, typename glue_type> inline Mat& operator+=(const Glue<T1, T2, glue_type>& X);
@@ -390,25 +403,33 @@ class Mat : public Base< eT, Mat<eT> >
   template<typename T1, typename T2, typename glue_type> inline Mat& operator%=(const mtGlue<eT, T1, T2, glue_type>& X);
   template<typename T1, typename T2, typename glue_type> inline Mat& operator/=(const mtGlue<eT, T1, T2, glue_type>& X);
   
+  template<typename T1, typename T2, typename glue_type> inline             Mat(const SpToDGlue<T1, T2, glue_type>& X);
+  template<typename T1, typename T2, typename glue_type> inline Mat& operator= (const SpToDGlue<T1, T2, glue_type>& X);
+  template<typename T1, typename T2, typename glue_type> inline Mat& operator+=(const SpToDGlue<T1, T2, glue_type>& X);
+  template<typename T1, typename T2, typename glue_type> inline Mat& operator-=(const SpToDGlue<T1, T2, glue_type>& X);
+  template<typename T1, typename T2, typename glue_type> inline Mat& operator*=(const SpToDGlue<T1, T2, glue_type>& X);
+  template<typename T1, typename T2, typename glue_type> inline Mat& operator%=(const SpToDGlue<T1, T2, glue_type>& X);
+  template<typename T1, typename T2, typename glue_type> inline Mat& operator/=(const SpToDGlue<T1, T2, glue_type>& X);
   
-  arma_inline arma_warn_unused const eT& at_alt     (const uword ii) const;
   
-  arma_inline arma_warn_unused       eT& operator[] (const uword ii);
-  arma_inline arma_warn_unused const eT& operator[] (const uword ii) const;
-  arma_inline arma_warn_unused       eT& at         (const uword ii);
-  arma_inline arma_warn_unused const eT& at         (const uword ii) const;
-  arma_inline arma_warn_unused       eT& operator() (const uword ii);
-  arma_inline arma_warn_unused const eT& operator() (const uword ii) const;
+  arma_warn_unused arma_inline const eT& at_alt     (const uword ii) const;
+  
+  arma_warn_unused arma_inline       eT& operator[] (const uword ii);
+  arma_warn_unused arma_inline const eT& operator[] (const uword ii) const;
+  arma_warn_unused arma_inline       eT& at         (const uword ii);
+  arma_warn_unused arma_inline const eT& at         (const uword ii) const;
+  arma_warn_unused arma_inline       eT& operator() (const uword ii);
+  arma_warn_unused arma_inline const eT& operator() (const uword ii) const;
   
   #if defined(__cpp_multidimensional_subscript)
-  arma_inline arma_warn_unused       eT& operator[] (const uword in_row, const uword in_col);
-  arma_inline arma_warn_unused const eT& operator[] (const uword in_row, const uword in_col) const;
+  arma_warn_unused arma_inline       eT& operator[] (const uword in_row, const uword in_col);
+  arma_warn_unused arma_inline const eT& operator[] (const uword in_row, const uword in_col) const;
   #endif
   
-  arma_inline arma_warn_unused       eT& at         (const uword in_row, const uword in_col);
-  arma_inline arma_warn_unused const eT& at         (const uword in_row, const uword in_col) const;
-  arma_inline arma_warn_unused       eT& operator() (const uword in_row, const uword in_col);
-  arma_inline arma_warn_unused const eT& operator() (const uword in_row, const uword in_col) const;
+  arma_warn_unused arma_inline       eT& at         (const uword in_row, const uword in_col);
+  arma_warn_unused arma_inline const eT& at         (const uword in_row, const uword in_col) const;
+  arma_warn_unused arma_inline       eT& operator() (const uword in_row, const uword in_col);
+  arma_warn_unused arma_inline const eT& operator() (const uword in_row, const uword in_col) const;
   
   arma_inline const Mat& operator++();
   arma_inline void       operator++(int);
@@ -416,136 +437,136 @@ class Mat : public Base< eT, Mat<eT> >
   arma_inline const Mat& operator--();
   arma_inline void       operator--(int);
   
-  arma_inline arma_warn_unused bool is_empty()  const;
-  arma_inline arma_warn_unused bool is_vec()    const;
-  arma_inline arma_warn_unused bool is_rowvec() const;
-  arma_inline arma_warn_unused bool is_colvec() const;
-  arma_inline arma_warn_unused bool is_square() const;
-       inline arma_warn_unused bool is_finite() const;
+  arma_warn_unused arma_inline bool is_empty()  const;
+  arma_warn_unused arma_inline bool is_vec()    const;
+  arma_warn_unused arma_inline bool is_rowvec() const;
+  arma_warn_unused arma_inline bool is_colvec() const;
+  arma_warn_unused arma_inline bool is_square() const;
   
-  inline arma_warn_unused bool has_inf()       const;
-  inline arma_warn_unused bool has_nan()       const;
-  inline arma_warn_unused bool has_nonfinite() const;
+  arma_warn_unused inline bool internal_is_finite()     const;
+  arma_warn_unused inline bool internal_has_inf()       const;
+  arma_warn_unused inline bool internal_has_nan()       const;
+  arma_warn_unused inline bool internal_has_nonfinite() const;
   
-  inline arma_warn_unused bool is_sorted(const char* direction = "ascend")       const;
-  inline arma_warn_unused bool is_sorted(const char* direction, const uword dim) const;
+  arma_warn_unused inline bool is_sorted(const char* direction = "ascend")       const;
+  arma_warn_unused inline bool is_sorted(const char* direction, const uword dim) const;
   
   template<typename comparator>
-  inline arma_warn_unused bool is_sorted_helper(const comparator& comp, const uword dim) const;
+  arma_warn_unused inline bool is_sorted_helper(const comparator& comp, const uword dim) const;
   
-  arma_inline arma_warn_unused bool in_range(const uword ii) const;
-  arma_inline arma_warn_unused bool in_range(const span& x ) const;
+  arma_warn_unused arma_inline bool in_range(const uword ii) const;
+  arma_warn_unused arma_inline bool in_range(const span& x ) const;
   
-  arma_inline arma_warn_unused bool in_range(const uword   in_row, const uword   in_col) const;
-  arma_inline arma_warn_unused bool in_range(const span& row_span, const uword   in_col) const;
-  arma_inline arma_warn_unused bool in_range(const uword   in_row, const span& col_span) const;
-  arma_inline arma_warn_unused bool in_range(const span& row_span, const span& col_span) const;
+  arma_warn_unused arma_inline bool in_range(const uword   in_row, const uword   in_col) const;
+  arma_warn_unused arma_inline bool in_range(const span& row_span, const uword   in_col) const;
+  arma_warn_unused arma_inline bool in_range(const uword   in_row, const span& col_span) const;
+  arma_warn_unused arma_inline bool in_range(const span& row_span, const span& col_span) const;
   
-  arma_inline arma_warn_unused bool in_range(const uword in_row, const uword in_col, const SizeMat& s) const;
+  arma_warn_unused arma_inline bool in_range(const uword in_row, const uword in_col, const SizeMat& s) const;
   
-  arma_inline arma_warn_unused       eT* colptr(const uword in_col);
-  arma_inline arma_warn_unused const eT* colptr(const uword in_col) const;
+  arma_warn_unused arma_inline       eT* colptr(const uword in_col);
+  arma_warn_unused arma_inline const eT* colptr(const uword in_col) const;
   
-  arma_inline arma_warn_unused       eT* memptr();
-  arma_inline arma_warn_unused const eT* memptr() const;
+  arma_warn_unused arma_inline       eT* memptr();
+  arma_warn_unused arma_inline const eT* memptr() const;
   
   
   template<typename eT2, typename expr>
-  inline void copy_size(const Base<eT2,expr>& X);
+  inline Mat& copy_size(const Base<eT2,expr>& X);
   
-  inline void set_size(const uword new_n_elem);
-  inline void set_size(const uword new_n_rows, const uword new_n_cols);
-  inline void set_size(const SizeMat& s);
+  inline Mat& set_size(const uword new_n_elem);
+  inline Mat& set_size(const uword new_n_rows, const uword new_n_cols);
+  inline Mat& set_size(const SizeMat& s);
   
-  inline void   resize(const uword new_n_elem);
-  inline void   resize(const uword new_n_rows, const uword new_n_cols);
-  inline void   resize(const SizeMat& s);
+  inline Mat&   resize(const uword new_n_elem);
+  inline Mat&   resize(const uword new_n_rows, const uword new_n_cols);
+  inline Mat&   resize(const SizeMat& s);
   
-  inline void  reshape(const uword new_n_rows, const uword new_n_cols);
-  inline void  reshape(const SizeMat& s);
+  inline Mat&  reshape(const uword new_n_rows, const uword new_n_cols);
+  inline Mat&  reshape(const SizeMat& s);
   
-  arma_deprecated inline void reshape(const uword new_n_rows, const uword new_n_cols, const uword dim);  //!< NOTE: don't use this form: it will be removed
+  arma_frown("use reshape(n_rows, n_cols) instead") inline void reshape(const uword new_n_rows, const uword new_n_cols, const uword dim);  //!< NOTE: don't use this form: it will be removed
   
   
-  template<typename functor> inline const Mat&  for_each(functor F);
+  template<typename functor> inline       Mat&  for_each(functor F);
   template<typename functor> inline const Mat&  for_each(functor F) const;
   
-  template<typename functor> inline const Mat& transform(functor F);
-  template<typename functor> inline const Mat&     imbue(functor F);
+  template<typename functor> inline       Mat& transform(functor F);
+  template<typename functor> inline       Mat&     imbue(functor F);
   
   
-  inline const Mat& replace(const eT old_val, const eT new_val);
+  inline Mat& replace(const eT old_val, const eT new_val);
   
-  inline const Mat& clean(const pod_type threshold);
+  inline Mat& clean(const pod_type threshold);
   
-  inline const Mat& clamp(const eT min_val, const eT max_val);
+  inline Mat& clamp(const eT min_val, const eT max_val);
   
-  inline const Mat& fill(const eT val);
+  inline Mat& fill(const eT val);
   
   template<typename fill_type>
-  inline const Mat& fill(const fill::fill_class<fill_type>& f);
+  inline Mat& fill(const fill::fill_class<fill_type>& f);
   
-  inline const Mat& zeros();
-  inline const Mat& zeros(const uword new_n_elem);
-  inline const Mat& zeros(const uword new_n_rows, const uword new_n_cols);
-  inline const Mat& zeros(const SizeMat& s);
+  inline Mat& zeros();
+  inline Mat& zeros(const uword new_n_elem);
+  inline Mat& zeros(const uword new_n_rows, const uword new_n_cols);
+  inline Mat& zeros(const SizeMat& s);
   
-  inline const Mat& ones();
-  inline const Mat& ones(const uword new_n_elem);
-  inline const Mat& ones(const uword new_n_rows, const uword new_n_cols);
-  inline const Mat& ones(const SizeMat& s);
+  inline Mat& ones();
+  inline Mat& ones(const uword new_n_elem);
+  inline Mat& ones(const uword new_n_rows, const uword new_n_cols);
+  inline Mat& ones(const SizeMat& s);
   
-  inline const Mat& randu();
-  inline const Mat& randu(const uword new_n_elem);
-  inline const Mat& randu(const uword new_n_rows, const uword new_n_cols);
-  inline const Mat& randu(const SizeMat& s);
+  inline Mat& randu();
+  inline Mat& randu(const uword new_n_elem);
+  inline Mat& randu(const uword new_n_rows, const uword new_n_cols);
+  inline Mat& randu(const SizeMat& s);
   
-  inline const Mat& randn();
-  inline const Mat& randn(const uword new_n_elem);
-  inline const Mat& randn(const uword new_n_rows, const uword new_n_cols);
-  inline const Mat& randn(const SizeMat& s);
+  inline Mat& randn();
+  inline Mat& randn(const uword new_n_elem);
+  inline Mat& randn(const uword new_n_rows, const uword new_n_cols);
+  inline Mat& randn(const SizeMat& s);
   
-  inline const Mat& eye();
-  inline const Mat& eye(const uword new_n_rows, const uword new_n_cols);
-  inline const Mat& eye(const SizeMat& s);
+  inline Mat& eye();
+  inline Mat& eye(const uword new_n_rows, const uword new_n_cols);
+  inline Mat& eye(const SizeMat& s);
   
-  inline arma_cold void      reset();
-  inline arma_cold void soft_reset();
+  arma_cold inline void      reset();
+  arma_cold inline void soft_reset();
   
   
   template<typename T1> inline void set_real(const Base<pod_type,T1>& X);
   template<typename T1> inline void set_imag(const Base<pod_type,T1>& X);
   
   
-  inline arma_warn_unused eT min() const;
-  inline arma_warn_unused eT max() const;
+  arma_warn_unused inline eT min() const;
+  arma_warn_unused inline eT max() const;
   
-  inline eT min(uword& index_of_min_val) const;
-  inline eT max(uword& index_of_max_val) const;
+  arma_frown("use .index_min() instead") inline eT min(uword& index_of_min_val) const;
+  arma_frown("use .index_max() instead") inline eT max(uword& index_of_max_val) const;
   
-  inline eT min(uword& row_of_min_val, uword& col_of_min_val) const;
-  inline eT max(uword& row_of_max_val, uword& col_of_max_val) const;
+  arma_frown("use .index_min() with ind2sub() instead") inline eT min(uword& row_of_min_val, uword& col_of_min_val) const;
+  arma_frown("use .index_max() with ind2sub() instead") inline eT max(uword& row_of_max_val, uword& col_of_max_val) const;
   
   
-  inline arma_cold bool save(const std::string   name, const file_type type = arma_binary) const;
-  inline arma_cold bool save(const hdf5_name&    spec, const file_type type = hdf5_binary) const;
-  inline arma_cold bool save(const  csv_name&    spec, const file_type type =   csv_ascii) const;
-  inline arma_cold bool save(      std::ostream& os,   const file_type type = arma_binary) const;
+  arma_cold inline bool save(const std::string   name, const file_type type = arma_binary) const;
+  arma_cold inline bool save(const hdf5_name&    spec, const file_type type = hdf5_binary) const;
+  arma_cold inline bool save(const  csv_name&    spec, const file_type type =   csv_ascii) const;
+  arma_cold inline bool save(      std::ostream& os,   const file_type type = arma_binary) const;
   
-  inline arma_cold bool load(const std::string   name, const file_type type = auto_detect);
-  inline arma_cold bool load(const hdf5_name&    spec, const file_type type = hdf5_binary);
-  inline arma_cold bool load(const  csv_name&    spec, const file_type type =   csv_ascii);
-  inline arma_cold bool load(      std::istream& is,   const file_type type = auto_detect);
+  arma_cold inline bool load(const std::string   name, const file_type type = auto_detect);
+  arma_cold inline bool load(const hdf5_name&    spec, const file_type type = hdf5_binary);
+  arma_cold inline bool load(const  csv_name&    spec, const file_type type =   csv_ascii);
+  arma_cold inline bool load(      std::istream& is,   const file_type type = auto_detect);
   
-  inline arma_cold bool quiet_save(const std::string   name, const file_type type = arma_binary) const;
-  inline arma_cold bool quiet_save(const hdf5_name&    spec, const file_type type = hdf5_binary) const;
-  inline arma_cold bool quiet_save(const  csv_name&    spec, const file_type type =   csv_ascii) const;
-  inline arma_cold bool quiet_save(      std::ostream& os,   const file_type type = arma_binary) const;
+  arma_frown("use save() instead") inline bool quiet_save(const std::string   name, const file_type type = arma_binary) const;
+  arma_frown("use save() instead") inline bool quiet_save(const hdf5_name&    spec, const file_type type = hdf5_binary) const;
+  arma_frown("use save() instead") inline bool quiet_save(const  csv_name&    spec, const file_type type =   csv_ascii) const;
+  arma_frown("use save() instead") inline bool quiet_save(      std::ostream& os,   const file_type type = arma_binary) const;
   
-  inline arma_cold bool quiet_load(const std::string   name, const file_type type = auto_detect);
-  inline arma_cold bool quiet_load(const hdf5_name&    spec, const file_type type = hdf5_binary);
-  inline arma_cold bool quiet_load(const  csv_name&    spec, const file_type type =   csv_ascii);
-  inline arma_cold bool quiet_load(      std::istream& is,   const file_type type = auto_detect);
+  arma_frown("use load() instead") inline bool quiet_load(const std::string   name, const file_type type = auto_detect);
+  arma_frown("use load() instead") inline bool quiet_load(const hdf5_name&    spec, const file_type type = hdf5_binary);
+  arma_frown("use load() instead") inline bool quiet_load(const  csv_name&    spec, const file_type type =   csv_ascii);
+  arma_frown("use load() instead") inline bool quiet_load(      std::istream& is,   const file_type type = auto_detect);
   
   
   // for container-like functionality
@@ -569,18 +590,18 @@ class Mat : public Base< eT, Mat<eT> >
     inline row_iterator(const row_iterator& X);
     inline row_iterator(Mat<eT>& in_M, const uword in_row, const uword in_col);
     
-    inline arma_warn_unused eT& operator* ();
+    arma_warn_unused inline eT& operator* ();
     
-    inline                  row_iterator& operator++();
-    inline arma_warn_unused row_iterator  operator++(int);
+                     inline row_iterator& operator++();
+    arma_warn_unused inline row_iterator  operator++(int);
     
-    inline                  row_iterator& operator--();
-    inline arma_warn_unused row_iterator  operator--(int);
+                     inline row_iterator& operator--();
+    arma_warn_unused inline row_iterator  operator--(int);
     
-    inline arma_warn_unused bool operator!=(const       row_iterator& X) const;
-    inline arma_warn_unused bool operator==(const       row_iterator& X) const;
-    inline arma_warn_unused bool operator!=(const const_row_iterator& X) const;
-    inline arma_warn_unused bool operator==(const const_row_iterator& X) const;
+    arma_warn_unused inline bool operator!=(const       row_iterator& X) const;
+    arma_warn_unused inline bool operator==(const       row_iterator& X) const;
+    arma_warn_unused inline bool operator!=(const const_row_iterator& X) const;
+    arma_warn_unused inline bool operator==(const const_row_iterator& X) const;
     
     typedef std::bidirectional_iterator_tag iterator_category;
     typedef eT                              value_type;
@@ -603,18 +624,18 @@ class Mat : public Base< eT, Mat<eT> >
     inline const_row_iterator(const const_row_iterator& X);
     inline const_row_iterator(const Mat<eT>& in_M, const uword in_row, const uword in_col);
     
-    inline arma_warn_unused const eT& operator*() const;
+    arma_warn_unused inline const eT& operator*() const;
     
-    inline                  const_row_iterator& operator++();
-    inline arma_warn_unused const_row_iterator  operator++(int);
+                     inline const_row_iterator& operator++();
+    arma_warn_unused inline const_row_iterator  operator++(int);
     
-    inline                  const_row_iterator& operator--();
-    inline arma_warn_unused const_row_iterator  operator--(int);
+                     inline const_row_iterator& operator--();
+    arma_warn_unused inline const_row_iterator  operator--(int);
     
-    inline arma_warn_unused bool operator!=(const       row_iterator& X) const;
-    inline arma_warn_unused bool operator==(const       row_iterator& X) const;
-    inline arma_warn_unused bool operator!=(const const_row_iterator& X) const;
-    inline arma_warn_unused bool operator==(const const_row_iterator& X) const;
+    arma_warn_unused inline bool operator!=(const       row_iterator& X) const;
+    arma_warn_unused inline bool operator==(const       row_iterator& X) const;
+    arma_warn_unused inline bool operator!=(const const_row_iterator& X) const;
+    arma_warn_unused inline bool operator==(const const_row_iterator& X) const;
     
     typedef std::bidirectional_iterator_tag iterator_category;
     typedef eT                              value_type;
@@ -638,21 +659,21 @@ class Mat : public Base< eT, Mat<eT> >
     inline row_col_iterator(const row_col_iterator& in_it);
     inline row_col_iterator(Mat<eT>& in_M, const uword row = 0, const uword col = 0);
     
-    inline arma_warn_unused eT& operator*();
+    arma_warn_unused inline eT& operator*();
     
-    inline                  row_col_iterator& operator++();
-    inline arma_warn_unused row_col_iterator  operator++(int);
+                     inline row_col_iterator& operator++();
+    arma_warn_unused inline row_col_iterator  operator++(int);
     
-    inline                  row_col_iterator& operator--();
-    inline arma_warn_unused row_col_iterator  operator--(int);
+                     inline row_col_iterator& operator--();
+    arma_warn_unused inline row_col_iterator  operator--(int);
     
-    inline arma_warn_unused uword row() const;
-    inline arma_warn_unused uword col() const;
+    arma_warn_unused inline uword row() const;
+    arma_warn_unused inline uword col() const;
     
-    inline arma_warn_unused bool operator==(const       row_col_iterator& rhs) const;
-    inline arma_warn_unused bool operator!=(const       row_col_iterator& rhs) const;
-    inline arma_warn_unused bool operator==(const const_row_col_iterator& rhs) const;
-    inline arma_warn_unused bool operator!=(const const_row_col_iterator& rhs) const;
+    arma_warn_unused inline bool operator==(const       row_col_iterator& rhs) const;
+    arma_warn_unused inline bool operator!=(const       row_col_iterator& rhs) const;
+    arma_warn_unused inline bool operator==(const const_row_col_iterator& rhs) const;
+    arma_warn_unused inline bool operator!=(const const_row_col_iterator& rhs) const;
     
     typedef std::bidirectional_iterator_tag iterator_category;
     typedef eT                              value_type;
@@ -676,21 +697,21 @@ class Mat : public Base< eT, Mat<eT> >
     inline const_row_col_iterator(const const_row_col_iterator& in_it);
     inline const_row_col_iterator(const Mat<eT>& in_M, const uword row = 0, const uword col = 0);
     
-    inline arma_warn_unused const eT& operator*() const;
+    arma_warn_unused inline const eT& operator*() const;
     
-    inline                  const_row_col_iterator& operator++();
-    inline arma_warn_unused const_row_col_iterator  operator++(int);
+                     inline const_row_col_iterator& operator++();
+    arma_warn_unused inline const_row_col_iterator  operator++(int);
     
-    inline                  const_row_col_iterator& operator--();
-    inline arma_warn_unused const_row_col_iterator  operator--(int);
+                     inline const_row_col_iterator& operator--();
+    arma_warn_unused inline const_row_col_iterator  operator--(int);
     
-    inline arma_warn_unused uword row() const;
-    inline arma_warn_unused uword col() const;
+    arma_warn_unused inline uword row() const;
+    arma_warn_unused inline uword col() const;
     
-    inline arma_warn_unused bool operator==(const const_row_col_iterator& rhs) const;
-    inline arma_warn_unused bool operator!=(const const_row_col_iterator& rhs) const;
-    inline arma_warn_unused bool operator==(const       row_col_iterator& rhs) const;
-    inline arma_warn_unused bool operator!=(const       row_col_iterator& rhs) const;
+    arma_warn_unused inline bool operator==(const const_row_col_iterator& rhs) const;
+    arma_warn_unused inline bool operator!=(const const_row_col_iterator& rhs) const;
+    arma_warn_unused inline bool operator==(const       row_col_iterator& rhs) const;
+    arma_warn_unused inline bool operator!=(const       row_col_iterator& rhs) const;
     
     // So that we satisfy the STL iterator types.
     typedef std::bidirectional_iterator_tag iterator_category;
@@ -737,11 +758,11 @@ class Mat : public Base< eT, Mat<eT> >
   inline bool  empty() const;
   inline uword size()  const;
   
-  inline arma_warn_unused       eT& front();
-  inline arma_warn_unused const eT& front() const;
+  arma_warn_unused inline       eT& front();
+  arma_warn_unused inline const eT& front() const;
   
-  inline arma_warn_unused       eT& back();
-  inline arma_warn_unused const eT& back() const;
+  arma_warn_unused inline       eT& back();
+  arma_warn_unused inline const eT& back() const;
   
   inline void swap(Mat& B);
   
@@ -749,6 +770,9 @@ class Mat : public Base< eT, Mat<eT> >
   inline void steal_mem(Mat& X, const bool is_move);  //!< don't use this unless you're writing code internal to Armadillo
   
   inline void steal_mem_col(Mat& X, const uword max_n_rows);
+  
+  template<typename eT2>
+  arma_inline bool is_alias(const Mat<eT2>& X) const; //!< don't use this unless you're writing code internal to Armadillo
   
   
   template<uword fixed_n_rows, uword fixed_n_cols> class fixed;
@@ -759,7 +783,7 @@ class Mat : public Base< eT, Mat<eT> >
   inline void init_cold();
   inline void init_warm(uword in_n_rows, uword in_n_cols);
   
-  inline arma_cold void init(const std::string& text);
+  arma_cold inline void init(const std::string& text);
   
   inline void init(const std::initializer_list<eT>& list);
   inline void init(const std::initializer_list< std::initializer_list<eT> >& list);
@@ -800,6 +824,8 @@ template<uword fixed_n_rows, uword fixed_n_cols>
 class Mat<eT>::fixed : public Mat<eT>
   {
   private:
+  
+  using Mat<eT>::mem_local;
   
   static constexpr uword fixed_n_elem = fixed_n_rows * fixed_n_cols;
   static constexpr bool  use_extra    = (fixed_n_elem > arma_config::mat_prealloc);
@@ -851,36 +877,36 @@ class Mat<eT>::fixed : public Mat<eT>
     template<typename T1, typename T2, typename eglue_type> inline Mat& operator=(const eGlue<T1, T2, eglue_type>& X);
   #endif
   
-  arma_inline arma_warn_unused const Op< Mat_fixed_type, op_htrans >  t() const;
-  arma_inline arma_warn_unused const Op< Mat_fixed_type, op_htrans > ht() const;
-  arma_inline arma_warn_unused const Op< Mat_fixed_type, op_strans > st() const;
+  arma_warn_unused arma_inline const Op< Mat_fixed_type, op_htrans >  t() const;
+  arma_warn_unused arma_inline const Op< Mat_fixed_type, op_htrans > ht() const;
+  arma_warn_unused arma_inline const Op< Mat_fixed_type, op_strans > st() const;
   
-  arma_inline arma_warn_unused const eT& at_alt     (const uword i) const;
+  arma_warn_unused arma_inline const eT& at_alt     (const uword i) const;
   
-  arma_inline arma_warn_unused       eT& operator[] (const uword i);
-  arma_inline arma_warn_unused const eT& operator[] (const uword i) const;
-  arma_inline arma_warn_unused       eT& at         (const uword i);
-  arma_inline arma_warn_unused const eT& at         (const uword i) const;
-  arma_inline arma_warn_unused       eT& operator() (const uword i);
-  arma_inline arma_warn_unused const eT& operator() (const uword i) const;
+  arma_warn_unused arma_inline       eT& operator[] (const uword i);
+  arma_warn_unused arma_inline const eT& operator[] (const uword i) const;
+  arma_warn_unused arma_inline       eT& at         (const uword i);
+  arma_warn_unused arma_inline const eT& at         (const uword i) const;
+  arma_warn_unused arma_inline       eT& operator() (const uword i);
+  arma_warn_unused arma_inline const eT& operator() (const uword i) const;
   
   #if defined(__cpp_multidimensional_subscript)
-  arma_inline arma_warn_unused       eT& operator[] (const uword in_row, const uword in_col);
-  arma_inline arma_warn_unused const eT& operator[] (const uword in_row, const uword in_col) const;
+  arma_warn_unused arma_inline       eT& operator[] (const uword in_row, const uword in_col);
+  arma_warn_unused arma_inline const eT& operator[] (const uword in_row, const uword in_col) const;
   #endif
   
-  arma_inline arma_warn_unused       eT& at         (const uword in_row, const uword in_col);
-  arma_inline arma_warn_unused const eT& at         (const uword in_row, const uword in_col) const;
-  arma_inline arma_warn_unused       eT& operator() (const uword in_row, const uword in_col);
-  arma_inline arma_warn_unused const eT& operator() (const uword in_row, const uword in_col) const;
+  arma_warn_unused arma_inline       eT& at         (const uword in_row, const uword in_col);
+  arma_warn_unused arma_inline const eT& at         (const uword in_row, const uword in_col) const;
+  arma_warn_unused arma_inline       eT& operator() (const uword in_row, const uword in_col);
+  arma_warn_unused arma_inline const eT& operator() (const uword in_row, const uword in_col) const;
   
-  arma_inline arma_warn_unused       eT* colptr(const uword in_col);
-  arma_inline arma_warn_unused const eT* colptr(const uword in_col) const;
+  arma_warn_unused arma_inline       eT* colptr(const uword in_col);
+  arma_warn_unused arma_inline const eT* colptr(const uword in_col) const;
   
-  arma_inline arma_warn_unused       eT* memptr();
-  arma_inline arma_warn_unused const eT* memptr() const;
+  arma_warn_unused arma_inline       eT* memptr();
+  arma_warn_unused arma_inline const eT* memptr() const;
   
-  arma_inline arma_warn_unused bool is_vec() const;
+  arma_warn_unused arma_inline bool is_vec() const;
   
   inline const Mat<eT>& fill(const eT val);
   inline const Mat<eT>& zeros();

@@ -91,6 +91,12 @@ class op_diagmat;
 class op_trimat;
 class op_vectorise_row;
 class op_vectorise_col;
+class op_symmatu;
+class op_symmatl;
+
+class op_row_as_mat;
+class op_col_as_mat;
+
 class glue_times;
 class glue_times_diag;
 
@@ -124,6 +130,18 @@ class spop_strans;
 class spop_htrans;
 class spop_vectorise_row;
 class spop_vectorise_col;
+class spop_square;
+
+class spop_rel_lt_pre;
+class spop_rel_lt_post;
+class spop_rel_gt_pre;
+class spop_rel_gt_post;
+class spop_rel_lteq_pre;
+class spop_rel_lteq_post;
+class spop_rel_gteq_pre;
+class spop_rel_gteq_post;
+class spop_rel_eq;
+class spop_rel_noteq;
 
 class spglue_plus;
 class spglue_minus;
@@ -134,7 +152,7 @@ class spglue_min;
 class spglue_rel_lt;
 class spglue_rel_gt;
 
-
+class op_sp_as_dense;
 
 class op_internal_equ;
 class op_internal_plus;
@@ -241,9 +259,10 @@ template<                 typename T1, typename  op_type> class     SpToDOp;
 template<                 typename T1, typename  op_type> class CubeToMatOp;
 template<typename out_eT, typename T1, typename  op_type> class        mtOp;
 
-template<                 typename T1, typename T2, typename  glue_type> class   Glue;
-template<                 typename T1, typename T2, typename eglue_type> class  eGlue;
-template<typename out_eT, typename T1, typename T2, typename  glue_type> class mtGlue;
+template<                 typename T1, typename T2, typename  glue_type> class      Glue;
+template<                 typename T1, typename T2, typename eglue_type> class     eGlue;
+template<                 typename T1, typename T2, typename  glue_type> class SpToDGlue;
+template<typename out_eT, typename T1, typename T2, typename  glue_type> class    mtGlue;
 
 
 
@@ -275,7 +294,7 @@ struct state_type
   {
   #if   defined(ARMA_USE_OPENMP)
                 int  state;
-  #elif (!defined(ARMA_DONT_USE_STD_MUTEX))
+  #elif defined(ARMA_USE_STD_MUTEX)
     std::atomic<int> state;
   #else
                 int  state;
@@ -294,7 +313,7 @@ struct state_type
     #if   defined(ARMA_USE_OPENMP)
       #pragma omp atomic read
       out = state;
-    #elif (!defined(ARMA_DONT_USE_STD_MUTEX))
+    #elif defined(ARMA_USE_STD_MUTEX)
       out = state.load();
     #else
       out = state;
@@ -310,7 +329,7 @@ struct state_type
     #if   defined(ARMA_USE_OPENMP)
       #pragma omp atomic write
       state = in_state;
-    #elif (!defined(ARMA_DONT_USE_STD_MUTEX))
+    #elif defined(ARMA_USE_STD_MUTEX)
       state.store(in_state);
     #else
       state = in_state;
@@ -321,6 +340,7 @@ struct state_type
 
 template<                 typename T1, typename spop_type> class   SpOp;
 template<typename out_eT, typename T1, typename spop_type> class mtSpOp;
+template<typename out_eT, typename T1, typename   op_type> class mtSpReduceOp;
 
 template<                 typename T1, typename T2, typename spglue_type> class   SpGlue;
 template<typename out_eT, typename T1, typename T2, typename spglue_type> class mtSpGlue;
@@ -346,6 +366,7 @@ struct arma_nozeros_indicator : public arma_initmode_indicator<false> {};
 
 template<typename Dummy = int> struct injector_end_of_row {};
 
+// DEPRECATED: DO NOT USE IN NEW CODE
 static const injector_end_of_row<> endr = injector_end_of_row<>();
 //!< endr indicates "end of row" when using the << operator;
 //!< similar conceptual meaning to std::endl

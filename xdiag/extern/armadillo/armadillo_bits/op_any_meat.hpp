@@ -27,7 +27,7 @@ inline
 bool
 op_any::any_vec_helper(const Base<typename T1::elem_type, T1>& X)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   typedef typename T1::elem_type eT;
   
@@ -66,7 +66,7 @@ inline
 bool
 op_any::any_vec_helper(const subview<eT>& X)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   const uword X_n_rows = X.n_rows;
   const uword X_n_cols = X.n_cols;
@@ -101,7 +101,7 @@ inline
 bool
 op_any::any_vec_helper(const Op<T1, op_vectorise_col>& X)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   return op_any::any_vec_helper(X.m);
   }
@@ -118,7 +118,7 @@ op_any::any_vec_helper
   const typename arma_not_cx<typename T1::elem_type>::result* junk2
   )
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   arma_ignore(junk1);
   arma_ignore(junk2);
   
@@ -190,7 +190,7 @@ op_any::any_vec_helper
   const typename arma_not_cx<typename T2::elem_type>::result* junk3
   )
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   arma_ignore(junk1);
   arma_ignore(junk2);
   arma_ignore(junk3);
@@ -204,9 +204,9 @@ op_any::any_vec_helper
   const Proxy<T1> A(X.A);
   const Proxy<T2> B(X.B);
   
-  arma_debug_assert_same_size(A, B, "relational operator");
+  arma_conform_assert_same_size(A, B, "relational operator");
   
-  const bool use_at = (Proxy<T1>::use_at || Proxy<T2>::use_at);
+  constexpr bool use_at = (Proxy<T1>::use_at || Proxy<T2>::use_at);
   
   if(use_at == false)
     {
@@ -262,24 +262,22 @@ inline
 bool
 op_any::any_vec(T1& X)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   return op_any::any_vec_helper(X);
   }
 
 
 
-template<typename T1>
+template<typename eT>
 inline
 void
-op_any::apply_helper(Mat<uword>& out, const Proxy<T1>& P, const uword dim)
+op_any::apply_mat_noalias(Mat<uword>& out, const Mat<eT>& X, const uword dim)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
-  const uword n_rows = P.get_n_rows();
-  const uword n_cols = P.get_n_cols();
-  
-  typedef typename Proxy<T1>::elem_type eT;
+  const uword n_rows = X.n_rows;
+  const uword n_cols = X.n_cols;
   
   if(dim == 0)  // traverse rows (ie. process each column)
     {
@@ -287,28 +285,13 @@ op_any::apply_helper(Mat<uword>& out, const Proxy<T1>& P, const uword dim)
     
     uword* out_mem = out.memptr();
     
-    if(is_Mat<typename Proxy<T1>::stored_type>::value)
+    for(uword col=0; col < n_cols; ++col)
       {
-      const unwrap<typename Proxy<T1>::stored_type> U(P.Q);
+      const eT* colmem = X.colptr(col);
       
-      for(uword col=0; col < n_cols; ++col)
+      for(uword row=0; row < n_rows; ++row)
         {
-        const eT* colmem = U.M.colptr(col);
-        
-        for(uword row=0; row < n_rows; ++row)
-          {
-          if(colmem[row] != eT(0))  { out_mem[col] = uword(1); break; }
-          }
-        }
-      }
-    else
-      {
-      for(uword col=0; col < n_cols; ++col)
-        {
-        for(uword row=0; row < n_rows; ++row)
-          {
-          if(P.at(row,col) != eT(0))  { out_mem[col] = uword(1); break; }
-          }
+        if(colmem[row] != eT(0))  { out_mem[col] = uword(1); break; }
         }
       }
     }
@@ -318,28 +301,57 @@ op_any::apply_helper(Mat<uword>& out, const Proxy<T1>& P, const uword dim)
     
     uword* out_mem = out.memptr();
     
-    if(is_Mat<typename Proxy<T1>::stored_type>::value)
+    for(uword col=0; col < n_cols; ++col)
       {
-      const unwrap<typename Proxy<T1>::stored_type> U(P.Q);
+      const eT* colmem = X.colptr(col);
       
-      for(uword col=0; col < n_cols; ++col)
+      for(uword row=0; row < n_rows; ++row)
         {
-        const eT* colmem = U.M.colptr(col);
-        
-        for(uword row=0; row < n_rows; ++row)
-          {
-          if(colmem[row] != eT(0))  { out_mem[row] = uword(1); }
-          }
+        if(colmem[row] != eT(0))  { out_mem[row] = uword(1); }
         }
       }
-    else
+    }
+  }
+
+
+
+template<typename T1>
+inline
+void
+op_any::apply_proxy_noalias(Mat<uword>& out, const Proxy<T1>& P, const uword dim)
+  {
+  arma_debug_sigprint();
+  
+  typedef typename Proxy<T1>::elem_type eT;
+  
+  const uword n_rows = P.get_n_rows();
+  const uword n_cols = P.get_n_cols();
+  
+  if(dim == 0)  // traverse rows (ie. process each column)
+    {
+    out.zeros(1, n_cols);
+    
+    uword* out_mem = out.memptr();
+    
+    for(uword col=0; col < n_cols; ++col)
       {
-      for(uword col=0; col < n_cols; ++col)
+      for(uword row=0; row < n_rows; ++row)
         {
-        for(uword row=0; row < n_rows; ++row)
-          {
-          if(P.at(row,col) != eT(0))  { out_mem[row] = uword(1); }
-          }
+        if(P.at(row,col) != eT(0))  { out_mem[col] = uword(1); break; }
+        }
+      }
+    }
+  else
+    {
+    out.zeros(n_rows, 1);
+    
+    uword* out_mem = out.memptr();
+    
+    for(uword col=0; col < n_cols; ++col)
+      {
+      for(uword row=0; row < n_rows; ++row)
+        {
+        if(P.at(row,col) != eT(0))  { out_mem[row] = uword(1); }
         }
       }
     }
@@ -352,23 +364,43 @@ inline
 void
 op_any::apply(Mat<uword>& out, const mtOp<uword, T1, op_any>& X)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   const uword dim = X.aux_uword_a;
   
-  const Proxy<T1> P(X.m);
-  
-  if(P.is_alias(out) == false)
+  if( (is_Mat<T1>::value) || (is_Mat<typename Proxy<T1>::stored_type>::value) || (arma_config::openmp && Proxy<T1>::use_mp) )
     {
-    op_any::apply_helper(out, P, dim);
+    const quasi_unwrap<T1> U(X.m);
+    
+    if(U.is_alias(out) == false)
+      {
+      op_any::apply_mat_noalias(out, U.M, dim);
+      }
+    else
+      {
+      Mat<uword> tmp;
+      
+      op_any::apply_mat_noalias(tmp, U.M, dim);
+      
+      out.steal_mem(tmp);
+      }
     }
   else
     {
-    Mat<uword> out2;
+    const Proxy<T1> P(X.m);
     
-    op_any::apply_helper(out2, P, dim);
-    
-    out.steal_mem(out2);
+    if(P.is_alias(out) == false)
+      {
+      op_any::apply_proxy_noalias(out, P, dim);
+      }
+    else
+      {
+      Mat<uword> tmp;
+      
+      op_any::apply_proxy_noalias(tmp, P, dim);
+      
+      out.steal_mem(tmp);
+      }
     }
   }
 

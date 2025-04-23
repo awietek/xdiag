@@ -30,7 +30,7 @@ running_mean_scalar<eT>::running_mean_scalar()
   : counter(uword(0))
   , r_mean (   eT(0))
   {
-  arma_extra_debug_sigprint_this(this);
+  arma_debug_sigprint_this(this);
   }
 
 
@@ -41,7 +41,7 @@ running_mean_scalar<eT>::running_mean_scalar(const running_mean_scalar<eT>& in)
   : counter(in.counter)
   , r_mean (in.r_mean )
   {
-  arma_extra_debug_sigprint_this(this);
+  arma_debug_sigprint_this(this);
   }
 
 
@@ -51,7 +51,7 @@ inline
 const running_mean_scalar<eT>&
 running_mean_scalar<eT>::operator=(const running_mean_scalar<eT>& in)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   counter = in.counter;
   r_mean  = in.r_mean;
@@ -62,12 +62,11 @@ running_mean_scalar<eT>::operator=(const running_mean_scalar<eT>& in)
 
 
 template<typename eT>
-arma_hot
 inline
 void
 running_mean_scalar<eT>::operator() (const eT X)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   counter++;
   
@@ -90,7 +89,7 @@ inline
 void
 running_mean_scalar<eT>::reset()
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   counter = 0;
   r_mean  = eT(0);

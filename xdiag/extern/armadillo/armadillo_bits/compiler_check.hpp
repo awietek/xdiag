@@ -20,6 +20,7 @@
 #undef ARMA_HAVE_CXX14
 #undef ARMA_HAVE_CXX17
 #undef ARMA_HAVE_CXX20
+#undef ARMA_HAVE_CXX23
 
 #if (__cplusplus >= 201103L)
   #define ARMA_HAVE_CXX11
@@ -37,16 +38,20 @@
   #define ARMA_HAVE_CXX20
 #endif
 
+#if (__cplusplus >= 202302L)
+  #define ARMA_HAVE_CXX23
+#endif
+
 
 // MS really can't get its proverbial shit together
 #if defined(_MSVC_LANG)
   
   #if (_MSVC_LANG >= 201402L)
-  #undef  ARMA_HAVE_CXX11
-  #undef  ARMA_HAVE_CXX14
-  
-  #define ARMA_HAVE_CXX11
-  #define ARMA_HAVE_CXX14
+    #undef  ARMA_HAVE_CXX11
+    #define ARMA_HAVE_CXX11
+    
+    #undef  ARMA_HAVE_CXX14
+    #define ARMA_HAVE_CXX14
   #endif
   
   #if (_MSVC_LANG >= 201703L)
@@ -57,6 +62,11 @@
   #if (_MSVC_LANG >= 202002L)
     #undef  ARMA_HAVE_CXX20
     #define ARMA_HAVE_CXX20
+  #endif
+  
+  #if (_MSVC_LANG >= 202302L)
+    #undef  ARMA_HAVE_CXX23
+    #define ARMA_HAVE_CXX23
   #endif
   
 #endif
@@ -70,6 +80,11 @@
 
 #if !defined(ARMA_HAVE_CXX11)
   #error "*** C++11 compiler required; enable C++11 mode in your compiler, or use an earlier version of Armadillo"
+#endif
+
+
+#if (!defined(ARMA_HAVE_CXX14)) && (!defined(ARMA_IGNORE_DEPRECATED_MARKER))
+  #pragma message ("INFO: support for C++11 is deprecated; minimum recommended standard is C++14")
 #endif
 
 

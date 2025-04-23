@@ -48,12 +48,6 @@ class op_inv_spd_full
   
   template<typename eT>
   arma_cold inline static bool apply_tiny_2x2(Mat<eT>& X);
-  
-  template<typename eT>
-  arma_cold inline static bool apply_tiny_3x3(Mat<eT>& X);
-  
-  template<typename eT>
-  arma_cold inline static bool apply_tiny_4x4(Mat<eT>& X);
   };
 
 
@@ -61,8 +55,9 @@ class op_inv_spd_full
 template<typename T>
 struct op_inv_spd_state
   {
-  T    rcond   = T(0);
-  bool is_diag = false;
+  uword size    = uword(0);
+  T     rcond   = T(0);
+  bool  is_diag = false;
   };
 
 

@@ -27,7 +27,7 @@ inline
 void
 op_pinv_default::apply(Mat<typename T1::elem_type>& out, const Op<T1,op_pinv_default>& in)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   const bool status = op_pinv_default::apply_direct(out, in.m);
   
@@ -45,7 +45,7 @@ inline
 bool
 op_pinv_default::apply_direct(Mat<typename T1::elem_type>& out, const Base<typename T1::elem_type,T1>& expr)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   typedef typename T1::pod_type T;
   
@@ -66,7 +66,7 @@ inline
 void
 op_pinv::apply(Mat<typename T1::elem_type>& out, const Op<T1,op_pinv>& in)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   typedef typename T1::pod_type T;
   
@@ -89,12 +89,12 @@ inline
 bool
 op_pinv::apply_direct(Mat<typename T1::elem_type>& out, const Base<typename T1::elem_type,T1>& expr, typename T1::pod_type tol, const uword method_id)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   typedef typename T1::elem_type eT;
   typedef typename T1::pod_type   T;
   
-  arma_debug_check((tol < T(0)), "pinv(): tolerance must be >= 0");
+  arma_conform_check((tol < T(0)), "pinv(): tolerance must be >= 0");
   
   // method_id = 0 -> default setting
   // method_id = 1 -> use standard algorithm
@@ -106,49 +106,25 @@ op_pinv::apply_direct(Mat<typename T1::elem_type>& out, const Base<typename T1::
   
   if(is_op_diagmat<T1>::value || A.is_diagmat())
     {
-    arma_extra_debug_print("op_pinv: detected diagonal matrix");
+    arma_debug_print("op_pinv: diag optimisation");
     
     return op_pinv::apply_diag(out, A, tol);
     }
   
-  bool do_sym   = false;
-  bool do_sympd = false;
+  bool do_sym = false;
   
-  const bool is_sym_size_ok = (A.n_rows > (is_cx<eT>::yes ? uword(20) : uword(40)));
-  const bool is_arg_default = ((tol == T(0)) && (method_id == uword(0)));
+  const bool is_sym_size_ok = (A.n_rows == A.n_cols) && (A.n_rows > (is_cx<eT>::yes ? uword(20) : uword(40)));
   
-  if( (arma_config::optimise_sympd) && (auxlib::crippled_lapack(A) == false) && (is_arg_default || is_sym_size_ok) )
+  if( (is_sym_size_ok) && (arma_config::optimise_sym) && (auxlib::crippled_lapack(A) == false) )
     {
-    bool is_approx_sym   = false;
-    bool is_approx_sympd = false;
+    do_sym = is_sym_expr<T1>::eval(expr.get_ref());
     
-    sympd_helper::analyse_matrix(is_approx_sym, is_approx_sympd, A);
-    
-    do_sym   = is_sym_size_ok && ((is_cx<eT>::no) ? (is_approx_sym) : (is_approx_sym && is_approx_sympd));
-    do_sympd = is_arg_default && is_approx_sympd;
-    }
-  
-  if(do_sympd)
-    {
-    arma_extra_debug_print("op_pinv: attempting sympd optimisation");
-    
-    out = A;
-    
-          bool is_sympd_junk   = false;
-          T    rcond_calc      = T(0);
-    const T    rcond_threshold = T((std::max)(uword(100), uword(A.n_rows))) * std::numeric_limits<T>::epsilon();
-    
-    const bool status = auxlib::inv_sympd_rcond(out, is_sympd_junk, rcond_calc, rcond_threshold);
-    
-    if(status && arma_isfinite(rcond_calc))  { return true; }
-    
-    arma_extra_debug_print("op_pinv: sympd optimisation failed");
-    // auxlib::inv_sympd_rcond() will fail if A isn't really positive definite or its rcond is below rcond_threshold
+    if(do_sym == false)  { do_sym = sym_helper::is_approx_sym(A); }
     }
   
   if(do_sym)
     {
-    arma_extra_debug_print("op_pinv: symmetric/hermitian optimisation");
+    arma_debug_print("op_pinv: symmetric/hermitian optimisation");
     
     return op_pinv::apply_sym(out, A, tol, method_id);
     }
@@ -163,7 +139,7 @@ inline
 bool
 op_pinv::apply_diag(Mat<eT>& out, const Mat<eT>& A, typename get_pod_type<eT>::result tol)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   typedef typename get_pod_type<eT>::result T;
   
@@ -209,7 +185,7 @@ inline
 bool
 op_pinv::apply_sym(Mat<eT>& out, const Mat<eT>& A, typename get_pod_type<eT>::result tol, const uword method_id)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   typedef typename get_pod_type<eT>::result T;
   
@@ -266,7 +242,7 @@ inline
 bool
 op_pinv::apply_gen(Mat<eT>& out, Mat<eT>& A, typename get_pod_type<eT>::result tol, const uword method_id)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   typedef typename get_pod_type<eT>::result T;
   

@@ -22,12 +22,11 @@
 
 
 template<typename eT>
-arma_hot
 inline
 void
 spglue_merge::subview_merge(SpSubview<eT>& sv, const SpMat<eT>& B)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   if(sv.n_elem == 0)  { return; }
   
@@ -195,12 +194,11 @@ spglue_merge::subview_merge(SpSubview<eT>& sv, const SpMat<eT>& B)
 
 
 template<typename eT>
-arma_hot
 inline
 void
 spglue_merge::subview_merge(SpSubview<eT>& sv, const Mat<eT>& B)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   if(sv.n_elem == 0)  { return; }
   
@@ -383,12 +381,11 @@ spglue_merge::subview_merge(SpSubview<eT>& sv, const Mat<eT>& B)
 
 
 template<typename eT>
-arma_hot
 inline
 void
 spglue_merge::symmat_merge(SpMat<eT>& out, const SpMat<eT>& A, const SpMat<eT>& B)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   out.reserve(A.n_rows, A.n_cols, 2*A.n_nonzero); // worst case scenario
   
@@ -468,12 +465,11 @@ spglue_merge::symmat_merge(SpMat<eT>& out, const SpMat<eT>& A, const SpMat<eT>& 
 
 
 template<typename eT>
-arma_hot
 inline
 void
 spglue_merge::diagview_merge(SpMat<eT>& out, const SpMat<eT>& A, const SpMat<eT>& B)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   // NOTE: assuming that B has non-zero elements only on the main diagonal
   

@@ -21,13 +21,6 @@
 
 
 
-struct field_prealloc_n_elem
-  {
-  static constexpr uword val = 16;
-  };
-
-
-
 //! A lightweight 1D/2D/3D container for arbitrary objects
 //! (the objects must have a copy constructor)
 
@@ -46,8 +39,7 @@ class field
   
   private:
   
-  arma_aligned oT** mem;                                     //!< pointers to stored objects
-  arma_aligned oT*  mem_local[ field_prealloc_n_elem::val ]; //!< local storage, for small fields
+  arma_aligned oT** mem;  //!< pointers to stored objects
   
   
   public:
@@ -67,11 +59,23 @@ class field
   inline explicit field(const SizeMat&  s);
   inline explicit field(const SizeCube& s);
   
-  inline void  set_size(const uword n_obj_in);
-  inline void  set_size(const uword n_rows_in, const uword n_cols_in);
-  inline void  set_size(const uword n_rows_in, const uword n_cols_in, const uword n_slices_in);
-  inline void  set_size(const SizeMat&  s);
-  inline void  set_size(const SizeCube& s);
+  inline field& set_size(const uword n_elem_in);
+  inline field& set_size(const uword n_rows_in, const uword n_cols_in);
+  inline field& set_size(const uword n_rows_in, const uword n_cols_in, const uword n_slices_in);
+  inline field& set_size(const SizeMat&  s);
+  inline field& set_size(const SizeCube& s);
+  
+  inline field& reshape(const uword n_elem_in);
+  inline field& reshape(const uword n_rows_in, const uword n_cols_in);
+  inline field& reshape(const uword n_rows_in, const uword n_cols_in, const uword n_slices_in);
+  inline field& reshape(const SizeMat&  s);
+  inline field& reshape(const SizeCube& s);
+  
+  inline field& resize(const uword n_elem_in);
+  inline field& resize(const uword n_rows_in, const uword n_cols_in);
+  inline field& resize(const uword n_rows_in, const uword n_cols_in, const uword n_slices_in);
+  inline field& resize(const SizeMat&  s);
+  inline field& resize(const SizeCube& s);
   
   inline            field(const std::vector<oT>& x);
   inline field& operator=(const std::vector<oT>& x);
@@ -86,49 +90,49 @@ class field
   inline field& operator=(field&& X);
   
   template<typename oT2>
-  inline void copy_size(const field<oT2>& x);
+  inline field& copy_size(const field<oT2>& x);
   
-  arma_inline arma_warn_unused       oT& operator[](const uword i);
-  arma_inline arma_warn_unused const oT& operator[](const uword i) const;
+  arma_warn_unused arma_inline       oT& operator[](const uword i);
+  arma_warn_unused arma_inline const oT& operator[](const uword i) const;
   
-  arma_inline arma_warn_unused       oT&         at(const uword i);
-  arma_inline arma_warn_unused const oT&         at(const uword i) const;
+  arma_warn_unused arma_inline       oT&         at(const uword i);
+  arma_warn_unused arma_inline const oT&         at(const uword i) const;
   
-  arma_inline arma_warn_unused       oT& operator()(const uword i);
-  arma_inline arma_warn_unused const oT& operator()(const uword i) const;
-  
-  #if defined(__cpp_multidimensional_subscript)
-  arma_inline arma_warn_unused       oT& operator[](const uword row, const uword col);
-  arma_inline arma_warn_unused const oT& operator[](const uword row, const uword col) const;
-  #endif
-  
-  arma_inline arma_warn_unused       oT&         at(const uword row, const uword col);
-  arma_inline arma_warn_unused const oT&         at(const uword row, const uword col) const;
+  arma_warn_unused arma_inline       oT& operator()(const uword i);
+  arma_warn_unused arma_inline const oT& operator()(const uword i) const;
   
   #if defined(__cpp_multidimensional_subscript)
-  arma_inline arma_warn_unused       oT& operator[](const uword row, const uword col, const uword slice);
-  arma_inline arma_warn_unused const oT& operator[](const uword row, const uword col, const uword slice) const;
+  arma_warn_unused arma_inline       oT& operator[](const uword row, const uword col);
+  arma_warn_unused arma_inline const oT& operator[](const uword row, const uword col) const;
   #endif
   
-  arma_inline arma_warn_unused       oT&         at(const uword row, const uword col, const uword slice);
-  arma_inline arma_warn_unused const oT&         at(const uword row, const uword col, const uword slice) const;
+  arma_warn_unused arma_inline       oT&         at(const uword row, const uword col);
+  arma_warn_unused arma_inline const oT&         at(const uword row, const uword col) const;
   
-  arma_inline arma_warn_unused       oT& operator()(const uword row, const uword col);
-  arma_inline arma_warn_unused const oT& operator()(const uword row, const uword col) const;
+  #if defined(__cpp_multidimensional_subscript)
+  arma_warn_unused arma_inline       oT& operator[](const uword row, const uword col, const uword slice);
+  arma_warn_unused arma_inline const oT& operator[](const uword row, const uword col, const uword slice) const;
+  #endif
+  
+  arma_warn_unused arma_inline       oT&         at(const uword row, const uword col, const uword slice);
+  arma_warn_unused arma_inline const oT&         at(const uword row, const uword col, const uword slice) const;
+  
+  arma_warn_unused arma_inline       oT& operator()(const uword row, const uword col);
+  arma_warn_unused arma_inline const oT& operator()(const uword row, const uword col) const;
 
-  arma_inline arma_warn_unused       oT& operator()(const uword row, const uword col, const uword slice);
-  arma_inline arma_warn_unused const oT& operator()(const uword row, const uword col, const uword slice) const;
+  arma_warn_unused arma_inline       oT& operator()(const uword row, const uword col, const uword slice);
+  arma_warn_unused arma_inline const oT& operator()(const uword row, const uword col, const uword slice) const;
   
   
-  arma_inline arma_warn_unused       oT& front();
-  arma_inline arma_warn_unused const oT& front() const;
+  arma_warn_unused arma_inline       oT& front();
+  arma_warn_unused arma_inline const oT& front() const;
   
-  arma_inline arma_warn_unused       oT& back();
-  arma_inline arma_warn_unused const oT& back() const;
+  arma_warn_unused arma_inline       oT& back();
+  arma_warn_unused arma_inline const oT& back() const;
   
   
-  arma_deprecated inline field_injector<field> operator<<(const oT& val);
-  arma_deprecated inline field_injector<field> operator<<(const injector_end_of_row<>& x);
+  arma_frown("use braced initialiser list instead") inline field_injector<field> operator<<(const oT& val);
+  arma_frown("use braced initialiser list instead") inline field_injector<field> operator<<(const injector_end_of_row<>& x);
   
   
   inline       subview_field<oT> row(const uword row_num);
@@ -183,45 +187,45 @@ class field
   arma_cold inline void print(                           const std::string extra_text = "") const;
   arma_cold inline void print(std::ostream& user_stream, const std::string extra_text = "") const;
   
-  inline const field& for_each(const std::function< void(      oT&) >& F);
+  inline       field& for_each(const std::function< void(      oT&) >& F);
   inline const field& for_each(const std::function< void(const oT&) >& F) const;
   
-  inline const field& fill(const oT& x);
+  inline field& fill(const oT& x);
   
   inline void reset();
   inline void reset_objects();
   
-  arma_inline bool is_empty() const;
+  arma_warn_unused arma_inline bool is_empty() const;
   
   
-  arma_inline arma_warn_unused bool in_range(const uword i) const;
-  arma_inline arma_warn_unused bool in_range(const span& x) const;
+  arma_warn_unused arma_inline bool in_range(const uword i) const;
+  arma_warn_unused arma_inline bool in_range(const span& x) const;
   
-  arma_inline arma_warn_unused bool in_range(const uword   in_row, const uword   in_col) const;
-  arma_inline arma_warn_unused bool in_range(const span& row_span, const uword   in_col) const;
-  arma_inline arma_warn_unused bool in_range(const uword   in_row, const span& col_span) const;
-  arma_inline arma_warn_unused bool in_range(const span& row_span, const span& col_span) const;
+  arma_warn_unused arma_inline bool in_range(const uword   in_row, const uword   in_col) const;
+  arma_warn_unused arma_inline bool in_range(const span& row_span, const uword   in_col) const;
+  arma_warn_unused arma_inline bool in_range(const uword   in_row, const span& col_span) const;
+  arma_warn_unused arma_inline bool in_range(const span& row_span, const span& col_span) const;
   
-  arma_inline arma_warn_unused bool in_range(const uword   in_row, const uword   in_col, const SizeMat& s) const;
+  arma_warn_unused arma_inline bool in_range(const uword   in_row, const uword   in_col, const SizeMat& s) const;
   
-  arma_inline arma_warn_unused bool in_range(const uword   in_row, const uword   in_col, const uword   in_slice) const;
-  arma_inline arma_warn_unused bool in_range(const span& row_span, const span& col_span, const span& slice_span) const;
+  arma_warn_unused arma_inline bool in_range(const uword   in_row, const uword   in_col, const uword   in_slice) const;
+  arma_warn_unused arma_inline bool in_range(const span& row_span, const span& col_span, const span& slice_span) const;
   
-  arma_inline arma_warn_unused bool in_range(const uword   in_row, const uword in_col, const uword in_slice, const SizeCube& s) const;
-  
-  
-  inline arma_cold bool save(const std::string   name, const file_type type = arma_binary) const;
-  inline arma_cold bool save(      std::ostream& os,   const file_type type = arma_binary) const;
-  
-  inline arma_cold bool load(const std::string   name, const file_type type = auto_detect);
-  inline arma_cold bool load(      std::istream& is,   const file_type type = auto_detect);
+  arma_warn_unused arma_inline bool in_range(const uword   in_row, const uword in_col, const uword in_slice, const SizeCube& s) const;
   
   
-  inline arma_cold bool quiet_save(const std::string   name, const file_type type = arma_binary) const;
-  inline arma_cold bool quiet_save(      std::ostream& os,   const file_type type = arma_binary) const;
+  arma_cold inline bool save(const std::string   name, const file_type type = arma_binary) const;
+  arma_cold inline bool save(      std::ostream& os,   const file_type type = arma_binary) const;
   
-  inline arma_cold bool quiet_load(const std::string   name, const file_type type = auto_detect);
-  inline arma_cold bool quiet_load(      std::istream& is,   const file_type type = auto_detect);
+  arma_cold inline bool load(const std::string   name, const file_type type = auto_detect);
+  arma_cold inline bool load(      std::istream& is,   const file_type type = auto_detect);
+  
+  
+  arma_deprecated inline bool quiet_save(const std::string   name, const file_type type = arma_binary) const;
+  arma_deprecated inline bool quiet_save(      std::ostream& os,   const file_type type = arma_binary) const;
+  
+  arma_deprecated inline bool quiet_load(const std::string   name, const file_type type = auto_detect);
+  arma_deprecated inline bool quiet_load(      std::istream& is,   const file_type type = auto_detect);
   
   
   // for container-like functionality

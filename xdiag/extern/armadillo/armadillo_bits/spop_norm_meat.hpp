@@ -26,7 +26,7 @@ inline
 typename get_pod_type<eT>::result
 spop_norm::mat_norm_1(const SpMat<eT>& X)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   // TODO: this can be sped up with a dedicated implementation
   return as_scalar( max( sum(abs(X), 0), 1) );
@@ -39,7 +39,7 @@ inline
 typename get_pod_type<eT>::result
 spop_norm::mat_norm_2(const SpMat<eT>& X, const typename arma_real_only<eT>::result* junk)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   arma_ignore(junk);
   
   // norm = sqrt( largest eigenvalue of (A^H)*A ), where ^H is the conjugate transpose
@@ -53,9 +53,12 @@ spop_norm::mat_norm_2(const SpMat<eT>& X, const typename arma_real_only<eT>::res
   const SpMat<eT>  C = (A.n_rows <= A.n_cols) ? (A*B) : (B*A);
   
   Col<T> eigval;
+  
   eigs_sym(eigval, C, 1);
   
-  return (eigval.n_elem > 0) ? T(std::sqrt(eigval[0])) : T(0);
+  const T out_square_val = (eigval.n_elem > 0) ? T(eigval[0]) : T(0);
+  
+  return (out_square_val <= T(0)) ? T(0) : T(std::sqrt(out_square_val));
   }
 
 
@@ -65,7 +68,7 @@ inline
 typename get_pod_type<eT>::result
 spop_norm::mat_norm_2(const SpMat<eT>& X, const typename arma_cx_only<eT>::result* junk)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   arma_ignore(junk);
   
   typedef typename get_pod_type<eT>::result T;
@@ -84,9 +87,12 @@ spop_norm::mat_norm_2(const SpMat<eT>& X, const typename arma_cx_only<eT>::resul
   const SpMat<eT>  C = (A.n_rows <= A.n_cols) ? (A*B) : (B*A);
   
   Col<eT> eigval;
+  
   eigs_gen(eigval, C, 1);
   
-  return (eigval.n_elem > 0) ? T(std::sqrt(std::real(eigval[0]))) : T(0);
+  const T out_square_val = (eigval.n_elem > 0) ? T(std::real(eigval[0])) : T(0);
+  
+  return (out_square_val <= T(0)) ? T(0) : T(std::sqrt(out_square_val));
   }
 
 
@@ -96,7 +102,7 @@ inline
 typename get_pod_type<eT>::result
 spop_norm::mat_norm_inf(const SpMat<eT>& X)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   // TODO: this can be sped up with a dedicated implementation
   return as_scalar( max( sum(abs(X), 1), 0) );
@@ -109,9 +115,9 @@ inline
 typename get_pod_type<eT>::result
 spop_norm::vec_norm_k(const eT* mem, const uword N, const uword k)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
-  arma_debug_check( (k == 0), "norm(): k must be greater than zero" );
+  arma_conform_check( (k == 0), "norm(): unsupported vector norm type" );
   
   // create a fake dense vector to allow reuse of code for dense vectors
   Col<eT> fake_vector( access::rwp(mem), N, false );

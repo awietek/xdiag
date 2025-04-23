@@ -22,12 +22,11 @@
 
 
 template<typename T1, typename T2>
-arma_hot
 inline
 void
 spglue_plus::apply(SpMat<typename T1::elem_type>& out, const SpGlue<T1,T2,spglue_plus>& X)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   typedef typename T1::elem_type eT;
   
@@ -53,14 +52,13 @@ spglue_plus::apply(SpMat<typename T1::elem_type>& out, const SpGlue<T1,T2,spglue
 
 
 template<typename eT, typename T1, typename T2>
-arma_hot
 inline
 void
 spglue_plus::apply_noalias(SpMat<eT>& out, const SpProxy<T1>& pa, const SpProxy<T2>& pb)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
-  arma_debug_assert_same_size(pa.get_n_rows(), pa.get_n_cols(), pb.get_n_rows(), pb.get_n_cols(), "addition");
+  arma_conform_assert_same_size(pa.get_n_rows(), pa.get_n_cols(), pb.get_n_rows(), pb.get_n_cols(), "addition");
   
   if(pa.get_n_nonzero() == 0)  { out = pb.Q; return; }
   if(pb.get_n_nonzero() == 0)  { out = pa.Q; return; }
@@ -160,12 +158,11 @@ spglue_plus::apply_noalias(SpMat<eT>& out, const SpProxy<T1>& pa, const SpProxy<
 
 
 template<typename eT>
-arma_hot
 inline
 void
 spglue_plus::apply_noalias(SpMat<eT>& out, const SpMat<eT>& A, const SpMat<eT>& B)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   const SpProxy< SpMat<eT> > pa(A);
   const SpProxy< SpMat<eT> > pb(B);
@@ -184,7 +181,7 @@ inline
 void
 spglue_plus_mixed::apply(SpMat<typename eT_promoter<T1,T2>::eT>& out, const mtSpGlue<typename eT_promoter<T1,T2>::eT, T1, T2, spglue_plus_mixed>& expr)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   typedef typename T1::elem_type eT1;
   typedef typename T2::elem_type eT2;
@@ -257,7 +254,7 @@ inline
 void
 spglue_plus_mixed::dense_plus_sparse(Mat< typename promote_type<typename T1::elem_type, typename T2::elem_type >::result>& out, const T1& X, const T2& Y)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   typedef typename T1::elem_type eT1;
   typedef typename T2::elem_type eT2;
@@ -281,7 +278,7 @@ spglue_plus_mixed::dense_plus_sparse(Mat< typename promote_type<typename T1::ele
   
   const SpProxy<T2> pb(Y);
   
-  arma_debug_assert_same_size( out.n_rows, out.n_cols, pb.get_n_rows(), pb.get_n_cols(), "addition" );
+  arma_conform_assert_same_size( out.n_rows, out.n_cols, pb.get_n_rows(), pb.get_n_cols(), "addition" );
   
   typename SpProxy<T2>::const_iterator_type it     = pb.begin();
   typename SpProxy<T2>::const_iterator_type it_end = pb.end();

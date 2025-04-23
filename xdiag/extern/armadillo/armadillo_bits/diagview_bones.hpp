@@ -29,7 +29,7 @@ class diagview : public Base< eT, diagview<eT> >
   typedef eT                                elem_type;
   typedef typename get_pod_type<eT>::result pod_type;
   
-  arma_aligned const Mat<eT>& m;
+  const Mat<eT>& m;
   
   static constexpr bool is_row  = false;
   static constexpr bool is_col  = true;
@@ -107,6 +107,9 @@ class diagview : public Base< eT, diagview<eT> >
   inline static void minus_inplace(Mat<eT>& out, const diagview& in);
   inline static void schur_inplace(Mat<eT>& out, const diagview& in);
   inline static void   div_inplace(Mat<eT>& out, const diagview& in);
+  
+  template<typename eT2>
+  inline bool is_alias(const Mat<eT2>& X) const;
   
   
   friend class Mat<eT>;

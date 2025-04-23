@@ -26,7 +26,7 @@ inline
 void
 op_inv_gen_default::apply(Mat<typename T1::elem_type>& out, const Op<T1,op_inv_gen_default>& X)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   const bool status = op_inv_gen_default::apply_direct(out, X.m, "inv()");
   
@@ -44,7 +44,7 @@ inline
 bool
 op_inv_gen_default::apply_direct(Mat<typename T1::elem_type>& out, const Base<typename T1::elem_type,T1>& expr, const char* caller_sig)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   return op_inv_gen_full::apply_direct<T1,false>(out, expr, caller_sig, uword(0));
   }
@@ -60,7 +60,7 @@ inline
 void
 op_inv_gen_full::apply(Mat<typename T1::elem_type>& out, const Op<T1,op_inv_gen_full>& X)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   const uword flags = X.aux_uword_a;
   
@@ -80,32 +80,29 @@ inline
 bool
 op_inv_gen_full::apply_direct(Mat<typename T1::elem_type>& out, const Base<typename T1::elem_type,T1>& expr, const char* caller_sig, const uword flags)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   typedef typename T1::elem_type eT;
   typedef typename T1::pod_type   T;
   
-  if(has_user_flags == true )  { arma_extra_debug_print("op_inv_gen_full: has_user_flags = true");  }
-  if(has_user_flags == false)  { arma_extra_debug_print("op_inv_gen_full: has_user_flags = false"); }
+  if(has_user_flags == true )  { arma_debug_print("op_inv_gen_full: has_user_flags = true");  }
+  if(has_user_flags == false)  { arma_debug_print("op_inv_gen_full: has_user_flags = false"); }
   
-  const bool tiny         = has_user_flags && bool(flags & inv_opts::flag_tiny        );
+  const bool fast         = has_user_flags && bool(flags & inv_opts::flag_fast        );
   const bool allow_approx = has_user_flags && bool(flags & inv_opts::flag_allow_approx);
-  const bool likely_sympd = has_user_flags && bool(flags & inv_opts::flag_likely_sympd);
-  const bool no_sympd     = has_user_flags && bool(flags & inv_opts::flag_no_sympd    );
   const bool no_ugly      = has_user_flags && bool(flags & inv_opts::flag_no_ugly     );
   
   if(has_user_flags)
     {
-    arma_extra_debug_print("op_inv_gen_full: enabled flags:");
+    arma_debug_print("op_inv_gen_full: enabled flags:");
     
-    if(tiny        )  { arma_extra_debug_print("tiny");         }
-    if(allow_approx)  { arma_extra_debug_print("allow_approx"); }
-    if(likely_sympd)  { arma_extra_debug_print("likely_sympd"); }
-    if(no_sympd    )  { arma_extra_debug_print("no_sympd");     }
-    if(no_ugly     )  { arma_extra_debug_print("no_ugly");      }
+    if(fast        )  { arma_debug_print("fast");         }
+    if(allow_approx)  { arma_debug_print("allow_approx"); }
+    if(no_ugly     )  { arma_debug_print("no_ugly");      }
     
-    arma_debug_check( (no_sympd && likely_sympd), "inv(): options 'no_sympd' and 'likely_sympd' are mutually exclusive" );
-    arma_debug_check( (no_ugly  && allow_approx), "inv(): options 'no_ugly' and 'allow_approx' are mutually exclusive"  );
+    arma_conform_check( (fast    && allow_approx), "inv(): options 'fast' and 'allow_approx' are mutually exclusive"    );
+    arma_conform_check( (fast    && no_ugly     ), "inv(): options 'fast' and 'no_ugly' are mutually exclusive"         );
+    arma_conform_check( (no_ugly && allow_approx), "inv(): options 'no_ugly' and 'allow_approx' are mutually exclusive" );
     }
   
   if(no_ugly)
@@ -114,9 +111,11 @@ op_inv_gen_full::apply_direct(Mat<typename T1::elem_type>& out, const Base<typen
     
     const bool status = op_inv_gen_rcond::apply_direct(out, inv_state, expr);
     
-    const T local_rcond = inv_state.rcond;  // workaround for bug in gcc 4.8
+    // workaround for bug in gcc 4.8
+    const uword local_size  = inv_state.size;
+    const T     local_rcond = inv_state.rcond;
     
-    if((status == false) || (local_rcond < std::numeric_limits<T>::epsilon()) || arma_isnan(local_rcond))  { return false; }
+    if((status == false) || (local_rcond < ((std::max)(local_size, uword(1)) * std::numeric_limits<T>::epsilon())) || arma_isnan(local_rcond))  { return false; }
     
     return true;
     }
@@ -129,9 +128,11 @@ op_inv_gen_full::apply_direct(Mat<typename T1::elem_type>& out, const Base<typen
     
     const bool status = op_inv_gen_rcond::apply_direct(tmp, inv_state, expr);
     
-    const T local_rcond = inv_state.rcond;  // workaround for bug in gcc 4.8
-
-    if((status == false) || (local_rcond < std::numeric_limits<T>::epsilon()) || arma_isnan(local_rcond))
+    // workaround for bug in gcc 4.8
+    const uword local_size  = inv_state.size;
+    const T     local_rcond = inv_state.rcond;
+    
+    if((status == false) || (local_rcond < ((std::max)(local_size, uword(1)) * std::numeric_limits<T>::epsilon())) || arma_isnan(local_rcond))
       {
       Mat<eT> A = expr.get_ref();
       
@@ -148,7 +149,7 @@ op_inv_gen_full::apply_direct(Mat<typename T1::elem_type>& out, const Base<typen
   
   out = expr.get_ref();
   
-  arma_debug_check( (out.is_square() == false), caller_sig, ": given matrix must be square sized" );
+  arma_conform_check( (out.is_square() == false), caller_sig, ": given matrix must be square sized", [&](){ out.soft_reset(); } );
   
   const uword N = out.n_rows;
   
@@ -172,16 +173,9 @@ op_inv_gen_full::apply_direct(Mat<typename T1::elem_type>& out, const Base<typen
       if(status)  { return true; }
       }
     else
-    if((N == 3) && tiny)
+    if(N == 3)
       {
       const bool status = op_inv_gen_full::apply_tiny_3x3(out);
-      
-      if(status)  { return true; }
-      }
-    else
-    if((N == 4) && tiny)
-      {
-      const bool status = op_inv_gen_full::apply_tiny_4x4(out);
       
       if(status)  { return true; }
       }
@@ -191,7 +185,7 @@ op_inv_gen_full::apply_direct(Mat<typename T1::elem_type>& out, const Base<typen
   
   if(is_op_diagmat<T1>::value || out.is_diagmat())
     {
-    arma_extra_debug_print("op_inv_gen_full: detected diagonal matrix");
+    arma_debug_print("op_inv_gen_full: diag optimisation");
     
     eT* colmem = out.memptr();
     
@@ -222,28 +216,16 @@ op_inv_gen_full::apply_direct(Mat<typename T1::elem_type>& out, const Base<typen
   
   if(is_triu_expr || is_tril_expr || is_triu_mat || is_tril_mat)
     {
+    arma_debug_print("op_inv_gen_full: tri optimisation");
+    
     return auxlib::inv_tr(out, ((is_triu_expr || is_triu_mat) ? uword(0) : uword(1)));
     }
   
-  const bool try_sympd = arma_config::optimise_sympd && ((no_sympd) ? false : (likely_sympd ? true : sympd_helper::guess_sympd(out)));
-  
-  if(try_sympd)
+  if( (arma_config::optimise_sym) && (auxlib::crippled_lapack(out) == false) && ( is_sym_expr<T1>::eval(expr.get_ref()) || sym_helper::is_approx_sym(out, uword(100)) ) )
     {
-    arma_extra_debug_print("op_inv_gen_full: attempting sympd optimisation");
+    arma_debug_print("op_inv_gen_full: symmetric/hermitian optimisation");
     
-    Mat<eT> tmp = out;
-    
-    bool sympd_state = false;
-    
-    const bool status = auxlib::inv_sympd(tmp, sympd_state);
-    
-    if(status)  { out.steal_mem(tmp); return true; }
-    
-    if((status == false) && (sympd_state == true))  { return false; }
-    
-    arma_extra_debug_print("op_inv_gen_full: sympd optimisation failed");
-    
-    // fallthrough if optimisation failed
+    return auxlib::inv_sym(out);
     }
   
   return auxlib::inv(out);
@@ -252,12 +234,11 @@ op_inv_gen_full::apply_direct(Mat<typename T1::elem_type>& out, const Base<typen
 
 
 template<typename eT>
-arma_cold
 inline
 bool
 op_inv_gen_full::apply_tiny_2x2(Mat<eT>& X)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   typedef typename get_pod_type<eT>::result T;
   
@@ -276,7 +257,7 @@ op_inv_gen_full::apply_tiny_2x2(Mat<eT>& X)
   const eT     det_val = (a*d - b*c);
   const  T abs_det_val = std::abs(det_val);
   
-  if((abs_det_val < det_min) || (abs_det_val > det_max))  { return false; }
+  if((abs_det_val < det_min) || (abs_det_val > det_max) || arma_isnan(det_val))  { return false; }
   
   Xm[pos<0,0>::n2] =  d / det_val;
   Xm[pos<0,1>::n2] = -b / det_val;
@@ -289,12 +270,11 @@ op_inv_gen_full::apply_tiny_2x2(Mat<eT>& X)
 
 
 template<typename eT>
-arma_cold
 inline
 bool
 op_inv_gen_full::apply_tiny_3x3(Mat<eT>& X)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   typedef typename get_pod_type<eT>::result T;
   
@@ -311,7 +291,7 @@ op_inv_gen_full::apply_tiny_3x3(Mat<eT>& X)
   const eT     det_val = op_det::apply_tiny_3x3(X);
   const  T abs_det_val = std::abs(det_val);
   
-  if((abs_det_val < det_min) || (abs_det_val > det_max))  { return false; }
+  if((abs_det_val < det_min) || (abs_det_val > det_max) || arma_isnan(det_val))  { return false; }
   
   Ym[pos<0,0>::n3] =  (Xm[pos<2,2>::n3]*Xm[pos<1,1>::n3] - Xm[pos<2,1>::n3]*Xm[pos<1,2>::n3]) / det_val;
   Ym[pos<1,0>::n3] = -(Xm[pos<2,2>::n3]*Xm[pos<1,0>::n3] - Xm[pos<2,0>::n3]*Xm[pos<1,2>::n3]) / det_val;
@@ -338,82 +318,25 @@ op_inv_gen_full::apply_tiny_3x3(Mat<eT>& X)
 
 
 
-template<typename eT>
-arma_cold
-inline
-bool
-op_inv_gen_full::apply_tiny_4x4(Mat<eT>& X)
-  {
-  arma_extra_debug_sigprint();
-  
-  typedef typename get_pod_type<eT>::result T;
-  
-  // NOTE: assuming matrix X is square sized
-  
-  constexpr T det_min =        std::numeric_limits<T>::epsilon();
-  constexpr T det_max = T(1) / std::numeric_limits<T>::epsilon();
-  
-  Mat<eT> Y(4, 4, arma_nozeros_indicator());
-  
-  eT* Xm = X.memptr();
-  eT* Ym = Y.memptr();
-  
-  const eT     det_val = op_det::apply_tiny_4x4(X);
-  const  T abs_det_val = std::abs(det_val);
-  
-  if((abs_det_val < det_min) || (abs_det_val > det_max))  { return false; }
-  
-  Ym[pos<0,0>::n4] = ( Xm[pos<1,2>::n4]*Xm[pos<2,3>::n4]*Xm[pos<3,1>::n4] - Xm[pos<1,3>::n4]*Xm[pos<2,2>::n4]*Xm[pos<3,1>::n4] + Xm[pos<1,3>::n4]*Xm[pos<2,1>::n4]*Xm[pos<3,2>::n4] - Xm[pos<1,1>::n4]*Xm[pos<2,3>::n4]*Xm[pos<3,2>::n4] - Xm[pos<1,2>::n4]*Xm[pos<2,1>::n4]*Xm[pos<3,3>::n4] + Xm[pos<1,1>::n4]*Xm[pos<2,2>::n4]*Xm[pos<3,3>::n4] ) / det_val;
-  Ym[pos<1,0>::n4] = ( Xm[pos<1,3>::n4]*Xm[pos<2,2>::n4]*Xm[pos<3,0>::n4] - Xm[pos<1,2>::n4]*Xm[pos<2,3>::n4]*Xm[pos<3,0>::n4] - Xm[pos<1,3>::n4]*Xm[pos<2,0>::n4]*Xm[pos<3,2>::n4] + Xm[pos<1,0>::n4]*Xm[pos<2,3>::n4]*Xm[pos<3,2>::n4] + Xm[pos<1,2>::n4]*Xm[pos<2,0>::n4]*Xm[pos<3,3>::n4] - Xm[pos<1,0>::n4]*Xm[pos<2,2>::n4]*Xm[pos<3,3>::n4] ) / det_val;
-  Ym[pos<2,0>::n4] = ( Xm[pos<1,1>::n4]*Xm[pos<2,3>::n4]*Xm[pos<3,0>::n4] - Xm[pos<1,3>::n4]*Xm[pos<2,1>::n4]*Xm[pos<3,0>::n4] + Xm[pos<1,3>::n4]*Xm[pos<2,0>::n4]*Xm[pos<3,1>::n4] - Xm[pos<1,0>::n4]*Xm[pos<2,3>::n4]*Xm[pos<3,1>::n4] - Xm[pos<1,1>::n4]*Xm[pos<2,0>::n4]*Xm[pos<3,3>::n4] + Xm[pos<1,0>::n4]*Xm[pos<2,1>::n4]*Xm[pos<3,3>::n4] ) / det_val;
-  Ym[pos<3,0>::n4] = ( Xm[pos<1,2>::n4]*Xm[pos<2,1>::n4]*Xm[pos<3,0>::n4] - Xm[pos<1,1>::n4]*Xm[pos<2,2>::n4]*Xm[pos<3,0>::n4] - Xm[pos<1,2>::n4]*Xm[pos<2,0>::n4]*Xm[pos<3,1>::n4] + Xm[pos<1,0>::n4]*Xm[pos<2,2>::n4]*Xm[pos<3,1>::n4] + Xm[pos<1,1>::n4]*Xm[pos<2,0>::n4]*Xm[pos<3,2>::n4] - Xm[pos<1,0>::n4]*Xm[pos<2,1>::n4]*Xm[pos<3,2>::n4] ) / det_val;
-  
-  Ym[pos<0,1>::n4] = ( Xm[pos<0,3>::n4]*Xm[pos<2,2>::n4]*Xm[pos<3,1>::n4] - Xm[pos<0,2>::n4]*Xm[pos<2,3>::n4]*Xm[pos<3,1>::n4] - Xm[pos<0,3>::n4]*Xm[pos<2,1>::n4]*Xm[pos<3,2>::n4] + Xm[pos<0,1>::n4]*Xm[pos<2,3>::n4]*Xm[pos<3,2>::n4] + Xm[pos<0,2>::n4]*Xm[pos<2,1>::n4]*Xm[pos<3,3>::n4] - Xm[pos<0,1>::n4]*Xm[pos<2,2>::n4]*Xm[pos<3,3>::n4] ) / det_val;
-  Ym[pos<1,1>::n4] = ( Xm[pos<0,2>::n4]*Xm[pos<2,3>::n4]*Xm[pos<3,0>::n4] - Xm[pos<0,3>::n4]*Xm[pos<2,2>::n4]*Xm[pos<3,0>::n4] + Xm[pos<0,3>::n4]*Xm[pos<2,0>::n4]*Xm[pos<3,2>::n4] - Xm[pos<0,0>::n4]*Xm[pos<2,3>::n4]*Xm[pos<3,2>::n4] - Xm[pos<0,2>::n4]*Xm[pos<2,0>::n4]*Xm[pos<3,3>::n4] + Xm[pos<0,0>::n4]*Xm[pos<2,2>::n4]*Xm[pos<3,3>::n4] ) / det_val;
-  Ym[pos<2,1>::n4] = ( Xm[pos<0,3>::n4]*Xm[pos<2,1>::n4]*Xm[pos<3,0>::n4] - Xm[pos<0,1>::n4]*Xm[pos<2,3>::n4]*Xm[pos<3,0>::n4] - Xm[pos<0,3>::n4]*Xm[pos<2,0>::n4]*Xm[pos<3,1>::n4] + Xm[pos<0,0>::n4]*Xm[pos<2,3>::n4]*Xm[pos<3,1>::n4] + Xm[pos<0,1>::n4]*Xm[pos<2,0>::n4]*Xm[pos<3,3>::n4] - Xm[pos<0,0>::n4]*Xm[pos<2,1>::n4]*Xm[pos<3,3>::n4] ) / det_val;
-  Ym[pos<3,1>::n4] = ( Xm[pos<0,1>::n4]*Xm[pos<2,2>::n4]*Xm[pos<3,0>::n4] - Xm[pos<0,2>::n4]*Xm[pos<2,1>::n4]*Xm[pos<3,0>::n4] + Xm[pos<0,2>::n4]*Xm[pos<2,0>::n4]*Xm[pos<3,1>::n4] - Xm[pos<0,0>::n4]*Xm[pos<2,2>::n4]*Xm[pos<3,1>::n4] - Xm[pos<0,1>::n4]*Xm[pos<2,0>::n4]*Xm[pos<3,2>::n4] + Xm[pos<0,0>::n4]*Xm[pos<2,1>::n4]*Xm[pos<3,2>::n4] ) / det_val;
-  
-  Ym[pos<0,2>::n4] = ( Xm[pos<0,2>::n4]*Xm[pos<1,3>::n4]*Xm[pos<3,1>::n4] - Xm[pos<0,3>::n4]*Xm[pos<1,2>::n4]*Xm[pos<3,1>::n4] + Xm[pos<0,3>::n4]*Xm[pos<1,1>::n4]*Xm[pos<3,2>::n4] - Xm[pos<0,1>::n4]*Xm[pos<1,3>::n4]*Xm[pos<3,2>::n4] - Xm[pos<0,2>::n4]*Xm[pos<1,1>::n4]*Xm[pos<3,3>::n4] + Xm[pos<0,1>::n4]*Xm[pos<1,2>::n4]*Xm[pos<3,3>::n4] ) / det_val;
-  Ym[pos<1,2>::n4] = ( Xm[pos<0,3>::n4]*Xm[pos<1,2>::n4]*Xm[pos<3,0>::n4] - Xm[pos<0,2>::n4]*Xm[pos<1,3>::n4]*Xm[pos<3,0>::n4] - Xm[pos<0,3>::n4]*Xm[pos<1,0>::n4]*Xm[pos<3,2>::n4] + Xm[pos<0,0>::n4]*Xm[pos<1,3>::n4]*Xm[pos<3,2>::n4] + Xm[pos<0,2>::n4]*Xm[pos<1,0>::n4]*Xm[pos<3,3>::n4] - Xm[pos<0,0>::n4]*Xm[pos<1,2>::n4]*Xm[pos<3,3>::n4] ) / det_val;
-  Ym[pos<2,2>::n4] = ( Xm[pos<0,1>::n4]*Xm[pos<1,3>::n4]*Xm[pos<3,0>::n4] - Xm[pos<0,3>::n4]*Xm[pos<1,1>::n4]*Xm[pos<3,0>::n4] + Xm[pos<0,3>::n4]*Xm[pos<1,0>::n4]*Xm[pos<3,1>::n4] - Xm[pos<0,0>::n4]*Xm[pos<1,3>::n4]*Xm[pos<3,1>::n4] - Xm[pos<0,1>::n4]*Xm[pos<1,0>::n4]*Xm[pos<3,3>::n4] + Xm[pos<0,0>::n4]*Xm[pos<1,1>::n4]*Xm[pos<3,3>::n4] ) / det_val;
-  Ym[pos<3,2>::n4] = ( Xm[pos<0,2>::n4]*Xm[pos<1,1>::n4]*Xm[pos<3,0>::n4] - Xm[pos<0,1>::n4]*Xm[pos<1,2>::n4]*Xm[pos<3,0>::n4] - Xm[pos<0,2>::n4]*Xm[pos<1,0>::n4]*Xm[pos<3,1>::n4] + Xm[pos<0,0>::n4]*Xm[pos<1,2>::n4]*Xm[pos<3,1>::n4] + Xm[pos<0,1>::n4]*Xm[pos<1,0>::n4]*Xm[pos<3,2>::n4] - Xm[pos<0,0>::n4]*Xm[pos<1,1>::n4]*Xm[pos<3,2>::n4] ) / det_val;
-  
-  Ym[pos<0,3>::n4] = ( Xm[pos<0,3>::n4]*Xm[pos<1,2>::n4]*Xm[pos<2,1>::n4] - Xm[pos<0,2>::n4]*Xm[pos<1,3>::n4]*Xm[pos<2,1>::n4] - Xm[pos<0,3>::n4]*Xm[pos<1,1>::n4]*Xm[pos<2,2>::n4] + Xm[pos<0,1>::n4]*Xm[pos<1,3>::n4]*Xm[pos<2,2>::n4] + Xm[pos<0,2>::n4]*Xm[pos<1,1>::n4]*Xm[pos<2,3>::n4] - Xm[pos<0,1>::n4]*Xm[pos<1,2>::n4]*Xm[pos<2,3>::n4] ) / det_val;
-  Ym[pos<1,3>::n4] = ( Xm[pos<0,2>::n4]*Xm[pos<1,3>::n4]*Xm[pos<2,0>::n4] - Xm[pos<0,3>::n4]*Xm[pos<1,2>::n4]*Xm[pos<2,0>::n4] + Xm[pos<0,3>::n4]*Xm[pos<1,0>::n4]*Xm[pos<2,2>::n4] - Xm[pos<0,0>::n4]*Xm[pos<1,3>::n4]*Xm[pos<2,2>::n4] - Xm[pos<0,2>::n4]*Xm[pos<1,0>::n4]*Xm[pos<2,3>::n4] + Xm[pos<0,0>::n4]*Xm[pos<1,2>::n4]*Xm[pos<2,3>::n4] ) / det_val;
-  Ym[pos<2,3>::n4] = ( Xm[pos<0,3>::n4]*Xm[pos<1,1>::n4]*Xm[pos<2,0>::n4] - Xm[pos<0,1>::n4]*Xm[pos<1,3>::n4]*Xm[pos<2,0>::n4] - Xm[pos<0,3>::n4]*Xm[pos<1,0>::n4]*Xm[pos<2,1>::n4] + Xm[pos<0,0>::n4]*Xm[pos<1,3>::n4]*Xm[pos<2,1>::n4] + Xm[pos<0,1>::n4]*Xm[pos<1,0>::n4]*Xm[pos<2,3>::n4] - Xm[pos<0,0>::n4]*Xm[pos<1,1>::n4]*Xm[pos<2,3>::n4] ) / det_val;
-  Ym[pos<3,3>::n4] = ( Xm[pos<0,1>::n4]*Xm[pos<1,2>::n4]*Xm[pos<2,0>::n4] - Xm[pos<0,2>::n4]*Xm[pos<1,1>::n4]*Xm[pos<2,0>::n4] + Xm[pos<0,2>::n4]*Xm[pos<1,0>::n4]*Xm[pos<2,1>::n4] - Xm[pos<0,0>::n4]*Xm[pos<1,2>::n4]*Xm[pos<2,1>::n4] - Xm[pos<0,1>::n4]*Xm[pos<1,0>::n4]*Xm[pos<2,2>::n4] + Xm[pos<0,0>::n4]*Xm[pos<1,1>::n4]*Xm[pos<2,2>::n4] ) / det_val;
-  
-  const eT check_val = Xm[pos<0,0>::n4]*Ym[pos<0,0>::n4] + Xm[pos<0,1>::n4]*Ym[pos<1,0>::n4] + Xm[pos<0,2>::n4]*Ym[pos<2,0>::n4] + Xm[pos<0,3>::n4]*Ym[pos<3,0>::n4];
-  
-  const  T max_diff  = (is_float<T>::value) ? T(1e-4) : T(1e-10);  // empirically determined; may need tuning
-  
-  if(std::abs(T(1) - check_val) >= max_diff)  { return false; }
-  
-  arrayops::copy(Xm, Ym, uword(4*4));
-  
-  return true;
-  }
-
-
-
 template<typename T1>
 inline
 bool
 op_inv_gen_rcond::apply_direct(Mat<typename T1::elem_type>& out, op_inv_gen_state<typename T1::pod_type>& out_state, const Base<typename T1::elem_type,T1>& expr)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   typedef typename T1::elem_type eT;
   typedef typename T1::pod_type   T;
   
   out             = expr.get_ref();
+  out_state.size  = out.n_rows;
   out_state.rcond = T(0);
   
-  arma_debug_check( (out.is_square() == false), "inv(): given matrix must be square sized" );
+  arma_conform_check( (out.is_square() == false), "inv(): given matrix must be square sized", [&](){ out.soft_reset(); } );
   
   if(is_op_diagmat<T1>::value || out.is_diagmat())
     {
-    arma_extra_debug_print("op_inv_gen_rcond: detected diagonal matrix");
+    arma_debug_print("op_inv_gen_rcond: diag optimisation");
     
     out_state.is_diag = true;
     
@@ -459,30 +382,18 @@ op_inv_gen_rcond::apply_direct(Mat<typename T1::elem_type>& out, op_inv_gen_stat
   
   if(is_triu_expr || is_tril_expr || is_triu_mat || is_tril_mat)
     {
+    arma_debug_print("op_inv_gen_rcond: tri optimisation");
+    
     return auxlib::inv_tr_rcond(out, out_state.rcond, ((is_triu_expr || is_triu_mat) ? uword(0) : uword(1)));
     }
   
-  const bool try_sympd = arma_config::optimise_sympd && ((auxlib::crippled_lapack(out)) ? false : sympd_helper::guess_sympd(out));
-  
-  if(try_sympd)
+  if( (arma_config::optimise_sym) && (auxlib::crippled_lapack(out) == false) && ( is_sym_expr<T1>::eval(expr.get_ref()) || sym_helper::is_approx_sym(out, uword(100)) ) )
     {
-    arma_extra_debug_print("op_inv_gen_rcond: attempting sympd optimisation");
+    arma_debug_print("op_inv_gen_rcond: symmetric/hermitian optimisation");
     
     out_state.is_sym = true;
     
-    Mat<eT> tmp = out;
-    
-    bool sympd_state = false;
-    
-    const bool status = auxlib::inv_sympd_rcond(tmp, sympd_state, out_state.rcond, T(-1));
-    
-    if(status)  { out.steal_mem(tmp); return true; }
-    
-    if((status == false) && (sympd_state == true))  { return false; }
-    
-    arma_extra_debug_print("op_inv_gen_rcond: sympd optimisation failed");
-    
-    // fallthrough if optimisation failed
+    return auxlib::inv_sym_rcond(out, out_state.rcond);
     }
   
   return auxlib::inv_rcond(out, out_state.rcond);

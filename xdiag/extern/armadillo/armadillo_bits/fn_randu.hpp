@@ -28,6 +28,8 @@ inline
 double
 randu()
   {
+  arma_debug_sigprint();
+  
   return double(arma_rng::randu<double>());
   }
 
@@ -39,6 +41,8 @@ inline
 typename arma_real_or_cx_only<eT>::result
 randu()
   {
+  arma_debug_sigprint();
+  
   return eT(arma_rng::randu<eT>());
   }
 
@@ -49,7 +53,7 @@ inline
 double
 randu(const distr_param& param)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   if(param.state == 0)  { return double(arma_rng::randu<double>()); }
   
@@ -58,7 +62,7 @@ randu(const distr_param& param)
   
   param.get_double_vals(a,b);
   
-  arma_debug_check( (a >= b), "randu(): incorrect distribution parameters; a must be less than b" );
+  arma_conform_check( (a >= b), "randu(): incorrect distribution parameters; a must be less than b" );
   
   const double val = double(arma_rng::randu<double>());
   
@@ -73,7 +77,7 @@ inline
 typename arma_real_or_cx_only<eT>::result
 randu(const distr_param& param)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   if(param.state == 0)  { return eT(arma_rng::randu<eT>()); }
   
@@ -82,7 +86,7 @@ randu(const distr_param& param)
   
   param.get_double_vals(a,b);
   
-  arma_debug_check( (a >= b), "randu(): incorrect distribution parameters; a must be less than b" );
+  arma_conform_check( (a >= b), "randu(): incorrect distribution parameters; a must be less than b" );
   
   eT val = eT(0);
   
@@ -100,7 +104,7 @@ inline
 vec
 randu(const uword n_elem, const distr_param& param = distr_param())
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   vec out(n_elem, arma_nozeros_indicator());
   
@@ -115,7 +119,7 @@ randu(const uword n_elem, const distr_param& param = distr_param())
     
     param.get_double_vals(a,b);
     
-    arma_debug_check( (a >= b), "randu(): incorrect distribution parameters; a must be less than b" );
+    arma_conform_check( (a >= b), "randu(): incorrect distribution parameters; a must be less than b" );
     
     arma_rng::randu<double>::fill(out.memptr(), n_elem, a, b);
     }
@@ -131,7 +135,7 @@ inline
 obj_type
 randu(const uword n_elem, const distr_param& param = distr_param(), const typename arma_Mat_Col_Row_only<obj_type>::result* junk = nullptr)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   arma_ignore(junk);
   
   typedef typename obj_type::elem_type eT;
@@ -152,7 +156,7 @@ randu(const uword n_elem, const distr_param& param = distr_param(), const typena
     
     param.get_double_vals(a,b);
     
-    arma_debug_check( (a >= b), "randu(): incorrect distribution parameters; a must be less than b" );
+    arma_conform_check( (a >= b), "randu(): incorrect distribution parameters; a must be less than b" );
     
     arma_rng::randu<eT>::fill(out.memptr(), out.n_elem, a, b);
     }
@@ -169,7 +173,7 @@ inline
 mat
 randu(const uword n_rows, const uword n_cols, const distr_param& param = distr_param())
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   mat out(n_rows, n_cols, arma_nozeros_indicator());
   
@@ -184,7 +188,7 @@ randu(const uword n_rows, const uword n_cols, const distr_param& param = distr_p
     
     param.get_double_vals(a,b);
     
-    arma_debug_check( (a >= b), "randu(): incorrect distribution parameters; a must be less than b" );
+    arma_conform_check( (a >= b), "randu(): incorrect distribution parameters; a must be less than b" );
     
     arma_rng::randu<double>::fill(out.memptr(), out.n_elem, a, b);
     }
@@ -199,7 +203,7 @@ inline
 mat
 randu(const SizeMat& s, const distr_param& param = distr_param())
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   return randu(s.n_rows, s.n_cols, param);
   }
@@ -212,13 +216,13 @@ inline
 obj_type
 randu(const uword n_rows, const uword n_cols, const distr_param& param = distr_param(), const typename arma_Mat_Col_Row_only<obj_type>::result* junk = nullptr)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   arma_ignore(junk);
   
   typedef typename obj_type::elem_type eT;
   
-  if(is_Col<obj_type>::value)  { arma_debug_check( (n_cols != 1), "randu(): incompatible size" ); }
-  if(is_Row<obj_type>::value)  { arma_debug_check( (n_rows != 1), "randu(): incompatible size" ); }
+  if(is_Col<obj_type>::value)  { arma_conform_check( (n_cols != 1), "randu(): incompatible size" ); }
+  if(is_Row<obj_type>::value)  { arma_conform_check( (n_rows != 1), "randu(): incompatible size" ); }
   
   obj_type out(n_rows, n_cols, arma_nozeros_indicator());
   
@@ -233,7 +237,7 @@ randu(const uword n_rows, const uword n_cols, const distr_param& param = distr_p
     
     param.get_double_vals(a,b);
     
-    arma_debug_check( (a >= b), "randu(): incorrect distribution parameters; a must be less than b" );
+    arma_conform_check( (a >= b), "randu(): incorrect distribution parameters; a must be less than b" );
     
     arma_rng::randu<eT>::fill(out.memptr(), out.n_elem, a, b);
     }
@@ -249,7 +253,7 @@ inline
 obj_type
 randu(const SizeMat& s, const distr_param& param = distr_param(), const typename arma_Mat_Col_Row_only<obj_type>::result* junk = nullptr)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   arma_ignore(junk);
   
   return randu<obj_type>(s.n_rows, s.n_cols, param);
@@ -265,7 +269,7 @@ inline
 cube
 randu(const uword n_rows, const uword n_cols, const uword n_slices, const distr_param& param = distr_param())
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   cube out(n_rows, n_cols, n_slices, arma_nozeros_indicator());
   
@@ -280,7 +284,7 @@ randu(const uword n_rows, const uword n_cols, const uword n_slices, const distr_
     
     param.get_double_vals(a,b);
     
-    arma_debug_check( (a >= b), "randu(): incorrect distribution parameters; a must be less than b" );
+    arma_conform_check( (a >= b), "randu(): incorrect distribution parameters; a must be less than b" );
     
     arma_rng::randu<double>::fill(out.memptr(), out.n_elem, a, b);
     }
@@ -295,7 +299,7 @@ inline
 cube
 randu(const SizeCube& s, const distr_param& param = distr_param())
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   return randu(s.n_rows, s.n_cols, s.n_slices, param);
   }
@@ -308,7 +312,7 @@ inline
 cube_type
 randu(const uword n_rows, const uword n_cols, const uword n_slices, const distr_param& param = distr_param(), const typename arma_Cube_only<cube_type>::result* junk = nullptr)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   arma_ignore(junk);
   
   typedef typename cube_type::elem_type eT;
@@ -326,7 +330,7 @@ randu(const uword n_rows, const uword n_cols, const uword n_slices, const distr_
     
     param.get_double_vals(a,b);
     
-    arma_debug_check( (a >= b), "randu(): incorrect distribution parameters; a must be less than b" );
+    arma_conform_check( (a >= b), "randu(): incorrect distribution parameters; a must be less than b" );
     
     arma_rng::randu<eT>::fill(out.memptr(), out.n_elem, a, b);
     }
@@ -342,7 +346,7 @@ inline
 cube_type
 randu(const SizeCube& s, const distr_param& param = distr_param(), const typename arma_Cube_only<cube_type>::result* junk = nullptr)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   arma_ignore(junk);
   
   return randu<cube_type>(s.n_rows, s.n_cols, s.n_slices, param);

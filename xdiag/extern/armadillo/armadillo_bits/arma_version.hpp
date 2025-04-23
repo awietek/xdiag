@@ -21,10 +21,10 @@
 
 
 
-#define ARMA_VERSION_MAJOR 11
-#define ARMA_VERSION_MINOR 2
-#define ARMA_VERSION_PATCH 4
-#define ARMA_VERSION_NAME  "Classic Roast"
+#define ARMA_VERSION_MAJOR 14
+#define ARMA_VERSION_MINOR 4
+#define ARMA_VERSION_PATCH 1
+#define ARMA_VERSION_NAME  "Filtered Espresso"
 
 
 

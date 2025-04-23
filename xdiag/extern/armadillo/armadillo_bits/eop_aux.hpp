@@ -73,8 +73,8 @@ class eop_aux
   template<typename eT> arma_inline static typename arma_real_or_cx_only<eT>::result sinh  (const eT x) { return std::sinh (x); }
   template<typename eT> arma_inline static typename arma_real_or_cx_only<eT>::result tanh  (const eT x) { return std::tanh (x); }
   
-  template<typename eT> arma_inline static typename arma_unsigned_integral_only<eT>::result neg (const eT x) { return  x; }
-  template<typename eT> arma_inline static typename            arma_signed_only<eT>::result neg (const eT x) { return -x; }
+  template<typename eT> arma_inline static typename arma_unsigned_integral_only<eT>::result neg (const eT x) { return static_cast<eT>(-1 * x); }  // TODO: not sure how to best handle this
+  template<typename eT> arma_inline static typename            arma_signed_only<eT>::result neg (const eT x) { return -x;                      }
   
   template<typename eT> arma_inline static typename arma_integral_only<eT>::result floor (const eT  x) { return x;                                                }
   template<typename eT> arma_inline static typename     arma_real_only<eT>::result floor (const eT  x) { return std::floor(x);                                    }
@@ -84,13 +84,13 @@ class eop_aux
   template<typename eT> arma_inline static typename     arma_real_only<eT>::result ceil  (const eT  x) { return std::ceil(x);                                     }
   template<typename eT> arma_inline static typename       arma_cx_only<eT>::result ceil  (const eT& x) { return eT( std::ceil(x.real()), std::ceil(x.imag()) );   }
   
-  template<typename eT> arma_inline static typename arma_integral_only<eT>::result round (const eT  x) { return x;                                                        }
-  template<typename eT> arma_inline static typename     arma_real_only<eT>::result round (const eT  x) { return std::round(x);                                            }
-  template<typename eT> arma_inline static typename       arma_cx_only<eT>::result round (const eT& x) { return eT( std::round(x.real()), std::round(x.imag()) );         }
+  template<typename eT> arma_inline static typename arma_integral_only<eT>::result round (const eT  x) { return x;                                                }
+  template<typename eT> arma_inline static typename     arma_real_only<eT>::result round (const eT  x) { return std::round(x);                                    }
+  template<typename eT> arma_inline static typename       arma_cx_only<eT>::result round (const eT& x) { return eT( std::round(x.real()), std::round(x.imag()) ); }
   
-  template<typename eT> arma_inline static typename arma_integral_only<eT>::result trunc (const eT  x) { return x;                                                        }
-  template<typename eT> arma_inline static typename     arma_real_only<eT>::result trunc (const eT  x) { return std::trunc(x);                                            }
-  template<typename eT> arma_inline static typename       arma_cx_only<eT>::result trunc (const eT& x) { return eT( std::trunc(x.real()), std::trunc(x.imag()) );         }
+  template<typename eT> arma_inline static typename arma_integral_only<eT>::result trunc (const eT  x) { return x;                                                }
+  template<typename eT> arma_inline static typename     arma_real_only<eT>::result trunc (const eT  x) { return std::trunc(x);                                    }
+  template<typename eT> arma_inline static typename       arma_cx_only<eT>::result trunc (const eT& x) { return eT( std::trunc(x.real()), std::trunc(x.imag()) ); }
   
   template<typename eT> arma_inline static typename   arma_integral_only<eT>::result log2 (const eT  x) { return eT( std::log2(double(x)) );                                                           }
   template<typename eT> arma_inline static typename       arma_real_only<eT>::result log2 (const eT  x) { return std::log2(x);                                                                         }
@@ -115,6 +115,10 @@ class eop_aux
   template<typename eT> arma_inline static typename   arma_signed_integral_only<eT>::result arma_abs (const eT               x) { return std::abs(x); }
   template<typename eT> arma_inline static typename              arma_real_only<eT>::result arma_abs (const eT               x) { return std::abs(x); }
   template<typename  T> arma_inline static typename              arma_real_only< T>::result arma_abs (const std::complex<T>& x) { return std::abs(x); }
+  
+  template<typename eT> arma_inline static typename arma_integral_only<eT>::result cbrt (const eT  x) { return eT( std::cbrt(double(x)) ); }
+  template<typename eT> arma_inline static typename     arma_real_only<eT>::result cbrt (const eT  x) { return std::cbrt(x);               }
+  template<typename eT> arma_inline static typename       arma_cx_only<eT>::result cbrt (const eT& x) { arma_ignore(x); return eT(0);      }
   
   template<typename eT> arma_inline static typename arma_integral_only<eT>::result erf (const eT  x) { return eT( std::erf(double(x)) ); }
   template<typename eT> arma_inline static typename     arma_real_only<eT>::result erf (const eT  x) { return std::erf(x);               }
@@ -152,9 +156,9 @@ class eop_aux
   typename arma_real_only<eT>::result
   direct_eps(const eT x)
     {
-    //arma_extra_debug_sigprint();
+    //arma_debug_sigprint();
     
-    // acording to IEEE Standard for Floating-Point Arithmetic (IEEE 754)
+    // according to IEEE Standard for Floating-Point Arithmetic (IEEE 754)
     // the mantissa length for double is 53 bits = std::numeric_limits<double>::digits
     // the mantissa length for float  is 24 bits = std::numeric_limits<float >::digits
     
@@ -174,7 +178,7 @@ class eop_aux
   typename arma_real_only<T>::result
   direct_eps(const std::complex<T>& x)
     {
-    //arma_extra_debug_sigprint();
+    //arma_debug_sigprint();
     
     //return std::pow( std::numeric_limits<T>::radix, (std::floor(std::log10(std::abs(x))/std::log10(std::numeric_limits<T>::radix))-(std::numeric_limits<T>::digits-1)) );
     

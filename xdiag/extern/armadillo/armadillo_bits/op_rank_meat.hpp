@@ -27,7 +27,7 @@ inline
 bool
 op_rank::apply(uword& out, const Base<typename T1::elem_type,T1>& expr, const typename T1::pod_type tol)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   typedef typename T1::elem_type eT;
   
@@ -37,26 +37,25 @@ op_rank::apply(uword& out, const Base<typename T1::elem_type,T1>& expr, const ty
   
   if(is_op_diagmat<T1>::value || A.is_diagmat())
     {
-    arma_extra_debug_print("op_rank::apply(): detected diagonal matrix");
+    arma_debug_print("op_rank::apply(): diag optimisation");
     
     return op_rank::apply_diag(out, A, tol);
     }
   
   bool do_sym = false;
   
-  if((arma_config::optimise_sympd) && (auxlib::crippled_lapack(A) == false) && (A.n_rows >= (is_cx<eT>::yes ? uword(64) : uword(128))))
+  const bool is_sym_size_ok = (A.n_rows == A.n_cols) && (A.n_rows > (is_cx<eT>::yes ? uword(20) : uword(40)));  // for consistency with op_pinv
+  
+  if( (is_sym_size_ok) && (arma_config::optimise_sym) && (auxlib::crippled_lapack(A) == false) )
     {
-    bool is_approx_sym   = false;
-    bool is_approx_sympd = false;
+    do_sym = is_sym_expr<T1>::eval(expr.get_ref());
     
-    sympd_helper::analyse_matrix(is_approx_sym, is_approx_sympd, A);
-    
-    do_sym = (is_cx<eT>::no) ? (is_approx_sym) : (is_approx_sym && is_approx_sympd);
+    if(do_sym == false)  { do_sym = sym_helper::is_approx_sym(A); }
     }
   
   if(do_sym)
     {
-    arma_extra_debug_print("op_rank::apply(): symmetric/hermitian optimisation");
+    arma_debug_print("op_rank::apply(): symmetric/hermitian optimisation");
     
     return op_rank::apply_sym(out, A, tol);
     }
@@ -71,7 +70,7 @@ inline
 bool
 op_rank::apply_diag(uword& out, Mat<eT>& A, typename get_pod_type<eT>::result tol)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   typedef typename get_pod_type<eT>::result T;
   
@@ -112,7 +111,7 @@ inline
 bool
 op_rank::apply_sym(uword& out, Mat<eT>& A, typename get_pod_type<eT>::result tol)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   typedef typename get_pod_type<eT>::result T;
   
@@ -152,7 +151,7 @@ inline
 bool
 op_rank::apply_gen(uword& out, Mat<eT>& A, typename get_pod_type<eT>::result tol)
   {
-  arma_extra_debug_sigprint();
+  arma_debug_sigprint();
   
   typedef typename get_pod_type<eT>::result T;
   
