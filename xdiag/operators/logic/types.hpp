@@ -15,13 +15,17 @@ inline const std::vector<std::string> known_types = {
     "S-",    "ScalarChirality", "Hop",      "Hopup",      "Hopdn",  "Cdagup",
     "Cup",   "Cdagdn",          "Cdn",      "HubbardU",   "Ntot",   "Nup",
     "Ndn",   "Nupdn",           "NtotNtot", "NupdnNupdn", "tJSzSz", "tJSdotS",
-    "Matrix"};
+    "Matrix", "Nhup", "Nhdn", "NupNdn", "NhupNdn", "NupNhdn", "NhupNhdn",
+    "Nhtot", "NhtotNhtot", "NhtotNtot", "NupNup", "NdnNdn", "NhupNup", "NhdnNdn",
+    "NhupNhup", "NhdnNhdn"};
 
 inline const std::vector<std::string> real_types = {
     "Id",     "SdotS",    "Exchange",   "SzSz",   "Sz",     "S+",
     "S-",     "Hop",      "Hopup",      "Hopdn",  "Cdagup", "Cup",
     "Cdagdn", "Cdn",      "HubbardU",   "Ntot",   "Nup",    "Ndn",
-    "Nupdn",  "NtotNtot", "NupdnNupdn", "tJSzSz", "tJSdotS"};
+    "Nupdn",  "NtotNtot", "NupdnNupdn", "tJSzSz", "tJSdotS", "Nhup", "Nhdn",
+    "NupNdn", "NhupNdn", "NupNhdn", "NhupNhdn", "Nhtot", "NhtotNhtot", "NhtotNtot", "NupNup",
+    "NdnNdn", "NhupNup", "NhdnNdn", "NhupNhup", "NhdnNhdn"};
 inline const std::vector<std::string> cplx_types = {"ScalarChirality"};
 
 inline const std::map<std::string, int64_t> _nsites_of_type = {
@@ -49,7 +53,23 @@ inline const std::map<std::string, int64_t> _nsites_of_type = {
     {"NupdnNupdn", 2},
     {"tJSzSz", 2},
     {"tJSdotS", 2},
-    {"Matrix", undefined}};
+    {"Matrix", undefined},
+    {"Nhup", 1},
+    {"Nhdn", 1},
+    {"NupNdn", 2},
+    {"NhupNdn", 2},
+    {"NupNhdn", 2},
+    {"NhupNhdn", 2},
+    {"Nhtot", 1},
+    {"NhtotNhtot", 2},
+    {"NhtotNtot", 2},
+    {"NupNup", 2},
+    {"NdnNdn", 2},
+    {"NhupNup", 2},
+    {"NhdnNdn", 2},
+    {"NhupNhup", 2},
+    {"NhdnNhdn", 2}
+};
 
 bool is_known_type(std::string type);
 bool is_real_type(std::string type);

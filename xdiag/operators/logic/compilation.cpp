@@ -159,6 +159,80 @@ OpSum compile_electron(OpSum const &ops) try {
     } else if (type == "Sz") {
       ops_compiled += (Scalar(0.5) * cpl.scalar()) * Op("Nup", op.sites());
       ops_compiled += (Scalar(-0.5) * cpl.scalar()) * Op("Ndn", op.sites());
+    } else if (type == "Nhup") {
+      ops_compiled += cpl * Op("Id");
+      ops_compiled -= cpl * Op("Nup", op.sites());
+    } else if (type == "Nhdn") {
+      ops_compiled += Op("Id");
+      ops_compiled -= cpl * Op("Ndn", op.sites());
+    } else if (type == "Nhtot") {
+      ops_compiled += (Scalar(2.0) * cpl.scalar()) * Op("Id");
+      ops_compiled -= cpl * Op("Nup", op.sites());
+      ops_compiled -= cpl * Op("Ndn", op.sites());
+    } else if (type == "NhupNdn") {
+      ops_compiled += cpl * Op("Ndn", op[1]);
+      ops_compiled -= cpl * Op("NupNdn", op.sites());
+    } else if (type == "NupNhdn") {
+      ops_compiled += cpl * Op("Nup", op[0]);
+      ops_compiled -= cpl * Op("NupNdn", op.sites());
+    } else if (type == "NhupNhdn") {
+      ops_compiled += cpl * Op("Id");
+      ops_compiled -= cpl * Op("Nup", op[0]);
+      ops_compiled -= cpl * Op("Ndn", op[1]);
+      ops_compiled += cpl * Op("NupNdn", op.sites());
+    } else if (type == "NhupNhup") {
+      // Special case
+      if (op[0] == op[1]) {
+          ops_compiled += cpl * Op("Id");
+          ops_compiled -= cpl * Op("Nup", op[0]);
+          continue;
+      }
+      ops_compiled += cpl * Op("Id");
+      ops_compiled -= cpl * Op("Nup", op[0]);
+      ops_compiled -= cpl * Op("Nup", op[1]);
+      ops_compiled += cpl * Op("NupNup", op.sites());
+    } else if (type == "NhdnNhdn") {
+      // Special case
+      if (op[0] == op[1]) {
+          ops_compiled += cpl * Op("Id");
+          ops_compiled -= cpl * Op("Ndn", op[0]);
+          continue;
+      }
+      ops_compiled += cpl * Op("Id");
+      ops_compiled -= cpl * Op("Ndn", op[0]);
+      ops_compiled -= cpl * Op("Ndn", op[1]);
+      ops_compiled += cpl * Op("NdnNdn", op.sites());
+    } else if (type == "NhupNup") {
+      // Special case
+      if (op[0] == op[1]) {
+          continue;
+      }
+      ops_compiled += cpl * Op("Nup", op[1]);
+      ops_compiled -= cpl * Op("NupNup", op.sites());
+    } else if (type == "NhdnNdn") {
+      // Special case
+      if (op[0] == op[1]) {
+          continue;
+      }
+      ops_compiled += cpl * Op("Ndn", op[1]);
+      ops_compiled -= cpl * Op("NdnNdn", op.sites());
+    } else if ((type == "NhtotNhtot")) {
+      auto s2 = Scalar(2.0) * cpl.scalar();
+      ops_compiled += (s2 + Scalar(2.0)) * Op("Id");
+      ops_compiled -= s2 * Op("Nup", op[0]);
+      ops_compiled -= s2 * Op("Ndn", op[0]);
+      ops_compiled -= s2 * Op("Nup", op[1]);
+      ops_compiled -= s2 * Op("Ndn", op[1]);
+      ops_compiled += cpl * Op("NtotNtot", op.sites());
+    } else if ((type == "NhtotNtot") && (op[0] == op[1])) {
+      ops_compiled += cpl * Op("Nup", op[0]);
+      ops_compiled += cpl * Op("Ndn", op[0]);
+      ops_compiled -= (Scalar(2.0) * cpl.scalar()) * Op("Nupdn", op[0]);
+    } else if (type == "NhtotNtot") {
+      auto s2 = Scalar(2.0) * cpl.scalar();
+      ops_compiled += s2 * Op("Nup", op[1]);
+      ops_compiled += s2 * Op("Ndn", op[1]);
+      ops_compiled -= cpl * Op("NtotNtot", op.sites());
     } else {
       ops_compiled += cpl * op;
     }
@@ -194,10 +268,17 @@ OpSum compile_electron(OpSum const &ops) try {
     } else if ((type == "Hopdn") && (op[0] == op[1])) {
       auto cpl2 = Scalar(-2.0) * cpl.scalar();
       ops_final += cpl2 * Op("Ndn", op[0]);
+    } else if ((type == "NupNdn") && (op[0] == op[1])) {
+        ops_final += cpl * Op("Nupdn", op[0]);
+    } else if ((type == "NupNup") && (op[0] == op[1])) {
+        ops_final += cpl * Op("Nup", op[0]);
+    } else if ((type == "NdnNdn") && (op[0] == op[1])) {
+        ops_final += cpl * Op("Ndn", op[0]);
     } else {
       ops_final += cpl * op;
     }
   }
+
   return ops_final;
 } catch (Error const &error) {
   XDIAG_RETHROW(error);

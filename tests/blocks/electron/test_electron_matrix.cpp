@@ -9,6 +9,7 @@
 #include "../spinhalf/testcases_spinhalf.hpp"
 #include "../tj/testcases_tj.hpp"
 #include "testcases_electron.hpp"
+#include "../../../xdiag/operators/logic/real.hpp"
 
 #include <xdiag/algebra/isapprox.hpp>
 #include <xdiag/algebra/matrix.hpp>
@@ -399,7 +400,6 @@ TEST_CASE("electron_matrix", "[electron]") try {
 
   for (int nsites = 2; nsites < 5; ++nsites) {
     auto b = Electron(nsites);
-
     for (int s = 0; s < nsites; ++s) {
       // Nupdn
       arma::mat m1 = matrix(Op("Nup", s), b) * matrix(Op("Ndn", s), b);
@@ -447,6 +447,68 @@ TEST_CASE("electron_matrix", "[electron]") try {
              matrix(cdagdn, b) * matrix(cdn, b));
       m2 = matrix(Op("Hop", {s, s}), b);
       REQUIRE(isapprox(m1, m2));
+
+      for (int s2 = 0; s2 < nsites; ++s2) {
+          // NupNdn
+          m1 = matrix(Op("Nup", s), b) * matrix(Op("Ndn", s2), b);
+          m2 = matrix(Op("NupNdn", {s, s2}), b);
+          REQUIRE(isapprox(m1, m2));
+
+          // NupNup
+          m1 = matrix(Op("Nup", s), b) * matrix(Op("Nup", s2), b);
+          m2 = matrix(Op("NupNup", {s, s2}), b);
+          REQUIRE(isapprox(m1, m2));
+
+          // NdnNdn
+          m1 = matrix(Op("Ndn", s), b) * matrix(Op("Ndn", s2), b);
+          m2 = matrix(Op("NdnNdn", {s, s2}), b);
+          REQUIRE(isapprox(m1, m2));
+
+          // NhupNhdn
+          m1 = matrix(Op("Nhup", s), b) * matrix(Op("Nhdn", s2), b);
+          m2 = matrix(Op("NhupNhdn", {s, s2}), b);
+          REQUIRE(isapprox(m1, m2));
+
+          // NhupNhup
+          m1 = matrix(Op("Nhup", s), b) * matrix(Op("Nhup", s2), b);
+          m2 = matrix(Op("NhupNhup", {s, s2}), b);
+          REQUIRE(isapprox(m1, m2));
+
+          // NhdnNhdn
+          m1 = matrix(Op("Nhdn", s), b) * matrix(Op("Nhdn", s2), b);
+          m2 = matrix(Op("NhdnNhdn", {s, s2}), b);
+          REQUIRE(isapprox(m1, m2));
+
+          // NhupNdn
+          m1 = matrix(Op("Nhup", s), b) * matrix(Op("Ndn", s2), b);
+          m2 = matrix(Op("NhupNdn", {s, s2}), b);
+          REQUIRE(isapprox(m1, m2));
+
+          // NupNhdn
+          m1 = matrix(Op("Nup", s), b) * matrix(Op("Nhdn", s2), b);
+          m2 = matrix(Op("NupNhdn", {s, s2}), b);
+          REQUIRE(isapprox(m1, m2));
+
+          // NhtotNhtot
+          m1 = matrix(Op("Nhtot", s), b) * matrix(Op("Nhtot", s2), b);
+          m2 = matrix(Op("NhtotNhtot", {s, s2}), b);
+          REQUIRE(isapprox(m1, m2));
+
+          // NhtotNtot
+          m1 = matrix(Op("Nhtot", s), b) * matrix(Op("Ntot", s2), b);
+          m2 = matrix(Op("NhtotNtot", {s, s2}), b);
+          REQUIRE(isapprox(m1, m2));
+
+          // NhupNup
+          m1 = matrix(Op("Nhup", s), b) * matrix(Op("Nup", s2), b);
+          m2 = matrix(Op("NhupNup", {s, s2}), b);
+          REQUIRE(isapprox(m1, m2));
+
+          // NhdnNdn
+          m1 = matrix(Op("Nhdn", s), b) * matrix(Op("Ndn", s2), b);
+          m2 = matrix(Op("NhdnNdn", {s, s2}), b);
+          REQUIRE(isapprox(m1, m2));
+      }
     }
   }
 
