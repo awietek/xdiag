@@ -76,7 +76,7 @@ void apply_nupdn_nupdn(Coupling const &cpl, Op const &op, basis_t const &basis,
 
 template <typename coeff_t, class basis_t>
 void apply_nup_ndn(Coupling const &cpl, Op const &op, basis_t const &basis,
-                 fill_f fill) try {
+                 const coeff_t *vec_in, coeff_t *vec_out) try {
     using bit_t = typename basis_t::bit_t;
     using bits::gbit;
 
@@ -90,7 +90,8 @@ void apply_nup_ndn(Coupling const &cpl, Op const &op, basis_t const &basis,
     auto apply = [&](bit_t ups, bit_t dns) {
         return (ups & mask1) && (dns & mask2) ? mu : 0.;
     };
-    electron_distributed::generic_term_diag<bit_t, coeff_t, symmetric>(cpl, basis, apply, fill);
+    electron_distributed::generic_term_diag<coeff_t>(basis, apply, vec_in,
+                                                     vec_out);
 
 } catch (Error const &e) {
     XDIAG_RETHROW(e);
@@ -98,7 +99,7 @@ void apply_nup_ndn(Coupling const &cpl, Op const &op, basis_t const &basis,
 
 template <typename coeff_t, class basis_t>
 void apply_nup_nup(Coupling const &cpl, Op const &op, basis_t const &basis,
-                 fill_f fill) try {
+                   const coeff_t *vec_in, coeff_t *vec_out) try {
     using bit_t = typename basis_t::bit_t;
     using bits::gbit;
 
@@ -113,7 +114,8 @@ void apply_nup_nup(Coupling const &cpl, Op const &op, basis_t const &basis,
         (void) dns;
         return (ups & mask1) && (ups & mask2) ? 0. : mu;
     };
-    electron_distributed::generic_term_diag<bit_t, coeff_t, symmetric>(cpl, basis, apply, fill);
+    electron_distributed::generic_term_diag<coeff_t>(basis, apply, vec_in,
+                                                     vec_out);
 
 } catch (Error const &e) {
     XDIAG_RETHROW(e);
@@ -121,7 +123,7 @@ void apply_nup_nup(Coupling const &cpl, Op const &op, basis_t const &basis,
 
 template <typename coeff_t, class basis_t>
 void apply_ndn_ndn(Coupling const &cpl, Op const &op, basis_t const &basis,
-                 fill_f fill) try {
+                   const coeff_t *vec_in, coeff_t *vec_out) try {
     using bit_t = typename basis_t::bit_t;
     using bits::gbit;
 
@@ -136,7 +138,8 @@ void apply_ndn_ndn(Coupling const &cpl, Op const &op, basis_t const &basis,
         (void) ups;
         return (dns & mask1) && (dns & mask2) ? 0. : mu;
     };
-    electron_distributed::generic_term_diag<bit_t, coeff_t, symmetric>(cpl, basis, apply, fill);
+    electron_distributed::generic_term_diag<coeff_t>(basis, apply, vec_in,
+                                                     vec_out);
 
 } catch (Error const &e) {
     XDIAG_RETHROW(e);

@@ -168,6 +168,42 @@ TEST_CASE("electron_distributed_apply", "[electron_distributed]") try {
             a = apply(Op("NupdnNupdn", {i, j}), r);
             b = apply(Op("Nupdn", i), apply(Op("Nupdn", j), r));
             REQUIRE(isapprox(a, b));
+
+            a = apply(Op("NupNdn", {i, j}), r);
+            b = apply(Op("Nup", i), apply(Op("Ndn", j), r));
+            REQUIRE(isapprox(a, b));
+
+            a = apply(Op("NupNup", {i, j}), r);
+            b = apply(Op("Nup", i), apply(Op("Nup", j), r));
+            REQUIRE(isapprox(a, b));
+
+            a = apply(Op("NhupNhdn", {i, j}), r);
+            b = apply(Op("Nhup", i), apply(Op("Nhdn", j), r));
+            REQUIRE(isapprox(a, b));
+
+            a = apply(Op("NhupNhup", {i, j}), r);
+            b = apply(Op("Nhup", i), apply(Op("Nhup", j), r));
+            REQUIRE(isapprox(a, b));
+
+            a = apply(Op("NhdnNhdn", {i, j}), r);
+            b = apply(Op("Nhdn", i), apply(Op("Nhdn", j), r));
+            REQUIRE(isapprox(a, b));
+
+            a = apply(Op("NhupNdn", {i, j}), r);
+            b = apply(Op("Nhup", i), apply(Op("Ndn", j), r));
+            REQUIRE(isapprox(a, b));
+
+            a = apply(Op("NupNhdn", {i, j}), r);
+            b = apply(Op("Nup", i), apply(Op("Nhdn", j), r));
+            REQUIRE(isapprox(a, b));
+
+            a = apply(Op("NhupNup", {i, j}), r);
+            b = apply(Op("Nhup", i), apply(Op("Nup", j), r));
+            REQUIRE(isapprox(a, b));
+
+            a = apply(Op("NhdnNdn", {i, j}), r);
+            b = apply(Op("Nhdn", i), apply(Op("Ndn", j), r));
+            REQUIRE(isapprox(a, b));
           }
         }
       }
