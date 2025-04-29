@@ -62,6 +62,55 @@ TEST_CASE("algebra_apply", "[algebra]") try {
         REQUIRE(isapprox(m0, m2, 1e-6, 1e-6));
         REQUIRE(isapprox(m0, m3, 1e-6, 1e-6));
       }
+
+      auto niu_gs = apply(Op("Nup", i), gs);
+      auto nid_gs = apply(Op("Ndn", i), gs);
+      auto nju_gs = apply(Op("Nup", j), gs);
+      auto njd_gs = apply(Op("Ndn", j), gs);
+
+      complex m_iujd = dotC(niu_gs, njd_gs);
+      complex m_juid = dotC(nju_gs, nid_gs);
+      complex m_uu = dotC(niu_gs, nju_gs);
+      complex m_dd = dotC(nid_gs, njd_gs);
+
+      if (i != j) {
+          complex m1 = innerC(Op("NupNdn", {i, j}), gs);
+          REQUIRE(isapprox(m_iujd, m1));
+          m1 = innerC(Op("NupNdn", {j, i}), gs);
+          REQUIRE(isapprox(m_juid, m1));
+          m1 = innerC(Op("NupNup", {i, j}), gs);
+          REQUIRE(isapprox(m_uu, m1));
+          m1 = innerC(Op("NdnNdn", {i, j}), gs);
+          REQUIRE(isapprox(m_dd, m1));
+
+          auto niujd_gs_s = symmetrize(Op("NupNdn", {i, j}), irrep.group());
+          complex m2 = innerC(niujd_gs_s, gssym);
+          auto niujd_s_gs = apply(niujd_gs_s, gssym);
+          complex m3 = dotC(gssym, niujd_s_gs);
+          REQUIRE(isapprox(m_iujd, m2, 1e-6, 1e-6));
+          REQUIRE(isapprox(m_iujd, m3, 1e-6, 1e-6));
+
+          auto njuid_gs_s = symmetrize(Op("NupNdn", {j, i}), irrep.group());
+          m2 = innerC(njuid_gs_s, gssym);
+          auto njuid_s_gs = apply(njuid_gs_s, gssym);
+          m3 = dotC(gssym, njuid_s_gs);
+          REQUIRE(isapprox(m_juid, m2, 1e-6, 1e-6));
+          REQUIRE(isapprox(m_juid, m3, 1e-6, 1e-6));
+
+          auto nuu_gs_s = symmetrize(Op("NupNup", {i, j}), irrep.group());
+          m2 = innerC(nuu_gs_s, gssym);
+          auto nuu_s_gs = apply(nuu_gs_s, gssym);
+          m3 = dotC(gssym, nuu_s_gs);
+          REQUIRE(isapprox(m_uu, m2, 1e-6, 1e-6));
+          REQUIRE(isapprox(m_uu, m3, 1e-6, 1e-6));
+
+          auto ndd_gs_s = symmetrize(Op("NdnNdn", {i, j}), irrep.group());
+          m2 = innerC(ndd_gs_s, gssym);
+          auto ndd_s_gs = apply(ndd_gs_s, gssym);
+          m3 = dotC(gssym, ndd_s_gs);
+          REQUIRE(isapprox(m_dd, m2, 1e-6, 1e-6));
+          REQUIRE(isapprox(m_dd, m3, 1e-6, 1e-6));
+      }
     }
   }
 

@@ -18,8 +18,7 @@ void check_valid(Op const &op) try {
     if ((type == "Sz") || (type == "S+") || (type == "S-") ||
         (type == "Cdagup") || (type == "Cup") || (type == "Cdagdn") ||
         (type == "Cdn") || (type == "Ntot") || (type == "Nup") ||
-        (type == "Ndn") || (type == "Nupdn") || (type == "Nhup") ||
-        (type == "Nhdn") || (type == "Nhtot")) {
+        (type == "Ndn") || (type == "Nupdn")) {
       must_not_have_matrix(op);
       must_have_sites(op);
       must_have_nsites(op, 1);
@@ -27,10 +26,7 @@ void check_valid(Op const &op) try {
                (type == "SzSz") || (type == "SdotS") || (type == "Exchange") ||
                (type == "NtotNtot") || (type == "NupdnNupdn") ||
                (type == "tJSzSz") || (type == "tJSdotS") || (type == "NupNdn") ||
-               (type == "NhupNdn") || (type == "NupNhdn") || (type == "NhupNhdn") ||
-               (type == "NhtotNtot") || (type == "NhtotNhtot") || (type == "NupNup") ||
-               (type == "NdnNdn") || (type == "NhupNup") || (type == "NhdnNdn") ||
-               (type == "NhupNhup") || (type == "NhdnNhdn")) {
+               (type == "NupNup") || (type == "NdnNdn")) {
       must_not_have_matrix(op);
       must_have_sites(op);
       must_have_nsites(op, 2);

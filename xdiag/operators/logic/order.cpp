@@ -76,9 +76,7 @@ std::pair<Scalar, Op> order(Scalar const &alpha, Op const &op) try {
 
   std::string type = op.type();
 
-  std::set<std::string> unordered = {"NupNdn", "NhupNdn", "NupNhdn", 
-                                     "NhtotNtot", "NhupNup", "NhdnNdn",
-                                     "NhupNhdn"};
+  std::set<std::string> unordered = {"NupNdn"};
   if (unordered.find(type) != unordered.end()) {
       return {alpha, op};
   }
