@@ -112,7 +112,7 @@ void apply_nup_nup(Coupling const &cpl, Op const &op, basis_t const &basis,
 
     auto apply = [&](bit_t ups, bit_t dns) {
         (void) dns;
-        return (ups & mask1) && (ups & mask2) ? 0. : mu;
+        return (ups & mask1) && (ups & mask2) ? mu : 0.;
     };
     electron_distributed::generic_term_diag<coeff_t>(basis, apply, vec_in,
                                                      vec_out);
@@ -136,7 +136,7 @@ void apply_ndn_ndn(Coupling const &cpl, Op const &op, basis_t const &basis,
 
     auto apply = [&](bit_t ups, bit_t dns) {
         (void) ups;
-        return (dns & mask1) && (dns & mask2) ? 0. : mu;
+        return (dns & mask1) && (dns & mask2) ? mu : 0.;
     };
     electron_distributed::generic_term_diag<coeff_t>(basis, apply, vec_in,
                                                      vec_out);
