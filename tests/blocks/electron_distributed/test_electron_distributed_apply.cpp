@@ -176,6 +176,10 @@ TEST_CASE("electron_distributed_apply", "[electron_distributed]") try {
             b = apply(Op("Nup", i), apply(Op("Ndn", j), r));
             REQUIRE(isapprox(a, b));
 
+            a = apply(Op("NdnNup", {i, j}), r);
+            b = apply(Op("Ndn", i), apply(Op("Nup", j), r));
+            REQUIRE(isapprox(a, b));
+
             a = apply(Op("NupNup", {i, j}), r);
             b = apply(Op("Nup", i), apply(Op("Nup", j), r));
             REQUIRE(isapprox(a, b));

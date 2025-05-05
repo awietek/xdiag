@@ -454,6 +454,11 @@ TEST_CASE("electron_matrix", "[electron]") try {
           m2 = matrix(Op("NupNdn", {s, s2}), b);
           REQUIRE(isapprox(m1, m2));
 
+          // NdnNup 
+          m1 = matrix(Op("Ndn", s), b) * matrix(Op("Nup", s2), b);
+          m2 = matrix(Op("NdnNup", {s, s2}), b);
+          REQUIRE(isapprox(m1, m2));
+
           // NupNup
           m1 = matrix(Op("Nup", s), b) * matrix(Op("Nup", s2), b);
           m2 = matrix(Op("NupNup", {s, s2}), b);

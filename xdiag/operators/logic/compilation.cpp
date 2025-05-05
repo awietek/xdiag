@@ -159,6 +159,8 @@ OpSum compile_electron(OpSum const &ops) try {
     } else if (type == "Sz") {
       ops_compiled += (Scalar(0.5) * cpl.scalar()) * Op("Nup", op.sites());
       ops_compiled += (Scalar(-0.5) * cpl.scalar()) * Op("Ndn", op.sites());
+    } else if (type == "NdnNup") {
+      ops_compiled += cpl * Op("NupNdn", {op[1], op[0]});
     } else {
       ops_compiled += cpl * op;
     }

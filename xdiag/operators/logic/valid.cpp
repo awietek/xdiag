@@ -26,7 +26,7 @@ void check_valid(Op const &op) try {
                (type == "SzSz") || (type == "SdotS") || (type == "Exchange") ||
                (type == "NtotNtot") || (type == "NupdnNupdn") ||
                (type == "tJSzSz") || (type == "tJSdotS") || (type == "NupNdn") ||
-               (type == "NupNup") || (type == "NdnNdn")) {
+               (type == "NupNup") || (type == "NdnNdn") || (type == "NdnNup")) {
       must_not_have_matrix(op);
       must_have_sites(op);
       must_have_nsites(op, 2);
