@@ -15,13 +15,14 @@ inline const std::vector<std::string> known_types = {
     "S-",    "ScalarChirality", "Hop",      "Hopup",      "Hopdn",  "Cdagup",
     "Cup",   "Cdagdn",          "Cdn",      "HubbardU",   "Ntot",   "Nup",
     "Ndn",   "Nupdn",           "NtotNtot", "NupdnNupdn", "tJSzSz", "tJSdotS",
-    "Matrix"};
+    "Matrix", "NupNdn", "NupNup", "NdnNdn", "NdnNup"};
 
 inline const std::vector<std::string> real_types = {
     "Id",     "SdotS",    "Exchange",   "SzSz",   "Sz",     "S+",
     "S-",     "Hop",      "Hopup",      "Hopdn",  "Cdagup", "Cup",
     "Cdagdn", "Cdn",      "HubbardU",   "Ntot",   "Nup",    "Ndn",
-    "Nupdn",  "NtotNtot", "NupdnNupdn", "tJSzSz", "tJSdotS"};
+    "Nupdn",  "NtotNtot", "NupdnNupdn", "tJSzSz", "tJSdotS",
+    "NupNdn", "NupNup", "NdnNdn", "NdnNup"};
 inline const std::vector<std::string> cplx_types = {"ScalarChirality"};
 
 inline const std::map<std::string, int64_t> _nsites_of_type = {
@@ -49,7 +50,12 @@ inline const std::map<std::string, int64_t> _nsites_of_type = {
     {"NupdnNupdn", 2},
     {"tJSzSz", 2},
     {"tJSdotS", 2},
-    {"Matrix", undefined}};
+    {"Matrix", undefined},
+    {"NupNdn", 2},
+    {"NupNup", 2},
+    {"NdnNdn", 2},
+    {"NdnNup", 2}
+};
 
 bool is_known_type(std::string type);
 bool is_real_type(std::string type);

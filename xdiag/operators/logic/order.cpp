@@ -5,6 +5,7 @@
 #include "order.hpp"
 
 #include <algorithm>
+#include <set>
 #include <xdiag/operators/logic/types.hpp>
 #include <xdiag/operators/logic/valid.hpp>
 
@@ -74,6 +75,11 @@ std::pair<Scalar, Op> order(Scalar const &alpha, Op const &op) try {
   check_valid(op);
 
   std::string type = op.type();
+
+  std::set<std::string> unordered = {"NupNdn", "NdnNup"};
+  if (unordered.find(type) != unordered.end()) {
+      return {alpha, op};
+  }
 
   if (type == "Matrix") {
     std::vector<int64_t> sites = op.sites();

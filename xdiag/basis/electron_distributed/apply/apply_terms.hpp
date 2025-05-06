@@ -11,6 +11,7 @@
 #include <xdiag/basis/electron_distributed/apply/apply_raise_lower.hpp>
 #include <xdiag/basis/electron_distributed/apply/apply_szsz.hpp>
 #include <xdiag/basis/electron_distributed/apply/apply_u.hpp>
+#include <xdiag/basis/apply_identity.hpp>
 #include <xdiag/common.hpp>
 
 namespace xdiag::basis::electron_distributed {
@@ -59,6 +60,18 @@ void apply_terms(OpSum const &ops, basis_t const &basis_in,
     } else if (type == "HubbardU") {
       electron_distributed::apply_u<coeff_t>(cpl, basis_in, vec_in.memptr(),
                                              vec_out.memptr());
+    } else if (type == "NupNdn") {
+        electron_distributed::apply_nup_ndn<coeff_t>(
+            cpl, op, basis_in, vec_in.memptr(), vec_out.memptr());
+    } else if (type == "NupNup") {
+        electron_distributed::apply_nup_nup<coeff_t>(
+            cpl, op, basis_in, vec_in.memptr(), vec_out.memptr());
+    } else if (type == "NdnNdn") {
+        electron_distributed::apply_ndn_ndn<coeff_t>(
+            cpl, op, basis_in, vec_in.memptr(), vec_out.memptr());
+    } else if (type == "Id") {
+        apply_identity_distributed<coeff_t, basis_t>( 
+            cpl, vec_in.memptr(), vec_out.memptr(), basis_in.size());
     } else {
       XDIAG_THROW(
           std::string("Unknown Op type for \"ElectronDistributed\" block: ") +
@@ -96,7 +109,8 @@ void apply_terms(OpSum const &ops, basis_t const &basis_in,
     } else if ((type == "SzSz") || (type == "Exchange") || (type == "Hopdn") ||
                (type == "Nup") || (type == "Ndn") || (type == "HubbardU") ||
                (type == "Cdagdn") || (type == "Cdn") || (type == "Nupdn") ||
-               (type == "NupdnNupdn") || (type == "NtotNtot")) {
+               (type == "NupdnNupdn") || (type == "NtotNtot") || (type == "NupNdn") ||
+               (type == "NupNup") || (type == "NdnNdn")) {
       continue;
     } else {
       XDIAG_THROW(

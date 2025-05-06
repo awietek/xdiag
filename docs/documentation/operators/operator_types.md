@@ -32,7 +32,10 @@ Generic operators in XDiag are represented as [OpSum](opsum.md) objects made up 
 | `tJSzSz`          | An Ising interaction as encountered in the $t-J$ model of the form $$  S^z_i S^z_j - \frac{n_i n_j}{4}$$                                                                   | 2            | tJ, tJDistributed                                                               |
 | `tJSdotS`         | An Heisenberg  interaction as encountered in the $t-J$ model of the form $$  \mathbf{S}_i \cdot \mathbf{S}_j - \frac{n_i n_j}{4}$$                                         | 2            | tJ, tJDistributed                                                               |
 | `Matrix`          | A generic spin interaction no an arbitrary number of sites defined via a coupling matrix                                                                                   | arbitrary    | Spinhalf                                                                        |
-
+| `NupNdn`          | A generic density-density interaction $n_{i\uparrow}n_{j\downarrow}$                                                                                                       | 2            | Electron                                                                        |
+| `NdnNup`          | A generic density-density interaction $n_{i\downarrow}n_{j\uparrow}$                                                                                                       | 2            | Electron                                                                        |
+| `NupNup`          | A generic density-density interaction for same-spin electrons $n_{i\uparrow}n_{i\uparrow}$                                                                                 | 2            | Electron                                                                        |
+| `NdnNdn`          | A generic density-density interaction for same-spin electrons $n_{i\downarrow}n_{i\downarrow}$                                                                             | 2            | Electron                                                                        |
 
 ## Matrix type
 

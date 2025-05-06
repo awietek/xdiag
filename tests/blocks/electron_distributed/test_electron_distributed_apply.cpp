@@ -142,6 +142,8 @@ TEST_CASE("electron_distributed_apply", "[electron_distributed]") try {
         auto b = ElectronDistributed(nsites, nup, ndn);
         auto r = random_state(b);
 
+        auto basis = ElectronDistributed(nsites, nup, ndn);
+
         for (int i = 0; i < nsites; ++i) {
           auto a = apply(Op("Nup", i), apply(Op("Ndn", i), r));
           auto b = apply(Op("Nupdn", i), r);
@@ -157,6 +159,7 @@ TEST_CASE("electron_distributed_apply", "[electron_distributed]") try {
 
           for (int j = 0; j < nsites; ++j) {
 
+
             a = apply(Op("SzSz", {i, j}), r);
             b = apply(Op("Sz", i), apply(Op("Sz", j), r));
             REQUIRE(isapprox(a, b));
@@ -167,6 +170,22 @@ TEST_CASE("electron_distributed_apply", "[electron_distributed]") try {
 
             a = apply(Op("NupdnNupdn", {i, j}), r);
             b = apply(Op("Nupdn", i), apply(Op("Nupdn", j), r));
+            REQUIRE(isapprox(a, b));
+
+            a = apply(Op("NupNdn", {i, j}), r);
+            b = apply(Op("Nup", i), apply(Op("Ndn", j), r));
+            REQUIRE(isapprox(a, b));
+
+            a = apply(Op("NdnNup", {i, j}), r);
+            b = apply(Op("Ndn", i), apply(Op("Nup", j), r));
+            REQUIRE(isapprox(a, b));
+
+            a = apply(Op("NupNup", {i, j}), r);
+            b = apply(Op("Nup", i), apply(Op("Nup", j), r));
+            REQUIRE(isapprox(a, b));
+
+            a = apply(Op("NdnNdn", {i, j}), r);
+            b = apply(Op("Ndn", i), apply(Op("Ndn", j), r));
             REQUIRE(isapprox(a, b));
           }
         }
