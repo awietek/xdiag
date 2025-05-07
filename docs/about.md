@@ -21,8 +21,10 @@ awietek _at_ pks.mpg.de
 </tr>
 </table>
 
-<img align="center" src="../img/about/mpipks.png"> 
+<img width=370 src="../img/about/mpipks.png">
+<img width=180 src="../img/about/flatiron_logo.png"> 
 
+---
 
 ## Contributors
 
