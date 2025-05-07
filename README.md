@@ -11,7 +11,6 @@ SPDX-License-Identifier: Apache-2.0
 [![Examples CI](https://github.com/awietek/xdiag/actions/workflows/examples.yml/badge.svg?style=for-the-badge)](https://github.com/awietek/xdiag/actions/workflows/examples.yml)
 
 # XDiag
-## High-performance Yxact Diagonalization Routines and Algorithms
 
 A C++ library to perform efficient Exact Diagonalizations of quantum many body systems. 
 
