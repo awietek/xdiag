@@ -16,9 +16,9 @@ SPDX-License-Identifier: Apache-2.0
 A C++ library to perform efficient Exact Diagonalizations of quantum many body systems. 
 
 
-| **Documentation**                                                                                                                                                                                    | **Citation**                                                                                           | **License**                                                        |
-|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------------:|--------------------------------------------------------------------|
-| [![docs](https://img.shields.io/badge/Documentation-here-red.svg)](https://awietek.github.io/xdiag) [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://docs.itensor.org/ITensors/dev/) | [![arXiv](https://img.shields.io/badge/arXiv-2007.14822-b31b1b.svg)](https://arxiv.org/abs/2505.02901) | ![license](https://img.shields.io/badge/license-Apache%202.0-blue) |
+| **Documentation**                                                                          | **Citation**                                                                                           | **License**                                                        |
+|:------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------------:|--------------------------------------------------------------------|
+| [![docs](https://img.shields.io/badge/docs-dev-blue.svg)](https://awietek.github.io/xdiag) | [![arXiv](https://img.shields.io/badge/arXiv-2007.14822-b31b1b.svg)](https://arxiv.org/abs/2505.02901) | ![license](https://img.shields.io/badge/license-Apache%202.0-blue) |
 
 
 ### Features:
