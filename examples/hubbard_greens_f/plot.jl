@@ -149,7 +149,7 @@ let
 
     omegas = collect(range(-4.0, 6.0, length=2000))
     fig = plot_momentum_cut(source, omegas)
-    display(fig)
-    sleep(10)
-    savefig(fig, "spekt_momentum_cut.pdf")
+    # display(fig)
+    # sleep(10)
+    Plots.savefig(fig, "spekt_momentum_cut.pdf")
 end
