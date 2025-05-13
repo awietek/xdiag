@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Alexander Wietek <awietek@pks.mpg.de>
+//
+// SPDX-License-Identifier: Apache-2.0
+
 #include "eigs_lanczos.hpp"
 
 #include <xdiag/algebra/algebra.hpp>
@@ -23,6 +27,12 @@ EigsLanczosResult eigs_lanczos(OpSum const &ops, State const &state0,
                                double deflation_tol) try {
   if (neigvals < 1) {
     XDIAG_THROW("Argument \"neigvals\" needs to be >= 1");
+  } else if (neigvals > dim(state0.block())) {
+    neigvals = dim(state0.block());
+  }
+  if (!isvalid(state0)) {
+    XDIAG_THROW("Initial state must be a valid state (i.e. not default "
+                "constructed by e.g. an annihilation operator)");
   }
   if (!isapprox(ops, hc(ops))) {
     XDIAG_THROW("Input OpSum is not hermitian");
@@ -120,6 +130,8 @@ EigsLanczosResult eigs_lanczos(OpSum const &ops, Block const &block,
                                int64_t random_seed) try {
   if (neigvals < 1) {
     XDIAG_THROW("Argument \"neigvals\" needs to be >= 1");
+  } else if (neigvals > dim(block)) {
+    neigvals = dim(block);
   }
   // if (!ops.ishermitian()) {
   //   XDIAG_THROW("Input OpSum is not hermitian");

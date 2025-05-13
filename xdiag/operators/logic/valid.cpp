@@ -1,9 +1,14 @@
+// SPDX-FileCopyrightText: 2025 Alexander Wietek <awietek@pks.mpg.de>
+//
+// SPDX-License-Identifier: Apache-2.0
+
 #include "valid.hpp"
 
 #include <set>
 #include <string>
 
 #include <xdiag/operators/logic/types.hpp>
+#include <xdiag/utils/logger.hpp>
 
 namespace xdiag {
 
@@ -20,7 +25,8 @@ void check_valid(Op const &op) try {
     } else if ((type == "Hop") || (type == "Hopup") || (type == "Hopdn") ||
                (type == "SzSz") || (type == "SdotS") || (type == "Exchange") ||
                (type == "NtotNtot") || (type == "NupdnNupdn") ||
-               (type == "tJSzSz") || (type == "tJSdotS")) {
+               (type == "tJSzSz") || (type == "tJSdotS") || (type == "NupNdn") ||
+               (type == "NupNup") || (type == "NdnNdn") || (type == "NdnNup")) {
       must_not_have_matrix(op);
       must_have_sites(op);
       must_have_nsites(op, 2);
@@ -98,7 +104,7 @@ void must_have_nsites(Op const &op, int64_t n) try {
     if (op.sites().size() != n) {
       XDIAG_THROW(fmt::format(
           "Op of type \"{}\" must have exactly {} sites defined, got Op:\n{}",
-          n, to_string(op)));
+          op.type(), n, to_string(op)));
     }
   } else {
     XDIAG_THROW(

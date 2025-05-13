@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Alexander Wietek <awietek@pks.mpg.de>
+//
+// SPDX-License-Identifier: Apache-2.0
+
 #pragma once
 
 #include <xdiag/common.hpp>
@@ -50,7 +54,7 @@ inline void fill_apply(arma::Mat<coeff_t> const &mat_in,
                        arma::Mat<coeff_t> &mat_out, int64_t idx_in,
                        int64_t idx_out, coeff_t val) {
   // for each column call the usual fill_apply.
-  for (int i=0; i < mat_in.n_cols; i++) {
+  for (int i = 0; i < mat_in.n_cols; i++) {
     fill_apply(mat_in.colptr(i), mat_out.colptr(i), idx_in, idx_out, val);
   }
 }

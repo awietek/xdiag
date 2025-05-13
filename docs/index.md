@@ -1,4 +1,4 @@
-<img src="img/xdiag_logo_small.png" alt="drawing" width="200"/>
+<img src="img/logo_cropped.png" alt="XDiag logo" width="500"/>
 
 
 ![C++ Badge](https://img.shields.io/badge/C%2B%2B-00599C?logo=cplusplus&logoColor=fff&style=for-the-badge)
@@ -7,6 +7,7 @@
 [![Linux CI](https://github.com/awietek/xdiag/actions/workflows/linux.yml/badge.svg?style=for-the-badge)](https://github.com/awietek/xdiag/actions/workflows/linux.yml)
 [![Mac OSX CI](https://github.com/awietek/xdiag/actions/workflows/osx.yml/badge.svg?style=for-the-badge)](https://github.com/awietek/xdiag/actions/workflows/osx.yml)
 [![Intel MPI CI](https://github.com/awietek/xdiag/actions/workflows/intelmpi.yml/badge.svg?style=for-the-badge)](https://github.com/awietek/xdiag/actions/workflows/intelmpi.yml)
+[![Examples CI](https://github.com/awietek/xdiag/actions/workflows/examples.yml/badge.svg?style=for-the-badge)](https://github.com/awietek/xdiag/actions/workflows/examples.yml)
 [![Julia CI](https://github.com/awietek/XDiag.jl/actions/workflows/CI.yml/badge.svg?style=for-the-badge)](https://github.com/awietek/XDiag.jl/actions/workflows/CI.yml)
 
 ![license](https://img.shields.io/badge/license-Apache%202.0-blue)
@@ -27,7 +28,23 @@ algorithms for navigating Hilbert spaces, iterative linear algebra algorithms,
 
 
 ## Citation
+Our software paper in now available on the arXiv: [XDiag software paper](https://arxiv.org/abs/2505.02901).
+
 Please support our work by citing XDiag and the implemented algorithms if it is used in your published research.
+
+```bibtex
+@article{xdiag,
+Author = {Alexander Wietek and Luke Staszewski and Martin Ulaga and Paul L. Ebert and Hannes Karlsson and Siddhartha Sarkar and Henry Shackleton and Aritra Sinha and Rafael D. Soares},
+Title = {XDiag: Exact Diagonalization for quantum many-body systems},
+Year = {2025},
+journal = {arXiv preprints},
+eprint = {arXiv:2505.02901},
+archivePrefix = {arXiv},
+primaryClass = {cond-mat.str-el}
+}
+```
+
+If you are using the sublattice coding techniques or distributed memory parallelization, please also cite the following paper.
 
 ```bibtex
 @article{Wietek2018,
@@ -51,7 +68,7 @@ Please support our work by citing XDiag and the implemented algorithms if it is 
 ## Gallery
 <div class="grid cards" markdown>
 - ![Image title](img/triangularwse2.png){ align=left }
-- ![Image title](img/hb_chain_dynamical_sf.png){ align=left }
-- ![Image title](img/hubbard_doublon.png){ align=left }
+- ![Image title](img/spinhalf_chain_level_statistics.png){ align=left }
+- ![Image title](img/hubbard_greens_f.png){ align=left }
 - ![Image title](img/j1j2_spectra.png){ align=left }
 </div>

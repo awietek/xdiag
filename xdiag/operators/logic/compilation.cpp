@@ -1,6 +1,21 @@
+// SPDX-FileCopyrightText: 2025 Alexander Wietek <awietek@pks.mpg.de>
+//
+// SPDX-License-Identifier: Apache-2.0
+
 #include "compilation.hpp"
 #include <xdiag/operators/logic/valid.hpp>
+#include <xdiag/operators/logic/order.hpp>
 #include <xdiag/utils/scalar.hpp>
+
+#include <xdiag/blocks/electron.hpp>
+#include <xdiag/blocks/spinhalf.hpp>
+#include <xdiag/blocks/tj.hpp>
+
+#ifdef XDIAG_USE_MPI
+#include <xdiag/blocks/electron_distributed.hpp>
+#include <xdiag/blocks/spinhalf_distributed.hpp>
+#include <xdiag/blocks/tj_distributed.hpp>
+#endif
 
 namespace xdiag::operators {
 
@@ -17,7 +32,7 @@ OpSum clean_zeros(OpSum const &ops) try {
 }
 
 OpSum compile_spinhalf(OpSum const &ops) try {
-  OpSum ops_clean = clean_zeros(ops.plain());
+  OpSum ops_clean = clean_zeros(order(ops));
   OpSum ops_compiled;
   for (auto [cpl, op] : ops_clean) {
     std::string type = op.type();
@@ -30,31 +45,32 @@ OpSum compile_spinhalf(OpSum const &ops) try {
   }
 
   // Additional changes for Spinhalf
-  OpSum ops_final;
+  OpSum ops_double;
   for (auto const &[cpl, op] : ops_compiled) {
     std::string type = op.type();
 
     // Replacement if of is on same site
     if ((type == "SzSz") && (op[0] == op[1])) {
       auto cpl2 = Scalar(0.25) * cpl.scalar();
-      ops_final += cpl2 * Op("Id");
+      ops_double += cpl2 * Op("Id");
     } else if ((type == "Exchange") && (op[0] == op[1])) {
       auto cpl2 = Scalar(0.5) * cpl.scalar();
-      ops_final += cpl2 * Op("Id");
+      ops_double += cpl2 * Op("Id");
     } else if ((type == "SdotS") && (op[0] == op[1])) {
       auto cpl2 = Scalar(0.75) * cpl.scalar();
-      ops_final += cpl2 * Op("Id");
+      ops_double += cpl2 * Op("Id");
     } else {
-      ops_final += cpl * op;
+      ops_double += cpl * op;
     }
   }
-  return ops_final;
+
+  return ops_double;
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
 OpSum compile_tj(OpSum const &ops) try {
-  OpSum ops_clean = clean_zeros(ops);
+  OpSum ops_clean = clean_zeros(order(ops));
   OpSum ops_compiled;
 
   for (auto [cpl, op] : ops_clean) {
@@ -123,7 +139,7 @@ OpSum compile_tj(OpSum const &ops) try {
 }
 
 OpSum compile_electron(OpSum const &ops) try {
-  OpSum ops_clean = clean_zeros(ops);
+  OpSum ops_clean = clean_zeros(order(ops));
   OpSum ops_compiled;
   for (auto [cpl, op] : ops_clean) {
     std::string type = op.type();
@@ -143,6 +159,8 @@ OpSum compile_electron(OpSum const &ops) try {
     } else if (type == "Sz") {
       ops_compiled += (Scalar(0.5) * cpl.scalar()) * Op("Nup", op.sites());
       ops_compiled += (Scalar(-0.5) * cpl.scalar()) * Op("Ndn", op.sites());
+    } else if (type == "NdnNup") {
+      ops_compiled += cpl * Op("NupNdn", {op[1], op[0]});
     } else {
       ops_compiled += cpl * op;
     }
@@ -178,6 +196,12 @@ OpSum compile_electron(OpSum const &ops) try {
     } else if ((type == "Hopdn") && (op[0] == op[1])) {
       auto cpl2 = Scalar(-2.0) * cpl.scalar();
       ops_final += cpl2 * Op("Ndn", op[0]);
+    } else if ((type == "NupNdn") && (op[0] == op[1])) {
+      ops_final += cpl * Op("Nupdn", op[0]);
+    } else if ((type == "NupNup") && (op[0] == op[1])) {
+      ops_final += cpl * Op("Nup", op[0]);
+    } else if ((type == "NdnNdn") && (op[0] == op[1])) {
+      ops_final += cpl * Op("Ndn", op[0]);
     } else {
       ops_final += cpl * op;
     }
@@ -202,6 +226,7 @@ template <> OpSum compile<Electron>(OpSum const &ops) try {
 } catch (Error const &error) {
   XDIAG_RETHROW(error);
 }
+
 #ifdef XDIAG_USE_MPI
 template <> OpSum compile<SpinhalfDistributed>(OpSum const &ops) try {
   return compile_spinhalf(ops);
@@ -210,6 +235,11 @@ template <> OpSum compile<SpinhalfDistributed>(OpSum const &ops) try {
 }
 template <> OpSum compile<tJDistributed>(OpSum const &ops) try {
   return compile_tj(ops);
+} catch (Error const &error) {
+  XDIAG_RETHROW(error);
+}
+template <> OpSum compile<ElectronDistributed>(OpSum const &ops) try {
+  return compile_electron(ops);
 } catch (Error const &error) {
   XDIAG_RETHROW(error);
 }

@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Alexander Wietek <awietek@pks.mpg.de>
+//
+// SPDX-License-Identifier: Apache-2.0
+
 #pragma once
 
 #include <vector>
@@ -6,11 +10,13 @@
 
 namespace xdiag::basis::tj {
 
-template <typename bit_t, typename coeff_t, bool symmetric, class BasisIn,
-          class BasisOut, class NonZeroTerm, class TermAction, class Fill>
-void generic_term_ups(BasisIn &&basis_in, BasisOut &&basis_out,
-                      NonZeroTerm &&non_zero_term, TermAction &&term_action,
-                      Fill &&fill) {
+template <typename coeff_t, bool symmetric, class basis_t,
+          class non_zero_term_f, class term_action_f, class fill_f>
+void generic_term_ups(basis_t const &basis_in, basis_t const &basis_out,
+                      non_zero_term_f non_zero_term, term_action_f term_action,
+                      fill_f fill) {
+  using bit_t = typename basis_t::bit_t;
+
   int64_t nsites = basis_in.nsites();
   assert(nsites == basis_out.nsites());
   bit_t sitesmask = ((bit_t)1 << nsites) - 1;
@@ -140,8 +146,8 @@ void generic_term_ups(BasisIn &&basis_in, BasisOut &&basis_out,
           }
 
         } // if target trivial stabilizer or not
-      }   // if non_zero_term
-    }     // loop over ups
+      } // if non_zero_term
+    } // loop over ups
 
   } else { // if not symmetric
 #ifdef _OPENMP

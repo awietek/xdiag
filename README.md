@@ -1,16 +1,24 @@
-![license](https://img.shields.io/badge/license-Apache%202.0-blue)
+<!--
+SPDX-FileCopyrightText: 2025 Alexander Wietek <awietek@pks.mpg.de>
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 ![cpp](https://img.shields.io/badge/C++-17-blue.svg?style=flat&logo=c%2B%2B)
-[![docs](https://img.shields.io/badge/Documentation-here-red.svg)](https://awietek.github.io/xdiag)
 [![Linux CI](https://github.com/awietek/xdiag/actions/workflows/linux.yml/badge.svg?style=for-the-badge)](https://github.com/awietek/xdiag/actions/workflows/linux.yml)
 [![Mac OSX CI](https://github.com/awietek/xdiag/actions/workflows/osx.yml/badge.svg?style=for-the-badge)](https://github.com/awietek/xdiag/actions/workflows/osx.yml)
 [![Intel MPI CI](https://github.com/awietek/xdiag/actions/workflows/intelmpi.yml/badge.svg?style=for-the-badge)](https://github.com/awietek/xdiag/actions/workflows/intelmpi.yml)
-[![DOI](https://zenodo.org/badge/169422780.svg)](https://zenodo.org/badge/latestdoi/169422780)
-
+[![Examples CI](https://github.com/awietek/xdiag/actions/workflows/examples.yml/badge.svg?style=for-the-badge)](https://github.com/awietek/xdiag/actions/workflows/examples.yml)
 
 # XDiag
-## High-performance Yxact Diagonalization Routines and Algorithms
 
 A C++ library to perform efficient Exact Diagonalizations of quantum many body systems. 
+
+
+| **Documentation**                                                                          | **Citation**                                                                                           | **License**                                                        |
+|:------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------------:|--------------------------------------------------------------------|
+| [![docs](https://img.shields.io/badge/docs-stable-blue.svg)](https://awietek.github.io/xdiag) | [![arXiv](https://img.shields.io/badge/arXiv-2505.02901-b31b1b.svg)](https://arxiv.org/abs/2505.02901) | ![license](https://img.shields.io/badge/license-Apache%202.0-blue) |
+
 
 ### Features:
 - Basic algebra of operators in quantum many-body systems

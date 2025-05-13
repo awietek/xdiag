@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 3.19)
+project(benchmark_heisenberg_chain)
+find_package(xdiag REQUIRED HINTS "~/Research/Software/xdiag/install")
+add_executable(main main.cpp)
+set_property(TARGET main PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
+target_link_libraries(main PRIVATE xdiag::xdiag)

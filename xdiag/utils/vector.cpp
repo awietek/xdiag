@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Alexander Wietek <awietek@pks.mpg.de>
+//
+// SPDX-License-Identifier: Apache-2.0
+
 #include "vector.hpp"
 #include <xdiag/utils/type_string.hpp>
 #include <xdiag/utils/arma_to_cx.hpp>

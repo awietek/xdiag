@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Alexander Wietek <awietek@pks.mpg.de>
+//
+// SPDX-License-Identifier: Apache-2.0
+
 #pragma once
 
 #include <xdiag/bits/bitops.hpp>
@@ -7,13 +11,12 @@
 #include <xdiag/parallel/mpi/buffer.hpp>
 #include <xdiag/parallel/mpi/communicator.hpp>
 
-#include <xdiag/basis/tj_distributed/apply/generic_term_mixed.hpp>
-
 namespace xdiag::basis::tj_distributed {
 
-template <typename bit_t, typename coeff_t, class Basis>
-void apply_exchange(Coupling const &cpl, Op const &op, Basis &&basis,
+template <typename coeff_t, class basis_t>
+void apply_exchange(Coupling const &cpl, Op const &op, basis_t const &basis,
                     const coeff_t *vec_in, coeff_t *vec_out) {
+  using bit_t = typename basis_t::bit_t;
   using namespace bits;
   int mpi_size;
   MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);

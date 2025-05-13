@@ -1,11 +1,16 @@
+// SPDX-FileCopyrightText: 2025 Alexander Wietek <awietek@pks.mpg.de>
+//
+// SPDX-License-Identifier: Apache-2.0
+
 #pragma once
 
 namespace xdiag::basis::electron {
 
-template <typename bit_t, typename coeff_t, bool symmetric, class Basis,
-          class Fill>
-void apply_number(Coupling const &cpl, Op const &op, Basis &&basis,
-                  Fill fill) try {
+template <typename coeff_t, bool symmetric, class basis_t, class fill_f>
+void apply_number(Coupling const &cpl, Op const &op, basis_t const &basis,
+                  fill_f fill) try {
+  using bit_t = typename basis_t::bit_t;
+
   coeff_t mu = cpl.scalar().as<coeff_t>();
   int64_t s = op[0];
   bit_t mask = (bit_t)1 << s;
@@ -14,10 +19,14 @@ void apply_number(Coupling const &cpl, Op const &op, Basis &&basis,
   if (type == "Nup") {
 
     if constexpr (symmetric) {
-      int64_t idx = 0;
+
+#ifdef _OPENMP
+#pragma omp parallel for schedule(guided)
+#endif
       for (int64_t idx_ups = 0; idx_ups < basis.n_rep_ups(); ++idx_ups) {
         bit_t ups = basis.rep_ups(idx_ups);
         auto dnss = basis.dns_for_ups_rep(ups);
+        int64_t idx = basis.ups_offset(idx_ups);
         int64_t size_dns = dnss.size();
         if (ups & mask) { // check whether bit at s is set
           int64_t end = idx + size_dns;

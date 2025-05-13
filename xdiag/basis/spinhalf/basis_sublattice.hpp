@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Alexander Wietek <awietek@pks.mpg.de>
+//
+// SPDX-License-Identifier: Apache-2.0
+
 #pragma once
 
 #include <xdiag/extern/flat_hash_map.hpp>
@@ -11,7 +15,7 @@
 
 namespace xdiag::basis::spinhalf {
 
-constexpr int64_t maximum_prefix_bits = 24;
+constexpr int64_t maximum_prefix_bits = 32;
 
 template <typename bit_tt, int n_sublat> class BasisSublattice {
 public:

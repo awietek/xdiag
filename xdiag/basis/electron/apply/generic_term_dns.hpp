@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Alexander Wietek <awietek@pks.mpg.de>
+//
+// SPDX-License-Identifier: Apache-2.0
+
 #pragma once
 
 #include <functional>
@@ -5,11 +9,11 @@
 namespace xdiag::basis::electron {
 
 template <typename bit_t, typename coeff_t, bool symmetric, bool fermi_ups,
-          class BasisIn, class BasisOut, class NonZeroTerm, class TermAction,
-          class Fill>
-void generic_term_dns(BasisIn &&basis_in, BasisOut &&basis_out,
-                      NonZeroTerm &&non_zero_term, TermAction &&term_action,
-                      Fill &&fill) {
+          class basis_t, class non_zero_term_f, class term_action_f,
+          class fill_f>
+void generic_term_dns(basis_t const &basis_in, basis_t const &basis_out,
+                      non_zero_term_f non_zero_term, term_action_f term_action,
+                      fill_f fill) {
 
   if constexpr (symmetric) {
 
@@ -89,7 +93,7 @@ void generic_term_dns(BasisIn &&basis_in, BasisOut &&basis_out,
           ++dns_in_idx;
         }
       } // if non trivial stabilizer
-    }   // loop over ups
+    } // loop over ups
   }
 
   else { // if not symmetric

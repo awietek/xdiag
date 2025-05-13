@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Alexander Wietek <awietek@pks.mpg.de>
+//
+// SPDX-License-Identifier: Apache-2.0
+
 #pragma once
 
 #include <xdiag/basis/tj/apply/generic_term_mixed.hpp>
@@ -7,10 +11,11 @@
 
 namespace xdiag::basis::tj {
 
-template <typename bit_t, typename coeff_t, bool symmetric, class Basis,
-          class Filler>
-void apply_exchange(Coupling const &cpl, Op const &op, Basis &&basis,
-                    Filler &&fill) try {
+template <typename coeff_t, bool symmetric, class basis_t, class fill_f>
+void apply_exchange(Coupling const &cpl, Op const &op, basis_t const &basis,
+                    fill_f fill) try {
+  using bit_t = typename basis_t::bit_t;
+
   coeff_t J = cpl.scalar().as<coeff_t>();
   coeff_t Jhalf = J / 2.;
   coeff_t Jhalf_conj = conj(Jhalf);

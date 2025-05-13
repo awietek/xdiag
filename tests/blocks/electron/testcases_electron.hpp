@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Alexander Wietek <awietek@pks.mpg.de>
+//
+// SPDX-License-Identifier: Apache-2.0
+
 #pragma once
 
 #include <xdiag/operators/opsum.hpp>
@@ -41,4 +45,11 @@ OpSum square2x2(double t, double J);
 
 OpSum square3x3(double t, double J);
 
+
+bool valid_nup_ndn(int nup, int ndn, int nsites);
+bool valid_nup_ndn(std::string op_str, int nup, int ndn, int nsites);
+bool valid_nup_ndn(std::string op_str1, std::string op_str2, int nup, int ndn,
+                   int nsites);
+
+  
 } // namespace xdiag::testcases::electron

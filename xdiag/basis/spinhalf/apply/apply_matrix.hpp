@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Alexander Wietek <awietek@pks.mpg.de>
+//
+// SPDX-License-Identifier: Apache-2.0
+
 #pragma once
 
 #include <functional>
@@ -11,10 +15,10 @@
 
 namespace xdiag::basis::spinhalf {
 
-template <typename bit_t, typename coeff_t, bool symmetric, class BasisIn,
-          class BasisOut, class Fill>
-void apply_matrix(Coupling const &cpl, Op const &op, BasisIn &&basis_in,
-                  BasisOut &&basis_out, Fill &&fill) try {
+template <typename coeff_t, bool symmetric, class basis_t, class fill_f>
+void apply_matrix(Coupling const &cpl, Op const &op, basis_t const &basis_in,
+                  basis_t const &basis_out, fill_f fill) try {
+  using bit_t = typename basis_t::bit_t;
 
   // Decompose into sum of non-branching operators
   auto ops_nb = operators::non_branching_ops<bit_t, coeff_t>(cpl, op);
@@ -28,7 +32,7 @@ void apply_matrix(Coupling const &cpl, Op const &op, BasisIn &&basis_in,
         bit_t local_spins = op_nb.extract(spins);
         return op_nb.coeff(local_spins);
       };
-      apply_term_diag<bit_t, coeff_t>(basis_in, term_coeff, fill);
+      apply_term_diag<coeff_t>(basis_in, term_coeff, fill);
     }
 
     // Offdiagonal terms
@@ -46,11 +50,11 @@ void apply_matrix(Coupling const &cpl, Op const &op, BasisIn &&basis_in,
 
       // Dispatch either symmetric of unsymmetric term application
       if constexpr (symmetric) {
-        apply_term_offdiag_sym<bit_t, coeff_t>(
-            basis_in, basis_out, non_zero_term, term_action, fill);
+        apply_term_offdiag_sym<coeff_t>(basis_in, basis_out, non_zero_term,
+                                        term_action, fill);
       } else {
-        apply_term_offdiag_no_sym<bit_t, coeff_t>(
-            basis_in, basis_out, non_zero_term, term_action, fill);
+        apply_term_offdiag_no_sym<coeff_t>(basis_in, basis_out, non_zero_term,
+                                           term_action, fill);
       }
     }
 

@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Alexander Wietek <awietek@pks.mpg.de>
+//
+// SPDX-License-Identifier: Apache-2.0
+
 #pragma once
 
 #include <xdiag/basis/apply_identity.hpp>
@@ -13,38 +17,37 @@
 
 namespace xdiag::basis::spinhalf {
 
-template <typename bit_t, typename coeff_t, bool symmetric, class BasisIn,
-          class BasisOut, class Fill>
-void apply_terms(OpSum const &ops, BasisIn const &basis_in,
-                 BasisOut const &basis_out, Fill &fill) try {
+template <typename coeff_t, bool symmetric, class basis_t, class fill_f>
+void apply_terms(OpSum const &ops, basis_t const &basis_in,
+                 basis_t const &basis_out, fill_f fill) try {
   for (auto const &[cpl, op] : ops.plain()) {
-
     std::string type = op.type();
     if (type == "Id") {
       apply_identity<coeff_t>(cpl, basis_in, fill);
     } else if (type == "Exchange") {
-      spinhalf::apply_exchange<bit_t, coeff_t, symmetric>(cpl, op, basis_in,
-                                                          basis_out, fill);
+      spinhalf::apply_exchange<coeff_t, symmetric>(cpl, op, basis_in, basis_out,
+                                                   fill);
     } else if (type == "SzSz") {
-      spinhalf::apply_szsz<bit_t, coeff_t, symmetric>(cpl, op, basis_in,
-                                                      basis_out, fill);
+      spinhalf::apply_szsz<coeff_t, symmetric>(cpl, op, basis_in, basis_out,
+                                               fill);
     } else if (type == "Sz") {
-      spinhalf::apply_sz<bit_t, coeff_t, symmetric>(cpl, op, basis_in,
-                                                    basis_out, fill);
+      spinhalf::apply_sz<coeff_t, symmetric>(cpl, op, basis_in, basis_out,
+                                             fill);
     } else if (type == "S+") {
-      spinhalf::apply_spsm<bit_t, coeff_t, symmetric>(cpl, op, basis_in,
-                                                      basis_out, fill);
+      spinhalf::apply_spsm<coeff_t, symmetric>(cpl, op, basis_in, basis_out,
+                                               fill);
     } else if (type == "S-") {
-      spinhalf::apply_spsm<bit_t, coeff_t, symmetric>(cpl, op, basis_in,
-                                                      basis_out, fill);
+      spinhalf::apply_spsm<coeff_t, symmetric>(cpl, op, basis_in, basis_out,
+                                               fill);
     } else if (type == "ScalarChirality") {
-      spinhalf::apply_scalar_chirality<bit_t, coeff_t, symmetric>(
-          cpl, op, basis_in, basis_out, fill);
+      spinhalf::apply_scalar_chirality<coeff_t, symmetric>(cpl, op, basis_in,
+                                                           basis_out, fill);
     } else if (type == "Matrix") {
-      spinhalf::apply_matrix<bit_t, coeff_t, symmetric>(cpl, op, basis_in,
-                                                        basis_out, fill);
+      spinhalf::apply_matrix<coeff_t, symmetric>(cpl, op, basis_in, basis_out,
+                                                 fill);
     } else {
-      XDIAG_THROW(fmt::format("Unknown Op type for Spinhalf block: \"{}\"", type));
+      XDIAG_THROW(
+          fmt::format("Unknown Op type for Spinhalf block: \"{}\"", type));
     }
   }
 } catch (Error const &e) {

@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Alexander Wietek <awietek@pks.mpg.de>
+//
+// SPDX-License-Identifier: Apache-2.0
+
 #include "qns.hpp"
 
 #include <optional>
@@ -5,6 +9,7 @@
 
 #include <xdiag/operators/logic/isapprox.hpp>
 #include <xdiag/operators/logic/permute.hpp>
+#include <xdiag/operators/logic/order.hpp>
 #include <xdiag/operators/logic/valid.hpp>
 #include <xdiag/utils/scalar.hpp>
 
@@ -39,10 +44,20 @@ Representation representation(OpSum const &ops,
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
+
 template <>
 Representation representation(OpSum const &ops,
                               tJDistributed const &block) try {
   XDIAG_THROW("Block of type tJDistributed does not have irreducible "
+              "representation defined");
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+
+template <>
+Representation representation(OpSum const &ops,
+                              ElectronDistributed const &block) try {
+  XDIAG_THROW("Block of type ElectronDistributed does not have irreducible "
               "representation defined");
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
@@ -89,6 +104,7 @@ template int64_t nup(OpSum const &ops, Electron const &block);
 #ifdef XDIAG_USE_MPI
 template int64_t nup(OpSum const &ops, SpinhalfDistributed const &block);
 template int64_t nup(OpSum const &ops, tJDistributed const &block);
+template int64_t nup(OpSum const &ops, ElectronDistributed const &block);
 #endif
 
 int64_t nup(OpSum const &ops, Block const &block) try {
@@ -135,6 +151,7 @@ int64_t ndn(OpSum const &ops, SpinhalfDistributed const &block) try {
   XDIAG_RETHROW(e);
 }
 template int64_t ndn(OpSum const &ops, tJDistributed const &block);
+template int64_t ndn(OpSum const &ops, ElectronDistributed const &block);
 #endif
 
 int64_t ndn(OpSum const &ops, Block const &block) try {
@@ -194,13 +211,14 @@ std::optional<int64_t> nup(Op const &op) try {
 }
 
 std::optional<int64_t> nup(OpSum const &ops) try {
-  check_valid(ops);
-  if (ops.size() == 0) {
+  OpSum opso = order(ops);
+  check_valid(opso);
+  if (opso.size() == 0) {
     return 0;
   } else {
     // Compute nup for every Op
     std::vector<std::optional<int64_t>> nups;
-    for (auto [cpl, op] : ops) {
+    for (auto [cpl, op] : opso) {
       nups.push_back(nup(op));
     }
 
@@ -231,13 +249,14 @@ std::optional<int64_t> ndn(Op const &op) try {
 }
 
 std::optional<int64_t> ndn(OpSum const &ops) try {
-  check_valid(ops);
-  if (ops.size() == 0) {
+  OpSum opso = order(ops);
+  check_valid(opso);
+  if (opso.size() == 0) {
     return 0;
   } else {
     // Compute nup for every Op
     std::vector<std::optional<int64_t>> ndns;
-    for (auto [cpl, op] : ops) {
+    for (auto [cpl, op] : opso) {
       ndns.push_back(ndn(op));
     }
 
@@ -255,12 +274,14 @@ std::optional<int64_t> ndn(OpSum const &ops) try {
 
 std::optional<Representation>
 representation(OpSum const &ops, PermutationGroup const &group) try {
+  OpSum opso = order(ops);
+  check_valid(opso);
   std::vector<complex> characters;
   std::vector<double> characters_real;
   bool real = true;
   for (auto const &perm : group) {
-    OpSum opsp = permute(ops, perm);
-    std::optional<Scalar> factor = isapprox_multiple(opsp, ops);
+    OpSum opsp = permute(opso, perm);
+    std::optional<Scalar> factor = isapprox_multiple(opsp, opso);
     if (factor) {
       characters.push_back((*factor).as<complex>());
       characters_real.push_back((*factor).real());

@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Alexander Wietek <awietek@pks.mpg.de>
+//
+// SPDX-License-Identifier: Apache-2.0
+
 #include "../../catch.hpp"
 
 #include <mpi.h>
@@ -22,6 +26,9 @@ void test_tj_distributed_basis_np_transpose() {
       for (int ndn = 0; ndn < nsites - nup; ++ndn) {
 
         auto basis = basis::tj_distributed::BasisNp<bit_t>(nsites, nup, ndn);
+	int64_t buffer_size = std::max(basis.size(), basis.size_transpose());
+	mpi::buffer.reserve<coeff_t>(buffer_size);
+
         arma::Col<coeff_t> v(basis.size(), arma::fill::randu);
         arma::Col<coeff_t> w(basis.size_transpose(), arma::fill::randu);
         arma::Col<coeff_t> w2(basis.size_transpose(), arma::fill::randu);

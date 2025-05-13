@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Alexander Wietek <awietek@pks.mpg.de>
+//
+// SPDX-License-Identifier: Apache-2.0
+
 #include "basis_np.hpp"
 
 #include <xdiag/combinatorics/binomial.hpp>
@@ -8,8 +12,7 @@ namespace xdiag::basis::tj_distributed {
 
 template <typename bit_t>
 BasisNp<bit_t>::BasisNp(int64_t nsites, int64_t nup, int64_t ndn) try
-    : nsites_(nsites), nup_(nup), ndn_(ndn),
-      lintable_dncs_(nsites - nup, ndn),
+    : nsites_(nsites), nup_(nup), ndn_(ndn), lintable_dncs_(nsites - nup, ndn),
       lintable_upcs_(nsites - ndn, nup) {
   check_nsites_work_with_bits<bit_t>(nsites_);
 
@@ -244,6 +247,17 @@ int64_t BasisNp<bit_t>::index(bit_t up, bit_t dn) const {
   }
 }
 
+template <typename bit_t>
+int64_t BasisNp<bit_t>::index_r(bit_t up, bit_t dn) const {
+  if (rank(dn) != mpi_rank_) {
+    return invalid_index;
+  } else {
+    bit_t not_dn = (~dn) & sitesmask_;
+    bit_t upc = bits::extract(up, not_dn);
+    return my_dns_offset(dn) + index_upcs(upc);
+  }
+}
+
 template <typename bit_t> int64_t BasisNp<bit_t>::dim() const { return dim_; }
 template <typename bit_t> int64_t BasisNp<bit_t>::size() const { return size_; }
 template <typename bit_t> int64_t BasisNp<bit_t>::size_transpose() const {
@@ -300,8 +314,6 @@ void BasisNp<bit_t>::transpose(const coeff_t *in_vec, coeff_t *out_vec) const
   // result of transpose is stored in send_buffer
 
   auto comm = transpose_communicator_;
-  mpi::buffer.reserve<coeff_t>(std::max(size_, size_transpose_));
-
   coeff_t *send_buffer = mpi::buffer.send<coeff_t>();
   coeff_t *recv_buffer = mpi::buffer.recv<coeff_t>();
 
@@ -346,10 +358,10 @@ template <typename bit_t>
 template <typename coeff_t>
 void BasisNp<bit_t>::transpose_r(coeff_t const *in_vec, coeff_t *out_vec) const
     try {
+
   // transforms a vector in up/dn order to dn/up order
   // result of transpose is stored in send_buffer
   auto comm = transpose_communicator_r_;
-  mpi::buffer.reserve<coeff_t>(std::max(size_, size_transpose_));
   coeff_t *send_buffer = mpi::buffer.send<coeff_t>();
   coeff_t *recv_buffer = mpi::buffer.recv<coeff_t>();
 

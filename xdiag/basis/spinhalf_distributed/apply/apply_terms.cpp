@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Alexander Wietek <awietek@pks.mpg.de>
+//
+// SPDX-License-Identifier: Apache-2.0
+
 #include "apply_terms.hpp"
 
 #include <xdiag/basis/apply_identity.hpp>
@@ -8,6 +12,7 @@
 
 #include <xdiag/basis/spinhalf_distributed/basis_sz.hpp>
 #include <xdiag/basis/spinhalf_distributed/transpose.hpp>
+#include <xdiag/utils/logger.hpp>
 
 namespace xdiag::basis::spinhalf_distributed {
 
@@ -51,6 +56,7 @@ void apply_terms(OpSum const &ops, basis_t const &basis_in,
   }
 
   // Diagonal operators
+  double time_start = MPI_Wtime();
   for (auto [cpl, op] : ops_diagonal) {
     std::string type = op.type();
     if (type == "SzSz") {
@@ -67,8 +73,11 @@ void apply_terms(OpSum const &ops, basis_t const &basis_in,
           "Unknown Op for SpinhalfDistributed block: \"{}\"", type));
     }
   }
+  double time_end = MPI_Wtime();
+  Log(3, "  diagonal ops: {:.6f} secs", time_end - time_start);
 
   // Apply postfix operators
+  time_start = MPI_Wtime();
   for (auto [cpl, op] : ops_postfix) {
     std::string type = op.type();
     if (type == "Exchange") {
@@ -80,6 +89,8 @@ void apply_terms(OpSum const &ops, basis_t const &basis_in,
           "Unknown Op for SpinhalfDistributed block: \"{}\"", type));
     }
   }
+  time_end = MPI_Wtime();
+  Log(3, "  postfix ops : {:.6f} secs", time_end - time_start);
 
   // Apply prefix operators (result is computed frmo send_buffer and stored in
   // recv_buffer)
@@ -89,8 +100,12 @@ void apply_terms(OpSum const &ops, basis_t const &basis_in,
   coeff_t *recv_buffer = mpi::buffer.recv<coeff_t>();
 
   // Transpose to postfix | prefix order
+  time_start = MPI_Wtime();
   transpose(basis_in, vec_in.memptr(), false);
+  time_end = MPI_Wtime();
+  Log(3, "  transpose   : {:.6f} secs", time_end - time_start);
 
+  time_start = MPI_Wtime();
   for (auto [cpl, op] : ops_prefix) {
     std::string type = op.type();
     if (type == "Exchange") {
@@ -102,17 +117,26 @@ void apply_terms(OpSum const &ops, basis_t const &basis_in,
           "Unknown Op for SpinhalfDistributed block: \"{}\"", type));
     }
   }
+  time_end = MPI_Wtime();
+  Log(3, "  prefix ops  : {:.6f} secs", time_end - time_start);
 
   // Transpose back to prefix | postfix order
+  time_start = MPI_Wtime();
   transpose(basis_out, recv_buffer, true);
+  time_end = MPI_Wtime();
+  Log(3, "  transpose r : {:.6f} secs", time_end - time_start);
 
   // Fill contents of send buffer into vec_out
+  time_start = MPI_Wtime();
   for (int64_t idx = 0; idx < vec_out.size(); ++idx) {
     vec_out(idx) += send_buffer[idx];
   }
+  time_end = MPI_Wtime();
+  Log(3, "  fill        : {:.6f} secs", time_end - time_start);
 
   /////////////////////////////
   // apply mixed operators
+  time_start = MPI_Wtime();
   for (auto [cpl, op] : ops_mixed) {
     std::string type = op.type();
     if (type == "Exchange") {
@@ -122,6 +146,9 @@ void apply_terms(OpSum const &ops, basis_t const &basis_in,
           "Unknown Op for SpinhalfDistributed block: \"{}\"", type));
     }
   }
+  time_end = MPI_Wtime();
+  Log(3, "  mixed       : {:.6f} secs", time_end - time_start);
+
 
 } catch (Error const &e) {
   XDIAG_RETHROW(e);

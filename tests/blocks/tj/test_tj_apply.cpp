@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Alexander Wietek <awietek@pks.mpg.de>
+//
+// SPDX-License-Identifier: Apache-2.0
+
 #include "../../catch.hpp"
 
 #include <iostream>
@@ -72,5 +76,39 @@ TEST_CASE("tj_apply", "[tj]") {
         //              e0_mat, e0_app);
         REQUIRE(isapprox(e0_mat, e0_app));
       }
+  }
+
+  
+  // Test corrs
+  for (int nsites = 2; nsites < 5; ++nsites) {
+    Log("tj_apply: corrs, N={}", nsites);
+
+    for (int nup = 0; nup <= nsites; ++nup) {
+      for (int ndn = 0; ndn <= nsites - nup; ++ndn) {
+        auto b = tJ(nsites, nup, ndn);
+        auto r = random_state(b);
+
+        for (int i = 0; i < nsites; ++i) {
+          auto a = apply(Op("Nup", i), r) + apply(Op("Ndn", i), r);
+          auto b = apply(Op("Ntot", i), r);
+          REQUIRE(isapprox(a, b));
+
+          a = 0.5 * (apply(Op("Nup", i), r) - apply(Op("Ndn", i), r));
+          b = apply(Op("Sz", i), r);
+          REQUIRE(isapprox(a, b));
+
+          for (int j = 0; j < nsites; ++j) {
+
+            a = apply(Op("SzSz", {i, j}), r);
+            b = apply(Op("Sz", i), apply(Op("Sz", j), r));
+            REQUIRE(isapprox(a, b));
+
+            a = apply(Op("NtotNtot", {i, j}), r);
+            b = apply(Op("Ntot", i), apply(Op("Ntot", j), r));
+            REQUIRE(isapprox(a, b));
+          }
+        }
+      }
+    }
   }
 }

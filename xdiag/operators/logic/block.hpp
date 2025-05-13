@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Alexander Wietek <awietek@pks.mpg.de>
+//
+// SPDX-License-Identifier: Apache-2.0
+
 #pragma once
 
 #include <xdiag/blocks/blocks.hpp>
@@ -13,6 +17,8 @@ XDIAG_API Electron block(OpSum const &ops, Electron const &block);
 XDIAG_API SpinhalfDistributed block(OpSum const &ops,
                                     SpinhalfDistributed const &block);
 XDIAG_API tJDistributed block(OpSum const &ops, tJDistributed const &block);
+XDIAG_API ElectronDistributed block(OpSum const &ops,
+                                    ElectronDistributed const &block);
 #endif
 
 bool blocks_match(OpSum const &ops, Block const &b1, Block const &b2);
@@ -24,6 +30,8 @@ bool blocks_match(OpSum const &ops, SpinhalfDistributed const &b1,
                   SpinhalfDistributed const &b2);
 bool blocks_match(OpSum const &ops, tJDistributed const &b1,
                   tJDistributed const &b2);
+bool blocks_match(OpSum const &ops, ElectronDistributed const &b1,
+                  ElectronDistributed const &b2);
 #endif
 
 } // namespace xdiag

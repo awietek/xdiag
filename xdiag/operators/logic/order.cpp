@@ -1,6 +1,11 @@
+// SPDX-FileCopyrightText: 2025 Alexander Wietek <awietek@pks.mpg.de>
+//
+// SPDX-License-Identifier: Apache-2.0
+
 #include "order.hpp"
 
 #include <algorithm>
+#include <set>
 #include <xdiag/operators/logic/types.hpp>
 #include <xdiag/operators/logic/valid.hpp>
 
@@ -70,6 +75,11 @@ std::pair<Scalar, Op> order(Scalar const &alpha, Op const &op) try {
   check_valid(op);
 
   std::string type = op.type();
+
+  std::set<std::string> unordered = {"NupNdn", "NdnNup"};
+  if (unordered.find(type) != unordered.end()) {
+      return {alpha, op};
+  }
 
   if (type == "Matrix") {
     std::vector<int64_t> sites = op.sites();
@@ -237,6 +247,7 @@ bool less(Scalar const &s1, Scalar const &s2) {
 }
 
 OpSum order(OpSum const &ops) try {
+
   using pair_t = std::pair<Scalar, Op>;
   std::vector<pair_t> terms;
   for (auto [a, op] : ops.plain()) {
@@ -255,12 +266,34 @@ OpSum order(OpSum const &ops) try {
   for (int64_t i = 0; i < terms.size(); ++i) {
     auto op = terms[i].second;
     Scalar cplsum = terms[i].first;
-    while((i < terms.size()-1) && (terms[i+1].second == op)){
+    while ((i < terms.size() - 1) && (terms[i + 1].second == op)) {
       cplsum += terms[++i].first;
     }
     opsnew += cplsum * op;
   }
-  return opsnew;
+
+  // Compbine Matrix operators on same sites
+  OpSum ops_matrix;
+  std::map<std::vector<int64_t>, Matrix> matrix_on_sites;
+  for (auto const &[cpl, op] : opsnew) {
+    if (op.type() == "Matrix") {
+      auto sites = op.sites();
+      auto coeff = cpl.scalar();
+      if (matrix_on_sites.count(sites)) { // sites already exist
+        matrix_on_sites[sites] += op.matrix() * coeff;
+      } else {
+        matrix_on_sites[sites] = op.matrix() * coeff;
+      }
+    } else {
+      ops_matrix += cpl * op;
+    }
+  }
+
+  for (auto const &[sites, matrix] : matrix_on_sites) {
+    ops_matrix += Op("Matrix", sites, matrix);
+  }
+
+  return ops_matrix;
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }

@@ -1,8 +1,12 @@
+# SPDX-FileCopyrightText: 2025 Alexander Wietek <awietek@pks.mpg.de>
+#
+# SPDX-License-Identifier: Apache-2.0
+
 cmake_minimum_required(VERSION 3.19)
 
 project(
   xdiag
-  VERSION 0.3.1
+  VERSION 0.3.2
   LANGUAGES CXX
 )
 
@@ -16,6 +20,7 @@ option(XDIAG_DISABLE_OPENMP "Disables the library being compiled with OpenMP" Of
 option(XDIAG_DISABLE_HDF5 "Disables the library being compiled with HDF5" Off)
 option(XDIAG_DISABLE_COLOR "Disables the library outputting colored texts" Off)
 option(XDIAG_OPTIMIZE_FOR_NATIVE "Optimize for native architecture" Off)
+option(XDIAG_FORCE_MKL_SEQUENTIAL "Intel MKL (if found) is forced to sequential mode" Off)
 
 message(STATUS "Compiler ID     : " ${CMAKE_CXX_COMPILER_ID})
 message(STATUS "Compiler version: " ${CMAKE_CXX_COMPILER_VERSION})
@@ -113,19 +118,38 @@ message(STATUS "-------- Determining Linear Algebra backend -------------")
 find_package(MKL)
 if(MKL_FOUND)
   message(STATUS "Employing IntelMKL as linear algebra backend")
+
+  if(XDIAG_FORCE_MKL_SEQUENTIAL OR XDIAG_DISTRIBUTED)
+    message(STATUS "Using sequential MKL backend")
+    set(XDIAG_MKL_THREAD_LIBRARY "mkl_sequential")
+  else()
+    if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+      message(STATUS "Using threaded MKL backend (GNU threads)")
+      set(XDIAG_MKL_THREAD_LIBRARY "mkl_gnu_thread")
+    elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+      message(STATUS "Using threaded MKL backend (GNU threads)")
+      set(XDIAG_MKL_THREAD_LIBRARY "mkl_gnu_thread")
+    elseif (CMAKE_CXX_COMPILER_ID STREQUAL "IntelLLVM")
+      message(STATUS "Using threaded MKL backend (Intel threads)")
+      set(XDIAG_MKL_THREAD_LIBRARY "mkl_intel_thread")
+    else ()
+      message(FATAL_ERROR "Unsupported compiler for threaded Intel MKL: " ${CMAKE_CXX_COMPILER_ID})
+    endif()
+  endif()
+
   target_compile_definitions(${XDIAG_LIBRARY} PUBLIC XDIAG_USE_MKL)
   target_include_directories(${XDIAG_LIBRARY} PUBLIC ${MKL_INCLUDE_DIR})
 
   # the following lines are needed to link MKL statically correctly
   add_library(mkl_intel_ilp64 STATIC IMPORTED)
-  add_library(mkl_sequential STATIC IMPORTED)
+  add_library(${XDIAG_MKL_THREAD_LIBRARY} STATIC IMPORTED)
   add_library(mkl_core STATIC IMPORTED)
   
   set_target_properties(mkl_intel_ilp64 PROPERTIES
     IMPORTED_LOCATION ${MKL_INTERFACE_LIBRARY}
     IMPORTED_LINK_INTERFACE_MULTIPLICITY 3)
   
-  set_target_properties(mkl_sequential PROPERTIES
+  set_target_properties(${XDIAG_MKL_THREAD_LIBRARY} PROPERTIES
     IMPORTED_LOCATION ${MKL_SEQUENTIAL_LAYER_LIBRARY}
     IMPORTED_LINK_INTERFACE_MULTIPLICITY 3)
   
@@ -134,14 +158,17 @@ if(MKL_FOUND)
     IMPORTED_LINK_INTERFACE_MULTIPLICITY 3)
 
   target_compile_definitions(mkl_intel_ilp64 INTERFACE MKL_ILP64)
-  set_target_properties(mkl_sequential PROPERTIES INTERFACE_LINK_LIBRARIES mkl_core)
-  set_target_properties(mkl_core       PROPERTIES INTERFACE_LINK_LIBRARIES mkl_sequential)
+  set_target_properties(${XDIAG_MKL_THREAD_LIBRARY} PROPERTIES INTERFACE_LINK_LIBRARIES
+    mkl_core)
+  set_target_properties(mkl_core                    PROPERTIES INTERFACE_LINK_LIBRARIES
+    ${XDIAG_MKL_THREAD_LIBRARY})
 
-  foreach(mkl_lib IN LISTS mkl_intel_ilp64 mkl_sequential mkl_core)
+  foreach(mkl_lib IN LISTS mkl_intel_ilp64 ${XDIAG_MKL_THREAD_LIBRARY} mkl_core)
     target_include_directories(mkl_lib PUBLIC ${MKL_INCLUDE_DIR})
   endforeach()  
   
-  target_link_libraries(${XDIAG_LIBRARY} PUBLIC mkl_intel_ilp64 mkl_sequential mkl_core dl pthread)
+  target_link_libraries(${XDIAG_LIBRARY} PUBLIC mkl_intel_ilp64 ${XDIAG_MKL_THREAD_LIBRARY}
+    mkl_core dl pthread)
 
   get_filename_component(MKL_LIB_DIR ${MKL_CORE_LIBRARY} DIRECTORY)
   target_link_directories(${XDIAG_LIBRARY} PUBLIC ${MKL_LIB_DIR})

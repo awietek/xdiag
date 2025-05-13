@@ -1,13 +1,8 @@
-/*
- *  Catch v2.13.10
- *  Generated: 2022-10-16 11:01:23.452308
- *  ----------------------------------------------------------
- *  This file has been merged from multiple headers. Please don't edit it directly
- *  Copyright (c) 2022 Two Blue Cubes Ltd. All rights reserved.
- *
- *  Distributed under the Boost Software License, Version 1.0. (See accompanying
- *  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
- */
+// Copyright (c) 2022 Two Blue Cubes Ltd. All rights reserved.
+// SPDX-FileCopyrightText: 2025 Alexander Wietek <awietek@pks.mpg.de>
+//
+// SPDX-License-Identifier: Apache-2.0
+
 #ifndef TWOBLUECUBES_SINGLE_INCLUDE_CATCH_HPP_INCLUDED
 #define TWOBLUECUBES_SINGLE_INCLUDE_CATCH_HPP_INCLUDED
 // start catch.hpp

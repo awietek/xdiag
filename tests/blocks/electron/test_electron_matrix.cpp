@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Alexander Wietek <awietek@pks.mpg.de>
+//
+// SPDX-License-Identifier: Apache-2.0
+
 #include "../../catch.hpp"
 
 #include <iostream>
@@ -5,6 +9,7 @@
 #include "../spinhalf/testcases_spinhalf.hpp"
 #include "../tj/testcases_tj.hpp"
 #include "testcases_electron.hpp"
+#include "../../../xdiag/operators/logic/real.hpp"
 
 #include <xdiag/algebra/isapprox.hpp>
 #include <xdiag/algebra/matrix.hpp>
@@ -395,7 +400,6 @@ TEST_CASE("electron_matrix", "[electron]") try {
 
   for (int nsites = 2; nsites < 5; ++nsites) {
     auto b = Electron(nsites);
-
     for (int s = 0; s < nsites; ++s) {
       // Nupdn
       arma::mat m1 = matrix(Op("Nup", s), b) * matrix(Op("Ndn", s), b);
@@ -443,6 +447,28 @@ TEST_CASE("electron_matrix", "[electron]") try {
              matrix(cdagdn, b) * matrix(cdn, b));
       m2 = matrix(Op("Hop", {s, s}), b);
       REQUIRE(isapprox(m1, m2));
+
+      for (int s2 = 0; s2 < nsites; ++s2) {
+          // NupNdn
+          m1 = matrix(Op("Nup", s), b) * matrix(Op("Ndn", s2), b);
+          m2 = matrix(Op("NupNdn", {s, s2}), b);
+          REQUIRE(isapprox(m1, m2));
+
+          // NdnNup 
+          m1 = matrix(Op("Ndn", s), b) * matrix(Op("Nup", s2), b);
+          m2 = matrix(Op("NdnNup", {s, s2}), b);
+          REQUIRE(isapprox(m1, m2));
+
+          // NupNup
+          m1 = matrix(Op("Nup", s), b) * matrix(Op("Nup", s2), b);
+          m2 = matrix(Op("NupNup", {s, s2}), b);
+          REQUIRE(isapprox(m1, m2));
+
+          // NdnNdn
+          m1 = matrix(Op("Ndn", s), b) * matrix(Op("Ndn", s2), b);
+          m2 = matrix(Op("NdnNdn", {s, s2}), b);
+          REQUIRE(isapprox(m1, m2));
+      }
     }
   }
 

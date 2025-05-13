@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Alexander Wietek <awietek@pks.mpg.de>
+//
+// SPDX-License-Identifier: Apache-2.0
+
 #pragma once
 
 #include <functional>
@@ -6,13 +10,15 @@
 
 namespace xdiag::basis::tj {
 
-template <typename bit_t, typename coeff_t, bool symmetric, bool fermi_ups,
-          class BasisIn, class BasisOut, class NonZeroTermUps,
-          class NonZeroTermDns, class TermAction, class Fill>
-void generic_term_dns(BasisIn &&basis_in, BasisOut &&basis_out,
-                      NonZeroTermUps &&non_zero_term_ups,
-                      NonZeroTermDns &&non_zero_term_dns,
-                      TermAction &&term_action, Fill &&fill) {
+template <typename coeff_t, bool symmetric, bool fermi_ups, class basis_t,
+          class non_zero_term_ups_f, class non_zero_term_dns_f,
+          class term_action_f, class fill_f>
+void generic_term_dns(basis_t const &basis_in, basis_t const &basis_out,
+                      non_zero_term_ups_f non_zero_term_ups,
+                      non_zero_term_dns_f non_zero_term_dns,
+                      term_action_f term_action, fill_f fill) {
+  using bit_t = typename basis_t::bit_t;
+
   int64_t nsites = basis_in.nsites();
   assert(nsites == basis_out.nsites());
   bit_t sitesmask = ((bit_t)1 << nsites) - 1;

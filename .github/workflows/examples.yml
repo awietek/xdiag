@@ -1,0 +1,25 @@
+name: Examples CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: install lapack
+      run: |
+        sudo apt-get install -y libblas-dev liblapack-dev
+    - name: Install HDF5
+      timeout-minutes: 5
+      run: sudo apt-get install libhdf5-serial-dev
+    - name: make examples
+      run: |
+        cmake -S . -B build -D XDIAG_SHARED_LIBS=On -D BUILD_EXAMPLES=On
+        cmake --build build

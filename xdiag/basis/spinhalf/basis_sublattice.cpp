@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Alexander Wietek <awietek@pks.mpg.de>
+//
+// SPDX-License-Identifier: Apache-2.0
+
 #include "basis_sublattice.hpp"
 
 #include <xdiag/combinatorics/combinations.hpp>
@@ -36,7 +40,7 @@ reps_norms_no_sz(GroupActionSublattice<bit_t, n_sublat> const &group_action,
     if (prefix_rep < prefix) {
       continue;
     }
-
+#ifndef _OPENMP
     for (auto postfix : Subsets<bit_t>(n_trailing)) {
       bit_t state = (prefix << n_trailing) | postfix;
       bit_t rep = group_action.representative(state);
@@ -48,7 +52,40 @@ reps_norms_no_sz(GroupActionSublattice<bit_t, n_sublat> const &group_action,
         }
       }
     }
-  }
+#else
+
+    std::vector<std::vector<bit_t>> reps_thread;
+    std::vector<std::vector<double>> norms_thread;
+#pragma omp parallel
+    {
+      int myid = omp_get_thread_num();
+      int rank = omp_get_num_threads();
+#pragma omp single
+      {
+        reps_thread.resize(rank);
+        norms_thread.resize(rank);
+      }
+      // Compute representatives for each thread
+      for (auto postfix : combinatorics::SubsetsThread<bit_t>(n_trailing)) {
+        bit_t state = (prefix << n_trailing) | postfix;
+        bit_t rep = group_action.representative(state);
+        if (state == rep) {
+          double norm = symmetries::norm(rep, group_action, characters);
+          if (std::abs(norm) > 1e-6) {
+            reps_thread[myid].push_back(rep);
+            norms_thread[myid].push_back(norm);
+          }
+        }
+      }
+    } // pragma omp parallel
+
+    auto reps_prefix = omp::combine_vectors(reps_thread);
+    auto norms_prefix = omp::combine_vectors(norms_thread);
+    reps.insert(reps.end(), reps_prefix.begin(), reps_prefix.end());
+    norms.insert(norms.end(), norms_prefix.begin(), norms_prefix.end());
+#endif
+  } // for (auto prefix : ...)
+
   reps.shrink_to_fit();
   norms.shrink_to_fit();
   return {reps, norms};

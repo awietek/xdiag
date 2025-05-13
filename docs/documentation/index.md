@@ -56,6 +56,7 @@ XDiag uses the C++ library [Armadillo](https://arma.sourceforge.net) as a linear
 |:------------------------------------------------------|:-------------------------------------------------------------------|-------------------:|
 | [SpinhalfDistributed](blocks/spinhalf_distributed.md) | Block of a spin $S=1/2$ type Hilbert space (distributed computing) | :simple-cplusplus: |
 | [tJDistributed](blocks/tJ_distributed.md)             | Block of a $t-J$ type Hilbert space  (distributed computing)       | :simple-cplusplus: |
+| [ElectronDistributed](blocks/electron_distributed.md) | Block of a Electron type Hilbert space  (distributed computing)    | :simple-cplusplus: |
 
 ---
 
