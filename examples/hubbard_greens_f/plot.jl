@@ -151,5 +151,6 @@ let
     fig = plot_momentum_cut(source, omegas)
     # display(fig)
     # sleep(10)
-    Plots.savefig(fig, "../../docs/img/hubbard_greens_f.png")
+    #Plots.savefig(fig, "../../docs/img/hubbard_greens_f.png")
+    Plots.savefig(fig, "hubbard_greens_f.png")
 end
