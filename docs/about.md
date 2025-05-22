@@ -26,6 +26,26 @@ awietek _at_ pks.mpg.de
 
 ---
 
+## Scientific advisor
+
+<table>
+<tr>
+<td> <img align="left" src="../img/about/aml.jpg" width="150"> </td>
+<td>
+<font size="3"> 
+<b>Andreas M. Läuchli</b> <br>
+Full Professor <br>
+École Polytechnique Fédérale de Lausanne <a href="https://people.epfl.ch/andreas.laeuchli?lang=en">[link]</a><br>
+Paul Scherrer Institute <a href="https://www.psi.ch/de/ltc/people/andreas-martin-laeuchli-herzig">[link]</a><br>
+</font>
+</p>
+</td>
+</tr>
+</table>
+
+---
+
+
 ## Contributors
 
 :octicons-file-code-16: Feature implementation<br>
