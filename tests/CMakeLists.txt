@@ -33,6 +33,7 @@ set(XDIAG_TEST_SOURCES
   symmetries/test_fermi_sign.cpp
   symmetries/test_permutation.cpp
   symmetries/test_permutation_group.cpp
+  symmetries/test_representation.cpp
 
   operators/test_op.cpp
   operators/test_opsum.cpp
