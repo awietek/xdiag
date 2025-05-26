@@ -8,8 +8,6 @@
 #include <iomanip>
 #include <numeric>
 
-#include "../utils/xdiag_show.hpp"
-
 namespace xdiag {
 
 template <typename T>
