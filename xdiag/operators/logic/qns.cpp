@@ -277,26 +277,17 @@ representation(OpSum const &ops, PermutationGroup const &group) try {
   OpSum opso = order(ops);
   check_valid(opso);
   std::vector<complex> characters;
-  std::vector<double> characters_real;
   bool real = true;
   for (auto const &perm : group) {
     OpSum opsp = permute(opso, perm);
     std::optional<Scalar> factor = isapprox_multiple(opsp, opso);
     if (factor) {
       characters.push_back((*factor).as<complex>());
-      characters_real.push_back((*factor).real());
-      if (!(*factor).isreal()) {
-        real = false;
-      }
     } else {
       return std::nullopt;
     }
   }
-  if (real) {
-    return Representation(group, characters_real);
-  } else {
-    return Representation(group, characters);
-  }
+  return Representation(group, Vector(characters));
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
