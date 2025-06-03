@@ -125,19 +125,17 @@ Representation multiply(Representation const &r1,
     XDIAG_THROW(
         "The two given representations are not defined for the same group.");
   }
-
-  if (isreal(r1) && isreal(r2)) {
-    auto c1 = r1.characters().as<arma::vec>();
-    auto c2 = r2.characters().as<arma::vec>();
-    return Representation(
-        r1.group(),
-        arma::vec(c1 % c2)); // % means element wise multiplication in armadillo
+  auto c1 = r1.characters().as<arma::cx_vec>();
+  auto c2 = r2.characters().as<arma::cx_vec>();
+  auto c = arma::cx_vec(c1 % c2);
+  // If imaginary part is small, make it real
+  auto ni = arma::norm(arma::imag(c));
+  if (ni < 1e-12) { // tolerance for logic::qns is 1e-12
+    return Representation(r1.group(), arma::vec(arma::real(c)));
   } else {
-    auto c1 = r1.characters().as<arma::cx_vec>();
-    auto c2 = r2.characters().as<arma::cx_vec>();
-    return Representation(r1.group(), arma::cx_vec(c1 % c2));
+  return Representation(r1.group(), c);
   }
-} catch (Error const &e) {
+  } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
