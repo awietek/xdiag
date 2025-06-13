@@ -117,12 +117,14 @@ Creates an OpSum with a single pair of coupling constant and an [Op](op.md) obje
 
 === "C++"
 	```c++
+	OpSum operator*(int64_t coupling, Op const &op);
 	OpSum operator*(double coupling, Op const &op);
 	OpSum operator*(complex coupling, Op const &op);
 	OpSum operator*(std::string coupling, Op const &op);
 	```
 === "Julia"
 	```julia
+	Base.:*(coupling::Int64, op::Op)::OpSum
 	Base.:*(coupling::Float64, op::Op)::OpSum
 	Base.:*(coupling::ComplexF64, op::Op)::OpSum
 	Base.:*(coupling::String, op::Op)::OpSum
@@ -170,25 +172,33 @@ $$\mathcal{B} = b \sum_i a_i \mathcal{A}_i$$
 
 === "C++"
 	```c++
+	OpSum &operator*=(int64_t scalar);
 	OpSum &operator*=(double scalar);
     OpSum &operator*=(complex scalar);
+	OpSum &operator/=(int64_t scalar);
 	OpSum &operator/=(double scalar);
 	OpSum &operator/=(complex scalar);
   
+	OpSum operator*(int64_t scalar, OpSum const &op);
 	OpSum operator*(double scalar, OpSum const &op);
 	OpSum operator*(complex scalar, OpSum const &op);
 	OpSum operator*(OpSum const &op, double scalar);
+	OpSum operator*(OpSum const &op, int64_t scalar);
 	OpSum operator*(OpSum const &op, complex scalar);
+	OpSum operator/(OpSum const &op, int64_t scalar);
 	OpSum operator/(OpSum const &op, double scalar);
 	OpSum operator/(OpSum const &op, complex scalar);
 	```
 
 === "Julia"
 	```julia
+	Base.:*(coupling::Int64, ops::OpSum)::OpSum
 	Base.:*(coupling::Float64, ops::OpSum)::OpSum
 	Base.:*(coupling::ComplexF64, ops::OpSum)::OpSum
+	Base.:*(ops::OpSum, coupling::Int64)::OpSum
 	Base.:*(ops::OpSum, coupling::Float64)::OpSum
 	Base.:*(ops::OpSum, coupling::ComplexF64)::OpSum
+	Base.:/(ops::OpSum, coupling::Int6464)::OpSum
 	Base.:/(ops::OpSum, coupling::Float64)::OpSum
 	Base.:/(ops::OpSum, coupling::ComplexF64)::OpSum
 	```
@@ -205,6 +215,7 @@ Sets a coupling constant defined as a string to a numerical value.
 	```
 === "Julia"
 	```julia
+	Base.setindex!(ops::OpSum, cpl::Int64, name::String)
 	Base.setindex!(ops::OpSum, cpl::Float64, name::String)
 	Base.setindex!(ops::OpSum, cpl::ComplexF64, name::String)
 	```	
@@ -277,4 +288,9 @@ Converts the OpSum to a readable string representation.
 === "C++"
 	```c++
 	--8<-- "examples/usage_examples/main.cpp:OpSum"
+	```
+
+=== "Julia"
+	```c++
+	--8<-- "examples/usage_examples/main.cpp:opsum"
 	```

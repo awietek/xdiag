@@ -11,6 +11,7 @@ namespace xdiag {
 OpSum::OpSum(Op const &op) : terms_({{Coupling(1.0), op}}) {}
 OpSum::OpSum(Coupling const &cpl, Op const &op) : terms_({{cpl, op}}) {}
 OpSum::OpSum(std::string cpl, Op const &op) : OpSum(Coupling(cpl), op) {}
+OpSum::OpSum(int64_t cpl, Op const &op) : OpSum((double)cpl, op) {}
 OpSum::OpSum(double cpl, Op const &op) : OpSum(Coupling(cpl), op) {}
 OpSum::OpSum(complex cpl, Op const &op) : OpSum(Coupling(cpl), op) {}
 
@@ -18,6 +19,12 @@ OpSum &OpSum::operator=(Op const &op) {
   terms_ = std::vector<std::pair<Coupling, Op>>{{Coupling(1.0), op}};
   constants_.clear();
   return *this;
+}
+
+OpSum &OpSum::operator*=(int64_t scalar) try {
+  return operator*=((double)scalar);
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
 }
 
 OpSum &OpSum::operator*=(double scalar) try {
@@ -48,6 +55,12 @@ OpSum &OpSum::operator*=(Scalar const &cpl) try {
     }
   }
   return *this;
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+
+OpSum &OpSum::operator/=(int64_t scalar) try {
+  return operator/=((double)scalar);
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
@@ -205,6 +218,7 @@ bool OpSum::operator!=(OpSum const &rhs) const { return !operator==(rhs); }
 OpSum::iterator_t OpSum::begin() const { return terms_.begin(); }
 OpSum::iterator_t OpSum::end() const { return terms_.end(); }
 
+OpSum operator*(int64_t cpl, Op const &op) { return OpSum((double)cpl, op); }
 OpSum operator*(double cpl, Op const &op) { return OpSum(Coupling(cpl), op); }
 OpSum operator*(complex cpl, Op const &op) { return OpSum(Coupling(cpl), op); }
 OpSum operator*(std::string cpl, Op const &op) {
@@ -216,12 +230,14 @@ OpSum operator*(Scalar const &cpl, Op const &op) {
 
 OpSum operator*(Coupling const &cpl, Op const &op) { return OpSum(cpl, op); }
 
+OpSum operator*(Op const &op, int64_t cpl) { return cpl * op; }
 OpSum operator*(Op const &op, double cpl) { return cpl * op; }
 OpSum operator*(Op const &op, complex cpl) { return cpl * op; }
 OpSum operator*(Op const &op, std::string cpl) { return cpl * op; }
 OpSum operator*(Op const &op, Scalar const &cpl) { return cpl * op; }
 OpSum operator*(Op const &op, Coupling const &cpl) { return cpl * op; }
 
+OpSum operator*(int64_t cpl, OpSum const &op) { return (double)cpl * op; }
 OpSum operator*(double cpl, OpSum const &op) { return Scalar(cpl) * op; }
 OpSum operator*(complex cpl, OpSum const &op) { return Scalar(cpl) * op; }
 OpSum operator*(Scalar const &cpl, OpSum const &op) {
@@ -229,10 +245,12 @@ OpSum operator*(Scalar const &cpl, OpSum const &op) {
   newop *= cpl;
   return newop;
 }
+OpSum operator*(OpSum const &op, int64_t cpl) { return ((double)cpl) * op; }
 OpSum operator*(OpSum const &op, double cpl) { return cpl * op; }
 OpSum operator*(OpSum const &op, complex cpl) { return cpl * op; }
 OpSum operator*(OpSum const &op, Scalar const &cpl) { return cpl * op; }
 
+OpSum operator/(OpSum const &op, int64_t cpl) { return op / double(cpl); }
 OpSum operator/(OpSum const &op, double cpl) { return op / Scalar(cpl); }
 OpSum operator/(OpSum const &op, complex cpl) { return op / Scalar(cpl); }
 OpSum operator/(OpSum const &op, Scalar const &cpl) {

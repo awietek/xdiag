@@ -17,19 +17,17 @@ void define_product_state(jlcxx::Module &mod) {
       });
 
   mod.add_type<ProductState>("cxx_ProductState")
-      .constructor<>()
-      .constructor<int64_t>()
-      .constructor<std::vector<std::string> const &>()
-      .method(
-          "nsites",
-          [](ProductState const &s) { JULIA_XDIAG_CALL_RETURN(s.nsites()) })
+      .method("nsites",
+              [](ProductState const &s) { JULIA_XDIAG_CALL_RETURN(s.nsites()) })
       .method("size",
               [](ProductState const &s) { JULIA_XDIAG_CALL_RETURN(s.size()) })
-      .method("getindex", [](ProductState const &s,
-                             int64_t idx) { JULIA_XDIAG_CALL_RETURN(s[idx-1]) })
+      .method("getindex",
+              [](ProductState const &s, int64_t idx) {
+                JULIA_XDIAG_CALL_RETURN(s[idx - 1])
+              })
       .method("setindex!",
               [](ProductState &s, std::string local_state, int64_t idx) {
-                JULIA_XDIAG_CALL_VOID(s[idx-1] = local_state)
+                JULIA_XDIAG_CALL_VOID(s[idx - 1] = local_state)
               })
       .method("push!",
               [](ProductState &s, std::string local_state) {
@@ -41,6 +39,15 @@ void define_product_state(jlcxx::Module &mod) {
               [](ProductState const &s) { JULIA_XDIAG_CALL_RETURN(s.end()) });
 
   mod.method("to_string", [](ProductState const &s) { return to_string(s); });
+
+  mod.method("construct_ProductState",
+             []() { JULIA_XDIAG_CALL_RETURN(ProductState()) });
+  mod.method("construct_ProductState", [](int64_t nsites) {
+    JULIA_XDIAG_CALL_RETURN(ProductState(nsites))
+  });
+  mod.method("construct_ProductState", [](std::vector<std::string> const &ls) {
+    JULIA_XDIAG_CALL_RETURN(ProductState(ls))
+  });
 }
 
 } // namespace xdiag::julia

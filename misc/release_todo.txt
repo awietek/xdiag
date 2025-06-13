@@ -1,6 +1,7 @@
 - update version numbers in
   * xdiag (C++) CMakeLists.txt
-  * Xdiag.jl (Julia) Project.toml 
+  * Xdiag.jl (Julia) Project.toml (version)
+  * XDiag.jl (Julia) Project.toml (compat jll)
 - commit and push xdiag (C++)
 - wait for all unit tests to succeed
 - tag new version for xdiag (not XDiag.jl yet)

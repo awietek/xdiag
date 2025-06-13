@@ -16,6 +16,12 @@ static void safe_resize(std::vector<double> &vec, int64_t size) try {
 
 // This initialization just allocates the memory
 void State::init0(bool real, int64_t nrows, int64_t ncols) try {
+  if (ncols < 1) {
+    XDIAG_THROW(fmt::format("Invalid number of columns for State given: {}. "
+                            "Needs to be an integer larger equal to 1.",
+                            ncols));
+  }
+
   real_ = real;
   nrows_ = nrows;
   ncols_ = ncols;

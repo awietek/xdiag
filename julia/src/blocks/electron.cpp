@@ -17,10 +17,6 @@ void define_electron(jlcxx::Module &mod) {
       });
 
   mod.add_type<Electron>("cxx_Electron")
-      .constructor<int64_t, std::string>()
-      .constructor<int64_t, int64_t, int64_t, std::string>()
-      .constructor<int64_t, Representation, std::string>()
-      .constructor<int64_t, int64_t, int64_t, Representation, std::string>()
       .method("nsites",
               [](Electron const &s) { JULIA_XDIAG_CALL_RETURN(s.nsites()) })
       .method("isreal",
@@ -37,5 +33,25 @@ void define_electron(jlcxx::Module &mod) {
       });
 
   mod.method("to_string", [](Electron const &r) { return to_string(r); });
+
+  mod.method("construct_Electron", []() {
+    JULIA_XDIAG_CALL_RETURN(Electron());
+  });
+  mod.method("construct_Electron", [](int64_t nsites, std::string backend) {
+    JULIA_XDIAG_CALL_RETURN(Electron(nsites, backend));
+  });
+  mod.method("construct_Electron",
+             [](int64_t nsites, int64_t nup, int64_t ndn, std::string backend) {
+               JULIA_XDIAG_CALL_RETURN(Electron(nsites, nup, ndn, backend));
+             });
+  mod.method("construct_Electron",
+             [](int64_t nsites, Representation irrep, std::string backend) {
+               JULIA_XDIAG_CALL_RETURN(Electron(nsites, irrep, backend));
+             });
+  mod.method("construct_Electron", [](int64_t nsites, int64_t nup, int64_t ndn,
+                                      Representation irrep,
+                                      std::string backend) {
+    JULIA_XDIAG_CALL_RETURN(Electron(nsites, nup, ndn, irrep, backend));
+  });
 }
 } // namespace xdiag::julia

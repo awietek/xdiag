@@ -29,6 +29,19 @@ void define_tj(jlcxx::Module &mod) {
         JULIA_XDIAG_CALL_RETURN(s.index(p))
       });
   mod.method("to_string", [](tJ const &r) { return to_string(r); });
+
+  mod.method("construct_tJ", []() {
+    JULIA_XDIAG_CALL_RETURN(tJ());
+  });
+  mod.method("construct_tJ",
+             [](int64_t nsites, int64_t nup, int64_t ndn, std::string backend) {
+               JULIA_XDIAG_CALL_RETURN(tJ(nsites, nup, ndn, backend));
+             });
+  mod.method("construct_tJ", [](int64_t nsites, int64_t nup, int64_t ndn,
+                                      Representation irrep,
+                                      std::string backend) {
+    JULIA_XDIAG_CALL_RETURN(tJ(nsites, nup, ndn, irrep, backend));
+  });
 }
 
 } // namespace xdiag::julia

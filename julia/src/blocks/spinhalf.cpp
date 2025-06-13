@@ -16,11 +16,6 @@ void define_spinhalf(jlcxx::Module &mod) {
       });
 
   mod.add_type<Spinhalf>("cxx_Spinhalf")
-      .constructor<>()
-      .constructor<int64_t, std::string>()
-      .constructor<int64_t, int64_t, std::string>()
-      .constructor<int64_t, Representation, std::string>()
-      .constructor<int64_t, int64_t, Representation, std::string>()
       .method("nsites",
               [](Spinhalf const &s) { JULIA_XDIAG_CALL_RETURN(s.nsites()) })
       .method("isreal",
@@ -37,6 +32,25 @@ void define_spinhalf(jlcxx::Module &mod) {
       });
 
   mod.method("to_string", [](Spinhalf const &r) { return to_string(r); });
+
+  mod.method("construct_Spinhalf",
+             []() { JULIA_XDIAG_CALL_RETURN(Spinhalf()); });
+  mod.method("construct_Spinhalf", [](int64_t nsites, std::string backend) {
+    JULIA_XDIAG_CALL_RETURN(Spinhalf(nsites, backend));
+  });
+  mod.method("construct_Spinhalf",
+             [](int64_t nsites, int64_t nup, std::string backend) {
+               JULIA_XDIAG_CALL_RETURN(Spinhalf(nsites, nup, backend));
+             });
+  mod.method("construct_Spinhalf",
+             [](int64_t nsites, Representation irrep, std::string backend) {
+               JULIA_XDIAG_CALL_RETURN(Spinhalf(nsites, irrep, backend));
+             });
+  mod.method("construct_Spinhalf",
+             [](int64_t nsites, int64_t nup, Representation irrep,
+                std::string backend) {
+               JULIA_XDIAG_CALL_RETURN(Spinhalf(nsites, nup, irrep, backend));
+             });
 }
 
 } // namespace xdiag::julia

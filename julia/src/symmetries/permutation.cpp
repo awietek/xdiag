@@ -7,9 +7,6 @@
 namespace xdiag::julia {
 void define_permutation(jlcxx::Module &mod) {
   mod.add_type<Permutation>("cxx_Permutation")
-      .constructor<>()
-      .constructor<int64_t>()
-      .constructor<std::vector<int64_t> const &>()
       .method("inv",
               [](Permutation const &p) { JULIA_XDIAG_CALL_RETURN(inv(p)); })
       .method("size",
@@ -30,6 +27,15 @@ void define_permutation(jlcxx::Module &mod) {
   });
   mod.method("to_string", [](Permutation const &p) {
     JULIA_XDIAG_CALL_RETURN(to_string(p));
+  });
+
+  mod.method("construct_Permutation",
+             []() { JULIA_XDIAG_CALL_RETURN(Permutation()); });
+
+  mod.method("construct_Permutation",
+             [](int64_t size) { JULIA_XDIAG_CALL_RETURN(Permutation(size)); });
+  mod.method("construct_Permutation", [](std::vector<int64_t> const &array) {
+    JULIA_XDIAG_CALL_RETURN(Permutation(array));
   });
 }
 

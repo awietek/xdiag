@@ -9,8 +9,6 @@ namespace xdiag::julia {
 void define_permutation_group(jlcxx::Module &mod) {
 
   mod.add_type<PermutationGroup>("cxx_PermutationGroup")
-      .constructor<>()
-      .constructor<int64_t *, int64_t, int64_t>()
       .method("nsites",
               [](PermutationGroup const &p) {
                 JULIA_XDIAG_CALL_RETURN(p.nsites());
@@ -25,6 +23,14 @@ void define_permutation_group(jlcxx::Module &mod) {
   mod.method("to_string", [](PermutationGroup const &p) {
     JULIA_XDIAG_CALL_RETURN(to_string(p));
   });
+
+  mod.method("construct_PermutationGroup",
+             []() { JULIA_XDIAG_CALL_RETURN(PermutationGroup()); });
+  mod.method("construct_PermutationGroup",
+             [](int64_t *ptr, int64_t n_permutations, int64_t nsites) {
+               JULIA_XDIAG_CALL_RETURN(
+                   PermutationGroup(ptr, n_permutations, nsites));
+             });
 }
 
 } // namespace xdiag::julia
