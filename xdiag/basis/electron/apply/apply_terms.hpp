@@ -4,6 +4,9 @@
 
 #pragma once
 
+#include <xdiag/common.hpp>
+#include <xdiag/operators/opsum.hpp>
+
 #include <xdiag/basis/electron/apply/apply_exchange.hpp>
 #include <xdiag/basis/electron/apply/apply_hopping.hpp>
 #include <xdiag/basis/electron/apply/apply_number.hpp>
@@ -12,9 +15,6 @@
 #include <xdiag/basis/electron/apply/apply_szsz.hpp>
 #include <xdiag/basis/electron/apply/apply_u.hpp>
 #include <xdiag/basis/apply_identity.hpp>
-
-#include <xdiag/common.hpp>
-#include <xdiag/operators/opsum.hpp>
 
 namespace xdiag::basis::electron {
 

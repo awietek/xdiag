@@ -10,6 +10,11 @@
 #include <xdiag/algebra/apply.hpp>
 #include <xdiag/algebra/isapprox.hpp>
 #include <xdiag/algebra/matrix.hpp>
+#include <xdiag/algebra/sparse/apply.hpp>
+#include <xdiag/algebra/sparse/coo_matrix.hpp>
+#include <xdiag/algebra/sparse/csc_matrix.hpp>
+#include <xdiag/algebra/sparse/csr_matrix.hpp>
+#include <xdiag/algebra/sparse/sparse_matrix_types.hpp>
 #include <xdiag/algorithms/lanczos/eigs_lanczos.hpp>
 #include <xdiag/algorithms/lanczos/eigvals_lanczos.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
@@ -48,13 +53,14 @@
 #include <xdiag/utils/xdiag_show.hpp>
 
 #ifdef XDIAG_USE_MPI
+#include <xdiag/blocks/electron_distributed.hpp>
 #include <xdiag/blocks/spinhalf_distributed.hpp>
 #include <xdiag/blocks/tj_distributed.hpp>
-#include <xdiag/blocks/electron_distributed.hpp>
 #endif
 
 #undef XDIAG_THROW
 #undef XDIAG_RETHROW
 #undef XDIAG_API
 #undef XDIAG_OFFSET
+#undef XDIAG_FILL
 #undef XDIAG_PI

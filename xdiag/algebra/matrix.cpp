@@ -4,10 +4,7 @@
 
 #include "matrix.hpp"
 
-#include <xdiag/algebra/fill.hpp>
-#include <xdiag/basis/electron/apply/dispatch_matrix.hpp>
-#include <xdiag/basis/spinhalf/apply/dispatch_matrix.hpp>
-#include <xdiag/basis/tj/apply/dispatch_matrix.hpp>
+#include <xdiag/algebra/apply_dispatch.hpp>
 #include <xdiag/operators/logic/block.hpp>
 #include <xdiag/operators/logic/compilation.hpp>
 #include <xdiag/operators/logic/real.hpp>
@@ -60,6 +57,11 @@ static arma::Mat<coeff_t> matrix_gen_variant(op_t const &op,
           [&](tJDistributed const &, tJDistributed const &) {
             XDIAG_THROW(
                 "Matrix creation not implemented for tJDistributed blocks");
+            return arma::Mat<coeff_t>();
+          },
+          [&](ElectronDistributed const &, ElectronDistributed const &) {
+            XDIAG_THROW("Matrix creation not implemented for "
+                        "ElectronDistributed blocks");
             return arma::Mat<coeff_t>();
           },
 #endif
@@ -163,7 +165,17 @@ void matrix(coeff_t *mat, OpSum const &ops, block_t const &block_in,
   int64_t n = block_in.size();
   std::fill(mat, mat + m * n, 0);
   OpSum opsc = operators::compile<block_t>(ops);
-  basis::dispatch_matrix(opsc, block_in, block_out, mat, m);
+
+  // create fill method to add to the matrix
+  auto fill = [&](int64_t idx_in, int64_t idx_out, coeff_t val) {
+    mat[idx_out + idx_in * m] += val;
+  };
+
+#ifdef _OPENMP
+  omp_set_schedule(omp_sched_guided, 0);
+#endif
+  
+  algebra::apply_dispatch<coeff_t>(opsc, block_in, block_out, fill);
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }

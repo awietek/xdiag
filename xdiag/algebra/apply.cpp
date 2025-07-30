@@ -4,24 +4,12 @@
 
 #include "apply.hpp"
 
-#include <variant>
-
-#include <xdiag/algebra/fill.hpp>
+#include <xdiag/algebra/apply_dispatch.hpp>
 #include <xdiag/operators/logic/block.hpp>
 #include <xdiag/operators/logic/compilation.hpp>
 #include <xdiag/operators/logic/isapprox.hpp>
 #include <xdiag/operators/logic/real.hpp>
 #include <xdiag/operators/logic/valid.hpp>
-
-#include <xdiag/basis/electron/apply/dispatch_apply.hpp>
-#include <xdiag/basis/spinhalf/apply/dispatch_apply.hpp>
-#include <xdiag/basis/tj/apply/dispatch_apply.hpp>
-
-#ifdef XDIAG_USE_MPI
-#include <xdiag/basis/electron_distributed/apply/dispatch_apply.hpp>
-#include <xdiag/basis/spinhalf_distributed/apply/dispatch_apply.hpp>
-#include <xdiag/basis/tj_distributed/apply/dispatch_apply.hpp>
-#endif
 
 namespace xdiag {
 
@@ -197,13 +185,65 @@ template void apply(OpSum const &, Block const &, arma::mat const &,
 template void apply(OpSum const &, Block const &, arma::cx_mat const &,
                     Block const &, arma::cx_mat &);
 
+template <typename coeff_t>
+static inline void fill_apply(coeff_t const *vec_in, coeff_t *vec_out,
+                              int64_t idx_in, int64_t idx_out, coeff_t val) {
+  // Atomic update to avoid multiple threads writing to the same address
+#ifdef _OPENMP
+  if constexpr (isreal<coeff_t>()) {
+    coeff_t x = val * vec_in[idx_in];
+#pragma omp atomic update
+    vec_out[idx_out] += x;
+  } else {
+    complex x = val * vec_in[idx_in];
+    double *r = &reinterpret_cast<double (&)[2]>(vec_out[idx_out])[0];
+    double *i = &reinterpret_cast<double (&)[2]>(vec_out[idx_out])[1];
+#pragma omp atomic update
+    *r += x.real();
+#pragma omp atomic update
+    *i += x.imag();
+  }
+#else
+  vec_out[idx_out] += val * vec_in[idx_in];
+#endif
+}
+
+template <typename coeff_t>
+static inline void fill_apply(arma::Col<coeff_t> const &vec_in,
+                              arma::Col<coeff_t> &vec_out, int64_t idx_in,
+                              int64_t idx_out, coeff_t val) {
+  fill_apply(vec_in.memptr(), vec_out.memptr(), idx_in, idx_out, val);
+}
+
+template <typename coeff_t>
+static inline void fill_apply(arma::Mat<coeff_t> const &mat_in,
+                              arma::Mat<coeff_t> &mat_out, int64_t idx_in,
+                              int64_t idx_out, coeff_t val) {
+  // for each column call the usual fill_apply.
+  for (int i = 0; i < mat_in.n_cols; i++) {
+    fill_apply(mat_in.colptr(i), mat_out.colptr(i), idx_in, idx_out, val);
+  }
+}
+
 template <typename mat_t, typename block_t>
 void apply(OpSum const &ops, block_t const &block_in, mat_t const &mat_in,
            block_t const &block_out, mat_t &mat_out) try {
+  using coeff_t = typename mat_t::elem_type;
+
   check_valid(ops, block_in.nsites());
   mat_out.zeros();
   OpSum opsc = operators::compile<block_t>(ops);
-  basis::dispatch_apply(opsc, block_in, mat_in, block_out, mat_out);
+
+  // create fill method to apply the terms
+  auto fill = [&](int64_t idx_in, int64_t idx_out, coeff_t val) {
+    return fill_apply(mat_in, mat_out, idx_in, idx_out, val);
+  };
+
+#ifdef _OPENMP
+  omp_set_schedule(omp_sched_guided, 0);
+#endif
+  
+  algebra::apply_dispatch<coeff_t>(opsc, block_in, block_out, fill);
 } catch (Error const &error) {
   XDIAG_RETHROW(error);
 }
