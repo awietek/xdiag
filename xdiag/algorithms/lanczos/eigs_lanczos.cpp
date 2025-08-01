@@ -6,6 +6,8 @@
 
 #include <xdiag/algebra/algebra.hpp>
 #include <xdiag/algebra/apply.hpp>
+#include <xdiag/algebra/sparse/apply.hpp>
+#include <xdiag/algebra/sparse/logic.hpp>
 #include <xdiag/algorithms/lanczos/eigvals_lanczos.hpp>
 #include <xdiag/algorithms/lanczos/lanczos.hpp>
 #include <xdiag/algorithms/lanczos/lanczos_convergence.hpp>
@@ -21,30 +23,15 @@
 
 namespace xdiag {
 
-EigsLanczosResult eigs_lanczos(OpSum const &ops, State const &state0,
-                               int64_t neigvals, double precision,
-                               int64_t max_iterations,
-                               double deflation_tol) try {
-  if (neigvals < 1) {
-    XDIAG_THROW("Argument \"neigvals\" needs to be >= 1");
-  } else if (neigvals > dim(state0.block())) {
-    neigvals = dim(state0.block());
-  }
-  if (!isvalid(state0)) {
-    XDIAG_THROW("Initial state must be a valid state (i.e. not default "
-                "constructed by e.g. an annihilation operator)");
-  }
-  if (!isapprox(ops, hc(ops))) {
-    XDIAG_THROW("Input OpSum is not hermitian");
-  }
-  auto const &block = state0.block();
+template <typename op_t>
+static EigsLanczosResult eigs_lanczos(op_t const &ops, State const &state0,
+                                      int64_t neigvals, double precision,
+                                      int64_t max_iterations,
+                                      double deflation_tol) try {
 
-  bool real = isreal(ops) && isreal(block) && isreal(state0);
-
+  // store initial state, such that it can be used again in second run
   State state1 = state0;
-  if (!real) {
-    state1.make_complex();
-  }
+
   // Perform first run to compute eigenvalues
   auto r = eigvals_lanczos_inplace(ops, state1, neigvals, precision,
                                    max_iterations, deflation_tol);
@@ -64,17 +51,35 @@ EigsLanczosResult eigs_lanczos(OpSum const &ops, State const &state0,
     XDIAG_THROW("Error diagonalizing tridiagonal matrix");
   }
 
+  // now we prepare second run, no convergence is checked, just fixed number
+  // of iterations is performed
   auto converged = [](Tmatrix const &) -> bool { return false; };
-
-  State eigenvectors(block, real, neigvals);
+  auto const &block = state0.block();
+  State eigenvectors(block, isreal(ops), neigvals);
   state1 = state0;
-  if (!real) {
-    state1.make_complex();
-  }
-
   int64_t iter = 1;
-  // Setup complex Lanczos run
-  if (!real) {
+
+  if (isreal(ops) && isreal(block)) { // Real Lanczos
+    arma::vec v0 = state1.vector(0, false);
+    auto mult = [&iter, &ops, &block](arma::vec const &v, arma::vec &w) {
+      auto ta = rightnow();
+      apply(ops, block, v, block, w);
+      Log(1, "Lanczos iteration {}", iter);
+      timing(ta, rightnow(), "MVM", 1);
+      ++iter;
+    };
+    auto dotf = [&block](arma::vec const &v, arma::vec const &w) {
+      return dot(block, v, w);
+    };
+    auto operation = [&eigenvectors, &revecs, &iter,
+                      neigvals](arma::vec const &v) {
+      eigenvectors.matrix(false) +=
+          kron(v, revecs.submat(iter - 1, 0, iter - 1, neigvals - 1));
+    };
+    lanczos::lanczos(mult, dotf, converged, operation, v0, r.niterations,
+                     deflation_tol);
+
+  } else { // Complex Lanczos
     arma::cx_vec v0 = state1.vectorC(0, false);
     auto mult = [&iter, &ops, &block](arma::cx_vec const &v, arma::cx_vec &w) {
       auto ta = rightnow();
@@ -94,27 +99,6 @@ EigsLanczosResult eigs_lanczos(OpSum const &ops, State const &state0,
 
     lanczos::lanczos(mult, dotf, converged, operation, v0, r.niterations,
                      deflation_tol);
-
-    // Setup real Lanczos run
-  } else {
-    arma::vec v0 = state1.vector(0, false);
-    auto mult = [&iter, &ops, &block](arma::vec const &v, arma::vec &w) {
-      auto ta = rightnow();
-      apply(ops, block, v, block, w);
-      Log(1, "Lanczos iteration {}", iter);
-      timing(ta, rightnow(), "MVM", 1);
-      ++iter;
-    };
-    auto dotf = [&block](arma::vec const &v, arma::vec const &w) {
-      return dot(block, v, w);
-    };
-    auto operation = [&eigenvectors, &revecs, &iter,
-                      neigvals](arma::vec const &v) {
-      eigenvectors.matrix(false) +=
-          kron(v, revecs.submat(iter - 1, 0, iter - 1, neigvals - 1));
-    };
-    lanczos::lanczos(mult, dotf, converged, operation, v0, r.niterations,
-                     deflation_tol);
   }
 
   return {r.alphas,     r.betas,       r.eigenvalues,
@@ -123,31 +107,101 @@ EigsLanczosResult eigs_lanczos(OpSum const &ops, State const &state0,
   XDIAG_RETHROW(e);
 }
 
-// starting from random vector
-EigsLanczosResult eigs_lanczos(OpSum const &ops, Block const &block,
-                               int64_t neigvals, double precision,
-                               int64_t max_iterations, double deflation_tol,
-                               int64_t random_seed) try {
-  if (neigvals < 1) {
-    XDIAG_THROW("Argument \"neigvals\" needs to be >= 1");
-  } else if (neigvals > dim(block)) {
-    neigvals = dim(block);
-  }
-  // if (!ops.ishermitian()) {
-  //   XDIAG_THROW("Input OpSum is not hermitian");
-  // }
-
+template <typename op_t>
+static EigsLanczosResult
+eigs_lanczos(op_t const &ops, Block const &block, int64_t neigvals,
+             double precision, int64_t max_iterations, double deflation_tol,
+             int64_t random_seed) try {
   bool real = isreal(ops) && isreal(block);
   State state0(block, real);
   fill(state0, RandomState(random_seed));
-
-  auto r = eigs_lanczos(ops, state0, neigvals, precision, max_iterations,
-                        deflation_tol);
-
-  return {r.alphas,       r.betas,       r.eigenvalues,
-          r.eigenvectors, r.niterations, r.criterion};
+  return eigs_lanczos(ops, state0, neigvals, precision, max_iterations,
+                      deflation_tol);
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
+EigsLanczosResult eigs_lanczos(OpSum const &ops, Block const &block,
+                               int64_t neigvals, double precision,
+                               int64_t max_iterations, double deflation_tol,
+                               int64_t random_seed) try {
+  return eigs_lanczos<OpSum>(ops, block, neigvals, precision, max_iterations,
+                             deflation_tol, random_seed);
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+
+template <typename idx_t, typename coeff_t>
+EigsLanczosResult eigs_lanczos(CSRMatrix<idx_t, coeff_t> const &ops,
+                               Block const &block, int64_t neigvals,
+                               double precision, int64_t max_iterations,
+                               double deflation_tol, int64_t random_seed) try {
+  return eigs_lanczos<CSRMatrix<idx_t, coeff_t>>(ops, block, neigvals,
+                                                 precision, max_iterations,
+                                                 deflation_tol, random_seed);
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+
+template EigsLanczosResult
+eigs_lanczos(CSRMatrix<int32_t, double> const &ops, Block const &block,
+             int64_t neigvals, double precision, int64_t max_iterations,
+             double deflation_tol, int64_t random_seed);
+template EigsLanczosResult
+eigs_lanczos(CSRMatrix<int32_t, complex> const &ops, Block const &block,
+             int64_t neigvals, double precision, int64_t max_iterations,
+             double deflation_tol, int64_t random_seed);
+template EigsLanczosResult
+eigs_lanczos(CSRMatrix<int64_t, double> const &ops, Block const &block,
+             int64_t neigvals, double precision, int64_t max_iterations,
+             double deflation_tol, int64_t random_seed);
+template EigsLanczosResult
+eigs_lanczos(CSRMatrix<int64_t, complex> const &ops, Block const &block,
+             int64_t neigvals, double precision, int64_t max_iterations,
+             double deflation_tol, int64_t random_seed);
+
+///////////////////////////////////////////////////////////////
+// Routine with random state initialization
+
+EigsLanczosResult eigs_lanczos(OpSum const &ops, State const &state0,
+                               int64_t neigvals, double precision,
+                               int64_t max_iterations,
+                               double deflation_tol) try {
+  return eigs_lanczos<OpSum>(ops, state0, neigvals, precision, max_iterations,
+                             deflation_tol);
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+
+template <typename idx_t, typename coeff_t>
+EigsLanczosResult eigs_lanczos(CSRMatrix<idx_t, coeff_t> const &ops,
+                               State const &state0, int64_t neigvals,
+                               double precision, int64_t max_iterations,
+                               double deflation_tol) try {
+  return eigs_lanczos<CSRMatrix<idx_t, coeff_t>>(
+      ops, state0, neigvals, precision, max_iterations, deflation_tol);
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+
+template EigsLanczosResult eigs_lanczos(CSRMatrix<int32_t, double> const &ops,
+                                        State const &state0, int64_t neigvals,
+                                        double precision,
+                                        int64_t max_iterations,
+                                        double deflation_tol);
+template EigsLanczosResult eigs_lanczos(CSRMatrix<int32_t, complex> const &ops,
+                                        State const &state0, int64_t neigvals,
+                                        double precision,
+                                        int64_t max_iterations,
+                                        double deflation_tol);
+template EigsLanczosResult eigs_lanczos(CSRMatrix<int64_t, double> const &ops,
+                                        State const &state0, int64_t neigvals,
+                                        double precision,
+                                        int64_t max_iterations,
+                                        double deflation_tol);
+template EigsLanczosResult eigs_lanczos(CSRMatrix<int64_t, complex> const &ops,
+                                        State const &state0, int64_t neigvals,
+                                        double precision,
+                                        int64_t max_iterations,
+                                        double deflation_tol);
 } // namespace xdiag

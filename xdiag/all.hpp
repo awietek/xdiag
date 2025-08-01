@@ -11,6 +11,7 @@
 #include <xdiag/algebra/isapprox.hpp>
 #include <xdiag/algebra/matrix.hpp>
 #include <xdiag/algebra/sparse/apply.hpp>
+#include <xdiag/algebra/sparse/logic.hpp>
 #include <xdiag/algebra/sparse/coo_matrix.hpp>
 #include <xdiag/algebra/sparse/csc_matrix.hpp>
 #include <xdiag/algebra/sparse/csr_matrix.hpp>

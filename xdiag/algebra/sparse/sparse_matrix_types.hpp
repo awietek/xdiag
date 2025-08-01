@@ -13,7 +13,8 @@ template <typename idx_t, typename coeff_t> struct COOMatrix {
   std::vector<idx_t> row;    // row indices
   std::vector<idx_t> col;    // column indices
   std::vector<coeff_t> data; // data entries
-  idx_t i0;                // zero index, either 0 or 1
+  idx_t i0;                  // zero index, either 0 or 1
+  bool ishermitian;          // flag whether matrix is hermitian/symmetric
 };
 
 using coo_mat = COOMatrix<int64_t, double>;
@@ -27,6 +28,7 @@ template <typename idx_t, typename coeff_t> struct CSRMatrix {
   std::vector<idx_t> col;    // columns for each row consecutively
   std::vector<coeff_t> data; // data entries each row consecutively
   idx_t i0;                  // zero index, either 0 or 1
+  bool ishermitian;          // flag whether matrix is hermitian/symmetric
 };
 
 using csr_mat = CSRMatrix<int64_t, double>;
@@ -40,11 +42,10 @@ template <typename idx_t, typename coeff_t> struct CSCMatrix {
   std::vector<idx_t> row;    // columns for each row consecutively
   std::vector<coeff_t> data; // data entries each row consecutively
   idx_t i0;                  // zero index, either 0 or 1
+  bool ishermitian;          // flag whether matrix is hermitian/symmetric
 };
 
 using csc_mat = CSCMatrix<int64_t, double>;
 using csc_cx_mat = CSCMatrix<int64_t, complex>;
 
-
-  
 } // namespace xdiag

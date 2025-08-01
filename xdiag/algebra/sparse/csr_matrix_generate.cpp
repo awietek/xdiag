@@ -9,6 +9,7 @@
 
 #include <xdiag/operators/logic/block.hpp>
 #include <xdiag/operators/logic/compilation.hpp>
+#include <xdiag/operators/logic/hc.hpp>
 #include <xdiag/operators/logic/real.hpp>
 #include <xdiag/operators/logic/valid.hpp>
 #include <xdiag/utils/timing.hpp>
@@ -259,7 +260,8 @@ csr_matrix_generate(OpSum const &ops, block_t const &block_in,
                                    rowptr,
                                    col,
                                    data,
-                                   i0};
+                                   i0,
+                                   ishermitian(ops)};
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }

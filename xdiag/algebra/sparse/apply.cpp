@@ -168,8 +168,8 @@ XDIAG_API void apply(CSRMatrix<idx_t, coeff_t> const &A,
         y[vec * m] = 0.;
       }
       for (idx_t jj = A.rowptr[i]; jj < A.rowptr[i + 1]; jj++) {
-        coeff_t val = A.data[jj-1];
-        idx_t j = A.col[jj-1]-1;
+        coeff_t val = A.data[jj - 1];
+        idx_t j = A.col[jj - 1] - 1;
         for (idx_t vec = 0; vec < nvec; vec++) {
           y[vec * m] += val * x[vec][j];
         }

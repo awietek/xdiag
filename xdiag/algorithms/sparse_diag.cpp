@@ -10,8 +10,9 @@
 
 namespace xdiag {
 
-double eigval0(OpSum const &ops, Block const &block, double precision,
-               int64_t max_iterations, int64_t random_seed) try {
+template <typename op_t>
+static double eigval0(op_t const &ops, Block const &block, double precision,
+                      int64_t max_iterations, int64_t random_seed) try {
   if (dim(block) == 0) {
     Log.warn("Warning: block zero dimensional in eigval0");
     return std::nan("");
@@ -27,12 +28,37 @@ double eigval0(OpSum const &ops, Block const &block, double precision,
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
-  return std::nan("");
 }
 
-std::tuple<double, State> eig0(OpSum const &ops, Block const &block,
-                               double precision, int64_t max_iterations,
-                               int64_t random_seed) try {
+double eigval0(OpSum const &ops, Block const &block, double precision,
+               int64_t max_iterations, int64_t random_seed) try {
+  return eigval0<OpSum>(ops, block, precision, max_iterations, random_seed);
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+
+template <typename idx_t, typename coeff_t>
+double eigval0(CSRMatrix<idx_t, coeff_t> const &ops, Block const &block,
+               double precision, int64_t max_iterations,
+               int64_t random_seed) try {
+  return eigval0<CSRMatrix<idx_t, coeff_t>>(ops, block, precision,
+                                            max_iterations, random_seed);
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+template double eigval0(CSRMatrix<int32_t, double> const &, Block const &,
+                        double, int64_t, int64_t);
+template double eigval0(CSRMatrix<int32_t, complex> const &, Block const &,
+                        double, int64_t, int64_t);
+template double eigval0(CSRMatrix<int64_t, double> const &, Block const &,
+                        double, int64_t, int64_t);
+template double eigval0(CSRMatrix<int64_t, complex> const &, Block const &,
+                        double, int64_t, int64_t);
+
+template <typename op_t>
+static std::tuple<double, State> eig0(op_t const &ops, Block const &block,
+                                      double precision, int64_t max_iterations,
+                                      int64_t random_seed) try {
   if (dim(block) == 0) {
     Log.warn("Warning: block zero dimensional in eigval0");
     return {std::nan(""), State()};
@@ -48,7 +74,36 @@ std::tuple<double, State> eig0(OpSum const &ops, Block const &block,
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
-  return {std::nan(""), State()};
 }
 
+std::tuple<double, State> eig0(OpSum const &ops, Block const &block,
+                               double precision, int64_t max_iterations,
+                               int64_t random_seed) try {
+  return eig0<OpSum>(ops, block, precision, max_iterations, random_seed);
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+
+template <typename idx_t, typename coeff_t>
+std::tuple<double, State>
+eig0(CSRMatrix<idx_t, coeff_t> const &ops, Block const &block, double precision,
+     int64_t max_iterations, int64_t random_seed) try {
+  return eig0<CSRMatrix<idx_t, coeff_t>>(ops, block, precision, max_iterations,
+                                         random_seed);
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+}
+
+template std::tuple<double, State> eig0(CSRMatrix<int32_t, double> const &,
+                                        Block const &, double, int64_t,
+                                        int64_t);
+template std::tuple<double, State> eig0(CSRMatrix<int32_t, complex> const &,
+                                        Block const &, double, int64_t,
+                                        int64_t);
+template std::tuple<double, State> eig0(CSRMatrix<int64_t, double> const &,
+                                        Block const &, double, int64_t,
+                                        int64_t);
+template std::tuple<double, State> eig0(CSRMatrix<int64_t, complex> const &,
+                                        Block const &, double, int64_t,
+                                        int64_t);
 } // namespace xdiag

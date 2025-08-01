@@ -3,8 +3,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "matrix.hpp"
-#include <xdiag/utils/type_string.hpp>
 #include <xdiag/utils/arma_to_cx.hpp>
+#include <xdiag/utils/type_string.hpp>
 
 namespace xdiag {
 
@@ -32,7 +32,7 @@ template <> arma::mat Matrix::as<arma::mat>() const try {
 
 template <> arma::cx_mat Matrix::as<arma::cx_mat>() const {
   if (const arma::mat *m = std::get_if<arma::mat>(&mat_)) {
-    return to_cx_mat(*m);
+    return utils::to_cx_mat(*m);
   } else {
     return std::get<arma::cx_mat>(mat_);
   }
@@ -66,23 +66,24 @@ Matrix Matrix::hc() const {
 }
 
 bool Matrix::isapprox(Matrix const &y, double rtol, double atol) const {
-  return std::visit(
-      overload{
-          [&](arma::mat const &a, arma::mat const &b) {
-            return arma::approx_equal(a, b, "both", atol, rtol);
-          },
-          [&](arma::mat const &a, arma::cx_mat const &&b) {
-            return arma::approx_equal(to_cx_mat(a), b, "both", atol, rtol);
-          },
-          [&](arma::cx_mat const &a, arma::mat const &&b) {
-            return arma::approx_equal(a, to_cx_mat(b), "both", atol, rtol);
-          },
-          [&](arma::cx_mat const &a, arma::cx_mat const &b) {
-            return arma::approx_equal(a, b, "both", atol, rtol);
-          },
-          [&](auto &&a, auto &&b) { return false; },
-      },
-      mat_, y.mat_);
+  return std::visit(overload{
+                        [&](arma::mat const &a, arma::mat const &b) {
+                          return arma::approx_equal(a, b, "both", atol, rtol);
+                        },
+                        [&](arma::mat const &a, arma::cx_mat const &&b) {
+                          return arma::approx_equal(utils::to_cx_mat(a), b,
+                                                    "both", atol, rtol);
+                        },
+                        [&](arma::cx_mat const &a, arma::mat const &&b) {
+                          return arma::approx_equal(a, utils::to_cx_mat(b),
+                                                    "both", atol, rtol);
+                        },
+                        [&](arma::cx_mat const &a, arma::cx_mat const &b) {
+                          return arma::approx_equal(a, b, "both", atol, rtol);
+                        },
+                        [&](auto &&a, auto &&b) { return false; },
+                    },
+                    mat_, y.mat_);
 }
 
 bool Matrix::operator==(Matrix const &rhs) const {
@@ -92,10 +93,10 @@ bool Matrix::operator!=(Matrix const &rhs) const { return !operator==(rhs); }
 
 Matrix &Matrix::operator+=(Matrix const &rhs) {
   std::visit(overload{[&](arma::mat &a, arma::cx_mat b) {
-                        mat_ = arma::cx_mat(to_cx_mat(a) + b);
+                        mat_ = arma::cx_mat(utils::to_cx_mat(a) + b);
                       },
                       [&](arma::cx_mat &a, arma::mat b) {
-                        mat_ = arma::cx_mat(a + to_cx_mat(b));
+                        mat_ = arma::cx_mat(a + utils::to_cx_mat(b));
                       },
                       [](auto &&a, auto &&b) { a += b; }},
              mat_, rhs.mat_);
@@ -103,10 +104,10 @@ Matrix &Matrix::operator+=(Matrix const &rhs) {
 }
 Matrix &Matrix::operator-=(Matrix const &rhs) {
   std::visit(overload{[&](arma::mat &a, arma::cx_mat b) {
-                        mat_ = arma::cx_mat(to_cx_mat(a) - b);
+                        mat_ = arma::cx_mat(utils::to_cx_mat(a) - b);
                       },
                       [&](arma::cx_mat &a, arma::mat b) {
-                        mat_ = arma::cx_mat(a - to_cx_mat(b));
+                        mat_ = arma::cx_mat(a - utils::to_cx_mat(b));
                       },
                       [](auto &&a, auto &&b) { a -= b; }},
              mat_, rhs.mat_);

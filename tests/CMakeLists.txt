@@ -67,7 +67,9 @@ set(XDIAG_TEST_SOURCES
   blocks/electron/test_electron_symmetric_apply.cpp
 
   algorithms/lanczos/test_eigvals_lanczos.cpp
+  algorithms/lanczos/test_eigvals_lanczos_csr_matrix.cpp
   algorithms/lanczos/test_eigs_lanczos.cpp
+  algorithms/lanczos/test_eigs_lanczos_csr_matrix.cpp
   
   algorithms/lanczos/test_lanczos_pro.cpp
   algorithms/arnoldi/test_arnoldi.cpp
@@ -80,7 +82,6 @@ set(XDIAG_TEST_SOURCES
   states/test_random_state.cpp
   states/test_product_state.cpp
   states/test_state.cpp
-
 )
 
 set(XDIAG_TESTCASES_SOURCES

@@ -8,6 +8,7 @@
 #include <xdiag/algebra/apply_dispatch.hpp>
 #include <xdiag/operators/logic/block.hpp>
 #include <xdiag/operators/logic/compilation.hpp>
+#include <xdiag/operators/logic/hc.hpp>
 #include <xdiag/operators/logic/real.hpp>
 #include <xdiag/operators/logic/valid.hpp>
 
@@ -149,7 +150,8 @@ coo_matrix_generate(OpSum const &ops, block_t const &block_in,
     }
   }
 
-  return COOMatrix<idx_t, coeff_t>{nrows, ncols, row, col, data, i0};
+  return COOMatrix<idx_t, coeff_t>{nrows, ncols,           row, col, data,
+                                   i0,    ishermitian(ops)};
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }

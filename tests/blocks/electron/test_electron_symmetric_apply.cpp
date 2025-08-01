@@ -9,11 +9,11 @@
 #include "../electron/testcases_electron.hpp"
 #include <xdiag/algebra/algebra.hpp>
 #include <xdiag/algebra/apply.hpp>
+#include <xdiag/algebra/isapprox.hpp>
 #include <xdiag/algebra/matrix.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
 #include <xdiag/io/read.hpp>
 #include <xdiag/operators/logic/real.hpp>
-#include <xdiag/algebra/isapprox.hpp>
 
 using namespace xdiag;
 
@@ -106,7 +106,7 @@ void test_hubbard_symmetric_apply_chains(int64_t nsites) {
   test_electron_symmetric_apply(ops_hb, nsites, irreps);
 }
 
-TEST_CASE("electron_symmetric_apply", "[electron]") {
+TEST_CASE("electron_symmetric_apply", "[electron]") try {
 
   // Test linear chains
   for (int64_t nsites = 2; nsites < 7; ++nsites) {
@@ -172,4 +172,6 @@ TEST_CASE("electron_symmetric_apply", "[electron]") {
     }
     test_electron_symmetric_apply(ops, 9, irreps);
   }
+} catch (xdiag::Error e) {
+  xdiag::error_trace(e);
 }

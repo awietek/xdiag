@@ -9,11 +9,11 @@
 #include "../electron/testcases_electron.hpp"
 #include "../tj/testcases_tj.hpp"
 #include <xdiag/algebra/apply.hpp>
+#include <xdiag/algebra/isapprox.hpp>
 #include <xdiag/algebra/matrix.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
 #include <xdiag/io/read.hpp>
 #include <xdiag/operators/logic/real.hpp>
-#include <xdiag/algebra/isapprox.hpp>
 
 using namespace xdiag;
 
@@ -77,15 +77,14 @@ void test_tj_symmetric_apply_chains(int64_t nsites) {
   using namespace xdiag::testcases::tj;
   using namespace xdiag::testcases::electron;
 
-  Log("tj_symmetric_apply: tJ chain, symmetric apply test, nsites: {}",
-      nsites);
+  Log("tj_symmetric_apply: tJ chain, symmetric apply test, nsites: {}", nsites);
   auto ops = tJchain(nsites, 1.0, 5.0);
   auto [irreps, multiplicities] = get_cyclic_group_irreps_mult(nsites);
   (void)multiplicities;
   test_apply_tj_symmetric(ops, nsites, irreps);
 }
 
-TEST_CASE("tj_symmetric_apply", "[tj]") {
+TEST_CASE("tj_symmetric_apply", "[tj]") try {
   using namespace xdiag::testcases::tj;
   using namespace xdiag::testcases::electron;
 
@@ -149,4 +148,6 @@ TEST_CASE("tj_symmetric_apply", "[tj]") {
       test_apply_tj_symmetric(ops, 9, irreps);
     }
   }
+} catch (xdiag::Error e) {
+  xdiag::error_trace(e);
 }

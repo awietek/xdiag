@@ -55,12 +55,6 @@ template <typename T> inline std::string to_string_generic(T const &x) {
   return ss.str();
 }
 
-template <typename R, typename... Types>
-constexpr std::integral_constant<unsigned, sizeof...(Types)>
-get_argument_count(R (*f)(Types...)) {
-  return std::integral_constant<unsigned, sizeof...(Types)>{};
-}
-
 } // namespace xdiag
 
 namespace fmt {
