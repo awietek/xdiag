@@ -72,12 +72,19 @@ You should replace `"/path/to/xdiag/install"` with the appropriate directory whe
 
 !!! info
 
-    For using the distributed XDiag library the last line of the above
-    `CMakeLists.txt` should be changed to
+    For using the distributed XDiag library the above `CMakeLists.txt` should be changed to.
 
     ```cmake
-    target_link_libraries(main PUBLIC xdiag::xdiag_distributed)
+    cmake_minimum_required(VERSION 3.19)
+
+	project(xdiag_application)
+
+	find_package(xdiag_distributed REQUIRED HINTS "/path/to/xdiag/install")
+	add_executable(main main.cpp)
+	target_link_libraries(main PRIVATE xdiag::xdiag_distributed)
     ```
+	
+	Notice that we only need to replace `xdiag` by `xdiag_distributed` in two places.
 
 We then compile the application code,
 
