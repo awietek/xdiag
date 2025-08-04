@@ -47,11 +47,10 @@ template void apply_dispatch(OpSum const &, ElectronDistributed const &,
                              ElectronDistributed const &block, arma::cx_vec &);
 
 template <typename coeff_t>
-inline void apply_dispatch(OpSum const &ops,
-                           ElectronDistributed const &block_in,
-                           arma::Mat<coeff_t> const &vec_in,
-                           ElectronDistributed const &block_out,
-                           arma::Mat<coeff_t> &vec_out) try {
+void apply_dispatch(OpSum const &ops, ElectronDistributed const &block_in,
+                    arma::Mat<coeff_t> const &vec_in,
+                    ElectronDistributed const &block_out,
+                    arma::Mat<coeff_t> &vec_out) try {
   XDIAG_THROW("Apply for an OpSum on a State with a matrix not implemented yet "
               "for ElectronDistributed blocks");
 } catch (Error const &error) {
@@ -121,7 +120,6 @@ void apply_dispatch(OpSum const &ops, tJDistributed const &block_in,
                     tJDistributed const &block_out,
                     arma::Col<coeff_t> &vec_out) try {
   using namespace basis::tj_distributed;
-
   auto const &basis_in = block_in.basis();
   auto const &basis_out = block_out.basis();
 

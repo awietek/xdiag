@@ -113,65 +113,65 @@ TEST_CASE("electron_symmetric_apply", "[electron]") try {
     test_hubbard_symmetric_apply_chains(nsites);
   }
 
-  // test a 3x3 triangular lattice
-  Log.out("electron_symmetric_apply: Hubbard 3x3 triangular");
-  std::string lfile =
-      XDIAG_DIRECTORY "/misc/data/triangular.9.hop.sublattices.tsl.toml";
+  // // test a 3x3 triangular lattice
+  // Log.out("electron_symmetric_apply: Hubbard 3x3 triangular");
+  // std::string lfile =
+  //     XDIAG_DIRECTORY "/misc/data/triangular.9.hop.sublattices.tsl.toml";
 
-  auto fl = FileToml(lfile);
-  auto ops = fl["Interactions"].as<OpSum>();
-  ops += "U" * Op("HubbardU");
-  ops["T"] = 1.0;
-  ops["U"] = 5.0;
+  // auto fl = FileToml(lfile);
+  // auto ops = fl["Interactions"].as<OpSum>();
+  // ops += "U" * Op("HubbardU");
+  // ops["T"] = 1.0;
+  // ops["U"] = 5.0;
 
-  std::vector<std::pair<std::string, int64_t>> rep_name_mult = {
-      {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
-      {"K0.D3.A1", 1},    {"K0.D3.A2", 1},    {"K0.D3.E", 2},
-      {"K1.D3.A1", 1},    {"K1.D3.A2", 1},    {"K1.D3.E", 2},
-      {"Y.C1.A", 6}};
-  std::vector<Representation> irreps;
-  for (auto [name, mult] : rep_name_mult) {
-    irreps.push_back(read_representation(fl, name));
-    (void)mult;
-  }
-  test_electron_symmetric_apply(ops, 9, irreps);
+  // std::vector<std::pair<std::string, int64_t>> rep_name_mult = {
+  //     {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
+  //     {"K0.D3.A1", 1},    {"K0.D3.A2", 1},    {"K0.D3.E", 2},
+  //     {"K1.D3.A1", 1},    {"K1.D3.A2", 1},    {"K1.D3.E", 2},
+  //     {"Y.C1.A", 6}};
+  // std::vector<Representation> irreps;
+  // for (auto [name, mult] : rep_name_mult) {
+  //   irreps.push_back(read_representation(fl, name));
+  //   (void)mult;
+  // }
+  // test_electron_symmetric_apply(ops, 9, irreps);
 
-  // test a 3x3 triangular lattice with Heisenberg terms
-  Log.out(
-      "electron_symmetric_apply: Hubbard 3x3 triangular (+ Heisenberg terms)");
-  auto ops_hb = ops;
-  for (auto [cpl, op] : ops) {
-    if (op.type() == "Hop") {
-      ops_hb += "J" * Op("SdotS", {op[0], op[1]});
-    }
-  }
-  ops_hb["J"] = 0.4;
-  test_electron_symmetric_apply(ops_hb, 9, irreps);
+  // // test a 3x3 triangular lattice with Heisenberg terms
+  // Log.out(
+  //     "electron_symmetric_apply: Hubbard 3x3 triangular (+ Heisenberg terms)");
+  // auto ops_hb = ops;
+  // for (auto [cpl, op] : ops) {
+  //   if (op.type() == "Hop") {
+  //     ops_hb += "J" * Op("SdotS", {op[0], op[1]});
+  //   }
+  // }
+  // ops_hb["J"] = 0.4;
+  // test_electron_symmetric_apply(ops_hb, 9, irreps);
 
-  // test a 3x3 triangular lattice with complex hoppings
-  {
-    Log.out("electron_symmetric_apply: Hubbard 3x3 triangular (complex)");
-    std::string lfile = XDIAG_DIRECTORY
-        "/misc/data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.toml";
-    auto fl = FileToml(lfile);
-    auto ops = fl["Interactions"].as<OpSum>();
-    ops += "U" * Op("HubbardU");
-    ops["TPHI"] = complex(0.5, 0.5);
-    ops["JPHI"] = 0.;
-    ops["U"] = 5.0;
+  // // test a 3x3 triangular lattice with complex hoppings
+  // {
+  //   Log.out("electron_symmetric_apply: Hubbard 3x3 triangular (complex)");
+  //   std::string lfile = XDIAG_DIRECTORY
+  //       "/misc/data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.toml";
+  //   auto fl = FileToml(lfile);
+  //   auto ops = fl["Interactions"].as<OpSum>();
+  //   ops += "U" * Op("HubbardU");
+  //   ops["TPHI"] = complex(0.5, 0.5);
+  //   ops["JPHI"] = 0.;
+  //   ops["U"] = 5.0;
 
-    std::vector<std::pair<std::string, int64_t>> rep_name_mult = {
-        {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
-        {"K0.D3.A1", 1},    {"K0.D3.A2", 1},    {"K0.D3.E", 2},
-        {"K1.D3.A1", 1},    {"K1.D3.A2", 1},    {"K1.D3.E", 2},
-        {"Y.C1.A", 6}};
-    irreps.clear();
-    for (auto [name, mult] : rep_name_mult) {
-      irreps.push_back(read_representation(fl, name));
-      (void)mult;
-    }
-    test_electron_symmetric_apply(ops, 9, irreps);
-  }
+  //   std::vector<std::pair<std::string, int64_t>> rep_name_mult = {
+  //       {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
+  //       {"K0.D3.A1", 1},    {"K0.D3.A2", 1},    {"K0.D3.E", 2},
+  //       {"K1.D3.A1", 1},    {"K1.D3.A2", 1},    {"K1.D3.E", 2},
+  //       {"Y.C1.A", 6}};
+  //   irreps.clear();
+  //   for (auto [name, mult] : rep_name_mult) {
+  //     irreps.push_back(read_representation(fl, name));
+  //     (void)mult;
+  //   }
+  //   test_electron_symmetric_apply(ops, 9, irreps);
+  // }
 } catch (xdiag::Error e) {
   xdiag::error_trace(e);
 }

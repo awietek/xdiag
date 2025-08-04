@@ -234,16 +234,19 @@ void apply(OpSum const &ops, block_t const &block_in, mat_t const &mat_in,
   mat_out.zeros();
   OpSum opsc = operators::compile<block_t>(ops);
 
-  // create fill method to apply the terms
-  auto fill = [&](int64_t idx_in, int64_t idx_out, coeff_t val) {
-    return fill_apply(mat_in, mat_out, idx_in, idx_out, val);
-  };
-
+  if constexpr (isdistributed<block_t>()) {
+    algebra::apply_dispatch<coeff_t>(opsc, block_in, mat_in, block_out,
+                                     mat_out);
+  } else {
+    // create fill method to apply the terms
+    auto fill = [&](int64_t idx_in, int64_t idx_out, coeff_t val) {
+      return fill_apply(mat_in, mat_out, idx_in, idx_out, val);
+    };
 #ifdef _OPENMP
-  omp_set_schedule(omp_sched_guided, 0);
+    omp_set_schedule(omp_sched_guided, 0);
 #endif
-  
-  algebra::apply_dispatch<coeff_t>(opsc, block_in, block_out, fill);
+    algebra::apply_dispatch<coeff_t>(opsc, block_in, block_out, fill);
+  }
 } catch (Error const &error) {
   XDIAG_RETHROW(error);
 }

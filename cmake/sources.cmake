@@ -17,6 +17,7 @@ set(XDIAG_SOURCES
   algebra/algebra.cpp
   algebra/matrix.cpp
   algebra/apply.cpp
+  algebra/apply_dispatch.cpp
   algebra/isapprox.cpp
   
   algebra/sparse/apply.cpp
@@ -150,16 +151,13 @@ set(XDIAG_DISTRIBUTED_SOURCES
   basis/spinhalf_distributed/basis_spinhalf_distributed.cpp
   basis/spinhalf_distributed/basis_sz.cpp
   basis/spinhalf_distributed/transpose.cpp
-  basis/spinhalf_distributed/apply/dispatch_apply.cpp
   basis/spinhalf_distributed/apply/apply_terms.cpp
   
   basis/tj_distributed/basis_tj_distributed.cpp
   basis/tj_distributed/basis_np.cpp
-  basis/tj_distributed/apply/dispatch_apply.cpp
 
   basis/electron_distributed/basis_electron_distributed.cpp
   basis/electron_distributed/basis_np.cpp
-  basis/electron_distributed/apply/dispatch_apply.cpp
   
   blocks/spinhalf_distributed.cpp
   blocks/tj_distributed.cpp

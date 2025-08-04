@@ -29,18 +29,17 @@ int64_t size(Block const &block);
 int64_t nsites(Block const &block);
 bool isreal(Block const &block);
 
+template <typename block_t> constexpr bool isdistributed() {
+  return !((std::is_same<block_t, Spinhalf>::value) ||
+           (std::is_same<block_t, tJ>::value) ||
+           (std::is_same<block_t, Electron>::value));
+}
+
 constexpr bool isdistributed(Block const &block) {
   return std::visit(
-      overload{
-          [&](Spinhalf const &) -> bool { return false; },
-          [&](tJ const &) -> bool { return false; },
-          [&](Electron const &) -> bool { return false; },
-#ifdef XDIAG_USE_MPI
-          [&](SpinhalfDistributed const &) -> bool { return true; },
-          [&](tJDistributed const &) -> bool { return true; },
-          [&](ElectronDistributed const &) -> bool { return true; },
-#endif
-          [&](auto &&) -> bool { return false; },
+      [&](auto &&block) -> bool {
+        using block_t = typename std::decay<decltype(block)>::type;
+        return isdistributed<block_t>();
       },
       block);
 }
