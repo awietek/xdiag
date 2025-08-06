@@ -40,7 +40,7 @@ csr_matrix_generate(OpSum const &ops, block_t const &block_in,
   arma::Col<idx_t> col;
   arma::Col<coeff_t> data;
   try {
-    rowptr.resize(transpose ? ncols + 1 : nrows + 1);
+    rowptr.resize(n_elements_in_row.size() + 1);
     col.resize(nnz);
     data.resize(nnz);
     rowptr.zeros();

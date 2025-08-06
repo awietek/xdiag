@@ -6,11 +6,11 @@
 
 #include <julia/src/utils/armadillo.hpp>
 
+#include <julia/src/operators/block.hpp>
 #include <julia/src/operators/hc.hpp>
 #include <julia/src/operators/op.hpp>
 #include <julia/src/operators/opsum.hpp>
 #include <julia/src/operators/symmetrize.hpp>
-#include <julia/src/operators/block.hpp>
 
 #include <julia/src/blocks/electron.hpp>
 #include <julia/src/blocks/spinhalf.hpp>
@@ -36,6 +36,8 @@
 #include <julia/src/algebra/apply.hpp>
 #include <julia/src/algebra/matrix.hpp>
 #include <julia/src/algebra/sparse/coo_matrix.hpp>
+#include <julia/src/algebra/sparse/csr_matrix.hpp>
+#include <julia/src/algebra/sparse/csc_matrix.hpp>
 
 #include <julia/src/algorithms/lanczos/eigs_lanczos.hpp>
 #include <julia/src/algorithms/lanczos/eigvals_lanczos.hpp>
@@ -56,7 +58,7 @@ JLCXX_MODULE define_julia_module(jlcxx::Module &mod) {
   // Armadillo
   julia::define_vectors(mod);
   julia::define_matrices(mod);
-  
+
   // Operators
   julia::define_op(mod);
   julia::define_opsum(mod);
@@ -76,7 +78,7 @@ JLCXX_MODULE define_julia_module(jlcxx::Module &mod) {
   julia::define_tj(mod);
   julia::define_electron(mod);
   julia::define_block(mod);
-  
+
   // States
   julia::define_state(mod);
   julia::define_random_state(mod);
@@ -89,6 +91,8 @@ JLCXX_MODULE define_julia_module(jlcxx::Module &mod) {
   julia::define_apply(mod);
   julia::define_algebra(mod);
   julia::define_coo_matrix(mod);
+  julia::define_csr_matrix(mod);
+  julia::define_csc_matrix(mod);
 
   // Algorithms
   julia::define_eig0(mod);

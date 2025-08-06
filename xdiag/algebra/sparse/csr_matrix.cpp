@@ -135,7 +135,9 @@ arma::Mat<coeff_t> to_dense(CSRMatrix<idx_t, coeff_t> const &csr_mat) try {
   }
 
   if (csr_mat.rowptr.size() != csr_mat.nrows + 1) {
-    XDIAG_THROW("Number of rowptr entries does not match number of rows (+1)");
+    XDIAG_THROW(fmt::format(
+        "Number of rowptr entries ({}) does not match number of rows (+1) ({})",
+        csr_mat.rowptr.size(), csr_mat.nrows + 1));
   }
   if (csr_mat.col.size() != nnz) {
     XDIAG_THROW(
