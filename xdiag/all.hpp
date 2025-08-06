@@ -61,6 +61,7 @@
 
 #undef XDIAG_THROW
 #undef XDIAG_RETHROW
+#undef XDIAG_CATCH
 #undef XDIAG_API
 #undef XDIAG_OFFSET
 #undef XDIAG_FILL

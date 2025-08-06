@@ -4,96 +4,19 @@
 
 #include "coo_matrix.hpp"
 
-#include <limits>
-#include <xdiag/algebra/apply_dispatch.hpp>
 #include <xdiag/algebra/sparse/coo_matrix_generate.hpp>
 #include <xdiag/operators/logic/block.hpp>
-#include <xdiag/operators/logic/compilation.hpp>
-#include <xdiag/operators/logic/real.hpp>
-#include <xdiag/operators/logic/valid.hpp>
-
-#include <xdiag/utils/timing.hpp>
-
-#ifdef _OPENMP
-#include <omp.h>
-#endif
 
 namespace xdiag {
 
-coo_mat coo_matrix(Op const &op, Block const &block, int64_t i0) try {
-  return coo_matrix(OpSum(op), block, i0);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
-coo_mat coo_matrix(OpSum const &ops, Block const &blocki, int64_t i0) try {
-  auto blocko = block(ops, blocki);
-  return coo_matrix(ops, blocki, blocko, i0);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
-coo_cx_mat coo_matrixC(Op const &op, Block const &block, int64_t i0) try {
-  return coo_matrixC(OpSum(op), block, i0);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
-coo_cx_mat coo_matrixC(OpSum const &ops, Block const &blocki, int64_t i0) try {
-  auto blocko = block(ops, blocki);
-  return coo_matrixC(ops, blocki, blocko, i0);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
-
-coo_mat coo_matrix(Op const &op, Block const &block_in, Block const &block_out,
-                   int64_t i0) try {
-  return coo_matrix(OpSum(op), block_in, block_out, i0);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
-coo_mat coo_matrix(OpSum const &ops, Block const &block_in,
-                   Block const &block_out, int64_t i0) try {
-  return coo_matrix<int64_t, double>(ops, block_in, block_out, i0);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
-coo_cx_mat coo_matrixC(Op const &op, Block const &block_in,
-                       Block const &block_out, int64_t i0) try {
-  return coo_matrix<int64_t, complex>(OpSum(op), block_in, block_out, i0);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
-coo_cx_mat coo_matrixC(OpSum const &ops, Block const &block_in,
-                       Block const &block_out, int64_t i0) try {
-  return coo_matrix<int64_t, complex>(ops, block_in, block_out, i0);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
-
-//
 template <typename idx_t, typename coeff_t>
-XDIAG_API COOMatrix<idx_t, coeff_t> coo_matrix(Op const &op, Block const &block,
-                                               idx_t i0) try {
-  return coo_matrix<idx_t, coeff_t>(OpSum(op), block, i0);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
-template COOMatrix<int32_t, double>
-coo_matrix<int32_t, double>(Op const &, Block const &, int32_t);
-template COOMatrix<int32_t, complex>
-coo_matrix<int32_t, complex>(Op const &, Block const &, int32_t);
-template COOMatrix<int64_t, double>
-coo_matrix<int64_t, double>(Op const &, Block const &, int64_t);
-template COOMatrix<int64_t, complex>
-coo_matrix<int64_t, complex>(Op const &, Block const &, int64_t);
-
-//
-template <typename idx_t, typename coeff_t>
-XDIAG_API COOMatrix<idx_t, coeff_t>
-coo_matrix(OpSum const &ops, Block const &blocki, idx_t i0) try {
+COOMatrix<idx_t, coeff_t> coo_matrix(OpSum const &ops, Block const &blocki,
+                                     idx_t i0) try {
   auto blocko = block(ops, blocki);
   return coo_matrix<idx_t, coeff_t>(ops, blocki, blocko, i0);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 template COOMatrix<int32_t, double>
 coo_matrix<int32_t, double>(OpSum const &, Block const &, int32_t);
 template COOMatrix<int32_t, complex>
@@ -102,22 +25,6 @@ template COOMatrix<int64_t, double>
 coo_matrix<int64_t, double>(OpSum const &, Block const &, int64_t);
 template COOMatrix<int64_t, complex>
 coo_matrix<int64_t, complex>(OpSum const &, Block const &, int64_t);
-
-//
-template <typename idx_t, typename coeff_t>
-XDIAG_API COOMatrix<idx_t, coeff_t>
-coo_matrix(Op const &op, Block const &block_in, Block const &block_out,
-           idx_t i0) {
-  return coo_matrix<idx_t, coeff_t>(OpSum(op), block_in, block_out, i0);
-}
-template COOMatrix<int32_t, double>
-coo_matrix<int32_t, double>(Op const &, Block const &, Block const &, int32_t);
-template COOMatrix<int32_t, complex>
-coo_matrix<int32_t, complex>(Op const &, Block const &, Block const &, int32_t);
-template COOMatrix<int64_t, double>
-coo_matrix<int64_t, double>(Op const &, Block const &, Block const &, int64_t);
-template COOMatrix<int64_t, complex>
-coo_matrix<int64_t, complex>(Op const &, Block const &, Block const &, int64_t);
 
 template <typename idx_t, typename coeff_t>
 COOMatrix<idx_t, coeff_t> coo_matrix(OpSum const &op, Block const &block_in,
@@ -156,9 +63,8 @@ COOMatrix<idx_t, coeff_t> coo_matrix(OpSum const &op, Block const &block_in,
                  return COOMatrix<idx_t, coeff_t>();
                }},
       block_in, block_out);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template COOMatrix<int32_t, double> coo_matrix<int32_t, double>(OpSum const &,
                                                                 Block const &,
@@ -177,8 +83,53 @@ template COOMatrix<int64_t, complex> coo_matrix<int64_t, complex>(OpSum const &,
                                                                   Block const &,
                                                                   int64_t);
 
+COOMatrix<int64_t, complex> coo_matrixC(OpSum const &ops, Block const &block,
+                                        int64_t i0) try {
+  return coo_matrix<int64_t, complex>(ops, block, i0);
+}
+XDIAG_CATCH
+
+COOMatrix<int64_t, complex> coo_matrixC(OpSum const &ops, Block const &block_in,
+                                        Block const &block_out,
+                                        int64_t i0) try {
+  return coo_matrix<int64_t, complex>(ops, block_in, block_out, i0);
+}
+XDIAG_CATCH
+
+COOMatrix<int32_t, double> coo_matrix_32(OpSum const &ops, Block const &block,
+                                         int32_t i0) try {
+  return coo_matrix<int32_t, double>(ops, block, i0);
+}
+XDIAG_CATCH
+
+COOMatrix<int32_t, double> coo_matrix_32(OpSum const &ops,
+                                         Block const &block_in,
+                                         Block const &block_out,
+                                         int32_t i0) try {
+  return coo_matrix<int32_t, double>(ops, block_in, block_out, i0);
+}
+XDIAG_CATCH
+
+COOMatrix<int32_t, complex> coo_matrixC_32(OpSum const &ops, Block const &block,
+                                           int32_t i0) try {
+  return coo_matrix<int32_t, complex>(ops, block, i0);
+}
+XDIAG_CATCH
+
+COOMatrix<int32_t, complex> coo_matrixC_32(OpSum const &ops,
+                                           Block const &block_in,
+                                           Block const &block_out,
+                                           int32_t i0) try {
+  return coo_matrix<int32_t, complex>(ops, block_in, block_out, i0);
+}
+XDIAG_CATCH
+
 template <typename idx_t, typename coeff_t>
 arma::Mat<coeff_t> to_dense(COOMatrix<idx_t, coeff_t> const &coo_mat) try {
+  if ((coo_mat.nrows == 0) || (coo_mat.ncols == 0)) {
+    return arma::Mat<coeff_t>();
+  }
+  
   int64_t nnz = coo_mat.data.size();
   if (coo_mat.row.size() != nnz) {
     XDIAG_THROW("Number of row entries does not match number of data entries");
@@ -210,9 +161,8 @@ arma::Mat<coeff_t> to_dense(COOMatrix<idx_t, coeff_t> const &coo_mat) try {
         coo_mat.i0));
   }
   return m;
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template arma::mat to_dense(COOMatrix<int32_t, double> const &);
 template arma::mat to_dense(COOMatrix<int64_t, double> const &);

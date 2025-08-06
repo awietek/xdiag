@@ -7,84 +7,16 @@
 #include <xdiag/algebra/sparse/csr_matrix_generate.hpp>
 #include <xdiag/operators/logic/block.hpp>
 
-#ifdef _OPENMP
-#include <omp.h>
-#endif
-
 namespace xdiag {
-
-csc_mat csc_matrix(Op const &op, Block const &block, int64_t i0) try {
-  return csc_matrix(OpSum(op), block, i0);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
-csc_mat csc_matrix(OpSum const &ops, Block const &blocki, int64_t i0) try {
-  auto blocko = block(ops, blocki);
-  return csc_matrix(ops, blocki, blocko, i0);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
-csc_cx_mat csc_matrixC(Op const &op, Block const &block, int64_t i0) try {
-  return csc_matrixC(OpSum(op), block, i0);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
-csc_cx_mat csc_matrixC(OpSum const &ops, Block const &blocki, int64_t i0) try {
-  auto blocko = block(ops, blocki);
-  return csc_matrixC(ops, blocki, blocko, i0);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
-
-csc_mat csc_matrix(Op const &op, Block const &block_in, Block const &block_out,
-                   int64_t i0) try {
-  return csc_matrix(OpSum(op), block_in, block_out, i0);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
-csc_mat csc_matrix(OpSum const &ops, Block const &block_in,
-                   Block const &block_out, int64_t i0) try {
-  return csc_matrix<int64_t, double>(ops, block_in, block_out, i0);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
-csc_cx_mat csc_matrixC(Op const &op, Block const &block_in,
-                       Block const &block_out, int64_t i0) try {
-  return csc_matrix<int64_t, complex>(OpSum(op), block_in, block_out, i0);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
-csc_cx_mat csc_matrixC(OpSum const &ops, Block const &block_in,
-                       Block const &block_out, int64_t i0) try {
-  return csc_matrix<int64_t, complex>(ops, block_in, block_out, i0);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
-
-template <typename idx_t, typename coeff_t>
-XDIAG_API CSCMatrix<idx_t, coeff_t> csc_matrix(Op const &op, Block const &block,
-                                               idx_t i0) try {
-  return csc_matrix<idx_t, coeff_t>(OpSum(op), block, i0);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
-template CSCMatrix<int32_t, double>
-csc_matrix<int32_t, double>(Op const &, Block const &, int32_t);
-template CSCMatrix<int32_t, complex>
-csc_matrix<int32_t, complex>(Op const &, Block const &, int32_t);
-template CSCMatrix<int64_t, double>
-csc_matrix<int64_t, double>(Op const &, Block const &, int64_t);
-template CSCMatrix<int64_t, complex>
-csc_matrix<int64_t, complex>(Op const &, Block const &, int64_t);
 
 template <typename idx_t, typename coeff_t>
 CSCMatrix<idx_t, coeff_t> csc_matrix(OpSum const &ops, Block const &blocki,
                                      idx_t i0) try {
   auto blocko = block(ops, blocki);
   return csc_matrix<idx_t, coeff_t>(ops, blocki, blocko, i0);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 template CSCMatrix<int32_t, double>
 csc_matrix<int32_t, double>(OpSum const &, Block const &, int32_t);
 template CSCMatrix<int32_t, complex>
@@ -93,21 +25,6 @@ template CSCMatrix<int64_t, double>
 csc_matrix<int64_t, double>(OpSum const &, Block const &, int64_t);
 template CSCMatrix<int64_t, complex>
 csc_matrix<int64_t, complex>(OpSum const &, Block const &, int64_t);
-
-template <typename idx_t, typename coeff_t>
-XDIAG_API CSCMatrix<idx_t, coeff_t>
-csc_matrix(Op const &op, Block const &block_in, Block const &block_out,
-           idx_t i0) {
-  return csc_matrix<idx_t, coeff_t>(OpSum(op), block_in, block_out, i0);
-}
-template CSCMatrix<int32_t, double>
-csc_matrix<int32_t, double>(Op const &, Block const &, Block const &, int32_t);
-template CSCMatrix<int32_t, complex>
-csc_matrix<int32_t, complex>(Op const &, Block const &, Block const &, int32_t);
-template CSCMatrix<int64_t, double>
-csc_matrix<int64_t, double>(Op const &, Block const &, Block const &, int64_t);
-template CSCMatrix<int64_t, complex>
-csc_matrix<int64_t, complex>(Op const &, Block const &, Block const &, int64_t);
 
 template <typename idx_t, typename coeff_t>
 static CSCMatrix<idx_t, coeff_t> to_csc(CSRMatrix<idx_t, coeff_t> &&csr) {
@@ -153,9 +70,8 @@ CSCMatrix<idx_t, coeff_t> csc_matrix(OpSum const &op, Block const &block_in,
             return CSRMatrix<idx_t, coeff_t>();
           }},
       block_in, block_out));
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template CSCMatrix<int32_t, double> csc_matrix<int32_t, double>(OpSum const &,
                                                                 Block const &,
@@ -174,8 +90,52 @@ template CSCMatrix<int64_t, complex> csc_matrix<int64_t, complex>(OpSum const &,
                                                                   Block const &,
                                                                   int64_t);
 
+CSCMatrix<int64_t, complex> csc_matrixC(OpSum const &ops, Block const &block,
+                                        int64_t i0) try {
+  return csc_matrix<int64_t, complex>(ops, block, i0);
+}
+XDIAG_CATCH
+
+CSCMatrix<int64_t, complex> csc_matrixC(OpSum const &ops, Block const &block_in,
+                                        Block const &block_out,
+                                        int64_t i0) try {
+  return csc_matrix<int64_t, complex>(ops, block_in, block_out, i0);
+}
+XDIAG_CATCH
+
+CSCMatrix<int32_t, double> csc_matrix_32(OpSum const &ops, Block const &block,
+                                         int32_t i0) try {
+  return csc_matrix<int32_t, double>(ops, block, i0);
+}
+XDIAG_CATCH
+
+CSCMatrix<int32_t, double> csc_matrix_32(OpSum const &ops,
+                                         Block const &block_in,
+                                         Block const &block_out,
+                                         int32_t i0) try {
+  return csc_matrix<int32_t, double>(ops, block_in, block_out, i0);
+}
+XDIAG_CATCH
+
+CSCMatrix<int32_t, complex> csc_matrixC_32(OpSum const &ops, Block const &block,
+                                           int32_t i0) try {
+  return csc_matrix<int32_t, complex>(ops, block, i0);
+}
+XDIAG_CATCH
+
+CSCMatrix<int32_t, complex> csc_matrixC_32(OpSum const &ops,
+                                           Block const &block_in,
+                                           Block const &block_out,
+                                           int32_t i0) try {
+  return csc_matrix<int32_t, complex>(ops, block_in, block_out, i0);
+}
+XDIAG_CATCH
+
 template <typename idx_t, typename coeff_t>
 arma::Mat<coeff_t> to_dense(CSCMatrix<idx_t, coeff_t> const &csc_mat) try {
+  if ((csc_mat.nrows == 0) || (csc_mat.ncols == 0)) {
+    return arma::Mat<coeff_t>();
+  }
   int64_t nnz = csc_mat.data.size();
   if (csc_mat.colptr.size() != csc_mat.ncols + 1) {
     XDIAG_THROW("Number of colptr entries does not match number of cols (+1)");
@@ -220,9 +180,8 @@ arma::Mat<coeff_t> to_dense(CSCMatrix<idx_t, coeff_t> const &csc_mat) try {
   }
 
   return m;
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template arma::mat to_dense(CSCMatrix<int32_t, double> const &);
 template arma::mat to_dense(CSCMatrix<int64_t, double> const &);

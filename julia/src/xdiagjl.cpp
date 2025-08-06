@@ -35,6 +35,7 @@
 #include <julia/src/algebra/algebra.hpp>
 #include <julia/src/algebra/apply.hpp>
 #include <julia/src/algebra/matrix.hpp>
+#include <julia/src/algebra/sparse/coo_matrix.hpp>
 
 #include <julia/src/algorithms/lanczos/eigs_lanczos.hpp>
 #include <julia/src/algorithms/lanczos/eigvals_lanczos.hpp>
@@ -87,6 +88,7 @@ JLCXX_MODULE define_julia_module(jlcxx::Module &mod) {
   julia::define_matrix(mod);
   julia::define_apply(mod);
   julia::define_algebra(mod);
+  julia::define_coo_matrix(mod);
 
   // Algorithms
   julia::define_eig0(mod);

@@ -27,9 +27,9 @@ void test_sparse_matrix(op_t const &ops, Block const &block) {
   for (int i0 = 0; i0 < 2; ++i0) {
     {
       auto m1 = matrix(ops, block);
-      auto m2 = to_dense(coo_matrix(ops, block, i0));
-      auto m3 = to_dense(coo_matrix<int32_t, double>(ops, block, i0));
-      auto m4 = to_dense(coo_matrix<int64_t, double>(ops, block, i0));
+      auto m2 = to_dense(coo_matrix(OpSum(ops), block, i0));
+      auto m3 = to_dense(coo_matrix<int32_t, double>(OpSum(ops), block, i0));
+      auto m4 = to_dense(coo_matrix<int64_t, double>(OpSum(ops), block, i0));
       REQUIRE(norm(m1 - m2) < 1e-12);
       REQUIRE(norm(m1 - m3) < 1e-12);
       REQUIRE(norm(m1 - m4) < 1e-12);
@@ -37,9 +37,9 @@ void test_sparse_matrix(op_t const &ops, Block const &block) {
 
     {
       auto m1 = matrix(ops, block);
-      auto m2 = to_dense(csr_matrix(ops, block, i0));
-      auto m3 = to_dense(csr_matrix<int32_t, double>(ops, block, i0));
-      auto m4 = to_dense(csr_matrix<int64_t, double>(ops, block, i0));
+      auto m2 = to_dense(csr_matrix(OpSum(ops), block, i0));
+      auto m3 = to_dense(csr_matrix<int32_t, double>(OpSum(ops), block, i0));
+      auto m4 = to_dense(csr_matrix<int64_t, double>(OpSum(ops), block, i0));
       REQUIRE(norm(m1 - m2) < 1e-12);
       REQUIRE(norm(m1 - m3) < 1e-12);
       REQUIRE(norm(m1 - m4) < 1e-12);
@@ -47,20 +47,20 @@ void test_sparse_matrix(op_t const &ops, Block const &block) {
       // test apply
       auto v = arma::vec(size(block), arma::fill::randu);
       auto w1 = m1 * v;
-      auto w2 = apply(csr_matrix(ops, block, i0), v);
+      auto w2 = apply(csr_matrix(OpSum(ops), block, i0), v);
       REQUIRE(norm(w1 - w2) < 1e-12);
 
       auto V = arma::mat(size(block), 7, arma::fill::randu);
       auto W1 = m1 * V;
-      auto W2 = apply(csr_matrix(ops, block, i0), V);
+      auto W2 = apply(csr_matrix(OpSum(ops), block, i0), V);
       REQUIRE(norm(W1 - W2) < 1e-12);
     }
 
     {
       auto m1 = matrix(ops, block);
-      auto m2 = to_dense(csc_matrix(ops, block, i0));
-      auto m3 = to_dense(csc_matrix<int32_t, double>(ops, block, i0));
-      auto m4 = to_dense(csc_matrix<int64_t, double>(ops, block, i0));
+      auto m2 = to_dense(csc_matrix(OpSum(ops), block, i0));
+      auto m3 = to_dense(csc_matrix<int32_t, double>(OpSum(ops), block, i0));
+      auto m4 = to_dense(csc_matrix<int64_t, double>(OpSum(ops), block, i0));
       REQUIRE(norm(m1 - m2) < 1e-12);
       REQUIRE(norm(m1 - m3) < 1e-12);
       REQUIRE(norm(m1 - m4) < 1e-12);
@@ -73,9 +73,9 @@ void test_sparse_matrixC(op_t const &ops, Block const &block) {
   for (int i0 = 0; i0 < 2; ++i0) {
     {
       auto m1 = matrixC(ops, block);
-      auto m2 = to_dense(coo_matrixC(ops, block, i0));
-      auto m3 = to_dense(coo_matrix<int32_t, complex>(ops, block, i0));
-      auto m4 = to_dense(coo_matrix<int64_t, complex>(ops, block, i0));
+      auto m2 = to_dense(coo_matrixC(OpSum(ops), block, i0));
+      auto m3 = to_dense(coo_matrix<int32_t, complex>(OpSum(ops), block, i0));
+      auto m4 = to_dense(coo_matrix<int64_t, complex>(OpSum(ops), block, i0));
       REQUIRE(norm(m1 - m2) < 1e-12);
       REQUIRE(norm(m1 - m3) < 1e-12);
       REQUIRE(norm(m1 - m4) < 1e-12);
@@ -83,9 +83,9 @@ void test_sparse_matrixC(op_t const &ops, Block const &block) {
 
     {
       auto m1 = matrixC(ops, block);
-      auto m2 = to_dense(csr_matrixC(ops, block, i0));
-      auto m3 = to_dense(csr_matrix<int32_t, complex>(ops, block, i0));
-      auto m4 = to_dense(csr_matrix<int64_t, complex>(ops, block, i0));
+      auto m2 = to_dense(csr_matrixC(OpSum(ops), block, i0));
+      auto m3 = to_dense(csr_matrix<int32_t, complex>(OpSum(ops), block, i0));
+      auto m4 = to_dense(csr_matrix<int64_t, complex>(OpSum(ops), block, i0));
       REQUIRE(norm(m1 - m2) < 1e-12);
       REQUIRE(norm(m1 - m3) < 1e-12);
       REQUIRE(norm(m1 - m4) < 1e-12);
@@ -93,20 +93,20 @@ void test_sparse_matrixC(op_t const &ops, Block const &block) {
       // test apply
       arma::Col<complex> v = arma::cx_vec(size(block), arma::fill::randu);
       auto w1 = m1 * v;
-      auto w2 = xdiag::apply(csr_matrixC(ops, block, i0), v);
+      auto w2 = xdiag::apply(csr_matrixC(OpSum(ops), block, i0), v);
       REQUIRE(norm(w1 - w2) < 1e-12);
 
       auto V = arma::cx_mat(size(block), 7, arma::fill::randu);
       auto W1 = m1 * V;
-      auto W2 = xdiag::apply(csr_matrixC(ops, block, i0), V);
+      auto W2 = xdiag::apply(csr_matrixC(OpSum(ops), block, i0), V);
       REQUIRE(norm(W1 - W2) < 1e-12);
     }
 
     {
       auto m1 = matrixC(ops, block);
-      auto m2 = to_dense(csc_matrixC(ops, block, i0));
-      auto m3 = to_dense(csc_matrix<int32_t, complex>(ops, block, i0));
-      auto m4 = to_dense(csc_matrix<int64_t, complex>(ops, block, i0));
+      auto m2 = to_dense(csc_matrixC(OpSum(ops), block, i0));
+      auto m3 = to_dense(csc_matrix<int32_t, complex>(OpSum(ops), block, i0));
+      auto m4 = to_dense(csc_matrix<int64_t, complex>(OpSum(ops), block, i0));
       REQUIRE(norm(m1 - m2) < 1e-12);
       REQUIRE(norm(m1 - m3) < 1e-12);
       REQUIRE(norm(m1 - m4) < 1e-12);

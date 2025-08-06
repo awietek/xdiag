@@ -21,21 +21,18 @@ set(XDIAG_SOURCES
   algebra/isapprox.cpp
   
   algebra/sparse/apply.cpp
-  algebra/sparse/csr_matrix.cpp
-  algebra/sparse/csc_matrix.cpp
-  algebra/sparse/coo_matrix.cpp
-
-  # algebra/sparse/coo_matrix_generate.cpp
-  algebra/sparse/coo_matrix_generate_int32_double.cpp
-  algebra/sparse/coo_matrix_generate_int32_complex.cpp
-  algebra/sparse/coo_matrix_generate_int64_double.cpp
-  algebra/sparse/coo_matrix_generate_int64_complex.cpp
   
-  # algebra/csr_matrix_generate.cpp
-  algebra/sparse/csr_matrix_generate_int32_double.cpp
-  algebra/sparse/csr_matrix_generate_int32_complex.cpp
-  algebra/sparse/csr_matrix_generate_int64_double.cpp
-  algebra/sparse/csr_matrix_generate_int64_complex.cpp
+  algebra/sparse/coo_matrix.cpp
+  algebra/sparse/coo_matrix_fill.cpp
+  algebra/sparse/coo_matrix_nnz.cpp
+  algebra/sparse/coo_matrix_generate.cpp
+
+  algebra/sparse/csr_matrix.cpp
+  algebra/sparse/csr_matrix_fill.cpp
+  algebra/sparse/csr_matrix_nnz.cpp
+  algebra/sparse/csr_matrix_generate.cpp
+ 
+  algebra/sparse/csc_matrix.cpp
   
   io/read.cpp
   io/file_toml.cpp
@@ -170,6 +167,7 @@ set(XDIAG_JULIA_SOURCES
   algebra/matrix.cpp
   algebra/apply.cpp
   algebra/algebra.cpp
+  algebra/sparse/coo_matrix.cpp
 
   algorithms/sparse_diag.cpp
   algorithms/lanczos/eigs_lanczos.cpp

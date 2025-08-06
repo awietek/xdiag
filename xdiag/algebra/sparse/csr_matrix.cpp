@@ -13,78 +13,13 @@
 
 namespace xdiag {
 
-csr_mat csr_matrix(Op const &op, Block const &block, int64_t i0) try {
-  return csr_matrix(OpSum(op), block, i0);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
-csr_mat csr_matrix(OpSum const &ops, Block const &blocki, int64_t i0) try {
-  auto blocko = block(ops, blocki);
-  return csr_matrix(ops, blocki, blocko, i0);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
-csr_cx_mat csr_matrixC(Op const &op, Block const &block, int64_t i0) try {
-  return csr_matrixC(OpSum(op), block, i0);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
-csr_cx_mat csr_matrixC(OpSum const &ops, Block const &blocki, int64_t i0) try {
-  auto blocko = block(ops, blocki);
-  return csr_matrixC(ops, blocki, blocko, i0);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
-
-csr_mat csr_matrix(Op const &op, Block const &block_in, Block const &block_out,
-                   int64_t i0) try {
-  return csr_matrix(OpSum(op), block_in, block_out, i0);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
-csr_mat csr_matrix(OpSum const &ops, Block const &block_in,
-                   Block const &block_out, int64_t i0) try {
-  return csr_matrix<int64_t, double>(ops, block_in, block_out, i0);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
-csr_cx_mat csr_matrixC(Op const &op, Block const &block_in,
-                       Block const &block_out, int64_t i0) try {
-  return csr_matrix<int64_t, complex>(OpSum(op), block_in, block_out, i0);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
-csr_cx_mat csr_matrixC(OpSum const &ops, Block const &block_in,
-                       Block const &block_out, int64_t i0) try {
-  return csr_matrix<int64_t, complex>(ops, block_in, block_out, i0);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
-
-template <typename idx_t, typename coeff_t>
-XDIAG_API CSRMatrix<idx_t, coeff_t> csr_matrix(Op const &op, Block const &block,
-                                               idx_t i0) try {
-  return csr_matrix<idx_t, coeff_t>(OpSum(op), block, i0);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
-template CSRMatrix<int32_t, double>
-csr_matrix<int32_t, double>(Op const &, Block const &, int32_t);
-template CSRMatrix<int32_t, complex>
-csr_matrix<int32_t, complex>(Op const &, Block const &, int32_t);
-template CSRMatrix<int64_t, double>
-csr_matrix<int64_t, double>(Op const &, Block const &, int64_t);
-template CSRMatrix<int64_t, complex>
-csr_matrix<int64_t, complex>(Op const &, Block const &, int64_t);
-
 template <typename idx_t, typename coeff_t>
 CSRMatrix<idx_t, coeff_t> csr_matrix(OpSum const &ops, Block const &blocki,
                                      idx_t i0) try {
   auto blocko = block(ops, blocki);
   return csr_matrix<idx_t, coeff_t>(ops, blocki, blocko, i0);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 template CSRMatrix<int32_t, double>
 csr_matrix<int32_t, double>(OpSum const &, Block const &, int32_t);
 template CSRMatrix<int32_t, complex>
@@ -93,21 +28,6 @@ template CSRMatrix<int64_t, double>
 csr_matrix<int64_t, double>(OpSum const &, Block const &, int64_t);
 template CSRMatrix<int64_t, complex>
 csr_matrix<int64_t, complex>(OpSum const &, Block const &, int64_t);
-
-template <typename idx_t, typename coeff_t>
-XDIAG_API CSRMatrix<idx_t, coeff_t>
-csr_matrix(Op const &op, Block const &block_in, Block const &block_out,
-           idx_t i0) {
-  return csr_matrix<idx_t, coeff_t>(OpSum(op), block_in, block_out, i0);
-}
-template CSRMatrix<int32_t, double>
-csr_matrix<int32_t, double>(Op const &, Block const &, Block const &, int32_t);
-template CSRMatrix<int32_t, complex>
-csr_matrix<int32_t, complex>(Op const &, Block const &, Block const &, int32_t);
-template CSRMatrix<int64_t, double>
-csr_matrix<int64_t, double>(Op const &, Block const &, Block const &, int64_t);
-template CSRMatrix<int64_t, complex>
-csr_matrix<int64_t, complex>(Op const &, Block const &, Block const &, int64_t);
 
 template <typename idx_t, typename coeff_t>
 CSRMatrix<idx_t, coeff_t> csr_matrix(OpSum const &op, Block const &block_in,
@@ -146,9 +66,8 @@ CSRMatrix<idx_t, coeff_t> csr_matrix(OpSum const &op, Block const &block_in,
             return CSRMatrix<idx_t, coeff_t>();
           }},
       block_in, block_out);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template CSRMatrix<int32_t, double> csr_matrix<int32_t, double>(OpSum const &,
                                                                 Block const &,
@@ -167,9 +86,54 @@ template CSRMatrix<int64_t, complex> csr_matrix<int64_t, complex>(OpSum const &,
                                                                   Block const &,
                                                                   int64_t);
 
+CSRMatrix<int64_t, complex> csr_matrixC(OpSum const &ops, Block const &block,
+                                        int64_t i0) try {
+  return csr_matrix<int64_t, complex>(ops, block, i0);
+}
+XDIAG_CATCH
+
+CSRMatrix<int64_t, complex> csr_matrixC(OpSum const &ops, Block const &block_in,
+                                        Block const &block_out,
+                                        int64_t i0) try {
+  return csr_matrix<int64_t, complex>(ops, block_in, block_out, i0);
+}
+XDIAG_CATCH
+
+CSRMatrix<int32_t, double> csr_matrix_32(OpSum const &ops, Block const &block,
+                                         int32_t i0) try {
+  return csr_matrix<int32_t, double>(ops, block, i0);
+}
+XDIAG_CATCH
+
+CSRMatrix<int32_t, double> csr_matrix_32(OpSum const &ops,
+                                         Block const &block_in,
+                                         Block const &block_out,
+                                         int32_t i0) try {
+  return csr_matrix<int32_t, double>(ops, block_in, block_out, i0);
+}
+XDIAG_CATCH
+
+CSRMatrix<int32_t, complex> csr_matrixC_32(OpSum const &ops, Block const &block,
+                                           int32_t i0) try {
+  return csr_matrix<int32_t, complex>(ops, block, i0);
+}
+XDIAG_CATCH
+
+CSRMatrix<int32_t, complex> csr_matrixC_32(OpSum const &ops,
+                                           Block const &block_in,
+                                           Block const &block_out,
+                                           int32_t i0) try {
+  return csr_matrix<int32_t, complex>(ops, block_in, block_out, i0);
+}
+XDIAG_CATCH
+
 template <typename idx_t, typename coeff_t>
 arma::Mat<coeff_t> to_dense(CSRMatrix<idx_t, coeff_t> const &csr_mat) try {
   int64_t nnz = csr_mat.data.size();
+  if ((csr_mat.nrows == 0) || (csr_mat.ncols == 0)) {
+    return arma::Mat<coeff_t>();
+  }
+
   if (csr_mat.rowptr.size() != csr_mat.nrows + 1) {
     XDIAG_THROW("Number of rowptr entries does not match number of rows (+1)");
   }
@@ -214,9 +178,8 @@ arma::Mat<coeff_t> to_dense(CSRMatrix<idx_t, coeff_t> const &csr_mat) try {
   }
 
   return m;
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template arma::mat to_dense(CSRMatrix<int32_t, double> const &);
 template arma::mat to_dense(CSRMatrix<int64_t, double> const &);
