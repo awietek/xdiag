@@ -41,6 +41,11 @@ double norm_estimate(apply_A_f &&apply_A, apply_A_T_f &&apply_A_T,
   // size: size of the local vector (only different from dim when distributed)
   // n_max_attempts: number of attempts to compute norm
   // seed: random seed
+
+  if (dim == 0) {
+    return 0.;
+  }
+
   using vec_t = arma::Col<coeff_t>;
   arma::arma_rng::set_seed(seed);
   vec_t e = vec_t(size, arma::fill::randn);
@@ -102,9 +107,8 @@ double norm_estimate(apply_A_f &&apply_A, apply_A_T_f &&apply_A_T,
   }
 
   return gamma;
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <typename op_t>
 static double norm_estimate(op_t const &ops, Block const &block,
@@ -114,25 +118,22 @@ static double norm_estimate(op_t const &ops, Block const &block,
         return norm_estimate(ops, block, n_max_attempts, seed);
       },
       block);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 double norm_estimate(OpSum const &ops, Block const &block,
                      int64_t n_max_attempts, uint64_t seed) try {
   return norm_estimate<OpSum>(ops, block, n_max_attempts, seed);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <typename idx_t, typename coeff_t>
 double norm_estimate(CSRMatrix<idx_t, coeff_t> const &ops, Block const &block,
                      int64_t n_max_attempts, uint64_t seed) try {
   return norm_estimate<CSRMatrix<idx_t, coeff_t>>(ops, block, n_max_attempts,
                                                   seed);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template double norm_estimate(CSRMatrix<int32_t, double> const &, Block const &,
                               int64_t, uint64_t);
@@ -146,6 +147,10 @@ template double norm_estimate(CSRMatrix<int64_t, complex> const &,
 template <typename op_t, typename block_t>
 double norm_estimate(op_t const &ops, block_t const &block,
                      int64_t n_max_attempts, uint64_t seed) try {
+  if (size(block) == 0) {
+    return 0.;
+  }
+
   if (!ishermitian(ops)) {
     XDIAG_THROW("Norm estimation is only implemented for hermitian operators");
   }
@@ -173,9 +178,8 @@ double norm_estimate(op_t const &ops, block_t const &block,
   return norm_estimate<complex>(apply_A, apply_A, norm_f, norm1_f, norminf_f,
                                 block.dim(), block.size(), n_max_attempts,
                                 seed);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template double norm_estimate(OpSum const &ops, Spinhalf const &block, int64_t,
                               uint64_t);
@@ -238,10 +242,8 @@ double norm_estimate(arma::Mat<coeff_t> const &A, int64_t n_max_attempts,
   };
   return norm_estimate<coeff_t>(apply_A, apply_A_T, norm_f, norm1_f, norminf_f,
                                 A.n_cols, A.n_cols, n_max_attempts, seed);
-
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template double norm_estimate(arma::mat const &, int64_t, uint64_t);
 template double norm_estimate(arma::cx_mat const &, int64_t, uint64_t);

@@ -15,6 +15,7 @@
 #include <xdiag/extern/armadillo/armadillo>
 #include <xdiag/io/read.hpp>
 #include <xdiag/utils/logger.hpp>
+#include <xdiag/utils/xdiag_show.hpp>
 
 using namespace xdiag;
 
@@ -30,16 +31,16 @@ void test_operator_norm_real(block_t const &block, op_t const &ops) try {
     H = to_dense(ops);
   }
   double norm_exact = norm(H, 1);
-
-  auto apply_H = [&H](vec const &v) { return vec(H * v); };
   double norm_est = norm_estimate(ops, block);
-  double ratio = norm_est / norm_exact;
 
-  // Log("norm_exact: {}", norm_exact);
-  // Log("norm_est: {}", norm_est);
   if (norm_exact > 1e-12) {
+    double ratio = norm_est / norm_exact;
+    // Log("norm_exact: {}", norm_exact);
+    // Log("norm_est: {}", norm_est);
     // Log("ratio: {}", ratio);
     REQUIRE(((ratio <= 1.00001) && (ratio > 0.2)));
+  } else {
+    REQUIRE(norm_est < 1e-12);
   }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
@@ -57,15 +58,16 @@ void test_operator_norm_cplx(block_t const &block, op_t const &ops) {
     H = to_dense(ops);
   }
   double norm_exact = norm(H, 1);
-
   double norm_est = norm_estimate(ops, block);
-  double ratio = norm_est / norm_exact;
 
-  // Log("norm_exact: {}", norm_exact);
-  // Log("norm_est: {}", norm_est);
   if (norm_exact > 1e-12) {
+    double ratio = norm_est / norm_exact;
+    // Log("norm_exact: {}", norm_exact);
+    // Log("norm_est: {}", norm_est);
     // Log("ratio: {}", ratio);
     REQUIRE(((ratio <= 1.00001) && (ratio > 0.3)));
+  } else {
+    REQUIRE(norm_est < 1e-12);
   }
 }
 
@@ -141,7 +143,6 @@ TEST_CASE("norm_estimate", "[algorithms]") try {
 
       for (auto irrep : irreps) {
         auto block = Spinhalf(nsites, nup, irrep);
-
         if (irrep.isreal()) {
           auto csr = csr_matrix(ops, block);
           test_operator_norm_real(block, ops);
