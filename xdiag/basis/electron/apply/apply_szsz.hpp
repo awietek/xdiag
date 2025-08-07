@@ -6,6 +6,7 @@
 
 #include <xdiag/common.hpp>
 #include <xdiag/operators/op.hpp>
+#include <xdiag/parallel/omp/omp_utils.hpp>
 
 namespace xdiag::basis::electron {
 
@@ -30,45 +31,55 @@ void apply_szsz(Coupling const &cpl, Op const &op, basis_t const &basis,
   if constexpr (symmetric) {
 
 #ifdef _OPENMP
-#pragma omp parallel for schedule(guided)
+#pragma omp parallel
+    {
+      int num_thread = omp_get_thread_num();
+#pragma omp for schedule(runtime)
 #endif
-    for (int64_t idx_ups = 0; idx_ups < basis.n_rep_ups(); ++idx_ups) {
-      bit_t ups = basis.rep_ups(idx_ups);
-      auto dnss = basis.dns_for_ups_rep(ups);
-      int64_t idx = basis.ups_offset(idx_ups);
+      for (int64_t idx_ups = 0; idx_ups < basis.n_rep_ups(); ++idx_ups) {
+        bit_t ups = basis.rep_ups(idx_ups);
+        auto dnss = basis.dns_for_ups_rep(ups);
+        int64_t idx = basis.ups_offset(idx_ups);
 
-      if ((ups & mask) == mask) { // both spins pointing up
-        for (bit_t dns : dnss) {
-          if (!(dns & mask))
-            fill(idx, idx, val_same);
-          ++idx;
-        }
-      } else if (ups & s1mask) { // s1 is pointing up
-        for (bit_t dns : dnss) {
-          if ((dns & mask) == s2mask)
-            fill(idx, idx, val_diff);
-          ++idx;
-        }
-      } else if (ups & s2mask) { // s2 is pointing up
-        for (bit_t dns : dnss) {
-          if ((dns & mask) == s1mask)
-            fill(idx, idx, val_diff);
-          ++idx;
-        }
-      } else { // no upspins
-        for (bit_t dns : dnss) {
-          if ((dns & mask) == mask)
-            fill(idx, idx, val_same);
-          ++idx;
+        if ((ups & mask) == mask) { // both spins pointing up
+          for (bit_t dns : dnss) {
+            if (!(dns & mask)) {
+              XDIAG_FILL(idx, idx, val_same);
+            }
+            ++idx;
+          }
+        } else if (ups & s1mask) { // s1 is pointing up
+          for (bit_t dns : dnss) {
+            if ((dns & mask) == s2mask) {
+              XDIAG_FILL(idx, idx, val_diff);
+            }
+            ++idx;
+          }
+        } else if (ups & s2mask) { // s2 is pointing up
+          for (bit_t dns : dnss) {
+            if ((dns & mask) == s1mask) {
+              XDIAG_FILL(idx, idx, val_diff);
+            }
+            ++idx;
+          }
+        } else { // no upspins
+          for (bit_t dns : dnss) {
+            if ((dns & mask) == mask) {
+              XDIAG_FILL(idx, idx, val_same);
+            }
+            ++idx;
+          }
         }
       }
+#ifdef _OPENMP
     }
-
+#endif
   } else { // if not (symmetric)
 
 #ifdef _OPENMP
 #pragma omp parallel
     {
+      int num_thread = omp_get_thread_num();
       auto ups_and_idces = basis.states_indices_ups_thread();
 #else
     auto ups_and_idces = basis.states_indices_ups();
@@ -81,21 +92,21 @@ void apply_szsz(Coupling const &cpl, Op const &op, basis_t const &basis,
         if ((up & mask) == mask) { // both spins pointing up
           for (bit_t dn : basis.states_dns()) {
             if (!(dn & mask)) {
-              fill(idx, idx, val_same);
+              XDIAG_FILL(idx, idx, val_same);
             }
             ++idx;
           }
         } else if (up & s1mask) { // s1 is pointing up
           for (bit_t dn : basis.states_dns()) {
             if ((dn & mask) == s2mask) {
-              fill(idx, idx, val_diff);
+              XDIAG_FILL(idx, idx, val_diff);
             }
             ++idx;
           }
         } else if (up & s2mask) { // s2 is pointing up
           for (bit_t dn : basis.states_dns()) {
             if ((dn & mask) == s1mask) {
-              fill(idx, idx, val_diff);
+              XDIAG_FILL(idx, idx, val_diff);
             }
             ++idx;
           }
@@ -103,7 +114,7 @@ void apply_szsz(Coupling const &cpl, Op const &op, basis_t const &basis,
         } else { // no upspins
           for (bit_t dn : basis.states_dns()) {
             if ((dn & mask) == mask) {
-              fill(idx, idx, val_same);
+              XDIAG_FILL(idx, idx, val_same);
             }
             ++idx;
           }

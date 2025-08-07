@@ -5,6 +5,7 @@
 #include "state.hpp"
 
 #include <xdiag/blocks/blocks.hpp>
+#include <xdiag/utils/arma_to_cx.hpp>
 
 namespace xdiag {
 
@@ -21,17 +22,14 @@ void State::init0(bool real, int64_t nrows, int64_t ncols) try {
                             "Needs to be an integer larger equal to 1.",
                             ncols));
   }
-
   real_ = real;
   nrows_ = nrows;
   ncols_ = ncols;
-
   if (real) {
     safe_resize(storage_, size());
   } else {
     safe_resize(storage_, 2 * size());
   }
-
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
@@ -63,7 +61,7 @@ void State::initcopy(const complex *ptr, int64_t nrows, int64_t ncols) try {
 
 State::State(Block const &block, bool real, int64_t ncols) try
     : valid_(true), block_(block) {
-  init0(real, xdiag::size(block), ncols);
+  init0(real && xdiag::isreal(block), xdiag::size(block), ncols);
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
@@ -74,7 +72,12 @@ State::State(Block const &block, arma::vec const &vector) try
     XDIAG_THROW(
         "Size of block does not agree with size of given armadillo vector");
   }
-  initcopy(vector.memptr(), vector.size(), 1);
+  if (xdiag::isreal(block)) {
+    initcopy(vector.memptr(), vector.size(), 1); // real init
+  } else {
+    arma::cx_vec vectorc = utils::to_cx_vec(vector);
+    initcopy(vectorc.memptr(), vector.size(), 1); // cplx init
+  }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
@@ -85,27 +88,34 @@ State::State(Block const &block, arma::cx_vec const &vector) try
     XDIAG_THROW(
         "Size of block does not agree with size of given armadillo vector");
   }
-  initcopy(vector.memptr(), vector.size(), 1);
+  initcopy(vector.memptr(), vector.size(), 1); // cplx init
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
+
 State::State(Block const &block, arma::mat const &matrix) try
     : valid_(true), block_(block) {
   if (matrix.n_rows != xdiag::size(block)) {
     XDIAG_THROW("Size of block does not agree with number of rows of given "
                 "armadillo matrix");
   }
-  initcopy(matrix.memptr(), matrix.n_rows, matrix.n_cols);
+  if (xdiag::isreal(block)) {
+    initcopy(matrix.memptr(), matrix.n_rows, matrix.n_cols); // real init
+  } else {
+    arma::cx_mat matrixc = utils::to_cx_mat(matrix);
+    initcopy(matrixc.memptr(), matrix.n_rows, matrix.n_cols); // cplx init
+  }
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
+
 State::State(Block const &block, arma::cx_mat const &matrix) try
     : valid_(true), block_(block) {
   if (matrix.n_rows != xdiag::size(block)) {
     XDIAG_THROW("Size of block does not agree with number of rows of given "
                 "armadillo matrix");
   }
-  initcopy(matrix.memptr(), matrix.n_rows, matrix.n_cols);
+  initcopy(matrix.memptr(), matrix.n_rows, matrix.n_cols); // cplx init
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
@@ -113,14 +123,14 @@ State::State(Block const &block, arma::cx_mat const &matrix) try
 State::State(Block const &block, double const *ptr, int64_t ncols,
              int64_t stride) try
     : valid_(true), block_(block) {
-  initcopy(ptr, xdiag::size(block), ncols, stride);
+  initcopy(ptr, xdiag::size(block), ncols, stride); // real init
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
 
 State::State(Block const &block, complex const *ptr, int64_t ncols) try
     : valid_(true), block_(block) {
-  initcopy(ptr, xdiag::size(block), ncols);
+  initcopy(ptr, xdiag::size(block), ncols); // complex init
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }
@@ -228,6 +238,7 @@ arma::cx_vec State::vectorC(int64_t n, bool copy) const try {
   } else if (n < 0) {
     XDIAG_THROW("Negative column index");
   }
+
   return arma::cx_vec(reinterpret_cast<complex *>(storage_.data()) + n * nrows_,
                       nrows_, copy, !copy);
 } catch (Error const &e) {

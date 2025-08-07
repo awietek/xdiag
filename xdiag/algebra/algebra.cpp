@@ -194,7 +194,6 @@ complex innerC(Op const &op, State const &v) try {
   if (!isvalid(v)) {
     return complex(0.);
   }
-
   return innerC(OpSum(op), v);
 } catch (Error const &error) {
   XDIAG_RETHROW(error);
