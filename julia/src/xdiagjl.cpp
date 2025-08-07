@@ -2,6 +2,10 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+#ifndef _OPENMP
+#error "XDiag Julia wrapper needs to be compiled with OpenMP support"
+#endif
+
 #include <julia/src/xdiagjl.hpp>
 
 #include <julia/src/utils/armadillo.hpp>
@@ -38,6 +42,7 @@
 #include <julia/src/algebra/sparse/coo_matrix.hpp>
 #include <julia/src/algebra/sparse/csr_matrix.hpp>
 #include <julia/src/algebra/sparse/csc_matrix.hpp>
+#include <julia/src/algebra/sparse/apply.hpp>
 
 #include <julia/src/algorithms/lanczos/eigs_lanczos.hpp>
 #include <julia/src/algorithms/lanczos/eigvals_lanczos.hpp>
@@ -93,6 +98,7 @@ JLCXX_MODULE define_julia_module(jlcxx::Module &mod) {
   julia::define_coo_matrix(mod);
   julia::define_csr_matrix(mod);
   julia::define_csc_matrix(mod);
+  julia::define_sparse_apply(mod);
 
   // Algorithms
   julia::define_eig0(mod);

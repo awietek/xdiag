@@ -170,6 +170,7 @@ set(XDIAG_JULIA_SOURCES
   algebra/sparse/coo_matrix.cpp
   algebra/sparse/csr_matrix.cpp
   algebra/sparse/csc_matrix.cpp
+  algebra/sparse/apply.cpp
 
   algorithms/sparse_diag.cpp
   algorithms/lanczos/eigs_lanczos.cpp

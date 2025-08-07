@@ -20,8 +20,7 @@ static void define_eigs_lanczos_block(jlcxx::Module &mod) {
 
 template <class op_t>
 static void define_eigs_lanczos_state(jlcxx::Module &mod) {
-  mod.method("cxx_eigs_lanczos",
-               mod.method("cxx_eigs_lanczos", [](op_t const &ops, State const &state0,
+  mod.method("cxx_eigs_lanczos", [](op_t const &ops, State const &state0,
                                     int64_t neigvals, double precision,
                                     int64_t max_iterations,
                                     double deflation_tol) {

@@ -27,4 +27,5 @@ void define_time_evolve(jlcxx::Module &mod) {
   define_time_evolve_op<CSRMatrix<int64_t, complex>>(mod);
   define_time_evolve_op<CSRMatrix<int32_t, double>>(mod);
   define_time_evolve_op<CSRMatrix<int32_t, complex>>(mod);
+}
 } // namespace xdiag::julia
