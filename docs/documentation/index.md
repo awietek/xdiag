@@ -15,6 +15,15 @@ XDiag uses the C++ library [Armadillo](https://arma.sourceforge.net) as a linear
 | [norm1](algebra/algebra.md#norm1)     | Computes the 1-norm of a state                                            | :simple-cplusplus: :simple-julia: |
 | [norminf](algebra/algebra.md#norminf) | Computes the $\infty$-norm of a state                                     | :simple-cplusplus: :simple-julia: |
 
+### Sparse matrices
+| Name                                                         | Description                                                                      |                          Language |
+|:-------------------------------------------------------------|:---------------------------------------------------------------------------------|----------------------------------:|
+| [Sparse Matrix Types](algebra/sparse/sparse_matrix_types.md) | Explanation of different sparse matrix types and their use                       | :simple-cplusplus: :simple-julia: |
+| [coo_matrix](algebra/sparse/coo_matrix.md)                   | Creates sparse matrix an operator in the coordinate (COO) format                 | :simple-cplusplus: :simple-julia: |
+| [csr_matrix](algebra/sparse/csr_matrix.md)                   | Creates sparse matrix an operator in the compressed-sparse-row (CSR) format      | :simple-cplusplus: :simple-julia: |
+| [csc_matrix](algebra/sparse/csc_matrix.md)                   | Creates sparse matrix an operator in the compressed-sparse-column (CSC) format   | :simple-cplusplus: :simple-julia: |
+| [apply](algebra/sparse/apply.md)                             | Sparse matrix-vector (and sparse matrix-matrix) multiplication with CSR matrices | :simple-cplusplus: :simple-julia: |
+
 ---
 
 ## Algorithms

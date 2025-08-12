@@ -146,6 +146,59 @@ let
 end
 # --8<-- [end:matrix]
 
+
+# --8<-- [start:coo_matrix]
+let 
+    N = 8
+    nup = N ÷ 2
+    block = Spinhalf(N, nup)
+    
+    # Define the nearest-neighbor Heisenberg model
+    ops = OpSum()
+    for i in 1:N
+        ops += "J" * Op("SdotS", [i, mod1(i+1, N)])
+    end
+    ops["J"] = 1.0
+    spmat = coo_matrix(ops, block)
+    spmat_32 = coo_matrix_32(ops, block)
+end
+# --8<-- [end:coo_matrix]
+
+
+# --8<-- [start:csc_matrix]
+let 
+    N = 8
+    nup = N ÷ 2
+    block = Spinhalf(N, nup)
+    
+    # Define the nearest-neighbor Heisenberg model
+    ops = OpSum()
+    for i in 1:N
+        ops += "J" * Op("SdotS", [i, mod1(i+1, N)])
+    end
+    ops["J"] = 1.0
+    spmat = csc_matrix(ops, block)
+    spmat_32 = csc_matrix_32(ops, block)
+end
+# --8<-- [end:csc_matrix]
+
+# --8<-- [start:csr_matrix]
+let 
+    N = 8
+    nup = N ÷ 2
+    block = Spinhalf(N, nup)
+    
+    # Define the nearest-neighbor Heisenberg model
+    ops = OpSum()
+    for i in 1:N
+        ops += "J" * Op("SdotS", [i, mod1(i+1, N)])
+    end
+    ops["J"] = 1.0
+    spmat = csr_matrix(ops, block)
+    spmat_32 = csr_matrix_32(ops, block)
+end
+# --8<-- [end:csr_matrix]
+
 # --8<-- [start:eigval0]
 let 
     N = 8

@@ -30,22 +30,7 @@ A matrix can be created in two ways:
 		matrix(ops::OpSum, block::Block)
 		```
 
-2. The output block is also handed as an argument. The compatibility of quantum numbers is checked. This way the output block is not created automatically and, thus, can be used to save computation time if the output block appears repeatedly in the computation.
-
-	=== "C++"
-		```c++
-		arma::mat matrix(Op const &op, Block const &block_in, Block const &block_out);
-		arma::mat matrix(OpSum const &ops, Block const &block_in, Block const &block_out);
-		arma::cx_mat matrixC(Op const &op, Block const &block_in, Block const &block_out);
-		arma::cx_mat matrixC(OpSum const &ops, Block const &block_in, Block const &block_out);
-		```
-	=== "Julia"
-		```julia
-		matrix(op::Op, block_in::Block, block_out::Block)
-		matrix(ops::OpSum, block_in::Block, block_out::Block)
-		```
-
-**Comment:** In Julia, depending on whether a real/complex matrix is generated also a  real/complex matrix is returned. The C++ version has to return a fixed type. If a real matrix is desired, use the function `matrix`. If a complex matrix is desired, use the function `matrixC`.
+**Comment:** In Julia, depending on whether a real/complex matrix is generated also a real/complex matrix is returned. The C++ version has to return a fixed type. If a real matrix is desired, use the functions `coo_matrix` or `coo_matrix_32`. If a complex matrix is desired, use the functions `coo_matrixC` and `coo_matrixC_32`.
 
 ---
 
