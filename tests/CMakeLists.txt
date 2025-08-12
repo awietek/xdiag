@@ -78,6 +78,7 @@ set(XDIAG_TEST_SOURCES
   algorithms/test_norm_estimate.cpp
   algorithms/time_evolution/test_time_evolution.cpp
   algorithms/time_evolution/test_pade.cpp
+  algorithms/lobpcg/test_lobpcg.cpp
 
   states/test_random_state.cpp
   states/test_product_state.cpp
