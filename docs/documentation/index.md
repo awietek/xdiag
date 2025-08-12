@@ -15,10 +15,10 @@ XDiag uses the C++ library [Armadillo](https://arma.sourceforge.net) as a linear
 | [norm1](algebra/algebra.md#norm1)     | Computes the 1-norm of a state                                            | :simple-cplusplus: :simple-julia: |
 | [norminf](algebra/algebra.md#norminf) | Computes the $\infty$-norm of a state                                     | :simple-cplusplus: :simple-julia: |
 
-### Sparse matrices
+#### Sparse matrices
 | Name                                                         | Description                                                                      |                          Language |
 |:-------------------------------------------------------------|:---------------------------------------------------------------------------------|----------------------------------:|
-| [Sparse Matrix Types](algebra/sparse/sparse_matrix_types.md) | Explanation of different sparse matrix types and their use                       | :simple-cplusplus: :simple-julia: |
+| [Sparse matrix types](algebra/sparse/sparse_matrix_types.md) | Explanation of different sparse matrix types and their use                       | :simple-cplusplus: :simple-julia: |
 | [coo_matrix](algebra/sparse/coo_matrix.md)                   | Creates sparse matrix an operator in the coordinate (COO) format                 | :simple-cplusplus: :simple-julia: |
 | [csr_matrix](algebra/sparse/csr_matrix.md)                   | Creates sparse matrix an operator in the compressed-sparse-row (CSR) format      | :simple-cplusplus: :simple-julia: |
 | [csc_matrix](algebra/sparse/csc_matrix.md)                   | Creates sparse matrix an operator in the compressed-sparse-column (CSC) format   | :simple-cplusplus: :simple-julia: |
@@ -28,7 +28,7 @@ XDiag uses the C++ library [Armadillo](https://arma.sourceforge.net) as a linear
 
 ## Algorithms
 
-**Diagonalization**
+#### Diagonalization
 
 | Name                                             | Description                                                                                    |                          Language |
 |:-------------------------------------------------|:-----------------------------------------------------------------------------------------------|----------------------------------:|
@@ -37,7 +37,7 @@ XDiag uses the C++ library [Armadillo](https://arma.sourceforge.net) as a linear
 | [eigvals_lanczos](algorithms/eigvals_lanczos.md) | Performs an iterative eigenvalue calculation using the Lanczos algorithm                       | :simple-cplusplus: :simple-julia: |
 | [eigs_lanczos](algorithms/eigs_lanczos.md)       | Performs an iterative eigenvalue calculation building eigenvectors using the Lanczos algorithm | :simple-cplusplus: :simple-julia: |
 
-**Time evolution**
+#### Time evolution
 
 | Name                                                         | Description                                                                                                                                     |                          Language |
 |:-------------------------------------------------------------|:------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------:|

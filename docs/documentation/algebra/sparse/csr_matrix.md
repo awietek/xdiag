@@ -6,7 +6,7 @@ Creates a sparse matrix in the compressed-sparse-row (CSR) format. The sparse ma
 
 By default the numbers describing the column and row indices are 64-bit signed integers. However, to save memory also 32-bit signed integer coded matrices can be created using the `csr_matrix_32` or `csr_matrixC_32` functions. Notice, that in this case the largest allowed row and column dimension is $2^{31} - 1= 2.147.483.647$.
 
-For a description of the CSR sparse matrix format, see [Sparse matrix types](sparse_matrix_types.jl).
+For a description of the CSR sparse matrix format, see [Sparse matrix types](sparse_matrix_types.md).
 
 **Sources**<br>
 [csr_matrix.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/algebra/sparse/csr_matrix.hpp)<br>

@@ -6,7 +6,7 @@ Creates a sparse matrix in the coordinate (COO) format. The sparse matrix can be
 
 By default the numbers describing the column and row indices are 64-bit signed integers. However, to save memory also 32-bit signed integer coded matrices can be created using the `coo_matrix_32` or `coo_matrixC_32` functions. Notice, that in this case the largest allowed row and column dimension is $2^{31} - 1= 2.147.483.647$.
 
-For a description of the COO sparse matrix format, see [Sparse matrix types](sparse_matrix_types.jl).
+For a description of the COO sparse matrix format, see [Sparse matrix types](sparse_matrix_types.md).
 
 **Sources**<br>
 [coo_matrix.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/algebra/sparse/coo_matrix.hpp)<br>
