@@ -6,6 +6,7 @@
 
 #include "../blocks/electron/testcases_electron.hpp"
 #include <xdiag/algebra/algebra.hpp>
+#include <xdiag/states/create_state.hpp>
 #include <xdiag/states/fill.hpp>
 #include <xdiag/states/random_state.hpp>
 #include <xdiag/utils/xdiag_show.hpp>
@@ -17,8 +18,27 @@ using namespace xdiag;
 
 TEST_CASE("random_state", "[states]") try {
   using namespace xdiag::testcases::electron;
+  {
+    using namespace arma;
 
-  Log.out("random state Spinhalf distinction test");
+    Log("random matrix state");
+
+    auto b = Spinhalf(2);
+    int64_t dim = size(b);
+    int64_t ncols = 3;
+    int64_t seed = 42;
+
+    auto rstate = random_state(b, true, ncols, seed, true);
+    auto ovlp = matrix_dot(rstate, rstate);
+    REQUIRE(approx_equal(ovlp, mat(eye<mat>(ncols, ncols)), "absdiff", 1e-14));
+
+    auto rstateC = random_state(b, false, ncols, seed, true);
+    auto ovlpC = matrix_dotC(rstateC, rstateC);
+    REQUIRE(approx_equal(ovlpC, cx_mat(eye<cx_mat>(ncols, ncols)), "absdiff",
+                         1e-14));
+  }
+
+  Log("random state Spinhalf distinction test");
   double first_r = 0.;
   complex first_c = 0.;
 
@@ -63,7 +83,7 @@ TEST_CASE("random_state", "[states]") try {
 
   // Check whether result with multiple threads is the same as with a single
   // thread
-  Log.out("random state Spinhalf omp test");
+  Log("random state Spinhalf omp test");
 
   auto block = Spinhalf(4);
   for (int seed = 0; seed < 10; ++seed) {
@@ -82,6 +102,5 @@ TEST_CASE("random_state", "[states]") try {
     REQUIRE(arma::norm(state_cplx.vectorC() - state2_cplx.vectorC()) < 1e-12);
   }
 #endif
-} catch (xdiag::Error e) {
-  xdiag::error_trace(e);
 }
+XDIAG_CATCH

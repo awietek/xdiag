@@ -6,6 +6,7 @@
 
 #include <xdiag/algebra/apply.hpp>
 #include <xdiag/operators/logic/real.hpp>
+#include <xdiag/utils/arma_to_cx.hpp>
 
 #ifdef XDIAG_USE_MPI
 #include <xdiag/parallel/mpi/allreduce.hpp>
@@ -29,9 +30,8 @@ double norm(State const &v) try {
       return norm(v.block(), v.vectorC(0, false));
     }
   }
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
 }
+XDIAG_CATCH
 
 double norm1(State const &v) try {
   if (!isvalid(v)) {
@@ -84,19 +84,18 @@ double dot(State const &v, State const &w) try {
   }
 
   if ((v.ncols() > 1) || (w.ncols() > 1)) {
-    XDIAG_THROW(
-        "Cannot compute dot product of state with more than one column");
+    XDIAG_THROW("Cannot compute dot product of state with more than one "
+                "column. Consider using matrix_dot instead.");
   }
 
   if ((isreal(v)) && (isreal(w))) {
     return dot(v.block(), v.vector(0, false), w.vector(0, false));
   } else {
     XDIAG_THROW("Unable to compute real dot product of a complex "
-                "state, consider using dotC instead.");
+                "state. Consider using dotC instead.");
   }
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
 }
+XDIAG_CATCH
 
 complex dotC(State const &v, State const &w) try {
   if ((!isvalid(v)) || (!isvalid(w))) {
@@ -108,8 +107,8 @@ complex dotC(State const &v, State const &w) try {
   }
 
   if ((v.ncols() > 1) || (w.ncols() > 1)) {
-    XDIAG_THROW(
-        "Cannot compute dotC product of state with more than one column");
+    XDIAG_THROW("Cannot compute dotC product of state with more than one "
+                "column. Consider using matrix_dotC instead.");
   }
   if ((isreal(v)) && (isreal(w))) {
     return dot(v.block(), v.vector(0, false), w.vector(0, false));
@@ -134,9 +133,66 @@ complex dotC(State const &v, State const &w) try {
   } else {
     return dot(v.block(), v.vectorC(0, false), w.vectorC(0, false));
   }
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
 }
+XDIAG_CATCH
+
+arma::mat matrix_dot(State const &v, State const &w) try {
+  if ((!isvalid(v)) || (!isvalid(w))) {
+    return arma::mat();
+  }
+
+  if (v.block() != w.block()) {
+    XDIAG_THROW(
+        "Cannot form matrix_dot product for states on different blocks");
+    return 0;
+  }
+
+  if ((isreal(v)) && (isreal(w))) {
+    return matrix_dot(v.block(), v.matrix(false), w.matrix(false));
+  } else {
+    XDIAG_THROW("Unable to compute real matrix_dot product of a complex "
+                "state. Consider using matrix_dotC instead.");
+  }
+}
+XDIAG_CATCH
+
+arma::cx_mat matrix_dotC(State const &v, State const &w) try {
+  if ((!isvalid(v)) || (!isvalid(w))) {
+    return arma::cx_mat();
+  }
+
+  if (v.block() != w.block()) {
+    XDIAG_THROW(
+        "Cannot form matrix_dot product for states on different blocks");
+    return 0;
+  }
+
+  if (isreal(v) && isreal(w)) {
+    return utils::to_cx_mat(
+        matrix_dot(v.block(), v.matrix(false), w.matrix(false)));
+  } else if ((isreal(v)) && (!isreal(w))) {
+    State v2;
+    try {
+      v2 = v;
+      v2.make_complex();
+    } catch (...) {
+      XDIAG_THROW("Unable to create intermediate complex State");
+    }
+    return matrix_dot(v.block(), v2.matrixC(false), w.matrixC(false));
+  } else if ((isreal(w)) && (!isreal(v))) {
+    State w2;
+    try {
+      w2 = w;
+      w2.make_complex();
+    } catch (...) {
+      XDIAG_THROW("Unable to create intermediate complex State");
+    }
+    return matrix_dot(v.block(), v.matrixC(false), w2.matrixC(false));
+  } else {
+    return matrix_dot(v.block(), v.matrixC(false), w.matrixC(false));
+  }
+}
+XDIAG_CATCH
 
 double inner(OpSum const &ops, State const &v) try {
   if (!isvalid(v)) {
@@ -152,9 +208,8 @@ double inner(OpSum const &ops, State const &v) try {
                 "be called if both the state and the Ops are real. Maybe use "
                 "innerC(...) instead.");
   }
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
 }
+XDIAG_CATCH
 
 double inner(Op const &op, State const &v) try {
   if (!isvalid(v)) {
@@ -162,9 +217,8 @@ double inner(Op const &op, State const &v) try {
   }
 
   return inner(OpSum(op), v);
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
 }
+XDIAG_CATCH
 
 complex innerC(OpSum const &ops, State const &v) try {
   if (!isvalid(v)) {
@@ -186,18 +240,16 @@ complex innerC(OpSum const &ops, State const &v) try {
     apply(ops, v, w);
     return dotC(w, v);
   }
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
 }
+XDIAG_CATCH
 
 complex innerC(Op const &op, State const &v) try {
   if (!isvalid(v)) {
     return complex(0.);
   }
   return innerC(OpSum(op), v);
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
 }
+XDIAG_CATCH
 
 double dot(Block const &block, arma::vec const &v, arma::vec const &w) try {
 #ifdef XDIAG_USE_MPI
@@ -211,9 +263,8 @@ double dot(Block const &block, arma::vec const &v, arma::vec const &w) try {
 #ifdef XDIAG_USE_MPI
   }
 #endif
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
 }
+XDIAG_CATCH
 
 complex dot(Block const &block, arma::cx_vec const &v,
             arma::cx_vec const &w) try {
@@ -228,16 +279,50 @@ complex dot(Block const &block, arma::cx_vec const &v,
 #ifdef XDIAG_USE_MPI
   }
 #endif
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
 }
+XDIAG_CATCH
+
+template <typename coeff_t>
+arma::Mat<coeff_t> matrix_dot(Block const &block, arma::Mat<coeff_t> const &V,
+                              arma::Mat<coeff_t> const &W) try {
+  if (V.n_rows != V.n_rows) {
+    XDIAG_THROW("Input matrices do not have the same number of rows");
+  }
+#ifdef XDIAG_USE_MPI
+  if (isdistributed(block)) {
+    int64_t L = V.n_rows;
+    int64_t m = V.n_cols;
+    int64_t n = W.n_cols;
+    arma::Mat<coeff_t> result(m, n, arma::fill::zeros);
+    for (int64_t i = 0; i < m; ++i) {
+      for (int64_t j = 0; j < n; ++j) {
+        arma::Col<coeff_t> cv(v.colptr(i), L, false, true);
+        arma::Col<coeff_t> cw(w.colptr(j), L, false, true);
+        result(i, j) = cdot_distributed(cv, cw);
+      }
+    }
+    return result;
+  } else {
+#else
+  (void)block;
+#endif
+    return V.t() * W;
+#ifdef XDIAG_USE_MPI
+  }
+#endif
+}
+XDIAG_CATCH
+
+template arma::mat matrix_dot(Block const &, arma::mat const &,
+                              arma::mat const &);
+template arma::cx_mat matrix_dot(Block const &, arma::cx_mat const &,
+                                 arma::cx_mat const &);
 
 template <typename coeff_t>
 double norm(Block const &block, arma::Col<coeff_t> const &v) try {
   return std::sqrt(xdiag::real(dot(block, v, v)));
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
 }
+XDIAG_CATCH
 
 template double norm(Block const &, arma::Col<double> const &);
 template double norm(Block const &, arma::Col<complex> const &);
@@ -251,9 +336,8 @@ double norm1(Block const &block, arma::Col<coeff_t> const &v) try {
   }
 #endif
   return nrm;
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
 }
+XDIAG_CATCH
 
 template double norm1(Block const &, arma::Col<double> const &);
 template double norm1(Block const &, arma::Col<complex> const &);
@@ -267,9 +351,8 @@ double norminf(Block const &block, arma::Col<coeff_t> const &v) try {
   }
 #endif
   return nrm;
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
 }
+XDIAG_CATCH
 
 template double norminf(Block const &, arma::Col<double> const &);
 template double norminf(Block const &, arma::Col<complex> const &);
