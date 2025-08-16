@@ -31,9 +31,6 @@ TEST_CASE("random_state", "[states]") try {
     auto rstate = random_state(b, true, ncols, seed, true);
     auto ovlp = matrix_dot(rstate, rstate);
     REQUIRE(approx_equal(ovlp, mat(eye<mat>(ncols, ncols)), "absdiff", 1e-14));
-    XDIAG_SHOW(rstate.matrix());
-    XDIAG_SHOW(rstate.matrix().t() * rstate.matrix());
-    XDIAG_SHOW(ovlp);
 
     auto rstateC = random_state(b, false, ncols, seed, true);
     auto ovlpC = matrix_dotC(rstateC, rstateC);
