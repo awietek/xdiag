@@ -76,7 +76,7 @@ State random_state(block_t const &block, bool real, int64_t ncols, int64_t seed,
 
     // orthonormalize
     if (normalized) {
-      if (ncols > size(block)) {
+      if (ncols > dim(block)) {
         XDIAG_THROW(
             "Cannot orthonormalize random state, since the block dimension is "
             "smaller than the requesed number of columns.  Either don't try to "

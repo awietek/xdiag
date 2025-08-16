@@ -37,5 +37,6 @@ TEST_CASE("random_state", "[states]") try {
     REQUIRE(approx_equal(ovlpC, cx_mat(eye<cx_mat>(ncols, ncols)), "absdiff",
                          1e-14));
   }
+} catch (Error const &e) {
+  error_trace(e);
 }
-XDIAG_CATCH
