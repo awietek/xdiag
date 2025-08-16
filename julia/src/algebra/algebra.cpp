@@ -24,6 +24,14 @@ void define_algebra(jlcxx::Module &mod) {
     JULIA_XDIAG_CALL_RETURN(dotC(v, w));
   });
 
+  mod.method("cxx_matrix_dot", [](State const &v, State const &w) {
+    JULIA_XDIAG_CALL_RETURN(matrix_dot(v, w));
+  });
+
+  mod.method("cxx_matrix_dotC", [](State const &v, State const &w) {
+    JULIA_XDIAG_CALL_RETURN(matrix_dotC(v, w));
+  });
+
   mod.method("cxx_inner", [](OpSum const &ops, State const &v) {
     JULIA_XDIAG_CALL_RETURN(inner(ops, v));
   });
@@ -47,7 +55,6 @@ void define_algebra(jlcxx::Module &mod) {
   mod.method("cxx_sub", [](State const &v, State const &w) {
     JULIA_XDIAG_CALL_RETURN(v - w);
   });
-
 
   mod.method("cxx_scalar_mult", [](double alpha, State const &v) {
     JULIA_XDIAG_CALL_RETURN(alpha * v);

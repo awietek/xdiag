@@ -12,4 +12,7 @@ namespace xdiag {
 XDIAG_API Op hc(Op const &op);
 XDIAG_API OpSum hc(OpSum const &ops);
 
+XDIAG_API bool ishermitian(Op const &op);
+XDIAG_API bool ishermitian(OpSum const &ops);
+  
 } // namespace xdiag

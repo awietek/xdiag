@@ -175,6 +175,57 @@ H.print();
 }
 
 {
+// --8<-- [start:coo_matrix]
+int N = 8;
+int nup = N / 2;
+auto block = Spinhalf(N, nup);
+    
+// Define the nearest-neighbor Heisenberg model
+auto ops = OpSum();
+for (int i=0; i<N; ++i) {
+  ops += "J" * Op("SdotS", {i, (i+1) % N});
+}
+ops["J"] = 1.0;
+auto spmat = coo_matrix(ops, block);
+auto spmat_32 = coo_matrix_32(ops, block);
+// --8<-- [end:coo_matrix]
+}
+
+ {
+// --8<-- [start:csr_matrix]
+int N = 8;
+int nup = N / 2;
+auto block = Spinhalf(N, nup);
+    
+// Define the nearest-neighbor Heisenberg model
+auto ops = OpSum();
+for (int i=0; i<N; ++i) {
+  ops += "J" * Op("SdotS", {i, (i+1) % N});
+}
+ops["J"] = 1.0;
+auto spmat = csr_matrix(ops, block);
+auto spmat_32 = csr_matrix_32(ops, block);
+// --8<-- [end:csr_matrix]
+}
+
+{
+// --8<-- [start:csc_matrix]
+int N = 8;
+int nup = N / 2;
+auto block = Spinhalf(N, nup);
+    
+// Define the nearest-neighbor Heisenberg model
+auto ops = OpSum();
+for (int i=0; i<N; ++i) {
+  ops += "J" * Op("SdotS", {i, (i+1) % N});
+}
+ops["J"] = 1.0;
+auto spmat = csc_matrix(ops, block);
+auto spmat_32 = csc_matrix_32(ops, block);
+// --8<-- [end:csc_matrix]
+}
+ 
+{
 // --8<-- [start:eigval0]
 int N = 8;
 int nup = N / 2;

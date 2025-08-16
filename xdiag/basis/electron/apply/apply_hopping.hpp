@@ -7,6 +7,7 @@
 #include <xdiag/bits/bitops.hpp>
 #include <xdiag/common.hpp>
 #include <xdiag/operators/op.hpp>
+#include <xdiag/parallel/omp/omp_utils.hpp>
 
 #include <xdiag/basis/electron/apply/generic_term_dns.hpp>
 #include <xdiag/basis/electron/apply/generic_term_ups.hpp>

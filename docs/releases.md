@@ -2,6 +2,18 @@
 title: Releases
 ---
 
+## v0.3.3
+
+**Jun. 17, 2025**
+
+Minor improvements and additional density operators
+
+* Multithreaded parallelization works on aarch64 MacOS now (Julia version)
+* introduced new density operators NupNup, NupNdn, NdnNup, NdnNdn for Electron block
+* Exceptions thrown in constructors are now handed on to Julia
+* OpSums can be created with integer coefficients
+* several minor bugfixes
+
 ## v0.3.2
 
 **Apr. 3, 2025**

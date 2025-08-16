@@ -10,12 +10,12 @@
 #include "../spinhalf/testcases_spinhalf.hpp"
 #include <xdiag/algebra/algebra.hpp>
 #include <xdiag/algebra/apply.hpp>
+#include <xdiag/algebra/isapprox.hpp>
 #include <xdiag/algebra/matrix.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
 #include <xdiag/io/file_toml.hpp>
 #include <xdiag/io/read.hpp>
 #include <xdiag/operators/logic/real.hpp>
-#include <xdiag/algebra/isapprox.hpp>
 
 using namespace xdiag;
 
@@ -123,7 +123,7 @@ void test_spinhalf_symmetric_apply_chains(int nsites) {
   test_spinhalf_symmetric_apply_no_sz(ops, nsites, irreps);
 }
 
-TEST_CASE("spinhalf_symmetric_apply", "[spinhalf]") {
+TEST_CASE("spinhalf_symmetric_apply", "[spinhalf]") try {
 
   // Test linear Heisenberg chains
   for (int nsites = 3; nsites < 7; ++nsites) {
@@ -194,4 +194,6 @@ TEST_CASE("spinhalf_symmetric_apply", "[spinhalf]") {
       REQUIRE(std::abs(e0 - energy) < 1e-10);
     }
   }
+} catch (xdiag::Error e) {
+  xdiag::error_trace(e);
 }

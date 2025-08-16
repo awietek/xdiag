@@ -9,6 +9,7 @@
 #include <xdiag/basis/electron/apply/generic_term_dns.hpp>
 #include <xdiag/basis/electron/apply/generic_term_ups.hpp>
 #include <xdiag/bits/bitops.hpp>
+#include <xdiag/parallel/omp/omp_utils.hpp>
 
 namespace xdiag::basis::electron {
 
