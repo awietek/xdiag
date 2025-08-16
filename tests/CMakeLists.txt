@@ -112,6 +112,8 @@ set(XDIAG_TEST_DISTRIBUTED_SOURCES
   states/test_random_state_distributed.cpp
 
   algorithms/time_evolution/test_time_evolution_distributed.cpp
+  algebra/test_apply_distributed.cpp
+
 )
 
 add_executable(tests tests.cpp ${XDIAG_TEST_SOURCES} ${XDIAG_TESTCASES_SOURCES})

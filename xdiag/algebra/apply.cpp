@@ -29,14 +29,11 @@ State apply(OpSum const &ops, State const &v) try {
   auto w = State(blockr, real, v.ncols());
   apply(ops, v, w);
   return w;
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
 }
-State apply(Op const &op, State const &v) try {
-  return apply(OpSum(op), v);
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
-}
+XDIAG_CATCH
+
+State apply(Op const &op, State const &v) try { return apply(OpSum(op), v); }
+XDIAG_CATCH
 
 void apply(OpSum const &ops, State const &v, State &w) try {
 
@@ -128,20 +125,21 @@ void apply(OpSum const &ops, State const &v, State &w) try {
         }
       }
     } else {
-      XDIAG_THROW("Applying a OpSum to a state with multiple "
-                  "columns generically not yet implemented "
-                  "(are the States of the same size?)");
+      XDIAG_THROW(
+          fmt::format("Applying an OpSum to a state with multiple columns "
+                      "results in a state with an equal number of columns. "
+                      "However, the input state number of columns ({}) differs "
+                      "from the output state number of columns ({}).",
+                      v.ncols(), w.ncols()));
     }
   }
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
 }
+XDIAG_CATCH
 
 void apply(Op const &op, State const &v, State &w) try {
   apply(OpSum(op), v, w);
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
 }
+XDIAG_CATCH
 
 template <typename mat_t>
 void apply(OpSum const &ops, Block const &block_in, mat_t const &mat_in,
@@ -172,9 +170,8 @@ void apply(OpSum const &ops, Block const &block_in, mat_t const &mat_in,
             XDIAG_THROW(fmt::format("Invalid combination of Block types"));
           }},
       block_in, block_out);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template void apply(OpSum const &, Block const &, arma::vec const &,
                     Block const &, arma::vec &);
@@ -247,9 +244,8 @@ void apply(OpSum const &ops, block_t const &block_in, mat_t const &mat_in,
 #endif
     algebra::apply_dispatch<coeff_t>(opsc, block_in, block_out, fill);
   }
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
 }
+XDIAG_CATCH
 
 template void apply(OpSum const &, Spinhalf const &, arma::vec const &,
                     Spinhalf const &, arma::vec &);

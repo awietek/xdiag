@@ -47,7 +47,6 @@ template State product_state(ElectronDistributed const &,
 
 State random_state(Block const &block, bool real, int64_t ncols, int64_t seed,
                    bool normalized) try {
-  Log("asdf");
   return std::visit(
       [&](auto &&block) {
         return random_state(block, real, ncols, seed, normalized);

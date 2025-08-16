@@ -35,9 +35,8 @@ void apply_dispatch(OpSum const &ops, ElectronDistributed const &block_in,
         }
       },
       basis_in, basis_out);
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
 }
+XDIAG_CATCH
 
 template void apply_dispatch(OpSum const &, ElectronDistributed const &,
                              arma::vec const &,
@@ -48,14 +47,41 @@ template void apply_dispatch(OpSum const &, ElectronDistributed const &,
 
 template <typename coeff_t>
 void apply_dispatch(OpSum const &ops, ElectronDistributed const &block_in,
-                    arma::Mat<coeff_t> const &vec_in,
+                    arma::Mat<coeff_t> const &mat_in,
                     ElectronDistributed const &block_out,
-                    arma::Mat<coeff_t> &vec_out) try {
-  XDIAG_THROW("Apply for an OpSum on a State with a matrix not implemented yet "
-              "for ElectronDistributed blocks");
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
+                    arma::Mat<coeff_t> &mat_out) try {
+  using namespace basis::electron_distributed;
+
+  auto const &basis_in = block_in.basis();
+  auto const &basis_out = block_out.basis();
+
+  std::visit(
+      [&](auto &&basis_in, auto &&basis_out) {
+        using basis_in_t = typename std::decay<decltype(basis_in)>::type;
+        using basis_out_t = typename std::decay<decltype(basis_out)>::type;
+        if constexpr (std::is_same<basis_in_t, basis_out_t>::value) {
+          if (mat_in.n_cols != mat_out.n_cols) {
+            XDIAG_THROW("Input and output matrix do not have the same number "
+                        "of columns");
+          }
+          int64_t ncols = mat_in.n_cols;
+          for (int i = 0; i < ncols; ++i) {
+            arma::Col<coeff_t> vec_in(const_cast<coeff_t *>(mat_in.colptr(i)),
+                                      mat_in.n_rows, false, true);
+            arma::Col<coeff_t> vec_out(mat_out.colptr(i), mat_out.n_rows, false,
+                                       true);
+            apply_terms(ops, basis_in, vec_in, basis_out, vec_out);
+          }
+
+        } else {
+          XDIAG_THROW(
+              "Invalid combination of bases for \"ElectronDistributed\" block.")
+        }
+      },
+      basis_in, basis_out);
 }
+XDIAG_CATCH
+
 template void apply_dispatch(OpSum const &, ElectronDistributed const &,
                              arma::mat const &,
                              ElectronDistributed const &block, arma::mat &);
@@ -85,9 +111,8 @@ void apply_dispatch(OpSum const &ops, SpinhalfDistributed const &block_in,
         }
       },
       basis_in, basis_out);
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
 }
+XDIAG_CATCH
 
 template void apply_dispatch(OpSum const &, SpinhalfDistributed const &,
                              arma::vec const &,
@@ -98,14 +123,40 @@ template void apply_dispatch(OpSum const &, SpinhalfDistributed const &,
 
 template <typename coeff_t>
 void apply_dispatch(OpSum const &ops, SpinhalfDistributed const &block_in,
-                    arma::Mat<coeff_t> const &vec_in,
+                    arma::Mat<coeff_t> const &mat_in,
                     SpinhalfDistributed const &block_out,
-                    arma::Mat<coeff_t> &vec_out) try {
-  XDIAG_THROW("Apply for an OpSum on a State with a matrix not implemented yet "
-              "for SpinhalfDistributed blocks");
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
+                    arma::Mat<coeff_t> &mat_out) try {
+  using namespace basis::spinhalf_distributed;
+
+  auto const &basis_in = block_in.basis();
+  auto const &basis_out = block_out.basis();
+
+  std::visit(
+      [&](auto &&basis_in, auto &&basis_out) {
+        using basis_in_t = typename std::decay<decltype(basis_in)>::type;
+        using basis_out_t = typename std::decay<decltype(basis_out)>::type;
+        if constexpr (std::is_same<basis_in_t, basis_out_t>::value) {
+          if (mat_in.n_cols != mat_out.n_cols) {
+            XDIAG_THROW("Input and output matrix do not have the same number "
+                        "of columns");
+          }
+          int64_t ncols = mat_in.n_cols;
+          for (int i = 0; i < ncols; ++i) {
+            arma::Col<coeff_t> vec_in(const_cast<coeff_t *>(mat_in.colptr(i)),
+                                      mat_in.n_rows, false, true);
+            arma::Col<coeff_t> vec_out(mat_out.colptr(i), mat_out.n_rows, false,
+                                       true);
+            apply_terms(ops, basis_in, vec_in, basis_out, vec_out);
+          }
+
+        } else {
+          XDIAG_THROW(
+              "Invalid combination of bases for \"ElectronDistributed\" block.")
+        }
+      },
+      basis_in, basis_out);
 }
+XDIAG_CATCH
 
 template void apply_dispatch(OpSum const &, SpinhalfDistributed const &,
                              arma::mat const &,
@@ -135,9 +186,8 @@ void apply_dispatch(OpSum const &ops, tJDistributed const &block_in,
         }
       },
       basis_in, basis_out);
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
 }
+XDIAG_CATCH
 
 template void apply_dispatch(OpSum const &, tJDistributed const &,
                              arma::vec const &, tJDistributed const &block,
@@ -148,14 +198,41 @@ template void apply_dispatch(OpSum const &, tJDistributed const &,
 
 template <typename coeff_t>
 void apply_dispatch(OpSum const &ops, tJDistributed const &block_in,
-                    arma::Mat<coeff_t> const &vec_in,
+                    arma::Mat<coeff_t> const &mat_in,
                     tJDistributed const &block_out,
-                    arma::Mat<coeff_t> &vec_out) try {
-  XDIAG_THROW("Apply for an OpSum on a State with a matrix not implemented yet "
-              "for tJDistributed blocks");
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
+                    arma::Mat<coeff_t> &mat_out) try {
+  using namespace basis::tj_distributed;
+
+  auto const &basis_in = block_in.basis();
+  auto const &basis_out = block_out.basis();
+
+  std::visit(
+      [&](auto &&basis_in, auto &&basis_out) {
+        using basis_in_t = typename std::decay<decltype(basis_in)>::type;
+        using basis_out_t = typename std::decay<decltype(basis_out)>::type;
+        if constexpr (std::is_same<basis_in_t, basis_out_t>::value) {
+          if (mat_in.n_cols != mat_out.n_cols) {
+            XDIAG_THROW("Input and output matrix do not have the same number "
+                        "of columns");
+          }
+          int64_t ncols = mat_in.n_cols;
+          for (int i = 0; i < ncols; ++i) {
+            arma::Col<coeff_t> vec_in(const_cast<coeff_t *>(mat_in.colptr(i)),
+                                      mat_in.n_rows, false, true);
+            arma::Col<coeff_t> vec_out(mat_out.colptr(i), mat_out.n_rows, false,
+                                       true);
+            apply_terms(ops, basis_in, vec_in, basis_out, vec_out);
+          }
+
+        } else {
+          XDIAG_THROW(
+              "Invalid combination of bases for \"ElectronDistributed\" block.")
+        }
+      },
+      basis_in, basis_out);
 }
+XDIAG_CATCH
+
 template void apply_dispatch(OpSum const &, tJDistributed const &,
                              arma::mat const &, tJDistributed const &block,
                              arma::mat &);
