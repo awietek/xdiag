@@ -109,6 +109,7 @@ set(XDIAG_TEST_DISTRIBUTED_SOURCES
   blocks/electron_distributed/test_electron_distributed_raiselower.cpp
 
   states/test_product_state_distributed.cpp
+  states/test_random_state_distributed.cpp
 
   algorithms/time_evolution/test_time_evolution_distributed.cpp
 )

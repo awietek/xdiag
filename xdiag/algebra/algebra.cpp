@@ -296,8 +296,10 @@ arma::Mat<coeff_t> matrix_dot(Block const &block, arma::Mat<coeff_t> const &V,
     arma::Mat<coeff_t> result(m, n, arma::fill::zeros);
     for (int64_t i = 0; i < m; ++i) {
       for (int64_t j = 0; j < n; ++j) {
-        arma::Col<coeff_t> cv(v.colptr(i), L, false, true);
-        arma::Col<coeff_t> cw(w.colptr(j), L, false, true);
+        arma::Col<coeff_t> cv(const_cast<coeff_t *>(V.colptr(i)), L, false,
+                              true);
+        arma::Col<coeff_t> cw(const_cast<coeff_t *>(W.colptr(j)), L, false,
+                              true);
         result(i, j) = cdot_distributed(cv, cw);
       }
     }
