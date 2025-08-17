@@ -26,15 +26,15 @@ XDIAG_API double eigval0(CSRMatrix<idx_t, coeff_t> const &ops,
                          int64_t max_iterations = 1000,
                          int64_t random_seed = 42);
 
-std::tuple<double, State> eig0(OpSum const &ops, Block const &block,
-                               double precision = 1e-12,
-                               int64_t max_iterations = 1000,
-                               int64_t random_seed = 42);
+XDIAG_API std::tuple<double, State> eig0(OpSum const &ops, Block const &block,
+                                         double precision = 1e-12,
+                                         int64_t max_iterations = 1000,
+                                         int64_t random_seed = 42);
 
 template <typename idx_t, typename coeff_t>
-std::tuple<double, State> eig0(CSRMatrix<idx_t, coeff_t> const &ops,
-                               Block const &block, double precision = 1e-12,
-                               int64_t max_iterations = 1000,
-                               int64_t random_seed = 42);
+XDIAG_API std::tuple<double, State>
+eig0(CSRMatrix<idx_t, coeff_t> const &ops, Block const &block,
+     double precision = 1e-12, int64_t max_iterations = 1000,
+     int64_t random_seed = 42);
 
 } // namespace xdiag

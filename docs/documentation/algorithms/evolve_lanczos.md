@@ -13,6 +13,8 @@ Here, $\delta$ denotes a real number shifting the spectrum of $H$. The algorithm
 > SIAM Journal on Numerical Analysis, Vol. 34, Iss. 5 (1997)<br>
 > DOI: [10.1137/S0036142995280572](https://doi.org/10.1137/S0036142995280572)
 
+The algorithm can be run either *on-the-fly* (matrix-free) or using a *sparse matrix* in the compressed-sparse-row format (see [CSRMatrix](../algebra/sparse/sparse_matrix_types.md)).
+
 **Sources**<br>
 [evolve_lanczos.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/evolve_lanczos.hpp)<br>
 [evolve_lanczos.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/evolve_lanczos.cpp)<br>
@@ -21,6 +23,8 @@ Here, $\delta$ denotes a real number shifting the spectrum of $H$. The algorithm
 ---
 
 ## Definition
+
+#### On-the-fly
 
 The method is provided in two variants:
 
@@ -78,20 +82,88 @@ The method is provided in two variants:
 				               max_iterations::Int64 = 1000, deflation_tol::Float64 = 1e-7)
 		```
 
+#### Sparse matrix
+
+1. Returning a new state while the input state remains untouched. This variant is safe to use and simple to code.
+
+	=== "C++"
+		```c++
+		template <typename idx_t, typename coeff_t>
+		EvolveLanczosResult evolve_lanczos(
+			CSRMatrix<idx_t, coeff_t> const &H, State psi, double tau,
+			double precision = 1e-12, double shift = 0., bool normalize = false,
+			int64_t max_iterations = 1000, double deflation_tol = 1e-7);
+			
+		template <typename idx_t, typename coeff_t>
+		EvolveLanczosResult evolve_lanczos(
+			CSRMatrix<idx_t, coeff_t> const &H, State psi, complex tau,
+			double precision = 1e-12, double shift = 0., bool normalize = false,
+			int64_t max_iterations = 1000, double deflation_tol = 1e-7);
+
+		```
+	=== "Julia"
+		```julia
+		evolve_lanczos(H::CSRMatrix, psi::State, t::Float64;
+               precision::Float64 = 1e-12,
+               shift::Float64=0.0,
+               normalize::Bool=false,
+               max_iterations::Int64 = 1000,
+               deflation_tol::Float64 = 1e-7)::EvolveLanczosResult
+			   
+		evolve_lanczos(H::CSRMatrix, psi::State, z::ComplexF64;
+               precision::Float64 = 1e-12,
+               shift::Float64=0.0,
+               normalize::Bool=false,
+               max_iterations::Int64 = 1000,
+               deflation_tol::Float64 = 1e-7)::EvolveLanczosResult
+		```
+		
+2. An *inplace* variant `evolve_lanczos_inplace`, where the input state is overwritten and contains the time evolved state upon exit. This version is more memory efficient than `evolve_lanczos`.
+
+
+	=== "C++"
+		```c++
+		<typename idx_t, typename coeff_t>
+		EvolveLanczosInplaceResult 
+		evolve_lanczos_inplace(
+			CSRMatrix<idx_t, coeff_t> const &H, State &psi, double tau,
+			double precision = 1e-12, double shift = 0., bool normalize = false,
+			int64_t max_iterations = 1000, double deflation_tol = 1e-7);
+
+		template <typename idx_t, typename coeff_t>
+		EvolveLanczosInplaceResult 
+		evolve_lanczos_inplace(
+			CSRMatrix<idx_t, coeff_t> const &H, State &psi, complex tau,
+			double precision = 1e-12, double shift = 0., bool normalize = false,
+			int64_t max_iterations = 1000, double deflation_tol = 1e-7);
+		```
+	=== "Julia"
+		```julia
+		evolve_lanczos_inplace(H::CSRMatrix, psi::State, t::Float64;
+			precision::Float64 = 1e-12, shift::Float64=0.0,
+			normalize::Bool=false, max_iterations::Int64 = 1000,
+			deflation_tol::Float64 = 1e-7)::EvolveLanczosInplaceResult
+			
+		evolve_lanczos_inplace(H::CSRMatrix, psi::State, z::ComplexF64;
+                       precision::Float64 = 1e-12,
+                       shift::Float64=0.0, normalize::Bool=false,
+                       max_iterations::Int64 = 1000,
+                       deflation_tol::Float64 = 1e-7)::EvolveLanczosInplaceResult
+		```
 ---
 
 ## Parameters
 
-| Name           | Description                                                                                             | Default |
-|:---------------|:--------------------------------------------------------------------------------------------------------|---------|
-| H              | [OpSum](../operators/opsum.md) defining the hermitian operator $H$ for time evolution                   |         |
-| psi0           | initial [State](../states/state.md) $\vert \psi_0 \rangle$ of the time evolution                        |         |
-| time           | time $\tau$ until which the state is evolved                                                            |         |
-| precision      | accuracy of the computed time evolved state $\vert \psi(t) \rangle$                                     | 1e-12   |
-| shift          | the offset $\delta$ when computing $\vert \psi(t) \rangle = e^{-(H - \delta) \tau} \vert \psi_0\rangle$ | 0.0     |
-| normalize      | flag whether or not the evolved state should be normalized                                              | false   |
-| max_iterations | maximum number of Lanczos iterations performed                                                          | 1000    |
-| deflation_tol  | tolerance for deflation, i.e. breakdown of Lanczos due to Krylow space exhaustion                       | 1e-7    |
+| Name           | Description                                                                                                                                    | Default |
+|:---------------|:-----------------------------------------------------------------------------------------------------------------------------------------------|---------|
+| H              | [OpSum](../operators/opsum.md) or [CSRMatrix](../algebra/sparse/sparse_matrix_types.md) defining the hermitian operator $H$ for time evolution |         |
+| psi0           | initial [State](../states/state.md) $\vert \psi_0 \rangle$ of the time evolution                                                               |         |
+| time           | time $\tau$ until which the state is evolved                                                                                                   |         |
+| precision      | accuracy of the computed time evolved state $\vert \psi(t) \rangle$                                                                            | 1e-12   |
+| shift          | the offset $\delta$ when computing $\vert \psi(t) \rangle = e^{-(H - \delta) \tau} \vert \psi_0\rangle$                                        | 0.0     |
+| normalize      | flag whether or not the evolved state should be normalized                                                                                     | false   |
+| max_iterations | maximum number of Lanczos iterations performed                                                                                                 | 1000    |
+| deflation_tol  | tolerance for deflation, i.e. breakdown of Lanczos due to Krylow space exhaustion                                                              | 1e-7    |
 
 The parameter `shift` can be used to turn all eigenvalues of the matrix $H - \delta \;\textrm{Id}$ positive whenever $\delta < E_0$, where $E_0$ denotes the ground state energy of $H$.
 
