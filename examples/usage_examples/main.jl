@@ -548,6 +548,36 @@ let
 end
 # --8<-- [end:apply]
 
+
+# --8<-- [start:sparse_apply]
+let
+    # Real vector apply
+    N = 8
+    block = Spinhalf(N,  N ÷ 2)
+    ops = OpSum()
+    for i in 1:N
+        ops += Op("SdotS", [i, mod1(i+1, N)])
+    end
+    spmat = csr_matrix(ops, block)
+    rstate = random_state(block)
+    res = apply(spmat, vector(rstate))
+
+    # Complex matrix apply
+    N = 4
+    block = Electron(N,  N ÷ 2, N ÷ 2)
+    ops = OpSum()
+    for i in 1:N
+        ops += (1.0 + 1.0im) * Op("Hop", [i, mod1(i+1, N)])
+    end
+    spmat = csr_matrix(ops, block)
+    ncols = 3
+    rstate = random_state(block; real=false, ncols=ncols)
+    in = matrix(rstate)
+    out = zeros(ComplexF64, size(block), ncols)
+    apply(spmat, in, out)
+end
+# --8<-- [end:sparse_apply]
+
 # --8<-- [start:symmetrize]
 let
     N = 4

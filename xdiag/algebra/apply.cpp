@@ -142,8 +142,9 @@ void apply(Op const &op, State const &v, State &w) try {
 XDIAG_CATCH
 
 template <typename mat_t>
-void apply(OpSum const &ops, Block const &block_in, mat_t const &mat_in,
-           Block const &block_out, mat_t &mat_out) try {
+static void apply_tpl(OpSum const &ops, Block const &block_in,
+                      mat_t const &mat_in, Block const &block_out,
+                      mat_t &mat_out) try {
   std::visit(
       overload{
           [&](Spinhalf const &b1, Spinhalf const &b2) {
@@ -173,14 +174,29 @@ void apply(OpSum const &ops, Block const &block_in, mat_t const &mat_in,
 }
 XDIAG_CATCH
 
-template void apply(OpSum const &, Block const &, arma::vec const &,
-                    Block const &, arma::vec &);
-template void apply(OpSum const &, Block const &, arma::cx_vec const &,
-                    Block const &, arma::cx_vec &);
-template void apply(OpSum const &, Block const &, arma::mat const &,
-                    Block const &, arma::mat &);
-template void apply(OpSum const &, Block const &, arma::cx_mat const &,
-                    Block const &, arma::cx_mat &);
+void apply(OpSum const &ops, Block const &block_in, arma::vec const &vec_in,
+           Block const &block_out, arma::vec &vec_out) try {
+  apply_tpl(ops, block_in, vec_in, block_out, vec_out);
+}
+XDIAG_CATCH
+
+void apply(OpSum const &ops, Block const &block_in, arma::cx_vec const &vec_in,
+           Block const &block_out, arma::cx_vec &vec_out) try {
+  apply_tpl(ops, block_in, vec_in, block_out, vec_out);
+}
+XDIAG_CATCH
+
+void apply(OpSum const &ops, Block const &block_in, arma::mat const &mat_in,
+           Block const &block_out, arma::mat &mat_out) try {
+  apply_tpl(ops, block_in, mat_in, block_out, mat_out);
+}
+XDIAG_CATCH
+
+void apply(OpSum const &ops, Block const &block_in, arma::cx_mat const &mat_in,
+           Block const &block_out, arma::cx_mat &mat_out) try {
+  apply_tpl(ops, block_in, mat_in, block_out, mat_out);
+}
+XDIAG_CATCH
 
 template <typename coeff_t>
 static inline void fill_apply(coeff_t const *vec_in, coeff_t *vec_out,

@@ -41,6 +41,39 @@ An operator $\mathcal{O}$ can be applied to a state $\vert v\rangle$ in two ways
 	    apply(ops::OpSum, v::State, w::State)
 		```
 
+3. A low-level routine where given an [OpSum](../operators/opsum.md) with an input and output block, the operator is applied to a raw vector. This version is useful when using XDiag in conjuction with third-party libraries. 
+
+	=== "C++"
+		```c++
+		void apply(OpSum const &ops, 
+		           Block const &block_in, arma::vec const &v, 
+				   Block const &block_out, arma::vec &w);
+		void apply(OpSum const &ops, 
+			       Block const &block_in, arma::cx_vec const &v, 
+				   Block const &block_out, arma::cx_vec &w);
+		void apply(OpSum const &ops, 
+		           Block const &block_in, arma::mat const &V, 
+				   Block const &block_out, arma::mat &W);
+		void apply(OpSum const &ops, 
+		           Block const &block_in, arma::cx_mat const &V, 
+				   Block const &block_out, arma::cx_mat &W);
+		```
+	=== "Julia"
+		```julia
+	    apply(ops::OpSum,
+              block_in::Block, v::Vector{Float64},
+              block_out::Block, w::Vector{Float64})
+	    apply(ops::OpSum,
+              block_in::Block, v::Vector{ComplexF64},
+              block_out::Block, w::Vector{ComplexF64})
+		apply(ops::OpSum,
+               block_in::Block, V::Matrix{Float64},
+               block_out::Block, W::Matrix{Float64})
+		apply(ops::OpSum,
+               block_in::Block, V::Matrix{ComplexF64},
+               block_out::Block, W::Matrix{ComplexF64})
+		```
+
 ---
 
 ## Parameters

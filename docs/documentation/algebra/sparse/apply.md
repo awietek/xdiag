@@ -22,7 +22,7 @@ There are two interfaces to perform this operation.
 		template <typename idx_t, typename coeff_t>
 		arma::Col<coeff_t> apply(CSRMatrix<idx_t, coeff_t> const &A, arma::Col<coeff_t> const &x);
 		template <typename idx_t, typename coeff_t>
-		arma::Col<coeff_t> apply(CSRMatrix<idx_t, coeff_t> const &A, arma::Col<coeff_t> const &X);
+		arma::Col<coeff_t> apply(CSRMatrix<idx_t, coeff_t> const &A, arma::Mat<coeff_t> const &X);
 		```
 	=== "Julia"
 		```julia
@@ -35,13 +35,9 @@ There are two interfaces to perform this operation.
 	=== "C++"
 		```c++
 		template <typename idx_t, typename coeff_t>
-		void apply(CSRMatrix<idx_t, coeff_t> const &A,
-                     arma::Col<coeff_t> const &x,
-                     arma::Col<coeff_t> &y);
+		void apply(CSRMatrix<idx_t, coeff_t> const &A, arma::Col<coeff_t> const &x, arma::Col<coeff_t> &y);
 		template <typename idx_t, typename coeff_t>
-		void apply(CSRMatrix<idx_t, coeff_t> const &A,
-                     arma::Mat<coeff_t> const &X,
-                     arma::Mat<coeff_t> &Y);
+		void apply(CSRMatrix<idx_t, coeff_t> const &A, arma::Mat<coeff_t> const &X, arma::Mat<coeff_t> &Y);
 		```
 	=== "Julia"
 		```julia

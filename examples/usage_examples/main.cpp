@@ -611,6 +611,40 @@ XDIAG_SHOW(inner(ops, phi));
 }
 
 {
+// --8<-- [start:sparse_apply] 
+// Real vector apply
+{
+  int N = 8;
+  auto block = Spinhalf(N,  N / 2);
+  auto ops = OpSum();
+  for (int i=0; i<N; ++i){
+    ops += Op("SdotS", {i, (i+1)%N});
+  }
+  auto spmat = csr_matrix(ops, block);
+  auto rstate = random_state(block);
+  arma::vec res = apply(spmat, rstate.vector(false));
+}
+
+// Complex matrix apply
+{
+   int N = 4;
+   auto block = Electron(N,  N / 2, N / 2);
+   auto ops = OpSum();
+   for (int i=0; i<N; ++i){
+     ops += complex(1.0, 1.0) * Op("Hop", {i, (i+1)%N});
+   }
+  auto spmat = csr_matrixC(ops, block);
+  int64_t ncols = 3;
+  auto rstate = random_state(block, false, ncols);
+  arma::cx_mat in = rstate.matrixC();
+  arma::cx_mat out(block.size(), ncols, arma::fill::zeros);
+  apply(spmat, in, out);
+}
+// --8<-- [end:sparse_apply]
+}
+
+
+{
 // --8<-- [start:symmetrize]
 int N = 4;
 int nup = 2;

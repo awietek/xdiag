@@ -51,7 +51,7 @@ XDiag uses the C++ library [Armadillo](https://arma.sourceforge.net) as a linear
 
 ## Blocks
 
-**Shared memory**
+#### Shared memory
 
 | Name                                                  | Description                                                        |                          Language |
 |:------------------------------------------------------|:-------------------------------------------------------------------|----------------------------------:|
@@ -59,7 +59,7 @@ XDiag uses the C++ library [Armadillo](https://arma.sourceforge.net) as a linear
 | [tJ](blocks/tJ.md)                                    | Block of a $t-J$ type Hilbert space                                | :simple-cplusplus: :simple-julia: |
 | [Electron](blocks/electron.md)                        | Block of a Electron type Hilbert space                             | :simple-cplusplus: :simple-julia: |
 
-**Distributed memory**
+#### Distributed memory
 
 | Name                                                  | Description                                                        |           Language |
 |:------------------------------------------------------|:-------------------------------------------------------------------|-------------------:|
@@ -80,7 +80,7 @@ XDiag uses the C++ library [Armadillo](https://arma.sourceforge.net) as a linear
 
 ## Input / Output
 
-**TOML**
+#### TOML
 
 | Name                                                   | Description                                                                  |                          Language |
 |:-------------------------------------------------------|:-----------------------------------------------------------------------------|----------------------------------:|
@@ -89,7 +89,7 @@ XDiag uses the C++ library [Armadillo](https://arma.sourceforge.net) as a linear
 | [read_permutation_group](io/read_permutation_group.md) | reads a [PermutationGroup](symmetries/permutation_group.md) from a TOML file | :simple-cplusplus: :simple-julia: |
 | [read_representation](io/read_representation.md) | reads a [Representation](symmetries/representation.md) from a TOML file | :simple-cplusplus: :simple-julia: |
 
-**HDF5**
+#### HDF5
 
 | Name                    | Description                                                               |           Language |
 |:------------------------|:--------------------------------------------------------------------------|-------------------:|
