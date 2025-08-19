@@ -211,7 +211,13 @@ let
         ops += "J" * Op("SdotS", [i, mod1(i+1, N)])
     end
     ops["J"] = 1.0
-    e0 = eigval0(ops, block);
+
+    # on-the-fly
+    e0 = eigval0(ops, block)
+
+    # sparse matrix
+    spmat = csr_matrix(ops, block)
+    e0 = eigval0(spmat, block)
 end
 # --8<-- [end:eigval0]
 
@@ -227,7 +233,13 @@ let
         ops += "J" * Op("SdotS", [i, mod1(i+1, N)])
     end
     ops["J"] = 1.0
+
+    # on-the-fly
     e0, gs = eig0(ops, block);
+
+    # sparse matrix
+    spmat = csr_matrix(ops, block)
+    e0, gs = eig0(spmat, block);
 end
 # --8<-- [end:eig0]
 
@@ -256,6 +268,10 @@ let
     @show res.alphas
     @show res.betas
     @show res.eigenvalues
+
+    # sparse matrix
+    spmat = csr_matrix(ops, block)
+    res = eigvals_lanczos(spmat, psi0)
 end
 # --8<-- [end:eigvals_lanczos]
 
@@ -279,6 +295,10 @@ let
     @show res.betas
     @show res.eigenvalues
     @show res.eigenvectors
+
+    # sparse matrix
+    spmat = csr_matrix(ops, block)
+    res = eigs_lanczos(spmat, block)
 end
 # --8<-- [end:eigs_lanczos]
 
@@ -298,9 +318,15 @@ let
 
     psi0 = product_state(block, ["Up", "Dn", "Up", "Dn", "Up", "Dn", "Up", "Dn"])
     time = 1.0
+
+    # on-the-fly
     psi = time_evolve(ops, psi0, time)
     time_evolve_inplace(ops, psi0, time)
     @show isapprox(psi0, psi)
+
+    # sparse matrix
+    spmat = csr_matrix(ops, block)
+    psi = time_evolve(spmat, psi0, time)
 end
 # --8<-- [end:time_evolve]
 
@@ -321,10 +347,17 @@ let
  
     psi0 = product_state(block, ["Up", "Dn", "Up", "Dn", "Up", "Dn", "Up", "Dn"])
     time = 1.0
+
+    # on-the-fly
     psi = imaginary_time_evolve(ops, psi0, time,
                                 precision=1e-12, shift=e0)
     imaginary_time_evolve_inplace(ops, psi0, time, precision=1e-12, shift=e0)
     @show isapprox(psi0, psi)
+
+    # sparse matrix
+    spmat = csr_matrix(ops, block)
+    psi = imaginary_time_evolve(ops, psi0, time,
+                                precision=1e-12, shift=e0)
 end
 # --8<-- [end:imaginary_time_evolve]
 
@@ -345,9 +378,15 @@ let
  
     psi0 = product_state(block, ["Up", "Dn", "Up", "Dn", "Up", "Dn", "Up", "Dn"])
     time = 1.0
+
+    # on-the-fly
     res = evolve_lanczos(ops, psi0, time, precision=1e-12, shift=e0, normalize=true)
     @show res.alphas
     @show res.betas
+
+    # sparse matrix
+    spmat = csr_matrix(ops, block)
+    res = evolve_lanczos(spmat, psi0, time, precision=1e-12, shift=e0, normalize=true)
 end
 # --8<-- [end:evolve_lanczos]
 
@@ -366,11 +405,17 @@ let
 
     psi0 = product_state(block, ["Up", "Dn", "Up", "Dn", "Up", "Dn", "Up", "Dn"])
     time = 1.0
+
+    # on-the-fly
     res1 = time_evolve_expokit(ops, psi0, time, precision=1e-8)
     res2 = time_evolve_expokit_inplace(ops, psi0, time, precision=1e-8)
     @show isapprox(psi0, res1.state)
     @show res1.error
     @show res1.hump
+
+    # sparse matrix
+    spmat = csr_matrix(ops, block)
+    res = time_evolve_expokit(spmat, psi0, time, precision=1e-8)
 end
 # --8<-- [end:time_evolve_expokit]
 

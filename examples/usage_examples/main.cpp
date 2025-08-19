@@ -237,7 +237,13 @@ for (int i=0; i<N; ++i) {
   ops += "J" * Op("SdotS", {i, (i+1) % N});
 }
 ops["J"] = 1.0;
+
+// On-the-fly
 double e0 = eigval0(ops, block);
+
+// sparse matrix
+auto spmat = csr_matrix(ops, block);
+double e0s = eigval0(spmat, block);
 // --8<-- [end:eigval0]
 }
 
@@ -253,7 +259,13 @@ for (int i=0; i<N; ++i) {
   ops += "J" * Op("SdotS", {i, (i+1) % N});
 }
 ops["J"] = 1.0;
+
+// On-the-fly
 auto [e0, gs] = eig0(ops, block);
+
+// sparse matrix
+auto spmat = csr_matrix(ops, block);
+auto [e0s, gss] = eig0(spmat, block);
 // --8<-- [end:eig0]
 }
 
@@ -282,6 +294,10 @@ auto res2 = eigvals_lanczos(ops, psi0);
 XDIAG_SHOW(res.alphas);
 XDIAG_SHOW(res.betas);
 XDIAG_SHOW(res.eigenvalues);
+
+// sparse matrix
+auto spmat = csr_matrix(ops, block);
+auto ress = eigvals_lanczos(spmat, block);
 // --8<-- [end:eigvals_lanczos]
 }
  
@@ -304,6 +320,11 @@ XDIAG_SHOW(res.alphas);
 XDIAG_SHOW(res.betas);
 XDIAG_SHOW(res.eigenvalues);
 XDIAG_SHOW(res.eigenvectors);
+
+// sparse matrix
+auto spmat = csr_matrix(ops, block);
+auto ress = eigs_lanczos(spmat, block);
+ 
 // --8<-- [end:eigs_lanczos]
 }
 
@@ -489,9 +510,15 @@ for (int i=0; i<N; ++i) {
 
 auto psi0 = product_state(block, {"Up", "Dn", "Up", "Dn", "Up", "Dn", "Up", "Dn"});
 double time = 1.0;
+
+// On-the-fly
 auto psi = time_evolve(ops, psi0, time);
 time_evolve_inplace(ops, psi0, time);
 XDIAG_SHOW(isapprox(psi0, psi));
+
+// sparse matrix
+auto spmat = csr_matrix(ops, block);
+auto psis = time_evolve(spmat, psi0, time);
 // --8<-- [end:time_evolve]
 }
 
@@ -513,9 +540,15 @@ double e0 = eigval0(ops, block);
 auto psi0 = product_state(block, {"Up", "Dn", "Up", "Dn", "Up", "Dn", "Up", "Dn"});
 double time = 1.0;
 double precision = 1e-12;
+
+// On-the-fly
 auto psi = imaginary_time_evolve(ops, psi0, time, precision, e0);
 imaginary_time_evolve_inplace(ops, psi0, time, precision, e0);
 XDIAG_SHOW(isapprox(psi0, psi));
+
+// sparse matrix
+auto spmat = csr_matrix(ops, block);
+auto psis = imaginary_time_evolve(spmat, psi0, time); 
 // --8<-- [end:imaginary_time_evolve]
 }
  
@@ -538,9 +571,15 @@ double e0 = eigval0(ops, block);
 auto psi0 = product_state(block, {"Up", "Dn", "Up", "Dn", "Up", "Dn", "Up", "Dn"});
 double time = 1.0;
 double precision = 1e-12;
+
+// On-the-fly
 auto res = evolve_lanczos(ops, psi0, time, precision, e0, true, 500);
 XDIAG_SHOW(res.alphas);
 XDIAG_SHOW(res.betas);
+
+// sparse matrix
+auto spmat = csr_matrix(ops, block);
+auto ress = evolve_lanczos(spmat, psi0, time, precision, e0, true, 500);
 // --8<-- [end:evolve_lanczos]
 }
  
@@ -559,11 +598,17 @@ for (int i=0; i<N; ++i) {
 auto psi0 = product_state(block, {"Up", "Dn", "Up", "Dn", "Up", "Dn", "Up", "Dn"});
 double time = 1.0;
 double precision = 1e-8;
+
+// On-the-fly
 auto res1 = time_evolve_expokit(ops, psi0, time, precision);
 auto res2 = time_evolve_expokit_inplace(ops, psi0, time, precision);
 XDIAG_SHOW(isapprox(psi0, res1.state));
 XDIAG_SHOW(res1.error);
 XDIAG_SHOW(res1.hump);
+
+// sparse matrix
+auto spmat = csr_matrix(ops, block);
+auto res = time_evolve_expokit(spmat, psi0, time, precision);
 // --8<-- [end:time_evolve_expokit]
 }
  
