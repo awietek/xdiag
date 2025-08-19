@@ -14,7 +14,6 @@ void csr_matrix_fill(OpSum const &ops, block_t const &block_in,
                      block_t const &block_out, int64_t nnz,
                      std::vector<idx_t> const &n_elements_in_row, idx_t *rowptr,
                      idx_t *col, coeff_t *data, idx_t i0, bool transpose) try {
-
   idx_t nrows = (idx_t)size(block_out);
   idx_t ncols = (idx_t)size(block_in);
 
@@ -32,6 +31,10 @@ void csr_matrix_fill(OpSum const &ops, block_t const &block_in,
                    n_elements_in_row_offset.begin() + 1);
   std::partial_sum(n_elements_in_row.begin(), n_elements_in_row.end() - 1,
                    rowptr + 1);
+  if (n_elements_in_row.size() > 0) { // don't forget to set first element to 0
+    n_elements_in_row_offset[0] = 0;
+    rowptr[0] = 0;
+  }
 
   if (transpose) {
     rowptr[ncols] = nnz;
@@ -89,7 +92,6 @@ void csr_matrix_fill(OpSum const &ops, block_t const &block_in,
       idx_t start = rowptr[row];
       idx_t end = rowptr[row + 1];
       idx_t nelems = end - start;
-
       std::copy(col + start, col + end, coltmp.begin());
       std::copy(data + start, data + end, datatmp.begin());
       std::iota(indices.begin(), indices.begin() + nelems, 0);

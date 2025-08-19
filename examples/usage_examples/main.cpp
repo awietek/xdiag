@@ -488,7 +488,7 @@ XDIAG_SHOW(state.vector());
 zero(state);
 XDIAG_SHOW(state.vector());
 
-state = random_state(block, false, 1234, true);
+state = random_state(block, false, 1, 1234, true);
 XDIAG_SHOW(state.vectorC());
 
 state = zero_state(block, true, 2);
