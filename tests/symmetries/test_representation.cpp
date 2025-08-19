@@ -18,10 +18,10 @@ TEST_CASE("representation", "[symmetries]") try {
     for (auto irrep:irreps) {
         auto chars_hc = arma::conj(irrep.characters().as<arma::cx_vec>());
         auto irrep_hc = Representation(irrep.group(), arma::cx_vec(chars_hc));
-        XDIAG_SHOW(irrep);
-        XDIAG_SHOW(irrep_hc);
+        // XDIAG_SHOW(irrep);
+        // XDIAG_SHOW(irrep_hc);
         auto irrep_id = irrep * irrep_hc;
-        XDIAG_SHOW(irrep_id);
+        // XDIAG_SHOW(irrep_id);
         REQUIRE(irrep_id.isreal());        
     }
   }

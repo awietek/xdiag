@@ -9,6 +9,7 @@
 #ifdef _OPENMP
 #include <xdiag/parallel/omp/omp_utils.hpp>
 #include <xdiag/random/hash_functions.hpp>
+#include <xdiag/utils/logger.hpp>
 #endif
 
 namespace xdiag::random {
@@ -65,6 +66,7 @@ int random_normal_discard() {
 
 template <typename coeff_t>
 void fill_random_normal_vector(arma::Col<coeff_t> &v, int seed) {
+
 #ifdef _OPENMP
 #pragma omp parallel
   {

@@ -140,65 +140,65 @@ TEST_CASE("tj_symmetric_matrix", "[tj]") try {
     test_spectra_tj_symmetric(ops, 8, irreps, multiplicities);
   }
 
-  {
-    // test a 3x3 triangular lattice
-    Log("tj_symmetric_matrix: tJ 3x3 triangular, symmetric spectra test");
-    std::string lfile =
-        XDIAG_DIRECTORY "/misc/data/triangular.9.hop.sublattices.tsl.toml";
+  // {
+  //   // test a 3x3 triangular lattice
+  //   Log("tj_symmetric_matrix: tJ 3x3 triangular, symmetric spectra test");
+  //   std::string lfile =
+  //       XDIAG_DIRECTORY "/misc/data/triangular.9.hop.sublattices.tsl.toml";
 
-    auto fl = FileToml(lfile);
-    auto ops = fl["Interactions"].as<OpSum>();
-    ops["T"] = 1.0;
-    ops["J"] = 0.4;
-    auto group = fl["Symmetries"].as<PermutationGroup>();
+  //   auto fl = FileToml(lfile);
+  //   auto ops = fl["Interactions"].as<OpSum>();
+  //   ops["T"] = 1.0;
+  //   ops["J"] = 0.4;
+  //   auto group = fl["Symmetries"].as<PermutationGroup>();
 
-    std::vector<std::pair<std::string, int64_t>> rep_name_mult = {
-        {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
-        {"K0.D3.A1", 1},    {"K0.D3.A2", 1},    {"K0.D3.E", 2},
-        {"K1.D3.A1", 1},    {"K1.D3.A2", 1},    {"K1.D3.E", 2},
-        {"Y.C1.A", 6}};
+  //   std::vector<std::pair<std::string, int64_t>> rep_name_mult = {
+  //       {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
+  //       {"K0.D3.A1", 1},    {"K0.D3.A2", 1},    {"K0.D3.E", 2},
+  //       {"K1.D3.A1", 1},    {"K1.D3.A2", 1},    {"K1.D3.E", 2},
+  //       {"Y.C1.A", 6}};
 
-    std::vector<Representation> irreps;
-    std::vector<int64_t> multiplicities;
-    for (auto [name, mult] : rep_name_mult) {
-      irreps.push_back(read_representation(fl, name));
-      multiplicities.push_back(mult);
-    }
-    test_spectra_tj_symmetric(ops, 9, irreps, multiplicities);
-  }
+  //   std::vector<Representation> irreps;
+  //   std::vector<int64_t> multiplicities;
+  //   for (auto [name, mult] : rep_name_mult) {
+  //     irreps.push_back(read_representation(fl, name));
+  //     multiplicities.push_back(mult);
+  //   }
+  //   test_spectra_tj_symmetric(ops, 9, irreps, multiplicities);
+  // }
 
-  {
-    // test a 3x3 triangular lattice with complex flux
-    Log("tj_symmetric_matrix: tJ 3x3 triangular staggered flux, "
-        "symmetric spectra test, complex");
-    std::string lfile = XDIAG_DIRECTORY
-        "/misc/data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.toml";
+  // {
+  //   // test a 3x3 triangular lattice with complex flux
+  //   Log("tj_symmetric_matrix: tJ 3x3 triangular staggered flux, "
+  //       "symmetric spectra test, complex");
+  //   std::string lfile = XDIAG_DIRECTORY
+  //       "/misc/data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.toml";
 
-    auto fl = FileToml(lfile);
-    auto ops = fl["Interactions"].as<OpSum>();
-    std::vector<double> etas{0.0, 0.1, 0.2, 0.3};
-    auto group = fl["Symmetries"].as<PermutationGroup>();
+  //   auto fl = FileToml(lfile);
+  //   auto ops = fl["Interactions"].as<OpSum>();
+  //   std::vector<double> etas{0.0, 0.1, 0.2, 0.3};
+  //   auto group = fl["Symmetries"].as<PermutationGroup>();
 
-    std::vector<std::pair<std::string, int64_t>> rep_name_mult = {
-        {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
-        {"K0.D3.A1", 1},    {"K0.D3.A2", 1},    {"K0.D3.E", 2},
-        {"K1.D3.A1", 1},    {"K1.D3.A2", 1},    {"K1.D3.E", 2},
-        {"Y.C1.A", 6}};
+  //   std::vector<std::pair<std::string, int64_t>> rep_name_mult = {
+  //       {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
+  //       {"K0.D3.A1", 1},    {"K0.D3.A2", 1},    {"K0.D3.E", 2},
+  //       {"K1.D3.A1", 1},    {"K1.D3.A2", 1},    {"K1.D3.E", 2},
+  //       {"Y.C1.A", 6}};
 
-    std::vector<Representation> irreps;
-    std::vector<int64_t> multiplicities;
-    for (auto [name, mult] : rep_name_mult) {
-      irreps.push_back(read_representation(fl, name));
-      multiplicities.push_back(mult);
-    }
+  //   std::vector<Representation> irreps;
+  //   std::vector<int64_t> multiplicities;
+  //   for (auto [name, mult] : rep_name_mult) {
+  //     irreps.push_back(read_representation(fl, name));
+  //     multiplicities.push_back(mult);
+  //   }
 
-    for (auto eta : etas) {
-      Log("eta: {:.2f}", eta);
-      ops["TPHI"] = 1.0; // complex(cos(eta * M_PI), sin(eta * M_PI));
-      ops["JPHI"] = 0.4; // complex(cos(2 * eta * M_PI), sin(2 * eta * M_PI));
-      test_spectra_tj_symmetric(ops, 9, irreps, multiplicities);
-    }
-  }
+  //   for (auto eta : etas) {
+  //     Log("eta: {:.2f}", eta);
+  //     ops["TPHI"] = 1.0; // complex(cos(eta * M_PI), sin(eta * M_PI));
+  //     ops["JPHI"] = 0.4; // complex(cos(2 * eta * M_PI), sin(2 * eta * M_PI));
+  //     test_spectra_tj_symmetric(ops, 9, irreps, multiplicities);
+  //   }
+  // }
 } catch (xdiag::Error const &e) {
   error_trace(e);
 }

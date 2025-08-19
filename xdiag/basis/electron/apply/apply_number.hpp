@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <xdiag/parallel/omp/omp_utils.hpp>
+
 namespace xdiag::basis::electron {
 
 template <typename coeff_t, bool symmetric, class basis_t, class fill_f>
@@ -21,28 +23,35 @@ void apply_number(Coupling const &cpl, Op const &op, basis_t const &basis,
     if constexpr (symmetric) {
 
 #ifdef _OPENMP
-#pragma omp parallel for schedule(guided)
+#pragma omp parallel
+      {
+        int num_thread = omp_get_thread_num();
+#pragma omp for schedule(runtime)
 #endif
-      for (int64_t idx_ups = 0; idx_ups < basis.n_rep_ups(); ++idx_ups) {
-        bit_t ups = basis.rep_ups(idx_ups);
-        auto dnss = basis.dns_for_ups_rep(ups);
-        int64_t idx = basis.ups_offset(idx_ups);
-        int64_t size_dns = dnss.size();
-        if (ups & mask) { // check whether bit at s is set
-          int64_t end = idx + size_dns;
-          for (; idx < end; ++idx) {
-            fill(idx, idx, mu);
+        for (int64_t idx_ups = 0; idx_ups < basis.n_rep_ups(); ++idx_ups) {
+          bit_t ups = basis.rep_ups(idx_ups);
+          auto dnss = basis.dns_for_ups_rep(ups);
+          int64_t idx = basis.ups_offset(idx_ups);
+          int64_t size_dns = dnss.size();
+          if (ups & mask) { // check whether bit at s is set
+            int64_t end = idx + size_dns;
+            for (; idx < end; ++idx) {
+              XDIAG_FILL(idx, idx, mu);
+            }
+          } else {
+            idx += size_dns;
           }
-        } else {
-          idx += size_dns;
         }
+#ifdef _OPENMP
       }
+#endif
 
     } else { // if not symmetric
 
 #ifdef _OPENMP
 #pragma omp parallel
       {
+        int num_thread = omp_get_thread_num();
         auto ups_and_idces = basis.states_indices_ups_thread();
 #else
       auto ups_and_idces = basis.states_indices_ups();
@@ -54,7 +63,7 @@ void apply_number(Coupling const &cpl, Op const &op, basis_t const &basis,
           if (up & mask) { // check whether bit at s is set
             int64_t end = idx + size_dns;
             for (; idx < end; ++idx) {
-              fill(idx, idx, mu);
+              XDIAG_FILL(idx, idx, mu);
             }
           } else {
             idx += size_dns;
@@ -67,22 +76,32 @@ void apply_number(Coupling const &cpl, Op const &op, basis_t const &basis,
   } else if (type == "Ndn") {
 
     if constexpr (symmetric) {
-      int64_t idx = 0;
-      for (int64_t idx_ups = 0; idx_ups < basis.n_rep_ups(); ++idx_ups) {
-        bit_t ups = basis.rep_ups(idx_ups);
-        auto dnss = basis.dns_for_ups_rep(ups);
-        for (bit_t dns : dnss) {
-          if (dns & mask) {
-            fill(idx, idx, mu);
+#ifdef _OPENMP
+#pragma omp parallel
+      {
+        int num_thread = omp_get_thread_num();
+#pragma omp for schedule(runtime)
+#endif
+        for (int64_t idx_ups = 0; idx_ups < basis.n_rep_ups(); ++idx_ups) {
+          bit_t ups = basis.rep_ups(idx_ups);
+          auto dnss = basis.dns_for_ups_rep(ups);
+          int64_t idx = basis.ups_offset(idx_ups);
+          for (bit_t dns : dnss) {
+            if (dns & mask) {
+              XDIAG_FILL(idx, idx, mu);
+            }
+            ++idx;
           }
-          ++idx;
         }
+#ifdef _OPENMP
       }
+#endif
 
     } else { // if not symmetric
 #ifdef _OPENMP
 #pragma omp parallel
       {
+        int num_thread = omp_get_thread_num();
         auto ups_and_idces = basis.states_indices_ups_thread();
 #else
       auto ups_and_idces = basis.states_indices_ups();
@@ -94,7 +113,7 @@ void apply_number(Coupling const &cpl, Op const &op, basis_t const &basis,
 
           for (bit_t dn : basis.states_dns()) {
             if (dn & mask) {
-              fill(idx, idx, mu);
+              XDIAG_FILL(idx, idx, mu);
             }
             ++idx;
           }

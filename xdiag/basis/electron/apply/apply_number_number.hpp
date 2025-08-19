@@ -6,6 +6,7 @@
 
 #include <xdiag/basis/electron/apply/generic_term_diag.hpp>
 #include <xdiag/bits/gbit.hpp>
+#include <xdiag/parallel/omp/omp_utils.hpp>
 
 namespace xdiag::basis::electron {
 

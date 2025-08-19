@@ -20,6 +20,10 @@ XDIAG_API double norminf(State const &v);
 XDIAG_API double dot(State const &v, State const &w);
 XDIAG_API complex dotC(State const &v, State const &w);
 
+// matrix_dot
+XDIAG_API arma::mat matrix_dot(State const &v, State const &w);
+XDIAG_API arma::cx_mat matrix_dotC(State const &v, State const &w);
+
 XDIAG_API double inner(OpSum const &ops, State const &v);
 XDIAG_API double inner(Op const &op, State const &v);
 XDIAG_API complex innerC(OpSum const &ops, State const &v);
@@ -28,6 +32,10 @@ XDIAG_API complex innerC(Op const &op, State const &v);
 // Internal routines
 double dot(Block const &block, arma::vec const &v, arma::vec const &w);
 complex dot(Block const &block, arma::cx_vec const &v, arma::cx_vec const &w);
+
+template <typename coeff_t>
+arma::Mat<coeff_t> matrix_dot(Block const &block, arma::Mat<coeff_t> const &V,
+                              arma::Mat<coeff_t> const &W);
 
 template <typename coeff_t>
 double norm(Block const &block, arma::Col<coeff_t> const &v);
