@@ -5,6 +5,8 @@
 #include <xdiag/operators/logic/compilation.hpp>
 #include <xdiag/utils/timing.hpp>
 
+#include <numeric>
+
 namespace xdiag::algebra {
 
 template <typename idx_t, typename coeff_t, typename block_t>
@@ -21,10 +23,16 @@ void csr_matrix_fill(OpSum const &ops, block_t const &block_in,
       *std::max_element(n_elements_in_row.begin(), n_elements_in_row.end());
 
   arma::Col<idx_t> n_elements_in_row_offset(n_elements_in_row.size());
-  std::exclusive_scan(n_elements_in_row.begin(), n_elements_in_row.end(),
-                      n_elements_in_row_offset.begin(), 0);
-  std::exclusive_scan(n_elements_in_row.begin(), n_elements_in_row.end(),
-                      rowptr, 0);
+
+  // std::exclusive_scan(n_elements_in_row.begin(), n_elements_in_row.end(),
+  //                     n_elements_in_row_offset.begin(), 0);
+  // std::exclusive_scan(n_elements_in_row.begin(), n_elements_in_row.end(),
+  //                     rowptr, 0);
+  std::partial_sum(n_elements_in_row.begin(), n_elements_in_row.end() - 1,
+                   n_elements_in_row_offset.begin() + 1);
+  std::partial_sum(n_elements_in_row.begin(), n_elements_in_row.end() - 1,
+                   rowptr + 1);
+
   if (transpose) {
     rowptr[ncols] = nnz;
   } else {

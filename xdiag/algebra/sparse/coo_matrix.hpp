@@ -11,16 +11,13 @@
 
 namespace xdiag {
 
-// int64_t, double (default)
-template <typename idx_t = int64_t, typename coeff_t = double>
-XDIAG_API COOMatrix<idx_t, coeff_t>
-coo_matrix(OpSum const &ops, Block const &block, idx_t i0 = 0);
-
-template <typename idx_t = int64_t, typename coeff_t = double>
-XDIAG_API COOMatrix<idx_t, coeff_t>
-coo_matrix(OpSum const &ops, Block const &block_in, Block const &block_out,
-           idx_t i0 = 0);
-
+// int64_t, double
+XDIAG_API COOMatrix<int64_t, double>
+coo_matrix(OpSum const &ops, Block const &block, int64_t i0 = 0);
+XDIAG_API COOMatrix<int64_t, double> coo_matrix(OpSum const &ops,
+                                                Block const &block_in,
+                                                Block const &block_out,
+                                                int64_t i0 = 0);
 // int64_t, complex
 XDIAG_API COOMatrix<int64_t, complex>
 coo_matrixC(OpSum const &ops, Block const &block, int64_t i0 = 0);
@@ -42,6 +39,14 @@ XDIAG_API COOMatrix<int32_t, complex> coo_matrixC_32(OpSum const &ops,
                                                      Block const &block_in,
                                                      Block const &block_out,
                                                      int32_t i0 = 0);
+template <typename idx_t, typename coeff_t>
+XDIAG_API COOMatrix<idx_t, coeff_t>
+coo_matrix(OpSum const &ops, Block const &block, idx_t i0 = 0);
+
+template <typename idx_t, typename coeff_t>
+XDIAG_API COOMatrix<idx_t, coeff_t>
+coo_matrix(OpSum const &ops, Block const &block_in, Block const &block_out,
+           idx_t i0 = 0);
 
 template <typename idx_t, typename coeff_t>
 XDIAG_API arma::Mat<coeff_t> to_dense(COOMatrix<idx_t, coeff_t> const &coo_mat);

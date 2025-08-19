@@ -8,6 +8,8 @@
 #include <xdiag/operators/logic/compilation.hpp>
 #include <xdiag/utils/timing.hpp>
 
+#include <numeric>
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -25,9 +27,12 @@ void coo_matrix_fill(OpSum const &ops, block_t const &block_in,
   OpSum opsc = operators::compile<block_t>(ops);
   int nthreads = nnz_thread.size();
   std::vector<int64_t> nnz_thread_offset(nthreads, 0);
-  std::exclusive_scan(nnz_thread.begin(), nnz_thread.end(),
-                      nnz_thread_offset.begin(), 0);
+  // std::exclusive_scan(nnz_thread.begin(), nnz_thread.end(),
+  //                     nnz_thread_offset.begin(), 0);
+  std::partial_sum(nnz_thread.begin(), nnz_thread.end() - 1,
+                   nnz_thread_offset.begin() + 1);
 
+  
   // Finally fill the COO matrix
   omp_set_schedule(omp_sched_static, 0);
   auto fill = [&](int64_t c, int64_t r, coeff_t d, int thread_num) {

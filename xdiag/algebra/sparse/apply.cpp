@@ -8,7 +8,12 @@
 #include <omp.h>
 #endif
 
-#include <xdiag/utils/logger.hpp>
+#ifdef XDIAG_USE_SPARSE_MKL
+#include <type_traits>
+#include <complex>
+#define MKL_Complex16 std::complex<double>
+#include <mkl_spblas.h>
+#endif
 
 namespace xdiag {
 
@@ -90,10 +95,108 @@ template arma::cx_mat apply(CSRMatrix<int32_t, double> const &spmat,
 template arma::cx_mat apply(CSRMatrix<int64_t, double> const &spmat,
                             arma::cx_mat const &mat_in);
 
+#ifdef XDIAG_USE_SPARSE_MKL
+template <typename coeff_t>
+static void apply_mkl(CSRMatrix<int64_t, coeff_t> const &A,
+                      arma::Col<coeff_t> const &vec_in,
+                      arma::Col<coeff_t> &vec_out) try {
+
+  if ((A.nrows != vec_out.n_rows) || (A.ncols != vec_in.n_rows)) {
+    XDIAG_THROW(fmt::format(
+        "Incompatible sparse matrix and matrix dimensions A*x=y, sparse matrix "
+        "A: ({} x {}), x: {}, y: {}",
+        A.nrows, A.ncols, vec_in.n_rows, vec_out.n_rows))
+  }
+
+  sparse_matrix_t A_handle;
+  sparse_status_t status;
+  sparse_index_base_t i0 =
+      (A.i0 == 0) ? SPARSE_INDEX_BASE_ZERO : SPARSE_INDEX_BASE_ONE;
+
+  matrix_descr descr;
+  descr.mode = SPARSE_FILL_MODE_LOWER;
+  descr.diag = SPARSE_DIAG_NON_UNIT;
+
+  MKL_INT nrows = A.nrows;
+  MKL_INT ncols = A.ncols;
+  MKL_INT *rowptr =
+      reinterpret_cast<MKL_INT *>(const_cast<int64_t *>(A.rowptr.memptr()));
+  MKL_INT *col =
+      reinterpret_cast<MKL_INT *>(const_cast<int64_t *>(A.col.memptr()));
+
+  // Real routines (double)
+  if constexpr (std::is_same<coeff_t, double>::value) {
+    double *data = const_cast<double *>(A.data.memptr());
+
+    descr.type = A.ishermitian ? SPARSE_MATRIX_TYPE_SYMMETRIC
+                               : SPARSE_MATRIX_TYPE_GENERAL;
+    status = mkl_sparse_d_create_csr(&A_handle, i0, nrows, ncols, rowptr,
+                                     rowptr + 1, col, data);
+    if (status == SPARSE_STATUS_NOT_INITIALIZED) {
+      // empty CSR matrix give -> return 0 vector
+      vec_out.zeros();
+      return;
+    } else if (status != SPARSE_STATUS_SUCCESS) {
+      XDIAG_THROW(
+          fmt::format("Error creating MKL sparse matrix interface using "
+                      "mkl_sparse_d_create_csr. MKL error code: {}",
+                      (int)status));
+    }
+    mkl_sparse_set_mv_hint(A_handle, SPARSE_OPERATION_NON_TRANSPOSE, descr,
+                           1000);
+    status = mkl_sparse_d_mv(SPARSE_OPERATION_NON_TRANSPOSE, 1.0, A_handle,
+                             descr, vec_in.memptr(), 0.0, vec_out.memptr());
+    if (status != SPARSE_STATUS_SUCCESS) {
+      XDIAG_THROW(fmt::format("Error calling sparse matrix-vector multiply "
+                              "mkl_sparse_d_mv (double). MKL error code: {}",
+                              (int)status));
+    }
+  } else { // Complex routines
+    complex *data = const_cast<complex *>(A.data.memptr());
+
+    descr.type = A.ishermitian ? SPARSE_MATRIX_TYPE_HERMITIAN
+                               : SPARSE_MATRIX_TYPE_GENERAL;
+
+    status = mkl_sparse_z_create_csr(&A_handle, i0, nrows, ncols, rowptr,
+                                     rowptr + 1, col, data);
+
+    if (status == SPARSE_STATUS_NOT_INITIALIZED) {
+      // empty CSR matrix give -> return 0 vector
+      vec_out.zeros();
+      return;
+    } else if (status != SPARSE_STATUS_SUCCESS) {
+      XDIAG_THROW(
+          fmt::format("Error creating MKL sparse matrix interface using "
+                      "mkl_sparse_z_create_csr. MKL error code: {}",
+                      (int)status));
+    }
+    mkl_sparse_set_mv_hint(A_handle, SPARSE_OPERATION_NON_TRANSPOSE, descr,
+                           1000);
+    status = mkl_sparse_z_mv(SPARSE_OPERATION_NON_TRANSPOSE, 1.0, A_handle,
+                             descr, vec_in.memptr(), 0.0, vec_out.memptr());
+
+    if (status != SPARSE_STATUS_SUCCESS) {
+      XDIAG_THROW(fmt::format("Error calling sparse matrix-vector multiply "
+                              "mkl_sparse_z_mv (complex). MKL error code: {}",
+                              (int)status));
+    }
+  }
+
+  mkl_sparse_destroy(A_handle);
+}
+XDIAG_CATCH
+
+template void apply_mkl(CSRMatrix<int64_t, double> const &, arma::vec const &,
+                        arma::vec &);
+template void apply_mkl(CSRMatrix<int64_t, complex> const &,
+                        arma::cx_vec const &, arma::cx_vec &);
+#endif
+
 template <typename idx_t, typename coeff_csr_t, typename coeff_vec_t>
 static void apply(CSRMatrix<idx_t, coeff_csr_t> const &A,
                   arma::Col<coeff_vec_t> const &vec_in,
                   arma::Col<coeff_vec_t> &vec_out) try {
+
   static_assert(!(isreal<coeff_vec_t>() && !isreal<coeff_csr_t>()));
 
   idx_t i0 = A.i0;
@@ -144,7 +247,15 @@ static void apply(CSRMatrix<idx_t, coeff_csr_t> const &A,
 template <typename idx_t, typename coeff_t>
 void apply(CSRMatrix<idx_t, coeff_t> const &spmat,
            arma::Col<coeff_t> const &vec_in, arma::Col<coeff_t> &vec_out) try {
+#ifdef XDIAG_USE_SPARSE_MKL
+  if constexpr (std::is_same<idx_t, int64_t>::value) {
+    apply_mkl<coeff_t>(spmat, vec_in, vec_out);
+  } else {
+    apply<idx_t, coeff_t, coeff_t>(spmat, vec_in, vec_out);
+  }
+#else
   apply<idx_t, coeff_t, coeff_t>(spmat, vec_in, vec_out);
+#endif
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
 }

@@ -86,6 +86,18 @@ template CSRMatrix<int64_t, complex> csr_matrix<int64_t, complex>(OpSum const &,
                                                                   Block const &,
                                                                   int64_t);
 
+CSRMatrix<int64_t, double> csr_matrix(OpSum const &ops, Block const &block,
+                                      int64_t i0) try {
+  return csr_matrix<int64_t, double>(ops, block, i0);
+}
+XDIAG_CATCH
+
+CSRMatrix<int64_t, double> csr_matrix(OpSum const &ops, Block const &block_in,
+                                      Block const &block_out, int64_t i0) try {
+  return csr_matrix<int64_t, double>(ops, block_in, block_out, i0);
+}
+XDIAG_CATCH
+
 CSRMatrix<int64_t, complex> csr_matrixC(OpSum const &ops, Block const &block,
                                         int64_t i0) try {
   return csr_matrix<int64_t, complex>(ops, block, i0);

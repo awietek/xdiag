@@ -90,6 +90,18 @@ template CSCMatrix<int64_t, complex> csc_matrix<int64_t, complex>(OpSum const &,
                                                                   Block const &,
                                                                   int64_t);
 
+CSCMatrix<int64_t, double> csc_matrix(OpSum const &ops, Block const &block,
+                                      int64_t i0) try {
+  return csc_matrix<int64_t, double>(ops, block, i0);
+}
+XDIAG_CATCH
+
+CSCMatrix<int64_t, double> csc_matrix(OpSum const &ops, Block const &block_in,
+                                      Block const &block_out, int64_t i0) try {
+  return csc_matrix<int64_t, double>(ops, block_in, block_out, i0);
+}
+XDIAG_CATCH
+
 CSCMatrix<int64_t, complex> csc_matrixC(OpSum const &ops, Block const &block,
                                         int64_t i0) try {
   return csc_matrix<int64_t, complex>(ops, block, i0);

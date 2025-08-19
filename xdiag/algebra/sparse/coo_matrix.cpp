@@ -83,6 +83,18 @@ template COOMatrix<int64_t, complex> coo_matrix<int64_t, complex>(OpSum const &,
                                                                   Block const &,
                                                                   int64_t);
 
+COOMatrix<int64_t, double> coo_matrix(OpSum const &ops, Block const &block,
+                                      int64_t i0) try {
+  return coo_matrix<int64_t, double>(ops, block, i0);
+}
+XDIAG_CATCH
+
+COOMatrix<int64_t, double> coo_matrix(OpSum const &ops, Block const &block_in,
+                                      Block const &block_out, int64_t i0) try {
+  return coo_matrix<int64_t, double>(ops, block_in, block_out, i0);
+}
+XDIAG_CATCH
+
 COOMatrix<int64_t, complex> coo_matrixC(OpSum const &ops, Block const &block,
                                         int64_t i0) try {
   return coo_matrix<int64_t, complex>(ops, block, i0);
@@ -129,7 +141,7 @@ arma::Mat<coeff_t> to_dense(COOMatrix<idx_t, coeff_t> const &coo_mat) try {
   if ((coo_mat.nrows == 0) || (coo_mat.ncols == 0)) {
     return arma::Mat<coeff_t>();
   }
-  
+
   int64_t nnz = coo_mat.data.size();
   if (coo_mat.row.size() != nnz) {
     XDIAG_THROW("Number of row entries does not match number of data entries");

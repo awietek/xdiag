@@ -39,17 +39,17 @@ int main(int argc, char *argv[]) try {
 
   XDIAG_SHOW(block);
 
-  // tic();
-  // auto coo = coo_matrix(ops, block);
-  // toc("COO matrix creation");
+  tic();
+  auto coo = coo_matrix(ops, block);
+  toc("COO matrix creation");
 
   tic();
   auto csr = csr_matrix(ops, block);
   toc("CSR matrix creation");
 
-  // tic();
-  // auto csc = csc_matrix(ops, block);
-  // toc("CSC matrix creation");
+  tic();
+  auto csc = csc_matrix(ops, block);
+  toc("CSC matrix creation");
 
   auto x = arma::vec(csr.ncols, arma::fill::randu);
   auto y = arma::vec(csr.nrows, arma::fill::zeros);
@@ -58,7 +58,7 @@ int main(int argc, char *argv[]) try {
   toc("CSR matrix multiply");
   
   tic();
-  double e0 = eigval0(ops, block, 1e-12, 1);
+  double e0 = eigval0(ops, block, 1e-12, 3);
   toc("MVM");
 
 } catch (Error e) {

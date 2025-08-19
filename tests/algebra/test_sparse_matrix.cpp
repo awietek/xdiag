@@ -82,6 +82,7 @@ void test_sparse_matrixC(op_t const &ops, Block const &block) {
     }
 
     {
+      Log("complex CSR");
       auto m1 = matrixC(ops, block);
       auto m2 = to_dense(csr_matrixC(OpSum(ops), block, i0));
       auto m3 = to_dense(csr_matrix<int32_t, complex>(OpSum(ops), block, i0));
