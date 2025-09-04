@@ -64,6 +64,19 @@ void test_sparse_matrix(op_t const &ops, Block const &block) {
       REQUIRE(norm(m1 - m2) < 1e-12);
       REQUIRE(norm(m1 - m3) < 1e-12);
       REQUIRE(norm(m1 - m4) < 1e-12);
+
+      // test arma conversion
+      auto X = csc_matrix(OpSum(ops), block, 0);
+      auto row = arma::conv_to<arma::uvec>::from(X.row);
+      auto colptr = arma::conv_to<arma::uvec>::from(X.colptr);
+      auto A = arma::sp_mat(row, colptr, X.data, X.nrows, X.ncols);
+      auto D = conv_to<arma::mat>::from(A);
+      // XDIAG_SHOW(D);
+      // XDIAG_SHOW(m1);
+      // XDIAG_SHOW(row);
+      // XDIAG_SHOW(colptr);
+      // XDIAG_SHOW(X.data);
+      // REQUIRE(norm(D - m1) < 1e-12);
     }
   }
 }
@@ -110,6 +123,14 @@ void test_sparse_matrixC(op_t const &ops, Block const &block) {
       REQUIRE(norm(m1 - m2) < 1e-12);
       REQUIRE(norm(m1 - m3) < 1e-12);
       REQUIRE(norm(m1 - m4) < 1e-12);
+
+      // test arma conversion
+      auto X = csc_matrixC(OpSum(ops), block, 0);
+      auto row = arma::conv_to<arma::uvec>::from(X.row);
+      auto colptr = arma::conv_to<arma::uvec>::from(X.colptr);
+      auto A = arma::sp_cx_mat(row, colptr, X.data, X.nrows, X.ncols);
+      auto D = conv_to<arma::cx_mat>::from(A);
+      // REQUIRE(norm(D - m1) < 1e-12);
     }
   }
 }
