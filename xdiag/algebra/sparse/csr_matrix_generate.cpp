@@ -25,7 +25,14 @@ csr_matrix_generate(OpSum const &ops, block_t const &block_in,
   idx_t nrows = (idx_t)size(block_out);
   idx_t ncols = (idx_t)size(block_in);
   if ((nrows == 0) || (ncols == 0)) {
-    return CSRMatrix<idx_t, coeff_t>();
+    return CSRMatrix<idx_t, coeff_t>{
+        0,
+        0,
+        arma::Col<idx_t>{0}, // rowprt / colptr must be size 1
+        arma::Col<idx_t>(),
+        arma::Col<coeff_t>(),
+        i0,
+        ishermitian(ops)};
   }
 
   // first count the number of nonzero elements in each row and in total

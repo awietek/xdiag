@@ -12,13 +12,13 @@ The coordinate format is a simple format which consists of two integer arrays `n
 	```c++
 	template <typename idx_t, typename coeff_t> 
 	struct COOMatrix {
-  idx_t nrows;             // number of rows in the matrix
-  idx_t ncols;             // number of columns in the matrix
-  arma::Col<idx_t> row;    // row indices
-  arma::Col<idx_t> col;    // column indices
-  arma::Col<coeff_t> data; // data entries
-  idx_t i0;                // zero index, either 0 or 1
-  bool ishermitian;        // flag whether matrix is hermitian/symmetric
+		idx_t nrows;             // number of rows in the matrix
+		idx_t ncols;             // number of columns in the matrix
+		arma::Col<idx_t> row;    // row indices
+		arma::Col<idx_t> col;    // column indices
+		arma::Col<coeff_t> data; // data entries
+		idx_t i0;                // zero index, either 0 or 1
+		bool ishermitian;        // flag whether matrix is hermitian/symmetric
 	};
 	```
 === "Julia"
@@ -48,13 +48,13 @@ The CSR format compresses information about the indices, by only storing the col
 	```c++
 	template <typename idx_t, typename coeff_t> 
 	struct CSRMatrix {
-  idx_t nrows;             // number of rows in the matrix
-  idx_t ncols;             // number of columns in the matrix
-  arma::Col<idx_t> rowptr; // pointer to elements of a row (size: nrows+1)
-  arma::Col<idx_t> col;    // columns for each row consecutively
-  arma::Col<coeff_t> data; // data entries each row consecutively
-  idx_t i0;                // zero index, either 0 or 1
-  bool ishermitian;        // flag whether matrix is hermitian/symmetric
+		idx_t nrows;             // number of rows in the matrix
+		idx_t ncols;             // number of columns in the matrix
+		arma::Col<idx_t> rowptr; // pointer to elements of a row (size: nrows+1)
+		arma::Col<idx_t> col;    // columns for each row consecutively
+		arma::Col<coeff_t> data; // data entries each row consecutively
+		idx_t i0;                // zero index, either 0 or 1
+		bool ishermitian;        // flag whether matrix is hermitian/symmetric
 	};
 	```
 === "Julia"
@@ -84,13 +84,13 @@ The CSC format is similar to the CSR format, but with the role of columns and ro
 	```c++
 	template <typename idx_t, typename coeff_t> 
 	struct CSCMatrix {
-  idx_t nrows;             // number of rows in the matrix
-  idx_t ncols;             // number of columns in the matrix
-  arma::Col<idx_t> colptr; // pointer to elements of a row (size: ncols+1)
-  arma::Col<idx_t> row;    // columns for each row consecutively
-  arma::Col<coeff_t> data; // data entries each row consecutively
-  idx_t i0;                // zero index, either 0 or 1
-  bool ishermitian;        // flag whether matrix is hermitian/symmetric
+		idx_t nrows;             // number of rows in the matrix
+		idx_t ncols;             // number of columns in the matrix
+		arma::Col<idx_t> colptr; // pointer to elements of a row (size: ncols+1)
+		arma::Col<idx_t> row;    // columns for each row consecutively
+		arma::Col<coeff_t> data; // data entries each row consecutively
+		idx_t i0;                // zero index, either 0 or 1
+		bool ishermitian;        // flag whether matrix is hermitian/symmetric
 	};
 	```
 === "Julia"
@@ -123,13 +123,13 @@ xmat = csc_matrix(ops, block)
 jmat = SparseMatrixCSC(xmat.nrows, xmat.ncols, xmat.colptr, xmat.row, xmat.data)
 ```
 
-<!-- Another library featuring sparse matrix capabilities that can be used right away in C++ is the armadillo library included with XDiag. In armadillo, sparse matrices are represented by the `arma::spmat` and `arma::cx_spmat` classes, which also implement a CSC format. The conversion between the XDiag CSC matrix and the `arma::spmat` can be done using the following code snippet. -->
+Another library featuring sparse matrix capabilities that can be used right away in C++ is the armadillo library included with XDiag. In armadillo, sparse matrices are represented by the `arma::spmat` and `arma::cx_spmat` classes, which also implement a CSC format. The conversion between the XDiag CSC matrix and the `arma::spmat` can be done using the following code snippet.
 
-<!-- ```c++ -->
-<!-- auto X = csc_matrix(OpSum(ops), block); -->
-<!-- auto colptr = arma::conv_to<arma::uvec>::from(X.colptr); -->
-<!-- auto row = arma::conv_to<arma::uvec>::from(X.row); -->
-<!-- auto A = arma::sp_mat(colptr, row, X.data, X.nrows, X.ncols); -->
-<!-- ``` -->
+```c++
+auto X = csc_matrix(OpSum(ops), block);
+auto colptr = arma::conv_to<arma::uvec>::from(X.colptr);
+auto row = arma::conv_to<arma::uvec>::from(X.row);
+auto A = arma::sp_mat(colptr, row, X.data, X.nrows, X.ncols);
+```
 
-<!-- This is slightly more verbose, as compared to the Julia version, as the index type has to be casted from signed integer in XDiag (`int32_t` or `int64_t`) to an unsigned integer of type `arma::uword`. We do not provide template specializations for unsigned integers in XDiag, since this would quite significantly increase the compilation overhead. We adhere to the general programming recommendation to stick with one integer type (in XDiag `int64_t`) throughout the library. -->
+This is slightly more verbose, as compared to the Julia version, as the index type has to be casted from signed integer in XDiag (`int32_t` or `int64_t`) to an unsigned integer of type `arma::uword`. We do not provide template specializations for unsigned integers in XDiag, since this would quite significantly increase the compilation overhead. We adhere to the general programming recommendation to stick with one integer type (in XDiag `int64_t`) throughout the library.
