@@ -59,7 +59,7 @@ static EigsLanczosResult eigs_lanczos(op_t const &ops, State const &state0,
   state1 = state0;
   int64_t iter = 1;
 
-  if (isreal(ops) && isreal(block)) { // Real Lanczos
+  if (isreal(ops) && isreal(block) && isreal(state1)) { // Real Lanczos
     arma::vec v0 = state1.vector(0, false);
     auto mult = [&iter, &ops, &block](arma::vec const &v, arma::vec &w) {
       auto ta = rightnow();

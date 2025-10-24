@@ -149,11 +149,7 @@ eigvals_lanczos_inplace(op_t const &ops, State &psi0, int64_t neigvals,
   lanczos::lanczos_result_t r;
   int64_t iter = 1;
 
-  if (isreal(ops) && isreal(block)) { // Real Lanczos algorithm
-    if (!isreal(psi0)) {
-      XDIAG_THROW("Lanczos routine is given a real operator, but a complex "
-                  "starting state. Please use a real starting state instead.");
-    }
+  if (isreal(ops) && isreal(block) && isreal(psi0)) { // Real Lanczos algorithm
 
     arma::vec v0 = psi0.vector(0, false); // not copied
     auto mult = [&iter, &ops, &block](arma::vec const &v, arma::vec &w) {

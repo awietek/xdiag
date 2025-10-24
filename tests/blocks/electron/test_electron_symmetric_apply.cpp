@@ -12,8 +12,10 @@
 #include <xdiag/algebra/isapprox.hpp>
 #include <xdiag/algebra/matrix.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
+#include <xdiag/algorithms/lanczos/eigvals_lanczos.hpp>
 #include <xdiag/io/read.hpp>
 #include <xdiag/operators/logic/real.hpp>
+#include <xdiag/operators/logic/symmetrize.hpp>
 
 using namespace xdiag;
 
@@ -138,7 +140,8 @@ TEST_CASE("electron_symmetric_apply", "[electron]") try {
 
   // // test a 3x3 triangular lattice with Heisenberg terms
   // Log.out(
-  //     "electron_symmetric_apply: Hubbard 3x3 triangular (+ Heisenberg terms)");
+  //     "electron_symmetric_apply: Hubbard 3x3 triangular (+ Heisenberg
+  //     terms)");
   // auto ops_hb = ops;
   // for (auto [cpl, op] : ops) {
   //   if (op.type() == "Hop") {
@@ -172,6 +175,67 @@ TEST_CASE("electron_symmetric_apply", "[electron]") try {
   //   }
   //   test_electron_symmetric_apply(ops, 9, irreps);
   // }
+
+  // test 8 site Hubbard Sz(q)
+  {
+
+    std::string latticeInput = XDIAG_DIRECTORY "/misc/data/hubbard.cluster.8.toml";
+    auto lfile = FileToml(latticeInput);
+
+    // Creating the Hilbert
+    int N = 8;
+    int nup = 4;
+    int ndn = 4;
+
+    // Creating the Hamiltonian
+    auto ham = read_opsum(lfile, "Interactions");
+
+    double t = 0.436;
+    double tp = -0.07;
+    double tpp = 0.05;
+    double U = 3.12;
+
+    ham["Tx"] = t;
+    ham["Ty"] = t;
+    ham["Tp+"] = tp;
+    ham["Tp-"] = tp;
+    ham["Tppx"] = tpp;
+    ham["Tppy"] = tpp;
+    ham["U"] = U;
+
+    // Creating the irreps
+    std::vector<Representation> irreps;
+    for (unsigned int i = 0; i < 8; ++i) {
+      auto irrep = read_representation(lfile, fmt::format("Irrep{}", i));
+      irreps.push_back(irrep);
+    }
+
+    // Ground state is at Gamma
+    auto irrep = irreps[0];
+    auto block = Electron(N, nup, ndn, irrep);
+    auto [e0, gs] = eig0(ham, block);
+    Log("Found ground state energy : {:10.6f}", e0);
+
+    gs.make_complex();
+
+    for (unsigned int i = 0; i < 8; ++i) {
+
+      std::cout << "Irrep " << i << std::endl;
+
+      auto S_q = symmetrize(Op("Sz", 0), irreps[i]);
+      std::cout << "symmetrized.." << std::endl;
+      auto Av = apply(S_q, gs);
+      std::cout << "applied.." << std::endl;
+      auto b = Av.block();
+      auto nrm = norm(Av);
+      Av /= nrm;
+
+      std::cout << "lanczos.." << std::endl;
+      auto res = eigvals_lanczos_inplace(ham, Av);
+      std::cout << "lanczos done.." << std::endl;
+      std::cout << "done.." << std::endl;
+    }
+  }
 } catch (xdiag::Error e) {
   xdiag::error_trace(e);
 }
