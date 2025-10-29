@@ -63,6 +63,12 @@ EigvalsLanczosResult eigvals_lanczos_inplace(OpSum const &ops, State &psi0,
                                              int64_t neigvals, double precision,
                                              int64_t max_iterations,
                                              double deflation_tol) try {
+  if (size(psi0) == 0) {
+    Log.warn(
+        "Warning: initial state zero dimensional in eigvals_lanczos_inplace");
+    return EigvalsLanczosResult();
+  }
+
   if (neigvals < 1) {
     XDIAG_THROW("Argument \"neigvals\" needs to be >= 1");
   } else if (neigvals > dim(psi0.block())) {

@@ -28,6 +28,12 @@ TimeEvolveExpokitInplaceResult
 time_evolve_expokit_inplace(OpSum const &ops, State &state, double time,
                             double precision, int64_t m, double anorm,
                             int64_t nnorm) try {
+  if (size(state) == 0) {
+    Log.warn("Warning: initial state zero dimensional in "
+             "time_evolve_expokit_inplace");
+    return TimeEvolveExpokitInplaceResult();
+  }
+
   if (!isapprox(ops, hc(ops))) {
     XDIAG_THROW("Input OpSum is not hermitian. Evolution using the expokit "
                 "algorithm requires the operator to be hermitian.");
@@ -36,7 +42,7 @@ time_evolve_expokit_inplace(OpSum const &ops, State &state, double time,
     XDIAG_THROW("Initial state must be a valid state (i.e. not default "
                 "constructed by e.g. an annihilation operator)");
   }
-  
+
   if (norm(state) == 0.) {
     XDIAG_THROW("Initial state has zero norm");
   }

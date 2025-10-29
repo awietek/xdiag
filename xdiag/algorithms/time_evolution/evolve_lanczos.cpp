@@ -41,6 +41,12 @@ EvolveLanczosInplaceResult evolve_lanczos_inplace(OpSum const &H, State &psi,
                                                   double shift, bool normalize,
                                                   int64_t max_iterations,
                                                   double deflation_tol) try {
+  if (size(psi) == 0) {
+    Log.warn(
+        "Warning: initial state zero dimensional in evolve_lanczos_inplace");
+    return EvolveLanczosInplaceResult();
+  }
+
   if (!isapprox(H, hc(H))) {
     XDIAG_THROW("Input OpSum is not hermitian. Evolution using the Lanczos "
                 "algorithm requires the operator to be hermitian.");
@@ -89,6 +95,11 @@ EvolveLanczosInplaceResult evolve_lanczos_inplace(OpSum const &H, State &psi,
                                                   double shift, bool normalize,
                                                   int64_t max_iterations,
                                                   double deflation_tol) try {
+  if (size(psi) == 0) {
+    Log.warn(
+        "Warning: initial state zero dimensional in evolve_lanczos_inplace");
+    return EvolveLanczosInplaceResult();
+  }
 
   if (!isapprox(H, hc(H))) {
     XDIAG_THROW("Input OpSum is not hermitian. Evolution using the Lanczos "

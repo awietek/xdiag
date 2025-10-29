@@ -25,6 +25,11 @@ EigsLanczosResult eigs_lanczos(OpSum const &ops, State const &state0,
                                int64_t neigvals, double precision,
                                int64_t max_iterations,
                                double deflation_tol) try {
+  if (size(state0) == 0) {
+    Log.warn("Warning: initial state zero dimensional in eigs_lanczos");
+    return EigsLanczosResult();
+  }
+
   if (neigvals < 1) {
     XDIAG_THROW("Argument \"neigvals\" needs to be >= 1");
   } else if (neigvals > dim(state0.block())) {
@@ -128,22 +133,11 @@ EigsLanczosResult eigs_lanczos(OpSum const &ops, Block const &block,
                                int64_t neigvals, double precision,
                                int64_t max_iterations, double deflation_tol,
                                int64_t random_seed) try {
-  if (neigvals < 1) {
-    XDIAG_THROW("Argument \"neigvals\" needs to be >= 1");
-  } else if (neigvals > dim(block)) {
-    neigvals = dim(block);
-  }
-  // if (!ops.ishermitian()) {
-  //   XDIAG_THROW("Input OpSum is not hermitian");
-  // }
-
   bool real = isreal(ops) && isreal(block);
   State state0(block, real);
   fill(state0, RandomState(random_seed));
-
   auto r = eigs_lanczos(ops, state0, neigvals, precision, max_iterations,
                         deflation_tol);
-
   return {r.alphas,       r.betas,       r.eigenvalues,
           r.eigenvectors, r.niterations, r.criterion};
 } catch (Error const &e) {
