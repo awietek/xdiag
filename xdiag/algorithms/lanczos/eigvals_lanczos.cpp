@@ -63,7 +63,7 @@ EigvalsLanczosResult eigvals_lanczos_inplace(OpSum const &ops, State &psi0,
                                              int64_t neigvals, double precision,
                                              int64_t max_iterations,
                                              double deflation_tol) try {
-  if (size(psi0) == 0) {
+  if (dim(psi0) == 0) {
     Log.warn(
         "Warning: initial state zero dimensional in eigvals_lanczos_inplace");
     return EigvalsLanczosResult();

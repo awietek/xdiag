@@ -25,7 +25,7 @@ EigsLanczosResult eigs_lanczos(OpSum const &ops, State const &state0,
                                int64_t neigvals, double precision,
                                int64_t max_iterations,
                                double deflation_tol) try {
-  if (size(state0) == 0) {
+  if (dim(state0) == 0) {
     Log.warn("Warning: initial state zero dimensional in eigs_lanczos");
     return EigsLanczosResult();
   }
