@@ -6,33 +6,34 @@
 
 #include <xdiag/bits/bitops.hpp>
 #include <xdiag/common.hpp>
-#include <xdiag/parallel/omp/omp_utils.hpp>
 #include <xdiag/operators/op.hpp>
+#include <xdiag/parallel/omp/omp_utils.hpp>
 
 namespace xdiag::basis::electron {
 
-template <typename bit_t, typename coeff_t, class basis_t, class fill_f>
+template <typename bit_t, typename coeff_t, typename basis_t, typename fill_f>
 void electron_do_down_flips(bit_t ups, int64_t idx_ups, bit_t flipmask,
                             bit_t fermimask, int64_t sdn, coeff_t val,
-                            basis_t const &basis, fill_f fill) {
+                            basis_t const &basis_in, basis_t const &basis_out,
+                            fill_f fill) {
 #ifdef _OPENMP
   int num_thread = omp_get_thread_num();
 #endif
 
-  int64_t size_dns = basis.size_dns();
+  int64_t size_dns = basis_in.size_dns();
 
   // Get limits of flipped up
   bit_t ups_flip = ups ^ flipmask;
-  int64_t idx_ups_flip = basis.index_ups(ups_flip);
+  int64_t idx_ups_flip = basis_out.index_ups(ups_flip);
 
   int64_t idx_out_offset = idx_ups_flip * size_dns;
   int64_t idx_in = idx_ups * size_dns;
 
-  for (auto dns : basis.states_dns()) {
+  for (auto dns : basis_in.states_dns()) {
 
     if ((bits::popcnt(dns & flipmask) == 1) && ((bool)bits::gbit(dns, sdn))) {
       bit_t dns_flip = dns ^ flipmask;
-      int64_t idx_out = idx_out_offset + basis.index_dns(dns_flip);
+      int64_t idx_out = idx_out_offset + basis_out.index_dns(dns_flip);
       XDIAG_FILL(idx_in, idx_out,
                  (bits::popcnt(dns & fermimask) & 1) ? -val : val);
     }
@@ -41,9 +42,9 @@ void electron_do_down_flips(bit_t ups, int64_t idx_ups, bit_t flipmask,
   }
 }
 
-template <typename coeff_t, bool symmetric, class basis_t, class fill_f>
-void apply_exchange(Coupling const &cpl, Op const &op, basis_t const &basis,
-                    fill_f fill) try {
+template <bool symmetric, typename coeff_t, typename basis_t, typename fill_f>
+void apply_exchange(Coupling const &cpl, Op const &op, basis_t const &basis_in,
+                    basis_t const &basis_out, fill_f fill) {
   using bit_t = typename basis_t::bit_t;
 
   coeff_t J = cpl.scalar().as<coeff_t>();
@@ -60,7 +61,7 @@ void apply_exchange(Coupling const &cpl, Op const &op, basis_t const &basis,
 
   if constexpr (symmetric) {
 
-    Representation const &irrep = basis.irrep();
+    Representation const &irrep = basis_out.irrep();
     auto characters = irrep.characters().as<arma::Col<coeff_t>>();
 
     // Loop over all up configurations
@@ -70,8 +71,8 @@ void apply_exchange(Coupling const &cpl, Op const &op, basis_t const &basis,
       int num_thread = omp_get_thread_num();
 #pragma omp for schedule(runtime)
 #endif
-      for (int64_t idx_ups = 0; idx_ups < basis.n_rep_ups(); ++idx_ups) {
-        bit_t ups = basis.rep_ups(idx_ups);
+      for (int64_t idx_ups = 0; idx_ups < basis_in.n_rep_ups(); ++idx_ups) {
+        bit_t ups = basis_in.rep_ups(idx_ups);
 
         // Exchange gives zero continue
         if ((bits::popcnt(ups & flipmask) == 2) ||
@@ -92,33 +93,33 @@ void apply_exchange(Coupling const &cpl, Op const &op, basis_t const &basis,
 
         // Compute index and rep of flipped ups
         bit_t ups_flip = ups ^ flipmask;
-        int64_t idx_ups_flip = basis.index_ups(ups_flip);
-        bit_t ups_flip_rep = basis.rep_ups(idx_ups_flip);
+        int64_t idx_ups_flip = basis_out.index_ups(ups_flip);
+        bit_t ups_flip_rep = basis_out.rep_ups(idx_ups_flip);
 
         // Get limits, syms, and dns for ingoing ups
-        int64_t up_offset_in = basis.ups_offset(idx_ups);
-        auto dnss_in = basis.dns_for_ups_rep(ups);
-        auto norms_in = basis.norms_for_ups_rep(ups);
+        int64_t up_offset_in = basis_in.ups_offset(idx_ups);
+        auto dnss_in = basis_in.dns_for_ups_rep(ups);
+        auto norms_in = basis_in.norms_for_ups_rep(ups);
 
         // Get limits, syms, and dns for outgoing ups
-        int64_t up_offset_out = basis.ups_offset(idx_ups_flip);
-        auto syms_up_out = basis.syms_ups(ups_flip);
-        auto dnss_out = basis.dns_for_ups_rep(ups_flip_rep);
-        auto norms_out = basis.norms_for_ups_rep(ups_flip_rep);
+        int64_t up_offset_out = basis_out.ups_offset(idx_ups_flip);
+        auto syms_up_out = basis_out.syms_ups(ups_flip);
+        auto dnss_out = basis_out.dns_for_ups_rep(ups_flip_rep);
+        auto norms_out = basis_out.norms_for_ups_rep(ups_flip_rep);
 
         bool fermi_up = !(bool)(bits::popcnt(ups & fermimask) & 1);
 
         // trivial up-stabilizer (likely)
         if (syms_up_out.size() == 1) {
           int64_t sym = syms_up_out.front();
-          fermi_up ^= basis.fermi_bool_ups(sym, ups_flip);
+          fermi_up ^= basis_out.fermi_bool_ups(sym, ups_flip);
 
           // Fix the bloch factor
           coeff_t prefac = -Jhalf * characters(sym);
 
-          // Fermi-sign of up spins
-          bool fermi_up = (bits::popcnt(ups & fermimask) & 1);
-          fermi_up ^= basis.fermi_bool_ups(sym, ups_flip);
+          // // Fermi-sign of up spins
+          // bool fermi_up = (bits::popcnt(ups & fermimask) & 1);
+          // fermi_up ^= basis_out.fermi_bool_ups(sym, ups_flip);
 
           int64_t idx_dn = 0;
           for (bit_t dns : dnss_in) {
@@ -127,7 +128,7 @@ void apply_exchange(Coupling const &cpl, Op const &op, basis_t const &basis,
             if ((dns & flipmask) == dns_mask) {
               bit_t dns_flip = dns ^ flipmask;
               auto [idx_dn_flip, fermi_dn] =
-                  basis.index_dns_fermi(dns_flip, sym, fermimask);
+                  basis_out.index_dns_fermi(dns_flip, sym, fermimask);
 
               coeff_t val = prefac / norms_in[idx_dn];
               int64_t idx_in = up_offset_in + idx_dn;
@@ -155,13 +156,13 @@ void apply_exchange(Coupling const &cpl, Op const &op, basis_t const &basis,
             // If  dns can be raised
             if ((dns & flipmask) == dns_mask) {
               bit_t dns_flip = dns ^ flipmask;
-              auto [idx_dn_flip, fermi_dn, sym] = basis.index_dns_fermi_sym(
+              auto [idx_dn_flip, fermi_dn, sym] = basis_out.index_dns_fermi_sym(
                   dns_flip, syms, dnss_out, fermimask);
 
               if (idx_dn_flip != invalid_index) {
 
                 bool fermi_up =
-                    fermi_up_hop ^ basis.fermi_bool_ups(sym, ups_flip);
+                    fermi_up_hop ^ basis_out.fermi_bool_ups(sym, ups_flip);
                 coeff_t val =
                     prefacs[sym] * norms_out[idx_dn_flip] / norms_in[idx_dn];
                 int64_t idx_in = up_offset_in + idx_dn;
@@ -183,9 +184,9 @@ void apply_exchange(Coupling const &cpl, Op const &op, basis_t const &basis,
 #ifdef _OPENMP
 #pragma omp parallel
     {
-      auto ups_and_idces = basis.states_indices_ups_thread();
+      auto ups_and_idces = basis_in.states_indices_ups_thread();
 #else
-    auto ups_and_idces = basis.states_indices_ups();
+    auto ups_and_idces = basis_in.states_indices_ups();
 #endif
 
       for (auto [ups, idx_up] : ups_and_idces) {
@@ -203,12 +204,12 @@ void apply_exchange(Coupling const &cpl, Op const &op, basis_t const &basis,
           // decide Fermi sign of upspins
           if (bits::popcnt(ups & fermimask) & 1) {
             electron_do_down_flips(ups, idx_up, flipmask, fermimask,
-                                   bits::gbit(ups, s1) ? s2 : s1, Jhalf, basis,
-                                   fill);
+                                   bits::gbit(ups, s1) ? s2 : s1, Jhalf,
+                                   basis_in, basis_out, fill);
           } else {
             electron_do_down_flips(ups, idx_up, flipmask, fermimask,
-                                   bits::gbit(ups, s1) ? s2 : s1, -Jhalf, basis,
-                                   fill);
+                                   bits::gbit(ups, s1) ? s2 : s1, -Jhalf,
+                                   basis_in, basis_out, fill);
           }
         }
       }
@@ -217,8 +218,6 @@ void apply_exchange(Coupling const &cpl, Op const &op, basis_t const &basis,
     }
 #endif
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
 
 } // namespace xdiag::basis::electron

@@ -26,41 +26,32 @@ void apply_terms(OpSum const &ops, basis_t const &basis_in,
 
     std::string type = op.type();
     if ((type == "Hopup") || (type == "Hopdn")) {
-      electron::apply_hopping<coeff_t, symmetric>(cpl, op, basis_in, basis_out,
-                                                  fill);
+      apply_hopping<symmetric, coeff_t>(cpl, op, basis_in, basis_out, fill);
     } else if ((type == "Cdagup") || (type == "Cup") || (type == "Cdagdn") ||
                (type == "Cdn")) {
-      electron::apply_raise_lower<coeff_t, symmetric>(cpl, op, basis_in,
-                                                      basis_out, fill);
+      apply_raise_lower<symmetric, coeff_t>(cpl, op, basis_in, basis_out, fill);
     } else if (type == "SzSz") {
-      electron::apply_szsz<coeff_t, symmetric>(cpl, op, basis_in, basis_out,
-                                               fill);
+      apply_szsz<symmetric, coeff_t>(cpl, op, basis_in, basis_out, fill);
     } else if (type == "Exchange") {
-      electron::apply_exchange<coeff_t, symmetric>(cpl, op, basis_in, basis_out,
-                                                   fill);
-    } else if ((type == "Nup") || (type == "Ndn")) {
-      electron::apply_number<coeff_t, symmetric>(cpl, op, basis_in, basis_out,
-                                                 fill);
+      apply_exchange<symmetric, coeff_t>(cpl, op, basis_in, basis_out, fill);
+    } else if (type == "Nup") {
+      apply_nup<symmetric, coeff_t>(cpl, op, basis_in, basis_out, fill);
+    } else if (type == "Ndn") {
+      apply_ndn<symmetric, coeff_t>(cpl, op, basis_in, basis_out, fill);
     } else if (type == "Nupdn") {
-      electron::apply_nupdn<coeff_t, symmetric>(cpl, op, basis_in, basis_out,
-                                                fill);
+      apply_nupdn<symmetric, coeff_t>(cpl, op, basis_in, basis_out, fill);
     } else if (type == "NupdnNupdn") {
-      electron::apply_nupdn_nupdn<coeff_t, symmetric>(cpl, op, basis_in,
-                                                      basis_out, fill);
+      apply_nupdn_nupdn<symmetric, coeff_t>(cpl, op, basis_in, basis_out, fill);
     } else if (type == "NtotNtot") {
-      electron::apply_ntot_ntot<coeff_t, symmetric>(cpl, op, basis_in,
-                                                    basis_out, fill);
+      apply_ntot_ntot<symmetric, coeff_t>(cpl, op, basis_in, basis_out, fill);
     } else if (type == "HubbardU") {
-      electron::apply_u<coeff_t, symmetric>(cpl, basis_in, fill);
+      apply_u<symmetric, coeff_t>(cpl, basis_in, fill);
     } else if (type == "NupNdn") {
-      electron::apply_nup_ndn<coeff_t, symmetric>(cpl, op, basis_in, basis_out,
-                                                  fill);
+      apply_nup_ndn<symmetric, coeff_t>(cpl, op, basis_in, basis_out, fill);
     } else if (type == "NupNup") {
-      electron::apply_nup_nup<coeff_t, symmetric>(cpl, op, basis_in, basis_out,
-                                                  fill);
+      apply_nup_nup<symmetric, coeff_t>(cpl, op, basis_in, basis_out, fill);
     } else if (type == "NdnNdn") {
-      electron::apply_ndn_ndn<coeff_t, symmetric>(cpl, op, basis_in, basis_out,
-                                                  fill);
+      apply_ndn_ndn<symmetric, coeff_t>(cpl, op, basis_in, basis_out, fill);
     } else if (type == "Id") {
       apply_identity<coeff_t, basis_t, fill_f>(cpl, basis_in, fill);
     } else {
@@ -68,8 +59,7 @@ void apply_terms(OpSum const &ops, basis_t const &basis_in,
           fmt::format("Unknown Op type for Electron block: \"{}\"", type));
     }
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 } // namespace xdiag::basis::electron

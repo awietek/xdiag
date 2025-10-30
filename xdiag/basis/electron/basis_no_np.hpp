@@ -28,6 +28,9 @@ public:
   iterator_t begin() const;
   iterator_t end() const;
 
+  bool operator==(BasisNoNp const &rhs) const;
+  bool operator!=(BasisNoNp const &rhs) const;
+  
   inline int64_t index(bit_t ups, bit_t dns) const {
     return index_ups(ups) * size_dns_ + index_dns(dns);
   }

@@ -15,9 +15,9 @@ template <class bit_t>
 BasisSymmetricNoNp<bit_t>::BasisSymmetricNoNp(int64_t nsites,
                                               Representation const &irrep) try
     : nsites_(nsites), group_action_(irrep.group()), irrep_(irrep),
-      raw_ups_size_((int64_t)1 << nsites),
-      raw_dns_size_((int64_t)1 << nsites), lintable_ups_(nsites),
-      lintable_dns_(nsites), fermi_table_(nsites_, irrep.group()) {
+      raw_ups_size_((int64_t)1 << nsites), raw_dns_size_((int64_t)1 << nsites),
+      lintable_ups_(nsites), lintable_dns_(nsites),
+      fermi_table_(nsites_, irrep.group()) {
   check_nsites_work_with_bits<bit_t>(nsites_);
 
   if (nsites < 0) {
@@ -100,6 +100,19 @@ BasisSymmetricNoNp<bit_t>::group_action() const {
 template <class bit_t>
 Representation const &BasisSymmetricNoNp<bit_t>::irrep() const {
   return irrep_;
+}
+
+template <typename bit_t>
+bool BasisSymmetricNoNp<bit_t>::operator==(
+    BasisSymmetricNoNp const &rhs) const {
+  return (nsites_ == rhs.nsites_) && (nup_ == rhs.nup_) && (ndn_ == rhs.ndn_) &&
+         (group_action_ == rhs.group_action_) && (irrep_ == rhs.irrep_);
+}
+
+template <typename bit_t>
+bool BasisSymmetricNoNp<bit_t>::operator!=(
+    BasisSymmetricNoNp const &rhs) const {
+  return !operator==(rhs);
 }
 
 template class BasisSymmetricNoNp<uint32_t>;

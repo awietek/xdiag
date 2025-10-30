@@ -9,8 +9,8 @@
 
 namespace xdiag::basis::electron {
 
-template <typename coeff_t, class basis_t, class non_zero_term_f,
-          class term_action_f, class fill_f>
+template <typename coeff_t, typename basis_t, typename non_zero_term_f,
+          typename term_action_f, typename fill_f>
 void generic_term_ups_sym(basis_t const &basis_in, basis_t const &basis_out,
                           non_zero_term_f non_zero_term,
                           term_action_f term_action, fill_f fill) {
@@ -96,8 +96,8 @@ void generic_term_ups_sym(basis_t const &basis_in, basis_t const &basis_out,
 #endif
 }
 
-template <typename coeff_t, class basis_t, class non_zero_term_f,
-          class term_action_f, class fill_f>
+template <typename coeff_t, typename basis_t, typename non_zero_term_f,
+          typename term_action_f, typename fill_f>
 void generic_term_ups_no_sym(basis_t const &basis_in, basis_t const &basis_out,
                              non_zero_term_f non_zero_term,
                              term_action_f term_action, fill_f fill) {
@@ -136,16 +136,17 @@ void generic_term_ups_no_sym(basis_t const &basis_in, basis_t const &basis_out,
 #endif
 }
 
-template <bool symmetric, typename coeff_t, class basis_t,
-          class non_zero_term_f, class term_action_f, class fill_f>
+template <bool symmetric, typename coeff_t, typename basis_t,
+          typename non_zero_term_f, typename term_action_f, typename fill_f>
 void generic_term_ups(basis_t const &basis_in, basis_t const &basis_out,
                       non_zero_term_f non_zero_term, term_action_f term_action,
                       fill_f fill) {
   if constexpr (symmetric) {
-    generic_term_ups_sym(basis_in, basis_out, non_zero_term, term_action, fill);
-  } else { // not symmetric
-    generic_term_ups_no_sym(basis_in, basis_out, non_zero_term, term_action,
-                            fill);
+    generic_term_ups_sym<coeff_t>(basis_in, basis_out, non_zero_term,
+                                  term_action, fill);
+  } else {
+    generic_term_ups_no_sym<coeff_t>(basis_in, basis_out, non_zero_term,
+                                     term_action, fill);
   }
 }
 

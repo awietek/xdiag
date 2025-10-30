@@ -8,7 +8,7 @@
 
 namespace xdiag::basis::electron {
 
-template <typename coeff_t, class basis_t, class apply_f, class fill_f>
+template <typename coeff_t, typename basis_t, typename apply_f, typename fill_f>
 void generic_term_sym(basis_t const &basis_in, basis_t const &basis_out,
                       apply_f apply, fill_f fill) {
   using bit_t = typename basis_t::bit_t;
@@ -86,10 +86,13 @@ void generic_term_sym(basis_t const &basis_in, basis_t const &basis_out,
         ++idx_dn;
       }
     }
-  }
-} // namespace xdiag::basis::electron
 
-template <typename coeff_t, class basis_t, class apply_f, class fill_f>
+#ifdef _OPENMP
+  }
+#endif
+}
+
+template <typename coeff_t, typename basis_t, typename apply_f, typename fill_f>
 void generic_term_no_sym(basis_t const &basis_in, basis_t const &basis_out,
                          apply_f apply, fill_f fill) {
   using bit_t = typename basis_t::bit_t;
@@ -119,8 +122,8 @@ void generic_term_no_sym(basis_t const &basis_in, basis_t const &basis_out,
   }
 }
 
-template <bool symmetric, typename coeff_t, class basis_t, class apply_f,
-          class fill_f>
+template <bool symmetric, typename coeff_t, typename basis_t, typename apply_f,
+          typename fill_f>
 void generic_term(basis_t const &basis_in, basis_t const &basis_out,
                   apply_f apply, fill_f fill) {
   if constexpr (symmetric) {

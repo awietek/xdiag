@@ -44,6 +44,16 @@ typename BasisNoNp<bit_t>::iterator_t BasisNoNp<bit_t>::end() const {
   return iterator_t(nsites_, false);
 }
 
+template <typename bit_t>
+bool BasisNoNp<bit_t>::operator==(BasisNoNp const &rhs) const {
+  return nsites_ == rhs.nsites_;
+}
+
+template <typename bit_t>
+bool BasisNoNp<bit_t>::operator!=(BasisNoNp const &rhs) const {
+  return !operator==(rhs);
+}
+
 template <typename bit_t> Subsets<bit_t> BasisNoNp<bit_t>::states_ups() const {
   return Subsets<bit_t>(nsites_);
 }

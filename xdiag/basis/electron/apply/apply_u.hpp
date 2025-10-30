@@ -10,8 +10,8 @@
 
 namespace xdiag::basis::electron {
 
-template <typename coeff_t, bool symmetric, class basis_t, class fill_f>
-void apply_u(Coupling const &cpl, basis_t const &basis, fill_f fill) try {
+template <bool symmetric, typename coeff_t, typename basis_t, typename fill_f>
+void apply_u(Coupling const &cpl, basis_t const &basis, fill_f fill) {
   using bit_t = typename basis_t::bit_t;
 
   coeff_t U = cpl.scalar().as<coeff_t>();
@@ -59,8 +59,6 @@ void apply_u(Coupling const &cpl, basis_t const &basis, fill_f fill) try {
     }
 #endif
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
 
 } // namespace xdiag::basis::electron
