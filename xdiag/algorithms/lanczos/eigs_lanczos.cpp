@@ -43,13 +43,9 @@ static EigsLanczosResult eigs_lanczos(op_t const &ops, State const &state0,
     XDIAG_THROW("Initial state must be a valid state (i.e. not default "
                 "constructed by e.g. an annihilation operator)");
   }
-  if (!isapprox(ops, hc(ops))) {
+  if (!ishermitian(ops)) {
     XDIAG_THROW("Input OpSum is not hermitian");
   }
-  auto const &block = state0.block();
-
-  bool real = isreal(ops) && isreal(block) && isreal(state0);
-
 
   // store initial state, such that it can be used again in second run
   State state1 = state0;
