@@ -64,8 +64,15 @@ TimeEvolveExpokitInplaceResult
 time_evolve_expokit_inplace(op_t const &ops, State &state, double time,
                             double precision, int64_t m, double anorm,
                             int64_t nnorm) try {
+
+  if (dim(state) == 0) {
+    Log.warn("Warning: initial state zero dimensional in "
+             "time_evolve_expokit_inplace");
+    return TimeEvolveExpokitInplaceResult();
+  }
+
   if (!ishermitian(ops)) {
-    XDIAG_THROW("Input operator is not hermitian. Evolution using the expokit "
+    XDIAG_THROW("Input OpSum is not hermitian. Evolution using the expokit "
                 "algorithm requires the operator to be hermitian.");
   }
   if (!isvalid(state)) {

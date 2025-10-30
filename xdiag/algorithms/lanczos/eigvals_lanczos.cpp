@@ -39,9 +39,7 @@ eigvals_lanczos(op_t const &ops, Block const &block, int64_t neigvals,
   fill(state0, RandomState(random_seed));
   return eigvals_lanczos_inplace(ops, state0, neigvals, precision,
                                  max_iterations, deflation_tol);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
+} XDIAG_CATCH
 
 EigvalsLanczosResult eigvals_lanczos(OpSum const &ops, Block const &block,
                                      int64_t neigvals, double precision,
@@ -50,9 +48,7 @@ EigvalsLanczosResult eigvals_lanczos(OpSum const &ops, Block const &block,
                                      int64_t random_seed) try {
   return eigvals_lanczos<OpSum>(ops, block, neigvals, precision, max_iterations,
                                 deflation_tol, random_seed);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
+} XDIAG_CATCH
 
 template <typename idx_t, typename coeff_t>
 EigvalsLanczosResult
@@ -62,9 +58,7 @@ eigvals_lanczos(CSRMatrix<idx_t, coeff_t> const &ops, Block const &block,
   return eigvals_lanczos<CSRMatrix<idx_t, coeff_t>>(ops, block, neigvals,
                                                     precision, max_iterations,
                                                     deflation_tol, random_seed);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
+} XDIAG_CATCH
 
 template EigvalsLanczosResult
 eigvals_lanczos(CSRMatrix<int32_t, double> const &, Block const &, int64_t,
@@ -88,9 +82,7 @@ EigvalsLanczosResult eigvals_lanczos(OpSum const &ops, State psi0,
                                      double deflation_tol) try {
   return eigvals_lanczos_inplace(ops, psi0, neigvals, precision, max_iterations,
                                  deflation_tol);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
+} XDIAG_CATCH
 
 template <typename idx_t, typename coeff_t>
 EigvalsLanczosResult eigvals_lanczos(CSRMatrix<idx_t, coeff_t> const &ops,
@@ -99,9 +91,8 @@ EigvalsLanczosResult eigvals_lanczos(CSRMatrix<idx_t, coeff_t> const &ops,
                                      double deflation_tol) try {
   return eigvals_lanczos_inplace(ops, psi0, neigvals, precision, max_iterations,
                                  deflation_tol);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
+} XDIAG_CATCH
+  
 template EigvalsLanczosResult
 eigvals_lanczos(CSRMatrix<int32_t, double> const &, State, int64_t, double,
                 int64_t, double);
@@ -123,6 +114,13 @@ static EigvalsLanczosResult
 eigvals_lanczos_inplace(op_t const &ops, State &psi0, int64_t neigvals,
                         double precision, int64_t max_iterations,
                         double deflation_tol) try {
+
+  if (dim(psi0) == 0) {
+    Log.warn(
+        "Warning: initial state zero dimensional in eigvals_lanczos_inplace");
+    return EigvalsLanczosResult();
+  }
+
   if (neigvals < 1) {
     XDIAG_THROW("Argument \"neigvals\" needs to be >= 1");
   } else if (neigvals > dim(psi0.block())) {
@@ -185,9 +183,7 @@ eigvals_lanczos_inplace(op_t const &ops, State &psi0, int64_t neigvals,
                          deflation_tol);
   }
   return {r.alphas, r.betas, r.eigenvalues, r.niterations, r.criterion};
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
+} XDIAG_CATCH
 
 EigvalsLanczosResult eigvals_lanczos_inplace(OpSum const &ops, State &psi0,
                                              int64_t neigvals, double precision,
@@ -195,9 +191,7 @@ EigvalsLanczosResult eigvals_lanczos_inplace(OpSum const &ops, State &psi0,
                                              double deflation_tol) try {
   return eigvals_lanczos_inplace<OpSum>(ops, psi0, neigvals, precision,
                                         max_iterations, deflation_tol);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
+} XDIAG_CATCH
 
 template <typename idx_t, typename coeff_t>
 EigvalsLanczosResult
@@ -206,9 +200,7 @@ eigvals_lanczos_inplace(CSRMatrix<idx_t, coeff_t> const &ops, State &psi0,
                         int64_t max_iterations, double deflation_tol) try {
   return eigvals_lanczos_inplace<CSRMatrix<idx_t, coeff_t>>(
       ops, psi0, neigvals, precision, max_iterations, deflation_tol);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
+} XDIAG_CATCH
 
 template EigvalsLanczosResult
 eigvals_lanczos_inplace(CSRMatrix<int32_t, double> const &, State &, int64_t,

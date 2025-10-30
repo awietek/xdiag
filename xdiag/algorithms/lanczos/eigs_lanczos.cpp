@@ -23,11 +23,33 @@
 
 namespace xdiag {
 
+
 template <typename op_t>
 static EigsLanczosResult eigs_lanczos(op_t const &ops, State const &state0,
                                       int64_t neigvals, double precision,
                                       int64_t max_iterations,
                                       double deflation_tol) try {
+  if (dim(state0) == 0) {
+    Log.warn("Warning: initial state zero dimensional in eigs_lanczos");
+    return EigsLanczosResult();
+  }
+
+  if (neigvals < 1) {
+    XDIAG_THROW("Argument \"neigvals\" needs to be >= 1");
+  } else if (neigvals > dim(state0.block())) {
+    neigvals = dim(state0.block());
+  }
+  if (!isvalid(state0)) {
+    XDIAG_THROW("Initial state must be a valid state (i.e. not default "
+                "constructed by e.g. an annihilation operator)");
+  }
+  if (!isapprox(ops, hc(ops))) {
+    XDIAG_THROW("Input OpSum is not hermitian");
+  }
+  auto const &block = state0.block();
+
+  bool real = isreal(ops) && isreal(block) && isreal(state0);
+
 
   // store initial state, such that it can be used again in second run
   State state1 = state0;
@@ -117,9 +139,7 @@ eigs_lanczos(op_t const &ops, Block const &block, int64_t neigvals,
   fill(state0, RandomState(random_seed));
   return eigs_lanczos(ops, state0, neigvals, precision, max_iterations,
                       deflation_tol);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
+} XDIAG_CATCH
 
 EigsLanczosResult eigs_lanczos(OpSum const &ops, Block const &block,
                                int64_t neigvals, double precision,
@@ -162,7 +182,6 @@ eigs_lanczos(CSRMatrix<int64_t, complex> const &ops, Block const &block,
 
 ///////////////////////////////////////////////////////////////
 // Routine with random state initialization
-
 EigsLanczosResult eigs_lanczos(OpSum const &ops, State const &state0,
                                int64_t neigvals, double precision,
                                int64_t max_iterations,
@@ -180,9 +199,7 @@ EigsLanczosResult eigs_lanczos(CSRMatrix<idx_t, coeff_t> const &ops,
                                double deflation_tol) try {
   return eigs_lanczos<CSRMatrix<idx_t, coeff_t>>(
       ops, state0, neigvals, precision, max_iterations, deflation_tol);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
+} XDIAG_CATCH
 
 template EigsLanczosResult eigs_lanczos(CSRMatrix<int32_t, double> const &ops,
                                         State const &state0, int64_t neigvals,
