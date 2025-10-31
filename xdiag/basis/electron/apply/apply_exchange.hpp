@@ -107,7 +107,7 @@ void apply_exchange(Coupling const &cpl, Op const &op, basis_t const &basis_in,
         auto dnss_out = basis_out.dns_for_ups_rep(ups_flip_rep);
         auto norms_out = basis_out.norms_for_ups_rep(ups_flip_rep);
 
-        bool fermi_up = !(bool)(bits::popcnt(ups & fermimask) & 1);
+        bool fermi_up = (bool)(bits::popcnt(ups & fermimask) & 1);
 
         // trivial up-stabilizer (likely)
         if (syms_up_out.size() == 1) {

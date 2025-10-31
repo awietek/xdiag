@@ -14,6 +14,7 @@
 #include <xdiag/io/read.hpp>
 #include <xdiag/operators/logic/real.hpp>
 #include <xdiag/algebra/isapprox.hpp>
+#include <xdiag/utils/xdiag_show.hpp>
 
 using namespace xdiag;
 
@@ -125,11 +126,11 @@ void test_electron_symmetric_spectra(OpSum opsum, int64_t nsites,
         std::sort(eigs_sym.begin(), eigs_sym.end());
 
         // Check if all eigenvalues agree
-        // Log.out("{} {} {} {}", nup, ndn, eigs_sym(0), eigs_nosym(0));
+        // Log("{} {} {} {}", nup, ndn, eigs_sym[0], eigs_nosym(0));
 
         // if (!isapprox(arma::vec(eigs_sym), eigs_nosym)){
         //   XDIAG_SHOW(arma::norm(arma::vec(eigs_sym) - eigs_nosym));
-        //   XDIAG_SHOW(eigs_sym);
+        //   XDIAG_SHOW(arma::vec(eigs_sym));
         //   XDIAG_SHOW(eigs_nosym);
         // }
         REQUIRE(isapprox(arma::vec(eigs_sym), eigs_nosym));
