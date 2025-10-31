@@ -55,6 +55,11 @@ template <typename bit_t> void check_nsites_work_with_bits(int64_t nsites);
   xdiag::rethrow_error(error, __FILE__, __func__, __LINE__);                   \
   throw 0;
 
+#define XDIAG_CATCH                                                            \
+  catch (Error const &e) {                                                     \
+    xdiag::rethrow_error(e, __FILE__, __func__, __LINE__);                     \
+    throw 0;                                                                   \
+  }
 #define XDIAG_TRY_CATCH(statement)                                             \
   try {                                                                        \
     statement;                                                                 \

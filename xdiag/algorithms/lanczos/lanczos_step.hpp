@@ -9,6 +9,7 @@
 #include <xdiag/algorithms/gram_schmidt/orthogonalize.hpp>
 #include <xdiag/algorithms/lanczos/tmatrix.hpp>
 #include <xdiag/common.hpp>
+#include <xdiag/utils/xdiag_show.hpp>
 
 namespace xdiag {
 
@@ -16,7 +17,6 @@ template <typename coeff_t, class multiply_f, class dot_f>
 inline void lanczos_step(arma::Col<coeff_t> &v0, arma::Col<coeff_t> &v1,
                          arma::Col<coeff_t> &w, double &alpha, double &beta,
                          multiply_f mult, dot_f dot) try {
-
   auto norm = [&dot](arma::Col<coeff_t> const &v) {
     return std::sqrt(xdiag::real(dot(v, v)));
   };

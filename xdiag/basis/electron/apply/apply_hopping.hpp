@@ -7,15 +7,16 @@
 #include <xdiag/bits/bitops.hpp>
 #include <xdiag/common.hpp>
 #include <xdiag/operators/op.hpp>
+#include <xdiag/parallel/omp/omp_utils.hpp>
 
 #include <xdiag/basis/electron/apply/generic_term_dns.hpp>
 #include <xdiag/basis/electron/apply/generic_term_ups.hpp>
 
 namespace xdiag::basis::electron {
 
-template <typename coeff_t, bool symmetric, class basis_t, class fill_f>
-void apply_hopping(Coupling const &cpl, Op const &op, basis_t const &basis,
-                   fill_f fill) try {
+template <bool symmetric, typename coeff_t, typename basis_t, typename fill_f>
+void apply_hopping(Coupling const &cpl, Op const &op, basis_t const &basis_in,
+                   basis_t const &basis_out, fill_f fill) {
   using bit_t = typename basis_t::bit_t;
 
   coeff_t t = cpl.scalar().as<coeff_t>();
@@ -43,14 +44,12 @@ void apply_hopping(Coupling const &cpl, Op const &op, basis_t const &basis,
 
   std::string type = op.type();
   if (type == "Hopup") {
-    electron::generic_term_ups<bit_t, coeff_t, symmetric>(
-        basis, basis, non_zero_term, term_action, fill);
+    generic_term_ups<symmetric, coeff_t>(basis_in, basis_out, non_zero_term,
+                                         term_action, fill);
   } else if (type == "Hopdn") {
-    electron::generic_term_dns<bit_t, coeff_t, symmetric, false>(
-        basis, basis, non_zero_term, term_action, fill);
+    generic_term_dns<symmetric, coeff_t, false>(
+        basis_in, basis_out, non_zero_term, term_action, fill);
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
 
 } // namespace xdiag::basis::electron

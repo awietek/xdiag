@@ -6,6 +6,44 @@
 
 namespace xdiag::julia {
 
+template <typename op_t>
+static void define_evolve_lanczos_op(jlcxx::Module &mod) {
+
+  mod.method("cxx_evolve_lanczos", [](op_t const &H, State psi, double tau,
+                                      double precision, double shift,
+                                      bool normalize, int64_t max_iterations,
+                                      double deflation_tol) {
+    JULIA_XDIAG_CALL_RETURN(evolve_lanczos(H, psi, tau, precision, shift,
+                                           normalize, max_iterations,
+                                           deflation_tol));
+  });
+  mod.method("cxx_evolve_lanczos", [](op_t const &H, State psi, complex tau,
+                                      double precision, double shift,
+                                      bool normalize, int64_t max_iterations,
+                                      double deflation_tol) {
+    JULIA_XDIAG_CALL_RETURN(evolve_lanczos(H, psi, tau, precision, shift,
+                                           normalize, max_iterations,
+                                           deflation_tol));
+  });
+
+  mod.method(
+      "cxx_evolve_lanczos_inplace",
+      [](op_t const &H, State &psi, double tau, double precision, double shift,
+         bool normalize, int64_t max_iterations, double deflation_tol) {
+        JULIA_XDIAG_CALL_RETURN(
+            evolve_lanczos_inplace(H, psi, tau, precision, shift, normalize,
+                                   max_iterations, deflation_tol));
+      });
+  mod.method(
+      "cxx_evolve_lanczos_inplace",
+      [](op_t const &H, State &psi, complex tau, double precision, double shift,
+         bool normalize, int64_t max_iterations, double deflation_tol) {
+        JULIA_XDIAG_CALL_RETURN(
+            evolve_lanczos_inplace(H, psi, tau, precision, shift, normalize,
+                                   max_iterations, deflation_tol));
+      });
+}
+
 void define_evolve_lanczos(jlcxx::Module &mod) {
 
   using res_t = EvolveLanczosResult;
@@ -25,23 +63,6 @@ void define_evolve_lanczos(jlcxx::Module &mod) {
       .method("state",
               [](res_t const &r) { JULIA_XDIAG_CALL_RETURN_MOVE(r.state) });
 
-  mod.method("cxx_evolve_lanczos", [](OpSum const &H, State psi, double tau,
-                                      double precision, double shift,
-                                      bool normalize, int64_t max_iterations,
-                                      double deflation_tol) {
-    JULIA_XDIAG_CALL_RETURN(evolve_lanczos(H, psi, tau, precision, shift,
-                                           normalize, max_iterations,
-                                           deflation_tol));
-  });
-  mod.method("cxx_evolve_lanczos", [](OpSum const &H, State psi, complex tau,
-                                      double precision, double shift,
-                                      bool normalize, int64_t max_iterations,
-                                      double deflation_tol) {
-    JULIA_XDIAG_CALL_RETURN(evolve_lanczos(H, psi, tau, precision, shift,
-                                           normalize, max_iterations,
-                                           deflation_tol));
-  });
-
   using res_inplace_t = EvolveLanczosInplaceResult;
   mod.add_type<res_inplace_t>("cxx_EvolveLanczosInplaceResult")
       .method(
@@ -58,27 +79,15 @@ void define_evolve_lanczos(jlcxx::Module &mod) {
               [](res_inplace_t const &r) {
                 JULIA_XDIAG_CALL_RETURN_MOVE(r.niterations)
               })
-      .method("criterion",
-              [](res_inplace_t const &r) {
-                JULIA_XDIAG_CALL_RETURN_MOVE(r.criterion)
-              });
-
-  mod.method(
-      "cxx_evolve_lanczos_inplace",
-      [](OpSum const &H, State &psi, double tau, double precision, double shift,
-         bool normalize, int64_t max_iterations, double deflation_tol) {
-        JULIA_XDIAG_CALL_RETURN(
-            evolve_lanczos_inplace(H, psi, tau, precision, shift, normalize,
-                                   max_iterations, deflation_tol));
+      .method("criterion", [](res_inplace_t const &r) {
+        JULIA_XDIAG_CALL_RETURN_MOVE(r.criterion)
       });
-  mod.method("cxx_evolve_lanczos_inplace",
-             [](OpSum const &H, State &psi, complex tau, double precision,
-                double shift, bool normalize, int64_t max_iterations,
-                double deflation_tol) {
-               JULIA_XDIAG_CALL_RETURN(evolve_lanczos_inplace(
-                   H, psi, tau, precision, shift, normalize, max_iterations,
-                   deflation_tol));
-             });
+
+  define_evolve_lanczos_op<OpSum>(mod);
+  define_evolve_lanczos_op<CSRMatrix<int64_t, double>>(mod);
+  define_evolve_lanczos_op<CSRMatrix<int64_t, complex>>(mod);
+  define_evolve_lanczos_op<CSRMatrix<int32_t, double>>(mod);
+  define_evolve_lanczos_op<CSRMatrix<int32_t, complex>>(mod);
 }
 
 } // namespace xdiag::julia

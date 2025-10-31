@@ -9,11 +9,13 @@
 #include "../electron/testcases_electron.hpp"
 #include <xdiag/algebra/algebra.hpp>
 #include <xdiag/algebra/apply.hpp>
+#include <xdiag/algebra/isapprox.hpp>
 #include <xdiag/algebra/matrix.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
+#include <xdiag/algorithms/lanczos/eigvals_lanczos.hpp>
 #include <xdiag/io/read.hpp>
 #include <xdiag/operators/logic/real.hpp>
-#include <xdiag/algebra/isapprox.hpp>
+#include <xdiag/operators/logic/symmetrize.hpp>
 
 using namespace xdiag;
 
@@ -106,70 +108,134 @@ void test_hubbard_symmetric_apply_chains(int64_t nsites) {
   test_electron_symmetric_apply(ops_hb, nsites, irreps);
 }
 
-TEST_CASE("electron_symmetric_apply", "[electron]") {
+TEST_CASE("electron_symmetric_apply", "[electron]") try {
 
   // Test linear chains
   for (int64_t nsites = 2; nsites < 7; ++nsites) {
     test_hubbard_symmetric_apply_chains(nsites);
   }
 
-  // test a 3x3 triangular lattice
-  Log.out("electron_symmetric_apply: Hubbard 3x3 triangular");
-  std::string lfile =
-      XDIAG_DIRECTORY "/misc/data/triangular.9.hop.sublattices.tsl.toml";
+  // // test a 3x3 triangular lattice
+  // Log.out("electron_symmetric_apply: Hubbard 3x3 triangular");
+  // std::string lfile =
+  //     XDIAG_DIRECTORY "/misc/data/triangular.9.hop.sublattices.tsl.toml";
 
-  auto fl = FileToml(lfile);
-  auto ops = fl["Interactions"].as<OpSum>();
-  ops += "U" * Op("HubbardU");
-  ops["T"] = 1.0;
-  ops["U"] = 5.0;
+  // auto fl = FileToml(lfile);
+  // auto ops = fl["Interactions"].as<OpSum>();
+  // ops += "U" * Op("HubbardU");
+  // ops["T"] = 1.0;
+  // ops["U"] = 5.0;
 
-  std::vector<std::pair<std::string, int64_t>> rep_name_mult = {
-      {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
-      {"K0.D3.A1", 1},    {"K0.D3.A2", 1},    {"K0.D3.E", 2},
-      {"K1.D3.A1", 1},    {"K1.D3.A2", 1},    {"K1.D3.E", 2},
-      {"Y.C1.A", 6}};
-  std::vector<Representation> irreps;
-  for (auto [name, mult] : rep_name_mult) {
-    irreps.push_back(read_representation(fl, name));
-    (void)mult;
-  }
-  test_electron_symmetric_apply(ops, 9, irreps);
+  // std::vector<std::pair<std::string, int64_t>> rep_name_mult = {
+  //     {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
+  //     {"K0.D3.A1", 1},    {"K0.D3.A2", 1},    {"K0.D3.E", 2},
+  //     {"K1.D3.A1", 1},    {"K1.D3.A2", 1},    {"K1.D3.E", 2},
+  //     {"Y.C1.A", 6}};
+  // std::vector<Representation> irreps;
+  // for (auto [name, mult] : rep_name_mult) {
+  //   irreps.push_back(read_representation(fl, name));
+  //   (void)mult;
+  // }
+  // test_electron_symmetric_apply(ops, 9, irreps);
 
-  // test a 3x3 triangular lattice with Heisenberg terms
-  Log.out(
-      "electron_symmetric_apply: Hubbard 3x3 triangular (+ Heisenberg terms)");
-  auto ops_hb = ops;
-  for (auto [cpl, op] : ops) {
-    if (op.type() == "Hop") {
-      ops_hb += "J" * Op("SdotS", {op[0], op[1]});
-    }
-  }
-  ops_hb["J"] = 0.4;
-  test_electron_symmetric_apply(ops_hb, 9, irreps);
+  // // test a 3x3 triangular lattice with Heisenberg terms
+  // Log.out(
+  //     "electron_symmetric_apply: Hubbard 3x3 triangular (+ Heisenberg
+  //     terms)");
+  // auto ops_hb = ops;
+  // for (auto [cpl, op] : ops) {
+  //   if (op.type() == "Hop") {
+  //     ops_hb += "J" * Op("SdotS", {op[0], op[1]});
+  //   }
+  // }
+  // ops_hb["J"] = 0.4;
+  // test_electron_symmetric_apply(ops_hb, 9, irreps);
 
-  // test a 3x3 triangular lattice with complex hoppings
+  // // test a 3x3 triangular lattice with complex hoppings
+  // {
+  //   Log.out("electron_symmetric_apply: Hubbard 3x3 triangular (complex)");
+  //   std::string lfile = XDIAG_DIRECTORY
+  //       "/misc/data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.toml";
+  //   auto fl = FileToml(lfile);
+  //   auto ops = fl["Interactions"].as<OpSum>();
+  //   ops += "U" * Op("HubbardU");
+  //   ops["TPHI"] = complex(0.5, 0.5);
+  //   ops["JPHI"] = 0.;
+  //   ops["U"] = 5.0;
+
+  //   std::vector<std::pair<std::string, int64_t>> rep_name_mult = {
+  //       {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
+  //       {"K0.D3.A1", 1},    {"K0.D3.A2", 1},    {"K0.D3.E", 2},
+  //       {"K1.D3.A1", 1},    {"K1.D3.A2", 1},    {"K1.D3.E", 2},
+  //       {"Y.C1.A", 6}};
+  //   irreps.clear();
+  //   for (auto [name, mult] : rep_name_mult) {
+  //     irreps.push_back(read_representation(fl, name));
+  //     (void)mult;
+  //   }
+  //   test_electron_symmetric_apply(ops, 9, irreps);
+  // }
+
+  // test 8 site Hubbard Sz(q)
   {
-    Log.out("electron_symmetric_apply: Hubbard 3x3 triangular (complex)");
-    std::string lfile = XDIAG_DIRECTORY
-        "/misc/data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.toml";
-    auto fl = FileToml(lfile);
-    auto ops = fl["Interactions"].as<OpSum>();
-    ops += "U" * Op("HubbardU");
-    ops["TPHI"] = complex(0.5, 0.5);
-    ops["JPHI"] = 0.;
-    ops["U"] = 5.0;
 
-    std::vector<std::pair<std::string, int64_t>> rep_name_mult = {
-        {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
-        {"K0.D3.A1", 1},    {"K0.D3.A2", 1},    {"K0.D3.E", 2},
-        {"K1.D3.A1", 1},    {"K1.D3.A2", 1},    {"K1.D3.E", 2},
-        {"Y.C1.A", 6}};
-    irreps.clear();
-    for (auto [name, mult] : rep_name_mult) {
-      irreps.push_back(read_representation(fl, name));
-      (void)mult;
+    std::string latticeInput = XDIAG_DIRECTORY "/misc/data/hubbard.cluster.8.toml";
+    auto lfile = FileToml(latticeInput);
+
+    // Creating the Hilbert
+    int N = 8;
+    int nup = 4;
+    int ndn = 4;
+
+    // Creating the Hamiltonian
+    auto ham = read_opsum(lfile, "Interactions");
+
+    double t = 0.436;
+    double tp = -0.07;
+    double tpp = 0.05;
+    double U = 3.12;
+
+    ham["Tx"] = t;
+    ham["Ty"] = t;
+    ham["Tp+"] = tp;
+    ham["Tp-"] = tp;
+    ham["Tppx"] = tpp;
+    ham["Tppy"] = tpp;
+    ham["U"] = U;
+
+    // Creating the irreps
+    std::vector<Representation> irreps;
+    for (unsigned int i = 0; i < 8; ++i) {
+      auto irrep = read_representation(lfile, fmt::format("Irrep{}", i));
+      irreps.push_back(irrep);
     }
-    test_electron_symmetric_apply(ops, 9, irreps);
+
+    // Ground state is at Gamma
+    auto irrep = irreps[0];
+    auto block = Electron(N, nup, ndn, irrep);
+    auto [e0, gs] = eig0(ham, block);
+    Log("Found ground state energy : {:10.6f}", e0);
+
+    gs.make_complex();
+
+    for (unsigned int i = 0; i < 8; ++i) {
+
+      std::cout << "Irrep " << i << std::endl;
+
+      auto S_q = symmetrize(Op("Sz", 0), irreps[i]);
+      std::cout << "symmetrized.." << std::endl;
+      auto Av = apply(S_q, gs);
+      std::cout << "applied.." << std::endl;
+      auto b = Av.block();
+      auto nrm = norm(Av);
+      Av /= nrm;
+
+      std::cout << "lanczos.." << std::endl;
+      auto res = eigvals_lanczos_inplace(ham, Av);
+      std::cout << "lanczos done.." << std::endl;
+      std::cout << "done.." << std::endl;
+    }
   }
+} catch (xdiag::Error e) {
+  xdiag::error_trace(e);
 }

@@ -5,23 +5,25 @@
 #pragma once
 
 #include <functional>
+#include <xdiag/parallel/omp/omp_utils.hpp>
 
 namespace xdiag::basis::electron {
 
-template <typename bit_t, typename coeff_t, bool symmetric, bool fermi_ups,
-          class basis_t, class non_zero_term_f, class term_action_f,
-          class fill_f>
-void generic_term_dns(basis_t const &basis_in, basis_t const &basis_out,
-                      non_zero_term_f non_zero_term, term_action_f term_action,
-                      fill_f fill) {
+template <typename coeff_t, bool fermi_ups, typename basis_t,
+          typename non_zero_term_f, typename term_action_f, typename fill_f>
+void generic_term_dns_sym(basis_t const &basis_in, basis_t const &basis_out,
+                          non_zero_term_f non_zero_term,
+                          term_action_f term_action, fill_f fill) {
+  using bit_t = typename basis_t::bit_t;
 
-  if constexpr (symmetric) {
-
-    Representation const &irrep = basis_out.irrep();
-    auto bloch_factors = irrep.characters().as<arma::Col<coeff_t>>();
+  Representation const &irrep = basis_out.irrep();
+  auto bloch_factors = irrep.characters().as<arma::Col<coeff_t>>();
 
 #ifdef _OPENMP
-#pragma omp parallel for schedule(guided)
+#pragma omp parallel
+  {
+    int num_thread = omp_get_thread_num();
+#pragma omp for schedule(runtime)
 #endif
     for (int64_t idx_up = 0; idx_up < basis_in.n_rep_ups(); ++idx_up) {
       bit_t ups_in = basis_in.rep_ups(idx_up);
@@ -54,7 +56,7 @@ void generic_term_dns(basis_t const &basis_in, basis_t const &basis_out,
 
             int64_t idx_dns_flip = basis_out.index_dns(dns_flip);
             int64_t idx_out = ups_offset_out + idx_dns_flip;
-            fill(idx_in, idx_out, coeff);
+            XDIAG_FILL(idx_in, idx_out, coeff);
           }
           ++dns_in_idx;
         }
@@ -86,7 +88,7 @@ void generic_term_dns(basis_t const &basis_in, basis_t const &basis_out,
               coeff_t val =
                   coeff * norms_out[idx_dns_flip] / norms_in[dns_in_idx];
 
-              fill(idx_in, idx_out, (fermi_up ^ fermi_dn) ? -val : val);
+              XDIAG_FILL(idx_in, idx_out, (fermi_up ^ fermi_dn) ? -val : val);
             }
           }
 
@@ -94,54 +96,75 @@ void generic_term_dns(basis_t const &basis_in, basis_t const &basis_out,
         }
       } // if non trivial stabilizer
     } // loop over ups
+#ifdef _OPENMP
   }
+#endif
+}
 
-  else { // if not symmetric
+template <typename coeff_t, bool fermi_ups, typename basis_t,
+          typename non_zero_term_f, typename term_action_f, typename fill_f>
+void generic_term_dns_no_sym(basis_t const &basis_in, basis_t const &basis_out,
+                             non_zero_term_f non_zero_term,
+                             term_action_f term_action, fill_f fill) {
+  using bit_t = typename basis_t::bit_t;
 
-    int64_t size_ups_in = basis_in.size_ups();
-    int64_t size_ups_out = basis_out.size_ups();
+  int64_t size_ups_in = basis_in.size_ups();
+  int64_t size_ups_out = basis_out.size_ups();
 
-    int64_t size_dns_in = basis_in.size_dns();
-    int64_t size_dns_out = basis_out.size_dns();
-    assert(size_ups_in == size_ups_out);
+  int64_t size_dns_in = basis_in.size_dns();
+  int64_t size_dns_out = basis_out.size_dns();
+  assert(size_ups_in == size_ups_out);
 
 #ifdef _OPENMP
 #pragma omp parallel
-    {
-      auto dns_and_idces = basis_in.states_indices_dns_thread();
+  {
+    int num_thread = omp_get_thread_num();
+    auto dns_and_idces = basis_in.states_indices_dns_thread();
 #else
-    auto dns_and_idces = basis_in.states_indices_dns();
+  auto dns_and_idces = basis_in.states_indices_dns();
 #endif
-      for (auto [dns_in, idx_dns_in] : dns_and_idces) {
-        if (non_zero_term(dns_in)) {
-          auto [dns_out, coeff] = term_action(dns_in);
+    for (auto [dns_in, idx_dns_in] : dns_and_idces) {
+      if (non_zero_term(dns_in)) {
+        auto [dns_out, coeff] = term_action(dns_in);
 
-          int64_t idx_dns_out = basis_out.index_dns(dns_out);
-          int64_t idx_out_start = idx_dns_out;
-          int64_t idx_out_end = idx_dns_out + basis_out.size();
+        int64_t idx_dns_out = basis_out.index_dns(dns_out);
+        int64_t idx_out_start = idx_dns_out;
+        int64_t idx_out_end = idx_dns_out + basis_out.size();
 
-          if constexpr (fermi_ups) {
-            int64_t idx_out = idx_out_start;
-            int64_t idx_in = idx_dns_in;
-            for (bit_t ups : basis_in.states_ups()) {
-              bool fermi = bits::popcnt(ups) & 1;
-              fill(idx_in, idx_out, fermi ? coeff : -coeff);
-              idx_out += size_dns_out;
-              idx_in += size_dns_in;
-            }
-          } else {
-            for (int64_t idx_out = idx_out_start, idx_in = idx_dns_in;
-                 idx_out < idx_out_end;
-                 idx_out += size_dns_out, idx_in += size_dns_in) {
-              fill(idx_in, idx_out, coeff);
-            }
+        if constexpr (fermi_ups) {
+          int64_t idx_out = idx_out_start;
+          int64_t idx_in = idx_dns_in;
+          for (bit_t ups : basis_in.states_ups()) {
+            bool fermi = bits::popcnt(ups) & 1;
+            XDIAG_FILL(idx_in, idx_out, fermi ? coeff : -coeff);
+            idx_out += size_dns_out;
+            idx_in += size_dns_in;
+          }
+        } else {
+          for (int64_t idx_out = idx_out_start, idx_in = idx_dns_in;
+               idx_out < idx_out_end;
+               idx_out += size_dns_out, idx_in += size_dns_in) {
+            XDIAG_FILL(idx_in, idx_out, coeff);
           }
         }
       }
+    }
 
 #ifdef _OPENMP
-    }
+  }
 #endif
+}
+template <bool symmetric, typename coeff_t, bool fermi_ups, typename basis_t,
+          typename non_zero_term_f, typename term_action_f, typename fill_f>
+void generic_term_dns(basis_t const &basis_in, basis_t const &basis_out,
+                      non_zero_term_f non_zero_term, term_action_f term_action,
+                      fill_f fill) {
+  if constexpr (symmetric) {
+    generic_term_dns_sym<coeff_t, fermi_ups>(basis_in, basis_out, non_zero_term,
+                                             term_action, fill);
+  } else { // if not symmetric
+    generic_term_dns_no_sym<coeff_t, fermi_ups>(
+        basis_in, basis_out, non_zero_term, term_action, fill);
   }
 }
 
