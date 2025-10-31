@@ -9,15 +9,17 @@
 #include "../../blocks/electron/testcases_electron.hpp"
 #include <xdiag/algebra/algebra.hpp>
 #include <xdiag/algebra/apply.hpp>
+#include <xdiag/algebra/isapprox.hpp>
 #include <xdiag/algorithms/lanczos/eigs_lanczos.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
 #include <xdiag/blocks/electron.hpp>
-#include <xdiag/operators/logic/symmetrize.hpp>
-#include <xdiag/operators/logic/order.hpp>
-#include <xdiag/operators/logic/isapprox.hpp>
 #include <xdiag/operators/logic/hc.hpp>
-#include <xdiag/algebra/isapprox.hpp>
+#include <xdiag/operators/logic/isapprox.hpp>
+#include <xdiag/operators/logic/order.hpp>
+#include <xdiag/operators/logic/symmetrize.hpp>
 #include <xdiag/states/create_state.hpp>
+#include <xdiag/io/read.hpp>
+#include <xdiag/algorithms/lanczos/eigvals_lanczos.hpp>
 
 using namespace xdiag;
 
@@ -42,9 +44,9 @@ TEST_CASE("symmetrize", "[operators]") try {
         if (block_nosym.size() == 0) {
           continue;
         }
-	auto o1 = order(ops.plain());
-	auto o2 = order(hc(ops).plain());
-	
+        auto o1 = order(ops.plain());
+        auto o2 = order(hc(ops).plain());
+
         // XDIAG_SHOW(o1);
         // XDIAG_SHOW(o2);
         // XDIAG_SHOW(isapprox(o1, o2));
@@ -146,8 +148,6 @@ TEST_CASE("symmetrize", "[operators]") try {
     }
   }
 
-
-
   OpSum twist;
   twist += complex(0., 1.) * Op("Exchange", {0, 1});
   auto p0 = Permutation({0, 1});
@@ -161,7 +161,74 @@ TEST_CASE("symmetrize", "[operators]") try {
   auto r = random_state(b);
   auto s = apply(twist_sym, r);
   REQUIRE(isapprox(dot(r, s), 0.));
-  
+
+  {
+    Log("Leo's bug report Electron #85");
+    std::string latticeInput =
+        XDIAG_DIRECTORY "/misc/data/hubbard.cluster.8.toml";
+    auto lfile = FileToml(latticeInput);
+
+    // Creating the Hilbert
+    int N = 8;
+    int nup = 4;
+    int ndn = 4;
+
+    // Creating the Hamiltonian
+    auto ham = read_opsum(lfile, "Interactions");
+
+    double t = 0.436;
+    double tp = -0.07;
+    double tpp = 0.05;
+    double U = 3.12;
+
+    ham["Tx"] = t;
+    ham["Ty"] = t;
+    ham["Tp+"] = tp;
+    ham["Tp-"] = tp;
+    ham["Tppx"] = tpp;
+    ham["Tppy"] = tpp;
+    ham["U"] = U;
+
+    // Creating the irreps
+    std::vector<Representation> irreps;
+    for (unsigned int i = 0; i < 8; ++i) {
+      auto irrep = read_representation(lfile, fmt::format("Irrep{}", i));
+      irreps.push_back(irrep);
+    }
+
+    // Ground state is at Gamma
+    auto irrep = irreps[0];
+    auto block = Electron(N, nup, ndn, irrep);
+    auto block_nosym = Electron(N, nup, ndn);
+
+    auto [e0, gs] = eig0(ham, block);
+    auto [e0n, gsn] = eig0(ham, block_nosym);
+
+    Log("Found ground state energy : {:10.6f} {}", e0, e0n);
+    gs.make_complex();
+    gsn.make_complex();
+
+    for (unsigned int i = 0; i < 8; ++i) {
+
+      std::cout << "Irrep " << i << std::endl;
+      auto S_q = symmetrize(Op("Sz", 0), irreps[i]);
+      std::cout << "symmetrized.." << std::endl;
+      auto Av = apply(S_q, gs);
+      auto Avn = apply(S_q, gsn);
+
+      complex e = innerC(ham, Av);
+      complex en = innerC(ham, Avn);
+      // Log("check: {} {}", e, en);
+      REQUIRE(isapprox(e, en, 1e-6, 1e-6));
+      std::cout << "applied.." << std::endl;
+      auto b = Av.block();
+      auto nrm = norm(Av);
+      Av /= nrm;
+
+      auto res = eigvals_lanczos_inplace(ham, Av);
+    }
+  }
+
   Log("done");
 } catch (xdiag::Error e) {
   xdiag::error_trace(e);
