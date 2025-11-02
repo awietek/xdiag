@@ -39,7 +39,6 @@ void apply_raise_lower(Coupling const &cpl, Op const &op,
       electron::generic_term_ups<symmetric, coeff_t>(
           basis_in, basis_out, non_zero_term, term_action, fill);
     } else if (type == "Cdagdn") {
-
       electron::generic_term_dns<symmetric, coeff_t, true>(
           basis_in, basis_out, non_zero_term, term_action, fill);
     }

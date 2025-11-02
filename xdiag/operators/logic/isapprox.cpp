@@ -6,6 +6,7 @@
 
 #include <xdiag/operators/logic/order.hpp>
 #include <xdiag/utils/matrix.hpp>
+#include <xdiag/utils/xdiag_show.hpp>
 
 namespace xdiag {
 
@@ -36,9 +37,8 @@ bool isapprox(Op const &op1, Op const &op2, double rtol, double atol) try {
   } else { // type different
     return false;
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 bool isapprox(OpSum const &ops1, OpSum const &ops2, double rtol,
               double atol) try {
@@ -75,15 +75,14 @@ bool isapprox(OpSum const &ops1, OpSum const &ops2, double rtol,
     }
     return true;
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 std::optional<Scalar> isapprox_multiple(OpSum const &ops1, OpSum const &ops2,
                                         double rtol, double atol) try {
   auto t1 = order(ops1).terms();
   auto t2 = order(ops2).terms();
-
+  
   if ((t1.size() != t2.size()) || (t1.size() == 0)) {
     return std::nullopt;
   } else {
@@ -116,8 +115,7 @@ std::optional<Scalar> isapprox_multiple(OpSum const &ops1, OpSum const &ops2,
     }
     return ratio;
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 } // namespace xdiag

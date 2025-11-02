@@ -8,10 +8,11 @@
 #include <set>
 
 #include <xdiag/operators/logic/isapprox.hpp>
-#include <xdiag/operators/logic/permute.hpp>
 #include <xdiag/operators/logic/order.hpp>
+#include <xdiag/operators/logic/permute.hpp>
 #include <xdiag/operators/logic/valid.hpp>
 #include <xdiag/utils/scalar.hpp>
+#include <xdiag/utils/xdiag_show.hpp>
 
 namespace xdiag {
 
@@ -31,9 +32,8 @@ Representation representation(OpSum const &ops, block_t const &block) try {
                   "representation of the symmetry group of the block")
     }
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 #ifdef XDIAG_USE_MPI
 template <>
@@ -41,27 +41,24 @@ Representation representation(OpSum const &ops,
                               SpinhalfDistributed const &block) try {
   XDIAG_THROW("Block of type SpinhalfDistributed does not have irreducible "
               "representation defined");
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <>
 Representation representation(OpSum const &ops,
                               tJDistributed const &block) try {
   XDIAG_THROW("Block of type tJDistributed does not have irreducible "
               "representation defined");
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <>
 Representation representation(OpSum const &ops,
                               ElectronDistributed const &block) try {
   XDIAG_THROW("Block of type ElectronDistributed does not have irreducible "
               "representation defined");
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 #endif
 
 template Representation representation(OpSum const &, Spinhalf const &);
@@ -71,15 +68,13 @@ template Representation representation(OpSum const &, Electron const &);
 Representation representation(OpSum const &ops, Block const &block) try {
   return std::visit([&](auto const &b) { return representation(ops, b); },
                     block);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 Representation representation(OpSum const &ops, State const &v) try {
   return representation(ops, v.block());
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <typename block_t>
 int64_t nup(OpSum const &ops, block_t const &block) try {
@@ -94,9 +89,8 @@ int64_t nup(OpSum const &ops, block_t const &block) try {
       XDIAG_THROW("OpSum does not conserve the number of nup particles");
     }
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template int64_t nup(OpSum const &ops, Spinhalf const &block);
 template int64_t nup(OpSum const &ops, tJ const &block);
@@ -109,15 +103,13 @@ template int64_t nup(OpSum const &ops, ElectronDistributed const &block);
 
 int64_t nup(OpSum const &ops, Block const &block) try {
   return std::visit([&](auto const &b) { return nup(ops, b); }, block);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 int64_t nup(OpSum const &ops, State const &v) try {
   return nup(ops, v.block());
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <typename block_t>
 int64_t ndn(OpSum const &ops, block_t const &block) try {
@@ -132,39 +124,34 @@ int64_t ndn(OpSum const &ops, block_t const &block) try {
   } else {
     XDIAG_THROW("OpSum does not conserve the number of ndn particles");
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <> int64_t ndn(OpSum const &ops, Spinhalf const &block) try {
   XDIAG_THROW("Block of type Spinhalf does not have ndn defined");
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 template int64_t ndn(OpSum const &ops, tJ const &block);
 template int64_t ndn(OpSum const &ops, Electron const &block);
 #ifdef XDIAG_USE_MPI
 template <>
 int64_t ndn(OpSum const &ops, SpinhalfDistributed const &block) try {
   XDIAG_THROW("Block of type SpinhalfDistributed does not have ndn defined");
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 template int64_t ndn(OpSum const &ops, tJDistributed const &block);
 template int64_t ndn(OpSum const &ops, ElectronDistributed const &block);
 #endif
 
 int64_t ndn(OpSum const &ops, Block const &block) try {
   return std::visit([&](auto const &b) { return ndn(ops, b); }, block);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 int64_t ndn(OpSum const &ops, State const &v) try {
   return ndn(ops, v.block());
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <typename T>
 static std::optional<int64_t> nup_matrix(arma::Mat<T> const &mat,
@@ -206,9 +193,8 @@ std::optional<int64_t> nup(Op const &op) try {
   } else {
     return 0;
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 std::optional<int64_t> nup(OpSum const &ops) try {
   OpSum opso = order(ops);
@@ -230,9 +216,8 @@ std::optional<int64_t> nup(OpSum const &ops) try {
       return std::nullopt;
     }
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 std::optional<int64_t> ndn(Op const &op) try {
   check_valid(op);
@@ -244,9 +229,8 @@ std::optional<int64_t> ndn(Op const &op) try {
   } else {
     return 0;
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 std::optional<int64_t> ndn(OpSum const &ops) try {
   OpSum opso = order(ops);
@@ -268,9 +252,8 @@ std::optional<int64_t> ndn(OpSum const &ops) try {
       return std::nullopt;
     }
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 std::optional<Representation>
 representation(OpSum const &ops, PermutationGroup const &group) try {
@@ -288,7 +271,6 @@ representation(OpSum const &ops, PermutationGroup const &group) try {
     }
   }
   return Representation(group, Vector(characters));
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 } // namespace xdiag

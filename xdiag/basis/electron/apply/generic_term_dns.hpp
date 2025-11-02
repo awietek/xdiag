@@ -27,10 +27,12 @@ void generic_term_dns_sym(basis_t const &basis_in, basis_t const &basis_out,
 #endif
     for (int64_t idx_up = 0; idx_up < basis_in.n_rep_ups(); ++idx_up) {
       bit_t ups_in = basis_in.rep_ups(idx_up);
+      bool ups_odd = !(bool)(bits::popcnt(ups_in) & 1);
+
       bit_t ups_out = basis_out.rep_ups(idx_up);
       assert(ups_out == ups_in);
 
-      int64_t ups_offset_in = basis_out.ups_offset(idx_up);
+      int64_t ups_offset_in = basis_in.ups_offset(idx_up);
       auto dnss_in = basis_in.dns_for_ups_rep(ups_in);
       auto norms_in = basis_in.norms_for_ups_rep(ups_in);
 
@@ -47,16 +49,14 @@ void generic_term_dns_sym(basis_t const &basis_in, basis_t const &basis_out,
           if (non_zero_term(dns_in)) {
             int64_t idx_in = ups_offset_in + dns_in_idx;
             auto [dns_flip, coeff] = term_action(dns_in);
-
-            if constexpr (fermi_ups) { // not ideal to do this here
-              if (bits::popcnt(ups_in) & 1) {
-                coeff = -coeff;
-              }
-            }
-
             int64_t idx_dns_flip = basis_out.index_dns(dns_flip);
             int64_t idx_out = ups_offset_out + idx_dns_flip;
-            XDIAG_FILL(idx_in, idx_out, coeff);
+
+            if constexpr (fermi_ups) { // not ideal to do this here
+              XDIAG_FILL(idx_in, idx_out, ups_odd ? -coeff : coeff);
+            } else {
+              XDIAG_FILL(idx_in, idx_out, coeff);
+            }
           }
           ++dns_in_idx;
         }
@@ -70,13 +70,6 @@ void generic_term_dns_sym(basis_t const &basis_in, basis_t const &basis_out,
           if (non_zero_term(dns_in)) {
             int64_t idx_in = ups_offset_in + dns_in_idx;
             auto [dns_flip, coeff] = term_action(dns_in);
-
-            if constexpr (fermi_ups) { // not ideal to do this here
-              if (bits::popcnt(ups_in) & 1) {
-                coeff = -coeff;
-              }
-            }
-
             auto [idx_dns_flip, fermi_dn, sym] =
                 basis_out.index_dns_fermi_sym(dns_flip, syms_out, dnss_out);
 
@@ -88,7 +81,18 @@ void generic_term_dns_sym(basis_t const &basis_in, basis_t const &basis_out,
               coeff_t val =
                   coeff * norms_out[idx_dns_flip] / norms_in[dns_in_idx];
 
-              XDIAG_FILL(idx_in, idx_out, (fermi_up ^ fermi_dn) ? -val : val);
+              if constexpr (fermi_ups) {
+                if (ups_odd) {
+                  XDIAG_FILL(idx_in, idx_out,
+                             (fermi_up ^ fermi_dn) ? val : -val);
+                } else {
+                  XDIAG_FILL(idx_in, idx_out,
+                             (fermi_up ^ fermi_dn) ? -val : val);
+                }
+
+              } else {
+                XDIAG_FILL(idx_in, idx_out, (fermi_up ^ fermi_dn) ? -val : val);
+              }
             }
           }
 

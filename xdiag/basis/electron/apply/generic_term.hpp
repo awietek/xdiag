@@ -59,10 +59,12 @@ void generic_term_sym(basis_t const &basis_in, basis_t const &basis_out,
               basis_out.index_dns_fermi(dns_flip, sym);
 
           // out norm is 1 since we have trivial stabilizer
-          coeff_t val = c * characters(sym) / norms_in[idx_dn];
-          int64_t idx_in = up_offset_in + idx_dn;
-          int64_t idx_out = up_offset_out + idx_dn_flip;
-          XDIAG_FILL(idx_in, idx_out, (fermi_up ^ fermi_dn) ? -val : val);
+          if (idx_dn_flip != invalid_index) {
+            coeff_t val = c * characters(sym) / norms_in[idx_dn];
+            int64_t idx_in = up_offset_in + idx_dn;
+            int64_t idx_out = up_offset_out + idx_dn_flip;
+            XDIAG_FILL(idx_in, idx_out, (fermi_up ^ fermi_dn) ? -val : val);
+          }
 
         } else { // non-trivial stabilizer
           auto const &syms = syms_up_out;

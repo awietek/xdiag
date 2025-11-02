@@ -11,15 +11,16 @@
 #include <xdiag/algebra/apply.hpp>
 #include <xdiag/algebra/isapprox.hpp>
 #include <xdiag/algorithms/lanczos/eigs_lanczos.hpp>
+#include <xdiag/algorithms/lanczos/eigvals_lanczos.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
 #include <xdiag/blocks/electron.hpp>
+#include <xdiag/io/read.hpp>
 #include <xdiag/operators/logic/hc.hpp>
 #include <xdiag/operators/logic/isapprox.hpp>
 #include <xdiag/operators/logic/order.hpp>
 #include <xdiag/operators/logic/symmetrize.hpp>
 #include <xdiag/states/create_state.hpp>
-#include <xdiag/io/read.hpp>
-#include <xdiag/algorithms/lanczos/eigvals_lanczos.hpp>
+#include <xdiag/utils/xdiag_show.hpp>
 
 using namespace xdiag;
 
@@ -210,22 +211,79 @@ TEST_CASE("symmetrize", "[operators]") try {
 
     for (unsigned int i = 0; i < 8; ++i) {
 
-      std::cout << "Irrep " << i << std::endl;
-      auto S_q = symmetrize(Op("Sz", 0), irreps[i]);
-      std::cout << "symmetrized.." << std::endl;
-      auto Av = apply(S_q, gs);
-      auto Avn = apply(S_q, gsn);
+      auto ops = std::vector<Op>(
+          {Op("Cdagup", 0), Op("Cdagdn", 0), Op("Cup", 0), Op("Cdn", 0),
+           Op("Sz", 0), Op("SzSz", {0, 1}), Op("Nup", 0), Op("Ndn", 0),
+           Op("Nupdn", 0), Op("NupNup", {0, 1}), Op("NupNdn", {0, 1}),
+           Op("NdnNup", {0, 1}), Op("NdnNdn", {0, 1}),
+           Op("NupdnNupdn", {0, 1})});
 
-      complex e = innerC(ham, Av);
-      complex en = innerC(ham, Avn);
-      // Log("check: {} {}", e, en);
-      REQUIRE(isapprox(e, en, 1e-6, 1e-6));
-      std::cout << "applied.." << std::endl;
-      auto b = Av.block();
-      auto nrm = norm(Av);
-      Av /= nrm;
+      for (auto op : ops) {
+        auto S_q = symmetrize(op, irreps[i]);
+        // XDIAG_SHOW(S_q);
+        auto Av = apply(S_q, gs);
+        auto Avn = apply(S_q, gsn);
+        complex e = innerC(ham, Av);
+        complex en = innerC(ham, Avn);
+        REQUIRE(isapprox(e, en, 1e-6, 1e-6));
+      }
+    }
+  }
 
-      auto res = eigvals_lanczos_inplace(ham, Av);
+  {
+    for (int nsites = 2; nsites <= 6; ++nsites) {
+      Log("Apply chain test: Electron {}", nsites);
+      auto ops = testcases::electron::get_linear_chain(nsites, 1.0, 5.0);
+      ops["T"] = 1.0;
+      auto irreps = testcases::electron::get_cyclic_group_irreps(nsites);
+
+      for (int nup = 1; nup <= nsites - 1; ++nup) {
+        for (int ndn = 1; ndn <= nsites - 1; ++ndn) {
+          // Log("nup {} ndn {}", nup, ndn);
+          auto block_nosym = Electron(nsites, nup, ndn);
+          auto [e0n, gsn] = eig0(ops, block_nosym);
+
+          Representation e0_irrep;
+          int e0deg = 0;
+          for (auto irrep : irreps) {
+            auto block = Electron(nsites, nup, ndn, irrep);
+            double e0 = eigval0(ops, block);
+            if (isapprox(e0, e0n)) {
+              e0_irrep = irrep;
+              e0deg++;
+            }
+          }
+          // Log("e0deg {}", e0deg);
+          if (e0deg == 1) {
+            auto block = Electron(nsites, nup, ndn, e0_irrep);
+            auto [e0, gs] = eig0(ops, block);
+            REQUIRE(isapprox(e0, e0n));
+
+            for (auto irrep : irreps) {
+
+              auto opss = std::vector<Op>(
+                  {// Op("Hopup", {0, 1}), Op("Hopdn", {0, 1}),
+                   // Op("Exchange", {0, 1}),
+                   Op("Cdagup", 0), Op("Cdagdn", 0), Op("Cup", 0), Op("Cdn", 0),
+                   Op("Sz", 0), Op("SzSz", {0, 1}), Op("Nup", 0), Op("Ndn", 0),
+                   Op("Nupdn", 0), Op("NupNup", {0, 1}), Op("NupNdn", {0, 1}),
+                   Op("NdnNup", {0, 1}), Op("NdnNdn", {0, 1}),
+                   Op("NupdnNupdn", {0, 1})});
+              for (auto op : opss) {
+                // XDIAG_SHOW(op);
+                auto S_q = symmetrize(op, irrep);
+                // XDIAG_SHOW(S_q);
+                auto Av = apply(S_q, gs);
+                auto Avn = apply(S_q, gsn);
+                complex e = innerC(ops, Av);
+                complex en = innerC(ops, Avn);
+                // Log("{} {} {} {} {}", nsites, nup, ndn, e, en);
+                REQUIRE(isapprox(e, en, 1e-6, 1e-6));
+              }
+            }
+          }
+        }
+      }
     }
   }
 
