@@ -59,7 +59,7 @@ JLCXX_MODULE define_julia_module(jlcxx::Module &mod) {
   // Comment: order of "defines" matters, otherwise errors like:
   // No appropriate factory for type ...
   //
-
+  
   // Armadillo
   julia::define_vectors(mod);
   julia::define_matrices(mod);

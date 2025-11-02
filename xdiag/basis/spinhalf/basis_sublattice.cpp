@@ -224,7 +224,9 @@ compute_rep_search_range_omp(std::vector<bit_t> const &reps,
       int rank = omp_get_num_threads();
 
 #pragma omp single
-      { rep_search_range_thread.resize(rank); }
+      {
+        rep_search_range_thread.resize(rank);
+      }
 
       auto [start_thread, end_thread] = omp::get_omp_start_end(reps.size());
 
@@ -292,9 +294,8 @@ BasisSublattice<bit_t, n_sublat>::BasisSublattice(
   }
 
   rep_search_range_ = compute_rep_search_range_serial(reps_, n_postfix_bits_);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <typename bit_t, int n_sublat>
 BasisSublattice<bit_t, n_sublat>::BasisSublattice(
@@ -319,9 +320,8 @@ BasisSublattice<bit_t, n_sublat>::BasisSublattice(
 #else
   rep_search_range_ = compute_rep_search_range_serial(reps_, n_postfix_bits_);
 #endif
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <typename bit_t, int n_sublat>
 typename std::vector<bit_t>::const_iterator

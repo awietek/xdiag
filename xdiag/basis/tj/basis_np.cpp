@@ -12,8 +12,7 @@ using namespace combinatorics;
 
 template <typename bit_t>
 BasisNp<bit_t>::BasisNp(int64_t nsites, int64_t nup, int64_t ndn) try
-    : nsites_(nsites), nup_(nup), ndn_(ndn),
-      size_ups_(binomial(nsites, nup)),
+    : nsites_(nsites), nup_(nup), ndn_(ndn), size_ups_(binomial(nsites, nup)),
       size_dncs_(binomial(nsites - nup, ndn)), size_(size_ups_ * size_dncs_),
       sitesmask_(((bit_t)1 << nsites) - 1), lintable_ups_(nsites, nup),
       lintable_dncs_(nsites - nup, ndn) {
@@ -108,6 +107,16 @@ BasisNp<bit_t>::states_indices_dncs_thread(bit_t ups) const {
   return CombinationsIndexThread<bit_t>(nsites_ - nup_, ndn_);
 }
 #endif
+
+template <typename bit_t>
+bool BasisNp<bit_t>::operator==(BasisNp const &rhs) const {
+  return (nsites_ == rhs.nsites_) && (nup_ == rhs.nup_) && (ndn_ == rhs.ndn_);
+}
+
+template <typename bit_t>
+bool BasisNp<bit_t>::operator!=(BasisNp const &rhs) const {
+  return !operator==(rhs);
+}
 
 template class BasisNp<uint32_t>;
 template class BasisNp<uint64_t>;

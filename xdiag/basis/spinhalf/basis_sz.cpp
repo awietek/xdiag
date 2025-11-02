@@ -36,9 +36,8 @@ BasisSz<bit_t>::BasisSz(int64_t nsites, int64_t nup) try
     states_[idx] = state;
   }
 #endif
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <typename bit_t>
 combinatorics::CombinationsIterator<bit_t> BasisSz<bit_t>::begin() const {

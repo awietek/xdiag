@@ -6,6 +6,7 @@
 
 #include <xdiag/combinatorics/binomial.hpp>
 #include <xdiag/random/hash.hpp>
+#include <xdiag/utils/xdiag_show.hpp>
 
 namespace xdiag {
 
@@ -38,9 +39,8 @@ Spinhalf::Spinhalf(int64_t nsites, std::string backend) try
   } else {
     XDIAG_THROW(fmt::format("Unknown backend: \"{}\"", backend));
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 Spinhalf::Spinhalf(int64_t nsites, int64_t nup, std::string backend) try
     : nsites_(nsites), backend_(backend), nup_(nup), irrep_(std::nullopt),
@@ -77,14 +77,12 @@ Spinhalf::Spinhalf(int64_t nsites, int64_t nup, std::string backend) try
   } else {
     XDIAG_THROW(fmt::format("Unknown backend: \"{}\"", backend));
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 Spinhalf::Spinhalf(int64_t nsites, Representation const &irrep,
                    std::string backend) try
     : nsites_(nsites), backend_(backend), nup_(std::nullopt), irrep_(irrep) {
-
   // Safety checks
   if (nsites < 0) {
     XDIAG_THROW("Invalid argument: nsites < 0");
@@ -131,9 +129,8 @@ Spinhalf::Spinhalf(int64_t nsites, Representation const &irrep,
 
   size_ = basis::size(*basis_);
   check_dimension_works_with_blas_int_size(size_);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 Spinhalf::Spinhalf(int64_t nsites, int64_t nup, Representation const &irrep,
                    std::string backend) try
@@ -189,9 +186,8 @@ Spinhalf::Spinhalf(int64_t nsites, int64_t nup, Representation const &irrep,
 
   size_ = basis::size(*basis_);
   check_dimension_works_with_blas_int_size(size_);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 Spinhalf::iterator_t Spinhalf::begin() const { return iterator_t(*this, true); }
 Spinhalf::iterator_t Spinhalf::end() const { return iterator_t(*this, false); }
@@ -204,9 +200,9 @@ int64_t Spinhalf::index(ProductState const &pstate) const try {
         return basis.index(spins);
       },
       *basis_);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 int64_t Spinhalf::dim() const { return size_; }
 int64_t Spinhalf::size() const { return size_; }
 

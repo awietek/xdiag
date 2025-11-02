@@ -43,9 +43,8 @@ tJDistributed::tJDistributed(int64_t nsites, int64_t nup, int64_t ndn,
   assert(dim_ == binomial(nsites, nup) * binomial(nsites - nup, ndn));
   size_ = basis::size(*basis_);
   check_dimension_works_with_blas_int_size(size_);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 int64_t tJDistributed::nsites() const { return nsites_; }
 std::string tJDistributed::backend() const { return backend_; }
@@ -71,9 +70,9 @@ int64_t tJDistributed::index(ProductState const &pstate) const try {
         return basis.index(ups, dns);
       },
       *basis_);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 bool tJDistributed::isreal() const {
   return true; // would only be nontrivial with space group irreps
 }

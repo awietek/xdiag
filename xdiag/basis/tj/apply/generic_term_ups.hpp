@@ -11,7 +11,7 @@
 
 namespace xdiag::basis::tj {
 
-template <typename coeff_t, bool symmetric, class basis_t,
+template <bool symmetric, typename coeff_t, class basis_t,
           class non_zero_term_f, class term_action_f, class fill_f>
 void generic_term_ups(basis_t const &basis_in, basis_t const &basis_out,
                       non_zero_term_f non_zero_term, term_action_f term_action,

@@ -46,9 +46,8 @@ ElectronDistributed::ElectronDistributed(int64_t nsites, int64_t nup,
   assert(dim_ == binomial(nsites, nup) * binomial(nsites, ndn));
   size_ = basis::size(*basis_);
   check_dimension_works_with_blas_int_size(size_);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 int64_t ElectronDistributed::nsites() const { return nsites_; }
 std::string ElectronDistributed::backend() const { return backend_; }
@@ -78,9 +77,9 @@ int64_t ElectronDistributed::index(ProductState const &pstate) const try {
         return basis.index(ups, dns);
       },
       *basis_);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 bool ElectronDistributed::isreal() const {
   return true; // would only be nontrivial with space group irreps
 }

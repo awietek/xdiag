@@ -25,6 +25,9 @@ public:
   iterator_t begin() const;
   iterator_t end() const;
 
+  bool operator==(BasisNp const &rhs) const;
+  bool operator!=(BasisNp const &rhs) const;
+  
   inline int64_t index(bit_t ups, bit_t dns) const {
     bit_t dncs = bits::extract<bit_t>(dns, (~ups) & sitesmask_);
     return index_ups(ups) * size_dncs_ + index_dncs(dncs);

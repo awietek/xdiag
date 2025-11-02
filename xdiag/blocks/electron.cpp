@@ -36,9 +36,8 @@ Electron::Electron(int64_t nsites, std::string backend) try
   }
   size_ = basis::size(*basis_);
   check_dimension_works_with_blas_int_size(size_);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 Electron::Electron(int64_t nsites, int64_t nup, int64_t ndn,
                    std::string backend) try
@@ -76,9 +75,8 @@ Electron::Electron(int64_t nsites, int64_t nup, int64_t ndn,
   }
   size_ = basis::size(*basis_);
   check_dimension_works_with_blas_int_size(size_);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 Electron::Electron(int64_t nsites, Representation const &irrep,
                    std::string backend) try
@@ -113,10 +111,8 @@ Electron::Electron(int64_t nsites, Representation const &irrep,
   }
   size_ = basis::size(*basis_);
   check_dimension_works_with_blas_int_size(size_);
-
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 Electron::Electron(int64_t nsites, int64_t nup, int64_t ndn,
                    Representation const &irrep, std::string backend) try
@@ -154,9 +150,8 @@ Electron::Electron(int64_t nsites, int64_t nup, int64_t ndn,
   }
   size_ = basis::size(*basis_);
   check_dimension_works_with_blas_int_size(size_);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 Electron::iterator_t Electron::begin() const { return iterator_t(*this, true); }
 Electron::iterator_t Electron::end() const { return iterator_t(*this, false); }
@@ -169,9 +164,8 @@ int64_t Electron::index(ProductState const &pstate) const try {
         return basis.index(ups, dns);
       },
       *basis_);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 bool Electron::operator==(Electron const &rhs) const {
   return (nsites_ == rhs.nsites_) && (nup_ == rhs.nup_) && (ndn_ == rhs.ndn_) &&

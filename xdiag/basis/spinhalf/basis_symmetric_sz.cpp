@@ -50,9 +50,8 @@ BasisSymmetricSz<bit_t>::BasisSymmetricSz(int64_t nup,
   }
 
   size_ = (int64_t)reps_.size();
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <class bit_t>
 typename std::vector<bit_t>::const_iterator

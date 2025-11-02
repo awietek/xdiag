@@ -11,9 +11,9 @@
 
 namespace xdiag::basis::tj {
 
-template <typename coeff_t, bool symmetric, bool fermi_ups, class basis_t,
-          class non_zero_term_ups_f, class non_zero_term_dns_f,
-          class term_action_f, class fill_f>
+template <bool symmetric, typename coeff_t, bool fermi_ups, typename basis_t,
+          typename non_zero_term_ups_f, typename non_zero_term_dns_f,
+          typename term_action_f, typename fill_f>
 void generic_term_dns(basis_t const &basis_in, basis_t const &basis_out,
                       non_zero_term_ups_f non_zero_term_ups,
                       non_zero_term_dns_f non_zero_term_dns,
@@ -95,7 +95,8 @@ void generic_term_dns(basis_t const &basis_in, basis_t const &basis_out,
                   }
                   coeff_t val = coeff * bloch_factors(sym) *
                                 norms_out[idx_dn_flip] / norms_in[idx_dn_in];
-                  XDIAG_FILL(idx_in, idx_out, (fermi_up ^ fermi_dn) ? -val : val);
+                  XDIAG_FILL(idx_in, idx_out,
+                             (fermi_up ^ fermi_dn) ? -val : val);
                 }
               }
               ++idx_dn_in;

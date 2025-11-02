@@ -12,9 +12,9 @@
 
 namespace xdiag::basis::tj {
 
-template <typename coeff_t, bool symmetric, class basis_t, class fill_f>
-void apply_hopping(Coupling const &cpl, Op const &op, basis_t const &basis,
-                   fill_f fill) try {
+template <bool symmetric, typename coeff_t, typename basis_t, typename fill_f>
+void apply_hopping(Coupling const &cpl, Op const &op, basis_t const &basis_in,
+                   basis_t const &basis_out, fill_f fill) {
   using bit_t = typename basis_t::bit_t;
 
   coeff_t t = cpl.scalar().as<coeff_t>();
@@ -41,7 +41,7 @@ void apply_hopping(Coupling const &cpl, Op const &op, basis_t const &basis,
     auto non_zero_term = [&](bit_t const &ups) -> bool {
       return bits::popcnt(ups & flipmask) & 1;
     };
-    tj::generic_term_ups<coeff_t, symmetric>(basis, basis, non_zero_term,
+    tj::generic_term_ups<symmetric, coeff_t>(basis_in, basis_out, non_zero_term,
                                              term_action, fill);
   } else if (type == "Hopdn") {
     auto non_zero_term_ups = [&](bit_t const &ups) -> bool {
@@ -50,11 +50,10 @@ void apply_hopping(Coupling const &cpl, Op const &op, basis_t const &basis,
     auto non_zero_term_dns = [&](bit_t const &dns) -> bool {
       return bits::popcnt(dns & flipmask) & 1;
     };
-    tj::generic_term_dns<coeff_t, symmetric, false>(
-        basis, basis, non_zero_term_ups, non_zero_term_dns, term_action, fill);
+    tj::generic_term_dns<symmetric, coeff_t, false>(
+        basis_in, basis_out, non_zero_term_ups, non_zero_term_dns, term_action,
+        fill);
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
 
 } // namespace xdiag::basis::tj
