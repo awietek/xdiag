@@ -203,9 +203,7 @@ zahexpv(double time, apply_A_f &&apply_A, dot_f &&dot, arma::cx_vec &w,
   Log(1, "zaexph finished: # steps = {}, # MVM = {}, est. error: {}, hump: {}",
       nstep, nstep * m, err, hump);
   return {err, hump};
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-  return {0., 0.};
 }
+XDIAG_CATCH
 
 } // namespace xdiag

@@ -23,9 +23,8 @@ BasisNp<bit_t>::BasisNp(int nsites, int nup, int ndn) try
   } else if ((ndn < 0) || (ndn > nsites)) {
     XDIAG_THROW("Invalid value of ndn");
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <typename bit_t> int BasisNp<bit_t>::nsites() const { return nsites_; }
 template <typename bit_t> int BasisNp<bit_t>::nup() const { return nup_; }

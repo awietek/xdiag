@@ -25,9 +25,8 @@ template <typename T> std::vector<T> std_vector(toml::node const &node) try {
         "TOML node cannot be converted to \"{}\". Node is not an array.",
         utils::type_string<std::vector<T>>()));
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template std::vector<int8_t> std_vector<int8_t>(toml::node const &);
 template std::vector<int16_t> std_vector<int16_t>(toml::node const &);
@@ -55,9 +54,8 @@ template <typename T> toml::array toml_array(std::vector<T> const &value) try {
     arr.push_back(x);
   }
   return arr;
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <> toml::array toml_array(std::vector<uint64_t> const &value) try {
   toml::array arr;
@@ -65,9 +63,8 @@ template <> toml::array toml_array(std::vector<uint64_t> const &value) try {
     arr.push_back((int64_t)x);
   }
   return arr;
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <> toml::array toml_array(std::vector<complex> const &value) try {
   toml::array arr;
@@ -75,9 +72,8 @@ template <> toml::array toml_array(std::vector<complex> const &value) try {
     arr.push_back(toml::array{x.real(), x.imag()});
   }
   return arr;
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template toml::array toml_array(std::vector<int8_t> const &);
 template toml::array toml_array(std::vector<int16_t> const &);

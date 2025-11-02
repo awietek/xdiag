@@ -50,8 +50,7 @@ inline void apply(CSRMatrix<idx_t, coeff_t> const &spmat, block_t const &,
   } else {
     return apply(spmat, vec_in, vec_out);
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 } // namespace xdiag

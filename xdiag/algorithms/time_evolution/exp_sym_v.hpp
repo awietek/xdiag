@@ -83,8 +83,7 @@ exp_sym_v(multiply_f mult, dot_f dot, arma::Col<coeff_t> &X, coeff_t tau,
   }
 
   return {r.alphas, r.betas, r.eigenvalues, r.niterations, r.criterion};
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 } // namespace xdiag

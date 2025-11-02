@@ -30,9 +30,8 @@ void State::init0(bool real, int64_t nrows, int64_t ncols) try {
   } else {
     safe_resize(storage_, 2 * size());
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 // This initialization copies the memory (double)
 void State::initcopy(const double *ptr, int64_t nrows, int64_t ncols,
@@ -47,24 +46,21 @@ void State::initcopy(const double *ptr, int64_t nrows, int64_t ncols,
   } else {
     XDIAG_THROW("Invalid stride given. This is a bug, please report.");
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 // This initialization copies the memory (complex)
 void State::initcopy(const complex *ptr, int64_t nrows, int64_t ncols) try {
   init0(false, nrows, ncols);
   std::copy(ptr, ptr + size(), reinterpret_cast<complex *>(storage_.data()));
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 State::State(Block const &block, bool real, int64_t ncols) try
     : valid_(true), block_(block) {
   init0(real && xdiag::isreal(block), xdiag::size(block), ncols);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 State::State(Block const &block, arma::vec const &vector) try
     : valid_(true), block_(block) {
@@ -78,9 +74,8 @@ State::State(Block const &block, arma::vec const &vector) try
     arma::cx_vec vectorc = utils::to_cx_vec(vector);
     initcopy(vectorc.memptr(), vector.size(), 1); // cplx init
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 State::State(Block const &block, arma::cx_vec const &vector) try
     : valid_(true), block_(block) {
@@ -89,9 +84,8 @@ State::State(Block const &block, arma::cx_vec const &vector) try
         "Size of block does not agree with size of given armadillo vector");
   }
   initcopy(vector.memptr(), vector.size(), 1); // cplx init
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 State::State(Block const &block, arma::mat const &matrix) try
     : valid_(true), block_(block) {
@@ -105,9 +99,8 @@ State::State(Block const &block, arma::mat const &matrix) try
     arma::cx_mat matrixc = utils::to_cx_mat(matrix);
     initcopy(matrixc.memptr(), matrix.n_rows, matrix.n_cols); // cplx init
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 State::State(Block const &block, arma::cx_mat const &matrix) try
     : valid_(true), block_(block) {
@@ -116,24 +109,21 @@ State::State(Block const &block, arma::cx_mat const &matrix) try
                 "armadillo matrix");
   }
   initcopy(matrix.memptr(), matrix.n_rows, matrix.n_cols); // cplx init
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 State::State(Block const &block, double const *ptr, int64_t ncols,
              int64_t stride) try
     : valid_(true), block_(block) {
   initcopy(ptr, xdiag::size(block), ncols, stride); // real init
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 State::State(Block const &block, complex const *ptr, int64_t ncols) try
     : valid_(true), block_(block) {
   initcopy(ptr, xdiag::size(block), ncols); // complex init
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 bool State::isvalid() const { return valid_; }
 int64_t State::nsites() const { return xdiag::nsites(block_); }
@@ -147,10 +137,8 @@ State State::real() const try {
     return std::visit(
         [&](auto &&block) { return State(block, ptr, ncols_, 2); }, block_);
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-  return (*this);
 }
+XDIAG_CATCH
 
 State State::imag() const try { // TODO: DOES THIS DO WHAT IT"S SUPPOSED TO?
   if (isreal()) {
@@ -160,10 +148,8 @@ State State::imag() const try { // TODO: DOES THIS DO WHAT IT"S SUPPOSED TO?
     return std::visit(
         [&](auto &&block) { return State(block, ptr + 1, ncols_, 2); }, block_);
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-  return (*this);
 }
+XDIAG_CATCH
 
 void State::make_complex() try {
   if (isreal()) {
@@ -176,9 +162,8 @@ void State::make_complex() try {
       std::swap(ptr[i << 1], ptr[i]);
     }
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 int64_t State::dim() const { return xdiag::dim(block_); }
 
@@ -198,10 +183,8 @@ State State::col(int64_t n, bool copy) const try {
     return std::visit([&](auto &&b) { return State(b, vectorC(n, copy)); },
                       block_);
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-  return State();
 }
+XDIAG_CATCH
 
 arma::vec State::vector(int64_t n, bool copy) const try {
   if (!real_) {
@@ -213,10 +196,8 @@ arma::vec State::vector(int64_t n, bool copy) const try {
     XDIAG_THROW("Negative column index");
   }
   return arma::vec(storage_.data() + n * nrows_, nrows_, copy, !copy);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-  return arma::vec();
 }
+XDIAG_CATCH
 
 arma::mat State::matrix(bool copy) const try {
   if (!real_) {
@@ -224,10 +205,8 @@ arma::mat State::matrix(bool copy) const try {
                 "complex state (maybe use matrixC(...) instead)");
   }
   return arma::mat(storage_.data(), nrows_, ncols_, copy, !copy);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-  return arma::mat();
 }
+XDIAG_CATCH
 
 arma::cx_vec State::vectorC(int64_t n, bool copy) const try {
   if (real_) {
@@ -241,10 +220,8 @@ arma::cx_vec State::vectorC(int64_t n, bool copy) const try {
 
   return arma::cx_vec(reinterpret_cast<complex *>(storage_.data()) + n * nrows_,
                       nrows_, copy, !copy);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-  return arma::cx_vec();
 }
+XDIAG_CATCH
 
 arma::cx_mat State::matrixC(bool copy) const try {
   if (real_) {
@@ -253,10 +230,8 @@ arma::cx_mat State::matrixC(bool copy) const try {
   }
   return arma::cx_mat(reinterpret_cast<complex *>(storage_.data()), nrows_,
                       ncols_, copy, !copy);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-  return arma::cx_mat();
 }
+XDIAG_CATCH
 
 double *State::memptr() { return storage_.data(); }
 complex *State::memptrC() {
@@ -291,9 +266,8 @@ bool isapprox(State const &v, State const &w, double rtol, double atol) try {
   } else {
     return false;
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 bool isreal(State const &s) { return s.isreal(); }
 State real(State const &s) { return s.real(); }
@@ -337,21 +311,18 @@ State &operator*=(State &X, double alpha) try {
     X.matrixC(false) *= alpha;
   }
   return X;
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
 }
+XDIAG_CATCH
+
 State operator*(State const &X, double alpha) try {
   auto res = X;
   res *= alpha;
   return res;
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
 }
-State operator*(double alpha, State const &X) try {
-  return X * alpha;
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
-}
+XDIAG_CATCH
+
+State operator*(double alpha, State const &X) try { return X * alpha; }
+XDIAG_CATCH
 
 State &operator*=(State &X, complex alpha) try {
   if (isreal(X)) {
@@ -361,21 +332,18 @@ State &operator*=(State &X, complex alpha) try {
     X.matrixC(false) *= alpha;
   }
   return X;
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
 }
+XDIAG_CATCH
+
 State operator*(State const &X, complex alpha) try {
   auto res = X;
   res *= alpha;
   return res;
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
 }
-State operator*(complex alpha, State const &X) try {
-  return X * alpha;
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
-}
+XDIAG_CATCH
+
+State operator*(complex alpha, State const &X) try { return X * alpha; }
+XDIAG_CATCH
 
 State &operator/=(State &X, double alpha) try {
   if (isreal(X)) {
@@ -384,16 +352,15 @@ State &operator/=(State &X, double alpha) try {
     X.matrixC(false) /= alpha;
   }
   return X;
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
 }
+XDIAG_CATCH
+
 State operator/(State const &X, double alpha) try {
   auto res = X;
   res /= alpha;
   return res;
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
 }
+XDIAG_CATCH
 
 State &operator/=(State &X, complex alpha) try {
   if (isreal(X)) {
@@ -403,17 +370,15 @@ State &operator/=(State &X, complex alpha) try {
     X.matrixC(false) /= alpha;
   }
   return X;
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
 }
+XDIAG_CATCH
 
 State operator/(State const &X, complex alpha) try {
   auto res = X;
   res /= alpha;
   return res;
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
 }
+XDIAG_CATCH
 
 State &operator+=(State &v, State const &w) try {
   if (v.block() != w.block()) {
@@ -437,9 +402,8 @@ State &operator+=(State &v, State const &w) try {
   }
 
   return v;
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
 }
+XDIAG_CATCH
 
 State &operator-=(State &v, State const &w) try {
   if (v.block() != w.block()) {
@@ -463,30 +427,24 @@ State &operator-=(State &v, State const &w) try {
   }
 
   return v;
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
 }
+XDIAG_CATCH
 
 State operator+(State const &v, State const &w) try {
   auto res = v;
   res += w;
   return res;
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
 }
+XDIAG_CATCH
 
 State operator-(State const &v, State const &w) try {
   auto res = v;
   res -= w;
   return res;
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
 }
+XDIAG_CATCH
 
-State operator-(State const &v) try {
-  return (-1.0) * v;
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
-}
+State operator-(State const &v) try { return (-1.0) * v; }
+XDIAG_CATCH
 
 } // namespace xdiag

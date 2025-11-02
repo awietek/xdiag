@@ -31,9 +31,8 @@ int64_t nsites_of_type(std::string type) try {
                             "\"{}\". This type is unknown.",
                             type));
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 std::string known_types_string() {
   std::string str;

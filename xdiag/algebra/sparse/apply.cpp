@@ -9,8 +9,8 @@
 #endif
 
 #ifdef XDIAG_USE_SPARSE_MKL
-#include <type_traits>
 #include <complex>
+#include <type_traits>
 #define MKL_Complex16 std::complex<double>
 #include <mkl_spblas.h>
 #endif
@@ -25,17 +25,15 @@ static arma::Col<coeff_vec_t> apply(CSRMatrix<idx_t, coeff_csr_t> const &spmat,
   auto vec_out = arma::Col<coeff_vec_t>(m);
   apply(spmat, vec_in, vec_out);
   return vec_out;
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <typename idx_t, typename coeff_t>
 arma::Col<coeff_t> apply(CSRMatrix<idx_t, coeff_t> const &spmat,
                          arma::Col<coeff_t> const &vec_in) try {
   return apply<idx_t, coeff_t, coeff_t>(spmat, vec_in);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template arma::vec apply(CSRMatrix<int32_t, double> const &, arma::vec const &);
 template arma::vec apply(CSRMatrix<int64_t, double> const &, arma::vec const &);
@@ -48,9 +46,9 @@ template <typename idx_t>
 arma::Col<complex> apply(CSRMatrix<idx_t, double> const &spmat,
                          arma::Col<complex> const &vec_in) try {
   return apply<idx_t, double, complex>(spmat, vec_in);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 template arma::cx_vec apply(CSRMatrix<int32_t, double> const &spmat,
                             arma::cx_vec const &vec_in);
 template arma::cx_vec apply(CSRMatrix<int64_t, double> const &spmat,
@@ -65,16 +63,15 @@ static arma::Mat<coeff_mat_t> apply(CSRMatrix<idx_t, coeff_csr_t> const &spmat,
   auto mat_out = arma::Mat<coeff_mat_t>(m, k);
   apply(spmat, mat_in, mat_out);
   return mat_out;
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 template <typename idx_t, typename coeff_t>
 arma::Mat<coeff_t> apply(CSRMatrix<idx_t, coeff_t> const &spmat,
                          arma::Mat<coeff_t> const &mat_in) try {
   return apply<idx_t, coeff_t, coeff_t>(spmat, mat_in);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template arma::mat apply(CSRMatrix<int32_t, double> const &, arma::mat const &);
 template arma::mat apply(CSRMatrix<int64_t, double> const &, arma::mat const &);
@@ -87,9 +84,9 @@ template <typename idx_t>
 arma::Mat<complex> apply(CSRMatrix<idx_t, double> const &spmat,
                          arma::Mat<complex> const &mat_in) try {
   return apply<idx_t, double, complex>(spmat, mat_in);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 template arma::cx_mat apply(CSRMatrix<int32_t, double> const &spmat,
                             arma::cx_mat const &mat_in);
 template arma::cx_mat apply(CSRMatrix<int64_t, double> const &spmat,
@@ -240,9 +237,8 @@ static void apply(CSRMatrix<idx_t, coeff_csr_t> const &A,
       vec_out[i] = zi;
     }
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <typename idx_t, typename coeff_t>
 void apply(CSRMatrix<idx_t, coeff_t> const &spmat,
@@ -256,9 +252,8 @@ void apply(CSRMatrix<idx_t, coeff_t> const &spmat,
 #else
   apply<idx_t, coeff_t, coeff_t>(spmat, vec_in, vec_out);
 #endif
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template void apply(CSRMatrix<int32_t, double> const &, arma::vec const &,
                     arma::vec &);
@@ -274,9 +269,8 @@ XDIAG_API void apply(CSRMatrix<idx_t, double> const &spmat,
                      arma::Col<complex> const &vec_in,
                      arma::Col<complex> &vec_out) try {
   apply<idx_t, double, complex>(spmat, vec_in, vec_out);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template void apply(CSRMatrix<int32_t, double> const &, arma::cx_vec const &,
                     arma::cx_vec &);
@@ -352,17 +346,15 @@ static void apply(CSRMatrix<idx_t, coeff_csr_t> const &A,
       }
     }
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <typename idx_t, typename coeff_t>
 void apply(CSRMatrix<idx_t, coeff_t> const &spmat,
            arma::Mat<coeff_t> const &mat_in, arma::Mat<coeff_t> &mat_out) try {
   apply<idx_t, coeff_t, coeff_t>(spmat, mat_in, mat_out);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template void apply(CSRMatrix<int32_t, double> const &, arma::mat const &,
                     arma::mat &);
@@ -377,9 +369,8 @@ template <typename idx_t>
 void apply(CSRMatrix<idx_t, double> const &spmat,
            arma::Mat<complex> const &mat_in, arma::Mat<complex> &mat_out) try {
   apply<idx_t, double, complex>(spmat, mat_in, mat_out);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template void apply(CSRMatrix<int32_t, double> const &, arma::cx_mat const &,
                     arma::cx_mat &);

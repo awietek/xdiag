@@ -26,9 +26,8 @@ template <> arma::mat Matrix::as<arma::mat>() const try {
                             utils::type_string<arma::cx_mat>(),
                             utils::type_string<arma::mat>()));
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <> arma::cx_mat Matrix::as<arma::cx_mat>() const {
   if (const arma::mat *m = std::get_if<arma::mat>(&mat_)) {

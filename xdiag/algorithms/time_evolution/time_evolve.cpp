@@ -14,25 +14,22 @@ static State time_evolve(op_t const &H, State psi, double time,
                          double precision, std::string algorithm) try {
   time_evolve_inplace(H, psi, time, precision, algorithm);
   return psi;
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 State time_evolve(OpSum const &H, State psi, double time, double precision,
                   std::string algorithm) try {
   return time_evolve<OpSum>(H, psi, time, precision, algorithm);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <typename idx_t, typename coeff_t>
 State time_evolve(CSRMatrix<idx_t, coeff_t> const &H, State psi, double time,
                   double precision, std::string algorithm) try {
   return time_evolve<CSRMatrix<idx_t, coeff_t>>(H, psi, time, precision,
                                                 algorithm);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template State time_evolve(CSRMatrix<int32_t, double> const &, State, double,
                            double, std::string);
@@ -57,17 +54,14 @@ static void time_evolve_inplace(op_t const &H, State &psi, double time,
         fmt::format("Invalid time-evolution algorithm specified: \"{}\". Must "
                     "be one of \"lanczos\" or \"expokit\"."));
   }
-
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 void time_evolve_inplace(OpSum const &H, State &psi, double time,
                          double precision, std::string algorithm) try {
   time_evolve_inplace<OpSum>(H, psi, time, precision, algorithm);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <typename idx_t, typename coeff_t>
 void time_evolve_inplace(CSRMatrix<idx_t, coeff_t> const &H, State &psi,
@@ -75,9 +69,9 @@ void time_evolve_inplace(CSRMatrix<idx_t, coeff_t> const &H, State &psi,
                          std::string algorithm) try {
   time_evolve_inplace<CSRMatrix<idx_t, coeff_t>>(H, psi, time, precision,
                                                  algorithm);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 template void time_evolve_inplace(CSRMatrix<int32_t, double> const &, State &,
                                   double, double, std::string);
 template void time_evolve_inplace(CSRMatrix<int32_t, complex> const &, State &,

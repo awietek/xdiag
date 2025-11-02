@@ -4,9 +4,9 @@
 
 #include "hc.hpp"
 
+#include <xdiag/operators/logic/isapprox.hpp>
 #include <xdiag/operators/logic/types.hpp>
 #include <xdiag/operators/logic/valid.hpp>
-#include <xdiag/operators/logic/isapprox.hpp>
 
 namespace xdiag {
 Op hc(Op const &op) try {
@@ -37,9 +37,8 @@ Op hc(Op const &op) try {
       return Op(op.type());
     }
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 OpSum hc(OpSum const &ops) try {
   OpSum ops_hc;
@@ -53,9 +52,8 @@ OpSum hc(OpSum const &ops) try {
     }
   }
   return ops_hc;
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 bool ishermitian(Op const &op) { return isapprox(op, hc(op)); }
 bool ishermitian(OpSum const &ops) { return isapprox(ops, hc(ops)); }

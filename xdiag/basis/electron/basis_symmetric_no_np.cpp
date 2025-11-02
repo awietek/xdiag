@@ -43,9 +43,8 @@ BasisSymmetricNoNp<bit_t>::BasisSymmetricNoNp(int64_t nsites,
         symmetries::electrondns_norms_limits_offset_size(
             reps_up_, Subsets<bit_t>(nsites), group_action_, characters);
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <class bit_t> int64_t BasisSymmetricNoNp<bit_t>::nsites() const {
   return nsites_;

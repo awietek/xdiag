@@ -124,9 +124,8 @@ void check_dimension_works_with_blas_int_size(int64_t dim) try {
         "backend BLAS routines. The block dimension requested is larger than"
         "2^63 which anyway is not feasible");
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <typename bit_t> void check_nsites_work_with_bits(int64_t nsites) try {
   int64_t n_bits = std::numeric_limits<bit_t>::digits;
@@ -136,9 +135,9 @@ template <typename bit_t> void check_nsites_work_with_bits(int64_t nsites) try {
                     "Consider using a different backend if possible.",
                     nsites, n_bits));
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 template void check_nsites_work_with_bits<uint16_t>(int64_t nsites);
 template void check_nsites_work_with_bits<uint32_t>(int64_t nsites);
 template void check_nsites_work_with_bits<uint64_t>(int64_t nsites);

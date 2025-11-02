@@ -18,9 +18,8 @@ template <typename T> T value(toml::node const &node) try {
     XDIAG_THROW(fmt::format("TOML node cannot be converted to type \"{}\"",
                             utils::type_string<T>()));
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <> complex value<complex>(toml::node const &node) try {
   auto val = node.value<double>();
@@ -34,9 +33,8 @@ template <> complex value<complex>(toml::node const &node) try {
     XDIAG_THROW(fmt::format("TOML node cannot be converted to type \"{}\"",
                             utils::type_string<complex>()));
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template bool value<bool>(toml::node const &);
 template int8_t value<int8_t>(toml::node const &);

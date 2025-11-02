@@ -22,9 +22,8 @@ time_evolve_expokit(op_t const &ops, State state, double time, double precision,
   auto res =
       time_evolve_expokit_inplace(ops, state, time, precision, m, anorm, nnorm);
   return {res.error, res.hump, state};
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 TimeEvolveExpokitResult time_evolve_expokit(OpSum const &ops, State state,
                                             double time, double precision,
@@ -32,9 +31,8 @@ TimeEvolveExpokitResult time_evolve_expokit(OpSum const &ops, State state,
                                             int64_t nnorm) try {
   return time_evolve_expokit<OpSum>(ops, state, time, precision, m, anorm,
                                     nnorm);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <typename idx_t, typename coeff_t>
 TimeEvolveExpokitResult
@@ -43,9 +41,9 @@ time_evolve_expokit(CSRMatrix<idx_t, coeff_t> const &ops, State state,
                     int64_t nnorm) try {
   return time_evolve_expokit<CSRMatrix<idx_t, coeff_t>>(
       ops, state, time, precision, m, anorm, nnorm);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 template TimeEvolveExpokitResult
 time_evolve_expokit(CSRMatrix<int32_t, double> const &, State, double, double,
                     int64_t, double, int64_t);
@@ -122,9 +120,8 @@ time_evolve_expokit_inplace(op_t const &ops, State &state, double time,
 
   timing(t0, rightnow(), "Time evolve expokit time", 1);
   return {err, hump};
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 TimeEvolveExpokitInplaceResult
 time_evolve_expokit_inplace(OpSum const &ops, State &state, double time,
@@ -132,9 +129,8 @@ time_evolve_expokit_inplace(OpSum const &ops, State &state, double time,
                             int64_t nnorm) try {
   return time_evolve_expokit_inplace<OpSum>(ops, state, time, precision, m,
                                             anorm, nnorm);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <typename idx_t, typename coeff_t>
 TimeEvolveExpokitInplaceResult
@@ -143,9 +139,8 @@ time_evolve_expokit_inplace(CSRMatrix<idx_t, coeff_t> const &ops, State &state,
                             double anorm, int64_t nnorm) try {
   return time_evolve_expokit_inplace<CSRMatrix<idx_t, coeff_t>>(
       ops, state, time, precision, m, anorm, nnorm);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template TimeEvolveExpokitInplaceResult
 time_evolve_expokit_inplace(CSRMatrix<int32_t, double> const &, State &, double,

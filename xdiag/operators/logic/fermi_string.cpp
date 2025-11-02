@@ -31,9 +31,8 @@ int64_t check_fermi_string(Op const &op) try {
     XDIAG_THROW("Number of sites does not match the number of Fermi operators");
   }
   return tokens.size();
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 bool is_fermi_string(Op const &op) {
   std::vector<std::string> tokens = utils::split(op.type(), "C");
@@ -70,10 +69,8 @@ FermiString<bit_t>::FermiString(Op const &op) try
     set_mask_[i] = (bit_t)1 << sites[i];
     fermi_mask_[i] = set_mask_[i] - 1;
   }
-
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <typename bit_t>
 bool FermiString<bit_t>::non_zero_term(bit_t up, bit_t dn) const {

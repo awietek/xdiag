@@ -26,9 +26,8 @@ template <> arma::vec Vector::as<arma::vec>() const try {
                             utils::type_string<arma::cx_vec>(),
                             utils::type_string<arma::vec>()));
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <> arma::cx_vec Vector::as<arma::cx_vec>() const {
   if (const arma::vec *m = std::get_if<arma::vec>(&vec_)) {

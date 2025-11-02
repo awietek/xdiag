@@ -9,11 +9,11 @@
 #include "../electron/testcases_electron.hpp"
 #include <xdiag/algebra/algebra.hpp>
 #include <xdiag/algebra/apply.hpp>
+#include <xdiag/algebra/isapprox.hpp>
 #include <xdiag/algebra/matrix.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
 #include <xdiag/io/read.hpp>
 #include <xdiag/operators/logic/real.hpp>
-#include <xdiag/algebra/isapprox.hpp>
 #include <xdiag/utils/xdiag_show.hpp>
 
 using namespace xdiag;
@@ -66,9 +66,8 @@ void test_electron_symmetric_spectra_no_np(
     std::sort(eigs_all.begin(), eigs_all.end());
     REQUIRE(isapprox(eigs_total, arma::vec(eigs_all)));
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 void test_electron_symmetric_spectra(OpSum opsum, int64_t nsites,
                                      std::vector<Representation> irreps,
@@ -137,9 +136,8 @@ void test_electron_symmetric_spectra(OpSum opsum, int64_t nsites,
       }
     }
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 void test_hubbard_symmetric_spectrum_chains(int64_t nsites) try {
   using namespace xdiag::testcases::electron;
@@ -160,9 +158,8 @@ void test_hubbard_symmetric_spectrum_chains(int64_t nsites) try {
   test_electron_symmetric_spectra(opsum_hb, nsites, irreps, multiplicities);
   test_electron_symmetric_spectra_no_np(opsum_hb, nsites, irreps,
                                         multiplicities);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 TEST_CASE("electron_symmetric_matrix", "[electron]") try {
   using namespace xdiag::testcases::electron;
@@ -249,9 +246,8 @@ TEST_CASE("electron_symmetric_matrix", "[electron]") try {
   // test_electron_symmetric_spectra(opsum, 9, irreps, multiplicities);
 
   // // test a 3x3 triangular lattice with Heisenberg terms
-  // Log("electron_symmetric_matrix: Hubbard 3x3 triangular(+ Heisenberg terms)");
-  // auto opsum_hb = opsum;
-  // for (auto [cpl, op] : opsum) {
+  // Log("electron_symmetric_matrix: Hubbard 3x3 triangular(+ Heisenberg
+  // terms)"); auto opsum_hb = opsum; for (auto [cpl, op] : opsum) {
   //   if (op.type() == "Hop") {
   //     opsum_hb += "J" * Op("SdotS", {op[0], op[1]});
   //   }

@@ -16,7 +16,7 @@ namespace xdiag::basis::spinhalf_distributed {
 template <class basis_t, typename coeff_t>
 void apply_szsz(Coupling const &cpl, Op const &op, basis_t const &basis,
                 arma::Col<coeff_t> const &vec_in,
-                arma::Col<coeff_t> &vec_out) try {
+                arma::Col<coeff_t> &vec_out) {
   using bit_t = typename basis_t::bit_t;
 
   coeff_t J = cpl.scalar().as<coeff_t>();
@@ -89,8 +89,6 @@ void apply_szsz(Coupling const &cpl, Op const &op, basis_t const &basis,
       }
     }
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
+} 
 
 } // namespace xdiag::basis::spinhalf_distributed

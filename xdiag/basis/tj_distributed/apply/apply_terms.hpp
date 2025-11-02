@@ -110,9 +110,7 @@ void apply_terms(OpSum const &ops, basis_t const &basis_in,
   }
   time_end = MPI_Wtime();
   Log(3, "  fill        : {:.6f} secs", time_end - time_start);
-
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 } // namespace xdiag::basis::tj_distributed

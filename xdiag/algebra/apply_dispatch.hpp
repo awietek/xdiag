@@ -84,9 +84,8 @@ inline void apply_dispatch(OpSum const &ops, Spinhalf const &block_in,
                         (void)idx_out;
                       }},
              basis_in, basis_out);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <typename coeff_t, class fill_f>
 inline void apply_dispatch(OpSum const &ops, tJ const &block_in,
@@ -118,9 +117,8 @@ inline void apply_dispatch(OpSum const &ops, tJ const &block_in,
                         XDIAG_THROW("Invalid basis or combination of bases");
                       }},
              basis_in, basis_out);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <typename coeff_t, class fill_f>
 inline void apply_dispatch(OpSum const &ops, Electron const &block_in,
@@ -169,9 +167,8 @@ inline void apply_dispatch(OpSum const &ops, Electron const &block_in,
                         XDIAG_THROW("Invalid basis or combination of bases");
                       }},
              basis_in, basis_out);
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
 }
+XDIAG_CATCH
 
 #ifdef XDIAG_USE_MPI
 template <typename coeff_t>

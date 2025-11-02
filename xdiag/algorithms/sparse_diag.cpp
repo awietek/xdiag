@@ -26,16 +26,14 @@ static double eigval0(op_t const &ops, Block const &block, double precision,
   } else {
     return res.eigenvalues(0);
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 double eigval0(OpSum const &ops, Block const &block, double precision,
                int64_t max_iterations, int64_t random_seed) try {
   return eigval0<OpSum>(ops, block, precision, max_iterations, random_seed);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <typename idx_t, typename coeff_t>
 double eigval0(CSRMatrix<idx_t, coeff_t> const &ops, Block const &block,
@@ -43,9 +41,8 @@ double eigval0(CSRMatrix<idx_t, coeff_t> const &ops, Block const &block,
                int64_t random_seed) try {
   return eigval0<CSRMatrix<idx_t, coeff_t>>(ops, block, precision,
                                             max_iterations, random_seed);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 template double eigval0(CSRMatrix<int32_t, double> const &, Block const &,
                         double, int64_t, int64_t);
 template double eigval0(CSRMatrix<int32_t, complex> const &, Block const &,
@@ -72,17 +69,15 @@ static std::tuple<double, State> eig0(op_t const &ops, Block const &block,
   } else {
     return {res.eigenvalues(0), res.eigenvectors};
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 std::tuple<double, State> eig0(OpSum const &ops, Block const &block,
                                double precision, int64_t max_iterations,
                                int64_t random_seed) try {
   return eig0<OpSum>(ops, block, precision, max_iterations, random_seed);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <typename idx_t, typename coeff_t>
 std::tuple<double, State>
@@ -90,9 +85,8 @@ eig0(CSRMatrix<idx_t, coeff_t> const &ops, Block const &block, double precision,
      int64_t max_iterations, int64_t random_seed) try {
   return eig0<CSRMatrix<idx_t, coeff_t>>(ops, block, precision, max_iterations,
                                          random_seed);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template std::tuple<double, State> eig0(CSRMatrix<int32_t, double> const &,
                                         Block const &, double, int64_t,

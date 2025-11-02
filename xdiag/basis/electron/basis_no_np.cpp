@@ -16,9 +16,8 @@ BasisNoNp<bit_t>::BasisNoNp(int nsites) try
   if (nsites < 0) {
     XDIAG_THROW("nsites < 0");
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <typename bit_t> int BasisNoNp<bit_t>::nsites() const {
   return nsites_;

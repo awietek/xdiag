@@ -19,9 +19,7 @@ static void check_valid_permutation(std::vector<int64_t> const &array) try {
                   "index from 0 to size-1 is present exactly once.");
     }
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
+} XDIAG_CATCH
 
 Permutation::Permutation(int64_t size) : array_(size, 0) {
   std::iota(array_.begin(), array_.end(), 0);
@@ -29,9 +27,7 @@ Permutation::Permutation(int64_t size) : array_(size, 0) {
 
 Permutation::Permutation(std::initializer_list<int64_t> list) try
     : Permutation(std::vector<int64_t>(list)) {
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
+} XDIAG_CATCH
 
 Permutation::Permutation(std::vector<int32_t> const &array) try
     : array_(array.size()) {
@@ -41,30 +37,22 @@ Permutation::Permutation(std::vector<int32_t> const &array) try
     ++idx;
   }
   check_valid_permutation(array_);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
+} XDIAG_CATCH
 
 Permutation::Permutation(std::vector<int64_t> const &array) try
     : array_(array) {
   check_valid_permutation(array_);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
+} XDIAG_CATCH
 
 Permutation::Permutation(arma::Col<int64_t> const &array) try
     : array_(array.memptr(), array.memptr() + array.size()) {
   check_valid_permutation(array_);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
+} XDIAG_CATCH
 
 Permutation::Permutation(int64_t *ptr, int64_t size) try
     : array_(ptr, ptr + size) {
   check_valid_permutation(array_);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
+} XDIAG_CATCH
 
 template <typename bit_t> bit_t Permutation::apply(bit_t state) const {
   bit_t tstate = 0;
@@ -86,9 +74,7 @@ Permutation Permutation::inv() const try {
     ++idx;
   }
   return Permutation(perm_inv);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
+} XDIAG_CATCH
 
 Permutation &Permutation::operator*=(Permutation const &rhs) try {
   if (array_.size() != rhs.size()) {
@@ -104,9 +90,7 @@ Permutation &Permutation::operator*=(Permutation const &rhs) try {
   }
   std::swap(array_, array);
   return *this;
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
+} XDIAG_CATCH
 
 int64_t Permutation::size() const { return array_.size(); }
 int64_t Permutation::operator[](int64_t i) const { return array_[i]; }
@@ -124,15 +108,11 @@ Permutation multiply(Permutation const &p1, Permutation const &p2) try {
   Permutation p = p1;
   p *= p2;
   return p;
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
+} XDIAG_CATCH
 
 Permutation operator*(Permutation const &p1, Permutation const &p2) try {
   return multiply(p1, p2);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
+} XDIAG_CATCH
 
 Permutation inv(Permutation const &p) { return p.inv(); }
 Permutation pow(Permutation const &p, int64_t power) try {
@@ -148,9 +128,7 @@ Permutation pow(Permutation const &p, int64_t power) try {
     }
   }
   return pp;
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
+} XDIAG_CATCH
 
 std::ostream &operator<<(std::ostream &out, Permutation const &p) {
   for (int64_t i = 0; i < p.size(); ++i) {

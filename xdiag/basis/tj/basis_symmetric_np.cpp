@@ -112,9 +112,8 @@ BasisSymmetricNp<bit_t>::BasisSymmetricNp(int64_t nsites, int64_t nup,
     }
     ++idx_up;
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <typename bit_t>
 inline int64_t BasisSymmetricNp<bit_t>::nsites() const {

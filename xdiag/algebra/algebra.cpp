@@ -48,10 +48,8 @@ double norm1(State const &v) try {
       return norm1(v.block(), v.vectorC(0, false));
     }
   }
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
-  return 0;
 }
+XDIAG_CATCH
 
 double norminf(State const &v) try {
   if (!isvalid(v)) {
@@ -68,10 +66,8 @@ double norminf(State const &v) try {
       return norminf(v.block(), v.vectorC(0, false));
     }
   }
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
-  return 0;
 }
+XDIAG_CATCH
 
 double dot(State const &v, State const &w) try {
   if ((!isvalid(v)) || (!isvalid(w))) {

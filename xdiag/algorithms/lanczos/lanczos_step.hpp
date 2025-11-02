@@ -27,9 +27,8 @@ inline void lanczos_step(arma::Col<coeff_t> &v0, arma::Col<coeff_t> &v1,
   v0 = v1;
   v1 = w;
   beta = norm(v1);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <typename coeff_t, class multiply_f, class dot_f>
 inline void lanczos_step_ortho(arma::Col<coeff_t> &v0, arma::Col<coeff_t> &v1,
@@ -48,8 +47,7 @@ inline void lanczos_step_ortho(arma::Col<coeff_t> &v0, arma::Col<coeff_t> &v1,
   v0 = v1;
   v1 = w;
   beta = norm(v1);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 } // namespace xdiag

@@ -12,18 +12,17 @@ Permutation read_permutation(FileToml file, std::string tag) try {
     XDIAG_THROW(fmt::format("TOML file does not contain the tag \"{}\"", tag));
   }
   return file[tag].as<Permutation>();
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 PermutationGroup read_permutation_group(FileToml file, std::string tag) try {
   if (!file.defined(tag)) {
     XDIAG_THROW(fmt::format("TOML file does not contain the tag \"{}\"", tag));
   }
   return file[tag].as<PermutationGroup>();
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 Representation read_representation(FileToml file, std::string irrep_tag,
                                    std::string group_tag) try {
   if (!file.defined(group_tag)) {
@@ -39,7 +38,7 @@ Representation read_representation(FileToml file, std::string irrep_tag,
   if (!file.defined(character_tag)) {
     XDIAG_THROW(fmt::format("TOML file does not contain the tag \"{}\"",
                             character_tag));
-  }  
+  }
 
   Vector characters;
   try {
@@ -64,24 +63,23 @@ Representation read_representation(FileToml file, std::string irrep_tag,
   } else {
     return Representation(group, characters);
   }
-
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 Op read_op(FileToml file, std::string tag) try {
   if (!file.defined(tag)) {
     XDIAG_THROW(fmt::format("TOML file does not contain the tag \"{}\"", tag));
   }
   return file[tag].as<Op>();
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 OpSum read_opsum(FileToml file, std::string tag) try {
   if (!file.defined(tag)) {
     XDIAG_THROW(fmt::format("TOML file does not contain the tag \"{}\"", tag));
   }
   return file[tag].as<OpSum>();
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 } // namespace xdiag

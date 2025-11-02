@@ -42,9 +42,8 @@ void test_operator_norm_real(block_t const &block, op_t const &ops) try {
   } else {
     REQUIRE(norm_est < 1e-12);
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <typename block_t, typename op_t>
 void test_operator_norm_cplx(block_t const &block, op_t const &ops) {
@@ -251,6 +250,5 @@ TEST_CASE("norm_estimate", "[algorithms]") try {
   //     }
   //   }
   // }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH

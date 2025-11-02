@@ -54,9 +54,8 @@ BasisSymmetricNp<bit_t>::BasisSymmetricNp(int64_t nsites, int64_t nup,
             reps_up_, Combinations<bit_t>(nsites, ndn), group_action_,
             characters);
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <typename bit_t> int64_t BasisSymmetricNp<bit_t>::nsites() const {
   return nsites_;

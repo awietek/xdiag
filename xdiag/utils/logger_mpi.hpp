@@ -18,7 +18,7 @@ namespace xdiag {
 
 class LoggerMPI {
 public:
-  LoggerMPI() : verbosity_(0){};
+  LoggerMPI() : verbosity_(0) {};
 
   inline void set_verbosity(int verbosity) { verbosity_ = verbosity; }
   inline int verbosity() { return verbosity_; }
@@ -29,9 +29,8 @@ public:
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     if (rank == 0)
       std::cout << fmt::format(format, args...) << "\n";
-  } catch (Error const &e) {
-    XDIAG_RETHROW(e);
   }
+  XDIAG_CATCH
 
   template <typename... Args>
   inline void warn(const std::string &format, const Args &...args) try {
@@ -39,9 +38,8 @@ public:
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     if (rank == 0)
       std::cout << fmt::format(format, args...) << "\n" << std::flush;
-  } catch (Error const &e) {
-    XDIAG_RETHROW(e);
   }
+  XDIAG_CATCH
 
   template <typename... Args>
   inline void err(const std::string &format, const Args &...args) try {
@@ -49,9 +47,8 @@ public:
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     if (rank == 0)
       std::cerr << fmt::format(format, args...) << "\n" << std::flush;
-  } catch (Error const &e) {
-    XDIAG_RETHROW(e);
   }
+  XDIAG_CATCH
 
   template <typename... Args>
   inline void out(int level, const std::string &format,
@@ -60,9 +57,8 @@ public:
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     if ((rank == 0) && (level <= verbosity_))
       std::cout << fmt::format(format, args...) << "\n";
-  } catch (Error const &e) {
-    XDIAG_RETHROW(e);
   }
+  XDIAG_CATCH
 
   template <typename... Args>
   inline void warn(int level, const std::string &format,
@@ -71,9 +67,8 @@ public:
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     if ((rank == 0) && (level <= verbosity_))
       std::cout << fmt::format(format, args...) << "\n" << std::flush;
-  } catch (Error const &e) {
-    XDIAG_RETHROW(e);
   }
+  XDIAG_CATCH
 
   template <typename... Args>
   inline void err(int level, const std::string &format,
@@ -82,24 +77,21 @@ public:
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     if ((rank == 0) && (level <= verbosity_))
       std::cerr << fmt::format(format, args...) << "\n" << std::flush;
-  } catch (Error const &e) {
-    XDIAG_RETHROW(e);
   }
+  XDIAG_CATCH
 
   template <typename... Args>
   inline void operator()(const std::string &format, const Args &...args) try {
     out(format, args...);
-  } catch (Error const &e) {
-    XDIAG_RETHROW(e);
   }
+  XDIAG_CATCH
 
   template <typename... Args>
   inline void operator()(int level, const std::string &format,
                          const Args &...args) try {
     out(level, format, args...);
-  } catch (Error const &e) {
-    XDIAG_RETHROW(e);
   }
+  XDIAG_CATCH
 
 private:
   int verbosity_;
@@ -109,7 +101,7 @@ inline LoggerMPI LogMPI;
 
 class LoggerMPIParallel {
 public:
-  LoggerMPIParallel() : verbosity_(0){};
+  LoggerMPIParallel() : verbosity_(0) {};
 
   inline void set_verbosity(int verbosity) { verbosity_ = verbosity; }
   inline int verbosity() { return verbosity_; }
@@ -126,9 +118,8 @@ public:
       }
       MPI_Barrier(MPI_COMM_WORLD);
     }
-  } catch (Error const &e) {
-    XDIAG_RETHROW(e);
   }
+  XDIAG_CATCH
 
   template <typename... Args>
   inline void warn(const std::string &format, const Args &...args) try {
@@ -143,9 +134,8 @@ public:
       }
       MPI_Barrier(MPI_COMM_WORLD);
     }
-  } catch (Error const &e) {
-    XDIAG_RETHROW(e);
   }
+  XDIAG_CATCH
 
   template <typename... Args>
   inline void err(const std::string &format, const Args &...args) try {
@@ -160,9 +150,8 @@ public:
       }
       MPI_Barrier(MPI_COMM_WORLD);
     }
-  } catch (Error const &e) {
-    XDIAG_RETHROW(e);
   }
+  XDIAG_CATCH
 
   template <typename... Args>
   inline void out(int level, const std::string &format,
@@ -177,9 +166,8 @@ public:
       }
       MPI_Barrier(MPI_COMM_WORLD);
     }
-  } catch (Error const &e) {
-    XDIAG_RETHROW(e);
   }
+  XDIAG_CATCH
 
   template <typename... Args>
   inline void warn(int level, const std::string &format,
@@ -195,9 +183,8 @@ public:
       }
       MPI_Barrier(MPI_COMM_WORLD);
     }
-  } catch (Error const &e) {
-    XDIAG_RETHROW(e);
   }
+  XDIAG_CATCH
 
   template <typename... Args>
   inline void err(int level, const std::string &format,
@@ -213,24 +200,21 @@ public:
       }
       MPI_Barrier(MPI_COMM_WORLD);
     }
-  } catch (Error const &e) {
-    XDIAG_RETHROW(e);
   }
+  XDIAG_CATCH
 
   template <typename... Args>
   inline void operator()(const std::string &format, const Args &...args) try {
     out(format, args...);
-  } catch (Error const &e) {
-    XDIAG_RETHROW(e);
   }
+  XDIAG_CATCH
 
   template <typename... Args>
   inline void operator()(int level, const std::string &format,
                          const Args &...args) try {
     out(level, format, args...);
-  } catch (Error const &e) {
-    XDIAG_RETHROW(e);
   }
+  XDIAG_CATCH
 
 private:
   int verbosity_;

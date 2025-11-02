@@ -16,13 +16,13 @@ int64_t size(BasisSpinhalf const &basis) {
 template <typename bit_t> bool has_bit_t(BasisSpinhalf const &basis) try {
   return std::visit(
       [](auto &&b) {
-	using basis_t = typename std::decay<decltype(b)>::type;
+        using basis_t = typename std::decay<decltype(b)>::type;
         return std::is_same<bit_t, typename basis_t::bit_t>::value;
       },
       basis);
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
 }
+XDIAG_CATCH
+
 template bool has_bit_t<uint32_t>(BasisSpinhalf const &basis);
 template bool has_bit_t<uint64_t>(BasisSpinhalf const &basis);
 

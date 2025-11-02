@@ -20,18 +20,16 @@ static arma::Mat<coeff_t> matrix_gen(op_t const &op, block_t const &block_in,
   arma::Mat<coeff_t> mat(m, n, arma::fill::zeros);
   matrix(mat.memptr(), OpSum(op), block_in, block_out);
   return mat;
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <typename coeff_t, typename op_t, typename block_t>
 static arma::Mat<coeff_t> matrix_gen(op_t const &op,
                                      block_t const &blocki) try {
   auto blockr = block(OpSum(op), blocki);
   return matrix_gen<coeff_t>(op, blocki, blockr);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <typename coeff_t, typename op_t>
 static arma::Mat<coeff_t> matrix_gen_variant(op_t const &op,
@@ -70,69 +68,65 @@ static arma::Mat<coeff_t> matrix_gen_variant(op_t const &op,
             return arma::Mat<coeff_t>();
           }},
       block_in, block_out);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <typename coeff_t, typename op_t>
 static arma::Mat<coeff_t> matrix_gen_variant(op_t const &op,
                                              Block const &blocki) try {
   auto blocko = block(OpSum(op), blocki);
   return matrix_gen_variant<coeff_t>(op, blocki, blocko);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 arma::mat matrix(Op const &op, Block const &block) try {
   return std::visit(
       [&](auto const &b) { return matrix_gen_variant<double>(op, b); }, block);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 arma::mat matrix(OpSum const &ops, Block const &block) try {
   return std::visit(
       [&](auto const &b) { return matrix_gen_variant<double>(ops, b); }, block);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 arma::cx_mat matrixC(Op const &op, Block const &block) try {
   return std::visit(
       [&](auto const &b) { return matrix_gen_variant<complex>(op, b); }, block);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 arma::cx_mat matrixC(OpSum const &ops, Block const &block) try {
   return std::visit(
       [&](auto const &b) { return matrix_gen_variant<complex>(ops, b); },
       block);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 arma::mat matrix(Op const &op, Block const &block_in,
                  Block const &block_out) try {
   return matrix_gen_variant<double>(op, block_in, block_out);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 arma::mat matrix(OpSum const &ops, Block const &block_in,
                  Block const &block_out) try {
   return matrix_gen_variant<double>(ops, block_in, block_out);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 arma::cx_mat matrixC(Op const &op, Block const &block_in,
                      Block const &block_out) try {
   return matrix_gen_variant<complex>(op, block_in, block_out);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 arma::cx_mat matrixC(OpSum const &ops, Block const &block_in,
                      Block const &block_out) try {
   return matrix_gen_variant<complex>(ops, block_in, block_out);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 // developer methods
 template <typename coeff_t, class block_t>
@@ -174,11 +168,10 @@ void matrix(coeff_t *mat, OpSum const &ops, block_t const &block_in,
 #ifdef _OPENMP
   omp_set_schedule(omp_sched_guided, 0);
 #endif
-  
+
   algebra::apply_dispatch<coeff_t>(opsc, block_in, block_out, fill);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template XDIAG_API void matrix(double *, OpSum const &, Spinhalf const &,
                                Spinhalf const &);

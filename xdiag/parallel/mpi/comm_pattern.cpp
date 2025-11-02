@@ -31,9 +31,8 @@ Communicator const &CommPattern::operator[](Op const &op) const try {
   } else {
     XDIAG_THROW("Cannot find communicator for Op");
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 void CommPattern::append(Op const &op, Communicator const &comm) {
   ops_.push_back(op);

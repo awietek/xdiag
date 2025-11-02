@@ -9,19 +9,20 @@
 
 #include <mpi.h>
 
+#include <xdiag/common.hpp>
+
 namespace xdiag {
 
 template <class coeff_t>
 coeff_t cdot_distributed(arma::Col<coeff_t> const &v,
                          arma::Col<coeff_t> const &w) try {
   if (v.n_rows != w.n_rows) {
-    throw(std::runtime_error("vector size does not match"));
+    XDIAG_THROW("vector size does not match");
   }
   uint64_t size = v.n_rows;
   return mpi::stable_dot_product(size, v.memptr(), w.memptr());
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template double cdot_distributed<double>(arma::Col<double> const &v,
                                          arma::Col<double> const &w);
@@ -31,9 +32,8 @@ template complex cdot_distributed<complex>(arma::Col<complex> const &v,
 template <class coeff_t>
 double norm_distributed(arma::Col<coeff_t> const &v) try {
   return std::real(std::sqrt(cdot_distributed(v, v)));
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template double norm_distributed<double>(arma::Col<double> const &v);
 template double norm_distributed<complex>(arma::Col<complex> const &v);

@@ -25,9 +25,8 @@ BasisNp<bit_t>::BasisNp(int64_t nsites, int64_t nup, int64_t ndn) try
   } else if ((nup + ndn) > nsites) {
     XDIAG_THROW("nup + ndn > nsites");
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <typename bit_t> int64_t BasisNp<bit_t>::nsites() const {
   return nsites_;

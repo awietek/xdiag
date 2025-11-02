@@ -51,9 +51,8 @@ template <class distro_f> int random_discard(distro_f distro) try {
     }
   }
   XDIAG_THROW("Error initializing RNG: could not determine random_discard");
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 int random_uniform_real_discard() {
   return random_discard(

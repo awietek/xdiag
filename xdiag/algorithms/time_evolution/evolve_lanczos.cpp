@@ -24,7 +24,8 @@ evolve_lanczos(op_t const &H, State psi, double tau, double precision,
   auto r = evolve_lanczos_inplace(H, psi, tau, precision, shift, normalize,
                                   max_iterations, deflation_tol);
   return {r.alphas, r.betas, r.eigenvalues, r.niterations, r.criterion, psi};
-} XDIAG_CATCH
+}
+XDIAG_CATCH
 
 EvolveLanczosResult evolve_lanczos(OpSum const &H, State psi, double tau,
                                    double precision, double shift,
@@ -33,7 +34,8 @@ EvolveLanczosResult evolve_lanczos(OpSum const &H, State psi, double tau,
 
   return evolve_lanczos<OpSum>(H, psi, tau, precision, shift, normalize,
                                max_iterations, deflation_tol);
-} XDIAG_CATCH
+}
+XDIAG_CATCH
 
 template <typename idx_t, typename coeff_t>
 EvolveLanczosResult
@@ -43,7 +45,8 @@ evolve_lanczos(CSRMatrix<idx_t, coeff_t> const &H, State psi, double tau,
 
   return evolve_lanczos<CSRMatrix<idx_t, coeff_t>>(
       H, psi, tau, precision, shift, normalize, max_iterations, deflation_tol);
-} XDIAG_CATCH
+}
+XDIAG_CATCH
 
 template EvolveLanczosResult evolve_lanczos(CSRMatrix<int32_t, double> const &,
                                             State, double, double, double, bool,
@@ -66,7 +69,8 @@ evolve_lanczos(op_t const &H, State psi, complex tau, double precision,
   auto r = evolve_lanczos_inplace(H, psi, tau, precision, shift, normalize,
                                   max_iterations, deflation_tol);
   return {r.alphas, r.betas, r.eigenvalues, r.niterations, r.criterion, psi};
-} XDIAG_CATCH
+}
+XDIAG_CATCH
 
 EvolveLanczosResult evolve_lanczos(OpSum const &H, State psi, complex tau,
                                    double precision, double shift,
@@ -74,9 +78,8 @@ EvolveLanczosResult evolve_lanczos(OpSum const &H, State psi, complex tau,
                                    double deflation_tol) try {
   return evolve_lanczos<OpSum>(H, psi, tau, precision, shift, normalize,
                                max_iterations, deflation_tol);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <typename idx_t, typename coeff_t>
 EvolveLanczosResult
@@ -85,7 +88,8 @@ evolve_lanczos(CSRMatrix<idx_t, coeff_t> const &H, State psi, complex tau,
                int64_t max_iterations, double deflation_tol) try {
   return evolve_lanczos<CSRMatrix<idx_t, coeff_t>>(
       H, psi, tau, precision, shift, normalize, max_iterations, deflation_tol);
-} XDIAG_CATCH
+}
+XDIAG_CATCH
 
 template EvolveLanczosResult evolve_lanczos(CSRMatrix<int32_t, double> const &,
                                             State, complex, double, double,
@@ -110,7 +114,7 @@ evolve_lanczos_inplace(op_t const &H, State &psi, double tau, double precision,
         "Warning: initial state zero dimensional in evolve_lanczos_inplace");
     return EvolveLanczosInplaceResult();
   }
-  
+
   if (!ishermitian(H)) {
     XDIAG_THROW("Input operator is not hermitian. Evolution using the Lanczos "
                 "algorithm requires the operator to be hermitian.");
@@ -150,7 +154,8 @@ evolve_lanczos_inplace(op_t const &H, State &psi, double tau, double precision,
     return evolve_lanczos_inplace(H, psi, complex(tau), precision, shift,
                                   normalize, max_iterations, deflation_tol);
   }
-} XDIAG_CATCH
+}
+XDIAG_CATCH
 
 EvolveLanczosInplaceResult evolve_lanczos_inplace(OpSum const &H, State &psi,
                                                   double tau, double precision,
@@ -159,7 +164,8 @@ EvolveLanczosInplaceResult evolve_lanczos_inplace(OpSum const &H, State &psi,
                                                   double deflation_tol) try {
   return evolve_lanczos_inplace<OpSum>(H, psi, tau, precision, shift, normalize,
                                        max_iterations, deflation_tol);
-} XDIAG_CATCH
+}
+XDIAG_CATCH
 
 template <typename idx_t, typename coeff_t>
 EvolveLanczosInplaceResult
@@ -169,7 +175,8 @@ evolve_lanczos_inplace(CSRMatrix<idx_t, coeff_t> const &H, State &psi,
                        double deflation_tol) try {
   return evolve_lanczos_inplace<CSRMatrix<idx_t, coeff_t>>(
       H, psi, tau, precision, shift, normalize, max_iterations, deflation_tol);
-} XDIAG_CATCH
+}
+XDIAG_CATCH
 
 template EvolveLanczosInplaceResult
 evolve_lanczos_inplace(CSRMatrix<int32_t, double> const &, State &, double,
@@ -194,7 +201,7 @@ evolve_lanczos_inplace(op_t const &H, State &psi, complex tau, double precision,
         "Warning: initial state zero dimensional in evolve_lanczos_inplace");
     return EvolveLanczosInplaceResult();
   }
-  
+
   if (!ishermitian(H)) {
     XDIAG_THROW("Input operator is not hermitian. Evolution using the Lanczos "
                 "algorithm requires the operator to be hermitian.");
@@ -228,7 +235,8 @@ evolve_lanczos_inplace(op_t const &H, State &psi, complex tau, double precision,
   auto r = exp_sym_v(mult, dot_f, v, tau, precision, shift, normalize,
                      max_iterations, deflation_tol);
   return {r.alphas, r.betas, r.eigenvalues, r.niterations, r.criterion};
-} XDIAG_CATCH
+}
+XDIAG_CATCH
 
 EvolveLanczosInplaceResult evolve_lanczos_inplace(OpSum const &H, State &psi,
                                                   complex tau, double precision,
@@ -237,7 +245,8 @@ EvolveLanczosInplaceResult evolve_lanczos_inplace(OpSum const &H, State &psi,
                                                   double deflation_tol) try {
   return evolve_lanczos_inplace<OpSum>(H, psi, tau, precision, shift, normalize,
                                        max_iterations, deflation_tol);
-} XDIAG_CATCH
+}
+XDIAG_CATCH
 
 template <typename idx_t, typename coeff_t>
 EvolveLanczosInplaceResult
@@ -247,7 +256,8 @@ evolve_lanczos_inplace(CSRMatrix<idx_t, coeff_t> const &H, State &psi,
                        double deflation_tol) try {
   return evolve_lanczos_inplace<CSRMatrix<idx_t, coeff_t>>(
       H, psi, tau, precision, shift, normalize, max_iterations, deflation_tol);
-} XDIAG_CATCH
+}
+XDIAG_CATCH
 
 template EvolveLanczosInplaceResult
 evolve_lanczos_inplace(CSRMatrix<int32_t, double> const &, State &, complex,

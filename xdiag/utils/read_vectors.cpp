@@ -60,9 +60,8 @@ arma::Mat<coeff_t> read_vectors(std::string type, std::string path_to_vecs,
 
     return Avecs;
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template arma::Mat<double>
 read_vectors<double>(std::string type, std::string path_to_vecs, int n);
