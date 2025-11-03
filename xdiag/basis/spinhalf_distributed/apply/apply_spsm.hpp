@@ -55,11 +55,10 @@ void apply_spsm_postfix(Coupling const &cpl, Op const &op,
     }
   }
 }
-XDIAG_CATCH
 
 template <class basis_t, typename coeff_t>
 void apply_spsm_prefix(Coupling const &cpl, Op const &op,
-                       basis_t const &basis_in, basis_t const &basis_out) try {
+                       basis_t const &basis_in, basis_t const &basis_out) {
   using bit_t = typename basis_t::bit_t;
 
   coeff_t H = cpl.scalar().as<coeff_t>();
