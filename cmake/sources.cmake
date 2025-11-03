@@ -23,15 +23,25 @@ set(XDIAG_SOURCES
   algebra/sparse/apply.cpp
   
   algebra/sparse/coo_matrix.cpp
-  algebra/sparse/coo_matrix_fill.cpp
-  algebra/sparse/coo_matrix_nnz.cpp
   algebra/sparse/coo_matrix_generate.cpp
-
+  algebra/sparse/instantiations/coo_matrix_nnz_double.cpp
+  algebra/sparse/instantiations/coo_matrix_nnz_complex.cpp
+  algebra/sparse/instantiations/coo_matrix_fill_int32_double.cpp
+  algebra/sparse/instantiations/coo_matrix_fill_int32_complex.cpp
+  algebra/sparse/instantiations/coo_matrix_fill_int64_double.cpp
+  algebra/sparse/instantiations/coo_matrix_fill_int64_complex.cpp
+  
   algebra/sparse/csr_matrix.cpp
-  algebra/sparse/csr_matrix_fill.cpp
-  algebra/sparse/csr_matrix_nnz.cpp
   algebra/sparse/csr_matrix_generate.cpp
- 
+  algebra/sparse/instantiations/csr_matrix_nnz_int32_double.cpp
+  algebra/sparse/instantiations/csr_matrix_nnz_int32_complex.cpp
+  algebra/sparse/instantiations/csr_matrix_nnz_int64_double.cpp
+  algebra/sparse/instantiations/csr_matrix_nnz_int64_complex.cpp
+  algebra/sparse/instantiations/csr_matrix_fill_int32_double.cpp
+  algebra/sparse/instantiations/csr_matrix_fill_int32_complex.cpp
+  algebra/sparse/instantiations/csr_matrix_fill_int64_double.cpp
+  algebra/sparse/instantiations/csr_matrix_fill_int64_complex.cpp
+  
   algebra/sparse/csc_matrix.cpp
   
   io/read.cpp

@@ -56,50 +56,6 @@ void coo_matrix_fill(OpSum const &ops, block_t const &block_in,
 }
 XDIAG_CATCH
 
-// int32_t, double
-template void coo_matrix_fill(OpSum const &, Spinhalf const &, Spinhalf const &,
-                              std::vector<int64_t> const &, int64_t, int32_t *,
-                              int32_t *, double *, int32_t);
-template void coo_matrix_fill(OpSum const &, tJ const &, tJ const &,
-                              std::vector<int64_t> const &, int64_t, int32_t *,
-                              int32_t *, double *, int32_t);
-template void coo_matrix_fill(OpSum const &, Electron const &, Electron const &,
-                              std::vector<int64_t> const &, int64_t, int32_t *,
-                              int32_t *, double *, int32_t);
-
-// int32_t, complex
-template void coo_matrix_fill(OpSum const &, Spinhalf const &, Spinhalf const &,
-                              std::vector<int64_t> const &, int64_t, int32_t *,
-                              int32_t *, complex *, int32_t);
-template void coo_matrix_fill(OpSum const &, tJ const &, tJ const &,
-                              std::vector<int64_t> const &, int64_t, int32_t *,
-                              int32_t *, complex *, int32_t);
-template void coo_matrix_fill(OpSum const &, Electron const &, Electron const &,
-                              std::vector<int64_t> const &, int64_t, int32_t *,
-                              int32_t *, complex *, int32_t);
-
-// int64_t, double
-template void coo_matrix_fill(OpSum const &, Spinhalf const &, Spinhalf const &,
-                              std::vector<int64_t> const &, int64_t, int64_t *,
-                              int64_t *, double *, int64_t);
-template void coo_matrix_fill(OpSum const &, tJ const &, tJ const &,
-                              std::vector<int64_t> const &, int64_t, int64_t *,
-                              int64_t *, double *, int64_t);
-template void coo_matrix_fill(OpSum const &, Electron const &, Electron const &,
-                              std::vector<int64_t> const &, int64_t, int64_t *,
-                              int64_t *, double *, int64_t);
-
-// int64_t, complex
-template void coo_matrix_fill(OpSum const &, Spinhalf const &, Spinhalf const &,
-                              std::vector<int64_t> const &, int64_t, int64_t *,
-                              int64_t *, complex *, int64_t);
-template void coo_matrix_fill(OpSum const &, tJ const &, tJ const &,
-                              std::vector<int64_t> const &, int64_t, int64_t *,
-                              int64_t *, complex *, int64_t);
-template void coo_matrix_fill(OpSum const &, Electron const &, Electron const &,
-                              std::vector<int64_t> const &, int64_t, int64_t *,
-                              int64_t *, complex *, int64_t);
-
 #else
 
 template <typename idx_t, typename coeff_t, typename block_t>
@@ -128,42 +84,6 @@ void coo_matrix_fill(OpSum const &ops, block_t const &block_in,
   }
 }
 XDIAG_CATCH
-
-// int32_t, double
-template void coo_matrix_fill(OpSum const &, Spinhalf const &, Spinhalf const &,
-                              int64_t, int32_t *, int32_t *, double *, int32_t);
-template void coo_matrix_fill(OpSum const &, tJ const &, tJ const &, int64_t,
-                              int32_t *, int32_t *, double *, int32_t);
-template void coo_matrix_fill(OpSum const &, Electron const &, Electron const &,
-                              int64_t, int32_t *, int32_t *, double *, int32_t);
-
-// int32_t, complex
-template void coo_matrix_fill(OpSum const &, Spinhalf const &, Spinhalf const &,
-                              int64_t, int32_t *, int32_t *, complex *,
-                              int32_t);
-template void coo_matrix_fill(OpSum const &, tJ const &, tJ const &, int64_t,
-                              int32_t *, int32_t *, complex *, int32_t);
-template void coo_matrix_fill(OpSum const &, Electron const &, Electron const &,
-                              int64_t, int32_t *, int32_t *, complex *,
-                              int32_t);
-
-// int64_t, double
-template void coo_matrix_fill(OpSum const &, Spinhalf const &, Spinhalf const &,
-                              int64_t, int64_t *, int64_t *, double *, int64_t);
-template void coo_matrix_fill(OpSum const &, tJ const &, tJ const &, int64_t,
-                              int64_t *, int64_t *, double *, int64_t);
-template void coo_matrix_fill(OpSum const &, Electron const &, Electron const &,
-                              int64_t, int64_t *, int64_t *, double *, int64_t);
-
-// int64_t, complex
-template void coo_matrix_fill(OpSum const &, Spinhalf const &, Spinhalf const &,
-                              int64_t, int64_t *, int64_t *, complex *,
-                              int64_t);
-template void coo_matrix_fill(OpSum const &, tJ const &, tJ const &, int64_t,
-                              int64_t *, int64_t *, complex *, int64_t);
-template void coo_matrix_fill(OpSum const &, Electron const &, Electron const &,
-                              int64_t, int64_t *, int64_t *, complex *,
-                              int64_t);
 
 #endif
 

@@ -129,48 +129,4 @@ void csr_matrix_fill(OpSum const &ops, block_t const &block_in,
 }
 XDIAG_CATCH
 
-// int64_t, double
-template void csr_matrix_fill(OpSum const &, Spinhalf const &, Spinhalf const &,
-                              int64_t, std::vector<int64_t> const &, int64_t *,
-                              int64_t *, double *, int64_t, bool);
-template void csr_matrix_fill(OpSum const &, tJ const &, tJ const &, int64_t,
-                              std::vector<int64_t> const &, int64_t *,
-                              int64_t *, double *, int64_t, bool);
-template void csr_matrix_fill(OpSum const &, Electron const &, Electron const &,
-                              int64_t, std::vector<int64_t> const &, int64_t *,
-                              int64_t *, double *, int64_t, bool);
-
-// int64_t, complex
-template void csr_matrix_fill(OpSum const &, Spinhalf const &, Spinhalf const &,
-                              int64_t, std::vector<int64_t> const &, int64_t *,
-                              int64_t *, complex *, int64_t, bool);
-template void csr_matrix_fill(OpSum const &, tJ const &, tJ const &, int64_t,
-                              std::vector<int64_t> const &, int64_t *,
-                              int64_t *, complex *, int64_t, bool);
-template void csr_matrix_fill(OpSum const &, Electron const &, Electron const &,
-                              int64_t, std::vector<int64_t> const &, int64_t *,
-                              int64_t *, complex *, int64_t, bool);
-
-// int32_t, double
-template void csr_matrix_fill(OpSum const &, Spinhalf const &, Spinhalf const &,
-                              int64_t, std::vector<int32_t> const &, int32_t *,
-                              int32_t *, double *, int32_t, bool);
-template void csr_matrix_fill(OpSum const &, tJ const &, tJ const &, int64_t,
-                              std::vector<int32_t> const &, int32_t *,
-                              int32_t *, double *, int32_t, bool);
-template void csr_matrix_fill(OpSum const &, Electron const &, Electron const &,
-                              int64_t, std::vector<int32_t> const &, int32_t *,
-                              int32_t *, double *, int32_t, bool);
-
-// int32_t, complex
-template void csr_matrix_fill(OpSum const &, Spinhalf const &, Spinhalf const &,
-                              int64_t, std::vector<int32_t> const &, int32_t *,
-                              int32_t *, complex *, int32_t, bool);
-template void csr_matrix_fill(OpSum const &, tJ const &, tJ const &, int64_t,
-                              std::vector<int32_t> const &, int32_t *,
-                              int32_t *, complex *, int32_t, bool);
-template void csr_matrix_fill(OpSum const &, Electron const &, Electron const &,
-                              int64_t, std::vector<int32_t> const &, int32_t *,
-                              int32_t *, complex *, int32_t, bool);
-
 } // namespace xdiag::algebra

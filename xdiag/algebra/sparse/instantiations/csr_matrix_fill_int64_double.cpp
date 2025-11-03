@@ -1,0 +1,17 @@
+// SPDX-FileCopyrightText: 2025 Alexander Wietek <awietek@pks.mpg.de>
+//
+// SPDX-License-Identifier: Apache-2.0
+
+#include <xdiag/algebra/sparse/csr_matrix_fill.cpp>
+
+namespace xdiag::algebra {
+template void csr_matrix_fill(OpSum const &, Spinhalf const &, Spinhalf const &,
+                              int64_t, std::vector<int64_t> const &, int64_t *,
+                              int64_t *, double *, int64_t, bool);
+template void csr_matrix_fill(OpSum const &, tJ const &, tJ const &, int64_t,
+                              std::vector<int64_t> const &, int64_t *,
+                              int64_t *, double *, int64_t, bool);
+template void csr_matrix_fill(OpSum const &, Electron const &, Electron const &,
+                              int64_t, std::vector<int64_t> const &, int64_t *,
+                              int64_t *, double *, int64_t, bool);
+} // namespace xdiag::algebra

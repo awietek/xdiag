@@ -35,25 +35,6 @@ std::vector<int64_t> coo_matrix_nnz_thread(OpSum const &ops,
 }
 XDIAG_CATCH
 
-template std::vector<int64_t> coo_matrix_nnz_thread<double>(OpSum const &,
-                                                            Spinhalf const &,
-                                                            Spinhalf const &);
-template std::vector<int64_t> coo_matrix_nnz_thread<complex>(OpSum const &,
-                                                             Spinhalf const &,
-                                                             Spinhalf const &);
-
-template std::vector<int64_t>
-coo_matrix_nnz_thread<double>(OpSum const &, tJ const &, tJ const &);
-template std::vector<int64_t>
-coo_matrix_nnz_thread<complex>(OpSum const &, tJ const &, tJ const &);
-
-template std::vector<int64_t> coo_matrix_nnz_thread<double>(OpSum const &,
-                                                            Electron const &,
-                                                            Electron const &);
-template std::vector<int64_t> coo_matrix_nnz_thread<complex>(OpSum const &,
-                                                             Electron const &,
-                                                             Electron const &);
-
 #else
 
 template <typename coeff_t, typename block_t>
@@ -70,19 +51,6 @@ int64_t coo_matrix_nnz(OpSum const &ops, block_t const &block_in,
   return nnz;
 }
 XDIAG_CATCH
-
-template int64_t coo_matrix_nnz<double>(OpSum const &, Spinhalf const &,
-                                        Spinhalf const &);
-template int64_t coo_matrix_nnz<complex>(OpSum const &, Spinhalf const &,
-                                         Spinhalf const &);
-
-template int64_t coo_matrix_nnz<double>(OpSum const &, tJ const &, tJ const &);
-template int64_t coo_matrix_nnz<complex>(OpSum const &, tJ const &, tJ const &);
-
-template int64_t coo_matrix_nnz<double>(OpSum const &, Electron const &,
-                                        Electron const &);
-template int64_t coo_matrix_nnz<complex>(OpSum const &, Electron const &,
-                                         Electron const &);
 
 #endif
 
