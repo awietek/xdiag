@@ -112,9 +112,8 @@ BasisSymmetricNp<bit_t>::BasisSymmetricNp(int64_t nsites, int64_t nup,
     }
     ++idx_up;
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <typename bit_t>
 inline int64_t BasisSymmetricNp<bit_t>::nsites() const {
@@ -306,6 +305,17 @@ bool BasisSymmetricNp<bit_t>::fermi_bool_dns(int64_t sym, bit_t dns) const {
 template <typename bit_t>
 int64_t BasisSymmetricNp<bit_t>::dnsc_index(bit_t dns) const {
   return lintable_dnsc_.index(dns);
+}
+
+template <typename bit_t>
+bool BasisSymmetricNp<bit_t>::operator==(BasisSymmetricNp const &rhs) const {
+  return (nsites_ == rhs.nsites_) && (nup_ == rhs.nup_) && (ndn_ == rhs.ndn_) &&
+         (group_action_ == rhs.group_action_) && (irrep_ == rhs.irrep_);
+}
+
+template <typename bit_t>
+bool BasisSymmetricNp<bit_t>::operator!=(BasisSymmetricNp const &rhs) const {
+  return !operator==(rhs);
 }
 
 template class BasisSymmetricNp<uint32_t>;

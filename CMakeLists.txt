@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 3.19)
 
 project(
   xdiag
-  VERSION 0.3.3
+  VERSION 0.4.0
   LANGUAGES CXX
 )
 
@@ -21,6 +21,7 @@ option(XDIAG_DISABLE_HDF5 "Disables the library being compiled with HDF5" Off)
 option(XDIAG_DISABLE_COLOR "Disables the library outputting colored texts" Off)
 option(XDIAG_OPTIMIZE_FOR_NATIVE "Optimize for native architecture" Off)
 option(XDIAG_FORCE_MKL_SEQUENTIAL "Intel MKL (if found) is forced to sequential mode" Off)
+option(XDIAG_USE_SPARSE_MKL "Use sparse BLAS routines from the Intel MKL" Off)
 
 message(STATUS "Compiler ID     : " ${CMAKE_CXX_COMPILER_ID})
 message(STATUS "Compiler version: " ${CMAKE_CXX_COMPILER_VERSION})
@@ -137,6 +138,13 @@ if(MKL_FOUND)
     endif()
   endif()
 
+  if(XDIAG_USE_SPARSE_MKL)
+    message(STATUS "Using sparse BLAS routines in Intel MKL")
+    target_compile_definitions(${XDIAG_LIBRARY} PUBLIC XDIAG_USE_SPARSE_MKL)
+  else()
+    message(STATUS "Not using sparse BLAS routines in Intel MKL")
+  endif()
+  
   target_compile_definitions(${XDIAG_LIBRARY} PUBLIC XDIAG_USE_MKL)
   target_include_directories(${XDIAG_LIBRARY} PUBLIC ${MKL_INCLUDE_DIR})
 
@@ -202,6 +210,9 @@ else()
     target_link_libraries(${XDIAG_LIBRARY} PUBLIC OpenMP::OpenMP_CXX)
   else()
     message(STATUS "OpenMP not found")
+    if (XDIAG_JULIA_WRAPPER)
+      message(FATAL_ERROR "The Julia wrapper needs to be compiled with OpenMP Support but OpenMP has not been found")
+    endif()
   endif()
 endif()
 
@@ -213,9 +224,13 @@ else()
   message(STATUS "--------   Determining if HDF5 is present   -------------")
   find_package(HDF5 COMPONENTS CXX)
   if(HDF5_FOUND)
-    message(STATUS "Employing HDF5")
-    target_compile_definitions(${XDIAG_LIBRARY} PUBLIC XDIAG_USE_HDF5)
-    target_link_libraries(${XDIAG_LIBRARY} PUBLIC HDF5::HDF5)
+    if (XDIAG_JULIA_WRAPPER)
+      message(STATUS "HDF5 found but ignored because of compiling the Julia wrapper")
+    else()
+      message(STATUS "Employing HDF5")
+      target_compile_definitions(${XDIAG_LIBRARY} PUBLIC XDIAG_USE_HDF5)
+      target_link_libraries(${XDIAG_LIBRARY} PUBLIC HDF5::HDF5)
+    endif()
   else()
     message(STATUS "HDF5 not found")
   endif()

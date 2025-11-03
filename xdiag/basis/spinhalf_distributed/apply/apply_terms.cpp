@@ -148,11 +148,8 @@ void apply_terms(OpSum const &ops, basis_t const &basis_in,
   }
   time_end = MPI_Wtime();
   Log(3, "  mixed       : {:.6f} secs", time_end - time_start);
-
-
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template void apply_terms(OpSum const &, BasisSz<uint32_t> const &,
                           arma::Col<double> const &, BasisSz<uint32_t> const &,

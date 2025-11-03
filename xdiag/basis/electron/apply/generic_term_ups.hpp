@@ -5,23 +5,26 @@
 #pragma once
 
 #include <vector>
+#include <xdiag/parallel/omp/omp_utils.hpp>
 
 namespace xdiag::basis::electron {
 
-template <typename bit_t, typename coeff_t, bool symmetric, class basis_t,
-          class non_zero_term_f, class term_action_f, class fill_f>
-void generic_term_ups(basis_t const &basis_in, basis_t const &basis_out,
-                      non_zero_term_f non_zero_term, term_action_f term_action,
-                      fill_f fill) {
+template <typename coeff_t, typename basis_t, typename non_zero_term_f,
+          typename term_action_f, typename fill_f>
+void generic_term_ups_sym(basis_t const &basis_in, basis_t const &basis_out,
+                          non_zero_term_f non_zero_term,
+                          term_action_f term_action, fill_f fill) {
+  using bit_t = typename basis_t::bit_t;
 
-  if constexpr (symmetric) {
-
-    auto const &group_action = basis_out.group_action();
-    Representation const &irrep = basis_out.irrep();
-    auto bloch_factors = irrep.characters().as<arma::Col<coeff_t>>();
+  auto const &group_action = basis_out.group_action();
+  Representation const &irrep = basis_out.irrep();
+  auto bloch_factors = irrep.characters().as<arma::Col<coeff_t>>();
 
 #ifdef _OPENMP
-#pragma omp parallel for schedule(guided)
+#pragma omp parallel
+  {
+    int num_thread = omp_get_thread_num();
+#pragma omp for schedule(runtime)
 #endif
     for (int64_t idx_up_in = 0; idx_up_in < basis_in.n_rep_ups(); ++idx_up_in) {
       bit_t ups_in = basis_in.rep_ups(idx_up_in);
@@ -57,7 +60,7 @@ void generic_term_ups(basis_t const &basis_in, basis_t const &basis_out,
 
             coeff_t val =
                 prefac / norms_in[idx_dn]; // norms_out = 1.0 in this case
-            fill(idx_in, idx_out, (fermi_up ^ fermi_dn) ? -val : val);
+            XDIAG_FILL(idx_in, idx_out, (fermi_up ^ fermi_dn) ? -val : val);
             ++idx_dn;
           }
 
@@ -81,46 +84,69 @@ void generic_term_ups(basis_t const &basis_in, basis_t const &basis_out,
               coeff_t val =
                   prefacs[sym] * norms_out[idx_dn_out] / norms_in[idx_dn];
 
-              fill(idx_in, idx_out, (fermi_up ^ fermi_dn) ? -val : val);
+              XDIAG_FILL(idx_in, idx_out, (fermi_up ^ fermi_dn) ? -val : val);
             }
             ++idx_dn;
           }
         } // if trivial stabilizer or not
       } // if non_zero_term
     } // loop over ups
+#ifdef _OPENMP
+  }
+#endif
+}
 
-  } else { // not symmetric
-    int64_t size_dns_in = basis_in.size_dns();
-    int64_t size_dns_out = basis_out.size_dns();
-    assert(size_dns_in == size_dns_out);
+template <typename coeff_t, typename basis_t, typename non_zero_term_f,
+          typename term_action_f, typename fill_f>
+void generic_term_ups_no_sym(basis_t const &basis_in, basis_t const &basis_out,
+                             non_zero_term_f non_zero_term,
+                             term_action_f term_action, fill_f fill) {
+  using bit_t = typename basis_t::bit_t;
+  int64_t size_dns_in = basis_in.size_dns();
+  int64_t size_dns_out = basis_out.size_dns();
+  assert(size_dns_in == size_dns_out);
 
 #ifdef _OPENMP
 #pragma omp parallel
-    {
-      auto ups_and_idces = basis_in.states_indices_ups_thread();
+  {
+    int num_thread = omp_get_thread_num();
+    auto ups_and_idces = basis_in.states_indices_ups_thread();
 #else
-    auto ups_and_idces = basis_in.states_indices_ups();
+  auto ups_and_idces = basis_in.states_indices_ups();
 #endif
 
-      for (auto [ups_in, idx_ups_in] : ups_and_idces) {
-        if (non_zero_term(ups_in)) {
-          auto [ups_out, coeff] = term_action(ups_in);
-          int64_t idx_ups_out = basis_out.index_ups(ups_out);
+    for (auto [ups_in, idx_ups_in] : ups_and_idces) {
+      if (non_zero_term(ups_in)) {
+        auto [ups_out, coeff] = term_action(ups_in);
+        int64_t idx_ups_out = basis_out.index_ups(ups_out);
 
-          int64_t idx_in_start = idx_ups_in * size_dns_in;
-          int64_t idx_out_start = idx_ups_out * size_dns_out;
-          int64_t idx_out_end = (idx_ups_out + 1) * size_dns_out;
+        int64_t idx_in_start = idx_ups_in * size_dns_in;
+        int64_t idx_out_start = idx_ups_out * size_dns_out;
+        int64_t idx_out_end = (idx_ups_out + 1) * size_dns_out;
 
-          for (int64_t idx_out = idx_out_start, idx_in = idx_in_start;
-               idx_out < idx_out_end; ++idx_out, ++idx_in) {
-            fill(idx_in, idx_out, coeff);
-          }
+        for (int64_t idx_out = idx_out_start, idx_in = idx_in_start;
+             idx_out < idx_out_end; ++idx_out, ++idx_in) {
+          XDIAG_FILL(idx_in, idx_out, coeff);
         }
       }
+    }
 
 #ifdef _OPENMP
-    }
+  }
 #endif
+}
+
+template <bool symmetric, typename coeff_t, typename basis_t,
+          typename non_zero_term_f, typename term_action_f, typename fill_f>
+void generic_term_ups(basis_t const &basis_in, basis_t const &basis_out,
+                      non_zero_term_f non_zero_term, term_action_f term_action,
+                      fill_f fill) {
+  if constexpr (symmetric) {
+    generic_term_ups_sym<coeff_t>(basis_in, basis_out, non_zero_term,
+                                  term_action, fill);
+  } else {
+    generic_term_ups_no_sym<coeff_t>(basis_in, basis_out, non_zero_term,
+                                     term_action, fill);
   }
 }
 

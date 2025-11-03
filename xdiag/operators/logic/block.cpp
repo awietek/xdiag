@@ -6,6 +6,7 @@
 
 #include <xdiag/operators/logic/order.hpp>
 #include <xdiag/operators/logic/qns.hpp>
+#include <xdiag/utils/xdiag_show.hpp>
 
 namespace xdiag {
 
@@ -30,9 +31,8 @@ Spinhalf block(OpSum const &ops, Spinhalf const &block) try {
                ? block
                : Spinhalf(nsites, nupr, irrepr, backend);
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 tJ block(OpSum const &ops, tJ const &block) try {
   int64_t nsites = block.nsites();
@@ -62,9 +62,8 @@ tJ block(OpSum const &ops, tJ const &block) try {
                ? block
                : tJ(nsites, nupr, ndnr, irrepr, backend);
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 Electron block(OpSum const &ops, Electron const &block) try {
   int64_t nsites = block.nsites();
@@ -92,9 +91,8 @@ Electron block(OpSum const &ops, Electron const &block) try {
                ? block
                : Electron(nsites, nupr, ndnr, irrepr, backend);
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 #ifdef XDIAG_USE_MPI
 SpinhalfDistributed block(OpSum const &ops,
@@ -108,9 +106,8 @@ SpinhalfDistributed block(OpSum const &ops,
     auto nupr = nup(ops, block);
     return (*nupi == nupr) ? block : SpinhalfDistributed(nsites, nupr, backend);
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 tJDistributed block(OpSum const &ops, tJDistributed const &block) try {
   int64_t nsites = block.nsites();
   std::string backend = block.backend();
@@ -125,9 +122,8 @@ tJDistributed block(OpSum const &ops, tJDistributed const &block) try {
                ? block
                : tJDistributed(nsites, nupr, ndnr, backend);
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 ElectronDistributed block(OpSum const &ops,
                           ElectronDistributed const &block) try {
@@ -144,16 +140,14 @@ ElectronDistributed block(OpSum const &ops,
                ? block
                : ElectronDistributed(nsites, nupr, ndnr, backend);
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 #endif
 
 Block block(OpSum const &ops, Block const &blocki) try {
   return std::visit([&](auto &&b) { return Block(block(ops, b)); }, blocki);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 bool blocks_match(OpSum const &ops, Block const &block1,
                   Block const &block2) try {
@@ -180,9 +174,8 @@ bool blocks_match(OpSum const &ops, Block const &block1,
           [&](auto const &b1, auto const &b2) { return false; },
       },
       block1, block2);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 bool blocks_match(OpSum const &ops, Spinhalf const &b1,
                   Spinhalf const &b2) try {
@@ -190,9 +183,8 @@ bool blocks_match(OpSum const &ops, Spinhalf const &b1,
   bool match_irrep =
       b1.irrep() ? isapprox(representation(ops, b1), *b2.irrep()) : !b2.irrep();
   return match_nup && match_irrep;
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 bool blocks_match(OpSum const &ops, tJ const &b1, tJ const &b2) try {
   bool match_nup = b1.nup() ? nup(ops, b1) == *b2.nup() : !b2.nup();
@@ -200,9 +192,8 @@ bool blocks_match(OpSum const &ops, tJ const &b1, tJ const &b2) try {
   bool match_irrep =
       b1.irrep() ? isapprox(representation(ops, b1), *b2.irrep()) : !b2.irrep();
   return match_nup && match_ndn && match_irrep;
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 bool blocks_match(OpSum const &ops, Electron const &b1,
                   Electron const &b2) try {
@@ -211,35 +202,31 @@ bool blocks_match(OpSum const &ops, Electron const &b1,
   bool match_irrep =
       b1.irrep() ? isapprox(representation(ops, b1), *b2.irrep()) : !b2.irrep();
   return match_nup && match_ndn && match_irrep;
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 #ifdef XDIAG_USE_MPI
 bool blocks_match(OpSum const &ops, SpinhalfDistributed const &b1,
                   SpinhalfDistributed const &b2) try {
   bool match_nup = b1.nup() ? nup(ops, b1) == *b2.nup() : !b2.nup();
   return match_nup;
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 bool blocks_match(OpSum const &ops, tJDistributed const &b1,
                   tJDistributed const &b2) try {
   bool match_nup = b1.nup() ? nup(ops, b1) == *b2.nup() : !b2.nup();
   bool match_ndn = b1.ndn() ? ndn(ops, b1) == *b2.ndn() : !b2.ndn();
   return match_nup && match_ndn;
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 bool blocks_match(OpSum const &ops, ElectronDistributed const &b1,
                   ElectronDistributed const &b2) try {
   bool match_nup = b1.nup() ? nup(ops, b1) == *b2.nup() : !b2.nup();
   bool match_ndn = b1.ndn() ? ndn(ops, b1) == *b2.ndn() : !b2.ndn();
   return match_nup && match_ndn;
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 #endif
 } // namespace xdiag

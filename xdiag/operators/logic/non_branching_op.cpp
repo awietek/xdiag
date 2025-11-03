@@ -76,10 +76,8 @@ NonBranchingOp<bit_t, coeff_t>::NonBranchingOp(
       break;
     }
   }
-
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <typename bit_t, typename coeff_t>
 bool NonBranchingOp<bit_t, coeff_t>::isdiagonal() const {
@@ -193,9 +191,8 @@ decompose_matrix_to_nonbranching(arma::Mat<coeff_t> const &mat,
     mats_nb.push_back(mat_nb);
   }
   return mats_nb;
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 static std::vector<Matrix>
 decompose_matrix_to_nonbranching(Matrix const &mat, double precision) try {
@@ -214,9 +211,8 @@ decompose_matrix_to_nonbranching(Matrix const &mat, double precision) try {
     }
   }
   return mats;
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <typename bit_t, typename coeff_t>
 std::vector<NonBranchingOp<bit_t, coeff_t>>
@@ -251,9 +247,8 @@ non_branching_ops(Coupling const &cpl, Op const &op, double precision) try {
         "Cannot convert Op to NonBranchingOps. Op has no matrix defined.");
   }
   return ops;
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template std::vector<NonBranchingOp<uint16_t, double>>
 non_branching_ops<uint16_t, double>(Coupling const &, Op const &, double);

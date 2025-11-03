@@ -44,7 +44,9 @@ constexpr int64_t invalid_index = (int64_t)-1;
 constexpr int64_t undefined = std::numeric_limits<int64_t>::min();
 
 // Helper type for visitor patterns
-template <class... Ts> struct overload : Ts... { using Ts::operator()...; };
+template <class... Ts> struct overload : Ts... {
+  using Ts::operator()...;
+};
 template <class... Ts> overload(Ts...) -> overload<Ts...>;
 
 template <typename T> inline std::string to_string_generic(T const &x) {

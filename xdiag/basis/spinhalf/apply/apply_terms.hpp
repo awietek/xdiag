@@ -50,8 +50,7 @@ void apply_terms(OpSum const &ops, basis_t const &basis_in,
           fmt::format("Unknown Op type for Spinhalf block: \"{}\"", type));
     }
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 } // namespace xdiag::basis::spinhalf

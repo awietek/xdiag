@@ -3,8 +3,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "compilation.hpp"
-#include <xdiag/operators/logic/valid.hpp>
 #include <xdiag/operators/logic/order.hpp>
+#include <xdiag/operators/logic/valid.hpp>
 #include <xdiag/utils/scalar.hpp>
 
 #include <xdiag/blocks/electron.hpp>
@@ -27,9 +27,8 @@ OpSum clean_zeros(OpSum const &ops) try {
     }
   }
   return ops_clean;
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 OpSum compile_spinhalf(OpSum const &ops) try {
   OpSum ops_clean = clean_zeros(order(ops));
@@ -65,9 +64,8 @@ OpSum compile_spinhalf(OpSum const &ops) try {
   }
 
   return ops_double;
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 OpSum compile_tj(OpSum const &ops) try {
   OpSum ops_clean = clean_zeros(order(ops));
@@ -134,9 +132,8 @@ OpSum compile_tj(OpSum const &ops) try {
     }
   }
   return ops_final;
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 OpSum compile_electron(OpSum const &ops) try {
   OpSum ops_clean = clean_zeros(order(ops));
@@ -207,42 +204,38 @@ OpSum compile_electron(OpSum const &ops) try {
     }
   }
   return ops_final;
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
 }
+XDIAG_CATCH
 
 template <> OpSum compile<Spinhalf>(OpSum const &ops) try {
   return compile_spinhalf(ops);
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
 }
-template <> OpSum compile<tJ>(OpSum const &ops) try {
-  return compile_tj(ops);
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
-}
+XDIAG_CATCH
+
+template <> OpSum compile<tJ>(OpSum const &ops) try { return compile_tj(ops); }
+XDIAG_CATCH
+
 template <> OpSum compile<Electron>(OpSum const &ops) try {
   return compile_electron(ops);
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
 }
+XDIAG_CATCH
 
 #ifdef XDIAG_USE_MPI
 template <> OpSum compile<SpinhalfDistributed>(OpSum const &ops) try {
   return compile_spinhalf(ops);
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
 }
+XDIAG_CATCH
+
 template <> OpSum compile<tJDistributed>(OpSum const &ops) try {
   return compile_tj(ops);
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
 }
+XDIAG_CATCH
+
 template <> OpSum compile<ElectronDistributed>(OpSum const &ops) try {
   return compile_electron(ops);
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
 }
+XDIAG_CATCH
+
 #endif
 
 } // namespace xdiag::operators

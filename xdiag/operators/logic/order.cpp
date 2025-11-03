@@ -61,15 +61,11 @@ static arma::Mat<T> permute_matrix(arma::Mat<T> const &mat,
     }
   }
   return mat_permuted;
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
-std::pair<Scalar, Op> order(Op const &op) try {
-  return order(1.0, op);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
+std::pair<Scalar, Op> order(Op const &op) try { return order(1.0, op); }
+XDIAG_CATCH
 
 std::pair<Scalar, Op> order(Scalar const &alpha, Op const &op) try {
   check_valid(op);
@@ -78,7 +74,7 @@ std::pair<Scalar, Op> order(Scalar const &alpha, Op const &op) try {
 
   std::set<std::string> unordered = {"NupNdn", "NdnNup"};
   if (unordered.find(type) != unordered.end()) {
-      return {alpha, op};
+    return {alpha, op};
   }
 
   if (type == "Matrix") {
@@ -142,9 +138,8 @@ std::pair<Scalar, Op> order(Scalar const &alpha, Op const &op) try {
   } else {
     return {alpha, op};
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 static bool less_sites(std::vector<int64_t> const &s1,
                        std::vector<int64_t> const &s2) try {
@@ -156,9 +151,8 @@ static bool less_sites(std::vector<int64_t> const &s1,
     return std::lexicographical_compare(s1.begin(), s1.end(), s2.begin(),
                                         s2.end());
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <typename T>
 static bool less_matrix(arma::Mat<T> const &mat1, arma::Mat<T> const &mat2) {
@@ -196,9 +190,8 @@ bool less(Matrix const &mat1, Matrix const &mat2) try {
   } else {
     return false;
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 bool less(Op const &o1, Op const &o2) try {
   std::string type1 = o1.type();
@@ -229,9 +222,8 @@ bool less(Op const &o1, Op const &o2) try {
       return false;
     }
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 bool less(Scalar const &s1, Scalar const &s2) {
   if (s1.isreal() && s2.isreal()) {
@@ -294,8 +286,7 @@ OpSum order(OpSum const &ops) try {
   }
 
   return ops_matrix;
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 } // namespace xdiag

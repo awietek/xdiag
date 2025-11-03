@@ -40,6 +40,9 @@ public:
   iterator_t end() const;
   int64_t index(bit_t ups, bit_t dns) const;
 
+  bool operator==(BasisSymmetricNp const &rhs) const;
+  bool operator!=(BasisSymmetricNp const &rhs) const;
+
   GroupActionLookup<bit_t> const &group_action() const;
   Representation const &irrep() const;
 

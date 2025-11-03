@@ -54,15 +54,4 @@ private:
 XDIAG_API std::ostream &operator<<(std::ostream &out, Op const &op);
 XDIAG_API std::string to_string(Op const &op);
 
-// helper for julia wrapper
-class VectorOp {
-public:
-  VectorOp() = default;
-  void push_back(Op const &op);
-  std::vector<Op> vector() const;
-
-private:
-  std::vector<Op> v_;
-};
-
 } // namespace xdiag

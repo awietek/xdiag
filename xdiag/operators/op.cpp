@@ -40,9 +40,9 @@ Matrix const &Op::matrix() const try {
     XDIAG_THROW(fmt::format(
         "Op does not have a matrix defined (type is \"{}\").", type_));
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 int64_t Op::size() const { return sites_ ? sites_->size() : 0; }
 int64_t Op::operator[](int64_t idx) const try {
   if (sites_) {
@@ -55,9 +55,8 @@ int64_t Op::operator[](int64_t idx) const try {
   } else {
     XDIAG_THROW("Cannot access site of Op, since Op has no sites defined.");
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 std::vector<int64_t> const &Op::sites() const try {
   if (hassites()) {
@@ -66,9 +65,8 @@ std::vector<int64_t> const &Op::sites() const try {
     XDIAG_THROW(
         fmt::format("Op does not have sites defined (type is \"{}\").", type_));
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 bool Op::operator==(Op const &rhs) const {
   return (type_ == rhs.type_) && (sites_ == rhs.sites_) &&
@@ -91,8 +89,5 @@ std::ostream &operator<<(std::ostream &out, Op const &op) {
 }
 
 std::string to_string(Op const &op) { return to_string_generic(op); }
-
-void VectorOp::push_back(Op const &op) { v_.push_back(op); }
-std::vector<Op> VectorOp::vector() const { return v_; }
 
 } // namespace xdiag

@@ -40,9 +40,8 @@ static T as_plain(std::string key, toml::table const &table) try {
   } else {
     XDIAG_THROW(fmt::format("Key \"{}\" is not contained in TOML table", key));
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 // Plain values
 template <>
@@ -103,9 +102,8 @@ static std::vector<T> as_std_vector(std::string key,
   } else {
     XDIAG_THROW(fmt::format("Key \"{}\" is not contained in TOML table", key));
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <>
 XDIAG_API std::vector<int8_t> FileTomlHandler::as<std::vector<int8_t>>() const
@@ -128,15 +126,18 @@ XDIAG_API std::vector<uint8_t> FileTomlHandler::as<std::vector<uint8_t>>() const
     XDIAG_TRY_CATCH(return as_std_vector<uint8_t>(key_, table_));
 
 template <>
-XDIAG_API std::vector<uint16_t> FileTomlHandler::as<std::vector<uint16_t>>() const
+XDIAG_API std::vector<uint16_t>
+FileTomlHandler::as<std::vector<uint16_t>>() const
     XDIAG_TRY_CATCH(return as_std_vector<uint16_t>(key_, table_));
 
 template <>
-XDIAG_API std::vector<uint32_t> FileTomlHandler::as<std::vector<uint32_t>>() const
+XDIAG_API std::vector<uint32_t>
+FileTomlHandler::as<std::vector<uint32_t>>() const
     XDIAG_TRY_CATCH(return as_std_vector<uint32_t>(key_, table_));
 
 template <>
-XDIAG_API std::vector<uint64_t> FileTomlHandler::as<std::vector<uint64_t>>() const
+XDIAG_API std::vector<uint64_t>
+FileTomlHandler::as<std::vector<uint64_t>>() const
     XDIAG_TRY_CATCH(return as_std_vector<uint64_t>(key_, table_));
 
 template <>
@@ -148,7 +149,8 @@ XDIAG_API std::vector<complex> FileTomlHandler::as<std::vector<complex>>() const
     XDIAG_TRY_CATCH(return as_std_vector<complex>(key_, table_));
 
 template <>
-XDIAG_API std::vector<std::string> FileTomlHandler::as<std::vector<std::string>>() const
+XDIAG_API std::vector<std::string>
+FileTomlHandler::as<std::vector<std::string>>() const
     XDIAG_TRY_CATCH(return as_std_vector<std::string>(key_, table_));
 
 // Armadillo vectors
@@ -161,9 +163,8 @@ static arma::Col<T> as_arma_vector(std::string key,
   } else {
     XDIAG_THROW(fmt::format("Key \"{}\" is not contained in TOML table", key));
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <>
 XDIAG_API arma::vec FileTomlHandler::as<arma::vec>() const
@@ -191,9 +192,8 @@ static arma::Mat<T> as_arma_matrix(std::string key,
   } else {
     XDIAG_THROW(fmt::format("Key \"{}\" is not contained in TOML table", key));
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <>
 XDIAG_API arma::mat FileTomlHandler::as<arma::mat>() const
@@ -214,11 +214,11 @@ XDIAG_API arma::umat FileTomlHandler::as<arma::umat>() const
 template <> XDIAG_API Permutation FileTomlHandler::as<Permutation>() const try {
   auto array = as_std_vector<int64_t>(key_, table_);
   return Permutation(array);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
-template <> XDIAG_API PermutationGroup FileTomlHandler::as<PermutationGroup>() const try {
+template <>
+XDIAG_API PermutationGroup FileTomlHandler::as<PermutationGroup>() const try {
   auto node = table_.at_path(key_).node();
   if (node) {
     auto mat = arma_matrix<arma::sword>(*node);
@@ -231,9 +231,8 @@ template <> XDIAG_API PermutationGroup FileTomlHandler::as<PermutationGroup>() c
   } else {
     XDIAG_THROW(fmt::format("Key \"{}\" is not contained in TOML table", key_));
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <> XDIAG_API Op FileTomlHandler::as<Op>() const try {
   auto node = table_.at_path(key_).node();
@@ -242,9 +241,8 @@ template <> XDIAG_API Op FileTomlHandler::as<Op>() const try {
   } else {
     XDIAG_THROW(fmt::format("Key \"{}\" is not contained in TOML table", key_));
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <> XDIAG_API OpSum FileTomlHandler::as<OpSum>() const try {
   auto node = table_.at_path(key_).node();
@@ -253,20 +251,18 @@ template <> XDIAG_API OpSum FileTomlHandler::as<OpSum>() const try {
   } else {
     XDIAG_THROW(fmt::format("Key \"{}\" is not contained in TOML table", key_));
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 //////////////////////////////////////////////////////////////////
 // operator=
 
 template <typename T> void FileTomlHandler::operator=(T const &value) try {
   table_.insert_or_assign(key_, value);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
-template void
-    FileTomlHandler::operator= <std::string>(std::string const &value);
+XDIAG_CATCH
+template void FileTomlHandler::operator=
+    <std::string>(std::string const &value);
 template void FileTomlHandler::operator= <int8_t>(int8_t const &value);
 template void FileTomlHandler::operator= <int16_t>(int16_t const &value);
 template void FileTomlHandler::operator= <int32_t>(int32_t const &value);
@@ -279,155 +275,144 @@ template void FileTomlHandler::operator= <double>(double const &value);
 template <>
 void FileTomlHandler::operator= <uint64_t>(uint64_t const &value) try {
   table_.insert_or_assign(key_, (int64_t)value);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <> void FileTomlHandler::operator=(complex const &value) try {
   table_.insert_or_assign(key_, toml::array{value.real(), value.imag()});
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <>
 void FileTomlHandler::operator=
     <std::vector<int8_t>>(std::vector<int8_t> const &value) try {
   table_.insert_or_assign(key_, toml_array(value));
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 template <>
 void FileTomlHandler::operator=
     <std::vector<int16_t>>(std::vector<int16_t> const &value) try {
   table_.insert_or_assign(key_, toml_array(value));
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 template <>
 void FileTomlHandler::operator=
     <std::vector<int32_t>>(std::vector<int32_t> const &value) try {
   table_.insert_or_assign(key_, toml_array(value));
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 template <>
 void FileTomlHandler::operator=
     <std::vector<int64_t>>(std::vector<int64_t> const &value) try {
   table_.insert_or_assign(key_, toml_array(value));
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 template <>
 void FileTomlHandler::operator=
     <std::vector<uint8_t>>(std::vector<uint8_t> const &value) try {
   table_.insert_or_assign(key_, toml_array(value));
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 template <>
 void FileTomlHandler::operator=
     <std::vector<uint16_t>>(std::vector<uint16_t> const &value) try {
   table_.insert_or_assign(key_, toml_array(value));
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 template <>
 void FileTomlHandler::operator=
     <std::vector<uint32_t>>(std::vector<uint32_t> const &value) try {
   table_.insert_or_assign(key_, toml_array(value));
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 template <>
 void FileTomlHandler::operator=
     <std::vector<uint64_t>>(std::vector<uint64_t> const &value) try {
   table_.insert_or_assign(key_, toml_array(value));
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 template <>
 void FileTomlHandler::operator=
     <std::vector<double>>(std::vector<double> const &value) try {
   table_.insert_or_assign(key_, toml_array(value));
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 template <>
 void FileTomlHandler::operator=
     <std::vector<complex>>(std::vector<complex> const &value) try {
   table_.insert_or_assign(key_, toml_array(value));
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <>
 void FileTomlHandler::operator=
     <std::vector<std::string>>(std::vector<std::string> const &value) try {
   table_.insert_or_assign(key_, toml_array(value));
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <>
 void FileTomlHandler::operator= <arma::vec>(arma::vec const &value) try {
   table_.insert_or_assign(key_, toml_array(value));
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <>
 void FileTomlHandler::operator= <arma::cx_vec>(arma::cx_vec const &value) try {
   table_.insert_or_assign(key_, toml_array(value));
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <>
 void FileTomlHandler::operator= <arma::ivec>(arma::ivec const &value) try {
   table_.insert_or_assign(key_, toml_array(value));
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <>
 void FileTomlHandler::operator= <arma::uvec>(arma::uvec const &value) try {
   table_.insert_or_assign(key_, toml_array(value));
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <>
 void FileTomlHandler::operator= <arma::mat>(arma::mat const &value) try {
   table_.insert_or_assign(key_, toml_array(value));
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 template <>
 void FileTomlHandler::operator= <arma::cx_mat>(arma::cx_mat const &value) try {
   table_.insert_or_assign(key_, toml_array(value));
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 template <>
 void FileTomlHandler::operator= <arma::imat>(arma::imat const &value) try {
   table_.insert_or_assign(key_, toml_array(value));
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <>
 void FileTomlHandler::operator= <arma::umat>(arma::umat const &value) try {
   table_.insert_or_assign(key_, toml_array(value));
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <>
 void FileTomlHandler::operator= <Permutation>(Permutation const &value) try {
   table_.insert_or_assign(key_, toml_array(value.array()));
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <>
 void FileTomlHandler::operator=
@@ -439,15 +424,13 @@ void FileTomlHandler::operator=
     mat.row(i) = arma::irowvec(vec);
   }
   table_.insert_or_assign(key_, toml_array(mat));
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <> void FileTomlHandler::operator= <Op>(Op const &op) try {
   table_.insert_or_assign(key_, toml_array(op));
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <> void FileTomlHandler::operator= <OpSum>(OpSum const &ops) try {
   if (ops.constants().size() > 0) {
@@ -455,8 +438,7 @@ template <> void FileTomlHandler::operator= <OpSum>(OpSum const &ops) try {
   } else {
     table_.insert_or_assign(key_, toml_array(ops));
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 } // namespace xdiag::io

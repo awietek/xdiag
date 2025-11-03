@@ -26,9 +26,8 @@ Scalar Coupling::scalar() const try {
     XDIAG_THROW("Cannot convert Coupling holding a value of type "
                 "\"std::string\" to value of type \"Scalar\"");
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 std::string Coupling::string() const try {
   if (const std::string *v = std::get_if<std::string>(&value_)) {
@@ -37,9 +36,8 @@ std::string Coupling::string() const try {
     XDIAG_THROW("Cannot convert Coupling holding a value of type "
                 "\"Scalar\" to value of type \"std::string\"");
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 bool Coupling::operator==(Coupling const &rhs) const {
   return value_ == rhs.value_;

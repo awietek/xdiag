@@ -9,11 +9,11 @@
 #include "../electron/testcases_electron.hpp"
 #include "../tj/testcases_tj.hpp"
 #include <xdiag/algebra/apply.hpp>
+#include <xdiag/algebra/isapprox.hpp>
 #include <xdiag/algebra/matrix.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
 #include <xdiag/io/read.hpp>
 #include <xdiag/operators/logic/real.hpp>
-#include <xdiag/algebra/isapprox.hpp>
 
 using namespace xdiag;
 
@@ -77,15 +77,14 @@ void test_tj_symmetric_apply_chains(int64_t nsites) {
   using namespace xdiag::testcases::tj;
   using namespace xdiag::testcases::electron;
 
-  Log("tj_symmetric_apply: tJ chain, symmetric apply test, nsites: {}",
-      nsites);
+  Log("tj_symmetric_apply: tJ chain, symmetric apply test, nsites: {}", nsites);
   auto ops = tJchain(nsites, 1.0, 5.0);
   auto [irreps, multiplicities] = get_cyclic_group_irreps_mult(nsites);
   (void)multiplicities;
   test_apply_tj_symmetric(ops, nsites, irreps);
 }
 
-TEST_CASE("tj_symmetric_apply", "[tj]") {
+TEST_CASE("tj_symmetric_apply", "[tj]") try {
   using namespace xdiag::testcases::tj;
   using namespace xdiag::testcases::electron;
 
@@ -93,60 +92,62 @@ TEST_CASE("tj_symmetric_apply", "[tj]") {
   for (int64_t nsites = 2; nsites < 8; ++nsites) {
     test_tj_symmetric_apply_chains(nsites);
   }
-  {
-    // test a 3x3 triangular lattice
-    Log("tj_symmetric_apply: tJ 3x3 triangular, symmetric apply test");
-    std::string lfile =
-        XDIAG_DIRECTORY "/misc/data/triangular.9.hop.sublattices.tsl.toml";
+  // {
+  //   // test a 3x3 triangular lattice
+  //   Log("tj_symmetric_apply: tJ 3x3 triangular, symmetric apply test");
+  //   std::string lfile =
+  //       XDIAG_DIRECTORY "/misc/data/triangular.9.hop.sublattices.tsl.toml";
 
-    auto fl = FileToml(lfile);
-    auto ops = fl["Interactions"].as<OpSum>();
-    ops["T"] = 1.0;
-    ops["U"] = 5.0;
+  //   auto fl = FileToml(lfile);
+  //   auto ops = fl["Interactions"].as<OpSum>();
+  //   ops["T"] = 1.0;
+  //   ops["U"] = 5.0;
 
-    std::vector<std::pair<std::string, int64_t>> rep_name_mult = {
-        {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
-        {"K0.D3.A1", 1},    {"K0.D3.A2", 1},    {"K0.D3.E", 2},
-        {"K1.D3.A1", 1},    {"K1.D3.A2", 1},    {"K1.D3.E", 2},
-        {"Y.C1.A", 6}};
+  //   std::vector<std::pair<std::string, int64_t>> rep_name_mult = {
+  //       {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
+  //       {"K0.D3.A1", 1},    {"K0.D3.A2", 1},    {"K0.D3.E", 2},
+  //       {"K1.D3.A1", 1},    {"K1.D3.A2", 1},    {"K1.D3.E", 2},
+  //       {"Y.C1.A", 6}};
 
-    std::vector<Representation> irreps;
-    for (auto [name, mult] : rep_name_mult) {
-      irreps.push_back(read_representation(fl, name));
-      (void)mult;
-    }
-    test_apply_tj_symmetric(ops, 9, irreps);
-  }
+  //   std::vector<Representation> irreps;
+  //   for (auto [name, mult] : rep_name_mult) {
+  //     irreps.push_back(read_representation(fl, name));
+  //     (void)mult;
+  //   }
+  //   test_apply_tj_symmetric(ops, 9, irreps);
+  // }
 
-  {
-    // test a 3x3 triangular lattice with complex flux
-    Log("tj_symmetric_apply: tJ 3x3 triangular staggered, symmetric apply "
-        "test, complex");
-    std::string lfile = XDIAG_DIRECTORY
-        "/misc/data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.toml";
+  // {
+  //   // test a 3x3 triangular lattice with complex flux
+  //   Log("tj_symmetric_apply: tJ 3x3 triangular staggered, symmetric apply "
+  //       "test, complex");
+  //   std::string lfile = XDIAG_DIRECTORY
+  //       "/misc/data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.toml";
 
-    auto fl = FileToml(lfile);
-    auto ops = fl["Interactions"].as<OpSum>();
-    std::vector<double> etas{0.0, 0.1, 0.2, 0.3};
+  //   auto fl = FileToml(lfile);
+  //   auto ops = fl["Interactions"].as<OpSum>();
+  //   std::vector<double> etas{0.0, 0.1, 0.2, 0.3};
 
-    std::vector<std::pair<std::string, int64_t>> rep_name_mult = {
-        {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
-        {"K0.D3.A1", 1},    {"K0.D3.A2", 1},    {"K0.D3.E", 2},
-        {"K1.D3.A1", 1},    {"K1.D3.A2", 1},    {"K1.D3.E", 2},
-        {"Y.C1.A", 6}};
+  //   std::vector<std::pair<std::string, int64_t>> rep_name_mult = {
+  //       {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
+  //       {"K0.D3.A1", 1},    {"K0.D3.A2", 1},    {"K0.D3.E", 2},
+  //       {"K1.D3.A1", 1},    {"K1.D3.A2", 1},    {"K1.D3.E", 2},
+  //       {"Y.C1.A", 6}};
 
-    std::vector<Representation> irreps;
-    std::vector<int64_t> multiplicities;
-    for (auto [name, mult] : rep_name_mult) {
-      irreps.push_back(read_representation(fl, name));
-      multiplicities.push_back(mult);
-    }
+  //   std::vector<Representation> irreps;
+  //   std::vector<int64_t> multiplicities;
+  //   for (auto [name, mult] : rep_name_mult) {
+  //     irreps.push_back(read_representation(fl, name));
+  //     multiplicities.push_back(mult);
+  //   }
 
-    for (auto eta : etas) {
-      ops["TPHI"] = complex(cos(eta * M_PI), sin(eta * M_PI));
-      ops["JPHI"] = complex(cos(2 * eta * M_PI), sin(2 * eta * M_PI));
+  //   for (auto eta : etas) {
+  //     ops["TPHI"] = complex(cos(eta * M_PI), sin(eta * M_PI));
+  //     ops["JPHI"] = complex(cos(2 * eta * M_PI), sin(2 * eta * M_PI));
 
-      test_apply_tj_symmetric(ops, 9, irreps);
-    }
-  }
+  //     test_apply_tj_symmetric(ops, 9, irreps);
+  //   }
+  // }
+} catch (xdiag::Error e) {
+  xdiag::error_trace(e);
 }

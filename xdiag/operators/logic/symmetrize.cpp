@@ -13,22 +13,19 @@ namespace xdiag {
 OpSum symmetrize(Op const &op, PermutationGroup const &group) try {
   auto ops = OpSum({op});
   return symmetrize(ops, group);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 OpSum symmetrize(Op const &op, Representation const &irrep) try {
   auto ops = OpSum({op});
   return symmetrize(ops, irrep);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 OpSum symmetrize(OpSum const &ops, PermutationGroup const &group) try {
   return symmetrize(ops, Representation(group));
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <typename T>
 static OpSum symmetrize(OpSum const &ops, PermutationGroup const &group,
@@ -46,9 +43,8 @@ static OpSum symmetrize(OpSum const &ops, PermutationGroup const &group,
     }
   }
   return ops_sym;
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 OpSum symmetrize(OpSum const &ops, Representation const &irrep) try {
   if (isreal(irrep) && isreal(ops)) {
@@ -58,8 +54,7 @@ OpSum symmetrize(OpSum const &ops, Representation const &irrep) try {
     auto characters = irrep.characters().as<arma::cx_vec>();
     return symmetrize(ops, irrep.group(), characters);
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 } // namespace xdiag

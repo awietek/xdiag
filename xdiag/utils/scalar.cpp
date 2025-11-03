@@ -116,9 +116,7 @@ template <> double Scalar::as<double>() const try {
     XDIAG_THROW("Cannot convert Scalar holding a value of type "
                 "\"complex\" to value of type \"double\"");
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
+} XDIAG_CATCH
 
 template <> complex Scalar::as<complex>() const {
   if (const double *v = std::get_if<double>(&value_)) {

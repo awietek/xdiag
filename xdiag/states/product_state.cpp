@@ -77,9 +77,8 @@ std::string to_string(ProductState const &state, std::string format) try {
     XDIAG_THROW(
         fmt::format("Unknown formatting style for ProductState: {}", format));
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <typename bit_t>
 void to_product_state_spinhalf(bit_t spins, ProductState &pstate) {
@@ -155,9 +154,8 @@ bit_t to_bits_spinhalf(ProductState const &pstate) try {
     }
   }
   return spins;
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template uint32_t to_bits_spinhalf(ProductState const &);
 template uint64_t to_bits_spinhalf(ProductState const &);
@@ -179,9 +177,9 @@ std::pair<bit_t, bit_t> to_bits_tj(ProductState const &pstate) try {
     }
   }
   return {ups, dns};
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 template std::pair<uint32_t, uint32_t> to_bits_tj(ProductState const &);
 template std::pair<uint64_t, uint64_t> to_bits_tj(ProductState const &);
 
@@ -205,9 +203,9 @@ std::pair<bit_t, bit_t> to_bits_electron(ProductState const &pstate) try {
     }
   }
   return {ups, dns};
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 template std::pair<uint32_t, uint32_t> to_bits_electron(ProductState const &);
 template std::pair<uint64_t, uint64_t> to_bits_electron(ProductState const &);
 

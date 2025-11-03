@@ -12,10 +12,9 @@ using namespace combinatorics;
 
 template <typename bit_t>
 BasisNp<bit_t>::BasisNp(int nsites, int nup, int ndn) try
-    : nsites_(nsites), nup_(nup), ndn_(ndn),
-      size_ups_(binomial(nsites, nup)), size_dns_(binomial(nsites, ndn)),
-      size_(size_ups_ * size_dns_), lintable_ups_(nsites, nup),
-      lintable_dns_(nsites, ndn) {
+    : nsites_(nsites), nup_(nup), ndn_(ndn), size_ups_(binomial(nsites, nup)),
+      size_dns_(binomial(nsites, ndn)), size_(size_ups_ * size_dns_),
+      lintable_ups_(nsites, nup), lintable_dns_(nsites, ndn) {
   check_nsites_work_with_bits<bit_t>(nsites_);
   if (nsites < 0) {
     XDIAG_THROW("nsites < 0");
@@ -24,13 +23,10 @@ BasisNp<bit_t>::BasisNp(int nsites, int nup, int ndn) try
   } else if ((ndn < 0) || (ndn > nsites)) {
     XDIAG_THROW("Invalid value of ndn");
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
-template <typename bit_t> int BasisNp<bit_t>::nsites() const {
-  return nsites_;
-}
+template <typename bit_t> int BasisNp<bit_t>::nsites() const { return nsites_; }
 template <typename bit_t> int BasisNp<bit_t>::nup() const { return nup_; }
 template <typename bit_t> int BasisNp<bit_t>::ndn() const { return ndn_; }
 
@@ -95,6 +91,16 @@ BasisNp<bit_t>::states_indices_dns_thread() const {
   return CombinationsIndexThread<bit_t>(nsites_, ndn_);
 }
 #endif
+
+template <typename bit_t>
+bool BasisNp<bit_t>::operator==(BasisNp const &rhs) const {
+  return (nsites_ == rhs.nsites_) && (nup_ == rhs.nup_) && (ndn_ == rhs.ndn_);
+}
+
+template <typename bit_t>
+bool BasisNp<bit_t>::operator!=(BasisNp const &rhs) const {
+  return !operator==(rhs);
+}
 
 template class BasisNp<uint32_t>;
 template class BasisNp<uint64_t>;

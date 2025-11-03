@@ -53,9 +53,8 @@ template <typename T> arma::Mat<T> arma_matrix(toml::node const &node) try {
         "TOML node cannot be converted to \"{}\". Node is not an array.",
         utils::type_string<arma::Mat<T>>()));
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template arma::Mat<double> arma_matrix<double>(toml::node const &);
 template arma::Mat<complex> arma_matrix<complex>(toml::node const &);
@@ -72,9 +71,8 @@ template <typename T> toml::array toml_array(arma::Mat<T> const &mat) try {
     arr.push_back(row);
   }
   return arr;
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <> toml::array toml_array(arma::Mat<arma::uword> const &mat) try {
   toml::array arr;
@@ -86,9 +84,8 @@ template <> toml::array toml_array(arma::Mat<arma::uword> const &mat) try {
     arr.push_back(row);
   }
   return arr;
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <> toml::array toml_array(arma::Mat<complex> const &mat) try {
   toml::array arr;
@@ -100,10 +97,8 @@ template <> toml::array toml_array(arma::Mat<complex> const &mat) try {
     arr.push_back(row);
   }
   return arr;
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-  return toml::array();
 }
+XDIAG_CATCH
 
 template toml::array toml_array(arma::Mat<double> const &);
 template toml::array toml_array(arma::Mat<arma::sword> const &);

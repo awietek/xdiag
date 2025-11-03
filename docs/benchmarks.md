@@ -8,19 +8,14 @@ To evaluate performance across all Hilbert space types supported by XDiag—name
 
 
 1. The $S= 1/2$ one-dimensional Heisenberg chain with nearest-neighbor interactions,
-
-   $$
-   H = J \sum_{\langle i,j\rangle} \mathbf{S}_i \cdot \mathbf{S}_j.
-   $$
-
+   $$ H = J \sum_{\langle i,j\rangle} \mathbf{S}_i \cdot \mathbf{S}_j. $$
+   
 2. The one-dimensional Hubbard model,
-
    $$
    H = -t \sum_{\langle i,j\rangle, \; \sigma} \left(c^\dagger_{i,\sigma}c_{j,\sigma} + \text{h.c.} \right) + U \sum_{i=0}^{N} n_{i,\uparrow} n_{i,\downarrow}.
    $$
 
 3. The *t*-*J* model of spin-$\frac{1}{2}$ electrons,
-
    $$
    H = -t \sum_{\langle i,j \rangle, \sigma} P \left( c^\dagger_{i,\sigma} c_{j,\sigma} + \text{h.c.} \right) P + J \sum_{\langle i , j \rangle } \mathbf{S}_i \cdot \mathbf{S}_j - n_i n_j/4. 
    $$

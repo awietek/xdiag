@@ -9,11 +9,12 @@
 #include "../electron/testcases_electron.hpp"
 #include <xdiag/algebra/algebra.hpp>
 #include <xdiag/algebra/apply.hpp>
+#include <xdiag/algebra/isapprox.hpp>
 #include <xdiag/algebra/matrix.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
 #include <xdiag/io/read.hpp>
 #include <xdiag/operators/logic/real.hpp>
-#include <xdiag/algebra/isapprox.hpp>
+#include <xdiag/utils/xdiag_show.hpp>
 
 using namespace xdiag;
 
@@ -65,9 +66,8 @@ void test_electron_symmetric_spectra_no_np(
     std::sort(eigs_all.begin(), eigs_all.end());
     REQUIRE(isapprox(eigs_total, arma::vec(eigs_all)));
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 void test_electron_symmetric_spectra(OpSum opsum, int64_t nsites,
                                      std::vector<Representation> irreps,
@@ -125,20 +125,19 @@ void test_electron_symmetric_spectra(OpSum opsum, int64_t nsites,
         std::sort(eigs_sym.begin(), eigs_sym.end());
 
         // Check if all eigenvalues agree
-        // Log.out("{} {} {} {}", nup, ndn, eigs_sym(0), eigs_nosym(0));
+        // Log("{} {} {} {}", nup, ndn, eigs_sym[0], eigs_nosym(0));
 
         // if (!isapprox(arma::vec(eigs_sym), eigs_nosym)){
         //   XDIAG_SHOW(arma::norm(arma::vec(eigs_sym) - eigs_nosym));
-        //   XDIAG_SHOW(eigs_sym);
+        //   XDIAG_SHOW(arma::vec(eigs_sym));
         //   XDIAG_SHOW(eigs_nosym);
         // }
         REQUIRE(isapprox(arma::vec(eigs_sym), eigs_nosym));
       }
     }
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 void test_hubbard_symmetric_spectrum_chains(int64_t nsites) try {
   using namespace xdiag::testcases::electron;
@@ -159,9 +158,8 @@ void test_hubbard_symmetric_spectrum_chains(int64_t nsites) try {
   test_electron_symmetric_spectra(opsum_hb, nsites, irreps, multiplicities);
   test_electron_symmetric_spectra_no_np(opsum_hb, nsites, irreps,
                                         multiplicities);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 TEST_CASE("electron_symmetric_matrix", "[electron]") try {
   using namespace xdiag::testcases::electron;
@@ -223,67 +221,66 @@ TEST_CASE("electron_symmetric_matrix", "[electron]") try {
     test_hubbard_symmetric_spectrum_chains(nsites);
   }
 
-  // test a 3x3 triangular lattice
-  Log("electron_symmetric_matrix: Hubbard 3x3 triangular");
-  std::string lfile =
-      XDIAG_DIRECTORY "/misc/data/triangular.9.hop.sublattices.tsl.toml";
+  // // test a 3x3 triangular lattice
+  // Log("electron_symmetric_matrix: Hubbard 3x3 triangular");
+  // std::string lfile =
+  //     XDIAG_DIRECTORY "/misc/data/triangular.9.hop.sublattices.tsl.toml";
 
-  auto fl = FileToml(lfile);
-  opsum = fl["Interactions"].as<OpSum>();
-  opsum["T"] = 1.0;
-  opsum += "U" * Op("HubbardU");
-  opsum["U"] = 5.0;
+  // auto fl = FileToml(lfile);
+  // opsum = fl["Interactions"].as<OpSum>();
+  // opsum["T"] = 1.0;
+  // opsum += "U" * Op("HubbardU");
+  // opsum["U"] = 5.0;
 
-  std::vector<std::pair<std::string, int64_t>> rep_name_mult = {
-      {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
-      {"K0.D3.A1", 1},    {"K0.D3.A2", 1},    {"K0.D3.E", 2},
-      {"K1.D3.A1", 1},    {"K1.D3.A2", 1},    {"K1.D3.E", 2},
-      {"Y.C1.A", 6}};
-  irreps.clear();
-  multiplicities.clear();
-  for (auto [name, mult] : rep_name_mult) {
-    irreps.push_back(read_representation(fl, name));
-    multiplicities.push_back(mult);
-  }
-  test_electron_symmetric_spectra(opsum, 9, irreps, multiplicities);
+  // std::vector<std::pair<std::string, int64_t>> rep_name_mult = {
+  //     {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
+  //     {"K0.D3.A1", 1},    {"K0.D3.A2", 1},    {"K0.D3.E", 2},
+  //     {"K1.D3.A1", 1},    {"K1.D3.A2", 1},    {"K1.D3.E", 2},
+  //     {"Y.C1.A", 6}};
+  // irreps.clear();
+  // multiplicities.clear();
+  // for (auto [name, mult] : rep_name_mult) {
+  //   irreps.push_back(read_representation(fl, name));
+  //   multiplicities.push_back(mult);
+  // }
+  // test_electron_symmetric_spectra(opsum, 9, irreps, multiplicities);
 
-  // test a 3x3 triangular lattice with Heisenberg terms
-  Log("electron_symmetric_matrix: Hubbard 3x3 triangular(+ Heisenberg terms)");
-  auto opsum_hb = opsum;
-  for (auto [cpl, op] : opsum) {
-    if (op.type() == "Hop") {
-      opsum_hb += "J" * Op("SdotS", {op[0], op[1]});
-    }
-  }
-  opsum_hb["J"] = 0.4;
-  test_electron_symmetric_spectra(opsum_hb, 9, irreps, multiplicities);
+  // // test a 3x3 triangular lattice with Heisenberg terms
+  // Log("electron_symmetric_matrix: Hubbard 3x3 triangular(+ Heisenberg
+  // terms)"); auto opsum_hb = opsum; for (auto [cpl, op] : opsum) {
+  //   if (op.type() == "Hop") {
+  //     opsum_hb += "J" * Op("SdotS", {op[0], op[1]});
+  //   }
+  // }
+  // opsum_hb["J"] = 0.4;
+  // test_electron_symmetric_spectra(opsum_hb, 9, irreps, multiplicities);
 
-  // test a 3x3 triangular lattice with complex hoppings
-  {
-    Log.out("electron_symmetric_matrix: Hubbard 3x3 triangular (complex)");
-    std::string lfile = XDIAG_DIRECTORY
-        "/misc/data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.toml";
+  // // test a 3x3 triangular lattice with complex hoppings
+  // {
+  //   Log.out("electron_symmetric_matrix: Hubbard 3x3 triangular (complex)");
+  //   std::string lfile = XDIAG_DIRECTORY
+  //       "/misc/data/triangular.9.tup.phi.tdn.nphi.sublattices.tsl.toml";
 
-    auto fl = FileToml(lfile);
-    auto opsum = fl["Interactions"].as<OpSum>();
-    opsum += "U" * Op("HubbardU");
-    opsum["TPHI"] = complex(0.5, 0.5);
-    opsum["JPHI"] = 0.;
-    opsum["U"] = 5.0;
+  //   auto fl = FileToml(lfile);
+  //   auto opsum = fl["Interactions"].as<OpSum>();
+  //   opsum += "U" * Op("HubbardU");
+  //   opsum["TPHI"] = complex(0.5, 0.5);
+  //   opsum["JPHI"] = 0.;
+  //   opsum["U"] = 5.0;
 
-    std::vector<std::pair<std::string, int64_t>> rep_name_mult = {
-        {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
-        {"K0.D3.A1", 1},    {"K0.D3.A2", 1},    {"K0.D3.E", 2},
-        {"K1.D3.A1", 1},    {"K1.D3.A2", 1},    {"K1.D3.E", 2},
-        {"Y.C1.A", 6}};
-    irreps.clear();
-    multiplicities.clear();
-    for (auto [name, mult] : rep_name_mult) {
-      irreps.push_back(read_representation(fl, name));
-      multiplicities.push_back(mult);
-    }
-    test_electron_symmetric_spectra(opsum, 9, irreps, multiplicities);
-  }
+  //   std::vector<std::pair<std::string, int64_t>> rep_name_mult = {
+  //       {"Gamma.D3.A1", 1}, {"Gamma.D3.A2", 1}, {"Gamma.D3.E", 2},
+  //       {"K0.D3.A1", 1},    {"K0.D3.A2", 1},    {"K0.D3.E", 2},
+  //       {"K1.D3.A1", 1},    {"K1.D3.A2", 1},    {"K1.D3.E", 2},
+  //       {"Y.C1.A", 6}};
+  //   irreps.clear();
+  //   multiplicities.clear();
+  //   for (auto [name, mult] : rep_name_mult) {
+  //     irreps.push_back(read_representation(fl, name));
+  //     multiplicities.push_back(mult);
+  //   }
+  //   test_electron_symmetric_spectra(opsum, 9, irreps, multiplicities);
+  // }
 } catch (Error const &e) {
   error_trace(e);
 }

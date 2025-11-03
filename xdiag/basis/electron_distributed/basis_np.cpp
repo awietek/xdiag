@@ -187,9 +187,8 @@ BasisNp<bit_t>::BasisNp(int64_t nsites, int64_t nup, int64_t ndn) try
   mpi::Allreduce(&size_, &size_min_f, 1, MPI_MIN, MPI_COMM_WORLD);
   mpi::Allreduce(&size_transpose_, &size_min_r, 1, MPI_MIN, MPI_COMM_WORLD);
   size_min_ = std::min(size_min_f, size_min_r);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <typename bit_t> int64_t BasisNp<bit_t>::nsites() const {
   return nsites_;
@@ -292,9 +291,8 @@ void BasisNp<bit_t>::transpose(const coeff_t *in_vec, coeff_t *out_vec) const
     }
   }
   mpi::buffer.clean_recv();
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template void BasisNp<uint16_t>::transpose(const double *, double *) const;
 template void BasisNp<uint16_t>::transpose(const complex *, complex *) const;
@@ -340,9 +338,8 @@ void BasisNp<bit_t>::transpose_r(coeff_t const *in_vec, coeff_t *out_vec) const
   }
 
   mpi::buffer.clean_recv();
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template void BasisNp<uint16_t>::transpose_r(const double *, double *) const;
 template void BasisNp<uint16_t>::transpose_r(const complex *, complex *) const;

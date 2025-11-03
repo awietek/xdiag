@@ -9,6 +9,7 @@ set(XDIAG_TEST_SOURCES
   io/test_file_h5.cpp
 
   algebra/test_matrix.cpp
+  algebra/test_sparse_matrix.cpp
   algebra/test_apply.cpp
   
   combinatorics/test_binomial.cpp
@@ -66,7 +67,9 @@ set(XDIAG_TEST_SOURCES
   blocks/electron/test_electron_symmetric_apply.cpp
 
   algorithms/lanczos/test_eigvals_lanczos.cpp
+  algorithms/lanczos/test_eigvals_lanczos_csr_matrix.cpp
   algorithms/lanczos/test_eigs_lanczos.cpp
+  algorithms/lanczos/test_eigs_lanczos_csr_matrix.cpp
   
   algorithms/lanczos/test_lanczos_pro.cpp
   algorithms/arnoldi/test_arnoldi.cpp
@@ -75,12 +78,12 @@ set(XDIAG_TEST_SOURCES
   algorithms/test_norm_estimate.cpp
   algorithms/time_evolution/test_time_evolution.cpp
   algorithms/time_evolution/test_pade.cpp
+  algorithms/lobpcg/test_lobpcg.cpp
   algorithms/test_empty_algorithm.cpp
 
   states/test_random_state.cpp
   states/test_product_state.cpp
   states/test_state.cpp
-
 )
 
 set(XDIAG_TESTCASES_SOURCES
@@ -107,8 +110,11 @@ set(XDIAG_TEST_DISTRIBUTED_SOURCES
   blocks/electron_distributed/test_electron_distributed_raiselower.cpp
 
   states/test_product_state_distributed.cpp
+  states/test_random_state_distributed.cpp
 
   algorithms/time_evolution/test_time_evolution_distributed.cpp
+  algebra/test_apply_distributed.cpp
+
 )
 
 add_executable(tests tests.cpp ${XDIAG_TEST_SOURCES} ${XDIAG_TESTCASES_SOURCES})

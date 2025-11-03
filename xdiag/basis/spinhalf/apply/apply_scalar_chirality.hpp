@@ -16,7 +16,7 @@ namespace xdiag::basis::spinhalf {
 template <typename coeff_t, bool symmetric, class basis_t, class fill_f>
 void apply_scalar_chirality(Coupling const &cpl, Op const &op,
                             basis_t const &basis_in, basis_t const &basis_out,
-                            fill_f fill) try {
+                            fill_f fill) {
   using bit_t = typename basis_t::bit_t;
   using bits::gbit;
 
@@ -80,8 +80,6 @@ void apply_scalar_chirality(Coupling const &cpl, Op const &op,
     spinhalf::apply_term_offdiag_no_sym<coeff_t>(
         basis_in, basis_out, non_zero_term, term_action_acyclic, fill);
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
 
 } // namespace xdiag::basis::spinhalf

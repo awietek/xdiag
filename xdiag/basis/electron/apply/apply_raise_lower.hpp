@@ -9,10 +9,11 @@
 #include <xdiag/basis/electron/apply/generic_term_dns.hpp>
 #include <xdiag/basis/electron/apply/generic_term_ups.hpp>
 #include <xdiag/bits/bitops.hpp>
+#include <xdiag/parallel/omp/omp_utils.hpp>
 
 namespace xdiag::basis::electron {
 
-template <typename coeff_t, bool symmetric, class basis_t, class fill_f>
+template <bool symmetric, typename coeff_t, typename basis_t, typename fill_f>
 void apply_raise_lower(Coupling const &cpl, Op const &op,
                        basis_t const &basis_in, basis_t const &basis_out,
                        fill_f fill) {
@@ -35,11 +36,10 @@ void apply_raise_lower(Coupling const &cpl, Op const &op,
     };
 
     if (type == "Cdagup") {
-      electron::generic_term_ups<bit_t, coeff_t, symmetric>(
+      electron::generic_term_ups<symmetric, coeff_t>(
           basis_in, basis_out, non_zero_term, term_action, fill);
     } else if (type == "Cdagdn") {
-
-      electron::generic_term_dns<bit_t, coeff_t, symmetric, true>(
+      electron::generic_term_dns<symmetric, coeff_t, true>(
           basis_in, basis_out, non_zero_term, term_action, fill);
     }
 
@@ -54,10 +54,10 @@ void apply_raise_lower(Coupling const &cpl, Op const &op,
     };
 
     if (type == "Cup") {
-      electron::generic_term_ups<bit_t, coeff_t, symmetric>(
+      electron::generic_term_ups<symmetric, coeff_t>(
           basis_in, basis_out, non_zero_term, term_action, fill);
     } else if (type == "Cdn") {
-      electron::generic_term_dns<bit_t, coeff_t, symmetric, true>(
+      electron::generic_term_dns<symmetric, coeff_t, true>(
           basis_in, basis_out, non_zero_term, term_action, fill);
     }
   }

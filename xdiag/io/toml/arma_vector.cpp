@@ -12,9 +12,8 @@ namespace xdiag::io {
 
 template <typename T> arma::Col<T> arma_vector(toml::node const &node) try {
   return arma::Col<T>(std_vector<T>(node));
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template arma::Col<double> arma_vector<double>(toml::node const &);
 template arma::Col<complex> arma_vector<complex>(toml::node const &);
@@ -27,9 +26,8 @@ template <typename T> toml::array toml_array(arma::Col<T> const &value) try {
     arr.push_back(x);
   }
   return arr;
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <> toml::array toml_array(arma::Col<arma::uword> const &value) try {
   toml::array arr;
@@ -37,9 +35,8 @@ template <> toml::array toml_array(arma::Col<arma::uword> const &value) try {
     arr.push_back((int64_t)x);
   }
   return arr;
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <> toml::array toml_array(arma::Col<complex> const &value) try {
   toml::array arr;
@@ -47,9 +44,8 @@ template <> toml::array toml_array(arma::Col<complex> const &value) try {
     arr.push_back(toml::array{x.real(), x.imag()});
   }
   return arr;
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template toml::array toml_array(arma::Col<double> const &);
 template toml::array toml_array(arma::Col<arma::sword> const &);

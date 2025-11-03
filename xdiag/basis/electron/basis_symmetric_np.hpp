@@ -45,6 +45,9 @@ public:
   GroupActionLookup<bit_t> const &group_action() const;
   Representation const &irrep() const;
 
+  bool operator==(BasisSymmetricNp const &rhs) const;
+  bool operator!=(BasisSymmetricNp const &rhs) const;
+
   inline int64_t n_rep_ups() const { return reps_up_.size(); }
   inline bit_t rep_ups(int64_t idx_ups) const { return reps_up_[idx_ups]; }
   inline int64_t ups_offset(int64_t idx_ups) const {

@@ -41,9 +41,8 @@ void gram_schmidt_inplace(arma::Mat<coeff_t> &M, int64_t max_col,
       }
     }
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template void gram_schmidt_inplace(arma::Mat<double> &, int64_t, int);
 template void gram_schmidt_inplace(arma::Mat<complex> &, int64_t, int);

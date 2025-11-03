@@ -9,6 +9,7 @@
 #ifdef _OPENMP
 #include <xdiag/parallel/omp/omp_utils.hpp>
 #include <xdiag/random/hash_functions.hpp>
+#include <xdiag/utils/logger.hpp>
 #endif
 
 namespace xdiag::random {
@@ -50,9 +51,8 @@ template <class distro_f> int random_discard(distro_f distro) try {
     }
   }
   XDIAG_THROW("Error initializing RNG: could not determine random_discard");
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 int random_uniform_real_discard() {
   return random_discard(
@@ -65,6 +65,7 @@ int random_normal_discard() {
 
 template <typename coeff_t>
 void fill_random_normal_vector(arma::Col<coeff_t> &v, int seed) {
+
 #ifdef _OPENMP
 #pragma omp parallel
   {

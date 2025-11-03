@@ -56,9 +56,8 @@ void write_scalar(hid_t file_id, std::string field, data_t data) try {
     H5Tclose(datatype);
   }
   close_groups(groups);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template void write_scalar(hid_t, std::string, int8_t);
 template void write_scalar(hid_t, std::string, int16_t);
@@ -112,9 +111,9 @@ void write_std_vector(hid_t file_id, std::string field,
     H5Tclose(datatype);
   }
   close_groups(groups);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 template void write_std_vector(hid_t, std::string, std::vector<int8_t> const &);
 template void write_std_vector(hid_t, std::string,
                                std::vector<int16_t> const &);
@@ -175,9 +174,8 @@ void write_arma_vector(hid_t file_id, std::string field,
     H5Tclose(datatype);
   }
   close_groups(groups);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template void write_arma_vector(hid_t, std::string,
                                 arma::Col<arma::sword> const &);
@@ -231,9 +229,8 @@ void write_arma_matrix(hid_t file_id, std::string field,
     H5Tclose(datatype);
   }
   close_groups(groups);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template void write_arma_matrix(hid_t, std::string,
                                 arma::Mat<arma::sword> const &);
@@ -290,9 +287,8 @@ void write_arma_cube(hid_t file_id, std::string field,
     H5Tclose(datatype);
   }
   close_groups(groups);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template void write_arma_cube(hid_t, std::string,
                               arma::Cube<arma::sword> const &);
@@ -365,9 +361,8 @@ void write_arma_col(hid_t file_id, std::string field, int col_number,
     H5Tclose(datatype);
   }
   close_groups(groups);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template void write_arma_col(hid_t, std::string, int col_number,
                              arma::Col<arma::sword> const &);
@@ -445,9 +440,8 @@ void write_arma_slice(hid_t file_id, std::string field, int slice_number,
     H5Tclose(datatype);
   }
   close_groups(groups);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template void write_arma_slice(hid_t, std::string, int slice_number,
                                arma::Mat<arma::sword> const &);
@@ -461,224 +455,215 @@ template void write_arma_slice(hid_t, std::string, int slice_number,
 template <>
 void write(hid_t file_id, std::string field, int8_t const &data) try {
   write_scalar(file_id, field, data);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 template <>
 void write(hid_t file_id, std::string field, int16_t const &data) try {
   write_scalar(file_id, field, data);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 template <>
 void write(hid_t file_id, std::string field, int32_t const &data) try {
   write_scalar(file_id, field, data);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 template <>
 void write(hid_t file_id, std::string field, int64_t const &data) try {
   write_scalar(file_id, field, data);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 template <>
 void write(hid_t file_id, std::string field, uint8_t const &data) try {
   write_scalar(file_id, field, data);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 template <>
 void write(hid_t file_id, std::string field, uint16_t const &data) try {
   write_scalar(file_id, field, data);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 template <>
 void write(hid_t file_id, std::string field, uint32_t const &data) try {
   write_scalar(file_id, field, data);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 template <>
 void write(hid_t file_id, std::string field, uint64_t const &data) try {
   write_scalar(file_id, field, data);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 template <>
 void write(hid_t file_id, std::string field, double const &data) try {
   write_scalar(file_id, field, data);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 template <>
 void write(hid_t file_id, std::string field, complex const &data) try {
   write_scalar(file_id, field, data);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <>
 void write(hid_t file_id, std::string field,
            std::vector<int8_t> const &data) try {
   write_std_vector(file_id, field, data);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 template <>
 void write(hid_t file_id, std::string field,
            std::vector<int16_t> const &data) try {
   write_std_vector(file_id, field, data);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 template <>
 void write(hid_t file_id, std::string field,
            std::vector<int32_t> const &data) try {
   write_std_vector(file_id, field, data);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 template <>
 void write(hid_t file_id, std::string field,
            std::vector<int64_t> const &data) try {
   write_std_vector(file_id, field, data);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 template <>
 void write(hid_t file_id, std::string field,
            std::vector<uint8_t> const &data) try {
   write_std_vector(file_id, field, data);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 template <>
 void write(hid_t file_id, std::string field,
            std::vector<uint16_t> const &data) try {
   write_std_vector(file_id, field, data);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 template <>
 void write(hid_t file_id, std::string field,
            std::vector<uint32_t> const &data) try {
   write_std_vector(file_id, field, data);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 template <>
 void write(hid_t file_id, std::string field,
            std::vector<uint64_t> const &data) try {
   write_std_vector(file_id, field, data);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 template <>
 void write(hid_t file_id, std::string field,
            std::vector<double> const &data) try {
   write_std_vector(file_id, field, data);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 template <>
 void write(hid_t file_id, std::string field,
            std::vector<complex> const &data) try {
   write_std_vector(file_id, field, data);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <>
 void write(hid_t file_id, std::string field,
            arma::Col<arma::sword> const &data) try {
   write_arma_vector(file_id, field, data);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 template <>
 void write(hid_t file_id, std::string field,
            arma::Col<arma::uword> const &data) try {
   write_arma_vector(file_id, field, data);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <>
 void write(hid_t file_id, std::string field,
            arma::Col<double> const &data) try {
   write_arma_vector(file_id, field, data);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 template <>
 void write(hid_t file_id, std::string field,
            arma::Col<complex> const &data) try {
   write_arma_vector(file_id, field, data);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <>
 void write(hid_t file_id, std::string field,
            arma::Mat<arma::sword> const &data) try {
   write_arma_matrix(file_id, field, data);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 template <>
 void write(hid_t file_id, std::string field,
            arma::Mat<arma::uword> const &data) try {
   write_arma_matrix(file_id, field, data);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <>
 void write(hid_t file_id, std::string field,
            arma::Mat<double> const &data) try {
   write_arma_matrix(file_id, field, data);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 template <>
 void write(hid_t file_id, std::string field,
            arma::Mat<complex> const &data) try {
   write_arma_matrix(file_id, field, data);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <>
 void write(hid_t file_id, std::string field,
            arma::Cube<arma::sword> const &data) try {
   write_arma_cube(file_id, field, data);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 template <>
 void write(hid_t file_id, std::string field,
            arma::Cube<arma::uword> const &data) try {
   write_arma_cube(file_id, field, data);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <>
 void write(hid_t file_id, std::string field,
            arma::Cube<double> const &data) try {
   write_arma_cube(file_id, field, data);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 template <>
 void write(hid_t file_id, std::string field,
            arma::Cube<complex> const &data) try {
   write_arma_cube(file_id, field, data);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 } // namespace xdiag::hdf5
 #endif

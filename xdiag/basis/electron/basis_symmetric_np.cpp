@@ -13,7 +13,7 @@
 
 namespace xdiag::basis::electron {
 
-template <class bit_t>
+template <typename bit_t>
 BasisSymmetricNp<bit_t>::BasisSymmetricNp(int64_t nsites, int64_t nup,
                                           int64_t ndn,
                                           Representation const &irrep) try
@@ -54,24 +54,23 @@ BasisSymmetricNp<bit_t>::BasisSymmetricNp(int64_t nsites, int64_t nup,
             reps_up_, Combinations<bit_t>(nsites, ndn), group_action_,
             characters);
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
-template <class bit_t> int64_t BasisSymmetricNp<bit_t>::nsites() const {
+template <typename bit_t> int64_t BasisSymmetricNp<bit_t>::nsites() const {
   return nsites_;
 }
-template <class bit_t> int64_t BasisSymmetricNp<bit_t>::nup() const {
+template <typename bit_t> int64_t BasisSymmetricNp<bit_t>::nup() const {
   return nup_;
 }
-template <class bit_t> int64_t BasisSymmetricNp<bit_t>::ndn() const {
+template <typename bit_t> int64_t BasisSymmetricNp<bit_t>::ndn() const {
   return ndn_;
 }
 
-template <class bit_t> int64_t BasisSymmetricNp<bit_t>::dim() const {
+template <typename bit_t> int64_t BasisSymmetricNp<bit_t>::dim() const {
   return size_;
 }
-template <class bit_t> int64_t BasisSymmetricNp<bit_t>::size() const {
+template <typename bit_t> int64_t BasisSymmetricNp<bit_t>::size() const {
   return size_;
 }
 template <typename bit_t>
@@ -102,13 +101,24 @@ int64_t BasisSymmetricNp<bit_t>::index(bit_t ups, bit_t dns) const {
   }
 }
 
-template <class bit_t>
+template <typename bit_t>
 GroupActionLookup<bit_t> const &BasisSymmetricNp<bit_t>::group_action() const {
   return group_action_;
 }
-template <class bit_t>
+template <typename bit_t>
 Representation const &BasisSymmetricNp<bit_t>::irrep() const {
   return irrep_;
+}
+
+template <typename bit_t>
+bool BasisSymmetricNp<bit_t>::operator==(BasisSymmetricNp const &rhs) const {
+  return (nsites_ == rhs.nsites_) && (nup_ == rhs.nup_) && (ndn_ == rhs.ndn_) &&
+         (group_action_ == rhs.group_action_) && (irrep_ == rhs.irrep_);
+}
+
+template <typename bit_t>
+bool BasisSymmetricNp<bit_t>::operator!=(BasisSymmetricNp const &rhs) const {
+  return !operator==(rhs);
 }
 
 template class BasisSymmetricNp<uint32_t>;

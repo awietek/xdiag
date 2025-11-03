@@ -21,9 +21,8 @@ Scalar scalar(toml::node const &node) try {
     XDIAG_THROW("Invalid TOML format for Scalar. Must be either a real number "
                 "or a length 2 array denoting a complex number");
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 Coupling coupling(toml::node const &node) try {
   auto real_node = node.value<double>();
@@ -37,9 +36,8 @@ Coupling coupling(toml::node const &node) try {
     XDIAG_THROW("Invalid TOML format for Coupling. Must be either a string, a "
                 "real number, or a complex number given by a length 2 array.");
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 Matrix matrix(toml::node const &node) try {
   // A real matrix should be a MxN array
@@ -88,10 +86,8 @@ Matrix matrix(toml::node const &node) try {
     XDIAG_THROW(
         "TOML node cannot be converted to Matrix. Node is not an array.")
   }
-
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 static Op op_from_array(toml::array const &array, int64_t start) try {
   int64_t size = array.size();
@@ -128,10 +124,8 @@ static Op op_from_array(toml::array const &array, int64_t start) try {
   } else {
     return Op(type, sites);
   }
-
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 Op op(toml::node const &node) try {
   auto array = node.as_array();
@@ -141,9 +135,8 @@ Op op(toml::node const &node) try {
     XDIAG_THROW(
         "Error converting TOML to Op: Input TOML node is not an array.");
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 OpSum opsum(toml::node const &node) try {
   auto array = node.as_array();
@@ -189,9 +182,8 @@ OpSum opsum(toml::node const &node) try {
         "Cannot convert TOML to OpSum. Entries must me at least arrays of "
         "length two containing at least a coupling and a type");
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 toml::array toml_array(Op const &op) try {
   toml::array array;
@@ -217,9 +209,8 @@ toml::array toml_array(Op const &op) try {
   }
 
   return array;
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 toml::array toml_array(OpSum const &ops) try {
   toml::array array;
@@ -244,9 +235,8 @@ toml::array toml_array(OpSum const &ops) try {
     array.push_back(arr);
   }
   return array;
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 toml::table toml_table(OpSum const &ops) try {
   toml::table table;
@@ -268,8 +258,7 @@ toml::table toml_table(OpSum const &ops) try {
     table.insert_or_assign("Constants", constants);
   }
   return table;
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 } // namespace xdiag::io

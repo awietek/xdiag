@@ -21,9 +21,8 @@ bool isreal(Op const &op) try {
   } else {
     return is_real_type(type);
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 bool isreal(OpSum const &ops) try {
   for (auto [cpl, op] : ops.plain()) {
@@ -32,8 +31,7 @@ bool isreal(OpSum const &ops) try {
     }
   }
   return true;
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 } // namespace xdiag

@@ -7,6 +7,7 @@
 //
 #include "../../catch.hpp"
 #include <xdiag/algebra/matrix.hpp>
+#include <xdiag/algebra/sparse/csr_matrix.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
 #include <xdiag/algorithms/time_evolution/evolve_lanczos.hpp>
 #include <xdiag/algorithms/time_evolution/expm.hpp>
@@ -63,6 +64,7 @@ TEST_CASE("analytic_case_free_particle_1D", "[time_evolution]") try {
   }
   ops["t"] = t;
   ops["U"] = 1;
+  auto csr = csr_matrix(ops, block);
 
   std::vector<std::string> psi_0_list;
   for (int i = 0; i < nsites; i++) {
@@ -78,10 +80,13 @@ TEST_CASE("analytic_case_free_particle_1D", "[time_evolution]") try {
     std::vector<double> tols = {1e-2, 1e-4, 1e-6, 1e-8, 1e-10, 1e-12};
     for (auto tol : tols) {
       auto w_expokit = time_evolve(ops, psi_0, time, tol, "expokit");
+      auto w_expokit_csr = time_evolve(csr, psi_0, time, tol, "expokit");
+
       arma::cx_vec w_analytic = psi_analytic(time);
 
       // norm is one so no division here by norm of true
       auto eps = arma::norm(w_expokit.vectorC() - w_analytic);
+      auto epscsr = arma::norm(w_expokit_csr.vectorC() - w_analytic);
 
       // cout << "err: " << eps / time << endl;
       // cout << "time = " << time << endl;
@@ -89,6 +94,7 @@ TEST_CASE("analytic_case_free_particle_1D", "[time_evolution]") try {
       // w_expokit.vector().print("lanc");
 
       REQUIRE(eps < 4 * tol);
+      REQUIRE(epscsr < 4 * tol);
     }
   }
 } catch (xdiag::Error e) {
@@ -165,6 +171,7 @@ TEST_CASE("analytic_case_free_particle_2D", "[time_evolution]") try {
   ops["t"] = t;
   ops["t1"] = t1;
   ops["U"] = 1;
+  auto csr = csr_matrix(ops, block);
 
   std::vector<std::string> psi_0_list;
   for (int i = 0; i < nsites; i++) {
@@ -180,10 +187,12 @@ TEST_CASE("analytic_case_free_particle_2D", "[time_evolution]") try {
     std::vector<double> tols = {1e-2, 1e-4, 1e-6, 1e-8, 1e-10, 1e-12};
     for (auto tol : tols) {
       auto w_expokit = time_evolve(ops, psi_0, time, tol, "expokit");
+      auto w_expokit_csr = time_evolve(csr, psi_0, time, tol, "expokit");
       arma::cx_vec w_analytic = psi_analytic(time);
 
       // norm is one so no division here by norm of true
       auto eps = arma::norm(w_expokit.vectorC() - w_analytic);
+      auto epscsr = arma::norm(w_expokit.vectorC() - w_analytic);
 
       // cout << "tol: " << tol << endl;
       // cout << "err: " << eps << endl;
@@ -195,6 +204,7 @@ TEST_CASE("analytic_case_free_particle_2D", "[time_evolution]") try {
       // cout << "norm analytic " << norm(w_analytic) << endl;
 
       REQUIRE(eps < 4 * tol);
+      REQUIRE(epscsr < 4 * tol);
     }
   }
 } catch (xdiag::Error e) {
@@ -239,7 +249,7 @@ TEST_CASE("tj_complex_timeevo", "[time_evolution]") try {
   }
   pstate[nsites / 2] = "Emp";
   auto block = tJ(nsites, nsites / 2, nsites / 2);
-
+  auto csr = csr_matrixC(ops, block);
   auto H = matrixC(ops, block);
   double e0 = eigval0(ops, block);
   arma::cx_mat Hshift =
@@ -258,10 +268,15 @@ TEST_CASE("tj_complex_timeevo", "[time_evolution]") try {
       Log("time: {}, tol: {}", time, tol);
       tic();
       auto psi = time_evolve(ops, psi_0, time, tol, "expokit");
-      toc();
+      toc("OpSum");
+      tic();
+      auto psicsr = time_evolve(csr, psi_0, time, tol, "expokit");
+      toc("CSRMatrix");
+
       cx_vec psi2 = expm(cx_mat(-1.0i * time * H)) * psi_0.vectorC();
 
       double eps = norm(psi2 - psi.vectorC());
+      double epscsr = norm(psi2 - psicsr.vectorC());
       // cout << "tol: " << tol << endl;
       // cout << "err: " << eps << endl;
       // cout << "time = " << time << endl;
@@ -272,6 +287,7 @@ TEST_CASE("tj_complex_timeevo", "[time_evolution]") try {
       // cout << "norm analytic " << norm(w_analytic) << endl;
 
       REQUIRE(eps < 4 * tol);
+      REQUIRE(epscsr < 4 * tol);
     }
   }
 
@@ -285,14 +301,22 @@ TEST_CASE("tj_complex_timeevo", "[time_evolution]") try {
       Log("time: {}, tol: {}", time, tol);
       tic();
       auto psi = time_evolve(ops, psi_0, time, tol, "lanczos");
-      toc();
+      toc("OpSum");
+      tic();
+      auto psicsr = time_evolve(csr, psi_0, time, tol, "lanczos");
+      toc("CSRMatrix");
+
       cx_vec psi2 = expm(cx_mat(-1.0i * time * H)) * psi_0.vectorC();
 
       auto ipsi = imaginary_time_evolve(ops, psi_0, time, tol, e0);
+      auto ipsicsr = imaginary_time_evolve(csr, psi_0, time, tol, e0);
+
       cx_vec ipsi2 = expm(cx_mat(-time * Hshift)) * psi_0.vectorC();
 
       double eps = norm(psi2 - psi.vectorC());
+      double epscsr = norm(psi2 - psicsr.vectorC());
       double ieps = norm(ipsi2 - ipsi.vectorC());
+      double iepscsr = norm(ipsi2 - ipsicsr.vectorC());
 
       // Log("eps: {}, ieps: {}", eps, ieps);
       // Log("nmat: {}, nlcz: {}", arma::norm(ipsi.vectorC()),
@@ -309,6 +333,8 @@ TEST_CASE("tj_complex_timeevo", "[time_evolution]") try {
 
       REQUIRE(eps < 40 * tol);
       REQUIRE(ieps < 40 * tol);
+      REQUIRE(epscsr < 40 * tol);
+      REQUIRE(iepscsr < 40 * tol);
     }
   }
 

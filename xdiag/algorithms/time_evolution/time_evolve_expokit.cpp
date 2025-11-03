@@ -6,6 +6,8 @@
 
 #include <xdiag/algebra/algebra.hpp>
 #include <xdiag/algebra/apply.hpp>
+#include <xdiag/algebra/sparse/apply.hpp>
+#include <xdiag/algebra/sparse/logic.hpp>
 #include <xdiag/algorithms/time_evolution/zahexpv.hpp>
 #include <xdiag/operators/logic/hc.hpp>
 #include <xdiag/operators/logic/isapprox.hpp>
@@ -13,28 +15,61 @@
 
 namespace xdiag {
 
+template <typename op_t>
+TimeEvolveExpokitResult
+time_evolve_expokit(op_t const &ops, State state, double time, double precision,
+                    int64_t m, double anorm, int64_t nnorm) try {
+  auto res =
+      time_evolve_expokit_inplace(ops, state, time, precision, m, anorm, nnorm);
+  return {res.error, res.hump, state};
+}
+XDIAG_CATCH
+
 TimeEvolveExpokitResult time_evolve_expokit(OpSum const &ops, State state,
                                             double time, double precision,
                                             int64_t m, double anorm,
                                             int64_t nnorm) try {
-  auto res =
-      time_evolve_expokit_inplace(ops, state, time, precision, m, anorm, nnorm);
-  return {res.error, res.hump, state};
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
+  return time_evolve_expokit<OpSum>(ops, state, time, precision, m, anorm,
+                                    nnorm);
 }
+XDIAG_CATCH
 
+template <typename idx_t, typename coeff_t>
+TimeEvolveExpokitResult
+time_evolve_expokit(CSRMatrix<idx_t, coeff_t> const &ops, State state,
+                    double time, double precision, int64_t m, double anorm,
+                    int64_t nnorm) try {
+  return time_evolve_expokit<CSRMatrix<idx_t, coeff_t>>(
+      ops, state, time, precision, m, anorm, nnorm);
+}
+XDIAG_CATCH
+
+template TimeEvolveExpokitResult
+time_evolve_expokit(CSRMatrix<int32_t, double> const &, State, double, double,
+                    int64_t, double, int64_t);
+template TimeEvolveExpokitResult
+time_evolve_expokit(CSRMatrix<int32_t, complex> const &, State, double, double,
+                    int64_t, double, int64_t);
+template TimeEvolveExpokitResult
+time_evolve_expokit(CSRMatrix<int64_t, double> const &, State, double, double,
+                    int64_t, double, int64_t);
+template TimeEvolveExpokitResult
+time_evolve_expokit(CSRMatrix<int64_t, complex> const &, State, double, double,
+                    int64_t, double, int64_t);
+
+template <typename op_t>
 TimeEvolveExpokitInplaceResult
-time_evolve_expokit_inplace(OpSum const &ops, State &state, double time,
+time_evolve_expokit_inplace(op_t const &ops, State &state, double time,
                             double precision, int64_t m, double anorm,
                             int64_t nnorm) try {
+
   if (dim(state) == 0) {
     Log.warn("Warning: initial state zero dimensional in "
              "time_evolve_expokit_inplace");
     return TimeEvolveExpokitInplaceResult();
   }
 
-  if (!isapprox(ops, hc(ops))) {
+  if (!ishermitian(ops)) {
     XDIAG_THROW("Input OpSum is not hermitian. Evolution using the expokit "
                 "algorithm requires the operator to be hermitian.");
   }
@@ -85,8 +120,39 @@ time_evolve_expokit_inplace(OpSum const &ops, State &state, double time,
 
   timing(t0, rightnow(), "Time evolve expokit time", 1);
   return {err, hump};
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
+TimeEvolveExpokitInplaceResult
+time_evolve_expokit_inplace(OpSum const &ops, State &state, double time,
+                            double precision, int64_t m, double anorm,
+                            int64_t nnorm) try {
+  return time_evolve_expokit_inplace<OpSum>(ops, state, time, precision, m,
+                                            anorm, nnorm);
+}
+XDIAG_CATCH
+
+template <typename idx_t, typename coeff_t>
+TimeEvolveExpokitInplaceResult
+time_evolve_expokit_inplace(CSRMatrix<idx_t, coeff_t> const &ops, State &state,
+                            double time, double precision, int64_t m,
+                            double anorm, int64_t nnorm) try {
+  return time_evolve_expokit_inplace<CSRMatrix<idx_t, coeff_t>>(
+      ops, state, time, precision, m, anorm, nnorm);
+}
+XDIAG_CATCH
+
+template TimeEvolveExpokitInplaceResult
+time_evolve_expokit_inplace(CSRMatrix<int32_t, double> const &, State &, double,
+                            double, int64_t, double, int64_t);
+template TimeEvolveExpokitInplaceResult
+time_evolve_expokit_inplace(CSRMatrix<int32_t, complex> const &, State &,
+                            double, double, int64_t, double, int64_t);
+template TimeEvolveExpokitInplaceResult
+time_evolve_expokit_inplace(CSRMatrix<int64_t, double> const &, State &, double,
+                            double, int64_t, double, int64_t);
+template TimeEvolveExpokitInplaceResult
+time_evolve_expokit_inplace(CSRMatrix<int64_t, complex> const &, State &,
+                            double, double, int64_t, double, int64_t);
 
 } // namespace xdiag

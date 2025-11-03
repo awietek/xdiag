@@ -21,7 +21,7 @@ template <class basis_t, typename coeff_t>
 void apply_exchange_postfix(Coupling const &cpl, Op const &op,
                             basis_t const &basis,
                             arma::Col<coeff_t> const &vec_in,
-                            arma::Col<coeff_t> &vec_out) try {
+                            arma::Col<coeff_t> &vec_out) {
   using bit_t = typename basis_t::bit_t;
 
   coeff_t J = cpl.scalar().as<coeff_t>();
@@ -50,14 +50,12 @@ void apply_exchange_postfix(Coupling const &cpl, Op const &op,
       ++idx;
     }
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
 
 // apply_exchange_prefix works with the send/recv buffer as input/output vectors
 template <class basis_t, typename coeff_t>
 void apply_exchange_prefix(Coupling const &cpl, Op const &op,
-                           basis_t const &basis) try {
+                           basis_t const &basis) {
   using bit_t = typename basis_t::bit_t;
 
   int64_t buffer_size = basis.size_max();
@@ -91,15 +89,13 @@ void apply_exchange_prefix(Coupling const &cpl, Op const &op,
       ++idx;
     }
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
 
 template <class basis_t, typename coeff_t>
 void apply_exchange_mixed(Coupling const &cpl, Op const &op,
                           basis_t const &basis,
                           arma::Col<coeff_t> const &vec_in,
-                          arma::Col<coeff_t> &vec_out) try {
+                          arma::Col<coeff_t> &vec_out) {
   using bit_t = typename basis_t::bit_t;
   int32_t mpi_rank, mpi_size;
   MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
@@ -253,8 +249,6 @@ void apply_exchange_mixed(Coupling const &cpl, Op const &op,
       }
     }
   } // for (bit_t prefix : Subsets<bit_t>(n_prefix_bits))
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
 
 } // namespace xdiag::basis::spinhalf_distributed

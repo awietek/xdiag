@@ -11,9 +11,9 @@
 
 namespace xdiag::basis::tj {
 
-template <typename coeff_t, bool symmetric, class basis_t, class fill_f>
-void apply_exchange(Coupling const &cpl, Op const &op, basis_t const &basis,
-                    fill_f fill) try {
+template <bool symmetric, typename coeff_t, typename basis_t, typename fill_f>
+void apply_exchange(Coupling const &cpl, Op const &op, basis_t const &basis_in,
+                    basis_t const &basis_out, fill_f fill) {
   using bit_t = typename basis_t::bit_t;
 
   coeff_t J = cpl.scalar().as<coeff_t>();
@@ -35,28 +35,25 @@ void apply_exchange(Coupling const &cpl, Op const &op, basis_t const &basis,
   auto non_zero_term_dns = [&](bit_t dn) {
     return bits::popcnt(dn & flipmask) == 1;
   };
-  auto term_actionups = [&](bit_t up) -> std::pair<bit_t, coeff_t> {
+  auto term_actionups = [&](bit_t up) -> bit_t { return up ^ flipmask; };
+  auto term_actiondns = [&](bit_t dn) -> bit_t { return dn ^ flipmask; };
+  auto matrix_element = [&](bit_t up, bit_t dn) -> coeff_t {
     bool fermi_up = bits::popcnt(up & fermimask) & 1;
-    bit_t up_flip = up ^ flipmask;
+    bool fermi_dn = bits::popcnt(dn & fermimask) & 1;
     if constexpr (isreal<coeff_t>()) {
-      return {up_flip, fermi_up ? Jhalf : -Jhalf};
+      return (fermi_up ^ fermi_dn) ? Jhalf : -Jhalf;
     } else {
       if (bits::gbit(up, s1)) {
-        return {up_flip, fermi_up ? Jhalf : -Jhalf};
+        return (fermi_up ^ fermi_dn) ? Jhalf : -Jhalf;
       } else {
-        return {up_flip, fermi_up ? Jhalf_conj : -Jhalf_conj};
+        return (fermi_up ^ fermi_dn) ? Jhalf_conj : -Jhalf_conj;
       }
     }
   };
-  auto term_actiondns = [&](bit_t dn) -> std::pair<bit_t, coeff_t> {
-    bool fermi_dn = bits::popcnt(dn & fermimask) & 1;
-    return {dn ^ flipmask, fermi_dn ? -1.0 : 1.0};
-  };
-  generic_term_mixed<bit_t, coeff_t, symmetric>(
-      basis, basis, non_zero_term_ups, non_zero_term_dns, term_actionups,
-      term_actiondns, fill);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
+
+  generic_term_mixed<symmetric, coeff_t>(basis_in, basis_out, non_zero_term_ups,
+                                         non_zero_term_dns, term_actionups,
+                                         term_actiondns, matrix_element, fill);
 }
 
 } // namespace xdiag::basis::tj

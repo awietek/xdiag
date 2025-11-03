@@ -183,9 +183,7 @@ representatives_indices_symmetries_limits_norms_omp(
   }
 
   return {reps, idces, syms, sym_limits, norms};
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
+} XDIAG_CATCH
 
 } // namespace xdiag::symmetries
 #endif

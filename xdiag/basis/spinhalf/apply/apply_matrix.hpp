@@ -17,7 +17,7 @@ namespace xdiag::basis::spinhalf {
 
 template <typename coeff_t, bool symmetric, class basis_t, class fill_f>
 void apply_matrix(Coupling const &cpl, Op const &op, basis_t const &basis_in,
-                  basis_t const &basis_out, fill_f fill) try {
+                  basis_t const &basis_out, fill_f fill) {
   using bit_t = typename basis_t::bit_t;
 
   // Decompose into sum of non-branching operators
@@ -59,8 +59,6 @@ void apply_matrix(Coupling const &cpl, Op const &op, basis_t const &basis_in,
     }
 
   } // for (auto const &op_nb : ops_nb)
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
 
 } // namespace xdiag::basis::spinhalf

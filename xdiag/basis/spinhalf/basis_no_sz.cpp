@@ -17,9 +17,8 @@ BasisNoSz<bit_t>::BasisNoSz(int64_t nsites) try
   if (nsites < 0) {
     XDIAG_THROW("Found nsites < 0");
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <typename bit_t>
 combinatorics::SubsetsIterator<bit_t> BasisNoSz<bit_t>::begin() const {

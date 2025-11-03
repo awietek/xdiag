@@ -25,8 +25,9 @@ void check_valid(Op const &op) try {
     } else if ((type == "Hop") || (type == "Hopup") || (type == "Hopdn") ||
                (type == "SzSz") || (type == "SdotS") || (type == "Exchange") ||
                (type == "NtotNtot") || (type == "NupdnNupdn") ||
-               (type == "tJSzSz") || (type == "tJSdotS") || (type == "NupNdn") ||
-               (type == "NupNup") || (type == "NdnNdn") || (type == "NdnNup")) {
+               (type == "tJSzSz") || (type == "tJSdotS") ||
+               (type == "NupNdn") || (type == "NupNup") || (type == "NdnNdn") ||
+               (type == "NdnNup")) {
       must_not_have_matrix(op);
       must_have_sites(op);
       must_have_nsites(op, 2);
@@ -50,34 +51,30 @@ void check_valid(Op const &op) try {
                             "recognizes the following Op types:\n{}",
                             type, to_string(op), known_types_string()));
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 void check_valid(OpSum const &ops) try {
   for (auto [cpl, op] : ops) {
     check_valid(op);
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 void check_valid(Op const &op, int64_t nsites) try {
   check_valid(op);
   if (op.hassites()) {
     must_have_sites_in_range(op, 0, nsites);
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 void check_valid(OpSum const &ops, int64_t nsites) try {
   for (auto [cpl, op] : ops) {
     check_valid(op, nsites);
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 void must_have_sites(Op const &op) try {
   if (!op.hassites()) {
@@ -85,9 +82,8 @@ void must_have_sites(Op const &op) try {
         fmt::format("Op of type \"{}\" must have sites defined, got Op:\n{}",
                     op.type(), to_string(op)));
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 void must_not_have_sites(Op const &op) try {
   if (op.hassites()) {
@@ -95,9 +91,8 @@ void must_not_have_sites(Op const &op) try {
         fmt::format("Op of type \"{}\" cannot have sites defined, got Op:\n{}",
                     op.type(), to_string(op)));
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 void must_have_nsites(Op const &op, int64_t n) try {
   if (op.hassites()) {
@@ -111,9 +106,8 @@ void must_have_nsites(Op const &op, int64_t n) try {
         fmt::format("Op of type \"{}\" must have sites defined, got Op:\n{}",
                     op.type(), to_string(op)));
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 void must_have_disjoint_sites(Op const &op) try {
   if (op.hassites()) {
@@ -129,9 +123,9 @@ void must_have_disjoint_sites(Op const &op) try {
         fmt::format("Op of type \"{}\" must have sites defined, got Op:\n{}",
                     op.type(), to_string(op)));
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 void must_have_sites_in_range(Op const &op, int64_t l, int64_t u) try {
   if (op.hassites()) {
     for (auto s : op.sites()) {
@@ -147,9 +141,8 @@ void must_have_sites_in_range(Op const &op, int64_t l, int64_t u) try {
         fmt::format("Op of type \"{}\" must have sites defined, got Op:\n{}",
                     op.type(), to_string(op)));
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 void must_have_matrix(Op const &op) try {
   if (!op.hasmatrix()) {
@@ -157,9 +150,8 @@ void must_have_matrix(Op const &op) try {
         fmt::format("Op of type \"{}\" must have a matrix defined, got Op:\n{}",
                     op.type(), to_string(op)));
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 void must_not_have_matrix(Op const &op) try {
   if (op.hasmatrix()) {
@@ -167,8 +159,7 @@ void must_not_have_matrix(Op const &op) try {
         "Op of type \"{}\" cannot have a matrix defined, got Op:\n{}",
         op.type(), to_string(op)));
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 } // namespace xdiag

@@ -10,9 +10,9 @@
 
 namespace xdiag::basis::tj {
 
-template <typename coeff_t, bool symmetric, class basis_t, class fill_f>
-void apply_szsz(Coupling const &cpl, Op const &op, basis_t const &basis,
-                fill_f fill) try {
+template <bool symmetric, typename coeff_t, typename basis_t, typename fill_f>
+void apply_szsz(Coupling const &cpl, Op const &op, basis_t const &basis_in,
+                basis_t const &basis_out, fill_f fill) {
   using bit_t = typename basis_t::bit_t;
 
   coeff_t J = cpl.scalar().as<coeff_t>();
@@ -46,9 +46,8 @@ void apply_szsz(Coupling const &cpl, Op const &op, basis_t const &basis,
     }
   };
 
-  tj::generic_term_diag<coeff_t, symmetric>(basis, term_action, fill);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
+  tj::generic_term_diag<symmetric, coeff_t>(basis_in, basis_out, term_action,
+                                            fill);
 }
 
 } // namespace xdiag::basis::tj

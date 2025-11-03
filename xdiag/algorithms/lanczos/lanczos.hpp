@@ -83,9 +83,7 @@ lanczos_result_t lanczos(mult_f mult, dot_f dot, converged_f converged,
 
   return lanczos_result_t{tmatrix.alphas(), tmatrix.betas(),
                           tmatrix.eigenvalues(), iteration, criterion};
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-  return lanczos_result_t();
 }
+XDIAG_CATCH
 
 } // namespace xdiag::lanczos

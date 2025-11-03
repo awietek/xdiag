@@ -20,15 +20,14 @@ GPWF::GPWF(arma::mat const &onebody_wfs, int64_t nup) try : isreal_(true) {
   ndn_ = nsites_ - nup_;
 
   work_matrix_ = mat(nsites_, nsites_, fill::zeros);
-  onebody_wfs_up_ = onebody_wfs(span::all, span(0, nup_-1));
-  onebody_wfs_dn_ = onebody_wfs(span::all, span(nup_, nsites_-1));
+  onebody_wfs_up_ = onebody_wfs(span::all, span(0, nup_ - 1));
+  onebody_wfs_dn_ = onebody_wfs(span::all, span(nup_, nsites_ - 1));
 
   work_matrix_c_ = cx_mat();
   onebody_wfs_up_c_ = cx_mat();
   onebody_wfs_dn_c_ = cx_mat();
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 GPWF::GPWF(arma::cx_mat const &onebody_wfs, int64_t nup) try : isreal_(false) {
   using namespace arma;
@@ -46,11 +45,10 @@ GPWF::GPWF(arma::cx_mat const &onebody_wfs, int64_t nup) try : isreal_(false) {
   onebody_wfs_dn_ = mat();
 
   work_matrix_c_ = cx_mat(nsites_, nsites_, fill::zeros);
-  onebody_wfs_up_c_ = onebody_wfs(span::all, span(0, nup_-1));
-  onebody_wfs_dn_c_ = onebody_wfs(span::all, span(nup_, nsites_-1));
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
+  onebody_wfs_up_c_ = onebody_wfs(span::all, span(0, nup_ - 1));
+  onebody_wfs_dn_c_ = onebody_wfs(span::all, span(nup_, nsites_ - 1));
 }
+XDIAG_CATCH
 
 int64_t GPWF::nsites() const { return nsites_; }
 int64_t GPWF::nup() const { return nup_; }
@@ -66,11 +64,11 @@ static coeff_t gpwf_coefficient(ProductState const &pstate, int64_t nsites,
   for (int64_t i = 0; i < nsites; ++i) {
     std::string s = pstate[i];
     if (s == "Up") {
-      work_matrix(i, arma::span(0, nup-1)) =
-          onebody_wfs_up(i, arma::span(0, nup-1));
+      work_matrix(i, arma::span(0, nup - 1)) =
+          onebody_wfs_up(i, arma::span(0, nup - 1));
     } else { // spin at site i is dn
-      work_matrix(i, arma::span(nup, nsites-1)) =
-          onebody_wfs_dn(i, arma::span(0, ndn-1));
+      work_matrix(i, arma::span(nup, nsites - 1)) =
+          onebody_wfs_dn(i, arma::span(0, ndn - 1));
     }
   }
   return arma::det(work_matrix);
@@ -86,9 +84,8 @@ double GPWF::coefficient(ProductState const &pstate) const try {
   }
   return gpwf_coefficient(pstate, nsites_, nup_, ndn_, onebody_wfs_up_,
                           onebody_wfs_dn_, work_matrix_);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 complex GPWF::coefficientC(ProductState const &pstate) const try {
   if (pstate.nsites() != nsites_) {
@@ -102,14 +99,12 @@ complex GPWF::coefficientC(ProductState const &pstate) const try {
     return gpwf_coefficient(pstate, nsites_, nup_, ndn_, onebody_wfs_up_c_,
                             onebody_wfs_dn_c_, work_matrix_c_);
   }
-
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 bool GPWF::operator==(GPWF const &rhs) const {
-  if ((nsites_ != rhs.nsites_) || (nup_ != rhs.nup_) ||
-      (ndn_ != rhs.ndn_) || (isreal_ != rhs.isreal_)) {
+  if ((nsites_ != rhs.nsites_) || (nup_ != rhs.nup_) || (ndn_ != rhs.ndn_) ||
+      (isreal_ != rhs.isreal_)) {
     return false;
   } else {
     if (isreal_) {

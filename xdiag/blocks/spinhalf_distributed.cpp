@@ -42,9 +42,8 @@ SpinhalfDistributed::SpinhalfDistributed(int64_t nsites, int64_t nup,
   assert(dim_ == binomial(nsites, nup));
   size_ = basis::size(*basis_);
   check_dimension_works_with_blas_int_size(size_);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 int64_t SpinhalfDistributed::nsites() const { return nsites_; }
 std::string SpinhalfDistributed::backend() const { return backend_; }
@@ -73,9 +72,9 @@ int64_t SpinhalfDistributed::index(ProductState const &pstate) const try {
         return basis.index(spins);
       },
       *basis_);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 bool SpinhalfDistributed::isreal(double precision) const {
   return true; // would only be nontrivial with space group irreps
 }

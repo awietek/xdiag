@@ -131,9 +131,8 @@ representatives_indices_symmetries_limits_norms(
   }
 
   return {reps, idces, syms, sym_limits, norms};
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <typename bit_t, class StatesIndexing, class GroupAction>
 inline std::tuple<std::vector<bit_t>, std::vector<int64_t>,
@@ -147,18 +146,17 @@ representatives_indices_symmetries_limits(StatesIndexing &&states_indexing,
           states_indexing, group_action, characters);
   (void)norms;
   return {reps, idces, syms, sym_limits};
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <typename bit_t, typename T, class States, class GroupAction>
 inline std::tuple<std::vector<bit_t>, std::vector<double>,
                   std::vector<std::pair<span_size_t, span_size_t>>,
                   std::vector<int64_t>, int64_t>
 electrondns_norms_limits_offset_size(std::vector<bit_t> const &reps_up,
-                                      States &&states_dns,
-                                      GroupAction &&group_action,
-                                      arma::Col<T> const &characters) try {
+                                     States &&states_dns,
+                                     GroupAction &&group_action,
+                                     arma::Col<T> const &characters) try {
 
   std::vector<bit_t> dns_storage;
   std::vector<double> norms_storage;
@@ -206,7 +204,6 @@ electrondns_norms_limits_offset_size(std::vector<bit_t> const &reps_up,
   }
 
   return {dns_storage, norms_storage, dns_limits, ups_offset, size};
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 } // namespace xdiag::symmetries

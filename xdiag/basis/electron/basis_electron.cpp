@@ -20,9 +20,8 @@ template <typename bit_t> bool has_bit_t(BasisElectron const &basis) try {
         return std::is_same<bit_t, typename basis_t::bit_t>::value;
       },
       basis);
-} catch (Error const &error) {
-  XDIAG_RETHROW(error);
 }
+XDIAG_CATCH
 
 template bool has_bit_t<uint32_t>(BasisElectron const &basis);
 template bool has_bit_t<uint64_t>(BasisElectron const &basis);

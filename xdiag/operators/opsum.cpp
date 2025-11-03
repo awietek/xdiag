@@ -23,21 +23,18 @@ OpSum &OpSum::operator=(Op const &op) {
 
 OpSum &OpSum::operator*=(int64_t scalar) try {
   return operator*=((double)scalar);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 OpSum &OpSum::operator*=(double scalar) try {
   return operator*=(Scalar(scalar));
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 OpSum &OpSum::operator*=(complex scalar) try {
   return operator*=(Scalar(scalar));
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 OpSum &OpSum::operator*=(Scalar const &cpl) try {
   for (auto &[c, op] : terms_) {
@@ -55,33 +52,28 @@ OpSum &OpSum::operator*=(Scalar const &cpl) try {
     }
   }
   return *this;
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 OpSum &OpSum::operator/=(int64_t scalar) try {
   return operator/=((double)scalar);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 OpSum &OpSum::operator/=(double scalar) try {
   return operator/=(Scalar(scalar));
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 OpSum &OpSum::operator/=(complex scalar) try {
   return operator/=(Scalar(scalar));
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 OpSum &OpSum::operator/=(Scalar const &cpl) try {
   return operator*=(Scalar(1.0) / cpl);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 OpSum &OpSum::operator+=(OpSum const &ops) try {
   terms_.insert(terms_.end(), ops.terms_.begin(), ops.terms_.end());
@@ -121,54 +113,40 @@ OpSum &OpSum::operator+=(OpSum const &ops) try {
   }
   constants_ = new_constants;
   return *this;
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
-OpSum &OpSum::operator+=(Op const &op) try {
-  return operator+=(OpSum(op));
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
+OpSum &OpSum::operator+=(Op const &op) try { return operator+=(OpSum(op)); }
+XDIAG_CATCH
 
 OpSum OpSum::operator+(OpSum const &op) const try {
   OpSum new_ops = *this;
   new_ops += op;
   return new_ops;
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
-OpSum OpSum::operator+(Op const &op) const try {
-  return operator+(OpSum(op));
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
+XDIAG_CATCH
+
+OpSum OpSum::operator+(Op const &op) const try { return operator+(OpSum(op)); }
+XDIAG_CATCH
 
 OpSum &OpSum::operator-=(OpSum const &ops) try {
   auto nops = ops * Scalar(-1.0);
   return operator+=(nops);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
-OpSum &OpSum::operator-=(Op const &op) try {
-  return operator-=(OpSum(op));
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
+XDIAG_CATCH
+
+OpSum &OpSum::operator-=(Op const &op) try { return operator-=(OpSum(op)); }
+XDIAG_CATCH
 
 OpSum OpSum::operator-(OpSum const &ops) const try {
   OpSum new_ops = *this;
   new_ops -= ops;
   return new_ops;
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
-OpSum OpSum::operator-(Op const &op) const try {
-  return operator-(OpSum(op));
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
+OpSum OpSum::operator-(Op const &op) const try { return operator-(OpSum(op)); }
+XDIAG_CATCH
 
 int64_t OpSum::size() const { return terms_.size(); }
 
@@ -206,9 +184,8 @@ OpSum OpSum::plain() const try {
     }
   }
   return ops;
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 bool OpSum::operator==(OpSum const &rhs) const {
   return (terms_ == rhs.terms_) && (constants_ == rhs.constants_);

@@ -39,9 +39,8 @@ Op permute(Op const &op, Permutation const &perm) try {
   } else {
     return op;
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 OpSum permute(OpSum const &ops, Permutation const &perm) try {
   OpSum ops_permuted;
@@ -49,8 +48,7 @@ OpSum permute(OpSum const &ops, Permutation const &perm) try {
     ops_permuted += cpl * permute(op, perm);
   }
   return ops_permuted;
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 } // namespace xdiag

@@ -6,6 +6,9 @@
 
 #include <xdiag/algebra/algebra.hpp>
 #include <xdiag/algebra/apply.hpp>
+#include <xdiag/algebra/sparse/apply.hpp>
+#include <xdiag/algebra/sparse/logic.hpp>
+#include <xdiag/operators/logic/hc.hpp>
 #include <xdiag/random/hash.hpp>
 #include <xdiag/utils/timing.hpp>
 
@@ -28,7 +31,7 @@ template <typename coeff_t, typename apply_A_f, typename apply_A_T_f,
 double norm_estimate(apply_A_f &&apply_A, apply_A_T_f &&apply_A_T,
                      norm_f &&norm, norm1_f &norm1, norminf_f &norminf,
                      int64_t dim, int64_t size, int64_t n_max_attempts,
-                     uint64_t seed) {
+                     uint64_t seed) try {
   // apply_A: function to apply an operator to a vector
   // apply_A_T: function to apply the transpose of that operator to a vector
   // norm: function to compute the 2-norm
@@ -38,11 +41,16 @@ double norm_estimate(apply_A_f &&apply_A, apply_A_T_f &&apply_A_T,
   // size: size of the local vector (only different from dim when distributed)
   // n_max_attempts: number of attempts to compute norm
   // seed: random seed
-  using vec_t = arma::Col<coeff_t>;
 
+  if (dim == 0) {
+    return 0.;
+  }
+
+  using vec_t = arma::Col<coeff_t>;
   arma::arma_rng::set_seed(seed);
   vec_t e = vec_t(size, arma::fill::randn);
   e /= norm(e);
+
   vec_t v = apply_A(e);
 
   // dim need not necessarily be size for distributed
@@ -52,7 +60,6 @@ double norm_estimate(apply_A_f &&apply_A, apply_A_T_f &&apply_A_T,
 
   double gamma = norm1(v);
   vec_t xsi = arma::sign(v);
-
   vec_t x = apply_A_T(xsi);
 
   for (int k = 2; k <= n_max_attempts; ++k) {
@@ -76,7 +83,6 @@ double norm_estimate(apply_A_f &&apply_A, apply_A_T_f &&apply_A_T,
 
     if (approx_equal(sign(v), xsi, "both", 1e-12, 1e-12) ||
         gamma <= gamma_bar) {
-      // Log("k: {}", k);
       break;
     }
 
@@ -102,28 +108,58 @@ double norm_estimate(apply_A_f &&apply_A, apply_A_T_f &&apply_A_T,
 
   return gamma;
 }
+XDIAG_CATCH
 
-double norm_estimate(OpSum const &ops, Block const &block,
-                     int64_t n_max_attempts, uint64_t seed) try {
+template <typename op_t>
+static double norm_estimate(op_t const &ops, Block const &block,
+                            int64_t n_max_attempts, uint64_t seed) try {
   return std::visit(
       [&](auto &&block) {
         return norm_estimate(ops, block, n_max_attempts, seed);
       },
       block);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-  return 0.;
 }
+XDIAG_CATCH
 
-template <typename block_t>
-double norm_estimate(OpSum const &ops, block_t const &block,
+double norm_estimate(OpSum const &ops, Block const &block,
                      int64_t n_max_attempts, uint64_t seed) try {
+  return norm_estimate<OpSum>(ops, block, n_max_attempts, seed);
+}
+XDIAG_CATCH
+
+template <typename idx_t, typename coeff_t>
+double norm_estimate(CSRMatrix<idx_t, coeff_t> const &ops, Block const &block,
+                     int64_t n_max_attempts, uint64_t seed) try {
+  return norm_estimate<CSRMatrix<idx_t, coeff_t>>(ops, block, n_max_attempts,
+                                                  seed);
+}
+XDIAG_CATCH
+
+template double norm_estimate(CSRMatrix<int32_t, double> const &, Block const &,
+                              int64_t, uint64_t);
+template double norm_estimate(CSRMatrix<int32_t, complex> const &,
+                              Block const &, int64_t, uint64_t);
+template double norm_estimate(CSRMatrix<int64_t, double> const &, Block const &,
+                              int64_t, uint64_t);
+template double norm_estimate(CSRMatrix<int64_t, complex> const &,
+                              Block const &, int64_t, uint64_t);
+
+template <typename op_t, typename block_t>
+double norm_estimate(op_t const &ops, block_t const &block,
+                     int64_t n_max_attempts, uint64_t seed) try {
+  if (size(block) == 0) {
+    return 0.;
+  }
+
+  if (!ishermitian(ops)) {
+    XDIAG_THROW("Norm estimation is only implemented for hermitian operators");
+  }
+
   int iter = 1;
   auto apply_A = [&iter, &ops, &block](arma::cx_vec const &v) {
     auto ta = rightnow();
     auto w = arma::cx_vec(v.n_rows, arma::fill::zeros);
     apply(ops, block, v, block, w);
-    Log(2, "Norm estimation iteration {}", iter);
     timing(ta, rightnow(), "MVM", 2);
     ++iter;
     return w;
@@ -142,10 +178,8 @@ double norm_estimate(OpSum const &ops, block_t const &block,
   return norm_estimate<complex>(apply_A, apply_A, norm_f, norm1_f, norminf_f,
                                 block.dim(), block.size(), n_max_attempts,
                                 seed);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-  return 0.;
 }
+XDIAG_CATCH
 
 template double norm_estimate(OpSum const &ops, Spinhalf const &block, int64_t,
                               uint64_t);
@@ -153,10 +187,44 @@ template double norm_estimate(OpSum const &ops, tJ const &block, int64_t,
                               uint64_t);
 template double norm_estimate(OpSum const &ops, Electron const &block, int64_t,
                               uint64_t);
+
+template double norm_estimate(CSRMatrix<int32_t, double> const &ops,
+                              Spinhalf const &block, int64_t, uint64_t);
+template double norm_estimate(CSRMatrix<int32_t, double> const &ops,
+                              tJ const &block, int64_t, uint64_t);
+template double norm_estimate(CSRMatrix<int32_t, double> const &ops,
+                              Electron const &block, int64_t, uint64_t);
+
+template double norm_estimate(CSRMatrix<int32_t, complex> const &ops,
+                              Spinhalf const &block, int64_t, uint64_t);
+template double norm_estimate(CSRMatrix<int32_t, complex> const &ops,
+                              tJ const &block, int64_t, uint64_t);
+template double norm_estimate(CSRMatrix<int32_t, complex> const &ops,
+                              Electron const &block, int64_t, uint64_t);
+
+template double norm_estimate(CSRMatrix<int64_t, double> const &ops,
+                              Spinhalf const &block, int64_t, uint64_t);
+template double norm_estimate(CSRMatrix<int64_t, double> const &ops,
+                              tJ const &block, int64_t, uint64_t);
+template double norm_estimate(CSRMatrix<int64_t, double> const &ops,
+                              Electron const &block, int64_t, uint64_t);
+
+template double norm_estimate(CSRMatrix<int64_t, complex> const &ops,
+                              Spinhalf const &block, int64_t, uint64_t);
+template double norm_estimate(CSRMatrix<int64_t, complex> const &ops,
+                              tJ const &block, int64_t, uint64_t);
+template double norm_estimate(CSRMatrix<int64_t, complex> const &ops,
+                              Electron const &block, int64_t, uint64_t);
+
 #ifdef XDIAG_USE_MPI
+template double norm_estimate(OpSum const &ops,
+                              SpinhalfDistributed const &block, int64_t,
+                              uint64_t);
 template double norm_estimate(OpSum const &ops, tJDistributed const &block,
                               int64_t, uint64_t);
-
+template double norm_estimate(OpSum const &ops,
+                              ElectronDistributed const &block, int64_t,
+                              uint64_t);
 #endif
 
 template <typename coeff_t>
@@ -174,11 +242,8 @@ double norm_estimate(arma::Mat<coeff_t> const &A, int64_t n_max_attempts,
   };
   return norm_estimate<coeff_t>(apply_A, apply_A_T, norm_f, norm1_f, norminf_f,
                                 A.n_cols, A.n_cols, n_max_attempts, seed);
-
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-  return 0.;
 }
+XDIAG_CATCH
 
 template double norm_estimate(arma::mat const &, int64_t, uint64_t);
 template double norm_estimate(arma::cx_mat const &, int64_t, uint64_t);

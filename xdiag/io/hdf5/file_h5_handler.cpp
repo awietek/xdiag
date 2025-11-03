@@ -20,21 +20,18 @@ FileH5Handler::FileH5Handler(hid_t file_id, std::string field)
 
 template <class data_t> void FileH5Handler::operator=(data_t const &data) try {
   write(file_id_, field_, data);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 hdf5::FileH5Submat FileH5Handler::col(int col_number) try {
   return hdf5::FileH5Submat(file_id_, field_, -1, col_number);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 hdf5::FileH5Subcube FileH5Handler::slice(int slice_number) try {
   return hdf5::FileH5Subcube(file_id_, field_, -1, -1, slice_number);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template XDIAG_API void FileH5Handler::operator=(int8_t const &);
 template XDIAG_API void FileH5Handler::operator=(int16_t const &);

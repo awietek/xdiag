@@ -17,7 +17,7 @@ namespace xdiag::basis::spinhalf {
 
 template <typename coeff_t, bool symmetric, class basis_t, class fill_f>
 void apply_exchange(Coupling const &cpl, Op const &op, basis_t const &basis_in,
-                    basis_t const &basis_out, fill_f fill) try {
+                    basis_t const &basis_out, fill_f fill) {
   using bit_t = typename basis_t::bit_t;
 
   coeff_t J = cpl.scalar().as<coeff_t>();
@@ -57,8 +57,6 @@ void apply_exchange(Coupling const &cpl, Op const &op, basis_t const &basis_in,
     spinhalf::apply_term_offdiag_no_sym<coeff_t>(
         basis_in, basis_out, non_zero_term, term_action, fill);
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
 
 } // namespace xdiag::basis::spinhalf

@@ -27,9 +27,8 @@ static void check_characters(PermutationGroup const &group,
       }
     }
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 Representation::Representation(PermutationGroup const &group,
                                Vector const &characters) try
@@ -50,23 +49,19 @@ Representation::Representation(PermutationGroup const &group,
       characters_ = Vector(arma::real(characters.as<arma::cx_vec>()));
     }
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 Representation::Representation(PermutationGroup const &group) try
     : Representation(group, Vector(arma::vec(group.size(), arma::fill::ones))) {
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <typename T>
 Representation::Representation(PermutationGroup const &group,
                                std::vector<T> const &characters) try
-    : Representation(group, Vector(arma::Col<T>(characters))) {
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
+    : Representation(group, Vector(arma::Col<T>(characters))) {}
+XDIAG_CATCH
 
 template Representation::Representation(PermutationGroup const &,
                                         std::vector<double> const &);
@@ -76,10 +71,9 @@ template Representation::Representation(PermutationGroup const &,
 template <typename T>
 Representation::Representation(PermutationGroup const &group,
                                arma::Col<T> const &characters) try
-    : Representation(group, Vector(characters)) {
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
+    : Representation(group, Vector(characters)) {}
+XDIAG_CATCH
+
 template Representation::Representation(PermutationGroup const &,
                                         arma::vec const &);
 template Representation::Representation(PermutationGroup const &,
@@ -89,10 +83,9 @@ template <typename T>
 Representation::Representation(PermutationGroup const &group, T *characters,
                                int64_t n_characters) try
     : Representation(group,
-                     Vector(arma::Col<T>(characters, n_characters, true))) {
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
+                     Vector(arma::Col<T>(characters, n_characters, true))) {}
+XDIAG_CATCH
+
 template Representation::Representation(PermutationGroup const &group,
                                         double *characters,
                                         int64_t n_characters);
@@ -133,18 +126,16 @@ Representation multiply(Representation const &r1,
   if (ni < 1e-12) { // tolerance for logic::qns is 1e-12
     return Representation(r1.group(), arma::vec(arma::real(c)));
   } else {
-  return Representation(r1.group(), c);
+    return Representation(r1.group(), c);
   }
-  } catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 Representation operator*(Representation const &r1,
                          Representation const &r2) try {
   return multiply(r1, r2);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 std::ostream &operator<<(std::ostream &out, Representation const &irrep) {
   out << "size      : " << irrep.size() << "\n";

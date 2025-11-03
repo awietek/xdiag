@@ -37,10 +37,8 @@ bool converged_eigenvalues(Tmatrix const &tmat, int n_eigenvalue,
 
     return (residue < precision);
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-  return false;
 }
+XDIAG_CATCH
 
 bool converged_time_evolution(Tmatrix const &tmat, complex tau,
                               double precision, double nrm) try {
@@ -86,10 +84,8 @@ bool converged_time_evolution(Tmatrix const &tmat, complex tau,
     }
     return (error < precision);
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-  return false;
 }
+XDIAG_CATCH
 
 // template <class coeff_t>
 // bool ConvergedRitz(const Tmatrix<coeff_t> &tmat, int n_eigenvalue,

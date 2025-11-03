@@ -47,10 +47,8 @@ check_valid_group(std::vector<Permutation> const &permutations) try {
       permutations.end()) {
     XDIAG_THROW("Identity element not found");
   }
-
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 static std::vector<int64_t>
 compute_inverse(std::vector<Permutation> const &permutations) try {
@@ -69,9 +67,8 @@ compute_inverse(std::vector<Permutation> const &permutations) try {
     idx++;
   }
   return inv;
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 static arma::Mat<int64_t>
 compute_multiply(std::vector<Permutation> const &permutations) try {
@@ -96,18 +93,16 @@ compute_multiply(std::vector<Permutation> const &permutations) try {
     ++i1;
   }
   return multiply;
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 PermutationGroup::PermutationGroup(
     std::vector<Permutation> const &permutations) try
     : permutations_(permutations), inv_(compute_inverse(permutations)),
       multiply_(compute_multiply(permutations)) {
   check_valid_group(permutations);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 static std::vector<Permutation>
 permutations_from_matrix(arma::Mat<int64_t> const &matrix) try {
@@ -117,23 +112,18 @@ permutations_from_matrix(arma::Mat<int64_t> const &matrix) try {
     permutations.push_back(perm);
   }
   return permutations;
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 PermutationGroup::PermutationGroup(arma::Mat<int64_t> const &matrix) try
-    : PermutationGroup(permutations_from_matrix(matrix)) {
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
+    : PermutationGroup(permutations_from_matrix(matrix)) {}
+XDIAG_CATCH
 
 PermutationGroup::PermutationGroup(int64_t *ptr, int64_t n_permutations,
                                    int64_t nsites) try
     : PermutationGroup(permutations_from_matrix(
-          arma::Mat<int64_t>(ptr, n_permutations, nsites, true))) {
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-}
+          arma::Mat<int64_t>(ptr, n_permutations, nsites, true))) {}
+XDIAG_CATCH
 
 int64_t PermutationGroup::nsites() const {
   return (permutations_.size() == 0) ? 0 : permutations_[0].size();
@@ -145,18 +135,17 @@ Permutation const &PermutationGroup::operator[](int64_t sym) const try {
   } else {
     return permutations_[sym];
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
+
 int64_t PermutationGroup::inv(int64_t sym) const try {
   if ((sym < 0) || (sym >= size())) {
     XDIAG_THROW("Invalid symmetry index");
   } else {
     return inv_[sym];
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 int64_t PermutationGroup::multiply(int64_t s1, int64_t s2) const try {
   if ((s1 < 0) || (s1 >= size()) || (s2 < 0) || (s2 >= size())) {
@@ -164,9 +153,8 @@ int64_t PermutationGroup::multiply(int64_t s1, int64_t s2) const try {
   } else {
     return multiply_(s1, s2);
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 int64_t nsites(PermutationGroup const &group) { return group.nsites(); }
 int64_t size(PermutationGroup const &group) { return group.size(); }
@@ -181,9 +169,8 @@ PermutationGroup subgroup(PermutationGroup const &group,
     subgroup_permutations.push_back(group[n_sym]);
   }
   return PermutationGroup(subgroup_permutations);
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 bool PermutationGroup::operator==(PermutationGroup const &rhs) const {
   return (permutations_ == rhs.permutations_);

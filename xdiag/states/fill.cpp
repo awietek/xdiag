@@ -23,9 +23,8 @@ void fill(block_t const &block, arma::Col<coeff_t> &vec, coeff_f coeff) try {
   for (auto const &pstate : block) {
     vec(idx++) = coeff(pstate);
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 void fill(State &state, std::function<double(ProductState const &)> coeff_f,
           int64_t col) try {
@@ -40,9 +39,8 @@ void fill(State &state, std::function<double(ProductState const &)> coeff_f,
     };
     std::visit([&](auto &&block) { fill(block, v, coeff_f_c); }, block);
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 void fill(State &state, std::function<complex(ProductState const &)> coeff_f,
           int64_t col) try {
@@ -54,9 +52,8 @@ void fill(State &state, std::function<complex(ProductState const &)> coeff_f,
     arma::cx_vec v = state.vectorC(col, false);
     std::visit([&](auto &&block) { fill(block, v, coeff_f); }, block);
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 void fill(State &state, RandomState const &rstate, int64_t col) try {
   int64_t seed = rstate.seed();
@@ -74,9 +71,8 @@ void fill(State &state, RandomState const &rstate, int64_t col) try {
     double nrm = norm(state);
     state /= nrm;
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <class block_t, typename coeff_t>
 void fill(block_t const &block, arma::Col<coeff_t> &vec,
@@ -103,9 +99,8 @@ void fill(block_t const &block, arma::Col<coeff_t> &vec,
     vec.zeros();
     vec(idx) = 1.0;
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 void fill(State &state, ProductState const &pstate, int64_t col) try {
   if (state.nsites() != pstate.size()) {
@@ -121,9 +116,8 @@ void fill(State &state, ProductState const &pstate, int64_t col) try {
     arma::cx_vec v = state.vectorC(col, false);
     std::visit([&](auto &&block) { fill(block, v, pstate); }, block);
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 void fill(State &state, GPWF const &gpwf, int64_t col) try {
   if (state.nsites() != gpwf.nsites()) {
@@ -153,8 +147,7 @@ void fill(State &state, GPWF const &gpwf, int64_t col) try {
     state.make_complex();
     fill(state, f, col);
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 } // namespace xdiag

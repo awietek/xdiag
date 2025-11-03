@@ -63,9 +63,8 @@ FileH5::FileH5(std::string filename, std::string iomode) try
         "Error in xdiag hdf5: invalid iomode, must be one of \"r\", \"w\", "
         "\"w!\", \"a\"");
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 FileH5::~FileH5() {
   if (!closed_) {

@@ -16,9 +16,8 @@ BasisNoNp<bit_t>::BasisNoNp(int nsites) try
   if (nsites < 0) {
     XDIAG_THROW("nsites < 0");
   }
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
 }
+XDIAG_CATCH
 
 template <typename bit_t> int BasisNoNp<bit_t>::nsites() const {
   return nsites_;
@@ -42,6 +41,16 @@ typename BasisNoNp<bit_t>::iterator_t BasisNoNp<bit_t>::begin() const {
 template <typename bit_t>
 typename BasisNoNp<bit_t>::iterator_t BasisNoNp<bit_t>::end() const {
   return iterator_t(nsites_, false);
+}
+
+template <typename bit_t>
+bool BasisNoNp<bit_t>::operator==(BasisNoNp const &rhs) const {
+  return nsites_ == rhs.nsites_;
+}
+
+template <typename bit_t>
+bool BasisNoNp<bit_t>::operator!=(BasisNoNp const &rhs) const {
+  return !operator==(rhs);
 }
 
 template <typename bit_t> Subsets<bit_t> BasisNoNp<bit_t>::states_ups() const {

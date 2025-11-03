@@ -23,10 +23,11 @@ OpSum get_linear_chain(int64_t nsites, double t, double U) {
 OpSum get_linear_chain_hb(int64_t nsites, double J) {
   // Create model
   OpSum ops;
-  // for (int64_t s = 0; s < nsites; ++s)
-  //   ops += Op("Hop", "T", {s, (s + 1) % nsites});
+  for (int64_t s = 0; s < nsites; ++s)
+    ops += "T" * Op("Hop", {s, (s + 1) % nsites});
   for (int64_t s = 0; s < nsites; ++s)
     ops += "J" * Op("Exchange", {s, (s + 1) % nsites});
+  ops["T"] = 1.;
   ops["J"] = J;
   return ops;
 }
