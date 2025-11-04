@@ -16,7 +16,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.50">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.16">
     
     
       
@@ -24,7 +24,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.a40c8224.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.7e37652d.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
@@ -122,11 +122,13 @@
     
     
     
-      <label class="md-header__button md-icon" for="__search">
-        
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
-      </label>
-      <div class="md-search" data-md-component="search" role="dialog">
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" name="search">
@@ -158,6 +160,7 @@
     </div>
   </div>
 </div>
+      
     
     
   </nav>
@@ -206,8 +209,10 @@
       <a href=".." class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
     Home
+    
   </span>
   
 
@@ -226,8 +231,10 @@
       <a href="../quick_start/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
     Quick Start
+    
   </span>
   
 
@@ -246,8 +253,10 @@
       <a href="../user_guide/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
     User Guide
+    
   </span>
   
 
@@ -266,8 +275,10 @@
       <a href="../examples/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
     Examples
+    
   </span>
   
 
@@ -286,8 +297,10 @@
       <a href="../documentation/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
     Documentation
+    
   </span>
   
 
@@ -313,8 +326,10 @@
         <label class="md-nav__link md-nav__link--active" for="__toc">
           
   
+  
   <span class="md-ellipsis">
     Benchmarks
+    
   </span>
   
 
@@ -324,8 +339,10 @@
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
+  
   <span class="md-ellipsis">
     Benchmarks
+    
   </span>
   
 
@@ -410,8 +427,10 @@
       <a href="../contributing/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
     Contributing
+    
   </span>
   
 
@@ -430,8 +449,10 @@
       <a href="../releases/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
     Releases
+    
   </span>
   
 
@@ -450,8 +471,10 @@
       <a href="../about/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
     About
+    
   </span>
   
 
@@ -547,28 +570,29 @@
                   
 
 
+
   <h1>Benchmarks</h1>
 
 <p>To properly highlight XDiag's paralellization performance, we benchmark the computation time of the key operation behind all main features implemented in XDiag: the execution of a single Lanczos iteration, consisting of a matrix-vector multiplication and a few vector operations. </p>
 <p>To evaluate performance across all Hilbert space types supported by XDiag—namely the <a href="../documentation/blocks/spinhalf/">Spinhalf</a>, <a href="../documentation/blocks/electron/">Electron</a> and <a href="../documentation/blocks/tJ/">tJ</a> blocks - we consider three distinct models:</p>
 <ol>
-<li>The <span class="arithmatex">\(S= 1/2\)</span> one-dimensional Heisenberg chain with nearest-neighbor interactions,</li>
-</ol>
-<p>$$
-   H = J \sum_{\langle i,j\rangle} \mathbf{S}_i \cdot \mathbf{S}_j.
-   $$</p>
-<ol>
-<li>The one-dimensional Hubbard model,</li>
-</ol>
-<p>$$
+<li>
+<p>The <span class="arithmatex">\(S= 1/2\)</span> one-dimensional Heisenberg chain with nearest-neighbor interactions,
+   $$ H = J \sum_{\langle i,j\rangle} \mathbf{S}_i \cdot \mathbf{S}_j. $$</p>
+</li>
+<li>
+<p>The one-dimensional Hubbard model,
+   $$
    H = -t \sum_{\langle i,j\rangle, \; \sigma} \left(c^\dagger_{i,\sigma}c_{j,\sigma} + \text{h.c.} \right) + U \sum_{i=0}^{N} n_{i,\uparrow} n_{i,\downarrow}.
    $$</p>
-<ol>
-<li>The <em>t</em>-<em>J</em> model of spin-<span class="arithmatex">\(\frac{1}{2}\)</span> electrons,</li>
-</ol>
-<p>$$
+</li>
+<li>
+<p>The <em>t</em>-<em>J</em> model of spin-<span class="arithmatex">\(\frac{1}{2}\)</span> electrons,
+   $$
    H = -t \sum_{\langle i,j \rangle, \sigma} P \left( c^\dagger_{i,\sigma} c_{j,\sigma} + \text{h.c.} \right) P + J \sum_{\langle i , j \rangle } \mathbf{S}_i \cdot \mathbf{S}_j - n_i n_j/4. 
    $$</p>
+</li>
+</ol>
 <p>XDiag supports both multithreading with OpenMP and multiprocessing with MPI. We provide benchmarks for all three computational models using both parallelisation strategies. Please note that in the current version, MPI-based parallelisation does not support lattice symmetries. </p>
 <p>Throughout the following, all reported computation times refer to wall time, not CPU time.</p>
 <h2 id="shared-memory-parallelization">Shared memory parallelization</h2>
@@ -815,10 +839,12 @@
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "..", "features": ["content.code.copy"], "search": "../assets/javascripts/workers/search.f8cc74c7.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["content.code.copy"], "search": "../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.60a45f97.min.js"></script>
+      <script src="../assets/javascripts/bundle.50899def.min.js"></script>
       
         <script src="../javascripts/katex.js"></script>
       
