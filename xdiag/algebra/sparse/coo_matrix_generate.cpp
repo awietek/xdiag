@@ -34,7 +34,7 @@ coo_matrix_generate(OpSum const &ops, block_t const &block_in,
 #ifdef _OPENMP
   std::vector<int64_t> nnz_thread =
       coo_matrix_nnz_thread<coeff_t>(ops, block_in, block_out);
-  int64_t nnz = std::accumulate(nnz_thread.begin(), nnz_thread.end(), 0);
+  int64_t nnz = std::accumulate(nnz_thread.begin(), nnz_thread.end(), (int64_t)0);
 #else
   int64_t nnz = coo_matrix_nnz<coeff_t>(ops, block_in, block_out);
 #endif

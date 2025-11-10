@@ -39,7 +39,7 @@ csr_matrix_generate(OpSum const &ops, block_t const &block_in,
   std::vector<idx_t> n_elements_in_row =
       csr_matrix_nnz<idx_t, coeff_t>(ops, block_in, block_out, transpose);
   int64_t nnz =
-      std::accumulate(n_elements_in_row.begin(), n_elements_in_row.end(), 0);
+      std::accumulate(n_elements_in_row.begin(), n_elements_in_row.end(), (int64_t)0);
 
   // try allocating the main memory
   auto t0 = rightnow();
@@ -53,7 +53,9 @@ csr_matrix_generate(OpSum const &ops, block_t const &block_in,
     rowptr.zeros();
     col.zeros();
     data.zeros();
-  } catch (...) {
+  } catch (std::exception& e) {
+    std::cout << "nnz: " << nnz <<std::endl;
+    std::cerr << "Armadillo error: " << e.what() << std::endl;
     XDIAG_THROW("Cannot allocate rowptr/col/data arrays for sparse matrix");
   }
   timing(t0, rightnow(), "Sparse matrix generation: resource allocation", 1);
