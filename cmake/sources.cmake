@@ -12,6 +12,8 @@ set(XDIAG_SOURCES
   utils/matrix.cpp
 
   bits/bitops.cpp
+  bits/bitset.cpp
+  bits/bitvector.cpp
   
   parallel/omp/omp_utils.cpp  
   algebra/algebra.cpp
