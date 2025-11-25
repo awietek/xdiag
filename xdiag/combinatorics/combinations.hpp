@@ -13,8 +13,9 @@ namespace xdiag::combinatorics {
 template <typename bit_t> class CombinationsIterator;
 
 // Combinations
-template <typename bit_t> class Combinations {
+template <typename bit_type> class Combinations {
 public:
+  using bit_t = bit_type;
   using iterator_t = CombinationsIterator<bit_t>;
 
   Combinations() = default;

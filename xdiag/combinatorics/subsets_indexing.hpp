@@ -11,8 +11,10 @@
 
 namespace xdiag::combinatorics {
 
-template <class bit_t> class SubsetsIndexing {
+template <class bit_type> class SubsetsIndexing {
 public:
+  using bit_t = bit_type;
+
   SubsetsIndexing() = default;
   SubsetsIndexing(int64_t n);
 

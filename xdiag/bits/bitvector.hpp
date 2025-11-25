@@ -16,6 +16,7 @@ public:
   BitVector() = default;
   BitVector(int64_t nbits, int64_t size);
 
+  inline int64_t size() const { return size_; }
   inline bit_t operator[](int64_t index) const {
     return storage_.get_bits(index * nbits_, nbits_);
   }

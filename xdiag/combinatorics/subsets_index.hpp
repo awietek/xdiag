@@ -12,8 +12,9 @@ namespace xdiag::combinatorics {
 template <class bit_t> class SubsetsIndexIterator;
 
 // SubsetsIndex
-template <class bit_t> class SubsetsIndex {
+template <class bit_type> class SubsetsIndex {
 public:
+  using bit_t = bit_type;
   using iterator_t = SubsetsIndexIterator<bit_t>;
 
   SubsetsIndex() = default;

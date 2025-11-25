@@ -12,8 +12,10 @@
 
 namespace xdiag::combinatorics {
 
-template <class bit_t> class CombinationsIndexing {
+template <class bit_type> class CombinationsIndexing {
 public:
+  using bit_t = bit_type;
+
   CombinationsIndexing() = default;
   CombinationsIndexing(int64_t n, int64_t k);
 

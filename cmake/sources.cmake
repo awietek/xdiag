@@ -98,6 +98,7 @@ set(XDIAG_SOURCES
   symmetries/permutation_group.cpp
   symmetries/representation.cpp
   symmetries/operations/symmetry_operations.cpp	
+  symmetries/operations/representative_lookup_table.cpp	
   symmetries/operations/fermi_sign.cpp
   symmetries/group_action/group_action.cpp
   symmetries/group_action/group_action_lookup.cpp
