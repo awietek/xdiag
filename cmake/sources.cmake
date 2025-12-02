@@ -14,7 +14,15 @@ set(XDIAG_SOURCES
   bits/bitops.cpp
   bits/bitset.cpp
   bits/bitvector.cpp
-  
+
+  combinatorics/binomial.cpp
+  combinatorics/bit_patterns.cpp
+  combinatorics/combinations/combinations.cpp
+  combinatorics/combinations/combinations_table.cpp
+  combinatorics/combinations/lin_table.cpp
+  combinatorics/subsets/subsets.cpp
+  combinatorics/subsets/subsets_table.cpp
+    
   parallel/omp/omp_utils.cpp  
   algebra/algebra.cpp
   algebra/matrix.cpp
@@ -61,17 +69,6 @@ set(XDIAG_SOURCES
   io/hdf5/write.cpp
   io/hdf5/types.cpp
   
-  combinatorics/binomial.cpp
-  combinatorics/subsets.cpp
-  combinatorics/subsets_index.cpp
-  combinatorics/bit_patterns.cpp
-  combinatorics/combinations.cpp
-  combinatorics/combinations_index.cpp
-  combinatorics/combinations_indexing.cpp
-  combinatorics/subsets_indexing.cpp
-  combinatorics/lin_table.cpp
-  combinatorics/fermi_table.cpp
-
   basis/spinhalf/basis_spinhalf.cpp
   basis/spinhalf/basis_sz.cpp
   basis/spinhalf/basis_no_sz.cpp
@@ -97,13 +94,19 @@ set(XDIAG_SOURCES
   symmetries/permutation.cpp
   symmetries/permutation_group.cpp
   symmetries/representation.cpp
-  symmetries/operations/symmetry_operations.cpp	
-  symmetries/operations/representative_lookup_table.cpp	
-  symmetries/operations/fermi_sign.cpp
+  symmetries/apply_permutation.cpp	
+  symmetries/fermi_sign.cpp	
+  symmetries/is_valid_permutation.cpp
   symmetries/group_action/group_action.cpp
   symmetries/group_action/group_action_lookup.cpp
   symmetries/group_action/group_action_sublattice.cpp
   symmetries/group_action/sublattice_stability.cpp
+  symmetries/group_action/representative.cpp
+  symmetries/group_action/mapping_syms.cpp
+  symmetries/group_action/norm.cpp
+  symmetries/group_action/stabilizer_symmetries.cpp
+  symmetries/lookup_tables/representative_lookup_table.cpp
+  symmetries/lookup_tables/fermi_table.cpp
 
   operators/coupling.cpp
   operators/op.cpp

@@ -7,13 +7,12 @@
 #include <map>
 #include <vector>
 
-#include <xdiag/combinatorics/fermi_table.hpp>
 #include <xdiag/combinatorics/subsets_indexing.hpp>
 #include <xdiag/common.hpp>
 #include <xdiag/extern/gsl/span>
 #include <xdiag/symmetries/group_action/group_action_lookup.hpp>
-#include <xdiag/symmetries/operations/group_action_operations.hpp>
-#include <xdiag/symmetries/operations/symmetry_operations.hpp>
+#include <xdiag/symmetries/group_action/representative.hpp>
+#include <xdiag/symmetries/lookup_tables/fermi_table.hpp>
 #include <xdiag/symmetries/permutation_group.hpp>
 #include <xdiag/symmetries/representation.hpp>
 
