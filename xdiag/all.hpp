@@ -11,10 +11,10 @@
 #include <xdiag/algebra/isapprox.hpp>
 #include <xdiag/algebra/matrix.hpp>
 #include <xdiag/algebra/sparse/apply.hpp>
-#include <xdiag/algebra/sparse/logic.hpp>
 #include <xdiag/algebra/sparse/coo_matrix.hpp>
 #include <xdiag/algebra/sparse/csc_matrix.hpp>
 #include <xdiag/algebra/sparse/csr_matrix.hpp>
+#include <xdiag/algebra/sparse/logic.hpp>
 #include <xdiag/algebra/sparse/sparse_matrix_types.hpp>
 #include <xdiag/algorithms/lanczos/eigs_lanczos.hpp>
 #include <xdiag/algorithms/lanczos/eigvals_lanczos.hpp>
@@ -23,6 +23,8 @@
 #include <xdiag/algorithms/time_evolution/imaginary_time_evolve.hpp>
 #include <xdiag/algorithms/time_evolution/time_evolve.hpp>
 #include <xdiag/algorithms/time_evolution/time_evolve_expokit.hpp>
+#include <xdiag/bits/bitset.hpp>
+#include <xdiag/bits/bitvector.hpp>
 #include <xdiag/blocks/electron.hpp>
 #include <xdiag/blocks/spinhalf.hpp>
 #include <xdiag/blocks/tj.hpp>
