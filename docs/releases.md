@@ -2,6 +2,13 @@
 title: Releases
 ---
 
+## v0.4.1
+
+**Dec. 4, 2025**
+Small patch release
+
+* Fixing bug reported in issue https://github.com/awietek/xdiag/issues/99
+
 ## v0.4.0
 
 **Nov. 4, 2025**
