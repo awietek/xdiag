@@ -116,6 +116,17 @@ The executables are then available in the directory `build/examples`. Most examp
     [source](examples/mbl.md) :simple-cplusplus: :simple-julia:
 
 
+-   :material-file-document:{ .lg .middle } __Linblad Spectrum__
+
+    ---
+
+    Computes the Linblad spectrum of XXZ chain with bulk dephasing.
+	
+	![Linblad Spectrum](img/linblad.png){ align=center }
+
+    [source](examples/linblad.md) :simple-cplusplus: :simple-julia:
+
+
 </div>
 
 ## Tower of States
