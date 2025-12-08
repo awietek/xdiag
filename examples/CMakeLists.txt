@@ -21,6 +21,7 @@ set(XDIAG_EXAMPLES
   ahm_correlations
   mbl
   ahm_quench
+  linblad
 )
 
 foreach(name ${XDIAG_EXAMPLES})
