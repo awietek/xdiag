@@ -150,6 +150,19 @@ auto og = symmetrize(ops, group);
 auto oi = symmetrize(ops, irrep);
 // --8<-- [end:usage_guide_sym7]
 
+// --8<-- [start:usage_guide_spm1]
+auto coo_mat = coo_matrix(ops, block);
+auto csr_mat = csr_matrix(ops, block);
+auto csc_mat = csc_matrix(ops, block);
+// --8<-- [end:usage_guide_spm1]
+
+// --8<-- [start:usage_guide_spm2]
+auto csc_mat = csc_matrix(ops, block);
+auto colptr = arma::conv_to<arma::uvec>::from(csc_mat.colptr);
+auto row = arma::conv_to<arma::uvec>::from(csc_mat.row);
+auto A = arma::sp_mat(colptr, row, csc_mat.data, csc_mat.nrows, csc_mat.ncols);
+// --8<-- [end:usage_guide_spm2]
+
 // --8<-- [start:usage_guide_dist1]
 #include <xdiag/all.hpp>
 using namespace xdiag;

@@ -133,5 +133,46 @@ og = symmetrize(ops, group)
 oi = symmetrize(ops, irrep)
 # --8<-- [end:usage_guide_sym7]
 
+#--8<-- [start:usage_guide_spm1]
+coo_mat = coo_matrix(ops, block)
+csr_mat = csr_matrix(ops, block)
+csc_mat = csc_matrix(ops, block)
+# --8<-- [end:usage_guide_spm1]
+
+#--8<-- [start:usage_guide_spm2]
+using SparseArrays
+csc_mat = csc_matrix(ops, block)
+jmat = SparseMatrixCSC(csc_mat.nrows, csc_mat.ncols, csc_mat.colptr, csc_mat.row, csc_mat.data)
+# --8<-- [end:usage_guide_spm2]
+
+#--8<-- [start:usage_guide_spm3]
+# Heisenberg chain with open boundary conditions
+N = 22
+block = Spinhalf(N)
+ops = OpSum()
+for i in 1:(N-1)
+    ops += "J" * Op("SdotS", [i, i+1])
+end
+ops["J"] = 1.0
+
+# perform default (matrix-free) Lanczos iterations
+@time begin
+    println(eigval0(ops, block))
+end
+
+# perform Lanczos iterations on sparse CSR Hamiltonian
+@time begin
+    csr_mat = csr_matrix(ops, block)
+    println(eigval0(csr_mat, block))
+end
+
+# Example output:
+#
+#   -9.568075875976074
+#       6.859141 seconds (7 allocations: 512 bytes)
+#   -9.568075875976076
+#       5.954734 seconds (376 allocations: 2.000 GiB, 16.86% gc time)
+#--8<-- [end:usage_guide_spm3]
+
     
 end
