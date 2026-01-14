@@ -528,6 +528,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#sparse-matrix-capabilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      Sparse Matrix Capabilities
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#distributed-computing" class="md-nav__link">
     <span class="md-ellipsis">
       Distributed computing
@@ -932,6 +941,15 @@
   <a href="#symmetrized-operators" class="md-nav__link">
     <span class="md-ellipsis">
       Symmetrized operators
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sparse-matrix-capabilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      Sparse Matrix Capabilities
     </span>
   </a>
   
@@ -1685,46 +1703,124 @@ $$
 Notice that such an operator can be written as <span class="arithmatex">\(O^\mathcal{G, \rho}\)</span> for an appropriate representation <span class="arithmatex">\(\rho\)</span> of a lattice symmetry. 
 Hence, it can be easily created using the <a href="../documentation/operators/symmetrize/">symmetrize</a> function with the irrep describing the momentum <span class="arithmatex">\(\mathbf{q}\)</span>. We provide several examples along XDiag demonstrating this functionality and use cases.</p>
 <hr />
-<h3 id="distributed-computing">Distributed computing</h3>
-<p>The standard XDiag library features shared memory parallelization using <a href="https://www.openmp.org/">OpenMP</a> for both the C++ and Julia version. However, we also provide distributed memory parallelization in a separate C++-only library that needs to be compiled independently. To do so, we have to use the flag <code>XDIAG_DISTRIBUTED</code> when setting up the compilation using <a href="https://cmake.org/">CMake</a>.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-59-1" name="__codelineno-59-1" href="#__codelineno-59-1"></a>cmake<span class="w"> </span>-S<span class="w"> </span>.<span class="w"> </span>-B<span class="w"> </span>build<span class="w"> </span>-D<span class="w"> </span><span class="nv">XDIAG_DISTRIBUTED</span><span class="o">=</span>On
-<a id="__codelineno-59-2" name="__codelineno-59-2" href="#__codelineno-59-2"></a>cmake<span class="w"> </span>--build<span class="w"> </span>build
-<a id="__codelineno-59-3" name="__codelineno-59-3" href="#__codelineno-59-3"></a>cmake<span class="w"> </span>--install<span class="w"> </span>build
-</code></pre></div>
-<p>This will create a distinct <code>xdiag_distributed</code> library, which is different from the standard <code>xdiag</code> library. To link an application code to the distributed library, we can use the following <code>CMakeLists.txt</code> file.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-60-1" name="__codelineno-60-1" href="#__codelineno-60-1"></a><span class="nb">cmake_minimum_required</span><span class="p">(</span><span class="s">VERSION</span><span class="w"> </span><span class="s">3.19</span><span class="p">)</span>
-<a id="__codelineno-60-2" name="__codelineno-60-2" href="#__codelineno-60-2"></a><span class="nb">project</span><span class="p">(</span><span class="s">hello_world</span><span class="p">)</span>
-<a id="__codelineno-60-3" name="__codelineno-60-3" href="#__codelineno-60-3"></a><span class="nb">find_package</span><span class="p">(</span><span class="s">xdiag_distributed</span><span class="w"> </span><span class="s">REQUIRED</span><span class="w"> </span><span class="s">HINTS</span><span class="w"> </span><span class="s2">&quot;/path/to/where/xdiag/should/be/install&quot;</span><span class="p">)</span>
-<a id="__codelineno-60-4" name="__codelineno-60-4" href="#__codelineno-60-4"></a><span class="nb">add_executable</span><span class="p">(</span><span class="s">main</span><span class="w"> </span><span class="s">main.cpp</span><span class="p">)</span>
-<a id="__codelineno-60-5" name="__codelineno-60-5" href="#__codelineno-60-5"></a><span class="nb">target_link_libraries</span><span class="p">(</span><span class="s">main</span><span class="w"> </span><span class="s">PRIVATE</span><span class="w"> </span><span class="s">xdiag::xdiag_distributed</span><span class="p">)</span><span class="w">  </span>
-</code></pre></div>
-<p>Notice that this only differs from the original <code>CMakeLists.txt</code> file shown in the section <a href="#application-compilation">Application compilation</a> in two places, where we specify that the <code>xdiag_distributed</code> library instead of the standard <code>xdiag</code> library is used. The distributed memory library is built on top of the message passing interface (MPI). Every MPI application needs to initialize and finalize the MPI environment explicitly. Hence, a typical main routine for using the distributed XDiag library with MPI should look similar to the following listing.</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="35:1"><input checked="checked" id="__tabbed_35_1" name="__tabbed_35" type="radio" /><div class="tabbed-labels"><label for="__tabbed_35_1">C++</label></div>
+<h3 id="sparse-matrix-capabilities">Sparse Matrix Capabilities</h3>
+<p>Working with many-body quantum systems often involves matrices which only have a small number of non-zero elements, also known as <em>sparse matrices</em>.
+Since storing and handling such objects in the conventional way (i.e. element by element) is very inefficient, XDiag includes basic implementations of three common <a href="../documentation/algebra/sparse/sparse_matrix_types/">sparse-matrix types</a>: the coordinate (COO), the compressed-sparse-row (CSR), and the compressed-sparse-column (CSC) formats.</p>
+<p>Just as the <a href="../documentation/algebra/matrix/">matrix</a> function can be used to obtain the full matrix representing a given operator <code>ops</code> (in the form of an <a href="../documentation/operators/opsum/">OpSum</a>) on a given Hilbert space <code>block</code> (see section <a href="#matrix-representation">Matrix representation</a>), there are functions <a href="../documentation/algebra/sparse/coo_matrix/">coo_matrix</a>, <a href="../documentation/algebra/sparse/csr_matrix/">csr_matrix</a>, and <a href="../documentation/algebra/sparse/csc_matrix/">csc_matrix</a> to obtain the same matrix in the respective sparse format.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="35:2"><input checked="checked" id="__tabbed_35_1" name="__tabbed_35" type="radio" /><input id="__tabbed_35_2" name="__tabbed_35" type="radio" /><div class="tabbed-labels"><label for="__tabbed_35_1">C++</label><label for="__tabbed_35_2">Julia</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-61-1" name="__codelineno-61-1" href="#__codelineno-61-1"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;xdiag/all.hpp&gt;</span>
-<a id="__codelineno-61-2" name="__codelineno-61-2" href="#__codelineno-61-2"></a><span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">xdiag</span><span class="p">;</span>
-<a id="__codelineno-61-3" name="__codelineno-61-3" href="#__codelineno-61-3"></a><span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">argv</span><span class="p">[])</span><span class="w"> </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-61-4" name="__codelineno-61-4" href="#__codelineno-61-4"></a><span class="w">    </span><span class="n">MPI_Init</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="n">argv</span><span class="p">);</span>
-<a id="__codelineno-61-5" name="__codelineno-61-5" href="#__codelineno-61-5"></a><span class="w">    </span><span class="c1">// genuine XDiag code here</span>
-<a id="__codelineno-61-6" name="__codelineno-61-6" href="#__codelineno-61-6"></a><span class="w">    </span><span class="n">MPI_Finalize</span><span class="p">();</span>
-<a id="__codelineno-61-7" name="__codelineno-61-7" href="#__codelineno-61-7"></a><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">Error</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-61-8" name="__codelineno-61-8" href="#__codelineno-61-8"></a><span class="w">    </span><span class="n">error_trace</span><span class="p">(</span><span class="n">e</span><span class="p">);</span>
-<a id="__codelineno-61-9" name="__codelineno-61-9" href="#__codelineno-61-9"></a><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-59-1" name="__codelineno-59-1" href="#__codelineno-59-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">coo_mat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">coo_matrix</span><span class="p">(</span><span class="n">ops</span><span class="p">,</span><span class="w"> </span><span class="n">block</span><span class="p">);</span>
+<a id="__codelineno-59-2" name="__codelineno-59-2" href="#__codelineno-59-2"></a><span class="k">auto</span><span class="w"> </span><span class="n">csr_mat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">csr_matrix</span><span class="p">(</span><span class="n">ops</span><span class="p">,</span><span class="w"> </span><span class="n">block</span><span class="p">);</span>
+<a id="__codelineno-59-3" name="__codelineno-59-3" href="#__codelineno-59-3"></a><span class="k">auto</span><span class="w"> </span><span class="n">csc_mat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">csc_matrix</span><span class="p">(</span><span class="n">ops</span><span class="p">,</span><span class="w"> </span><span class="n">block</span><span class="p">);</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-60-1" name="__codelineno-60-1" href="#__codelineno-60-1"></a><span class="n">coo_mat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">coo_matrix</span><span class="p">(</span><span class="n">ops</span><span class="p">,</span><span class="w"> </span><span class="n">block</span><span class="p">)</span>
+<a id="__codelineno-60-2" name="__codelineno-60-2" href="#__codelineno-60-2"></a><span class="n">csr_mat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">csr_matrix</span><span class="p">(</span><span class="n">ops</span><span class="p">,</span><span class="w"> </span><span class="n">block</span><span class="p">)</span>
+<a id="__codelineno-60-3" name="__codelineno-60-3" href="#__codelineno-60-3"></a><span class="n">csc_mat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">csc_matrix</span><span class="p">(</span><span class="n">ops</span><span class="p">,</span><span class="w"> </span><span class="n">block</span><span class="p">)</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<p>Note that the C++ implementation distinguishes between real and complex matrices, e.g., there are the <a href="../documentation/algebra/sparse/csr_matrix/">csr_matrix</a> and <a href="../documentation/algebra/sparse/csr_matrix/">csr_matrixC</a> functions.</p>
+<p>The objects returned by these functions are "raw" in the sense that they are not an instance of a sparse matrix implementation by another library, but contain all the information to call the respective sparse-matrix constructor of your sparse-matrix library of choice.
+For instance, the output of <a href="../documentation/algebra/sparse/csc_matrix/">csc_matrix</a> can be used to construct the <code>sp_mat</code> type implemented by the C++ <a href="https://arma.sourceforge.net">Armadillo library</a> or the <code>SparseMatrixCSC</code> type implemented by <a href="https://docs.julialang.org/en/v1/stdlib/SparseArrays/">SparseArrays</a> in julia.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="36:2"><input checked="checked" id="__tabbed_36_1" name="__tabbed_36" type="radio" /><input id="__tabbed_36_2" name="__tabbed_36" type="radio" /><div class="tabbed-labels"><label for="__tabbed_36_1">C++</label><label for="__tabbed_36_2">Julia</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-61-1" name="__codelineno-61-1" href="#__codelineno-61-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">csc_mat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">csc_matrix</span><span class="p">(</span><span class="n">ops</span><span class="p">,</span><span class="w"> </span><span class="n">block</span><span class="p">);</span>
+<a id="__codelineno-61-2" name="__codelineno-61-2" href="#__codelineno-61-2"></a><span class="k">auto</span><span class="w"> </span><span class="n">colptr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">arma</span><span class="o">::</span><span class="n">conv_to</span><span class="o">&lt;</span><span class="n">arma</span><span class="o">::</span><span class="n">uvec</span><span class="o">&gt;::</span><span class="n">from</span><span class="p">(</span><span class="n">csc_mat</span><span class="p">.</span><span class="n">colptr</span><span class="p">);</span>
+<a id="__codelineno-61-3" name="__codelineno-61-3" href="#__codelineno-61-3"></a><span class="k">auto</span><span class="w"> </span><span class="n">row</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">arma</span><span class="o">::</span><span class="n">conv_to</span><span class="o">&lt;</span><span class="n">arma</span><span class="o">::</span><span class="n">uvec</span><span class="o">&gt;::</span><span class="n">from</span><span class="p">(</span><span class="n">csc_mat</span><span class="p">.</span><span class="n">row</span><span class="p">);</span>
+<a id="__codelineno-61-4" name="__codelineno-61-4" href="#__codelineno-61-4"></a><span class="k">auto</span><span class="w"> </span><span class="n">A</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">arma</span><span class="o">::</span><span class="n">sp_mat</span><span class="p">(</span><span class="n">colptr</span><span class="p">,</span><span class="w"> </span><span class="n">row</span><span class="p">,</span><span class="w"> </span><span class="n">csc_mat</span><span class="p">.</span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">csc_mat</span><span class="p">.</span><span class="n">nrows</span><span class="p">,</span><span class="w"> </span><span class="n">csc_mat</span><span class="p">.</span><span class="n">ncols</span><span class="p">);</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-62-1" name="__codelineno-62-1" href="#__codelineno-62-1"></a><span class="k">using</span><span class="w"> </span><span class="n">SparseArrays</span>
+<a id="__codelineno-62-2" name="__codelineno-62-2" href="#__codelineno-62-2"></a><span class="n">csc_mat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">csc_matrix</span><span class="p">(</span><span class="n">ops</span><span class="p">,</span><span class="w"> </span><span class="n">block</span><span class="p">)</span>
+<a id="__codelineno-62-3" name="__codelineno-62-3" href="#__codelineno-62-3"></a><span class="n">jmat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SparseMatrixCSC</span><span class="p">(</span><span class="n">csc_mat</span><span class="o">.</span><span class="n">nrows</span><span class="p">,</span><span class="w"> </span><span class="n">csc_mat</span><span class="o">.</span><span class="n">ncols</span><span class="p">,</span><span class="w"> </span><span class="n">csc_mat</span><span class="o">.</span><span class="n">colptr</span><span class="p">,</span><span class="w"> </span><span class="n">csc_mat</span><span class="o">.</span><span class="n">row</span><span class="p">,</span><span class="w"> </span><span class="n">csc_mat</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<p>While the COO, CSR, and CSC formats are supported for extracting sparse matrices from XDiag, only the CSR format is used internally because it is the only one suitable for parallelized matrix-vector multiplications.
+The following julia example finds the ground state of an open-boundary Heisenberg chain and compares the default (matrix-free, i.e., on-the-fly) implementation to first converting the Hamiltonian to the CSR format.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="37:1"><input checked="checked" id="__tabbed_37_1" name="__tabbed_37" type="radio" /><div class="tabbed-labels"><label for="__tabbed_37_1">Julia</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-63-1" name="__codelineno-63-1" href="#__codelineno-63-1"></a><span class="c"># Heisenberg chain with open boundary conditions</span>
+<a id="__codelineno-63-2" name="__codelineno-63-2" href="#__codelineno-63-2"></a><span class="n">N</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">22</span>
+<a id="__codelineno-63-3" name="__codelineno-63-3" href="#__codelineno-63-3"></a><span class="n">block</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Spinhalf</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
+<a id="__codelineno-63-4" name="__codelineno-63-4" href="#__codelineno-63-4"></a><span class="n">ops</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OpSum</span><span class="p">()</span>
+<a id="__codelineno-63-5" name="__codelineno-63-5" href="#__codelineno-63-5"></a><span class="k">for</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="mi">1</span><span class="o">:</span><span class="p">(</span><span class="n">N</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<a id="__codelineno-63-6" name="__codelineno-63-6" href="#__codelineno-63-6"></a><span class="w">    </span><span class="n">ops</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="s">&quot;J&quot;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Op</span><span class="p">(</span><span class="s">&quot;SdotS&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
+<a id="__codelineno-63-7" name="__codelineno-63-7" href="#__codelineno-63-7"></a><span class="k">end</span>
+<a id="__codelineno-63-8" name="__codelineno-63-8" href="#__codelineno-63-8"></a><span class="n">ops</span><span class="p">[</span><span class="s">&quot;J&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span>
+<a id="__codelineno-63-9" name="__codelineno-63-9" href="#__codelineno-63-9"></a>
+<a id="__codelineno-63-10" name="__codelineno-63-10" href="#__codelineno-63-10"></a><span class="c"># perform default (matrix-free) Lanczos iterations</span>
+<a id="__codelineno-63-11" name="__codelineno-63-11" href="#__codelineno-63-11"></a><span class="nd">@time</span><span class="w"> </span><span class="k">begin</span>
+<a id="__codelineno-63-12" name="__codelineno-63-12" href="#__codelineno-63-12"></a><span class="w">    </span><span class="n">println</span><span class="p">(</span><span class="n">eigval0</span><span class="p">(</span><span class="n">ops</span><span class="p">,</span><span class="w"> </span><span class="n">block</span><span class="p">))</span>
+<a id="__codelineno-63-13" name="__codelineno-63-13" href="#__codelineno-63-13"></a><span class="k">end</span>
+<a id="__codelineno-63-14" name="__codelineno-63-14" href="#__codelineno-63-14"></a>
+<a id="__codelineno-63-15" name="__codelineno-63-15" href="#__codelineno-63-15"></a><span class="c"># perform Lanczos iterations on sparse CSR Hamiltonian</span>
+<a id="__codelineno-63-16" name="__codelineno-63-16" href="#__codelineno-63-16"></a><span class="nd">@time</span><span class="w"> </span><span class="k">begin</span>
+<a id="__codelineno-63-17" name="__codelineno-63-17" href="#__codelineno-63-17"></a><span class="w">    </span><span class="n">csr_mat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">csr_matrix</span><span class="p">(</span><span class="n">ops</span><span class="p">,</span><span class="w"> </span><span class="n">block</span><span class="p">)</span>
+<a id="__codelineno-63-18" name="__codelineno-63-18" href="#__codelineno-63-18"></a><span class="w">    </span><span class="n">println</span><span class="p">(</span><span class="n">eigval0</span><span class="p">(</span><span class="n">csr_mat</span><span class="p">,</span><span class="w"> </span><span class="n">block</span><span class="p">))</span>
+<a id="__codelineno-63-19" name="__codelineno-63-19" href="#__codelineno-63-19"></a><span class="k">end</span>
+<a id="__codelineno-63-20" name="__codelineno-63-20" href="#__codelineno-63-20"></a>
+<a id="__codelineno-63-21" name="__codelineno-63-21" href="#__codelineno-63-21"></a><span class="c"># Example output:</span>
+<a id="__codelineno-63-22" name="__codelineno-63-22" href="#__codelineno-63-22"></a><span class="c">#</span>
+<a id="__codelineno-63-23" name="__codelineno-63-23" href="#__codelineno-63-23"></a><span class="c">#   -9.568075875976074</span>
+<a id="__codelineno-63-24" name="__codelineno-63-24" href="#__codelineno-63-24"></a><span class="c">#       6.859141 seconds (7 allocations: 512 bytes)</span>
+<a id="__codelineno-63-25" name="__codelineno-63-25" href="#__codelineno-63-25"></a><span class="c">#   -9.568075875976076</span>
+<a id="__codelineno-63-26" name="__codelineno-63-26" href="#__codelineno-63-26"></a><span class="c">#       5.954734 seconds (376 allocations: 2.000 GiB, 16.86% gc time)</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<p>It can be observed that (at medium block sizes) the runtime of both versions is comparable, while the matrix-free variant will always require substantially less memory.
+Note that the computational effort and memory required to construct the CSR representation grows significantly with system size such that the matrix-free version will generally run faster on larger systems.
+The CSR implementations of XDiag functions are thus only recommended when the CSR matrix can be pre-computed once and needs to be reused frequently.</p>
+<h3 id="distributed-computing">Distributed computing</h3>
+<p>The standard XDiag library features shared memory parallelization using <a href="https://www.openmp.org/">OpenMP</a> for both the C++ and Julia version. However, we also provide distributed memory parallelization in a separate C++-only library that needs to be compiled independently. To do so, we have to use the flag <code>XDIAG_DISTRIBUTED</code> when setting up the compilation using <a href="https://cmake.org/">CMake</a>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-64-1" name="__codelineno-64-1" href="#__codelineno-64-1"></a>cmake<span class="w"> </span>-S<span class="w"> </span>.<span class="w"> </span>-B<span class="w"> </span>build<span class="w"> </span>-D<span class="w"> </span><span class="nv">XDIAG_DISTRIBUTED</span><span class="o">=</span>On
+<a id="__codelineno-64-2" name="__codelineno-64-2" href="#__codelineno-64-2"></a>cmake<span class="w"> </span>--build<span class="w"> </span>build
+<a id="__codelineno-64-3" name="__codelineno-64-3" href="#__codelineno-64-3"></a>cmake<span class="w"> </span>--install<span class="w"> </span>build
+</code></pre></div>
+<p>This will create a distinct <code>xdiag_distributed</code> library, which is different from the standard <code>xdiag</code> library. To link an application code to the distributed library, we can use the following <code>CMakeLists.txt</code> file.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-65-1" name="__codelineno-65-1" href="#__codelineno-65-1"></a><span class="nb">cmake_minimum_required</span><span class="p">(</span><span class="s">VERSION</span><span class="w"> </span><span class="s">3.19</span><span class="p">)</span>
+<a id="__codelineno-65-2" name="__codelineno-65-2" href="#__codelineno-65-2"></a><span class="nb">project</span><span class="p">(</span><span class="s">hello_world</span><span class="p">)</span>
+<a id="__codelineno-65-3" name="__codelineno-65-3" href="#__codelineno-65-3"></a><span class="nb">find_package</span><span class="p">(</span><span class="s">xdiag_distributed</span><span class="w"> </span><span class="s">REQUIRED</span><span class="w"> </span><span class="s">HINTS</span><span class="w"> </span><span class="s2">&quot;/path/to/where/xdiag/should/be/install&quot;</span><span class="p">)</span>
+<a id="__codelineno-65-4" name="__codelineno-65-4" href="#__codelineno-65-4"></a><span class="nb">add_executable</span><span class="p">(</span><span class="s">main</span><span class="w"> </span><span class="s">main.cpp</span><span class="p">)</span>
+<a id="__codelineno-65-5" name="__codelineno-65-5" href="#__codelineno-65-5"></a><span class="nb">target_link_libraries</span><span class="p">(</span><span class="s">main</span><span class="w"> </span><span class="s">PRIVATE</span><span class="w"> </span><span class="s">xdiag::xdiag_distributed</span><span class="p">)</span><span class="w">  </span>
+</code></pre></div>
+<p>Notice that this only differs from the original <code>CMakeLists.txt</code> file shown in the section <a href="#application-compilation">Application compilation</a> in two places, where we specify that the <code>xdiag_distributed</code> library instead of the standard <code>xdiag</code> library is used. The distributed memory library is built on top of the message passing interface (MPI). Every MPI application needs to initialize and finalize the MPI environment explicitly. Hence, a typical main routine for using the distributed XDiag library with MPI should look similar to the following listing.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="38:1"><input checked="checked" id="__tabbed_38_1" name="__tabbed_38" type="radio" /><div class="tabbed-labels"><label for="__tabbed_38_1">C++</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-66-1" name="__codelineno-66-1" href="#__codelineno-66-1"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;xdiag/all.hpp&gt;</span>
+<a id="__codelineno-66-2" name="__codelineno-66-2" href="#__codelineno-66-2"></a><span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">xdiag</span><span class="p">;</span>
+<a id="__codelineno-66-3" name="__codelineno-66-3" href="#__codelineno-66-3"></a><span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">argv</span><span class="p">[])</span><span class="w"> </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-66-4" name="__codelineno-66-4" href="#__codelineno-66-4"></a><span class="w">    </span><span class="n">MPI_Init</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="n">argv</span><span class="p">);</span>
+<a id="__codelineno-66-5" name="__codelineno-66-5" href="#__codelineno-66-5"></a><span class="w">    </span><span class="c1">// genuine XDiag code here</span>
+<a id="__codelineno-66-6" name="__codelineno-66-6" href="#__codelineno-66-6"></a><span class="w">    </span><span class="n">MPI_Finalize</span><span class="p">();</span>
+<a id="__codelineno-66-7" name="__codelineno-66-7" href="#__codelineno-66-7"></a><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">Error</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-66-8" name="__codelineno-66-8" href="#__codelineno-66-8"></a><span class="w">    </span><span class="n">error_trace</span><span class="p">(</span><span class="n">e</span><span class="p">);</span>
+<a id="__codelineno-66-9" name="__codelineno-66-9" href="#__codelineno-66-9"></a><span class="p">}</span>
 </code></pre></div>
 </div>
 </div>
 </div>
 <p>The functionality described in the previous sections is also available to some degree for the distributed library. Importantly, to use the distributed capabilities we have to change the types of blocks from the standard <a href="../documentation/blocks/spinhalf/">Spinhalf</a>, <a href="../documentation/blocks/tJ/">tJ</a>, and <a href="../documentation/blocks/electron/">Electron</a> blocks to the <a href="../documentation/blocks/spinhalf_distributed/">SpinhalfDistributed</a>, <a href="../documentation/blocks/tJ_distributed/">tJDistributed</a>, and <a href="../documentation/blocks/electron_distributed/">ElectronDistributed</a> blocks. An example to compute the ground state of a Heisenberg chain using the distributed capabilities is given by,</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="36:1"><input checked="checked" id="__tabbed_36_1" name="__tabbed_36" type="radio" /><div class="tabbed-labels"><label for="__tabbed_36_1">C++</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="39:1"><input checked="checked" id="__tabbed_39_1" name="__tabbed_39" type="radio" /><div class="tabbed-labels"><label for="__tabbed_39_1">C++</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-62-1" name="__codelineno-62-1" href="#__codelineno-62-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">block</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SpinhalfDistributed</span><span class="p">(</span><span class="n">N</span><span class="p">,</span><span class="w"> </span><span class="n">nup</span><span class="p">);</span>
-<a id="__codelineno-62-2" name="__codelineno-62-2" href="#__codelineno-62-2"></a><span class="n">OpSum</span><span class="w"> </span><span class="n">ops</span><span class="p">;</span><span class="w">    </span>
-<a id="__codelineno-62-3" name="__codelineno-62-3" href="#__codelineno-62-3"></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">N</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-62-4" name="__codelineno-62-4" href="#__codelineno-62-4"></a><span class="w">    </span><span class="n">ops</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">Op</span><span class="p">(</span><span class="s">&quot;SdotS&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="n">N</span><span class="p">});</span>
-<a id="__codelineno-62-5" name="__codelineno-62-5" href="#__codelineno-62-5"></a><span class="p">}</span>
-<a id="__codelineno-62-6" name="__codelineno-62-6" href="#__codelineno-62-6"></a><span class="kt">double</span><span class="w"> </span><span class="n">e0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eigval0</span><span class="p">(</span><span class="n">ops</span><span class="p">,</span><span class="w"> </span><span class="n">block</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-67-1" name="__codelineno-67-1" href="#__codelineno-67-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">block</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SpinhalfDistributed</span><span class="p">(</span><span class="n">N</span><span class="p">,</span><span class="w"> </span><span class="n">nup</span><span class="p">);</span>
+<a id="__codelineno-67-2" name="__codelineno-67-2" href="#__codelineno-67-2"></a><span class="n">OpSum</span><span class="w"> </span><span class="n">ops</span><span class="p">;</span><span class="w">    </span>
+<a id="__codelineno-67-3" name="__codelineno-67-3" href="#__codelineno-67-3"></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">N</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-67-4" name="__codelineno-67-4" href="#__codelineno-67-4"></a><span class="w">    </span><span class="n">ops</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">Op</span><span class="p">(</span><span class="s">&quot;SdotS&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="n">N</span><span class="p">});</span>
+<a id="__codelineno-67-5" name="__codelineno-67-5" href="#__codelineno-67-5"></a><span class="p">}</span>
+<a id="__codelineno-67-6" name="__codelineno-67-6" href="#__codelineno-67-6"></a><span class="kt">double</span><span class="w"> </span><span class="n">e0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eigval0</span><span class="p">(</span><span class="n">ops</span><span class="p">,</span><span class="w"> </span><span class="n">block</span><span class="p">);</span>
 </code></pre></div>
 </div>
 </div>
