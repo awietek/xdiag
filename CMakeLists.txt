@@ -312,7 +312,11 @@ install(TARGETS ${XDIAG_LIBRARY} EXPORT ${XDIAG_LIBRARY}_Targets
         INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
 
 if (BUILD_SHARED_LIBS)
-    set(type shared)
+  set(type shared)
+  install(FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/include/${XDIAG_LIBRARY}/export.hpp
+    DESTINATION include/${XDIAG_LIBRARY}
+  )
 else ()
     set(type static)
 endif ()
