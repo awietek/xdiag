@@ -218,4 +218,32 @@ std::tuple<OpSum, double> triangular_12_complex(int64_t nup, double eta) {
   return {ops, e0};
 }
 
+OpSum Exchange_chain(int64_t nsites, double J) {
+
+  OpSum ops;
+  ops["J"] = J;
+
+  for (int64_t s = 0; s < nsites; ++s) {
+    ops += "J" * Op("Exchange", {s, (s + 1) % nsites});
+  }
+  
+  return ops;
+}
+
+OpSum XY_chain(int64_t nsites, double Jx, double Jy){
+
+    OpSum ops;
+    ops["Jx"] = Jx;
+    ops["Jy"] = Jy;
+
+    for (int64_t s = 0; s < nsites; ++s) {
+      ops += "Jx" * Op("SxSx", {s, (s + 1) % nsites});
+      ops += "Jy" * Op("SySy", {s, (s + 1) % nsites});
+    }
+    
+  return ops;
+}
+
+
+
 } // namespace xdiag::testcases::spinhalf

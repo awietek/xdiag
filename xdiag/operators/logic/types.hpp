@@ -11,18 +11,20 @@
 namespace xdiag {
 
 inline const std::vector<std::string> known_types = {
-    "Id",    "SdotS",           "Exchange", "SzSz",       "Sz",     "S+",
-    "S-",    "ScalarChirality", "Hop",      "Hopup",      "Hopdn",  "Cdagup",
-    "Cup",   "Cdagdn",          "Cdn",      "HubbardU",   "Ntot",   "Nup",
-    "Ndn",   "Nupdn",           "NtotNtot", "NupdnNupdn", "tJSzSz", "tJSdotS",
-    "Matrix", "NupNdn", "NupNup", "NdnNdn", "NdnNup"};
+    "Id",     "SdotS",   "Exchange", "SzSz",             "SxSx",     "SySy"
+    "Sz",     "S+",      "S-",       "ScalarChirality",  "Hop",      "Hopup",  
+    "Hopdn",  "Cdagup",  "Cup",      "Cdagdn",           "Cdn",      "HubbardU",  
+    "Ntot",   "Nup",     "Ndn",      "Nupdn",            "NtotNtot", "NupdnNupdn",
+    "tJSzSz", "tJSdotS", "Matrix",   "NupNdn",           "NupNup",   "NdnNdn",
+    "NdnNup"};
 
 inline const std::vector<std::string> real_types = {
-    "Id",     "SdotS",    "Exchange",   "SzSz",   "Sz",     "S+",
-    "S-",     "Hop",      "Hopup",      "Hopdn",  "Cdagup", "Cup",
-    "Cdagdn", "Cdn",      "HubbardU",   "Ntot",   "Nup",    "Ndn",
-    "Nupdn",  "NtotNtot", "NupdnNupdn", "tJSzSz", "tJSdotS",
-    "NupNdn", "NupNup", "NdnNdn", "NdnNup"};
+    "Id",      "SdotS",    "Exchange",   "SzSz",     "SxSx",       "SySy", 
+    "Sz",      "S+",       "S-",         "Hop",      "Hopup",      "Hopdn",
+    "Cdagup",  "Cup",      "Cdagdn",     "Cdn",      "HubbardU",   "Ntot", 
+    "Nup",     "Ndn",      "Nupdn",      "NtotNtot", "NupdnNupdn", "tJSzSz",
+    "tJSdotS", "NupNdn",   "NupNup",     "NdnNdn",   "NdnNup"};
+
 inline const std::vector<std::string> cplx_types = {"ScalarChirality"};
 
 inline const std::map<std::string, int64_t> _nsites_of_type = {
@@ -30,6 +32,8 @@ inline const std::map<std::string, int64_t> _nsites_of_type = {
     {"SdotS", 2},
     {"Exchange", 2},
     {"SzSz", 2},
+    {"SxSx", 2},
+    {"SySy", 2},
     {"Sz", 1},
     {"S+", 1},
     {"S-", 1},

@@ -133,4 +133,19 @@ TEST_CASE("spinhalf_apply", "[spinhalf]") {
 
     REQUIRE(isapprox(e0, energy));
   }
+
+  {
+    Log("spinhalf_matrix: XY chain vs. Exchange chain, N=7");
+    int nsites = 7;
+    auto block = Spinhalf(nsites);
+    auto ops_exch = Exchange_chain(nsites, 1.0);
+    auto ops_xy = XY_chain(nsites, 1.0, 1.0);
+    auto e0_exch = eigval0(ops_exch, block);
+    auto e0_xy = eigval0(ops_xy, block);
+    //Log("e0_xy: {}, e0_exch: {}", e0_xy, e0_exch);
+
+    REQUIRE(isapprox(e0_xy, e0_exch));
+  }
+
+
 }

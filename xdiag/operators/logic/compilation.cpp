@@ -38,6 +38,14 @@ OpSum compile_spinhalf(OpSum const &ops) try {
     if (type == "SdotS") {
       ops_compiled += cpl * Op("SzSz", op.sites());
       ops_compiled += cpl * Op("Exchange", op.sites());
+    } else if (type == "SxSx") {
+      arma::mat Sx = arma::mat({{0, 0.5}, {0.5, 0}});
+      arma::mat SxSx = arma::kron(Sx, Sx);
+      ops_compiled += cpl * Op("Matrix", op.sites(), SxSx);
+    } else if (type == "SySy") {
+      arma::mat iSy = arma::mat({{0, 0.5}, {-0.5, 0}});
+      arma::mat SySy = - arma::kron(iSy, iSy);
+      ops_compiled += cpl * Op("Matrix", op.sites(), SySy);
     } else {
       ops_compiled += cpl * op;
     }
