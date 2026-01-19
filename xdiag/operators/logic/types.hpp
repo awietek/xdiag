@@ -11,7 +11,7 @@
 namespace xdiag {
 
 inline const std::vector<std::string> known_types = {
-    "Id",     "SdotS",   "Exchange", "SzSz",             "SxSx",     "SySy"
+    "Id",     "SdotS",   "Exchange", "SzSz",             "SxSx",     "SySy",
     "Sz",     "S+",      "S-",       "ScalarChirality",  "Hop",      "Hopup",  
     "Hopdn",  "Cdagup",  "Cup",      "Cdagdn",           "Cdn",      "HubbardU",  
     "Ntot",   "Nup",     "Ndn",      "Nupdn",            "NtotNtot", "NupdnNupdn",
