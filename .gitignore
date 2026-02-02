@@ -72,3 +72,4 @@ examples/thermodynamics/checkerboard_tpq/outfiles/*
 **output.pdf
 */output.h5
 examples/user_guide/output.h5
+.aider*
