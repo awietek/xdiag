@@ -20,7 +20,6 @@ public:
   static constexpr size_t nchunkbits = std::numeric_limits<chunk_t>::digits;
   static constexpr size_t chunkshift = floorlog2(nchunkbits);
   static constexpr chunk_t chunkmask = ((chunk_t)1 << chunkshift) - 1;
-
   using storage_t =
       typename std::conditional<(bool)nchunks, std::array<chunk_t, nchunks>,
                                 std::vector<chunk_t>>::type;
