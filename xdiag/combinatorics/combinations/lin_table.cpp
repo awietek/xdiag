@@ -6,17 +6,18 @@
 
 #include <xdiag/bits/bitops.hpp>
 #include <xdiag/combinatorics/binomial.hpp>
-#include <xdiag/combinatorics/combinations.hpp>
+#include <xdiag/combinatorics/combinations/combinations.hpp>
+#include <xdiag/utils/error.hpp>
 
 namespace xdiag::combinatorics {
 
 template <class bit_t>
-LinTable<bit_t>::LinTable(int64_t n, int64_t k)
+LinTable<bit_t>::LinTable(int64_t n, int64_t k) try
     : n_(n), k_(k), n_left_(ceil(n / 2.0)), n_right_(n - n_left_),
       left_table_size_((int64_t)1 << n_left_),
       right_table_size_((int64_t)1 << n_right_),
       left_indices_(left_table_size_, 0), right_indices_(right_table_size_, 0),
-      size_(combinatorics::binomial(n, k)) {
+      size_(binomial(n, k)) {
   using bits::popcnt;
 
   // Fill offsets on left indices
@@ -33,10 +34,12 @@ LinTable<bit_t>::LinTable(int64_t n, int64_t k)
   // Fill indices for right combinations
   for (int64_t k_right = 0; k_right <= n_right_; ++k_right) {
     int64_t idx = 0;
-    for (bit_t bits : Combinations<bit_t>(n_right_, k_right))
+    for (bit_t bits : Combinations<bit_t>(n_right_, k_right)) {
       right_indices_[bits] = idx++;
+    }
   }
 }
+XDIAG_CATCH
 
 template <class bit_t>
 bool LinTable<bit_t>::operator==(LinTable<bit_t> const &rhs) const {

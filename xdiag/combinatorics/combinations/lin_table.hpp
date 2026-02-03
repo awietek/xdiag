@@ -4,37 +4,21 @@
 
 #pragma once
 
+#include <cstdint>
 #include <vector>
-
 #include <xdiag/bits/bitops.hpp>
-#include <xdiag/combinatorics/combinations.hpp>
-#include <xdiag/combinatorics/combinations_index.hpp>
-#include <xdiag/common.hpp>
 
 namespace xdiag::combinatorics {
 
-template <class bit_t> class LinTable {
+template <class bit_tt> class LinTable {
 public:
+  using bit_t = bit_tt;
   LinTable() = default;
   LinTable(int64_t n, int64_t k);
-
-  inline int64_t n() const { return n_; }
-  inline int64_t k() const { return k_; }
-
   inline int64_t index(bit_t bits) const {
     return left_indices_[bits >> n_right_] +
            right_indices_[bits::gbits(bits, 0, n_right_)];
   }
-
-  inline combinatorics::Combinations<bit_t> states() const {
-    return combinatorics::Combinations<bit_t>(n_, k_);
-  }
-
-  inline combinatorics::CombinationsIndex<bit_t> states_indices() const {
-    return combinatorics::CombinationsIndex<bit_t>(n_, k_);
-  }
-  inline int64_t size() const { return size_; }
-
   bool operator==(LinTable<bit_t> const &rhs) const;
   bool operator!=(LinTable<bit_t> const &rhs) const;
 
