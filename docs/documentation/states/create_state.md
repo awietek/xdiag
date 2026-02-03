@@ -35,12 +35,12 @@ Create a filled random state with normal $\mathcal{N}(0, 1)$ distributed coeffic
 
 === "C++"
 	```c++
-	State random_state(Block const &block, bool real = true, int64_t seed = 42, bool normalized = true);
+	State random_state(Block const &block, bool real = true, int64_t ncols = 1, int64_t seed = 42, bool normalized = true);
 	```
 	
 === "Julia"
 	```julia
-	random_state(block::Block; real::Bool=true, seed::Int64=42, normalized::Bool=true
+	random_state(block::Block; real::Bool=true, ncols::Int64=1, seed::Int64=42, normalized::Bool=true
 	```
 
 
@@ -50,6 +50,7 @@ Create a filled random state with normal $\mathcal{N}(0, 1)$ distributed coeffic
 |:-----------|:---------------------------------------------------|---|
 | block      | block on which the state is defined                |   |
 | real       | flag whether real state is created                 |   |
+| ncols      | number of columns in the state                     |   |
 | seed       | random seed determining the precise random numbers |   |
 | normalized | flag whether the state is normalized               |   |
 

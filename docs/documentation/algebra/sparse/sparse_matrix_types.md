@@ -36,7 +36,7 @@ The coordinate format is a simple format which consists of two integer arrays `n
 
 Notice, that in addition to the three arrays `row`, `col` `data`, also the total number of rows `nrows` and columns `ncols` is stored. Also, the entry `i0` is used in XDiag to indicate whether the matrix is 0-indexed (`i0=0`) or 1-indexed (`i0=1`). Lastly, whenever a sparse matrix is created in XDiag the flag `ishermitian` is set, which indicates whether or not the matrix is Hermitian. 
 
-The COO format is simple to understand and can be created very efficiently using XDiag. The entries in the `row` and `col` arrays are not ordered in any specific manner. This format is a common format in many sparse matrix libraries to create more advances storage types. A disavantage of this format is the memory overhead by storing both row and column indices, which can for example be reduces in the compressed-sparse-row (CSR) or compressed-sparse-column (CSC) formats. Also, typically implementations of matrix-vector multiplications are often not efficient for the COO format, due to a lack of locality in memory.
+The COO format is simple to understand and can be created very efficiently using XDiag. The entries in the `row` and `col` arrays are not ordered in any specific manner. This format is a common format in many sparse matrix libraries to create more advances storage types. A disadvantage of this format is the memory overhead by storing both row and column indices, which can for example be reduces in the compressed-sparse-row (CSR) or compressed-sparse-column (CSC) formats. Also, typically implementations of matrix-vector multiplications are often not efficient for the COO format, due to a lack of locality in memory.
 
 To create matrices in the COO format, the functions [coo_matrix](coo_matrix.md) and [coo_matrix_32](coo_matrix.md) can be used.
 
@@ -115,7 +115,7 @@ To create matrices in the CSC format, the functions [csc_matrix](csc_matrix.md) 
 
 ## Interfacing with other libraries
 
-The matrix formats provided by XDiag are very raw lacking advanced sparse matrix functionality, except that CSR matrices can be used in internal algorithms in XDiag. To have more advances sparse matrix features we recommend using third party library. Here, we show how to convert an XDiag sparse matrix to some specific libraries. First, the following code shows how to create a `SparseMatrixCSC` in Julia, which is part of the Julia standard libary. The standard Julia sparse matrix is in the compressed-sparse-columns (CSC) format, which is why we use the [csc_matrix](csc_matrix.md) function to create the proper data structure. 
+The matrix formats provided by XDiag are very raw lacking advanced sparse matrix functionality, except that CSR matrices can be used in internal algorithms in XDiag. To have more advanced sparse matrix features we recommend using third party library. Here, we show how to convert an XDiag sparse matrix to some specific libraries. First, the following code shows how to create a `SparseMatrixCSC` in Julia, which is part of the Julia standard libary. The standard Julia sparse matrix is in the compressed-sparse-columns (CSC) format, which is why we use the [csc_matrix](csc_matrix.md) function to create the proper data structure. 
 
 ```julia
 using SparseArrays

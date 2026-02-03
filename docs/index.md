@@ -16,6 +16,7 @@
 
 ## News
 
+* **Dec. 4, 2025** New release [v0.4.1](releases.md) fixes a bug reported as issue #99
 * **Nov. 4, 2025** New release [v0.4.0](releases.md) introduces sparse matrix capabilities
 * **Jun. 17, 2025** New release [v0.3.3](releases.md) features additional parallelization in Julia, compatibility with Julia 1.12, and several practical enhancements
 

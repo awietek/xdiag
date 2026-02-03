@@ -26,7 +26,7 @@ template <typename bit_t> constexpr bit_t get_next_pattern(bit_t v) noexcept {
   // 1)));
 
   // Slow version (should work everywhere)
-  int_t t = (v | (v - 1)) + 1;
+  bit_t t = (v | (v - 1)) + 1;
   return v == 0 ? ~v : t | ((((t & -t) / (v & -v)) >> 1) - 1);
 }
 
