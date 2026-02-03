@@ -94,16 +94,16 @@ set(XDIAG_SOURCES
   blocks/electron.cpp
   blocks/tj.cpp
 
-  symmetries/permutation.cpp
-  symmetries/permutation_group.cpp
-  symmetries/representation.cpp
-  symmetries/operations/symmetry_operations.cpp	
-  symmetries/operations/representative_lookup_table.cpp	
-  symmetries/operations/fermi_sign.cpp
-  symmetries/group_action/group_action.cpp
-  symmetries/group_action/group_action_lookup.cpp
-  symmetries/group_action/group_action_sublattice.cpp
-  symmetries/group_action/sublattice_stability.cpp
+  # symmetries/permutation.cpp
+  # symmetries/permutation_group.cpp
+  # symmetries/representation.cpp
+  # symmetries/operations/symmetry_operations.cpp	
+  # symmetries/operations/representative_lookup_table.cpp	
+  # symmetries/operations/fermi_sign.cpp
+  # symmetries/group_action/group_action.cpp
+  # symmetries/group_action/group_action_lookup.cpp
+  # symmetries/group_action/group_action_sublattice.cpp
+  # symmetries/group_action/sublattice_stability.cpp
 
   operators/coupling.cpp
   operators/op.cpp
