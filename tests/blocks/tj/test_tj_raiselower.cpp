@@ -3,17 +3,66 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "../../catch.hpp"
+
+#include "testcases_tj.hpp"
+#include <xdiag/algebra/algebra.hpp>
 #include <xdiag/algebra/apply.hpp>
 #include <xdiag/algebra/isapprox.hpp>
 #include <xdiag/algebra/matrix.hpp>
-#include <xdiag/utils/logger.hpp>
-#include "testcases_tj.hpp"
+#include <xdiag/states/fill.hpp>
 
-using namespace xdiag;
-using namespace arma;
+#include <xdiag/utils/logger.hpp>
 
 TEST_CASE("tj_raise_lower", "[tj]") try {
-  using namespace testcases::tj;
+  using namespace xdiag;
+  using namespace xdiag::testcases::tj;
+
+  // Test normal ordering
+  Log("test tJ normal ordering");
+  for (int nsites = 2; nsites < 6; ++nsites) {
+    auto block0 = tJ(nsites, 0, 0);
+    auto psi0 = State(block0);
+    psi0.vector(0, false)[0] = 1.0;
+
+    for (int nup = 0; nup <= nsites; ++nup) {
+      for (int ndn = 0; ndn <= nsites - nup; ++ndn) {
+        auto block = tJ(nsites, nup, ndn);
+
+        for (ProductState pstate : block) {
+          std::vector<int> up_positions;
+          std::vector<int> dn_positions;
+          for (int i = 0; i < nsites; ++i) {
+            if ((pstate[i] == "Up") || (pstate[i] == "UpDn")) {
+              up_positions.push_back(i);
+            }
+            if ((pstate[i] == "Dn") || (pstate[i] == "UpDn")) {
+              dn_positions.push_back(i);
+            }
+          }
+
+          // Create state from product state
+          auto psi = State(block);
+          fill(psi, pstate, 0);
+
+          auto psi2 = psi0;
+
+          std::reverse(dn_positions.begin(), dn_positions.end());
+          for (int i : dn_positions) {
+            psi2 = apply(Op("Cdagdn", i), psi2);
+          }
+
+          std::reverse(up_positions.begin(), up_positions.end());
+          for (int i : up_positions) {
+            psi2 = apply(Op("Cdagup", i), psi2);
+          }
+
+          REQUIRE(norm(psi2 - psi) < 1e-12);
+        }
+      }
+    }
+  }
+
+  using namespace arma;
   std::vector<std::string> op_strs = {"Cdagup", "Cdagdn", "Cup", "Cdn"};
 
   for (int nsites = 1; nsites < 7; ++nsites) {
@@ -108,13 +157,13 @@ TEST_CASE("tj_raise_lower", "[tj]") try {
                 }
 
               } // loop op_i_str
-            }   // loop op_j_str
+            } // loop op_j_str
 
           } // loop i
-        }   // loop j
+        } // loop j
 
       } // loop nup
-    }   // loop ndn
+    } // loop ndn
 
   } // loop nsites
 

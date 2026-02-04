@@ -9,15 +9,61 @@
 #include <xdiag/algebra/isapprox.hpp>
 #include <xdiag/algebra/matrix.hpp>
 #include <xdiag/states/create_state.hpp>
+#include <xdiag/states/fill.hpp>
 #include <xdiag/utils/logger.hpp>
 
 using namespace xdiag;
-using namespace arma;
 
 TEST_CASE("tj_distributed_raise_lower", "[tj_distributed]") try {
   using namespace testcases::tj;
   using block_t = tJDistributed;
   // using block_t = tJ;
+
+  // Test normal ordering
+  Log("test tJDistributed normal ordering");
+  for (int nsites = 2; nsites < 6; ++nsites) {
+    auto block0 = tJDistributed(nsites, 0, 0);
+    auto psi0 = product_state(block0, std::vector<std::string>(nsites, "Emp"));
+
+    for (int nup = 0; nup <= nsites; ++nup) {
+      for (int ndn = 0; ndn <= nsites - nup; ++ndn) {
+        auto block = tJDistributed(nsites, nup, ndn);
+
+        for (auto pstate : block) {
+          std::vector<int> up_positions;
+          std::vector<int> dn_positions;
+          for (int i = 0; i < nsites; ++i) {
+            if ((pstate[i] == "Up") || (pstate[i] == "UpDn")) {
+              up_positions.push_back(i);
+            }
+            if ((pstate[i] == "Dn") || (pstate[i] == "UpDn")) {
+              dn_positions.push_back(i);
+            }
+          }
+
+          // Create state from product state
+          auto psi = State(block);
+          fill(psi, pstate);
+
+          auto psi2 = psi0;
+
+          std::reverse(dn_positions.begin(), dn_positions.end());
+          for (int i : dn_positions) {
+            psi2 = apply(Op("Cdagdn", i), psi2);
+          }
+
+          std::reverse(up_positions.begin(), up_positions.end());
+          for (int i : up_positions) {
+            psi2 = apply(Op("Cdagup", i), psi2);
+          }
+
+          REQUIRE(norm(psi2 - psi) < 1e-12);
+        }
+      }
+    }
+  }
+
+  using namespace arma;
 
   std::vector<std::string> op_strs = {"Cdagup", "Cdagdn", "Cup", "Cdn"};
   // std::vector<std::string> op_strs = {"Cup", "Cdn"};

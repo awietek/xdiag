@@ -140,7 +140,7 @@ void generic_term_dns_no_sym(basis_t const &basis_in, basis_t const &basis_out,
           int64_t idx_in = idx_dns_in;
           for (bit_t ups : basis_in.states_ups()) {
             bool fermi = bits::popcnt(ups) & 1;
-            XDIAG_FILL(idx_in, idx_out, fermi ? coeff : -coeff);
+            XDIAG_FILL(idx_in, idx_out, fermi ? -coeff : coeff);
             idx_out += size_dns_out;
             idx_in += size_dns_in;
           }

@@ -8,9 +8,57 @@
 #include <xdiag/algebra/apply.hpp>
 #include <xdiag/algebra/matrix.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
+#include <xdiag/states/fill.hpp>
+#include <xdiag/states/create_state.hpp>
+#include <xdiag/utils/xdiag_show.hpp>
 
 TEST_CASE("electron_raise_lower", "[electron]") try {
   using namespace xdiag;
+
+  // Test normal ordering
+  Log("test Electron normal ordering");
+  for (int nsites = 2; nsites < 6; ++nsites) {
+    auto block0 = Electron(nsites, 0, 0);
+    auto psi0 = product_state(block0, std::vector<std::string>(nsites, "Emp"));
+
+    for (int nup = 0; nup <= nsites; ++nup) {
+      for (int ndn = 0; ndn <= nsites; ++ndn) {
+        auto block = Electron(nsites, nup, ndn);
+
+        for (auto pstate : block) {
+          std::vector<int> up_positions;
+          std::vector<int> dn_positions;
+          for (int i = 0; i < nsites; ++i) {
+            if ((pstate[i] == "Up") || (pstate[i] == "UpDn")) {
+              up_positions.push_back(i);
+            }
+            if ((pstate[i] == "Dn") || (pstate[i] == "UpDn")) {
+              dn_positions.push_back(i);
+            }
+          }
+
+          // Create state from product state
+          auto psi = State(block);
+          fill(psi, pstate);
+
+          auto psi2 = psi0;
+
+          std::reverse(dn_positions.begin(), dn_positions.end());
+          for (int i : dn_positions) {
+            psi2 = apply(Op("Cdagdn", i), psi2);
+          }
+
+          std::reverse(up_positions.begin(), up_positions.end());
+          for (int i : up_positions) {
+            psi2 = apply(Op("Cdagup", i), psi2);
+          }
+
+          REQUIRE(norm(psi2 - psi) < 1e-12);
+        }
+      }
+    }
+  }
+
   using namespace arma;
   std::vector<std::string> op_strs = {"Cdagup", "Cdagdn", "Cup", "Cdn"};
 
