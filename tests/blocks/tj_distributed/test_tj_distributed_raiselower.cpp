@@ -27,9 +27,11 @@ TEST_CASE("tj_distributed_raise_lower", "[tj_distributed]") try {
 
     for (int nup = 0; nup <= nsites; ++nup) {
       for (int ndn = 0; ndn <= nsites - nup; ++ndn) {
-        auto block = tJDistributed(nsites, nup, ndn);
 
-        for (auto pstate : block) {
+        auto block = tJDistributed(nsites, nup, ndn);
+        auto blockserial = tJ(nsites, nup, ndn);
+
+        for (auto pstate : blockserial) {
           std::vector<int> up_positions;
           std::vector<int> dn_positions;
           for (int i = 0; i < nsites; ++i) {
@@ -44,7 +46,7 @@ TEST_CASE("tj_distributed_raise_lower", "[tj_distributed]") try {
           // Create state from product state
           auto psi = State(block);
           fill(psi, pstate);
-
+	  
           auto psi2 = psi0;
 
           std::reverse(dn_positions.begin(), dn_positions.end());
@@ -56,7 +58,6 @@ TEST_CASE("tj_distributed_raise_lower", "[tj_distributed]") try {
           for (int i : up_positions) {
             psi2 = apply(Op("Cdagup", i), psi2);
           }
-
           REQUIRE(norm(psi2 - psi) < 1e-12);
         }
       }

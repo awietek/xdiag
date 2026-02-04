@@ -28,8 +28,9 @@ TEST_CASE("electron_distributed_raise_lower", "[electron_distributed]") try {
     for (int nup = 0; nup <= nsites; ++nup) {
       for (int ndn = 0; ndn <= nsites; ++ndn) {
         auto block = ElectronDistributed(nsites, nup, ndn);
+        auto blockserial = Electron(nsites, nup, ndn);
 
-        for (auto pstate : block) {
+        for (auto pstate : blockserial) {
           std::vector<int> up_positions;
           std::vector<int> dn_positions;
           for (int i = 0; i < nsites; ++i) {
