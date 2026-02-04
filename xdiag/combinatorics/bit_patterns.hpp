@@ -14,7 +14,7 @@ template <typename bit_t> constexpr bit_t get_next_pattern(bit_t v) noexcept {
   // http://graphics.stanford.edu/~seander/bithacks.html
   // #NextBitPermutation
 
-  // DONT USE FAST VERSIONS
+  // DONT USE FAST VERSION
 
   // // Fast version (needs __builtin_ctz(v)) (some problem with 0)
   // bit_t t = v | (v - 1); // t gets v's least significant 0

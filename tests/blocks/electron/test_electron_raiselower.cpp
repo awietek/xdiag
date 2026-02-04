@@ -11,7 +11,49 @@
 
 TEST_CASE("electron_raise_lower", "[electron]") try {
   using namespace xdiag;
+
+  // Test normal ordering
+  for (int nsites = 2; nsites < 6; ++nsites) {
+    auto block0 = Electron(nsites, 0, 0);
+    auto psi0 = State(block0);
+
+    for (int nup = 0; nup <= nsites; ++nup) {
+      for (int ndn = 0; ndn <= nsites; ++ndn) {
+        auto block = Electron(nsites, nup, ndn);
+
+        for (auto pstate : block) {
+          std::vector<int> up_positions;
+          std::vector<int> dn_positions;
+          for (int i = 0; i < nsites; ++i) {
+            if ((pstate[i] == "Up") || (pstate[i] == "UpDn")) {
+              up_postitions.push_back(i);
+            } else if ((pstate[i] == "Dn") || (pstate[i] == "UpDn")) {
+              dn_postitions.push_back(i);
+            }
+          }
+
+          // Create state from product state
+          auto psi = State(block);
+          fill(psi, pstate);
+
+          auto psi2 = psi0;
+          for (int i :
+               std::vector<int>(up_positions.rbegin(), up_positions.rend())) {
+            psi2 = apply(Op("Cdagup", i), psi2);
+          }
+          for (int i :
+               std::vector<int>(dn_positions.rbegin(), dn_positions.rend())) {
+            psi2 = apply(Op("Cdagdn", i), psi2);
+          }
+	  REQUIRE(isclose(psi2, psi));
+	  
+        }
+      }
+    }
+  }
+
   using namespace arma;
+
   std::vector<std::string> op_strs = {"Cdagup", "Cdagdn", "Cup", "Cdn"};
 
   for (int nsites = 1; nsites < 4; ++nsites) {

@@ -7,6 +7,8 @@ run.sh
 build
 build_julia_wrapper.sh
 *.prof
+*.heap
+heap.pdf
 *.prof.pdf
 */build/*
 install

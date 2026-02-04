@@ -61,9 +61,9 @@ private:
 
   // functions used in implementation of terms
 public:
-  inline bit_t representative(bit_t raw_state) const {
-    return reps_[index(raw_state)];
-  }
+  // inline bit_t representative(bit_t raw_state) const {
+  //   return reps_[index(raw_state)];
+  // }
   inline std::pair<int64_t, int64_t> index_sym(bit_t raw_state) const {
     int64_t raw_idx = combinations_indexing_.index(raw_state);
     int64_t index = index_for_rep_[raw_idx];
@@ -73,13 +73,13 @@ public:
     int64_t start = sym_limits_for_rep_[raw_idx].first;
     return {index, syms_[start]};
   }
-  inline std::pair<int64_t, gsl::span<int64_t const>>
-  index_syms(bit_t raw_state) const {
-    int64_t raw_idx = combinations_indexing_.index(raw_state);
-    int64_t index = index_for_rep_[raw_idx];
-    auto [start, length] = sym_limits_for_rep_[raw_idx];
-    return {index, {syms_.data() + start, length}};
-  }
+  // inline std::pair<int64_t, gsl::span<int64_t const>>
+  // index_syms(bit_t raw_state) const {
+  //   int64_t raw_idx = combinations_indexing_.index(raw_state);
+  //   int64_t index = index_for_rep_[raw_idx];
+  //   auto [start, length] = sym_limits_for_rep_[raw_idx];
+  //   return {index, {syms_.data() + start, length}};
+  // }
 };
 
 } // namespace xdiag::basis::spinhalf
