@@ -65,7 +65,7 @@ inline void set_bit(Bitset<chunk_t, nchunks> &bits, int64_t n) {
 
 template <class bit_t> constexpr void set_bit(bit_t &x, int64_t b, bool val) {
   bit_t mask = bit_t(1) << b;
-  x ^= (-bit_t(val) ^ x) & mask;
+  x = (x & ~mask) | (bit_t(-val) & mask);
 }
 template <class chunk_t, int64_t nchunks>
 inline void set_bit(Bitset<chunk_t, nchunks> &bits, int64_t n, bool val) {
