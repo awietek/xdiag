@@ -58,6 +58,8 @@ set(XDIAG_SOURCES
 
   basis/basis.cpp
   basis/basis_onthefly.cpp
+  basis/basis_symmetric.cpp
+  basis/to_product_state.cpp
   
   blocks/blocks.cpp
   blocks/spinhalf.cpp

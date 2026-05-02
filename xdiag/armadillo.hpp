@@ -15,7 +15,10 @@
 #endif
 
 #ifdef XDIAG_USE_HDF5
-#define ARMA_USE_HDF5
+// #define ARMA_USE_HDF5
+// commented out since caused an error
+// error: no matching function for call to 'H5Ovisit3'
+// on OSX
 #endif
 
 // Redefinition of "Op" to avoid name colission with xdiag::Op

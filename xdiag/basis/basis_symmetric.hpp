@@ -12,6 +12,7 @@
 
 #include <xdiag/basis/basis.hpp>
 #include <xdiag/states/product_state.hpp>
+#include <xdiag/symmetries/representation.hpp>
 #include <xdiag/symmetries/tables/representative_table.hpp>
 #include <xdiag/utils/type_name.hpp>
 
@@ -22,16 +23,18 @@ class BasisSymmetric : public BasisType<BasisSymmetric<enumeration_tt>> {
 public:
   using enumeration_t = enumeration_tt;
   using bit_t = typename enumeration_t::bit_t;
-  using iterator_t =
-      typename RepresentativeTable<enumeration_t>::const_iterator;
+  using table_t = symmetries::RepresentativeTable<enumeration_t>;
+  using iterator_t = typename table_t::const_iterator;
   static constexpr std::string_view type_name =
       utils::get_type_name<BasisSymmetric<enumeration_t>>();
 
   BasisSymmetric() = default;
-  BasisSymmetric(enumeration_t const &enumeration);
+  BasisSymmetric(Representation const &irrep, enumeration_t const &enumeration);
 
   int64_t size() const;
   int64_t nsites() const;
+  Representation const& irrep() const;
+  
   inline std::tuple<int64_t, int64_t, double>
   representative_index_symmetry_norm(bit_t bits) const {
     int64_t idx = enumeration_.index(bits);
@@ -50,8 +53,9 @@ public:
   bool operator!=(BasisSymmetric<enumeration_t> const &rhs) const;
 
 private:
+  Representation irrep_;
   enumeration_t enumeration_;
-  RepresentativeTable<enumeration_t> table_;
+  table_t table_;
 };
 
 } // namespace xdiag::basis

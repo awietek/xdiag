@@ -27,6 +27,7 @@
 #include <xdiag/symmetries/action/isrepresentative.hpp>
 #include <xdiag/symmetries/action/norm.hpp>
 #include <xdiag/utils/error.hpp>
+#include <xdiag/utils/format.hpp>
 
 namespace xdiag::symmetries {
 
@@ -41,6 +42,18 @@ static void representative_table_initialize(
     std::vector<double> &norms) try {
   using bit_t = typename enumeration_t::bit_t;
   using bits::BitVector;
+
+  if (action.size() != characters.size()) {
+    XDIAG_THROW(fmt::format("Size of symmetry group action (={}) incompatible "
+                            "with size of character table of irrep (={})",
+                            action.size(), characters.size()));
+  }
+  if (action.nsites() != enumeration.n()) {
+    XDIAG_THROW(
+        fmt::format("nsites of symmetry group action (={}) incompatible "
+                    "with nsites of state enumeration (={})",
+                    action.nsites(), enumeration.n()));
+  }
 
   // First pass, simply count number of representatives and number of different
   // norms
@@ -254,12 +267,8 @@ XDIAG_CATCH
 
 template <typename enumeration_t>
 RepresentativeTable<enumeration_t>::RepresentativeTable(
-    enumeration_t const &enumeration, SitePermutation const &action,
-    Representation const &irrep) try {
-  if (action.group() != irrep.group()) {
-    XDIAG_THROW("PermutationGroup of SitePermutation does not agree with group "
-                "or Representation");
-  }
+    Representation const &irrep, enumeration_t const &enumeration) try {
+  auto action = SitePermutation(irrep.group());
   if (isreal(irrep)) {
     representative_table_initialize(
         enumeration, action, irrep.characters().as<arma::vec>(),
@@ -281,7 +290,7 @@ int64_t RepresentativeTable<enumeration_t>::size() const {
 
 template <typename enumeration_t>
 bool RepresentativeTable<enumeration_t>::operator==(
-    RepresentativeTable<enumeration_t> const &rhs) const {
+    RepresentativeTable const &rhs) const {
   return (representative_ == rhs.representative_) &&
          (representative_index_ == rhs.representative_index_) &&
          (representative_symmetry_ == rhs.representative_symmetry_) &&
@@ -291,7 +300,7 @@ bool RepresentativeTable<enumeration_t>::operator==(
 
 template <typename enumeration_t>
 bool RepresentativeTable<enumeration_t>::operator!=(
-    RepresentativeTable<enumeration_t> const &rhs) const {
+    RepresentativeTable const &rhs) const {
   return !operator==(rhs);
 }
 

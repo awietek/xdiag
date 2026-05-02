@@ -4,15 +4,19 @@
 
 #include "basis_onthefly.hpp"
 
+#include <xdiag/basis/to_product_state.hpp>
 #include <xdiag/bits/bitset.hpp>
 #include <xdiag/combinatorics/combinations/combinations.hpp>
 #include <xdiag/combinatorics/combinations/lin_table.hpp>
 #include <xdiag/combinatorics/subsets/subsets.hpp>
+#include <xdiag/utils/error.hpp>
 
 namespace xdiag::basis {
 template <typename enumeration_t>
-BasisOnTheFly<enumeration_t>::BasisOnTheFly(enumeration_t const &enumeration)
+BasisOnTheFly<enumeration_t>::BasisOnTheFly(
+    enumeration_t const &enumeration) try
     : enumeration_(enumeration) {}
+XDIAG_CATCH
 
 template <typename enumeration_t>
 int64_t BasisOnTheFly<enumeration_t>::size() const {
@@ -44,13 +48,7 @@ BasisOnTheFly<enumeration_t>::end() const {
 template <typename enumeration_t>
 ProductState BasisOnTheFly<enumeration_t>::product_state(
     int64_t idx, std::vector<std::string> const &dict) const {
-  int64_t nsites = enumeration_.n();
-  ProductState ps(nsites);
-  auto const b = enumeration_[idx];
-  for (int64_t i = 0; i < nsites; ++i) {
-    ps[i] = dict[bits::get_bit(b, i)];
-  }
-  return ps;
+  return to_product_state(enumeration_, idx, dict);
 }
 
 template <typename enumeration_t>

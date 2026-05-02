@@ -12,9 +12,9 @@
 
 namespace xdiag::symmetries {
 
-// RepresentativeTable maps every state in an enumeration to the lexicographically
-// smallest state in its symmetry orbit (the "representative") under a given
-// SitePermutation action and 1-D Representation (irrep).
+// RepresentativeTable maps every state in an enumeration to the
+// lexicographically smallest state in its symmetry orbit (the "representative")
+// under a given SitePermutation action and 1-D Representation (irrep).
 //
 // For each state at enumeration index idx, the table stores:
 //   representative(idx)         – the orbit representative (a bit state)
@@ -33,20 +33,19 @@ public:
   using const_iterator = bits::BitVectorConstIterator<bit_t>;
 
   RepresentativeTable() = default;
-  RepresentativeTable(enumeration_t const &enumeration,
-                      SitePermutation const &action,
-                      Representation const &irrep);
+  RepresentativeTable(Representation const &irrep,
+                      enumeration_t const &enumeration);
 
   inline bit_t representative(int64_t idx) const {
     return representative_[representative_index_[idx]];
   }
-  inline int64_t index_of_representative(int64_t idx) const {
+  inline int64_t representative_index(int64_t idx) const {
     return representative_index_[idx];
   }
-  inline int64_t symmetry(int64_t idx) const {
+  inline int64_t representative_symmetry(int64_t idx) const {
     return representative_symmetry_[idx];
   }
-  inline double norm(int64_t idx) const {
+  inline double representative_norm(int64_t idx) const {
     return norm_[representative_norm_index_[idx]];
   }
   int64_t size() const;
@@ -54,8 +53,8 @@ public:
   const_iterator begin() const noexcept { return representative_.cbegin(); }
   const_iterator end() const noexcept { return representative_.cend(); }
 
-  bool operator==(RepresentativeTable<enumeration_t> const &rhs) const;
-  bool operator!=(RepresentativeTable<enumeration_t> const &rhs) const;
+  bool operator==(RepresentativeTable const &rhs) const;
+  bool operator!=(RepresentativeTable const &rhs) const;
 
 private:
   bits::BitVector<bit_t> representative_;
