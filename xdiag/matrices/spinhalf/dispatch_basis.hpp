@@ -5,6 +5,7 @@
 #pragma once
 
 #include <xdiag/basis/basis_onthefly.hpp>
+#include <xdiag/basis/basis_symmetric.hpp>
 #include <xdiag/bits/bitset.hpp>
 #include <xdiag/blocks/spinhalf.hpp>
 #include <xdiag/combinatorics/combinations/combinations.hpp>
@@ -33,6 +34,16 @@ void dispatch_basis(xdiag::Spinhalf const &block_in,
   ADD(BasisOnTheFly<Combinations<BitsetStatic2>>)
   ADD(BasisOnTheFly<Combinations<BitsetStatic4>>)
   ADD(BasisOnTheFly<Combinations<BitsetStatic8>>)
+  ADD(BasisSymmetric<Subsets<uint32_t>>)
+  ADD(BasisSymmetric<Subsets<uint64_t>>)
+  ADD(BasisSymmetric<Combinations<uint32_t>>)
+  ADD(BasisSymmetric<Combinations<uint64_t>>)
+  ADD(BasisSymmetric<LinTable<uint32_t>>)
+  ADD(BasisSymmetric<LinTable<uint64_t>>)
+  ADD(BasisSymmetric<Combinations<BitsetDynamic>>)
+  ADD(BasisSymmetric<Combinations<BitsetStatic2>>)
+  ADD(BasisSymmetric<Combinations<BitsetStatic4>>)
+  ADD(BasisSymmetric<Combinations<BitsetStatic8>>)
 #undef ADD
   d.dispatch(block_in.basis(), block_out.basis());
 }

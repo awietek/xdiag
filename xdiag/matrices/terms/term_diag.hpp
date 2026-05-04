@@ -5,14 +5,21 @@
 #pragma once
 
 #include <cstdint>
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 #include <xdiag/basis/basis_onthefly.hpp>
 #include <xdiag/matrices/fill_functions.hpp>
 
 namespace xdiag::matrices {
 
-template <typename enumeration_t, typename term_coeff_f, typename fill_f>
-void term_diag(basis::BasisOnTheFly<enumeration_t> const &basis,
-               term_coeff_f term_coeff, fill_f fill) {
+// Implementation for:
+// BasisOnTheFly
+// BasisSymmetric
+
+template <typename basis_t, typename term_coeff_f, typename fill_f>
+void term_diag(basis_t const &basis, term_coeff_f term_coeff, fill_f fill) {
 
   // OpenMP parallel implementation
 #ifdef _OPENMP
@@ -27,7 +34,6 @@ void term_diag(basis::BasisOnTheFly<enumeration_t> const &basis,
     auto end = (num_thread == nthreads - 1)
                    ? basis.end()
                    : basis.begin() + (num_thread + 1) * (size / nthreads);
-
     for (auto it = begin; it != end; ++it, ++idx) {
       auto coeff = term_coeff(*it);
       XDIAG_FILL(idx, idx, coeff);

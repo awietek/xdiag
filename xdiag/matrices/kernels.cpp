@@ -8,6 +8,7 @@
 
 #include <xdiag/armadillo.hpp>
 #include <xdiag/basis/basis_onthefly.hpp>
+#include <xdiag/basis/basis_symmetric.hpp>
 #include <xdiag/bits/bitset.hpp>
 #include <xdiag/combinatorics/combinations/combinations.hpp>
 #include <xdiag/combinatorics/combinations/lin_table.hpp>
@@ -231,6 +232,12 @@ using namespace xdiag::matrices;
   INSTANTIATE_CSR_FILL(MATRIX_POLICY, BASIS, int64_t, double)                  \
   INSTANTIATE_CSR_FILL(MATRIX_POLICY, BASIS, int64_t, complex)
 
+//
+//
+// BasisOnTheFly Instantiations
+//
+//
+
 // BEGIN_INSTANTIATION_GROUP(spinhalf_onthefly_subsets_uint32_t)
 INSTANTIATE_KERNELS(spinhalf::MatrixPolicy, BasisOnTheFly<Subsets<uint32_t>>)
 // END_INSTANTIATION_GROUP
@@ -275,4 +282,56 @@ INSTANTIATE_KERNELS(spinhalf::MatrixPolicy,
 // BEGIN_INSTANTIATION_GROUP(spinhalf_onthefly_combinations_bitset_static_8)
 INSTANTIATE_KERNELS(spinhalf::MatrixPolicy,
                     BasisOnTheFly<Combinations<BitsetStatic8>>)
+// END_INSTANTIATION_GROUP
+
+//
+//
+// BasisSymmetric Instantiations
+//
+//
+
+// BEGIN_INSTANTIATION_GROUP(spinhalf_symmetric_subsets_uint32_t)
+INSTANTIATE_KERNELS(spinhalf::MatrixPolicy, BasisSymmetric<Subsets<uint32_t>>)
+// END_INSTANTIATION_GROUP
+
+// BEGIN_INSTANTIATION_GROUP(spinhalf_symmetric_subsets_uint64_t)
+INSTANTIATE_KERNELS(spinhalf::MatrixPolicy, BasisSymmetric<Subsets<uint64_t>>)
+// END_INSTANTIATION_GROUP
+
+// BEGIN_INSTANTIATION_GROUP(spinhalf_symmetric_combinations_uint32_t)
+INSTANTIATE_KERNELS(spinhalf::MatrixPolicy,
+                    BasisSymmetric<Combinations<uint32_t>>)
+// END_INSTANTIATION_GROUP
+
+// BEGIN_INSTANTIATION_GROUP(spinhalf_symmetric_combinations_uint64_t)
+INSTANTIATE_KERNELS(spinhalf::MatrixPolicy,
+                    BasisSymmetric<Combinations<uint64_t>>)
+// END_INSTANTIATION_GROUP
+
+// BEGIN_INSTANTIATION_GROUP(spinhalf_symmetric_lintable_uint32_t)
+INSTANTIATE_KERNELS(spinhalf::MatrixPolicy, BasisSymmetric<LinTable<uint32_t>>)
+// END_INSTANTIATION_GROUP
+
+// BEGIN_INSTANTIATION_GROUP(spinhalf_symmetric_lintable_uint64_t)
+INSTANTIATE_KERNELS(spinhalf::MatrixPolicy, BasisSymmetric<LinTable<uint64_t>>)
+// END_INSTANTIATION_GROUP
+
+// BEGIN_INSTANTIATION_GROUP(spinhalf_symmetric_combinations_bitset_dynamic)
+INSTANTIATE_KERNELS(spinhalf::MatrixPolicy,
+                    BasisSymmetric<Combinations<BitsetDynamic>>)
+// END_INSTANTIATION_GROUP
+
+// BEGIN_INSTANTIATION_GROUP(spinhalf_symmetric_combinations_bitset_static_2)
+INSTANTIATE_KERNELS(spinhalf::MatrixPolicy,
+                    BasisSymmetric<Combinations<BitsetStatic2>>)
+// END_INSTANTIATION_GROUP
+
+// BEGIN_INSTANTIATION_GROUP(spinhalf_symmetric_combinations_bitset_static_4)
+INSTANTIATE_KERNELS(spinhalf::MatrixPolicy,
+                    BasisSymmetric<Combinations<BitsetStatic4>>)
+// END_INSTANTIATION_GROUP
+
+// BEGIN_INSTANTIATION_GROUP(spinhalf_symmetric_combinations_bitset_static_8)
+INSTANTIATE_KERNELS(spinhalf::MatrixPolicy,
+                    BasisSymmetric<Combinations<BitsetStatic8>>)
 // END_INSTANTIATION_GROUP

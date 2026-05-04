@@ -33,15 +33,24 @@ public:
 
   int64_t size() const;
   int64_t nsites() const;
-  Representation const& irrep() const;
-  
+  Representation const &irrep() const;
+
+  // Returns {raw_rep_idx, sym, norm_out}.
+  // raw_rep_idx == 0 means zero-norm (invalid); actual index is raw_rep_idx - 1.
   inline std::tuple<int64_t, int64_t, double>
-  representative_index_symmetry_norm(bit_t bits) const {
+  representative_data(bit_t bits) const {
     int64_t idx = enumeration_.index(bits);
-    return {table_.representative_index(idx),
-            table_.representative_symmetry(idx),
-            table_.representative_norm(idx)};
+    int64_t raw = table_.raw_representative_index(idx);
+    if (!raw)
+      return {0, 0, 0.0};
+    return {raw, table_.representative_symmetry(idx),
+            table_.representative_norm(raw - 1)};
   }
+  inline double norm(int64_t idx) const {
+    return table_.representative_norm(idx);
+  }
+
+  inline bit_t operator[](int64_t idx) const { return table_[idx]; }
   iterator_t begin() const;
   iterator_t end() const;
 

@@ -36,14 +36,19 @@ public:
   RepresentativeTable(Representation const &irrep,
                       enumeration_t const &enumeration);
 
+  inline bit_t operator[](int64_t idx) const { return representative_[idx]; }
   inline bit_t representative(int64_t idx) const {
-    return representative_[representative_index_[idx]];
+    return representative_[representative_index_[idx] - 1];
+  }
+  // Returns 0 if state has zero norm (invalid), actual rep index + 1 otherwise
+  inline int64_t raw_representative_index(int64_t idx) const {
+    return (int64_t)representative_index_[idx];
   }
   inline int64_t representative_index(int64_t idx) const {
-    return representative_index_[idx];
+    return (int64_t)representative_index_[idx] - 1;
   }
   inline int64_t representative_symmetry(int64_t idx) const {
-    return representative_symmetry_[idx];
+    return (int64_t)representative_symmetry_[idx];
   }
   inline double representative_norm(int64_t idx) const {
     return norm_[representative_norm_index_[idx]];

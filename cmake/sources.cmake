@@ -120,8 +120,6 @@ set(XDIAG_SOURCES
   algorithms/time_evolution/time_evolve_expokit.cpp
   algorithms/time_evolution/evolve_lanczos.cpp
   algorithms/time_evolution/expm.cpp
-  
-  parallel/omp/omp_utils.cpp  
 
   # algebra/apply_dispatch.cpp
   # algebra/isapprox.cpp

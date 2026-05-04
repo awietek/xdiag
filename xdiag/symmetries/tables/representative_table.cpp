@@ -140,7 +140,7 @@ static void representative_table_initialize(
   // representative
   try {
     int64_t size = enumeration.size();
-    int64_t nbits = std::max(1u, bits::ceillog2(nrepresentatives));
+    int64_t nbits = std::max(1u, bits::ceillog2(nrepresentatives + 1));
     representative_index = BitVector<uint64_t>(size, nbits);
   } catch (...) {
     XDIAG_THROW("Unable to allocate representative index array");
@@ -244,7 +244,7 @@ static void representative_table_initialize(
         if (std::find(seen.begin(), seen.end(), idx) != seen.end())
           continue;
         seen.push_back(idx);
-        representative_index.atomic_or_element(idx, (uint64_t)rep_idx);
+        representative_index.atomic_or_element(idx, (uint64_t)(rep_idx + 1));
         representative_symmetry.atomic_or_element(idx,
                                                   (uint64_t)group.inv(sym));
       }
@@ -257,7 +257,7 @@ static void representative_table_initialize(
     for (int64_t sym = 0; sym < action.size(); ++sym) {
       bit_t state = action.apply(sym, rep);
       int64_t idx = enumeration.index(state);
-      representative_index[idx] = (uint64_t)rep_idx;
+      representative_index[idx] = (uint64_t)(rep_idx + 1);
       representative_symmetry[idx] = (uint64_t)group.inv(sym);
     }
   }

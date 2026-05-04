@@ -10,7 +10,6 @@
 #include <xdiag/utils/error.hpp>
 
 #ifdef _OPENMP
-#include <xdiag/parallel/omp/omp_utils.hpp>
 #include <xdiag/random/hash_functions.hpp>
 #endif
 
@@ -71,8 +70,14 @@ void fill_random_normal_vector(arma::Col<coeff_t> &v, int seed) {
 #ifdef _OPENMP
 #pragma omp parallel
   {
+    int64_t size = v.size();
+    int64_t thread_num = omp_get_thread_num();
+    int64_t num_threads = omp_get_num_threads();
+    int64_t chunksize = size / num_threads;
+    int64_t start = thread_num * chunksize;
+    int64_t end =
+        (thread_num == num_threads - 1) ? size : (thread_num + 1) * chunksize;
 
-    auto [start, end] = omp::get_omp_start_end(v.size());
     int discard = random::random_normal_discard();
 
     if constexpr (isreal<coeff_t>()) {
