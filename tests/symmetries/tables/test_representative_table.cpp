@@ -32,64 +32,92 @@ using namespace xdiag::combinatorics;
 using namespace xdiag::symmetries;
 
 // -----------------------------------------------------------------------
-// Generic invariant checker: verifies structural correctness for any
-// enumeration type without depending on specific representative values.
+// Generic invariant checker. The SitePermutation is derived from
+// irrep.group() — identical to what the constructor uses internally.
 //
 // Checks:
 //   1. size() in [0, enumeration.size()]
-//   2. All iterated representatives satisfy isrepresentative()
-//   3. Symmetry property: apply(symmetry(idx), state) == representative(idx)
-//   4. index_of_representative is in-bounds
+//   2. Iteration yields exactly size() elements, all isrepresentative
+//   3. operator[](ri) matches iteration order
+//   4. For every rep at index ri, every group element sym:
+//        state = sp.apply(sym, rep)
+//        representative(idx) == rep
+//        representative_index(idx) == ri              (0-based)
+//        raw_representative_index(idx) == ri + 1      (1-based storage)
+//        sp.apply(representative_symmetry(idx), state) == rep
 //   5. All norms are positive
-//   6. Two identically-constructed tables compare equal
+//   6. table[representative_index(idx)] == representative(idx)
+//      for every enumeration state with nonzero norm
+//   7. Two identically-constructed tables compare equal
 // -----------------------------------------------------------------------
 template <typename enumeration_t>
 void test_invariants(enumeration_t const &enumeration,
-                     SitePermutation const &sp,
                      Representation const &irrep) {
   using bit_t = typename enumeration_t::bit_t;
-  RepresentativeTable<enumeration_t> table(enumeration, sp, irrep);
+  auto sp = SitePermutation(irrep.group());
+  RepresentativeTable<enumeration_t> table(enumeration, irrep);
 
   REQUIRE(table.size() >= 0);
   REQUIRE(table.size() <= enumeration.size());
 
+  // Iteration count and isrepresentative
+  int64_t count = 0;
   for (auto rep : table) {
     REQUIRE(isrepresentative(rep, sp));
+    ++count;
+  }
+  REQUIRE(count == table.size());
+
+  // operator[] matches iteration order
+  {
+    int64_t ri = 0;
+    for (auto rep : table) {
+      REQUIRE(table[ri] == rep);
+      ++ri;
+    }
   }
 
-  // Symmetry property: only valid for states in the orbit of a nonzero-norm
-  // representative. Zero-norm states are not included in the table and their
-  // representative_index / representative_symmetry fields remain at their
-  // default values, so we must not check them here.
-  for (auto rep : table) {
+  // Orbit structure for every representative
+  for (int64_t ri = 0; ri < table.size(); ++ri) {
+    bit_t rep = table[ri];
     for (int64_t sym = 0; sym < sp.size(); ++sym) {
       bit_t state = sp.apply(sym, rep);
       int64_t idx = enumeration.index(state);
       REQUIRE(table.representative(idx) == rep);
-      REQUIRE(sp.apply(table.symmetry(idx), state) == rep);
-      int64_t rep_idx = table.index_of_representative(idx);
-      REQUIRE(rep_idx >= 0);
-      REQUIRE(rep_idx < table.size());
+      REQUIRE(table.representative_index(idx) == ri);
+      REQUIRE(table.raw_representative_index(idx) == ri + 1);
+      REQUIRE(sp.apply(table.representative_symmetry(idx), state) == rep);
     }
   }
 
+  // Norms are positive for all representatives
   for (int64_t ri = 0; ri < table.size(); ++ri) {
-    REQUIRE(table.norm(ri) > 0.0);
+    REQUIRE(table.representative_norm(ri) > 0.0);
   }
 
-  RepresentativeTable<enumeration_t> table2(enumeration, sp, irrep);
+  // Consistency: table[representative_index(idx)] == representative(idx)
+  // for every enumeration state that has a nonzero norm (raw_index != 0).
+  for (auto state : enumeration) {
+    int64_t idx = enumeration.index(state);
+    if (table.raw_representative_index(idx) != 0) {
+      int64_t ri = table.representative_index(idx);
+      REQUIRE(ri >= 0);
+      REQUIRE(ri < table.size());
+      REQUIRE(table[ri] == table.representative(idx));
+    }
+  }
+
+  // Two tables from the same inputs compare equal
+  RepresentativeTable<enumeration_t> table2(enumeration, irrep);
   REQUIRE(table == table2);
   REQUIRE_FALSE(table != table2);
 }
 
-// -----------------------------------------------------------------------
-// Size-check helper: constructs a table and asserts the number of reps.
-// -----------------------------------------------------------------------
 template <typename enumeration_t>
-void check_size(enumeration_t const &enumeration, SitePermutation const &sp,
-                Representation const &irrep, int64_t expected_size) {
-  RepresentativeTable<enumeration_t> table(enumeration, sp, irrep);
-  REQUIRE(table.size() == expected_size);
+void check_size(enumeration_t const &enumeration, Representation const &irrep,
+                int64_t expected) {
+  RepresentativeTable<enumeration_t> table(enumeration, irrep);
+  REQUIRE(table.size() == expected);
 }
 
 // -----------------------------------------------------------------------
@@ -99,471 +127,538 @@ void check_size(enumeration_t const &enumeration, SitePermutation const &sp,
 TEST_CASE("representative_table", "[symmetries]") try {
   Log("Test RepresentativeTable");
 
-  // Groups and irreps used throughout
-  auto group4 = cyclic_group(4);
-  auto sp4 = SitePermutation(group4);
-  auto irrep4_0 = cyclic_group_irrep(4, 0); // trivial: all chi=1
-  auto irrep4_1 = cyclic_group_irrep(4, 1); // complex
-  auto irrep4_2 = cyclic_group_irrep(4, 2); // real: chi={1,-1,1,-1}
+  // Groups and irreps used throughout.
+  // cyclic_group(4): rotations r0=id, r1, r2, r3 with chi_k(rm) = exp(2πikm/4)
+  //   k=0: chi = {1, 1, 1, 1}         (trivial, real)
+  //   k=1: chi = {1, i, -1, -i}       (complex)
+  //   k=2: chi = {1, -1, 1, -1}       (real, non-trivial)
+  auto irrep4_0 = cyclic_group_irrep(4, 0);
+  auto irrep4_1 = cyclic_group_irrep(4, 1);
+  auto irrep4_2 = cyclic_group_irrep(4, 2);
 
-  auto group3 = cyclic_group(3);
-  auto sp3 = SitePermutation(group3);
   auto irrep3_0 = cyclic_group_irrep(3, 0);
-  auto irrep3_1 = cyclic_group_irrep(3, 1); // complex
+  auto irrep3_1 = cyclic_group_irrep(3, 1);
 
   // =====================================================================
-  // Subsets — representatives of all n-bit strings under cyclic_group(4)
+  // Subsets — all 16 bit-strings of length 4, under cyclic_group(4)
   //
-  // cyclic_group(4) on Subsets(4) — 16 states, 6 orbits:
-  //   {0}, {1,2,4,8}, {3,6,12,9}, {5,10}, {7,14,13,11}, {15}
+  // Orbits:
+  //   {0}           size 1, stab=G  → norm=sqrt(4)=2
+  //   {1,2,4,8}     size 4, stab={id} → norm=1
+  //   {3,6,12,9}    size 4, stab={id} → norm=1
+  //   {5,10}        size 2, stab={id,r2} → norm=sqrt(2)
+  //   {7,14,13,11}  size 4, stab={id} → norm=1
+  //   {15}          size 1, stab=G  → norm=sqrt(4)=2
+  //
   // k=0: 6 reps (all orbits have nonzero norm)
-  // k=2: 4 reps (orbits {0} and {15} excluded: amplitude=0)
-  // k=1: 3 reps (orbits {0}, {5,10}, {15} excluded)
+  // k=2: 4 reps ({0} and {15} excluded: sum_stab chi_2 = 1+(-1)+1+(-1) = 0)
+  // k=1: 3 reps ({0}, {5,10}, {15} excluded)
   // =====================================================================
 
   SECTION("Subsets<uint32_t>") {
     auto subsets = Subsets<uint32_t>(4);
-    test_invariants(subsets, sp4, irrep4_0);
-    test_invariants(subsets, sp4, irrep4_2);
-    test_invariants(subsets, sp4, irrep4_1);
-    check_size(subsets, sp4, irrep4_0, 6);
-    check_size(subsets, sp4, irrep4_2, 4);
-    check_size(subsets, sp4, irrep4_1, 3);
+    auto sp4 = SitePermutation(irrep4_0.group());
 
-    // Verify k=0 representatives appear in iteration order
-    std::vector<uint32_t> expected = {0, 1, 3, 5, 7, 15};
-    RepresentativeTable<Subsets<uint32_t>> table(subsets, sp4, irrep4_0);
-    std::vector<uint32_t> got;
-    for (auto r : table)
-      got.push_back(r);
-    REQUIRE(got == expected);
+    test_invariants(subsets, irrep4_0);
+    test_invariants(subsets, irrep4_2);
+    test_invariants(subsets, irrep4_1);
+    check_size(subsets, irrep4_0, 6);
+    check_size(subsets, irrep4_2, 4);
+    check_size(subsets, irrep4_1, 3);
 
-    // Verify norm values for k=0: norm = sqrt(|stabilizer|)
-    // rep 0  (orbit size 1): norm = sqrt(4) = 2
-    // rep 1  (orbit size 4): norm = 1
-    // rep 3  (orbit size 4): norm = 1
-    // rep 5  (orbit size 2): stabilizer={id,r2}, norm = sqrt(2)
-    // rep 7  (orbit size 4): norm = 1
-    // rep 15 (orbit size 1): norm = sqrt(4) = 2
-    REQUIRE(table.norm(0) == Approx(2.0));
-    REQUIRE(table.norm(1) == Approx(1.0));
-    REQUIRE(table.norm(2) == Approx(1.0));
-    REQUIRE(table.norm(3) == Approx(std::sqrt(2.0)));
-    REQUIRE(table.norm(4) == Approx(1.0));
-    REQUIRE(table.norm(5) == Approx(2.0));
+    // ---- Specific values: k=0 ----
+    {
+      RepresentativeTable<Subsets<uint32_t>> table(subsets, irrep4_0);
 
-    // operator!= with a different irrep
-    RepresentativeTable<Subsets<uint32_t>> table2(subsets, sp4, irrep4_2);
-    REQUIRE(table != table2);
-    REQUIRE_FALSE(table == table2);
+      // Representatives in enumeration (lexicographic) order
+      std::vector<uint32_t> expected_reps = {0, 1, 3, 5, 7, 15};
+      std::vector<uint32_t> got_reps;
+      for (auto r : table)
+        got_reps.push_back(r);
+      REQUIRE(got_reps == expected_reps);
+
+      // operator[] matches
+      for (int64_t ri = 0; ri < (int64_t)expected_reps.size(); ++ri)
+        REQUIRE(table[ri] == expected_reps[ri]);
+
+      // Norms by representative index
+      REQUIRE(table.representative_norm(0) == Approx(2.0));
+      REQUIRE(table.representative_norm(1) == Approx(1.0));
+      REQUIRE(table.representative_norm(2) == Approx(1.0));
+      REQUIRE(table.representative_norm(3) == Approx(std::sqrt(2.0)));
+      REQUIRE(table.representative_norm(4) == Approx(1.0));
+      REQUIRE(table.representative_norm(5) == Approx(2.0));
+
+      // Orbit {1,2,4,8}: all map to rep 1 (ri=1), raw_index = 2
+      for (uint32_t s : {1u, 2u, 4u, 8u}) {
+        int64_t idx = subsets.index(s);
+        REQUIRE(table.representative(idx) == 1u);
+        REQUIRE(table.representative_index(idx) == 1);
+        REQUIRE(table.raw_representative_index(idx) == 2);
+        REQUIRE(sp4.apply(table.representative_symmetry(idx), s) == 1u);
+      }
+
+      // Orbit {5,10}: rep=5 (ri=3), raw_index = 4
+      for (uint32_t s : {5u, 10u}) {
+        int64_t idx = subsets.index(s);
+        REQUIRE(table.representative(idx) == 5u);
+        REQUIRE(table.representative_index(idx) == 3);
+        REQUIRE(table.raw_representative_index(idx) == 4);
+        REQUIRE(sp4.apply(table.representative_symmetry(idx), s) == 5u);
+      }
+
+      // Inequality: different irrep → tables differ
+      RepresentativeTable<Subsets<uint32_t>> table_k2(subsets, irrep4_2);
+      REQUIRE(table != table_k2);
+      REQUIRE_FALSE(table == table_k2);
+    }
+
+    // ---- Zero-norm state detection: k=2 ----
+    // States 0 and 15 are fixed by all rotations; chi-sum = 0 → excluded.
+    {
+      RepresentativeTable<Subsets<uint32_t>> table(subsets, irrep4_2);
+      for (uint32_t s : {0u, 15u}) {
+        int64_t idx = subsets.index(s);
+        REQUIRE(table.raw_representative_index(idx) == 0);
+        REQUIRE(table.representative_index(idx) == -1);
+      }
+    }
   }
 
   SECTION("Subsets<uint64_t>") {
     auto subsets = Subsets<uint64_t>(4);
-    test_invariants(subsets, sp4, irrep4_0);
-    check_size(subsets, sp4, irrep4_0, 6);
+    test_invariants(subsets, irrep4_0);
+    check_size(subsets, irrep4_0, 6);
   }
 
   // =====================================================================
-  // Combinations (native integer types)
+  // Combinations(4,2) — 6 states under cyclic_group(4)
   //
-  // cyclic_group(4) on Combinations(4,2) — 6 states:
-  //   {3(0011), 5(0101), 6(0110), 9(1001), 10(1010), 12(1100)}
-  // Orbits: {3,6,12,9} and {5,10} → 2 representatives
+  // Orbits: {3,6,12,9} (size 4) and {5,10} (size 2, stab={id,r2})
+  //
+  // k=0: 2 reps
+  // k=2: 2 reps (chi_2(r2)=1, norm²({5,10})=1+1=2 > 0)
+  // k=1: 1 rep  (chi_1(r2)=-1, norm²({5,10})=1+(-1)=0 → excluded)
   // =====================================================================
 
   SECTION("Combinations<uint32_t>") {
     auto combos = Combinations<uint32_t>(4, 2);
-    test_invariants(combos, sp4, irrep4_0);
-    test_invariants(combos, sp4, irrep4_2);
-    check_size(combos, sp4, irrep4_0, 2);
-    check_size(combos, sp4, irrep4_2, 2);
+    auto sp4 = SitePermutation(irrep4_0.group());
 
-    // Verify representatives via iterator
-    RepresentativeTable<Combinations<uint32_t>> table(combos, sp4, irrep4_0);
-    auto it = table.begin();
-    REQUIRE(*it == 3u);
-    ++it;
-    REQUIRE(*it == 5u);
-    ++it;
-    REQUIRE(it == table.end());
+    test_invariants(combos, irrep4_0);
+    test_invariants(combos, irrep4_2);
+    test_invariants(combos, irrep4_1);
+    check_size(combos, irrep4_0, 2);
+    check_size(combos, irrep4_2, 2);
+    check_size(combos, irrep4_1, 1);
 
-    // Orbit {3,6,12,9}: all four states map to rep=3
-    for (uint32_t s : {3u, 6u, 9u, 12u})
-      REQUIRE(table.representative(combos.index(s)) == 3u);
-    // Orbit {5,10}: both map to rep=5
-    for (uint32_t s : {5u, 10u})
-      REQUIRE(table.representative(combos.index(s)) == 5u);
+    // Specific values for k=0
+    {
+      RepresentativeTable<Combinations<uint32_t>> table(combos, irrep4_0);
+
+      auto it = table.begin();
+      REQUIRE(*it == 3u);
+      ++it;
+      REQUIRE(*it == 5u);
+      ++it;
+      REQUIRE(it == table.end());
+
+      for (uint32_t s : {3u, 6u, 9u, 12u}) {
+        int64_t idx = combos.index(s);
+        REQUIRE(table.representative(idx) == 3u);
+        REQUIRE(table.representative_index(idx) == 0);
+        REQUIRE(sp4.apply(table.representative_symmetry(idx), s) == 3u);
+      }
+      for (uint32_t s : {5u, 10u}) {
+        int64_t idx = combos.index(s);
+        REQUIRE(table.representative(idx) == 5u);
+        REQUIRE(table.representative_index(idx) == 1);
+        REQUIRE(sp4.apply(table.representative_symmetry(idx), s) == 5u);
+      }
+    }
+
+    // Zero-norm for k=1: orbit {5,10} excluded
+    {
+      RepresentativeTable<Combinations<uint32_t>> table(combos, irrep4_1);
+      for (uint32_t s : {5u, 10u}) {
+        int64_t idx = combos.index(s);
+        REQUIRE(table.raw_representative_index(idx) == 0);
+        REQUIRE(table.representative_index(idx) == -1);
+      }
+    }
   }
 
   SECTION("Combinations<uint64_t>") {
     auto combos = Combinations<uint64_t>(4, 2);
-    test_invariants(combos, sp4, irrep4_0);
-    check_size(combos, sp4, irrep4_0, 2);
+    test_invariants(combos, irrep4_0);
+    check_size(combos, irrep4_0, 2);
   }
 
   // =====================================================================
-  // Combinations (Bitset types) — same 6 states as uint32_t but packed
-  // into wider bitsets; orbit structure and rep count unchanged.
+  // Combinations (Bitset types) — same 6 states, same orbit structure
   // =====================================================================
 
   SECTION("Combinations<BitsetStatic2>") {
     auto combos = Combinations<BitsetStatic2>(4, 2);
-    test_invariants(combos, sp4, irrep4_0);
-    check_size(combos, sp4, irrep4_0, 2);
+    test_invariants(combos, irrep4_0);
+    check_size(combos, irrep4_0, 2);
   }
 
   SECTION("Combinations<BitsetStatic4>") {
     auto combos = Combinations<BitsetStatic4>(4, 2);
-    test_invariants(combos, sp4, irrep4_0);
-    check_size(combos, sp4, irrep4_0, 2);
+    test_invariants(combos, irrep4_0);
+    check_size(combos, irrep4_0, 2);
   }
 
   SECTION("Combinations<BitsetStatic8>") {
     auto combos = Combinations<BitsetStatic8>(4, 2);
-    test_invariants(combos, sp4, irrep4_0);
-    check_size(combos, sp4, irrep4_0, 2);
+    test_invariants(combos, irrep4_0);
+    check_size(combos, irrep4_0, 2);
   }
 
   SECTION("Combinations<BitsetDynamic>") {
     auto combos = Combinations<BitsetDynamic>(4, 2);
-    test_invariants(combos, sp4, irrep4_0);
-    check_size(combos, sp4, irrep4_0, 2);
+    test_invariants(combos, irrep4_0);
+    check_size(combos, irrep4_0, 2);
   }
 
   // =====================================================================
-  // LinTable — drop-in Combinations with O(1) index(); same orbits.
+  // LinTable — O(1)-index drop-in for Combinations; same orbit structure
   // =====================================================================
 
   SECTION("LinTable<uint32_t>") {
     auto lt = LinTable<uint32_t>(4, 2);
-    test_invariants(lt, sp4, irrep4_0);
-    test_invariants(lt, sp4, irrep4_2);
-    check_size(lt, sp4, irrep4_0, 2);
+    test_invariants(lt, irrep4_0);
+    test_invariants(lt, irrep4_2);
+    check_size(lt, irrep4_0, 2);
   }
 
   SECTION("LinTable<uint64_t>") {
     auto lt = LinTable<uint64_t>(4, 2);
-    test_invariants(lt, sp4, irrep4_0);
-    check_size(lt, sp4, irrep4_0, 2);
+    test_invariants(lt, irrep4_0);
+    check_size(lt, irrep4_0, 2);
   }
 
   // =====================================================================
-  // BoundedMultisets
-  //
-  // With bound=2, BoundedMultisets(4, 2) enumerates the same 16 states
-  // as Subsets(4): each slot is 0 or 1. Under cyclic_group(4):
-  //   k=0: 6 reps, k=2: 4 reps (Burnside invariant of ordering)
-  //
-  // BitArrayN: uint64_t backing (1–8 bits per slot)
-  // BitArrayLongN: BitsetDynamic backing (1–8 bits per slot)
+  // BoundedMultisets — with bound=2 equivalent to Subsets; same counts
   // =====================================================================
 
   SECTION("BoundedMultisets<BitArray1>") {
     auto ms = BoundedMultisets<BitArray1>(4, 2);
-    test_invariants(ms, sp4, irrep4_0);
-    test_invariants(ms, sp4, irrep4_2);
-    check_size(ms, sp4, irrep4_0, 6);
-    check_size(ms, sp4, irrep4_2, 4);
+    test_invariants(ms, irrep4_0);
+    test_invariants(ms, irrep4_2);
+    check_size(ms, irrep4_0, 6);
+    check_size(ms, irrep4_2, 4);
   }
 
   SECTION("BoundedMultisets<BitArray2>") {
     auto ms = BoundedMultisets<BitArray2>(4, 2);
-    test_invariants(ms, sp4, irrep4_0);
-    check_size(ms, sp4, irrep4_0, 6);
+    test_invariants(ms, irrep4_0);
+    check_size(ms, irrep4_0, 6);
   }
 
   SECTION("BoundedMultisets<BitArray3>") {
-    // bound=4 uses 3 bits; cyclic_group(4) on 4^4=256 states
+    // bound=4, 3 bits per slot: 4^4 = 256 states
     auto ms = BoundedMultisets<BitArray3>(4, 4);
-    test_invariants(ms, sp4, irrep4_0);
-    test_invariants(ms, sp4, irrep4_1);
+    test_invariants(ms, irrep4_0);
+    test_invariants(ms, irrep4_1);
   }
 
   SECTION("BoundedMultisets<BitArray4>") {
     auto ms = BoundedMultisets<BitArray4>(4, 2);
-    test_invariants(ms, sp4, irrep4_0);
-    check_size(ms, sp4, irrep4_0, 6);
+    test_invariants(ms, irrep4_0);
+    check_size(ms, irrep4_0, 6);
   }
 
   SECTION("BoundedMultisets<BitArray5>") {
     auto ms = BoundedMultisets<BitArray5>(4, 2);
-    test_invariants(ms, sp4, irrep4_0);
-    check_size(ms, sp4, irrep4_0, 6);
+    test_invariants(ms, irrep4_0);
+    check_size(ms, irrep4_0, 6);
   }
 
   SECTION("BoundedMultisets<BitArray6>") {
     auto ms = BoundedMultisets<BitArray6>(4, 2);
-    test_invariants(ms, sp4, irrep4_0);
-    check_size(ms, sp4, irrep4_0, 6);
+    test_invariants(ms, irrep4_0);
+    check_size(ms, irrep4_0, 6);
   }
 
   SECTION("BoundedMultisets<BitArray7>") {
     auto ms = BoundedMultisets<BitArray7>(4, 2);
-    test_invariants(ms, sp4, irrep4_0);
-    check_size(ms, sp4, irrep4_0, 6);
+    test_invariants(ms, irrep4_0);
+    check_size(ms, irrep4_0, 6);
   }
 
   SECTION("BoundedMultisets<BitArray8>") {
     auto ms = BoundedMultisets<BitArray8>(4, 2);
-    test_invariants(ms, sp4, irrep4_0);
-    check_size(ms, sp4, irrep4_0, 6);
+    test_invariants(ms, irrep4_0);
+    check_size(ms, irrep4_0, 6);
   }
 
   SECTION("BoundedMultisets<BitArrayLong1>") {
     auto ms = BoundedMultisets<BitArrayLong1>(4, 2);
-    test_invariants(ms, sp4, irrep4_0);
-    check_size(ms, sp4, irrep4_0, 6);
-    check_size(ms, sp4, irrep4_2, 4);
+    test_invariants(ms, irrep4_0);
+    check_size(ms, irrep4_0, 6);
+    check_size(ms, irrep4_2, 4);
   }
 
   SECTION("BoundedMultisets<BitArrayLong2>") {
     auto ms = BoundedMultisets<BitArrayLong2>(4, 2);
-    test_invariants(ms, sp4, irrep4_0);
-    check_size(ms, sp4, irrep4_0, 6);
+    test_invariants(ms, irrep4_0);
+    check_size(ms, irrep4_0, 6);
   }
 
   SECTION("BoundedMultisets<BitArrayLong3>") {
     auto ms = BoundedMultisets<BitArrayLong3>(4, 4);
-    test_invariants(ms, sp4, irrep4_0);
-    test_invariants(ms, sp4, irrep4_1);
+    test_invariants(ms, irrep4_0);
+    test_invariants(ms, irrep4_1);
   }
 
   SECTION("BoundedMultisets<BitArrayLong4>") {
     auto ms = BoundedMultisets<BitArrayLong4>(4, 2);
-    test_invariants(ms, sp4, irrep4_0);
-    check_size(ms, sp4, irrep4_0, 6);
+    test_invariants(ms, irrep4_0);
+    check_size(ms, irrep4_0, 6);
   }
 
   SECTION("BoundedMultisets<BitArrayLong5>") {
     auto ms = BoundedMultisets<BitArrayLong5>(4, 2);
-    test_invariants(ms, sp4, irrep4_0);
-    check_size(ms, sp4, irrep4_0, 6);
+    test_invariants(ms, irrep4_0);
+    check_size(ms, irrep4_0, 6);
   }
 
   SECTION("BoundedMultisets<BitArrayLong6>") {
     auto ms = BoundedMultisets<BitArrayLong6>(4, 2);
-    test_invariants(ms, sp4, irrep4_0);
-    check_size(ms, sp4, irrep4_0, 6);
+    test_invariants(ms, irrep4_0);
+    check_size(ms, irrep4_0, 6);
   }
 
   SECTION("BoundedMultisets<BitArrayLong7>") {
     auto ms = BoundedMultisets<BitArrayLong7>(4, 2);
-    test_invariants(ms, sp4, irrep4_0);
-    check_size(ms, sp4, irrep4_0, 6);
+    test_invariants(ms, irrep4_0);
+    check_size(ms, irrep4_0, 6);
   }
 
   SECTION("BoundedMultisets<BitArrayLong8>") {
     auto ms = BoundedMultisets<BitArrayLong8>(4, 2);
-    test_invariants(ms, sp4, irrep4_0);
-    check_size(ms, sp4, irrep4_0, 6);
+    test_invariants(ms, irrep4_0);
+    check_size(ms, irrep4_0, 6);
   }
 
   // =====================================================================
   // BoundedPartitions
   //
-  // cyclic_group(4), n=4, total=2:
-  //   BitArray1 (bound=2): C(4,2)=6 states, same orbits as Combinations(4,2)
-  //     → 2 reps for k=0
-  //   BitArray2..8, BitArrayLong2..8 (bound=3): 10 states, 3 orbits:
-  //     {(2,0,0,0) orbit}, {(1,1,0,0) orbit}, {(1,0,1,0) orbit}
-  //     → 3 reps for k=0
+  // n=4, total=2, bound=2 (BitArray1): same as Combinations(4,2) → 2 reps
+  // n=4, total=2, bound=3 (BitArray2+): 10 states, 3 orbits → 3 reps
   // =====================================================================
 
   SECTION("BoundedPartitions<BitArray1>") {
-    // bound=2: sequences of 0s and 1s summing to 2 — same as Combinations(4,2)
     auto bp = BoundedPartitions<BitArray1>(4, 2, 2);
-    test_invariants(bp, sp4, irrep4_0);
-    check_size(bp, sp4, irrep4_0, 2);
+    test_invariants(bp, irrep4_0);
+    check_size(bp, irrep4_0, 2);
   }
 
   SECTION("BoundedPartitions<BitArray2>") {
     auto bp = BoundedPartitions<BitArray2>(4, 2, 3);
-    test_invariants(bp, sp4, irrep4_0);
-    test_invariants(bp, sp4, irrep4_2);
-    check_size(bp, sp4, irrep4_0, 3);
-    check_size(bp, sp4, irrep4_2, 3);
+    test_invariants(bp, irrep4_0);
+    test_invariants(bp, irrep4_2);
+    check_size(bp, irrep4_0, 3);
+    check_size(bp, irrep4_2, 3);
   }
 
   SECTION("BoundedPartitions<BitArray3>") {
     auto bp = BoundedPartitions<BitArray3>(4, 2, 3);
-    test_invariants(bp, sp4, irrep4_0);
-    check_size(bp, sp4, irrep4_0, 3);
+    test_invariants(bp, irrep4_0);
+    check_size(bp, irrep4_0, 3);
   }
 
   SECTION("BoundedPartitions<BitArray4>") {
     auto bp = BoundedPartitions<BitArray4>(4, 2, 3);
-    test_invariants(bp, sp4, irrep4_0);
-    check_size(bp, sp4, irrep4_0, 3);
+    test_invariants(bp, irrep4_0);
+    check_size(bp, irrep4_0, 3);
   }
 
   SECTION("BoundedPartitions<BitArray5>") {
     auto bp = BoundedPartitions<BitArray5>(4, 2, 3);
-    test_invariants(bp, sp4, irrep4_0);
-    check_size(bp, sp4, irrep4_0, 3);
+    test_invariants(bp, irrep4_0);
+    check_size(bp, irrep4_0, 3);
   }
 
   SECTION("BoundedPartitions<BitArray6>") {
     auto bp = BoundedPartitions<BitArray6>(4, 2, 3);
-    test_invariants(bp, sp4, irrep4_0);
-    check_size(bp, sp4, irrep4_0, 3);
+    test_invariants(bp, irrep4_0);
+    check_size(bp, irrep4_0, 3);
   }
 
   SECTION("BoundedPartitions<BitArray7>") {
     auto bp = BoundedPartitions<BitArray7>(4, 2, 3);
-    test_invariants(bp, sp4, irrep4_0);
-    check_size(bp, sp4, irrep4_0, 3);
+    test_invariants(bp, irrep4_0);
+    check_size(bp, irrep4_0, 3);
   }
 
   SECTION("BoundedPartitions<BitArray8>") {
     auto bp = BoundedPartitions<BitArray8>(4, 2, 3);
-    test_invariants(bp, sp4, irrep4_0);
-    check_size(bp, sp4, irrep4_0, 3);
+    test_invariants(bp, irrep4_0);
+    check_size(bp, irrep4_0, 3);
   }
 
   SECTION("BoundedPartitions<BitArrayLong1>") {
     auto bp = BoundedPartitions<BitArrayLong1>(4, 2, 2);
-    test_invariants(bp, sp4, irrep4_0);
-    check_size(bp, sp4, irrep4_0, 2);
+    test_invariants(bp, irrep4_0);
+    check_size(bp, irrep4_0, 2);
   }
 
   SECTION("BoundedPartitions<BitArrayLong2>") {
     auto bp = BoundedPartitions<BitArrayLong2>(4, 2, 3);
-    test_invariants(bp, sp4, irrep4_0);
-    check_size(bp, sp4, irrep4_0, 3);
+    test_invariants(bp, irrep4_0);
+    check_size(bp, irrep4_0, 3);
   }
 
   SECTION("BoundedPartitions<BitArrayLong3>") {
     auto bp = BoundedPartitions<BitArrayLong3>(4, 2, 3);
-    test_invariants(bp, sp4, irrep4_0);
-    check_size(bp, sp4, irrep4_0, 3);
+    test_invariants(bp, irrep4_0);
+    check_size(bp, irrep4_0, 3);
   }
 
   SECTION("BoundedPartitions<BitArrayLong4>") {
     auto bp = BoundedPartitions<BitArrayLong4>(4, 2, 3);
-    test_invariants(bp, sp4, irrep4_0);
-    check_size(bp, sp4, irrep4_0, 3);
+    test_invariants(bp, irrep4_0);
+    check_size(bp, irrep4_0, 3);
   }
 
   SECTION("BoundedPartitions<BitArrayLong5>") {
     auto bp = BoundedPartitions<BitArrayLong5>(4, 2, 3);
-    test_invariants(bp, sp4, irrep4_0);
-    check_size(bp, sp4, irrep4_0, 3);
+    test_invariants(bp, irrep4_0);
+    check_size(bp, irrep4_0, 3);
   }
 
   SECTION("BoundedPartitions<BitArrayLong6>") {
     auto bp = BoundedPartitions<BitArrayLong6>(4, 2, 3);
-    test_invariants(bp, sp4, irrep4_0);
-    check_size(bp, sp4, irrep4_0, 3);
+    test_invariants(bp, irrep4_0);
+    check_size(bp, irrep4_0, 3);
   }
 
   SECTION("BoundedPartitions<BitArrayLong7>") {
     auto bp = BoundedPartitions<BitArrayLong7>(4, 2, 3);
-    test_invariants(bp, sp4, irrep4_0);
-    check_size(bp, sp4, irrep4_0, 3);
+    test_invariants(bp, irrep4_0);
+    check_size(bp, irrep4_0, 3);
   }
 
   SECTION("BoundedPartitions<BitArrayLong8>") {
     auto bp = BoundedPartitions<BitArrayLong8>(4, 2, 3);
-    test_invariants(bp, sp4, irrep4_0);
-    check_size(bp, sp4, irrep4_0, 3);
+    test_invariants(bp, irrep4_0);
+    check_size(bp, irrep4_0, 3);
   }
 
   // =====================================================================
-  // SchaeferTable — same enumeration as BoundedPartitions, faster index()
-  // Only instantiated for BitArray1..8 (not BitArrayLong)
+  // SchaeferTable — same enumeration as BoundedPartitions, O(1) index()
+  // Only BitArray1..8
   // =====================================================================
 
   SECTION("SchaeferTable<BitArray1>") {
     auto st = SchaeferTable<BitArray1>(4, 2, 2);
-    test_invariants(st, sp4, irrep4_0);
-    check_size(st, sp4, irrep4_0, 2);
+    test_invariants(st, irrep4_0);
+    check_size(st, irrep4_0, 2);
   }
 
   SECTION("SchaeferTable<BitArray2>") {
     auto st = SchaeferTable<BitArray2>(4, 2, 3);
-    test_invariants(st, sp4, irrep4_0);
-    test_invariants(st, sp4, irrep4_2);
-    check_size(st, sp4, irrep4_0, 3);
-    check_size(st, sp4, irrep4_2, 3);
+    test_invariants(st, irrep4_0);
+    test_invariants(st, irrep4_2);
+    check_size(st, irrep4_0, 3);
+    check_size(st, irrep4_2, 3);
   }
 
   SECTION("SchaeferTable<BitArray3>") {
     auto st = SchaeferTable<BitArray3>(4, 2, 3);
-    test_invariants(st, sp4, irrep4_0);
-    check_size(st, sp4, irrep4_0, 3);
+    test_invariants(st, irrep4_0);
+    check_size(st, irrep4_0, 3);
   }
 
   SECTION("SchaeferTable<BitArray4>") {
     auto st = SchaeferTable<BitArray4>(4, 2, 3);
-    test_invariants(st, sp4, irrep4_0);
-    check_size(st, sp4, irrep4_0, 3);
+    test_invariants(st, irrep4_0);
+    check_size(st, irrep4_0, 3);
   }
 
   SECTION("SchaeferTable<BitArray5>") {
     auto st = SchaeferTable<BitArray5>(4, 2, 3);
-    test_invariants(st, sp4, irrep4_0);
-    check_size(st, sp4, irrep4_0, 3);
+    test_invariants(st, irrep4_0);
+    check_size(st, irrep4_0, 3);
   }
 
   SECTION("SchaeferTable<BitArray6>") {
     auto st = SchaeferTable<BitArray6>(4, 2, 3);
-    test_invariants(st, sp4, irrep4_0);
-    check_size(st, sp4, irrep4_0, 3);
+    test_invariants(st, irrep4_0);
+    check_size(st, irrep4_0, 3);
   }
 
   SECTION("SchaeferTable<BitArray7>") {
     auto st = SchaeferTable<BitArray7>(4, 2, 3);
-    test_invariants(st, sp4, irrep4_0);
-    check_size(st, sp4, irrep4_0, 3);
+    test_invariants(st, irrep4_0);
+    check_size(st, irrep4_0, 3);
   }
 
   SECTION("SchaeferTable<BitArray8>") {
     auto st = SchaeferTable<BitArray8>(4, 2, 3);
-    test_invariants(st, sp4, irrep4_0);
-    check_size(st, sp4, irrep4_0, 3);
+    test_invariants(st, irrep4_0);
+    check_size(st, irrep4_0, 3);
   }
 
   // =====================================================================
-  // Cross-check using cyclic_group(3): verify rep counts via Burnside
+  // Cross-check: BoundedPartitions vs SchaeferTable enumerate identically
+  // =====================================================================
+
+  SECTION("BoundedPartitions vs SchaeferTable cross-check") {
+    auto bp = BoundedPartitions<BitArray2>(4, 2, 3);
+    auto st = SchaeferTable<BitArray2>(4, 2, 3);
+
+    RepresentativeTable<BoundedPartitions<BitArray2>> tbl_bp(bp, irrep4_0);
+    RepresentativeTable<SchaeferTable<BitArray2>> tbl_st(st, irrep4_0);
+    REQUIRE(tbl_bp.size() == tbl_st.size());
+
+    // Representatives must appear in the same order
+    using bit_t = typename BoundedPartitions<BitArray2>::bit_t;
+    std::vector<bit_t> reps_bp, reps_st;
+    for (auto r : tbl_bp)
+      reps_bp.push_back(r);
+    for (auto r : tbl_st)
+      reps_st.push_back(r);
+    REQUIRE(reps_bp == reps_st);
+  }
+
+  // =====================================================================
+  // Cross-check: cyclic_group(3) on BoundedMultisets(3, bound=2)
   //
-  // cyclic_group(3) on BoundedMultisets(3, bound=2):
-  //   8 states, under rotation: {(0,0,0)}, {(1,0,0),(0,1,0),(0,0,1)},
-  //                              {(1,1,0),(0,1,1),(1,0,1)}, {(1,1,1)}
-  //   k=0: 4 reps
-  //   k=1: (0,0,0) and (1,1,1) excluded → 2 reps
+  // 8 states. Orbits:
+  //   {(0,0,0)}, {(1,0,0),(0,1,0),(0,0,1)},
+  //   {(1,1,0),(0,1,1),(1,0,1)}, {(1,1,1)}
+  // k=0: 4 reps
+  // k=1: {(0,0,0)} and {(1,1,1)} excluded (chi-sum over stabilizer=G is 0)
+  //   → 2 reps
   // =====================================================================
 
   SECTION("BoundedMultisets<BitArray1> cyclic_group(3)") {
     auto ms = BoundedMultisets<BitArray1>(3, 2);
-    test_invariants(ms, sp3, irrep3_0);
-    test_invariants(ms, sp3, irrep3_1);
-    check_size(ms, sp3, irrep3_0, 4);
-    check_size(ms, sp3, irrep3_1, 2);
+    test_invariants(ms, irrep3_0);
+    test_invariants(ms, irrep3_1);
+    check_size(ms, irrep3_0, 4);
+    check_size(ms, irrep3_1, 2);
   }
 
   SECTION("BoundedMultisets<BitArrayLong1> cyclic_group(3)") {
     auto ms = BoundedMultisets<BitArrayLong1>(3, 2);
-    test_invariants(ms, sp3, irrep3_0);
-    test_invariants(ms, sp3, irrep3_1);
-    check_size(ms, sp3, irrep3_0, 4);
-    check_size(ms, sp3, irrep3_1, 2);
+    test_invariants(ms, irrep3_0);
+    test_invariants(ms, irrep3_1);
+    check_size(ms, irrep3_0, 4);
+    check_size(ms, irrep3_1, 2);
   }
 
   // =====================================================================
   // Triangular lattice 12-site space group (72 elements, non-abelian)
   //
-  // This tests correctness on a physically-realistic group and various
-  // types of irreps:
-  //   Gamma.C6.A  – real, trivial (all chi=1)
-  //   Gamma.C6.B  – real, non-trivial (chi in {+1,-1})
-  //   K.C3.Ea     – complex (K-point, involves cube roots of unity)
-  //
-  // Enumerations used:
-  //   Combinations<uint32_t>(12,2)       – C(12,2)=66 states, fast
-  //   LinTable<uint32_t>(12,6)           – C(12,6)=924 states, half-filling
-  //   BoundedPartitions<BitArray2>(12,2,3) – 78 states (sequences summing to 2)
-  //   SchaeferTable<BitArray2>(12,2,3)     – same states, fast index()
+  // Irreps tested:
+  //   Gamma.C6.A  — real, trivial
+  //   Gamma.C6.B  — real, non-trivial (chi in {+1,-1})
+  //   K.C3.Ea     — complex (K-point, cube roots of unity)
   // =====================================================================
 
   SECTION("triangular_12_site_group") {
@@ -572,77 +667,51 @@ TEST_CASE("representative_table", "[symmetries]") try {
                         "triangular.12.j1j2jch.sublattices.fsl.toml";
     auto fl = FileToml(lfile);
 
-    // Load three qualitatively different irreps; each irrep's group may differ
-    // (K.C3.Ea uses a 24-element little group, Gamma irreps use all 72).
-    // SitePermutation is constructed from irrep.group() so that the group
-    // check in RepresentativeTable is satisfied by construction.
-    auto irrep_trivial = read_representation(fl, "Gamma.C6.A"); // real, chi=1
-    auto irrep_B = read_representation(fl, "Gamma.C6.B");       // real, chi=±1
-    auto irrep_Kea = read_representation(fl, "K.C3.Ea");        // complex
+    auto irrep_trivial = read_representation(fl, "Gamma.C6.A");
+    auto irrep_B = read_representation(fl, "Gamma.C6.B");
+    auto irrep_Kea = read_representation(fl, "K.C3.Ea");
 
-    auto sp_trivial = SitePermutation(irrep_trivial.group());
-    auto sp_B = SitePermutation(irrep_B.group());
-    auto sp_Kea = SitePermutation(irrep_Kea.group());
-
-    // ------------------------------------------------------------------
-    // Combinations<uint32_t>(12, 2): 66 2-particle states on 12 sites
-    // ------------------------------------------------------------------
+    // Combinations<uint32_t>(12, 2): 66 states
     {
       auto combos = Combinations<uint32_t>(12, 2);
+      test_invariants(combos, irrep_trivial);
+      test_invariants(combos, irrep_B);
+      test_invariants(combos, irrep_Kea);
 
-      test_invariants(combos, sp_trivial, irrep_trivial);
-      test_invariants(combos, sp_B, irrep_B);
-      test_invariants(combos, sp_Kea, irrep_Kea);
-
-      // For the trivial irrep all states have nonzero norm, so nreps =
-      // number of orbits, which must satisfy 1 <= nreps < 66.
-      RepresentativeTable<Combinations<uint32_t>> tbl(combos, sp_trivial,
-                                                      irrep_trivial);
+      RepresentativeTable<Combinations<uint32_t>> tbl(combos, irrep_trivial);
       REQUIRE(tbl.size() > 0);
       REQUIRE(tbl.size() < combos.size());
     }
 
-    // ------------------------------------------------------------------
     // LinTable<uint32_t>(12, 6): 924 half-filling states
-    // Tests a realistically-sized Hilbert-space sector.
-    // ------------------------------------------------------------------
     {
       auto lt = LinTable<uint32_t>(12, 6);
-      test_invariants(lt, sp_trivial, irrep_trivial);
-      test_invariants(lt, sp_B, irrep_B);
-      test_invariants(lt, sp_Kea, irrep_Kea);
+      test_invariants(lt, irrep_trivial);
+      test_invariants(lt, irrep_B);
+      test_invariants(lt, irrep_Kea);
 
-      RepresentativeTable<LinTable<uint32_t>> tbl(lt, sp_trivial, irrep_trivial);
+      RepresentativeTable<LinTable<uint32_t>> tbl(lt, irrep_trivial);
       REQUIRE(tbl.size() > 0);
       REQUIRE(tbl.size() < lt.size());
     }
 
-    // ------------------------------------------------------------------
-    // BoundedPartitions<BitArray2>(12,2,3): 78 states with integer
-    // occupancies 0/1/2 per site summing to 2. Exercises multi-valued
-    // site degrees of freedom.
-    // ------------------------------------------------------------------
+    // BoundedPartitions<BitArray2>(12,2,3): 78 states
     {
       auto bp = BoundedPartitions<BitArray2>(12, 2, 3);
-      test_invariants(bp, sp_trivial, irrep_trivial);
-      test_invariants(bp, sp_B, irrep_B);
-      test_invariants(bp, sp_Kea, irrep_Kea);
+      test_invariants(bp, irrep_trivial);
+      test_invariants(bp, irrep_B);
+      test_invariants(bp, irrep_Kea);
     }
 
-    // ------------------------------------------------------------------
-    // SchaeferTable<BitArray2>(12,2,3): same 78 states with fast index()
-    // ------------------------------------------------------------------
+    // SchaeferTable<BitArray2>(12,2,3): same 78 states
     {
       auto st = SchaeferTable<BitArray2>(12, 2, 3);
-      test_invariants(st, sp_trivial, irrep_trivial);
-      test_invariants(st, sp_B, irrep_B);
+      test_invariants(st, irrep_trivial);
+      test_invariants(st, irrep_B);
 
-      // Both BoundedPartitions and SchaeferTable for same params → same reps
       auto bp = BoundedPartitions<BitArray2>(12, 2, 3);
-      RepresentativeTable<BoundedPartitions<BitArray2>> tbl_bp(bp, sp_trivial,
-                                                               irrep_trivial);
-      RepresentativeTable<SchaeferTable<BitArray2>> tbl_st(st, sp_trivial,
-                                                           irrep_trivial);
+      RepresentativeTable<BoundedPartitions<BitArray2>> tbl_bp(bp, irrep_trivial);
+      RepresentativeTable<SchaeferTable<BitArray2>> tbl_st(st, irrep_trivial);
       REQUIRE(tbl_bp.size() == tbl_st.size());
     }
   }

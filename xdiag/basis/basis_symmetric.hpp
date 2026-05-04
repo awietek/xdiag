@@ -29,14 +29,15 @@ public:
       utils::get_type_name<BasisSymmetric<enumeration_t>>();
 
   BasisSymmetric() = default;
-  BasisSymmetric(Representation const &irrep, enumeration_t const &enumeration);
+  BasisSymmetric(enumeration_t const &enumeration, Representation const &irrep);
 
-  int64_t size() const;
+  int64_t size() const override;
   int64_t nsites() const;
   Representation const &irrep() const;
 
   // Returns {raw_rep_idx, sym, norm_out}.
-  // raw_rep_idx == 0 means zero-norm (invalid); actual index is raw_rep_idx - 1.
+  // raw_rep_idx == 0 means zero-norm (invalid); actual index is raw_rep_idx
+  // - 1.
   inline std::tuple<int64_t, int64_t, double>
   representative_data(bit_t bits) const {
     int64_t idx = enumeration_.index(bits);
@@ -62,8 +63,8 @@ public:
   bool operator!=(BasisSymmetric<enumeration_t> const &rhs) const;
 
 private:
-  Representation irrep_;
   enumeration_t enumeration_;
+  Representation irrep_;
   table_t table_;
 };
 

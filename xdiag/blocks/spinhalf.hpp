@@ -12,6 +12,7 @@
 #include <xdiag/basis/basis.hpp>
 #include <xdiag/operators/opsum.hpp>
 #include <xdiag/states/product_state.hpp>
+#include <xdiag/symmetries/representation.hpp>
 #include <xdiag/utils/xdiag_api.hpp>
 
 namespace xdiag {
@@ -25,6 +26,8 @@ public:
   XDIAG_API Spinhalf() = default;
   XDIAG_API Spinhalf(int64_t nsites);
   XDIAG_API Spinhalf(int64_t nsites, int64_t nup);
+  XDIAG_API Spinhalf(int64_t nsites, Representation const &irrep);
+  XDIAG_API Spinhalf(int64_t nsites, int64_t nup, Representation const &irrep);
 
   XDIAG_API int64_t nsites() const;
   XDIAG_API int64_t dim() const;
@@ -38,13 +41,15 @@ public:
   XDIAG_API iterator_t end() const;
 
   std::optional<int64_t> nup() const;
+  std::optional<Representation> const &irrep() const;
   std::shared_ptr<basis::Basis> const &basis() const;
 
 private:
   int64_t nsites_;
   std::optional<int64_t> nup_;
-  int64_t size_;
+  std::optional<Representation> irrep_;
   std::shared_ptr<basis::Basis> basis_;
+  int64_t size_;
 };
 
 XDIAG_API int64_t nsites(Spinhalf const &block);

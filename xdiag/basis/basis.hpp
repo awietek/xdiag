@@ -18,6 +18,7 @@ class Basis {
 public:
   virtual std::size_t type() const = 0;
   virtual std::string_view name() const = 0;
+  virtual int64_t size() const = 0;
   virtual ProductState
   product_state(int64_t idx, std::vector<std::string> const &dict) const = 0;
   virtual ~Basis() = default;

@@ -267,7 +267,7 @@ XDIAG_CATCH
 
 template <typename enumeration_t>
 RepresentativeTable<enumeration_t>::RepresentativeTable(
-    Representation const &irrep, enumeration_t const &enumeration) try {
+    enumeration_t const &enumeration, Representation const &irrep) try {
   auto action = SitePermutation(irrep.group());
   if (isreal(irrep)) {
     representative_table_initialize(

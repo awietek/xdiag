@@ -5,6 +5,7 @@
 #include "spinhalf.hpp"
 
 #include <xdiag/basis/basis_onthefly.hpp>
+#include <xdiag/basis/basis_symmetric.hpp>
 #include <xdiag/bits/bitset.hpp>
 #include <xdiag/combinatorics/combinations/combinations.hpp>
 #include <xdiag/combinatorics/combinations/lin_table.hpp>
@@ -17,7 +18,8 @@
 
 namespace xdiag {
 
-Spinhalf::Spinhalf(int64_t nsites) try : nsites_(nsites), nup_(std::nullopt) {
+Spinhalf::Spinhalf(int64_t nsites) try
+    : nsites_(nsites), nup_(std::nullopt), irrep_(std::nullopt) {
   using namespace bits;
   using namespace combinatorics;
   using namespace basis;
@@ -49,7 +51,7 @@ Spinhalf::Spinhalf(int64_t nsites) try : nsites_(nsites), nup_(std::nullopt) {
 XDIAG_CATCH
 
 Spinhalf::Spinhalf(int64_t nsites, int64_t nup) try
-    : nsites_(nsites), nup_(nup) {
+    : nsites_(nsites), nup_(nup), irrep_(std::nullopt) {
   using namespace bits;
   using namespace combinatorics;
   using namespace basis;
@@ -104,6 +106,96 @@ Spinhalf::Spinhalf(int64_t nsites, int64_t nup) try
     using basis_t = BasisOnTheFly<enum_t>;
     basis_ = std::make_shared<basis_t>(enum_t(nsites, nup));
   }
+}
+XDIAG_CATCH
+
+Spinhalf::Spinhalf(int64_t nsites, Representation const &irrep) try
+    : nsites_(nsites), nup_(std::nullopt), irrep_(irrep) {
+  using namespace bits;
+  using namespace combinatorics;
+  using namespace basis;
+
+  // Safety check
+  if (nsites < 0) {
+    XDIAG_THROW("Invalid argument: nsites < 0");
+  }
+
+  // Choose basis implementation
+  if (nsites <= 32) {
+    using bit_t = uint32_t;
+    using enum_t = Subsets<bit_t>;
+    using basis_t = BasisSymmetric<enum_t>;
+    basis_ = std::make_shared<basis_t>(enum_t(nsites), irrep);
+  } else if (nsites <= 64) {
+    using bit_t = uint64_t;
+    using enum_t = Subsets<bit_t>;
+    using basis_t = BasisSymmetric<enum_t>;
+    basis_ = std::make_shared<basis_t>(enum_t(nsites), irrep);
+  } else {
+    XDIAG_THROW("Invalid nsites > 64 for non-Sz conserving Spinhalf block");
+  }
+
+  size_ = basis_->size();
+  check_dimension_reasonable(size_);
+  check_dimension_works_with_blas_int_size(size_);
+}
+XDIAG_CATCH
+
+Spinhalf::Spinhalf(int64_t nsites, int64_t nup, Representation const &irrep) try
+    : nsites_(nsites), nup_(nup), irrep_(irrep) {
+  using namespace bits;
+  using namespace combinatorics;
+  using namespace basis;
+
+  // Safety checks
+  if (nsites < 0) {
+    XDIAG_THROW("Invalid argument: nsites < 0");
+  } else if (nup < 0) {
+    XDIAG_THROW("Invalid argument: nup < 0");
+  } else if (nup > nsites) {
+    XDIAG_THROW("Invalid argument: nup > nsites");
+  }
+
+  // For nsites <= 42 choose a LinTable for fast lookups
+  if (nsites <= 32) {
+    using bit_t = uint32_t;
+    using enum_t = LinTable<bit_t>;
+    using basis_t = BasisSymmetric<enum_t>;
+    basis_ = std::make_shared<basis_t>(enum_t(nsites, nup), irrep);
+  } else if (nsites <= 42) {
+    using bit_t = uint64_t;
+    using enum_t = LinTable<bit_t>;
+    using basis_t = BasisSymmetric<enum_t>;
+    basis_ = std::make_shared<basis_t>(enum_t(nsites, nup), irrep);
+  } else if (nsites <= 64) {
+    using bit_t = uint64_t;
+    using enum_t = Combinations<bit_t>;
+    using basis_t = BasisSymmetric<enum_t>;
+    basis_ = std::make_shared<basis_t>(enum_t(nsites, nup), irrep);
+  } else if (nsites <= 128) {
+    using bit_t = Bitset<uint64_t, 2>;
+    using enum_t = Combinations<bit_t>;
+    using basis_t = BasisSymmetric<enum_t>;
+    basis_ = std::make_shared<basis_t>(enum_t(nsites, nup), irrep);
+  } else if (nsites <= 256) {
+    using bit_t = Bitset<uint64_t, 4>;
+    using enum_t = Combinations<bit_t>;
+    using basis_t = BasisSymmetric<enum_t>;
+    basis_ = std::make_shared<basis_t>(enum_t(nsites, nup), irrep);
+  } else if (nsites <= 512) {
+    using bit_t = Bitset<uint64_t, 8>;
+    using enum_t = Combinations<bit_t>;
+    using basis_t = BasisSymmetric<enum_t>;
+    basis_ = std::make_shared<basis_t>(enum_t(nsites, nup), irrep);
+  } else { // use dynamically sized Bitset
+    using bit_t = Bitset<uint64_t, 0>;
+    using enum_t = Combinations<bit_t>;
+    using basis_t = BasisSymmetric<enum_t>;
+    basis_ = std::make_shared<basis_t>(enum_t(nsites, nup), irrep);
+  }
+  size_ = basis_->size();
+  check_dimension_reasonable(size_);
+  check_dimension_works_with_blas_int_size(size_);
 }
 XDIAG_CATCH
 

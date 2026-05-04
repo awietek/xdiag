@@ -12,9 +12,9 @@
 namespace xdiag::basis {
 
 template <typename enumeration_t>
-BasisSymmetric<enumeration_t>::BasisSymmetric(
-    Representation const &irrep, enumeration_t const &enumeration) try
-    : irrep_(irrep), enumeration_(enumeration), table_(irrep, enumeration) {}
+BasisSymmetric<enumeration_t>::BasisSymmetric(enumeration_t const &enumeration,
+                                              Representation const &irrep) try
+    : enumeration_(enumeration), irrep_(irrep), table_(enumeration, irrep) {}
 XDIAG_CATCH
 
 template <typename enumeration_t>

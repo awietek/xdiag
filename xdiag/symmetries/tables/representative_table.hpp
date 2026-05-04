@@ -33,8 +33,8 @@ public:
   using const_iterator = bits::BitVectorConstIterator<bit_t>;
 
   RepresentativeTable() = default;
-  RepresentativeTable(Representation const &irrep,
-                      enumeration_t const &enumeration);
+  RepresentativeTable(enumeration_t const &enumeration,
+                      Representation const &irrep);
 
   inline bit_t operator[](int64_t idx) const { return representative_[idx]; }
   inline bit_t representative(int64_t idx) const {
