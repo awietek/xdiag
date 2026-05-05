@@ -5,6 +5,7 @@
 #pragma once
 
 #include <xdiag/basis/basis_onthefly.hpp>
+#include <xdiag/basis/basis_sublattice.hpp>
 #include <xdiag/basis/basis_symmetric.hpp>
 #include <xdiag/bits/bitset.hpp>
 #include <xdiag/blocks/spinhalf.hpp>
@@ -44,6 +45,16 @@ void dispatch_basis(xdiag::Spinhalf const &block_in,
   ADD(BasisSymmetric<Combinations<BitsetStatic2>>)
   ADD(BasisSymmetric<Combinations<BitsetStatic4>>)
   ADD(BasisSymmetric<Combinations<BitsetStatic8>>)
+  ADD(BasisSublattice<uint32_t, 1>)
+  ADD(BasisSublattice<uint32_t, 2>)
+  ADD(BasisSublattice<uint32_t, 3>)
+  ADD(BasisSublattice<uint32_t, 4>)
+  ADD(BasisSublattice<uint32_t, 5>)
+  ADD(BasisSublattice<uint64_t, 1>)
+  ADD(BasisSublattice<uint64_t, 2>)
+  ADD(BasisSublattice<uint64_t, 3>)
+  ADD(BasisSublattice<uint64_t, 4>)
+  ADD(BasisSublattice<uint64_t, 5>)
 #undef ADD
   d.dispatch(block_in.basis(), block_out.basis());
 }

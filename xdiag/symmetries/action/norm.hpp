@@ -5,12 +5,16 @@
 #pragma once
 
 #include <xdiag/symmetries/action/site_permutation.hpp>
+#include <xdiag/symmetries/action/site_permutation_sublattice.hpp>
 
 namespace xdiag::symmetries {
 
-// determines norm of a state in an orbit
-template <typename bit_t, typename coeff_t>
-double norm(bit_t state, SitePermutation const &action,
+// Norm of a state in its symmetry orbit.
+// action_t must provide apply(sym, state) and size().
+// Explicitly instantiated in norm.cpp for SitePermutation and
+// SitePermutationSublattice.
+template <typename bit_t, typename coeff_t, typename action_t>
+double norm(bit_t state, action_t const &action,
             arma::Col<coeff_t> const &characters);
 
 } // namespace xdiag::symmetries

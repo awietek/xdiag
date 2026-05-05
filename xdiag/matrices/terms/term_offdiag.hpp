@@ -11,6 +11,8 @@
 #endif
 
 #include <xdiag/basis/basis_onthefly.hpp>
+#include <xdiag/basis/basis_sublattice.hpp>
+#include <xdiag/basis/basis_symmetric.hpp>
 #include <xdiag/matrices/fill_functions.hpp>
 #include <xdiag/utils/likely.hpp>
 
@@ -60,13 +62,15 @@ void term_offdiag(basis::BasisOnTheFly<enumeration_t> const &basis_in,
 #endif
 }
 
-template <typename enumeration_t, typename non_zero_term_f,
-          typename term_action_f, typename fill_f>
-void term_offdiag(basis::BasisSymmetric<enumeration_t> const &basis_in,
-                  basis::BasisSymmetric<enumeration_t> const &basis_out,
-                  non_zero_term_f non_zero_term, term_action_f term_action,
-                  fill_f fill) {
-  using bit_t = typename enumeration_t::bit_t;
+// Shared implementation for any symmetric basis providing representative_data,
+// inv_norm, irrep, size, begin/end (random-access), and operator[].
+namespace detail {
+template <typename basis_t, typename non_zero_term_f, typename term_action_f,
+          typename fill_f>
+void term_offdiag_sym(basis_t const &basis_in, basis_t const &basis_out,
+                      non_zero_term_f non_zero_term, term_action_f term_action,
+                      fill_f fill) {
+  using bit_t = typename basis_t::bit_t;
   using coeff_t =
       typename std::invoke_result_t<decltype(term_action), bit_t>::second_type;
 
@@ -76,12 +80,7 @@ void term_offdiag(basis::BasisSymmetric<enumeration_t> const &basis_in,
 #ifdef _OPENMP
 #pragma omp parallel
   {
-    int num_thread = omp_get_thread_num(); // needed for XDIAG_FILL in case of
-                                           // sparse matrices
-    // #pragma omp for schedule(runtime)
-    //     for (int64_t idx_in = 0; idx_in < basis_in.size(); ++idx_in) {
-    // bit_t spins_in = basis_in[idx_in];
-
+    int num_thread = omp_get_thread_num();
     int nthreads = omp_get_num_threads();
     int64_t size = basis_in.size();
     int64_t idx_in = num_thread * (size / nthreads);
@@ -118,6 +117,27 @@ void term_offdiag(basis::BasisSymmetric<enumeration_t> const &basis_in,
     }
   }
 #endif
+}
+} // namespace detail
+
+template <typename enumeration_t, typename non_zero_term_f,
+          typename term_action_f, typename fill_f>
+void term_offdiag(basis::BasisSymmetric<enumeration_t> const &basis_in,
+                  basis::BasisSymmetric<enumeration_t> const &basis_out,
+                  non_zero_term_f non_zero_term, term_action_f term_action,
+                  fill_f fill) {
+  detail::term_offdiag_sym(basis_in, basis_out, non_zero_term, term_action,
+                            fill);
+}
+
+template <typename bit_t, int n_sublat, typename non_zero_term_f,
+          typename term_action_f, typename fill_f>
+void term_offdiag(basis::BasisSublattice<bit_t, n_sublat> const &basis_in,
+                  basis::BasisSublattice<bit_t, n_sublat> const &basis_out,
+                  non_zero_term_f non_zero_term, term_action_f term_action,
+                  fill_f fill) {
+  detail::term_offdiag_sym(basis_in, basis_out, non_zero_term, term_action,
+                            fill);
 }
 
 } // namespace xdiag::matrices
