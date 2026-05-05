@@ -14,6 +14,7 @@
 #include <xdiag/states/product_state.hpp>
 #include <xdiag/symmetries/representation.hpp>
 #include <xdiag/symmetries/tables/representative_table.hpp>
+#include <xdiag/utils/likely.hpp>
 #include <xdiag/utils/type_name.hpp>
 
 namespace xdiag::basis {
@@ -42,10 +43,12 @@ public:
   representative_data(bit_t bits) const {
     int64_t idx = enumeration_.index(bits);
     int64_t raw = table_.raw_representative_index(idx);
-    if (!raw)
+    if (XDIAG_LIKELY(raw)) {
+      return {raw, table_.representative_symmetry(idx),
+              table_.representative_norm(raw - 1)};
+    } else {
       return {0, 0, 0.0};
-    return {raw, table_.representative_symmetry(idx),
-            table_.representative_norm(raw - 1)};
+    }
   }
   inline double norm(int64_t idx) const {
     return table_.representative_norm(idx);

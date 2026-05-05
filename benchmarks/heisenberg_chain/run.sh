@@ -1,7 +1,7 @@
 #!/bin/bash
 
 profiler=/home/awietek/Research/Software/gperftools/build/libprofiler.so
-nsites=32
+nsites=28
 
 LD_PRELOAD=$profiler CPUPROFILE=main.prof ./build/main $nsites
 
