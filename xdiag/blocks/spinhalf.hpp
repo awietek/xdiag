@@ -26,8 +26,10 @@ public:
   XDIAG_API Spinhalf() = default;
   XDIAG_API Spinhalf(int64_t nsites);
   XDIAG_API Spinhalf(int64_t nsites, int64_t nup);
-  XDIAG_API Spinhalf(int64_t nsites, Representation const &irrep);
-  XDIAG_API Spinhalf(int64_t nsites, int64_t nup, Representation const &irrep);
+  XDIAG_API Spinhalf(int64_t nsites, Representation const &irrep,
+                     std::string backend = "auto");
+  XDIAG_API Spinhalf(int64_t nsites, int64_t nup, Representation const &irrep,
+                     std::string backend = "auto");
 
   XDIAG_API int64_t nsites() const;
   XDIAG_API int64_t dim() const;

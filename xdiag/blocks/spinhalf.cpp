@@ -5,6 +5,7 @@
 #include "spinhalf.hpp"
 
 #include <xdiag/basis/basis_onthefly.hpp>
+#include <xdiag/basis/basis_sublattice.hpp>
 #include <xdiag/basis/basis_symmetric.hpp>
 #include <xdiag/bits/bitset.hpp>
 #include <xdiag/combinatorics/combinations/combinations.hpp>
@@ -109,7 +110,8 @@ Spinhalf::Spinhalf(int64_t nsites, int64_t nup) try
 }
 XDIAG_CATCH
 
-Spinhalf::Spinhalf(int64_t nsites, Representation const &irrep) try
+Spinhalf::Spinhalf(int64_t nsites, Representation const &irrep,
+                   std::string backend) try
     : nsites_(nsites), nup_(std::nullopt), irrep_(irrep) {
   using namespace bits;
   using namespace combinatorics;
@@ -121,18 +123,79 @@ Spinhalf::Spinhalf(int64_t nsites, Representation const &irrep) try
   }
 
   // Choose basis implementation
-  if (nsites <= 32) {
-    using bit_t = uint32_t;
-    using enum_t = Subsets<bit_t>;
-    using basis_t = BasisSymmetric<enum_t>;
-    basis_ = std::make_shared<basis_t>(enum_t(nsites), irrep);
-  } else if (nsites <= 64) {
-    using bit_t = uint64_t;
-    using enum_t = Subsets<bit_t>;
-    using basis_t = BasisSymmetric<enum_t>;
-    basis_ = std::make_shared<basis_t>(enum_t(nsites), irrep);
+  if (backend == "auto") {
+
+    if (nsites <= 32) {
+      using bit_t = uint32_t;
+      using enum_t = Subsets<bit_t>;
+      using basis_t = BasisSymmetric<enum_t>;
+      basis_ = std::make_shared<basis_t>(enum_t(nsites), irrep);
+    } else if (nsites <= 64) {
+      using bit_t = uint64_t;
+      using enum_t = Subsets<bit_t>;
+      using basis_t = BasisSymmetric<enum_t>;
+      basis_ = std::make_shared<basis_t>(enum_t(nsites), irrep);
+    } else {
+      XDIAG_THROW(
+          "Unsupported nsites > 64 for non-Sz conserving Spinhalf block");
+    }
+  } else if (backend == "1sublattice") {
+    if (nsites <= 32) {
+      using basis_t = BasisSublattice32<1>;
+      basis_ = std::make_shared<basis_t>(irrep);
+    } else if (nsites <= 64) {
+      using basis_t = BasisSublattice64<1>;
+      basis_ = std::make_shared<basis_t>(irrep);
+    } else {
+      XDIAG_THROW(
+          "Unsupported nsites > 64 for Spinhalf block with sublattice coding");
+    }
+  } else if (backend == "2sublattice") {
+    if (nsites <= 32) {
+      using basis_t = BasisSublattice32<2>;
+      basis_ = std::make_shared<basis_t>(irrep);
+    } else if (nsites <= 64) {
+      using basis_t = BasisSublattice64<2>;
+      basis_ = std::make_shared<basis_t>(irrep);
+    } else {
+      XDIAG_THROW(
+          "Unsupported nsites > 64 for Spinhalf block with sublattice coding");
+    }
+  } else if (backend == "3sublattice") {
+    if (nsites <= 32) {
+      using basis_t = BasisSublattice32<3>;
+      basis_ = std::make_shared<basis_t>(irrep);
+    } else if (nsites <= 64) {
+      using basis_t = BasisSublattice64<3>;
+      basis_ = std::make_shared<basis_t>(irrep);
+    } else {
+      XDIAG_THROW(
+          "Unsupported nsites > 64 for Spinhalf block with sublattice coding");
+    }
+  } else if (backend == "4sublattice") {
+    if (nsites <= 32) {
+      using basis_t = BasisSublattice32<4>;
+      basis_ = std::make_shared<basis_t>(irrep);
+    } else if (nsites <= 64) {
+      using basis_t = BasisSublattice64<4>;
+      basis_ = std::make_shared<basis_t>(irrep);
+    } else {
+      XDIAG_THROW(
+          "Unsupported nsites > 64 for Spinhalf block with sublattice coding");
+    }
+  } else if (backend == "5sublattice") {
+    if (nsites <= 32) {
+      using basis_t = BasisSublattice32<5>;
+      basis_ = std::make_shared<basis_t>(irrep);
+    } else if (nsites <= 64) {
+      using basis_t = BasisSublattice64<5>;
+      basis_ = std::make_shared<basis_t>(irrep);
+    } else {
+      XDIAG_THROW(
+          "Unsupported nsites > 64 for Spinhalf block with sublattice coding");
+    }
   } else {
-    XDIAG_THROW("Invalid nsites > 64 for non-Sz conserving Spinhalf block");
+    XDIAG_THROW(fmt::format("Unknown backend: \"{}\"", backend));
   }
 
   size_ = basis_->size();
@@ -141,7 +204,8 @@ Spinhalf::Spinhalf(int64_t nsites, Representation const &irrep) try
 }
 XDIAG_CATCH
 
-Spinhalf::Spinhalf(int64_t nsites, int64_t nup, Representation const &irrep) try
+Spinhalf::Spinhalf(int64_t nsites, int64_t nup, Representation const &irrep,
+                   std::string backend) try
     : nsites_(nsites), nup_(nup), irrep_(irrep) {
   using namespace bits;
   using namespace combinatorics;
@@ -156,43 +220,103 @@ Spinhalf::Spinhalf(int64_t nsites, int64_t nup, Representation const &irrep) try
     XDIAG_THROW("Invalid argument: nup > nsites");
   }
 
-  // For nsites <= 42 choose a LinTable for fast lookups
-  if (nsites <= 32) {
-    using bit_t = uint32_t;
-    using enum_t = LinTable<bit_t>;
-    using basis_t = BasisSymmetric<enum_t>;
-    basis_ = std::make_shared<basis_t>(enum_t(nsites, nup), irrep);
-  } else if (nsites <= 42) {
-    using bit_t = uint64_t;
-    using enum_t = LinTable<bit_t>;
-    using basis_t = BasisSymmetric<enum_t>;
-    basis_ = std::make_shared<basis_t>(enum_t(nsites, nup), irrep);
-  } else if (nsites <= 64) {
-    using bit_t = uint64_t;
-    using enum_t = Combinations<bit_t>;
-    using basis_t = BasisSymmetric<enum_t>;
-    basis_ = std::make_shared<basis_t>(enum_t(nsites, nup), irrep);
-  } else if (nsites <= 128) {
-    using bit_t = Bitset<uint64_t, 2>;
-    using enum_t = Combinations<bit_t>;
-    using basis_t = BasisSymmetric<enum_t>;
-    basis_ = std::make_shared<basis_t>(enum_t(nsites, nup), irrep);
-  } else if (nsites <= 256) {
-    using bit_t = Bitset<uint64_t, 4>;
-    using enum_t = Combinations<bit_t>;
-    using basis_t = BasisSymmetric<enum_t>;
-    basis_ = std::make_shared<basis_t>(enum_t(nsites, nup), irrep);
-  } else if (nsites <= 512) {
-    using bit_t = Bitset<uint64_t, 8>;
-    using enum_t = Combinations<bit_t>;
-    using basis_t = BasisSymmetric<enum_t>;
-    basis_ = std::make_shared<basis_t>(enum_t(nsites, nup), irrep);
-  } else { // use dynamically sized Bitset
-    using bit_t = Bitset<uint64_t, 0>;
-    using enum_t = Combinations<bit_t>;
-    using basis_t = BasisSymmetric<enum_t>;
-    basis_ = std::make_shared<basis_t>(enum_t(nsites, nup), irrep);
+  if (backend == "auto") {
+    // For nsites <= 42 choose a LinTable for fast lookups
+    if (nsites <= 32) {
+      using bit_t = uint32_t;
+      using enum_t = LinTable<bit_t>;
+      using basis_t = BasisSymmetric<enum_t>;
+      basis_ = std::make_shared<basis_t>(enum_t(nsites, nup), irrep);
+    } else if (nsites <= 42) {
+      using bit_t = uint64_t;
+      using enum_t = LinTable<bit_t>;
+      using basis_t = BasisSymmetric<enum_t>;
+      basis_ = std::make_shared<basis_t>(enum_t(nsites, nup), irrep);
+    } else if (nsites <= 64) {
+      using bit_t = uint64_t;
+      using enum_t = Combinations<bit_t>;
+      using basis_t = BasisSymmetric<enum_t>;
+      basis_ = std::make_shared<basis_t>(enum_t(nsites, nup), irrep);
+    } else if (nsites <= 128) {
+      using bit_t = Bitset<uint64_t, 2>;
+      using enum_t = Combinations<bit_t>;
+      using basis_t = BasisSymmetric<enum_t>;
+      basis_ = std::make_shared<basis_t>(enum_t(nsites, nup), irrep);
+    } else if (nsites <= 256) {
+      using bit_t = Bitset<uint64_t, 4>;
+      using enum_t = Combinations<bit_t>;
+      using basis_t = BasisSymmetric<enum_t>;
+      basis_ = std::make_shared<basis_t>(enum_t(nsites, nup), irrep);
+    } else if (nsites <= 512) {
+      using bit_t = Bitset<uint64_t, 8>;
+      using enum_t = Combinations<bit_t>;
+      using basis_t = BasisSymmetric<enum_t>;
+      basis_ = std::make_shared<basis_t>(enum_t(nsites, nup), irrep);
+    } else { // use dynamically sized Bitset
+      using bit_t = Bitset<uint64_t, 0>;
+      using enum_t = Combinations<bit_t>;
+      using basis_t = BasisSymmetric<enum_t>;
+      basis_ = std::make_shared<basis_t>(enum_t(nsites, nup), irrep);
+    }
+  } else if (backend == "1sublattice") {
+    if (nsites <= 32) {
+      using basis_t = BasisSublattice32<1>;
+      basis_ = std::make_shared<basis_t>(nup, irrep);
+    } else if (nsites <= 64) {
+      using basis_t = BasisSublattice64<1>;
+      basis_ = std::make_shared<basis_t>(nup, irrep);
+    } else {
+      XDIAG_THROW(
+          "Unsupported nsites > 64 for Spinhalf block with sublattice coding");
+    }
+  } else if (backend == "2sublattice") {
+    if (nsites <= 32) {
+      using basis_t = BasisSublattice32<2>;
+      basis_ = std::make_shared<basis_t>(nup, irrep);
+    } else if (nsites <= 64) {
+      using basis_t = BasisSublattice64<2>;
+      basis_ = std::make_shared<basis_t>(nup, irrep);
+    } else {
+      XDIAG_THROW(
+          "Unsupported nsites > 64 for Spinhalf block with sublattice coding");
+    }
+  } else if (backend == "3sublattice") {
+    if (nsites <= 32) {
+      using basis_t = BasisSublattice32<3>;
+      basis_ = std::make_shared<basis_t>(nup, irrep);
+    } else if (nsites <= 64) {
+      using basis_t = BasisSublattice64<3>;
+      basis_ = std::make_shared<basis_t>(nup, irrep);
+    } else {
+      XDIAG_THROW(
+          "Unsupported nsites > 64 for Spinhalf block with sublattice coding");
+    }
+  } else if (backend == "4sublattice") {
+    if (nsites <= 32) {
+      using basis_t = BasisSublattice32<4>;
+      basis_ = std::make_shared<basis_t>(nup, irrep);
+    } else if (nsites <= 64) {
+      using basis_t = BasisSublattice64<4>;
+      basis_ = std::make_shared<basis_t>(nup, irrep);
+    } else {
+      XDIAG_THROW(
+          "Unsupported nsites > 64 for Spinhalf block with sublattice coding");
+    }
+  } else if (backend == "5sublattice") {
+    if (nsites <= 32) {
+      using basis_t = BasisSublattice32<5>;
+      basis_ = std::make_shared<basis_t>(nup, irrep);
+    } else if (nsites <= 64) {
+      using basis_t = BasisSublattice64<5>;
+      basis_ = std::make_shared<basis_t>(nup, irrep);
+    } else {
+      XDIAG_THROW(
+          "Unsupported nsites > 64 for Spinhalf block with sublattice coding");
+    }
+  } else {
+    XDIAG_THROW(fmt::format("Unknown backend: \"{}\"", backend));
   }
+
   size_ = basis_->size();
   check_dimension_reasonable(size_);
   check_dimension_works_with_blas_int_size(size_);

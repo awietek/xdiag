@@ -140,7 +140,7 @@ XDIAG_CATCH
 
 template <typename bit_t> void check_nsites_work_with_bits(int64_t nsites) try {
   int64_t n_bits = std::numeric_limits<bit_t>::digits;
-  if (nsites >= n_bits) {
+  if (nsites > n_bits) {
     XDIAG_THROW(
         fmt::format("Cannot encode basis with nsites={} using only {} bits. "
                     "Consider using a different backend if possible.",
