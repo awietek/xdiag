@@ -50,6 +50,9 @@ public:
   inline double norm(int64_t idx) const {
     return table_.representative_norm(idx);
   }
+  inline double inv_norm(int64_t idx) const {
+    return table_.inv_representative_norm(idx);
+  }
 
   inline bit_t operator[](int64_t idx) const { return table_[idx]; }
   iterator_t begin() const;

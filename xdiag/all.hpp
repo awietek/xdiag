@@ -1,70 +1,67 @@
-// SPDX-FileCopyrightText: 2025 Alexander Wietek <awietek@pks.mpg.de>
-//
-// SPDX-License-Identifier: Apache-2.0
-
 #pragma once
 
-#include <xdiag/common.hpp>
-
-#include <xdiag/algebra/algebra.hpp>
-#include <xdiag/algebra/apply.hpp>
-#include <xdiag/algebra/isapprox.hpp>
-#include <xdiag/algebra/matrix.hpp>
-#include <xdiag/algebra/sparse/apply.hpp>
-#include <xdiag/algebra/sparse/coo_matrix.hpp>
-#include <xdiag/algebra/sparse/csc_matrix.hpp>
-#include <xdiag/algebra/sparse/csr_matrix.hpp>
-#include <xdiag/algebra/sparse/logic.hpp>
-#include <xdiag/algebra/sparse/sparse_matrix_types.hpp>
+#include <xdiag/armadillo.hpp>
 #include <xdiag/algorithms/lanczos/eigs_lanczos.hpp>
 #include <xdiag/algorithms/lanczos/eigvals_lanczos.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
 #include <xdiag/algorithms/time_evolution/evolve_lanczos.hpp>
 #include <xdiag/algorithms/time_evolution/imaginary_time_evolve.hpp>
-#include <xdiag/algorithms/time_evolution/time_evolve.hpp>
 #include <xdiag/algorithms/time_evolution/time_evolve_expokit.hpp>
-#include <xdiag/bits/bitset.hpp>
-#include <xdiag/bits/bitvector.hpp>
-#include <xdiag/blocks/electron.hpp>
+#include <xdiag/algorithms/time_evolution/time_evolve.hpp>
 #include <xdiag/blocks/spinhalf.hpp>
-#include <xdiag/blocks/tj.hpp>
 #include <xdiag/io/file_h5.hpp>
 #include <xdiag/io/file_toml.hpp>
+#include <xdiag/io/hdf5/file_h5_handler.hpp>
 #include <xdiag/io/read.hpp>
-#include <xdiag/operators/coupling.hpp>
-#include <xdiag/operators/logic/block.hpp>
+#include <xdiag/math/matrix.hpp>
+#include <xdiag/math/scalar.hpp>
+#include <xdiag/math/vector.hpp>
+#include <xdiag/matrices/apply.hpp>
+#include <xdiag/matrices/matrix.hpp>
+#include <xdiag/matrices/sparse/apply.hpp>
+#include <xdiag/matrices/sparse/coo_matrix.hpp>
+#include <xdiag/matrices/sparse/csc_matrix.hpp>
+#include <xdiag/matrices/sparse/csr_matrix.hpp>
+#include <xdiag/operators/coeff.hpp>
+#include <xdiag/operators/logic/collect.hpp>
 #include <xdiag/operators/logic/hc.hpp>
 #include <xdiag/operators/logic/isapprox.hpp>
-#include <xdiag/operators/logic/qns.hpp>
-#include <xdiag/operators/logic/real.hpp>
+#include <xdiag/operators/logic/isreal.hpp>
 #include <xdiag/operators/logic/symmetrize.hpp>
+#include <xdiag/operators/monomial.hpp>
 #include <xdiag/operators/op.hpp>
 #include <xdiag/operators/opsum.hpp>
+#include <xdiag/operators/qns/block.hpp>
+#include <xdiag/states/apply.hpp>
 #include <xdiag/states/create_state.hpp>
+#include <xdiag/states/dot.hpp>
 #include <xdiag/states/fill.hpp>
+#include <xdiag/states/norm.hpp>
 #include <xdiag/states/product_state.hpp>
 #include <xdiag/states/random_state.hpp>
 #include <xdiag/states/state.hpp>
-#include <xdiag/symmetries/permutation.hpp>
+#include <xdiag/symmetries/action/site_permutation.hpp>
 #include <xdiag/symmetries/permutation_group.hpp>
+#include <xdiag/symmetries/permutation.hpp>
 #include <xdiag/symmetries/representation.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/logger.hpp>
 #include <xdiag/utils/say_hello.hpp>
-#include <xdiag/utils/scalar.hpp>
+#include <xdiag/utils/timing.hpp>
 #include <xdiag/utils/xdiag_api.hpp>
 #include <xdiag/utils/xdiag_show.hpp>
 
-#ifdef XDIAG_USE_MPI
-#include <xdiag/blocks/electron_distributed.hpp>
-#include <xdiag/blocks/spinhalf_distributed.hpp>
-#include <xdiag/blocks/tj_distributed.hpp>
-#endif
-
-#undef XDIAG_THROW
-#undef XDIAG_RETHROW
-#undef XDIAG_CATCH
 #undef XDIAG_API
-#undef XDIAG_OFFSET
+#undef XDIAG_CATCH
+#undef XDIAG_COMPILEDBY
+#undef XDIAG_DIRECTORY
 #undef XDIAG_FILL
-#undef XDIAG_PI
+#undef XDIAG_HOSTNAME
+#undef XDIAG_LIKELY
+#undef XDIAG_OFFSET
+#undef XDIAG_RETHROW
+#undef XDIAG_SUBLATTICE_UNSTABLE
+#undef XDIAG_THROW
+#undef XDIAG_TRY_CATCH
+#undef XDIAG_UNLIKELY
+#undef XDIAG_VERSION

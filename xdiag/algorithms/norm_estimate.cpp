@@ -11,6 +11,7 @@
 #include <xdiag/operators/logic/hc.hpp>
 #include <xdiag/random/hash.hpp>
 #include <xdiag/utils/timing.hpp>
+#include <xdiag/utils/error.hpp>
 
 namespace xdiag {
 

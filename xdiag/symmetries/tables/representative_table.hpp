@@ -53,6 +53,9 @@ public:
   inline double representative_norm(int64_t idx) const {
     return norm_[representative_norm_index_[idx]];
   }
+  inline double inv_representative_norm(int64_t idx) const {
+    return inv_norm_[representative_norm_index_[idx]];
+  }
   int64_t size() const;
 
   const_iterator begin() const noexcept { return representative_.cbegin(); }
@@ -67,6 +70,7 @@ private:
   bits::BitVector<uint64_t> representative_symmetry_;
   bits::BitVector<uint64_t> representative_norm_index_;
   std::vector<double> norm_;
+  std::vector<double> inv_norm_;
 };
 
 } // namespace xdiag::symmetries

@@ -4,9 +4,11 @@
 
 #include "create_state.hpp"
 
-#include <xdiag/algebra/algebra.hpp>
+#include <xdiag/math/dot.hpp>
 #include <xdiag/states/fill.hpp>
-#include <xdiag/utils/xdiag_show.hpp>
+#include <xdiag/states/product_state.hpp>
+#include <xdiag/states/random_state.hpp>
+#include <xdiag/utils/error.hpp>
 
 namespace xdiag {
 State product_state(Block const &block,
@@ -31,10 +33,11 @@ XDIAG_CATCH
 
 template State product_state(Spinhalf const &, std::vector<std::string> const &,
                              bool);
-template State product_state(tJ const &, std::vector<std::string> const &,
-                             bool);
-template State product_state(Electron const &, std::vector<std::string> const &,
-                             bool);
+// template State product_state(tJ const &, std::vector<std::string> const &,
+//                              bool);
+// template State product_state(Electron const &, std::vector<std::string> const
+// &,
+//                              bool);
 
 #ifdef XDIAG_USE_MPI
 template State product_state(SpinhalfDistributed const &,
@@ -84,7 +87,7 @@ State random_state(block_t const &block, bool real, int64_t ncols, int64_t seed,
       }
       if (real) {
         auto V = state.matrix(false);
-        auto VdagV = matrix_dot(block, V, V);
+        auto VdagV = math::matrix_dot(block, V, V);
         if (VdagV.is_sympd()) {
           arma::mat L = chol(VdagV, "lower");
           V = V * inv(trimatl(L)).t();
@@ -95,7 +98,7 @@ State random_state(block_t const &block, bool real, int64_t ncols, int64_t seed,
         }
       } else { // complex
         auto V = state.matrixC(false);
-        auto VdagV = matrix_dot(block, V, V);
+        auto VdagV = math::matrix_dot(block, V, V);
         if (VdagV.is_sympd()) {
           arma::cx_mat L = chol(VdagV, "lower");
           V = V * inv(trimatl(L)).t();
@@ -112,8 +115,8 @@ State random_state(block_t const &block, bool real, int64_t ncols, int64_t seed,
 XDIAG_CATCH
 
 template State random_state(Spinhalf const &, bool, int64_t, int64_t, bool);
-template State random_state(tJ const &, bool, int64_t, int64_t, bool);
-template State random_state(Electron const &, bool, int64_t, int64_t, bool);
+// template State random_state(tJ const &, bool, int64_t, int64_t, bool);
+// template State random_state(Electron const &, bool, int64_t, int64_t, bool);
 #ifdef XDIAG_USE_MPI
 template State random_state(SpinhalfDistributed const &, bool, int64_t, int64_t,
                             bool);
@@ -133,8 +136,8 @@ State zero_state(block_t const &block, bool real, int64_t ncols) {
   return State(block, real, ncols);
 }
 template State zero_state(Spinhalf const &, bool, int64_t);
-template State zero_state(tJ const &, bool, int64_t);
-template State zero_state(Electron const &, bool, int64_t);
+// template State zero_state(tJ const &, bool, int64_t);
+// template State zero_state(Electron const &, bool, int64_t);
 #ifdef XDIAG_USE_MPI
 template State zero_state(ElectronDistributed const &, bool, int64_t);
 template State zero_state(tJDistributed const &, bool, int64_t);

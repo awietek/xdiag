@@ -4,9 +4,11 @@
 
 #pragma once
 
+#include <cstdint>
+#include <vector>
+#include <string>
+
 #include <xdiag/blocks/blocks.hpp>
-#include <xdiag/common.hpp>
-#include <xdiag/states/product_state.hpp>
 #include <xdiag/states/state.hpp>
 
 namespace xdiag {

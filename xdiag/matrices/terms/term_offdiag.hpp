@@ -78,16 +78,26 @@ void term_offdiag(basis::BasisSymmetric<enumeration_t> const &basis_in,
   {
     int num_thread = omp_get_thread_num(); // needed for XDIAG_FILL in case of
                                            // sparse matrices
-#pragma omp for schedule(runtime)
-    for (int64_t idx_in = 0; idx_in < basis_in.size(); ++idx_in) {
-      bit_t spins_in = basis_in[idx_in];
+    // #pragma omp for schedule(runtime)
+    //     for (int64_t idx_in = 0; idx_in < basis_in.size(); ++idx_in) {
+    // bit_t spins_in = basis_in[idx_in];
+
+    int nthreads = omp_get_num_threads();
+    int64_t size = basis_in.size();
+    int64_t idx_in = num_thread * (size / nthreads);
+    auto begin = basis_in.begin() + idx_in;
+    auto end = (num_thread == nthreads - 1)
+                   ? basis_in.end()
+                   : basis_in.begin() + (num_thread + 1) * (size / nthreads);
+    for (auto it = begin; it != end; ++it, ++idx_in) {
+      bit_t spins_in = *it;
       if (non_zero_term(spins_in)) {
         auto [spins_out, coeff] = term_action(spins_in);
         auto [raw_idx_out, sym, norm_out] = // raw_idx_out = idx_out + 1
             basis_out.representative_data(spins_out);
         if (XDIAG_LIKELY(raw_idx_out)) { // raw_idx_out == 0 means 0-norm
-          double norm_in = basis_in.norm(idx_in);
-          coeff_t val = coeff * characters(sym) * norm_out / norm_in;
+          double inv_norm_in = basis_in.inv_norm(idx_in);
+          coeff_t val = coeff * characters(sym) * norm_out * inv_norm_in;
           XDIAG_FILL(idx_in, raw_idx_out - 1, val);
         }
       }
@@ -101,8 +111,8 @@ void term_offdiag(basis::BasisSymmetric<enumeration_t> const &basis_in,
       auto [raw_idx_out, sym, norm_out] =
           basis_out.representative_data(spins_out);
       if (XDIAG_LIKELY(raw_idx_out)) {
-        double norm_in = basis_in.norm(idx_in);
-        coeff_t val = coeff * characters(sym) * norm_out / norm_in;
+        double inv_norm_in = basis_in.inv_norm(idx_in);
+        coeff_t val = coeff * characters(sym) * norm_out * inv_norm_in;
         fill(idx_in, raw_idx_out - 1, val);
       }
     }

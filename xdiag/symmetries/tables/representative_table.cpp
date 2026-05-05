@@ -28,6 +28,8 @@
 #include <xdiag/symmetries/action/norm.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/format.hpp>
+#include <xdiag/utils/logger.hpp>
+#include <xdiag/utils/timing.hpp>
 
 namespace xdiag::symmetries {
 
@@ -57,6 +59,12 @@ static void representative_table_initialize(
 
   // First pass, simply count number of representatives and number of different
   // norms
+  Log(2, "Creating representative table...");
+  auto time_total = rightnow();
+
+  Log(2, "  counting representatives...");
+  auto time_count = rightnow();
+
 #ifdef _OPENMP
   int nthreads = omp_get_max_threads();
   std::vector<int64_t> nrepresentatives_for_thread(nthreads, 0);
@@ -122,11 +130,15 @@ static void representative_table_initialize(
   }
 #endif
   std::sort(norms.begin(), norms.end());
+  timing(time_count, rightnow(), "  time (count)", 2);
 
+  
   // --------------------------------------------------------------
   // Now come the allocations, since we know al the relevant sizes
   // --------------------------------------------------------------
-
+  Log(2, "  allocate memory...");
+  auto time_allocation = rightnow();
+  
   // Create vector holding the representatives
   try {
     int64_t size = nrepresentatives;
@@ -163,6 +175,7 @@ static void representative_table_initialize(
   } catch (...) {
     XDIAG_THROW("Unable to allocate representative norm index array");
   }
+  timing(time_allocation, rightnow(), "  time (allocation)", 2);
 
   // --------------------------------------------------------------
   // Second pass: fill representative[] and representative_norm_index[].
@@ -171,6 +184,9 @@ static void representative_table_initialize(
   // so we use atomic_or_element (OR into zero-initialised storage) which is
   // safe because each element position is written by exactly one thread.
   // --------------------------------------------------------------
+    Log(2, "  write representatives...");
+    auto time_write_rep = rightnow();
+    
 #ifdef _OPENMP
 #pragma omp parallel
   {
@@ -216,6 +232,7 @@ static void representative_table_initialize(
     }
   }
 #endif
+  timing(time_write_rep, rightnow(), "  time (write representative)", 2);
 
   // --------------------------------------------------------------
   // Third pass: expand each representative's orbit to fill
@@ -227,6 +244,9 @@ static void representative_table_initialize(
   // In the OMP path we use atomic_or_element (OR into zero-initialised
   // storage) so concurrent writes to different rep_idx are race-free.
   // --------------------------------------------------------------
+  Log(2, "  write non-representatives...");
+  auto time_write_non_rep = rightnow();
+  
   auto const &group = action.group();
 #ifdef _OPENMP
 #pragma omp parallel
@@ -262,6 +282,8 @@ static void representative_table_initialize(
     }
   }
 #endif
+  timing(time_write_non_rep, rightnow(), "  time (write non-representative)", 2);
+  timing(time_total, rightnow(), "done", 2);
 }
 XDIAG_CATCH
 
@@ -279,6 +301,10 @@ RepresentativeTable<enumeration_t>::RepresentativeTable(
         enumeration, action, irrep.characters().as<arma::cx_vec>(),
         representative_, representative_index_, representative_symmetry_,
         representative_norm_index_, norm_);
+  }
+  inv_norm_.resize(norm_.size());
+  for (int64_t i = 0; i < norm_.size(); ++i) {
+    inv_norm_[i] = 1.0 / norm_[i];
   }
 }
 XDIAG_CATCH

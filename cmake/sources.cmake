@@ -5,6 +5,7 @@ set(XDIAG_SOURCES
   utils/say_hello.cpp
   utils/read_vectors.cpp
   utils/split.cpp
+  utils/timing.cpp
 
   io/read.cpp
   io/file_toml.cpp
@@ -66,6 +67,7 @@ set(XDIAG_SOURCES
 
   states/product_state.cpp
   states/random_state.cpp
+  states/create_state.cpp
   states/state.cpp
   states/apply.cpp
   states/dot.cpp
