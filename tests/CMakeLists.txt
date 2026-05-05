@@ -21,6 +21,8 @@ set(XDIAG_TEST_SOURCES
   combinatorics/test_schaefer_table.cpp
 
   basis/test_basis_onthefly.cpp
+  basis/test_basis_sublattice.cpp
+  basis/test_basis_symmetric.cpp
   
   operators/test_coeff.cpp
   operators/test_monomial.cpp

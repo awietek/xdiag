@@ -45,8 +45,7 @@ public:
   int64_t nup() const;
 
   Representation const &irrep() const;
-  symmetries::SitePermutationSublattice<bit_t, n_sublat> const &
-  action() const;
+  symmetries::SitePermutationSublattice<bit_t, n_sublat> const &action() const;
 
   ProductState
   product_state(int64_t idx,
@@ -91,4 +90,8 @@ public:
   index_syms(bit_t raw_state) const;
 };
 
+template <int n_sublat>
+using BasisSublattice32 = BasisSublattice<uint32_t, n_sublat>;
+template <int n_sublat>
+using BasisSublattice64 = BasisSublattice<uint64_t, n_sublat>;
 } // namespace xdiag::basis

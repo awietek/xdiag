@@ -335,3 +335,49 @@ INSTANTIATE_KERNELS(spinhalf::MatrixPolicy,
 INSTANTIATE_KERNELS(spinhalf::MatrixPolicy,
                     BasisSymmetric<Combinations<BitsetStatic8>>)
 // END_INSTANTIATION_GROUP
+
+//
+//
+// BasisSublattice Instantiations
+//
+//
+
+// BEGIN_INSTANTIATION_GROUP(spinhalf_sublattice_uint32_t_1)
+INSTANTIATE_KERNELS(spinhalf::MatrixPolicy, BasisSublattice32<1>)
+// END_INSTANTIATION_GROUP
+
+// BEGIN_INSTANTIATION_GROUP(spinhalf_sublattice_uint32_t_2)
+INSTANTIATE_KERNELS(spinhalf::MatrixPolicy, BasisSublattice32<2>)
+// END_INSTANTIATION_GROUP
+
+// BEGIN_INSTANTIATION_GROUP(spinhalf_sublattice_uint32_t_3)
+INSTANTIATE_KERNELS(spinhalf::MatrixPolicy, BasisSublattice32<3>)
+// END_INSTANTIATION_GROUP
+
+// BEGIN_INSTANTIATION_GROUP(spinhalf_sublattice_uint32_t_4)
+INSTANTIATE_KERNELS(spinhalf::MatrixPolicy, BasisSublattice32<4>)
+// END_INSTANTIATION_GROUP
+
+// BEGIN_INSTANTIATION_GROUP(spinhalf_sublattice_uint32_t_5)
+INSTANTIATE_KERNELS(spinhalf::MatrixPolicy, BasisSublattice32<5>)
+// END_INSTANTIATION_GROUP
+
+// BEGIN_INSTANTIATION_GROUP(spinhalf_sublattice_uint64_t_1)
+INSTANTIATE_KERNELS(spinhalf::MatrixPolicy, BasisSublattice64<1>)
+// END_INSTANTIATION_GROUP
+
+// BEGIN_INSTANTIATION_GROUP(spinhalf_sublattice_uint64_t_2)
+INSTANTIATE_KERNELS(spinhalf::MatrixPolicy, BasisSublattice64<2>)
+// END_INSTANTIATION_GROUP
+
+// BEGIN_INSTANTIATION_GROUP(spinhalf_sublattice_uint64_t_3)
+INSTANTIATE_KERNELS(spinhalf::MatrixPolicy, BasisSublattice64<3>)
+// END_INSTANTIATION_GROUP
+
+// BEGIN_INSTANTIATION_GROUP(spinhalf_sublattice_uint64_t_4)
+INSTANTIATE_KERNELS(spinhalf::MatrixPolicy, BasisSublattice64<4>)
+// END_INSTANTIATION_GROUP
+
+// BEGIN_INSTANTIATION_GROUP(spinhalf_sublattice_uint64_t_5)
+INSTANTIATE_KERNELS(spinhalf::MatrixPolicy, BasisSublattice64<5>)
+// END_INSTANTIATION_GROUP

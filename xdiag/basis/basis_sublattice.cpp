@@ -29,8 +29,7 @@ constexpr int64_t invalid_index = -1;
 constexpr int64_t undefined = std::numeric_limits<int64_t>::min();
 
 template <typename bit_t, typename coeff_t, int n_sublat>
-std::pair<std::vector<bit_t>, std::vector<double>>
-reps_norms_no_sz(
+std::pair<std::vector<bit_t>, std::vector<double>> reps_norms_no_sz(
     symmetries::SitePermutationSublattice<bit_t, n_sublat> const &action,
     arma::Col<coeff_t> const &characters) {
   using combinatorics::Subsets;
@@ -80,8 +79,7 @@ reps_norms_no_sz(
       }
       int64_t start = myid * (sz / nthr);
       int64_t end = (myid == nthr - 1) ? sz : (myid + 1) * (sz / nthr);
-      for (auto it = postfixes.begin() + start,
-                eit = postfixes.begin() + end;
+      for (auto it = postfixes.begin() + start, eit = postfixes.begin() + end;
            it != eit; ++it) {
         bit_t postfix = *it;
         bit_t state = (prefix << n_trailing) | postfix;
@@ -109,13 +107,10 @@ reps_norms_no_sz(
 }
 
 template <typename bit_t, typename coeff_t, int n_sublat>
-std::pair<std::vector<bit_t>, std::vector<double>>
-reps_norms_sz(
+std::pair<std::vector<bit_t>, std::vector<double>> reps_norms_sz(
     int64_t nup,
     symmetries::SitePermutationSublattice<bit_t, n_sublat> const &action,
     arma::Col<coeff_t> const &characters) {
-  using bits::popcnt;
-
   std::vector<bit_t> reps;
   std::vector<double> norms;
 
@@ -126,7 +121,7 @@ reps_norms_sz(
 
   for (auto prefix : combinatorics::Subsets<bit_t>(n_leading)) {
 
-    int64_t nup_prefix = popcnt(prefix);
+    int64_t nup_prefix = bits::popcount(prefix);
     int64_t nup_postfix = nup - nup_prefix;
     if ((nup_postfix < 0) || (nup_postfix > n_trailing)) {
       continue;
