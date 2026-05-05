@@ -274,9 +274,8 @@ void test_equality() {
 
 TEST_CASE("BoundedPartitions", "[combinatorics/bounded_partitions]") {
 
-  xdiag::Log("Testing BoundedPartitions");
-
   SECTION("size matches brute-force count") {
+    xdiag::Log("Testing BoundedPartitions - size matches brute-force count");
     // Use template param nbits_val=2 for brute_force_count (bound <= 4)
     using A2 = BitArray<uint64_t, 2>;
     for (int n = 0; n <= 4; ++n)
@@ -291,6 +290,8 @@ TEST_CASE("BoundedPartitions", "[combinatorics/bounded_partitions]") {
   }
 
   SECTION("iteration: count, sum constraint, element bounds") {
+    xdiag::Log("Testing BoundedPartitions - iteration: count, sum constraint, "
+               "element bounds");
     test_iter<BitArray<uint64_t, 2>>(3, 4, 3);
     test_iter<BitArray<uint64_t, 2>>(4, 5, 4);
     test_iter<BitArray<uint64_t, 3>>(5, 7, 5);
@@ -299,31 +300,54 @@ TEST_CASE("BoundedPartitions", "[combinatorics/bounded_partitions]") {
   }
 
   SECTION("reverse-lexicographic order") {
+    xdiag::Log("Testing BoundedPartitions - reverse-lexicographic order");
     test_order<BitArray<uint64_t, 2>>(3, 4, 3);
     test_order<BitArray<uint64_t, 3>>(4, 6, 5);
     test_order<BitArray<uint64_t, 1>>(6, 3, 2);
     test_order<BitArray<uint32_t, 2>>(4, 5, 4);
   }
 
-  SECTION("exact sequence order (n=3, bound=3, total=4)") { test_exact(); }
+  SECTION("exact sequence order (n=3, bound=3, total=4)") {
+    xdiag::Log("Testing BoundedPartitions - exact sequence order (n=3, "
+               "bound=3, total=4)");
+    test_exact();
+  }
 
-  SECTION("n=0 edge cases") { test_n0(); }
+  SECTION("n=0 edge cases") {
+    xdiag::Log("Testing BoundedPartitions - n=0 edge cases");
+    test_n0();
+  }
 
-  SECTION("n=1 edge cases") { test_n1(); }
+  SECTION("n=1 edge cases") {
+    xdiag::Log("Testing BoundedPartitions - n=1 edge cases");
+    test_n1();
+  }
 
-  SECTION("total=0 yields all-zeros") { test_total0(); }
+  SECTION("total=0 yields all-zeros") {
+    xdiag::Log("Testing BoundedPartitions - total=0 yields all-zeros");
+    test_total0();
+  }
 
-  SECTION("total=n*(bound-1) yields all-(bound-1)") { test_total_max(); }
+  SECTION("total=n*(bound-1) yields all-(bound-1)") {
+    xdiag::Log(
+        "Testing BoundedPartitions - total=n*(bound-1) yields all-(bound-1)");
+    test_total_max();
+  }
 
   SECTION("all sequences are growing in size") {
+    xdiag::Log("Testing BoundedPartitions - all sequences are growing in size");
     test_growing<BitArray<uint64_t, 2>>(3, 3, 3);
     test_growing<BitArray<uint64_t, 3>>(3, 5, 5);
     test_growing<BitArray<uint32_t, 2>>(4, 4, 4);
   }
 
-  SECTION("equality operator") { test_equality(); }
+  SECTION("equality operator") {
+    xdiag::Log("Testing BoundedPartitions - equality operator");
+    test_equality();
+  }
 
   SECTION("random access and index") {
+    xdiag::Log("Testing BoundedPartitions - random access and index");
     test_random_access<BitArray<uint64_t, 2>>(3, 4, 3);
     test_random_access<BitArray<uint64_t, 2>>(4, 5, 4);
     test_random_access<BitArray<uint64_t, 3>>(5, 7, 5);
@@ -333,6 +357,7 @@ TEST_CASE("BoundedPartitions", "[combinatorics/bounded_partitions]") {
   }
 
   SECTION("iterator advance (+ and +=)") {
+    xdiag::Log("Testing BoundedPartitions - iterator advance (+ and +=)");
     test_iterator_advance<BitArray<uint64_t, 2>>(3, 4, 3);
     test_iterator_advance<BitArray<uint64_t, 2>>(4, 5, 4);
     test_iterator_advance<BitArray<uint64_t, 3>>(5, 7, 5);

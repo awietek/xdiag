@@ -303,33 +303,36 @@ void test_next_combination_overload_bitset() {
 TEST_CASE("Combinations", "[combinatorics]") {
   using namespace xdiag::bits;
 
-  xdiag::Log("Testing Combinations");
-
   SECTION("native integers") {
+    xdiag::Log("Testing Combinations - native integers");
     test_combinations<uint16_t>();
     test_combinations<uint32_t>();
     test_combinations<uint64_t>();
   }
 
   SECTION("random access and index") {
+    xdiag::Log("Testing Combinations - random access and index");
     test_combinations_random_access<uint16_t>();
     test_combinations_random_access<uint32_t>();
     test_combinations_random_access<uint64_t>();
   }
 
   SECTION("iterator advance (+ and +=)") {
+    xdiag::Log("Testing Combinations - iterator advance");
     test_combinations_iterator_advance<uint16_t>();
     test_combinations_iterator_advance<uint32_t>();
     test_combinations_iterator_advance<uint64_t>();
   }
 
   SECTION("next_combination(v, n) - integers") {
+    xdiag::Log("Testing Combinations - next_combination (integers)");
     test_next_combination_overload<uint16_t>();
     test_next_combination_overload<uint32_t>();
     test_next_combination_overload<uint64_t>();
   }
 
   SECTION("next_combination(v, n) - bitset") {
+    xdiag::Log("Testing Combinations - next_combination (bitset)");
     test_next_combination_overload_bitset<uint8_t, 0>();
     test_next_combination_overload_bitset<uint8_t, 1>();
     test_next_combination_overload_bitset<uint64_t, 1>();
@@ -337,6 +340,7 @@ TEST_CASE("Combinations", "[combinatorics]") {
   }
 
   SECTION("random access and index (bitset)") {
+    xdiag::Log("Testing Combinations - random access and index (bitset)");
     test_combinations_random_access_bitset<uint8_t, 0>();
     test_combinations_random_access_bitset<uint8_t, 1>();
     test_combinations_random_access_bitset<uint64_t, 1>();
@@ -344,6 +348,7 @@ TEST_CASE("Combinations", "[combinatorics]") {
   }
 
   SECTION("iterator advance (+ and +=) (bitset)") {
+    xdiag::Log("Testing Combinations - iterator advance (bitset)");
     test_combinations_iterator_advance_bitset<uint8_t, 0>();
     test_combinations_iterator_advance_bitset<uint8_t, 1>();
     test_combinations_iterator_advance_bitset<uint64_t, 1>();

@@ -230,17 +230,21 @@ template <typename value_t> void test_bitvector_bitarray_long() {
 }
 
 TEST_CASE("bitvector", "[bits]") try {
-  Log("Testing bitvector");
 
   SECTION("integral") {
+    Log("Testing bitvector - integral");
     test_bitvector_integral<uint16_t>();
     test_bitvector_integral<uint32_t>();
     test_bitvector_integral<uint64_t>();
   }
 
-  SECTION("bitset_dynamic") { test_bitvector_bitset_dynamic(); }
+  SECTION("bitset_dynamic") {
+    Log("Testing bitvector - bitset_dynamic");
+    test_bitvector_bitset_dynamic();
+  }
 
   SECTION("bitset_static") {
+    Log("Testing bitvector - bitset_static");
     test_bitvector_static_bitset<BitsetStatic1>();
     test_bitvector_static_bitset<BitsetStatic2>();
     test_bitvector_static_bitset<BitsetStatic4>();
@@ -248,6 +252,7 @@ TEST_CASE("bitvector", "[bits]") try {
   }
 
   SECTION("bitarray") {
+    Log("Testing bitvector - bitarray");
     test_bitvector_bitarray<BitArray1>();
     test_bitvector_bitarray<BitArray2>();
     test_bitvector_bitarray<BitArray3>();
@@ -259,6 +264,7 @@ TEST_CASE("bitvector", "[bits]") try {
   }
 
   SECTION("bitarray_long") {
+    Log("Testing bitvector - bitarray_long");
     test_bitvector_bitarray_long<BitArrayLong1>();
     test_bitvector_bitarray_long<BitArrayLong2>();
     test_bitvector_bitarray_long<BitArrayLong3>();

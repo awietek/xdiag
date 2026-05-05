@@ -104,7 +104,10 @@ set(XDIAG_SOURCES
   symmetries/cyclic_group.cpp
   symmetries/action/site_permutation.cpp
   symmetries/action/isrepresentative.cpp
+  symmetries/action/representative.cpp
   symmetries/action/norm.cpp
+  symmetries/action/site_permutation_sublattice.cpp
+  symmetries/action/sublattice_stability.cpp
   symmetries/tables/representative_table.cpp
   
   algorithms/lanczos/lanczos_convergence.cpp
@@ -177,8 +180,7 @@ set(XDIAG_SOURCES
   # symmetries/operations/fermi_sign.cpp
   # symmetries/group_action/group_action.cpp
   # symmetries/group_action/group_action_lookup.cpp
-  # symmetries/group_action/group_action_sublattice.cpp
-  # symmetries/group_action/sublattice_stability.cpp
+
 
 
   # operators/logic/qns.cpp         (depends on blocks)

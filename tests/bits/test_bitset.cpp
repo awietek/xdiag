@@ -666,9 +666,9 @@ template <typename chunk_t> void test_make_bitset() {
 }
 
 TEST_CASE("bitset", "[bits]") {
-  Log.out("Testing bitset");
 
   SECTION("constructor") {
+    Log("Testing bitset - constructor");
     test_bitset_constructor<uint8_t>();
     test_bitset_constructor<uint16_t>();
     test_bitset_constructor<uint32_t>();
@@ -676,6 +676,7 @@ TEST_CASE("bitset", "[bits]") {
   }
 
   SECTION("test_set_reset_flip") {
+    Log("Testing bitset - test_set_reset_flip");
     test_bitset_test_set_reset_flip<uint8_t>();
     test_bitset_test_set_reset_flip<uint16_t>();
     test_bitset_test_set_reset_flip<uint32_t>();
@@ -683,6 +684,7 @@ TEST_CASE("bitset", "[bits]") {
   }
 
   SECTION("get_range") {
+    Log("Testing bitset - get_range");
     test_bitset_get_range<uint8_t>();
     test_bitset_get_range<uint16_t>();
     test_bitset_get_range<uint32_t>();
@@ -690,6 +692,7 @@ TEST_CASE("bitset", "[bits]") {
   }
 
   SECTION("set_range") {
+    Log("Testing bitset - set_range");
     test_bitset_set_range<uint8_t>();
     test_bitset_set_range<uint16_t>();
     test_bitset_set_range<uint32_t>();
@@ -697,6 +700,7 @@ TEST_CASE("bitset", "[bits]") {
   }
 
   SECTION("bitwise_ops") {
+    Log("Testing bitset - bitwise_ops");
     test_bitset_bitwise_ops<uint8_t>();
     test_bitset_bitwise_ops<uint16_t>();
     test_bitset_bitwise_ops<uint32_t>();
@@ -704,6 +708,7 @@ TEST_CASE("bitset", "[bits]") {
   }
 
   SECTION("shift_ops") {
+    Log("Testing bitset - shift_ops");
     test_bitset_shift_ops<uint8_t>();
     test_bitset_shift_ops<uint16_t>();
     test_bitset_shift_ops<uint32_t>();
@@ -711,6 +716,7 @@ TEST_CASE("bitset", "[bits]") {
   }
 
   SECTION("predicates") {
+    Log("Testing bitset - predicates");
     test_bitset_predicates<uint8_t>();
     test_bitset_predicates<uint16_t>();
     test_bitset_predicates<uint32_t>();
@@ -718,6 +724,7 @@ TEST_CASE("bitset", "[bits]") {
   }
 
   SECTION("comparison") {
+    Log("Testing bitset - comparison");
     test_bitset_comparison<uint8_t>();
     test_bitset_comparison<uint16_t>();
     test_bitset_comparison<uint32_t>();
@@ -725,6 +732,7 @@ TEST_CASE("bitset", "[bits]") {
   }
 
   SECTION("make_bitset") {
+    Log("Testing bitset - make_bitset");
     test_make_bitset<uint8_t>();
     test_make_bitset<uint16_t>();
     test_make_bitset<uint32_t>();
@@ -732,6 +740,7 @@ TEST_CASE("bitset", "[bits]") {
   }
 
   SECTION("arithmetic_ops") {
+    Log("Testing bitset - arithmetic_ops");
     test_bitset_arithmetic_ops<uint8_t>();
     test_bitset_arithmetic_ops<uint16_t>();
     test_bitset_arithmetic_ops<uint32_t>();
@@ -739,6 +748,7 @@ TEST_CASE("bitset", "[bits]") {
   }
 
   SECTION("relational_ops") {
+    Log("Testing bitset - relational_ops");
     test_bitset_relational_ops<uint8_t>();
     test_bitset_relational_ops<uint16_t>();
     test_bitset_relational_ops<uint32_t>();

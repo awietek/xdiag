@@ -37,6 +37,7 @@ set(XDIAG_TEST_SOURCES
   symmetries/test_permutation_group.cpp
   symmetries/test_representation.cpp
   symmetries/action/test_site_permutation.cpp
+  symmetries/action/test_site_permutation_sublattice.cpp
   symmetries/tables/test_representative_table.cpp
   
   blocks/spinhalf/testcases_spinhalf.cpp

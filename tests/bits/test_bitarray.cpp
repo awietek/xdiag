@@ -117,9 +117,9 @@ void test_bitarray_comparison() {
 }
 
 TEST_CASE("bitarray", "[bits]") {
-  Log.out("Testing BitArray");
 
   SECTION("basic operations") {
+    Log("Testing BitArray - basic operations");
     // Native integers
     test_bitarray_basic<uint16_t, 1>();
     test_bitarray_basic<uint16_t, 2>();
@@ -136,6 +136,7 @@ TEST_CASE("bitarray", "[bits]") {
   }
 
   SECTION("boundary values") {
+    Log("Testing BitArray - boundary values");
     test_bitarray_boundaries<uint16_t, 1>();
     test_bitarray_boundaries<uint16_t, 4>();
     test_bitarray_boundaries<uint32_t, 3>();
@@ -146,6 +147,7 @@ TEST_CASE("bitarray", "[bits]") {
   }
 
   SECTION("element independence") {
+    Log("Testing BitArray - element independence");
     test_bitarray_independence<uint16_t, 2>();
     test_bitarray_independence<uint32_t, 3>();
     test_bitarray_independence<uint64_t, 4>();
@@ -155,6 +157,7 @@ TEST_CASE("bitarray", "[bits]") {
   }
 
   SECTION("random values") {
+    Log("Testing BitArray - random values");
     test_bitarray_random<uint16_t, 1>();
     test_bitarray_random<uint16_t, 3>();
     test_bitarray_random<uint32_t, 5>();
@@ -166,6 +169,7 @@ TEST_CASE("bitarray", "[bits]") {
   }
 
   SECTION("comparison operators") {
+    Log("Testing BitArray - comparison operators");
     test_bitarray_comparison<uint16_t, 2>();
     test_bitarray_comparison<uint32_t, 4>();
     test_bitarray_comparison<uint64_t, 6>();

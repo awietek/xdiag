@@ -38,6 +38,21 @@ public:
   XDIAG_API int64_t inv(int64_t sym) const;
   XDIAG_API int64_t multiply(int64_t s1, int64_t s2) const;
 
+  class iterator {
+  public:
+    iterator(PermutationGroup const *group, int64_t idx);
+    Permutation operator*() const;
+    iterator &operator++();
+    bool operator!=(iterator const &rhs) const;
+
+  private:
+    PermutationGroup const *group_;
+    int64_t idx_;
+  };
+
+  XDIAG_API iterator begin() const;
+  XDIAG_API iterator end() const;
+
 private:
   arma::Mat<int64_t> permutations_; // nsites x n_permutations
   std::vector<int64_t> inv_;

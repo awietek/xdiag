@@ -196,9 +196,9 @@ template <typename bitarray_t> void test_equality() {
 
 TEST_CASE("BoundedMultisets", "[combinatorics/bounded_multisets]") {
 
-  xdiag::Log("Testing BoundedMultisets");
 
   SECTION("size and iteration count — uint64_t") {
+    xdiag::Log("Testing BoundedMultisets - size and iteration count — uint64_t");
     using A2 = BitArray<uint64_t, 1>;
     using A3 = BitArray<uint64_t, 2>;
     using A5 = BitArray<uint64_t, 3>;
@@ -210,23 +210,27 @@ TEST_CASE("BoundedMultisets", "[combinatorics/bounded_multisets]") {
   }
 
   SECTION("size and iteration count — uint16_t / uint32_t") {
+    xdiag::Log("Testing BoundedMultisets - size and iteration count — uint16_t / uint32_t");
     test_size<BitArray<uint16_t, 1>>(2);
     test_size<BitArray<uint32_t, 2>>(3);
   }
 
   SECTION("size and iteration count — Bitset types") {
+    xdiag::Log("Testing BoundedMultisets - size and iteration count — Bitset types");
     test_size<BitArray<BitsetStatic1, 1>>(2);
     test_size<BitArray<BitsetStatic2, 2>>(3);
     test_size<BitArray<BitsetStatic4, 3>>(5);
   }
 
   SECTION("element values in [0, bound)") {
+    xdiag::Log("Testing BoundedMultisets - element values in [0, bound)");
     test_element_bounds<BitArray<uint64_t, 2>>(3);
     test_element_bounds<BitArray<uint64_t, 3>>(5);
     test_element_bounds<BitArray<uint32_t, 2>>(4);
   }
 
   SECTION("exact ordering") {
+    xdiag::Log("Testing BoundedMultisets - exact ordering");
     test_ordering<BitArray<uint64_t, 2>>(3, 3);
     test_ordering<BitArray<uint64_t, 3>>(4, 5);
     test_ordering<BitArray<uint64_t, 1>>(8, 2);
@@ -235,36 +239,42 @@ TEST_CASE("BoundedMultisets", "[combinatorics/bounded_multisets]") {
   }
 
   SECTION("n=1 yields 0..bound-1 in order") {
+    xdiag::Log("Testing BoundedMultisets - n=1 yields 0..bound-1 in order");
     test_n1<BitArray<uint64_t, 2>>(3);
     test_n1<BitArray<uint64_t, 3>>(8);
     test_n1<BitArray<uint16_t, 1>>(2);
   }
 
   SECTION("n=0 yields one empty sequence") {
+    xdiag::Log("Testing BoundedMultisets - n=0 yields one empty sequence");
     test_n0<BitArray<uint64_t, 2>>(2);
     test_n0<BitArray<uint64_t, 3>>(5);
     test_n0<BitArray<uint32_t, 2>>(3);
   }
 
   SECTION("all sequences are distinct") {
+    xdiag::Log("Testing BoundedMultisets - all sequences are distinct");
     test_distinct<BitArray<uint64_t, 2>>(3, 3);
     test_distinct<BitArray<uint64_t, 3>>(3, 5);
     test_distinct<BitArray<uint32_t, 2>>(4, 4);
   }
 
   SECTION("all sequences are growing in size") {
+    xdiag::Log("Testing BoundedMultisets - all sequences are growing in size");
     test_growing<BitArray<uint64_t, 2>>(3, 3);
     test_growing<BitArray<uint64_t, 3>>(3, 5);
     test_growing<BitArray<uint32_t, 2>>(4, 4);
   }
 
   SECTION("equality operator") {
+    xdiag::Log("Testing BoundedMultisets - equality operator");
     test_equality<BitArray<uint64_t, 2>>();
     test_equality<BitArray<uint32_t, 2>>();
     test_equality<BitArray<BitsetStatic2, 2>>();
   }
 
   SECTION("random access and index") {
+    xdiag::Log("Testing BoundedMultisets - random access and index");
     test_random_access<BitArray<uint64_t, 2>>(3, 3);
     test_random_access<BitArray<uint64_t, 3>>(4, 5);
     test_random_access<BitArray<uint64_t, 1>>(6, 2);
@@ -273,6 +283,7 @@ TEST_CASE("BoundedMultisets", "[combinatorics/bounded_multisets]") {
   }
 
   SECTION("iterator advance (+ and +=)") {
+    xdiag::Log("Testing BoundedMultisets - iterator advance (+ and +=)");
     test_iterator_advance<BitArray<uint64_t, 2>>(3, 3);
     test_iterator_advance<BitArray<uint64_t, 3>>(4, 5);
     test_iterator_advance<BitArray<uint64_t, 1>>(6, 2);

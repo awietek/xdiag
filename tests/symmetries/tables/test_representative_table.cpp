@@ -125,7 +125,6 @@ void check_size(enumeration_t const &enumeration, Representation const &irrep,
 // -----------------------------------------------------------------------
 
 TEST_CASE("representative_table", "[symmetries]") try {
-  Log("Test RepresentativeTable");
 
   // Groups and irreps used throughout.
   // cyclic_group(4): rotations r0=id, r1, r2, r3 with chi_k(rm) = exp(2πikm/4)
@@ -156,6 +155,7 @@ TEST_CASE("representative_table", "[symmetries]") try {
   // =====================================================================
 
   SECTION("Subsets<uint32_t>") {
+    Log("Testing RepresentativeTable - Subsets<uint32_t>");
     auto subsets = Subsets<uint32_t>(4);
     auto sp4 = SitePermutation(irrep4_0.group());
 
@@ -226,6 +226,7 @@ TEST_CASE("representative_table", "[symmetries]") try {
   }
 
   SECTION("Subsets<uint64_t>") {
+    Log("Testing RepresentativeTable - Subsets<uint64_t>");
     auto subsets = Subsets<uint64_t>(4);
     test_invariants(subsets, irrep4_0);
     check_size(subsets, irrep4_0, 6);
@@ -242,6 +243,7 @@ TEST_CASE("representative_table", "[symmetries]") try {
   // =====================================================================
 
   SECTION("Combinations<uint32_t>") {
+    Log("Testing RepresentativeTable - Combinations<uint32_t>");
     auto combos = Combinations<uint32_t>(4, 2);
     auto sp4 = SitePermutation(irrep4_0.group());
 
@@ -289,6 +291,7 @@ TEST_CASE("representative_table", "[symmetries]") try {
   }
 
   SECTION("Combinations<uint64_t>") {
+    Log("Testing RepresentativeTable - Combinations<uint64_t>");
     auto combos = Combinations<uint64_t>(4, 2);
     test_invariants(combos, irrep4_0);
     check_size(combos, irrep4_0, 2);
@@ -299,24 +302,28 @@ TEST_CASE("representative_table", "[symmetries]") try {
   // =====================================================================
 
   SECTION("Combinations<BitsetStatic2>") {
+    Log("Testing RepresentativeTable - Combinations<BitsetStatic2>");
     auto combos = Combinations<BitsetStatic2>(4, 2);
     test_invariants(combos, irrep4_0);
     check_size(combos, irrep4_0, 2);
   }
 
   SECTION("Combinations<BitsetStatic4>") {
+    Log("Testing RepresentativeTable - Combinations<BitsetStatic4>");
     auto combos = Combinations<BitsetStatic4>(4, 2);
     test_invariants(combos, irrep4_0);
     check_size(combos, irrep4_0, 2);
   }
 
   SECTION("Combinations<BitsetStatic8>") {
+    Log("Testing RepresentativeTable - Combinations<BitsetStatic8>");
     auto combos = Combinations<BitsetStatic8>(4, 2);
     test_invariants(combos, irrep4_0);
     check_size(combos, irrep4_0, 2);
   }
 
   SECTION("Combinations<BitsetDynamic>") {
+    Log("Testing RepresentativeTable - Combinations<BitsetDynamic>");
     auto combos = Combinations<BitsetDynamic>(4, 2);
     test_invariants(combos, irrep4_0);
     check_size(combos, irrep4_0, 2);
@@ -327,6 +334,7 @@ TEST_CASE("representative_table", "[symmetries]") try {
   // =====================================================================
 
   SECTION("LinTable<uint32_t>") {
+    Log("Testing RepresentativeTable - LinTable<uint32_t>");
     auto lt = LinTable<uint32_t>(4, 2);
     test_invariants(lt, irrep4_0);
     test_invariants(lt, irrep4_2);
@@ -334,6 +342,7 @@ TEST_CASE("representative_table", "[symmetries]") try {
   }
 
   SECTION("LinTable<uint64_t>") {
+    Log("Testing RepresentativeTable - LinTable<uint64_t>");
     auto lt = LinTable<uint64_t>(4, 2);
     test_invariants(lt, irrep4_0);
     check_size(lt, irrep4_0, 2);
@@ -344,6 +353,7 @@ TEST_CASE("representative_table", "[symmetries]") try {
   // =====================================================================
 
   SECTION("BoundedMultisets<BitArray1>") {
+    Log("Testing RepresentativeTable - BoundedMultisets<BitArray1>");
     auto ms = BoundedMultisets<BitArray1>(4, 2);
     test_invariants(ms, irrep4_0);
     test_invariants(ms, irrep4_2);
@@ -352,12 +362,14 @@ TEST_CASE("representative_table", "[symmetries]") try {
   }
 
   SECTION("BoundedMultisets<BitArray2>") {
+    Log("Testing RepresentativeTable - BoundedMultisets<BitArray2>");
     auto ms = BoundedMultisets<BitArray2>(4, 2);
     test_invariants(ms, irrep4_0);
     check_size(ms, irrep4_0, 6);
   }
 
   SECTION("BoundedMultisets<BitArray3>") {
+    Log("Testing RepresentativeTable - BoundedMultisets<BitArray3>");
     // bound=4, 3 bits per slot: 4^4 = 256 states
     auto ms = BoundedMultisets<BitArray3>(4, 4);
     test_invariants(ms, irrep4_0);
@@ -365,36 +377,42 @@ TEST_CASE("representative_table", "[symmetries]") try {
   }
 
   SECTION("BoundedMultisets<BitArray4>") {
+    Log("Testing RepresentativeTable - BoundedMultisets<BitArray4>");
     auto ms = BoundedMultisets<BitArray4>(4, 2);
     test_invariants(ms, irrep4_0);
     check_size(ms, irrep4_0, 6);
   }
 
   SECTION("BoundedMultisets<BitArray5>") {
+    Log("Testing RepresentativeTable - BoundedMultisets<BitArray5>");
     auto ms = BoundedMultisets<BitArray5>(4, 2);
     test_invariants(ms, irrep4_0);
     check_size(ms, irrep4_0, 6);
   }
 
   SECTION("BoundedMultisets<BitArray6>") {
+    Log("Testing RepresentativeTable - BoundedMultisets<BitArray6>");
     auto ms = BoundedMultisets<BitArray6>(4, 2);
     test_invariants(ms, irrep4_0);
     check_size(ms, irrep4_0, 6);
   }
 
   SECTION("BoundedMultisets<BitArray7>") {
+    Log("Testing RepresentativeTable - BoundedMultisets<BitArray7>");
     auto ms = BoundedMultisets<BitArray7>(4, 2);
     test_invariants(ms, irrep4_0);
     check_size(ms, irrep4_0, 6);
   }
 
   SECTION("BoundedMultisets<BitArray8>") {
+    Log("Testing RepresentativeTable - BoundedMultisets<BitArray8>");
     auto ms = BoundedMultisets<BitArray8>(4, 2);
     test_invariants(ms, irrep4_0);
     check_size(ms, irrep4_0, 6);
   }
 
   SECTION("BoundedMultisets<BitArrayLong1>") {
+    Log("Testing RepresentativeTable - BoundedMultisets<BitArrayLong1>");
     auto ms = BoundedMultisets<BitArrayLong1>(4, 2);
     test_invariants(ms, irrep4_0);
     check_size(ms, irrep4_0, 6);
@@ -402,42 +420,49 @@ TEST_CASE("representative_table", "[symmetries]") try {
   }
 
   SECTION("BoundedMultisets<BitArrayLong2>") {
+    Log("Testing RepresentativeTable - BoundedMultisets<BitArrayLong2>");
     auto ms = BoundedMultisets<BitArrayLong2>(4, 2);
     test_invariants(ms, irrep4_0);
     check_size(ms, irrep4_0, 6);
   }
 
   SECTION("BoundedMultisets<BitArrayLong3>") {
+    Log("Testing RepresentativeTable - BoundedMultisets<BitArrayLong3>");
     auto ms = BoundedMultisets<BitArrayLong3>(4, 4);
     test_invariants(ms, irrep4_0);
     test_invariants(ms, irrep4_1);
   }
 
   SECTION("BoundedMultisets<BitArrayLong4>") {
+    Log("Testing RepresentativeTable - BoundedMultisets<BitArrayLong4>");
     auto ms = BoundedMultisets<BitArrayLong4>(4, 2);
     test_invariants(ms, irrep4_0);
     check_size(ms, irrep4_0, 6);
   }
 
   SECTION("BoundedMultisets<BitArrayLong5>") {
+    Log("Testing RepresentativeTable - BoundedMultisets<BitArrayLong5>");
     auto ms = BoundedMultisets<BitArrayLong5>(4, 2);
     test_invariants(ms, irrep4_0);
     check_size(ms, irrep4_0, 6);
   }
 
   SECTION("BoundedMultisets<BitArrayLong6>") {
+    Log("Testing RepresentativeTable - BoundedMultisets<BitArrayLong6>");
     auto ms = BoundedMultisets<BitArrayLong6>(4, 2);
     test_invariants(ms, irrep4_0);
     check_size(ms, irrep4_0, 6);
   }
 
   SECTION("BoundedMultisets<BitArrayLong7>") {
+    Log("Testing RepresentativeTable - BoundedMultisets<BitArrayLong7>");
     auto ms = BoundedMultisets<BitArrayLong7>(4, 2);
     test_invariants(ms, irrep4_0);
     check_size(ms, irrep4_0, 6);
   }
 
   SECTION("BoundedMultisets<BitArrayLong8>") {
+    Log("Testing RepresentativeTable - BoundedMultisets<BitArrayLong8>");
     auto ms = BoundedMultisets<BitArrayLong8>(4, 2);
     test_invariants(ms, irrep4_0);
     check_size(ms, irrep4_0, 6);
@@ -451,12 +476,14 @@ TEST_CASE("representative_table", "[symmetries]") try {
   // =====================================================================
 
   SECTION("BoundedPartitions<BitArray1>") {
+    Log("Testing RepresentativeTable - BoundedPartitions<BitArray1>");
     auto bp = BoundedPartitions<BitArray1>(4, 2, 2);
     test_invariants(bp, irrep4_0);
     check_size(bp, irrep4_0, 2);
   }
 
   SECTION("BoundedPartitions<BitArray2>") {
+    Log("Testing RepresentativeTable - BoundedPartitions<BitArray2>");
     auto bp = BoundedPartitions<BitArray2>(4, 2, 3);
     test_invariants(bp, irrep4_0);
     test_invariants(bp, irrep4_2);
@@ -465,84 +492,98 @@ TEST_CASE("representative_table", "[symmetries]") try {
   }
 
   SECTION("BoundedPartitions<BitArray3>") {
+    Log("Testing RepresentativeTable - BoundedPartitions<BitArray3>");
     auto bp = BoundedPartitions<BitArray3>(4, 2, 3);
     test_invariants(bp, irrep4_0);
     check_size(bp, irrep4_0, 3);
   }
 
   SECTION("BoundedPartitions<BitArray4>") {
+    Log("Testing RepresentativeTable - BoundedPartitions<BitArray4>");
     auto bp = BoundedPartitions<BitArray4>(4, 2, 3);
     test_invariants(bp, irrep4_0);
     check_size(bp, irrep4_0, 3);
   }
 
   SECTION("BoundedPartitions<BitArray5>") {
+    Log("Testing RepresentativeTable - BoundedPartitions<BitArray5>");
     auto bp = BoundedPartitions<BitArray5>(4, 2, 3);
     test_invariants(bp, irrep4_0);
     check_size(bp, irrep4_0, 3);
   }
 
   SECTION("BoundedPartitions<BitArray6>") {
+    Log("Testing RepresentativeTable - BoundedPartitions<BitArray6>");
     auto bp = BoundedPartitions<BitArray6>(4, 2, 3);
     test_invariants(bp, irrep4_0);
     check_size(bp, irrep4_0, 3);
   }
 
   SECTION("BoundedPartitions<BitArray7>") {
+    Log("Testing RepresentativeTable - BoundedPartitions<BitArray7>");
     auto bp = BoundedPartitions<BitArray7>(4, 2, 3);
     test_invariants(bp, irrep4_0);
     check_size(bp, irrep4_0, 3);
   }
 
   SECTION("BoundedPartitions<BitArray8>") {
+    Log("Testing RepresentativeTable - BoundedPartitions<BitArray8>");
     auto bp = BoundedPartitions<BitArray8>(4, 2, 3);
     test_invariants(bp, irrep4_0);
     check_size(bp, irrep4_0, 3);
   }
 
   SECTION("BoundedPartitions<BitArrayLong1>") {
+    Log("Testing RepresentativeTable - BoundedPartitions<BitArrayLong1>");
     auto bp = BoundedPartitions<BitArrayLong1>(4, 2, 2);
     test_invariants(bp, irrep4_0);
     check_size(bp, irrep4_0, 2);
   }
 
   SECTION("BoundedPartitions<BitArrayLong2>") {
+    Log("Testing RepresentativeTable - BoundedPartitions<BitArrayLong2>");
     auto bp = BoundedPartitions<BitArrayLong2>(4, 2, 3);
     test_invariants(bp, irrep4_0);
     check_size(bp, irrep4_0, 3);
   }
 
   SECTION("BoundedPartitions<BitArrayLong3>") {
+    Log("Testing RepresentativeTable - BoundedPartitions<BitArrayLong3>");
     auto bp = BoundedPartitions<BitArrayLong3>(4, 2, 3);
     test_invariants(bp, irrep4_0);
     check_size(bp, irrep4_0, 3);
   }
 
   SECTION("BoundedPartitions<BitArrayLong4>") {
+    Log("Testing RepresentativeTable - BoundedPartitions<BitArrayLong4>");
     auto bp = BoundedPartitions<BitArrayLong4>(4, 2, 3);
     test_invariants(bp, irrep4_0);
     check_size(bp, irrep4_0, 3);
   }
 
   SECTION("BoundedPartitions<BitArrayLong5>") {
+    Log("Testing RepresentativeTable - BoundedPartitions<BitArrayLong5>");
     auto bp = BoundedPartitions<BitArrayLong5>(4, 2, 3);
     test_invariants(bp, irrep4_0);
     check_size(bp, irrep4_0, 3);
   }
 
   SECTION("BoundedPartitions<BitArrayLong6>") {
+    Log("Testing RepresentativeTable - BoundedPartitions<BitArrayLong6>");
     auto bp = BoundedPartitions<BitArrayLong6>(4, 2, 3);
     test_invariants(bp, irrep4_0);
     check_size(bp, irrep4_0, 3);
   }
 
   SECTION("BoundedPartitions<BitArrayLong7>") {
+    Log("Testing RepresentativeTable - BoundedPartitions<BitArrayLong7>");
     auto bp = BoundedPartitions<BitArrayLong7>(4, 2, 3);
     test_invariants(bp, irrep4_0);
     check_size(bp, irrep4_0, 3);
   }
 
   SECTION("BoundedPartitions<BitArrayLong8>") {
+    Log("Testing RepresentativeTable - BoundedPartitions<BitArrayLong8>");
     auto bp = BoundedPartitions<BitArrayLong8>(4, 2, 3);
     test_invariants(bp, irrep4_0);
     check_size(bp, irrep4_0, 3);
@@ -554,12 +595,14 @@ TEST_CASE("representative_table", "[symmetries]") try {
   // =====================================================================
 
   SECTION("SchaeferTable<BitArray1>") {
+    Log("Testing RepresentativeTable - SchaeferTable<BitArray1>");
     auto st = SchaeferTable<BitArray1>(4, 2, 2);
     test_invariants(st, irrep4_0);
     check_size(st, irrep4_0, 2);
   }
 
   SECTION("SchaeferTable<BitArray2>") {
+    Log("Testing RepresentativeTable - SchaeferTable<BitArray2>");
     auto st = SchaeferTable<BitArray2>(4, 2, 3);
     test_invariants(st, irrep4_0);
     test_invariants(st, irrep4_2);
@@ -568,36 +611,42 @@ TEST_CASE("representative_table", "[symmetries]") try {
   }
 
   SECTION("SchaeferTable<BitArray3>") {
+    Log("Testing RepresentativeTable - SchaeferTable<BitArray3>");
     auto st = SchaeferTable<BitArray3>(4, 2, 3);
     test_invariants(st, irrep4_0);
     check_size(st, irrep4_0, 3);
   }
 
   SECTION("SchaeferTable<BitArray4>") {
+    Log("Testing RepresentativeTable - SchaeferTable<BitArray4>");
     auto st = SchaeferTable<BitArray4>(4, 2, 3);
     test_invariants(st, irrep4_0);
     check_size(st, irrep4_0, 3);
   }
 
   SECTION("SchaeferTable<BitArray5>") {
+    Log("Testing RepresentativeTable - SchaeferTable<BitArray5>");
     auto st = SchaeferTable<BitArray5>(4, 2, 3);
     test_invariants(st, irrep4_0);
     check_size(st, irrep4_0, 3);
   }
 
   SECTION("SchaeferTable<BitArray6>") {
+    Log("Testing RepresentativeTable - SchaeferTable<BitArray6>");
     auto st = SchaeferTable<BitArray6>(4, 2, 3);
     test_invariants(st, irrep4_0);
     check_size(st, irrep4_0, 3);
   }
 
   SECTION("SchaeferTable<BitArray7>") {
+    Log("Testing RepresentativeTable - SchaeferTable<BitArray7>");
     auto st = SchaeferTable<BitArray7>(4, 2, 3);
     test_invariants(st, irrep4_0);
     check_size(st, irrep4_0, 3);
   }
 
   SECTION("SchaeferTable<BitArray8>") {
+    Log("Testing RepresentativeTable - SchaeferTable<BitArray8>");
     auto st = SchaeferTable<BitArray8>(4, 2, 3);
     test_invariants(st, irrep4_0);
     check_size(st, irrep4_0, 3);
@@ -608,6 +657,7 @@ TEST_CASE("representative_table", "[symmetries]") try {
   // =====================================================================
 
   SECTION("BoundedPartitions vs SchaeferTable cross-check") {
+    Log("Testing RepresentativeTable - BoundedPartitions vs SchaeferTable cross-check");
     auto bp = BoundedPartitions<BitArray2>(4, 2, 3);
     auto st = SchaeferTable<BitArray2>(4, 2, 3);
 
@@ -637,6 +687,7 @@ TEST_CASE("representative_table", "[symmetries]") try {
   // =====================================================================
 
   SECTION("BoundedMultisets<BitArray1> cyclic_group(3)") {
+    Log("Testing RepresentativeTable - BoundedMultisets<BitArray1> cyclic_group(3)");
     auto ms = BoundedMultisets<BitArray1>(3, 2);
     test_invariants(ms, irrep3_0);
     test_invariants(ms, irrep3_1);
@@ -645,6 +696,7 @@ TEST_CASE("representative_table", "[symmetries]") try {
   }
 
   SECTION("BoundedMultisets<BitArrayLong1> cyclic_group(3)") {
+    Log("Testing RepresentativeTable - BoundedMultisets<BitArrayLong1> cyclic_group(3)");
     auto ms = BoundedMultisets<BitArrayLong1>(3, 2);
     test_invariants(ms, irrep3_0);
     test_invariants(ms, irrep3_1);
@@ -662,6 +714,7 @@ TEST_CASE("representative_table", "[symmetries]") try {
   // =====================================================================
 
   SECTION("triangular_12_site_group") {
+    Log("Testing RepresentativeTable - triangular_12_site_group");
     std::string lfile =
         XDIAG_DIRECTORY "/misc/data/triangular.j1j2jch/"
                         "triangular.12.j1j2jch.sublattices.fsl.toml";
@@ -710,13 +763,12 @@ TEST_CASE("representative_table", "[symmetries]") try {
       test_invariants(st, irrep_B);
 
       auto bp = BoundedPartitions<BitArray2>(12, 2, 3);
-      RepresentativeTable<BoundedPartitions<BitArray2>> tbl_bp(bp, irrep_trivial);
+      RepresentativeTable<BoundedPartitions<BitArray2>> tbl_bp(bp,
+                                                               irrep_trivial);
       RepresentativeTable<SchaeferTable<BitArray2>> tbl_st(st, irrep_trivial);
       REQUIRE(tbl_bp.size() == tbl_st.size());
     }
   }
-
-  Log("done");
 } catch (xdiag::Error e) {
   xdiag::error_trace(e);
 }

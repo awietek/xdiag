@@ -148,72 +148,84 @@ TEST_CASE("SchaeferTable", "[combinatorics]") {
   using A3u64 = BitArray<uint64_t, 3>; // 3-bit slots: bound up to 8
   using A2u32 = BitArray<uint32_t, 2>; // smaller storage
 
-  xdiag::Log("Testing SchaeferTable");
 
   SECTION("iteration (bound=2)") {
+    xdiag::Log("Testing SchaeferTable - iteration (bound=2)");
     test_schaefer_iteration<A2u64>(2);
     test_schaefer_iteration<A3u64>(2);
     test_schaefer_iteration<A2u32>(2);
   }
 
   SECTION("iteration (bound=3)") {
+    xdiag::Log("Testing SchaeferTable - iteration (bound=3)");
     test_schaefer_iteration<A2u64>(3);
     test_schaefer_iteration<A3u64>(3);
   }
 
   SECTION("iteration (bound=4)") {
+    xdiag::Log("Testing SchaeferTable - iteration (bound=4)");
     test_schaefer_iteration<A2u64>(4);
     test_schaefer_iteration<A3u64>(4);
   }
 
   SECTION("index (bound=2)") {
+    xdiag::Log("Testing SchaeferTable - index (bound=2)");
     test_schaefer_index<A2u64>(2);
     test_schaefer_index<A3u64>(2);
     test_schaefer_index<A2u32>(2);
   }
 
   SECTION("index (bound=3)") {
+    xdiag::Log("Testing SchaeferTable - index (bound=3)");
     test_schaefer_index<A2u64>(3);
     test_schaefer_index<A3u64>(3);
   }
 
   SECTION("index (bound=4)") {
+    xdiag::Log("Testing SchaeferTable - index (bound=4)");
     test_schaefer_index<A2u64>(4);
     test_schaefer_index<A3u64>(4);
   }
 
   SECTION("random access and index round-trip (bound=2)") {
+    xdiag::Log("Testing SchaeferTable - random access and index round-trip (bound=2)");
     test_schaefer_random_access<A2u64>(2);
     test_schaefer_random_access<A3u64>(2);
   }
 
   SECTION("random access and index round-trip (bound=3)") {
+    xdiag::Log("Testing SchaeferTable - random access and index round-trip (bound=3)");
     test_schaefer_random_access<A2u64>(3);
     test_schaefer_random_access<A3u64>(3);
   }
 
   SECTION("iterator advance (+ and +=) (bound=2)") {
+    xdiag::Log("Testing SchaeferTable - iterator advance (+ and +=) (bound=2)");
     test_schaefer_iterator_advance<A2u64>(2);
     test_schaefer_iterator_advance<A3u64>(2);
   }
 
   SECTION("iterator advance (+ and +=) (bound=3)") {
+    xdiag::Log("Testing SchaeferTable - iterator advance (+ and +=) (bound=3)");
     test_schaefer_iterator_advance<A2u64>(3);
     test_schaefer_iterator_advance<A3u64>(3);
   }
 
   SECTION("vs BoundedPartitions (bound=2)") {
+    xdiag::Log("Testing SchaeferTable - vs BoundedPartitions (bound=2)");
     test_schaefer_vs_bounded_partitions<A2u64>(2);
     test_schaefer_vs_bounded_partitions<A3u64>(2);
     test_schaefer_vs_bounded_partitions<A2u32>(2);
   }
 
   SECTION("vs BoundedPartitions (bound=3)") {
+    xdiag::Log("Testing SchaeferTable - vs BoundedPartitions (bound=3)");
     test_schaefer_vs_bounded_partitions<A2u64>(3);
     test_schaefer_vs_bounded_partitions<A3u64>(3);
   }
 
   SECTION("vs BoundedPartitions (bound=4)") {
+    xdiag::Log("Testing SchaeferTable - vs BoundedPartitions (bound=4)");
     test_schaefer_vs_bounded_partitions<A2u64>(4);
     test_schaefer_vs_bounded_partitions<A3u64>(4);
   }

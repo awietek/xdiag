@@ -10,7 +10,7 @@
 #include <xdiag/bits/bitset.hpp>
 #include <xdiag/bits/get_set_bit.hpp>
 
-namespace xdiag {
+namespace xdiag::symmetries {
 
 SitePermutation::SitePermutation(PermutationGroup const &group)
     : group_(group), nsites_(group.nsites()) {}
@@ -98,4 +98,4 @@ INSTANTIATE_APPLY_BITARRAY(BitsetStatic8);
 
 // #undef INSTANTIATE_APPLY;
 
-} // namespace xdiag
+} // namespace xdiag::symmetries

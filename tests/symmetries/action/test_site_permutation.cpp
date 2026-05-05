@@ -11,6 +11,7 @@
 #include <xdiag/utils/logger.hpp>
 
 TEST_CASE("site_permutation", "[symmetries]") try {
+  using namespace xdiag::symmetries;
   using namespace xdiag;
   using namespace xdiag::bits;
   Log("Test SitePermutation");

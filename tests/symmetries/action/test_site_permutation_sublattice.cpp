@@ -6,23 +6,25 @@
 
 #include <iostream>
 
-#include <xdiag/combinatorics/combinations.hpp>
-#include <xdiag/combinatorics/subsets.hpp>
+#include <xdiag/combinatorics/combinations/combinations.hpp>
+#include <xdiag/combinatorics/subsets/subsets.hpp>
+#include <xdiag/config.hpp>
 #include <xdiag/io/file_toml.hpp>
-#include <xdiag/symmetries/group_action/group_action.hpp>
-#include <xdiag/symmetries/group_action/group_action_sublattice.hpp>
-#include <xdiag/symmetries/operations/symmetry_operations.hpp>
+#include <xdiag/symmetries/action/representative.hpp>
+#include <xdiag/symmetries/action/site_permutation.hpp>
+#include <xdiag/symmetries/action/site_permutation_sublattice.hpp>
 #include <xdiag/utils/logger.hpp>
 
 using namespace xdiag;
+using namespace xdiag::symmetries;
 
-template <class Action1, class Action2>
-void compare_actions(Action1 &&action1, Action2 &&action2) {
+template <typename action_t>
+void compare_actions(SitePermutation const &action1, action_t const &action2) {
   int nsites = action1.nsites();
-  int n_symmetries = action1.n_symmetries();
+  int n_symmetries = action1.size();
 
   REQUIRE(action2.nsites() == nsites);
-  REQUIRE(action2.n_symmetries() == n_symmetries);
+  REQUIRE(action2.size() == n_symmetries);
 
   for (auto bits : combinatorics::Subsets<uint64_t>(nsites)) {
 
@@ -35,13 +37,13 @@ void compare_actions(Action1 &&action1, Action2 &&action2) {
     }
 
     // Check representative search
-    auto r1 = action1.representative(bits);
+    auto r1 = representative(bits, action1);
     auto r2 = action2.representative(bits);
     // Log("1sl bits: {} r1: {} r2: {}", BSTR(bits), BSTR(r1), BSTR(r2));
     REQUIRE(r1 == r2);
 
     {
-      auto [r1, sym1] = action1.representative_sym(bits);
+      auto [r1, sym1] = representative_sym(bits, action1);
       auto [r2, sym2] = action2.representative_sym(bits);
       REQUIRE(r1 == r2);
       REQUIRE(action1.apply(sym1, bits) == r1);
@@ -49,7 +51,7 @@ void compare_actions(Action1 &&action1, Action2 &&action2) {
     }
 
     {
-      auto [r1, syms1] = action1.representative_syms(bits);
+      auto [r1, syms1] = representative_syms(bits, action1);
       auto [r2, syms2] = action2.representative_syms(bits);
       REQUIRE(r1 == r2);
       REQUIRE(syms1.size() == syms2.size());
@@ -64,79 +66,80 @@ void compare_actions(Action1 &&action1, Action2 &&action2) {
 }
 
 template <class bit_t> void test_group_action_sublattice() {
+  using namespace xdiag::symmetries;
 
   {
-    Log("GroupActionSublattice: 1 sublattice");
+    Log("SitePermutationSublattice: 1 sublattice");
     std::string lfile =
         XDIAG_DIRECTORY "/misc/data/square.8.heisenberg.2sl.toml";
     auto fl = FileToml(lfile);
     auto group = fl["Symmetries"].as<PermutationGroup>();
-    auto action = GroupAction(group);
-    auto action_sl = GroupActionSublattice<bit_t, 1>(group);
+    auto action = SitePermutation(group);
+    auto action_sl = SitePermutationSublattice<bit_t, 1>(group);
     compare_actions(action, action_sl);
   }
 
   // Two sublattice
   {
-    Log("GroupActionSublattice: 2 sublattice");
+    Log("SitePermutationSublattice: 2 sublattice");
     std::string lfile =
         XDIAG_DIRECTORY "/misc/data/square.8.heisenberg.2sl.toml";
     auto fl = FileToml(lfile);
     auto group = fl["Symmetries"].as<PermutationGroup>();
-    auto action = GroupAction(group);
-    auto action_sl = GroupActionSublattice<bit_t, 2>(group);
+    auto action = SitePermutation(group);
+    auto action_sl = SitePermutationSublattice<bit_t, 2>(group);
     compare_actions(action, action_sl);
   }
 
   // Three sublattice
   {
-    Log("GroupActionSublattice: 3 sublattice");
+    Log("SitePermutationSublattice: 3 sublattice");
     std::string lfile =
         XDIAG_DIRECTORY "/misc/data/square.9.heisenberg.3sl.toml";
     auto fl = FileToml(lfile);
     auto group = fl["Symmetries"].as<PermutationGroup>();
-    auto action = GroupAction(group);
-    auto action_sl = GroupActionSublattice<bit_t, 3>(group);
+    auto action = SitePermutation(group);
+    auto action_sl = SitePermutationSublattice<bit_t, 3>(group);
     compare_actions(action, action_sl);
   }
 
   // Three sublattice (triangular example)
   {
-    Log("GroupActionSublattice: 3 sublattice (triangular)");
+    Log("SitePermutationSublattice: 3 sublattice (triangular)");
     std::string lfile = XDIAG_DIRECTORY
         "/misc/data/triangular.9.Jz1Jz2Jx1Jx2D1.sublattices.tsl.toml";
     auto fl = FileToml(lfile);
     auto group = fl["Symmetries"].as<PermutationGroup>();
-    auto action = GroupAction(group);
-    auto action_sl = GroupActionSublattice<bit_t, 3>(group);
+    auto action = SitePermutation(group);
+    auto action_sl = SitePermutationSublattice<bit_t, 3>(group);
     compare_actions(action, action_sl);
   }
 
   // Four sublattice
   {
-    Log("GroupActionSublattice: 4 sublattice");
+    Log("SitePermutationSublattice: 4 sublattice");
     std::string lfile =
         XDIAG_DIRECTORY "/misc/data/square.8.heisenberg.4sl.toml";
     auto fl = FileToml(lfile);
     auto group = fl["Symmetries"].as<PermutationGroup>();
-    auto action = GroupAction(group);
-    auto action_sl = GroupActionSublattice<bit_t, 4>(group);
+    auto action = SitePermutation(group);
+    auto action_sl = SitePermutationSublattice<bit_t, 4>(group);
   }
 
   // Five sublattice
   {
-    Log("GroupActionSublattice: 5 sublattice");
+    Log("SitePermutationSublattice: 5 sublattice");
     std::string lfile =
         XDIAG_DIRECTORY "/misc/data/square.10.heisenberg.5sl.toml";
     auto fl = FileToml(lfile);
     auto group = fl["Symmetries"].as<PermutationGroup>();
-    auto action = GroupAction(group);
-    auto action_sl = GroupActionSublattice<bit_t, 5>(group);
+    auto action = SitePermutation(group);
+    auto action_sl = SitePermutationSublattice<bit_t, 5>(group);
   }
 }
 
-TEST_CASE("GroupActionSublattice", "[symmetries]") {
-  Log("Test GroupActionSublattice");
+TEST_CASE("SitePermutationSublattice", "[symmetries]") {
+  Log("Test SitePermutationSublattice");
   Log("uint16_t");
   test_group_action_sublattice<uint16_t>();
   Log("uint32_t");

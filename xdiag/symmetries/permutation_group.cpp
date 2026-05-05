@@ -180,6 +180,25 @@ int64_t PermutationGroup::multiply(int64_t s1, int64_t s2) const try {
 }
 XDIAG_CATCH
 
+PermutationGroup::iterator::iterator(PermutationGroup const *group, int64_t idx)
+    : group_(group), idx_(idx) {}
+Permutation PermutationGroup::iterator::operator*() const {
+  return (*group_)[idx_];
+}
+PermutationGroup::iterator &PermutationGroup::iterator::operator++() {
+  ++idx_;
+  return *this;
+}
+bool PermutationGroup::iterator::operator!=(iterator const &rhs) const {
+  return idx_ != rhs.idx_;
+}
+PermutationGroup::iterator PermutationGroup::begin() const {
+  return {this, 0};
+}
+PermutationGroup::iterator PermutationGroup::end() const {
+  return {this, size()};
+}
+
 int64_t nsites(PermutationGroup const &group) { return group.nsites(); }
 int64_t size(PermutationGroup const &group) { return group.size(); }
 PermutationGroup subgroup(PermutationGroup const &group,

@@ -8,7 +8,7 @@
 #include <xdiag/symmetries/permutation_group.hpp>
 #include <xdiag/utils/xdiag_api.hpp>
 
-namespace xdiag {
+namespace xdiag::symmetries {
 
 // Applies site permutations from a PermutationGroup to bit states.
 // apply(sym, bits) moves the bit at site i to site p[i], where p is the
@@ -20,7 +20,7 @@ public:
 
   XDIAG_API int64_t size() const;
   XDIAG_API int64_t nsites() const;
-  XDIAG_API PermutationGroup const& group() const;
+  XDIAG_API PermutationGroup const &group() const;
   XDIAG_API bool operator==(SitePermutation const &rhs) const;
   XDIAG_API bool operator!=(SitePermutation const &rhs) const;
 
@@ -36,4 +36,4 @@ private:
   int64_t nsites_;
 };
 
-} // namespace xdiag
+} // namespace xdiag::symmetries

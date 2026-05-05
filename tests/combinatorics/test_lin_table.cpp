@@ -134,33 +134,37 @@ template <class bit_t> void test_lintable_vs_combinations() {
 }
 
 TEST_CASE("LinTable", "[combinatorics]") {
-  xdiag::Log("Testing LinTable");
 
   SECTION("iteration") {
+    xdiag::Log("Testing LinTable - iteration");
     test_lintable_iteration<uint16_t>();
     test_lintable_iteration<uint32_t>();
     test_lintable_iteration<uint64_t>();
   }
 
   SECTION("index") {
+    xdiag::Log("Testing LinTable - index");
     test_lintable_index<uint16_t>();
     test_lintable_index<uint32_t>();
     test_lintable_index<uint64_t>();
   }
 
   SECTION("random access and index round-trip") {
+    xdiag::Log("Testing LinTable - random access and index round-trip");
     test_lintable_random_access<uint16_t>();
     test_lintable_random_access<uint32_t>();
     test_lintable_random_access<uint64_t>();
   }
 
   SECTION("iterator advance (+ and +=)") {
+    xdiag::Log("Testing LinTable - iterator advance");
     test_lintable_iterator_advance<uint16_t>();
     test_lintable_iterator_advance<uint32_t>();
     test_lintable_iterator_advance<uint64_t>();
   }
 
   SECTION("vs Combinations") {
+    xdiag::Log("Testing LinTable - vs Combinations");
     test_lintable_vs_combinations<uint16_t>();
     test_lintable_vs_combinations<uint32_t>();
     test_lintable_vs_combinations<uint64_t>();
