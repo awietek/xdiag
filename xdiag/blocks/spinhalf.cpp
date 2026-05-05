@@ -201,7 +201,7 @@ XDIAG_CATCH
 
 int64_t Spinhalf::dim() const { return size_; }
 int64_t Spinhalf::size() const { return size_; }
-bool Spinhalf::isreal() const { return true; }
+bool Spinhalf::isreal() const { return irrep_ ? irrep_->isreal() : true; }
 
 SpinhalfIterator Spinhalf::begin() const { return {this, 0}; }
 SpinhalfIterator Spinhalf::end() const { return {this, size_}; }

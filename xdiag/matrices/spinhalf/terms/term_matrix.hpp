@@ -27,7 +27,7 @@ void term_matrix(Coeff const &c, Op const &op, basis_t const &basis_in,
         auto local_spins = op_nb.extract(spins);
         return op_nb.coeff(local_spins);
       };
-      term_diag(basis_in, term_coeff, fill);
+      term_diag(basis_in, basis_out, term_coeff, fill);
     } else { // Offdiagonal terms
       auto non_zero_term = [&](bit_t spins) -> bool {
         auto local_spins = op_nb.extract(spins);

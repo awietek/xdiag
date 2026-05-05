@@ -18,9 +18,15 @@ void term_exchange(Coeff const &c, Op const &op, basis_t const &basis_in,
   using bit_t = typename basis_t::bit_t;
 
   coeff_t J = c.scalar().as<coeff_t>();
-  bit_t mask = bit_t();
   int64_t s1 = op[0];
   int64_t s2 = op[1];
+
+  if (s1 == s2) {
+    term_diag(basis_in, basis_out, [&](bit_t) { return J / 2.0; }, fill);
+    return;
+  }
+
+  bit_t mask = bit_t();
   bits::set_bit(mask, s1);
   bits::set_bit(mask, s2);
 

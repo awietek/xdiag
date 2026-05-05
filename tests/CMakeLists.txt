@@ -39,8 +39,9 @@ set(XDIAG_TEST_SOURCES
   symmetries/action/test_site_permutation.cpp
   symmetries/tables/test_representative_table.cpp
   
-  blocks/spinhalf/test_spinhalf.cpp
   blocks/spinhalf/testcases_spinhalf.cpp
+  blocks/spinhalf/test_spinhalf_strategies.cpp
+  blocks/spinhalf/test_spinhalf.cpp
 
   io/test_file_toml.cpp
   io/test_file_h5.cpp
@@ -77,13 +78,6 @@ set(XDIAG_TEST_SOURCES
   # operators/logic/test_isapprox.cpp
   # operators/logic/test_qns.cpp
  
-  # blocks/spinhalf/test_spinhalf_matrix.cpp
-  # blocks/spinhalf/test_spinhalf_apply.cpp
-  # blocks/spinhalf/test_spinhalf_symmetric.cpp
-  # blocks/spinhalf/test_spinhalf_symmetric_matrix.cpp
-  # blocks/spinhalf/test_spinhalf_symmetric_apply.cpp
-  # blocks/spinhalf/test_kitaev_gamma.cpp
-
   # blocks/tj/test_tj_matrix.cpp
   # blocks/tj/test_tj_apply.cpp
   # blocks/tj/test_tj_raiselower.cpp

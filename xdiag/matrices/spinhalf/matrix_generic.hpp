@@ -41,9 +41,9 @@ void matrix_generic(OpSum const &ops, basis_t const &basis_in,
     } else if (type == "Exchange") {
       spinhalf::term_exchange<coeff_t>(c, op, basis_in, basis_out, fill);
     } else if (type == "SzSz") {
-      spinhalf::term_szsz<coeff_t>(c, op, basis_in, fill);
+      spinhalf::term_szsz<coeff_t>(c, op, basis_in, basis_out, fill);
     } else if (type == "Sz") {
-      spinhalf::term_sz<coeff_t>(c, op, basis_in, fill);
+      spinhalf::term_sz<coeff_t>(c, op, basis_in, basis_out, fill);
     } else if (type == "S+") {
       spinhalf::term_spsm<coeff_t>(c, op, basis_in, basis_out, fill);
     } else if (type == "S-") {

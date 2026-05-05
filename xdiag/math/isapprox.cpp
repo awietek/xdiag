@@ -4,7 +4,17 @@
 
 #include "isapprox.hpp"
 
+#include <cmath>
+
 namespace xdiag {
+
+bool isapprox(double a, double b, double rtol, double atol) {
+  return std::abs(a - b) <= atol + rtol * std::max(std::abs(a), std::abs(b));
+}
+
+bool isapprox(complex a, complex b, double rtol, double atol) {
+  return std::abs(a - b) <= atol + rtol * std::max(std::abs(a), std::abs(b));
+}
 
 template <typename coeff_t>
 bool isapprox(arma::Col<coeff_t> const &v, arma::Col<coeff_t> const &w,

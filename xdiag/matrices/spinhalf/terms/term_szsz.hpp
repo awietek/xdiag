@@ -12,11 +12,17 @@
 namespace xdiag::matrices::spinhalf {
 
 template <typename coeff_t, class basis_t, class fill_f>
-void term_szsz(Coeff const &c, Op const &op, basis_t const &basis,
-               fill_f fill) try {
+void term_szsz(Coeff const &c, Op const &op, basis_t const &basis_in,
+               basis_t const &basis_out, fill_f fill) try {
   using bit_t = typename basis_t::bit_t;
 
   coeff_t J = c.scalar().as<coeff_t>();
+
+  if (op[0] == op[1]) {
+    term_diag(basis_in, basis_out, [&](bit_t) { return J / 4.0; }, fill);
+    return;
+  }
+
   coeff_t val_same = J / 4.0;
   coeff_t val_diff = -J / 4.0;
 
@@ -25,7 +31,7 @@ void term_szsz(Coeff const &c, Op const &op, basis_t const &basis,
   bits::set_bit(mask, op[1]);
 
   term_diag(
-      basis,
+      basis_in, basis_out,
       [&](bit_t spins) {
         return bits::popcount(spins & mask) & 1 ? val_diff : val_same;
       },

@@ -28,9 +28,9 @@ struct OpTypeInfo {
 inline const std::map<std::string, OpTypeInfo> op_registry = {
 //  type             nsites      site_req  overlap  mat_req  is_real  hc_partner
   {"Id",            {undefined,  false,    false,   false,   true,    "Id"           }},
-  {"SdotS",         {2,          true,     false,   false,   true,    "SdotS"        }},
-  {"Exchange",      {2,          true,     false,   false,   true,    "Exchange"     }},
-  {"SzSz",          {2,          true,     false,   false,   true,    "SzSz"         }},
+  {"SdotS",         {2,          true,     true,    false,   true,    "SdotS"        }},
+  {"Exchange",      {2,          true,     true,    false,   true,    "Exchange"     }},
+  {"SzSz",          {2,          true,     true,    false,   true,    "SzSz"         }},
   {"Sz",            {1,          true,     false,   false,   true,    "Sz"           }},
   {"S+",            {1,          true,     false,   false,   true,    "S-"           }},
   {"S-",            {1,          true,     false,   false,   true,    "S+"           }},
