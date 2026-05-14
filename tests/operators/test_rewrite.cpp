@@ -4,7 +4,7 @@
 
 #include "../catch.hpp"
 
-#include <xdiag/operators/logic/rewrite.hpp>
+#include <xdiag/algebra/rewrite.hpp>
 #include <xdiag/operators/monomial.hpp>
 #include <xdiag/operators/op.hpp>
 #include <xdiag/operators/opsum.hpp>

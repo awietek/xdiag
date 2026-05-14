@@ -29,10 +29,10 @@ set(XDIAG_TEST_SOURCES
   operators/test_op.cpp
   operators/test_opsum.cpp
   operators/test_rewrite.cpp
-  operators/logic/test_combine_matrix_ops.cpp
-  operators/logic/test_normal_order.cpp
-  operators/logic/test_matrix_algebra.cpp
-  operators/logic/test_spinhalf_implementation_algebra.cpp
+  algebra/test_combine_matrix_ops.cpp
+  algebra/test_normal_order.cpp
+  algebra/test_matrix_algebra.cpp
+  algebra/test_spinhalf_implementation_algebra.cpp
   operators/qns/test_nup_ndn.cpp
 
   symmetries/test_permutation.cpp
@@ -75,11 +75,11 @@ set(XDIAG_TEST_SOURCES
   # operators/test_op.cpp
   # operators/test_opsum.cpp
   # operators/test_non_branching_op.cpp
-  # operators/logic/test_symmetrize.cpp
-  # operators/logic/test_permute.cpp
-  # operators/logic/test_order.cpp 
-  # operators/logic/test_isapprox.cpp
-  # operators/logic/test_qns.cpp
+  # algebra/test_symmetrize.cpp
+  # algebra/test_permute.cpp
+  # algebra/test_order.cpp 
+  # algebra/test_isapprox.cpp
+  # algebra/test_qns.cpp
  
   # blocks/tj/test_tj_matrix.cpp
   # blocks/tj/test_tj_apply.cpp

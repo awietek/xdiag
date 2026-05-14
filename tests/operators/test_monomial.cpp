@@ -5,7 +5,7 @@
 #include "../catch.hpp"
 
 #include <vector>
-#include <xdiag/operators/logic/hc.hpp>
+#include <xdiag/algebra/hc.hpp>
 #include <xdiag/operators/monomial.hpp>
 #include <xdiag/operators/op.hpp>
 #include <xdiag/utils/error.hpp>

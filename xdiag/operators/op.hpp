@@ -48,6 +48,7 @@ public:
   bool hassites() const;  // true if site list was provided
   bool hasmatrix() const; // true if a matrix was provided
   Matrix const &matrix() const;
+  XDIAG_API bool isreal() const;
 
   XDIAG_API bool operator==(const Op &rhs) const;
   XDIAG_API bool operator!=(const Op &rhs) const;
@@ -59,6 +60,7 @@ private:
   std::optional<Matrix> matrix_;
 };
 
+XDIAG_API bool isreal(Op const &op);
 XDIAG_API std::ostream &operator<<(std::ostream &out, Op const &op);
 XDIAG_API std::string to_string(Op const &op);
 

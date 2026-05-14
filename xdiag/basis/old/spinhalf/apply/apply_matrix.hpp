@@ -11,7 +11,7 @@
 #include <xdiag/basis/spinhalf/apply/apply_term_offdiag_sym.hpp>
 
 #include <xdiag/common.hpp>
-#include <xdiag/operators/logic/non_branching_op.hpp>
+#include <xdiag/algebra/non_branching_op.hpp>
 
 namespace xdiag::basis::spinhalf {
 

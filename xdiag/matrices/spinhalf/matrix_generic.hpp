@@ -4,20 +4,20 @@
 
 #pragma once
 
-#include <xdiag/operators/logic/algebra.hpp>
-#include <xdiag/operators/logic/normal_order.hpp>
-#include <xdiag/operators/logic/valid.hpp>
+#include <xdiag/algebra/normal_order.hpp>
+#include <xdiag/algebra/spinhalf_implementation_algebra.hpp>
+#include <xdiag/algebra/valid.hpp>
 #include <xdiag/operators/opsum.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/format.hpp>
 
 #include <xdiag/matrices/spinhalf/terms/term_exchange.hpp>
-#include <xdiag/matrices/spinhalf/terms/term_matrix.hpp>
 #include <xdiag/matrices/spinhalf/terms/term_scalar_chirality.hpp>
 #include <xdiag/matrices/spinhalf/terms/term_spsm.hpp>
 #include <xdiag/matrices/spinhalf/terms/term_sz.hpp>
 #include <xdiag/matrices/spinhalf/terms/term_szsz.hpp>
 #include <xdiag/matrices/terms/term_identity.hpp>
+#include <xdiag/matrices/terms/term_matrix.hpp>
 
 namespace xdiag::matrices::spinhalf {
 
@@ -52,7 +52,7 @@ void matrix_generic(OpSum const &ops, basis_t const &basis_in,
       spinhalf::term_scalar_chirality<coeff_t>(c, op, basis_in, basis_out,
                                                fill);
     } else if (type == "Matrix") {
-      spinhalf::term_matrix<coeff_t>(c, op, basis_in, basis_out, fill);
+      matrices::term_matrix<coeff_t>(c, op, basis_in, basis_out, fill);
     } else {
       XDIAG_THROW(
           fmt::format("Unknown Op type for Spinhalf basis \"{}\"", type));

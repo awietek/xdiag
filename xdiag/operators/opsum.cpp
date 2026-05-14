@@ -247,6 +247,20 @@ bool OpSum::operator==(OpSum const &rhs) const {
 }
 bool OpSum::operator!=(OpSum const &rhs) const { return !operator==(rhs); }
 
+bool OpSum::isreal() const try {
+  for (Term const &t : terms_) {
+    if (!xdiag::isreal(t.coeff.scalar())) {
+      return false;
+    }
+    if (!t.monomial.isreal()) {
+      return false;
+    }
+  }
+  return true;
+} XDIAG_CATCH
+
+bool isreal(OpSum const &ops) { return ops.isreal(); }
+
 // --- Free operators ---
 
 // Coeff/scalar * Op

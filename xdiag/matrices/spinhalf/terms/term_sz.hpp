@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <xdiag/bits/get_set_bit.hpp>
+#include <xdiag/bits/get_set.hpp>
 #include <xdiag/bits/nonzero.hpp>
 #include <xdiag/matrices/terms/term_diag.hpp>
 #include <xdiag/utils/error.hpp>
@@ -19,7 +19,7 @@ void term_sz(Coeff const &c, Op const &op, basis_t const &basis_in,
   coeff_t H = c.scalar().as<coeff_t>();
   int64_t s = op[0];
   bit_t mask = bit_t();
-  bits::set_bit(mask, s);
+  bits::set(mask, s);
 
   coeff_t val_up = H / 2.;
   coeff_t val_dn = -H / 2.;

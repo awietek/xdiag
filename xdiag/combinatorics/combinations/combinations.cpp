@@ -6,7 +6,7 @@
 
 #include <type_traits>
 #include <xdiag/bits/bitset.hpp>
-#include <xdiag/bits/get_set_bit.hpp>
+#include <xdiag/bits/get_set.hpp>
 #include <xdiag/bits/popcount.hpp>
 #include <xdiag/combinatorics/combinations/enumerate_combinations.hpp>
 #include <xdiag/math/binomial.hpp>

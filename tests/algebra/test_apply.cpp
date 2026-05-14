@@ -9,9 +9,9 @@
 #include <xdiag/algebra/matrix.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
 #include <xdiag/io/read.hpp>
-#include <xdiag/operators/logic/order.hpp>
-#include <xdiag/operators/logic/real.hpp>
-#include <xdiag/operators/logic/symmetrize.hpp>
+#include <xdiag/algebra/order.hpp>
+#include <xdiag/algebra/real.hpp>
+#include <xdiag/algebra/symmetrize.hpp>
 #include <xdiag/states/create_state.hpp>
 #include <xdiag/states/fill.hpp>
 #include <xdiag/states/random_state.hpp>

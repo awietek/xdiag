@@ -51,6 +51,7 @@ public:
 
   // Hermitian conjugate: reverse order and apply hc to each Op
   XDIAG_API Monomial hc() const;
+  XDIAG_API bool isreal() const;
 
 private:
   std::vector<Op> ops_;
@@ -60,6 +61,7 @@ private:
 XDIAG_API Monomial operator*(Op const &lhs, Op const &rhs);
 XDIAG_API Monomial operator*(Op const &lhs, Monomial const &rhs);
 
+XDIAG_API bool isreal(Monomial const &m);
 XDIAG_API std::ostream &operator<<(std::ostream &out, Monomial const &m);
 XDIAG_API std::string to_string(Monomial const &m);
 

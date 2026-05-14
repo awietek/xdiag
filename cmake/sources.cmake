@@ -6,7 +6,6 @@ set(XDIAG_SOURCES
   utils/read_vectors.cpp
   utils/split.cpp
   utils/timing.cpp
-
   io/read.cpp
   io/file_toml.cpp
   io/file_h5.cpp
@@ -31,7 +30,6 @@ set(XDIAG_SOURCES
   math/dot.cpp
   math/norm.cpp
   math/isapprox.cpp
-
   matrices/apply.cpp
   matrices/matrix.cpp
   matrices/sparse/coo_matrix.cpp
@@ -41,7 +39,6 @@ set(XDIAG_SOURCES
   matrices/dispatcher.cpp
   matrices/kernels.cpp
   matrices/terms/non_branching_op.cpp
-
   bits/bitset.cpp
   bits/bitvector.cpp
   bits/bitarray.cpp
@@ -56,7 +53,6 @@ set(XDIAG_SOURCES
   combinatorics/bounded_partitions/bounded_partitions.cpp
   combinatorics/bounded_partitions/count_bounded_partitions.cpp
   combinatorics/bounded_partitions/schaefer_table.cpp
-
   basis/basis.cpp
   basis/basis_onthefly.cpp
   basis/basis_sublattice.cpp
@@ -65,7 +61,6 @@ set(XDIAG_SOURCES
   
   blocks/blocks.cpp
   blocks/spinhalf.cpp
-
   states/product_state.cpp
   states/random_state.cpp
   states/create_state.cpp
@@ -74,31 +69,45 @@ set(XDIAG_SOURCES
   states/dot.cpp
   states/norm.cpp
   states/fill.cpp
-
   random/random_utils.cpp
   random/hash.cpp
-
   operators/coeff.cpp
   operators/monomial.cpp
   operators/op.cpp
   operators/opsum.cpp
-  operators/logic/valid.cpp
-  operators/logic/types.cpp
-  operators/logic/symmetrize.cpp
-  operators/logic/isreal.cpp
-  operators/logic/hc.cpp
-  operators/logic/isapprox.cpp
-  operators/logic/permute.cpp
-  operators/logic/collect.cpp
-  operators/logic/rewrite.cpp
-  operators/logic/combine_matrix_ops.cpp
-  operators/logic/permute_matrix_op.cpp
-  operators/logic/algebra.cpp
-  operators/logic/normal_order.cpp
+  algebra/valid.cpp
+  operators/types.cpp
+  algebra/symmetrize.cpp
+  algebra/hc.cpp
+  algebra/isapprox.cpp
+  algebra/permute.cpp
+  algebra/collect.cpp
+  algebra/rewrite.cpp
+  algebra/combine_matrix_ops.cpp
+  algebra/permute_matrix_op.cpp
+  algebra/op_to_matrix_op.cpp
+  algebra/rules/utils.cpp
+  algebra/rules/id_absorption_rule.cpp
+  algebra/rules/sort_sites_rule.cpp
+  algebra/rules/spinhalf_same_site_rule.cpp
+  algebra/rules/electron_same_site_rule.cpp
+  algebra/rules/tj_same_site_rule.cpp
+  algebra/rules/combine_matrix_rule.cpp
+  algebra/rules/sort_matrix_sites_rule.cpp
+  algebra/rules/spinhalf_sdots_rule.cpp
+  algebra/rules/convert_to_matrix_rule.cpp
+  algebra/rules/spin_expansion_rules.cpp
+  algebra/rules/fermionic_expansion_rules.cpp
+  algebra/rules/tj_expansion_rules.cpp
+  algebra/spin_algebra.cpp
+  algebra/electron_algebra.cpp
+  algebra/tj_algebra.cpp
+  algebra/matrix_algebra.cpp
+  algebra/spinhalf_implementation_algebra.cpp
+  algebra/normal_order.cpp
   operators/qns/nup_ndn.cpp
   operators/qns/block.cpp
   operators/qns/blocks_match.cpp
-
   symmetries/permutation.cpp
   symmetries/permutation_group.cpp
   symmetries/representation.cpp
@@ -119,14 +128,12 @@ set(XDIAG_SOURCES
   algorithms/arnoldi/arnoldi_to_disk.cpp
   algorithms/gram_schmidt/gram_schmidt.cpp
   algorithms/gram_schmidt/orthogonalize.cpp
-
   algorithms/norm_estimate.cpp
   algorithms/time_evolution/time_evolve.cpp
   algorithms/time_evolution/imaginary_time_evolve.cpp
   algorithms/time_evolution/time_evolve_expokit.cpp
   algorithms/time_evolution/evolve_lanczos.cpp
   algorithms/time_evolution/expm.cpp
-
   # algebra/apply_dispatch.cpp
   # algebra/isapprox.cpp
   # algebra/sparse/apply.cpp
@@ -160,11 +167,9 @@ set(XDIAG_SOURCES
   # basis/spinhalf/basis_symmetric_sz.cpp
   # basis/spinhalf/basis_symmetric_no_sz.cpp
   # basis/spinhalf/basis_sublattice.cpp
-
   # basis/tj/basis_tj.cpp
   # basis/tj/basis_np.cpp
   # basis/tj/basis_symmetric_np.cpp
-
   # basis/electron/basis_electron.cpp
   # basis/electron/basis_np.cpp
   # basis/electron/basis_no_np.cpp
@@ -175,19 +180,15 @@ set(XDIAG_SOURCES
   # blocks/spinhalf.cpp
   # blocks/electron.cpp
   # blocks/tj.cpp
-
   # symmetries/operations/symmetry_operations.cpp	
   # symmetries/operations/representative_lookup_table.cpp	
   # symmetries/operations/fermi_sign.cpp
   # symmetries/group_action/group_action.cpp
   # symmetries/group_action/group_action_lookup.cpp
-
-
-
-  # operators/logic/qns.cpp         (depends on blocks)
-  # operators/logic/non_branching_op.cpp
-  # operators/logic/compilation.cpp (depends on blocks)
-  # operators/logic/block.cpp
+  # algebra/qns.cpp         (depends on blocks)
+  # algebra/non_branching_op.cpp
+  # algebra/compilation.cpp (depends on blocks)
+  # algebra/block.cpp
   
   # states/gpwf.cpp
   # states/random_state.cpp
@@ -197,10 +198,7 @@ set(XDIAG_SOURCES
   
   # random/random_utils.cpp
   # random/hash.cpp
-
-
 )
-
 set(XDIAG_DISTRIBUTED_SOURCES
   parallel/mpi/allreduce.cpp
   parallel/mpi/alltoall.cpp
@@ -210,7 +208,6 @@ set(XDIAG_DISTRIBUTED_SOURCES
   parallel/mpi/cdot_distributed.cpp
   parallel/mpi/timing_mpi.cpp
   parallel/mpi/buffer.cpp
-
   basis/spinhalf_distributed/basis_spinhalf_distributed.cpp
   basis/spinhalf_distributed/basis_sz.cpp
   basis/spinhalf_distributed/transpose.cpp
@@ -218,7 +215,6 @@ set(XDIAG_DISTRIBUTED_SOURCES
   
   basis/tj_distributed/basis_tj_distributed.cpp
   basis/tj_distributed/basis_np.cpp
-
   basis/electron_distributed/basis_electron_distributed.cpp
   basis/electron_distributed/basis_np.cpp
   
@@ -226,10 +222,8 @@ set(XDIAG_DISTRIBUTED_SOURCES
   blocks/tj_distributed.cpp
   blocks/electron_distributed.cpp
 )
-
 set(XDIAG_JULIA_SOURCES
   xdiagjl.cpp
-
   algebra/matrix.cpp
   algebra/apply.cpp
   algebra/algebra.cpp
@@ -237,7 +231,6 @@ set(XDIAG_JULIA_SOURCES
   algebra/sparse/csr_matrix.cpp
   algebra/sparse/csc_matrix.cpp
   algebra/sparse/apply.cpp
-
   algorithms/sparse_diag.cpp
   algorithms/lanczos/eigs_lanczos.cpp
   algorithms/lanczos/eigvals_lanczos.cpp
@@ -245,11 +238,9 @@ set(XDIAG_JULIA_SOURCES
   algorithms/time_evolution/imaginary_time_evolve.cpp
   algorithms/time_evolution/time_evolve_expokit.cpp  
   algorithms/time_evolution/evolve_lanczos.cpp
-
   blocks/spinhalf.cpp
   blocks/tj.cpp
   blocks/electron.cpp
-
   io/file_toml.cpp
   io/read.cpp
   
@@ -265,10 +256,8 @@ set(XDIAG_JULIA_SOURCES
   states/product_state.cpp
   states/gpwf.cpp
   states/state.cpp
-
   utils/utils.cpp
   utils/armadillo.cpp
-
   symmetries/permutation.cpp
   symmetries/permutation_group.cpp
   symmetries/representation.cpp

@@ -4,127 +4,72 @@
 
 #include "non_branching_op.hpp"
 
-#include <limits>
 #include <tuple>
-#include <type_traits>
 #include <vector>
 
 #include <xdiag/bits/bitset.hpp>
-#include <xdiag/bits/get_set_bit.hpp>
+#include <xdiag/bits/get_set.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/format.hpp>
 
 namespace xdiag::matrices {
 
-template <typename coeff_t>
-static bool is_non_branching_matrix(arma::Mat<coeff_t> const &mat,
-                                    double precision) {
-  for (arma::uword i = 0; i < mat.n_rows; ++i) {
-    int64_t non_zero_in_row = 0;
-    for (arma::uword j = 0; j < mat.n_cols; ++j) {
-      if (std::abs(mat(i, j)) > precision) {
-        ++non_zero_in_row;
-      }
-    }
-    if (non_zero_in_row > 1) {
-      return false;
-    }
-  }
-  return true;
-}
-
 template <typename bit_t, typename coeff_t>
 NonBranchingOp<bit_t, coeff_t>::NonBranchingOp(
     std::vector<int64_t> const &sites, arma::Mat<coeff_t> const &matrix,
-    double precision) try
-    : sites_(sites), mask_(0), diagonal_(true) {
+    double precision)
+    : sites_(sites), diagonal_(true) {
 
-  if (sites.size() > std::numeric_limits<cbit_t>::digits) {
-    XDIAG_THROW(
-        "Number of sites in NonBranchingOp too large for given bit type");
-  }
-
-  if (!is_non_branching_matrix(matrix, precision)) {
-    XDIAG_THROW("Trying to create a NonBranchingOp from a matrix which is "
-                "branching (i.e. more than one entry per row/column)");
-  }
-
-  // Set mask
-  for (int64_t s : sites) {
-    bits::set_bit(mask_, s);
-  }
-  mask_ = ~mask_;
-
-  // Matrix dimension is 2**(no. sites of op)
   int64_t dim = (int64_t)1 << sites.size();
-  if ((matrix.n_cols != dim) || (matrix.n_rows != dim)) {
+  if ((int64_t)matrix.n_rows != dim || (int64_t)matrix.n_cols != dim) {
     XDIAG_THROW(fmt::format(
-        "Invalid matrix dimension for non-branching Op matrix. Expected "
-        "dim={}, but received n_rows={} and n_cols={}.",
+        "Invalid matrix dimension for non-branching Op. Expected dim={}, "
+        "got n_rows={}, n_cols={}.",
         dim, matrix.n_rows, matrix.n_cols));
   }
 
-  // Set arrays where state is mapped to
-  non_zero_term_ = std::vector<bool>(dim, false);
-  state_applied_ = std::vector<cbit_t>(dim);
-  coeff_ = std::vector<coeff_t>(dim, 0.);
-  for (cbit_t in = 0; in < dim; ++in) {
-    for (cbit_t out = 0; out < dim; ++out) {
+  // Build hops_, check non-branching, detect diagonality in a single pass.
+  hops_.assign(dim, {int64_t(0), coeff_t(0)});
+  std::vector<bool> row_used(dim, false);
+  for (int64_t in = 0; in < dim; ++in) {
+    bool found = false;
+    for (int64_t out = 0; out < dim; ++out) {
       if (std::abs(matrix(out, in)) > precision) {
-        non_zero_term_[in] = true;
-        state_applied_[in] = out;
-        coeff_[in] = matrix(out, in);
-        break;
+        if (found) {
+          XDIAG_THROW(fmt::format(
+              "Matrix is branching: column {} has multiple non-zero entries",
+              in));
+        }
+        if (row_used[out]) {
+          XDIAG_THROW(fmt::format(
+              "Matrix is branching: row {} has multiple non-zero entries",
+              out));
+        }
+        found = true;
+        row_used[out] = true;
+        hops_[in] = {out, matrix(out, in)};
+        if (out != in) {
+          diagonal_ = false;
+        }
       }
     }
   }
-
-  // Determine if diagonal
-  for (cbit_t i = 0; i < dim; ++i) {
-    if ((non_zero_term_[i]) && (state_applied_[i] != i)) {
-      diagonal_ = false;
-      break;
-    }
-  }
-}
-XDIAG_CATCH
-
-template <typename bit_t, typename coeff_t>
-bool NonBranchingOp<bit_t, coeff_t>::isdiagonal() const {
-  return diagonal_;
 }
 
 template <typename bit_t, typename coeff_t>
-bool NonBranchingOp<bit_t, coeff_t>::non_zero_term(cbit_t local_state) const {
-  return non_zero_term_[local_state];
-}
-template <typename bit_t, typename coeff_t>
-coeff_t NonBranchingOp<bit_t, coeff_t>::coeff(cbit_t local_state) const {
-  return coeff_[local_state];
-}
-
-template <typename bit_t, typename coeff_t>
-std::pair<typename NonBranchingOp<bit_t, coeff_t>::cbit_t, coeff_t>
-NonBranchingOp<bit_t, coeff_t>::state_coeff(cbit_t local_state) const {
-  return {state_applied_[local_state], coeff_[local_state]};
-}
-
-template <typename bit_t, typename coeff_t>
-typename NonBranchingOp<bit_t, coeff_t>::cbit_t
-NonBranchingOp<bit_t, coeff_t>::extract(bit_t state) const {
-  cbit_t local_state = 0;
+int64_t NonBranchingOp<bit_t, coeff_t>::extract(bit_t state) const {
+  int64_t local = 0;
   for (int64_t i = 0; i < (int64_t)sites_.size(); ++i) {
-    bits::set_bit(local_state, i, bits::get_bit(state, sites_[i]));
+    bits::set(local, i, bits::get(state, sites_[i]));
   }
-  return local_state;
+  return local;
 }
 
 template <typename bit_t, typename coeff_t>
-bit_t NonBranchingOp<bit_t, coeff_t>::deposit(cbit_t local_state,
+bit_t NonBranchingOp<bit_t, coeff_t>::deposit(int64_t local,
                                               bit_t state) const {
-  state &= mask_; // clear bits on site
   for (int64_t i = 0; i < (int64_t)sites_.size(); ++i) {
-    bits::set_bit(state, sites_[i], bits::get_bit(local_state, i));
+    bits::set(state, sites_[i], bits::get(local, i));
   }
   return state;
 }
@@ -141,14 +86,16 @@ decompose_matrix_to_nonbranching(arma::Mat<coeff_t> const &mat,
 
   std::vector<std::tuple<int64_t, int64_t, coeff_t>> all_entries;
 
-  // Get diagonal elements
+  // Get diagonal elements first so the first non-branching matrix tends to
+  // contain the entire diagonal (so the diagonal fast-path in term_matrix
+  // triggers cleanly).
   for (int64_t i = 0; i < n; ++i) {
     if (std::abs(mat(i, i)) > precision) {
       all_entries.push_back({i, i, mat(i, i)});
     }
   }
 
-  // Get offidagonal elements
+  // Get offdiagonal elements
   for (int64_t n_diag = 1; n_diag < n; ++n_diag) {
     for (int64_t i = 0; i < n - n_diag; ++i) {
       if (std::abs(mat(i, i + n_diag)) > precision) {
@@ -183,8 +130,9 @@ decompose_matrix_to_nonbranching(arma::Mat<coeff_t> const &mat,
       ++i;
     }
 
-    for (int64_t i = delete_entries.size() - 1; i >= 0; --i)
+    for (int64_t i = delete_entries.size() - 1; i >= 0; --i) {
       all_entries.erase(all_entries.begin() + delete_entries[i]);
+    }
 
     // Create non-branching matrix
     arma::Mat<coeff_t> mat_nb(m, n, arma::fill::zeros);
@@ -194,8 +142,7 @@ decompose_matrix_to_nonbranching(arma::Mat<coeff_t> const &mat,
     mats_nb.push_back(mat_nb);
   }
   return mats_nb;
-}
-XDIAG_CATCH
+} XDIAG_CATCH
 
 static std::vector<Matrix>
 decompose_matrix_to_nonbranching(Matrix const &mat, double precision) try {
@@ -214,8 +161,7 @@ decompose_matrix_to_nonbranching(Matrix const &mat, double precision) try {
     }
   }
   return mats;
-}
-XDIAG_CATCH
+} XDIAG_CATCH
 
 template <typename bit_t, typename coeff_t>
 std::vector<NonBranchingOp<bit_t, coeff_t>>
@@ -231,7 +177,7 @@ non_branching_ops(Coeff const &cpl, Op const &op, double precision) try {
     auto mat = op.matrix() * cpl.scalar();
     auto sites = op.sites();
     auto mats_nb = decompose_matrix_to_nonbranching(mat, precision);
-    for (auto m : mats_nb) {
+    for (auto const &m : mats_nb) {
       if constexpr (isreal<coeff_t>()) {
         if (m.isreal()) {
           ops.push_back(NonBranchingOp<bit_t, coeff_t>(sites, m.as<arma::mat>(),
@@ -250,8 +196,7 @@ non_branching_ops(Coeff const &cpl, Op const &op, double precision) try {
         "Cannot convert Op to NonBranchingOps. Op has no matrix defined.");
   }
   return ops;
-}
-XDIAG_CATCH
+} XDIAG_CATCH
 
 #define INSTANTIATE_XDIAG_BASIS_NON_BRANCHING_OP(BIT_TYPE, NUMBER_TYPE)        \
   template class NonBranchingOp<BIT_TYPE, NUMBER_TYPE>;                        \

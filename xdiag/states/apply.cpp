@@ -6,8 +6,7 @@
 
 #include <xdiag/armadillo.hpp>
 #include <xdiag/matrices/apply.hpp>
-#include <xdiag/operators/logic/isapprox.hpp>
-#include <xdiag/operators/logic/isreal.hpp>
+#include <xdiag/algebra/isapprox.hpp>
 #include <xdiag/operators/qns/block.hpp>
 #include <xdiag/operators/qns/blocks_match.hpp>
 #include <xdiag/utils/error.hpp>

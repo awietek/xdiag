@@ -7,7 +7,7 @@
 #include <cstdint>
 #include <vector>
 
-#include <xdiag/bits/get_set_bit.hpp>
+#include <xdiag/bits/get_set.hpp>
 #include <xdiag/combinatorics/combinations/combinations.hpp>
 
 // LinTable<bit_t> is a drop-in replacement for Combinations<bit_t> with O(1)
@@ -47,7 +47,7 @@ public:
   bit_t operator[](int64_t idx) const;
   inline int64_t index(bit_t bits) const {
     return left_indices_[bits >> n_right_] +
-           right_indices_[bits::get_bits(bits, 0, n_right_)];
+           right_indices_[bits::get_range(bits, 0, n_right_)];
   }
   iterator_t begin() const;
   iterator_t end() const;

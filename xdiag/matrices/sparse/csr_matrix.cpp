@@ -12,7 +12,7 @@
 #include <xdiag/matrices/kernels.hpp>
 #include <xdiag/matrices/spinhalf/dispatch_basis.hpp>
 #include <xdiag/matrices/spinhalf/matrix_policy.hpp>
-#include <xdiag/operators/logic/hc.hpp>
+#include <xdiag/algebra/hc.hpp>
 #include <xdiag/operators/qns/block.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/variants.hpp>

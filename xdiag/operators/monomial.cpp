@@ -4,7 +4,7 @@
 
 #include "monomial.hpp"
 
-#include <xdiag/operators/logic/hc.hpp>
+#include <xdiag/algebra/hc.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/to_string_generic.hpp>
 
@@ -72,6 +72,17 @@ Monomial Monomial::hc() const {
   }
   return result;
 }
+
+bool Monomial::isreal() const {
+  for (Op const &op : ops_) {
+    if (!op.isreal()) {
+      return false;
+    }
+  }
+  return true;
+}
+
+bool isreal(Monomial const &m) { return m.isreal(); }
 
 Monomial operator*(Op const &lhs, Op const &rhs) {
   return Monomial({lhs, rhs});

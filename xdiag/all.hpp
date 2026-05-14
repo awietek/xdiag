@@ -23,11 +23,10 @@
 #include <xdiag/matrices/sparse/csc_matrix.hpp>
 #include <xdiag/matrices/sparse/csr_matrix.hpp>
 #include <xdiag/operators/coeff.hpp>
-#include <xdiag/operators/logic/collect.hpp>
-#include <xdiag/operators/logic/hc.hpp>
-#include <xdiag/operators/logic/isapprox.hpp>
-#include <xdiag/operators/logic/isreal.hpp>
-#include <xdiag/operators/logic/symmetrize.hpp>
+#include <xdiag/algebra/collect.hpp>
+#include <xdiag/algebra/hc.hpp>
+#include <xdiag/algebra/isapprox.hpp>
+#include <xdiag/algebra/symmetrize.hpp>
 #include <xdiag/operators/monomial.hpp>
 #include <xdiag/operators/op.hpp>
 #include <xdiag/operators/opsum.hpp>

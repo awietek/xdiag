@@ -15,7 +15,7 @@
 #include <xdiag/algorithms/sparse_diag.hpp>
 #include <xdiag/io/file_toml.hpp>
 #include <xdiag/io/read.hpp>
-#include <xdiag/operators/logic/real.hpp>
+#include <xdiag/algebra/real.hpp>
 #include <xdiag/algebra/isapprox.hpp>
 
 using namespace xdiag;

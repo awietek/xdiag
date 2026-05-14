@@ -10,9 +10,8 @@
 #include <xdiag/algorithms/lanczos/lanczos_convergence.hpp>
 #include <xdiag/math/dot.hpp>
 #include <xdiag/matrices/apply.hpp>
-#include <xdiag/operators/logic/hc.hpp>
-#include <xdiag/operators/logic/isapprox.hpp>
-#include <xdiag/operators/logic/isreal.hpp>
+#include <xdiag/algebra/hc.hpp>
+#include <xdiag/algebra/isapprox.hpp>
 #include <xdiag/states/fill.hpp>
 #include <xdiag/states/random_state.hpp>
 #include <xdiag/utils/timing.hpp>

@@ -9,7 +9,7 @@
 #include <xdiag/algebra/matrix.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
 #include <xdiag/blocks/spinhalf.hpp>
-#include <xdiag/operators/logic/non_branching_op.hpp>
+#include <xdiag/algebra/non_branching_op.hpp>
 #include <xdiag/algebra/isapprox.hpp>
 
 TEST_CASE("non_branching_op", "[operators]") try {

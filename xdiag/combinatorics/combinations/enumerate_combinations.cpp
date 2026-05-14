@@ -7,7 +7,7 @@
 #include <type_traits>
 #include <xdiag/bits/bit_zero_one.hpp>
 #include <xdiag/bits/bitset.hpp>
-#include <xdiag/bits/get_set_bit.hpp>
+#include <xdiag/bits/get_set.hpp>
 #include <xdiag/math/binomial.hpp>
 
 namespace xdiag::combinatorics {
@@ -74,7 +74,7 @@ template <typename bit_t> bit_t next_combination(bit_t v, int64_t n) noexcept {
 template <class bit_t> int64_t rank_combination(bit_t bits, int64_t n) {
   int64_t result = 0, j = 0;
   for (int64_t b = 0; b < n; ++b) {
-    if (bits::get_bit(bits, b)) {
+    if (bits::get(bits, b)) {
       result += math::binomial(b, j + 1);
       ++j;
     }
@@ -99,7 +99,7 @@ bit_t nth_combination(int64_t n, int64_t k, int64_t idx) {
     int64_t b = j - 1;
     while (math::binomial(b + 1, j) <= remaining)
       ++b;
-    bits::set_bit(result, b);
+    bits::set(result, b);
     remaining -= math::binomial(b, j);
   }
   return result;

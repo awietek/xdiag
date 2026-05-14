@@ -14,7 +14,7 @@ ProductState to_product_state(enumeration_t const &enumeration, int64_t idx,
   ProductState ps(nsites);
   auto const b = enumeration[idx];
   for (int64_t i = 0; i < nsites; ++i) {
-    ps[i] = dict[bits::get_bit(b, i)];
+    ps[i] = dict[bits::get(b, i)];
   }
   return ps;
 }

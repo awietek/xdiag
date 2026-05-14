@@ -12,7 +12,7 @@
 #include <xdiag/blocks/electron.hpp>
 #include <xdiag/common.hpp>
 #include <xdiag/io/read.hpp>
-#include <xdiag/operators/logic/real.hpp>
+#include <xdiag/algebra/real.hpp>
 #include <xdiag/utils/xdiag_show.hpp>
 
 #include "../blocks/electron/testcases_electron.hpp"

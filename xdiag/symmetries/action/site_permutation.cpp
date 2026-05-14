@@ -8,7 +8,7 @@
 
 #include <xdiag/bits/bitarray.hpp>
 #include <xdiag/bits/bitset.hpp>
-#include <xdiag/bits/get_set_bit.hpp>
+#include <xdiag/bits/get_set.hpp>
 
 namespace xdiag::symmetries {
 
@@ -36,7 +36,7 @@ bit_t SitePermutation::apply(int64_t sym, bit_t const &bits) const {
   }
   const int64_t *permutation = group_.ptr(sym);
   for (int64_t i = 0; i < nsites_; ++i) {
-    bits::set_bit(bitsr, permutation[i], bits::get_bit(bits, i));
+    bits::set(bitsr, permutation[i], bits::get(bits, i));
   }
   return bitsr;
 }

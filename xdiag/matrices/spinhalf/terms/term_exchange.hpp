@@ -6,7 +6,7 @@
 
 #include <utility>
 
-#include <xdiag/bits/get_set_bit.hpp>
+#include <xdiag/bits/get_set.hpp>
 #include <xdiag/bits/popcount.hpp>
 #include <xdiag/matrices/terms/term_offdiag.hpp>
 
@@ -27,8 +27,8 @@ void term_exchange(Coeff const &c, Op const &op, basis_t const &basis_in,
   }
 
   bit_t mask = bit_t();
-  bits::set_bit(mask, s1);
-  bits::set_bit(mask, s2);
+  bits::set(mask, s1);
+  bits::set(mask, s2);
 
   auto non_zero_term = [&](bit_t spins) -> bool {
     return bits::popcount(spins & mask) & 1;
@@ -47,7 +47,7 @@ void term_exchange(Coeff const &c, Op const &op, basis_t const &basis_in,
     term_offdiag(
         basis_in, basis_out, non_zero_term,
         [&](bit_t spins) -> std::pair<bit_t, coeff_t> {
-          return {spins ^ mask, bits::get_bit(spins, s1) ? Jhalf : Jhalf_conj};
+          return {spins ^ mask, bits::get(spins, s1) ? Jhalf : Jhalf_conj};
         },
         fill);
   }

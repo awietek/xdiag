@@ -10,8 +10,8 @@
 #include <xdiag/math/dot.hpp>
 #include <xdiag/math/norm.hpp>
 #include <xdiag/matrices/apply.hpp>
-#include <xdiag/operators/logic/hc.hpp>
-#include <xdiag/operators/logic/isapprox.hpp>
+#include <xdiag/algebra/hc.hpp>
+#include <xdiag/algebra/isapprox.hpp>
 #include <xdiag/states/norm.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/timing.hpp>

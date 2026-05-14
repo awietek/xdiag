@@ -14,8 +14,8 @@
 #include <xdiag/algorithms/sparse_diag.hpp>
 #include <xdiag/algorithms/lanczos/eigvals_lanczos.hpp>
 #include <xdiag/io/read.hpp>
-#include <xdiag/operators/logic/real.hpp>
-#include <xdiag/operators/logic/symmetrize.hpp>
+#include <xdiag/algebra/real.hpp>
+#include <xdiag/algebra/symmetrize.hpp>
 
 using namespace xdiag;
 

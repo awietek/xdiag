@@ -6,6 +6,7 @@
 
 #include <string>
 
+#include <xdiag/operators/types.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/format.hpp>
 #include <xdiag/utils/to_string_generic.hpp>
@@ -78,6 +79,15 @@ std::vector<int64_t> const &Op::sites() const try {
   }
 }
 XDIAG_CATCH
+
+bool Op::isreal() const {
+  if (hasmatrix()) {
+    return matrix_->isreal();
+  }
+  return is_real_type(type_);
+}
+
+bool isreal(Op const &op) { return op.isreal(); }
 
 bool Op::operator==(Op const &rhs) const {
   return (type_ == rhs.type_) && (sites_ == rhs.sites_) &&

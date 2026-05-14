@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include <xdiag/operators/logic/isreal.hpp>
 #include <xdiag/operators/opsum.hpp>
 #include <xdiag/operators/qns/blocks_match.hpp>
 #include <xdiag/utils/error.hpp>

@@ -6,7 +6,7 @@
 
 #include <utility>
 
-#include <xdiag/bits/get_set_bit.hpp>
+#include <xdiag/bits/get_set.hpp>
 #include <xdiag/bits/nonzero.hpp>
 #include <xdiag/matrices/terms/term_offdiag.hpp>
 #include <xdiag/utils/error.hpp>
@@ -21,7 +21,7 @@ void term_spsm(Coeff const &c, Op const &op, basis_t const &basis_in,
   coeff_t J = c.scalar().as<coeff_t>();
   int64_t s = op[0];
   bit_t mask = bit_t();
-  bits::set_bit(mask, s);
+  bits::set(mask, s);
 
   if (op.type() == "S+") {
     auto non_zero_term = [&](bit_t spins) {

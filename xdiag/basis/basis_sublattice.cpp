@@ -7,7 +7,7 @@
 #include <algorithm>
 #include <limits>
 
-#include <xdiag/bits/get_set_bit.hpp>
+#include <xdiag/bits/get_set.hpp>
 #include <xdiag/bits/popcount.hpp>
 #include <xdiag/combinatorics/combinations/combinations.hpp>
 #include <xdiag/combinatorics/subsets/subsets.hpp>
@@ -348,7 +348,7 @@ ProductState BasisSublattice<bit_t, n_sublat>::product_state(
   bit_t b = reps_[idx];
   ProductState ps(nsites_);
   for (int64_t i = 0; i < nsites_; ++i) {
-    ps[i] = dict[bits::get_bit(b, i)];
+    ps[i] = dict[bits::get(b, i)];
   }
   return ps;
 }

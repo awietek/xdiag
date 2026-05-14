@@ -6,7 +6,7 @@
 
 #include <iostream>
 #include <vector>
-#include <xdiag/operators/logic/collect.hpp>
+#include <xdiag/algebra/collect.hpp>
 #include <xdiag/operators/opsum.hpp>
 #include <xdiag/utils/error.hpp>
 

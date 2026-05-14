@@ -12,9 +12,8 @@
 #include <xdiag/algorithms/lanczos/lanczos_convergence.hpp>
 #include <xdiag/algorithms/time_evolution/exp_sym_v.hpp>
 #include <xdiag/matrices/apply.hpp>
-#include <xdiag/operators/logic/hc.hpp>
-#include <xdiag/operators/logic/isapprox.hpp>
-#include <xdiag/operators/logic/isreal.hpp>
+#include <xdiag/algebra/hc.hpp>
+#include <xdiag/algebra/isapprox.hpp>
 #include <xdiag/utils/timing.hpp>
 
 namespace xdiag {

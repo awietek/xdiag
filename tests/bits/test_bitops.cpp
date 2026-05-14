@@ -7,7 +7,7 @@
 #include <random>
 
 #include <xdiag/bits/extract_deposit.hpp>
-#include <xdiag/bits/get_set_bit.hpp>
+#include <xdiag/bits/get_set.hpp>
 #include <xdiag/bits/popcount.hpp>
 #include <xdiag/utils/logger.hpp>
 #include <xdiag/utils/timing.hpp>
@@ -120,7 +120,7 @@ template <typename bit_t> void test_bitops() {
 
     time = rightnow();
     for (int i = 0; i < N; ++i) {
-      gbits2[i] = get_bit(v1[i], n);
+      gbits2[i] = get(v1[i], n);
     }
     if (do_timing)
       timing(time, rightnow(), "gbit (fast)", 1);
@@ -147,7 +147,7 @@ template <typename bit_t> void test_bitops() {
 
     time = rightnow();
     for (int i = 0; i < N; ++i) {
-      gbitss2[i] = get_bits(v1[i], n, l);
+      gbitss2[i] = get_range(v1[i], n, l);
     }
     if (do_timing)
       timing(time, rightnow(), "gbitss (fast)", 1);

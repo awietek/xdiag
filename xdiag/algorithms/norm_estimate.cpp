@@ -8,7 +8,7 @@
 // #include <xdiag/algebra/sparse/logic.hpp>
 #include <xdiag/math/norm.hpp>
 #include <xdiag/matrices/apply.hpp>
-#include <xdiag/operators/logic/hc.hpp>
+#include <xdiag/algebra/hc.hpp>
 #include <xdiag/random/hash.hpp>
 #include <xdiag/utils/timing.hpp>
 #include <xdiag/utils/error.hpp>

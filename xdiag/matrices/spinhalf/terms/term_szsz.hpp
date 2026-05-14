@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <xdiag/bits/get_set_bit.hpp>
+#include <xdiag/bits/get_set.hpp>
 #include <xdiag/bits/popcount.hpp>
 #include <xdiag/matrices/terms/term_diag.hpp>
 #include <xdiag/utils/error.hpp>
@@ -27,8 +27,8 @@ void term_szsz(Coeff const &c, Op const &op, basis_t const &basis_in,
   coeff_t val_diff = -J / 4.0;
 
   bit_t mask = bit_t();
-  bits::set_bit(mask, op[0]);
-  bits::set_bit(mask, op[1]);
+  bits::set(mask, op[0]);
+  bits::set(mask, op[1]);
 
   term_diag(
       basis_in, basis_out,

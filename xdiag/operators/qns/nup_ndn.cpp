@@ -6,7 +6,7 @@
 
 #include <xdiag/armadillo.hpp>
 #include <xdiag/bits/popcount.hpp>
-#include <xdiag/operators/logic/valid.hpp>
+#include <xdiag/algebra/valid.hpp>
 #include <xdiag/utils/error.hpp>
 
 namespace xdiag::operators {

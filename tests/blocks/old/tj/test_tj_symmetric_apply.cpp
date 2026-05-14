@@ -13,7 +13,7 @@
 #include <xdiag/algebra/matrix.hpp>
 #include <xdiag/algorithms/sparse_diag.hpp>
 #include <xdiag/io/read.hpp>
-#include <xdiag/operators/logic/real.hpp>
+#include <xdiag/algebra/real.hpp>
 
 using namespace xdiag;
 

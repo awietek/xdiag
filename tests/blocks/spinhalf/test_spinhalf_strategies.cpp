@@ -17,7 +17,6 @@
 #include <xdiag/math/isapprox.hpp>
 #include <xdiag/matrices/apply.hpp>
 #include <xdiag/matrices/matrix.hpp>
-#include <xdiag/operators/logic/isreal.hpp>
 #include <xdiag/utils/logger.hpp>
 
 using namespace xdiag;

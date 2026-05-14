@@ -7,7 +7,7 @@
 #include <cstddef>
 #include <string_view>
 
-#include <xdiag/bits/get_set_bit.hpp>
+#include <xdiag/bits/get_set.hpp>
 #include <xdiag/states/product_state.hpp>
 
 namespace xdiag::basis {
