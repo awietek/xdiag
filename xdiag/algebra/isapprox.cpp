@@ -7,6 +7,7 @@
 #include <map>
 #include <set>
 
+#include <xdiag/algebra/normal_order.hpp>
 #include <xdiag/math/matrix.hpp>
 #include <xdiag/math/scalar.hpp>
 #include <xdiag/operators/monomial.hpp>
@@ -15,16 +16,17 @@
 namespace xdiag {
 
 bool isapprox(Op const &op1, Op const &op2, double rtol, double atol) {
-  if (op1.type() != op2.type())
+  if (op1.type() != op2.type()) {
     return false;
-  if (op1.hassites() != op2.hassites())
+  } else if (op1.hassites() != op2.hassites()) {
     return false;
-  if (op1.hassites() && op1.sites() != op2.sites())
+  } else if (op1.hassites() && op1.sites() != op2.sites()) {
     return false;
-  if (op1.hasmatrix() != op2.hasmatrix())
+  } else if (op1.hasmatrix() != op2.hasmatrix()) {
     return false;
-  if (op1.hasmatrix())
+  } else if (op1.hasmatrix()) {
     return xdiag::isapprox(op1.matrix(), op2.matrix(), rtol, atol);
+  }
   return true;
 }
 
@@ -42,10 +44,10 @@ static std::map<Monomial, Scalar> to_map(OpSum const &ops) {
   return m;
 }
 
-bool isapprox(OpSum const &ops1, OpSum const &ops2, double rtol,
-              double atol) try {
-  auto map1 = to_map(ops1);
-  auto map2 = to_map(ops2);
+bool isapprox(OpSum const &ops1, OpSum const &ops2,
+              algebra::Algebra const &algebra, double rtol, double atol) try {
+  std::map<Monomial, Scalar> map1 = to_map(algebra::normal_order(ops1, algebra));
+  std::map<Monomial, Scalar> map2 = to_map(algebra::normal_order(ops2, algebra));
 
   // Collect all monomials
   std::set<Monomial> all;
@@ -65,16 +67,18 @@ bool isapprox(OpSum const &ops1, OpSum const &ops2, double rtol,
 XDIAG_CATCH
 
 std::optional<Scalar> isapprox_multiple(OpSum const &ops1, OpSum const &ops2,
+                                        algebra::Algebra const &algebra,
                                         double rtol, double atol) try {
-  auto map1 = to_map(ops1);
-  auto map2 = to_map(ops2);
+  std::map<Monomial, Scalar> map1 = to_map(algebra::normal_order(ops1, algebra));
+  std::map<Monomial, Scalar> map2 = to_map(algebra::normal_order(ops2, algebra));
 
   std::set<Monomial> all;
-  for (auto const &[m, c] : map1)
+  for (auto const &[m, c] : map1) {
     all.insert(m);
-  for (auto const &[m, c] : map2)
+  }
+  for (auto const &[m, c] : map2) {
     all.insert(m);
-
+  }
   // Find lambda such that ops1 = lambda * ops2
   std::optional<Scalar> lambda;
   for (auto const &m : all) {
@@ -84,11 +88,12 @@ std::optional<Scalar> isapprox_multiple(OpSum const &ops1, OpSum const &ops2,
     bool z1 = xdiag::isapprox(c1, Scalar(0.0), rtol, atol);
     bool z2 = xdiag::isapprox(c2, Scalar(0.0), rtol, atol);
 
-    if (z1 && z2)
+    if (z1 && z2) {
       continue;
-    if (z1 != z2)
+    }
+    if (z1 != z2) {
       return std::nullopt;
-
+    }
     Scalar ratio = c1 / c2;
     if (!lambda) {
       lambda = ratio;

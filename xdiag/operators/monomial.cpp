@@ -4,7 +4,7 @@
 
 #include "monomial.hpp"
 
-#include <xdiag/algebra/hc.hpp>
+#include <xdiag/operators/hc.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/to_string_generic.hpp>
 

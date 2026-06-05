@@ -5,50 +5,18 @@
 #pragma once
 
 #include <xdiag/operators/opsum.hpp>
-#include <xdiag/operators/qns/blocks_match.hpp>
-#include <xdiag/utils/error.hpp>
-#include <xdiag/utils/format.hpp>
 
 namespace xdiag {
 
+// Validates the inputs of a sparse-matrix construction before building:
+//   - the zero index i0 is 0 or 1,
+//   - ops maps block_in into block_out's symmetry sector (blocks_match),
+//   - a real matrix (coeff_t real) is only requested for real ops and blocks,
+//   - the block dimensions fit into the index type idx_t.
+// Throws on any violation. Defined for each (idx_t, coeff_t, block_t) used by
+// the sparse-matrix builders (see explicit instantiations in valid.cpp).
 template <typename idx_t, typename coeff_t, typename block_t>
-inline void check_valid_sparse_matrix(OpSum const &ops, block_t const &block_in,
-                                      block_t block_out, idx_t i0) try {
-
-  if (!((i0 == 0) || (i0 == 1))) {
-    XDIAG_THROW(fmt::format(
-        "Invalid zero index i0. Must be either 0 or 1, but got i0={}", i0));
-  }
-
-  // Check if ops and blocks are compatible
-  if (!blocks_match(ops, block_in, block_out)) {
-    XDIAG_THROW("Cannot create a sparse matrix on blocks. The resulting block "
-                "is not in "
-                "the correct symmetry sector. Please check the quantum numbers "
-                "of the output block.");
-  }
-
-  // Check if real matrix can be created
-  if constexpr (isreal<coeff_t>()) {
-    if (!isreal(ops)) {
-      XDIAG_THROW(
-          "Cannot create a real sparse matrix from an Op or OpSum which "
-          "is complex.");
-    }
-    if (!isreal(block_in) || !isreal(block_out)) {
-      XDIAG_THROW("Cannot create a real sparse matrix when a block is complex.")
-    }
-  }
-
-  int64_t m = block_out.size();
-  int64_t n = block_in.size();
-  if ((m > std::numeric_limits<idx_t>::max()) ||
-      (n > std::numeric_limits<idx_t>::max())) {
-    XDIAG_THROW(
-        "Block is too large for index type which attempts to hold indices. "
-        "Consider using a larger index type, e.g. 64 bit integers");
-  }
-}
-XDIAG_CATCH
+void check_valid_sparse_matrix(OpSum const &ops, block_t const &block_in,
+                               block_t block_out, idx_t i0);
 
 } // namespace xdiag

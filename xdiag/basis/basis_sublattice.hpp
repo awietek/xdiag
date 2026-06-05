@@ -28,24 +28,23 @@ public:
       utils::get_type_name<BasisSublattice<bit_t, n_sublat>>();
 
   BasisSublattice() = default;
-  BasisSublattice(Representation const &irrep);
-  BasisSublattice(int64_t nup, Representation const &irrep);
+  BasisSublattice(PermutationGroup const &group, Vector const &characters);
+  BasisSublattice(int64_t nup, PermutationGroup const &group,
+                  Vector const &characters);
 
   iterator_t begin() const;
   iterator_t end() const;
+  int64_t nsites() const;
   int64_t size() const override;
+  int64_t d() const; // Local Hilbert space dimension per site
   int64_t dim() const;
+  Vector const& characters() const;
+  symmetries::SitePermutationSublattice<bit_t, n_sublat> const& action() const;
 
   int64_t index(bit_t state) const;
   inline bit_t operator[](int64_t idx) const { return reps_[idx]; }
   inline double norm(int64_t idx) const { return norms_[idx]; }
   inline double inv_norm(int64_t idx) const { return 1.0 / norms_[idx]; }
-
-  int64_t nsites() const;
-  int64_t nup() const;
-
-  Representation const &irrep() const;
-  symmetries::SitePermutationSublattice<bit_t, n_sublat> const &action() const;
 
   ProductState
   product_state(int64_t idx,
@@ -55,12 +54,14 @@ public:
   bool operator!=(BasisSublattice<bit_t, n_sublat> const &rhs) const;
 
 private:
+  PermutationGroup group_;
+  symmetries::SitePermutationSublattice<bit_t, n_sublat> action_;
+  Vector characters_;
+
   int64_t nsites_;
   int64_t nup_;
   int64_t n_postfix_bits_;
 
-  Representation irrep_;
-  symmetries::SitePermutationSublattice<bit_t, n_sublat> action_;
   std::vector<bit_t> reps_;
   std::vector<double> norms_;
   ska::flat_hash_map<bit_t, gsl::span<bit_t const>> rep_search_range_;

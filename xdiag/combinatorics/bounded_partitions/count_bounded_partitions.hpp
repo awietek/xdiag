@@ -9,10 +9,10 @@
 namespace xdiag::combinatorics {
 
 // ---------------------------------------------------------------------------
-// Count weak compositions of total into n parts each in {0, ..., bound-1}.
-// Inclusion-exclusion: sum_{k=0}^{K} (-1)^k C(n,k) C(total-k*bound+n-1, n-1)
+// Count weak compositions of total into n parts each in {0, ..., d-1}.
+// Inclusion-exclusion: sum_{k=0}^{K} (-1)^k C(n,k) C(total-k*d+n-1, n-1)
 // ---------------------------------------------------------------------------
-int64_t count_bounded_partitions(int64_t n, int64_t total, int64_t bound);
+int64_t count_bounded_partitions(int64_t n, int64_t total, int64_t d);
 
 // ---------------------------------------------------------------------------
 // Compute the sequence at linear index idx in rlex order.
@@ -21,7 +21,7 @@ int64_t count_bounded_partitions(int64_t n, int64_t total, int64_t bound);
 // within the block for v.
 // ---------------------------------------------------------------------------
 template <typename bitarray_t>
-bitarray_t nth_bounded_partition(int64_t n, int64_t total, int64_t bound,
+bitarray_t nth_bounded_partition(int64_t n, int64_t total, int64_t d,
                                  int64_t idx);
 
 // ---------------------------------------------------------------------------
@@ -29,7 +29,7 @@ bitarray_t nth_bounded_partition(int64_t n, int64_t total, int64_t bound,
 // Inverse of nth_bounded_partition.
 // ---------------------------------------------------------------------------
 template <typename bitarray_t>
-int64_t rank_bounded_partition(int64_t n, int64_t total, int64_t bound,
+int64_t rank_bounded_partition(int64_t n, int64_t total, int64_t d,
                                bitarray_t seq);
 
 } // namespace xdiag::combinatorics

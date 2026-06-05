@@ -59,9 +59,11 @@ void test_sublattice_no_sz(Representation const &irrep) {
   using namespace basis;
   using namespace combinatorics;
 
-  auto basis_sl = BasisSublattice<bit_t, n_sublat>(irrep);
-  auto basis_ref =
-      BasisSymmetric<Subsets<bit_t>>(Subsets<bit_t>(irrep.group().nsites()), irrep);
+  auto basis_sl =
+      BasisSublattice<bit_t, n_sublat>(irrep.group(), irrep.characters());
+  auto basis_ref = BasisSymmetric<Subsets<bit_t>>(
+      Subsets<bit_t>(irrep.group().nsites()), irrep.group(),
+      irrep.characters());
 
   compare_with_reference(basis_sl, basis_ref);
 
@@ -76,9 +78,11 @@ void test_sublattice_sz(int64_t nup, Representation const &irrep) {
   using namespace basis;
   using namespace combinatorics;
 
-  auto basis_sl = BasisSublattice<bit_t, n_sublat>(nup, irrep);
+  auto basis_sl = BasisSublattice<bit_t, n_sublat>(nup, irrep.group(),
+                                                   irrep.characters());
   auto basis_ref = BasisSymmetric<Combinations<bit_t>>(
-      Combinations<bit_t>(irrep.group().nsites(), nup), irrep);
+      Combinations<bit_t>(irrep.group().nsites(), nup), irrep.group(),
+      irrep.characters());
 
   compare_with_reference(basis_sl, basis_ref);
 

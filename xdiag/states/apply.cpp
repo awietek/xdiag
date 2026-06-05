@@ -4,28 +4,34 @@
 
 #include "apply.hpp"
 
-#include <xdiag/armadillo.hpp>
-#include <xdiag/matrices/apply.hpp>
 #include <xdiag/algebra/isapprox.hpp>
-#include <xdiag/operators/qns/block.hpp>
-#include <xdiag/operators/qns/blocks_match.hpp>
+#include <xdiag/armadillo.hpp>
+#include <xdiag/blocks/blocks.hpp>
+#include <xdiag/matrices/apply.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/format.hpp>
 
 namespace xdiag {
 
-template <typename op_t> State apply(op_t const &ops, State const &v) try {
+State apply(Op const &op, State const &v) try { return apply(OpSum(op), v); }
+XDIAG_CATCH
+State apply(Monomial const &mono, State const &v) try {
+  return apply(OpSum(mono), v);
+}
+XDIAG_CATCH
+
+State apply(OpSum const &ops, State const &v) try {
   // invalid v
   if (!isvalid(v)) {
     return State();
   }
 
   // ops is zero
-  if (isapprox(OpSum(ops), OpSum())) {
+  if (empty(ops)) {
     return State();
   }
 
-  auto blockr = block(OpSum(ops), v.block());
+  auto blockr = block(ops, v.block());
   bool real = isreal(ops) && isreal(v);
   auto w = State(blockr, real, v.ncols());
   apply(ops, v, w);
@@ -33,16 +39,24 @@ template <typename op_t> State apply(op_t const &ops, State const &v) try {
 }
 XDIAG_CATCH
 
-template <typename op_t>
-void apply(op_t const &ops, State const &v, State &w) try {
+void apply(Op const &op, State const &v, State &w) try {
+  apply(OpSum(op), v, w);
+}
+XDIAG_CATCH
+void apply(Monomial const &mono, State const &v, State &w) try {
+  apply(OpSum(mono), v, w);
+}
+XDIAG_CATCH
+
+void apply(OpSum const &ops, State const &v, State &w) try {
 
   if (!isvalid(v)) {
     w = State();
-  } else if (isapprox(OpSum(ops), OpSum())) { // ops is zero
+  } else if (empty(ops)) { // ops is zero
     w = State();
   } else {
 
-    if (!blocks_match(OpSum(ops), v.block(), w.block())) {
+    if (!blocks_match(ops, v.block(), w.block())) {
       XDIAG_THROW(
           "Cannot apply OpSum to State. The resulting state is not in "
           "the correct symmetry sector. Please check the quantum numbers "
@@ -134,10 +148,5 @@ void apply(op_t const &ops, State const &v, State &w) try {
   }
 }
 XDIAG_CATCH
-
-template State apply(Op const &, State const &);
-template State apply(OpSum const &, State const &);
-template void apply(Op const &, State const &, State &);
-template void apply(OpSum const &, State const &, State &);
 
 } // namespace xdiag

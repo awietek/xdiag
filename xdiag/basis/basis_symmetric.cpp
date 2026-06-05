@@ -13,8 +13,10 @@ namespace xdiag::basis {
 
 template <typename enumeration_t>
 BasisSymmetric<enumeration_t>::BasisSymmetric(enumeration_t const &enumeration,
-                                              Representation const &irrep) try
-    : enumeration_(enumeration), irrep_(irrep), table_(enumeration, irrep) {}
+                                              PermutationGroup const &group,
+                                              Vector const &characters) try
+    : enumeration_(enumeration), group_(group), characters_(characters),
+      table_(enumeration, group, characters) {}
 XDIAG_CATCH
 
 template <typename enumeration_t>
@@ -28,8 +30,18 @@ int64_t BasisSymmetric<enumeration_t>::nsites() const {
 }
 
 template <typename enumeration_t>
-Representation const &BasisSymmetric<enumeration_t>::irrep() const {
-  return irrep_;
+int64_t BasisSymmetric<enumeration_t>::d() const {
+  return enumeration_.d();
+}
+
+template <typename enumeration_t>
+PermutationGroup const &BasisSymmetric<enumeration_t>::group() const {
+  return group_;
+}
+
+template <typename enumeration_t>
+Vector const &BasisSymmetric<enumeration_t>::characters() const {
+  return characters_;
 }
 
 template <typename enumeration_t>
@@ -53,7 +65,8 @@ ProductState BasisSymmetric<enumeration_t>::product_state(
 template <typename enumeration_t>
 bool BasisSymmetric<enumeration_t>::operator==(
     BasisSymmetric<enumeration_t> const &rhs) const {
-  return (irrep_ == rhs.irrep_) && (enumeration_ == rhs.enumeration_);
+  return (group_ == rhs.group_) && (characters_ == rhs.characters_) &&
+         (enumeration_ == rhs.enumeration_);
 }
 
 template <typename enumeration_t>

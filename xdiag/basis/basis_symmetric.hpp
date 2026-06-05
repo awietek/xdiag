@@ -11,8 +11,9 @@
 #include <vector>
 
 #include <xdiag/basis/basis.hpp>
+#include <xdiag/math/vector.hpp>
 #include <xdiag/states/product_state.hpp>
-#include <xdiag/symmetries/representation.hpp>
+#include <xdiag/symmetries/permutation_group.hpp>
 #include <xdiag/symmetries/tables/representative_table.hpp>
 #include <xdiag/utils/likely.hpp>
 #include <xdiag/utils/type_name.hpp>
@@ -30,11 +31,14 @@ public:
       utils::get_type_name<BasisSymmetric<enumeration_t>>();
 
   BasisSymmetric() = default;
-  BasisSymmetric(enumeration_t const &enumeration, Representation const &irrep);
+  BasisSymmetric(enumeration_t const &enumeration,
+                 PermutationGroup const &group, Vector const &characters);
 
   int64_t size() const override;
   int64_t nsites() const;
-  Representation const &irrep() const;
+  int64_t d() const; // Local Hilbert space dimension per site
+  PermutationGroup const &group() const;
+  Vector const &characters() const;
 
   // Returns {raw_rep_idx, sym, norm_out}.
   // raw_rep_idx == 0 means zero-norm (invalid); actual index is raw_rep_idx
@@ -70,7 +74,8 @@ public:
 
 private:
   enumeration_t enumeration_;
-  Representation irrep_;
+  PermutationGroup group_;
+  Vector characters_;
   table_t table_;
 };
 

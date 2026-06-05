@@ -90,6 +90,7 @@ public:
   XDIAG_API bool operator!=(OpSum const &rhs) const;
 
   XDIAG_API bool isreal() const;
+  XDIAG_API bool empty() const;
 
 private:
   std::vector<Term> terms_;
@@ -148,6 +149,8 @@ XDIAG_API OpSum operator*(Op const &lhs, OpSum const &rhs);
 XDIAG_API OpSum operator*(Monomial const &lhs, OpSum const &rhs);
 
 XDIAG_API bool isreal(OpSum const &ops);
+XDIAG_API bool empty(OpSum const &ops);
+
 XDIAG_API std::ostream &operator<<(std::ostream &out, OpSum const &ops);
 XDIAG_API std::string to_string(OpSum const &ops);
 

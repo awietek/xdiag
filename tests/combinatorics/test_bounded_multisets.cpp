@@ -33,7 +33,7 @@ template <typename bitarray_t> void test_size(int64_t bound) {
   for (int n = 0; n <= 4; ++n) {
     BoundedMultisets<bitarray_t> ms(n, bound);
     REQUIRE(ms.n() == n);
-    REQUIRE(ms.bound() == bound);
+    REQUIRE(ms.d() == bound);
     REQUIRE(ms.size() == ipow(bound, n));
 
     int64_t ctr = 0;

@@ -12,7 +12,6 @@
 #include <xdiag/operators/monomial.hpp>
 #include <xdiag/operators/op.hpp>
 #include <xdiag/operators/opsum.hpp>
-#include <xdiag/operators/qns/block.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/variants.hpp>
 
@@ -31,7 +30,8 @@
 //     kernel can fill it without owning the storage.
 //
 // Layer 2 — Basis type (runtime dispatch via dispatch_basis):
-//   matrix(OpSum, Spinhalf, Spinhalf, coeff_t*)   [public: used by Julia wrapper]
+//   matrix(OpSum, Spinhalf, Spinhalf, coeff_t*)   [public: used by Julia
+//   wrapper]
 //     dispatch_basis resolves the shared_ptr<Basis> stored in each Spinhalf
 //     to a concrete BasisOnTheFly<...> type via a type-id lookup table, then
 //     calls the lambda with the concrete basis objects.
@@ -53,8 +53,8 @@ void matrix(OpSum const &ops, Spinhalf const &block_in,
   matrices::spinhalf::dispatch_basis(
       block_in, block_out, [&](auto const &basis_in, auto const &basis_out) {
         // Kernel: definition is in kernels.cpp, instantiated per basis type.
-        matrices::matrix<matrices::spinhalf::MatrixPolicy>(
-            ops, basis_in, basis_out, mat);
+        matrices::matrix<matrices::spinhalf::MatrixPolicy>(ops, basis_in,
+                                                           basis_out, mat);
       });
 }
 XDIAG_CATCH

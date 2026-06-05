@@ -9,6 +9,7 @@
 
 #include <xdiag/bits/bitset.hpp>
 #include <xdiag/bits/get_set.hpp>
+#include <xdiag/math/ipow.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/format.hpp>
 
@@ -17,10 +18,10 @@ namespace xdiag::matrices {
 template <typename bit_t, typename coeff_t>
 NonBranchingOp<bit_t, coeff_t>::NonBranchingOp(
     std::vector<int64_t> const &sites, arma::Mat<coeff_t> const &matrix,
-    double precision)
-    : sites_(sites), diagonal_(true) {
+    int64_t d, double precision)
+    : sites_(sites), d_(d), diagonal_(true) {
 
-  int64_t dim = (int64_t)1 << sites.size();
+  int64_t dim = math::ipow(d, (int64_t)sites.size());
   if ((int64_t)matrix.n_rows != dim || (int64_t)matrix.n_cols != dim) {
     XDIAG_THROW(fmt::format(
         "Invalid matrix dimension for non-branching Op. Expected dim={}, "
@@ -59,8 +60,8 @@ NonBranchingOp<bit_t, coeff_t>::NonBranchingOp(
 template <typename bit_t, typename coeff_t>
 int64_t NonBranchingOp<bit_t, coeff_t>::extract(bit_t state) const {
   int64_t local = 0;
-  for (int64_t i = 0; i < (int64_t)sites_.size(); ++i) {
-    bits::set(local, i, bits::get(state, sites_[i]));
+  for (int64_t i = (int64_t)sites_.size() - 1; i >= 0; --i) {
+    local = local * d_ + bits::get(state, sites_[i]);
   }
   return local;
 }
@@ -69,7 +70,8 @@ template <typename bit_t, typename coeff_t>
 bit_t NonBranchingOp<bit_t, coeff_t>::deposit(int64_t local,
                                               bit_t state) const {
   for (int64_t i = 0; i < (int64_t)sites_.size(); ++i) {
-    bits::set(state, sites_[i], bits::get(local, i));
+    bits::set(state, sites_[i], local % d_);
+    local /= d_;
   }
   return state;
 }
@@ -107,37 +109,32 @@ decompose_matrix_to_nonbranching(arma::Mat<coeff_t> const &mat,
     }
   }
 
-  // Reduce to minimal number of non-branching terms
+  // Reduce to minimal number of non-branching terms via greedy bipartite
+  // matching: each pass picks the maximum independent set of entries (no
+  // shared row, no shared column), produces one non-branching matrix.
   std::vector<arma::Mat<coeff_t>> mats_nb;
+  std::vector<bool> consumed(all_entries.size(), false);
+  std::vector<bool> row_taken(n);
+  std::vector<bool> col_taken(n);
+  int64_t remaining = (int64_t)all_entries.size();
 
-  while (all_entries.size() != 0) {
-    std::vector<int64_t> forbidden_columns;
-    std::vector<int64_t> forbidden_rows;
-    std::vector<std::tuple<int64_t, int64_t, coeff_t>> current_entries;
-    std::vector<int64_t> delete_entries;
-    int64_t i = 0;
-    for (auto [row, column, coeff] : all_entries) {
-
-      if ((std::find(forbidden_rows.begin(), forbidden_rows.end(), row) ==
-           forbidden_rows.end()) &&
-          (std::find(forbidden_columns.begin(), forbidden_columns.end(),
-                     column) == forbidden_columns.end())) {
-        current_entries.push_back({row, column, coeff});
-        forbidden_rows.push_back(row);
-        forbidden_columns.push_back(column);
-        delete_entries.push_back(i);
-      }
-      ++i;
-    }
-
-    for (int64_t i = delete_entries.size() - 1; i >= 0; --i) {
-      all_entries.erase(all_entries.begin() + delete_entries[i]);
-    }
-
-    // Create non-branching matrix
+  while (remaining > 0) {
+    std::fill(row_taken.begin(), row_taken.end(), false);
+    std::fill(col_taken.begin(), col_taken.end(), false);
     arma::Mat<coeff_t> mat_nb(m, n, arma::fill::zeros);
-    for (auto [i, j, coeff] : current_entries) {
-      mat_nb(i, j) = coeff;
+
+    for (int64_t idx = 0; idx < (int64_t)all_entries.size(); ++idx) {
+      if (consumed[idx]) {
+        continue;
+      }
+      auto [row, col, coeff] = all_entries[idx];
+      if (!row_taken[row] && !col_taken[col]) {
+        row_taken[row] = true;
+        col_taken[col] = true;
+        mat_nb(row, col) = coeff;
+        consumed[idx] = true;
+        --remaining;
+      }
     }
     mats_nb.push_back(mat_nb);
   }
@@ -165,7 +162,8 @@ decompose_matrix_to_nonbranching(Matrix const &mat, double precision) try {
 
 template <typename bit_t, typename coeff_t>
 std::vector<NonBranchingOp<bit_t, coeff_t>>
-non_branching_ops(Coeff const &cpl, Op const &op, double precision) try {
+non_branching_ops(Coeff const &cpl, Op const &op, int64_t d,
+                  double precision) try {
   if (cpl.isstring()) {
     XDIAG_THROW("Cannot convert Op to NonBranchingOps. Coeff found to be a "
                 "string. To convert it to a NonBranchingOp the coupling must "
@@ -181,14 +179,14 @@ non_branching_ops(Coeff const &cpl, Op const &op, double precision) try {
       if constexpr (isreal<coeff_t>()) {
         if (m.isreal()) {
           ops.push_back(NonBranchingOp<bit_t, coeff_t>(sites, m.as<arma::mat>(),
-                                                       precision));
+                                                       d, precision));
         } else {
           XDIAG_THROW(
               "Cannot create a real NonBranchingOp from a complex matrix.")
         }
       } else {
         ops.push_back(NonBranchingOp<bit_t, coeff_t>(
-            sites, m.as<arma::cx_mat>(), precision));
+            sites, m.as<arma::cx_mat>(), d, precision));
       }
     }
   } else {
@@ -201,7 +199,8 @@ non_branching_ops(Coeff const &cpl, Op const &op, double precision) try {
 #define INSTANTIATE_XDIAG_BASIS_NON_BRANCHING_OP(BIT_TYPE, NUMBER_TYPE)        \
   template class NonBranchingOp<BIT_TYPE, NUMBER_TYPE>;                        \
   template std::vector<NonBranchingOp<BIT_TYPE, NUMBER_TYPE>>                  \
-  non_branching_ops<BIT_TYPE, NUMBER_TYPE>(Coeff const &, Op const &, double);
+  non_branching_ops<BIT_TYPE, NUMBER_TYPE>(Coeff const &, Op const &,          \
+                                           int64_t, double);
 
 using namespace bits;
 

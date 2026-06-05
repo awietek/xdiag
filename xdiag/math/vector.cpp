@@ -15,6 +15,8 @@ namespace xdiag {
 
 Vector::Vector(arma::vec const &vec) : vec_(vec) {}
 Vector::Vector(arma::cx_vec const &vec) : vec_(vec) {}
+Vector::Vector(std::vector<double> const &vec) : vec_(arma::vec(vec)) {}
+Vector::Vector(std::vector<complex> const &vec) : vec_(arma::cx_vec(vec)) {}
 
 template <typename T> bool Vector::is() const {
   return std::holds_alternative<T>(vec_);

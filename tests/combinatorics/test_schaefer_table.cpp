@@ -21,7 +21,7 @@ void test_schaefer_iteration(int64_t bound) {
       SchaeferTable<bitarray_t> st(n, total, bound);
       REQUIRE(st.n() == n);
       REQUIRE(st.total() == total);
-      REQUIRE(st.bound() == bound);
+      REQUIRE(st.d() == bound);
 
       int64_t ctr = 0;
       for (auto seq : st) {
@@ -127,7 +127,7 @@ void test_schaefer_vs_bounded_partitions(int64_t bound) {
 
       REQUIRE(st.n() == bp.n());
       REQUIRE(st.total() == bp.total());
-      REQUIRE(st.bound() == bp.bound());
+      REQUIRE(st.d() == bp.d());
       REQUIRE(st.size() == bp.size());
 
       auto it_st = st.begin();

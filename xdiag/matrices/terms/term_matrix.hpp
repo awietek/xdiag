@@ -16,7 +16,7 @@ void term_matrix(Coeff const &c, Op const &op, basis_t const &basis_in,
   using bit_t = typename basis_t::bit_t;
 
   // Decompose into sum of non-branching operators
-  auto ops_nb = non_branching_ops<bit_t, coeff_t>(c, op);
+  auto ops_nb = non_branching_ops<bit_t, coeff_t>(c, op, basis_in.d());
 
   // Loop over sum of non-branching operators
   for (NonBranchingOp<bit_t, coeff_t> const &op_nb : ops_nb) {

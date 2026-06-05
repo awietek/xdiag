@@ -6,6 +6,7 @@
 
 #include <string>
 #include <variant>
+#include <vector>
 
 #include <xdiag/armadillo.hpp>
 #include <xdiag/math/scalar.hpp>
@@ -27,6 +28,8 @@ public:
   XDIAG_API Vector() = default;
   XDIAG_API Vector(arma::vec const &vec);
   XDIAG_API Vector(arma::cx_vec const &vec);
+  XDIAG_API Vector(std::vector<double> const &vec);
+  XDIAG_API Vector(std::vector<complex> const &vec);
 
   XDIAG_API bool operator==(Vector const &rhs) const;
   XDIAG_API bool operator!=(Vector const &rhs) const;

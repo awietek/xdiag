@@ -32,9 +32,10 @@ public:
   Subsets() = default;
   explicit Subsets(int64_t n);
 
-  int64_t n() const;        // Total number of bit positions
-  int64_t size() const;     // Total number of subsets (2^n)
-  int64_t bitwidth() const; // number of bits needed to represent state (=n)
+  int64_t n() const;                            // Total number of bit positions
+  constexpr int64_t d() const { return 2; }     // Local dim per site
+  int64_t size() const;                         // Total number of subsets (2^n)
+  int64_t bitwidth() const;                     // bits needed to represent state (=n)
   bit_t operator[](int64_t idx) const; // Bit pattern at index idx
   iterator_t begin() const;            // Iterator to first subset
   iterator_t end() const;              // Iterator past last subset

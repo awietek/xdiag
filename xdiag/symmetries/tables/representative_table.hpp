@@ -7,8 +7,9 @@
 #include <cstdint>
 #include <vector>
 #include <xdiag/bits/bitvector.hpp>
+#include <xdiag/math/vector.hpp>
 #include <xdiag/symmetries/action/site_permutation.hpp>
-#include <xdiag/symmetries/representation.hpp>
+#include <xdiag/symmetries/permutation_group.hpp>
 
 namespace xdiag::symmetries {
 
@@ -25,7 +26,8 @@ namespace xdiag::symmetries {
 //                                  basis states (zero-norm states are excluded)
 //
 // Iteration (begin/end) yields the representatives in enumeration order.
-// The group of the SitePermutation must equal the group of the Representation.
+// The PermutationGroup defines the action; characters are the 1-D irrep
+// characters, one per group element.
 template <typename enumeration_tt> class RepresentativeTable {
 public:
   using enumeration_t = enumeration_tt;
@@ -34,7 +36,7 @@ public:
 
   RepresentativeTable() = default;
   RepresentativeTable(enumeration_t const &enumeration,
-                      Representation const &irrep);
+                      PermutationGroup const &group, Vector const &characters);
 
   inline bit_t operator[](int64_t idx) const { return representative_[idx]; }
   inline bit_t representative(int64_t idx) const {

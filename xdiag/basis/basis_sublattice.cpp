@@ -220,42 +220,37 @@ compute_rep_search_range(std::vector<bit_t> const &reps,
 } // namespace
 
 template <typename bit_t, int n_sublat>
-BasisSublattice<bit_t, n_sublat>::BasisSublattice(
-    Representation const &irrep) try
-    : nsites_(irrep.group().nsites()), nup_(undefined),
-      n_postfix_bits_(nsites_ - std::min(maximum_prefix_bits, nsites_)),
-      action_(irrep.group()), irrep_(irrep) {
+BasisSublattice<bit_t, n_sublat>::BasisSublattice(PermutationGroup const &group,
+                                                  Vector const &characters) try
+    : group_(group), action_(group_), characters_(characters),
+      nsites_(group.nsites()), nup_(undefined),
+      n_postfix_bits_(nsites_ - std::min(maximum_prefix_bits, nsites_)) {
   check_nsites_work_with_bits<bit_t>(nsites_);
-
-  if (isreal(irrep)) {
-    arma::vec characters = irrep.characters().as<arma::vec>();
-    std::tie(reps_, norms_) = reps_norms_no_sz(action_, characters);
+  if (isreal(characters)) {
+    std::tie(reps_, norms_) =
+        reps_norms_no_sz(action_, characters.as<arma::vec>());
   } else {
-    arma::cx_vec characters = irrep.characters().as<arma::cx_vec>();
-    std::tie(reps_, norms_) = reps_norms_no_sz(action_, characters);
+    std::tie(reps_, norms_) =
+        reps_norms_no_sz(action_, characters.as<arma::cx_vec>());
   }
-
-  rep_search_range_ = compute_rep_search_range(reps_, n_postfix_bits_);
 }
 XDIAG_CATCH
 
 template <typename bit_t, int n_sublat>
-BasisSublattice<bit_t, n_sublat>::BasisSublattice(
-    int64_t nup, Representation const &irrep) try
-    : nsites_(irrep.group().nsites()), nup_(nup),
-      n_postfix_bits_(nsites_ - std::min(maximum_prefix_bits, nsites_)),
-      action_(irrep.group()), irrep_(irrep) {
+BasisSublattice<bit_t, n_sublat>::BasisSublattice(int64_t nup,
+                                                  PermutationGroup const &group,
+                                                  Vector const &characters) try
+    : group_(group), action_(group_), characters_(characters),
+      nsites_(group.nsites()), nup_(nup),
+      n_postfix_bits_(nsites_ - std::min(maximum_prefix_bits, nsites_)) {
   check_nsites_work_with_bits<bit_t>(nsites_);
-
-  if (isreal(irrep)) {
-    arma::vec characters = irrep.characters().as<arma::vec>();
-    std::tie(reps_, norms_) = reps_norms_sz(nup, action_, characters);
+  if (isreal(characters)) {
+    std::tie(reps_, norms_) =
+        reps_norms_sz(nup, action_, characters.as<arma::vec>());
   } else {
-    arma::cx_vec characters = irrep.characters().as<arma::cx_vec>();
-    std::tie(reps_, norms_) = reps_norms_sz(nup, action_, characters);
+    std::tie(reps_, norms_) =
+        reps_norms_sz(nup, action_, characters.as<arma::cx_vec>());
   }
-
-  rep_search_range_ = compute_rep_search_range(reps_, n_postfix_bits_);
 }
 XDIAG_CATCH
 
@@ -272,6 +267,11 @@ BasisSublattice<bit_t, n_sublat>::end() const {
 }
 
 template <typename bit_t, int n_sublat>
+int64_t BasisSublattice<bit_t, n_sublat>::nsites() const {
+  return nsites_;
+}
+
+template <typename bit_t, int n_sublat>
 int64_t BasisSublattice<bit_t, n_sublat>::dim() const {
   return size();
 }
@@ -282,21 +282,16 @@ int64_t BasisSublattice<bit_t, n_sublat>::size() const {
 }
 
 template <typename bit_t, int n_sublat>
-int64_t BasisSublattice<bit_t, n_sublat>::nsites() const {
-  return nsites_;
+int64_t BasisSublattice<bit_t, n_sublat>::d() const {
+  return 2;
 }
 
 template <typename bit_t, int n_sublat>
-int64_t BasisSublattice<bit_t, n_sublat>::nup() const {
-  return nup_;
+Vector const &BasisSublattice<bit_t, n_sublat>::characters() const {
+  return characters_;
 }
-
 template <typename bit_t, int n_sublat>
-Representation const &BasisSublattice<bit_t, n_sublat>::irrep() const {
-  return irrep_;
-}
 
-template <typename bit_t, int n_sublat>
 symmetries::SitePermutationSublattice<bit_t, n_sublat> const &
 BasisSublattice<bit_t, n_sublat>::action() const {
   return action_;

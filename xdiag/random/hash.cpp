@@ -47,9 +47,9 @@ uint64_t hash(Block const &block) {
 
 uint64_t hash(Spinhalf const &block) {
   uint64_t h = block.nsites() == 0 ? 0 : hash_fnv1((uint64_t)block.nsites());
-  if (block.nup()) {
-    h = hash_combine(h, hash_fnv1((uint64_t)*block.nup()));
-  }
+  // if (block.nup()) {
+  //   h = hash_combine(h, hash_fnv1((uint64_t)*block.nup()));
+  // }
   // if (block.irrep()) {
   //   h = hash_combine(h, hash(*block.irrep()));
   // }

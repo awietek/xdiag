@@ -49,12 +49,21 @@ static OpSum symmetrize(OpSum const &ops, PermutationGroup const &group,
 XDIAG_CATCH
 
 OpSum symmetrize(OpSum const &ops, Representation const &irrep) try {
+  if (!irrep.is_permutation()) {
+    XDIAG_THROW(
+        "symmetrize requires a Representation acting via a SitePermutation");
+  }
+  // Project with the conjugate characters conj(chi(g)) -- the standard
+  // projection operator P = (1/|G|) sum_g conj(chi(g)) g -- so that the
+  // symmetrized OpSum transforms under irrep (and not its conjugate). For real
+  // characters conj is a no-op.
+  PermutationGroup group = irrep.group();
+  Vector characters = irrep.characters();
   if (isreal(irrep) && isreal(ops)) {
-    auto characters = irrep.characters().as<arma::vec>();
-    return symmetrize(ops, irrep.group(), characters);
+    return symmetrize(ops, group, characters.as<arma::vec>());
   } else {
-    auto characters = irrep.characters().as<arma::cx_vec>();
-    return symmetrize(ops, irrep.group(), characters);
+    return symmetrize(ops, group,
+                      arma::cx_vec(arma::conj(characters.as<arma::cx_vec>())));
   }
 }
 XDIAG_CATCH

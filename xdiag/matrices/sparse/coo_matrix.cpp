@@ -6,14 +6,15 @@
 
 #include <numeric>
 
+#include <xdiag/algebra/ishermitian.hpp>
+#include <xdiag/blocks/blocks.hpp>
 #include <xdiag/armadillo.hpp>
 #include <xdiag/math/complex.hpp>
-#include <xdiag/matrices/sparse/valid.hpp>
 #include <xdiag/matrices/kernels.hpp>
+#include <xdiag/matrices/sparse/valid.hpp>
 #include <xdiag/matrices/spinhalf/dispatch_basis.hpp>
 #include <xdiag/matrices/spinhalf/matrix_policy.hpp>
-#include <xdiag/algebra/hc.hpp>
-#include <xdiag/operators/qns/block.hpp>
+#include <xdiag/operators/hc.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/variants.hpp>
 
@@ -64,8 +65,8 @@ coo_matrix(OpSum const &ops, Spinhalf const &block_in,
         auto nnz_thread =
             matrices::coo_matrix_nnz<matrices::spinhalf::MatrixPolicy, coeff_t>(
                 ops, basis_in, basis_out);
-        int64_t nnz = std::accumulate(nnz_thread.begin(), nnz_thread.end(),
-                                      (int64_t)0);
+        int64_t nnz =
+            std::accumulate(nnz_thread.begin(), nnz_thread.end(), (int64_t)0);
         rows.resize(nnz);
         cols.resize(nnz);
         data.resize(nnz);
@@ -88,7 +89,7 @@ coo_matrix(OpSum const &ops, Spinhalf const &block_in,
 #endif
       });
 
-  bool isherm = ishermitian(ops);
+  bool isherm = ishermitian(ops, block_in);
   return COOMatrix<idx_t, coeff_t>{nrows, ncols, rows, cols, data, i0, isherm};
 }
 XDIAG_CATCH
@@ -118,33 +119,31 @@ COOMatrix<idx_t, coeff_t> coo_matrix(OpSum const &ops, Block const &blocki,
 }
 XDIAG_CATCH
 
-template COOMatrix<int32_t, double> coo_matrix<int32_t, double>(OpSum const &,
-                                                                Block const &,
-                                                                int32_t);
-template COOMatrix<int32_t, complex> coo_matrix<int32_t, complex>(OpSum const &,
-                                                                  Block const &,
-                                                                  int32_t);
-template COOMatrix<int64_t, double> coo_matrix<int64_t, double>(OpSum const &,
-                                                                Block const &,
-                                                                int64_t);
-template COOMatrix<int64_t, complex> coo_matrix<int64_t, complex>(OpSum const &,
-                                                                  Block const &,
-                                                                  int64_t);
+template COOMatrix<int32_t, double>
+coo_matrix<int32_t, double>(OpSum const &, Block const &, int32_t);
+template COOMatrix<int32_t, complex>
+coo_matrix<int32_t, complex>(OpSum const &, Block const &, int32_t);
+template COOMatrix<int64_t, double>
+coo_matrix<int64_t, double>(OpSum const &, Block const &, int64_t);
+template COOMatrix<int64_t, complex>
+coo_matrix<int64_t, complex>(OpSum const &, Block const &, int64_t);
 
 template COOMatrix<int32_t, double> coo_matrix<int32_t, double>(OpSum const &,
                                                                 Block const &,
                                                                 Block const &,
                                                                 int32_t);
-template COOMatrix<int32_t, complex>
-coo_matrix<int32_t, complex>(OpSum const &, Block const &, Block const &,
-                             int32_t);
+template COOMatrix<int32_t, complex> coo_matrix<int32_t, complex>(OpSum const &,
+                                                                  Block const &,
+                                                                  Block const &,
+                                                                  int32_t);
 template COOMatrix<int64_t, double> coo_matrix<int64_t, double>(OpSum const &,
                                                                 Block const &,
                                                                 Block const &,
                                                                 int64_t);
-template COOMatrix<int64_t, complex>
-coo_matrix<int64_t, complex>(OpSum const &, Block const &, Block const &,
-                             int64_t);
+template COOMatrix<int64_t, complex> coo_matrix<int64_t, complex>(OpSum const &,
+                                                                  Block const &,
+                                                                  Block const &,
+                                                                  int64_t);
 
 // Named convenience wrappers (no template syntax at call sites).
 COOMatrix<int64_t, double> coo_matrix(OpSum const &ops, Block const &block,
@@ -154,8 +153,7 @@ COOMatrix<int64_t, double> coo_matrix(OpSum const &ops, Block const &block,
 XDIAG_CATCH
 
 COOMatrix<int64_t, double> coo_matrix(OpSum const &ops, Block const &block_in,
-                                      Block const &block_out,
-                                      int64_t i0) try {
+                                      Block const &block_out, int64_t i0) try {
   return coo_matrix<int64_t, double>(ops, block_in, block_out, i0);
 }
 XDIAG_CATCH

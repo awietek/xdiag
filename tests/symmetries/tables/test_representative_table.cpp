@@ -55,7 +55,7 @@ void test_invariants(enumeration_t const &enumeration,
                      Representation const &irrep) {
   using bit_t = typename enumeration_t::bit_t;
   auto sp = SitePermutation(irrep.group());
-  RepresentativeTable<enumeration_t> table(enumeration, irrep);
+  RepresentativeTable<enumeration_t> table(enumeration, irrep.group(), irrep.characters());
 
   REQUIRE(table.size() >= 0);
   REQUIRE(table.size() <= enumeration.size());
@@ -108,7 +108,7 @@ void test_invariants(enumeration_t const &enumeration,
   }
 
   // Two tables from the same inputs compare equal
-  RepresentativeTable<enumeration_t> table2(enumeration, irrep);
+  RepresentativeTable<enumeration_t> table2(enumeration, irrep.group(), irrep.characters());
   REQUIRE(table == table2);
   REQUIRE_FALSE(table != table2);
 }
@@ -116,7 +116,7 @@ void test_invariants(enumeration_t const &enumeration,
 template <typename enumeration_t>
 void check_size(enumeration_t const &enumeration, Representation const &irrep,
                 int64_t expected) {
-  RepresentativeTable<enumeration_t> table(enumeration, irrep);
+  RepresentativeTable<enumeration_t> table(enumeration, irrep.group(), irrep.characters());
   REQUIRE(table.size() == expected);
 }
 
@@ -168,7 +168,7 @@ TEST_CASE("representative_table", "[symmetries]") try {
 
     // ---- Specific values: k=0 ----
     {
-      RepresentativeTable<Subsets<uint32_t>> table(subsets, irrep4_0);
+      RepresentativeTable<Subsets<uint32_t>> table(subsets, irrep4_0.group(), irrep4_0.characters());
 
       // Representatives in enumeration (lexicographic) order
       std::vector<uint32_t> expected_reps = {0, 1, 3, 5, 7, 15};
@@ -208,7 +208,7 @@ TEST_CASE("representative_table", "[symmetries]") try {
       }
 
       // Inequality: different irrep → tables differ
-      RepresentativeTable<Subsets<uint32_t>> table_k2(subsets, irrep4_2);
+      RepresentativeTable<Subsets<uint32_t>> table_k2(subsets, irrep4_2.group(), irrep4_2.characters());
       REQUIRE(table != table_k2);
       REQUIRE_FALSE(table == table_k2);
     }
@@ -216,7 +216,7 @@ TEST_CASE("representative_table", "[symmetries]") try {
     // ---- Zero-norm state detection: k=2 ----
     // States 0 and 15 are fixed by all rotations; chi-sum = 0 → excluded.
     {
-      RepresentativeTable<Subsets<uint32_t>> table(subsets, irrep4_2);
+      RepresentativeTable<Subsets<uint32_t>> table(subsets, irrep4_2.group(), irrep4_2.characters());
       for (uint32_t s : {0u, 15u}) {
         int64_t idx = subsets.index(s);
         REQUIRE(table.raw_representative_index(idx) == 0);
@@ -256,7 +256,7 @@ TEST_CASE("representative_table", "[symmetries]") try {
 
     // Specific values for k=0
     {
-      RepresentativeTable<Combinations<uint32_t>> table(combos, irrep4_0);
+      RepresentativeTable<Combinations<uint32_t>> table(combos, irrep4_0.group(), irrep4_0.characters());
 
       auto it = table.begin();
       REQUIRE(*it == 3u);
@@ -281,7 +281,7 @@ TEST_CASE("representative_table", "[symmetries]") try {
 
     // Zero-norm for k=1: orbit {5,10} excluded
     {
-      RepresentativeTable<Combinations<uint32_t>> table(combos, irrep4_1);
+      RepresentativeTable<Combinations<uint32_t>> table(combos, irrep4_1.group(), irrep4_1.characters());
       for (uint32_t s : {5u, 10u}) {
         int64_t idx = combos.index(s);
         REQUIRE(table.raw_representative_index(idx) == 0);
@@ -661,8 +661,8 @@ TEST_CASE("representative_table", "[symmetries]") try {
     auto bp = BoundedPartitions<BitArray2>(4, 2, 3);
     auto st = SchaeferTable<BitArray2>(4, 2, 3);
 
-    RepresentativeTable<BoundedPartitions<BitArray2>> tbl_bp(bp, irrep4_0);
-    RepresentativeTable<SchaeferTable<BitArray2>> tbl_st(st, irrep4_0);
+    RepresentativeTable<BoundedPartitions<BitArray2>> tbl_bp(bp, irrep4_0.group(), irrep4_0.characters());
+    RepresentativeTable<SchaeferTable<BitArray2>> tbl_st(st, irrep4_0.group(), irrep4_0.characters());
     REQUIRE(tbl_bp.size() == tbl_st.size());
 
     // Representatives must appear in the same order
@@ -731,7 +731,7 @@ TEST_CASE("representative_table", "[symmetries]") try {
       test_invariants(combos, irrep_B);
       test_invariants(combos, irrep_Kea);
 
-      RepresentativeTable<Combinations<uint32_t>> tbl(combos, irrep_trivial);
+      RepresentativeTable<Combinations<uint32_t>> tbl(combos, irrep_trivial.group(), irrep_trivial.characters());
       REQUIRE(tbl.size() > 0);
       REQUIRE(tbl.size() < combos.size());
     }
@@ -743,7 +743,7 @@ TEST_CASE("representative_table", "[symmetries]") try {
       test_invariants(lt, irrep_B);
       test_invariants(lt, irrep_Kea);
 
-      RepresentativeTable<LinTable<uint32_t>> tbl(lt, irrep_trivial);
+      RepresentativeTable<LinTable<uint32_t>> tbl(lt, irrep_trivial.group(), irrep_trivial.characters());
       REQUIRE(tbl.size() > 0);
       REQUIRE(tbl.size() < lt.size());
     }
@@ -764,8 +764,8 @@ TEST_CASE("representative_table", "[symmetries]") try {
 
       auto bp = BoundedPartitions<BitArray2>(12, 2, 3);
       RepresentativeTable<BoundedPartitions<BitArray2>> tbl_bp(bp,
-                                                               irrep_trivial);
-      RepresentativeTable<SchaeferTable<BitArray2>> tbl_st(st, irrep_trivial);
+                                                               irrep_trivial.group(), irrep_trivial.characters());
+      RepresentativeTable<SchaeferTable<BitArray2>> tbl_st(st, irrep_trivial.group(), irrep_trivial.characters());
       REQUIRE(tbl_bp.size() == tbl_st.size());
     }
   }

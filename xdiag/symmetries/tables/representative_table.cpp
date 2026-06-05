@@ -289,21 +289,22 @@ XDIAG_CATCH
 
 template <typename enumeration_t>
 RepresentativeTable<enumeration_t>::RepresentativeTable(
-    enumeration_t const &enumeration, Representation const &irrep) try {
-  auto action = SitePermutation(irrep.group());
-  if (isreal(irrep)) {
+    enumeration_t const &enumeration, PermutationGroup const &group,
+    Vector const &characters) try {
+  SitePermutation action(group);
+  if (characters.isreal()) {
     representative_table_initialize(
-        enumeration, action, irrep.characters().as<arma::vec>(),
-        representative_, representative_index_, representative_symmetry_,
+        enumeration, action, characters.as<arma::vec>(), representative_,
+        representative_index_, representative_symmetry_,
         representative_norm_index_, norm_);
   } else {
     representative_table_initialize(
-        enumeration, action, irrep.characters().as<arma::cx_vec>(),
-        representative_, representative_index_, representative_symmetry_,
+        enumeration, action, characters.as<arma::cx_vec>(), representative_,
+        representative_index_, representative_symmetry_,
         representative_norm_index_, norm_);
   }
   inv_norm_.resize(norm_.size());
-  for (int64_t i = 0; i < norm_.size(); ++i) {
+  for (int64_t i = 0; i < (int64_t)norm_.size(); ++i) {
     inv_norm_[i] = 1.0 / norm_[i];
   }
 }

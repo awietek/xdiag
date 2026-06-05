@@ -9,7 +9,7 @@
 #include <xdiag/algebra/apply.hpp>
 #include <xdiag/algebra/isapprox.hpp>
 #include <xdiag/algebra/matrix.hpp>
-#include <xdiag/algorithms/sparse_diag.hpp>
+#include <xdiag/linalg/sparse_diag.hpp>
 #include <xdiag/blocks/spinhalf.hpp>
 #include <xdiag/blocks/spinhalf_distributed.hpp>
 #include <xdiag/states/create_state.hpp>

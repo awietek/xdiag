@@ -11,16 +11,16 @@ namespace xdiag::combinatorics {
 template <typename bitarray_t> class BoundedMultisetsIterator;
 
 // BoundedMultisets<bitarray_t> enumerates all ordered sequences of length n
-// with elements drawn from {0, ..., bound-1}. Each sequence is packed into a
-// bitarray_t = BitArray<bit_t, nbits> using nbits bits per slot (runtime bound,
+// with elements drawn from {0, ..., d-1}. Each sequence is packed into a
+// bitarray_t = BitArray<bit_t, nbits> using nbits bits per slot (runtime d,
 // compile-time packing width). The constructor checks that
-// ceillog2(bound) <= nbits and n <= bitarray_t::maximum_size.
-// Sequences are produced in little-endian base-bound order (slot 0 is the
-// least significant digit); total count is bound^n.
-// Requires: n >= 0, bound >= 2.
+// ceillog2(d) <= nbits and n <= bitarray_t::maximum_size.
+// Sequences are produced in little-endian base-d order (slot 0 is the
+// least significant digit); total count is d^n.
+// Requires: n >= 0, d >= 2.
 //
 // Example:
-//   using A = BitArray<uint64_t, 2>;     // 2-bit slots -> bound up to 4
+//   using A = BitArray<uint64_t, 2>;     // 2-bit slots -> d up to 4
 //   BoundedMultisets<A> ms(3, 3);        // 27 triples from {0, 1, 2}
 //   for (auto seq : ms)
 //     use seq.get(0), seq.get(1), seq.get(2);
@@ -32,10 +32,10 @@ public:
   using iterator_t = BoundedMultisetsIterator<bitarray_t>;
 
   BoundedMultisets() = default;
-  BoundedMultisets(int64_t n, int64_t bound);
+  BoundedMultisets(int64_t n, int64_t d);
 
   int64_t n() const;
-  int64_t bound() const;
+  int64_t d() const; // Local Hilbert space dimension per site
   int64_t size() const;
   int64_t bitwidth() const;
 
@@ -49,7 +49,7 @@ public:
 
 private:
   int64_t n_ = 0;
-  int64_t bound_ = 0;
+  int64_t d_ = 0;
   int64_t size_ = 0;
 };
 
@@ -59,7 +59,7 @@ public:
   static constexpr int nbits = bitarray_t::nbits;
 
   BoundedMultisetsIterator() = default;
-  BoundedMultisetsIterator(int64_t n, int64_t idx, int64_t bound);
+  BoundedMultisetsIterator(int64_t n, int64_t idx, int64_t d);
 
   bool operator==(BoundedMultisetsIterator<bitarray_t> const &rhs) const;
   bool operator!=(BoundedMultisetsIterator<bitarray_t> const &rhs) const;
@@ -71,7 +71,7 @@ public:
 private:
   int64_t n_ = 0;
   int64_t idx_ = 0;
-  int64_t bound_ = 0;
+  int64_t d_ = 0;
   bitarray_t current_;
 };
 

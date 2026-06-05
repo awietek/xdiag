@@ -17,7 +17,8 @@ namespace xdiag::matrices {
 template <typename bit_t, typename coeff_t> class NonBranchingOp {
 public:
   NonBranchingOp(std::vector<int64_t> const &sites,
-                 arma::Mat<coeff_t> const &mat, double precision = 1e-12);
+                 arma::Mat<coeff_t> const &mat, int64_t d,
+                 double precision = 1e-12);
 
   inline bool isdiagonal() const { return diagonal_; }
   inline std::pair<int64_t, coeff_t> state_coeff(int64_t s) const {
@@ -29,12 +30,14 @@ public:
 
 private:
   std::vector<int64_t> sites_;
+  int64_t d_;
   bool diagonal_;
   std::vector<std::pair<int64_t, coeff_t>> hops_;
 };
 
 template <typename bit_t, typename coeff_t>
 std::vector<NonBranchingOp<bit_t, coeff_t>>
-non_branching_ops(Coeff const &c, Op const &op, double precision = 1e-12);
+non_branching_ops(Coeff const &c, Op const &op, int64_t d,
+                  double precision = 1e-12);
 
 } // namespace xdiag::matrices

@@ -4,10 +4,10 @@
 
 #pragma once
 
+#include <xdiag/algebra/algebras/spinhalf_implementation_algebra.hpp>
 #include <xdiag/algebra/normal_order.hpp>
-#include <xdiag/algebra/spinhalf_implementation_algebra.hpp>
-#include <xdiag/algebra/valid.hpp>
 #include <xdiag/operators/opsum.hpp>
+#include <xdiag/operators/valid.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/format.hpp>
 
@@ -27,8 +27,8 @@ void matrix_generic(OpSum const &ops, basis_t const &basis_in,
 
   // Get OpSum into format that can be processed
   operators::check_valid(ops);
-  auto algebra = operators::spinhalf_implementation_algebra();
-  auto ops_compiled = normal_order(ops.plain(), algebra, basis_in.nsites());
+  auto algebra = algebra::spinhalf_implementation_algebra();
+  auto ops_compiled = normal_order(ops.plain(), algebra);
 
   for (auto const &[c, monomial] : ops_compiled) {
     assert(monomial.size() == 1); // required for properly compiled ops

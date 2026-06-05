@@ -7,13 +7,15 @@
 #include <algorithm>
 #include <numeric>
 
+#include <xdiag/algebra/ishermitian.hpp>
+#include <xdiag/blocks/blocks.hpp>
 #include <xdiag/armadillo.hpp>
 #include <xdiag/math/complex.hpp>
 #include <xdiag/matrices/kernels.hpp>
 #include <xdiag/matrices/spinhalf/dispatch_basis.hpp>
 #include <xdiag/matrices/spinhalf/matrix_policy.hpp>
-#include <xdiag/algebra/hc.hpp>
-#include <xdiag/operators/qns/block.hpp>
+#include <xdiag/matrices/sparse/valid.hpp>
+#include <xdiag/operators/hc.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/variants.hpp>
 
@@ -111,10 +113,9 @@ csr_matrix(OpSum const &ops, Spinhalf const &block_in,
             std::copy(data.memptr() + start, data.memptr() + end,
                       datatmp.begin());
             std::iota(indices.begin(), indices.begin() + nelems, (int64_t)0);
-            std::sort(indices.begin(), indices.begin() + nelems,
-                      [&](int64_t i, int64_t j) {
-                        return coltmp[i] < coltmp[j];
-                      });
+            std::sort(
+                indices.begin(), indices.begin() + nelems,
+                [&](int64_t i, int64_t j) { return coltmp[i] < coltmp[j]; });
             for (int64_t i = 0; i < nelems; ++i) {
               col[start + i] = coltmp[indices[i]];
               data[start + i] = datatmp[indices[i]];
@@ -123,7 +124,7 @@ csr_matrix(OpSum const &ops, Spinhalf const &block_in,
         }
       });
 
-  bool isherm = ishermitian(ops);
+  bool isherm = ishermitian(ops, block_in);
   return CSRMatrix<idx_t, coeff_t>{nrows, ncols, rowptr, col, data, i0, isherm};
 }
 XDIAG_CATCH
@@ -136,6 +137,7 @@ CSRMatrix<idx_t, coeff_t> csr_matrix(OpSum const &ops, Block const &block_in,
   utils::visit_same_type(
       block_in, block_out,
       [&](auto const &bin, auto const &bout) {
+        check_valid_sparse_matrix<idx_t, coeff_t>(ops, bin, bout, i0);
         result = csr_matrix<idx_t, coeff_t>(ops, bin, bout, i0);
       },
       "Type mismatch of Block types");
@@ -151,33 +153,31 @@ CSRMatrix<idx_t, coeff_t> csr_matrix(OpSum const &ops, Block const &blocki,
 }
 XDIAG_CATCH
 
-template CSRMatrix<int32_t, double> csr_matrix<int32_t, double>(OpSum const &,
-                                                                Block const &,
-                                                                int32_t);
-template CSRMatrix<int32_t, complex> csr_matrix<int32_t, complex>(OpSum const &,
-                                                                  Block const &,
-                                                                  int32_t);
-template CSRMatrix<int64_t, double> csr_matrix<int64_t, double>(OpSum const &,
-                                                                Block const &,
-                                                                int64_t);
-template CSRMatrix<int64_t, complex> csr_matrix<int64_t, complex>(OpSum const &,
-                                                                  Block const &,
-                                                                  int64_t);
+template CSRMatrix<int32_t, double>
+csr_matrix<int32_t, double>(OpSum const &, Block const &, int32_t);
+template CSRMatrix<int32_t, complex>
+csr_matrix<int32_t, complex>(OpSum const &, Block const &, int32_t);
+template CSRMatrix<int64_t, double>
+csr_matrix<int64_t, double>(OpSum const &, Block const &, int64_t);
+template CSRMatrix<int64_t, complex>
+csr_matrix<int64_t, complex>(OpSum const &, Block const &, int64_t);
 
 template CSRMatrix<int32_t, double> csr_matrix<int32_t, double>(OpSum const &,
                                                                 Block const &,
                                                                 Block const &,
                                                                 int32_t);
-template CSRMatrix<int32_t, complex>
-csr_matrix<int32_t, complex>(OpSum const &, Block const &, Block const &,
-                             int32_t);
+template CSRMatrix<int32_t, complex> csr_matrix<int32_t, complex>(OpSum const &,
+                                                                  Block const &,
+                                                                  Block const &,
+                                                                  int32_t);
 template CSRMatrix<int64_t, double> csr_matrix<int64_t, double>(OpSum const &,
                                                                 Block const &,
                                                                 Block const &,
                                                                 int64_t);
-template CSRMatrix<int64_t, complex>
-csr_matrix<int64_t, complex>(OpSum const &, Block const &, Block const &,
-                             int64_t);
+template CSRMatrix<int64_t, complex> csr_matrix<int64_t, complex>(OpSum const &,
+                                                                  Block const &,
+                                                                  Block const &,
+                                                                  int64_t);
 
 // Named convenience wrappers.
 CSRMatrix<int64_t, double> csr_matrix(OpSum const &ops, Block const &block,
@@ -187,8 +187,7 @@ CSRMatrix<int64_t, double> csr_matrix(OpSum const &ops, Block const &block,
 XDIAG_CATCH
 
 CSRMatrix<int64_t, double> csr_matrix(OpSum const &ops, Block const &block_in,
-                                      Block const &block_out,
-                                      int64_t i0) try {
+                                      Block const &block_out, int64_t i0) try {
   return csr_matrix<int64_t, double>(ops, block_in, block_out, i0);
 }
 XDIAG_CATCH

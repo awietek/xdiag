@@ -28,16 +28,21 @@ set(XDIAG_TEST_SOURCES
   operators/test_monomial.cpp
   operators/test_op.cpp
   operators/test_opsum.cpp
-  operators/test_rewrite.cpp
-  algebra/test_combine_matrix_ops.cpp
+
   algebra/test_normal_order.cpp
-  algebra/test_matrix_algebra.cpp
-  algebra/test_spinhalf_implementation_algebra.cpp
-  operators/qns/test_nup_ndn.cpp
+  algebra/test_permute.cpp
+  # algebra/test_symmetrize.cpp # requires Electron block to work currently
+  algebra/test_isapprox.cpp
+  algebra/test_representation.cpp
+  algebra/algebras/test_matrix_algebra.cpp
+  algebra/algebras/test_spinhalf_implementation_algebra.cpp
+  algebra/rewrite/test_rewrite.cpp
+  algebra/utils/test_combine_matrix_ops.cpp
 
   symmetries/test_permutation.cpp
   symmetries/test_permutation_group.cpp
   symmetries/test_representation.cpp
+  symmetries/test_representation_set.cpp
   symmetries/action/test_site_permutation.cpp
   symmetries/action/test_site_permutation_sublattice.cpp
   symmetries/tables/test_representative_table.cpp
@@ -46,6 +51,12 @@ set(XDIAG_TEST_SOURCES
   blocks/spinhalf/test_spinhalf_strategies.cpp
   blocks/spinhalf/test_spinhalf.cpp
 
+  blocks/electron/testcases_electron.cpp
+
+  blocks/tj/testcases_tj.cpp
+
+  matrices/terms/test_non_branching_op.cpp
+  
   io/test_file_toml.cpp
   io/test_file_h5.cpp
 
@@ -74,7 +85,6 @@ set(XDIAG_TEST_SOURCES
 
   # operators/test_op.cpp
   # operators/test_opsum.cpp
-  # operators/test_non_branching_op.cpp
   # algebra/test_symmetrize.cpp
   # algebra/test_permute.cpp
   # algebra/test_order.cpp 
@@ -95,20 +105,20 @@ set(XDIAG_TEST_SOURCES
   # blocks/electron/test_electron_symmetric_matrix.cpp
   # blocks/electron/test_electron_symmetric_apply.cpp
 
-  # algorithms/lanczos/test_eigvals_lanczos.cpp
-  # algorithms/lanczos/test_eigvals_lanczos_csr_matrix.cpp
-  # algorithms/lanczos/test_eigs_lanczos.cpp
-  # algorithms/lanczos/test_eigs_lanczos_csr_matrix.cpp
+  # linalg/lanczos/test_eigvals_lanczos.cpp
+  # linalg/lanczos/test_eigvals_lanczos_csr_matrix.cpp
+  # linalg/lanczos/test_eigs_lanczos.cpp
+  # linalg/lanczos/test_eigs_lanczos_csr_matrix.cpp
   
-  # algorithms/lanczos/test_lanczos_pro.cpp
-  # algorithms/arnoldi/test_arnoldi.cpp
-  # algorithms/gram_schmidt/test_gram_schmidt.cpp
-  # algorithms/test_exp_sym_v.cpp
-  # algorithms/test_norm_estimate.cpp
-  # algorithms/time_evolution/test_time_evolution.cpp
-  # algorithms/time_evolution/test_pade.cpp
-  # algorithms/lobpcg/test_lobpcg.cpp
-  # algorithms/test_empty_algorithm.cpp
+  # linalg/lanczos/test_lanczos_pro.cpp
+  # linalg/arnoldi/test_arnoldi.cpp
+  # linalg/gram_schmidt/test_gram_schmidt.cpp
+  # linalg/test_exp_sym_v.cpp
+  # linalg/test_norm_estimate.cpp
+  # linalg/time_evolution/test_time_evolution.cpp
+  # linalg/time_evolution/test_pade.cpp
+  # linalg/lobpcg/test_lobpcg.cpp
+  # linalg/test_empty_algorithm.cpp
 
   # states/test_random_state.cpp
   # states/test_product_state.cpp
@@ -141,7 +151,7 @@ set(XDIAG_TEST_DISTRIBUTED_SOURCES
   states/test_product_state_distributed.cpp
   states/test_random_state_distributed.cpp
 
-  algorithms/time_evolution/test_time_evolution_distributed.cpp
+  linalg/time_evolution/test_time_evolution_distributed.cpp
   algebra/test_apply_distributed.cpp
 
 )

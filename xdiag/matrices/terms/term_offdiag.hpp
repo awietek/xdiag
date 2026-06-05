@@ -70,12 +70,12 @@ template <typename basis_t, typename non_zero_term_f, typename term_action_f,
 void term_offdiag_sym(basis_t const &basis_in, basis_t const &basis_out,
                       non_zero_term_f non_zero_term, term_action_f term_action,
                       fill_f fill) {
+  using namespace symmetries;
   using bit_t = typename basis_t::bit_t;
   using coeff_t =
       typename std::invoke_result_t<decltype(term_action), bit_t>::second_type;
 
-  Representation irrep = basis_out.irrep();
-  arma::Col<coeff_t> characters = irrep.characters().as<arma::Col<coeff_t>>();
+  auto characters = basis_out.characters().template as<arma::Col<coeff_t>>();
 
 #ifdef _OPENMP
 #pragma omp parallel
@@ -127,7 +127,7 @@ void term_offdiag(basis::BasisSymmetric<enumeration_t> const &basis_in,
                   non_zero_term_f non_zero_term, term_action_f term_action,
                   fill_f fill) {
   detail::term_offdiag_sym(basis_in, basis_out, non_zero_term, term_action,
-                            fill);
+                           fill);
 }
 
 template <typename bit_t, int n_sublat, typename non_zero_term_f,
@@ -137,7 +137,7 @@ void term_offdiag(basis::BasisSublattice<bit_t, n_sublat> const &basis_in,
                   non_zero_term_f non_zero_term, term_action_f term_action,
                   fill_f fill) {
   detail::term_offdiag_sym(basis_in, basis_out, non_zero_term, term_action,
-                            fill);
+                           fill);
 }
 
 } // namespace xdiag::matrices

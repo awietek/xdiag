@@ -11,15 +11,15 @@
 
 namespace xdiag::combinatorics {
 
-int64_t count_bounded_partitions(int64_t n, int64_t total, int64_t bound) {
+int64_t count_bounded_partitions(int64_t n, int64_t total, int64_t d) {
   if (n == 0)
     return (total == 0) ? 1 : 0;
-  if (total < 0 || total > n * (bound - 1))
+  if (total < 0 || total > n * (d - 1))
     return 0;
   int64_t result = 0;
-  for (int64_t k = 0; k * bound <= total; ++k) {
+  for (int64_t k = 0; k * d <= total; ++k) {
     int64_t b1 = math::binomial(n, k);
-    int64_t b2 = math::binomial(total - k * bound + n - 1, n - 1);
+    int64_t b2 = math::binomial(total - k * d + n - 1, n - 1);
     if (k % 2 == 0)
       result += b1 * b2;
     else
@@ -29,13 +29,13 @@ int64_t count_bounded_partitions(int64_t n, int64_t total, int64_t bound) {
 }
 
 template <typename bitarray_t>
-bitarray_t nth_bounded_partition(int64_t n, int64_t total, int64_t bound,
+bitarray_t nth_bounded_partition(int64_t n, int64_t total, int64_t d,
                                  int64_t idx) {
   bitarray_t arr = bits::make_bitarray<bitarray_t>(n);
   int64_t remaining = total;
   for (int64_t slot = n - 1; slot >= 0; --slot) {
-    for (int64_t v = 0; v <= std::min(bound - 1, remaining); ++v) {
-      int64_t cnt = count_bounded_partitions(slot, remaining - v, bound);
+    for (int64_t v = 0; v <= std::min(d - 1, remaining); ++v) {
+      int64_t cnt = count_bounded_partitions(slot, remaining - v, d);
       if (idx < cnt) {
         arr.set(slot, v);
         remaining -= v;
@@ -48,14 +48,14 @@ bitarray_t nth_bounded_partition(int64_t n, int64_t total, int64_t bound,
 }
 
 template <typename bitarray_t>
-int64_t rank_bounded_partition(int64_t n, int64_t total, int64_t bound,
+int64_t rank_bounded_partition(int64_t n, int64_t total, int64_t d,
                                bitarray_t seq) {
   int64_t result = 0;
   int64_t remaining = total;
   for (int64_t slot = n - 1; slot >= 0; --slot) {
     int64_t v = seq.get(slot);
     for (int64_t vp = 0; vp < v; ++vp)
-      result += count_bounded_partitions(slot, remaining - vp, bound);
+      result += count_bounded_partitions(slot, remaining - vp, d);
     remaining -= v;
   }
   return result;

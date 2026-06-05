@@ -15,19 +15,19 @@
 namespace xdiag::combinatorics {
 
 template <typename bitarray_t>
-BoundedMultisets<bitarray_t>::BoundedMultisets(int64_t n, int64_t bound) try
-    : n_(n), bound_(bound), size_(math::ipow((int64_t)bound, n)) {
+BoundedMultisets<bitarray_t>::BoundedMultisets(int64_t n, int64_t d) try
+    : n_(n), d_(d), size_(math::ipow((int64_t)d, n)) {
   if (n < 0) {
     XDIAG_THROW("Error constructing BoundedMultisets: n<0");
   }
-  if (bound < 2) {
-    XDIAG_THROW("Error constructing BoundedMultisets: bound < 2");
+  if (d < 2) {
+    XDIAG_THROW("Error constructing BoundedMultisets: d < 2");
   }
-  int64_t nbits_for_bound = bits::ceillog2(bound);
-  if (nbits_for_bound > nbits) {
-    XDIAG_THROW(fmt::format("Error constructing BoundedMultisets: bound ({}) "
+  int64_t nbits_for_d = bits::ceillog2(d);
+  if (nbits_for_d > nbits) {
+    XDIAG_THROW(fmt::format("Error constructing BoundedMultisets: d ({}) "
                             "is too large for BitArray type with nbits ({})",
-                            bound, nbits));
+                            d, nbits));
   }
   if (n > bitarray_t::maximum_size) {
     XDIAG_THROW(
@@ -42,9 +42,8 @@ template <typename bitarray_t> int64_t BoundedMultisets<bitarray_t>::n() const {
   return n_;
 }
 
-template <typename bitarray_t>
-int64_t BoundedMultisets<bitarray_t>::bound() const {
-  return bound_;
+template <typename bitarray_t> int64_t BoundedMultisets<bitarray_t>::d() const {
+  return d_;
 }
 
 template <typename bitarray_t>
@@ -59,29 +58,29 @@ int64_t BoundedMultisets<bitarray_t>::bitwidth() const {
 
 template <typename bitarray_t>
 auto BoundedMultisets<bitarray_t>::operator[](int64_t idx) const -> bitarray_t {
-  return bits::unpack<raw_t, nbits>(idx, bound_, n_);
+  return bits::unpack<raw_t, nbits>(idx, d_, n_);
 }
 
 template <typename bitarray_t>
 int64_t BoundedMultisets<bitarray_t>::index(bitarray_t seq) const {
-  return bits::pack<raw_t, nbits>(seq, bound_, n_);
+  return bits::pack<raw_t, nbits>(seq, d_, n_);
 }
 
 template <typename bitarray_t>
 BoundedMultisetsIterator<bitarray_t>
 BoundedMultisets<bitarray_t>::begin() const {
-  return BoundedMultisetsIterator<bitarray_t>(n_, 0, bound_);
+  return BoundedMultisetsIterator<bitarray_t>(n_, 0, d_);
 }
 
 template <typename bitarray_t>
 BoundedMultisetsIterator<bitarray_t> BoundedMultisets<bitarray_t>::end() const {
-  return BoundedMultisetsIterator<bitarray_t>(n_, size_, bound_);
+  return BoundedMultisetsIterator<bitarray_t>(n_, size_, d_);
 }
 
 template <typename bitarray_t>
 bool BoundedMultisets<bitarray_t>::operator==(
     BoundedMultisets<bitarray_t> const &rhs) const {
-  return (n_ == rhs.n_) && (bound_ == rhs.bound_);
+  return (n_ == rhs.n_) && (d_ == rhs.d_);
 }
 
 template <typename bitarray_t>
@@ -93,9 +92,9 @@ bool BoundedMultisets<bitarray_t>::operator!=(
 template <typename bitarray_t>
 BoundedMultisetsIterator<bitarray_t>::BoundedMultisetsIterator(int64_t n,
                                                                int64_t idx,
-                                                               int64_t bound)
-    : n_(n), idx_(idx), bound_(bound),
-      current_(bits::unpack<bit_t, nbits>(idx, bound, n)) {}
+                                                               int64_t d)
+    : n_(n), idx_(idx), d_(d),
+      current_(bits::unpack<bit_t, nbits>(idx, d, n)) {}
 
 template <typename bitarray_t>
 bool BoundedMultisetsIterator<bitarray_t>::operator==(
@@ -115,7 +114,7 @@ BoundedMultisetsIterator<bitarray_t>::operator++() {
   ++idx_;
   for (int64_t i = 0; i < n_; ++i) {
     int64_t val = current_.get(i) + 1;
-    if (val < bound_) {
+    if (val < d_) {
       current_.set(i, val);
       return *this;
     }
@@ -128,7 +127,7 @@ template <typename bitarray_t>
 BoundedMultisetsIterator<bitarray_t> &
 BoundedMultisetsIterator<bitarray_t>::operator+=(int64_t n) {
   idx_ += n;
-  current_ = bits::unpack<bit_t, nbits>(idx_, bound_, n_);
+  current_ = bits::unpack<bit_t, nbits>(idx_, d_, n_);
   return *this;
 }
 

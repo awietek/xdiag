@@ -2,24 +2,20 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-#include "../catch.hpp"
-
 #include <iostream>
 
-#include "../../blocks/electron/testcases_electron.hpp"
-#include "../../blocks/tj/testcases_tj.hpp"
-#include <xdiag/algebra/algebra.hpp>
-#include <xdiag/algebra/apply.hpp>
+#include <tests/blocks/electron/testcases_electron.hpp>
+#include <tests/blocks/tj/testcases_tj.hpp>
+#include <tests/catch.hpp>
+
 #include <xdiag/algebra/isapprox.hpp>
-#include <xdiag/algorithms/lanczos/eigs_lanczos.hpp>
-#include <xdiag/algorithms/lanczos/eigvals_lanczos.hpp>
-#include <xdiag/algorithms/sparse_diag.hpp>
+#include <xdiag/algebra/symmetrize.hpp>
 #include <xdiag/blocks/electron.hpp>
 #include <xdiag/io/read.hpp>
-#include <xdiag/algebra/hc.hpp>
-#include <xdiag/algebra/isapprox.hpp>
-#include <xdiag/algebra/order.hpp>
-#include <xdiag/algebra/symmetrize.hpp>
+#include <xdiag/linalg/lanczos/eigs_lanczos.hpp>
+#include <xdiag/linalg/lanczos/eigvals_lanczos.hpp>
+#include <xdiag/linalg/sparse_diag.hpp>
+#include <xdiag/operators/hc.hpp>
 #include <xdiag/states/create_state.hpp>
 #include <xdiag/utils/xdiag_show.hpp>
 

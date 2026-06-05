@@ -6,6 +6,7 @@ set(XDIAG_SOURCES
   utils/read_vectors.cpp
   utils/split.cpp
   utils/timing.cpp
+  
   io/read.cpp
   io/file_toml.cpp
   io/file_h5.cpp
@@ -30,15 +31,18 @@ set(XDIAG_SOURCES
   math/dot.cpp
   math/norm.cpp
   math/isapprox.cpp
+  
   matrices/apply.cpp
   matrices/matrix.cpp
   matrices/sparse/coo_matrix.cpp
   matrices/sparse/csr_matrix.cpp
   matrices/sparse/csc_matrix.cpp
+  matrices/sparse/valid.cpp
   matrices/sparse/apply.cpp
   matrices/dispatcher.cpp
   matrices/kernels.cpp
   matrices/terms/non_branching_op.cpp
+  
   bits/bitset.cpp
   bits/bitvector.cpp
   bits/bitarray.cpp
@@ -53,6 +57,7 @@ set(XDIAG_SOURCES
   combinatorics/bounded_partitions/bounded_partitions.cpp
   combinatorics/bounded_partitions/count_bounded_partitions.cpp
   combinatorics/bounded_partitions/schaefer_table.cpp
+  
   basis/basis.cpp
   basis/basis_onthefly.cpp
   basis/basis_sublattice.cpp
@@ -61,6 +66,7 @@ set(XDIAG_SOURCES
   
   blocks/blocks.cpp
   blocks/spinhalf.cpp
+  
   states/product_state.cpp
   states/random_state.cpp
   states/create_state.cpp
@@ -69,49 +75,25 @@ set(XDIAG_SOURCES
   states/dot.cpp
   states/norm.cpp
   states/fill.cpp
+  
   random/random_utils.cpp
   random/hash.cpp
+  
   operators/coeff.cpp
   operators/monomial.cpp
   operators/op.cpp
   operators/opsum.cpp
-  algebra/valid.cpp
   operators/types.cpp
-  algebra/symmetrize.cpp
-  algebra/hc.cpp
-  algebra/isapprox.cpp
-  algebra/permute.cpp
-  algebra/collect.cpp
-  algebra/rewrite.cpp
-  algebra/combine_matrix_ops.cpp
-  algebra/permute_matrix_op.cpp
-  algebra/op_to_matrix_op.cpp
-  algebra/rules/utils.cpp
-  algebra/rules/id_absorption_rule.cpp
-  algebra/rules/sort_sites_rule.cpp
-  algebra/rules/spinhalf_same_site_rule.cpp
-  algebra/rules/electron_same_site_rule.cpp
-  algebra/rules/tj_same_site_rule.cpp
-  algebra/rules/combine_matrix_rule.cpp
-  algebra/rules/sort_matrix_sites_rule.cpp
-  algebra/rules/spinhalf_sdots_rule.cpp
-  algebra/rules/convert_to_matrix_rule.cpp
-  algebra/rules/spin_expansion_rules.cpp
-  algebra/rules/fermionic_expansion_rules.cpp
-  algebra/rules/tj_expansion_rules.cpp
-  algebra/spin_algebra.cpp
-  algebra/electron_algebra.cpp
-  algebra/tj_algebra.cpp
-  algebra/matrix_algebra.cpp
-  algebra/spinhalf_implementation_algebra.cpp
-  algebra/normal_order.cpp
-  operators/qns/nup_ndn.cpp
-  operators/qns/block.cpp
-  operators/qns/blocks_match.cpp
+  operators/hc.cpp
+  operators/valid.cpp
+  operators/collect.cpp
+
   symmetries/permutation.cpp
   symmetries/permutation_group.cpp
   symmetries/representation.cpp
+  symmetries/representation_set.cpp
   symmetries/cyclic_group.cpp
+
   symmetries/action/site_permutation.cpp
   symmetries/action/isrepresentative.cpp
   symmetries/action/representative.cpp
@@ -120,84 +102,55 @@ set(XDIAG_SOURCES
   symmetries/action/sublattice_stability.cpp
   symmetries/tables/representative_table.cpp
   
-  algorithms/lanczos/lanczos_convergence.cpp
-  algorithms/lanczos/tmatrix.cpp
-  algorithms/lanczos/eigvals_lanczos.cpp
-  algorithms/lanczos/eigs_lanczos.cpp
-  algorithms/sparse_diag.cpp
-  algorithms/arnoldi/arnoldi_to_disk.cpp
-  algorithms/gram_schmidt/gram_schmidt.cpp
-  algorithms/gram_schmidt/orthogonalize.cpp
-  algorithms/norm_estimate.cpp
-  algorithms/time_evolution/time_evolve.cpp
-  algorithms/time_evolution/imaginary_time_evolve.cpp
-  algorithms/time_evolution/time_evolve_expokit.cpp
-  algorithms/time_evolution/evolve_lanczos.cpp
-  algorithms/time_evolution/expm.cpp
-  # algebra/apply_dispatch.cpp
-  # algebra/isapprox.cpp
-  # algebra/sparse/apply.cpp
+  algebra/symmetrize.cpp
+  algebra/permute.cpp
+  algebra/representation.cpp
+  algebra/normal_order.cpp
+  algebra/isapprox.cpp
+  algebra/ishermitian.cpp
+
+  algebra/algebras/algebra.cpp
+  algebra/algebras/spin_algebra.cpp
+  algebra/algebras/electron_algebra.cpp
+  algebra/algebras/tj_algebra.cpp
+  algebra/algebras/matrix_algebra.cpp
+  algebra/algebras/spinhalf_implementation_algebra.cpp
+
+  algebra/rewrite/rewrite.cpp
+  algebra/rewrite/rules/id_absorption_rule.cpp
+  algebra/rewrite/rules/sort_sites_rule.cpp
+  algebra/rewrite/rules/spinhalf_same_site_rule.cpp
+  algebra/rewrite/rules/electron_same_site_rule.cpp
+  algebra/rewrite/rules/tj_same_site_rule.cpp
+  algebra/rewrite/rules/combine_matrix_rule.cpp
+  algebra/rewrite/rules/sort_matrix_sites_rule.cpp
+  algebra/rewrite/rules/spinhalf_sdots_rule.cpp
+  algebra/rewrite/rules/convert_to_matrix_rule.cpp
+  algebra/rewrite/rules/spin_expansion_rules.cpp
+  algebra/rewrite/rules/fermionic_expansion_rules.cpp
+  algebra/rewrite/rules/tj_expansion_rules.cpp
+
+  algebra/utils/combine_matrix_ops.cpp
+  algebra/utils/permute_matrix_op.cpp
+  algebra/utils/op_to_matrix_op.cpp
+  algebra/utils/swap_pair.cpp
+  algebra/utils/replace_pair.cpp
+  algebra/utils/check_allowed_types.cpp
   
-  # algebra/sparse/coo_matrix.cpp
-  # algebra/sparse/coo_matrix_generate.cpp
-  # algebra/sparse/instantiations/coo_matrix_nnz_double.cpp
-  # algebra/sparse/instantiations/coo_matrix_nnz_complex.cpp
-  # algebra/sparse/instantiations/coo_matrix_fill_int32_double.cpp
-  # algebra/sparse/instantiations/coo_matrix_fill_int32_complex.cpp
-  # algebra/sparse/instantiations/coo_matrix_fill_int64_double.cpp
-  # algebra/sparse/instantiations/coo_matrix_fill_int64_complex.cpp
-  
-  # algebra/sparse/csr_matrix.cpp
-  # algebra/sparse/csr_matrix_generate.cpp
-  # algebra/sparse/instantiations/csr_matrix_nnz_int32_double.cpp
-  # algebra/sparse/instantiations/csr_matrix_nnz_int32_complex.cpp
-  # algebra/sparse/instantiations/csr_matrix_nnz_int64_double.cpp
-  # algebra/sparse/instantiations/csr_matrix_nnz_int64_complex.cpp
-  # algebra/sparse/instantiations/csr_matrix_fill_int32_double.cpp
-  # algebra/sparse/instantiations/csr_matrix_fill_int32_complex.cpp
-  # algebra/sparse/instantiations/csr_matrix_fill_int64_double.cpp
-  # algebra/sparse/instantiations/csr_matrix_fill_int64_complex.cpp
-  
-  # algebra/sparse/csc_matrix.cpp
-  
-  
-  # basis/spinhalf/basis_spinhalf.cpp
-  # basis/spinhalf/basis_sz.cpp
-  # basis/spinhalf/basis_no_sz.cpp
-  # basis/spinhalf/basis_symmetric_sz.cpp
-  # basis/spinhalf/basis_symmetric_no_sz.cpp
-  # basis/spinhalf/basis_sublattice.cpp
-  # basis/tj/basis_tj.cpp
-  # basis/tj/basis_np.cpp
-  # basis/tj/basis_symmetric_np.cpp
-  # basis/electron/basis_electron.cpp
-  # basis/electron/basis_np.cpp
-  # basis/electron/basis_no_np.cpp
-  # basis/electron/basis_symmetric_np.cpp
-  # basis/electron/basis_symmetric_no_np.cpp
-  
-  # blocks/blocks.cpp
-  # blocks/spinhalf.cpp
-  # blocks/electron.cpp
-  # blocks/tj.cpp
-  # symmetries/operations/symmetry_operations.cpp	
-  # symmetries/operations/representative_lookup_table.cpp	
-  # symmetries/operations/fermi_sign.cpp
-  # symmetries/group_action/group_action.cpp
-  # symmetries/group_action/group_action_lookup.cpp
-  # algebra/qns.cpp         (depends on blocks)
-  # algebra/non_branching_op.cpp
-  # algebra/compilation.cpp (depends on blocks)
-  # algebra/block.cpp
-  
-  # states/gpwf.cpp
-  # states/random_state.cpp
-  # states/state.cpp
-  # states/fill.cpp
-  # states/create_state.cpp
-  
-  # random/random_utils.cpp
-  # random/hash.cpp
+  linalg/lanczos/lanczos_convergence.cpp
+  linalg/lanczos/tmatrix.cpp
+  linalg/lanczos/eigvals_lanczos.cpp
+  linalg/lanczos/eigs_lanczos.cpp
+  linalg/sparse_diag.cpp
+  linalg/arnoldi/arnoldi_to_disk.cpp
+  linalg/gram_schmidt/gram_schmidt.cpp
+  linalg/gram_schmidt/orthogonalize.cpp
+  linalg/norm_estimate.cpp
+  linalg/time_evolution/time_evolve.cpp
+  linalg/time_evolution/imaginary_time_evolve.cpp
+  linalg/time_evolution/time_evolve_expokit.cpp
+  linalg/time_evolution/evolve_lanczos.cpp
+  linalg/time_evolution/expm.cpp
 )
 set(XDIAG_DISTRIBUTED_SOURCES
   parallel/mpi/allreduce.cpp
@@ -231,13 +184,13 @@ set(XDIAG_JULIA_SOURCES
   algebra/sparse/csr_matrix.cpp
   algebra/sparse/csc_matrix.cpp
   algebra/sparse/apply.cpp
-  algorithms/sparse_diag.cpp
-  algorithms/lanczos/eigs_lanczos.cpp
-  algorithms/lanczos/eigvals_lanczos.cpp
-  algorithms/time_evolution/time_evolve.cpp
-  algorithms/time_evolution/imaginary_time_evolve.cpp
-  algorithms/time_evolution/time_evolve_expokit.cpp  
-  algorithms/time_evolution/evolve_lanczos.cpp
+  linalg/sparse_diag.cpp
+  linalg/lanczos/eigs_lanczos.cpp
+  linalg/lanczos/eigvals_lanczos.cpp
+  linalg/time_evolution/time_evolve.cpp
+  linalg/time_evolution/imaginary_time_evolve.cpp
+  linalg/time_evolution/time_evolve_expokit.cpp  
+  linalg/time_evolution/evolve_lanczos.cpp
   blocks/spinhalf.cpp
   blocks/tj.cpp
   blocks/electron.cpp
@@ -261,4 +214,5 @@ set(XDIAG_JULIA_SOURCES
   symmetries/permutation.cpp
   symmetries/permutation_group.cpp
   symmetries/representation.cpp
+  symmetries/u1.cpp
 )

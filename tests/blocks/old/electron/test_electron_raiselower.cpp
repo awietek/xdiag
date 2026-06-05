@@ -7,7 +7,7 @@
 #include <xdiag/algebra/algebra.hpp>
 #include <xdiag/algebra/apply.hpp>
 #include <xdiag/algebra/matrix.hpp>
-#include <xdiag/algorithms/sparse_diag.hpp>
+#include <xdiag/linalg/sparse_diag.hpp>
 #include <xdiag/states/fill.hpp>
 #include <xdiag/states/create_state.hpp>
 #include <xdiag/utils/xdiag_show.hpp>

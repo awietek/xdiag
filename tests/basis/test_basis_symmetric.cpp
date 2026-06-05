@@ -23,7 +23,7 @@ using namespace xdiag;
 // Checks representative_data consistency for a single state
 template <typename bit_t, class Basis>
 void check_state(bit_t state, Basis const &basis) {
-  auto action = symmetries::SitePermutation(basis.irrep().group());
+  auto action = symmetries::SitePermutation(basis.group());
   auto [raw, sym, norm_out] = basis.representative_data(state);
 
   if (raw == 0)
@@ -38,8 +38,7 @@ void check_state(bit_t state, Basis const &basis) {
 
 // Checks that the iterator visits all representatives exactly once, in order,
 // and that each representative maps to itself under representative_data
-template <class Basis>
-void check_iterator(Basis const &basis) {
+template <class Basis> void check_iterator(Basis const &basis) {
   int64_t count = 0;
   for (auto state : basis) {
     auto [raw, sym, norm_out] = basis.representative_data(state);
@@ -51,14 +50,14 @@ void check_iterator(Basis const &basis) {
   REQUIRE(count == basis.size());
 }
 
-template <typename bit_t>
-void test_no_sz(Representation const &irrep) {
+template <typename bit_t> void test_no_sz(Representation const &irrep) {
   using namespace basis;
   using namespace combinatorics;
 
   int64_t nsites = irrep.group().nsites();
   auto enumeration = Subsets<bit_t>(nsites);
-  auto b = BasisSymmetric<Subsets<bit_t>>(enumeration, irrep);
+  auto b = BasisSymmetric<Subsets<bit_t>>(enumeration, irrep.group(),
+                                          irrep.characters());
 
   for (auto state : enumeration)
     check_state(state, b);
@@ -72,15 +71,15 @@ void test_sz(int64_t nup, Representation const &irrep) {
 
   int64_t nsites = irrep.group().nsites();
   auto enumeration = Combinations<bit_t>(nsites, nup);
-  auto b = BasisSymmetric<Combinations<bit_t>>(enumeration, irrep);
+  auto b = BasisSymmetric<Combinations<bit_t>>(enumeration, irrep.group(),
+                                               irrep.characters());
 
   for (auto state : enumeration)
     check_state(state, b);
   check_iterator(b);
 }
 
-template <typename bit_t>
-void test_basis_symmetric_cyclic() {
+template <typename bit_t> void test_basis_symmetric_cyclic() {
   for (int64_t nsites = 1; nsites <= 6; ++nsites) {
     for (int64_t k = 0; k < nsites; ++k) {
       auto irrep = cyclic_group_irrep(nsites, k);
@@ -91,8 +90,7 @@ void test_basis_symmetric_cyclic() {
   }
 }
 
-template <typename bit_t>
-void test_basis_symmetric_lattice() {
+template <typename bit_t> void test_basis_symmetric_lattice() {
   {
     Log("basis_symmetric: triangular 3x3");
     int64_t nsites = 9;
@@ -131,8 +129,7 @@ void test_basis_symmetric_lattice() {
   }
 }
 
-template <typename bit_t>
-void test_basis_symmetric() {
+template <typename bit_t> void test_basis_symmetric() {
   Log("cyclic group irreps");
   test_basis_symmetric_cyclic<bit_t>();
   Log("lattice data");

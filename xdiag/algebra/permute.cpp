@@ -4,7 +4,6 @@
 
 #include "permute.hpp"
 
-#include <xdiag/algebra/isapprox.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/format.hpp>
 

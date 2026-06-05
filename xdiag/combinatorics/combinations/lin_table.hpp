@@ -41,6 +41,7 @@ public:
 
   int64_t n() const;
   int64_t k() const;
+  constexpr int64_t d() const { return 2; } // Local dim per site
   int64_t size() const;
   int64_t bitwidth() const; // number of bits needed to represent state (=n)
 

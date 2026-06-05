@@ -11,7 +11,7 @@
 #include <xdiag/algebra/algebra.hpp>
 #include <xdiag/algebra/apply.hpp>
 #include <xdiag/algebra/matrix.hpp>
-#include <xdiag/algorithms/sparse_diag.hpp>
+#include <xdiag/linalg/sparse_diag.hpp>
 #include <xdiag/algebra/isapprox.hpp>
 
 using namespace xdiag;

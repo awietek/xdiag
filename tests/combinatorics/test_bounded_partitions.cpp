@@ -46,7 +46,7 @@ void test_size(int n, int64_t total, int64_t bound) {
   BoundedPartitions<bitarray_t> bp(n, total, bound);
   REQUIRE(bp.n() == n);
   REQUIRE(bp.total() == total);
-  REQUIRE(bp.bound() == bound);
+  REQUIRE(bp.d() == bound);
   REQUIRE(bp.size() == brute_force_count<nbits_val>(n, total, bound));
 }
 

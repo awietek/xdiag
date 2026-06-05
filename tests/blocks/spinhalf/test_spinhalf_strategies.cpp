@@ -9,7 +9,7 @@
 #include <cassert>
 
 #include <xdiag/armadillo.hpp>
-#include <xdiag/algorithms/sparse_diag.hpp>
+#include <xdiag/linalg/sparse_diag.hpp>
 #include <xdiag/config.hpp>
 #include <xdiag/blocks/spinhalf.hpp>
 #include <xdiag/io/file_toml.hpp>

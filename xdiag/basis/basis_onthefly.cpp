@@ -29,6 +29,11 @@ int64_t BasisOnTheFly<enumeration_t>::nsites() const {
 }
 
 template <typename enumeration_t>
+int64_t BasisOnTheFly<enumeration_t>::d() const {
+  return enumeration_.d();
+}
+
+template <typename enumeration_t>
 int64_t BasisOnTheFly<enumeration_t>::index(bit_t bits) const {
   return enumeration_.index(bits);
 }

@@ -248,7 +248,10 @@ bool OpSum::operator==(OpSum const &rhs) const {
 bool OpSum::operator!=(OpSum const &rhs) const { return !operator==(rhs); }
 
 bool OpSum::isreal() const try {
-  for (Term const &t : terms_) {
+  // A string coefficient has no numeric value on its own; resolve named
+  // coefficients to their defined values first (plain() throws if any named
+  // coefficient is undefined).
+  for (Term const &t : plain().terms_) {
     if (!xdiag::isreal(t.coeff.scalar())) {
       return false;
     }
@@ -257,9 +260,13 @@ bool OpSum::isreal() const try {
     }
   }
   return true;
-} XDIAG_CATCH
+}
+XDIAG_CATCH
 
 bool isreal(OpSum const &ops) { return ops.isreal(); }
+
+bool OpSum::empty() const { return terms_.empty(); }
+bool empty(OpSum const &ops) { return ops.empty(); }
 
 // --- Free operators ---
 
