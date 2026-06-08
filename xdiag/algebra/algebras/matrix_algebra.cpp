@@ -33,7 +33,7 @@ Algebra matrix_algebra(int64_t d) {
       .d = d,
       .elementary_types = {"Matrix"},
       .fermionic_types = fermionic,
-      .allowed_types = {"Exchange", "Id", "Matrix", "S+", "S-",
+      .allowed_types = {"Exchange", "ExchangeAsym", "Id", "Matrix", "S+", "S-",
                         "ScalarChirality", "SdotS", "Sx", "Sy", "Sz", "SzSz"},
       .expansion_rules = {},
       .algebra_rules = algebra_rules_vec,

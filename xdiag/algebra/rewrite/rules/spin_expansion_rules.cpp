@@ -47,6 +47,18 @@ std::vector<OpRule> spin_expansion_rules() {
     return r;
   });
 
+  // ExchangeAsym{i,j} -> 1/2 S+{i}*S-{j} - 1/2 S-{i}*S+{j}
+  rules.push_back([](Op const &op) -> std::optional<OpSum> {
+    if (op.type() != "ExchangeAsym") {
+      return std::nullopt;
+    }
+    int64_t i = op[0], j = op[1];
+    OpSum r;
+    r += 0.5 * (Op("S+", i) * Op("S-", j));
+    r -= 0.5 * (Op("S-", i) * Op("S+", j));
+    return r;
+  });
+
   // ScalarChirality{i,j,k} ->
   //   (i/2)*[ S+{i}*S-{j}*Sz{k} - S-{i}*S+{j}*Sz{k}
   //         + Sz{i}*S+{j}*S-{k} - Sz{i}*S-{j}*S+{k}

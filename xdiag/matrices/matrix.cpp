@@ -76,6 +76,19 @@ XDIAG_CATCH
 template <typename op_t>
 arma::mat matrix(op_t const &op, Block const &block_in,
                  Block const &block_out) try {
+  if (!isreal(op)) {
+    XDIAG_THROW("Cannot create a real matrix when the input operator is "
+                "complex. Consider using matrixC instead.");
+  }
+  if (!isreal(block_in)) {
+    XDIAG_THROW("Cannot create a real matrix when the input block is complex. "
+                "Consider using matrixC instead.");
+  }
+  if (!isreal(block_out)) {
+    XDIAG_THROW("Cannot create a real matrix when the output block is complex. "
+                "Consider using matrixC instead.");
+  }
+
   int64_t m = size(block_out);
   int64_t n = dim(block_in);
   arma::mat mat(m, n, arma::fill::zeros); // zeroed here; kernel uses +=

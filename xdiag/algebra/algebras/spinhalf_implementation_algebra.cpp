@@ -23,7 +23,7 @@ Algebra spinhalf_implementation_algebra() {
   // All other allowed types (Sx, Sy, SdotS after sdots_rule, multi-op
   // combinations) are converted to Matrix.
   static const std::set<std::string> protected_types = {
-      "Exchange", "S+", "S-", "ScalarChirality", "Sz", "SzSz"};
+      "Exchange", "ExchangeAsym", "S+", "S-", "ScalarChirality", "Sz", "SzSz"};
 
   std::vector<MonomialRule> algebra_rules_vec{
       id_absorption_rule(),
@@ -36,10 +36,10 @@ Algebra spinhalf_implementation_algebra() {
   return Algebra{
       .name = "spinhalf_implementation_algebra",
       .d = 2,
-      .elementary_types = {"Exchange", "Matrix", "S+", "S-", "ScalarChirality",
-                           "Sz", "SzSz"},
+      .elementary_types = {"Exchange", "ExchangeAsym", "Matrix", "S+", "S-",
+                           "ScalarChirality", "Sz", "SzSz"},
       .fermionic_types = fermionic,
-      .allowed_types = {"Exchange", "Id", "Matrix", "S+", "S-",
+      .allowed_types = {"Exchange", "ExchangeAsym", "Id", "Matrix", "S+", "S-",
                         "ScalarChirality", "SdotS", "Sx", "Sy", "Sz", "SzSz"},
       .expansion_rules = {},
       .algebra_rules = algebra_rules_vec,

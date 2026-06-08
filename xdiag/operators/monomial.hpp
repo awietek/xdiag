@@ -49,8 +49,8 @@ public:
   XDIAG_API bool operator!=(Monomial const &rhs) const noexcept;
   XDIAG_API bool operator<(Monomial const &rhs) const noexcept; // lexicographic
 
-  // Hermitian conjugate: reverse order and apply hc to each Op
-  XDIAG_API Monomial hc() const;
+  // Hermitian conjugation is provided by hc() (operators/hc.hpp), which returns
+  // an OpSum so it can carry a phase (e.g. hc(ExchangeAsym) = -ExchangeAsym).
   XDIAG_API bool isreal() const;
 
 private:

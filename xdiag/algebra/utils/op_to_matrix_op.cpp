@@ -81,6 +81,16 @@ Op op_to_matrix_op(Op const &op) try {
                   0.5 * arma::mat(arma::kron(sp, sm));
     return Op("Matrix", op.sites(), m);
   }
+  if (type == "ExchangeAsym") {
+    int64_t i = op.sites()[0], j = op.sites()[1];
+    if (i == j) {
+      arma::mat m = 0.5 * arma::mat(sp * sm) - 0.5 * arma::mat(sm * sp);
+      return Op("Matrix", std::vector<int64_t>{i}, m);
+    }
+    arma::mat m = 0.5 * arma::mat(arma::kron(sm, sp)) -
+                  0.5 * arma::mat(arma::kron(sp, sm));
+    return Op("Matrix", op.sites(), m);
+  }
 
   // Three-site ScalarChirality → 8×8 complex matrix.
   // S_i·(S_j×S_k) = (i/2)*[ S+_i S-_j Sz_k - S-_i S+_j Sz_k
@@ -107,6 +117,7 @@ Op op_to_matrix_op(Op const &op) try {
 
   XDIAG_THROW(
       fmt::format("Cannot convert Op of type \"{}\" to a Matrix op", type));
-} XDIAG_CATCH
+}
+XDIAG_CATCH
 
 } // namespace xdiag::algebra

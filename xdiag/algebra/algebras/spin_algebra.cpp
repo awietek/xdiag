@@ -29,8 +29,8 @@ Algebra spin_algebra() {
       .d = 2,
       .elementary_types = {"S+", "S-", "Sz"},
       .fermionic_types = fermionic,
-      .allowed_types = {"Exchange", "Id", "S+", "S-", "ScalarChirality",
-                        "SdotS", "Sx", "Sy", "Sz", "SzSz"},
+      .allowed_types = {"Exchange", "ExchangeAsym", "Id", "S+", "S-",
+                        "ScalarChirality", "SdotS", "Sx", "Sy", "Sz", "SzSz"},
       .expansion_rules = spin_expansion_rules(),
       .algebra_rules = algebra_rules_vec,
   };

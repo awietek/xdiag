@@ -9,7 +9,11 @@
 
 namespace xdiag {
 
-XDIAG_API Op hc(Op const &op);
+// Hermitian conjugate of a single Op. Returns an OpSum (rather than an Op)
+// because hc may introduce a phase (e.g. hc(ExchangeAsym) = -ExchangeAsym).
+// Throws if the Op type has no defined hermitian-conjugate partner.
+XDIAG_API OpSum hc(Op const &op);
+XDIAG_API OpSum hc(Monomial const &mono);
 XDIAG_API OpSum hc(OpSum const &ops);
 
 } // namespace xdiag

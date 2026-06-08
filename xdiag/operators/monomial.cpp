@@ -4,7 +4,6 @@
 
 #include "monomial.hpp"
 
-#include <xdiag/operators/hc.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/to_string_generic.hpp>
 
@@ -62,15 +61,6 @@ bool Monomial::operator<(Monomial const &rhs) const noexcept {
       return ops_[i] < rhs.ops_[i];
   }
   return false; // equal
-}
-
-Monomial Monomial::hc() const {
-  Monomial result;
-  result.ops_.reserve(ops_.size());
-  for (int64_t i = (int64_t)ops_.size() - 1; i >= 0; --i) {
-    result.ops_.push_back(xdiag::hc(ops_[i]));
-  }
-  return result;
 }
 
 bool Monomial::isreal() const {

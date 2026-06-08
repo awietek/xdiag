@@ -12,6 +12,7 @@
 #include <xdiag/utils/format.hpp>
 
 #include <xdiag/matrices/spinhalf/terms/term_exchange.hpp>
+#include <xdiag/matrices/spinhalf/terms/term_exchange_asym.hpp>
 #include <xdiag/matrices/spinhalf/terms/term_scalar_chirality.hpp>
 #include <xdiag/matrices/spinhalf/terms/term_spsm.hpp>
 #include <xdiag/matrices/spinhalf/terms/term_sz.hpp>
@@ -40,6 +41,8 @@ void matrix_generic(OpSum const &ops, basis_t const &basis_in,
       matrices::term_identity<coeff_t>(c, basis_in, fill);
     } else if (type == "Exchange") {
       spinhalf::term_exchange<coeff_t>(c, op, basis_in, basis_out, fill);
+    } else if (type == "ExchangeAsym") {
+      spinhalf::term_exchange_asym<coeff_t>(c, op, basis_in, basis_out, fill);
     } else if (type == "SzSz") {
       spinhalf::term_szsz<coeff_t>(c, op, basis_in, basis_out, fill);
     } else if (type == "Sz") {

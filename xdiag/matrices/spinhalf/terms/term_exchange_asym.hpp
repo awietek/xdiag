@@ -13,8 +13,8 @@
 namespace xdiag::matrices::spinhalf {
 
 template <typename coeff_t, class basis_t, class fill_f>
-void term_exchange(Coeff const &c, Op const &op, basis_t const &basis_in,
-                   basis_t const &basis_out, fill_f fill) try {
+void term_exchange_asym(Coeff const &c, Op const &op, basis_t const &basis_in,
+                        basis_t const &basis_out, fill_f fill) try {
   using bit_t = typename basis_t::bit_t;
 
   coeff_t J = c.scalar().as<coeff_t>();
@@ -38,7 +38,7 @@ void term_exchange(Coeff const &c, Op const &op, basis_t const &basis_in,
   term_offdiag(
       basis_in, basis_out, non_zero_term,
       [&](bit_t spins) -> std::pair<bit_t, coeff_t> {
-        return {spins ^ mask, Jhalf};
+        return {spins ^ mask, bits::get(spins, s1) ? Jhalf : -Jhalf};
       },
       fill);
 }

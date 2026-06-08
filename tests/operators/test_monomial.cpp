@@ -153,7 +153,7 @@ TEST_CASE("Monomial", "[operators]") try {
     REQUIRE_FALSE(mLong < mShort);
   }
 
-  // --- hc(): hermitian conjugate ---
+  // --- hc(Monomial): hermitian conjugate ---
   {
     Op sp = Op("S+", 0);
     Op sm = Op("S-", 0);
@@ -161,14 +161,14 @@ TEST_CASE("Monomial", "[operators]") try {
     // Single-op: hc of S+ is S-
     Monomial m_sp{sp};
     Monomial m_sm{sm};
-    REQUIRE(m_sp.hc() == m_sm);
-    REQUIRE(m_sm.hc() == m_sp);
+    REQUIRE(hc(m_sp) == OpSum(m_sm));
+    REQUIRE(hc(m_sm) == OpSum(m_sp));
 
     // Multi-op: hc reverses order and conjugates each
-    // {S+(0), S-(1)}.hc() == {S+(1), S-(0)}
+    // hc({S+(0), S-(1)}) == {S+(1), S-(0)}
     Monomial m2{Op("S+", 0), Op("S-", 1)};
     Monomial m2_hc{Op("S+", 1), Op("S-", 0)};
-    REQUIRE(m2.hc() == m2_hc);
+    REQUIRE(hc(m2) == OpSum(m2_hc));
   }
 
 } catch (xdiag::Error e) {

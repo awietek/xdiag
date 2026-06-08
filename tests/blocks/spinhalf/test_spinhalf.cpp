@@ -7,22 +7,29 @@
 #include "test_spinhalf_strategies.hpp"
 #include "testcases_spinhalf.hpp"
 
+#include <xdiag/algebra/algebras/matrix_algebra.hpp>
+#include <xdiag/algebra/algebras/spin_algebra.hpp>
+#include <xdiag/algebra/algebras/spinhalf_implementation_algebra.hpp>
+#include <xdiag/algebra/isapprox.hpp>
+#include <xdiag/algebra/normal_order.hpp>
 #include <xdiag/armadillo.hpp>
-#include <xdiag/linalg/sparse_diag.hpp>
-#include <xdiag/config.hpp>
 #include <xdiag/blocks/spinhalf.hpp>
+#include <xdiag/config.hpp>
 #include <xdiag/io/file_toml.hpp>
 #include <xdiag/io/read.hpp>
+#include <xdiag/linalg/sparse_diag.hpp>
 #include <xdiag/math/binomial.hpp>
 #include <xdiag/math/isapprox.hpp>
 #include <xdiag/matrices/matrix.hpp>
 #include <xdiag/matrices/sparse/coo_matrix.hpp>
 #include <xdiag/matrices/sparse/csc_matrix.hpp>
 #include <xdiag/matrices/sparse/csr_matrix.hpp>
+#include <xdiag/operators/hc.hpp>
 #include <xdiag/symmetries/cyclic_group.hpp>
 #include <xdiag/symmetries/representation.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/logger.hpp>
+#include <xdiag/utils/xdiag_show.hpp>
 
 using namespace xdiag;
 using namespace xdiag::testcases::spinhalf;
@@ -248,8 +255,8 @@ TEST_CASE("spinhalf_commutators", "[spinhalf]") try {
 
           arma::mat comm = arma::mat(sp_i_m_mat * sm_j_m_mat) -
                            arma::mat(sm_j_p_mat * sp_i_p_mat);
-          arma::mat commr = arma::mat(sp_i_mat * sm_j_mat) -
-                            arma::mat(sm_j_mat * sp_i_mat);
+          arma::mat commr =
+              arma::mat(sp_i_mat * sm_j_mat) - arma::mat(sm_j_mat * sp_i_mat);
 
           if (i == j) {
             OpSum sz;
@@ -259,8 +266,8 @@ TEST_CASE("spinhalf_commutators", "[spinhalf]") try {
             REQUIRE(isapprox(comm, arma::mat(2.0 * sz_mat)));
             REQUIRE(isapprox(commr, arma::mat(2.0 * sz_matr)));
           } else {
-            REQUIRE(isapprox(comm, arma::mat(comm.n_rows, comm.n_cols,
-                                             arma::fill::zeros)));
+            REQUIRE(isapprox(
+                comm, arma::mat(comm.n_rows, comm.n_cols, arma::fill::zeros)));
             REQUIRE(isapprox(commr, arma::mat(commr.n_rows, commr.n_cols,
                                               arma::fill::zeros)));
           }
@@ -483,7 +490,8 @@ TEST_CASE("spinhalf_symmetric_matrix", "[spinhalf]") try {
     test_spinhalf_symmetric_spectra_no_sz(ops, 9, irreps, multiplicities);
   }
 
-  // Triangular J1-J2-Jchi N=12: verify ground state energy per irrep via full diag
+  // Triangular J1-J2-Jchi N=12: verify ground state energy per irrep via full
+  // diag
   {
     Log("spinhalf_symmetric_matrix: triangular J1J2Jchi N=12");
     std::string lfile =
@@ -535,72 +543,124 @@ TEST_CASE("kitaev_gamma", "[spinhalf]") {
   {
     double K = -.30901699437494742412;
     double G = .95105651629515357210;
-    test_kitaev_gamma(K, G, {
-        {"Gamma.C2.A", -3.1765766652975568896},
-        {"Gamma.C2.B", -2.0558245985778302867},
-        {"M0.C2.A",    -2.3210367200223522843},
-        {"M0.C2.B",    -2.8044982600737728973},
-        {"M1.C2.A",    -2.3210367200223518402},
-        {"M1.C2.B",    -2.8044982600737733414},
-        {"M2.C2.A",    -2.3210367200223536166},
-        {"M2.C2.B",    -2.8044982600737742295}});
+    test_kitaev_gamma(K, G,
+                      {{"Gamma.C2.A", -3.1765766652975568896},
+                       {"Gamma.C2.B", -2.0558245985778302867},
+                       {"M0.C2.A", -2.3210367200223522843},
+                       {"M0.C2.B", -2.8044982600737728973},
+                       {"M1.C2.A", -2.3210367200223518402},
+                       {"M1.C2.B", -2.8044982600737733414},
+                       {"M2.C2.A", -2.3210367200223536166},
+                       {"M2.C2.B", -2.8044982600737742295}});
   }
 
   {
     double K = -1.0;
     double G = 0.0;
-    test_kitaev_gamma(K, G, {
-        {"Gamma.C2.A", -1.732050807568876083},
-        {"Gamma.C2.B", -0.85463767971846216209},
-        {"M0.C2.A",    -1.4516059629557762634},
-        {"M0.C2.B",    -1.4516059629557771515},
-        {"M1.C2.A",    -1.4516059629557773736},
-        {"M1.C2.B",    -1.4516059629557787058},
-        {"M2.C2.A",    -1.4516059629557762634},
-        {"M2.C2.B",    -1.4516059629557764854}});
+    test_kitaev_gamma(K, G,
+                      {{"Gamma.C2.A", -1.732050807568876083},
+                       {"Gamma.C2.B", -0.85463767971846216209},
+                       {"M0.C2.A", -1.4516059629557762634},
+                       {"M0.C2.B", -1.4516059629557771515},
+                       {"M1.C2.A", -1.4516059629557773736},
+                       {"M1.C2.B", -1.4516059629557787058},
+                       {"M2.C2.A", -1.4516059629557762634},
+                       {"M2.C2.B", -1.4516059629557764854}});
   }
 
   {
     double K = 0.0;
     double G = 1.0;
-    test_kitaev_gamma(K, G, {
-        {"Gamma.C2.A", -2.9261296954884912225},
-        {"Gamma.C2.B", -2.2611516188994311705},
-        {"M0.C2.A",    -2.3314966606292610862},
-        {"M0.C2.B",    -2.6582065612437091318},
-        {"M1.C2.A",    -2.3314966606292633067},
-        {"M1.C2.B",    -2.6582065612437086877},
-        {"M2.C2.A",    -2.3314966606292646389},
-        {"M2.C2.B",    -2.6582065612437109081}});
+    test_kitaev_gamma(K, G,
+                      {{"Gamma.C2.A", -2.9261296954884912225},
+                       {"Gamma.C2.B", -2.2611516188994311705},
+                       {"M0.C2.A", -2.3314966606292610862},
+                       {"M0.C2.B", -2.6582065612437091318},
+                       {"M1.C2.A", -2.3314966606292633067},
+                       {"M1.C2.B", -2.6582065612437086877},
+                       {"M2.C2.A", -2.3314966606292646389},
+                       {"M2.C2.B", -2.6582065612437109081}});
   }
 
   {
     double K = -0.64944804833018365819;
     double G = 0.76040596560003093085;
-    test_kitaev_gamma(K, G, {
-        {"Gamma.C2.A", -3.0857997869548752234},
-        {"Gamma.C2.B", -1.8283034696482216575},
-        {"M0.C2.A",    -2.0356565020285248835},
-        {"M0.C2.B",    -2.6544975593746693576},
-        {"M1.C2.A",    -2.035656502028527548},
-        {"M1.C2.B",    -2.6544975593746698017},
-        {"M2.C2.A",    -2.0356565020285266598},
-        {"M2.C2.B",    -2.6544975593746689135}});
+    test_kitaev_gamma(K, G,
+                      {{"Gamma.C2.A", -3.0857997869548752234},
+                       {"Gamma.C2.B", -1.8283034696482216575},
+                       {"M0.C2.A", -2.0356565020285248835},
+                       {"M0.C2.B", -2.6544975593746693576},
+                       {"M1.C2.A", -2.035656502028527548},
+                       {"M1.C2.B", -2.6544975593746698017},
+                       {"M2.C2.A", -2.0356565020285266598},
+                       {"M2.C2.B", -2.6544975593746689135}});
   }
 
   {
     double K = -0.70710678118654752441;
     double G = 0.70710678118654752441;
-    test_kitaev_gamma(K, G, {
-        {"Gamma.C2.A", -3.0140686352095316103},
-        {"Gamma.C2.B", -1.7541857925174297872},
-        {"M0.C2.A",    -1.94808553693512998},
-        {"M0.C2.B",    -2.5821356185598034472},
-        {"M1.C2.A",    -1.9480855369351295359},
-        {"M1.C2.B",    -2.5821356185598021149},
-        {"M2.C2.A",    -1.948085536935130424},
-        {"M2.C2.B",    -2.582135618559802559}});
+    test_kitaev_gamma(K, G,
+                      {{"Gamma.C2.A", -3.0140686352095316103},
+                       {"Gamma.C2.B", -1.7541857925174297872},
+                       {"M0.C2.A", -1.94808553693512998},
+                       {"M0.C2.B", -2.5821356185598034472},
+                       {"M1.C2.A", -1.9480855369351295359},
+                       {"M1.C2.B", -2.5821356185598021149},
+                       {"M2.C2.A", -1.948085536935130424},
+                       {"M2.C2.B", -2.582135618559802559}});
   }
 
   Log("kitaev_gamma: done");
+}
+
+// -----------------------------------------------------------------------
+// TEST_CASE: test whether exchange terms constructed correctly
+// -----------------------------------------------------------------------
+
+TEST_CASE("spinhalfexchange", "[spinhalf]") try {
+
+  auto b = Spinhalf(2);
+  {
+    auto op1 = complex(0.0, 1.0) * Op("Exchange", {0, 1});
+    auto op2 = complex(0.0, 1.0) * Op("Exchange", {1, 0});
+
+    // XDIAG_SHOW(op1);
+    // XDIAG_SHOW(hc(op1));
+
+    // auto algebra = algebra::matrix_algebra(2);
+    auto algebra = algebra::spin_algebra();
+
+    // XDIAG_SHOW(normal_order(op1, algebra));
+    // XDIAG_SHOW(normal_order(op2, algebra));
+    REQUIRE(isapprox(op1, op2, algebra));
+    REQUIRE_FALSE(isapprox(hc(op1), op1, algebra));
+    REQUIRE_FALSE(isapprox(hc(op2), op1, algebra));
+
+    auto m1 = matrixC(op1, b);
+    auto m2 = matrixC(op2, b);
+    REQUIRE(isapprox(m1, m2));
+  }
+  {
+    auto op1 = complex(0.0, 1.0) * Op("ExchangeAsym", {0, 1});
+    auto op2 = complex(0.0, 1.0) * Op("ExchangeAsym", {1, 0});
+
+    // XDIAG_SHOW(op1);
+    // XDIAG_SHOW(hc(op1));
+
+    // auto algebra = algebra::matrix_algebra(2);
+    auto algebra = algebra::spin_algebra();
+
+    // XDIAG_SHOW(normal_order(op1, algebra));
+    // XDIAG_SHOW(normal_order(op2, algebra));
+    REQUIRE(isapprox(op1, -op2, algebra));
+    REQUIRE(isapprox(hc(op1), op1, algebra));
+    REQUIRE(isapprox(hc(op2), op2, algebra));
+
+    auto m1 = matrixC(op1, b);
+    auto m2 = matrixC(op2, b);
+    REQUIRE(isapprox(m1, arma::cx_mat(-m2)));
+  }
+
+} catch (xdiag::Error e) {
+  error_trace(e);
 }
