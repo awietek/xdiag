@@ -4,7 +4,7 @@
 
 #pragma once
 
-namespace xdiag::bits {
+namespace xdiag::math {
 
 constexpr size_t floorlog2(size_t x) {
   return x == 1 ? 0 : 1 + floorlog2(x >> 1);
@@ -14,4 +14,4 @@ constexpr unsigned ceillog2(unsigned x) {
   return x == 1 ? 0 : floorlog2(x - 1) + 1;
 }
 
-} // namespace xdiag::bits
+} // namespace xdiag::math

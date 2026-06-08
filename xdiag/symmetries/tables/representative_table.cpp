@@ -16,7 +16,6 @@
 
 #include <xdiag/bits/bitarray.hpp>
 #include <xdiag/bits/bitset.hpp>
-#include <xdiag/bits/log2.hpp>
 #include <xdiag/bits/nbits.hpp>
 #include <xdiag/combinatorics/bounded_multisets/bounded_multisets.hpp>
 #include <xdiag/combinatorics/bounded_partitions/bounded_partitions.hpp>
@@ -24,6 +23,7 @@
 #include <xdiag/combinatorics/combinations/combinations.hpp>
 #include <xdiag/combinatorics/combinations/lin_table.hpp>
 #include <xdiag/combinatorics/subsets/subsets.hpp>
+#include <xdiag/math/log2.hpp>
 #include <xdiag/symmetries/action/isrepresentative.hpp>
 #include <xdiag/symmetries/action/norm.hpp>
 #include <xdiag/utils/error.hpp>
@@ -132,13 +132,12 @@ static void representative_table_initialize(
   std::sort(norms.begin(), norms.end());
   timing(time_count, rightnow(), "  time (count)", 2);
 
-  
   // --------------------------------------------------------------
   // Now come the allocations, since we know al the relevant sizes
   // --------------------------------------------------------------
   Log(2, "  allocate memory...");
   auto time_allocation = rightnow();
-  
+
   // Create vector holding the representatives
   try {
     int64_t size = nrepresentatives;
@@ -152,7 +151,7 @@ static void representative_table_initialize(
   // representative
   try {
     int64_t size = enumeration.size();
-    int64_t nbits = std::max(1u, bits::ceillog2(nrepresentatives + 1));
+    int64_t nbits = std::max(1u, math::ceillog2(nrepresentatives + 1));
     representative_index = BitVector<uint64_t>(size, nbits);
   } catch (...) {
     XDIAG_THROW("Unable to allocate representative index array");
@@ -161,7 +160,7 @@ static void representative_table_initialize(
   // Create vector holding the symmetry which yields the representative
   try {
     int64_t size = enumeration.size();
-    int64_t nbits = std::max(1u, bits::ceillog2(action.size()));
+    int64_t nbits = std::max(1u, math::ceillog2(action.size()));
     representative_symmetry = BitVector<uint64_t>(size, nbits);
   } catch (...) {
     XDIAG_THROW("Unable to allocate representative symmetry array");
@@ -170,7 +169,7 @@ static void representative_table_initialize(
   // Create vector holding the norm index of the states
   try {
     int64_t size = nrepresentatives;
-    int64_t nbits = std::max(1u, bits::ceillog2(norms.size()));
+    int64_t nbits = std::max(1u, math::ceillog2(norms.size()));
     representative_norm_index = BitVector<uint64_t>(size, nbits);
   } catch (...) {
     XDIAG_THROW("Unable to allocate representative norm index array");
@@ -184,9 +183,9 @@ static void representative_table_initialize(
   // so we use atomic_or_element (OR into zero-initialised storage) which is
   // safe because each element position is written by exactly one thread.
   // --------------------------------------------------------------
-    Log(2, "  write representatives...");
-    auto time_write_rep = rightnow();
-    
+  Log(2, "  write representatives...");
+  auto time_write_rep = rightnow();
+
 #ifdef _OPENMP
 #pragma omp parallel
   {
@@ -246,7 +245,7 @@ static void representative_table_initialize(
   // --------------------------------------------------------------
   Log(2, "  write non-representatives...");
   auto time_write_non_rep = rightnow();
-  
+
   auto const &group = action.group();
 #ifdef _OPENMP
 #pragma omp parallel
@@ -282,7 +281,8 @@ static void representative_table_initialize(
     }
   }
 #endif
-  timing(time_write_non_rep, rightnow(), "  time (write non-representative)", 2);
+  timing(time_write_non_rep, rightnow(), "  time (write non-representative)",
+         2);
   timing(time_total, rightnow(), "done", 2);
 }
 XDIAG_CATCH

@@ -6,11 +6,9 @@
 
 #include <cstdint>
 #include <memory>
-#include <optional>
 #include <string>
 
 #include <xdiag/basis/basis.hpp>
-#include <xdiag/operators/opsum.hpp>
 #include <xdiag/states/product_state.hpp>
 #include <xdiag/symmetries/representation.hpp>
 #include <xdiag/symmetries/representation_set.hpp>
@@ -56,7 +54,6 @@ private:
   int64_t nsites_ = 0;
   RepresentationSet irreps_;
   std::shared_ptr<basis::Basis> basis_;
-  int64_t size_ = 0;
 };
 
 XDIAG_API int64_t nsites(Spinhalf const &block);
@@ -76,7 +73,7 @@ public:
   XDIAG_API bool operator!=(SpinhalfIterator const &rhs) const;
 
 private:
-  Spinhalf const *block_;
+  std::unique_ptr<basis::BasisIterator> it_;
   int64_t idx_;
 };
 

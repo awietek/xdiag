@@ -12,8 +12,7 @@
 
 namespace xdiag {
 State product_state(Block const &block,
-                    std::vector<std::string> const &local_state,
-                    bool real) try {
+                    std::vector<int64_t> const &local_state, bool real) try {
   return std::visit(
       [&](auto &&block) { return product_state(block, local_state, real); },
       block);
@@ -22,17 +21,17 @@ XDIAG_CATCH
 
 template <typename block_t>
 State product_state(block_t const &block,
-                    std::vector<std::string> const &local_state,
-                    bool real) try {
-  auto state = State(block, real);
-  auto pstate = ProductState(local_state);
+                    std::vector<int64_t> const &local_state, bool real) try {
+  State state(block, real);
+  ProductState pstate(local_state);
   fill(state, pstate);
   return state;
 }
 XDIAG_CATCH
 
-template State product_state(Spinhalf const &, std::vector<std::string> const &,
+template State product_state(Spinhalf const &, std::vector<int64_t> const &,
                              bool);
+template State product_state(Boson const &, std::vector<int64_t> const &, bool);
 // template State product_state(tJ const &, std::vector<std::string> const &,
 //                              bool);
 // template State product_state(Electron const &, std::vector<std::string> const

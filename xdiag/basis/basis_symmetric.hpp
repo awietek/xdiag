@@ -65,10 +65,6 @@ public:
   iterator_t begin() const;
   iterator_t end() const;
 
-  ProductState
-  product_state(int64_t idx,
-                std::vector<std::string> const &dict) const override;
-
   bool operator==(BasisSymmetric<enumeration_t> const &rhs) const;
   bool operator!=(BasisSymmetric<enumeration_t> const &rhs) const;
 

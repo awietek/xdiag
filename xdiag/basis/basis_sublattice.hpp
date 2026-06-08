@@ -46,10 +46,6 @@ public:
   inline double norm(int64_t idx) const { return norms_[idx]; }
   inline double inv_norm(int64_t idx) const { return 1.0 / norms_[idx]; }
 
-  ProductState
-  product_state(int64_t idx,
-                std::vector<std::string> const &dict) const override;
-
   bool operator==(BasisSublattice<bit_t, n_sublat> const &rhs) const;
   bool operator!=(BasisSublattice<bit_t, n_sublat> const &rhs) const;
 

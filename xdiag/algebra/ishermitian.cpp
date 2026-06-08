@@ -6,6 +6,7 @@
 
 #include <cstdint>
 
+#include <xdiag/algebra/algebras/algebra.hpp>
 #include <xdiag/algebra/isapprox.hpp>
 #include <xdiag/math/complex.hpp>
 #include <xdiag/operators/hc.hpp>
@@ -20,7 +21,7 @@ bool ishermitian(OpSum const &ops, algebra::Algebra const &algebra,
 XDIAG_CATCH
 
 bool ishermitian(OpSum const &ops, Block const &block, double tol) try {
-  return ishermitian(ops, algebra::algebra(block), tol);
+  return ishermitian(ops, algebra::symmetry_algebra(block), tol);
 }
 XDIAG_CATCH
 

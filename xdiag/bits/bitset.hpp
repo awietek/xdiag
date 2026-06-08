@@ -13,7 +13,7 @@
 #include <vector>
 
 #include <xdiag/bits/bitmask.hpp>
-#include <xdiag/bits/log2.hpp>
+#include <xdiag/math/log2.hpp>
 
 namespace xdiag::bits {
 
@@ -47,7 +47,7 @@ public:
 
   static constexpr size_t nchunkbits = std::numeric_limits<chunk_t>::digits;
   static constexpr size_t nbits = nchunkbits * nchunks;
-  static constexpr size_t chunkshift = floorlog2(nchunkbits);
+  static constexpr size_t chunkshift = math::floorlog2(nchunkbits);
   static constexpr chunk_t chunkmask = bitmask<chunk_t>(chunkshift);
 
   Bitset() = default;
@@ -110,7 +110,7 @@ public:
   // Uses reinterpret_cast to std::atomic<chunk_t>*, which is well-defined for
   // lock-free types on all major platforms (GCC, Clang, MSVC / x86-64, ARM64).
   inline void set_range_atomic_or(int64_t start, int64_t length,
-                                   chunk_t bits) noexcept {
+                                  chunk_t bits) noexcept {
     static_assert(std::atomic<chunk_t>::is_always_lock_free,
                   "chunk_t must support lock-free atomics for parallel writes");
     bits &= bitmask<chunk_t>(length);
@@ -118,14 +118,15 @@ public:
       return;
     int64_t end = start + length;
     int64_t startchunk = start >> chunkshift;
-    int64_t startbit   = start & chunkmask;
-    int64_t endchunk   = end >> chunkshift;
-    int64_t endbit     = end & chunkmask;
+    int64_t startbit = start & chunkmask;
+    int64_t endchunk = end >> chunkshift;
+    int64_t endbit = end & chunkmask;
     reinterpret_cast<std::atomic<chunk_t> *>(&chunks_[startchunk])
         ->fetch_or(bits << startbit, std::memory_order_relaxed);
     if (endchunk != startchunk && endbit != 0)
       reinterpret_cast<std::atomic<chunk_t> *>(&chunks_[endchunk])
-          ->fetch_or(bits >> (nchunkbits - startbit), std::memory_order_relaxed);
+          ->fetch_or(bits >> (nchunkbits - startbit),
+                     std::memory_order_relaxed);
   }
 
   inline chunk_t get_range(int64_t start, int64_t length) const noexcept {

@@ -4,8 +4,10 @@
 
 #include "basis_onthefly.hpp"
 
-#include <xdiag/basis/to_product_state.hpp>
 #include <xdiag/bits/bitset.hpp>
+#include <xdiag/combinatorics/bounded_multisets/bounded_multisets.hpp>
+#include <xdiag/combinatorics/bounded_partitions/bounded_partitions.hpp>
+#include <xdiag/combinatorics/bounded_partitions/schaefer_table.hpp>
 #include <xdiag/combinatorics/combinations/combinations.hpp>
 #include <xdiag/combinatorics/combinations/lin_table.hpp>
 #include <xdiag/combinatorics/subsets/subsets.hpp>
@@ -51,12 +53,6 @@ BasisOnTheFly<enumeration_t>::end() const {
 }
 
 template <typename enumeration_t>
-ProductState BasisOnTheFly<enumeration_t>::product_state(
-    int64_t idx, std::vector<std::string> const &dict) const {
-  return to_product_state(enumeration_, idx, dict);
-}
-
-template <typename enumeration_t>
 bool BasisOnTheFly<enumeration_t>::operator==(
     BasisOnTheFly<enumeration_t> const &rhs) const {
   return enumeration_ == rhs.enumeration_;
@@ -68,17 +64,69 @@ bool BasisOnTheFly<enumeration_t>::operator!=(
   return !operator==(rhs);
 }
 
+} // namespace xdiag::basis
+
+using namespace xdiag;
+using namespace basis;
 using namespace combinatorics;
 using namespace bits;
-template class BasisOnTheFly<Subsets<uint32_t>>;
-template class BasisOnTheFly<Subsets<uint64_t>>;
-template class BasisOnTheFly<Combinations<uint32_t>>;
-template class BasisOnTheFly<Combinations<uint64_t>>;
-template class BasisOnTheFly<Combinations<BitsetStatic2>>;
-template class BasisOnTheFly<Combinations<BitsetStatic4>>;
-template class BasisOnTheFly<Combinations<BitsetStatic8>>;
-template class BasisOnTheFly<Combinations<BitsetDynamic>>;
-template class BasisOnTheFly<LinTable<uint32_t>>;
-template class BasisOnTheFly<LinTable<uint64_t>>;
 
-} // namespace xdiag::basis
+#define INSTANTIATE(E) template class basis::BasisOnTheFly<E>;
+
+// SchaeferTable / BoundedMultisets / BoundedPartitions share the BitArray
+// backends, so list those once per class template.
+#define INSTANTIATE_BITARRAY(Tmpl)                                             \
+  INSTANTIATE(Tmpl<BitArray1>)                                                 \
+  INSTANTIATE(Tmpl<BitArray2>)                                                 \
+  INSTANTIATE(Tmpl<BitArray3>)                                                 \
+  INSTANTIATE(Tmpl<BitArray4>)                                                 \
+  INSTANTIATE(Tmpl<BitArray5>)                                                 \
+  INSTANTIATE(Tmpl<BitArray6>)                                                 \
+  INSTANTIATE(Tmpl<BitArray7>)                                                 \
+  INSTANTIATE(Tmpl<BitArray8>)
+
+#define INSTANTIATE_BITARRAY_LONG(Tmpl)                                        \
+  INSTANTIATE(Tmpl<BitArrayLong1>)                                             \
+  INSTANTIATE(Tmpl<BitArrayLong2>)                                             \
+  INSTANTIATE(Tmpl<BitArrayLong3>)                                             \
+  INSTANTIATE(Tmpl<BitArrayLong4>)                                             \
+  INSTANTIATE(Tmpl<BitArrayLong5>)                                             \
+  INSTANTIATE(Tmpl<BitArrayLong6>)                                             \
+  INSTANTIATE(Tmpl<BitArrayLong7>)                                             \
+  INSTANTIATE(Tmpl<BitArrayLong8>)
+
+// BEGIN_INSTANTIATION_GROUP(spinhalf)
+INSTANTIATE(Subsets<uint32_t>)
+INSTANTIATE(Subsets<uint64_t>)
+INSTANTIATE(Combinations<uint32_t>)
+INSTANTIATE(Combinations<uint64_t>)
+INSTANTIATE(Combinations<BitsetStatic2>)
+INSTANTIATE(Combinations<BitsetStatic4>)
+INSTANTIATE(Combinations<BitsetStatic8>)
+INSTANTIATE(Combinations<BitsetDynamic>)
+INSTANTIATE(LinTable<uint32_t>)
+INSTANTIATE(LinTable<uint64_t>)
+// END_INSTANTIATION_GROUP
+
+// BEGIN_INSTANTIATION_GROUP(schaefer_table)
+INSTANTIATE_BITARRAY(SchaeferTable)
+// END_INSTANTIATION_GROUP
+
+// BEGIN_INSTANTIATION_GROUP(bounded_multisets)
+INSTANTIATE_BITARRAY(BoundedMultisets)
+// END_INSTANTIATION_GROUP
+
+// BEGIN_INSTANTIATION_GROUP(bounded_multisets_long)
+INSTANTIATE_BITARRAY_LONG(BoundedMultisets)
+// END_INSTANTIATION_GROUP
+
+// BEGIN_INSTANTIATION_GROUP(bounded_partitions)
+INSTANTIATE_BITARRAY(BoundedPartitions)
+// END_INSTANTIATION_GROUP
+
+// BEGIN_INSTANTIATION_GROUP(bounded_partitions_long)
+INSTANTIATE_BITARRAY_LONG(BoundedPartitions)
+// END_INSTANTIATION_GROUP
+
+#undef INSTANTIATE_BITARRAY
+#undef INSTANTIATE

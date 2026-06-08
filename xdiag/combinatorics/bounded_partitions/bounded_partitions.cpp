@@ -7,8 +7,8 @@
 #include <algorithm>
 #include <xdiag/bits/bitarray.hpp>
 #include <xdiag/bits/bitset.hpp>
-#include <xdiag/bits/log2.hpp>
 #include <xdiag/combinatorics/bounded_partitions/count_bounded_partitions.hpp>
+#include <xdiag/math/log2.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/format.hpp>
 
@@ -51,7 +51,7 @@ BoundedPartitions<bitarray_t>::BoundedPartitions(int64_t n, int64_t total,
   if (d < 2) {
     XDIAG_THROW("Error constructing BoundedPartitions: d < 2");
   }
-  int64_t nbits_for_d = bits::ceillog2(d);
+  int64_t nbits_for_d = math::ceillog2(d);
   if (nbits_for_d > nbits) {
     XDIAG_THROW(fmt::format("Error constructing BoundedPartitions: d ({}) "
                             "is too large for BitArray type with nbits ({})",

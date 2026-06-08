@@ -55,6 +55,8 @@ set(XDIAG_TEST_SOURCES
 
   blocks/tj/testcases_tj.cpp
 
+  blocks/boson/test_boson.cpp
+
   matrices/terms/test_non_branching_op.cpp
   
   io/test_file_toml.cpp

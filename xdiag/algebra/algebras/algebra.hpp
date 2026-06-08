@@ -10,6 +10,8 @@
 
 #include <xdiag/algebra/rewrite/rules/rules.hpp>
 #include <xdiag/blocks/blocks.hpp>
+#include <xdiag/blocks/boson.hpp>
+#include <xdiag/blocks/spinhalf.hpp>
 
 namespace xdiag::algebra {
 
@@ -39,12 +41,12 @@ struct Algebra {
   std::vector<MonomialRule> algebra_rules;
 };
 
-// Returns the Algebra used to bring an OpSum into normal order for the given
-// block. Each block type has a canonical algebra (e.g. Spinhalf uses the
-// spin-1/2 implementation algebra). Used wherever an OpSum must be normal
-// ordered or compared (e.g. isapprox / hermiticity checks) in the context of a
-// concrete block.
-Algebra algebra(Spinhalf const &block);
-Algebra algebra(Block const &block);
+Algebra implementation_algebra(Boson const &block);
+Algebra implementation_algebra(Spinhalf const &block);
+Algebra implementation_algebra(Block const &block);
+
+Algebra symmetry_algebra(Boson const &block);
+Algebra symmetry_algebra(Spinhalf const &block);
+Algebra symmetry_algebra(Block const &block);
 
 } // namespace xdiag::algebra

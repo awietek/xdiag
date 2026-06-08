@@ -4,6 +4,7 @@
 
 #include "spinhalf.hpp"
 
+#include <memory>
 #include <type_traits>
 
 #include <xdiag/basis/basis_onthefly.hpp>
@@ -22,7 +23,9 @@ namespace xdiag {
 namespace {
 
 // Carries a type into a generic lambda without constructing a value of it.
-template <typename T> struct type_tag { using type = T; };
+template <typename T> struct type_tag {
+  using type = T;
+};
 
 // Selects the (bit type, enumeration type) for a Spinhalf block from nsites and
 // the optional magnetization nup, builds the enumeration, and forwards it to f
@@ -124,9 +127,8 @@ Spinhalf::Spinhalf(int64_t nsites, RepresentationSet const &irreps,
     });
   }
 
-  size_ = basis_->size();
-  check_dimension_reasonable(size_);
-  check_dimension_works_with_blas_int_size(size_);
+  check_dimension_reasonable(size());
+  check_dimension_works_with_blas_int_size(size());
 }
 XDIAG_CATCH
 
@@ -149,12 +151,13 @@ Spinhalf::Spinhalf(int64_t nsites, int64_t nup, Representation const &irrep,
                backend) {}
 XDIAG_CATCH
 
-int64_t Spinhalf::dim() const { return size_; }
-int64_t Spinhalf::size() const { return size_; }
+int64_t Spinhalf::nsites() const { return nsites_; }
+int64_t Spinhalf::dim() const { return size(); }
+int64_t Spinhalf::size() const { return basis_->size(); }
 bool Spinhalf::isreal() const { return irreps_.isreal(); }
 
 SpinhalfIterator Spinhalf::begin() const { return {this, 0}; }
-SpinhalfIterator Spinhalf::end() const { return {this, size_}; }
+SpinhalfIterator Spinhalf::end() const { return {this, size()}; }
 
 bool Spinhalf::operator==(Spinhalf const &rhs) const {
   return (nsites_ == rhs.nsites_) && (irreps_ == rhs.irreps_);
@@ -164,7 +167,6 @@ bool Spinhalf::operator!=(Spinhalf const &rhs) const {
   return !operator==(rhs);
 }
 
-int64_t Spinhalf::nsites() const { return nsites_; }
 RepresentationSet Spinhalf::irreps() const { return irreps_; }
 std::shared_ptr<basis::Basis> const &Spinhalf::basis() const { return basis_; }
 
@@ -191,15 +193,20 @@ std::string to_string(Spinhalf const &block) {
 }
 
 SpinhalfIterator::SpinhalfIterator(Spinhalf const *block, int64_t idx)
-    : block_(block), idx_(idx) {}
+    : idx_(idx) {
+  if (idx_ < block->size()) {
+    it_ = block->basis()->product_state_iterator();
+  }
+}
 
 SpinhalfIterator &SpinhalfIterator::operator++() {
+  it_->advance();
   ++idx_;
   return *this;
 }
 
 ProductState SpinhalfIterator::operator*() const {
-  return block_->basis()->product_state(idx_, {"Dn", "Up"});
+  return it_->product_state();
 }
 
 bool SpinhalfIterator::operator==(SpinhalfIterator const &rhs) const {

@@ -10,10 +10,14 @@
 #include <xdiag/basis/basis_onthefly.hpp>
 #include <xdiag/basis/basis_symmetric.hpp>
 #include <xdiag/bits/bitset.hpp>
+#include <xdiag/combinatorics/bounded_multisets/bounded_multisets.hpp>
+#include <xdiag/combinatorics/bounded_partitions/bounded_partitions.hpp>
+#include <xdiag/combinatorics/bounded_partitions/schaefer_table.hpp>
 #include <xdiag/combinatorics/combinations/combinations.hpp>
 #include <xdiag/combinatorics/combinations/lin_table.hpp>
 #include <xdiag/combinatorics/subsets/subsets.hpp>
 #include <xdiag/math/complex.hpp>
+#include <xdiag/matrices/boson/matrix_policy.hpp>
 #include <xdiag/matrices/fill_functions.hpp>
 #include <xdiag/matrices/spinhalf/matrix_policy.hpp>
 #include <xdiag/utils/error.hpp>
@@ -232,6 +236,28 @@ using namespace xdiag::matrices;
   INSTANTIATE_CSR_FILL(MATRIX_POLICY, BASIS, int64_t, double)                  \
   INSTANTIATE_CSR_FILL(MATRIX_POLICY, BASIS, int64_t, complex)
 
+// Boson bases share the same BitArray<1..8> / BitArrayLong<1..8> backends for a
+// given (basis class, enumeration), so instantiate all eight at once.
+#define INSTANTIATE_KERNELS_BITARRAY(POLICY, BASIS, ENUM)                      \
+  INSTANTIATE_KERNELS(POLICY, BASIS<ENUM<BitArray1>>)                          \
+  INSTANTIATE_KERNELS(POLICY, BASIS<ENUM<BitArray2>>)                          \
+  INSTANTIATE_KERNELS(POLICY, BASIS<ENUM<BitArray3>>)                          \
+  INSTANTIATE_KERNELS(POLICY, BASIS<ENUM<BitArray4>>)                          \
+  INSTANTIATE_KERNELS(POLICY, BASIS<ENUM<BitArray5>>)                          \
+  INSTANTIATE_KERNELS(POLICY, BASIS<ENUM<BitArray6>>)                          \
+  INSTANTIATE_KERNELS(POLICY, BASIS<ENUM<BitArray7>>)                          \
+  INSTANTIATE_KERNELS(POLICY, BASIS<ENUM<BitArray8>>)
+
+#define INSTANTIATE_KERNELS_BITARRAY_LONG(POLICY, BASIS, ENUM)                 \
+  INSTANTIATE_KERNELS(POLICY, BASIS<ENUM<BitArrayLong1>>)                      \
+  INSTANTIATE_KERNELS(POLICY, BASIS<ENUM<BitArrayLong2>>)                      \
+  INSTANTIATE_KERNELS(POLICY, BASIS<ENUM<BitArrayLong3>>)                      \
+  INSTANTIATE_KERNELS(POLICY, BASIS<ENUM<BitArrayLong4>>)                      \
+  INSTANTIATE_KERNELS(POLICY, BASIS<ENUM<BitArrayLong5>>)                      \
+  INSTANTIATE_KERNELS(POLICY, BASIS<ENUM<BitArrayLong6>>)                      \
+  INSTANTIATE_KERNELS(POLICY, BASIS<ENUM<BitArrayLong7>>)                      \
+  INSTANTIATE_KERNELS(POLICY, BASIS<ENUM<BitArrayLong8>>)
+
 //
 //
 // BasisOnTheFly Instantiations
@@ -380,4 +406,58 @@ INSTANTIATE_KERNELS(spinhalf::MatrixPolicy, BasisSublattice64<4>)
 
 // BEGIN_INSTANTIATION_GROUP(spinhalf_sublattice_uint64_t_5)
 INSTANTIATE_KERNELS(spinhalf::MatrixPolicy, BasisSublattice64<5>)
+// END_INSTANTIATION_GROUP
+
+//
+//
+// Boson Instantiations (must mirror matrices/boson/dispatch_basis.hpp)
+//
+//
+
+// BEGIN_INSTANTIATION_GROUP(boson_onthefly_schaefer_table)
+INSTANTIATE_KERNELS_BITARRAY(boson::MatrixPolicy, BasisOnTheFly, SchaeferTable)
+// END_INSTANTIATION_GROUP
+
+// BEGIN_INSTANTIATION_GROUP(boson_onthefly_bounded_partitions)
+INSTANTIATE_KERNELS_BITARRAY(boson::MatrixPolicy, BasisOnTheFly,
+                             BoundedPartitions)
+// END_INSTANTIATION_GROUP
+
+// BEGIN_INSTANTIATION_GROUP(boson_onthefly_bounded_multisets)
+INSTANTIATE_KERNELS_BITARRAY(boson::MatrixPolicy, BasisOnTheFly,
+                             BoundedMultisets)
+// END_INSTANTIATION_GROUP
+
+// BEGIN_INSTANTIATION_GROUP(boson_symmetric_schaefer_table)
+INSTANTIATE_KERNELS_BITARRAY(boson::MatrixPolicy, BasisSymmetric, SchaeferTable)
+// END_INSTANTIATION_GROUP
+
+// BEGIN_INSTANTIATION_GROUP(boson_symmetric_bounded_partitions)
+INSTANTIATE_KERNELS_BITARRAY(boson::MatrixPolicy, BasisSymmetric,
+                             BoundedPartitions)
+// END_INSTANTIATION_GROUP
+
+// BEGIN_INSTANTIATION_GROUP(boson_symmetric_bounded_multisets)
+INSTANTIATE_KERNELS_BITARRAY(boson::MatrixPolicy, BasisSymmetric,
+                             BoundedMultisets)
+// END_INSTANTIATION_GROUP
+
+// BEGIN_INSTANTIATION_GROUP(boson_onthefly_bounded_partitions_long)
+INSTANTIATE_KERNELS_BITARRAY_LONG(boson::MatrixPolicy, BasisOnTheFly,
+                                  BoundedPartitions)
+// END_INSTANTIATION_GROUP
+
+// BEGIN_INSTANTIATION_GROUP(boson_onthefly_bounded_multisets_long)
+INSTANTIATE_KERNELS_BITARRAY_LONG(boson::MatrixPolicy, BasisOnTheFly,
+                                  BoundedMultisets)
+// END_INSTANTIATION_GROUP
+
+// BEGIN_INSTANTIATION_GROUP(boson_symmetric_bounded_partitions_long)
+INSTANTIATE_KERNELS_BITARRAY_LONG(boson::MatrixPolicy, BasisSymmetric,
+                                  BoundedPartitions)
+// END_INSTANTIATION_GROUP
+
+// BEGIN_INSTANTIATION_GROUP(boson_symmetric_bounded_multisets_long)
+INSTANTIATE_KERNELS_BITARRAY_LONG(boson::MatrixPolicy, BasisSymmetric,
+                                  BoundedMultisets)
 // END_INSTANTIATION_GROUP

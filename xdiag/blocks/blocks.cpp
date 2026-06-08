@@ -1,33 +1,30 @@
-// SPDX-FileCopyrightText: 2025 Alexander Wietek <awietek@pks.mpg.de>
+// SPDX-FileCopyrightText: 2026 Alexander Wietek <awietek@pks.mpg.de>
 //
 // SPDX-License-Identifier: Apache-2.0
 
 #include "blocks.hpp"
 
+#include <cmath>
+#include <cstdint>
+#include <sstream>
+#include <string>
 #include <type_traits>
 
-#include <xdiag/algebra/algebras/spinhalf_implementation_algebra.hpp>
+#include <xdiag/algebra/algebras/algebra.hpp>
 #include <xdiag/algebra/representation.hpp>
+#include <xdiag/extern/fmt/color.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/format.hpp>
 #include <xdiag/utils/to_string_generic.hpp>
 
 namespace xdiag {
 
-// Symmetry sectors of the output block obtained by applying ops to a Spinhalf:
-// the input sectors shifted by the representation ops transforms under (U(1)
-// charges add, permutation characters multiply). Does not build a block.
+template <typename block_t>
 static RepresentationSet output_irreps(OpSum const &ops,
-                                       Spinhalf const &block_in) try {
-  // How ops transforms under each symmetry sector of the input block. A sector
-  // is omitted from `shift` whenever ops has no well-defined quantum number for
-  // it.
+                                       block_t const &block_in,
+                                       algebra::Algebra const &algebra) try {
   RepresentationSet in = block_in.irreps();
-  RepresentationSet shift = algebra::representations(
-      ops, in, algebra::spinhalf_implementation_algebra());
-
-  // Every symmetry of the input block must be matched, otherwise applying ops
-  // does not map block_in into a single output block.
+  RepresentationSet shift = algebra::representations(ops, in, algebra);
   for (Representation const &rep : in) {
     if (!shift.has_type(rep.type())) {
       XDIAG_THROW(fmt::format(
@@ -42,19 +39,29 @@ static RepresentationSet output_irreps(OpSum const &ops,
 XDIAG_CATCH
 
 Spinhalf block(OpSum const &ops, Spinhalf const &block_in) try {
-  RepresentationSet out = output_irreps(ops, block_in);
+  RepresentationSet irreps_out =
+      output_irreps(ops, block_in, algebra::symmetry_algebra(block_in));
 
-  // If ops leaves every sector unchanged the output block equals the input
-  // block; return a shallow copy (shares the basis) instead of rebuilding it.
-  // isapprox, not ==, because the computed characters only match approximately.
-  if (block_in.irreps().isapprox(out)) {
+  if (block_in.irreps().isapprox(irreps_out)) {
     return block_in;
   }
-  return Spinhalf(block_in.nsites(), out);
+  return Spinhalf(block_in.nsites(), irreps_out);
+}
+XDIAG_CATCH
+
+Boson block(OpSum const &ops, Boson const &block_in) try {
+  RepresentationSet irreps_out =
+      output_irreps(ops, block_in, algebra::symmetry_algebra(block_in));
+
+  if (block_in.irreps().isapprox(irreps_out)) {
+    return block_in;
+  }
+  return Boson(block_in.nsites(), block_in.d(), irreps_out);
 }
 XDIAG_CATCH
 
 Block block(OpSum const &ops, Block const &block_in) try {
+
   return std::visit([&](auto const &b) -> Block { return block(ops, b); },
                     block_in);
 }
@@ -62,14 +69,12 @@ XDIAG_CATCH
 
 bool blocks_match(OpSum const &ops, Block const &block_in,
                   Block const &block_out) try {
-  // Check that block_out is the sector ops maps block_in into, comparing only
-  // nsites and irreps -- no block is copied or constructed. isapprox, not ==,
-  // because the output characters are computed and only match approximately.
   return std::visit(
       [&](auto const &bin, auto const &bout) -> bool {
         if constexpr (std::is_same_v<decltype(bin), decltype(bout)>) {
-          return (bin.nsites() == bout.nsites()) &&
-                 isapprox(output_irreps(ops, bin), bout.irreps());
+          return isapprox(
+              output_irreps(ops, bin, algebra::symmetry_algebra(block_in)),
+              bout.irreps());
         } else { // different block types never match
           return false;
         }
@@ -99,5 +104,62 @@ std::ostream &operator<<(std::ostream &out, Block const &block) {
   return out;
 }
 std::string to_string(Block const &block) { return to_string_generic(block); }
+
+// Bare printing renders the raw per-site integers (highest site first, matching
+// the bit ordering). Block-aware label rendering lives in the blocks layer
+// (see to_string(ProductState, Block)).
+std::ostream &operator<<(std::ostream &out, ProductState const &state) {
+  for (int64_t i = state.size() - 1; i >= 0; --i) {
+    out << state[i] << " ";
+  }
+  return out;
+}
+std::string to_string(ProductState const &state) {
+  std::stringstream ss;
+  ss << state;
+  return ss.str();
+}
+
+// Render a ProductState with the labels appropriate to its block. The block is
+// what knows how to interpret the per-site integers: spin-1/2 maps them to
+// colored arrows, bosons just print the occupation numbers. Highest site first,
+// matching the bit ordering.
+static std::string to_string(ProductState const &state, Spinhalf const &) {
+  std::stringstream ss;
+  for (int64_t i = state.size() - 1; i >= 0; --i) {
+    if (state[i] == 1) { // Up
+      ss << fmt::format(fg(fmt::color::light_blue), "↑");
+    } else { // Dn
+      ss << fmt::format(fg(fmt::color::orange), "↓");
+    }
+  }
+  return ss.str();
+}
+
+// Bosons: occupation numbers in a fixed-width column (width set by the largest
+// representable occupation d()-1, so e.g. a value of 5 lines up under 12), each
+// colored on a blue->red gradient across the d() possible occupations.
+static std::string to_string(ProductState const &state, Boson const &boson) {
+  int64_t d = boson.d();
+  int64_t max_occupation = (d > 0) ? d - 1 : 0;
+  int width = static_cast<int>(std::to_string(max_occupation).size());
+  std::stringstream ss;
+  for (int64_t i = state.size() - 1; i >= 0; --i) {
+    int64_t v = state[i];
+    double f =
+        (d > 1) ? static_cast<double>(v) / static_cast<double>(d - 1) : 0.0;
+    uint8_t r = static_cast<uint8_t>(std::lround(255.0 * f));
+    uint8_t b = static_cast<uint8_t>(std::lround(255.0 * (1.0 - f)));
+    ss << fmt::format(fg(fmt::rgb(r, 0, b)), "{:>{}}", v, width);
+    if (i > 0) {
+      ss << " ";
+    }
+  }
+  return ss.str();
+}
+
+std::string to_string(ProductState const &state, Block const &block) {
+  return std::visit([&](auto const &b) { return to_string(state, b); }, block);
+}
 
 } // namespace xdiag

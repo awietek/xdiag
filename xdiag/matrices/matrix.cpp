@@ -5,7 +5,11 @@
 #include "matrix.hpp"
 
 #include <xdiag/armadillo.hpp>
+#include <xdiag/blocks/boson.hpp>
+#include <xdiag/blocks/spinhalf.hpp>
 #include <xdiag/math/complex.hpp>
+#include <xdiag/matrices/boson/dispatch_basis.hpp>
+#include <xdiag/matrices/boson/matrix_policy.hpp>
 #include <xdiag/matrices/kernels.hpp>
 #include <xdiag/matrices/spinhalf/dispatch_basis.hpp>
 #include <xdiag/matrices/spinhalf/matrix_policy.hpp>
@@ -55,6 +59,17 @@ void matrix(OpSum const &ops, Spinhalf const &block_in,
         // Kernel: definition is in kernels.cpp, instantiated per basis type.
         matrices::matrix<matrices::spinhalf::MatrixPolicy>(ops, basis_in,
                                                            basis_out, mat);
+      });
+}
+XDIAG_CATCH
+
+template <typename coeff_t>
+void matrix(OpSum const &ops, Boson const &block_in, Boson const &block_out,
+            coeff_t *mat) try {
+  matrices::boson::dispatch_basis(
+      block_in, block_out, [&](auto const &basis_in, auto const &basis_out) {
+        matrices::matrix<matrices::boson::MatrixPolicy>(ops, basis_in,
+                                                        basis_out, mat);
       });
 }
 XDIAG_CATCH
@@ -136,5 +151,7 @@ template void matrix(OpSum const &, Spinhalf const &, Spinhalf const &,
                      double *);
 template void matrix(OpSum const &, Spinhalf const &, Spinhalf const &,
                      complex *);
+template void matrix(OpSum const &, Boson const &, Boson const &, double *);
+template void matrix(OpSum const &, Boson const &, Boson const &, complex *);
 
 } // namespace xdiag

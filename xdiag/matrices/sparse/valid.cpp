@@ -56,17 +56,18 @@ void check_valid_sparse_matrix(OpSum const &ops, block_t const &block_in,
 XDIAG_CATCH
 
 // Explicit instantiations for each (idx_t, coeff_t) over the supported blocks.
-#define XDIAG_INSTANTIATE_CHECK_VALID(idx_t, coeff_t, block_t)                  \
-  template void check_valid_sparse_matrix<idx_t, coeff_t, block_t>(             \
+#define XDIAG_INSTANTIATE_CHECK_VALID(idx_t, coeff_t, block_t)                 \
+  template void check_valid_sparse_matrix<idx_t, coeff_t, block_t>(            \
       OpSum const &, block_t const &, block_t, idx_t);
 
 #define XDIAG_INSTANTIATE_CHECK_VALID_BLOCK(block_t)                           \
-  XDIAG_INSTANTIATE_CHECK_VALID(int32_t, double, block_t)                       \
-  XDIAG_INSTANTIATE_CHECK_VALID(int32_t, complex, block_t)                      \
-  XDIAG_INSTANTIATE_CHECK_VALID(int64_t, double, block_t)                       \
+  XDIAG_INSTANTIATE_CHECK_VALID(int32_t, double, block_t)                      \
+  XDIAG_INSTANTIATE_CHECK_VALID(int32_t, complex, block_t)                     \
+  XDIAG_INSTANTIATE_CHECK_VALID(int64_t, double, block_t)                      \
   XDIAG_INSTANTIATE_CHECK_VALID(int64_t, complex, block_t)
 
 XDIAG_INSTANTIATE_CHECK_VALID_BLOCK(Spinhalf)
+XDIAG_INSTANTIATE_CHECK_VALID_BLOCK(Boson)
 
 #undef XDIAG_INSTANTIATE_CHECK_VALID_BLOCK
 #undef XDIAG_INSTANTIATE_CHECK_VALID

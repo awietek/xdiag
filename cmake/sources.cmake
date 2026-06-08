@@ -62,10 +62,10 @@ set(XDIAG_SOURCES
   basis/basis_onthefly.cpp
   basis/basis_sublattice.cpp
   basis/basis_symmetric.cpp
-  basis/to_product_state.cpp
-  
+
   blocks/blocks.cpp
   blocks/spinhalf.cpp
+  blocks/boson.cpp
   
   states/product_state.cpp
   states/random_state.cpp

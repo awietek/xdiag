@@ -62,8 +62,7 @@ static coeff_t gpwf_coefficient(ProductState const &pstate, int64_t nsites,
                                 arma::Mat<coeff_t> &work_matrix) {
   work_matrix.zeros();
   for (int64_t i = 0; i < nsites; ++i) {
-    std::string s = pstate[i];
-    if (s == "Up") {
+    if (pstate[i] == 1) { // Up
       work_matrix(i, arma::span(0, nup - 1)) =
           onebody_wfs_up(i, arma::span(0, nup - 1));
     } else { // spin at site i is dn

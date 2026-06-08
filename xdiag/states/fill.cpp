@@ -71,50 +71,24 @@ void fill(State &state, RandomState const &rstate, int64_t col) try {
 }
 XDIAG_CATCH
 
-// template <class block_t, typename coeff_t>
-// void fill(block_t const &block, arma::Col<coeff_t> &vec,
-//           ProductState const &p) try {
-//   int64_t idx = block.index(p);
-//   if (isdistributed(block)) {
-//     vec.zeros();
-
-// #ifdef XDIAG_USE_MPI
-//     // all processes except one should hold invalid index
-//     int64_t max_idx;
-//     MPI_Allreduce(&idx, &max_idx, 1, MPI_LONG_LONG_INT, MPI_MAX,
-//                   MPI_COMM_WORLD);
-//     if (max_idx == invalid_index) {
-//       XDIAG_THROW("Index of product state cannot be determined");
-//     } else if (idx != invalid_index) {
-//       vec(idx) = 1.0;
-//     }
-// #endif
-//   } else {
-//     if (idx == invalid_index) {
-//       XDIAG_THROW("Index of product state cannot be determined");
-//     }
-//     vec.zeros();
-//     vec(idx) = 1.0;
-//   }
-// }
-// XDIAG_CATCH
-
-// void fill(State &state, ProductState const &pstate, int64_t col) try {
-//   if (state.nsites() != pstate.size()) {
-//     XDIAG_THROW("State and ProductState do not have the same number of sites");
-//   } else if (col >= state.ncols()) {
-//     XDIAG_THROW("Column index larger than number of columns in State");
-//   }
-//   auto const &block = state.block();
-//   if (state.isreal()) {
-//     arma::vec v = state.vector(col, false);
-//     std::visit([&](auto &&block) { fill(block, v, pstate); }, block);
-//   } else {
-//     arma::cx_vec v = state.vectorC(col, false);
-//     std::visit([&](auto &&block) { fill(block, v, pstate); }, block);
-//   }
-// }
-// XDIAG_CATCH
+// Set the given column to the basis vector of a single product state: 1 on the
+// matching basis element, 0 elsewhere. Implemented by reusing the coefficient
+// fill, which iterates the block's product states, so it is correct for every
+// basis type (including symmetric bases, where the match is against the
+// canonical representative product state).
+void fill(State &state, ProductState const &pstate, int64_t col) try {
+  if (state.nsites() != pstate.size()) {
+    XDIAG_THROW("State and ProductState do not have the same number of sites");
+  } else if (col >= state.ncols()) {
+    XDIAG_THROW("Column index larger than number of columns in State");
+  }
+  std::function<double(ProductState const &)> coeff =
+      [&pstate](ProductState const &p) -> double {
+    return (p == pstate) ? 1.0 : 0.0;
+  };
+  fill(state, coeff, col);
+}
+XDIAG_CATCH
 
 // void fill(State &state, GPWF const &gpwf, int64_t col) try {
 //   if (state.nsites() != gpwf.nsites()) {

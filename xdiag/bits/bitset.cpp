@@ -16,7 +16,7 @@ namespace xdiag::bits {
 template <typename chunk_t>
 static constexpr int64_t n_chunks_for_bits(int64_t nbits) {
   constexpr size_t nchunkbits = std::numeric_limits<chunk_t>::digits;
-  constexpr size_t chunkshift = floorlog2(nchunkbits);
+  constexpr size_t chunkshift = math::floorlog2(nchunkbits);
   return nbits > 0 ? ((nbits - 1) >> chunkshift) + 1 : 0;
 }
 

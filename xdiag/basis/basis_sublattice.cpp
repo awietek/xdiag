@@ -338,17 +338,6 @@ BasisSublattice<bit_t, n_sublat>::index_syms(bit_t state) const {
 }
 
 template <typename bit_t, int n_sublat>
-ProductState BasisSublattice<bit_t, n_sublat>::product_state(
-    int64_t idx, std::vector<std::string> const &dict) const {
-  bit_t b = reps_[idx];
-  ProductState ps(nsites_);
-  for (int64_t i = 0; i < nsites_; ++i) {
-    ps[i] = dict[bits::get(b, i)];
-  }
-  return ps;
-}
-
-template <typename bit_t, int n_sublat>
 bool BasisSublattice<bit_t, n_sublat>::operator==(
     BasisSublattice<bit_t, n_sublat> const &rhs) const {
   return (nsites_ == rhs.nsites_) && (nup_ == rhs.nup_) &&

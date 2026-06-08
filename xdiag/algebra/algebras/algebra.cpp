@@ -6,18 +6,38 @@
 
 #include <variant>
 
+#include <xdiag/algebra/algebras/matrix_algebra.hpp>
 #include <xdiag/algebra/algebras/spinhalf_implementation_algebra.hpp>
 #include <xdiag/utils/error.hpp>
 
 namespace xdiag::algebra {
 
-Algebra algebra(Spinhalf const &) try {
+Algebra implementation_algebra(Spinhalf const &) try {
   return spinhalf_implementation_algebra();
 }
 XDIAG_CATCH
 
-Algebra algebra(Block const &block) try {
-  return std::visit([](auto const &b) { return algebra(b); }, block);
+Algebra implementation_algebra(Boson const &block) try {
+  return matrix_algebra(block.d());
+}
+XDIAG_CATCH
+
+Algebra implementation_algebra(Block const &block) try {
+  return std::visit([](auto const &b) { return implementation_algebra(b); },
+                    block);
+}
+XDIAG_CATCH
+
+Algebra symmetry_algebra(Spinhalf const &) try { return matrix_algebra(2); }
+XDIAG_CATCH
+
+Algebra symmetry_algebra(Boson const &block) try {
+  return matrix_algebra(block.d());
+}
+XDIAG_CATCH
+
+Algebra symmetry_algebra(Block const &block) try {
+  return std::visit([](auto const &b) { return symmetry_algebra(b); }, block);
 }
 XDIAG_CATCH
 

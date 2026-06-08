@@ -4,10 +4,10 @@
 
 #pragma once
 
-#include <xdiag/algebra/algebra.hpp>
+#include <xdiag/algebra/algebras/matrix_algebra.hpp>
 #include <xdiag/algebra/normal_order.hpp>
-#include <xdiag/algebra/valid.hpp>
 #include <xdiag/operators/opsum.hpp>
+#include <xdiag/operators/valid.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/format.hpp>
 
@@ -20,9 +20,15 @@ template <typename coeff_t, typename basis_t, typename fill_f>
 void matrix_generic(OpSum const &ops, basis_t const &basis_in,
                     basis_t const &basis_out, fill_f fill) try {
 
+  if (basis_in.d() != basis_out.d()) {
+    XDIAG_THROW(
+        fmt::format("Incompatible local dimensions: input d={}, output d={}",
+                    basis_in.d(), basis_out.d()));
+  }
+
   // Get OpSum into format that can be processed
   operators::check_valid(ops);
-  auto algebra = operators::boson_implementation_algebra();
+  auto algebra = algebra::matrix_algebra(basis_in.d());
   auto ops_compiled = normal_order(ops.plain(), algebra);
 
   for (auto const &[c, monomial] : ops_compiled) {
