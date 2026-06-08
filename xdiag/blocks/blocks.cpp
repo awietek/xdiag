@@ -105,21 +105,6 @@ std::ostream &operator<<(std::ostream &out, Block const &block) {
 }
 std::string to_string(Block const &block) { return to_string_generic(block); }
 
-// Bare printing renders the raw per-site integers (highest site first, matching
-// the bit ordering). Block-aware label rendering lives in the blocks layer
-// (see to_string(ProductState, Block)).
-std::ostream &operator<<(std::ostream &out, ProductState const &state) {
-  for (int64_t i = state.size() - 1; i >= 0; --i) {
-    out << state[i] << " ";
-  }
-  return out;
-}
-std::string to_string(ProductState const &state) {
-  std::stringstream ss;
-  ss << state;
-  return ss.str();
-}
-
 // Render a ProductState with the labels appropriate to its block. The block is
 // what knows how to interpret the per-site integers: spin-1/2 maps them to
 // colored arrows, bosons just print the occupation numbers. Highest site first,

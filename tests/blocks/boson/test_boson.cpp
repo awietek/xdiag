@@ -10,9 +10,9 @@
 
 TEST_CASE("boson", "[boson]") try {
   using namespace xdiag;
-  int64_t nsites = 3;
-  int64_t d = 12;
-  auto block = Spin(nsites, d);
+  int64_t nsites = 4;
+  int64_t d = 6;
+  auto block = Boson(nsites, d, d*2);
   for (auto state : block) {
     Log(to_string(state, block));
   }
