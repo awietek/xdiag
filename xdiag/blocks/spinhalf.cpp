@@ -14,9 +14,14 @@
 #include <xdiag/combinatorics/combinations/combinations.hpp>
 #include <xdiag/combinatorics/combinations/lin_table.hpp>
 #include <xdiag/combinatorics/subsets/subsets.hpp>
+#include <xdiag/random/hash.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/format.hpp>
 #include <xdiag/utils/to_string_generic.hpp>
+
+#ifndef XDIAG_DISABLE_COLOR
+#include <xdiag/extern/fmt/color.hpp>
+#endif
 
 namespace xdiag {
 
@@ -176,16 +181,25 @@ int64_t size(Spinhalf const &block) { return block.size(); }
 bool isreal(Spinhalf const &block) { return block.isreal(); }
 
 std::ostream &operator<<(std::ostream &out, Spinhalf const &block) {
-  out << "Spinhalf:\n";
-  out << "  nsites   : " << block.nsites() << "\n";
+  out << fmt::format(fg(fmt::color::moccasin) | fmt::emphasis::bold,
+                     "Spinhalf\n");
+  out << "| nsites   : " << block.nsites() << "\n";
   std::optional<int64_t> nup = block.irreps().charge("nup");
   if (nup) {
-    out << "  nup      : " << *nup << "\n";
+    out << "| nup      : " << *nup << "\n";
   } else {
-    out << "  nup      : not conserved\n";
+    out << "| nup      : not conserved\n";
   }
-
-  out << "  dimension: " << fmt::format_de("{:L}", block.size()) << "\n";
+  auto group = block.irreps().group("SitePermutation");
+  if (group) {
+    out << "| permutation symmetries used\n";
+    out << fmt::format(
+        "| irrep ID : {0:x}\n",
+        random::hash(Representation(
+            *group, *block.irreps().characters("SitePermutation"))));
+  }
+  out << fmt::format("| ID       : {0:x}\n", random::hash(block));
+  out << "| dimension: " << fmt::format_de("{:L}", block.size()) << "\n";
   return out;
 }
 std::string to_string(Spinhalf const &block) {

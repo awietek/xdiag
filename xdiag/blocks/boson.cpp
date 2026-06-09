@@ -17,9 +17,14 @@
 #include <xdiag/combinatorics/bounded_partitions/bounded_partitions.hpp>
 #include <xdiag/combinatorics/bounded_partitions/schaefer_table.hpp>
 #include <xdiag/math/log2.hpp>
+#include <xdiag/random/hash.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/format.hpp>
 #include <xdiag/utils/to_string_generic.hpp>
+
+#ifndef XDIAG_DISABLE_COLOR
+#include <xdiag/extern/fmt/color.hpp>
+#endif
 
 namespace xdiag {
 
@@ -130,8 +135,8 @@ Boson::Boson(int64_t nsites, int64_t d, RepresentationSet const &irreps) try
   if (number) {
     if (*number < 0) {
       XDIAG_THROW("Invalid argument: number < 0");
-    } else if (*number > nsites * d) {
-      XDIAG_THROW("Invalid argument: number > nsites * d");
+    } else if (*number > nsites * (d - 1)) {
+      XDIAG_THROW("Invalid argument: number > nsites * (d-1)");
     }
   }
 
@@ -200,17 +205,26 @@ int64_t size(Boson const &block) { return block.size(); }
 bool isreal(Boson const &block) { return block.isreal(); }
 
 std::ostream &operator<<(std::ostream &out, Boson const &block) {
-  out << "Boson:\n";
-  out << "  nsites   : " << block.nsites() << "\n";
-  out << "  d        : " << block.d() << "\n";
+  out << fmt::format(fg(fmt::color::steel_blue) | fmt::emphasis::bold,
+                     "Boson\n");
+  out << "| nsites   : " << block.nsites() << "\n";
+  out << "| d        : " << block.d() << "\n";
   std::optional<int64_t> number = block.irreps().charge("number");
   if (number) {
-    out << "  number   : " << *number << "\n";
+    out << "| number   : " << *number << "\n";
   } else {
-    out << "  number   : not conserved\n";
+    out << "| number   : not conserved\n";
   }
-
-  out << "  dimension: " << fmt::format_de("{:L}", block.size()) << "\n";
+  auto group = block.irreps().group("SitePermutation");
+  if (group) {
+    out << "| permutation symmetries used\n";
+    out << fmt::format(
+        "| irrep ID : {0:x}\n",
+        random::hash(Representation(
+            *group, *block.irreps().characters("SitePermutation"))));
+  }
+  out << fmt::format("| ID       : {0:x}\n", random::hash(block));
+  out << "| dimension: " << fmt::format_de("{:L}", block.size()) << "\n";
   return out;
 }
 std::string to_string(Boson const &block) { return to_string_generic(block); }

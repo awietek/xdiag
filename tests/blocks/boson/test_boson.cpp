@@ -13,86 +13,177 @@
 #include <xdiag/states/correlation_matrix.hpp>
 #include <xdiag/states/expect.hpp>
 #include <xdiag/states/inner.hpp>
+#include <xdiag/symmetries/cyclic_group.hpp>
 #include <xdiag/utils/logger.hpp>
 #include <xdiag/utils/xdiag_show.hpp>
 
-TEST_CASE("boson", "[boson]") try {
-  using namespace xdiag;
-  int64_t nsites = 4;
-  int64_t d = 5;
-  auto block = Boson(nsites, d);
-  // for (auto state : block) {
-  //   Log(to_string(state, block));
-  // }
-  Log("Bose-Hubbard tests");
-  
-  double t = 1.0;
+using namespace xdiag;
+
+static OpSum bose_hubbard_opsum(int64_t nsites, double t, double U) {
+
   auto ops = OpSum();
   for (int i = 0; i < nsites; ++i) {
     ops += t * Op("Hop", {i, (i + 1) % nsites});
   }
-  ops += "U" * Op("HubbardU");
+  ops += U * Op("HubbardU");
+  return ops;
+}
 
+TEST_CASE("boson", "[boson]") try {
   {
-    ops["U"] = 1.0;
-    auto [e0, psi0] = eig0(ops, block);
-    double e0_dmrg = -9.354167806978255;
-    Log("e0: {:.16f}, e0_dmrg: {:.16f}", e0, e0_dmrg);
-    REQUIRE(isapprox(e0, e0_dmrg, 1e-8, 1e-8));
-
-    arma::mat AdagA_dmrg = {
-        {2.0, 1.87457, 1.82526, 1.87457},
-        {1.87457, 2.0, 1.87457, 1.82526},
-        {1.82526, 1.87457, 2.0, 1.87457},
-        {1.87457, 1.82526, 1.87457, 2.0},
-    };
-    auto AdagA = correlation_matrix(psi0, "Adag", "A");
-    REQUIRE(isapprox(AdagA_dmrg, AdagA, 1e-5, 1e-5));
+    Boson block;
+    REQUIRE_THROWS(block = Boson(3, 3, 9));
+    REQUIRE_THROWS(block = Boson(-3, 3, 9));
+    REQUIRE_THROWS(block = Boson(-3, 1, 9));
+    REQUIRE_THROWS(block = Boson(3, 3, -9));
+    REQUIRE_THROWS(block = Boson(3, 3333, 2));
   }
   {
-    ops["U"] = 2.0;
-    auto [e0, psi0] = eig0(ops, block);
-    double e0_dmrg = -5.921611286247851;
-    Log("e0: {:.16f}, e0_dmrg: {:.16f}", e0, e0_dmrg);
-    REQUIRE(isapprox(e0, e0_dmrg, 1e-8, 1e-8));
+    int64_t nsites = 4;
+    int64_t d = 5;
+    auto block = Boson(nsites, d);
 
-    arma::mat AdagA_dmrg = {{1.25, 1.17416, 1.14403, 1.17416},
-                            {1.17416, 1.25, 1.17416, 1.14403},
-                            {1.14403, 1.17416, 1.25, 1.17416},
-                            {1.17416, 1.14403, 1.17416, 1.25}};
-    auto AdagA = correlation_matrix(psi0, "Adag", "A");
-    REQUIRE(isapprox(AdagA_dmrg, AdagA, 1e-5, 1e-5));
+    Log("Bose-Hubbard tests");
+    {
+      auto [e0, psi0] = eig0(bose_hubbard_opsum(nsites, 1.0, 1.0), block);
+      double e0_dmrg = -9.354167806978255;
+      Log("e0: {:.16f}, e0_dmrg: {:.16f}", e0, e0_dmrg);
+      REQUIRE(isapprox(e0, e0_dmrg, 1e-8, 1e-8));
+
+      arma::mat AdagA_dmrg = {
+          {2.0, 1.87457, 1.82526, 1.87457},
+          {1.87457, 2.0, 1.87457, 1.82526},
+          {1.82526, 1.87457, 2.0, 1.87457},
+          {1.87457, 1.82526, 1.87457, 2.0},
+      };
+      auto AdagA = correlation_matrix(psi0, "Adag", "A");
+      REQUIRE(isapprox(AdagA_dmrg, AdagA, 1e-5, 1e-5));
+    }
+    {
+      auto [e0, psi0] = eig0(bose_hubbard_opsum(nsites, 1.0, 2.0), block);
+      double e0_dmrg = -5.921611286247851;
+      Log("e0: {:.16f}, e0_dmrg: {:.16f}", e0, e0_dmrg);
+      REQUIRE(isapprox(e0, e0_dmrg, 1e-8, 1e-8));
+
+      arma::mat AdagA_dmrg = {{1.25, 1.17416, 1.14403, 1.17416},
+                              {1.17416, 1.25, 1.17416, 1.14403},
+                              {1.14403, 1.17416, 1.25, 1.17416},
+                              {1.17416, 1.14403, 1.17416, 1.25}};
+      auto AdagA = correlation_matrix(psi0, "Adag", "A");
+      REQUIRE(isapprox(AdagA_dmrg, AdagA, 1e-5, 1e-5));
+    }
+
+    {
+      auto [e0, psi0] = eig0(bose_hubbard_opsum(nsites, 1.0, 4.0), block);
+      double e0_dmrg = -4.116103420851046;
+      Log("e0: {:.16f}, e0_dmrg: {:.16f}", e0, e0_dmrg);
+      REQUIRE(isapprox(e0, e0_dmrg, 1e-8, 1e-8));
+
+      arma::mat AdagA_dmrg = {{0.75, 0.659022, 0.625756, 0.659022},
+                              {0.659022, 0.75, 0.659022, 0.625756},
+                              {0.625756, 0.659022, 0.75, 0.659022},
+                              {0.659022, 0.625756, 0.659022, 0.75}};
+      auto AdagA = correlation_matrix(psi0, "Adag", "A");
+      REQUIRE(isapprox(AdagA_dmrg, AdagA, 1e-5, 1e-5));
+    }
+
+    {
+      auto [e0, psi0] = eig0(bose_hubbard_opsum(nsites, 1.0, 8.0), block);
+      double e0_dmrg = -3.32638322925368;
+      Log("e0: {:.16f}, e0_dmrg: {:.16f}", e0, e0_dmrg);
+      REQUIRE(isapprox(e0, e0_dmrg, 1e-8, 1e-8));
+
+      arma::mat AdagA_dmrg = {{0.75, 0.547103, 0.501433, 0.547103},
+                              {0.547103, 0.75, 0.547103, 0.501433},
+                              {0.501433, 0.547103, 0.75, 0.547103},
+                              {0.547103, 0.501433, 0.547103, 0.75}};
+      auto AdagA = correlation_matrix(psi0, "Adag", "A");
+      REQUIRE(isapprox(AdagA_dmrg, AdagA, 1e-5, 1e-5));
+    }
   }
 
-  {
-    ops["U"] = 4.0;
-    auto [e0, psi0] = eig0(ops, block);
-    double e0_dmrg = -4.116103420851046;
-    Log("e0: {:.16f}, e0_dmrg: {:.16f}", e0, e0_dmrg);
-    REQUIRE(isapprox(e0, e0_dmrg, 1e-8, 1e-8));
+  // Test whether quantum numbers work
+  for (int nsites = 2; nsites < 5; ++nsites) {
+    auto ops = bose_hubbard_opsum(nsites, 1.0, 2.0);
+    for (int d = 2; d < 6; ++d) {
+      auto block = Boson(nsites, d);
+      double e0 = eigval0(ops, block);
+      // Log("e0: {:.6f}", e0);
+      double e0nmin = 999.999999;
 
-    arma::mat AdagA_dmrg = {{0.75, 0.659022, 0.625756, 0.659022},
-                            {0.659022, 0.75, 0.659022, 0.625756},
-                            {0.625756, 0.659022, 0.75, 0.659022},
-                            {0.659022, 0.625756, 0.659022, 0.75}};
-    auto AdagA = correlation_matrix(psi0, "Adag", "A");
-    REQUIRE(isapprox(AdagA_dmrg, AdagA, 1e-5, 1e-5));
+      for (int number = 0; number < nsites * (d - 1); ++number) {
+        auto blockn = Boson(nsites, d, number);
+        double e0n = eigval0(ops, blockn);
+        // Log("n: {}, e0n: {:.6f}", number, e0n);
+        if (e0n < e0nmin) {
+          e0nmin = e0n;
+        }
+
+        double e0nkmin = 99999.999;
+        for (int k = 0; k < nsites; ++k) {
+          auto blocknk =
+              Boson(nsites, d, number, cyclic_group_irrep(nsites, k));
+          if (dim(blocknk) > 0) {
+            double e0nk = eigval0(ops, blocknk);
+            // Log("n: {}, k: {}, e0nk: {:.6f}", number, k, e0nk);
+            if (e0nk < e0nkmin) {
+              e0nkmin = e0nk;
+            }
+          }
+        }
+        REQUIRE(isapprox(e0n, e0nkmin));
+      }
+      REQUIRE(isapprox(e0, e0nmin));
+
+      double e0kmin = 99999.999;
+      for (int k = 0; k < nsites; ++k) {
+        auto blockk = Boson(nsites, d, cyclic_group_irrep(nsites, k));
+        if (dim(blockk) > 0) {
+          double e0k = eigval0(ops, blockk);
+          // Log("k: {}, e0k: {:.6f}", k, e0k);
+          if (e0k < e0kmin) {
+            e0kmin = e0k;
+          }
+        }
+      }
+      REQUIRE(isapprox(e0, e0kmin));
+      // Log("");
+    }
   }
+  // {
+  //   auto block = Boson(4, 2);
+  //   XDIAG_SHOW(block);
+  // }
+  // {
+  //   auto block = Boson(4, 2, 2);
+  //   XDIAG_SHOW(block);
+  // }
+  // {
+  //   auto block = Boson(4, 2, cyclic_group_irrep(4, 1));
+  //   XDIAG_SHOW(block);
+  // }
+  // {
+  //   auto block = Boson(4, 2, 2, cyclic_group_irrep(4, 1));
+  //   XDIAG_SHOW(block);
+  // }
 
-  {
-    ops["U"] = 8.0;
-    auto [e0, psi0] = eig0(ops, block);
-    double e0_dmrg = -3.32638322925368;
-    Log("e0: {:.16f}, e0_dmrg: {:.16f}", e0, e0_dmrg);
-    REQUIRE(isapprox(e0, e0_dmrg, 1e-8, 1e-8));
+  // {
+  //   auto block = Spinhalf(4);
+  //   XDIAG_SHOW(block);
+  // }
+  // {
+  //   auto block = Spinhalf(4, 2);
+  //   XDIAG_SHOW(block);
+  // }
+  // {
+  //   auto block = Spinhalf(4, cyclic_group_irrep(4, 1));
+  //   XDIAG_SHOW(block);
+  // }
+  // {
+  //   auto block = Spinhalf(4, 2, cyclic_group_irrep(4, 1));
+  //   XDIAG_SHOW(block);
+  // }
 
-    arma::mat AdagA_dmrg = {{0.75, 0.547103, 0.501433, 0.547103},
-                            {0.547103, 0.75, 0.547103, 0.501433},
-                            {0.501433, 0.547103, 0.75, 0.547103},
-                            {0.547103, 0.501433, 0.547103, 0.75}};
-    auto AdagA = correlation_matrix(psi0, "Adag", "A");
-    REQUIRE(isapprox(AdagA_dmrg, AdagA, 1e-5, 1e-5));
-  }
 } catch (xdiag::Error e) {
   error_trace(e);
 }
