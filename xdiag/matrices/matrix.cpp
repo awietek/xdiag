@@ -8,11 +8,8 @@
 #include <xdiag/blocks/boson.hpp>
 #include <xdiag/blocks/spinhalf.hpp>
 #include <xdiag/math/complex.hpp>
-#include <xdiag/matrices/boson/dispatch_basis.hpp>
-#include <xdiag/matrices/boson/matrix_policy.hpp>
+#include <xdiag/matrices/kernel_traits.hpp>
 #include <xdiag/matrices/kernels.hpp>
-#include <xdiag/matrices/spinhalf/dispatch_basis.hpp>
-#include <xdiag/matrices/spinhalf/matrix_policy.hpp>
 #include <xdiag/operators/monomial.hpp>
 #include <xdiag/operators/op.hpp>
 #include <xdiag/operators/opsum.hpp>
@@ -21,56 +18,51 @@
 
 // Dispatch overview
 // -----------------
-// The matrix function routes through two layers of type erasure before
-// reaching the actual numerical kernel, mirroring apply.cpp exactly:
+// The matrix function routes through two layers before reaching the numerical
+// kernel, mirroring apply.cpp:
 //
 // Layer 1 — Block type (variant dispatch via visit_same_type):
 //   matrix(op_t, Block)  →  matrix(op_t, Block, Block)
 //     The output Block is first determined from the operator quantum numbers,
 //     then visit_same_type unwraps both Block variants to their concrete type
-//     and calls matrix(OpSum, ConcreteBlock, ConcreteBlock, coeff_t*).
+//     and calls matrix_impl(OpSum, ConcreteBlock, ConcreteBlock, coeff_t*).
 //     Op/Monomial are promoted to OpSum here. The output arma matrix is
 //     allocated and zeroed at this layer; a raw pointer is passed down so the
 //     kernel can fill it without owning the storage.
 //
-// Layer 2 — Basis type (runtime dispatch via dispatch_basis):
-//   matrix(OpSum, Spinhalf, Spinhalf, coeff_t*)   [public: used by Julia
-//   wrapper]
-//     dispatch_basis resolves the shared_ptr<Basis> stored in each Spinhalf
-//     to a concrete BasisOnTheFly<...> type via a type-id lookup table, then
-//     calls the lambda with the concrete basis objects.
+// Layer 2 — matrix_impl<block_t>: one body for every block type. The block's
+//     kernel_traits (matrices/kernel_traits.hpp) supply the basis dispatch
+//     (resolving the shared_ptr<Basis> to a concrete BasisOnTheFly<...> via a
+//     type-id table) and the MatrixPolicy. A block type lacking a kernel_traits
+//     specialization is a compile error here, never a silent fallback.
 //
-// Kernel — spinhalf::matrix<basis_t, coeff_t>(ops, basis_in, basis_out, mat)
-//     Defined in spinhalf/kernels.cpp; only declared here. Each basis_t
+// Kernel — matrices::matrix<policy, coeff_t>(ops, basis_in, basis_out, mat)
+//     Defined in kernels.cpp; only declared here. Each (policy, basis_t)
 //     specialisation is compiled in its own translation unit (instantiation
 //     groups), keeping this file free of heavy template instantiation.
 
 namespace xdiag {
 
-template <typename coeff_t>
-void matrix(OpSum const &ops, Spinhalf const &block_in,
-            Spinhalf const &block_out, coeff_t *mat) try {
-  // Layer 2: unwrap the basis pointer; the lambda receives the concrete
-  // BasisOnTheFly<...> type, allowing matrix_generic to be instantiated
-  // at compile time for each basis specialization.
-  // Layer 2: unwrap the basis pointer to a concrete BasisOnTheFly<...> type.
-  matrices::spinhalf::dispatch_basis(
+// Layer 2: block-generic dense fill. One body for all block types via
+// kernel_traits<block_t>.
+template <typename block_t, typename coeff_t>
+static void matrix_impl(OpSum const &ops, block_t const &block_in,
+                        block_t const &block_out, coeff_t *mat) try {
+  matrices::kernel_traits<block_t>::dispatch(
       block_in, block_out, [&](auto const &basis_in, auto const &basis_out) {
         // Kernel: definition is in kernels.cpp, instantiated per basis type.
-        matrices::matrix<matrices::spinhalf::MatrixPolicy>(ops, basis_in,
-                                                           basis_out, mat);
+        matrices::matrix<typename matrices::kernel_traits<block_t>::policy>(
+            ops, basis_in, basis_out, mat);
       });
 }
 XDIAG_CATCH
 
+// Developer overload used by the Julia wrapper: thin wrapper over matrix_impl
+// that pins the concrete block type (keeps a stable exported symbol).
 template <typename coeff_t>
-void matrix(OpSum const &ops, Boson const &block_in, Boson const &block_out,
-            coeff_t *mat) try {
-  matrices::boson::dispatch_basis(
-      block_in, block_out, [&](auto const &basis_in, auto const &basis_out) {
-        matrices::matrix<matrices::boson::MatrixPolicy>(ops, basis_in,
-                                                        basis_out, mat);
-      });
+void matrix(OpSum const &ops, Spinhalf const &block_in,
+            Spinhalf const &block_out, coeff_t *mat) try {
+  matrix_impl(ops, block_in, block_out, mat);
 }
 XDIAG_CATCH
 
@@ -107,11 +99,12 @@ arma::mat matrix(op_t const &op, Block const &block_in,
   int64_t m = size(block_out);
   int64_t n = dim(block_in);
   arma::mat mat(m, n, arma::fill::zeros); // zeroed here; kernel uses +=
-  // Layer 1: unwrap the Block variant; op_t is promoted to OpSum inside.
+  // Layer 1: unwrap the Block variant (op_t is promoted to OpSum inside) and
+  // forward to the block-generic matrix_impl.
   utils::visit_same_type(
       block_in, block_out,
       [&](auto const &bin, auto const &bout) {
-        matrix(OpSum(op), bin, bout, mat.memptr());
+        matrix_impl(OpSum(op), bin, bout, mat.memptr());
       },
       "Type mismatch of Block types");
   return mat;
@@ -124,11 +117,12 @@ arma::cx_mat matrixC(op_t const &op, Block const &block_in,
   int64_t m = size(block_out);
   int64_t n = dim(block_in);
   arma::cx_mat mat(m, n, arma::fill::zeros); // zeroed here; kernel uses +=
-  // Layer 1: unwrap the Block variant; op_t is promoted to OpSum inside.
+  // Layer 1: unwrap the Block variant (op_t is promoted to OpSum inside) and
+  // forward to the block-generic matrix_impl.
   utils::visit_same_type(
       block_in, block_out,
       [&](auto const &bin, auto const &bout) {
-        matrix(OpSum(op), bin, bout, mat.memptr());
+        matrix_impl(OpSum(op), bin, bout, mat.memptr());
       },
       "Type mismatch of Block types");
   return mat;
@@ -147,11 +141,12 @@ INSTANTIATE_XDIAG_MATRIX(OpSum);
 
 #undef INSTANTIATE_XDIAG_MATRIX
 
+// Exported developer overload (Julia wrapper). The Boson / future-block paths
+// go through matrix_impl, instantiated implicitly via the Layer-1 templates
+// above, so they need no explicit instantiation here.
 template void matrix(OpSum const &, Spinhalf const &, Spinhalf const &,
                      double *);
 template void matrix(OpSum const &, Spinhalf const &, Spinhalf const &,
                      complex *);
-template void matrix(OpSum const &, Boson const &, Boson const &, double *);
-template void matrix(OpSum const &, Boson const &, Boson const &, complex *);
 
 } // namespace xdiag

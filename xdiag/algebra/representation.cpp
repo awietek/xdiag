@@ -22,13 +22,14 @@ namespace xdiag::algebra {
 
 // Charge each elementary Op type carries under the named U(1) action. Types not
 // listed carry charge 0.
-static std::map<std::string, int64_t> u1_charges(std::string const &action) try {
+static std::map<std::string, int64_t>
+u1_charges(std::string const &action) try {
   if (action == "nup") {
     return {{"S+", 1}, {"Cdagup", 1}, {"S-", -1}, {"Cup", -1}};
   } else if (action == "ndn") {
     return {{"S-", 1}, {"Cdagdn", 1}, {"S+", -1}, {"Cdn", -1}};
-  } else if (action == "np") {
-    return {{"Cdag", 1}, {"C", -1}};
+  } else if (action == "number") {
+    return {{"Cdag", 1}, {"C", -1}, {"Adag", 1}, {"A", -1}};
   } else {
     XDIAG_THROW("Unknown U(1) action \"" + action + "\"");
   }
@@ -180,7 +181,8 @@ RepresentationSet representations(OpSum const &ops,
                                   Algebra const &algebra, double tol) try {
   std::vector<Representation> result;
   for (Representation const &irrep : irreps) {
-    std::optional<Representation> rep = representation(ops, irrep, algebra, tol);
+    std::optional<Representation> rep =
+        representation(ops, irrep, algebra, tol);
     if (rep) {
       result.push_back(*rep);
     }

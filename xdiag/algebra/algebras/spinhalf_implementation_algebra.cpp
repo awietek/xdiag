@@ -16,7 +16,7 @@
 
 namespace xdiag::algebra {
 
-Algebra spinhalf_implementation_algebra() {
+Algebra spinhalf_implementation_algebra(int64_t nsites) {
   std::set<std::string> fermionic{};
 
   // Types that remain in named form when they appear as a size-1 monomial.
@@ -28,13 +28,14 @@ Algebra spinhalf_implementation_algebra() {
   std::vector<MonomialRule> algebra_rules_vec{
       id_absorption_rule(),
       spinhalf_sdots_rule(),
-      convert_to_matrix_rule(protected_types),
+      convert_to_matrix_rule(protected_types, 2),
       combine_matrix_rule(2),
       sort_matrix_sites_rule(2),
   };
 
   return Algebra{
       .name = "spinhalf_implementation_algebra",
+      .nsites = nsites,
       .d = 2,
       .elementary_types = {"Exchange", "ExchangeAsym", "Matrix", "S+", "S-",
                            "ScalarChirality", "Sz", "SzSz"},

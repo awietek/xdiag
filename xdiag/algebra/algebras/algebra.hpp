@@ -32,6 +32,7 @@ namespace xdiag::algebra {
 // spinhalf_implementation_algebra.hpp).
 struct Algebra {
   std::string name; // human-readable name for errors
+  int64_t nsites;   // number of sites 
   int64_t d;        // local Hilbert space dimension per site
   std::vector<std::string> elementary_types;
   std::set<std::string> fermionic_types;

@@ -73,6 +73,9 @@ set(XDIAG_SOURCES
   states/state.cpp
   states/apply.cpp
   states/dot.cpp
+  states/inner.cpp
+  states/expect.cpp
+  states/correlation_matrix.cpp
   states/norm.cpp
   states/fill.cpp
   
@@ -129,6 +132,7 @@ set(XDIAG_SOURCES
   algebra/rewrite/rules/spin_expansion_rules.cpp
   algebra/rewrite/rules/fermionic_expansion_rules.cpp
   algebra/rewrite/rules/tj_expansion_rules.cpp
+  algebra/rewrite/rules/boson_expansion_rules.cpp
 
   algebra/utils/combine_matrix_ops.cpp
   algebra/utils/permute_matrix_op.cpp

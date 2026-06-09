@@ -15,7 +15,7 @@
 
 namespace xdiag::algebra {
 
-Algebra spin_algebra() {
+Algebra spin_algebra(int64_t nsites) {
   std::set<std::string> fermionic{}; // spin operators commute
 
   std::vector<MonomialRule> algebra_rules_vec{
@@ -26,6 +26,7 @@ Algebra spin_algebra() {
 
   return Algebra{
       .name = "spin-1/2",
+      .nsites = nsites,
       .d = 2,
       .elementary_types = {"S+", "S-", "Sz"},
       .fermionic_types = fermionic,

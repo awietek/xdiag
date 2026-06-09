@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <cstdint>
 #include <set>
 #include <string>
 
@@ -20,9 +21,13 @@ namespace xdiag::algebra {
 //   form). Pass an empty set for matrix_algebra, where every op becomes a
 //   Matrix.
 //
+// d — local Hilbert space dimension, forwarded to op_to_matrix_op to select the
+//   spin-S / bosonic matrix representations.
+//
 // Iterated to fixed point together with combine_matrix_rule so all ops in
 // multi-op monomials eventually collapse to one Matrix op.
 MonomialRule
-convert_to_matrix_rule(std::set<std::string> const &protected_single_op_types);
+convert_to_matrix_rule(std::set<std::string> const &protected_single_op_types,
+                       int64_t d);
 
 } // namespace xdiag::algebra

@@ -12,6 +12,6 @@ namespace xdiag::algebra {
 
 // `d` is the local Hilbert space dimension per site (matrices passed in via
 // "Matrix" Ops must be d^nsites in each dimension).
-Algebra matrix_algebra(int64_t d);
+Algebra matrix_algebra(int64_t nsites, int64_t d);
 
 } // namespace xdiag::algebra

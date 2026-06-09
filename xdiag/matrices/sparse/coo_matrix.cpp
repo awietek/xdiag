@@ -10,10 +10,9 @@
 #include <xdiag/blocks/blocks.hpp>
 #include <xdiag/armadillo.hpp>
 #include <xdiag/math/complex.hpp>
+#include <xdiag/matrices/kernel_traits.hpp>
 #include <xdiag/matrices/kernels.hpp>
 #include <xdiag/matrices/sparse/valid.hpp>
-#include <xdiag/matrices/spinhalf/dispatch_basis.hpp>
-#include <xdiag/matrices/spinhalf/matrix_policy.hpp>
 #include <xdiag/operators/hc.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/variants.hpp>
@@ -25,21 +24,22 @@
 // Layer 1 — Block type (variant dispatch via visit_same_type):
 //   coo_matrix(OpSum, Block, Block, idx_t)
 //     visit_same_type unwraps both Block variants to their concrete type
-//     and calls coo_matrix(OpSum, ConcreteBlock, ConcreteBlock, idx_t).
+//     and calls coo_matrix_impl(OpSum, ConcreteBlock, ConcreteBlock, idx_t).
 //
-// Layer 2 — Basis type (runtime dispatch via dispatch_basis):
-//   coo_matrix(OpSum, Spinhalf, Spinhalf, idx_t)
-//     dispatch_basis resolves the shared_ptr<Basis> to a concrete
-//     BasisOnTheFly<...> type, then orchestrates the two-pass COO build:
+// Layer 2 — coo_matrix_impl<block_t>: one body for every block type. The
+//     block's kernel_traits (matrices/kernel_traits.hpp) supply the basis
+//     dispatch (resolving the shared_ptr<Basis> to a concrete BasisOnTheFly
+//     <...> via a type-id table) and the MatrixPolicy. A block type lacking a
+//     kernel_traits specialization is a compile error here, never a silent
+//     fallback. The basis-level two-pass build lives in coo_build:
 //       Pass 1: coo_matrix_nnz  — counts NNZ (per thread with OMP)
 //       Alloc:  allocates row/col/data arrays from the NNZ count
 //       Pass 2: coo_matrix_fill — fills the pre-allocated arrays
 //
-// Kernels — spinhalf::coo_matrix_nnz / coo_matrix_fill (kernels.cpp)
-//     Defined in spinhalf/kernels.cpp; instantiated per basis type via
-//     the instantiation-group mechanism.  The two-pass split keeps the
-//     memory allocation at the block level so it is not repeated when
-//     new block types are added.
+// Kernels — matrices::coo_matrix_nnz / coo_matrix_fill<policy> (kernels.cpp),
+//     instantiated per (policy, basis type) via the instantiation-group
+//     mechanism. The two-pass split keeps the memory allocation at the block
+//     level so it is not repeated when new block types are added.
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -47,55 +47,64 @@
 
 namespace xdiag {
 
-// Layer 2: Spinhalf-specific function.  Orchestrates the two-pass COO build
-// using dispatch_basis to obtain concrete BasisOnTheFly objects.
-template <typename idx_t, typename coeff_t>
+// Basis-level two-pass COO build, generic over the block's MatrixPolicy and
+// concrete BasisOnTheFly type. Shared by the block-generic Layer-2 below.
+template <typename idx_t, typename coeff_t, typename policy_t, typename basis_t>
+static void coo_build(OpSum const &ops, basis_t const &basis_in,
+                      basis_t const &basis_out, idx_t i0,
+                      arma::Col<idx_t> &rows, arma::Col<idx_t> &cols,
+                      arma::Col<coeff_t> &data) {
+#ifdef _OPENMP
+  // Pass 1: count NNZ per thread.
+  auto nnz_thread =
+      matrices::coo_matrix_nnz<policy_t, coeff_t>(ops, basis_in, basis_out);
+  int64_t nnz =
+      std::accumulate(nnz_thread.begin(), nnz_thread.end(), (int64_t)0);
+  rows.resize(nnz);
+  cols.resize(nnz);
+  data.resize(nnz);
+  // Pass 2: fill using per-thread offsets.
+  matrices::coo_matrix_fill<policy_t, coeff_t>(ops, basis_in, basis_out,
+                                               nnz_thread, rows.memptr(),
+                                               cols.memptr(), data.memptr(), i0);
+#else
+  // Pass 1: count total NNZ.
+  int64_t nnz =
+      matrices::coo_matrix_nnz<policy_t, coeff_t>(ops, basis_in, basis_out);
+  rows.resize(nnz);
+  cols.resize(nnz);
+  data.resize(nnz);
+  // Pass 2: fill sequentially.
+  matrices::coo_matrix_fill<policy_t, coeff_t>(
+      ops, basis_in, basis_out, rows.memptr(), cols.memptr(), data.memptr(),
+      i0);
+#endif
+}
+
+// Layer 2: block-generic orchestration. kernel_traits<block_t> supplies the
+// basis dispatch and MatrixPolicy; a block without a specialization is a
+// compile error here, never a silent fallback to the Block overload.
+template <typename idx_t, typename coeff_t, typename block_t>
 static COOMatrix<idx_t, coeff_t>
-coo_matrix(OpSum const &ops, Spinhalf const &block_in,
-           Spinhalf const &block_out, idx_t i0) try {
+coo_matrix_impl(OpSum const &ops, block_t const &block_in,
+                block_t const &block_out, idx_t i0) try {
   idx_t nrows = (idx_t)size(block_out);
   idx_t ncols = (idx_t)size(block_in);
   arma::Col<idx_t> rows, cols;
   arma::Col<coeff_t> data;
-
-  matrices::spinhalf::dispatch_basis(
+  matrices::kernel_traits<block_t>::dispatch(
       block_in, block_out, [&](auto const &basis_in, auto const &basis_out) {
-#ifdef _OPENMP
-        // Pass 1: count NNZ per thread.
-        auto nnz_thread =
-            matrices::coo_matrix_nnz<matrices::spinhalf::MatrixPolicy, coeff_t>(
-                ops, basis_in, basis_out);
-        int64_t nnz =
-            std::accumulate(nnz_thread.begin(), nnz_thread.end(), (int64_t)0);
-        rows.resize(nnz);
-        cols.resize(nnz);
-        data.resize(nnz);
-        // Pass 2: fill using per-thread offsets.
-        matrices::coo_matrix_fill<matrices::spinhalf::MatrixPolicy, coeff_t>(
-            ops, basis_in, basis_out, nnz_thread, rows.memptr(), cols.memptr(),
-            data.memptr(), i0);
-#else
-        // Pass 1: count total NNZ.
-        int64_t nnz =
-            matrices::coo_matrix_nnz<matrices::spinhalf::MatrixPolicy, coeff_t>(
-                ops, basis_in, basis_out);
-        rows.resize(nnz);
-        cols.resize(nnz);
-        data.resize(nnz);
-        // Pass 2: fill sequentially.
-        matrices::coo_matrix_fill<matrices::spinhalf::MatrixPolicy, coeff_t>(
-            ops, basis_in, basis_out, rows.memptr(), cols.memptr(),
-            data.memptr(), i0);
-#endif
+        coo_build<idx_t, coeff_t,
+                  typename matrices::kernel_traits<block_t>::policy>(
+            ops, basis_in, basis_out, i0, rows, cols, data);
       });
-
   bool isherm = ishermitian(ops, block_in);
   return COOMatrix<idx_t, coeff_t>{nrows, ncols, rows, cols, data, i0, isherm};
 }
 XDIAG_CATCH
 
 // Layer 1: unwrap Block variant; validate with concrete types, then call the
-// block-specific Layer 2 function (currently Spinhalf only).
+// block-generic Layer 2.
 template <typename idx_t, typename coeff_t>
 COOMatrix<idx_t, coeff_t> coo_matrix(OpSum const &ops, Block const &block_in,
                                      Block const &block_out, idx_t i0) try {
@@ -104,7 +113,7 @@ COOMatrix<idx_t, coeff_t> coo_matrix(OpSum const &ops, Block const &block_in,
       block_in, block_out,
       [&](auto const &bin, auto const &bout) {
         check_valid_sparse_matrix<idx_t, coeff_t>(ops, bin, bout, i0);
-        result = coo_matrix<idx_t, coeff_t>(ops, bin, bout, i0);
+        result = coo_matrix_impl<idx_t, coeff_t>(ops, bin, bout, i0);
       },
       "Type mismatch of Block types");
   return result;

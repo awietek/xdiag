@@ -14,8 +14,9 @@
 namespace xdiag::algebra {
 
 MonomialRule
-convert_to_matrix_rule(std::set<std::string> const &protected_single_op_types) {
-  return [protected_single_op_types](
+convert_to_matrix_rule(std::set<std::string> const &protected_single_op_types,
+                       int64_t d) {
+  return [protected_single_op_types, d](
              Monomial const &mono) -> std::optional<OpSum> {
     for (int64_t k = 0; k < mono.size(); ++k) {
       std::string const &type = mono[k].type();
@@ -29,7 +30,7 @@ convert_to_matrix_rule(std::set<std::string> const &protected_single_op_types) {
       if (mono.size() == 1 && protected_single_op_types.count(type) > 0) {
         return std::nullopt;
       }
-      Op mat_op = op_to_matrix_op(mono[k]);
+      Op mat_op = op_to_matrix_op(mono[k], d);
       std::vector<Op> ops = mono.ops();
       ops[k] = mat_op;
       return OpSum(Monomial(ops));

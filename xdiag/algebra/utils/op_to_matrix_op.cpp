@@ -4,6 +4,7 @@
 
 #include "op_to_matrix_op.hpp"
 
+#include <cmath>
 #include <vector>
 
 #include <xdiag/armadillo.hpp>
@@ -13,16 +14,78 @@
 
 namespace xdiag::algebra {
 
-Op op_to_matrix_op(Op const &op) try {
-  static const arma::mat sp = {{0., 1.}, {0., 0.}};
-  static const arma::mat sm = {{0., 0.}, {1., 0.}};
-  static const arma::mat sz = {{0.5, 0.}, {0., -0.5}};
+namespace {
 
+// Spin-S elementary matrices for local dimension d = 2S+1. Basis index
+// i = 0..d-1 maps to magnetic quantum number m_i = S - i, so index 0 is the
+// highest-weight state m = +S. This convention reduces, for d = 2, to the
+// spin-1/2 matrices Sz = diag(1/2, -1/2), S+ = [[0,1],[0,0]], S- = [[0,0],[1,0]].
+struct SpinMatrices {
+  arma::mat sp;
+  arma::mat sm;
+  arma::mat sz;
+};
+
+SpinMatrices spin_matrices(int64_t d) {
+  double S = 0.5 * static_cast<double>(d - 1);
+  arma::mat sp(d, d, arma::fill::zeros);
+  arma::mat sm(d, d, arma::fill::zeros);
+  arma::mat sz(d, d, arma::fill::zeros);
+
+  for (int64_t i = 0; i < d; ++i) {
+    sz(i, i) = S - static_cast<double>(i);
+  }
+  // S+ |m> = sqrt(S(S+1) - m(m+1)) |m+1>; |m+1> sits at index i-1.
+  for (int64_t i = 1; i < d; ++i) {
+    double m = S - static_cast<double>(i);
+    sp(i - 1, i) = std::sqrt(S * (S + 1.0) - m * (m + 1.0));
+  }
+  // S- |m> = sqrt(S(S+1) - m(m-1)) |m-1>; |m-1> sits at index i+1.
+  for (int64_t i = 0; i < d - 1; ++i) {
+    double m = S - static_cast<double>(i);
+    sm(i + 1, i) = std::sqrt(S * (S + 1.0) - m * (m - 1.0));
+  }
+  return {sp, sm, sz};
+}
+
+} // namespace
+
+Op op_to_matrix_op(Op const &op, int64_t d) try {
   std::string const &type = op.type();
 
   if (type == "Matrix") {
     return op;
   }
+
+  // --- Bosonic operators on a Fock space truncated to occupations 0..d-1 -----
+  // Basis index i = occupation i.
+  //   A    |n> = sqrt(n)   |n-1>   (annihilation)
+  //   Adag |n> = sqrt(n+1) |n+1>   (creation, truncated at n = d-1)
+  //   N    |n> = n |n>             (number)
+  if (type == "A" || type == "Adag" || type == "N") {
+    arma::mat m(d, d, arma::fill::zeros);
+    if (type == "N") {
+      for (int64_t n = 0; n < d; ++n) {
+        m(n, n) = static_cast<double>(n);
+      }
+    } else if (type == "A") {
+      for (int64_t n = 1; n < d; ++n) {
+        m(n - 1, n) = std::sqrt(static_cast<double>(n));
+      }
+    } else { // Adag
+      for (int64_t n = 0; n < d - 1; ++n) {
+        m(n + 1, n) = std::sqrt(static_cast<double>(n + 1));
+      }
+    }
+    return Op("Matrix", op.sites(), m);
+  }
+
+  // --- Spin-S operators (S = (d-1)/2) ----------------------------------------
+  SpinMatrices spin = spin_matrices(d);
+  arma::mat const &sp = spin.sp;
+  arma::mat const &sm = spin.sm;
+  arma::mat const &sz = spin.sz;
+
   if (type == "S+") {
     return Op("Matrix", op.sites(), sp);
   }
@@ -33,22 +96,24 @@ Op op_to_matrix_op(Op const &op) try {
     return Op("Matrix", op.sites(), sz);
   }
 
-  // Sx{i} -> [[0,0.5],[0.5,0]]
+  // Sx = (S+ + S-) / 2
   if (type == "Sx") {
-    arma::mat m = {{0.0, 0.5}, {0.5, 0.0}};
+    arma::mat m = 0.5 * (sp + sm);
     return Op("Matrix", op.sites(), m);
   }
 
-  // Sy{i} -> [[0,-i/2],[i/2,0]]
+  // Sy = (S+ - S-) / (2i) = -(i/2) (S+ - S-)
   if (type == "Sy") {
     complex I(0.0, 1.0);
-    arma::cx_mat m = {{0.0 + 0.0 * I, -I * 0.5}, {I * 0.5, 0.0 + 0.0 * I}};
+    arma::cx_mat m =
+        arma::cx_mat(arma::zeros<arma::mat>(d, d), -0.5 * (sp - sm));
     return Op("Matrix", op.sites(), m);
   }
 
-  // Two-site compound ops. When i == j (same site) the matrix is a plain 2×2
-  // product; otherwise it is a 4×4 Kronecker product. Convention for different
-  // sites:  kron(outer=site1, inner=site0) — matches combine_matrix_ops.
+  // Two-site compound ops. When i == j (same site) the matrix is a plain d×d
+  // product; otherwise it is a d²×d² Kronecker product. Convention for
+  // different sites:  kron(outer=site1, inner=site0) — matches
+  // combine_matrix_ops.
 
   // SdotS{i,j} = Sz_i Sz_j + 0.5*S+_i S-_j + 0.5*S-_i S+_j
   if (type == "SdotS") {
@@ -92,16 +157,17 @@ Op op_to_matrix_op(Op const &op) try {
     return Op("Matrix", op.sites(), m);
   }
 
-  // Three-site ScalarChirality → 8×8 complex matrix.
+  // Three-site ScalarChirality → d³×d³ complex matrix.
   // S_i·(S_j×S_k) = (i/2)*[ S+_i S-_j Sz_k - S-_i S+_j Sz_k
   //                        + Sz_i S+_j S-_k - Sz_i S-_j S+_k
   //                        + S-_i Sz_j S+_k - S+_i Sz_j S-_k ]
   // Each product A_i B_j C_k maps to kron(C_k, kron(B_j, A_i)).
   if (type == "ScalarChirality") {
     complex I(0., 1.);
-    arma::cx_mat sp_cx(sp, arma::zeros<arma::mat>(2, 2));
-    arma::cx_mat sm_cx(sm, arma::zeros<arma::mat>(2, 2));
-    arma::cx_mat sz_cx(sz, arma::zeros<arma::mat>(2, 2));
+    arma::mat z = arma::zeros<arma::mat>(d, d);
+    arma::cx_mat sp_cx(sp, z);
+    arma::cx_mat sm_cx(sm, z);
+    arma::cx_mat sz_cx(sz, z);
     auto t = [](arma::cx_mat const &a, arma::cx_mat const &b,
                 arma::cx_mat const &c) {
       return arma::cx_mat(arma::kron(a, arma::cx_mat(arma::kron(b, c))));

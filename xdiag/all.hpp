@@ -32,9 +32,12 @@
 #include <xdiag/operators/opsum.hpp>
 #include <xdiag/operators/qns/block.hpp>
 #include <xdiag/states/apply.hpp>
+#include <xdiag/states/correlation_matrix.hpp>
 #include <xdiag/states/create_state.hpp>
 #include <xdiag/states/dot.hpp>
+#include <xdiag/states/expect.hpp>
 #include <xdiag/states/fill.hpp>
+#include <xdiag/states/inner.hpp>
 #include <xdiag/states/norm.hpp>
 #include <xdiag/states/product_state.hpp>
 #include <xdiag/states/random_state.hpp>

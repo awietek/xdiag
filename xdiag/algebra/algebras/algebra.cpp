@@ -12,13 +12,13 @@
 
 namespace xdiag::algebra {
 
-Algebra implementation_algebra(Spinhalf const &) try {
-  return spinhalf_implementation_algebra();
+Algebra implementation_algebra(Spinhalf const &block) try {
+  return spinhalf_implementation_algebra(block.nsites());
 }
 XDIAG_CATCH
 
 Algebra implementation_algebra(Boson const &block) try {
-  return matrix_algebra(block.d());
+  return matrix_algebra(block.nsites(), block.d());
 }
 XDIAG_CATCH
 
@@ -28,11 +28,13 @@ Algebra implementation_algebra(Block const &block) try {
 }
 XDIAG_CATCH
 
-Algebra symmetry_algebra(Spinhalf const &) try { return matrix_algebra(2); }
+Algebra symmetry_algebra(Spinhalf const &block) try {
+  return matrix_algebra(block.nsites(), 2);
+}
 XDIAG_CATCH
 
 Algebra symmetry_algebra(Boson const &block) try {
-  return matrix_algebra(block.d());
+  return matrix_algebra(block.nsites(), block.d());
 }
 XDIAG_CATCH
 

@@ -7,6 +7,7 @@
 #include <cstdint>
 
 #include <xdiag/blocks/blocks.hpp>
+#include <xdiag/blocks/boson.hpp>
 #include <xdiag/blocks/spinhalf.hpp>
 #include <xdiag/symmetries/permutation.hpp>
 #include <xdiag/symmetries/permutation_group.hpp>
@@ -27,6 +28,7 @@ uint64_t hash(Representation const &irrep);
 uint64_t hash(Block const &block);
 
 uint64_t hash(Spinhalf const &block);
+uint64_t hash(Boson const &block);
 // uint64_t hash(tJ const &block);
 // uint64_t hash(Electron const &block);
 

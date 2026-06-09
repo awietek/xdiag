@@ -15,7 +15,7 @@
 
 namespace xdiag::algebra {
 
-Algebra electron_algebra() {
+Algebra electron_algebra(int64_t nsites) {
   std::set<std::string> fermionic{"Cdagup", "Cup", "Cdagdn", "Cdn"};
 
   std::vector<MonomialRule> algebra_rules_vec{
@@ -26,6 +26,7 @@ Algebra electron_algebra() {
 
   return Algebra{
       .name = "electron",
+      .nsites = nsites,
       .d = 4,
       .elementary_types = {"Cdagup", "Cup", "Cdagdn", "Cdn"},
       .fermionic_types = fermionic,

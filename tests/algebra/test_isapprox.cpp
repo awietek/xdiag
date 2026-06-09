@@ -17,8 +17,8 @@ using namespace xdiag::algebra;
 TEST_CASE("isapprox", "[operators]") try {
   using namespace arma;
 
-  Algebra spin = spin_algebra();
-  Algebra elec = electron_algebra();
+  Algebra spin = spin_algebra(3);
+  Algebra elec = electron_algebra(3);
 
   Log("Testing isapprox of operators");
 

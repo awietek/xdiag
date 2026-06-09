@@ -28,7 +28,7 @@ void matrix_generic(OpSum const &ops, basis_t const &basis_in,
 
   // Get OpSum into format that can be processed
   operators::check_valid(ops);
-  auto algebra = algebra::spinhalf_implementation_algebra();
+  auto algebra = algebra::spinhalf_implementation_algebra(basis_in.nsites());
   auto ops_compiled = normal_order(ops.plain(), algebra);
 
   for (auto const &[c, monomial] : ops_compiled) {

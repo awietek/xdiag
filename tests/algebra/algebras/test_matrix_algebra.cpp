@@ -7,6 +7,7 @@
 #include <xdiag/algebra/algebras/matrix_algebra.hpp>
 #include <xdiag/algebra/isapprox.hpp>
 #include <xdiag/algebra/normal_order.hpp>
+#include <xdiag/operators/hc.hpp>
 #include <xdiag/math/complex.hpp>
 #include <xdiag/operators/monomial.hpp>
 #include <xdiag/operators/op.hpp>
@@ -54,7 +55,7 @@ static cx_mat sum_cx_matrices(OpSum const &ops) {
 
 TEST_CASE("matrix_algebra", "[operators]") try {
 
-  auto mat_alg = matrix_algebra(2);
+  auto mat_alg = matrix_algebra(3, 2);
 
   // Standard spin-1/2 matrices
   mat sp = {{0.0, 1.0}, {0.0, 0.0}};
@@ -286,10 +287,156 @@ TEST_CASE("matrix_algebra", "[operators]") try {
   {
     // REQUIRE_THROWS(normal_order(OpSum(Op("Cdagup", 0)), mat_alg));
     // REQUIRE_THROWS(normal_order(OpSum(Op("Nup", 0)), mat_alg));
-    // REQUIRE_THROWS(normal_order(OpSum(Op("Hop", {0, 1})), mat_alg));
+  }
+
+  // -------------------------------------------------------------------------
+  // Site range validation: mat_alg has 3 sites, valid range [0, 3)
+  // -------------------------------------------------------------------------
+  Log("Testing matrix_algebra: site range validation");
+  {
+    REQUIRE_NOTHROW(normal_order(OpSum(Op("Sz", 2)), mat_alg));
+    REQUIRE_THROWS(normal_order(OpSum(Op("Sz", 3)), mat_alg));
+    REQUIRE_THROWS(normal_order(OpSum(Op("Sz", -1)), mat_alg));
+    // a single out-of-range site in a multi-site op also throws
+    REQUIRE_THROWS(normal_order(OpSum(Op("SdotS", {2, 5})), mat_alg));
+    // site-less ops (Id) are unaffected
+    REQUIRE_NOTHROW(normal_order(OpSum(Op("Id")), mat_alg));
   }
 
   Log("Done testing matrix_algebra");
+} catch (xdiag::Error const &e) {
+  error_trace(e);
+}
+
+TEST_CASE("matrix_algebra_boson", "[operators]") try {
+  // Bosonic ladder/number operators on a Fock space truncated to occupations
+  // 0..d-1, swept over local dimensions d = 2..6.
+  for (int64_t d = 2; d <= 6; ++d) {
+    Log("Testing matrix_algebra: bosonic operators, d = {}", d);
+    auto mat_alg = matrix_algebra(2, d);
+
+    // Expected elementary matrices: A|n> = sqrt(n)|n-1>, Adag = A^T,
+    // N = diag(0, 1, ..., d-1).
+    mat A(d, d, fill::zeros);
+    for (int64_t n = 1; n < d; ++n) {
+      A(n - 1, n) = std::sqrt((double)n);
+    }
+    mat Adag = A.t();
+    vec ns(d);
+    for (int64_t n = 0; n < d; ++n) {
+      ns(n) = (double)n;
+    }
+    mat N = diagmat(ns);
+
+    {
+      auto r = normal_order(OpSum(Op("A", 0)), mat_alg);
+      REQUIRE(isapprox(r, OpSum(Op("Matrix", 0, A)), mat_alg));
+    }
+    {
+      auto r = normal_order(OpSum(Op("Adag", 0)), mat_alg);
+      REQUIRE(isapprox(r, OpSum(Op("Matrix", 0, Adag)), mat_alg));
+    }
+    {
+      auto r = normal_order(OpSum(Op("N", 0)), mat_alg);
+      REQUIRE(isapprox(r, OpSum(Op("Matrix", 0, N)), mat_alg));
+    }
+    {
+      // Adag{0} * A{0} == N{0} exactly (no truncation correction for the
+      // number operator built this way).
+      auto r = normal_order(1.0 * (Op("Adag", 0) * Op("A", 0)), mat_alg);
+      REQUIRE(norm(sum_real_matrices(r) - N) < 1e-12);
+    }
+    {
+      // hc(A) == Adag, hc(Adag) == A, hc(N) == N
+      REQUIRE(isapprox(hc(OpSum(Op("A", 0))), OpSum(Op("Adag", 0)), mat_alg));
+      REQUIRE(isapprox(hc(OpSum(Op("Adag", 0))), OpSum(Op("A", 0)), mat_alg));
+      REQUIRE(isapprox(hc(OpSum(Op("N", 0))), OpSum(Op("N", 0)), mat_alg));
+    }
+    {
+      // Hop{0,1} == -(Adag{0}*A{1} + Adag{1}*A{0}) (minus sign convention)
+      auto r = normal_order(OpSum(Op("Hop", {0, 1})), mat_alg);
+      auto expected = normal_order(-1.0 * (Op("Adag", 0) * Op("A", 1)) -
+                                       1.0 * (Op("Adag", 1) * Op("A", 0)),
+                                   mat_alg);
+      REQUIRE(isapprox(r, expected, mat_alg));
+      // Hop is hermitian
+      REQUIRE(isapprox(hc(OpSum(Op("Hop", {0, 1}))), OpSum(Op("Hop", {0, 1})),
+                       mat_alg));
+    }
+    {
+      // HubbardU == (1/2) sum_i N{i}(N{i}-1) over the two sites of the algebra
+      auto r = normal_order(OpSum(Op("HubbardU")), mat_alg);
+      OpSum u;
+      for (int64_t i = 0; i < 2; ++i) {
+        u += 0.5 * (Op("N", i) * Op("N", i));
+        u += -0.5 * Op("N", i);
+      }
+      REQUIRE(isapprox(r, normal_order(u, mat_alg), mat_alg));
+    }
+  }
+  Log("Done testing matrix_algebra_boson");
+} catch (xdiag::Error const &e) {
+  error_trace(e);
+}
+
+TEST_CASE("matrix_algebra_spin_s", "[operators]") try {
+  // Spin-S operators (S = (d-1)/2) swept over local dimensions d = 2..6. Basis
+  // index i maps to m = S - i, so index 0 is the highest-weight state m = +S.
+  for (int64_t d = 2; d <= 6; ++d) {
+    double S = 0.5 * (double)(d - 1);
+    Log("Testing matrix_algebra: spin-S operators, d = {} (S = {})", d, S);
+    auto mat_alg = matrix_algebra(2, d);
+
+    // Expected elementary matrices.
+    mat sp(d, d, fill::zeros), sz(d, d, fill::zeros);
+    for (int64_t i = 0; i < d; ++i) {
+      sz(i, i) = S - (double)i;
+    }
+    for (int64_t i = 1; i < d; ++i) {
+      double m = S - (double)i;
+      sp(i - 1, i) = std::sqrt(S * (S + 1.0) - m * (m + 1.0));
+    }
+    mat sm = sp.t();
+    mat idd = eye(d, d);
+
+    {
+      auto r = normal_order(OpSum(Op("S+", 0)), mat_alg);
+      REQUIRE(isapprox(r, OpSum(Op("Matrix", 0, sp)), mat_alg));
+    }
+    {
+      auto r = normal_order(OpSum(Op("S-", 0)), mat_alg);
+      REQUIRE(isapprox(r, OpSum(Op("Matrix", 0, sm)), mat_alg));
+    }
+    {
+      auto r = normal_order(OpSum(Op("Sz", 0)), mat_alg);
+      REQUIRE(isapprox(r, OpSum(Op("Matrix", 0, sz)), mat_alg));
+    }
+    {
+      // Sx = (S+ + S-)/2
+      auto r = normal_order(OpSum(Op("Sx", 0)), mat_alg);
+      REQUIRE(
+          isapprox(r, OpSum(Op("Matrix", 0, mat(0.5 * (sp + sm)))), mat_alg));
+    }
+    {
+      // [S+, S-] = 2 Sz : S+ S- - S- S+ == 2 Sz
+      auto r = normal_order(1.0 * (Op("S+", 0) * Op("S-", 0)) -
+                                1.0 * (Op("S-", 0) * Op("S+", 0)),
+                            mat_alg);
+      REQUIRE(norm(sum_real_matrices(r) - 2.0 * sz) < 1e-12);
+    }
+    {
+      // On-site Casimir S·S = S(S+1) I
+      auto r = normal_order(OpSum(Op("SdotS", {0, 0})), mat_alg);
+      REQUIRE(norm(sum_real_matrices(r) - S * (S + 1.0) * idd) < 1e-12);
+    }
+    {
+      // hc(S+) == S-, hc(S-) == S+, hc(Sz) == Sz
+      REQUIRE(isapprox(hc(OpSum(Op("S+", 0))), OpSum(Op("S-", 0)), mat_alg));
+      REQUIRE(isapprox(hc(OpSum(Op("S-", 0))), OpSum(Op("S+", 0)), mat_alg));
+      REQUIRE(isapprox(hc(OpSum(Op("Sz", 0))), OpSum(Op("Sz", 0)), mat_alg));
+    }
+  }
+  Log("Done testing matrix_algebra_spin_s");
 } catch (xdiag::Error const &e) {
   error_trace(e);
 }

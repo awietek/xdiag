@@ -21,8 +21,8 @@ using namespace arma;
 
 TEST_CASE("spinhalf_implementation_algebra", "[operators]") try {
 
-  auto impl_alg = spinhalf_implementation_algebra();
-  auto mat_alg = matrix_algebra(2);
+  auto impl_alg = spinhalf_implementation_algebra(4);
+  auto mat_alg = matrix_algebra(4, 2);
 
   // Standard spin-1/2 matrices (for direct matrix comparisons)
   mat sp = {{0.0, 1.0}, {0.0, 0.0}};

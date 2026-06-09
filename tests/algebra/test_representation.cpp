@@ -33,20 +33,19 @@ TEST_CASE("opsum representation", "[algebra]") try {
   // only matters for "Matrix" Ops (via its local dimension d); d == 2 suffices.
   auto nup = [](OpSum const &ops) -> std::optional<int64_t> {
     std::optional<Representation> rep =
-        representation(ops, Representation("nup", 0), matrix_algebra(2));
+        representation(ops, Representation("nup", 0), matrix_algebra(1, 2));
     return rep ? std::optional<int64_t>(rep->charge()) : std::nullopt;
   };
   auto ndn = [](OpSum const &ops) -> std::optional<int64_t> {
     std::optional<Representation> rep =
-        representation(ops, Representation("ndn", 0), matrix_algebra(2));
+        representation(ops, Representation("ndn", 0), matrix_algebra(1, 2));
     return rep ? std::optional<int64_t>(rep->charge()) : std::nullopt;
   };
 
   // The result is itself a charge Representation labelled by the action.
   {
-    std::optional<Representation> rep =
-        representation(OpSum(Op("S+", 0)), Representation("nup", 999),
-                       matrix_algebra(2));
+    std::optional<Representation> rep = representation(
+        OpSum(Op("S+", 0)), Representation("nup", 999), matrix_algebra(1, 2));
     REQUIRE(rep);
     REQUIRE(rep->is_charge());
     REQUIRE(rep->type() == "nup");
@@ -95,16 +94,16 @@ TEST_CASE("opsum representation", "[algebra]") try {
       OpSum ops = symmetrize(Op("Sz", 0), irrep);
 
       std::optional<Representation> rep =
-          representation(ops, irrep, spin_algebra());
+          representation(ops, irrep, spin_algebra(nsites));
       REQUIRE(rep);
       REQUIRE(rep->is_permutation());
       REQUIRE(isapprox(*rep, irrep));
 
-      // Only the GROUP of the input is used; its characters are ignored. Passing
-      // the trivial irrep (same group, different characters) recovers the same
-      // result.
+      // Only the GROUP of the input is used; its characters are ignored.
+      // Passing the trivial irrep (same group, different characters) recovers
+      // the same result.
       std::optional<Representation> rep2 =
-          representation(ops, trivial, spin_algebra());
+          representation(ops, trivial, spin_algebra(nsites));
       REQUIRE(rep2);
       REQUIRE(isapprox(*rep2, irrep));
     }
@@ -114,7 +113,7 @@ TEST_CASE("opsum representation", "[algebra]") try {
   // a single-site Sz is not mapped to a multiple of itself by translations.
   {
     std::optional<Representation> none = representation(
-        OpSum(Op("Sz", 0)), cyclic_group_irrep(4, 0), spin_algebra());
+        OpSum(Op("Sz", 0)), cyclic_group_irrep(4, 0), spin_algebra(1));
     REQUIRE_FALSE(none);
   }
 
@@ -125,10 +124,11 @@ TEST_CASE("opsum representation", "[algebra]") try {
     Representation perm = cyclic_group_irrep(4, 1);
     OpSum ops = symmetrize(Op("Sz", 0), perm);
 
-    // Bogus input charges (ignored); the three types are SitePermutation/nup/ndn
+    // Bogus input charges (ignored); the three types are
+    // SitePermutation/nup/ndn
     RepresentationSet irreps(
         {perm, Representation("nup", 77), Representation("ndn", 99)});
-    RepresentationSet result = representations(ops, irreps, spin_algebra());
+    RepresentationSet result = representations(ops, irreps, spin_algebra(1));
 
     REQUIRE(result.size() == 3);
     REQUIRE(result.charge("nup") == 0); // Sz terms conserve nup and ndn
@@ -143,7 +143,8 @@ TEST_CASE("opsum representation", "[algebra]") try {
   {
     OpSum mixed = OpSum(Op("S+", 0)) + OpSum(Op("Sz", 0)); // nup ill-defined
     RepresentationSet irreps({Representation("nup", 0)});
-    RepresentationSet result = representations(mixed, irreps, matrix_algebra(2));
+    RepresentationSet result =
+        representations(mixed, irreps, matrix_algebra(1, 2));
     REQUIRE(result.size() == 0);
   }
 

@@ -12,8 +12,9 @@
 namespace xdiag::algebra {
 
 OpSum normal_order(OpSum const &ops, Algebra const &algebra) try {
-  // Step 1: validate Op types
+  // Step 1: validate Op types and site ranges
   check_allowed_types(ops, algebra);
+  check_sites_in_range(ops, algebra);
   OpSum current = ops.plain();
 
   // Step 2: expand compound operators into elementary ones (to fixed point)

@@ -628,7 +628,7 @@ TEST_CASE("spinhalfexchange", "[spinhalf]") try {
     // XDIAG_SHOW(hc(op1));
 
     // auto algebra = algebra::matrix_algebra(2);
-    auto algebra = algebra::spin_algebra();
+    auto algebra = algebra::spin_algebra(2);
 
     // XDIAG_SHOW(normal_order(op1, algebra));
     // XDIAG_SHOW(normal_order(op2, algebra));
@@ -648,7 +648,7 @@ TEST_CASE("spinhalfexchange", "[spinhalf]") try {
     // XDIAG_SHOW(hc(op1));
 
     // auto algebra = algebra::matrix_algebra(2);
-    auto algebra = algebra::spin_algebra();
+    auto algebra = algebra::spin_algebra(2);
 
     // XDIAG_SHOW(normal_order(op1, algebra));
     // XDIAG_SHOW(normal_order(op2, algebra));

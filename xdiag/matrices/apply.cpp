@@ -5,9 +5,8 @@
 #include "apply.hpp"
 
 #include <xdiag/armadillo.hpp>
+#include <xdiag/matrices/kernel_traits.hpp>
 #include <xdiag/matrices/kernels.hpp>
-#include <xdiag/matrices/spinhalf/dispatch_basis.hpp>
-#include <xdiag/matrices/spinhalf/matrix_policy.hpp>
 #include <xdiag/operators/monomial.hpp>
 #include <xdiag/operators/op.hpp>
 #include <xdiag/operators/opsum.hpp>
@@ -21,35 +20,40 @@
 //
 // Layer 1 — Block type (variant dispatch via visit_same_type):
 //   apply(op_t, Block, mat_t, Block, mat_t)
-//     Block is a std::variant<Spinhalf, ...>. visit_same_type unwraps both
-//     block_in and block_out to their concrete type (enforcing they match),
-//     then calls apply(OpSum, ConcreteBlock, ...). Op/Monomial are first
-//     promoted to OpSum here.
+//     Block is a std::variant<Spinhalf, Boson, ...>. visit_same_type unwraps
+//     both block_in and block_out to their concrete type (enforcing they
+//     match), then calls apply_impl(OpSum, ConcreteBlock, ...). Op/Monomial are
+//     first promoted to OpSum here.
 //
-// Layer 2 — Basis type (runtime dispatch via dispatch_basis):
-//   apply(OpSum, Spinhalf, mat_t, Spinhalf, mat_t)
-//     Spinhalf stores its basis as a shared_ptr<Basis>. dispatch_basis builds
-//     a lookup table keyed on the basis type-id and invokes the matching entry,
-//     giving the lambda the concrete BasisOnTheFly<...> objects.
+// Layer 2 — apply_impl<block_t>: one body for every block type. The block's
+//     kernel_traits (matrices/kernel_traits.hpp) supply the basis dispatch
+//     (resolving the shared_ptr<Basis> to a concrete BasisOnTheFly<...> via a
+//     type-id table) and the MatrixPolicy. A block type lacking a kernel_traits
+//     specialization is a compile error here, never a silent fallback that
+//     would re-resolve to the Block overload and recurse.
 //
-// Kernel — spinhalf::apply<basis_t, mat_t>(ops, basis_in, mat_in, basis_out, mat_out)
-//     Defined in spinhalf/kernels.cpp; only declared here. Each basis_t
+// Kernel — matrices::apply<policy, basis_t, mat_t>(ops, basis_in, mat_in,
+//          basis_out, mat_out)
+//     Defined in kernels.cpp; only declared here. Each (policy, basis_t)
 //     specialisation is compiled in its own translation unit (instantiation
 //     groups), keeping this file free of heavy template instantiation.
 
 namespace xdiag {
 
 // Layer 2 implementation — internal, called only from apply(op_t, Block, ...).
-template <typename vec_t>
-static void apply(OpSum const &ops, Spinhalf const &block_in,
-                  vec_t const &vec_in, Spinhalf const &block_out,
-                  vec_t &vec_out) try {
+// One body for every block type: kernel_traits<block_t> supplies the basis
+// dispatch and the MatrixPolicy. A block type without a kernel_traits
+// specialization is a compile error here, never a silent fallback.
+template <typename block_t, typename vec_t>
+static void apply_impl(OpSum const &ops, block_t const &block_in,
+                       vec_t const &vec_in, block_t const &block_out,
+                       vec_t &vec_out) try {
   vec_out.zeros();
   // Layer 2: unwrap the basis pointer to a concrete BasisOnTheFly<...> type.
-  matrices::spinhalf::dispatch_basis(
+  matrices::kernel_traits<block_t>::dispatch(
       block_in, block_out, [&](auto const &basis_in, auto const &basis_out) {
         // Kernel: definition is in kernels.cpp, instantiated per basis type.
-        matrices::apply<matrices::spinhalf::MatrixPolicy>(
+        matrices::apply<typename matrices::kernel_traits<block_t>::policy>(
             ops, basis_in, vec_in, basis_out, vec_out);
       });
 }
@@ -58,11 +62,12 @@ XDIAG_CATCH
 template <typename op_t, typename mat_t>
 void apply(op_t const &ops, Block const &block_in, mat_t const &vec_in,
            Block const &block_out, mat_t &vec_out) try {
-  // Layer 1: unwrap the Block variant; op_t is promoted to OpSum inside.
+  // Layer 1: unwrap the Block variant (op_t is promoted to OpSum inside) and
+  // forward to the block-generic apply_impl.
   utils::visit_same_type(
       block_in, block_out,
       [&](auto const &bin, auto const &bout) {
-        apply(OpSum(ops), bin, vec_in, bout, vec_out);
+        apply_impl(OpSum(ops), bin, vec_in, bout, vec_out);
       },
       "Type mismatch of Block types");
 }

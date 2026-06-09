@@ -11,9 +11,8 @@
 #include <xdiag/blocks/blocks.hpp>
 #include <xdiag/armadillo.hpp>
 #include <xdiag/math/complex.hpp>
+#include <xdiag/matrices/kernel_traits.hpp>
 #include <xdiag/matrices/kernels.hpp>
-#include <xdiag/matrices/spinhalf/dispatch_basis.hpp>
-#include <xdiag/matrices/spinhalf/matrix_policy.hpp>
 #include <xdiag/matrices/sparse/valid.hpp>
 #include <xdiag/operators/hc.hpp>
 #include <xdiag/utils/error.hpp>
@@ -25,88 +24,97 @@
 
 namespace xdiag {
 
-// Layer 2: Spinhalf-specific function.  Builds CSC via transposed CSR kernels.
-template <typename idx_t, typename coeff_t>
+// Basis-level CSC build (via transposed CSR kernels), generic over the block's
+// MatrixPolicy and concrete BasisOnTheFly type. Shared by the Layer-2 below.
+template <typename idx_t, typename coeff_t, typename policy_t, typename basis_t>
+static void csc_build(OpSum const &ops, basis_t const &basis_in,
+                      basis_t const &basis_out, idx_t ncols, idx_t i0,
+                      arma::Col<idx_t> &colptr, arma::Col<idx_t> &row,
+                      arma::Col<coeff_t> &data) {
+  // Pass 1: count nonzeros per column (transpose=true keys by idx_in).
+  auto n_elements_in_col = matrices::csr_matrix_nnz<policy_t, coeff_t>(
+      ops, basis_in, basis_out, true);
+  int64_t nnz = std::accumulate(n_elements_in_col.begin(),
+                                n_elements_in_col.end(), (int64_t)0);
+
+  // Build colptr (exclusive prefix sum + i0 shift) and the mutable offset
+  // array that csr_matrix_fill uses to claim write slots.
+  colptr.resize(ncols + 1);
+  row.resize(nnz);
+  data.resize(nnz);
+
+  std::vector<int64_t> offset(ncols, 0);
+  if (ncols > 0) {
+    std::partial_sum(n_elements_in_col.begin(), n_elements_in_col.end() - 1,
+                     offset.begin() + 1);
+    for (idx_t c = 0; c < ncols; ++c)
+      colptr[c] = (idx_t)(offset[c] + i0);
+    colptr[ncols] = (idx_t)(nnz + i0);
+  }
+
+  // Pass 2: fill row and data using atomic slot assignment.
+  matrices::csr_matrix_fill<policy_t, coeff_t>(ops, basis_in, basis_out, offset,
+                                               row.memptr(), data.memptr(), i0,
+                                               true);
+
+  // Sort each column's entries by row index (required for CSC validity).
+  int64_t max_elems = n_elements_in_col.empty()
+                          ? 0
+                          : *std::max_element(n_elements_in_col.begin(),
+                                              n_elements_in_col.end());
+#ifdef _OPENMP
+#pragma omp parallel
+  {
+    std::vector<int64_t> indices(max_elems);
+    std::vector<idx_t> rowtmp(max_elems);
+    std::vector<coeff_t> datatmp(max_elems);
+#pragma omp for
+#else
+  {
+    std::vector<int64_t> indices(max_elems);
+    std::vector<idx_t> rowtmp(max_elems);
+    std::vector<coeff_t> datatmp(max_elems);
+#endif
+    for (idx_t col = 0; col < ncols; ++col) {
+      int64_t start = (int64_t)(colptr[col] - i0);
+      int64_t end = (int64_t)(colptr[col + 1] - i0);
+      int64_t nelems = end - start;
+      std::copy(row.memptr() + start, row.memptr() + end, rowtmp.begin());
+      std::copy(data.memptr() + start, data.memptr() + end, datatmp.begin());
+      std::iota(indices.begin(), indices.begin() + nelems, (int64_t)0);
+      std::sort(indices.begin(), indices.begin() + nelems,
+                [&](int64_t i, int64_t j) { return rowtmp[i] < rowtmp[j]; });
+      for (int64_t i = 0; i < nelems; ++i) {
+        row[start + i] = rowtmp[indices[i]];
+        data[start + i] = datatmp[indices[i]];
+      }
+    }
+  }
+}
+
+// Layer 2: block-generic orchestration. kernel_traits<block_t> supplies the
+// basis dispatch and MatrixPolicy; a block without a specialization is a
+// compile error here, never a silent fallback to the Block overload.
+template <typename idx_t, typename coeff_t, typename block_t>
 static CSCMatrix<idx_t, coeff_t>
-csc_matrix(OpSum const &ops, Spinhalf const &block_in,
-           Spinhalf const &block_out, idx_t i0) try {
+csc_matrix_impl(OpSum const &ops, block_t const &block_in,
+                block_t const &block_out, idx_t i0) try {
   idx_t nrows = (idx_t)size(block_out);
   idx_t ncols = (idx_t)size(block_in);
   arma::Col<idx_t> colptr, row;
   arma::Col<coeff_t> data;
-
-  matrices::spinhalf::dispatch_basis(
+  matrices::kernel_traits<block_t>::dispatch(
       block_in, block_out, [&](auto const &basis_in, auto const &basis_out) {
-        // Pass 1: count nonzeros per column (transpose=true keys by idx_in).
-        auto n_elements_in_col =
-            matrices::csr_matrix_nnz<matrices::spinhalf::MatrixPolicy, coeff_t>(
-                ops, basis_in, basis_out, true);
-        int64_t nnz = std::accumulate(n_elements_in_col.begin(),
-                                      n_elements_in_col.end(), (int64_t)0);
-
-        // Build colptr (exclusive prefix sum + i0 shift) and the mutable
-        // offset array that csr_matrix_fill uses to claim write slots.
-        colptr.resize(ncols + 1);
-        row.resize(nnz);
-        data.resize(nnz);
-
-        std::vector<int64_t> offset(ncols, 0);
-        if (ncols > 0) {
-          std::partial_sum(n_elements_in_col.begin(),
-                           n_elements_in_col.end() - 1, offset.begin() + 1);
-          for (idx_t c = 0; c < ncols; ++c)
-            colptr[c] = (idx_t)(offset[c] + i0);
-          colptr[ncols] = (idx_t)(nnz + i0);
-        }
-
-        // Pass 2: fill row and data using atomic slot assignment.
-        matrices::csr_matrix_fill<matrices::spinhalf::MatrixPolicy, coeff_t>(
-            ops, basis_in, basis_out, offset, row.memptr(), data.memptr(), i0,
-            true);
-
-        // Sort each column's entries by row index (required for CSC validity).
-        int64_t max_elems = n_elements_in_col.empty()
-                                ? 0
-                                : *std::max_element(n_elements_in_col.begin(),
-                                                    n_elements_in_col.end());
-#ifdef _OPENMP
-#pragma omp parallel
-        {
-          std::vector<int64_t> indices(max_elems);
-          std::vector<idx_t> rowtmp(max_elems);
-          std::vector<coeff_t> datatmp(max_elems);
-#pragma omp for
-#else
-        {
-          std::vector<int64_t> indices(max_elems);
-          std::vector<idx_t> rowtmp(max_elems);
-          std::vector<coeff_t> datatmp(max_elems);
-#endif
-          for (idx_t col = 0; col < ncols; ++col) {
-            int64_t start = (int64_t)(colptr[col] - i0);
-            int64_t end = (int64_t)(colptr[col + 1] - i0);
-            int64_t nelems = end - start;
-            std::copy(row.memptr() + start, row.memptr() + end, rowtmp.begin());
-            std::copy(data.memptr() + start, data.memptr() + end,
-                      datatmp.begin());
-            std::iota(indices.begin(), indices.begin() + nelems, (int64_t)0);
-            std::sort(
-                indices.begin(), indices.begin() + nelems,
-                [&](int64_t i, int64_t j) { return rowtmp[i] < rowtmp[j]; });
-            for (int64_t i = 0; i < nelems; ++i) {
-              row[start + i] = rowtmp[indices[i]];
-              data[start + i] = datatmp[indices[i]];
-            }
-          }
-        }
+        csc_build<idx_t, coeff_t,
+                  typename matrices::kernel_traits<block_t>::policy>(
+            ops, basis_in, basis_out, ncols, i0, colptr, row, data);
       });
-
   bool isherm = ishermitian(ops, block_in);
   return CSCMatrix<idx_t, coeff_t>{nrows, ncols, colptr, row, data, i0, isherm};
 }
 XDIAG_CATCH
 
-// Layer 1: unwrap Block variant, then call the block-specific Layer 2 function.
+// Layer 1: unwrap Block variant, then call the block-generic Layer 2.
 template <typename idx_t, typename coeff_t>
 CSCMatrix<idx_t, coeff_t> csc_matrix(OpSum const &ops, Block const &block_in,
                                      Block const &block_out, idx_t i0) try {
@@ -115,7 +123,7 @@ CSCMatrix<idx_t, coeff_t> csc_matrix(OpSum const &ops, Block const &block_in,
       block_in, block_out,
       [&](auto const &bin, auto const &bout) {
         check_valid_sparse_matrix<idx_t, coeff_t>(ops, bin, bout, i0);
-        result = csc_matrix<idx_t, coeff_t>(ops, bin, bout, i0);
+        result = csc_matrix_impl<idx_t, coeff_t>(ops, bin, bout, i0);
       },
       "Type mismatch of Block types");
   return result;
