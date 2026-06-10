@@ -11,6 +11,7 @@
 #include <xdiag/algebra/rewrite/rules/rules.hpp>
 #include <xdiag/blocks/blocks.hpp>
 #include <xdiag/blocks/boson.hpp>
+#include <xdiag/blocks/fermion.hpp>
 #include <xdiag/blocks/spinhalf.hpp>
 
 namespace xdiag::algebra {
@@ -44,10 +45,12 @@ struct Algebra {
 
 Algebra implementation_algebra(Boson const &block);
 Algebra implementation_algebra(Spinhalf const &block);
+Algebra implementation_algebra(Fermion const &block);
 Algebra implementation_algebra(Block const &block);
 
 Algebra symmetry_algebra(Boson const &block);
 Algebra symmetry_algebra(Spinhalf const &block);
+Algebra symmetry_algebra(Fermion const &block);
 Algebra symmetry_algebra(Block const &block);
 
 } // namespace xdiag::algebra

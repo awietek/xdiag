@@ -43,6 +43,8 @@ inline const std::map<std::string, OpTypeInfo> op_registry = {
   {"Sy",            {1,          true,     false,   false,   false  }},
   {"A",             {1,          true,     false,   false,   true   }},
   {"Adag",          {1,          true,     false,   false,   true   }},
+  {"C",             {1,          true,     false,   false,   true   }},
+  {"Cdag",          {1,          true,     false,   false,   true   }},
   {"N",             {1,          true,     false,   false,   true   }},
   {"ScalarChirality",{3,         true,     false,   false,   false  }},
   {"Hop",           {2,          true,     false,   false,   true   }},

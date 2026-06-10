@@ -16,6 +16,7 @@
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/format.hpp>
 #include <xdiag/utils/to_string_generic.hpp>
+#include <xdiag/utils/variants.hpp>
 
 namespace xdiag {
 
@@ -60,10 +61,29 @@ Boson block(OpSum const &ops, Boson const &block_in) try {
 }
 XDIAG_CATCH
 
-Block block(OpSum const &ops, Block const &block_in) try {
+Fermion block(OpSum const &ops, Fermion const &block_in) try {
+  RepresentationSet irreps_out =
+      output_irreps(ops, block_in, algebra::symmetry_algebra(block_in));
 
-  return std::visit([&](auto const &b) -> Block { return block(ops, b); },
-                    block_in);
+  if (block_in.irreps().isapprox(irreps_out)) {
+    return block_in;
+  }
+  return Fermion(block_in.nsites(), irreps_out);
+}
+XDIAG_CATCH
+
+Block block(OpSum const &ops, Block const &block_in) try {
+  // Exhaustive per-type dispatch: adding a new alternative to the Block variant
+  // without a matching block(...) overload here is a compile-time error
+  // (std::visit can no longer call the visitor for every alternative), instead
+  // of silently recursing through this Block overload at runtime.
+  return std::visit(
+      utils::overload{
+          [&](Spinhalf const &b) -> Block { return block(ops, b); },
+          [&](Boson const &b) -> Block { return block(ops, b); },
+          [&](Fermion const &b) -> Block { return block(ops, b); },
+      },
+      block_in);
 }
 XDIAG_CATCH
 

@@ -23,7 +23,7 @@ using namespace xdiag;
 using namespace xdiag::algebra;
 using namespace arma;
 
-TEST_CASE("opsum representation", "[algebra]") try {
+TEST_CASE("opsumrepresentation", "[algebra]") try {
 
   // ===========================================================================
   // representation() — U(1) / charge sectors
@@ -33,19 +33,19 @@ TEST_CASE("opsum representation", "[algebra]") try {
   // only matters for "Matrix" Ops (via its local dimension d); d == 2 suffices.
   auto nup = [](OpSum const &ops) -> std::optional<int64_t> {
     std::optional<Representation> rep =
-        representation(ops, Representation("nup", 0), matrix_algebra(1, 2));
+        representation(ops, Representation("nup", 0), matrix_algebra(2, 2));
     return rep ? std::optional<int64_t>(rep->charge()) : std::nullopt;
   };
   auto ndn = [](OpSum const &ops) -> std::optional<int64_t> {
     std::optional<Representation> rep =
-        representation(ops, Representation("ndn", 0), matrix_algebra(1, 2));
+        representation(ops, Representation("ndn", 0), matrix_algebra(2, 2));
     return rep ? std::optional<int64_t>(rep->charge()) : std::nullopt;
   };
 
   // The result is itself a charge Representation labelled by the action.
   {
     std::optional<Representation> rep = representation(
-        OpSum(Op("S+", 0)), Representation("nup", 999), matrix_algebra(1, 2));
+        OpSum(Op("S+", 0)), Representation("nup", 999), matrix_algebra(2, 2));
     REQUIRE(rep);
     REQUIRE(rep->is_charge());
     REQUIRE(rep->type() == "nup");
@@ -113,7 +113,7 @@ TEST_CASE("opsum representation", "[algebra]") try {
   // a single-site Sz is not mapped to a multiple of itself by translations.
   {
     std::optional<Representation> none = representation(
-        OpSum(Op("Sz", 0)), cyclic_group_irrep(4, 0), spin_algebra(1));
+        OpSum(Op("Sz", 0)), cyclic_group_irrep(4, 0), spin_algebra(4));
     REQUIRE_FALSE(none);
   }
 
@@ -128,7 +128,7 @@ TEST_CASE("opsum representation", "[algebra]") try {
     // SitePermutation/nup/ndn
     RepresentationSet irreps(
         {perm, Representation("nup", 77), Representation("ndn", 99)});
-    RepresentationSet result = representations(ops, irreps, spin_algebra(1));
+    RepresentationSet result = representations(ops, irreps, spin_algebra(4));
 
     REQUIRE(result.size() == 3);
     REQUIRE(result.charge("nup") == 0); // Sz terms conserve nup and ndn

@@ -169,3 +169,59 @@ TEST_CASE("boson", "[boson]") try {
 } catch (xdiag::Error e) {
   error_trace(e);
 }
+
+TEST_CASE("bosoncommutation", "[boson]") try {
+  Log("Boson (truncated) commutation relations");
+
+  // Bosons on a Fock space truncated to occupations 0..d-1 satisfy
+  //   [a_i, a_j]   = 0
+  //   [adag_i, adag_j] = 0
+  //   [a_i, adag_j]    = 0                         (i != j)
+  //   [a_i, adag_i]    = I - d P_{n=d-1}           (truncated!)
+  // The truncation modifies the canonical [a, adag] = I only on the highest
+  // occupation n = d-1, where adag|d-1> = 0, giving the diagonal entry -(d-1)
+  // instead of +1.
+  for (int nsites = 2; nsites <= 3; ++nsites) {
+    for (int d = 2; d <= 4; ++d) {
+      auto block = Boson(nsites, d); // full Fock space (square matrices)
+      int64_t D = block.dim();
+      arma::mat zeros(D, D, arma::fill::zeros);
+
+      for (int i = 0; i < nsites; ++i) {
+        for (int j = 0; j < nsites; ++j) {
+          arma::mat adagi = matrix(Op("Adag", i), block);
+          arma::mat adagj = matrix(Op("Adag", j), block);
+          arma::mat ai = matrix(Op("A", i), block);
+          arma::mat aj = matrix(Op("A", j), block);
+
+          arma::mat aa = ai * aj - aj * ai;                   // [a_i, a_j]
+          arma::mat adagadag = adagi * adagj - adagj * adagi; // [adag_i, adag_j]
+          arma::mat a_adag = ai * adagj - adagj * ai;         // [a_i, adag_j]
+          arma::mat adag_a = adagi * aj - aj * adagi;         // [adag_i, a_j]
+
+          REQUIRE(isapprox(aa, zeros));
+          REQUIRE(isapprox(adagadag, zeros));
+
+          if (i != j) {
+            REQUIRE(isapprox(a_adag, zeros));
+            REQUIRE(isapprox(adag_a, zeros));
+          } else {
+            // Truncated commutator built from the number operator: the diagonal
+            // is +1 except -(d-1) on states with maximal occupation at site i.
+            arma::mat ni = matrix(Op("N", i), block); // diagonal n_i
+            arma::vec nd = ni.diag();
+            arma::mat expected(D, D, arma::fill::zeros);
+            for (int64_t k = 0; k < D; ++k) {
+              bool maxed = nd(k) > static_cast<double>(d) - 1.5; // n_i == d-1
+              expected(k, k) = maxed ? -static_cast<double>(d - 1) : 1.0;
+            }
+            REQUIRE(isapprox(a_adag, expected));
+            REQUIRE(isapprox(adag_a, arma::mat(-expected)));
+          }
+        }
+      }
+    }
+  }
+} catch (xdiag::Error e) {
+  error_trace(e);
+}

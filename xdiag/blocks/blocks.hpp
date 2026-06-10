@@ -28,6 +28,7 @@ XDIAG_API bool isreal(Block const &block);
 // well-defined sector under one of the block's symmetries.
 Spinhalf block(OpSum const &ops, Spinhalf const &block_in);
 Boson block(OpSum const &ops, Boson const &block_in);
+Fermion block(OpSum const &ops, Fermion const &block_in);
 Block block(OpSum const &ops, Block const &block_in);
 
 // True if applying ops to block_in lands exactly in block_out, i.e. block_out

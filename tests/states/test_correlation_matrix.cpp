@@ -65,9 +65,9 @@ static arma::cx_mat naive_correlationC(State const &psi, Builder build) {
 // (complex Matrix ops on bond-dependent X/Y/Z terms). Loaded from the shared
 // lattice file, mirroring tests/blocks/spinhalf/test_spinhalf_strategies.
 static OpSum kitaev_gamma_opsum(double K, double G) {
-  std::string lfile = XDIAG_DIRECTORY
-      "/misc/data/kitaev_gamma/lattice-files/"
-      "honeycomb.8.HeisenbergKitaevGamma.fsl.toml";
+  std::string lfile =
+      XDIAG_DIRECTORY "/misc/data/kitaev_gamma/lattice-files/"
+                      "honeycomb.8.HeisenbergKitaevGamma.fsl.toml";
   auto fl = FileToml(lfile);
   auto ops_read = read_opsum(fl, "Interactions");
 
@@ -138,7 +138,8 @@ TEST_CASE("correlation_matrix", "[states]") try {
     }
   }
 
-  // ===== Bose-Hubbard ring: <Adag_i A_j> (single-particle density matrix) =====
+  // ===== Bose-Hubbard ring: <Adag_i A_j> (single-particle density matrix)
+  // =====
   {
     int64_t n = 4, d = 3, number = 3;
     OpSum H;
@@ -197,8 +198,10 @@ TEST_CASE("correlation_matrix_kitaev", "[states]") try {
 
     for (auto const &[t1, t2] : pairs) {
       arma::cx_mat c = correlation_matrixC(psi, t1, t2);
+      std::string tt1 = t1;
+      std::string tt2 = t2;
       arma::cx_mat naive = naive_correlationC(psi, [&](int64_t i, int64_t j) {
-        return OpSum(Monomial{Op(t1, i), Op(t2, j)});
+        return OpSum(Monomial{Op(tt1, i), Op(tt2, j)});
       });
       REQUIRE(isapprox(c, naive, 1e-8, 1e-8));
     }
@@ -206,9 +209,9 @@ TEST_CASE("correlation_matrix_kitaev", "[states]") try {
 
   // --- with a C2 point-group symmetry ---
   {
-    std::string lfile = XDIAG_DIRECTORY
-        "/misc/data/kitaev_gamma/lattice-files/"
-        "honeycomb.8.HeisenbergKitaevGamma.fsl.toml";
+    std::string lfile =
+        XDIAG_DIRECTORY "/misc/data/kitaev_gamma/lattice-files/"
+                        "honeycomb.8.HeisenbergKitaevGamma.fsl.toml";
     auto fl = FileToml(lfile);
     auto irrep = read_representation(fl, "Gamma.C2.A");
     auto group = irrep.group();
@@ -217,8 +220,10 @@ TEST_CASE("correlation_matrix_kitaev", "[states]") try {
 
     for (auto const &[t1, t2] : pairs) {
       arma::cx_mat c = correlation_matrixC(psi, t1, t2);
+      std::string tt1 = t1;
+      std::string tt2 = t2;
       arma::cx_mat naive = naive_correlationC(psi, [&](int64_t i, int64_t j) {
-        return symmetrize(OpSum(Monomial{Op(t1, i), Op(t2, j)}), group);
+        return symmetrize(OpSum(Monomial{Op(tt1, i), Op(tt2, j)}), group);
       });
       REQUIRE(isapprox(c, naive, 1e-8, 1e-8));
     }

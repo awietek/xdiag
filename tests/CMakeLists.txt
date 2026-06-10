@@ -57,6 +57,8 @@ set(XDIAG_TEST_SOURCES
 
   blocks/boson/test_boson.cpp
 
+  blocks/fermion/test_fermion.cpp
+
   matrices/terms/test_non_branching_op.cpp
   
   io/test_file_toml.cpp

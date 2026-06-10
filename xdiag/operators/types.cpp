@@ -13,16 +13,21 @@ bool is_known_type(std::string const &type) {
   return op_registry.find(type) != op_registry.end();
 }
 
-bool is_real_type(std::string const &type) {
+bool is_real_type(std::string const &type) try {
   auto it = op_registry.find(type);
-  return (it != op_registry.end()) && it->second.is_real;
+  if (it == op_registry.end()) {
+    XDIAG_THROW(fmt::format("Op type \"{}\" is unknown. Known types: {}", type,
+                            known_types_string()));
+  }
+  return it->second.is_real;
 }
+XDIAG_CATCH
 
 int64_t nsites_of_type(std::string const &type) try {
   auto it = op_registry.find(type);
   if (it == op_registry.end()) {
-    XDIAG_THROW(fmt::format("Op type \"{}\" is unknown. Known types: {}",
-                            type, known_types_string()));
+    XDIAG_THROW(fmt::format("Op type \"{}\" is unknown. Known types: {}", type,
+                            known_types_string()));
   }
   return it->second.nsites;
 }
@@ -31,8 +36,8 @@ XDIAG_CATCH
 OpTypeInfo const &info_of_type(std::string const &type) try {
   auto it = op_registry.find(type);
   if (it == op_registry.end()) {
-    XDIAG_THROW(fmt::format("Op type \"{}\" is unknown. Known types: {}",
-                            type, known_types_string()));
+    XDIAG_THROW(fmt::format("Op type \"{}\" is unknown. Known types: {}", type,
+                            known_types_string()));
   }
   return it->second;
 }
