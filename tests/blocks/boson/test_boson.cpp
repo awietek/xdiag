@@ -104,6 +104,7 @@ TEST_CASE("boson", "[boson]") try {
 
   // Test whether quantum numbers work
   for (int nsites = 2; nsites < 5; ++nsites) {
+    Log("Bose-Hubbard chain symmetry test: N = {}", nsites);
     auto ops = bose_hubbard_opsum(nsites, 1.0, 2.0);
     for (int d = 2; d < 6; ++d) {
       auto block = Boson(nsites, d);
@@ -113,25 +114,39 @@ TEST_CASE("boson", "[boson]") try {
 
       for (int number = 0; number < nsites * (d - 1); ++number) {
         auto blockn = Boson(nsites, d, number);
-        double e0n = eigval0(ops, blockn);
+        auto [e0n, psi0n] = eig0(ops, blockn);
         // Log("n: {}, e0n: {:.6f}", number, e0n);
         if (e0n < e0nmin) {
           e0nmin = e0n;
         }
 
+        auto AdagAn = correlation_matrixC(psi0n, "Adag", "A");
+
+        // XDIAG_SHOW(AdagAn);
+
         double e0nkmin = 99999.999;
+        int kmin = 0;
         for (int k = 0; k < nsites; ++k) {
           auto blocknk =
               Boson(nsites, d, number, cyclic_group_irrep(nsites, k));
+	  // XDIAG_SHOW(blocknk);
           if (dim(blocknk) > 0) {
-            double e0nk = eigval0(ops, blocknk);
+            auto [e0nk, psi0nk] = eig0(ops, blocknk);
             // Log("n: {}, k: {}, e0nk: {:.6f}", number, k, e0nk);
             if (e0nk < e0nkmin) {
               e0nkmin = e0nk;
+              kmin = k;
             }
           }
         }
+        auto blocknk =
+            Boson(nsites, d, number, cyclic_group_irrep(nsites, kmin));
+        auto [e0nk, psi0nk] = eig0(ops, blocknk);
+        auto AdagAnk = correlation_matrixC(psi0nk, "Adag", "A");
+        // XDIAG_SHOW(AdagAnk);
+
         REQUIRE(isapprox(e0n, e0nkmin));
+        REQUIRE(isapprox(AdagAn, AdagAnk, 1e-6, 1e-6));
       }
       REQUIRE(isapprox(e0, e0nmin));
 
@@ -150,39 +165,6 @@ TEST_CASE("boson", "[boson]") try {
       // Log("");
     }
   }
-  // {
-  //   auto block = Boson(4, 2);
-  //   XDIAG_SHOW(block);
-  // }
-  // {
-  //   auto block = Boson(4, 2, 2);
-  //   XDIAG_SHOW(block);
-  // }
-  // {
-  //   auto block = Boson(4, 2, cyclic_group_irrep(4, 1));
-  //   XDIAG_SHOW(block);
-  // }
-  // {
-  //   auto block = Boson(4, 2, 2, cyclic_group_irrep(4, 1));
-  //   XDIAG_SHOW(block);
-  // }
-
-  // {
-  //   auto block = Spinhalf(4);
-  //   XDIAG_SHOW(block);
-  // }
-  // {
-  //   auto block = Spinhalf(4, 2);
-  //   XDIAG_SHOW(block);
-  // }
-  // {
-  //   auto block = Spinhalf(4, cyclic_group_irrep(4, 1));
-  //   XDIAG_SHOW(block);
-  // }
-  // {
-  //   auto block = Spinhalf(4, 2, cyclic_group_irrep(4, 1));
-  //   XDIAG_SHOW(block);
-  // }
 
 } catch (xdiag::Error e) {
   error_trace(e);

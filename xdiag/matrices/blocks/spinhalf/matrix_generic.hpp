@@ -11,12 +11,12 @@
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/format.hpp>
 
-#include <xdiag/matrices/spinhalf/terms/term_exchange.hpp>
-#include <xdiag/matrices/spinhalf/terms/term_exchange_asym.hpp>
-#include <xdiag/matrices/spinhalf/terms/term_scalar_chirality.hpp>
-#include <xdiag/matrices/spinhalf/terms/term_spsm.hpp>
-#include <xdiag/matrices/spinhalf/terms/term_sz.hpp>
-#include <xdiag/matrices/spinhalf/terms/term_szsz.hpp>
+#include <xdiag/matrices/blocks/spinhalf/terms/term_exchange.hpp>
+#include <xdiag/matrices/blocks/spinhalf/terms/term_exchange_asym.hpp>
+#include <xdiag/matrices/blocks/spinhalf/terms/term_scalar_chirality.hpp>
+#include <xdiag/matrices/blocks/spinhalf/terms/term_spsm.hpp>
+#include <xdiag/matrices/blocks/spinhalf/terms/term_sz.hpp>
+#include <xdiag/matrices/blocks/spinhalf/terms/term_szsz.hpp>
 #include <xdiag/matrices/terms/term_identity.hpp>
 #include <xdiag/matrices/terms/term_matrix.hpp>
 

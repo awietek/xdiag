@@ -4,7 +4,7 @@
 
 #include "spinhalf.hpp"
 
-#include <memory>
+#include <regex>
 #include <type_traits>
 
 #include <xdiag/basis/basis_onthefly.hpp>
@@ -103,8 +103,12 @@ Spinhalf::Spinhalf(int64_t nsites, RepresentationSet const &irreps,
   }
 
   std::optional<int64_t> nup = irreps.charge("nup");
-  if (nup && ((*nup < 0) || (*nup > nsites))) {
-    XDIAG_THROW("Invalid argument: nup < 0 or nup > nsites");
+  if (nup) {
+    if (*nup < 0) {
+      XDIAG_THROW("Invalid argument: nup < 0");
+    } else if (*nup > nsites) {
+      XDIAG_THROW("Invalid argument: nup > nsites");
+    }
   }
 
   std::optional<PermutationGroup> group = irreps.group("SitePermutation");
@@ -175,11 +179,6 @@ bool Spinhalf::operator!=(Spinhalf const &rhs) const {
 RepresentationSet Spinhalf::irreps() const { return irreps_; }
 std::shared_ptr<basis::Basis> const &Spinhalf::basis() const { return basis_; }
 
-int64_t nsites(Spinhalf const &block) { return block.nsites(); }
-int64_t dim(Spinhalf const &block) { return block.dim(); }
-int64_t size(Spinhalf const &block) { return block.size(); }
-bool isreal(Spinhalf const &block) { return block.isreal(); }
-
 std::ostream &operator<<(std::ostream &out, Spinhalf const &block) {
   out << fmt::format(fg(fmt::color::moccasin) | fmt::emphasis::bold,
                      "Spinhalf\n");
@@ -198,6 +197,14 @@ std::ostream &operator<<(std::ostream &out, Spinhalf const &block) {
         random::hash(Representation(
             *group, *block.irreps().characters("SitePermutation"))));
   }
+  std::string basisname(block.basis()->name());
+  basisname = std::regex_replace(basisname, std::regex("xdiag::basis::"), "");
+  basisname =
+      std::regex_replace(basisname, std::regex("xdiag::combinatorics::"), "");
+  basisname =
+      std::regex_replace(basisname, std::regex("unsigned int"), "uint32_t");
+
+  out << fmt::format("| basis    : {}\n", basisname);
   out << fmt::format("| ID       : {0:x}\n", random::hash(block));
   out << "| dimension: " << fmt::format_de("{:L}", block.size()) << "\n";
   return out;

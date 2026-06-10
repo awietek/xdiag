@@ -16,25 +16,23 @@
 
 namespace xdiag {
 
-class SpinhalfIterator;
+class FermionIterator;
 
-class Spinhalf {
+class Fermion {
 public:
-  using iterator_t = SpinhalfIterator;
+  using iterator_t = FermionIterator;
 
-  XDIAG_API Spinhalf() = default;
+  XDIAG_API Fermion() = default;
 
   // Generic constructor
-  Spinhalf(int64_t sites, RepresentationSet const &irreps,
-           std::string backend = "auto");
+  Fermion(int64_t sites, RepresentationSet const &irreps);
 
   // Convenience constructors
-  XDIAG_API Spinhalf(int64_t nsites);
-  XDIAG_API Spinhalf(int64_t nsites, int64_t nup);
-  XDIAG_API Spinhalf(int64_t nsites, Representation const &irrep,
-                     std::string backend = "auto");
-  XDIAG_API Spinhalf(int64_t nsites, int64_t nup, Representation const &irrep,
-                     std::string backend = "auto");
+  XDIAG_API Fermion(int64_t nsites);
+  XDIAG_API Fermion(int64_t nsites, int64_t number);
+  XDIAG_API Fermion(int64_t nsites, Representation const &irrep);
+  XDIAG_API Fermion(int64_t nsites, int64_t number,
+                    Representation const &irrep);
 
   XDIAG_API int64_t nsites() const;
   XDIAG_API constexpr int64_t d() const { return 2; }
@@ -42,8 +40,8 @@ public:
   XDIAG_API int64_t size() const;
   XDIAG_API bool isreal() const;
 
-  XDIAG_API bool operator==(Spinhalf const &rhs) const;
-  XDIAG_API bool operator!=(Spinhalf const &rhs) const;
+  XDIAG_API bool operator==(Fermion const &rhs) const;
+  XDIAG_API bool operator!=(Fermion const &rhs) const;
 
   XDIAG_API iterator_t begin() const;
   XDIAG_API iterator_t end() const;
@@ -57,16 +55,16 @@ private:
   std::shared_ptr<basis::Basis> basis_;
 };
 
-XDIAG_API std::ostream &operator<<(std::ostream &out, Spinhalf const &block);
-XDIAG_API std::string to_string(Spinhalf const &block);
+XDIAG_API std::ostream &operator<<(std::ostream &out, Fermion const &block);
+XDIAG_API std::string to_string(Fermion const &block);
 
-class SpinhalfIterator {
+class FermionIterator {
 public:
-  XDIAG_API SpinhalfIterator(Spinhalf const *block, int64_t idx);
-  XDIAG_API SpinhalfIterator &operator++();
+  XDIAG_API FermionIterator(Fermion const *block, int64_t idx);
+  XDIAG_API FermionIterator &operator++();
   XDIAG_API ProductState operator*() const;
-  XDIAG_API bool operator==(SpinhalfIterator const &rhs) const;
-  XDIAG_API bool operator!=(SpinhalfIterator const &rhs) const;
+  XDIAG_API bool operator==(FermionIterator const &rhs) const;
+  XDIAG_API bool operator!=(FermionIterator const &rhs) const;
 
 private:
   std::unique_ptr<basis::BasisIterator> it_;

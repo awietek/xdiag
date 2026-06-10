@@ -7,8 +7,7 @@
 
 namespace xdiag::bits {
 
-template <typename bit_t, typename length_t>
-constexpr inline bit_t bitmask(length_t length) {
+template <typename bit_t> constexpr bit_t bitmask(int64_t length) {
   return (length == std::numeric_limits<bit_t>::digits)
              ? std::numeric_limits<bit_t>::max()
              : (((bit_t)1 << length) - 1);

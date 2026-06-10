@@ -7,8 +7,7 @@
 namespace xdiag::bits {
 
 // Helper functions for generic bit operations (zero overhead for native types)
-template <typename bit_t>
-constexpr bit_t bit_zero(int64_t nbits = 64) noexcept {
+template <typename bit_t> constexpr bit_t zero(int64_t nbits = 64) noexcept {
   if constexpr (std::is_integral<bit_t>::value) {
     return 0;
   } else {
@@ -16,7 +15,7 @@ constexpr bit_t bit_zero(int64_t nbits = 64) noexcept {
   }
 }
 
-template <typename bit_t> constexpr bit_t bit_one(int64_t nbits = 64) noexcept {
+template <typename bit_t> constexpr bit_t one(int64_t nbits = 64) noexcept {
   if constexpr (std::is_integral<bit_t>::value) {
     return 1;
   } else {

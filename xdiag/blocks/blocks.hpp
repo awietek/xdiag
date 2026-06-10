@@ -9,12 +9,13 @@
 #include <variant>
 
 #include <xdiag/blocks/boson.hpp>
+#include <xdiag/blocks/fermion.hpp>
 #include <xdiag/blocks/spinhalf.hpp>
 #include <xdiag/operators/opsum.hpp>
 #include <xdiag/utils/xdiag_api.hpp>
 
 namespace xdiag {
-using Block = std::variant<Spinhalf, Boson>;
+using Block = std::variant<Spinhalf, Boson, Fermion>;
 
 XDIAG_API int64_t dim(Block const &block);
 XDIAG_API int64_t size(Block const &block);

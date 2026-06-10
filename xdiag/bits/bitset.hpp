@@ -274,6 +274,18 @@ using BitsetStatic2 = Bitset<uint64_t, 2>;
 using BitsetStatic4 = Bitset<uint64_t, 4>;
 using BitsetStatic8 = Bitset<uint64_t, 8>;
 
+template <typename bit_t> inline bit_t bitmask(int64_t nbits, int64_t length) {
+  if constexpr (std::is_integral<bit_t>()) {
+    return bitmask<bit_t>(length);
+  } else {
+    bit_t bits = bit_t(nbits);
+    for (int64_t i = 0; i < length; ++i) {
+      bits.set(i);
+    }
+    return bits;
+  }
+}
+
 } // namespace xdiag::bits
 
 // Specialization of numeric_limits for Bitset (needed for BitArray)

@@ -8,7 +8,7 @@
 #include <iterator>
 #include <type_traits>
 
-#include <xdiag/bits/bit_zero_one.hpp>
+#include <xdiag/bits/zero_one.hpp>
 #include <xdiag/bits/bitarray.hpp>
 #include <xdiag/bits/bitset.hpp>
 
@@ -58,7 +58,7 @@ inline value_t get_element(BitsetDynamic const &storage, int64_t offset,
     using raw_t = typename value_t::bit_t;
     return value_t(get_element<raw_t>(storage, offset, nbits));
   } else {
-    value_t result = bit_zero<value_t>(nbits);
+    value_t result = bits::zero<value_t>(nbits);
     for (int64_t b = 0; b < nbits; b += 64) {
       int64_t w = std::min(int64_t(64), nbits - b);
       result.set_range(b, w, storage.get_range(offset + b, w));

@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <xdiag/matrices/boson/matrix_generic.hpp>
+#include <xdiag/matrices/blocks/boson/matrix_generic.hpp>
 #include <xdiag/operators/opsum.hpp>
 
 namespace xdiag::matrices::boson {

@@ -5,7 +5,7 @@
 #include "enumerate_combinations.hpp"
 
 #include <type_traits>
-#include <xdiag/bits/bit_zero_one.hpp>
+#include <xdiag/bits/zero_one.hpp>
 #include <xdiag/bits/bitset.hpp>
 #include <xdiag/bits/get_set.hpp>
 #include <xdiag/math/binomial.hpp>
@@ -29,8 +29,8 @@ template <typename bit_t> bit_t next_combination(bit_t v) noexcept {
   // 1)));
 
   // Slow version (should work everywhere)
-  const bit_t zero = bits::bit_zero<bit_t>();
-  const bit_t one = bits::bit_one<bit_t>();
+  const bit_t zero = bits::zero<bit_t>();
+  const bit_t one = bits::one<bit_t>();
   bit_t t = (v | (v - one)) + one;
   return v == zero ? ~v : t | ((((t & -t) / (v & -v)) >> 1) - one);
 }

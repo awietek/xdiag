@@ -54,11 +54,6 @@ private:
   std::shared_ptr<basis::Basis> basis_;
 };
 
-XDIAG_API int64_t nsites(Boson const &block);
-XDIAG_API int64_t dim(Boson const &block);
-XDIAG_API int64_t size(Boson const &block);
-XDIAG_API bool isreal(Boson const &block);
-
 XDIAG_API std::ostream &operator<<(std::ostream &out, Boson const &block);
 XDIAG_API std::string to_string(Boson const &block);
 

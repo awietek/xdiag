@@ -6,6 +6,7 @@
 
 #include <memory>
 #include <optional>
+#include <regex>
 #include <type_traits>
 #include <utility>
 
@@ -199,11 +200,6 @@ bool Boson::operator!=(Boson const &rhs) const { return !operator==(rhs); }
 RepresentationSet Boson::irreps() const { return irreps_; }
 std::shared_ptr<basis::Basis> const &Boson::basis() const { return basis_; }
 
-int64_t nsites(Boson const &block) { return block.nsites(); }
-int64_t dim(Boson const &block) { return block.dim(); }
-int64_t size(Boson const &block) { return block.size(); }
-bool isreal(Boson const &block) { return block.isreal(); }
-
 std::ostream &operator<<(std::ostream &out, Boson const &block) {
   out << fmt::format(fg(fmt::color::steel_blue) | fmt::emphasis::bold,
                      "Boson\n");
@@ -223,6 +219,14 @@ std::ostream &operator<<(std::ostream &out, Boson const &block) {
         random::hash(Representation(
             *group, *block.irreps().characters("SitePermutation"))));
   }
+  std::string basisname(block.basis()->name());
+  basisname = std::regex_replace(basisname, std::regex("xdiag::basis::"), "");
+  basisname =
+      std::regex_replace(basisname, std::regex("xdiag::combinatorics::"), "");
+  basisname =
+      std::regex_replace(basisname, std::regex("unsigned int"), "uint32_t");
+
+  out << fmt::format("| basis    : {}\n", basisname);
   out << fmt::format("| ID       : {0:x}\n", random::hash(block));
   out << "| dimension: " << fmt::format_de("{:L}", block.size()) << "\n";
   return out;

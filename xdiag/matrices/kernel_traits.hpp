@@ -7,11 +7,14 @@
 #include <utility>
 
 #include <xdiag/blocks/boson.hpp>
+#include <xdiag/blocks/fermion.hpp>
 #include <xdiag/blocks/spinhalf.hpp>
-#include <xdiag/matrices/boson/dispatch_basis.hpp>
-#include <xdiag/matrices/boson/matrix_policy.hpp>
-#include <xdiag/matrices/spinhalf/dispatch_basis.hpp>
-#include <xdiag/matrices/spinhalf/matrix_policy.hpp>
+#include <xdiag/matrices/blocks/boson/dispatch_basis.hpp>
+#include <xdiag/matrices/blocks/boson/matrix_policy.hpp>
+#include <xdiag/matrices/blocks/fermion/dispatch_basis.hpp>
+#include <xdiag/matrices/blocks/fermion/matrix_policy.hpp>
+#include <xdiag/matrices/blocks/spinhalf/dispatch_basis.hpp>
+#include <xdiag/matrices/blocks/spinhalf/matrix_policy.hpp>
 
 namespace xdiag::matrices {
 
@@ -35,10 +38,11 @@ namespace xdiag::matrices {
 // The primary template is intentionally undefined: a missing specialization is
 // a compile error at the dispatch site (not a silent fallback that recurses).
 template <typename block_t> struct kernel_traits {
-  static_assert(sizeof(block_t) == 0,
-                "kernel_traits is not specialized for this block type. Register "
-                "the block by adding a kernel_traits specialization here, a "
-                "Block variant alternative, and a kernel instantiation group.");
+  static_assert(
+      sizeof(block_t) == 0,
+      "kernel_traits is not specialized for this block type. Register "
+      "the block by adding a kernel_traits specialization here, a "
+      "Block variant alternative, and a kernel instantiation group.");
 };
 
 template <> struct kernel_traits<Spinhalf> {
@@ -56,6 +60,15 @@ template <> struct kernel_traits<Boson> {
   static void dispatch(Boson const &block_in, Boson const &block_out,
                        func_t &&f) {
     boson::dispatch_basis(block_in, block_out, std::forward<func_t>(f));
+  }
+};
+
+template <> struct kernel_traits<Fermion> {
+  using policy = fermion::MatrixPolicy;
+  template <typename func_t>
+  static void dispatch(Fermion const &block_in, Fermion const &block_out,
+                       func_t &&f) {
+    fermion::dispatch_basis(block_in, block_out, std::forward<func_t>(f));
   }
 };
 

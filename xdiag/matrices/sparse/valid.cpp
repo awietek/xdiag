@@ -15,9 +15,9 @@
 
 namespace xdiag {
 
-template <typename idx_t, typename coeff_t, typename block_t>
-void check_valid_sparse_matrix(OpSum const &ops, block_t const &block_in,
-                               block_t block_out, idx_t i0) try {
+template <typename idx_t, typename coeff_t>
+void check_valid_sparse_matrix(OpSum const &ops, Block const &block_in,
+                               Block const &block_out, idx_t i0) try {
 
   if (!((i0 == 0) || (i0 == 1))) {
     XDIAG_THROW(fmt::format(
@@ -44,8 +44,8 @@ void check_valid_sparse_matrix(OpSum const &ops, block_t const &block_in,
     }
   }
 
-  int64_t m = block_out.size();
-  int64_t n = block_in.size();
+  int64_t m = size(block_out);
+  int64_t n = size(block_in);
   if ((m > std::numeric_limits<idx_t>::max()) ||
       (n > std::numeric_limits<idx_t>::max())) {
     XDIAG_THROW(
@@ -56,18 +56,14 @@ void check_valid_sparse_matrix(OpSum const &ops, block_t const &block_in,
 XDIAG_CATCH
 
 // Explicit instantiations for each (idx_t, coeff_t) over the supported blocks.
-#define XDIAG_INSTANTIATE_CHECK_VALID(idx_t, coeff_t, block_t)                 \
-  template void check_valid_sparse_matrix<idx_t, coeff_t, block_t>(            \
-      OpSum const &, block_t const &, block_t, idx_t);
+#define XDIAG_INSTANTIATE_CHECK_VALID(idx_t, coeff_t)                          \
+  template void check_valid_sparse_matrix<idx_t, coeff_t>(                     \
+      OpSum const &, Block const &, Block const &, idx_t);
 
-#define XDIAG_INSTANTIATE_CHECK_VALID_BLOCK(block_t)                           \
-  XDIAG_INSTANTIATE_CHECK_VALID(int32_t, double, block_t)                      \
-  XDIAG_INSTANTIATE_CHECK_VALID(int32_t, complex, block_t)                     \
-  XDIAG_INSTANTIATE_CHECK_VALID(int64_t, double, block_t)                      \
-  XDIAG_INSTANTIATE_CHECK_VALID(int64_t, complex, block_t)
-
-XDIAG_INSTANTIATE_CHECK_VALID_BLOCK(Spinhalf)
-XDIAG_INSTANTIATE_CHECK_VALID_BLOCK(Boson)
+XDIAG_INSTANTIATE_CHECK_VALID(int32_t, double)
+XDIAG_INSTANTIATE_CHECK_VALID(int32_t, complex)
+XDIAG_INSTANTIATE_CHECK_VALID(int64_t, double)
+XDIAG_INSTANTIATE_CHECK_VALID(int64_t, complex)
 
 #undef XDIAG_INSTANTIATE_CHECK_VALID_BLOCK
 #undef XDIAG_INSTANTIATE_CHECK_VALID

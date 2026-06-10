@@ -5,6 +5,7 @@
 #pragma once
 
 #include <xdiag/operators/opsum.hpp>
+#include <xdiag/blocks/blocks.hpp>
 
 namespace xdiag {
 
@@ -15,8 +16,8 @@ namespace xdiag {
 //   - the block dimensions fit into the index type idx_t.
 // Throws on any violation. Defined for each (idx_t, coeff_t, block_t) used by
 // the sparse-matrix builders (see explicit instantiations in valid.cpp).
-template <typename idx_t, typename coeff_t, typename block_t>
-void check_valid_sparse_matrix(OpSum const &ops, block_t const &block_in,
-                               block_t block_out, idx_t i0);
+template <typename idx_t, typename coeff_t>
+void check_valid_sparse_matrix(OpSum const &ops, Block const &block_in,
+                               Block const &block_out, idx_t i0);
 
 } // namespace xdiag

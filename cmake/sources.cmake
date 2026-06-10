@@ -66,6 +66,7 @@ set(XDIAG_SOURCES
   blocks/blocks.cpp
   blocks/spinhalf.cpp
   blocks/boson.cpp
+  blocks/fermion.cpp
   
   states/product_state.cpp
   states/random_state.cpp
@@ -118,12 +119,16 @@ set(XDIAG_SOURCES
   algebra/algebras/tj_algebra.cpp
   algebra/algebras/matrix_algebra.cpp
   algebra/algebras/spinhalf_implementation_algebra.cpp
+  algebra/algebras/fermion_implementation_algebra.cpp
+  algebra/algebras/fermion_algebra.cpp
 
   algebra/rewrite/rewrite.cpp
   algebra/rewrite/rules/id_absorption_rule.cpp
   algebra/rewrite/rules/sort_sites_rule.cpp
   algebra/rewrite/rules/spinhalf_same_site_rule.cpp
   algebra/rewrite/rules/electron_same_site_rule.cpp
+  algebra/rewrite/rules/fermion_same_site_rule.cpp
+  algebra/rewrite/rules/fermion_normal_order_rule.cpp
   algebra/rewrite/rules/tj_same_site_rule.cpp
   algebra/rewrite/rules/combine_matrix_rule.cpp
   algebra/rewrite/rules/sort_matrix_sites_rule.cpp
@@ -131,6 +136,7 @@ set(XDIAG_SOURCES
   algebra/rewrite/rules/convert_to_matrix_rule.cpp
   algebra/rewrite/rules/spin_expansion_rules.cpp
   algebra/rewrite/rules/fermionic_expansion_rules.cpp
+  algebra/rewrite/rules/fermion_expansion_rules.cpp
   algebra/rewrite/rules/tj_expansion_rules.cpp
   algebra/rewrite/rules/boson_expansion_rules.cpp
 
