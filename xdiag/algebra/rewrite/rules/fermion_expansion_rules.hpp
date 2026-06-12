@@ -35,6 +35,7 @@ namespace xdiag::algebra {
 // The first expandable operator found (left-to-right) is expanded; repeated
 // application to a fixed point expands all of them.
 MonomialRule
-fermion_protected_expansion_rule(std::set<std::string> const &protected_types);
+fermion_protected_expansion_rule(std::set<std::string> const &protected_types,
+                                 int64_t nsites);
 
 } // namespace xdiag::algebra

@@ -4,6 +4,8 @@
 
 #include "../../catch.hpp"
 
+#include <tests/blocks/random_opsum_matrix.hpp>
+
 #include "test_spinhalf_strategies.hpp"
 #include "testcases_spinhalf.hpp"
 
@@ -417,16 +419,18 @@ TEST_CASE("spinhalf_symmetric_apply", "[spinhalf]") try {
     ops["Jchi"] = -0.09;
 
     std::vector<std::pair<std::string, double>> rep_name_e0 = {
-        {"Gamma.C6.A", -6.9456000700824329641},
-        {"Gamma.C6.B", -5.8410912437873072633},
-        {"Gamma.C6.E1a", -3.8556417248355927541},
-        {"Gamma.C6.E2a", -6.4157243358059030669},
-        {"K.C3.A", -5.9197511811622431921},
-        {"K.C3.Ea", -5.0281703836000861685},
-        {"K.C3.Eb", -5.2045133473640809996},
-        {"M.C2.A", -5.756684675081964464},
-        {"M.C2.B", -5.7723510325561688816},
-        {"X.C1.A", -5.9030627660522529965}};
+        {"Gamma.C6.A", -6.945600070082439181},
+        {"Gamma.C6.B", -5.84109124378730904},
+        {"Gamma.C6.E1a", -3.845414358083013795},
+        {"Gamma.C6.E1b", -3.855641724835592754},
+        {"Gamma.C6.E2a", -6.322314852895261517},
+        {"Gamma.C6.E2b", -6.415724335805900402},
+        {"K.C3.A", -5.91975118116224408},
+        {"K.C3.Ea", -5.204513347364086329},
+        {"K.C3.Eb", -5.028170383600089721},
+        {"M.C2.A", -5.756684675081961799},
+        {"M.C2.B", -5.77235103255616977},
+        {"X.C1.A", -5.90306276605228053}};
 
     int64_t nsites = 12;
     int64_t nup = 6;
@@ -504,16 +508,18 @@ TEST_CASE("spinhalf_symmetric_matrix", "[spinhalf]") try {
     ops["Jchi"] = -0.09;
 
     std::vector<std::pair<std::string, double>> rep_name_e0 = {
-        {"Gamma.C6.A", -6.9456000700824329641},
-        {"Gamma.C6.B", -5.8410912437873072633},
-        {"Gamma.C6.E1a", -3.8556417248355927541},
-        {"Gamma.C6.E2a", -6.4157243358059030669},
-        {"K.C3.A", -5.9197511811622431921},
-        {"K.C3.Ea", -5.0281703836000861685},
-        {"K.C3.Eb", -5.2045133473640809996},
-        {"M.C2.A", -5.756684675081964464},
-        {"M.C2.B", -5.7723510325561688816},
-        {"X.C1.A", -5.9030627660522529965}};
+        {"Gamma.C6.A", -6.945600070082439181},
+        {"Gamma.C6.B", -5.84109124378730904},
+        {"Gamma.C6.E1a", -3.845414358083013795},
+        {"Gamma.C6.E1b", -3.855641724835592754},
+        {"Gamma.C6.E2a", -6.322314852895261517},
+        {"Gamma.C6.E2b", -6.415724335805900402},
+        {"K.C3.A", -5.91975118116224408},
+        {"K.C3.Ea", -5.204513347364086329},
+        {"K.C3.Eb", -5.028170383600089721},
+        {"M.C2.A", -5.756684675081961799},
+        {"M.C2.B", -5.77235103255616977},
+        {"X.C1.A", -5.90306276605228053}};
 
     int64_t nsites = 12;
     int64_t nup = 6;
@@ -661,6 +667,20 @@ TEST_CASE("spinhalfexchange", "[spinhalf]") try {
     REQUIRE(isapprox(m1, arma::cx_mat(-m2)));
   }
 
+} catch (xdiag::Error e) {
+  error_trace(e);
+}
+
+// Randomized cross-check of the full operator pipeline against naive matrix
+// products (shared harness). Uses the full spin-1/2 Hilbert space (no Sz
+// conservation) so every elementary op is an endomorphism.
+TEST_CASE("spinhalfrandomopsum", "[spinhalf]") try {
+  for (int nsites = 3; nsites < 6; ++nsites) {
+    Log("Spinhalf random OpSum matrix test: N = {}", nsites);
+    for (uint32_t seed = 0; seed < 5; ++seed) {
+      testcases::test_random_opsum_matrix(Spinhalf(nsites), seed);
+    }
+  }
 } catch (xdiag::Error e) {
   error_trace(e);
 }

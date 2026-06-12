@@ -23,12 +23,17 @@ void term_scalar_chirality(Coeff const &c, Op const &op,
 
   complex J = c.scalar().as<complex>();
   coeff_t Jquarter = 0.;
-  coeff_t Jquarter_conj = 0.;
+  coeff_t Jquarter_acyclic = 0.;
   if constexpr (isreal<coeff_t>()) {
     XDIAG_THROW("Scalar chirality term cannot be used with real coefficients");
   } else {
-    Jquarter = complex(0, -0.25) * J;
-    Jquarter_conj = xdiag::conj(Jquarter);
+    // This realizes ScalarChirality = S_i . (S_j x S_k). The acyclic (inverse)
+    // rotation carries -Jquarter, i.e. the operator is (i/4) J (cyclic -
+    // acyclic). Using -Jquarter (rather than conj(Jquarter)) keeps the term
+    // linear in J for complex coefficients, while still reducing to the
+    // Hermitian operator for real J.
+    Jquarter = complex(0, 0.25) * J;
+    Jquarter_acyclic = -Jquarter;
   }
 
   bit_t mask = bit_t();
@@ -64,7 +69,7 @@ void term_scalar_chirality(Coeff const &c, Op const &op,
     bits::set(threespins_acyclic, s2, bits::get(spins, s3));
     bit_t spins_void = spins & (~mask);
     bit_t spins_acyclic = spins_void | threespins_acyclic;
-    return {spins_acyclic, Jquarter_conj};
+    return {spins_acyclic, Jquarter_acyclic};
   };
   term_offdiag(basis_in, basis_out, non_zero_term, term_action_cyclic, fill);
   term_offdiag(basis_in, basis_out, non_zero_term, term_action_acyclic, fill);

@@ -24,12 +24,14 @@ TEST_CASE("spinhalf_implementation_algebra", "[operators]") try {
   auto impl_alg = spinhalf_implementation_algebra(4);
   auto mat_alg = matrix_algebra(4, 2);
 
-  // Standard spin-1/2 matrices (for direct matrix comparisons)
-  mat sp = {{0.0, 1.0}, {0.0, 0.0}};
-  mat sm = {{0.0, 0.0}, {1.0, 0.0}};
-  mat sz = {{0.5, 0.0}, {0.0, -0.5}};
+  // Standard spin-1/2 matrices (for direct matrix comparisons). Local basis
+  // index 0 = down (m = -1/2), index 1 = up (m = +1/2), matching the basis bit
+  // convention (a set bit is "up"); see op_to_matrix_op.
+  mat sp = {{0.0, 0.0}, {1.0, 0.0}};
+  mat sm = {{0.0, 1.0}, {0.0, 0.0}};
+  mat sz = {{-0.5, 0.0}, {0.0, 0.5}};
   mat sx = {{0.0, 0.5}, {0.5, 0.0}};
-  cx_mat sy(mat({{0., 0.}, {0., 0.}}), mat({{0., -0.5}, {0.5, 0.}}));
+  cx_mat sy(mat({{0., 0.}, {0., 0.}}), mat({{0., 0.5}, {-0.5, 0.}}));
   mat id2 = eye(2, 2);
 
   // -------------------------------------------------------------------------

@@ -7,6 +7,7 @@
 #include <utility>
 
 #include <xdiag/bits/get_set.hpp>
+#include <xdiag/bits/nonzero.hpp>
 #include <xdiag/bits/popcount.hpp>
 #include <xdiag/matrices/terms/term_offdiag.hpp>
 
@@ -21,8 +22,17 @@ void term_exchange_asym(Coeff const &c, Op const &op, basis_t const &basis_in,
   int64_t s1 = op[0];
   int64_t s2 = op[1];
 
+  // ExchangeAsym{i,j} = (1/2)(S+_i S-_j - S-_i S+_j), matching op_to_matrix_op.
+  // For i == j this is (1/2)[S+,S-] = Sz_i.
   if (s1 == s2) {
-    term_diag(basis_in, basis_out, [&](bit_t) { return J / 2.0; }, fill);
+    bit_t mask_i = bit_t();
+    bits::set(mask_i, s1);
+    term_diag(
+        basis_in, basis_out,
+        [&](bit_t spins) -> coeff_t {
+          return bits::nonzero(spins & mask_i) ? J / 2.0 : -J / 2.0;
+        },
+        fill);
     return;
   }
 
@@ -38,7 +48,9 @@ void term_exchange_asym(Coeff const &c, Op const &op, basis_t const &basis_in,
   term_offdiag(
       basis_in, basis_out, non_zero_term,
       [&](bit_t spins) -> std::pair<bit_t, coeff_t> {
-        return {spins ^ mask, bits::get(spins, s1) ? Jhalf : -Jhalf};
+        // s1 up (S-_i S+_j branch) -> -J/2;  s1 down (S+_i S-_j) -> +J/2,
+        // matching op_to_matrix_op's (1/2)(S+_i S-_j - S-_i S+_j).
+        return {spins ^ mask, bits::get(spins, s1) ? -Jhalf : Jhalf};
       },
       fill);
 }

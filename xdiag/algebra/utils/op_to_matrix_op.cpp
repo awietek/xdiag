@@ -17,9 +17,11 @@ namespace xdiag::algebra {
 namespace {
 
 // Spin-S elementary matrices for local dimension d = 2S+1. Basis index
-// i = 0..d-1 maps to magnetic quantum number m_i = S - i, so index 0 is the
-// highest-weight state m = +S. This convention reduces, for d = 2, to the
-// spin-1/2 matrices Sz = diag(1/2, -1/2), S+ = [[0,1],[0,0]], S- = [[0,0],[1,0]].
+// i = 0..d-1 maps to magnetic quantum number m_i = -S + i, so index 0 is the
+// lowest-weight state m = -S. This matches the occupation/bit convention used
+// by the basis and the single-site kernels (a set bit is "up", i.e. higher m),
+// so that the Matrix path for products agrees with term_sz / term_spsm. For
+// d = 2 it gives Sz = diag(-1/2, 1/2), S+ = [[0,0],[1,0]], S- = [[0,1],[0,0]].
 struct SpinMatrices {
   arma::mat sp;
   arma::mat sm;
@@ -33,17 +35,17 @@ SpinMatrices spin_matrices(int64_t d) {
   arma::mat sz(d, d, arma::fill::zeros);
 
   for (int64_t i = 0; i < d; ++i) {
-    sz(i, i) = S - static_cast<double>(i);
+    sz(i, i) = -S + static_cast<double>(i);
   }
-  // S+ |m> = sqrt(S(S+1) - m(m+1)) |m+1>; |m+1> sits at index i-1.
-  for (int64_t i = 1; i < d; ++i) {
-    double m = S - static_cast<double>(i);
-    sp(i - 1, i) = std::sqrt(S * (S + 1.0) - m * (m + 1.0));
-  }
-  // S- |m> = sqrt(S(S+1) - m(m-1)) |m-1>; |m-1> sits at index i+1.
+  // S+ |m> = sqrt(S(S+1) - m(m+1)) |m+1>; |m+1> sits at index i+1.
   for (int64_t i = 0; i < d - 1; ++i) {
-    double m = S - static_cast<double>(i);
-    sm(i + 1, i) = std::sqrt(S * (S + 1.0) - m * (m - 1.0));
+    double m = -S + static_cast<double>(i);
+    sp(i + 1, i) = std::sqrt(S * (S + 1.0) - m * (m + 1.0));
+  }
+  // S- |m> = sqrt(S(S+1) - m(m-1)) |m-1>; |m-1> sits at index i-1.
+  for (int64_t i = 1; i < d; ++i) {
+    double m = -S + static_cast<double>(i);
+    sm(i - 1, i) = std::sqrt(S * (S + 1.0) - m * (m - 1.0));
   }
   return {sp, sm, sz};
 }
@@ -172,6 +174,8 @@ Op op_to_matrix_op(Op const &op, int64_t d) try {
                 arma::cx_mat const &c) {
       return arma::cx_mat(arma::kron(a, arma::cx_mat(arma::kron(b, c))));
     };
+    // Realizes ScalarChirality = S_i . (S_j x S_k); matches the
+    // term_scalar_chirality kernel so the kernel and Matrix path agree.
     arma::cx_mat m = (I * 0.5) * t(sz_cx, sm_cx, sp_cx)     // S+_i S-_j Sz_k
                      + (-I * 0.5) * t(sz_cx, sp_cx, sm_cx)  // S-_i S+_j Sz_k
                      + (I * 0.5) * t(sm_cx, sp_cx, sz_cx)   // Sz_i S+_j S-_k

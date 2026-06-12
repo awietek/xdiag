@@ -19,12 +19,14 @@ TEST_CASE("non_branching_op", "[operators]") try {
   using namespace arma;
   Log("testing non_branching_op");
 
+  // Local basis index 0 = down (m = -1/2), index 1 = up: a set bit is "up",
+  // matching the basis/kernel convention (see op_to_matrix_op).
   cx_mat sx(mat({{0., 0.5}, {0.5, 0.}}), mat({{0., 0.}, {0., 0.}}));
-  cx_mat sy(mat({{0., 0.}, {0., 0.}}), mat({{0., -0.5}, {0.5, 0.}}));
-  cx_mat sz(mat({{0.5, 0.0}, {0.0, -0.5}}), mat({{0., 0.}, {0., 0.0}}));
+  cx_mat sy(mat({{0., 0.}, {0., 0.}}), mat({{0., 0.5}, {-0.5, 0.}}));
+  cx_mat sz(mat({{-0.5, 0.0}, {0.0, 0.5}}), mat({{0., 0.}, {0., 0.0}}));
 
-  cx_mat sp(mat({{0.0, 1.0}, {0.0, 0.0}}), mat({{0., 0.}, {0., 0.0}}));
-  cx_mat sm(mat({{0.0, 0.0}, {1.0, 0.0}}), mat({{0., 0.}, {0., 0.0}}));
+  cx_mat sp(mat({{0.0, 0.0}, {1.0, 0.0}}), mat({{0., 0.}, {0., 0.0}}));
+  cx_mat sm(mat({{0.0, 1.0}, {0.0, 0.0}}), mat({{0., 0.}, {0., 0.0}}));
   cx_mat ones(mat({{1.0, 1.0}, {1.0, 1.0}}), mat({{1.0, 1.0}, {1.0, 1.0}}));
 
   for (auto ss : {sx, sy, sz, sp, sm, ones}) {
@@ -86,9 +88,11 @@ TEST_CASE("non_branching_op", "[operators]") try {
     ops1["Jchi"] = 1.0;
     auto H1 = matrixC(ops1, block6);
 
-    cx_mat jchimat = kron(sx, kron(sy, sz) - kron(sz, sy)) +
-                     kron(sy, kron(sz, sx) - kron(sx, sz)) +
-                     kron(sz, kron(sx, sy) - kron(sy, sx));
+    // S_0.(S_1 x S_2) with the Matrix-op convention: the first site (0) is the
+    // inner (rightmost) kron factor, the last site (2) is the outer one.
+    cx_mat jchimat = kron(sz, kron(sy, sx) - kron(sx, sy)) +
+                     kron(sx, kron(sz, sy) - kron(sy, sz)) +
+                     kron(sy, kron(sx, sz) - kron(sz, sx));
 
     OpSum ops2;
     ops2 += Op("Matrix", {0, 1, 2}, jchimat);
@@ -131,9 +135,9 @@ TEST_CASE("non_branching_op", "[operators]") try {
   ops1["Jchi"] = 1.0;
   auto H1 = matrixC(ops1, block12);
 
-  cx_mat jchimat = kron(kron(sx, sy), sz) + kron(kron(sy, sz), sx) +
-                   kron(kron(sz, sx), sy) - kron(kron(sx, sz), sy) -
-                   kron(kron(sy, sx), sz) - kron(kron(sz, sy), sx);
+  cx_mat jchimat = kron(kron(sx, sz), sy) + kron(kron(sy, sx), sz) +
+                   kron(kron(sz, sy), sx) - kron(kron(sx, sy), sz) -
+                   kron(kron(sy, sz), sx) - kron(kron(sz, sx), sy);
 
   OpSum ops2;
   ops2 += Op("Matrix", {0, 4, 6}, jchimat);

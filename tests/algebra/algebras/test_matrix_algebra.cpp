@@ -57,12 +57,14 @@ TEST_CASE("matrix_algebra", "[operators]") try {
 
   auto mat_alg = matrix_algebra(4, 2);
 
-  // Standard spin-1/2 matrices
-  mat sp = {{0.0, 1.0}, {0.0, 0.0}};
-  mat sm = {{0.0, 0.0}, {1.0, 0.0}};
-  mat sz = {{0.5, 0.0}, {0.0, -0.5}};
+  // Standard spin-1/2 matrices. Local basis index 0 = down (m = -1/2), index
+  // 1 = up (m = +1/2), matching the occupation/bit convention of the basis
+  // (a set bit is "up"); see op_to_matrix_op.
+  mat sp = {{0.0, 0.0}, {1.0, 0.0}};
+  mat sm = {{0.0, 1.0}, {0.0, 0.0}};
+  mat sz = {{-0.5, 0.0}, {0.0, 0.5}};
   mat sx = {{0.0, 0.5}, {0.5, 0.0}};
-  cx_mat sy(mat({{0., 0.}, {0., 0.}}), mat({{0., -0.5}, {0.5, 0.}}));
+  cx_mat sy(mat({{0., 0.}, {0., 0.}}), mat({{0., 0.5}, {-0.5, 0.}}));
   mat id2 = eye(2, 2);
 
   // -------------------------------------------------------------------------
@@ -381,7 +383,8 @@ TEST_CASE("matrix_algebra_boson", "[operators]") try {
 
 TEST_CASE("matrix_algebra_spin_s", "[operators]") try {
   // Spin-S operators (S = (d-1)/2) swept over local dimensions d = 2..6. Basis
-  // index i maps to m = S - i, so index 0 is the highest-weight state m = +S.
+  // index i maps to m = -S + i, so index 0 is the lowest-weight state m = -S
+  // (a set bit / higher occupation is "up", i.e. higher m); see op_to_matrix_op.
   for (int64_t d = 2; d <= 6; ++d) {
     double S = 0.5 * (double)(d - 1);
     Log("Testing matrix_algebra: spin-S operators, d = {} (S = {})", d, S);
@@ -390,11 +393,11 @@ TEST_CASE("matrix_algebra_spin_s", "[operators]") try {
     // Expected elementary matrices.
     mat sp(d, d, fill::zeros), sz(d, d, fill::zeros);
     for (int64_t i = 0; i < d; ++i) {
-      sz(i, i) = S - (double)i;
+      sz(i, i) = -S + (double)i;
     }
-    for (int64_t i = 1; i < d; ++i) {
-      double m = S - (double)i;
-      sp(i - 1, i) = std::sqrt(S * (S + 1.0) - m * (m + 1.0));
+    for (int64_t i = 0; i < d - 1; ++i) {
+      double m = -S + (double)i;
+      sp(i + 1, i) = std::sqrt(S * (S + 1.0) - m * (m + 1.0));
     }
     mat sm = sp.t();
     mat idd = eye(d, d);

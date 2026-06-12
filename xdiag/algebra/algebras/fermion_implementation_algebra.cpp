@@ -20,13 +20,14 @@ Algebra fermion_implementation_algebra(int64_t nsites) {
 
   // Named operators that have a dedicated matrix kernel and therefore stay
   // in named form when they appear as a size-1 monomial. As soon as they
-  // appear inside a product, they are expanded into elementary Cdag/C.
+  // appear inside a product, they are expanded into elementary Cdag/C (TotalN
+  // first expands to sum_i N{i}).
   static const std::set<std::string> protected_types = {"Hop", "HopAsym", "N",
-                                                        "NN"};
+                                                        "NN", "TotalN"};
 
   std::vector<MonomialRule> algebra_rules_vec{
       id_absorption_rule(),
-      fermion_protected_expansion_rule(protected_types),
+      fermion_protected_expansion_rule(protected_types, nsites),
       fermion_same_site_rule(),
       fermion_normal_order_rule(),
   };

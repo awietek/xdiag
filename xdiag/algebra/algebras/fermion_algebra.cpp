@@ -26,7 +26,7 @@ Algebra fermion_algebra(int64_t nsites) {
 
   std::vector<MonomialRule> algebra_rules_vec{
       id_absorption_rule(),
-      fermion_protected_expansion_rule(protected_types),
+      fermion_protected_expansion_rule(protected_types, nsites),
       fermion_same_site_rule(),
       fermion_normal_order_rule(),
   };

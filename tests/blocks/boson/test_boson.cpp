@@ -4,6 +4,8 @@
 
 #include "../../catch.hpp"
 
+#include <tests/blocks/random_opsum_matrix.hpp>
+
 #include <xdiag/blocks/blocks.hpp>
 #include <xdiag/blocks/boson.hpp>
 #include <xdiag/linalg/sparse_diag.hpp>
@@ -228,6 +230,21 @@ TEST_CASE("bosoncommutation", "[boson]") try {
           }
         }
       }
+    }
+  }
+} catch (xdiag::Error e) {
+  error_trace(e);
+}
+
+// Randomized cross-check of the full operator pipeline against naive matrix
+// products (shared harness). Uses the full truncated Fock space (no number
+// conservation) so every elementary op is an endomorphism.
+TEST_CASE("bosonrandomopsum", "[boson]") try {
+  int64_t d = 3; // local dimension (max occupation 2)
+  for (int nsites = 2; nsites < 5; ++nsites) {
+    Log("Boson random OpSum matrix test: N = {}", nsites);
+    for (uint32_t seed = 0; seed < 5; ++seed) {
+      testcases::test_random_opsum_matrix(Boson(nsites, d), seed);
     }
   }
 } catch (xdiag::Error e) {

@@ -2,7 +2,11 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+#include <algorithm>
+#include <vector>
+
 #include <tests/blocks/fermion/testcases_fermion.hpp>
+#include <tests/blocks/random_opsum_matrix.hpp>
 #include <tests/catch.hpp>
 
 #include <xdiag/blocks/blocks.hpp>
@@ -25,6 +29,20 @@ static OpSum spinless_fermi_chain(int64_t nsites, double t, double V, double mu,
   int end = pbc ? nsites : nsites - 1;
   for (int i = 0; i < end; ++i) {
     ops += t * Op("Hop", {i, (i + 1) % nsites});
+    ops += V * Op("NN", {i, (i + 1) % nsites});
+  }
+  ops += mu * Op("TotalN");
+  return ops;
+}
+
+// Spinless chain with a complex (Peierls-flux) hopping, to exercise complex
+// coefficients together with complex irrep characters under symmetry.
+static OpSum spinless_fermi_chain_flux(int64_t nsites, double t, double tflux,
+                                       double V, double mu) {
+  auto ops = OpSum();
+  for (int i = 0; i < nsites; ++i) {
+    ops += t * Op("Hop", {i, (i + 1) % nsites});
+    ops += std::complex(0.0, tflux) * Op("HopAsym", {i, (i + 1) % nsites});
     ops += V * Op("NN", {i, (i + 1) % nsites});
   }
   ops += mu * Op("TotalN");
@@ -282,6 +300,88 @@ TEST_CASE("fermionsymmetry", "[fermion]") try {
     }
     REQUIRE(isapprox(e0, e0kmin));
     // Log("");
+  }
+} catch (xdiag::Error e) {
+  error_trace(e);
+}
+
+// Strong check of the fermionic symmetry-adapted basis: for every particle
+// sector the union of the symmetric-block spectra over all momenta must equal
+// the full (non-symmetric) spectrum, and the symmetric block dimensions must
+// sum to the full dimension. The dimension identity verifies that fermionic
+// zero-norm states are excluded exactly (none lost, none double-counted), which
+// is only non-trivial when orbits have a non-trivial stabilizer (e.g. N=4, 6).
+// Both a real and a complex (flux) Hamiltonian are checked.
+TEST_CASE("fermionsymmetryspectrum", "[fermion]") try {
+  for (int nsites = 2; nsites < 7; ++nsites) {
+    Log("Spinless fermion full-spectrum symmetry test: N = {}", nsites);
+    std::vector<OpSum> hamiltonians = {
+        spinless_fermi_chain(nsites, 1.0, 2.0, 0.5, true),
+        spinless_fermi_chain_flux(nsites, 1.0, 0.7, 2.0, 0.5)};
+
+    for (auto const &ops : hamiltonians) {
+      for (int number = 0; number <= nsites; ++number) {
+        auto block = Fermion(nsites, number);
+        arma::cx_mat H = matrixC(ops, block);
+        REQUIRE(H.is_hermitian(1e-8));
+        arma::vec eigs_full;
+        arma::eig_sym(eigs_full, H);
+
+        std::vector<double> eigs_sym;
+        int64_t dimsum = 0;
+        for (int k = 0; k < nsites; ++k) {
+          auto blockk = Fermion(nsites, number, cyclic_group_irrep(nsites, k));
+          int64_t d = dim(blockk);
+          dimsum += d;
+          if (d > 0) {
+            arma::cx_mat Hk = matrixC(ops, blockk);
+            REQUIRE(Hk.is_hermitian(1e-8));
+            arma::vec ek;
+            arma::eig_sym(ek, Hk);
+            for (double e : ek) {
+              eigs_sym.push_back(e);
+            }
+          }
+        }
+        REQUIRE(dimsum == (int64_t)dim(block));
+        std::sort(eigs_sym.begin(), eigs_sym.end());
+        REQUIRE(isapprox(eigs_full, arma::vec(eigs_sym)));
+      }
+    }
+  }
+} catch (xdiag::Error e) {
+  error_trace(e);
+}
+
+// A global (site-free) operator inside a product must expand: TotalN -> sum_i
+// N{i}, so that Op("TotalN") * Op("N", j) == sum_i Op("N", i) * Op("N", j).
+TEST_CASE("fermiontotalnproduct", "[fermion]") try {
+  for (int nsites = 2; nsites < 5; ++nsites) {
+    for (int number = 0; number <= nsites; ++number) {
+      auto block = Fermion(nsites, number);
+      for (int j = 0; j < nsites; ++j) {
+        OpSum lhs(Op("TotalN") * Op("N", j));
+        OpSum rhs;
+        for (int i = 0; i < nsites; ++i) {
+          rhs += 1.0 * (Op("N", i) * Op("N", j));
+        }
+        REQUIRE(isapprox(matrix(lhs, block), matrix(rhs, block)));
+      }
+    }
+  }
+} catch (xdiag::Error e) {
+  error_trace(e);
+}
+
+// Randomized cross-check of the full operator pipeline against naive matrix
+// products (shared harness). Uses the full Fock space so every elementary op
+// is an endomorphism.
+TEST_CASE("fermionrandomopsum", "[fermion]") try {
+  for (int nsites = 2; nsites < 6; ++nsites) {
+    Log("Fermion random OpSum matrix test: N = {}", nsites);
+    for (uint32_t seed = 0; seed < 5; ++seed) {
+      testcases::test_random_opsum_matrix(Fermion(nsites), seed);
+    }
   }
 } catch (xdiag::Error e) {
   error_trace(e);

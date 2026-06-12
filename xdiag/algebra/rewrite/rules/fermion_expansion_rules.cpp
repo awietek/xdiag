@@ -17,13 +17,23 @@ namespace xdiag::algebra {
 // Expansion of a single compound operator into elementary Cdag/C.
 // Returns nullopt for operators that are already elementary (Cdag, C, Id) or
 // otherwise not expandable.
-static std::optional<OpSum> expand_fermion_op(Op const &op) {
+static std::optional<OpSum> expand_fermion_op(Op const &op, int64_t nsites) {
   std::string type = op.type();
 
   // N{i} -> Cdag{i} C{i}
   if (type == "N") {
     int64_t i = op[0];
     return OpSum(Op("Cdag", i) * Op("C", i));
+  }
+
+  // TotalN -> sum_i N{i}  (site-free; sums over all `nsites` sites). Each N{i}
+  // is expanded to Cdag{i} C{i} by a subsequent pass.
+  if (type == "TotalN") {
+    OpSum r;
+    for (int64_t i = 0; i < nsites; ++i) {
+      r += Op("N", i);
+    }
+    return r;
   }
 
   // NN{i,j} -> Cdag{i} C{i} Cdag{j} C{j}
@@ -54,8 +64,9 @@ static std::optional<OpSum> expand_fermion_op(Op const &op) {
 }
 
 MonomialRule
-fermion_protected_expansion_rule(std::set<std::string> const &protected_types) {
-  return [protected_types](Monomial const &mono) -> std::optional<OpSum> {
+fermion_protected_expansion_rule(std::set<std::string> const &protected_types,
+                                 int64_t nsites) {
+  return [protected_types, nsites](Monomial const &mono) -> std::optional<OpSum> {
     int64_t n = mono.size();
     for (int64_t k = 0; k < n; ++k) {
       Op const &op = mono[k];
@@ -65,7 +76,7 @@ fermion_protected_expansion_rule(std::set<std::string> const &protected_types) {
         continue;
       }
 
-      std::optional<OpSum> expansion = expand_fermion_op(op);
+      std::optional<OpSum> expansion = expand_fermion_op(op, nsites);
       if (!expansion) {
         continue;
       }

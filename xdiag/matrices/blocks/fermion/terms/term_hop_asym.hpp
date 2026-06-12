@@ -36,13 +36,17 @@ void term_hop_asym(Coeff const &c, Op const &op, basis_t const &basis_in,
     return bits::popcount(spins & flipmask) & 1;
   };
 
+  // Antisymmetric hopping HopAsym{s1,s2} = -Cdag{s1} C{s2} + Cdag{s2} C{s1}
+  // (matching fermion_expansion_rules, so the single-op kernel and the in-
+  // product expansion agree). The fermi sign maps an expansion coefficient -1
+  // to (fermi ? t : -t), as in term_hop; +1 is its negation.
   auto term_action = [&](bit_t spins) -> std::pair<bit_t, coeff_t> {
     bool fermi = bits::popcount(spins & fermimask) & 1;
     spins ^= flipmask;
-    if (bits::get(spins, s2)) {
-      return {spins, fermi ? t : -t};
-    } else {
+    if (bits::get(spins, s2)) { // Cdag{s2} C{s1}, expansion coefficient +1
       return {spins, fermi ? -t : t};
+    } else { // Cdag{s1} C{s2}, expansion coefficient -1
+      return {spins, fermi ? t : -t};
     }
   };
   term_offdiag_fermionic(basis_in, basis_out, non_zero_term, term_action, fill);
