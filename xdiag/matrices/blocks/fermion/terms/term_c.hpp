@@ -11,7 +11,7 @@
 #include <xdiag/bits/get_set.hpp>
 #include <xdiag/bits/nonzero.hpp>
 #include <xdiag/bits/popcount.hpp>
-#include <xdiag/matrices/terms/term_offdiag.hpp>
+#include <xdiag/matrices/terms/term_offdiag_fermionic.hpp>
 #include <xdiag/utils/error.hpp>
 
 namespace xdiag::matrices::fermion {
@@ -34,7 +34,7 @@ void term_c(Coeff const &c, Op const &op, basis_t const &basis_in,
     bool fermi = bits::popcount(spins & fermi_mask) & 1;
     return {spins_flip, fermi ? -cf : cf};
   };
-  term_offdiag(basis_in, basis_out, non_zero_term, term_action, fill);
+  term_offdiag_fermionic(basis_in, basis_out, non_zero_term, term_action, fill);
 }
 XDIAG_CATCH
 

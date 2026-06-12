@@ -12,16 +12,18 @@
 #include <xdiag/matrices/matrix.hpp>
 #include <xdiag/operators/opsum.hpp>
 #include <xdiag/states/correlation_matrix.hpp>
+#include <xdiag/symmetries/cyclic_group.hpp>
 #include <xdiag/utils/logger.hpp>
 #include <xdiag/utils/xdiag_show.hpp>
 
 using namespace xdiag;
 
-static OpSum spinless_fermi_chain(int64_t nsites, double t, double V,
-                                  double mu) {
+static OpSum spinless_fermi_chain(int64_t nsites, double t, double V, double mu,
+                                  bool pbc = false) {
 
   auto ops = OpSum();
-  for (int i = 0; i < nsites - 1; ++i) {
+  int end = pbc ? nsites : nsites - 1;
+  for (int i = 0; i < end; ++i) {
     ops += t * Op("Hop", {i, (i + 1) % nsites});
     ops += V * Op("NN", {i, (i + 1) % nsites});
   }
@@ -202,9 +204,84 @@ TEST_CASE("randomfreefermionscomplex", "[fermion]") try {
       arma::vec eigsc;
       arma::eig_sym(eigsc, Hc);
       double e0 = eigsc(0);
-      printf("number: %d,  e0: %f, e0_exact: %f\n", number, e0, e0_exact);
+      // printf("number: %d,  e0: %f, e0_exact: %f\n", number, e0, e0_exact);
       REQUIRE(isapprox(e0_exact, e0));
     }
+  }
+} catch (xdiag::Error e) {
+  error_trace(e);
+}
+
+TEST_CASE("fermionsymmetry", "[fermion]") try {
+
+  // Test whether quantum numbers work
+  for (int nsites = 2; nsites < 5; ++nsites) {
+    Log("Spinless fermion chain symmetry test: N = {}", nsites);
+    auto ops = spinless_fermi_chain(nsites, 1.0, 2.0, 0.5, true);
+    auto block = Fermion(nsites);
+    double e0 = eigval0(ops, block);
+    // Log("e0: {:.6f}", e0);
+    double e0nmin = 999.999999;
+
+    for (int number = 0; number <= nsites; ++number) {
+      auto blockn = Fermion(nsites, number);
+      auto [e0n, psi0n] = eig0(ops, blockn);
+      // Log("n: {}, e0n: {:.6f}", number, e0n);
+      if (e0n < e0nmin) {
+        e0nmin = e0n;
+      }
+
+      auto CdagCn = correlation_matrixC(psi0n, "Cdag", "C");
+
+      // XDIAG_SHOW(CdagCn);
+
+      double e0nkmin = 99999.999;
+      int kmin = 0;
+      int ndegen = 0; // number of k-sectors reaching the lowest energy
+      for (int k = 0; k < nsites; ++k) {
+        auto blocknk = Fermion(nsites, number, cyclic_group_irrep(nsites, k));
+        // XDIAG_SHOW(blocknk);
+        if (dim(blocknk) > 0) {
+          auto [e0nk, psi0nk] = eig0(ops, blocknk);
+          // Log("n: {}, k: {}, e0nk: {:.6f}", number, k, e0nk);
+          if (e0nk < e0nkmin - 1e-8) {
+            e0nkmin = e0nk;
+            kmin = k;
+            ndegen = 1;
+          } else if (isapprox(e0nk, e0nkmin)) {
+            ++ndegen;
+          }
+        }
+      }
+      auto blocknk = Fermion(nsites, number, cyclic_group_irrep(nsites, kmin));
+      auto [e0nk, psi0nk] = eig0(ops, blocknk);
+      auto CdagCnk = correlation_matrixC(psi0nk, "Cdag", "C");
+      // XDIAG_SHOW(CdagCnk);
+
+      REQUIRE(isapprox(e0n, e0nkmin));
+      // <Cdag_i C_j> is only basis-independent for a non-degenerate ground
+      // state. When the lowest energy is reached in several momentum sectors,
+      // the non-symmetric block returns an arbitrary combination of degenerate
+      // ground states, so the correlation matrices need not agree.
+      if (ndegen == 1) {
+        REQUIRE(isapprox(CdagCn, CdagCnk, 1e-6, 1e-6));
+      }
+    }
+    REQUIRE(isapprox(e0, e0nmin));
+
+    double e0kmin = 99999.999;
+    for (int k = 0; k < nsites; ++k) {
+      auto blockk = Fermion(nsites, cyclic_group_irrep(nsites, k));
+      if (dim(blockk) > 0) {
+        double e0k = eigval0(ops, blockk);
+        // Log("k: {}, e0k: {:.6f}", k, e0k);
+        if (e0k < e0kmin) {
+          e0kmin = e0k;
+        }
+      }
+    }
+    REQUIRE(isapprox(e0, e0kmin));
+    // Log("");
   }
 } catch (xdiag::Error e) {
   error_trace(e);

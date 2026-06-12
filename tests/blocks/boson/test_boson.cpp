@@ -119,7 +119,7 @@ TEST_CASE("boson", "[boson]") try {
       // Log("e0: {:.6f}", e0);
       double e0nmin = 999.999999;
 
-      for (int number = 0; number < nsites * (d - 1); ++number) {
+      for (int number = 0; number <= nsites * (d - 1); ++number) {
         auto blockn = Boson(nsites, d, number);
         auto [e0n, psi0n] = eig0(ops, blockn);
         // Log("n: {}, e0n: {:.6f}", number, e0n);

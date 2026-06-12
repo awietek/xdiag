@@ -78,11 +78,11 @@ Fermion::Fermion(int64_t nsites, RepresentationSet const &irreps) try
   std::optional<PermutationGroup> group = irreps.group("SitePermutation");
   std::optional<Vector> characters = irreps.characters("SitePermutation");
 
-  if (group) { // permutation symmetry -> BasisSymmetric (fermionic bool)
+  if (group) { // permutation symmetry -> BasisSymmetric (fermionic)
     dispatch_enumeration(nsites, number, [&](auto &&enumeration) {
       using enum_t = std::decay_t<decltype(enumeration)>;
-      basis_ = std::make_shared<BasisSymmetric<enum_t>>(enumeration, *group,
-                                                        *characters);
+      basis_ = std::make_shared<BasisSymmetric<enum_t>>(
+          enumeration, *group, *characters, /*fermionic=*/true);
     });
   } else { // no permutation symmetry -> BasisOnTheFly
     dispatch_enumeration(nsites, number, [&](auto &&enumeration) {

@@ -26,6 +26,8 @@
 #include <xdiag/math/log2.hpp>
 #include <xdiag/symmetries/action/isrepresentative.hpp>
 #include <xdiag/symmetries/action/norm.hpp>
+#include <xdiag/symmetries/action/norm_fermionic.hpp>
+#include <xdiag/symmetries/operations/fermi_sign.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/format.hpp>
 #include <xdiag/utils/logger.hpp>
@@ -33,7 +35,7 @@
 
 namespace xdiag::symmetries {
 
-template <typename enumeration_t, typename coeff_t>
+template <bool fermionic, typename enumeration_t, typename coeff_t>
 static void representative_table_initialize(
     enumeration_t const &enumeration, SitePermutation const &action,
     arma::Col<coeff_t> const &characters,
@@ -41,9 +43,21 @@ static void representative_table_initialize(
     bits::BitVector<uint64_t> &representative_index,
     bits::BitVector<uint64_t> &representative_symmetry,
     bits::BitVector<uint64_t> &representative_norm_index,
+    bits::BitVector<uint64_t> &representative_fermi,
     std::vector<double> &norms) try {
   using bit_t = typename enumeration_t::bit_t;
   using bits::BitVector;
+
+  // Orbit norm of a state: bosonic sqrt(|sum_{g:g(s)=s} chi(g)|), or the
+  // fermi-sign-weighted version that can reduce/cancel the weight. The branch
+  // is resolved at compile time so the bosonic path keeps its original code.
+  auto orbit_norm = [&](bit_t state) {
+    if constexpr (fermionic) {
+      return norm_fermionic(state, action, characters);
+    } else {
+      return norm(state, action, characters);
+    }
+  };
 
   if (action.size() != characters.size()) {
     XDIAG_THROW(fmt::format("Size of symmetry group action (={}) incompatible "
@@ -81,7 +95,7 @@ static void representative_table_initialize(
     for (auto it = begin; it != end; ++it) {
       auto state = *it;
       if (isrepresentative(state, action)) {
-        double nrm = norm(state, action, characters);
+        double nrm = orbit_norm(state);
         if (std::fabs(nrm) > 1e-6) { // representative found
           ++nrepresentatives_for_thread[num_thread];
           norms_for_thread[num_thread].insert(nrm);
@@ -111,7 +125,7 @@ static void representative_table_initialize(
   int64_t nrepresentatives = 0;
   for (auto state : enumeration) {
     if (isrepresentative(state, action)) {
-      double nrm = norm(state, action, characters);
+      double nrm = orbit_norm(state);
 
       if (std::fabs(nrm) > 1e-6) { // representative found
         ++nrepresentatives;
@@ -174,6 +188,16 @@ static void representative_table_initialize(
   } catch (...) {
     XDIAG_THROW("Unable to allocate representative norm index array");
   }
+
+  // Create vector holding the fermi sign (1 bit per state) of the symmetry
+  // stored in representative_symmetry. Only needed for fermionic tables.
+  if constexpr (fermionic) {
+    try {
+      representative_fermi = BitVector<uint64_t>(enumeration.size(), 1);
+    } catch (...) {
+      XDIAG_THROW("Unable to allocate representative fermi array");
+    }
+  }
   timing(time_allocation, rightnow(), "  time (allocation)", 2);
 
   // --------------------------------------------------------------
@@ -199,7 +223,7 @@ static void representative_table_initialize(
     for (int64_t i = i_begin; i < i_end; ++i, ++it) {
       bit_t state = *it;
       if (isrepresentative(state, action)) {
-        double nrm = norm(state, action, characters);
+        double nrm = orbit_norm(state);
         if (std::fabs(nrm) > 1e-6) {
           representative.atomic_or_element(local_rep_idx, state);
           auto it2 = std::find_if(norms.begin(), norms.end(), [&](double n) {
@@ -217,7 +241,7 @@ static void representative_table_initialize(
     int64_t rep_idx = 0;
     for (auto state : enumeration) {
       if (isrepresentative(state, action)) {
-        double nrm = norm(state, action, characters);
+        double nrm = orbit_norm(state);
         if (std::fabs(nrm) > 1e-6) {
           representative[rep_idx] = state;
           auto it = std::find_if(norms.begin(), norms.end(), [&](double n) {
@@ -263,9 +287,14 @@ static void representative_table_initialize(
         if (std::find(seen.begin(), seen.end(), idx) != seen.end())
           continue;
         seen.push_back(idx);
+        int64_t inv_sym = group.inv(sym);
         representative_index.atomic_or_element(idx, (uint64_t)(rep_idx + 1));
-        representative_symmetry.atomic_or_element(idx,
-                                                  (uint64_t)group.inv(sym));
+        representative_symmetry.atomic_or_element(idx, (uint64_t)inv_sym);
+        if constexpr (fermionic) {
+          if (fermi_bool_of_permutation(state, group[inv_sym])) {
+            representative_fermi.atomic_or_element(idx, (uint64_t)1);
+          }
+        }
       }
     }
   }
@@ -276,8 +305,14 @@ static void representative_table_initialize(
     for (int64_t sym = 0; sym < action.size(); ++sym) {
       bit_t state = action.apply(sym, rep);
       int64_t idx = enumeration.index(state);
+      int64_t inv_sym = group.inv(sym);
       representative_index[idx] = (uint64_t)(rep_idx + 1);
-      representative_symmetry[idx] = (uint64_t)group.inv(sym);
+      representative_symmetry[idx] = (uint64_t)inv_sym;
+      if constexpr (fermionic) {
+        if (fermi_bool_of_permutation(state, group[inv_sym])) {
+          representative_fermi[idx] = (uint64_t)1;
+        }
+      }
     }
   }
 #endif
@@ -290,18 +325,34 @@ XDIAG_CATCH
 template <typename enumeration_t>
 RepresentativeTable<enumeration_t>::RepresentativeTable(
     enumeration_t const &enumeration, PermutationGroup const &group,
-    Vector const &characters) try {
+    Vector const &characters, bool fermionic) try {
   SitePermutation action(group);
   if (characters.isreal()) {
-    representative_table_initialize(
-        enumeration, action, characters.as<arma::vec>(), representative_,
-        representative_index_, representative_symmetry_,
-        representative_norm_index_, norm_);
+    arma::vec chars = characters.as<arma::vec>();
+    if (fermionic) {
+      representative_table_initialize<true>(
+          enumeration, action, chars, representative_, representative_index_,
+          representative_symmetry_, representative_norm_index_,
+          representative_fermi_, norm_);
+    } else {
+      representative_table_initialize<false>(
+          enumeration, action, chars, representative_, representative_index_,
+          representative_symmetry_, representative_norm_index_,
+          representative_fermi_, norm_);
+    }
   } else {
-    representative_table_initialize(
-        enumeration, action, characters.as<arma::cx_vec>(), representative_,
-        representative_index_, representative_symmetry_,
-        representative_norm_index_, norm_);
+    arma::cx_vec chars = characters.as<arma::cx_vec>();
+    if (fermionic) {
+      representative_table_initialize<true>(
+          enumeration, action, chars, representative_, representative_index_,
+          representative_symmetry_, representative_norm_index_,
+          representative_fermi_, norm_);
+    } else {
+      representative_table_initialize<false>(
+          enumeration, action, chars, representative_, representative_index_,
+          representative_symmetry_, representative_norm_index_,
+          representative_fermi_, norm_);
+    }
   }
   inv_norm_.resize(norm_.size());
   for (int64_t i = 0; i < (int64_t)norm_.size(); ++i) {

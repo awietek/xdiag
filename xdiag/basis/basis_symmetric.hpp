@@ -32,7 +32,8 @@ public:
 
   BasisSymmetric() = default;
   BasisSymmetric(enumeration_t const &enumeration,
-                 PermutationGroup const &group, Vector const &characters);
+                 PermutationGroup const &group, Vector const &characters,
+                 bool fermionic = false);
 
   int64_t size() const override;
   int64_t nsites() const;
@@ -52,6 +53,22 @@ public:
               table_.representative_norm(raw - 1)};
     } else {
       return {0, 0, 0.0};
+    }
+  }
+  // Like representative_data, but also returns whether the mapping to the
+  // representative picks up a fermi minus sign (true => -1). Used by
+  // term_offdiag_fermionic; the bosonic term_offdiag_sym keeps using the
+  // 3-tuple representative_data.
+  inline std::tuple<int64_t, int64_t, double, bool>
+  representative_data_fermi(bit_t bits) const {
+    int64_t idx = enumeration_.index(bits);
+    int64_t raw = table_.raw_representative_index(idx);
+    if (XDIAG_LIKELY(raw)) {
+      return {raw, table_.representative_symmetry(idx),
+              table_.representative_norm(raw - 1),
+              table_.representative_fermi_bool(idx)};
+    } else {
+      return {0, 0, 0.0, false};
     }
   }
   inline double norm(int64_t idx) const {

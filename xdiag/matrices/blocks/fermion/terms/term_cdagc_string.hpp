@@ -13,7 +13,7 @@
 #include <xdiag/bits/nonzero.hpp>
 #include <xdiag/bits/popcount.hpp>
 #include <xdiag/bits/zero_one.hpp>
-#include <xdiag/matrices/terms/term_offdiag.hpp>
+#include <xdiag/matrices/terms/term_offdiag_fermionic.hpp>
 #include <xdiag/operators/coeff.hpp>
 #include <xdiag/operators/monomial.hpp>
 #include <xdiag/operators/op.hpp>
@@ -123,7 +123,7 @@ void term_cdagc_string(Coeff const &c, Monomial const &mono,
     coeff_t sign = (bits::popcount(parity) & 1) ? -cf : cf;
     return {spins ^ flipmask, sign};
   };
-  term_offdiag(basis_in, basis_out, non_zero_term, term_action, fill);
+  term_offdiag_fermionic(basis_in, basis_out, non_zero_term, term_action, fill);
 }
 XDIAG_CATCH
 

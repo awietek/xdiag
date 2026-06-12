@@ -36,7 +36,8 @@ public:
 
   RepresentativeTable() = default;
   RepresentativeTable(enumeration_t const &enumeration,
-                      PermutationGroup const &group, Vector const &characters);
+                      PermutationGroup const &group, Vector const &characters,
+                      bool fermionic = false);
 
   inline bit_t operator[](int64_t idx) const { return representative_[idx]; }
   inline bit_t representative(int64_t idx) const {
@@ -58,6 +59,14 @@ public:
   inline double inv_representative_norm(int64_t idx) const {
     return inv_norm_[representative_norm_index_[idx]];
   }
+  // Whether the stored symmetry representative_symmetry(idx) picks up a fermi
+  // minus sign when mapping the state at enumeration index idx to its
+  // representative. Precomputed at construction (one bit per state). Only valid
+  // on fermionic tables (the only caller, term_offdiag_fermionic, guarantees
+  // this); the bit array is not allocated otherwise.
+  inline bool representative_fermi_bool(int64_t idx) const {
+    return representative_fermi_[idx];
+  }
   int64_t size() const;
 
   const_iterator begin() const noexcept { return representative_.cbegin(); }
@@ -71,6 +80,9 @@ private:
   bits::BitVector<uint64_t> representative_index_;
   bits::BitVector<uint64_t> representative_symmetry_;
   bits::BitVector<uint64_t> representative_norm_index_;
+  // One bit per state (only allocated when fermionic_): the fermi sign of the
+  // mapping stored in representative_symmetry_. Bit set => sign -1.
+  bits::BitVector<uint64_t> representative_fermi_;
   std::vector<double> norm_;
   std::vector<double> inv_norm_;
 };

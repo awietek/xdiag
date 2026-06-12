@@ -11,7 +11,7 @@
 #include <xdiag/bits/nonzero.hpp>
 #include <xdiag/bits/popcount.hpp>
 #include <xdiag/bits/zero_one.hpp>
-#include <xdiag/matrices/terms/term_offdiag.hpp>
+#include <xdiag/matrices/terms/term_offdiag_fermionic.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/logger.hpp>
 
@@ -42,7 +42,7 @@ void term_hop(Coeff const &c, Op const &op, basis_t const &basis_in,
     spins ^= flipmask;
     return {spins, fermi ? t : -t};
   };
-  term_offdiag(basis_in, basis_out, non_zero_term, term_action, fill);
+  term_offdiag_fermionic(basis_in, basis_out, non_zero_term, term_action, fill);
 }
 XDIAG_CATCH
 

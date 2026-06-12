@@ -16,9 +16,10 @@ namespace xdiag::basis {
 template <typename enumeration_t>
 BasisSymmetric<enumeration_t>::BasisSymmetric(enumeration_t const &enumeration,
                                               PermutationGroup const &group,
-                                              Vector const &characters) try
+                                              Vector const &characters,
+                                              bool fermionic) try
     : enumeration_(enumeration), group_(group), characters_(characters),
-      table_(enumeration, group, characters) {}
+      table_(enumeration, group, characters, fermionic) {}
 XDIAG_CATCH
 
 template <typename enumeration_t>
