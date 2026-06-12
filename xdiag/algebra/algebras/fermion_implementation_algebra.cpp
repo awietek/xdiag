@@ -37,7 +37,8 @@ Algebra fermion_implementation_algebra(int64_t nsites) {
       .d = 2,
       .elementary_types = {"C", "Cdag"},
       .fermionic_types = fermionic,
-      .allowed_types = {"C", "Cdag", "Hop", "HopAsym", "Id", "N", "NN"},
+      .allowed_types = {"C", "Cdag", "Hop", "HopAsym", "Id", "N", "NN",
+                        "TotalN"},
       .expansion_rules = {},
       .algebra_rules = algebra_rules_vec,
   };

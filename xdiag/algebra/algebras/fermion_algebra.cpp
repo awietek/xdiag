@@ -12,6 +12,7 @@
 #include <xdiag/algebra/rewrite/rules/fermion_normal_order_rule.hpp>
 #include <xdiag/algebra/rewrite/rules/fermion_same_site_rule.hpp>
 #include <xdiag/algebra/rewrite/rules/id_absorption_rule.hpp>
+#include <xdiag/algebra/rewrite/rules/totaln_expansion_rule.hpp>
 
 namespace xdiag::algebra {
 
@@ -36,8 +37,9 @@ Algebra fermion_algebra(int64_t nsites) {
       .d = 2,
       .elementary_types = {"C", "Cdag"},
       .fermionic_types = fermionic,
-      .allowed_types = {"C", "Cdag", "Hop", "HopAsym", "Id", "N", "NN"},
-      .expansion_rules = {},
+      .allowed_types = {"C", "Cdag", "Hop", "HopAsym", "Id", "N", "NN",
+                        "TotalN"},
+      .expansion_rules = {totaln_expansion_rule(nsites)},
       .algebra_rules = algebra_rules_vec,
   };
 }

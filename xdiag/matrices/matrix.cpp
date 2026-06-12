@@ -8,7 +8,9 @@
 #include <xdiag/blocks/boson.hpp>
 #include <xdiag/blocks/spinhalf.hpp>
 #include <xdiag/math/complex.hpp>
-#include <xdiag/matrices/kernel_traits.hpp>
+#include <xdiag/matrices/blocks/boson/dispatch_basis.hpp>
+#include <xdiag/matrices/blocks/fermion/dispatch_basis.hpp>
+#include <xdiag/matrices/blocks/spinhalf/dispatch_basis.hpp>
 #include <xdiag/matrices/kernels.hpp>
 #include <xdiag/operators/monomial.hpp>
 #include <xdiag/operators/op.hpp>
@@ -31,28 +33,28 @@
 //     kernel can fill it without owning the storage.
 //
 // Layer 2 — matrix_impl<block_t>: one body for every block type. The block's
-//     kernel_traits (matrices/kernel_traits.hpp) supply the basis dispatch
-//     (resolving the shared_ptr<Basis> to a concrete BasisOnTheFly<...> via a
-//     type-id table) and the MatrixPolicy. A block type lacking a kernel_traits
-//     specialization is a compile error here, never a silent fallback.
+//     dispatch_basis overload (matrices/blocks/<block>/dispatch_basis.hpp)
+//     resolves the shared_ptr<Basis> to a concrete BasisOnTheFly<...> via a
+//     type-id table. The numerical kernel is selected by block_t in
+//     kernels.cpp. A block type with no dispatch_basis overload is a compile
+//     error here, never a silent fallback.
 //
-// Kernel — matrices::matrix<policy, coeff_t>(ops, basis_in, basis_out, mat)
-//     Defined in kernels.cpp; only declared here. Each (policy, basis_t)
+// Kernel — matrices::matrix<block_t, coeff_t>(ops, basis_in, basis_out, mat)
+//     Defined in kernels.cpp; only declared here. Each (block_t, basis_t)
 //     specialisation is compiled in its own translation unit (instantiation
 //     groups), keeping this file free of heavy template instantiation.
 
 namespace xdiag {
 
-// Layer 2: block-generic dense fill. One body for all block types via
-// kernel_traits<block_t>.
+// Layer 2: block-generic dense fill. One body for all block types via the
+// dispatch_basis overload set.
 template <typename block_t, typename coeff_t>
 static void matrix_impl(OpSum const &ops, block_t const &block_in,
                         block_t const &block_out, coeff_t *mat) try {
-  matrices::kernel_traits<block_t>::dispatch(
+  matrices::dispatch_basis(
       block_in, block_out, [&](auto const &basis_in, auto const &basis_out) {
         // Kernel: definition is in kernels.cpp, instantiated per basis type.
-        matrices::matrix<typename matrices::kernel_traits<block_t>::policy>(
-            ops, basis_in, basis_out, mat);
+        matrices::matrix<block_t>(ops, basis_in, basis_out, mat);
       });
 }
 XDIAG_CATCH

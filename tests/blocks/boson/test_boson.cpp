@@ -19,13 +19,14 @@
 
 using namespace xdiag;
 
-static OpSum bose_hubbard_opsum(int64_t nsites, double t, double U) {
+static OpSum bose_hubbard_opsum(int64_t nsites, double t, double U, double mu) {
 
   auto ops = OpSum();
   for (int i = 0; i < nsites; ++i) {
     ops += t * Op("Hop", {i, (i + 1) % nsites});
   }
   ops += U * Op("HubbardU");
+  ops += mu * Op("TotalN");
   return ops;
 }
 
@@ -40,42 +41,47 @@ TEST_CASE("boson", "[boson]") try {
   }
   {
     int64_t nsites = 4;
+    double t = 1.0;
+    double mu = 0.5;
     int64_t d = 5;
     auto block = Boson(nsites, d);
 
     Log("Bose-Hubbard tests");
     {
-      auto [e0, psi0] = eig0(bose_hubbard_opsum(nsites, 1.0, 1.0), block);
-      double e0_dmrg = -9.354167806978255;
+      double U = 1.0;
+      auto [e0, psi0] = eig0(bose_hubbard_opsum(nsites, t, U, mu), block);
+      double e0_dmrg = -5.660431125405925;
       Log("e0: {:.16f}, e0_dmrg: {:.16f}", e0, e0_dmrg);
       REQUIRE(isapprox(e0, e0_dmrg, 1e-8, 1e-8));
 
       arma::mat AdagA_dmrg = {
-          {2.0, 1.87457, 1.82526, 1.87457},
-          {1.87457, 2.0, 1.87457, 1.82526},
-          {1.82526, 1.87457, 2.0, 1.87457},
-          {1.87457, 1.82526, 1.87457, 2.0},
+          {1.75, 1.67525, 1.6428, 1.67525},
+          {1.67525, 1.75, 1.67525, 1.6428},
+          {1.6428, 1.67525, 1.75, 1.67525},
+          {1.67525, 1.6428, 1.67525, 1.75},
       };
       auto AdagA = correlation_matrix(psi0, "Adag", "A");
       REQUIRE(isapprox(AdagA_dmrg, AdagA, 1e-5, 1e-5));
     }
     {
-      auto [e0, psi0] = eig0(bose_hubbard_opsum(nsites, 1.0, 2.0), block);
-      double e0_dmrg = -5.921611286247851;
+      double U = 2.0;
+      auto [e0, psi0] = eig0(bose_hubbard_opsum(nsites, t, U, mu), block);
+      double e0_dmrg = -3.6138649391176814;
       Log("e0: {:.16f}, e0_dmrg: {:.16f}", e0, e0_dmrg);
       REQUIRE(isapprox(e0, e0_dmrg, 1e-8, 1e-8));
 
-      arma::mat AdagA_dmrg = {{1.25, 1.17416, 1.14403, 1.17416},
-                              {1.17416, 1.25, 1.17416, 1.14403},
-                              {1.14403, 1.17416, 1.25, 1.17416},
-                              {1.17416, 1.14403, 1.17416, 1.25}};
+      arma::mat AdagA_dmrg = {{1.0, 0.945091, 0.921613, 0.945091},
+                              {0.945091, 1.0, 0.945091, 0.921613},
+                              {0.921613, 0.945091, 1.0, 0.945091},
+                              {0.945091, 0.921613, 0.945091, 1.0}};
       auto AdagA = correlation_matrix(psi0, "Adag", "A");
       REQUIRE(isapprox(AdagA_dmrg, AdagA, 1e-5, 1e-5));
     }
 
     {
-      auto [e0, psi0] = eig0(bose_hubbard_opsum(nsites, 1.0, 4.0), block);
-      double e0_dmrg = -4.116103420851046;
+      double U = 4.0;
+      auto [e0, psi0] = eig0(bose_hubbard_opsum(nsites, t, U, mu), block);
+      double e0_dmrg = -2.6161034208510463;
       Log("e0: {:.16f}, e0_dmrg: {:.16f}", e0, e0_dmrg);
       REQUIRE(isapprox(e0, e0_dmrg, 1e-8, 1e-8));
 
@@ -88,15 +94,16 @@ TEST_CASE("boson", "[boson]") try {
     }
 
     {
-      auto [e0, psi0] = eig0(bose_hubbard_opsum(nsites, 1.0, 8.0), block);
-      double e0_dmrg = -3.32638322925368;
+      double U = 8.0;
+      auto [e0, psi0] = eig0(bose_hubbard_opsum(nsites, t, U, mu), block);
+      double e0_dmrg = -2.207750943219353;
       Log("e0: {:.16f}, e0_dmrg: {:.16f}", e0, e0_dmrg);
       REQUIRE(isapprox(e0, e0_dmrg, 1e-8, 1e-8));
 
-      arma::mat AdagA_dmrg = {{0.75, 0.547103, 0.501433, 0.547103},
-                              {0.547103, 0.75, 0.547103, 0.501433},
-                              {0.501433, 0.547103, 0.75, 0.547103},
-                              {0.547103, 0.501433, 0.547103, 0.75}};
+      arma::mat AdagA_dmrg = {{0.5, 0.43556, 0.392426, 0.43556},
+                              {0.43556, 0.5, 0.43556, 0.392426},
+                              {0.392426, 0.43556, 0.5, 0.43556},
+                              {0.43556, 0.392426, 0.43556, 0.5}};
       auto AdagA = correlation_matrix(psi0, "Adag", "A");
       REQUIRE(isapprox(AdagA_dmrg, AdagA, 1e-5, 1e-5));
     }
@@ -105,7 +112,7 @@ TEST_CASE("boson", "[boson]") try {
   // Test whether quantum numbers work
   for (int nsites = 2; nsites < 5; ++nsites) {
     Log("Bose-Hubbard chain symmetry test: N = {}", nsites);
-    auto ops = bose_hubbard_opsum(nsites, 1.0, 2.0);
+    auto ops = bose_hubbard_opsum(nsites, 1.0, 2.0, 0.0);
     for (int d = 2; d < 6; ++d) {
       auto block = Boson(nsites, d);
       double e0 = eigval0(ops, block);
@@ -129,7 +136,7 @@ TEST_CASE("boson", "[boson]") try {
         for (int k = 0; k < nsites; ++k) {
           auto blocknk =
               Boson(nsites, d, number, cyclic_group_irrep(nsites, k));
-	  // XDIAG_SHOW(blocknk);
+          // XDIAG_SHOW(blocknk);
           if (dim(blocknk) > 0) {
             auto [e0nk, psi0nk] = eig0(ops, blocknk);
             // Log("n: {}, k: {}, e0nk: {:.6f}", number, k, e0nk);
@@ -194,10 +201,11 @@ TEST_CASE("bosoncommutation", "[boson]") try {
           arma::mat ai = matrix(Op("A", i), block);
           arma::mat aj = matrix(Op("A", j), block);
 
-          arma::mat aa = ai * aj - aj * ai;                   // [a_i, a_j]
-          arma::mat adagadag = adagi * adagj - adagj * adagi; // [adag_i, adag_j]
-          arma::mat a_adag = ai * adagj - adagj * ai;         // [a_i, adag_j]
-          arma::mat adag_a = adagi * aj - aj * adagi;         // [adag_i, a_j]
+          arma::mat aa = ai * aj - aj * ai; // [a_i, a_j]
+          arma::mat adagadag =
+              adagi * adagj - adagj * adagi;          // [adag_i, adag_j]
+          arma::mat a_adag = ai * adagj - adagj * ai; // [a_i, adag_j]
+          arma::mat adag_a = adagi * aj - aj * adagi; // [adag_i, a_j]
 
           REQUIRE(isapprox(aa, zeros));
           REQUIRE(isapprox(adagadag, zeros));

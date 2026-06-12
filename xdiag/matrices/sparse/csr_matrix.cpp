@@ -11,7 +11,9 @@
 #include <xdiag/blocks/blocks.hpp>
 #include <xdiag/armadillo.hpp>
 #include <xdiag/math/complex.hpp>
-#include <xdiag/matrices/kernel_traits.hpp>
+#include <xdiag/matrices/blocks/boson/dispatch_basis.hpp>
+#include <xdiag/matrices/blocks/fermion/dispatch_basis.hpp>
+#include <xdiag/matrices/blocks/spinhalf/dispatch_basis.hpp>
 #include <xdiag/matrices/kernels.hpp>
 #include <xdiag/matrices/sparse/valid.hpp>
 #include <xdiag/operators/hc.hpp>
@@ -28,19 +30,20 @@
 //     and calls csr_matrix_impl(OpSum, ConcreteBlock, ConcreteBlock, idx_t).
 //
 // Layer 2 — csr_matrix_impl<block_t>: one body for every block type. The
-//     block's kernel_traits (matrices/kernel_traits.hpp) supply the basis
-//     dispatch (resolving the shared_ptr<Basis> to a concrete BasisOnTheFly
-//     <...> via a type-id table) and the MatrixPolicy. A block type lacking a
-//     kernel_traits specialization is a compile error here, never a silent
-//     fallback. The basis-level two-pass build lives in csr_build:
+//     block's dispatch_basis overload (matrices/blocks/<block>/dispatch_basis
+//     .hpp) resolves the shared_ptr<Basis> to a concrete BasisOnTheFly<...>
+//     via a type-id table. The numerical kernel is selected by block_t in
+//     kernels.cpp. A block type with no dispatch_basis overload is a compile
+//     error here, never a silent fallback. The basis-level two-pass build lives
+//     in csr_build:
 //       Pass 1: csr_matrix_nnz  — counts nonzeros per row
 //       Alloc:  builds rowptr and offset from per-row counts; allocates
 //               col and data arrays
 //       Pass 2: csr_matrix_fill — fills col/data via atomic slot assignment
 //       Post:   sorts each row's entries by column index
 //
-// Kernels — matrices::csr_matrix_nnz / csr_matrix_fill<policy> (kernels.cpp),
-//     instantiated per (policy, basis type). Offset computation, rowptr
+// Kernels — matrices::csr_matrix_nnz / csr_matrix_fill<block_t> (kernels.cpp),
+//     instantiated per (block_t, basis type). Offset computation, rowptr
 //     construction, and sorting are done here (block level) so they need not be
 //     repeated for new block types.
 
@@ -50,16 +53,16 @@
 
 namespace xdiag {
 
-// Basis-level two-pass CSR build, generic over the block's MatrixPolicy and
+// Basis-level two-pass CSR build, generic over the block type and
 // concrete BasisOnTheFly type. Shared by the block-generic Layer-2 below.
-template <typename idx_t, typename coeff_t, typename policy_t, typename basis_t>
+template <typename idx_t, typename coeff_t, typename block_t, typename basis_t>
 static void csr_build(OpSum const &ops, basis_t const &basis_in,
                       basis_t const &basis_out, idx_t nrows, idx_t i0,
                       arma::Col<idx_t> &rowptr, arma::Col<idx_t> &col,
                       arma::Col<coeff_t> &data) {
   // Pass 1: count nonzeros per row.
   auto n_elements_in_row =
-      matrices::csr_matrix_nnz<policy_t, coeff_t>(ops, basis_in, basis_out);
+      matrices::csr_matrix_nnz<block_t, coeff_t>(ops, basis_in, basis_out);
   int64_t nnz = std::accumulate(n_elements_in_row.begin(),
                                 n_elements_in_row.end(), (int64_t)0);
 
@@ -79,7 +82,7 @@ static void csr_build(OpSum const &ops, basis_t const &basis_in,
   }
 
   // Pass 2: fill col and data using atomic slot assignment.
-  matrices::csr_matrix_fill<policy_t, coeff_t>(
+  matrices::csr_matrix_fill<block_t, coeff_t>(
       ops, basis_in, basis_out, offset, col.memptr(), data.memptr(), i0);
 
   // Sort each row's entries by column index (required for CSR validity).
@@ -117,9 +120,9 @@ static void csr_build(OpSum const &ops, basis_t const &basis_in,
   }
 }
 
-// Layer 2: block-generic orchestration. kernel_traits<block_t> supplies the
-// basis dispatch and MatrixPolicy; a block without a specialization is a
-// compile error here, never a silent fallback to the Block overload.
+// Layer 2: block-generic orchestration. The dispatch_basis overload supplies
+// the basis dispatch; a block with no overload is a compile error here, never a
+// silent fallback to the Block overload.
 template <typename idx_t, typename coeff_t, typename block_t>
 static CSRMatrix<idx_t, coeff_t>
 csr_matrix_impl(OpSum const &ops, block_t const &block_in,
@@ -128,11 +131,10 @@ csr_matrix_impl(OpSum const &ops, block_t const &block_in,
   idx_t ncols = (idx_t)size(block_in);
   arma::Col<idx_t> rowptr, col;
   arma::Col<coeff_t> data;
-  matrices::kernel_traits<block_t>::dispatch(
+  matrices::dispatch_basis(
       block_in, block_out, [&](auto const &basis_in, auto const &basis_out) {
-        csr_build<idx_t, coeff_t,
-                  typename matrices::kernel_traits<block_t>::policy>(
-            ops, basis_in, basis_out, nrows, i0, rowptr, col, data);
+        csr_build<idx_t, coeff_t, block_t>(ops, basis_in, basis_out, nrows, i0,
+                                           rowptr, col, data);
       });
   bool isherm = ishermitian(ops, block_in);
   return CSRMatrix<idx_t, coeff_t>{nrows, ncols, rowptr, col, data, i0, isherm};

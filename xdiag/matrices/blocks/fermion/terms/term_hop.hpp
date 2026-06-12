@@ -13,6 +13,7 @@
 #include <xdiag/bits/zero_one.hpp>
 #include <xdiag/matrices/terms/term_offdiag.hpp>
 #include <xdiag/utils/error.hpp>
+#include <xdiag/utils/logger.hpp>
 
 namespace xdiag::matrices::fermion {
 
@@ -32,7 +33,7 @@ void term_hop(Coeff const &c, Op const &op, basis_t const &basis_in,
   int64_t u = std::max(s1, s2);
   bit_t fermimask = bits::bitmask<bit_t>(nsites, u - l - 1) << (l + 1);
 
-  auto non_zero_term = [&flipmask](bit_t const &spins) -> bool {
+  auto non_zero_term = [&](bit_t const &spins) -> bool {
     return bits::popcount(spins & flipmask) & 1;
   };
 
@@ -41,6 +42,7 @@ void term_hop(Coeff const &c, Op const &op, basis_t const &basis_in,
     spins ^= flipmask;
     return {spins, fermi ? t : -t};
   };
+  term_offdiag(basis_in, basis_out, non_zero_term, term_action, fill);
 }
 XDIAG_CATCH
 

@@ -4,6 +4,7 @@
 
 #include "boson_expansion_rules.hpp"
 
+#include <xdiag/algebra/rewrite/rules/totaln_expansion_rule.hpp>
 #include <xdiag/operators/op.hpp>
 #include <xdiag/operators/opsum.hpp>
 
@@ -38,6 +39,9 @@ std::vector<OpRule> boson_expansion_rules(int64_t nsites) {
     }
     return r;
   });
+
+  // TotalN -> sum_i N{i}
+  rules.push_back(totaln_expansion_rule(nsites));
 
   return rules;
 }

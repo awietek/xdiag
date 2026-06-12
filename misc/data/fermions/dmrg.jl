@@ -2,28 +2,28 @@ using ITensors
 using ITensorMPS
 
 let 
-    N=4
+    N=6
     t=1
-    U=1
-    mu=0.5
-
-    maxOcc = 5
+    V=3.7
+    mu=-0.2
 
     # set up Hamiltonian for a PBC chain
     ops = OpSum()
-    for s in 1:N
+    for s in 1:N-1
         s1 = s
         s2 = mod1(s+1, N)
-        ops += -t, "Adag", s1, "A", s2
-        ops += -t, "Adag", s2, "A", s1
-        ops += U/2.0, "N", s, "N", s
-        ops += -U/2.0, "N", s
-        ops += mu,"N",s
+        ops += -t, "Cdag", s1, "C", s2
+        ops += -t, "Cdag", s2, "C", s1
+        ops += V, "N", s1, "N", s2
     end
 
+    for s in 1:N
+        ops += mu,"N",s
+    end
+    
     # This says that the sites of the lattice have local bosons,
     # with maximal dimension maxOcc
-    sites = siteinds("Boson", N; dim=maxOcc)
+    sites = siteinds("Fermion", N)
 
     # This creates a matrix-product operator for the Hamiltonian
     H = MPO(ops, sites)
@@ -40,6 +40,6 @@ let
     energy, psi = dmrg(H,psi0; nsweeps, maxdim, cutoff)    # this runs DMRG
     @show energy
 
-    M = correlation_matrix(psi, "Adag", "A")
+    M = correlation_matrix(psi, "Cdag", "C")
     display(M)
 end

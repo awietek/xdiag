@@ -5,7 +5,9 @@
 #include "apply.hpp"
 
 #include <xdiag/armadillo.hpp>
-#include <xdiag/matrices/kernel_traits.hpp>
+#include <xdiag/matrices/blocks/boson/dispatch_basis.hpp>
+#include <xdiag/matrices/blocks/fermion/dispatch_basis.hpp>
+#include <xdiag/matrices/blocks/spinhalf/dispatch_basis.hpp>
 #include <xdiag/matrices/kernels.hpp>
 #include <xdiag/operators/monomial.hpp>
 #include <xdiag/operators/op.hpp>
@@ -26,35 +28,35 @@
 //     first promoted to OpSum here.
 //
 // Layer 2 — apply_impl<block_t>: one body for every block type. The block's
-//     kernel_traits (matrices/kernel_traits.hpp) supply the basis dispatch
-//     (resolving the shared_ptr<Basis> to a concrete BasisOnTheFly<...> via a
-//     type-id table) and the MatrixPolicy. A block type lacking a kernel_traits
-//     specialization is a compile error here, never a silent fallback that
-//     would re-resolve to the Block overload and recurse.
+//     dispatch_basis overload (matrices/blocks/<block>/dispatch_basis.hpp)
+//     resolves the shared_ptr<Basis> to a concrete BasisOnTheFly<...> via a
+//     type-id table. The numerical kernel is selected by block_t in
+//     kernels.cpp. A block type with no dispatch_basis overload is a compile
+//     error here, never a silent fallback that re-resolves to the Block
+//     overload and recurses.
 //
-// Kernel — matrices::apply<policy, basis_t, mat_t>(ops, basis_in, mat_in,
+// Kernel — matrices::apply<block_t, basis_t, mat_t>(ops, basis_in, mat_in,
 //          basis_out, mat_out)
-//     Defined in kernels.cpp; only declared here. Each (policy, basis_t)
+//     Defined in kernels.cpp; only declared here. Each (block_t, basis_t)
 //     specialisation is compiled in its own translation unit (instantiation
 //     groups), keeping this file free of heavy template instantiation.
 
 namespace xdiag {
 
 // Layer 2 implementation — internal, called only from apply(op_t, Block, ...).
-// One body for every block type: kernel_traits<block_t> supplies the basis
-// dispatch and the MatrixPolicy. A block type without a kernel_traits
-// specialization is a compile error here, never a silent fallback.
+// One body for every block type: the dispatch_basis overload supplies the basis
+// dispatch (the numerical kernel is selected by block_t in kernels.cpp). A block
+// type with no dispatch_basis overload is a compile error here.
 template <typename block_t, typename vec_t>
 static void apply_impl(OpSum const &ops, block_t const &block_in,
                        vec_t const &vec_in, block_t const &block_out,
                        vec_t &vec_out) try {
   vec_out.zeros();
   // Layer 2: unwrap the basis pointer to a concrete BasisOnTheFly<...> type.
-  matrices::kernel_traits<block_t>::dispatch(
+  matrices::dispatch_basis(
       block_in, block_out, [&](auto const &basis_in, auto const &basis_out) {
         // Kernel: definition is in kernels.cpp, instantiated per basis type.
-        matrices::apply<typename matrices::kernel_traits<block_t>::policy>(
-            ops, basis_in, vec_in, basis_out, vec_out);
+        matrices::apply<block_t>(ops, basis_in, vec_in, basis_out, vec_out);
       });
 }
 XDIAG_CATCH

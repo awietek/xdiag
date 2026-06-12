@@ -13,102 +13,99 @@
 #include <xdiag/combinatorics/bounded_partitions/schaefer_table.hpp>
 #include <xdiag/matrices/dispatcher.hpp>
 
-namespace xdiag::matrices::boson {
+namespace xdiag::matrices {
 
+// Concrete basis types for Boson. Must mirror the kernel instantiation groups in
+// matrices/blocks/boson/kernels.cpp. Both the BitArray<1..8> short backends and
+// the BitArrayLong<1..8> backends are enumerated.
 template <typename func_t>
 void dispatch_basis(xdiag::Boson const &block_in, xdiag::Boson const &block_out,
                     func_t fn) {
   using namespace basis;
   using namespace combinatorics;
   using namespace bits;
-
-  matrices::Dispatcher d;
-#define ADD(B) d.add<B>([&](B const &bin, B const &bout) { fn(bin, bout); });
-  ADD(BasisOnTheFly<SchaeferTable<BitArray1>>)
-  ADD(BasisOnTheFly<SchaeferTable<BitArray2>>)
-  ADD(BasisOnTheFly<SchaeferTable<BitArray3>>)
-  ADD(BasisOnTheFly<SchaeferTable<BitArray4>>)
-  ADD(BasisOnTheFly<SchaeferTable<BitArray5>>)
-  ADD(BasisOnTheFly<SchaeferTable<BitArray6>>)
-  ADD(BasisOnTheFly<SchaeferTable<BitArray7>>)
-  ADD(BasisOnTheFly<SchaeferTable<BitArray8>>)
-  ADD(BasisOnTheFly<BoundedPartitions<BitArray1>>)
-  ADD(BasisOnTheFly<BoundedPartitions<BitArray2>>)
-  ADD(BasisOnTheFly<BoundedPartitions<BitArray3>>)
-  ADD(BasisOnTheFly<BoundedPartitions<BitArray4>>)
-  ADD(BasisOnTheFly<BoundedPartitions<BitArray5>>)
-  ADD(BasisOnTheFly<BoundedPartitions<BitArray6>>)
-  ADD(BasisOnTheFly<BoundedPartitions<BitArray7>>)
-  ADD(BasisOnTheFly<BoundedPartitions<BitArray8>>)
-  ADD(BasisOnTheFly<BoundedMultisets<BitArray1>>)
-  ADD(BasisOnTheFly<BoundedMultisets<BitArray2>>)
-  ADD(BasisOnTheFly<BoundedMultisets<BitArray3>>)
-  ADD(BasisOnTheFly<BoundedMultisets<BitArray4>>)
-  ADD(BasisOnTheFly<BoundedMultisets<BitArray5>>)
-  ADD(BasisOnTheFly<BoundedMultisets<BitArray6>>)
-  ADD(BasisOnTheFly<BoundedMultisets<BitArray7>>)
-  ADD(BasisOnTheFly<BoundedMultisets<BitArray8>>)
-
-  ADD(BasisSymmetric<SchaeferTable<BitArray1>>)
-  ADD(BasisSymmetric<SchaeferTable<BitArray2>>)
-  ADD(BasisSymmetric<SchaeferTable<BitArray3>>)
-  ADD(BasisSymmetric<SchaeferTable<BitArray4>>)
-  ADD(BasisSymmetric<SchaeferTable<BitArray5>>)
-  ADD(BasisSymmetric<SchaeferTable<BitArray6>>)
-  ADD(BasisSymmetric<SchaeferTable<BitArray7>>)
-  ADD(BasisSymmetric<SchaeferTable<BitArray8>>)
-  ADD(BasisSymmetric<BoundedPartitions<BitArray1>>)
-  ADD(BasisSymmetric<BoundedPartitions<BitArray2>>)
-  ADD(BasisSymmetric<BoundedPartitions<BitArray3>>)
-  ADD(BasisSymmetric<BoundedPartitions<BitArray4>>)
-  ADD(BasisSymmetric<BoundedPartitions<BitArray5>>)
-  ADD(BasisSymmetric<BoundedPartitions<BitArray6>>)
-  ADD(BasisSymmetric<BoundedPartitions<BitArray7>>)
-  ADD(BasisSymmetric<BoundedPartitions<BitArray8>>)
-  ADD(BasisSymmetric<BoundedMultisets<BitArray1>>)
-  ADD(BasisSymmetric<BoundedMultisets<BitArray2>>)
-  ADD(BasisSymmetric<BoundedMultisets<BitArray3>>)
-  ADD(BasisSymmetric<BoundedMultisets<BitArray4>>)
-  ADD(BasisSymmetric<BoundedMultisets<BitArray5>>)
-  ADD(BasisSymmetric<BoundedMultisets<BitArray6>>)
-  ADD(BasisSymmetric<BoundedMultisets<BitArray7>>)
-  ADD(BasisSymmetric<BoundedMultisets<BitArray8>>)
-
-  ADD(BasisOnTheFly<BoundedPartitions<BitArrayLong1>>)
-  ADD(BasisOnTheFly<BoundedPartitions<BitArrayLong2>>)
-  ADD(BasisOnTheFly<BoundedPartitions<BitArrayLong3>>)
-  ADD(BasisOnTheFly<BoundedPartitions<BitArrayLong4>>)
-  ADD(BasisOnTheFly<BoundedPartitions<BitArrayLong5>>)
-  ADD(BasisOnTheFly<BoundedPartitions<BitArrayLong6>>)
-  ADD(BasisOnTheFly<BoundedPartitions<BitArrayLong7>>)
-  ADD(BasisOnTheFly<BoundedPartitions<BitArrayLong8>>)
-  ADD(BasisOnTheFly<BoundedMultisets<BitArrayLong1>>)
-  ADD(BasisOnTheFly<BoundedMultisets<BitArrayLong2>>)
-  ADD(BasisOnTheFly<BoundedMultisets<BitArrayLong3>>)
-  ADD(BasisOnTheFly<BoundedMultisets<BitArrayLong4>>)
-  ADD(BasisOnTheFly<BoundedMultisets<BitArrayLong5>>)
-  ADD(BasisOnTheFly<BoundedMultisets<BitArrayLong6>>)
-  ADD(BasisOnTheFly<BoundedMultisets<BitArrayLong7>>)
-  ADD(BasisOnTheFly<BoundedMultisets<BitArrayLong8>>)
-
-  ADD(BasisSymmetric<BoundedPartitions<BitArrayLong1>>)
-  ADD(BasisSymmetric<BoundedPartitions<BitArrayLong2>>)
-  ADD(BasisSymmetric<BoundedPartitions<BitArrayLong3>>)
-  ADD(BasisSymmetric<BoundedPartitions<BitArrayLong4>>)
-  ADD(BasisSymmetric<BoundedPartitions<BitArrayLong5>>)
-  ADD(BasisSymmetric<BoundedPartitions<BitArrayLong6>>)
-  ADD(BasisSymmetric<BoundedPartitions<BitArrayLong7>>)
-  ADD(BasisSymmetric<BoundedPartitions<BitArrayLong8>>)
-  ADD(BasisSymmetric<BoundedMultisets<BitArrayLong1>>)
-  ADD(BasisSymmetric<BoundedMultisets<BitArrayLong2>>)
-  ADD(BasisSymmetric<BoundedMultisets<BitArrayLong3>>)
-  ADD(BasisSymmetric<BoundedMultisets<BitArrayLong4>>)
-  ADD(BasisSymmetric<BoundedMultisets<BitArrayLong5>>)
-  ADD(BasisSymmetric<BoundedMultisets<BitArrayLong6>>)
-  ADD(BasisSymmetric<BoundedMultisets<BitArrayLong7>>)
-  ADD(BasisSymmetric<BoundedMultisets<BitArrayLong8>>)
-#undef ADD
-  d.dispatch(block_in.basis(), block_out.basis());
+  dispatch_basis_types<
+      BasisOnTheFly<SchaeferTable<BitArray1>>,
+      BasisOnTheFly<SchaeferTable<BitArray2>>,
+      BasisOnTheFly<SchaeferTable<BitArray3>>,
+      BasisOnTheFly<SchaeferTable<BitArray4>>,
+      BasisOnTheFly<SchaeferTable<BitArray5>>,
+      BasisOnTheFly<SchaeferTable<BitArray6>>,
+      BasisOnTheFly<SchaeferTable<BitArray7>>,
+      BasisOnTheFly<SchaeferTable<BitArray8>>,
+      BasisOnTheFly<BoundedPartitions<BitArray1>>,
+      BasisOnTheFly<BoundedPartitions<BitArray2>>,
+      BasisOnTheFly<BoundedPartitions<BitArray3>>,
+      BasisOnTheFly<BoundedPartitions<BitArray4>>,
+      BasisOnTheFly<BoundedPartitions<BitArray5>>,
+      BasisOnTheFly<BoundedPartitions<BitArray6>>,
+      BasisOnTheFly<BoundedPartitions<BitArray7>>,
+      BasisOnTheFly<BoundedPartitions<BitArray8>>,
+      BasisOnTheFly<BoundedMultisets<BitArray1>>,
+      BasisOnTheFly<BoundedMultisets<BitArray2>>,
+      BasisOnTheFly<BoundedMultisets<BitArray3>>,
+      BasisOnTheFly<BoundedMultisets<BitArray4>>,
+      BasisOnTheFly<BoundedMultisets<BitArray5>>,
+      BasisOnTheFly<BoundedMultisets<BitArray6>>,
+      BasisOnTheFly<BoundedMultisets<BitArray7>>,
+      BasisOnTheFly<BoundedMultisets<BitArray8>>,
+      BasisSymmetric<SchaeferTable<BitArray1>>,
+      BasisSymmetric<SchaeferTable<BitArray2>>,
+      BasisSymmetric<SchaeferTable<BitArray3>>,
+      BasisSymmetric<SchaeferTable<BitArray4>>,
+      BasisSymmetric<SchaeferTable<BitArray5>>,
+      BasisSymmetric<SchaeferTable<BitArray6>>,
+      BasisSymmetric<SchaeferTable<BitArray7>>,
+      BasisSymmetric<SchaeferTable<BitArray8>>,
+      BasisSymmetric<BoundedPartitions<BitArray1>>,
+      BasisSymmetric<BoundedPartitions<BitArray2>>,
+      BasisSymmetric<BoundedPartitions<BitArray3>>,
+      BasisSymmetric<BoundedPartitions<BitArray4>>,
+      BasisSymmetric<BoundedPartitions<BitArray5>>,
+      BasisSymmetric<BoundedPartitions<BitArray6>>,
+      BasisSymmetric<BoundedPartitions<BitArray7>>,
+      BasisSymmetric<BoundedPartitions<BitArray8>>,
+      BasisSymmetric<BoundedMultisets<BitArray1>>,
+      BasisSymmetric<BoundedMultisets<BitArray2>>,
+      BasisSymmetric<BoundedMultisets<BitArray3>>,
+      BasisSymmetric<BoundedMultisets<BitArray4>>,
+      BasisSymmetric<BoundedMultisets<BitArray5>>,
+      BasisSymmetric<BoundedMultisets<BitArray6>>,
+      BasisSymmetric<BoundedMultisets<BitArray7>>,
+      BasisSymmetric<BoundedMultisets<BitArray8>>,
+      BasisOnTheFly<BoundedPartitions<BitArrayLong1>>,
+      BasisOnTheFly<BoundedPartitions<BitArrayLong2>>,
+      BasisOnTheFly<BoundedPartitions<BitArrayLong3>>,
+      BasisOnTheFly<BoundedPartitions<BitArrayLong4>>,
+      BasisOnTheFly<BoundedPartitions<BitArrayLong5>>,
+      BasisOnTheFly<BoundedPartitions<BitArrayLong6>>,
+      BasisOnTheFly<BoundedPartitions<BitArrayLong7>>,
+      BasisOnTheFly<BoundedPartitions<BitArrayLong8>>,
+      BasisOnTheFly<BoundedMultisets<BitArrayLong1>>,
+      BasisOnTheFly<BoundedMultisets<BitArrayLong2>>,
+      BasisOnTheFly<BoundedMultisets<BitArrayLong3>>,
+      BasisOnTheFly<BoundedMultisets<BitArrayLong4>>,
+      BasisOnTheFly<BoundedMultisets<BitArrayLong5>>,
+      BasisOnTheFly<BoundedMultisets<BitArrayLong6>>,
+      BasisOnTheFly<BoundedMultisets<BitArrayLong7>>,
+      BasisOnTheFly<BoundedMultisets<BitArrayLong8>>,
+      BasisSymmetric<BoundedPartitions<BitArrayLong1>>,
+      BasisSymmetric<BoundedPartitions<BitArrayLong2>>,
+      BasisSymmetric<BoundedPartitions<BitArrayLong3>>,
+      BasisSymmetric<BoundedPartitions<BitArrayLong4>>,
+      BasisSymmetric<BoundedPartitions<BitArrayLong5>>,
+      BasisSymmetric<BoundedPartitions<BitArrayLong6>>,
+      BasisSymmetric<BoundedPartitions<BitArrayLong7>>,
+      BasisSymmetric<BoundedPartitions<BitArrayLong8>>,
+      BasisSymmetric<BoundedMultisets<BitArrayLong1>>,
+      BasisSymmetric<BoundedMultisets<BitArrayLong2>>,
+      BasisSymmetric<BoundedMultisets<BitArrayLong3>>,
+      BasisSymmetric<BoundedMultisets<BitArrayLong4>>,
+      BasisSymmetric<BoundedMultisets<BitArrayLong5>>,
+      BasisSymmetric<BoundedMultisets<BitArrayLong6>>,
+      BasisSymmetric<BoundedMultisets<BitArrayLong7>>,
+      BasisSymmetric<BoundedMultisets<BitArrayLong8>>>(
+      *block_in.basis(), *block_out.basis(), fn);
 }
 
-} // namespace xdiag::matrices::boson
+} // namespace xdiag::matrices

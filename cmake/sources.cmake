@@ -39,8 +39,9 @@ set(XDIAG_SOURCES
   matrices/sparse/csc_matrix.cpp
   matrices/sparse/valid.cpp
   matrices/sparse/apply.cpp
-  matrices/dispatcher.cpp
-  matrices/kernels.cpp
+  matrices/blocks/spinhalf/kernels.cpp
+  matrices/blocks/boson/kernels.cpp
+  matrices/blocks/fermion/kernels.cpp
   matrices/terms/non_branching_op.cpp
   
   bits/bitset.cpp
@@ -139,6 +140,7 @@ set(XDIAG_SOURCES
   algebra/rewrite/rules/fermion_expansion_rules.cpp
   algebra/rewrite/rules/tj_expansion_rules.cpp
   algebra/rewrite/rules/boson_expansion_rules.cpp
+  algebra/rewrite/rules/totaln_expansion_rule.cpp
 
   algebra/utils/combine_matrix_ops.cpp
   algebra/utils/permute_matrix_op.cpp

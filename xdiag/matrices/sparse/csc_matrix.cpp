@@ -8,10 +8,12 @@
 #include <numeric>
 
 #include <xdiag/algebra/ishermitian.hpp>
-#include <xdiag/blocks/blocks.hpp>
 #include <xdiag/armadillo.hpp>
+#include <xdiag/blocks/blocks.hpp>
 #include <xdiag/math/complex.hpp>
-#include <xdiag/matrices/kernel_traits.hpp>
+#include <xdiag/matrices/blocks/boson/dispatch_basis.hpp>
+#include <xdiag/matrices/blocks/fermion/dispatch_basis.hpp>
+#include <xdiag/matrices/blocks/spinhalf/dispatch_basis.hpp>
 #include <xdiag/matrices/kernels.hpp>
 #include <xdiag/matrices/sparse/valid.hpp>
 #include <xdiag/operators/hc.hpp>
@@ -24,15 +26,15 @@
 
 namespace xdiag {
 
-// Basis-level CSC build (via transposed CSR kernels), generic over the block's
-// MatrixPolicy and concrete BasisOnTheFly type. Shared by the Layer-2 below.
-template <typename idx_t, typename coeff_t, typename policy_t, typename basis_t>
+// Basis-level CSC build (via transposed CSR kernels), generic over the block
+// type and concrete BasisOnTheFly type. Shared by the Layer-2 below.
+template <typename idx_t, typename coeff_t, typename block_t, typename basis_t>
 static void csc_build(OpSum const &ops, basis_t const &basis_in,
                       basis_t const &basis_out, idx_t ncols, idx_t i0,
                       arma::Col<idx_t> &colptr, arma::Col<idx_t> &row,
                       arma::Col<coeff_t> &data) {
   // Pass 1: count nonzeros per column (transpose=true keys by idx_in).
-  auto n_elements_in_col = matrices::csr_matrix_nnz<policy_t, coeff_t>(
+  auto n_elements_in_col = matrices::csr_matrix_nnz<block_t, coeff_t>(
       ops, basis_in, basis_out, true);
   int64_t nnz = std::accumulate(n_elements_in_col.begin(),
                                 n_elements_in_col.end(), (int64_t)0);
@@ -53,9 +55,8 @@ static void csc_build(OpSum const &ops, basis_t const &basis_in,
   }
 
   // Pass 2: fill row and data using atomic slot assignment.
-  matrices::csr_matrix_fill<policy_t, coeff_t>(ops, basis_in, basis_out, offset,
-                                               row.memptr(), data.memptr(), i0,
-                                               true);
+  matrices::csr_matrix_fill<block_t, coeff_t>(
+      ops, basis_in, basis_out, offset, row.memptr(), data.memptr(), i0, true);
 
   // Sort each column's entries by row index (required for CSC validity).
   int64_t max_elems = n_elements_in_col.empty()
@@ -92,9 +93,9 @@ static void csc_build(OpSum const &ops, basis_t const &basis_in,
   }
 }
 
-// Layer 2: block-generic orchestration. kernel_traits<block_t> supplies the
-// basis dispatch and MatrixPolicy; a block without a specialization is a
-// compile error here, never a silent fallback to the Block overload.
+// Layer 2: block-generic orchestration. The dispatch_basis overload supplies
+// the basis dispatch; a block with no overload is a compile error here, never a
+// silent fallback to the Block overload.
 template <typename idx_t, typename coeff_t, typename block_t>
 static CSCMatrix<idx_t, coeff_t>
 csc_matrix_impl(OpSum const &ops, block_t const &block_in,
@@ -103,11 +104,10 @@ csc_matrix_impl(OpSum const &ops, block_t const &block_in,
   idx_t ncols = (idx_t)size(block_in);
   arma::Col<idx_t> colptr, row;
   arma::Col<coeff_t> data;
-  matrices::kernel_traits<block_t>::dispatch(
+  matrices::dispatch_basis(
       block_in, block_out, [&](auto const &basis_in, auto const &basis_out) {
-        csc_build<idx_t, coeff_t,
-                  typename matrices::kernel_traits<block_t>::policy>(
-            ops, basis_in, basis_out, ncols, i0, colptr, row, data);
+        csc_build<idx_t, coeff_t, block_t>(ops, basis_in, basis_out, ncols, i0,
+                                           colptr, row, data);
       });
   bool isherm = ishermitian(ops, block_in);
   return CSCMatrix<idx_t, coeff_t>{nrows, ncols, colptr, row, data, i0, isherm};

@@ -10,59 +10,58 @@
 #include <xdiag/armadillo.hpp>
 #include <xdiag/operators/opsum.hpp>
 
-// Generic kernel declarations.  Each function is templated on a Matrix
-// policy that provides the block-specific matrix_generic implementation:
+// Generic kernel declarations.  Each function is templated on the block type
+// (Spinhalf, Boson, Fermion, ...). The block selects the numerical kernel:
+// kernels.cpp maps block_t to that block's matrix_generic implementation via
+// the internal matrix_kernel<block_t> trait.
 //
-//   struct MatrixPolicy {
-//     template <typename coeff_t, typename basis_t, typename fill_f>
-//     static void call(OpSum const &ops, basis_t const &basis_in,
-//                      basis_t const &basis_out, fill_f &&fill);
-//   };
-//
+// These are only DECLARED here; consumers (apply.cpp, matrix.cpp, the sparse
+// builders) name them with an incomplete block type and forward to the extern
+// instantiation, so they never pull in matrix_generic or the term headers.
 // Definitions live in kernels.cpp; explicit instantiations are provided there
-// for each (Matrix, basis_t) pair using the instantiation-group mechanism.
+// for each (block_t, basis_t) pair using the instantiation-group mechanism.
 
 namespace xdiag::matrices {
 
-template <typename matrix_policy_t, typename basis_t, typename mat_t>
+template <typename block_t, typename basis_t, typename mat_t>
 void apply(OpSum const &ops, basis_t const &basis_in, mat_t const &mat_in,
            basis_t const &basis_out, mat_t &mat_out);
 
-template <typename matrix_policy_t, typename coeff_t, typename basis_t>
+template <typename block_t, typename coeff_t, typename basis_t>
 void matrix(OpSum const &ops, basis_t const &basis_in, basis_t const &basis_out,
             coeff_t *mat);
 
 #ifdef _OPENMP
-template <typename matrix_policy_t, typename coeff_t, typename basis_t>
+template <typename block_t, typename coeff_t, typename basis_t>
 std::vector<int64_t> coo_matrix_nnz(OpSum const &ops, basis_t const &basis_in,
                                     basis_t const &basis_out);
 #else
-template <typename matrix_policy_t, typename coeff_t, typename basis_t>
+template <typename block_t, typename coeff_t, typename basis_t>
 int64_t coo_matrix_nnz(OpSum const &ops, basis_t const &basis_in,
                        basis_t const &basis_out);
 #endif
 
 #ifdef _OPENMP
-template <typename matrix_policy_t, typename coeff_t, typename basis_t,
+template <typename block_t, typename coeff_t, typename basis_t,
           typename idx_t>
 void coo_matrix_fill(OpSum const &ops, basis_t const &basis_in,
                      basis_t const &basis_out,
                      std::vector<int64_t> const &nnz_thread, idx_t *rows,
                      idx_t *cols, coeff_t *data, idx_t i0);
 #else
-template <typename matrix_policy_t, typename coeff_t, typename basis_t,
+template <typename block_t, typename coeff_t, typename basis_t,
           typename idx_t>
 void coo_matrix_fill(OpSum const &ops, basis_t const &basis_in,
                      basis_t const &basis_out, idx_t *rows, idx_t *cols,
                      coeff_t *data, idx_t i0);
 #endif
 
-template <typename matrix_policy_t, typename coeff_t, typename basis_t>
+template <typename block_t, typename coeff_t, typename basis_t>
 std::vector<int64_t> csr_matrix_nnz(OpSum const &ops, basis_t const &basis_in,
                                     basis_t const &basis_out,
                                     bool transpose = false);
 
-template <typename matrix_policy_t, typename coeff_t, typename basis_t,
+template <typename block_t, typename coeff_t, typename basis_t,
           typename idx_t>
 void csr_matrix_fill(OpSum const &ops, basis_t const &basis_in,
                      basis_t const &basis_out, std::vector<int64_t> &offset,

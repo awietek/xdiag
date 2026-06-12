@@ -14,49 +14,42 @@
 #include <xdiag/combinatorics/subsets/subsets.hpp>
 #include <xdiag/matrices/dispatcher.hpp>
 
-namespace xdiag::matrices::spinhalf {
+namespace xdiag::matrices {
 
+// Concrete basis types for Spinhalf. Must mirror the kernel instantiation groups
+// in matrices/blocks/spinhalf/kernels.cpp.
 template <typename func_t>
 void dispatch_basis(xdiag::Spinhalf const &block_in,
                     xdiag::Spinhalf const &block_out, func_t fn) {
   using namespace basis;
   using namespace combinatorics;
   using namespace bits;
-
-  matrices::Dispatcher d;
-#define ADD(B) d.add<B>([&](B const &bin, B const &bout) { fn(bin, bout); });
-  ADD(BasisOnTheFly<Subsets<uint32_t>>)
-  ADD(BasisOnTheFly<Subsets<uint64_t>>)
-  ADD(BasisOnTheFly<Combinations<uint32_t>>)
-  ADD(BasisOnTheFly<Combinations<uint64_t>>)
-  ADD(BasisOnTheFly<LinTable<uint32_t>>)
-  ADD(BasisOnTheFly<LinTable<uint64_t>>)
-  ADD(BasisOnTheFly<Combinations<BitsetDynamic>>)
-  ADD(BasisOnTheFly<Combinations<BitsetStatic2>>)
-  ADD(BasisOnTheFly<Combinations<BitsetStatic4>>)
-  ADD(BasisOnTheFly<Combinations<BitsetStatic8>>)
-  ADD(BasisSymmetric<Subsets<uint32_t>>)
-  ADD(BasisSymmetric<Subsets<uint64_t>>)
-  ADD(BasisSymmetric<Combinations<uint32_t>>)
-  ADD(BasisSymmetric<Combinations<uint64_t>>)
-  ADD(BasisSymmetric<LinTable<uint32_t>>)
-  ADD(BasisSymmetric<LinTable<uint64_t>>)
-  ADD(BasisSymmetric<Combinations<BitsetDynamic>>)
-  ADD(BasisSymmetric<Combinations<BitsetStatic2>>)
-  ADD(BasisSymmetric<Combinations<BitsetStatic4>>)
-  ADD(BasisSymmetric<Combinations<BitsetStatic8>>)
-  ADD(BasisSublattice32<1>)
-  ADD(BasisSublattice32<2>)
-  ADD(BasisSublattice32<3>)
-  ADD(BasisSublattice32<4>)
-  ADD(BasisSublattice32<5>)
-  ADD(BasisSublattice64<1>)
-  ADD(BasisSublattice64<2>)
-  ADD(BasisSublattice64<3>)
-  ADD(BasisSublattice64<4>)
-  ADD(BasisSublattice64<5>)
-#undef ADD
-  d.dispatch(block_in.basis(), block_out.basis());
+  dispatch_basis_types<BasisOnTheFly<Subsets<uint32_t>>,            //
+                       BasisOnTheFly<Subsets<uint64_t>>,            //
+                       BasisOnTheFly<Combinations<uint32_t>>,       //
+                       BasisOnTheFly<Combinations<uint64_t>>,       //
+                       BasisOnTheFly<LinTable<uint32_t>>,           //
+                       BasisOnTheFly<LinTable<uint64_t>>,           //
+                       BasisOnTheFly<Combinations<BitsetDynamic>>,  //
+                       BasisOnTheFly<Combinations<BitsetStatic2>>,  //
+                       BasisOnTheFly<Combinations<BitsetStatic4>>,  //
+                       BasisOnTheFly<Combinations<BitsetStatic8>>,  //
+                       BasisSymmetric<Subsets<uint32_t>>,           //
+                       BasisSymmetric<Subsets<uint64_t>>,           //
+                       BasisSymmetric<Combinations<uint32_t>>,      //
+                       BasisSymmetric<Combinations<uint64_t>>,      //
+                       BasisSymmetric<LinTable<uint32_t>>,          //
+                       BasisSymmetric<LinTable<uint64_t>>,          //
+                       BasisSymmetric<Combinations<BitsetDynamic>>, //
+                       BasisSymmetric<Combinations<BitsetStatic2>>, //
+                       BasisSymmetric<Combinations<BitsetStatic4>>, //
+                       BasisSymmetric<Combinations<BitsetStatic8>>, //
+                       BasisSublattice32<1>, BasisSublattice32<2>,  //
+                       BasisSublattice32<3>, BasisSublattice32<4>,  //
+                       BasisSublattice32<5>, BasisSublattice64<1>,  //
+                       BasisSublattice64<2>, BasisSublattice64<3>,  //
+                       BasisSublattice64<4>, BasisSublattice64<5>>(
+      *block_in.basis(), *block_out.basis(), fn);
 }
 
-} // namespace xdiag::matrices::spinhalf
+} // namespace xdiag::matrices

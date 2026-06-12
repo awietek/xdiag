@@ -38,7 +38,8 @@ Algebra matrix_algebra(int64_t nsites, int64_t d) {
       .fermionic_types = fermionic,
       .allowed_types = {"A", "Adag", "Exchange", "ExchangeAsym", "Hop",
                         "HubbardU", "Id", "Matrix", "N", "S+", "S-",
-                        "ScalarChirality", "SdotS", "Sx", "Sy", "Sz", "SzSz"},
+                        "ScalarChirality", "SdotS", "Sx", "Sy", "Sz", "SzSz",
+                        "TotalN"},
       .expansion_rules = boson_expansion_rules(nsites),
       .algebra_rules = algebra_rules_vec,
   };
