@@ -49,27 +49,27 @@ void print_block(std::ostream &out, block_t const &block) {
     charges = {{"number", block.irreps().charge("number")}};
   } else if constexpr (std::is_same_v<block_t, Electron>) {
     name = "Electron";
-    color = fmt::fg(fmt::color::crimson) | fmt::emphasis::bold;
+    color = fmt::fg(fmt::color::indigo) | fmt::emphasis::bold;
     charges = {{"nup", block.irreps().charge("nup")},
                {"ndn", block.irreps().charge("ndn")}};
   }
 
   out << fmt::format(color, "{}\n", name);
-  out << fmt::format("| {:<9}: {}\n", "nsites", block.nsites());
-  out << fmt::format("| {:<9}: {}\n", "d", block.d());
+  out << fmt::format("│ {:<9}: {}\n", "nsites", block.nsites());
+  out << fmt::format("│ {:<9}: {}\n", "d", block.d());
   for (auto const &[label, value] : charges) {
     if (value) {
-      out << fmt::format("| {:<9}: {}\n", label, *value);
+      out << fmt::format("│ {:<9}: {}\n", label, *value);
     } else {
-      out << fmt::format("| {:<9}: not conserved\n", label);
+      out << fmt::format("│ {:<9}: not conserved\n", label);
     }
   }
 
   auto group = block.irreps().group("SitePermutation");
   if (group) {
-    out << "| permutation symmetries used\n";
+    out << "│ permutation symmetries used\n";
     out << fmt::format(
-        "| {:<9}: {:x}\n", "irrep ID",
+        "│ {:<9}: {:x}\n", "irrep ID",
         random::hash(Representation(
             *group, *block.irreps().characters("SitePermutation"))));
   }
@@ -81,9 +81,9 @@ void print_block(std::ostream &out, block_t const &block) {
   basisname =
       std::regex_replace(basisname, std::regex("unsigned int"), "uint32_t");
 
-  out << fmt::format("| {:<9}: {}\n", "basis", basisname);
-  out << fmt::format("| {:<9}: {:x}\n", "ID", random::hash(block));
-  out << fmt::format("| {:<9}: {}\n", "dimension",
+  out << fmt::format("│ {:<9}: {}\n", "basis", basisname);
+  out << fmt::format("│ {:<9}: {:x}\n", "ID", random::hash(block));
+  out << fmt::format("│ {:<9}: {}\n", "dimension",
                      fmt::format_de("{:L}", block.size()));
 }
 

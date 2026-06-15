@@ -98,4 +98,17 @@ constexpr uint64_t hash_combine(uint64_t h1, uint64_t h2) {
   return h1;
 }
 
+// splitmix64 finalizer: a bijective avalanche step that spreads the entropy of
+// a hash over all 64 bits. Applied to the public hashes so that low-entropy
+// inputs (small charges, nsites, ...) do not leave the high bits nearly
+// constant (which made block / irrep IDs share a long common prefix).
+constexpr uint64_t hash_finalize(uint64_t h) noexcept {
+  h ^= h >> 30;
+  h *= 0xbf58476d1ce4e5b9ULL;
+  h ^= h >> 27;
+  h *= 0x94d049bb133111ebULL;
+  h ^= h >> 31;
+  return h;
+}
+
 } // namespace xdiag::random

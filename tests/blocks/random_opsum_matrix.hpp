@@ -22,6 +22,7 @@
 #include <xdiag/operators/opsum.hpp>
 #include <xdiag/operators/types.hpp>
 #include <xdiag/utils/logger.hpp>
+#include <xdiag/utils/xdiag_show.hpp>
 
 namespace xdiag::testcases {
 

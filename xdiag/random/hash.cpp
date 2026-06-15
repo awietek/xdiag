@@ -56,7 +56,7 @@ uint64_t hash(Representation const &irrep) {
     }
     h = hash_combine(h, hash(irrep.group()));
   }
-  return h;
+  return hash_finalize(h);
 }
 
 uint64_t hash(Block const &block) {
@@ -69,7 +69,7 @@ uint64_t hash(Block const &block) {
         for (auto const &irrep : b.irreps()) {
           h = hash_combine(h, hash(irrep));
         }
-        return h;
+        return hash_finalize(h);
       },
       block);
 }
