@@ -9,13 +9,14 @@
 #include <variant>
 
 #include <xdiag/blocks/boson.hpp>
+#include <xdiag/blocks/electron.hpp>
 #include <xdiag/blocks/fermion.hpp>
 #include <xdiag/blocks/spinhalf.hpp>
 #include <xdiag/operators/opsum.hpp>
 #include <xdiag/utils/xdiag_api.hpp>
 
 namespace xdiag {
-using Block = std::variant<Spinhalf, Boson, Fermion>;
+using Block = std::variant<Spinhalf, Boson, Fermion, Electron>;
 
 XDIAG_API int64_t dim(Block const &block);
 XDIAG_API int64_t size(Block const &block);
@@ -26,9 +27,11 @@ XDIAG_API bool isreal(Block const &block);
 // of block_in are shifted by the representation ops transforms under (U(1)
 // charges add, permutation characters multiply). Throws if ops has no
 // well-defined sector under one of the block's symmetries.
-Spinhalf block(OpSum const &ops, Spinhalf const &block_in);
-Boson block(OpSum const &ops, Boson const &block_in);
-Fermion block(OpSum const &ops, Fermion const &block_in);
+// Concrete-block overload, one body for every block type. Explicitly
+// instantiated in blocks.cpp for each block, so the definition (and its heavy
+// output_irreps / symmetry_algebra includes) stays out of this header.
+template <typename block_t>
+block_t block(OpSum const &ops, block_t const &block_in);
 Block block(OpSum const &ops, Block const &block_in);
 
 // True if applying ops to block_in lands exactly in block_out, i.e. block_out

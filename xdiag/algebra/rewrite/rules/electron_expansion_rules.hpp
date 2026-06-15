@@ -12,6 +12,6 @@ namespace xdiag::algebra {
 // Shared fermionic expansion rules used by electron and tJ algebras: hopping
 // (Hop, Hopup, Hopdn), occupation (Nup, Ndn, Ntot, Nupdn), density-density
 // pairs, and spin operators in terms of c/c†.
-std::vector<OpRule> fermionic_expansion_rules();
+std::vector<OpRule> electron_expansion_rules();
 
 } // namespace xdiag::algebra

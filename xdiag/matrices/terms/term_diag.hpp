@@ -12,6 +12,7 @@
 #include <xdiag/basis/basis_onthefly.hpp>
 #include <xdiag/matrices/fill_functions.hpp>
 #include <xdiag/matrices/terms/term_offdiag.hpp>
+#include <xdiag/utils/thread_range.hpp>
 
 namespace xdiag::matrices {
 
@@ -35,17 +36,11 @@ void term_diag(basis_t const &basis_in, basis_t const &basis_out,
 
     // OpenMP parallel implementation
 #ifdef _OPENMP
-    int64_t size = basis.size();
-
 #pragma omp parallel
     {
       int num_thread = omp_get_thread_num();
-      int nthreads = omp_get_num_threads();
-      int64_t idx = num_thread * (size / nthreads);
-      auto begin = basis.begin() + idx;
-      auto end = (num_thread == nthreads - 1)
-                     ? basis.end()
-                     : basis.begin() + (num_thread + 1) * (size / nthreads);
+      auto [begin, end, idx] =
+          utils::thread_range(basis, num_thread, omp_get_num_threads());
       for (auto it = begin; it != end; ++it, ++idx) {
         auto coeff = term_coeff(*it);
         XDIAG_FILL(idx, idx, coeff);

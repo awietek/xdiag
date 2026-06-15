@@ -198,13 +198,17 @@ TEST_CASE("normal_order", "[operators]") try {
   Log("Testing normal_order: HubbardU / Nupdn");
   alg = electron_algebra(2);
   {
-    // A site-free "HubbardU" represents sum_i Nupdn{i}, but nsites is unknown
-    // here, so it is elementary and left untouched (see normal_order.hpp).
+    // The site-free "HubbardU" represents sum_i Nupdn{i}; the electron algebra
+    // knows nsites, so it expands it (and then down to elementary operators).
+    // It must agree with the explicit sum over sites and leave no HubbardU type.
     auto r = normal_order(OpSum(Op("HubbardU")), alg);
-    REQUIRE(r.size() == 1);
+    auto expected =
+        normal_order(OpSum(Op("Nupdn", 0)) + OpSum(Op("Nupdn", 1)), alg);
+    REQUIRE(isapprox(r, expected, alg));
     for (auto const &[c, mono] : r) {
-      REQUIRE(mono.size() == 1);
-      REQUIRE(mono[0].type() == "HubbardU");
+      for (auto const &op : mono) {
+        REQUIRE(op.type() != "HubbardU");
+      }
     }
   }
   {

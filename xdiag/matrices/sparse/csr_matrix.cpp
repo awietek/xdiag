@@ -11,9 +11,7 @@
 #include <xdiag/blocks/blocks.hpp>
 #include <xdiag/armadillo.hpp>
 #include <xdiag/math/complex.hpp>
-#include <xdiag/matrices/blocks/boson/dispatch_basis.hpp>
-#include <xdiag/matrices/blocks/fermion/dispatch_basis.hpp>
-#include <xdiag/matrices/blocks/spinhalf/dispatch_basis.hpp>
+#include <xdiag/matrices/blocks/dispatch_bases.hpp>
 #include <xdiag/matrices/kernels.hpp>
 #include <xdiag/matrices/sparse/valid.hpp>
 #include <xdiag/operators/hc.hpp>

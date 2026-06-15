@@ -14,6 +14,7 @@
 #include <xdiag/combinatorics/combinations/combinations.hpp>
 #include <xdiag/combinatorics/combinations/lin_table.hpp>
 #include <xdiag/combinatorics/subsets/subsets.hpp>
+#include <xdiag/blocks/print_block.hpp>
 #include <xdiag/random/hash.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/format.hpp>
@@ -95,7 +96,7 @@ void dispatch_sublattice(std::string const &backend, int64_t nsites, F &&f) {
 
 Spinhalf::Spinhalf(int64_t nsites, RepresentationSet const &irreps,
                    std::string backend) try
-    : nsites_(nsites), irreps_(irreps) {
+    : irreps_(irreps) {
   using namespace basis;
 
   if (nsites < 0) {
@@ -160,7 +161,7 @@ Spinhalf::Spinhalf(int64_t nsites, int64_t nup, Representation const &irrep,
                backend) {}
 XDIAG_CATCH
 
-int64_t Spinhalf::nsites() const { return nsites_; }
+int64_t Spinhalf::nsites() const { return basis_->nsites(); }
 int64_t Spinhalf::dim() const { return size(); }
 int64_t Spinhalf::size() const { return basis_->size(); }
 bool Spinhalf::isreal() const { return irreps_.isreal(); }
@@ -169,7 +170,7 @@ SpinhalfIterator Spinhalf::begin() const { return {this, 0}; }
 SpinhalfIterator Spinhalf::end() const { return {this, size()}; }
 
 bool Spinhalf::operator==(Spinhalf const &rhs) const {
-  return (nsites_ == rhs.nsites_) && (irreps_ == rhs.irreps_);
+  return (irreps_ == rhs.irreps_) && (basis_ == rhs.basis_);
 }
 
 bool Spinhalf::operator!=(Spinhalf const &rhs) const {
@@ -180,33 +181,7 @@ RepresentationSet Spinhalf::irreps() const { return irreps_; }
 std::shared_ptr<basis::Basis> const &Spinhalf::basis() const { return basis_; }
 
 std::ostream &operator<<(std::ostream &out, Spinhalf const &block) {
-  out << fmt::format(fg(fmt::color::moccasin) | fmt::emphasis::bold,
-                     "Spinhalf\n");
-  out << "| nsites   : " << block.nsites() << "\n";
-  std::optional<int64_t> nup = block.irreps().charge("nup");
-  if (nup) {
-    out << "| nup      : " << *nup << "\n";
-  } else {
-    out << "| nup      : not conserved\n";
-  }
-  auto group = block.irreps().group("SitePermutation");
-  if (group) {
-    out << "| permutation symmetries used\n";
-    out << fmt::format(
-        "| irrep ID : {0:x}\n",
-        random::hash(Representation(
-            *group, *block.irreps().characters("SitePermutation"))));
-  }
-  std::string basisname(block.basis()->name());
-  basisname = std::regex_replace(basisname, std::regex("xdiag::basis::"), "");
-  basisname =
-      std::regex_replace(basisname, std::regex("xdiag::combinatorics::"), "");
-  basisname =
-      std::regex_replace(basisname, std::regex("unsigned int"), "uint32_t");
-
-  out << fmt::format("| basis    : {}\n", basisname);
-  out << fmt::format("| ID       : {0:x}\n", random::hash(block));
-  out << "| dimension: " << fmt::format_de("{:L}", block.size()) << "\n";
+  print_block(out, block);
   return out;
 }
 std::string to_string(Spinhalf const &block) {

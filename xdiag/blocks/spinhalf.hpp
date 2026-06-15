@@ -52,7 +52,6 @@ public:
   std::shared_ptr<basis::Basis> const &basis() const;
 
 private:
-  int64_t nsites_ = 0;
   RepresentationSet irreps_;
   std::shared_ptr<basis::Basis> basis_;
 };

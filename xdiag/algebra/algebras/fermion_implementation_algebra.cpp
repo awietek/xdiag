@@ -36,7 +36,6 @@ Algebra fermion_implementation_algebra(int64_t nsites) {
       .name = "fermion_implementation_algebra",
       .nsites = nsites,
       .d = 2,
-      .elementary_types = {"C", "Cdag"},
       .fermionic_types = fermionic,
       .allowed_types = {"C", "Cdag", "Hop", "HopAsym", "Id", "N", "NN",
                         "TotalN"},

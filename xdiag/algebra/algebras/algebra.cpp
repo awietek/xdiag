@@ -6,6 +6,8 @@
 
 #include <variant>
 
+#include <xdiag/algebra/algebras/electron_algebra.hpp>
+#include <xdiag/algebra/algebras/electron_implementation_algebra.hpp>
 #include <xdiag/algebra/algebras/fermion_algebra.hpp>
 #include <xdiag/algebra/algebras/fermion_implementation_algebra.hpp>
 #include <xdiag/algebra/algebras/matrix_algebra.hpp>
@@ -30,17 +32,16 @@ Algebra implementation_algebra(Fermion const &block) try {
 }
 XDIAG_CATCH
 
+Algebra implementation_algebra(Electron const &block) try {
+  return electron_implementation_algebra(block.nsites());
+}
+XDIAG_CATCH
+
 Algebra implementation_algebra(Block const &block) try {
-  // Exhaustive per-type dispatch: adding a new alternative to the Block variant
-  // without a matching overload here is a compile-time error (std::visit can no
-  // longer call the visitor for every alternative).
+  // Generic visitor: a block type without an implementation_algebra overload is
+  // a compile error when the lambda is instantiated for that alternative.
   return std::visit(
-      utils::overload{
-          [](Spinhalf const &b) { return implementation_algebra(b); },
-          [](Boson const &b) { return implementation_algebra(b); },
-          [](Fermion const &b) { return implementation_algebra(b); },
-      },
-      block);
+      [](auto const &b) { return implementation_algebra(b); }, block);
 }
 XDIAG_CATCH
 
@@ -59,15 +60,15 @@ Algebra symmetry_algebra(Fermion const &block) try {
 }
 XDIAG_CATCH
 
+Algebra symmetry_algebra(Electron const &block) try {
+  return electron_algebra(block.nsites());
+}
+XDIAG_CATCH
+
 Algebra symmetry_algebra(Block const &block) try {
-  // Exhaustive per-type dispatch (see implementation_algebra(Block) above).
-  return std::visit(
-      utils::overload{
-          [](Spinhalf const &b) { return symmetry_algebra(b); },
-          [](Boson const &b) { return symmetry_algebra(b); },
-          [](Fermion const &b) { return symmetry_algebra(b); },
-      },
-      block);
+  // Generic visitor: a block type without a symmetry_algebra overload is a
+  // compile error when the lambda is instantiated for that alternative.
+  return std::visit([](auto const &b) { return symmetry_algebra(b); }, block);
 }
 XDIAG_CATCH
 

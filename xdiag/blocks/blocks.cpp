@@ -39,51 +39,34 @@ static RepresentationSet output_irreps(OpSum const &ops,
 }
 XDIAG_CATCH
 
-Spinhalf block(OpSum const &ops, Spinhalf const &block_in) try {
+template <typename block_t>
+block_t block(OpSum const &ops, block_t const &block_in) try {
   RepresentationSet irreps_out =
       output_irreps(ops, block_in, algebra::symmetry_algebra(block_in));
 
   if (block_in.irreps().isapprox(irreps_out)) {
     return block_in;
   }
-  return Spinhalf(block_in.nsites(), irreps_out);
-}
-XDIAG_CATCH
-
-Boson block(OpSum const &ops, Boson const &block_in) try {
-  RepresentationSet irreps_out =
-      output_irreps(ops, block_in, algebra::symmetry_algebra(block_in));
-
-  if (block_in.irreps().isapprox(irreps_out)) {
-    return block_in;
+  if constexpr (std::is_same_v<block_t, Boson>) {
+    // Boson carries the local dimension d explicitly in its constructor.
+    return Boson(block_in.nsites(), block_in.d(), irreps_out);
+  } else {
+    return block_t(block_in.nsites(), irreps_out);
   }
-  return Boson(block_in.nsites(), block_in.d(), irreps_out);
 }
 XDIAG_CATCH
 
-Fermion block(OpSum const &ops, Fermion const &block_in) try {
-  RepresentationSet irreps_out =
-      output_irreps(ops, block_in, algebra::symmetry_algebra(block_in));
-
-  if (block_in.irreps().isapprox(irreps_out)) {
-    return block_in;
-  }
-  return Fermion(block_in.nsites(), irreps_out);
-}
-XDIAG_CATCH
+template Spinhalf block(OpSum const &, Spinhalf const &);
+template Boson block(OpSum const &, Boson const &);
+template Fermion block(OpSum const &, Fermion const &);
+template Electron block(OpSum const &, Electron const &);
 
 Block block(OpSum const &ops, Block const &block_in) try {
-  // Exhaustive per-type dispatch: adding a new alternative to the Block variant
-  // without a matching block(...) overload here is a compile-time error
-  // (std::visit can no longer call the visitor for every alternative), instead
-  // of silently recursing through this Block overload at runtime.
-  return std::visit(
-      utils::overload{
-          [&](Spinhalf const &b) -> Block { return block(ops, b); },
-          [&](Boson const &b) -> Block { return block(ops, b); },
-          [&](Fermion const &b) -> Block { return block(ops, b); },
-      },
-      block_in);
+  // Generic visitor: the inner block(ops, b) resolves to the block<block_t>
+  // template above. A block type whose template is not explicitly instantiated
+  // (just above) is an undefined reference at link time.
+  return std::visit([&](auto const &b) -> Block { return block(ops, b); },
+                    block_in);
 }
 XDIAG_CATCH
 
@@ -158,6 +141,31 @@ static std::string to_string(ProductState const &state, Boson const &boson) {
     ss << fmt::format(fg(fmt::rgb(r, 0, b)), "{:>{}}", v, width);
     if (i > 0) {
       ss << " ";
+    }
+  }
+  return ss.str();
+}
+
+// Electrons: local index 0 empty, 1 up, 2 dn, 3 up&dn. Up is shown as a blue
+// arrow, dn as an orange arrow, double occupancy as both, empty as a dot.
+static std::string to_string(ProductState const &state, Electron const &) {
+  std::stringstream ss;
+  for (int64_t i = state.size() - 1; i >= 0; --i) {
+    bool up = state[i] & 1;
+    bool dn = state[i] & 2;
+    std::string s;
+    if (up && dn) {
+      const char *s = "\u2195";
+      ss << fmt::format(fg(fmt::color::red), s);
+    } else if (up) {
+      const char *s = "\u2191";
+      ss << fmt::format(fg(fmt::color::light_blue), s);
+    } else if (dn) {
+      const char *s = "\u2193";
+      ss << fmt::format(fg(fmt::color::orange), s);
+    } else { // empty
+      const char *s = "\u25CC";
+      ss << fmt::format(fg(fmt::color::gray), s);
     }
   }
   return ss.str();

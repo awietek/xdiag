@@ -53,6 +53,8 @@ static const std::map<std::string, std::pair<double, std::string>> hc_partners =
   {"HopAsym",         {-1.0, "HopAsym"        }},
   {"Hopup",           {1.0,  "Hopup"          }},
   {"Hopdn",           {1.0,  "Hopdn"          }},
+  {"HopupAsym",       {-1.0, "HopupAsym"      }},
+  {"HopdnAsym",       {-1.0, "HopdnAsym"      }},
   {"Cdag",            {1.0,  "C"              }},
   {"C",               {1.0,  "Cdag"           }},
   {"Cdagup",          {1.0,  "Cup"            }},

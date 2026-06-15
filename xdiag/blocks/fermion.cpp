@@ -12,6 +12,7 @@
 #include <xdiag/combinatorics/combinations/combinations.hpp>
 #include <xdiag/combinatorics/combinations/lin_table.hpp>
 #include <xdiag/combinatorics/subsets/subsets.hpp>
+#include <xdiag/blocks/print_block.hpp>
 #include <xdiag/random/hash.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/format.hpp>
@@ -59,7 +60,7 @@ static void dispatch_enumeration(int64_t nsites, std::optional<int64_t> number,
 }
 
 Fermion::Fermion(int64_t nsites, RepresentationSet const &irreps) try
-    : nsites_(nsites), irreps_(irreps) {
+    : irreps_(irreps) {
   using namespace basis;
 
   if (nsites < 0) {
@@ -113,7 +114,7 @@ Fermion::Fermion(int64_t nsites, int64_t number,
               RepresentationSet{Representation("number", number), irrep}) {}
 XDIAG_CATCH
 
-int64_t Fermion::nsites() const { return nsites_; }
+int64_t Fermion::nsites() const { return basis_->nsites(); }
 int64_t Fermion::dim() const { return size(); }
 int64_t Fermion::size() const { return basis_->size(); }
 bool Fermion::isreal() const { return irreps_.isreal(); }
@@ -122,7 +123,7 @@ FermionIterator Fermion::begin() const { return {this, 0}; }
 FermionIterator Fermion::end() const { return {this, size()}; }
 
 bool Fermion::operator==(Fermion const &rhs) const {
-  return (nsites_ == rhs.nsites_) && (irreps_ == rhs.irreps_);
+  return (irreps_ == rhs.irreps_) && (basis_ == rhs.basis_);
 }
 
 bool Fermion::operator!=(Fermion const &rhs) const { return !operator==(rhs); }
@@ -131,33 +132,7 @@ RepresentationSet Fermion::irreps() const { return irreps_; }
 std::shared_ptr<basis::Basis> const &Fermion::basis() const { return basis_; }
 
 std::ostream &operator<<(std::ostream &out, Fermion const &block) {
-  out << fmt::format(fg(fmt::color::crimson) | fmt::emphasis::bold,
-                     "Fermion\n");
-  out << "| nsites   : " << block.nsites() << "\n";
-  std::optional<int64_t> number = block.irreps().charge("number");
-  if (number) {
-    out << "| number   : " << *number << "\n";
-  } else {
-    out << "| number   : not conserved\n";
-  }
-  auto group = block.irreps().group("SitePermutation");
-  if (group) {
-    out << "| permutation symmetries used\n";
-    out << fmt::format(
-        "| irrep ID : {0:x}\n",
-        random::hash(Representation(
-            *group, *block.irreps().characters("SitePermutation"))));
-  }
-  std::string basisname(block.basis()->name());
-  basisname = std::regex_replace(basisname, std::regex("xdiag::basis::"), "");
-  basisname =
-      std::regex_replace(basisname, std::regex("xdiag::combinatorics::"), "");
-  basisname =
-      std::regex_replace(basisname, std::regex("unsigned int"), "uint32_t");
-
-  out << fmt::format("| basis    : {}\n", basisname);
-  out << fmt::format("| ID       : {0:x}\n", random::hash(block));
-  out << "| dimension: " << fmt::format_de("{:L}", block.size()) << "\n";
+  print_block(out, block);
   return out;
 }
 std::string to_string(Fermion const &block) { return to_string_generic(block); }

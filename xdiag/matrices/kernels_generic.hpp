@@ -175,84 +175,84 @@ XDIAG_CATCH
 // scope (using namespace arma; xdiag; xdiag::basis; ...).
 // ---------------------------------------------------------------------------
 
-#define INSTANTIATE_APPLY(BLOCK, BASIS, MAT)                                   \
+#define XDIAG_INSTANTIATE_APPLY(BLOCK, BASIS, MAT)                                   \
   template void xdiag::matrices::apply<BLOCK, BASIS, MAT>(                     \
       OpSum const &, BASIS const &, MAT const &, BASIS const &, MAT &);
 
-#define INSTANTIATE_MATRIX(BLOCK, BASIS, COEFF)                                \
+#define XDIAG_INSTANTIATE_MATRIX(BLOCK, BASIS, COEFF)                                \
   template void xdiag::matrices::matrix<BLOCK, COEFF, BASIS>(                  \
       OpSum const &, BASIS const &, BASIS const &, COEFF *);
 
 #ifdef _OPENMP
-#define INSTANTIATE_COO_NNZ(BLOCK, BASIS, COEFF)                               \
+#define XDIAG_INSTANTIATE_COO_NNZ(BLOCK, BASIS, COEFF)                               \
   template std::vector<int64_t>                                                \
   xdiag::matrices::coo_matrix_nnz<BLOCK, COEFF, BASIS>(                        \
       OpSum const &, BASIS const &, BASIS const &);
-#define INSTANTIATE_COO_FILL(BLOCK, BASIS, IDX, COEFF)                         \
+#define XDIAG_INSTANTIATE_COO_FILL(BLOCK, BASIS, IDX, COEFF)                         \
   template void                                                                \
   xdiag::matrices::coo_matrix_fill<BLOCK, COEFF, BASIS, IDX>(                  \
       OpSum const &, BASIS const &, BASIS const &,                            \
       std::vector<int64_t> const &, IDX *, IDX *, COEFF *, IDX);
 #else
-#define INSTANTIATE_COO_NNZ(BLOCK, BASIS, COEFF)                               \
+#define XDIAG_INSTANTIATE_COO_NNZ(BLOCK, BASIS, COEFF)                               \
   template int64_t                                                             \
   xdiag::matrices::coo_matrix_nnz<BLOCK, COEFF, BASIS>(                        \
       OpSum const &, BASIS const &, BASIS const &);
-#define INSTANTIATE_COO_FILL(BLOCK, BASIS, IDX, COEFF)                         \
+#define XDIAG_INSTANTIATE_COO_FILL(BLOCK, BASIS, IDX, COEFF)                         \
   template void                                                                \
   xdiag::matrices::coo_matrix_fill<BLOCK, COEFF, BASIS, IDX>(                  \
       OpSum const &, BASIS const &, BASIS const &, IDX *, IDX *, COEFF *,      \
       IDX);
 #endif
 
-#define INSTANTIATE_CSR_NNZ(BLOCK, BASIS, COEFF)                               \
+#define XDIAG_INSTANTIATE_CSR_NNZ(BLOCK, BASIS, COEFF)                               \
   template std::vector<int64_t>                                                \
   xdiag::matrices::csr_matrix_nnz<BLOCK, COEFF, BASIS>(                        \
       OpSum const &, BASIS const &, BASIS const &, bool);
-#define INSTANTIATE_CSR_FILL(BLOCK, BASIS, IDX, COEFF)                         \
+#define XDIAG_INSTANTIATE_CSR_FILL(BLOCK, BASIS, IDX, COEFF)                         \
   template void                                                                \
   xdiag::matrices::csr_matrix_fill<BLOCK, COEFF, BASIS, IDX>(                  \
       OpSum const &, BASIS const &, BASIS const &, std::vector<int64_t> &,     \
       IDX *, COEFF *, IDX, bool);
 
-#define INSTANTIATE_KERNELS(BLOCK, BASIS)                                      \
-  INSTANTIATE_APPLY(BLOCK, BASIS, vec)                                         \
-  INSTANTIATE_APPLY(BLOCK, BASIS, cx_vec)                                      \
-  INSTANTIATE_APPLY(BLOCK, BASIS, mat)                                         \
-  INSTANTIATE_APPLY(BLOCK, BASIS, cx_mat)                                      \
-  INSTANTIATE_MATRIX(BLOCK, BASIS, double)                                     \
-  INSTANTIATE_MATRIX(BLOCK, BASIS, complex)                                    \
-  INSTANTIATE_COO_NNZ(BLOCK, BASIS, double)                                    \
-  INSTANTIATE_COO_NNZ(BLOCK, BASIS, complex)                                   \
-  INSTANTIATE_COO_FILL(BLOCK, BASIS, int32_t, double)                          \
-  INSTANTIATE_COO_FILL(BLOCK, BASIS, int32_t, complex)                         \
-  INSTANTIATE_COO_FILL(BLOCK, BASIS, int64_t, double)                          \
-  INSTANTIATE_COO_FILL(BLOCK, BASIS, int64_t, complex)                         \
-  INSTANTIATE_CSR_NNZ(BLOCK, BASIS, double)                                    \
-  INSTANTIATE_CSR_NNZ(BLOCK, BASIS, complex)                                   \
-  INSTANTIATE_CSR_FILL(BLOCK, BASIS, int32_t, double)                          \
-  INSTANTIATE_CSR_FILL(BLOCK, BASIS, int32_t, complex)                         \
-  INSTANTIATE_CSR_FILL(BLOCK, BASIS, int64_t, double)                          \
-  INSTANTIATE_CSR_FILL(BLOCK, BASIS, int64_t, complex)
+#define XDIAG_INSTANTIATE_KERNELS(BLOCK, BASIS)                                      \
+  XDIAG_INSTANTIATE_APPLY(BLOCK, BASIS, vec)                                         \
+  XDIAG_INSTANTIATE_APPLY(BLOCK, BASIS, cx_vec)                                      \
+  XDIAG_INSTANTIATE_APPLY(BLOCK, BASIS, mat)                                         \
+  XDIAG_INSTANTIATE_APPLY(BLOCK, BASIS, cx_mat)                                      \
+  XDIAG_INSTANTIATE_MATRIX(BLOCK, BASIS, double)                                     \
+  XDIAG_INSTANTIATE_MATRIX(BLOCK, BASIS, complex)                                    \
+  XDIAG_INSTANTIATE_COO_NNZ(BLOCK, BASIS, double)                                    \
+  XDIAG_INSTANTIATE_COO_NNZ(BLOCK, BASIS, complex)                                   \
+  XDIAG_INSTANTIATE_COO_FILL(BLOCK, BASIS, int32_t, double)                          \
+  XDIAG_INSTANTIATE_COO_FILL(BLOCK, BASIS, int32_t, complex)                         \
+  XDIAG_INSTANTIATE_COO_FILL(BLOCK, BASIS, int64_t, double)                          \
+  XDIAG_INSTANTIATE_COO_FILL(BLOCK, BASIS, int64_t, complex)                         \
+  XDIAG_INSTANTIATE_CSR_NNZ(BLOCK, BASIS, double)                                    \
+  XDIAG_INSTANTIATE_CSR_NNZ(BLOCK, BASIS, complex)                                   \
+  XDIAG_INSTANTIATE_CSR_FILL(BLOCK, BASIS, int32_t, double)                          \
+  XDIAG_INSTANTIATE_CSR_FILL(BLOCK, BASIS, int32_t, complex)                         \
+  XDIAG_INSTANTIATE_CSR_FILL(BLOCK, BASIS, int64_t, double)                          \
+  XDIAG_INSTANTIATE_CSR_FILL(BLOCK, BASIS, int64_t, complex)
 
 // Boson bases share the same BitArray<1..8> / BitArrayLong<1..8> backends for a
 // given (basis class, enumeration), so instantiate all eight at once.
-#define INSTANTIATE_KERNELS_BITARRAY(BLOCK, BASIS, ENUM)                       \
-  INSTANTIATE_KERNELS(BLOCK, BASIS<ENUM<BitArray1>>)                           \
-  INSTANTIATE_KERNELS(BLOCK, BASIS<ENUM<BitArray2>>)                           \
-  INSTANTIATE_KERNELS(BLOCK, BASIS<ENUM<BitArray3>>)                           \
-  INSTANTIATE_KERNELS(BLOCK, BASIS<ENUM<BitArray4>>)                           \
-  INSTANTIATE_KERNELS(BLOCK, BASIS<ENUM<BitArray5>>)                           \
-  INSTANTIATE_KERNELS(BLOCK, BASIS<ENUM<BitArray6>>)                           \
-  INSTANTIATE_KERNELS(BLOCK, BASIS<ENUM<BitArray7>>)                           \
-  INSTANTIATE_KERNELS(BLOCK, BASIS<ENUM<BitArray8>>)
+#define XDIAG_INSTANTIATE_KERNELS_BITARRAY(BLOCK, BASIS, ENUM)                       \
+  XDIAG_INSTANTIATE_KERNELS(BLOCK, BASIS<ENUM<BitArray1>>)                           \
+  XDIAG_INSTANTIATE_KERNELS(BLOCK, BASIS<ENUM<BitArray2>>)                           \
+  XDIAG_INSTANTIATE_KERNELS(BLOCK, BASIS<ENUM<BitArray3>>)                           \
+  XDIAG_INSTANTIATE_KERNELS(BLOCK, BASIS<ENUM<BitArray4>>)                           \
+  XDIAG_INSTANTIATE_KERNELS(BLOCK, BASIS<ENUM<BitArray5>>)                           \
+  XDIAG_INSTANTIATE_KERNELS(BLOCK, BASIS<ENUM<BitArray6>>)                           \
+  XDIAG_INSTANTIATE_KERNELS(BLOCK, BASIS<ENUM<BitArray7>>)                           \
+  XDIAG_INSTANTIATE_KERNELS(BLOCK, BASIS<ENUM<BitArray8>>)
 
-#define INSTANTIATE_KERNELS_BITARRAY_LONG(BLOCK, BASIS, ENUM)                  \
-  INSTANTIATE_KERNELS(BLOCK, BASIS<ENUM<BitArrayLong1>>)                       \
-  INSTANTIATE_KERNELS(BLOCK, BASIS<ENUM<BitArrayLong2>>)                       \
-  INSTANTIATE_KERNELS(BLOCK, BASIS<ENUM<BitArrayLong3>>)                       \
-  INSTANTIATE_KERNELS(BLOCK, BASIS<ENUM<BitArrayLong4>>)                       \
-  INSTANTIATE_KERNELS(BLOCK, BASIS<ENUM<BitArrayLong5>>)                       \
-  INSTANTIATE_KERNELS(BLOCK, BASIS<ENUM<BitArrayLong6>>)                       \
-  INSTANTIATE_KERNELS(BLOCK, BASIS<ENUM<BitArrayLong7>>)                       \
-  INSTANTIATE_KERNELS(BLOCK, BASIS<ENUM<BitArrayLong8>>)
+#define XDIAG_INSTANTIATE_KERNELS_BITARRAY_LONG(BLOCK, BASIS, ENUM)                  \
+  XDIAG_INSTANTIATE_KERNELS(BLOCK, BASIS<ENUM<BitArrayLong1>>)                       \
+  XDIAG_INSTANTIATE_KERNELS(BLOCK, BASIS<ENUM<BitArrayLong2>>)                       \
+  XDIAG_INSTANTIATE_KERNELS(BLOCK, BASIS<ENUM<BitArrayLong3>>)                       \
+  XDIAG_INSTANTIATE_KERNELS(BLOCK, BASIS<ENUM<BitArrayLong4>>)                       \
+  XDIAG_INSTANTIATE_KERNELS(BLOCK, BASIS<ENUM<BitArrayLong5>>)                       \
+  XDIAG_INSTANTIATE_KERNELS(BLOCK, BASIS<ENUM<BitArrayLong6>>)                       \
+  XDIAG_INSTANTIATE_KERNELS(BLOCK, BASIS<ENUM<BitArrayLong7>>)                       \
+  XDIAG_INSTANTIATE_KERNELS(BLOCK, BASIS<ENUM<BitArrayLong8>>)

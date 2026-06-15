@@ -679,12 +679,11 @@ OpSum tj_alltoall_complex(int nsites) {
   OpSum ops;
   for (int s1 = 0; s1 < nsites; ++s1)
     for (int s2 = s1 + 1; s2 < nsites; ++s2) {
-      std::stringstream ss;
-      ss << "T" << s1 << "_" << s2;
-      std::string name = ss.str();
+      // Complex hopping stays hermitian when split into the symmetric Hop (real
+      // part) and the antisymmetric HopAsym (imaginary part).
       complex value = complex(distribution(generator), distribution(generator));
-      ops += name * Op("Hop", {s1, s2});
-      ops[name] = value;
+      ops += std::real(value) * Op("Hop", {s1, s2});
+      ops += complex(0.0, std::imag(value)) * Op("HopAsym", {s1, s2});
     }
   for (int s1 = 0; s1 < nsites; ++s1)
     for (int s2 = s1 + 1; s2 < nsites; ++s2) {

@@ -35,81 +35,81 @@ using namespace xdiag::combinatorics;
 using namespace xdiag::matrices;
 
 // BEGIN_INSTANTIATION_GROUP(fermion_onthefly_subsets_uint32_t)
-INSTANTIATE_KERNELS(Fermion, BasisOnTheFly<Subsets<uint32_t>>)
+XDIAG_INSTANTIATE_KERNELS(Fermion, BasisOnTheFly<Subsets<uint32_t>>)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(fermion_onthefly_subsets_uint64_t)
-INSTANTIATE_KERNELS(Fermion, BasisOnTheFly<Subsets<uint64_t>>)
+XDIAG_INSTANTIATE_KERNELS(Fermion, BasisOnTheFly<Subsets<uint64_t>>)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(fermion_onthefly_combinations_uint32_t)
-INSTANTIATE_KERNELS(Fermion, BasisOnTheFly<Combinations<uint32_t>>)
+XDIAG_INSTANTIATE_KERNELS(Fermion, BasisOnTheFly<Combinations<uint32_t>>)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(fermion_onthefly_combinations_uint64_t)
-INSTANTIATE_KERNELS(Fermion, BasisOnTheFly<Combinations<uint64_t>>)
+XDIAG_INSTANTIATE_KERNELS(Fermion, BasisOnTheFly<Combinations<uint64_t>>)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(fermion_onthefly_lintable_uint32_t)
-INSTANTIATE_KERNELS(Fermion, BasisOnTheFly<LinTable<uint32_t>>)
+XDIAG_INSTANTIATE_KERNELS(Fermion, BasisOnTheFly<LinTable<uint32_t>>)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(fermion_onthefly_lintable_uint64_t)
-INSTANTIATE_KERNELS(Fermion, BasisOnTheFly<LinTable<uint64_t>>)
+XDIAG_INSTANTIATE_KERNELS(Fermion, BasisOnTheFly<LinTable<uint64_t>>)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(fermion_onthefly_combinations_bitset_dynamic)
-INSTANTIATE_KERNELS(Fermion, BasisOnTheFly<Combinations<BitsetDynamic>>)
+XDIAG_INSTANTIATE_KERNELS(Fermion, BasisOnTheFly<Combinations<BitsetDynamic>>)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(fermion_onthefly_combinations_bitset_static_2)
-INSTANTIATE_KERNELS(Fermion, BasisOnTheFly<Combinations<BitsetStatic2>>)
+XDIAG_INSTANTIATE_KERNELS(Fermion, BasisOnTheFly<Combinations<BitsetStatic2>>)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(fermion_onthefly_combinations_bitset_static_4)
-INSTANTIATE_KERNELS(Fermion, BasisOnTheFly<Combinations<BitsetStatic4>>)
+XDIAG_INSTANTIATE_KERNELS(Fermion, BasisOnTheFly<Combinations<BitsetStatic4>>)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(fermion_onthefly_combinations_bitset_static_8)
-INSTANTIATE_KERNELS(Fermion, BasisOnTheFly<Combinations<BitsetStatic8>>)
+XDIAG_INSTANTIATE_KERNELS(Fermion, BasisOnTheFly<Combinations<BitsetStatic8>>)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(fermion_symmetric_subsets_uint32_t)
-INSTANTIATE_KERNELS(Fermion, BasisSymmetric<Subsets<uint32_t>>)
+XDIAG_INSTANTIATE_KERNELS(Fermion, BasisSymmetric<Subsets<uint32_t>>)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(fermion_symmetric_subsets_uint64_t)
-INSTANTIATE_KERNELS(Fermion, BasisSymmetric<Subsets<uint64_t>>)
+XDIAG_INSTANTIATE_KERNELS(Fermion, BasisSymmetric<Subsets<uint64_t>>)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(fermion_symmetric_combinations_uint32_t)
-INSTANTIATE_KERNELS(Fermion, BasisSymmetric<Combinations<uint32_t>>)
+XDIAG_INSTANTIATE_KERNELS(Fermion, BasisSymmetric<Combinations<uint32_t>>)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(fermion_symmetric_combinations_uint64_t)
-INSTANTIATE_KERNELS(Fermion, BasisSymmetric<Combinations<uint64_t>>)
+XDIAG_INSTANTIATE_KERNELS(Fermion, BasisSymmetric<Combinations<uint64_t>>)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(fermion_symmetric_lintable_uint32_t)
-INSTANTIATE_KERNELS(Fermion, BasisSymmetric<LinTable<uint32_t>>)
+XDIAG_INSTANTIATE_KERNELS(Fermion, BasisSymmetric<LinTable<uint32_t>>)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(fermion_symmetric_lintable_uint64_t)
-INSTANTIATE_KERNELS(Fermion, BasisSymmetric<LinTable<uint64_t>>)
+XDIAG_INSTANTIATE_KERNELS(Fermion, BasisSymmetric<LinTable<uint64_t>>)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(fermion_symmetric_combinations_bitset_dynamic)
-INSTANTIATE_KERNELS(Fermion, BasisSymmetric<Combinations<BitsetDynamic>>)
+XDIAG_INSTANTIATE_KERNELS(Fermion, BasisSymmetric<Combinations<BitsetDynamic>>)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(fermion_symmetric_combinations_bitset_static_2)
-INSTANTIATE_KERNELS(Fermion, BasisSymmetric<Combinations<BitsetStatic2>>)
+XDIAG_INSTANTIATE_KERNELS(Fermion, BasisSymmetric<Combinations<BitsetStatic2>>)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(fermion_symmetric_combinations_bitset_static_4)
-INSTANTIATE_KERNELS(Fermion, BasisSymmetric<Combinations<BitsetStatic4>>)
+XDIAG_INSTANTIATE_KERNELS(Fermion, BasisSymmetric<Combinations<BitsetStatic4>>)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(fermion_symmetric_combinations_bitset_static_8)
-INSTANTIATE_KERNELS(Fermion, BasisSymmetric<Combinations<BitsetStatic8>>)
+XDIAG_INSTANTIATE_KERNELS(Fermion, BasisSymmetric<Combinations<BitsetStatic8>>)
 // END_INSTANTIATION_GROUP

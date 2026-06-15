@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-#include "fermionic_expansion_rules.hpp"
+#include "electron_expansion_rules.hpp"
 
 #include <xdiag/math/complex.hpp>
 #include <xdiag/operators/op.hpp>
@@ -10,7 +10,7 @@
 
 namespace xdiag::algebra {
 
-std::vector<OpRule> fermionic_expansion_rules() {
+std::vector<OpRule> electron_expansion_rules() {
   std::vector<OpRule> rules;
 
   // Hopup{i,j} -> -Cdagup{i}*Cup{j} - Cdagup{j}*Cup{i}
@@ -49,6 +49,45 @@ std::vector<OpRule> fermionic_expansion_rules() {
     r += -1.0 * (Op("Cdagup", j) * Op("Cup", i));
     r += -1.0 * (Op("Cdagdn", i) * Op("Cdn", j));
     r += -1.0 * (Op("Cdagdn", j) * Op("Cdn", i));
+    return r;
+  });
+
+  // HopupAsym{i,j} -> -Cdagup{i}*Cup{j} + Cdagup{j}*Cup{i}
+  rules.push_back([](Op const &op) -> std::optional<OpSum> {
+    if (op.type() != "HopupAsym") {
+      return std::nullopt;
+    }
+    int64_t i = op[0], j = op[1];
+    OpSum r;
+    r += -1.0 * (Op("Cdagup", i) * Op("Cup", j));
+    r += 1.0 * (Op("Cdagup", j) * Op("Cup", i));
+    return r;
+  });
+
+  // HopdnAsym{i,j} -> -Cdagdn{i}*Cdn{j} + Cdagdn{j}*Cdn{i}
+  rules.push_back([](Op const &op) -> std::optional<OpSum> {
+    if (op.type() != "HopdnAsym") {
+      return std::nullopt;
+    }
+    int64_t i = op[0], j = op[1];
+    OpSum r;
+    r += -1.0 * (Op("Cdagdn", i) * Op("Cdn", j));
+    r += 1.0 * (Op("Cdagdn", j) * Op("Cdn", i));
+    return r;
+  });
+
+  // HopAsym{i,j} -> -Cdagup{i}*Cup{j} + Cdagup{j}*Cup{i}
+  //                 -Cdagdn{i}*Cdn{j} + Cdagdn{j}*Cdn{i}
+  rules.push_back([](Op const &op) -> std::optional<OpSum> {
+    if (op.type() != "HopAsym") {
+      return std::nullopt;
+    }
+    int64_t i = op[0], j = op[1];
+    OpSum r;
+    r += -1.0 * (Op("Cdagup", i) * Op("Cup", j));
+    r += 1.0 * (Op("Cdagup", j) * Op("Cup", i));
+    r += -1.0 * (Op("Cdagdn", i) * Op("Cdn", j));
+    r += 1.0 * (Op("Cdagdn", j) * Op("Cdn", i));
     return r;
   });
 
@@ -171,6 +210,48 @@ std::vector<OpRule> fermionic_expansion_rules() {
     }
     int64_t i = op[0];
     return OpSum(Op("Cdagdn", i) * Op("Cup", i));
+  });
+
+  // SzSz{i,j} -> Sz{i}*Sz{j}  (further expanded by Sz rule above)
+  rules.push_back([](Op const &op) -> std::optional<OpSum> {
+    if (op.type() != "SzSz") {
+      return std::nullopt;
+    }
+    int64_t i = op[0], j = op[1];
+    return OpSum(Op("Sz", i) * Op("Sz", j));
+  });
+
+  // Exchange{i,j} -> 1/2 S+{i}*S-{j} + 1/2 S-{i}*S+{j}
+  rules.push_back([](Op const &op) -> std::optional<OpSum> {
+    if (op.type() != "Exchange") {
+      return std::nullopt;
+    }
+    int64_t i = op[0], j = op[1];
+    OpSum r;
+    r += 0.5 * (Op("S+", i) * Op("S-", j));
+    r += 0.5 * (Op("S-", i) * Op("S+", j));
+    return r;
+  });
+
+  // ExchangeAsym{i,j} -> 1/2 S+{i}*S-{j} - 1/2 S-{i}*S+{j}
+  rules.push_back([](Op const &op) -> std::optional<OpSum> {
+    if (op.type() != "ExchangeAsym") {
+      return std::nullopt;
+    }
+    int64_t i = op[0], j = op[1];
+    OpSum r;
+    r += 0.5 * (Op("S+", i) * Op("S-", j));
+    r -= 0.5 * (Op("S-", i) * Op("S+", j));
+    return r;
+  });
+
+  // SdotS{i,j} -> SzSz{i,j} + Exchange{i,j}  (S_i . S_j; further expanded above)
+  rules.push_back([](Op const &op) -> std::optional<OpSum> {
+    if (op.type() != "SdotS") {
+      return std::nullopt;
+    }
+    int64_t i = op[0], j = op[1];
+    return OpSum(Op("SzSz", {i, j})) + OpSum(Op("Exchange", {i, j}));
   });
 
   // Sx{i} -> 1/2 S+{i} + 1/2 S-{i}  (further expanded by S+/S- rules above)

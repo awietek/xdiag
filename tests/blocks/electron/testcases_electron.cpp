@@ -240,23 +240,17 @@ OpSum freefermion_alltoall_complex_updn(int64_t nsites) {
   for (int64_t s1 = 0; s1 < nsites; ++s1)
     for (int64_t s2 = s1 + 1; s2 < nsites; ++s2) {
 
-      // Hopping on upspins
-      std::stringstream ss_up;
-      ss_up << "TUP" << s1 << "_" << s2;
-      std::string name_up = ss_up.str();
+      // Complex hopping stays hermitian by splitting into the symmetric Hopup
+      // (real part) and the antisymmetric HopupAsym (imaginary part).
       complex value_up =
           complex(distribution(generator), distribution(generator));
-      ops += name_up * Op("Hopup", {s1, s2});
-      ops[name_up] = value_up;
+      ops += std::real(value_up) * Op("Hopup", {s1, s2});
+      ops += complex(0.0, std::imag(value_up)) * Op("HopupAsym", {s1, s2});
 
-      // Hopping on dnspins
-      std::stringstream ss_dn;
-      ss_dn << "TDN" << s1 << "_" << s2;
-      std::string name_dn = ss_dn.str();
       complex value_dn =
           complex(distribution(generator), distribution(generator));
-      ops += name_dn * Op("Hopdn", {s1, s2});
-      ops[name_dn] = value_dn;
+      ops += std::real(value_dn) * Op("Hopdn", {s1, s2});
+      ops += complex(0.0, std::imag(value_dn)) * Op("HopdnAsym", {s1, s2});
     }
   return ops;
 }

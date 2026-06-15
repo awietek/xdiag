@@ -25,7 +25,7 @@ public:
   XDIAG_API Fermion() = default;
 
   // Generic constructor
-  Fermion(int64_t sites, RepresentationSet const &irreps);
+  Fermion(int64_t nsites, RepresentationSet const &irreps);
 
   // Convenience constructors
   XDIAG_API Fermion(int64_t nsites);
@@ -50,7 +50,6 @@ public:
   std::shared_ptr<basis::Basis> const &basis() const;
 
 private:
-  int64_t nsites_ = 0;
   RepresentationSet irreps_;
   std::shared_ptr<basis::Basis> basis_;
 };

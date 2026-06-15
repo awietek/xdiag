@@ -19,9 +19,9 @@ namespace xdiag::algebra {
 // Algebra describes how to bring an OpSum into normal order for a specific
 // physical system. It contains:
 //
-//   elementary_types  — the canonical generators (e.g. {S+, S-, Sz} for spin)
-//   fermionic_types   — subset of elementary_types that anticommute at
-//                       different sites (used to determine swap signs)
+//   fermionic_types   — the Op types that anticommute at different sites
+//                       (used to determine swap signs)
+//   allowed_types     — all valid input Op types (checked before expansion)
 //   expansion_rules   — OpRules that expand compound operators into products
 //                       of elementary ones (applied first, to fixed point)
 //   algebra_rules     — MonomialRules that simplify same-site products and
@@ -35,7 +35,6 @@ struct Algebra {
   std::string name; // human-readable name for errors
   int64_t nsites;   // number of sites 
   int64_t d;        // local Hilbert space dimension per site
-  std::vector<std::string> elementary_types;
   std::set<std::string> fermionic_types;
   std::set<std::string>
       allowed_types; // all valid input types (checked before expansion)
@@ -46,11 +45,13 @@ struct Algebra {
 Algebra implementation_algebra(Boson const &block);
 Algebra implementation_algebra(Spinhalf const &block);
 Algebra implementation_algebra(Fermion const &block);
+Algebra implementation_algebra(Electron const &block);
 Algebra implementation_algebra(Block const &block);
 
 Algebra symmetry_algebra(Boson const &block);
 Algebra symmetry_algebra(Spinhalf const &block);
 Algebra symmetry_algebra(Fermion const &block);
+Algebra symmetry_algebra(Electron const &block);
 Algebra symmetry_algebra(Block const &block);
 
 } // namespace xdiag::algebra

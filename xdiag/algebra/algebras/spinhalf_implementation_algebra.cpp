@@ -37,8 +37,6 @@ Algebra spinhalf_implementation_algebra(int64_t nsites) {
       .name = "spinhalf_implementation_algebra",
       .nsites = nsites,
       .d = 2,
-      .elementary_types = {"Exchange", "ExchangeAsym", "Matrix", "S+", "S-",
-                           "ScalarChirality", "Sz", "SzSz"},
       .fermionic_types = fermionic,
       .allowed_types = {"Exchange", "ExchangeAsym", "Id", "Matrix", "S+", "S-",
                         "ScalarChirality", "SdotS", "Sx", "Sy", "Sz", "SzSz"},

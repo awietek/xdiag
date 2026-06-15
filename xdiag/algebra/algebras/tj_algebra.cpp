@@ -28,7 +28,6 @@ Algebra tj_algebra(int64_t nsites) {
       .name = "tJ",
       .nsites = nsites,
       .d = 3,
-      .elementary_types = {"Cdagup", "Cup", "Cdagdn", "Cdn"},
       .fermionic_types = fermionic,
       .allowed_types = {"Cdagdn", "Cdagup", "Cdn",   "Cup",        "Exchange",
                         "Hop",    "Hopdn",  "Hopup", "Id",         "Ndn",

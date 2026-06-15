@@ -41,41 +41,41 @@ using namespace xdiag::matrices;
 //
 
 // BEGIN_INSTANTIATION_GROUP(boson_onthefly_schaefer_table)
-INSTANTIATE_KERNELS_BITARRAY(Boson, BasisOnTheFly, SchaeferTable)
+XDIAG_INSTANTIATE_KERNELS_BITARRAY(Boson, BasisOnTheFly, SchaeferTable)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(boson_onthefly_bounded_partitions)
-INSTANTIATE_KERNELS_BITARRAY(Boson, BasisOnTheFly, BoundedPartitions)
+XDIAG_INSTANTIATE_KERNELS_BITARRAY(Boson, BasisOnTheFly, BoundedPartitions)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(boson_onthefly_bounded_multisets)
-INSTANTIATE_KERNELS_BITARRAY(Boson, BasisOnTheFly, BoundedMultisets)
+XDIAG_INSTANTIATE_KERNELS_BITARRAY(Boson, BasisOnTheFly, BoundedMultisets)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(boson_symmetric_schaefer_table)
-INSTANTIATE_KERNELS_BITARRAY(Boson, BasisSymmetric, SchaeferTable)
+XDIAG_INSTANTIATE_KERNELS_BITARRAY(Boson, BasisSymmetric, SchaeferTable)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(boson_symmetric_bounded_partitions)
-INSTANTIATE_KERNELS_BITARRAY(Boson, BasisSymmetric, BoundedPartitions)
+XDIAG_INSTANTIATE_KERNELS_BITARRAY(Boson, BasisSymmetric, BoundedPartitions)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(boson_symmetric_bounded_multisets)
-INSTANTIATE_KERNELS_BITARRAY(Boson, BasisSymmetric, BoundedMultisets)
+XDIAG_INSTANTIATE_KERNELS_BITARRAY(Boson, BasisSymmetric, BoundedMultisets)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(boson_onthefly_bounded_partitions_long)
-INSTANTIATE_KERNELS_BITARRAY_LONG(Boson, BasisOnTheFly, BoundedPartitions)
+XDIAG_INSTANTIATE_KERNELS_BITARRAY_LONG(Boson, BasisOnTheFly, BoundedPartitions)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(boson_onthefly_bounded_multisets_long)
-INSTANTIATE_KERNELS_BITARRAY_LONG(Boson, BasisOnTheFly, BoundedMultisets)
+XDIAG_INSTANTIATE_KERNELS_BITARRAY_LONG(Boson, BasisOnTheFly, BoundedMultisets)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(boson_symmetric_bounded_partitions_long)
-INSTANTIATE_KERNELS_BITARRAY_LONG(Boson, BasisSymmetric, BoundedPartitions)
+XDIAG_INSTANTIATE_KERNELS_BITARRAY_LONG(Boson, BasisSymmetric, BoundedPartitions)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(boson_symmetric_bounded_multisets_long)
-INSTANTIATE_KERNELS_BITARRAY_LONG(Boson, BasisSymmetric, BoundedMultisets)
+XDIAG_INSTANTIATE_KERNELS_BITARRAY_LONG(Boson, BasisSymmetric, BoundedMultisets)
 // END_INSTANTIATION_GROUP

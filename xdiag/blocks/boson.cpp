@@ -18,6 +18,7 @@
 #include <xdiag/combinatorics/bounded_partitions/bounded_partitions.hpp>
 #include <xdiag/combinatorics/bounded_partitions/schaefer_table.hpp>
 #include <xdiag/math/log2.hpp>
+#include <xdiag/blocks/print_block.hpp>
 #include <xdiag/random/hash.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/format.hpp>
@@ -116,7 +117,7 @@ void dispatch_boson_enumeration(int64_t nlocalbits, int64_t nsites, int64_t d,
 XDIAG_CATCH
 
 Boson::Boson(int64_t nsites, int64_t d, RepresentationSet const &irreps) try
-    : nsites_(nsites), d_(d), irreps_(irreps) {
+    : d_(d), irreps_(irreps) {
   using namespace basis;
 
   if (nsites < 0) {
@@ -182,7 +183,7 @@ Boson::Boson(int64_t nsites, int64_t d, int64_t number,
             RepresentationSet{Representation("number", number), irrep}) {}
 XDIAG_CATCH
 
-int64_t Boson::nsites() const { return nsites_; }
+int64_t Boson::nsites() const { return basis_->nsites(); }
 int64_t Boson::d() const { return d_; }
 int64_t Boson::dim() const { return size(); }
 int64_t Boson::size() const { return basis_->size(); }
@@ -192,7 +193,7 @@ BosonIterator Boson::begin() const { return {this, 0}; }
 BosonIterator Boson::end() const { return {this, size()}; }
 
 bool Boson::operator==(Boson const &rhs) const {
-  return (nsites_ == rhs.nsites_) && (d_ == rhs.d_) && (irreps_ == rhs.irreps_);
+  return (d_ == rhs.d_) && (irreps_ == rhs.irreps_) && (basis_ == rhs.basis_);
 }
 
 bool Boson::operator!=(Boson const &rhs) const { return !operator==(rhs); }
@@ -201,34 +202,7 @@ RepresentationSet Boson::irreps() const { return irreps_; }
 std::shared_ptr<basis::Basis> const &Boson::basis() const { return basis_; }
 
 std::ostream &operator<<(std::ostream &out, Boson const &block) {
-  out << fmt::format(fg(fmt::color::steel_blue) | fmt::emphasis::bold,
-                     "Boson\n");
-  out << "| nsites   : " << block.nsites() << "\n";
-  out << "| d        : " << block.d() << "\n";
-  std::optional<int64_t> number = block.irreps().charge("number");
-  if (number) {
-    out << "| number   : " << *number << "\n";
-  } else {
-    out << "| number   : not conserved\n";
-  }
-  auto group = block.irreps().group("SitePermutation");
-  if (group) {
-    out << "| permutation symmetries used\n";
-    out << fmt::format(
-        "| irrep ID : {0:x}\n",
-        random::hash(Representation(
-            *group, *block.irreps().characters("SitePermutation"))));
-  }
-  std::string basisname(block.basis()->name());
-  basisname = std::regex_replace(basisname, std::regex("xdiag::basis::"), "");
-  basisname =
-      std::regex_replace(basisname, std::regex("xdiag::combinatorics::"), "");
-  basisname =
-      std::regex_replace(basisname, std::regex("unsigned int"), "uint32_t");
-
-  out << fmt::format("| basis    : {}\n", basisname);
-  out << fmt::format("| ID       : {0:x}\n", random::hash(block));
-  out << "| dimension: " << fmt::format_de("{:L}", block.size()) << "\n";
+  print_block(out, block);
   return out;
 }
 std::string to_string(Boson const &block) { return to_string_generic(block); }

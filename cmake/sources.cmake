@@ -42,7 +42,9 @@ set(XDIAG_SOURCES
   matrices/blocks/spinhalf/kernels.cpp
   matrices/blocks/boson/kernels.cpp
   matrices/blocks/fermion/kernels.cpp
+  matrices/blocks/electron/kernels.cpp
   matrices/terms/non_branching_op.cpp
+  matrices/terms/cdagc_string.cpp
   
   bits/bitset.cpp
   bits/bitvector.cpp
@@ -61,13 +63,16 @@ set(XDIAG_SOURCES
   
   basis/basis.cpp
   basis/basis_onthefly.cpp
+  basis/basis_electron.cpp
   basis/basis_sublattice.cpp
   basis/basis_symmetric.cpp
 
   blocks/blocks.cpp
+  blocks/print_block.cpp
   blocks/spinhalf.cpp
   blocks/boson.cpp
   blocks/fermion.cpp
+  blocks/electron.cpp
   
   states/product_state.cpp
   states/random_state.cpp
@@ -122,12 +127,15 @@ set(XDIAG_SOURCES
   algebra/algebras/spinhalf_implementation_algebra.cpp
   algebra/algebras/fermion_implementation_algebra.cpp
   algebra/algebras/fermion_algebra.cpp
+  algebra/algebras/electron_implementation_algebra.cpp
 
   algebra/rewrite/rewrite.cpp
   algebra/rewrite/rules/id_absorption_rule.cpp
   algebra/rewrite/rules/sort_sites_rule.cpp
   algebra/rewrite/rules/spinhalf_same_site_rule.cpp
   algebra/rewrite/rules/electron_same_site_rule.cpp
+  algebra/rewrite/rules/electron_normal_order_rule.cpp
+  algebra/rewrite/rules/electron_protected_expansion_rule.cpp
   algebra/rewrite/rules/fermion_same_site_rule.cpp
   algebra/rewrite/rules/fermion_normal_order_rule.cpp
   algebra/rewrite/rules/tj_same_site_rule.cpp
@@ -136,11 +144,12 @@ set(XDIAG_SOURCES
   algebra/rewrite/rules/spinhalf_sdots_rule.cpp
   algebra/rewrite/rules/convert_to_matrix_rule.cpp
   algebra/rewrite/rules/spin_expansion_rules.cpp
-  algebra/rewrite/rules/fermionic_expansion_rules.cpp
+  algebra/rewrite/rules/electron_expansion_rules.cpp
   algebra/rewrite/rules/fermion_expansion_rules.cpp
   algebra/rewrite/rules/tj_expansion_rules.cpp
   algebra/rewrite/rules/boson_expansion_rules.cpp
   algebra/rewrite/rules/totaln_expansion_rule.cpp
+  algebra/rewrite/rules/hubbardu_expansion_rule.cpp
 
   algebra/utils/combine_matrix_ops.cpp
   algebra/utils/permute_matrix_op.cpp

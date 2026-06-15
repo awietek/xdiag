@@ -42,43 +42,43 @@ using namespace xdiag::matrices;
 //
 
 // BEGIN_INSTANTIATION_GROUP(spinhalf_onthefly_subsets_uint32_t)
-INSTANTIATE_KERNELS(Spinhalf, BasisOnTheFly<Subsets<uint32_t>>)
+XDIAG_INSTANTIATE_KERNELS(Spinhalf, BasisOnTheFly<Subsets<uint32_t>>)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(spinhalf_onthefly_subsets_uint64_t)
-INSTANTIATE_KERNELS(Spinhalf, BasisOnTheFly<Subsets<uint64_t>>)
+XDIAG_INSTANTIATE_KERNELS(Spinhalf, BasisOnTheFly<Subsets<uint64_t>>)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(spinhalf_onthefly_combinations_uint32_t)
-INSTANTIATE_KERNELS(Spinhalf, BasisOnTheFly<Combinations<uint32_t>>)
+XDIAG_INSTANTIATE_KERNELS(Spinhalf, BasisOnTheFly<Combinations<uint32_t>>)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(spinhalf_onthefly_combinations_uint64_t)
-INSTANTIATE_KERNELS(Spinhalf, BasisOnTheFly<Combinations<uint64_t>>)
+XDIAG_INSTANTIATE_KERNELS(Spinhalf, BasisOnTheFly<Combinations<uint64_t>>)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(spinhalf_onthefly_lintable_uint32_t)
-INSTANTIATE_KERNELS(Spinhalf, BasisOnTheFly<LinTable<uint32_t>>)
+XDIAG_INSTANTIATE_KERNELS(Spinhalf, BasisOnTheFly<LinTable<uint32_t>>)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(spinhalf_onthefly_lintable_uint64_t)
-INSTANTIATE_KERNELS(Spinhalf, BasisOnTheFly<LinTable<uint64_t>>)
+XDIAG_INSTANTIATE_KERNELS(Spinhalf, BasisOnTheFly<LinTable<uint64_t>>)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(spinhalf_onthefly_combinations_bitset_dynamic)
-INSTANTIATE_KERNELS(Spinhalf, BasisOnTheFly<Combinations<BitsetDynamic>>)
+XDIAG_INSTANTIATE_KERNELS(Spinhalf, BasisOnTheFly<Combinations<BitsetDynamic>>)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(spinhalf_onthefly_combinations_bitset_static_2)
-INSTANTIATE_KERNELS(Spinhalf, BasisOnTheFly<Combinations<BitsetStatic2>>)
+XDIAG_INSTANTIATE_KERNELS(Spinhalf, BasisOnTheFly<Combinations<BitsetStatic2>>)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(spinhalf_onthefly_combinations_bitset_static_4)
-INSTANTIATE_KERNELS(Spinhalf, BasisOnTheFly<Combinations<BitsetStatic4>>)
+XDIAG_INSTANTIATE_KERNELS(Spinhalf, BasisOnTheFly<Combinations<BitsetStatic4>>)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(spinhalf_onthefly_combinations_bitset_static_8)
-INSTANTIATE_KERNELS(Spinhalf, BasisOnTheFly<Combinations<BitsetStatic8>>)
+XDIAG_INSTANTIATE_KERNELS(Spinhalf, BasisOnTheFly<Combinations<BitsetStatic8>>)
 // END_INSTANTIATION_GROUP
 
 //
@@ -88,43 +88,43 @@ INSTANTIATE_KERNELS(Spinhalf, BasisOnTheFly<Combinations<BitsetStatic8>>)
 //
 
 // BEGIN_INSTANTIATION_GROUP(spinhalf_symmetric_subsets_uint32_t)
-INSTANTIATE_KERNELS(Spinhalf, BasisSymmetric<Subsets<uint32_t>>)
+XDIAG_INSTANTIATE_KERNELS(Spinhalf, BasisSymmetric<Subsets<uint32_t>>)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(spinhalf_symmetric_subsets_uint64_t)
-INSTANTIATE_KERNELS(Spinhalf, BasisSymmetric<Subsets<uint64_t>>)
+XDIAG_INSTANTIATE_KERNELS(Spinhalf, BasisSymmetric<Subsets<uint64_t>>)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(spinhalf_symmetric_combinations_uint32_t)
-INSTANTIATE_KERNELS(Spinhalf, BasisSymmetric<Combinations<uint32_t>>)
+XDIAG_INSTANTIATE_KERNELS(Spinhalf, BasisSymmetric<Combinations<uint32_t>>)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(spinhalf_symmetric_combinations_uint64_t)
-INSTANTIATE_KERNELS(Spinhalf, BasisSymmetric<Combinations<uint64_t>>)
+XDIAG_INSTANTIATE_KERNELS(Spinhalf, BasisSymmetric<Combinations<uint64_t>>)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(spinhalf_symmetric_lintable_uint32_t)
-INSTANTIATE_KERNELS(Spinhalf, BasisSymmetric<LinTable<uint32_t>>)
+XDIAG_INSTANTIATE_KERNELS(Spinhalf, BasisSymmetric<LinTable<uint32_t>>)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(spinhalf_symmetric_lintable_uint64_t)
-INSTANTIATE_KERNELS(Spinhalf, BasisSymmetric<LinTable<uint64_t>>)
+XDIAG_INSTANTIATE_KERNELS(Spinhalf, BasisSymmetric<LinTable<uint64_t>>)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(spinhalf_symmetric_combinations_bitset_dynamic)
-INSTANTIATE_KERNELS(Spinhalf, BasisSymmetric<Combinations<BitsetDynamic>>)
+XDIAG_INSTANTIATE_KERNELS(Spinhalf, BasisSymmetric<Combinations<BitsetDynamic>>)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(spinhalf_symmetric_combinations_bitset_static_2)
-INSTANTIATE_KERNELS(Spinhalf, BasisSymmetric<Combinations<BitsetStatic2>>)
+XDIAG_INSTANTIATE_KERNELS(Spinhalf, BasisSymmetric<Combinations<BitsetStatic2>>)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(spinhalf_symmetric_combinations_bitset_static_4)
-INSTANTIATE_KERNELS(Spinhalf, BasisSymmetric<Combinations<BitsetStatic4>>)
+XDIAG_INSTANTIATE_KERNELS(Spinhalf, BasisSymmetric<Combinations<BitsetStatic4>>)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(spinhalf_symmetric_combinations_bitset_static_8)
-INSTANTIATE_KERNELS(Spinhalf, BasisSymmetric<Combinations<BitsetStatic8>>)
+XDIAG_INSTANTIATE_KERNELS(Spinhalf, BasisSymmetric<Combinations<BitsetStatic8>>)
 // END_INSTANTIATION_GROUP
 
 //
@@ -134,41 +134,41 @@ INSTANTIATE_KERNELS(Spinhalf, BasisSymmetric<Combinations<BitsetStatic8>>)
 //
 
 // BEGIN_INSTANTIATION_GROUP(spinhalf_sublattice_uint32_t_1)
-INSTANTIATE_KERNELS(Spinhalf, BasisSublattice32<1>)
+XDIAG_INSTANTIATE_KERNELS(Spinhalf, BasisSublattice32<1>)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(spinhalf_sublattice_uint32_t_2)
-INSTANTIATE_KERNELS(Spinhalf, BasisSublattice32<2>)
+XDIAG_INSTANTIATE_KERNELS(Spinhalf, BasisSublattice32<2>)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(spinhalf_sublattice_uint32_t_3)
-INSTANTIATE_KERNELS(Spinhalf, BasisSublattice32<3>)
+XDIAG_INSTANTIATE_KERNELS(Spinhalf, BasisSublattice32<3>)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(spinhalf_sublattice_uint32_t_4)
-INSTANTIATE_KERNELS(Spinhalf, BasisSublattice32<4>)
+XDIAG_INSTANTIATE_KERNELS(Spinhalf, BasisSublattice32<4>)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(spinhalf_sublattice_uint32_t_5)
-INSTANTIATE_KERNELS(Spinhalf, BasisSublattice32<5>)
+XDIAG_INSTANTIATE_KERNELS(Spinhalf, BasisSublattice32<5>)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(spinhalf_sublattice_uint64_t_1)
-INSTANTIATE_KERNELS(Spinhalf, BasisSublattice64<1>)
+XDIAG_INSTANTIATE_KERNELS(Spinhalf, BasisSublattice64<1>)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(spinhalf_sublattice_uint64_t_2)
-INSTANTIATE_KERNELS(Spinhalf, BasisSublattice64<2>)
+XDIAG_INSTANTIATE_KERNELS(Spinhalf, BasisSublattice64<2>)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(spinhalf_sublattice_uint64_t_3)
-INSTANTIATE_KERNELS(Spinhalf, BasisSublattice64<3>)
+XDIAG_INSTANTIATE_KERNELS(Spinhalf, BasisSublattice64<3>)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(spinhalf_sublattice_uint64_t_4)
-INSTANTIATE_KERNELS(Spinhalf, BasisSublattice64<4>)
+XDIAG_INSTANTIATE_KERNELS(Spinhalf, BasisSublattice64<4>)
 // END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(spinhalf_sublattice_uint64_t_5)
-INSTANTIATE_KERNELS(Spinhalf, BasisSublattice64<5>)
+XDIAG_INSTANTIATE_KERNELS(Spinhalf, BasisSublattice64<5>)
 // END_INSTANTIATION_GROUP

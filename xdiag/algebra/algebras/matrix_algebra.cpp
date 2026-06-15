@@ -34,7 +34,6 @@ Algebra matrix_algebra(int64_t nsites, int64_t d) {
       .name = "matrix",
       .nsites = nsites,
       .d = d,
-      .elementary_types = {"Matrix"},
       .fermionic_types = fermionic,
       .allowed_types = {"A", "Adag", "Exchange", "ExchangeAsym", "Hop",
                         "HubbardU", "Id", "Matrix", "N", "S+", "S-",

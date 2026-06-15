@@ -31,6 +31,7 @@
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/format.hpp>
 #include <xdiag/utils/logger.hpp>
+#include <xdiag/utils/thread_range.hpp>
 #include <xdiag/utils/timing.hpp>
 
 namespace xdiag::symmetries {
@@ -87,12 +88,8 @@ static void representative_table_initialize(
 #pragma omp parallel
   {
     int num_thread = omp_get_thread_num();
-    int64_t size = enumeration.size();
-    auto begin = enumeration.begin() + num_thread * (size / nthreads);
-    auto end = (num_thread == nthreads - 1)
-                   ? enumeration.end()
-                   : enumeration.begin() + (num_thread + 1) * (size / nthreads);
-    for (auto it = begin; it != end; ++it) {
+    auto range = utils::thread_range(enumeration, num_thread, nthreads);
+    for (auto it = range.begin; it != range.end; ++it) {
       auto state = *it;
       if (isrepresentative(state, action)) {
         double nrm = orbit_norm(state);
@@ -214,13 +211,9 @@ static void representative_table_initialize(
 #pragma omp parallel
   {
     int t = omp_get_thread_num();
-    int64_t size = enumeration.size();
-    int64_t i_begin = (int64_t)t * (size / nthreads);
-    int64_t i_end =
-        (t == nthreads - 1) ? size : (int64_t)(t + 1) * (size / nthreads);
-    auto it = enumeration.begin() + i_begin;
+    auto range = utils::thread_range(enumeration, t, nthreads);
     int64_t local_rep_idx = nrepresentatives_for_thread_offset[t];
-    for (int64_t i = i_begin; i < i_end; ++i, ++it) {
+    for (auto it = range.begin; it != range.end; ++it) {
       bit_t state = *it;
       if (isrepresentative(state, action)) {
         double nrm = orbit_norm(state);

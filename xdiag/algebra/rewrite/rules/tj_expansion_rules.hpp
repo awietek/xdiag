@@ -9,7 +9,7 @@
 
 namespace xdiag::algebra {
 
-// tJ expansion rules: all fermionic_expansion_rules plus the tJ-specific
+// tJ expansion rules: all electron_expansion_rules plus the tJ-specific
 // tJSzSz, tJSdotS, and (in tJ) Exchange expansions in terms of c/c†.
 std::vector<OpRule> tj_expansion_rules();
 

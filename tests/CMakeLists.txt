@@ -52,6 +52,9 @@ set(XDIAG_TEST_SOURCES
   blocks/spinhalf/test_spinhalf.cpp
 
   blocks/electron/testcases_electron.cpp
+  blocks/electron/test_electron_raiselower.cpp
+  blocks/electron/test_electron_apply.cpp
+  blocks/electron/test_electron_matrix.cpp
 
   blocks/tj/testcases_tj.cpp
 

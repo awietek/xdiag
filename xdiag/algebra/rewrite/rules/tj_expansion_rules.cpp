@@ -4,14 +4,14 @@
 
 #include "tj_expansion_rules.hpp"
 
-#include <xdiag/algebra/rewrite/rules/fermionic_expansion_rules.hpp>
+#include <xdiag/algebra/rewrite/rules/electron_expansion_rules.hpp>
 #include <xdiag/operators/op.hpp>
 #include <xdiag/operators/opsum.hpp>
 
 namespace xdiag::algebra {
 
 std::vector<OpRule> tj_expansion_rules() {
-  std::vector<OpRule> rules = fermionic_expansion_rules();
+  std::vector<OpRule> rules = electron_expansion_rules();
 
   // tJSzSz{i,j} -> (Nup{i}-Ndn{i})/2 * (Nup{j}-Ndn{j})/2
   //  = 1/4*(Nup{i}*Nup{j} - Nup{i}*Ndn{j} - Ndn{i}*Nup{j} + Ndn{i}*Ndn{j})

@@ -28,7 +28,6 @@ Algebra spin_algebra(int64_t nsites) {
       .name = "spin-1/2",
       .nsites = nsites,
       .d = 2,
-      .elementary_types = {"S+", "S-", "Sz"},
       .fermionic_types = fermionic,
       .allowed_types = {"Exchange", "ExchangeAsym", "Id", "S+", "S-",
                         "ScalarChirality", "SdotS", "Sx", "Sy", "Sz", "SzSz"},
