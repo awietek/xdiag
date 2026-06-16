@@ -12,6 +12,7 @@
 #include <tests/blocks/spinhalf/testcases_spinhalf.hpp>
 #include <tests/blocks/tj/testcases_tj.hpp>
 #include <tests/catch.hpp>
+#include <tests/is_approx_hermitian.hpp>
 
 #include <xdiag/blocks/blocks.hpp>
 #include <xdiag/blocks/electron.hpp>
@@ -44,7 +45,7 @@ static void test_onsite(std::string op1, std::string op12) {
 static void test_electron_np_no_np_matrix(int nsites, OpSum ops) try {
   auto block_full = Electron(nsites);
   auto H_full = matrixC(ops, block_full, block_full);
-  REQUIRE(H_full.is_hermitian(1e-12));
+  REQUIRE(testcases::is_approx_hermitian(H_full, 1e-12));
   arma::Col<double> eigs_full;
   arma::eig_sym(eigs_full, H_full);
 
@@ -53,7 +54,7 @@ static void test_electron_np_no_np_matrix(int nsites, OpSum ops) try {
     for (int ndn = 0; ndn <= nsites; ++ndn) {
       auto block = Electron(nsites, nup, ndn);
       auto H = matrixC(ops, block, block);
-      REQUIRE(H.is_hermitian(1e-12));
+      REQUIRE(testcases::is_approx_hermitian(H, 1e-12));
       arma::Col<double> eigs;
       arma::eig_sym(eigs, H);
       for (auto eig : eigs) {
@@ -84,7 +85,7 @@ TEST_CASE("electron_matrix", "[electron]") try {
     ops["T"] = t;
     ops["U"] = U;
     auto H1 = matrix(ops, block, block);
-    REQUIRE(H1.is_hermitian(1e-12));
+    REQUIRE(testcases::is_approx_hermitian(H1, 1e-12));
 
     double tp = t, tm = -t, UU = U, U2 = 2 * U;
     arma::Mat<double> H1_correct = {
@@ -151,7 +152,7 @@ TEST_CASE("electron_matrix", "[electron]") try {
       ops["U"] = U;
       double e0_exact = 0.5 * (U - std::sqrt(U * U + 16));
       auto H = matrix(ops, block2, block2);
-      REQUIRE(H.is_hermitian(1e-8));
+      REQUIRE(testcases::is_approx_hermitian(H, 1e-8));
       arma::Col<double> eigs;
       arma::eig_sym(eigs, H);
       REQUIRE(isapprox(e0_exact, eigs(0)));
@@ -185,11 +186,11 @@ TEST_CASE("electron_matrix", "[electron]") try {
         }
         auto block = Electron(nsites, nup, ndn);
         auto Hr = matrix(ops, block, block);
-        REQUIRE(Hr.is_hermitian(1e-8));
+        REQUIRE(testcases::is_approx_hermitian(Hr, 1e-8));
         arma::vec eigsr;
         arma::eig_sym(eigsr, Hr);
         auto Hc = matrixC(ops, block, block);
-        REQUIRE(Hc.is_hermitian(1e-8));
+        REQUIRE(testcases::is_approx_hermitian(Hc, 1e-8));
         arma::vec eigsc;
         arma::eig_sym(eigsc, Hc);
         REQUIRE(isapprox(eigsr, eigsc));
@@ -239,7 +240,7 @@ TEST_CASE("electron_matrix", "[electron]") try {
         }
         auto block = Electron(nsites, nup, ndn);
         auto H = matrixC(ops, block, block);
-        REQUIRE(H.is_hermitian(1e-8));
+        REQUIRE(testcases::is_approx_hermitian(H, 1e-8));
         arma::vec eigs;
         arma::eig_sym(eigs, H);
         REQUIRE(isapprox(e0_exact, eigs(0)));
@@ -261,8 +262,8 @@ TEST_CASE("electron_matrix", "[electron]") try {
     ops_U["U"] = 999999; // gap out doubly occupied sites
     auto H_spinhalf = matrix(ops, block_spinhalf, block_spinhalf);
     auto H_electron = matrix(ops_U, block_electron, block_electron);
-    REQUIRE(H_spinhalf.is_hermitian(1e-8));
-    REQUIRE(H_electron.is_hermitian(1e-8));
+    REQUIRE(testcases::is_approx_hermitian(H_spinhalf, 1e-8));
+    REQUIRE(testcases::is_approx_hermitian(H_electron, 1e-8));
 
     arma::vec eigs_spinhalf, eigs_electron;
     arma::eig_sym(eigs_spinhalf, H_spinhalf);
@@ -282,7 +283,7 @@ TEST_CASE("electron_matrix", "[electron]") try {
       for (int ndn = 0; ndn <= nsites; ++ndn) {
         auto block = Electron(nsites, nup, ndn);
         auto H = matrix(ops, block, block);
-        REQUIRE(H.is_hermitian(1e-8));
+        REQUIRE(testcases::is_approx_hermitian(H, 1e-8));
         arma::vec eigs;
         arma::eig_sym(eigs, H);
         for (auto eig : eigs) {
@@ -299,7 +300,7 @@ TEST_CASE("electron_matrix", "[electron]") try {
       for (int ndn = 0; ndn <= nsites; ++ndn) {
         auto block = Electron(nsites, nup, ndn);
         auto H = matrix(opsU, block, block);
-        REQUIRE(H.is_hermitian(1e-8));
+        REQUIRE(testcases::is_approx_hermitian(H, 1e-8));
         arma::vec eigs;
         arma::eig_sym(eigs, H);
         for (auto eig : eigs) {
@@ -319,7 +320,7 @@ TEST_CASE("electron_matrix", "[electron]") try {
       for (int ndn = 0; ndn <= N - nup; ++ndn) {
         auto block = Electron(N, nup, ndn);
         auto H = matrixC(ops, block, block);
-        REQUIRE(H.is_hermitian(1e-8));
+        REQUIRE(testcases::is_approx_hermitian(H, 1e-8));
       }
     }
   }

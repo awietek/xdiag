@@ -14,12 +14,12 @@ namespace xdiag::matrices::electron {
 // HubbardU = U * sum_i n^up_i n^dn_i. Site-free: the number of doubly occupied
 // sites of a product state (ups, dns) is popcount(ups & dns), so the diagonal
 // entry is U times that count.
-template <typename coeff_t, class enumeration_t, class fill_f>
+template <typename coeff_t, class basis_t, class fill_f>
 void term_hubbardu(Coeff const &c,
-                   basis::BasisElectron<enumeration_t> const &basis_in,
-                   basis::BasisElectron<enumeration_t> const &basis_out,
+                   basis_t const &basis_in,
+                   basis_t const &basis_out,
                    fill_f fill) try {
-  using bit_t = typename enumeration_t::bit_t;
+  using bit_t = typename basis_t::bit_t;
   coeff_t U = c.scalar().as<coeff_t>();
   term_diag<coeff_t>(
       basis_in, basis_out,

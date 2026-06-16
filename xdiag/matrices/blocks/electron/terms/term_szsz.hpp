@@ -15,12 +15,12 @@
 namespace xdiag::matrices::electron {
 
 // SzSz{i,j} = Sz_i Sz_j with Sz_s = (n^up_s - n^dn_s) / 2.
-template <typename coeff_t, class enumeration_t, class fill_f>
+template <typename coeff_t, class basis_t, class fill_f>
 void term_szsz(Coeff const &c, Op const &op,
-               basis::BasisElectron<enumeration_t> const &basis_in,
-               basis::BasisElectron<enumeration_t> const &basis_out,
+               basis_t const &basis_in,
+               basis_t const &basis_out,
                fill_f fill) try {
-  using bit_t = typename enumeration_t::bit_t;
+  using bit_t = typename basis_t::bit_t;
   coeff_t J = c.scalar().as<coeff_t>();
   int64_t i = op[0], j = op[1];
   term_diag<coeff_t>(

@@ -7,6 +7,7 @@
 #include <regex>
 
 #include <xdiag/basis/basis_electron.hpp>
+#include <xdiag/basis/basis_electron_symmetric.hpp>
 #include <xdiag/bits/bitset.hpp>
 #include <xdiag/combinatorics/combinations/combinations.hpp>
 #include <xdiag/combinatorics/combinations/lin_table.hpp>
@@ -76,16 +77,20 @@ Electron::Electron(int64_t nsites, RepresentationSet const &irreps) try
   }
 
   std::optional<PermutationGroup> group = irreps.group("SitePermutation");
-  if (group) {
-    XDIAG_THROW("Electron block with permutation symmetry is not yet "
-                "implemented (BasisElectronSymmetric)");
-  }
+  std::optional<Vector> characters = irreps.characters("SitePermutation");
 
-  // No permutation symmetry -> BasisElectron
-  dispatch_enumeration(nsites, nup, ndn, [&](auto &&enum_up, auto &&enum_dn) {
-    using enum_t = std::decay_t<decltype(enum_up)>;
-    basis_ = std::make_shared<BasisElectron<enum_t>>(enum_up, enum_dn);
-  });
+  if (group) { // permutation symmetry -> BasisElectronSymmetric
+    dispatch_enumeration(nsites, nup, ndn, [&](auto &&enum_up, auto &&enum_dn) {
+      using enum_t = std::decay_t<decltype(enum_up)>;
+      basis_ = std::make_shared<BasisElectronSymmetric<enum_t>>(
+          enum_up, enum_dn, *group, *characters);
+    });
+  } else { // no permutation symmetry -> BasisElectron
+    dispatch_enumeration(nsites, nup, ndn, [&](auto &&enum_up, auto &&enum_dn) {
+      using enum_t = std::decay_t<decltype(enum_up)>;
+      basis_ = std::make_shared<BasisElectron<enum_t>>(enum_up, enum_dn);
+    });
+  }
 
   check_dimension_reasonable(size());
   check_dimension_works_with_blas_int_size(size());

@@ -8,6 +8,7 @@
 #include <tests/blocks/electron/testcases_electron.hpp>
 #include <tests/blocks/tj/testcases_tj.hpp>
 #include <tests/catch.hpp>
+#include <tests/is_approx_hermitian.hpp>
 
 #include <xdiag/blocks/blocks.hpp>
 #include <xdiag/blocks/electron.hpp>
@@ -52,7 +53,7 @@ TEST_CASE("electron_apply", "[electron]") try {
       for (int ndn = 0; ndn <= nsites; ++ndn) {
         auto block = Electron(nsites, nup, ndn);
         auto H = matrix(ops, block, block);
-        REQUIRE(H.is_hermitian(1e-8));
+        REQUIRE(testcases::is_approx_hermitian(H, 1e-8));
 
         // apply matches dense matrix multiplication (vector and multi-column)
         arma::cx_vec v(block.size(), arma::fill::randn);
@@ -84,7 +85,7 @@ TEST_CASE("electron_apply", "[electron]") try {
       for (int ndn = 0; ndn <= nsites; ++ndn) {
         auto block = Electron(nsites, nup, ndn);
         auto H = matrixC(ops, block, block);
-        REQUIRE(H.is_hermitian(1e-8));
+        REQUIRE(testcases::is_approx_hermitian(H, 1e-8));
 
         arma::cx_vec v(block.size(), arma::fill::randn);
         arma::cx_vec w1 = H * v;
@@ -109,7 +110,7 @@ TEST_CASE("electron_apply", "[electron]") try {
       for (int ndn = 0; ndn <= nsites; ++ndn) {
         auto block = Electron(nsites, nup, ndn);
         auto H = matrix(ops4, block, block);
-        REQUIRE(H.is_hermitian(1e-8));
+        REQUIRE(testcases::is_approx_hermitian(H, 1e-8));
         arma::vec v(block.size(), arma::fill::randn);
         arma::vec w1 = H * v;
         arma::vec w2(block.size(), arma::fill::zeros);
@@ -126,7 +127,7 @@ TEST_CASE("electron_apply", "[electron]") try {
       for (int ndn = 0; ndn <= nsites; ++ndn) {
         auto block = Electron(nsites, nup, ndn);
         auto H = matrix(opsU, block, block);
-        REQUIRE(H.is_hermitian(1e-8));
+        REQUIRE(testcases::is_approx_hermitian(H, 1e-8));
         arma::vec v(block.size(), arma::fill::randn);
         arma::vec w1 = H * v;
         arma::vec w2(block.size(), arma::fill::zeros);

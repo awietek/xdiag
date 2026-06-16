@@ -53,6 +53,9 @@ void term_offdiag_fermionic(
     int num_thread = omp_get_thread_num();
     auto [begin, end, idx_in] =
         utils::thread_range(basis_in, num_thread, omp_get_num_threads());
+#else
+    auto [begin, end, idx_in] = utils::thread_range(basis_in, 0, 1);
+#endif
     for (auto it = begin; it != end; ++it, ++idx_in) {
       bit_t spins_in = *it;
       if (non_zero_term(spins_in)) {
@@ -66,20 +69,7 @@ void term_offdiag_fermionic(
         }
       }
     }
-  }
-#else
-  for (int64_t idx_in = 0; idx_in < basis_in.size(); ++idx_in) {
-    bit_t spins_in = basis_in[idx_in];
-    if (non_zero_term(spins_in)) {
-      auto [spins_out, coeff] = term_action(spins_in);
-      auto [raw_idx_out, sym, norm_out, fermi] =
-          basis_out.representative_data_fermi(spins_out);
-      if (XDIAG_LIKELY(raw_idx_out)) {
-        double inv_norm_in = basis_in.inv_norm(idx_in);
-        coeff_t val = coeff * characters(sym) * norm_out * inv_norm_in;
-        fill(idx_in, raw_idx_out - 1, fermi ? -val : val);
-      }
-    }
+#ifdef _OPENMP
   }
 #endif
 }

@@ -55,6 +55,7 @@ set(XDIAG_TEST_SOURCES
   blocks/electron/test_electron_raiselower.cpp
   blocks/electron/test_electron_apply.cpp
   blocks/electron/test_electron_matrix.cpp
+  blocks/electron/test_electron_symmetric.cpp
 
   blocks/tj/testcases_tj.cpp
 

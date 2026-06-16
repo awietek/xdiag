@@ -8,6 +8,7 @@
 #include <tests/blocks/fermion/testcases_fermion.hpp>
 #include <tests/blocks/random_opsum_matrix.hpp>
 #include <tests/catch.hpp>
+#include <tests/is_approx_hermitian.hpp>
 
 #include <xdiag/blocks/blocks.hpp>
 #include <xdiag/blocks/fermion.hpp>
@@ -172,11 +173,11 @@ TEST_CASE("randomfreefermionsreal", "[fermion]") try {
 
       auto block = Fermion(nsites, number);
       auto Hr = matrix(ops, block);
-      REQUIRE(Hr.is_hermitian(1e-8));
+      REQUIRE(testcases::is_approx_hermitian(Hr, 1e-8));
       arma::vec eigsr;
       arma::eig_sym(eigsr, Hr);
       auto Hc = matrixC(ops, block);
-      REQUIRE(Hc.is_hermitian(1e-8));
+      REQUIRE(testcases::is_approx_hermitian(Hc, 1e-8));
       arma::vec eigsc;
       arma::eig_sym(eigsc, Hc);
       REQUIRE(isapprox(eigsr, eigsc));
@@ -218,7 +219,7 @@ TEST_CASE("randomfreefermionscomplex", "[fermion]") try {
 
       auto block = Fermion(nsites, number);
       auto Hc = matrixC(ops, block);
-      REQUIRE(Hc.is_hermitian(1e-8));
+      REQUIRE(testcases::is_approx_hermitian(Hc, 1e-8));
       arma::vec eigsc;
       arma::eig_sym(eigsc, Hc);
       double e0 = eigsc(0);
@@ -323,7 +324,7 @@ TEST_CASE("fermionsymmetryspectrum", "[fermion]") try {
       for (int number = 0; number <= nsites; ++number) {
         auto block = Fermion(nsites, number);
         arma::cx_mat H = matrixC(ops, block);
-        REQUIRE(H.is_hermitian(1e-8));
+        REQUIRE(testcases::is_approx_hermitian(H, 1e-8));
         arma::vec eigs_full;
         arma::eig_sym(eigs_full, H);
 
@@ -335,7 +336,7 @@ TEST_CASE("fermionsymmetryspectrum", "[fermion]") try {
           dimsum += d;
           if (d > 0) {
             arma::cx_mat Hk = matrixC(ops, blockk);
-            REQUIRE(Hk.is_hermitian(1e-8));
+            REQUIRE(testcases::is_approx_hermitian(Hk, 1e-8));
             arma::vec ek;
             arma::eig_sym(ek, Hk);
             for (double e : ek) {

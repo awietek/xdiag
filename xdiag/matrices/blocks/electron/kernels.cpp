@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include <xdiag/basis/basis_electron.hpp>
+#include <xdiag/basis/basis_electron_symmetric.hpp>
 #include <xdiag/bits/bitset.hpp>
 #include <xdiag/blocks/electron.hpp>
 #include <xdiag/combinatorics/combinations/combinations.hpp>
@@ -59,4 +60,35 @@ XDIAG_INSTANTIATE_KERNELS(Electron, BasisElectron<LinTable<uint64_t>>)
 
 // BEGIN_INSTANTIATION_GROUP(electron_combinations_bitset_dynamic)
 XDIAG_INSTANTIATE_KERNELS(Electron, BasisElectron<Combinations<BitsetDynamic>>)
+// END_INSTANTIATION_GROUP
+
+// BEGIN_INSTANTIATION_GROUP(electron_symmetric_subsets_uint32_t)
+XDIAG_INSTANTIATE_KERNELS(Electron, BasisElectronSymmetric<Subsets<uint32_t>>)
+// END_INSTANTIATION_GROUP
+
+// BEGIN_INSTANTIATION_GROUP(electron_symmetric_subsets_uint64_t)
+XDIAG_INSTANTIATE_KERNELS(Electron, BasisElectronSymmetric<Subsets<uint64_t>>)
+// END_INSTANTIATION_GROUP
+
+// BEGIN_INSTANTIATION_GROUP(electron_symmetric_combinations_uint32_t)
+XDIAG_INSTANTIATE_KERNELS(Electron,
+                          BasisElectronSymmetric<Combinations<uint32_t>>)
+// END_INSTANTIATION_GROUP
+
+// BEGIN_INSTANTIATION_GROUP(electron_symmetric_combinations_uint64_t)
+XDIAG_INSTANTIATE_KERNELS(Electron,
+                          BasisElectronSymmetric<Combinations<uint64_t>>)
+// END_INSTANTIATION_GROUP
+
+// BEGIN_INSTANTIATION_GROUP(electron_symmetric_lintable_uint32_t)
+XDIAG_INSTANTIATE_KERNELS(Electron, BasisElectronSymmetric<LinTable<uint32_t>>)
+// END_INSTANTIATION_GROUP
+
+// BEGIN_INSTANTIATION_GROUP(electron_symmetric_lintable_uint64_t)
+XDIAG_INSTANTIATE_KERNELS(Electron, BasisElectronSymmetric<LinTable<uint64_t>>)
+// END_INSTANTIATION_GROUP
+
+// BEGIN_INSTANTIATION_GROUP(electron_symmetric_combinations_bitset_dynamic)
+XDIAG_INSTANTIATE_KERNELS(Electron,
+                          BasisElectronSymmetric<Combinations<BitsetDynamic>>)
 // END_INSTANTIATION_GROUP

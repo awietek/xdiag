@@ -5,6 +5,7 @@
 #pragma once
 
 #include <xdiag/basis/basis_electron.hpp>
+#include <xdiag/basis/basis_electron_symmetric.hpp>
 #include <xdiag/bits/bitset.hpp>
 #include <xdiag/blocks/electron.hpp>
 #include <xdiag/combinatorics/combinations/combinations.hpp>
@@ -15,22 +16,30 @@
 namespace xdiag::matrices {
 
 // Concrete basis types for Electron. Must mirror the kernel instantiation groups
-// in matrices/blocks/electron/kernels.cpp and the BasisElectron instantiations
-// in basis/basis_electron.cpp. Non-symmetric only (no BasisElectronSymmetric
-// yet).
+// in matrices/blocks/electron/kernels.cpp and the basis instantiations in
+// basis/basis_electron.cpp and basis/basis_electron_symmetric.cpp. The
+// symmetric and non-symmetric types coexist; dispatch_basis_types selects by the
+// runtime basis type.
 template <typename func_t>
 void dispatch_basis(xdiag::Electron const &block_in,
                     xdiag::Electron const &block_out, func_t fn) {
   using namespace basis;
   using namespace combinatorics;
   using namespace bits;
-  dispatch_basis_types<BasisElectron<Subsets<uint32_t>>,          //
-                       BasisElectron<Subsets<uint64_t>>,          //
-                       BasisElectron<Combinations<uint32_t>>,     //
-                       BasisElectron<Combinations<uint64_t>>,     //
-                       BasisElectron<LinTable<uint32_t>>,         //
-                       BasisElectron<LinTable<uint64_t>>,         //
-                       BasisElectron<Combinations<BitsetDynamic>>>(
+  dispatch_basis_types<BasisElectron<Subsets<uint32_t>>,                   //
+                       BasisElectron<Subsets<uint64_t>>,                   //
+                       BasisElectron<Combinations<uint32_t>>,              //
+                       BasisElectron<Combinations<uint64_t>>,              //
+                       BasisElectron<LinTable<uint32_t>>,                  //
+                       BasisElectron<LinTable<uint64_t>>,                  //
+                       BasisElectron<Combinations<BitsetDynamic>>,         //
+                       BasisElectronSymmetric<Subsets<uint32_t>>,          //
+                       BasisElectronSymmetric<Subsets<uint64_t>>,          //
+                       BasisElectronSymmetric<Combinations<uint32_t>>,     //
+                       BasisElectronSymmetric<Combinations<uint64_t>>,     //
+                       BasisElectronSymmetric<LinTable<uint32_t>>,         //
+                       BasisElectronSymmetric<LinTable<uint64_t>>,         //
+                       BasisElectronSymmetric<Combinations<BitsetDynamic>>>(
       *block_in.basis(), *block_out.basis(), fn);
 }
 

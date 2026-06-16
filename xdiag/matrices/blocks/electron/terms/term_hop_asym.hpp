@@ -23,12 +23,12 @@ namespace xdiag::matrices::electron {
 // HopupAsym{s1,s2} = -Cdagup{s1} Cup{s2} + Cdagup{s2} Cup{s1}, acting on the up
 // sector (matching electron_expansion_rules). The fermi sign maps an expansion
 // coefficient -1 to (fermi ? t : -t), as in term_hopup; +1 is its negation.
-template <typename coeff_t, class enumeration_t, class fill_f>
+template <typename coeff_t, class basis_t, class fill_f>
 void term_hopup_asym(Coeff const &c, Op const &op,
-                     basis::BasisElectron<enumeration_t> const &basis_in,
-                     basis::BasisElectron<enumeration_t> const &basis_out,
+                     basis_t const &basis_in,
+                     basis_t const &basis_out,
                      fill_f fill) try {
-  using bit_t = typename enumeration_t::bit_t;
+  using bit_t = typename basis_t::bit_t;
 
   int64_t nsites = basis_in.nsites();
   coeff_t t = c.scalar().as<coeff_t>();
@@ -59,12 +59,12 @@ XDIAG_CATCH
 
 // HopdnAsym{s1,s2} = -Cdagdn{s1} Cdn{s2} + Cdagdn{s2} Cdn{s1}, acting on the dn
 // sector. Even number of dn operators, so the up parity cancels.
-template <typename coeff_t, class enumeration_t, class fill_f>
+template <typename coeff_t, class basis_t, class fill_f>
 void term_hopdn_asym(Coeff const &c, Op const &op,
-                     basis::BasisElectron<enumeration_t> const &basis_in,
-                     basis::BasisElectron<enumeration_t> const &basis_out,
+                     basis_t const &basis_in,
+                     basis_t const &basis_out,
                      fill_f fill) try {
-  using bit_t = typename enumeration_t::bit_t;
+  using bit_t = typename basis_t::bit_t;
 
   int64_t nsites = basis_in.nsites();
   coeff_t t = c.scalar().as<coeff_t>();

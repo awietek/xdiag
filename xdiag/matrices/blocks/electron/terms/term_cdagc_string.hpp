@@ -13,6 +13,7 @@
 #endif
 
 #include <xdiag/basis/basis_electron.hpp>
+#include <xdiag/basis/basis_electron_symmetric.hpp>
 #include <xdiag/bits/popcount.hpp>
 #include <xdiag/matrices/fill_functions.hpp>
 #include <xdiag/matrices/terms/cdagc_string.hpp>
@@ -83,6 +84,9 @@ void term_cdagc_string(Coeff const &c, Monomial const &mono,
     int num_thread = omp_get_thread_num();
     auto [begin_dn, end_dn, idx_dn] =
         utils::thread_range(basis_dn_in, num_thread, omp_get_num_threads());
+#else
+    auto [begin_dn, end_dn, idx_dn] = utils::thread_range(basis_dn_in, 0, 1);
+#endif
     for (auto it = begin_dn; it != end_dn; ++it, ++idx_dn) {
       bit_t dns = *it;
       if (dn_str.non_zero(dns)) {
@@ -93,20 +97,7 @@ void term_cdagc_string(Coeff const &c, Monomial const &mono,
         dn_out[idx_dn] = -1;
       }
     }
-  }
-#else
-  {
-    int64_t idx_dn = 0;
-    for (bit_t dns : basis_dn_in) {
-      if (dn_str.non_zero(dns)) {
-        std::pair<bit_t, bool> a = dn_str.action(dns);
-        dn_out[idx_dn] = basis_dn_out.index(a.first);
-        dn_neg[idx_dn] = a.second ? 1 : 0;
-      } else {
-        dn_out[idx_dn] = -1;
-      }
-      ++idx_dn;
-    }
+#ifdef _OPENMP
   }
 #endif
 
@@ -117,6 +108,9 @@ void term_cdagc_string(Coeff const &c, Monomial const &mono,
     int num_thread = omp_get_thread_num();
     auto [begin_up, end_up, idx_up] =
         utils::thread_range(basis_up_in, num_thread, omp_get_num_threads());
+#else
+    auto [begin_up, end_up, idx_up] = utils::thread_range(basis_up_in, 0, 1);
+#endif
     for (auto it_up = begin_up; it_up != end_up; ++it_up, ++idx_up) {
       bit_t ups = *it_up;
       if (!up_str.non_zero(ups)) {
@@ -137,26 +131,121 @@ void term_cdagc_string(Coeff const &c, Monomial const &mono,
         }
       }
     }
+#ifdef _OPENMP
   }
+#endif
+}
+XDIAG_CATCH
+
+// Symmetric overload. Same split into an up sub-string and a dn sub-string, but
+// the result (ups_mid, dns_mid) is mapped into the symmetric output basis. The
+// up sub-string action, the cross sign (-1)^(q_dn * Nup_in), the output up
+// representative and its up-stabilizer are all evaluated once per input up
+// representative (outer loop, hoisted); the inner dn loop applies the dn
+// sub-string and re-symmetrises the dn within the output up rep's block. The
+// total sign combines the operator signs (up, dn, cross) with the
+// symmetrisation fermi sign (fermi_up XOR fermi_dn).
+template <typename coeff_t, class enumeration_t, class fill_f>
+void term_cdagc_string(
+    Coeff const &c, Monomial const &mono,
+    basis::BasisElectronSymmetric<enumeration_t> const &basis_in,
+    basis::BasisElectronSymmetric<enumeration_t> const &basis_out,
+    fill_f fill) try {
+  using bit_t = typename enumeration_t::bit_t;
+
+  int64_t nsites = basis_in.nsites();
+  coeff_t cf = c.scalar().as<coeff_t>();
+
+  // Split the monomial into its up and dn sub-strings (validating the types).
+  std::vector<Op> up_ops, dn_ops;
+  for (int64_t k = 0; k < mono.size(); ++k) {
+    Op const &op = mono[k];
+    std::string type = op.type();
+    if ((type == "Cdagup") || (type == "Cup")) {
+      up_ops.push_back(op);
+    } else if ((type == "Cdagdn") || (type == "Cdn")) {
+      dn_ops.push_back(op);
+    } else {
+      XDIAG_THROW("electron Cdag/C string: unexpected operator type \"" + type +
+                  "\"; only Cdagup, Cup, Cdagdn, Cdn are allowed");
+    }
+  }
+  CdagCString<bit_t> up_str(nsites, Monomial(up_ops), "Cdagup", "Cup");
+  CdagCString<bit_t> dn_str(nsites, Monomial(dn_ops), "Cdagdn", "Cdn");
+  bool cross_when_odd_nup = (dn_ops.size() & 1);
+
+  auto const &basis_up_in = basis_in.basis_up();
+  auto bloch = basis_out.characters().template as<arma::Col<coeff_t>>();
+
+#ifdef _OPENMP
+#pragma omp parallel
+  {
+    int num_thread = omp_get_thread_num();
+    auto [begin_up, end_up, idx_up_in] =
+        utils::thread_range(basis_up_in, num_thread, omp_get_num_threads());
 #else
-  int64_t idx_up = 0;
-  for (bit_t ups : basis_up_in) {
-    if (up_str.non_zero(ups)) {
-      std::pair<bit_t, bool> a = up_str.action(ups);
-      bool up_total = a.second;
-      if (cross_when_odd_nup && (bits::popcount(ups) & 1)) {
-        up_total = !up_total;
+    auto [begin_up, end_up, idx_up_in] =
+        utils::thread_range(basis_up_in, 0, 1);
+#endif
+    for (auto it_up = begin_up; it_up != end_up; ++it_up, ++idx_up_in) {
+      bit_t ups = *it_up;
+      if (!up_str.non_zero(ups)) {
+        continue;
       }
-      int64_t base_in = idx_up * size_dn_in;
-      int64_t base_out = basis_up_out.index(a.first) * size_dn_out;
-      for (int64_t idx_dn = 0; idx_dn < size_dn_in; ++idx_dn) {
-        if (dn_out[idx_dn] >= 0) {
-          bool neg = up_total ^ (bool)dn_neg[idx_dn];
-          fill(base_in + idx_dn, base_out + dn_out[idx_dn], neg ? -cf : cf);
+      // up sub-string action + cross sign, both hoisted out of the dn loop
+      auto [ups_flip, up_fermi] = up_str.action(ups);
+      if (cross_when_odd_nup && (bits::popcount(ups) & 1)) {
+        up_fermi = !up_fermi;
+      }
+
+      auto [raw, s0, nrm] = basis_out.basis_up().representative_data(ups_flip);
+      (void)nrm;
+      int64_t idx_up_out = raw - 1;
+      int64_t off_in = basis_in.ups_offset(idx_up_in);
+      int64_t off_out = basis_out.ups_offset(idx_up_out);
+      auto dnss_in = basis_in.dns_for_ups_rep(idx_up_in);
+      auto norms_in = basis_in.norms_for_ups_rep(idx_up_in);
+
+      if (basis_out.stab_size(idx_up_out) == 1) {
+        coeff_t prefac = cf * bloch(s0);
+        bool fermi_up = basis_out.fermi_bool_ups(s0, ups_flip);
+        int64_t dn_idx = 0;
+        for (bit_t dns : dnss_in) {
+          if (dn_str.non_zero(dns)) {
+            auto [dns_flip, dn_fermi] = dn_str.action(dns);
+            auto [idx_dns_out, fermi_dn] =
+                basis_out.index_dns_fermi(dns_flip, s0);
+            coeff_t val = prefac / norms_in[dn_idx];
+            bool neg = up_fermi ^ dn_fermi ^ fermi_up ^ fermi_dn;
+            XDIAG_FILL(off_in + dn_idx, off_out + idx_dns_out,
+                       neg ? -val : val);
+          }
+          ++dn_idx;
+        }
+      } else {
+        std::vector<int64_t> syms = basis_out.syms_ups(ups_flip);
+        auto dnss_out = basis_out.dns_for_ups_rep(idx_up_out);
+        auto norms_out = basis_out.norms_for_ups_rep(idx_up_out);
+        int64_t dn_idx = 0;
+        for (bit_t dns : dnss_in) {
+          if (dn_str.non_zero(dns)) {
+            auto [dns_flip, dn_fermi] = dn_str.action(dns);
+            auto [idx_dns_out, fermi_dn, sym] =
+                basis_out.index_dns_fermi_sym(dns_flip, syms, dnss_out);
+            if (idx_dns_out >= 0) {
+              bool fermi_up = basis_out.fermi_bool_ups(sym, ups_flip);
+              coeff_t val = cf * bloch(sym) * norms_out[idx_dns_out] /
+                            norms_in[dn_idx];
+              bool neg = up_fermi ^ dn_fermi ^ fermi_up ^ fermi_dn;
+              XDIAG_FILL(off_in + dn_idx, off_out + idx_dns_out,
+                         neg ? -val : val);
+            }
+          }
+          ++dn_idx;
         }
       }
     }
-    ++idx_up;
+#ifdef _OPENMP
   }
 #endif
 }

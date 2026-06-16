@@ -1,49 +1,44 @@
-// SPDX-FileCopyrightText: 2025 Alexander Wietek <awietek@pks.mpg.de>
+// SPDX-FileCopyrightText: 2026 Alexander Wietek <awietek@pks.mpg.de>
 //
 // SPDX-License-Identifier: Apache-2.0
 
 #pragma once
 
+#include <cstdint>
+#include <string_view>
 #include <vector>
 
-#include <xdiag/combinatorics/combinations.hpp>
-#include <xdiag/combinatorics/lin_table.hpp>
-#include <xdiag/combinatorics/subsets.hpp>
-#include <xdiag/common.hpp>
 #include <xdiag/symmetries/permutation_group.hpp>
+#include <xdiag/utils/type_name.hpp>
 
-namespace xdiag::combinatorics {
+namespace xdiag::symmetries {
 
-template <typename bit_t> class FermiTableSubsets {
+// Precomputed table of fermi signs over a state enumeration and a permutation
+// group: sign(sym, state) == fermi_bool_of_permutation(state, group[sym]).
+//
+// fermi_bool_of_permutation is O(nsites); evaluating it per matrix element in
+// the symmetric apply/matrix kernels would dominate the hot loop. This trades
+// |group| x |enumeration| bits of one-time storage for an O(1) lookup (plus the
+// enumeration's own index(), O(1) for the LinTable enumerations the symmetric
+// blocks use). Templated on the enumeration, like RepresentativeTable.
+template <typename enumeration_tt> class FermiTable {
 public:
-  FermiTableSubsets() = default;
-  FermiTableSubsets(int64_t nsites, PermutationGroup const &group);
+  using enumeration_t = enumeration_tt;
+  using bit_t = typename enumeration_t::bit_t;
+  static constexpr std::string_view type_name =
+      utils::get_type_name<FermiTable<enumeration_t>>();
+
+  FermiTable() = default;
+  FermiTable(enumeration_t const &enumeration, PermutationGroup const &group);
+
   inline bool sign(int64_t sym, bit_t state) const {
-    return table_[(sym << nsites_) | (int64_t)state];
+    return table_[sym * size_ + enumeration_.index(state)];
   }
-  bool operator==(FermiTableSubsets const &rhs) const;
-  bool operator!=(FermiTableSubsets const &rhs) const;
 
 private:
-  int64_t nsites_;
+  enumeration_t enumeration_;
+  int64_t size_ = 0; // number of states in the enumeration
   std::vector<bool> table_;
 };
 
-template <typename bit_t> class FermiTableCombinations {
-public:
-  FermiTableCombinations() = default;
-  FermiTableCombinations(int64_t nsites, int64_t n_par,
-                         PermutationGroup const &group);
-  inline bool sign(int64_t sym, bit_t state) const {
-    return table_[sym * raw_size_ + lin_table_.index(state)];
-  }
-  bool operator==(FermiTableCombinations const &rhs) const;
-  bool operator!=(FermiTableCombinations const &rhs) const;
-
-private:
-  int64_t raw_size_;
-  combinatorics::LinTable<bit_t> lin_table_;
-  std::vector<bool> table_;
-};
-
-} // namespace xdiag::combinatorics
+} // namespace xdiag::symmetries

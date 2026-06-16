@@ -4,8 +4,7 @@
 
 #pragma once
 
-#include <xdiag/symmetries/action/site_permutation.hpp>
-#include <xdiag/symmetries/action/site_permutation_sublattice.hpp>
+#include <xdiag/armadillo.hpp>
 
 namespace xdiag::symmetries {
 

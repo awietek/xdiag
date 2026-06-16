@@ -9,6 +9,8 @@
 
 #include <xdiag/bits/bitarray.hpp>
 #include <xdiag/bits/bitset.hpp>
+#include <xdiag/symmetries/action/site_permutation.hpp>
+#include <xdiag/symmetries/action/site_permutation_sublattice.hpp>
 
 namespace xdiag::symmetries {
 

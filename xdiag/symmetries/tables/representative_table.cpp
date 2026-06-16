@@ -27,7 +27,7 @@
 #include <xdiag/symmetries/action/isrepresentative.hpp>
 #include <xdiag/symmetries/action/norm.hpp>
 #include <xdiag/symmetries/action/norm_fermionic.hpp>
-#include <xdiag/symmetries/operations/fermi_sign.hpp>
+#include <xdiag/symmetries/fermi_sign.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/format.hpp>
 #include <xdiag/utils/logger.hpp>
@@ -319,28 +319,53 @@ template <typename enumeration_t>
 RepresentativeTable<enumeration_t>::RepresentativeTable(
     enumeration_t const &enumeration, PermutationGroup const &group,
     Vector const &characters, bool fermionic) try {
+  using bit_t = typename enumeration_t::bit_t;
   SitePermutation action(group);
-  if (characters.isreal()) {
-    arma::vec chars = characters.as<arma::vec>();
-    if (fermionic) {
-      representative_table_initialize<true>(
-          enumeration, action, chars, representative_, representative_index_,
-          representative_symmetry_, representative_norm_index_,
-          representative_fermi_, norm_);
+
+  // The fermionic path is only compiled for fermi_capable backends (native
+  // integers / Bitset). The BitArray-backed bosonic bases never request it, so
+  // for them we compile only the bosonic path and reject a fermionic request.
+  if constexpr (fermi_capable<bit_t>::value) {
+    if (characters.isreal()) {
+      arma::vec chars = characters.as<arma::vec>();
+      if (fermionic) {
+        representative_table_initialize<true>(
+            enumeration, action, chars, representative_, representative_index_,
+            representative_symmetry_, representative_norm_index_,
+            representative_fermi_, norm_);
+      } else {
+        representative_table_initialize<false>(
+            enumeration, action, chars, representative_, representative_index_,
+            representative_symmetry_, representative_norm_index_,
+            representative_fermi_, norm_);
+      }
     } else {
+      arma::cx_vec chars = characters.as<arma::cx_vec>();
+      if (fermionic) {
+        representative_table_initialize<true>(
+            enumeration, action, chars, representative_, representative_index_,
+            representative_symmetry_, representative_norm_index_,
+            representative_fermi_, norm_);
+      } else {
+        representative_table_initialize<false>(
+            enumeration, action, chars, representative_, representative_index_,
+            representative_symmetry_, representative_norm_index_,
+            representative_fermi_, norm_);
+      }
+    }
+  } else {
+    if (fermionic) {
+      XDIAG_THROW("fermionic representative tables are not supported for this "
+                  "enumeration backend (it is bosonic)");
+    }
+    if (characters.isreal()) {
+      arma::vec chars = characters.as<arma::vec>();
       representative_table_initialize<false>(
           enumeration, action, chars, representative_, representative_index_,
           representative_symmetry_, representative_norm_index_,
           representative_fermi_, norm_);
-    }
-  } else {
-    arma::cx_vec chars = characters.as<arma::cx_vec>();
-    if (fermionic) {
-      representative_table_initialize<true>(
-          enumeration, action, chars, representative_, representative_index_,
-          representative_symmetry_, representative_norm_index_,
-          representative_fermi_, norm_);
     } else {
+      arma::cx_vec chars = characters.as<arma::cx_vec>();
       representative_table_initialize<false>(
           enumeration, action, chars, representative_, representative_index_,
           representative_symmetry_, representative_norm_index_,

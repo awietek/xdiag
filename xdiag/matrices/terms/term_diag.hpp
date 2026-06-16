@@ -34,26 +34,20 @@ void term_diag(basis_t const &basis_in, basis_t const &basis_out,
   } else {
     basis_t const &basis = basis_in;
 
-    // OpenMP parallel implementation
 #ifdef _OPENMP
 #pragma omp parallel
     {
       int num_thread = omp_get_thread_num();
       auto [begin, end, idx] =
           utils::thread_range(basis, num_thread, omp_get_num_threads());
+#else
+      auto [begin, end, idx] = utils::thread_range(basis, 0, 1);
+#endif
       for (auto it = begin; it != end; ++it, ++idx) {
         auto coeff = term_coeff(*it);
         XDIAG_FILL(idx, idx, coeff);
       }
-    }
-
-    // Serial implementation
-#else
-    int64_t idx = 0;
-    for (auto spins : basis) {
-      auto coeff = term_coeff(spins);
-      fill(idx, idx, coeff);
-      ++idx;
+#ifdef _OPENMP
     }
 #endif
   }

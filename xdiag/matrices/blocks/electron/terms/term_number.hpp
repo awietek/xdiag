@@ -15,12 +15,12 @@
 namespace xdiag::matrices::electron {
 
 // Nup{s} = n^up_s
-template <typename coeff_t, class enumeration_t, class fill_f>
+template <typename coeff_t, class basis_t, class fill_f>
 void term_nup(Coeff const &c, Op const &op,
-              basis::BasisElectron<enumeration_t> const &basis_in,
-              basis::BasisElectron<enumeration_t> const &basis_out,
+              basis_t const &basis_in,
+              basis_t const &basis_out,
               fill_f fill) try {
-  using bit_t = typename enumeration_t::bit_t;
+  using bit_t = typename basis_t::bit_t;
   coeff_t mu = c.scalar().as<coeff_t>();
   int64_t s = op[0];
   term_diag<coeff_t>(
@@ -33,12 +33,12 @@ void term_nup(Coeff const &c, Op const &op,
 XDIAG_CATCH
 
 // Ndn{s} = n^dn_s
-template <typename coeff_t, class enumeration_t, class fill_f>
+template <typename coeff_t, class basis_t, class fill_f>
 void term_ndn(Coeff const &c, Op const &op,
-              basis::BasisElectron<enumeration_t> const &basis_in,
-              basis::BasisElectron<enumeration_t> const &basis_out,
+              basis_t const &basis_in,
+              basis_t const &basis_out,
               fill_f fill) try {
-  using bit_t = typename enumeration_t::bit_t;
+  using bit_t = typename basis_t::bit_t;
   coeff_t mu = c.scalar().as<coeff_t>();
   int64_t s = op[0];
   term_diag<coeff_t>(
@@ -51,12 +51,12 @@ void term_ndn(Coeff const &c, Op const &op,
 XDIAG_CATCH
 
 // Nupdn{s} = n^up_s n^dn_s (local double occupancy)
-template <typename coeff_t, class enumeration_t, class fill_f>
+template <typename coeff_t, class basis_t, class fill_f>
 void term_nupdn(Coeff const &c, Op const &op,
-                basis::BasisElectron<enumeration_t> const &basis_in,
-                basis::BasisElectron<enumeration_t> const &basis_out,
+                basis_t const &basis_in,
+                basis_t const &basis_out,
                 fill_f fill) try {
-  using bit_t = typename enumeration_t::bit_t;
+  using bit_t = typename basis_t::bit_t;
   coeff_t u = c.scalar().as<coeff_t>();
   int64_t s = op[0];
   term_diag<coeff_t>(

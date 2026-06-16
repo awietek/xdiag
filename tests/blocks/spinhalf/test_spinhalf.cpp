@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "../../catch.hpp"
+#include <tests/is_approx_hermitian.hpp>
 
 #include <tests/blocks/random_opsum_matrix.hpp>
 
@@ -146,7 +147,7 @@ TEST_CASE("spinhalf_matrix", "[spinhalf]") try {
         auto [ops, exact_eigs] = HBchain_fullspectrum_nup(nsites, nup);
         auto block = Spinhalf(nsites, nup);
         auto H = matrix(ops, block, block);
-        REQUIRE(H.is_hermitian(1e-7));
+        REQUIRE(testcases::is_approx_hermitian(H, 1e-7));
         arma::vec eigs;
         arma::eig_sym(eigs, H);
         REQUIRE(isapprox(eigs, exact_eigs));
@@ -160,7 +161,7 @@ TEST_CASE("spinhalf_matrix", "[spinhalf]") try {
       auto ops = HB_alltoall(nsites);
       auto block_no_sz = Spinhalf(nsites);
       auto H_no_sz = matrix(ops, block_no_sz, block_no_sz);
-      REQUIRE(H_no_sz.is_hermitian(1e-8));
+      REQUIRE(testcases::is_approx_hermitian(H_no_sz, 1e-8));
       arma::vec eigs_no_sz;
       arma::eig_sym(eigs_no_sz, H_no_sz);
 
@@ -168,7 +169,7 @@ TEST_CASE("spinhalf_matrix", "[spinhalf]") try {
       for (int64_t nup = 0; nup <= nsites; ++nup) {
         auto block_sz = Spinhalf(nsites, nup);
         auto H_sz = matrix(ops, block_sz, block_sz);
-        REQUIRE(H_sz.is_hermitian(1e-7));
+        REQUIRE(testcases::is_approx_hermitian(H_sz, 1e-7));
         arma::vec eigs_sz;
         arma::eig_sym(eigs_sz, H_sz);
         for (auto eig : eigs_sz) {
@@ -189,7 +190,7 @@ TEST_CASE("spinhalf_matrix", "[spinhalf]") try {
       auto [ops, e0] = triangular_12_complex(nup, eta);
       auto block = Spinhalf(nsites, nup);
       auto H = matrixC(ops, block, block);
-      REQUIRE(H.is_hermitian(1e-8));
+      REQUIRE(testcases::is_approx_hermitian(H, 1e-8));
       arma::vec eigs;
       arma::eig_sym(eigs, H);
       REQUIRE(isapprox(eigs(0), e0, 1e-12, 1e-8));
@@ -210,7 +211,7 @@ TEST_CASE("spinhalf_matrix", "[spinhalf]") try {
     int64_t nup = 6;
     auto block = Spinhalf(nsites, nup);
     auto H = matrixC(ops, block, block);
-    REQUIRE(H.is_hermitian(1e-8));
+    REQUIRE(testcases::is_approx_hermitian(H, 1e-8));
     arma::vec eigs;
     arma::eig_sym(eigs, H);
     double energy = -6.9456000700824329641;

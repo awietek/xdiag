@@ -1,150 +1,62 @@
-// SPDX-FileCopyrightText: 2025 Alexander Wietek <awietek@pks.mpg.de>
+// SPDX-FileCopyrightText: 2026 Alexander Wietek <awietek@pks.mpg.de>
 //
 // SPDX-License-Identifier: Apache-2.0
 
 #include "fermi_table.hpp"
 
-#include <cassert>
+#include <xdiag/bits/bitset.hpp>
+#include <xdiag/combinatorics/combinations/combinations.hpp>
+#include <xdiag/combinatorics/combinations/lin_table.hpp>
+#include <xdiag/combinatorics/subsets/subsets.hpp>
+#include <xdiag/symmetries/fermi_sign.hpp>
+#include <xdiag/utils/error.hpp>
 
-#include <xdiag/combinatorics/combinations.hpp>
-#include <xdiag/combinatorics/subsets.hpp>
-#include <xdiag/symmetries/operations/fermi_sign.hpp>
+namespace xdiag::symmetries {
 
-#ifdef _OPENMP
-#include <xdiag/parallel/omp/omp_utils.hpp>
-#endif
+template <typename enumeration_t>
+FermiTable<enumeration_t>::FermiTable(enumeration_t const &enumeration,
+                                      PermutationGroup const &group) try
+    : enumeration_(enumeration), size_(enumeration.size()) {
+  if (enumeration.n() != group.nsites()) {
+    XDIAG_THROW("nsites of the enumeration does not match the nsites of the "
+                "PermutationGroup");
+  }
+  int64_t nsyms = group.size();
+  table_.resize(nsyms * size_);
 
-namespace xdiag::combinatorics {
-
-template <class States>
-std::vector<bool> init_fermi_table_serial(States const &states,
-                                          PermutationGroup const &group) {
-  int64_t nsites = group.nsites();
-  int64_t n_symmetries = group.size();
-  int64_t raw_size = states.size();
-  std::vector<bool> fermi_table(raw_size * n_symmetries);
-  auto fermi_work = symmetries::fermi_work(nsites);
-  for (int64_t sym = 0; sym < n_symmetries; ++sym) {
-    auto const &perm = group[sym];
-
+  // Filled serially: std::vector<bool> is bit-packed, so concurrent writes to
+  // distinct entries that share a storage word would race (the reason the
+  // earlier OpenMP version had to build per-thread vectors and concatenate). The
+  // build is one-time and O(|group| * size * nsites) with the O(nsites)
+  // fermi_bool_of_permutation, dwarfed by the matvecs the O(1) lookup then
+  // speeds up. If it ever needs threads, give each symmetry a word-aligned row
+  // (pad size to a multiple of 64) and parallelise over symmetries.
+  for (int64_t sym = 0; sym < nsyms; ++sym) {
+    Permutation perm = group[sym];
     int64_t idx = 0;
-    for (auto state : states) {
-      fermi_table[sym * raw_size + idx] =
-          symmetries::fermi_bool_of_permutation(state, perm, fermi_work);
+    for (bit_t state : enumeration_) {
+      table_[sym * size_ + idx] = fermi_bool_of_permutation(state, perm);
       ++idx;
     }
   }
-  return fermi_table;
 }
+XDIAG_CATCH
 
-#ifdef _OPENMP
-template <class States>
-std::vector<bool> init_fermi_table_omp(States const &states,
-                                       PermutationGroup const &group) {
-  int64_t nsites = group.nsites();
-  int64_t n_symmetries = group.size();
-  int64_t raw_size = states.size();
-  std::vector<bool> fermi_bool_table;
-  fermi_bool_table.reserve(raw_size * n_symmetries);
+} // namespace xdiag::symmetries
 
-  for (int64_t sym = 0; sym < n_symmetries; ++sym) {
-    auto const &perm = group[sym];
-    std::vector<std::vector<bool>> fermi_bool_table_local;
+using namespace xdiag;
+using namespace xdiag::combinatorics;
+using namespace xdiag::bits;
 
-    // Comment: even though every entry in fermi_bool_table would be
-    // written by only one thread, std::vector<bool> is special and requires
-    // seperate vectors to be built
+#define INSTANTIATE_FERMI_TABLE(ENUMERATION)                                   \
+  template class xdiag::symmetries::FermiTable<ENUMERATION>;
 
-#pragma omp parallel
-    {
-      int myid = omp_get_thread_num();
-      int rank = omp_get_num_threads();
+INSTANTIATE_FERMI_TABLE(Subsets<uint32_t>)
+INSTANTIATE_FERMI_TABLE(Subsets<uint64_t>)
+INSTANTIATE_FERMI_TABLE(LinTable<uint32_t>)
+INSTANTIATE_FERMI_TABLE(LinTable<uint64_t>)
+INSTANTIATE_FERMI_TABLE(Combinations<uint32_t>)
+INSTANTIATE_FERMI_TABLE(Combinations<uint64_t>)
+INSTANTIATE_FERMI_TABLE(Combinations<BitsetDynamic>)
 
-#pragma omp single
-      { fermi_bool_table_local.resize(rank); }
-#pragma omp barrier
-
-      auto states_thread = ThreadStates(states);
-      // fermi_bool_table_local[myid].resize(states_thread.size());
-      auto fermi_work = symmetries::fermi_work(nsites);
-      for (auto state : states_thread) {
-        bool fermi_bool =
-            symmetries::fermi_bool_of_permutation(state, perm, fermi_work);
-        fermi_bool_table_local[myid].push_back(fermi_bool);
-      }
-#pragma omp barrier
-
-#pragma omp single
-      {
-        for (int id = 0; id < rank; ++id) {
-          fermi_bool_table.insert(fermi_bool_table.end(),
-                                  fermi_bool_table_local[id].begin(),
-                                  fermi_bool_table_local[id].end());
-        }
-      }
-
-    } // pragma omp parallel
-  }
-
-  return fermi_bool_table;
-}
-#endif
-
-template <class States>
-std::vector<bool> init_fermi_table(States const &states,
-                                   PermutationGroup const &group) {
-  assert(states.n() == group.nsites());
-#ifdef _OPENMP
-  return init_fermi_table_omp(states, group);
-#else
-  return init_fermi_table_serial(states, group);
-#endif
-}
-
-template <typename bit_t>
-FermiTableSubsets<bit_t>::FermiTableSubsets(int64_t nsites,
-                                            PermutationGroup const &group)
-    : nsites_(nsites),
-      table_(init_fermi_table(combinatorics::Subsets<bit_t>(nsites), group)) {}
-
-template <typename bit_t>
-bool FermiTableSubsets<bit_t>::operator==(
-    FermiTableSubsets<bit_t> const &rhs) const {
-  return (nsites_ == rhs.nsites_) && (table_ == rhs.table_);
-}
-
-template <typename bit_t>
-bool FermiTableSubsets<bit_t>::operator!=(
-    FermiTableSubsets<bit_t> const &rhs) const {
-  return !operator==(rhs);
-}
-
-template class FermiTableSubsets<uint16_t>;
-template class FermiTableSubsets<uint32_t>;
-template class FermiTableSubsets<uint64_t>;
-
-template <typename bit_t>
-FermiTableCombinations<bit_t>::FermiTableCombinations(
-    int64_t nsites, int64_t n_par, PermutationGroup const &group)
-    : raw_size_(combinatorics::binomial(nsites, n_par)),
-      lin_table_(nsites, n_par),
-      table_(init_fermi_table(
-          combinatorics::Combinations<bit_t>(nsites, n_par), group)) {}
-
-template <typename bit_t>
-bool FermiTableCombinations<bit_t>::operator==(
-    FermiTableCombinations<bit_t> const &rhs) const {
-  return (raw_size_ == rhs.raw_size_) && (lin_table_ == rhs.lin_table_) &&
-         (table_ == rhs.table_);
-}
-template <typename bit_t>
-bool FermiTableCombinations<bit_t>::operator!=(
-    FermiTableCombinations<bit_t> const &rhs) const {
-  return !operator==(rhs);
-}
-
-template class FermiTableCombinations<uint16_t>;
-template class FermiTableCombinations<uint32_t>;
-template class FermiTableCombinations<uint64_t>;
-
-} // namespace xdiag::combinatorics
+#undef INSTANTIATE_FERMI_TABLE

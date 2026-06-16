@@ -5,6 +5,7 @@
 #include "test_spinhalf_strategies.hpp"
 
 #include "../../catch.hpp"
+#include <tests/is_approx_hermitian.hpp>
 
 #include <cassert>
 
@@ -25,7 +26,7 @@ void test_apply(int64_t N, OpSum ops) {
   for (int64_t nup = 1; nup <= N; ++nup) {
     auto block = Spinhalf(N, nup);
     auto H = matrix(ops, block, block);
-    REQUIRE(H.is_hermitian(1e-8));
+    REQUIRE(testcases::is_approx_hermitian(H, 1e-8));
 
     arma::vec v(block.size(), arma::fill::randn);
     arma::vec w2(block.size(), arma::fill::zeros);
@@ -48,7 +49,7 @@ void test_apply_mat(int64_t N, OpSum ops) {
   for (int64_t nup = 1; nup <= N; ++nup) {
     auto block = Spinhalf(N, nup);
     auto H = matrix(ops, block, block);
-    REQUIRE(H.is_hermitian(1e-8));
+    REQUIRE(testcases::is_approx_hermitian(H, 1e-8));
 
     arma::mat v(block.size(), 5, arma::fill::randn);
     arma::mat w2(block.size(), 5, arma::fill::zeros);
@@ -278,7 +279,7 @@ void test_spinhalf_symmetric_spectra_no_sz(
     std::vector<double> eigs_sym;
 
     auto H_nosym = matrixC(ops, spinhalf_nosym, spinhalf_nosym);
-    REQUIRE(H_nosym.is_hermitian());
+    REQUIRE(testcases::is_approx_hermitian(H_nosym));
     arma::vec eigs_nosym;
     arma::eig_sym(eigs_nosym, H_nosym);
 

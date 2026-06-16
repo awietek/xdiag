@@ -64,6 +64,7 @@ set(XDIAG_SOURCES
   basis/basis.cpp
   basis/basis_onthefly.cpp
   basis/basis_electron.cpp
+  basis/basis_electron_symmetric.cpp
   basis/basis_sublattice.cpp
   basis/basis_symmetric.cpp
 
@@ -103,15 +104,18 @@ set(XDIAG_SOURCES
   symmetries/representation.cpp
   symmetries/representation_set.cpp
   symmetries/cyclic_group.cpp
+  symmetries/fermi_sign.cpp
 
   symmetries/action/site_permutation.cpp
   symmetries/action/isrepresentative.cpp
   symmetries/action/representative.cpp
   symmetries/action/norm.cpp
+  symmetries/action/norm_fermionic.cpp
   symmetries/action/site_permutation_sublattice.cpp
   symmetries/action/sublattice_stability.cpp
   symmetries/tables/representative_table.cpp
-  
+  symmetries/tables/fermi_table.cpp
+
   algebra/symmetrize.cpp
   algebra/permute.cpp
   algebra/representation.cpp
