@@ -8,8 +8,8 @@
 #include <string>
 #include <utility>
 
-#include <xdiag/bits/nonzero.hpp>
 #include <xdiag/bits/popcount.hpp>
+#include <xdiag/bits/zero_one.hpp>
 #include <xdiag/operators/monomial.hpp>
 
 namespace xdiag::matrices {
@@ -28,29 +28,21 @@ namespace xdiag::matrices {
 // This is the shared core of the fermion and electron Cdag/C string kernels:
 // the fermion block builds one string ("Cdag", "C"); the electron block splits
 // its monomial into an up and a dn sub-monomial and builds one string each
-// ("Cdagup"/"Cup" and "Cdagdn"/"Cdn") plus a cross sign. The decode is cold and
-// lives in the .cpp (explicitly instantiated for the fermion/electron bit
-// types); the per-state queries non_zero / action are hot and inline here.
+// ("Cdagup"/"Cup" and "Cdagdn"/"Cdn") plus a cross sign. 
 template <typename bit_t> class CdagCString {
 public:
-  // Decode the `cdag_type` / `c_type` operators of `mono` into masks. Operators
-  // of any other type are ignored (so a multi-sector monomial can be decoded
-  // one sector at a time). Throws if the selected operators are not in
-  // creation-left, strictly-ascending order.
+  // Decode the `cdag_type` / `c_type` operators of `mono` into masks. Every
+  // operator of `mono` must be of one of those two types (a multi-sector
+  // monomial is split by the caller first). Throws on any other type, or if the
+  // operators are not in creation-left, strictly-ascending order.
   CdagCString(int64_t nsites, Monomial const &mono,
               std::string const &cdag_type, std::string const &c_type);
-
-  // Sites whose occupation changes (number-operator sites cancel).
-  bit_t flipmask() const;
 
   // Non-zero iff every C / number-operator site is occupied and every pure
   // Cdag site is empty.
   inline bool non_zero(bit_t spins) const {
-    // pure Cdag sites = Cdag sites that are not also number-operator sites
-    // (written with ^ and & only; bit_t need not provide operator~).
-    bit_t mask_cdag_only = mask_cdag_ ^ (mask_cdag_ & mask_c_);
     return ((spins & mask_c_) == mask_c_) &&
-           !bits::nonzero(spins & mask_cdag_only);
+           bits::iszero(spins & mask_cdag_only_);
   }
 
   // {flipped configuration, negate}. Only meaningful when non_zero(spins). The
@@ -61,14 +53,16 @@ public:
   inline std::pair<bit_t, bool> action(bit_t spins) const {
     bit_t spins1 = spins ^ mask_c_;
     bit_t parity = (spins & signmask_c_) ^ (spins1 & signmask_cdag_);
-    return {spins ^ (mask_c_ ^ mask_cdag_), (bool)(bits::popcount(parity) & 1)};
+    return {spins ^ flipmask_, (bool)(bits::popcount(parity) & 1)};
   }
 
 private:
-  bit_t mask_c_;        // sites carrying a C (must be occupied)
-  bit_t mask_cdag_;     // sites carrying a Cdag (pure ones must be empty)
-  bit_t signmask_c_;    // XOR of below(j_a) over the annihilation block
-  bit_t signmask_cdag_; // XOR of below(i_b) over the creation block
+  bit_t mask_c_;         // sites carrying a C (must be occupied)
+  bit_t mask_cdag_only_; // pure Cdag sites, i.e. not number-operator sites
+                         // (must be empty)
+  bit_t flipmask_;       // sites whose occupation changes (mask_c ^ mask_cdag)
+  bit_t signmask_c_;     // XOR of below(j_a) over the annihilation block
+  bit_t signmask_cdag_;  // XOR of below(i_b) over the creation block
 };
 
 } // namespace xdiag::matrices

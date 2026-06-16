@@ -7,7 +7,7 @@
 #include <utility>
 
 #include <xdiag/bits/get_set.hpp>
-#include <xdiag/bits/nonzero.hpp>
+#include <xdiag/bits/zero_one.hpp>
 #include <xdiag/bits/popcount.hpp>
 #include <xdiag/matrices/terms/term_offdiag.hpp>
 

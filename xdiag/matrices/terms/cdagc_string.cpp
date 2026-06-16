@@ -20,9 +20,12 @@ template <typename bit_t>
 CdagCString<bit_t>::CdagCString(int64_t nsites, Monomial const &mono,
                                 std::string const &cdag_type,
                                 std::string const &c_type) try
-    : mask_c_(bits::zero<bit_t>(nsites)), mask_cdag_(bits::zero<bit_t>(nsites)),
+    : mask_c_(bits::zero<bit_t>(nsites)),
+      mask_cdag_only_(bits::zero<bit_t>(nsites)),
+      flipmask_(bits::zero<bit_t>(nsites)),
       signmask_c_(bits::zero<bit_t>(nsites)),
       signmask_cdag_(bits::zero<bit_t>(nsites)) {
+  bit_t mask_cdag = bits::zero<bit_t>(nsites);
   int64_t prev_cdag = -1;
   int64_t prev_c = -1;
   bool in_c_block = false;
@@ -40,7 +43,7 @@ CdagCString<bit_t>::CdagCString(int64_t nsites, Monomial const &mono,
         XDIAG_THROW("CdagCString: the Cdag block is not strictly ascending");
       }
       prev_cdag = s;
-      bits::set(mask_cdag_, s);
+      bits::set(mask_cdag, s);
       signmask_cdag_ ^= bits::bitmask<bit_t>(nsites, s);
     } else if (type == c_type) {
       int64_t s = op[0];
@@ -57,12 +60,12 @@ CdagCString<bit_t>::CdagCString(int64_t nsites, Monomial const &mono,
                   "\")");
     }
   }
+  // Precompute the state-independent derived masks: pure Cdag sites (excluding
+  // the number-operator sites Cdag*C) and the occupation-flip mask.
+  mask_cdag_only_ = mask_cdag ^ (mask_cdag & mask_c_);
+  flipmask_ = mask_c_ ^ mask_cdag;
 }
 XDIAG_CATCH
-
-template <typename bit_t> bit_t CdagCString<bit_t>::flipmask() const {
-  return mask_c_ ^ mask_cdag_;
-}
 
 // Explicit instantiations for the bit types the fermion and electron Cdag/C
 // string kernels use.

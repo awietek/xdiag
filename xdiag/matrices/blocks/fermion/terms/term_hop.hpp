@@ -8,7 +8,6 @@
 
 #include <xdiag/bits/bitmask.hpp>
 #include <xdiag/bits/get_set.hpp>
-#include <xdiag/bits/nonzero.hpp>
 #include <xdiag/bits/popcount.hpp>
 #include <xdiag/bits/zero_one.hpp>
 #include <xdiag/matrices/terms/term_offdiag_fermionic.hpp>
