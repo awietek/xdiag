@@ -60,6 +60,7 @@ template Spinhalf block(OpSum const &, Spinhalf const &);
 template Boson block(OpSum const &, Boson const &);
 template Fermion block(OpSum const &, Fermion const &);
 template Electron block(OpSum const &, Electron const &);
+template tJ block(OpSum const &, tJ const &);
 
 Block block(OpSum const &ops, Block const &block_in) try {
   // Generic visitor: the inner block(ops, b) resolves to the block<block_t>
@@ -166,6 +167,22 @@ static std::string to_string(ProductState const &state, Electron const &) {
     } else { // empty
       const char *s = "\u25CC";
       ss << fmt::format(fg(fmt::color::gray), s);
+    }
+  }
+  return ss.str();
+}
+
+// t-J: local index 0 empty, 1 up, 2 dn (no double occupancy). Up is a blue
+// arrow, dn an orange arrow, empty a dot.
+static std::string to_string(ProductState const &state, tJ const &) {
+  std::stringstream ss;
+  for (int64_t i = state.size() - 1; i >= 0; --i) {
+    if (state[i] == 1) { // up
+      ss << fmt::format(fg(fmt::color::light_blue), "↑");
+    } else if (state[i] == 2) { // dn
+      ss << fmt::format(fg(fmt::color::orange), "↓");
+    } else { // empty
+      ss << fmt::format(fg(fmt::color::gray), "◌");
     }
   }
   return ss.str();

@@ -23,6 +23,7 @@ set(XDIAG_TEST_SOURCES
   basis/test_basis_onthefly.cpp
   basis/test_basis_sublattice.cpp
   basis/test_basis_symmetric.cpp
+  basis/test_basis_tj.cpp
   
   operators/test_coeff.cpp
   operators/test_monomial.cpp
@@ -58,6 +59,10 @@ set(XDIAG_TEST_SOURCES
   blocks/electron/test_electron_symmetric.cpp
 
   blocks/tj/testcases_tj.cpp
+  blocks/tj/test_tj_kernels.cpp
+  blocks/tj/test_tj_matrix.cpp
+  blocks/tj/test_tj_apply.cpp
+  blocks/tj/test_tj_raiselower.cpp
 
   blocks/boson/test_boson.cpp
 

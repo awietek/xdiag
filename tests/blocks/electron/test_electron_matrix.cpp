@@ -331,15 +331,19 @@ TEST_CASE("electron_matrix", "[electron]") try {
     test_electron_np_no_np_matrix(N, ops);
   }
 
-  // On-site identity SzSz{s,s} == Sz{s}^2. (NtotNtot / NupdnNupdn forbid
-  // overlapping sites in the new architecture, so they have no same-site form.)
+  // On-site identities: same-site two-site operators reduce to diagonal
+  // single-site operators via the implementation algebra. SzSz{s,s} == Sz{s}^2,
+  // NtotNtot{s,s} == Ntot{s}^2.
   test_onsite("Sz", "SzSz");
+  test_onsite("Ntot", "NtotNtot");
 
-  // Same-site composites that DO require distinct sites must be rejected.
+  // NupNdn{s,s} == n^up{s} n^dn{s} == Nupdn{s}
   {
     auto b = Electron(2);
-    REQUIRE_THROWS(matrix(Op("NtotNtot", {0, 0}), b));
-    REQUIRE_THROWS(matrix(Op("NupNdn", {0, 0}), b));
+    for (int s = 0; s < 2; ++s) {
+      REQUIRE(isapprox(matrix(Op("NupNdn", {s, s}), b),
+                       arma::mat(matrix(Op("Nupdn", s), b))));
+    }
   }
 
   for (int nsites = 2; nsites < 5; ++nsites) {

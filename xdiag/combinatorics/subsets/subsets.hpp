@@ -5,6 +5,7 @@
 #pragma once
 
 #include <cstdint>
+#include <type_traits>
 
 namespace xdiag::combinatorics {
 
@@ -69,5 +70,14 @@ public:
 private:
   bit_t current_;
 };
+
+// True iff the enumeration is Subsets, i.e. non-number-conserving. Used by the
+// number-conservation-agnostic bases (e.g. BasistJ) to branch the np vs no-np
+// seam at compile time.
+template <typename enumeration_t> struct is_subsets : std::false_type {};
+template <typename bit_t>
+struct is_subsets<Subsets<bit_t>> : std::true_type {};
+template <typename enumeration_t>
+inline constexpr bool is_subsets_v = is_subsets<enumeration_t>::value;
 
 } // namespace xdiag::combinatorics

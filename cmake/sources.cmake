@@ -43,6 +43,7 @@ set(XDIAG_SOURCES
   matrices/blocks/boson/kernels.cpp
   matrices/blocks/fermion/kernels.cpp
   matrices/blocks/electron/kernels.cpp
+  matrices/blocks/tj/kernels.cpp
   matrices/terms/non_branching_op.cpp
   matrices/terms/cdagc_string.cpp
   
@@ -65,6 +66,7 @@ set(XDIAG_SOURCES
   basis/basis_onthefly.cpp
   basis/basis_electron.cpp
   basis/basis_electron_symmetric.cpp
+  basis/basis_tj.cpp
   basis/basis_sublattice.cpp
   basis/basis_symmetric.cpp
 
@@ -74,6 +76,7 @@ set(XDIAG_SOURCES
   blocks/boson.cpp
   blocks/fermion.cpp
   blocks/electron.cpp
+  blocks/tj.cpp
   
   states/product_state.cpp
   states/random_state.cpp
@@ -127,6 +130,7 @@ set(XDIAG_SOURCES
   algebra/algebras/spin_algebra.cpp
   algebra/algebras/electron_algebra.cpp
   algebra/algebras/tj_algebra.cpp
+  algebra/algebras/tj_implementation_algebra.cpp
   algebra/algebras/matrix_algebra.cpp
   algebra/algebras/spinhalf_implementation_algebra.cpp
   algebra/algebras/fermion_implementation_algebra.cpp
@@ -143,6 +147,8 @@ set(XDIAG_SOURCES
   algebra/rewrite/rules/fermion_same_site_rule.cpp
   algebra/rewrite/rules/fermion_normal_order_rule.cpp
   algebra/rewrite/rules/tj_same_site_rule.cpp
+  algebra/rewrite/rules/tj_protected_expansion_rule.cpp
+  algebra/rewrite/rules/tj_normal_order_rule.cpp
   algebra/rewrite/rules/combine_matrix_rule.cpp
   algebra/rewrite/rules/sort_matrix_sites_rule.cpp
   algebra/rewrite/rules/spinhalf_sdots_rule.cpp

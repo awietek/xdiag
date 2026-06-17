@@ -12,6 +12,8 @@
 #include <xdiag/algebra/algebras/fermion_implementation_algebra.hpp>
 #include <xdiag/algebra/algebras/matrix_algebra.hpp>
 #include <xdiag/algebra/algebras/spinhalf_implementation_algebra.hpp>
+#include <xdiag/algebra/algebras/tj_algebra.hpp>
+#include <xdiag/algebra/algebras/tj_implementation_algebra.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/variants.hpp>
 
@@ -34,6 +36,11 @@ XDIAG_CATCH
 
 Algebra implementation_algebra(Electron const &block) try {
   return electron_implementation_algebra(block.nsites());
+}
+XDIAG_CATCH
+
+Algebra implementation_algebra(tJ const &block) try {
+  return tj_implementation_algebra(block.nsites());
 }
 XDIAG_CATCH
 
@@ -62,6 +69,11 @@ XDIAG_CATCH
 
 Algebra symmetry_algebra(Electron const &block) try {
   return electron_algebra(block.nsites());
+}
+XDIAG_CATCH
+
+Algebra symmetry_algebra(tJ const &block) try {
+  return tj_algebra(block.nsites());
 }
 XDIAG_CATCH
 

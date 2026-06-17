@@ -21,6 +21,7 @@
 #include <xdiag/blocks/electron.hpp>
 #include <xdiag/blocks/fermion.hpp>
 #include <xdiag/blocks/spinhalf.hpp>
+#include <xdiag/blocks/tj.hpp>
 #include <xdiag/random/hash.hpp>
 #include <xdiag/symmetries/representation.hpp>
 
@@ -49,7 +50,12 @@ void print_block(std::ostream &out, block_t const &block) {
     charges = {{"number", block.irreps().charge("number")}};
   } else if constexpr (std::is_same_v<block_t, Electron>) {
     name = "Electron";
-    color = fmt::fg(fmt::color::indigo) | fmt::emphasis::bold;
+    color = fmt::fg(fmt::color::blue_violet) | fmt::emphasis::bold;
+    charges = {{"nup", block.irreps().charge("nup")},
+               {"ndn", block.irreps().charge("ndn")}};
+  } else if constexpr (std::is_same_v<block_t, tJ>) {
+    name = "tJ";
+    color = fmt::fg(fmt::color::medium_sea_green) | fmt::emphasis::bold;
     charges = {{"nup", block.irreps().charge("nup")},
                {"ndn", block.irreps().charge("ndn")}};
   }
@@ -91,5 +97,6 @@ template void print_block<Spinhalf>(std::ostream &, Spinhalf const &);
 template void print_block<Boson>(std::ostream &, Boson const &);
 template void print_block<Fermion>(std::ostream &, Fermion const &);
 template void print_block<Electron>(std::ostream &, Electron const &);
+template void print_block<tJ>(std::ostream &, tJ const &);
 
 } // namespace xdiag

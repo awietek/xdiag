@@ -13,3 +13,4 @@
 #include <xdiag/matrices/blocks/electron/dispatch_basis.hpp>
 #include <xdiag/matrices/blocks/fermion/dispatch_basis.hpp>
 #include <xdiag/matrices/blocks/spinhalf/dispatch_basis.hpp>
+#include <xdiag/matrices/blocks/tj/dispatch_basis.hpp>
