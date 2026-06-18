@@ -7,11 +7,13 @@
 #include <optional>
 
 #include <xdiag/basis/basis_tj.hpp>
+#include <xdiag/basis/basis_tj_symmetric.hpp>
 #include <xdiag/bits/bitset.hpp>
 #include <xdiag/blocks/print_block.hpp>
 #include <xdiag/combinatorics/combinations/combinations.hpp>
 #include <xdiag/combinatorics/combinations/lin_table.hpp>
 #include <xdiag/combinatorics/subsets/subsets.hpp>
+#include <xdiag/math/vector.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/format.hpp>
 #include <xdiag/utils/to_string_generic.hpp>
@@ -40,12 +42,43 @@ tJ::tJ(int64_t nsites, RepresentationSet const &irreps) try : irreps_(irreps) {
   }
 
   std::optional<PermutationGroup> group = irreps.group("SitePermutation");
-  if (group) {
-    XDIAG_THROW("tJ block with permutation symmetry is not yet implemented");
-  }
+  std::optional<Vector> characters = irreps.characters("SitePermutation");
 
-  if (nup && ndn) { // number-conserving: ups on (nsites,nup), compressed dn on
-                    // (nsites-nup, ndn)
+  if (group) {
+    // permutation symmetry -> BasistJSymmetric. Unlike the non-symmetric block
+    // (compressed dn on nsites-nup sites), the symmetric basis stores FULL-nsites
+    // dn, so enum_dn is built on (nsites, ndn) -- not (nsites-nup, ndn).
+    auto build = [&](auto &&enum_up, auto &&enum_dn) {
+      using enum_t = std::decay_t<decltype(enum_up)>;
+      basis_ = std::make_shared<BasistJSymmetric<enum_t>>(enum_up, enum_dn,
+                                                          *group, *characters);
+    };
+    if (nup && ndn) {
+      int64_t n = nsites, ku = *nup, kd = *ndn;
+      if (nsites <= 32) {
+        build(LinTable<uint32_t>(n, ku), LinTable<uint32_t>(n, kd));
+      } else if (nsites <= 42) {
+        build(LinTable<uint64_t>(n, ku), LinTable<uint64_t>(n, kd));
+      } else if (nsites <= 64) {
+        build(Combinations<uint64_t>(n, ku), Combinations<uint64_t>(n, kd));
+      } else {
+        build(Combinations<BitsetDynamic>(n, ku),
+              Combinations<BitsetDynamic>(n, kd));
+      }
+    } else if (!nup && !ndn) {
+      if (nsites <= 32) {
+        build(Subsets<uint32_t>(nsites), Subsets<uint32_t>(nsites));
+      } else if (nsites <= 64) {
+        build(Subsets<uint64_t>(nsites), Subsets<uint64_t>(nsites));
+      } else {
+        XDIAG_THROW("Unsupported nsites > 64 for non-number conserving "
+                    "symmetric tJ block");
+      }
+    } else {
+      XDIAG_THROW("tJ block requires both nup and ndn to be set, or neither");
+    }
+  } else if (nup && ndn) { // number-conserving: ups on (nsites,nup), compressed
+                           // dn on (nsites-nup, ndn)
     int64_t n = nsites, ku = *nup, kd = *ndn, nc = nsites - *nup;
     auto build = [&](auto &&enum_up, auto &&enum_dncs) {
       using enum_t = std::decay_t<decltype(enum_up)>;

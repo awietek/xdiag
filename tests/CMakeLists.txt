@@ -63,6 +63,7 @@ set(XDIAG_TEST_SOURCES
   blocks/tj/test_tj_matrix.cpp
   blocks/tj/test_tj_apply.cpp
   blocks/tj/test_tj_raiselower.cpp
+  blocks/tj/test_tj_symmetric.cpp
 
   blocks/boson/test_boson.cpp
 

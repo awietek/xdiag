@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include <xdiag/basis/basis_tj.hpp>
+#include <xdiag/basis/basis_tj_symmetric.hpp>
 #include <xdiag/bits/bitset.hpp>
 #include <xdiag/blocks/tj.hpp>
 #include <xdiag/combinatorics/combinations/combinations.hpp>
@@ -59,4 +60,32 @@ XDIAG_INSTANTIATE_KERNELS(tJ, BasistJ<LinTable<uint64_t>>)
 
 // BEGIN_INSTANTIATION_GROUP(tj_combinations_bitset_dynamic)
 XDIAG_INSTANTIATE_KERNELS(tJ, BasistJ<Combinations<BitsetDynamic>>)
+// END_INSTANTIATION_GROUP
+
+// BEGIN_INSTANTIATION_GROUP(tj_symmetric_subsets_uint32_t)
+XDIAG_INSTANTIATE_KERNELS(tJ, BasistJSymmetric<Subsets<uint32_t>>)
+// END_INSTANTIATION_GROUP
+
+// BEGIN_INSTANTIATION_GROUP(tj_symmetric_subsets_uint64_t)
+XDIAG_INSTANTIATE_KERNELS(tJ, BasistJSymmetric<Subsets<uint64_t>>)
+// END_INSTANTIATION_GROUP
+
+// BEGIN_INSTANTIATION_GROUP(tj_symmetric_combinations_uint32_t)
+XDIAG_INSTANTIATE_KERNELS(tJ, BasistJSymmetric<Combinations<uint32_t>>)
+// END_INSTANTIATION_GROUP
+
+// BEGIN_INSTANTIATION_GROUP(tj_symmetric_combinations_uint64_t)
+XDIAG_INSTANTIATE_KERNELS(tJ, BasistJSymmetric<Combinations<uint64_t>>)
+// END_INSTANTIATION_GROUP
+
+// BEGIN_INSTANTIATION_GROUP(tj_symmetric_lintable_uint32_t)
+XDIAG_INSTANTIATE_KERNELS(tJ, BasistJSymmetric<LinTable<uint32_t>>)
+// END_INSTANTIATION_GROUP
+
+// BEGIN_INSTANTIATION_GROUP(tj_symmetric_lintable_uint64_t)
+XDIAG_INSTANTIATE_KERNELS(tJ, BasistJSymmetric<LinTable<uint64_t>>)
+// END_INSTANTIATION_GROUP
+
+// BEGIN_INSTANTIATION_GROUP(tj_symmetric_combinations_bitset_dynamic)
+XDIAG_INSTANTIATE_KERNELS(tJ, BasistJSymmetric<Combinations<BitsetDynamic>>)
 // END_INSTANTIATION_GROUP

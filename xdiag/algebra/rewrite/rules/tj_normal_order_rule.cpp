@@ -53,11 +53,14 @@ MonomialRule tj_normal_order_rule() {
       int64_t sa = a[0], sb = b[0];
 
       if (sa != sb) {
-        // Different sites: ordinary fermion anticommutation. Canonical key
-        // (sector, creation, site).
-        bool out_of_order = (sec_a > sec_b) ||
-                            ((sec_a == sec_b) && (cre_a > cre_b)) ||
-                            ((sec_a == sec_b) && (cre_a == cre_b) && (sa > sb));
+        // Different sites: ordinary fermion anticommutation. Creation-major
+        // canonical order -- all creation operators left of all annihilation
+        // operators, then up before dn, then ascending site: key (creation,
+        // sector, site). (The same-site branch below already produces this
+        // order: it keeps Cdag*C pairs S+/S- and forbids the C*Cdag ones.)
+        bool out_of_order = (cre_a > cre_b) ||
+                            ((cre_a == cre_b) && (sec_a > sec_b)) ||
+                            ((cre_a == cre_b) && (sec_a == sec_b) && (sa > sb));
         if (out_of_order) {
           return swap_pair(mono, k, -1.0);
         }

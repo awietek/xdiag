@@ -75,13 +75,13 @@ void term_ups(basis::BasisElectron<enumeration_t> const &basis_in,
 // carries the character of the mapping symmetry, the norm ratio, and the fermi
 // sign fermi_up XOR fermi_dn. `term_action`'s coeff already carries the up-sector
 // operator sign.
-template <typename coeff_t, typename enumeration_t, typename non_zero_term_f,
-          typename term_action_f, typename fill_f>
-void term_ups(basis::BasisElectronSymmetric<enumeration_t> const &basis_in,
-              basis::BasisElectronSymmetric<enumeration_t> const &basis_out,
+template <typename coeff_t, typename basis_t, typename non_zero_term_f,
+          typename term_action_f, typename fill_f,
+          typename = decltype(std::declval<basis_t>().dns_for_ups_rep(0))>
+void term_ups(basis_t const &basis_in, basis_t const &basis_out,
               non_zero_term_f non_zero_term, term_action_f term_action,
               fill_f fill) {
-  using bit_t = typename enumeration_t::bit_t;
+  using bit_t = typename basis_t::bit_t;
 
   auto const &basis_up_in = basis_in.basis_up();
   auto bloch = basis_out.characters().template as<arma::Col<coeff_t>>();
@@ -115,12 +115,16 @@ void term_ups(basis::BasisElectronSymmetric<enumeration_t> const &basis_in,
         // trivial out-stabilizer: single mapping symmetry s0, norm_out == 1
         coeff_t prefac = coeff * bloch(s0);
         bool fermi_up = basis_out.fermi_bool_ups(s0, ups_out);
+        auto dnss_out = basis_out.dns_for_ups_rep(idx_up_out);
         int64_t idx_dn = 0;
         for (bit_t dns : dnss_in) {
-          auto [idx_dns_out, fermi_dn] = basis_out.index_dns_fermi(dns, s0);
-          coeff_t val = prefac / norms_in[idx_dn];
-          XDIAG_FILL(off_in + idx_dn, off_out + idx_dns_out,
-                     (fermi_up ^ fermi_dn) ? -val : val);
+          auto [idx_dns_out, fermi_dn] =
+              basis_out.index_dns_fermi(dns, s0, idx_up_out, dnss_out);
+          if (idx_dns_out >= 0) { // -1: tJ double occupancy (never for electron)
+            coeff_t val = prefac / norms_in[idx_dn];
+            XDIAG_FILL(off_in + idx_dn, off_out + idx_dns_out,
+                       (fermi_up ^ fermi_dn) ? -val : val);
+          }
           ++idx_dn;
         }
       } else {

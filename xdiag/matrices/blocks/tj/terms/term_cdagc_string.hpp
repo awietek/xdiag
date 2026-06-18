@@ -51,6 +51,12 @@ void term_cdagc_string(Coeff const &c, Monomial const &mono,
 
   int64_t nsites = basis_in.nsites();
   coeff_t cf = c.scalar().as<coeff_t>();
+  // The split below evaluates the up and dn sub-strings as if the monomial were
+  // in all-ups-then-all-dns order; fold in the Jordan-Wigner sign of partitioning
+  // the (possibly interleaved) input into that order.
+  if (cdagc_sector_partition_neg(mono, "Cdagdn", "Cdn")) {
+    cf = -cf;
+  }
 
   // Split the monomial into its up and dn sub-strings (validating the types).
   std::vector<Op> up_ops, dn_ops;

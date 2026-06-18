@@ -103,13 +103,13 @@ void term_dns(basis::BasisElectron<enumeration_t> const &basis_in,
 // (-1)^popcount(ups_rep), matching the non-symmetric overload's
 // negate = popcount(ups)&1, and is combined with the symmetrisation fermi sign
 // (fermi_up XOR fermi_dn) on the non-trivial-stabilizer path.
-template <typename coeff_t, bool fermi_ups, typename enumeration_t,
-          typename non_zero_term_f, typename term_action_f, typename fill_f>
-void term_dns(basis::BasisElectronSymmetric<enumeration_t> const &basis_in,
-              basis::BasisElectronSymmetric<enumeration_t> const &basis_out,
+template <typename coeff_t, bool fermi_ups, typename basis_t,
+          typename non_zero_term_f, typename term_action_f, typename fill_f,
+          typename = decltype(std::declval<basis_t>().dns_for_ups_rep(0))>
+void term_dns(basis_t const &basis_in, basis_t const &basis_out,
               non_zero_term_f non_zero_term, term_action_f term_action,
               fill_f fill) {
-  using bit_t = typename enumeration_t::bit_t;
+  using bit_t = typename basis_t::bit_t;
   (void)basis_out; // == basis_in for a dn-sector (Nup-conserving) operator
 
   auto const &basis_up = basis_in.basis_up();
@@ -139,9 +139,11 @@ void term_dns(basis::BasisElectronSymmetric<enumeration_t> const &basis_in,
         for (bit_t dns_in : dnss) {
           if (non_zero_term(dns_in)) {
             auto [dns_flip, coeff] = term_action(dns_in);
-            int64_t idx_dns_flip = basis_in.basis_dn().index(dns_flip);
-            XDIAG_FILL(off + dn_idx, off + idx_dns_flip,
-                       nup_neg ? -coeff : coeff);
+            int64_t idx_dns_flip = basis_in.index_dns(dns_flip, idx_up, dnss);
+            if (idx_dns_flip >= 0) { // -1: tJ double occupancy (never for electron)
+              XDIAG_FILL(off + dn_idx, off + idx_dns_flip,
+                         nup_neg ? -coeff : coeff);
+            }
           }
           ++dn_idx;
         }

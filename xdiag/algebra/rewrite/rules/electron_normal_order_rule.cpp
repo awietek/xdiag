@@ -71,10 +71,12 @@ MonomialRule electron_normal_order_rule() {
           return replace_pair(mono, k, repl);
         }
       } else {
-        // Different modes: anticommute. Canonical key (sector, creation, site).
-        bool out_of_order = (sec_a > sec_b) ||
-                            ((sec_a == sec_b) && (cre_a > cre_b)) ||
-                            ((sec_a == sec_b) && (cre_a == cre_b) && (sa > sb));
+        // Different modes: anticommute. Creation-major canonical order -- all
+        // creation operators left of all annihilation operators, then up before
+        // dn, then ascending site: key (creation, sector, site).
+        bool out_of_order = (cre_a > cre_b) ||
+                            ((cre_a == cre_b) && (sec_a > sec_b)) ||
+                            ((cre_a == cre_b) && (sec_a == sec_b) && (sa > sb));
         if (out_of_order) {
           return swap_pair(mono, k, -1.0);
         }

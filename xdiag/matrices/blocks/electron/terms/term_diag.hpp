@@ -10,6 +10,7 @@
 #endif
 
 #include <tuple>
+#include <utility>
 
 #include <xdiag/basis/basis_electron.hpp>
 #include <xdiag/basis/basis_electron_symmetric.hpp>
@@ -78,12 +79,12 @@ void term_diag(basis::BasisElectron<enumeration_t> const &basis_in,
 // Unlike the non-symmetric overload -- where basis_in != basis_out can only mean
 // different particle numbers (genuinely zero) -- this is not always zero, so it
 // forwards to the general term_offdiag with a state-preserving action.
-template <typename coeff_t, typename enumeration_t, typename apply_f,
-          typename fill_f>
-void term_diag(basis::BasisElectronSymmetric<enumeration_t> const &basis_in,
-               basis::BasisElectronSymmetric<enumeration_t> const &basis_out,
-               apply_f apply, fill_f fill) {
-  using bit_t = typename enumeration_t::bit_t;
+template <typename coeff_t, typename basis_t, typename apply_f,
+          typename fill_f,
+          typename = decltype(std::declval<basis_t>().dns_for_ups_rep(0))>
+void term_diag(basis_t const &basis_in, basis_t const &basis_out, apply_f apply,
+               fill_f fill) {
+  using bit_t = typename basis_t::bit_t;
 
   if (basis_in != basis_out) {
     term_offdiag<coeff_t>(

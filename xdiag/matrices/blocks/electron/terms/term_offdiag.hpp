@@ -5,6 +5,7 @@
 #pragma once
 
 #include <cstdint>
+#include <utility>
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -26,12 +27,12 @@ namespace xdiag::matrices::electron {
 // forwards here for its cross-block (different irrep) case. The per-element
 // representative lookup (representative_data_fermi) makes this the slow,
 // general fallback, used where the sector-restricted kernels do not apply.
-template <typename coeff_t, typename enumeration_t, typename apply_f,
-          typename fill_f>
-void term_offdiag(basis::BasisElectronSymmetric<enumeration_t> const &basis_in,
-                  basis::BasisElectronSymmetric<enumeration_t> const &basis_out,
+template <typename coeff_t, typename basis_t, typename apply_f,
+          typename fill_f,
+          typename = decltype(std::declval<basis_t>().dns_for_ups_rep(0))>
+void term_offdiag(basis_t const &basis_in, basis_t const &basis_out,
                   apply_f apply, fill_f fill) {
-  using bit_t = typename enumeration_t::bit_t;
+  using bit_t = typename basis_t::bit_t;
 
   auto const &basis_up = basis_in.basis_up();
   auto bloch = basis_out.characters().template as<arma::Col<coeff_t>>();

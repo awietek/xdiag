@@ -2,21 +2,71 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+#include <array>
+#include <vector>
+
 #include <tests/catch.hpp>
 
 #include <xdiag/algebra/algebras/electron_algebra.hpp>
+#include <xdiag/algebra/algebras/electron_implementation_algebra.hpp>
+#include <xdiag/algebra/algebras/fermion_implementation_algebra.hpp>
 #include <xdiag/algebra/algebras/spin_algebra.hpp>
 #include <xdiag/algebra/algebras/tj_algebra.hpp>
+#include <xdiag/algebra/algebras/tj_implementation_algebra.hpp>
 #include <xdiag/algebra/isapprox.hpp>
 #include <xdiag/algebra/normal_order.hpp>
+#include <xdiag/blocks/electron.hpp>
+#include <xdiag/blocks/fermion.hpp>
+#include <xdiag/blocks/tj.hpp>
 #include <xdiag/operators/monomial.hpp>
 #include <xdiag/operators/op.hpp>
 #include <xdiag/operators/opsum.hpp>
+#include <xdiag/states/apply.hpp>
+#include <xdiag/states/create_state.hpp>
+#include <xdiag/states/state.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/logger.hpp>
 
 using namespace xdiag;
 using namespace xdiag::algebra;
+
+// Classify an elementary Cdag/C operator into the creation-major sort key
+// (creation: Cdag=0 < C=1 ; sector: up=0 < dn=1 ; site). Returns {2,0,0} for a
+// non-Cdag/C operator so callers can ignore it.
+static std::array<int64_t, 3> no_key(Op const &op) {
+  std::string t = op.type();
+  if (t == "Cdag" || t == "Cdagup" || t == "Cdagdn") {
+    int64_t sec = (t == "Cdagdn") ? 1 : 0;
+    return {0, sec, op[0]};
+  }
+  if (t == "C" || t == "Cup" || t == "Cdn") {
+    int64_t sec = (t == "Cdn") ? 1 : 0;
+    return {1, sec, op[0]};
+  }
+  return {2, 0, 0};
+}
+
+// Assert every monomial of a normal-ordered OpSum is in creation-major order:
+// all creation operators left of all annihilation operators, up before dn,
+// ascending site. (Strictly increasing keys ⇒ also no same-mode duplicates.)
+static void require_creation_major(OpSum const &compiled) {
+  for (auto const &[c, mono] : compiled) {
+    (void)c;
+    std::array<int64_t, 3> prev = {-1, -1, -1};
+    bool started = false;
+    for (int64_t k = 0; k < mono.size(); ++k) {
+      std::array<int64_t, 3> key = no_key(mono[k]);
+      if (key[0] == 2) {
+        continue; // not an elementary Cdag/C operator (e.g. Id)
+      }
+      if (started) {
+        REQUIRE(prev < key);
+      }
+      prev = key;
+      started = true;
+    }
+  }
+}
 
 TEST_CASE("normal_order", "[operators]") try {
 
@@ -234,6 +284,86 @@ TEST_CASE("normal_order", "[operators]") try {
   }
 
   Log("Done testing normal_order");
+} catch (xdiag::Error const &e) {
+  error_trace(e);
+}
+
+// The implementation algebras (the ones feeding the matrix kernels) must bring
+// mixed Cdag/C strings into creation-major normal order.
+TEST_CASE("normal_order_creation_major", "[operators]") try {
+  Log("Testing normal_order: creation-major (implementation algebras)");
+
+  // Electron: a deliberately out-of-order, mixed-sector 4-operator string.
+  {
+    Algebra alg = electron_implementation_algebra(4);
+    auto r = normal_order(1.0 * (Op("Cdn", 1) * Op("Cdagup", 2) * Op("Cup", 0) *
+                                 Op("Cdagdn", 3)),
+                          alg);
+    require_creation_major(r);
+  }
+  // tJ: an out-of-order string (different sites, both sectors).
+  {
+    Algebra alg = tj_implementation_algebra(4);
+    auto r = normal_order(1.0 * (Op("Cdn", 0) * Op("Cdagup", 1) * Op("Cup", 2) *
+                                 Op("Cdagdn", 3)),
+                          alg);
+    require_creation_major(r);
+  }
+  // tJ: the projected S- pair stays Cdagdn*Cup (already creation-major).
+  {
+    Algebra alg = tj_implementation_algebra(2);
+    auto r = normal_order(1.0 * (Op("Cdagdn", 1) * Op("Cup", 0)), alg);
+    require_creation_major(r);
+  }
+  // Fermion (single sector): all Cdag before all C.
+  {
+    Algebra alg = fermion_implementation_algebra(4);
+    auto r =
+        normal_order(1.0 * (Op("C", 1) * Op("Cdag", 3) * Op("Cdag", 0)), alg);
+    require_creation_major(r);
+  }
+} catch (xdiag::Error const &e) {
+  error_trace(e);
+}
+
+// The basis must MEAN that normal order: a creation-major monomial applied to
+// the vacuum equals (a) the product state with the corresponding occupation and
+// (b) the same operators applied one at a time (right to left). Checked on the
+// number-non-conserving block so every step stays in one block.
+template <typename block_t>
+static void test_basis_meaning(block_t const &block,
+                               std::vector<int64_t> const &target_local_states,
+                               Monomial const &mono) {
+  int64_t n = block.nsites();
+  State vac = product_state(block, std::vector<int64_t>(n, 0));
+  State target = product_state(block, target_local_states);
+
+  // (b) the whole creation-major monomial applied to the vacuum
+  State whole = apply(mono, vac);
+
+  // (c) the single operators applied iteratively, right to left
+  State iter = vac;
+  for (int64_t k = mono.size() - 1; k >= 0; --k) {
+    iter = apply(mono[k], iter);
+  }
+
+  REQUIRE(isapprox(whole, iter));   // composition: whole == iterative
+  REQUIRE(isapprox(whole, target)); // and both build the product state
+}
+
+TEST_CASE("normal_order_basis_meaning", "[operators]") try {
+  Log("Testing normal_order: basis meaning (3-way state agreement)");
+
+  // local states: empty=0, up=1, dn=2 (electron/tJ); occupied=1 (fermion).
+  // Target occupation up@0, up@2, dn@1; creation-major monomial
+  // Cdagup_0 Cdagup_2 Cdagdn_1.
+  Monomial mono_eltj{Op("Cdagup", 0), Op("Cdagup", 2), Op("Cdagdn", 1)};
+  test_basis_meaning(Electron(4), {1, 2, 1, 0}, mono_eltj);
+  test_basis_meaning(tJ(4), {1, 2, 1, 0}, mono_eltj);
+
+  // Fermion: occupation @0,2,3; creation-major monomial Cdag_0 Cdag_2 Cdag_3.
+  Monomial mono_f{Op("Cdag", 0), Op("Cdag", 2), Op("Cdag", 3)};
+  test_basis_meaning(Fermion(4), {1, 0, 1, 1}, mono_f);
 } catch (xdiag::Error const &e) {
   error_trace(e);
 }

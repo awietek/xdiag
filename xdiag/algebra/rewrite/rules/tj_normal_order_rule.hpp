@@ -9,8 +9,12 @@
 namespace xdiag::algebra {
 
 // MonomialRule that brings a product of elementary tJ operators
-// (Cdagup/Cup/Cdagdn/Cdn) into the "all ups then all dns, creation-left,
-// ascending" normal order expected by term_cdagc_string.
+// (Cdagup/Cup/Cdagdn/Cdn) into creation-major normal order: all creation
+// operators left of all annihilation operators, then up before dn, then
+// ascending site --
+//   Cdagup_{i<...} Cdagdn_{...} Cup_{...} Cdn_{...} .
+// (The Cdag/C string kernels split this by sector and fold in the Jordan-Wigner
+// sign of partitioning it into the all-ups-then-all-dns order they evaluate.)
 //
 // Different sites anticommute like ordinary fermions (swap with a -1 sign).
 // Same-site pairs use the tJ (projected) relations rather than the canonical

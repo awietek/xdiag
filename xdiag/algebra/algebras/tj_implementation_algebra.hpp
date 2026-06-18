@@ -25,6 +25,13 @@ namespace xdiag::algebra {
 //   TotalN   -> sum_i Ntot{i}
 // Exchange, SzSz, tJSzSz and the number operators are kept as size-1 named ops
 // (routed to their kernels); they only expand to Cdag/C strings inside a product.
-Algebra tj_implementation_algebra(int64_t nsites);
+//
+// exchange_as_kernel: the symmetric tJ block has no dedicated Exchange kernel --
+// it reuses the electron Cdag/C string kernel -- so it passes false, which drops
+// Exchange from the kernel types and lets it expand to (normal-ordered) Cdag/C
+// strings like any other product. The non-symmetric block keeps the fast
+// Exchange kernel (true).
+Algebra tj_implementation_algebra(int64_t nsites,
+                                  bool exchange_as_kernel = true);
 
 } // namespace xdiag::algebra

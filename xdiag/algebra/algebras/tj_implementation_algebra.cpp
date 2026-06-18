@@ -19,14 +19,19 @@
 
 namespace xdiag::algebra {
 
-Algebra tj_implementation_algebra(int64_t nsites) {
+Algebra tj_implementation_algebra(int64_t nsites, bool exchange_as_kernel) {
   std::set<std::string> fermionic{"Cdagup", "Cup", "Cdagdn", "Cdn"};
 
   // Named operator types with a dedicated tJ matrix kernel (kept as size-1).
   std::set<std::string> kernel_types{
       "Cdagup", "Cup",    "Cdagdn", "Cdn",      "Hopup",  "Hopdn",
       "Nup",    "Ndn",    "NupNup", "NdnNdn",   "NupNdn", "NdnNup",
-      "NtotNtot", "SzSz", "tJSzSz", "Exchange"};
+      "NtotNtot", "SzSz", "tJSzSz"};
+  if (exchange_as_kernel) {
+    // The symmetric block has no Exchange kernel; it lets Exchange expand to
+    // (normal-ordered) Cdag/C strings handled by the string kernel instead.
+    kernel_types.insert("Exchange");
+  }
 
   std::vector<OpRule> expansion_rules;
 

@@ -65,4 +65,31 @@ private:
   bit_t signmask_cdag_;  // XOR of below(i_b) over the creation block
 };
 
+// Electron / tJ string kernels split a two-sector monomial into an up and a dn
+// sub-string and evaluate them independently, which silently reorders the
+// operators into the all-ups-then-all-dns form. That reordering carries a
+// Jordan-Wigner sign whenever a dn operator originally sat to the LEFT of an up
+// operator (e.g. S- = Cdagdn_i Cup_i, or the interleaved strings the tJ
+// normal-order rule emits because it cannot separate the projected S+/S- pairs).
+// Returns true iff that partition sign is negative: one factor of -1 per
+// (dn-operator before up-operator) pair. It is +1 for an already separated
+// monomial (the electron normal order), so folding it into the coefficient
+// leaves the electron block unchanged while making the kernels correct for any
+// operator order. `cdag_dn` / `c_dn` name the dn-sector operator types.
+inline bool cdagc_sector_partition_neg(Monomial const &mono,
+                                       std::string const &cdag_dn,
+                                       std::string const &c_dn) {
+  int64_t dn_seen = 0;
+  int64_t inversions = 0;
+  for (int64_t k = 0; k < mono.size(); ++k) {
+    std::string const &t = mono[k].type();
+    if ((t == cdag_dn) || (t == c_dn)) {
+      ++dn_seen; // a dn operator: later up operators must hop past it
+    } else {
+      inversions += dn_seen;
+    }
+  }
+  return (inversions & 1) != 0;
+}
+
 } // namespace xdiag::matrices

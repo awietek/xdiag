@@ -47,6 +47,13 @@ void term_cdagc_string(Coeff const &c, Monomial const &mono,
 
   int64_t nsites = basis_in.nsites();
   coeff_t cf = c.scalar().as<coeff_t>();
+  // The split below evaluates the up and dn sub-strings as if the monomial were
+  // in all-ups-then-all-dns order; fold in the Jordan-Wigner sign of partitioning
+  // the input into that order (a no-op for the electron block's all-ups-then-dns
+  // normal order, needed for the interleaved tJ creation-major normal order).
+  if (cdagc_sector_partition_neg(mono, "Cdagdn", "Cdn")) {
+    cf = -cf;
+  }
 
   // Split the monomial into its up and dn sub-strings (validating the types).
   std::vector<Op> up_ops, dn_ops;
@@ -145,16 +152,20 @@ XDIAG_CATCH
 // sub-string and re-symmetrises the dn within the output up rep's block. The
 // total sign combines the operator signs (up, dn, cross) with the
 // symmetrisation fermi sign (fermi_up XOR fermi_dn).
-template <typename coeff_t, class enumeration_t, class fill_f>
-void term_cdagc_string(
-    Coeff const &c, Monomial const &mono,
-    basis::BasisElectronSymmetric<enumeration_t> const &basis_in,
-    basis::BasisElectronSymmetric<enumeration_t> const &basis_out,
-    fill_f fill) try {
-  using bit_t = typename enumeration_t::bit_t;
+template <typename coeff_t, class basis_t, class fill_f,
+          typename = decltype(std::declval<basis_t>().dns_for_ups_rep(0))>
+void term_cdagc_string(Coeff const &c, Monomial const &mono,
+                       basis_t const &basis_in, basis_t const &basis_out,
+                       fill_f fill) try {
+  using bit_t = typename basis_t::bit_t;
 
   int64_t nsites = basis_in.nsites();
   coeff_t cf = c.scalar().as<coeff_t>();
+  // See the non-symmetric overload: fold in the Jordan-Wigner sign of
+  // partitioning the monomial into all-ups-then-all-dns order.
+  if (cdagc_sector_partition_neg(mono, "Cdagdn", "Cdn")) {
+    cf = -cf;
+  }
 
   // Split the monomial into its up and dn sub-strings (validating the types).
   std::vector<Op> up_ops, dn_ops;
@@ -209,16 +220,19 @@ void term_cdagc_string(
       if (basis_out.stab_size(idx_up_out) == 1) {
         coeff_t prefac = cf * bloch(s0);
         bool fermi_up = basis_out.fermi_bool_ups(s0, ups_flip);
+        auto dnss_out = basis_out.dns_for_ups_rep(idx_up_out);
         int64_t dn_idx = 0;
         for (bit_t dns : dnss_in) {
           if (dn_str.non_zero(dns)) {
             auto [dns_flip, dn_fermi] = dn_str.action(dns);
             auto [idx_dns_out, fermi_dn] =
-                basis_out.index_dns_fermi(dns_flip, s0);
-            coeff_t val = prefac / norms_in[dn_idx];
-            bool neg = up_fermi ^ dn_fermi ^ fermi_up ^ fermi_dn;
-            XDIAG_FILL(off_in + dn_idx, off_out + idx_dns_out,
-                       neg ? -val : val);
+                basis_out.index_dns_fermi(dns_flip, s0, idx_up_out, dnss_out);
+            if (idx_dns_out >= 0) { // -1: tJ double occupancy (never for electron)
+              coeff_t val = prefac / norms_in[dn_idx];
+              bool neg = up_fermi ^ dn_fermi ^ fermi_up ^ fermi_dn;
+              XDIAG_FILL(off_in + dn_idx, off_out + idx_dns_out,
+                         neg ? -val : val);
+            }
           }
           ++dn_idx;
         }

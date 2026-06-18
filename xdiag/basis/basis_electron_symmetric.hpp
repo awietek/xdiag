@@ -147,13 +147,27 @@ public:
     return fermi_dn_.sign(sym, dns);
   }
 
+  // Block index of `dns` in up representative `idx_up`'s dn block. For electron
+  // the trivial-stabilizer block is the full dn enumeration, so this is the O(1)
+  // basis_dn().index() and the idx_up / dnss arguments are unused; they exist so
+  // the symmetric kernels are shared verbatim with BasistJSymmetric, whose block
+  // is up-rep-specific. Electron states are never absent here (no double
+  // occupancy constraint), so the result is always >= 0.
+  inline int64_t index_dns(bit_t dns, int64_t idx_up,
+                           gsl::span<bit_t const> dnss) const {
+    (void)idx_up;
+    (void)dnss;
+    return basis_dn_.index(dns);
+  }
+
   // dn index and fermi sign of `dns` mapped by the single symmetry `sym`
-  // (the trivial up-stabilizer path: dn block is the full enumeration).
-  inline std::pair<int64_t, bool> index_dns_fermi(bit_t dns,
-                                                  int64_t sym) const {
-    bit_t dns_rep = action_.apply(sym, dns);
-    int64_t idx_dn = basis_dn_.index(dns_rep);
-    return {idx_dn, fermi_bool_dns(sym, dns)};
+  // (the trivial up-stabilizer path: dn block is the full enumeration). idx_up /
+  // dnss are unused for electron (see index_dns).
+  inline std::pair<int64_t, bool>
+  index_dns_fermi(bit_t dns, int64_t sym, int64_t idx_up,
+                  gsl::span<bit_t const> dnss) const {
+    return {index_dns(action_.apply(sym, dns), idx_up, dnss),
+            fermi_bool_dns(sym, dns)};
   }
 
   // dn index, fermi sign and chosen symmetry for the non-trivial up-stabilizer.

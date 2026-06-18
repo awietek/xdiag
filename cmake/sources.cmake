@@ -51,6 +51,7 @@ set(XDIAG_SOURCES
   bits/bitvector.cpp
   bits/bitarray.cpp
   bits/pack_unpack.cpp
+  bits/mask_compressor.cpp
   bits/to_string.cpp
   
   combinatorics/combinations/enumerate_combinations.cpp
@@ -67,6 +68,7 @@ set(XDIAG_SOURCES
   basis/basis_electron.cpp
   basis/basis_electron_symmetric.cpp
   basis/basis_tj.cpp
+  basis/basis_tj_symmetric.cpp
   basis/basis_sublattice.cpp
   basis/basis_symmetric.cpp
 
