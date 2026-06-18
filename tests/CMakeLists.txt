@@ -31,6 +31,7 @@ set(XDIAG_TEST_SOURCES
   operators/test_opsum.cpp
 
   algebra/test_normal_order.cpp
+  algebra/test_quantum_numbers.cpp
   algebra/test_permute.cpp
   # algebra/test_symmetrize.cpp # requires Electron block to work currently
   algebra/test_isapprox.cpp

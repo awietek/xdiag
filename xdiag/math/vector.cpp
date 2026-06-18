@@ -95,11 +95,11 @@ bool Vector::isapprox(Vector const &y, double rtol, double atol) const {
                         [&](arma::vec const &a, arma::vec const &b) {
                           return arma::approx_equal(a, b, "both", atol, rtol);
                         },
-                        [&](arma::vec const &a, arma::cx_vec const &&b) {
+                        [&](arma::vec const &a, arma::cx_vec const &b) {
                           return arma::approx_equal(math::to_cx_vec(a), b,
                                                     "both", atol, rtol);
                         },
-                        [&](arma::cx_vec const &a, arma::vec const &&b) {
+                        [&](arma::cx_vec const &a, arma::vec const &b) {
                           return arma::approx_equal(a, math::to_cx_vec(b),
                                                     "both", atol, rtol);
                         },

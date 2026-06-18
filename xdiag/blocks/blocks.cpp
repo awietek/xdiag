@@ -103,6 +103,19 @@ bool isreal(Block const &block) {
   return std::visit([&](auto &&b) { return b.isreal(); }, block);
 }
 
+bool isapprox(Block const &b1, Block const &b2, double tol) {
+  if (b1.index() != b2.index()) {
+    return false; // different block type
+  }
+  return std::visit(
+      [&](auto const &x) -> bool {
+        auto const &y = std::get<std::decay_t<decltype(x)>>(b2);
+        return (x.nsites() == y.nsites()) && (x.d() == y.d()) &&
+               isapprox(x.irreps(), y.irreps(), tol);
+      },
+      b1);
+}
+
 std::ostream &operator<<(std::ostream &out, Block const &block) {
   std::visit([&](auto &&block) { out << block; }, block);
   return out;

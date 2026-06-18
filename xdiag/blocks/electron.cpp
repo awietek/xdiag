@@ -125,7 +125,7 @@ ElectronIterator Electron::begin() const { return {this, 0}; }
 ElectronIterator Electron::end() const { return {this, size()}; }
 
 bool Electron::operator==(Electron const &rhs) const {
-  return (nsites() == rhs.nsites()) && (irreps_ == rhs.irreps_);
+  return (irreps_ == rhs.irreps_) && (basis_ == rhs.basis_);
 }
 
 bool Electron::operator!=(Electron const &rhs) const {

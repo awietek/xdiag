@@ -24,6 +24,13 @@ XDIAG_API int64_t size(Block const &block);
 XDIAG_API int64_t nsites(Block const &block);
 XDIAG_API bool isreal(Block const &block);
 
+// Semantic equality: same block type, number of sites, local dimension, and
+// (approximately) the same quantum-number sectors / irreps. Unlike operator==,
+// which for some blocks compares basis-pointer identity, this compares the
+// physical content, so two independently built blocks for the same sector
+// compare equal.
+XDIAG_API bool isapprox(Block const &b1, Block const &b2, double tol = 1e-12);
+
 // Output block obtained by applying ops to block_in: the quantum-number sectors
 // of block_in are shifted by the representation ops transforms under (U(1)
 // charges add, permutation characters multiply). Throws if ops has no

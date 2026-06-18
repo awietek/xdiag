@@ -115,11 +115,11 @@ bool Matrix::isapprox(Matrix const &y, double rtol, double atol) const {
                         [&](arma::mat const &a, arma::mat const &b) {
                           return arma::approx_equal(a, b, "both", atol, rtol);
                         },
-                        [&](arma::mat const &a, arma::cx_mat const &&b) {
+                        [&](arma::mat const &a, arma::cx_mat const &b) {
                           return arma::approx_equal(math::to_cx_mat(a), b,
                                                     "both", atol, rtol);
                         },
-                        [&](arma::cx_mat const &a, arma::mat const &&b) {
+                        [&](arma::cx_mat const &a, arma::mat const &b) {
                           return arma::approx_equal(a, math::to_cx_mat(b),
                                                     "both", atol, rtol);
                         },

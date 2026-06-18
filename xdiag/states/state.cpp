@@ -256,7 +256,7 @@ complex *State::colptrC(int64_t col) {
 bool isvalid(State const &s) { return s.isvalid(); }
 int64_t nsites(State const &s) { return s.nsites(); }
 bool isapprox(State const &v, State const &w, double rtol, double atol) try {
-  if (v.block() == w.block()) {
+  if (isapprox(v.block(), w.block())) {
     if (isreal(v) && isreal(w)) {
       return arma::approx_equal(v.matrix(false), w.matrix(false), "both", atol,
                                 rtol);
@@ -384,7 +384,7 @@ State operator/(State const &X, complex alpha) try {
 XDIAG_CATCH
 
 State &operator+=(State &v, State const &w) try {
-  if (v.block() != w.block()) {
+  if (!isapprox(v.block(), w.block())) {
     XDIAG_THROW("Cannot add two states from different blocks");
   }
   if (v.ncols() != w.ncols()) {
@@ -409,7 +409,7 @@ State &operator+=(State &v, State const &w) try {
 XDIAG_CATCH
 
 State &operator-=(State &v, State const &w) try {
-  if (v.block() != w.block()) {
+  if (!isapprox(v.block(), w.block())) {
     XDIAG_THROW("Cannot subtract two states from different blocks");
   }
   if (v.ncols() != w.ncols()) {

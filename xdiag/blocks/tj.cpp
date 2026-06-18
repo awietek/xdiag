@@ -141,7 +141,7 @@ tJIterator tJ::begin() const { return {this, 0}; }
 tJIterator tJ::end() const { return {this, size()}; }
 
 bool tJ::operator==(tJ const &rhs) const {
-  return (nsites() == rhs.nsites()) && (irreps_ == rhs.irreps_);
+  return (irreps_ == rhs.irreps_) && (basis_ == rhs.basis_);
 }
 bool tJ::operator!=(tJ const &rhs) const { return !operator==(rhs); }
 

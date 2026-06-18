@@ -147,13 +147,23 @@ TEST_CASE("tjsymmetricmatrix", "[tj]") try {
     test_spectra_np(ops, nsites, irreps, mults);
   }
 
-  // All-to-all tJ couplings, real and complex (the complex couplings exercise
-  // the complex-character / flux path of the symmetric kernels).
-  for (int64_t nsites = 2; nsites < 6; ++nsites) {
-    Log("tj symmetric matrix: tJ all-to-all N = {}", nsites);
+  // Translation-invariant complex chain (uniform Peierls flux): exercises the
+  // complex-coupling / flux path of the symmetric kernels while still conserving
+  // momentum, so the per-sector spectra union is meaningful. (A random all-to-all
+  // coupling is NOT translation-invariant -- it has no SitePermutation quantum
+  // number -- so it cannot be decomposed into momentum sectors and is covered
+  // instead by the non-symmetric matrix test.)
+  for (int64_t nsites = 3; nsites < 6; ++nsites) {
+    Log("tj symmetric matrix: tJ complex flux chain N = {}", nsites);
     auto [irreps, mults] = get_cyclic_group_irreps_mult(nsites);
-    test_spectra_np(tj_alltoall(nsites), nsites, irreps, mults);
-    test_spectra_np(tj_alltoall_complex(nsites), nsites, irreps, mults);
+    OpSum ops;
+    for (int64_t i = 0; i < nsites; ++i) {
+      int64_t j = (i + 1) % nsites;
+      ops += 1.0 * Op("Hop", {i, j});                // real part of the hopping
+      ops += complex(0.0, 0.5) * Op("HopAsym", {i, j}); // imaginary part (flux)
+      ops += 0.4 * Op("SdotS", {i, j});
+    }
+    test_spectra_np(ops, nsites, irreps, mults);
   }
 } catch (xdiag::Error const &e) {
   error_trace(e);
