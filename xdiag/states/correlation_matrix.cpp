@@ -8,7 +8,7 @@
 #include <variant>
 #include <vector>
 
-#include <xdiag/algebra/algebras/algebra.hpp>
+#include <xdiag/algebra/algebra.hpp>
 #include <xdiag/algebra/isapprox.hpp>
 #include <xdiag/algebra/symmetrize.hpp>
 #include <xdiag/blocks/blocks.hpp>

@@ -13,7 +13,7 @@
 
 #include <tests/catch.hpp>
 
-#include <xdiag/algebra/algebras/algebra.hpp>
+#include <xdiag/algebra/algebra.hpp>
 #include <xdiag/math/complex.hpp>
 #include <xdiag/math/isapprox.hpp>
 #include <xdiag/matrices/matrix.hpp>

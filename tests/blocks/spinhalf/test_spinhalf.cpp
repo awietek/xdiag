@@ -10,9 +10,7 @@
 #include "test_spinhalf_strategies.hpp"
 #include "testcases_spinhalf.hpp"
 
-#include <xdiag/algebra/algebras/matrix_algebra.hpp>
-#include <xdiag/algebra/algebras/spin_algebra.hpp>
-#include <xdiag/algebra/algebras/spinhalf_implementation_algebra.hpp>
+#include <xdiag/algebra/algebra.hpp>
 #include <xdiag/algebra/isapprox.hpp>
 #include <xdiag/algebra/normal_order.hpp>
 #include <xdiag/armadillo.hpp>

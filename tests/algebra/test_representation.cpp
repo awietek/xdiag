@@ -7,8 +7,7 @@
 
 #include "../catch.hpp"
 
-#include <xdiag/algebra/algebras/matrix_algebra.hpp>
-#include <xdiag/algebra/algebras/spin_algebra.hpp>
+#include <xdiag/algebra/algebra.hpp>
 #include <xdiag/algebra/representation.hpp>
 #include <xdiag/algebra/symmetrize.hpp>
 #include <xdiag/matrices/matrix.hpp>

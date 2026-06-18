@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <xdiag/algebra/algebras/algebra.hpp>
+#include <xdiag/algebra/algebra.hpp>
 #include <xdiag/operators/opsum.hpp>
 
 namespace xdiag::algebra {

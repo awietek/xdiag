@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <xdiag/algebra/algebras/algebra.hpp>
+#include <xdiag/algebra/algebra.hpp>
 #include <xdiag/matrices/sparse/sparse_matrix_types.hpp>
 #include <xdiag/operators/opsum.hpp>
 

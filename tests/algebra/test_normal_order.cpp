@@ -7,17 +7,15 @@
 
 #include <tests/catch.hpp>
 
-#include <xdiag/algebra/algebras/electron_algebra.hpp>
-#include <xdiag/algebra/algebras/electron_implementation_algebra.hpp>
-#include <xdiag/algebra/algebras/fermion_implementation_algebra.hpp>
-#include <xdiag/algebra/algebras/spin_algebra.hpp>
-#include <xdiag/algebra/algebras/tj_algebra.hpp>
-#include <xdiag/algebra/algebras/tj_implementation_algebra.hpp>
+#include <xdiag/algebra/algebra.hpp>
 #include <xdiag/algebra/isapprox.hpp>
 #include <xdiag/algebra/normal_order.hpp>
 #include <xdiag/blocks/electron.hpp>
+#include <xdiag/blocks/spinhalf.hpp>
 #include <xdiag/blocks/fermion.hpp>
 #include <xdiag/blocks/tj.hpp>
+#include <xdiag/math/isapprox.hpp>
+#include <xdiag/matrices/matrix.hpp>
 #include <xdiag/operators/monomial.hpp>
 #include <xdiag/operators/op.hpp>
 #include <xdiag/operators/opsum.hpp>
@@ -364,6 +362,66 @@ TEST_CASE("normal_order_basis_meaning", "[operators]") try {
   // Fermion: occupation @0,2,3; creation-major monomial Cdag_0 Cdag_2 Cdag_3.
   Monomial mono_f{Op("Cdag", 0), Op("Cdag", 2), Op("Cdag", 3)};
   test_basis_meaning(Fermion(4), {1, 0, 1, 1}, mono_f);
+} catch (xdiag::Error const &e) {
+  error_trace(e);
+}
+
+// TotalN / TotalNup / TotalNdn / TotalSz are site-free convenience operators
+// that expand to the sum of their local operator over all sites.
+TEST_CASE("total_operators", "[operators]") try {
+  Log("Testing normal_order: TotalN / TotalNup / TotalNdn / TotalSz");
+
+  auto sum_local = [](int64_t n, std::string const &local) {
+    OpSum r;
+    for (int64_t i = 0; i < n; ++i) {
+      r += Op(local, i);
+    }
+    return r;
+  };
+
+  int64_t n = 3;
+
+  // Algebra-level: the total operator normal-orders to the explicit local sum.
+  {
+    Algebra alg = spin_algebra(n);
+    REQUIRE(isapprox(normal_order(OpSum(Op("TotalSz")), alg),
+                     normal_order(sum_local(n, "Sz"), alg), alg));
+  }
+  {
+    Algebra alg = electron_algebra(n);
+    REQUIRE(isapprox(normal_order(OpSum(Op("TotalNup")), alg),
+                     normal_order(sum_local(n, "Nup"), alg), alg));
+    REQUIRE(isapprox(normal_order(OpSum(Op("TotalNdn")), alg),
+                     normal_order(sum_local(n, "Ndn"), alg), alg));
+    REQUIRE(isapprox(normal_order(OpSum(Op("TotalSz")), alg),
+                     normal_order(sum_local(n, "Sz"), alg), alg));
+  }
+  {
+    Algebra alg = tj_algebra(n);
+    REQUIRE(isapprox(normal_order(OpSum(Op("TotalNup")), alg),
+                     normal_order(sum_local(n, "Nup"), alg), alg));
+    REQUIRE(isapprox(normal_order(OpSum(Op("TotalNdn")), alg),
+                     normal_order(sum_local(n, "Ndn"), alg), alg));
+    REQUIRE(isapprox(normal_order(OpSum(Op("TotalSz")), alg),
+                     normal_order(sum_local(n, "Sz"), alg), alg));
+  }
+
+  // Functional: the assembled matrix equals the explicit local-sum matrix
+  // (exercises the implementation algebra + kernels end to end).
+  auto check_matrix = [&](auto const &block, std::string const &total,
+                          std::string const &local) {
+    int64_t ns = block.nsites();
+    arma::mat m_total = matrix(OpSum(Op(total)), block);
+    arma::mat m_sum = matrix(sum_local(ns, local), block);
+    REQUIRE(isapprox(m_total, m_sum));
+  };
+  check_matrix(Spinhalf(4), "TotalSz", "Sz");
+  check_matrix(Electron(4), "TotalSz", "Sz");
+  check_matrix(Electron(4), "TotalNup", "Nup");
+  check_matrix(Electron(4), "TotalNdn", "Ndn");
+  check_matrix(tJ(4), "TotalSz", "Sz");
+  check_matrix(tJ(4), "TotalNup", "Nup");
+  check_matrix(tJ(4), "TotalNdn", "Ndn");
 } catch (xdiag::Error const &e) {
   error_trace(e);
 }

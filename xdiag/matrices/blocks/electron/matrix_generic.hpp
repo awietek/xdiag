@@ -6,7 +6,7 @@
 
 #include <string>
 
-#include <xdiag/algebra/algebras/electron_implementation_algebra.hpp>
+#include <xdiag/algebra/algebra.hpp>
 #include <xdiag/algebra/normal_order.hpp>
 #include <xdiag/operators/opsum.hpp>
 #include <xdiag/operators/valid.hpp>

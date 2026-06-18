@@ -4,7 +4,7 @@
 
 #include <tests/catch.hpp>
 
-#include <xdiag/algebra/algebras/matrix_algebra.hpp>
+#include <xdiag/algebra/algebra.hpp>
 #include <xdiag/algebra/isapprox.hpp>
 #include <xdiag/algebra/normal_order.hpp>
 #include <xdiag/operators/hc.hpp>

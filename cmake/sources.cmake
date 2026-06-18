@@ -128,40 +128,15 @@ set(XDIAG_SOURCES
   algebra/isapprox.cpp
   algebra/ishermitian.cpp
 
-  algebra/algebras/algebra.cpp
-  algebra/algebras/spin_algebra.cpp
-  algebra/algebras/electron_algebra.cpp
-  algebra/algebras/tj_algebra.cpp
-  algebra/algebras/tj_implementation_algebra.cpp
-  algebra/algebras/matrix_algebra.cpp
-  algebra/algebras/spinhalf_implementation_algebra.cpp
-  algebra/algebras/fermion_implementation_algebra.cpp
-  algebra/algebras/fermion_algebra.cpp
-  algebra/algebras/electron_implementation_algebra.cpp
+  algebra/algebra.cpp
 
   algebra/rewrite/rewrite.cpp
-  algebra/rewrite/rules/id_absorption_rule.cpp
-  algebra/rewrite/rules/sort_sites_rule.cpp
-  algebra/rewrite/rules/spinhalf_same_site_rule.cpp
-  algebra/rewrite/rules/electron_same_site_rule.cpp
-  algebra/rewrite/rules/electron_normal_order_rule.cpp
-  algebra/rewrite/rules/electron_protected_expansion_rule.cpp
-  algebra/rewrite/rules/fermion_same_site_rule.cpp
-  algebra/rewrite/rules/fermion_normal_order_rule.cpp
-  algebra/rewrite/rules/tj_same_site_rule.cpp
-  algebra/rewrite/rules/tj_protected_expansion_rule.cpp
-  algebra/rewrite/rules/tj_normal_order_rule.cpp
-  algebra/rewrite/rules/combine_matrix_rule.cpp
-  algebra/rewrite/rules/sort_matrix_sites_rule.cpp
-  algebra/rewrite/rules/spinhalf_sdots_rule.cpp
-  algebra/rewrite/rules/convert_to_matrix_rule.cpp
-  algebra/rewrite/rules/spin_expansion_rules.cpp
-  algebra/rewrite/rules/electron_expansion_rules.cpp
-  algebra/rewrite/rules/fermion_expansion_rules.cpp
-  algebra/rewrite/rules/tj_expansion_rules.cpp
-  algebra/rewrite/rules/boson_expansion_rules.cpp
-  algebra/rewrite/rules/totaln_expansion_rule.cpp
-  algebra/rewrite/rules/hubbardu_expansion_rule.cpp
+  algebra/rewrite/sort_sites.cpp
+  algebra/rewrite/spin_rules.cpp
+  algebra/rewrite/fermion_rules.cpp
+  algebra/rewrite/electron_rules.cpp
+  algebra/rewrite/tj_rules.cpp
+  algebra/rewrite/matrix_rules.cpp
 
   algebra/utils/combine_matrix_ops.cpp
   algebra/utils/permute_matrix_op.cpp

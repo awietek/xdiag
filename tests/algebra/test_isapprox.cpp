@@ -6,8 +6,7 @@
 
 #include <tests/catch.hpp>
 
-#include <xdiag/algebra/algebras/electron_algebra.hpp>
-#include <xdiag/algebra/algebras/spin_algebra.hpp>
+#include <xdiag/algebra/algebra.hpp>
 #include <xdiag/algebra/isapprox.hpp>
 #include <xdiag/utils/logger.hpp>
 

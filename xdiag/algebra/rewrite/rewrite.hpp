@@ -4,37 +4,24 @@
 
 #pragma once
 
-#include <vector>
+#include <cstdint>
+#include <functional>
+#include <optional>
 
-#include <xdiag/algebra/rewrite/rules/rules.hpp>
 #include <xdiag/operators/monomial.hpp>
-#include <xdiag/operators/op.hpp>
 #include <xdiag/operators/opsum.hpp>
 
 namespace xdiag::algebra {
 
-// --- Rewriting functions ---
-
-// Apply one round of rewriting to each term in ops:
-//   1. Try each MonomialRule on the full monomial — use the first match.
-//   2. If no MonomialRule matched, try OpRules left-to-right — use the
-//      first match (replaces just that one Op, keeps prefix and suffix).
-//   3. If nothing matched, keep the term unchanged.
-// The result is collected (equal monomials combined, zero terms dropped).
-OpSum rewrite_once(OpSum const &ops, std::vector<MonomialRule> const &mrules,
-                   std::vector<OpRule> const &orules);
-
-// Iterate rewrite_once until the OpSum stops changing (fixed point)
-// or max_iter is exceeded, in which case XDIAG_THROW is called.
-OpSum rewrite(OpSum const &ops, std::vector<MonomialRule> const &mrules,
-              std::vector<OpRule> const &orules, int64_t max_iter = 1000);
-
-// Convenience overloads: pass only one kind of rules.
-OpSum rewrite_once(OpSum const &ops, std::vector<OpRule> const &orules);
-OpSum rewrite_once(OpSum const &ops, std::vector<MonomialRule> const &mrules);
-OpSum rewrite(OpSum const &ops, std::vector<OpRule> const &orules,
-              int64_t max_iter = 1000);
-OpSum rewrite(OpSum const &ops, std::vector<MonomialRule> const &mrules,
-              int64_t max_iter = 1000);
+// Generic fixed-point driver. `step(mono)` returns the replacement for one
+// monomial (without its outer coefficient), or nullopt if that monomial is
+// already in final form. rewrite_to_fixpoint applies `step` to every monomial,
+// collects equal monomials, and repeats until nothing changes (or throws after
+// max_iter rounds). This is the only engine; the per-block expansion and
+// simplification steps are plain functions assembled by normal_order().
+OpSum rewrite_to_fixpoint(
+    OpSum const &ops,
+    std::function<std::optional<OpSum>(Monomial const &)> const &step,
+    int64_t max_iter = 10000);
 
 } // namespace xdiag::algebra

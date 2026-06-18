@@ -10,7 +10,7 @@
 #include <string>
 #include <type_traits>
 
-#include <xdiag/algebra/algebras/algebra.hpp>
+#include <xdiag/algebra/algebra.hpp>
 #include <xdiag/algebra/representation.hpp>
 #include <xdiag/extern/fmt/color.hpp>
 #include <xdiag/utils/error.hpp>

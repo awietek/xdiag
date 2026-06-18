@@ -6,7 +6,7 @@
 
 #include <cstdint>
 
-#include <xdiag/algebra/algebras/algebra.hpp>
+#include <xdiag/algebra/algebra.hpp>
 #include <xdiag/algebra/isapprox.hpp>
 #include <xdiag/math/complex.hpp>
 #include <xdiag/operators/hc.hpp>

@@ -8,7 +8,7 @@
 #include <type_traits>
 #include <utility>
 
-#include <xdiag/algebra/algebras/tj_implementation_algebra.hpp>
+#include <xdiag/algebra/algebra.hpp>
 #include <xdiag/algebra/normal_order.hpp>
 #include <xdiag/bits/get_set.hpp>
 #include <xdiag/operators/coeff.hpp>

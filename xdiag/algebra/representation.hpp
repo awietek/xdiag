@@ -6,7 +6,7 @@
 
 #include <optional>
 
-#include <xdiag/algebra/algebras/algebra.hpp>
+#include <xdiag/algebra/algebra.hpp>
 #include <xdiag/operators/opsum.hpp>
 #include <xdiag/symmetries/representation.hpp>
 #include <xdiag/symmetries/representation_set.hpp>
