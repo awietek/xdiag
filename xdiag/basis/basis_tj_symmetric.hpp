@@ -12,7 +12,7 @@
 #include <utility>
 #include <vector>
 
-#include <xdiag/extern/gsl/span>
+#include <extern/gsl/span>
 
 #include <type_traits>
 

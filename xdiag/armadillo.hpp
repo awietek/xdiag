@@ -23,5 +23,5 @@
 
 // Redefinition of "Op" to avoid name colission with xdiag::Op
 #define Op XDIAG_OP_SUBSTITUTE
-#include <xdiag/extern/armadillo/armadillo>
+#include <extern/armadillo/armadillo>
 #undef Op

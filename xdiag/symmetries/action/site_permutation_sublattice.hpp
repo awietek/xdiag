@@ -10,7 +10,7 @@
 #include <vector>
 
 #include <xdiag/bits/half_bit_types.hpp>
-#include <xdiag/extern/gsl/span>
+#include <extern/gsl/span>
 #include <xdiag/symmetries/permutation_group.hpp>
 
 namespace xdiag::symmetries {

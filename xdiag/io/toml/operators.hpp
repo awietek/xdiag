@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <xdiag/extern/toml++/toml.hpp>
+#include <extern/toml++/toml.hpp>
 #include <xdiag/math/matrix.hpp>
 #include <xdiag/math/scalar.hpp>
 #include <xdiag/operators/coeff.hpp>

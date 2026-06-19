@@ -6,7 +6,7 @@
 
 #include <algorithm>
 #include <xdiag/bits/bitset.hpp>
-#include <xdiag/extern/fmt/format.hpp>
+#include <extern/fmt/format.hpp>
 
 namespace xdiag::bits {
 

@@ -7,7 +7,7 @@
 #include <cstdint>
 #include <utility>
 #include <vector>
-#include <xdiag/extern/gsl/span>
+#include <extern/gsl/span>
 
 namespace xdiag::symmetries {
 

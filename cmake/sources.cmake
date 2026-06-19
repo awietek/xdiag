@@ -4,7 +4,6 @@ set(XDIAG_SOURCES
   utils/logger.cpp
   utils/say_hello.cpp
   utils/read_vectors.cpp
-  utils/split.cpp
   utils/timing.cpp
   
   io/read.cpp

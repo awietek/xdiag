@@ -8,7 +8,7 @@
 #include <locale>
 
 #define FMT_HEADER_ONLY
-#include <xdiag/extern/fmt/format.hpp>
+#include <extern/fmt/format.hpp>
 
 namespace fmt {
 

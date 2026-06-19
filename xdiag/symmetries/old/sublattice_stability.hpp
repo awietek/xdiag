@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <xdiag/extern/gsl/span>
+#include <extern/gsl/span>
 #include <xdiag/symmetries/permutation_group.hpp>
 
 #define XDIAG_SUBLATTICE_UNSTABLE -1

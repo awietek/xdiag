@@ -6,7 +6,7 @@
 
 #include <ostream>
 
-#include <xdiag/extern/fmt/color.hpp>
+#include <extern/fmt/color.hpp>
 
 namespace xdiag {
 

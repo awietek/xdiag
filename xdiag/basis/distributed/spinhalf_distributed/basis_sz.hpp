@@ -5,7 +5,7 @@
 #pragma once
 #ifdef XDIAG_USE_MPI
 
-#include <xdiag/extern/gsl/span>
+#include <extern/gsl/span>
 
 #include <xdiag/bits/bitops.hpp>
 #include <xdiag/combinatorics/lin_table.hpp>

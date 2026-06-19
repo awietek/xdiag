@@ -12,7 +12,7 @@
 #include <utility>
 #include <vector>
 
-#include <xdiag/extern/gsl/span>
+#include <extern/gsl/span>
 
 #include <xdiag/basis/basis.hpp>
 #include <xdiag/basis/basis_onthefly.hpp>

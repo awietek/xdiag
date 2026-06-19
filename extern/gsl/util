@@ -17,7 +17,7 @@
 #ifndef GSL_UTIL_H
 #define GSL_UTIL_H
 
-#include <xdiag/extern/gsl/assert> // for Expects
+#include <extern/gsl/assert> // for Expects
 
 #include <array>
 #include <cstddef>          // for ptrdiff_t, size_t

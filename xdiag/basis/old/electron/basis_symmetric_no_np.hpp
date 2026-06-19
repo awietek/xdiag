@@ -9,7 +9,7 @@
 
 #include <xdiag/combinatorics/subsets_indexing.hpp>
 #include <xdiag/common.hpp>
-#include <xdiag/extern/gsl/span>
+#include <extern/gsl/span>
 #include <xdiag/symmetries/group_action/group_action_lookup.hpp>
 #include <xdiag/symmetries/group_action/representative.hpp>
 #include <xdiag/symmetries/lookup_tables/fermi_table.hpp>

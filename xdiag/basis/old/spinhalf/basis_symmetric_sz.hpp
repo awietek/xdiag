@@ -9,7 +9,7 @@
 
 #include <xdiag/combinatorics/combinations_indexing.hpp>
 #include <xdiag/common.hpp>
-#include <xdiag/extern/gsl/span>
+#include <extern/gsl/span>
 #include <xdiag/symmetries/group_action/group_action_lookup.hpp>
 #include <xdiag/symmetries/permutation_group.hpp>
 #include <xdiag/symmetries/representation.hpp>

@@ -12,7 +12,7 @@
 #include <xdiag/config.hpp>
 
 #ifndef XDIAG_DISABLE_COLOR
-#include <xdiag/extern/fmt/color.hpp>
+#include <extern/fmt/color.hpp>
 #endif
 
 namespace xdiag {

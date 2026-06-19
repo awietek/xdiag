@@ -13,7 +13,7 @@
 #include <xdiag/utils/xdiag_offset.hpp>
 
 #ifndef XDIAG_DISABLE_COLOR
-#include <xdiag/extern/fmt/color.hpp>
+#include <extern/fmt/color.hpp>
 #endif
 
 namespace xdiag {

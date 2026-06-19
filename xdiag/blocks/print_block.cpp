@@ -25,7 +25,7 @@
 #include <xdiag/random/hash.hpp>
 #include <xdiag/symmetries/representation.hpp>
 
-#include <xdiag/extern/fmt/format.hpp>
+#include <extern/fmt/format.hpp>
 
 namespace xdiag {
 

@@ -9,7 +9,7 @@
 #include <vector>
 
 #include <xdiag/common.hpp>
-#include <xdiag/extern/gsl/span>
+#include <extern/gsl/span>
 #include <xdiag/symmetries/operations/group_action_operations.hpp>
 #include <xdiag/symmetries/operations/symmetry_operations.hpp>
 #include <xdiag/utils/logger.hpp>

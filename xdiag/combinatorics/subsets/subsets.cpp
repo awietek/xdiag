@@ -5,7 +5,7 @@
 #include "subsets.hpp"
 #include <limits>
 
-#include <xdiag/extern/fmt/format.hpp>
+#include <extern/fmt/format.hpp>
 #include <xdiag/math/ipow.hpp>
 #include <xdiag/utils/error.hpp>
 

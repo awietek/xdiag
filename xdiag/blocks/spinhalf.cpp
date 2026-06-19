@@ -21,7 +21,7 @@
 #include <xdiag/utils/to_string_generic.hpp>
 
 #ifndef XDIAG_DISABLE_COLOR
-#include <xdiag/extern/fmt/color.hpp>
+#include <extern/fmt/color.hpp>
 #endif
 
 namespace xdiag {

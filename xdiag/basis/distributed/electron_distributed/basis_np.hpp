@@ -10,7 +10,7 @@
 #include <xdiag/bits/bitops.hpp>
 #include <xdiag/combinatorics/lin_table.hpp>
 #include <xdiag/common.hpp>
-#include <xdiag/extern/gsl/span>
+#include <extern/gsl/span>
 #include <xdiag/parallel/mpi/communicator.hpp>
 #include <xdiag/random/hash_functions.hpp>
 

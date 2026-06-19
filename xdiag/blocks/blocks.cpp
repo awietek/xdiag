@@ -12,7 +12,7 @@
 
 #include <xdiag/algebra/algebra.hpp>
 #include <xdiag/algebra/representation.hpp>
-#include <xdiag/extern/fmt/color.hpp>
+#include <extern/fmt/color.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/format.hpp>
 #include <xdiag/utils/to_string_generic.hpp>

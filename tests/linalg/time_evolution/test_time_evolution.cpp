@@ -5,17 +5,18 @@
 //
 // Created by Luke Staszewski on 30.01.23.
 //
-#include "../../catch.hpp"
+#include <tests/catch.hpp>
+
 #include <xdiag/algebra/matrix.hpp>
 #include <xdiag/algebra/sparse/csr_matrix.hpp>
+#include <xdiag/common.hpp>
+#include <xdiag/armadillo.hpp>
 #include <xdiag/linalg/sparse_diag.hpp>
 #include <xdiag/linalg/time_evolution/evolve_lanczos.hpp>
 #include <xdiag/linalg/time_evolution/expm.hpp>
 #include <xdiag/linalg/time_evolution/imaginary_time_evolve.hpp>
 #include <xdiag/linalg/time_evolution/time_evolve.hpp>
 #include <xdiag/linalg/time_evolution/time_evolve_expokit.hpp>
-#include <xdiag/common.hpp>
-#include <xdiag/extern/armadillo/armadillo>
 #include <xdiag/states/create_state.hpp>
 #include <xdiag/states/fill.hpp>
 #include <xdiag/states/product_state.hpp>

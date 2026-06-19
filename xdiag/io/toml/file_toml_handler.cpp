@@ -10,7 +10,7 @@
 #include <vector>
 
 #include <xdiag/armadillo.hpp>
-#include <xdiag/extern/toml++/toml.hpp>
+#include <extern/toml++/toml.hpp>
 #include <xdiag/io/toml/arma_matrix.hpp>
 #include <xdiag/io/toml/arma_vector.hpp>
 #include <xdiag/io/toml/operators.hpp>

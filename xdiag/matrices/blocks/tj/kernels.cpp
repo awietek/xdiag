@@ -34,58 +34,58 @@ using namespace xdiag::bits;
 using namespace xdiag::combinatorics;
 using namespace xdiag::matrices;
 
-// BEGIN_INSTANTIATION_GROUP(tj_subsets_uint32_t)
+// BEGIN_INSTANTIATION_GROUP(subsets_uint32_t)
 XDIAG_INSTANTIATE_KERNELS(tJ, BasistJ<Subsets<uint32_t>>)
 // END_INSTANTIATION_GROUP
 
-// BEGIN_INSTANTIATION_GROUP(tj_subsets_uint64_t)
+// BEGIN_INSTANTIATION_GROUP(subsets_uint64_t)
 XDIAG_INSTANTIATE_KERNELS(tJ, BasistJ<Subsets<uint64_t>>)
 // END_INSTANTIATION_GROUP
 
-// BEGIN_INSTANTIATION_GROUP(tj_combinations_uint32_t)
+// BEGIN_INSTANTIATION_GROUP(combinations_uint32_t)
 XDIAG_INSTANTIATE_KERNELS(tJ, BasistJ<Combinations<uint32_t>>)
 // END_INSTANTIATION_GROUP
 
-// BEGIN_INSTANTIATION_GROUP(tj_combinations_uint64_t)
+// BEGIN_INSTANTIATION_GROUP(combinations_uint64_t)
 XDIAG_INSTANTIATE_KERNELS(tJ, BasistJ<Combinations<uint64_t>>)
 // END_INSTANTIATION_GROUP
 
-// BEGIN_INSTANTIATION_GROUP(tj_lintable_uint32_t)
+// BEGIN_INSTANTIATION_GROUP(lintable_uint32_t)
 XDIAG_INSTANTIATE_KERNELS(tJ, BasistJ<LinTable<uint32_t>>)
 // END_INSTANTIATION_GROUP
 
-// BEGIN_INSTANTIATION_GROUP(tj_lintable_uint64_t)
+// BEGIN_INSTANTIATION_GROUP(lintable_uint64_t)
 XDIAG_INSTANTIATE_KERNELS(tJ, BasistJ<LinTable<uint64_t>>)
 // END_INSTANTIATION_GROUP
 
-// BEGIN_INSTANTIATION_GROUP(tj_combinations_bitset_dynamic)
+// BEGIN_INSTANTIATION_GROUP(combinations_bitset_dynamic)
 XDIAG_INSTANTIATE_KERNELS(tJ, BasistJ<Combinations<BitsetDynamic>>)
 // END_INSTANTIATION_GROUP
 
-// BEGIN_INSTANTIATION_GROUP(tj_symmetric_subsets_uint32_t)
+// BEGIN_INSTANTIATION_GROUP(symmetric_subsets_uint32_t)
 XDIAG_INSTANTIATE_KERNELS(tJ, BasistJSymmetric<Subsets<uint32_t>>)
 // END_INSTANTIATION_GROUP
 
-// BEGIN_INSTANTIATION_GROUP(tj_symmetric_subsets_uint64_t)
+// BEGIN_INSTANTIATION_GROUP(symmetric_subsets_uint64_t)
 XDIAG_INSTANTIATE_KERNELS(tJ, BasistJSymmetric<Subsets<uint64_t>>)
 // END_INSTANTIATION_GROUP
 
-// BEGIN_INSTANTIATION_GROUP(tj_symmetric_combinations_uint32_t)
+// BEGIN_INSTANTIATION_GROUP(symmetric_combinations_uint32_t)
 XDIAG_INSTANTIATE_KERNELS(tJ, BasistJSymmetric<Combinations<uint32_t>>)
 // END_INSTANTIATION_GROUP
 
-// BEGIN_INSTANTIATION_GROUP(tj_symmetric_combinations_uint64_t)
+// BEGIN_INSTANTIATION_GROUP(symmetric_combinations_uint64_t)
 XDIAG_INSTANTIATE_KERNELS(tJ, BasistJSymmetric<Combinations<uint64_t>>)
 // END_INSTANTIATION_GROUP
 
-// BEGIN_INSTANTIATION_GROUP(tj_symmetric_lintable_uint32_t)
+// BEGIN_INSTANTIATION_GROUP(symmetric_lintable_uint32_t)
 XDIAG_INSTANTIATE_KERNELS(tJ, BasistJSymmetric<LinTable<uint32_t>>)
 // END_INSTANTIATION_GROUP
 
-// BEGIN_INSTANTIATION_GROUP(tj_symmetric_lintable_uint64_t)
+// BEGIN_INSTANTIATION_GROUP(symmetric_lintable_uint64_t)
 XDIAG_INSTANTIATE_KERNELS(tJ, BasistJSymmetric<LinTable<uint64_t>>)
 // END_INSTANTIATION_GROUP
 
-// BEGIN_INSTANTIATION_GROUP(tj_symmetric_combinations_bitset_dynamic)
+// BEGIN_INSTANTIATION_GROUP(symmetric_combinations_bitset_dynamic)
 XDIAG_INSTANTIATE_KERNELS(tJ, BasistJSymmetric<Combinations<BitsetDynamic>>)
 // END_INSTANTIATION_GROUP

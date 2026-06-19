@@ -6,7 +6,7 @@
 
 #include <utility>
 #include <vector>
-#include <xdiag/extern/gsl/span>
+#include <extern/gsl/span>
 
 #include <xdiag/combinatorics/subsets_indexing.hpp>
 #include <xdiag/common.hpp>

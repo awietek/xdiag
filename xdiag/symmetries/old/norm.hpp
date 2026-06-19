@@ -4,7 +4,7 @@
 
 #include <cstdint>
 #include <vector>
-#include <xdiag/extern/gsl/span>
+#include <extern/gsl/span>
 
 #pragma once
 

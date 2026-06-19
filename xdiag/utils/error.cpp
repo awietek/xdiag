@@ -10,10 +10,10 @@
 #include <variant>
 
 #define FMT_HEADER_ONLY
-#include <xdiag/extern/fmt/format.hpp>
+#include <extern/fmt/format.hpp>
 
 #ifndef XDIAG_DISABLE_COLOR
-#include <xdiag/extern/fmt/color.hpp>
+#include <extern/fmt/color.hpp>
 #endif
 
 #include <xdiag/armadillo.hpp>

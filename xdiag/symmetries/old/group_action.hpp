@@ -6,7 +6,7 @@
 
 #include <utility>
 
-#include <xdiag/extern/gsl/span>
+#include <extern/gsl/span>
 #include <xdiag/symmetries/permutation_group.hpp>
 
 namespace xdiag {

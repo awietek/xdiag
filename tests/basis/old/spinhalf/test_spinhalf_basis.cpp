@@ -13,7 +13,7 @@
 #include <xdiag/combinatorics/combinations.hpp>
 #include <xdiag/combinatorics/subsets.hpp>
 #include <xdiag/common.hpp>
-#include <xdiag/extern/armadillo/armadillo>
+#include <extern/armadillo/armadillo>
 #include <xdiag/io/file_toml.hpp>
 #include <xdiag/io/read.hpp>
 #include <xdiag/symmetries/operations/group_action_operations.hpp>

@@ -5,7 +5,7 @@
 #include "read_vectors.hpp"
 
 #include <sstream>
-#include <xdiag/extern/fmt/format.hpp>
+#include <extern/fmt/format.hpp>
 #include <xdiag/math/complex.hpp>
 #include <xdiag/utils/error.hpp>
 

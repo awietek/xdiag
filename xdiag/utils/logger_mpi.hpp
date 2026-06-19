@@ -11,7 +11,7 @@
 #include <mpi.h>
 
 #define FMT_HEADER_ONLY
-#include <xdiag/extern/fmt/format.hpp>
+#include <extern/fmt/format.hpp>
 #include <xdiag/utils/error.hpp>
 
 namespace xdiag {

@@ -5,7 +5,7 @@
 #include <cmath>
 #include <optional>
 
-#include "../catch.hpp"
+#include <tests/catch.hpp>
 
 #include <xdiag/algebra/algebra.hpp>
 #include <xdiag/algebra/representation.hpp>
@@ -22,7 +22,7 @@ using namespace xdiag;
 using namespace xdiag::algebra;
 using namespace arma;
 
-TEST_CASE("opsumrepresentation", "[algebra]") try {
+TEST_CASE("opsumrepresentation", "[algebra]") {
 
   // ===========================================================================
   // representation() — U(1) / charge sectors
@@ -72,7 +72,9 @@ TEST_CASE("opsumrepresentation", "[algebra]") try {
   mat sz({{0.5, 0.0}, {0.0, -0.5}});
   mat sm({{0., 1.}, {0., 0.}});
   mat sp({{0., 0.}, {1., 0.}});
-  cx_mat sy(mat({{0., 0.}, {0., 0.}}), mat({{0., -0.5}, {0.5, 0.}}));
+  mat a = mat({{0., 0.}, {0., 0.}});
+  mat b = mat({{0., -0.5}, {0.5, 0.}});
+  cx_mat sy(a, b);
 
   REQUIRE(*nup(OpSum(Op("Matrix", 0, sz))) == 0);
   REQUIRE(*nup(OpSum(Op("Matrix", 0, sp))) == 1);
@@ -81,11 +83,13 @@ TEST_CASE("opsumrepresentation", "[algebra]") try {
   REQUIRE(*nup(OpSum(Op("Matrix", {0, 1}, mat(kron(sp, sp))))) == 2);
   REQUIRE(*nup(OpSum(Op("Matrix", {0, 1}, mat(kron(sp, sm))))) == 0);
 
+  //
   // ===========================================================================
   // representation() — PermutationGroup irreps
+  //
   // ===========================================================================
-  // Symmetrizing an Op with an irrep yields an OpSum that transforms under that
-  // irrep; representation() must recover it from the group action alone.
+  // Symmetrizing an Op with an irrep yields an OpSum that transforms under
+  // that irrep; representation() must recover it from the group action alone.
   for (int64_t nsites = 3; nsites < 7; ++nsites) {
     Representation trivial = cyclic_group_irrep(nsites, 0);
     for (int64_t k = 0; k < nsites; ++k) {
@@ -99,8 +103,8 @@ TEST_CASE("opsumrepresentation", "[algebra]") try {
       REQUIRE(isapprox(*rep, irrep));
 
       // Only the GROUP of the input is used; its characters are ignored.
-      // Passing the trivial irrep (same group, different characters) recovers
-      // the same result.
+      // Passing the trivial irrep (same group, different characters)
+      // recovers the same result.
       std::optional<Representation> rep2 =
           representation(ops, trivial, spin_algebra(nsites));
       REQUIRE(rep2);
@@ -116,27 +120,25 @@ TEST_CASE("opsumrepresentation", "[algebra]") try {
     REQUIRE_FALSE(none);
   }
 
-  // ===========================================================================
+  //
   // representations() — a whole RepresentationSet at once
-  // ===========================================================================
-  {
-    Representation perm = cyclic_group_irrep(4, 1);
-    OpSum ops = symmetrize(Op("Sz", 0), perm);
+  //
+  Representation perm = cyclic_group_irrep(4, 1);
+  OpSum ops = symmetrize(Op("Sz", 0), perm);
 
-    // Bogus input charges (ignored); the three types are
-    // SitePermutation/nup/ndn
-    RepresentationSet irreps(
-        {perm, Representation("nup", 77), Representation("ndn", 99)});
-    RepresentationSet result = representations(ops, irreps, spin_algebra(4));
+  // Bogus input charges (ignored); the three types are
+  // SitePermutation/nup/ndn
+  RepresentationSet irreps(
+      {perm, Representation("nup", 77), Representation("ndn", 99)});
+  RepresentationSet result = representations(ops, irreps, spin_algebra(4));
 
-    REQUIRE(result.size() == 3);
-    REQUIRE(result.charge("nup") == 0); // Sz terms conserve nup and ndn
-    REQUIRE(result.charge("ndn") == 0);
-    REQUIRE(result.has_type("SitePermutation"));
-    REQUIRE(isapprox(Representation(*result.group("SitePermutation"),
-                                    *result.characters("SitePermutation")),
-                     perm));
-  }
+  REQUIRE(result.size() == 3);
+  REQUIRE(result.charge("nup") == 0); // Sz terms conserve nup and ndn
+  REQUIRE(result.charge("ndn") == 0);
+  REQUIRE(result.has_type("SitePermutation"));
+  REQUIRE(isapprox(Representation(*result.group("SitePermutation"),
+                                  *result.characters("SitePermutation")),
+                   perm));
 
   // Symmetries under which the OpSum has no well-defined sector are dropped.
   {
@@ -146,7 +148,4 @@ TEST_CASE("opsumrepresentation", "[algebra]") try {
         representations(mixed, irreps, matrix_algebra(1, 2));
     REQUIRE(result.size() == 0);
   }
-
-} catch (xdiag::Error e) {
-  xdiag::error_trace(e);
 }

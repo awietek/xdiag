@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include <xdiag/extern/flat_hash_map.hpp>
-#include <xdiag/extern/gsl/span>
+#include <extern/flat_hash_map.hpp>
+#include <extern/gsl/span>
 
 #include <xdiag/common.hpp>
 

@@ -5,7 +5,7 @@
 #include "../catch.hpp"
 
 #include <xdiag/config.hpp>
-#include <xdiag/extern/armadillo/armadillo>
+#include <xdiag/armadillo.hpp>
 #include <xdiag/io/file_h5.hpp>
 #include <xdiag/utils/error.hpp>
 

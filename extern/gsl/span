@@ -17,14 +17,14 @@
 #ifndef GSL_SPAN_H
 #define GSL_SPAN_H
 
-#include <xdiag/extern/gsl/assert> // for Expects
-#include <xdiag/extern/gsl/byte>   // for byte
-#include <xdiag/extern/gsl/util>   // for narrow_cast
+#include <extern/gsl/assert> // for Expects
+#include <extern/gsl/byte>   // for byte
+#include <extern/gsl/util>   // for narrow_cast
 
 #include <array>    // for array
 #include <cstddef>  // for ptrdiff_t, size_t, nullptr_t
 #include <iterator> // for reverse_iterator, distance, random_access_...
-#include <xdiag/extern/gsl/span_ext> // for span specialization of gsl::at and other span-related extensions
+#include <extern/gsl/span_ext> // for span specialization of gsl::at and other span-related extensions
 #include <type_traits> // for enable_if_t, declval, is_convertible, inte...
 
 #if defined(_MSC_VER) && !defined(__clang__)
