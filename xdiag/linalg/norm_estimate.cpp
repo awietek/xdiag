@@ -140,7 +140,7 @@ static double norm_estimate(op_t const &ops, block_t const &block,
   auto norminf_f = [&block](arma::cx_vec const &v) {
     return math::norminf(block, v);
   };
-#ifdef XDIAG_USE_MPI
+#ifdef XDIAG_DISTRIBUTED
   if (isdistributed(block)) {
     seed = random::hash_combine(random::hash(block), seed);
   }

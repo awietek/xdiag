@@ -96,7 +96,7 @@ XDIAG_CATCH
 //   }
 //   auto const &block = state.block();
 
-// #ifdef XDIAG_USE_MPI
+// #ifdef XDIAG_DISTRIBUTED
 //   if (!std::holds_alternative<Spinhalf>(block) &&
 //       !std::holds_alternative<SpinhalfDistributed>(block)) {
 //     XDIAG_THROW("GPWF is currently only defined for \"Spinhalf\" and "

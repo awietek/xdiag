@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "error.hpp"
-#ifdef XDIAG_USE_MPI
+#ifdef XDIAG_DISTRIBUTED
 #include <mpi.h>
 #endif
 #include <iomanip> // std::setw
@@ -79,7 +79,7 @@ void rethrow_error(Error const &error, const char *file, const char *func,
 
 void error_trace(Error const &error) {
 
-#ifdef XDIAG_USE_MPI
+#ifdef XDIAG_DISTRIBUTED
   int mpi_rank;
   MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
   if (mpi_rank == 0) {
@@ -104,7 +104,7 @@ void error_trace(Error const &error) {
       ++idx;
     }
 
-#ifdef XDIAG_USE_MPI
+#ifdef XDIAG_DISTRIBUTED
   }
 #endif
 }

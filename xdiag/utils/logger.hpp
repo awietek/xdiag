@@ -4,7 +4,7 @@
 
 #pragma once
 
-#ifdef XDIAG_USE_MPI
+#ifdef XDIAG_DISTRIBUTED
 #include <xdiag/utils/logger_mpi.hpp>
 #else
 #include <xdiag/utils/logger_serial.hpp>
@@ -14,7 +14,7 @@
 
 namespace xdiag {
 
-#ifdef XDIAG_USE_MPI
+#ifdef XDIAG_DISTRIBUTED
 XDIAG_API inline auto &Log = LogMPI;
 #else
 XDIAG_API inline auto &Log = LogSerial;

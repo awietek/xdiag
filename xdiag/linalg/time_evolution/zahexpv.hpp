@@ -14,7 +14,7 @@
 #include <xdiag/linalg/norm_estimate.hpp>
 #include <xdiag/linalg/time_evolution/expm.hpp>
 #include <xdiag/math/numbers.hpp>
-#include <xdiag/parallel/mpi/allreduce.hpp>
+#include <xdiag/mpi/allreduce.hpp>
 #include <xdiag/utils/logger.hpp>
 
 namespace xdiag {

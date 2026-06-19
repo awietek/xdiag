@@ -160,27 +160,29 @@ set(XDIAG_SOURCES
   linalg/time_evolution/expm.cpp
 )
 set(XDIAG_DISTRIBUTED_SOURCES
-  parallel/mpi/allreduce.cpp
-  parallel/mpi/alltoall.cpp
-  parallel/mpi/communicator.cpp
-  parallel/mpi/comm_pattern.cpp
-  parallel/mpi/datatype.cpp
-  parallel/mpi/cdot_distributed.cpp
-  parallel/mpi/timing_mpi.cpp
-  parallel/mpi/buffer.cpp
-  basis/spinhalf_distributed/basis_spinhalf_distributed.cpp
-  basis/spinhalf_distributed/basis_sz.cpp
-  basis/spinhalf_distributed/transpose.cpp
-  basis/spinhalf_distributed/apply/apply_terms.cpp
+  basis/distributed/basis_electron_distributed.cpp
   
-  basis/tj_distributed/basis_tj_distributed.cpp
-  basis/tj_distributed/basis_np.cpp
-  basis/electron_distributed/basis_electron_distributed.cpp
-  basis/electron_distributed/basis_np.cpp
+  # parallel/mpi/allreduce.cpp
+  # parallel/mpi/alltoall.cpp
+  # parallel/mpi/communicator.cpp
+  # parallel/mpi/comm_pattern.cpp
+  # parallel/mpi/datatype.cpp
+  # parallel/mpi/cdot_distributed.cpp
+  # parallel/mpi/timing_mpi.cpp
+  # parallel/mpi/buffer.cpp
+  # basis/spinhalf_distributed/basis_spinhalf_distributed.cpp
+  # basis/spinhalf_distributed/basis_sz.cpp
+  # basis/spinhalf_distributed/transpose.cpp
+  # basis/spinhalf_distributed/apply/apply_terms.cpp
   
-  blocks/spinhalf_distributed.cpp
-  blocks/tj_distributed.cpp
-  blocks/electron_distributed.cpp
+  # basis/tj_distributed/basis_tj_distributed.cpp
+  # basis/tj_distributed/basis_np.cpp
+  # basis/electron_distributed/basis_electron_distributed.cpp
+  # basis/electron_distributed/basis_np.cpp
+  
+  # blocks/spinhalf_distributed.cpp
+  # blocks/tj_distributed.cpp
+  # blocks/electron_distributed.cpp
 )
 set(XDIAG_JULIA_SOURCES
   xdiagjl.cpp

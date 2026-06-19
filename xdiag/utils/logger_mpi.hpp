@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #pragma once
-#ifdef XDIAG_USE_MPI
+#ifdef XDIAG_DISTRIBUTED
 
 #include <iostream>
 #include <string>

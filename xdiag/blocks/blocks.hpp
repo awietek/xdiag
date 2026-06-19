@@ -13,16 +13,30 @@
 #include <xdiag/blocks/fermion.hpp>
 #include <xdiag/blocks/spinhalf.hpp>
 #include <xdiag/blocks/tj.hpp>
+#ifdef XDIAG_DISTRIBUTED
+#include <xdiag/blocks/distributed/electron_distributed.hpp>
+#endif
 #include <xdiag/operators/opsum.hpp>
 #include <xdiag/utils/xdiag_api.hpp>
 
 namespace xdiag {
-using Block = std::variant<Spinhalf, Boson, Fermion, Electron, tJ>;
-
+using Block =
+    std::variant<Spinhalf, Boson, Fermion, Electron, tJ,
+#ifdef XDIAG_DISTRIBUTED
+                 SpinhalfDistributed, tJDistributed, ElectronDistributed
+#endif
+                 >;
 XDIAG_API int64_t dim(Block const &block);
 XDIAG_API int64_t size(Block const &block);
 XDIAG_API int64_t nsites(Block const &block);
 XDIAG_API bool isreal(Block const &block);
+
+XDIAG_API std::ostream &operator<<(std::ostream &out, Block const &block);
+XDIAG_API std::string to_string(Block const &block);
+
+// Render a ProductState using the labels appropriate to its block (spin-1/2
+// arrows, boson occupation numbers on a blue->red gradient).
+XDIAG_API std::string to_string(ProductState const &state, Block const &block);
 
 // Semantic equality: same block type, number of sites, local dimension, and
 // (approximately) the same quantum-number sectors / irreps. Unlike operator==,
@@ -47,11 +61,19 @@ Block block(OpSum const &ops, Block const &block_in);
 bool blocks_match(OpSum const &ops, Block const &block_in,
                   Block const &block_out);
 
-XDIAG_API std::ostream &operator<<(std::ostream &out, Block const &block);
-XDIAG_API std::string to_string(Block const &block);
-
-// Render a ProductState using the labels appropriate to its block (spin-1/2
-// arrows, boson occupation numbers on a blue->red gradient).
-XDIAG_API std::string to_string(ProductState const &state, Block const &block);
+template <typename T> struct is_distributed : std::false_type {};
+#ifdef XDIAG_DISTRIBUTED
+struct is_distributed<SpinhalfDistributed> : std::true_type {};
+struct is_distributed<tJDistributed> : std::true_type {};
+struct is_distributed<ElectronDistributed> : std::true_type {};
+#endif
+template <typename T>
+inline constexpr bool is_distributed_v = is_distributed<T>::value;
+bool is_distributed(Block const &block) {
+  return std::visit([](auto &&blk) {
+    using block_t = std::decay(decltype(blk));
+    return is_distributed_v<block_t>;
+  })
+}
 
 } // namespace xdiag

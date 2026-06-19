@@ -15,8 +15,8 @@
 #include <xdiag/states/random_state.hpp>
 #include <xdiag/utils/timing.hpp>
 
-#ifdef XDIAG_USE_MPI
-#include <xdiag/parallel/mpi/cdot_distributed.hpp>
+#ifdef XDIAG_DISTRIBUTED
+#include <xdiag/mpi/cdot_distributed.hpp>
 #endif
 
 namespace xdiag {

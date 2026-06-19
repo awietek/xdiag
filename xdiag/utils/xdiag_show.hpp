@@ -6,7 +6,7 @@
 
 #include <iostream>
 
-#ifdef XDIAG_USE_MPI
+#ifdef XDIAG_DISTRIBUTED
 #include <mpi.h>
 #endif
 
@@ -17,7 +17,7 @@ template <typename T> inline void print_pretty(const char *id, T X) {
   std::cout << X << "\n";
 }
 
-#ifdef XDIAG_USE_MPI
+#ifdef XDIAG_DISTRIBUTED
 template <typename T> inline void print_pretty_mpi(const char *id, T X) {
   int rank = 0;
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
@@ -30,7 +30,7 @@ template <typename T> inline void print_pretty_mpi(const char *id, T X) {
 } // namespace xdiag::utils
 
 // XDIAG_SHOW belongs to XDIAG_API
-#ifdef XDIAG_USE_MPI
+#ifdef XDIAG_DISTRIBUTED
 #define XDIAG_SHOW(X) xdiag::utils::print_pretty_mpi(#X, X)
 #else
 #define XDIAG_SHOW(X) xdiag::utils::print_pretty(#X, X)

@@ -7,8 +7,8 @@
 #include <xdiag/math/dot.hpp>
 #include <xdiag/utils/error.hpp>
 
-#ifdef XDIAG_USE_MPI
-#include <xdiag/parallel/mpi/allreduce.hpp>
+#ifdef XDIAG_DISTRIBUTED
+#include <xdiag/mpi/allreduce.hpp>
 #endif
 
 namespace xdiag::math {
@@ -24,7 +24,7 @@ template double norm(Block const &, arma::Col<complex> const &);
 template <typename coeff_t>
 double norm1(Block const &block, arma::Col<coeff_t> const &v) try {
   double nrm = arma::norm(v, 1);
-#ifdef XDIAG_USE_MPI
+#ifdef XDIAG_DISTRIBUTED
   if (isdistributed(block)) {
     mpi::Allreduce((double *)MPI_IN_PLACE, &nrm, 1, MPI_SUM, MPI_COMM_WORLD);
   }
@@ -39,7 +39,7 @@ template double norm1(Block const &, arma::Col<complex> const &);
 template <typename coeff_t>
 double norminf(Block const &block, arma::Col<coeff_t> const &v) try {
   double nrm = arma::norm(v, "inf");
-#ifdef XDIAG_USE_MPI
+#ifdef XDIAG_DISTRIBUTED
   if (isdistributed(block)) {
     mpi::Allreduce((double *)MPI_IN_PLACE, &nrm, 1, MPI_MAX, MPI_COMM_WORLD);
   }

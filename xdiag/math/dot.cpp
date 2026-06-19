@@ -6,23 +6,23 @@
 
 #include <xdiag/utils/error.hpp>
 
-#ifdef XDIAG_USE_MPI
-#include <xdiag/parallel/mpi/allreduce.hpp>
-#include <xdiag/parallel/mpi/cdot_distributed.hpp>
+#ifdef XDIAG_DISTRIBUTED
+#include <xdiag/mpi/allreduce.hpp>
+#include <xdiag/mpi/cdot_distributed.hpp>
 #endif
 
 namespace xdiag::math {
 
 double dot(Block const &block, arma::vec const &v, arma::vec const &w) try {
-#ifdef XDIAG_USE_MPI
-  if (isdistributed(block)) {
+#ifdef XDIAG_DISTRIBUTED
+  if (is_distributed(block)) {
     return cdot_distributed(v, w);
   } else {
 #else
   (void)block;
 #endif
     return arma::dot(v, w);
-#ifdef XDIAG_USE_MPI
+#ifdef XDIAG_DISTRIBUTED
   }
 #endif
 }
@@ -30,15 +30,15 @@ XDIAG_CATCH
 
 complex dot(Block const &block, arma::cx_vec const &v,
             arma::cx_vec const &w) try {
-#ifdef XDIAG_USE_MPI
-  if (isdistributed(block)) {
+#ifdef XDIAG_DISTRIBUTED
+  if (is_distributed(block)) {
     return cdot_distributed(v, w);
   } else {
 #else
   (void)block;
 #endif
     return arma::cdot(v, w);
-#ifdef XDIAG_USE_MPI
+#ifdef XDIAG_DISTRIBUTED
   }
 #endif
 }
@@ -50,8 +50,8 @@ arma::Mat<coeff_t> matrix_dot(Block const &block, arma::Mat<coeff_t> const &V,
   if (V.n_rows != V.n_rows) {
     XDIAG_THROW("Input matrices do not have the same number of rows");
   }
-#ifdef XDIAG_USE_MPI
-  if (isdistributed(block)) {
+#ifdef XDIAG_DISTRIBUTED
+  if (is_distributed(block)) {
     int64_t L = V.n_rows;
     int64_t m = V.n_cols;
     int64_t n = W.n_cols;
@@ -71,7 +71,7 @@ arma::Mat<coeff_t> matrix_dot(Block const &block, arma::Mat<coeff_t> const &V,
   (void)block;
 #endif
     return V.t() * W;
-#ifdef XDIAG_USE_MPI
+#ifdef XDIAG_DISTRIBUTED
   }
 #endif
 }

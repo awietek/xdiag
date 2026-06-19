@@ -24,7 +24,7 @@ if(XDIAG_DISTRIBUTED)
 
   find_package(MPI REQUIRED)
   target_link_libraries(xdiag_distributed PUBLIC ${MPI_CXX_LIBRARIES})
-  target_compile_definitions(xdiag_distributed PUBLIC XDIAG_USE_MPI)
+  target_compile_definitions(xdiag_distributed PUBLIC XDIAG_DISTRIBUTED)
 else()
   message(STATUS "--------    BUILDING NORMAL XDIAG LIBRARY   -------------")
 
