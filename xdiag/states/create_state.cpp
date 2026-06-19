@@ -11,17 +11,10 @@
 #include <xdiag/utils/error.hpp>
 
 namespace xdiag {
-State product_state(Block const &block,
-                    std::vector<int64_t> const &local_state, bool real) try {
-  return std::visit(
-      [&](auto &&block) { return product_state(block, local_state, real); },
-      block);
-}
-XDIAG_CATCH
-
 template <typename block_t>
-State product_state(block_t const &block,
-                    std::vector<int64_t> const &local_state, bool real) try {
+static State product_state(block_t const &block,
+                           std::vector<int64_t> const &local_state,
+                           bool real) try {
   State state(block, real);
   ProductState pstate(local_state);
   fill(state, pstate);
@@ -29,37 +22,17 @@ State product_state(block_t const &block,
 }
 XDIAG_CATCH
 
-template State product_state(Spinhalf const &, std::vector<int64_t> const &,
-                             bool);
-template State product_state(Boson const &, std::vector<int64_t> const &, bool);
-// template State product_state(tJ const &, std::vector<std::string> const &,
-//                              bool);
-// template State product_state(Electron const &, std::vector<std::string> const
-// &,
-//                              bool);
-
-#ifdef XDIAG_USE_MPI
-template State product_state(SpinhalfDistributed const &,
-                             std::vector<std::string> const &, bool);
-template State product_state(tJDistributed const &,
-                             std::vector<std::string> const &, bool);
-template State product_state(ElectronDistributed const &,
-                             std::vector<std::string> const &, bool);
-#endif
-
-State random_state(Block const &block, bool real, int64_t ncols, int64_t seed,
-                   bool normalized) try {
+State product_state(Block const &block, std::vector<int64_t> const &local_state,
+                    bool real) try {
   return std::visit(
-      [&](auto &&block) {
-        return random_state(block, real, ncols, seed, normalized);
-      },
+      [&](auto &&block) { return product_state(block, local_state, real); },
       block);
 }
 XDIAG_CATCH
 
 template <typename block_t>
-State random_state(block_t const &block, bool real, int64_t ncols, int64_t seed,
-                   bool normalized) try {
+static State random_state(block_t const &block, bool real, int64_t ncols,
+                          int64_t seed, bool normalized) try {
   auto state = State(block, real, ncols);
   if (ncols == 1) {
     auto rstate = RandomState(seed, normalized);
@@ -113,35 +86,25 @@ State random_state(block_t const &block, bool real, int64_t ncols, int64_t seed,
 }
 XDIAG_CATCH
 
-template State random_state(Spinhalf const &, bool, int64_t, int64_t, bool);
-// template State random_state(tJ const &, bool, int64_t, int64_t, bool);
-// template State random_state(Electron const &, bool, int64_t, int64_t, bool);
-#ifdef XDIAG_USE_MPI
-template State random_state(SpinhalfDistributed const &, bool, int64_t, int64_t,
-                            bool);
-template State random_state(tJDistributed const &, bool, int64_t, int64_t,
-                            bool);
-template State random_state(ElectronDistributed const &, bool, int64_t, int64_t,
-                            bool);
-#endif
+State random_state(Block const &block, bool real, int64_t ncols, int64_t seed,
+                   bool normalized) try {
+  return std::visit(
+      [&](auto &&block) {
+        return random_state(block, real, ncols, seed, normalized);
+      },
+      block);
+}
+XDIAG_CATCH
+
+template <typename block_t>
+static State zero_state(block_t const &block, bool real, int64_t ncols) {
+  return State(block, real, ncols);
+}
 
 State zero_state(Block const &block, bool real, int64_t ncols) {
   return std::visit([&](auto &&blk) { return zero_state(blk, real, ncols); },
                     block);
 }
-
-template <typename block_t>
-State zero_state(block_t const &block, bool real, int64_t ncols) {
-  return State(block, real, ncols);
-}
-template State zero_state(Spinhalf const &, bool, int64_t);
-// template State zero_state(tJ const &, bool, int64_t);
-// template State zero_state(Electron const &, bool, int64_t);
-#ifdef XDIAG_USE_MPI
-template State zero_state(ElectronDistributed const &, bool, int64_t);
-template State zero_state(tJDistributed const &, bool, int64_t);
-template State zero_state(SpinhalfDistributed const &, bool, int64_t);
-#endif
 
 void zero(State &state) {
   if (state.isreal()) {

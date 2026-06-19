@@ -12,6 +12,7 @@
 #endif
 
 #include <xdiag/armadillo.hpp>
+#include <xdiag/math/complex.hpp>
 #include <xdiag/utils/lambda_details.hpp>
 
 namespace xdiag::matrices {
@@ -42,8 +43,8 @@ inline void fill_apply(coeff_t const *vec_in, coeff_t *vec_out, int64_t idx_in,
     vec_out[idx_out] += x;
   } else {
     complex x = val * vec_in[idx_in];
-    double *r = &reinterpret_cast<double (&)[2]>(vec_out[idx_out])[0];
-    double *i = &reinterpret_cast<double (&)[2]>(vec_out[idx_out])[1];
+    double *r = &reinterpret_cast<double(&)[2]>(vec_out[idx_out])[0];
+    double *i = &reinterpret_cast<double(&)[2]>(vec_out[idx_out])[1];
 #pragma omp atomic update
     *r += x.real();
 #pragma omp atomic update
