@@ -8,7 +8,7 @@
 #include <utility>
 #include <vector>
 
-#include <xdiag/common.hpp>
+#include <xdiag/math/complex.hpp>
 #include <extern/gsl/span>
 #include <xdiag/symmetries/operations/group_action_operations.hpp>
 #include <xdiag/symmetries/operations/symmetry_operations.hpp>

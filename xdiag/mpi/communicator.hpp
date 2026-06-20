@@ -7,7 +7,7 @@
 
 #include <mpi.h>
 
-#include <xdiag/common.hpp>
+#include <xdiag/math/complex.hpp>
 #include <xdiag/mpi/alltoall.hpp>
 #include <xdiag/mpi/buffer.hpp>
 

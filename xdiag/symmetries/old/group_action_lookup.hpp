@@ -5,7 +5,7 @@
 #pragma once
 #include <tuple>
 
-#include <xdiag/common.hpp>
+#include <xdiag/math/complex.hpp>
 #include <xdiag/symmetries/permutation_group.hpp>
 
 namespace xdiag {

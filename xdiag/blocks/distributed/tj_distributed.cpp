@@ -4,168 +4,108 @@
 
 #include "tj_distributed.hpp"
 
-#include <xdiag/combinatorics/binomial.hpp>
-#include <xdiag/random/hash.hpp>
+#include <optional>
+
+#include <xdiag/basis/distributed/basis_tj_distributed.hpp>
+#include <xdiag/blocks/print_block.hpp>
+#include <xdiag/utils/error.hpp>
+#include <xdiag/utils/to_string_generic.hpp>
 
 namespace xdiag {
 
-tJDistributed::tJDistributed(int64_t nsites, int64_t nup, int64_t ndn,
-                             std::string backend) try
-    : nsites_(nsites), backend_(backend), nup_(nup), ndn_(ndn) {
-  using namespace basis::tj_distributed;
-  using combinatorics::binomial;
-
-  // Safety checks
+tJDistributed::tJDistributed(int64_t nsites,
+                             RepresentationSet const &irreps) try
+    : irreps_(irreps) {
+  using namespace basis;
   if (nsites < 0) {
-    XDIAG_THROW("nsites < 0");
-  } else if ((nup < 0) || (ndn < 0)) {
-    XDIAG_THROW("nup < 0 or ndn < 0");
-  } else if ((nup + ndn) > nsites) {
-    XDIAG_THROW("nup + ndn > nsites");
+    XDIAG_THROW("Invalid argument: nsites < 0");
   }
-  // Choose basis implementation
-  if (backend == "auto") {
-    if (nsites < 32) {
-      basis_ = std::make_shared<basis_t>(BasisNp<uint32_t>(nsites, nup, ndn));
-    } else if (nsites < 64) {
-      basis_ = std::make_shared<basis_t>(BasisNp<uint64_t>(nsites, nup, ndn));
-    } else {
-      XDIAG_THROW("Blocks with more than 64 sites currently not implemented");
-    }
-  } else if (backend == "32bit") {
-    basis_ = std::make_shared<basis_t>(BasisNp<uint32_t>(nsites, nup, ndn));
-  } else if (backend == "64bit") {
-    basis_ = std::make_shared<basis_t>(BasisNp<uint64_t>(nsites, nup, ndn));
+  if (irreps.group("SitePermutation")) {
+    XDIAG_THROW("tJDistributed does not support permutation symmetries");
+  }
+  std::optional<int64_t> nup = irreps.charge("nup");
+  std::optional<int64_t> ndn = irreps.charge("ndn");
+  if (!nup || !ndn) {
+    XDIAG_THROW("tJDistributed requires fixed nup and ndn (number conservation "
+                "in both spin species)");
+  }
+  if ((*nup < 0) || (*ndn < 0)) {
+    XDIAG_THROW("Invalid argument: nup < 0 or ndn < 0");
+  }
+  if ((*nup + *ndn) > nsites) {
+    XDIAG_THROW("Invalid argument: nup + ndn > nsites (no double occupancy)");
+  }
+
+  if (nsites <= 32) {
+    basis_ =
+        std::make_shared<BasistJDistributed<uint32_t>>(nsites, *nup, *ndn);
+  } else if (nsites <= 64) {
+    basis_ =
+        std::make_shared<BasistJDistributed<uint64_t>>(nsites, *nup, *ndn);
   } else {
-    XDIAG_THROW(fmt::format("Unknown backend: \"{}\"", backend));
+    XDIAG_THROW("tJDistributed currently supports up to 64 sites");
   }
-  dim_ = basis::dim(*basis_);
-  assert(dim_ == binomial(nsites, nup) * binomial(nsites - nup, ndn));
-  size_ = basis::size(*basis_);
-  check_dimension_works_with_blas_int_size(size_);
 }
 XDIAG_CATCH
 
-int64_t tJDistributed::nsites() const { return nsites_; }
-std::string tJDistributed::backend() const { return backend_; }
-std::optional<int64_t> tJDistributed::nup() const { return nup_; }
-std::optional<int64_t> tJDistributed::ndn() const { return ndn_; }
-
-int64_t tJDistributed::dim() const { return dim_; }
-int64_t tJDistributed::size() const { return size_; }
-int64_t tJDistributed::size_max() const { return basis::size_max(*basis_); }
-int64_t tJDistributed::size_min() const { return basis::size_min(*basis_); }
-tJDistributed::iterator_t tJDistributed::begin() const {
-  return iterator_t(*this, true);
-}
-tJDistributed::iterator_t tJDistributed::end() const {
-  return iterator_t(*this, false);
-}
-int64_t tJDistributed::index(ProductState const &pstate) const try {
-  return std::visit(
-      [&](auto &&basis) {
-        using basis_t = typename std::decay<decltype(basis)>::type;
-        using bit_t = typename basis_t::bit_t;
-        auto [ups, dns] = to_bits_electron<bit_t>(pstate);
-        return basis.index(ups, dns);
-      },
-      *basis_);
-}
+tJDistributed::tJDistributed(int64_t nsites, int64_t nup, int64_t ndn) try
+    : tJDistributed(nsites, RepresentationSet{Representation("nup", nup),
+                                              Representation("ndn", ndn)}) {}
 XDIAG_CATCH
 
-bool tJDistributed::isreal() const {
-  return true; // would only be nontrivial with space group irreps
-}
+int64_t tJDistributed::nsites() const { return basis_->nsites(); }
+int64_t tJDistributed::dim() const { return basis_->dim(); }
+int64_t tJDistributed::size() const { return basis_->size(); }
+int64_t tJDistributed::size_max() const { return basis_->size_max(); }
+int64_t tJDistributed::size_min() const { return basis_->size_min(); }
+bool tJDistributed::isreal() const { return irreps_.isreal(); }
 
 bool tJDistributed::operator==(tJDistributed const &rhs) const {
-  return (nsites_ == rhs.nsites_) && (nup_ == rhs.nup_) && (ndn_ == rhs.ndn_);
+  return (irreps_ == rhs.irreps_) && (basis_ == rhs.basis_);
 }
 bool tJDistributed::operator!=(tJDistributed const &rhs) const {
   return !operator==(rhs);
 }
 
-tJDistributed::basis_t const &tJDistributed::basis() const { return *basis_; }
-int64_t index(tJDistributed const &block, ProductState const &pstate) {
-  return block.index(pstate);
+tJDistributedIterator tJDistributed::begin() const { return {this, 0}; }
+tJDistributedIterator tJDistributed::end() const { return {this, size()}; }
+
+RepresentationSet tJDistributed::irreps() const { return irreps_; }
+std::shared_ptr<basis::Basis> const &tJDistributed::basis() const {
+  return basis_;
 }
-int64_t nsites(tJDistributed const &block) { return block.nsites(); }
-int64_t dim(tJDistributed const &block) { return block.dim(); }
-int64_t size(tJDistributed const &block) { return block.size(); }
-bool isreal(tJDistributed const &block) { return block.isreal(); }
+
 std::ostream &operator<<(std::ostream &out, tJDistributed const &block) {
-  int mpi_size;
-  MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
-
-  out << "tJDistributed:\n";
-  out << "  nsites   : " << block.nsites() << "\n";
-  if (block.nup()) {
-    out << "  nup      : " << *block.nup() << "\n";
-  } else {
-    out << "  nup      : not conserved\n";
-  }
-
-  if (block.ndn()) {
-    out << "  ndn      : " << *block.ndn() << "\n";
-  } else {
-    out << "  ndn      : not conserved\n";
-  }
-
-  std::stringstream ss;
-  ss.imbue(std::locale("en_US.UTF-8"));
-  ss << block.dim();
-
-  std::stringstream ssmax;
-  ssmax.imbue(std::locale("en_US.UTF-8"));
-  ssmax << block.size_max();
-
-  std::stringstream ssmin;
-  ssmin.imbue(std::locale("en_US.UTF-8"));
-  ssmin << block.size_min();
-
-  std::stringstream ssavg;
-  ssavg.imbue(std::locale("en_US.UTF-8"));
-  ssavg << block.dim() / mpi_size;
-
-  out << "  dimension       : " << ss.str() << "\n";
-  out << "  size (max local): " << ssmax.str() << "\n";
-  out << "  size (min local): " << ssmin.str() << "\n";
-  out << "  size (avg local): " << ssavg.str() << "\n";
-  out << "  ID              : " << std::hex << random::hash(block) << std::dec
-      << "\n";
+  print_block(out, block);
   return out;
 }
 std::string to_string(tJDistributed const &block) {
   return to_string_generic(block);
 }
 
-tJDistributedIterator::tJDistributedIterator(tJDistributed const &block,
-                                             bool begin)
-    : nsites_(block.nsites()), pstate_(nsites_),
-      it_(std::visit(
-          [&](auto const &basis) {
-            basis::BasistJDistributedIterator it =
-                begin ? basis.begin() : basis.end();
-            return it;
-          },
-          block.basis())) {}
+tJDistributedIterator::tJDistributedIterator(tJDistributed const *block,
+                                             int64_t idx)
+    : idx_(idx) {
+  if (idx_ < block->size()) {
+    it_ = block->basis()->product_state_iterator();
+  }
+}
 
 tJDistributedIterator &tJDistributedIterator::operator++() {
-  std::visit([](auto &&it) { ++it; }, it_);
+  it_->advance();
+  ++idx_;
   return *this;
 }
 
-ProductState const &tJDistributedIterator::operator*() const {
-  std::visit(
-      [&](auto &&it) {
-        auto [ups, dns] = *it;
-        to_product_state_tj(ups, dns, pstate_);
-      },
-      it_);
-  return pstate_;
+ProductState tJDistributedIterator::operator*() const {
+  return it_->product_state();
 }
 
+bool tJDistributedIterator::operator==(tJDistributedIterator const &rhs) const {
+  return idx_ == rhs.idx_;
+}
 bool tJDistributedIterator::operator!=(tJDistributedIterator const &rhs) const {
-  return it_ != rhs.it_;
+  return idx_ != rhs.idx_;
 }
 
 } // namespace xdiag

@@ -5,6 +5,7 @@
 #include "matrix.hpp"
 
 #include <xdiag/armadillo.hpp>
+#include <xdiag/blocks/blocks.hpp>
 #include <xdiag/blocks/boson.hpp>
 #include <xdiag/blocks/spinhalf.hpp>
 #include <xdiag/math/complex.hpp>
@@ -49,11 +50,21 @@ namespace xdiag {
 template <typename block_t, typename coeff_t>
 static void matrix_impl(OpSum const &ops, block_t const &block_in,
                         block_t const &block_out, coeff_t *mat) try {
-  matrices::dispatch_basis(
-      block_in, block_out, [&](auto const &basis_in, auto const &basis_out) {
-        // Kernel: definition is in kernels.cpp, instantiated per basis type.
-        matrices::matrix<block_t>(ops, basis_in, basis_out, mat);
-      });
+  if constexpr (is_distributed_v<block_t>) {
+    (void)ops;
+    (void)block_in;
+    (void)block_out;
+    (void)mat;
+    XDIAG_THROW("Cannot build a dense matrix for a distributed block: its "
+                "Hilbert space is distributed across MPI ranks. Use apply(...) "
+                "instead.");
+  } else {
+    matrices::dispatch_basis(
+        block_in, block_out, [&](auto const &basis_in, auto const &basis_out) {
+          // Kernel: definition is in kernels.cpp, instantiated per basis type.
+          matrices::matrix<block_t>(ops, basis_in, basis_out, mat);
+        });
+  }
 }
 XDIAG_CATCH
 

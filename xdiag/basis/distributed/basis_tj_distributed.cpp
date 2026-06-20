@@ -4,9 +4,10 @@
 
 #include "basis_tj_distributed.hpp"
 
-#include <xdiag/combinatorics/binomial.hpp>
-#include <xdiag/combinatorics/combinations.hpp>
+#include <xdiag/math/binomial.hpp>
+#include <xdiag/combinatorics/combinations/combinations.hpp>
 #include <xdiag/mpi/allreduce.hpp>
+#include <xdiag/utils/error.hpp>
 
 namespace xdiag::basis {
 
@@ -17,6 +18,7 @@ BasistJDistributed<bit_t>::BasistJDistributed(int64_t nsites, int64_t nup, int64
   check_nsites_work_with_bits<bit_t>(nsites_);
 
   using namespace combinatorics;
+  using math::binomial;
 
   if (nsites < 0) {
     XDIAG_THROW("nsites < 0");
@@ -29,7 +31,7 @@ BasistJDistributed<bit_t>::BasistJDistributed(int64_t nsites, int64_t nup, int64
   dim_ = binomial(nsites, nup) * binomial(nsites - nup, ndn);
   MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank_);
   MPI_Comm_size(MPI_COMM_WORLD, &mpi_size_);
-  sitesmask_ = ((bit_t)1 << nsites) - 1;
+  sitesmask_ = bits::bitmask<bit_t>(nsites);
 
   // ////////////////////////////////////////////////////////////////
   // Ordering  ups / dns
@@ -405,7 +407,7 @@ template class BasistJDistributed<uint64_t>;
 
 template <typename bit_t>
 BasistJDistributedIterator<bit_t>::BasistJDistributedIterator(BasistJDistributed<bit_t> const &basis, bool begin)
-    : basis_(basis), sitesmask_(((bit_t)1 << basis.nsites()) - 1),
+    : basis_(basis), sitesmask_(bits::bitmask<bit_t>(basis.nsites())),
       up_idx_(begin ? 0 : basis_.my_ups().size()), dn_idx_(0) {
   if ((basis_.my_ups().size() > 0) && begin) {
     dns_for_ups_ = basis_.my_dns_for_ups(0);
@@ -442,4 +444,4 @@ bool BasistJDistributedIterator<bit_t>::operator!=(
 template class BasistJDistributedIterator<uint32_t>;
 template class BasistJDistributedIterator<uint64_t>;
 
-} // namespace xdiag::basis::tj_distributed
+} // namespace xdiag::basis

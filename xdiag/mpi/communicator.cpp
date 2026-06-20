@@ -4,6 +4,7 @@
 
 #include "communicator.hpp"
 
+#include <cassert>
 #include <numeric>
 #include <vector>
 

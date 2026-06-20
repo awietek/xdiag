@@ -2,16 +2,27 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-#include "../../catch.hpp"
-#include "../electron/testcases_electron.hpp"
+#include <mpi.h>
+
+#include <tests/blocks/electron/testcases_electron.hpp>
+#include <tests/blocks/spinhalf/testcases_spinhalf.hpp>
+#include <tests/blocks/tj/testcases_tj.hpp>
+#include <tests/catch.hpp>
+
 #include <xdiag/algebra/algebra.hpp>
-#include <xdiag/algebra/apply.hpp>
 #include <xdiag/algebra/isapprox.hpp>
-#include <xdiag/algebra/matrix.hpp>
+#include <xdiag/blocks/distributed/tj_distributed.hpp>
+#include <xdiag/blocks/tj.hpp>
+#include <xdiag/linalg/sparse_diag.hpp>
+#include <xdiag/matrices/apply.hpp>
+#include <xdiag/matrices/matrix.hpp>
+#include <xdiag/states/apply.hpp>
 #include <xdiag/states/create_state.hpp>
 #include <xdiag/states/fill.hpp>
+#include <xdiag/states/norm.hpp>
+#include <xdiag/states/dot.hpp>
+#include <xdiag/states/inner.hpp>
 #include <xdiag/utils/logger.hpp>
-#include <xdiag/utils/xdiag_show.hpp>
 
 TEST_CASE("electron_distributed_raise_lower", "[electron_distributed]") try {
   // using block_t = Electron;
@@ -23,7 +34,7 @@ TEST_CASE("electron_distributed_raise_lower", "[electron_distributed]") try {
   Log("test ElectronDistributed normal ordering");
   for (int nsites = 2; nsites < 6; ++nsites) {
     auto block0 = ElectronDistributed(nsites, 0, 0);
-    auto psi0 = product_state(block0, std::vector<std::string>(nsites, "Emp"));
+    auto psi0 = product_state(block0, std::vector<int64_t>(nsites, 0));
 
     for (int nup = 0; nup <= nsites; ++nup) {
       for (int ndn = 0; ndn <= nsites; ++ndn) {
@@ -34,10 +45,10 @@ TEST_CASE("electron_distributed_raise_lower", "[electron_distributed]") try {
           std::vector<int> up_positions;
           std::vector<int> dn_positions;
           for (int i = 0; i < nsites; ++i) {
-            if ((pstate[i] == "Up") || (pstate[i] == "UpDn")) {
+            if ((pstate[i] == 1) || (pstate[i] == 3)) {
               up_positions.push_back(i);
             }
-            if ((pstate[i] == "Dn") || (pstate[i] == "UpDn")) {
+            if ((pstate[i] == 2) || (pstate[i] == 3)) {
               dn_positions.push_back(i);
             }
           }

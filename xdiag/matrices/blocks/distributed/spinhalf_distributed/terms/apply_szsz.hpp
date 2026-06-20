@@ -7,14 +7,16 @@
 #include <algorithm>
 #include <tuple>
 
-#include <xdiag/bits/bitops.hpp>
+#include <xdiag/bits/bitmask.hpp>
+#include <xdiag/bits/popcount.hpp>
 #include <xdiag/armadillo.hpp>
+#include <xdiag/operators/coeff.hpp>
 #include <xdiag/operators/op.hpp>
 
 namespace xdiag::basis::spinhalf_distributed {
 
 template <class basis_t, typename coeff_t>
-void apply_szsz(Coupling const &cpl, Op const &op, basis_t const &basis,
+void apply_szsz(Coeff const &cpl, Op const &op, basis_t const &basis,
                 arma::Col<coeff_t> const &vec_in,
                 arma::Col<coeff_t> &vec_out) {
   using bit_t = typename basis_t::bit_t;
@@ -41,7 +43,7 @@ void apply_szsz(Coupling const &cpl, Op const &op, basis_t const &basis,
     // Both sites are on prefixes
     if ((s1 >= n_postfix_bits) && (s2 >= n_postfix_bits)) {
       coeff_t val =
-          (bits::popcnt(prefix_shifted & mask) & 1) ? val_diff : val_same;
+          (bits::popcount(prefix_shifted & mask) & 1) ? val_diff : val_same;
       int64_t end = idx + postfixes.size();
       for (; idx < end; ++idx) {
         vec_out(idx) += val * vec_in(idx);
@@ -52,7 +54,7 @@ void apply_szsz(Coupling const &cpl, Op const &op, basis_t const &basis,
     else if ((s1 < n_postfix_bits) && (s2 < n_postfix_bits)) {
 
       for (auto postfix : postfixes) {
-        if (bits::popcnt(postfix & mask) & 1) {
+        if (bits::popcount(postfix & mask) & 1) {
           vec_out(idx) += val_diff * vec_in(idx);
         } else {
           vec_out(idx) += val_same * vec_in(idx);

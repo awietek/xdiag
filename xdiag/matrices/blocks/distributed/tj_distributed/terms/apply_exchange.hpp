@@ -4,9 +4,13 @@
 
 #pragma once
 
-#include <xdiag/bits/bitops.hpp>
-#include <xdiag/combinatorics/combinations.hpp>
-#include <xdiag/common.hpp>
+#include <xdiag/math/binomial.hpp>
+
+#include <xdiag/bits/bitmask.hpp>
+#include <xdiag/bits/popcount.hpp>
+#include <xdiag/combinatorics/combinations/combinations.hpp>
+#include <xdiag/math/complex.hpp>
+#include <xdiag/operators/coeff.hpp>
 #include <xdiag/operators/op.hpp>
 #include <xdiag/mpi/buffer.hpp>
 #include <xdiag/mpi/communicator.hpp>
@@ -14,7 +18,7 @@
 namespace xdiag::basis::tj_distributed {
 
 template <typename coeff_t, class basis_t>
-void apply_exchange(Coupling const &cpl, Op const &op, basis_t const &basis,
+void apply_exchange(Coeff const &cpl, Op const &op, basis_t const &basis,
                     const coeff_t *vec_in, coeff_t *vec_out) {
   using bit_t = typename basis_t::bit_t;
   using namespace bits;
@@ -38,7 +42,7 @@ void apply_exchange(Coupling const &cpl, Op const &op, basis_t const &basis,
   int64_t nsites = basis.nsites();
   int64_t nup = basis.nup();
   int64_t ndn = basis.ndn();
-  int64_t ndn_configurations = combinatorics::binomial(nsites - nup, ndn);
+  int64_t ndn_configurations = math::binomial(nsites - nup, ndn);
 
   // Find out how many states is sent to each process
   std::vector<int64_t> n_states_i_send(mpi_size, 0);
@@ -46,12 +50,12 @@ void apply_exchange(Coupling const &cpl, Op const &op, basis_t const &basis,
   // Flip states and check out how much needs to be communicated
   int64_t idx_up = 0;
   for (bit_t up : basis.my_ups()) {
-    if (popcnt(up & flipmask) == 1) {
+    if (bits::popcount(up & flipmask) == 1) {
       bit_t flipped_up = up ^ flipmask;
       int target = basis.rank(flipped_up);
 
       for (bit_t dn : basis.my_dns_for_ups(idx_up)) {
-        if (popcnt(dn & flipmask) == 1)
+        if (bits::popcount(dn & flipmask) == 1)
           ++n_states_i_send[target];
       }
     }
@@ -67,12 +71,12 @@ void apply_exchange(Coupling const &cpl, Op const &op, basis_t const &basis,
   idx_up = 0;
   int64_t idx = 0;
   for (bit_t up : basis.my_ups()) {
-    if (popcnt(up & flipmask) == 1) {
+    if (bits::popcount(up & flipmask) == 1) {
       bit_t flipped_up = up ^ flipmask;
       int target = basis.rank(flipped_up);
 
       for (bit_t dn : basis.my_dns_for_ups(idx_up)) {
-        if (popcnt(dn & flipmask) == 1) {
+        if (bits::popcount(dn & flipmask) == 1) {
           comm.add_to_send_buffer(target, vec_in[idx],
                                   mpi::buffer.send<coeff_t>());
         }
@@ -109,9 +113,9 @@ void apply_exchange(Coupling const &cpl, Op const &op, basis_t const &basis,
               });
 
     for (bit_t up : ups_i_get_from_proc[m]) {
-      if (popcnt(up & flipmask) == 1) {
-        bool fermi_up = bits::popcnt(up & fermimask) & 1;
-        bool up_s1_set = bits::gbit(up, s2);
+      if (bits::popcount(up & flipmask) == 1) {
+        bool fermi_up = bits::popcount(up & fermimask) & 1;
+        bool up_s1_set = bits::get(up, s2);
 
         int64_t up_offset = basis.my_ups_offset(up);
 
@@ -119,8 +123,8 @@ void apply_exchange(Coupling const &cpl, Op const &op, basis_t const &basis,
              target_idx < up_offset + ndn_configurations; ++target_idx) {
           bit_t dn = basis.my_dns_for_ups_storage(target_idx);
 
-          if (bits::popcnt(dn & flipmask) == 1) {
-            bool fermi_dn = bits::popcnt(dn & fermimask) & 1;
+          if (bits::popcount(dn & flipmask) == 1) {
+            bool fermi_dn = bits::popcount(dn & fermimask) & 1;
 
             if constexpr (isreal<coeff_t>()) {
               vec_out[target_idx] += ((fermi_up ^ fermi_dn) ? Jhalf : -Jhalf) *

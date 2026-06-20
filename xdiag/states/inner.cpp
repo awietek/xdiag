@@ -9,6 +9,9 @@
 #include <xdiag/utils/error.hpp>
 
 namespace xdiag {
+double inner(Op const &A, State const &v) { return inner(v, A, v); }
+double inner(Monomial const &A, State const &v) { return inner(v, A, v); }
+double inner(OpSum const &A, State const &v) { return inner(v, A, v); }
 
 double inner(State const &v, Op const &A, State const &w) try {
   return inner(v, OpSum(A), w);
@@ -28,6 +31,10 @@ double inner(State const &v, OpSum const &A, State const &w) try {
   }
 }
 XDIAG_CATCH
+
+complex innerC(Op const &A, State const &v) { return innerC(v, A, v); }
+complex innerC(Monomial const &A, State const &v) { return innerC(v, A, v); }
+complex innerC(OpSum const &A, State const &v) { return innerC(v, A, v); }
 
 complex innerC(State const &v, Op const &A, State const &w) try {
   return innerC(v, OpSum(A), w);

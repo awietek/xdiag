@@ -112,8 +112,15 @@ COOMatrix<idx_t, coeff_t> coo_matrix(OpSum const &ops, Block const &block_in,
   utils::visit_same_type(
       block_in, block_out,
       [&](auto const &bin, auto const &bout) {
-        check_valid_sparse_matrix<idx_t, coeff_t>(ops, bin, bout, i0);
-        result = coo_matrix_impl<idx_t, coeff_t>(ops, bin, bout, i0);
+        using block_t = std::decay_t<decltype(bin)>;
+        if constexpr (is_distributed_v<block_t>) {
+          XDIAG_THROW("Cannot build a sparse matrix for a distributed block: "
+                      "its Hilbert space is distributed across MPI ranks. Use "
+                      "apply(...) instead.");
+        } else {
+          check_valid_sparse_matrix<idx_t, coeff_t>(ops, bin, bout, i0);
+          result = coo_matrix_impl<idx_t, coeff_t>(ops, bin, bout, i0);
+        }
       },
       "Type mismatch of Block types");
   return result;

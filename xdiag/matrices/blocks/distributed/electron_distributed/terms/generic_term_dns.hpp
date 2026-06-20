@@ -4,9 +4,12 @@
 
 #pragma once
 
+#include <xdiag/math/binomial.hpp>
+
 #include <functional>
 
-#include <xdiag/bits/bitops.hpp>
+#include <xdiag/bits/bitmask.hpp>
+#include <xdiag/bits/popcount.hpp>
 
 namespace xdiag::basis::electron_distributed {
 
@@ -26,11 +29,11 @@ void generic_term_dns(basis_t const &basis_in, basis_t const &basis_out,
 
   int64_t nup_in = basis_in.nup();
   int64_t ndn_in = basis_in.ndn();
-  int64_t ndn_configurations_in = combinatorics::binomial(nsites, ndn_in);
+  int64_t ndn_configurations_in = math::binomial(nsites, ndn_in);
 
   int64_t nup_out = basis_out.nup();
   int64_t ndn_out = basis_out.ndn();
-  int64_t ndn_configurations_out = combinatorics::binomial(nsites, ndn_out);
+  int64_t ndn_configurations_out = math::binomial(nsites, ndn_out);
 
   // Loop over all configurations
   int64_t idx_up = 0;
@@ -50,7 +53,7 @@ void generic_term_dns(basis_t const &basis_in, basis_t const &basis_out,
           int64_t idx_out = up_offset_out + idx_dn_flip;
 
           if constexpr (fermi_ups) { // if odd number of ups -> factor -1
-            bool fermi_up = (bool)(bits::popcnt(up) & 1);
+            bool fermi_up = (bool)(bits::popcount(up) & 1);
             vec_out[idx_out] += (fermi_up ? -coeff : coeff) * vec_in[idx_in];
           } else {
             vec_out[idx_out] += coeff * vec_in[idx_in];

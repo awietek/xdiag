@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #pragma once
-#include <xdiag/common.hpp>
+#include <xdiag/math/complex.hpp>
 #include <xdiag/symmetries/permutation.hpp>
 
 namespace xdiag::symmetries {

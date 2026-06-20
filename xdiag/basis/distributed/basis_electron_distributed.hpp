@@ -8,11 +8,14 @@
 #include <extern/gsl/span>
 
 #include <xdiag/basis/basis.hpp>
-#include <xdiag/bits/bitops.hpp>
-#include <xdiag/combinatorics/lin_table.hpp>
-#include <xdiag/common.hpp>
+#include <xdiag/bits/bitmask.hpp>
+#include <xdiag/bits/extract_deposit.hpp>
+#include <xdiag/bits/popcount.hpp>
+#include <xdiag/combinatorics/combinations/lin_table.hpp>
+#include <xdiag/math/complex.hpp>
 #include <xdiag/mpi/communicator.hpp>
 #include <xdiag/random/hash_functions.hpp>
+#include <xdiag/utils/type_name.hpp>
 
 namespace xdiag::basis {
 
@@ -24,6 +27,8 @@ class BasisElectronDistributed
 public:
   using bit_t = bit_tt;
   using iterator_t = BasisElectronDistributedIterator<bit_t>;
+  static constexpr std::string_view type_name =
+      utils::get_type_name<BasisElectronDistributed<bit_t>>();
 
   BasisElectronDistributed() = default;
   BasisElectronDistributed(int64_t nsites, int64_t nup, int64_t ndn);

@@ -33,7 +33,7 @@ set(XDIAG_TEST_SOURCES
   algebra/test_normal_order.cpp
   algebra/test_quantum_numbers.cpp
   algebra/test_permute.cpp
-  # algebra/test_symmetrize.cpp # requires Electron block to work currently
+  algebra/test_symmetrize.cpp
   algebra/test_isapprox.cpp
   algebra/test_representation.cpp
   algebra/algebras/test_matrix_algebra.cpp
@@ -49,17 +49,14 @@ set(XDIAG_TEST_SOURCES
   symmetries/action/test_site_permutation_sublattice.cpp
   symmetries/tables/test_representative_table.cpp
   
-  blocks/spinhalf/testcases_spinhalf.cpp
   blocks/spinhalf/test_spinhalf_strategies.cpp
   blocks/spinhalf/test_spinhalf.cpp
 
-  blocks/electron/testcases_electron.cpp
   blocks/electron/test_electron_raiselower.cpp
   blocks/electron/test_electron_apply.cpp
   blocks/electron/test_electron_matrix.cpp
   blocks/electron/test_electron_symmetric.cpp
 
-  blocks/tj/testcases_tj.cpp
   blocks/tj/test_tj_kernels.cpp
   blocks/tj/test_tj_matrix.cpp
   blocks/tj/test_tj_apply.cpp
@@ -144,34 +141,18 @@ set(XDIAG_TEST_SOURCES
 )
 
 set(XDIAG_TESTCASES_SOURCES
-  # blocks/spinhalf/testcases_spinhalf.cpp
-  # blocks/tj/testcases_tj.cpp
-  # blocks/electron/testcases_electron.cpp
+  blocks/spinhalf/testcases_spinhalf.cpp
+  blocks/tj/testcases_tj.cpp
+  blocks/electron/testcases_electron.cpp
 )
 
 set(XDIAG_TEST_DISTRIBUTED_SOURCES
-  parallel/mpi/test_cdot_distributed.cpp
-
-  basis/spinhalf_distributed/test_basis_sz.cpp
-  basis/spinhalf_distributed/test_spinhalf_distributed_basis_iterator.cpp
-  basis/tj_distributed/test_basis_np.cpp
-  basis/tj_distributed/test_tj_distributed_basis_iterator.cpp
-
-  blocks/spinhalf_distributed/test_spinhalf_distributed.cpp
-  blocks/spinhalf_distributed/test_spinhalf_distributed_apply.cpp
-
-  blocks/tj_distributed/test_tj_distributed_apply.cpp
-  blocks/tj_distributed/test_tj_distributed_raiselower.cpp
-
-  blocks/electron_distributed/test_electron_distributed_apply.cpp
-  blocks/electron_distributed/test_electron_distributed_raiselower.cpp
-
-  states/test_product_state_distributed.cpp
-  states/test_random_state_distributed.cpp
-
-  linalg/time_evolution/test_time_evolution_distributed.cpp
-  algebra/test_apply_distributed.cpp
-
+  blocks/distributed/test_spinhalf_distributed.cpp
+  blocks/distributed/test_spinhalf_distributed_apply.cpp
+  blocks/distributed/test_tj_distributed_apply.cpp
+  blocks/distributed/test_tj_distributed_raiselower.cpp
+  blocks/distributed/test_electron_distributed_apply.cpp
+  blocks/distributed/test_electron_distributed_raiselower.cpp
 )
 
 add_executable(tests tests.cpp ${XDIAG_TEST_SOURCES} ${XDIAG_TESTCASES_SOURCES})

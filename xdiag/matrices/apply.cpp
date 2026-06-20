@@ -5,6 +5,10 @@
 #include "apply.hpp"
 
 #include <xdiag/armadillo.hpp>
+#include <xdiag/blocks/blocks.hpp>
+#ifdef XDIAG_DISTRIBUTED
+#include <xdiag/matrices/blocks/distributed/apply_distributed.hpp>
+#endif
 #include <xdiag/matrices/blocks/dispatch_bases.hpp>
 #include <xdiag/matrices/kernels.hpp>
 #include <xdiag/operators/monomial.hpp>
@@ -43,19 +47,35 @@ namespace xdiag {
 
 // Layer 2 implementation — internal, called only from apply(op_t, Block, ...).
 // One body for every block type: the dispatch_basis overload supplies the basis
-// dispatch (the numerical kernel is selected by block_t in kernels.cpp). A block
-// type with no dispatch_basis overload is a compile error here.
+// dispatch (the numerical kernel is selected by block_t in kernels.cpp). A
+// block type with no dispatch_basis overload is a compile error here.
 template <typename block_t, typename vec_t>
 static void apply_impl(OpSum const &ops, block_t const &block_in,
                        vec_t const &vec_in, block_t const &block_out,
                        vec_t &vec_out) try {
   vec_out.zeros();
-  // Layer 2: unwrap the basis pointer to a concrete BasisOnTheFly<...> type.
-  matrices::dispatch_basis(
-      block_in, block_out, [&](auto const &basis_in, auto const &basis_out) {
-        // Kernel: definition is in kernels.cpp, instantiated per basis type.
-        matrices::apply<block_t>(ops, basis_in, vec_in, basis_out, vec_out);
-      });
+
+  if constexpr (is_distributed_v<block_t>) {
+#ifdef XDIAG_DISTRIBUTED
+    // Distributed blocks use a separate matrix-free, MPI-aware apply path
+    // (matrices/blocks/distributed/<block>/kernels.cpp). Only single-column
+    // vectors are supported.
+    using coeff_t = typename vec_t::elem_type;
+    if (std::is_same_v<vec_t, arma::Col<coeff_t>>) {
+      matrices::apply_distributed(ops, block_in, vec_in, block_out, vec_out);
+    } else {
+      XDIAG_THROW("apply for a distributed block only supports single-column "
+                  "vectors (States with one column).");
+    }
+#endif
+  } else {
+    // Layer 2: unwrap the basis pointer to a concrete BasisOnTheFly<...> type.
+    matrices::dispatch_basis(
+        block_in, block_out, [&](auto const &basis_in, auto const &basis_out) {
+          // Kernel: definition is in kernels.cpp, instantiated per basis type.
+          matrices::apply<block_t>(ops, basis_in, vec_in, basis_out, vec_out);
+        });
+  }
 }
 XDIAG_CATCH
 

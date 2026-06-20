@@ -37,7 +37,6 @@ public:
   int64_t nsites() const override;
   int64_t size() const override;
   int64_t d() const; // Local Hilbert space dimension per site
-  int64_t dim() const;
   Vector const& characters() const;
   symmetries::SitePermutationSublattice<bit_t, n_sublat> const& action() const;
 

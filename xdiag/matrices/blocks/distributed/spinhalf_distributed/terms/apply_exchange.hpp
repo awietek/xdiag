@@ -8,8 +8,10 @@
 #include <tuple>
 
 #include <xdiag/armadillo.hpp>
-#include <xdiag/bits/bitops.hpp>
-#include <xdiag/combinatorics/subsets.hpp>
+#include <xdiag/bits/bitmask.hpp>
+#include <xdiag/bits/popcount.hpp>
+#include <xdiag/combinatorics/subsets/subsets.hpp>
+#include <xdiag/operators/coeff.hpp>
 #include <xdiag/operators/op.hpp>
 #include <xdiag/mpi/buffer.hpp>
 #include <xdiag/mpi/comm_pattern.hpp>
@@ -18,7 +20,7 @@
 namespace xdiag::basis::spinhalf_distributed {
 
 template <class basis_t, typename coeff_t>
-void apply_exchange_postfix(Coupling const &cpl, Op const &op,
+void apply_exchange_postfix(Coeff const &cpl, Op const &op,
                             basis_t const &basis,
                             arma::Col<coeff_t> const &vec_in,
                             arma::Col<coeff_t> &vec_out) {
@@ -42,7 +44,7 @@ void apply_exchange_postfix(Coupling const &cpl, Op const &op,
     int64_t prefix_begin = basis.prefix_begin(prefix);
     for (bit_t postfix : postfixes) {
 
-      if (bits::popcnt(postfix & mask) & 1) {
+      if (bits::popcount(postfix & mask) & 1) {
         bit_t new_postfix = postfix ^ mask;
         int64_t new_idx = prefix_begin + lintable.index(new_postfix);
         vec_out(new_idx) += Jhalf * vec_in(idx);
@@ -54,7 +56,7 @@ void apply_exchange_postfix(Coupling const &cpl, Op const &op,
 
 // apply_exchange_prefix works with the send/recv buffer as input/output vectors
 template <class basis_t, typename coeff_t>
-void apply_exchange_prefix(Coupling const &cpl, Op const &op,
+void apply_exchange_prefix(Coeff const &cpl, Op const &op,
                            basis_t const &basis) {
   using bit_t = typename basis_t::bit_t;
 
@@ -81,7 +83,7 @@ void apply_exchange_prefix(Coupling const &cpl, Op const &op,
     auto const &prefixes = basis.prefix_states(postfix);
     int64_t postfix_begin = basis.postfix_begin(postfix);
     for (bit_t prefix : prefixes) {
-      if (bits::popcnt(prefix & mask) & 1) {
+      if (bits::popcount(prefix & mask) & 1) {
         bit_t new_prefix = prefix ^ mask;
         int64_t new_idx = postfix_begin + lintable.index(new_prefix);
         recv_buffer[new_idx] += Jhalf * send_buffer[idx];
@@ -92,7 +94,7 @@ void apply_exchange_prefix(Coupling const &cpl, Op const &op,
 }
 
 template <class basis_t, typename coeff_t>
-void apply_exchange_mixed(Coupling const &cpl, Op const &op,
+void apply_exchange_mixed(Coeff const &cpl, Op const &op,
                           basis_t const &basis,
                           arma::Col<coeff_t> const &vec_in,
                           arma::Col<coeff_t> &vec_out) {
@@ -195,14 +197,14 @@ void apply_exchange_mixed(Coupling const &cpl, Op const &op,
   for (bit_t prefix : combinatorics::Subsets<bit_t>(n_prefix_bits)) {
 
     // Only consider prefix if both itself and flipped version are valid
-    int64_t nup_prefix = bits::popcnt(prefix);
+    int64_t nup_prefix = bits::popcount(prefix);
     int64_t nup_postfix = nup - nup_prefix;
     if ((nup_postfix < 0) || (nup_postfix > n_postfix_bits)) {
       continue;
     }
 
     bit_t prefix_flipped = prefix ^ prefix_mask;
-    int64_t nup_prefix_flipped = bits::popcnt(prefix_flipped);
+    int64_t nup_prefix_flipped = bits::popcount(prefix_flipped);
     int64_t nup_postfix_flipped = nup - nup_prefix_flipped;
     if ((nup_postfix_flipped < 0) || (nup_postfix_flipped > n_postfix_bits))
       continue;

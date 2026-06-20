@@ -4,17 +4,19 @@
 
 #pragma once
 
-#include <xdiag/bits/bitops.hpp>
-#include <xdiag/common.hpp>
+#include <xdiag/bits/bitmask.hpp>
+#include <xdiag/bits/popcount.hpp>
+#include <xdiag/math/complex.hpp>
+#include <xdiag/operators/coeff.hpp>
 #include <xdiag/operators/op.hpp>
 
-#include <xdiag/basis/tj_distributed/apply/generic_term_dns.hpp>
-#include <xdiag/basis/tj_distributed/apply/generic_term_ups.hpp>
+#include <xdiag/matrices/blocks/distributed/tj_distributed/terms/generic_term_dns.hpp>
+#include <xdiag/matrices/blocks/distributed/tj_distributed/terms/generic_term_ups.hpp>
 
 namespace xdiag::basis::tj_distributed {
 
 template <typename coeff_t, class basis_t>
-void apply_hopping(Coupling const &cpl, Op const &op, basis_t const &basis,
+void apply_hopping(Coeff const &cpl, Op const &op, basis_t const &basis,
                    const coeff_t *vec_in, coeff_t *vec_out) {
   using bit_t = typename basis_t::bit_t;
 
@@ -29,12 +31,12 @@ void apply_hopping(Coupling const &cpl, Op const &op, basis_t const &basis,
   bit_t fermimask = (((bit_t)1 << (u - l - 1)) - 1) << (l + 1);
 
   auto term_action = [&](bit_t spins) -> std::pair<bit_t, coeff_t> {
-    bool fermi = bits::popcnt(spins & fermimask) & 1;
+    bool fermi = bits::popcount(spins & fermimask) & 1;
     spins ^= flipmask;
     if constexpr (isreal<coeff_t>()) {
       return {spins, fermi ? t : -t};
     } else {
-      coeff_t tt = (bits::gbit(spins, s1)) ? t : conj(t);
+      coeff_t tt = (bits::get(spins, s1)) ? t : conj(t);
       return {spins, fermi ? tt : -tt};
     }
   };
@@ -46,7 +48,7 @@ void apply_hopping(Coupling const &cpl, Op const &op, basis_t const &basis,
       return (dns & flipmask) == 0;
     };
     auto non_zero_term_ups = [&](bit_t const &ups) -> bool {
-      return bits::popcnt(ups & flipmask) & 1;
+      return bits::popcount(ups & flipmask) & 1;
     };
 
     // Call generic term function
@@ -60,7 +62,7 @@ void apply_hopping(Coupling const &cpl, Op const &op, basis_t const &basis,
       return (ups & flipmask) == 0;
     };
     auto non_zero_term_dns = [&](bit_t const &dns) -> bool {
-      return bits::popcnt(dns & flipmask) & 1;
+      return bits::popcount(dns & flipmask) & 1;
     };
 
     // Call generic term function

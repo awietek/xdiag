@@ -25,7 +25,6 @@ namespace xdiag::basis {
 
 namespace {
 
-constexpr int64_t invalid_index = -1;
 constexpr int64_t undefined = std::numeric_limits<int64_t>::min();
 
 template <typename bit_t, typename coeff_t, int n_sublat>
@@ -269,11 +268,6 @@ BasisSublattice<bit_t, n_sublat>::end() const {
 template <typename bit_t, int n_sublat>
 int64_t BasisSublattice<bit_t, n_sublat>::nsites() const {
   return nsites_;
-}
-
-template <typename bit_t, int n_sublat>
-int64_t BasisSublattice<bit_t, n_sublat>::dim() const {
-  return size();
 }
 
 template <typename bit_t, int n_sublat>

@@ -4,14 +4,15 @@
 
 #pragma once
 
-#include <xdiag/basis/electron_distributed/apply/generic_term_diag.hpp>
-#include <xdiag/common.hpp>
+#include <xdiag/matrices/blocks/distributed/electron_distributed/terms/generic_term_diag.hpp>
+#include <xdiag/math/complex.hpp>
+#include <xdiag/operators/coeff.hpp>
 #include <xdiag/operators/op.hpp>
 
 namespace xdiag::basis::electron_distributed {
 
 template <typename coeff_t, class basis_t>
-void apply_number(Coupling const &cpl, Op const &op, basis_t const &basis,
+void apply_number(Coeff const &cpl, Op const &op, basis_t const &basis,
                   const coeff_t *vec_in, coeff_t *vec_out) {
   using bit_t = typename basis_t::bit_t;
 

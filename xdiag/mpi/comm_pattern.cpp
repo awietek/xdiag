@@ -4,6 +4,8 @@
 
 #include "comm_pattern.hpp"
 
+#include <xdiag/utils/error.hpp>
+
 namespace xdiag::mpi {
 
 bool CommPattern::contains(Op const &op) const {

@@ -1,11 +1,13 @@
 set(XDIAG_SOURCES
+  # Utility functions
   utils/iochecks.cpp
   utils/error.cpp
   utils/logger.cpp
   utils/say_hello.cpp
   utils/read_vectors.cpp
   utils/timing.cpp
-  
+
+  # Input / Output 
   io/read.cpp
   io/file_toml.cpp
   io/file_h5.cpp
@@ -20,7 +22,8 @@ set(XDIAG_SOURCES
   io/hdf5/utils.cpp
   io/hdf5/write.cpp
   io/hdf5/types.cpp
-  
+
+  # Simple math helpers
   math/ipow.cpp
   math/binomial.cpp
   math/scalar.cpp
@@ -30,7 +33,8 @@ set(XDIAG_SOURCES
   math/dot.cpp
   math/norm.cpp
   math/isapprox.cpp
-  
+
+  # Core computational kernels
   matrices/apply.cpp
   matrices/matrix.cpp
   matrices/sparse/coo_matrix.cpp
@@ -45,14 +49,16 @@ set(XDIAG_SOURCES
   matrices/blocks/tj/kernels.cpp
   matrices/terms/non_branching_op.cpp
   matrices/terms/cdagc_string.cpp
-  
+
+  # Bit(set) functionality
   bits/bitset.cpp
   bits/bitvector.cpp
   bits/bitarray.cpp
   bits/pack_unpack.cpp
   bits/mask_compressor.cpp
   bits/to_string.cpp
-  
+
+  # Combinatorical components
   combinatorics/combinations/enumerate_combinations.cpp
   combinatorics/combinations/combinations.cpp
   combinatorics/combinations/lin_table.cpp
@@ -61,7 +67,8 @@ set(XDIAG_SOURCES
   combinatorics/bounded_partitions/bounded_partitions.cpp
   combinatorics/bounded_partitions/count_bounded_partitions.cpp
   combinatorics/bounded_partitions/schaefer_table.cpp
-  
+
+  # Bases of the blocks
   basis/basis.cpp
   basis/basis_onthefly.cpp
   basis/basis_electron.cpp
@@ -71,6 +78,7 @@ set(XDIAG_SOURCES
   basis/basis_sublattice.cpp
   basis/basis_symmetric.cpp
 
+  # Blocks of Hilbert spaces
   blocks/blocks.cpp
   blocks/print_block.cpp
   blocks/spinhalf.cpp
@@ -78,7 +86,8 @@ set(XDIAG_SOURCES
   blocks/fermion.cpp
   blocks/electron.cpp
   blocks/tj.cpp
-  
+
+  # Quantum states
   states/product_state.cpp
   states/random_state.cpp
   states/create_state.cpp
@@ -90,10 +99,12 @@ set(XDIAG_SOURCES
   states/correlation_matrix.cpp
   states/norm.cpp
   states/fill.cpp
-  
+
+  # utilities for random numbers
   random/random_utils.cpp
   random/hash.cpp
-  
+
+  # Quantum operators
   operators/coeff.cpp
   operators/monomial.cpp
   operators/op.cpp
@@ -103,13 +114,13 @@ set(XDIAG_SOURCES
   operators/valid.cpp
   operators/collect.cpp
 
+  # Permutation symmetries
   symmetries/permutation.cpp
   symmetries/permutation_group.cpp
   symmetries/representation.cpp
   symmetries/representation_set.cpp
   symmetries/cyclic_group.cpp
   symmetries/fermi_sign.cpp
-
   symmetries/action/site_permutation.cpp
   symmetries/action/isrepresentative.cpp
   symmetries/action/representative.cpp
@@ -120,15 +131,14 @@ set(XDIAG_SOURCES
   symmetries/tables/representative_table.cpp
   symmetries/tables/fermi_table.cpp
 
+  # Algebraic capabilities
   algebra/symmetrize.cpp
   algebra/permute.cpp
   algebra/representation.cpp
   algebra/normal_order.cpp
   algebra/isapprox.cpp
   algebra/ishermitian.cpp
-
   algebra/algebra.cpp
-
   algebra/rewrite/rewrite.cpp
   algebra/rewrite/sort_sites.cpp
   algebra/rewrite/spin_rules.cpp
@@ -136,14 +146,14 @@ set(XDIAG_SOURCES
   algebra/rewrite/electron_rules.cpp
   algebra/rewrite/tj_rules.cpp
   algebra/rewrite/matrix_rules.cpp
-
   algebra/utils/combine_matrix_ops.cpp
   algebra/utils/permute_matrix_op.cpp
   algebra/utils/op_to_matrix_op.cpp
   algebra/utils/swap_pair.cpp
   algebra/utils/replace_pair.cpp
   algebra/utils/check_allowed_types.cpp
-  
+
+  # Numerical linear algebra iterative algorithms
   linalg/lanczos/lanczos_convergence.cpp
   linalg/lanczos/tmatrix.cpp
   linalg/lanczos/eigvals_lanczos.cpp
@@ -160,29 +170,31 @@ set(XDIAG_SOURCES
   linalg/time_evolution/expm.cpp
 )
 set(XDIAG_DISTRIBUTED_SOURCES
+  # MPI infrastructure
+  mpi/allreduce.cpp
+  mpi/alltoall.cpp
+  mpi/buffer.cpp
+  mpi/cdot_distributed.cpp
+  mpi/comm_pattern.cpp
+  mpi/communicator.cpp
+  mpi/datatype.cpp
+  mpi/timing_mpi.cpp
+
+  # distributed bases
+  basis/distributed/basis_spinhalf_distributed.cpp
+  basis/distributed/basis_tj_distributed.cpp
   basis/distributed/basis_electron_distributed.cpp
-  
-  # parallel/mpi/allreduce.cpp
-  # parallel/mpi/alltoall.cpp
-  # parallel/mpi/communicator.cpp
-  # parallel/mpi/comm_pattern.cpp
-  # parallel/mpi/datatype.cpp
-  # parallel/mpi/cdot_distributed.cpp
-  # parallel/mpi/timing_mpi.cpp
-  # parallel/mpi/buffer.cpp
-  # basis/spinhalf_distributed/basis_spinhalf_distributed.cpp
-  # basis/spinhalf_distributed/basis_sz.cpp
-  # basis/spinhalf_distributed/transpose.cpp
-  # basis/spinhalf_distributed/apply/apply_terms.cpp
-  
-  # basis/tj_distributed/basis_tj_distributed.cpp
-  # basis/tj_distributed/basis_np.cpp
-  # basis/electron_distributed/basis_electron_distributed.cpp
-  # basis/electron_distributed/basis_np.cpp
-  
-  # blocks/spinhalf_distributed.cpp
-  # blocks/tj_distributed.cpp
-  # blocks/electron_distributed.cpp
+
+  # distributed blocks
+  blocks/distributed/spinhalf_distributed.cpp
+  blocks/distributed/tj_distributed.cpp
+  blocks/distributed/electron_distributed.cpp
+
+  # distributed kernels
+  matrices/blocks/distributed/spinhalf_distributed/kernels.cpp
+  matrices/blocks/distributed/spinhalf_distributed/terms/transpose.cpp
+  matrices/blocks/distributed/tj_distributed/kernels.cpp
+  matrices/blocks/distributed/electron_distributed/kernels.cpp
 )
 set(XDIAG_JULIA_SOURCES
   xdiagjl.cpp

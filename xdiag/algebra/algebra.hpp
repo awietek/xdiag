@@ -74,6 +74,11 @@ Algebra implementation_algebra(Spinhalf const &block);
 Algebra implementation_algebra(Fermion const &block);
 Algebra implementation_algebra(Electron const &block);
 Algebra implementation_algebra(tJ const &block);
+#ifdef XDIAG_DISTRIBUTED
+Algebra implementation_algebra(SpinhalfDistributed const &block);
+Algebra implementation_algebra(tJDistributed const &block);
+Algebra implementation_algebra(ElectronDistributed const &block);
+#endif
 Algebra implementation_algebra(Block const &block);
 
 Algebra symmetry_algebra(Boson const &block);
@@ -81,6 +86,11 @@ Algebra symmetry_algebra(Spinhalf const &block);
 Algebra symmetry_algebra(Fermion const &block);
 Algebra symmetry_algebra(Electron const &block);
 Algebra symmetry_algebra(tJ const &block);
+#ifdef XDIAG_DISTRIBUTED
+Algebra symmetry_algebra(SpinhalfDistributed const &block);
+Algebra symmetry_algebra(tJDistributed const &block);
+Algebra symmetry_algebra(ElectronDistributed const &block);
+#endif
 Algebra symmetry_algebra(Block const &block);
 
 } // namespace xdiag::algebra

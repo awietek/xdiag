@@ -8,6 +8,7 @@
 #include <mpi.h>
 
 #include <xdiag/armadillo.hpp>
+#include <xdiag/math/complex.hpp>
 
 namespace xdiag {
 

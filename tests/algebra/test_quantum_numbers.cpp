@@ -71,9 +71,13 @@ static OpSum random_charge_opsum(int64_t nsites,
         opv.push_back(Op(t, sites[idx++]));
       }
     }
-    // charge-0 fillers
+    // charge-0 fillers (all operators sit on distinct sites, so stop adding
+    // fillers once the remaining sites cannot hold the next one)
     for (int e = 0; e < n_neutral && !neutrals.empty(); ++e) {
       Neutral const &nu = neutrals[ndist(gen)];
+      if (idx + nu.second > (int64_t)sites.size()) {
+        break;
+      }
       if (nu.second == 1) {
         opv.push_back(Op(nu.first, sites[idx++]));
       } else {

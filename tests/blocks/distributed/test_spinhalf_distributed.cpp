@@ -5,10 +5,11 @@
 #include "../../catch.hpp"
 #include <mpi.h>
 
+#include <xdiag/blocks/distributed/spinhalf_distributed.hpp>
 #include <xdiag/blocks/spinhalf.hpp>
-#include <xdiag/blocks/spinhalf_distributed.hpp>
+#include <xdiag/math/binomial.hpp>
+#include <xdiag/mpi/allreduce.hpp>
 #include <xdiag/utils/logger.hpp>
-#include <xdiag/parallel/mpi/allreduce.hpp>
 
 using namespace xdiag;
 
@@ -24,7 +25,7 @@ void test_spinhalf_distributed(int nsites) {
 
     REQUIRE(block_mpi.dim() == block.size());
     REQUIRE(block_mpi.dim() == mysize);
-    REQUIRE(block_mpi.dim() == combinatorics::binomial(nsites, nup));
+    REQUIRE(block_mpi.dim() == math::binomial(nsites, nup));
   }
 }
 

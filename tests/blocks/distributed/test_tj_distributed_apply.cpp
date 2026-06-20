@@ -2,17 +2,25 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-#include "../../catch.hpp"
+#include <mpi.h>
 
-#include <iostream>
+#include <tests/blocks/tj/testcases_tj.hpp>
+#include <tests/blocks/spinhalf/testcases_spinhalf.hpp>
+#include <tests/catch.hpp>
 
-#include "../spinhalf/testcases_spinhalf.hpp"
-#include "../tj/testcases_tj.hpp"
-#include <xdiag/algebra/apply.hpp>
+#include <xdiag/algebra/algebra.hpp>
 #include <xdiag/algebra/isapprox.hpp>
-#include <xdiag/algebra/matrix.hpp>
+#include <xdiag/blocks/distributed/tj_distributed.hpp>
+#include <xdiag/blocks/tj.hpp>
 #include <xdiag/linalg/sparse_diag.hpp>
+#include <xdiag/matrices/apply.hpp>
+#include <xdiag/matrices/matrix.hpp>
+#include <xdiag/states/apply.hpp>
+#include <xdiag/states/inner.hpp>
+#include <xdiag/states/dot.hpp>
 #include <xdiag/states/create_state.hpp>
+#include <xdiag/utils/logger.hpp>
+
 
 using namespace xdiag;
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cmath>
-#include <xdiag/common.hpp>
+#include <xdiag/math/complex.hpp>
 #include <xdiag/utils/ipow.hpp>
 #include <xdiag/utils/logger.hpp>
 #include <xdiag/utils/xdiag_show.hpp>

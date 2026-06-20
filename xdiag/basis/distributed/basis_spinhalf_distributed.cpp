@@ -4,12 +4,13 @@
 
 #include "basis_spinhalf_distributed.hpp"
 
-#include <xdiag/combinatorics/binomial.hpp>
-#include <xdiag/combinatorics/combinations.hpp>
-#include <xdiag/combinatorics/subsets.hpp>
+#include <xdiag/math/binomial.hpp>
+#include <xdiag/combinatorics/combinations/combinations.hpp>
+#include <xdiag/combinatorics/subsets/subsets.hpp>
 #include <xdiag/mpi/allreduce.hpp>
+#include <xdiag/utils/error.hpp>
 
-namespace xdiag::basis::spinhalf_distributed {
+namespace xdiag::basis {
 
 template <typename bit_t, class process_f>
 static int64_t
@@ -19,7 +20,7 @@ fill_tables(int64_t nsites, int64_t nup, int64_t n_prefix_bits, process_f rank,
             std::vector<combinatorics::LinTable<bit_t>> &postfix_lintables,
             std::vector<std::vector<bit_t>> &postfix_states) {
 
-  using combinatorics::binomial;
+  using math::binomial;
   using combinatorics::LinTable;
 
   int mpi_rank;
@@ -30,7 +31,7 @@ fill_tables(int64_t nsites, int64_t nup, int64_t n_prefix_bits, process_f rank,
   // Determine the valid prefixes that belong to my process
   int64_t size = 0;
   for (bit_t prefix : combinatorics::Subsets<bit_t>(n_prefix_bits)) {
-    int nup_prefix = bits::popcnt(prefix);
+    int nup_prefix = bits::popcount(prefix);
     int nup_postfix = nup - nup_prefix;
 
     // Ignore impossible prefix configurations
@@ -71,6 +72,7 @@ BasisSpinhalfDistributed<bit_t>::BasisSpinhalfDistributed(int64_t nsites, int64_
     : nsites_(nsites), nup_(nup), n_prefix_bits_(nsites / 2),
       n_postfix_bits_(nsites - n_prefix_bits_) {
   using namespace combinatorics;
+  using math::binomial;
   check_nsites_work_with_bits<bit_t>(nsites_);
 
   if (nsites < 0) {
@@ -175,7 +177,7 @@ template <typename bit_t> int64_t BasisSpinhalfDistributed<bit_t>::index(bit_t s
   }
   int64_t offset = prefix_begin(prefix);
   auto const &lintable = postfix_lintable(prefix);
-  bit_t postfix = spins & (((bit_t)1 << n_postfix_bits_) - 1);
+  bit_t postfix = spins & bits::bitmask<bit_t>(n_postfix_bits_);
   return offset + lintable.index(postfix);
 }
 
@@ -195,13 +197,13 @@ int64_t BasisSpinhalfDistributed<bit_t>::prefix_begin(bit_t prefix) const {
 template <typename bit_t>
 combinatorics::LinTable<bit_t> const &
 BasisSpinhalfDistributed<bit_t>::postfix_lintable(bit_t prefix) const {
-  int nup_prefix = bits::popcnt(prefix);
+  int nup_prefix = bits::popcount(prefix);
   int nup_postfix = nup_ - nup_prefix;
   return postfix_lintables_[nup_postfix];
 }
 template <typename bit_t>
 std::vector<bit_t> const &BasisSpinhalfDistributed<bit_t>::postfix_states(bit_t prefix) const {
-  int nup_prefix = bits::popcnt(prefix);
+  int nup_prefix = bits::popcount(prefix);
   int nup_postfix = nup_ - nup_prefix;
   return postfix_states_[nup_postfix];
 }
@@ -222,13 +224,13 @@ int64_t BasisSpinhalfDistributed<bit_t>::postfix_begin(bit_t postfix) const {
 template <typename bit_t>
 combinatorics::LinTable<bit_t> const &
 BasisSpinhalfDistributed<bit_t>::prefix_lintable(bit_t postfix) const {
-  int nup_postfix = bits::popcnt(postfix);
+  int nup_postfix = bits::popcount(postfix);
   int nup_prefix = nup_ - nup_postfix;
   return prefix_lintables_[nup_prefix];
 }
 template <typename bit_t>
 std::vector<bit_t> const &BasisSpinhalfDistributed<bit_t>::prefix_states(bit_t postfix) const {
-  int nup_postfix = bits::popcnt(postfix);
+  int nup_postfix = bits::popcount(postfix);
   int nup_prefix = nup_ - nup_postfix;
   return prefix_states_[nup_prefix];
 }
@@ -282,4 +284,4 @@ bool BasisSpinhalfDistributedIterator<bit_t>::operator!=(
 template class BasisSpinhalfDistributedIterator<uint32_t>;
 template class BasisSpinhalfDistributedIterator<uint64_t>;
 
-} // namespace xdiag::basis::spinhalf_distributed
+} // namespace xdiag::basis

@@ -4,9 +4,12 @@
 
 #pragma once
 
+#include <xdiag/math/binomial.hpp>
+
 #include <vector>
 
-#include <xdiag/bits/bitops.hpp>
+#include <xdiag/bits/bitmask.hpp>
+#include <xdiag/bits/popcount.hpp>
 #include <xdiag/utils/logger.hpp>
 
 namespace xdiag::basis::electron_distributed {
@@ -26,11 +29,11 @@ void generic_term_ups(basis_t const &basis_in, basis_t const &basis_out,
 
   int64_t nup_in = basis_in.nup();
   int64_t ndn_in = basis_in.ndn();
-  int64_t nup_configurations_in = combinatorics::binomial(nsites, nup_in);
+  int64_t nup_configurations_in = math::binomial(nsites, nup_in);
 
   int64_t nup_out = basis_out.nup();
   int64_t ndn_out = basis_out.ndn();
-  int64_t nup_configurations_out = combinatorics::binomial(nsites, nup_out);
+  int64_t nup_configurations_out = math::binomial(nsites, nup_out);
 
   // Loop over all configurations
   int64_t idx_dn = 0;

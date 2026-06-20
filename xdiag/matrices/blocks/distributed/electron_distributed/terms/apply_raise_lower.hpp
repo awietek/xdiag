@@ -6,14 +6,15 @@
 
 #include <string>
 
-#include <xdiag/basis/electron_distributed/apply/generic_term_dns.hpp>
-#include <xdiag/basis/electron_distributed/apply/generic_term_ups.hpp>
-#include <xdiag/bits/bitops.hpp>
+#include <xdiag/matrices/blocks/distributed/electron_distributed/terms/generic_term_dns.hpp>
+#include <xdiag/matrices/blocks/distributed/electron_distributed/terms/generic_term_ups.hpp>
+#include <xdiag/bits/bitmask.hpp>
+#include <xdiag/bits/popcount.hpp>
 
 namespace xdiag::basis::electron_distributed {
 
 template <typename coeff_t, class basis_t>
-void apply_raise_lower(Coupling const &cpl, Op const &op,
+void apply_raise_lower(Coeff const &cpl, Op const &op,
                        basis_t const &basis_in, const coeff_t *vec_in,
                        basis_t const &basis_out, coeff_t *vec_out) {
   using bit_t = typename basis_t::bit_t;
@@ -26,7 +27,7 @@ void apply_raise_lower(Coupling const &cpl, Op const &op,
   bit_t fermi_mask = site_mask - 1;
 
   auto term_action = [&](bit_t spins) -> std::pair<bit_t, coeff_t> {
-    bool fermi = bits::popcnt(spins & fermi_mask) & 1;
+    bool fermi = bits::popcount(spins & fermi_mask) & 1;
     return {spins ^ site_mask, fermi ? -c : c};
   };
 

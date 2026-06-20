@@ -9,7 +9,7 @@
 
 #include <mpi.h>
 
-#include <xdiag/common.hpp>
+#include <xdiag/math/complex.hpp>
 
 namespace xdiag::mpi {
 

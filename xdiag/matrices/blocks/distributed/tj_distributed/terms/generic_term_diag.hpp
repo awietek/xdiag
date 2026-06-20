@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <xdiag/common.hpp>
+#include <xdiag/math/complex.hpp>
 
 namespace xdiag::basis::tj_distributed {
 

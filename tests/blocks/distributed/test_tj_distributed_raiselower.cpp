@@ -1,15 +1,24 @@
 // SPDX-FileCopyrightText: 2025 Alexander Wietek <awietek@pks.mpg.de>
 //
 // SPDX-License-Identifier: Apache-2.0
+#include <mpi.h>
 
-#include "../../catch.hpp"
-#include "../tj/testcases_tj.hpp"
+#include <tests/blocks/tj/testcases_tj.hpp>
+#include <tests/catch.hpp>
+
 #include <xdiag/algebra/algebra.hpp>
-#include <xdiag/algebra/apply.hpp>
 #include <xdiag/algebra/isapprox.hpp>
-#include <xdiag/algebra/matrix.hpp>
-#include <xdiag/states/create_state.hpp>
+#include <xdiag/blocks/distributed/tj_distributed.hpp>
+#include <xdiag/blocks/tj.hpp>
+#include <xdiag/linalg/sparse_diag.hpp>
+#include <xdiag/matrices/apply.hpp>
+#include <xdiag/matrices/matrix.hpp>
+#include <xdiag/states/apply.hpp>
 #include <xdiag/states/fill.hpp>
+#include <xdiag/states/create_state.hpp>
+#include <xdiag/states/dot.hpp>
+#include <xdiag/states/norm.hpp>
+#include <xdiag/states/inner.hpp>
 #include <xdiag/utils/logger.hpp>
 
 using namespace xdiag;
@@ -23,7 +32,7 @@ TEST_CASE("tj_distributed_raise_lower", "[tj_distributed]") try {
   Log("test tJDistributed normal ordering");
   for (int nsites = 2; nsites < 6; ++nsites) {
     auto block0 = tJDistributed(nsites, 0, 0);
-    auto psi0 = product_state(block0, std::vector<std::string>(nsites, "Emp"));
+    auto psi0 = product_state(block0, std::vector<int64_t>(nsites, 0));
 
     for (int nup = 0; nup <= nsites; ++nup) {
       for (int ndn = 0; ndn <= nsites - nup; ++ndn) {
@@ -35,10 +44,10 @@ TEST_CASE("tj_distributed_raise_lower", "[tj_distributed]") try {
           std::vector<int> up_positions;
           std::vector<int> dn_positions;
           for (int i = 0; i < nsites; ++i) {
-            if ((pstate[i] == "Up") || (pstate[i] == "UpDn")) {
+            if ((pstate[i] == 1) || (pstate[i] == 3)) {
               up_positions.push_back(i);
             }
-            if ((pstate[i] == "Dn") || (pstate[i] == "UpDn")) {
+            if ((pstate[i] == 2) || (pstate[i] == 3)) {
               dn_positions.push_back(i);
             }
           }
@@ -46,7 +55,7 @@ TEST_CASE("tj_distributed_raise_lower", "[tj_distributed]") try {
           // Create state from product state
           auto psi = State(block);
           fill(psi, pstate);
-	  
+
           auto psi2 = psi0;
 
           std::reverse(dn_positions.begin(), dn_positions.end());

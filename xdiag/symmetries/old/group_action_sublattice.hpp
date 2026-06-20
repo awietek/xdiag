@@ -7,7 +7,7 @@
 #include <utility>
 
 #include <xdiag/bits/half_bit_types.hpp>
-#include <xdiag/common.hpp>
+#include <xdiag/math/complex.hpp>
 #include <extern/gsl/span>
 #include <xdiag/symmetries/permutation_group.hpp>
 

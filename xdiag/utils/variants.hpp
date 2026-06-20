@@ -39,4 +39,11 @@ decltype(auto) visit_same_type(VariantA &&a, VariantB &&b, F &&f,
 }
 XDIAG_CATCH
 
+template <typename V1, typename V2> struct variant_union;
+
+template <typename... Ts, typename... Us>
+struct variant_union<std::variant<Ts...>, std::variant<Us...>> {
+  using type = std::variant<Ts..., Us...>;
+};
+
 } // namespace xdiag::utils

@@ -4,9 +4,10 @@
 
 #include "basis_electron_distributed.hpp"
 
-#include <xdiag/combinatorics/binomial.hpp>
-#include <xdiag/combinatorics/combinations.hpp>
+#include <xdiag/math/binomial.hpp>
+#include <xdiag/combinatorics/combinations/combinations.hpp>
 #include <xdiag/mpi/allreduce.hpp>
+#include <xdiag/utils/error.hpp>
 
 namespace xdiag::basis {
 
@@ -19,6 +20,7 @@ BasisElectronDistributed<bit_t>::BasisElectronDistributed(int64_t nsites,
   check_nsites_work_with_bits<bit_t>(nsites_);
 
   using namespace combinatorics;
+  using math::binomial;
 
   // Safety checks
   if (nsites < 0) {
@@ -34,7 +36,7 @@ BasisElectronDistributed<bit_t>::BasisElectronDistributed(int64_t nsites,
   dim_ = binomial(nsites, nup) * binomial(nsites, ndn);
   MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank_);
   MPI_Comm_size(MPI_COMM_WORLD, &mpi_size_);
-  sitesmask_ = ((bit_t)1 << nsites) - 1;
+  sitesmask_ = bits::bitmask<bit_t>(nsites);
 
   // ////////////////////////////////////////////////////////////////
   // Ordering  ups / dns
@@ -416,4 +418,4 @@ bool BasisElectronDistributedIterator<bit_t>::operator!=(
 template class BasisElectronDistributedIterator<uint32_t>;
 template class BasisElectronDistributedIterator<uint64_t>;
 
-} // namespace xdiag::basis::electron_distributed
+} // namespace xdiag::basis

@@ -110,8 +110,13 @@ void term_dns(basis_t const &basis_in, basis_t const &basis_out,
               non_zero_term_f non_zero_term, term_action_f term_action,
               fill_f fill) {
   using bit_t = typename basis_t::bit_t;
-  (void)basis_out; // == basis_in for a dn-sector (Nup-conserving) operator
 
+  // A dn-sector operator conserves Nup, so the up representative (and its index)
+  // is identical in basis_in and basis_out -- only the dn fibers differ. For an
+  // Ndn-conserving operator (Hopdn, SzSz, Ndn) basis_out == basis_in; for a
+  // single Cdagdn / Cdn, Ndn changes so basis_out is a DIFFERENT (in general
+  // smaller) sector. The input (row) index uses basis_in, the output (column)
+  // index uses basis_out.
   auto const &basis_up = basis_in.basis_up();
   auto bloch = basis_in.characters().template as<arma::Col<coeff_t>>();
 
@@ -130,18 +135,22 @@ void term_dns(basis_t const &basis_in, basis_t const &basis_out,
       if constexpr (fermi_ups) {
         nup_neg = bits::popcount(ups) & 1;
       }
-      int64_t off = basis_in.ups_offset(idx_up);
-      auto dnss = basis_in.dns_for_ups_rep(idx_up);
-      auto norms = basis_in.norms_for_ups_rep(idx_up);
+      int64_t off_in = basis_in.ups_offset(idx_up);
+      int64_t off_out = basis_out.ups_offset(idx_up);
+      auto dnss_in = basis_in.dns_for_ups_rep(idx_up);
+      auto dnss_out = basis_out.dns_for_ups_rep(idx_up);
+      auto norms_in = basis_in.norms_for_ups_rep(idx_up);
+      auto norms_out = basis_out.norms_for_ups_rep(idx_up);
 
       if (basis_in.stab_size(idx_up) == 1) {
         int64_t dn_idx = 0;
-        for (bit_t dns_in : dnss) {
+        for (bit_t dns_in : dnss_in) {
           if (non_zero_term(dns_in)) {
             auto [dns_flip, coeff] = term_action(dns_in);
-            int64_t idx_dns_flip = basis_in.index_dns(dns_flip, idx_up, dnss);
+            int64_t idx_dns_flip =
+                basis_out.index_dns(dns_flip, idx_up, dnss_out);
             if (idx_dns_flip >= 0) { // -1: tJ double occupancy (never for electron)
-              XDIAG_FILL(off + dn_idx, off + idx_dns_flip,
+              XDIAG_FILL(off_in + dn_idx, off_out + idx_dns_flip,
                          nup_neg ? -coeff : coeff);
             }
           }
@@ -150,17 +159,18 @@ void term_dns(basis_t const &basis_in, basis_t const &basis_out,
       } else {
         std::vector<int64_t> syms = basis_in.syms_ups(ups);
         int64_t dn_idx = 0;
-        for (bit_t dns_in : dnss) {
+        for (bit_t dns_in : dnss_in) {
           if (non_zero_term(dns_in)) {
             auto [dns_flip, coeff] = term_action(dns_in);
             auto [idx_dns_flip, fermi_dn, sym] =
-                basis_in.index_dns_fermi_sym(dns_flip, syms, dnss);
+                basis_out.index_dns_fermi_sym(dns_flip, syms, dnss_out);
             if (idx_dns_flip >= 0) {
               bool fermi_up = basis_in.fermi_bool_ups(sym, ups);
-              coeff_t val = coeff * bloch(sym) * norms[idx_dns_flip] /
-                            norms[dn_idx];
+              coeff_t val = coeff * bloch(sym) * norms_out[idx_dns_flip] /
+                            norms_in[dn_idx];
               bool neg = (fermi_up ^ fermi_dn) ^ nup_neg;
-              XDIAG_FILL(off + dn_idx, off + idx_dns_flip, neg ? -val : val);
+              XDIAG_FILL(off_in + dn_idx, off_out + idx_dns_flip,
+                         neg ? -val : val);
             }
           }
           ++dn_idx;

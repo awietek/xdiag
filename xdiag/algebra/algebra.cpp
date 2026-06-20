@@ -181,6 +181,21 @@ Algebra implementation_algebra(tJ const &block) try {
 }
 XDIAG_CATCH
 
+#ifdef XDIAG_DISTRIBUTED
+Algebra implementation_algebra(SpinhalfDistributed const &block) try {
+  return spinhalf_implementation_algebra(block.nsites());
+}
+XDIAG_CATCH
+Algebra implementation_algebra(tJDistributed const &block) try {
+  return tj_implementation_algebra(block.nsites());
+}
+XDIAG_CATCH
+Algebra implementation_algebra(ElectronDistributed const &block) try {
+  return electron_implementation_algebra(block.nsites());
+}
+XDIAG_CATCH
+#endif
+
 Algebra implementation_algebra(Block const &block) try {
   return std::visit([](auto const &b) { return implementation_algebra(b); },
                     block);
@@ -211,6 +226,21 @@ Algebra symmetry_algebra(tJ const &block) try {
   return tj_algebra(block.nsites());
 }
 XDIAG_CATCH
+
+#ifdef XDIAG_DISTRIBUTED
+Algebra symmetry_algebra(SpinhalfDistributed const &block) try {
+  return matrix_algebra(block.nsites(), 2);
+}
+XDIAG_CATCH
+Algebra symmetry_algebra(tJDistributed const &block) try {
+  return tj_algebra(block.nsites());
+}
+XDIAG_CATCH
+Algebra symmetry_algebra(ElectronDistributed const &block) try {
+  return electron_algebra(block.nsites());
+}
+XDIAG_CATCH
+#endif
 
 Algebra symmetry_algebra(Block const &block) try {
   return std::visit([](auto const &b) { return symmetry_algebra(b); }, block);

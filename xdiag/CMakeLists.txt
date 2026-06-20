@@ -20,50 +20,62 @@ endif()
 
 if(XDIAG_DISTRIBUTED)
   message(STATUS "--------- BUILDING DISTRIBUTED XDIAG LIBRARY ------------")
-  target_sources(${XDIAG_LIBRARY} PRIVATE ${XDIAG_SOURCES} ${XDIAG_DISTRIBUTED_SOURCES})
-
-  find_package(MPI REQUIRED)
-  target_link_libraries(xdiag_distributed PUBLIC ${MPI_CXX_LIBRARIES})
-  target_compile_definitions(xdiag_distributed PUBLIC XDIAG_DISTRIBUTED)
 else()
   message(STATUS "--------    BUILDING NORMAL XDIAG LIBRARY   -------------")
+endif()
 
-  # XDIAG_GROUPED_SOURCES and XDIAG_NORMAL_SOURCES are set by the top-level
-  # CMakeLists.txt via detect_grouped_sources() before add_subdirectory(xdiag).
+# Assemble the full source list: the serial base sources plus, for a distributed
+# build, the MPI extras. Both go through the same instantiation-group expansion
+# below (the distributed build must expand the groups too, not compile the
+# grouped sources as single translation units).
+set(XDIAG_ALL_SOURCES ${XDIAG_SOURCES})
+if(XDIAG_DISTRIBUTED)
+  list(APPEND XDIAG_ALL_SOURCES ${XDIAG_DISTRIBUTED_SOURCES})
+endif()
 
-  set(SOURCE_ROOT  "${CMAKE_SOURCE_DIR}/xdiag")
-  set(INCLUDE_ROOT "${CMAKE_SOURCE_DIR}")
-  set(INST_OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}")
+# Split sources carrying BEGIN_INSTANTIATION_GROUP markers from the rest.
+detect_grouped_sources(
+  "${XDIAG_ALL_SOURCES}"
+  XDIAG_GROUPED_SOURCES
+  XDIAG_NORMAL_SOURCES)
 
-  # For each grouped source: determine the generated file paths at configure
-  # time, then register a build-time command to (re)generate them whenever the
-  # original source changes.
-  set(XDIAG_INSTANTIATION_SOURCES)
-  foreach(SRC IN LISTS XDIAG_GROUPED_SOURCES)
-    set(ABSOLUTE_SRC "${SOURCE_ROOT}/${SRC}")
+set(SOURCE_ROOT  "${CMAKE_SOURCE_DIR}/xdiag")
+set(INCLUDE_ROOT "${CMAKE_SOURCE_DIR}")
+set(INST_OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}")
 
-    get_instantiation_outputs(
-      "${ABSOLUTE_SRC}" "${SOURCE_ROOT}" "${INST_OUTPUT_DIR}"
-      GEN_FILES)
+# For each grouped source: determine the generated file paths at configure time,
+# then register a build-time command to (re)generate one .cpp per instantiation
+# group whenever the original source changes.
+set(XDIAG_INSTANTIATION_SOURCES)
+foreach(SRC IN LISTS XDIAG_GROUPED_SOURCES)
+  set(ABSOLUTE_SRC "${SOURCE_ROOT}/${SRC}")
 
-    add_custom_command(
-      OUTPUT  ${GEN_FILES}
-      COMMAND ${CMAKE_COMMAND}
-        -DSOURCE_FILE=${ABSOLUTE_SRC}
-        -DSOURCE_ROOT=${SOURCE_ROOT}
-        -DINCLUDE_ROOT=${INCLUDE_ROOT}
-        -DOUTPUT_DIR=${INST_OUTPUT_DIR}
-        -P ${CMAKE_SOURCE_DIR}/cmake/generate_instantiation.cmake
-      DEPENDS "${ABSOLUTE_SRC}"
-      COMMENT "Generating instantiation files for ${SRC}"
-    )
+  get_instantiation_outputs(
+    "${ABSOLUTE_SRC}" "${SOURCE_ROOT}" "${INST_OUTPUT_DIR}"
+    GEN_FILES)
 
-    list(APPEND XDIAG_INSTANTIATION_SOURCES ${GEN_FILES})
-  endforeach()
+  add_custom_command(
+    OUTPUT  ${GEN_FILES}
+    COMMAND ${CMAKE_COMMAND}
+      -DSOURCE_FILE=${ABSOLUTE_SRC}
+      -DSOURCE_ROOT=${SOURCE_ROOT}
+      -DINCLUDE_ROOT=${INCLUDE_ROOT}
+      -DOUTPUT_DIR=${INST_OUTPUT_DIR}
+      -P ${CMAKE_SOURCE_DIR}/cmake/generate_instantiation.cmake
+    DEPENDS "${ABSOLUTE_SRC}"
+    COMMENT "Generating instantiation files for ${SRC}"
+  )
 
-  target_sources(${XDIAG_LIBRARY}
-    PRIVATE
-    ${XDIAG_NORMAL_SOURCES}
-    ${XDIAG_INSTANTIATION_SOURCES})
+  list(APPEND XDIAG_INSTANTIATION_SOURCES ${GEN_FILES})
+endforeach()
 
+target_sources(${XDIAG_LIBRARY}
+  PRIVATE
+  ${XDIAG_NORMAL_SOURCES}
+  ${XDIAG_INSTANTIATION_SOURCES})
+
+if(XDIAG_DISTRIBUTED)
+  find_package(MPI REQUIRED)
+  target_link_libraries(${XDIAG_LIBRARY} PUBLIC ${MPI_CXX_LIBRARIES})
+  target_compile_definitions(${XDIAG_LIBRARY} PUBLIC XDIAG_DISTRIBUTED)
 endif()

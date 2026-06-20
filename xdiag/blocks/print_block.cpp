@@ -22,6 +22,11 @@
 #include <xdiag/blocks/fermion.hpp>
 #include <xdiag/blocks/spinhalf.hpp>
 #include <xdiag/blocks/tj.hpp>
+#ifdef XDIAG_DISTRIBUTED
+#include <xdiag/blocks/distributed/electron_distributed.hpp>
+#include <xdiag/blocks/distributed/spinhalf_distributed.hpp>
+#include <xdiag/blocks/distributed/tj_distributed.hpp>
+#endif
 #include <xdiag/random/hash.hpp>
 #include <xdiag/symmetries/representation.hpp>
 
@@ -59,6 +64,23 @@ void print_block(std::ostream &out, block_t const &block) {
     charges = {{"nup", block.irreps().charge("nup")},
                {"ndn", block.irreps().charge("ndn")}};
   }
+#ifdef XDIAG_DISTRIBUTED
+  else if constexpr (std::is_same_v<block_t, SpinhalfDistributed>) {
+    name = "SpinhalfDistributed";
+    color = fmt::fg(fmt::color::moccasin) | fmt::emphasis::bold;
+    charges = {{"nup", block.irreps().charge("nup")}};
+  } else if constexpr (std::is_same_v<block_t, tJDistributed>) {
+    name = "tJDistributed";
+    color = fmt::fg(fmt::color::medium_sea_green) | fmt::emphasis::bold;
+    charges = {{"nup", block.irreps().charge("nup")},
+               {"ndn", block.irreps().charge("ndn")}};
+  } else if constexpr (std::is_same_v<block_t, ElectronDistributed>) {
+    name = "ElectronDistributed";
+    color = fmt::fg(fmt::color::blue_violet) | fmt::emphasis::bold;
+    charges = {{"nup", block.irreps().charge("nup")},
+               {"ndn", block.irreps().charge("ndn")}};
+  }
+#endif
 
   out << fmt::format(color, "{}\n", name);
   out << fmt::format("│ {:<9}: {}\n", "nsites", block.nsites());
@@ -90,7 +112,19 @@ void print_block(std::ostream &out, block_t const &block) {
   out << fmt::format("│ {:<9}: {}\n", "basis", basisname);
   out << fmt::format("│ {:<9}: {:x}\n", "ID", random::hash(block));
   out << fmt::format("│ {:<9}: {}\n", "dimension",
-                     fmt::format_de("{:L}", block.size()));
+                     fmt::format_de("{:L}", block.dim()));
+#ifdef XDIAG_DISTRIBUTED
+  if constexpr (std::is_same_v<block_t, SpinhalfDistributed> ||
+                std::is_same_v<block_t, tJDistributed> ||
+                std::is_same_v<block_t, ElectronDistributed>) {
+    // A distributed basis is split over MPI ranks; report the largest/smallest
+    // local block size as a measure of the load balance.
+    out << fmt::format("│ {:<9}: {}\n", "size max",
+                       fmt::format_de("{:L}", block.size_max()));
+    out << fmt::format("│ {:<9}: {}\n", "size min",
+                       fmt::format_de("{:L}", block.size_min()));
+  }
+#endif
 }
 
 template void print_block<Spinhalf>(std::ostream &, Spinhalf const &);
@@ -98,5 +132,13 @@ template void print_block<Boson>(std::ostream &, Boson const &);
 template void print_block<Fermion>(std::ostream &, Fermion const &);
 template void print_block<Electron>(std::ostream &, Electron const &);
 template void print_block<tJ>(std::ostream &, tJ const &);
+#ifdef XDIAG_DISTRIBUTED
+template void print_block<SpinhalfDistributed>(std::ostream &,
+                                               SpinhalfDistributed const &);
+template void print_block<tJDistributed>(std::ostream &,
+                                         tJDistributed const &);
+template void print_block<ElectronDistributed>(std::ostream &,
+                                               ElectronDistributed const &);
+#endif
 
 } // namespace xdiag

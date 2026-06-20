@@ -4,14 +4,16 @@
 
 #pragma once
 
-#include <xdiag/bits/bitops.hpp>
+#include <xdiag/bits/bitmask.hpp>
+#include <xdiag/bits/popcount.hpp>
 #include <xdiag/armadillo.hpp>
+#include <xdiag/operators/coeff.hpp>
 #include <xdiag/operators/op.hpp>
 #include <xdiag/mpi/buffer.hpp>
 namespace xdiag::basis::spinhalf_distributed {
 
 template <class basis_t, typename coeff_t>
-void apply_spsm_postfix(Coupling const &cpl, Op const &op,
+void apply_spsm_postfix(Coeff const &cpl, Op const &op,
                         basis_t const &basis_in,
                         arma::Col<coeff_t> const &vec_in,
                         basis_t const &basis_out, arma::Col<coeff_t> &vec_out) {
@@ -57,7 +59,7 @@ void apply_spsm_postfix(Coupling const &cpl, Op const &op,
 }
 
 template <class basis_t, typename coeff_t>
-void apply_spsm_prefix(Coupling const &cpl, Op const &op,
+void apply_spsm_prefix(Coeff const &cpl, Op const &op,
                        basis_t const &basis_in, basis_t const &basis_out) {
   using bit_t = typename basis_t::bit_t;
 

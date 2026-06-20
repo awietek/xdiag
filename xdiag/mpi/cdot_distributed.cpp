@@ -7,9 +7,11 @@
 #include <cmath>
 #include <cstring>
 
+#include <xdiag/utils/error.hpp>
+
 #include <mpi.h>
 
-#include <xdiag/common.hpp>
+#include <xdiag/math/complex.hpp>
 
 namespace xdiag {
 

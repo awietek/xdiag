@@ -4,12 +4,12 @@
 
 #include "transpose.hpp"
 
-#include <xdiag/combinatorics/subsets.hpp>
+#include <xdiag/combinatorics/subsets/subsets.hpp>
 
 namespace xdiag::basis::spinhalf_distributed {
 
 template <class bit_t, typename coeff_t>
-void transpose(BasisSz<bit_t> const &basis, coeff_t const *vec_in,
+void transpose(BasisSpinhalfDistributed<bit_t> const &basis, coeff_t const *vec_in,
                bool reverse) {
   mpi::Communicator com = basis.transpose_communicator(reverse);
 
@@ -47,7 +47,7 @@ void transpose(BasisSz<bit_t> const &basis, coeff_t const *vec_in,
   int n_postfix_bits = reverse ? basis.n_prefix_bits() : basis.n_postfix_bits();
 
   for (auto prefix : combinatorics::Subsets<bit_t>(n_prefix_bits)) {
-    int nup_prefix = bits::popcnt(prefix);
+    int nup_prefix = bits::popcount(prefix);
     int nup_postfix = basis.nup() - nup_prefix;
     if ((nup_postfix < 0) || (nup_postfix > n_postfix_bits))
       continue;
@@ -56,16 +56,16 @@ void transpose(BasisSz<bit_t> const &basis, coeff_t const *vec_in,
     int64_t origin_offset = com.n_values_i_recv_offset(origin_rank);
     int64_t prefix_idx = 0;
     if (reverse) {
-      bit_t postfix = ((bit_t)1 << nup_postfix) - 1;
+      bit_t postfix = bits::bitmask<bit_t>(nup_postfix);
       prefix_idx = basis.postfix_lintable(postfix).index(prefix);
     } else {
-      bit_t postfix = ((bit_t)1 << nup_postfix) - 1;
+      bit_t postfix = bits::bitmask<bit_t>(nup_postfix);
       prefix_idx = basis.prefix_lintable(postfix).index(prefix);
     }
 
     auto postfixes = reverse ? basis.prefixes() : basis.postfixes();
     for (bit_t postfix : postfixes) {
-      if (bits::popcnt(postfix) != nup_postfix)
+      if (bits::popcount(postfix) != nup_postfix)
         continue;
 
       int64_t idx_received = origin_offset + offsets[origin_rank];
@@ -84,9 +84,9 @@ void transpose(BasisSz<bit_t> const &basis, coeff_t const *vec_in,
   mpi::buffer.clean_recv();
 }
 
-template void transpose(BasisSz<uint32_t> const &, double const *, bool);
-template void transpose(BasisSz<uint64_t> const &, double const *, bool);
-template void transpose(BasisSz<uint32_t> const &, complex const *, bool);
-template void transpose(BasisSz<uint64_t> const &, complex const *, bool);
+template void transpose(BasisSpinhalfDistributed<uint32_t> const &, double const *, bool);
+template void transpose(BasisSpinhalfDistributed<uint64_t> const &, double const *, bool);
+template void transpose(BasisSpinhalfDistributed<uint32_t> const &, complex const *, bool);
+template void transpose(BasisSpinhalfDistributed<uint64_t> const &, complex const *, bool);
 
 } // namespace xdiag::basis::spinhalf_distributed

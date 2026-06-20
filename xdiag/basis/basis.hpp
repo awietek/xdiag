@@ -14,6 +14,10 @@
 
 namespace xdiag::basis {
 
+// Sentinel returned by index lookups when a configuration is not present in the
+// (possibly rank-local) basis.
+inline constexpr int64_t invalid_index = -1;
+
 std::size_t create_basis_type_id();
 
 // Type-erased forward iterator over a basis, yielding ProductStates. This is
@@ -32,17 +36,21 @@ public:
   virtual std::string_view name() const = 0;
   virtual int64_t size() const = 0;
   virtual int64_t nsites() const = 0;
-  // Iterator positioned at the first basis element. Advancing it walks the
-  // basis linearly; nothing else is needed since end is detected by index.
+
+  // next three functions are for distributed blocks which override this default
+  // implementation
+  virtual int64_t dim() const { return size(); }
+  virtual int64_t size_max() const { return size(); }
+  virtual int64_t size_min() const { return size(); }
   virtual std::unique_ptr<BasisIterator> product_state_iterator() const = 0;
   virtual ~Basis() = default;
 };
 
 // Per-site local-state index of a basis configuration, used when converting a
-// raw configuration to a ProductState. A single bit_t (spin-1/2 / boson / single
-// fermion species backends) gives bits::get(config, i) directly. A spinful
-// electron basis dereferences to a (ups, dns) pair, whose local state is
-// ups_i + 2 * dns_i (0 empty, 1 up, 2 dn, 3 up&dn).
+// raw configuration to a ProductState. A single bit_t (spin-1/2 / boson /
+// single fermion species backends) gives bits::get(config, i) directly. A
+// spinful electron basis dereferences to a (ups, dns) pair, whose local state
+// is ups_i + 2 * dns_i (0 empty, 1 up, 2 dn, 3 up&dn).
 template <typename bit_t>
 inline int64_t local_state(bit_t const &config, int64_t i) {
   return bits::get(config, i);

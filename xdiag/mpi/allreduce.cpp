@@ -4,6 +4,9 @@
 
 #include "allreduce.hpp"
 
+#include <xdiag/math/complex.hpp>
+#include <xdiag/mpi/datatype.hpp>
+
 namespace xdiag::mpi {
 
 template <class coeff_t>

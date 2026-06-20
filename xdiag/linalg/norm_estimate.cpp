@@ -10,6 +10,7 @@
 #include <xdiag/matrices/apply.hpp>
 #include <xdiag/algebra/ishermitian.hpp>
 #include <xdiag/random/hash.hpp>
+#include <xdiag/random/hash_functions.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/timing.hpp>
 
