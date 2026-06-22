@@ -201,6 +201,11 @@ TEST_CASE("electronsymmetricmatrix", "[electron]") try {
     for (int64_t k = 0; k < (int64_t)irreps.size(); ++k) {
       auto block = Electron(nsites, nup, ndn, irreps[k]);
       arma::cx_mat H = matrixC(ops, block);
+
+      // notice k=1 <-> k=3 switched w.r.t. reference as they define the
+      // sign of the irrep differently
+      // P = sum e^{ikr} T_r  (Fehske)
+      // P = sum e^{-ikr} T_r (here)
       if (k == 0) {
         arma::cx_mat Hc = {{U2, tm, tm, tp, tp, 0.}, {tm, U2, tm, tm, 0., tp},
                            {tm, tm, U2, 0., tm, tm}, {tp, tm, 0., UU, tm, tp},
@@ -208,9 +213,9 @@ TEST_CASE("electronsymmetricmatrix", "[electron]") try {
         REQUIRE(isapprox(Hc, H));
       } else if (k == 1) {
         arma::cx_mat Hc = {
-            {U2, tm, it, it, tp, 0.},       {tm, U2, tm, tm, 2. * it, tp},
-            {-it, tm, U2, 0., tm, it},      {-it, tm, 0., UU, tm, it},
-            {tp, -2. * it, tm, tm, UU, tm}, {0., tp, -it, -it, tm, UU}};
+            {U2, tm, -it, -it, tp, 0.},    {tm, U2, tm, tm, -2. * it, tp},
+            {it, tm, U2, 0., tm, -it},     {it, tm, 0., UU, tm, -it},
+            {tp, 2. * it, tm, tm, UU, tm}, {0., tp, it, it, tm, UU}};
         REQUIRE(isapprox(Hc, H));
       } else if (k == 2) {
         arma::cx_mat Hc = {{U2, tm, tp, tm, tp, 0.}, {tm, U2, tm, tm, 0., tp},
@@ -219,9 +224,9 @@ TEST_CASE("electronsymmetricmatrix", "[electron]") try {
         REQUIRE(isapprox(Hc, H));
       } else if (k == 3) {
         arma::cx_mat Hc = {
-            {U2, tm, -it, -it, tp, 0.},    {tm, U2, tm, tm, -2. * it, tp},
-            {it, tm, U2, 0., tm, -it},     {it, tm, 0., UU, tm, -it},
-            {tp, 2. * it, tm, tm, UU, tm}, {0., tp, it, it, tm, UU}};
+            {U2, tm, it, it, tp, 0.},       {tm, U2, tm, tm, 2. * it, tp},
+            {-it, tm, U2, 0., tm, it},      {-it, tm, 0., UU, tm, it},
+            {tp, -2. * it, tm, tm, UU, tm}, {0., tp, -it, -it, tm, UU}};
         REQUIRE(isapprox(Hc, H));
       }
     }
