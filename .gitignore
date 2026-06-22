@@ -76,3 +76,4 @@ examples/thermodynamics/checkerboard_tpq/outfiles/*
 examples/user_guide/output.h5
 .aider*
 .cache/
+.claude

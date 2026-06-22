@@ -34,7 +34,7 @@ void term_offdiag(basis::BasisOnTheFly<enumeration_t> const &basis_in,
     auto [begin, end, idx_in] =
         utils::thread_range(basis_in, num_thread, omp_get_num_threads());
 #else
-    auto [begin, end, idx_in] = utils::thread_range(basis_in, 0, 1);
+  auto [begin, end, idx_in] = utils::thread_range(basis_in, 0, 1);
 #endif
     for (auto it = begin; it != end; ++it, ++idx_in) {
       bit_t spins_in = *it;
@@ -62,8 +62,10 @@ void term_offdiag_sym(basis_t const &basis_in, basis_t const &basis_out,
   using coeff_t =
       typename std::invoke_result_t<decltype(term_action), bit_t>::second_type;
 
-  auto characters = basis_out.characters().template as<arma::Col<coeff_t>>();
-
+  // conjugation necessary for definition of projected states
+  arma::Col<coeff_t> characters =
+      arma::conj(basis_out.characters().template as<arma::Col<coeff_t>>());
+  
 #ifdef _OPENMP
 #pragma omp parallel
   {
@@ -71,7 +73,7 @@ void term_offdiag_sym(basis_t const &basis_in, basis_t const &basis_out,
     auto [begin, end, idx_in] =
         utils::thread_range(basis_in, num_thread, omp_get_num_threads());
 #else
-    auto [begin, end, idx_in] = utils::thread_range(basis_in, 0, 1);
+  auto [begin, end, idx_in] = utils::thread_range(basis_in, 0, 1);
 #endif
     for (auto it = begin; it != end; ++it, ++idx_in) {
       bit_t spins_in = *it;

@@ -58,7 +58,7 @@ void term_dns(basis::BasisElectron<enumeration_t> const &basis_in,
     auto [begin_up, end_up, idx_up] =
         utils::thread_range(basis_up, num_thread, omp_get_num_threads());
 #else
-    auto [begin_up, end_up, idx_up] = utils::thread_range(basis_up, 0, 1);
+  auto [begin_up, end_up, idx_up] = utils::thread_range(basis_up, 0, 1);
 #endif
     for (auto it_up = begin_up; it_up != end_up; ++it_up, ++idx_up) {
       bit_t ups = *it_up;
@@ -111,14 +111,17 @@ void term_dns(basis_t const &basis_in, basis_t const &basis_out,
               fill_f fill) {
   using bit_t = typename basis_t::bit_t;
 
-  // A dn-sector operator conserves Nup, so the up representative (and its index)
-  // is identical in basis_in and basis_out -- only the dn fibers differ. For an
-  // Ndn-conserving operator (Hopdn, SzSz, Ndn) basis_out == basis_in; for a
-  // single Cdagdn / Cdn, Ndn changes so basis_out is a DIFFERENT (in general
-  // smaller) sector. The input (row) index uses basis_in, the output (column)
-  // index uses basis_out.
+  // A dn-sector operator conserves Nup, so the up representative (and its
+  // index) is identical in basis_in and basis_out -- only the dn fibers differ.
+  // For an Ndn-conserving operator (Hopdn, SzSz, Ndn) basis_out == basis_in;
+  // for a single Cdagdn / Cdn, Ndn changes so basis_out is a DIFFERENT (in
+  // general smaller) sector. The input (row) index uses basis_in, the output
+  // (column) index uses basis_out.
   auto const &basis_up = basis_in.basis_up();
-  auto bloch = basis_in.characters().template as<arma::Col<coeff_t>>();
+
+  // conjugation necessary for definition of projected states
+  arma::Col<coeff_t> characters =
+      arma::conj(basis_out.characters().template as<arma::Col<coeff_t>>());
 
 #ifdef _OPENMP
 #pragma omp parallel
@@ -127,7 +130,7 @@ void term_dns(basis_t const &basis_in, basis_t const &basis_out,
     auto [begin_up, end_up, idx_up] =
         utils::thread_range(basis_up, num_thread, omp_get_num_threads());
 #else
-    auto [begin_up, end_up, idx_up] = utils::thread_range(basis_up, 0, 1);
+  auto [begin_up, end_up, idx_up] = utils::thread_range(basis_up, 0, 1);
 #endif
     for (auto it_up = begin_up; it_up != end_up; ++it_up, ++idx_up) {
       bit_t ups = *it_up;
@@ -149,7 +152,8 @@ void term_dns(basis_t const &basis_in, basis_t const &basis_out,
             auto [dns_flip, coeff] = term_action(dns_in);
             int64_t idx_dns_flip =
                 basis_out.index_dns(dns_flip, idx_up, dnss_out);
-            if (idx_dns_flip >= 0) { // -1: tJ double occupancy (never for electron)
+            if (idx_dns_flip >=
+                0) { // -1: tJ double occupancy (never for electron)
               XDIAG_FILL(off_in + dn_idx, off_out + idx_dns_flip,
                          nup_neg ? -coeff : coeff);
             }
@@ -166,7 +170,7 @@ void term_dns(basis_t const &basis_in, basis_t const &basis_out,
                 basis_out.index_dns_fermi_sym(dns_flip, syms, dnss_out);
             if (idx_dns_flip >= 0) {
               bool fermi_up = basis_in.fermi_bool_ups(sym, ups);
-              coeff_t val = coeff * bloch(sym) * norms_out[idx_dns_flip] /
+              coeff_t val = coeff * characters(sym) * norms_out[idx_dns_flip] /
                             norms_in[dn_idx];
               bool neg = (fermi_up ^ fermi_dn) ^ nup_neg;
               XDIAG_FILL(off_in + dn_idx, off_out + idx_dns_flip,

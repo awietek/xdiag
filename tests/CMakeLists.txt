@@ -32,6 +32,7 @@ set(XDIAG_TEST_SOURCES
 
   algebra/test_normal_order.cpp
   algebra/test_quantum_numbers.cpp
+  algebra/test_quantum_numbers_chain.cpp
   algebra/test_permute.cpp
   algebra/test_symmetrize.cpp
   algebra/test_isapprox.cpp

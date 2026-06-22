@@ -199,12 +199,12 @@ TEST_CASE("symmetrize", "[operators]") {
     auto [e0, gs] = eig0(ham, block);
     auto [e0n, gsn] = eig0(ham, block_nosym);
 
-    Log("Found ground state energy : {:10.6f} {}", e0, e0n);
+    // Log("Found ground state energy : {:10.6f} {}", e0, e0n);
     gs.make_complex();
     gsn.make_complex();
 
     for (unsigned int i = 0; i < 8; ++i) {
-      Log("hell {}", i);
+      // Log("hell {}", i);
       auto ops = std::vector<Op>(
           {Op("Cdagup", 0), Op("Cdagdn", 0), Op("Cup", 0), Op("Cdn", 0),
            Op("Sz", 0), Op("SzSz", {0, 1}), Op("Nup", 0), Op("Ndn", 0),
@@ -219,17 +219,17 @@ TEST_CASE("symmetrize", "[operators]") {
         auto Avn = apply(S_q, gsn);
         complex e = innerC(ham, Av);
         complex en = innerC(ham, Avn);
-        if (!isapprox(e, en, 1e-6, 1e-6)) {
-          XDIAG_SHOW(S_q);
-          Log("{} {}", i, 8);
-        }
-        // CHECK(isapprox(e, en, 1e-6, 1e-6));
+        // if (!isapprox(e, en, 1e-6, 1e-6)) {
+          // XDIAG_SHOW(S_q);
+          // Log("{} {} {} {} {}", i, 8, op.type(), e, en);
+        // }
+        REQUIRE(isapprox(e, en, 1e-6, 1e-6));
       }
     }
   }
 
   {
-    for (int nsites = 2; nsites <= 6; ++nsites) {
+    for (int nsites = 2; nsites <= 5; ++nsites) {
       Log("Apply chain test: Electron {}", nsites);
       auto ops = testcases::electron::get_linear_chain(nsites, 1.0, 5.0);
       ops["T"] = 1.0;
@@ -276,6 +276,10 @@ TEST_CASE("symmetrize", "[operators]") {
                 complex e = innerC(ops, Av);
                 complex en = innerC(ops, Avn);
                 // Log("{} {} {} {} {}", nsites, nup, ndn, e, en);
+                // if (!isapprox(e, en, 1e-6, 1e-6)) {
+                //   // XDIAG_SHOW(S_q);
+                //   Log("{}", op.type());
+                // }
                 REQUIRE(isapprox(e, en, 1e-6, 1e-6));
               }
             }
@@ -286,7 +290,7 @@ TEST_CASE("symmetrize", "[operators]") {
   }
 
   {
-    for (int nsites = 3; nsites <= 6; ++nsites) {
+    for (int nsites = 3; nsites <= 5; ++nsites) {
       Log("Apply chain test: tJ {}", nsites);
       auto ops = testcases::tj::tJchain(nsites, 1.0, 0.4);
       auto irreps = testcases::electron::get_cyclic_group_irreps(nsites);

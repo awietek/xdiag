@@ -36,8 +36,8 @@ namespace xdiag::matrices::electron {
 // the up occupation (evaluated on the incoming ups, since in this order the dn
 // operators act first).
 //
-// The up sub-string and the per-up cross sign are evaluated once per up state in
-// the outer loop; the dn sub-string action is precomputed once per dn state.
+// The up sub-string and the per-up cross sign are evaluated once per up state
+// in the outer loop; the dn sub-string action is precomputed once per dn state.
 template <typename coeff_t, class enumeration_t, class fill_f>
 void term_cdagc_string(Coeff const &c, Monomial const &mono,
                        basis::BasisElectron<enumeration_t> const &basis_in,
@@ -48,9 +48,10 @@ void term_cdagc_string(Coeff const &c, Monomial const &mono,
   int64_t nsites = basis_in.nsites();
   coeff_t cf = c.scalar().as<coeff_t>();
   // The split below evaluates the up and dn sub-strings as if the monomial were
-  // in all-ups-then-all-dns order; fold in the Jordan-Wigner sign of partitioning
-  // the input into that order (a no-op for the electron block's all-ups-then-dns
-  // normal order, needed for the interleaved tJ creation-major normal order).
+  // in all-ups-then-all-dns order; fold in the Jordan-Wigner sign of
+  // partitioning the input into that order (a no-op for the electron block's
+  // all-ups-then-dns normal order, needed for the interleaved tJ creation-major
+  // normal order).
   if (cdagc_sector_partition_neg(mono, "Cdagdn", "Cdn")) {
     cf = -cf;
   }
@@ -92,7 +93,7 @@ void term_cdagc_string(Coeff const &c, Monomial const &mono,
     auto [begin_dn, end_dn, idx_dn] =
         utils::thread_range(basis_dn_in, num_thread, omp_get_num_threads());
 #else
-    auto [begin_dn, end_dn, idx_dn] = utils::thread_range(basis_dn_in, 0, 1);
+  auto [begin_dn, end_dn, idx_dn] = utils::thread_range(basis_dn_in, 0, 1);
 #endif
     for (auto it = begin_dn; it != end_dn; ++it, ++idx_dn) {
       bit_t dns = *it;
@@ -116,7 +117,7 @@ void term_cdagc_string(Coeff const &c, Monomial const &mono,
     auto [begin_up, end_up, idx_up] =
         utils::thread_range(basis_up_in, num_thread, omp_get_num_threads());
 #else
-    auto [begin_up, end_up, idx_up] = utils::thread_range(basis_up_in, 0, 1);
+  auto [begin_up, end_up, idx_up] = utils::thread_range(basis_up_in, 0, 1);
 #endif
     for (auto it_up = begin_up; it_up != end_up; ++it_up, ++idx_up) {
       bit_t ups = *it_up;
@@ -186,7 +187,10 @@ void term_cdagc_string(Coeff const &c, Monomial const &mono,
   bool cross_when_odd_nup = (dn_ops.size() & 1);
 
   auto const &basis_up_in = basis_in.basis_up();
-  auto bloch = basis_out.characters().template as<arma::Col<coeff_t>>();
+
+  // conjugation necessary for definition of projected states
+  arma::Col<coeff_t> characters =
+      arma::conj(basis_out.characters().template as<arma::Col<coeff_t>>());
 
 #ifdef _OPENMP
 #pragma omp parallel
@@ -195,8 +199,7 @@ void term_cdagc_string(Coeff const &c, Monomial const &mono,
     auto [begin_up, end_up, idx_up_in] =
         utils::thread_range(basis_up_in, num_thread, omp_get_num_threads());
 #else
-    auto [begin_up, end_up, idx_up_in] =
-        utils::thread_range(basis_up_in, 0, 1);
+  auto [begin_up, end_up, idx_up_in] = utils::thread_range(basis_up_in, 0, 1);
 #endif
     for (auto it_up = begin_up; it_up != end_up; ++it_up, ++idx_up_in) {
       bit_t ups = *it_up;
@@ -218,7 +221,7 @@ void term_cdagc_string(Coeff const &c, Monomial const &mono,
       auto norms_in = basis_in.norms_for_ups_rep(idx_up_in);
 
       if (basis_out.stab_size(idx_up_out) == 1) {
-        coeff_t prefac = cf * bloch(s0);
+        coeff_t prefac = cf * characters(s0);
         bool fermi_up = basis_out.fermi_bool_ups(s0, ups_flip);
         auto dnss_out = basis_out.dns_for_ups_rep(idx_up_out);
         int64_t dn_idx = 0;
@@ -227,7 +230,8 @@ void term_cdagc_string(Coeff const &c, Monomial const &mono,
             auto [dns_flip, dn_fermi] = dn_str.action(dns);
             auto [idx_dns_out, fermi_dn] =
                 basis_out.index_dns_fermi(dns_flip, s0, idx_up_out, dnss_out);
-            if (idx_dns_out >= 0) { // -1: tJ double occupancy (never for electron)
+            if (idx_dns_out >=
+                0) { // -1: tJ double occupancy (never for electron)
               coeff_t val = prefac / norms_in[dn_idx];
               bool neg = up_fermi ^ dn_fermi ^ fermi_up ^ fermi_dn;
               XDIAG_FILL(off_in + dn_idx, off_out + idx_dns_out,
@@ -248,7 +252,7 @@ void term_cdagc_string(Coeff const &c, Monomial const &mono,
                 basis_out.index_dns_fermi_sym(dns_flip, syms, dnss_out);
             if (idx_dns_out >= 0) {
               bool fermi_up = basis_out.fermi_bool_ups(sym, ups_flip);
-              coeff_t val = cf * bloch(sym) * norms_out[idx_dns_out] /
+              coeff_t val = cf * characters(sym) * norms_out[idx_dns_out] /
                             norms_in[dn_idx];
               bool neg = up_fermi ^ dn_fermi ^ fermi_up ^ fermi_dn;
               XDIAG_FILL(off_in + dn_idx, off_out + idx_dns_out,

@@ -28,10 +28,10 @@ namespace xdiag::matrices {
 
 template <typename enumeration_t, typename non_zero_term_f,
           typename term_action_f, typename fill_f>
-void term_offdiag_fermionic(basis::BasisOnTheFly<enumeration_t> const &basis_in,
-                            basis::BasisOnTheFly<enumeration_t> const &basis_out,
-                            non_zero_term_f non_zero_term,
-                            term_action_f term_action, fill_f fill) {
+void term_offdiag_fermionic(
+    basis::BasisOnTheFly<enumeration_t> const &basis_in,
+    basis::BasisOnTheFly<enumeration_t> const &basis_out,
+    non_zero_term_f non_zero_term, term_action_f term_action, fill_f fill) {
   term_offdiag(basis_in, basis_out, non_zero_term, term_action, fill);
 }
 
@@ -45,7 +45,9 @@ void term_offdiag_fermionic(
   using coeff_t =
       typename std::invoke_result_t<decltype(term_action), bit_t>::second_type;
 
-  auto characters = basis_out.characters().template as<arma::Col<coeff_t>>();
+  // conjugation necessary for definition of projected states
+  arma::Col<coeff_t> characters =
+      arma::conj(basis_out.characters().template as<arma::Col<coeff_t>>());
 
 #ifdef _OPENMP
 #pragma omp parallel
@@ -54,7 +56,7 @@ void term_offdiag_fermionic(
     auto [begin, end, idx_in] =
         utils::thread_range(basis_in, num_thread, omp_get_num_threads());
 #else
-    auto [begin, end, idx_in] = utils::thread_range(basis_in, 0, 1);
+  auto [begin, end, idx_in] = utils::thread_range(basis_in, 0, 1);
 #endif
     for (auto it = begin; it != end; ++it, ++idx_in) {
       bit_t spins_in = *it;
