@@ -16,7 +16,7 @@
 #include <xdiag/algebra/algebra.hpp>
 #include <xdiag/math/complex.hpp>
 #include <xdiag/math/isapprox.hpp>
-#include <xdiag/matrices/matrix.hpp>
+#include <xdiag/kernels/matrix.hpp>
 #include <xdiag/operators/monomial.hpp>
 #include <xdiag/operators/op.hpp>
 #include <xdiag/operators/opsum.hpp>

@@ -7,7 +7,7 @@
 #include <xdiag/algebra/isapprox.hpp>
 #include <xdiag/armadillo.hpp>
 #include <xdiag/blocks/blocks.hpp>
-#include <xdiag/matrices/apply.hpp>
+#include <xdiag/kernels/apply.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/format.hpp>
 

@@ -13,8 +13,8 @@
 #include <xdiag/blocks/distributed/tj_distributed.hpp>
 #include <xdiag/blocks/tj.hpp>
 #include <xdiag/linalg/sparse_diag.hpp>
-#include <xdiag/matrices/apply.hpp>
-#include <xdiag/matrices/matrix.hpp>
+#include <xdiag/kernels/apply.hpp>
+#include <xdiag/kernels/matrix.hpp>
 #include <xdiag/states/apply.hpp>
 #include <xdiag/states/inner.hpp>
 #include <xdiag/states/dot.hpp>

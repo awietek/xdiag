@@ -21,10 +21,10 @@
 #include <xdiag/linalg/sparse_diag.hpp>
 #include <xdiag/math/binomial.hpp>
 #include <xdiag/math/isapprox.hpp>
-#include <xdiag/matrices/matrix.hpp>
-#include <xdiag/matrices/sparse/coo_matrix.hpp>
-#include <xdiag/matrices/sparse/csc_matrix.hpp>
-#include <xdiag/matrices/sparse/csr_matrix.hpp>
+#include <xdiag/kernels/matrix.hpp>
+#include <xdiag/kernels/sparse/coo_matrix.hpp>
+#include <xdiag/kernels/sparse/csc_matrix.hpp>
+#include <xdiag/kernels/sparse/csr_matrix.hpp>
 #include <xdiag/operators/hc.hpp>
 #include <xdiag/symmetries/cyclic_group.hpp>
 #include <xdiag/symmetries/representation.hpp>

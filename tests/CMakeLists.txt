@@ -69,7 +69,7 @@ set(XDIAG_TEST_SOURCES
   blocks/fermion/test_fermion.cpp
   blocks/fermion/testcases_fermion.cpp
 
-  matrices/terms/test_non_branching_op.cpp
+  kernels/terms/test_non_branching_op.cpp
   
   io/test_file_toml.cpp
   io/test_file_h5.cpp

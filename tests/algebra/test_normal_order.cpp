@@ -15,7 +15,7 @@
 #include <xdiag/blocks/fermion.hpp>
 #include <xdiag/blocks/tj.hpp>
 #include <xdiag/math/isapprox.hpp>
-#include <xdiag/matrices/matrix.hpp>
+#include <xdiag/kernels/matrix.hpp>
 #include <xdiag/operators/monomial.hpp>
 #include <xdiag/operators/op.hpp>
 #include <xdiag/operators/opsum.hpp>

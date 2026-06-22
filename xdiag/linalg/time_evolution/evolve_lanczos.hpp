@@ -9,7 +9,7 @@
 
 #include <xdiag/armadillo.hpp>
 #include <xdiag/math/complex.hpp>
-#include <xdiag/matrices/sparse/sparse_matrix_types.hpp>
+#include <xdiag/kernels/sparse/sparse_matrix_types.hpp>
 #include <xdiag/operators/opsum.hpp>
 #include <xdiag/states/state.hpp>
 #include <xdiag/utils/xdiag_api.hpp>

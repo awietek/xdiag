@@ -6,8 +6,8 @@
 #include <tests/catch.hpp>
 
 #include <xdiag/math/isapprox.hpp>
-#include <xdiag/matrices/apply.hpp>
-#include <xdiag/matrices/matrix.hpp>
+#include <xdiag/kernels/apply.hpp>
+#include <xdiag/kernels/matrix.hpp>
 #include <xdiag/states/apply.hpp>
 #include <xdiag/states/fill.hpp>
 #include <xdiag/states/norm.hpp>

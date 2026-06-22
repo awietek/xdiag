@@ -10,7 +10,7 @@
 #include <xdiag/linalg/lanczos/lanczos.hpp>
 #include <xdiag/linalg/lanczos/lanczos_convergence.hpp>
 #include <xdiag/math/dot.hpp>
-#include <xdiag/matrices/apply.hpp>
+#include <xdiag/kernels/apply.hpp>
 #include <xdiag/algebra/ishermitian.hpp>
 #include <xdiag/states/fill.hpp>
 #include <xdiag/states/random_state.hpp>

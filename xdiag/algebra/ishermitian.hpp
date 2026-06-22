@@ -5,7 +5,7 @@
 #pragma once
 
 #include <xdiag/algebra/algebra.hpp>
-#include <xdiag/matrices/sparse/sparse_matrix_types.hpp>
+#include <xdiag/kernels/sparse/sparse_matrix_types.hpp>
 #include <xdiag/operators/opsum.hpp>
 
 namespace xdiag {

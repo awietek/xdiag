@@ -9,7 +9,7 @@
 #include <xdiag/linalg/time_evolution/zahexpv.hpp>
 #include <xdiag/math/dot.hpp>
 #include <xdiag/math/norm.hpp>
-#include <xdiag/matrices/apply.hpp>
+#include <xdiag/kernels/apply.hpp>
 #include <xdiag/algebra/ishermitian.hpp>
 #include <xdiag/states/norm.hpp>
 #include <xdiag/utils/error.hpp>

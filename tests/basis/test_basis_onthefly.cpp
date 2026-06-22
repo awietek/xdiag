@@ -10,7 +10,7 @@
 #include <xdiag/basis/basis_onthefly.hpp>
 #include <xdiag/combinatorics/combinations/combinations.hpp>
 #include <xdiag/combinatorics/subsets/subsets.hpp>
-#include <xdiag/matrices/apply.hpp>
+#include <xdiag/kernels/apply.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/logger.hpp>
 

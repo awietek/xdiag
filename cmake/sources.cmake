@@ -35,20 +35,20 @@ set(XDIAG_SOURCES
   math/isapprox.cpp
 
   # Core computational kernels
-  matrices/apply.cpp
-  matrices/matrix.cpp
-  matrices/sparse/coo_matrix.cpp
-  matrices/sparse/csr_matrix.cpp
-  matrices/sparse/csc_matrix.cpp
-  matrices/sparse/valid.cpp
-  matrices/sparse/apply.cpp
-  matrices/blocks/spinhalf/kernels.cpp
-  matrices/blocks/boson/kernels.cpp
-  matrices/blocks/fermion/kernels.cpp
-  matrices/blocks/electron/kernels.cpp
-  matrices/blocks/tj/kernels.cpp
-  matrices/terms/non_branching_op.cpp
-  matrices/terms/cdagc_string.cpp
+  kernels/apply.cpp
+  kernels/matrix.cpp
+  kernels/sparse/coo_matrix.cpp
+  kernels/sparse/csr_matrix.cpp
+  kernels/sparse/csc_matrix.cpp
+  kernels/sparse/valid.cpp
+  kernels/sparse/apply.cpp
+  kernels/blocks/spinhalf/kernels.cpp
+  kernels/blocks/boson/kernels.cpp
+  kernels/blocks/fermion/kernels.cpp
+  kernels/blocks/electron/kernels.cpp
+  kernels/blocks/tj/kernels.cpp
+  kernels/terms/non_branching_op.cpp
+  kernels/terms/cdagc_string.cpp
 
   # Bit(set) functionality
   bits/bitset.cpp
@@ -191,10 +191,10 @@ set(XDIAG_DISTRIBUTED_SOURCES
   blocks/distributed/electron_distributed.cpp
 
   # distributed kernels
-  matrices/blocks/distributed/spinhalf_distributed/kernels.cpp
-  matrices/blocks/distributed/spinhalf_distributed/terms/transpose.cpp
-  matrices/blocks/distributed/tj_distributed/kernels.cpp
-  matrices/blocks/distributed/electron_distributed/kernels.cpp
+  kernels/blocks/distributed/spinhalf_distributed/kernels.cpp
+  kernels/blocks/distributed/spinhalf_distributed/terms/transpose.cpp
+  kernels/blocks/distributed/tj_distributed/kernels.cpp
+  kernels/blocks/distributed/electron_distributed/kernels.cpp
 )
 set(XDIAG_JULIA_SOURCES
   xdiagjl.cpp

@@ -10,7 +10,7 @@
 #include <xdiag/blocks/electron.hpp>
 #include <xdiag/math/complex.hpp>
 #include <xdiag/math/isapprox.hpp>
-#include <xdiag/matrices/matrix.hpp>
+#include <xdiag/kernels/matrix.hpp>
 #include <xdiag/operators/opsum.hpp>
 #include <xdiag/utils/logger.hpp>
 

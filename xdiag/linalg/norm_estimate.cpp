@@ -7,7 +7,7 @@
 // #include <xdiag/algebra/sparse/apply.hpp>
 // #include <xdiag/algebra/sparse/logic.hpp>
 #include <xdiag/math/norm.hpp>
-#include <xdiag/matrices/apply.hpp>
+#include <xdiag/kernels/apply.hpp>
 #include <xdiag/algebra/ishermitian.hpp>
 #include <xdiag/random/hash.hpp>
 #include <xdiag/random/hash_functions.hpp>

@@ -14,12 +14,12 @@
 #include <xdiag/bits/popcount.hpp>
 #include <xdiag/combinatorics/combinations/lin_table.hpp>
 #include <xdiag/combinatorics/subsets/subsets.hpp>
-#include <xdiag/matrices/blocks/tj/terms/term_cdagc_string.hpp>
-#include <xdiag/matrices/blocks/tj/terms/term_exchange.hpp>
-#include <xdiag/matrices/blocks/tj/terms/term_hopdn.hpp>
-#include <xdiag/matrices/blocks/tj/terms/term_hopup.hpp>
-#include <xdiag/matrices/blocks/tj/terms/term_raise_lower.hpp>
-#include <xdiag/matrices/blocks/tj/terms/term_szsz.hpp>
+#include <xdiag/kernels/blocks/tj/terms/term_cdagc_string.hpp>
+#include <xdiag/kernels/blocks/tj/terms/term_exchange.hpp>
+#include <xdiag/kernels/blocks/tj/terms/term_hopdn.hpp>
+#include <xdiag/kernels/blocks/tj/terms/term_hopup.hpp>
+#include <xdiag/kernels/blocks/tj/terms/term_raise_lower.hpp>
+#include <xdiag/kernels/blocks/tj/terms/term_szsz.hpp>
 #include <xdiag/math/binomial.hpp>
 #include <xdiag/operators/coeff.hpp>
 #include <xdiag/operators/monomial.hpp>
@@ -122,7 +122,7 @@ TEST_CASE("tj_term_hopdn", "[tj]") {
             auto fill = [&](int64_t idx_in, int64_t idx_out, double val) {
               mat(idx_out, idx_in) += val;
             };
-            matrices::tj::term_hopdn<double>(
+            kernels::tj::term_hopdn<double>(
                 Coeff(1.0), Op("Hopdn", std::vector<int64_t>{s1, s2}), b, b,
                 fill);
 
@@ -155,7 +155,7 @@ TEST_CASE("tj_term_hopdn", "[tj]") {
             auto fill_up = [&](int64_t idx_in, int64_t idx_out, double val) {
               mat_up(idx_out, idx_in) += val;
             };
-            matrices::tj::term_hopup<double>(
+            kernels::tj::term_hopup<double>(
                 Coeff(1.0), Op("Hopup", std::vector<int64_t>{s1, s2}), b, b,
                 fill_up);
 
@@ -189,10 +189,10 @@ TEST_CASE("tj_term_hopdn", "[tj]") {
             auto fill_tjsz = [&](int64_t idx_in, int64_t idx_out, double val) {
               mat_tjsz(idx_out, idx_in) += val;
             };
-            matrices::tj::term_szsz<double>(
+            kernels::tj::term_szsz<double>(
                 Coeff(1.0), Op("SzSz", std::vector<int64_t>{s1, s2}), b, b,
                 fill_sz);
-            matrices::tj::term_szsz<double>(
+            kernels::tj::term_szsz<double>(
                 Coeff(1.0), Op("tJSzSz", std::vector<int64_t>{s1, s2}), b, b,
                 fill_tjsz);
 
@@ -273,13 +273,13 @@ TEST_CASE("tj_raise_lower_kernels", "[tj]") {
             Op op(k.name, s);
             std::string name = k.name;
             if (name == "Cup") {
-              matrices::tj::term_cup<double>(Coeff(1.0), op, bin, bout, fill);
+              kernels::tj::term_cup<double>(Coeff(1.0), op, bin, bout, fill);
             } else if (name == "Cdagup") {
-              matrices::tj::term_cdagup<double>(Coeff(1.0), op, bin, bout, fill);
+              kernels::tj::term_cdagup<double>(Coeff(1.0), op, bin, bout, fill);
             } else if (name == "Cdn") {
-              matrices::tj::term_cdn<double>(Coeff(1.0), op, bin, bout, fill);
+              kernels::tj::term_cdn<double>(Coeff(1.0), op, bin, bout, fill);
             } else {
-              matrices::tj::term_cdagdn<double>(Coeff(1.0), op, bin, bout, fill);
+              kernels::tj::term_cdagdn<double>(Coeff(1.0), op, bin, bout, fill);
             }
 
             arma::mat ref(dim_out, dim_in, arma::fill::zeros);
@@ -387,7 +387,7 @@ TEST_CASE("tj_cdagc_string", "[tj]") {
 
               arma::mat mat(dim_out, dim_in, arma::fill::zeros);
               auto fill = [&](int64_t i, int64_t o, double v) { mat(o, i) += v; };
-              matrices::tj::term_cdagc_string<double>(Coeff(1.0), Monomial(opv),
+              kernels::tj::term_cdagc_string<double>(Coeff(1.0), Monomial(opv),
                                                       bin, bout, fill);
 
               // full-space reference: apply ops right-to-left with JW signs
@@ -470,7 +470,7 @@ TEST_CASE("tj_exchange", "[tj]") {
 
             arma::mat mat(dim, dim, arma::fill::zeros);
             auto fill = [&](int64_t in, int64_t o, double v) { mat(o, in) += v; };
-            matrices::tj::term_exchange<double>(
+            kernels::tj::term_exchange<double>(
                 Coeff(1.0), Op("Exchange", std::vector<int64_t>{i, j}), b, b,
                 fill);
 
@@ -558,19 +558,19 @@ TEST_CASE("tj_nonp_kernels", "[tj]") {
         // --- Hopdn ---
         arma::mat mhd(dim, dim, arma::fill::zeros);
         auto fhd = [&](int64_t in, int64_t o, double v) { mhd(o, in) += v; };
-        matrices::tj::term_hopdn<double>(
+        kernels::tj::term_hopdn<double>(
             Coeff(1.0), Op("Hopdn", std::vector<int64_t>{i, j}), b, b, fhd);
         arma::mat rhd(dim, dim, arma::fill::zeros);
         // --- Hopup ---
         arma::mat mhu(dim, dim, arma::fill::zeros);
         auto fhu = [&](int64_t in, int64_t o, double v) { mhu(o, in) += v; };
-        matrices::tj::term_hopup<double>(
+        kernels::tj::term_hopup<double>(
             Coeff(1.0), Op("Hopup", std::vector<int64_t>{i, j}), b, b, fhu);
         arma::mat rhu(dim, dim, arma::fill::zeros);
         // --- tJSzSz ---
         arma::mat msz(dim, dim, arma::fill::zeros);
         auto fsz = [&](int64_t in, int64_t o, double v) { msz(o, in) += v; };
-        matrices::tj::term_szsz<double>(
+        kernels::tj::term_szsz<double>(
             Coeff(1.0), Op("SzSz", std::vector<int64_t>{i, j}), b, b, fsz);
         arma::mat rsz(dim, dim, arma::fill::zeros);
 
@@ -605,7 +605,7 @@ TEST_CASE("tj_nonp_kernels", "[tj]") {
         // --- Exchange ---
         arma::mat mex(dim, dim, arma::fill::zeros);
         auto fex = [&](int64_t in2, int64_t o, double v) { mex(o, in2) += v; };
-        matrices::tj::term_exchange<double>(
+        kernels::tj::term_exchange<double>(
             Coeff(1.0), Op("Exchange", std::vector<int64_t>{i, j}), b, b, fex);
         arma::mat rex = 0.5 * (string_ref({{"Cdagup", i}, {"Cdn", i},
                                            {"Cdagdn", j}, {"Cup", j}}) +
@@ -618,7 +618,7 @@ TEST_CASE("tj_nonp_kernels", "[tj]") {
         auto fcs = [&](int64_t in2, int64_t o, double v) { mcs(o, in2) += v; };
         std::vector<Op> opv = {Op("Cdagup", i), Op("Cup", j), Op("Cdagdn", j),
                                Op("Cdn", i)};
-        matrices::tj::term_cdagc_string<double>(Coeff(1.0), Monomial(opv), b, b,
+        kernels::tj::term_cdagc_string<double>(Coeff(1.0), Monomial(opv), b, b,
                                                 fcs);
         arma::mat rcs = string_ref(
             {{"Cdagup", i}, {"Cup", j}, {"Cdagdn", j}, {"Cdn", i}});
@@ -634,10 +634,10 @@ TEST_CASE("tj_nonp_kernels", "[tj]") {
       auto f1 = [&](int64_t in, int64_t o, double v) { m1(o, in) += v; };
       auto f2 = [&](int64_t in, int64_t o, double v) { m2(o, in) += v; };
       auto f3 = [&](int64_t in, int64_t o, double v) { m3(o, in) += v; };
-      matrices::tj::term_cup<double>(Coeff(1.0), Op("Cup", s), b, b, f0);
-      matrices::tj::term_cdagup<double>(Coeff(1.0), Op("Cdagup", s), b, b, f1);
-      matrices::tj::term_cdn<double>(Coeff(1.0), Op("Cdn", s), b, b, f2);
-      matrices::tj::term_cdagdn<double>(Coeff(1.0), Op("Cdagdn", s), b, b, f3);
+      kernels::tj::term_cup<double>(Coeff(1.0), Op("Cup", s), b, b, f0);
+      kernels::tj::term_cdagup<double>(Coeff(1.0), Op("Cdagup", s), b, b, f1);
+      kernels::tj::term_cdn<double>(Coeff(1.0), Op("Cdn", s), b, b, f2);
+      kernels::tj::term_cdagdn<double>(Coeff(1.0), Op("Cdagdn", s), b, b, f3);
       REQUIRE(arma::approx_equal(m0, string_ref({{"Cup", s}}), "absdiff", 1e-12));
       REQUIRE(arma::approx_equal(m1, string_ref({{"Cdagup", s}}), "absdiff", 1e-12));
       REQUIRE(arma::approx_equal(m2, string_ref({{"Cdn", s}}), "absdiff", 1e-12));

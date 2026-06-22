@@ -11,7 +11,7 @@
 #include <xdiag/linalg/lanczos/lanczos.hpp>
 #include <xdiag/linalg/lanczos/lanczos_convergence.hpp>
 #include <xdiag/linalg/time_evolution/exp_sym_v.hpp>
-#include <xdiag/matrices/apply.hpp>
+#include <xdiag/kernels/apply.hpp>
 #include <xdiag/algebra/ishermitian.hpp>
 #include <xdiag/utils/timing.hpp>
 

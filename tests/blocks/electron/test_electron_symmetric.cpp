@@ -18,8 +18,8 @@
 #include <xdiag/io/read.hpp>
 #include <xdiag/linalg/sparse_diag.hpp>
 #include <xdiag/math/isapprox.hpp>
-#include <xdiag/matrices/apply.hpp>
-#include <xdiag/matrices/matrix.hpp>
+#include <xdiag/kernels/apply.hpp>
+#include <xdiag/kernels/matrix.hpp>
 #include <xdiag/operators/opsum.hpp>
 #include <xdiag/utils/logger.hpp>
 

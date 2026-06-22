@@ -9,7 +9,7 @@
 #include <xdiag/blocks/blocks.hpp>
 #include <xdiag/blocks/boson.hpp>
 #include <xdiag/linalg/sparse_diag.hpp>
-#include <xdiag/matrices/matrix.hpp>
+#include <xdiag/kernels/matrix.hpp>
 #include <xdiag/operators/opsum.hpp>
 #include <xdiag/states/apply.hpp>
 #include <xdiag/states/correlation_matrix.hpp>

@@ -9,8 +9,8 @@
 
 #include <xdiag/linalg/sparse_diag.hpp>
 #include <xdiag/math/isapprox.hpp>
-#include <xdiag/matrices/apply.hpp>
-#include <xdiag/matrices/matrix.hpp>
+#include <xdiag/kernels/apply.hpp>
+#include <xdiag/kernels/matrix.hpp>
 #include <xdiag/blocks/blocks.hpp>
 #include <xdiag/math/isapprox.hpp>
 #include <xdiag/states/apply.hpp>
