@@ -17,7 +17,7 @@ julia/build_tarballs.jl
 site
 misc/dump/*
 build/*
-docs/autoreference
+misc/.venv
 cmake-build-debug
 examples/*/build
 examples/*/outfiles

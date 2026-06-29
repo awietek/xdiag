@@ -296,8 +296,8 @@ install(DIRECTORY "${CMAKE_SOURCE_DIR}/xdiag" # source directory
   PATTERN "*.hpp" # select header files
 )
 
-install(DIRECTORY "${CMAKE_SOURCE_DIR}/xdiag/extern" # source directory
-  DESTINATION include/xdiag
+install(DIRECTORY "${CMAKE_SOURCE_DIR}/extern" # source directory
+  DESTINATION include
   FILES_MATCHING # install only matched files
   PATTERN "*" # select header files
 )

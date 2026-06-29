@@ -26,15 +26,13 @@ namespace xdiag {
 
 using BlockShared = std::variant<Spinhalf, Boson, Fermion, Electron, tJ>;
 
-// #ifdef XDIAG_DISTRIBUTED
-// using BlockDistributed =
-//     std::variant<SpinhalfDistributed, tJDistributed, ElectronDistributed>;
-// using Block = utils::variant_union<BlockShared, BlockDistributed>::type;
-// #else
-// using Block = BlockShared;
-// #endif
-  using Block = BlockShared;
-
+#ifdef XDIAG_DISTRIBUTED
+using BlockDistributed =
+    std::variant<SpinhalfDistributed, tJDistributed, ElectronDistributed>;
+using Block = utils::variant_union<BlockShared, BlockDistributed>::type;
+#else
+using Block = BlockShared;
+#endif
 
 XDIAG_API int64_t dim(Block const &block);
 XDIAG_API int64_t size(Block const &block);

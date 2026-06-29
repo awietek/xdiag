@@ -6,9 +6,7 @@
 
 #include <xdiag/armadillo.hpp>
 #include <xdiag/blocks/blocks.hpp>
-#ifdef XDIAG_DISTRIBUTED
 #include <xdiag/kernels/blocks/distributed/apply_distributed.hpp>
-#endif
 #include <xdiag/kernels/blocks/dispatch_bases.hpp>
 #include <xdiag/kernels/kernels.hpp>
 #include <xdiag/operators/monomial.hpp>

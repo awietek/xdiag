@@ -191,6 +191,7 @@ set(XDIAG_DISTRIBUTED_SOURCES
   blocks/distributed/electron_distributed.cpp
 
   # distributed kernels
+  kernels/blocks/distributed/apply_distributed.cpp
   kernels/blocks/distributed/spinhalf_distributed/kernels.cpp
   kernels/blocks/distributed/spinhalf_distributed/terms/transpose.cpp
   kernels/blocks/distributed/tj_distributed/kernels.cpp
