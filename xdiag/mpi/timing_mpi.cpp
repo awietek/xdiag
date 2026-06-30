@@ -13,10 +13,11 @@ double rightnow_mpi() { return MPI_Wtime(); }
 void timing_mpi(double const &t0, double const &t1, std::string msg,
                 int verbosity) {
   auto td = t1 - t0;
-  if (msg != "")
+  if (msg != "") {
     LogMPI.out(verbosity, "{}: {:.6f} secs", msg, td);
-  else
+  } else {
     LogMPI.out(verbosity, "{:.6f} secs", td);
+  }
 }
 
 void tic_mpi(bool begin, std::string msg, int verbosity) {

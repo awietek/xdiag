@@ -4,6 +4,8 @@
 
 #include "buffer.hpp"
 
+#include <algorithm>
+
 namespace xdiag::mpi {
 
 void Buffer::clean() {

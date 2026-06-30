@@ -5,6 +5,7 @@
 #pragma once
 #ifdef XDIAG_DISTRIBUTED
 
+#include <vector>
 #include <mpi.h>
 
 #include <xdiag/math/complex.hpp>

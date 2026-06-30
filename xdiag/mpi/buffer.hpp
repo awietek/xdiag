@@ -6,6 +6,7 @@
 #ifdef XDIAG_DISTRIBUTED
 
 #include <algorithm>
+#include <vector>
 
 #include <mpi.h>
 

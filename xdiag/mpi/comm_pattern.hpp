@@ -4,6 +4,9 @@
 
 #pragma once
 #ifdef XDIAG_DISTRIBUTED
+
+#include <vector>
+
 #include <xdiag/operators/op.hpp>
 #include <xdiag/mpi/communicator.hpp>
 

@@ -5,6 +5,7 @@
 #pragma once
 #ifdef XDIAG_DISTRIBUTED
 
+#include <string>
 #include <mpi.h>
 
 #include <xdiag/utils/logger_mpi.hpp>

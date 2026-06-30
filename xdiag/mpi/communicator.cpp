@@ -5,6 +5,7 @@
 #include "communicator.hpp"
 
 #include <cassert>
+#include <algorithm>
 #include <numeric>
 #include <vector>
 
