@@ -60,6 +60,33 @@ arma::Mat<coeff_t> correlation_matrix_static(State const &state,
     return arma::Mat<coeff_t>(n, n, arma::fill::zeros);
   }
 
+#ifdef XDIAG_DISTRIBUTED
+  // Distributed blocks only apply single-operator terms, so the two-site
+  // product cannot be applied as one operator. Evaluate
+  //   C(i,j) = <state| Op(type1,i) Op(type2,j) |state>
+  // by two sequential single-site applies instead (distributed blocks carry no
+  // permutation symmetry, so no symmetrization is needed here).
+  if (isdistributed(blk)) {
+    arma::Mat<coeff_t> result(n, n);
+    // The second apply writes into w, which is pre-allocated on `blk` (same
+    // basis instance as state). The product preserves the block, so this is the
+    // correct output block, and dot/dotC -- which require an identical block --
+    // accept it. (apply zeroes its output, so w can be reused.)
+    State w(blk, state.isreal());
+    for (int64_t i = 0; i < n; ++i) {
+      for (int64_t j = 0; j < n; ++j) {
+        apply(Op(type1, i), apply(Op(type2, j), state), w);
+        if constexpr (isreal<coeff_t>()) {
+          result(i, j) = dot(state, w);
+        } else {
+          result(i, j) = dotC(state, w);
+        }
+      }
+    }
+    return result;
+  }
+#endif
+
   // Many of the n*n operators coincide up to a scalar prefactor -- by site
   // permutation symmetry, because the two operators commute, or as a hermitian
   // conjugate of one already seen. Group them: each (i,j) is assigned a

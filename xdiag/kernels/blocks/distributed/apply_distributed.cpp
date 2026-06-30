@@ -8,6 +8,8 @@
 
 namespace xdiag::kernels {
 
+// Apply for multiple-columns
+// workaround mulitplying each column individually
 template <typename coeff_t>
 void apply_distributed(OpSum const &ops, Block const &block_in,
                        arma::Mat<coeff_t> const &mat_in, Block const &block_out,
@@ -28,7 +30,7 @@ void apply_distributed(OpSum const &ops, Block const &block_in,
                                     mat_in.n_rows, false, true);
           arma::Col<coeff_t> vec_out(mat_out.colptr(i), mat_out.n_rows, false,
                                      true);
-          apply_distributed(ops, basis_in, vec_in, basis_out, vec_out);
+          apply_distributed(ops, bin, vec_in, bout, vec_out);
         }
       },
       "Input and output block are not of the same type");

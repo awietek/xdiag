@@ -4,6 +4,8 @@
 
 #include "matrix.hpp"
 
+#include <algorithm>
+
 #include <xdiag/armadillo.hpp>
 #include <xdiag/blocks/blocks.hpp>
 #include <xdiag/blocks/boson.hpp>
@@ -68,12 +70,22 @@ static void matrix_impl(OpSum const &ops, block_t const &block_in,
 }
 XDIAG_CATCH
 
-// Developer overload used by the Julia wrapper: thin wrapper over matrix_impl
-// that pins the concrete block type (keeps a stable exported symbol).
+// Developer overload used by the Julia wrapper: fills a caller-allocated,
+// column-major buffer of size size(block_out) x dim(block_in). The Block
+// variant is unwrapped to its concrete type (op already an OpSum) and forwarded
+// to the block-generic matrix_impl, mirroring the arma-returning overloads. The
+// buffer is zeroed here because the kernel accumulates with +=; the pointer is
+// not retained past the call. Distributed blocks throw inside matrix_impl.
 template <typename coeff_t>
-void matrix(OpSum const &ops, Spinhalf const &block_in,
-            Spinhalf const &block_out, coeff_t *mat) try {
-  matrix_impl(ops, block_in, block_out, mat);
+void matrix(OpSum const &ops, Block const &block_in, Block const &block_out,
+            coeff_t *mat) try {
+  int64_t m = size(block_out);
+  int64_t n = dim(block_in);
+  std::fill_n(mat, m * n, coeff_t(0));
+  utils::visit_same_type(
+      block_in, block_out,
+      [&](auto const &bin, auto const &bout) { matrix_impl(ops, bin, bout, mat); },
+      "Type mismatch of Block types");
 }
 XDIAG_CATCH
 
@@ -152,12 +164,10 @@ INSTANTIATE_XDIAG_MATRIX(OpSum);
 
 #undef INSTANTIATE_XDIAG_MATRIX
 
-// Exported developer overload (Julia wrapper). The Boson / future-block paths
-// go through matrix_impl, instantiated implicitly via the Layer-1 templates
-// above, so they need no explicit instantiation here.
-template void matrix(OpSum const &, Spinhalf const &, Spinhalf const &,
-                     double *);
-template void matrix(OpSum const &, Spinhalf const &, Spinhalf const &,
-                     complex *);
+// Exported developer overload (Julia wrapper). One Block overload per coeff
+// type; all concrete blocks are handled inside via visit_same_type, so no
+// per-block instantiation is needed.
+template void matrix(OpSum const &, Block const &, Block const &, double *);
+template void matrix(OpSum const &, Block const &, Block const &, complex *);
 
 } // namespace xdiag

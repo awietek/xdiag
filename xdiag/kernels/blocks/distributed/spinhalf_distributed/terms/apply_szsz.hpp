@@ -27,6 +27,16 @@ void apply_szsz(Coeff const &cpl, Op const &op, basis_t const &basis,
   coeff_t val_same = J / 4.;
   coeff_t val_diff = -J / 4.;
 
+  // Same-site SzSz_{s,s} = J Sz_s^2 = (J/4) I for spin-1/2: purely diagonal with
+  // no up/dn dependence. The general code below uses a single-bit mask when
+  // s1==s2 and would wrongly assign val_diff to up spins, so handle it here.
+  if (ss1 == ss2) {
+    for (int64_t idx = 0; idx < (int64_t)vec_in.size(); ++idx) {
+      vec_out(idx) += val_same * vec_in(idx);
+    }
+    return;
+  }
+
   int64_t s1 = std::min(ss1, ss2);
   int64_t s2 = std::max(ss1, ss2);
 

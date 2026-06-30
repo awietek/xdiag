@@ -62,7 +62,7 @@ XDIAG_API bool isapprox(Block const &b1, Block const &b2, double tol = 1e-12);
 // output_irreps / symmetry_algebra includes) stays out of this header.
 template <typename block_t>
 block_t block(OpSum const &ops, block_t const &block_in);
-Block block(OpSum const &ops, Block const &block_in);
+XDIAG_API Block block(OpSum const &ops, Block const &block_in);
 
 // True if applying ops to block_in lands exactly in block_out, i.e. block_out
 // is the output block inferred from the operator quantum numbers.

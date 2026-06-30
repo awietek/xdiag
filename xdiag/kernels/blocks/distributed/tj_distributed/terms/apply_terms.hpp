@@ -32,7 +32,8 @@ namespace xdiag::basis::tj_distributed {
 // Returns true if op needs the dn/up (transposed) ordering, i.e. it hops/raises
 // in the up spin species (Hopup / Cdagup / Cup).
 inline bool is_up_term(std::string const &type) {
-  return (type == "Hopup") || (type == "Cdagup") || (type == "Cup");
+  return (type == "Hopup") || (type == "HopupAsym") || (type == "Cdagup") ||
+         (type == "Cup");
 }
 
 // Matrix-free, MPI-aware application of a (number conserving in both species,
@@ -46,7 +47,7 @@ void apply_terms(OpSum const &ops, basis_t const &basis_in,
                  arma::Col<coeff_t> const &vec_in, basis_t const &basis_out,
                  arma::Col<coeff_t> &vec_out) try {
 
-  auto algebra = algebra::tj_implementation_algebra(basis_in.nsites());
+  auto algebra = algebra::tj_distributed_implementation_algebra(basis_in.nsites());
   auto ops_compiled = normal_order(ops.plain(), algebra);
 
   std::vector<std::pair<Coeff, Op>> terms;
@@ -77,10 +78,10 @@ void apply_terms(OpSum const &ops, basis_t const &basis_in,
     } else if (type == "NtotNtot") {
       apply_ntot_ntot<coeff_t>(c, op, basis_in, vec_in.memptr(),
                                vec_out.memptr());
-    } else if (type == "Exchange") {
+    } else if ((type == "Exchange") || (type == "ExchangeAsym")) {
       apply_exchange<coeff_t>(c, op, basis_in, vec_in.memptr(),
                               vec_out.memptr());
-    } else if (type == "Hopdn") {
+    } else if ((type == "Hopdn") || (type == "HopdnAsym")) {
       apply_hopping<coeff_t>(c, op, basis_in, vec_in.memptr(),
                              vec_out.memptr());
     } else if ((type == "Cdagdn") || (type == "Cdn")) {
@@ -107,7 +108,7 @@ void apply_terms(OpSum const &ops, basis_t const &basis_in,
 
     for (auto const &[c, op] : terms) {
       std::string type = op.type();
-      if (type == "Hopup") {
+      if ((type == "Hopup") || (type == "HopupAsym")) {
         apply_hopping<coeff_t>(c, op, basis_in, vec_in_trans, vec_out_trans);
       } else if ((type == "Cdagup") || (type == "Cup")) {
         apply_raise_lower<coeff_t>(c, op, basis_in, vec_in_trans, basis_out,

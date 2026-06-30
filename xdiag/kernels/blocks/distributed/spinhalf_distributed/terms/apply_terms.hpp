@@ -64,7 +64,19 @@ void apply_terms(OpSum const &ops, basis_t const &basis_in,
     std::string type = op.type();
     if ((type == "SzSz") || (type == "Sz") || (type == "Id")) {
       diagonal.push_back({c, op});
-    } else if ((type == "Exchange") || (type == "S+") || (type == "S-")) {
+    } else if ((type == "Exchange") && (op[0] == op[1])) {
+      // Same-site Exchange_{s,s} = 1/2(S+_s S-_s + S-_s S+_s) = (1/2) I is
+      // purely diagonal (matching the non-distributed spinhalf::term_exchange);
+      // the off-diagonal kernels below would instead flip the single masked
+      // bit, so handle it as a diagonal term.
+      diagonal.push_back({c, op});
+    } else if ((type == "ExchangeAsym") && (op[0] == op[1])) {
+      // Same-site ExchangeAsym_{s,s} = 1/2(S+_s S-_s - S-_s S+_s) = Sz_s
+      // (matching the non-distributed spinhalf::term_exchange_asym); reuse the
+      // diagonal Sz kernel.
+      diagonal.push_back({c, Op("Sz", op[0])});
+    } else if ((type == "Exchange") || (type == "ExchangeAsym") ||
+               (type == "S+") || (type == "S-")) {
       if (on_prefix(op)) {
         prefix.push_back({c, op});
       } else if (on_postfix(op)) {
@@ -85,6 +97,11 @@ void apply_terms(OpSum const &ops, basis_t const &basis_in,
       apply_szsz(c, op, basis_in, vec_in, vec_out);
     } else if (type == "Sz") {
       apply_sz(c, op, basis_in, vec_in, vec_out);
+    } else if (type == "Exchange") { // same-site Exchange_{s,s} = (J/2) I
+      coeff_t jhalf = c.scalar().as<coeff_t>() / 2.0;
+      for (int64_t idx = 0; idx < (int64_t)vec_in.size(); ++idx) {
+        vec_out(idx) += jhalf * vec_in(idx);
+      }
     } else { // Id
       coeff_t cc = c.scalar().as<coeff_t>();
       for (int64_t idx = 0; idx < (int64_t)vec_in.size(); ++idx) {
@@ -96,7 +113,7 @@ void apply_terms(OpSum const &ops, basis_t const &basis_in,
   // Postfix operators (local, off-diagonal)
   for (auto const &[c, op] : postfix) {
     std::string type = op.type();
-    if (type == "Exchange") {
+    if ((type == "Exchange") || (type == "ExchangeAsym")) {
       apply_exchange_postfix(c, op, basis_in, vec_in, vec_out);
     } else { // S+ / S-
       apply_spsm_postfix(c, op, basis_in, vec_in, basis_out, vec_out);
@@ -113,7 +130,7 @@ void apply_terms(OpSum const &ops, basis_t const &basis_in,
     transpose(basis_in, vec_in.memptr(), false);
     for (auto const &[c, op] : prefix) {
       std::string type = op.type();
-      if (type == "Exchange") {
+      if ((type == "Exchange") || (type == "ExchangeAsym")) {
         apply_exchange_prefix<basis_t, coeff_t>(c, op, basis_in);
       } else { // S+ / S-
         apply_spsm_prefix<basis_t, coeff_t>(c, op, basis_in, basis_out);
@@ -128,7 +145,7 @@ void apply_terms(OpSum const &ops, basis_t const &basis_in,
   // Mixed operators (custom all-to-all)
   for (auto const &[c, op] : mixed) {
     std::string type = op.type();
-    if (type == "Exchange") {
+    if ((type == "Exchange") || (type == "ExchangeAsym")) {
       apply_exchange_mixed(c, op, basis_in, vec_in, vec_out);
     } else {
       XDIAG_THROW(fmt::format("Unsupported mixed Op type for "

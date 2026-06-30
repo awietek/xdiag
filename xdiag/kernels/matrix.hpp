@@ -6,7 +6,6 @@
 
 #include <xdiag/armadillo.hpp>
 #include <xdiag/blocks/blocks.hpp>
-#include <xdiag/blocks/spinhalf.hpp>
 #include <xdiag/utils/xdiag_api.hpp>
 
 namespace xdiag {
@@ -30,11 +29,14 @@ template <typename op_t>
 XDIAG_API arma::cx_mat matrixC(op_t const &op, Block const &block_in,
                                Block const &block_out);
 
-// Developer overload used by the Julia wrapper: fills a pre-allocated
-// column-major array mat of size dim(block_out) x dim(block_in).
-// coeff_t must be double or complex.
+// Developer overload used by the Julia wrapper: fills a caller-allocated,
+// column-major buffer mat of size size(block_out) x dim(block_in). The buffer
+// is zeroed by this routine before the kernel accumulates into it (the kernel
+// uses +=), so callers may pass uninitialized memory. mat must stay valid for
+// the duration of the call only; no pointer to it is retained. coeff_t must be
+// double or complex. Throws for distributed blocks (no dense representation).
 template <typename coeff_t>
-XDIAG_API void matrix(OpSum const &ops, Spinhalf const &block_in,
-                      Spinhalf const &block_out, coeff_t *mat);
+XDIAG_API void matrix(OpSum const &ops, Block const &block_in,
+                      Block const &block_out, coeff_t *mat);
 
 } // namespace xdiag

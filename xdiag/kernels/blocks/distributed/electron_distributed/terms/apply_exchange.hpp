@@ -28,9 +28,9 @@ void apply_exchange(Coeff const &cpl, Op const &op, basis_t const &basis,
 
   coeff_t J = cpl.scalar().as<coeff_t>();
   coeff_t Jhalf = J / 2.;
-  coeff_t Jhalf_conj = conj(Jhalf);
 
   std::string type = op.type();
+  bool is_asym = (type == "ExchangeAsym");
   int64_t s1 = op[0];
   int64_t s2 = op[1];
 
@@ -117,7 +117,13 @@ void apply_exchange(Coeff const &cpl, Op const &op, basis_t const &basis,
     for (bit_t up : ups_i_get_from_proc[m]) {
       if (bits::popcount(up & flipmask) == 1) {
         bool fermi_up = bits::popcount(up & fermimask) & 1;
-        bool up_s1_set = bits::get(up, s2);
+
+        // Per-direction coupling, selected once per ups (no conjugation,
+        // matching the non-distributed exchange). Plain Exchange uses Jhalf in
+        // both spin-flip directions; ExchangeAsym =
+        // 1/2(S+_{s1}S-_{s2} - S-_{s1}S+_{s2}) flips the sign of the
+        // S-_{s1}S+_{s2} branch, identified by s2 being set in the output ups.
+        coeff_t Jdir = (is_asym && bits::get(up, s2)) ? -Jhalf : Jhalf;
 
         int64_t up_offset = basis.my_ups_offset(up);
 
@@ -126,21 +132,8 @@ void apply_exchange(Coeff const &cpl, Op const &op, basis_t const &basis,
 
           if (((up ^ dn) & flipmask) == flipmask) { // no empty or double occ
             bool fermi_dn = bits::popcount(dn & fermimask) & 1;
-
-            if constexpr (isreal<coeff_t>()) {
-              vec_out[target_idx] += ((fermi_up ^ fermi_dn) ? Jhalf : -Jhalf) *
-                                     mpi::buffer.recv<coeff_t>()[recv_idx];
-            } else {
-              if (up_s1_set) {
-                vec_out[target_idx] +=
-                    ((fermi_up ^ fermi_dn) ? Jhalf : -Jhalf) *
-                    mpi::buffer.recv<coeff_t>()[recv_idx];
-              } else {
-                vec_out[target_idx] +=
-                    ((fermi_up ^ fermi_dn) ? Jhalf_conj : -Jhalf_conj) *
-                    mpi::buffer.recv<coeff_t>()[recv_idx];
-              }
-            }
+            vec_out[target_idx] += ((fermi_up ^ fermi_dn) ? Jdir : -Jdir) *
+                                   mpi::buffer.recv<coeff_t>()[recv_idx];
             ++recv_idx;
           }
           ++target_idx;

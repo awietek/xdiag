@@ -22,6 +22,8 @@
 #include <xdiag/states/create_state.hpp>
 #include <xdiag/utils/logger.hpp>
 
+#include <tests/blocks/distributed/compare_observables.hpp>
+
 
 using namespace xdiag;
 
@@ -49,7 +51,7 @@ static void test_regular_block_e0(OpSum ops, int nsites, int nup, int ndn) {
   REQUIRE(isapprox(e0, e0d));
 }
 
-TEST_CASE("electron_distributed_apply", "[electron_distributed]") try {
+TEST_CASE("electron_distributed_apply", "[electron_distributed]") {
   using namespace xdiag::testcases::electron;
 
   Log("electron_distributed_apply test");
@@ -63,13 +65,22 @@ TEST_CASE("electron_distributed_apply", "[electron_distributed]") try {
       for (int i = 0; i < N; ++i) {
         ops += "Jz" * Op("SzSz", {i, (i + 1) % N});
         ops += "Jx" * Op("Exchange", {i, (i + 1) % N});
+        ops += "Jxasym" * Op("ExchangeAsym", {i, (i + 1) % N});
         ops += "TDN" * Op("Hopdn", {i, (i + 1) % N});
         ops += "TUP" * Op("Hopup", {i, (i + 1) % N});
+        ops += "TDNasym" * Op("HopdnAsym", {i, (i + 1) % N});
+        ops += "TUPasym" * Op("HopupAsym", {i, (i + 1) % N});
       }
       ops["Jz"] = 1.32;
-      ops["Jx"] = complex(.432, .576);
-      ops["TDN"] = complex(-0.1432, .3576);
-      ops["TUP"] = complex(-0.4321, .5763); // 2.104;
+      // A complex Exchange/Hop is not Hermitian on its own; the Hermitian
+      // combination is the real (symmetric) part plus the imaginary
+      // (antisymmetric) part, matching the non-distributed Electron block.
+      ops["Jx"] = 0.432;
+      ops["Jxasym"] = complex(0., 0.576);
+      ops["TDN"] = -0.1432;
+      ops["TUP"] = -0.4321;
+      ops["TDNasym"] = complex(0., .3576);
+      ops["TUPasym"] = complex(0., .5763);
 
       ops += 8.34 * Op("HubbardU");
 
@@ -200,6 +211,29 @@ TEST_CASE("electron_distributed_apply", "[electron_distributed]") try {
       }
     }
   }
-} catch (Error e) {
-  error_trace(e);
+}
+
+TEST_CASE("electron_distributed_observables", "[electron_distributed]") {
+  Log("electron_distributed_observables: expect / correlation_matrix vs "
+      "Electron");
+  int N = 4;
+  // Generic Hermitian electron Hamiltonian (real symmetric + imaginary
+  // antisymmetric hop/exchange + Hubbard U) -> non-degenerate ground state.
+  OpSum ops;
+  for (int i = 0; i < N; ++i) {
+    ops += 1.10 * Op("SzSz", {i, (i + 1) % N});
+    ops += 0.43 * Op("Exchange", {i, (i + 1) % N});
+    ops += complex(0.0, 0.31) * Op("ExchangeAsym", {i, (i + 1) % N});
+    ops += -0.97 * Op("Hop", {i, (i + 1) % N});
+    ops += complex(0.0, 0.22) * Op("HopAsym", {i, (i + 1) % N});
+  }
+  ops += 3.0 * Op("HubbardU");
+  std::vector<std::string> onesite = {"Nup", "Ndn", "Ntot", "Sz"};
+  std::vector<std::pair<std::string, std::string>> twosite = {
+      {"Sz", "Sz"}, {"Ntot", "Ntot"}, {"Cdagup", "Cup"}, {"Cdagdn", "Cdn"}};
+  std::vector<std::tuple<int, int>> nup_ndn = {{2, 1}, {2, 2}, {1, 2}};
+  for (auto [nup, ndn] : nup_ndn) {
+    compare_observables(ops, Electron(N, nup, ndn),
+                        ElectronDistributed(N, nup, ndn), onesite, twosite);
+  }
 }

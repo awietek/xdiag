@@ -32,7 +32,8 @@ namespace xdiag::basis::electron_distributed {
 
 // Up-species term: hops/raises in the up spin (Hopup / Cdagup / Cup).
 inline bool is_up_term(std::string const &type) {
-  return (type == "Hopup") || (type == "Cdagup") || (type == "Cup");
+  return (type == "Hopup") || (type == "HopupAsym") || (type == "Cdagup") ||
+         (type == "Cup");
 }
 
 // Matrix-free, MPI-aware application of a (number conserving in both species,
@@ -45,7 +46,8 @@ void apply_terms(OpSum const &ops, basis_t const &basis_in,
                  arma::Col<coeff_t> const &vec_in, basis_t const &basis_out,
                  arma::Col<coeff_t> &vec_out) try {
 
-  auto algebra = algebra::electron_implementation_algebra(basis_in.nsites());
+  auto algebra =
+      algebra::electron_distributed_implementation_algebra(basis_in.nsites());
   auto ops_compiled = normal_order(ops.plain(), algebra);
 
   std::vector<std::pair<Coeff, Op>> terms;
@@ -84,16 +86,21 @@ void apply_terms(OpSum const &ops, basis_t const &basis_in,
     } else if (type == "NupNdn") {
       apply_nup_ndn<coeff_t>(c, op, basis_in, vec_in.memptr(),
                              vec_out.memptr());
+    } else if (type == "NdnNup") {
+      // NdnNup_{i,j} = Ndn_i Nup_j = Nup_j Ndn_i = NupNdn_{j,i} (number
+      // operators commute); reuse the NupNdn kernel with swapped sites.
+      apply_nup_ndn<coeff_t>(c, Op("NupNdn", {op[1], op[0]}), basis_in,
+                             vec_in.memptr(), vec_out.memptr());
     } else if (type == "NupNup") {
       apply_nup_nup<coeff_t>(c, op, basis_in, vec_in.memptr(),
                              vec_out.memptr());
     } else if (type == "NdnNdn") {
       apply_ndn_ndn<coeff_t>(c, op, basis_in, vec_in.memptr(),
                              vec_out.memptr());
-    } else if (type == "Exchange") {
+    } else if ((type == "Exchange") || (type == "ExchangeAsym")) {
       apply_exchange<coeff_t>(c, op, basis_in, vec_in.memptr(),
                               vec_out.memptr());
-    } else if (type == "Hopdn") {
+    } else if ((type == "Hopdn") || (type == "HopdnAsym")) {
       apply_hopping<coeff_t>(c, op, basis_in, vec_in.memptr(),
                              vec_out.memptr());
     } else if ((type == "Cdagdn") || (type == "Cdn")) {
@@ -123,7 +130,7 @@ void apply_terms(OpSum const &ops, basis_t const &basis_in,
 
     for (auto const &[c, op] : terms) {
       std::string type = op.type();
-      if (type == "Hopup") {
+      if ((type == "Hopup") || (type == "HopupAsym")) {
         apply_hopping<coeff_t>(c, op, basis_in, vec_in_trans, vec_out_trans);
       } else if ((type == "Cdagup") || (type == "Cup")) {
         apply_raise_lower<coeff_t>(c, op, basis_in, vec_in_trans, basis_out,

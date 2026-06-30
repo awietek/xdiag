@@ -6,11 +6,16 @@
 
 #include <variant>
 
+#include <xdiag/blocks/blocks.hpp>
 #include <xdiag/random/hash.hpp>
 #include <xdiag/random/hash_functions.hpp>
 #include <xdiag/random/random_utils.hpp>
 #include <xdiag/states/norm.hpp>
 #include <xdiag/utils/error.hpp>
+
+#ifdef XDIAG_DISTRIBUTED
+#include <mpi.h>
+#endif
 
 namespace xdiag {
 
@@ -56,6 +61,26 @@ void fill(State &state, RandomState const &rstate, int64_t col) try {
   int64_t seed = rstate.seed();
   int64_t seed_modified =
       random::hash_combine(seed, random::hash(state.block()));
+
+#ifdef XDIAG_DISTRIBUTED
+  // For distributed blocks every rank holds a disjoint slice of the global
+  // vector, but fill_random_normal_vector always starts its (seeded) random
+  // sequence at local index 0. Seeding all ranks identically would therefore
+  // fill those slices with the *same* local sequence, producing a global start
+  // vector that is correlated across ranks -- and for tiny blocks (e.g. one
+  // amplitude per rank) an exact symmetry eigenvector, onto which Lanczos then
+  // locks (returning the wrong eigenvalue). Offsetting the seed by the MPI rank
+  // makes each rank's slice an independent draw, so the global vector is a
+  // genuine random vector.
+  int mpi_size;
+  MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
+  if ((mpi_size > 1) && isdistributed(state.block())) {
+    int rank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    seed_modified = random::hash_combine((uint64_t)seed_modified,
+                                         random::hash_fnv1((uint64_t)rank));
+  }
+#endif
 
   if (state.isreal()) {
     auto v = state.vector(col, false);

@@ -62,11 +62,19 @@ Algebra tj_algebra(int64_t nsites);
 
 Algebra fermion_implementation_algebra(int64_t nsites);
 Algebra electron_implementation_algebra(int64_t nsites);
+// The distributed electron block applies Exchange / ExchangeAsym directly as
+// kernels (it only supports single-operator monomials), so it additionally
+// keeps these named on top of the electron implementation algebra.
+Algebra electron_distributed_implementation_algebra(int64_t nsites);
 Algebra spinhalf_implementation_algebra(int64_t nsites);
 // exchange_as_kernel = false drops Exchange from the kept (kernel) types so it
 // expands to Cdag/C strings (used by the symmetric tJ block, which has no
 // Exchange kernel).
 Algebra tj_implementation_algebra(int64_t nsites, bool exchange_as_kernel = true);
+// The distributed tJ block applies the antisymmetric hops/exchange directly as
+// kernels (it only supports single-operator monomials), so it additionally
+// keeps HopupAsym / HopdnAsym / ExchangeAsym named.
+Algebra tj_distributed_implementation_algebra(int64_t nsites);
 
 // Per-block dispatch.
 Algebra implementation_algebra(Boson const &block);

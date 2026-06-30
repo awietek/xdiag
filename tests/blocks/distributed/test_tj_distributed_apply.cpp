@@ -4,23 +4,24 @@
 
 #include <mpi.h>
 
-#include <tests/blocks/tj/testcases_tj.hpp>
 #include <tests/blocks/spinhalf/testcases_spinhalf.hpp>
+#include <tests/blocks/tj/testcases_tj.hpp>
 #include <tests/catch.hpp>
 
 #include <xdiag/algebra/algebra.hpp>
 #include <xdiag/algebra/isapprox.hpp>
 #include <xdiag/blocks/distributed/tj_distributed.hpp>
 #include <xdiag/blocks/tj.hpp>
-#include <xdiag/linalg/sparse_diag.hpp>
 #include <xdiag/kernels/apply.hpp>
 #include <xdiag/kernels/matrix.hpp>
-#include <xdiag/states/apply.hpp>
-#include <xdiag/states/inner.hpp>
-#include <xdiag/states/dot.hpp>
-#include <xdiag/states/create_state.hpp>
-#include <xdiag/utils/logger.hpp>
+#include <xdiag/linalg/sparse_diag.hpp>
+#include <tests/blocks/distributed/compare_observables.hpp>
 
+#include <xdiag/states/apply.hpp>
+#include <xdiag/states/create_state.hpp>
+#include <xdiag/states/dot.hpp>
+#include <xdiag/states/inner.hpp>
+#include <xdiag/utils/logger.hpp>
 
 using namespace xdiag;
 
@@ -49,7 +50,7 @@ static void test_tjdistributed_e0_real(OpSum ops, int nsites, int nup, int ndn,
   REQUIRE(std::abs(e0 - e0c) < 1e-6);
 }
 
-TEST_CASE("tj_distributed_apply", "[tj_distributed]") try {
+TEST_CASE("tj_distributed_apply", "[tj_distributed]") {
   using namespace xdiag::testcases::tj;
 
   Log("tj_distributed_apply test");
@@ -63,13 +64,22 @@ TEST_CASE("tj_distributed_apply", "[tj_distributed]") try {
       for (int i = 0; i < N; ++i) {
         ops += "Jz" * Op("SzSz", {i, (i + 1) % N});
         ops += "Jx" * Op("Exchange", {i, (i + 1) % N});
+        ops += "Jxasym" * Op("ExchangeAsym", {i, (i + 1) % N});
         ops += "TDN" * Op("Hopdn", {i, (i + 1) % N});
         ops += "TUP" * Op("Hopup", {i, (i + 1) % N});
+        ops += "TDNasym" * Op("HopdnAsym", {i, (i + 1) % N});
+        ops += "TUPasym" * Op("HopupAsym", {i, (i + 1) % N});
       }
       ops["Jz"] = 1.32;
-      ops["Jx"] = complex(.432, .576);
-      ops["TDN"] = complex(-0.1432, .3576);
-      ops["TUP"] = complex(-0.4321, .5763); // 2.104;
+      // ops["Jx"] = complex(.432, .576);
+      ops["Jx"] = 0.432;
+      ops["Jxasym"] = complex(0., 0.576);
+      // ops["TDN"] = complex(-0.1432, .3576);
+      // ops["TUP"] = complex(-0.4321, .5763); // 2.104;
+      ops["TDN"] = -0.1432;
+      ops["TUP"] = -0.4321;
+      ops["TDNasym"] = complex(0., .3576);
+      ops["TUPasym"] = complex(0., .5763); // 2.104;
 
       double e0 = eigval0(ops, block);
       auto block2 = tJ(N, nup, ndn);
@@ -205,10 +215,11 @@ TEST_CASE("tj_distributed_apply", "[tj_distributed]") try {
           auto cdagdn = Op("Cdagdn", s);
           auto cdn = Op("Cdn", s);
 
-          auto spsmr = apply(cdagup, apply(cdn, apply(cdagdn, apply(cup,
-          r)))); auto smspr = apply(cdagdn, apply(cup, apply(cdagup,
-          apply(cdn, r)))); auto r1 = 0.5 * (spsmr + smspr); auto r2 =
-          apply(Op("Exchange", {s, s}), r); REQUIRE(isapprox(r1, r2));
+          auto spsmr = apply(cdagup, apply(cdn, apply(cdagdn, apply(cup, r))));
+          auto smspr = apply(cdagdn, apply(cup, apply(cdagup, apply(cdn, r))));
+          auto r1 = 0.5 * (spsmr + smspr);
+          auto r2 = apply(Op("Exchange", {s, s}), r);
+          REQUIRE(isapprox(r1, r2));
 
           // SdotS
           auto szszr = apply(Op("SzSz", {s, s}), r);
@@ -228,20 +239,18 @@ TEST_CASE("tj_distributed_apply", "[tj_distributed]") try {
           REQUIRE(isapprox(r1, r2));
 
           // Hopup
-          r1 = -(apply(cdagup, apply(cup, r)) + apply(cdagup, apply(cup,
-          r))); r2 = apply(Op("Hopup", {s, s}), r); REQUIRE(isapprox(r1,
-          r2));
+          r1 = -(apply(cdagup, apply(cup, r)) + apply(cdagup, apply(cup, r)));
+          r2 = apply(Op("Hopup", {s, s}), r);
+          REQUIRE(isapprox(r1, r2));
 
           // Hopdn
-          r1 = -(apply(cdagdn, apply(cdn, r)) + apply(cdagdn, apply(cdn,
-          r))); r2 = apply(Op("Hopdn", {s, s}), r); REQUIRE(isapprox(r1,
-          r2));
+          r1 = -(apply(cdagdn, apply(cdn, r)) + apply(cdagdn, apply(cdn, r)));
+          r2 = apply(Op("Hopdn", {s, s}), r);
+          REQUIRE(isapprox(r1, r2));
 
           // Hop
-          r1 = -(apply(cdagup, apply(cup, r)) + apply(cdagup, apply(cup, r))
-          +
-                 apply(cdagdn, apply(cdn, r)) + apply(cdagdn, apply(cdn,
-                 r)));
+          r1 = -(apply(cdagup, apply(cup, r)) + apply(cdagup, apply(cup, r)) +
+                 apply(cdagdn, apply(cdn, r)) + apply(cdagdn, apply(cdn, r)));
           r2 = apply(Op("Hop", {s, s}), r);
           REQUIRE(isapprox(r1, r2));
         }
@@ -279,7 +288,27 @@ TEST_CASE("tj_distributed_apply", "[tj_distributed]") try {
       }
     }
   }
+}
 
-} catch (Error e) {
-  error_trace(e);
+TEST_CASE("tj_distributed_observables", "[tj_distributed]") {
+  Log("tj_distributed_observables: expect / correlation_matrix vs tJ");
+  int N = 4;
+  // Generic Hermitian t-J Hamiltonian (real symmetric + imaginary asymmetric
+  // parts) on a chain -> non-degenerate ground state.
+  OpSum ops;
+  for (int i = 0; i < N; ++i) {
+    ops += 1.10 * Op("SzSz", {i, (i + 1) % N});
+    ops += 0.43 * Op("Exchange", {i, (i + 1) % N});
+    ops += complex(0.0, 0.31) * Op("ExchangeAsym", {i, (i + 1) % N});
+    ops += -0.97 * Op("Hop", {i, (i + 1) % N});
+    ops += complex(0.0, 0.22) * Op("HopAsym", {i, (i + 1) % N});
+  }
+  std::vector<std::string> onesite = {"Ntot", "Sz", "Nup", "Ndn"};
+  std::vector<std::pair<std::string, std::string>> twosite = {
+      {"Sz", "Sz"}, {"Ntot", "Ntot"}, {"Cdagup", "Cup"}, {"Cdagdn", "Cdn"}};
+  std::vector<std::tuple<int, int>> nup_ndn = {{2, 1}, {2, 2}, {1, 2}};
+  for (auto [nup, ndn] : nup_ndn) {
+    compare_observables(ops, tJ(N, nup, ndn), tJDistributed(N, nup, ndn),
+                        onesite, twosite);
+  }
 }

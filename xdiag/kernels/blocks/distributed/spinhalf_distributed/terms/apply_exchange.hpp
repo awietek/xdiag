@@ -28,6 +28,7 @@ void apply_exchange_postfix(Coeff const &cpl, Op const &op,
 
   coeff_t J = cpl.scalar().as<coeff_t>();
   coeff_t Jhalf = J / 2.0;
+  bool is_asym = (op.type() == "ExchangeAsym");
   int64_t s1 = op[0];
   int64_t s2 = op[1];
 
@@ -36,6 +37,13 @@ void apply_exchange_postfix(Coeff const &cpl, Op const &op,
   assert((s1 < n_postfix_bits) && (s2 < n_postfix_bits));
 
   bit_t mask = ((bit_t)1 << s1) | ((bit_t)1 << s2);
+  bit_t s1mask = (bit_t)1 << s1;
+
+  // Per-branch coupling, hoisted out of the loop. ExchangeAsym =
+  // 1/2(S+_{s1}S-_{s2} - S-_{s1}S+_{s2}): the S-_{s1} branch (input s1 up) gets
+  // -Jhalf (matching term_exchange_asym); plain Exchange uses Jhalf for both.
+  coeff_t j_s1dn = Jhalf;
+  coeff_t j_s1up = is_asym ? -Jhalf : Jhalf;
 
   int64_t idx = 0;
   for (bit_t prefix : basis.prefixes()) {
@@ -47,7 +55,7 @@ void apply_exchange_postfix(Coeff const &cpl, Op const &op,
       if (bits::popcount(postfix & mask) & 1) {
         bit_t new_postfix = postfix ^ mask;
         int64_t new_idx = prefix_begin + lintable.index(new_postfix);
-        vec_out(new_idx) += Jhalf * vec_in(idx);
+        vec_out(new_idx) += ((postfix & s1mask) ? j_s1up : j_s1dn) * vec_in(idx);
       }
       ++idx;
     }
@@ -67,6 +75,7 @@ void apply_exchange_prefix(Coeff const &cpl, Op const &op,
 
   coeff_t J = cpl.scalar().as<coeff_t>();
   coeff_t Jhalf = J / 2.0;
+  bool is_asym = (op.type() == "ExchangeAsym");
   int64_t s1 = op[0];
   int64_t s2 = op[1];
 
@@ -75,6 +84,13 @@ void apply_exchange_prefix(Coeff const &cpl, Op const &op,
   assert((s1 >= n_postfix_bits) && (s2 >= n_postfix_bits));
 
   bit_t mask = (((bit_t)1 << s1) | ((bit_t)1 << s2)) >> n_postfix_bits;
+  bit_t s1mask = (bit_t)1 << (s1 - n_postfix_bits);
+
+  // Per-branch coupling, hoisted out of the loop (see apply_exchange_postfix):
+  // ExchangeAsym flips the sign of the input-s1-up branch, plain Exchange does
+  // not.
+  coeff_t j_s1dn = Jhalf;
+  coeff_t j_s1up = is_asym ? -Jhalf : Jhalf;
 
   // loop through all postfixes
   int64_t idx = 0;
@@ -86,7 +102,8 @@ void apply_exchange_prefix(Coeff const &cpl, Op const &op,
       if (bits::popcount(prefix & mask) & 1) {
         bit_t new_prefix = prefix ^ mask;
         int64_t new_idx = postfix_begin + lintable.index(new_prefix);
-        recv_buffer[new_idx] += Jhalf * send_buffer[idx];
+        recv_buffer[new_idx] +=
+            ((prefix & s1mask) ? j_s1up : j_s1dn) * send_buffer[idx];
       }
       ++idx;
     }
@@ -105,6 +122,7 @@ void apply_exchange_mixed(Coeff const &cpl, Op const &op,
 
   coeff_t J = cpl.scalar().as<coeff_t>();
   coeff_t Jhalf = J / 2.0;
+  bool is_asym = (op.type() == "ExchangeAsym");
   int64_t s1 = op[0];
   int64_t s2 = op[1];
   assert((s1 >= 0) && (s2 >= 0));
@@ -116,6 +134,18 @@ void apply_exchange_mixed(Coeff const &cpl, Op const &op,
   int64_t ss2 = std::max(s1, s2);
   bit_t prefix_mask = ((bit_t)1 << (ss2 - n_postfix_bits));
   bit_t postfix_mask = ((bit_t)1 << ss1);
+
+  // Per-branch coupling, hoisted out of the fill loop. ExchangeAsym =
+  // 1/2(S+_{s1}S-_{s2} - S-_{s1}S+_{s2}) gives -Jhalf when the input s1 spin is
+  // up (matching term_exchange_asym); plain Exchange uses Jhalf throughout.
+  // s1 lives on the prefix iff it is the larger site (ss2); the two fill
+  // branches below fix the s1 spin from the prefix/postfix occupation.
+  coeff_t j_s1up = is_asym ? -Jhalf : Jhalf;
+  bool s1_on_prefix = (s1 > s2);
+  // "prefix up, postfix dn" branch: s1 is up iff s1 sits on the prefix.
+  coeff_t coeff_prefix_up = s1_on_prefix ? j_s1up : Jhalf;
+  // "prefix dn, postfix up" branch: s1 is up iff s1 sits on the postfix.
+  coeff_t coeff_prefix_dn = s1_on_prefix ? Jhalf : j_s1up;
 
   mpi::Communicator comm;
 
@@ -231,7 +261,7 @@ void apply_exchange_mixed(Coeff const &cpl, Op const &op,
           int64_t int64_target =
               prefix_flipped_offset +
               postfix_flipped_lintable.index(postfix_flipped);
-          vec_out(int64_target) += Jhalf * recv_buffer[idx_received];
+          vec_out(int64_target) += coeff_prefix_up * recv_buffer[idx_received];
           ++offsets[origin_rank];
         }
       }
@@ -245,7 +275,7 @@ void apply_exchange_mixed(Coeff const &cpl, Op const &op,
           int64_t int64_target =
               prefix_flipped_offset +
               postfix_flipped_lintable.index(postfix_flipped);
-          vec_out(int64_target) += Jhalf * recv_buffer[idx_received];
+          vec_out(int64_target) += coeff_prefix_dn * recv_buffer[idx_received];
           ++offsets[origin_rank];
         }
       }

@@ -102,6 +102,19 @@ Algebra electron_implementation_algebra(int64_t nsites) {
   return a;
 }
 
+Algebra electron_distributed_implementation_algebra(int64_t nsites) {
+  Algebra a = electron_implementation_algebra(nsites);
+  a.name = "electron_distributed_implementation";
+  // The distributed block has no Cdag/C string kernel, so Exchange and its
+  // antisymmetric variant must survive normal-ordering as single named
+  // operators and be applied by the dedicated distributed exchange kernel.
+  // (Hopup/Hopdn and their Asym variants are already kept by the electron
+  // implementation algebra.)
+  a.kept_named.insert("Exchange");
+  a.kept_named.insert("ExchangeAsym");
+  return a;
+}
+
 Algebra tj_algebra(int64_t nsites) {
   Algebra a;
   a.name = "tJ";
@@ -132,6 +145,18 @@ Algebra tj_implementation_algebra(int64_t nsites, bool exchange_as_kernel) {
     a.kept_named.insert("Exchange");
   }
   a.simplify = tj_simplify; // creation-major, projected
+  return a;
+}
+
+Algebra tj_distributed_implementation_algebra(int64_t nsites) {
+  Algebra a = tj_implementation_algebra(nsites);
+  a.name = "tj_distributed_implementation";
+  // The distributed block has no Cdag/C string kernel, so the antisymmetric
+  // hops/exchange must survive normal-ordering as single named operators and
+  // be applied by their dedicated distributed kernels.
+  a.kept_named.insert("HopupAsym");
+  a.kept_named.insert("HopdnAsym");
+  a.kept_named.insert("ExchangeAsym");
   return a;
 }
 
@@ -187,11 +212,11 @@ Algebra implementation_algebra(SpinhalfDistributed const &block) try {
 }
 XDIAG_CATCH
 Algebra implementation_algebra(tJDistributed const &block) try {
-  return tj_implementation_algebra(block.nsites());
+  return tj_distributed_implementation_algebra(block.nsites());
 }
 XDIAG_CATCH
 Algebra implementation_algebra(ElectronDistributed const &block) try {
-  return electron_implementation_algebra(block.nsites());
+  return electron_distributed_implementation_algebra(block.nsites());
 }
 XDIAG_CATCH
 #endif

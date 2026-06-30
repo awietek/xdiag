@@ -20,6 +20,8 @@
 #include <xdiag/states/create_state.hpp>
 #include <xdiag/utils/logger.hpp>
 
+#include <tests/blocks/distributed/compare_observables.hpp>
+
 using namespace xdiag;
 
 static void test_onsite(std::string op1, std::string op12) {
@@ -190,6 +192,30 @@ TEST_CASE("spinhalf_distributed_apply", "[spinhalf_distributed]") try {
     test_e0_nompi(N, ops);
   }
 
+  // ExchangeAsym all-to-all: a Hermitian operator built from real (symmetric)
+  // Exchange + SzSz and imaginary (antisymmetric) ExchangeAsym, exercising the
+  // postfix / prefix / mixed exchange kernels for every site pair.
+  Log("SpinhalfDistributed: Exchange+ExchangeAsym alltoall test, N=2,..,7");
+  for (int N = 2; N <= 7; ++N) {
+    OpSum ops;
+    for (int i = 0; i < N; ++i) {
+      for (int j = i + 1; j < N; ++j) {
+        double re = 0.5 + 0.1 * (i + 1) - 0.05 * j;
+        double im = 0.3 + 0.07 * (j + 1) - 0.04 * i;
+        ops += re * Op("Exchange", {i, j});
+        ops += complex(0.0, im) * Op("ExchangeAsym", {i, j});
+        ops += (0.2 * (i + 1)) * Op("SzSz", {i, j});
+      }
+    }
+    // Complex OpSum -> compare the Lanczos ground-state energies directly
+    // (test_e0_nompi builds a real matrix and cannot be used here).
+    for (int nup = 0; nup <= N; ++nup) {
+      double e0 = eigval0(ops, Spinhalf(N, nup));
+      double e0d = eigval0(ops, SpinhalfDistributed(N, nup));
+      REQUIRE(isapprox(e0, e0d));
+    }
+  }
+
   // Test S+, S-, Sz operators
   Log("SpinhalfDistributed: Heisenberg chain Sz,S+,S- energy test, N=2,..,6");
   for (int N = 2; N <= 6; N += 2) {
@@ -233,4 +259,27 @@ TEST_CASE("spinhalf_distributed_apply", "[spinhalf_distributed]") try {
 
 } catch (Error const &e) {
   error_trace(e);
+}
+
+TEST_CASE("spinhalf_distributed_observables", "[spinhalf_distributed]") {
+  Log("spinhalf_distributed_observables: expect / correlation_matrix vs "
+      "Spinhalf");
+  int N = 6;
+  // Generic Hermitian spin Hamiltonian (real SzSz + Exchange, imaginary
+  // ExchangeAsym) over all pairs -> non-degenerate ground state.
+  OpSum ops;
+  for (int i = 0; i < N; ++i) {
+    for (int j = i + 1; j < N; ++j) {
+      ops += (0.5 + 0.1 * (i + 1) - 0.05 * j) * Op("SzSz", {i, j});
+      ops += (0.3 + 0.04 * i) * Op("Exchange", {i, j});
+      ops += complex(0.0, 0.2 + 0.03 * j) * Op("ExchangeAsym", {i, j});
+    }
+  }
+  std::vector<std::string> onesite = {"Sz"};
+  std::vector<std::pair<std::string, std::string>> twosite = {{"Sz", "Sz"},
+                                                              {"S+", "S-"}};
+  for (int nup : {3, 2}) {
+    compare_observables(ops, Spinhalf(N, nup), SpinhalfDistributed(N, nup),
+                        onesite, twosite);
+  }
 }
