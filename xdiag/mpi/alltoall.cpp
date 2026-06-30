@@ -4,6 +4,8 @@
 
 #include "alltoall.hpp"
 
+#include <vector>
+
 #include <xdiag/math/complex.hpp>
 #include <xdiag/mpi/datatype.hpp>
 
