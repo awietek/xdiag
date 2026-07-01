@@ -88,6 +88,7 @@ set(XDIAG_TEST_SOURCES
   linalg/time_evolution/test_time_evolution.cpp
   linalg/time_evolution/test_pade.cpp
   linalg/lobpcg/test_lobpcg.cpp
+  linalg/test_sparse_diag.cpp
   linalg/test_empty_algorithm.cpp
 
   states/test_random_state.cpp
@@ -105,6 +106,7 @@ set(XDIAG_TESTCASES_SOURCES
 
 set(XDIAG_TEST_DISTRIBUTED_SOURCES
   mpi/test_cdot_distributed.cpp
+  linalg/lobpcg/test_lobpcg_distributed.cpp
   linalg/time_evolution/test_time_evolution_distributed.cpp
   blocks/distributed/test_spinhalf_distributed.cpp
   blocks/distributed/test_spinhalf_distributed_apply.cpp

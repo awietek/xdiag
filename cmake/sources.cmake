@@ -157,6 +157,7 @@ set(XDIAG_SOURCES
   linalg/lanczos/tmatrix.cpp
   linalg/lanczos/eigvals_lanczos.cpp
   linalg/lanczos/eigs_lanczos.cpp
+  linalg/lobpcg/eigs_lobpcg.cpp
   linalg/sparse_diag.cpp
   linalg/arnoldi/arnoldi_to_disk.cpp
   linalg/gram_schmidt/gram_schmidt.cpp

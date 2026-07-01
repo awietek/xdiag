@@ -47,7 +47,7 @@ XDIAG_CATCH
 template <typename coeff_t>
 arma::Mat<coeff_t> matrix_dot(Block const &block, arma::Mat<coeff_t> const &V,
                               arma::Mat<coeff_t> const &W) try {
-  if (V.n_rows != V.n_rows) {
+  if (V.n_rows != W.n_rows) {
     XDIAG_THROW("Input matrices do not have the same number of rows");
   }
 #ifdef XDIAG_DISTRIBUTED

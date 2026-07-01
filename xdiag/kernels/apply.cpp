@@ -56,14 +56,19 @@ static void apply_impl(OpSum const &ops, block_t const &block_in,
   if constexpr (is_distributed_v<block_t>) {
 #ifdef XDIAG_DISTRIBUTED
     // Distributed blocks use a separate matrix-free, MPI-aware apply path
-    // (kernels/blocks/distributed/<block>/kernels.cpp). Only single-column
-    // vectors are supported.
+    // (kernels/blocks/distributed/<block>/kernels.cpp) that operates on a
+    // single column. A multi-column block (e.g. a LOBPCG search space) is
+    // applied one column at a time.
     using coeff_t = typename vec_t::elem_type;
-    if (std::is_same_v<vec_t, arma::Col<coeff_t>>) {
+    if constexpr (std::is_same_v<vec_t, arma::Col<coeff_t>>) {
       kernels::apply_distributed(ops, block_in, vec_in, block_out, vec_out);
     } else {
-      XDIAG_THROW("apply for a distributed block only supports single-column "
-                  "vectors (States with one column).");
+      for (arma::uword c = 0; c < vec_in.n_cols; ++c) {
+        arma::Col<coeff_t> in_col = vec_in.col(c);
+        arma::Col<coeff_t> out_col(vec_out.n_rows, arma::fill::zeros);
+        kernels::apply_distributed(ops, block_in, in_col, block_out, out_col);
+        vec_out.col(c) = out_col;
+      }
     }
 #endif
   } else {

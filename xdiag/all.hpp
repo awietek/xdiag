@@ -39,6 +39,7 @@ limitations under the License.
 #include <xdiag/xdiag/kernels/sparse/csr_matrix.hpp>
 #include <xdiag/xdiag/linalg/lanczos/eigs_lanczos.hpp>
 #include <xdiag/xdiag/linalg/lanczos/eigvals_lanczos.hpp>
+#include <xdiag/xdiag/linalg/lobpcg/eigs_lobpcg.hpp>
 #include <xdiag/xdiag/linalg/sparse_diag.hpp>
 #include <xdiag/xdiag/linalg/time_evolution/evolve_lanczos.hpp>
 #include <xdiag/xdiag/linalg/time_evolution/imaginary_time_evolve.hpp>
