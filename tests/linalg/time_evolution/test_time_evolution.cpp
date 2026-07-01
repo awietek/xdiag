@@ -7,10 +7,9 @@
 //
 #include <tests/catch.hpp>
 
-#include <xdiag/algebra/matrix.hpp>
-#include <xdiag/algebra/sparse/csr_matrix.hpp>
-#include <xdiag/common.hpp>
 #include <xdiag/armadillo.hpp>
+#include <xdiag/kernels/matrix.hpp>
+#include <xdiag/kernels/sparse/csr_matrix.hpp>
 #include <xdiag/linalg/sparse_diag.hpp>
 #include <xdiag/linalg/time_evolution/evolve_lanczos.hpp>
 #include <xdiag/linalg/time_evolution/expm.hpp>
@@ -67,11 +66,11 @@ TEST_CASE("analytic_case_free_particle_1D", "[time_evolution]") try {
   ops["U"] = 1;
   auto csr = csr_matrix(ops, block);
 
-  std::vector<std::string> psi_0_list;
+  std::vector<int> psi_0_list;
   for (int i = 0; i < nsites; i++) {
-    psi_0_list.push_back(std::string("Emp"));
+    psi_0_list.push_back(0);
   }
-  psi_0_list[0] = "Up";
+  psi_0_list[0] = 1;
   auto psi_0 = product_state(block, psi_0_list);
 
   // seems to be accurate for times up towards 10^5
@@ -174,11 +173,11 @@ TEST_CASE("analytic_case_free_particle_2D", "[time_evolution]") try {
   ops["U"] = 1;
   auto csr = csr_matrix(ops, block);
 
-  std::vector<std::string> psi_0_list;
+  std::vector<int> psi_0_list;
   for (int i = 0; i < nsites; i++) {
-    psi_0_list.push_back(std::string("Emp"));
+    psi_0_list.push_back(0);
   }
-  psi_0_list[0] = "Up";
+  psi_0_list[0] = 1;
   auto psi_0 = product_state(block, psi_0_list);
 
   // seems to be accurate for times up towards 10^5
@@ -242,13 +241,13 @@ TEST_CASE("tj_complex_timeevo", "[time_evolution]") try {
   for (int x = 0; x < L; ++x) {
     for (int y = 0; y < L; ++y) {
       if (((x + y) % 2) == 0) {
-        pstate.push_back("Dn");
+        pstate.push_back(2);
       } else {
-        pstate.push_back("Up");
+        pstate.push_back(1);
       }
     }
   }
-  pstate[nsites / 2] = "Emp";
+  pstate[nsites / 2] = 0;
   auto block = tJ(nsites, nsites / 2, nsites / 2);
   auto csr = csr_matrixC(ops, block);
   auto H = matrixC(ops, block);

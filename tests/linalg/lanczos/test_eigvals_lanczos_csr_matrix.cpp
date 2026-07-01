@@ -2,17 +2,17 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-#include "../../catch.hpp"
-
 #include <iostream>
 
-#include "../../blocks/electron/testcases_electron.hpp"
+#include <tests/catch.hpp>
+#include <tests/blocks/electron/testcases_electron.hpp>
 
-#include <xdiag/algebra/isapprox.hpp>
-#include <xdiag/algebra/matrix.hpp>
-#include <xdiag/algebra/sparse/csr_matrix.hpp>
-#include <xdiag/linalg/lanczos/eigvals_lanczos.hpp>
 #include <xdiag/linalg/sparse_diag.hpp>
+#include <xdiag/linalg/lanczos/eigvals_lanczos.hpp>
+#include <xdiag/kernels/matrix.hpp>
+#include <xdiag/kernels/sparse/csr_matrix.hpp>
+#include <xdiag/algebra/isapprox.hpp>
+#include <xdiag/utils/logger.hpp>
 
 using namespace xdiag;
 
@@ -27,7 +27,7 @@ void test_eigvals_lanczos_csr_matrix() {
   int num_eigenvalue = 1;
 
   if (std::is_same<coeff_t, double>::value) {
-    printf("  eigvals_lanczos real test ...\n");
+    Log("  eigvals_lanczos real test ...");
     ops = freefermion_alltoall(nsites);
 
     for (int nup = 0; nup <= nsites; ++nup)
@@ -52,7 +52,7 @@ void test_eigvals_lanczos_csr_matrix() {
         }
       }
   } else {
-    printf("  eigvals_lanczos cplx test ...\n");
+    Log("  eigvals_lanczos cplx test ...");
     ops = freefermion_alltoall_complex_updn(nsites);
 
     for (int nup = 0; nup <= nsites; ++nup)

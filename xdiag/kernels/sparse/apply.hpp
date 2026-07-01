@@ -5,8 +5,8 @@
 #pragma once
 
 #include <xdiag/armadillo.hpp>
-#include <xdiag/math/complex.hpp>
 #include <xdiag/kernels/sparse/sparse_matrix_types.hpp>
+#include <xdiag/math/complex.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/xdiag_api.hpp>
 

@@ -8,11 +8,10 @@
 #include <tests/blocks/spinhalf/testcases_spinhalf.hpp>
 #include <tests/catch.hpp>
 
-#include <xdiag/algebra/matrix.hpp>
-#include <xdiag/algebra/sparse/csr_matrix.hpp>
 #include <xdiag/armadillo.hpp>
-#include <xdiag/common.hpp>
 #include <xdiag/io/read.hpp>
+#include <xdiag/kernels/matrix.hpp>
+#include <xdiag/kernels/sparse/csr_matrix.hpp>
 #include <xdiag/linalg/norm_estimate.hpp>
 #include <xdiag/utils/logger.hpp>
 #include <xdiag/utils/xdiag_show.hpp>

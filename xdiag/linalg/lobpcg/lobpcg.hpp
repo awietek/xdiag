@@ -2,7 +2,7 @@
 
 #include <cmath>
 #include <xdiag/math/complex.hpp>
-#include <xdiag/utils/ipow.hpp>
+#include <xdiag/math/ipow.hpp>
 #include <xdiag/utils/logger.hpp>
 #include <xdiag/utils/xdiag_show.hpp>
 
@@ -28,7 +28,6 @@ bool eig_sym_gen(arma::vec &eigvals, arma::Mat<coeff_t> &eigvecs,
   if (!B.is_sympd(1e-6)) {
     B.print();
     eig_sym(B).print();
-    printf("hello here\n");
     return false;
   }
 
@@ -40,7 +39,6 @@ bool eig_sym_gen(arma::vec &eigvals, arma::Mat<coeff_t> &eigvecs,
   arma::Mat<coeff_t> C = Linv * A * Linv.t();
   bool success = eig_sym(eigvals, eigvecs, C);
   if (!success) {
-    printf("hello\n");
     return false;
   }
 
@@ -314,7 +312,7 @@ void lobpcg(multiply_f multiplyA, arma::Mat<coeff_t> &X, double tol,
       bestIterationNumber = iterationNumber;
       bestBlockVectorX = blockVectorX;
     } else if (residualNorm >
-               utils::ipow(2, restartControl) * smallestResidualNorm) {
+               math::ipow(2, restartControl) * smallestResidualNorm) {
       forcedRestart = true;
 
       // MVM

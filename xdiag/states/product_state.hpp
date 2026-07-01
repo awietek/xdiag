@@ -23,6 +23,7 @@ public:
 
   XDIAG_API ProductState() = default;
   XDIAG_API explicit ProductState(int64_t nsites);
+  XDIAG_API explicit ProductState(std::vector<int32_t> const &local_states);
   XDIAG_API explicit ProductState(std::vector<int64_t> const &local_states);
 
   XDIAG_API int64_t operator[](int64_t i) const;

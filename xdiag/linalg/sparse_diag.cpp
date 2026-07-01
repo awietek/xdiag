@@ -35,22 +35,22 @@ double eigval0(OpSum const &ops, Block const &block, double precision,
 }
 XDIAG_CATCH
 
-// template <typename idx_t, typename coeff_t>
-// double eigval0(CSRMatrix<idx_t, coeff_t> const &ops, Block const &block,
-//                double precision, int64_t max_iterations,
-//                int64_t random_seed) try {
-//   return eigval0<CSRMatrix<idx_t, coeff_t>>(ops, block, precision,
-//                                             max_iterations, random_seed);
-// }
-// XDIAG_CATCH
-// template double eigval0(CSRMatrix<int32_t, double> const &, Block const &,
-//                         double, int64_t, int64_t);
-// template double eigval0(CSRMatrix<int32_t, complex> const &, Block const &,
-//                         double, int64_t, int64_t);
-// template double eigval0(CSRMatrix<int64_t, double> const &, Block const &,
-//                         double, int64_t, int64_t);
-// template double eigval0(CSRMatrix<int64_t, complex> const &, Block const &,
-//                         double, int64_t, int64_t);
+template <typename idx_t, typename coeff_t>
+double eigval0(CSRMatrix<idx_t, coeff_t> const &ops, Block const &block,
+               double precision, int64_t max_iterations,
+               int64_t random_seed) try {
+  return eigval0<CSRMatrix<idx_t, coeff_t>>(ops, block, precision,
+                                            max_iterations, random_seed);
+}
+XDIAG_CATCH
+template double eigval0(CSRMatrix<int32_t, double> const &, Block const &,
+                        double, int64_t, int64_t);
+template double eigval0(CSRMatrix<int32_t, complex> const &, Block const &,
+                        double, int64_t, int64_t);
+template double eigval0(CSRMatrix<int64_t, double> const &, Block const &,
+                        double, int64_t, int64_t);
+template double eigval0(CSRMatrix<int64_t, complex> const &, Block const &,
+                        double, int64_t, int64_t);
 
 template <typename op_t>
 static std::tuple<double, State> eig0(op_t const &ops, Block const &block,
@@ -79,27 +79,25 @@ std::tuple<double, State> eig0(OpSum const &ops, Block const &block,
 }
 XDIAG_CATCH
 
-// template <typename idx_t, typename coeff_t>
-// std::tuple<double, State>
-// eig0(CSRMatrix<idx_t, coeff_t> const &ops, Block const &block, double
-// precision,
-//      int64_t max_iterations, int64_t random_seed) try {
-//   return eig0<CSRMatrix<idx_t, coeff_t>>(ops, block, precision,
-//   max_iterations,
-//                                          random_seed);
-// }
-// XDIAG_CATCH
+template <typename idx_t, typename coeff_t>
+std::tuple<double, State>
+eig0(CSRMatrix<idx_t, coeff_t> const &ops, Block const &block, double precision,
+     int64_t max_iterations, int64_t random_seed) try {
+  return eig0<CSRMatrix<idx_t, coeff_t>>(ops, block, precision, max_iterations,
+                                         random_seed);
+}
+XDIAG_CATCH
 
-// template std::tuple<double, State> eig0(CSRMatrix<int32_t, double> const &,
-//                                         Block const &, double, int64_t,
-//                                         int64_t);
-// template std::tuple<double, State> eig0(CSRMatrix<int32_t, complex> const &,
-//                                         Block const &, double, int64_t,
-//                                         int64_t);
-// template std::tuple<double, State> eig0(CSRMatrix<int64_t, double> const &,
-//                                         Block const &, double, int64_t,
-//                                         int64_t);
-// template std::tuple<double, State> eig0(CSRMatrix<int64_t, complex> const &,
-//                                         Block const &, double, int64_t,
-//                                         int64_t);
+template std::tuple<double, State> eig0(CSRMatrix<int32_t, double> const &,
+                                        Block const &, double, int64_t,
+                                        int64_t);
+template std::tuple<double, State> eig0(CSRMatrix<int32_t, complex> const &,
+                                        Block const &, double, int64_t,
+                                        int64_t);
+template std::tuple<double, State> eig0(CSRMatrix<int64_t, double> const &,
+                                        Block const &, double, int64_t,
+                                        int64_t);
+template std::tuple<double, State> eig0(CSRMatrix<int64_t, complex> const &,
+                                        Block const &, double, int64_t,
+                                        int64_t);
 } // namespace xdiag

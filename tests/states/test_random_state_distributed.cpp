@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-#include "../catch.hpp"
+#include <tests/catch.hpp>
 
 #include "../blocks/electron/testcases_electron.hpp"
 #include <xdiag/algebra/algebra.hpp>

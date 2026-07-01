@@ -2,18 +2,17 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-#include "../catch.hpp"
-
 #include <iostream>
 
-#include "../blocks/spinhalf/testcases_spinhalf.hpp"
+#include <tests/blocks/spinhalf/testcases_spinhalf.hpp>
+#include <tests/catch.hpp>
 
 #include <xdiag/algebra/algebra.hpp>
-#include <xdiag/algebra/apply.hpp>
-#include <xdiag/algebra/matrix.hpp>
-#include <xdiag/linalg/time_evolution/exp_sym_v.hpp>
 #include <xdiag/blocks/blocks.hpp>
-#include <xdiag/common.hpp>
+#include <xdiag/kernels/apply.hpp>
+#include <xdiag/kernels/matrix.hpp>
+#include <xdiag/linalg/time_evolution/exp_sym_v.hpp>
+#include <xdiag/math/dot.hpp>
 #include <xdiag/states/create_state.hpp>
 #include <xdiag/states/random_state.hpp>
 #include <xdiag/states/state.hpp>
@@ -34,13 +33,13 @@ TEST_CASE("exp_sym_v", "[algorithms]") try {
       apply(ops, block, v, block, w);
     };
     auto dot_f = [&block](arma::vec const &v, arma::vec const &w) {
-      return dot(block, v, w);
+      return math::dot(block, v, w);
     };
     auto multC = [&](arma::cx_vec const &v, arma::cx_vec &w) {
       apply(ops, block, v, block, w);
     };
     auto dot_fC = [&block](arma::cx_vec const &v, arma::cx_vec const &w) {
-      return dot(block, v, w);
+      return math::dot(block, v, w);
     };
     {
       Log("real time");

@@ -2,13 +2,17 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-#include "../catch.hpp"
+#include <tests/blocks/electron/testcases_electron.hpp>
+#include <tests/catch.hpp>
 
-#include "../blocks/electron/testcases_electron.hpp"
 #include <xdiag/algebra/algebra.hpp>
+#include <xdiag/math/dot.hpp>
 #include <xdiag/states/create_state.hpp>
+#include <xdiag/states/dot.hpp>
 #include <xdiag/states/fill.hpp>
+#include <xdiag/states/inner.hpp>
 #include <xdiag/states/random_state.hpp>
+#include <xdiag/utils/logger.hpp>
 #include <xdiag/utils/xdiag_show.hpp>
 
 #include <iostream>
@@ -30,6 +34,7 @@ TEST_CASE("random_state", "[states]") try {
 
     auto rstate = random_state(b, true, ncols, seed, true);
     auto ovlp = matrix_dot(rstate, rstate);
+
     REQUIRE(approx_equal(ovlp, mat(eye<mat>(ncols, ncols)), "absdiff", 1e-14));
 
     auto rstateC = random_state(b, false, ncols, seed, true);

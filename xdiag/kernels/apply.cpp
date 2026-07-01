@@ -6,8 +6,8 @@
 
 #include <xdiag/armadillo.hpp>
 #include <xdiag/blocks/blocks.hpp>
-#include <xdiag/kernels/blocks/distributed/apply_distributed.hpp>
 #include <xdiag/kernels/blocks/dispatch_bases.hpp>
+#include <xdiag/kernels/blocks/distributed/apply_distributed.hpp>
 #include <xdiag/kernels/kernels.hpp>
 #include <xdiag/operators/monomial.hpp>
 #include <xdiag/operators/op.hpp>
@@ -77,8 +77,21 @@ static void apply_impl(OpSum const &ops, block_t const &block_in,
 }
 XDIAG_CATCH
 
-template <typename op_t, typename mat_t>
-void apply(op_t const &ops, Block const &block_in, mat_t const &vec_in,
+template <typename mat_t>
+XDIAG_API void apply(Op const &op, Block const &block_in, mat_t const &vec_in,
+                     Block const &block_out, mat_t &vec_out) {
+  apply(OpSum(op), block_in, vec_in, block_out, vec_out);
+}
+
+template <typename mat_t>
+XDIAG_API void apply(Monomial const &mono, Block const &block_in,
+                     mat_t const &vec_in, Block const &block_out,
+                     mat_t &vec_out) {
+  apply(OpSum(mono), block_in, vec_in, block_out, vec_out);
+}
+
+template <typename mat_t>
+void apply(OpSum const &ops, Block const &block_in, mat_t const &vec_in,
            Block const &block_out, mat_t &vec_out) try {
   // Layer 1: unwrap the Block variant (op_t is promoted to OpSum inside) and
   // forward to the block-generic apply_impl.

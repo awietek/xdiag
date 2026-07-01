@@ -2,20 +2,21 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-#include "../../catch.hpp"
-
 #include <iostream>
 
-#include "../../blocks/electron/testcases_electron.hpp"
-
-#include <xdiag/algebra/algebra.hpp>
-#include <xdiag/algebra/apply.hpp>
-#include <xdiag/algebra/matrix.hpp>
-#include <xdiag/algebra/sparse/csr_matrix.hpp>
-#include <xdiag/linalg/lanczos/eigs_lanczos.hpp>
-#include <xdiag/linalg/sparse_diag.hpp>
+#include <tests/blocks/electron/testcases_electron.hpp>
+#include <tests/catch.hpp>
 
 #include <xdiag/algebra/isapprox.hpp>
+#include <xdiag/kernels/apply.hpp>
+#include <xdiag/kernels/matrix.hpp>
+#include <xdiag/kernels/sparse/csr_matrix.hpp>
+#include <xdiag/linalg/lanczos/eigs_lanczos.hpp>
+#include <xdiag/linalg/sparse_diag.hpp>
+#include <xdiag/states/apply.hpp>
+#include <xdiag/states/dot.hpp>
+#include <xdiag/states/norm.hpp>
+#include <xdiag/utils/logger.hpp>
 
 using namespace xdiag;
 

@@ -2,12 +2,13 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-#include "../catch.hpp"
+#include <tests/catch.hpp>
 
 #include <xdiag/algebra/algebra.hpp>
+#include <xdiag/algebra/isapprox.hpp>
 #include <xdiag/states/fill.hpp>
 #include <xdiag/states/product_state.hpp>
-#include <xdiag/algebra/isapprox.hpp>
+#include <xdiag/states/inner.hpp>
 
 using namespace xdiag;
 
@@ -17,9 +18,8 @@ TEST_CASE("product_state", "[states]") try {
   for (int i = 0; i < 10; ++i) {
     for (int nsites = 1; nsites < 9; ++nsites) {
 
-      std::vector<std::string> ps = {"Emp", "Up", "Dn", "UpDn",
-                                     "Emp", "Up", "Dn", "UpDn"};
-      std::vector<std::string> pss;
+      std::vector<int> ps = {0, 1, 2, 3, 0, 1, 2, 3};
+      std::vector<int> pss;
       std::sample(ps.begin(), ps.end(), std::back_inserter(pss), nsites,
                   std::mt19937(i));
       auto pstate = ProductState(pss);
@@ -32,25 +32,25 @@ TEST_CASE("product_state", "[states]") try {
       int nup = 0;
       int ndn = 0;
       for (int i = 0; i < nsites; ++i) {
-        std::string p = pstate[i];
+        int64_t p = pstate[i];
         auto sz = Op("Sz", i);
         auto szc = inner(sz, psi);
 
         auto n = Op("Ntot", i);
         auto nc = inner(n, psi);
 
-        if (p == "Emp") {
+        if (p == 0) {
           REQUIRE(isapprox(szc, 0.));
           REQUIRE(isapprox(nc, 0.));
-        } else if (p == "Up") {
+        } else if (p == 1) {
           REQUIRE(isapprox(szc, 0.5));
           REQUIRE(isapprox(nc, 1.0));
           ++nup;
-        } else if (p == "Dn") {
+        } else if (p == 2) {
           REQUIRE(isapprox(szc, -0.5));
           REQUIRE(isapprox(nc, 1.0));
           ++ndn;
-        } else if (p == "UpDn") {
+        } else if (p == 3) {
           REQUIRE(isapprox(szc, 0.0));
           REQUIRE(isapprox(nc, 2.0));
           ++nup;
@@ -63,23 +63,23 @@ TEST_CASE("product_state", "[states]") try {
       fill(psi2, pstate);
 
       for (int i = 0; i < nsites; ++i) {
-        std::string p = pstate[i];
+        int p = pstate[i];
         auto sz = Op("Sz", i);
         auto szc = inner(sz, psi2);
 
         auto n = Op("Ntot", i);
         auto nc = inner(n, psi2);
 
-        if (p == "Emp") {
+        if (p == 0) {
           REQUIRE(isapprox(szc, 0.));
           REQUIRE(isapprox(nc, 0.));
-        } else if (p == "Up") {
+        } else if (p == 1) {
           REQUIRE(isapprox(szc, 0.5));
           REQUIRE(isapprox(nc, 1.0));
-        } else if (p == "Dn") {
+        } else if (p == 2) {
           REQUIRE(isapprox(szc, -0.5));
           REQUIRE(isapprox(nc, 1.0));
-        } else if (p == "UpDn") {
+        } else if (p == 3) {
           REQUIRE(isapprox(szc, 0.0));
           REQUIRE(isapprox(nc, 2.0));
         }
@@ -91,10 +91,8 @@ TEST_CASE("product_state", "[states]") try {
   for (int i = 0; i < 10; ++i) {
     for (int nsites = 1; nsites < 9; ++nsites) {
 
-      std::vector<std::string> ps = {
-          "Emp", "Up", "Dn", "Emp", "Up", "Dn", "Emp", "Up", "Dn",
-      };
-      std::vector<std::string> pss;
+      std::vector<int> ps = {0, 1, 2, 0, 1, 2, 0, 1, 2};
+      std::vector<int> pss;
       std::sample(ps.begin(), ps.end(), std::back_inserter(pss), nsites,
                   std::mt19937(i));
       auto pstate = ProductState(pss);
@@ -103,11 +101,11 @@ TEST_CASE("product_state", "[states]") try {
       int nup = 0;
       int ndn = 0;
       for (int i = 0; i < nsites; ++i) {
-        std::string p = pstate[i];
+        int64_t p = pstate[i];
 
-        if (p == "Up") {
+        if (p == 1) {
           ++nup;
-        } else if (p == "Dn") {
+        } else if (p == 2) {
           ++ndn;
         }
       }
@@ -116,20 +114,20 @@ TEST_CASE("product_state", "[states]") try {
       auto psi2 = State(block2);
       fill(psi2, pstate);
       for (int i = 0; i < nsites; ++i) {
-        std::string p = pstate[i];
+        int64_t p = pstate[i];
         auto sz = Op("Sz", i);
         auto szc = inner(sz, psi2);
 
         auto n = Op("Ntot", i);
         auto nc = inner(n, psi2);
 
-        if (p == "Emp") {
+        if (p == 0) {
           REQUIRE(isapprox(szc, 0.));
           REQUIRE(isapprox(nc, 0.));
-        } else if (p == "Up") {
+        } else if (p == 1) {
           REQUIRE(isapprox(szc, 0.5));
           REQUIRE(isapprox(nc, 1.0));
-        } else if (p == "Dn") {
+        } else if (p == 2) {
           REQUIRE(isapprox(szc, -0.5));
           REQUIRE(isapprox(nc, 1.0));
         }
@@ -141,9 +139,8 @@ TEST_CASE("product_state", "[states]") try {
   for (int i = 0; i < 10; ++i) {
     for (int nsites = 1; nsites < 9; ++nsites) {
 
-      std::vector<std::string> ps = {"Up", "Dn", "Up", "Dn",
-                                     "Up", "Dn", "Up", "Dn"};
-      std::vector<std::string> pss;
+      std::vector<int64_t> ps = {1, 0, 1, 0, 1, 0, 1, 0};
+      std::vector<int64_t> pss;
       std::sample(ps.begin(), ps.end(), std::back_inserter(pss), nsites,
                   std::mt19937(i));
       auto pstate = ProductState(pss);
@@ -154,15 +151,15 @@ TEST_CASE("product_state", "[states]") try {
       auto psi = State(block);
       fill(psi, pstate);
       for (int i = 0; i < nsites; ++i) {
-        std::string p = pstate[i];
+        int64_t p = pstate[i];
 
         auto sz = Op("Sz", i);
         auto szc = inner(sz, psi);
 
-        if (p == "Up") {
+        if (p == 1) {
           REQUIRE(isapprox(szc, 0.5));
           ++nup;
-        } else if (p == "Dn") {
+        } else if (p == 0) {
           REQUIRE(isapprox(szc, -0.5));
         }
       }
@@ -171,117 +168,19 @@ TEST_CASE("product_state", "[states]") try {
       auto psi2 = State(block2);
       fill(psi2, pstate);
       for (int i = 0; i < nsites; ++i) {
-        std::string p = pstate[i];
+        int64_t p = pstate[i];
         auto sz = Op("Sz", i);
         auto szc = inner(sz, psi2);
 
-        if (p == "Up") {
+        if (p == 1) {
           REQUIRE(isapprox(szc, 0.5));
-        } else if (p == "Dn") {
+        } else if (p == 0) {
           REQUIRE(isapprox(szc, -0.5));
         }
       }
     }
   }
 
-  // {
-  //   for
-
-  //     auto pstate = ProductState({"Up", "Dn", "UpDn", "Emp"});
-  //   auto block = Electron(4, 2, 2);
-  //   auto psi = StateReal(block, pstate);
-
-  //   auto sz0 = Op("Sz", 0);
-  //   complex sz0c = inner(sz0, psi);
-  //   REQUIRE(isapprox(sz0c, 0.5));
-
-  //   auto sz1 = Op("Sz", 1);
-  //   complex sz1c = inner(sz1, psi);
-  //   REQUIRE(isapprox(sz1c, -0.5));
-
-  //   auto sz2 = Op("Sz", 2);
-  //   complex sz2c = inner(sz2, psi);
-  //   REQUIRE(isapprox(sz2c, 0.));
-
-  //   auto sz3 = Op("Sz", 3);
-  //   complex sz3c = inner(sz3, psi);
-  //   REQUIRE(isapprox(sz3c, 0.));
-
-  //   auto n0 = Op("Ntot", 0);
-  //   complex n0c = inner(n0, psi);
-  //   REQUIRE(isapprox(n0c, 1.0));
-
-  //   auto n1 = Op("Ntot", 1);
-  //   complex n1c = inner(n1, psi);
-  //   REQUIRE(isapprox(n1c, 1.0));
-
-  //   auto n2 = Op("Ntot", 2);
-  //   complex n2c = inner(n2, psi);
-  //   REQUIRE(isapprox(n2c, 2.));
-
-  //   auto n3 = Op("Ntot", 3);
-  //   complex n3c = inner(n3, psi);
-  //   REQUIRE(isapprox(n3c, 0.));
-  // }
-  // {
-  //   auto pstate = ProductState({"Up", "Dn", "Up", "Emp"});
-  //   auto block = tJ(4, 2, 1);
-  //   auto psi = StateReal(block, pstate);
-
-  //   auto sz0 = Op("Sz", 0);
-  //   complex sz0c = inner(sz0, psi);
-  //   REQUIRE(isapprox(sz0c, 0.5));
-
-  //   auto sz1 = Op("Sz", 1);
-  //   complex sz1c = inner(sz1, psi);
-  //   REQUIRE(isapprox(sz1c, -0.5));
-
-  //   auto sz2 = Op("Sz", 2);
-  //   complex sz2c = inner(sz2, psi);
-  //   REQUIRE(isapprox(sz2c, 0.5));
-
-  //   auto sz3 = Op("Sz", 3);
-  //   complex sz3c = inner(sz3, psi);
-  //   REQUIRE(isapprox(sz3c, 0.));
-
-  //   auto n0 = Op("Ntot", 0);
-  //   complex n0c = inner(n0, psi);
-  //   REQUIRE(isapprox(n0c, 1.0));
-
-  //   auto n1 = Op("Ntot", 1);
-  //   complex n1c = inner(n1, psi);
-  //   REQUIRE(isapprox(n1c, 1.0));
-
-  //   auto n2 = Op("Ntot", 2);
-  //   complex n2c = inner(n2, psi);
-  //   REQUIRE(isapprox(n2c, 1.));
-
-  //   auto n3 = Op("Ntot", 3);
-  //   complex n3c = inner(n3, psi);
-  //   REQUIRE(isapprox(n3c, 0.));
-  // }
-
-  // {
-  //   auto pstate = ProductState({"Up", "Dn", "Up", "Dn"});
-  //   auto block = Spinhalf(4, 2);
-  //   auto psi = StateReal(block, pstate);
-
-  //   auto sz0 = Op("Sz", 0);
-  //   complex sz0c = inner(sz0, psi);
-  //   REQUIRE(isapprox(sz0c, 0.5));
-
-  //   auto sz1 = Op("Sz", 1);
-  //   complex sz1c = inner(sz1, psi);
-  //   REQUIRE(isapprox(sz1c, -0.5));
-
-  //   auto sz2 = Op("Sz", 2);
-  //   complex sz2c = inner(sz2, psi);
-  //   REQUIRE(isapprox(sz2c, 0.5));
-
-  //   auto sz3 = Op("Sz", 3);
-  //   complex sz3c = inner(sz3, psi);
-  //   REQUIRE(isapprox(sz3c, -0.5));
-  // }
 } catch (xdiag::Error const &e) {
   error_trace(e);
 }

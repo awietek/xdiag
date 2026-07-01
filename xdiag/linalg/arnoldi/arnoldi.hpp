@@ -8,6 +8,7 @@
 #pragma once
 #include <utility>
 #include <xdiag/armadillo.hpp>
+#include <xdiag/utils/logger.hpp>
 
 namespace xdiag {
 
@@ -99,8 +100,8 @@ arnoldi(mult const &H, arma::Col<coeff_t> const &q0, int n, double eps = 1e-12,
   auto h = arnoldi_out.second;
 
   // krylov space dimension
-  Log.out(1, "h_rows: {}, h_cols: {}", h.n_rows, h.n_cols);
-  Log.out(1, "Q_rows: {}, Q_cols: {}", Q.n_rows, Q.n_cols);
+  Log(1, "h_rows: {}, h_cols: {}", h.n_rows, h.n_cols);
+  Log(1, "Q_rows: {}, Q_cols: {}", Q.n_rows, Q.n_cols);
   int M = Q.n_cols; // krylov space dim
   uword m = q0.n_elem;
   h = h(span(0, M - 1), span(0, M - 1));

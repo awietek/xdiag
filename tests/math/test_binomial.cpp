@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-#include "../catch.hpp"
+#include <tests/catch.hpp>
 #include <xdiag/math/binomial.hpp>
 
 TEST_CASE("binomial", "[matg]") {

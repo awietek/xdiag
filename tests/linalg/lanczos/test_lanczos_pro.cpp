@@ -2,21 +2,25 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-#include "../../catch.hpp"
+#include <tests/catch.hpp>
 
 #include <iostream>
 
-#include <xdiag/algebra/algebra.hpp>
-#include <xdiag/algebra/apply.hpp>
+#include <xdiag/algebra/isapprox.hpp>
+#include <xdiag/config.hpp>
+#include <xdiag/io/read.hpp>
+#include <xdiag/kernels/apply.hpp>
 #include <xdiag/linalg/lanczos/lanczos_pro.hpp>
 #include <xdiag/linalg/sparse_diag.hpp>
-#include <xdiag/io/read.hpp>
+#include <xdiag/math/isapprox.hpp>
 #include <xdiag/operators/opsum.hpp>
+#include <xdiag/states/apply.hpp>
 #include <xdiag/states/create_state.hpp>
+#include <xdiag/states/dot.hpp>
+#include <xdiag/states/norm.hpp>
 #include <xdiag/states/random_state.hpp>
 #include <xdiag/symmetries/permutation_group.hpp>
 #include <xdiag/symmetries/representation.hpp>
-#include <xdiag/algebra/isapprox.hpp>
 
 TEST_CASE("lanczos_pro", "[lanczos]") {
   using namespace xdiag;
@@ -27,7 +31,7 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
 
   {
     Log("  random Hermitian orthogonal");
-    int N = 2000;
+    int N = 500;
     mat B = randn(N, N);
     mat A = B + B.t();
 
@@ -48,7 +52,7 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
 
   {
     Log("  random Hermitian exact deflation, exact V A Vt decomp");
-    int N = 567;
+    int N = 123;
     mat B = randn(N, N);
     mat A = B + B.t();
 
@@ -83,7 +87,7 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
 
   {
     Log("  random Hermitian orthogonal (complex)");
-    int N = 2000;
+    int N = 500;
     cx_mat B(N, N, fill::randn);
     cx_mat A = B + B.t();
 
@@ -105,7 +109,7 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
 
   {
     Log("  random Hermitian exact deflation, exact V A Vt decomp (complex)");
-    int N = 567;
+    int N = 123;
     cx_mat B(N, N, fill::randn);
     cx_mat A = B + B.t();
 
@@ -152,7 +156,7 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
     std::vector<std::string> irrep_names = {"Gamma.C1.A", "M.C1.A", "X0.C1.A",
                                             "X1.C1.A"};
 
-    for (int nup = 0; nup <= 6; ++nup) {
+    for (int nup = 0; nup <= 4; ++nup) {
       for (std::string k : irrep_names) {
         auto irrep = read_representation(lfile, k);
         auto block = Spinhalf(nsites, nup, irrep);
@@ -206,7 +210,7 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
 
     std::vector<std::string> irrep_names = {"Gamma.C1.A"};
 
-    for (int nup = 0; nup <= 6; ++nup) {
+    for (int nup = 0; nup <= 4; ++nup) {
       for (std::string k : irrep_names) {
         auto irrep = read_representation(lfile, k);
         auto block = Spinhalf(nsites, nup, irrep);

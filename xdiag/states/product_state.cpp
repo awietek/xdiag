@@ -11,6 +11,10 @@ namespace xdiag {
 
 ProductState::ProductState(int64_t nsites) : local_states_(nsites) {}
 
+ProductState::ProductState(std::vector<int32_t> const &local_states)
+    : ProductState(
+          std::vector<int64_t>(local_states.begin(), local_states.end())) {}
+
 ProductState::ProductState(std::vector<int64_t> const &local_states)
     : local_states_(local_states) {}
 

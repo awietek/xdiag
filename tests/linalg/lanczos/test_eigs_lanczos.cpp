@@ -2,18 +2,20 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-#include "../../catch.hpp"
-
 #include <iostream>
 
-#include "../../blocks/electron/testcases_electron.hpp"
-
-#include <xdiag/algebra/algebra.hpp>
-#include <xdiag/algebra/apply.hpp>
-#include <xdiag/algebra/matrix.hpp>
-#include <xdiag/linalg/lanczos/eigs_lanczos.hpp>
+#include <tests/blocks/electron/testcases_electron.hpp>
+#include <tests/catch.hpp>
 
 #include <xdiag/algebra/isapprox.hpp>
+#include <xdiag/kernels/apply.hpp>
+#include <xdiag/kernels/matrix.hpp>
+#include <xdiag/linalg/lanczos/eigs_lanczos.hpp>
+#include <xdiag/linalg/sparse_diag.hpp>
+#include <xdiag/states/apply.hpp>
+#include <xdiag/states/dot.hpp>
+#include <xdiag/states/norm.hpp>
+#include <xdiag/utils/logger.hpp>
 
 using namespace xdiag;
 
@@ -25,7 +27,7 @@ TEST_CASE("eigs_lanczos", "[lanczos]") {
   int nsites = 6;
   int max_num_eigenvalue = 2;
 
-  printf("lanczos_eigenvector_real test ...\n");
+  Log("lanczos_eigenvector_real test ...");
   ops = freefermion_alltoall(nsites);
   ops["U"] = 5.0;
 
@@ -59,9 +61,9 @@ TEST_CASE("eigs_lanczos", "[lanczos]") {
         REQUIRE(isapprox(imag(e), 0.0));
       }
     }
-  printf("Done.\n");
+  Log("Done.");
 
-  printf("lanczos_eigenvector_cplx test ...\n");
+  Log("lanczos_eigenvector_cplx test ...");
   ops = freefermion_alltoall_complex_updn(nsites);
 
   for (int nup = 2; nup <= nsites / 3; ++nup)
@@ -75,8 +77,8 @@ TEST_CASE("eigs_lanczos", "[lanczos]") {
 
       // Compute evec with Lanczos
       try {
-        auto res = eigs_lanczos(ops, block, max_num_eigenvalue, 1e-12,
-                                1000, true);
+        auto res =
+            eigs_lanczos(ops, block, max_num_eigenvalue, 1e-12, 1000, true);
 
         // Compute energy of eigenvector
         for (int num_eigenvalue = 0; num_eigenvalue < max_num_eigenvalue;
@@ -93,5 +95,5 @@ TEST_CASE("eigs_lanczos", "[lanczos]") {
         error_trace(e);
       }
     }
-  printf("Done.\n");
+  Log("Done.");
 }

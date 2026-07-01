@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-#include "../catch.hpp"
+#include <tests/catch.hpp>
 
 #include <xdiag/bits/bitmask.hpp>
 #include <xdiag/bits/bitvector.hpp>

@@ -4,11 +4,10 @@
 
 #include "norm_estimate.hpp"
 
-// #include <xdiag/algebra/sparse/apply.hpp>
-// #include <xdiag/algebra/sparse/logic.hpp>
-#include <xdiag/math/norm.hpp>
-#include <xdiag/kernels/apply.hpp>
 #include <xdiag/algebra/ishermitian.hpp>
+#include <xdiag/kernels/apply.hpp>
+#include <xdiag/kernels/sparse/apply.hpp>
+#include <xdiag/math/norm.hpp>
 #include <xdiag/random/hash.hpp>
 #include <xdiag/random/hash_functions.hpp>
 #include <xdiag/utils/error.hpp>
@@ -170,25 +169,22 @@ double norm_estimate(OpSum const &ops, Block const &block,
 }
 XDIAG_CATCH
 
-// template <typename idx_t, typename coeff_t>
-// double norm_estimate(CSRMatrix<idx_t, coeff_t> const &ops, Block const
-// &block,
-//                      int64_t n_max_attempts, uint64_t seed) try {
-//   return norm_estimate<CSRMatrix<idx_t, coeff_t>>(ops, block, n_max_attempts,
-//                                                   seed);
-// }
-// XDIAG_CATCH
+template <typename idx_t, typename coeff_t>
+double norm_estimate(CSRMatrix<idx_t, coeff_t> const &ops, Block const &block,
+                     int64_t n_max_attempts, uint64_t seed) try {
+  return norm_estimate<CSRMatrix<idx_t, coeff_t>>(ops, block, n_max_attempts,
+                                                  seed);
+}
+XDIAG_CATCH
 
-// template double norm_estimate(CSRMatrix<int32_t, double> const &, Block const
-// &,
-//                               int64_t, uint64_t);
-// template double norm_estimate(CSRMatrix<int32_t, complex> const &,
-//                               Block const &, int64_t, uint64_t);
-// template double norm_estimate(CSRMatrix<int64_t, double> const &, Block const
-// &,
-//                               int64_t, uint64_t);
-// template double norm_estimate(CSRMatrix<int64_t, complex> const &,
-//                               Block const &, int64_t, uint64_t);
+template double norm_estimate(CSRMatrix<int32_t, double> const &, Block const &,
+                              int64_t, uint64_t);
+template double norm_estimate(CSRMatrix<int32_t, complex> const &,
+                              Block const &, int64_t, uint64_t);
+template double norm_estimate(CSRMatrix<int64_t, double> const &, Block const &,
+                              int64_t, uint64_t);
+template double norm_estimate(CSRMatrix<int64_t, complex> const &,
+                              Block const &, int64_t, uint64_t);
 
 template <typename coeff_t>
 double norm_estimate(arma::Mat<coeff_t> const &A, int64_t n_max_attempts,

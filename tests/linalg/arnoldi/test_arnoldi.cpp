@@ -5,18 +5,21 @@
 //
 // Created by Luke Staszewski on 19.06.23.
 //
-#include "../../catch.hpp"
+
 #include <iostream>
 
-#include "../../blocks/electron/testcases_electron.hpp"
+#include <tests/blocks/electron/testcases_electron.hpp>
+#include <tests/catch.hpp>
 
-#include <xdiag/algebra/matrix.hpp>
+#include <xdiag/blocks/spinhalf.hpp>
+#include <xdiag/config.hpp>
+#include <xdiag/kernels/matrix.hpp>
 #include <xdiag/linalg/arnoldi/arnoldi.hpp>
 #include <xdiag/linalg/arnoldi/arnoldi_to_disk.hpp>
 #include <xdiag/linalg/time_evolution/expm.hpp>
-#include <xdiag/blocks/spinhalf.hpp>
 #include <xdiag/states/create_state.hpp>
 #include <xdiag/states/random_state.hpp>
+#include <xdiag/utils/logger.hpp>
 
 // TODO: write tests for arnoldi_to_disk
 bool check_basis_orthonormality(arma::cx_mat const &Q, double tol = 1e-12) {

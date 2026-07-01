@@ -2,17 +2,16 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-#include "../../catch.hpp"
-
 #include <iostream>
 
-#include "../../blocks/electron/testcases_electron.hpp"
+#include <tests/catch.hpp>
+#include <tests/blocks/electron/testcases_electron.hpp>
 
-#include <xdiag/algebra/apply.hpp>
 #include <xdiag/algebra/isapprox.hpp>
+#include <xdiag/blocks/blocks.hpp>
+#include <xdiag/kernels/apply.hpp>
 #include <xdiag/linalg/lobpcg/lobpcg.hpp>
 #include <xdiag/linalg/sparse_diag.hpp>
-#include <xdiag/blocks/blocks.hpp>
 #include <xdiag/utils/xdiag_show.hpp>
 
 using namespace xdiag;
@@ -45,7 +44,7 @@ template <typename idx_t, typename coeff_t> void test_lobpcg_csr_matrix() {
 }
 
 TEST_CASE("lobpcg", "[lobpcg]") try {
-  
+
   Log("lobpcg_csr_matrix int32_t double");
   test_lobpcg_csr_matrix<int32_t, double>();
   // Log("lobpcg_csr_matrix int32_t complex");
