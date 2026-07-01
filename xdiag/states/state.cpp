@@ -5,7 +5,6 @@
 #include "state.hpp"
 
 #include <xdiag/blocks/blocks.hpp>
-#include <xdiag/math/arma_to_cx.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/format.hpp>
 #include <xdiag/utils/to_string_generic.hpp>
@@ -74,7 +73,7 @@ State::State(Block const &block, arma::vec const &vector) try
   if (xdiag::isreal(block)) {
     initcopy(vector.memptr(), vector.size(), 1); // real init
   } else {
-    arma::cx_vec vectorc = math::to_cx_vec(vector);
+    arma::cx_vec vectorc = arma::conv_to<arma::cx_vec>::from(vector);
     initcopy(vectorc.memptr(), vector.size(), 1); // cplx init
   }
 }
@@ -99,7 +98,7 @@ State::State(Block const &block, arma::mat const &matrix) try
   if (xdiag::isreal(block)) {
     initcopy(matrix.memptr(), matrix.n_rows, matrix.n_cols); // real init
   } else {
-    arma::cx_mat matrixc = math::to_cx_mat(matrix);
+    arma::cx_mat matrixc = arma::conv_to<arma::cx_mat>::from(matrix);
     initcopy(matrixc.memptr(), matrix.n_rows, matrix.n_cols); // cplx init
   }
 }

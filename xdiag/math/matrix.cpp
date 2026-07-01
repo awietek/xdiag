@@ -4,7 +4,6 @@
 
 #include "matrix.hpp"
 #include <algorithm>
-#include <xdiag/math/arma_to_cx.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/format.hpp>
 #include <xdiag/utils/to_string_generic.hpp>
@@ -36,7 +35,7 @@ XDIAG_CATCH
 
 template <> arma::cx_mat Matrix::as<arma::cx_mat>() const {
   if (const arma::mat *m = std::get_if<arma::mat>(&mat_)) {
-    return math::to_cx_mat(*m);
+    return arma::conv_to<arma::cx_mat>::from(*m);
   } else {
     return std::get<arma::cx_mat>(mat_);
   }
@@ -111,24 +110,25 @@ Matrix Matrix::to_real(double tol) const try {
 XDIAG_CATCH
 
 bool Matrix::isapprox(Matrix const &y, double rtol, double atol) const {
-  return std::visit(utils::overload{
-                        [&](arma::mat const &a, arma::mat const &b) {
-                          return arma::approx_equal(a, b, "both", atol, rtol);
-                        },
-                        [&](arma::mat const &a, arma::cx_mat const &b) {
-                          return arma::approx_equal(math::to_cx_mat(a), b,
-                                                    "both", atol, rtol);
-                        },
-                        [&](arma::cx_mat const &a, arma::mat const &b) {
-                          return arma::approx_equal(a, math::to_cx_mat(b),
-                                                    "both", atol, rtol);
-                        },
-                        [&](arma::cx_mat const &a, arma::cx_mat const &b) {
-                          return arma::approx_equal(a, b, "both", atol, rtol);
-                        },
-                        [&](auto &&a, auto &&b) { return false; },
-                    },
-                    mat_, y.mat_);
+  return std::visit(
+      utils::overload{
+          [&](arma::mat const &a, arma::mat const &b) {
+            return arma::approx_equal(a, b, "both", atol, rtol);
+          },
+          [&](arma::mat const &a, arma::cx_mat const &b) {
+            return arma::approx_equal(arma::conv_to<arma::cx_mat>::from(a), b,
+                                      "both", atol, rtol);
+          },
+          [&](arma::cx_mat const &a, arma::mat const &b) {
+            return arma::approx_equal(a, arma::conv_to<arma::cx_mat>::from(b),
+                                      "both", atol, rtol);
+          },
+          [&](arma::cx_mat const &a, arma::cx_mat const &b) {
+            return arma::approx_equal(a, b, "both", atol, rtol);
+          },
+          [&](auto &&a, auto &&b) { return false; },
+      },
+      mat_, y.mat_);
 }
 
 bool Matrix::operator==(Matrix const &rhs) const {
@@ -141,7 +141,8 @@ bool Matrix::operator!=(Matrix const &rhs) const { return !operator==(rhs); }
 bool Matrix::operator<(Matrix const &rhs) const {
   // real matrices come before complex
   if (isreal() != rhs.isreal())
-    return isreal() > rhs.isreal(); // real (true) > complex (false) → real first
+    return isreal() >
+           rhs.isreal(); // real (true) > complex (false) → real first
   // Compare by shape first
   if (n_rows() != rhs.n_rows())
     return n_rows() < rhs.n_rows();
@@ -152,8 +153,8 @@ bool Matrix::operator<(Matrix const &rhs) const {
     auto const &a = as<arma::mat>();
     auto const &b = rhs.as<arma::mat>();
     int64_t s = n_rows() * n_cols();
-    return std::lexicographical_compare(a.memptr(), a.memptr() + s,
-                                        b.memptr(), b.memptr() + s);
+    return std::lexicographical_compare(a.memptr(), a.memptr() + s, b.memptr(),
+                                        b.memptr() + s);
   } else {
     auto const &a = as<arma::cx_mat>();
     auto const &b = rhs.as<arma::cx_mat>();
@@ -166,10 +167,12 @@ bool Matrix::operator<(Matrix const &rhs) const {
 
 Matrix &Matrix::operator+=(Matrix const &rhs) {
   std::visit(utils::overload{[&](arma::mat &a, arma::cx_mat b) {
-                               mat_ = arma::cx_mat(math::to_cx_mat(a) + b);
+                               mat_ = arma::cx_mat(
+                                   arma::conv_to<arma::cx_mat>::from(a) + b);
                              },
                              [&](arma::cx_mat &a, arma::mat b) {
-                               mat_ = arma::cx_mat(a + math::to_cx_mat(b));
+                               mat_ = arma::cx_mat(
+                                   a + arma::conv_to<arma::cx_mat>::from(b));
                              },
                              [](auto &&a, auto &&b) { a += b; }},
              mat_, rhs.mat_);
@@ -177,10 +180,12 @@ Matrix &Matrix::operator+=(Matrix const &rhs) {
 }
 Matrix &Matrix::operator-=(Matrix const &rhs) {
   std::visit(utils::overload{[&](arma::mat &a, arma::cx_mat b) {
-                               mat_ = arma::cx_mat(math::to_cx_mat(a) - b);
+                               mat_ = arma::cx_mat(
+                                   arma::conv_to<arma::cx_mat>::from(a) - b);
                              },
                              [&](arma::cx_mat &a, arma::mat b) {
-                               mat_ = arma::cx_mat(a - math::to_cx_mat(b));
+                               mat_ = arma::cx_mat(
+                                   a - arma::conv_to<arma::cx_mat>::from(b));
                              },
                              [](auto &&a, auto &&b) { a -= b; }},
              mat_, rhs.mat_);

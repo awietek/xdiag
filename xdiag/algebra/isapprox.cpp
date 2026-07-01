@@ -8,7 +8,6 @@
 #include <vector>
 
 #include <xdiag/algebra/normal_order.hpp>
-#include <xdiag/math/arma_to_cx.hpp>
 #include <xdiag/math/matrix.hpp>
 #include <xdiag/math/scalar.hpp>
 #include <xdiag/operators/monomial.hpp>
@@ -38,11 +37,11 @@ using OpTerm = std::pair<Scalar, Monomial>;
 
 // Two monomials have the same "skeleton" if they are the same product of
 // operators ignoring any Matrix VALUES: same length, and op-by-op the same type
-// and sites. We never order or compare matrices here -- a Matrix has no sensible
-// (and no danger-free) operator<, and the (coefficient, matrix) split is not
-// unique since c*Matrix(M) == (c*a)*Matrix(M/a). Whether two same-skeleton terms
-// agree (up to a scalar) is decided afterwards by isapprox on the
-// coefficient-weighted matrices.
+// and sites. We never order or compare matrices here -- a Matrix has no
+// sensible (and no danger-free) operator<, and the (coefficient, matrix) split
+// is not unique since c*Matrix(M) == (c*a)*Matrix(M/a). Whether two
+// same-skeleton terms agree (up to a scalar) is decided afterwards by isapprox
+// on the coefficient-weighted matrices.
 bool same_skeleton(Monomial const &a, Monomial const &b) {
   if (a.size() != b.size()) {
     return false;
@@ -98,12 +97,14 @@ complex term_ratio(OpTerm const &a, OpTerm const &b) {
   if (is_matrix_mono(a.second)) {
     Matrix ma = a.second[0].matrix() * a.first;
     Matrix mb = b.second[0].matrix() * b.first;
-    arma::cx_vec va = ma.isreal()
-                          ? math::to_cx_vec(arma::vectorise(ma.as<arma::mat>()))
-                          : arma::cx_vec(arma::vectorise(ma.as<arma::cx_mat>()));
-    arma::cx_vec vb = mb.isreal()
-                          ? math::to_cx_vec(arma::vectorise(mb.as<arma::mat>()))
-                          : arma::cx_vec(arma::vectorise(mb.as<arma::cx_mat>()));
+    arma::cx_vec va =
+        ma.isreal() ? arma::conv_to<arma::cx_vec>::from(
+                          arma::vectorise(ma.as<arma::mat>()))
+                    : arma::cx_vec(arma::vectorise(ma.as<arma::cx_mat>()));
+    arma::cx_vec vb =
+        mb.isreal() ? arma::conv_to<arma::cx_vec>::from(
+                          arma::vectorise(mb.as<arma::mat>()))
+                    : arma::cx_vec(arma::vectorise(mb.as<arma::cx_mat>()));
     arma::uword idx = arma::abs(vb).index_max();
     return va[idx] / vb[idx];
   }
@@ -112,7 +113,7 @@ complex term_ratio(OpTerm const &a, OpTerm const &b) {
 
 // Non-zero terms of an OpSum brought into normal order.
 std::vector<OpTerm> nonzero_terms(OpSum const &ops, algebra::Algebra const &alg,
-                                double rtol, double atol) {
+                                  double rtol, double atol) {
   std::vector<OpTerm> terms;
   for (auto const &[c, mono] : algebra::normal_order(ops, alg).plain()) {
     OpTerm t{c.scalar(), mono};
@@ -125,8 +126,9 @@ std::vector<OpTerm> nonzero_terms(OpSum const &ops, algebra::Algebra const &alg,
 
 // Does A equal `scale * B` term-by-term? Linear search: each A term must pair
 // with a distinct B term via term_isapprox_scaled.
-bool lists_match_scaled(std::vector<OpTerm> const &A, std::vector<OpTerm> const &B,
-                        complex scale, double rtol, double atol) {
+bool lists_match_scaled(std::vector<OpTerm> const &A,
+                        std::vector<OpTerm> const &B, complex scale,
+                        double rtol, double atol) {
   if (A.size() != B.size()) {
     return false;
   }
@@ -170,8 +172,8 @@ std::optional<Scalar> isapprox_multiple(OpSum const &ops1, OpSum const &ops2,
     return std::nullopt;
   }
 
-  // Candidate lambda: pair the first term of ops2 with the same-skeleton term of
-  // ops1, then read off the ratio of their coefficient-weighted operators.
+  // Candidate lambda: pair the first term of ops2 with the same-skeleton term
+  // of ops1, then read off the ratio of their coefficient-weighted operators.
   OpTerm const &ref = t2.front();
   OpTerm const *match = nullptr;
   for (OpTerm const &a : t1) {

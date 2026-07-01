@@ -29,7 +29,6 @@ set(XDIAG_SOURCES
   math/scalar.cpp
   math/vector.cpp
   math/matrix.cpp
-  math/arma_to_cx.cpp
   math/dot.cpp
   math/norm.cpp
   math/isapprox.cpp

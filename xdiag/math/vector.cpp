@@ -4,7 +4,6 @@
 
 #include "vector.hpp"
 
-#include <xdiag/math/arma_to_cx.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/format.hpp>
 #include <xdiag/utils/to_string_generic.hpp>
@@ -38,7 +37,7 @@ XDIAG_CATCH
 
 template <> arma::cx_vec Vector::as<arma::cx_vec>() const {
   if (const arma::vec *m = std::get_if<arma::vec>(&vec_)) {
-    return math::to_cx_vec(*m);
+    return arma::conv_to<arma::cx_vec>::from(*m);
   } else {
     return std::get<arma::cx_vec>(vec_);
   }
@@ -91,24 +90,25 @@ Vector Vector::to_real(double tol) const try {
 XDIAG_CATCH
 
 bool Vector::isapprox(Vector const &y, double rtol, double atol) const {
-  return std::visit(utils::overload{
-                        [&](arma::vec const &a, arma::vec const &b) {
-                          return arma::approx_equal(a, b, "both", atol, rtol);
-                        },
-                        [&](arma::vec const &a, arma::cx_vec const &b) {
-                          return arma::approx_equal(math::to_cx_vec(a), b,
-                                                    "both", atol, rtol);
-                        },
-                        [&](arma::cx_vec const &a, arma::vec const &b) {
-                          return arma::approx_equal(a, math::to_cx_vec(b),
-                                                    "both", atol, rtol);
-                        },
-                        [&](arma::cx_vec const &a, arma::cx_vec const &b) {
-                          return arma::approx_equal(a, b, "both", atol, rtol);
-                        },
-                        [&](auto &&a, auto &&b) { return false; },
-                    },
-                    vec_, y.vec_);
+  return std::visit(
+      utils::overload{
+          [&](arma::vec const &a, arma::vec const &b) {
+            return arma::approx_equal(a, b, "both", atol, rtol);
+          },
+          [&](arma::vec const &a, arma::cx_vec const &b) {
+            return arma::approx_equal(arma::conv_to<arma::cx_vec>::from(a), b,
+                                      "both", atol, rtol);
+          },
+          [&](arma::cx_vec const &a, arma::vec const &b) {
+            return arma::approx_equal(a, arma::conv_to<arma::cx_vec>::from(b),
+                                      "both", atol, rtol);
+          },
+          [&](arma::cx_vec const &a, arma::cx_vec const &b) {
+            return arma::approx_equal(a, b, "both", atol, rtol);
+          },
+          [&](auto &&a, auto &&b) { return false; },
+      },
+      vec_, y.vec_);
 }
 
 bool Vector::operator==(Vector const &rhs) const {
@@ -118,10 +118,12 @@ bool Vector::operator!=(Vector const &rhs) const { return !operator==(rhs); }
 
 Vector &Vector::operator+=(Vector const &rhs) {
   std::visit(utils::overload{[&](arma::vec &a, arma::cx_vec b) {
-                               vec_ = arma::cx_vec(math::to_cx_vec(a) + b);
+                               vec_ = arma::cx_vec(
+                                   arma::conv_to<arma::cx_vec>::from(a) + b);
                              },
                              [&](arma::cx_vec &a, arma::vec b) {
-                               vec_ = arma::cx_vec(a + math::to_cx_vec(b));
+                               vec_ = arma::cx_vec(
+                                   a + arma::conv_to<arma::cx_vec>::from(b));
                              },
                              [](auto &&a, auto &&b) { a += b; }},
              vec_, rhs.vec_);
@@ -129,10 +131,12 @@ Vector &Vector::operator+=(Vector const &rhs) {
 }
 Vector &Vector::operator-=(Vector const &rhs) {
   std::visit(utils::overload{[&](arma::vec &a, arma::cx_vec b) {
-                               vec_ = arma::cx_vec(math::to_cx_vec(a) - b);
+                               vec_ = arma::cx_vec(
+                                   arma::conv_to<arma::cx_vec>::from(a) - b);
                              },
                              [&](arma::cx_vec &a, arma::vec b) {
-                               vec_ = arma::cx_vec(a - math::to_cx_vec(b));
+                               vec_ = arma::cx_vec(
+                                   a - arma::conv_to<arma::cx_vec>::from(b));
                              },
                              [](auto &&a, auto &&b) { a -= b; }},
              vec_, rhs.vec_);
