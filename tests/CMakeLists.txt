@@ -105,12 +105,14 @@ set(XDIAG_TESTCASES_SOURCES
 
 set(XDIAG_TEST_DISTRIBUTED_SOURCES
   mpi/test_cdot_distributed.cpp
+  linalg/time_evolution/test_time_evolution_distributed.cpp
   blocks/distributed/test_spinhalf_distributed.cpp
   blocks/distributed/test_spinhalf_distributed_apply.cpp
   blocks/distributed/test_tj_distributed_apply.cpp
   blocks/distributed/test_tj_distributed_raiselower.cpp
   blocks/distributed/test_electron_distributed_apply.cpp
   blocks/distributed/test_electron_distributed_raiselower.cpp
+  
 )
 
 add_executable(tests tests.cpp ${XDIAG_TEST_SOURCES} ${XDIAG_TESTCASES_SOURCES})

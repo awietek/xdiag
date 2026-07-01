@@ -26,13 +26,13 @@ TEST_CASE("state", "[states]") try {
   arma::vec vr = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
   auto psivr = State(block, vr);
   REQUIRE(isreal(psivr));
-  XDIAG_SHOW(psivr.vector());
+  // XDIAG_SHOW(psivr.vector());
   REQUIRE(norm(psivr.vector() - vr) < 1e-12);
 
   arma::vec vi = {6.0, 5.0, 4.0, 3.0, 2.0, 1.0};
   auto vc = arma::cx_vec(vr, vi);
   auto psivc = State(block, vc);
-  XDIAG_SHOW(psivc.vectorC());
+  // XDIAG_SHOW(psivc.vectorC());
   REQUIRE(!isreal(psivc));
   REQUIRE(norm(psivc.vectorC() - vc) < 1e-12);
   REQUIRE(norm(psivc.real().vector() - vr) < 1e-12);

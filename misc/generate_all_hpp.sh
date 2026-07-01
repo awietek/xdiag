@@ -50,9 +50,19 @@ echo "#endif"
 echo
 
 # undef the XDIAG macros (portable: BSD grep has no -P/\K)
-macronames=`grep -rhE '^[[:space:]]*#[[:space:]]*define[[:space:]]+XDIAG_' ../xdiag | sed -E 's/^[[:space:]]*#[[:space:]]*define[[:space:]]+(XDIAG_[A-Za-z0-9_]+).*/\1/' | sort -u`
+macronames=`grep -rhE --include="*.hpp" --exclude="config.hpp" '^[[:space:]]*#[[:space:]]*define[[:space:]]+XDIAG_' ../xdiag | sed -E 's/^[[:space:]]*#[[:space:]]*define[[:space:]]+(XDIAG_[A-Za-z0-9_]+).*/\1/' | sort -u`
 for macro in ${macronames[@]}; do
     if [[ ! "$macro" == "XDIAG_SHOW" ]]; then
 	echo "#undef $macro"
+    fi
+done
+echo
+
+# write list of exported macros
+macronames=`grep -rhE --include="config.hpp" '^[[:space:]]*#[[:space:]]*define[[:space:]]+XDIAG_' ../xdiag | sed -E 's/^[[:space:]]*#[[:space:]]*define[[:space:]]+(XDIAG_[A-Za-z0-9_]+).*/\1/' | sort -u`
+echo "// exported macros:"
+for macro in ${macronames[@]}; do
+    if [[ ! "$macro" == "XDIAG_SHOW" ]]; then
+	echo "// $macro"
     fi
 done

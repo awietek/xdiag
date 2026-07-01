@@ -26,7 +26,7 @@ template <class coeff_t> static double log2abs(coeff_t x) {
 }
 
 template <typename coeff_t>
-arma::Mat<coeff_t> expm(arma::Mat<coeff_t> const &A, coeff_t alpha = 1.) {
+arma::Mat<coeff_t> expm(arma::Mat<coeff_t> const &A, coeff_t alpha) {
   using mat_t = arma::Mat<coeff_t>;
   arma::uword n = A.n_rows;
   assert(n == A.n_cols);
@@ -64,7 +64,6 @@ arma::Mat<coeff_t> expm(arma::Mat<coeff_t> const &A, coeff_t alpha = 1.) {
   return E;
 }
 
-template arma::Mat<double> expm(arma::Mat<double> const &A, double alpha = 1.);
-template arma::Mat<complex> expm(arma::Mat<complex> const &A,
-                                 complex alpha = 1.);
+template arma::Mat<double> expm(arma::Mat<double> const &A, double alpha);
+template arma::Mat<complex> expm(arma::Mat<complex> const &A, complex alpha);
 } // namespace xdiag

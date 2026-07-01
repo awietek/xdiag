@@ -31,14 +31,14 @@ State imaginary_time_evolve(CSRMatrix<idx_t, coeff_t> const &H, State psi,
 }
 XDIAG_CATCH
 
-template State imaginary_time_evolve(CSRMatrix<int32_t, double> const &, State,
-                                     double, double, double);
-template State imaginary_time_evolve(CSRMatrix<int32_t, complex> const &, State,
-                                     double, double, double);
-template State imaginary_time_evolve(CSRMatrix<int64_t, double> const &, State,
-                                     double, double, double);
-template State imaginary_time_evolve(CSRMatrix<int64_t, complex> const &, State,
-                                     double, double, double);
+#define XDIAG_INST(IDX, COEFF)                                                 \
+  template State imaginary_time_evolve(CSRMatrix<IDX, COEFF> const &, State,   \
+                                       double, double, double);
+XDIAG_INST(int32_t, double)
+XDIAG_INST(int32_t, complex)
+XDIAG_INST(int64_t, double)
+XDIAG_INST(int64_t, complex)
+#undef XDIAG_INST
 
 template <typename op_t>
 static void imaginary_time_evolve_inplace(op_t const &H, State &psi,
@@ -64,13 +64,13 @@ void imaginary_time_evolve_inplace(CSRMatrix<idx_t, coeff_t> const &H,
 }
 XDIAG_CATCH
 
-template void imaginary_time_evolve_inplace(CSRMatrix<int32_t, double> const &,
-                                            State &, double, double, double);
-template void imaginary_time_evolve_inplace(CSRMatrix<int32_t, complex> const &,
-                                            State &, double, double, double);
-template void imaginary_time_evolve_inplace(CSRMatrix<int64_t, double> const &,
-                                            State &, double, double, double);
-template void imaginary_time_evolve_inplace(CSRMatrix<int64_t, complex> const &,
-                                            State &, double, double, double);
+#define XDIAG_INST(IDX, COEFF)                                                 \
+  template void imaginary_time_evolve_inplace(CSRMatrix<IDX, COEFF> const &,   \
+                                              State &, double, double, double);
+XDIAG_INST(int32_t, double)
+XDIAG_INST(int32_t, complex)
+XDIAG_INST(int64_t, double)
+XDIAG_INST(int64_t, complex)
+#undef XDIAG_INST
 
 } // namespace xdiag

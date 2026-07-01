@@ -69,7 +69,7 @@ void test_operator_norm_cplx(block_t const &block, op_t const &ops) {
   }
 }
 
-TEST_CASE("norm_estimate", "[algorithms]") try {
+TEST_CASE("norm_estimate", "[linalg]") try {
 
   using namespace xdiag::testcases::spinhalf;
   using xdiag::testcases::electron::get_cyclic_group_irreps_mult;

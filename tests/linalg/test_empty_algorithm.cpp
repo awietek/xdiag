@@ -21,7 +21,7 @@
 
 using namespace xdiag;
 
-TEST_CASE("empty_algorithm", "[algorithm]") try {
+TEST_CASE("empty_algorithm", "[linalg]") try {
   using namespace testcases::spinhalf;
   using testcases::electron::get_cyclic_group_irreps;
   Log("empty algorithms");

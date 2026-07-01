@@ -33,14 +33,14 @@ State time_evolve(CSRMatrix<idx_t, coeff_t> const &H, State psi, double time,
 }
 XDIAG_CATCH
 
-template State time_evolve(CSRMatrix<int32_t, double> const &, State, double,
-                           double, std::string);
-template State time_evolve(CSRMatrix<int32_t, complex> const &, State, double,
-                           double, std::string);
-template State time_evolve(CSRMatrix<int64_t, double> const &, State, double,
-                           double, std::string);
-template State time_evolve(CSRMatrix<int64_t, complex> const &, State, double,
-                           double, std::string);
+#define XDIAG_INST(IDX, COEFF)                                                 \
+  template State time_evolve(CSRMatrix<IDX, COEFF> const &, State, double,     \
+                             double, std::string);
+XDIAG_INST(int32_t, double)
+XDIAG_INST(int32_t, complex)
+XDIAG_INST(int64_t, double)
+XDIAG_INST(int64_t, complex)
+#undef XDIAG_INST
 
 template <typename op_t>
 static void time_evolve_inplace(op_t const &H, State &psi, double time,
@@ -54,7 +54,8 @@ static void time_evolve_inplace(op_t const &H, State &psi, double time,
   } else {
     XDIAG_THROW(
         fmt::format("Invalid time-evolution algorithm specified: \"{}\". Must "
-                    "be one of \"lanczos\" or \"expokit\"."));
+                    "be one of \"lanczos\" or \"expokit\".",
+                    algorithm));
   }
 }
 XDIAG_CATCH
@@ -74,12 +75,13 @@ void time_evolve_inplace(CSRMatrix<idx_t, coeff_t> const &H, State &psi,
 }
 XDIAG_CATCH
 
-template void time_evolve_inplace(CSRMatrix<int32_t, double> const &, State &,
-                                  double, double, std::string);
-template void time_evolve_inplace(CSRMatrix<int32_t, complex> const &, State &,
-                                  double, double, std::string);
-template void time_evolve_inplace(CSRMatrix<int64_t, double> const &, State &,
-                                  double, double, std::string);
-template void time_evolve_inplace(CSRMatrix<int64_t, complex> const &, State &,
-                                  double, double, std::string);
+#define XDIAG_INST(IDX, COEFF)                                                 \
+  template void time_evolve_inplace(CSRMatrix<IDX, COEFF> const &, State &,    \
+                                    double, double, std::string);
+XDIAG_INST(int32_t, double)
+XDIAG_INST(int32_t, complex)
+XDIAG_INST(int64_t, double)
+XDIAG_INST(int64_t, complex)
+#undef XDIAG_INST
+
 } // namespace xdiag

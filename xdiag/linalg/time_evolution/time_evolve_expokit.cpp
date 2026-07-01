@@ -45,18 +45,15 @@ time_evolve_expokit(CSRMatrix<idx_t, coeff_t> const &ops, State state,
 }
 XDIAG_CATCH
 
-template TimeEvolveExpokitResult
-time_evolve_expokit(CSRMatrix<int32_t, double> const &, State, double, double,
-                    int64_t, double, int64_t);
-template TimeEvolveExpokitResult
-time_evolve_expokit(CSRMatrix<int32_t, complex> const &, State, double, double,
-                    int64_t, double, int64_t);
-template TimeEvolveExpokitResult
-time_evolve_expokit(CSRMatrix<int64_t, double> const &, State, double, double,
-                    int64_t, double, int64_t);
-template TimeEvolveExpokitResult
-time_evolve_expokit(CSRMatrix<int64_t, complex> const &, State, double, double,
-                    int64_t, double, int64_t);
+#define XDIAG_INST(IDX, COEFF)                                                 \
+  template TimeEvolveExpokitResult time_evolve_expokit(                        \
+      CSRMatrix<IDX, COEFF> const &, State, double, double, int64_t, double,   \
+      int64_t);
+XDIAG_INST(int32_t, double)
+XDIAG_INST(int32_t, complex)
+XDIAG_INST(int64_t, double)
+XDIAG_INST(int64_t, complex)
+#undef XDIAG_INST
 
 template <typename op_t>
 TimeEvolveExpokitInplaceResult
@@ -143,17 +140,14 @@ time_evolve_expokit_inplace(CSRMatrix<idx_t, coeff_t> const &ops, State &state,
 }
 XDIAG_CATCH
 
-template TimeEvolveExpokitInplaceResult
-time_evolve_expokit_inplace(CSRMatrix<int32_t, double> const &, State &, double,
-                            double, int64_t, double, int64_t);
-template TimeEvolveExpokitInplaceResult
-time_evolve_expokit_inplace(CSRMatrix<int32_t, complex> const &, State &,
-                            double, double, int64_t, double, int64_t);
-template TimeEvolveExpokitInplaceResult
-time_evolve_expokit_inplace(CSRMatrix<int64_t, double> const &, State &, double,
-                            double, int64_t, double, int64_t);
-template TimeEvolveExpokitInplaceResult
-time_evolve_expokit_inplace(CSRMatrix<int64_t, complex> const &, State &,
-                            double, double, int64_t, double, int64_t);
+#define XDIAG_INST(IDX, COEFF)                                                 \
+  template TimeEvolveExpokitInplaceResult time_evolve_expokit_inplace(         \
+      CSRMatrix<IDX, COEFF> const &, State &, double, double, int64_t, double, \
+      int64_t);
+XDIAG_INST(int32_t, double)
+XDIAG_INST(int32_t, complex)
+XDIAG_INST(int64_t, double)
+XDIAG_INST(int64_t, complex)
+#undef XDIAG_INST
 
 } // namespace xdiag

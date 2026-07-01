@@ -73,7 +73,7 @@ static EigsLanczosResult eigs_lanczos(op_t const &ops, State const &state0,
                 "constructed by e.g. an annihilation operator)");
   }
   if (!ishermitian(ops, state0.block())) {
-    XDIAG_THROW("Input OpSum is not hermitian");
+    XDIAG_THROW("Input OpSum is not Hermitian");
   }
 
   // store initial state, such that it can be used again in second run

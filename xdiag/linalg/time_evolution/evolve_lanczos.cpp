@@ -16,6 +16,32 @@
 
 namespace xdiag {
 
+// Sets up the multiply/dot callbacks for a given coefficient type and applies
+// exp(tau * H) to the vector v via the Krylov routine exp_sym_v. Shared by the
+// real (coeff_t = double) and complex (coeff_t = complex) code paths.
+template <typename coeff_t, typename op_t>
+static EvolveLanczosInplaceResult
+run_exp_sym_v(op_t const &H, Block const &block, arma::Col<coeff_t> &v,
+              coeff_t tau, double precision, double shift, bool normalize,
+              int64_t max_iterations, double deflation_tol) {
+  int64_t iter = 1;
+  auto mult = [&iter, &H, &block](arma::Col<coeff_t> const &v,
+                                  arma::Col<coeff_t> &w) {
+    auto ta = rightnow();
+    apply(H, block, v, block, w);
+    Log(2, "Lanczos iteration {}", iter);
+    timing(ta, rightnow(), "MVM", 1);
+    ++iter;
+  };
+  auto dot_f = [&block](arma::Col<coeff_t> const &v,
+                        arma::Col<coeff_t> const &w) {
+    return math::dot(block, v, w);
+  };
+  exp_sym_v_result_t r = exp_sym_v(mult, dot_f, v, tau, precision, shift,
+                                   normalize, max_iterations, deflation_tol);
+  return {r.alphas, r.betas, r.eigenvalues, r.niterations, r.criterion};
+}
+
 template <typename op_t>
 static EvolveLanczosResult
 evolve_lanczos(op_t const &H, State psi, double tau, double precision,
@@ -48,18 +74,15 @@ evolve_lanczos(CSRMatrix<idx_t, coeff_t> const &H, State psi, double tau,
 }
 XDIAG_CATCH
 
-template EvolveLanczosResult evolve_lanczos(CSRMatrix<int32_t, double> const &,
-                                            State, double, double, double, bool,
-                                            int64_t, double);
-template EvolveLanczosResult evolve_lanczos(CSRMatrix<int32_t, complex> const &,
-                                            State, double, double, double, bool,
-                                            int64_t, double);
-template EvolveLanczosResult evolve_lanczos(CSRMatrix<int64_t, double> const &,
-                                            State, double, double, double, bool,
-                                            int64_t, double);
-template EvolveLanczosResult evolve_lanczos(CSRMatrix<int64_t, complex> const &,
-                                            State, double, double, double, bool,
-                                            int64_t, double);
+#define XDIAG_INST(IDX, COEFF)                                                 \
+  template EvolveLanczosResult evolve_lanczos(CSRMatrix<IDX, COEFF> const &,   \
+                                              State, double, double, double,   \
+                                              bool, int64_t, double);
+XDIAG_INST(int32_t, double)
+XDIAG_INST(int32_t, complex)
+XDIAG_INST(int64_t, double)
+XDIAG_INST(int64_t, complex)
+#undef XDIAG_INST
 
 template <typename op_t>
 static EvolveLanczosResult
@@ -91,18 +114,15 @@ evolve_lanczos(CSRMatrix<idx_t, coeff_t> const &H, State psi, complex tau,
 }
 XDIAG_CATCH
 
-template EvolveLanczosResult evolve_lanczos(CSRMatrix<int32_t, double> const &,
-                                            State, complex, double, double,
-                                            bool, int64_t, double);
-template EvolveLanczosResult evolve_lanczos(CSRMatrix<int32_t, complex> const &,
-                                            State, complex, double, double,
-                                            bool, int64_t, double);
-template EvolveLanczosResult evolve_lanczos(CSRMatrix<int64_t, double> const &,
-                                            State, complex, double, double,
-                                            bool, int64_t, double);
-template EvolveLanczosResult evolve_lanczos(CSRMatrix<int64_t, complex> const &,
-                                            State, complex, double, double,
-                                            bool, int64_t, double);
+#define XDIAG_INST(IDX, COEFF)                                                 \
+  template EvolveLanczosResult evolve_lanczos(CSRMatrix<IDX, COEFF> const &,   \
+                                              State, complex, double, double,  \
+                                              bool, int64_t, double);
+XDIAG_INST(int32_t, double)
+XDIAG_INST(int32_t, complex)
+XDIAG_INST(int64_t, double)
+XDIAG_INST(int64_t, complex)
+#undef XDIAG_INST
 
 template <typename op_t>
 static EvolveLanczosInplaceResult
@@ -133,24 +153,10 @@ evolve_lanczos_inplace(op_t const &H, State &psi, double tau, double precision,
 
   // Real time evolution is possible
   if (psi.isreal() && isreal(H)) {
-    int iter = 1;
-    auto mult = [&iter, &H, &block](arma::vec const &v, arma::vec &w) {
-      auto ta = rightnow();
-      apply(H, block, v, block, w);
-      Log(2, "Lanczos iteration {}", iter);
-      timing(ta, rightnow(), "MVM", 1);
-      ++iter;
-    };
-    auto dot_f = [&block](arma::vec const &v, arma::vec const &w) {
-      return math::dot(block, v, w);
-    };
-
     arma::vec v = psi.vector(0, false);
-    auto r = exp_sym_v(mult, dot_f, v, tau, precision, shift, normalize,
-                       max_iterations, deflation_tol);
-    return {r.alphas, r.betas, r.eigenvalues, r.niterations, r.criterion};
-    // Refer to complex time evolution
-  } else {
+    return run_exp_sym_v(H, block, v, tau, precision, shift, normalize,
+                         max_iterations, deflation_tol);
+  } else { // Refer to complex time evolution
     return evolve_lanczos_inplace(H, psi, complex(tau), precision, shift,
                                   normalize, max_iterations, deflation_tol);
   }
@@ -178,21 +184,18 @@ evolve_lanczos_inplace(CSRMatrix<idx_t, coeff_t> const &H, State &psi,
 }
 XDIAG_CATCH
 
-template EvolveLanczosInplaceResult
-evolve_lanczos_inplace(CSRMatrix<int32_t, double> const &, State &, double,
-                       double, double, bool, int64_t, double);
-template EvolveLanczosInplaceResult
-evolve_lanczos_inplace(CSRMatrix<int32_t, complex> const &, State &, double,
-                       double, double, bool, int64_t, double);
-template EvolveLanczosInplaceResult
-evolve_lanczos_inplace(CSRMatrix<int64_t, double> const &, State &, double,
-                       double, double, bool, int64_t, double);
-template EvolveLanczosInplaceResult
-evolve_lanczos_inplace(CSRMatrix<int64_t, complex> const &, State &, double,
-                       double, double, bool, int64_t, double);
+#define XDIAG_INST(IDX, COEFF)                                                 \
+  template EvolveLanczosInplaceResult evolve_lanczos_inplace(                  \
+      CSRMatrix<IDX, COEFF> const &, State &, double, double, double, bool,    \
+      int64_t, double);
+XDIAG_INST(int32_t, double)
+XDIAG_INST(int32_t, complex)
+XDIAG_INST(int64_t, double)
+XDIAG_INST(int64_t, complex)
+#undef XDIAG_INST
 
 template <typename op_t>
-EvolveLanczosInplaceResult
+static EvolveLanczosInplaceResult
 evolve_lanczos_inplace(op_t const &H, State &psi, complex tau, double precision,
                        double shift, bool normalize, int64_t max_iterations,
                        double deflation_tol) try {
@@ -220,21 +223,9 @@ evolve_lanczos_inplace(op_t const &H, State &psi, complex tau, double precision,
   }
   auto const &block = psi.block();
 
-  int iter = 1;
-  auto mult = [&iter, &H, &block](arma::cx_vec const &v, arma::cx_vec &w) {
-    auto ta = rightnow();
-    apply(H, block, v, block, w);
-    Log(2, "Lanczos iteration {}", iter);
-    timing(ta, rightnow(), "MVM", 1);
-    ++iter;
-  };
-  auto dot_f = [&block](arma::cx_vec const &v, arma::cx_vec const &w) {
-    return math::dot(block, v, w);
-  };
   arma::cx_vec v = psi.vectorC(0, false);
-  auto r = exp_sym_v(mult, dot_f, v, tau, precision, shift, normalize,
-                     max_iterations, deflation_tol);
-  return {r.alphas, r.betas, r.eigenvalues, r.niterations, r.criterion};
+  return run_exp_sym_v(H, block, v, tau, precision, shift, normalize,
+                       max_iterations, deflation_tol);
 }
 XDIAG_CATCH
 
@@ -259,17 +250,14 @@ evolve_lanczos_inplace(CSRMatrix<idx_t, coeff_t> const &H, State &psi,
 }
 XDIAG_CATCH
 
-template EvolveLanczosInplaceResult
-evolve_lanczos_inplace(CSRMatrix<int32_t, double> const &, State &, complex,
-                       double, double, bool, int64_t, double);
-template EvolveLanczosInplaceResult
-evolve_lanczos_inplace(CSRMatrix<int32_t, complex> const &, State &, complex,
-                       double, double, bool, int64_t, double);
-template EvolveLanczosInplaceResult
-evolve_lanczos_inplace(CSRMatrix<int64_t, double> const &, State &, complex,
-                       double, double, bool, int64_t, double);
-template EvolveLanczosInplaceResult
-evolve_lanczos_inplace(CSRMatrix<int64_t, complex> const &, State &, complex,
-                       double, double, bool, int64_t, double);
+#define XDIAG_INST(IDX, COEFF)                                                 \
+  template EvolveLanczosInplaceResult evolve_lanczos_inplace(                  \
+      CSRMatrix<IDX, COEFF> const &, State &, complex, double, double, bool,   \
+      int64_t, double);
+XDIAG_INST(int32_t, double)
+XDIAG_INST(int32_t, complex)
+XDIAG_INST(int64_t, double)
+XDIAG_INST(int64_t, complex)
+#undef XDIAG_INST
 
 } // namespace xdiag

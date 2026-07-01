@@ -131,8 +131,8 @@ eigvals_lanczos_inplace(op_t const &ops, State &psi0, int64_t neigvals,
   }
 
   if (!ishermitian(ops, psi0.block())) {
-    XDIAG_THROW("Input operator is not hermitian. The Lanczos algorithm can "
-                "only be applied to hermitian operators.");
+    XDIAG_THROW("Input operator is not Hermitian. The Lanczos algorithm can "
+                "only be applied to Hermitian operators.");
   }
 
   auto const &block = psi0.block();

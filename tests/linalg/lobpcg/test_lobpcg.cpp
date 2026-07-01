@@ -37,8 +37,8 @@ template <typename idx_t, typename coeff_t> void test_lobpcg_csr_matrix() {
   int64_t ncols = 5;
   auto X0 = arma::mat(nrows, ncols, arma::fill::randn);
 
-  XDIAG_SHOW(eigval0(ops, block));
-  Log.set_verbosity(1);
+  // XDIAG_SHOW(eigval0(ops, block));
+  // Log.set_verbosity(1);
 
   lobpcg::lobpcg(mult, X0, 1e-6, 30, true, 20);
 }

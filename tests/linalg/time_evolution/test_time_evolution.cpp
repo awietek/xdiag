@@ -228,12 +228,15 @@ TEST_CASE("tj_complex_timeevo", "[time_evolution]") try {
       int right = y * L + nx;
       int top = ny * L + x;
       ops += "T" * Op("Hop", {site, right});
+      ops += "Tasym" * Op("HopAsym", {site, right});
       ops += "J" * Op("tJSzSz", {site, right});
       ops += "T" * Op("Hop", {site, top});
+      ops += "Tasym" * Op("HopAsym", {site, top});
       ops += "J" * Op("tJSzSz", {site, top});
     }
   }
-  ops["T"] = (std::complex<double>)(1.0 + 0.2i);
+  ops["T"] = 1.0;
+  ops["Tasym"] = std::complex<double>(0.0, 0.2);
   ops["J"] = 0.4;
 
   // Create initial state
@@ -265,13 +268,13 @@ TEST_CASE("tj_complex_timeevo", "[time_evolution]") try {
   for (auto time : times) {
     std::vector<double> tols = {1e-2, 1e-6, 1e-10, 1e-12};
     for (auto tol : tols) {
-      Log("time: {}, tol: {}", time, tol);
-      tic();
+      // Log("time: {}, tol: {}", time, tol);
+      // tic();
       auto psi = time_evolve(ops, psi_0, time, tol, "expokit");
-      toc("OpSum");
-      tic();
+      // toc("OpSum");
+      // tic();
       auto psicsr = time_evolve(csr, psi_0, time, tol, "expokit");
-      toc("CSRMatrix");
+      // toc("CSRMatrix");
 
       cx_vec psi2 = expm(cx_mat(-1.0i * time * H)) * psi_0.vectorC();
 
@@ -298,13 +301,13 @@ TEST_CASE("tj_complex_timeevo", "[time_evolution]") try {
   for (auto time : times) {
     std::vector<double> tols = {1e-2, 1e-6, 1e-10, 1e-12};
     for (auto tol : tols) {
-      Log("time: {}, tol: {}", time, tol);
-      tic();
+      // Log("time: {}, tol: {}", time, tol);
+      // tic();
       auto psi = time_evolve(ops, psi_0, time, tol, "lanczos");
-      toc("OpSum");
-      tic();
+      // toc("OpSum");
+      // tic();
       auto psicsr = time_evolve(csr, psi_0, time, tol, "lanczos");
-      toc("CSRMatrix");
+      // toc("CSRMatrix");
 
       cx_vec psi2 = expm(cx_mat(-1.0i * time * H)) * psi_0.vectorC();
 

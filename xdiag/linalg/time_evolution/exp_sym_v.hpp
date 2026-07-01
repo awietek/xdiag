@@ -25,30 +25,22 @@ exp_sym_v(multiply_f mult, dot_f dot, arma::Col<coeff_t> &X, coeff_t tau,
           double precision = 1e-12, double shift = 0, bool normalize = false,
           int64_t max_iterations = 1000, double deflation_tol = 1e-7) try {
 
-  auto norm_f = [&dot](arma::Col<coeff_t> const &v) {
-    return std::sqrt(xdiag::real(dot(v, v)));
-  };
+  double nrm = lanczos_norm(X, dot);
+  arma::Col<coeff_t> v0 = X;
 
-  double norm = norm_f(X);
-  auto v0 = X;
-
-  auto converged = [precision, tau, norm](Tmatrix const &tmat) {
-    return lanczos::converged_time_evolution(tmat, tau, precision, norm);
+  auto converged = [precision, tau, nrm](Tmatrix const &tmat) {
+    return lanczos::converged_time_evolution(tmat, tau, precision, nrm);
   };
 
   auto operation_void = [](arma::Col<coeff_t> const &) {};
 
-  auto r = lanczos::lanczos(mult, dot, converged, operation_void, v0,
-                            max_iterations, deflation_tol);
+  lanczos::lanczos_result_t r = lanczos::lanczos(
+      mult, dot, converged, operation_void, v0, max_iterations, deflation_tol);
 
-  double e0 = r.eigenvalues(0);
-
-  // Compute the tridiagonal matrix
-  arma::mat tmat = arma::diagmat(r.alphas);
-  if (r.alphas.n_rows > 1) {
-    tmat += arma::diagmat(r.betas.head(r.betas.size() - 1), 1) +
-            arma::diagmat(r.betas.head(r.betas.size() - 1), -1);
-  }
+  // Reconstruct the tridiagonal matrix from the recurrence coefficients
+  Tmatrix tmatrix(arma::conv_to<std::vector<double>>::from(r.alphas),
+                  arma::conv_to<std::vector<double>>::from(r.betas));
+  arma::mat tmat = tmatrix.mat();
 
   // Subtract shift from diagonal
   if (shift != 0.) {
@@ -76,10 +68,10 @@ exp_sym_v(multiply_f mult, dot_f dot, arma::Col<coeff_t> &X, coeff_t tau,
                    deflation_tol);
 
   if (!normalize) {
-    X *= norm;
+    X *= nrm;
   } else {
-    double nrm = norm_f(X);
-    X /= nrm;
+    double nrm_final = lanczos_norm(X, dot);
+    X /= nrm_final;
   }
 
   return {r.alphas, r.betas, r.eigenvalues, r.niterations, r.criterion};

@@ -18,7 +18,7 @@
 #include <xdiag/states/state.hpp>
 #include <xdiag/utils/logger.hpp>
 
-TEST_CASE("exp_sym_v", "[algorithms]") try {
+TEST_CASE("exp_sym_v", "[linalg]") try {
   using namespace xdiag;
   for (int64_t N = 2; N <= 10; ++N) {
     Log("Testing exp_sym_v on all-to-all HB model, N={}", N);
