@@ -25,9 +25,9 @@ lanczos_result_t lanczos(mult_f mult, dot_f dot, converged_f converged,
                          operation_f operation, arma::Col<coeff_t> &v0,
                          int max_iterations = 1000,
                          double deflation_tol = 1e-7) try {
-  auto norm = [&dot](arma::Col<coeff_t> const &v) {
-    return std::sqrt(xdiag::real(dot(v, v)));
-  };
+  // Below this norm the start vector is treated as zero (unusable). This is a
+  // separate notion from deflation_tol, which detects an exhausted sequence.
+  constexpr double start_vector_tol = 1e-12;
   auto tmatrix = Tmatrix();
 
   // Initialize Lanczos vectors and tmatrix
@@ -45,8 +45,8 @@ lanczos_result_t lanczos(mult_f mult, dot_f dot, converged_f converged,
   double beta = 0.;
 
   // Normalize start vector or return if norm is zero
-  coeff_t v1_norm = norm(v1);
-  if (std::abs(v1_norm) > 1e-12) {
+  double v1_norm = lanczos_norm(v1, dot);
+  if (v1_norm > start_vector_tol) {
     v1 /= v1_norm;
   } else {
     return lanczos_result_t();

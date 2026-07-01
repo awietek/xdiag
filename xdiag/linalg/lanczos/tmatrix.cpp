@@ -4,7 +4,10 @@
 
 #include "tmatrix.hpp"
 
+#include <algorithm>
 #include <cassert>
+#include <string>
+
 #include <xdiag/utils/logger.hpp>
 
 namespace xdiag {
@@ -92,18 +95,16 @@ std::pair<arma::vec, arma::mat> Tmatrix::eigen() const try {
 }
 
 void Tmatrix::print_log() const try {
-  auto eigs = eigenvalues();
+  arma::vec eigs = eigenvalues();
   double alpha = alphas_[size() - 1];
   double beta = betas_[size() - 1];
   Log(2, "alpha: {:.16f}", alpha);
   Log(2, "beta: {:.16f}", beta);
-  if (eigs.size() == 1) {
-    Log(2, "eigs: {:.16f}", eigs(0));
-  } else if (eigs.size() == 2) {
-    Log(2, "eigs: {:.16f} {:.16f}", eigs(0), eigs(1));
-  } else {
-    Log(2, "eigs: {:.16f} {:.16f} {:.16f}", eigs(0), eigs(1), eigs(2));
+  std::string eigs_str;
+  for (int64_t i = 0; i < std::min<int64_t>(3, eigs.size()); ++i) {
+    eigs_str += fmt::format("{:.16f} ", eigs(i));
   }
+  Log(2, "eigs: {}", eigs_str);
 } catch (...) {
   XDIAG_THROW("cannot logging of Tmatrix");
 }

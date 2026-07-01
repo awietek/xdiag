@@ -4,19 +4,54 @@
 
 #include "eigs_lanczos.hpp"
 
+#include <xdiag/algebra/ishermitian.hpp>
+#include <xdiag/kernels/apply.hpp>
+#include <xdiag/kernels/sparse/apply.hpp>
 #include <xdiag/linalg/lanczos/eigvals_lanczos.hpp>
 #include <xdiag/linalg/lanczos/lanczos.hpp>
 #include <xdiag/linalg/lanczos/lanczos_convergence.hpp>
+#include <xdiag/math/complex.hpp>
 #include <xdiag/math/dot.hpp>
-#include <xdiag/kernels/apply.hpp>
-#include <xdiag/kernels/sparse/apply.hpp>
-#include <xdiag/algebra/ishermitian.hpp>
 #include <xdiag/states/fill.hpp>
 #include <xdiag/states/random_state.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/timing.hpp>
 
 namespace xdiag {
+
+// Re-runs the Lanczos iteration for a given coefficient type, accumulating the
+// eigenvectors on the fly via the "operation" callback. The tridiagonal
+// eigenvectors "revecs" project each Lanczos vector onto the wanted Ritz
+// vectors. Shared by the real (coeff_t = double) and complex code paths.
+template <typename coeff_t, typename op_t>
+static void run_eigs_lanczos(op_t const &ops, Block const &block,
+                             arma::Col<coeff_t> &v0, arma::mat const &revecs,
+                             int64_t neigvals, int64_t max_iterations,
+                             double deflation_tol, State &eigenvectors) {
+  int64_t iter = 1;
+  auto mult = [&](arma::Col<coeff_t> const &v, arma::Col<coeff_t> &w) {
+    auto ta = rightnow();
+    apply(ops, block, v, block, w);
+    Log(1, "Lanczos iteration {}", iter);
+    timing(ta, rightnow(), "MVM", 1);
+    ++iter;
+  };
+  auto dotf = [&](arma::Col<coeff_t> const &v, arma::Col<coeff_t> const &w) {
+    return math::dot(block, v, w);
+  };
+  auto operation = [&](arma::Col<coeff_t> const &v) {
+    auto coeffs = revecs.submat(iter - 1, 0, iter - 1, neigvals - 1);
+    if constexpr (isreal<coeff_t>()) {
+      eigenvectors.matrix(false) += arma::kron(v, coeffs);
+    } else {
+      eigenvectors.matrixC(false) += arma::kron(v, coeffs);
+    }
+  };
+  // no convergence check: perform a fixed number of iterations
+  auto converged = [](Tmatrix const &) -> bool { return false; };
+  lanczos::lanczos(mult, dotf, converged, operation, v0, max_iterations,
+                   deflation_tol);
+}
 
 template <typename op_t>
 static EigsLanczosResult eigs_lanczos(op_t const &ops, State const &state0,
@@ -48,12 +83,11 @@ static EigsLanczosResult eigs_lanczos(op_t const &ops, State const &state0,
   auto r = eigvals_lanczos_inplace(ops, state1, neigvals, precision,
                                    max_iterations, deflation_tol);
 
-  // Perform second run to compute the eigenvectors
-  arma::mat tmat = arma::diagmat(r.alphas);
-  if (r.alphas.n_rows > 1) {
-    tmat += arma::diagmat(r.betas.head(r.betas.size() - 1), 1) +
-            arma::diagmat(r.betas.head(r.betas.size() - 1), -1);
-  }
+  // Perform second run to compute the eigenvectors. The tridiagonal T-matrix
+  // is reconstructed from the recurrence coefficients (cf. Tmatrix::mat()).
+  Tmatrix tmatrix(arma::conv_to<std::vector<double>>::from(r.alphas),
+                  arma::conv_to<std::vector<double>>::from(r.betas));
+  arma::mat tmat = tmatrix.mat();
 
   arma::vec reigs;
   arma::mat revecs;
@@ -63,54 +97,19 @@ static EigsLanczosResult eigs_lanczos(op_t const &ops, State const &state0,
     XDIAG_THROW("Error diagonalizing tridiagonal matrix");
   }
 
-  // now we prepare second run, no convergence is checked, just fixed number
-  // of iterations is performed
-  auto converged = [](Tmatrix const &) -> bool { return false; };
+  // Second run: no convergence is checked, just a fixed number of iterations
   auto const &block = state0.block();
   State eigenvectors(block, isreal(ops), neigvals);
   state1 = state0;
-  int64_t iter = 1;
 
   if (isreal(ops) && isreal(block) && isreal(state1)) { // Real Lanczos
     arma::vec v0 = state1.vector(0, false);
-    auto mult = [&iter, &ops, &block](arma::vec const &v, arma::vec &w) {
-      auto ta = rightnow();
-      apply(ops, block, v, block, w);
-      Log(1, "Lanczos iteration {}", iter);
-      timing(ta, rightnow(), "MVM", 1);
-      ++iter;
-    };
-    auto dotf = [&block](arma::vec const &v, arma::vec const &w) {
-      return math::dot(block, v, w);
-    };
-    auto operation = [&eigenvectors, &revecs, &iter,
-                      neigvals](arma::vec const &v) {
-      eigenvectors.matrix(false) +=
-          kron(v, revecs.submat(iter - 1, 0, iter - 1, neigvals - 1));
-    };
-    lanczos::lanczos(mult, dotf, converged, operation, v0, r.niterations,
-                     deflation_tol);
-
+    run_eigs_lanczos(ops, block, v0, revecs, neigvals, r.niterations,
+                     deflation_tol, eigenvectors);
   } else { // Complex Lanczos
     arma::cx_vec v0 = state1.vectorC(0, false);
-    auto mult = [&iter, &ops, &block](arma::cx_vec const &v, arma::cx_vec &w) {
-      auto ta = rightnow();
-      apply(ops, block, v, block, w);
-      Log(1, "Lanczos iteration (rerun) {}", iter);
-      timing(ta, rightnow(), "MVM", 1);
-      ++iter;
-    };
-    auto dotf = [&block](arma::cx_vec const &v, arma::cx_vec const &w) {
-      return math::dot(block, v, w);
-    };
-    auto operation = [&eigenvectors, &revecs, &iter,
-                      neigvals](arma::cx_vec const &v) {
-      eigenvectors.matrixC(false) +=
-          kron(v, revecs.submat(iter - 1, 0, iter - 1, neigvals - 1));
-    };
-
-    lanczos::lanczos(mult, dotf, converged, operation, v0, r.niterations,
-                     deflation_tol);
+    run_eigs_lanczos(ops, block, v0, revecs, neigvals, r.niterations,
+                     deflation_tol, eigenvectors);
   }
 
   return {r.alphas,     r.betas,       r.eigenvalues,
@@ -172,47 +171,19 @@ EigsLanczosResult eigs_lanczos(CSRMatrix<idx_t, coeff_t> const &ops,
 }
 XDIAG_CATCH
 
-// Template instantiations
+// Template instantiations for every (idx_t, coeff_t) sparse-matrix combination
+#define XDIAG_INST(IDX, COEFF)                                                 \
+  template EigsLanczosResult eigs_lanczos(CSRMatrix<IDX, COEFF> const &,       \
+                                          Block const &, int64_t, double,      \
+                                          int64_t, double, int64_t);           \
+  template EigsLanczosResult eigs_lanczos(CSRMatrix<IDX, COEFF> const &,       \
+                                          State const &, int64_t, double,      \
+                                          int64_t, double);
 
-template EigsLanczosResult
-eigs_lanczos(CSRMatrix<int32_t, double> const &ops, Block const &block,
-             int64_t neigvals, double precision, int64_t max_iterations,
-             double deflation_tol, int64_t random_seed);
-template EigsLanczosResult
-eigs_lanczos(CSRMatrix<int32_t, complex> const &ops, Block const &block,
-             int64_t neigvals, double precision, int64_t max_iterations,
-             double deflation_tol, int64_t random_seed);
-template EigsLanczosResult
-eigs_lanczos(CSRMatrix<int64_t, double> const &ops, Block const &block,
-             int64_t neigvals, double precision, int64_t max_iterations,
-             double deflation_tol, int64_t random_seed);
-template EigsLanczosResult
-eigs_lanczos(CSRMatrix<int64_t, complex> const &ops, Block const &block,
-             int64_t neigvals, double precision, int64_t max_iterations,
-             double deflation_tol, int64_t random_seed);
+XDIAG_INST(int32_t, double)
+XDIAG_INST(int32_t, complex)
+XDIAG_INST(int64_t, double)
+XDIAG_INST(int64_t, complex)
+#undef XDIAG_INST
 
-template EigsLanczosResult eigs_lanczos(CSRMatrix<int32_t, double> const
-&ops,
-                                        State const &state0, int64_t
-                                        neigvals, double precision, int64_t
-                                        max_iterations, double
-                                        deflation_tol);
-template EigsLanczosResult eigs_lanczos(CSRMatrix<int32_t, complex> const
-&ops,
-                                        State const &state0, int64_t
-                                        neigvals, double precision, int64_t
-                                        max_iterations, double
-                                        deflation_tol);
-template EigsLanczosResult eigs_lanczos(CSRMatrix<int64_t, double> const
-&ops,
-                                        State const &state0, int64_t
-                                        neigvals, double precision, int64_t
-                                        max_iterations, double
-                                        deflation_tol);
-template EigsLanczosResult eigs_lanczos(CSRMatrix<int64_t, complex> const
-&ops,
-                                        State const &state0, int64_t
-                                        neigvals, double precision, int64_t
-                                        max_iterations, double
-                                        deflation_tol);
 } // namespace xdiag

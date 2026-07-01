@@ -20,6 +20,31 @@
 
 namespace xdiag {
 
+// Sets up the multiply/dot/operation callbacks for a given coefficient type
+// and runs the bare Lanczos iteration. Shared by the real (coeff_t = double)
+// and complex (coeff_t = complex) code paths.
+template <typename coeff_t, typename op_t, typename converged_f>
+static lanczos::lanczos_result_t
+run_eigvals_lanczos(op_t const &ops, Block const &block, arma::Col<coeff_t> &v0,
+                    converged_f converged, int64_t max_iterations,
+                    double deflation_tol) {
+  int64_t iter = 1;
+  auto mult = [&](arma::Col<coeff_t> const &v, arma::Col<coeff_t> &w) {
+    auto ta = rightnow();
+    apply(ops, block, v, block, w);
+    Log(1, "Lanczos iteration {}", iter);
+    timing(ta, rightnow(), "MVM", 1);
+    ++iter;
+  };
+  auto operation = [](arma::Col<coeff_t> const &) {};
+  // different dot product for normal and distributed blocks
+  auto dotf = [&](arma::Col<coeff_t> const &v, arma::Col<coeff_t> const &w) {
+    return math::dot(block, v, w);
+  };
+  return lanczos::lanczos(mult, dotf, converged, operation, v0, max_iterations,
+                          deflation_tol);
+}
+
 ///////////////////////////////////////////////////////////////
 // Routine with random state initialization
 
@@ -118,41 +143,15 @@ eigvals_lanczos_inplace(op_t const &ops, State &psi0, int64_t neigvals,
   };
 
   lanczos::lanczos_result_t r;
-  int64_t iter = 1;
-  if (isreal(ops) && isreal(block) && isreal(psi0)) { // Real Lanczos algorithm
-
+  if (real) {                             // Real Lanczos algorithm
     arma::vec v0 = psi0.vector(0, false); // not copied
-    auto mult = [&iter, &ops, &block](arma::vec const &v, arma::vec &w) {
-      auto ta = rightnow();
-      apply(ops, block, v, block, w);
-      Log(1, "Lanczos iteration {}", iter);
-      timing(ta, rightnow(), "MVM", 1);
-      ++iter;
-    };
-    auto operation = [](arma::vec const &) {};
-    auto dotf = [&block](arma::vec const &v, arma::vec const &w) {
-      return math::dot(block, v, w);
-    }; // different dot product for normal and distributed blocks
-
-    r = lanczos::lanczos(mult, dotf, converged, operation, v0, max_iterations,
-                         deflation_tol);
+    r = run_eigvals_lanczos(ops, block, v0, converged, max_iterations,
+                            deflation_tol);
   } else { // Complex Lanczos algorithm
     psi0.make_complex();
-    arma::cx_vec v0 = psi0.vectorC(0, false);
-    auto mult = [&iter, &ops, &block](arma::cx_vec const &v, arma::cx_vec &w) {
-      auto ta = rightnow();
-      apply(ops, block, v, block, w);
-      Log(1, "Lanczos iteration {}", iter);
-      timing(ta, rightnow(), "MVM", 1);
-      ++iter;
-    };
-    auto operation = [](arma::cx_vec const &) {};
-    auto dotf = [&block](arma::cx_vec const &v, arma::cx_vec const &w) {
-      return math::dot(block, v, w);
-    }; // different dot product for normal and distributed blocks
-
-    r = lanczos::lanczos(mult, dotf, converged, operation, v0, max_iterations,
-                         deflation_tol);
+    arma::cx_vec v0 = psi0.vectorC(0, false); // not copied
+    r = run_eigvals_lanczos(ops, block, v0, converged, max_iterations,
+                            deflation_tol);
   }
   return {r.alphas, r.betas, r.eigenvalues, r.niterations, r.criterion};
 }
@@ -177,43 +176,21 @@ eigvals_lanczos_inplace(CSRMatrix<idx_t, coeff_t> const &ops, State &psi0,
 }
 XDIAG_CATCH
 
-// Template Instantiations
-template EigvalsLanczosResult
-eigvals_lanczos(CSRMatrix<int32_t, double> const &, Block const &, int64_t,
-                double, int64_t, double, int64_t);
-template EigvalsLanczosResult
-eigvals_lanczos(CSRMatrix<int32_t, complex> const &, Block const &, int64_t,
-                double, int64_t, double, int64_t);
-template EigvalsLanczosResult
-eigvals_lanczos(CSRMatrix<int64_t, double> const &, Block const &, int64_t,
-                double, int64_t, double, int64_t);
-template EigvalsLanczosResult
-eigvals_lanczos(CSRMatrix<int64_t, complex> const &, Block const &, int64_t,
-                double, int64_t, double, int64_t);
+// Template instantiations for every (idx_t, coeff_t) sparse-matrix combination
+#define XDIAG_INST(IDX, COEFF)                                                 \
+  template EigvalsLanczosResult eigvals_lanczos(                               \
+      CSRMatrix<IDX, COEFF> const &, Block const &, int64_t, double, int64_t,  \
+      double, int64_t);                                                        \
+  template EigvalsLanczosResult eigvals_lanczos(                               \
+      CSRMatrix<IDX, COEFF> const &, State, int64_t, double, int64_t, double); \
+  template EigvalsLanczosResult eigvals_lanczos_inplace(                       \
+      CSRMatrix<IDX, COEFF> const &, State &, int64_t, double, int64_t,        \
+      double);
 
-template EigvalsLanczosResult
-eigvals_lanczos(CSRMatrix<int32_t, double> const &, State, int64_t, double,
-                int64_t, double);
-template EigvalsLanczosResult
-eigvals_lanczos(CSRMatrix<int32_t, complex> const &, State, int64_t, double,
-                int64_t, double);
-template EigvalsLanczosResult
-eigvals_lanczos(CSRMatrix<int64_t, double> const &, State, int64_t, double,
-                int64_t, double);
-template EigvalsLanczosResult
-eigvals_lanczos(CSRMatrix<int64_t, complex> const &, State, int64_t, double,
-                int64_t, double);
+XDIAG_INST(int32_t, double)
+XDIAG_INST(int32_t, complex)
+XDIAG_INST(int64_t, double)
+XDIAG_INST(int64_t, complex)
+#undef XDIAG_INST
 
-template EigvalsLanczosResult
-eigvals_lanczos_inplace(CSRMatrix<int32_t, double> const &, State &, int64_t,
-                        double, int64_t, double);
-template EigvalsLanczosResult
-eigvals_lanczos_inplace(CSRMatrix<int32_t, complex> const &, State &, int64_t,
-                        double, int64_t, double);
-template EigvalsLanczosResult
-eigvals_lanczos_inplace(CSRMatrix<int64_t, double> const &, State &, int64_t,
-                        double, int64_t, double);
-template EigvalsLanczosResult
-eigvals_lanczos_inplace(CSRMatrix<int64_t, complex> const &, State &, int64_t,
-                        double, int64_t, double);
 } // namespace xdiag
