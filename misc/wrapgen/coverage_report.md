@@ -3,7 +3,7 @@
 - headers scanned: 58  (parse errors: 0)
 - API records (classes/structs): 47
 - free functions/operators: 320
-- currently add_type<>'d in julia/src: 24
+- currently add_type<>'d in julia/src: 40
 
 ## Type-classification tally (args + returns)
 
@@ -168,7 +168,7 @@ _Full member lists so you can decide wrap-vs-exclude type-by-type._
 
 ## Record coverage
 
-### `xdiag::Boson`  [✗ MISSING] — 15 members
+### `xdiag::Boson`  [✓ wrapped] — 15 members
 
 - `Boson() = default`
 - `Boson(int64_t sites, int64_t d)`
@@ -176,7 +176,7 @@ _Full member lists so you can decide wrap-vs-exclude type-by-type._
 - `Boson(int64_t sites, int64_t d, Representation const &irrep)`
 - `Boson(int64_t sites, int64_t d, int64_t number, Representation const &irrep)`
 - `int64_t nsites() const` ✓
-- `int64_t d() const`
+- `int64_t d() const` ✓
 - `int64_t dim() const` ✓
 - `int64_t size() const` ✓
 - `bool isreal() const` ✓
@@ -186,7 +186,7 @@ _Full member lists so you can decide wrap-vs-exclude type-by-type._
 - `iterator_t begin() const`
 - `iterator_t end() const`
 
-### `xdiag::BosonIterator`  [✗ MISSING] — 5 members
+### `xdiag::BosonIterator`  [✓ wrapped] — 5 members
 
 - `BosonIterator(Boson const *block, int64_t idx)`
 - `BosonIterator &operator++()`
@@ -218,7 +218,7 @@ _Full member lists so you can decide wrap-vs-exclude type-by-type._
 - `Scalar scalar() const`
 - `std::string string() const`
 
-### `xdiag::EigsLanczosResult`  [✗ MISSING] — 6 members
+### `xdiag::EigsLanczosResult`  [✓ wrapped] — 6 members
 
 - `arma::vec alphas` ✓
 - `arma::vec betas` ✓
@@ -227,17 +227,17 @@ _Full member lists so you can decide wrap-vs-exclude type-by-type._
 - `int64_t niterations` ✓
 - `std::string criterion` ✓
 
-### `xdiag::EigsLobpcgResult`  [✗ MISSING] — 7 members
+### `xdiag::EigsLobpcgResult`  [✓ wrapped] — 7 members
 
 - `arma::vec eigenvalues` ✓
-- `arma::vec residual_norms`
+- `arma::vec residual_norms` ✓
 - `State eigenvectors` ✓
 - `int64_t niterations` ✓
 - `std::string criterion` ✓
-- `arma::mat eigenvalue_history`
-- `arma::mat residual_norms_history`
+- `arma::mat eigenvalue_history` ✓
+- `arma::mat residual_norms_history` ✓
 
-### `xdiag::EigvalsLanczosResult`  [✗ MISSING] — 5 members
+### `xdiag::EigvalsLanczosResult`  [✓ wrapped] — 5 members
 
 - `arma::vec alphas` ✓
 - `arma::vec betas` ✓
@@ -253,7 +253,7 @@ _Full member lists so you can decide wrap-vs-exclude type-by-type._
 - `Electron(int64_t nsites, Representation const &irrep)`
 - `Electron(int64_t nsites, int64_t nup, int64_t ndn, Representation const &irrep)`
 - `int64_t nsites() const` ✓
-- `constexpr int64_t d() const`
+- `constexpr int64_t d() const` ✓
 - `int64_t dim() const` ✓
 - `int64_t size() const` ✓
 - `bool isreal() const` ✓
@@ -263,7 +263,7 @@ _Full member lists so you can decide wrap-vs-exclude type-by-type._
 - `iterator_t begin() const`
 - `iterator_t end() const`
 
-### `xdiag::ElectronIterator`  [✗ MISSING] — 5 members
+### `xdiag::ElectronIterator`  [✓ wrapped] — 5 members
 
 - `ElectronIterator(Electron const *block, int64_t idx)`
 - `ElectronIterator &operator++()`
@@ -271,11 +271,11 @@ _Full member lists so you can decide wrap-vs-exclude type-by-type._
 - `bool operator==(ElectronIterator const &rhs) const` ✓
 - `bool operator!=(ElectronIterator const &rhs) const` ✓
 
-### `xdiag::Error`  [✗ MISSING] — 1 members
+### `xdiag::Error`  [✓ wrapped] — 1 members
 
 - `const char *what() const noexcept`
 
-### `xdiag::EvolveLanczosInplaceResult`  [✗ MISSING] — 5 members
+### `xdiag::EvolveLanczosInplaceResult`  [✓ wrapped] — 5 members
 
 - `arma::vec alphas` ✓
 - `arma::vec betas` ✓
@@ -283,7 +283,7 @@ _Full member lists so you can decide wrap-vs-exclude type-by-type._
 - `int64_t niterations` ✓
 - `std::string criterion` ✓
 
-### `xdiag::EvolveLanczosResult`  [✗ MISSING] — 6 members
+### `xdiag::EvolveLanczosResult`  [✓ wrapped] — 6 members
 
 - `arma::vec alphas` ✓
 - `arma::vec betas` ✓
@@ -292,7 +292,7 @@ _Full member lists so you can decide wrap-vs-exclude type-by-type._
 - `std::string criterion` ✓
 - `State state` ✓
 
-### `xdiag::Fermion`  [✗ MISSING] — 15 members
+### `xdiag::Fermion`  [✓ wrapped] — 15 members
 
 - `Fermion() = default`
 - `Fermion(int64_t nsites)`
@@ -300,7 +300,7 @@ _Full member lists so you can decide wrap-vs-exclude type-by-type._
 - `Fermion(int64_t nsites, Representation const &irrep)`
 - `Fermion(int64_t nsites, int64_t number, Representation const &irrep)`
 - `int64_t nsites() const` ✓
-- `constexpr int64_t d() const`
+- `constexpr int64_t d() const` ✓
 - `int64_t dim() const` ✓
 - `int64_t size() const` ✓
 - `bool isreal() const` ✓
@@ -310,7 +310,7 @@ _Full member lists so you can decide wrap-vs-exclude type-by-type._
 - `iterator_t begin() const`
 - `iterator_t end() const`
 
-### `xdiag::FermionIterator`  [✗ MISSING] — 5 members
+### `xdiag::FermionIterator`  [✓ wrapped] — 5 members
 
 - `FermionIterator(Fermion const *block, int64_t idx)`
 - `FermionIterator &operator++()`
@@ -360,7 +360,7 @@ _Full member lists so you can decide wrap-vs-exclude type-by-type._
 - `bool isreal() const` ✓
 - `arma::mat real() const` ✓
 - `arma::mat imag() const` ✓
-- `Matrix hc() const`
+- `Matrix hc() const` ✓
 - `Matrix to_real(double tol = 1e-12) const`
 - `bool isapprox(Matrix const &y, double rtol = 1e-12, double atol = 1e-12) const` ✓
 
@@ -371,7 +371,7 @@ _Full member lists so you can decide wrap-vs-exclude type-by-type._
 - `Monomial(std::initializer_list<Op> ops)`
 - `explicit Monomial(std::vector<Op> const &ops)`
 - `int64_t size() const noexcept` ✓
-- `bool empty() const noexcept`
+- `bool empty() const noexcept` ✓
 - `Op const &operator[](int64_t idx) const`
 - `std::vector<Op> const &ops() const noexcept`
 - `iterator_t begin() const noexcept`
@@ -453,7 +453,7 @@ _Full member lists so you can decide wrap-vs-exclude type-by-type._
 - `bool operator==(OpSum const &rhs) const` ✓
 - `bool operator!=(OpSum const &rhs) const` ✓
 - `bool isreal() const` ✓
-- `bool empty() const`
+- `bool empty() const` ✓
 
 ### `xdiag::Permutation`  [✓ wrapped] — 14 members
 
@@ -504,7 +504,7 @@ _Full member lists so you can decide wrap-vs-exclude type-by-type._
 - `int64_t &operator[](int64_t i)`
 - `int64_t size() const` ✓
 - `int64_t nsites() const` ✓
-- `void push_back(int64_t l)`
+- `void push_back(int64_t l)` ✓
 - `iterator_t begin() const`
 - `iterator_t end() const`
 - `bool operator==(ProductState const &rhs) const` ✓
@@ -522,8 +522,8 @@ _Full member lists so you can decide wrap-vs-exclude type-by-type._
 - `Representation(std::string type, int64_t charge)`
 - `bool operator==(Representation const &rhs) const` ✓
 - `bool operator!=(Representation const &rhs) const` ✓
-- `bool is_permutation() const`
-- `bool is_charge() const`
+- `bool is_permutation() const` ✓
+- `bool is_charge() const` ✓
 - `bool isreal() const` ✓
 
 ### `xdiag::Scalar`  [✗ MISSING] — 23 members
@@ -561,8 +561,8 @@ _Full member lists so you can decide wrap-vs-exclude type-by-type._
 - `PermutationGroup const &group() const`
 - `bool operator==(SitePermutation const &rhs) const` ✓
 - `bool operator!=(SitePermutation const &rhs) const` ✓
-- `template <typename bit_t> bit_t apply(int64_t sym, bit_t const &bits) const`
-- `template <typename bit_t, int nbits> bits::BitArray<bit_t, nbits> apply(int64_t sym, bits::BitArray<bit_t, nbits> const &bits) const`
+- `template <typename bit_t> bit_t apply(int64_t sym, bit_t const &bits) const` ✓
+- `template <typename bit_t, int nbits> bits::BitArray<bit_t, nbits> apply(int64_t sym, bits::BitArray<bit_t, nbits> const &bits) const` ✓
 
 ### `xdiag::Spinhalf`  [✓ wrapped] — 15 members
 
@@ -572,7 +572,7 @@ _Full member lists so you can decide wrap-vs-exclude type-by-type._
 - `Spinhalf(int64_t nsites, Representation const &irrep, std::string backend = "auto")`
 - `Spinhalf(int64_t nsites, int64_t nup, Representation const &irrep, std::string backend = "auto")`
 - `int64_t nsites() const` ✓
-- `constexpr int64_t d() const`
+- `constexpr int64_t d() const` ✓
 - `int64_t dim() const` ✓
 - `int64_t size() const` ✓
 - `bool isreal() const` ✓
@@ -582,7 +582,7 @@ _Full member lists so you can decide wrap-vs-exclude type-by-type._
 - `iterator_t begin() const`
 - `iterator_t end() const`
 
-### `xdiag::SpinhalfIterator`  [✗ MISSING] — 5 members
+### `xdiag::SpinhalfIterator`  [✓ wrapped] — 5 members
 
 - `SpinhalfIterator(Spinhalf const *block, int64_t idx)`
 - `SpinhalfIterator &operator++()`
@@ -598,7 +598,7 @@ _Full member lists so you can decide wrap-vs-exclude type-by-type._
 - `State(Block const &block, arma::cx_vec const &vector)`
 - `State(Block const &block, arma::mat const &matrix)`
 - `State(Block const &block, arma::cx_mat const &matrix)`
-- `bool isvalid() const`
+- `bool isvalid() const` ✓
 - `int64_t nsites() const` ✓
 - `bool isreal() const` ✓
 - `State real() const` ✓
@@ -625,12 +625,12 @@ _Full member lists so you can decide wrap-vs-exclude type-by-type._
 - `bool operator==(Term const &rhs) const noexcept` ✓
 - `bool operator!=(Term const &rhs) const noexcept` ✓
 
-### `xdiag::TimeEvolveExpokitInplaceResult`  [✗ MISSING] — 2 members
+### `xdiag::TimeEvolveExpokitInplaceResult`  [✓ wrapped] — 2 members
 
 - `double error` ✓
 - `double hump` ✓
 
-### `xdiag::TimeEvolveExpokitResult`  [✗ MISSING] — 3 members
+### `xdiag::TimeEvolveExpokitResult`  [✓ wrapped] — 3 members
 
 - `double error` ✓
 - `double hump` ✓
@@ -675,7 +675,7 @@ _Full member lists so you can decide wrap-vs-exclude type-by-type._
 - `tJ(int64_t nsites, Representation const &irrep)`
 - `tJ(int64_t nsites, int64_t nup, int64_t ndn, Representation const &irrep)`
 - `int64_t nsites() const` ✓
-- `constexpr int64_t d() const`
+- `constexpr int64_t d() const` ✓
 - `int64_t dim() const` ✓
 - `int64_t size() const` ✓
 - `bool isreal() const` ✓
@@ -685,7 +685,7 @@ _Full member lists so you can decide wrap-vs-exclude type-by-type._
 - `iterator_t begin() const`
 - `iterator_t end() const`
 
-### `xdiag::tJIterator`  [✗ MISSING] — 5 members
+### `xdiag::tJIterator`  [✓ wrapped] — 5 members
 
 - `tJIterator(tJ const *block, int64_t idx)`
 - `tJIterator &operator++()`

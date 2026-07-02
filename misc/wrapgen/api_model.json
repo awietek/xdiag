@@ -1201,7 +1201,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         }
       ],
       "is_template": false,
@@ -1485,7 +1486,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         },
         {
           "name": "atol",
@@ -1494,7 +1496,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         }
       ],
       "is_template": false,
@@ -2208,7 +2211,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         }
       ],
       "is_template": false,
@@ -2248,7 +2252,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         },
         {
           "name": "atol",
@@ -2257,7 +2262,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         }
       ],
       "is_template": false,
@@ -2432,7 +2438,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         },
         {
           "name": "atol",
@@ -2441,7 +2448,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         }
       ],
       "is_template": false,
@@ -3210,7 +3218,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         }
       ],
       "is_template": false,
@@ -3250,7 +3259,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         },
         {
           "name": "atol",
@@ -3259,7 +3269,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         }
       ],
       "is_template": false,
@@ -3434,7 +3445,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         },
         {
           "name": "atol",
@@ -3443,7 +3455,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         }
       ],
       "is_template": false,
@@ -10119,7 +10132,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         }
       ],
       "is_template": false,
@@ -12861,7 +12875,8 @@
             "cat": "string",
             "cpp": "std::string"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "\"auto\""
         }
       ],
       "is_template": false,
@@ -12913,7 +12928,8 @@
             "cat": "string",
             "cpp": "std::string"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "\"auto\""
         }
       ],
       "is_template": false,
@@ -14745,7 +14761,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         }
       ],
       "is_template": false,
@@ -16695,7 +16712,8 @@
             "cat": "string",
             "cpp": "std::string"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "\"Symmetries\""
         }
       ],
       "is_template": false,
@@ -18103,7 +18121,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0"
         }
       ],
       "is_template": false,
@@ -18219,7 +18238,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0"
         }
       ],
       "is_template": false,
@@ -18297,7 +18317,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0"
         }
       ],
       "is_template": false,
@@ -18413,7 +18434,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0"
         }
       ],
       "is_template": false,
@@ -18491,7 +18513,8 @@
             "cpp": "int",
             "prim": "int32"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0"
         }
       ],
       "is_template": false,
@@ -18607,7 +18630,8 @@
             "cpp": "int",
             "prim": "int32"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0"
         }
       ],
       "is_template": false,
@@ -18685,7 +18709,8 @@
             "cpp": "int",
             "prim": "int32"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0"
         }
       ],
       "is_template": false,
@@ -18801,7 +18826,8 @@
             "cpp": "int",
             "prim": "int32"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0"
         }
       ],
       "is_template": false,
@@ -18878,7 +18904,8 @@
             "cat": "template_param",
             "cpp": "type-parameter-0-0"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0"
         }
       ],
       "is_template": true,
@@ -18996,7 +19023,8 @@
             "cat": "template_param",
             "cpp": "type-parameter-0-0"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0"
         }
       ],
       "is_template": true,
@@ -19383,7 +19411,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0"
         }
       ],
       "is_template": false,
@@ -19499,7 +19528,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0"
         }
       ],
       "is_template": false,
@@ -19577,7 +19607,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0"
         }
       ],
       "is_template": false,
@@ -19693,7 +19724,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0"
         }
       ],
       "is_template": false,
@@ -19771,7 +19803,8 @@
             "cpp": "int",
             "prim": "int32"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0"
         }
       ],
       "is_template": false,
@@ -19887,7 +19920,8 @@
             "cpp": "int",
             "prim": "int32"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0"
         }
       ],
       "is_template": false,
@@ -19965,7 +19999,8 @@
             "cpp": "int",
             "prim": "int32"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0"
         }
       ],
       "is_template": false,
@@ -20081,7 +20116,8 @@
             "cpp": "int",
             "prim": "int32"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0"
         }
       ],
       "is_template": false,
@@ -20158,7 +20194,8 @@
             "cat": "template_param",
             "cpp": "type-parameter-0-0"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0"
         }
       ],
       "is_template": true,
@@ -20276,7 +20313,8 @@
             "cat": "template_param",
             "cpp": "type-parameter-0-0"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0"
         }
       ],
       "is_template": true,
@@ -20390,7 +20428,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0"
         }
       ],
       "is_template": false,
@@ -20506,7 +20545,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0"
         }
       ],
       "is_template": false,
@@ -20584,7 +20624,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0"
         }
       ],
       "is_template": false,
@@ -20700,7 +20741,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0"
         }
       ],
       "is_template": false,
@@ -20778,7 +20820,8 @@
             "cpp": "int",
             "prim": "int32"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0"
         }
       ],
       "is_template": false,
@@ -20894,7 +20937,8 @@
             "cpp": "int",
             "prim": "int32"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0"
         }
       ],
       "is_template": false,
@@ -20972,7 +21016,8 @@
             "cpp": "int",
             "prim": "int32"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0"
         }
       ],
       "is_template": false,
@@ -21088,7 +21133,8 @@
             "cpp": "int",
             "prim": "int32"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0"
         }
       ],
       "is_template": false,
@@ -21165,7 +21211,8 @@
             "cat": "template_param",
             "cpp": "type-parameter-0-0"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0"
         }
       ],
       "is_template": true,
@@ -21283,7 +21330,8 @@
             "cat": "template_param",
             "cpp": "type-parameter-0-0"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0"
         }
       ],
       "is_template": true,
@@ -21683,7 +21731,8 @@
             "cpp": "bool",
             "prim": "bool"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "true"
         },
         {
           "name": "ncols",
@@ -21692,7 +21741,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1"
         }
       ],
       "is_template": false,
@@ -22170,7 +22220,8 @@
             "cpp": "bool",
             "prim": "bool"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "true"
         }
       ],
       "is_template": false,
@@ -22199,7 +22250,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0"
         },
         {
           "name": "copy",
@@ -22208,7 +22260,8 @@
             "cpp": "bool",
             "prim": "bool"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "true"
         }
       ],
       "is_template": false,
@@ -22237,7 +22290,8 @@
             "cpp": "bool",
             "prim": "bool"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "true"
         }
       ],
       "is_template": false,
@@ -22266,7 +22320,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0"
         },
         {
           "name": "copy",
@@ -22275,7 +22330,8 @@
             "cpp": "bool",
             "prim": "bool"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "true"
         }
       ],
       "is_template": false,
@@ -22304,7 +22360,8 @@
             "cpp": "bool",
             "prim": "bool"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "true"
         }
       ],
       "is_template": false,
@@ -22393,7 +22450,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1"
         }
       ],
       "is_template": false,
@@ -22688,7 +22746,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         },
         {
           "name": "atol",
@@ -22697,7 +22756,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         }
       ],
       "is_template": false,
@@ -22993,7 +23053,8 @@
             "cpp": "bool",
             "prim": "bool"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "true"
         }
       ],
       "is_template": false,
@@ -23033,7 +23094,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0"
         },
         {
           "name": "copy",
@@ -23042,7 +23104,8 @@
             "cpp": "bool",
             "prim": "bool"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "true"
         }
       ],
       "is_template": false,
@@ -23082,7 +23145,8 @@
             "cpp": "bool",
             "prim": "bool"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "true"
         }
       ],
       "is_template": false,
@@ -23122,7 +23186,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0"
         },
         {
           "name": "copy",
@@ -23131,7 +23196,8 @@
             "cpp": "bool",
             "prim": "bool"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "true"
         }
       ],
       "is_template": false,
@@ -23171,7 +23237,8 @@
             "cpp": "bool",
             "prim": "bool"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "true"
         }
       ],
       "is_template": false,
@@ -24037,7 +24104,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1"
         },
         {
           "name": "precision",
@@ -24046,7 +24114,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         },
         {
           "name": "max_iterations",
@@ -24055,7 +24124,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1000"
         },
         {
           "name": "deflation_tol",
@@ -24064,7 +24134,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-7"
         },
         {
           "name": "random_seed",
@@ -24073,7 +24144,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "42"
         }
       ],
       "is_template": false,
@@ -24150,7 +24222,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1"
         },
         {
           "name": "precision",
@@ -24159,7 +24232,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         },
         {
           "name": "max_iterations",
@@ -24168,7 +24242,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1000"
         },
         {
           "name": "deflation_tol",
@@ -24177,7 +24252,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-7"
         },
         {
           "name": "random_seed",
@@ -24186,7 +24262,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "42"
         }
       ],
       "is_template": true,
@@ -24241,7 +24318,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1"
         },
         {
           "name": "precision",
@@ -24250,7 +24328,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         },
         {
           "name": "max_iterations",
@@ -24259,7 +24338,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1000"
         },
         {
           "name": "deflation_tol",
@@ -24268,7 +24348,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-7"
         }
       ],
       "is_template": false,
@@ -24318,7 +24399,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1"
         },
         {
           "name": "precision",
@@ -24327,7 +24409,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         },
         {
           "name": "max_iterations",
@@ -24336,7 +24419,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1000"
         },
         {
           "name": "deflation_tol",
@@ -24345,7 +24429,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-7"
         }
       ],
       "is_template": true,
@@ -24501,7 +24586,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1"
         },
         {
           "name": "precision",
@@ -24510,7 +24596,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         },
         {
           "name": "max_iterations",
@@ -24519,7 +24606,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1000"
         },
         {
           "name": "deflation_tol",
@@ -24528,7 +24616,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-7"
         },
         {
           "name": "random_seed",
@@ -24537,7 +24626,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "42"
         }
       ],
       "is_template": false,
@@ -24614,7 +24704,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1"
         },
         {
           "name": "precision",
@@ -24623,7 +24714,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         },
         {
           "name": "max_iterations",
@@ -24632,7 +24724,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1000"
         },
         {
           "name": "deflation_tol",
@@ -24641,7 +24734,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-7"
         },
         {
           "name": "random_seed",
@@ -24650,7 +24744,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "42"
         }
       ],
       "is_template": true,
@@ -24703,7 +24798,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1"
         },
         {
           "name": "precision",
@@ -24712,7 +24808,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         },
         {
           "name": "max_iterations",
@@ -24721,7 +24818,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1000"
         },
         {
           "name": "deflation_tol",
@@ -24730,7 +24828,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-7"
         }
       ],
       "is_template": false,
@@ -24778,7 +24877,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1"
         },
         {
           "name": "precision",
@@ -24787,7 +24887,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         },
         {
           "name": "max_iterations",
@@ -24796,7 +24897,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1000"
         },
         {
           "name": "deflation_tol",
@@ -24805,7 +24907,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-7"
         }
       ],
       "is_template": true,
@@ -24860,7 +24963,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1"
         },
         {
           "name": "precision",
@@ -24869,7 +24973,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         },
         {
           "name": "max_iterations",
@@ -24878,7 +24983,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1000"
         },
         {
           "name": "deflation_tol",
@@ -24887,7 +24993,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-7"
         }
       ],
       "is_template": false,
@@ -24937,7 +25044,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1"
         },
         {
           "name": "precision",
@@ -24946,7 +25054,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         },
         {
           "name": "max_iterations",
@@ -24955,7 +25064,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1000"
         },
         {
           "name": "deflation_tol",
@@ -24964,7 +25074,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-7"
         }
       ],
       "is_template": true,
@@ -25150,7 +25261,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1"
         },
         {
           "name": "guard",
@@ -25159,7 +25271,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "2"
         },
         {
           "name": "tol",
@@ -25168,7 +25281,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-10"
         },
         {
           "name": "max_iterations",
@@ -25177,7 +25291,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1000"
         },
         {
           "name": "random_seed",
@@ -25186,7 +25301,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "42"
         }
       ],
       "is_template": false,
@@ -25263,7 +25379,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1"
         },
         {
           "name": "guard",
@@ -25272,7 +25389,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "2"
         },
         {
           "name": "tol",
@@ -25281,7 +25399,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-10"
         },
         {
           "name": "max_iterations",
@@ -25290,7 +25409,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1000"
         },
         {
           "name": "random_seed",
@@ -25299,7 +25419,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "42"
         }
       ],
       "is_template": true,
@@ -25381,7 +25502,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         },
         {
           "name": "max_iterations",
@@ -25390,7 +25512,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1000"
         },
         {
           "name": "random_seed",
@@ -25399,7 +25522,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "42"
         }
       ],
       "is_template": false,
@@ -25476,7 +25600,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         },
         {
           "name": "max_iterations",
@@ -25485,7 +25610,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1000"
         },
         {
           "name": "random_seed",
@@ -25494,7 +25620,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "42"
         }
       ],
       "is_template": true,
@@ -25576,7 +25703,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         },
         {
           "name": "max_iterations",
@@ -25585,7 +25713,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1000"
         },
         {
           "name": "random_seed",
@@ -25594,7 +25723,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "42"
         }
       ],
       "is_template": false,
@@ -25670,7 +25800,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         },
         {
           "name": "max_iterations",
@@ -25679,7 +25810,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1000"
         },
         {
           "name": "random_seed",
@@ -25688,7 +25820,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "42"
         }
       ],
       "is_template": true,
@@ -25778,7 +25911,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         },
         {
           "name": "max_iterations",
@@ -25787,7 +25921,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1000"
         },
         {
           "name": "random_seed",
@@ -25796,7 +25931,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "42"
         }
       ],
       "is_template": false,
@@ -25882,7 +26018,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         },
         {
           "name": "max_iterations",
@@ -25891,7 +26028,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1000"
         },
         {
           "name": "random_seed",
@@ -25900,7 +26038,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "42"
         }
       ],
       "is_template": true,
@@ -25991,7 +26130,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         },
         {
           "name": "max_iterations",
@@ -26000,7 +26140,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1000"
         },
         {
           "name": "random_seed",
@@ -26009,7 +26150,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "42"
         }
       ],
       "is_template": false,
@@ -26094,7 +26236,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         },
         {
           "name": "max_iterations",
@@ -26103,7 +26246,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1000"
         },
         {
           "name": "random_seed",
@@ -26112,7 +26256,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "42"
         }
       ],
       "is_template": true,
@@ -26262,7 +26407,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         },
         {
           "name": "shift",
@@ -26271,7 +26417,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0."
         },
         {
           "name": "normalize",
@@ -26280,7 +26427,8 @@
             "cpp": "bool",
             "prim": "bool"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "false"
         },
         {
           "name": "max_iterations",
@@ -26289,7 +26437,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1000"
         },
         {
           "name": "deflation_tol",
@@ -26298,7 +26447,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-7"
         }
       ],
       "is_template": false,
@@ -26356,7 +26506,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         },
         {
           "name": "shift",
@@ -26365,7 +26516,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0."
         },
         {
           "name": "normalize",
@@ -26374,7 +26526,8 @@
             "cpp": "bool",
             "prim": "bool"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "false"
         },
         {
           "name": "max_iterations",
@@ -26383,7 +26536,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1000"
         },
         {
           "name": "deflation_tol",
@@ -26392,7 +26546,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-7"
         }
       ],
       "is_template": false,
@@ -26449,7 +26604,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         },
         {
           "name": "shift",
@@ -26458,7 +26614,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0."
         },
         {
           "name": "normalize",
@@ -26467,7 +26624,8 @@
             "cpp": "bool",
             "prim": "bool"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "false"
         },
         {
           "name": "max_iterations",
@@ -26476,7 +26634,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1000"
         },
         {
           "name": "deflation_tol",
@@ -26485,7 +26644,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-7"
         }
       ],
       "is_template": true,
@@ -26546,7 +26706,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         },
         {
           "name": "shift",
@@ -26555,7 +26716,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0."
         },
         {
           "name": "normalize",
@@ -26564,7 +26726,8 @@
             "cpp": "bool",
             "prim": "bool"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "false"
         },
         {
           "name": "max_iterations",
@@ -26573,7 +26736,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1000"
         },
         {
           "name": "deflation_tol",
@@ -26582,7 +26746,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-7"
         }
       ],
       "is_template": true,
@@ -26720,7 +26885,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         },
         {
           "name": "shift",
@@ -26729,7 +26895,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0."
         },
         {
           "name": "normalize",
@@ -26738,7 +26905,8 @@
             "cpp": "bool",
             "prim": "bool"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "false"
         },
         {
           "name": "max_iterations",
@@ -26747,7 +26915,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1000"
         },
         {
           "name": "deflation_tol",
@@ -26756,7 +26925,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-7"
         }
       ],
       "is_template": false,
@@ -26816,7 +26986,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         },
         {
           "name": "shift",
@@ -26825,7 +26996,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0."
         },
         {
           "name": "normalize",
@@ -26834,7 +27006,8 @@
             "cpp": "bool",
             "prim": "bool"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "false"
         },
         {
           "name": "max_iterations",
@@ -26843,7 +27016,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1000"
         },
         {
           "name": "deflation_tol",
@@ -26852,7 +27026,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-7"
         }
       ],
       "is_template": false,
@@ -26911,7 +27086,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         },
         {
           "name": "shift",
@@ -26920,7 +27096,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0."
         },
         {
           "name": "normalize",
@@ -26929,7 +27106,8 @@
             "cpp": "bool",
             "prim": "bool"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "false"
         },
         {
           "name": "max_iterations",
@@ -26938,7 +27116,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1000"
         },
         {
           "name": "deflation_tol",
@@ -26947,7 +27126,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-7"
         }
       ],
       "is_template": true,
@@ -27010,7 +27190,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         },
         {
           "name": "shift",
@@ -27019,7 +27200,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0."
         },
         {
           "name": "normalize",
@@ -27028,7 +27210,8 @@
             "cpp": "bool",
             "prim": "bool"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "false"
         },
         {
           "name": "max_iterations",
@@ -27037,7 +27220,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1000"
         },
         {
           "name": "deflation_tol",
@@ -27046,7 +27230,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-7"
         }
       ],
       "is_template": true,
@@ -27108,7 +27293,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         },
         {
           "name": "shift",
@@ -27117,7 +27303,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0."
         }
       ],
       "is_template": false,
@@ -27174,7 +27361,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         },
         {
           "name": "shift",
@@ -27183,7 +27371,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0."
         }
       ],
       "is_template": true,
@@ -27247,7 +27436,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         },
         {
           "name": "shift",
@@ -27256,7 +27446,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0."
         }
       ],
       "is_template": false,
@@ -27314,7 +27505,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         },
         {
           "name": "shift",
@@ -27323,7 +27515,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0."
         }
       ],
       "is_template": true,
@@ -27384,7 +27577,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         },
         {
           "name": "algorithm",
@@ -27392,7 +27586,8 @@
             "cat": "string",
             "cpp": "std::string"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "\"lanczos\""
         }
       ],
       "is_template": false,
@@ -27449,7 +27644,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         },
         {
           "name": "algorithm",
@@ -27457,7 +27653,8 @@
             "cat": "string",
             "cpp": "std::string"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "\"lanczos\""
         }
       ],
       "is_template": true,
@@ -27521,7 +27718,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         },
         {
           "name": "algorithm",
@@ -27529,7 +27727,8 @@
             "cat": "string",
             "cpp": "std::string"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "\"lanczos\""
         }
       ],
       "is_template": false,
@@ -27587,7 +27786,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         },
         {
           "name": "algorithm",
@@ -27595,7 +27795,8 @@
             "cat": "string",
             "cpp": "std::string"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "\"lanczos\""
         }
       ],
       "is_template": true,
@@ -27701,7 +27902,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         },
         {
           "name": "m",
@@ -27710,7 +27912,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "30"
         },
         {
           "name": "anorm",
@@ -27719,7 +27922,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0."
         },
         {
           "name": "nnorm",
@@ -27728,7 +27932,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "2"
         }
       ],
       "is_template": false,
@@ -27785,7 +27990,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         },
         {
           "name": "m",
@@ -27794,7 +28000,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "30"
         },
         {
           "name": "anorm",
@@ -27803,7 +28010,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0."
         },
         {
           "name": "nnorm",
@@ -27812,7 +28020,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "2"
         }
       ],
       "is_template": true,
@@ -27906,7 +28115,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         },
         {
           "name": "m",
@@ -27915,7 +28125,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "30"
         },
         {
           "name": "anorm",
@@ -27924,7 +28135,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0."
         },
         {
           "name": "nnorm",
@@ -27933,7 +28145,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "2"
         }
       ],
       "is_template": false,
@@ -27992,7 +28205,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         },
         {
           "name": "m",
@@ -28001,7 +28215,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "30"
         },
         {
           "name": "anorm",
@@ -28010,7 +28225,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0."
         },
         {
           "name": "nnorm",
@@ -28019,7 +28235,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "2"
         }
       ],
       "is_template": true,
@@ -28063,7 +28280,8 @@
             "cpp": "double",
             "prim": "double"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1e-12"
         }
       ],
       "is_template": false,
@@ -28614,7 +28832,8 @@
             "cpp": "bool",
             "prim": "bool"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "true"
         }
       ],
       "is_template": false,
@@ -28696,7 +28915,8 @@
             "cpp": "bool",
             "prim": "bool"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "true"
         }
       ],
       "is_template": false,
@@ -28763,7 +28983,8 @@
             "cpp": "bool",
             "prim": "bool"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "true"
         },
         {
           "name": "ncols",
@@ -28772,7 +28993,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1"
         },
         {
           "name": "seed",
@@ -28781,7 +29003,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "42"
         },
         {
           "name": "normalized",
@@ -28790,7 +29013,8 @@
             "cpp": "bool",
             "prim": "bool"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "true"
         }
       ],
       "is_template": false,
@@ -28857,7 +29081,8 @@
             "cpp": "bool",
             "prim": "bool"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "true"
         },
         {
           "name": "ncols",
@@ -28866,7 +29091,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "1"
         }
       ],
       "is_template": false,
@@ -29171,7 +29397,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "42"
         },
         {
           "name": "normalized",
@@ -29180,7 +29407,8 @@
             "cpp": "bool",
             "prim": "bool"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "true"
         }
       ],
       "is_template": false,
@@ -29297,7 +29525,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0"
         }
       ],
       "is_template": false,
@@ -29345,7 +29574,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0"
         }
       ],
       "is_template": false,
@@ -29395,7 +29625,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0"
         }
       ],
       "is_template": false,
@@ -29445,7 +29676,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0"
         }
       ],
       "is_template": false,
@@ -29495,7 +29727,8 @@
             "cpp": "long long",
             "prim": "int64"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0"
         }
       ],
       "is_template": false,
@@ -30568,7 +30801,8 @@
             "cat": "string",
             "cpp": "std::string"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "\"\""
         },
         {
           "name": "verbosity",
@@ -30577,7 +30811,8 @@
             "cpp": "int",
             "prim": "int32"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0"
         }
       ],
       "is_template": false,
@@ -30605,7 +30840,8 @@
             "cpp": "bool",
             "prim": "bool"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "true"
         },
         {
           "name": "msg",
@@ -30613,7 +30849,8 @@
             "cat": "string",
             "cpp": "std::string"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "\"\""
         },
         {
           "name": "verbosity",
@@ -30622,7 +30859,8 @@
             "cpp": "int",
             "prim": "int32"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0"
         }
       ],
       "is_template": false,
@@ -30649,7 +30887,8 @@
             "cat": "string",
             "cpp": "std::string"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "\"\""
         },
         {
           "name": "verbosity",
@@ -30658,7 +30897,8 @@
             "cpp": "int",
             "prim": "int32"
           },
-          "has_default": true
+          "has_default": true,
+          "default": "0"
         }
       ],
       "is_template": false,
