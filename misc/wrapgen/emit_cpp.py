@@ -195,28 +195,35 @@ def _reg(target, jl_name, decls, body):
     return f'  {target}.method("{jl_name}", []({", ".join(decls)}) {{ {body} }});'
 
 
-def emit_method(tw, entry, wrapped_names):
-    """Member method / operator on a wrapped record -> list of (sig_key, line)."""
+def emit_method(entry, wrapped_names):
+    """Member method / operator on a wrapped record -> list of (sig_key, line).
+    Registered via mod.method (self is the explicit first arg) so it needs no
+    TypeWrapper -- this lets PASS 2 be split across files."""
     rec = short(entry["qualified"].rsplit("::", 1)[0])
     nargs = len(entry.get("args", []))
     wrap, is_void = return_transform(entry, wrapped_names)
     out = []
     for decls, callargs, sig in expansions(entry, wrapped_names, self_type=rec):
+        void = is_void
         if entry["kind"] == "operator":
             op = entry.get("op")
             if op in _BINARY_OPS and nargs == 1:
                 jl_name, expr = op, f"self {op} {callargs[0]}"
             elif op == "[]" and nargs == 1:
                 jl_name, expr = "getindex", f"self[{callargs[0]}]"
+            elif op == "++" and nargs == 0:  # iterator increment
+                jl_name, expr, void = "_incr", "++self", True
+            elif op == "*" and nargs == 0:  # iterator dereference
+                jl_name, expr = "_deref", "*self"
             else:
                 raise Skip(f"operator{op}")
         else:
             jl_name = entry["name"]
             expr = f"self.{entry['name']}({', '.join(callargs)})"
         expr = wrap(expr)
-        body = (f"JULIA_XDIAG_CALL_VOID({expr});" if is_void
+        body = (f"JULIA_XDIAG_CALL_VOID({expr});" if void
                 else f"JULIA_XDIAG_CALL_RETURN({expr})")
-        out.append(((tw, jl_name, sig), _reg(tw, jl_name, decls, body)))
+        out.append(((jl_name, sig), _reg("mod", jl_name, decls, body)))
     return out
 
 
@@ -225,7 +232,7 @@ def emit_constructor(entry, wrapped_names):
     out = []
     for decls, callargs, sig in expansions(entry, wrapped_names):
         body = f'JULIA_XDIAG_CALL_RETURN({rec}({", ".join(callargs)}))'
-        out.append((("mod", f"construct_{rec}", sig),
+        out.append(((f"construct_{rec}", sig),
                     _reg("mod", f"construct_{rec}", decls, body)))
     return out
 
@@ -248,7 +255,7 @@ def emit_free(entry, wrapped_names):
         expr = wrap(expr)
         body = (f"JULIA_XDIAG_CALL_VOID({expr});" if is_void
                 else f"JULIA_XDIAG_CALL_RETURN({expr})")
-        out.append((("mod", jl_name, sig), _reg("mod", jl_name, decls, body)))
+        out.append(((jl_name, sig), _reg("mod", jl_name, decls, body)))
     return out
 
 
@@ -262,12 +269,37 @@ def excluded(entry):
         return True
     if q in ov.SPECIALS:
         return True  # emitted from a hand-written fragment instead
+    # Per-overload exclusion: drop this overload if an argument type matches.
+    subs = ov.EXCLUDE_OVERLOADS.get(q)
+    if subs:
+        for a in entry.get("args", []):
+            t = a["type"]
+            s = t.get("type") or t.get("cpp") or ""
+            if any(sub in s for sub in subs):
+                return True
     return False
 
 
+def _snake(name):
+    out = []
+    for i, c in enumerate(name):
+        if c.isupper() and i > 0 and not name[i - 1].isupper():
+            out.append("_")
+        out.append(c.lower())
+    return "".join(out)
+
+
+def group_of(header):
+    """Subsystem bucket for a symbol, from its header path (xdiag/<group>/...)."""
+    if header and header.startswith("xdiag/"):
+        parts = header.split("/")
+        if len(parts) >= 3:
+            return parts[1]
+    return "misc"
+
+
 def build(model):
-    # Class-template records (CSRMatrix<>, ...) cannot be add_type'd generically;
-    # specific instantiations are provided by hand-written specials.
+    # Class-template records (CSRMatrix<>, ...) can't be add_type'd generically.
     template_records = {e["qualified"] for e in model["entries"]
                         if e["kind"] == "record"
                         and e.get("record_kind") == "class_template"}
@@ -280,28 +312,20 @@ def build(model):
             continue
         wrapped_names.add(q)
 
-    tw_of = {}  # qualified record name -> TypeWrapper variable
-    lines_pass1, lines_pass2 = [], []
     skipped = {}
 
     def note_skip(q, why):
         skipped.setdefault(str(why), []).append(q)
 
-    # PASS 1: register every wrapped type.
-    for q in sorted(wrapped_names):
-        name = short(q)
-        field = ov.FIELD_NAMES.get(q, "cxx_" + _snake(name))
-        var = "tw_" + _snake(name)
-        tw_of[q] = var
-        lines_pass1.append(f'  auto {var} = mod.add_type<{name}>("cxx_{name}");')
+    # PASS 1: register every wrapped type (no TypeWrapper kept -- all methods go
+    # through mod.method, so PASS 2 can live in separate translation units).
+    types = [f'  mod.add_type<{short(q)}>("cxx_{short(q)}");'
+             for q in sorted(wrapped_names)]
 
-    # PASS 2: methods, constructors, operators, free functions.
-    records = {}
-    frees = []
+    # PASS 2: bucket registrations by subsystem so they compile in parallel.
+    records, frees = {}, []
     for e in model["entries"]:
-        if e["kind"] == "record":
-            continue
-        if excluded(e):
+        if e["kind"] == "record" or excluded(e):
             continue
         rec = e.get("record")
         if rec:
@@ -313,25 +337,27 @@ def build(model):
         elif e["kind"] in ("function", "operator"):
             frees.append(e)
 
-    seen = set()  # de-dup registrations whose C++ signatures collide
+    seen = set()
+    groups = {}
 
-    def add(regs, q):
-        for sig, line in regs:
-            if sig in seen:
+    def add(regs, q, group):
+        for key, line in regs:
+            jl_name, sig = key
+            nkey = (jl_name, tuple("".join(s.split()) for s in sig))
+            if nkey in seen:
                 note_skip(q, "duplicate signature")
                 continue
-            seen.add(sig)
-            lines_pass2.append(line)
+            seen.add(nkey)
+            groups.setdefault(group, []).append(line)
 
     for q in sorted(records):
-        tw = tw_of[q]
-        lines_pass2.append(f"  // ---- {short(q)} ----")
         for e in sorted(records[q], key=lambda e: e["line"]):
+            group = group_of(e["header"])
             try:
                 if e["kind"] == "constructor":
-                    add(emit_constructor(e, wrapped_names), e["qualified"])
+                    add(emit_constructor(e, wrapped_names), e["qualified"], group)
                 elif e["kind"] in ("method", "operator"):
-                    add(emit_method(tw, e, wrapped_names), e["qualified"])
+                    add(emit_method(e, wrapped_names), e["qualified"], group)
                 elif e["kind"] == "destructor":
                     pass
                 else:
@@ -339,59 +365,56 @@ def build(model):
             except Skip as s:
                 note_skip(e["qualified"], str(s))
 
-    lines_pass2.append("  // ---- free functions ----")
     for e in sorted(frees, key=lambda e: (e["header"] or "", e["line"])):
         try:
-            add(emit_free(e, wrapped_names), e["qualified"])
+            add(emit_free(e, wrapped_names), e["qualified"], group_of(e["header"]))
         except Skip as s:
             note_skip(e["qualified"], str(s))
 
-    return lines_pass1, lines_pass2, skipped, wrapped_names
+    return types, groups, skipped, wrapped_names
 
 
-def _snake(name):
-    out = []
-    for i, c in enumerate(name):
-        if c.isupper() and i > 0 and not name[i - 1].isupper():
-            out.append("_")
-        out.append(c.lower())
-    return "".join(out)
-
-
-HEADER = """// SPDX-License-Identifier: Apache-2.0
+_FILE_HEADER = """// SPDX-License-Identifier: Apache-2.0
 // GENERATED by misc/wrapgen/emit_cpp.py -- DO NOT EDIT.
-// Source model: XDIAG_API surface. Regenerate with misc/wrapgen/generate.py.
 
 #include <julia/src/xdiagjl.hpp>
 
 namespace xdiag::julia {
-
-void define_generated(jlcxx::Module &mod) {
-  using namespace xdiag;
-
 """
+_FILE_FOOTER = "\n} // namespace xdiag::julia\n"
 
-FOOTER = """}
 
-} // namespace xdiag::julia
-"""
+def _fn(name, body_lines):
+    return (f"\nvoid {name}(jlcxx::Module &mod) {{\n"
+            f"  using namespace xdiag;\n" + "\n".join(body_lines) + "\n}\n")
 
 
 def render(model):
-    p1, p2, skipped, wrapped = build(model)
-    body = HEADER
-    body += "  // ==== PASS 1: register all types ====\n"
-    body += "\n".join(p1) + "\n\n"
-    body += "  // ==== PASS 2: methods / constructors / free functions ====\n"
-    body += "\n".join(p2) + "\n"
-    body += FOOTER
-    return body, skipped, wrapped
+    types, groups, skipped, wrapped = build(model)
+    files = {}
+    files["define_types.cpp"] = (_FILE_HEADER + _fn("define_types", types)
+                                 + _FILE_FOOTER)
+    gnames = sorted(groups)
+    for g in gnames:
+        files[f"define_{g}.cpp"] = (_FILE_HEADER + _fn(f"define_{g}", groups[g])
+                                    + _FILE_FOOTER)
+    decls = ["void define_types(jlcxx::Module &mod);"]
+    calls = ["  define_types(mod);"]
+    for g in gnames:
+        decls.append(f"void define_{g}(jlcxx::Module &mod);")
+        calls.append(f"  define_{g}(mod);")
+    files["module_generated.cpp"] = (
+        _FILE_HEADER + "\n" + "\n".join(decls)
+        + "\n\nvoid define_generated(jlcxx::Module &mod) {\n"
+        + "\n".join(calls) + "\n}\n" + _FILE_FOOTER)
+    return files, skipped, wrapped
 
 
 def main():
     import argparse
+    import glob
     ap = argparse.ArgumentParser()
-    ap.add_argument("-o", "--output", default="-")
+    ap.add_argument("--out-dir", help="directory for the generated .cpp files")
     ap.add_argument("--report", action="store_true")
     args = ap.parse_args()
 
@@ -401,15 +424,26 @@ def main():
         print("OVERRIDES INVALID:", *errs, sep="\n  ", file=sys.stderr)
         sys.exit(1)
 
-    code, skipped, wrapped = render(model)
-    if args.output == "-":
-        sys.stdout.write(code)
+    files, skipped, wrapped = render(model)
+
+    if args.out_dir:
+        os.makedirs(args.out_dir, exist_ok=True)
+        # Clear stale generated files first (a subsystem may have vanished).
+        for old in glob.glob(os.path.join(args.out_dir, "define_*.cpp")):
+            os.remove(old)
+        stale = os.path.join(args.out_dir, "module_generated.cpp")
+        if os.path.exists(stale):
+            os.remove(stale)
+        nreg = 0
+        for fn, content in files.items():
+            with open(os.path.join(args.out_dir, fn), "w") as fh:
+                fh.write(content)
+            nreg += content.count("mod.method(")
+        print(f"Wrote {len(files)} files to {args.out_dir} "
+              f"({len(wrapped)} types, {nreg} registrations).", file=sys.stderr)
     else:
-        with open(args.output, "w") as f:
-            f.write(code)
-        print(f"Wrote {args.output} ({len(wrapped)} types, "
-              f"{code.count('.method(') + code.count('mod.method(')} registrations).",
-              file=sys.stderr)
+        for fn, content in files.items():
+            sys.stdout.write(f"// ==== {fn} ====\n{content}\n")
 
     if args.report:
         total = sum(len(v) for v in skipped.values())

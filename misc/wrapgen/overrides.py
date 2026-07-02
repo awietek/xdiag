@@ -45,6 +45,15 @@ EXCLUDE_SYMBOLS = {
     "xdiag::operator<<",
 }
 
+# Skip specific overloads (not the whole symbol): keyed by qualified name ->
+# substrings; an overload is dropped if any of its argument types contains one.
+EXCLUDE_OVERLOADS = {
+    # fill(State, GPWF, col) is declared in fill.hpp but its definition is
+    # commented out in the core (WIP) -> would be an undefined symbol. The
+    # ProductState / RandomState overloads of fill are kept.
+    "xdiag::fill": ["GPWF"],
+}
+
 # Argument categories that make an overload unwrappable -> that overload is
 # dropped (the others for the same name are kept). Used for sugar overloads
 # with no clean Julia mapping.

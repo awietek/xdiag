@@ -199,44 +199,14 @@ set(XDIAG_DISTRIBUTED_SOURCES
   kernels/blocks/distributed/tj_distributed/kernels.cpp
   kernels/blocks/distributed/electron_distributed/kernels.cpp
 )
+# The Julia wrapper is generated from the XDIAG_API surface by
+# misc/wrapgen/emit_cpp.py (module_generated.cpp) plus the hand-written
+# pointer-fill specials (specials.cpp) and the armadillo bridge. The old
+# per-type hand-written sources were replaced by this generated wrapper.
+# The per-subsystem generated files (generated/*.cpp) are globbed in
+# julia/CMakeLists.txt so the emitter can add/remove subsystem files freely.
 set(XDIAG_JULIA_SOURCES
   xdiagjl.cpp
-  algebra/matrix.cpp
-  algebra/apply.cpp
-  algebra/algebra.cpp
-  algebra/sparse/coo_matrix.cpp
-  algebra/sparse/csr_matrix.cpp
-  algebra/sparse/csc_matrix.cpp
-  algebra/sparse/apply.cpp
-  linalg/sparse_diag.cpp
-  linalg/lanczos/eigs_lanczos.cpp
-  linalg/lanczos/eigvals_lanczos.cpp
-  linalg/time_evolution/time_evolve.cpp
-  linalg/time_evolution/imaginary_time_evolve.cpp
-  linalg/time_evolution/time_evolve_expokit.cpp  
-  linalg/time_evolution/evolve_lanczos.cpp
-  blocks/spinhalf.cpp
-  blocks/tj.cpp
-  blocks/electron.cpp
-  io/file_toml.cpp
-  io/read.cpp
-  
-  operators/op.cpp
-  operators/opsum.cpp
-  operators/symmetrize.cpp
-  operators/hc.cpp
-  operators/block.cpp
-  
-  states/create_state.cpp
-  states/fill.cpp
-  states/random_state.cpp
-  states/product_state.cpp
-  states/gpwf.cpp
-  states/state.cpp
-  utils/utils.cpp
   utils/armadillo.cpp
-  symmetries/permutation.cpp
-  symmetries/permutation_group.cpp
-  symmetries/representation.cpp
-  symmetries/u1.cpp
+  specials.cpp
 )

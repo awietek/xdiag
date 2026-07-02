@@ -16,6 +16,11 @@ void define_vectors(jlcxx::Module &mod) {
       .constructor<complex *, arma::uword, bool, bool>()
       .method("memptr", [](arma::cx_vec &m) { return m.memptr(); })
       .method("n_rows", [](arma::cx_vec const &m) { return m.n_rows; });
+
+  mod.add_type<arma::Col<int64_t>>("cxx_arma_ivec")
+      .constructor<int64_t *, arma::uword, bool, bool>()
+      .method("memptr", [](arma::Col<int64_t> &m) { return m.memptr(); })
+      .method("n_rows", [](arma::Col<int64_t> const &m) { return m.n_rows; });
 }
 
 void define_matrices(jlcxx::Module &mod) {

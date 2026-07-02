@@ -86,5 +86,5 @@ examples/user_guide/output.h5
 .claude
 !misc/data/hdf5/.gitkeep
 
-# WIP generated Julia wrapper (regenerate with misc/wrapgen)
-julia/src/generated/
+# Julia-wrapper build directory
+build-jl/
