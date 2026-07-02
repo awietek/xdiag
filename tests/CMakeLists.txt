@@ -57,21 +57,26 @@ set(XDIAG_TEST_SOURCES
 
   blocks/spinhalf/test_spinhalf_strategies.cpp
   blocks/spinhalf/test_spinhalf.cpp
+  blocks/spinhalf/test_spinhalf_long.cpp
 
   blocks/electron/test_electron_raiselower.cpp
   blocks/electron/test_electron_apply.cpp
   blocks/electron/test_electron_matrix.cpp
   blocks/electron/test_electron_symmetric.cpp
+  blocks/electron/test_electron_long.cpp
 
   blocks/tj/test_tj_kernels.cpp
   blocks/tj/test_tj_matrix.cpp
   blocks/tj/test_tj_apply.cpp
   blocks/tj/test_tj_raiselower.cpp
   blocks/tj/test_tj_symmetric.cpp
+  blocks/tj/test_tj_long.cpp
 
   blocks/boson/test_boson.cpp
+  blocks/boson/test_boson_long.cpp
 
   blocks/fermion/test_fermion.cpp
+  blocks/fermion/test_fermion_long.cpp
   blocks/fermion/testcases_fermion.cpp
 
   kernels/terms/test_non_branching_op.cpp

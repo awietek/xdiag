@@ -34,6 +34,7 @@ benchmark/*/build/*
 *.profdata
 build-cov
 misc/coverage/coverage-html
+misc/data/hdf5/*
 *.o
 *.a
 *.d
