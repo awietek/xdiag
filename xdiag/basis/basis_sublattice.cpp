@@ -344,12 +344,6 @@ bool BasisSublattice<bit_t, n_sublat>::operator!=(
   return !operator==(rhs);
 }
 
-template class BasisSublattice<uint32_t, 1>;
-template class BasisSublattice<uint32_t, 2>;
-template class BasisSublattice<uint32_t, 3>;
-template class BasisSublattice<uint32_t, 4>;
-template class BasisSublattice<uint32_t, 5>;
-
 template class BasisSublattice<uint64_t, 1>;
 template class BasisSublattice<uint64_t, 2>;
 template class BasisSublattice<uint64_t, 3>;

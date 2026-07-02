@@ -60,12 +60,21 @@ void dispatch_boson_enumeration(int64_t nsites, int64_t d,
 }
 XDIAG_CATCH
 
-// Dispatches the runtime number of bits per site (nlocalbits in 1..8) to the
-// compile-time template parameter N.
+// Rounds the required bits-per-site up to the nearest compiled BitArray width.
+// Only widths {1,2,3,4,8} are instantiated to keep the library small; widths
+// 5,6,7 are stored in 8-bit fields instead. This is functionally identical (the
+// enumeration is driven by the true local dimension d, N is only the storage
+// field width), it just uses slightly wider storage per site.
+constexpr int64_t promote_nlocalbits(int64_t nlocalbits) {
+  return (nlocalbits <= 4) ? nlocalbits : 8;
+}
+
+// Dispatches the (already promoted) storage width N in {1,2,3,4,8} to the
+// compile-time template parameter.
 template <typename bit_t, typename F>
-void dispatch_nlocalbits(int64_t nlocalbits, int64_t nsites, int64_t d,
+void dispatch_nlocalbits(int64_t nstore, int64_t nsites, int64_t d,
                          std::optional<int64_t> number, F &&f) try {
-  switch (nlocalbits) {
+  switch (nstore) {
   case 1:
     dispatch_boson_enumeration<bit_t, 1>(nsites, d, number, std::forward<F>(f));
     break;
@@ -78,22 +87,13 @@ void dispatch_nlocalbits(int64_t nlocalbits, int64_t nsites, int64_t d,
   case 4:
     dispatch_boson_enumeration<bit_t, 4>(nsites, d, number, std::forward<F>(f));
     break;
-  case 5:
-    dispatch_boson_enumeration<bit_t, 5>(nsites, d, number, std::forward<F>(f));
-    break;
-  case 6:
-    dispatch_boson_enumeration<bit_t, 6>(nsites, d, number, std::forward<F>(f));
-    break;
-  case 7:
-    dispatch_boson_enumeration<bit_t, 7>(nsites, d, number, std::forward<F>(f));
-    break;
   case 8:
     dispatch_boson_enumeration<bit_t, 8>(nsites, d, number, std::forward<F>(f));
     break;
   default:
     XDIAG_THROW(fmt::format("Unsupported number of bits per site: {}. "
                             "nlocalbits must lie in 1..8.",
-                            nlocalbits));
+                            nstore));
   }
 }
 XDIAG_CATCH
@@ -106,11 +106,16 @@ template <typename F>
 void dispatch_boson_enumeration(int64_t nlocalbits, int64_t nsites, int64_t d,
                                 std::optional<int64_t> number, F &&f) try {
   using namespace bits;
-  if (nsites * nlocalbits <= 64) {
-    dispatch_nlocalbits<uint64_t>(nlocalbits, nsites, d, number,
+  // Promote to the actual storage width first, so the 64-bit fit test below
+  // reflects how many bits are really used (nsites * nstore), not the ideal
+  // width. Getting this wrong would pick a single-word backend for a state that
+  // no longer fits in 64 bits.
+  int64_t nstore = promote_nlocalbits(nlocalbits);
+  if (nsites * nstore <= 64) {
+    dispatch_nlocalbits<uint64_t>(nstore, nsites, d, number,
                                   std::forward<F>(f));
   } else {
-    dispatch_nlocalbits<BitsetDynamic>(nlocalbits, nsites, d, number,
+    dispatch_nlocalbits<BitsetDynamic>(nstore, nsites, d, number,
                                        std::forward<F>(f));
   }
 }

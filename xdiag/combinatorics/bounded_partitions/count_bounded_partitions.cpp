@@ -75,9 +75,6 @@ int64_t rank_bounded_partition(int64_t n, int64_t total, int64_t d,
   INSTANTIATE_CBP(BIT_T, 2)                                                    \
   INSTANTIATE_CBP(BIT_T, 3)                                                    \
   INSTANTIATE_CBP(BIT_T, 4)                                                    \
-  INSTANTIATE_CBP(BIT_T, 5)                                                    \
-  INSTANTIATE_CBP(BIT_T, 6)                                                    \
-  INSTANTIATE_CBP(BIT_T, 7)                                                    \
   INSTANTIATE_CBP(BIT_T, 8)
 
 INSTANTIATE_CBP_ALL(uint16_t)

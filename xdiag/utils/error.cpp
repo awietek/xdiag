@@ -9,7 +9,6 @@
 #include <iomanip> // std::setw
 #include <variant>
 
-#define FMT_HEADER_ONLY
 #include <extern/fmt/format.hpp>
 
 #ifndef XDIAG_DISABLE_COLOR

@@ -71,14 +71,6 @@ XDIAG_INSTANTIATE_KERNELS(Spinhalf, BasisOnTheFly<Combinations<BitsetDynamic>>)
 XDIAG_INSTANTIATE_KERNELS(Spinhalf, BasisOnTheFly<Combinations<BitsetStatic2>>)
 // END_INSTANTIATION_GROUP
 
-// BEGIN_INSTANTIATION_GROUP(onthefly_combinations_bitset_static_4)
-XDIAG_INSTANTIATE_KERNELS(Spinhalf, BasisOnTheFly<Combinations<BitsetStatic4>>)
-// END_INSTANTIATION_GROUP
-
-// BEGIN_INSTANTIATION_GROUP(onthefly_combinations_bitset_static_8)
-XDIAG_INSTANTIATE_KERNELS(Spinhalf, BasisOnTheFly<Combinations<BitsetStatic8>>)
-// END_INSTANTIATION_GROUP
-
 //
 // BasisSymmetric Instantiations
 //
@@ -115,37 +107,9 @@ XDIAG_INSTANTIATE_KERNELS(Spinhalf, BasisSymmetric<Combinations<BitsetDynamic>>)
 XDIAG_INSTANTIATE_KERNELS(Spinhalf, BasisSymmetric<Combinations<BitsetStatic2>>)
 // END_INSTANTIATION_GROUP
 
-// BEGIN_INSTANTIATION_GROUP(symmetric_combinations_bitset_static_4)
-XDIAG_INSTANTIATE_KERNELS(Spinhalf, BasisSymmetric<Combinations<BitsetStatic4>>)
-// END_INSTANTIATION_GROUP
-
-// BEGIN_INSTANTIATION_GROUP(symmetric_combinations_bitset_static_8)
-XDIAG_INSTANTIATE_KERNELS(Spinhalf, BasisSymmetric<Combinations<BitsetStatic8>>)
-// END_INSTANTIATION_GROUP
-
 //
 // BasisSublattice Instantiations
 //
-
-// BEGIN_INSTANTIATION_GROUP(sublattice_uint32_t_1)
-XDIAG_INSTANTIATE_KERNELS(Spinhalf, BasisSublattice32<1>)
-// END_INSTANTIATION_GROUP
-
-// BEGIN_INSTANTIATION_GROUP(sublattice_uint32_t_2)
-XDIAG_INSTANTIATE_KERNELS(Spinhalf, BasisSublattice32<2>)
-// END_INSTANTIATION_GROUP
-
-// BEGIN_INSTANTIATION_GROUP(sublattice_uint32_t_3)
-XDIAG_INSTANTIATE_KERNELS(Spinhalf, BasisSublattice32<3>)
-// END_INSTANTIATION_GROUP
-
-// BEGIN_INSTANTIATION_GROUP(sublattice_uint32_t_4)
-XDIAG_INSTANTIATE_KERNELS(Spinhalf, BasisSublattice32<4>)
-// END_INSTANTIATION_GROUP
-
-// BEGIN_INSTANTIATION_GROUP(sublattice_uint32_t_5)
-XDIAG_INSTANTIATE_KERNELS(Spinhalf, BasisSublattice32<5>)
-// END_INSTANTIATION_GROUP
 
 // BEGIN_INSTANTIATION_GROUP(sublattice_uint64_t_1)
 XDIAG_INSTANTIATE_KERNELS(Spinhalf, BasisSublattice64<1>)

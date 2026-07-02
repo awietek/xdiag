@@ -40,10 +40,6 @@ static void dispatch_enumeration(int64_t nsites, std::optional<int64_t> number,
       f(Combinations<uint64_t>(n, k));
     } else if (nsites <= 128) {
       f(Combinations<BitsetStatic2>(n, k));
-    } else if (nsites <= 256) {
-      f(Combinations<BitsetStatic4>(n, k));
-    } else if (nsites <= 512) {
-      f(Combinations<BitsetStatic8>(n, k));
     } else {
       f(Combinations<BitsetDynamic>(n, k));
     }

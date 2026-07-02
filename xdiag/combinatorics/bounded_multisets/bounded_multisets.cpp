@@ -154,9 +154,6 @@ auto BoundedMultisetsIterator<bitarray_t>::operator*() const -> bitarray_t {
   INSTANTIATE_BMS(BIT_T, 2)                                                    \
   INSTANTIATE_BMS(BIT_T, 3)                                                    \
   INSTANTIATE_BMS(BIT_T, 4)                                                    \
-  INSTANTIATE_BMS(BIT_T, 5)                                                    \
-  INSTANTIATE_BMS(BIT_T, 6)                                                    \
-  INSTANTIATE_BMS(BIT_T, 7)                                                    \
   INSTANTIATE_BMS(BIT_T, 8)
 
 INSTANTIATE_BMS_ALL(uint16_t)

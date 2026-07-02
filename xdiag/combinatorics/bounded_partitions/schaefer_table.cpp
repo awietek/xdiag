@@ -129,9 +129,6 @@ using namespace xdiag::bits;
   INSTANTIATE_ST(BIT_T, 2)                                                     \
   INSTANTIATE_ST(BIT_T, 3)                                                     \
   INSTANTIATE_ST(BIT_T, 4)                                                     \
-  INSTANTIATE_ST(BIT_T, 5)                                                     \
-  INSTANTIATE_ST(BIT_T, 6)                                                     \
-  INSTANTIATE_ST(BIT_T, 7)                                                     \
   INSTANTIATE_ST(BIT_T, 8)
 
 // BEGIN_INSTANTIATION_GROUP(native)

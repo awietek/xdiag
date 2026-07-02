@@ -1,5 +1,6 @@
 set(XDIAG_SOURCES
   # Utility functions
+  utils/format.cpp
   utils/iochecks.cpp
   utils/error.cpp
   utils/logger.cpp
@@ -37,6 +38,7 @@ set(XDIAG_SOURCES
   kernels/apply.cpp
   kernels/matrix.cpp
   kernels/sparse/coo_matrix.cpp
+  kernels/sparse/sparse_build.cpp
   kernels/sparse/csr_matrix.cpp
   kernels/sparse/csc_matrix.cpp
   kernels/sparse/valid.cpp

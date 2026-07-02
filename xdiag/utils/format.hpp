@@ -7,7 +7,8 @@
 #include <complex>
 #include <locale>
 
-#define FMT_HEADER_ONLY
+// fmt in compiled mode: core defined once in utils/format.cpp, so
+// FMT_HEADER_ONLY must not be defined anywhere (inline vs compiled defs clash).
 #include <extern/fmt/format.hpp>
 
 namespace fmt {

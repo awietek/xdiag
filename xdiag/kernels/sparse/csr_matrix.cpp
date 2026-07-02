@@ -11,8 +11,7 @@
 #include <xdiag/blocks/blocks.hpp>
 #include <xdiag/armadillo.hpp>
 #include <xdiag/math/complex.hpp>
-#include <xdiag/kernels/blocks/dispatch_bases.hpp>
-#include <xdiag/kernels/kernels.hpp>
+#include <xdiag/kernels/sparse/sparse_build.hpp>
 #include <xdiag/kernels/sparse/valid.hpp>
 #include <xdiag/operators/hc.hpp>
 #include <xdiag/utils/error.hpp>
@@ -51,76 +50,9 @@
 
 namespace xdiag {
 
-// Basis-level two-pass CSR build, generic over the block type and
-// concrete BasisOnTheFly type. Shared by the block-generic Layer-2 below.
-template <typename idx_t, typename coeff_t, typename block_t, typename basis_t>
-static void csr_build(OpSum const &ops, basis_t const &basis_in,
-                      basis_t const &basis_out, idx_t nrows, idx_t i0,
-                      arma::Col<idx_t> &rowptr, arma::Col<idx_t> &col,
-                      arma::Col<coeff_t> &data) {
-  // Pass 1: count nonzeros per row.
-  auto n_elements_in_row =
-      kernels::csr_matrix_nnz<block_t, coeff_t>(ops, basis_in, basis_out);
-  int64_t nnz = std::accumulate(n_elements_in_row.begin(),
-                                n_elements_in_row.end(), (int64_t)0);
-
-  // Build rowptr (exclusive prefix sum + i0 shift) and the mutable offset
-  // array that csr_matrix_fill uses to claim write slots.
-  rowptr.resize(nrows + 1);
-  col.resize(nnz);
-  data.resize(nnz);
-
-  std::vector<int64_t> offset(nrows, 0);
-  if (nrows > 0) {
-    std::partial_sum(n_elements_in_row.begin(), n_elements_in_row.end() - 1,
-                     offset.begin() + 1);
-    for (idx_t r = 0; r < nrows; ++r)
-      rowptr[r] = (idx_t)(offset[r] + i0);
-    rowptr[nrows] = (idx_t)(nnz + i0);
-  }
-
-  // Pass 2: fill col and data using atomic slot assignment.
-  kernels::csr_matrix_fill<block_t, coeff_t>(
-      ops, basis_in, basis_out, offset, col.memptr(), data.memptr(), i0);
-
-  // Sort each row's entries by column index (required for CSR validity).
-  int64_t max_elems = n_elements_in_row.empty()
-                          ? 0
-                          : *std::max_element(n_elements_in_row.begin(),
-                                              n_elements_in_row.end());
-#ifdef _OPENMP
-#pragma omp parallel
-  {
-    std::vector<int64_t> indices(max_elems);
-    std::vector<idx_t> coltmp(max_elems);
-    std::vector<coeff_t> datatmp(max_elems);
-#pragma omp for
-#else
-  {
-    std::vector<int64_t> indices(max_elems);
-    std::vector<idx_t> coltmp(max_elems);
-    std::vector<coeff_t> datatmp(max_elems);
-#endif
-    for (idx_t row = 0; row < nrows; ++row) {
-      int64_t start = (int64_t)(rowptr[row] - i0);
-      int64_t end = (int64_t)(rowptr[row + 1] - i0);
-      int64_t nelems = end - start;
-      std::copy(col.memptr() + start, col.memptr() + end, coltmp.begin());
-      std::copy(data.memptr() + start, data.memptr() + end, datatmp.begin());
-      std::iota(indices.begin(), indices.begin() + nelems, (int64_t)0);
-      std::sort(indices.begin(), indices.begin() + nelems,
-                [&](int64_t i, int64_t j) { return coltmp[i] < coltmp[j]; });
-      for (int64_t i = 0; i < nelems; ++i) {
-        col[start + i] = coltmp[indices[i]];
-        data[start + i] = datatmp[indices[i]];
-      }
-    }
-  }
-}
-
-// Layer 2: block-generic orchestration. The dispatch_basis overload supplies
-// the basis dispatch; a block with no overload is a compile error here, never a
-// silent fallback to the Block overload.
+// Layer 2: block-generic orchestration. The per-basis-type build (dispatch +
+// two-pass fill + sort) lives in the shared build_csr_arrays (sparse_build.cpp),
+// called here with transpose=false for CSR (groups = rows, ndim = nrows).
 template <typename idx_t, typename coeff_t, typename block_t>
 static CSRMatrix<idx_t, coeff_t>
 csr_matrix_impl(OpSum const &ops, block_t const &block_in,
@@ -129,11 +61,9 @@ csr_matrix_impl(OpSum const &ops, block_t const &block_in,
   idx_t ncols = (idx_t)size(block_in);
   arma::Col<idx_t> rowptr, col;
   arma::Col<coeff_t> data;
-  kernels::dispatch_basis(
-      block_in, block_out, [&](auto const &basis_in, auto const &basis_out) {
-        csr_build<idx_t, coeff_t, block_t>(ops, basis_in, basis_out, nrows, i0,
-                                           rowptr, col, data);
-      });
+  build_csr_arrays<idx_t, coeff_t, block_t>(ops, block_in, block_out, nrows, i0,
+                                            /*transpose=*/false, rowptr, col,
+                                            data);
   bool isherm = ishermitian(ops, block_in);
   return CSRMatrix<idx_t, coeff_t>{nrows, ncols, rowptr, col, data, i0, isherm};
 }

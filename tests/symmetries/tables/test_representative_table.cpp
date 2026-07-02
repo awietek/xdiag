@@ -383,26 +383,7 @@ TEST_CASE("representative_table", "[symmetries]") try {
     check_size(ms, irrep4_0, 6);
   }
 
-  SECTION("BoundedMultisets<BitArray5>") {
-    Log("Testing RepresentativeTable - BoundedMultisets<BitArray5>");
-    auto ms = BoundedMultisets<BitArray5>(4, 2);
-    test_invariants(ms, irrep4_0);
-    check_size(ms, irrep4_0, 6);
-  }
-
-  SECTION("BoundedMultisets<BitArray6>") {
-    Log("Testing RepresentativeTable - BoundedMultisets<BitArray6>");
-    auto ms = BoundedMultisets<BitArray6>(4, 2);
-    test_invariants(ms, irrep4_0);
-    check_size(ms, irrep4_0, 6);
-  }
-
-  SECTION("BoundedMultisets<BitArray7>") {
-    Log("Testing RepresentativeTable - BoundedMultisets<BitArray7>");
-    auto ms = BoundedMultisets<BitArray7>(4, 2);
-    test_invariants(ms, irrep4_0);
-    check_size(ms, irrep4_0, 6);
-  }
+  // Widths 5-7 are no longer compiled (boson dispatch promotes them to 8).
 
   SECTION("BoundedMultisets<BitArray8>") {
     Log("Testing RepresentativeTable - BoundedMultisets<BitArray8>");
@@ -436,27 +417,6 @@ TEST_CASE("representative_table", "[symmetries]") try {
   SECTION("BoundedMultisets<BitArrayLong4>") {
     Log("Testing RepresentativeTable - BoundedMultisets<BitArrayLong4>");
     auto ms = BoundedMultisets<BitArrayLong4>(4, 2);
-    test_invariants(ms, irrep4_0);
-    check_size(ms, irrep4_0, 6);
-  }
-
-  SECTION("BoundedMultisets<BitArrayLong5>") {
-    Log("Testing RepresentativeTable - BoundedMultisets<BitArrayLong5>");
-    auto ms = BoundedMultisets<BitArrayLong5>(4, 2);
-    test_invariants(ms, irrep4_0);
-    check_size(ms, irrep4_0, 6);
-  }
-
-  SECTION("BoundedMultisets<BitArrayLong6>") {
-    Log("Testing RepresentativeTable - BoundedMultisets<BitArrayLong6>");
-    auto ms = BoundedMultisets<BitArrayLong6>(4, 2);
-    test_invariants(ms, irrep4_0);
-    check_size(ms, irrep4_0, 6);
-  }
-
-  SECTION("BoundedMultisets<BitArrayLong7>") {
-    Log("Testing RepresentativeTable - BoundedMultisets<BitArrayLong7>");
-    auto ms = BoundedMultisets<BitArrayLong7>(4, 2);
     test_invariants(ms, irrep4_0);
     check_size(ms, irrep4_0, 6);
   }
@@ -505,27 +465,6 @@ TEST_CASE("representative_table", "[symmetries]") try {
     check_size(bp, irrep4_0, 3);
   }
 
-  SECTION("BoundedPartitions<BitArray5>") {
-    Log("Testing RepresentativeTable - BoundedPartitions<BitArray5>");
-    auto bp = BoundedPartitions<BitArray5>(4, 2, 3);
-    test_invariants(bp, irrep4_0);
-    check_size(bp, irrep4_0, 3);
-  }
-
-  SECTION("BoundedPartitions<BitArray6>") {
-    Log("Testing RepresentativeTable - BoundedPartitions<BitArray6>");
-    auto bp = BoundedPartitions<BitArray6>(4, 2, 3);
-    test_invariants(bp, irrep4_0);
-    check_size(bp, irrep4_0, 3);
-  }
-
-  SECTION("BoundedPartitions<BitArray7>") {
-    Log("Testing RepresentativeTable - BoundedPartitions<BitArray7>");
-    auto bp = BoundedPartitions<BitArray7>(4, 2, 3);
-    test_invariants(bp, irrep4_0);
-    check_size(bp, irrep4_0, 3);
-  }
-
   SECTION("BoundedPartitions<BitArray8>") {
     Log("Testing RepresentativeTable - BoundedPartitions<BitArray8>");
     auto bp = BoundedPartitions<BitArray8>(4, 2, 3);
@@ -561,26 +500,6 @@ TEST_CASE("representative_table", "[symmetries]") try {
     check_size(bp, irrep4_0, 3);
   }
 
-  SECTION("BoundedPartitions<BitArrayLong5>") {
-    Log("Testing RepresentativeTable - BoundedPartitions<BitArrayLong5>");
-    auto bp = BoundedPartitions<BitArrayLong5>(4, 2, 3);
-    test_invariants(bp, irrep4_0);
-    check_size(bp, irrep4_0, 3);
-  }
-
-  SECTION("BoundedPartitions<BitArrayLong6>") {
-    Log("Testing RepresentativeTable - BoundedPartitions<BitArrayLong6>");
-    auto bp = BoundedPartitions<BitArrayLong6>(4, 2, 3);
-    test_invariants(bp, irrep4_0);
-    check_size(bp, irrep4_0, 3);
-  }
-
-  SECTION("BoundedPartitions<BitArrayLong7>") {
-    Log("Testing RepresentativeTable - BoundedPartitions<BitArrayLong7>");
-    auto bp = BoundedPartitions<BitArrayLong7>(4, 2, 3);
-    test_invariants(bp, irrep4_0);
-    check_size(bp, irrep4_0, 3);
-  }
 
   SECTION("BoundedPartitions<BitArrayLong8>") {
     Log("Testing RepresentativeTable - BoundedPartitions<BitArrayLong8>");
@@ -624,26 +543,7 @@ TEST_CASE("representative_table", "[symmetries]") try {
     check_size(st, irrep4_0, 3);
   }
 
-  SECTION("SchaeferTable<BitArray5>") {
-    Log("Testing RepresentativeTable - SchaeferTable<BitArray5>");
-    auto st = SchaeferTable<BitArray5>(4, 2, 3);
-    test_invariants(st, irrep4_0);
-    check_size(st, irrep4_0, 3);
-  }
-
-  SECTION("SchaeferTable<BitArray6>") {
-    Log("Testing RepresentativeTable - SchaeferTable<BitArray6>");
-    auto st = SchaeferTable<BitArray6>(4, 2, 3);
-    test_invariants(st, irrep4_0);
-    check_size(st, irrep4_0, 3);
-  }
-
-  SECTION("SchaeferTable<BitArray7>") {
-    Log("Testing RepresentativeTable - SchaeferTable<BitArray7>");
-    auto st = SchaeferTable<BitArray7>(4, 2, 3);
-    test_invariants(st, irrep4_0);
-    check_size(st, irrep4_0, 3);
-  }
+  // Widths 5-7 are no longer compiled (boson dispatch promotes them to 8).
 
   SECTION("SchaeferTable<BitArray8>") {
     Log("Testing RepresentativeTable - SchaeferTable<BitArray8>");

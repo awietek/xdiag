@@ -31,8 +31,6 @@ void dispatch_basis(xdiag::Fermion const &block_in,
                        BasisOnTheFly<LinTable<uint64_t>>,          //
                        BasisOnTheFly<Combinations<BitsetDynamic>>, //
                        BasisOnTheFly<Combinations<BitsetStatic2>>, //
-                       BasisOnTheFly<Combinations<BitsetStatic4>>, //
-                       BasisOnTheFly<Combinations<BitsetStatic8>>, //
                        BasisSymmetric<Subsets<uint32_t>>,          //
                        BasisSymmetric<Subsets<uint64_t>>,          //
                        BasisSymmetric<Combinations<uint32_t>>,     //
@@ -40,9 +38,7 @@ void dispatch_basis(xdiag::Fermion const &block_in,
                        BasisSymmetric<LinTable<uint32_t>>,         //
                        BasisSymmetric<LinTable<uint64_t>>,         //
                        BasisSymmetric<Combinations<BitsetDynamic>>, //
-                       BasisSymmetric<Combinations<BitsetStatic2>>, //
-                       BasisSymmetric<Combinations<BitsetStatic4>>, //
-                       BasisSymmetric<Combinations<BitsetStatic8>>>(
+                       BasisSymmetric<Combinations<BitsetStatic2>>>(
       *block_in.basis(), *block_out.basis(), fn);
 }
 

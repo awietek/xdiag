@@ -7,7 +7,6 @@
 #include <cstdlib>
 #include <iostream>
 
-#define FMT_HEADER_ONLY
 #include <extern/fmt/format.hpp>
 #include <xdiag/utils/error.hpp>
 

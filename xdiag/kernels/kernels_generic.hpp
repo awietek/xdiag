@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <functional>
 #include <numeric>
 
 #include <xdiag/armadillo.hpp>
@@ -31,6 +32,17 @@ namespace xdiag::kernels {
 // specialization for its own block before instantiating the kernels below.
 template <typename block_t> struct matrix_kernel;
 
+// Type-erased fill callbacks used by the one-shot matrix-construction paths
+// (matrix / coo / csr). Routing these through a single erased type collapses
+// the per-fill-variant instantiations of matrix_generic (and all term_*
+// kernels) down to one per coeff_t (fill_t) plus one per coeff_t for the OMP
+// 4-arg signature (fill_omp_t). The hot apply() path deliberately keeps its raw
+// lambda so the fill stays inlined in the matrix-vector product.
+template <typename coeff_t>
+using fill_t = std::function<void(int64_t, int64_t, coeff_t)>;
+template <typename coeff_t>
+using fill_omp_t = std::function<void(int64_t, int64_t, coeff_t, int)>;
+
 template <typename block_t, typename basis_t, typename mat_t>
 void apply(OpSum const &ops, basis_t const &basis_in, mat_t const &mat_in,
            basis_t const &basis_out, mat_t &mat_out) try {
@@ -50,9 +62,9 @@ void matrix(OpSum const &ops, basis_t const &basis_in, basis_t const &basis_out,
   int64_t m = basis_out.size();
   matrix_kernel<block_t>::template call<coeff_t>(
       ops, basis_in, basis_out,
-      [&](int64_t idx_in, int64_t idx_out, coeff_t val) {
+      fill_t<coeff_t>([&](int64_t idx_in, int64_t idx_out, coeff_t val) {
         fill_matrix(mat, m, idx_in, idx_out, val);
-      });
+      }));
 }
 XDIAG_CATCH
 
@@ -65,9 +77,10 @@ std::vector<int64_t> coo_matrix_nnz(OpSum const &ops, basis_t const &basis_in,
   int nthreads = omp_get_max_threads();
   std::vector<int64_t> nnz_thread(nthreads, 0);
   matrix_kernel<block_t>::template call<coeff_t>(
-      ops, basis_in, basis_out, [&](int64_t, int64_t, coeff_t, int num_thread) {
+      ops, basis_in, basis_out,
+      fill_omp_t<coeff_t>([&](int64_t, int64_t, coeff_t, int num_thread) {
         fill_coo_count(nnz_thread, num_thread);
-      });
+      }));
   return nnz_thread;
 }
 XDIAG_CATCH
@@ -85,10 +98,11 @@ void coo_matrix_fill(OpSum const &ops, basis_t const &basis_in,
   omp_set_schedule(omp_sched_static, 0);
   matrix_kernel<block_t>::template call<coeff_t>(
       ops, basis_in, basis_out,
-      [&](int64_t idx_in, int64_t idx_out, coeff_t val, int num_thread) {
-        fill_coo(rows, cols, data, offset, idx_in, idx_out, val, i0,
-                 num_thread);
-      });
+      fill_omp_t<coeff_t>(
+          [&](int64_t idx_in, int64_t idx_out, coeff_t val, int num_thread) {
+            fill_coo(rows, cols, data, offset, idx_in, idx_out, val, i0,
+                     num_thread);
+          }));
 }
 XDIAG_CATCH
 
@@ -100,7 +114,7 @@ int64_t coo_matrix_nnz(OpSum const &ops, basis_t const &basis_in,
   int64_t nnz = 0;
   matrix_kernel<block_t>::template call<coeff_t>(
       ops, basis_in, basis_out,
-      [&](int64_t, int64_t, coeff_t) { fill_coo_count(nnz); });
+      fill_t<coeff_t>([&](int64_t, int64_t, coeff_t) { fill_coo_count(nnz); }));
   return nnz;
 }
 XDIAG_CATCH
@@ -113,9 +127,9 @@ void coo_matrix_fill(OpSum const &ops, basis_t const &basis_in,
   int64_t k = 0;
   matrix_kernel<block_t>::template call<coeff_t>(
       ops, basis_in, basis_out,
-      [&](int64_t idx_in, int64_t idx_out, coeff_t val) {
+      fill_t<coeff_t>([&](int64_t idx_in, int64_t idx_out, coeff_t val) {
         fill_coo(rows, cols, data, k, idx_in, idx_out, val, i0);
-      });
+      }));
 }
 XDIAG_CATCH
 
@@ -128,16 +142,18 @@ std::vector<int64_t> csr_matrix_nnz(OpSum const &ops, basis_t const &basis_in,
   if (transpose) {
     std::vector<int64_t> n_elements(basis_in.size(), 0);
     matrix_kernel<block_t>::template call<coeff_t>(
-        ops, basis_in, basis_out, [&](int64_t idx_in, int64_t, coeff_t) {
+        ops, basis_in, basis_out,
+        fill_t<coeff_t>([&](int64_t idx_in, int64_t, coeff_t) {
           fill_csr_count(n_elements, idx_in);
-        });
+        }));
     return n_elements;
   } else {
     std::vector<int64_t> n_elements(basis_out.size(), 0);
     matrix_kernel<block_t>::template call<coeff_t>(
-        ops, basis_in, basis_out, [&](int64_t, int64_t idx_out, coeff_t) {
+        ops, basis_in, basis_out,
+        fill_t<coeff_t>([&](int64_t, int64_t idx_out, coeff_t) {
           fill_csr_count(n_elements, idx_out);
-        });
+        }));
     return n_elements;
   }
 }
@@ -152,16 +168,16 @@ void csr_matrix_fill(OpSum const &ops, basis_t const &basis_in,
     // CSC: key by column (idx_in), store row (idx_out)
     matrix_kernel<block_t>::template call<coeff_t>(
         ops, basis_in, basis_out,
-        [&](int64_t idx_in, int64_t idx_out, coeff_t val) {
+        fill_t<coeff_t>([&](int64_t idx_in, int64_t idx_out, coeff_t val) {
           fill_csr(offset, col, data, idx_out, idx_in, val, i0);
-        });
+        }));
   } else {
     // CSR: key by row (idx_out), store column (idx_in)
     matrix_kernel<block_t>::template call<coeff_t>(
         ops, basis_in, basis_out,
-        [&](int64_t idx_in, int64_t idx_out, coeff_t val) {
+        fill_t<coeff_t>([&](int64_t idx_in, int64_t idx_out, coeff_t val) {
           fill_csr(offset, col, data, idx_in, idx_out, val, i0);
-        });
+        }));
   }
 }
 XDIAG_CATCH
@@ -235,16 +251,16 @@ XDIAG_CATCH
   XDIAG_INSTANTIATE_CSR_FILL(BLOCK, BASIS, int64_t, double)                          \
   XDIAG_INSTANTIATE_CSR_FILL(BLOCK, BASIS, int64_t, complex)
 
-// Boson bases share the same BitArray<1..8> / BitArrayLong<1..8> backends for a
-// given (basis class, enumeration), so instantiate all eight at once.
+// Boson bases share a set of BitArray / BitArrayLong backends for a given
+// (basis class, enumeration). Only the widths {1,2,3,4,8} are compiled; states
+// needing 5-7 bits per site are promoted to the 8-bit backend at dispatch time
+// (see promote_nlocalbits in blocks/boson.cpp), so those widths are never
+// constructed and need no kernels.
 #define XDIAG_INSTANTIATE_KERNELS_BITARRAY(BLOCK, BASIS, ENUM)                       \
   XDIAG_INSTANTIATE_KERNELS(BLOCK, BASIS<ENUM<BitArray1>>)                           \
   XDIAG_INSTANTIATE_KERNELS(BLOCK, BASIS<ENUM<BitArray2>>)                           \
   XDIAG_INSTANTIATE_KERNELS(BLOCK, BASIS<ENUM<BitArray3>>)                           \
   XDIAG_INSTANTIATE_KERNELS(BLOCK, BASIS<ENUM<BitArray4>>)                           \
-  XDIAG_INSTANTIATE_KERNELS(BLOCK, BASIS<ENUM<BitArray5>>)                           \
-  XDIAG_INSTANTIATE_KERNELS(BLOCK, BASIS<ENUM<BitArray6>>)                           \
-  XDIAG_INSTANTIATE_KERNELS(BLOCK, BASIS<ENUM<BitArray7>>)                           \
   XDIAG_INSTANTIATE_KERNELS(BLOCK, BASIS<ENUM<BitArray8>>)
 
 #define XDIAG_INSTANTIATE_KERNELS_BITARRAY_LONG(BLOCK, BASIS, ENUM)                  \
@@ -252,7 +268,4 @@ XDIAG_CATCH
   XDIAG_INSTANTIATE_KERNELS(BLOCK, BASIS<ENUM<BitArrayLong2>>)                       \
   XDIAG_INSTANTIATE_KERNELS(BLOCK, BASIS<ENUM<BitArrayLong3>>)                       \
   XDIAG_INSTANTIATE_KERNELS(BLOCK, BASIS<ENUM<BitArrayLong4>>)                       \
-  XDIAG_INSTANTIATE_KERNELS(BLOCK, BASIS<ENUM<BitArrayLong5>>)                       \
-  XDIAG_INSTANTIATE_KERNELS(BLOCK, BASIS<ENUM<BitArrayLong6>>)                       \
-  XDIAG_INSTANTIATE_KERNELS(BLOCK, BASIS<ENUM<BitArrayLong7>>)                       \
   XDIAG_INSTANTIATE_KERNELS(BLOCK, BASIS<ENUM<BitArrayLong8>>)

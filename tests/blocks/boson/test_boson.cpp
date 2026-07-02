@@ -253,3 +253,66 @@ TEST_CASE("bosonrandomopsum", "[boson]") try {
   error_trace(e);
   throw;
 }
+
+// Local dimensions requiring 5-7 bits per site (d in 17..128) are stored in
+// 8-bit fields (see promote_nlocalbits in blocks/boson.cpp), since the 5,6,7-bit
+// backends are no longer compiled. These checks confirm the promoted storage
+// still enumerates and indexes states correctly, across the single-word,
+// dynamic-word, and symmetric backends.
+TEST_CASE("bosonpromotion", "[boson]") try {
+  using namespace arma;
+
+  // d -> bits per site: 16->4 (exact), 17->5, 33->6, 65->7, 256->8. The 5-7
+  // cases are the ones promoted to the 8-bit backend.
+  for (int64_t d : {(int64_t)16, (int64_t)17, (int64_t)33, (int64_t)65,
+                    (int64_t)256}) {
+    Log("Boson promotion test: single site, d = {}", d);
+    auto block = Boson(1, d); // full Fock space on one site, dim == d
+    REQUIRE(block.dim() == d);
+
+    // N on a single site is diagonal with occupations 0,1,...,d-1.
+    mat n = matrix(Op("N", 0), block);
+    REQUIRE(isapprox(vec(sort(n.diag())), vec(regspace<vec>(0, d - 1))));
+  }
+
+  // d > 256 needs more than 8 bits per site (nlocalbits > 8) and must be
+  // rejected rather than silently promoted.
+  for (int64_t d : {(int64_t)257, (int64_t)512, (int64_t)1000}) {
+    Log("Boson promotion test: d = {} must throw", d);
+    Boson block;
+    REQUIRE_THROWS(block = Boson(1, d));
+    REQUIRE_THROWS(block = Boson(4, d));
+    REQUIRE_THROWS(block = Boson(4, d, 3));
+  }
+
+  // Promoted dynamic (BitArrayLong8) backend: nsites * 8 > 64 forces the
+  // dynamically sized word storage, even though the ideal 5-bit width for d=17
+  // would still fit a single 64-bit word.
+  {
+    Log("Boson promotion test: dynamic backend, nsites=9, d=17");
+    int64_t nsites = 9, d = 17, number = 2;
+    auto block = Boson(nsites, d, number);
+    // number-conserving full multiset dimension: C(nsites + number - 1, number)
+    REQUIRE(block.dim() == 45);
+    // On a fixed-number block TotalN is number * identity.
+    mat ntot = matrix(Op("TotalN"), block);
+    REQUIRE(isapprox(ntot, mat(mat(block.dim(), block.dim(), fill::eye) *
+                               (double)number)));
+  }
+
+  // Promoted symmetric (BitArray8) backend: the number sector must split into
+  // momentum sectors whose dimensions sum back to the full sector dimension.
+  {
+    Log("Boson promotion test: symmetric backend, nsites=3, d=17");
+    int64_t nsites = 3, d = 17, number = 2;
+    auto full = Boson(nsites, d, number);
+    int64_t sum = 0;
+    for (int k = 0; k < nsites; ++k) {
+      sum += dim(Boson(nsites, d, number, cyclic_group_irrep(nsites, k)));
+    }
+    REQUIRE(sum == full.dim());
+  }
+} catch (xdiag::Error e) {
+  error_trace(e);
+  throw;
+}

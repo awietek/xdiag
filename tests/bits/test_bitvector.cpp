@@ -257,9 +257,7 @@ TEST_CASE("bitvector", "[bits]") try {
     test_bitvector_bitarray<BitArray2>();
     test_bitvector_bitarray<BitArray3>();
     test_bitvector_bitarray<BitArray4>();
-    test_bitvector_bitarray<BitArray5>();
-    test_bitvector_bitarray<BitArray6>();
-    test_bitvector_bitarray<BitArray7>();
+    // Widths 5-7 are no longer compiled (boson dispatch promotes them to 8).
     test_bitvector_bitarray<BitArray8>();
   }
 
@@ -269,9 +267,7 @@ TEST_CASE("bitvector", "[bits]") try {
     test_bitvector_bitarray_long<BitArrayLong2>();
     test_bitvector_bitarray_long<BitArrayLong3>();
     test_bitvector_bitarray_long<BitArrayLong4>();
-    test_bitvector_bitarray_long<BitArrayLong5>();
-    test_bitvector_bitarray_long<BitArrayLong6>();
-    test_bitvector_bitarray_long<BitArrayLong7>();
+    // Widths 5-7 are no longer compiled (boson dispatch promotes them to 8).
     test_bitvector_bitarray_long<BitArrayLong8>();
   }
 

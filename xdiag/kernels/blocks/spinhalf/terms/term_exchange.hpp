@@ -8,6 +8,7 @@
 
 #include <xdiag/bits/get_set.hpp>
 #include <xdiag/bits/popcount.hpp>
+#include <xdiag/kernels/terms/term_diag.hpp>
 #include <xdiag/kernels/terms/term_offdiag.hpp>
 
 namespace xdiag::kernels::spinhalf {

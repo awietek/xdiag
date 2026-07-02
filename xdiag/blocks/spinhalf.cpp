@@ -61,10 +61,6 @@ void dispatch_enumeration(int64_t nsites, std::optional<int64_t> nup, F &&f) {
       f(Combinations<uint64_t>(n, k));
     } else if (nsites <= 128) {
       f(Combinations<BitsetStatic2>(n, k));
-    } else if (nsites <= 256) {
-      f(Combinations<BitsetStatic4>(n, k));
-    } else if (nsites <= 512) {
-      f(Combinations<BitsetStatic8>(n, k));
     } else {
       f(Combinations<BitsetDynamic>(n, k));
     }
@@ -79,8 +75,6 @@ void dispatch_sublattice(std::string const &backend, int64_t nsites, F &&f) {
   if constexpr (n_sublat <= 5) {
     if (backend != fmt::format("{}sublattice", n_sublat)) {
       dispatch_sublattice<n_sublat + 1>(backend, nsites, f);
-    } else if (nsites <= 32) {
-      f(type_tag<BasisSublattice<uint32_t, n_sublat>>{});
     } else if (nsites <= 64) {
       f(type_tag<BasisSublattice<uint64_t, n_sublat>>{});
     } else {

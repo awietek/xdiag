@@ -75,14 +75,13 @@ using namespace bits;
 
 // SchaeferTable / BoundedMultisets / BoundedPartitions share the BitArray
 // backends, so list those once per class template.
+// Only widths {1,2,3,4,8} are compiled; 5-7 are promoted to 8 at dispatch time
+// (see promote_nlocalbits in blocks/boson.cpp).
 #define INSTANTIATE_BITARRAY(Tmpl)                                             \
   INSTANTIATE(Tmpl<BitArray1>)                                                 \
   INSTANTIATE(Tmpl<BitArray2>)                                                 \
   INSTANTIATE(Tmpl<BitArray3>)                                                 \
   INSTANTIATE(Tmpl<BitArray4>)                                                 \
-  INSTANTIATE(Tmpl<BitArray5>)                                                 \
-  INSTANTIATE(Tmpl<BitArray6>)                                                 \
-  INSTANTIATE(Tmpl<BitArray7>)                                                 \
   INSTANTIATE(Tmpl<BitArray8>)
 
 #define INSTANTIATE_BITARRAY_LONG(Tmpl)                                        \
@@ -90,9 +89,6 @@ using namespace bits;
   INSTANTIATE(Tmpl<BitArrayLong2>)                                             \
   INSTANTIATE(Tmpl<BitArrayLong3>)                                             \
   INSTANTIATE(Tmpl<BitArrayLong4>)                                             \
-  INSTANTIATE(Tmpl<BitArrayLong5>)                                             \
-  INSTANTIATE(Tmpl<BitArrayLong6>)                                             \
-  INSTANTIATE(Tmpl<BitArrayLong7>)                                             \
   INSTANTIATE(Tmpl<BitArrayLong8>)
 
 // BEGIN_INSTANTIATION_GROUP(spinhalf)
@@ -101,8 +97,6 @@ INSTANTIATE(Subsets<uint64_t>)
 INSTANTIATE(Combinations<uint32_t>)
 INSTANTIATE(Combinations<uint64_t>)
 INSTANTIATE(Combinations<BitsetStatic2>)
-INSTANTIATE(Combinations<BitsetStatic4>)
-INSTANTIATE(Combinations<BitsetStatic8>)
 INSTANTIATE(Combinations<BitsetDynamic>)
 INSTANTIATE(LinTable<uint32_t>)
 INSTANTIATE(LinTable<uint64_t>)

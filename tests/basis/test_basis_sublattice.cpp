@@ -183,8 +183,8 @@ template <typename bit_t> void test_basis_sublattice() {
 
 TEST_CASE("basis_sublattice", "[basis]") try {
   Log("Test basis_sublattice");
-  Log("uint32_t");
-  test_basis_sublattice<uint32_t>();
+  // uint32_t sublattice coding was removed to shrink the library; the block
+  // dispatch now routes nsites <= 32 through the uint64_t sublattice basis.
   Log("uint64_t");
   test_basis_sublattice<uint64_t>();
   Log("Done");

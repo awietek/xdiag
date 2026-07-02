@@ -73,7 +73,5 @@ template class CdagCString<uint32_t>;
 template class CdagCString<uint64_t>;
 template class CdagCString<bits::BitsetDynamic>;
 template class CdagCString<bits::BitsetStatic2>;
-template class CdagCString<bits::BitsetStatic4>;
-template class CdagCString<bits::BitsetStatic8>;
 
 } // namespace xdiag::kernels
