@@ -116,6 +116,14 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
   target_link_options(${XDIAG_LIBRARY} PUBLIC -fsanitize=address)
 endif()
 
+# Add source-based coverage instrumentation (see misc/coverage/README.md)
+option(XDIAG_COVERAGE "Build with source-based coverage instrumentation" OFF)
+if (XDIAG_COVERAGE)
+  message(STATUS "Adding coverage instrumentation to ${XDIAG_LIBRARY}")
+  target_compile_options(${XDIAG_LIBRARY} PUBLIC -fprofile-instr-generate -fcoverage-mapping)
+  target_link_options(${XDIAG_LIBRARY} PUBLIC -fprofile-instr-generate -fcoverage-mapping)
+endif()
+
 
   
 message(STATUS "-------- Determining Linear Algebra backend -------------")

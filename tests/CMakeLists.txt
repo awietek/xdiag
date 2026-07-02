@@ -29,6 +29,7 @@ set(XDIAG_TEST_SOURCES
   operators/test_monomial.cpp
   operators/test_op.cpp
   operators/test_opsum.cpp
+  operators/test_valid.cpp
 
   algebra/test_normal_order.cpp
   algebra/test_quantum_numbers.cpp
@@ -51,6 +52,8 @@ set(XDIAG_TEST_SOURCES
   symmetries/action/test_site_permutation_sublattice.cpp
   symmetries/tables/test_representative_table.cpp
   symmetries/tables/test_fermi_table.cpp
+
+  blocks/test_print_block.cpp
 
   blocks/spinhalf/test_spinhalf_strategies.cpp
   blocks/spinhalf/test_spinhalf.cpp
@@ -93,6 +96,7 @@ set(XDIAG_TEST_SOURCES
 
   states/test_random_state.cpp
   states/test_product_state.cpp
+  states/test_norm.cpp
   states/test_state.cpp
   states/test_expect.cpp
   states/test_correlation_matrix.cpp

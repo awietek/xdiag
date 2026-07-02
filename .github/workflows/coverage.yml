@@ -1,0 +1,33 @@
+name: Coverage
+on:
+  push: { branches: [ main ] }
+  pull_request: { branches: [ main ] }
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+    env:
+      CC: clang
+      CXX: clang++
+    steps:
+      - uses: actions/checkout@v4
+      - name: install deps
+        run: sudo apt-get update && sudo apt-get install -y clang llvm libblas-dev liblapack-dev
+      - name: build (instrumented)
+        run: |
+          cmake -S . -B build-cov -DCMAKE_BUILD_TYPE=Debug -DXDIAG_COVERAGE=ON -DBUILD_TESTING=ON
+          cmake --build build-cov --target tests -j$(nproc)
+      - name: run tests
+        run: LLVM_PROFILE_FILE=tests.profraw ./build-cov/tests/tests
+      - name: export lcov
+        run: |
+          llvm-profdata merge -sparse tests.profraw -o tests.profdata
+          llvm-cov export ./build-cov/tests/tests \
+            -instr-profile=tests.profdata -format=lcov \
+            -ignore-filename-regex='(extern|tests|build)/' > coverage.lcov
+      - name: upload to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: coverage.lcov
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: false

@@ -30,6 +30,10 @@ benchmark/*/build/*
 *.gcda
 *.gcno
 *.gcov
+*.profraw
+*.profdata
+build-cov
+misc/coverage/coverage-html
 *.o
 *.a
 *.d
