@@ -18,6 +18,7 @@
 # bridges, template instantiation, or categories not yet handled are skipped and
 # reported so coverage stays honest.
 
+import itertools
 import os
 import sys
 
@@ -55,6 +56,20 @@ MIRRORED = {
     "xdiag::EvolveLanczosResult", "xdiag::EvolveLanczosInplaceResult",
     "xdiag::TimeEvolveExpokitResult", "xdiag::TimeEvolveExpokitInplaceResult",
     "xdiag::EigsLobpcgResult",
+}
+
+# Native-type bridges: a bridge parameter is accepted as each of these C++
+# types (by value) and wrapped into the bridge type at the call site; a bridge
+# return is converted back. The Julia side then sees plain Number/String/arrays.
+NATIVE_BRIDGE_PARAM = {
+    "scalar": [("double", "Scalar({n})"), ("complex", "Scalar({n})")],
+    "coeff": [("std::string", "Coeff({n})"), ("double", "Coeff({n})"),
+              ("complex", "Coeff({n})")],
+    "vector": [("arma::vec", "Vector({n})"), ("arma::cx_vec", "Vector({n})")],
+    "matrix": [("arma::mat", "Matrix({n})"), ("arma::cx_mat", "Matrix({n})")],
+}
+NATIVE_BRIDGE_RETURN = {  # expr -> converted expr; missing kinds are skipped
+    "scalar": "({expr}).as<complex>()",
 }
 
 
@@ -122,104 +137,118 @@ def raise_skip(tp):
     raise Skip(tp.get("cat", "?"))
 
 
-def has_block_param(entry):
-    return any(a["type"].get("cat") == "variant" and a["type"].get("is_block")
-               for a in entry.get("args", []))
+def param_choices(tp, wrapped_names):
+    """Concrete lambda-parameter choices for one API parameter, as a list of
+    (cpp_decl_type, argfmt) where argfmt.format(n=name) is the value passed to
+    the C++ callee. Multiple entries mean the parameter is expanded: a Block
+    over the concrete serial blocks, a native-bridge type over its accepted
+    Julia representations."""
+    cat = tp["cat"]
+    if cat == "variant" and tp.get("is_block"):
+        return [(f"{bt} const &", "{n}") for bt in BLOCK_TYPES]
+    if cat == "wrapped" and tp["type"] in ov.NATIVE_BRIDGES:
+        opts = NATIVE_BRIDGE_PARAM.get(ov.NATIVE_BRIDGES[tp["type"]])
+        if not opts:
+            raise Skip(f"bridge param {tp['type']}")
+        return list(opts)
+    return [(cpp_type(tp, wrapped_names), "{n}")]
 
 
-def block_subs(entry):
-    """Concrete block names to expand over ([None] if no Block params)."""
-    return BLOCK_TYPES if has_block_param(entry) else [None]
-
-
-def lambda_params(entry, wrapped_names, self_type=None, block_sub=None):
-    """Return (param_decls, arg_names). Prepends a self param for members."""
-    decls, names = [], []
-    if self_type is not None:
-        const = entry.get("is_const", True)
-        decls.append(f"{self_type} {'const &' if const else '&'} self")
-        names.append("self")
-    for i, a in enumerate(entry.get("args", [])):
-        t = cpp_type(a["type"], wrapped_names, block_sub)
-        if t == "void":
-            raise Skip("void param")
-        an = a["name"] or f"a{i}"
-        decls.append(f"{t} {an}")
-        names.append(an)
-    return decls, names
-
-
-def call_wrap(entry, expr):
+def return_transform(entry, wrapped_names):
+    """(expr_wrapper, is_void). Validates the return marshals or raises Skip.
+    A native-bridge return is converted back to its Julia representation."""
     ret = entry.get("return", {"cat": "void"})
-    if ret["cat"] == "void":
-        return f"JULIA_XDIAG_CALL_VOID({expr});"
-    return f"JULIA_XDIAG_CALL_RETURN({expr})"
-
-
-def _check_return(entry, wrapped_names):
-    """Validate the return type marshals; variant(block) returns are skipped."""
-    ret = entry.get("return", {"cat": "void"})
-    if ret.get("cat") == "variant":
+    cat = ret.get("cat")
+    if cat == "void":
+        return (lambda e: e), True
+    if cat == "variant":
         raise Skip("returns Block variant")
-    cpp_type(ret, wrapped_names)  # raises Skip if not marshallable
+    if cat == "wrapped" and ret["type"] in ov.NATIVE_BRIDGES:
+        tmpl = NATIVE_BRIDGE_RETURN.get(ov.NATIVE_BRIDGES[ret["type"]])
+        if not tmpl:
+            raise Skip(f"bridge return {ret['type']}")
+        return (lambda e: tmpl.format(expr=e)), False
+    cpp_type(ret, wrapped_names)  # validate marshallable
+    return (lambda e: e), False
+
+
+def expansions(entry, wrapped_names, self_type=None):
+    """Yield (decls, callargs, sig) for each concrete overload of a callable.
+    sig is the tuple of C++ parameter types used for de-duplication."""
+    choices = [param_choices(a["type"], wrapped_names)
+               for a in entry.get("args", [])]
+    for combo in itertools.product(*choices):
+        decls, callargs, sig = [], [], []
+        if self_type is not None:
+            const = entry.get("is_const", True)
+            decls.append(f"{self_type} {'const &' if const else '&'} self")
+            sig.append(self_type + (" const&" if const else "&"))
+        for i, (a, (decl, fmt)) in enumerate(zip(entry.get("args", []), combo)):
+            an = a["name"] or f"a{i}"
+            decls.append(f"{decl} {an}")
+            callargs.append(fmt.format(n=an))
+            sig.append(decl)
+        yield decls, callargs, tuple(sig)
+
+
+def _reg(target, jl_name, decls, body):
+    return f'  {target}.method("{jl_name}", []({", ".join(decls)}) {{ {body} }});'
 
 
 def emit_method(tw, entry, wrapped_names):
-    """A member method / operator on a wrapped record. Returns a list of lines
-    (one per Block substitution)."""
+    """Member method / operator on a wrapped record -> list of (sig_key, line)."""
     rec = short(entry["qualified"].rsplit("::", 1)[0])
-    args = entry.get("args", [])
-    _check_return(entry, wrapped_names)
+    nargs = len(entry.get("args", []))
+    wrap, is_void = return_transform(entry, wrapped_names)
     out = []
-    for sub in block_subs(entry):
-        decls, names = lambda_params(entry, wrapped_names, self_type=rec,
-                                     block_sub=sub)
-        call_args = ", ".join(names[1:])
+    for decls, callargs, sig in expansions(entry, wrapped_names, self_type=rec):
         if entry["kind"] == "operator":
             op = entry.get("op")
-            if op in _BINARY_OPS and len(args) == 1:
-                jl_name, expr = op, f"self {op} {names[1]}"
-            elif op == "[]" and len(args) == 1:
-                jl_name, expr = "getindex", f"self[{names[1]}]"
+            if op in _BINARY_OPS and nargs == 1:
+                jl_name, expr = op, f"self {op} {callargs[0]}"
+            elif op == "[]" and nargs == 1:
+                jl_name, expr = "getindex", f"self[{callargs[0]}]"
             else:
                 raise Skip(f"operator{op}")
         else:
             jl_name = entry["name"]
-            expr = f"self.{entry['name']}({call_args})"
-        body = call_wrap(entry, expr)
-        out.append(f'  {tw}.method("{jl_name}", []({", ".join(decls)}) '
-                   f'{{ {body} }});')
+            expr = f"self.{entry['name']}({', '.join(callargs)})"
+        expr = wrap(expr)
+        body = (f"JULIA_XDIAG_CALL_VOID({expr});" if is_void
+                else f"JULIA_XDIAG_CALL_RETURN({expr})")
+        out.append(((tw, jl_name, sig), _reg(tw, jl_name, decls, body)))
     return out
 
 
 def emit_constructor(entry, wrapped_names):
     rec = short(entry["qualified"].rsplit("::", 1)[0])
     out = []
-    for sub in block_subs(entry):
-        decls, names = lambda_params(entry, wrapped_names, block_sub=sub)
-        out.append(f'  mod.method("construct_{rec}", []({", ".join(decls)}) '
-                   f'{{ JULIA_XDIAG_CALL_RETURN({rec}({", ".join(names)})) }});')
+    for decls, callargs, sig in expansions(entry, wrapped_names):
+        body = f'JULIA_XDIAG_CALL_RETURN({rec}({", ".join(callargs)}))'
+        out.append((("mod", f"construct_{rec}", sig),
+                    _reg("mod", f"construct_{rec}", decls, body)))
     return out
 
 
 def emit_free(entry, wrapped_names):
     name = entry["name"]
-    _check_return(entry, wrapped_names)
+    nargs = len(entry.get("args", []))
+    wrap, is_void = return_transform(entry, wrapped_names)
     out = []
-    for sub in block_subs(entry):
-        decls, names = lambda_params(entry, wrapped_names, block_sub=sub)
+    for decls, callargs, sig in expansions(entry, wrapped_names):
         if entry["kind"] == "operator":
             op = entry.get("op")
-            if op in _BINARY_OPS and len(names) == 2:
-                jl_name, expr = op, f"{names[0]} {op} {names[1]}"
+            if op in _BINARY_OPS and nargs == 2:
+                jl_name, expr = op, f"{callargs[0]} {op} {callargs[1]}"
             else:
                 raise Skip(f"free operator{op}")
         else:
             jl_name = name
-            expr = f"{name}({', '.join(names)})"
-        body = call_wrap(entry, expr)
-        out.append(f'  mod.method("{jl_name}", []({", ".join(decls)}) '
-                   f'{{ {body} }});')
+            expr = f"{name}({', '.join(callargs)})"
+        expr = wrap(expr)
+        body = (f"JULIA_XDIAG_CALL_VOID({expr});" if is_void
+                else f"JULIA_XDIAG_CALL_RETURN({expr})")
+        out.append((("mod", jl_name, sig), _reg("mod", jl_name, decls, body)))
     return out
 
 
@@ -284,15 +313,25 @@ def build(model):
         elif e["kind"] in ("function", "operator"):
             frees.append(e)
 
+    seen = set()  # de-dup registrations whose C++ signatures collide
+
+    def add(regs, q):
+        for sig, line in regs:
+            if sig in seen:
+                note_skip(q, "duplicate signature")
+                continue
+            seen.add(sig)
+            lines_pass2.append(line)
+
     for q in sorted(records):
         tw = tw_of[q]
         lines_pass2.append(f"  // ---- {short(q)} ----")
         for e in sorted(records[q], key=lambda e: e["line"]):
             try:
                 if e["kind"] == "constructor":
-                    lines_pass2.extend(emit_constructor(e, wrapped_names))
+                    add(emit_constructor(e, wrapped_names), e["qualified"])
                 elif e["kind"] in ("method", "operator"):
-                    lines_pass2.extend(emit_method(tw, e, wrapped_names))
+                    add(emit_method(tw, e, wrapped_names), e["qualified"])
                 elif e["kind"] == "destructor":
                     pass
                 else:
@@ -303,7 +342,7 @@ def build(model):
     lines_pass2.append("  // ---- free functions ----")
     for e in sorted(frees, key=lambda e: (e["header"] or "", e["line"])):
         try:
-            lines_pass2.extend(emit_free(e, wrapped_names))
+            add(emit_free(e, wrapped_names), e["qualified"])
         except Skip as s:
             note_skip(e["qualified"], str(s))
 

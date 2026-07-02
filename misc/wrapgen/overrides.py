@@ -43,10 +43,6 @@ EXCLUDE_RECORDS = {
 EXCLUDE_SYMBOLS = {
     # ostream operator<< is replaced by to_string.
     "xdiag::operator<<",
-    # Declared-but-unused two-phase entry points for COO (the Julia wrapper
-    # derives COO/CSC from CSR, so only the CSR two-phase is wrapped).
-    "xdiag::coo_matrix_nnz",
-    "xdiag::coo_matrix_fill",
 }
 
 # Argument categories that make an overload unwrappable -> that overload is
@@ -198,12 +194,24 @@ TEMPLATES_TODO = {
 # The Julia side allocates, then calls these to fill its own memory.
 #   dense:  matrix<coeff_t>(OpSum, Block, Block, coeff_t* mat)
 #   sparse: *_matrix_nnz -> allocate -> *_matrix_fill(..., idx_t*, idx_t*, coeff_t*)
+# Symbols provided entirely by the hand-written fragment julia/src/specials.cpp
+# (define_specials) instead of the mechanical emitter: template functions whose
+# lambdas take raw Julia-owned pointers and need explicit idx/coeff/block
+# instantiation. Everything here is excluded from the generated file.
+#   matrix          : dense pointer-fill matrix<coeff_t>(ops, block, block, T* m)
+#   csr_matrix_nnz  : CSR phase 1 (per-row counts)
+#   csr_matrix_fill : CSR phase 2 (fill Julia-owned rowptr/col/data)
+#   coo_matrix_nnz  : COO phase 1 (total nnz)
+#   coo_matrix_fill : COO phase 2 (fill Julia-owned row/col/data)
+# CSC is produced Julia-side as a transpose of the CSR arrays (no C++ code).
+# The fill overloads taking std::function (GPWF callbacks) are left unwrapped
+# for now; the ProductState / RandomState / GPWF overloads of fill wrap normally.
 SPECIALS = {
-    "xdiag::matrix": "matrix",           # only the coeff_t* pointer overload
-    "xdiag::csr_matrix_nnz": "sparse_csr",   # phase 1: per-row counts
-    "xdiag::csr_matrix_fill": "sparse_csr",  # phase 2: fill Julia-owned arrays
-    # GPWF / fill std::function callbacks: Julia-function -> std::function bridge
-    "xdiag::fill": "fill_function",      # only the coeff_f std::function overloads
+    "xdiag::matrix": "matrix",
+    "xdiag::csr_matrix_nnz": "sparse_csr",
+    "xdiag::csr_matrix_fill": "sparse_csr",
+    "xdiag::coo_matrix_nnz": "sparse_coo",
+    "xdiag::coo_matrix_fill": "sparse_coo",
 }
 
 
