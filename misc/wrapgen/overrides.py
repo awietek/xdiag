@@ -95,11 +95,20 @@ FIELD_NAMES = {
 # C++ and 1-based in Julia. The emitter subtracts 1 from flagged args and adds 1
 # to flagged returns (element-wise for vector/arma types).
 #
+# A "site index" is either a lattice site or a positional index into a per-site
+# / per-element container (op[i], pstate[i], perm[i], group[i]): 1-based in Julia
+# -> subtract 1. A returned value is shifted (+1) only if it is itself a site
+# index; a returned VALUE (a local state, a wrapped object) is not.
+#
 # ONEBASED_ARGS: {qualified_symbol: [arg_name, ...]}  (applies across overloads)
 ONEBASED_ARGS = {
     "xdiag::Op::Op": ["site", "sites"],
+    "xdiag::Op::operator[]": ["idx"],            # op[i]: which site of the op
     "xdiag::Permutation::Permutation": ["array", "list"],
+    "xdiag::Permutation::operator[]": ["i"],     # perm[i]: image of site i
     "xdiag::PermutationGroup::PermutationGroup": ["matrix"],
+    "xdiag::PermutationGroup::operator[]": ["sym"],  # group[i]: i-th element
+    "xdiag::ProductState::operator[]": ["i"],    # pstate[i]/pstate[i]=v: site i
     "xdiag::col": ["n"],
     "xdiag::vector": ["n"],
     "xdiag::vectorC": ["n"],
@@ -108,36 +117,35 @@ ONEBASED_ARGS = {
 # ONEBASED_RETURN: {qualified_symbol}  (add 1; element-wise for vectors)
 ONEBASED_RETURN = {
     "xdiag::Op::sites",
-    "xdiag::Op::operator[]",
+    "xdiag::Op::operator[]",         # returns a site
     "xdiag::Permutation::array",
+    "xdiag::Permutation::operator[]",  # returns a site
     # block index() -> position of a ProductState in the basis (1-based)
     "xdiag::Spinhalf::index",
     "xdiag::tJ::index",
     "xdiag::Electron::index",
     "xdiag::Boson::index",
     "xdiag::Fermion::index",
+    # NOT ProductState::operator[] (returns a local-state value, not a site) and
+    # NOT PermutationGroup::operator[] (returns a Permutation object).
 }
 
 # ---------------------------------------------------------------------------
-# AMBIGUOUS shifts — NEED A RULING, deliberately NOT applied yet.
+# Resolved index-shift rulings (formerly ambiguous)
 # ---------------------------------------------------------------------------
-# The current hand-written wrapper is inconsistent here; encoding either way
-# changes behaviour, so these are quarantined until confirmed. Each entry:
-#   (symbol, what, current_wrapper_behaviour, semantic_expectation)
-AMBIGUOUS_ONEBASED_REVIEW = [
-    ("xdiag::Op::operator[]", "arg idx",
-     "NOT shifted (idx passed as-is), return +1",
-     "idx is a 1-based position -> arg should be idx-1"),
-    ("xdiag::ProductState::operator[]", "arg i / return",
-     "NOT shifted either way; returns a local-state value",
-     "i is a 1-based site -> arg i-1; return is a local state, no shift"),
-    ("xdiag::ProductState::setindex!", "arg idx",
-     "NOT shifted",
-     "idx is a 1-based site -> arg idx-1"),
-    ("xdiag::Permutation::operator[]", "arg i / return",
-     "not wrapped currently",
-     "i is a 1-based site -> arg i-1; return is a site -> +1"),
-]
+# All settled by the single rule above (site-index arg -> -1; return shifted
+# only if it is itself a site index). These correct latent inconsistencies in
+# the hand-written wrapper, so the generated Julia intentionally differs:
+#   Op::operator[]           arg idx -1 (was NOT shifted), return +1  -> op[i]
+#                            now agrees with sites(op)[i].
+#   ProductState::operator[] arg i   -1 (was NOT shifted); return is a local
+#                            state, so NO shift. Covers getindex and setindex!.
+#   Permutation::operator[]  arg i   -1, return +1 (was unwrapped); perm[i] now
+#                            agrees with array(perm)[i].
+#   PermutationGroup::operator[] arg sym -1 (positional); returns a Permutation,
+#                            no numeric shift.
+# (ProductState::setindex! is not a distinct C++ symbol -- it is the non-const
+#  ProductState::operator[], so the operator[] arg rule covers assignment too.)
 
 # ---------------------------------------------------------------------------
 # Template instantiation combos.
