@@ -16,11 +16,11 @@
 namespace xdiag {
 
 struct EigvalsLanczosResult {
-  arma::vec alphas;
-  arma::vec betas;
-  arma::vec eigenvalues;
-  int64_t niterations;
-  std::string criterion;
+  XDIAG_API arma::vec alphas;
+  XDIAG_API arma::vec betas;
+  XDIAG_API arma::vec eigenvalues;
+  XDIAG_API int64_t niterations;
+  XDIAG_API std::string criterion;
 };
 
 ///////////////////////////////////////////////////////////////

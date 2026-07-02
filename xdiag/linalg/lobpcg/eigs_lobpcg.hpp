@@ -16,15 +16,15 @@
 namespace xdiag {
 
 struct EigsLobpcgResult {
-  arma::vec eigenvalues;    // the neigs smallest eigenvalues, ascending
-  arma::vec residual_norms; // residual norm per returned eigenvalue
-  State eigenvectors;       // neigs eigenvectors (columns)
-  int64_t niterations;
-  std::string criterion;
+  XDIAG_API arma::vec eigenvalues;    // the neigs smallest eigenvalues, ascending
+  XDIAG_API arma::vec residual_norms; // residual norm per returned eigenvalue
+  XDIAG_API State eigenvectors;       // neigs eigenvectors (columns)
+  XDIAG_API int64_t niterations;
+  XDIAG_API std::string criterion;
   // Per-iteration Ritz-value / residual-norm history (one row per iteration,
   // blocksize = neigs + guard columns) for convergence diagnostics.
-  arma::mat eigenvalue_history;
-  arma::mat residual_norms_history;
+  XDIAG_API arma::mat eigenvalue_history;
+  XDIAG_API arma::mat residual_norms_history;
 };
 
 // Computes the "neigs" algebraically smallest eigenvalues (and eigenvectors) of

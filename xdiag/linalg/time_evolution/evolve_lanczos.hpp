@@ -17,12 +17,12 @@
 namespace xdiag {
 
 struct EvolveLanczosResult {
-  arma::vec alphas;
-  arma::vec betas;
-  arma::vec eigenvalues;
-  int64_t niterations;
-  std::string criterion;
-  State state;
+  XDIAG_API arma::vec alphas;
+  XDIAG_API arma::vec betas;
+  XDIAG_API arma::vec eigenvalues;
+  XDIAG_API int64_t niterations;
+  XDIAG_API std::string criterion;
+  XDIAG_API State state;
 };
 
 XDIAG_API EvolveLanczosResult
@@ -48,11 +48,11 @@ XDIAG_API EvolveLanczosResult evolve_lanczos(
     int64_t max_iterations = 1000, double deflation_tol = 1e-7);
 
 struct EvolveLanczosInplaceResult {
-  arma::vec alphas;
-  arma::vec betas;
-  arma::vec eigenvalues;
-  int64_t niterations;
-  std::string criterion;
+  XDIAG_API arma::vec alphas;
+  XDIAG_API arma::vec betas;
+  XDIAG_API arma::vec eigenvalues;
+  XDIAG_API int64_t niterations;
+  XDIAG_API std::string criterion;
 };
 
 XDIAG_API EvolveLanczosInplaceResult evolve_lanczos_inplace(

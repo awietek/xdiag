@@ -18,6 +18,8 @@ site
 misc/dump/*
 build/*
 misc/.venv
+misc/__pycache__
+misc/wrapgen/__pycache__
 cmake-build-debug
 examples/*/build
 examples/*/outfiles
