@@ -80,4 +80,5 @@ TEST_CASE("exp_sym_v", "[linalg]") try {
 
 } catch (xdiag::Error e) {
   xdiag::error_trace(e);
+  throw;
 }

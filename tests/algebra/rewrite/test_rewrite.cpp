@@ -70,4 +70,5 @@ TEST_CASE("test_rewrite", "[operators]") try {
   Log("Done testing rewrite_to_fixpoint");
 } catch (xdiag::Error const &e) {
   error_trace(e);
+  throw;
 }

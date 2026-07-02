@@ -262,6 +262,7 @@ TEST_CASE("quantum_numbers_charge", "[algebra]") try {
   }
 } catch (xdiag::Error const &e) {
   error_trace(e);
+  throw;
 }
 
 // Combined: an operator carrying BOTH a nontrivial U(1) charge AND a nontrivial
@@ -424,6 +425,7 @@ TEST_CASE("quantum_numbers_combined", "[algebra]") try {
   }
 } catch (xdiag::Error const &e) {
   error_trace(e);
+  throw;
 }
 
 // Tests 1, 2, 3 (permutation): build operators of definite momentum with
@@ -523,4 +525,5 @@ TEST_CASE("quantum_numbers_permutation", "[algebra]") try {
   }
 } catch (xdiag::Error const &e) {
   error_trace(e);
+  throw;
 }

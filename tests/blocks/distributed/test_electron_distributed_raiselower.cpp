@@ -149,4 +149,5 @@ TEST_CASE("electron_distributed_raise_lower", "[electron_distributed]") try {
   } // loop nsites
 } catch (xdiag::Error const &e) {
   error_trace(e);
+  throw;
 }

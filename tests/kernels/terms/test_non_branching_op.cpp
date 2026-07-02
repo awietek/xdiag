@@ -172,4 +172,5 @@ TEST_CASE("non_branching_op", "[operators]") try {
   // REQUIRE(isapprox(H1, H2));
 } catch (xdiag::Error e) {
   xdiag::error_trace(e);
+  throw;
 }

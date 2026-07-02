@@ -74,5 +74,6 @@ TEST_CASE("apply_distributed", "[algebra]") try {
   }
 } catch (Error const &e) {
   error_trace(e);
+  throw;
 }
 

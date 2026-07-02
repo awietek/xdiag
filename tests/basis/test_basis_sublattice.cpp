@@ -190,4 +190,5 @@ TEST_CASE("basis_sublattice", "[basis]") try {
   Log("Done");
 } catch (xdiag::Error e) {
   error_trace(e);
+  throw;
 }

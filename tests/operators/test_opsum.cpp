@@ -67,6 +67,7 @@ TEST_CASE("OpSum construction", "[operators]") try {
 
 } catch (xdiag::Error e) {
   error_trace(e);
+  throw;
 }
 
 TEST_CASE("OpSum vector space", "[operators]") try {
@@ -140,6 +141,7 @@ TEST_CASE("OpSum vector space", "[operators]") try {
 
 } catch (xdiag::Error e) {
   error_trace(e);
+  throw;
 }
 
 TEST_CASE("OpSum algebra product", "[operators]") try {
@@ -185,6 +187,7 @@ TEST_CASE("OpSum algebra product", "[operators]") try {
 
 } catch (xdiag::Error e) {
   error_trace(e);
+  throw;
 }
 
 TEST_CASE("OpSum named params", "[operators]") try {
@@ -248,6 +251,7 @@ TEST_CASE("OpSum named params", "[operators]") try {
 
 } catch (xdiag::Error e) {
   error_trace(e);
+  throw;
 }
 
 TEST_CASE("OpSum access", "[operators]") try {
@@ -279,6 +283,7 @@ TEST_CASE("OpSum access", "[operators]") try {
 
 } catch (xdiag::Error e) {
   error_trace(e);
+  throw;
 }
 
 TEST_CASE("OpSum collect", "[operators]") try {
@@ -303,6 +308,7 @@ TEST_CASE("OpSum collect", "[operators]") try {
 
 } catch (xdiag::Error e) {
   error_trace(e);
+  throw;
 }
 
 TEST_CASE("OpSum equality", "[operators]") try {
@@ -320,4 +326,115 @@ TEST_CASE("OpSum equality", "[operators]") try {
 
 } catch (xdiag::Error e) {
   error_trace(e);
+  throw;
+}
+
+TEST_CASE("OpSum operand overloads", "[operators]") try {
+  using namespace xdiag;
+
+  Op A("A", int64_t(0));
+  Op B("B", int64_t(1));
+  Monomial mAB{A, B};
+
+  // --- operator+ / += with Op and Monomial operands ---
+  {
+    OpSum ops(A);
+    ops += B;    // += Op
+    ops += mAB;  // += Monomial
+    REQUIRE(ops.size() == 3);
+  }
+  {
+    OpSum base(A);
+    OpSum s1 = base + B;   // + Op
+    OpSum s2 = base + mAB; // + Monomial
+    REQUIRE(s1.size() == 2);
+    REQUIRE(s2.size() == 2);
+  }
+
+  // --- operator- / -= with Op and Monomial operands ---
+  {
+    OpSum ops = 2.0 * A + 3.0 * B;
+    ops -= A;    // -= Op
+    ops -= mAB;  // -= Monomial
+    REQUIRE(collect(ops).size() == 3); // A(coeff1), B, -(A*B)
+  }
+  {
+    OpSum base = 2.0 * A;
+    OpSum d1 = base - B;   // - Op
+    OpSum d2 = base - mAB; // - Monomial
+    REQUIRE(d1.size() == 2);
+    REQUIRE(d2.size() == 2);
+  }
+
+  // --- unary minus negates every coefficient ---
+  {
+    OpSum ops = 2.0 * A + 3.0 * B;
+    OpSum neg = -ops;
+    OpSum sum = collect(ops + neg);
+    REQUIRE(sum.size() == 0); // ops + (-ops) == 0
+  }
+
+  // --- algebra product with Op / Monomial / OpSum operands ---
+  {
+    OpSum a(A);
+    OpSum pOp = a * B;     // OpSum * Op
+    OpSum pMono = a * mAB; // OpSum * Monomial
+    OpSum pSum = a * OpSum(B); // OpSum * OpSum
+    REQUIRE(pOp.size() == 1);
+    REQUIRE(pMono.size() == 1);
+    REQUIRE(pSum.size() == 1);
+
+    OpSum acc(A);
+    acc *= B;   // *= Op
+    REQUIRE(acc.size() == 1);
+    OpSum acc2(A);
+    acc2 *= mAB; // *= Monomial
+    REQUIRE(acc2.size() == 1);
+    OpSum acc3(A);
+    acc3 *= OpSum(B); // *= OpSum
+    REQUIRE(acc3.size() == 1);
+  }
+
+} catch (xdiag::Error e) {
+  error_trace(e);
+  throw;
+}
+
+TEST_CASE("OpSum scalar scaling paths", "[operators]") try {
+  using namespace xdiag;
+
+  Op A("A", int64_t(0));
+
+  // --- /= complex ---
+  {
+    OpSum ops = complex(4.0, 0.0) * A;
+    ops /= complex(2.0, 0.0);
+    REQUIRE(collect(ops).terms()[0].coeff == Coeff(complex(2.0, 0.0)));
+  }
+
+  // --- scaling an OpSum carrying a named parameter resolves it via params_ ---
+  {
+    OpSum ops = std::string("J") * A;
+    ops["J"] = Scalar(3.0);
+    ops *= 2.0; // hits the params_.find branch in operator*=(Scalar)
+    OpSum resolved = ops.plain();
+    REQUIRE(resolved.terms()[0].coeff == Coeff(6.0));
+  }
+
+  // --- merging two OpSums that both carry named parameters ---
+  {
+    Op B("B", int64_t(1));
+    OpSum o1 = std::string("J1") * A;
+    o1["J1"] = Scalar(1.5);
+    OpSum o2 = std::string("J2") * B;
+    o2["J2"] = Scalar(2.5);
+    o1 += o2; // merge_params combines the parameter maps
+    REQUIRE(o1.params().size() == 2);
+    OpSum resolved = o1.plain();
+    REQUIRE(resolved.size() == 2);
+  }
+
+} catch (xdiag::Error e) {
+  error_trace(e);
+  throw;
 }

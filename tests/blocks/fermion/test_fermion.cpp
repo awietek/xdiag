@@ -105,6 +105,7 @@ TEST_CASE("fermion", "[fermion]") try {
   }
 } catch (xdiag::Error e) {
   error_trace(e);
+  throw;
 }
 
 TEST_CASE("fermionanticommutation", "[fermion]") try {
@@ -141,6 +142,7 @@ TEST_CASE("fermionanticommutation", "[fermion]") try {
   }
 } catch (xdiag::Error e) {
   error_trace(e);
+  throw;
 }
 
 TEST_CASE("randomfreefermionsreal", "[fermion]") try {
@@ -187,6 +189,7 @@ TEST_CASE("randomfreefermionsreal", "[fermion]") try {
   }
 } catch (xdiag::Error e) {
   error_trace(e);
+  throw;
 }
 
 TEST_CASE("randomfreefermionscomplex", "[fermion]") try {
@@ -229,6 +232,7 @@ TEST_CASE("randomfreefermionscomplex", "[fermion]") try {
   }
 } catch (xdiag::Error e) {
   error_trace(e);
+  throw;
 }
 
 TEST_CASE("fermionsymmetry", "[fermion]") try {
@@ -304,6 +308,7 @@ TEST_CASE("fermionsymmetry", "[fermion]") try {
   }
 } catch (xdiag::Error e) {
   error_trace(e);
+  throw;
 }
 
 // Strong check of the fermionic symmetry-adapted basis: for every particle
@@ -352,6 +357,7 @@ TEST_CASE("fermionsymmetryspectrum", "[fermion]") try {
   }
 } catch (xdiag::Error e) {
   error_trace(e);
+  throw;
 }
 
 // A global (site-free) operator inside a product must expand: TotalN -> sum_i
@@ -372,6 +378,7 @@ TEST_CASE("fermiontotalnproduct", "[fermion]") try {
   }
 } catch (xdiag::Error e) {
   error_trace(e);
+  throw;
 }
 
 // Randomized cross-check of the full operator pipeline against naive matrix
@@ -386,4 +393,5 @@ TEST_CASE("fermionrandomopsum", "[fermion]") try {
   }
 } catch (xdiag::Error e) {
   error_trace(e);
+  throw;
 }

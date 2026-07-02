@@ -63,4 +63,5 @@ TEST_CASE("isapprox", "[operators]") try {
   Log("done");
 } catch (xdiag::Error e) {
   xdiag::error_trace(e);
+  throw;
 }

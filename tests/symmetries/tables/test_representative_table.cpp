@@ -771,4 +771,5 @@ TEST_CASE("representative_table", "[symmetries]") try {
   }
 } catch (xdiag::Error e) {
   xdiag::error_trace(e);
+  throw;
 }

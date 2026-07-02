@@ -132,6 +132,7 @@ TEST_CASE("tjsymmetricdim", "[tj]") try {
   }
 } catch (xdiag::Error const &e) {
   error_trace(e);
+  throw;
 }
 
 TEST_CASE("tjsymmetricmatrix", "[tj]") try {
@@ -167,6 +168,7 @@ TEST_CASE("tjsymmetricmatrix", "[tj]") try {
   }
 } catch (xdiag::Error const &e) {
   error_trace(e);
+  throw;
 }
 
 TEST_CASE("tjsymmetricapply", "[tj]") try {
@@ -181,4 +183,5 @@ TEST_CASE("tjsymmetricapply", "[tj]") try {
   }
 } catch (xdiag::Error const &e) {
   error_trace(e);
+  throw;
 }

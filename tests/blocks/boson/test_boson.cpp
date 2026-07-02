@@ -177,6 +177,7 @@ TEST_CASE("boson", "[boson]") try {
 
 } catch (xdiag::Error e) {
   error_trace(e);
+  throw;
 }
 
 TEST_CASE("bosoncommutation", "[boson]") try {
@@ -234,6 +235,7 @@ TEST_CASE("bosoncommutation", "[boson]") try {
   }
 } catch (xdiag::Error e) {
   error_trace(e);
+  throw;
 }
 
 // Randomized cross-check of the full operator pipeline against naive matrix
@@ -249,4 +251,5 @@ TEST_CASE("bosonrandomopsum", "[boson]") try {
   }
 } catch (xdiag::Error e) {
   error_trace(e);
+  throw;
 }

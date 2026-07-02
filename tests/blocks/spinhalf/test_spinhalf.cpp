@@ -73,6 +73,7 @@ TEST_CASE("spinhalf", "[spinhalf]") try {
 
 } catch (xdiag::Error e) {
   error_trace(e);
+  throw;
 }
 
 // -----------------------------------------------------------------------
@@ -130,6 +131,7 @@ TEST_CASE("spinhalf_apply", "[spinhalf]") try {
 
 } catch (xdiag::Error const &e) {
   error_trace(e);
+  throw;
 }
 
 // -----------------------------------------------------------------------
@@ -218,6 +220,7 @@ TEST_CASE("spinhalf_matrix", "[spinhalf]") try {
 
 } catch (xdiag::Error const &e) {
   error_trace(e);
+  throw;
 }
 
 // -----------------------------------------------------------------------
@@ -304,6 +307,7 @@ TEST_CASE("spinhalf_commutators", "[spinhalf]") try {
 
 } catch (xdiag::Error const &e) {
   error_trace(e);
+  throw;
 }
 
 // -----------------------------------------------------------------------
@@ -359,6 +363,7 @@ TEST_CASE("spinhalf_symmetric", "[spinhalf]") try {
 
 } catch (xdiag::Error const &e) {
   error_trace(e);
+  throw;
 }
 
 // -----------------------------------------------------------------------
@@ -450,6 +455,7 @@ TEST_CASE("spinhalf_symmetric_apply", "[spinhalf]") try {
 
 } catch (xdiag::Error e) {
   error_trace(e);
+  throw;
 }
 
 // -----------------------------------------------------------------------
@@ -549,6 +555,7 @@ TEST_CASE("spinhalf_symmetric_matrix", "[spinhalf]") try {
 
 } catch (xdiag::Error const &e) {
   error_trace(e);
+  throw;
 }
 
 // -----------------------------------------------------------------------
@@ -682,6 +689,7 @@ TEST_CASE("spinhalfexchange", "[spinhalf]") try {
 
 } catch (xdiag::Error e) {
   error_trace(e);
+  throw;
 }
 
 // Randomized cross-check of the full operator pipeline against naive matrix
@@ -696,4 +704,5 @@ TEST_CASE("spinhalfrandomopsum", "[spinhalf]") try {
   }
 } catch (xdiag::Error e) {
   error_trace(e);
+  throw;
 }

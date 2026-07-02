@@ -341,4 +341,5 @@ TEST_CASE("spinhalf_implementation_algebra", "[operators]") try {
   Log("Done testing spinhalf_implementation_algebra");
 } catch (xdiag::Error const &e) {
   error_trace(e);
+  throw;
 }

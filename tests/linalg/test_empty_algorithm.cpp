@@ -58,4 +58,5 @@ TEST_CASE("empty_algorithm", "[linalg]") try {
 
 } catch (Error e) {
   error_trace(e);
+  throw;
 }

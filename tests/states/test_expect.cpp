@@ -97,4 +97,5 @@ TEST_CASE("expect", "[states]") try {
   }
 } catch (xdiag::Error const &e) {
   error_trace(e);
+  throw;
 }

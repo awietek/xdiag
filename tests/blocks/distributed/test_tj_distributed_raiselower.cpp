@@ -170,4 +170,5 @@ TEST_CASE("tj_distributed_raise_lower", "[tj_distributed]") try {
   } // loop nsites
 } catch (xdiag::Error const &e) {
   error_trace(e);
+  throw;
 }

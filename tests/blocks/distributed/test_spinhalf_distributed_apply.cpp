@@ -259,6 +259,7 @@ TEST_CASE("spinhalf_distributed_apply", "[spinhalf_distributed]") try {
 
 } catch (Error const &e) {
   error_trace(e);
+  throw;
 }
 
 TEST_CASE("spinhalf_distributed_observables", "[spinhalf_distributed]") {

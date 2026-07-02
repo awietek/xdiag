@@ -185,6 +185,7 @@ TEST_CASE("product_state", "[states]") try {
 
 } catch (xdiag::Error const &e) {
   error_trace(e);
+  throw;
 }
 
 TEST_CASE("product_state_api", "[states]") try {
@@ -273,4 +274,5 @@ TEST_CASE("product_state_api", "[states]") try {
 
 } catch (xdiag::Error const &e) {
   error_trace(e);
+  throw;
 }

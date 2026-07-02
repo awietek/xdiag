@@ -153,4 +153,5 @@ TEST_CASE("representation_set", "[symmetries]") try {
 
 } catch (xdiag::Error e) {
   xdiag::error_trace(e);
+  throw;
 }

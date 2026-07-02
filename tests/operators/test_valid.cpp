@@ -56,6 +56,7 @@ TEST_CASE("check_valid Op", "[operators]") try {
 
 } catch (xdiag::Error const &e) {
   error_trace(e);
+  throw;
 }
 
 TEST_CASE("check_valid Monomial and OpSum", "[operators]") try {
@@ -83,6 +84,7 @@ TEST_CASE("check_valid Monomial and OpSum", "[operators]") try {
 
 } catch (xdiag::Error const &e) {
   error_trace(e);
+  throw;
 }
 
 TEST_CASE("valid must_* helpers", "[operators]") try {
@@ -128,4 +130,5 @@ TEST_CASE("valid must_* helpers", "[operators]") try {
 
 } catch (xdiag::Error const &e) {
   error_trace(e);
+  throw;
 }

@@ -78,4 +78,5 @@ TEST_CASE("permutation_group", "[symmetries]") try {
   Log("done");
 } catch (xdiag::Error e) {
   error_trace(e);
+  throw;
 }

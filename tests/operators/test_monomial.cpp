@@ -173,6 +173,7 @@ TEST_CASE("Monomial", "[operators]") try {
 
 } catch (xdiag::Error e) {
   error_trace(e);
+  throw;
 }
 
 TEST_CASE("Term", "[operators]") try {
@@ -205,4 +206,5 @@ TEST_CASE("Term", "[operators]") try {
 
 } catch (xdiag::Error e) {
   error_trace(e);
+  throw;
 }

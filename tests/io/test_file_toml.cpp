@@ -85,6 +85,7 @@ TEST_CASE("file_toml", "[io]") try {
     REQUIRE(fl[n].as<complex>() == std::complex<double>(2.3122, 0.1237));
   } catch (Error const &e) {
     error_trace(e);
+    throw;
   }
   n = "vectors.ints";
   // for (auto i : fl[n].as<std::vector<int>>()) {
@@ -275,4 +276,5 @@ TEST_CASE("file_toml", "[io]") try {
 
 } catch (xdiag::Error const &e) {
   error_trace(e);
+  throw;
 }

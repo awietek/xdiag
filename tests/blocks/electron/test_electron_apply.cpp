@@ -149,4 +149,5 @@ TEST_CASE("electron_apply", "[electron]") try {
   }
 } catch (xdiag::Error const &e) {
   error_trace(e);
+  throw;
 }

@@ -125,6 +125,7 @@ void test_random_opsum_matrix(block_t const &block, uint32_t seed,
   REQUIRE(isapprox(A, B));
 } catch (xdiag::Error const &e) {
   error_trace(e);
+  throw;
 }
 
 } // namespace xdiag::testcases

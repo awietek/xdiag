@@ -380,4 +380,5 @@ TEST_CASE("sparse_matrix", "[algebra]") try {
   // }
 } catch (Error const &e) {
   error_trace(e);
+  throw;
 }

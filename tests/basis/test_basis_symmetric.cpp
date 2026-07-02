@@ -145,4 +145,5 @@ TEST_CASE("basis_symmetric", "[basis]") try {
   Log("Done");
 } catch (xdiag::Error e) {
   error_trace(e);
+  throw;
 }

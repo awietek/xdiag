@@ -178,4 +178,5 @@ TEST_CASE("combine_matrix_ops", "[operators]") try {
   Log("Done testing combine_matrix_ops");
 } catch (xdiag::Error e) {
   xdiag::error_trace(e);
+  throw;
 }

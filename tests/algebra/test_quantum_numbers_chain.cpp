@@ -101,4 +101,5 @@ TEST_CASE("quantum_numbers_chain", "[operators]") try {
   Log("done");
 } catch (xdiag::Error e) {
   error_trace(e);
+  throw;
 }

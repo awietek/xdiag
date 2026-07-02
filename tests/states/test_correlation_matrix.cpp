@@ -171,6 +171,7 @@ TEST_CASE("correlation_matrix", "[states]") try {
   }
 } catch (xdiag::Error const &e) {
   error_trace(e);
+  throw;
 }
 
 // Complex model: Kitaev-Gamma honeycomb. Exercises the complex paths
@@ -230,4 +231,5 @@ TEST_CASE("correlation_matrix_kitaev", "[states]") try {
   }
 } catch (xdiag::Error const &e) {
   error_trace(e);
+  throw;
 }

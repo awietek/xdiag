@@ -12,4 +12,5 @@ int main(int argc, char *argv[]) try {
   return result;
 } catch (xdiag::Error const &e) {
   error_trace(e);
+  throw;
 }

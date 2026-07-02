@@ -390,6 +390,7 @@ TEST_CASE("electron_matrix", "[electron]") try {
   }
 } catch (xdiag::Error const &e) {
   error_trace(e);
+  throw;
 }
 
 // Randomized cross-check of the full operator pipeline against naive matrix
@@ -405,4 +406,5 @@ TEST_CASE("electronrandomopsum", "[electron]") try {
   }
 } catch (xdiag::Error const &e) {
   error_trace(e);
+  throw;
 }

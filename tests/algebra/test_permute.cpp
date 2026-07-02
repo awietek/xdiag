@@ -43,4 +43,5 @@ TEST_CASE("permute", "[operators]") try {
 
 } catch (xdiag::Error e) {
   xdiag::error_trace(e);
+  throw;
 }

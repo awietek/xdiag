@@ -184,6 +184,7 @@ TEST_CASE("electronsymmetricdim", "[electron]") try {
   }
 } catch (xdiag::Error const &e) {
   error_trace(e);
+  throw;
 }
 
 TEST_CASE("electronsymmetricmatrix", "[electron]") try {
@@ -247,6 +248,7 @@ TEST_CASE("electronsymmetricmatrix", "[electron]") try {
   }
 } catch (xdiag::Error const &e) {
   error_trace(e);
+  throw;
 }
 
 // 3x3 triangular lattice with a D3 point group (non-trivial stabilizers and
@@ -331,6 +333,7 @@ TEST_CASE("electronsymmetrictriangular", "[electron]") try {
   }
 } catch (xdiag::Error const &e) {
   error_trace(e);
+  throw;
 }
 
 TEST_CASE("electronsymmetricapply", "[electron]") try {
@@ -345,4 +348,5 @@ TEST_CASE("electronsymmetricapply", "[electron]") try {
   }
 } catch (xdiag::Error const &e) {
   error_trace(e);
+  throw;
 }

@@ -106,4 +106,5 @@ TEST_CASE("time_evolution_distributed", "[time_evolution]") try {
 
 } catch (xdiag::Error e) {
   error_trace(e);
+  throw;
 }

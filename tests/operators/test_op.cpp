@@ -70,6 +70,7 @@ TEST_CASE("Op construction and properties", "[operators]") try {
 
 } catch (xdiag::Error e) {
   error_trace(e);
+  throw;
 }
 
 TEST_CASE("Op equality", "[operators]") try {
@@ -95,6 +96,7 @@ TEST_CASE("Op equality", "[operators]") try {
 
 } catch (xdiag::Error e) {
   error_trace(e);
+  throw;
 }
 
 TEST_CASE("Op", "[operators]") try {
@@ -133,4 +135,5 @@ TEST_CASE("Op", "[operators]") try {
 
 } catch (xdiag::Error e) {
   error_trace(e);
+  throw;
 }

@@ -99,6 +99,7 @@ TEST_CASE("analytic_case_free_particle_1D", "[time_evolution]") try {
   }
 } catch (xdiag::Error e) {
   xdiag::error_trace(e);
+  throw;
 }
 
 TEST_CASE("analytic_case_free_particle_2D", "[time_evolution]") try {
@@ -209,6 +210,7 @@ TEST_CASE("analytic_case_free_particle_2D", "[time_evolution]") try {
   }
 } catch (xdiag::Error e) {
   xdiag::error_trace(e);
+  throw;
 }
 
 TEST_CASE("tj_complex_timeevo", "[time_evolution]") try {
@@ -343,6 +345,7 @@ TEST_CASE("tj_complex_timeevo", "[time_evolution]") try {
 
 } catch (xdiag::Error e) {
   xdiag::error_trace(e);
+  throw;
 }
 
 // TEST_CASE("zero_state_timeevo", "[time_evolution]") try {

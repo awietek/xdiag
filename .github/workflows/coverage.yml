@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: install deps
-        run: sudo apt-get update && sudo apt-get install -y clang llvm libblas-dev liblapack-dev
+        run: sudo apt-get update && sudo apt-get install -y clang llvm libomp-dev libhdf5-dev libblas-dev liblapack-dev
       - name: build (instrumented)
         run: |
           cmake -S . -B build-cov -DCMAKE_BUILD_TYPE=Debug -DXDIAG_COVERAGE=ON -DBUILD_TESTING=ON

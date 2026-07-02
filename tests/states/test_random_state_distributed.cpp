@@ -39,4 +39,5 @@ TEST_CASE("random_state", "[states]") try {
   }
 } catch (Error const &e) {
   error_trace(e);
+  throw;
 }

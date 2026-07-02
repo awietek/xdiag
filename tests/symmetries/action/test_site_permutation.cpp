@@ -162,4 +162,5 @@ TEST_CASE("site_permutation", "[symmetries]") try {
   Log("done");
 } catch (xdiag::Error e) {
   xdiag::error_trace(e);
+  throw;
 }

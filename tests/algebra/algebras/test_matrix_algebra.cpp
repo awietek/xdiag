@@ -308,6 +308,7 @@ TEST_CASE("matrix_algebra", "[operators]") try {
   Log("Done testing matrix_algebra");
 } catch (xdiag::Error const &e) {
   error_trace(e);
+  throw;
 }
 
 TEST_CASE("matrix_algebra_boson", "[operators]") try {
@@ -379,6 +380,7 @@ TEST_CASE("matrix_algebra_boson", "[operators]") try {
   Log("Done testing matrix_algebra_boson");
 } catch (xdiag::Error const &e) {
   error_trace(e);
+  throw;
 }
 
 TEST_CASE("matrix_algebra_spin_s", "[operators]") try {
@@ -442,4 +444,5 @@ TEST_CASE("matrix_algebra_spin_s", "[operators]") try {
   Log("Done testing matrix_algebra_spin_s");
 } catch (xdiag::Error const &e) {
   error_trace(e);
+  throw;
 }

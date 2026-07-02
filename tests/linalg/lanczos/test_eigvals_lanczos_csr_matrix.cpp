@@ -88,4 +88,5 @@ TEST_CASE("eigvals_lanczos_csr_matrix", "[lanczos]") try {
   test_eigvals_lanczos_csr_matrix<int64_t, complex>();
 } catch (xdiag::Error e) {
   xdiag::error_trace(e);
+  throw;
 }

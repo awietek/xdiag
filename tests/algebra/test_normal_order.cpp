@@ -284,6 +284,7 @@ TEST_CASE("normal_order", "[operators]") try {
   Log("Done testing normal_order");
 } catch (xdiag::Error const &e) {
   error_trace(e);
+  throw;
 }
 
 // The implementation algebras (the ones feeding the matrix kernels) must bring
@@ -322,6 +323,7 @@ TEST_CASE("normal_order_creation_major", "[operators]") try {
   }
 } catch (xdiag::Error const &e) {
   error_trace(e);
+  throw;
 }
 
 // The basis must MEAN that normal order: a creation-major monomial applied to
@@ -364,6 +366,7 @@ TEST_CASE("normal_order_basis_meaning", "[operators]") try {
   test_basis_meaning(Fermion(4), {1, 0, 1, 1}, mono_f);
 } catch (xdiag::Error const &e) {
   error_trace(e);
+  throw;
 }
 
 // TotalN / TotalNup / TotalNdn / TotalSz are site-free convenience operators
@@ -424,4 +427,5 @@ TEST_CASE("total_operators", "[operators]") try {
   check_matrix(tJ(4), "TotalNdn", "Ndn");
 } catch (xdiag::Error const &e) {
   error_trace(e);
+  throw;
 }

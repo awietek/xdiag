@@ -58,4 +58,5 @@ TEST_CASE("norm", "[states]") try {
 
 } catch (xdiag::Error const &e) {
   error_trace(e);
+  throw;
 }

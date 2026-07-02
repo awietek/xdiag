@@ -47,7 +47,7 @@ public:
   Block block() const;
 
 private:
-  bool valid_;
+  bool valid_ = false;
   Block block_;
   bool real_;
   int64_t nrows_;

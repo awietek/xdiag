@@ -270,4 +270,5 @@ TEST_CASE("tj_raise_lower", "[tj]") try {
   // }
 } catch (xdiag::Error const &e) {
   error_trace(e);
+  throw;
 }

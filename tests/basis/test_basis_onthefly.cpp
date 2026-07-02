@@ -41,4 +41,5 @@ TEST_CASE("basis_onthefly", "[basis]") try {
   // apply(ops, b1, b4);
 } catch (xdiag::Error e) {
   error_trace(e);
+  throw;
 }

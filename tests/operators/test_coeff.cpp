@@ -101,4 +101,5 @@ TEST_CASE("Coeff", "[operators]") try {
 
 } catch (xdiag::Error e) {
   error_trace(e);
+  throw;
 }

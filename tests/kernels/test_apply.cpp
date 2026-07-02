@@ -196,4 +196,5 @@ TEST_CASE("algebra_apply", "[algebra]") try {
   }
 } catch (Error const &e) {
   error_trace(e);
+  throw;
 }

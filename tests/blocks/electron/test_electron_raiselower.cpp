@@ -141,6 +141,7 @@ TEST_CASE("electron_raise_lower", "[electron]") try {
   }
 } catch (xdiag::Error const &e) {
   error_trace(e);
+  throw;
 }
 
 // Spin operators S+, S-, Sx, Sy (which expand to elementary-operator strings)
@@ -201,4 +202,5 @@ TEST_CASE("electron_commutators", "[electron]") try {
   }
 } catch (xdiag::Error const &e) {
   error_trace(e);
+  throw;
 }

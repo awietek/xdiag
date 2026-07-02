@@ -93,6 +93,7 @@ TEST_CASE("eigs_lanczos", "[lanczos]") {
         }
       } catch (Error e) {
         error_trace(e);
+        throw;
       }
     }
   Log("Done.");

@@ -277,4 +277,5 @@ TEST_CASE("bitvector", "[bits]") try {
 
 } catch (xdiag::Error const &e) {
   error_trace(e);
+  throw;
 }
