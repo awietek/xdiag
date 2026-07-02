@@ -10,7 +10,6 @@ void define_algebra(jlcxx::Module &mod);
 void define_blocks(jlcxx::Module &mod);
 void define_io(jlcxx::Module &mod);
 void define_linalg(jlcxx::Module &mod);
-void define_math(jlcxx::Module &mod);
 void define_operators(jlcxx::Module &mod);
 void define_states(jlcxx::Module &mod);
 void define_symmetries(jlcxx::Module &mod);
@@ -22,7 +21,6 @@ void define_generated(jlcxx::Module &mod) {
   define_blocks(mod);
   define_io(mod);
   define_linalg(mod);
-  define_math(mod);
   define_operators(mod);
   define_states(mod);
   define_symmetries(mod);

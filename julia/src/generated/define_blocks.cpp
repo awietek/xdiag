@@ -20,8 +20,8 @@ void define_blocks(jlcxx::Module &mod) {
   mod.method("index", [](Boson const & self, ProductState const & pstate) { JULIA_XDIAG_CALL_RETURN(self.index(pstate)) });
   mod.method("==", [](Boson const & self, Boson const & rhs) { JULIA_XDIAG_CALL_RETURN(self == rhs) });
   mod.method("!=", [](Boson const & self, Boson const & rhs) { JULIA_XDIAG_CALL_RETURN(self != rhs) });
-  mod.method("begin", [](Boson const & self) { JULIA_XDIAG_CALL_RETURN(self.begin()) });
-  mod.method("end", [](Boson const & self) { JULIA_XDIAG_CALL_RETURN(self.end()) });
+  mod.method("_begin", [](Boson const & self) { JULIA_XDIAG_CALL_RETURN(self.begin()) });
+  mod.method("_end", [](Boson const & self) { JULIA_XDIAG_CALL_RETURN(self.end()) });
   mod.method("_incr", [](BosonIterator & self) { JULIA_XDIAG_CALL_VOID(++self); });
   mod.method("_deref", [](BosonIterator const & self) { JULIA_XDIAG_CALL_RETURN(*self) });
   mod.method("==", [](BosonIterator const & self, BosonIterator const & rhs) { JULIA_XDIAG_CALL_RETURN(self == rhs) });
@@ -39,8 +39,8 @@ void define_blocks(jlcxx::Module &mod) {
   mod.method("index", [](Electron const & self, ProductState const & pstate) { JULIA_XDIAG_CALL_RETURN(self.index(pstate)) });
   mod.method("==", [](Electron const & self, Electron const & rhs) { JULIA_XDIAG_CALL_RETURN(self == rhs) });
   mod.method("!=", [](Electron const & self, Electron const & rhs) { JULIA_XDIAG_CALL_RETURN(self != rhs) });
-  mod.method("begin", [](Electron const & self) { JULIA_XDIAG_CALL_RETURN(self.begin()) });
-  mod.method("end", [](Electron const & self) { JULIA_XDIAG_CALL_RETURN(self.end()) });
+  mod.method("_begin", [](Electron const & self) { JULIA_XDIAG_CALL_RETURN(self.begin()) });
+  mod.method("_end", [](Electron const & self) { JULIA_XDIAG_CALL_RETURN(self.end()) });
   mod.method("_incr", [](ElectronIterator & self) { JULIA_XDIAG_CALL_VOID(++self); });
   mod.method("_deref", [](ElectronIterator const & self) { JULIA_XDIAG_CALL_RETURN(*self) });
   mod.method("==", [](ElectronIterator const & self, ElectronIterator const & rhs) { JULIA_XDIAG_CALL_RETURN(self == rhs) });
@@ -58,8 +58,8 @@ void define_blocks(jlcxx::Module &mod) {
   mod.method("index", [](Fermion const & self, ProductState const & pstate) { JULIA_XDIAG_CALL_RETURN(self.index(pstate)) });
   mod.method("==", [](Fermion const & self, Fermion const & rhs) { JULIA_XDIAG_CALL_RETURN(self == rhs) });
   mod.method("!=", [](Fermion const & self, Fermion const & rhs) { JULIA_XDIAG_CALL_RETURN(self != rhs) });
-  mod.method("begin", [](Fermion const & self) { JULIA_XDIAG_CALL_RETURN(self.begin()) });
-  mod.method("end", [](Fermion const & self) { JULIA_XDIAG_CALL_RETURN(self.end()) });
+  mod.method("_begin", [](Fermion const & self) { JULIA_XDIAG_CALL_RETURN(self.begin()) });
+  mod.method("_end", [](Fermion const & self) { JULIA_XDIAG_CALL_RETURN(self.end()) });
   mod.method("_incr", [](FermionIterator & self) { JULIA_XDIAG_CALL_VOID(++self); });
   mod.method("_deref", [](FermionIterator const & self) { JULIA_XDIAG_CALL_RETURN(*self) });
   mod.method("==", [](FermionIterator const & self, FermionIterator const & rhs) { JULIA_XDIAG_CALL_RETURN(self == rhs) });
@@ -77,8 +77,8 @@ void define_blocks(jlcxx::Module &mod) {
   mod.method("index", [](Spinhalf const & self, ProductState const & pstate) { JULIA_XDIAG_CALL_RETURN(self.index(pstate)) });
   mod.method("==", [](Spinhalf const & self, Spinhalf const & rhs) { JULIA_XDIAG_CALL_RETURN(self == rhs) });
   mod.method("!=", [](Spinhalf const & self, Spinhalf const & rhs) { JULIA_XDIAG_CALL_RETURN(self != rhs) });
-  mod.method("begin", [](Spinhalf const & self) { JULIA_XDIAG_CALL_RETURN(self.begin()) });
-  mod.method("end", [](Spinhalf const & self) { JULIA_XDIAG_CALL_RETURN(self.end()) });
+  mod.method("_begin", [](Spinhalf const & self) { JULIA_XDIAG_CALL_RETURN(self.begin()) });
+  mod.method("_end", [](Spinhalf const & self) { JULIA_XDIAG_CALL_RETURN(self.end()) });
   mod.method("_incr", [](SpinhalfIterator & self) { JULIA_XDIAG_CALL_VOID(++self); });
   mod.method("_deref", [](SpinhalfIterator const & self) { JULIA_XDIAG_CALL_RETURN(*self) });
   mod.method("==", [](SpinhalfIterator const & self, SpinhalfIterator const & rhs) { JULIA_XDIAG_CALL_RETURN(self == rhs) });
@@ -96,8 +96,8 @@ void define_blocks(jlcxx::Module &mod) {
   mod.method("index", [](tJ const & self, ProductState const & pstate) { JULIA_XDIAG_CALL_RETURN(self.index(pstate)) });
   mod.method("==", [](tJ const & self, tJ const & rhs) { JULIA_XDIAG_CALL_RETURN(self == rhs) });
   mod.method("!=", [](tJ const & self, tJ const & rhs) { JULIA_XDIAG_CALL_RETURN(self != rhs) });
-  mod.method("begin", [](tJ const & self) { JULIA_XDIAG_CALL_RETURN(self.begin()) });
-  mod.method("end", [](tJ const & self) { JULIA_XDIAG_CALL_RETURN(self.end()) });
+  mod.method("_begin", [](tJ const & self) { JULIA_XDIAG_CALL_RETURN(self.begin()) });
+  mod.method("_end", [](tJ const & self) { JULIA_XDIAG_CALL_RETURN(self.end()) });
   mod.method("_incr", [](tJIterator & self) { JULIA_XDIAG_CALL_VOID(++self); });
   mod.method("_deref", [](tJIterator const & self) { JULIA_XDIAG_CALL_RETURN(*self) });
   mod.method("==", [](tJIterator const & self, tJIterator const & rhs) { JULIA_XDIAG_CALL_RETURN(self == rhs) });

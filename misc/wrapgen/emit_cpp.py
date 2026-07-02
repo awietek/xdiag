@@ -168,6 +168,10 @@ def return_transform(entry, wrapped_names):
         if not tmpl:
             raise Skip(f"bridge return {ret['type']}")
         return (lambda e: tmpl.format(expr=e)), False
+    # std::tuple returns (eig0 -> (double, State); eigs -> (arma::vec, State))
+    # marshal via jlcxx/tuple.hpp; the elements are registered types.
+    if cat == "std_composite" and ret.get("cpp", "").startswith("std::tuple<"):
+        return (lambda e: e), False
     cpp_type(ret, wrapped_names)  # validate marshallable
     return (lambda e: e), False
 
@@ -218,7 +222,9 @@ def emit_method(entry, wrapped_names):
             else:
                 raise Skip(f"operator{op}")
         else:
-            jl_name = entry["name"]
+            # begin / end are Julia keywords -> expose as _begin / _end.
+            jl_name = {"begin": "_begin", "end": "_end"}.get(entry["name"],
+                                                             entry["name"])
             expr = f"self.{entry['name']}({', '.join(callargs)})"
         expr = wrap(expr)
         body = (f"JULIA_XDIAG_CALL_VOID({expr});" if void
@@ -240,6 +246,20 @@ def emit_constructor(entry, wrapped_names):
 def emit_free(entry, wrapped_names):
     name = entry["name"]
     nargs = len(entry.get("args", []))
+    # Free operations on native-bridge value types (abs/real/imag/conj/isreal/
+    # isapprox/to_string on Scalar/Vector/Matrix/Coeff, ...) bridge-expand to
+    # e.g. abs(double), which collides with Base.abs -- and they duplicate
+    # Julia's native ops anyway. Skip them unless they produce a wrapped type
+    # (e.g. scalar * Op -> OpSum, which is kept).
+    args = entry.get("args", [])
+    has_bridge = any(a["type"].get("cat") == "wrapped"
+                     and a["type"].get("type") in ov.NATIVE_BRIDGES
+                     for a in args)
+    ret = entry.get("return", {"cat": "void"})
+    ret_wrapped = (ret.get("cat") == "wrapped"
+                   and ret.get("type") not in ov.NATIVE_BRIDGES)
+    if has_bridge and not ret_wrapped:
+        raise Skip("native-bridge value op")
     wrap, is_void = return_transform(entry, wrapped_names)
     out = []
     for decls, callargs, sig in expansions(entry, wrapped_names):
