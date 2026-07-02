@@ -215,6 +215,119 @@ COOMatrix<int32_t, complex> coo_matrixC_32(OpSum const &ops,
 }
 XDIAG_CATCH
 
+// Two-phase build into caller-owned storage (Julia wrapper). Phase 1 returns
+// the total nnz; phase 2 fills the caller's row/col/data (recomputing the
+// per-thread counts, guarded against a shrunk capacity). Distributed blocks
+// have no local sparse representation.
+template <typename coeff_t, typename block_t, typename basis_t>
+static int64_t coo_nnz_basis(OpSum const &ops, basis_t const &basis_in,
+                             basis_t const &basis_out) {
+#ifdef _OPENMP
+  auto nnz_thread =
+      kernels::coo_matrix_nnz<block_t, coeff_t>(ops, basis_in, basis_out);
+  return std::accumulate(nnz_thread.begin(), nnz_thread.end(), (int64_t)0);
+#else
+  return kernels::coo_matrix_nnz<block_t, coeff_t>(ops, basis_in, basis_out);
+#endif
+}
+
+template <typename idx_t, typename coeff_t, typename block_t, typename basis_t>
+static void coo_fill_basis(OpSum const &ops, basis_t const &basis_in,
+                           basis_t const &basis_out, int64_t nnz_capacity,
+                           idx_t *row, idx_t *col, coeff_t *data, idx_t i0) {
+#ifdef _OPENMP
+  auto nnz_thread =
+      kernels::coo_matrix_nnz<block_t, coeff_t>(ops, basis_in, basis_out);
+  int64_t nnz =
+      std::accumulate(nnz_thread.begin(), nnz_thread.end(), (int64_t)0);
+  if (nnz > nnz_capacity) {
+    XDIAG_THROW("coo_matrix_fill: recomputed nnz exceeds the allocated capacity "
+                "(did the OpenMP thread count change between the nnz and fill "
+                "calls?)");
+  }
+  kernels::coo_matrix_fill<block_t, coeff_t>(ops, basis_in, basis_out,
+                                             nnz_thread, row, col, data, i0);
+#else
+  int64_t nnz =
+      kernels::coo_matrix_nnz<block_t, coeff_t>(ops, basis_in, basis_out);
+  if (nnz > nnz_capacity) {
+    XDIAG_THROW("coo_matrix_fill: recomputed nnz exceeds the allocated capacity");
+  }
+  kernels::coo_matrix_fill<block_t, coeff_t>(ops, basis_in, basis_out, row, col,
+                                             data, i0);
+#endif
+}
+
+template <typename coeff_t>
+int64_t coo_matrix_nnz(OpSum const &ops, Block const &block_in,
+                       Block const &block_out) try {
+  int64_t nnz = 0;
+  utils::visit_same_type(
+      block_in, block_out,
+      [&](auto const &bin, auto const &bout) {
+        using block_t = std::decay_t<decltype(bin)>;
+        if constexpr (is_distributed_v<block_t>) {
+          XDIAG_THROW("Cannot build a sparse matrix for a distributed block: "
+                      "its Hilbert space is distributed across MPI ranks. Use "
+                      "apply(...) instead.");
+        } else {
+          kernels::dispatch_basis(
+              bin, bout, [&](auto const &basis_in, auto const &basis_out) {
+                nnz = coo_nnz_basis<coeff_t, block_t>(ops, basis_in, basis_out);
+              });
+        }
+      },
+      "Type mismatch of Block types");
+  return nnz;
+}
+XDIAG_CATCH
+
+template <typename idx_t, typename coeff_t>
+void coo_matrix_fill(OpSum const &ops, Block const &block_in,
+                     Block const &block_out, int64_t nnz_capacity, idx_t *row,
+                     idx_t *col, coeff_t *data, idx_t i0) try {
+  utils::visit_same_type(
+      block_in, block_out,
+      [&](auto const &bin, auto const &bout) {
+        using block_t = std::decay_t<decltype(bin)>;
+        if constexpr (is_distributed_v<block_t>) {
+          XDIAG_THROW("Cannot build a sparse matrix for a distributed block: "
+                      "its Hilbert space is distributed across MPI ranks. Use "
+                      "apply(...) instead.");
+        } else {
+          check_valid_sparse_matrix<idx_t, coeff_t>(ops, bin, bout, i0);
+          kernels::dispatch_basis(
+              bin, bout, [&](auto const &basis_in, auto const &basis_out) {
+                coo_fill_basis<idx_t, coeff_t, block_t>(
+                    ops, basis_in, basis_out, nnz_capacity, row, col, data, i0);
+              });
+        }
+      },
+      "Type mismatch of Block types");
+}
+XDIAG_CATCH
+
+template int64_t coo_matrix_nnz<double>(OpSum const &, Block const &,
+                                        Block const &);
+template int64_t coo_matrix_nnz<complex>(OpSum const &, Block const &,
+                                         Block const &);
+template void coo_matrix_fill<int32_t, double>(OpSum const &, Block const &,
+                                               Block const &, int64_t,
+                                               int32_t *, int32_t *, double *,
+                                               int32_t);
+template void coo_matrix_fill<int64_t, double>(OpSum const &, Block const &,
+                                               Block const &, int64_t,
+                                               int64_t *, int64_t *, double *,
+                                               int64_t);
+template void coo_matrix_fill<int32_t, complex>(OpSum const &, Block const &,
+                                                Block const &, int64_t,
+                                                int32_t *, int32_t *, complex *,
+                                                int32_t);
+template void coo_matrix_fill<int64_t, complex>(OpSum const &, Block const &,
+                                                Block const &, int64_t,
+                                                int64_t *, int64_t *, complex *,
+                                                int64_t);
+
 template <typename idx_t, typename coeff_t>
 arma::Mat<coeff_t> to_dense(COOMatrix<idx_t, coeff_t> const &coo_mat) try {
   if ((coo_mat.nrows == 0) || (coo_mat.ncols == 0)) {

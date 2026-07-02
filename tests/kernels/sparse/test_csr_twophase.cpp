@@ -13,6 +13,7 @@
 #include <xdiag/blocks/fermion.hpp>
 #include <xdiag/blocks/spinhalf.hpp>
 #include <xdiag/blocks/tj.hpp>
+#include <xdiag/kernels/sparse/coo_matrix.hpp>
 #include <xdiag/kernels/sparse/csr_matrix.hpp>
 #include <xdiag/kernels/sparse/sparse_matrix_types.hpp>
 #include <xdiag/operators/op.hpp>
@@ -55,6 +56,27 @@ static void check_twophase(OpSum const &ops, Block const &block, int i0) {
   REQUIRE(norm(to_dense(twophase) - to_dense(concrete)) < 1e-12);
 }
 
+// COO two-phase (coo_matrix_nnz -> allocate -> coo_matrix_fill) must reproduce
+// the one-shot coo_matrix.
+template <typename idx_t, typename coeff_t>
+static void check_twophase_coo(OpSum const &ops, Block const &block, int i0) {
+  int64_t nnz = coo_matrix_nnz<coeff_t>(ops, block, block);
+  int64_t nrows = size(block);
+
+  arma::Col<idx_t> row((arma::uword)nnz), col((arma::uword)nnz);
+  arma::Col<coeff_t> data((arma::uword)nnz);
+  coo_matrix_fill<idx_t, coeff_t>(ops, block, block, nnz, row.memptr(),
+                                  col.memptr(), data.memptr(), (idx_t)i0);
+
+  COOMatrix<idx_t, coeff_t> twophase{(idx_t)nrows, (idx_t)nrows, row,
+                                     col,          data,         (idx_t)i0,
+                                     false};
+  COOMatrix<idx_t, coeff_t> concrete =
+      coo_matrix<idx_t, coeff_t>(ops, block, block, (idx_t)i0);
+  REQUIRE(nnz == (int64_t)concrete.data.n_elem);
+  REQUIRE(norm(to_dense(twophase) - to_dense(concrete)) < 1e-12);
+}
+
 // All idx/coeff combinations and both index bases; the real coeff path only
 // where the sector is real (otherwise the double CSR would drop imaginary
 // entries).
@@ -62,9 +84,13 @@ static void check_all(OpSum const &ops, Block const &block) {
   for (int i0 = 0; i0 < 2; ++i0) {
     check_twophase<int32_t, complex>(ops, block, i0);
     check_twophase<int64_t, complex>(ops, block, i0);
+    check_twophase_coo<int32_t, complex>(ops, block, i0);
+    check_twophase_coo<int64_t, complex>(ops, block, i0);
     if (isreal(ops) && isreal(block)) {
       check_twophase<int32_t, double>(ops, block, i0);
       check_twophase<int64_t, double>(ops, block, i0);
+      check_twophase_coo<int32_t, double>(ops, block, i0);
+      check_twophase_coo<int64_t, double>(ops, block, i0);
     }
   }
 }
