@@ -223,8 +223,11 @@ def emit_method(entry, wrapped_names):
                 raise Skip(f"operator{op}")
         else:
             # begin / end are Julia keywords -> expose as _begin / _end.
-            jl_name = {"begin": "_begin", "end": "_end"}.get(entry["name"],
-                                                             entry["name"])
+            base = {"begin": "_begin", "end": "_end"}.get(entry["name"],
+                                                          entry["name"])
+            # Ergonomic-owned names are registered as cxx_<name>; the hand-
+            # written Julia layer provides the idiomatic <name>.
+            jl_name = ov.cxx_name(base)
             expr = f"self.{entry['name']}({', '.join(callargs)})"
         expr = wrap(expr)
         body = (f"JULIA_XDIAG_CALL_VOID({expr});" if void
@@ -270,7 +273,7 @@ def emit_free(entry, wrapped_names):
             else:
                 raise Skip(f"free operator{op}")
         else:
-            jl_name = name
+            jl_name = ov.cxx_name(name)
             expr = f"{name}({', '.join(callargs)})"
         expr = wrap(expr)
         body = (f"JULIA_XDIAG_CALL_VOID({expr});" if is_void

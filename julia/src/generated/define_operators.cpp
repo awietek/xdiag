@@ -34,8 +34,6 @@ void define_operators(jlcxx::Module &mod) {
   mod.method("-", [](OpSum const & self, Op const & op) { JULIA_XDIAG_CALL_RETURN(self - op) });
   mod.method("*", [](OpSum const & self, OpSum const & rhs) { JULIA_XDIAG_CALL_RETURN(self * rhs) });
   mod.method("*", [](OpSum const & self, Op const & rhs) { JULIA_XDIAG_CALL_RETURN(self * rhs) });
-  mod.method("getindex", [](OpSum & self, std::string const & name) { JULIA_XDIAG_CALL_RETURN((self[name]).as<complex>()) });
-  mod.method("getindex", [](OpSum const & self, std::string const & name) { JULIA_XDIAG_CALL_RETURN((self[name]).as<complex>()) });
   mod.method("plain", [](OpSum const & self) { JULIA_XDIAG_CALL_RETURN(self.plain()) });
   mod.method("size", [](OpSum const & self) { JULIA_XDIAG_CALL_RETURN(self.size()) });
   mod.method("==", [](OpSum const & self, OpSum const & rhs) { JULIA_XDIAG_CALL_RETURN(self == rhs) });

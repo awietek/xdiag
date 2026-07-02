@@ -15,6 +15,7 @@ namespace xdiag::julia {
 // pointer-fill specials.
 void define_generated(jlcxx::Module &mod);
 void define_specials(jlcxx::Module &mod);
+void define_specials_sparse(jlcxx::Module &mod);
 } // namespace xdiag::julia
 
 JLCXX_MODULE define_julia_module(jlcxx::Module &mod) {
@@ -29,4 +30,5 @@ JLCXX_MODULE define_julia_module(jlcxx::Module &mod) {
   // pointer-fill specials.
   julia::define_generated(mod);
   julia::define_specials(mod);
+  julia::define_specials_sparse(mod);
 }

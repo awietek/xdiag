@@ -209,4 +209,5 @@ set(XDIAG_JULIA_SOURCES
   xdiagjl.cpp
   utils/armadillo.cpp
   specials.cpp
+  specials_sparse.cpp
 )

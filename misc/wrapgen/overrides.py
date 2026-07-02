@@ -43,6 +43,10 @@ EXCLUDE_RECORDS = {
 EXCLUDE_SYMBOLS = {
     # ostream operator<< is replaced by to_string.
     "xdiag::operator<<",
+    # OpSum::operator[](string) returns Scalar& for coupling get/set; the
+    # mechanical [] emitter assumes an integer index. Hand-written in the
+    # ergonomic layer via cxx_opsum_get / cxx_opsum_set (see specials.cpp).
+    "xdiag::OpSum::operator[]",
 }
 
 # Skip specific overloads (not the whole symbol): keyed by qualified name ->
@@ -216,11 +220,62 @@ TEMPLATES_TODO = {
 # The fill overloads taking std::function (GPWF callbacks) are left unwrapped
 # for now; the ProductState / RandomState / GPWF overloads of fill wrap normally.
 SPECIALS = {
-    "xdiag::matrix": "matrix",
     "xdiag::csr_matrix_nnz": "sparse_csr",
     "xdiag::csr_matrix_fill": "sparse_csr",
     "xdiag::coo_matrix_nnz": "sparse_coo",
     "xdiag::coo_matrix_fill": "sparse_coo",
+}
+
+# ---------------------------------------------------------------------------
+# Ergonomic-owned symbols — the hand-written Julia layer (src/ergonomics/*.jl)
+# ---------------------------------------------------------------------------
+# These free functions / State accessors are re-exposed on the C++ side under a
+# `cxx_<name>` registration and SKIPPED on the generated Julia side, because
+# their idiomatic Julia surface needs behaviour the mechanical emitter cannot
+# infer: runtime real/complex dispatch (isreal -> inner vs innerC, dot vs dotC,
+# vector vs vectorC, matrix vs matrixC), keyword arguments + result-struct
+# materialisation for the algorithms, and Base / LinearAlgebra generic extension
+# (norm, dot). The hand-written layer calls the cxx_ registrations directly.
+# (Matched by short (unqualified) name, so it applies across all overloads.)
+ERGONOMIC = {
+    "norm", "dot", "dotC", "inner", "innerC", "matrix_dot", "matrix_dotC",
+    "vector", "vectorC", "matrix", "matrixC", "col",
+    "eig0", "eigval0", "eigs",
+    "eigs_lanczos", "eigvals_lanczos", "eigvals_lanczos_inplace",
+    "evolve_lanczos", "evolve_lanczos_inplace",
+    "time_evolve", "time_evolve_inplace",
+    "imaginary_time_evolve", "imaginary_time_evolve_inplace",
+    "time_evolve_expokit", "time_evolve_expokit_inplace",
+    "apply",
+}
+
+# Algorithm result structs are materialised as native Julia structs by the
+# hand-written layer (real fields filled eagerly via convert), so the generator
+# neither wraps them as opaque cxx_ types nor emits field-accessor forwarders.
+# The C++ side still add_type's them + registers the field read accessors, which
+# the hand-written convert() calls.
+RESULT_STRUCTS = {
+    "xdiag::EigsLanczosResult", "xdiag::EigvalsLanczosResult",
+    "xdiag::EvolveLanczosResult", "xdiag::EvolveLanczosInplaceResult",
+    "xdiag::TimeEvolveExpokitResult", "xdiag::TimeEvolveExpokitInplaceResult",
+    "xdiag::EigsLobpcgResult",
+}
+
+
+def cxx_name(short_name):
+    """C++ registration name for a Julia-visible verb: prefixed with cxx_ when
+    the hand-written ergonomic layer owns the Julia-side name."""
+    return "cxx_" + short_name if short_name in ERGONOMIC else short_name
+
+
+# Symbols kept on the C++ side (plain registration) but whose Julia forwarder is
+# hand-written instead of generated, because the idiomatic Julia surface uses
+# keyword arguments where the C++ API is positional (State construction and the
+# state factories). The hand-written layer calls the plain C++ registration.
+EXCLUDE_JULIA = {
+    "xdiag::State::State",
+    "xdiag::random_state",
+    "xdiag::zero_state",
 }
 
 

@@ -114,7 +114,11 @@ def unwrap_arg(tp, name, wrapped, shift):
     if cat == "wrapped":
         q = tp["type"]
         if q in ov.NATIVE_BRIDGES:
-            return name  # C++ overloads accept the native value directly
+            # scalar/coeff pass through as native Julia numbers; vector/matrix
+            # are marshalled through armadillo (C++ overloads take arma types).
+            if ov.NATIVE_BRIDGES[q] in ("vector", "matrix"):
+                return f"to_armadillo({name})"
+            return name
         return f"{name}.{field_name(q)}"
     if cat == "stdvector":
         e = tp.get("elem", {})
@@ -125,7 +129,7 @@ def unwrap_arg(tp, name, wrapped, shift):
             return f"StdVector({base})"
         return f"StdVector({inner})"
     if cat == "arma":
-        return f"to_armadillo({name})"
+        return f"to_armadillo({name} .- 1)" if shift else f"to_armadillo({name})"
     if cat == "primitive" and shift:
         return f"{name} - 1"
     return name
@@ -138,7 +142,11 @@ def wrap_return(tp, expr, wrapped, shift):
     if cat == "wrapped":
         q = tp["type"]
         if q in ov.NATIVE_BRIDGES:
-            return expr, True  # already a native value from the C++ side
+            # vector/matrix come back as armadillo objects; scalar/coeff are
+            # already native Julia numbers.
+            if ov.NATIVE_BRIDGES[q] in ("vector", "matrix"):
+                return f"to_julia({expr})", True
+            return expr, True
         if q not in wrapped:
             raise Skip("return wrapped " + q)
         return f"{short(q)}({expr})", True
@@ -324,6 +332,49 @@ function Base.iterate(b::{block}, it)
 end"""
 
 
+def _sig_key(line):
+    """(funcname, (types...)) for a `NAME(params) = rhs` def.
+
+    Two C++ overloads can collapse to the same Julia signature (e.g. the
+    std::vector<int64_t> and arma::Col<int64_t> Permutation constructors both
+    become Permutation(::Vector{Int64})). Julia would silently let the last
+    definition win; here we dedup on the signature and keep the FIRST emitted
+    one, which carries the correct index shift / return handling. Falls back to
+    the whole line for anything that isn't a single `f(...) = ...` def."""
+    head = line.split(" = ", 1)[0].strip()
+    if not head.endswith(")"):
+        return line
+    depth, open_idx = 0, -1
+    for i in range(len(head) - 1, -1, -1):
+        if head[i] == ")":
+            depth += 1
+        elif head[i] == "(":
+            depth -= 1
+            if depth == 0:
+                open_idx = i
+                break
+    if open_idx < 0:
+        return line
+    name = head[:open_idx]
+    depth, cur, parts = 0, "", []
+    for c in head[open_idx + 1:-1]:
+        if c in "([{":
+            depth += 1; cur += c
+        elif c in ")]}":
+            depth -= 1; cur += c
+        elif c == "," and depth == 0:
+            parts.append(cur); cur = ""
+        else:
+            cur += c
+    if cur.strip():
+        parts.append(cur)
+    types = []
+    for p in parts:
+        p = p.split("=", 1)[0].strip()
+        types.append(p.split("::", 1)[1].strip() if "::" in p else "Any")
+    return (name, tuple(types))
+
+
 def group_of(header):
     if header and header.startswith("xdiag/"):
         p = header.split("/")
@@ -348,6 +399,8 @@ def build(model):
     for q in model["api_record_names"]:
         if q in ov.EXCLUDE_RECORDS or q in ov.NATIVE_BRIDGES:
             continue
+        if q in ov.RESULT_STRUCTS:
+            continue  # materialised as native structs by the ergonomic layer
         if q in template_records or "Distributed" in q or short(q) in ITERATORS:
             continue
         wrapped.add(q)
@@ -363,9 +416,10 @@ def build(model):
     methods = {}
     seen = set()
     def add(line, group):
-        if line in seen:
+        key = _sig_key(line)
+        if key in seen:
             return
-        seen.add(line)
+        seen.add(key)
         methods.setdefault(group, []).append(line)
 
     def wrappable_rec(rec):
@@ -377,6 +431,12 @@ def build(model):
         q = e["qualified"]
         if q in ov.EXCLUDE_SYMBOLS or q in ov.SPECIALS or e.get("is_template"):
             note(q, "special/template/excluded")
+            continue
+        if e["kind"] in ("function", "method") and e.get("name") in ov.ERGONOMIC:
+            note(q, "ergonomic (hand-written)")
+            continue
+        if q in ov.EXCLUDE_JULIA:
+            note(q, "julia-excluded (hand-written kwargs forwarder)")
             continue
         g = group_of(e["header"])
         rec = e.get("record")
