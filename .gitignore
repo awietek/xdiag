@@ -85,3 +85,6 @@ examples/user_guide/output.h5
 .cache/
 .claude
 !misc/data/hdf5/.gitkeep
+
+# WIP generated Julia wrapper (regenerate with misc/wrapgen)
+julia/src/generated/

@@ -43,6 +43,10 @@ EXCLUDE_RECORDS = {
 EXCLUDE_SYMBOLS = {
     # ostream operator<< is replaced by to_string.
     "xdiag::operator<<",
+    # Declared-but-unused two-phase entry points for COO (the Julia wrapper
+    # derives COO/CSC from CSR, so only the CSR two-phase is wrapped).
+    "xdiag::coo_matrix_nnz",
+    "xdiag::coo_matrix_fill",
 }
 
 # Argument categories that make an overload unwrappable -> that overload is
