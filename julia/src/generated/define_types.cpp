@@ -9,9 +9,14 @@ void define_types(jlcxx::Module &mod) {
   using namespace xdiag;
   mod.add_type<Boson>("cxx_Boson");
   mod.add_type<BosonIterator>("cxx_BosonIterator");
+  mod.add_type<EigsLanczosResult>("cxx_EigsLanczosResult");
+  mod.add_type<EigsLobpcgResult>("cxx_EigsLobpcgResult");
+  mod.add_type<EigvalsLanczosResult>("cxx_EigvalsLanczosResult");
   mod.add_type<Electron>("cxx_Electron");
   mod.add_type<ElectronIterator>("cxx_ElectronIterator");
   mod.add_type<Error>("cxx_Error");
+  mod.add_type<EvolveLanczosInplaceResult>("cxx_EvolveLanczosInplaceResult");
+  mod.add_type<EvolveLanczosResult>("cxx_EvolveLanczosResult");
   mod.add_type<Fermion>("cxx_Fermion");
   mod.add_type<FermionIterator>("cxx_FermionIterator");
   mod.add_type<FileToml>("cxx_FileToml");
@@ -26,6 +31,8 @@ void define_types(jlcxx::Module &mod) {
   mod.add_type<Spinhalf>("cxx_Spinhalf");
   mod.add_type<SpinhalfIterator>("cxx_SpinhalfIterator");
   mod.add_type<State>("cxx_State");
+  mod.add_type<TimeEvolveExpokitInplaceResult>("cxx_TimeEvolveExpokitInplaceResult");
+  mod.add_type<TimeEvolveExpokitResult>("cxx_TimeEvolveExpokitResult");
   mod.add_type<tJ>("cxx_tJ");
   mod.add_type<tJIterator>("cxx_tJIterator");
 }

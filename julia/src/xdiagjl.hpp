@@ -13,6 +13,27 @@
 
 #include <xdiag/all.hpp>
 
+// The algorithm result structs are plain aggregates that CxxWrap would treat as
+// "mirrored" types (mapping them field-by-field to a Julia struct) and then
+// refuse to add_type. We instead expose them as opaque wrapped types with field
+// accessors, so mirroring must be turned off for them here (visible in every
+// translation unit that add_type's them or receives them as a return value).
+namespace jlcxx {
+template <> struct IsMirroredType<xdiag::EigsLanczosResult> : std::false_type {};
+template <>
+struct IsMirroredType<xdiag::EigvalsLanczosResult> : std::false_type {};
+template <>
+struct IsMirroredType<xdiag::EvolveLanczosResult> : std::false_type {};
+template <>
+struct IsMirroredType<xdiag::EvolveLanczosInplaceResult> : std::false_type {};
+template <>
+struct IsMirroredType<xdiag::TimeEvolveExpokitResult> : std::false_type {};
+template <>
+struct IsMirroredType<xdiag::TimeEvolveExpokitInplaceResult> : std::false_type {
+};
+template <> struct IsMirroredType<xdiag::EigsLobpcgResult> : std::false_type {};
+} // namespace jlcxx
+
 #define JULIA_XDIAG_CALL_VOID(CMD)                                             \
   try {                                                                        \
     CMD;                                                                       \

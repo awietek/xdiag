@@ -259,6 +259,20 @@ def emit_free(entry, wrapped_names):
     return out
 
 
+def emit_field(entry, wrapped_names):
+    """Read accessor for a public data member (algorithm result structs)."""
+    rec = short(entry["qualified"].rsplit("::", 1)[0])
+    field = entry["name"]
+    t = entry.get("type", {"cat": "void"})
+    if t.get("cat") in ("void", "variant"):
+        raise Skip("field " + t.get("cat", "?"))
+    cpp_type(t, wrapped_names)  # validate the field type marshals
+    sig = (f"{rec} const &",)
+    line = (f'  mod.method("{field}", []({rec} const & self) '
+            f'{{ JULIA_XDIAG_CALL_RETURN(self.{field}) }});')
+    return [((field, sig), line)]
+
+
 def excluded(entry):
     header = entry.get("header") or ""
     for pat in ov.EXCLUDE_HEADERS:
@@ -306,7 +320,7 @@ def build(model):
 
     wrapped_names = set()
     for q in model["api_record_names"]:
-        if q in ov.EXCLUDE_RECORDS or q in ov.NATIVE_BRIDGES or q in MIRRORED:
+        if q in ov.EXCLUDE_RECORDS or q in ov.NATIVE_BRIDGES:
             continue
         if q in template_records or "Distributed" in q:
             continue
@@ -358,6 +372,8 @@ def build(model):
                     add(emit_constructor(e, wrapped_names), e["qualified"], group)
                 elif e["kind"] in ("method", "operator"):
                     add(emit_method(e, wrapped_names), e["qualified"], group)
+                elif e["kind"] == "var":
+                    add(emit_field(e, wrapped_names), e["qualified"], group)
                 elif e["kind"] == "destructor":
                     pass
                 else:
