@@ -323,11 +323,16 @@ def _entry(c, record_names):
     if c.kind in api.CALLABLE_KINDS:
         args = []
         for a in _params(c):
-            args.append({
+            entry = {
                 "name": a.spelling,
                 "type": classify_type(a.type, record_names),
                 "has_default": _has_default(a),
-            })
+            }
+            if entry["has_default"]:
+                dv = _default_value(base["signature"], a.spelling)
+                if dv is not None:
+                    entry["default"] = dv
+            args.append(entry)
         base["args"] = args
         base["is_template"] = c.kind == cindex.CursorKind.FUNCTION_TEMPLATE
         tparams = _template_params(c)
@@ -386,6 +391,18 @@ def _has_default(arg_cursor):
         if tok.spelling == "=":
             return True
     return False
+
+
+def _default_value(signature, arg_name):
+    """Extract the C++ default value for arg_name from the raw signature, e.g.
+    '..., std::string backend = "auto")' -> '"auto"'. Handles the simple
+    literal defaults used in the API (numbers, strings, bools)."""
+    if not arg_name:
+        return None
+    m = re.search(r"\b" + re.escape(arg_name) + r"\s*=\s*([^,)]+)", signature)
+    if not m:
+        return None
+    return m.group(1).strip()
 
 
 # ---------------------------------------------------------------------------
