@@ -133,6 +133,13 @@ bool BasistJIterator<enumeration_t>::operator!=(
   return (up_ != rhs.up_) || ((up_ != up_end_) && (dn_ != rhs.dn_));
 }
 
+template <typename enumeration_t>
+int64_t BasistJ<enumeration_t>::index(ProductState const &pstate) const {
+  auto [ups, dns] = pair_from_pstate<bit_t>(pstate, nsites());
+  bit_t dncs = tj_compress_dns(ups, dns, nsites());
+  return ups_offset(index_up(ups)) + index_dncs(ups, dncs);
+}
+
 } // namespace xdiag::basis
 
 using namespace xdiag::combinatorics;

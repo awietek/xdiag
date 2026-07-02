@@ -99,6 +99,14 @@ inline bitarray_t make_bitarray(int64_t n_slots) {
   }
 }
 
+namespace detail {
+template <typename T> struct is_bitarray : std::false_type {};
+template <typename bit_t, int N>
+struct is_bitarray<BitArray<bit_t, N>> : std::true_type {};
+template <typename T>
+inline constexpr bool is_bitarray_v = is_bitarray<T>::value;
+} // namespace detail
+
 template <typename bit_t, int nbits>
 std::string to_string(BitArray<bit_t, nbits> const &bits,
                       int64_t size = BitArray<bit_t, nbits>::maximum_size,

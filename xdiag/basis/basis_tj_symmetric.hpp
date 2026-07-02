@@ -94,6 +94,7 @@ public:
   // configuration (ups, dns); -1 if it has zero norm or is not in the basis
   // (which includes a double-occupied configuration).
   int64_t index(bit_t ups, bit_t dns) const;
+  int64_t index(ProductState const &pstate) const override;
 
   iterator_t begin() const;
   iterator_t end() const;

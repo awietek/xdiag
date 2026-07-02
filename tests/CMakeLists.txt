@@ -54,6 +54,7 @@ set(XDIAG_TEST_SOURCES
   symmetries/tables/test_fermi_table.cpp
 
   blocks/test_print_block.cpp
+  blocks/test_index.cpp
 
   blocks/spinhalf/test_spinhalf_strategies.cpp
   blocks/spinhalf/test_spinhalf.cpp
@@ -80,6 +81,7 @@ set(XDIAG_TEST_SOURCES
   blocks/fermion/testcases_fermion.cpp
 
   kernels/terms/test_non_branching_op.cpp
+  kernels/sparse/test_csr_twophase.cpp
   
   io/test_file_toml.cpp
   io/test_file_h5.cpp

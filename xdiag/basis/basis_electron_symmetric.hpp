@@ -92,6 +92,7 @@ public:
   // Linear index of the symmetric basis state reached by symmetrising the raw
   // configuration (ups, dns); -1 if it has zero norm (not in the basis).
   int64_t index(bit_t ups, bit_t dns) const;
+  int64_t index(ProductState const &pstate) const override;
 
   iterator_t begin() const;
   iterator_t end() const;

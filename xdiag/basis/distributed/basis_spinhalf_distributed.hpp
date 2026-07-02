@@ -45,6 +45,7 @@ public:
   iterator_t begin() const;
   iterator_t end() const;
   int64_t index(bit_t spins) const;
+  int64_t index(ProductState const &pstate) const override;
 
   std::vector<bit_t> const &prefixes() const;
   int64_t prefix_begin(bit_t prefix) const;

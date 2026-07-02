@@ -249,6 +249,12 @@ int64_t BasistJDistributed<bit_t>::index(bit_t up, bit_t dn) const {
 }
 
 template <typename bit_t>
+int64_t BasistJDistributed<bit_t>::index(ProductState const &pstate) const {
+  auto [up, dn] = pair_from_pstate<bit_t>(pstate, nsites());
+  return index(up, dn);
+}
+
+template <typename bit_t>
 int64_t BasistJDistributed<bit_t>::index_r(bit_t up, bit_t dn) const {
   if (rank(dn) != mpi_rank_) {
     return invalid_index;

@@ -37,6 +37,7 @@ public:
 
   int64_t size() const override;
   int64_t nsites() const override;
+  int64_t index(ProductState const &pstate) const override;
   int64_t d() const; // Local Hilbert space dimension per site
   PermutationGroup const &group() const;
   Vector const &characters() const;

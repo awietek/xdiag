@@ -39,6 +39,7 @@ public:
   XDIAG_API int64_t dim() const;
   XDIAG_API int64_t size() const;
   XDIAG_API bool isreal() const;
+  XDIAG_API int64_t index(ProductState const &pstate) const;
 
   XDIAG_API bool operator==(Fermion const &rhs) const;
   XDIAG_API bool operator!=(Fermion const &rhs) const;

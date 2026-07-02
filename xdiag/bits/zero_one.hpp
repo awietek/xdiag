@@ -7,16 +7,21 @@
 #include <cstdint>
 #include <type_traits>
 
+#include <xdiag/bits/bitarray.hpp>
 #include <xdiag/bits/bitset.hpp>
 
 namespace xdiag::bits {
 
 // Helper functions for generic bit operations (zero overhead for native types)
 
-// Construct an all-zero / single-low-bit configuration.
+// Construct an all-zero / single-low-bit configuration. The argument is the
+// logical size: number of bits for integral/Bitset (one per site), number of
+// per-site slots for BitArray.
 template <typename bit_t> constexpr bit_t zero(int64_t nbits = 64) noexcept {
   if constexpr (std::is_integral<bit_t>::value) {
     return 0;
+  } else if constexpr (detail::is_bitarray_v<bit_t>) {
+    return make_bitarray<bit_t>(nbits);
   } else {
     return bit_t(nbits);
   }

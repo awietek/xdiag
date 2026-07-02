@@ -41,6 +41,12 @@ int64_t BasisOnTheFly<enumeration_t>::index(bit_t bits) const {
 }
 
 template <typename enumeration_t>
+int64_t
+BasisOnTheFly<enumeration_t>::index(ProductState const &pstate) const {
+  return index(config_from_pstate<bit_t>(pstate, nsites()));
+}
+
+template <typename enumeration_t>
 typename BasisOnTheFly<enumeration_t>::iterator_t
 BasisOnTheFly<enumeration_t>::begin() const {
   return enumeration_.begin();

@@ -133,6 +133,9 @@ tJ::tJ(int64_t nsites, int64_t nup, int64_t ndn, Representation const &irrep) tr
 XDIAG_CATCH
 
 int64_t tJ::nsites() const { return basis_->nsites(); }
+int64_t tJ::index(ProductState const &pstate) const {
+  return basis_->index(pstate);
+}
 int64_t tJ::dim() const { return size(); }
 int64_t tJ::size() const { return basis_->size(); }
 bool tJ::isreal() const { return irreps_.isreal(); }

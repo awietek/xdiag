@@ -37,16 +37,6 @@ template <typename value_t> class BitVectorConstIterator;
 //   uint64_t val = vec[0];            // Get first element (returns 5)
 //   for (auto x : vec) { ... }        // Iterate over elements
 
-// --- Local type trait ---
-
-namespace detail {
-template <typename T> struct is_bitarray : std::false_type {};
-template <typename bit_t, int N>
-struct is_bitarray<BitArray<bit_t, N>> : std::true_type {};
-template <typename T>
-inline constexpr bool is_bitarray_v = is_bitarray<T>::value;
-} // namespace detail
-
 // --- Element access helpers (inline for operator[] performance) ---
 
 template <typename value_t>

@@ -117,6 +117,9 @@ Electron::Electron(int64_t nsites, int64_t nup, int64_t ndn,
 XDIAG_CATCH
 
 int64_t Electron::nsites() const { return basis_->nsites(); }
+int64_t Electron::index(ProductState const &pstate) const {
+  return basis_->index(pstate);
+}
 int64_t Electron::dim() const { return size(); }
 int64_t Electron::size() const { return basis_->size(); }
 bool Electron::isreal() const { return irreps_.isreal(); }

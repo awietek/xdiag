@@ -41,6 +41,13 @@ int64_t BasisElectron<enumeration_t>::index(bit_t ups, bit_t dns) const {
 }
 
 template <typename enumeration_t>
+int64_t
+BasisElectron<enumeration_t>::index(ProductState const &pstate) const {
+  auto [ups, dns] = pair_from_pstate<bit_t>(pstate, nsites());
+  return index(ups, dns);
+}
+
+template <typename enumeration_t>
 typename BasisElectron<enumeration_t>::iterator_t
 BasisElectron<enumeration_t>::begin() const {
   return iterator_t(basis_up_.begin(), basis_up_.end(), basis_dn_.begin(),

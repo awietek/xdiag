@@ -33,6 +33,16 @@ int64_t BasisSymmetric<enumeration_t>::nsites() const {
 }
 
 template <typename enumeration_t>
+int64_t
+BasisSymmetric<enumeration_t>::index(ProductState const &pstate) const {
+  auto [raw, sym, norm] =
+      representative_data(config_from_pstate<bit_t>(pstate, nsites()));
+  (void)sym;
+  (void)norm;
+  return raw > 0 ? raw - 1 : invalid_index;
+}
+
+template <typename enumeration_t>
 int64_t BasisSymmetric<enumeration_t>::d() const {
   return enumeration_.d();
 }

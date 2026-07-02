@@ -38,6 +38,7 @@ XDIAG_API int64_t dim(Block const &block);
 XDIAG_API int64_t size(Block const &block);
 XDIAG_API int64_t nsites(Block const &block);
 XDIAG_API bool isreal(Block const &block);
+XDIAG_API int64_t index(Block const &block, ProductState const &pstate);
 
 XDIAG_API std::ostream &operator<<(std::ostream &out, Block const &block);
 XDIAG_API std::string to_string(Block const &block);

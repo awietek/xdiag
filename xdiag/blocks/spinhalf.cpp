@@ -156,6 +156,9 @@ Spinhalf::Spinhalf(int64_t nsites, int64_t nup, Representation const &irrep,
 XDIAG_CATCH
 
 int64_t Spinhalf::nsites() const { return basis_->nsites(); }
+int64_t Spinhalf::index(ProductState const &pstate) const {
+  return basis_->index(pstate);
+}
 int64_t Spinhalf::dim() const { return size(); }
 int64_t Spinhalf::size() const { return basis_->size(); }
 bool Spinhalf::isreal() const { return irreps_.isreal(); }

@@ -316,6 +316,12 @@ int64_t BasisSublattice<bit_t, n_sublat>::index(bit_t state) const {
 }
 
 template <typename bit_t, int n_sublat>
+int64_t
+BasisSublattice<bit_t, n_sublat>::index(ProductState const &pstate) const {
+  return index(config_from_pstate<bit_t>(pstate, nsites()));
+}
+
+template <typename bit_t, int n_sublat>
 std::pair<int64_t, int64_t>
 BasisSublattice<bit_t, n_sublat>::index_sym(bit_t state) const {
   auto [rep, sym] = action_.representative_sym(state);

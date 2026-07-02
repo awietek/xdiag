@@ -10,6 +10,7 @@
 #include <utility>
 
 #include <xdiag/bits/get_set.hpp>
+#include <xdiag/bits/zero_one.hpp>
 #include <xdiag/states/product_state.hpp>
 
 namespace xdiag::basis {
@@ -43,6 +44,7 @@ public:
   virtual int64_t size_max() const { return size(); }
   virtual int64_t size_min() const { return size(); }
   virtual std::unique_ptr<BasisIterator> product_state_iterator() const = 0;
+  virtual int64_t index(ProductState const &pstate) const = 0;
   virtual ~Basis() = default;
 };
 
@@ -58,6 +60,31 @@ inline int64_t local_state(bit_t const &config, int64_t i) {
 template <typename bit_t>
 inline int64_t local_state(std::pair<bit_t, bit_t> const &config, int64_t i) {
   return bits::get(config.first, i) + 2 * bits::get(config.second, i);
+}
+
+// Inverse of local_state: reconstruct a raw configuration from a ProductState,
+// used by the Basis::index overrides. bits::zero sizes the storage per backend.
+template <typename bit_t>
+inline bit_t config_from_pstate(ProductState const &pstate, int64_t nsites) {
+  bit_t config = bits::zero<bit_t>(nsites);
+  for (int64_t i = 0; i < nsites; ++i) {
+    bits::set(config, i, pstate[i]);
+  }
+  return config;
+}
+
+// (ups, dns) product backends: local state 0 empty, 1 up, 2 dn, 3 up&dn.
+template <typename bit_t>
+inline std::pair<bit_t, bit_t>
+pair_from_pstate(ProductState const &pstate, int64_t nsites) {
+  bit_t ups = bits::zero<bit_t>(nsites);
+  bit_t dns = bits::zero<bit_t>(nsites);
+  for (int64_t i = 0; i < nsites; ++i) {
+    int64_t l = pstate[i];
+    bits::set(ups, i, l & 1);
+    bits::set(dns, i, (l >> 1) & 1);
+  }
+  return {ups, dns};
 }
 
 // Concrete BasisIterator wrapping a basis' own linear iterator. The underlying

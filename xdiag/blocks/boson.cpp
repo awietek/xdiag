@@ -189,6 +189,9 @@ Boson::Boson(int64_t nsites, int64_t d, int64_t number,
 XDIAG_CATCH
 
 int64_t Boson::nsites() const { return basis_->nsites(); }
+int64_t Boson::index(ProductState const &pstate) const {
+  return basis_->index(pstate);
+}
 int64_t Boson::d() const { return d_; }
 int64_t Boson::dim() const { return size(); }
 int64_t Boson::size() const { return basis_->size(); }

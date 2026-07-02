@@ -146,6 +146,13 @@ int64_t BasisElectronSymmetric<enumeration_t>::index(bit_t ups,
 }
 
 template <typename enumeration_t>
+int64_t BasisElectronSymmetric<enumeration_t>::index(
+    ProductState const &pstate) const {
+  auto [ups, dns] = pair_from_pstate<bit_t>(pstate, nsites());
+  return index(ups, dns);
+}
+
+template <typename enumeration_t>
 std::vector<int64_t>
 BasisElectronSymmetric<enumeration_t>::syms_ups(bit_t ups) const {
   auto [raw, s0, nrm] = basis_up_.representative_data(ups);

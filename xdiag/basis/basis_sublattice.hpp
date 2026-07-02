@@ -41,6 +41,7 @@ public:
   symmetries::SitePermutationSublattice<bit_t, n_sublat> const& action() const;
 
   int64_t index(bit_t state) const;
+  int64_t index(ProductState const &pstate) const override;
   inline bit_t operator[](int64_t idx) const { return reps_[idx]; }
   inline double norm(int64_t idx) const { return norms_[idx]; }
   inline double inv_norm(int64_t idx) const { return 1.0 / norms_[idx]; }

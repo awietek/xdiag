@@ -180,6 +180,80 @@ CSRMatrix<int32_t, complex> csr_matrixC_32(OpSum const &ops,
 }
 XDIAG_CATCH
 
+// Two-phase build into caller-owned storage (Julia wrapper). Phase 1: per-row
+// nonzero counts. Distributed blocks have no local dense/sparse representation.
+template <typename coeff_t>
+std::vector<int64_t> csr_matrix_nnz(OpSum const &ops, Block const &block_in,
+                                    Block const &block_out) try {
+  std::vector<int64_t> counts;
+  utils::visit_same_type(
+      block_in, block_out,
+      [&](auto const &bin, auto const &bout) {
+        using block_t = std::decay_t<decltype(bin)>;
+        if constexpr (is_distributed_v<block_t>) {
+          XDIAG_THROW("Cannot build a sparse matrix for a distributed block: "
+                      "its Hilbert space is distributed across MPI ranks. Use "
+                      "apply(...) instead.");
+        } else {
+          counts = build_csr_nnz<coeff_t, block_t>(ops, bin, bout);
+        }
+      },
+      "Type mismatch of Block types");
+  return counts;
+}
+XDIAG_CATCH
+
+// Phase 2: fill the caller's rowptr/col/data, using the phase-1 counts.
+template <typename idx_t, typename coeff_t>
+void csr_matrix_fill(OpSum const &ops, Block const &block_in,
+                     Block const &block_out,
+                     std::vector<int64_t> const &n_elements_in_row,
+                     idx_t *rowptr, idx_t *col, coeff_t *data, idx_t i0) try {
+  utils::visit_same_type(
+      block_in, block_out,
+      [&](auto const &bin, auto const &bout) {
+        using block_t = std::decay_t<decltype(bin)>;
+        if constexpr (is_distributed_v<block_t>) {
+          XDIAG_THROW("Cannot build a sparse matrix for a distributed block: "
+                      "its Hilbert space is distributed across MPI ranks. Use "
+                      "apply(...) instead.");
+        } else {
+          check_valid_sparse_matrix<idx_t, coeff_t>(ops, bin, bout, i0);
+          build_csr_fill<idx_t, coeff_t, block_t>(ops, bin, bout,
+                                                  n_elements_in_row, rowptr, col,
+                                                  data, i0);
+        }
+      },
+      "Type mismatch of Block types");
+}
+XDIAG_CATCH
+
+template std::vector<int64_t>
+csr_matrix_nnz<double>(OpSum const &, Block const &, Block const &);
+template std::vector<int64_t>
+csr_matrix_nnz<complex>(OpSum const &, Block const &, Block const &);
+
+template void csr_matrix_fill<int32_t, double>(OpSum const &, Block const &,
+                                               Block const &,
+                                               std::vector<int64_t> const &,
+                                               int32_t *, int32_t *, double *,
+                                               int32_t);
+template void csr_matrix_fill<int64_t, double>(OpSum const &, Block const &,
+                                               Block const &,
+                                               std::vector<int64_t> const &,
+                                               int64_t *, int64_t *, double *,
+                                               int64_t);
+template void csr_matrix_fill<int32_t, complex>(OpSum const &, Block const &,
+                                                Block const &,
+                                                std::vector<int64_t> const &,
+                                                int32_t *, int32_t *, complex *,
+                                                int32_t);
+template void csr_matrix_fill<int64_t, complex>(OpSum const &, Block const &,
+                                                Block const &,
+                                                std::vector<int64_t> const &,
+                                                int64_t *, int64_t *, complex *,
+                                                int64_t);
+
 template <typename idx_t, typename coeff_t>
 arma::Mat<coeff_t> to_dense(CSRMatrix<idx_t, coeff_t> const &csr_mat) try {
   int64_t nnz = csr_mat.data.size();

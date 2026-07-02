@@ -182,6 +182,12 @@ template <typename bit_t> int64_t BasisSpinhalfDistributed<bit_t>::index(bit_t s
 }
 
 template <typename bit_t>
+int64_t
+BasisSpinhalfDistributed<bit_t>::index(ProductState const &pstate) const {
+  return index(config_from_pstate<bit_t>(pstate, nsites()));
+}
+
+template <typename bit_t>
 std::vector<bit_t> const &BasisSpinhalfDistributed<bit_t>::prefixes() const {
   return prefixes_;
 }

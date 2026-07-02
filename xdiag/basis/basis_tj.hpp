@@ -75,6 +75,7 @@ public:
 
   int64_t size() const override;
   int64_t nsites() const override;
+  int64_t index(ProductState const &pstate) const override;
   constexpr int64_t d() const { return 3; }
 
   iterator_t begin() const;

@@ -43,6 +43,7 @@ public:
   iterator_t begin() const;
   iterator_t end() const;
   int64_t index(bit_t up, bit_t dn) const;
+  int64_t index(ProductState const &pstate) const override;
   int64_t index_r(bit_t up, bit_t dn) const;
 
   bool operator==(BasistJDistributed const &rhs) const;

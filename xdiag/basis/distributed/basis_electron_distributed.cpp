@@ -215,6 +215,13 @@ int64_t BasisElectronDistributed<bit_t>::index(bit_t up, bit_t dn) const {
   }
 }
 
+template <typename bit_t>
+int64_t
+BasisElectronDistributed<bit_t>::index(ProductState const &pstate) const {
+  auto [up, dn] = pair_from_pstate<bit_t>(pstate, nsites());
+  return index(up, dn);
+}
+
 template <typename bit_t> int64_t BasisElectronDistributed<bit_t>::dim() const {
   return dim_;
 }

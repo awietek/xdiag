@@ -46,6 +46,7 @@ public:
   iterator_t begin() const;
   iterator_t end() const;
   int64_t index(bit_t up, bit_t dn) const;
+  int64_t index(ProductState const &pstate) const override;
 
   bool operator==(BasisElectronDistributed const &rhs) const;
   bool operator!=(BasisElectronDistributed const &rhs) const;

@@ -29,6 +29,7 @@ public:
   int64_t nsites() const override;
   int64_t d() const; // Local Hilbert space dimension per site
   int64_t index(bit_t bits) const;
+  int64_t index(ProductState const &pstate) const override;
   iterator_t begin() const;
   iterator_t end() const;
 

@@ -111,6 +111,9 @@ Fermion::Fermion(int64_t nsites, int64_t number,
 XDIAG_CATCH
 
 int64_t Fermion::nsites() const { return basis_->nsites(); }
+int64_t Fermion::index(ProductState const &pstate) const {
+  return basis_->index(pstate);
+}
 int64_t Fermion::dim() const { return size(); }
 int64_t Fermion::size() const { return basis_->size(); }
 bool Fermion::isreal() const { return irreps_.isreal(); }

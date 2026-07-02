@@ -99,6 +99,10 @@ int64_t nsites(Block const &block) {
   return std::visit([&](auto &&b) { return b.nsites(); }, block);
 }
 
+int64_t index(Block const &block, ProductState const &pstate) {
+  return std::visit([&](auto &&b) { return b.index(pstate); }, block);
+}
+
 bool isreal(Block const &block) {
   return std::visit([&](auto &&b) { return b.isreal(); }, block);
 }
