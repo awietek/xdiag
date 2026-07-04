@@ -37,11 +37,9 @@ tJDistributed::tJDistributed(int64_t nsites,
   }
 
   if (nsites <= 32) {
-    basis_ =
-        std::make_shared<BasistJDistributed<uint32_t>>(nsites, *nup, *ndn);
+    basis_ = std::make_shared<BasistJDistributed<uint32_t>>(nsites, *nup, *ndn);
   } else if (nsites <= 64) {
-    basis_ =
-        std::make_shared<BasistJDistributed<uint64_t>>(nsites, *nup, *ndn);
+    basis_ = std::make_shared<BasistJDistributed<uint64_t>>(nsites, *nup, *ndn);
   } else {
     XDIAG_THROW("tJDistributed currently supports up to 64 sites");
   }
@@ -59,6 +57,9 @@ int64_t tJDistributed::size() const { return basis_->size(); }
 int64_t tJDistributed::size_max() const { return basis_->size_max(); }
 int64_t tJDistributed::size_min() const { return basis_->size_min(); }
 bool tJDistributed::isreal() const { return irreps_.isreal(); }
+int64_t tJDistributed::index(ProductState const &pstate) const {
+  return basis_->index(pstate);
+}
 
 bool tJDistributed::operator==(tJDistributed const &rhs) const {
   return (irreps_ == rhs.irreps_) && (basis_ == rhs.basis_);

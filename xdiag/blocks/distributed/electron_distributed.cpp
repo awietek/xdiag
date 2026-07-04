@@ -58,7 +58,10 @@ int64_t ElectronDistributed::size() const { return basis_->size(); }
 int64_t ElectronDistributed::size_max() const { return basis_->size_max(); }
 int64_t ElectronDistributed::size_min() const { return basis_->size_min(); }
 bool ElectronDistributed::isreal() const { return irreps_.isreal(); }
-
+int64_t ElectronDistributed::index(ProductState const &pstate) const {
+  return basis_->index(pstate);
+}
+  
 bool ElectronDistributed::operator==(ElectronDistributed const &rhs) const {
   return (irreps_ == rhs.irreps_) && (basis_ == rhs.basis_);
 }

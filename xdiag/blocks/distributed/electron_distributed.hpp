@@ -40,6 +40,7 @@ public:
   XDIAG_API int64_t size_max() const;  // largest local dimension over all ranks
   XDIAG_API int64_t size_min() const;  // smallest local dimension over all ranks
   XDIAG_API bool isreal() const;
+  XDIAG_API int64_t index(ProductState const &pstate) const;
 
   XDIAG_API bool operator==(ElectronDistributed const &rhs) const;
   XDIAG_API bool operator!=(ElectronDistributed const &rhs) const;

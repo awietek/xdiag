@@ -53,7 +53,10 @@ int64_t SpinhalfDistributed::size() const { return basis_->size(); }
 int64_t SpinhalfDistributed::size_max() const { return basis_->size_max(); }
 int64_t SpinhalfDistributed::size_min() const { return basis_->size_min(); }
 bool SpinhalfDistributed::isreal() const { return irreps_.isreal(); }
-
+int64_t SpinhalfDistributed::index(ProductState const &pstate) const {
+  return basis_->index(pstate);
+}
+  
 bool SpinhalfDistributed::operator==(SpinhalfDistributed const &rhs) const {
   return (irreps_ == rhs.irreps_) && (basis_ == rhs.basis_);
 }

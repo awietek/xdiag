@@ -31,17 +31,17 @@ public:
   BasisSpinhalfDistributed() = default;
   BasisSpinhalfDistributed(int64_t nsites, int64_t nup);
 
-  int64_t nsites() const;
+  int64_t nsites() const override;
   int64_t nup() const;
 
   int64_t n_prefix_bits() const;
   int64_t n_postfix_bits() const;
 
-  int64_t dim() const;
-  int64_t size() const;
+  int64_t dim() const override;
+  int64_t size() const override;
   int64_t size_transpose() const;
-  int64_t size_max() const;
-  int64_t size_min() const;
+  int64_t size_max() const override;
+  int64_t size_min() const override;
   iterator_t begin() const;
   iterator_t end() const;
   int64_t index(bit_t spins) const;
