@@ -1,10 +1,12 @@
 #!/bin/bash
 
-normal_headers=`grep -rl XDIAG_API ../xdiag  --exclude=all.hpp  --exclude-dir=old --exclude=*.cpp --exclude *distributed*`
+normal_headers=`grep -rl XDIAG_API ../xdiag  --exclude=all.hpp  --exclude-dir=old --exclude=*.cpp --exclude=*distributed* --exclude=*h5* --exclude=*hdf5*`
+hdf5_headers=`grep -rl XDIAG_API ../xdiag  --include=*h5* --include=*hdf5*`
 distributed_headers=`grep -rl XDIAG_API ../xdiag  --exclude=all.hpp  --exclude-dir=old --exclude=*.cpp --include *distributed*`
 
 # sort lexicographically
 normal_headers=$(echo $normal_headers | xargs -n1 | sort | xargs)
+hdf5_headers=$(echo $hdf5_headers | xargs -n1 | sort | xargs)
 distributed_headers=$(echo $distributed_headers | xargs -n1 | sort | xargs)
 
 # add license on top
@@ -39,6 +41,14 @@ for header in ${normal_headers[@]}; do
     echo "#include <$header>"
 done
 
+echo
+
+echo "#ifdef XDIAG_USE_HDF5"
+for header in ${hdf5_headers[@]}; do
+    header=`echo $header | sed "s/..\///"`
+    echo "#include <$header>"
+done
+echo "#endif"
 echo
 
 echo "#ifdef XDIAG_DISTRIBUTED"

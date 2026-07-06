@@ -24,10 +24,9 @@ limitations under the License.
 #include <xdiag/blocks/fermion.hpp>
 #include <xdiag/blocks/spinhalf.hpp>
 #include <xdiag/blocks/tj.hpp>
-#include <xdiag/io/file_h5.hpp>
 #include <xdiag/io/file_toml.hpp>
-#include <xdiag/io/hdf5/file_h5_handler.hpp>
 #include <xdiag/io/read.hpp>
+#include <xdiag/io/toml/file_toml_handler.hpp>
 #include <xdiag/kernels/apply.hpp>
 #include <xdiag/kernels/matrix.hpp>
 #include <xdiag/kernels/sparse/apply.hpp>
@@ -42,11 +41,6 @@ limitations under the License.
 #include <xdiag/linalg/time_evolution/imaginary_time_evolve.hpp>
 #include <xdiag/linalg/time_evolution/time_evolve_expokit.hpp>
 #include <xdiag/linalg/time_evolution/time_evolve.hpp>
-#include <xdiag/math/matrix.hpp>
-#include <xdiag/math/scalar.hpp>
-#include <xdiag/math/vector.hpp>
-#include <xdiag/operators/coeff.hpp>
-#include <xdiag/operators/collect.hpp>
 #include <xdiag/operators/hc.hpp>
 #include <xdiag/operators/monomial.hpp>
 #include <xdiag/operators/op.hpp>
@@ -57,12 +51,12 @@ limitations under the License.
 #include <xdiag/states/dot.hpp>
 #include <xdiag/states/expect.hpp>
 #include <xdiag/states/fill.hpp>
+#include <xdiag/states/gpwf.hpp>
 #include <xdiag/states/inner.hpp>
 #include <xdiag/states/norm.hpp>
 #include <xdiag/states/product_state.hpp>
 #include <xdiag/states/random_state.hpp>
 #include <xdiag/states/state.hpp>
-#include <xdiag/symmetries/action/site_permutation.hpp>
 #include <xdiag/symmetries/permutation_group.hpp>
 #include <xdiag/symmetries/permutation.hpp>
 #include <xdiag/symmetries/representation.hpp>
@@ -72,6 +66,11 @@ limitations under the License.
 #include <xdiag/utils/timing.hpp>
 #include <xdiag/utils/xdiag_api.hpp>
 #include <xdiag/utils/xdiag_show.hpp>
+
+#ifdef XDIAG_USE_HDF5
+#include <xdiag/io/file_h5.hpp>
+#include <xdiag/io/hdf5/file_h5_handler.hpp>
+#endif
 
 #ifdef XDIAG_DISTRIBUTED
 #include <xdiag/blocks/distributed/electron_distributed.hpp>

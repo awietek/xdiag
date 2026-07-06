@@ -8,21 +8,21 @@
 #include <string>
 
 #include <xdiag/armadillo.hpp>
-#include <xdiag/math/complex.hpp>
 #include <xdiag/kernels/sparse/sparse_matrix_types.hpp>
+#include <xdiag/math/complex.hpp>
 #include <xdiag/operators/opsum.hpp>
 #include <xdiag/states/state.hpp>
 #include <xdiag/utils/xdiag_api.hpp>
 
 namespace xdiag {
 
-struct EvolveLanczosResult {
-  XDIAG_API arma::vec alphas;
-  XDIAG_API arma::vec betas;
-  XDIAG_API arma::vec eigenvalues;
-  XDIAG_API int64_t niterations;
-  XDIAG_API std::string criterion;
-  XDIAG_API State state;
+struct XDIAG_API EvolveLanczosResult {
+  arma::vec alphas;
+  arma::vec betas;
+  arma::vec eigenvalues;
+  int64_t niterations;
+  std::string criterion;
+  State state;
 };
 
 XDIAG_API EvolveLanczosResult
@@ -47,12 +47,12 @@ XDIAG_API EvolveLanczosResult evolve_lanczos(
     double precision = 1e-12, double shift = 0., bool normalize = false,
     int64_t max_iterations = 1000, double deflation_tol = 1e-7);
 
-struct EvolveLanczosInplaceResult {
-  XDIAG_API arma::vec alphas;
-  XDIAG_API arma::vec betas;
-  XDIAG_API arma::vec eigenvalues;
-  XDIAG_API int64_t niterations;
-  XDIAG_API std::string criterion;
+struct XDIAG_API EvolveLanczosInplaceResult {
+  arma::vec alphas;
+  arma::vec betas;
+  arma::vec eigenvalues;
+  int64_t niterations;
+  std::string criterion;
 };
 
 XDIAG_API EvolveLanczosInplaceResult evolve_lanczos_inplace(

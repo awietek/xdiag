@@ -12,9 +12,9 @@
 
 namespace xdiag {
 
-class RandomState {
+class XDIAG_API RandomState {
 public:
-  XDIAG_API RandomState(int64_t seed = 42, bool normalized = true);
+  RandomState(int64_t seed = 42, bool normalized = true);
   int64_t seed() const;
   bool normalized() const;
 

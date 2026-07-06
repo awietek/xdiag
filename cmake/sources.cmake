@@ -11,18 +11,12 @@ set(XDIAG_SOURCES
   # Input / Output 
   io/read.cpp
   io/file_toml.cpp
-  io/file_h5.cpp
   io/toml/file_toml_handler.cpp
   io/toml/value.cpp
   io/toml/std_vector.cpp
   io/toml/arma_vector.cpp
   io/toml/arma_matrix.cpp
   io/toml/operators.cpp
-  io/hdf5/file_h5_handler.cpp
-  io/hdf5/file_h5_subview.cpp
-  io/hdf5/utils.cpp
-  io/hdf5/write.cpp
-  io/hdf5/types.cpp
 
   # Simple math helpers
   math/ipow.cpp
@@ -171,6 +165,16 @@ set(XDIAG_SOURCES
   linalg/time_evolution/evolve_lanczos.cpp
   linalg/time_evolution/expm.cpp
 )
+
+set(XDIAG_HDF5_SOURCES
+  io/file_h5.cpp
+  io/hdf5/file_h5_handler.cpp
+  io/hdf5/file_h5_subview.cpp
+  io/hdf5/utils.cpp
+  io/hdf5/write.cpp
+  io/hdf5/types.cpp
+)
+
 set(XDIAG_DISTRIBUTED_SOURCES
   # MPI infrastructure
   mpi/allreduce.cpp
@@ -198,16 +202,4 @@ set(XDIAG_DISTRIBUTED_SOURCES
   kernels/blocks/distributed/spinhalf_distributed/terms/transpose.cpp
   kernels/blocks/distributed/tj_distributed/kernels.cpp
   kernels/blocks/distributed/electron_distributed/kernels.cpp
-)
-# The Julia wrapper is generated from the XDIAG_API surface by
-# misc/wrapgen/emit_cpp.py (module_generated.cpp) plus the hand-written
-# pointer-fill specials (specials.cpp) and the armadillo bridge. The old
-# per-type hand-written sources were replaced by this generated wrapper.
-# The per-subsystem generated files (generated/*.cpp) are globbed in
-# julia/CMakeLists.txt so the emitter can add/remove subsystem files freely.
-set(XDIAG_JULIA_SOURCES
-  xdiagjl.cpp
-  utils/armadillo.cpp
-  specials.cpp
-  specials_sparse.cpp
 )

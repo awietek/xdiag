@@ -9,8 +9,8 @@
 #include <cstdint>
 #include <vector>
 
-#include <xdiag/armadillo.hpp>
 #include <extern/toml++/toml.hpp>
+#include <xdiag/armadillo.hpp>
 #include <xdiag/io/toml/arma_matrix.hpp>
 #include <xdiag/io/toml/arma_vector.hpp>
 #include <xdiag/io/toml/operators.hpp>
@@ -24,8 +24,10 @@
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/format.hpp>
 
-namespace xdiag::io {
+namespace xdiag {
 
+using namespace io;
+  
 FileTomlHandler::FileTomlHandler(std::string key, toml::table &table)
     : key_(key), table_(table) {}
 
@@ -42,51 +44,51 @@ XDIAG_CATCH
 
 // Plain values
 template <>
-XDIAG_API bool FileTomlHandler::as<bool>() const
+bool FileTomlHandler::as<bool>() const
     XDIAG_TRY_CATCH(return as_plain<bool>(key_, table_));
 
 template <>
-XDIAG_API int8_t FileTomlHandler::as<int8_t>() const
+int8_t FileTomlHandler::as<int8_t>() const
     XDIAG_TRY_CATCH(return as_plain<int8_t>(key_, table_));
 
 template <>
-XDIAG_API int16_t FileTomlHandler::as<int16_t>() const
+int16_t FileTomlHandler::as<int16_t>() const
     XDIAG_TRY_CATCH(return as_plain<int16_t>(key_, table_));
 
 template <>
-XDIAG_API int32_t FileTomlHandler::as<int32_t>() const
+int32_t FileTomlHandler::as<int32_t>() const
     XDIAG_TRY_CATCH(return as_plain<int32_t>(key_, table_));
 
 template <>
-XDIAG_API int64_t FileTomlHandler::as<int64_t>() const
+int64_t FileTomlHandler::as<int64_t>() const
     XDIAG_TRY_CATCH(return as_plain<int64_t>(key_, table_));
 
 template <>
-XDIAG_API uint8_t FileTomlHandler::as<uint8_t>() const
+uint8_t FileTomlHandler::as<uint8_t>() const
     XDIAG_TRY_CATCH(return as_plain<uint8_t>(key_, table_));
 
 template <>
-XDIAG_API uint16_t FileTomlHandler::as<uint16_t>() const
+uint16_t FileTomlHandler::as<uint16_t>() const
     XDIAG_TRY_CATCH(return as_plain<uint16_t>(key_, table_));
 
 template <>
-XDIAG_API uint32_t FileTomlHandler::as<uint32_t>() const
+uint32_t FileTomlHandler::as<uint32_t>() const
     XDIAG_TRY_CATCH(return as_plain<uint32_t>(key_, table_));
 
 template <>
-XDIAG_API uint64_t FileTomlHandler::as<uint64_t>() const
+uint64_t FileTomlHandler::as<uint64_t>() const
     XDIAG_TRY_CATCH(return as_plain<uint64_t>(key_, table_));
 
 template <>
-XDIAG_API double FileTomlHandler::as<double>() const
+double FileTomlHandler::as<double>() const
     XDIAG_TRY_CATCH(return as_plain<double>(key_, table_));
 
 template <>
-XDIAG_API complex FileTomlHandler::as<complex>() const
+complex FileTomlHandler::as<complex>() const
     XDIAG_TRY_CATCH(return as_plain<complex>(key_, table_));
 
 template <>
-XDIAG_API std::string FileTomlHandler::as<std::string>() const
+std::string FileTomlHandler::as<std::string>() const
     XDIAG_TRY_CATCH(return as_plain<std::string>(key_, table_));
 
 // std::vectors
@@ -103,51 +105,47 @@ static std::vector<T> as_std_vector(std::string key,
 XDIAG_CATCH
 
 template <>
-XDIAG_API std::vector<int8_t> FileTomlHandler::as<std::vector<int8_t>>() const
+std::vector<int8_t> FileTomlHandler::as<std::vector<int8_t>>() const
     XDIAG_TRY_CATCH(return as_std_vector<int8_t>(key_, table_));
 
 template <>
-XDIAG_API std::vector<int16_t> FileTomlHandler::as<std::vector<int16_t>>() const
+std::vector<int16_t> FileTomlHandler::as<std::vector<int16_t>>() const
     XDIAG_TRY_CATCH(return as_std_vector<int16_t>(key_, table_));
 
 template <>
-XDIAG_API std::vector<int32_t> FileTomlHandler::as<std::vector<int32_t>>() const
+std::vector<int32_t> FileTomlHandler::as<std::vector<int32_t>>() const
     XDIAG_TRY_CATCH(return as_std_vector<int32_t>(key_, table_));
 
 template <>
-XDIAG_API std::vector<int64_t> FileTomlHandler::as<std::vector<int64_t>>() const
+std::vector<int64_t> FileTomlHandler::as<std::vector<int64_t>>() const
     XDIAG_TRY_CATCH(return as_std_vector<int64_t>(key_, table_));
 
 template <>
-XDIAG_API std::vector<uint8_t> FileTomlHandler::as<std::vector<uint8_t>>() const
+std::vector<uint8_t> FileTomlHandler::as<std::vector<uint8_t>>() const
     XDIAG_TRY_CATCH(return as_std_vector<uint8_t>(key_, table_));
 
 template <>
-XDIAG_API std::vector<uint16_t>
-FileTomlHandler::as<std::vector<uint16_t>>() const
+std::vector<uint16_t> FileTomlHandler::as<std::vector<uint16_t>>() const
     XDIAG_TRY_CATCH(return as_std_vector<uint16_t>(key_, table_));
 
 template <>
-XDIAG_API std::vector<uint32_t>
-FileTomlHandler::as<std::vector<uint32_t>>() const
+std::vector<uint32_t> FileTomlHandler::as<std::vector<uint32_t>>() const
     XDIAG_TRY_CATCH(return as_std_vector<uint32_t>(key_, table_));
 
 template <>
-XDIAG_API std::vector<uint64_t>
-FileTomlHandler::as<std::vector<uint64_t>>() const
+std::vector<uint64_t> FileTomlHandler::as<std::vector<uint64_t>>() const
     XDIAG_TRY_CATCH(return as_std_vector<uint64_t>(key_, table_));
 
 template <>
-XDIAG_API std::vector<double> FileTomlHandler::as<std::vector<double>>() const
+std::vector<double> FileTomlHandler::as<std::vector<double>>() const
     XDIAG_TRY_CATCH(return as_std_vector<double>(key_, table_));
 
 template <>
-XDIAG_API std::vector<complex> FileTomlHandler::as<std::vector<complex>>() const
+std::vector<complex> FileTomlHandler::as<std::vector<complex>>() const
     XDIAG_TRY_CATCH(return as_std_vector<complex>(key_, table_));
 
 template <>
-XDIAG_API std::vector<std::string>
-FileTomlHandler::as<std::vector<std::string>>() const
+std::vector<std::string> FileTomlHandler::as<std::vector<std::string>>() const
     XDIAG_TRY_CATCH(return as_std_vector<std::string>(key_, table_));
 
 // Armadillo vectors
@@ -164,19 +162,19 @@ static arma::Col<T> as_arma_vector(std::string key,
 XDIAG_CATCH
 
 template <>
-XDIAG_API arma::vec FileTomlHandler::as<arma::vec>() const
+arma::vec FileTomlHandler::as<arma::vec>() const
     XDIAG_TRY_CATCH(return as_arma_vector<double>(key_, table_));
 
 template <>
-XDIAG_API arma::cx_vec FileTomlHandler::as<arma::cx_vec>() const
+arma::cx_vec FileTomlHandler::as<arma::cx_vec>() const
     XDIAG_TRY_CATCH(return as_arma_vector<complex>(key_, table_));
 
 template <>
-XDIAG_API arma::ivec FileTomlHandler::as<arma::ivec>() const
+arma::ivec FileTomlHandler::as<arma::ivec>() const
     XDIAG_TRY_CATCH(return as_arma_vector<arma::sword>(key_, table_));
 
 template <>
-XDIAG_API arma::uvec FileTomlHandler::as<arma::uvec>() const
+arma::uvec FileTomlHandler::as<arma::uvec>() const
     XDIAG_TRY_CATCH(return as_arma_vector<arma::uword>(key_, table_));
 
 // Armadillo matrices
@@ -193,29 +191,28 @@ static arma::Mat<T> as_arma_matrix(std::string key,
 XDIAG_CATCH
 
 template <>
-XDIAG_API arma::mat FileTomlHandler::as<arma::mat>() const
+arma::mat FileTomlHandler::as<arma::mat>() const
     XDIAG_TRY_CATCH(return as_arma_matrix<double>(key_, table_));
 
 template <>
-XDIAG_API arma::cx_mat FileTomlHandler::as<arma::cx_mat>() const
+arma::cx_mat FileTomlHandler::as<arma::cx_mat>() const
     XDIAG_TRY_CATCH(return as_arma_matrix<complex>(key_, table_));
 
 template <>
-XDIAG_API arma::imat FileTomlHandler::as<arma::imat>() const
+arma::imat FileTomlHandler::as<arma::imat>() const
     XDIAG_TRY_CATCH(return as_arma_matrix<arma::sword>(key_, table_));
 
 template <>
-XDIAG_API arma::umat FileTomlHandler::as<arma::umat>() const
+arma::umat FileTomlHandler::as<arma::umat>() const
     XDIAG_TRY_CATCH(return as_arma_matrix<arma::uword>(key_, table_));
 
-template <> XDIAG_API Permutation FileTomlHandler::as<Permutation>() const try {
+template <> Permutation FileTomlHandler::as<Permutation>() const try {
   auto array = as_std_vector<int64_t>(key_, table_);
   return Permutation(array);
 }
 XDIAG_CATCH
 
-template <>
-XDIAG_API PermutationGroup FileTomlHandler::as<PermutationGroup>() const try {
+template <> PermutationGroup FileTomlHandler::as<PermutationGroup>() const try {
   auto node = table_.at_path(key_).node();
   if (node) {
     auto mat = arma_matrix<arma::sword>(*node);
@@ -231,7 +228,7 @@ XDIAG_API PermutationGroup FileTomlHandler::as<PermutationGroup>() const try {
 }
 XDIAG_CATCH
 
-template <> XDIAG_API Op FileTomlHandler::as<Op>() const try {
+template <> Op FileTomlHandler::as<Op>() const try {
   auto node = table_.at_path(key_).node();
   if (node) {
     return op(*node);
@@ -241,7 +238,7 @@ template <> XDIAG_API Op FileTomlHandler::as<Op>() const try {
 }
 XDIAG_CATCH
 
-template <> XDIAG_API OpSum FileTomlHandler::as<OpSum>() const try {
+template <> OpSum FileTomlHandler::as<OpSum>() const try {
   auto node = table_.at_path(key_).node();
   if (node) {
     return opsum(*node);
@@ -438,4 +435,4 @@ template <> void FileTomlHandler::operator= <OpSum>(OpSum const &ops) try {
 }
 XDIAG_CATCH
 
-} // namespace xdiag::io
+} // namespace xdiag

@@ -15,20 +15,19 @@ namespace xdiag::symmetries {
 // sym-th permutation. Supports native integers (uint16/32/64_t) and BitArray.
 class SitePermutation {
 public:
-  XDIAG_API SitePermutation() = default;
-  XDIAG_API explicit SitePermutation(PermutationGroup const &group);
+  SitePermutation() = default;
+  explicit SitePermutation(PermutationGroup const &group);
 
-  XDIAG_API int64_t size() const;
-  XDIAG_API int64_t nsites() const;
-  XDIAG_API PermutationGroup const &group() const;
-  XDIAG_API bool operator==(SitePermutation const &rhs) const;
-  XDIAG_API bool operator!=(SitePermutation const &rhs) const;
+  int64_t size() const;
+  int64_t nsites() const;
+  PermutationGroup const &group() const;
+  bool operator==(SitePermutation const &rhs) const;
+  bool operator!=(SitePermutation const &rhs) const;
 
-  template <typename bit_t>
-  XDIAG_API bit_t apply(int64_t sym, bit_t const &bits) const;
+  template <typename bit_t> bit_t apply(int64_t sym, bit_t const &bits) const;
 
   template <typename bit_t, int nbits>
-  XDIAG_API bits::BitArray<bit_t, nbits>
+  bits::BitArray<bit_t, nbits>
   apply(int64_t sym, bits::BitArray<bit_t, nbits> const &bits) const;
 
 private:

@@ -15,7 +15,7 @@
 
 namespace xdiag {
 
-class Representation {
+class XDIAG_API Representation {
 public:
   // A 1-D irrep of a finite group of site permutations: one character per
   // group element.
@@ -23,24 +23,23 @@ public:
     PermutationGroup group;
     Vector characters;
 
-    XDIAG_API bool operator==(PermutationIrrep const &rhs) const;
-    XDIAG_API bool operator!=(PermutationIrrep const &rhs) const;
+    bool operator==(PermutationIrrep const &rhs) const;
+    bool operator!=(PermutationIrrep const &rhs) const;
   };
 
-  XDIAG_API Representation() = default;
-  XDIAG_API explicit Representation(PermutationGroup const &group);
-  XDIAG_API Representation(PermutationGroup const &group,
-                           Vector const &characters);
-  XDIAG_API Representation(std::string type, int64_t charge);
+  Representation() = default;
+  explicit Representation(PermutationGroup const &group);
+  Representation(PermutationGroup const &group, Vector const &characters);
+  Representation(std::string type, int64_t charge);
 
-  XDIAG_API bool operator==(Representation const &rhs) const;
-  XDIAG_API bool operator!=(Representation const &rhs) const;
+  bool operator==(Representation const &rhs) const;
+  bool operator!=(Representation const &rhs) const;
 
   // Discriminate the two variants without inspecting the type string.
-  XDIAG_API bool is_permutation() const;
-  XDIAG_API bool is_charge() const;
+  bool is_permutation() const;
+  bool is_charge() const;
 
-  XDIAG_API bool isreal() const;
+  bool isreal() const;
 
   std::string type() const;
   PermutationGroup group() const;

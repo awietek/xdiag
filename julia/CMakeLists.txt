@@ -7,27 +7,36 @@ message(STATUS "------   BUILDING JULIA WRAPPER XDIAG LIBRARY   ----------")
 find_package(JlCxx REQUIRED)
 get_target_property(JlCxx_location JlCxx::cxxwrap_julia LOCATION)
 get_filename_component(JlCxx_location ${JlCxx_location} DIRECTORY)
-
 message(STATUS ${JlCxx_location})
 
-# Expand the kernel instantiation groups exactly like xdiag/CMakeLists.txt, so
-# the grouped sources are compiled as many small per-group translation units
-# rather than one monolithic TU each (which would be very slow / memory-heavy
-# and inflate the shared library).
-detect_grouped_sources(
-  "${XDIAG_SOURCES}"
-  XDIAG_GROUPED_SOURCES
-  XDIAG_NORMAL_SOURCES)
+# Julia wrapper source list (relative to this julia/ directory).
+include(${CMAKE_CURRENT_SOURCE_DIR}/src/xdiag_julia_sources.cmake)
 
-set(SOURCE_ROOT  "${CMAKE_SOURCE_DIR}/xdiag")
-set(INCLUDE_ROOT "${CMAKE_SOURCE_DIR}")
+# ---------------------------------------------------------------------------
+# Instantiation-group expansion (mirrors xdiag/CMakeLists.txt)
+#
+# The grouped base sources carry BEGIN_INSTANTIATION_GROUP markers and must be
+# split into one .cpp per group at build time, exactly like the main library --
+# otherwise each grouped file would be compiled as a single, huge translation
+# unit.  detect_grouped_sources() has already run at the top level, populating
+# XDIAG_GROUPED_SOURCES and XDIAG_NORMAL_SOURCES (both relative to xdiag/), and
+# those variables are inherited into this subdirectory scope.
+# ---------------------------------------------------------------------------
+set(SOURCE_ROOT     "${CMAKE_SOURCE_DIR}/xdiag")
+set(INCLUDE_ROOT    "${CMAKE_SOURCE_DIR}")
 set(INST_OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}")
 
+# For each grouped source: compute the generated file paths at configure time,
+# then register a build-time command to (re)generate one .cpp per group
+# whenever the original source changes.
 set(XDIAG_INSTANTIATION_SOURCES)
 foreach(SRC IN LISTS XDIAG_GROUPED_SOURCES)
   set(ABSOLUTE_SRC "${SOURCE_ROOT}/${SRC}")
+
   get_instantiation_outputs(
-    "${ABSOLUTE_SRC}" "${SOURCE_ROOT}" "${INST_OUTPUT_DIR}" GEN_FILES)
+    "${ABSOLUTE_SRC}" "${SOURCE_ROOT}" "${INST_OUTPUT_DIR}"
+    GEN_FILES)
+
   add_custom_command(
     OUTPUT  ${GEN_FILES}
     COMMAND ${CMAKE_COMMAND}
@@ -37,24 +46,23 @@ foreach(SRC IN LISTS XDIAG_GROUPED_SOURCES)
       -DOUTPUT_DIR=${INST_OUTPUT_DIR}
       -P ${CMAKE_SOURCE_DIR}/cmake/generate_instantiation.cmake
     DEPENDS "${ABSOLUTE_SRC}"
-    COMMENT "Generating instantiation files for ${SRC}")
+    COMMENT "Generating instantiation files for ${SRC}"
+  )
+
   list(APPEND XDIAG_INSTANTIATION_SOURCES ${GEN_FILES})
 endforeach()
 
-# Non-grouped core sources live under ../xdiag/; wrapper sources under src/.
-list(TRANSFORM XDIAG_NORMAL_SOURCES PREPEND "../xdiag/")
-list(TRANSFORM XDIAG_JULIA_SOURCES PREPEND "src/")
-
-# The generated wrapper is split per subsystem (misc/wrapgen/emit_cpp.py); glob
-# whatever it produced so adding/removing a subsystem file needs no edit here.
-file(GLOB XDIAG_JULIA_GENERATED CONFIGURE_DEPENDS
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/generated/*.cpp")
+# The non-grouped base sources are relative to xdiag/; make them absolute so
+# they resolve from this julia/ subdirectory.
+set(XDIAG_NORMAL_SOURCES_ABS)
+foreach(SRC IN LISTS XDIAG_NORMAL_SOURCES)
+  list(APPEND XDIAG_NORMAL_SOURCES_ABS "${SOURCE_ROOT}/${SRC}")
+endforeach()
 
 add_library(${XDIAG_LIBRARY} SHARED
-  ${XDIAG_NORMAL_SOURCES}
+  ${XDIAG_NORMAL_SOURCES_ABS}
   ${XDIAG_INSTANTIATION_SOURCES}
-  ${XDIAG_JULIA_SOURCES}
-  ${XDIAG_JULIA_GENERATED})
+  ${XDIAG_JULIA_SOURCES})
 
 target_include_directories(
   ${XDIAG_LIBRARY} PUBLIC "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>")

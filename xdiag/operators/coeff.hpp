@@ -20,37 +20,37 @@ class Coeff {
 public:
   using value_t = std::variant<Scalar, std::string>;
 
-  XDIAG_API Coeff() = default;
-  XDIAG_API explicit Coeff(std::string value);
-  XDIAG_API explicit Coeff(const char *value);
-  XDIAG_API explicit Coeff(double value);
-  XDIAG_API explicit Coeff(complex value);
-  XDIAG_API explicit Coeff(Scalar value);
+  Coeff() = default;
+  explicit Coeff(std::string value);
+  explicit Coeff(const char *value);
+  explicit Coeff(double value);
+  explicit Coeff(complex value);
+  explicit Coeff(Scalar value);
 
-  XDIAG_API bool operator==(Coeff const &rhs) const;
-  XDIAG_API bool operator!=(Coeff const &rhs) const;
+  bool operator==(Coeff const &rhs) const;
+  bool operator!=(Coeff const &rhs) const;
 
-  XDIAG_API bool isscalar() const;
-  XDIAG_API bool isstring() const;
-  XDIAG_API Scalar scalar() const;
-  XDIAG_API std::string string() const;
+  bool isscalar() const;
+  bool isstring() const;
+  Scalar scalar() const;
+  std::string string() const;
 
 private:
   value_t value_;
 };
 
-XDIAG_API bool isscalar(Coeff const &c);
-XDIAG_API bool isstring(Coeff const &c);
-XDIAG_API Scalar scalar(Coeff const &c);
-XDIAG_API std::string string(Coeff const &c);
+bool isscalar(Coeff const &c);
+bool isstring(Coeff const &c);
+Scalar scalar(Coeff const &c);
+std::string string(Coeff const &c);
 
 // Multiply two Coeffs. Both must be scalar (throws if either is a string).
 // Call OpSum::plain() first to resolve named coefficients before multiplying.
-XDIAG_API Coeff operator*(Coeff const &lhs, Coeff const &rhs);
-XDIAG_API Coeff operator*(Coeff const &lhs, Scalar const &rhs);
-XDIAG_API Coeff operator*(Scalar const &lhs, Coeff const &rhs);
+Coeff operator*(Coeff const &lhs, Coeff const &rhs);
+Coeff operator*(Coeff const &lhs, Scalar const &rhs);
+Coeff operator*(Scalar const &lhs, Coeff const &rhs);
 
-XDIAG_API std::ostream &operator<<(std::ostream &out, Coeff const &c);
-XDIAG_API std::string to_string(Coeff const &c);
+std::ostream &operator<<(std::ostream &out, Coeff const &c);
+std::string to_string(Coeff const &c);
 
 } // namespace xdiag

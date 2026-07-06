@@ -22,34 +22,33 @@ class tJIterator;
 // with the no-double-occupancy constraint; the dn sector is stored compressed
 // into the non-up sites (see basis/basis_tj.hpp). Mirrors the Electron block's
 // RepresentationSet-based interface.
-class tJ {
+class XDIAG_API tJ {
 public:
   using iterator_t = tJIterator;
 
-  XDIAG_API tJ() = default;
+  tJ() = default;
 
   // Generic constructor
   tJ(int64_t nsites, RepresentationSet const &irreps);
 
   // Convenience constructors
-  XDIAG_API tJ(int64_t nsites);
-  XDIAG_API tJ(int64_t nsites, int64_t nup, int64_t ndn);
-  XDIAG_API tJ(int64_t nsites, Representation const &irrep);
-  XDIAG_API tJ(int64_t nsites, int64_t nup, int64_t ndn,
-               Representation const &irrep);
+  tJ(int64_t nsites);
+  tJ(int64_t nsites, int64_t nup, int64_t ndn);
+  tJ(int64_t nsites, Representation const &irrep);
+  tJ(int64_t nsites, int64_t nup, int64_t ndn, Representation const &irrep);
 
-  XDIAG_API int64_t nsites() const;
-  XDIAG_API constexpr int64_t d() const { return 3; }
-  XDIAG_API int64_t dim() const;
-  XDIAG_API int64_t size() const;
-  XDIAG_API bool isreal() const;
-  XDIAG_API int64_t index(ProductState const &pstate) const;
+  int64_t nsites() const;
+  constexpr int64_t d() const { return 3; }
+  int64_t dim() const;
+  int64_t size() const;
+  bool isreal() const;
+  int64_t index(ProductState const &pstate) const;
 
-  XDIAG_API bool operator==(tJ const &rhs) const;
-  XDIAG_API bool operator!=(tJ const &rhs) const;
+  bool operator==(tJ const &rhs) const;
+  bool operator!=(tJ const &rhs) const;
 
-  XDIAG_API iterator_t begin() const;
-  XDIAG_API iterator_t end() const;
+  iterator_t begin() const;
+  iterator_t end() const;
 
   RepresentationSet irreps() const;
   std::shared_ptr<basis::Basis> const &basis() const;
@@ -59,16 +58,16 @@ private:
   std::shared_ptr<basis::Basis> basis_;
 };
 
-XDIAG_API std::ostream &operator<<(std::ostream &out, tJ const &block);
-XDIAG_API std::string to_string(tJ const &block);
+std::ostream &operator<<(std::ostream &out, tJ const &block);
+std::string to_string(tJ const &block);
 
-class tJIterator {
+class XDIAG_API tJIterator {
 public:
-  XDIAG_API tJIterator(tJ const *block, int64_t idx);
-  XDIAG_API tJIterator &operator++();
-  XDIAG_API ProductState operator*() const;
-  XDIAG_API bool operator==(tJIterator const &rhs) const;
-  XDIAG_API bool operator!=(tJIterator const &rhs) const;
+  tJIterator(tJ const *block, int64_t idx);
+  tJIterator &operator++();
+  ProductState operator*() const;
+  bool operator==(tJIterator const &rhs) const;
+  bool operator!=(tJIterator const &rhs) const;
 
 private:
   std::unique_ptr<basis::BasisIterator> it_;

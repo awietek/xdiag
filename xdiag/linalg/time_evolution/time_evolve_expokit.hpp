@@ -13,10 +13,10 @@
 
 namespace xdiag {
 
-struct TimeEvolveExpokitResult {
-  XDIAG_API double error;
-  XDIAG_API double hump;
-  XDIAG_API State state;
+struct XDIAG_API TimeEvolveExpokitResult {
+  double error;
+  double hump;
+  State state;
 };
 
 XDIAG_API TimeEvolveExpokitResult time_evolve_expokit(
@@ -29,9 +29,9 @@ time_evolve_expokit(CSRMatrix<idx_t, coeff_t> const &H, State psi0, double time,
                     double precision = 1e-12, int64_t m = 30, double anorm = 0.,
                     int64_t nnorm = 2);
 
-struct TimeEvolveExpokitInplaceResult {
-  XDIAG_API double error;
-  XDIAG_API double hump;
+struct XDIAG_API TimeEvolveExpokitInplaceResult {
+  double error;
+  double hump;
 };
 
 XDIAG_API TimeEvolveExpokitInplaceResult time_evolve_expokit_inplace(

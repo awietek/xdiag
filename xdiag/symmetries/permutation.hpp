@@ -15,24 +15,24 @@ namespace xdiag {
 
 // Permutation of n sites: bijection {0,...,n-1} -> {0,...,n-1} stored as p[i].
 // Composition: (p1 * p2)[i] = p1[p2[i]], i.e. p2 is applied first.
-class Permutation {
+class XDIAG_API Permutation {
 public:
-  XDIAG_API Permutation() = default;
-  XDIAG_API explicit Permutation(int64_t size); // creates identity permutation
-  XDIAG_API Permutation(std::initializer_list<int64_t> list);
-  XDIAG_API explicit Permutation(std::vector<int32_t> const &array);
-  XDIAG_API explicit Permutation(std::vector<int64_t> const &array);
-  XDIAG_API explicit Permutation(arma::Col<int64_t> const &array);
-  XDIAG_API Permutation(int64_t const *ptr, int64_t size);
+  Permutation() = default;
+  explicit Permutation(int64_t size); // creates identity permutation
+  Permutation(std::initializer_list<int64_t> list);
+  explicit Permutation(std::vector<int32_t> const &array);
+  explicit Permutation(std::vector<int64_t> const &array);
+  explicit Permutation(arma::Col<int64_t> const &array);
+  Permutation(int64_t const *ptr, int64_t size);
 
-  XDIAG_API int64_t size() const;
-  XDIAG_API int64_t operator[](int64_t i) const;
-  XDIAG_API Permutation inv() const;
-  XDIAG_API std::vector<int64_t> const &array() const;
+  int64_t size() const;
+  int64_t operator[](int64_t i) const;
+  Permutation inv() const;
+  std::vector<int64_t> const &array() const;
 
-  XDIAG_API Permutation &operator*=(Permutation const &rhs);
-  XDIAG_API bool operator==(Permutation const &rhs) const;
-  XDIAG_API bool operator!=(Permutation const &rhs) const;
+  Permutation &operator*=(Permutation const &rhs);
+  bool operator==(Permutation const &rhs) const;
+  bool operator!=(Permutation const &rhs) const;
 
 private:
   std::vector<int64_t> array_;

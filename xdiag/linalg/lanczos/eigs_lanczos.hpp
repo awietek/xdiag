@@ -15,13 +15,13 @@
 
 namespace xdiag {
 
-struct EigsLanczosResult {
-  XDIAG_API arma::vec alphas;
-  XDIAG_API arma::vec betas;
-  XDIAG_API arma::vec eigenvalues;
-  XDIAG_API State eigenvectors;
-  XDIAG_API int64_t niterations;
-  XDIAG_API std::string criterion;
+struct XDIAG_API EigsLanczosResult {
+  arma::vec alphas;
+  arma::vec betas;
+  arma::vec eigenvalues;
+  State eigenvectors;
+  int64_t niterations;
+  std::string criterion;
 };
 
 ///////////////////////////////////////////////////////////////

@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #pragma once
+#ifdef XDIAG_DISTRIBUTED
 
 #include <cstdint>
 #include <memory>
@@ -18,35 +19,36 @@ namespace xdiag {
 
 class ElectronDistributedIterator;
 
-// Distributed (MPI) electron block (double occupancy allowed). Number conserving
-// in both spin species, no permutation symmetries. Stores only its irreps and a
-// type-erased basis (a BasisElectronDistributed<bit_t> backend from nsites).
-class ElectronDistributed {
+// Distributed (MPI) electron block (double occupancy allowed). Number
+// conserving in both spin species, no permutation symmetries. Stores only its
+// irreps and a type-erased basis (a BasisElectronDistributed<bit_t> backend
+// from nsites).
+class XDIAG_API ElectronDistributed {
 public:
   using iterator_t = ElectronDistributedIterator;
 
-  XDIAG_API ElectronDistributed() = default;
+  ElectronDistributed() = default;
 
   // Generic constructor
   ElectronDistributed(int64_t nsites, RepresentationSet const &irreps);
 
   // Convenience constructor
-  XDIAG_API ElectronDistributed(int64_t nsites, int64_t nup, int64_t ndn);
+  ElectronDistributed(int64_t nsites, int64_t nup, int64_t ndn);
 
-  XDIAG_API int64_t nsites() const;
-  XDIAG_API constexpr int64_t d() const { return 4; }
-  XDIAG_API int64_t dim() const;       // global dimension
-  XDIAG_API int64_t size() const;      // locally stored dimension
-  XDIAG_API int64_t size_max() const;  // largest local dimension over all ranks
-  XDIAG_API int64_t size_min() const;  // smallest local dimension over all ranks
-  XDIAG_API bool isreal() const;
-  XDIAG_API int64_t index(ProductState const &pstate) const;
+  int64_t nsites() const;
+  constexpr int64_t d() const { return 4; }
+  int64_t dim() const;      // global dimension
+  int64_t size() const;     // locally stored dimension
+  int64_t size_max() const; // largest local dimension over all ranks
+  int64_t size_min() const; // smallest local dimension over all ranks
+  bool isreal() const;
+  int64_t index(ProductState const &pstate) const;
 
-  XDIAG_API bool operator==(ElectronDistributed const &rhs) const;
-  XDIAG_API bool operator!=(ElectronDistributed const &rhs) const;
+  bool operator==(ElectronDistributed const &rhs) const;
+  bool operator!=(ElectronDistributed const &rhs) const;
 
-  XDIAG_API iterator_t begin() const;
-  XDIAG_API iterator_t end() const;
+  iterator_t begin() const;
+  iterator_t end() const;
 
   RepresentationSet irreps() const;
   std::shared_ptr<basis::Basis> const &basis() const;
@@ -56,18 +58,16 @@ private:
   std::shared_ptr<basis::Basis> basis_;
 };
 
-XDIAG_API std::ostream &operator<<(std::ostream &out,
-                                   ElectronDistributed const &block);
-XDIAG_API std::string to_string(ElectronDistributed const &block);
+std::ostream &operator<<(std::ostream &out, ElectronDistributed const &block);
+std::string to_string(ElectronDistributed const &block);
 
-class ElectronDistributedIterator {
+class XDIAG_API ElectronDistributedIterator {
 public:
-  XDIAG_API ElectronDistributedIterator(ElectronDistributed const *block,
-                                        int64_t idx);
-  XDIAG_API ElectronDistributedIterator &operator++();
-  XDIAG_API ProductState operator*() const;
-  XDIAG_API bool operator==(ElectronDistributedIterator const &rhs) const;
-  XDIAG_API bool operator!=(ElectronDistributedIterator const &rhs) const;
+  ElectronDistributedIterator(ElectronDistributed const *block, int64_t idx);
+  ElectronDistributedIterator &operator++();
+  ProductState operator*() const;
+  bool operator==(ElectronDistributedIterator const &rhs) const;
+  bool operator!=(ElectronDistributedIterator const &rhs) const;
 
 private:
   std::unique_ptr<basis::BasisIterator> it_;
@@ -75,3 +75,4 @@ private:
 };
 
 } // namespace xdiag
+#endif

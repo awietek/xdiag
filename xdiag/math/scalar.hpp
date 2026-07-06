@@ -22,56 +22,56 @@ class Scalar {
 public:
   using value_t = std::variant<double, complex>;
 
-  XDIAG_API Scalar() = default;
-  XDIAG_API Scalar(double value);
-  XDIAG_API Scalar(complex value);
-  XDIAG_API
-  Scalar(int64_t value); // prevents ambiguous integer literal overload
-  XDIAG_API Scalar(int value);
+  Scalar() = default;
+  Scalar(double value);
+  Scalar(complex value);
 
-  XDIAG_API bool operator==(Scalar const &rhs) const;
-  XDIAG_API bool operator!=(Scalar const &rhs) const;
+  Scalar(int64_t value); // prevents ambiguous integer literal overload
+  Scalar(int value);
+
+  bool operator==(Scalar const &rhs) const;
+  bool operator!=(Scalar const &rhs) const;
 
   // Field operations. Mixed real/complex widens the result to complex.
-  XDIAG_API Scalar &operator+=(Scalar const &rhs);
-  XDIAG_API Scalar &operator-=(Scalar const &rhs);
-  XDIAG_API Scalar &operator*=(Scalar const &rhs);
-  XDIAG_API Scalar &operator/=(Scalar const &rhs);
+  Scalar &operator+=(Scalar const &rhs);
+  Scalar &operator-=(Scalar const &rhs);
+  Scalar &operator*=(Scalar const &rhs);
+  Scalar &operator/=(Scalar const &rhs);
 
-  XDIAG_API Scalar operator-() const;
-  XDIAG_API Scalar operator+(Scalar const &b) const;
-  XDIAG_API Scalar operator-(Scalar const &b) const;
-  XDIAG_API Scalar operator*(Scalar const &b) const;
-  XDIAG_API Scalar operator/(Scalar const &b) const;
+  Scalar operator-() const;
+  Scalar operator+(Scalar const &b) const;
+  Scalar operator-(Scalar const &b) const;
+  Scalar operator*(Scalar const &b) const;
+  Scalar operator/(Scalar const &b) const;
 
   template <typename T> bool is() const; // is<double>() or is<complex>()
   template <typename T> T as() const;    // as<double>() throws if complex
 
-  XDIAG_API bool isreal() const;
-  XDIAG_API double real() const;
-  XDIAG_API double imag() const; // 0 for real Scalars
-  XDIAG_API double abs() const;
-  XDIAG_API Scalar conj() const; // identity for real Scalars
-  XDIAG_API Scalar to_real(
+  bool isreal() const;
+  double real() const;
+  double imag() const; // 0 for real Scalars
+  double abs() const;
+  Scalar conj() const; // identity for real Scalars
+  Scalar to_real(
       double tol = 1e-12) const; // narrows to double; throws if |imag| > tol
-  XDIAG_API bool isapprox(Scalar const &y, double rtol, double atol) const;
+  bool isapprox(Scalar const &y, double rtol, double atol) const;
 
 private:
   value_t value_;
 };
 
 // Returns a zero of the same type (double or complex) as s.
-XDIAG_API Scalar zero(Scalar s);
+Scalar zero(Scalar s);
 
-XDIAG_API bool isreal(Scalar const &s);
-XDIAG_API double real(Scalar const &s);
-XDIAG_API double imag(Scalar const &s);
-XDIAG_API double abs(Scalar const &s);
-XDIAG_API Scalar conj(Scalar const &s);
-XDIAG_API bool isapprox(Scalar const &a, Scalar const &b, double rtol = 1e-12,
-                        double atol = 1e-12);
+bool isreal(Scalar const &s);
+double real(Scalar const &s);
+double imag(Scalar const &s);
+double abs(Scalar const &s);
+Scalar conj(Scalar const &s);
+bool isapprox(Scalar const &a, Scalar const &b, double rtol = 1e-12,
+              double atol = 1e-12);
 
-XDIAG_API std::ostream &operator<<(std::ostream &out, Scalar const &v);
-XDIAG_API std::string to_string(Scalar const &v);
+std::ostream &operator<<(std::ostream &out, Scalar const &v);
+std::string to_string(Scalar const &v);
 
 } // namespace xdiag

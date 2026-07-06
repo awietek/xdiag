@@ -13,7 +13,7 @@ namespace xdiag {
 
 using clock_t = std::chrono::high_resolution_clock;
 
-XDIAG_API auto rightnow() -> decltype(clock_t::now());
+XDIAG_API std::chrono::time_point<clock_t> rightnow();
 XDIAG_API void timing(std::chrono::time_point<clock_t> const &t0,
                       std::chrono::time_point<clock_t> const &t1,
                       std::string msg = "", int verbosity = 0);

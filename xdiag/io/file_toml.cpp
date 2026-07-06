@@ -49,8 +49,8 @@ bool FileToml::defined(std::string key) const try {
 }
 XDIAG_CATCH
 
-io::FileTomlHandler FileToml::operator[](std::string key) try {
-  return io::FileTomlHandler(key, table_);
+FileTomlHandler FileToml::operator[](std::string key) try {
+  return FileTomlHandler(key, table_);
 }
 XDIAG_CATCH
 

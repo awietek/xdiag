@@ -15,16 +15,16 @@
 
 namespace xdiag {
 
-class FileH5 {
+class XDIAG_API FileH5 {
 public:
   FileH5() = default;
-  XDIAG_API FileH5(std::string filename, char iomode);
-  XDIAG_API FileH5(std::string filename, std::string iomode = "w");
-  XDIAG_API ~FileH5();
+  FileH5(std::string filename, char iomode);
+  FileH5(std::string filename, std::string iomode = "w");
+  ~FileH5();
 
   void close();
 
-  XDIAG_API hdf5::FileH5Handler operator[](std::string key);
+  hdf5::FileH5Handler operator[](std::string key);
   bool operator==(FileH5 const &other) const;
   bool operator!=(FileH5 const &other) const;
 

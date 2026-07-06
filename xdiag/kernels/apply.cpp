@@ -83,17 +83,18 @@ static void apply_impl(OpSum const &ops, block_t const &block_in,
 XDIAG_CATCH
 
 template <typename mat_t>
-XDIAG_API void apply(Op const &op, Block const &block_in, mat_t const &vec_in,
-                     Block const &block_out, mat_t &vec_out) {
+void apply(Op const &op, Block const &block_in, mat_t const &vec_in,
+           Block const &block_out, mat_t &vec_out) try {
   apply(OpSum(op), block_in, vec_in, block_out, vec_out);
 }
+XDIAG_CATCH
 
 template <typename mat_t>
-XDIAG_API void apply(Monomial const &mono, Block const &block_in,
-                     mat_t const &vec_in, Block const &block_out,
-                     mat_t &vec_out) {
+void apply(Monomial const &mono, Block const &block_in, mat_t const &vec_in,
+           Block const &block_out, mat_t &vec_out) try {
   apply(OpSum(mono), block_in, vec_in, block_out, vec_out);
 }
+XDIAG_CATCH
 
 template <typename mat_t>
 void apply(OpSum const &ops, Block const &block_in, mat_t const &vec_in,

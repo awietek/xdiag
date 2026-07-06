@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #pragma once
+#ifdef XDIAG_DISTRIBUTED
 
 #include <cstdint>
 #include <memory>
@@ -21,32 +22,32 @@ class tJDistributedIterator;
 // Distributed (MPI) t-J block (no double occupancy). Number conserving in both
 // spin species, no permutation symmetries. Stores only its irreps and a
 // type-erased basis (a BasistJDistributed<bit_t> backend chosen from nsites).
-class tJDistributed {
+class XDIAG_API tJDistributed {
 public:
   using iterator_t = tJDistributedIterator;
 
-  XDIAG_API tJDistributed() = default;
+  tJDistributed() = default;
 
   // Generic constructor
   tJDistributed(int64_t nsites, RepresentationSet const &irreps);
 
   // Convenience constructor
-  XDIAG_API tJDistributed(int64_t nsites, int64_t nup, int64_t ndn);
+  tJDistributed(int64_t nsites, int64_t nup, int64_t ndn);
 
-  XDIAG_API int64_t nsites() const;
-  XDIAG_API constexpr int64_t d() const { return 3; }
-  XDIAG_API int64_t dim() const;       // global dimension
-  XDIAG_API int64_t size() const;      // locally stored dimension
-  XDIAG_API int64_t size_max() const;  // largest local dimension over all ranks
-  XDIAG_API int64_t size_min() const;  // smallest local dimension over all ranks
-  XDIAG_API bool isreal() const;
-  XDIAG_API int64_t index(ProductState const &pstate) const;
+  int64_t nsites() const;
+  constexpr int64_t d() const { return 3; }
+  int64_t dim() const;      // global dimension
+  int64_t size() const;     // locally stored dimension
+  int64_t size_max() const; // largest local dimension over all ranks
+  int64_t size_min() const; // smallest local dimension over all ranks
+  bool isreal() const;
+  int64_t index(ProductState const &pstate) const;
 
-  XDIAG_API bool operator==(tJDistributed const &rhs) const;
-  XDIAG_API bool operator!=(tJDistributed const &rhs) const;
+  bool operator==(tJDistributed const &rhs) const;
+  bool operator!=(tJDistributed const &rhs) const;
 
-  XDIAG_API iterator_t begin() const;
-  XDIAG_API iterator_t end() const;
+  iterator_t begin() const;
+  iterator_t end() const;
 
   RepresentationSet irreps() const;
   std::shared_ptr<basis::Basis> const &basis() const;
@@ -56,17 +57,16 @@ private:
   std::shared_ptr<basis::Basis> basis_;
 };
 
-XDIAG_API std::ostream &operator<<(std::ostream &out,
-                                   tJDistributed const &block);
-XDIAG_API std::string to_string(tJDistributed const &block);
+std::ostream &operator<<(std::ostream &out, tJDistributed const &block);
+std::string to_string(tJDistributed const &block);
 
-class tJDistributedIterator {
+class XDIAG_API tJDistributedIterator {
 public:
-  XDIAG_API tJDistributedIterator(tJDistributed const *block, int64_t idx);
-  XDIAG_API tJDistributedIterator &operator++();
-  XDIAG_API ProductState operator*() const;
-  XDIAG_API bool operator==(tJDistributedIterator const &rhs) const;
-  XDIAG_API bool operator!=(tJDistributedIterator const &rhs) const;
+  tJDistributedIterator(tJDistributed const *block, int64_t idx);
+  tJDistributedIterator &operator++();
+  ProductState operator*() const;
+  bool operator==(tJDistributedIterator const &rhs) const;
+  bool operator!=(tJDistributedIterator const &rhs) const;
 
 private:
   std::unique_ptr<basis::BasisIterator> it_;
@@ -74,3 +74,4 @@ private:
 };
 
 } // namespace xdiag
+#endif

@@ -14,19 +14,19 @@
 
 namespace xdiag {
 
-class FileToml {
+class XDIAG_API FileToml {
 public:
-  XDIAG_API FileToml() = default;
-  XDIAG_API explicit FileToml(const char *filename);
-  XDIAG_API explicit FileToml(std::string filename);
-  XDIAG_API explicit FileToml(std::istream &is);
+  FileToml() = default;
+  explicit FileToml(const char *filename);
+  explicit FileToml(std::string filename);
+  explicit FileToml(std::istream &is);
 
   bool defined(std::string key) const;
-  XDIAG_API io::FileTomlHandler operator[](std::string key);
+  FileTomlHandler operator[](std::string key);
   void write(std::string filename, std::string mode = "w") const;
 
-  XDIAG_API bool operator==(FileToml const &other) const;
-  XDIAG_API bool operator!=(FileToml const &other) const;
+  bool operator==(FileToml const &other) const;
+  bool operator!=(FileToml const &other) const;
 
   std::vector<std::string> keys() const;
   toml::table table() const;

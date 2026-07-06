@@ -18,6 +18,6 @@ namespace xdiag {
 // linearity); a fused term that sums to the zero matrix is dropped. This is
 // well-defined for "Matrix" alone, since a Matrix Op denotes the linear
 // operator given by its matrix on those sites, independent of any algebra.
-XDIAG_API OpSum collect(OpSum const &ops, double tol = 1e-12);
+OpSum collect(OpSum const &ops, double tol = 1e-12);
 
 } // namespace xdiag

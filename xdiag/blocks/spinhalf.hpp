@@ -18,36 +18,36 @@ namespace xdiag {
 
 class SpinhalfIterator;
 
-class Spinhalf {
+class XDIAG_API Spinhalf {
 public:
   using iterator_t = SpinhalfIterator;
 
-  XDIAG_API Spinhalf() = default;
+   Spinhalf() = default;
 
   // Generic constructor
   Spinhalf(int64_t sites, RepresentationSet const &irreps,
            std::string backend = "auto");
 
   // Convenience constructors
-  XDIAG_API Spinhalf(int64_t nsites);
-  XDIAG_API Spinhalf(int64_t nsites, int64_t nup);
-  XDIAG_API Spinhalf(int64_t nsites, Representation const &irrep,
+   Spinhalf(int64_t nsites);
+   Spinhalf(int64_t nsites, int64_t nup);
+   Spinhalf(int64_t nsites, Representation const &irrep,
                      std::string backend = "auto");
-  XDIAG_API Spinhalf(int64_t nsites, int64_t nup, Representation const &irrep,
+   Spinhalf(int64_t nsites, int64_t nup, Representation const &irrep,
                      std::string backend = "auto");
 
-  XDIAG_API int64_t nsites() const;
-  XDIAG_API constexpr int64_t d() const { return 2; }
-  XDIAG_API int64_t dim() const;
-  XDIAG_API int64_t size() const;
-  XDIAG_API bool isreal() const;
-  XDIAG_API int64_t index(ProductState const &pstate) const;
+   int64_t nsites() const;
+   constexpr int64_t d() const { return 2; }
+   int64_t dim() const;
+   int64_t size() const;
+   bool isreal() const;
+   int64_t index(ProductState const &pstate) const;
 
-  XDIAG_API bool operator==(Spinhalf const &rhs) const;
-  XDIAG_API bool operator!=(Spinhalf const &rhs) const;
+   bool operator==(Spinhalf const &rhs) const;
+   bool operator!=(Spinhalf const &rhs) const;
 
-  XDIAG_API iterator_t begin() const;
-  XDIAG_API iterator_t end() const;
+   iterator_t begin() const;
+   iterator_t end() const;
 
   RepresentationSet irreps() const;
   std::shared_ptr<basis::Basis> const &basis() const;
@@ -57,16 +57,16 @@ private:
   std::shared_ptr<basis::Basis> basis_;
 };
 
-XDIAG_API std::ostream &operator<<(std::ostream &out, Spinhalf const &block);
-XDIAG_API std::string to_string(Spinhalf const &block);
+ std::ostream &operator<<(std::ostream &out, Spinhalf const &block);
+ std::string to_string(Spinhalf const &block);
 
-class SpinhalfIterator {
+class XDIAG_API SpinhalfIterator {
 public:
-  XDIAG_API SpinhalfIterator(Spinhalf const *block, int64_t idx);
-  XDIAG_API SpinhalfIterator &operator++();
-  XDIAG_API ProductState operator*() const;
-  XDIAG_API bool operator==(SpinhalfIterator const &rhs) const;
-  XDIAG_API bool operator!=(SpinhalfIterator const &rhs) const;
+   SpinhalfIterator(Spinhalf const *block, int64_t idx);
+   SpinhalfIterator &operator++();
+   ProductState operator*() const;
+   bool operator==(SpinhalfIterator const &rhs) const;
+   bool operator!=(SpinhalfIterator const &rhs) const;
 
 private:
   std::unique_ptr<basis::BasisIterator> it_;

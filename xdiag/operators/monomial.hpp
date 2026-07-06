@@ -23,35 +23,35 @@ namespace xdiag {
 //
 // A single Op implicitly converts to a length-1 Monomial, so all OpSum
 // construction that previously used (Coeff, Op) pairs continues to work.
-class Monomial {
+class XDIAG_API Monomial {
 public:
-  XDIAG_API Monomial() = default;
-  XDIAG_API Monomial(Op const &op);                  // implicit single-op
-  XDIAG_API Monomial(std::initializer_list<Op> ops); // Monomial{A, B, C}
-  XDIAG_API explicit Monomial(std::vector<Op> const &ops);
+  Monomial() = default;
+  Monomial(Op const &op);                  // implicit single-op
+  Monomial(std::initializer_list<Op> ops); // Monomial{A, B, C}
+  explicit Monomial(std::vector<Op> const &ops);
 
-  XDIAG_API int64_t size() const noexcept;
-  XDIAG_API bool empty() const noexcept;
-  XDIAG_API Op const &operator[](int64_t idx) const;
-  XDIAG_API std::vector<Op> const &ops() const noexcept;
+  int64_t size() const noexcept;
+  bool empty() const noexcept;
+  Op const &operator[](int64_t idx) const;
+  std::vector<Op> const &ops() const noexcept;
 
   using iterator_t = std::vector<Op>::const_iterator;
-  XDIAG_API iterator_t begin() const noexcept;
-  XDIAG_API iterator_t end() const noexcept;
+  iterator_t begin() const noexcept;
+  iterator_t end() const noexcept;
 
   // Algebra product (free algebra): concatenation, no simplification
-  XDIAG_API Monomial operator*(Op const &rhs) const;
-  XDIAG_API Monomial operator*(Monomial const &rhs) const;
-  XDIAG_API Monomial &operator*=(Op const &rhs);
-  XDIAG_API Monomial &operator*=(Monomial const &rhs);
+  Monomial operator*(Op const &rhs) const;
+  Monomial operator*(Monomial const &rhs) const;
+  Monomial &operator*=(Op const &rhs);
+  Monomial &operator*=(Monomial const &rhs);
 
-  XDIAG_API bool operator==(Monomial const &rhs) const noexcept;
-  XDIAG_API bool operator!=(Monomial const &rhs) const noexcept;
-  XDIAG_API bool operator<(Monomial const &rhs) const noexcept; // lexicographic
+  bool operator==(Monomial const &rhs) const noexcept;
+  bool operator!=(Monomial const &rhs) const noexcept;
+  bool operator<(Monomial const &rhs) const noexcept; // lexicographic
 
   // Hermitian conjugation is provided by hc() (operators/hc.hpp), which returns
   // an OpSum so it can carry a phase (e.g. hc(ExchangeAsym) = -ExchangeAsym).
-  XDIAG_API bool isreal() const;
+  bool isreal() const;
 
 private:
   std::vector<Op> ops_;
@@ -69,8 +69,8 @@ XDIAG_API std::string to_string(Monomial const &m);
 struct Term {
   Coeff coeff;
   Monomial monomial;
-  XDIAG_API bool operator==(Term const &rhs) const noexcept;
-  XDIAG_API bool operator!=(Term const &rhs) const noexcept;
+  bool operator==(Term const &rhs) const noexcept;
+  bool operator!=(Term const &rhs) const noexcept;
 };
 
 } // namespace xdiag

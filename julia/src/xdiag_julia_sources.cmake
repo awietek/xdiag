@@ -1,0 +1,18 @@
+set(XDIAG_JULIA_SOURCES
+    src/types.cpp
+    src/algebra.cpp
+    src/basis.cpp
+    src/bits.cpp
+    src/blocks.cpp
+    src/combinatorics.cpp
+    src/io.cpp
+    src/kernels.cpp
+    src/linalg.cpp
+    src/math.cpp
+    src/mpi.cpp
+    src/operators.cpp
+    src/random.cpp
+    src/states.cpp
+    src/symmetries.cpp
+    src/utils.cpp
+)
