@@ -14,8 +14,6 @@ void define_io(jlcxx::Module &mod) {
   mod.method("con_FileToml", [](std::string filename) {
     JULIA_XDIAG_CALL_RETURN(FileToml(filename))
   });
-  mod.method("con_FileToml",
-             [](std::istream &is) { JULIA_XDIAG_CALL_RETURN(FileToml(is)) });
   mod.method("mth_defined", [](FileToml const &self, std::string key) {
     JULIA_XDIAG_CALL_RETURN(self.defined(key))
   });
@@ -31,9 +29,6 @@ void define_io(jlcxx::Module &mod) {
   });
   mod.method("mth_keys",
              [](const FileToml &self) { JULIA_XDIAG_CALL_RETURN(self.keys()) });
-  mod.method("mth_table", [](const FileToml &self) {
-    JULIA_XDIAG_CALL_RETURN(self.table())
-  });
   mod.method("fun_defined", [](FileToml const &fl, std::string key) {
     JULIA_XDIAG_CALL_RETURN(defined(fl, key))
   });

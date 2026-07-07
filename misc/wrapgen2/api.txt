@@ -211,6 +211,11 @@
 [                  38] FUNCTION_DECL        CSRMatrix<int32_t, complex> csr_matrixC_32(OpSum const &ops, Block const &block, int32_t i0 = 0)
 [                  39] FUNCTION_DECL        CSRMatrix<int32_t, complex> csr_matrixC_32(OpSum const &ops, Block const &block_in, Block const &block_out, int32_t i0 = 0)
 
+=== xdiag/kernels/sparse/sparse_matrix_types.hpp ===
+[                  10] CLASS_TEMPLATE       template <typename idx_t, typename coeff_t> struct XDIAG_API COOMatrix { idx_t nrows; // number of rows in the matrix idx_t ncols; // number of columns in the matrix arma::Col<idx_t> row; // row indices arma::Col<idx_t> col; // column indices arma::Col<coeff_t> data; // data entries idx_t i0; // zero index, either 0 or 1 bool ishermitian; // flag whether matrix is hermitian/symmetric }
+[                  21] CLASS_TEMPLATE       template <typename idx_t, typename coeff_t> struct XDIAG_API CSRMatrix { idx_t nrows; // number of rows in the matrix idx_t ncols; // number of columns in the matrix arma::Col<idx_t> rowptr; // pointer to elements of a row (size: nrows+1) arma::Col<idx_t> col; // columns for each row consecutively arma::Col<coeff_t> data; // data entries each row consecutively idx_t i0; // zero index, either 0 or 1 bool ishermitian; // flag whether matrix is hermitian/symmetric }
+[                  32] CLASS_TEMPLATE       template <typename idx_t, typename coeff_t> struct XDIAG_API CSCMatrix { idx_t nrows; // number of rows in the matrix idx_t ncols; // number of columns in the matrix arma::Col<idx_t> colptr; // pointer to elements of a row (size: ncols+1) arma::Col<idx_t> row; // columns for each row consecutively arma::Col<coeff_t> data; // data entries each row consecutively idx_t i0; // zero index, either 0 or 1 bool ishermitian; // flag whether matrix is hermitian/symmetric }
+
 === xdiag/linalg/lanczos/eigs_lanczos.hpp ===
 [                  18] STRUCT_DECL          struct XDIAG_API EigsLanczosResult { arma::vec alphas; arma::vec betas; arma::vec eigenvalues; State eigenvectors; int64_t niterations; std::string criterion; }
 [                  31] FUNCTION_DECL        EigsLanczosResult eigs_lanczos(OpSum const &ops, Block const &block, int64_t neigvals = 1, double precision = 1e-12, int64_t max_iterations = 1000, double deflation_tol = 1e-7, int64_t random_seed = 42)
@@ -223,8 +228,8 @@
 [                  64] FUNCTION_DECL        EigvalsLanczosResult eigvals_lanczos_inplace(OpSum const &ops, State &psi0, int64_t neigvals = 1, double precision = 1e-12, int64_t max_iterations = 1000, double deflation_tol = 1e-7)
 
 === xdiag/linalg/lobpcg/eigs_lobpcg.hpp ===
-[                  18] STRUCT_DECL          struct XDIAG_API EigsLobpcgResult { arma::vec eigenvalues; // the neigs smallest eigenvalues, ascending arma::vec residual_norms; // residual norm per returned eigenvalue State eigenvectors; // neigs eigenvectors (columns) int64_t niterations; std::string criterion; // Per-iteration Ritz-value / residual-norm history (one row per iteration, // blocksize = neigs + guard columns) for convergence diagnostics. arma::mat eigenvalue_history; arma::mat residual_norms_history; }
-[                  37] FUNCTION_DECL        EigsLobpcgResult eigs_lobpcg(OpSum const &ops, Block const &block, int64_t neigs = 1, int64_t guard = 2, double tol = 1e-10, int64_t max_iterations = 1000, int64_t random_seed = 42)
+[                  18] STRUCT_DECL          struct XDIAG_API EigsLobpcgResult { arma::vec eigenvalues; arma::vec residual_norms; State eigenvectors; int64_t niterations; std::string criterion; arma::mat eigenvalue_history; arma::mat residual_norms_history; }
+[                  35] FUNCTION_DECL        EigsLobpcgResult eigs_lobpcg(OpSum const &ops, Block const &block, int64_t neigs = 1, int64_t guard = 2, double tol = 1e-10, int64_t max_iterations = 1000, int64_t random_seed = 42)
 
 === xdiag/linalg/sparse_diag.hpp ===
 [                  19] FUNCTION_DECL        double eigval0(OpSum const &ops, Block const &block, double precision = 1e-12, int64_t max_iterations = 1000, int64_t random_seed = 42)

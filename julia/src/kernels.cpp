@@ -8,99 +8,498 @@ namespace xdiag::julia {
 void define_kernels(jlcxx::Module &mod) {
   using namespace xdiag;
   mod.method("fun_coo_matrix",
-             [](OpSum const &ops, Block const &block, int64_t i0 = 0) {
+             [](OpSum const &ops, Fermion const &block, int64_t i0 = 0) {
                JULIA_XDIAG_CALL_RETURN(coo_matrix(ops, block, 0))
              });
-  mod.method("fun_coo_matrix", [](OpSum const &ops, Block const &block_in,
-                                  Block const &block_out, int64_t i0 = 0) {
+  mod.method("fun_coo_matrix",
+             [](OpSum const &ops, Boson const &block, int64_t i0 = 0) {
+               JULIA_XDIAG_CALL_RETURN(coo_matrix(ops, block, 0))
+             });
+  mod.method("fun_coo_matrix",
+             [](OpSum const &ops, Spinhalf const &block, int64_t i0 = 0) {
+               JULIA_XDIAG_CALL_RETURN(coo_matrix(ops, block, 0))
+             });
+  mod.method("fun_coo_matrix",
+             [](OpSum const &ops, Electron const &block, int64_t i0 = 0) {
+               JULIA_XDIAG_CALL_RETURN(coo_matrix(ops, block, 0))
+             });
+  mod.method("fun_coo_matrix",
+             [](OpSum const &ops, tJ const &block, int64_t i0 = 0) {
+               JULIA_XDIAG_CALL_RETURN(coo_matrix(ops, block, 0))
+             });
+  mod.method("fun_coo_matrix", [](OpSum const &ops, Fermion const &block_in,
+                                  Fermion const &block_out, int64_t i0 = 0) {
+    JULIA_XDIAG_CALL_RETURN(coo_matrix(ops, block_in, block_out, 0))
+  });
+  mod.method("fun_coo_matrix", [](OpSum const &ops, Boson const &block_in,
+                                  Boson const &block_out, int64_t i0 = 0) {
+    JULIA_XDIAG_CALL_RETURN(coo_matrix(ops, block_in, block_out, 0))
+  });
+  mod.method("fun_coo_matrix", [](OpSum const &ops, Spinhalf const &block_in,
+                                  Spinhalf const &block_out, int64_t i0 = 0) {
+    JULIA_XDIAG_CALL_RETURN(coo_matrix(ops, block_in, block_out, 0))
+  });
+  mod.method("fun_coo_matrix", [](OpSum const &ops, Electron const &block_in,
+                                  Electron const &block_out, int64_t i0 = 0) {
+    JULIA_XDIAG_CALL_RETURN(coo_matrix(ops, block_in, block_out, 0))
+  });
+  mod.method("fun_coo_matrix", [](OpSum const &ops, tJ const &block_in,
+                                  tJ const &block_out, int64_t i0 = 0) {
     JULIA_XDIAG_CALL_RETURN(coo_matrix(ops, block_in, block_out, 0))
   });
   mod.method("fun_coo_matrixC",
-             [](OpSum const &ops, Block const &block, int64_t i0 = 0) {
+             [](OpSum const &ops, Fermion const &block, int64_t i0 = 0) {
                JULIA_XDIAG_CALL_RETURN(coo_matrixC(ops, block, 0))
              });
-  mod.method("fun_coo_matrixC", [](OpSum const &ops, Block const &block_in,
-                                   Block const &block_out, int64_t i0 = 0) {
+  mod.method("fun_coo_matrixC",
+             [](OpSum const &ops, Boson const &block, int64_t i0 = 0) {
+               JULIA_XDIAG_CALL_RETURN(coo_matrixC(ops, block, 0))
+             });
+  mod.method("fun_coo_matrixC",
+             [](OpSum const &ops, Spinhalf const &block, int64_t i0 = 0) {
+               JULIA_XDIAG_CALL_RETURN(coo_matrixC(ops, block, 0))
+             });
+  mod.method("fun_coo_matrixC",
+             [](OpSum const &ops, Electron const &block, int64_t i0 = 0) {
+               JULIA_XDIAG_CALL_RETURN(coo_matrixC(ops, block, 0))
+             });
+  mod.method("fun_coo_matrixC",
+             [](OpSum const &ops, tJ const &block, int64_t i0 = 0) {
+               JULIA_XDIAG_CALL_RETURN(coo_matrixC(ops, block, 0))
+             });
+  mod.method("fun_coo_matrixC", [](OpSum const &ops, Fermion const &block_in,
+                                   Fermion const &block_out, int64_t i0 = 0) {
+    JULIA_XDIAG_CALL_RETURN(coo_matrixC(ops, block_in, block_out, 0))
+  });
+  mod.method("fun_coo_matrixC", [](OpSum const &ops, Boson const &block_in,
+                                   Boson const &block_out, int64_t i0 = 0) {
+    JULIA_XDIAG_CALL_RETURN(coo_matrixC(ops, block_in, block_out, 0))
+  });
+  mod.method("fun_coo_matrixC", [](OpSum const &ops, Spinhalf const &block_in,
+                                   Spinhalf const &block_out, int64_t i0 = 0) {
+    JULIA_XDIAG_CALL_RETURN(coo_matrixC(ops, block_in, block_out, 0))
+  });
+  mod.method("fun_coo_matrixC", [](OpSum const &ops, Electron const &block_in,
+                                   Electron const &block_out, int64_t i0 = 0) {
+    JULIA_XDIAG_CALL_RETURN(coo_matrixC(ops, block_in, block_out, 0))
+  });
+  mod.method("fun_coo_matrixC", [](OpSum const &ops, tJ const &block_in,
+                                   tJ const &block_out, int64_t i0 = 0) {
     JULIA_XDIAG_CALL_RETURN(coo_matrixC(ops, block_in, block_out, 0))
   });
   mod.method("fun_coo_matrix_32",
-             [](OpSum const &ops, Block const &block, int32_t i0 = 0) {
+             [](OpSum const &ops, Fermion const &block, int32_t i0 = 0) {
                JULIA_XDIAG_CALL_RETURN(coo_matrix_32(ops, block, 0))
              });
-  mod.method("fun_coo_matrix_32", [](OpSum const &ops, Block const &block_in,
-                                     Block const &block_out, int32_t i0 = 0) {
+  mod.method("fun_coo_matrix_32",
+             [](OpSum const &ops, Boson const &block, int32_t i0 = 0) {
+               JULIA_XDIAG_CALL_RETURN(coo_matrix_32(ops, block, 0))
+             });
+  mod.method("fun_coo_matrix_32",
+             [](OpSum const &ops, Spinhalf const &block, int32_t i0 = 0) {
+               JULIA_XDIAG_CALL_RETURN(coo_matrix_32(ops, block, 0))
+             });
+  mod.method("fun_coo_matrix_32",
+             [](OpSum const &ops, Electron const &block, int32_t i0 = 0) {
+               JULIA_XDIAG_CALL_RETURN(coo_matrix_32(ops, block, 0))
+             });
+  mod.method("fun_coo_matrix_32",
+             [](OpSum const &ops, tJ const &block, int32_t i0 = 0) {
+               JULIA_XDIAG_CALL_RETURN(coo_matrix_32(ops, block, 0))
+             });
+  mod.method("fun_coo_matrix_32", [](OpSum const &ops, Fermion const &block_in,
+                                     Fermion const &block_out, int32_t i0 = 0) {
+    JULIA_XDIAG_CALL_RETURN(coo_matrix_32(ops, block_in, block_out, 0))
+  });
+  mod.method("fun_coo_matrix_32", [](OpSum const &ops, Boson const &block_in,
+                                     Boson const &block_out, int32_t i0 = 0) {
+    JULIA_XDIAG_CALL_RETURN(coo_matrix_32(ops, block_in, block_out, 0))
+  });
+  mod.method("fun_coo_matrix_32", [](OpSum const &ops, Spinhalf const &block_in,
+                                     Spinhalf const &block_out,
+                                     int32_t i0 = 0) {
+    JULIA_XDIAG_CALL_RETURN(coo_matrix_32(ops, block_in, block_out, 0))
+  });
+  mod.method("fun_coo_matrix_32", [](OpSum const &ops, Electron const &block_in,
+                                     Electron const &block_out,
+                                     int32_t i0 = 0) {
+    JULIA_XDIAG_CALL_RETURN(coo_matrix_32(ops, block_in, block_out, 0))
+  });
+  mod.method("fun_coo_matrix_32", [](OpSum const &ops, tJ const &block_in,
+                                     tJ const &block_out, int32_t i0 = 0) {
     JULIA_XDIAG_CALL_RETURN(coo_matrix_32(ops, block_in, block_out, 0))
   });
   mod.method("fun_coo_matrixC_32",
-             [](OpSum const &ops, Block const &block, int32_t i0 = 0) {
+             [](OpSum const &ops, Fermion const &block, int32_t i0 = 0) {
                JULIA_XDIAG_CALL_RETURN(coo_matrixC_32(ops, block, 0))
              });
-  mod.method("fun_coo_matrixC_32", [](OpSum const &ops, Block const &block_in,
-                                      Block const &block_out, int32_t i0 = 0) {
+  mod.method("fun_coo_matrixC_32",
+             [](OpSum const &ops, Boson const &block, int32_t i0 = 0) {
+               JULIA_XDIAG_CALL_RETURN(coo_matrixC_32(ops, block, 0))
+             });
+  mod.method("fun_coo_matrixC_32",
+             [](OpSum const &ops, Spinhalf const &block, int32_t i0 = 0) {
+               JULIA_XDIAG_CALL_RETURN(coo_matrixC_32(ops, block, 0))
+             });
+  mod.method("fun_coo_matrixC_32",
+             [](OpSum const &ops, Electron const &block, int32_t i0 = 0) {
+               JULIA_XDIAG_CALL_RETURN(coo_matrixC_32(ops, block, 0))
+             });
+  mod.method("fun_coo_matrixC_32",
+             [](OpSum const &ops, tJ const &block, int32_t i0 = 0) {
+               JULIA_XDIAG_CALL_RETURN(coo_matrixC_32(ops, block, 0))
+             });
+  mod.method("fun_coo_matrixC_32", [](OpSum const &ops, Fermion const &block_in,
+                                      Fermion const &block_out,
+                                      int32_t i0 = 0) {
+    JULIA_XDIAG_CALL_RETURN(coo_matrixC_32(ops, block_in, block_out, 0))
+  });
+  mod.method("fun_coo_matrixC_32", [](OpSum const &ops, Boson const &block_in,
+                                      Boson const &block_out, int32_t i0 = 0) {
+    JULIA_XDIAG_CALL_RETURN(coo_matrixC_32(ops, block_in, block_out, 0))
+  });
+  mod.method(
+      "fun_coo_matrixC_32", [](OpSum const &ops, Spinhalf const &block_in,
+                               Spinhalf const &block_out, int32_t i0 = 0) {
+        JULIA_XDIAG_CALL_RETURN(coo_matrixC_32(ops, block_in, block_out, 0))
+      });
+  mod.method(
+      "fun_coo_matrixC_32", [](OpSum const &ops, Electron const &block_in,
+                               Electron const &block_out, int32_t i0 = 0) {
+        JULIA_XDIAG_CALL_RETURN(coo_matrixC_32(ops, block_in, block_out, 0))
+      });
+  mod.method("fun_coo_matrixC_32", [](OpSum const &ops, tJ const &block_in,
+                                      tJ const &block_out, int32_t i0 = 0) {
     JULIA_XDIAG_CALL_RETURN(coo_matrixC_32(ops, block_in, block_out, 0))
   });
   mod.method("fun_csc_matrix",
-             [](OpSum const &ops, Block const &block, int64_t i0 = 0) {
+             [](OpSum const &ops, Fermion const &block, int64_t i0 = 0) {
                JULIA_XDIAG_CALL_RETURN(csc_matrix(ops, block, 0))
              });
-  mod.method("fun_csc_matrix", [](OpSum const &ops, Block const &block_in,
-                                  Block const &block_out, int64_t i0 = 0) {
+  mod.method("fun_csc_matrix",
+             [](OpSum const &ops, Boson const &block, int64_t i0 = 0) {
+               JULIA_XDIAG_CALL_RETURN(csc_matrix(ops, block, 0))
+             });
+  mod.method("fun_csc_matrix",
+             [](OpSum const &ops, Spinhalf const &block, int64_t i0 = 0) {
+               JULIA_XDIAG_CALL_RETURN(csc_matrix(ops, block, 0))
+             });
+  mod.method("fun_csc_matrix",
+             [](OpSum const &ops, Electron const &block, int64_t i0 = 0) {
+               JULIA_XDIAG_CALL_RETURN(csc_matrix(ops, block, 0))
+             });
+  mod.method("fun_csc_matrix",
+             [](OpSum const &ops, tJ const &block, int64_t i0 = 0) {
+               JULIA_XDIAG_CALL_RETURN(csc_matrix(ops, block, 0))
+             });
+  mod.method("fun_csc_matrix", [](OpSum const &ops, Fermion const &block_in,
+                                  Fermion const &block_out, int64_t i0 = 0) {
+    JULIA_XDIAG_CALL_RETURN(csc_matrix(ops, block_in, block_out, 0))
+  });
+  mod.method("fun_csc_matrix", [](OpSum const &ops, Boson const &block_in,
+                                  Boson const &block_out, int64_t i0 = 0) {
+    JULIA_XDIAG_CALL_RETURN(csc_matrix(ops, block_in, block_out, 0))
+  });
+  mod.method("fun_csc_matrix", [](OpSum const &ops, Spinhalf const &block_in,
+                                  Spinhalf const &block_out, int64_t i0 = 0) {
+    JULIA_XDIAG_CALL_RETURN(csc_matrix(ops, block_in, block_out, 0))
+  });
+  mod.method("fun_csc_matrix", [](OpSum const &ops, Electron const &block_in,
+                                  Electron const &block_out, int64_t i0 = 0) {
+    JULIA_XDIAG_CALL_RETURN(csc_matrix(ops, block_in, block_out, 0))
+  });
+  mod.method("fun_csc_matrix", [](OpSum const &ops, tJ const &block_in,
+                                  tJ const &block_out, int64_t i0 = 0) {
     JULIA_XDIAG_CALL_RETURN(csc_matrix(ops, block_in, block_out, 0))
   });
   mod.method("fun_csc_matrixC",
-             [](OpSum const &ops, Block const &block, int64_t i0 = 0) {
+             [](OpSum const &ops, Fermion const &block, int64_t i0 = 0) {
                JULIA_XDIAG_CALL_RETURN(csc_matrixC(ops, block, 0))
              });
-  mod.method("fun_csc_matrixC", [](OpSum const &ops, Block const &block_in,
-                                   Block const &block_out, int64_t i0 = 0) {
+  mod.method("fun_csc_matrixC",
+             [](OpSum const &ops, Boson const &block, int64_t i0 = 0) {
+               JULIA_XDIAG_CALL_RETURN(csc_matrixC(ops, block, 0))
+             });
+  mod.method("fun_csc_matrixC",
+             [](OpSum const &ops, Spinhalf const &block, int64_t i0 = 0) {
+               JULIA_XDIAG_CALL_RETURN(csc_matrixC(ops, block, 0))
+             });
+  mod.method("fun_csc_matrixC",
+             [](OpSum const &ops, Electron const &block, int64_t i0 = 0) {
+               JULIA_XDIAG_CALL_RETURN(csc_matrixC(ops, block, 0))
+             });
+  mod.method("fun_csc_matrixC",
+             [](OpSum const &ops, tJ const &block, int64_t i0 = 0) {
+               JULIA_XDIAG_CALL_RETURN(csc_matrixC(ops, block, 0))
+             });
+  mod.method("fun_csc_matrixC", [](OpSum const &ops, Fermion const &block_in,
+                                   Fermion const &block_out, int64_t i0 = 0) {
+    JULIA_XDIAG_CALL_RETURN(csc_matrixC(ops, block_in, block_out, 0))
+  });
+  mod.method("fun_csc_matrixC", [](OpSum const &ops, Boson const &block_in,
+                                   Boson const &block_out, int64_t i0 = 0) {
+    JULIA_XDIAG_CALL_RETURN(csc_matrixC(ops, block_in, block_out, 0))
+  });
+  mod.method("fun_csc_matrixC", [](OpSum const &ops, Spinhalf const &block_in,
+                                   Spinhalf const &block_out, int64_t i0 = 0) {
+    JULIA_XDIAG_CALL_RETURN(csc_matrixC(ops, block_in, block_out, 0))
+  });
+  mod.method("fun_csc_matrixC", [](OpSum const &ops, Electron const &block_in,
+                                   Electron const &block_out, int64_t i0 = 0) {
+    JULIA_XDIAG_CALL_RETURN(csc_matrixC(ops, block_in, block_out, 0))
+  });
+  mod.method("fun_csc_matrixC", [](OpSum const &ops, tJ const &block_in,
+                                   tJ const &block_out, int64_t i0 = 0) {
     JULIA_XDIAG_CALL_RETURN(csc_matrixC(ops, block_in, block_out, 0))
   });
   mod.method("fun_csc_matrix_32",
-             [](OpSum const &ops, Block const &block, int32_t i0 = 0) {
+             [](OpSum const &ops, Fermion const &block, int32_t i0 = 0) {
                JULIA_XDIAG_CALL_RETURN(csc_matrix_32(ops, block, 0))
              });
-  mod.method("fun_csc_matrix_32", [](OpSum const &ops, Block const &block_in,
-                                     Block const &block_out, int32_t i0 = 0) {
+  mod.method("fun_csc_matrix_32",
+             [](OpSum const &ops, Boson const &block, int32_t i0 = 0) {
+               JULIA_XDIAG_CALL_RETURN(csc_matrix_32(ops, block, 0))
+             });
+  mod.method("fun_csc_matrix_32",
+             [](OpSum const &ops, Spinhalf const &block, int32_t i0 = 0) {
+               JULIA_XDIAG_CALL_RETURN(csc_matrix_32(ops, block, 0))
+             });
+  mod.method("fun_csc_matrix_32",
+             [](OpSum const &ops, Electron const &block, int32_t i0 = 0) {
+               JULIA_XDIAG_CALL_RETURN(csc_matrix_32(ops, block, 0))
+             });
+  mod.method("fun_csc_matrix_32",
+             [](OpSum const &ops, tJ const &block, int32_t i0 = 0) {
+               JULIA_XDIAG_CALL_RETURN(csc_matrix_32(ops, block, 0))
+             });
+  mod.method("fun_csc_matrix_32", [](OpSum const &ops, Fermion const &block_in,
+                                     Fermion const &block_out, int32_t i0 = 0) {
+    JULIA_XDIAG_CALL_RETURN(csc_matrix_32(ops, block_in, block_out, 0))
+  });
+  mod.method("fun_csc_matrix_32", [](OpSum const &ops, Boson const &block_in,
+                                     Boson const &block_out, int32_t i0 = 0) {
+    JULIA_XDIAG_CALL_RETURN(csc_matrix_32(ops, block_in, block_out, 0))
+  });
+  mod.method("fun_csc_matrix_32", [](OpSum const &ops, Spinhalf const &block_in,
+                                     Spinhalf const &block_out,
+                                     int32_t i0 = 0) {
+    JULIA_XDIAG_CALL_RETURN(csc_matrix_32(ops, block_in, block_out, 0))
+  });
+  mod.method("fun_csc_matrix_32", [](OpSum const &ops, Electron const &block_in,
+                                     Electron const &block_out,
+                                     int32_t i0 = 0) {
+    JULIA_XDIAG_CALL_RETURN(csc_matrix_32(ops, block_in, block_out, 0))
+  });
+  mod.method("fun_csc_matrix_32", [](OpSum const &ops, tJ const &block_in,
+                                     tJ const &block_out, int32_t i0 = 0) {
     JULIA_XDIAG_CALL_RETURN(csc_matrix_32(ops, block_in, block_out, 0))
   });
   mod.method("fun_csc_matrixC_32",
-             [](OpSum const &ops, Block const &block, int32_t i0 = 0) {
+             [](OpSum const &ops, Fermion const &block, int32_t i0 = 0) {
                JULIA_XDIAG_CALL_RETURN(csc_matrixC_32(ops, block, 0))
              });
-  mod.method("fun_csc_matrixC_32", [](OpSum const &ops, Block const &block_in,
-                                      Block const &block_out, int32_t i0 = 0) {
+  mod.method("fun_csc_matrixC_32",
+             [](OpSum const &ops, Boson const &block, int32_t i0 = 0) {
+               JULIA_XDIAG_CALL_RETURN(csc_matrixC_32(ops, block, 0))
+             });
+  mod.method("fun_csc_matrixC_32",
+             [](OpSum const &ops, Spinhalf const &block, int32_t i0 = 0) {
+               JULIA_XDIAG_CALL_RETURN(csc_matrixC_32(ops, block, 0))
+             });
+  mod.method("fun_csc_matrixC_32",
+             [](OpSum const &ops, Electron const &block, int32_t i0 = 0) {
+               JULIA_XDIAG_CALL_RETURN(csc_matrixC_32(ops, block, 0))
+             });
+  mod.method("fun_csc_matrixC_32",
+             [](OpSum const &ops, tJ const &block, int32_t i0 = 0) {
+               JULIA_XDIAG_CALL_RETURN(csc_matrixC_32(ops, block, 0))
+             });
+  mod.method("fun_csc_matrixC_32", [](OpSum const &ops, Fermion const &block_in,
+                                      Fermion const &block_out,
+                                      int32_t i0 = 0) {
+    JULIA_XDIAG_CALL_RETURN(csc_matrixC_32(ops, block_in, block_out, 0))
+  });
+  mod.method("fun_csc_matrixC_32", [](OpSum const &ops, Boson const &block_in,
+                                      Boson const &block_out, int32_t i0 = 0) {
+    JULIA_XDIAG_CALL_RETURN(csc_matrixC_32(ops, block_in, block_out, 0))
+  });
+  mod.method(
+      "fun_csc_matrixC_32", [](OpSum const &ops, Spinhalf const &block_in,
+                               Spinhalf const &block_out, int32_t i0 = 0) {
+        JULIA_XDIAG_CALL_RETURN(csc_matrixC_32(ops, block_in, block_out, 0))
+      });
+  mod.method(
+      "fun_csc_matrixC_32", [](OpSum const &ops, Electron const &block_in,
+                               Electron const &block_out, int32_t i0 = 0) {
+        JULIA_XDIAG_CALL_RETURN(csc_matrixC_32(ops, block_in, block_out, 0))
+      });
+  mod.method("fun_csc_matrixC_32", [](OpSum const &ops, tJ const &block_in,
+                                      tJ const &block_out, int32_t i0 = 0) {
     JULIA_XDIAG_CALL_RETURN(csc_matrixC_32(ops, block_in, block_out, 0))
   });
   mod.method("fun_csr_matrix",
-             [](OpSum const &ops, Block const &block, int64_t i0 = 0) {
+             [](OpSum const &ops, Fermion const &block, int64_t i0 = 0) {
                JULIA_XDIAG_CALL_RETURN(csr_matrix(ops, block, 0))
              });
-  mod.method("fun_csr_matrix", [](OpSum const &ops, Block const &block_in,
-                                  Block const &block_out, int64_t i0 = 0) {
+  mod.method("fun_csr_matrix",
+             [](OpSum const &ops, Boson const &block, int64_t i0 = 0) {
+               JULIA_XDIAG_CALL_RETURN(csr_matrix(ops, block, 0))
+             });
+  mod.method("fun_csr_matrix",
+             [](OpSum const &ops, Spinhalf const &block, int64_t i0 = 0) {
+               JULIA_XDIAG_CALL_RETURN(csr_matrix(ops, block, 0))
+             });
+  mod.method("fun_csr_matrix",
+             [](OpSum const &ops, Electron const &block, int64_t i0 = 0) {
+               JULIA_XDIAG_CALL_RETURN(csr_matrix(ops, block, 0))
+             });
+  mod.method("fun_csr_matrix",
+             [](OpSum const &ops, tJ const &block, int64_t i0 = 0) {
+               JULIA_XDIAG_CALL_RETURN(csr_matrix(ops, block, 0))
+             });
+  mod.method("fun_csr_matrix", [](OpSum const &ops, Fermion const &block_in,
+                                  Fermion const &block_out, int64_t i0 = 0) {
+    JULIA_XDIAG_CALL_RETURN(csr_matrix(ops, block_in, block_out, 0))
+  });
+  mod.method("fun_csr_matrix", [](OpSum const &ops, Boson const &block_in,
+                                  Boson const &block_out, int64_t i0 = 0) {
+    JULIA_XDIAG_CALL_RETURN(csr_matrix(ops, block_in, block_out, 0))
+  });
+  mod.method("fun_csr_matrix", [](OpSum const &ops, Spinhalf const &block_in,
+                                  Spinhalf const &block_out, int64_t i0 = 0) {
+    JULIA_XDIAG_CALL_RETURN(csr_matrix(ops, block_in, block_out, 0))
+  });
+  mod.method("fun_csr_matrix", [](OpSum const &ops, Electron const &block_in,
+                                  Electron const &block_out, int64_t i0 = 0) {
+    JULIA_XDIAG_CALL_RETURN(csr_matrix(ops, block_in, block_out, 0))
+  });
+  mod.method("fun_csr_matrix", [](OpSum const &ops, tJ const &block_in,
+                                  tJ const &block_out, int64_t i0 = 0) {
     JULIA_XDIAG_CALL_RETURN(csr_matrix(ops, block_in, block_out, 0))
   });
   mod.method("fun_csr_matrixC",
-             [](OpSum const &ops, Block const &block, int64_t i0 = 0) {
+             [](OpSum const &ops, Fermion const &block, int64_t i0 = 0) {
                JULIA_XDIAG_CALL_RETURN(csr_matrixC(ops, block, 0))
              });
-  mod.method("fun_csr_matrixC", [](OpSum const &ops, Block const &block_in,
-                                   Block const &block_out, int64_t i0 = 0) {
+  mod.method("fun_csr_matrixC",
+             [](OpSum const &ops, Boson const &block, int64_t i0 = 0) {
+               JULIA_XDIAG_CALL_RETURN(csr_matrixC(ops, block, 0))
+             });
+  mod.method("fun_csr_matrixC",
+             [](OpSum const &ops, Spinhalf const &block, int64_t i0 = 0) {
+               JULIA_XDIAG_CALL_RETURN(csr_matrixC(ops, block, 0))
+             });
+  mod.method("fun_csr_matrixC",
+             [](OpSum const &ops, Electron const &block, int64_t i0 = 0) {
+               JULIA_XDIAG_CALL_RETURN(csr_matrixC(ops, block, 0))
+             });
+  mod.method("fun_csr_matrixC",
+             [](OpSum const &ops, tJ const &block, int64_t i0 = 0) {
+               JULIA_XDIAG_CALL_RETURN(csr_matrixC(ops, block, 0))
+             });
+  mod.method("fun_csr_matrixC", [](OpSum const &ops, Fermion const &block_in,
+                                   Fermion const &block_out, int64_t i0 = 0) {
+    JULIA_XDIAG_CALL_RETURN(csr_matrixC(ops, block_in, block_out, 0))
+  });
+  mod.method("fun_csr_matrixC", [](OpSum const &ops, Boson const &block_in,
+                                   Boson const &block_out, int64_t i0 = 0) {
+    JULIA_XDIAG_CALL_RETURN(csr_matrixC(ops, block_in, block_out, 0))
+  });
+  mod.method("fun_csr_matrixC", [](OpSum const &ops, Spinhalf const &block_in,
+                                   Spinhalf const &block_out, int64_t i0 = 0) {
+    JULIA_XDIAG_CALL_RETURN(csr_matrixC(ops, block_in, block_out, 0))
+  });
+  mod.method("fun_csr_matrixC", [](OpSum const &ops, Electron const &block_in,
+                                   Electron const &block_out, int64_t i0 = 0) {
+    JULIA_XDIAG_CALL_RETURN(csr_matrixC(ops, block_in, block_out, 0))
+  });
+  mod.method("fun_csr_matrixC", [](OpSum const &ops, tJ const &block_in,
+                                   tJ const &block_out, int64_t i0 = 0) {
     JULIA_XDIAG_CALL_RETURN(csr_matrixC(ops, block_in, block_out, 0))
   });
   mod.method("fun_csr_matrix_32",
-             [](OpSum const &ops, Block const &block, int32_t i0 = 0) {
+             [](OpSum const &ops, Fermion const &block, int32_t i0 = 0) {
                JULIA_XDIAG_CALL_RETURN(csr_matrix_32(ops, block, 0))
              });
-  mod.method("fun_csr_matrix_32", [](OpSum const &ops, Block const &block_in,
-                                     Block const &block_out, int32_t i0 = 0) {
+  mod.method("fun_csr_matrix_32",
+             [](OpSum const &ops, Boson const &block, int32_t i0 = 0) {
+               JULIA_XDIAG_CALL_RETURN(csr_matrix_32(ops, block, 0))
+             });
+  mod.method("fun_csr_matrix_32",
+             [](OpSum const &ops, Spinhalf const &block, int32_t i0 = 0) {
+               JULIA_XDIAG_CALL_RETURN(csr_matrix_32(ops, block, 0))
+             });
+  mod.method("fun_csr_matrix_32",
+             [](OpSum const &ops, Electron const &block, int32_t i0 = 0) {
+               JULIA_XDIAG_CALL_RETURN(csr_matrix_32(ops, block, 0))
+             });
+  mod.method("fun_csr_matrix_32",
+             [](OpSum const &ops, tJ const &block, int32_t i0 = 0) {
+               JULIA_XDIAG_CALL_RETURN(csr_matrix_32(ops, block, 0))
+             });
+  mod.method("fun_csr_matrix_32", [](OpSum const &ops, Fermion const &block_in,
+                                     Fermion const &block_out, int32_t i0 = 0) {
+    JULIA_XDIAG_CALL_RETURN(csr_matrix_32(ops, block_in, block_out, 0))
+  });
+  mod.method("fun_csr_matrix_32", [](OpSum const &ops, Boson const &block_in,
+                                     Boson const &block_out, int32_t i0 = 0) {
+    JULIA_XDIAG_CALL_RETURN(csr_matrix_32(ops, block_in, block_out, 0))
+  });
+  mod.method("fun_csr_matrix_32", [](OpSum const &ops, Spinhalf const &block_in,
+                                     Spinhalf const &block_out,
+                                     int32_t i0 = 0) {
+    JULIA_XDIAG_CALL_RETURN(csr_matrix_32(ops, block_in, block_out, 0))
+  });
+  mod.method("fun_csr_matrix_32", [](OpSum const &ops, Electron const &block_in,
+                                     Electron const &block_out,
+                                     int32_t i0 = 0) {
+    JULIA_XDIAG_CALL_RETURN(csr_matrix_32(ops, block_in, block_out, 0))
+  });
+  mod.method("fun_csr_matrix_32", [](OpSum const &ops, tJ const &block_in,
+                                     tJ const &block_out, int32_t i0 = 0) {
     JULIA_XDIAG_CALL_RETURN(csr_matrix_32(ops, block_in, block_out, 0))
   });
   mod.method("fun_csr_matrixC_32",
-             [](OpSum const &ops, Block const &block, int32_t i0 = 0) {
+             [](OpSum const &ops, Fermion const &block, int32_t i0 = 0) {
                JULIA_XDIAG_CALL_RETURN(csr_matrixC_32(ops, block, 0))
              });
-  mod.method("fun_csr_matrixC_32", [](OpSum const &ops, Block const &block_in,
-                                      Block const &block_out, int32_t i0 = 0) {
+  mod.method("fun_csr_matrixC_32",
+             [](OpSum const &ops, Boson const &block, int32_t i0 = 0) {
+               JULIA_XDIAG_CALL_RETURN(csr_matrixC_32(ops, block, 0))
+             });
+  mod.method("fun_csr_matrixC_32",
+             [](OpSum const &ops, Spinhalf const &block, int32_t i0 = 0) {
+               JULIA_XDIAG_CALL_RETURN(csr_matrixC_32(ops, block, 0))
+             });
+  mod.method("fun_csr_matrixC_32",
+             [](OpSum const &ops, Electron const &block, int32_t i0 = 0) {
+               JULIA_XDIAG_CALL_RETURN(csr_matrixC_32(ops, block, 0))
+             });
+  mod.method("fun_csr_matrixC_32",
+             [](OpSum const &ops, tJ const &block, int32_t i0 = 0) {
+               JULIA_XDIAG_CALL_RETURN(csr_matrixC_32(ops, block, 0))
+             });
+  mod.method("fun_csr_matrixC_32", [](OpSum const &ops, Fermion const &block_in,
+                                      Fermion const &block_out,
+                                      int32_t i0 = 0) {
+    JULIA_XDIAG_CALL_RETURN(csr_matrixC_32(ops, block_in, block_out, 0))
+  });
+  mod.method("fun_csr_matrixC_32", [](OpSum const &ops, Boson const &block_in,
+                                      Boson const &block_out, int32_t i0 = 0) {
+    JULIA_XDIAG_CALL_RETURN(csr_matrixC_32(ops, block_in, block_out, 0))
+  });
+  mod.method(
+      "fun_csr_matrixC_32", [](OpSum const &ops, Spinhalf const &block_in,
+                               Spinhalf const &block_out, int32_t i0 = 0) {
+        JULIA_XDIAG_CALL_RETURN(csr_matrixC_32(ops, block_in, block_out, 0))
+      });
+  mod.method(
+      "fun_csr_matrixC_32", [](OpSum const &ops, Electron const &block_in,
+                               Electron const &block_out, int32_t i0 = 0) {
+        JULIA_XDIAG_CALL_RETURN(csr_matrixC_32(ops, block_in, block_out, 0))
+      });
+  mod.method("fun_csr_matrixC_32", [](OpSum const &ops, tJ const &block_in,
+                                      tJ const &block_out, int32_t i0 = 0) {
     JULIA_XDIAG_CALL_RETURN(csr_matrixC_32(ops, block_in, block_out, 0))
   });
 }

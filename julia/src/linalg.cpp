@@ -7,8 +7,48 @@
 namespace xdiag::julia {
 void define_linalg(jlcxx::Module &mod) {
   using namespace xdiag;
+  mod.method("mth_alphas",
+             [](EigsLanczosResult const &self) { return self.alphas; });
+  mod.method("mth_betas",
+             [](EigsLanczosResult const &self) { return self.betas; });
+  mod.method("mth_eigenvalues",
+             [](EigsLanczosResult const &self) { return self.eigenvalues; });
+  mod.method("mth_eigenvectors",
+             [](EigsLanczosResult const &self) { return self.eigenvectors; });
+  mod.method("mth_niterations",
+             [](EigsLanczosResult const &self) { return self.niterations; });
+  mod.method("mth_criterion",
+             [](EigsLanczosResult const &self) { return self.criterion; });
   mod.method("fun_eigs_lanczos",
-             [](OpSum const &ops, Block const &block, int64_t neigvals = 1,
+             [](OpSum const &ops, Fermion const &block, int64_t neigvals = 1,
+                double precision = 1e-12, int64_t max_iterations = 1000,
+                double deflation_tol = 1e-7, int64_t random_seed = 42) {
+               JULIA_XDIAG_CALL_RETURN(
+                   eigs_lanczos(ops, block, 1, 1e-12, 1000, 1e-7, 42))
+             });
+  mod.method("fun_eigs_lanczos",
+             [](OpSum const &ops, Boson const &block, int64_t neigvals = 1,
+                double precision = 1e-12, int64_t max_iterations = 1000,
+                double deflation_tol = 1e-7, int64_t random_seed = 42) {
+               JULIA_XDIAG_CALL_RETURN(
+                   eigs_lanczos(ops, block, 1, 1e-12, 1000, 1e-7, 42))
+             });
+  mod.method("fun_eigs_lanczos",
+             [](OpSum const &ops, Spinhalf const &block, int64_t neigvals = 1,
+                double precision = 1e-12, int64_t max_iterations = 1000,
+                double deflation_tol = 1e-7, int64_t random_seed = 42) {
+               JULIA_XDIAG_CALL_RETURN(
+                   eigs_lanczos(ops, block, 1, 1e-12, 1000, 1e-7, 42))
+             });
+  mod.method("fun_eigs_lanczos",
+             [](OpSum const &ops, Electron const &block, int64_t neigvals = 1,
+                double precision = 1e-12, int64_t max_iterations = 1000,
+                double deflation_tol = 1e-7, int64_t random_seed = 42) {
+               JULIA_XDIAG_CALL_RETURN(
+                   eigs_lanczos(ops, block, 1, 1e-12, 1000, 1e-7, 42))
+             });
+  mod.method("fun_eigs_lanczos",
+             [](OpSum const &ops, tJ const &block, int64_t neigvals = 1,
                 double precision = 1e-12, int64_t max_iterations = 1000,
                 double deflation_tol = 1e-7, int64_t random_seed = 42) {
                JULIA_XDIAG_CALL_RETURN(
@@ -21,8 +61,46 @@ void define_linalg(jlcxx::Module &mod) {
                                     double deflation_tol = 1e-7) {
     JULIA_XDIAG_CALL_RETURN(eigs_lanczos(ops, state0, 1, 1e-12, 1000, 1e-7))
   });
+  mod.method("mth_alphas",
+             [](EigvalsLanczosResult const &self) { return self.alphas; });
+  mod.method("mth_betas",
+             [](EigvalsLanczosResult const &self) { return self.betas; });
+  mod.method("mth_eigenvalues",
+             [](EigvalsLanczosResult const &self) { return self.eigenvalues; });
+  mod.method("mth_niterations",
+             [](EigvalsLanczosResult const &self) { return self.niterations; });
+  mod.method("mth_criterion",
+             [](EigvalsLanczosResult const &self) { return self.criterion; });
   mod.method("fun_eigvals_lanczos",
-             [](OpSum const &ops, Block const &block, int64_t neigvals = 1,
+             [](OpSum const &ops, Fermion const &block, int64_t neigvals = 1,
+                double precision = 1e-12, int64_t max_iterations = 1000,
+                double deflation_tol = 1e-7, int64_t random_seed = 42) {
+               JULIA_XDIAG_CALL_RETURN(
+                   eigvals_lanczos(ops, block, 1, 1e-12, 1000, 1e-7, 42))
+             });
+  mod.method("fun_eigvals_lanczos",
+             [](OpSum const &ops, Boson const &block, int64_t neigvals = 1,
+                double precision = 1e-12, int64_t max_iterations = 1000,
+                double deflation_tol = 1e-7, int64_t random_seed = 42) {
+               JULIA_XDIAG_CALL_RETURN(
+                   eigvals_lanczos(ops, block, 1, 1e-12, 1000, 1e-7, 42))
+             });
+  mod.method("fun_eigvals_lanczos",
+             [](OpSum const &ops, Spinhalf const &block, int64_t neigvals = 1,
+                double precision = 1e-12, int64_t max_iterations = 1000,
+                double deflation_tol = 1e-7, int64_t random_seed = 42) {
+               JULIA_XDIAG_CALL_RETURN(
+                   eigvals_lanczos(ops, block, 1, 1e-12, 1000, 1e-7, 42))
+             });
+  mod.method("fun_eigvals_lanczos",
+             [](OpSum const &ops, Electron const &block, int64_t neigvals = 1,
+                double precision = 1e-12, int64_t max_iterations = 1000,
+                double deflation_tol = 1e-7, int64_t random_seed = 42) {
+               JULIA_XDIAG_CALL_RETURN(
+                   eigvals_lanczos(ops, block, 1, 1e-12, 1000, 1e-7, 42))
+             });
+  mod.method("fun_eigvals_lanczos",
+             [](OpSum const &ops, tJ const &block, int64_t neigvals = 1,
                 double precision = 1e-12, int64_t max_iterations = 1000,
                 double deflation_tol = 1e-7, int64_t random_seed = 42) {
                JULIA_XDIAG_CALL_RETURN(
@@ -42,7 +120,51 @@ void define_linalg(jlcxx::Module &mod) {
                JULIA_XDIAG_CALL_RETURN(
                    eigvals_lanczos_inplace(ops, psi0, 1, 1e-12, 1000, 1e-7))
              });
-  mod.method("fun_eigs_lobpcg", [](OpSum const &ops, Block const &block,
+  mod.method("mth_eigenvalues",
+             [](EigsLobpcgResult const &self) { return self.eigenvalues; });
+  mod.method("mth_residual_norms",
+             [](EigsLobpcgResult const &self) { return self.residual_norms; });
+  mod.method("mth_eigenvectors",
+             [](EigsLobpcgResult const &self) { return self.eigenvectors; });
+  mod.method("mth_niterations",
+             [](EigsLobpcgResult const &self) { return self.niterations; });
+  mod.method("mth_criterion",
+             [](EigsLobpcgResult const &self) { return self.criterion; });
+  mod.method("mth_eigenvalue_history", [](EigsLobpcgResult const &self) {
+    return self.eigenvalue_history;
+  });
+  mod.method("mth_residual_norms_history", [](EigsLobpcgResult const &self) {
+    return self.residual_norms_history;
+  });
+  mod.method("fun_eigs_lobpcg", [](OpSum const &ops, Fermion const &block,
+                                   int64_t neigs = 1, int64_t guard = 2,
+                                   double tol = 1e-10,
+                                   int64_t max_iterations = 1000,
+                                   int64_t random_seed = 42) {
+    JULIA_XDIAG_CALL_RETURN(eigs_lobpcg(ops, block, 1, 2, 1e-10, 1000, 42))
+  });
+  mod.method("fun_eigs_lobpcg", [](OpSum const &ops, Boson const &block,
+                                   int64_t neigs = 1, int64_t guard = 2,
+                                   double tol = 1e-10,
+                                   int64_t max_iterations = 1000,
+                                   int64_t random_seed = 42) {
+    JULIA_XDIAG_CALL_RETURN(eigs_lobpcg(ops, block, 1, 2, 1e-10, 1000, 42))
+  });
+  mod.method("fun_eigs_lobpcg", [](OpSum const &ops, Spinhalf const &block,
+                                   int64_t neigs = 1, int64_t guard = 2,
+                                   double tol = 1e-10,
+                                   int64_t max_iterations = 1000,
+                                   int64_t random_seed = 42) {
+    JULIA_XDIAG_CALL_RETURN(eigs_lobpcg(ops, block, 1, 2, 1e-10, 1000, 42))
+  });
+  mod.method("fun_eigs_lobpcg", [](OpSum const &ops, Electron const &block,
+                                   int64_t neigs = 1, int64_t guard = 2,
+                                   double tol = 1e-10,
+                                   int64_t max_iterations = 1000,
+                                   int64_t random_seed = 42) {
+    JULIA_XDIAG_CALL_RETURN(eigs_lobpcg(ops, block, 1, 2, 1e-10, 1000, 42))
+  });
+  mod.method("fun_eigs_lobpcg", [](OpSum const &ops, tJ const &block,
                                    int64_t neigs = 1, int64_t guard = 2,
                                    double tol = 1e-10,
                                    int64_t max_iterations = 1000,
@@ -50,27 +172,133 @@ void define_linalg(jlcxx::Module &mod) {
     JULIA_XDIAG_CALL_RETURN(eigs_lobpcg(ops, block, 1, 2, 1e-10, 1000, 42))
   });
   mod.method("fun_eigval0",
-             [](OpSum const &ops, Block const &block, double precision = 1e-12,
+             [](OpSum const &ops, Fermion const &block,
+                double precision = 1e-12, int64_t max_iterations = 1000,
+                int64_t random_seed = 42) {
+               JULIA_XDIAG_CALL_RETURN(eigval0(ops, block, 1e-12, 1000, 42))
+             });
+  mod.method("fun_eigval0",
+             [](OpSum const &ops, Boson const &block, double precision = 1e-12,
+                int64_t max_iterations = 1000, int64_t random_seed = 42) {
+               JULIA_XDIAG_CALL_RETURN(eigval0(ops, block, 1e-12, 1000, 42))
+             });
+  mod.method("fun_eigval0",
+             [](OpSum const &ops, Spinhalf const &block,
+                double precision = 1e-12, int64_t max_iterations = 1000,
+                int64_t random_seed = 42) {
+               JULIA_XDIAG_CALL_RETURN(eigval0(ops, block, 1e-12, 1000, 42))
+             });
+  mod.method("fun_eigval0",
+             [](OpSum const &ops, Electron const &block,
+                double precision = 1e-12, int64_t max_iterations = 1000,
+                int64_t random_seed = 42) {
+               JULIA_XDIAG_CALL_RETURN(eigval0(ops, block, 1e-12, 1000, 42))
+             });
+  mod.method("fun_eigval0",
+             [](OpSum const &ops, tJ const &block, double precision = 1e-12,
                 int64_t max_iterations = 1000, int64_t random_seed = 42) {
                JULIA_XDIAG_CALL_RETURN(eigval0(ops, block, 1e-12, 1000, 42))
              });
   mod.method("fun_eig0",
-             [](OpSum const &ops, Block const &block, double precision = 1e-12,
+             [](OpSum const &ops, Fermion const &block,
+                double precision = 1e-12, int64_t max_iterations = 1000,
+                int64_t random_seed = 42) {
+               JULIA_XDIAG_CALL_RETURN(eig0(ops, block, 1e-12, 1000, 42))
+             });
+  mod.method("fun_eig0",
+             [](OpSum const &ops, Boson const &block, double precision = 1e-12,
                 int64_t max_iterations = 1000, int64_t random_seed = 42) {
                JULIA_XDIAG_CALL_RETURN(eig0(ops, block, 1e-12, 1000, 42))
              });
-  mod.method("fun_eigvals", [](OpSum const &ops, Block const &block,
+  mod.method("fun_eig0",
+             [](OpSum const &ops, Spinhalf const &block,
+                double precision = 1e-12, int64_t max_iterations = 1000,
+                int64_t random_seed = 42) {
+               JULIA_XDIAG_CALL_RETURN(eig0(ops, block, 1e-12, 1000, 42))
+             });
+  mod.method("fun_eig0",
+             [](OpSum const &ops, Electron const &block,
+                double precision = 1e-12, int64_t max_iterations = 1000,
+                int64_t random_seed = 42) {
+               JULIA_XDIAG_CALL_RETURN(eig0(ops, block, 1e-12, 1000, 42))
+             });
+  mod.method("fun_eig0",
+             [](OpSum const &ops, tJ const &block, double precision = 1e-12,
+                int64_t max_iterations = 1000, int64_t random_seed = 42) {
+               JULIA_XDIAG_CALL_RETURN(eig0(ops, block, 1e-12, 1000, 42))
+             });
+  mod.method("fun_eigvals", [](OpSum const &ops, Fermion const &block,
                                int64_t neigs, double precision = 1e-12,
                                int64_t max_iterations = 1000,
                                int64_t random_seed = 42) {
     JULIA_XDIAG_CALL_RETURN(eigvals(ops, block, neigs, 1e-12, 1000, 42))
   });
+  mod.method("fun_eigvals", [](OpSum const &ops, Boson const &block,
+                               int64_t neigs, double precision = 1e-12,
+                               int64_t max_iterations = 1000,
+                               int64_t random_seed = 42) {
+    JULIA_XDIAG_CALL_RETURN(eigvals(ops, block, neigs, 1e-12, 1000, 42))
+  });
+  mod.method("fun_eigvals", [](OpSum const &ops, Spinhalf const &block,
+                               int64_t neigs, double precision = 1e-12,
+                               int64_t max_iterations = 1000,
+                               int64_t random_seed = 42) {
+    JULIA_XDIAG_CALL_RETURN(eigvals(ops, block, neigs, 1e-12, 1000, 42))
+  });
+  mod.method("fun_eigvals", [](OpSum const &ops, Electron const &block,
+                               int64_t neigs, double precision = 1e-12,
+                               int64_t max_iterations = 1000,
+                               int64_t random_seed = 42) {
+    JULIA_XDIAG_CALL_RETURN(eigvals(ops, block, neigs, 1e-12, 1000, 42))
+  });
+  mod.method("fun_eigvals", [](OpSum const &ops, tJ const &block, int64_t neigs,
+                               double precision = 1e-12,
+                               int64_t max_iterations = 1000,
+                               int64_t random_seed = 42) {
+    JULIA_XDIAG_CALL_RETURN(eigvals(ops, block, neigs, 1e-12, 1000, 42))
+  });
   mod.method("fun_eigs",
-             [](OpSum const &ops, Block const &block, int64_t neigs,
+             [](OpSum const &ops, Fermion const &block, int64_t neigs,
                 double precision = 1e-12, int64_t max_iterations = 1000,
                 int64_t random_seed = 42) {
                JULIA_XDIAG_CALL_RETURN(eigs(ops, block, neigs, 1e-12, 1000, 42))
              });
+  mod.method("fun_eigs",
+             [](OpSum const &ops, Boson const &block, int64_t neigs,
+                double precision = 1e-12, int64_t max_iterations = 1000,
+                int64_t random_seed = 42) {
+               JULIA_XDIAG_CALL_RETURN(eigs(ops, block, neigs, 1e-12, 1000, 42))
+             });
+  mod.method("fun_eigs",
+             [](OpSum const &ops, Spinhalf const &block, int64_t neigs,
+                double precision = 1e-12, int64_t max_iterations = 1000,
+                int64_t random_seed = 42) {
+               JULIA_XDIAG_CALL_RETURN(eigs(ops, block, neigs, 1e-12, 1000, 42))
+             });
+  mod.method("fun_eigs",
+             [](OpSum const &ops, Electron const &block, int64_t neigs,
+                double precision = 1e-12, int64_t max_iterations = 1000,
+                int64_t random_seed = 42) {
+               JULIA_XDIAG_CALL_RETURN(eigs(ops, block, neigs, 1e-12, 1000, 42))
+             });
+  mod.method("fun_eigs",
+             [](OpSum const &ops, tJ const &block, int64_t neigs,
+                double precision = 1e-12, int64_t max_iterations = 1000,
+                int64_t random_seed = 42) {
+               JULIA_XDIAG_CALL_RETURN(eigs(ops, block, neigs, 1e-12, 1000, 42))
+             });
+  mod.method("mth_alphas",
+             [](EvolveLanczosResult const &self) { return self.alphas; });
+  mod.method("mth_betas",
+             [](EvolveLanczosResult const &self) { return self.betas; });
+  mod.method("mth_eigenvalues",
+             [](EvolveLanczosResult const &self) { return self.eigenvalues; });
+  mod.method("mth_niterations",
+             [](EvolveLanczosResult const &self) { return self.niterations; });
+  mod.method("mth_criterion",
+             [](EvolveLanczosResult const &self) { return self.criterion; });
+  mod.method("mth_state",
+             [](EvolveLanczosResult const &self) { return self.state; });
   mod.method("fun_evolve_lanczos",
              [](OpSum const &H, State psi, double tau, double precision = 1e-12,
                 double shift = 0., bool normalize = false,
@@ -86,6 +314,20 @@ void define_linalg(jlcxx::Module &mod) {
                JULIA_XDIAG_CALL_RETURN(
                    evolve_lanczos(H, psi, tau, 1e-12, 0., false, 1000, 1e-7))
              });
+  mod.method("mth_alphas", [](EvolveLanczosInplaceResult const &self) {
+    return self.alphas;
+  });
+  mod.method("mth_betas",
+             [](EvolveLanczosInplaceResult const &self) { return self.betas; });
+  mod.method("mth_eigenvalues", [](EvolveLanczosInplaceResult const &self) {
+    return self.eigenvalues;
+  });
+  mod.method("mth_niterations", [](EvolveLanczosInplaceResult const &self) {
+    return self.niterations;
+  });
+  mod.method("mth_criterion", [](EvolveLanczosInplaceResult const &self) {
+    return self.criterion;
+  });
   mod.method(
       "fun_evolve_lanczos_inplace",
       [](OpSum const &H, State &psi, double tau, double precision = 1e-12,
@@ -125,6 +367,12 @@ void define_linalg(jlcxx::Module &mod) {
                                            std::string algorithm = "lanczos") {
     JULIA_XDIAG_CALL_VOID(time_evolve_inplace(H, psi, time, 1e-12, "lanczos"));
   });
+  mod.method("mth_error",
+             [](TimeEvolveExpokitResult const &self) { return self.error; });
+  mod.method("mth_hump",
+             [](TimeEvolveExpokitResult const &self) { return self.hump; });
+  mod.method("mth_state",
+             [](TimeEvolveExpokitResult const &self) { return self.state; });
   mod.method("fun_time_evolve_expokit",
              [](OpSum const &H, State psi0, double time,
                 double precision = 1e-12, int64_t m = 30, double anorm = 0.,
@@ -132,6 +380,12 @@ void define_linalg(jlcxx::Module &mod) {
                JULIA_XDIAG_CALL_RETURN(
                    time_evolve_expokit(H, psi0, time, 1e-12, 30, 0., 2))
              });
+  mod.method("mth_error", [](TimeEvolveExpokitInplaceResult const &self) {
+    return self.error;
+  });
+  mod.method("mth_hump", [](TimeEvolveExpokitInplaceResult const &self) {
+    return self.hump;
+  });
   mod.method("fun_time_evolve_expokit_inplace",
              [](OpSum const &H, State &psi, double time,
                 double precision = 1e-12, int64_t m = 30, double anorm = 0.,

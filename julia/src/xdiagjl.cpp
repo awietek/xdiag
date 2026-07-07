@@ -6,21 +6,43 @@
 #error "XDiag Julia wrapper needs to be compiled with OpenMP support"
 #endif
 
-#include <julia/src/xdiagjl.hpp>
-#include <julia/src/types.hpp>
 #include <julia/src/modules.hpp>
-// #include <julia/src/utils/armadillo.hpp>
+#include <julia/src/types.hpp>
+#include <julia/src/xdiagjl.hpp>
 
 JLCXX_MODULE define_julia_module(jlcxx::Module &mod) {
   using namespace xdiag;
 
-  // // Armadillo bridge types (cxx_arma_vec/mat) must be registered before any
-  // // generated method that returns or takes them.
-  // julia::define_vectors(mod);
-  // julia::define_matrices(mod);
+  mod.add_type<arma::vec>("typ_arma_vec")
+      .constructor<double *, arma::uword, bool, bool>()
+      .method("memptr", [](arma::vec &m) { return m.memptr(); })
+      .method("n_rows", [](arma::vec const &m) { return m.n_rows; });
 
-  // All wrapped xdiag types + their methods (two-pass inside), then the
-  // pointer-fill specials.
+  mod.add_type<arma::cx_vec>("typ_arma_cx_vec")
+      .constructor<complex *, arma::uword, bool, bool>()
+      .method("memptr", [](arma::cx_vec &m) { return m.memptr(); })
+      .method("n_rows", [](arma::cx_vec const &m) { return m.n_rows; });
+
+  mod.add_type<arma::Col<int64_t>>("typ_arma_vec_int64_t")
+      .constructor<int64_t *, arma::uword, bool, bool>();
+
+  mod.add_type<arma::mat>("typ_arma_mat")
+      .constructor<double *, arma::uword, arma::uword, bool, bool>()
+      .method("memptr", [](arma::mat &m) { return m.memptr(); })
+      .method("n_rows", [](arma::mat const &m) { return m.n_rows; })
+      .method("n_cols", [](arma::mat const &m) { return m.n_cols; })
+      .method("n_elem", [](arma::mat const &m) { return m.n_elem; });
+
+  mod.add_type<arma::cx_mat>("typ_arma_cx_mat")
+      .constructor<complex *, arma::uword, arma::uword, bool, bool>()
+      .method("memptr", [](arma::cx_mat &m) { return m.memptr(); })
+      .method("n_rows", [](arma::cx_mat const &m) { return m.n_rows; })
+      .method("n_cols", [](arma::cx_mat const &m) { return m.n_cols; })
+      .method("n_elem", [](arma::cx_mat const &m) { return m.n_elem; });
+
+  mod.add_type<arma::Mat<int64_t>>("typ_arma_mat_int64_t")
+      .constructor<int64_t *, arma::uword, arma::uword, bool, bool>();
+
   julia::define_types(mod);
   julia::define_modules(mod);
 }

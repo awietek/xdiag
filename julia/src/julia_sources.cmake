@@ -1,5 +1,7 @@
 set(XDIAG_JULIA_SOURCES
+    src/xdiagjl.cpp
     src/types.cpp
+    src/modules.cpp
     src/algebra.cpp
     src/basis.cpp
     src/bits.cpp

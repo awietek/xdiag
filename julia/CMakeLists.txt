@@ -10,7 +10,7 @@ get_filename_component(JlCxx_location ${JlCxx_location} DIRECTORY)
 message(STATUS ${JlCxx_location})
 
 # Julia wrapper source list (relative to this julia/ directory).
-include(${CMAKE_CURRENT_SOURCE_DIR}/src/xdiag_julia_sources.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/src/julia_sources.cmake)
 
 # ---------------------------------------------------------------------------
 # Instantiation-group expansion (mirrors xdiag/CMakeLists.txt)

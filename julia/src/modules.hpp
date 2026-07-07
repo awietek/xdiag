@@ -4,6 +4,9 @@
 #include <julia/src/xdiagjl.hpp>
 
 namespace xdiag::julia {
+
+void define_modules(jlcxx::Module &mod);
+
 void define_algebra(jlcxx::Module &mod);
 void define_basis(jlcxx::Module &mod);
 void define_bits(jlcxx::Module &mod);
@@ -19,4 +22,4 @@ void define_random(jlcxx::Module &mod);
 void define_states(jlcxx::Module &mod);
 void define_symmetries(jlcxx::Module &mod);
 void define_utils(jlcxx::Module &mod);
-}
+} // namespace xdiag::julia

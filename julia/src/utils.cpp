@@ -11,13 +11,6 @@ void define_utils(jlcxx::Module &mod) {
                                    const char *func, int line) {
     JULIA_XDIAG_CALL_VOID(throw_error(message, file, func, line));
   });
-  mod.method("fun_rethrow_error", [](Error const &error, const char *file,
-                                     const char *func, int line) {
-    JULIA_XDIAG_CALL_VOID(rethrow_error(error, file, func, line));
-  });
-  mod.method("fun_error_trace", [](Error const &error) {
-    JULIA_XDIAG_CALL_VOID(error_trace(error));
-  });
   mod.method("fun_set_verbosity", [](int64_t level) {
     JULIA_XDIAG_CALL_VOID(set_verbosity(level));
   });
@@ -26,7 +19,6 @@ void define_utils(jlcxx::Module &mod) {
   mod.method("fun_say_hello", []() { JULIA_XDIAG_CALL_VOID(say_hello()); });
   mod.method("fun_print_version",
              []() { JULIA_XDIAG_CALL_VOID(print_version()); });
-  mod.method("fun_rightnow", []() { JULIA_XDIAG_CALL_RETURN(rightnow()) });
   mod.method("fun_tic",
              [](bool begin = true, std::string msg = "", int verbosity = 0) {
                JULIA_XDIAG_CALL_VOID(tic(true, "", 0));

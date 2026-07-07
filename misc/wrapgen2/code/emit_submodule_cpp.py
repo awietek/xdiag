@@ -1,14 +1,25 @@
 #!/usr/bin/env python
 import sys
-
-ignored = ["operator<<", "operator++", "operator[]", "fill", "what"]
-ignored_classes = ["FileTomlHandler", "GPWF"]
+from common import *
 
 def is_deleted(line):
     return line.split("=")[-1].strip() == "delete"
+
 def is_const_qualified(line):
     return line.split(")")[-1].strip() == "const"
 
+# If some argument list contains a "Block", then we cannot expose it with the
+# Block interface, since CxxWrap can't handle the std::variant
+# Instead each Block gets replaced by the concrete block types
+def get_substituted_args(args):
+    for t in ignored_types:
+        if t in args:
+            return []
+        
+    if "Block" in args:
+        return [b.join(args.split("Block")) for b in blocks]
+    else:
+        return [args]
 
 def get_class_name(line):
     return str(line.split("[")[1].split("]")[0]).strip()
@@ -88,51 +99,61 @@ using namespace xdiag;
                 continue
             
             args, args_raw = get_args(line)
-            ss += "mod.method(\"con_{}\", []({}) {{ ".format(class_name, args)
-            ss += "  JULIA_XDIAG_CALL_RETURN({}({})) ".format(class_name, args_raw);
-            ss += "});\n"
+
+            # the block constructors with RepresentationSet will not be exposed to Julia
+            if "RepresentationSet" in args:
+                continue
+
+            args_all = get_substituted_args(args)
+            for arg in args_all:
+                ss += "mod.method(\"con_{}\", []({}) {{ ".format(class_name, arg)
+                ss += "  JULIA_XDIAG_CALL_RETURN({}({})) ".format(class_name, args_raw);
+                ss += "});\n"
 
         elif "CXX_METHOD" in line:
             class_name = get_class_name(line)
-            args, args_raw = get_args(line)
             method_name, return_type = get_name_return_type(line, "CXX_METHOD")
-            if method_name in ignored:
+            if method_name in ignored or return_type in ignored_types:
                 continue
-
-            conststr = "const" if is_const_qualified(line) else ""
+            conststr = "const" if is_const_qualified(line) else ""           
             
-            
-            if args == "":
-                ss += "mod.method(\"mth_{}\", []({} {}& self) {{ ".format(method_name, conststr, class_name)
-            else:
-                ss += "mod.method(\"mth_{}\", []({} {}& self, {}) {{ ".format(method_name, class_name, conststr, args)
-
-            if return_type == "void":
-                ss += "JULIA_XDIAG_CALL_VOID(self.{}({})); ".format(method_name, args_raw);
-            else:
-                ss += "JULIA_XDIAG_CALL_RETURN(self.{}({}))".format(method_name, args_raw);
-            ss += "});\n"
+            args, args_raw = get_args(line)
+            args_all = get_substituted_args(args)
+            for args in args_all:
+                if args == "":
+                    ss += "mod.method(\"mth_{}\", []({} {}& self) {{ ".format(method_name, conststr, class_name)
+                else:
+                    ss += "mod.method(\"mth_{}\", []({} {}& self, {}) {{ ".format(method_name, class_name, conststr, args)
+                    
+                if return_type == "void":
+                    ss += "JULIA_XDIAG_CALL_VOID(self.{}({})); ".format(method_name, args_raw);
+                else:
+                    ss += "JULIA_XDIAG_CALL_RETURN(self.{}({}))".format(method_name, args_raw);
+                ss += "});\n"
 
         elif "FUNCTION_DECL" in line:
-            args, args_raw = get_args(line)
             function_name, return_type = get_name_return_type(line, "FUNCTION_DECL")
-
-            if function_name in ignored:
+            if function_name in ignored or return_type in ignored_types:
                 continue
-            
-            ss += "mod.method(\"fun_{}\", []({}) {{ ".format(function_name, args)
-            if return_type == "void":
-                ss += "JULIA_XDIAG_CALL_VOID({}({})); ".format(function_name, args_raw);
-            else:
-                ss += "JULIA_XDIAG_CALL_RETURN({}({}))".format(function_name, args_raw);
-            ss += "});\n"
 
-            
-            # print("{:20s} {:20s} {:20s} {:20s}".format(function_name, return_type, args, args_raw))
+            args, args_raw = get_args(line)
+            args_all = get_substituted_args(args)
+            for args in args_all:
+                ss += "mod.method(\"fun_{}\", []({}) {{ ".format(function_name, args)
+                if return_type == "void":
+                    ss += "JULIA_XDIAG_CALL_VOID({}({})); ".format(function_name, args_raw);
+                else:
+                    ss += "JULIA_XDIAG_CALL_RETURN({}({}))".format(function_name, args_raw);
+                ss += "});\n"
+
+        elif "STRUCT_DECL" in line:
+            struct_name, fields = get_struct_name_fields(line)
+            for field in fields:
+                ss += "mod.method(\"mth_{}\", []({} const& self) {{ ".format(
+                    field, struct_name)
+                ss += "return self.{}; }});\n".format(field);
+
         total_string += ss
-        
-
-            
     
     footer = """}
 } // namespace xdiag::julia"""
@@ -140,4 +161,5 @@ using namespace xdiag;
     return total_string
 
 module = str(sys.argv[1])
+# emit_submodule(module)
 print(emit_submodule(module))

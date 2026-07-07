@@ -11,9 +11,6 @@ void define_symmetries(jlcxx::Module &mod) {
              []() { JULIA_XDIAG_CALL_RETURN(Permutation()) });
   mod.method("con_Permutation",
              [](int64_t size) { JULIA_XDIAG_CALL_RETURN(Permutation(size)) });
-  mod.method("con_Permutation", [](std::initializer_list<int64_t> list) {
-    JULIA_XDIAG_CALL_RETURN(Permutation(list))
-  });
   mod.method("con_Permutation", [](std::vector<int32_t> const &array) {
     JULIA_XDIAG_CALL_RETURN(Permutation(array))
   });
@@ -99,12 +96,6 @@ void define_symmetries(jlcxx::Module &mod) {
              [](PermutationGroup const &self, int64_t s1, int64_t s2) {
                JULIA_XDIAG_CALL_RETURN(self.multiply(s1, s2))
              });
-  mod.method("mth_begin", [](const PermutationGroup &self) {
-    JULIA_XDIAG_CALL_RETURN(self.begin())
-  });
-  mod.method("mth_end", [](const PermutationGroup &self) {
-    JULIA_XDIAG_CALL_RETURN(self.end())
-  });
   mod.method("fun_nsites", [](PermutationGroup const &group) {
     JULIA_XDIAG_CALL_RETURN(nsites(group))
   });
@@ -123,10 +114,6 @@ void define_symmetries(jlcxx::Module &mod) {
   mod.method("con_Representation", [](PermutationGroup const &group) {
     JULIA_XDIAG_CALL_RETURN(Representation(group))
   });
-  mod.method("con_Representation",
-             [](PermutationGroup const &group, Vector const &characters) {
-               JULIA_XDIAG_CALL_RETURN(Representation(group, characters))
-             });
   mod.method("con_Representation", [](std::string type, int64_t charge) {
     JULIA_XDIAG_CALL_RETURN(Representation(type, charge))
   });
@@ -155,9 +142,6 @@ void define_symmetries(jlcxx::Module &mod) {
   });
   mod.method("mth_charge", [](const Representation &self) {
     JULIA_XDIAG_CALL_RETURN(self.charge())
-  });
-  mod.method("mth_characters", [](const Representation &self) {
-    JULIA_XDIAG_CALL_RETURN(self.characters())
   });
   mod.method("fun_isreal", [](Representation const &irrep) {
     JULIA_XDIAG_CALL_RETURN(isreal(irrep))

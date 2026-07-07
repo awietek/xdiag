@@ -2,11 +2,12 @@
 
 #include <xdiag/armadillo.hpp>
 #include <xdiag/math/complex.hpp>
+#include <xdiag/utils/xdiag_api.hpp>
 
 namespace xdiag {
 
 // COO format
-template <typename idx_t, typename coeff_t> struct COOMatrix {
+template <typename idx_t, typename coeff_t> struct XDIAG_API COOMatrix {
   idx_t nrows;             // number of rows in the matrix
   idx_t ncols;             // number of columns in the matrix
   arma::Col<idx_t> row;    // row indices
@@ -17,7 +18,7 @@ template <typename idx_t, typename coeff_t> struct COOMatrix {
 };
 
 // CSR format
-template <typename idx_t, typename coeff_t> struct CSRMatrix {
+template <typename idx_t, typename coeff_t> struct XDIAG_API CSRMatrix {
   idx_t nrows;             // number of rows in the matrix
   idx_t ncols;             // number of columns in the matrix
   arma::Col<idx_t> rowptr; // pointer to elements of a row (size: nrows+1)
@@ -28,7 +29,7 @@ template <typename idx_t, typename coeff_t> struct CSRMatrix {
 };
 
 // CSC format
-template <typename idx_t, typename coeff_t> struct CSCMatrix {
+template <typename idx_t, typename coeff_t> struct XDIAG_API CSCMatrix {
   idx_t nrows;             // number of rows in the matrix
   idx_t ncols;             // number of columns in the matrix
   arma::Col<idx_t> colptr; // pointer to elements of a row (size: ncols+1)
@@ -39,28 +40,28 @@ template <typename idx_t, typename coeff_t> struct CSCMatrix {
 };
 
 template <typename idx_t, typename coeff_t>
-constexpr bool isreal(CSRMatrix<idx_t, coeff_t> const &) {
+constexpr XDIAG_API bool isreal(CSRMatrix<idx_t, coeff_t> const &) {
   return isreal<coeff_t>();
 }
 template <typename idx_t, typename coeff_t>
-constexpr bool isreal(CSCMatrix<idx_t, coeff_t> const &) {
+constexpr XDIAG_API bool isreal(CSCMatrix<idx_t, coeff_t> const &) {
   return isreal<coeff_t>();
 }
 template <typename idx_t, typename coeff_t>
-constexpr bool isreal(COOMatrix<idx_t, coeff_t> const &) {
+constexpr XDIAG_API bool isreal(COOMatrix<idx_t, coeff_t> const &) {
   return isreal<coeff_t>();
 }
 
 template <typename idx_t, typename coeff_t>
-constexpr bool ishermitian(CSRMatrix<idx_t, coeff_t> const &A) {
+constexpr XDIAG_API bool ishermitian(CSRMatrix<idx_t, coeff_t> const &A) {
   return A.ishermitian;
 }
 template <typename idx_t, typename coeff_t>
-constexpr bool ishermitian(CSCMatrix<idx_t, coeff_t> const &A) {
+constexpr XDIAG_API bool ishermitian(CSCMatrix<idx_t, coeff_t> const &A) {
   return A.ishermitian;
 }
 template <typename idx_t, typename coeff_t>
-constexpr bool ishermitian(COOMatrix<idx_t, coeff_t> const &A) {
+constexpr XDIAG_API bool ishermitian(COOMatrix<idx_t, coeff_t> const &A) {
   return A.ishermitian;
 }
 
