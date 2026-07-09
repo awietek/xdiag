@@ -23,18 +23,37 @@ Op::Op(std::string type, int64_t site)
     : type_(type), sites_(std::vector<int64_t>{site}) {}
 Op::Op(std::string type, std::vector<int64_t> const &sites)
     : type_(type), sites_(sites) {}
+Op::Op(std::string type, arma::Col<int64_t> const &sites)
+    : type_(type), sites_(std::vector<int64_t>(sites.begin(), sites.end())) {}
+Op::Op(std::string type, std::initializer_list<int64_t> const &sites)
+    : type_(type), sites_(std::vector<int64_t>(sites.begin(), sites.end())) {}
 
 Op::Op(std::string type, int64_t site, arma::mat const &mat)
     : type_(type), sites_(std::vector<int64_t>{site}), matrix_(mat) {}
 Op::Op(std::string type, std::vector<int64_t> const &sites,
        arma::mat const &mat)
     : type_(type), sites_(sites), matrix_(mat) {}
+Op::Op(std::string type, arma::Col<int64_t> const &sites, arma::mat const &mat)
+    : type_(type), sites_(std::vector<int64_t>(sites.begin(), sites.end())),
+      matrix_(mat) {}
+Op::Op(std::string type, std::initializer_list<int64_t> const &sites,
+       arma::mat const &mat)
+    : type_(type), sites_(std::vector<int64_t>(sites.begin(), sites.end())),
+      matrix_(mat) {}
 
 Op::Op(std::string type, int64_t site, arma::cx_mat const &mat)
     : type_(type), sites_(std::vector<int64_t>{site}), matrix_(mat) {}
 Op::Op(std::string type, std::vector<int64_t> const &sites,
        arma::cx_mat const &mat)
     : type_(type), sites_(sites), matrix_(mat) {}
+Op::Op(std::string type, arma::Col<int64_t> const &sites,
+       arma::cx_mat const &mat)
+    : type_(type), sites_(std::vector<int64_t>(sites.begin(), sites.end())),
+      matrix_(mat) {}
+Op::Op(std::string type, std::initializer_list<int64_t> const &sites,
+       arma::cx_mat const &mat)
+    : type_(type), sites_(std::vector<int64_t>(sites.begin(), sites.end())),
+      matrix_(mat) {}
 
 Op::Op(std::string type, int64_t site, Matrix const &mat)
     : type_(type), sites_(std::vector<int64_t>{site}), matrix_(mat) {}

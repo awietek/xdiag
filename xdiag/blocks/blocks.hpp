@@ -40,8 +40,9 @@ XDIAG_API int64_t nsites(Block const &block);
 XDIAG_API bool isreal(Block const &block);
 XDIAG_API int64_t index(Block const &block, ProductState const &pstate);
 
-XDIAG_API std::ostream &operator<<(std::ostream &out, Block const &block);
-XDIAG_API std::string to_string(Block const &block);
+// Don't make API -> double registration in wrapper
+std::ostream &operator<<(std::ostream &out, Block const &block);
+std::string to_string(Block const &block);
 
 // Render a ProductState using the labels appropriate to its block (spin-1/2
 // arrows, boson occupation numbers on a blue->red gradient).

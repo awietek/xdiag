@@ -68,7 +68,7 @@ public:
   bit_t operator*() const;
 
 private:
-  bit_t current_;
+  int64_t current_;
 };
 
 // True iff the enumeration is Subsets, i.e. non-number-conserving. Used by the

@@ -24,34 +24,8 @@ void define_operators(jlcxx::Module &mod) {
              [](Monomial &self) { JULIA_XDIAG_CALL_RETURN(self.empty()) });
   mod.method("mth_ops",
              [](Monomial &self) { JULIA_XDIAG_CALL_RETURN(self.ops()) });
-  mod.method("mth_operator*", [](Monomial &self, Op const &rhs) {
-    JULIA_XDIAG_CALL_RETURN(self.operator*(rhs))
-  });
-  mod.method("mth_operator*", [](Monomial &self, Monomial const &rhs) {
-    JULIA_XDIAG_CALL_RETURN(self.operator*(rhs))
-  });
-  mod.method("mth_operator*=", [](Monomial &self, Op const &rhs) {
-    JULIA_XDIAG_CALL_RETURN(self.operator*=(rhs))
-  });
-  mod.method("mth_operator*=", [](Monomial &self, Monomial const &rhs) {
-    JULIA_XDIAG_CALL_RETURN(self.operator*=(rhs))
-  });
-  mod.method("mth_operator==", [](Monomial &self, Monomial const &rhs) {
-    JULIA_XDIAG_CALL_RETURN(self.operator==(rhs))
-  });
-  mod.method("mth_operator!=", [](Monomial &self, Monomial const &rhs) {
-    JULIA_XDIAG_CALL_RETURN(self.operator!=(rhs))
-  });
-  mod.method("mth_operator<", [](Monomial &self, Monomial const &rhs) {
-    JULIA_XDIAG_CALL_RETURN(self.operator<(rhs))
-  });
-  mod.method("mth_isreal",
-             [](Monomial &self) { JULIA_XDIAG_CALL_RETURN(self.isreal()) });
-  mod.method("fun_operator*", [](Op const &lhs, Op const &rhs) {
-    JULIA_XDIAG_CALL_RETURN(operator*(lhs, rhs))
-  });
-  mod.method("fun_operator*", [](Op const &lhs, Monomial const &rhs) {
-    JULIA_XDIAG_CALL_RETURN(operator*(lhs, rhs))
+  mod.method("mth_isreal", [](const Monomial &self) {
+    JULIA_XDIAG_CALL_RETURN(self.isreal())
   });
   mod.method("fun_isreal",
              [](Monomial const &m) { JULIA_XDIAG_CALL_RETURN(isreal(m)) });
@@ -66,6 +40,9 @@ void define_operators(jlcxx::Module &mod) {
   mod.method("con_Op", [](std::string type, std::vector<int64_t> const &sites) {
     JULIA_XDIAG_CALL_RETURN(Op(type, sites))
   });
+  mod.method("con_Op", [](std::string type, arma::Col<int64_t> const &sites) {
+    JULIA_XDIAG_CALL_RETURN(Op(type, sites))
+  });
   mod.method("con_Op",
              [](std::string type, int64_t site, arma::mat const &matrix) {
                JULIA_XDIAG_CALL_RETURN(Op(type, site, matrix))
@@ -74,11 +51,19 @@ void define_operators(jlcxx::Module &mod) {
                           arma::mat const &matrix) {
     JULIA_XDIAG_CALL_RETURN(Op(type, sites, matrix))
   });
+  mod.method("con_Op", [](std::string type, arma::Col<int64_t> const &sites,
+                          arma::mat const &matrix) {
+    JULIA_XDIAG_CALL_RETURN(Op(type, sites, matrix))
+  });
   mod.method("con_Op",
              [](std::string type, int64_t site, arma::cx_mat const &matrix) {
                JULIA_XDIAG_CALL_RETURN(Op(type, site, matrix))
              });
   mod.method("con_Op", [](std::string type, std::vector<int64_t> const &sites,
+                          arma::cx_mat const &matrix) {
+    JULIA_XDIAG_CALL_RETURN(Op(type, sites, matrix))
+  });
+  mod.method("con_Op", [](std::string type, arma::Col<int64_t> const &sites,
                           arma::cx_mat const &matrix) {
     JULIA_XDIAG_CALL_RETURN(Op(type, sites, matrix))
   });
@@ -94,15 +79,6 @@ void define_operators(jlcxx::Module &mod) {
              [](const Op &self) { JULIA_XDIAG_CALL_RETURN(self.hasmatrix()) });
   mod.method("mth_isreal",
              [](const Op &self) { JULIA_XDIAG_CALL_RETURN(self.isreal()) });
-  mod.method("mth_operator==", [](Op const &self, const Op &rhs) {
-    JULIA_XDIAG_CALL_RETURN(self.operator==(rhs))
-  });
-  mod.method("mth_operator!=", [](Op const &self, const Op &rhs) {
-    JULIA_XDIAG_CALL_RETURN(self.operator!=(rhs))
-  });
-  mod.method("mth_operator<", [](Op &self, const Op &rhs) {
-    JULIA_XDIAG_CALL_RETURN(self.operator<(rhs))
-  });
   mod.method("fun_isreal",
              [](Op const &op) { JULIA_XDIAG_CALL_RETURN(isreal(op)) });
   mod.method("fun_to_string",
@@ -130,171 +106,161 @@ void define_operators(jlcxx::Module &mod) {
   mod.method("con_OpSum", [](complex coeff, Monomial const &mono) {
     JULIA_XDIAG_CALL_RETURN(OpSum(coeff, mono))
   });
-  mod.method("mth_operator+=", [](OpSum &self, OpSum const &ops) {
-    JULIA_XDIAG_CALL_RETURN(self.operator+=(ops))
-  });
-  mod.method("mth_operator+=", [](OpSum &self, Op const &op) {
-    JULIA_XDIAG_CALL_RETURN(self.operator+=(op))
-  });
-  mod.method("mth_operator+=", [](OpSum &self, Monomial const &mono) {
-    JULIA_XDIAG_CALL_RETURN(self.operator+=(mono))
-  });
-  mod.method("mth_operator+", [](OpSum const &self, OpSum const &ops) {
-    JULIA_XDIAG_CALL_RETURN(self.operator+(ops))
-  });
-  mod.method("mth_operator+", [](OpSum const &self, Op const &op) {
-    JULIA_XDIAG_CALL_RETURN(self.operator+(op))
-  });
-  mod.method("mth_operator+", [](OpSum const &self, Monomial const &mono) {
-    JULIA_XDIAG_CALL_RETURN(self.operator+(mono))
-  });
-  mod.method("mth_operator-=", [](OpSum &self, OpSum const &ops) {
-    JULIA_XDIAG_CALL_RETURN(self.operator-=(ops))
-  });
-  mod.method("mth_operator-=", [](OpSum &self, Op const &op) {
-    JULIA_XDIAG_CALL_RETURN(self.operator-=(op))
-  });
-  mod.method("mth_operator-=", [](OpSum &self, Monomial const &mono) {
-    JULIA_XDIAG_CALL_RETURN(self.operator-=(mono))
-  });
-  mod.method("mth_operator-", [](OpSum const &self, OpSum const &ops) {
-    JULIA_XDIAG_CALL_RETURN(self.operator-(ops))
-  });
-  mod.method("mth_operator-", [](OpSum const &self, Op const &op) {
-    JULIA_XDIAG_CALL_RETURN(self.operator-(op))
-  });
-  mod.method("mth_operator-", [](OpSum const &self, Monomial const &mono) {
-    JULIA_XDIAG_CALL_RETURN(self.operator-(mono))
-  });
-  mod.method("mth_operator-", [](const OpSum &self) {
-    JULIA_XDIAG_CALL_RETURN(self.operator-())
-  });
-  mod.method("mth_operator*=", [](OpSum &self, double scalar) {
-    JULIA_XDIAG_CALL_RETURN(self.operator*=(scalar))
-  });
-  mod.method("mth_operator*=", [](OpSum &self, complex scalar) {
-    JULIA_XDIAG_CALL_RETURN(self.operator*=(scalar))
-  });
-  mod.method("mth_operator/=", [](OpSum &self, double scalar) {
-    JULIA_XDIAG_CALL_RETURN(self.operator/=(scalar))
-  });
-  mod.method("mth_operator/=", [](OpSum &self, complex scalar) {
-    JULIA_XDIAG_CALL_RETURN(self.operator/=(scalar))
-  });
-  mod.method("mth_operator*", [](OpSum const &self, OpSum const &rhs) {
-    JULIA_XDIAG_CALL_RETURN(self.operator*(rhs))
-  });
-  mod.method("mth_operator*=", [](OpSum &self, OpSum const &rhs) {
-    JULIA_XDIAG_CALL_RETURN(self.operator*=(rhs))
-  });
-  mod.method("mth_operator*", [](OpSum const &self, Op const &rhs) {
-    JULIA_XDIAG_CALL_RETURN(self.operator*(rhs))
-  });
-  mod.method("mth_operator*=", [](OpSum &self, Op const &rhs) {
-    JULIA_XDIAG_CALL_RETURN(self.operator*=(rhs))
-  });
-  mod.method("mth_operator*", [](OpSum const &self, Monomial const &rhs) {
-    JULIA_XDIAG_CALL_RETURN(self.operator*(rhs))
-  });
-  mod.method("mth_operator*=", [](OpSum &self, Monomial const &rhs) {
-    JULIA_XDIAG_CALL_RETURN(self.operator*=(rhs))
-  });
   mod.method("mth_plain",
              [](const OpSum &self) { JULIA_XDIAG_CALL_RETURN(self.plain()) });
   mod.method("mth_size",
              [](OpSum &self) { JULIA_XDIAG_CALL_RETURN(self.size()) });
-  mod.method("mth_operator==", [](OpSum const &self, OpSum const &rhs) {
-    JULIA_XDIAG_CALL_RETURN(self.operator==(rhs))
-  });
-  mod.method("mth_operator!=", [](OpSum const &self, OpSum const &rhs) {
-    JULIA_XDIAG_CALL_RETURN(self.operator!=(rhs))
-  });
   mod.method("mth_isreal",
              [](const OpSum &self) { JULIA_XDIAG_CALL_RETURN(self.isreal()) });
   mod.method("mth_empty",
              [](const OpSum &self) { JULIA_XDIAG_CALL_RETURN(self.empty()) });
-  mod.method("fun_operator*", [](double coeff, Op const &op) {
-    JULIA_XDIAG_CALL_RETURN(operator*(coeff, op))
-  });
-  mod.method("fun_operator*", [](complex coeff, Op const &op) {
-    JULIA_XDIAG_CALL_RETURN(operator*(coeff, op))
-  });
-  mod.method("fun_operator*", [](std::string const &coeff, Op const &op) {
-    JULIA_XDIAG_CALL_RETURN(operator*(coeff, op))
-  });
-  mod.method("fun_operator*", [](Op const &op, double coeff) {
-    JULIA_XDIAG_CALL_RETURN(operator*(op, coeff))
-  });
-  mod.method("fun_operator*", [](Op const &op, complex coeff) {
-    JULIA_XDIAG_CALL_RETURN(operator*(op, coeff))
-  });
-  mod.method("fun_operator*", [](Op const &op, std::string const &coeff) {
-    JULIA_XDIAG_CALL_RETURN(operator*(op, coeff))
-  });
-  mod.method("fun_operator*", [](double coeff, Monomial const &mono) {
-    JULIA_XDIAG_CALL_RETURN(operator*(coeff, mono))
-  });
-  mod.method("fun_operator*", [](complex coeff, Monomial const &mono) {
-    JULIA_XDIAG_CALL_RETURN(operator*(coeff, mono))
-  });
-  mod.method("fun_operator*",
-             [](std::string const &coeff, Monomial const &mono) {
-               JULIA_XDIAG_CALL_RETURN(operator*(coeff, mono))
-             });
-  mod.method("fun_operator*", [](Monomial const &mono, double coeff) {
-    JULIA_XDIAG_CALL_RETURN(operator*(mono, coeff))
-  });
-  mod.method("fun_operator*", [](Monomial const &mono, complex coeff) {
-    JULIA_XDIAG_CALL_RETURN(operator*(mono, coeff))
-  });
-  mod.method("fun_operator*",
-             [](Monomial const &mono, std::string const &coeff) {
-               JULIA_XDIAG_CALL_RETURN(operator*(mono, coeff))
-             });
-  mod.method("fun_operator*", [](double scalar, OpSum const &ops) {
-    JULIA_XDIAG_CALL_RETURN(operator*(scalar, ops))
-  });
-  mod.method("fun_operator*", [](complex scalar, OpSum const &ops) {
-    JULIA_XDIAG_CALL_RETURN(operator*(scalar, ops))
-  });
-  mod.method("fun_operator*", [](OpSum const &ops, double scalar) {
-    JULIA_XDIAG_CALL_RETURN(operator*(ops, scalar))
-  });
-  mod.method("fun_operator*", [](OpSum const &ops, complex scalar) {
-    JULIA_XDIAG_CALL_RETURN(operator*(ops, scalar))
-  });
-  mod.method("fun_operator/", [](OpSum const &ops, double scalar) {
-    JULIA_XDIAG_CALL_RETURN(operator/(ops, scalar))
-  });
-  mod.method("fun_operator/", [](OpSum const &ops, complex scalar) {
-    JULIA_XDIAG_CALL_RETURN(operator/(ops, scalar))
-  });
-  mod.method("fun_operator+", [](Monomial const &lhs, Monomial const &rhs) {
-    JULIA_XDIAG_CALL_RETURN(operator+(lhs, rhs))
-  });
-  mod.method("fun_operator-", [](Monomial const &lhs, Monomial const &rhs) {
-    JULIA_XDIAG_CALL_RETURN(operator-(lhs, rhs))
-  });
-  mod.method("fun_operator-", [](Monomial const &mono) {
-    JULIA_XDIAG_CALL_RETURN(operator-(mono))
-  });
-  mod.method("fun_operator+", [](Monomial const &lhs, OpSum const &rhs) {
-    JULIA_XDIAG_CALL_RETURN(operator+(lhs, rhs))
-  });
-  mod.method("fun_operator-", [](Monomial const &lhs, OpSum const &rhs) {
-    JULIA_XDIAG_CALL_RETURN(operator-(lhs, rhs))
-  });
-  mod.method("fun_operator*", [](Op const &lhs, OpSum const &rhs) {
-    JULIA_XDIAG_CALL_RETURN(operator*(lhs, rhs))
-  });
-  mod.method("fun_operator*", [](Monomial const &lhs, OpSum const &rhs) {
-    JULIA_XDIAG_CALL_RETURN(operator*(lhs, rhs))
-  });
   mod.method("fun_isreal",
              [](OpSum const &ops) { JULIA_XDIAG_CALL_RETURN(isreal(ops)) });
   mod.method("fun_empty",
              [](OpSum const &ops) { JULIA_XDIAG_CALL_RETURN(empty(ops)) });
   mod.method("fun_to_string",
              [](OpSum const &ops) { JULIA_XDIAG_CALL_RETURN(to_string(ops)) });
+
+  // operator overloads
+  mod.method("op_getindex", [](Monomial const &self, int64_t idx) {
+    JULIA_XDIAG_CALL_RETURN(self[idx])
+  });
+  mod.method("op_mul", [](Monomial const &self, Op const &rhs) {
+    JULIA_XDIAG_CALL_RETURN(self.operator*(rhs))
+  });
+  mod.method("op_mul", [](Monomial const &self, Monomial const &rhs) {
+    JULIA_XDIAG_CALL_RETURN(self.operator*(rhs))
+  });
+  mod.method("op_isequal", [](Monomial &self, Monomial const &rhs) {
+    JULIA_XDIAG_CALL_RETURN(self.operator==(rhs))
+  });
+  mod.method("op_mul", [](Op const &lhs, Op const &rhs) {
+    JULIA_XDIAG_CALL_RETURN(operator*(lhs, rhs))
+  });
+  mod.method("op_mul", [](Op const &lhs, Monomial const &rhs) {
+    JULIA_XDIAG_CALL_RETURN(operator*(lhs, rhs))
+  });
+  mod.method("op_getindex", [](Op const &self, int64_t idx) {
+    JULIA_XDIAG_CALL_RETURN(self[idx])
+  });
+  mod.method("op_isequal", [](Op const &self, const Op &rhs) {
+    JULIA_XDIAG_CALL_RETURN(self.operator==(rhs))
+  });
+  mod.method("op_add", [](OpSum const &self, OpSum const &ops) {
+    JULIA_XDIAG_CALL_RETURN(self.operator+(ops))
+  });
+  mod.method("op_add", [](OpSum const &self, Op const &op) {
+    JULIA_XDIAG_CALL_RETURN(self.operator+(op))
+  });
+  mod.method("op_add", [](OpSum const &self, Monomial const &mono) {
+    JULIA_XDIAG_CALL_RETURN(self.operator+(mono))
+  });
+  mod.method("op_sub", [](OpSum const &self, OpSum const &ops) {
+    JULIA_XDIAG_CALL_RETURN(self.operator-(ops))
+  });
+  mod.method("op_sub", [](OpSum const &self, Op const &op) {
+    JULIA_XDIAG_CALL_RETURN(self.operator-(op))
+  });
+  mod.method("op_sub", [](OpSum const &self, Monomial const &mono) {
+    JULIA_XDIAG_CALL_RETURN(self.operator-(mono))
+  });
+  mod.method("op_sub", [](const OpSum &self) {
+    JULIA_XDIAG_CALL_RETURN(self.operator-())
+  });
+  mod.method("op_mul", [](OpSum const &self, OpSum const &rhs) {
+    JULIA_XDIAG_CALL_RETURN(self.operator*(rhs))
+  });
+  mod.method("op_mul", [](OpSum const &self, Op const &rhs) {
+    JULIA_XDIAG_CALL_RETURN(self.operator*(rhs))
+  });
+  mod.method("op_mul", [](OpSum const &self, Monomial const &rhs) {
+    JULIA_XDIAG_CALL_RETURN(self.operator*(rhs))
+  });
+  mod.method("op_setindex",
+             [](OpSum &self, std::string const &name, double const &val) {
+               JULIA_XDIAG_CALL_VOID(self[name] = val);
+             });
+  mod.method("op_setindex",
+             [](OpSum &self, std::string const &name, complex const &val) {
+               JULIA_XDIAG_CALL_VOID(self[name] = val);
+             });
+  mod.method("op_isequal", [](OpSum const &self, OpSum const &rhs) {
+    JULIA_XDIAG_CALL_RETURN(self.operator==(rhs))
+  });
+  mod.method("op_mul", [](double coeff, Op const &op) {
+    JULIA_XDIAG_CALL_RETURN(operator*(coeff, op))
+  });
+  mod.method("op_mul", [](complex coeff, Op const &op) {
+    JULIA_XDIAG_CALL_RETURN(operator*(coeff, op))
+  });
+  mod.method("op_mul", [](std::string const &coeff, Op const &op) {
+    JULIA_XDIAG_CALL_RETURN(operator*(coeff, op))
+  });
+  mod.method("op_mul", [](Op const &op, double coeff) {
+    JULIA_XDIAG_CALL_RETURN(operator*(op, coeff))
+  });
+  mod.method("op_mul", [](Op const &op, complex coeff) {
+    JULIA_XDIAG_CALL_RETURN(operator*(op, coeff))
+  });
+  mod.method("op_mul", [](Op const &op, std::string const &coeff) {
+    JULIA_XDIAG_CALL_RETURN(operator*(op, coeff))
+  });
+  mod.method("op_mul", [](double coeff, Monomial const &mono) {
+    JULIA_XDIAG_CALL_RETURN(operator*(coeff, mono))
+  });
+  mod.method("op_mul", [](complex coeff, Monomial const &mono) {
+    JULIA_XDIAG_CALL_RETURN(operator*(coeff, mono))
+  });
+  mod.method("op_mul", [](std::string const &coeff, Monomial const &mono) {
+    JULIA_XDIAG_CALL_RETURN(operator*(coeff, mono))
+  });
+  mod.method("op_mul", [](Monomial const &mono, double coeff) {
+    JULIA_XDIAG_CALL_RETURN(operator*(mono, coeff))
+  });
+  mod.method("op_mul", [](Monomial const &mono, complex coeff) {
+    JULIA_XDIAG_CALL_RETURN(operator*(mono, coeff))
+  });
+  mod.method("op_mul", [](Monomial const &mono, std::string const &coeff) {
+    JULIA_XDIAG_CALL_RETURN(operator*(mono, coeff))
+  });
+  mod.method("op_mul", [](double scalar, OpSum const &ops) {
+    JULIA_XDIAG_CALL_RETURN(operator*(scalar, ops))
+  });
+  mod.method("op_mul", [](complex scalar, OpSum const &ops) {
+    JULIA_XDIAG_CALL_RETURN(operator*(scalar, ops))
+  });
+  mod.method("op_mul", [](OpSum const &ops, double scalar) {
+    JULIA_XDIAG_CALL_RETURN(operator*(ops, scalar))
+  });
+  mod.method("op_mul", [](OpSum const &ops, complex scalar) {
+    JULIA_XDIAG_CALL_RETURN(operator*(ops, scalar))
+  });
+  mod.method("op_div", [](OpSum const &ops, double scalar) {
+    JULIA_XDIAG_CALL_RETURN(operator/(ops, scalar))
+  });
+  mod.method("op_div", [](OpSum const &ops, complex scalar) {
+    JULIA_XDIAG_CALL_RETURN(operator/(ops, scalar))
+  });
+  mod.method("op_add", [](Monomial const &lhs, Monomial const &rhs) {
+    JULIA_XDIAG_CALL_RETURN(operator+(lhs, rhs))
+  });
+  mod.method("op_sub", [](Monomial const &lhs, Monomial const &rhs) {
+    JULIA_XDIAG_CALL_RETURN(operator-(lhs, rhs))
+  });
+  mod.method("op_sub", [](Monomial const &mono) {
+    JULIA_XDIAG_CALL_RETURN(operator-(mono))
+  });
+  mod.method("op_add", [](Monomial const &lhs, OpSum const &rhs) {
+    JULIA_XDIAG_CALL_RETURN(operator+(lhs, rhs))
+  });
+  mod.method("op_sub", [](Monomial const &lhs, OpSum const &rhs) {
+    JULIA_XDIAG_CALL_RETURN(operator-(lhs, rhs))
+  });
+  mod.method("op_mul", [](Op const &lhs, OpSum const &rhs) {
+    JULIA_XDIAG_CALL_RETURN(operator*(lhs, rhs))
+  });
+  mod.method("op_mul", [](Monomial const &lhs, OpSum const &rhs) {
+    JULIA_XDIAG_CALL_RETURN(operator*(lhs, rhs))
+  });
 }
 } // namespace xdiag::julia

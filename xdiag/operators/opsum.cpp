@@ -375,7 +375,7 @@ static size_t coeff_visible_width(Coeff const &c) {
 
 std::ostream &operator<<(std::ostream &out, OpSum const &ops) {
   if (ops.size() == 0) {
-    out << "0\n";
+    out << "0.0";
     return out;
   }
 
@@ -398,7 +398,10 @@ std::ostream &operator<<(std::ostream &out, OpSum const &ops) {
   // bytes)
   for (size_t i = 0; i < cstrs.size(); ++i) {
     out << "  " << std::string(cw - cwidths[i], ' ') << cstrs[i] << "  "
-        << mstrs[i] << "\n";
+        << mstrs[i];
+    if (i != cstrs.size() - 1) {
+      out << "\n";
+    }
   }
 
   // Named parameters section
@@ -407,8 +410,16 @@ std::ostream &operator<<(std::ostream &out, OpSum const &ops) {
     size_t nw = 0;
     for (auto const &[name, val] : ops.params())
       nw = std::max(nw, name.size());
-    for (auto const &[name, val] : ops.params())
-      out << fmt::format("  {0:>{1}} = {2}\n", name, nw, to_string(val));
+
+    int64_t idx=0; 
+    for (auto const &[name, val] : ops.params()){
+      if (idx != ops.params().size() - 1) {
+	out << fmt::format("  {0:>{1}} = {2}\n", name, nw, to_string(val));
+      } else {
+	out << fmt::format("  {0:>{1}} = {2}", name, nw, to_string(val));
+      }
+      ++idx;
+    }
   }
   return out;
 }

@@ -94,16 +94,24 @@ void print_block(std::ostream &out, block_t const &block) {
   }
 
   auto group = block.irreps().group("SitePermutation");
+  auto chars = block.irreps().characters("SitePermutation");
   if (group) {
     out << "│ permutation symmetries used\n";
-    out << fmt::format(
-        "│ {:<9}: {:x}\n", "irrep ID",
-        random::hash(Representation(
-            *group, *block.irreps().characters("SitePermutation"))));
+
+    if (isreal(*chars)) {
+      out << fmt::format("│ {:<9}: {:x}\n", "irrep ID",
+                         random::hash(Representation(
+                             *group, chars->template as<arma::vec>())));
+    } else {
+      out << fmt::format("│ {:<9}: {:x}\n", "irrep ID",
+                         random::hash(Representation(
+                             *group, chars->template as<arma::cx_vec>())));
+    }
   }
 
   std::string basisname(block.basis()->name());
   basisname = std::regex_replace(basisname, std::regex("xdiag::basis::"), "");
+  basisname =  std::regex_replace(basisname, std::regex("xdiag::bits::Bitset<>"), "BitsetDynamic");
   basisname =
       std::regex_replace(basisname, std::regex("xdiag::combinatorics::"), "");
   basisname =
@@ -111,20 +119,18 @@ void print_block(std::ostream &out, block_t const &block) {
 
   out << fmt::format("│ {:<9}: {}\n", "basis", basisname);
   out << fmt::format("│ {:<9}: {:x}\n", "ID", random::hash(block));
-  out << fmt::format("│ {:<9}: {}\n", "dimension",
-                     fmt::format_de("{:L}", block.dim()));
-#ifdef XDIAG_DISTRIBUTED
-  if constexpr (std::is_same_v<block_t, SpinhalfDistributed> ||
-                std::is_same_v<block_t, tJDistributed> ||
-                std::is_same_v<block_t, ElectronDistributed>) {
-    // A distributed basis is split over MPI ranks; report the largest/smallest
-    // local block size as a measure of the load balance.
+
+  if constexpr (is_distributed_v<block_t>) {
+    out << fmt::format("│ {:<9}: {}\n", "dimension",
+                       fmt::format_de("{:L}", block.dim()));
     out << fmt::format("│ {:<9}: {}\n", "size max",
                        fmt::format_de("{:L}", block.size_max()));
-    out << fmt::format("│ {:<9}: {}\n", "size min",
+    out << fmt::format("│ {:<9}: {}", "size min",
                        fmt::format_de("{:L}", block.size_min()));
+  } else {
+    out << fmt::format("│ {:<9}: {}", "dimension",
+                       fmt::format_de("{:L}", block.dim()));
   }
-#endif
 }
 
 template void print_block<Spinhalf>(std::ostream &, Spinhalf const &);
@@ -135,8 +141,7 @@ template void print_block<tJ>(std::ostream &, tJ const &);
 #ifdef XDIAG_DISTRIBUTED
 template void print_block<SpinhalfDistributed>(std::ostream &,
                                                SpinhalfDistributed const &);
-template void print_block<tJDistributed>(std::ostream &,
-                                         tJDistributed const &);
+template void print_block<tJDistributed>(std::ostream &, tJDistributed const &);
 template void print_block<ElectronDistributed>(std::ostream &,
                                                ElectronDistributed const &);
 #endif

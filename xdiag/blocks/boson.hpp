@@ -53,8 +53,8 @@ private:
   std::shared_ptr<basis::Basis> basis_;
 };
 
-std::ostream &operator<<(std::ostream &out, Boson const &block);
-std::string to_string(Boson const &block);
+XDIAG_API std::ostream &operator<<(std::ostream &out, Boson const &block);
+XDIAG_API std::string to_string(Boson const &block);
 
 class XDIAG_API BosonIterator {
 public:

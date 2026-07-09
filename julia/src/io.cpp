@@ -17,16 +17,10 @@ void define_io(jlcxx::Module &mod) {
   mod.method("mth_defined", [](FileToml const &self, std::string key) {
     JULIA_XDIAG_CALL_RETURN(self.defined(key))
   });
-  mod.method("mth_write", [](FileToml const &self, std::string filename,
-                             std::string mode = "w") {
-    JULIA_XDIAG_CALL_VOID(self.write(filename, "w"));
-  });
-  mod.method("mth_operator==", [](FileToml const &self, FileToml const &other) {
-    JULIA_XDIAG_CALL_RETURN(self.operator==(other))
-  });
-  mod.method("mth_operator!=", [](FileToml const &self, FileToml const &other) {
-    JULIA_XDIAG_CALL_RETURN(self.operator!=(other))
-  });
+  mod.method("mth_write",
+             [](FileToml const &self, std::string filename, std::string mode) {
+               JULIA_XDIAG_CALL_VOID(self.write(filename, mode));
+             });
   mod.method("mth_keys",
              [](const FileToml &self) { JULIA_XDIAG_CALL_RETURN(self.keys()) });
   mod.method("fun_defined", [](FileToml const &fl, std::string key) {
@@ -39,15 +33,19 @@ void define_io(jlcxx::Module &mod) {
     JULIA_XDIAG_CALL_RETURN(read_permutation_group(file, tag))
   });
   mod.method("fun_read_representation", [](FileToml file, std::string irrep_tag,
-                                           std::string group_tag =
-                                               "Symmetries") {
-    JULIA_XDIAG_CALL_RETURN(read_representation(file, irrep_tag, "Symmetries"))
+                                           std::string group_tag) {
+    JULIA_XDIAG_CALL_RETURN(read_representation(file, irrep_tag, group_tag))
   });
   mod.method("fun_read_op", [](FileToml file, std::string tag) {
     JULIA_XDIAG_CALL_RETURN(read_op(file, tag))
   });
   mod.method("fun_read_opsum", [](FileToml file, std::string tag) {
     JULIA_XDIAG_CALL_RETURN(read_opsum(file, tag))
+  });
+
+  // operator overloads
+  mod.method("op_isequal", [](FileToml const &self, FileToml const &other) {
+    JULIA_XDIAG_CALL_RETURN(self.operator==(other))
   });
 }
 } // namespace xdiag::julia

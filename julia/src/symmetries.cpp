@@ -32,24 +32,10 @@ void define_symmetries(jlcxx::Module &mod) {
   mod.method("mth_array", [](const Permutation &self) {
     JULIA_XDIAG_CALL_RETURN(self.array())
   });
-  mod.method("mth_operator*=", [](Permutation &self, Permutation const &rhs) {
-    JULIA_XDIAG_CALL_RETURN(self.operator*=(rhs))
-  });
-  mod.method("mth_operator==",
-             [](Permutation const &self, Permutation const &rhs) {
-               JULIA_XDIAG_CALL_RETURN(self.operator==(rhs))
-             });
-  mod.method("mth_operator!=",
-             [](Permutation const &self, Permutation const &rhs) {
-               JULIA_XDIAG_CALL_RETURN(self.operator!=(rhs))
-             });
   mod.method("fun_size",
              [](Permutation const &p) { JULIA_XDIAG_CALL_RETURN(size(p)) });
   mod.method("fun_multiply", [](Permutation const &p1, Permutation const &p2) {
     JULIA_XDIAG_CALL_RETURN(multiply(p1, p2))
-  });
-  mod.method("fun_operator*", [](Permutation const &p1, Permutation const &p2) {
-    JULIA_XDIAG_CALL_RETURN(operator*(p1, p2))
   });
   mod.method("fun_inv",
              [](Permutation const &p) { JULIA_XDIAG_CALL_RETURN(inv(p)) });
@@ -72,14 +58,6 @@ void define_symmetries(jlcxx::Module &mod) {
                                         int64_t nsites) {
     JULIA_XDIAG_CALL_RETURN(PermutationGroup(ptr, n_permutations, nsites))
   });
-  mod.method("mth_operator==",
-             [](PermutationGroup const &self, PermutationGroup const &rhs) {
-               JULIA_XDIAG_CALL_RETURN(self.operator==(rhs))
-             });
-  mod.method("mth_operator!=",
-             [](PermutationGroup const &self, PermutationGroup const &rhs) {
-               JULIA_XDIAG_CALL_RETURN(self.operator!=(rhs))
-             });
   mod.method("mth_size", [](const PermutationGroup &self) {
     JULIA_XDIAG_CALL_RETURN(self.size())
   });
@@ -114,17 +92,17 @@ void define_symmetries(jlcxx::Module &mod) {
   mod.method("con_Representation", [](PermutationGroup const &group) {
     JULIA_XDIAG_CALL_RETURN(Representation(group))
   });
+  mod.method("con_Representation",
+             [](PermutationGroup const &group, arma::vec const &characters) {
+               JULIA_XDIAG_CALL_RETURN(Representation(group, characters))
+             });
+  mod.method("con_Representation",
+             [](PermutationGroup const &group, arma::cx_vec const &characters) {
+               JULIA_XDIAG_CALL_RETURN(Representation(group, characters))
+             });
   mod.method("con_Representation", [](std::string type, int64_t charge) {
     JULIA_XDIAG_CALL_RETURN(Representation(type, charge))
   });
-  mod.method("mth_operator==",
-             [](Representation const &self, Representation const &rhs) {
-               JULIA_XDIAG_CALL_RETURN(self.operator==(rhs))
-             });
-  mod.method("mth_operator!=",
-             [](Representation const &self, Representation const &rhs) {
-               JULIA_XDIAG_CALL_RETURN(self.operator!=(rhs))
-             });
   mod.method("mth_is_permutation", [](const Representation &self) {
     JULIA_XDIAG_CALL_RETURN(self.is_permutation())
   });
@@ -146,20 +124,40 @@ void define_symmetries(jlcxx::Module &mod) {
   mod.method("fun_isreal", [](Representation const &irrep) {
     JULIA_XDIAG_CALL_RETURN(isreal(irrep))
   });
-  mod.method("fun_isapprox", [](Representation const &r1,
-                                Representation const &r2, double tol = 1e-12) {
-    JULIA_XDIAG_CALL_RETURN(isapprox(r1, r2, 1e-12))
-  });
+  mod.method("fun_isapprox",
+             [](Representation const &r1, Representation const &r2,
+                double tol) { JULIA_XDIAG_CALL_RETURN(isapprox(r1, r2, tol)) });
   mod.method("fun_multiply",
              [](Representation const &r1, Representation const &r2) {
                JULIA_XDIAG_CALL_RETURN(multiply(r1, r2))
              });
-  mod.method("fun_operator*",
-             [](Representation const &r1, Representation const &r2) {
-               JULIA_XDIAG_CALL_RETURN(operator*(r1, r2))
-             });
   mod.method("fun_to_string", [](Representation const &irrep) {
     JULIA_XDIAG_CALL_RETURN(to_string(irrep))
+  });
+
+  // operator overloads
+  mod.method("op_getindex", [](Permutation const &self, int64_t i) {
+    JULIA_XDIAG_CALL_RETURN(self[i])
+  });
+  mod.method("op_isequal", [](Permutation const &self, Permutation const &rhs) {
+    JULIA_XDIAG_CALL_RETURN(self.operator==(rhs))
+  });
+  mod.method("op_mul", [](Permutation const &p1, Permutation const &p2) {
+    JULIA_XDIAG_CALL_RETURN(operator*(p1, p2))
+  });
+  mod.method("op_isequal",
+             [](PermutationGroup const &self, PermutationGroup const &rhs) {
+               JULIA_XDIAG_CALL_RETURN(self.operator==(rhs))
+             });
+  mod.method("op_getindex", [](PermutationGroup const &self, int64_t sym) {
+    JULIA_XDIAG_CALL_RETURN(self[sym])
+  });
+  mod.method("op_isequal",
+             [](Representation const &self, Representation const &rhs) {
+               JULIA_XDIAG_CALL_RETURN(self.operator==(rhs))
+             });
+  mod.method("op_mul", [](Representation const &r1, Representation const &r2) {
+    JULIA_XDIAG_CALL_RETURN(operator*(r1, r2))
   });
 }
 } // namespace xdiag::julia

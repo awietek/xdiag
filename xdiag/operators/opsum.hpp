@@ -78,7 +78,7 @@ public:
   Scalar &operator[](std::string const &name);
   Scalar const &operator[](std::string const &name) const;
   OpSum plain() const;
-
+  
   // Access
   std::vector<Term> const &terms() const noexcept;
   std::map<std::string, Scalar> const &params() const noexcept;

@@ -158,9 +158,11 @@ std::optional<Representation> representation(OpSum const &ops,
         real = false;
       }
     }
-    Vector characters =
-        real ? Vector(arma::vec(arma::real(chars))) : Vector(chars);
-    return Representation(group, characters);
+    if (real) {
+      return Representation(group, arma::vec(arma::real(chars)));
+    } else {
+      return Representation(group, chars);
+    }
   } else {
     // Charge (U(1)) symmetry: the type names the action ("nup", "ndn", "np").
     std::optional<int64_t> charge =

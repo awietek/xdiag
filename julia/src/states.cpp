@@ -35,99 +35,97 @@ void define_states(jlcxx::Module &mod) {
              });
   mod.method("fun_product_state",
              [](Fermion const &block, std::vector<int32_t> const &local_state,
-                bool real = true) {
-               JULIA_XDIAG_CALL_RETURN(product_state(block, local_state, true))
+                bool real) {
+               JULIA_XDIAG_CALL_RETURN(product_state(block, local_state, real))
              });
   mod.method("fun_product_state",
              [](Boson const &block, std::vector<int32_t> const &local_state,
-                bool real = true) {
-               JULIA_XDIAG_CALL_RETURN(product_state(block, local_state, true))
+                bool real) {
+               JULIA_XDIAG_CALL_RETURN(product_state(block, local_state, real))
              });
   mod.method("fun_product_state",
              [](Spinhalf const &block, std::vector<int32_t> const &local_state,
-                bool real = true) {
-               JULIA_XDIAG_CALL_RETURN(product_state(block, local_state, true))
+                bool real) {
+               JULIA_XDIAG_CALL_RETURN(product_state(block, local_state, real))
              });
   mod.method("fun_product_state",
              [](Electron const &block, std::vector<int32_t> const &local_state,
-                bool real = true) {
-               JULIA_XDIAG_CALL_RETURN(product_state(block, local_state, true))
+                bool real) {
+               JULIA_XDIAG_CALL_RETURN(product_state(block, local_state, real))
              });
-  mod.method("fun_product_state",
-             [](tJ const &block, std::vector<int32_t> const &local_state,
-                bool real = true) {
-               JULIA_XDIAG_CALL_RETURN(product_state(block, local_state, true))
-             });
+  mod.method(
+      "fun_product_state",
+      [](tJ const &block, std::vector<int32_t> const &local_state, bool real) {
+        JULIA_XDIAG_CALL_RETURN(product_state(block, local_state, real))
+      });
   mod.method("fun_product_state",
              [](Fermion const &block, std::vector<int64_t> const &local_state,
-                bool real = true) {
-               JULIA_XDIAG_CALL_RETURN(product_state(block, local_state, true))
+                bool real) {
+               JULIA_XDIAG_CALL_RETURN(product_state(block, local_state, real))
              });
   mod.method("fun_product_state",
              [](Boson const &block, std::vector<int64_t> const &local_state,
-                bool real = true) {
-               JULIA_XDIAG_CALL_RETURN(product_state(block, local_state, true))
+                bool real) {
+               JULIA_XDIAG_CALL_RETURN(product_state(block, local_state, real))
              });
   mod.method("fun_product_state",
              [](Spinhalf const &block, std::vector<int64_t> const &local_state,
-                bool real = true) {
-               JULIA_XDIAG_CALL_RETURN(product_state(block, local_state, true))
+                bool real) {
+               JULIA_XDIAG_CALL_RETURN(product_state(block, local_state, real))
              });
   mod.method("fun_product_state",
              [](Electron const &block, std::vector<int64_t> const &local_state,
-                bool real = true) {
-               JULIA_XDIAG_CALL_RETURN(product_state(block, local_state, true))
+                bool real) {
+               JULIA_XDIAG_CALL_RETURN(product_state(block, local_state, real))
              });
-  mod.method("fun_product_state",
-             [](tJ const &block, std::vector<int64_t> const &local_state,
-                bool real = true) {
-               JULIA_XDIAG_CALL_RETURN(product_state(block, local_state, true))
-             });
-  mod.method("fun_random_state",
-             [](Fermion const &block, bool real = true, int64_t ncols = 1,
-                int64_t seed = 42, bool normalized = true) {
-               JULIA_XDIAG_CALL_RETURN(random_state(block, true, 1, 42, true))
-             });
-  mod.method("fun_random_state",
-             [](Boson const &block, bool real = true, int64_t ncols = 1,
-                int64_t seed = 42, bool normalized = true) {
-               JULIA_XDIAG_CALL_RETURN(random_state(block, true, 1, 42, true))
-             });
-  mod.method("fun_random_state",
-             [](Spinhalf const &block, bool real = true, int64_t ncols = 1,
-                int64_t seed = 42, bool normalized = true) {
-               JULIA_XDIAG_CALL_RETURN(random_state(block, true, 1, 42, true))
-             });
-  mod.method("fun_random_state",
-             [](Electron const &block, bool real = true, int64_t ncols = 1,
-                int64_t seed = 42, bool normalized = true) {
-               JULIA_XDIAG_CALL_RETURN(random_state(block, true, 1, 42, true))
-             });
-  mod.method("fun_random_state",
-             [](tJ const &block, bool real = true, int64_t ncols = 1,
-                int64_t seed = 42, bool normalized = true) {
-               JULIA_XDIAG_CALL_RETURN(random_state(block, true, 1, 42, true))
+  mod.method(
+      "fun_product_state",
+      [](tJ const &block, std::vector<int64_t> const &local_state, bool real) {
+        JULIA_XDIAG_CALL_RETURN(product_state(block, local_state, real))
+      });
+  mod.method("fun_random_state", [](Fermion const &block, bool real,
+                                    int64_t ncols, int64_t seed,
+                                    bool normalized) {
+    JULIA_XDIAG_CALL_RETURN(random_state(block, real, ncols, seed, normalized))
+  });
+  mod.method("fun_random_state", [](Boson const &block, bool real,
+                                    int64_t ncols, int64_t seed,
+                                    bool normalized) {
+    JULIA_XDIAG_CALL_RETURN(random_state(block, real, ncols, seed, normalized))
+  });
+  mod.method("fun_random_state", [](Spinhalf const &block, bool real,
+                                    int64_t ncols, int64_t seed,
+                                    bool normalized) {
+    JULIA_XDIAG_CALL_RETURN(random_state(block, real, ncols, seed, normalized))
+  });
+  mod.method("fun_random_state", [](Electron const &block, bool real,
+                                    int64_t ncols, int64_t seed,
+                                    bool normalized) {
+    JULIA_XDIAG_CALL_RETURN(random_state(block, real, ncols, seed, normalized))
+  });
+  mod.method("fun_random_state", [](tJ const &block, bool real, int64_t ncols,
+                                    int64_t seed, bool normalized) {
+    JULIA_XDIAG_CALL_RETURN(random_state(block, real, ncols, seed, normalized))
+  });
+  mod.method("fun_zero_state",
+             [](Fermion const &block, bool real, int64_t ncols) {
+               JULIA_XDIAG_CALL_RETURN(zero_state(block, real, ncols))
              });
   mod.method("fun_zero_state",
-             [](Fermion const &block, bool real = true, int64_t ncols = 1) {
-               JULIA_XDIAG_CALL_RETURN(zero_state(block, true, 1))
+             [](Boson const &block, bool real, int64_t ncols) {
+               JULIA_XDIAG_CALL_RETURN(zero_state(block, real, ncols))
              });
   mod.method("fun_zero_state",
-             [](Boson const &block, bool real = true, int64_t ncols = 1) {
-               JULIA_XDIAG_CALL_RETURN(zero_state(block, true, 1))
+             [](Spinhalf const &block, bool real, int64_t ncols) {
+               JULIA_XDIAG_CALL_RETURN(zero_state(block, real, ncols))
              });
   mod.method("fun_zero_state",
-             [](Spinhalf const &block, bool real = true, int64_t ncols = 1) {
-               JULIA_XDIAG_CALL_RETURN(zero_state(block, true, 1))
+             [](Electron const &block, bool real, int64_t ncols) {
+               JULIA_XDIAG_CALL_RETURN(zero_state(block, real, ncols))
              });
-  mod.method("fun_zero_state",
-             [](Electron const &block, bool real = true, int64_t ncols = 1) {
-               JULIA_XDIAG_CALL_RETURN(zero_state(block, true, 1))
-             });
-  mod.method("fun_zero_state",
-             [](tJ const &block, bool real = true, int64_t ncols = 1) {
-               JULIA_XDIAG_CALL_RETURN(zero_state(block, true, 1))
-             });
+  mod.method("fun_zero_state", [](tJ const &block, bool real, int64_t ncols) {
+    JULIA_XDIAG_CALL_RETURN(zero_state(block, real, ncols))
+  });
   mod.method("fun_zero",
              [](State &state) { JULIA_XDIAG_CALL_VOID(zero(state)); });
   mod.method("fun_dot", [](State const &v, State const &w) {
@@ -212,14 +210,6 @@ void define_states(jlcxx::Module &mod) {
   mod.method("mth_push_back", [](ProductState &self, int64_t l) {
     JULIA_XDIAG_CALL_VOID(self.push_back(l));
   });
-  mod.method("mth_operator==",
-             [](ProductState const &self, ProductState const &rhs) {
-               JULIA_XDIAG_CALL_RETURN(self.operator==(rhs))
-             });
-  mod.method("mth_operator!=",
-             [](ProductState const &self, ProductState const &rhs) {
-               JULIA_XDIAG_CALL_RETURN(self.operator!=(rhs))
-             });
   mod.method("fun_size",
              [](ProductState const &p) { JULIA_XDIAG_CALL_RETURN(size(p)) });
   mod.method("fun_nsites",
@@ -227,8 +217,8 @@ void define_states(jlcxx::Module &mod) {
   mod.method("fun_to_string", [](ProductState const &state) {
     JULIA_XDIAG_CALL_RETURN(to_string(state))
   });
-  mod.method("con_RandomState", [](int64_t seed = 42, bool normalized = true) {
-    JULIA_XDIAG_CALL_RETURN(RandomState(42, true))
+  mod.method("con_RandomState", [](int64_t seed, bool normalized) {
+    JULIA_XDIAG_CALL_RETURN(RandomState(seed, normalized))
   });
   mod.method("mth_seed", [](const RandomState &self) {
     JULIA_XDIAG_CALL_RETURN(self.seed())
@@ -240,26 +230,21 @@ void define_states(jlcxx::Module &mod) {
     JULIA_XDIAG_CALL_RETURN(to_string(state))
   });
   mod.method("con_State", []() { JULIA_XDIAG_CALL_RETURN(State()) });
-  mod.method("con_State",
-             [](Fermion const &block, bool real = true, int64_t ncols = 1) {
-               JULIA_XDIAG_CALL_RETURN(State(block, true, 1))
-             });
-  mod.method("con_State",
-             [](Boson const &block, bool real = true, int64_t ncols = 1) {
-               JULIA_XDIAG_CALL_RETURN(State(block, true, 1))
-             });
-  mod.method("con_State",
-             [](Spinhalf const &block, bool real = true, int64_t ncols = 1) {
-               JULIA_XDIAG_CALL_RETURN(State(block, true, 1))
-             });
-  mod.method("con_State",
-             [](Electron const &block, bool real = true, int64_t ncols = 1) {
-               JULIA_XDIAG_CALL_RETURN(State(block, true, 1))
-             });
-  mod.method("con_State",
-             [](tJ const &block, bool real = true, int64_t ncols = 1) {
-               JULIA_XDIAG_CALL_RETURN(State(block, true, 1))
-             });
+  mod.method("con_State", [](Fermion const &block, bool real, int64_t ncols) {
+    JULIA_XDIAG_CALL_RETURN(State(block, real, ncols))
+  });
+  mod.method("con_State", [](Boson const &block, bool real, int64_t ncols) {
+    JULIA_XDIAG_CALL_RETURN(State(block, real, ncols))
+  });
+  mod.method("con_State", [](Spinhalf const &block, bool real, int64_t ncols) {
+    JULIA_XDIAG_CALL_RETURN(State(block, real, ncols))
+  });
+  mod.method("con_State", [](Electron const &block, bool real, int64_t ncols) {
+    JULIA_XDIAG_CALL_RETURN(State(block, real, ncols))
+  });
+  mod.method("con_State", [](tJ const &block, bool real, int64_t ncols) {
+    JULIA_XDIAG_CALL_RETURN(State(block, real, ncols))
+  });
   mod.method("con_State", [](Fermion const &block, arma::vec const &vector) {
     JULIA_XDIAG_CALL_RETURN(State(block, vector))
   });
@@ -344,42 +329,40 @@ void define_states(jlcxx::Module &mod) {
              [](const State &self) { JULIA_XDIAG_CALL_RETURN(self.nrows()) });
   mod.method("mth_ncols",
              [](const State &self) { JULIA_XDIAG_CALL_RETURN(self.ncols()) });
-  mod.method("mth_col", [](State const &self, int64_t n, bool copy = true) {
-    JULIA_XDIAG_CALL_RETURN(self.col(n, true))
+  mod.method("mth_col", [](State const &self, int64_t n, bool copy) {
+    JULIA_XDIAG_CALL_RETURN(self.col(n, copy))
   });
-  mod.method("mth_vector",
-             [](State const &self, int64_t n = 0, bool copy = true) {
-               JULIA_XDIAG_CALL_RETURN(self.vector(0, true))
-             });
-  mod.method("mth_matrix", [](State const &self, bool copy = true) {
-    JULIA_XDIAG_CALL_RETURN(self.matrix(true))
+  mod.method("mth_vector", [](State const &self, int64_t n, bool copy) {
+    JULIA_XDIAG_CALL_RETURN(self.vector(n, copy))
   });
-  mod.method("mth_vectorC",
-             [](State const &self, int64_t n = 0, bool copy = true) {
-               JULIA_XDIAG_CALL_RETURN(self.vectorC(0, true))
-             });
-  mod.method("mth_matrixC", [](State const &self, bool copy = true) {
-    JULIA_XDIAG_CALL_RETURN(self.matrixC(true))
+  mod.method("mth_matrix", [](State const &self, bool copy) {
+    JULIA_XDIAG_CALL_RETURN(self.matrix(copy))
+  });
+  mod.method("mth_vectorC", [](State const &self, int64_t n, bool copy) {
+    JULIA_XDIAG_CALL_RETURN(self.vectorC(n, copy))
+  });
+  mod.method("mth_matrixC", [](State const &self, bool copy) {
+    JULIA_XDIAG_CALL_RETURN(self.matrixC(copy))
   });
   mod.method("con_State", [](Fermion const &block, double const *ptr,
-                             int64_t ncols, int64_t stride = 1) {
-    JULIA_XDIAG_CALL_RETURN(State(block, ptr, ncols, 1))
+                             int64_t ncols, int64_t stride) {
+    JULIA_XDIAG_CALL_RETURN(State(block, ptr, ncols, stride))
   });
   mod.method("con_State", [](Boson const &block, double const *ptr,
-                             int64_t ncols, int64_t stride = 1) {
-    JULIA_XDIAG_CALL_RETURN(State(block, ptr, ncols, 1))
+                             int64_t ncols, int64_t stride) {
+    JULIA_XDIAG_CALL_RETURN(State(block, ptr, ncols, stride))
   });
   mod.method("con_State", [](Spinhalf const &block, double const *ptr,
-                             int64_t ncols, int64_t stride = 1) {
-    JULIA_XDIAG_CALL_RETURN(State(block, ptr, ncols, 1))
+                             int64_t ncols, int64_t stride) {
+    JULIA_XDIAG_CALL_RETURN(State(block, ptr, ncols, stride))
   });
   mod.method("con_State", [](Electron const &block, double const *ptr,
-                             int64_t ncols, int64_t stride = 1) {
-    JULIA_XDIAG_CALL_RETURN(State(block, ptr, ncols, 1))
+                             int64_t ncols, int64_t stride) {
+    JULIA_XDIAG_CALL_RETURN(State(block, ptr, ncols, stride))
   });
   mod.method("con_State", [](tJ const &block, double const *ptr, int64_t ncols,
-                             int64_t stride = 1) {
-    JULIA_XDIAG_CALL_RETURN(State(block, ptr, ncols, 1))
+                             int64_t stride) {
+    JULIA_XDIAG_CALL_RETURN(State(block, ptr, ncols, stride))
   });
   mod.method("con_State",
              [](Fermion const &block, complex const *ptr, int64_t ncols) {
@@ -415,10 +398,10 @@ void define_states(jlcxx::Module &mod) {
              [](State const &s) { JULIA_XDIAG_CALL_RETURN(isvalid(s)) });
   mod.method("fun_nsites",
              [](State const &s) { JULIA_XDIAG_CALL_RETURN(nsites(s)) });
-  mod.method("fun_isapprox", [](State const &v, State const &w,
-                                double rtol = 1e-12, double atol = 1e-12) {
-    JULIA_XDIAG_CALL_RETURN(isapprox(v, w, 1e-12, 1e-12))
-  });
+  mod.method("fun_isapprox",
+             [](State const &v, State const &w, double rtol, double atol) {
+               JULIA_XDIAG_CALL_RETURN(isapprox(v, w, rtol, atol))
+             });
   mod.method("fun_isreal",
              [](State const &s) { JULIA_XDIAG_CALL_RETURN(isreal(s)) });
   mod.method("fun_real",
@@ -434,68 +417,36 @@ void define_states(jlcxx::Module &mod) {
              [](State const &s) { JULIA_XDIAG_CALL_RETURN(nrows(s)) });
   mod.method("fun_ncols",
              [](State const &s) { JULIA_XDIAG_CALL_RETURN(ncols(s)) });
-  mod.method("fun_col", [](State const &s, int64_t n, bool copy = true) {
-    JULIA_XDIAG_CALL_RETURN(col(s, n, true))
+  mod.method("fun_col", [](State const &s, int64_t n, bool copy) {
+    JULIA_XDIAG_CALL_RETURN(col(s, n, copy))
   });
-  mod.method("fun_vector", [](State const &s, int64_t n = 0, bool copy = true) {
-    JULIA_XDIAG_CALL_RETURN(vector(s, 0, true))
+  mod.method("fun_vector", [](State const &s, int64_t n, bool copy) {
+    JULIA_XDIAG_CALL_RETURN(vector(s, n, copy))
   });
-  mod.method("fun_matrix", [](State const &s, bool copy = true) {
-    JULIA_XDIAG_CALL_RETURN(matrix(s, true))
+  mod.method("fun_matrix", [](State const &s, bool copy) {
+    JULIA_XDIAG_CALL_RETURN(matrix(s, copy))
   });
-  mod.method("fun_vectorC",
-             [](State const &s, int64_t n = 0, bool copy = true) {
-               JULIA_XDIAG_CALL_RETURN(vectorC(s, 0, true))
-             });
-  mod.method("fun_matrixC", [](State const &s, bool copy = true) {
-    JULIA_XDIAG_CALL_RETURN(matrixC(s, true))
+  mod.method("fun_vectorC", [](State const &s, int64_t n, bool copy) {
+    JULIA_XDIAG_CALL_RETURN(vectorC(s, n, copy))
+  });
+  mod.method("fun_matrixC", [](State const &s, bool copy) {
+    JULIA_XDIAG_CALL_RETURN(matrixC(s, copy))
   });
   mod.method("fun_to_string", [](State const &state) {
     JULIA_XDIAG_CALL_RETURN(to_string(state))
   });
-  mod.method("fun_operator*=", [](State &X, double alpha) {
-    JULIA_XDIAG_CALL_RETURN(operator*=(X, alpha))
+
+  // operator overloads
+  mod.method("op_getindex", [](ProductState const &self, int64_t i) {
+    JULIA_XDIAG_CALL_RETURN(self[i])
   });
-  mod.method("fun_operator*", [](State const &X, double alpha) {
-    JULIA_XDIAG_CALL_RETURN(operator*(X, alpha))
-  });
-  mod.method("fun_operator*", [](double alpha, State const &X) {
-    JULIA_XDIAG_CALL_RETURN(operator*(alpha, X))
-  });
-  mod.method("fun_operator*=", [](State &X, complex alpha) {
-    JULIA_XDIAG_CALL_RETURN(operator*=(X, alpha))
-  });
-  mod.method("fun_operator*", [](State const &X, complex alpha) {
-    JULIA_XDIAG_CALL_RETURN(operator*(X, alpha))
-  });
-  mod.method("fun_operator*", [](complex alpha, State const &X) {
-    JULIA_XDIAG_CALL_RETURN(operator*(alpha, X))
-  });
-  mod.method("fun_operator/=", [](State &X, double alpha) {
-    JULIA_XDIAG_CALL_RETURN(operator/=(X, alpha))
-  });
-  mod.method("fun_operator/", [](State const &X, double alpha) {
-    JULIA_XDIAG_CALL_RETURN(operator/(X, alpha))
-  });
-  mod.method("fun_operator/=", [](State &X, complex alpha) {
-    JULIA_XDIAG_CALL_RETURN(operator/=(X, alpha))
-  });
-  mod.method("fun_operator/", [](State const &X, complex alpha) {
-    JULIA_XDIAG_CALL_RETURN(operator/(X, alpha))
-  });
-  mod.method("fun_operator+=", [](State &v, State const &w) {
-    JULIA_XDIAG_CALL_RETURN(operator+=(v, w))
-  });
-  mod.method("fun_operator-=", [](State &v, State const &w) {
-    JULIA_XDIAG_CALL_RETURN(operator-=(v, w))
-  });
-  mod.method("fun_operator+", [](State const &v, State const &w) {
-    JULIA_XDIAG_CALL_RETURN(operator+(v, w))
-  });
-  mod.method("fun_operator-", [](State const &v, State const &w) {
-    JULIA_XDIAG_CALL_RETURN(operator-(v, w))
-  });
-  mod.method("fun_operator-",
-             [](State const &v) { JULIA_XDIAG_CALL_RETURN(operator-(v)) });
+  mod.method("op_setindex",
+             [](ProductState &self, int64_t i, int64_t const &val) {
+               JULIA_XDIAG_CALL_VOID(self[i] = val);
+             });
+  mod.method("op_isequal",
+             [](ProductState const &self, ProductState const &rhs) {
+               JULIA_XDIAG_CALL_RETURN(self.operator==(rhs))
+             });
 }
 } // namespace xdiag::julia

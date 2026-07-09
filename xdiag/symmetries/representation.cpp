@@ -46,24 +46,32 @@ bool Representation::PermutationIrrep::operator!=(
 }
 
 Representation::Representation(PermutationGroup const &group,
-                               Vector const &characters) try
-    : type_("SitePermutation"), irrep_(PermutationIrrep{group, characters}) {
+                               arma::vec const &characters) try
+    : type_("SitePermutation"),
+      irrep_(PermutationIrrep{group, Vector(characters)}) {
   if (group.size() != characters.size()) {
     XDIAG_THROW(
         "Size of PermutationGroup is not equal to number of characters given.");
   }
+  check_characters(group, characters);
+}
+XDIAG_CATCH
 
-  if (characters.isreal()) {
-    check_characters(group, characters.as<arma::vec>());
-  } else {
-    arma::cx_vec chars = characters.as<arma::cx_vec>();
-    check_characters(group, chars);
+Representation::Representation(PermutationGroup const &group,
+                               arma::cx_vec const &characters) try
+    : type_("SitePermutation"),
+      irrep_(PermutationIrrep{group, Vector(characters)}) {
+  if (group.size() != characters.size()) {
+    XDIAG_THROW(
+        "Size of PermutationGroup is not equal to number of characters given.");
+  }
+  check_characters(group, characters);
 
-    // If imaginary part is small, make it real
-    double ni = arma::norm(arma::imag(chars));
-    if (ni < 1e-14) {
-      std::get<PermutationIrrep>(irrep_).characters = Vector(arma::real(chars));
-    }
+  // If imaginary part is small, make it real
+  double ni = arma::norm(arma::imag(characters));
+  if (ni < 1e-14) {
+    std::get<PermutationIrrep>(irrep_).characters =
+        Vector(arma::real(characters));
   }
 }
 XDIAG_CATCH
@@ -164,11 +172,11 @@ Representation multiply(Representation const &r1,
     Vector c2 = r2.characters();
     if (c1.isreal() && c2.isreal()) {
       arma::vec c = c1.as<arma::vec>() % c2.as<arma::vec>();
-      return Representation(r1.group(), Vector(c));
+      return Representation(r1.group(), c);
     } else {
       // The Representation constructor narrows back to real if possible
       arma::cx_vec c = c1.as<arma::cx_vec>() % c2.as<arma::cx_vec>();
-      return Representation(r1.group(), Vector(c));
+      return Representation(r1.group(), c);
     }
   } else if (r1.is_charge() && r2.is_charge()) {
     // tensor product of U(1)-type irreps: e^{i n theta} * e^{i m theta} adds

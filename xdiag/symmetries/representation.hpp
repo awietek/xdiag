@@ -29,7 +29,8 @@ public:
 
   Representation() = default;
   explicit Representation(PermutationGroup const &group);
-  Representation(PermutationGroup const &group, Vector const &characters);
+  Representation(PermutationGroup const &group, arma::vec const &characters);
+  Representation(PermutationGroup const &group, arma::cx_vec const &characters);
   Representation(std::string type, int64_t charge);
 
   bool operator==(Representation const &rhs) const;

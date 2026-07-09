@@ -16,7 +16,7 @@ Subsets<bit_t>::Subsets(int64_t n) try : n_(n), size_(math::ipow(2, n)) {
   if (n < 0) {
     XDIAG_THROW("Error constructing Subsets: n<0");
   }
-  if (n >= (int64_t)std::numeric_limits<bit_t>::digits) {
+  if (n > (int64_t)std::numeric_limits<bit_t>::digits) {
     XDIAG_THROW(fmt::format("Error constructing Subsets: n ({}) is too large "
                             "for bit_t with {} bits",
                             n, std::numeric_limits<bit_t>::digits));
@@ -33,7 +33,7 @@ template <class bit_t> SubsetsIterator<bit_t> Subsets<bit_t>::begin() const {
 }
 
 template <class bit_t> SubsetsIterator<bit_t> Subsets<bit_t>::end() const {
-  return SubsetsIterator<bit_t>((int64_t)size_);
+  return SubsetsIterator<bit_t>(size_);
 }
 
 template <class bit_t> bit_t Subsets<bit_t>::operator[](int64_t idx) const {
@@ -58,7 +58,7 @@ template class Subsets<uint32_t>;
 template class Subsets<uint64_t>;
 
 template <class bit_t>
-SubsetsIterator<bit_t>::SubsetsIterator(int64_t idx) : current_((bit_t)idx) {}
+SubsetsIterator<bit_t>::SubsetsIterator(int64_t idx) : current_(idx) {}
 
 template <class bit_t>
 bool SubsetsIterator<bit_t>::operator==(
@@ -92,7 +92,7 @@ SubsetsIterator<bit_t> SubsetsIterator<bit_t>::operator+(int64_t n) const {
 }
 
 template <class bit_t> bit_t SubsetsIterator<bit_t>::operator*() const {
-  return current_;
+  return (bit_t)current_;
 }
 
 template class SubsetsIterator<uint16_t>;

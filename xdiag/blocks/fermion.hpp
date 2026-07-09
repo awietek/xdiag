@@ -54,8 +54,8 @@ private:
   std::shared_ptr<basis::Basis> basis_;
 };
 
-std::ostream &operator<<(std::ostream &out, Fermion const &block);
-std::string to_string(Fermion const &block);
+XDIAG_API std::ostream &operator<<(std::ostream &out, Fermion const &block);
+XDIAG_API std::string to_string(Fermion const &block);
 
 class XDIAG_API FermionIterator {
 public:

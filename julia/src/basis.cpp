@@ -5,5 +5,9 @@
 #include <xdiag/all.hpp>
 
 namespace xdiag::julia {
-void define_basis(jlcxx::Module &mod) { using namespace xdiag; }
+void define_basis(jlcxx::Module &mod) {
+  using namespace xdiag;
+
+  // operator overloads
+}
 } // namespace xdiag::julia

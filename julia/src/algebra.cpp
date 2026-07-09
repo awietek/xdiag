@@ -21,5 +21,7 @@ void define_algebra(jlcxx::Module &mod) {
              [](OpSum const &ops, Representation const &irrep) {
                JULIA_XDIAG_CALL_RETURN(symmetrize(ops, irrep))
              });
+
+  // operator overloads
 }
 } // namespace xdiag::julia

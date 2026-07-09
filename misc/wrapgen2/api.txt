@@ -1,20 +1,18 @@
 
 === xdiag/algebra/symmetrize.hpp ===
-[                  14] FUNCTION_DECL        OpSum symmetrize(Op const &op, PermutationGroup const &group)
-[                  15] FUNCTION_DECL        OpSum symmetrize(Op const &op, Representation const &irrep)
-[                  16] FUNCTION_DECL        OpSum symmetrize(OpSum const &ops, PermutationGroup const &group)
-[                  17] FUNCTION_DECL        OpSum symmetrize(OpSum const &ops, Representation const &irrep)
+[                  14] FUNCTION_DECL        XDIAG_API OpSum symmetrize(Op const &op, PermutationGroup const &group)
+[                  15] FUNCTION_DECL        XDIAG_API OpSum symmetrize(Op const &op, Representation const &irrep)
+[                  16] FUNCTION_DECL        XDIAG_API OpSum symmetrize(OpSum const &ops, PermutationGroup const &group)
+[                  17] FUNCTION_DECL        XDIAG_API OpSum symmetrize(OpSum const &ops, Representation const &irrep)
 
 === xdiag/blocks/blocks.hpp ===
-[                  37] FUNCTION_DECL        int64_t dim(Block const &block)
-[                  38] FUNCTION_DECL        int64_t size(Block const &block)
-[                  39] FUNCTION_DECL        int64_t nsites(Block const &block)
-[                  40] FUNCTION_DECL        bool isreal(Block const &block)
-[                  41] FUNCTION_DECL        int64_t index(Block const &block, ProductState const &pstate)
-[                  43] FUNCTION_DECL        std::ostream &operator<<(std::ostream &out, Block const &block)
-[                  44] FUNCTION_DECL        std::string to_string(Block const &block)
-[                  48] FUNCTION_DECL        std::string to_string(ProductState const &state, Block const &block)
-[                  55] FUNCTION_DECL        bool isapprox(Block const &b1, Block const &b2, double tol = 1e-12)
+[                  37] FUNCTION_DECL        XDIAG_API int64_t dim(Block const &block)
+[                  38] FUNCTION_DECL        XDIAG_API int64_t size(Block const &block)
+[                  39] FUNCTION_DECL        XDIAG_API int64_t nsites(Block const &block)
+[                  40] FUNCTION_DECL        XDIAG_API bool isreal(Block const &block)
+[                  41] FUNCTION_DECL        XDIAG_API int64_t index(Block const &block, ProductState const &pstate)
+[                  49] FUNCTION_DECL        XDIAG_API std::string to_string(ProductState const &state, Block const &block)
+[                  56] FUNCTION_DECL        XDIAG_API bool isapprox(Block const &b1, Block const &b2, double tol = 1e-12)
 
 === xdiag/blocks/boson.hpp ===
 [                  19] CLASS_DECL           class XDIAG_API Boson { public: using iterator_t = BosonIterator; Boson() = default; // Generic constructor Boson(int64_t sites, int64_t d, RepresentationSet const &irreps); // Convenience constructors Boson(int64_t sites, int64_t d); Boson(int64_t sites, int64_t d, int64_t number); Boson(int64_t sites, int64_t d, Representation const &irrep); Boson(int64_t sites, int64_t d, int64_t number, Representation const &irrep); int64_t nsites() const; int64_t d() const; int64_t dim() const; int64_t size() const; bool isreal() const; int64_t index(ProductState const &pstate) const; bool operator==(Boson const &rhs) const; bool operator!=(Boson const &rhs) const; iterator_t begin() const; iterator_t end() const; RepresentationSet irreps() const; std::shared_ptr<basis::Basis> const &basis() const; private: int64_t d_; RepresentationSet irreps_; std::shared_ptr<basis::Basis> basis_; }
@@ -36,6 +34,8 @@
 [Boson               ] CXX_METHOD           iterator_t end() const
 [Boson               ] CXX_METHOD           RepresentationSet irreps() const
 [Boson               ] CXX_METHOD           std::shared_ptr<basis::Basis> const &basis() const
+[                  56] FUNCTION_DECL        XDIAG_API std::ostream &operator<<(std::ostream &out, Boson const &block)
+[                  57] FUNCTION_DECL        XDIAG_API std::string to_string(Boson const &block)
 [                  59] CLASS_DECL           class XDIAG_API BosonIterator { public: BosonIterator(Boson const *block, int64_t idx); BosonIterator &operator++(); ProductState operator*() const; bool operator==(BosonIterator const &rhs) const; bool operator!=(BosonIterator const &rhs) const; private: std::unique_ptr<basis::BasisIterator> it_; int64_t idx_; }
 [BosonIterator       ] CONSTRUCTOR          BosonIterator(Boson const *block, int64_t idx)
 [BosonIterator       ] CXX_METHOD           BosonIterator &operator++()
@@ -63,6 +63,8 @@
 [Electron            ] CXX_METHOD           iterator_t end() const
 [Electron            ] CXX_METHOD           RepresentationSet irreps() const
 [Electron            ] CXX_METHOD           std::shared_ptr<basis::Basis> const &basis() const
+[                  58] FUNCTION_DECL        XDIAG_API std::ostream &operator<<(std::ostream &out, Electron const &block)
+[                  59] FUNCTION_DECL        XDIAG_API std::string to_string(Electron const &block)
 [                  61] CLASS_DECL           class XDIAG_API ElectronIterator { public: ElectronIterator(Electron const *block, int64_t idx); ElectronIterator &operator++(); ProductState operator*() const; bool operator==(ElectronIterator const &rhs) const; bool operator!=(ElectronIterator const &rhs) const; private: std::unique_ptr<basis::BasisIterator> it_; int64_t idx_; }
 [ElectronIterator    ] CONSTRUCTOR          ElectronIterator(Electron const *block, int64_t idx)
 [ElectronIterator    ] CXX_METHOD           ElectronIterator &operator++()
@@ -90,6 +92,8 @@
 [Fermion             ] CXX_METHOD           iterator_t end() const
 [Fermion             ] CXX_METHOD           RepresentationSet irreps() const
 [Fermion             ] CXX_METHOD           std::shared_ptr<basis::Basis> const &basis() const
+[                  57] FUNCTION_DECL        XDIAG_API std::ostream &operator<<(std::ostream &out, Fermion const &block)
+[                  58] FUNCTION_DECL        XDIAG_API std::string to_string(Fermion const &block)
 [                  60] CLASS_DECL           class XDIAG_API FermionIterator { public: FermionIterator(Fermion const *block, int64_t idx); FermionIterator &operator++(); ProductState operator*() const; bool operator==(FermionIterator const &rhs) const; bool operator!=(FermionIterator const &rhs) const; private: std::unique_ptr<basis::BasisIterator> it_; int64_t idx_; }
 [FermionIterator     ] CONSTRUCTOR          FermionIterator(Fermion const *block, int64_t idx)
 [FermionIterator     ] CXX_METHOD           FermionIterator &operator++()
@@ -117,6 +121,8 @@
 [Spinhalf            ] CXX_METHOD           iterator_t end() const
 [Spinhalf            ] CXX_METHOD           RepresentationSet irreps() const
 [Spinhalf            ] CXX_METHOD           std::shared_ptr<basis::Basis> const &basis() const
+[                  60] FUNCTION_DECL        XDIAG_API std::ostream &operator<<(std::ostream &out, Spinhalf const &block)
+[                  61] FUNCTION_DECL        XDIAG_API std::string to_string(Spinhalf const &block)
 [                  63] CLASS_DECL           class XDIAG_API SpinhalfIterator { public: SpinhalfIterator(Spinhalf const *block, int64_t idx); SpinhalfIterator &operator++(); ProductState operator*() const; bool operator==(SpinhalfIterator const &rhs) const; bool operator!=(SpinhalfIterator const &rhs) const; private: std::unique_ptr<basis::BasisIterator> it_; int64_t idx_; }
 [SpinhalfIterator    ] CONSTRUCTOR          SpinhalfIterator(Spinhalf const *block, int64_t idx)
 [SpinhalfIterator    ] CXX_METHOD           SpinhalfIterator &operator++()
@@ -144,6 +150,8 @@
 [tJ                  ] CXX_METHOD           iterator_t end() const
 [tJ                  ] CXX_METHOD           RepresentationSet irreps() const
 [tJ                  ] CXX_METHOD           std::shared_ptr<basis::Basis> const &basis() const
+[                  61] FUNCTION_DECL        XDIAG_API std::ostream &operator<<(std::ostream &out, tJ const &block)
+[                  62] FUNCTION_DECL        XDIAG_API std::string to_string(tJ const &block)
 [                  64] CLASS_DECL           class XDIAG_API tJIterator { public: tJIterator(tJ const *block, int64_t idx); tJIterator &operator++(); ProductState operator*() const; bool operator==(tJIterator const &rhs) const; bool operator!=(tJIterator const &rhs) const; private: std::unique_ptr<basis::BasisIterator> it_; int64_t idx_; }
 [tJIterator          ] CONSTRUCTOR          tJIterator(tJ const *block, int64_t idx)
 [tJIterator          ] CXX_METHOD           tJIterator &operator++()
@@ -164,14 +172,14 @@
 [FileToml            ] CXX_METHOD           bool operator!=(FileToml const &other) const
 [FileToml            ] CXX_METHOD           std::vector<std::string> keys() const
 [FileToml            ] CXX_METHOD           toml::table table() const
-[                  38] FUNCTION_DECL        bool defined(FileToml const &fl, std::string key)
+[                  38] FUNCTION_DECL        XDIAG_API bool defined(FileToml const &fl, std::string key)
 
 === xdiag/io/read.hpp ===
-[                  19] FUNCTION_DECL        Permutation read_permutation(FileToml file, std::string tag)
-[                  20] FUNCTION_DECL        PermutationGroup read_permutation_group(FileToml file, std::string tag)
-[                  22] FUNCTION_DECL        Representation read_representation( FileToml file, std::string irrep_tag, std::string group_tag = "Symmetries")
-[                  24] FUNCTION_DECL        Op read_op(FileToml file, std::string tag)
-[                  25] FUNCTION_DECL        OpSum read_opsum(FileToml file, std::string tag)
+[                  19] FUNCTION_DECL        XDIAG_API Permutation read_permutation(FileToml file, std::string tag)
+[                  20] FUNCTION_DECL        XDIAG_API PermutationGroup read_permutation_group(FileToml file, std::string tag)
+[                  22] FUNCTION_DECL        XDIAG_API Representation read_representation( FileToml file, std::string irrep_tag, std::string group_tag = "Symmetries")
+[                  24] FUNCTION_DECL        XDIAG_API Op read_op(FileToml file, std::string tag)
+[                  25] FUNCTION_DECL        XDIAG_API OpSum read_opsum(FileToml file, std::string tag)
 
 === xdiag/io/toml/file_toml_handler.hpp ===
 [                  14] CLASS_DECL           class XDIAG_API FileTomlHandler { public: FileTomlHandler(std::string key, toml::table &file); FileTomlHandler(FileTomlHandler const &) = delete; FileTomlHandler &operator=(FileTomlHandler const &) = delete; template <class data_t> data_t as() const; template <class data_t> void operator=(data_t const &data); private: std::string key_; toml::table &table_; }
@@ -182,34 +190,34 @@
 [FileTomlHandler     ] FUNCTION_TEMPLATE    template <class data_t> void operator=(data_t const &data)
 
 === xdiag/kernels/sparse/coo_matrix.hpp ===
-[                  16] FUNCTION_DECL        COOMatrix<int64_t, double> coo_matrix(OpSum const &ops, Block const &block, int64_t i0 = 0)
-[                  17] FUNCTION_DECL        COOMatrix<int64_t, double> coo_matrix(OpSum const &ops, Block const &block_in, Block const &block_out, int64_t i0 = 0)
-[                  23] FUNCTION_DECL        COOMatrix<int64_t, complex> coo_matrixC(OpSum const &ops, Block const &block, int64_t i0 = 0)
-[                  24] FUNCTION_DECL        COOMatrix<int64_t, complex> coo_matrixC(OpSum const &ops, Block const &block_in, Block const &block_out, int64_t i0 = 0)
-[                  30] FUNCTION_DECL        COOMatrix<int32_t, double> coo_matrix_32(OpSum const &ops, Block const &block, int32_t i0 = 0)
-[                  31] FUNCTION_DECL        COOMatrix<int32_t, double> coo_matrix_32(OpSum const &ops, Block const &block_in, Block const &block_out, int32_t i0 = 0)
-[                  37] FUNCTION_DECL        COOMatrix<int32_t, complex> coo_matrixC_32(OpSum const &ops, Block const &block, int32_t i0 = 0)
-[                  38] FUNCTION_DECL        COOMatrix<int32_t, complex> coo_matrixC_32(OpSum const &ops, Block const &block_in, Block const &block_out, int32_t i0 = 0)
+[                  16] FUNCTION_DECL        XDIAG_API COOMatrix<int64_t, double> coo_matrix(OpSum const &ops, Block const &block, int64_t i0 = 0)
+[                  17] FUNCTION_DECL        XDIAG_API COOMatrix<int64_t, double> coo_matrix(OpSum const &ops, Block const &block_in, Block const &block_out, int64_t i0 = 0)
+[                  23] FUNCTION_DECL        XDIAG_API COOMatrix<int64_t, complex> coo_matrixC(OpSum const &ops, Block const &block, int64_t i0 = 0)
+[                  24] FUNCTION_DECL        XDIAG_API COOMatrix<int64_t, complex> coo_matrixC(OpSum const &ops, Block const &block_in, Block const &block_out, int64_t i0 = 0)
+[                  30] FUNCTION_DECL        XDIAG_API COOMatrix<int32_t, double> coo_matrix_32(OpSum const &ops, Block const &block, int32_t i0 = 0)
+[                  31] FUNCTION_DECL        XDIAG_API COOMatrix<int32_t, double> coo_matrix_32(OpSum const &ops, Block const &block_in, Block const &block_out, int32_t i0 = 0)
+[                  37] FUNCTION_DECL        XDIAG_API COOMatrix<int32_t, complex> coo_matrixC_32(OpSum const &ops, Block const &block, int32_t i0 = 0)
+[                  38] FUNCTION_DECL        XDIAG_API COOMatrix<int32_t, complex> coo_matrixC_32(OpSum const &ops, Block const &block_in, Block const &block_out, int32_t i0 = 0)
 
 === xdiag/kernels/sparse/csc_matrix.hpp ===
-[                  16] FUNCTION_DECL        CSCMatrix<int64_t, double> csc_matrix(OpSum const &ops, Block const &block, int64_t i0 = 0)
-[                  17] FUNCTION_DECL        CSCMatrix<int64_t, double> csc_matrix(OpSum const &ops, Block const &block_in, Block const &block_out, int64_t i0 = 0)
-[                  23] FUNCTION_DECL        CSCMatrix<int64_t, complex> csc_matrixC(OpSum const &ops, Block const &block, int64_t i0 = 0)
-[                  24] FUNCTION_DECL        CSCMatrix<int64_t, complex> csc_matrixC(OpSum const &ops, Block const &block_in, Block const &block_out, int64_t i0 = 0)
-[                  30] FUNCTION_DECL        CSCMatrix<int32_t, double> csc_matrix_32(OpSum const &ops, Block const &block, int32_t i0 = 0)
-[                  31] FUNCTION_DECL        CSCMatrix<int32_t, double> csc_matrix_32(OpSum const &ops, Block const &block_in, Block const &block_out, int32_t i0 = 0)
-[                  37] FUNCTION_DECL        CSCMatrix<int32_t, complex> csc_matrixC_32(OpSum const &ops, Block const &block, int32_t i0 = 0)
-[                  38] FUNCTION_DECL        CSCMatrix<int32_t, complex> csc_matrixC_32(OpSum const &ops, Block const &block_in, Block const &block_out, int32_t i0 = 0)
+[                  16] FUNCTION_DECL        XDIAG_API CSCMatrix<int64_t, double> csc_matrix(OpSum const &ops, Block const &block, int64_t i0 = 0)
+[                  17] FUNCTION_DECL        XDIAG_API CSCMatrix<int64_t, double> csc_matrix(OpSum const &ops, Block const &block_in, Block const &block_out, int64_t i0 = 0)
+[                  23] FUNCTION_DECL        XDIAG_API CSCMatrix<int64_t, complex> csc_matrixC(OpSum const &ops, Block const &block, int64_t i0 = 0)
+[                  24] FUNCTION_DECL        XDIAG_API CSCMatrix<int64_t, complex> csc_matrixC(OpSum const &ops, Block const &block_in, Block const &block_out, int64_t i0 = 0)
+[                  30] FUNCTION_DECL        XDIAG_API CSCMatrix<int32_t, double> csc_matrix_32(OpSum const &ops, Block const &block, int32_t i0 = 0)
+[                  31] FUNCTION_DECL        XDIAG_API CSCMatrix<int32_t, double> csc_matrix_32(OpSum const &ops, Block const &block_in, Block const &block_out, int32_t i0 = 0)
+[                  37] FUNCTION_DECL        XDIAG_API CSCMatrix<int32_t, complex> csc_matrixC_32(OpSum const &ops, Block const &block, int32_t i0 = 0)
+[                  38] FUNCTION_DECL        XDIAG_API CSCMatrix<int32_t, complex> csc_matrixC_32(OpSum const &ops, Block const &block_in, Block const &block_out, int32_t i0 = 0)
 
 === xdiag/kernels/sparse/csr_matrix.hpp ===
-[                  16] FUNCTION_DECL        CSRMatrix<int64_t, double> csr_matrix(OpSum const &ops, Block const &block, int64_t i0 = 0)
-[                  17] FUNCTION_DECL        CSRMatrix<int64_t, double> csr_matrix(OpSum const &ops, Block const &block_in, Block const &block_out, int64_t i0 = 0)
-[                  24] FUNCTION_DECL        CSRMatrix<int64_t, complex> csr_matrixC(OpSum const &ops, Block const &block, int64_t i0 = 0)
-[                  25] FUNCTION_DECL        CSRMatrix<int64_t, complex> csr_matrixC(OpSum const &ops, Block const &block_in, Block const &block_out, int64_t i0 = 0)
-[                  31] FUNCTION_DECL        CSRMatrix<int32_t, double> csr_matrix_32(OpSum const &ops, Block const &block, int32_t i0 = 0)
-[                  32] FUNCTION_DECL        CSRMatrix<int32_t, double> csr_matrix_32(OpSum const &ops, Block const &block_in, Block const &block_out, int32_t i0 = 0)
-[                  38] FUNCTION_DECL        CSRMatrix<int32_t, complex> csr_matrixC_32(OpSum const &ops, Block const &block, int32_t i0 = 0)
-[                  39] FUNCTION_DECL        CSRMatrix<int32_t, complex> csr_matrixC_32(OpSum const &ops, Block const &block_in, Block const &block_out, int32_t i0 = 0)
+[                  16] FUNCTION_DECL        XDIAG_API CSRMatrix<int64_t, double> csr_matrix(OpSum const &ops, Block const &block, int64_t i0 = 0)
+[                  17] FUNCTION_DECL        XDIAG_API CSRMatrix<int64_t, double> csr_matrix(OpSum const &ops, Block const &block_in, Block const &block_out, int64_t i0 = 0)
+[                  24] FUNCTION_DECL        XDIAG_API CSRMatrix<int64_t, complex> csr_matrixC(OpSum const &ops, Block const &block, int64_t i0 = 0)
+[                  25] FUNCTION_DECL        XDIAG_API CSRMatrix<int64_t, complex> csr_matrixC(OpSum const &ops, Block const &block_in, Block const &block_out, int64_t i0 = 0)
+[                  31] FUNCTION_DECL        XDIAG_API CSRMatrix<int32_t, double> csr_matrix_32(OpSum const &ops, Block const &block, int32_t i0 = 0)
+[                  32] FUNCTION_DECL        XDIAG_API CSRMatrix<int32_t, double> csr_matrix_32(OpSum const &ops, Block const &block_in, Block const &block_out, int32_t i0 = 0)
+[                  38] FUNCTION_DECL        XDIAG_API CSRMatrix<int32_t, complex> csr_matrixC_32(OpSum const &ops, Block const &block, int32_t i0 = 0)
+[                  39] FUNCTION_DECL        XDIAG_API CSRMatrix<int32_t, complex> csr_matrixC_32(OpSum const &ops, Block const &block_in, Block const &block_out, int32_t i0 = 0)
 
 === xdiag/kernels/sparse/sparse_matrix_types.hpp ===
 [                  10] CLASS_TEMPLATE       template <typename idx_t, typename coeff_t> struct XDIAG_API COOMatrix { idx_t nrows; // number of rows in the matrix idx_t ncols; // number of columns in the matrix arma::Col<idx_t> row; // row indices arma::Col<idx_t> col; // column indices arma::Col<coeff_t> data; // data entries idx_t i0; // zero index, either 0 or 1 bool ishermitian; // flag whether matrix is hermitian/symmetric }
@@ -218,88 +226,94 @@
 
 === xdiag/linalg/lanczos/eigs_lanczos.hpp ===
 [                  18] STRUCT_DECL          struct XDIAG_API EigsLanczosResult { arma::vec alphas; arma::vec betas; arma::vec eigenvalues; State eigenvectors; int64_t niterations; std::string criterion; }
-[                  31] FUNCTION_DECL        EigsLanczosResult eigs_lanczos(OpSum const &ops, Block const &block, int64_t neigvals = 1, double precision = 1e-12, int64_t max_iterations = 1000, double deflation_tol = 1e-7, int64_t random_seed = 42)
-[                  52] FUNCTION_DECL        EigsLanczosResult eigs_lanczos(OpSum const &ops, State const &state0, int64_t neigvals = 1, double precision = 1e-12, int64_t max_iterations = 1000, double deflation_tol = 1e-7)
+[                  31] FUNCTION_DECL        XDIAG_API EigsLanczosResult eigs_lanczos(OpSum const &ops, Block const &block, int64_t neigvals = 1, double precision = 1e-12, int64_t max_iterations = 1000, double deflation_tol = 1e-7, int64_t random_seed = 42)
+[                  52] FUNCTION_DECL        XDIAG_API EigsLanczosResult eigs_lanczos(OpSum const &ops, State const &state0, int64_t neigvals = 1, double precision = 1e-12, int64_t max_iterations = 1000, double deflation_tol = 1e-7)
 
 === xdiag/linalg/lanczos/eigvals_lanczos.hpp ===
 [                  18] STRUCT_DECL          struct XDIAG_API EigvalsLanczosResult { arma::vec alphas; arma::vec betas; arma::vec eigenvalues; int64_t niterations; std::string criterion; }
-[                  31] FUNCTION_DECL        EigvalsLanczosResult eigvals_lanczos(OpSum const &ops, Block const &block, int64_t neigvals = 1, double precision = 1e-12, int64_t max_iterations = 1000, double deflation_tol = 1e-7, int64_t random_seed = 42)
-[                  47] FUNCTION_DECL        EigvalsLanczosResult eigvals_lanczos(OpSum const &ops, State psi0, int64_t neigvals = 1, double precision = 1e-12, int64_t max_iterations = 1000, double deflation_tol = 1e-7)
-[                  64] FUNCTION_DECL        EigvalsLanczosResult eigvals_lanczos_inplace(OpSum const &ops, State &psi0, int64_t neigvals = 1, double precision = 1e-12, int64_t max_iterations = 1000, double deflation_tol = 1e-7)
+[                  31] FUNCTION_DECL        XDIAG_API EigvalsLanczosResult eigvals_lanczos(OpSum const &ops, Block const &block, int64_t neigvals = 1, double precision = 1e-12, int64_t max_iterations = 1000, double deflation_tol = 1e-7, int64_t random_seed = 42)
+[                  47] FUNCTION_DECL        XDIAG_API EigvalsLanczosResult eigvals_lanczos(OpSum const &ops, State psi0, int64_t neigvals = 1, double precision = 1e-12, int64_t max_iterations = 1000, double deflation_tol = 1e-7)
+[                  64] FUNCTION_DECL        XDIAG_API EigvalsLanczosResult eigvals_lanczos_inplace(OpSum const &ops, State &psi0, int64_t neigvals = 1, double precision = 1e-12, int64_t max_iterations = 1000, double deflation_tol = 1e-7)
 
 === xdiag/linalg/lobpcg/eigs_lobpcg.hpp ===
 [                  18] STRUCT_DECL          struct XDIAG_API EigsLobpcgResult { arma::vec eigenvalues; arma::vec residual_norms; State eigenvectors; int64_t niterations; std::string criterion; arma::mat eigenvalue_history; arma::mat residual_norms_history; }
-[                  35] FUNCTION_DECL        EigsLobpcgResult eigs_lobpcg(OpSum const &ops, Block const &block, int64_t neigs = 1, int64_t guard = 2, double tol = 1e-10, int64_t max_iterations = 1000, int64_t random_seed = 42)
+[                  35] FUNCTION_DECL        XDIAG_API EigsLobpcgResult eigs_lobpcg(OpSum const &ops, Block const &block, int64_t neigs = 1, int64_t guard = 2, double tol = 1e-10, int64_t max_iterations = 1000, int64_t random_seed = 42)
 
 === xdiag/linalg/sparse_diag.hpp ===
-[                  19] FUNCTION_DECL        double eigval0(OpSum const &ops, Block const &block, double precision = 1e-12, int64_t max_iterations = 1000, int64_t random_seed = 42)
-[                  30] FUNCTION_DECL        std::tuple<double, State> eig0(OpSum const &ops, Block const &block, double precision = 1e-12, int64_t max_iterations = 1000, int64_t random_seed = 42)
-[                  42] FUNCTION_DECL        arma::vec eigvals(OpSum const &ops, Block const &block, int64_t neigs, double precision = 1e-12, int64_t max_iterations = 1000, int64_t random_seed = 42)
-[                  53] FUNCTION_DECL        std::tuple<arma::vec, State> eigs(OpSum const &ops, Block const &block, int64_t neigs, double precision = 1e-12, int64_t max_iterations = 1000, int64_t random_seed = 42)
+[                  19] FUNCTION_DECL        XDIAG_API double eigval0(OpSum const &ops, Block const &block, double precision = 1e-12, int64_t max_iterations = 1000, int64_t random_seed = 42)
+[                  30] FUNCTION_DECL        XDIAG_API std::tuple<double, State> eig0(OpSum const &ops, Block const &block, double precision = 1e-12, int64_t max_iterations = 1000, int64_t random_seed = 42)
+[                  42] FUNCTION_DECL        XDIAG_API arma::vec eigvals(OpSum const &ops, Block const &block, int64_t neigs, double precision = 1e-12, int64_t max_iterations = 1000, int64_t random_seed = 42)
+[                  53] FUNCTION_DECL        XDIAG_API std::tuple<arma::vec, State> eigs(OpSum const &ops, Block const &block, int64_t neigs, double precision = 1e-12, int64_t max_iterations = 1000, int64_t random_seed = 42)
 
 === xdiag/linalg/time_evolution/evolve_lanczos.hpp ===
 [                  19] STRUCT_DECL          struct XDIAG_API EvolveLanczosResult { arma::vec alphas; arma::vec betas; arma::vec eigenvalues; int64_t niterations; std::string criterion; State state; }
-[                  29] FUNCTION_DECL        EvolveLanczosResult evolve_lanczos(OpSum const &H, State psi, double tau, double precision = 1e-12, double shift = 0., bool normalize = false, int64_t max_iterations = 1000, double deflation_tol = 1e-7)
-[                  34] FUNCTION_DECL        EvolveLanczosResult evolve_lanczos(OpSum const &H, State psi, complex tau, double precision = 1e-12, double shift = 0., bool normalize = false, int64_t max_iterations = 1000, double deflation_tol = 1e-7)
+[                  29] FUNCTION_DECL        XDIAG_API EvolveLanczosResult evolve_lanczos(OpSum const &H, State psi, double tau, double precision = 1e-12, double shift = 0., bool normalize = false, int64_t max_iterations = 1000, double deflation_tol = 1e-7)
+[                  34] FUNCTION_DECL        XDIAG_API EvolveLanczosResult evolve_lanczos(OpSum const &H, State psi, complex tau, double precision = 1e-12, double shift = 0., bool normalize = false, int64_t max_iterations = 1000, double deflation_tol = 1e-7)
 [                  50] STRUCT_DECL          struct XDIAG_API EvolveLanczosInplaceResult { arma::vec alphas; arma::vec betas; arma::vec eigenvalues; int64_t niterations; std::string criterion; }
-[                  58] FUNCTION_DECL        EvolveLanczosInplaceResult evolve_lanczos_inplace( OpSum const &H, State &psi, double tau, double precision = 1e-12, double shift = 0., bool normalize = false, int64_t max_iterations = 1000, double deflation_tol = 1e-7)
-[                  63] FUNCTION_DECL        EvolveLanczosInplaceResult evolve_lanczos_inplace( OpSum const &H, State &psi, complex tau, double precision = 1e-12, double shift = 0., bool normalize = false, int64_t max_iterations = 1000, double deflation_tol = 1e-7)
+[                  58] FUNCTION_DECL        XDIAG_API EvolveLanczosInplaceResult evolve_lanczos_inplace( OpSum const &H, State &psi, double tau, double precision = 1e-12, double shift = 0., bool normalize = false, int64_t max_iterations = 1000, double deflation_tol = 1e-7)
+[                  63] FUNCTION_DECL        XDIAG_API EvolveLanczosInplaceResult evolve_lanczos_inplace( OpSum const &H, State &psi, complex tau, double precision = 1e-12, double shift = 0., bool normalize = false, int64_t max_iterations = 1000, double deflation_tol = 1e-7)
 
 === xdiag/linalg/time_evolution/imaginary_time_evolve.hpp ===
-[                  14] FUNCTION_DECL        State imaginary_time_evolve(OpSum const &H, State psi, double time, double precision = 1e-12, double shift = 0.)
-[                  23] FUNCTION_DECL        void imaginary_time_evolve_inplace(OpSum const &H, State &psi, double time, double precision = 1e-12, double shift = 0.)
+[                  14] FUNCTION_DECL        XDIAG_API State imaginary_time_evolve(OpSum const &H, State psi, double time, double precision = 1e-12, double shift = 0.)
+[                  23] FUNCTION_DECL        XDIAG_API void imaginary_time_evolve_inplace(OpSum const &H, State &psi, double time, double precision = 1e-12, double shift = 0.)
 
 === xdiag/linalg/time_evolution/time_evolve.hpp ===
-[                  16] FUNCTION_DECL        State time_evolve(OpSum const &H, State psi, double time, double precision = 1e-12, std::string algorithm = "lanczos")
-[                  25] FUNCTION_DECL        void time_evolve_inplace(OpSum const &H, State &psi, double time, double precision = 1e-12, std::string algorithm = "lanczos")
+[                  16] FUNCTION_DECL        XDIAG_API State time_evolve(OpSum const &H, State psi, double time, double precision = 1e-12, std::string algorithm = "lanczos")
+[                  25] FUNCTION_DECL        XDIAG_API void time_evolve_inplace(OpSum const &H, State &psi, double time, double precision = 1e-12, std::string algorithm = "lanczos")
 
 === xdiag/linalg/time_evolution/time_evolve_expokit.hpp ===
 [                  16] STRUCT_DECL          struct XDIAG_API TimeEvolveExpokitResult { double error; double hump; State state; }
-[                  22] FUNCTION_DECL        TimeEvolveExpokitResult time_evolve_expokit( OpSum const &H, State psi0, double time, double precision = 1e-12, int64_t m = 30, double anorm = 0., int64_t nnorm = 2)
+[                  22] FUNCTION_DECL        XDIAG_API TimeEvolveExpokitResult time_evolve_expokit( OpSum const &H, State psi0, double time, double precision = 1e-12, int64_t m = 30, double anorm = 0., int64_t nnorm = 2)
 [                  32] STRUCT_DECL          struct XDIAG_API TimeEvolveExpokitInplaceResult { double error; double hump; }
-[                  37] FUNCTION_DECL        TimeEvolveExpokitInplaceResult time_evolve_expokit_inplace( OpSum const &H, State &psi, double time, double precision = 1e-12, int64_t m = 30, double anorm = 0., int64_t nnorm = 2)
+[                  37] FUNCTION_DECL        XDIAG_API TimeEvolveExpokitInplaceResult time_evolve_expokit_inplace( OpSum const &H, State &psi, double time, double precision = 1e-12, int64_t m = 30, double anorm = 0., int64_t nnorm = 2)
 
 === xdiag/operators/hc.hpp ===
-[                  15] FUNCTION_DECL        OpSum hc(Op const &op)
-[                  16] FUNCTION_DECL        OpSum hc(Monomial const &mono)
-[                  17] FUNCTION_DECL        OpSum hc(OpSum const &ops)
+[                  15] FUNCTION_DECL        XDIAG_API OpSum hc(Op const &op)
+[                  16] FUNCTION_DECL        XDIAG_API OpSum hc(Monomial const &mono)
+[                  17] FUNCTION_DECL        XDIAG_API OpSum hc(OpSum const &ops)
 
 === xdiag/operators/monomial.hpp ===
-[                  26] CLASS_DECL           ass XDIAG_API Monomial { public: Monomial() = default; Monomial(Op const &op); // implicit single-op Monomial(std::initializer_list<Op> ops); // Monomial{A, B, C} explicit Monomial(std::vector<Op> const &ops); int64_t size() const noexcept; bool empty() const noexcept; Op const &operator[](int64_t idx) const; std::vector<Op> const &ops() const noexcept; using iterator_t = std::vector<Op>::const_iterator; iterator_t begin() const noexcept; iterator_t end() const noexcept; // Algebra product (free algebra): concatenation, no simplification Monomial operator*(Op const &rhs) const; Monomial operator*(Monomial const &rhs) const; Monomial &operator*=(Op const &rhs); Monomial &operator*=(Monomial const &rhs); bool operator==(Monomial const &rhs) const noexcept; bool operator!=(Monomial const &rhs) const noexcept; bool operator<(Monomial const &rhs) const noexcept; // lexicographic // Hermitian conjugation is provided by hc() (operators/hc.hpp), which returns // an OpSum so it can carry a phase (e.g. hc(ExchangeAsym) = -ExchangeAsym). bool isreal() const; private: std::vector<Op> ops_; };
-[Monomial            ] CONSTRUCTOR          nomial() = default;
-[Monomial            ] CONSTRUCTOR          nomial(Op const &op);
-[Monomial            ] CONSTRUCTOR          nomial(std::initializer_list<Op> ops);
-[Monomial            ] CONSTRUCTOR          plicit Monomial(std::vector<Op> const &ops);
-[Monomial            ] CXX_METHOD           t64_t size() const noexcept;
-[Monomial            ] CXX_METHOD           ol empty() const noexcept;
-[Monomial            ] CXX_METHOD           const &operator[](int64_t idx) const;
-[Monomial            ] CXX_METHOD           d::vector<Op> const &ops() const noexcept;
-[Monomial            ] CXX_METHOD           erator_t begin() const noexcept;
-[Monomial            ] CXX_METHOD           erator_t end() const noexcept;
-[Monomial            ] CXX_METHOD           nomial operator*(Op const &rhs) const;
-[Monomial            ] CXX_METHOD           nomial operator*(Monomial const &rhs) const;
-[Monomial            ] CXX_METHOD           nomial &operator*=(Op const &rhs);
-[Monomial            ] CXX_METHOD           nomial &operator*=(Monomial const &rhs);
-[Monomial            ] CXX_METHOD           ol operator==(Monomial const &rhs) const noexcept;
-[Monomial            ] CXX_METHOD           ol operator!=(Monomial const &rhs) const noexcept;
-[Monomial            ] CXX_METHOD           ol operator<(Monomial const &rhs) const noexcept;
-[Monomial            ] CXX_METHOD           ol isreal() const;
-[                  61] FUNCTION_DECL        nomial operator*(Op const &lhs, Op const &rhs);
-[                  62] FUNCTION_DECL        nomial operator*(Op const &lhs, Monomial const &rhs);
-[                  64] FUNCTION_DECL        ol isreal(Monomial const &m);
-[                  65] FUNCTION_DECL        d::ostream &operator<<(std::ostream &out, Monomial const &m);
-[                  66] FUNCTION_DECL        d::string to_string(Monomial const &m);
+[                  26] CLASS_DECL           class XDIAG_API Monomial { public: Monomial() = default; Monomial(Op const &op); // implicit single-op Monomial(std::initializer_list<Op> ops); // Monomial{A, B, C} explicit Monomial(std::vector<Op> const &ops); int64_t size() const noexcept; bool empty() const noexcept; Op const &operator[](int64_t idx) const; std::vector<Op> const &ops() const noexcept; using iterator_t = std::vector<Op>::const_iterator; iterator_t begin() const noexcept; iterator_t end() const noexcept; // Algebra product (free algebra): concatenation, no simplification Monomial operator*(Op const &rhs) const; Monomial operator*(Monomial const &rhs) const; Monomial &operator*=(Op const &rhs); Monomial &operator*=(Monomial const &rhs); bool operator==(Monomial const &rhs) const noexcept; bool operator!=(Monomial const &rhs) const noexcept; bool operator<(Monomial const &rhs) const noexcept; // lexicographic // Hermitian conjugation is provided by hc() (operators/hc.hpp), which returns // an OpSum so it can carry a phase (e.g. hc(ExchangeAsym) = -ExchangeAsym). bool isreal() const; private: std::vector<Op> ops_; }
+[Monomial            ] CONSTRUCTOR          Monomial() = default
+[Monomial            ] CONSTRUCTOR          Monomial(Op const &op)
+[Monomial            ] CONSTRUCTOR          Monomial(std::initializer_list<Op> ops)
+[Monomial            ] CONSTRUCTOR          explicit Monomial(std::vector<Op> const &ops)
+[Monomial            ] CXX_METHOD           int64_t size() const noexcept
+[Monomial            ] CXX_METHOD           bool empty() const noexcept
+[Monomial            ] CXX_METHOD           Op const &operator[](int64_t idx) const
+[Monomial            ] CXX_METHOD           std::vector<Op> const &ops() const noexcept
+[Monomial            ] CXX_METHOD           iterator_t begin() const noexcept
+[Monomial            ] CXX_METHOD           iterator_t end() const noexcept
+[Monomial            ] CXX_METHOD           Monomial operator*(Op const &rhs) const
+[Monomial            ] CXX_METHOD           Monomial operator*(Monomial const &rhs) const
+[Monomial            ] CXX_METHOD           Monomial &operator*=(Op const &rhs)
+[Monomial            ] CXX_METHOD           Monomial &operator*=(Monomial const &rhs)
+[Monomial            ] CXX_METHOD           bool operator==(Monomial const &rhs) const noexcept
+[Monomial            ] CXX_METHOD           bool operator!=(Monomial const &rhs) const noexcept
+[Monomial            ] CXX_METHOD           bool operator<(Monomial const &rhs) const noexcept
+[Monomial            ] CXX_METHOD           bool isreal() const
+[                  61] FUNCTION_DECL        XDIAG_API Monomial operator*(Op const &lhs, Op const &rhs)
+[                  62] FUNCTION_DECL        XDIAG_API Monomial operator*(Op const &lhs, Monomial const &rhs)
+[                  64] FUNCTION_DECL        XDIAG_API bool isreal(Monomial const &m)
+[                  65] FUNCTION_DECL        XDIAG_API std::ostream &operator<<(std::ostream &out, Monomial const &m)
+[                  66] FUNCTION_DECL        XDIAG_API std::string to_string(Monomial const &m)
 
 === xdiag/operators/op.hpp ===
-[                  24] CLASS_DECL           class XDIAG_API Op { public: Op() = default; explicit Op(std::string type); // site-free (e.g. "HubbardU") Op(std::string type, int64_t site); // single-site Op(std::string type, std::vector<int64_t> const &sites); // multi-site // Custom matrix operator on one or more sites (real or complex) Op(std::string type, int64_t site, arma::mat const &matrix); Op(std::string type, std::vector<int64_t> const &sites, arma::mat const &matrix); Op(std::string type, int64_t site, arma::cx_mat const &matrix); Op(std::string type, std::vector<int64_t> const &sites, arma::cx_mat const &matrix); Op(std::string type, int64_t site, Matrix const &matrix); Op(std::string type, std::vector<int64_t> const &sites, Matrix const &matrix); std::string type() const; // operator type string int64_t size() const; // number of sites int64_t operator[](int64_t idx) const; // site at index idx std::vector<int64_t> const &sites() const; bool hassites() const; // true if site list was provided bool hasmatrix() const; // true if a matrix was provided Matrix const &matrix() const; bool isreal() const; bool operator==(const Op &rhs) const; bool operator!=(const Op &rhs) const; bool operator<(const Op &rhs) const noexcept; private: std::string type_; std::optional<std::vector<int64_t>> sites_; std::optional<Matrix> matrix_; }
+[                  24] CLASS_DECL           class XDIAG_API Op { public: Op() = default; explicit Op(std::string type); // site-free (e.g. "HubbardU") Op(std::string type, int64_t site); // single-site Op(std::string type, std::initializer_list<int64_t> const &sites); // multi-site Op(std::string type, std::vector<int64_t> const &sites); // multi-site Op(std::string type, arma::Col<int64_t> const &sites); // multi-site // Custom matrix operator on one or more sites (real or complex) Op(std::string type, int64_t site, arma::mat const &matrix); Op(std::string type, std::initializer_list<int64_t> const &sites, arma::mat const &matrix); Op(std::string type, std::vector<int64_t> const &sites, arma::mat const &matrix); Op(std::string type, arma::Col<int64_t> const &sites, arma::mat const &matrix); Op(std::string type, int64_t site, arma::cx_mat const &matrix); Op(std::string type, std::initializer_list<int64_t> const &sites, arma::cx_mat const &matrix); Op(std::string type, std::vector<int64_t> const &sites, arma::cx_mat const &matrix); Op(std::string type, arma::Col<int64_t> const &sites, arma::cx_mat const &matrix); Op(std::string type, int64_t site, Matrix const &matrix); Op(std::string type, std::vector<int64_t> const &sites, Matrix const &matrix); std::string type() const; // operator type string int64_t size() const; // number of sites int64_t operator[](int64_t idx) const; // site at index idx std::vector<int64_t> const &sites() const; bool hassites() const; // true if site list was provided bool hasmatrix() const; // true if a matrix was provided Matrix const &matrix() const; bool isreal() const; bool operator==(const Op &rhs) const; bool operator!=(const Op &rhs) const; bool operator<(const Op &rhs) const noexcept; private: std::string type_; std::optional<std::vector<int64_t>> sites_; std::optional<Matrix> matrix_; }
 [Op                  ] CONSTRUCTOR          Op() = default
 [Op                  ] CONSTRUCTOR          explicit Op(std::string type)
 [Op                  ] CONSTRUCTOR          Op(std::string type, int64_t site)
+[Op                  ] CONSTRUCTOR          Op(std::string type, std::initializer_list<int64_t> const &sites)
 [Op                  ] CONSTRUCTOR          Op(std::string type, std::vector<int64_t> const &sites)
+[Op                  ] CONSTRUCTOR          Op(std::string type, arma::Col<int64_t> const &sites)
 [Op                  ] CONSTRUCTOR          Op(std::string type, int64_t site, arma::mat const &matrix)
+[Op                  ] CONSTRUCTOR          Op(std::string type, std::initializer_list<int64_t> const &sites, arma::mat const &matrix)
 [Op                  ] CONSTRUCTOR          Op(std::string type, std::vector<int64_t> const &sites, arma::mat const &matrix)
+[Op                  ] CONSTRUCTOR          Op(std::string type, arma::Col<int64_t> const &sites, arma::mat const &matrix)
 [Op                  ] CONSTRUCTOR          Op(std::string type, int64_t site, arma::cx_mat const &matrix)
+[Op                  ] CONSTRUCTOR          Op(std::string type, std::initializer_list<int64_t> const &sites, arma::cx_mat const &matrix)
 [Op                  ] CONSTRUCTOR          Op(std::string type, std::vector<int64_t> const &sites, arma::cx_mat const &matrix)
+[Op                  ] CONSTRUCTOR          Op(std::string type, arma::Col<int64_t> const &sites, arma::cx_mat const &matrix)
 [Op                  ] CONSTRUCTOR          Op(std::string type, int64_t site, Matrix const &matrix)
 [Op                  ] CONSTRUCTOR          Op(std::string type, std::vector<int64_t> const &sites, Matrix const &matrix)
 [Op                  ] CXX_METHOD           std::string type() const
@@ -313,9 +327,9 @@
 [Op                  ] CXX_METHOD           bool operator==(const Op &rhs) const
 [Op                  ] CXX_METHOD           bool operator!=(const Op &rhs) const
 [Op                  ] CXX_METHOD           bool operator<(const Op &rhs) const noexcept
-[                  63] FUNCTION_DECL        bool isreal(Op const &op)
-[                  64] FUNCTION_DECL        std::ostream &operator<<(std::ostream &out, Op const &op)
-[                  65] FUNCTION_DECL        std::string to_string(Op const &op)
+[                  76] FUNCTION_DECL        XDIAG_API bool isreal(Op const &op)
+[                  77] FUNCTION_DECL        XDIAG_API std::ostream &operator<<(std::ostream &out, Op const &op)
+[                  78] FUNCTION_DECL        XDIAG_API std::string to_string(Op const &op)
 
 === xdiag/operators/opsum.hpp ===
 [                  28] CLASS_DECL           class XDIAG_API OpSum { public: using iterator_t = std::vector<Term>::const_iterator; OpSum() = default; explicit OpSum(Op const &op); explicit OpSum(Monomial const &mono); OpSum(Scalar const &coeff, Op const &op); OpSum(Scalar const &coeff, Monomial const &mono); OpSum(Coeff const &coeff, Op const &op); OpSum(Coeff const &coeff, Monomial const &mono); OpSum(std::string const &coeff, Op const &op); OpSum(double coeff, Op const &op); OpSum(complex coeff, Op const &op); OpSum(std::string const &coeff, Monomial const &mono); OpSum(double coeff, Monomial const &mono); OpSum(complex coeff, Monomial const &mono); // Vector space: addition and subtraction OpSum &operator+=(OpSum const &ops); OpSum &operator+=(Op const &op); OpSum &operator+=(Monomial const &mono); OpSum operator+(OpSum const &ops) const; OpSum operator+(Op const &op) const; OpSum operator+(Monomial const &mono) const; OpSum &operator-=(OpSum const &ops); OpSum &operator-=(Op const &op); OpSum &operator-=(Monomial const &mono); OpSum operator-(OpSum const &ops) const; OpSum operator-(Op const &op) const; OpSum operator-(Monomial const &mono) const; OpSum operator-() const; // Scalar scaling (multiplies each coefficient by the scalar) OpSum &operator*=(double scalar); OpSum &operator*=(complex scalar); OpSum &operator/=(double scalar); OpSum &operator/=(complex scalar); OpSum &operator*=(Scalar const &scalar); OpSum &operator/=(Scalar const &scalar); // Algebra product (non-commutative, distributes over addition) OpSum operator*(OpSum const &rhs) const; OpSum &operator*=(OpSum const &rhs); OpSum operator*(Op const &rhs) const; OpSum &operator*=(Op const &rhs); OpSum operator*(Monomial const &rhs) const; OpSum &operator*=(Monomial const &rhs); // Named parameters: ops["J"] = 1.5; ops.plain() resolves them Scalar &operator[](std::string const &name); Scalar const &operator[](std::string const &name) const; OpSum plain() const; // Access std::vector<Term> const &terms() const noexcept; std::map<std::string, Scalar> const &params() const noexcept; int64_t size() const noexcept; iterator_t begin() const noexcept; iterator_t end() const noexcept; bool operator==(OpSum const &rhs) const; bool operator!=(OpSum const &rhs) const; bool isreal() const; bool empty() const; private: std::vector<Term> terms_; std::map<std::string, Scalar> params_; void merge_params(std::map<std::string, Scalar> const &other); }
@@ -369,101 +383,101 @@
 [OpSum               ] CXX_METHOD           bool operator!=(OpSum const &rhs) const
 [OpSum               ] CXX_METHOD           bool isreal() const
 [OpSum               ] CXX_METHOD           bool empty() const
-[                 105] FUNCTION_DECL        OpSum operator*(double coeff, Op const &op)
-[                 106] FUNCTION_DECL        OpSum operator*(complex coeff, Op const &op)
-[                 107] FUNCTION_DECL        OpSum operator*(std::string const &coeff, Op const &op)
-[                 108] FUNCTION_DECL        OpSum operator*(Coeff const &coeff, Op const &op)
-[                 109] FUNCTION_DECL        OpSum operator*(Scalar const &coeff, Op const &op)
-[                 110] FUNCTION_DECL        OpSum operator*(Op const &op, double coeff)
-[                 111] FUNCTION_DECL        OpSum operator*(Op const &op, complex coeff)
-[                 112] FUNCTION_DECL        OpSum operator*(Op const &op, std::string const &coeff)
-[                 113] FUNCTION_DECL        OpSum operator*(Op const &op, Coeff const &coeff)
-[                 114] FUNCTION_DECL        OpSum operator*(Op const &op, Scalar const &coeff)
-[                 117] FUNCTION_DECL        OpSum operator*(double coeff, Monomial const &mono)
-[                 118] FUNCTION_DECL        OpSum operator*(complex coeff, Monomial const &mono)
-[                 119] FUNCTION_DECL        OpSum operator*(std::string const &coeff, Monomial const &mono)
-[                 120] FUNCTION_DECL        OpSum operator*(Coeff const &coeff, Monomial const &mono)
-[                 121] FUNCTION_DECL        OpSum operator*(Scalar const &coeff, Monomial const &mono)
-[                 122] FUNCTION_DECL        OpSum operator*(Monomial const &mono, double coeff)
-[                 123] FUNCTION_DECL        OpSum operator*(Monomial const &mono, complex coeff)
-[                 124] FUNCTION_DECL        OpSum operator*(Monomial const &mono, std::string const &coeff)
-[                 125] FUNCTION_DECL        OpSum operator*(Monomial const &mono, Coeff const &coeff)
-[                 126] FUNCTION_DECL        OpSum operator*(Monomial const &mono, Scalar const &coeff)
-[                 129] FUNCTION_DECL        OpSum operator*(double scalar, OpSum const &ops)
-[                 130] FUNCTION_DECL        OpSum operator*(complex scalar, OpSum const &ops)
-[                 131] FUNCTION_DECL        OpSum operator*(Scalar const &scalar, OpSum const &ops)
-[                 132] FUNCTION_DECL        OpSum operator*(OpSum const &ops, double scalar)
-[                 133] FUNCTION_DECL        OpSum operator*(OpSum const &ops, complex scalar)
-[                 134] FUNCTION_DECL        OpSum operator*(OpSum const &ops, Scalar const &scalar)
-[                 135] FUNCTION_DECL        OpSum operator/(OpSum const &ops, double scalar)
-[                 136] FUNCTION_DECL        OpSum operator/(OpSum const &ops, complex scalar)
-[                 137] FUNCTION_DECL        OpSum operator/(OpSum const &ops, Scalar const &scalar)
-[                 141] FUNCTION_DECL        OpSum operator+(Monomial const &lhs, Monomial const &rhs)
-[                 142] FUNCTION_DECL        OpSum operator-(Monomial const &lhs, Monomial const &rhs)
-[                 143] FUNCTION_DECL        OpSum operator-(Monomial const &mono)
-[                 144] FUNCTION_DECL        OpSum operator+(Monomial const &lhs, OpSum const &rhs)
-[                 145] FUNCTION_DECL        OpSum operator-(Monomial const &lhs, OpSum const &rhs)
-[                 148] FUNCTION_DECL        OpSum operator*(Op const &lhs, OpSum const &rhs)
-[                 149] FUNCTION_DECL        OpSum operator*(Monomial const &lhs, OpSum const &rhs)
-[                 151] FUNCTION_DECL        bool isreal(OpSum const &ops)
-[                 152] FUNCTION_DECL        bool empty(OpSum const &ops)
-[                 154] FUNCTION_DECL        std::ostream &operator<<(std::ostream &out, OpSum const &ops)
-[                 155] FUNCTION_DECL        std::string to_string(OpSum const &ops)
+[                 105] FUNCTION_DECL        XDIAG_API OpSum operator*(double coeff, Op const &op)
+[                 106] FUNCTION_DECL        XDIAG_API OpSum operator*(complex coeff, Op const &op)
+[                 107] FUNCTION_DECL        XDIAG_API OpSum operator*(std::string const &coeff, Op const &op)
+[                 108] FUNCTION_DECL        XDIAG_API OpSum operator*(Coeff const &coeff, Op const &op)
+[                 109] FUNCTION_DECL        XDIAG_API OpSum operator*(Scalar const &coeff, Op const &op)
+[                 110] FUNCTION_DECL        XDIAG_API OpSum operator*(Op const &op, double coeff)
+[                 111] FUNCTION_DECL        XDIAG_API OpSum operator*(Op const &op, complex coeff)
+[                 112] FUNCTION_DECL        XDIAG_API OpSum operator*(Op const &op, std::string const &coeff)
+[                 113] FUNCTION_DECL        XDIAG_API OpSum operator*(Op const &op, Coeff const &coeff)
+[                 114] FUNCTION_DECL        XDIAG_API OpSum operator*(Op const &op, Scalar const &coeff)
+[                 117] FUNCTION_DECL        XDIAG_API OpSum operator*(double coeff, Monomial const &mono)
+[                 118] FUNCTION_DECL        XDIAG_API OpSum operator*(complex coeff, Monomial const &mono)
+[                 119] FUNCTION_DECL        XDIAG_API OpSum operator*(std::string const &coeff, Monomial const &mono)
+[                 120] FUNCTION_DECL        XDIAG_API OpSum operator*(Coeff const &coeff, Monomial const &mono)
+[                 121] FUNCTION_DECL        XDIAG_API OpSum operator*(Scalar const &coeff, Monomial const &mono)
+[                 122] FUNCTION_DECL        XDIAG_API OpSum operator*(Monomial const &mono, double coeff)
+[                 123] FUNCTION_DECL        XDIAG_API OpSum operator*(Monomial const &mono, complex coeff)
+[                 124] FUNCTION_DECL        XDIAG_API OpSum operator*(Monomial const &mono, std::string const &coeff)
+[                 125] FUNCTION_DECL        XDIAG_API OpSum operator*(Monomial const &mono, Coeff const &coeff)
+[                 126] FUNCTION_DECL        XDIAG_API OpSum operator*(Monomial const &mono, Scalar const &coeff)
+[                 129] FUNCTION_DECL        XDIAG_API OpSum operator*(double scalar, OpSum const &ops)
+[                 130] FUNCTION_DECL        XDIAG_API OpSum operator*(complex scalar, OpSum const &ops)
+[                 131] FUNCTION_DECL        XDIAG_API OpSum operator*(Scalar const &scalar, OpSum const &ops)
+[                 132] FUNCTION_DECL        XDIAG_API OpSum operator*(OpSum const &ops, double scalar)
+[                 133] FUNCTION_DECL        XDIAG_API OpSum operator*(OpSum const &ops, complex scalar)
+[                 134] FUNCTION_DECL        XDIAG_API OpSum operator*(OpSum const &ops, Scalar const &scalar)
+[                 135] FUNCTION_DECL        XDIAG_API OpSum operator/(OpSum const &ops, double scalar)
+[                 136] FUNCTION_DECL        XDIAG_API OpSum operator/(OpSum const &ops, complex scalar)
+[                 137] FUNCTION_DECL        XDIAG_API OpSum operator/(OpSum const &ops, Scalar const &scalar)
+[                 141] FUNCTION_DECL        XDIAG_API OpSum operator+(Monomial const &lhs, Monomial const &rhs)
+[                 142] FUNCTION_DECL        XDIAG_API OpSum operator-(Monomial const &lhs, Monomial const &rhs)
+[                 143] FUNCTION_DECL        XDIAG_API OpSum operator-(Monomial const &mono)
+[                 144] FUNCTION_DECL        XDIAG_API OpSum operator+(Monomial const &lhs, OpSum const &rhs)
+[                 145] FUNCTION_DECL        XDIAG_API OpSum operator-(Monomial const &lhs, OpSum const &rhs)
+[                 148] FUNCTION_DECL        XDIAG_API OpSum operator*(Op const &lhs, OpSum const &rhs)
+[                 149] FUNCTION_DECL        XDIAG_API OpSum operator*(Monomial const &lhs, OpSum const &rhs)
+[                 151] FUNCTION_DECL        XDIAG_API bool isreal(OpSum const &ops)
+[                 152] FUNCTION_DECL        XDIAG_API bool empty(OpSum const &ops)
+[                 154] FUNCTION_DECL        XDIAG_API std::ostream &operator<<(std::ostream &out, OpSum const &ops)
+[                 155] FUNCTION_DECL        XDIAG_API std::string to_string(OpSum const &ops)
 
 === xdiag/states/apply.hpp ===
-[                  16] FUNCTION_DECL        State apply(Op const &op, State const &v)
-[                  17] FUNCTION_DECL        State apply(Monomial const &mono, State const &v)
-[                  18] FUNCTION_DECL        State apply(OpSum const &ops, State const &v)
-[                  21] FUNCTION_DECL        void apply(Op const &op, State const &v, State &w)
-[                  22] FUNCTION_DECL        void apply(Monomial const &mono, State const &v, State &w)
-[                  23] FUNCTION_DECL        void apply(OpSum const &ops, State const &v, State &w)
+[                  16] FUNCTION_DECL        XDIAG_API State apply(Op const &op, State const &v)
+[                  17] FUNCTION_DECL        XDIAG_API State apply(Monomial const &mono, State const &v)
+[                  18] FUNCTION_DECL        XDIAG_API State apply(OpSum const &ops, State const &v)
+[                  21] FUNCTION_DECL        XDIAG_API void apply(Op const &op, State const &v, State &w)
+[                  22] FUNCTION_DECL        XDIAG_API void apply(Monomial const &mono, State const &v, State &w)
+[                  23] FUNCTION_DECL        XDIAG_API void apply(OpSum const &ops, State const &v, State &w)
 
 === xdiag/states/correlation_matrix.hpp ===
-[                  29] FUNCTION_DECL        arma::mat correlation_matrix(State const &state, std::string type1, std::string type2)
-[                  31] FUNCTION_DECL        arma::cx_mat correlation_matrixC(State const &state, std::string type1, std::string type2)
+[                  29] FUNCTION_DECL        XDIAG_API arma::mat correlation_matrix(State const &state, std::string type1, std::string type2)
+[                  31] FUNCTION_DECL        XDIAG_API arma::cx_mat correlation_matrixC(State const &state, std::string type1, std::string type2)
 
 === xdiag/states/create_state.hpp ===
-[                  17] FUNCTION_DECL        State product_state(Block const &block, std::vector<int32_t> const &local_state, bool real = true)
-[                  20] FUNCTION_DECL        State product_state(Block const &block, std::vector<int64_t> const &local_state, bool real = true)
-[                  24] FUNCTION_DECL        State random_state(Block const &block, bool real = true, int64_t ncols = 1, int64_t seed = 42, bool normalized = true)
-[                  28] FUNCTION_DECL        State zero_state(Block const &block, bool real = true, int64_t ncols = 1)
-[                  31] FUNCTION_DECL        void zero(State &state)
+[                  17] FUNCTION_DECL        XDIAG_API State product_state(Block const &block, std::vector<int32_t> const &local_state, bool real = true)
+[                  20] FUNCTION_DECL        XDIAG_API State product_state(Block const &block, std::vector<int64_t> const &local_state, bool real = true)
+[                  24] FUNCTION_DECL        XDIAG_API State random_state(Block const &block, bool real = true, int64_t ncols = 1, int64_t seed = 42, bool normalized = true)
+[                  28] FUNCTION_DECL        XDIAG_API State zero_state(Block const &block, bool real = true, int64_t ncols = 1)
+[                  31] FUNCTION_DECL        XDIAG_API void zero(State &state)
 
 === xdiag/states/dot.hpp ===
-[                  13] FUNCTION_DECL        double dot(State const &v, State const &w)
-[                  14] FUNCTION_DECL        complex dotC(State const &v, State const &w)
-[                  16] FUNCTION_DECL        arma::mat matrix_dot(State const &v, State const &w)
-[                  17] FUNCTION_DECL        arma::cx_mat matrix_dotC(State const &v, State const &w)
+[                  13] FUNCTION_DECL        XDIAG_API double dot(State const &v, State const &w)
+[                  14] FUNCTION_DECL        XDIAG_API complex dotC(State const &v, State const &w)
+[                  16] FUNCTION_DECL        XDIAG_API arma::mat matrix_dot(State const &v, State const &w)
+[                  17] FUNCTION_DECL        XDIAG_API arma::cx_mat matrix_dotC(State const &v, State const &w)
 
 === xdiag/states/expect.hpp ===
-[                  28] FUNCTION_DECL        arma::vec expect(State const &state, std::string type)
-[                  29] FUNCTION_DECL        arma::cx_vec expectC(State const &state, std::string type)
+[                  28] FUNCTION_DECL        XDIAG_API arma::vec expect(State const &state, std::string type)
+[                  29] FUNCTION_DECL        XDIAG_API arma::cx_vec expectC(State const &state, std::string type)
 
 === xdiag/states/fill.hpp ===
-[                  16] FUNCTION_DECL        void fill(State &state, std::function<double(ProductState const &)> coeff_f, int64_t col = 0)
-[                  19] FUNCTION_DECL        void fill(State &state, std::function<complex(ProductState const &)> coeff_f, int64_t col = 0)
-[                  23] FUNCTION_DECL        void fill(State &state, RandomState const &rstate, int64_t col = 0)
-[                  24] FUNCTION_DECL        void fill(State &state, ProductState const &pstate, int64_t col = 0)
-[                  25] FUNCTION_DECL        void fill(State &state, GPWF const &gpwf, int64_t col = 0)
+[                  16] FUNCTION_DECL        XDIAG_API void fill(State &state, std::function<double(ProductState const &)> coeff_f, int64_t col = 0)
+[                  19] FUNCTION_DECL        XDIAG_API void fill(State &state, std::function<complex(ProductState const &)> coeff_f, int64_t col = 0)
+[                  23] FUNCTION_DECL        XDIAG_API void fill(State &state, RandomState const &rstate, int64_t col = 0)
+[                  24] FUNCTION_DECL        XDIAG_API void fill(State &state, ProductState const &pstate, int64_t col = 0)
+[                  25] FUNCTION_DECL        XDIAG_API void fill(State &state, GPWF const &gpwf, int64_t col = 0)
 
 === xdiag/states/inner.hpp ===
-[                  17] FUNCTION_DECL        double inner(Op const &A, State const &v)
-[                  18] FUNCTION_DECL        double inner(Monomial const &A, State const &v)
-[                  19] FUNCTION_DECL        double inner(OpSum const &A, State const &v)
-[                  22] FUNCTION_DECL        complex innerC(Op const &A, State const &w)
-[                  23] FUNCTION_DECL        complex innerC(Monomial const &A, State const &w)
-[                  24] FUNCTION_DECL        complex innerC(OpSum const &A, State const &w)
-[                  27] FUNCTION_DECL        double inner(State const &v, Op const &A, State const &w)
-[                  28] FUNCTION_DECL        double inner(State const &v, Monomial const &A, State const &w)
-[                  29] FUNCTION_DECL        double inner(State const &v, OpSum const &A, State const &w)
-[                  32] FUNCTION_DECL        complex innerC(State const &v, Op const &A, State const &w)
-[                  33] FUNCTION_DECL        complex innerC(State const &v, Monomial const &A, State const &w)
-[                  34] FUNCTION_DECL        complex innerC(State const &v, OpSum const &A, State const &w)
+[                  17] FUNCTION_DECL        XDIAG_API double inner(Op const &A, State const &v)
+[                  18] FUNCTION_DECL        XDIAG_API double inner(Monomial const &A, State const &v)
+[                  19] FUNCTION_DECL        XDIAG_API double inner(OpSum const &A, State const &v)
+[                  22] FUNCTION_DECL        XDIAG_API complex innerC(Op const &A, State const &w)
+[                  23] FUNCTION_DECL        XDIAG_API complex innerC(Monomial const &A, State const &w)
+[                  24] FUNCTION_DECL        XDIAG_API complex innerC(OpSum const &A, State const &w)
+[                  27] FUNCTION_DECL        XDIAG_API double inner(State const &v, Op const &A, State const &w)
+[                  28] FUNCTION_DECL        XDIAG_API double inner(State const &v, Monomial const &A, State const &w)
+[                  29] FUNCTION_DECL        XDIAG_API double inner(State const &v, OpSum const &A, State const &w)
+[                  32] FUNCTION_DECL        XDIAG_API complex innerC(State const &v, Op const &A, State const &w)
+[                  33] FUNCTION_DECL        XDIAG_API complex innerC(State const &v, Monomial const &A, State const &w)
+[                  34] FUNCTION_DECL        XDIAG_API complex innerC(State const &v, OpSum const &A, State const &w)
 
 === xdiag/states/norm.hpp ===
-[                  14] FUNCTION_DECL        double norm(State const &v)
-[                  15] FUNCTION_DECL        double norm1(State const &v)
-[                  16] FUNCTION_DECL        double norminf(State const &v)
+[                  14] FUNCTION_DECL        XDIAG_API double norm(State const &v)
+[                  15] FUNCTION_DECL        XDIAG_API double norm1(State const &v)
+[                  16] FUNCTION_DECL        XDIAG_API double norminf(State const &v)
 
 === xdiag/states/product_state.hpp ===
 [                  20] CLASS_DECL           class XDIAG_API ProductState { public: using iterator_t = std::vector<int64_t>::const_iterator; ProductState() = default; explicit ProductState(int64_t nsites); explicit ProductState(std::vector<int32_t> const &local_states); explicit ProductState(std::vector<int64_t> const &local_states); int64_t operator[](int64_t i) const; int64_t &operator[](int64_t i); int64_t size() const; int64_t nsites() const; void push_back(int64_t l); iterator_t begin() const; iterator_t end() const; bool operator==(ProductState const &rhs) const; bool operator!=(ProductState const &rhs) const; private: std::vector<int64_t> local_states_; }
@@ -480,18 +494,18 @@
 [ProductState        ] CXX_METHOD           iterator_t end() const
 [ProductState        ] CXX_METHOD           bool operator==(ProductState const &rhs) const
 [ProductState        ] CXX_METHOD           bool operator!=(ProductState const &rhs) const
-[                  46] FUNCTION_DECL        int64_t size(ProductState const &p)
-[                  47] FUNCTION_DECL        int64_t nsites(ProductState const &p)
-[                  48] FUNCTION_DECL        std::ostream &operator<<(std::ostream &out, ProductState const &state)
-[                  50] FUNCTION_DECL        std::string to_string(ProductState const &state)
+[                  46] FUNCTION_DECL        XDIAG_API int64_t size(ProductState const &p)
+[                  47] FUNCTION_DECL        XDIAG_API int64_t nsites(ProductState const &p)
+[                  48] FUNCTION_DECL        XDIAG_API std::ostream &operator<<(std::ostream &out, ProductState const &state)
+[                  50] FUNCTION_DECL        XDIAG_API std::string to_string(ProductState const &state)
 
 === xdiag/states/random_state.hpp ===
 [                  15] CLASS_DECL           class XDIAG_API RandomState { public: RandomState(int64_t seed = 42, bool normalized = true); int64_t seed() const; bool normalized() const; private: int64_t seed_; bool normalized_; }
 [RandomState         ] CONSTRUCTOR          RandomState(int64_t seed = 42, bool normalized = true)
 [RandomState         ] CXX_METHOD           int64_t seed() const
 [RandomState         ] CXX_METHOD           bool normalized() const
-[                  26] FUNCTION_DECL        std::ostream &operator<<(std::ostream &out, RandomState const &state)
-[                  27] FUNCTION_DECL        std::string to_string(RandomState const &state)
+[                  26] FUNCTION_DECL        XDIAG_API std::ostream &operator<<(std::ostream &out, RandomState const &state)
+[                  27] FUNCTION_DECL        XDIAG_API std::string to_string(RandomState const &state)
 
 === xdiag/states/state.hpp ===
 [                  12] CLASS_DECL           class XDIAG_API State { public: State() = default; explicit State(Block const &block, bool real = true, int64_t ncols = 1); State(Block const &block, arma::vec const &vector); State(Block const &block, arma::cx_vec const &vector); State(Block const &block, arma::mat const &matrix); State(Block const &block, arma::cx_mat const &matrix); bool isvalid() const; int64_t nsites() const; bool isreal() const; State real() const; State imag() const; void make_complex(); int64_t dim() const; int64_t size() const; int64_t nrows() const; int64_t ncols() const; State col(int64_t n, bool copy = true) const; arma::vec vector(int64_t n = 0, bool copy = true) const; arma::mat matrix(bool copy = true) const; arma::cx_vec vectorC(int64_t n = 0, bool copy = true) const; arma::cx_mat matrixC(bool copy = true) const; // Developer section State(Block const &block, double const *ptr, int64_t ncols, int64_t stride = 1); State(Block const &block, complex const *ptr, int64_t ncols); double *memptr(); complex *memptrC(); double *colptr(int64_t col); complex *colptrC(int64_t col); Block block() const; private: bool valid_ = false; Block block_; bool real_; int64_t nrows_; int64_t ncols_; mutable std::vector<double> storage_; void init0(bool real, int64_t nrows, int64_t ncols); void initcopy(const double *ptr, int64_t nrows, int64_t ncols, int64_t stride = 1); void initcopy(const complex *ptr, int64_t nrows, int64_t ncols); }
@@ -523,39 +537,39 @@
 [State               ] CXX_METHOD           double *colptr(int64_t col)
 [State               ] CXX_METHOD           complex *colptrC(int64_t col)
 [State               ] CXX_METHOD           Block block() const
-[                  62] FUNCTION_DECL        bool isvalid(State const &s)
-[                  63] FUNCTION_DECL        int64_t nsites(State const &s)
-[                  64] FUNCTION_DECL        bool isapprox(State const &v, State const &w, double rtol = 1e-12, double atol = 1e-12)
-[                  66] FUNCTION_DECL        bool isreal(State const &s)
-[                  67] FUNCTION_DECL        State real(State const &s)
-[                  68] FUNCTION_DECL        State imag(State const &s)
-[                  69] FUNCTION_DECL        void make_complex(State &s)
-[                  70] FUNCTION_DECL        int64_t dim(State const &s)
-[                  71] FUNCTION_DECL        int64_t size(State const &s)
-[                  72] FUNCTION_DECL        int64_t nrows(State const &s)
-[                  73] FUNCTION_DECL        int64_t ncols(State const &s)
-[                  75] FUNCTION_DECL        State col(State const &s, int64_t n, bool copy = true)
-[                  76] FUNCTION_DECL        arma::vec vector(State const &s, int64_t n = 0, bool copy = true)
-[                  77] FUNCTION_DECL        arma::mat matrix(State const &s, bool copy = true)
-[                  78] FUNCTION_DECL        arma::cx_vec vectorC(State const &s, int64_t n = 0, bool copy = true)
-[                  79] FUNCTION_DECL        arma::cx_mat matrixC(State const &s, bool copy = true)
-[                  81] FUNCTION_DECL        std::ostream &operator<<(std::ostream &out, State const &state)
-[                  82] FUNCTION_DECL        std::string to_string(State const &state)
-[                  85] FUNCTION_DECL        State &operator*=(State &X, double alpha)
-[                  86] FUNCTION_DECL        State operator*(State const &X, double alpha)
-[                  87] FUNCTION_DECL        State operator*(double alpha, State const &X)
-[                  89] FUNCTION_DECL        State &operator*=(State &X, complex alpha)
-[                  90] FUNCTION_DECL        State operator*(State const &X, complex alpha)
-[                  91] FUNCTION_DECL        State operator*(complex alpha, State const &X)
-[                  93] FUNCTION_DECL        State &operator/=(State &X, double alpha)
-[                  94] FUNCTION_DECL        State operator/(State const &X, double alpha)
-[                  96] FUNCTION_DECL        State &operator/=(State &X, complex alpha)
-[                  97] FUNCTION_DECL        State operator/(State const &X, complex alpha)
-[                  99] FUNCTION_DECL        State &operator+=(State &v, State const &w)
-[                 100] FUNCTION_DECL        State &operator-=(State &v, State const &w)
-[                 101] FUNCTION_DECL        State operator+(State const &v, State const &w)
-[                 102] FUNCTION_DECL        State operator-(State const &v, State const &w)
-[                 104] FUNCTION_DECL        State operator-(State const &v)
+[                  62] FUNCTION_DECL        XDIAG_API bool isvalid(State const &s)
+[                  63] FUNCTION_DECL        XDIAG_API int64_t nsites(State const &s)
+[                  64] FUNCTION_DECL        XDIAG_API bool isapprox(State const &v, State const &w, double rtol = 1e-12, double atol = 1e-12)
+[                  66] FUNCTION_DECL        XDIAG_API bool isreal(State const &s)
+[                  67] FUNCTION_DECL        XDIAG_API State real(State const &s)
+[                  68] FUNCTION_DECL        XDIAG_API State imag(State const &s)
+[                  69] FUNCTION_DECL        XDIAG_API void make_complex(State &s)
+[                  70] FUNCTION_DECL        XDIAG_API int64_t dim(State const &s)
+[                  71] FUNCTION_DECL        XDIAG_API int64_t size(State const &s)
+[                  72] FUNCTION_DECL        XDIAG_API int64_t nrows(State const &s)
+[                  73] FUNCTION_DECL        XDIAG_API int64_t ncols(State const &s)
+[                  75] FUNCTION_DECL        XDIAG_API State col(State const &s, int64_t n, bool copy = true)
+[                  76] FUNCTION_DECL        XDIAG_API arma::vec vector(State const &s, int64_t n = 0, bool copy = true)
+[                  77] FUNCTION_DECL        XDIAG_API arma::mat matrix(State const &s, bool copy = true)
+[                  78] FUNCTION_DECL        XDIAG_API arma::cx_vec vectorC(State const &s, int64_t n = 0, bool copy = true)
+[                  79] FUNCTION_DECL        XDIAG_API arma::cx_mat matrixC(State const &s, bool copy = true)
+[                  81] FUNCTION_DECL        XDIAG_API std::ostream &operator<<(std::ostream &out, State const &state)
+[                  82] FUNCTION_DECL        XDIAG_API std::string to_string(State const &state)
+[                  85] FUNCTION_DECL        XDIAG_API State &operator*=(State &X, double alpha)
+[                  86] FUNCTION_DECL        XDIAG_API State operator*(State const &X, double alpha)
+[                  87] FUNCTION_DECL        XDIAG_API State operator*(double alpha, State const &X)
+[                  89] FUNCTION_DECL        XDIAG_API State &operator*=(State &X, complex alpha)
+[                  90] FUNCTION_DECL        XDIAG_API State operator*(State const &X, complex alpha)
+[                  91] FUNCTION_DECL        XDIAG_API State operator*(complex alpha, State const &X)
+[                  93] FUNCTION_DECL        XDIAG_API State &operator/=(State &X, double alpha)
+[                  94] FUNCTION_DECL        XDIAG_API State operator/(State const &X, double alpha)
+[                  96] FUNCTION_DECL        XDIAG_API State &operator/=(State &X, complex alpha)
+[                  97] FUNCTION_DECL        XDIAG_API State operator/(State const &X, complex alpha)
+[                  99] FUNCTION_DECL        XDIAG_API State &operator+=(State &v, State const &w)
+[                 100] FUNCTION_DECL        XDIAG_API State &operator-=(State &v, State const &w)
+[                 101] FUNCTION_DECL        XDIAG_API State operator+(State const &v, State const &w)
+[                 102] FUNCTION_DECL        XDIAG_API State operator-(State const &v, State const &w)
+[                 104] FUNCTION_DECL        XDIAG_API State operator-(State const &v)
 
 === xdiag/symmetries/permutation.hpp ===
 [                  18] CLASS_DECL           class XDIAG_API Permutation { public: Permutation() = default; explicit Permutation(int64_t size); // creates identity permutation Permutation(std::initializer_list<int64_t> list); explicit Permutation(std::vector<int32_t> const &array); explicit Permutation(std::vector<int64_t> const &array); explicit Permutation(arma::Col<int64_t> const &array); Permutation(int64_t const *ptr, int64_t size); int64_t size() const; int64_t operator[](int64_t i) const; Permutation inv() const; std::vector<int64_t> const &array() const; Permutation &operator*=(Permutation const &rhs); bool operator==(Permutation const &rhs) const; bool operator!=(Permutation const &rhs) const; private: std::vector<int64_t> array_; }
@@ -573,13 +587,13 @@
 [Permutation         ] CXX_METHOD           Permutation &operator*=(Permutation const &rhs)
 [Permutation         ] CXX_METHOD           bool operator==(Permutation const &rhs) const
 [Permutation         ] CXX_METHOD           bool operator!=(Permutation const &rhs) const
-[                  41] FUNCTION_DECL        int64_t size(Permutation const &p)
-[                  42] FUNCTION_DECL        Permutation multiply(Permutation const &p1, Permutation const &p2)
-[                  43] FUNCTION_DECL        Permutation operator*(Permutation const &p1, Permutation const &p2)
-[                  44] FUNCTION_DECL        Permutation inv(Permutation const &p)
-[                  45] FUNCTION_DECL        Permutation pow(Permutation const &p, int64_t power)
-[                  47] FUNCTION_DECL        std::ostream &operator<<(std::ostream &out, Permutation const &perm)
-[                  48] FUNCTION_DECL        std::string to_string(Permutation const &perm)
+[                  41] FUNCTION_DECL        XDIAG_API int64_t size(Permutation const &p)
+[                  42] FUNCTION_DECL        XDIAG_API Permutation multiply(Permutation const &p1, Permutation const &p2)
+[                  43] FUNCTION_DECL        XDIAG_API Permutation operator*(Permutation const &p1, Permutation const &p2)
+[                  44] FUNCTION_DECL        XDIAG_API Permutation inv(Permutation const &p)
+[                  45] FUNCTION_DECL        XDIAG_API Permutation pow(Permutation const &p, int64_t power)
+[                  47] FUNCTION_DECL        XDIAG_API std::ostream &operator<<(std::ostream &out, Permutation const &perm)
+[                  48] FUNCTION_DECL        XDIAG_API std::string to_string(Permutation const &perm)
 
 === xdiag/symmetries/permutation_group.hpp ===
 [                  20] CLASS_DECL           class XDIAG_API PermutationGroup { public: PermutationGroup() = default; explicit PermutationGroup(std::vector<Permutation> const &permutations); explicit PermutationGroup( arma::Mat<int64_t> const &matrix); // nsites x n_permutations, cols=perms PermutationGroup(int64_t *ptr, int64_t n_permutations, int64_t nsites); bool operator==(PermutationGroup const &rhs) const; bool operator!=(PermutationGroup const &rhs) const; int64_t size() const; int64_t nsites() const; Permutation operator[](int64_t sym) const; int64_t const *ptr(int64_t sym) const; // pointer to sym-th column int64_t inv(int64_t sym) const; int64_t multiply(int64_t s1, int64_t s2) const; class iterator { public: iterator(PermutationGroup const *group, int64_t idx); Permutation operator*() const; iterator &operator++(); bool operator!=(iterator const &rhs) const; private: PermutationGroup const *group_; int64_t idx_; }; iterator begin() const; iterator end() const; private: arma::Mat<int64_t> permutations_; // nsites x n_permutations std::vector<int64_t> inv_; arma::Mat<int64_t> multiply_; }
@@ -597,17 +611,18 @@
 [PermutationGroup    ] CXX_METHOD           int64_t multiply(int64_t s1, int64_t s2) const
 [PermutationGroup    ] CXX_METHOD           iterator begin() const
 [PermutationGroup    ] CXX_METHOD           iterator end() const
-[                  60] FUNCTION_DECL        int64_t nsites(PermutationGroup const &group)
-[                  61] FUNCTION_DECL        int64_t size(PermutationGroup const &group)
-[                  62] FUNCTION_DECL        PermutationGroup subgroup(PermutationGroup const &group, std::vector<int64_t> const &symmetries)
-[                  64] FUNCTION_DECL        std::ostream &operator<<(std::ostream &out, PermutationGroup const &group)
-[                  66] FUNCTION_DECL        std::string to_string(PermutationGroup const &group)
+[                  60] FUNCTION_DECL        XDIAG_API int64_t nsites(PermutationGroup const &group)
+[                  61] FUNCTION_DECL        XDIAG_API int64_t size(PermutationGroup const &group)
+[                  62] FUNCTION_DECL        XDIAG_API PermutationGroup subgroup(PermutationGroup const &group, std::vector<int64_t> const &symmetries)
+[                  64] FUNCTION_DECL        XDIAG_API std::ostream &operator<<(std::ostream &out, PermutationGroup const &group)
+[                  66] FUNCTION_DECL        XDIAG_API std::string to_string(PermutationGroup const &group)
 
 === xdiag/symmetries/representation.hpp ===
-[                  18] CLASS_DECL           class XDIAG_API Representation { public: // A 1-D irrep of a finite group of site permutations: one character per // group element. struct PermutationIrrep { PermutationGroup group; Vector characters; bool operator==(PermutationIrrep const &rhs) const; bool operator!=(PermutationIrrep const &rhs) const; }; Representation() = default; explicit Representation(PermutationGroup const &group); Representation(PermutationGroup const &group, Vector const &characters); Representation(std::string type, int64_t charge); bool operator==(Representation const &rhs) const; bool operator!=(Representation const &rhs) const; // Discriminate the two variants without inspecting the type string. bool is_permutation() const; bool is_charge() const; bool isreal() const; std::string type() const; PermutationGroup group() const; int64_t charge() const; Vector characters() const; private: std::string type_; // always present; labels the variant std::variant<int64_t, PermutationIrrep> irrep_; }
+[                  18] CLASS_DECL           class XDIAG_API Representation { public: // A 1-D irrep of a finite group of site permutations: one character per // group element. struct PermutationIrrep { PermutationGroup group; Vector characters; bool operator==(PermutationIrrep const &rhs) const; bool operator!=(PermutationIrrep const &rhs) const; }; Representation() = default; explicit Representation(PermutationGroup const &group); Representation(PermutationGroup const &group, arma::vec const &characters); Representation(PermutationGroup const &group, arma::cx_vec const &characters); Representation(std::string type, int64_t charge); bool operator==(Representation const &rhs) const; bool operator!=(Representation const &rhs) const; // Discriminate the two variants without inspecting the type string. bool is_permutation() const; bool is_charge() const; bool isreal() const; std::string type() const; PermutationGroup group() const; int64_t charge() const; Vector characters() const; private: std::string type_; // always present; labels the variant std::variant<int64_t, PermutationIrrep> irrep_; }
 [Representation      ] CONSTRUCTOR          Representation() = default
 [Representation      ] CONSTRUCTOR          explicit Representation(PermutationGroup const &group)
-[Representation      ] CONSTRUCTOR          Representation(PermutationGroup const &group, Vector const &characters)
+[Representation      ] CONSTRUCTOR          Representation(PermutationGroup const &group, arma::vec const &characters)
+[Representation      ] CONSTRUCTOR          Representation(PermutationGroup const &group, arma::cx_vec const &characters)
 [Representation      ] CONSTRUCTOR          Representation(std::string type, int64_t charge)
 [Representation      ] CXX_METHOD           bool operator==(Representation const &rhs) const
 [Representation      ] CXX_METHOD           bool operator!=(Representation const &rhs) const
@@ -618,28 +633,28 @@
 [Representation      ] CXX_METHOD           PermutationGroup group() const
 [Representation      ] CXX_METHOD           int64_t charge() const
 [Representation      ] CXX_METHOD           Vector characters() const
-[                  54] FUNCTION_DECL        bool isreal(Representation const &irrep)
-[                  55] FUNCTION_DECL        bool isapprox(Representation const &r1, Representation const &r2, double tol = 1e-12)
-[                  57] FUNCTION_DECL        Representation multiply(Representation const &r1, Representation const &r2)
-[                  59] FUNCTION_DECL        Representation operator*(Representation const &r1, Representation const &r2)
-[                  62] FUNCTION_DECL        std::ostream &operator<<(std::ostream &out, Representation const &irrep)
-[                  64] FUNCTION_DECL        std::string to_string(Representation const &irrep)
+[                  55] FUNCTION_DECL        XDIAG_API bool isreal(Representation const &irrep)
+[                  56] FUNCTION_DECL        XDIAG_API bool isapprox(Representation const &r1, Representation const &r2, double tol = 1e-12)
+[                  58] FUNCTION_DECL        XDIAG_API Representation multiply(Representation const &r1, Representation const &r2)
+[                  60] FUNCTION_DECL        XDIAG_API Representation operator*(Representation const &r1, Representation const &r2)
+[                  63] FUNCTION_DECL        XDIAG_API std::ostream &operator<<(std::ostream &out, Representation const &irrep)
+[                  65] FUNCTION_DECL        XDIAG_API std::string to_string(Representation const &irrep)
 
 === xdiag/utils/error.hpp ===
-[                  20] CXX_METHOD           const char *what() const noexcept
-[                  27] FUNCTION_DECL        void throw_error(std::string message, const char *file, const char *func, int line)
-[                  29] FUNCTION_DECL        void rethrow_error(Error const &error, const char *file, const char *func, int line)
-[                  31] FUNCTION_DECL        void error_trace(Error const &error)
+[                  20] CXX_METHOD           XDIAG_API const char *what() const noexcept
+[                  27] FUNCTION_DECL        XDIAG_API void throw_error(std::string message, const char *file, const char *func, int line)
+[                  29] FUNCTION_DECL        XDIAG_API void rethrow_error(Error const &error, const char *file, const char *func, int line)
+[                  31] FUNCTION_DECL        XDIAG_API void error_trace(Error const &error)
 
 === xdiag/utils/logger.hpp ===
-[                  23] FUNCTION_DECL        void set_verbosity(int64_t level)
+[                  23] FUNCTION_DECL        XDIAG_API void set_verbosity(int64_t level)
 
 === xdiag/utils/say_hello.hpp ===
-[                  12] FUNCTION_DECL        std::string version_string()
-[                  13] FUNCTION_DECL        void say_hello()
-[                  14] FUNCTION_DECL        void print_version()
+[                  12] FUNCTION_DECL        XDIAG_API std::string version_string()
+[                  13] FUNCTION_DECL        XDIAG_API void say_hello()
+[                  14] FUNCTION_DECL        XDIAG_API void print_version()
 
 === xdiag/utils/timing.hpp ===
-[                  16] FUNCTION_DECL        std::chrono::time_point<clock_t> rightnow()
-[                  20] FUNCTION_DECL        void tic(bool begin = true, std::string msg = "", int verbosity = 0)
-[                  21] FUNCTION_DECL        void toc(std::string msg = "", int verbosity = 0)
+[                  16] FUNCTION_DECL        XDIAG_API std::chrono::time_point<clock_t> rightnow()
+[                  20] FUNCTION_DECL        XDIAG_API void tic(bool begin = true, std::string msg = "", int verbosity = 0)
+[                  21] FUNCTION_DECL        XDIAG_API void toc(std::string msg = "", int verbosity = 0)

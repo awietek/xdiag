@@ -58,8 +58,8 @@ private:
   std::shared_ptr<basis::Basis> basis_;
 };
 
-std::ostream &operator<<(std::ostream &out, tJ const &block);
-std::string to_string(tJ const &block);
+XDIAG_API std::ostream &operator<<(std::ostream &out, tJ const &block);
+XDIAG_API std::string to_string(tJ const &block);
 
 class XDIAG_API tJIterator {
 public:

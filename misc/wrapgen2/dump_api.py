@@ -78,7 +78,7 @@ def print_api_by_file(results, project_root: Path):
         for path in sorted(by_file, key=lambda p: Path(p).relative_to(project_root).parts):
             rel = Path(path).relative_to(project_root)
             ss = f"\n=== {rel} ==="
-            print(ss)
+            # print(ss)
             fl.write("{}\n".format(ss))
         
             for line, kind, name, signature, parent_class in sorted(set(by_file[path])):
@@ -86,7 +86,7 @@ def print_api_by_file(results, project_root: Path):
                     ss = f"[{line:20}] {kind:20s} {signature}"
                 else:
                     ss = f"[{parent_class:20s}] {kind:20s} {signature}"
-                print(ss)
+                # print(ss)
                 fl.write("{}\n".format(ss))  
 
 def collect_api(node, project_root: Path, api_lines: dict, results: list, inherited_class: str = None):
@@ -155,6 +155,7 @@ def main():
         collect_api(tu.cursor, project_root, api_lines, results)
 
     print_api_by_file(results, project_root)
-
+    print("Dumped to api.txt")
+    
 if __name__ == "__main__":
     main()

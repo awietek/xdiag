@@ -19,12 +19,13 @@ void define_utils(jlcxx::Module &mod) {
   mod.method("fun_say_hello", []() { JULIA_XDIAG_CALL_VOID(say_hello()); });
   mod.method("fun_print_version",
              []() { JULIA_XDIAG_CALL_VOID(print_version()); });
-  mod.method("fun_tic",
-             [](bool begin = true, std::string msg = "", int verbosity = 0) {
-               JULIA_XDIAG_CALL_VOID(tic(true, "", 0));
-             });
-  mod.method("fun_toc", [](std::string msg = "", int verbosity = 0) {
-    JULIA_XDIAG_CALL_VOID(toc("", 0));
+  mod.method("fun_tic", [](bool begin, std::string msg, int verbosity) {
+    JULIA_XDIAG_CALL_VOID(tic(begin, msg, verbosity));
   });
+  mod.method("fun_toc", [](std::string msg, int verbosity) {
+    JULIA_XDIAG_CALL_VOID(toc(msg, verbosity));
+  });
+
+  // operator overloads
 }
 } // namespace xdiag::julia

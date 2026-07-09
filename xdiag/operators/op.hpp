@@ -28,14 +28,27 @@ public:
 
   Op(std::string type, int64_t site); // single-site
   Op(std::string type,
+     std::initializer_list<int64_t> const &sites); // multi-site
+  Op(std::string type,
      std::vector<int64_t> const &sites); // multi-site
+  Op(std::string type,
+     arma::Col<int64_t> const &sites); // multi-site
 
   // Custom matrix operator on one or more sites (real or complex)
   Op(std::string type, int64_t site, arma::mat const &matrix);
+  Op(std::string type, std::initializer_list<int64_t> const &sites,
+     arma::mat const &matrix);
   Op(std::string type, std::vector<int64_t> const &sites,
      arma::mat const &matrix);
+  Op(std::string type, arma::Col<int64_t> const &sites,
+     arma::mat const &matrix);
+
   Op(std::string type, int64_t site, arma::cx_mat const &matrix);
+  Op(std::string type, std::initializer_list<int64_t> const &sites,
+     arma::cx_mat const &matrix);
   Op(std::string type, std::vector<int64_t> const &sites,
+     arma::cx_mat const &matrix);
+  Op(std::string type, arma::Col<int64_t> const &sites,
      arma::cx_mat const &matrix);
   Op(std::string type, int64_t site, Matrix const &matrix);
   Op(std::string type, std::vector<int64_t> const &sites, Matrix const &matrix);
