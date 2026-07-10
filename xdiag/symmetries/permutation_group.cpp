@@ -139,8 +139,7 @@ XDIAG_CATCH
 
 PermutationGroup::PermutationGroup(int64_t *ptr, int64_t n_permutations,
                                    int64_t nsites) try
-    : PermutationGroup(
-          arma::Mat<int64_t>(ptr, nsites, n_permutations, true)) {}
+    : PermutationGroup(arma::Mat<int64_t>(ptr, nsites, n_permutations, true)) {}
 XDIAG_CATCH
 
 int64_t PermutationGroup::nsites() const { return permutations_.n_rows; }
@@ -192,9 +191,7 @@ PermutationGroup::iterator &PermutationGroup::iterator::operator++() {
 bool PermutationGroup::iterator::operator!=(iterator const &rhs) const {
   return idx_ != rhs.idx_;
 }
-PermutationGroup::iterator PermutationGroup::begin() const {
-  return {this, 0};
-}
+PermutationGroup::iterator PermutationGroup::begin() const { return {this, 0}; }
 PermutationGroup::iterator PermutationGroup::end() const {
   return {this, size()};
 }
@@ -236,7 +233,7 @@ std::ostream &operator<<(std::ostream &out, PermutationGroup const &group) {
   return out;
 }
 std::string to_string(PermutationGroup const &group) {
-  return to_string_generic(group);
+  return utils::to_string_generic(group);
 }
 
 } // namespace xdiag

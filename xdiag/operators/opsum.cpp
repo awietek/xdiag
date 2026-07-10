@@ -411,12 +411,12 @@ std::ostream &operator<<(std::ostream &out, OpSum const &ops) {
     for (auto const &[name, val] : ops.params())
       nw = std::max(nw, name.size());
 
-    int64_t idx=0; 
-    for (auto const &[name, val] : ops.params()){
+    int64_t idx = 0;
+    for (auto const &[name, val] : ops.params()) {
       if (idx != ops.params().size() - 1) {
-	out << fmt::format("  {0:>{1}} = {2}\n", name, nw, to_string(val));
+        out << fmt::format("  {0:>{1}} = {2}\n", name, nw, to_string(val));
       } else {
-	out << fmt::format("  {0:>{1}} = {2}", name, nw, to_string(val));
+        out << fmt::format("  {0:>{1}} = {2}", name, nw, to_string(val));
       }
       ++idx;
     }
@@ -424,6 +424,8 @@ std::ostream &operator<<(std::ostream &out, OpSum const &ops) {
   return out;
 }
 
-std::string to_string(OpSum const &ops) { return to_string_generic(ops); }
+std::string to_string(OpSum const &ops) {
+  return utils::to_string_generic(ops);
+}
 
 } // namespace xdiag

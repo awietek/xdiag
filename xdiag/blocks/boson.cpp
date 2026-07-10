@@ -14,19 +14,15 @@
 #include <xdiag/basis/basis_symmetric.hpp>
 #include <xdiag/bits/bitarray.hpp>
 #include <xdiag/bits/bitset.hpp>
+#include <xdiag/blocks/print_block.hpp>
 #include <xdiag/combinatorics/bounded_multisets/bounded_multisets.hpp>
 #include <xdiag/combinatorics/bounded_partitions/bounded_partitions.hpp>
 #include <xdiag/combinatorics/bounded_partitions/schaefer_table.hpp>
 #include <xdiag/math/log2.hpp>
-#include <xdiag/blocks/print_block.hpp>
 #include <xdiag/random/hash.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/format.hpp>
 #include <xdiag/utils/to_string_generic.hpp>
-
-#ifndef XDIAG_DISABLE_COLOR
-#include <extern/fmt/color.hpp>
-#endif
 
 namespace xdiag {
 
@@ -213,7 +209,9 @@ std::ostream &operator<<(std::ostream &out, Boson const &block) {
   print_block(out, block);
   return out;
 }
-std::string to_string(Boson const &block) { return to_string_generic(block); }
+std::string to_string(Boson const &block) {
+  return utils::to_string_generic(block);
+}
 
 BosonIterator::BosonIterator(Boson const *block, int64_t idx) : idx_(idx) {
   if (idx_ < block->size()) {

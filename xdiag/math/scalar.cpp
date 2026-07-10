@@ -179,6 +179,6 @@ std::ostream &operator<<(std::ostream &out, Scalar const &v) {
   }
   return out;
 }
-std::string to_string(Scalar const &v) { return to_string_generic(v); }
+std::string to_string(Scalar const &v) { return utils::to_string_generic(v); }
 
 } // namespace xdiag

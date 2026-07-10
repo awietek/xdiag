@@ -1,0 +1,312 @@
+module = "linalg"
+
+
+# ============================================================
+# xdiag/linalg/lanczos/eigs_lanczos.hpp
+# ============================================================
+
+[[entries]]
+kind = "struct"
+name = "EigsLanczosResult"
+fields = ["arma::vec alphas", "arma::vec betas", "arma::vec eigenvalues", "State eigenvectors", "int64_t niterations", "std::string criterion"]
+
+[[entries]]
+kind = "function"
+name = "eigs_lanczos"
+returns = "EigsLanczosResult"
+args = ["OpSum const& ops", "Block const& block", "int64_t neigvals = 1", "double precision = 1e-12", "int64_t max_iterations = 1000", "double deflation_tol = 1e-7", "int64_t random_seed = 42"]
+
+[[entries]]
+kind = "function"
+name = "eigs_lanczos"
+returns = "EigsLanczosResult"
+args = ["CSRMatrix const& ops", "Block const& block", "int64_t neigvals = 1", "double precision = 1e-12", "int64_t max_iterations = 1000", "double deflation_tol = 1e-7", "int64_t random_seed = 42"]
+
+[[entries]]
+kind = "function"
+name = "eigs_lanczos"
+returns = "EigsLanczosResult"
+args = ["OpSum const& ops", "State const& state0", "int64_t neigvals = 1", "double precision = 1e-12", "int64_t max_iterations = 1000", "double deflation_tol = 1e-7"]
+
+[[entries]]
+kind = "function"
+name = "eigs_lanczos"
+returns = "EigsLanczosResult"
+args = ["CSRMatrix const& ops", "State const& state0", "int64_t neigvals = 1", "double precision = 1e-12", "int64_t max_iterations = 1000", "double deflation_tol = 1e-7"]
+
+
+# ============================================================
+# xdiag/linalg/lanczos/eigvals_lanczos.hpp
+# ============================================================
+
+[[entries]]
+kind = "struct"
+name = "EigvalsLanczosResult"
+fields = ["arma::vec alphas", "arma::vec betas", "arma::vec eigenvalues", "int64_t niterations", "std::string criterion"]
+
+[[entries]]
+kind = "function"
+name = "eigvals_lanczos"
+returns = "EigvalsLanczosResult"
+args = ["OpSum const& ops", "Block const& block", "int64_t neigvals = 1", "double precision = 1e-12", "int64_t max_iterations = 1000", "double deflation_tol = 1e-7", "int64_t random_seed = 42"]
+
+[[entries]]
+kind = "function"
+name = "eigvals_lanczos"
+returns = "EigvalsLanczosResult"
+args = ["CSRMatrix const& A", "Block const& block", "int64_t neigvals = 1", "double precision = 1e-12", "int64_t max_iterations = 1000", "double deflation_tol = 1e-7", "int64_t random_seed = 42"]
+
+[[entries]]
+kind = "function"
+name = "eigvals_lanczos"
+returns = "EigvalsLanczosResult"
+args = ["OpSum const& ops", "State psi0", "int64_t neigvals = 1", "double precision = 1e-12", "int64_t max_iterations = 1000", "double deflation_tol = 1e-7"]
+
+[[entries]]
+kind = "function"
+name = "eigvals_lanczos"
+returns = "EigvalsLanczosResult"
+args = ["CSRMatrix const& A", "State psi0", "int64_t neigvals = 1", "double precision = 1e-12", "int64_t max_iterations = 1000", "double deflation_tol = 1e-7"]
+
+[[entries]]
+kind = "function"
+name = "eigvals_lanczos_inplace"
+returns = "EigvalsLanczosResult"
+args = ["OpSum const& ops", "State& psi0", "int64_t neigvals = 1", "double precision = 1e-12", "int64_t max_iterations = 1000", "double deflation_tol = 1e-7"]
+
+[[entries]]
+kind = "function"
+name = "eigvals_lanczos_inplace"
+returns = "EigvalsLanczosResult"
+args = ["CSRMatrix const& A", "State& psi0", "int64_t neigvals = 1", "double precision = 1e-12", "int64_t max_iterations = 1000", "double deflation_tol = 1e-7"]
+
+
+# ============================================================
+# xdiag/linalg/lobpcg/eigs_lobpcg.hpp
+# ============================================================
+
+[[entries]]
+kind = "struct"
+name = "EigsLobpcgResult"
+fields = ["arma::vec eigenvalues", "arma::vec residual_norms", "State eigenvectors", "int64_t niterations", "std::string criterion", "arma::mat eigenvalue_history", "arma::mat residual_norms_history"]
+
+[[entries]]
+kind = "function"
+name = "eigs_lobpcg"
+returns = "EigsLobpcgResult"
+args = ["OpSum const& ops", "Block const& block", "int64_t neigs = 1", "int64_t guard = 2", "double tol = 1e-10", "int64_t max_iterations = 1000", "int64_t random_seed = 42"]
+
+[[entries]]
+kind = "function"
+name = "eigs_lobpcg"
+returns = "EigsLobpcgResult"
+args = ["CSRMatrix const& A", "Block const& block", "int64_t neigs = 1", "int64_t guard = 2", "double tol = 1e-10", "int64_t max_iterations = 1000", "int64_t random_seed = 42"]
+
+
+# ============================================================
+# xdiag/linalg/sparse_diag.hpp
+# ============================================================
+
+[[entries]]
+kind = "function"
+name = "eigval0"
+returns = "double"
+args = ["OpSum const& ops", "Block const& block", "double precision = 1e-12", "int64_t max_iterations = 1000", "int64_t random_seed = 42"]
+
+[[entries]]
+kind = "function"
+name = "eigval0"
+returns = "double"
+args = ["CSRMatrix const& ops", "Block const& block", "double precision = 1e-12", "int64_t max_iterations = 1000", "int64_t random_seed = 42"]
+
+[[entries]]
+kind = "function"
+name = "eig0"
+returns = "tuple<double, State>"
+args = ["OpSum const& ops", "Block const& block", "double precision = 1e-12", "int64_t max_iterations = 1000", "int64_t random_seed = 42"]
+
+[[entries]]
+kind = "function"
+name = "eig0"
+returns = "tuple<double, State>"
+args = ["CSRMatrix const& ops", "Block const& block", "double precision = 1e-12", "int64_t max_iterations = 1000", "int64_t random_seed = 42"]
+
+[[entries]]
+kind = "function"
+name = "eigvals"
+returns = "arma::vec"
+args = ["OpSum const& ops", "Block const& block", "int64_t neigs", "double precision = 1e-12", "int64_t max_iterations = 1000", "int64_t random_seed = 42"]
+
+[[entries]]
+kind = "function"
+name = "eigvals"
+returns = "arma::vec"
+args = ["CSRMatrix const& ops", "Block const& block", "int64_t neigs", "double precision = 1e-12", "int64_t max_iterations = 1000", "int64_t random_seed = 42"]
+
+[[entries]]
+kind = "function"
+name = "eigs"
+returns = "tuple<arma::vec, State>"
+args = ["OpSum const& ops", "Block const& block", "int64_t neigs", "double precision = 1e-12", "int64_t max_iterations = 1000", "int64_t random_seed = 42"]
+
+[[entries]]
+kind = "function"
+name = "eigs"
+returns = "tuple<arma::vec, State>"
+args = ["CSRMatrix const& ops", "Block const& block", "int64_t neigs", "double precision = 1e-12", "int64_t max_iterations = 1000", "int64_t random_seed = 42"]
+
+
+# ============================================================
+# xdiag/linalg/time_evolution/evolve_lanczos.hpp
+# ============================================================
+
+[[entries]]
+kind = "struct"
+name = "EvolveLanczosResult"
+fields = ["arma::vec alphas", "arma::vec betas", "arma::vec eigenvalues", "int64_t niterations", "std::string criterion", "State state"]
+
+[[entries]]
+kind = "function"
+name = "evolve_lanczos"
+returns = "EvolveLanczosResult"
+args = ["OpSum const& H", "State psi", "double tau", "double precision = 1e-12", "double shift = 0.", "bool normalize = false", "int64_t max_iterations = 1000", "double deflation_tol = 1e-7"]
+
+[[entries]]
+kind = "function"
+name = "evolve_lanczos"
+returns = "EvolveLanczosResult"
+args = ["OpSum const& H", "State psi", "complex tau", "double precision = 1e-12", "double shift = 0.", "bool normalize = false", "int64_t max_iterations = 1000", "double deflation_tol = 1e-7"]
+
+[[entries]]
+kind = "function"
+name = "evolve_lanczos"
+returns = "EvolveLanczosResult"
+args = ["CSRMatrix const& H", "State psi", "double tau", "double precision = 1e-12", "double shift = 0.", "bool normalize = false", "int64_t max_iterations = 1000", "double deflation_tol = 1e-7"]
+
+[[entries]]
+kind = "function"
+name = "evolve_lanczos"
+returns = "EvolveLanczosResult"
+args = ["CSRMatrix const& H", "State psi", "complex tau", "double precision = 1e-12", "double shift = 0.", "bool normalize = false", "int64_t max_iterations = 1000", "double deflation_tol = 1e-7"]
+
+[[entries]]
+kind = "struct"
+name = "EvolveLanczosInplaceResult"
+fields = ["arma::vec alphas", "arma::vec betas", "arma::vec eigenvalues", "int64_t niterations", "std::string criterion"]
+
+[[entries]]
+kind = "function"
+name = "evolve_lanczos_inplace"
+returns = "EvolveLanczosInplaceResult"
+args = ["OpSum const& H", "State& psi", "double tau", "double precision = 1e-12", "double shift = 0.", "bool normalize = false", "int64_t max_iterations = 1000", "double deflation_tol = 1e-7"]
+
+[[entries]]
+kind = "function"
+name = "evolve_lanczos_inplace"
+returns = "EvolveLanczosInplaceResult"
+args = ["OpSum const& H", "State& psi", "complex tau", "double precision = 1e-12", "double shift = 0.", "bool normalize = false", "int64_t max_iterations = 1000", "double deflation_tol = 1e-7"]
+
+[[entries]]
+kind = "function"
+name = "evolve_lanczos_inplace"
+returns = "EvolveLanczosInplaceResult"
+args = ["CSRMatrix const& H", "State& psi", "double tau", "double precision = 1e-12", "double shift = 0.", "bool normalize = false", "int64_t max_iterations = 1000", "double deflation_tol = 1e-7"]
+
+[[entries]]
+kind = "function"
+name = "evolve_lanczos_inplace"
+returns = "EvolveLanczosInplaceResult"
+args = ["CSRMatrix const& H", "State& psi", "complex tau", "double precision = 1e-12", "double shift = 0.", "bool normalize = false", "int64_t max_iterations = 1000", "double deflation_tol = 1e-7"]
+
+
+# ============================================================
+# xdiag/linalg/time_evolution/imaginary_time_evolve.hpp
+# ============================================================
+
+[[entries]]
+kind = "function"
+name = "imaginary_time_evolve"
+returns = "State"
+args = ["OpSum const& H", "State psi", "double time", "double precision = 1e-12", "double shift = 0."]
+
+[[entries]]
+kind = "function"
+name = "imaginary_time_evolve"
+returns = "State"
+args = ["CSRMatrix const& H", "State psi", "double time", "double precision = 1e-12", "double shift = 0."]
+
+[[entries]]
+kind = "function"
+name = "imaginary_time_evolve_inplace"
+args = ["OpSum const& H", "State& psi", "double time", "double precision = 1e-12", "double shift = 0."]
+
+[[entries]]
+kind = "function"
+name = "imaginary_time_evolve_inplace"
+args = ["CSRMatrix const& H", "State& psi", "double time", "double precision = 1e-12", "double shift = 0."]
+
+
+# ============================================================
+# xdiag/linalg/time_evolution/time_evolve_expokit.hpp
+# ============================================================
+
+[[entries]]
+kind = "struct"
+name = "TimeEvolveExpokitResult"
+fields = ["double error", "double hump", "State state"]
+
+[[entries]]
+kind = "function"
+name = "time_evolve_expokit"
+returns = "TimeEvolveExpokitResult"
+args = ["OpSum const& H", "State psi0", "double time", "double precision = 1e-12", "int64_t m = 30", "double anorm = 0.", "int64_t nnorm = 2"]
+
+[[entries]]
+kind = "function"
+name = "time_evolve_expokit"
+returns = "TimeEvolveExpokitResult"
+args = ["CSRMatrix const& H", "State psi0", "double time", "double precision = 1e-12", "int64_t m = 30", "double anorm = 0.", "int64_t nnorm = 2"]
+
+[[entries]]
+kind = "struct"
+name = "TimeEvolveExpokitInplaceResult"
+fields = ["double error", "double hump"]
+
+[[entries]]
+kind = "function"
+name = "time_evolve_expokit_inplace"
+returns = "TimeEvolveExpokitInplaceResult"
+args = ["OpSum const& H", "State& psi", "double time", "double precision = 1e-12", "int64_t m = 30", "double anorm = 0.", "int64_t nnorm = 2"]
+
+[[entries]]
+kind = "function"
+name = "time_evolve_expokit_inplace"
+returns = "TimeEvolveExpokitInplaceResult"
+args = ["CSRMatrix const& H", "State& psi", "double time", "double precision = 1e-12", "int64_t m = 30", "double anorm = 0.", "int64_t nnorm = 2"]
+
+
+# ============================================================
+# xdiag/linalg/time_evolution/time_evolve.hpp
+# ============================================================
+
+[[entries]]
+kind = "function"
+name = "time_evolve"
+returns = "State"
+args = ["OpSum const& H", "State psi", "double time", "double precision = 1e-12", "std::string algorithm = \"lanczos\""]
+
+[[entries]]
+kind = "function"
+name = "time_evolve"
+returns = "State"
+args = ["CSRMatrix const& H", "State psi", "double time", "double precision = 1e-12", "std::string algorithm = \"lanczos\""]
+
+[[entries]]
+kind = "function"
+name = "time_evolve_inplace"
+args = ["OpSum const& H", "State& psi", "double time", "double precision = 1e-12", "std::string algorithm = \"lanczos\""]
+
+[[entries]]
+kind = "function"
+name = "time_evolve_inplace"
+args = ["CSRMatrix const& H", "State& psi", "double time", "double precision = 1e-12", "std::string algorithm = \"lanczos\""]

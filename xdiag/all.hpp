@@ -17,6 +17,7 @@ limitations under the License.
 #pragma once
 
 #include <xdiag/armadillo.hpp>
+#include <xdiag/algebra/ishermitian.hpp>
 #include <xdiag/algebra/symmetrize.hpp>
 #include <xdiag/blocks/blocks.hpp>
 #include <xdiag/blocks/boson.hpp>
@@ -33,6 +34,7 @@ limitations under the License.
 #include <xdiag/kernels/sparse/coo_matrix.hpp>
 #include <xdiag/kernels/sparse/csc_matrix.hpp>
 #include <xdiag/kernels/sparse/csr_matrix.hpp>
+#include <xdiag/kernels/sparse/sparse_matrix_types.hpp>
 #include <xdiag/linalg/lanczos/eigs_lanczos.hpp>
 #include <xdiag/linalg/lanczos/eigvals_lanczos.hpp>
 #include <xdiag/linalg/lobpcg/eigs_lobpcg.hpp>
@@ -51,12 +53,12 @@ limitations under the License.
 #include <xdiag/states/dot.hpp>
 #include <xdiag/states/expect.hpp>
 #include <xdiag/states/fill.hpp>
-#include <xdiag/states/gpwf.hpp>
 #include <xdiag/states/inner.hpp>
 #include <xdiag/states/norm.hpp>
 #include <xdiag/states/product_state.hpp>
 #include <xdiag/states/random_state.hpp>
 #include <xdiag/states/state.hpp>
+#include <xdiag/symmetries/cyclic_group.hpp>
 #include <xdiag/symmetries/permutation_group.hpp>
 #include <xdiag/symmetries/permutation.hpp>
 #include <xdiag/symmetries/representation.hpp>

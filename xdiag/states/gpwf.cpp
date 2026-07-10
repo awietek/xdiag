@@ -138,6 +138,8 @@ std::ostream &operator<<(std::ostream &out, GPWF const &state) {
   }
   return out;
 }
-std::string to_string(GPWF const &state) { return to_string_generic(state); }
+std::string to_string(GPWF const &state) {
+  return utils::to_string_generic(state);
+}
 
 } // namespace xdiag

@@ -105,12 +105,13 @@ XDIAG_CATCH
 // Phase 1 (caller-allocated path): per-row nonzero counts, length size(block_out).
 template <typename coeff_t, typename block_t>
 std::vector<int64_t> build_csr_nnz(OpSum const &ops, block_t const &block_in,
-                                   block_t const &block_out) try {
+                                   block_t const &block_out,
+                                   bool transpose) try {
   std::vector<int64_t> counts;
   kernels::dispatch_basis(
       block_in, block_out, [&](auto const &basis_in, auto const &basis_out) {
-        counts = kernels::csr_matrix_nnz<block_t, coeff_t>(
-            ops, basis_in, basis_out, /*transpose=*/false);
+        counts = kernels::csr_matrix_nnz<block_t, coeff_t>(ops, basis_in,
+                                                           basis_out, transpose);
       });
   return counts;
 }
@@ -122,13 +123,15 @@ template <typename idx_t, typename coeff_t, typename block_t>
 void build_csr_fill(OpSum const &ops, block_t const &block_in,
                     block_t const &block_out,
                     std::vector<int64_t> const &n_elements_in_row,
-                    idx_t *rowptr, idx_t *col, coeff_t *data, idx_t i0) try {
-  idx_t ndim = (idx_t)size(block_out);
+                    idx_t *rowptr, idx_t *col, coeff_t *data, idx_t i0,
+                    bool transpose) try {
+  // groups are rows for CSR, columns for CSC (transpose): ndim is their count
+  idx_t ndim = (idx_t)(transpose ? size(block_in) : size(block_out));
   kernels::dispatch_basis(
       block_in, block_out, [&](auto const &basis_in, auto const &basis_out) {
         sparse_fill_basis<idx_t, coeff_t, block_t>(
-            ops, basis_in, basis_out, ndim, i0, /*transpose=*/false,
-            n_elements_in_row, rowptr, col, data);
+            ops, basis_in, basis_out, ndim, i0, transpose, n_elements_in_row,
+            rowptr, col, data);
       });
 }
 XDIAG_CATCH
@@ -142,11 +145,11 @@ XDIAG_CATCH
       arma::Col<IDX> &, arma::Col<IDX> &, arma::Col<COEFF> &);                 \
   template void build_csr_fill<IDX, COEFF, BLOCK>(                             \
       OpSum const &, BLOCK const &, BLOCK const &,                            \
-      std::vector<int64_t> const &, IDX *, IDX *, COEFF *, IDX);
+      std::vector<int64_t> const &, IDX *, IDX *, COEFF *, IDX, bool);
 
 #define XDIAG_INST_BUILD_C(BLOCK, COEFF)                                       \
   template std::vector<int64_t> build_csr_nnz<COEFF, BLOCK>(                   \
-      OpSum const &, BLOCK const &, BLOCK const &);
+      OpSum const &, BLOCK const &, BLOCK const &, bool);
 
 #define XDIAG_INST_BUILD(BLOCK)                                                \
   XDIAG_INST_BUILD_IC(BLOCK, int32_t, double)                                  \

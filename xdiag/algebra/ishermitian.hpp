@@ -7,6 +7,7 @@
 #include <xdiag/algebra/algebra.hpp>
 #include <xdiag/kernels/sparse/sparse_matrix_types.hpp>
 #include <xdiag/operators/opsum.hpp>
+#include <xdiag/utils/xdiag_api.hpp>
 
 namespace xdiag {
 
@@ -19,7 +20,8 @@ bool ishermitian(OpSum const &ops, algebra::Algebra const &algebra,
 
 // Convenience overload: uses the algebra canonically associated with the block
 // (see algebra(Block)).
-bool ishermitian(OpSum const &ops, Block const &block, double tol = 1e-12);
+XDIAG_API bool ishermitian(OpSum const &ops, Block const &block,
+                           double tol = 1e-12);
 
 // Block-aware overloads for already-assembled sparse matrices: the matrix
 // stores its hermiticity flag, so the block and tolerance are ignored. These

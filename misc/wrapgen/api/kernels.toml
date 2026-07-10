@@ -1,0 +1,232 @@
+module = "kernels"
+
+
+# ============================================================
+# xdiag/kernels/sparse/sparse_matrix_types.hpp
+# ============================================================
+
+[[entries]]
+kind = "function"
+name = "isreal"
+returns = "bool"
+args = ["CSRMatrix const& A"]
+
+[[entries]]
+kind = "function"
+name = "ishermitian"
+returns = "bool"
+args = ["CSRMatrix const& A"]
+
+
+# ============================================================
+# xdiag/kernels/sparse/apply.hpp
+# ============================================================
+
+[[entries]]
+kind = "function"
+name = "apply"
+returns = "arma::Col<coeff_t>"
+args = ["CSRMatrix const& spmat", "arma::Col<coeff_t> const& vec_in"]
+
+[[entries]]
+kind = "function"
+name = "apply"
+returns = "Col"
+args = ["CSRMatrix const& spmat", "Col const& vec_in"]
+
+[[entries]]
+kind = "function"
+name = "apply"
+returns = "arma::Mat<coeff_t>"
+args = ["CSRMatrix const& spmat", "arma::Mat<coeff_t> const& mat_in"]
+
+[[entries]]
+kind = "function"
+name = "apply"
+returns = "Mat"
+args = ["CSRMatrix const& spmat", "Mat const& mat_in"]
+
+[[entries]]
+kind = "function"
+name = "apply"
+args = ["CSRMatrix const& spmat", "arma::Col<coeff_t> const& vec_in", "arma::Col<coeff_t>& vec_out"]
+
+[[entries]]
+kind = "function"
+name = "apply"
+args = ["CSRMatrix const& spmat", "arma::Mat<coeff_t> const& mat_in", "arma::Mat<coeff_t>& mat_out"]
+
+[[entries]]
+kind = "function"
+name = "apply"
+args = ["CSRMatrix const& spmat", "Col const& vec_in", "Col& vec_out"]
+
+[[entries]]
+kind = "function"
+name = "apply"
+args = ["CSRMatrix const& spmat", "Mat const& mat_in", "Mat& mat_out"]
+
+
+# ============================================================
+# xdiag/kernels/sparse/coo_matrix.hpp
+# ============================================================
+
+[[entries]]
+kind = "function"
+name = "coo_matrix"
+returns = "COOMatrix"
+args = ["OpSum const& ops", "Block const& block", "int64_t i0 = 0"]
+
+[[entries]]
+kind = "function"
+name = "coo_matrix"
+returns = "COOMatrix"
+args = ["OpSum const& ops", "Block const& block_in", "Block const& block_out", "int64_t i0 = 0"]
+
+[[entries]]
+kind = "function"
+name = "coo_matrixC"
+returns = "COOMatrix"
+args = ["OpSum const& ops", "Block const& block", "int64_t i0 = 0"]
+
+[[entries]]
+kind = "function"
+name = "coo_matrixC"
+returns = "COOMatrix"
+args = ["OpSum const& ops", "Block const& block_in", "Block const& block_out", "int64_t i0 = 0"]
+
+[[entries]]
+kind = "function"
+name = "coo_matrix_32"
+returns = "COOMatrix"
+args = ["OpSum const& ops", "Block const& block", "int32_t i0 = 0"]
+
+[[entries]]
+kind = "function"
+name = "coo_matrix_32"
+returns = "COOMatrix"
+args = ["OpSum const& ops", "Block const& block_in", "Block const& block_out", "int32_t i0 = 0"]
+
+[[entries]]
+kind = "function"
+name = "coo_matrixC_32"
+returns = "COOMatrix"
+args = ["OpSum const& ops", "Block const& block", "int32_t i0 = 0"]
+
+[[entries]]
+kind = "function"
+name = "coo_matrixC_32"
+returns = "COOMatrix"
+args = ["OpSum const& ops", "Block const& block_in", "Block const& block_out", "int32_t i0 = 0"]
+
+
+# ============================================================
+# xdiag/kernels/sparse/csc_matrix.hpp
+# ============================================================
+
+[[entries]]
+kind = "function"
+name = "csc_matrix"
+returns = "CSCMatrix"
+args = ["OpSum const& ops", "Block const& block", "int64_t i0 = 0"]
+
+[[entries]]
+kind = "function"
+name = "csc_matrix"
+returns = "CSCMatrix"
+args = ["OpSum const& ops", "Block const& block_in", "Block const& block_out", "int64_t i0 = 0"]
+
+[[entries]]
+kind = "function"
+name = "csc_matrixC"
+returns = "CSCMatrix"
+args = ["OpSum const& ops", "Block const& block", "int64_t i0 = 0"]
+
+[[entries]]
+kind = "function"
+name = "csc_matrixC"
+returns = "CSCMatrix"
+args = ["OpSum const& ops", "Block const& block_in", "Block const& block_out", "int64_t i0 = 0"]
+
+[[entries]]
+kind = "function"
+name = "csc_matrix_32"
+returns = "CSCMatrix"
+args = ["OpSum const& ops", "Block const& block", "int32_t i0 = 0"]
+
+[[entries]]
+kind = "function"
+name = "csc_matrix_32"
+returns = "CSCMatrix"
+args = ["OpSum const& ops", "Block const& block_in", "Block const& block_out", "int32_t i0 = 0"]
+
+[[entries]]
+kind = "function"
+name = "csc_matrixC_32"
+returns = "CSCMatrix"
+args = ["OpSum const& ops", "Block const& block", "int32_t i0 = 0"]
+
+[[entries]]
+kind = "function"
+name = "csc_matrixC_32"
+returns = "CSCMatrix"
+args = ["OpSum const& ops", "Block const& block_in", "Block const& block_out", "int32_t i0 = 0"]
+
+
+# ============================================================
+# xdiag/kernels/sparse/csr_matrix.hpp
+# ============================================================
+
+[[entries]]
+kind = "function"
+name = "csr_matrix"
+returns = "CSRMatrix"
+args = ["OpSum const& ops", "Block const& block", "int64_t i0 = 0"]
+
+[[entries]]
+kind = "function"
+name = "csr_matrix"
+returns = "CSRMatrix"
+args = ["OpSum const& ops", "Block const& block_in", "Block const& block_out", "int64_t i0 = 0"]
+
+[[entries]]
+kind = "function"
+name = "csr_matrixC"
+returns = "CSRMatrix"
+args = ["OpSum const& ops", "Block const& block", "int64_t i0 = 0"]
+
+[[entries]]
+kind = "function"
+name = "csr_matrixC"
+returns = "CSRMatrix"
+args = ["OpSum const& ops", "Block const& block_in", "Block const& block_out", "int64_t i0 = 0"]
+
+[[entries]]
+kind = "function"
+name = "csr_matrix_32"
+returns = "CSRMatrix"
+args = ["OpSum const& ops", "Block const& block", "int32_t i0 = 0"]
+
+[[entries]]
+kind = "function"
+name = "csr_matrix_32"
+returns = "CSRMatrix"
+args = ["OpSum const& ops", "Block const& block_in", "Block const& block_out", "int32_t i0 = 0"]
+
+[[entries]]
+kind = "function"
+name = "csr_matrixC_32"
+returns = "CSRMatrix"
+args = ["OpSum const& ops", "Block const& block", "int32_t i0 = 0"]
+
+[[entries]]
+kind = "function"
+name = "csr_matrixC_32"
+returns = "CSRMatrix"
+args = ["OpSum const& ops", "Block const& block_in", "Block const& block_out", "int32_t i0 = 0"]
+
+[[entries]]
+kind = "function"
+name = "to_dense"
+returns = "arma::Mat<coeff_t>"
+args = ["CSRMatrix const& csr_mat"]

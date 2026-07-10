@@ -10,9 +10,9 @@
 #include <string>
 #include <type_traits>
 
+#include <extern/fmt/color.hpp>
 #include <xdiag/algebra/algebra.hpp>
 #include <xdiag/algebra/representation.hpp>
-#include <extern/fmt/color.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/format.hpp>
 #include <xdiag/utils/to_string_generic.hpp>
@@ -124,7 +124,9 @@ std::ostream &operator<<(std::ostream &out, Block const &block) {
   std::visit([&](auto &&block) { out << block; }, block);
   return out;
 }
-std::string to_string(Block const &block) { return to_string_generic(block); }
+std::string to_string(Block const &block) {
+  return utils::to_string_generic(block);
+}
 
 // Render a ProductState with the labels appropriate to its block. The block is
 // what knows how to interpret the per-site integers: spin-1/2 maps them to
@@ -132,11 +134,27 @@ std::string to_string(Block const &block) { return to_string_generic(block); }
 // matching the bit ordering.
 static std::string to_string(ProductState const &state, Spinhalf const &) {
   std::stringstream ss;
-  for (int64_t i = state.size() - 1; i >= 0; --i) {
+  for (int64_t i = 0; i < state.size(); ++i) {
     if (state[i] == 1) { // Up
-      ss << fmt::format(fg(fmt::color::light_blue), "↑");
+      const char *s = "\u2191";
+      ss << fmt::format(fg(fmt::color::light_blue), s);
     } else { // Dn
-      ss << fmt::format(fg(fmt::color::orange), "↓");
+      const char *s = "\u2193";
+      ss << fmt::format(fg(fmt::color::orange), s);
+    }
+  }
+  return ss.str();
+}
+
+static std::string to_string(ProductState const &state, Fermion const &) {
+  std::stringstream ss;
+  for (int64_t i = 0; i < state.size(); ++i) {
+    if (state[i] == 1) { // Occ
+      const char *s = "\u25CF";
+      ss << fmt::format(fg(fmt::color::crimson), s);
+    } else { // Emp
+      const char *s = "\u25CB";
+      ss << fmt::format(fg(fmt::color::gray), s);
     }
   }
   return ss.str();
@@ -150,14 +168,14 @@ static std::string to_string(ProductState const &state, Boson const &boson) {
   int64_t max_occupation = (d > 0) ? d - 1 : 0;
   int width = static_cast<int>(std::to_string(max_occupation).size());
   std::stringstream ss;
-  for (int64_t i = state.size() - 1; i >= 0; --i) {
+  for (int64_t i = 0; i < state.size(); ++i) {
     int64_t v = state[i];
     double f =
         (d > 1) ? static_cast<double>(v) / static_cast<double>(d - 1) : 0.0;
     uint8_t r = static_cast<uint8_t>(std::lround(255.0 * f));
     uint8_t b = static_cast<uint8_t>(std::lround(255.0 * (1.0 - f)));
-    ss << fmt::format(fg(fmt::rgb(r, 0, b)), "{:>{}}", v, width);
-    if (i > 0) {
+    ss << fmt::format(fg(fmt::rgb(r, 122., b)), "{:>{}}", v, width);
+    if (i < state.size() - 1) {
       ss << " ";
     }
   }
@@ -168,12 +186,12 @@ static std::string to_string(ProductState const &state, Boson const &boson) {
 // arrow, dn as an orange arrow, double occupancy as both, empty as a dot.
 static std::string to_string(ProductState const &state, Electron const &) {
   std::stringstream ss;
-  for (int64_t i = state.size() - 1; i >= 0; --i) {
+  for (int64_t i = 0; i < state.size(); ++i) {
     bool up = state[i] & 1;
     bool dn = state[i] & 2;
     std::string s;
     if (up && dn) {
-      const char *s = "\u2195";
+      const char *s = "\u21C5";
       ss << fmt::format(fg(fmt::color::red), s);
     } else if (up) {
       const char *s = "\u2191";
@@ -182,7 +200,7 @@ static std::string to_string(ProductState const &state, Electron const &) {
       const char *s = "\u2193";
       ss << fmt::format(fg(fmt::color::orange), s);
     } else { // empty
-      const char *s = "\u25CC";
+      const char *s = "\u25CB";
       ss << fmt::format(fg(fmt::color::gray), s);
     }
   }
@@ -193,13 +211,16 @@ static std::string to_string(ProductState const &state, Electron const &) {
 // arrow, dn an orange arrow, empty a dot.
 static std::string to_string(ProductState const &state, tJ const &) {
   std::stringstream ss;
-  for (int64_t i = state.size() - 1; i >= 0; --i) {
+  for (int64_t i = 0; i < state.size(); ++i) {
     if (state[i] == 1) { // up
-      ss << fmt::format(fg(fmt::color::light_blue), "↑");
+      const char *s = "\u2191";
+      ss << fmt::format(fg(fmt::color::light_blue), s);
     } else if (state[i] == 2) { // dn
-      ss << fmt::format(fg(fmt::color::orange), "↓");
+      const char *s = "\u2193";
+      ss << fmt::format(fg(fmt::color::orange), s);
     } else { // empty
-      ss << fmt::format(fg(fmt::color::gray), "◌");
+      const char *s = "\u25CB";
+      ss << fmt::format(fg(fmt::color::gray), s);
     }
   }
   return ss.str();

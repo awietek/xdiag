@@ -8,10 +8,11 @@
 
 #include <xdiag/symmetries/permutation_group.hpp>
 #include <xdiag/symmetries/representation.hpp>
+#include <xdiag/utils/xdiag_api.hpp>
 
 namespace xdiag {
 
-PermutationGroup cyclic_group(int64_t n);
-Representation cyclic_group_irrep(int64_t n, int64_t k);
+XDIAG_API PermutationGroup cyclic_group(int64_t n);
+XDIAG_API Representation cyclic_group_irrep(int64_t n, int64_t k);
 
 } // namespace xdiag

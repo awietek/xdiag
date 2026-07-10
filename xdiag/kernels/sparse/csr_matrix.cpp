@@ -184,7 +184,8 @@ XDIAG_CATCH
 // nonzero counts. Distributed blocks have no local dense/sparse representation.
 template <typename coeff_t>
 std::vector<int64_t> csr_matrix_nnz(OpSum const &ops, Block const &block_in,
-                                    Block const &block_out) try {
+                                    Block const &block_out,
+                                    bool transpose) try {
   std::vector<int64_t> counts;
   utils::visit_same_type(
       block_in, block_out,
@@ -195,7 +196,7 @@ std::vector<int64_t> csr_matrix_nnz(OpSum const &ops, Block const &block_in,
                       "its Hilbert space is distributed across MPI ranks. Use "
                       "apply(...) instead.");
         } else {
-          counts = build_csr_nnz<coeff_t, block_t>(ops, bin, bout);
+          counts = build_csr_nnz<coeff_t, block_t>(ops, bin, bout, transpose);
         }
       },
       "Type mismatch of Block types");
@@ -208,7 +209,8 @@ template <typename idx_t, typename coeff_t>
 void csr_matrix_fill(OpSum const &ops, Block const &block_in,
                      Block const &block_out,
                      std::vector<int64_t> const &n_elements_in_row,
-                     idx_t *rowptr, idx_t *col, coeff_t *data, idx_t i0) try {
+                     idx_t *rowptr, idx_t *col, coeff_t *data, idx_t i0,
+                     bool transpose) try {
   utils::visit_same_type(
       block_in, block_out,
       [&](auto const &bin, auto const &bout) {
@@ -221,7 +223,7 @@ void csr_matrix_fill(OpSum const &ops, Block const &block_in,
           check_valid_sparse_matrix<idx_t, coeff_t>(ops, bin, bout, i0);
           build_csr_fill<idx_t, coeff_t, block_t>(ops, bin, bout,
                                                   n_elements_in_row, rowptr, col,
-                                                  data, i0);
+                                                  data, i0, transpose);
         }
       },
       "Type mismatch of Block types");
@@ -229,30 +231,30 @@ void csr_matrix_fill(OpSum const &ops, Block const &block_in,
 XDIAG_CATCH
 
 template std::vector<int64_t>
-csr_matrix_nnz<double>(OpSum const &, Block const &, Block const &);
+csr_matrix_nnz<double>(OpSum const &, Block const &, Block const &, bool);
 template std::vector<int64_t>
-csr_matrix_nnz<complex>(OpSum const &, Block const &, Block const &);
+csr_matrix_nnz<complex>(OpSum const &, Block const &, Block const &, bool);
 
 template void csr_matrix_fill<int32_t, double>(OpSum const &, Block const &,
                                                Block const &,
                                                std::vector<int64_t> const &,
                                                int32_t *, int32_t *, double *,
-                                               int32_t);
+                                               int32_t, bool);
 template void csr_matrix_fill<int64_t, double>(OpSum const &, Block const &,
                                                Block const &,
                                                std::vector<int64_t> const &,
                                                int64_t *, int64_t *, double *,
-                                               int64_t);
+                                               int64_t, bool);
 template void csr_matrix_fill<int32_t, complex>(OpSum const &, Block const &,
                                                 Block const &,
                                                 std::vector<int64_t> const &,
                                                 int32_t *, int32_t *, complex *,
-                                                int32_t);
+                                                int32_t, bool);
 template void csr_matrix_fill<int64_t, complex>(OpSum const &, Block const &,
                                                 Block const &,
                                                 std::vector<int64_t> const &,
                                                 int64_t *, int64_t *, complex *,
-                                                int64_t);
+                                                int64_t, bool);
 
 template <typename idx_t, typename coeff_t>
 arma::Mat<coeff_t> to_dense(CSRMatrix<idx_t, coeff_t> const &csr_mat) try {

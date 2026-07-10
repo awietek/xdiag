@@ -155,7 +155,7 @@ std::ostream &operator<<(std::ostream &out, tJ const &block) {
   print_block(out, block);
   return out;
 }
-std::string to_string(tJ const &block) { return to_string_generic(block); }
+std::string to_string(tJ const &block) { return utils::to_string_generic(block); }
 
 tJIterator::tJIterator(tJ const *block, int64_t idx) : idx_(idx) {
   if (idx_ < block->size()) {

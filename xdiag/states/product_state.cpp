@@ -6,6 +6,7 @@
 
 #include <ostream>
 #include <sstream>
+#include <xdiag/utils/to_string_generic.hpp>
 
 namespace xdiag {
 
@@ -17,6 +18,9 @@ ProductState::ProductState(std::vector<int32_t> const &local_states)
 
 ProductState::ProductState(std::vector<int64_t> const &local_states)
     : local_states_(local_states) {}
+ProductState::ProductState(arma::Col<int64_t> const &local_states)
+    : ProductState(
+          std::vector<int64_t>(local_states.begin(), local_states.end())) {}
 
 int64_t ProductState::operator[](int64_t i) const { return local_states_[i]; }
 int64_t &ProductState::operator[](int64_t i) { return local_states_[i]; }
@@ -43,18 +47,16 @@ int64_t size(ProductState const &p) { return p.size(); }
 int64_t nsites(ProductState const &p) { return p.nsites(); }
 
 std::ostream &operator<<(std::ostream &out, ProductState const &state) {
-  for (int64_t i = state.size() - 1; i >= 0; --i) {
+  for (int64_t i = 0; i < state.size(); ++i) {
     out << state[i];
-    if (i > 0) {
+    if (i < state.size() - 1) {
       out << " ";
     }
   }
   return out;
 }
 std::string to_string(ProductState const &state) {
-  std::stringstream ss;
-  ss << state;
-  return ss.str();
+  return utils::to_string_generic(state);
 }
 
 } // namespace xdiag

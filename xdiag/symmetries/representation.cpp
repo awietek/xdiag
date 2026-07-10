@@ -217,7 +217,7 @@ std::ostream &operator<<(std::ostream &out, Representation const &irrep) {
   return out;
 }
 std::string to_string(Representation const &irrep) {
-  return to_string_generic(irrep);
+  return utils::to_string_generic(irrep);
 }
 
 } // namespace xdiag

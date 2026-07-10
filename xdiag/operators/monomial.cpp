@@ -97,7 +97,7 @@ std::ostream &operator<<(std::ostream &out, Monomial const &m) {
   return out;
 }
 
-std::string to_string(Monomial const &m) { return to_string_generic(m); }
+std::string to_string(Monomial const &m) { return utils::to_string_generic(m); }
 
 bool Term::operator==(Term const &rhs) const noexcept {
   return coeff == rhs.coeff && monomial == rhs.monomial;

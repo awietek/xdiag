@@ -12,6 +12,7 @@
 #include <xdiag/math/dot.hpp>
 #include <xdiag/states/fill.hpp>
 #include <xdiag/states/random_state.hpp>
+#include <xdiag/utils/logger.hpp>
 #include <xdiag/utils/timing.hpp>
 
 #ifdef XDIAG_DISTRIBUTED

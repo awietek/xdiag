@@ -8,6 +8,7 @@
 #include <iosfwd>
 #include <string>
 #include <vector>
+#include <xdiag/armadillo.hpp>
 #include <xdiag/utils/xdiag_api.hpp>
 
 namespace xdiag {
@@ -25,6 +26,7 @@ public:
   explicit ProductState(int64_t nsites);
   explicit ProductState(std::vector<int32_t> const &local_states);
   explicit ProductState(std::vector<int64_t> const &local_states);
+  explicit ProductState(arma::Col<int64_t> const &local_states);
 
   int64_t operator[](int64_t i) const;
   int64_t &operator[](int64_t i);

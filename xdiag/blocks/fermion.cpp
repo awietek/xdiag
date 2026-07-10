@@ -9,18 +9,14 @@
 #include <xdiag/basis/basis_onthefly.hpp>
 #include <xdiag/basis/basis_symmetric.hpp>
 #include <xdiag/bits/bitset.hpp>
+#include <xdiag/blocks/print_block.hpp>
 #include <xdiag/combinatorics/combinations/combinations.hpp>
 #include <xdiag/combinatorics/combinations/lin_table.hpp>
 #include <xdiag/combinatorics/subsets/subsets.hpp>
-#include <xdiag/blocks/print_block.hpp>
 #include <xdiag/random/hash.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/format.hpp>
 #include <xdiag/utils/to_string_generic.hpp>
-
-#ifndef XDIAG_DISABLE_COLOR
-#include <extern/fmt/color.hpp>
-#endif
 
 namespace xdiag {
 
@@ -134,7 +130,9 @@ std::ostream &operator<<(std::ostream &out, Fermion const &block) {
   print_block(out, block);
   return out;
 }
-std::string to_string(Fermion const &block) { return to_string_generic(block); }
+std::string to_string(Fermion const &block) {
+  return utils::to_string_generic(block);
+}
 
 FermionIterator::FermionIterator(Fermion const *block, int64_t idx)
     : idx_(idx) {

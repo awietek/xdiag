@@ -7,7 +7,7 @@
 #include <sstream>
 #include <string>
 
-namespace xdiag {
+namespace xdiag::utils {
 
 template <typename T> inline std::string to_string_generic(T const &x) {
   std::ostringstream ss;
@@ -15,4 +15,4 @@ template <typename T> inline std::string to_string_generic(T const &x) {
   return ss.str();
 }
 
-} // namespace xdiag
+} // namespace xdiag::utils

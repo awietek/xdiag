@@ -234,6 +234,8 @@ std::ostream &operator<<(std::ostream &out, Vector const &vec) {
   }
   return out;
 }
-std::string to_string(Vector const &vec) { return to_string_generic(vec); }
+std::string to_string(Vector const &vec) {
+  return utils::to_string_generic(vec);
+}
 
 } // namespace xdiag

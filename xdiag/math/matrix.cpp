@@ -282,6 +282,8 @@ std::ostream &operator<<(std::ostream &out, Matrix const &mat) {
   }
   return out;
 }
-std::string to_string(Matrix const &mat) { return to_string_generic(mat); }
+std::string to_string(Matrix const &mat) {
+  return utils::to_string_generic(mat);
+}
 
 } // namespace xdiag

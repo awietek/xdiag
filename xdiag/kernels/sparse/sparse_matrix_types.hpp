@@ -40,15 +40,18 @@ template <typename idx_t, typename coeff_t> struct XDIAG_API CSCMatrix {
 };
 
 template <typename idx_t, typename coeff_t>
-constexpr XDIAG_API bool isreal(CSRMatrix<idx_t, coeff_t> const &) {
+constexpr XDIAG_API bool isreal(CSRMatrix<idx_t, coeff_t> const &A) {
+  (void)A; // need argument name for wrapper generator -> keep it
   return isreal<coeff_t>();
 }
 template <typename idx_t, typename coeff_t>
-constexpr XDIAG_API bool isreal(CSCMatrix<idx_t, coeff_t> const &) {
+constexpr XDIAG_API bool isreal(CSCMatrix<idx_t, coeff_t> const &A) {
+  (void)A;
   return isreal<coeff_t>();
 }
 template <typename idx_t, typename coeff_t>
-constexpr XDIAG_API bool isreal(COOMatrix<idx_t, coeff_t> const &) {
+constexpr XDIAG_API bool isreal(COOMatrix<idx_t, coeff_t> const &A) {
+  (void)A;
   return isreal<coeff_t>();
 }
 

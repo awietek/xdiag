@@ -88,6 +88,6 @@ std::ostream &operator<<(std::ostream &out, Coeff const &c) {
   return out;
 }
 
-std::string to_string(Coeff const &c) { return to_string_generic(c); }
+std::string to_string(Coeff const &c) { return utils::to_string_generic(c); }
 
 } // namespace xdiag

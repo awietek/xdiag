@@ -136,7 +136,7 @@ std::ostream &operator<<(std::ostream &out, Permutation const &p) {
   return out;
 }
 std::string to_string(Permutation const &perm) {
-  return to_string_generic(perm);
+  return utils::to_string_generic(perm);
 }
 
 } // namespace xdiag

@@ -20,7 +20,10 @@ XDIAG_API State product_state(Block const &block,
 XDIAG_API State product_state(Block const &block,
                               std::vector<int64_t> const &local_state,
                               bool real = true);
-
+XDIAG_API State product_state(Block const &block,
+                              arma::Col<int64_t> const &local_state,
+                              bool real = true);
+  
 XDIAG_API State random_state(Block const &block, bool real = true,
                              int64_t ncols = 1, int64_t seed = 42,
                              bool normalized = true);

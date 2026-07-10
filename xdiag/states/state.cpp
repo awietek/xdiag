@@ -297,6 +297,7 @@ std::ostream &operator<<(std::ostream &out, State const &state) {
     } else {
       out << "COMPLEX State\n";
     }
+    out << "ncols: " << state.ncols() << "\n"; 
     out << "Block:\n";
     out << state.block();
   } else {
@@ -304,7 +305,9 @@ std::ostream &operator<<(std::ostream &out, State const &state) {
   }
   return out;
 }
-std::string to_string(State const &state) { return to_string_generic(state); }
+std::string to_string(State const &state) {
+  return utils::to_string_generic(state);
+}
 
 State &operator*=(State &X, double alpha) try {
   if (isreal(X)) {

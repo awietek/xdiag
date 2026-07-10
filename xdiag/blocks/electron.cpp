@@ -18,10 +18,6 @@
 #include <xdiag/utils/format.hpp>
 #include <xdiag/utils/to_string_generic.hpp>
 
-#ifndef XDIAG_DISABLE_COLOR
-#include <extern/fmt/color.hpp>
-#endif
-
 namespace xdiag {
 
 // Builds the up and dn enumerations (same type) and calls f(enum_up, enum_dn).
@@ -143,7 +139,7 @@ std::ostream &operator<<(std::ostream &out, Electron const &block) {
   return out;
 }
 std::string to_string(Electron const &block) {
-  return to_string_generic(block);
+  return utils::to_string_generic(block);
 }
 
 ElectronIterator::ElectronIterator(Electron const *block, int64_t idx)

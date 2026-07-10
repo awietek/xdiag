@@ -169,6 +169,6 @@ std::ostream &operator<<(std::ostream &out, Op const &op) {
   return out;
 }
 
-std::string to_string(Op const &op) { return to_string_generic(op); }
+std::string to_string(Op const &op) { return utils::to_string_generic(op); }
 
 } // namespace xdiag

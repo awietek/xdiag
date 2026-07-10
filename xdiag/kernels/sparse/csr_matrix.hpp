@@ -69,12 +69,16 @@ XDIAG_API arma::Mat<coeff_t> to_dense(CSRMatrix<idx_t, coeff_t> const &csr_mat);
 // blocks throw.
 template <typename coeff_t>
 XDIAG_API std::vector<int64_t>
-csr_matrix_nnz(OpSum const &ops, Block const &block_in, Block const &block_out);
+csr_matrix_nnz(OpSum const &ops, Block const &block_in, Block const &block_out,
+               bool transpose = false);
 
+// transpose == true swaps the roles of rows and columns, i.e. builds the CSC
+// arrays of the matrix (colptr/row/data) directly, without a post-transpose.
+// The phase-1 counts are then per-column (length size(block_in)).
 template <typename idx_t, typename coeff_t>
 XDIAG_API void csr_matrix_fill(OpSum const &ops, Block const &block_in,
                                Block const &block_out,
                                std::vector<int64_t> const &n_elements_in_row,
                                idx_t *rowptr, idx_t *col, coeff_t *data,
-                               idx_t i0);
+                               idx_t i0, bool transpose = false);
 } // namespace xdiag

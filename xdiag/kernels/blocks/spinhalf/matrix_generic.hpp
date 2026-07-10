@@ -10,6 +10,7 @@
 #include <xdiag/operators/valid.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/format.hpp>
+#include <xdiag/utils/logger.hpp>
 
 #include <xdiag/kernels/blocks/spinhalf/terms/term_exchange.hpp>
 #include <xdiag/kernels/blocks/spinhalf/terms/term_exchange_asym.hpp>
@@ -25,7 +26,6 @@ namespace xdiag::kernels::spinhalf {
 template <typename coeff_t, typename basis_t, typename fill_f>
 void matrix_generic(OpSum const &ops, basis_t const &basis_in,
                     basis_t const &basis_out, fill_f fill) try {
-
   // Get OpSum into format that can be processed
   operators::check_valid(ops);
   auto algebra = algebra::spinhalf_implementation_algebra(basis_in.nsites());

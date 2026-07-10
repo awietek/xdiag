@@ -29,12 +29,14 @@ void build_csr_arrays(OpSum const &ops, block_t const &block_in,
 // dispatch_basis instantiation here, shared with build_csr_arrays.
 template <typename coeff_t, typename block_t>
 std::vector<int64_t> build_csr_nnz(OpSum const &ops, block_t const &block_in,
-                                   block_t const &block_out);
+                                   block_t const &block_out,
+                                   bool transpose = false);
 
 template <typename idx_t, typename coeff_t, typename block_t>
 void build_csr_fill(OpSum const &ops, block_t const &block_in,
                     block_t const &block_out,
                     std::vector<int64_t> const &n_elements_in_row,
-                    idx_t *rowptr, idx_t *col, coeff_t *data, idx_t i0);
+                    idx_t *rowptr, idx_t *col, coeff_t *data, idx_t i0,
+                    bool transpose = false);
 
 } // namespace xdiag

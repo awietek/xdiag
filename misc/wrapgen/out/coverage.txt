@@ -1,0 +1,206 @@
+WRAPPED: 363 symbols
+SKIPPED: 217
+
+   61  ignored
+          ::empty
+          ::operator<<
+          Boson::begin
+          Boson::end
+          Boson::operator!=
+          BosonIterator::operator!=
+          BosonIterator::operator++
+          Electron::begin
+          Electron::end
+          Electron::operator!=
+          ElectronIterator::operator!=
+          ElectronIterator::operator++
+          Error::what
+          Fermion::begin
+          Fermion::end
+          Fermion::operator!=
+          FermionIterator::operator!=
+          FermionIterator::operator++
+          FileToml::operator!=
+          Monomial::begin
+          Monomial::empty
+          Monomial::end
+          Monomial::operator!=
+          Monomial::operator<
+          Op::operator!=
+          Op::operator<
+          OpSum::begin
+          OpSum::empty
+          OpSum::end
+          OpSum::operator!=
+          Permutation::operator!=
+          PermutationGroup::begin
+          PermutationGroup::end
+          PermutationGroup::operator!=
+          ProductState::begin
+          ProductState::end
+          ProductState::operator!=
+          Representation::operator!=
+          Spinhalf::begin
+          Spinhalf::end
+          Spinhalf::operator!=
+          SpinhalfIterator::operator!=
+          SpinhalfIterator::operator++
+          tJ::begin
+          tJ::end
+          tJ::operator!=
+          tJIterator::operator!=
+          tJIterator::operator++
+   13  unsupported arg: vector const&
+          ::product_state
+          ::subgroup
+          Monomial::Monomial
+          Op::Op
+          Permutation::Permutation
+          PermutationGroup::PermutationGroup
+          ProductState::ProductState
+   12  unsupported arg: int32_t
+          ::coo_matrixC_32
+          ::coo_matrix_32
+          ::csc_matrixC_32
+          ::csc_matrix_32
+          ::csr_matrixC_32
+          ::csr_matrix_32
+   11  unsupported arg: Scalar const&
+          ::operator*
+          ::operator/
+          OpSum::OpSum
+          OpSum::operator*=
+          OpSum::operator/=
+   10  operator not wrapped: operator*=
+          ::operator*=
+          Monomial::operator*=
+          OpSum::operator*=
+          Permutation::operator*=
+    6  unsupported arg: Coeff const&
+          ::operator*
+          OpSum::OpSum
+    5  unsupported arg: RepresentationSet const&
+          Boson::Boson
+          Electron::Electron
+          Fermion::Fermion
+          Spinhalf::Spinhalf
+          tJ::tJ
+    5  unsupported return: RepresentationSet
+          Boson::irreps
+          Electron::irreps
+          Fermion::irreps
+          Spinhalf::irreps
+          tJ::irreps
+    5  unsupported return: shared_ptr const&
+          Boson::basis
+          Electron::basis
+          Fermion::basis
+          Spinhalf::basis
+          tJ::basis
+    5  operator arity: operator*
+          BosonIterator::operator*
+          ElectronIterator::operator*
+          FermionIterator::operator*
+          SpinhalfIterator::operator*
+          tJIterator::operator*
+    5  unsupported return: vector const&
+          Error::messages
+          Monomial::ops
+          Op::sites
+          OpSum::terms
+          Permutation::array
+    5  hand-written
+          ::fill
+    4  unsupported return: COOMatrix
+          ::coo_matrix
+          ::coo_matrixC
+    4  unsupported return: CSCMatrix
+          ::csc_matrix
+          ::csc_matrixC
+    4  unsupported return: CSRMatrix
+          ::csr_matrix
+          ::csr_matrixC
+    4  operator not wrapped: operator+=
+          ::operator+=
+          OpSum::operator+=
+    4  operator not wrapped: operator-=
+          ::operator-=
+          OpSum::operator-=
+    4  operator not wrapped: operator/=
+          ::operator/=
+          OpSum::operator/=
+    3  ignored class
+          FileTomlHandler::FileTomlHandler
+          FileTomlHandler::operator=
+    3  unsupported arg: char*
+          ::rethrow_error
+          ::throw_error
+          FileToml::FileToml
+    3  unsupported arg: initializer_list const&
+          Op::Op
+    3  operator arity: operator-
+          ::operator-
+          OpSum::operator-
+    2  unsupported arg: arma::Col<coeff_t> const&
+          ::apply
+    2  unsupported arg: Col const&
+          ::apply
+    2  unsupported arg: arma::Mat<coeff_t> const&
+          ::apply
+    2  unsupported arg: Mat const&
+          ::apply
+    2  unsupported arg: initializer_list
+          Monomial::Monomial
+          Permutation::Permutation
+    2  unsupported return: double*
+          State::colptr
+          State::memptr
+    2  unsupported return: complex*
+          State::colptrC
+          State::memptrC
+    2  unsupported arg: int64_t*
+          Permutation::Permutation
+          PermutationGroup::PermutationGroup
+    2  unsupported arg: int
+          ::tic
+          ::toc
+    1  unsupported arg: Boson*
+          BosonIterator::BosonIterator
+    1  unsupported arg: Electron*
+          ElectronIterator::ElectronIterator
+    1  unsupported arg: Fermion*
+          FermionIterator::FermionIterator
+    1  unsupported arg: Spinhalf*
+          SpinhalfIterator::SpinhalfIterator
+    1  unsupported arg: tJ*
+          tJIterator::tJIterator
+    1  unsupported arg: basic_istream&
+          FileToml::FileToml
+    1  unsupported return: FileTomlHandler
+          FileToml::operator[]
+    1  unsupported return: vector
+          FileToml::keys
+    1  unsupported return: table
+          FileToml::table
+    1  unsupported return: arma::Mat<coeff_t>
+          ::to_dense
+    1  unsupported arg: Matrix const&
+          Op::Op
+    1  unsupported return: Matrix const&
+          Op::matrix
+    1  unsupported return: map const&
+          OpSum::params
+    1  unsupported arg: double*
+          State::State
+    1  unsupported arg: complex*
+          State::State
+    1  unsupported return: Block
+          State::block
+    1  unsupported return: int64_t*
+          PermutationGroup::ptr
+    1  unsupported return: Vector
+          Representation::characters
+    1  unsupported return: time_point
+          ::rightnow
+    1  unsupported arg: time_point const&
+          ::timing

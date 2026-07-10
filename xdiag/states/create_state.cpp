@@ -38,6 +38,14 @@ State product_state(Block const &block, std::vector<int64_t> const &local_state,
 }
 XDIAG_CATCH
 
+State product_state(Block const &block, arma::Col<int64_t> const &local_state,
+                    bool real) try {
+  return product_state(
+      block, std::vector<int64_t>(local_state.begin(), local_state.end()),
+      real);
+}
+XDIAG_CATCH
+
 template <typename block_t>
 static State random_state(block_t const &block, bool real, int64_t ncols,
                           int64_t seed, bool normalized) try {

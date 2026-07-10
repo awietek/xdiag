@@ -20,10 +20,6 @@
 #include <xdiag/utils/format.hpp>
 #include <xdiag/utils/to_string_generic.hpp>
 
-#ifndef XDIAG_DISABLE_COLOR
-#include <extern/fmt/color.hpp>
-#endif
-
 namespace xdiag {
 
 namespace {
@@ -182,7 +178,7 @@ std::ostream &operator<<(std::ostream &out, Spinhalf const &block) {
   return out;
 }
 std::string to_string(Spinhalf const &block) {
-  return to_string_generic(block);
+  return utils::to_string_generic(block);
 }
 
 SpinhalfIterator::SpinhalfIterator(Spinhalf const *block, int64_t idx)
