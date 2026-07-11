@@ -256,14 +256,14 @@ TEST_CASE("product_state_api", "[states]") try {
     REQUIRE(a != d);
   }
 
-  // --- Printing / to_string prints entries in reverse (MSB-first) order ---
+  // --- Printing / to_string prints entries  ---
   {
     ProductState p(std::vector<int64_t>{1, 2, 3});
-    REQUIRE(to_string(p) == "3 2 1");
+    REQUIRE(to_string(p) == "1 2 3");
 
     std::ostringstream oss;
     oss << p;
-    REQUIRE(oss.str() == "3 2 1");
+    REQUIRE(oss.str() == "1 2 3");
 
     ProductState single(std::vector<int64_t>{7});
     REQUIRE(to_string(single) == "7");
