@@ -778,6 +778,12 @@ FMT_CONSTEXPR inline size_t compute_width(string_view s) {
   return num_code_points;
 }
 
+// xdiag local patch: under C++17, char8_type is a non-standard enum (see the
+// #ifdef __cpp_char8_t above), so instantiating basic_string_view<char8_type>
+// pulls in char_traits<char8_type>, which recent libc++ deprecates. Silence it
+// here at the sole point of use rather than globally. Drop on fmt upgrade / C++20.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 inline auto compute_width(basic_string_view<char8_type> s) -> size_t {
   return compute_width(
       string_view(reinterpret_cast<const char*>(s.data()), s.size()));
@@ -804,6 +810,7 @@ inline auto code_point_index(basic_string_view<char8_type> s, size_t n)
   return code_point_index(
       string_view(reinterpret_cast<const char*>(s.data()), s.size()), n);
 }
+#pragma GCC diagnostic pop
 
 template <typename T> struct is_integral : std::is_integral<T> {};
 template <> struct is_integral<int128_opt> : std::true_type {};
