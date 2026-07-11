@@ -82,8 +82,16 @@ TEST_CASE("quantum_numbers_chain", "[operators]") try {
 
           auto Sq_psi0k = apply(Sq, psi0k);
           auto irr = std::get<Spinhalf>(Sq_psi0k.block()).irreps();
-          auto kqirrep = Representation(*irr.group("SitePermutation"),
-                                        *irr.characters("SitePermutation"));
+          Representation kqirrep;
+          if (isreal(*irr.characters("SitePermutation"))) {
+            arma::vec chars =
+                (*irr.characters("SitePermutation")).as<arma::vec>();
+            kqirrep = Representation(*irr.group("SitePermutation"), chars);
+          } else {
+            arma::cx_vec chars =
+                (*irr.characters("SitePermutation")).as<arma::cx_vec>();
+            kqirrep = Representation(*irr.group("SitePermutation"), chars);
+          }
           auto kqirrep_exact = cyclic_group_irrep(nsites, (kmin + q) % nsites);
           int nupp1 = *irr.charge("nup");
           REQUIRE(nupp1 == nup + 1);
@@ -93,7 +101,6 @@ TEST_CASE("quantum_numbers_chain", "[operators]") try {
           // Log("q: {}, nrm0: {}, nrm0k: {}", q, nrm0, nrm0k);
           REQUIRE(isapprox(nrm0, nrm0k, 1e-7, 1e-7));
         }
-	
       }
     }
   }

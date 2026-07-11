@@ -20,7 +20,6 @@ bit_t representative(bit_t state, SitePermutation const &action) {
   return rep;
 }
 
-template uint16_t representative<uint16_t>(uint16_t, SitePermutation const &);
 template uint32_t representative<uint32_t>(uint32_t, SitePermutation const &);
 template uint64_t representative<uint64_t>(uint64_t, SitePermutation const &);
 
@@ -39,8 +38,6 @@ std::pair<bit_t, int64_t> representative_sym(bit_t state,
   return {rep, idx};
 }
 
-template std::pair<uint16_t, int64_t>
-representative_sym<uint16_t>(uint16_t, SitePermutation const &);
 template std::pair<uint32_t, int64_t>
 representative_sym<uint32_t>(uint32_t, SitePermutation const &);
 template std::pair<uint64_t, int64_t>
@@ -64,8 +61,6 @@ representative_syms(bit_t state, SitePermutation const &action) {
   return {rep, indices};
 }
 
-template std::pair<uint16_t, std::vector<int64_t>>
-representative_syms<uint16_t>(uint16_t, SitePermutation const &);
 template std::pair<uint32_t, std::vector<int64_t>>
 representative_syms<uint32_t>(uint32_t, SitePermutation const &);
 template std::pair<uint64_t, std::vector<int64_t>>
@@ -98,7 +93,7 @@ template bits::BitsetDynamic representative_subset<bits::BitsetDynamic>(
 template <typename bit_t>
 std::pair<bit_t, int64_t>
 representative_sym_subset(bit_t state, SitePermutation const &action,
-                         std::vector<int64_t> const &syms) {
+                          std::vector<int64_t> const &syms) {
   bit_t rep = state;
   int64_t rep_sym = 0;
   bool first = true;

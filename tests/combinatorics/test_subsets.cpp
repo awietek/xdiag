@@ -87,21 +87,18 @@ TEST_CASE( "subsets", "[combinatorics]" ) {
 
   SECTION("iteration") {
     xdiag::Log("Testing Subsets - iteration");
-    test_subsets<uint16_t>();
     test_subsets<uint32_t>();
     test_subsets<uint64_t>();
   }
 
   SECTION("random access and index") {
     xdiag::Log("Testing Subsets - random access and index");
-    test_subsets_random_access<uint16_t>();
     test_subsets_random_access<uint32_t>();
     test_subsets_random_access<uint64_t>();
   }
 
   SECTION("iterator advance (+ and +=)") {
     xdiag::Log("Testing Subsets - iterator advance");
-    test_subsets_iterator_advance<uint16_t>();
     test_subsets_iterator_advance<uint32_t>();
     test_subsets_iterator_advance<uint64_t>();
   }

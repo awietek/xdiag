@@ -28,7 +28,6 @@ bool isrepresentative(bit_t state, SitePermutation const &action) {
 
 using namespace bits;
 
-INSTANTIATE_ISREPRESENTATIVE(uint16_t);
 INSTANTIATE_ISREPRESENTATIVE(uint32_t);
 INSTANTIATE_ISREPRESENTATIVE(uint64_t);
 INSTANTIATE_ISREPRESENTATIVE(BitsetDynamic);

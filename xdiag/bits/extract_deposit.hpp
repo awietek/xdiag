@@ -24,9 +24,6 @@ namespace xdiag::bits {
 
 // wrappers around the bmi2 pdep/pext intrinsics
 #if defined(__BMI2__) && defined(USE_PEXT_PDEP)
-inline uint16_t pdep(uint16_t source, uint16_t mask) noexcept {
-  return _pdep_u32((uint32_t)source, (uint32_t)mask);
-}
 inline uint32_t pdep(uint32_t source, uint32_t mask) noexcept {
   return _pdep_u32(source, mask);
 }
@@ -34,9 +31,6 @@ inline uint64_t pdep(uint64_t source, uint64_t mask) noexcept {
   return _pdep_u64(source, mask);
 }
 
-inline uint16_t pext(uint16_t source, uint16_t mask) noexcept {
-  return _pext_u32((uint32_t)source, (uint32_t)mask);
-}
 inline uint32_t pext(uint32_t source, uint32_t mask) noexcept {
   return _pext_u32(source, mask);
 }

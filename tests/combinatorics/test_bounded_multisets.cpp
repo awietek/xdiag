@@ -196,9 +196,9 @@ template <typename bitarray_t> void test_equality() {
 
 TEST_CASE("BoundedMultisets", "[combinatorics/bounded_multisets]") {
 
-
   SECTION("size and iteration count — uint64_t") {
-    xdiag::Log("Testing BoundedMultisets - size and iteration count — uint64_t");
+    xdiag::Log(
+        "Testing BoundedMultisets - size and iteration count — uint64_t");
     using A2 = BitArray<uint64_t, 1>;
     using A3 = BitArray<uint64_t, 2>;
     using A5 = BitArray<uint64_t, 3>;
@@ -209,14 +209,15 @@ TEST_CASE("BoundedMultisets", "[combinatorics/bounded_multisets]") {
     test_size<A5>(8);
   }
 
-  SECTION("size and iteration count — uint16_t / uint32_t") {
-    xdiag::Log("Testing BoundedMultisets - size and iteration count — uint16_t / uint32_t");
-    test_size<BitArray<uint16_t, 1>>(2);
+  SECTION("size and iteration count — uint32_t") {
+    xdiag::Log(
+        "Testing BoundedMultisets - size and iteration count — uint32_t");
     test_size<BitArray<uint32_t, 2>>(3);
   }
 
   SECTION("size and iteration count — Bitset types") {
-    xdiag::Log("Testing BoundedMultisets - size and iteration count — Bitset types");
+    xdiag::Log(
+        "Testing BoundedMultisets - size and iteration count — Bitset types");
     test_size<BitArray<BitsetStatic1, 1>>(2);
     test_size<BitArray<BitsetStatic2, 2>>(3);
     test_size<BitArray<BitsetStatic4, 3>>(5);
@@ -242,7 +243,6 @@ TEST_CASE("BoundedMultisets", "[combinatorics/bounded_multisets]") {
     xdiag::Log("Testing BoundedMultisets - n=1 yields 0..bound-1 in order");
     test_n1<BitArray<uint64_t, 2>>(3);
     test_n1<BitArray<uint64_t, 3>>(8);
-    test_n1<BitArray<uint16_t, 1>>(2);
   }
 
   SECTION("n=0 yields one empty sequence") {

@@ -105,7 +105,7 @@ TEST_CASE("representation", "[symmetries]") try {
     for (int64_t k = 0; k < n; ++k) {
       Representation irrep = cyclic_group_irrep(n, k);
       arma::cx_vec chars_hc = arma::conj(irrep.characters().as<arma::cx_vec>());
-      Representation irrep_hc = Representation(irrep.group(), Vector(chars_hc));
+      Representation irrep_hc = Representation(irrep.group(), chars_hc);
       REQUIRE((irrep * irrep_hc).isreal());
     }
   }

@@ -18,7 +18,6 @@ std::string to_string(bit_t bits, int64_t size, bool reverse) {
   return to_string(ba, size, reverse);
 }
 
-template std::string to_string(uint16_t, int64_t, bool);
 template std::string to_string(uint32_t, int64_t, bool);
 template std::string to_string(uint64_t, int64_t, bool);
 

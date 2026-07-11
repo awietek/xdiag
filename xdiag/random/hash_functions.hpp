@@ -16,9 +16,6 @@ constexpr uint32_t fnv1_mask_uint32_t =
 constexpr uint32_t hash_fnv1(uint32_t bits) noexcept {
   return fnv1_mask_uint32_t ^ bits;
 }
-constexpr uint16_t hash_fnv1(uint16_t bits) noexcept {
-  return (uint16_t)hash_fnv1((uint32_t)bits);
-}
 
 // Fowler–Noll–Vo hash function for uint64_t
 constexpr uint64_t fnv1_prime_uint64_t = 0x00000100000001B3;
@@ -81,10 +78,6 @@ inline uint32_t hash_div3(uint32_t bits) noexcept {
   // std::cout << "num2 " << (123456789 * num + 987654321) % 3000000019ULL <<
   // "\n\n";
   return (123456789 * num + 987654321) % 3000000019ULL;
-}
-
-inline uint16_t hash_div3(uint16_t bits) noexcept {
-  return (uint16_t)hash_div3((uint32_t)bits);
 }
 
 // Taken from boost::hash_combine

@@ -39,22 +39,15 @@ constexpr int swar_popcount_64(uint64_t x) {
   x = (x + (x >> 4)) & m_4;
   return (x * 0x0101010101010101LLU) >> 56;
 }
-constexpr int swar_popcount(uint16_t x) noexcept {
-  return swar_popcount_32((uint32_t)x);
-}
 constexpr int swar_popcount(uint32_t x) noexcept { return swar_popcount_32(x); }
 constexpr int swar_popcount(uint64_t x) noexcept { return swar_popcount_64(x); }
 
 #if defined(USE_POPCOUNT)
 constexpr int popcount(int x) noexcept { return __builtin_popcount(x); }
-constexpr int popcount(uint16_t x) noexcept { return __builtin_popcount(x); }
 constexpr int popcount(uint32_t x) noexcept { return __builtin_popcount(x); }
 constexpr int popcount(uint64_t x) noexcept { return __builtin_popcountll(x); }
 #else
 constexpr int popcount(int x) noexcept { return swar_popcount_32((uint32_t)x); }
-constexpr int popcount(uint16_t x) noexcept {
-  return swar_popcount_32((uint32_t)x);
-}
 constexpr int popcount(uint32_t x) noexcept { return swar_popcount_32(x); }
 constexpr int popcount(uint64_t x) noexcept { return swar_popcount_64(x); }
 #endif

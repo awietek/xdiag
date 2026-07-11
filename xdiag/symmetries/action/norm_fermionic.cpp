@@ -35,7 +35,6 @@ double norm_fermionic(bit_t state, action_t const &action,
                                  arma::cx_vec const &);                        \
   using namespace bits;
 
-INSTANTIATE_NORM_FERMIONIC_SP(uint16_t);
 INSTANTIATE_NORM_FERMIONIC_SP(uint32_t);
 INSTANTIATE_NORM_FERMIONIC_SP(uint64_t);
 INSTANTIATE_NORM_FERMIONIC_SP(BitsetDynamic);

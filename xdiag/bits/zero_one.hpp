@@ -38,12 +38,8 @@ template <typename bit_t> constexpr bit_t one(int64_t nbits = 64) noexcept {
 }
 
 // Test whether any / no bit is set.
-constexpr bool nonzero(uint8_t s) { return (bool)s; }
-constexpr bool nonzero(uint16_t s) { return (bool)s; }
 constexpr bool nonzero(uint32_t s) { return (bool)s; }
 constexpr bool nonzero(uint64_t s) { return (bool)s; }
-constexpr bool nonzero(int8_t s) { return (bool)s; }
-constexpr bool nonzero(int16_t s) { return (bool)s; }
 constexpr bool nonzero(int32_t s) { return (bool)s; }
 constexpr bool nonzero(int64_t s) { return (bool)s; }
 

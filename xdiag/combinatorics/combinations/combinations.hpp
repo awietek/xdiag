@@ -16,7 +16,7 @@ template <typename bit_t> class CombinationsIterator;
 // out of n total bit positions. The patterns are generated in lexicographic
 // order (treating bit patterns as unsigned integers).
 //
-// Template parameter bit_t: uint16_t, uint32_t, uint64_t, or Bitset
+// Template parameter bit_t: uint32_t, uint64_t, or Bitset
 //
 // Example usage:
 //   Combinations<uint64_t> combs(5, 2);  // All ways to choose 2 from 5
@@ -32,9 +32,12 @@ public:
 
   Combinations() = default;
 
-  // Construct combinations of k bits from n positions.
-  // Throws if k > n, k < 0, or n < 0.
-  Combinations(int64_t n, int64_t k);
+  // Construct combinations of k bits from n positions. The optional width sets
+  // the storage bit width of the generated states (defaults to n); it must be
+  // >= n and only matters for dynamic Bitset, letting the states be stored in a
+  // wider word than n bits (used by the tJ compressed-dn fiber to match the ups
+  // bit width). Throws if k > n, k < 0, or n < 0.
+  Combinations(int64_t n, int64_t k, int64_t width = -1);
 
   int64_t n() const;                            // Total number of bit positions
   int64_t k() const;                            // Number of bits set in each pattern
@@ -53,6 +56,7 @@ private:
   int64_t n_ = 0;
   int64_t k_ = 0;
   int64_t size_ = 0;
+  int64_t width_ = 0; // storage bit width of the generated states (>= n_)
 };
 
 // Forward iterator over combination bit patterns.
@@ -64,7 +68,7 @@ template <typename bit_tt> class CombinationsIterator {
 public:
   using bit_t = bit_tt;
   CombinationsIterator() = default;
-  CombinationsIterator(int64_t n, int64_t k, int64_t idx);
+  CombinationsIterator(int64_t n, int64_t k, int64_t idx, int64_t width = -1);
 
   bool operator==(CombinationsIterator<bit_t> const &rhs) const;
   bool operator!=(CombinationsIterator<bit_t> const &rhs) const;
@@ -77,6 +81,7 @@ private:
   bit_t current_;
   int64_t idx_;
   int64_t n_;
+  int64_t width_; // storage bit width of current_ (>= n_)
 };
 
 } // namespace xdiag::combinatorics

@@ -16,7 +16,14 @@ template <typename bit_t> bit_t next_combination(bit_t v) noexcept;
 // iterators that already store n.
 template <typename bit_t> bit_t next_combination(bit_t v, int64_t n) noexcept;
 
-template <class bit_t> bit_t nth_combination(int64_t n, int64_t k, int64_t idx);
+// nth_combination(n, k, idx, width): the optional width argument sets the
+// storage bit width of the returned bit_t and defaults to n. It matters only for
+// dynamic Bitset, whose chunk count tracks the bit count: enumerating k bits over
+// n positions but storing them in a wider (width >= n) bitset lets the tJ
+// compressed-dn states share the ups bit width, so the kernels' nsites-wide masks
+// and the dn states have matching chunk counts.
+template <class bit_t>
+bit_t nth_combination(int64_t n, int64_t k, int64_t idx, int64_t width = -1);
 template <class bit_t> int64_t rank_combination(bit_t bits, int64_t n);
 
 // template <typename bit_t>

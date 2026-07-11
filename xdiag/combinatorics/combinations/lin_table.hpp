@@ -22,8 +22,7 @@
 // so index(bits) = left_indices_[bits >> n_right] + right_indices_[bits &
 // right_mask] is a single O(1) table lookup. Iteration and operator[] delegate
 // to Combinations<bit_t>.
-// Requires: n >= 0, 0 <= k <= n. Instantiated for uint16_t, uint32_t,
-// uint64_t.
+// Requires: n >= 0, 0 <= k <= n. Instantiated for uint32_t, uint64_t.
 //
 // Example:
 //   LinTable<uint32_t> lt(16, 8);   // C(16,8) = 12870 patterns

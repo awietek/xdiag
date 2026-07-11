@@ -215,7 +215,6 @@ auto BoundedPartitionsIterator<bitarray_t>::operator*() const -> bitarray_t {
   INSTANTIATE_BP(BIT_T, 4)                                                     \
   INSTANTIATE_BP(BIT_T, 8)
 
-INSTANTIATE_BP_ALL(uint16_t)
 INSTANTIATE_BP_ALL(uint32_t)
 INSTANTIATE_BP_ALL(uint64_t)
 INSTANTIATE_BP_ALL(bits::BitsetDynamic)

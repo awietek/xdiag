@@ -257,23 +257,18 @@ bool SitePermutationSublattice<bit_t, n_sublat>::operator!=(
   return !operator==(rhs);
 }
 
-template class SitePermutationSublattice<uint16_t, 1>;
 template class SitePermutationSublattice<uint32_t, 1>;
 template class SitePermutationSublattice<uint64_t, 1>;
 
-template class SitePermutationSublattice<uint16_t, 2>;
 template class SitePermutationSublattice<uint32_t, 2>;
 template class SitePermutationSublattice<uint64_t, 2>;
 
-template class SitePermutationSublattice<uint16_t, 3>;
 template class SitePermutationSublattice<uint32_t, 3>;
 template class SitePermutationSublattice<uint64_t, 3>;
 
-template class SitePermutationSublattice<uint16_t, 4>;
 template class SitePermutationSublattice<uint32_t, 4>;
 template class SitePermutationSublattice<uint64_t, 4>;
 
-template class SitePermutationSublattice<uint16_t, 5>;
 template class SitePermutationSublattice<uint32_t, 5>;
 template class SitePermutationSublattice<uint64_t, 5>;
 

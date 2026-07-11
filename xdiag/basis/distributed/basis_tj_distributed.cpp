@@ -353,8 +353,6 @@ void BasistJDistributed<bit_t>::transpose(const coeff_t *in_vec, coeff_t *out_ve
 }
 XDIAG_CATCH
 
-template void BasistJDistributed<uint16_t>::transpose(const double *, double *) const;
-template void BasistJDistributed<uint16_t>::transpose(const complex *, complex *) const;
 template void BasistJDistributed<uint32_t>::transpose(const double *, double *) const;
 template void BasistJDistributed<uint32_t>::transpose(const complex *, complex *) const;
 template void BasistJDistributed<uint64_t>::transpose(const double *, double *) const;
@@ -401,8 +399,6 @@ void BasistJDistributed<bit_t>::transpose_r(coeff_t const *in_vec, coeff_t *out_
 }
 XDIAG_CATCH
 
-template void BasistJDistributed<uint16_t>::transpose_r(const double *, double *) const;
-template void BasistJDistributed<uint16_t>::transpose_r(const complex *, complex *) const;
 template void BasistJDistributed<uint32_t>::transpose_r(const double *, double *) const;
 template void BasistJDistributed<uint32_t>::transpose_r(const complex *, complex *) const;
 template void BasistJDistributed<uint64_t>::transpose_r(const double *, double *) const;

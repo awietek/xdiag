@@ -32,44 +32,6 @@ TEST_CASE("site_permutation", "[symmetries]") try {
     REQUIRE(sp1 != sp3);
   }
 
-  // apply<uint16_t>: cyclic group on 4 sites, sym k shifts bit i -> site (i+k)%4
-  {
-    auto sp = SitePermutation(cyclic_group(4));
-    REQUIRE(sp.apply<uint16_t>(0, 0b0001) == 0b0001); // identity
-    REQUIRE(sp.apply<uint16_t>(1, 0b0001) == 0b0010); // bit 0 -> site 1
-    REQUIRE(sp.apply<uint16_t>(2, 0b0001) == 0b0100); // bit 0 -> site 2
-    REQUIRE(sp.apply<uint16_t>(3, 0b0001) == 0b1000); // bit 0 -> site 3
-    REQUIRE(sp.apply<uint16_t>(1, 0b0101) == 0b1010); // bits {0,2} -> {1,3}
-  }
-
-  // apply(inv(sym), apply(sym, bits)) == bits for all states and symmetries
-  {
-    auto group = cyclic_group(4);
-    auto sp = SitePermutation(group);
-    for (uint16_t state = 0; state < 16; ++state) {
-      for (int64_t sym = 0; sym < group.size(); ++sym) {
-        auto permuted = sp.apply<uint16_t>(sym, state);
-        auto recovered = sp.apply<uint16_t>(group.inv(sym), permuted);
-        REQUIRE(recovered == state);
-      }
-    }
-  }
-
-  // Homomorphism: apply(s2, apply(s1, b)) == apply(multiply(s1,s2), b)
-  {
-    auto group = cyclic_group(4);
-    auto sp = SitePermutation(group);
-    for (uint16_t state = 0; state < 16; ++state) {
-      for (int64_t s1 = 0; s1 < group.size(); ++s1) {
-        for (int64_t s2 = 0; s2 < group.size(); ++s2) {
-          auto composed = sp.apply<uint16_t>(s2, sp.apply<uint16_t>(s1, state));
-          auto direct = sp.apply<uint16_t>(group.multiply(s1, s2), state);
-          REQUIRE(composed == direct);
-        }
-      }
-    }
-  }
-
   // apply with BitArray<uint64_t, 1>: 1-bit-per-site storage
   {
     auto group = cyclic_group(4);

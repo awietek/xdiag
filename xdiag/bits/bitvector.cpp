@@ -358,7 +358,6 @@ bool BitVectorIterator<value_t>::operator>=(
 using namespace xdiag::bits;
 
 // BEGIN_INSTANTIATION_GROUP(native)
-INSTANTIATE_BITVECTOR(uint16_t);
 INSTANTIATE_BITVECTOR(uint32_t);
 INSTANTIATE_BITVECTOR(uint64_t);
 // END_INSTANTIATION_GROUP

@@ -85,15 +85,20 @@ template <class bit_t> int64_t rank_combination(bit_t bits, int64_t n) {
 // nth_combination: inverse of rank_combination. Greedy descent: for each slot
 // j from k down to 1, find the largest b with binom(b,j) <= remaining.
 template <class bit_t>
-bit_t nth_combination(int64_t n, int64_t k, int64_t idx) {
+bit_t nth_combination(int64_t n, int64_t k, int64_t idx, int64_t width) {
   // For dynamic Bitset (nchunks==0), default construction yields empty storage;
-  // must pass n to allocate enough capacity. For integers and static Bitsets,
-  // the Bitset(n) constructor is equivalent to the default constructor.
+  // must pass a capacity to allocate enough chunks. The capacity is `width` (>=
+  // n), defaulting to n; a wider capacity lets callers (e.g. the tJ compressed-dn
+  // fiber) store the k-of-n pattern in a bitset matching a larger bit width. For
+  // integers and static Bitsets, the Bitset(width) constructor is equivalent to
+  // the default constructor.
+  if (width < 0)
+    width = n;
   bit_t result;
   if constexpr (std::is_integral_v<bit_t>)
     result = bit_t{};
   else
-    result = bit_t(n);
+    result = bit_t(width);
   int64_t remaining = idx;
   for (int64_t j = k; j >= 1; --j) {
     int64_t b = j - 1;
@@ -148,10 +153,9 @@ bit_t nth_combination(int64_t n, int64_t k, int64_t idx) {
 #define INSTANTIATE_EC(BIT_T)                                                  \
   template BIT_T next_combination<BIT_T>(BIT_T) noexcept;                     \
   template BIT_T next_combination<BIT_T>(BIT_T, int64_t) noexcept;            \
-  template BIT_T nth_combination<BIT_T>(int64_t, int64_t, int64_t);           \
+  template BIT_T nth_combination<BIT_T>(int64_t, int64_t, int64_t, int64_t);  \
   template int64_t rank_combination<BIT_T>(BIT_T, int64_t);
 
-INSTANTIATE_EC(uint16_t)
 INSTANTIATE_EC(uint32_t)
 INSTANTIATE_EC(uint64_t)
 
@@ -163,7 +167,8 @@ INSTANTIATE_EC(uint64_t)
   next_combination<bits::Bitset<CHUNK_T, NCHUNKS>>(                            \
       bits::Bitset<CHUNK_T, NCHUNKS>, int64_t) noexcept;                       \
   template bits::Bitset<CHUNK_T, NCHUNKS>                                      \
-  nth_combination<bits::Bitset<CHUNK_T, NCHUNKS>>(int64_t, int64_t, int64_t); \
+  nth_combination<bits::Bitset<CHUNK_T, NCHUNKS>>(int64_t, int64_t, int64_t,  \
+                                                  int64_t);                    \
   template int64_t                                                              \
   rank_combination<bits::Bitset<CHUNK_T, NCHUNKS>>(                            \
       bits::Bitset<CHUNK_T, NCHUNKS>, int64_t);
@@ -175,8 +180,6 @@ INSTANTIATE_EC(uint64_t)
   INSTANTIATE_EC_BITSET(CHUNK_T, 4)                                            \
   INSTANTIATE_EC_BITSET(CHUNK_T, 8)
 
-INSTANTIATE_EC_BITSET_ALL(uint8_t)
-INSTANTIATE_EC_BITSET_ALL(uint16_t)
 INSTANTIATE_EC_BITSET_ALL(uint32_t)
 INSTANTIATE_EC_BITSET_ALL(uint64_t)
 

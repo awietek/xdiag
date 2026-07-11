@@ -60,7 +60,6 @@ using namespace bits;
 #define INSTANTIATE_APPLY(BIT_TYPE)                                            \
   template BIT_TYPE SitePermutation::apply(int64_t, BIT_TYPE const &) const;
 
-INSTANTIATE_APPLY(uint16_t);
 INSTANTIATE_APPLY(uint32_t);
 INSTANTIATE_APPLY(uint64_t);
 INSTANTIATE_APPLY(BitsetDynamic);
@@ -87,7 +86,6 @@ INSTANTIATE_APPLY(BitsetStatic8);
   template BitArray<BIT_TYPE, 8> SitePermutation::apply(                       \
       int64_t, BitArray<BIT_TYPE, 8> const &) const;
 
-INSTANTIATE_APPLY_BITARRAY(uint16_t);
 INSTANTIATE_APPLY_BITARRAY(uint32_t);
 INSTANTIATE_APPLY_BITARRAY(uint64_t);
 INSTANTIATE_APPLY_BITARRAY(BitsetDynamic);

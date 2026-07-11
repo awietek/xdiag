@@ -83,7 +83,6 @@ bool LinTable<bit_t>::operator!=(LinTable<bit_t> const &rhs) const {
   return !operator==(rhs);
 }
 
-template class LinTable<uint16_t>;
 template class LinTable<uint32_t>;
 template class LinTable<uint64_t>;
 

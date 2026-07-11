@@ -91,8 +91,11 @@ tJ::tJ(int64_t nsites, RepresentationSet const &irreps) try : irreps_(irreps) {
     } else if (nsites <= 64) {
       build(Combinations<uint64_t>(n, ku), Combinations<uint64_t>(nc, kd));
     } else {
+      // Store the compressed-dn states (enumerated over nc = nsites-nup sites)
+      // in nsites-wide bitsets so their dynamic-Bitset chunk count matches the
+      // ups states and the nsites-wide masks used by the tJ kernels.
       build(Combinations<BitsetDynamic>(n, ku),
-            Combinations<BitsetDynamic>(nc, kd));
+            Combinations<BitsetDynamic>(nc, kd, n));
     }
   } else if (!nup && !ndn) { // no number conservation (small nsites only)
     auto build = [&](auto &&enum_up) {

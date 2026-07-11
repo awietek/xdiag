@@ -320,10 +320,6 @@ void BasisElectronDistributed<bit_t>::transpose(const coeff_t *in_vec,
 }
 XDIAG_CATCH
 
-template void BasisElectronDistributed<uint16_t>::transpose(const double *,
-                                                            double *) const;
-template void BasisElectronDistributed<uint16_t>::transpose(const complex *,
-                                                            complex *) const;
 template void BasisElectronDistributed<uint32_t>::transpose(const double *,
                                                             double *) const;
 template void BasisElectronDistributed<uint32_t>::transpose(const complex *,
@@ -373,10 +369,6 @@ void BasisElectronDistributed<bit_t>::transpose_r(coeff_t const *in_vec,
 }
 XDIAG_CATCH
 
-template void BasisElectronDistributed<uint16_t>::transpose_r(const double *,
-                                                              double *) const;
-template void BasisElectronDistributed<uint16_t>::transpose_r(const complex *,
-                                                              complex *) const;
 template void BasisElectronDistributed<uint32_t>::transpose_r(const double *,
                                                               double *) const;
 template void BasisElectronDistributed<uint32_t>::transpose_r(const complex *,

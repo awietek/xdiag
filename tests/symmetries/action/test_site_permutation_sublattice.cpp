@@ -140,8 +140,6 @@ template <class bit_t> void test_group_action_sublattice() {
 
 TEST_CASE("SitePermutationSublattice", "[symmetries]") {
   Log("Test SitePermutationSublattice");
-  Log("uint16_t");
-  test_group_action_sublattice<uint16_t>();
   Log("uint32_t");
   test_group_action_sublattice<uint32_t>();
   Log("uint64_t");

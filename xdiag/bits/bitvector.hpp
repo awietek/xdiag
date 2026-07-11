@@ -26,7 +26,7 @@ template <typename value_t> class BitVectorConstIterator;
 //
 // Template parameter:
 //   value_t: Element type returned by operator[]. Supported types:
-//     - uint16_t, uint32_t, uint64_t  (nbits <= type width)
+//     - uint32_t, uint64_t  (nbits <= type width)
 //     - BitsetDynamic, BitsetStatic*   (multi-word values)
 //     - BitArray<bit_t, N>             (packed N-bit-per-site arrays;
 //                                       pass nbits = digits of bit_t)

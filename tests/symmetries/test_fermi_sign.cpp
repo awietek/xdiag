@@ -139,7 +139,6 @@ TEST_CASE("fermi_sign", "[symmetries]") {
 
   Log("Test fermi_sign");
   for (int64_t nsites = 1; nsites < 8; ++nsites) {
-    test_fermi_sign_subsets<uint16_t>(nsites);
     test_fermi_sign_subsets<uint32_t>(nsites);
     test_fermi_sign_subsets<uint64_t>(nsites);
     test_fermi_sign_combinations<BitsetDynamic>(nsites);

@@ -160,8 +160,6 @@ template <typename bit_t> void test_bitops() {
 
 TEST_CASE("bitops", "[bitops]") {
   Log.set_verbosity(1);
-  Log("Testing bitops<uint16_t>");
-  test_bitops<uint16_t>();
   Log("Testing bitops<uint32_t>");
   test_bitops<uint32_t>();
   Log("Testing bitops<uint64_t>");

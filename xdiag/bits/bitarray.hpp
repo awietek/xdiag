@@ -20,7 +20,7 @@ namespace xdiag::bits {
 // with specialized implementations for both native integers and Bitsets.
 //
 // Template parameters:
-//   bit_t: Storage type - uint16_t, uint32_t, uint64_t, or Bitset<uint64_t, X>
+//   bit_t: Storage type - uint32_t, uint64_t, or Bitset<uint64_t, X>
 //   nbits: Bits per element (1-8). Determines how many elements fit.
 //
 // Example:

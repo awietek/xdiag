@@ -53,7 +53,6 @@ bool Subsets<bit_t>::operator!=(Subsets<bit_t> const &rhs) const {
   return !operator==(rhs);
 }
 
-template class Subsets<uint16_t>;
 template class Subsets<uint32_t>;
 template class Subsets<uint64_t>;
 
@@ -95,7 +94,6 @@ template <class bit_t> bit_t SubsetsIterator<bit_t>::operator*() const {
   return (bit_t)current_;
 }
 
-template class SubsetsIterator<uint16_t>;
 template class SubsetsIterator<uint32_t>;
 template class SubsetsIterator<uint64_t>;
 

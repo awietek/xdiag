@@ -16,7 +16,7 @@
 using namespace xdiag;
 using namespace xdiag::bits;
 
-// --- Integral value_t (uint16_t, uint32_t, uint64_t) ---
+// --- Integral value_t (uint32_t, uint64_t) ---
 
 template <typename value_t> void test_bitvector_integral() {
   std::mt19937 rng(42);
@@ -233,7 +233,6 @@ TEST_CASE("bitvector", "[bits]") try {
 
   SECTION("integral") {
     Log("Testing bitvector - integral");
-    test_bitvector_integral<uint16_t>();
     test_bitvector_integral<uint32_t>();
     test_bitvector_integral<uint64_t>();
   }

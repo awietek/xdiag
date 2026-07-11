@@ -16,7 +16,7 @@ template <typename bit_t> class SubsetsIterator;
 // This class provides iteration over all 2^n bit patterns of n bit positions,
 // i.e., all subsets of an n-element set, in ascending order.
 //
-// Template parameter bit_t: uint16_t, uint32_t, uint64_t
+// Template parameter bit_t: uint32_t, uint64_t
 //
 // Example usage:
 //   Subsets<uint64_t> subs(3);  // All 8 subsets of a 3-element set

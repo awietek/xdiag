@@ -15,8 +15,8 @@
 namespace xdiag::combinatorics {
 
 template <class bit_t>
-Combinations<bit_t>::Combinations(int64_t n, int64_t k) try
-    : n_(n), k_(k), size_(math::binomial(n, k)) {
+Combinations<bit_t>::Combinations(int64_t n, int64_t k, int64_t width) try
+    : n_(n), k_(k), size_(math::binomial(n, k)), width_(width < 0 ? n : width) {
   if (n < 0) {
     XDIAG_THROW("Error constructing Combinations: n<0");
   }
@@ -25,6 +25,9 @@ Combinations<bit_t>::Combinations(int64_t n, int64_t k) try
   }
   if (k > n) {
     XDIAG_THROW("Error constructing Combinations: k>n");
+  }
+  if (width_ < n) {
+    XDIAG_THROW("Error constructing Combinations: width<n");
   }
 }
 XDIAG_CATCH
@@ -40,7 +43,7 @@ template <class bit_t> int64_t Combinations<bit_t>::bitwidth() const {
 
 template <class bit_t>
 bit_t Combinations<bit_t>::operator[](int64_t idx) const {
-  return nth_combination<bit_t>(n_, k_, idx);
+  return nth_combination<bit_t>(n_, k_, idx, width_);
 }
 
 template <class bit_t> int64_t Combinations<bit_t>::index(bit_t bits) const {
@@ -49,12 +52,12 @@ template <class bit_t> int64_t Combinations<bit_t>::index(bit_t bits) const {
 
 template <class bit_t>
 CombinationsIterator<bit_t> Combinations<bit_t>::begin() const {
-  return CombinationsIterator<bit_t>(n_, k_, 0);
+  return CombinationsIterator<bit_t>(n_, k_, 0, width_);
 }
 
 template <class bit_t>
 CombinationsIterator<bit_t> Combinations<bit_t>::end() const {
-  return CombinationsIterator<bit_t>(n_, k_, size_);
+  return CombinationsIterator<bit_t>(n_, k_, size_, width_);
 }
 
 template <class bit_t>
@@ -67,7 +70,6 @@ bool Combinations<bit_t>::operator!=(Combinations<bit_t> const &rhs) const {
   return !operator==(rhs);
 }
 
-template class Combinations<uint16_t>;
 template class Combinations<uint32_t>;
 template class Combinations<uint64_t>;
 
@@ -82,8 +84,6 @@ template class Combinations<uint64_t>;
   INSTANTIATE_COMBINATIONS(CHUNK_T, 4)                                         \
   INSTANTIATE_COMBINATIONS(CHUNK_T, 8)
 
-INSTANTIATE_COMBINATIONS_FOR_NCHUNKS(uint8_t)
-INSTANTIATE_COMBINATIONS_FOR_NCHUNKS(uint16_t)
 INSTANTIATE_COMBINATIONS_FOR_NCHUNKS(uint32_t)
 INSTANTIATE_COMBINATIONS_FOR_NCHUNKS(uint64_t)
 
@@ -92,10 +92,11 @@ INSTANTIATE_COMBINATIONS_FOR_NCHUNKS(uint64_t)
 
 template <class bit_t>
 CombinationsIterator<bit_t>::CombinationsIterator(int64_t n, int64_t k,
-                                                  int64_t idx)
-    : current_(idx < math::binomial(n, k) ? nth_combination<bit_t>(n, k, idx)
-                                          : bit_t{}),
-      idx_(idx), n_(n) {}
+                                                  int64_t idx, int64_t width)
+    : current_(idx < math::binomial(n, k)
+                   ? nth_combination<bit_t>(n, k, idx, width)
+                   : bit_t{}),
+      idx_(idx), n_(n), width_(width < 0 ? n : width) {}
 
 template <class bit_t>
 bool CombinationsIterator<bit_t>::operator==(
@@ -120,7 +121,7 @@ template <class bit_t>
 CombinationsIterator<bit_t> &
 CombinationsIterator<bit_t>::operator+=(int64_t n) {
   idx_ += n;
-  current_ = nth_combination<bit_t>(n_, bits::popcount(current_), idx_);
+  current_ = nth_combination<bit_t>(n_, bits::popcount(current_), idx_, width_);
   return *this;
 }
 
@@ -136,7 +137,6 @@ template <class bit_t> bit_t CombinationsIterator<bit_t>::operator*() const {
   return current_;
 }
 
-template class CombinationsIterator<uint16_t>;
 template class CombinationsIterator<uint32_t>;
 template class CombinationsIterator<uint64_t>;
 
@@ -151,8 +151,6 @@ template class CombinationsIterator<uint64_t>;
   INSTANTIATE_COMBINATIONS_ITERATOR(CHUNK_T, 4)                                \
   INSTANTIATE_COMBINATIONS_ITERATOR(CHUNK_T, 8)
 
-INSTANTIATE_COMBINATIONS_ITERATOR_FOR_NCHUNKS(uint8_t)
-INSTANTIATE_COMBINATIONS_ITERATOR_FOR_NCHUNKS(uint16_t)
 INSTANTIATE_COMBINATIONS_ITERATOR_FOR_NCHUNKS(uint32_t)
 INSTANTIATE_COMBINATIONS_ITERATOR_FOR_NCHUNKS(uint64_t)
 

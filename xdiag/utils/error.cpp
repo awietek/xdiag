@@ -148,7 +148,6 @@ template <typename bit_t> void check_nsites_work_with_bits(int64_t nsites) try {
 }
 XDIAG_CATCH
 
-template void check_nsites_work_with_bits<uint16_t>(int64_t nsites);
 template void check_nsites_work_with_bits<uint32_t>(int64_t nsites);
 template void check_nsites_work_with_bits<uint64_t>(int64_t nsites);
 } // namespace xdiag

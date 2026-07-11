@@ -58,7 +58,6 @@ bool fermi_bool_of_permutation(bit_t const &state, Permutation const &perm) {
                                           Permutation const &perm);
 
 using namespace bits;
-INSTANTIATE_FERMI_BOOL_OF_PERMUTATION(uint16_t);
 INSTANTIATE_FERMI_BOOL_OF_PERMUTATION(uint32_t);
 INSTANTIATE_FERMI_BOOL_OF_PERMUTATION(uint64_t);
 INSTANTIATE_FERMI_BOOL_OF_PERMUTATION(BitsetDynamic);

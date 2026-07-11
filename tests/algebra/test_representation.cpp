@@ -136,9 +136,16 @@ TEST_CASE("opsumrepresentation", "[algebra]") {
   REQUIRE(result.charge("nup") == 0); // Sz terms conserve nup and ndn
   REQUIRE(result.charge("ndn") == 0);
   REQUIRE(result.has_type("SitePermutation"));
-  REQUIRE(isapprox(Representation(*result.group("SitePermutation"),
-                                  *result.characters("SitePermutation")),
-                   perm));
+  Vector chars = *result.characters("SitePermutation");
+  if (isreal(chars)) {
+    REQUIRE(isapprox(
+        Representation(*result.group("SitePermutation"), chars.as<arma::vec>()),
+        perm));
+  } else {
+    REQUIRE(isapprox(Representation(*result.group("SitePermutation"),
+                                    chars.as<arma::cx_vec>()),
+                     perm));
+  }
 
   // Symmetries under which the OpSum has no well-defined sector are dropped.
   {

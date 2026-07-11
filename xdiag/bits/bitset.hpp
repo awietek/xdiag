@@ -19,13 +19,13 @@ namespace xdiag::bits {
 
 // Multi-precision bit storage with arithmetic operations.
 //
-// Bitset stores a sequence of bits using chunks (uint8_t/16/32/64) and supports
+// Bitset stores a sequence of bits using chunks (uint32_t/64) and supports
 // both dynamic sizing (nchunks=0) and static sizing (nchunks>0). Provides
 // bitwise operations, shifts, arithmetic (+,-,*,/), and comparisons, modeling
 // unsigned integers.
 //
 // Template parameters:
-//   chunk_tt: Chunk type (uint8_t, uint16_t, uint32_t, uint64_t)
+//   chunk_tt: Chunk type (uint32_t, uint64_t)
 //   nchunks: Number of chunks (0=dynamic using std::vector, >0=static using
 //   std::array)
 //

@@ -44,7 +44,6 @@ int64_t pack(BitArray<bit_t, nbits> array, int64_t q, int64_t n) {
   INSTANTIATE_UNPACK(bit_t, 7)                                                 \
   INSTANTIATE_UNPACK(bit_t, 8)
 
-INSTANTIATE_UNPACK_ALL(uint16_t)
 INSTANTIATE_UNPACK_ALL(uint32_t)
 INSTANTIATE_UNPACK_ALL(uint64_t)
 INSTANTIATE_UNPACK_ALL(BitsetDynamic)
