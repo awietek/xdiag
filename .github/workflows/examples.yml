@@ -19,7 +19,7 @@ jobs:
       - name: install deps
         run: sudo apt-get update && sudo apt-get install -y clang llvm libhdf5-dev libblas-dev liblapack-dev
 
-    - name: make examples
-      run: |
-        cmake -S . -B build -D XDIAG_SHARED_LIBS=On -D BUILD_EXAMPLES=On
-        cmake --build build -j$(nproc)
+      - name: make examples
+        run: |
+          cmake -S . -B build -D XDIAG_SHARED_LIBS=On -D BUILD_EXAMPLES=On
+          cmake --build build -j$(nproc)
