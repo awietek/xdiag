@@ -81,7 +81,7 @@ std::ostream &operator<<(std::ostream &out, tJDistributed const &block) {
   return out;
 }
 std::string to_string(tJDistributed const &block) {
-  return to_string_generic(block);
+  return utils::to_string_generic(block);
 }
 
 tJDistributedIterator::tJDistributedIterator(tJDistributed const *block,

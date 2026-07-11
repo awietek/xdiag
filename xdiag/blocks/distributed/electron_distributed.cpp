@@ -86,7 +86,7 @@ std::ostream &operator<<(std::ostream &out, ElectronDistributed const &block) {
   return out;
 }
 std::string to_string(ElectronDistributed const &block) {
-  return to_string_generic(block);
+  return utils::to_string_generic(block);
 }
 
 ElectronDistributedIterator::ElectronDistributedIterator(

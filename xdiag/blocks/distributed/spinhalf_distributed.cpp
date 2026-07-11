@@ -81,7 +81,7 @@ std::ostream &operator<<(std::ostream &out, SpinhalfDistributed const &block) {
   return out;
 }
 std::string to_string(SpinhalfDistributed const &block) {
-  return to_string_generic(block);
+  return utils::to_string_generic(block);
 }
 
 SpinhalfDistributedIterator::SpinhalfDistributedIterator(
