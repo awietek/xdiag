@@ -8,7 +8,9 @@ on:
 
 jobs:
   build:
+  
     runs-on: ubuntu-latest
+
     env:
       CC: clang
       CXX: clang++
