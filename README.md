@@ -9,6 +9,7 @@ SPDX-License-Identifier: Apache-2.0
 [![Mac OSX CI](https://github.com/awietek/xdiag/actions/workflows/osx.yml/badge.svg?style=for-the-badge)](https://github.com/awietek/xdiag/actions/workflows/osx.yml)
 [![Intel MPI CI](https://github.com/awietek/xdiag/actions/workflows/intelmpi.yml/badge.svg?style=for-the-badge)](https://github.com/awietek/xdiag/actions/workflows/intelmpi.yml)
 [![Examples CI](https://github.com/awietek/xdiag/actions/workflows/examples.yml/badge.svg?style=for-the-badge)](https://github.com/awietek/xdiag/actions/workflows/examples.yml)
+![Downloads](https://img.shields.io/github/downloads/awietek/xdiag/total)
 [![codecov](https://codecov.io/gh/awietek/xdiag/graph/badge.svg)](https://codecov.io/gh/awietek/xdiag)
 
 # XDiag
