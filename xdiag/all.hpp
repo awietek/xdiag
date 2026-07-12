@@ -16,6 +16,7 @@ limitations under the License.
 
 #pragma once
 
+#include <xdiag/config.hpp>
 #include <xdiag/armadillo.hpp>
 #include <xdiag/algebra/ishermitian.hpp>
 #include <xdiag/algebra/symmetrize.hpp>
@@ -101,6 +102,7 @@ limitations under the License.
 #undef XDIAG_UNLIKELY
 
 // exported macros:
+// XDIAG_SHOW
 // XDIAG_COMPILEDBY
 // XDIAG_DIRECTORY
 // XDIAG_HOSTNAME

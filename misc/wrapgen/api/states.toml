@@ -24,6 +24,12 @@ args = ["int64_t nsites"]
 kind = "constructor"
 name = "ProductState"
 record = "ProductState"
+args = ["initializer_list list"]
+
+[[entries]]
+kind = "constructor"
+name = "ProductState"
+record = "ProductState"
 args = ["vector const& local_states"]
 
 [[entries]]
@@ -580,6 +586,12 @@ args = ["State const& state", "std::string type1", "std::string type2"]
 # ============================================================
 # xdiag/states/create_state.hpp
 # ============================================================
+
+[[entries]]
+kind = "function"
+name = "product_state"
+returns = "State"
+args = ["Block const& block", "initializer_list local_state", "bool real = true"]
 
 [[entries]]
 kind = "function"

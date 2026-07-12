@@ -33,6 +33,7 @@ limitations under the License.
 echo "#pragma once"
 
 echo
+echo "#include <xdiag/config.hpp>"
 echo "#include <xdiag/armadillo.hpp>"
 
 
@@ -71,8 +72,7 @@ echo
 # write list of exported macros
 macronames=`grep -rhE --include="config.hpp" '^[[:space:]]*#[[:space:]]*define[[:space:]]+XDIAG_' ../xdiag | sed -E 's/^[[:space:]]*#[[:space:]]*define[[:space:]]+(XDIAG_[A-Za-z0-9_]+).*/\1/' | sort -u`
 echo "// exported macros:"
-for macro in ${macronames[@]}; do
-    if [[ ! "$macro" == "XDIAG_SHOW" ]]; then
-	echo "// $macro"
-    fi
+echo "// XDIAG_SHOW"
+for macro in ${macronames[@]}; do    
+    echo "// $macro"	
 done

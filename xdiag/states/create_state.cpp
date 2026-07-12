@@ -22,6 +22,14 @@ static State product_state(block_t const &block,
 }
 XDIAG_CATCH
 
+State product_state(Block const &block,
+                    std::initializer_list<int64_t> local_state, bool real) try {
+  return product_state(
+      block, std::vector<int64_t>(local_state.begin(), local_state.end()),
+      real);
+}
+XDIAG_CATCH
+
 State product_state(Block const &block, std::vector<int32_t> const &local_state,
                     bool real) try {
   return product_state(

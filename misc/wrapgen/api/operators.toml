@@ -457,6 +457,20 @@ args = ["complex coeff", "Monomial const& mono"]
 
 [[entries]]
 kind = "method"
+name = "operator="
+record = "OpSum"
+returns = "OpSum&"
+args = ["Op const& op"]
+
+[[entries]]
+kind = "method"
+name = "operator="
+record = "OpSum"
+returns = "OpSum&"
+args = ["Monomial const& op"]
+
+[[entries]]
+kind = "method"
 name = "operator+="
 record = "OpSum"
 returns = "OpSum&"

@@ -100,6 +100,7 @@ def exported_names(entries):
     # LinearAlgebra functions we extend are re-exported (so `using XDiag` alone
     # provides dot/norm); Base functions stay unexported (Base is always in scope).
     linalg = sorted(n for n in callables if n in LINALG)
+    names.add("make_complex!")
     for n in callables:
         merged_c = n.endswith("C") and n[:-1] in callables   # dotC etc. -> merged into dot
         if n not in BASE and not n.startswith("operator") and not merged_c:

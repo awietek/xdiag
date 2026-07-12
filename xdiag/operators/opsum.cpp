@@ -35,6 +35,20 @@ OpSum::OpSum(std::string const &coeff, Monomial const &mono)
 OpSum::OpSum(double coeff, Monomial const &mono) : OpSum(Coeff(coeff), mono) {}
 OpSum::OpSum(complex coeff, Monomial const &mono) : OpSum(Coeff(coeff), mono) {}
 
+OpSum &OpSum::operator=(Op const &op) try {
+  terms_ = {{Coeff(1.0), Monomial(op)}};
+  params_.clear();
+  return *this;
+}
+XDIAG_CATCH
+
+OpSum &OpSum::operator=(Monomial const &op) try {
+  terms_ = {{Coeff(1.0), op}};
+  params_.clear();
+  return *this;
+}
+XDIAG_CATCH
+
 // --- Scalar scaling ---
 
 OpSum &OpSum::operator*=(double scalar) try {

@@ -17,3 +17,5 @@ function PermutationGroup(perms::Vector{Permutation})
     end
     return PermutationGroup(mat)
 end
+
+

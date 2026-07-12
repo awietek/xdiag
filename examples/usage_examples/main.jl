@@ -265,7 +265,7 @@ let
     @show res.eigenvalues
 
     # With specific initial state
-    psi0 = product_state(block, ["Up", "Dn", "Up", "Dn", "Up", "Dn", "Up", "Dn"])
+    psi0 = product_state(block, [1, 0, 1, 0, 1, 0, 1, 0])
     res2 = eigvals_lanczos(ops, psi0)
     @show res.alphas
     @show res.betas
@@ -318,7 +318,7 @@ let
     end
     ops["J"] = 1.0
 
-    psi0 = product_state(block, ["Up", "Dn", "Up", "Dn", "Up", "Dn", "Up", "Dn"])
+    psi0 = product_state(block, [1, 0, 1, 0, 1, 0, 1, 0])
     time = 1.0
 
     # on-the-fly
@@ -347,7 +347,7 @@ let
     # Compute ground state energy
     e0 = eigval0(ops, block)
  
-    psi0 = product_state(block, ["Up", "Dn", "Up", "Dn", "Up", "Dn", "Up", "Dn"])
+    psi0 = product_state(block, [1, 0, 1, 0, 1, 0, 1, 0])
     time = 1.0
 
     # on-the-fly
@@ -378,7 +378,7 @@ let
     # Compute ground state energy
     e0 = eigval0(ops, block)
  
-    psi0 = product_state(block, ["Up", "Dn", "Up", "Dn", "Up", "Dn", "Up", "Dn"])
+    psi0 = product_state(block, [1, 0, 1, 0, 1, 0, 1, 0])
     time = 1.0
 
     # on-the-fly
@@ -405,7 +405,7 @@ let
         ops += Op("SdotS", [i, mod1(i+1, N)])
     end
 
-    psi0 = product_state(block, ["Up", "Dn", "Up", "Dn", "Up", "Dn", "Up", "Dn"])
+    psi0 = product_state(block, [1, 0, 1, 0, 1, 0, 1, 0])
     time = 1.0
 
     # on-the-fly
@@ -457,8 +457,6 @@ let
     ops2["J"] = J;
     ops2["h"] = h;
     
-    @show isapprox(ops1, ops2)
-    @show isapprox(ops1 + ops2, 2.0 * ops1)
     @show to_string(ops1)
 end
 # --8<-- [end:opsum]
@@ -482,7 +480,7 @@ display(vector(psi1))
 make_complex!(psi1)
 display(vector(psi1))
 
-psi2 = State(block, real=false, n_cols=3)
+psi2 = State(block, real=false, ncols=3)
 @show psi2
 display(matrix(psi2))
 
@@ -494,16 +492,13 @@ display(vector(imag(psi3)))
 
 
 # --8<-- [start:product_state]
-pstate = ProductState(["Up", "Dn", "Emp", "UpDn"])
+pstate = ProductState([1, 2, 0, 3])
 for s in pstate
     @show s
 end
 @show pstate
 
-pstate = ProductState()
-push!(pstate, "Dn")
-push!(pstate, "Up")
-push!(pstate, "Dn")
+pstate = ProductState([2, 1, 2])
 @show nsites(pstate)
 for s in pstate
     @show s
@@ -515,34 +510,20 @@ end
 # --8<-- [start:random_state]
 block = Spinhalf(2)
 state = State(block, real=false)  # complex State
-rstate1 = RandomState(1234)
-fill(state, rstate1)
+state = random_state(block, seed=1234)
 display(vector(state))
 
-rstate2 = RandomState(4321)
-fill(state, rstate2)
+state = random_state(block, seed=4321)
 display(vector(state))
 
-fill(state, rstate1)
+state = random_state(block, seed=4321)
 display(vector(state))
 # --8<-- [end:random_state]
-
-# --8<-- [start:fill]
-block = Spinhalf(2)
-state = State(block)
-pstate = ProductState(["Up", "Dn"])
-fill(state, pstate)
-display(vector(state))
-
-rstate = RandomState(1234)
-fill(state, rstate)
-display(vector(state))
-# --8<-- [end:fill]
 
 
 # --8<-- [start:create_state]
 block = Spinhalf(2)
-state = product_state(block, ["Up", "Dn"])
+state = product_state(block, [1, 0])
 display(vector(state))
 
 zero(state)

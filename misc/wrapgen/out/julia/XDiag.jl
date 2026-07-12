@@ -65,6 +65,7 @@ export Boson,
     is_permutation,
     ishermitian,
     make_complex,
+    make_complex!,
     matrix,
     matrix_dot,
     multiply,
@@ -120,6 +121,7 @@ include("sparse.jl")
 include("states.jl")
 include("symmetries.jl")
 include("utils.jl")
+include("julia_specials.jl")
 include("permutation_group.jl")
 
 function __init__()

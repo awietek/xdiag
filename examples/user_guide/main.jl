@@ -88,7 +88,7 @@ phi = time_evolve(H, psi0, t)
 
 # --8<-- [start:usage_guide_measu1]
 for i in 1:N
-    op = Op("SzSz", {1, i})
+    op = Op("SzSz", [1, i])
     corr = inner(op, psi0)
 end
 # --8<-- [end:usage_guide_measu1]

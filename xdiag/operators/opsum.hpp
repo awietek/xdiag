@@ -43,6 +43,9 @@ public:
   OpSum(double coeff, Monomial const &mono);
   OpSum(complex coeff, Monomial const &mono);
 
+  OpSum &operator=(Op const &op);
+  OpSum &operator=(Monomial const &op);
+
   // Vector space: addition and subtraction
   OpSum &operator+=(OpSum const &ops);
   OpSum &operator+=(Op const &op);
@@ -78,7 +81,7 @@ public:
   Scalar &operator[](std::string const &name);
   Scalar const &operator[](std::string const &name) const;
   OpSum plain() const;
-  
+
   // Access
   std::vector<Term> const &terms() const noexcept;
   std::map<std::string, Scalar> const &params() const noexcept;

@@ -19,7 +19,7 @@ function main()
 
     # define initial state with domain wall
     block = Spinhalf(N)
-    psi0_vec = vcat(repeat(["Up"], N÷2), repeat(["Dn"], N÷2))
+    psi0_vec = vcat(repeat([1], N÷2), repeat([0], N÷2))
     psi = product_state(block, psi0_vec)
 
     # time evolve and measure Sz expectation value

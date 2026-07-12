@@ -1,5 +1,5 @@
 WRAPPED: 363 symbols
-SKIPPED: 217
+SKIPPED: 221
 
    61  ignored
           ::empty
@@ -120,6 +120,11 @@ SKIPPED: 217
     4  unsupported return: CSRMatrix
           ::csr_matrix
           ::csr_matrixC
+    4  unsupported arg: initializer_list
+          ::product_state
+          Monomial::Monomial
+          Permutation::Permutation
+          ProductState::ProductState
     4  operator not wrapped: operator+=
           ::operator+=
           OpSum::operator+=
@@ -149,9 +154,8 @@ SKIPPED: 217
           ::apply
     2  unsupported arg: Mat const&
           ::apply
-    2  unsupported arg: initializer_list
-          Monomial::Monomial
-          Permutation::Permutation
+    2  operator not wrapped: operator=
+          OpSum::operator=
     2  unsupported return: double*
           State::colptr
           State::memptr

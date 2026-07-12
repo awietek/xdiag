@@ -289,7 +289,7 @@ XDIAG_SHOW(res.betas);
 XDIAG_SHOW(res.eigenvalues);
 
 // With specific initial state
-auto psi0 = product_state(block, {"Up", "Dn", "Up", "Dn", "Up", "Dn", "Up", "Dn"});
+auto psi0 = product_state(block, {1, 0, 1, 0, 1, 0, 1, 0});
 auto res2 = eigvals_lanczos(ops, psi0);
 XDIAG_SHOW(res.alphas);
 XDIAG_SHOW(res.betas);
@@ -368,16 +368,13 @@ for (int i = 0; i<N; ++i) {
 }
 ops2["J"] = J;
 ops2["h"] = h;
-
-XDIAG_SHOW(isapprox(ops1, ops2));
-XDIAG_SHOW(isapprox(ops1 + ops2, 2.0 * ops1));
 // --8<-- [end:OpSum]
 }
 
 {
 // --8<-- [start:hc]
-auto cdagup = Op("Cdagup", 0);
-auto sdots = Op("SdotS", {0, 1});
+auto cdagup = 1.0 * Op("Cdagup", 0);
+auto sdots = 1.0 * Op("SdotS", {0, 1});
 auto hop = (1.0 + 1.0i) * Op("Hop", {0, 1});
 XDIAG_SHOW(cdagup == hc(cdagup));
 XDIAG_SHOW(sdots == hc(sdots));
@@ -428,16 +425,16 @@ XDIAG_SHOW(vector(imag(psi3)));
 
 {
 // --8<-- [start:product_state]
-auto pstate = ProductState({"Up", "Dn", "Emp", "UpDn"});
+auto pstate = ProductState({1, 2, 0, 3});
 for (auto s : pstate) {
   Log("{}", s);
 }
 XDIAG_SHOW(to_string(pstate));
 
 pstate = ProductState();
-pstate.push_back("Dn");
-pstate.push_back("Up");
-pstate.push_back("Dn");
+pstate.push_back(2);
+pstate.push_back(1);
+pstate.push_back(2);
 XDIAG_SHOW(pstate.nsites());
 for (auto s : pstate) {
   Log("{}", s);
@@ -468,7 +465,7 @@ XDIAG_SHOW(state.vectorC());
 // --8<-- [start:fill]
 auto block = Spinhalf(2);
 auto state = State(block);  
-auto pstate = ProductState({"Up", "Dn"});
+auto pstate = ProductState({1, 0});
 fill(state, pstate);
 XDIAG_SHOW(state.vector());
 
@@ -482,7 +479,7 @@ XDIAG_SHOW(state.vector());
 {
 // --8<-- [start:create_state]
 auto block = Spinhalf(2);
-auto state = product_state(block, {"Up", "Dn"});
+auto state = product_state(block, {1, 0});
 XDIAG_SHOW(state.vector());
 
 zero(state);
@@ -508,7 +505,7 @@ for (int i=0; i<N; ++i) {
   ops += Op("SdotS", {i, (i+1) % N});
 }
 
-auto psi0 = product_state(block, {"Up", "Dn", "Up", "Dn", "Up", "Dn", "Up", "Dn"});
+auto psi0 = product_state(block, {1, 0, 1, 0, 1, 0, 1, 0});
 double time = 1.0;
 
 // On-the-fly
@@ -537,7 +534,7 @@ for (int i=0; i<N; ++i) {
 // Compute ground state energy
 double e0 = eigval0(ops, block);
  
-auto psi0 = product_state(block, {"Up", "Dn", "Up", "Dn", "Up", "Dn", "Up", "Dn"});
+auto psi0 = product_state(block, {1, 0, 1, 0, 1, 0, 1, 0});
 double time = 1.0;
 double precision = 1e-12;
 
@@ -568,7 +565,7 @@ for (int i=0; i<N; ++i) {
 // Compute ground state energy
 double e0 = eigval0(ops, block);
  
-auto psi0 = product_state(block, {"Up", "Dn", "Up", "Dn", "Up", "Dn", "Up", "Dn"});
+auto psi0 = product_state(block, {1, 0, 1, 0, 1, 0, 1, 0});
 double time = 1.0;
 double precision = 1e-12;
 
@@ -595,7 +592,7 @@ for (int i=0; i<N; ++i) {
   ops += Op("SdotS", {i, (i+1) % N});
 }
 
-auto psi0 = product_state(block, {"Up", "Dn", "Up", "Dn", "Up", "Dn", "Up", "Dn"});
+auto psi0 = product_state(block, {1, 0, 1, 0, 1, 0, 1, 0});
 double time = 1.0;
 double precision = 1e-8;
 

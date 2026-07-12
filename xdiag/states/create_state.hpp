@@ -15,6 +15,9 @@ namespace xdiag {
 // Build a State holding the single product state given by its per-site local
 // quantum-number indices (spin-1/2: Dn=0, Up=1; boson: occupation number).
 XDIAG_API State product_state(Block const &block,
+                              std::initializer_list<int64_t> local_state,
+                              bool real = true);
+XDIAG_API State product_state(Block const &block,
                               std::vector<int32_t> const &local_state,
                               bool real = true);
 XDIAG_API State product_state(Block const &block,
@@ -23,7 +26,7 @@ XDIAG_API State product_state(Block const &block,
 XDIAG_API State product_state(Block const &block,
                               arma::Col<int64_t> const &local_state,
                               bool real = true);
-  
+
 XDIAG_API State random_state(Block const &block, bool real = true,
                              int64_t ncols = 1, int64_t seed = 42,
                              bool normalized = true);

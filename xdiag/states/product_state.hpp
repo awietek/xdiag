@@ -24,6 +24,7 @@ public:
 
   ProductState() = default;
   explicit ProductState(int64_t nsites);
+  ProductState(std::initializer_list<int64_t> list);
   explicit ProductState(std::vector<int32_t> const &local_states);
   explicit ProductState(std::vector<int64_t> const &local_states);
   explicit ProductState(arma::Col<int64_t> const &local_states);
